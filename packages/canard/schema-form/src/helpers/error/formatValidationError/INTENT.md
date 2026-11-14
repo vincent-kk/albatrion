@@ -2,28 +2,26 @@
 
 ## Purpose
 
-JSON Schema 검증 에러를 스키마의 `errorMessages` 프로퍼티에 정의된 사용자 커스텀 메시지로 대체하고, `{field}` / `{value}` 등 플레이스홀더 패턴을 실제 값으로 치환한다.
+검증 결과의 메시지를 해당 노드에 작성한 메시지 설정으로 표현합니다. 판정의 의미·경로·표시 자격은 바꾸지 않습니다.
 
 ## Conventions
 
-- `FormatError` 시그니처: `(error, node, context) => string | undefined`
-- `errorMessages` 또는 `keyword` 부재 시 원본 `error.message` 반환 (절대 throw 금지)
-- 로케일 메시지: `errorMessages[keyword]`가 객체인 경우 `context.locale` 키로 접근
-- 패턴 치환: `{keyword}` 형식 (중괄호) — `replacePattern` 내부에서 `details` 키 → `{value}` 순 처리
+- FormatError 호출 계약을 유지합니다.
+- 번역을 선택할 수 없으면 검증기의 메시지를 보존합니다.
 
 ## Boundaries
 
 ### Always do
 
-- `FormatError` 타입 시그니처를 반드시 준수할 것
-- `errorMessages` 또는 `keyword` 부재 시 원본 메시지를 fallback으로 반환
+- 메시지는 노드의 presentation과 전달받은 locale 문맥으로 선택합니다.
+- 기존 메시지의 의미를 지키도록 제한된 패턴 치환 순서를 보존합니다.
 
 ### Ask first
 
-- 패턴 치환 문법(`replacePattern`) 변경 — 스키마 작성자가 사용하는 메시지 포맷 계약에 영향
-- `getErrorMessage`의 `context.locale` 우선순위 로직 변경
+- 치환 문법·반복 치환·로케일 fallback 또는 FormatError 계약을 바꿀 때.
 
 ### Never do
 
-- `formatValidationError` 내에서 에러를 throw
-- `node.jsonSchema` 외의 소스(외부 상태, 글로벌 레지스트리 등)에서 메시지 조회
+- 검증 결과나 노드 값을 수정하거나 오류를 보고하지 않습니다.
+- 전역 메시지 저장소나 검증 keyword의 자체 해석을 추가하지 않습니다.
+- 접근자·문자열 변환의 예외까지 격리한다고 가정하지 않습니다.

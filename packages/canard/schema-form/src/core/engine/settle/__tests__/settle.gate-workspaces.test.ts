@@ -1,0 +1,97 @@
+import { describe, expect, it, vi } from 'vitest';
+
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import * as compiler from '../../blueprint/compileBlueprintExpressions';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import type { SettlementContext } from '../types/settlement';
+import { evaluateGate } from '../utils/gates/evaluateGate';
+import * as projection from '../utils/gates/readProjectedValue';
+
+describe('compiled active gate workspace characterization', () => {
+  it.each([false, true])(
+    'preserves outer dependencies across a nested read, throw=%s',
+    (throws) => {
+      const calls: unknown[][] = [];
+      const compile = compiler.compileBlueprintExpressions;
+      let recording = false;
+      const compiling = vi
+        .spyOn(compiler, 'compileBlueprintExpressions')
+        .mockImplementation((context) =>
+          compile(context).map((expression) => {
+            const wrapped = {
+              ...expression,
+              evaluate: (dependencies: unknown[]) => {
+                if (recording && expression.key === 'active')
+                  calls.push(dependencies.slice());
+                return expression.evaluate(dependencies);
+              },
+            };
+            Object.defineProperty(wrapped, 'completeReads', {
+              value: expression.completeReads,
+            });
+            return Object.freeze(wrapped);
+          }),
+        );
+      try {
+        const { root, blueprint } = createTestTree({
+          type: 'object',
+          properties: {
+            a: { type: 'string', default: 'A' },
+            b: { type: 'string', default: 'B' },
+          },
+          oneOf: [
+            { controls: { active: "./a === 'A' && ./b === 'B'" } },
+            { controls: { active: "./b === 'B'" } },
+          ],
+        });
+        loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
+        const gates = root.blueprintNode.declarations.flatMap(
+          (declaration) => declaration.gates,
+        );
+        const outer = gates.find(
+          (gate) => gate.schemaPath === blueprint.expressions[0].schemaPath,
+        )!;
+        const inner = gates.find(
+          (gate) => gate.schemaPath === blueprint.expressions[1].schemaPath,
+        )!;
+        const context = {
+          root,
+          changedSource: new Set(),
+          changedNodes: new Set(),
+          pendingOutputs: new Set(),
+        } as unknown as SettlementContext<PlainNode>;
+        const read = projection.readProjectedValue;
+        let nested = false;
+        const reading = vi
+          .spyOn(projection, 'readProjectedValue')
+          .mockImplementation((current, path) => {
+            if (!nested && path === '/b') {
+              nested = true;
+              expect(evaluateGate(inner, context, root)).toBe(true);
+              if (throws) throw new Error('outer projected read');
+            }
+            return read(current, path);
+          });
+        recording = true;
+        try {
+          expect(evaluateGate(outer, context, root)).toBe(!throws);
+          reading.mockRestore();
+          expect(evaluateGate(outer, context, root)).toBe(true);
+          expect(calls).toEqual(
+            throws ? [['B'], ['A', 'B']] : [['B'], ['A', 'B'], ['A', 'B']],
+          );
+          expect(context.gateThrowVersion).toBe(throws ? 1 : undefined);
+          expect([...context.changedNodes]).toEqual([]);
+          expect([...context.pendingOutputs!]).toEqual([]);
+        } finally {
+          reading.mockRestore();
+        }
+      } finally {
+        compiling.mockRestore();
+      }
+    },
+  );
+});

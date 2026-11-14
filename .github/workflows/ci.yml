@@ -1,0 +1,107 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  workflow_call:
+    inputs:
+      tier:
+        type: string
+        required: false
+        default: pr
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ inputs.tier || 'pr' }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  affected:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      plan: ${{ steps.select.outputs.plan }}
+      any: ${{ steps.select.outputs.any }}
+      shards: ${{ steps.select.outputs.shards }}
+    steps:
+      - name: Checkout event head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.19.5
+      - name: Test selection and runner without installing dependencies
+        run: node --test scripts/ci
+      - name: Select affected workspaces
+        id: select
+        env:
+          CHECK_TIER: ${{ inputs.tier || 'pr' }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          if [ "$CHECK_TIER" = "pre-release" ]; then
+            node scripts/ci/selectAffectedWorkspaces.mjs --tier "$CHECK_TIER"
+          else
+            node scripts/ci/selectAffectedWorkspaces.mjs --tier "$CHECK_TIER" --base "$BASE_SHA" --head "$HEAD_SHA"
+          fi
+
+  check:
+    name: check (${{ matrix.shard.name }})
+    needs: affected
+    if: needs.affected.outputs.any == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.affected.outputs.shards) }}
+    env:
+      CI: "true"
+      # The @canard/schema-form typecheck needs about 2.4 GB of heap; Node's
+      # default limit on the runner is about 2 GB, so it fails intermittently.
+      NODE_OPTIONS: --max-old-space-size=4096
+    steps:
+      - name: Checkout event head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Enable Corepack
+        # Yarn must be available before setup-node resolves its package-manager cache.
+        run: corepack enable
+      - name: Setup Node and restore Yarn cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.19.5
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - name: Install immutable dependencies
+        run: yarn install --immutable
+      - name: Test shared build scripts once
+        if: strategy.job-index == 0
+        run: yarn --cwd . test:build-scripts
+      - name: Read Playwright version
+        id: playwright
+        if: matrix.shard.browser
+        run: node -e 'const fs = require("node:fs"); fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${require("./package.json").devDependencies.playwright}\n`);'
+      - name: Restore Chromium cache
+        if: matrix.shard.browser
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ steps.playwright.outputs.version }}
+      - name: Install Chromium and system dependencies
+        if: matrix.shard.browser
+        run: yarn exec playwright install --with-deps chromium
+      - name: Run check plan
+        env:
+          CHECK_PLAN: ${{ needs.affected.outputs.plan }}
+          CHECK_SHARD: ${{ matrix.shard.name }}
+        run: node scripts/ci/runCheckPlan.mjs --shard "$CHECK_SHARD"

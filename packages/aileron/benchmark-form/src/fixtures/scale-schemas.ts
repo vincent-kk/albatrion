@@ -1,4 +1,4 @@
-import type { JSONSchema } from '@canard/schema-form';
+import type { EquivalentJSONSchema as JSONSchema } from '../../fixtures/equivalent/types';
 
 /**
  * Scale-dial fixtures for measuring schema-form cost as a function of
@@ -24,7 +24,7 @@ export function buildFlatSchema(fieldCount: number): JSONSchema {
   return {
     type: 'object',
     properties,
-  } as JSONSchema;
+  } satisfies JSONSchema;
 }
 
 /**
@@ -36,13 +36,13 @@ export function buildFlatSchema(fieldCount: number): JSONSchema {
 export function buildNestedSchema(depth: number, fanout: number): JSONSchema {
   function buildLevel(currentDepth: number): JSONSchema {
     if (currentDepth === 0) {
-      return { type: 'string', default: 'leaf' } as JSONSchema;
+      return { type: 'string', default: 'leaf' } satisfies JSONSchema;
     }
     const properties: Record<string, JSONSchema> = {};
     for (let i = 0; i < fanout; i++) {
       properties[`n${i}`] = buildLevel(currentDepth - 1);
     }
-    return { type: 'object', properties } as JSONSchema;
+    return { type: 'object', properties } satisfies JSONSchema;
   }
   return buildLevel(depth);
 }
@@ -76,7 +76,7 @@ export function buildArraySchema(itemCount: number): JSONSchema {
         },
       },
     },
-  } as JSONSchema;
+  } satisfies JSONSchema;
 }
 
 /**
@@ -95,7 +95,7 @@ export function buildOneOfHeavySchema(branchCount: number): JSONSchema {
         [`payload_${i}_c`]: { type: 'boolean', default: i % 2 === 0 },
       },
       required: ['kind'],
-    } as JSONSchema);
+    } satisfies JSONSchema);
   }
   return {
     type: 'object',
@@ -103,7 +103,7 @@ export function buildOneOfHeavySchema(branchCount: number): JSONSchema {
       common: { type: 'string', default: 'shared' },
     },
     oneOf,
-  } as JSONSchema;
+  } satisfies JSONSchema;
 }
 
 export interface ScaleCase {

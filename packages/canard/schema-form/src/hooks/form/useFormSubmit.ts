@@ -1,0 +1,81 @@
+import {
+  type RefObject,
+  useCallback,
+  useMemo,
+  useSyncExternalStore,
+} from 'react';
+
+import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
+
+import type { Fn, Nullable } from '@aileron/declare';
+
+import type { FormHandle } from '@/schema-form/components/Form';
+import type {
+  AllowedValue,
+  InferValueType,
+  JSONSchema,
+} from '@/schema-form/types';
+
+/**
+ * Hook for handling form submission with pending state management.
+ * Provides a submit function and pending state synchronized with the form's internal submit handler.
+ * Every subscription checks pending on attach, including Activity reconnects.
+ *
+ * @example
+ * ```typescript
+ * const formRef = useRef<FormHandle<typeof schema>>(null);
+ * const { submit, pending } = useFormSubmit(formRef);
+ * const handleClick = async () => {
+ *   try {
+ *     await submit();
+ *   } catch (error) {
+ *     // a ValidationError leaves the field errors on the form
+ *     if (!isValidationError(error)) reportError(error);
+ *   }
+ * };
+ *
+ * <Form ref={formRef} jsonSchema={schema} onSubmit={handleSubmit} />
+ * <button type="button" onClick={handleClick} disabled={pending}>
+ *   {pending ? 'Submitting...' : 'Submit'}
+ * </button>
+ * ```
+ *
+ * @param ref - React ref to FormHandle instance
+ * @returns Object containing submit function and pending state
+ * @returns {Function} submit - Async function that triggers form submission
+ * @returns {boolean | undefined} pending - Submission pending state
+ */
+export const useFormSubmit = <
+  Schema extends JSONSchema,
+  Value extends AllowedValue = InferValueType<Schema>,
+>(
+  ref: RefObject<Nullable<FormHandle<Schema, Value>>>,
+) => {
+  const [subscribe, getSnapshot] = useMemo(
+    () => [
+      (onStoreChange: Fn) => {
+        const unsubscribe =
+          ref.current?.submit?.subscribe?.(onStoreChange) || NOOP_FUNCTION;
+        onStoreChange();
+        return unsubscribe;
+      },
+      () => ref?.current?.submit?.pending,
+    ],
+    [ref],
+  );
+  const pending = useSyncExternalStore(subscribe, getSnapshot);
+
+  const submit = useCallback(() => {
+    const handler = ref.current?.submit;
+    if (!handler) return Promise.resolve(void 0);
+    return handler();
+  }, [ref]);
+
+  return useMemo(
+    () => ({
+      submit,
+      pending,
+    }),
+    [pending, submit],
+  );
+};

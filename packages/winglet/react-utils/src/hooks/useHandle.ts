@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
 
+import type { Fn } from '@aileron/declare';
+
 import { useReference } from './useReference';
 
 /**
@@ -43,9 +45,7 @@ import { useReference } from './useReference';
  * @param handler - The function to wrap
  * @returns A stable callback that always invokes the latest version of the handler
  */
-export function useHandle<P extends Array<any>, R>(
-  handler: (...args: P) => R,
-): (...args: P) => R;
+export function useHandle<P extends Array<any>, R>(handler: Fn<P, R>): Fn<P, R>;
 /**
  * Wraps an optional handler in a stable callback.
  *
@@ -65,11 +65,11 @@ export function useHandle<P extends Array<any>, R>(
  * @returns A stable callback that invokes the latest handler, or yields `null` when there is none
  */
 export function useHandle<P extends Array<any>, R>(
-  handler?: (...args: P) => R,
-): (...args: P) => R | null;
+  handler?: Fn<P, R>,
+): Fn<P, R | null>;
 export function useHandle<P extends Array<any>, R>(
-  handler?: (...args: P) => R,
-): (...args: P) => R | null {
+  handler?: Fn<P, R>,
+): Fn<P, R | null> {
   const handlerRef = useReference(handler);
   return useCallback(
     (...args: P) => {

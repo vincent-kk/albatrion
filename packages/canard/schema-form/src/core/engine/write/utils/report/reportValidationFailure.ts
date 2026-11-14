@@ -1,0 +1,50 @@
+import { SchemaFormError } from '../../../../../errors';
+import type { FieldNodeRuntime } from '../../../record';
+import { flushFieldNodeSettings } from '../chain/flushFieldNodeSettings';
+import { readFormErrorCode } from './readFormErrorCode';
+import { reportOwnerlessFailure } from './reportOwnerlessFailure';
+
+/**
+ * Expose an asynchronous validator or result-listener failure once to each surface.
+ * @param runtime - Tree whose reporter receives the structured occurrence.
+ * @param failure - Original structured validation or delivery failure.
+ * @returns Nothing; the sink owns the uncaught asynchronous surface.
+ */
+export const reportValidationFailure = (
+  runtime: Pick<
+    FieldNodeRuntime<unknown>,
+    | 'errorReporter'
+    | 'reportingErrors'
+    | 'pendingSettings'
+    | 'entryDepth'
+    | 'chainRoot'
+    | 'flushingQueuedEvents'
+  >,
+  failure: unknown,
+): void => {
+  if (runtime.errorReporter?.hasConsumer()) {
+    const wasReporting = runtime.reportingErrors;
+    runtime.reportingErrors = true;
+    try {
+      runtime.errorReporter.report({
+        level: 'error',
+        code: readFormErrorCode(failure),
+        message: failure instanceof Error ? failure.message : String(failure),
+        ...(failure instanceof SchemaFormError
+          ? { details: failure.details }
+          : {}),
+        error: failure,
+        origin: 'validate',
+      });
+    } catch (reporterFailure) {
+      reportOwnerlessFailure(reporterFailure);
+    } finally {
+      runtime.reportingErrors = wasReporting;
+    }
+  }
+  try {
+    reportOwnerlessFailure(failure);
+  } finally {
+    flushFieldNodeSettings(runtime);
+  }
+};

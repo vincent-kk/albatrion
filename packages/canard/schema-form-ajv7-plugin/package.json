@@ -44,10 +44,11 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rolldown -c && yarn build:types && yarn typecheck",
+    "build": "rolldown -c && yarn build:types && yarn build:verify:types && yarn typecheck",
+    "build-storybook": "storybook build",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
-    "build-storybook": "storybook build",
+    "build:verify:types": "node ../../aileron/script/build/verifyDeclarations.mjs",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "publish:npm": "yarn npm publish --access public",
@@ -61,7 +62,11 @@
   "dependencies": {
     "ajv": "^7.0.0"
   },
+  "peerDependencies": {
+    "@canard/schema-form": "workspace:^"
+  },
   "devDependencies": {
+    "@aileron/schema-form-scenarios": "workspace:*",
     "@canard/schema-form": "workspace:^",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

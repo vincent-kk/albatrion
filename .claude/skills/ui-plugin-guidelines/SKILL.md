@@ -1,219 +1,226 @@
 ---
 name: ui-plugin-guidelines
-description: "UI 라이브러리와 @canard/schema-form 플러그인 간 호환성 검증 및 프로젝트 구조 설계 전문가. 호환성 매핑, 접근성 요구사항, 렌더러 컴포넌트 가이드를 제공합니다."
+description: "Expert at verifying compatibility between a UI library and an @canard/schema-form plugin, and at designing the project structure. Provides compatibility mapping, accessibility requirements, and renderer component guidance."
 ---
 
 # UI Plugin Guidelines Skill
 
-## 역할
-당신은 UI 라이브러리와 @canard/schema-form 플러그인 간 호환성 검증 및 프로젝트 구조 설계 전문가입니다.
+## Role
+You are an expert at verifying compatibility between a UI library and an @canard/schema-form plugin, and at designing the project structure.
 
-## 핵심 책임
-1. **호환성 검증**: UI 라이브러리 컴포넌트와 Schema Form 요구사항 매핑
-2. **프로젝트 구조 설계**: 플러그인 디렉토리 구조 권장
-3. **접근성 요구사항**: ARIA 속성 및 키보드 네비게이션 가이드
-4. **렌더러 컴포넌트**: FormGroup, FormLabel, FormInput, FormError 구현 가이드
-5. **UI 라이브러리별 특수 사항**: 각 라이브러리의 고유한 패턴 안내
+## Core Responsibilities
+1. **Compatibility verification**: map UI library components to Schema Form requirements
+2. **Project structure design**: recommend the plugin directory structure
+3. **Accessibility requirements**: guide ARIA attributes and keyboard navigation
+4. **Renderer components**: guide the implementation of FieldRenderer, LabelRenderer, and ErrorMessageRenderer, plus the optional input frame
+5. **Library-specific notes**: explain the patterns unique to each library
 
-## 작동 방식
+## How It Works
 
-### 1. 호환성 분석
-**knowledge/compatibility-matrix.md**를 통해:
-- Schema Form 요구사항과 UI 라이브러리 컴포넌트 매핑
-- 호환성 등급 (직접/커스텀/Fallback) 판정
-- 구현 우선순위 결정
+### 1. Compatibility Analysis
+Through **knowledge/compatibility-matrix.md**:
+- Map Schema Form requirements to UI library components
+- Judge the compatibility grade (Direct / Custom / Fallback)
+- Decide implementation priority
 
-### 2. 프로젝트 구조 제공
-**knowledge/project-structure.md**로:
-- 권장 디렉토리 구조
-- 파일 명명 규칙
-- import/export 패턴
+### 2. Project Structure
+With **knowledge/project-structure.md**:
+- Recommended directory structure
+- File naming rules
+- import/export patterns
 
-### 3. 접근성 검증
-**knowledge/accessibility-checklist.md**로:
-- ARIA 속성 필수 항목
-- 키보드 네비게이션 요구사항
-- 스크린 리더 호환성
+### 3. Accessibility Verification
+With **knowledge/accessibility-checklist.md**:
+- Required ARIA attributes
+- Keyboard navigation requirements
+- Screen reader compatibility
 
-## 제공하는 정보
+## Information Provided
 
-### 호환성 매핑 표 형식
+### Compatibility Mapping Table Format
 
-| Schema Form 요구사항 | UI Library 컴포넌트 | 호환성 | 구현 방식 | 우선순위 |
+| Schema Form requirement | UI Library component | Compatibility | Implementation | Priority |
 |---------------------|---------------------|--------|----------|---------|
-| String 입력 (기본) | TextField / Input | ✅ 직접 | defaultValue 사용 | P1 |
-| Number 입력 | NumberInput | ✅ 직접 | type="number" | P1 |
-| Boolean (Checkbox) | Checkbox | ✅ 직접 | defaultChecked | P1 |
-| Date 선택 | DatePicker | ⚠️ 커스텀 | 값 변환 필요 | P2 |
-| Rich Text 편집기 | - | ❌ 없음 | Fallback 또는 외부 라이브러리 | P4 |
+| String input (basic) | TextField / Input | ✅ Direct | Use defaultValue | P1 |
+| Number input | NumberInput | ✅ Direct | type="number" | P1 |
+| Boolean (Checkbox) | Checkbox | ✅ Direct | defaultChecked | P1 |
+| Date selection | DatePicker | ⚠️ Custom | Value conversion required | P2 |
+| Rich Text editor | - | ❌ None | Fallback or external library | P4 |
 
-**호환성 등급**:
-- ✅ **직접**: 컴포넌트 그대로 사용 가능
-- ⚠️ **커스텀**: 값 변환/래핑 필요
-- ❌ **없음**: Fallback 또는 외부 라이브러리 필요
+**Compatibility grades**:
+- ✅ **Direct**: The component can be used as-is
+- ⚠️ **Custom**: Value conversion/wrapping required
+- ❌ **None**: Fallback or external library required
 
-### 권장 프로젝트 구조
+### Recommended Project Structure
+
+Scaffold paths are destinations for a new plugin. Repository references point to the antd5 and MUI plugins; example-only inputs follow the FieldInput naming pattern.
 
 ```
 @canard/schema-form-{ui-library}-plugin/
 ├── src/
-│   ├── index.ts                    # 메인 export (plugin 객체)
-│   ├── type.ts                     # Context 타입 정의
-│   ├── renderers/                  # 기본 렌더러 (필수 5개)
-│   │   ├── FormGroup.tsx
-│   │   ├── FormLabel.tsx
-│   │   ├── FormInput.tsx
-│   │   ├── FormError.tsx
-│   │   └── formatError.ts
-│   ├── formTypeInputs/             # FormTypeInput 구현체
-│   │   ├── index.ts                # formTypeInputDefinitions 통합
-│   │   ├── FormTypeInputString.tsx
-│   │   ├── FormTypeInputNumber.tsx
-│   │   ├── FormTypeInputBoolean.tsx
-│   │   ├── FormTypeInputArray.tsx
-│   │   ├── FormTypeInputStringEnum.tsx
+│   ├── index.ts                    # Main export (plugin object)
+│   ├── type.ts                     # Context type definitions
+│   ├── components/                  # Registered renderer components
+│   │   ├── FieldRenderer.tsx
+│   │   ├── LabelRenderer.tsx
+│   │   └── ErrorMessageRenderer.tsx
+│   ├── fieldInputs/             # FieldInput implementations
+│   │   ├── index.ts                # fieldInputDefinitions aggregation
+│   │   ├── FieldInputString.tsx
+│   │   ├── FieldInputNumber.tsx
+│   │   ├── FieldInputBoolean.tsx
+│   │   ├── FieldInputArray.tsx
+│   │   ├── FieldInputStringEnum.tsx
 │   │   └── ...
-│   └── utils/                      # 공통 유틸리티 (선택적)
-│       └── valueConversion.ts      # 값 변환 헬퍼
-├── coverage/                       # Storybook stories
-│   ├── FormTypeInputString.stories.tsx
+│   └── utils/                      # Shared utilities (optional)
+│       └── valueConversion.ts      # Value conversion helpers
+├── stories/                       # Storybook stories
+│   ├── FieldInputString.stories.tsx
 │   └── ...
 ├── package.json
 ├── tsconfig.json
 ├── rolldown.config.mjs
-├── vite.config.ts                  # Vitest 설정
+├── vite.config.ts                  # Vitest configuration
 ├── README.md
 └── README-ko_kr.md
 ```
 
-### 필수 렌더러 컴포넌트
+### Renderer Components
 
-#### 1. FormGroup
+#### 1. FieldRenderer
 
-**역할**: 필드 그룹 래퍼 (object, array 타입)
+**Role**: Field wrapper, composing terminal labels and branch legends
 
-**필수 처리**:
-- `depth` 기반 스타일링 (들여쓰기)
-- `isRoot` 조건 처리
-- 타입별 시각적 구분 (object vs array)
+**Required handling**:
+- `depth`-based styling (indentation)
+- Root condition handling (`depth === 0`)
+- Visual distinction by strategy (branch vs leaf)
+- Compose the bound parts `Label`, `Input`, `ErrorMessage` and the `errorMessage` value
 
 ```typescript
-const FormGroup = ({
+const FieldRenderer = ({
+  node,
   depth,
-  isRoot,
-  type,
   name,
-  children,
-}: FormTypeRendererProps) => {
+  Input,
+  Label,
+  ErrorMessage,
+  errorMessage,
+}: FieldRendererProps) => {
+  if (depth === 0) return <Input />;
+
+  if (node.strategy === 'branch') {
+    return (
+      <Box sx={{ pl: depth * 2, border: '1px solid', borderColor: 'divider' }}>
+        <fieldset><legend>{name}</legend><Input /></fieldset>
+      </Box>
+    );
+  }
+
   return (
-    <Box
-      sx={{
-        pl: depth * 2,  // 깊이에 따른 들여쓰기
-        border: isRoot ? 'none' : '1px solid',
-        borderColor: 'divider',
-      }}
-    >
-      {!isRoot && (
-        <Typography variant="h6">{name}</Typography>
-      )}
-      {children}
+    <Box sx={{ pl: depth * 2 }}>
+      <Label />
+      <Input />
+      <ErrorMessage>{errorMessage}</ErrorMessage>
     </Box>
   );
 };
 ```
 
-#### 2. FormLabel
+Branch titles are direct legends; the registered LabelRenderer applies to terminal labels. `<Input unwrapped />` skips a registered input frame. Pass only reference-stable props (module-level constants) to the parts.
 
-**역할**: 필드 라벨 렌더링
+#### 2. LabelRenderer
 
-**필수 처리**:
-- `htmlFor` 연결
-- `required` 시각적 표시 (`*` 또는 라이브러리 표준)
-- 라벨 우선순위: `jsonSchema.label` > `jsonSchema.title` > `name`
+**Role**: Field label rendering
+
+**Receives**: `LabelRendererProps` (`children`, `htmlFor`, `id`, `required`, `style`, `className`, `node`, `path`, `name`, `jsonSchema`)
+
+**Required handling**:
+- Own the root `<label>`: apply `htmlFor`, `id`, `style`, `className` to it
+- Render `children` as the label content
+- `required` visual indicator (`*` or the library standard), marked `aria-hidden`
 
 ```typescript
-const FormLabel = ({
-  path,
-  name,
-  jsonSchema,
+const LabelRenderer = ({
+  children,
+  htmlFor,
+  id,
   required,
-}: FormTypeRendererProps) => {
-  const label = jsonSchema.label || jsonSchema.title || name;
-  
-  return (
-    <FormLabel htmlFor={path} required={required}>
-      {label}
-    </FormLabel>
-  );
-};
+  style,
+  className,
+}: LabelRendererProps) => (
+  <label htmlFor={htmlFor} id={id} style={style} className={className}>
+    {children}
+    {required && <span aria-hidden> *</span>}
+  </label>
+);
 ```
 
-#### 3. FormInput
+#### 3. ErrorMessageRenderer
 
-**역할**: Input 컴포넌트 래퍼
+**Role**: Error message display
 
-**구현**: 단순 패스스루
+**Receives**: `ErrorMessageRendererProps` (`children`, `style`, `className`, `node`, `path`, `name`, `jsonSchema`, `required`)
 
 ```typescript
-const FormInput = ({ Input, ...props }: FormTypeRendererProps) => {
-  return <Input {...props} />;
-};
+const ErrorMessageRenderer = ({
+  children,
+  style,
+  className,
+}: ErrorMessageRendererProps) => (
+  <span style={style} className={className}>
+    {children}
+  </span>
+);
 ```
 
-#### 4. FormError
+#### Optional input frame (`InputRenderer`)
 
-**역할**: 에러 메시지 표시
+`InputRenderer` is an optional frame registered under the `InputRenderer` key. It must render `children` exactly once, unconditionally, at an unchanging position.
 
 ```typescript
-const FormError = ({ errorMessage }: FormTypeRendererProps) => {
-  if (!errorMessage) return null;
-  
-  return (
-    <FormHelperText error>
-      {errorMessage}
-    </FormHelperText>
-  );
-};
+const FormInputFrame = ({ children, node, required, readOnly, disabled, context }: InputRendererProps) => <Wrapper>{children}</Wrapper>;
 ```
 
-#### 5. formatError
+#### Optional formatError
 
-**역할**: JSONSchemaError → ReactNode 변환
+**Role**: JSONSchemaError → ReactNode conversion
 
 ```typescript
 const formatError: FormatError = (error, node, context) => {
-  // 다국어 지원, 사용자 친화적 메시지
+  // Multilingual support, user-friendly message
   return error.message;
 };
 ```
 
-## 접근성 요구사항
+## Accessibility Requirements
 
-### 필수 ARIA 속성
+### Required ARIA Attributes
 
 ```typescript
 <TextField
-  id={path}                          // ✅ 고유 ID
-  name={name}                        // ✅ name 속성
+  id={path}                          // ✅ Unique ID
+  name={name}                        // ✅ name attribute
   required={required}                // ✅ required
   aria-required={required}           // ✅ ARIA required
   aria-invalid={hasError}            // ✅ ARIA invalid
-  aria-describedby={`${path}-error`} // ✅ 에러 연결
+  aria-describedby={`${path}-error`} // ✅ Error association
 />
 ```
 
-### 키보드 네비게이션
+### Keyboard Navigation
 
-- Tab: 다음 필드로 이동
-- Shift+Tab: 이전 필드로 이동
-- Enter: 폼 제출 (button type="submit")
-- Esc: 모달 닫기 (해당 시)
+- Tab: Move to the next field
+- Shift+Tab: Move to the previous field
+- Enter: Submit the form (button type="submit")
+- Esc: Close the modal (when applicable)
 
-## UI 라이브러리별 특수 사항
+## Special Notes by UI Library
 
 ### MUI (Material-UI)
 
-**slotProps 패턴**:
+**slotProps pattern**:
 ```typescript
 <DatePicker
   slotProps={{
@@ -222,22 +229,22 @@ const formatError: FormatError = (error, node, context) => {
 />
 ```
 
-**sx prop 스타일링**:
+**sx prop styling**:
 ```typescript
 <Box sx={{ pl: 2, mb: 1 }} />
 ```
 
 ### Ant Design
 
-**Form.Item 사용하지 않음**:
-- canard-form이 레이아웃 관리
-- 컴포넌트만 직접 사용
+**Do not use Form.Item**:
+- canard-form manages the layout
+- Use the components directly
 
 ```typescript
-// ✅ 올바름
+// ✅ Correct
 <Input id={path} name={name} />
 
-// ❌ 사용하지 않음
+// ❌ Do not use
 <Form.Item label="Name">
   <Input />
 </Form.Item>
@@ -245,7 +252,7 @@ const formatError: FormatError = (error, node, context) => {
 
 ### Chakra UI
 
-**FormControl 래핑**:
+**FormControl wrapping**:
 ```typescript
 <FormControl isRequired={required} isInvalid={hasError}>
   <FormLabel htmlFor={path}>{label}</FormLabel>
@@ -254,103 +261,106 @@ const formatError: FormatError = (error, node, context) => {
 </FormControl>
 ```
 
-## 제약 조건
+## Constraints
 
-- 필수 렌더러 5개는 반드시 구현
-- 접근성 속성 필수
-- UI 라이브러리 네이티브 컴포넌트 우선 사용
-- 커스텀 컴포넌트는 최소화
+- Implement the registered parts the plugin customizes; SchemaFormPlugin allows partial plugins
+- Accessibility attributes are required
+- Prefer native UI library components
+- Minimize custom components
 
-## 출력 형식
+## Output Format
 
-### 호환성 분석 결과
+### Compatibility Analysis Result
 
 ```markdown
-## {UI Library} 호환성 분석
+## {UI Library} Compatibility Analysis
 
-### ✅ 직접 사용 가능 (Priority 1)
-- String 입력: TextField
-- Number 입력: NumberInput
+### ✅ Directly usable (Priority 1)
+- String input: TextField
+- Number input: NumberInput
 - Boolean: Checkbox
 
-### ⚠️ 커스텀 필요 (Priority 2)
-- Date 선택: DatePicker (값 변환 필요)
-- Time 선택: TimePicker (값 변환 필요)
+### ⚠️ Customization required (Priority 2)
+- Date selection: DatePicker (value conversion required)
+- Time selection: TimePicker (value conversion required)
 
-### ❌ 대체 필요 (Priority 3)
-- Rich Text: 외부 라이브러리 (react-quill 등)
+### ❌ Replacement required (Priority 3)
+- Rich Text: External library (react-quill, etc.)
 
-**구현 권장 순서**: P1 → P2 → P3
+**Recommended implementation order**: P1 → P2 → P3
 ```
 
-## 다음 단계 연계
+## Next-Step Linkage
 
-- 호환성 분석 후 `react-plugin-implementation` 스킬로 구현
-- 프로젝트 구조 설정 후 `phased-development` 스킬로 개발 진행
+- After compatibility analysis, implement with the `react-plugin-implementation` skill
+- After setting up the project structure, plan the implementation using the verified compatibility priorities
 
-## 사용 시나리오
+## Usage Scenarios
 
-### 시나리오 1: MUI (Material-UI) v6 플러그인 호환성 검증
+### Scenario 1: MUI (Material-UI) v6 Plugin Compatibility Verification
 
-**상황**: @canard/schema-form을 위한 MUI v6 플러그인 개발 시작
+**Situation**: Starting development of an MUI v6 plugin for @canard/schema-form
 
-**Step 1: 호환성 분석**
+**Step 1: Compatibility Analysis**
 
 ```markdown
-## MUI v6 호환성 분석
+## MUI v6 Compatibility Analysis
 
-### ✅ 직접 사용 가능 (Priority 1)
+### ✅ Directly usable (Priority 1)
 
-| Schema Form 요구사항 | MUI 컴포넌트 | 호환성 | 구현 방식 | 비고 |
+| Schema Form requirement | MUI component | Compatibility | Implementation | Notes |
 |---------------------|-------------|--------|----------|------|
-| String 입력 (기본) | TextField | ✅ 직접 | defaultValue, onChange | - |
-| Number 입력 | TextField (type="number") | ✅ 직접 | type="number" | - |
-| Boolean (Checkbox) | Checkbox | ✅ 직접 | defaultChecked | - |
-| Boolean (Switch) | Switch | ✅ 직접 | defaultChecked | - |
-| String (Multiline) | TextField (multiline) | ✅ 직접 | multiline prop | - |
-| StringEnum (Radio) | RadioGroup | ✅ 직접 | - | - |
-| StringEnum (Select) | Select | ✅ 직접 | - | - |
-| Array (기본) | - | ✅ 렌더러 | ChildNodeComponents | FormGroup으로 래핑 |
-| Object (기본) | - | ✅ 렌더러 | ChildNodeComponents | FormGroup으로 래핑 |
+| String input (basic) | TextField | ✅ Direct | defaultValue, onChange | - |
+| Number input | TextField (type="number") | ✅ Direct | type="number" | - |
+| Boolean (Checkbox) | Checkbox | ✅ Direct | defaultChecked | - |
+| Boolean (Switch) | Switch | ✅ Direct | defaultChecked | - |
+| String (Multiline) | TextField (multiline) | ✅ Direct | multiline prop | - |
+| StringEnum (Radio) | RadioGroup | ✅ Direct | - | - |
+| StringEnum (Select) | Select | ✅ Direct | - | - |
+| Array (basic) | - | ✅ Renderer | ChildFields | Wrap with FieldRenderer |
+| Object (basic) | - | ✅ Renderer | ChildFields | Wrap with FieldRenderer |
 
-### ⚠️ 커스텀 필요 (Priority 2)
+### ⚠️ Customization required (Priority 2)
 
-| Schema Form 요구사항 | MUI 컴포넌트 | 호환성 | 구현 방식 | 필요 작업 |
+| Schema Form requirement | MUI component | Compatibility | Implementation | Required work |
 |---------------------|-------------|--------|----------|----------|
-| Date 입력 | DatePicker (@mui/x-date-pickers) | ⚠️ 커스텀 | slotProps 활용 | ISO string ↔ Date 변환 |
-| Time 입력 | TimePicker (@mui/x-date-pickers) | ⚠️ 커스텀 | slotProps 활용 | ISO string ↔ Date 변환 |
-| DateTime 입력 | DateTimePicker (@mui/x-date-pickers) | ⚠️ 커스텀 | slotProps 활용 | ISO string ↔ Date 변환 |
-| StringEnum (Autocomplete) | Autocomplete | ⚠️ 커스텀 | value/onChange 매핑 | 값 구조 변환 |
-| File Upload | - | ⚠️ 커스텀 | Button + hidden input | onFileAttach 연동 |
+| Date input | DatePicker (@mui/x-date-pickers) | ⚠️ Custom | Use slotProps | ISO string ↔ Date conversion |
+| Time input | TimePicker (@mui/x-date-pickers) | ⚠️ Custom | Use slotProps | ISO string ↔ Date conversion |
+| DateTime input | DateTimePicker (@mui/x-date-pickers) | ⚠️ Custom | Use slotProps | ISO string ↔ Date conversion |
+| StringEnum (Autocomplete) | Autocomplete | ⚠️ Custom | value/onChange mapping | Value structure conversion |
+| File Upload | - | ⚠️ Custom | Button + hidden input | onFileAttach integration |
 
-### ❌ 대체 필요 (Priority 3)
+### ❌ Replacement required (Priority 3)
 
-| Schema Form 요구사항 | MUI 컴포넌트 | 호환성 | 대체 방안 | 비고 |
+| Schema Form requirement | MUI component | Compatibility | Replacement | Notes |
 |---------------------|-------------|--------|----------|------|
-| Rich Text Editor | - | ❌ 없음 | react-quill, tiptap | 외부 라이브러리 |
-| Color Picker | - | ❌ 없음 | react-color, mui-color | 외부 라이브러리 |
-| Slider (Range) | Slider | ⚠️ 커스텀 | value/onChange 매핑 | 단일값/범위 처리 |
+| Rich Text Editor | - | ❌ None | react-quill, tiptap | External library |
+| Color Picker | - | ❌ None | react-color, mui-color | External library |
+| Slider (Range) | Slider | ⚠️ Custom | value/onChange mapping | Single-value/range handling |
 
-**구현 권장 순서**:
-1. P1 (기본 FormType 9개) - 1-2일
-2. P2 (DatePicker, Autocomplete 등) - 2-3일
-3. P3 (Rich Text 등) - 선택적
+**Recommended implementation order**:
+1. P1 (9 basic input kinds) - 1-2 days
+2. P2 (DatePicker, Autocomplete, etc.) - 2-3 days
+3. P3 (Rich Text, etc.) - Optional
 
-**총 예상 개발 기간**: 5-7일 (테스트 포함)
+**Total estimated development time**: 5-7 days (including tests)
 ```
 
-**Step 2: 특수 사항 확인**
+**Step 2: Confirm Special Notes**
 
 ```markdown
-## MUI v6 특수 사항
+## MUI v6 Special Notes
 
-### 1. DatePicker slotProps 패턴
-MUI DatePicker는 TextField를 내부적으로 사용하므로, slotProps로 접근성 속성 전달:
+### 1. DatePicker slotProps pattern
+MUI DatePicker uses TextField internally. With AdapterDayjs, pass Dayjs values and accessibility attributes through slotProps:
 
 ```typescript
 <DatePicker
-  value={value ? new Date(value) : null}
-  onChange={(newDate) => onChange(newDate?.toISOString())}
+  value={value ? dayjs(value) : null}
+  onChange={(newDate: Dayjs | null) => {
+    if (newDate === null) onChange(undefined);
+    else if (newDate.isValid()) onChange(newDate.format('YYYY-MM-DD'));
+  }}
   slotProps={{
     textField: {
       id: path,
@@ -364,8 +374,8 @@ MUI DatePicker는 TextField를 내부적으로 사용하므로, slotProps로 접
 />
 ```
 
-### 2. sx prop 스타일링
-MUI의 sx prop 활용하여 일관된 스타일링:
+### 2. sx prop styling
+Use MUI's sx prop for consistent styling:
 
 ```typescript
 <Box sx={{ pl: depth * 2, mb: 2, borderLeft: '2px solid', borderColor: 'divider' }}>
@@ -373,32 +383,32 @@ MUI의 sx prop 활용하여 일관된 스타일링:
 </Box>
 ```
 
-### 3. Theme 통합
-사용자의 MUI Theme 존중:
+### 3. Theme integration
+Respect the user's MUI Theme:
 
 ```typescript
 import { useTheme } from '@mui/material/styles';
 
-const FormGroup = ({ depth, children }: FormTypeRendererProps) => {
+const FieldRenderer = ({ depth, Input }: FieldRendererProps) => {
   const theme = useTheme();
 
   return (
     <Box sx={{
-      pl: depth * theme.spacing(2),  // theme spacing 사용
+      pl: theme.spacing(depth * 2),  // Use theme spacing
       borderColor: theme.palette.divider,
     }}>
-      {children}
+      <Input />
     </Box>
   );
 };
 ```
 
-### 4. 의존성 버전
+### 4. Dependency versions
 ```json
 {
   "peerDependencies": {
-    "@mui/material": ">=6.0.0 <7.0.0",
-    "@mui/x-date-pickers": ">=7.0.0 <8.0.0",  // DatePicker 사용 시
+    "@mui/material": ">=7.0.0",
+    "@mui/x-date-pickers": ">=8.0.0",  // When using DatePicker
     "react": ">=18.0.0",
     "@canard/schema-form": "*"
   }
@@ -406,23 +416,23 @@ const FormGroup = ({ depth, children }: FormTypeRendererProps) => {
 ```
 ```
 
-**Step 3: 접근성 검증**
+**Step 3: Accessibility Verification**
 
 ```markdown
-## MUI 접근성 체크리스트
+## MUI Accessibility Checklist
 
-### ✅ 필수 ARIA 속성
+### ✅ Required ARIA Attributes
 
 **TextField**:
 ```typescript
 <TextField
-  id={path}                          // ✅ 고유 ID (WCAG 4.1.1)
-  name={name}                        // ✅ name 속성
-  label={label}                      // ✅ 라벨 (WCAG 1.3.1)
+  id={path}                          // ✅ Unique ID (WCAG 4.1.1)
+  name={name}                        // ✅ name attribute
+  label={label}                      // ✅ Label (WCAG 1.3.1)
   required={required}                // ✅ required (WCAG 3.3.2)
-  error={hasError}                   // ✅ error 상태
-  helperText={errorMessage}          // ✅ 에러 메시지 (WCAG 3.3.1)
-  aria-describedby={`${path}-helper`} // ✅ 보조 텍스트 연결
+  error={hasError}                   // ✅ error state
+  helperText={errorMessage}          // ✅ Error message (WCAG 3.3.1)
+  aria-describedby={`${path}-helper`} // ✅ Helper text association
 />
 ```
 
@@ -438,14 +448,14 @@ const FormGroup = ({ depth, children }: FormTypeRendererProps) => {
       aria-required={required}
     />
   }
-  label={label}  // ✅ 체크박스 라벨 (WCAG 1.3.1)
+  label={label}  // ✅ Checkbox label (WCAG 1.3.1)
 />
 ```
 
 **RadioGroup**:
 ```typescript
 <FormControl component="fieldset" required={required}>
-  <FormLabel component="legend">{label}</FormLabel>  {/* ✅ 그룹 라벨 */}
+  <FormLabel component="legend">{label}</FormLabel>  {/* ✅ Group label */}
   <RadioGroup
     name={name}
     value={value ?? ''}
@@ -456,107 +466,107 @@ const FormGroup = ({ depth, children }: FormTypeRendererProps) => {
         key={option.value}
         value={option.value}
         control={<Radio />}
-        label={option.label}  {/* ✅ 각 라디오 라벨 */}
+        label={option.label}
       />
     ))}
   </RadioGroup>
 </FormControl>
 ```
 
-### 🎹 키보드 네비게이션
+### 🎹 Keyboard Navigation
 
-**기본 동작** (MUI 기본 지원):
-- Tab: 다음 필드로 이동 ✅
-- Shift+Tab: 이전 필드로 이동 ✅
-- Enter: 폼 제출 (type="submit" 버튼) ✅
-- Space: 체크박스/라디오 토글 ✅
-- Arrow keys: 라디오 그룹 내 이동 ✅
+**Default behavior** (supported by MUI by default):
+- Tab: Move to the next field ✅
+- Shift+Tab: Move to the previous field ✅
+- Enter: Submit the form (type="submit" button) ✅
+- Space: Toggle checkbox/radio ✅
+- Arrow keys: Move within a radio group ✅
 
-**DatePicker 특수 동작**:
-- Enter: 날짜 선택기 열기
-- Esc: 날짜 선택기 닫기
-- Arrow keys: 날짜 네비게이션
+**DatePicker special behavior**:
+- Enter: Open the date picker
+- Esc: Close the date picker
+- Arrow keys: Date navigation
 
-### 🖥️ 스크린 리더 테스트
+### 🖥️ Screen Reader Testing
 
-**권장 테스트 도구**:
-- NVDA (Windows) - 무료
-- JAWS (Windows) - 유료
-- VoiceOver (macOS) - 기본 내장
+**Recommended testing tools**:
+- NVDA (Windows) - Free
+- JAWS (Windows) - Paid
+- VoiceOver (macOS) - Built in
 
-**테스트 시나리오**:
-1. 폼 필드 라벨이 올바르게 읽히는지
-2. 에러 메시지가 필드와 연결되어 읽히는지
-3. required 필드가 "필수" 또는 "required"로 표시되는지
-4. 체크박스/라디오 상태가 올바르게 읽히는지
+**Test scenarios**:
+1. Whether form field labels are read correctly
+2. Whether error messages are read in association with the field
+3. Whether a required field is announced as "required"
+4. Whether checkbox/radio state is read correctly
 ```
 
-**결과 요약**:
+**Result summary**:
 ```markdown
-## MUI v6 플러그인 개발 준비 완료
+## MUI v6 plugin development ready
 
-### ✅ 검증 완료 항목
-- 9개 기본 FormType 직접 지원 가능
-- DatePicker 등 5개 추가 FormType 커스텀 지원
-- 접근성 요구사항 모두 충족 가능
-- MUI Theme 통합 가능
+### ✅ Verified items
+- 9 basic input kinds can be supported directly
+- 5 additional input kinds such as DatePicker can be supported with customization
+- All accessibility requirements can be met
+- MUI Theme integration is possible
 
-### 📋 다음 단계
-1. 프로젝트 구조 설정 (권장 구조 사용)
-2. P1 FormType 9개 구현 (react-plugin-implementation 스킬)
-3. P2 DatePicker 등 커스텀 FormType 구현
-4. Storybook stories 작성
-5. 접근성 테스트
+### 📋 Next steps
+1. Set up the project structure (use the recommended structure)
+2. Implement the 9 P1 input kinds (react-plugin-implementation skill)
+3. Implement custom input kinds such as the P2 DatePicker
+4. Write Storybook stories
+5. Accessibility testing
 
-### ⚠️ 주의사항
-- @mui/x-date-pickers는 별도 peer dependency
-- slotProps 패턴 일관되게 사용
-- Theme spacing 활용하여 일관된 스타일링
+### ⚠️ Cautions
+- @mui/x-date-pickers is a separate peer dependency
+- Use the slotProps pattern consistently
+- Use Theme spacing for consistent styling
 ```
 
-### 시나리오 2: Ant Design v5 플러그인 호환성 검증
+### Scenario 2: Ant Design v5 Plugin Compatibility Verification
 
-**상황**: Ant Design v5 기반 플러그인 개발
+**Situation**: Developing a plugin based on Ant Design v5
 
-**Step 1: 호환성 분석**
+**Step 1: Compatibility Analysis**
 
 ```markdown
-## Ant Design v5 호환성 분석
+## Ant Design v5 Compatibility Analysis
 
-### ✅ 직접 사용 가능 (Priority 1)
+### ✅ Directly usable (Priority 1)
 
-| Schema Form 요구사항 | Ant Design 컴포넌트 | 호환성 | 구현 방식 | 특이사항 |
+| Schema Form requirement | Ant Design component | Compatibility | Implementation | Special notes |
 |---------------------|-------------------|--------|----------|---------|
-| String 입력 (기본) | Input | ✅ 직접 | defaultValue | - |
-| Number 입력 | InputNumber | ✅ 직접 | defaultValue | - |
-| Boolean (Checkbox) | Checkbox | ✅ 직접 | defaultChecked | - |
-| Boolean (Switch) | Switch | ✅ 직접 | defaultChecked | - |
-| String (Multiline) | Input.TextArea | ✅ 직접 | defaultValue | - |
-| StringEnum (Radio) | Radio.Group | ✅ 직접 | defaultValue | - |
-| StringEnum (Select) | Select | ✅ 직접 | defaultValue | - |
-| Date 입력 | DatePicker | ⚠️ 커스텀 | dayjs 변환 | dayjs 필수 |
-| Time 입력 | TimePicker | ⚠️ 커스텀 | dayjs 변환 | dayjs 필수 |
+| String input (basic) | Input | ✅ Direct | defaultValue | - |
+| Number input | InputNumber | ✅ Direct | defaultValue | - |
+| Boolean (Checkbox) | Checkbox | ✅ Direct | defaultChecked | - |
+| Boolean (Switch) | Switch | ✅ Direct | defaultChecked | - |
+| String (Multiline) | Input.TextArea | ✅ Direct | defaultValue | - |
+| StringEnum (Radio) | Radio.Group | ✅ Direct | defaultValue | - |
+| StringEnum (Select) | Select | ✅ Direct | defaultValue | - |
+| Date input | DatePicker | ⚠️ Custom | dayjs conversion | dayjs required |
+| Time input | TimePicker | ⚠️ Custom | dayjs conversion | dayjs required |
 
-### ⚠️ 커스텀 필요 (Priority 2)
+### ⚠️ Customization required (Priority 2)
 
-| Schema Form 요구사항 | Ant Design 컴포넌트 | 호환성 | 구현 방식 | 필요 작업 |
+| Schema Form requirement | Ant Design component | Compatibility | Implementation | Required work |
 |---------------------|-------------------|--------|----------|----------|
-| StringEnum (Autocomplete) | AutoComplete | ⚠️ 커스텀 | options 매핑 | 값 구조 변환 |
-| Number (Slider) | Slider | ⚠️ 커스텀 | - | 단일값/범위 처리 |
-| File Upload | Upload | ⚠️ 커스텀 | customRequest | onFileAttach 연동 |
-| Color Picker | ColorPicker | ✅ 직접 | - | v5.5+ 기본 지원 |
+| StringEnum (Autocomplete) | AutoComplete | ⚠️ Custom | options mapping | Value structure conversion |
+| Number (Slider) | Slider | ⚠️ Custom | - | Single-value/range handling |
+| File Upload | Upload | ⚠️ Custom | customRequest | onFileAttach integration |
+| Color Picker | ColorPicker | ✅ Direct | - | Built-in support in v5.5+ |
 
-### 🚨 중요: Form.Item 사용하지 않음
+### 🚨 Important: Do not use Form.Item
 
-Ant Design의 Form.Item은 **사용하지 않습니다**. @canard/schema-form이 폼 레이아웃과 검증을 관리합니다.
+Do **not use** Ant Design's Form.Item. @canard/schema-form manages form layout and validation.
 
 ```typescript
-// ❌ 잘못된 방법 (Form.Item 사용)
+// ❌ Incorrect approach (using Form.Item)
 <Form.Item label="Name" name="name" rules={[{ required: true }]}>
   <Input />
 </Form.Item>
 
-// ✅ 올바른 방법 (컴포넌트만 사용)
+// ✅ Correct approach (use the component only)
 <Input
   id={path}
   name={name}
@@ -566,20 +576,20 @@ Ant Design의 Form.Item은 **사용하지 않습니다**. @canard/schema-form이
 />
 ```
 
-**이유**:
-1. @canard/schema-form이 JSON Schema 기반으로 검증 관리
-2. Form.Item의 name, rules는 중복/충돌 발생
-3. FormGroup, FormLabel, FormError 렌더러가 레이아웃 담당
+**Reason**:
+1. @canard/schema-form manages validation based on JSON Schema
+2. Form.Item's name and rules cause duplication/conflicts
+3. The FieldRenderer, LabelRenderer, and ErrorMessageRenderer renderers handle the layout
 ```
 
-**Step 2: Ant Design 특수 사항**
+**Step 2: Ant Design Special Notes**
 
 ```markdown
-## Ant Design v5 특수 사항
+## Ant Design v5 Special Notes
 
-### 1. dayjs 필수 의존성
+### 1. Required dayjs dependency
 
-Ant Design v5는 날짜 처리에 dayjs 사용 (moment.js 제거):
+Ant Design v5 uses dayjs for date handling (moment.js removed):
 
 ```json
 {
@@ -594,48 +604,49 @@ Ant Design v5는 날짜 처리에 dayjs 사용 (moment.js 제거):
 }
 ```
 
-**DatePicker 구현**:
+**DatePicker implementation**:
 ```typescript
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs, { type Dayjs } from 'dayjs';
+import type { FieldInputProps } from '@canard/schema-form';
 import { DatePicker } from 'antd';
 
-function FormTypeInputDate(props: FormTypeInputProps<string>) {
-  const { value, defaultValue, onChange, ...rest } = props;
-
+function FieldInputDate({ path, name, readOnly, disabled, defaultValue, onChange }: FieldInputProps<string>) {
   return (
     <DatePicker
-      {...rest}
-      defaultValue={defaultValue ? dayjs(defaultValue) : undefined}
-      value={value ? dayjs(value) : null}
+      id={path}
+      name={name}
+      disabled={disabled || readOnly}
+      defaultValue={defaultValue ? dayjs(defaultValue) : null}
       onChange={(date: Dayjs | null) => {
-        onChange(date ? date.toISOString() : undefined);
+        if (date === null) onChange(undefined);
+        else if (date.isValid()) onChange(date.format('YYYY-MM-DD'));
       }}
     />
   );
 }
 ```
 
-### 2. status prop으로 에러 표시
+### 2. Showing errors with the status prop
 
-Ant Design은 `error` prop 대신 `status` prop 사용:
+Ant Design uses the `status` prop instead of an `error` prop:
 
 ```typescript
 <Input
   status={hasError ? 'error' : undefined}  // ✅ status prop
 />
 
-// ❌ error prop은 없음
-<Input error={hasError} />  // 작동 안 함
+// ❌ there is no error prop
+<Input error={hasError} />  // does not work
 ```
 
-### 3. ConfigProvider를 통한 테마
+### 3. Theme through ConfigProvider
 
-사용자의 Ant Design 테마 존중:
+Respect the user's Ant Design theme:
 
 ```typescript
 import { ConfigProvider, theme } from 'antd';
 
-// 사용자가 설정한 테마 사용
+// Use the theme configured by the user
 const { token } = theme.useToken();
 
 <div style={{ padding: token.padding }}>
@@ -643,25 +654,26 @@ const { token } = theme.useToken();
 </div>
 ```
 
-### 4. Upload 컴포넌트 특수 처리
+### 4. Special handling for the Upload component
 
-Upload는 customRequest로 onFileAttach 연동:
+Upload wires onFileAttach through customRequest; this value-driven definition declares controlled: true:
 
 ```typescript
 import { Upload, Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import type { FieldInputDefinition, FieldInputProps } from '@canard/schema-form';
 
-function FormTypeInputFile(props: FormTypeInputProps<string>) {
+function FieldInputFile(props: FieldInputProps<string>) {
   const { onChange, onFileAttach, value } = props;
 
   return (
     <Upload
       maxCount={1}
       customRequest={({ file, onSuccess }) => {
-        // File 객체를 schema-form에 첨부
+        // Attach the File object to schema-form
         onFileAttach(file as File);
 
-        // 파일명을 value로 저장
+        // Store the file name as the value
         onChange((file as File).name);
 
         onSuccess?.('ok');
@@ -672,26 +684,32 @@ function FormTypeInputFile(props: FormTypeInputProps<string>) {
     </Upload>
   );
 }
+
+export const FieldInputFileDefinition = {
+  Component: FieldInputFile,
+  test: { type: 'string', format: 'file' },
+  controlled: true,
+} satisfies FieldInputDefinition;
 ```
 ```
 
-**Step 3: 접근성 검증**
+**Step 3: Accessibility Verification**
 
 ```markdown
-## Ant Design 접근성 검증
+## Ant Design Accessibility Verification
 
-### ✅ 기본 접근성 지원
+### ✅ Built-in accessibility support
 
-Ant Design v5는 대부분의 접근성 속성을 자동으로 처리하지만, 일부는 수동 추가 필요:
+Ant Design v5 handles most accessibility attributes automatically, but some must be added manually:
 
 **Input**:
 ```typescript
 <Input
-  id={path}                    // ✅ 고유 ID
-  name={name}                  // ✅ name 속성
-  aria-required={required}     // ⚠️ 수동 추가 필요
-  aria-invalid={hasError}      // ⚠️ 수동 추가 필요
-  aria-describedby={hasError ? `${path}-error` : undefined}  // ⚠️ 수동
+  id={path}                    // ✅ Unique ID
+  name={name}                  // ✅ name attribute
+  aria-required={required}     // ⚠️ Manual addition required
+  aria-invalid={hasError}      // ⚠️ Manual addition required
+  aria-describedby={hasError ? `${path}-error` : undefined}  // ⚠️ Manual
   status={hasError ? 'error' : undefined}
 />
 ```
@@ -702,7 +720,7 @@ Ant Design v5는 대부분의 접근성 속성을 자동으로 처리하지만, 
   id={path}
   name={name}
   checked={value ?? false}
-  aria-required={required}     // ⚠️ 수동 추가 필요
+  aria-required={required}     // ⚠️ Manual addition required
 >
   {label}
 </Checkbox>
@@ -714,8 +732,8 @@ Ant Design v5는 대부분의 접근성 속성을 자동으로 처리하지만, 
   id={path}
   defaultValue={defaultValue}
   onChange={onChange}
-  aria-required={required}     // ⚠️ 수동 추가 필요
-  aria-invalid={hasError}      // ⚠️ 수동 추가 필요
+  aria-required={required}     // ⚠️ Manual addition required
+  aria-invalid={hasError}      // ⚠️ Manual addition required
   status={hasError ? 'error' : undefined}
 >
   {options.map(opt => (
@@ -726,116 +744,121 @@ Ant Design v5는 대부분의 접근성 속성을 자동으로 처리하지만, 
 </Select>
 ```
 
-### ⚠️ 주의: FormLabel 직접 구현 필요
+### ⚠️ Caution: LabelRenderer must be implemented directly
 
-Ant Design의 Form.Item을 사용하지 않으므로, FormLabel 렌더러에서 라벨 처리:
+Because Ant Design's Form.Item is not used, handle the label in the LabelRenderer renderer:
 
 ```typescript
-const FormLabel = ({ path, name, jsonSchema, required }: FormTypeRendererProps) => {
-  const label = jsonSchema.label || jsonSchema.title || name;
-
-  return (
-    <label
-      htmlFor={path}
-      style={{
-        display: 'block',
-        marginBottom: '8px',
-        fontWeight: 500,
-      }}
-    >
-      {label}
-      {required && <span style={{ color: 'red', marginLeft: '4px' }}>*</span>}
-    </label>
-  );
-};
+const LabelRenderer = ({
+  children,
+  htmlFor,
+  id,
+  required,
+  style,
+  className,
+}: LabelRendererProps) => (
+  <label
+    htmlFor={htmlFor}
+    id={id}
+    style={{ display: 'block', marginBottom: '8px', fontWeight: 500, ...style }}
+    className={className}
+  >
+    {children}
+    {required && (
+      <span aria-hidden style={{ color: 'red', marginLeft: '4px' }}>
+        *
+      </span>
+    )}
+  </label>
+);
 ```
 
-### 🎹 키보드 네비게이션
+### 🎹 Keyboard Navigation
 
-Ant Design은 기본 키보드 네비게이션 지원:
-- Tab/Shift+Tab: 필드 이동 ✅
-- Enter: 폼 제출 ✅
-- Space: 체크박스/스위치 토글 ✅
-- Arrow keys: Select/Radio 옵션 이동 ✅
+Ant Design supports keyboard navigation by default:
+- Tab/Shift+Tab: Move between fields ✅
+- Enter: Submit the form ✅
+- Space: Toggle checkbox/switch ✅
+- Arrow keys: Move between Select/Radio options ✅
 
-### 📝 접근성 테스트 체크리스트
+### 📝 Accessibility Test Checklist
 
-- [ ] 모든 Input에 id, name, aria-required 속성 확인
-- [ ] 에러 발생 시 aria-invalid 및 aria-describedby 추가
-- [ ] FormLabel이 htmlFor로 Input과 연결 확인
-- [ ] 키보드만으로 모든 필드 접근 가능한지 테스트
-- [ ] 스크린 리더로 라벨 및 에러 메시지 읽히는지 테스트
+- [ ] Confirm id, name, and aria-required on every Input
+- [ ] When an error occurs, add aria-invalid and aria-describedby
+- [ ] Confirm LabelRenderer is associated with Input via htmlFor
+- [ ] Test that every field is reachable by keyboard alone
+- [ ] Test that a screen reader reads labels and error messages
 ```
 
-**결과 요약**:
+**Result summary**:
 ```markdown
-## Ant Design v5 플러그인 개발 준비 완료
+## Ant Design v5 plugin development ready
 
-### ✅ 검증 완료 항목
-- 9개 기본 FormType 지원 (DatePicker는 dayjs 변환)
-- ColorPicker 기본 지원 (v5.5+)
-- Upload 컴포넌트 커스텀 지원 가능
+### ✅ Verified items
+- 9 basic input kinds supported (DatePicker uses dayjs conversion)
+- ColorPicker supported by default (v5.5+)
+- Upload component can be supported with customization
 
-### ⚠️ 주의사항
-- Form.Item 절대 사용하지 않음
-- dayjs peer dependency 필수
-- status prop 사용 (error prop 없음)
-- ARIA 속성 일부 수동 추가 필요
+### ⚠️ Cautions
+- Never use Form.Item
+- dayjs peer dependency is required
+- Use the status prop (there is no error prop)
+- Some ARIA attributes must be added manually
 
-### 📋 다음 단계
-1. dayjs 의존성 추가
-2. FormLabel, FormError 렌더러 직접 구현
-3. 모든 컴포넌트에 ARIA 속성 수동 추가
-4. 접근성 테스트 (스크린 리더, 키보드)
+### 📋 Next steps
+1. Add the dayjs dependency
+2. Implement the LabelRenderer and ErrorMessageRenderer renderers directly
+3. Manually add ARIA attributes to every component
+4. Accessibility testing (screen reader, keyboard)
 ```
 
-### 시나리오 3: Chakra UI v2 플러그인 호환성 검증
+### Scenario 3: Chakra UI v2 Plugin Compatibility Verification
 
-**상황**: Chakra UI v2 기반 플러그인 개발
+**Situation**: Developing a plugin based on Chakra UI v2
 
-**Step 1: 호환성 분석**
+**Step 1: Compatibility Analysis**
 
 ```markdown
-## Chakra UI v2 호환성 분석
+## Chakra UI v2 Compatibility Analysis
 
-### ✅ 직접 사용 가능 (Priority 1)
+### ✅ Directly usable (Priority 1)
 
-| Schema Form 요구사항 | Chakra UI 컴포넌트 | 호환성 | 구현 방식 | 특이사항 |
+| Schema Form requirement | Chakra UI component | Compatibility | Implementation | Special notes |
 |---------------------|------------------|--------|----------|---------|
-| String 입력 (기본) | Input | ✅ 직접 | defaultValue | FormControl 래핑 |
-| Number 입력 | NumberInput | ✅ 직접 | defaultValue | - |
-| Boolean (Checkbox) | Checkbox | ✅ 직접 | defaultChecked | - |
-| Boolean (Switch) | Switch | ✅ 직접 | defaultChecked | - |
-| String (Multiline) | Textarea | ✅ 직접 | defaultValue | - |
-| StringEnum (Radio) | RadioGroup | ✅ 직접 | defaultValue | - |
-| StringEnum (Select) | Select | ✅ 직접 | defaultValue | - |
+| String input (basic) | Input | ✅ Direct | defaultValue | FormControl wrapping |
+| Number input | NumberInput | ✅ Direct | defaultValue | - |
+| Boolean (Checkbox) | Checkbox | ✅ Direct | defaultChecked | - |
+| Boolean (Switch) | Switch | ✅ Direct | defaultChecked | - |
+| String (Multiline) | Textarea | ✅ Direct | defaultValue | - |
+| StringEnum (Radio) | RadioGroup | ✅ Direct | defaultValue | - |
+| StringEnum (Select) | Select | ✅ Direct | defaultValue | - |
 
-### ⚠️ 커스텀 필요 (Priority 2)
+### ⚠️ Customization required (Priority 2)
 
-| Schema Form 요구사항 | Chakra UI 컴포넌트 | 호환성 | 구현 방식 | 필요 작업 |
+| Schema Form requirement | Chakra UI component | Compatibility | Implementation | Required work |
 |---------------------|------------------|--------|----------|----------|
-| Number (Slider) | Slider | ⚠️ 커스텀 | - | 단일값/범위 처리 |
-| File Upload | - | ❌ 없음 | Input (type="file") | 커스텀 스타일링 |
-| Color Picker | - | ❌ 없음 | react-colorful | 외부 라이브러리 |
+| Number (Slider) | Slider | ⚠️ Custom | - | Single-value/range handling |
+| File Upload | - | ❌ None | Input (type="file") | Custom styling |
+| Color Picker | - | ❌ None | react-colorful | External library |
 
-### ❌ 대체 필요 (Priority 3)
+### ❌ Replacement required (Priority 3)
 
-| Schema Form 요구사항 | Chakra UI 컴포넌트 | 호환성 | 대체 방안 | 비고 |
+| Schema Form requirement | Chakra UI component | Compatibility | Replacement | Notes |
 |---------------------|------------------|--------|----------|------|
-| Date Picker | - | ❌ 없음 | react-datepicker + Chakra 스타일 | Chakra는 DatePicker 없음 |
-| Rich Text Editor | - | ❌ 없음 | tiptap + Chakra 스타일 | 외부 라이브러리 |
+| Date Picker | - | ❌ None | react-datepicker + Chakra style | Chakra has no DatePicker |
+| Rich Text Editor | - | ❌ None | tiptap + Chakra style | External library |
 
-**주요 차이점**: Chakra UI는 DatePicker/TimePicker가 없으므로 외부 라이브러리 필수
+**Key difference**: Chakra UI has no DatePicker/TimePicker, so an external library is required
 ```
 
-**Step 2: Chakra UI 특수 사항**
+**Step 2: Chakra UI Special Notes**
 
 ```markdown
-## Chakra UI v2 특수 사항
+## Chakra UI v2 Special Notes
 
-### 1. FormControl 래핑 패턴 (필수)
+### 1. FormControl wrapping pattern
 
-Chakra UI는 FormControl로 필드를 래핑하여 접근성 자동 처리:
+Chakra UI wraps fields with FormControl so accessibility is handled automatically:
 
 ```typescript
 import {
@@ -845,13 +868,14 @@ import {
   FormHelperText,
   Input,
 } from '@chakra-ui/react';
+import { useFieldErrors, type FieldInputProps } from '@canard/schema-form';
 
-function FormTypeInputString(props: FormTypeInputProps<string>) {
-  const { path, name, jsonSchema, required, value, defaultValue, onChange, errors } = props;
+function FieldInputString(props: FieldInputProps<string>) {
+  const { node, path, name, jsonSchema, required, value, onChange } = props;
 
-  const label = jsonSchema.label || jsonSchema.title || name;
-  const hasError = errors && errors.length > 0;
-  const errorMessage = hasError ? errors[0].message : undefined;
+  const label = jsonSchema.title || name;
+  const { errorMessage } = useFieldErrors(node);
+  const hasError = errorMessage != null;
 
   return (
     <FormControl isRequired={required} isInvalid={hasError}>
@@ -859,9 +883,8 @@ function FormTypeInputString(props: FormTypeInputProps<string>) {
       <Input
         id={path}
         name={name}
-        defaultValue={defaultValue}
         value={value ?? ''}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value === '' ? undefined : e.target.value)}
       />
       {hasError && <FormErrorMessage>{errorMessage}</FormErrorMessage>}
       {jsonSchema.description && (
@@ -872,23 +895,24 @@ function FormTypeInputString(props: FormTypeInputProps<string>) {
 }
 ```
 
-**FormControl의 장점**:
-- `isRequired` → 라벨에 자동으로 `*` 표시
-- `isInvalid` → Input에 error 스타일 자동 적용
-- `htmlFor` → FormLabel과 Input 자동 연결
-- ARIA 속성 자동 추가
+The value-driven input declares controlled: true on its FieldInputDefinition. An input reads error state with `useFieldErrors(node)` instead of props. The hook makes that input re-render on its field's error changes, so call it only in inputs that display error state themselves.
 
-### 2. NumberInput 특수 구조
+**Advantages of FormControl**:
+- `isRequired` → automatically shows `*` on the label
+- `isInvalid` → automatically applies the error style to Input
+- `htmlFor` → automatically associates FormLabel with Input
+- ARIA attributes are added automatically
 
-NumberInput은 복합 컴포넌트:
+### 2. NumberInput's special structure
+
+NumberInput is a compound component:
 
 ```typescript
 import { NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } from '@chakra-ui/react';
 
 <NumberInput
-  defaultValue={defaultValue}
-  value={value ?? undefined}
-  onChange={(valueString, valueNumber) => onChange(valueNumber)}
+  value={value ?? ''}
+  onChange={(text, number) => onChange(text === '' ? undefined : Number.isFinite(number) ? number : undefined)}
   min={jsonSchema.minimum}
   max={jsonSchema.maximum}
 >
@@ -900,12 +924,13 @@ import { NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepp
 </NumberInput>
 ```
 
-### 3. DatePicker 통합 (react-datepicker)
+### 3. DatePicker integration (react-datepicker)
 
-Chakra UI는 DatePicker가 없으므로 react-datepicker를 Chakra 스타일로 래핑:
+Chakra UI has no DatePicker, so wrap react-datepicker in a Chakra style:
 
 ```typescript
 import ReactDatePicker from 'react-datepicker';
+import dayjs from 'dayjs';
 import { Input, useColorMode } from '@chakra-ui/react';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -914,9 +939,9 @@ function ChakraDatePicker({ value, onChange, ...props }: any) {
 
   return (
     <ReactDatePicker
-      selected={value ? new Date(value) : null}
+      selected={value ? dayjs(value).toDate() : null}
       onChange={(date: Date | null) => {
-        onChange(date ? date.toISOString() : undefined);
+        onChange(date ? dayjs(date).format('YYYY-MM-DD') : undefined);
       }}
       customInput={
         <Input
@@ -929,7 +954,7 @@ function ChakraDatePicker({ value, onChange, ...props }: any) {
 }
 ```
 
-**의존성 추가**:
+**Add dependencies**:
 ```json
 {
   "dependencies": {
@@ -939,14 +964,14 @@ function ChakraDatePicker({ value, onChange, ...props }: any) {
 }
 ```
 
-### 4. useColorMode 통합
+### 4. useColorMode integration
 
-Chakra UI의 다크 모드 지원:
+Chakra UI dark mode support:
 
 ```typescript
 import { useColorMode } from '@chakra-ui/react';
 
-const FormGroup = ({ depth, children }: FormTypeRendererProps) => {
+const FieldRenderer = ({ depth, Input }: FieldRendererProps) => {
   const { colorMode } = useColorMode();
 
   return (
@@ -956,23 +981,23 @@ const FormGroup = ({ depth, children }: FormTypeRendererProps) => {
       borderColor={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
       bg={colorMode === 'dark' ? 'gray.800' : 'gray.50'}
     >
-      {children}
+      <Input />
     </Box>
   );
 };
 ```
 ```
 
-**Step 3: 접근성 검증**
+**Step 3: Accessibility Verification**
 
 ```markdown
-## Chakra UI 접근성 검증
+## Chakra UI Accessibility Verification
 
-### ✅ FormControl 자동 접근성 처리
+### ✅ FormControl automatic accessibility handling
 
-Chakra UI의 FormControl은 대부분의 접근성 속성을 자동으로 추가:
+Chakra UI's FormControl automatically adds most accessibility attributes:
 
-**자동 추가되는 속성**:
+**Attributes added automatically**:
 ```typescript
 <FormControl isRequired={true} isInvalid={true}>
   <FormLabel htmlFor="name">Name</FormLabel>
@@ -981,7 +1006,7 @@ Chakra UI의 FormControl은 대부분의 접근성 속성을 자동으로 추가
 </FormControl>
 ```
 
-**렌더링된 HTML** (자동 생성):
+**Rendered HTML** (generated automatically):
 ```html
 <div role="group">
   <label for="name" class="chakra-form__label">
@@ -1002,284 +1027,284 @@ Chakra UI의 FormControl은 대부분의 접근성 속성을 자동으로 추가
 </div>
 ```
 
-**자동 처리 항목**:
-- ✅ `aria-required` (isRequired prop에서)
-- ✅ `aria-invalid` (isInvalid prop에서)
-- ✅ `aria-describedby` (FormErrorMessage 연결)
-- ✅ `htmlFor` 연결 (FormLabel)
-- ✅ `*` 표시 (required 시)
+**Automatically handled items**:
+- ✅ `aria-required` (from the isRequired prop)
+- ✅ `aria-invalid` (from the isInvalid prop)
+- ✅ `aria-describedby` (FormErrorMessage association)
+- ✅ `htmlFor` association (FormLabel)
+- ✅ `*` indicator (when required)
 
-### 🎹 키보드 네비게이션
+### 🎹 Keyboard Navigation
 
-Chakra UI는 완벽한 키보드 네비게이션 지원:
-- Tab/Shift+Tab: 필드 이동 ✅
-- Enter: 폼 제출 ✅
-- Space: 체크박스/스위치 토글 ✅
-- Arrow keys: Radio, Select, NumberInput 조작 ✅
+Chakra UI supports complete keyboard navigation:
+- Tab/Shift+Tab: Move between fields ✅
+- Enter: Submit the form ✅
+- Space: Toggle checkbox/switch ✅
+- Arrow keys: Operate Radio, Select, and NumberInput ✅
 
-### 🌗 다크 모드 접근성
+### 🌗 Dark mode accessibility
 
-Chakra UI의 다크 모드는 WCAG 대비율 자동 보장:
+Check contrast for the selected light and dark colors:
 
 ```typescript
 import { useColorModeValue } from '@chakra-ui/react';
 
-const FormGroup = ({ children }: FormTypeRendererProps) => {
+const FieldRenderer = ({ Input }: FieldRendererProps) => {
   const bgColor = useColorModeValue('gray.50', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
 
   return (
     <Box bg={bgColor} borderColor={borderColor}>
-      {children}
+      <Input />
     </Box>
   );
 };
 ```
 
-### 📝 접근성 테스트 체크리스트
+### 📝 Accessibility Test Checklist
 
-- [x] FormControl로 모든 필드 래핑
-- [x] isRequired, isInvalid prop 사용
-- [x] FormLabel, FormErrorMessage 사용
-- [x] 키보드 네비게이션 테스트
-- [x] 스크린 리더 테스트
-- [x] 다크 모드 대비율 확인
+- [x] Wrap every field with FormControl
+- [x] Use the isRequired and isInvalid props
+- [x] Use FormLabel and FormErrorMessage
+- [x] Keyboard navigation testing
+- [x] Screen reader testing
+- [x] Check dark mode contrast ratios
 ```
 
-**결과 요약**:
+**Result summary**:
 ```markdown
-## Chakra UI v2 플러그인 개발 준비 완료
+## Chakra UI v2 plugin development ready
 
-### ✅ 강점
-- FormControl의 자동 접근성 처리 (최고 수준)
-- 완벽한 다크 모드 지원
-- 간결한 API (isRequired, isInvalid)
-- 키보드 네비게이션 완벽
+### ✅ Strengths
+- FormControl's automatic accessibility handling (best in class)
+- Complete dark mode support
+- Concise API (isRequired, isInvalid)
+- Complete keyboard navigation
 
-### ⚠️ 약점
-- DatePicker 없음 (react-datepicker 통합 필요)
-- TimePicker 없음
-- ColorPicker 없음
-- 추가 의존성 필요
+### ⚠️ Weaknesses
+- No DatePicker (react-datepicker integration required)
+- No TimePicker
+- No ColorPicker
+- Additional dependencies required
 
-### 📋 다음 단계
-1. react-datepicker 통합 및 Chakra 스타일 적용
-2. FormControl 패턴 일관되게 적용
-3. useColorMode로 다크 모드 지원
-4. 접근성 자동 처리 검증
+### 📋 Next steps
+1. Integrate react-datepicker and apply Chakra styles
+2. Apply the FormControl pattern consistently
+3. Support dark mode with useColorMode
+4. Verify automatic accessibility handling
 ```
 
-### 시나리오 4: Headless UI + Tailwind CSS 플러그인 호환성 검증
+### Scenario 4: Headless UI + Tailwind CSS Plugin Compatibility Verification
 
-**상황**: Headless UI + Tailwind CSS 조합 플러그인 개발
+**Situation**: Developing a plugin that combines Headless UI and Tailwind CSS
 
-**호환성 분석**:
+**Compatibility Analysis**:
 
 ```markdown
-## Headless UI + Tailwind CSS 호환성 분석
+## Headless UI + Tailwind CSS Compatibility Analysis
 
-### ⚠️ 특수 상황: 스타일 없는 컴포넌트
+### ⚠️ Special case: unstyled components
 
-Headless UI는 스타일이 전혀 없는 완전 headless 컴포넌트이므로:
-- 모든 스타일을 Tailwind CSS로 직접 작성 필요
-- 접근성은 자동 처리 (Headless UI의 강점)
-- FormControl 같은 래퍼 없음 → 직접 구현
+Headless UI components are fully headless and have no styles at all, so:
+- Every style must be written directly in Tailwind CSS
+- Accessibility is handled automatically (a strength of Headless UI)
+- There is no wrapper like FormControl → implement it directly
 
-### ✅ Headless UI 활용 가능
+### ✅ Headless UI can be used
 
-| 용도 | Headless UI 컴포넌트 | 구현 방식 |
+| Purpose | Headless UI component | Implementation |
 |------|---------------------|----------|
-| StringEnum (Select) | Listbox | 완전 접근성 지원 |
-| StringEnum (Autocomplete) | Combobox | 검색 기능 + 접근성 |
-| Boolean (Toggle) | Switch | 접근성 자동 처리 |
-| Radio Group | RadioGroup | 접근성 자동 처리 |
+| StringEnum (Select) | Listbox | Full accessibility support |
+| StringEnum (Autocomplete) | Combobox | Search plus accessibility |
+| Boolean (Toggle) | Switch | Automatic accessibility handling |
+| Radio Group | RadioGroup | Automatic accessibility handling |
 
-### 🔧 직접 구현 필요
+### 🔧 Direct implementation required
 
-| 용도 | 구현 방식 | 비고 |
+| Purpose | Implementation | Notes |
 |------|----------|------|
-| String 입력 | `<input>` + Tailwind | 스타일만 추가 |
-| Number 입력 | `<input type="number">` + Tailwind | 스타일만 추가 |
-| Textarea | `<textarea>` + Tailwind | 스타일만 추가 |
-| Checkbox | `<input type="checkbox">` + Tailwind | 커스텀 스타일링 |
-| DatePicker | react-datepicker + Tailwind | 외부 라이브러리 |
+| String input | `<input>` + Tailwind | Add styles only |
+| Number input | `<input type="number">` + Tailwind | Add styles only |
+| Textarea | `<textarea>` + Tailwind | Add styles only |
+| Checkbox | `<input type="checkbox">` + Tailwind | Custom styling |
+| DatePicker | react-datepicker + Tailwind | External library |
 
-**결론**: Headless UI + Tailwind는 **고급 사용자용**
-- 장점: 완전한 스타일 자유도, 작은 번들 사이즈
-- 단점: 모든 스타일을 직접 작성, 개발 시간 증가
+**Conclusion**: Headless UI + Tailwind is **for advanced users**
+- Advantages: complete style freedom, small bundle size
+- Disadvantages: write every style yourself, longer development time
 ```
 
-**권장사항**:
+**Recommendations**:
 ```markdown
-## 권장 사항
+## Recommendations
 
-### ✅ Headless UI + Tailwind 추천 대상
-- Tailwind CSS에 익숙한 팀
-- 완전한 디자인 커스터마이징 필요
-- 번들 사이즈 최소화 우선
+### ✅ Headless UI + Tailwind is recommended for
+- Teams familiar with Tailwind CSS
+- Complete design customization is required
+- Minimizing bundle size comes first
 
-### ⚠️ 권장하지 않는 대상
-- 빠른 프로토타이핑 필요
-- 디자인 시스템 없음
-- Tailwind CSS 경험 부족
+### ⚠️ Not recommended for
+- Rapid prototyping is required
+- There is no design system
+- Insufficient Tailwind CSS experience
 
-### 💡 대안
-위 조건에 해당하면 MUI, Ant Design, Chakra UI 추천
+### 💡 Alternative
+If the conditions above apply, MUI, Ant Design, or Chakra UI is recommended
 ```
 
-### 시나리오 5: 다중 UI 라이브러리 비교 및 선택 가이드
+### Scenario 5: Multiple UI Library Comparison and Selection Guide
 
-**상황**: 프로젝트에 가장 적합한 UI 라이브러리 선택
+**Situation**: Choosing the UI library best suited to the project
 
-**비교표**:
+**Comparison table**:
 
 ```markdown
-## UI 라이브러리 종합 비교
+## Comprehensive UI Library Comparison
 
-| 기준 | MUI v6 | Ant Design v5 | Chakra UI v2 | Headless UI + TW |
+| Criterion | MUI v6 | Ant Design v5 | Chakra UI v2 | Headless UI + TW |
 |------|--------|---------------|--------------|------------------|
-| **기본 컴포넌트** | ✅ 완벽 (9/9) | ✅ 완벽 (9/9) | ✅ 완벽 (9/9) | ⚠️ 수동 (5/9) |
-| **DatePicker** | ✅ 있음 (@mui/x) | ✅ 있음 (dayjs) | ❌ 없음 | ❌ 없음 |
-| **접근성** | ✅ 우수 | ⚠️ 수동 추가 | ✅ 최고 (자동) | ✅ 우수 (headless) |
-| **다크 모드** | ✅ Theme | ✅ ConfigProvider | ✅ 완벽 (내장) | 🔧 수동 (TW) |
-| **번들 크기** | 🟡 중간 (300KB+) | 🟡 중간 (400KB+) | 🟢 작음 (200KB+) | 🟢 최소 (50KB+) |
-| **TypeScript** | ✅ 완벽 | ✅ 우수 | ✅ 우수 | ✅ 우수 |
-| **학습 곡선** | 🟡 중간 | 🟡 중간 | 🟢 쉬움 | 🔴 어려움 |
-| **커뮤니티** | ✅ 최대 | ✅ 대형 | 🟡 중간 | 🟢 성장 중 |
-| **디자인 자유도** | 🟡 제한적 (sx) | 🟡 제한적 (style) | 🟢 높음 (props) | ✅ 최대 (TW) |
-| **개발 속도** | ✅ 빠름 | ✅ 빠름 | ✅ 빠름 | 🟡 느림 |
+| **Basic components** | ✅ Complete (9/9) | ✅ Complete (9/9) | ✅ Complete (9/9) | ⚠️ Manual (5/9) |
+| **DatePicker** | ✅ Available (@mui/x) | ✅ Available (dayjs) | ❌ None | ❌ None |
+| **Accessibility** | ✅ Excellent | ⚠️ Manual addition | ✅ Best (automatic) | ✅ Excellent (headless) |
+| **Dark mode** | ✅ Theme | ✅ ConfigProvider | ✅ Complete (built in) | 🔧 Manual (TW) |
+| **Bundle size** | 🟡 Medium (300KB+) | 🟡 Medium (400KB+) | 🟢 Small (200KB+) | 🟢 Smallest (50KB+) |
+| **TypeScript** | ✅ Complete | ✅ Excellent | ✅ Excellent | ✅ Excellent |
+| **Learning curve** | 🟡 Medium | 🟡 Medium | 🟢 Easy | 🔴 Difficult |
+| **Community** | ✅ Largest | ✅ Large | 🟡 Medium | 🟢 Growing |
+| **Design freedom** | 🟡 Limited (sx) | 🟡 Limited (style) | 🟢 High (props) | ✅ Maximum (TW) |
+| **Development speed** | ✅ Fast | ✅ Fast | ✅ Fast | 🟡 Slow |
 
-**추천 순위**:
+**Recommendation ranking**:
 
-1. **MUI v6** - 가장 안전한 선택
-   - 👍 완전한 컴포넌트 세트
-   - 👍 DatePicker 기본 지원
-   - 👍 최대 커뮤니티
-   - 👎 번들 크기 큼
-   - 👎 디자인 커스터마이징 제한적
+1. **MUI v6** - the safest choice
+   - 👍 Complete component set
+   - 👍 DatePicker supported by default
+   - 👍 Largest community
+   - 👎 Large bundle size
+   - 👎 Limited design customization
 
-2. **Chakra UI v2** - 최고의 접근성
-   - 👍 FormControl 자동 접근성
-   - 👍 완벽한 다크 모드
-   - 👍 간결한 API
-   - 👍 작은 번들
-   - 👎 DatePicker 없음
+2. **Chakra UI v2** - the best accessibility
+   - 👍 FormControl automatic accessibility
+   - 👍 Complete dark mode
+   - 👍 Concise API
+   - 👍 Small bundle
+   - 👎 No DatePicker
 
-3. **Ant Design v5** - 엔터프라이즈급
-   - 👍 풍부한 컴포넌트
-   - 👍 DatePicker 기본 지원
-   - 👍 중국 시장 강세
-   - 👎 Form.Item 사용 불가 (주의)
-   - 👎 ARIA 수동 추가 필요
+3. **Ant Design v5** - enterprise grade
+   - 👍 Rich component set
+   - 👍 DatePicker supported by default
+   - 👍 Strong in the Chinese market
+   - 👎 Form.Item cannot be used (caution)
+   - 👎 ARIA must be added manually
 
-4. **Headless UI + Tailwind** - 고급 사용자용
-   - 👍 완전한 디자인 자유
-   - 👍 최소 번들 크기
-   - 👍 Headless 접근성
-   - 👎 모든 스타일 수동
-   - 👎 개발 시간 증가
+4. **Headless UI + Tailwind** - for advanced users
+   - 👍 Complete design freedom
+   - 👍 Smallest bundle size
+   - 👍 Headless accessibility
+   - 👎 Every style is manual
+   - 👎 Longer development time
 ```
 
-**의사결정 트리**:
+**Decision tree**:
 
 ```markdown
-## UI 라이브러리 선택 가이드
+## UI Library Selection Guide
 
 ```
-프로젝트에 DatePicker 필요?
+Does the project need a DatePicker?
 ├─ Yes
-│  ├─ MUI v6 ✅ (가장 완전한 컴포넌트 세트)
-│  └─ Ant Design v5 ✅ (엔터프라이즈 기능 풍부)
+│  ├─ MUI v6 ✅ (the most complete component set)
+│  └─ Ant Design v5 ✅ (rich enterprise features)
 │
 └─ No
-   ├─ 접근성 최우선?
-   │  └─ Chakra UI v2 ✅ (자동 접근성 최고)
+   ├─ Accessibility first?
+   │  └─ Chakra UI v2 ✅ (best automatic accessibility)
    │
-   ├─ 번들 크기 최소화?
-   │  └─ Headless UI + Tailwind ✅ (완전한 자유도)
+   ├─ Minimize bundle size?
+   │  └─ Headless UI + Tailwind ✅ (complete freedom)
    │
-   └─ 빠른 개발?
-      └─ MUI v6 ✅ (가장 빠른 프로토타이핑)
+   └─ Fast development?
+      └─ MUI v6 ✅ (the fastest prototyping)
 ```
 ```
 
 ---
 
-> **Best Practice**: 접근성 필수, UI 라이브러리 네이티브 컴포넌트 우선
-> **Integration**: 호환성 검증 → 구현 → 테스트
+> **Best Practice**: Accessibility is required, native UI library components first
+> **Integration**: Compatibility verification → implementation → testing
 
 ---
 
-## 에러 처리
+## Error Handling
 
 ```yaml
 error_handling:
   severity_high:
     conditions:
-      - UI 라이브러리 미설치 (peer dependency 누락)
-      - 호환성 매트릭스 없음 (knowledge/ 파일 누락)
-      - 필수 렌더러 구현 불가 (FormGroup, FormLabel 등)
-      - 프로젝트 구조 설정 실패
-      - 접근성 요구사항 충족 불가
+      - UI library not installed (peer dependency missing)
+      - Compatibility matrix missing (knowledge/ file missing)
+      - Required renderer cannot be implemented (FieldRenderer, LabelRenderer, etc.)
+      - Project structure setup failed
+      - Accessibility requirements cannot be met
     action: |
-      ❌ 치명적 오류 - 플러그인 개발 중단
-      → UI 라이브러리 설치 확인: npm list {ui-library}
-      → 호환성 매트릭스 확인: ls knowledge/compatibility-matrix.md
-      → 필수 렌더러 요구사항 재검토
-      → 프로젝트 구조 템플릿 사용
-      → 재실행: 필수 요건 충족 후 재시도
+      ❌ Fatal error - stop plugin development
+      → Confirm the UI library is installed: npm list {ui-library}
+      → Check the compatibility matrix: ls knowledge/compatibility-matrix.md
+      → Re-review the required renderer requirements
+      → Use the project structure template
+      → Re-run: retry after the required conditions are met
     examples:
-      - condition: "UI 라이브러리 없음"
-        message: "❌ 오류: @mui/material이 설치되지 않음"
-        recovery: "peer dependency 설치: npm install @mui/material @mui/x-date-pickers"
-      - condition: "필수 렌더러 불가"
-        message: "❌ 오류: FormGroup 컴포넌트 구현 불가 (depth prop 미지원)"
-        recovery: "UI 라이브러리 대체 또는 커스텀 래퍼 구현"
+      - condition: "UI library missing"
+        message: "❌ Error: @mui/material is not installed"
+        recovery: "Install the peer dependency: npm install @mui/material @mui/x-date-pickers"
+      - condition: "Required renderer unavailable"
+        message: "❌ Error: FieldRenderer component cannot be implemented (depth prop unsupported)"
+        recovery: "Replace the UI library or implement a custom wrapper"
 
   severity_medium:
     conditions:
-      - 일부 FormType 호환 안 됨 (DatePicker, RichText 등)
-      - 접근성 속성 일부 누락 (ARIA)
-      - UI 라이브러리 버전 호환 경고
-      - Storybook 설정 실패
-      - 테스트 커버리지 낮음
+      - Some input kinds are incompatible (DatePicker, RichText, etc.)
+      - Some accessibility attributes are missing (ARIA)
+      - UI library version compatibility warning
+      - Storybook setup failed
+      - Test coverage is low
     action: |
-      ⚠️  경고 - 부분 플러그인 구현
-      1. 호환 안 되는 FormType을 Fallback 또는 외부 라이브러리로 대체
-      2. 누락된 ARIA 속성 수동 추가
-      3. UI 라이브러리 버전 업데이트 권장
-      4. Storybook 없이 진행 (수동 테스트)
-      5. 플러그인에 경고 추가:
-         > ⚠️  WARNING: 일부 FormType 미지원
+      ⚠️  Warning - partial plugin implementation
+      1. Replace incompatible input kinds with a Fallback or an external library
+      2. Manually add the missing ARIA attributes
+      3. Updating the UI library version is recommended
+      4. Proceed without Storybook (manual testing)
+      5. Add a warning to the plugin:
+         > ⚠️  WARNING: some input kinds are unsupported
          > → {unsupported_types}
     fallback_values:
-      unsupported_formtype: "Fallback 또는 외부 라이브러리"
-      missing_aria: "수동 추가 필요"
+      unsupported_input_kind: "Fallback or external library"
+      missing_aria: "Manual addition required"
       storybook_enabled: false
     examples:
-      - condition: "FormType 호환 안 됨"
-        message: "⚠️  경고: RichText FormType 지원 안 됨 (컴포넌트 없음)"
-        fallback: "react-quill 외부 라이브러리 사용 권장"
-      - condition: "ARIA 속성 누락"
-        message: "⚠️  경고: Select 컴포넌트에 aria-required 누락"
-        fallback: "수동으로 aria-required 추가"
+      - condition: "input kind incompatible"
+        message: "⚠️  Warning: RichText input kind is unsupported (no component)"
+        fallback: "Using the react-quill external library is recommended"
+      - condition: "ARIA attribute missing"
+        message: "⚠️  Warning: aria-required is missing on the Select component"
+        fallback: "Add aria-required manually"
 
   severity_low:
     conditions:
-      - 선택적 FormType 미구현 (ColorPicker, Slider 등)
-      - UI 라이브러리 Theme 통합 경고
-      - Storybook stories 일부 누락
-      - 문서화 부족
+      - Optional input kinds not implemented (ColorPicker, Slider, etc.)
+      - UI library Theme integration warning
+      - Some Storybook stories are missing
+      - Documentation is insufficient
     action: |
-      ℹ️  정보: 선택적 항목 생략 - 핵심 플러그인 구현
-      → 선택적 FormType: Priority 3로 연기
-      → Theme 통합: 기본 스타일 사용
-      → Storybook: 필수 stories만 작성
-      → 문서화: 최소 README 제공
+      ℹ️  Info: optional items omitted - implement the core plugin
+      → Optional input kinds: defer to Priority 3
+      → Theme integration: use the default styles
+      → Storybook: write only the required stories
+      → Documentation: provide a minimal README
     examples:
-      - condition: "ColorPicker 미구현"
-        auto_handling: "Priority 3 FormType → 선택적 구현 (필수 아님)"
-      - condition: "Theme 통합 경고"
-        auto_handling: "Theme 미통합 → 기본 스타일 사용 (일부 불일치 가능)"
+      - condition: "ColorPicker not implemented"
+        auto_handling: "Priority 3 input kind → optional implementation (not required)"
+      - condition: "Theme integration warning"
+        auto_handling: "Theme not integrated → use default styles (some inconsistency possible)"
 ```
 

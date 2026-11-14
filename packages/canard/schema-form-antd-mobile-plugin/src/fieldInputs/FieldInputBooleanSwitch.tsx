@@ -1,0 +1,65 @@
+import { type ReactNode, useMemo } from 'react';
+
+import { Switch } from 'antd-mobile';
+
+import { useHandle } from '@winglet/react-utils/hook';
+
+import type {
+  BooleanSchema,
+  FieldInputDefinition,
+  FieldInputPropsWithSchema,
+} from '@canard/schema-form';
+
+import { SwitchKeyboardControl } from './components/SwitchKeyboardControl';
+
+interface FieldInputBooleanSwitchProps
+  extends FieldInputPropsWithSchema<
+    boolean | null,
+    BooleanSchema,
+    {
+      checkboxLabels?: {
+        checked?: ReactNode;
+        unchecked?: ReactNode;
+      };
+    }
+  > {
+  alias?: { checked?: ReactNode; unchecked?: ReactNode };
+}
+
+const FieldInputBooleanSwitch = ({
+  path,
+  disabled,
+  value,
+  onChange,
+  context,
+  alias,
+  misfit,
+}: FieldInputBooleanSwitchProps) => {
+  const [checkedLabel, uncheckedLabel] = useMemo(() => {
+    const labels = context?.checkboxLabels || alias || {};
+    return [labels.checked, labels.unchecked];
+  }, [context, alias]);
+
+  const handleChange = useHandle(onChange);
+
+  return (
+    <SwitchKeyboardControl disabled={disabled}>
+      <Switch
+        data-focus-target
+        tabIndex={disabled ? undefined : 0}
+        aria-invalid={misfit || undefined}
+        key={path}
+        disabled={disabled}
+        checked={value === true}
+        checkedText={checkedLabel}
+        uncheckedText={uncheckedLabel}
+        onChange={handleChange}
+      />
+    </SwitchKeyboardControl>
+  );
+};
+export const FieldInputBooleanSwitchDefinition = {
+  Component: FieldInputBooleanSwitch,
+  controlled: true,
+  test: ({ type, inputType }) => type === 'boolean' && inputType === 'switch',
+} satisfies FieldInputDefinition;

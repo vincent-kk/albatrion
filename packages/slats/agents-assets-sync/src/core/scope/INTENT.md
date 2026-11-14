@@ -2,18 +2,18 @@
 
 ## Purpose
 
-Resolve a `user | project` scope token into one absolute project root. `user` is the home directory; `project` walks up from `cwd` in two tiers: the nearest ancestor owning a root marker, and only when none exists the nearest ancestor owning an agent anchor. The root is agent-neutral on purpose — every selected agent derives its own asset locations from the same root, so `claude` and `codex` never disagree about which project they are in.
+`user | project` 스코프 토큰을 절대 프로젝트 루트 하나로 해석합니다. `user`는 홈 디렉터리입니다. `project`는 `cwd`에서 두 단계로 상위를 탐색합니다. 루트 마커를 가진 가장 가까운 조상을 찾고, 그런 조상이 없을 때만 에이전트 앵커를 가진 가장 가까운 조상을 찾습니다. 모든 선택된 에이전트가 같은 루트에서 자산 위치를 정하여 `claude`와 `codex`가 서로 다른 프로젝트를 선택하지 않도록 루트를 에이전트와 독립적으로 유지합니다.
 
 ## Conventions
 
-- A root marker is any of `.git`, `pnpm-workspace.yaml`, `pnpm-lock.yaml`, `yarn.lock`, `package-lock.json`, `npm-shrinkwrap.json`, `bun.lock`, `bun.lockb` — what the repository and the package manager themselves treat as the project root, in a monorepo and a single-package repository alike. A marker owned by the home directory or an ancestor of it does not count: it belongs to the user's own configuration, not to a project underneath.
-- An agent anchor is any of `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git`. It is the weaker tier because a tool may create one in any directory, including a workspace member.
-- Existence alone decides, with no directory check: a file and a directory count alike, because `AGENTS.md` is a file and `.git` is a file rather than a directory inside a worktree.
-- Order within a list does not affect the verdict; the first match wins.
+- 루트 마커는 `.git`, `pnpm-workspace.yaml`, `pnpm-lock.yaml`, `yarn.lock`, `package-lock.json`, `npm-shrinkwrap.json`, `bun.lock`, `bun.lockb` 중 하나입니다. 모노레포와 단일 패키지 저장소 모두에서 저장소와 패키지 관리자가 프로젝트 루트로 판단하는 기준입니다. 홈 디렉터리나 그 조상이 소유한 마커는 하위 프로젝트가 아닌 사용자의 설정이므로 제외합니다.
+- 에이전트 앵커는 `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git` 중 하나입니다. 도구가 워크스페이스 구성원을 포함한 어느 디렉터리에도 만들 수 있으므로 더 약한 판별 단계입니다.
+- 디렉터리 여부를 검사하지 않고 존재만으로 판정합니다. `AGENTS.md`는 파일이고 워크트리 안의 `.git`도 디렉터리가 아닌 파일이므로 파일과 디렉터리를 동일하게 취급합니다.
+- 목록 안의 순서는 판정에 영향을 주지 않으며 첫 일치가 우선합니다.
 
 ## Dependencies
 
-- None. This is the deepest leaf `agentTarget/` builds on.
+- 없습니다. `agentTarget/`이 의존하는 가장 깊은 말단입니다.
 
 ## Boundaries
 

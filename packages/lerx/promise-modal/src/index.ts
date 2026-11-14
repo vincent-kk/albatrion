@@ -10,23 +10,26 @@ export {
   type BootstrapProviderProps as ModalProviderProps,
 } from './bootstrap';
 
-export { useModal } from './hooks/useModal';
-export { useActiveModalCount } from './hooks/useActiveModalCount';
-export { useDestroyAfter } from './hooks/useDestroyAfter';
+export { useModal } from './core';
+export { useActiveModalCount } from './app';
+export { useDestroyAfter } from './providers';
 export { useModalAnimation } from './hooks/useModalAnimation';
-export { useModalDuration } from './hooks/useModalDuration';
-export { useSubscribeModal } from './hooks/useSubscribeModal';
+export { useModalDuration } from './providers';
+export { useSubscribeModal } from './app';
 
 export { alert, confirm, prompt } from './core';
-
 export type {
-  ModalOptions,
-  ModalFrameProps,
-  FooterComponentProps,
-  ModalBackground,
-  PromptInputProps,
-  AlertContentProps,
-  ConfirmContentProps,
-  PromptContentProps,
-  WrapperComponentProps,
-} from './types';
+  AlertProps,
+  ConfirmProps,
+  PromptProps,
+  OverridableHandleProps,
+} from './core';
+
+export type { ModalOptions } from './types/option';
+export type { ModalNodeView } from './core';
+export type { ModalFrameProps } from './types/frame';
+export type { FooterComponentProps, WrapperComponentProps } from './types/base';
+export type { ModalBackground } from './types/background';
+export type { PromptInputProps, PromptContentProps } from './types/prompt';
+export type { AlertContentProps } from './types/alert';
+export type { ConfirmContentProps } from './types/confirm';

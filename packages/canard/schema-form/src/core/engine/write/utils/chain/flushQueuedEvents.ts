@@ -1,0 +1,177 @@
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
+import { FieldNodeRevisionLedger } from '../../../record';
+import type { FieldNodeDelivery, FieldNodeRecord } from '../../../record';
+import { settleFieldNodeValidation } from '../../../validation';
+import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalErrorsToRoot';
+import { finishQueuedErrors } from '../report/finishQueuedErrors';
+import { captureChainError } from './captureChainError';
+import { readChainAbort, restoreChainReporters } from './chainAbort';
+import { deliverWave } from './deliverWave';
+import { discardFieldNodeChainWork } from './discardFieldNodeChainWork';
+import { flushFieldNodeSettings } from './flushFieldNodeSettings';
+import { resolveFieldNodeChainRoot } from './resolveFieldNodeChainRoot';
+import { runDeliveryWaves } from './runDeliveryWaves';
+
+/**
+ * Accept only live records from this runtime for revision accounting.
+ * @param candidate - Key held by the pending event table
+ * @param runtime - Runtime that owns the pending wave
+ * @returns Whether the key is a live node of this tree
+ */
+const isQueuedNode = <Self extends FieldNodeRecord<Self>>(
+  candidate: unknown,
+  runtime: Self['runtime'],
+): candidate is Self =>
+  candidate !== null &&
+  typeof candidate === 'object' &&
+  Reflect.get(candidate, 'runtime') === runtime &&
+  Reflect.get(candidate, 'detached') === false;
+
+/**
+ * Deliver merged non-settlement bits in waves after committed events; a non-root
+ * external-error change made by a listener is folded into the root list before the
+ * next wave and counts against the same feedback budget (195C-01).
+ * @param root - Live root owning the queued event table and observers
+ * @param caller - Whether a synchronous caller receives standalone failures
+ * @param origin - Operation owning a standalone wave and its enclosed writes
+ * @returns Nothing; standalone failures are exposed after all deliveries
+ */
+export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
+  root: Self,
+  caller: boolean,
+  origin: 'load' | 'write' | 'validate',
+): void => {
+  const entryRuntime = root.runtime;
+  if (entryRuntime.flushingQueuedEvents) return;
+  entryRuntime.flushingQueuedEvents = true;
+  const standalone = !entryRuntime.entryDepth && !entryRuntime.chainErrors;
+  const previousOrigin = entryRuntime.chainOrigin;
+  const previousErrors = entryRuntime.chainErrors;
+  const previousOccurrences = entryRuntime.chainOccurrences;
+  let waves = 0;
+  let budgetReported = false;
+  if (standalone) {
+    entryRuntime.chainOrigin = origin;
+    entryRuntime.chainErrors = [];
+    entryRuntime.chainOccurrences = [];
+  }
+  const owners = new Set([entryRuntime]);
+  let active = root;
+  let runtime = entryRuntime;
+  let interrupted: ReturnType<typeof readChainAbort>;
+  try {
+    for (;;) {
+      active = resolveFieldNodeChainRoot(active, owners);
+      runtime = active.runtime;
+      runtime.flushingQueuedEvents = true;
+      if (
+        !runtime.pendingExternalErrorNodes?.size &&
+        !runtime.queuedNonSettleEvents?.size &&
+        !runtime.deliveries?.size &&
+        !(!runtime.entryDepth && runtime.stateChanged)
+      )
+        break;
+      if (runtime.pendingExternalErrorNodes?.size) {
+        try {
+          rebuildRootExternalErrors(active);
+        } catch (error) {
+          captureChainError(runtime, error);
+        }
+        continue;
+      }
+      if (runtime.deliveries?.size) {
+        runDeliveryWaves(active);
+        continue;
+      }
+      if (runtime.queuedNonSettleEvents?.size) {
+        waves += 1;
+        if (waves > 25) {
+          for (const node of runtime.queuedNonSettleEvents)
+            node.pendingNonSettleDelivery = undefined;
+          runtime.queuedNonSettleEvents = undefined;
+          if (!budgetReported)
+            captureChainError(
+              runtime,
+              new SchemaFormError(
+                FormErrorCode.FeedbackLimitExceeded,
+                'Non-settlement feedback exceeded 25 waves',
+              ),
+            );
+          budgetReported = true;
+          continue;
+        }
+        const pending: [Self, FieldNodeDelivery][] = [];
+        for (const candidate of runtime.queuedNonSettleEvents) {
+          const delivery = candidate.pendingNonSettleDelivery;
+          candidate.pendingNonSettleDelivery = undefined;
+          if (!delivery) continue;
+          if (!isQueuedNode<Self>(candidate, runtime)) continue;
+          const node = candidate;
+          pending.push([node, delivery]);
+          node.revisionLedger = new FieldNodeRevisionLedger(
+            node.revisionLedger,
+            delivery.type,
+          );
+        }
+        runtime.queuedNonSettleEvents = undefined;
+        deliverWave(active, pending);
+        continue;
+      }
+      runtime.stateChanged = false;
+      try {
+        runtime.onStateChange?.();
+      } catch (error) {
+        captureChainError(
+          resolveFieldNodeChainRoot(active, owners).runtime,
+          error,
+        );
+      }
+    }
+    if (standalone) {
+      const aborted = readChainAbort(runtime.chainErrors);
+      if (aborted) throw aborted.error;
+      finishQueuedErrors(
+        runtime,
+        runtime.chainErrors ?? [],
+        runtime.chainOccurrences ?? [],
+        caller,
+        origin,
+      );
+    }
+  } catch (error) {
+    if (standalone) {
+      active = resolveFieldNodeChainRoot(active, owners);
+      runtime = active.runtime;
+      interrupted = readChainAbort(runtime.chainErrors);
+      if (interrupted) {
+        discardFieldNodeChainWork(active);
+        throw interrupted.error;
+      }
+    }
+    throw error;
+  } finally {
+    for (const owner of owners) {
+      owner.flushingQueuedEvents = false;
+      if (!standalone) continue;
+      owner.chainOrigin = previousOrigin;
+      owner.chainErrors = previousErrors;
+      owner.chainOccurrences = previousOccurrences;
+      if (owner !== entryRuntime) owner.chainRoot = undefined;
+      if (!interrupted) flushFieldNodeSettings(owner);
+    }
+    if (interrupted) {
+      try {
+        settleFieldNodeValidation(active);
+      } catch {
+        // The original collaborator failure takes precedence over cleanup callbacks.
+      } finally {
+        try {
+          for (const owner of owners)
+            flushFieldNodeSettings(owner, interrupted);
+        } finally {
+          restoreChainReporters(interrupted);
+        }
+      }
+    }
+  }
+};

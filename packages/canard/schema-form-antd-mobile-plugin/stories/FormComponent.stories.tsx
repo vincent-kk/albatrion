@@ -1,3 +1,4 @@
+import { ErrorVisibility } from '@canard/schema-form';
 import {
   Form,
   FormProvider,
@@ -6,11 +7,10 @@ import {
 } from '@canard/schema-form';
 import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin';
 
-import { FormError } from '../src/components/FormError';
-import { FormGroup } from '../src/components/FormGroup';
-import { FormInput } from '../src/components/FormInput';
-import { FormLabel } from '../src/components/FormLabel';
-import { formTypeInputDefinitions } from '../src/formTypeInputs';
+import { ErrorMessageRenderer } from '../src/components/ErrorMessageRenderer';
+import { FieldRenderer } from '../src/components/FieldRenderer';
+import { LabelRenderer } from '../src/components/LabelRenderer';
+import { fieldInputDefinitions } from '../src/fieldInputs';
 
 registerPlugin(ajv8Plugin);
 
@@ -73,11 +73,13 @@ const bigSchema = {
             gender: {
               type: 'string',
               enum: ['male', 'female', 'other'],
-              computed: {
+              controls: {
                 active: '../age >= 18',
               },
-              FormTypeInputProps: {
-                placeholder: 'Select gender',
+              presentation: {
+                FieldInputProps: {
+                  placeholder: 'Select gender',
+                },
               },
             },
             preferences: {
@@ -87,20 +89,26 @@ const bigSchema = {
                   type: 'string',
                   enum: ['light', 'dark'],
                   default: 'light',
-                  formType: 'switch',
+                  presentation: {
+                    inputType: 'switch',
+                  },
                 },
                 notifications: {
                   type: 'object',
                   properties: {
                     email: {
                       type: 'boolean',
-                      formType: 'switch',
                       default: true,
+                      presentation: {
+                        inputType: 'switch',
+                      },
                     },
                     sms: {
                       type: 'boolean',
-                      formType: 'switch',
                       default: false,
+                      presentation: {
+                        inputType: 'switch',
+                      },
                     },
                   },
                   required: ['email', 'sms'],
@@ -137,7 +145,9 @@ const bigSchema = {
             '2FA': {
               type: 'boolean',
               default: true,
-              formType: 'switch',
+              presentation: {
+                inputType: 'switch',
+              },
             },
             backupCodes: {
               type: 'array',
@@ -157,14 +167,14 @@ const bigSchema = {
   },
   required: ['user', 'settings'],
 } satisfies JSONSchema;
-export const FormErrorComponent = () => {
+export const FormErrorMessageComponent = () => {
   return (
     <FormProvider
-      FormErrorRenderer={FormError}
-      formTypeInputDefinitions={formTypeInputDefinitions}
+      ErrorMessageRenderer={ErrorMessageRenderer}
+      fieldInputDefinitions={fieldInputDefinitions}
     >
-      <Form jsonSchema={jsonSchema} showError>
-        <Form.Error path="username" />
+      <Form jsonSchema={jsonSchema} errorVisibility={ErrorVisibility.Always}>
+        <Form.ErrorMessage path="username" />
       </Form>
     </FormProvider>
   );
@@ -172,11 +182,8 @@ export const FormErrorComponent = () => {
 
 export const FormInputComponent = () => {
   return (
-    <FormProvider
-      FormInputRenderer={FormInput}
-      formTypeInputDefinitions={formTypeInputDefinitions}
-    >
-      <Form jsonSchema={jsonSchema} showError>
+    <FormProvider fieldInputDefinitions={fieldInputDefinitions}>
+      <Form jsonSchema={jsonSchema} errorVisibility={ErrorVisibility.Always}>
         <Form.Input path="username" />
       </Form>
     </FormProvider>
@@ -186,23 +193,27 @@ export const FormInputComponent = () => {
 export const FormLabelComponent = () => {
   return (
     <FormProvider
-      FormLabelRenderer={FormLabel}
-      formTypeInputDefinitions={formTypeInputDefinitions}
+      LabelRenderer={LabelRenderer}
+      fieldInputDefinitions={fieldInputDefinitions}
     >
-      <Form jsonSchema={jsonSchema} showError>
+      <Form jsonSchema={jsonSchema} errorVisibility={ErrorVisibility.Always}>
         <Form.Label path="username" />
       </Form>
     </FormProvider>
   );
 };
 
-export const FormGroupComponent = () => {
+export const FieldRendererComponent = () => {
   return (
     <FormProvider
-      FormGroupRenderer={FormGroup}
-      formTypeInputDefinitions={formTypeInputDefinitions}
+      FieldRenderer={FieldRenderer}
+      fieldInputDefinitions={fieldInputDefinitions}
     >
-      <Form jsonSchema={bigSchema} showError context={{}} />
+      <Form
+        jsonSchema={bigSchema}
+        errorVisibility={ErrorVisibility.Always}
+        context={{}}
+      />
     </FormProvider>
   );
 };

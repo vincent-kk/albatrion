@@ -1,21 +1,21 @@
 # CLAUDE.md
 
-`@winglet/react-utils` — React 커스텀 훅, HOC, 유틸리티 라이브러리. Sub-path export 지원.
+`@winglet/react-utils` provides custom React hooks, HOCs, and utilities with sub-path exports.
 
 ## Commands
 
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언 + agents-hashes.json
-yarn build:hashes      # docs/agents/** 해시 매니페스트만 재생성
-yarn test              # Vitest 테스트 (jsdom)
-yarn test --watch      # watch 모드
+yarn build             # ESM + CJS build + type declarations + agents-hashes.json
+yarn build:hashes      # Regenerate only the docs/agents/** hash manifest
+yarn test              # Vitest tests (jsdom)
+yarn test --watch      # watch mode
 yarn lint              # ESLint
 ```
 
 ## Agent Docs Injector
 
-`docs/agents/**` 자산을 선택한 에이전트 위치에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
-`--agent` 로 대상 에이전트를 고른다 — `claude` 는 `.claude/{skills,rules,commands}`, `codex`/`agents` 는 `.agents/skills` + `AGENTS.md` 마커 블록(project scope 기준).
+Inject `docs/agents/**` assets into the selected agent's locations. Engine: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
+Select agents with `--agent`: `claude` uses `.claude/{skills,rules,commands}`; `codex`/`agents` use `.agents/skills` and marker blocks in `AGENTS.md` (at project scope).
 
 ```bash
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/react-utils --agent=claude --scope=user
@@ -26,8 +26,8 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/react
 
 ### Isolation Guardrails
 
-- `src/**` 는 `docs/**` 와 `@slats/agents-assets-sync` 어느 것도 import 금지.
-- **절대 `exports` 에 `./docs/*` 를 추가하지 말 것.**
+- `src/**` MUST NOT import from `docs/**` or `@slats/agents-assets-sync`.
+- **Never add `./docs/*` to `exports`.**
 
 ## Sub-path Exports
 
@@ -41,20 +41,20 @@ import { isReactComponent } from '@winglet/react-utils/filter';
 ## Key APIs
 
 **Hooks** (`@winglet/react-utils/hook`):
-- `useHandle` — 안정적인 이벤트 핸들러 (schema-form 플러그인에서 주로 사용)
-- `useConstant` — 비싼 연산 메모이제이션
-- `useLazyConstant` — factory 1회 실행 + identity 보장 (useMemo와 달리 재계산 불가 보장, 리소스 소유 인스턴스용)
-- `useMemorize` — 향상된 memoization
-- `useEffectUntil` / `useLayoutEffectUntil` — 조건부 effect
-- `useWindowSize` — 브라우저 윈도우 크기 추적
+- `useHandle` — Stable event handler (used mainly by schema-form plugins)
+- `useConstant` — Memoization of expensive computations
+- `useLazyConstant` — Executes the factory once and guarantees identity (unlike useMemo, guarantees no recomputation; for resource-owning instances)
+- `useMemorize` — Enhanced memoization
+- `useEffectUntil` / `useLayoutEffectUntil` — Conditional effect
+- `useWindowSize` — Tracks browser window size
 
 **Portal System** (`@winglet/react-utils/portal`):
-- `withPortal()` — 포털 컨텍스트 HOC
-- `Portal.Anchor` — 포털 렌더링 위치 지정
-- `Portal` — anchor 위치에 children 렌더링
+- `withPortal()` — Portal context HOC
+- `Portal.Anchor` — Specifies the portal rendering location
+- `Portal` — Renders children at the anchor location
 
 **HOCs** (`@winglet/react-utils/hoc`):
-- `withErrorBoundary()` — 에러 바운더리 래핑
+- `withErrorBoundary()` — Error boundary wrapping
 
 ## Peer Dependencies
 

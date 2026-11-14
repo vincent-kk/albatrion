@@ -1,42 +1,43 @@
-import { memo, useCallback, useRef } from 'react';
+import { memo, useCallback } from 'react';
 
-import { useOnMountLayout } from '@winglet/react-utils/hook';
+import { ErrorBoundary } from '@winglet/react-utils/hoc';
 
+import { useSubscribeModal } from '@/promise-modal/app';
 import { Background } from '@/promise-modal/components/Background';
 import { Foreground } from '@/promise-modal/components/Foreground';
-import { useSubscribeModal } from '@/promise-modal/hooks/useSubscribeModal';
 import {
   useConfigurationOptions,
   useModalManager,
+  useModalManagerContext,
 } from '@/promise-modal/providers';
-import type { PresenterProps } from '@/promise-modal/types';
+import type { PresenterProps } from '@/promise-modal/types/modal';
 
-import { presenter } from './style';
+import { presenter } from './styles/style';
 
-export const Presenter = memo(
-  ({ modalId, getValue, increment }: PresenterProps) => {
-    const ref = useRef<HTMLDivElement>(null);
-    const options = useConfigurationOptions();
-    const { modal } = useModalManager(modalId);
-    useSubscribeModal(modal);
-
-    useOnMountLayout(() => {
-      if (ref.current === null) return;
-      ref.current.style.zIndex = '' + (options.zIndex + increment());
-    });
-
-    const handleChangeOrder = useCallback(() => {
-      const element = ref.current;
-      if (element === null) return;
-      if (element.style.zIndex === '' + (options.zIndex + getValue())) return;
-      element.style.zIndex = '' + (options.zIndex + increment());
-    }, [getValue, increment, options.zIndex]);
-
-    return (
-      <div ref={ref} className={presenter}>
+/** Presents one node and routes render failures through context operations. */
+export const Presenter = memo(({ modalId }: PresenterProps) => {
+  const options = useConfigurationOptions();
+  const { modal } = useModalManager(modalId);
+  const { onReject, onChangeOrder } = useModalManagerContext();
+  useSubscribeModal(modalId);
+  const handleChangeOrder = useCallback(
+    () => onChangeOrder(modalId),
+    [modalId, onChangeOrder],
+  );
+  const handleError = useCallback(
+    (error: unknown) => onReject(modalId, error),
+    [modalId, onReject],
+  );
+  if (!modal) return null;
+  return (
+    <ErrorBoundary fallback={null} onError={handleError}>
+      <div
+        className={presenter}
+        style={{ zIndex: options.zIndex + modal.order }}
+      >
         <Background modalId={modalId} onChangeOrder={handleChangeOrder} />
         <Foreground modalId={modalId} onChangeOrder={handleChangeOrder} />
       </div>
-    );
-  },
-);
+    </ErrorBoundary>
+  );
+});

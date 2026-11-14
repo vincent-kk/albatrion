@@ -1,0 +1,33 @@
+import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
+
+import type { BlueprintSchemaType, SchemaTypeName } from '../../../blueprint';
+import type { FieldNodeRecord } from '../../../record';
+import { isMisfit } from './isMisfit';
+
+/**
+ * Find scalar conversions that could admit a currently mismatched source value.
+ * @param node - Node whose row supplies the same conversion rule as marking
+ * @param effective - Current gated type list
+ * @returns Converted kind names in effective-list order
+ */
+export const conversionCandidates = <Self extends FieldNodeRecord<Self>>(
+  node: Self,
+  effective: BlueprintSchemaType,
+): Exclude<SchemaTypeName, 'null'>[] => {
+  const kinds = typeof effective === 'string' ? [effective] : effective;
+  const candidates: Exclude<SchemaTypeName, 'null'>[] = [];
+  for (const kind of kinds) {
+    if (kind === 'null') continue;
+    const converted = node.behavior.interpret(node.source, {
+      kinds: kind,
+      mask: BIT_MASK_NONE,
+      nullable: node.nullable,
+    });
+    if (
+      !Object.is(converted, node.source) &&
+      !isMisfit(converted, kind, node.nullable)
+    )
+      candidates.push(kind);
+  }
+  return candidates;
+};

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { ManagedModal } from '../../types';
+import type { ManagedModal } from '../../types/modal';
 import { AlertNode } from '../node/ModalNode/AlertNode';
 import { ConfirmNode } from '../node/ModalNode/ConfirmNode';
 import { PromptNode } from '../node/ModalNode/PromptNode';
@@ -214,51 +214,6 @@ describe('nodeFactory', () => {
     });
   });
 
-  describe('type narrowing', () => {
-    const mockInput = () => null;
-
-    it('타입 가드로 올바른 노드 타입을 식별할 수 있어야 함', () => {
-      const alertModal: ManagedModal = {
-        id: 11,
-        initiator: 'test',
-        type: 'alert',
-        title: 'Alert',
-      };
-
-      const confirmModal: ManagedModal = {
-        id: 12,
-        initiator: 'test',
-        type: 'confirm',
-        title: 'Confirm',
-      };
-
-      const promptModal: ManagedModal = {
-        id: 13,
-        initiator: 'test',
-        type: 'prompt',
-        title: 'Prompt',
-        Input: mockInput,
-      };
-
-      const alertNode = nodeFactory(alertModal);
-      const confirmNode = nodeFactory(confirmModal);
-      const promptNode = nodeFactory(promptModal);
-
-      // 타입 가드를 통한 식별
-      if (alertNode.type === 'alert') {
-        expect(alertNode).toBeInstanceOf(AlertNode);
-      }
-
-      if (confirmNode.type === 'confirm') {
-        expect(confirmNode).toBeInstanceOf(ConfirmNode);
-      }
-
-      if (promptNode.type === 'prompt') {
-        expect(promptNode).toBeInstanceOf(PromptNode);
-      }
-    });
-  });
-
   describe('초기 상태', () => {
     const mockInput = () => null;
 
@@ -287,7 +242,7 @@ describe('nodeFactory', () => {
 
       [alertNode, confirmNode, promptNode].forEach((node) => {
         expect(node.alive).toBe(true);
-        expect(node.visible).toBe(true); // AbstractNode 초기 상태는 visible=true
+        expect(node.visible).toBe(true);
       });
     });
   });

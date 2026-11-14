@@ -1,17 +1,17 @@
 ---
-sidebar_label: 'Examples'
+sidebar_label: '예제'
 sidebar_position: 3
 ---
 
 import ForAI from '@site/src/components/ForAI';
 
-# Examples
+# 예제 {#examples}
 
 일반적인 모달 시나리오에 대한 실용적인 사용 패턴입니다.
 
 ---
 
-## Basic alert / confirm / prompt
+## 기본 alert / confirm / prompt {#basic-alert--confirm--prompt}
 
 ```tsx
 import { alert, confirm, prompt } from '@lerx/promise-modal';
@@ -39,9 +39,9 @@ const name = await prompt<string>({
 
 ---
 
-## Subtypes
+## 하위 타입 {#subtypes}
 
-`subtype` prop은 컴포넌트 슬롯으로 전달되므로 시맨틱 타입별로 다른 스타일을 적용할 수 있습니다.
+`subtype` 속성은 컴포넌트 슬롯으로 전달되므로 시맨틱 타입별로 다른 스타일을 적용할 수 있습니다.
 
 ```tsx
 await alert({ title: 'Info',    content: '...', subtype: 'info' });
@@ -52,7 +52,7 @@ await alert({ title: 'Error',   content: '...', subtype: 'error' });
 
 ---
 
-## Custom footer text
+## 사용자 정의 푸터 텍스트 {#custom-footer-text}
 
 ```tsx
 await alert({
@@ -70,7 +70,7 @@ const result = await confirm({
 
 ---
 
-## Prompt with complex value
+## 복합 값을 사용하는 prompt {#prompt-with-complex-value}
 
 ```tsx
 type UserInfo = { name: string; age: number };
@@ -99,9 +99,9 @@ const user = await prompt<UserInfo>({
 
 ---
 
-## Custom modal components
+## 사용자 정의 모달 컴포넌트 {#custom-modal-components}
 
-`ModalProvider`에서 전역으로, 또는 개별 모달 옵션에서 per-call로 컴포넌트 슬롯을 재정의할 수 있습니다.
+`ModalProvider`에서 전역으로, 또는 개별 모달 옵션에서 호출별로 컴포넌트 슬롯을 재정의할 수 있습니다.
 
 ```tsx
 import { ModalProvider, alert, type ModalFrameProps, type WrapperComponentProps, type FooterComponentProps } from '@lerx/promise-modal';
@@ -139,7 +139,7 @@ function App() {
 }
 ```
 
-### Per-call component override
+### 호출별 컴포넌트 재정의 {#per-call-component-override}
 
 ```tsx
 await alert({
@@ -155,7 +155,7 @@ await alert({
 
 ---
 
-## Background data
+## 배경 데이터 {#background-data}
 
 `background.data`를 통해 `BackgroundComponent`에 타입이 지정된 데이터를 전달합니다.
 
@@ -180,7 +180,7 @@ await confirm({
 
 ---
 
-## Async operations in modals
+## 모달의 비동기 작업 {#async-operations-in-modals}
 
 ```tsx
 async function handleSubmit() {
@@ -205,7 +205,7 @@ async function handleSubmit() {
 
 ---
 
-## Nested / sequential modals
+## 중첩 / 순차 모달 {#nested--sequential-modals}
 
 ```tsx
 async function multiStep() {
@@ -239,7 +239,7 @@ async function multiStep() {
 
 ---
 
-## Component-lifecycle-scoped modals (`useModal`)
+## 컴포넌트 라이프사이클에 연동된 모달 (`useModal`) {#component-lifecycle-scoped-modals-usemodal}
 
 `useModal`을 통해 열린 모달은 컴포넌트가 언마운트될 때 자동으로 닫힙니다. 폼이나 상세 뷰에 유용합니다.
 
@@ -264,7 +264,7 @@ function ItemEditor({ itemId }: { itemId: string }) {
 
 ---
 
-## Custom anchor (render modals into a specific DOM node)
+## 사용자 정의 앵커 (특정 DOM 노드에 모달 렌더링하기) {#custom-anchor-render-modals-into-a-specific-dom-node}
 
 ```tsx
 import { useRef, useEffect } from 'react';
@@ -293,7 +293,7 @@ function CustomAnchorExample() {
 
 ---
 
-## Toast notifications
+## 토스트 알림 {#toast-notifications}
 
 커스텀 `ForegroundComponent`와 `useDestroyAfter`를 사용하여 `alert`로 토스트 메시지를 구현합니다.
 
@@ -349,9 +349,9 @@ export function toast(message: React.ReactNode, duration = 3000) {
 
 ---
 
-## Context: theme / locale in modal components
+## 컨텍스트: 모달 컴포넌트의 테마 / 로케일 {#context-theme--locale-in-modal-components}
 
-`ModalProvider`의 `context` prop을 통해 모든 모달 컴포넌트 슬롯에 공유 데이터를 전달합니다.
+`ModalProvider`의 `context` 속성을 통해 모든 모달 컴포넌트 슬롯에 공유 데이터를 전달합니다.
 
 ```tsx
 // Provider setup
@@ -380,33 +380,33 @@ const myPrompt = await prompt<string>({
 
 <ForAI>
 
-## AI Agent Reference — Examples Summary
+## AI 에이전트 참조 — 예제 요약 {#ai-agent-reference--examples-summary}
 
-### Pattern index
+### 패턴 색인 {#pattern-index}
 
-| Goal | Key APIs |
+| 목적 | 주요 API |
 |---|---|
-| Simple notification | `await alert({ title, content })` |
-| Yes/no decision | `const ok = await confirm(...)` |
-| User text input | `const val = await prompt<T>({ Input, defaultValue })` |
-| Typed input validation | `prompt({ disabled: v => condition })` |
-| Custom look | `ModalProvider` slots or per-call `ForegroundComponent` |
-| Background data | `alert({ background: { data: myData } })` |
-| Sequential workflow | `await confirm(...)` then `await prompt(...)` then `await alert(...)` |
-| Auto-close on unmount | `const modal = useModal(); await modal.confirm(...)` |
-| Custom DOM target | `ModalProviderHandle.initialize(element)` |
-| Toast | `alert({ footer: false, dimmed: false, ForegroundComponent: toastComponent })` |
-| Theme/locale in components | `ModalProvider context={...}` + `WrapperComponentProps.context` |
+| 간단한 알림 | `await alert({ title, content })` |
+| 예/아니요 결정 | `const ok = await confirm(...)` |
+| 사용자 텍스트 입력 | `const val = await prompt<T>({ Input, defaultValue })` |
+| 타입이 지정된 입력 검증 | `prompt({ disabled: v => condition })` |
+| 사용자 정의 외관 | `ModalProvider` 슬롯 또는 호출별 `ForegroundComponent` |
+| 배경 데이터 | `alert({ background: { data: myData } })` |
+| 순차 작업 흐름 | `await confirm(...)` 다음 `await prompt(...)` 다음 `await alert(...)` |
+| 언마운트 시 자동 닫기 | `const modal = useModal(); await modal.confirm(...)` |
+| 사용자 정의 DOM 대상 | `ModalProviderHandle.initialize(element)` |
+| 토스트 | `alert({ footer: false, dimmed: false, ForegroundComponent: toastComponent })` |
+| 컴포넌트의 테마/로케일 | `ModalProvider context={...}` + `WrapperComponentProps.context` |
 
-### Important constraints for code generation
+### 코드 생성 시 주요 제약 사항 {#important-constraints-for-code-generation}
 
-1. `ModalProvider` must exist in the React tree before any `alert`/`confirm`/`prompt` call renders.
-2. `prompt` requires the `Input` prop — it is not optional.
-3. Custom `ForegroundComponent` must forward `children` (it wraps title, content, footer slots).
-4. `BackgroundComponent` does NOT receive `children` — it is a sibling layer, not a wrapper.
-5. `manualDestroy: true` requires calling `onDestroy()` explicitly; otherwise the modal DOM node leaks.
-6. `useDestroyAfter` and `useModalAnimation` must be called inside a `ForegroundComponent` rendered by the modal system (they read modal context internally).
-7. `footer: false` hides the footer entirely — no confirm/cancel buttons.
-8. `disabled` in `prompt` controls the confirm button state; it does not prevent the modal from being closed via backdrop or cancel.
+1. `alert`/`confirm`/`prompt` 호출이 렌더링되기 전에 React 트리에 `ModalProvider`가 있어야 합니다.
+2. `prompt`에는 `Input` 속성이 필수입니다. 선택 사항이 아닙니다.
+3. 사용자 정의 `ForegroundComponent`는 `children`을 전달해야 합니다 (`title`, `content`, `footer` 슬롯을 감쌉니다).
+4. `BackgroundComponent`는 `children`을 받지 않습니다. 래퍼가 아닌 형제 레이어입니다.
+5. `manualDestroy: true`를 사용하면 `onDestroy()`를 명시적으로 호출해야 합니다. 그렇지 않으면 모달 DOM 노드가 누수됩니다.
+6. `useDestroyAfter`와 `useModalAnimation`은 모달 시스템이 렌더링한 `ForegroundComponent` 내부에서 호출해야 합니다 (내부적으로 모달 컨텍스트를 읽습니다).
+7. `footer: false`는 푸터 전체를 숨기므로 확인/취소 버튼이 없습니다.
+8. `prompt`의 `disabled`는 확인 버튼 상태를 제어합니다. 백드롭이나 취소를 통한 모달 닫기를 막지는 않습니다.
 
 </ForAI>

@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import type {
-  ConsumerPackage,
-  DefaultFlags,
-} from '../../types/index.js';
+import type { Fn } from '@aileron/declare';
+
 import type { AgentType, AssetKind, Scope } from '../../core/index.js';
+import type { ConsumerPackage, DefaultFlags } from '../../types/index.js';
 import type { InjectEvent, TargetPlan, Warning } from '../types/index.js';
 import { applyAllPlans } from './useApplyStep.js';
 import { requestForceConfirm } from './useForceConfirmStep.js';
@@ -17,7 +16,7 @@ interface UseInjectSessionOptions {
   readonly targets: readonly ConsumerPackage[];
   readonly flags: DefaultFlags;
   readonly originCwd: string;
-  readonly dispatch: (event: InjectEvent) => void;
+  readonly dispatch: Fn<[event: InjectEvent]>;
 }
 
 export function useInjectSession({

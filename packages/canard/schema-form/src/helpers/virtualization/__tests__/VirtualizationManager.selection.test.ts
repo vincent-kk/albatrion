@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { SchemaNode } from '@/schema-form/core';
-import { VirtualizationManager } from '@/schema-form/helpers/virtualization';
+import type { FieldNode } from '@/schema-form/core';
+import { VirtualizationManager } from '@/schema-form/helpers/virtualization/VirtualizationManager';
 
 /**
  * Selection API of VirtualizationManager: the static `create` factory and the
@@ -24,9 +24,18 @@ describe('VirtualizationManager selection API', () => {
     vi.unstubAllGlobals();
   });
 
-  it('create returns null when virtualization is disabled', () => {
-    expect(VirtualizationManager.create(undefined)).toBeNull();
-    expect(VirtualizationManager.create(false)).toBeNull();
+  it('keeps a disabled manager and its reveal ledger when observation is supported', () => {
+    for (const input of [undefined, false]) {
+      const manager = VirtualizationManager.create(input);
+      expect(manager).toBeInstanceOf(VirtualizationManager);
+      expect(manager!.enabled).toBe(false);
+      expect(manager!.forBranch(100)).toBeNull();
+      const node = {} as FieldNode;
+      manager!.markRevealed(node);
+      manager!.updateOptions({ threshold: 1, eagerCount: 0 });
+      expect(manager!.enabled).toBe(true);
+      expect(manager!.forChild(0, node)).toBeNull();
+    }
   });
 
   it('create returns null when IntersectionObserver is unavailable', () => {
@@ -40,7 +49,7 @@ describe('VirtualizationManager selection API', () => {
     expect(manager).toBeInstanceOf(VirtualizationManager);
     expect(manager?.forBranch(29)).toBeNull();
     expect(manager?.forBranch(30)).toBe(manager);
-    const node = {} as unknown as SchemaNode;
+    const node = {} as unknown as FieldNode;
     expect(manager?.forChild(19, node)).toBeNull();
     expect(manager?.forChild(20, node)).toBe(manager);
     expect(manager?.estimateHeight(node)).toBe(40);
@@ -59,7 +68,7 @@ describe('VirtualizationManager selection API', () => {
   it('create merges partial options over the defaults', () => {
     const manager = VirtualizationManager.create({ threshold: 5 });
     expect(manager?.forBranch(5)).toBe(manager);
-    const node = {} as unknown as SchemaNode;
+    const node = {} as unknown as FieldNode;
     expect(manager?.forChild(20, node)).toBe(manager);
     expect(manager?.forChild(19, node)).toBeNull();
   });
@@ -69,7 +78,7 @@ describe('VirtualizationManager selection API', () => {
       threshold: 1,
       eagerCount: 0,
     });
-    const node = {} as unknown as SchemaNode;
+    const node = {} as unknown as FieldNode;
     expect(manager?.forChild(0, node)).toBe(manager);
     manager?.markRevealed(node);
     expect(manager?.forChild(0, node)).toBeNull();
@@ -79,8 +88,8 @@ describe('VirtualizationManager selection API', () => {
     const manager = VirtualizationManager.create({
       estimateHeight: (node) => (node.path === '/tall' ? 120 : 32),
     });
-    const tall = { path: '/tall' } as unknown as SchemaNode;
-    const short = { path: '/short' } as unknown as SchemaNode;
+    const tall = { path: '/tall' } as unknown as FieldNode;
+    const short = { path: '/short' } as unknown as FieldNode;
     expect(manager?.estimateHeight(tall)).toBe(120);
     expect(manager?.estimateHeight(short)).toBe(32);
   });

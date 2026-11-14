@@ -5,36 +5,22 @@ sidebar_position: 12
 
 import LazyDemo from '@site/src/components/LazyDemo';
 
-# Array Output Filters (omitTrailing / omitEmpty)
+# Array Output Filters
 
-`options.omitTrailing` lets an array offer empty rows up front while keeping them out of the value the form emits. Only **trailing** `undefined` items are dropped — leading and middle holes stay in place, so error `dataPath`s and validation indexes keep pointing at the row the user sees.
+Compare three string arrays with minItems: 3 and different output options. See [option semantics](../schema-reference#authoring-groups) and [array data versus UI](../core-concepts#arrays) for the contract.
 
-:::info Key Features
+## Live example {#live-demo}
 
-- `omitTrailing: true` — opt-in; trims trailing `undefined` from the emitted value only
-- `omitEmpty` — on by default; an empty array disappears from its parent value
-- Filter order — `omitTrailing` runs first, `omitEmpty` second
-- Two channels — `node.value` (raw, what renders) vs `node.normalizedValue` (refined, what is emitted)
-  :::
+<LazyDemo load={() => import('@site/src/components/demos/examples/ArrayOutputFiltersDemo')} />
 
-The demo below renders three arrays that share one shape (`minItems: 3`, string items) and differ only in their `options`. Each starts with three empty rows; the table under the form shows both channels side by side, so you can watch the rendered row count and the emitted value diverge.
+## Read the output panel {#reading-output}
 
-| Path       | `options`                                  | Emitted at first paint        |
-| ---------- | ------------------------------------------ | ----------------------------- |
-| `/tags`    | `{ omitTrailing: true }`                   | key absent (`[]` → omitEmpty) |
-| `/notes`   | none                                       | `[null, null, null]`          |
-| `/aliases` | `{ omitTrailing: true, omitEmpty: false }` | `[]`                          |
+After adding three rows and leaving them empty, the JSON display shows:
 
-:::caution minItems and validation
-Validation reads the **normalized** value. Pairing `minItems: 3` with `omitTrailing: true` means an array holding one filled row is validated as length 1, not 3. Use `minItems` to decide how many rows to offer only when the emitted contract also wants that many; otherwise leave it off and let users add rows.
-:::
+| Path | Options | JSON display |
+| --- | --- | --- |
+| /tags | omitTrailing: true | Key absent |
+| /notes | defaults | [null, null, null] |
+| /aliases | omitTrailing: true, omitEmpty: false | [] |
 
-:::tip Custom array inputs
-Count rows from `node.children`, never from `value.length` — the filtered value is shorter than the rendered row count by design.
-:::
-
-<LazyDemo
-  load={() =>
-    import('@site/src/components/demos/examples/ArrayOutputFiltersDemo')
-  }
-/>
+JSON.stringify displays undefined array slots as null; these are not explicit null writes. Validation reads emitted output, so one filled row with trailing empty rows omitted is checked as length one. Read row counts and output using the [node value and children contract](../api-reference#nodes).

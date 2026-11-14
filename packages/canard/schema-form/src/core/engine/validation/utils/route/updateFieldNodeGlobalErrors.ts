@@ -1,0 +1,21 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
+import type { FieldNodeRecord } from '../../../record';
+
+/**
+ * Store the form list after either root external or routed validator issues change.
+ * @param root - Live form root owning both error channels.
+ * @returns Nothing; getters read the stored external-first list without allocation.
+ */
+export const updateFieldNodeGlobalErrors = <Self extends FieldNodeRecord<Self>>(
+  root: Self,
+): void => {
+  const runtime = root.runtime;
+  const external = runtime.nodeErrors?.get(root);
+  const validation = runtime.routedValidationErrors;
+  runtime.globalErrors = external?.length
+    ? validation?.length
+      ? [...external, ...validation]
+      : external
+    : (validation ?? EMPTY_ARRAY);
+};

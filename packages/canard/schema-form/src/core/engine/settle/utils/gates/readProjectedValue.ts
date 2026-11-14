@@ -1,0 +1,106 @@
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+
+import type { FieldNodeRecord } from '../../../record';
+import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
+import type { SettlementContext } from '../../types/settlement';
+import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
+import { flushPendingOutput } from '../output/flushPendingOutput';
+import { getGateRegistry } from './getGateRegistry';
+
+/**
+ * Read a publication only after its changed source has been calculated.
+ * @param node - Record whose emission is requested
+ * @param context - Source changes and calculated records for this settlement
+ * @returns Published emission, or undefined while its changed source is pending
+ */
+const projectedEmission = <Self extends FieldNodeRecord<Self>>(
+  node: Self,
+  context: SettlementContext<Self>,
+): unknown =>
+  node.emit === undefined ||
+  (context.changedSource.has(node.path) && !context.changedNodes.has(node))
+    ? undefined
+    : node.emit;
+
+/**
+ * Read a path only from the current projected value and undeclared extras.
+ * @param context - Root and changed paths in the current settlement
+ * @param path - Absolute JSON Pointer of the requested value
+ * @returns Latest projected value, or undefined when projection omits the path
+ */
+export const readProjectedValue = <Self extends FieldNodeRecord<Self>>(
+  context: SettlementContext<Self>,
+  path: string,
+): unknown => {
+  let node: Self = context.root;
+  if (!path) flushPendingOutput(node, context);
+  let value = projectedEmission(node, context);
+  if (!path) return value;
+  let atNode = true;
+  const segments = node.runtime.blueprint.capabilities.branchless
+    ? getCachedPointerSegments(node.runtime, path)
+    : getGateRegistry(node.runtime).pathSegments(path);
+  for (let index = 0; index < segments.length; index++) {
+    const name = segments[index];
+    if (typeof name !== 'string') return undefined;
+    if (!atNode) {
+      if (value === null || typeof value !== 'object' || !hasOwnProperty(value, name))
+        return undefined;
+      value = Reflect.get(value, name);
+      continue;
+    }
+    if (
+      node.behavior.strategy === 'branch' &&
+      node.source !== undefined &&
+      flushPendingOutput(node, context)
+    )
+      value = projectedEmission(node, context);
+    if (
+      node.behavior.strategy === 'branch' &&
+      node.source !== undefined &&
+      (node.parent !== null ||
+        value === null ||
+        typeof value !== 'object' ||
+        !hasOwnProperty(value, name))
+    )
+      return undefined;
+    const structure = node.structure;
+    const child = structure
+      ? node.behavior.type !== 'array' &&
+        Object.getPrototypeOf(structure) === null
+        ? structure[name]
+        : hasOwnProperty(structure, name)
+          ? structure[name]
+          : undefined
+      : undefined;
+    if (child) {
+      node = child;
+      atNode = true;
+      value = projectedEmission(node, context);
+    } else {
+      if (flushPendingOutput(node, context))
+        value = projectedEmission(node, context);
+      atNode = false;
+      if (
+        value !== null &&
+        typeof value === 'object' &&
+        hasOwnProperty(value, name)
+      )
+        value = Reflect.get(value, name);
+      else {
+        const declared = getDeclaredChildNames(node.blueprintNode);
+        if (
+          !declared.has(name) &&
+          node.extras !== null &&
+          typeof node.extras === 'object' &&
+          hasOwnProperty(node.extras, name)
+        )
+          value = Reflect.get(node.extras, name);
+        else return undefined;
+      }
+    }
+  }
+  if (atNode && flushPendingOutput(node, context))
+    value = projectedEmission(node, context);
+  return value;
+};

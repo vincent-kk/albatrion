@@ -104,7 +104,7 @@ export const applySinglePatch = (
   strict: boolean,
   cloned: WeakSet<object> | null,
 ): any => {
-  // 루트 패치 처리
+
   if (patch.path === '' || patch.path === JSONPointer.Fragment)
     return handleRootPatch(source, patch, patchIndex, strict);
 
@@ -196,7 +196,7 @@ export const applySinglePatch = (
     }
     current = next;
 
-    // 경로가 더 남았는데 현재 값이 객체가 아닌 경우
+
     if (!current || typeof current !== 'object') {
       throw new JSONPatchError(
         'PATCH_PATH_INVALID_INTERMEDIATE',

@@ -12,13 +12,13 @@ The heading is `## Agent Docs Injector`, not `## Claude Docs Injector`. Match it
 
 ## Template
 
-Prose is Korean in every deployed consumer. If the target's `CLAUDE.md` is written in English, translate the prose only — headings, commands and the guardrail structure stay as they are.
+The template prose is English. Copy it as written — headings, commands, and the guardrail structure stay as they are.
 
 ````markdown
 ## Agent Docs Injector
 
-`docs/agents/**` 자산을 선택한 에이전트 위치에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
-`--agent` 로 대상 에이전트를 고른다 — `claude` 는 `.claude/{skills,rules,commands}`, `codex`/`agents` 는 `.agents/skills` + `AGENTS.md` 마커 블록(project scope 기준).
+Inject `docs/agents/**` assets into the selected agent location. Engine: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
+`--agent` selects the target agent — `claude` uses `.claude/{skills,rules,commands}`; `codex`/`agents` uses `.agents/skills` plus the `AGENTS.md` marker block (project scope).
 
 ```bash
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
@@ -29,8 +29,8 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 
 ### Isolation Guardrails
 
-- `src/**` 는 `docs/**` 와 `@slats/agents-assets-sync` 어느 것도 import 금지.
-- **절대 `exports` 에 `./docs/*` 를 추가하지 말 것.**
+- `src/**` must not import either `docs/**` or `@slats/agents-assets-sync`.
+- **Never add `./docs/*` to `exports`.**
 ````
 
 ---

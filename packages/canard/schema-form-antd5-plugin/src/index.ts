@@ -1,15 +1,13 @@
 import type { SchemaFormPlugin } from '@canard/schema-form';
 
-import { FormError } from './components/FormError';
-import { FormGroup } from './components/FormGroup';
-import { FormInput } from './components/FormInput';
-import { FormLabel } from './components/FormLabel';
-import { formTypeInputDefinitions } from './formTypeInputs';
+import { ErrorMessageRenderer } from './components/ErrorMessageRenderer';
+import { FieldRenderer } from './components/FieldRenderer';
+import { LabelRenderer } from './components/LabelRenderer';
+import { fieldInputDefinitions } from './fieldInputs';
 
 export const plugin = {
-  FormGroup,
-  FormLabel,
-  FormInput,
-  FormError,
-  formTypeInputDefinitions,
+  FieldRenderer,
+  LabelRenderer,
+  ErrorMessageRenderer,
+  fieldInputDefinitions,
 } satisfies SchemaFormPlugin;

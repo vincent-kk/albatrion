@@ -41,10 +41,11 @@ type ExtractPrimaryType<T> = T extends readonly (infer U)[]
  *
  * Two spellings, checked in this order:
  * 1. `type` array containing `'null'` — the JSON Schema form
- * 2. `nullable: true` — deprecated, still honored at runtime
+ * 2. `nullable: true` — officially supported OpenAPI 3.0 compatible notation
  *
- * The array is checked first so a schema carrying both never adds NullValue
- * twice, and a contradictory `nullable: false` alongside `['T','null']` still
+ * The two notations are equivalent. The array is checked first so a schema
+ * carrying both never adds NullValue twice, and a contradictory `nullable: false`
+ * alongside `['T','null']` still
  * resolves as nullable — matching the runtime, which reads the array first.
  */
 type IsNullableSchema<T, Type> =
@@ -60,12 +61,30 @@ type InferPropertyValue<T> = T extends { type?: any }
   : AnyValue;
 
 /**
- * Infers an array schema's value type from `items`.
+ * Infers homogeneous items or the rest after a finite prefix.
  * Falls back to ArrayValue when `items` is absent.
  */
-type InferArrayValue<T> = T extends { items: infer Items }
+type InferArrayItems<T> = T extends { items: infer Items }
   ? InferPropertyValue<Items>[]
   : ArrayValue;
+
+/** Infers mutable optional positions because prefixItems sets no minimum length. */
+type InferPrefixItems<PrefixItems extends readonly unknown[]> = {
+  -readonly [Index in keyof PrefixItems]?: InferPropertyValue<
+    PrefixItems[Index]
+  >;
+};
+
+/** Infers finite prefix tuples and preserves items inference for widened arrays. */
+type InferArrayValue<T> = T extends {
+  prefixItems: infer PrefixItems extends readonly unknown[];
+}
+  ? number extends PrefixItems['length']
+    ? InferArrayItems<T>
+    : T extends { items: false }
+      ? InferPrefixItems<PrefixItems>
+      : [...InferPrefixItems<PrefixItems>, ...InferArrayItems<T>]
+  : InferArrayItems<T>;
 
 /**
  * Helper type to shape a schema's declared `properties`.
@@ -124,16 +143,16 @@ type InferNonNullableValueType<T, Type> = Type extends 'string'
  * Infers the value type from a JSON Schema type definition.
  * - For single types (e.g., 'string'), returns the corresponding value type
  * - For nullable types (e.g., ['string', 'null']), returns the value type | null
- * - For the deprecated `nullable: true` keyword, also returns the value type | null
+ * - For the officially supported OpenAPI 3.0 `nullable: true`, also returns the value type | null
  * - For single-member arrays (e.g., ['string']), unwraps to the member's value type
  * - For pure null type, returns NullValue
- * - For 'object'/'array', recurses into `properties`/`items` when they are literal
+ * - For 'object'/'array', recurses into literal `properties`/`prefixItems`/`items`
  *   (i.e. the schema is `as const`); otherwise falls back to ObjectValue/ArrayValue
  *
- * `nullable: true` is superseded by the type array but still honored here because
- * consumers interpret it at runtime (@canard/schema-form accepts null for a
- * nullable node). Inferring a type that rejects null would make a schema the
- * runtime accepts fail to type-check. The type array is checked first, so a schema
+ * `nullable: true` is the officially supported OpenAPI 3.0 compatible notation,
+ * equivalent to adding 'null' to the type array. Consumers interpret both at
+ * runtime (@canard/schema-form accepts null for a nullable node), so inference
+ * follows the same contract. The type array is checked first, so a schema
  * carrying both never gets NullValue added twice.
  *
  * Known limit: `nullable` must be the literal `true` at the type level. A schema

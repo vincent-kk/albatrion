@@ -1,6 +1,6 @@
 {
   "name": "@winglet/json-schema",
-  "version": "0.16.0",
+  "version": "0.16.1",
   "description": "Powerful utility library for JSON Schema manipulation featuring schema traversal, validation, reference resolution, and filtering with TypeScript support and visitor pattern implementation",
   "keywords": [
     "typescript",
@@ -47,6 +47,12 @@
       "source": "./src/filters/index.ts",
       "import": "./dist/filters/index.mjs",
       "require": "./dist/filters/index.cjs"
+    },
+    "./keyword": {
+      "types": "./dist/keyword/index.d.ts",
+      "source": "./src/keyword/index.ts",
+      "import": "./dist/keyword/index.mjs",
+      "require": "./dist/keyword/index.cjs"
     }
   },
   "main": "dist/index.cjs",
@@ -78,6 +84,7 @@
   },
   "devDependencies": {
     "@slats/agents-assets-sync": "workspace:^",
+    "ajv": "^8.17.1",
     "eslint": "8.57.1",
     "rolldown": "^1.2.0",
     "tsc-alias": "^1.8.16",

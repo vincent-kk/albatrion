@@ -1,36 +1,25 @@
-# schema-form/src/core
+# core — 엔진과 표면의 조합
 
 ## Purpose
 
-JSON Schema를 노드 트리로 변환하고 폼 상태를 관리하는 핵심 엔진. `nodeFromJSONSchema()` 팩토리로 스키마를 파싱하여 타입별 노드(StringNode, NumberNode, ObjectNode 등) 트리를 생성한다.
+호스트 바인딩을 위해 렌더러와 독립적인 실행 엔진과 노드 표면을 조합합니다.
 
 ## Conventions
 
-- 클래스는 Domain-First 멤버 순서: Identity → Tree → Value → Computed → State → Validation → Events → Injection → Lifecycle → Constructor
-- 내부 필드/메서드는 `__name__` 이중 언더스코어
-- 이벤트는 `EventCascade` 를 통해 마이크로태스크 배칭
-- `UpdateValue` 는 즉시(synchronous) 발행, 나머지는 배칭
-- 노드 타입 가드: `isStringNode`, `isArrayNode`, `isObjectNode` 등
+재수출 이름을 명시합니다. 런타임 구현은 소유 모듈에 두고 표현 값은 불투명하게 유지합니다.
 
 ## Boundaries
 
 ### Always do
 
-- 새 노드 타입 추가 시 `AbstractNode` 상속 및 `nodes/index.ts` export 포함
-- 노드 값 변경은 반드시 `setValue()` 공개 API 사용
-- 파서 함수는 순수 함수로 유지 (사이드 이펙트 없음)
-- 노드 상태 변경 시 관련 이벤트 발행
+- 코어 호스트와 React 바인딩에 같은 트리 생성·마운트 채널을 유지합니다.
+- 바인딩 전용 설정·검증 epoch·수명 채널은 패키지 표면에 노출하지 않습니다.
 
 ### Ask first
 
-- `EventCascade` 배칭 메커니즘 변경 (이벤트 타이밍 회귀 위험)
-- `SetValueOption` 비트 플래그 추가 또는 변경
-- `AbstractNode` 에 새 공개 메서드 추가 (모든 노드 타입에 영향)
-- `BranchStrategy` / `TerminalStrategy` 분기 조건 수정
+- 호스트 경계·공개 노드 계약·옵션 비트·사건 시점을 바꿀 때.
 
 ### Never do
 
-- 노드의 `__value__` 등 private 필드에 외부에서 직접 접근
-- `__tests__/` 파일을 수정하지 않고 명세 동작 변경
-- 파서 함수에 JSON Schema 검증 로직 추가 (파서는 값 변환만 담당)
-- 노드 트리를 순환 참조 구조로 구성
+- React나 애플리케이션 플러그인 레지스트리를 가져오거나 인라인 표현 값을 직렬화하거나 호출자 소유 스키마를 변경하지 않습니다.
+- 렌더러의 스키마 어휘를 공급하기 위한 전역 타입 보강을 도입하지 않습니다.

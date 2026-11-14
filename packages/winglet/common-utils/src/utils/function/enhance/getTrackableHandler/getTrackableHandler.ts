@@ -380,7 +380,7 @@ export function getTrackableHandler<
    * @internal
    */
   const update = (
-    updater: Partial<State> | ((prev: State) => Partial<State>),
+    updater: Partial<State> | Fn<[prev: State], Partial<State>>,
   ) => {
     const update = typeof updater === 'function' ? updater(state) : updater;
     state = { ...state, ...update };

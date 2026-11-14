@@ -1,10 +1,9 @@
+import type { JSONSchema } from '@canard/schema-form';
 import Ajv from 'ajv';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createValidatorFactory } from '../createValidatorFactory';
 import { ajvValidatorPlugin } from '../validatorPlugin';
-
-// 테스트에서 사용할 스키마들은 as any로 타입 체크 우회
 
 describe('createValidatorFactory', () => {
   let ajv: Ajv;
@@ -22,7 +21,7 @@ describe('createValidatorFactory', () => {
         age: { type: 'number' },
       },
       required: ['name'],
-    } as any;
+    } as unknown as JSONSchema;
 
     const validator = factory(schema);
     const result = await validator({ name: 'John', age: 30 });
@@ -39,7 +38,7 @@ describe('createValidatorFactory', () => {
         age: { type: 'number' },
       },
       required: ['name'],
-    } as any;
+    } as unknown as JSONSchema;
 
     const validator = factory(schema);
     const result = await validator({ age: 30 }); // missing required 'name'
@@ -60,7 +59,7 @@ describe('createValidatorFactory', () => {
         name: { type: 'string' },
         age: { type: 'number' },
       },
-    } as any;
+    } as unknown as JSONSchema;
 
     const validator = factory(schema);
     const result = await validator({ name: 'John', age: 'not-a-number' });
@@ -92,7 +91,7 @@ describe('createValidatorFactory', () => {
         },
       },
       required: ['user'],
-    } as any;
+    } as unknown as JSONSchema;
 
     const validator = factory(schema);
     const result = await validator({ user: { profile: {} } }); // missing name
@@ -120,7 +119,7 @@ describe('createValidatorFactory', () => {
           },
         },
       },
-    } as any;
+    } as unknown as JSONSchema;
 
     const validator = factory(schema);
     const result = await validator({ items: [{}] }); // missing id
@@ -142,7 +141,7 @@ describe('createValidatorFactory', () => {
         email: { type: 'string' },
       },
       required: ['name', 'email'],
-    } as any;
+    } as unknown as JSONSchema;
 
     const validator = factory(schema);
     const result = await validator({ age: -5 }); // missing name, email + invalid age
@@ -155,22 +154,20 @@ describe('createValidatorFactory', () => {
     expect(errorKeywords).toContain('minimum');
   });
 
-  it('should set $async: true on compiled schema', async () => {
+  it('should compile the authored schema without changing it', async () => {
     const compileSpy = vi.spyOn(ajv, 'compile');
     const factory = createValidatorFactory(ajv);
-    const schema = { type: 'string' } as any;
+    const schema = { type: 'string' } as unknown as JSONSchema;
 
     factory(schema);
 
-    expect(compileSpy).toHaveBeenCalledWith({
-      ...schema,
-      $async: true,
-    });
+    expect(compileSpy).toHaveBeenCalledWith(schema);
+    expect(schema).toEqual({ type: 'string' });
   });
 
   it('should throw non-validation errors', async () => {
     const factory = createValidatorFactory(ajv);
-    const schema = { type: 'string' } as any;
+    const schema = { type: 'string' } as unknown as JSONSchema;
 
     // ajv.compile이 throw하는 에러를 시뮬레이션
     const mockCompile = vi.spyOn(ajv, 'compile').mockImplementation(() => {
@@ -186,7 +183,7 @@ describe('createValidatorFactory', () => {
 describe('ajvValidatorPlugin', () => {
   beforeEach(() => {
     // 각 테스트 전에 ajvInstance를 리셋
-    ajvValidatorPlugin.bind!(null as any);
+    ajvValidatorPlugin.bind!(new Ajv({ allErrors: true, strict: false }));
   });
 
   it('should bind ajv instance correctly', () => {
@@ -195,14 +192,14 @@ describe('ajvValidatorPlugin', () => {
     ajvValidatorPlugin.bind!(ajv);
 
     // bind 함수가 인스턴스를 저장하는지 확인 (compile에서 사용됨을 통해 간접 확인)
-    const schema = { type: 'string' } as any;
+    const schema = { type: 'string' } as unknown as JSONSchema;
     const validator = ajvValidatorPlugin.compile(schema);
 
     expect(typeof validator).toBe('function');
   });
 
   it('should create default ajv instance when none is bound', () => {
-    const schema = { type: 'string' } as any;
+    const schema = { type: 'string' } as unknown as JSONSchema;
 
     const validator = ajvValidatorPlugin.compile(schema);
 
@@ -216,7 +213,7 @@ describe('ajvValidatorPlugin', () => {
         name: { type: 'string' },
       },
       required: ['name'],
-    } as any;
+    } as unknown as JSONSchema;
 
     const validator = ajvValidatorPlugin.compile(schema);
 
@@ -250,7 +247,7 @@ describe('ajvValidatorPlugin', () => {
         age: { type: 'number' },
       },
       required: ['name', 'age'],
-    } as any;
+    } as unknown as JSONSchema;
 
     const validator = ajvValidatorPlugin.compile(schema);
     const result = await validator({}); // 두 개 필드 모두 누락
@@ -288,7 +285,7 @@ describe('ajvValidatorPlugin', () => {
         },
       },
       required: ['user'],
-    } as any;
+    } as unknown as JSONSchema;
 
     const validator = ajvValidatorPlugin.compile(schema);
 
@@ -334,7 +331,7 @@ describe('ajvValidatorPlugin', () => {
           },
         },
       },
-    } as any;
+    } as unknown as JSONSchema;
 
     const validator = ajvValidatorPlugin.compile(schema);
     const result = await validator({

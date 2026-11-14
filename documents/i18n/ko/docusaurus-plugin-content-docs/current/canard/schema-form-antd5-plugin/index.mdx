@@ -10,13 +10,13 @@ import LazyDemo from '@site/src/components/LazyDemo';
 
 <PackageHeader name="@canard/schema-form-antd5-plugin" />
 
-`@canard/schema-form`를 위한 Ant Design v5 UI 플러그인입니다.
+`@canard/schema-form`을 위한 Ant Design v5 UI 플러그인입니다.
 `antd ^5.10.0` 기반의 18개 폼 입력 컴포넌트를 제공하며,
 문자열, 숫자, 불리언, 날짜, 범위, 선택 컨트롤을 모두 포함합니다.
 
 ## 컴포넌트 카탈로그
 
-### Preview
+### 미리보기 {#preview}
 
 <LazyDemo load={() => import('@site/src/components/demos/showcase/Antd5QuickDemo')} />
 
@@ -24,19 +24,19 @@ import LazyDemo from '@site/src/components/LazyDemo';
 18개 컴포넌트 전체를 [컴포넌트 카탈로그](./demos) 페이지에서 확인하세요.
 :::
 
-## Installation
+## 설치 {#installation}
 
 ```bash
 yarn add @canard/schema-form-antd5-plugin
 ```
 
-### Peer Dependencies
+### 피어 의존성 {#peer-dependencies}
 
 ```bash
 yarn add antd@>=5.10.0 dayjs@>=1 react@>=18 react-dom@>=18
 ```
 
-## Quick Setup
+## 빠른 설정 {#quick-setup}
 
 ```ts
 import { registerPlugin } from '@canard/schema-form';
@@ -45,37 +45,37 @@ import { plugin } from '@canard/schema-form-antd5-plugin';
 registerPlugin(plugin);
 ```
 
-## Component Mapping
+## 컴포넌트 매핑 {#component-mapping}
 
-Components are selected automatically based on JSON Schema properties. Priority order matches the list below (top = highest priority).
+컴포넌트는 JSON Schema 속성에 따라 자동으로 선택됩니다. 우선순위는 아래 목록 순서와 같으며, 맨 위가 가장 높습니다.
 
-| Component | type | format | formType | enum | Notes |
+| 컴포넌트 | type | format | inputType | enum | 참고 사항 |
 |---|---|---|---|---|---|
-| `FormTypeInputBooleanSwitch` | `boolean` | — | `"switch"` | — | Switch toggle |
-| `FormTypeInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | Checkbox group; items must be string schema |
-| `FormTypeInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
-| `FormTypeInputUri` | `string` | `"uri"` or formType `"uri"` | — | — | URI input with protocol selector |
-| `FormTypeInputMonth` | `string` | `"month"` | — | — | Month picker |
-| `FormTypeInputDate` | `string` | `"date"` | — | — | Date picker |
-| `FormTypeInputTime` | `string` | `"time"` | — | — | Time picker |
-| `FormTypeInputMonthRange` | `array` | `"month-range"` or formType `"monthRange"` | — | — | Month range picker; items must be string schema |
-| `FormTypeInputDateRange` | `array` | `"date-range"` or formType `"dateRange"` | — | — | Date range picker; items must be string schema |
-| `FormTypeInputTimeRange` | `array` | `"time-range"` or formType `"timeRange"` | — | — | Time range picker; items must be string schema |
-| `FormTypeInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | Radio button group |
-| `FormTypeInputStringEnum` | `string` | — | — | required | Select dropdown; also handles string-item arrays with enum |
-| `FormTypeInputArray` | `array` | — | — | — | Dynamic list with add/remove |
-| `FormTypeInputSlider` | `number` \| `integer` | — | `"slider"` | — | Slider input |
-| `FormTypeInputTextarea` | `string` | `"textarea"` or formType `"textarea"` | — | — | Multi-line textarea |
-| `FormTypeInputString` | `string` | — | — | — | Default text input (password supported via `format: "password"`) |
-| `FormTypeInputNumber` | `number` \| `integer` | — | — | — | Numeric input |
-| `FormTypeInputBoolean` | `boolean` | — | — | — | Checkbox |
+| `FieldInputBooleanSwitch` | `boolean` | — | `"switch"` | — | 스위치 토글 |
+| `FieldInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | 체크박스 그룹이며, items는 문자열 스키마여야 합니다. |
+| `FieldInputStringSwitch` | `string` | — | `"switch"` | 값 2개 | 두 enum 값 사이를 전환합니다. |
+| `FieldInputUri` | `string` | `"uri"` 또는 inputType `"uri"` | — | — | 프로토콜 선택기가 있는 URI 입력 |
+| `FieldInputMonth` | `string` | `"month"` | — | — | 월 선택기 |
+| `FieldInputDate` | `string` | `"date"` | — | — | 날짜 선택기 |
+| `FieldInputTime` | `string` | `"time"` | — | — | 시간 선택기 |
+| `FieldInputMonthRange` | `array` | `"month-range"` 또는 inputType `"monthRange"` | — | — | 월 범위 선택기이며, items는 문자열 스키마여야 합니다. |
+| `FieldInputDateRange` | `array` | `"date-range"` 또는 inputType `"dateRange"` | — | — | 날짜 범위 선택기이며, items는 문자열 스키마여야 합니다. |
+| `FieldInputTimeRange` | `array` | `"time-range"` 또는 inputType `"timeRange"` | — | — | 시간 범위 선택기이며, items는 문자열 스키마여야 합니다. |
+| `FieldInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` 또는 `"radiogroup"` | 필수 | 라디오 버튼 그룹 |
+| `FieldInputStringEnum` | `string` | — | — | 필수 | 선택 드롭다운이며, enum이 있는 문자열 항목 배열도 처리합니다. |
+| `FieldInputArray` | `array` | — | — | — | 추가/제거가 가능한 동적 목록 |
+| `FieldInputSlider` | `number` \| `integer` | — | `"slider"` | — | 슬라이더 입력 |
+| `FieldInputTextarea` | `string` | `"textarea"` 또는 inputType `"textarea"` | — | — | 여러 줄 텍스트 영역 |
+| `FieldInputString` | `string` | — | — | — | 기본 텍스트 입력 (`format: "password"`로 비밀번호 지원) |
+| `FieldInputNumber` | `number` \| `integer` | — | — | — | 숫자 입력 |
+| `FieldInputBoolean` | `boolean` | — | — | — | 체크박스 |
 
-## Schema Extension Properties
+## 스키마 확장 속성 {#schema-extension-properties}
 
 ```ts
 // Custom schema properties recognized by this plugin
 {
-  formType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' |
+  inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' |
              'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange',
   // Standard JSON Schema properties also used for routing:
   format?: 'date' | 'time' | 'month' | 'password' | 'uri' |
@@ -83,7 +83,7 @@ Components are selected automatically based on JSON Schema properties. Priority 
 }
 ```
 
-## Usage Example
+## 사용 예제 {#usage-example}
 
 ```tsx
 import { Form } from '@canard/schema-form';
@@ -93,20 +93,20 @@ const schema = {
   properties: {
     name:      { type: 'string' },
     age:       { type: 'integer' },
-    active:    { type: 'boolean', formType: 'switch' },
+    active:    { type: 'boolean', presentation: { inputType: 'switch' } },
     role:      { type: 'string', enum: ['admin', 'user', 'guest'] },
     birthday:  { type: 'string', format: 'date' },
     bio:       { type: 'string', format: 'textarea' },
-    score:     { type: 'number', formType: 'slider', minimum: 0, maximum: 100 },
+    score:     { type: 'number', presentation: { inputType: 'slider' }, minimum: 0, maximum: 100 },
   },
 };
 
 <Form jsonSchema={schema} onChange={setValue} />
 ```
 
-## Context
+## 컨텍스트 {#context}
 
-The plugin reads `context` passed to `<Form context={...}>` for size configuration:
+플러그인은 크기 설정을 위해 `<Form context={...}>`에 전달된 `context`를 읽습니다:
 
 ```ts
 type AntdContext = {
@@ -116,43 +116,43 @@ type AntdContext = {
 
 <ForAI>
 
-## AI Reference
+## AI 참조 {#ai-reference}
 
-**Package**: `@canard/schema-form-antd5-plugin` v0.10.0
-**Purpose**: Ant Design v5 UI plugin — 18 form input components for `@canard/schema-form`.
+**패키지**: `@canard/schema-form-antd5-plugin` v0.10.0
+**목적**: Ant Design v5 UI 플러그인으로, `@canard/schema-form`을 위한 폼 입력 컴포넌트 18개를 제공합니다.
 
-### Exports
+### 내보내기 {#exports}
 ```ts
 import { plugin } from '@canard/schema-form-antd5-plugin';
 ```
 
-### Peer dependencies
+### 피어 의존성 {#peer-dependencies-1}
 `antd@>=5.10.0`, `dayjs@>=1`, `react@>=18`
 
-### Component mapping (priority order, high → low)
-| Component | Trigger |
+### 컴포넌트 매핑 (우선순위 높은 순) {#component-mapping-priority-order-high--low}
+| 컴포넌트 | 선택 조건 |
 |---|---|
-| BooleanSwitch | `boolean` + `formType: "switch"` |
-| StringCheckbox | `array` + `formType: "checkbox"` + items.enum |
-| StringSwitch | `string` + `formType: "switch"` + 2 enum values |
+| BooleanSwitch | `boolean` + `inputType: "switch"` |
+| StringCheckbox | `array` + `inputType: "checkbox"` + items.enum |
+| StringSwitch | `string` + `inputType: "switch"` + enum 값 2개 |
 | Uri | `string` + `format: "uri"` |
 | Month / Date / Time | `string` + `format: "month"/"date"/"time"` |
 | MonthRange / DateRange / TimeRange | `array` + `format: "*-range"` |
-| RadioGroup | `string\|number` + `formType: "radio"` + enum |
+| RadioGroup | `string\|number` + `inputType: "radio"` + enum |
 | StringEnum | `string` + enum |
-| Array | `array` (dynamic list) |
-| Slider | `number` + `formType: "slider"` |
+| Array | `array` (동적 목록) |
+| Slider | `number` + `inputType: "slider"` |
 | Textarea | `string` + `format: "textarea"` |
-| String | `string` (default) |
-| Number | `number\|integer` (default) |
-| Boolean | `boolean` (default checkbox) |
+| String | `string` (기본값) |
+| Number | `number\|integer` (기본값) |
+| Boolean | `boolean` (기본 체크박스) |
 
-### Context type
+### 컨텍스트 타입 {#context-type}
 ```ts
 type AntdContext = { size?: 'small' | 'middle' | 'large' };
 ```
 
-### Schema extensions
-`formType`: `'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange'`
+### 스키마 확장 {#schema-extensions}
+`inputType`: `'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange'`
 
 </ForAI>

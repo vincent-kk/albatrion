@@ -1,679 +1,437 @@
-# @winglet/json-schema — Specification
+# @winglet/json-schema — Behavior specification
 
-**Version:** 0.10.0 **License:** MIT
+[Quick start](../../README.md) · [한국어](../ko/SPECIFICATION.md)
 
----
+## Scope
 
-## Table of Contents
+Use the scanners for schema analysis and transformation. They do not evaluate data instances. Runtime guards inspect type labels; inferred TypeScript values are partial models, not proof of validation. Examples below are independent programs. The package ships ESM and CommonJS with ES2020 syntax. URI resolution requires the host’s URL implementation.
 
-1. [Overview](#overview)
-2. [Installation](#installation)
-3. [Quick Start](#quick-start)
-4. [Architecture — Visitor Pattern](#architecture--visitor-pattern)
-5. [JSONSchemaScanner API](#jsonschemaScanner-api)
-6. [JSONSchemaScannerAsync API](#jsonschemascannerasync-api)
-7. [Schema Filters](#schema-filters)
-8. [Type Definitions](#type-definitions)
-9. [resolveReference Utility](#resolvereference-utility)
-10. [Usage Patterns](#usage-patterns)
-11. [Compatibility](#compatibility)
+## Traversal and ownership
 
----
+A node runs `filter` → `mutate` → `enter` → reference processing → child discovery → `exit`. A false filter prunes the node and descendants without enter/exit. `maxDepth` is inclusive, with root at zero; processing at that boundary still runs. Child occurrence pointers are captured after the parent’s processing, before visiting its first child. Vocabulary order determines keyword order; maps use own-key enumeration order and lists use increasing indexes. Array containers themselves are not schema nodes. Boolean schemas are leaves and reach callbacks, including false.
 
-## Overview
+`path` is an escaped schema pointer rooted at `#`; `dataPath` starts empty and extends for properties and tuple positions. The same entry object reaches enter and exit, so keep a separate snapshot if you need its earlier contents. The engine fills `references` after enter; exit observes completed chain outcomes.
 
-`@winglet/json-schema` is a TypeScript library for JSON Schema manipulation. It provides:
+Scanning records transformations without writing to inputs, mutation returns or resolver targets. The first `getValue()` materializes the result and caches it, including false. With no operation it returns the input by identity. With operations, plain JSON containers are copied and repeated object occurrences receive separate copies. `getValue()` is synchronous in both scanners. A failed scan clears state; `getValue()` before a successful scan returns undefined. While a scan is running, the same instance’s `scan` and `getValue` throw `scan-in-progress`; use a different instance for independent work.
 
-- **Schema Traversal** — depth-first traversal of any JSON Schema tree with enter/exit callbacks
-- **$ref Resolution** — synchronous and asynchronous resolution of JSON Schema `$ref` pointers
-- **Schema Filtering** — runtime type guards for all JSON Schema types, including nullable variants
-- **Schema Transformation** — mutate schema nodes during traversal with automatic result assembly
-- **Circular Reference Detection** — stack-based cycle prevention for self-referential schemas
-
-The library is tree-shakeable via four sub-path exports and ships both ESM and CJS builds.
-
----
-
-## Installation
-
-```bash
-# yarn (recommended for this monorepo)
-yarn add @winglet/json-schema
-
-# npm
-npm install @winglet/json-schema
-```
-
-### Sub-path Imports
-
-```typescript
-// All exports
-import { JSONSchemaScanner, isObjectSchema, resolveReference } from '@winglet/json-schema';
-
-// Sync scanner only
-import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
-
-// Async scanner only
-import { JSONSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
-
-// Type guard functions only
-import { isObjectSchema, isStringSchema, isCompatibleSchemaType } from '@winglet/json-schema/filter';
-```
-
-Use sub-path imports to reduce bundle size when you only need part of the library.
-
----
-
-## Quick Start
-
-### Traverse a schema and collect field paths
+<!-- example: walk -->
 
 ```typescript
 import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
 
-const schema = {
-  type: 'object',
-  properties: {
-    name: { type: 'string', minLength: 1 },
-    age: { type: 'number', minimum: 0 },
-    address: {
-      type: 'object',
-      properties: {
-        city: { type: 'string' },
-        zip: { type: 'string' },
-      },
-    },
-  },
-  required: ['name'],
-};
-
-const fieldPaths: string[] = [];
-
-new JSONSchemaScanner({
+const paths: string[] = [];
+const schema = { properties: { name: { type: 'string' }, denied: false } };
+const scanner = new JSONSchemaScanner({
   visitor: {
-    enter: ({ keyword, dataPath }) => {
-      if (keyword === 'properties') fieldPaths.push(dataPath);
+    enter(entry) {
+      if (entry.keyword === 'properties') paths.push(entry.dataPath);
+      if (typeof entry.schema === 'boolean') return;
+      console.assert(typeof entry.schema === 'object');
     },
   },
-}).scan(schema);
-
-console.log(fieldPaths);
-// ['/name', '/age', '/address', '/address/city', '/address/zip']
+});
+console.assert(scanner.scan(schema).getValue() === schema);
+console.assert(paths.join(',') === '/name,/denied');
 ```
 
-### Check schema types at runtime
+## Transformations
+
+Return a replacement from `mutate`; do not write through `entry.schema`. Undefined alone means “keep this node”; false is a real replacement. Children are discovered from the replacement. Inert entries still reach callbacks, but their replacements are not recorded in output, so guard with `entry.inert` when you only intend semantic changes.
+
+Mutations cannot add, remove or change the current node’s `$id`, `id`, `$schema`, `$anchor`, `$dynamicAnchor` or `$recursiveAnchor`; this throws `identifier-mutation`. Identifiers introduced deeper in a replacement are not registered. The resolver indexes the document supplied at construction, so perform identifier restructuring before constructing it and keep supplied documents immutable while reusing a resolver.
+
+<!-- example: mutate -->
+
+```typescript
+import { JSONSchemaScanner } from '@winglet/json-schema';
+
+const schema = { properties: { name: { type: 'string' }, denied: false } };
+const output = new JSONSchemaScanner({
+  options: {
+    mutate(entry) {
+      if (entry.inert || typeof entry.schema === 'boolean') return;
+      if (entry.schema.type === 'string')
+        return { ...entry.schema, minLength: 1 };
+    },
+  },
+})
+  .scan(schema)
+  .getValue();
+if (!output || typeof output === 'boolean')
+  throw new Error('Expected an object root');
+console.assert(output.properties.name.minLength === 1);
+console.assert(!('minLength' in schema.properties.name));
+```
+
+## Built-in resolution
+
+`resolveReference(schema, options)` is the synchronous convenience form. Use a scanner and resolver factory when you need callbacks or scan options. The root is indexed at construction; `resources` are documents keyed by absolute retrieval URI and indexed on first lookup. `baseURI` supplies an address for an anonymous root. `$id` creates resource bases; draft-04 also uses `id`. `$anchor` declares static fragments in 2019-09 and 2020-12; draft-06/07 also accept fragment-only `$id` names and draft-04 uses `id`. Anchors and JSON Pointers resolve to canonical locations, so aliases share cycle identity. Pointer fragments are percent-decoded once, then tokens unescape `~1` and `~0`; only own properties are followed.
+
+Targets are prepared for their host resource, with reference strings rewritten when a safe move needs it. This preparation inspects the entire target independently of the public filter and maxDepth. Matching target/host templates are cached by the resolver, then each inline occurrence is copied to avoid output aliases. Definition containers remain addressable.
+
+<!-- example: inline -->
 
 ```typescript
 import {
-  isArraySchema,
-  isObjectSchema,
+  JSONSchemaScanner,
+  createReferenceResolver,
+} from '@winglet/json-schema';
+import type { ReferenceOutcome } from '@winglet/json-schema';
+
+const schema = {
+  $id: 'https://schemas.example/root.json',
+  properties: { name: { $ref: 'types.json#/$defs/Text' } },
+};
+const resolver = createReferenceResolver(schema, {
+  resources: {
+    'https://schemas.example/types.json': {
+      $defs: { Text: { type: 'string' } },
+    },
+  },
+});
+const outcomes: ReferenceOutcome[] = [];
+const scanner = new JSONSchemaScanner({
+  options: { resolveReference: resolver },
+  visitor: { exit: (entry) => outcomes.push(...(entry.references ?? [])) },
+});
+const output = scanner.scan(schema).getValue();
+if (!output || typeof output === 'boolean')
+  throw new Error('Expected an object root');
+console.assert(output.properties.name.type === 'string');
+console.assert(outcomes.some((outcome) => outcome.resolved));
+console.assert(schema.properties.name.$ref === 'types.json#/$defs/Text');
+```
+
+## Asynchronous document supply
+
+The package never fetches documents itself. The synchronous resolver only uses the root and registered resources. The asynchronous resolver calls your `load` only for an unavailable absolute document URI, without its fragment; registered resources take precedence. Supply undefined for a missing document. Pending requests and their completed/missing results are shared per URI by that resolver; loader errors propagate. Create a fresh resolver when the source set changes.
+
+Await `JSONSchemaScannerAsync.scan()` before using synchronous getValue. Its callbacks and resolver resolve operation are awaited sequentially; root/child/dialect remain synchronous. The synchronous scanner does not wait for callback return values; use the async scanner even when an async visitor is assignable to a void-returning callback. A custom resolver returning a Promise to the synchronous scanner is an invalid result. Fetching, retries, authentication and cancellation belong to the caller’s loader.
+
+<!-- example: load -->
+
+```typescript
+import {
+  JSONSchemaScannerAsync,
+  createReferenceResolverAsync,
+} from '@winglet/json-schema';
+import type { UnknownSchema } from '@winglet/json-schema';
+
+const schema = {
+  $id: 'https://schemas.example/root.json',
+  properties: { first: { $ref: 'deny.json' }, second: { $ref: 'deny.json' } },
+};
+const documents: Record<string, UnknownSchema | boolean> = {
+  'https://schemas.example/deny.json': false,
+};
+const requested: string[] = [];
+const resolver = createReferenceResolverAsync(schema, {
+  load: async (uri) => {
+    requested.push(uri);
+    return documents[uri];
+  },
+});
+const scanner = new JSONSchemaScannerAsync({
+  options: { resolveReference: resolver },
+});
+await scanner.scan(schema);
+const output = scanner.getValue();
+if (!output || typeof output === 'boolean')
+  throw new Error('Expected an object root');
+console.assert(
+  output.properties.first === false && output.properties.second === false,
+);
+console.assert(requested.join(',') === 'https://schemas.example/deny.json');
+```
+
+## Custom resolver protocol
+
+Use the published `ReferenceResolver` or `ReferenceResolverAsync` type. `root` establishes the lexical context; optional `child` enters an original lexical child. Return the same context object when unchanged; omitting child keeps the root context throughout. `dialect` reports the effective resource dialect.
+
+Resolve returns a tagged result, never a bare schema or undefined. A resolved result’s uri is canonical identity: aliases for one target must return the same uri so cycle tracking works. Its target must already mean the same thing at the host position. The engine does not re-enter that target’s identifier scope. A custom provider is responsible for relocation and dynamic-scope safety; use the built-in provider when you need those guarantees. In this example the canonical registry targets contain no identifiers or relative references.
+
+<!-- example: custom -->
+
+```typescript
+import { JSONSchemaScanner } from '@winglet/json-schema';
+import type { ReferenceResolver, UnknownSchema } from '@winglet/json-schema';
+
+const registry = new Map<string, UnknownSchema | boolean>([
+  ['urn:example:Text', { type: 'string' }],
+]);
+const resolver: ReferenceResolver<void> = {
+  root: () => undefined,
+  dialect: () => '2020-12',
+  resolve(reference) {
+    const target = registry.get(reference);
+    return target === undefined
+      ? { status: 'skipped', reason: 'unresolved' }
+      : { status: 'resolved', uri: reference, target };
+  },
+};
+const output = new JSONSchemaScanner({
+  options: { resolveReference: resolver },
+})
+  .scan({ $ref: 'urn:example:Text' })
+  .getValue();
+if (!output || typeof output === 'boolean')
+  throw new Error('Expected an object root');
+console.assert(output.type === 'string');
+```
+
+## Dialects and inert positions
+
+The default fallback is 2020-12. The exported Dialect table names the supported dialects (Dialect.Draft04 through Dialect.Draft202012); its entries are the same strings, so either spelling is accepted wherever a dialect is expected. `$ref` is recognized in every supported dialect, `$dynamicRef` only in 2020-12, and `$recursiveRef` only in 2019-09. A recognized root/resource `$schema` selects its dialect; supported HTTP/HTTPS spellings and trailing # are normalized. Resolver `dialects` can map custom metaschema URIs to supported dialects. Unknown declarations inherit the surrounding/fallback dialect. An embedded resource inherits its parent unless it declares a known dialect. With a resolver, configure its fallback too; scanner defaultDialect is the fallback when no provider supplies a dialect.
+
+Traversal uses the union of schema positions from draft-04, draft-06, draft-07, 2019-09 and 2020-12. Without resolution or mutation, changing `$schema` changes inertness rather than the visit paths/order. Positions outside the resource’s dialect and their descendants have inert=true: callbacks still run, but references and output operations are suppressed and identifiers are not indexed. Boolean leaves are inert in draft-04. For example, contains is active from draft-06, prefixItems in 2020-12, and tuple-form items through 2019-09. Modern dialects still recognize definitions and schema-valued dependencies; string-array dependencies are not schemas.
+
+<!-- example: inert -->
+
+```typescript
+import { JSONSchemaScanner } from '@winglet/json-schema';
+
+const inactive: string[] = [];
+new JSONSchemaScanner({
+  options: { defaultDialect: 'draft-04' },
+  visitor: {
+    enter: (entry) => {
+      if (entry.inert) inactive.push(entry.path);
+    },
+  },
+}).scan({ contains: { type: 'string' }, additionalProperties: false });
+console.assert(inactive.includes('#/contains'));
+console.assert(inactive.includes('#/additionalProperties'));
+```
+
+## Vocabulary selection
+
+The default vocabulary includes composition, conditionals, object/array applicators, definition containers and schema-valued dependencies. `keywords` replaces that entire vocabulary; `additionalKeywords` appends to the selected one. The last duplicate wins in both kind and position. Descriptor dialects control inertness, not discovery. `objectMap` extends dataPath with its key; `schemaMap` does not. Schema lists visit their elements without visiting the container. `DEFAULT_KEYWORDS`, `Dialect`, `KeywordDescriptor` and `KeywordKind` are also exported from `@winglet/json-schema/keyword`, which loads no scanner code.
+
+Use identical vocabulary options for the built-in resolver and scanner so indexing, relocation checks and public traversal agree. The convenience resolveReference function passes its vocabulary to both. Keyword names and map keys are JSON Pointer escaped, including custom names.
+
+<!-- example: keywords -->
+
+```typescript
+import {
+  JSONSchemaScanner,
+  createReferenceResolver,
+} from '@winglet/json-schema';
+import type { KeywordDescriptor } from '@winglet/json-schema';
+
+const additionalKeywords: KeywordDescriptor[] = [
+  { keyword: 'x/schema', kind: 'schema' },
+];
+const schema = {
+  'x/schema': { type: 'string' },
+  properties: { value: { $ref: '#/x~1schema' } },
+};
+const resolver = createReferenceResolver(schema, { additionalKeywords });
+const visited: string[] = [];
+const output = new JSONSchemaScanner({
+  options: { additionalKeywords, resolveReference: resolver },
+  visitor: { enter: (entry) => visited.push(entry.path) },
+})
+  .scan(schema)
+  .getValue();
+if (!output || typeof output === 'boolean')
+  throw new Error('Expected an object root');
+console.assert(visited.includes('#/x~1schema'));
+console.assert(output.properties.value.type === 'string');
+```
+
+## Reference preservation and sibling keywords
+
+Inlinable chains outside definitions are followed to completion. Canonical identities are active only on the ancestor path; independent siblings can use the same target. Audit exit’s entry.references: each outcome carries the written reference and keyword, canonical uri when known, resolved, and skipped when preserved. The exported ReferenceSkipReason table names every skipped value, for example ReferenceSkipReason.Relocation.
+
+| skipped      | Meaning                                                                                                                       |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| `definition` | A reference in a definition container or its descendants during resolver-enabled scanning; definitions remain address stores. |
+| `cycle`      | An otherwise inlinable canonical target is already active on the ancestor path.                                               |
+| `unresolved` | No resolver is configured, or the address/document is unavailable.                                                            |
+| `dynamic`    | The lookup needs a dynamic or recursive anchor rather than static binding.                                                    |
+| `relocation` | Moving the target cannot guarantee equivalent meaning and existing addresses.                                                 |
+| `invalid`    | The target or composition position cannot be inlined; distinct from a malformed protocol result.                              |
+
+unresolvedReference defaults to keep; throw fails only unresolved outcomes. It does not force other preserved references to disappear. Inert positions do not process references and may have no outcomes.
+
+### Draft-07 and below
+
+Siblings of $ref are ignored for evaluation. Retaining the reference still visits sibling children: definitions and $defs remain ordinary definition positions, while other sibling descendants are inert. Identifiers inside those inert regions are not indexed. A sibling identifier on the $ref node itself is ignored too.
+
+Before inlining, classify the other own keys. Keep $schema, definitions and $defs. Drop other keys only when their values are strings, numbers or null. A boolean, object or array under any other key blocks inlining with relocation, because deleting it can remove an address and retaining it beside allOf can activate ignored evaluation. With KEEP keys only, wrap as `{ ...keptKeys, allOf: [targetCopy] }`; without kept keys, replace the node with the target copy.
+
+<!-- example: relocation -->
+
+```typescript
+import {
+  JSONSchemaScanner,
+  createReferenceResolver,
+} from '@winglet/json-schema';
+
+const schema = {
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  $ref: '#/definitions/Text',
+  hidden: false,
+  definitions: { Text: { type: 'string' } },
+};
+const reasons: string[] = [];
+const output = new JSONSchemaScanner({
+  options: { resolveReference: createReferenceResolver(schema) },
+  visitor: {
+    exit: (entry) => {
+      for (const outcome of entry.references ?? [])
+        if (outcome.skipped) reasons.push(outcome.skipped);
+    },
+  },
+})
+  .scan(schema)
+  .getValue();
+console.assert(output === schema);
+console.assert(reasons.includes('relocation'));
+```
+
+### 2019-09 and later
+
+Siblings remain and apply. A sole reference with no other keys replaces the node; otherwise remove only the inlined keywords and append target branches to the end of existing allOf. A non-array allOf preserves the reference as invalid.
+
+### Built-in relocation boundary
+
+The original reference remains when:
+
+- the target is at/below an inert or unrecognized schema position;
+- moving it changes the dialect of the target or a removed resource boundary;
+- a rewritten copy contains `$recursiveRef`, or a removed resource defines `$dynamicAnchor`/`$recursiveAnchor` scope;
+- reference/identifier occurrences outside recognized schema positions and default/const/enum/examples data cannot be rewritten safely;
+- a URI cannot be rewritten, including a cross-resource address to an anonymous document without an identifier or base.
+
+An identifier-free target in the same resource can be copied directly. Other safe moves remove identifier boundaries and rewrite reference URIs from their original bases. Data-keyword values are not rewritten. A `$dynamicRef` whose initial fragment is declared by `$dynamicAnchor` stays dynamic; otherwise it behaves like `$ref`. A `$recursiveRef` targeting `$recursiveAnchor`:true stays dynamic.
+
+Relative document paths cannot be formed against a non-hierarchical base URI. Supply absolute references or a hierarchical baseURI. This example returns an unresolved outcome.
+
+<!-- example: opaque -->
+
+```typescript
+import { createReferenceResolver } from '@winglet/json-schema';
+
+const schema = { $ref: 'child.json' };
+const resolver = createReferenceResolver(schema, {
+  baseURI: 'urn:example:root',
+  resources: { 'urn:example:child.json': { type: 'string' } },
+});
+const context = resolver.root(schema);
+const relative = resolver.resolve('child.json', '$ref', context);
+const absolute = resolver.resolve('urn:example:child.json', '$ref', context);
+console.assert(
+  relative.status === 'skipped' && relative.reason === 'unresolved',
+);
+console.assert(absolute.status === 'resolved');
+```
+
+## Limits and errors
+
+limits.referenceChain bounds a replacement chain at one position (default 32); limits.inlinedNodes bounds total inlined schema nodes per scan (default 1,000,000). These are independent of maxDepth and public pruning does not constrain full target preparation.
+
+Use JSONSchemaScanError.code to distinguish failures. The exported JSONSchemaScanErrorCode table names every code; compare against its entries, such as JSONSchemaScanErrorCode.SchemaCycle, rather than typing the string. User callback and loader exceptions propagate unchanged.
+
+| code                      | Meaning                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------ |
+| `duplicate-identifier`    | Distinct locations declare one identifier.                                     |
+| `reference-chain-limit`   | The replacement-chain budget was exceeded.                                     |
+| `inlined-node-limit`      | The inlined-node budget was exceeded.                                          |
+| `unresolved-reference`    | A reference is unavailable under the throw policy.                             |
+| `invalid-resolver-result` | The protocol tag/URI/target is invalid, or a sync resolver returns a thenable. |
+| `identifier-mutation`     | A mutation changes the current node’s identifier keywords.                     |
+| `schema-cycle`            | Traversal or plain-container copying finds a physical ancestry cycle.          |
+| `scan-in-progress`        | The running instance is scanned or read again.                                 |
+
+<!-- example: errors -->
+
+```typescript
+import {
+  JSONSchemaScanError,
+  JSONSchemaScanErrorCode,
+  JSONSchemaScanner,
+} from '@winglet/json-schema';
+
+const scanner = new JSONSchemaScanner({
+  options: { unresolvedReference: 'throw' },
+});
+let caught = false;
+try {
+  scanner.scan({ $ref: '#/missing' });
+} catch (error) {
+  if (!(error instanceof JSONSchemaScanError)) throw error;
+  caught = true;
+  console.assert(error.code === JSONSchemaScanErrorCode.UnresolvedReference);
+}
+console.assert(caught && scanner.getValue() === undefined);
+```
+
+## Scope of depth safety
+
+Traversal and copying of plain objects/arrays use no call-stack recursion. Repeated aliases are not cycles; physical ancestor cycles are schema-cycle errors. Sparse holes and own **proto** data keys are preserved; symbol keys on plain containers are not copied. Non-plain values delegate to a generic copier, so the guarantee does not extend to class instances, user getters, callbacks or loaders. Memory and explicit reference budgets still apply rather than a fixed schema-depth ceiling. Cycles in data keywords may be discovered only when a copy is needed; an unchanged getValue returns the input without cloning it.
+
+## Schema guards and inference
+
+Guards inspect type. Union guards accept nullable-array and ordinary spellings, and number guards include integer. Nullable-only guards require null in a type array; OpenAPI nullable:true is not their criterion. Comparison functions have a separate policy that normalizes OpenAPI nullable:true. hasNullInType tests array membership, not a pure type:null.
+
+<!-- example: guards -->
+
+```typescript
+import {
+  hasNullInType,
+  isCompatibleSchemaType,
+  isIdenticalSchemaType,
   isStringSchema,
 } from '@winglet/json-schema/filter';
 
-const s = { type: ['string', 'null'], minLength: 1 };
-
-if (isStringSchema(s)) {
-  // s is narrowed to StringSchema
-  console.log(s.minLength); // 1
-}
+console.assert(isStringSchema({ type: ['string', 'null'] }));
+console.assert(!hasNullInType({ type: 'null' }));
+console.assert(
+  isIdenticalSchemaType(
+    { type: ['string', 'null'] },
+    { type: 'string', nullable: true },
+  ),
+);
+console.assert(!isIdenticalSchemaType({ type: 'number' }, { type: 'integer' }));
+console.assert(isCompatibleSchemaType({ type: 'number' }, { type: 'integer' }));
 ```
 
----
+Preserve literal information with as const. InferValueType models partial values: even required object keys are optional, and objects stay open unless additionalProperties:false. Inferred values stay mutable for readonly schema declarations. Do not treat inference as static validation of composition/reference constraints; use an explicit value type and validation for a required validated shape. InferJSONSchema chooses a schema family from a value type; it does not generate object properties.
 
-## Architecture — Visitor Pattern
-
-`JSONSchemaScanner` implements a **non-recursive, stack-based DFS** traversal engine. Instead of calling itself recursively, it maintains an explicit `Entry[]` stack and advances each entry through a state machine with four phases.
-
-```
-Schema tree node lifecycle:
-  Push to stack
-       │
-  ┌────▼─────┐
-  │  Enter   │  ← filter() check, mutate(), visitor.enter()
-  └────┬─────┘
-       │
-  ┌────▼─────────┐
-  │  Reference   │  ← detect $ref, call resolveReference(), circular check
-  └────┬─────────┘
-       │
-  ┌────▼──────────────┐
-  │  ChildEntries     │  ← maxDepth check, push children to stack
-  └────┬──────────────┘
-       │
-  ┌────▼─────┐
-  │   Exit   │  ← visitor.exit(), cleanup circular ref tracking
-  └────┬─────┘
-       │
-  Pop from stack
-```
-
-**Key design properties:**
-
-- **Stack-safe** — handles arbitrarily deep schemas without stack overflow
-- **Lazy resolution** — `$ref` nodes are resolved only when encountered
-- **Deferred mutations** — `mutate()` results are collected and applied by `getValue()` via a single deep clone
-- **Copy-on-write** — the original schema is never modified during traversal
-- **Per-scan isolation** — each `scan()` call resets all internal state
-
-### Child discovery order
-
-Within any schema node, children are discovered and visited in this fixed order:
-
-`$defs` → `definitions` → `additionalProperties` → `not/if/then/else` → `allOf/anyOf/oneOf` → `prefixItems` → `items` → `properties`
-
----
-
-## JSONSchemaScanner API
-
-### Constructor
+<!-- example: types -->
 
 ```typescript
-new JSONSchemaScanner<Schema extends UnknownSchema = UnknownSchema, ContextType = void>(
-  props?: {
-    visitor?: SchemaVisitor<Schema, ContextType>;
-    options?: JSONScannerOptions<Schema, ContextType>;
-  }
-)
+import type { InferJSONSchema, InferValueType } from '@winglet/json-schema';
+
+const schema = {
+  type: 'object',
+  properties: { id: { type: 'number' } },
+  required: ['id'],
+  additionalProperties: false,
+} as const;
+type Value = InferValueType<typeof schema>;
+const partial: Value = {};
+partial.id = 1;
+const nameSchema: InferJSONSchema<string> = { type: 'string', minLength: 1 };
+console.assert(nameSchema.type === 'string');
 ```
 
-### SchemaVisitor
+Finite prefixItems produces a mutable tuple with optional positions. items:false closes it, omitted/true items adds an any[] rest, and an items schema types the rest after the prefix. minItems is not used for inference. Widened prefixes and legacy items arrays are outside this finite-tuple inference and unmodeled shapes retain broad fallbacks. Recursive types do not extend TypeScript’s own instantiation limits.
+
+<!-- example: tuple -->
 
 ```typescript
-interface SchemaVisitor<Schema, ContextType> {
-  enter?: (entry: SchemaEntry<Schema>, context?: ContextType) => void;
-  exit?: (entry: SchemaEntry<Schema>, context?: ContextType) => void;
-}
+import type { InferValueType } from '@winglet/json-schema';
+
+const schema = {
+  type: 'array',
+  prefixItems: [{ type: 'string' }, { type: 'number' }],
+  items: false,
+} as const;
+type Pair = InferValueType<typeof schema>;
+const empty: Pair = [];
+const pair: Pair = ['name', 1];
+pair[0] = 'changed';
+console.assert(empty.length === 0 && pair[0] === 'changed');
 ```
-
-- `enter` — called when first visiting a node, before its children are pushed
-- `exit` — called after all descendants of the node have been processed
-
-### JSONScannerOptions
-
-| Option             | Type                                            | Description                                                |
-| ------------------ | ----------------------------------------------- | ---------------------------------------------------------- |
-| `filter`           | `(entry, context?) => boolean`                  | Return `false` to skip node and all descendants            |
-| `mutate`           | `(entry, context?) => Schema \| void`           | Return new schema to replace node; applied by `getValue()` |
-| `resolveReference` | `(ref, entry, context?) => Schema \| undefined` | Resolve a `$ref` pointer to a schema object                |
-| `maxDepth`         | `number`                                        | Maximum traversal depth (root = depth 0)                   |
-| `context`          | `ContextType`                                   | Shared mutable context passed to all callbacks             |
-
-### scan(schema)
-
-```typescript
-scan(schema: Schema): this
-```
-
-Starts traversal from the root schema node. Resets all internal state before traversal. Returns `this` for method chaining.
-
-### getValue()
-
-```typescript
-getValue<OutputSchema extends UnknownSchema = Schema>(): OutputSchema | undefined
-```
-
-Returns the processed schema after traversal:
-
-- Returns `undefined` if called before `scan()`
-- Returns original schema reference when no mutations or resolved references exist
-- Returns a deep-cloned schema with all mutations and inlined references applied otherwise
-- Caches the result; subsequent calls return the same object
-
-### SchemaEntry
-
-```typescript
-type SchemaEntry<Schema> = {
-  schema: Schema; // current schema node
-  path: string; // JSON Pointer: "#/properties/name"
-  dataPath: string; // data path: "/name"
-  depth: number; // 0 at root
-  hasReference?: boolean; // true: $ref found but not resolved
-  referencePath?: string; // original $ref value when resolved
-  referenceResolved?: boolean; // true: resolveReference() succeeded
-  keyword?: string; // structural keyword producing this entry
-  variant?: string | number; // property name or array index
-};
-```
-
-**keyword values:** `'properties'`, `'$defs'`, `'definitions'`, `'items'`, `'prefixItems'`, `'additionalProperties'`, `'not'`, `'if'`, `'then'`, `'else'`, `'allOf'`, `'anyOf'`, `'oneOf'`
-
-### Circular Reference Detection
-
-The scanner tracks resolved `$ref` paths in a `Set<string>` per `scan()` call:
-
-1. When a `$ref` is resolved, its path is added to the set.
-2. If the same path is encountered again during traversal of the resolved schema's subtree, the node is marked `hasReference: true` and children are skipped.
-3. When the original resolved node exits, the path is removed — allowing the same `$ref` in a different branch.
-
----
-
-## JSONSchemaScannerAsync API
-
-`JSONSchemaScannerAsync` is a parallel implementation of the scanner with full async/await support. It shares the same architecture but all callbacks can return `Promise<void>` and `resolveReference` can return `Promise<Schema | undefined>`.
-
-### Constructor
-
-```typescript
-new JSONSchemaScannerAsync<Schema, ContextType>(
-  props?: {
-    visitor?: SchemaVisitor<Schema, ContextType>;  // callbacks may be async
-    options?: JSONScannerOptionsAsync<Schema, ContextType>;
-  }
-)
-```
-
-`JSONScannerOptionsAsync` is identical to `JSONScannerOptions` except `resolveReference` may return a `Promise`.
-
-### scan(schema)
-
-```typescript
-async scan(schema: Schema): Promise<this>
-```
-
-Returns a `Promise` that resolves to `this` after traversal completes. Must be awaited before calling `getValue()`.
-
-### getValue()
-
-Identical to the sync scanner. Synchronous. Call after awaiting `scan()`.
-
-```typescript
-const scanner = new JSONSchemaScannerAsync({
-  /* ... */
-});
-const result = await scanner.scan(schema).then((s) => s.getValue());
-```
-
-### Async use cases
-
-- **Remote $ref resolution** — `fetch()` schemas from external URLs
-- **Database-backed schemas** — look up schema fragments from a database
-- **Async validation** — call external APIs during traversal
-- **Async logging** — write to databases or message queues in visitors
-- **Service mesh schemas** — resolve microservice schemas via service discovery
-
----
-
-## Schema Filters
-
-All type guards are available from `@winglet/json-schema/filter`.
-
-### Union Guards (recommended)
-
-Handle both nullable and non-nullable schemas:
-
-| Function             | Matches                                                  |
-| -------------------- | -------------------------------------------------------- |
-| `isObjectSchema(s)`  | `{ type: 'object' }` or `{ type: ['object', 'null'] }`   |
-| `isArraySchema(s)`   | `{ type: 'array' }` or `{ type: ['array', 'null'] }`     |
-| `isStringSchema(s)`  | `{ type: 'string' }` or `{ type: ['string', 'null'] }`   |
-| `isNumberSchema(s)`  | `{ type: 'number'\|'integer' }` or nullable variants     |
-| `isBooleanSchema(s)` | `{ type: 'boolean' }` or `{ type: ['boolean', 'null'] }` |
-| `isNullSchema(s)`    | `{ type: 'null' }` (pure null, not nullable)             |
-
-All guards narrow the TypeScript type of the argument, giving access to type-specific fields (`properties`, `items`, `pattern`, etc.).
-
-### Specific Variant Guards
-
-For cases where nullable vs. non-nullable distinction matters:
-
-```typescript
-isNonNullableObjectSchema(s); // only { type: 'object' }
-isNullableObjectSchema(s); // only { type: ['object', 'null'] }
-
-isNonNullableStringSchema(s); // only { type: 'string' }
-isNullableStringSchema(s); // only { type: ['string', 'null'] }
-
-// Same pattern for array, number, boolean
-```
-
-### hasNullInType
-
-```typescript
-hasNullInType(schema: UnknownSchema): boolean
-```
-
-Returns `true` when `schema.type` is an array that contains `'null'`. Does not match `{ type: 'null' }`.
-
-```typescript
-hasNullInType({ type: ['string', 'null'] }); // true
-hasNullInType({ type: 'null' }); // false
-```
-
-### Schema Comparison
-
-#### isIdenticalSchemaType
-
-```typescript
-isIdenticalSchemaType(left: UnknownSchema, right: UnknownSchema): boolean
-```
-
-Strict equality with nullable-aware comparison. Supports both JSON Schema array format and OpenAPI 3.0 `nullable: true`.
-
-```typescript
-isIdenticalSchemaType({ type: 'string' }, { type: 'string' }); // true
-isIdenticalSchemaType(
-  { type: ['string', 'null'] },
-  { type: 'string', nullable: true },
-); // true
-isIdenticalSchemaType({ type: 'number' }, { type: 'integer' }); // false
-```
-
-#### isCompatibleSchemaType
-
-```typescript
-isCompatibleSchemaType(left: UnknownSchema, right: UnknownSchema): boolean
-```
-
-Looser check. `number` and `integer` are treated as compatible. Nullable differences are ignored.
-
-```typescript
-isCompatibleSchemaType({ type: 'number' }, { type: 'integer' }); // true
-isCompatibleSchemaType({ type: ['string', 'null'] }, { type: 'string' }); // true
-isCompatibleSchemaType({ type: [] }, { type: [] }); // false (empty array)
-```
-
----
-
-## Type Definitions
-
-### Core Schema Types
-
-```typescript
-// Base type — any schema object
-type UnknownSchema = { type?: string | Readonly<string[]>; [key: string]: any };
-
-// Full JSON Schema union
-type JSONSchema<Options = object> =
-  | NonNullableNumberSchema
-  | NullableNumberSchema
-  | NonNullableStringSchema
-  | NullableStringSchema
-  | NonNullableBooleanSchema
-  | NullableBooleanSchema
-  | NonNullableArraySchema
-  | NullableArraySchema
-  | NonNullableObjectSchema
-  | NullableObjectSchema
-  | NullSchema;
-
-// $ref node
-interface RefSchema {
-  type?: undefined;
-  $ref: string;
-}
-```
-
-### Schema Generic Parameter
-
-All schema types accept two generic parameters:
-
-```typescript
-ObjectSchema<Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema>
-```
-
-- `Options` — shape of the `schema.options` extension field
-- `Schema` — recursive self-reference for nested schemas
-
-### InferJSONSchema
-
-Maps a TypeScript value type to the corresponding schema interface:
-
-```typescript
-type InferJSONSchema<Value, Options = object, Schema = JSONSchema>
-
-// Examples
-InferJSONSchema<string>          // NonNullableStringSchema
-InferJSONSchema<string | null>   // NullableStringSchema
-InferJSONSchema<null>            // NullSchema
-InferJSONSchema<number[]>        // NonNullableArraySchema
-```
-
-### InferValueType
-
-Maps a schema type definition to its runtime value type:
-
-```typescript
-type InferValueType<T extends { type?: string | readonly string[] }>
-
-// Examples
-InferValueType<{ type: 'string' }>             // string
-InferValueType<{ type: ['string', 'null'] }>   // string | null
-InferValueType<{ type: 'integer' }>            // number
-InferValueType<{ type: 'array' }>              // any[]
-InferValueType<{ type: 'object' }>             // Record<string, any>
-```
-
-`object` and `array` recurse into `properties` and `items` when those are literal — that is, when the schema is declared `as const`. Without `as const`, `type` widens to `string` and the result is `any`.
-
-```typescript
-InferValueType<{ type: 'array'; items: { type: 'string' } }>; // string[]
-
-InferValueType<{
-  type: 'object';
-  properties: { id: { type: 'number' } };
-  required: ['id'];
-}>;
-// { id?: number } & Record<string, any>
-```
-
-Two rules govern the object result:
-
-- **Every key is optional, including those in `required`.** The value described by a schema may legitimately omit a key at runtime, so a required marker here would be a promise this type cannot keep. Declare the exact shape yourself when you need one.
-- **The result is intersected with `Record<string, any>`** unless the schema sets `additionalProperties: false` — open is the JSON Schema default, and it keeps keys contributed by applicators this type does not model (`oneOf`, `anyOf`, `if`/`then`/`else`, `patternProperties`, `dependentSchemas`, `$ref`) from being rejected as excess properties.
-
-Anything not modeled falls back rather than narrowing: a non-literal `properties` (e.g. `Dictionary<JSONSchema>`) yields `Record<string, any>`, a multi-type such as `['string', 'number']` yields `any`, and `items: false` yields `any[]`.
-
-### Common BasicSchema Fields
-
-All typed schemas include these common fields inherited from `BasicSchema`:
-
-| Field               | Type                 | Description                 |
-| ------------------- | -------------------- | --------------------------- |
-| `$defs`             | `Dictionary<Schema>` | Reusable schema definitions |
-| `if/then/else`      | `Partial<Schema>`    | Conditional schemas         |
-| `not`               | `Partial<Schema>`    | Negation schema             |
-| `allOf/anyOf/oneOf` | `Partial<Schema>[]`  | Composition schemas         |
-| `const`             | `Nullable<Type>`     | Constant value constraint   |
-| `default`           | `Nullable<Type>`     | Default value               |
-| `enum`              | `Nullable<Type>[]`   | Allowed values              |
-| `nullable`          | `boolean`            | OpenAPI 3.0 nullable flag   |
-| `readOnly`          | `boolean`            | Read-only hint              |
-| `disabled`          | `boolean`            | Disabled hint               |
-| `options`           | `Options`            | Custom extension options    |
-
----
-
-## resolveReference Utility
-
-```typescript
-import { resolveReference } from '@winglet/json-schema';
-
-function resolveReference(jsonSchema: UnknownSchema): UnknownSchema | undefined;
-```
-
-A convenience utility for resolving all internal `$ref` pointers in a self-contained schema (one that defines all its references in `$defs` or `definitions`).
-
-**How it works (two passes):**
-
-1. Scans the schema to find all unresolved `$ref` nodes. Uses `@winglet/json` JSON Pointer `getValue` to look up each ref inside the schema itself. Builds a `Map<refPath, resolvedSchema>`.
-2. Re-scans with the map as the `resolveReference` option to inline all refs. Returns the processed schema via `getValue()`.
-
-**When to use:**
-
-- Schema is self-contained (all `$ref` values point to `#/definitions/...` or `#/$defs/...`)
-- You want a fully inlined schema with no `$ref` remaining
-- No custom resolution logic needed
-
-**For custom resolution**, use `JSONSchemaScanner` directly:
-
-```typescript
-const scanner = new JSONSchemaScanner({
-  options: {
-    resolveReference: (ref, entry, context) => myCustomResolver(ref),
-  },
-});
-const inlined = scanner.scan(schema).getValue();
-```
-
----
-
-## Usage Patterns
-
-### Pattern 1: Schema Analysis
-
-Walk the schema and build a report without modifying anything.
-
-```typescript
-interface Report {
-  totalFields: number;
-  requiredFields: string[];
-  optionalFields: string[];
-  nullable: string[];
-}
-
-const report: Report = {
-  totalFields: 0,
-  requiredFields: [],
-  optionalFields: [],
-  nullable: [],
-};
-
-new JSONSchemaScanner<UnknownSchema, Report>({
-  options: { context: report },
-  visitor: {
-    enter: ({ schema, keyword, dataPath, depth }, ctx) => {
-      if (keyword !== 'properties' || depth === 0) return;
-      ctx!.totalFields++;
-      if (hasNullInType(schema)) ctx!.nullable.push(dataPath);
-
-      const parent = /* track parent required array */ [];
-      const fieldName = dataPath.split('/').pop()!;
-      if (parent.includes(fieldName)) ctx!.requiredFields.push(dataPath);
-      else ctx!.optionalFields.push(dataPath);
-    },
-  },
-}).scan(schema);
-```
-
-### Pattern 2: Schema Transformation
-
-Enrich schemas with additional metadata during traversal.
-
-```typescript
-import { isNumberSchema, isStringSchema } from '@winglet/json-schema/filter';
-
-const enriched = new JSONSchemaScanner({
-  options: {
-    mutate: ({ schema, dataPath }) => {
-      if (isStringSchema(schema) && !schema.title)
-        return { ...schema, title: dataPath.split('/').pop() };
-      if (isNumberSchema(schema) && schema.minimum === undefined)
-        return { ...schema, minimum: 0 };
-    },
-  },
-})
-  .scan(schema)
-  .getValue();
-```
-
-### Pattern 3: $ref Inlining with Custom Resolver
-
-Resolve references from an external registry.
-
-```typescript
-const registry: Record<string, UnknownSchema> = {
-  '#/definitions/Address': {
-    type: 'object',
-    properties: { city: { type: 'string' } },
-  },
-};
-
-const inlined = new JSONSchemaScanner({
-  options: {
-    resolveReference: (ref) => registry[ref],
-  },
-})
-  .scan(schema)
-  .getValue();
-```
-
-### Pattern 4: Async Schema Composition
-
-Build a composite schema by fetching remote schemas during traversal.
-
-```typescript
-import { JSONSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
-
-const schemaCache = new Map<string, UnknownSchema>();
-
-const scanner = new JSONSchemaScannerAsync({
-  options: {
-    resolveReference: async (ref) => {
-      if (schemaCache.has(ref)) return schemaCache.get(ref)!;
-      const schema = await fetch(ref).then((r) => r.json());
-      schemaCache.set(ref, schema);
-      return schema;
-    },
-  },
-});
-
-const composed = await scanner.scan(rootSchema).then((s) => s.getValue());
-```
-
-### Pattern 5: Conditional Traversal
-
-Use `filter` to skip entire subtrees based on schema properties.
-
-```typescript
-const scanner = new JSONSchemaScanner({
-  options: {
-    // Skip read-only fields and their descendants
-    filter: ({ schema }) => !schema.readOnly,
-  },
-  visitor: {
-    enter: ({ path }) => console.log('visiting', path),
-  },
-});
-```
-
-### Pattern 6: Type-Safe Schema Building
-
-Use `InferJSONSchema` to write schemas with compile-time type checking.
-
-```typescript
-import type { InferJSONSchema } from '@winglet/json-schema';
-
-interface UserFormOptions {
-  placeholder?: string;
-  autocomplete?: string;
-}
-
-type UserSchema = InferJSONSchema<
-  { name: string; age: number },
-  UserFormOptions
->;
-
-const userSchema: InferJSONSchema<string, UserFormOptions> = {
-  type: 'string',
-  minLength: 1,
-  options: { placeholder: 'Enter name', autocomplete: 'name' },
-};
-```
-
----
-
-## Compatibility
-
-| Environment | Minimum Version |
-| ----------- | --------------- |
-| Node.js     | 16.11.0         |
-| Chrome      | 94              |
-| Firefox     | 93              |
-| Safari      | 15              |
-
-Both ESM (`import`) and CommonJS (`require`) builds are included. For legacy environments, use Babel or SWC to transpile ES2022 syntax.
-
-**Dependencies:**
-
-- `@winglet/common-utils` — object cloning, utility functions
-- `@winglet/json` — JSON Pointer operations (`getValue`, `setValue`, `escapeSegment`)

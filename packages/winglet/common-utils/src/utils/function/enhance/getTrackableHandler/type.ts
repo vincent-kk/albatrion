@@ -135,7 +135,7 @@ export type TrackableHandlerFunction<
    * unsubscribe();
    * ```
    */
-  readonly subscribe: (listener: Fn) => Fn;
+  readonly subscribe: Fn<[listener: Fn], Fn>;
 
   /**
    * Whether the function is currently executing
@@ -231,7 +231,7 @@ export type TrackableHandlerOptions<
    * }
    * ```
    */
-  beforeExecute?: (args: Args, stateManager: StateManager<State>) => void;
+  beforeExecute?: Fn<[args: Args, stateManager: StateManager<State>]>;
 
   /**
    * Callback called after executing the original function.
@@ -255,5 +255,5 @@ export type TrackableHandlerOptions<
    * }
    * ```
    */
-  afterExecute?: (args: Args, stateManager: StateManager<State>) => void;
+  afterExecute?: Fn<[args: Args, stateManager: StateManager<State>]>;
 };

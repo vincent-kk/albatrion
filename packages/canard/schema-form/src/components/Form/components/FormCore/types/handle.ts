@@ -1,0 +1,58 @@
+import type { TrackableHandlerFunction } from '@winglet/common-utils/function';
+
+import type { Fn, Nullable } from '@aileron/declare';
+
+import type {
+  FieldNode,
+  InferFieldNode,
+  SetValueOption,
+} from '@/schema-form/core';
+import type {
+  AllowedValue,
+  AttachedFilesMap,
+  InferValueType,
+  JSONSchema,
+  SetStateFnWithOptions,
+} from '@/schema-form/types';
+
+/** Imperative operations always addressing the current root. */
+export interface FormHandle<
+  Schema extends JSONSchema = JSONSchema,
+  Value extends AllowedValue = InferValueType<Schema>,
+> {
+  node?: InferFieldNode<Schema>;
+  /**
+   * Focus the exact input through nested virtualization gates, respecting later user focus movement.
+   * Mounted positions keep ordinary node requests; newer requests, reset and confirmed unmount cancel pending reveal focus.
+   * Terminal interiors, omitted layouts and inputs suspended in the reveal commit are unreachable.
+   */
+  focus: Fn<[path?: FieldNode['path']]>;
+  select: Fn<[path?: FieldNode['path']]>;
+  refresh: Fn<[path?: FieldNode['path']]>;
+  remount: Fn<[path?: FieldNode['path']]>;
+  /** Load committed defaults; only automatic-write flags override the Form default. */
+  reset: Fn<
+    [
+      option?:
+        | typeof SetValueOption.DisableAutomaticWrites
+        | typeof SetValueOption.EnableAutomaticWrites,
+    ]
+  >;
+  /** Invalidate this schema's cached analysis and rebuild with reset's load options. */
+  rebuild: FormHandle<Schema, Value>['reset'];
+  findNode: Fn<[path: FieldNode['path']], Nullable<FieldNode>>;
+  findNodes: Fn<[path: FieldNode['path']], readonly FieldNode[]>;
+  getState: Fn<[], FieldNode['globalState']>;
+  setState: Fn<[state: FieldNode['state']]>;
+  clearState: Fn;
+  getValue: Fn<[], Value>;
+  setValue: SetStateFnWithOptions<Value>;
+  getErrors: Fn<[], FieldNode['globalErrors']>;
+  getAttachedFilesMap: Fn<[], AttachedFilesMap>;
+  validate: Fn<[], Promise<FieldNode['globalErrors']>>;
+  /** Temporarily reveal errors without validating or writing node state; explicit node suppression and OnChange release still apply. */
+  revealErrors: Fn;
+  /** Restore the latest base policy without validating or writing node state. */
+  resetErrorVisibility: Fn;
+  submit: TrackableHandlerFunction;
+}

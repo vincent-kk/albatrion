@@ -4,9 +4,9 @@ import type {
   AlertContentProps,
   AlertFooterRender,
   AlertModal,
-  FooterOptions,
-  ManagedEntity,
-} from '@/promise-modal/types';
+} from '@/promise-modal/types/alert';
+import type { FooterOptions } from '@/promise-modal/types/base';
+import type { ManagedEntity } from '@/promise-modal/types/modal';
 
 import { AbstractNode } from './AbstractNode';
 
@@ -36,13 +36,18 @@ export class AlertNode<B = any> extends AbstractNode<null, B> {
     duration,
     manualDestroy,
     closeOnBackdropClick,
+    closeOnEscape,
+    trapFocus,
+    lockScroll,
     handleResolve,
+    handleReject,
     ForegroundComponent,
     BackgroundComponent,
   }: AlertNodeProps<B>) {
     super({
       id,
       group,
+      subtype,
       initiator,
       title,
       subtitle,
@@ -51,7 +56,11 @@ export class AlertNode<B = any> extends AbstractNode<null, B> {
       duration,
       manualDestroy,
       closeOnBackdropClick,
+      closeOnEscape,
+      trapFocus,
+      lockScroll,
       handleResolve,
+      handleReject,
       ForegroundComponent,
       BackgroundComponent,
     });

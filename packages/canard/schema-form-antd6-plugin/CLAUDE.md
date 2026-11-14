@@ -1,23 +1,24 @@
 # CLAUDE.md
 
-`@canard/schema-form-antd6-plugin` — Ant Design 6.x UI 컴포넌트를 `@canard/schema-form`에 연결하는 플러그인. (v5는 `schema-form-antd5-plugin` 사용)
+`@canard/schema-form-antd6-plugin` connects Ant Design 6.x UI components to `@canard/schema-form`. Use `schema-form-antd5-plugin` for v5.
 
 ## Commands
 
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언
-yarn test              # Vitest 테스트
+yarn build             # ESM + CJS build + type declarations
+yarn test              # Vitest tests
 yarn lint              # ESLint
 yarn storybook         # Storybook dev (port 6006)
 ```
 
 ## Architecture
 
-플러그인은 `SchemaFormPlugin` 객체를 export:
-- `FormGroup` / `FormLabel` / `FormInput` / `FormError` — 기본 레이아웃 컴포넌트
-- `formTypeInputDefinitions` — 18개 입력 컴포넌트 정의 (우선순위 순)
+The plugin exports a `SchemaFormPlugin` object:
+- `FieldRenderer` composes bound input and error parts; `LabelRenderer` owns the label root.
+- `ErrorMessageRenderer` owns the error root. The plugin registers `LabelRenderer` and `ErrorMessageRenderer`, with no pass-through input frame.
+- `fieldInputDefinitions` — 18 input component definitions (in priority order)
 
-**입력 컴포넌트 카테고리**:
+**Input component categories**:
 - String: text, password, textarea, URI
 - Number: input, slider
 - Boolean: checkbox, switch
@@ -25,10 +26,18 @@ yarn storybook         # Storybook dev (port 6006)
 - Array: dynamic list
 - Selection: radio, checkbox group, dropdown
 
-## Schema → Component 매핑 기준
+## Schema → Component Mapping Criteria
 
-`type`, `format`, `formType`, `enum` JSON Schema 속성으로 컴포넌트 자동 선택.
+Components are selected automatically from the `type`, `format`, `inputType`, and `enum` JSON Schema properties.
 
 ## Peer Dependencies
 
 `@canard/schema-form`, `antd`, `dayjs`, React
+
+Date and month pickers combine readOnly with disabled because preventing text entry alone leaves calendar selection editable. Lock updates must reach the widget.
+
+Enum UI identities encode the raw JSON scalar, while labels and aliases use its display string. Initial selection and change payloads use the same identity mapping so null and the string "null" remain distinct.
+
+## Verification tables
+
+Keep local parameter tables as static array literals at the Vitest each call so the case count can be audited without executing tests. Preserve case names, row order and assertions when relocating tables or splitting files by behavior. Shared scenario runners keep their canonical imported data rather than copying it into each runner.

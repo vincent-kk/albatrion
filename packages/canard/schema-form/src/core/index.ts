@@ -1,33 +1,71 @@
-export { nodeFromJSONSchema, contextNodeFactory } from './nodeFromJSONSchema';
-
-export type {
-  ArrayNode,
-  BooleanNode,
-  NullNode,
-  NumberNode,
-  ObjectNode,
-  StringNode,
-  VirtualNode,
-  InferSchemaNode,
-  SchemaNode,
-  NodeListener,
-  UnionNodeEventType,
-} from './nodes';
-
 export {
-  NodeState,
-  NodeEventType,
-  ValidationMode,
+  batchFieldNodeLoad,
+  fieldNodeFactory,
+  setContext,
   SetValueOption,
-  PublicSetValueOption,
-  PublicNodeEventType,
-  isSchemaNode,
-  isBooleanNode,
-  isNumberNode,
-  isObjectNode,
+  FieldNodeEventType,
+  FieldNodeRequestType,
+  isFieldNode,
   isStringNode,
-  isVirtualNode,
+  isNumberNode,
+  isBooleanNode,
+  isObjectNode,
   isArrayNode,
+  isVirtualNode,
+  isUnionNode,
   isBranchNode,
   isTerminalNode,
-} from './nodes';
+  buildFieldNodeTree,
+  mountFieldNode,
+  reloadFieldNodeForm,
+  adoptFieldNodeTree,
+  relayFieldNodeInput,
+  writeFieldNodeInput,
+  finishFieldNodeInput,
+  readFieldNodeInteractionReset,
+  startFieldNodeLoadValidation,
+  readFieldNodeRevealBaseline,
+  observeFieldNodeReports,
+  interpretFieldNodeDraft,
+} from './surface';
+export {
+  FieldNodeState,
+  ValidationMode,
+  retainValidationRoot,
+  releaseValidationRoot,
+  scheduleValidationSlot,
+  blueprint,
+  forEachFailureLeaf,
+} from './engine';
+export type {
+  FieldNode,
+  StringNode,
+  NumberNode,
+  BooleanNode,
+  NullNode,
+  ObjectNode,
+  ArrayNode,
+  VirtualNode,
+  UnionNode,
+  BranchNode,
+  TerminalNode,
+  InferFieldNode,
+} from './surface';
+export type {
+  AuthoredSchema,
+  Validator,
+  ValidationIssue,
+  SchemaControls,
+  NonObjectSchemaControls,
+  InactiveValue,
+  InactiveValueResolver,
+  InactiveValueContext,
+  ValidateFunction,
+} from './engine';
+export { readFieldNodeRevealPolicy } from './surface';
+export { readFieldNodeRevealVersion } from './surface';
+export { subscribeFieldNodeRevealReleased } from './surface';
+export {
+  updateFieldNodeSettings,
+  readFieldNodeValidationEpoch,
+} from './surface';

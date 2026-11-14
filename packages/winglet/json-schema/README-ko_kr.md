@@ -1,280 +1,51 @@
 # @winglet/json-schema
 
-[![Typescript](https://img.shields.io/badge/typescript-✔-blue.svg)]()
-[![JSON Schema](https://img.shields.io/badge/JSONSchema-{}-blue.svg)]()
+[English](README.md) · 한국어
 
----
+스키마를 순회하고 변환하며, 의미를 보존할 수 있는 참조를 인라인하는 도구입니다. 타입 가드는 스키마의 `type`을 판별합니다. 데이터 인스턴스의 유효성은 별도의 검증기로 확인하세요.
 
-## 개요
+## 설치
 
-`@winglet/json-schema`는 JSON Schema 및 JSON 데이터를 다루기 위한 강력한 유틸리티 라이브러리입니다. 주요 기능으로는 JSON Schema 구조 탐색, 유효성 검증, 참조 해결(reference resolution), 필터링 등을 제공합니다. 타입스크립트로 작성되어 있어 타입 안정성이 보장되며, JSON Schema의 구조화된 처리를 위한 다양한 기능을 제공합니다.
-
----
-
-## 설치 방법
-
-```bash
-# npm 사용
-npm install @winglet/json-schema
-
-# yarn 사용
+```sh
 yarn add @winglet/json-schema
 ```
 
----
+## 참조 인라인 시작하기
 
-## Sub-path Imports
+동기 일괄 변환에는 `resolveReference`를 사용합니다. 이 예제는 입력을 바꾸지 않고 boolean 대상을 복사합니다. 보존이 필요한 참조는 결과에 남을 수 있습니다.
 
-이 패키지는 sub-path import를 지원하여 더 세분화된 가져오기를 가능하게 하고 번들 크기를 최적화합니다. 전체 패키지를 가져오지 않고 특정 모듈을 직접 가져올 수 있습니다:
-
-```typescript
-// 메인 내보내기 (모든 유틸리티 및 타입 정의)
-import { JSONSchemaScanner, isObjectSchema } from '@winglet/json-schema';
-
-// 동기 스키마 스캐너
-import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
-
-// 비동기 스키마 스캐너
-import { JSONSchemaScannerAsync } from '@winglet/json-schema/async-scanner';
-
-// 스키마 타입 검사 유틸리티
-import {
-  isArraySchema,
-  isObjectSchema,
-  isStringSchema,
-  isNumberSchema,
-  isBooleanSchema,
-  isNullSchema
-} from '@winglet/json-schema/filter';
-```
-
-### 사용 가능한 Sub-path
-
-package.json의 exports 설정을 기반으로 합니다:
-
-- `@winglet/json-schema` - 메인 내보내기 (모든 유틸리티, 스캐너, 타입 정의)
-- `@winglet/json-schema/scanner` - 동기 JSON Schema 스캐너 (JSONSchemaScanner)
-- `@winglet/json-schema/async-scanner` - 비동기 JSON Schema 스캐너 (JSONSchemaScannerAsync)
-- `@winglet/json-schema/filter` - 스키마 타입 검사 및 필터링 유틸리티 (isArraySchema, isObjectSchema 등)
-
----
-
-## 호환성 안내
-
-**지원 환경:**
-
-- Node.js 16.11.0 이상
-- 최신 브라우저 (Chrome 94+, Firefox 93+, Safari 15+)
-
-**레거시 환경 지원이 필요한 경우:**
-Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환해주세요.
-
-**대상 패키지**
-
-- `@winglet/json-schema`
-- `@winglet/common-utils`
-
----
-
-## 주요 기능
-
-### 1. 스키마 탐색 및 유효성 검사
-
-- **[`JSONSchemaScanner`](./src/utils/JSONSchemaScanner/sync/JSONSchemaScanner.ts)**: JSON 스키마를 깊이 우선 탐색(DFS) 방식으로 순회하며 방문자(Visitor) 패턴을 적용하고 $ref 참조를 해결하는 클래스
-- **[`JSONSchemaScannerAsync`](./src/utils/JSONSchemaScanner/async/JSONSchemaScannerAsync.ts)**: 비동기 작업을 지원하는 JSONSchemaScanner 확장 클래스
-
-### 2. 타입 검증 및 필터링
-
-- **[`isArraySchema`](./src/filter.ts)**: 스키마가 배열 타입인지 확인
-- **[`isNumberSchema`](./src/filter.ts)**: 스키마가 숫자 타입인지 확인
-- **[`isObjectSchema`](./src/filter.ts)**: 스키마가 객체 타입인지 확인
-- **[`isStringSchema`](./src/filter.ts)**: 스키마가 문자열 타입인지 확인
-- **[`isBooleanSchema`](./src/filter.ts)**: 스키마가 불리언 타입인지 확인
-- **[`isNullSchema`](./src/filter.ts)**: 스키마가 null 타입인지 확인
-
-### 3. JSON Schema 타입 정의
-
-- 다양한 JSON Schema 타입 정의 ([`ObjectSchema`](./src/types/jsonSchema.ts), [`ArraySchema`](./src/types/jsonSchema.ts), [`StringSchema`](./src/types/jsonSchema.ts) 등)
-- 스키마에서 값 타입을 추론하는 유틸리티 타입 ([`InferValueType`](./src/types/value.ts))
-
----
-
-## 사용 예제
-
-### JSONSchemaScanner 사용하기
+<!-- example: quick -->
 
 ```typescript
-import { JSONSchemaScanner } from '@winglet/json-schema';
-
-// 스키마 정의
-const schema = {
-  type: 'object',
-  properties: {
-    name: { type: 'string' },
-    age: { type: 'number' },
-    address: {
-      type: 'object',
-      properties: {
-        city: { type: 'string' },
-        zipCode: { type: 'string' },
-      },
-    },
-  },
-};
-
-// Visitor 패턴으로 스키마 탐색
-const scanner = new JSONSchemaScanner({
-  visitor: {
-    enter: (entry, context) => {
-      console.log(`Enter: ${entry.path}`);
-    },
-    exit: (entry, context) => {
-      console.log(`Exit: ${entry.path}`);
-    },
-  },
-  options: {
-    maxDepth: 5, // 최대 탐색 깊이 설정
-    filter: (entry, context) => {
-      // 특정 조건에 따라 노드 필터링
-      return true;
-    },
-    mutate: (entry, context) => {
-      // 특정 조건에 따라 스키마 변경
-      return entry.schema;
-    },
-  },
-});
-
-// 스키마 스캔
-scanner.scan(schema);
-
-// 처리된 스키마 가져오기
-const processedSchema = scanner.getValue();
-```
-
-### 스키마 타입 검사하기
-
-```typescript
-import {
-  isArraySchema,
-  isObjectSchema,
-  isStringSchema,
-} from '@winglet/json-schema';
+import { resolveReference } from '@winglet/json-schema';
 
 const schema = {
-  type: 'object',
-  properties: {
-    /* ... */
-  },
+  $defs: { Allowed: false },
+  properties: { value: { $ref: '#/$defs/Allowed' } },
 };
-
-if (isObjectSchema(schema)) {
-  // 객체 스키마 처리
-  const properties = schema.properties;
-  // ...
-} else if (isArraySchema(schema)) {
-  // 배열 스키마 처리
-  const items = schema.items;
-  // ...
-}
+const output = resolveReference(schema);
+if (!output || typeof output === 'boolean')
+  throw new Error('Expected an object root');
+console.assert(output.properties.value === false);
+console.assert(schema.properties.value.$ref === '#/$defs/Allowed');
 ```
 
-## 개발 환경 설정
+## 작업에 맞는 경로
 
-```bash
-# 저장소 클론
-dir=your-albatrion && git clone https://github.com/vincent-kk/albatrion.git "$dir" && cd "$dir"
+- 방문·필터·변형이 필요하면 `JSONSchemaScanner`와 `createReferenceResolver`를 함께 사용합니다. 해소기를 설정하지 않으면 참조를 인라인하지 않습니다.
+- 문서 공급이나 콜백을 기다려야 하면 `JSONSchemaScannerAsync`와 `createReferenceResolverAsync`를 사용합니다. 문서 공급은 호출자가 제공한 `load` 함수가 담당합니다. 패키지는 스스로 네트워크나 파일에 접근하지 않습니다.
+- 스키마 타입 판별은 `@winglet/json-schema/filter`, 동기 순회는 `/scanner`, 비동기 순회는 `/async-scanner` 하위 경로에서도 가져올 수 있습니다. `Dialect`, `DEFAULT_KEYWORDS`와 키워드 서술 형은 스캐너 코드를 불러오지 않는 `/keyword` 하위 경로에서도 가져올 수 있습니다. 해소기 구성 함수는 루트에서 가져옵니다.
 
-# 의존성 설치
-nvm use && yarn install && yarn run:all build
+## 동작과 한계 읽기
 
-# 개발 빌드
-yarn jsonSchema build
+[상세 명세](docs/ko/SPECIFICATION.md)가 방문 시점, 출력 소유권, 방언과 `inert`, 사용자 해소기, 참조 보존 이유, 오류와 깊이 안전의 범위를 설명합니다. 설치된 선언은 정확한 시그니처의 기준입니다.
 
-# 테스트 실행
-yarn jsonSchema test
-```
+boolean 노드를 처리한 뒤 객체 필드를 읽고, 참조 결과는 `exit`의 `entry.references`에서 확인하세요. `getValue()`는 변환 연산이 없으면 원본을 그대로 반환하므로 그 결과가 항상 소유한 사본이라고 가정하지 마세요.
 
----
+## 에이전트 지침
 
-## API 참조
-
-### 주요 클래스 및 함수
-
-#### JSONSchemaScanner
-
-JSON 스키마를 순회하고 참조를 해결하는 클래스입니다.
-
-```typescript
-class JSONSchemaScanner<ContextType = void> {
-  constructor(props?: {
-    visitor?: SchemaVisitor<ContextType>;
-    options?: JSONScannerOptions<ContextType>;
-  });
-  scan(schema: UnknownSchema): this;
-  getValue<Schema extends UnknownSchema>(): Schema | undefined;
-}
-```
-
-#### JSONSchemaScannerAsync
-
-비동기 작업을 지원하는 JSONSchemaScanner 확장 클래스입니다.
-
-```typescript
-class JSONSchemaScannerAsync<
-  ContextType = void,
-> extends JSONSchemaScanner<ContextType> {
-  scanAsync(schema: UnknownSchema): Promise<this>;
-  getValueAsync<Schema extends UnknownSchema>(): Promise<Schema | undefined>;
-}
-```
-
-#### 타입 검증 함수
-
-```typescript
-function isArraySchema(schema: UnknownSchema): schema is ArraySchema;
-function isNumberSchema(schema: UnknownSchema): schema is NumberSchema;
-function isObjectSchema(schema: UnknownSchema): schema is ObjectSchema;
-function isStringSchema(schema: UnknownSchema): schema is StringSchema;
-function isBooleanSchema(schema: UnknownSchema): schema is BooleanSchema;
-function isNullSchema(schema: UnknownSchema): schema is NullSchema;
-```
-
-### 주요 타입 정의
-
-```typescript
-// 기본 JSON 스키마 타입
-type JSONSchema<Options extends Dictionary = object> =
-  | NumberSchema<Options, JSONSchema>
-  | StringSchema<Options, JSONSchema>
-  | BooleanSchema<Options, JSONSchema>
-  | ArraySchema<Options, JSONSchema>
-  | ObjectSchema<Options, JSONSchema>
-  | NullSchema<Options, JSONSchema>;
-
-// 값 타입
-type BooleanValue = boolean;
-type NumberValue = number;
-type StringValue = string;
-type ArrayValue = any[];
-type ObjectValue = Record<string, any>;
-type NullValue = null;
-```
-
----
-
-## 마이그레이션 안내 (0.16.0)
-
-0.16.0은 0.15.0이 이전 대소문자 혼용 이름을 위해 남겨 둔 deprecated 별칭을 제거합니다. `JSONSchema`, `InferJSONSchema`, `JSONSchemaScanner`, `JSONSchemaScannerAsync`, `JSONScannerOptions`, `JSONScannerOptionsAsync`를 사용하세요.
-
----
+패키지에 포함된 사용 지침은 [스킬](docs/agents/skills/json-schema-skill/SKILL.md)에서 시작합니다.
 
 ## 라이선스
 
-이 저장소는 MIT 라이선스로 제공됩니다. 자세한 내용은 [`LICENSE`](./LICENSE) 파일을 참조하세요.
-
----
-
-## 연락처
-
-이 프로젝트에 관한 질문이나 제안이 있으시면 이슈를 생성해 주세요.
+MIT.

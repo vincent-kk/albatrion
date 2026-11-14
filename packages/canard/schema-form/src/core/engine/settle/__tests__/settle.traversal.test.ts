@@ -1,0 +1,110 @@
+import { describe, expect, it } from 'vitest';
+
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
+import {
+  FieldNodeWriteKind,
+  WriteOption,
+} from '@/schema-form/core/engine/types/value';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
+
+// filid:contract settle-write-traversal
+describe('bounded settlement traversal', () => {
+  it('SETTLE-047 visits only the leaf and its ancestor on an input write', () => {
+    const properties = Object.fromEntries(
+      Array.from({ length: 50 }, (_, index) => [
+        `field${index}`,
+        { type: 'string' },
+      ]),
+    );
+    const { root, visits } = createTestTree({ type: 'object', properties });
+    writeFieldNode(
+      root,
+      {},
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
+    visits.length = 0;
+    writeFieldNode(
+      root.structure!.field0,
+      'changed',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
+    expect(visits).toEqual(['/field0', '']);
+    expect(visits.filter((visit) => visit.startsWith('select:'))).toHaveLength(
+      0,
+    );
+    expect(visits).toHaveLength(2);
+  });
+
+  it('SETTLE-047 skips 50 declared siblings when their gate reads cannot change', () => {
+    const properties = Object.fromEntries(
+      Array.from({ length: 50 }, (_, index) => [
+        `field${index}`,
+        { type: 'string' },
+      ]),
+    );
+    const { root, visits } = createTestTree({
+      type: 'object',
+      properties: {
+        ...properties,
+        flag: { type: 'boolean' },
+        guarded: { type: 'string', controls: { active: '../flag' } },
+      },
+    });
+    writeFieldNode(
+      root,
+      { flag: false },
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
+    visits.length = 0;
+    writeFieldNode(
+      root.structure!.field49,
+      'changed',
+      FieldNodeWriteKind.Input,
+      WriteOption.Overwrite,
+    );
+    expect(visits).toEqual(['/field49', '']);
+    expect(visits.filter((visit) => visit.startsWith('select:'))).toHaveLength(
+      0,
+    );
+  });
+
+  it('SETTLE-047 confines whole replacement to its target subtree', () => {
+    const fields = Object.fromEntries(
+      Array.from({ length: 50 }, (_, index) => [
+        `field${index}`,
+        { type: 'string' },
+      ]),
+    );
+    const { root, visits } = createTestTree({
+      type: 'object',
+      properties: {
+        left: { type: 'object', properties: fields },
+        right: { type: 'object', properties: fields },
+      },
+    });
+    writeFieldNode(
+      root,
+      { left: {}, right: {} },
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
+    visits.length = 0;
+    writeFieldNode(
+      root.structure!.left,
+      { field0: 'changed' },
+      FieldNodeWriteKind.CallerReplace,
+      WriteOption.Overwrite,
+    );
+    expect(
+      visits.some((visit) => visit === '/right' || visit.startsWith('/right/')),
+    ).toBe(false);
+    expect(
+      root.structure!.right.revisionLedger[FieldNodeEventType.UpdateValue],
+    ).toBe(1);
+  });
+});

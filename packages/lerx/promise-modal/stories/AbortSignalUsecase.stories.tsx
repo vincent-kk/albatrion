@@ -25,7 +25,7 @@ export const AbortAlertAfterDelay = () => {
       content: 'Watch the modal close automatically!',
       signal: controller.signal,
     }).then(() => {
-      setStatus('Alert closed (should not happen on abort)');
+      setStatus('Alert completed (confirmation or cancellation)');
     });
 
     setTimeout(() => {
@@ -54,7 +54,7 @@ export const AbortConfirmBeforeUser = () => {
       content: 'This will be aborted in 3 seconds',
       signal: controller.signal,
     }).then((confirmed) => {
-      setResult(`User chose: ${confirmed}`);
+      setResult(`Confirm result: ${confirmed}`);
     });
 
     setTimeout(() => {
@@ -94,7 +94,7 @@ export const AbortPromptDuringInput = () => {
       signal: controller.signal,
     }).then((inputValue) => {
       setValue(inputValue ?? '');
-      setStatus('Input received');
+      setStatus(inputValue === null ? 'Prompt cancelled' : 'Input confirmed');
     });
 
     setTimeout(() => {
@@ -156,6 +156,7 @@ export const ManualAbortControl = () => {
       content: 'Click the "Abort" button below to close this modal',
       signal: newController.signal,
       closeOnBackdropClick: false,
+      dimmed: false,
     }).then(() => {
       setStatus('Alert closed');
       setController(null);
@@ -198,6 +199,7 @@ export const MultipleModalsAbort = () => {
         content: `This is modal number ${i + 1}`,
         signal: controller.signal,
         closeOnBackdropClick: false,
+        dimmed: false,
       });
     }
 

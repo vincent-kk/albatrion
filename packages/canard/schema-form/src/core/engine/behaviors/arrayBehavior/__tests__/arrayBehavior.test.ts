@@ -1,0 +1,498 @@
+import { describe, expect, it } from 'vitest';
+
+import { isArray } from '@winglet/common-utils/filter';
+
+import { BEHAVIORS } from '@/schema-form/core/engine/behaviors/behaviors';
+import type { BlueprintNode } from '@/schema-form/core/engine/blueprint';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
+import type {
+  ArrayOperation,
+  Behavior,
+  FieldNodeRecord,
+} from '@/schema-form/core/engine/record';
+import { EMPTY_REVISION_LEDGER } from '@/schema-form/core/engine/record';
+import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
+import { SchemaFormError } from '@/schema-form/errors';
+
+import { arrayBehavior } from '../arrayBehavior';
+
+/** Make a calculation record without constructing or settling child nodes. */
+const makeRecord = (
+  behavior: Behavior,
+  template: BlueprintNode,
+  source: unknown = undefined,
+  options: Record<string, unknown> = {},
+): FieldNodeRecord<unknown> => ({
+  behavior,
+  runtime: {
+    blueprint: blueprint({ type: 'array' }),
+    diagnostics: { status: 'stable' },
+    context: {},
+    nodeFactory: () => undefined,
+    globalStateCounts: new Map(),
+    globalState: {},
+    loadSnapshot: undefined,
+
+    misfitPaths: new PathKeyedSet(),
+  },
+  blueprintNode: template,
+  parent: null,
+  rootNode: undefined,
+  name: '',
+  escapedName: '',
+  path: '/list',
+  depth: 0,
+  isRequired: false,
+  nullable: false,
+  schemaType: template.schemaType,
+  structure: null,
+  children: null,
+  itemKey: null,
+  itemCount: 0,
+  nextItemKey: 0,
+  source,
+  extras: undefined,
+  isActive: true,
+  isVisible: true,
+  isReadOnly: false,
+  isDisabled: false,
+  local: undefined,
+  emit: undefined,
+  divergenceCurrent: undefined,
+  divergencePath: undefined,
+  divergenceSegments: undefined,
+  divergenceBase: undefined,
+  divergenceResult: false,
+  schema: { schema: { options }, typeConflict: false },
+  interactionState: {},
+  revisionLedger: EMPTY_REVISION_LEDGER,
+  deliveryInitialized: false,
+  deliveryChanges: 0,
+  pendingRevision: 0,
+  detached: false,
+  disposed: false,
+  interactionReset: 0,
+});
+
+// filid:contract array-branch
+describe('array branch calculation', () => {
+  it('NODE-052 declares positions with templates and reuses their entries', () => {
+    const template = blueprint({
+      type: 'array',
+      prefixItems: [{ type: 'string' }, { type: 'number' }],
+      items: false,
+    }).root;
+    const node = makeRecord(arrayBehavior.branch, template);
+    node.itemCount = 4;
+    const first = arrayBehavior.branch.declareChildren(node);
+    expect(first.map((entry) => entry.name)).toEqual(['0', '1']);
+    expect(arrayBehavior.branch.declareChildren(node)).toBe(first);
+    const other = makeRecord(arrayBehavior.branch, template);
+    other.itemCount = 1;
+    expect(
+      arrayBehavior.branch.declareChildren(other).map((entry) => entry.name),
+    ).toEqual(['0']);
+    const again = arrayBehavior.branch.declareChildren(node);
+    expect(again).toEqual(first);
+    again.forEach((entry, index) => expect(entry).toBe(first[index]));
+    node.itemCount = 0;
+    expect(arrayBehavior.branch.declareChildren(node)).toBe(
+      arrayBehavior.branch.declareChildren(node),
+    );
+  });
+
+  it('VALUE-034 fills absent object, array, and leaf emissions by kind', () => {
+    const template = blueprint({
+      type: 'array',
+      prefixItems: [{ type: 'object' }, { type: 'array' }, { type: 'string' }],
+      items: false,
+    }).root;
+    const node = makeRecord(arrayBehavior.branch, template);
+    node.itemCount = 3;
+    expect(arrayBehavior.branch.assemble(node, [])).toEqual([{}, [], null]);
+    expect(
+      arrayBehavior.branch.interpret([1], {
+        kinds: 'array',
+        mask: 0,
+        nullable: false,
+      }),
+    ).toEqual([1]);
+    const wrong = { unexpected: true };
+    expect(
+      arrayBehavior.branch.interpret(wrong, {
+        kinds: 'array',
+        mask: 0,
+        nullable: false,
+      }),
+    ).toBe(wrong);
+  });
+
+  it('VALUE-037 fills a union leaf whose empty object emitted nothing with null', () => {
+    const template = blueprint({
+      type: 'array',
+      items: {
+        type: ['object', 'string'],
+      },
+    }).root;
+    const node = makeRecord(arrayBehavior.branch, template);
+    node.itemCount = 1;
+    node.structure = { '0': { emit: undefined } };
+    expect(arrayBehavior.branch.assemble(node, [])).toEqual([null]);
+  });
+
+  it('NODE-052 appends blueprint-less extras after declared positions', () => {
+    const template = blueprint({
+      type: 'array',
+      prefixItems: [{ type: 'string' }],
+      items: false,
+    }).root;
+    const node = makeRecord(arrayBehavior.branch, template);
+    node.itemCount = 3;
+    node.structure = { '0': { emit: 'first' } };
+    node.extras = ['second', 'third'];
+    const local = arrayBehavior.branch.assemble(node, []);
+    expect(local).toEqual(['first', 'second', 'third']);
+    node.local = local;
+    expect(arrayBehavior.branch.assemble(node, [])).toBe(local);
+  });
+
+  it('LANDING-085 trims trailing holes and empty output without mutation', () => {
+    const template = blueprint({
+      type: 'array',
+      items: { type: 'string' },
+    }).root;
+    const node = makeRecord(arrayBehavior.branch, template, undefined, {
+      omitTrailing: true,
+    });
+    node.itemCount = 3;
+    node.structure = { '0': { emit: 'kept' }, '1': { emit: null } };
+    const local = arrayBehavior.branch.assemble(node, []);
+    expect(local).toEqual(['kept', null, null]);
+    const projected = arrayBehavior.branch.project(node, local);
+    expect(projected).toEqual(['kept']);
+    expect(arrayBehavior.branch.project(node, local)).toBe(projected);
+    expect(local).toEqual(['kept', null, null]);
+    node.structure = null;
+    node.itemCount = 0;
+    expect(arrayBehavior.branch.project(node, [])).toBeUndefined();
+    node.schema = {
+      schema: { options: { omitEmpty: false } },
+      typeConflict: false,
+    };
+    expect(arrayBehavior.branch.project(node, [])).toEqual([]);
+    node.source = { wrong: true };
+    expect(arrayBehavior.branch.project(node, ['kept'])).toBe(node.source);
+  });
+
+  it('VALUE-034 keeps an emitted object before omitted host holes and tail nulls', () => {
+    const template = blueprint({
+      type: 'array',
+      prefixItems: [{ type: 'object' }, { type: 'array' }],
+      items: false,
+    }).root;
+    const node = makeRecord(arrayBehavior.branch, template, undefined, {
+      omitTrailing: true,
+    });
+    node.itemCount = 4;
+    const emitted = {};
+    node.structure = { '0': { emit: emitted } };
+    node.extras = [null, undefined];
+    const local = arrayBehavior.branch.assemble(node, []);
+    expect(local).toEqual([{}, [], null, undefined]);
+    const projected = arrayBehavior.branch.project(node, local);
+    expect(projected).toEqual([{}]);
+    if (isArray(projected)) expect(projected[0]).toBe(emitted);
+    expect(local).toEqual([{}, [], null, undefined]);
+  });
+
+  it('NODE-005 plans branch push, pop, remove, update, and clear', () => {
+    const node = makeRecord(
+      arrayBehavior.branch,
+      blueprint({ type: 'array', items: { type: 'string' } }).root,
+    );
+    node.itemCount = 3;
+    expect(
+      arrayBehavior.branch.arrange(node, { kind: 'push', value: 'x' }),
+    ).toEqual({
+      kind: 'slots',
+      slots: [{ from: 0 }, { from: 1 }, { from: 2 }, { value: 'x' }],
+      result: { source: 'length' },
+    });
+    expect(arrayBehavior.branch.arrange(node, { kind: 'pop' })).toEqual({
+      kind: 'slots',
+      slots: [{ from: 0 }, { from: 1 }],
+      result: { source: 'removed', index: 2 },
+    });
+    expect(
+      arrayBehavior.branch.arrange(node, { kind: 'remove', index: 1 }),
+    ).toEqual({
+      kind: 'slots',
+      slots: [{ from: 0 }, { from: 2 }],
+      result: { source: 'removed', index: 1 },
+    });
+    expect(
+      arrayBehavior.branch.arrange(node, {
+        kind: 'update',
+        index: 1,
+        value: 'y',
+      }),
+    ).toEqual({ kind: 'update', index: 1, value: 'y' });
+    expect(arrayBehavior.branch.arrange(node, { kind: 'clear' })).toEqual({
+      kind: 'slots',
+      slots: [],
+      result: { source: 'void' },
+    });
+  });
+
+  it('35C-06 47C-02 returns noop for invalid positions and non-push null verbs', () => {
+    for (const row of [arrayBehavior.branch, arrayBehavior.terminal]) {
+      const node = makeRecord(
+        row,
+        blueprint({ type: 'array', items: { type: 'string' } }).root,
+        row.strategy === 'terminal' ? [] : undefined,
+      );
+      expect(row.arrange(node, { kind: 'pop' })).toEqual({ kind: 'noop' });
+      expect(row.arrange(node, { kind: 'clear' })).toEqual({ kind: 'noop' });
+      for (const index of [-1, 0, 1.5]) {
+        expect(row.arrange(node, { kind: 'remove', index })).toEqual({
+          kind: 'noop',
+        });
+        expect(
+          row.arrange(node, { kind: 'update', index, value: 'x' }),
+        ).toEqual({ kind: 'noop' });
+      }
+      node.source = null;
+      for (const operation of [
+        { kind: 'pop' },
+        { kind: 'update', index: 0, value: 'x' },
+        { kind: 'remove', index: 0 },
+        { kind: 'clear' },
+      ] as const)
+        expect(row.arrange(node, operation)).toEqual({ kind: 'noop' });
+      expect(row.arrange(node, { kind: 'push', value: 'x' })).toEqual(
+        row.strategy === 'branch'
+          ? {
+              kind: 'slots',
+              slots: [{ value: 'x' }],
+              result: { source: 'length' },
+            }
+          : { kind: 'source', source: ['x'], result: { source: 'length' } },
+      );
+    }
+  });
+
+  it('NODE-051 plans branch insert at the front, the middle and the tail', () => {
+    const node = makeRecord(
+      arrayBehavior.branch,
+      blueprint({ type: 'array', items: { type: 'string' } }).root,
+    );
+    node.itemCount = 3;
+    const plans = [0, 1, 3].map((index) =>
+      arrayBehavior.branch.arrange(node, { kind: 'insert', index, value: 'x' }),
+    );
+    expect(plans).toEqual([
+      {
+        kind: 'slots',
+        slots: [{ value: 'x' }, { from: 0 }, { from: 1 }, { from: 2 }],
+        result: { source: 'length' },
+      },
+      {
+        kind: 'slots',
+        slots: [{ from: 0 }, { value: 'x' }, { from: 1 }, { from: 2 }],
+        result: { source: 'length' },
+      },
+      {
+        kind: 'slots',
+        slots: [{ from: 0 }, { from: 1 }, { from: 2 }, { value: 'x' }],
+        result: { source: 'length' },
+      },
+    ]);
+    expect(plans[2]).toEqual(
+      arrayBehavior.branch.arrange(node, { kind: 'push', value: 'x' }),
+    );
+  });
+
+  it('35C-06 47C-02 accepts insert only in [0, N] and only at 0 on a non-array host', () => {
+    for (const row of [arrayBehavior.branch, arrayBehavior.terminal]) {
+      const node = makeRecord(
+        row,
+        blueprint({ type: 'array', items: { type: 'string' } }).root,
+        row.strategy === 'terminal' ? ['a', 'b'] : undefined,
+      );
+      node.itemCount = row.strategy === 'branch' ? 2 : 0;
+      for (const index of [-1, 3, 1.5, Number.NaN, Infinity])
+        expect(
+          row.arrange(node, { kind: 'insert', index, value: 'x' }),
+        ).toEqual({ kind: 'noop' });
+      for (const source of [null, 5, { a: 1 }]) {
+        node.source = source;
+        node.itemCount = 0;
+        expect(
+          row.arrange(node, { kind: 'insert', index: 1, value: 'x' }),
+        ).toEqual({ kind: 'noop' });
+        expect(
+          row.arrange(node, { kind: 'insert', index: 0, value: 'x' }),
+        ).toEqual(row.arrange(node, { kind: 'push', value: 'x' }));
+      }
+    }
+  });
+});
+
+// filid:contract array-terminal
+describe('array terminal calculation', () => {
+  it('35C-12 retains source identity and copies it for every valid change', () => {
+    const source = ['a', 'b', 'c'];
+    const node = makeRecord(
+      arrayBehavior.terminal,
+      blueprint({ type: 'array' }).root,
+      source,
+    );
+    expect(arrayBehavior.terminal.assemble(node, [])).toBe(source);
+    const operations: readonly ArrayOperation[] = [
+      { kind: 'push', value: 'd' },
+      { kind: 'pop' },
+      { kind: 'remove', index: 1 },
+      { kind: 'update', index: 1, value: 'x' },
+      { kind: 'clear' },
+    ];
+    const expected = [
+      ['a', 'b', 'c', 'd'],
+      ['a', 'b'],
+      ['a', 'c'],
+      ['a', 'x', 'c'],
+      [],
+    ];
+    operations.forEach((operation, index) => {
+      const plan = arrayBehavior.terminal.arrange(node, operation);
+      expect(plan.kind).toBe('source');
+      if (plan.kind === 'source') {
+        expect(plan.source).toEqual(expected[index]);
+        expect(plan.source).not.toBe(source);
+      }
+    });
+    expect(source).toEqual(['a', 'b', 'c']);
+    expect(
+      arrayBehavior.terminal.arrange(node, {
+        kind: 'update',
+        index: 1,
+        value: 'x',
+      }),
+    ).toMatchObject({ result: { source: 'updated', index: 1 } });
+    node.source = undefined;
+    expect(
+      arrayBehavior.terminal.arrange(node, { kind: 'push', value: 'x' }),
+    ).toEqual({ kind: 'source', source: ['x'], result: { source: 'length' } });
+    expect(arrayBehavior.terminal.arrange(node, { kind: 'pop' })).toEqual({
+      kind: 'noop',
+    });
+    expect(
+      arrayBehavior.terminal.arrange(node, { kind: 'remove', index: 0 }),
+    ).toEqual({ kind: 'noop' });
+    expect(
+      arrayBehavior.terminal.arrange(node, {
+        kind: 'update',
+        index: 0,
+        value: 'x',
+      }),
+    ).toEqual({ kind: 'noop' });
+  });
+
+  it('NODE-005 splices terminal insert into a copy and appends at the length like push', () => {
+    const source = ['a', 'b', 'c'];
+    const node = makeRecord(
+      arrayBehavior.terminal,
+      blueprint({ type: 'array' }).root,
+      source,
+    );
+    const expected = [
+      ['x', 'a', 'b', 'c'],
+      ['a', 'x', 'b', 'c'],
+      ['a', 'b', 'c', 'x'],
+    ];
+    [0, 1, 3].forEach((index, position) => {
+      const plan = arrayBehavior.terminal.arrange(node, {
+        kind: 'insert',
+        index,
+        value: 'x',
+      });
+      expect(plan).toEqual({
+        kind: 'source',
+        source: expected[position],
+        result: { source: 'length' },
+      });
+      if (plan.kind === 'source') expect(plan.source).not.toBe(source);
+    });
+    expect(source).toEqual(['a', 'b', 'c']);
+    expect(
+      arrayBehavior.terminal.arrange(node, {
+        kind: 'insert',
+        index: 3,
+        value: 'x',
+      }),
+    ).toEqual(
+      arrayBehavior.terminal.arrange(node, { kind: 'push', value: 'x' }),
+    );
+  });
+
+  it('LANDING-085 projects trailing nullish values without changing source', () => {
+    const source = ['kept', null, undefined];
+    const node = makeRecord(
+      arrayBehavior.terminal,
+      blueprint({ type: 'array' }).root,
+      source,
+      { omitTrailing: true },
+    );
+    const projected = arrayBehavior.terminal.project(node, source);
+    expect(projected).toEqual(['kept']);
+    expect(arrayBehavior.terminal.project(node, source)).toBe(projected);
+    expect(source).toEqual(['kept', null, undefined]);
+    node.schema = {
+      schema: { options: { omitTrailing: false } },
+      typeConflict: false,
+    };
+    expect(arrayBehavior.terminal.project(node, source)).toBe(source);
+    node.source = 3;
+    expect(arrayBehavior.terminal.project(node, source)).toBe(3);
+  });
+});
+
+// filid:contract array-arrange
+describe('non-array arrangement', () => {
+  it('NODE-014 ERROR-197 rejects five verbs on every non-array row with path and method', () => {
+    const operations: readonly ArrayOperation[] = [
+      { kind: 'push', value: 1 },
+      { kind: 'pop' },
+      { kind: 'update', index: 0, value: 1 },
+      { kind: 'remove', index: 0 },
+      { kind: 'clear' },
+    ];
+    for (const row of Object.values(BEHAVIORS).flatMap(Object.values)) {
+      if (row.type === 'array') continue;
+      const node = makeRecord(row, blueprint({ type: 'array' }).root);
+      for (const operation of operations) {
+        expect(() => row.arrange(node, operation)).toThrow(SchemaFormError);
+        expect(() => row.arrange(node, operation)).toThrowError(
+          expect.objectContaining({
+            code: 'SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY',
+            details: { path: '/list', method: operation.kind },
+          }),
+        );
+      }
+    }
+  });
+
+  it('NODE-014 ERROR-197 rejects insert on every non-array row with its method', () => {
+    for (const row of Object.values(BEHAVIORS).flatMap(Object.values)) {
+      if (row.type === 'array') continue;
+      const node = makeRecord(row, blueprint({ type: 'array' }).root);
+      expect(() =>
+        row.arrange(node, { kind: 'insert', index: 0, value: 1 }),
+      ).toThrowError(
+        expect.objectContaining({
+          code: 'SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY',
+          details: { path: '/list', method: 'insert' },
+        }),
+      );
+    }
+  });
+});

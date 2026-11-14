@@ -1,1 +1,0 @@
-export { getDerivedValueFactory } from './getDerivedValueFactory';

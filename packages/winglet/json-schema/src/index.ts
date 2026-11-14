@@ -20,19 +20,31 @@ export {
   isStringSchema,
 } from './filters';
 export {
-  JSONSchemaScannerAsync,
-  type JSONScannerOptionsAsync,
-} from './utils/JSONSchemaScanner/async';
-export {
   DEFAULT_KEYWORDS,
-  EXTENDED_KEYWORDS,
-  JSONSchemaScanner,
-  type JSONScannerOptions,
+  Dialect,
   type KeywordDescriptor,
   type KeywordKind,
+} from './keyword';
+export {
+  JSONSchemaScanError,
+  JSONSchemaScanErrorCode,
+  JSONSchemaScanner,
+  JSONSchemaScannerAsync,
+  ReferenceSkipReason,
+  createReferenceResolver,
+  createReferenceResolverAsync,
+  type JSONScannerOptions,
+  type JSONScannerOptionsAsync,
+  type ReferenceKeyword,
+  type ReferenceOutcome,
+  type ReferenceResolver,
+  type ReferenceResolverAsync,
+  type ReferenceResolverAsyncOptions,
+  type ReferenceResolverOptions,
+  type ReferenceStep,
   type SchemaEntry,
   type SchemaVisitor,
-} from './utils/JSONSchemaScanner/sync';
+} from './utils/JSONSchemaScanner';
 export type {
   ArraySchema,
   BasicSchema,

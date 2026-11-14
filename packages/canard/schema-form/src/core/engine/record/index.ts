@@ -1,0 +1,42 @@
+export type { FieldNodeRecord, FieldNodeDelivery } from './types/record';
+export type { InactiveSlotBaseline, InactiveSlotOverlay } from './types/slots';
+export type {
+  Behavior,
+  ArrayOperation,
+  ArrayArrangePlan,
+  UnionSpec,
+} from './types/behavior';
+export type {
+  Distribution,
+  FieldNodeRuntime,
+  SettlementBudget,
+  SettlementEntryApi,
+  SettlementFailureCause,
+  SettlementScratch,
+  MisfitRecord,
+} from './types/runtime';
+export { EMPTY_REVISION_LEDGER } from './constants/emptyRevisionLedger';
+export { FieldNodeRevisionLedger } from './utils/FieldNodeRevisionLedger';
+export { advanceFieldNodeRevision } from './utils/advanceFieldNodeRevision';
+export { canOmitFieldNodePayload } from './utils/canOmitFieldNodePayload';
+export { FieldNodeEventType } from './constants/FieldNodeEventType';
+export { FieldNodeRequestType } from './constants/FieldNodeRequestType';
+export {
+  DISABLED_BIT_SHIFT,
+  READ_ONLY_BIT_SHIFT,
+  VISIBLE_BIT_SHIFT,
+} from './constants/controlledPropertyShift';
+export { markFieldNodeEvent } from './utils/markFieldNodeEvent';
+export { indexFieldNodeWarning } from './utils/indexFieldNodeWarning';
+export { updateFieldNodeNameAndPath } from './utils/updateFieldNodeNameAndPath';
+export { patchFieldNodeInteractionState } from './utils/patchFieldNodeInteractionState';
+export { shallowPatch } from './utils/shallowPatch';
+export { accumulateGlobalStateDeltas } from './utils/accumulateGlobalStateDeltas';
+export { publishGlobalStateDeltas } from './utils/publishGlobalStateDeltas';
+
+export { captureFieldNodeChange } from './utils/captureFieldNodeChange';
+export { clearFieldNodeChanges } from './utils/clearFieldNodeChanges';
+
+export { recordFieldNodeRevealBaseline } from './utils/recordFieldNodeRevealBaseline';
+
+export { advanceFieldNodeRevealSequence } from './utils/advanceFieldNodeRevealSequence';

@@ -1,0 +1,26 @@
+import type { FieldNodeRecord } from '../../../record';
+import type { SettlementContext } from '../../types/settlement';
+import { isPlain } from '../input/isPlain';
+
+/**
+ * Record object ancestors whose wrong-kind source may need conditional clearing.
+ * @param node - Non-load caller target below one or more object hosts
+ * @param context - Settlement that owns the pending caller effect
+ * @returns Nothing; candidates remain unchanged until child emits are calculated
+ */
+export const markWrongKindAncestors = <Self extends FieldNodeRecord<Self>>(
+  node: Self,
+  context: SettlementContext<Self>,
+): void => {
+  let parent = node.parent;
+  while (parent) {
+    if (
+      parent.behavior.type === 'object' &&
+      parent.behavior.strategy === 'branch' &&
+      parent.source !== undefined &&
+      !isPlain(parent.source)
+    )
+      context.wrongKindHosts.add(parent);
+    parent = parent.parent;
+  }
+};

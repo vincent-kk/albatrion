@@ -1,0 +1,48 @@
+# Documentation
+
+This file is the only home of the principles for the documents this repository writes. `CLAUDE.md` and `AGENTS.md` point here and do not restate them.
+
+## Scope
+
+The principles cover every document this repository authors for a person or an agent: module documents (`INTENT.md`, `DETAIL.md`), `CLAUDE.md` and `AGENTS.md`, the repository skills and commands under `.claude/`, packaged agent documents (`packages/**/docs/agents/**`), package documentation and the documentation site. Change records (commit messages, pull request descriptions, changesets, the `CHANGELOG.md` files generated from them, and release notes) record history by design and are outside them; changesets follow the change records section below. The plugin-managed rule files under `.claude/rules/` and their blocks in `AGENTS.md` are outside this file. Under the precedence stated in `CLAUDE.md`, this file outranks `.claude/rules/`.
+
+## Principles
+
+1. **Record what the reader cannot establish.** Every mental model, policy, invariant, rejected alternative, known limit and other idea that the intended reader cannot establish from what they hold (principle 2) is written down with its reason, and a policy or invariant also names the failure it prevents. Reasons and change permissions (`Always do`, `Ask first`, `Never do`) stay even when the behavior they govern is visible in code. When it is unclear whether the reader would establish something correctly, keep it.
+2. **Omit what the reader derives.** A maintainer holds the source and tests; a consumer holds the published declarations, documents and tooling. A restatement of what that reader derives directly is a second copy that drifts, and stays out. For a sentence that principle 1 does not require, ask whether deleting it raises the chance that this reader acts wrongly; if it does not, delete it.
+3. **The present, and true.** Documents state current behavior, every behavioral claim holds for the current code with its conditions intact, and history lives in version control and change records. There is no `## History` section, dated note or "previously" (this overrides section 6, the opening summary and the closing line of `filid_module-documents`, and the decision-record and module-document options in `seiri_code-comments` section 1). The `## Last Updated` heading that filid requires stays, and its body states what triggers an update, never a date. A decision and its reason are present facts; when and how the decision was reached is history, and a demotion that `filid_fractal-boundaries` asks the parent to record is written as the parent's present decision. Code examples in the `docs/agents/**` of a package that has a snippet parity test (`src/__tests__/agentsSnippets.test.ts`) are copied from tests that run; other examples are checked against the current API whenever they are written or changed. Each stated behavioral limit is grounded in code or a test that the pull request description cites, and the document names that code or test only when its reader can open it.
+4. **One home per fact.** Each fact lives in the one document its reader opens; other documents refer to it instead of restating it. A file that a host loads in place of the canonical one, such as `AGENTS.md` for Codex, points to the canonical file instead of copying it. A translation keeps its source's structure and changes with it in the same pull request; it is not a second home.
+5. **Sized for attention.** Always-loaded text stays short. The fixed budgets are an `INTENT.md` within 50 lines and a rule under `packages/**/docs/agents/rules/` within 40; other always-loaded files move detail out before they grow. Detail sits one link away, in a document whose name states its purpose. A document still over budget after principle 2 has removed what its reader derives is split by reader or purpose; required content is never dropped to fit.
+6. **Changed with the code.** A change that alters a documented policy updates its document in the same pull request, before the code. A mismatch between a document and the code is a defect, fixed like a bug.
+7. **Judged by a fresh agent.** The packaged agent rules and skills and the `INTENT.md` files are done when an agent with no prior context does its role's job correctly from fixed inputs: the role's documents and what principle 2 says the role holds. A consumer builds the requested feature through the public API, advanced features included; a maintainer makes the right change decision for the right reason. When a pull request changes what these documents teach, an evaluator other than the writer runs this check: it withholds solutions, grading and anything the role does not hold, counts a task only when it actually passes, compares with a run whose inputs differ only by the absence of the document, and keeps some tasks unseen by the writer. The writer fixes a failure at its general cause rather than by adding that task's answer. Every other document, `DETAIL.md` included, is written to pass the same test.
+
+## Language
+
+Each document has one language: the language its explanation is written in. `INTENT.md` and `DETAIL.md` are written in Korean. `CLAUDE.md`, `AGENTS.md`, this file, everything under `.claude/`, packaged agent documents and code comments are written in English. A `README`, a site page and any other document take the language of their file name or tree (`README-ko_kr.md`, `docs/ko` and `documents/i18n/ko` are Korean).
+
+The rule binds prose, not every word. Headings, code and the comments inside it, identifiers, commands, paths, literal values, established technical terms and references to other documents or standards may stay in English in a document of any language, as they commonly do; translating a name breaks search and the link to the thing it names. A document breaks the rule only when its explanation switches language: a sentence, list item or table cell of prose written in a language other than its document's, which makes the reader change languages in the middle of one explanation.
+
+## Change records
+
+A changeset (`.changeset/*.md`, created with `yarn changeset`) is written for the consumers of a published package; at release, `yarn changeset:version` turns it into a version bump and that package's `CHANGELOG.md` entry, with a link to the pull request that added it. Its claims must be true, but the present-only rule of principle 3 does not apply to it.
+
+- Every pull request that changes a published package's behavior, public API, types or shipped documentation (`README.md`, `docs/`, `docs/agents/**`) adds a changeset for each affected package. A change no consumer can observe (an internal refactor, tests, benchmarks, stories, module documents) needs none.
+- Choose the bump from the consumer's view under semantic versioning. A breaking change says so in its first sentence and shows how to migrate, with code before and after.
+- Write for a consumer who did not follow the work. The first sentence states the observable change; the rest says why it matters to them. Name only the public API, and leave out internal paths, stage or round names, ledger IDs and review discussion.
+- One entry per independent change: a pull request with two unrelated changes writes two entries, and several pull requests that build one release-line change, such as a major version, extend one entry instead of adding fragments. Such an entry links only the pull request that added it.
+- Write in English.
+
+## Plugin status
+
+Some principles are proposed as plugin rules: [vincent-kk/ogham#145](https://github.com/vincent-kk/ogham/issues/145) for filid and [vincent-kk/ogham#146](https://github.com/vincent-kk/ogham/issues/146) for seiri. When a plugin release ships a rule whose text carries a clause as it is written here, delete that clause here and keep only what is specific to this repository; while the shipped text differs, keep the clause.
+
+- Principles 1 and 2 (seiri #146; filid #145 for module documents): delete.
+- Principle 3, history in version control, no `## History`, and the sentence naming the overridden rule text (filid #145, seiri #146): delete.
+- Principle 3, the `## Last Updated` body and the demotion record (filid #145): delete.
+- Principle 3, true claims and grounded limits (seiri #146): delete the general clause and keep the snippet parity rule.
+- Principle 4 (seiri #146): delete.
+- Principle 5 (seiri #146; filid already caps `INTENT.md` at 50 lines): delete the general clause and keep the `packages/**/docs/agents/rules/` budget.
+- Principle 6 (seiri #146; filid already updates `DETAIL.md` before code): delete.
+- Principle 7 (seiri #146): delete the general clause and keep which documents it covers and when it runs.
+- Change records, the rules for writing for consumers (seiri #146): delete the general clauses and keep what is specific to changesets here: the mechanics and the pull request link, which pull requests need one, the bump choice and the language.
+- Scope and Language: specific to this repository, so they stay.

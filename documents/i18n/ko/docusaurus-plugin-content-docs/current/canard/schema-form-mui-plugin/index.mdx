@@ -10,13 +10,13 @@ import LazyDemo from '@site/src/components/LazyDemo';
 
 <PackageHeader name="@canard/schema-form-mui-plugin" />
 
-`@canard/schema-form`를 위한 Material UI v7 플러그인입니다.
-`@mui/material ^7.0.0`과 MUI X date/time picker 기반의 15개 폼 입력 컴포넌트를 제공합니다.
+`@canard/schema-form`을 위한 Material UI v7 플러그인입니다.
+`@mui/material ^7.0.0`과 MUI X 날짜/시간 선택기 기반의 15개 폼 입력 컴포넌트를 제공합니다.
 MUI의 `size`, `variant`, `fullWidth` 컨텍스트 옵션을 지원합니다.
 
 ## 컴포넌트 카탈로그
 
-### Preview
+### 미리보기 {#preview}
 
 <LazyDemo load={() => import('@site/src/components/demos/showcase/MuiQuickDemo')} />
 
@@ -24,13 +24,13 @@ MUI의 `size`, `variant`, `fullWidth` 컨텍스트 옵션을 지원합니다.
 15개 컴포넌트 전체를 [컴포넌트 카탈로그](./demos) 페이지에서 확인하세요.
 :::
 
-## Installation
+## 설치 {#installation}
 
 ```bash
 yarn add @canard/schema-form-mui-plugin
 ```
 
-### Peer Dependencies
+### 피어 의존성 {#peer-dependencies}
 
 ```bash
 yarn add @mui/material@>=7.0.0 @mui/x-date-pickers@>=8.0.0 \
@@ -39,7 +39,7 @@ yarn add @mui/material@>=7.0.0 @mui/x-date-pickers@>=8.0.0 \
          dayjs@>=1 react@>=18 react-dom@>=18
 ```
 
-## Quick Setup
+## 빠른 설정 {#quick-setup}
 
 ```ts
 import { registerPlugin } from '@canard/schema-form';
@@ -48,38 +48,38 @@ import { plugin } from '@canard/schema-form-mui-plugin';
 registerPlugin(plugin);
 ```
 
-## Component Mapping
+## 컴포넌트 매핑 {#component-mapping}
 
-Components are selected automatically based on JSON Schema properties. Priority order matches the list below (top = highest priority).
+컴포넌트는 JSON Schema 속성에 따라 자동으로 선택됩니다. 우선순위는 아래 목록 순서와 같으며, 맨 위가 가장 높습니다.
 
-| Component | type | format | formType | enum | Notes |
+| 컴포넌트 | type | format | inputType | enum | 참고 사항 |
 |---|---|---|---|---|---|
-| `FormTypeInputBooleanSwitch` | `boolean` | — | `"switch"` | — | MUI Switch |
-| `FormTypeInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | MUI Checkbox group; items must be string schema |
-| `FormTypeInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
-| `FormTypeInputUri` | `string` | `"uri"` or formType `"uri"` | — | — | URI input with protocol dropdown |
-| `FormTypeInputMonth` | `string` | `"month"` | — | — | MUI X MonthPicker |
-| `FormTypeInputDate` | `string` | `"date"` | — | — | MUI X DatePicker |
-| `FormTypeInputTime` | `string` | `"time"` | — | — | MUI X TimePicker (HH:mm:00Z format) |
-| `FormTypeInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | MUI RadioGroup |
-| `FormTypeInputStringEnum` | `string` | — | — | required | MUI Select dropdown |
-| `FormTypeInputArray` | `array` | — | — | — | Dynamic list with add/remove |
-| `FormTypeInputSlider` | `number` \| `integer` | — | `"slider"` | — | MUI Slider |
-| `FormTypeInputTextarea` | `string` | `"textarea"` or formType `"textarea"` | — | — | MUI TextField multiline |
-| `FormTypeInputString` | `string` | — | — | — | MUI TextField (password via `format:"password"`) |
-| `FormTypeInputNumber` | `number` \| `integer` | — | — | — | MUI TextField type=number |
-| `FormTypeInputBoolean` | `boolean` | — | — | — | MUI Checkbox with indeterminate |
+| `FieldInputBooleanSwitch` | `boolean` | — | `"switch"` | — | MUI Switch |
+| `FieldInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | MUI Checkbox 그룹이며, items는 문자열 스키마여야 합니다. |
+| `FieldInputStringSwitch` | `string` | — | `"switch"` | 값 2개 | 두 enum 값 사이를 전환합니다. |
+| `FieldInputUri` | `string` | `"uri"` 또는 inputType `"uri"` | — | — | 프로토콜 드롭다운이 있는 URI 입력 |
+| `FieldInputMonth` | `string` | `"month"` | — | — | MUI X MonthPicker |
+| `FieldInputDate` | `string` | `"date"` | — | — | MUI X DatePicker |
+| `FieldInputTime` | `string` | `"time"` | — | — | MUI X TimePicker (HH:mm:00Z 형식) |
+| `FieldInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` 또는 `"radiogroup"` | 필수 | MUI RadioGroup |
+| `FieldInputStringEnum` | `string` | — | — | 필수 | MUI Select 드롭다운 |
+| `FieldInputArray` | `array` | — | — | — | 추가/제거가 가능한 동적 목록 |
+| `FieldInputSlider` | `number` \| `integer` | — | `"slider"` | — | MUI Slider |
+| `FieldInputTextarea` | `string` | `"textarea"` 또는 inputType `"textarea"` | — | — | MUI TextField 여러 줄 입력 |
+| `FieldInputString` | `string` | — | — | — | MUI TextField (`format:"password"`로 비밀번호 지원) |
+| `FieldInputNumber` | `number` \| `integer` | — | — | — | MUI TextField의 type=number |
+| `FieldInputBoolean` | `boolean` | — | — | — | `indeterminate` 상태를 지원하는 MUI Checkbox |
 
-## Schema Extension Properties
+## 스키마 확장 속성 {#schema-extension-properties}
 
 ```ts
 {
-  formType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri',
+  inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri',
   format?:   'date' | 'time' | 'month' | 'password' | 'uri' | 'textarea',
 }
 ```
 
-## Usage Example
+## 사용 예제 {#usage-example}
 
 ```tsx
 import { Form } from '@canard/schema-form';
@@ -89,20 +89,20 @@ const schema = {
   properties: {
     name:     { type: 'string' },
     age:      { type: 'integer' },
-    active:   { type: 'boolean', formType: 'switch' },
+    active:   { type: 'boolean', presentation: { inputType: 'switch' } },
     role:     { type: 'string', enum: ['admin', 'user', 'guest'] },
     birthday: { type: 'string', format: 'date' },
     bio:      { type: 'string', format: 'textarea' },
-    score:    { type: 'number', formType: 'slider', minimum: 0, maximum: 100 },
+    score:    { type: 'number', presentation: { inputType: 'slider' }, minimum: 0, maximum: 100 },
   },
 };
 
 <Form jsonSchema={schema} onChange={setValue} />
 ```
 
-## MUI Context
+## MUI 컨텍스트 {#mui-context}
 
-Pass MUI styling options through `<Form context={...}>`:
+`<Form context={...}>`를 통해 MUI 스타일 옵션을 전달하십시오:
 
 ```ts
 type MuiContext = {
@@ -120,9 +120,9 @@ type MuiContext = {
 />
 ```
 
-## Date/Time Picker Setup
+## 날짜/시간 선택기 설정 {#datetime-picker-setup}
 
-MUI X date pickers require a `LocalizationProvider`. Wrap your app:
+MUI X 날짜 선택기는 `LocalizationProvider`가 필요합니다. 앱을 다음과 같이 감싸십시오:
 
 ```tsx
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -135,43 +135,43 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 <ForAI>
 
-## AI Reference
+## AI 참조 {#ai-reference}
 
-**Package**: `@canard/schema-form-mui-plugin` v0.10.0
-**Purpose**: Material UI v7 plugin — 15 form input components with MUI X date/time pickers.
+**패키지**: `@canard/schema-form-mui-plugin` v0.10.0
+**목적**: Material UI v7 플러그인으로, MUI X 날짜/시간 선택기를 포함한 폼 입력 컴포넌트 15개를 제공합니다.
 
-### Exports
+### 내보내기 {#exports}
 ```ts
 import { plugin } from '@canard/schema-form-mui-plugin';
 import type { MuiContext } from '@canard/schema-form-mui-plugin';
 ```
 
-### Peer dependencies
+### 피어 의존성 {#peer-dependencies-1}
 `@mui/material@>=7`, `@mui/x-date-pickers@>=8`, `@mui/icons-material@>=7`, `@emotion/react@>=11`, `@emotion/styled@>=11`, `dayjs@>=1`, `react@>=18`
 
-### Component mapping (priority order, high → low)
-| Component | Trigger |
+### 컴포넌트 매핑 (우선순위 높은 순) {#component-mapping-priority-order-high--low}
+| 컴포넌트 | 선택 조건 |
 |---|---|
-| BooleanSwitch | `boolean` + `formType: "switch"` |
-| StringCheckbox | `array` + `formType: "checkbox"` + items.enum |
-| StringSwitch | `string` + `formType: "switch"` + 2 enum values |
+| BooleanSwitch | `boolean` + `inputType: "switch"` |
+| StringCheckbox | `array` + `inputType: "checkbox"` + items.enum |
+| StringSwitch | `string` + `inputType: "switch"` + enum 값 2개 |
 | Uri | `string` + `format: "uri"` |
-| Month / Date / Time | `string` + `format: "month"/"date"/"time"` (MUI X pickers) |
-| RadioGroup | `string\|number` + `formType: "radio"` + enum |
+| Month / Date / Time | `string` + `format: "month"/"date"/"time"` (MUI X 선택기) |
+| RadioGroup | `string\|number` + `inputType: "radio"` + enum |
 | StringEnum | `string` + enum (MUI Select) |
-| Array | `array` (dynamic list) |
-| Slider | `number` + `formType: "slider"` |
-| Textarea | `string` + `format: "textarea"` (multiline TextField) |
-| String | `string` (TextField, password via `format: "password"`) |
-| Number | `number\|integer` (TextField type=number) |
-| Boolean | `boolean` (Checkbox with indeterminate) |
+| Array | `array` (동적 목록) |
+| Slider | `number` + `inputType: "slider"` |
+| Textarea | `string` + `format: "textarea"` (여러 줄 TextField) |
+| String | `string` (TextField, 비밀번호 지원: `format: "password"`) |
+| Number | `number\|integer` (TextField의 type=number) |
+| Boolean | `boolean` (`indeterminate` 상태를 지원하는 Checkbox) |
 
-### Context type
+### 컨텍스트 타입 {#context-type}
 ```ts
 type MuiContext = { size?: 'small' | 'medium'; variant?: 'outlined' | 'filled' | 'standard'; fullWidth?: boolean };
 ```
 
-### Required setup for date/time pickers
+### 날짜/시간 선택기에 필요한 설정 {#required-setup-for-datetime-pickers}
 ```tsx
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';

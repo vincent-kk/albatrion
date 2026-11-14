@@ -1,29 +1,38 @@
 # CLAUDE.md
 
-`@canard/schema-form` — JSON Schema 기반 React 폼 라이브러리. 노드 트리 기반 상태 관리, 플러그인 시스템, 비동기 검증 지원.
+`@canard/schema-form` is a JSON Schema-based React form library with node-tree state management, a plugin system, and asynchronous validation.
 
 ## Design Values
 
 - Consistent, predictable behavior is the core value — where behavior could go either way, follow the consistency the public interface leads a caller to expect.
 - Speed first, minimal computation, and the same value read twice returns the same reference — every change states its speed and memory cost.
+- For a small, fixed set of checks known at build time, use direct `&&` or `||` conditions. Hoist a constant key array when iteration is clearer; never allocate the same fixed list on every call.
+- Use `hasOwnProperty` from `@winglet/common-utils/lib` for own-key checks instead of calling `Object.prototype.hasOwnProperty` directly.
+- Use `isArray` from `@winglet/common-utils/filter` for array checks instead of calling `Array.isArray` directly (consumer-facing doc examples may show the native call).
+- Use `EMPTY_ARRAY`/`EMPTY_OBJECT` from `@winglet/common-utils/constant` for shared empty values, except identity sentinels.
 
 ## Commands
 
+Before local `build` or `typecheck`, rebuild workspace dependencies, including `yarn workspace @winglet/json-schema build` after `@winglet/common-utils` and `@winglet/json`; CI builds the dependency closure first via `scripts/ci/helpers/plan/createBuildSteps.mjs`.
+
+Run these commands from `packages/canard/schema-form`. From the repository root, use `yarn workspace @canard/schema-form <command>`.
+
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언 + agents-hashes.json
-yarn build:types       # 타입 선언만
-yarn build:hashes      # docs/agents/** 해시 매니페스트만 재생성
-yarn test              # Vitest 테스트
-yarn test --coverage   # 커버리지 포함
-yarn test --run src/__tests__/   # 렌더 레벨(node tree + DOM) 통합 스위트만
+yarn build             # Build ESM/CJS bundles, verify build flags, generate declarations and agent hashes, then typecheck
+yarn build:types       # Type declarations only
+yarn build:hashes      # Regenerate only the docs/agents/** hash manifest
+yarn test              # Vitest tests
+yarn workspace @canard/schema-form test --run --project render # All React 19 render tests
 yarn lint              # ESLint
 yarn storybook         # Storybook dev (port 6006)
 ```
 
+Coverage requires a provider package such as `@vitest/coverage-v8`, which is not installed.
+
 ## Agent Docs Injector
 
-`docs/agents/**` 자산을 선택한 에이전트 위치에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
-`--agent` 로 대상 에이전트를 고른다 — `claude` 는 `.claude/{skills,rules,commands}`, `codex`/`agents` 는 `.agents/skills` + `AGENTS.md` 마커 블록(project scope 기준).
+Inject `docs/agents/**` assets into the selected agent's locations. Engine: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
+Select agents with `--agent`: `claude` uses `.claude/{skills,rules,commands}`; `codex`/`agents` use `.agents/skills` and marker blocks in `AGENTS.md` (at project scope).
 
 ```bash
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
@@ -34,72 +43,107 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 
 ### Isolation Guardrails
 
-- `src/**` 는 `docs/**` 와 `@slats/agents-assets-sync` 어느 것도 import 금지.
-- **절대 `exports` 에 `./docs/*` 를 추가하지 말 것.**
+- `src/**` MUST NOT import from `docs/**` or `@slats/agents-assets-sync`.
+- **Never add `./docs/*` to `exports`.**
 
 ## Architecture
 
 ### Node System
 
-- **AbstractNode** — 모든 노드의 기반 클래스
-- **Terminal Nodes**: `StringNode`, `NumberNode`, `BooleanNode`, `NullNode`
-- **Branch Nodes**: `ObjectNode`, `ArrayNode` (각각 `BranchStrategy` / `TerminalStrategy`)
-- **Special**: `VirtualNode` (조건부 필드, 계산 값)
-- 노드 생성: `nodeFromJSONSchema()`
+- **`FieldNode` is the single runtime class** (`src/core/surface/runtime/FieldNode.ts`). Node kinds are public discriminated union types distinguished by `type`, rather than separate classes (`src/core/surface/type.ts`).
+- **Terminal**: `StringNode`, `NumberNode`, `BooleanNode`, `NullNode`, `UnionNode` (`type` holds several kinds)
+- **Branch**: `ObjectNode`, `ArrayNode`, `VirtualNode` (sibling fields grouped with `options.virtual`). An `object` or `array` is terminal when `options.terminal: true`. The schema determines this once; it does not change during execution.
+- **Discrimination**: Use guards such as `isStringNode` and `node.strategy` (`'branch'` | `'terminal'`).
+- Node creation: `<Form>` creates and mounts the tree from `jsonSchema` and `defaultValue`. External access uses `FormHandle.node`, `findNode`, `findNodes`, the `node` in the `children` function, and the FieldInput `node` prop. Direct tree creation is not public (tests and benchmarks use `src/__tests__/fixtures/nodeFromJSONSchema.ts`).
 
 ### Plugin System (`src/app/plugin/`)
 
-- Validator 플러그인: AJV7/AJV8 등 JSON Schema 검증
-- UI 컴포넌트 플러그인: `FormGroup`, `FormLabel`, `FormInput`, `FormError`
-- FormTypeInput 플러그인: 커스텀 입력 컴포넌트
+- Validator plugins: JSON Schema validation through AJV7/AJV8 and other validators
+- UI plugins supply FieldRenderer and the root-owning LabelRenderer / ErrorMessageRenderer parts; optional InputRenderer frames the bound input. See [part assembly](docs/agents/skills/schema-form-skill/knowledge/field-input.md#bound-parts-and-input-frames).
+- FieldInput plugins: Custom input components
 
 ### Error Isolation (user-injected render surfaces)
 
-사용자 주입 컴포넌트(FormTypeRenderer/FormTypeInput, virtualization `Placeholder` 등)는 반드시 `@winglet/react-utils/hoc`의 `withErrorBoundary`로 감싼다 — 하나가 렌더 중 throw해도 폼 전체가 아니라 그 서브트리만 fallback으로 격리된다. 래핑은 **컴포넌트를 해석·소유하는 지점에서 1회**만: 렌더러는 `SchemaNodeProxy`/`SchemaNodeInputWrapper`가 `memo(withErrorBoundary(...))`로, `Placeholder`는 `VirtualizationManager` 생성자가 form당 1회 래핑해 모든 지연 필드가 동일 인스턴스를 공유한다. 소비처(개별 렌더 위치)마다 반복 래핑하지 말 것. (`helpers/virtualization`는 이 `Placeholder` 방어만 React 예외로 허용 — INTENT.md 참조.)
+User-injected render surfaces (FieldRenderer/FieldInput and virtualization Placeholder) are isolated at the component resolution owner so a thrown render affects only that subtree. FieldProxy owns the renderer ErrorBoundary; the input definition adapter owns the input boundary. VirtualizationManager wraps Placeholder only when its original component reference changes, and every waiting field shares that adapter. Do not wrap again at each consumption site. The virtualization helper permits this Placeholder protection as its only React exception; see its INTENT.md.
 
 ### Key APIs
 
-- `Form` — 메인 진입점
-- `Form.Render` — JSONPointer 경로로 커스텀 레이아웃
-- `registerPlugin()` — 플러그인 전역 등록 (렌더 전 필수)
-- `node.find('/path')` — JSONPointer 노드 탐색 (`..` 부모, `*` 와일드카드는 제한적 사용)
-- `node.value` / `node.enhancedValue` (가상 필드 포함)
-- `node.normalizedValue` — 스키마 옵션으로 정제된 값. `FormHandle.getValue`/`submit`/루트 방출/부모측 hydration 스냅샷이 이 값을 읽으며, `ArrayNode`는 `options.omitTrailing` 트림을 여기에 적용 (`omitEmpty`는 부모 전파 경로 전용)
+- `Form` — Main entry point
+- `Form.Render` — Custom layout through JSONPointer paths
+- `registerPlugin()` — Global plugin registration (required before rendering)
+- `node.find('/path')` — JSONPointer node lookup (`..` for the parent; `*` wildcard support is limited)
+- `node.value` — read a virtual group tuple through `FormHandle.findNode('/period')`, narrow with `isVirtualNode`, then read its `value`; see [virtual schema](docs/agents/skills/schema-form-skill/knowledge/virtual-schema.md).
+- `node.outputValue` — Value refined by schema options. `FormHandle.getValue`/`submit`, root emission, and parent-side hydration snapshots read this value. `ArrayNode` applies `options.omitTrailing` trimming here (`omitEmpty` applies only to the parent propagation path).
 - `node.validate()` / `node.errors`
-- `node.subscribe()` — 노드 이벤트 구독 (cleanup 함수 반환). 구독 전에 전달된 이벤트는 재생되지 않음 — 상태 미러는 `useSchemaNodeSubscribe`의 `onSubscribe` catch-up 사용
-- `node.revision(mask?)` — 전달된 이벤트 배치의 단조 리비전 (리스너 유무 무관 집계, 늦은 구독자의 갭 감지용; `useSchemaNodeTracker`가 useSyncExternalStore 스냅샷으로 사용)
-- `virtualization` prop — 초대형 폼 렌더 가상화(지연 마운트). node tree는 전량 생성 유지, branch 자식 수 ≥ `threshold`면 `eagerCount` 이후 필드를 placeholder(`[data-path][data-deferred]` — identity는 `data-path`로 통일, 마커가 상태 구분)로 지연 → IO 교차·idle backfill·RequestFocus/Select 시 마운트(defer-once). 게이트는 `useChildNodeComponents`에서 bake, 조율은 `VirtualizationManager`(helpers/virtualization). placeholder 시각은 CSS `[data-deferred]` 셀렉터 또는 `Placeholder` 컴포넌트 옵션(공간 예약은 `estimateHeight` 소유, 컴포넌트는 시각 채움만). CSR 전용 — SSR 하이드레이션에서 켜지 말 것
+- `node.subscribe()` — Subscribes to node events (returns a cleanup function). Events delivered before subscription are not replayed; state mirrors use the `onSubscribe` catch-up in `useFieldNodeSubscribe`.
+- `node.revision(mask?)` — Monotonic revision of delivered event batches (counted regardless of listeners to detect gaps for late subscribers; `useFieldNodeTracker` uses it as the useSyncExternalStore snapshot)
+- `virtualization` prop — deferred mounting for large forms. The node tree stays complete; branches at `threshold` defer children beyond `eagerCount` behind `[data-path][data-deferred]` placeholders until intersection, idle backfill, or Focus/Select reveals them once. `useChildFields` bakes gates and `VirtualizationManager` coordinates them. Style placeholders with `[data-deferred]` CSS or `Placeholder`; `estimateHeight` owns reserved space. SSR renders every field and hydrates unchanged; only branches and children added after hydration are gated. Hydration itself schedules no extra branch render, including custom branch inputs containing Suspense in React 18 and 19.
 
-### FormTypeInput 우선순위 (높음 → 낮음)
+### FieldInput Priority (High → Low)
 
-1. 스키마 내 `FormTypeInput` 직접 지정
-2. `formTypeInputMap` 경로 매핑
-3. Form 레벨 `formTypeInputDefinitions`
-4. Provider `formTypeInputDefinitions`
-5. 플러그인 제공 정의
+1. Direct schema `presentation.FieldInput` declaration
+2. `fieldInputMap` path mapping
+3. Form-level `fieldInputDefinitions`
+4. Provider `fieldInputDefinitions`
+5. Plugin-provided definitions
 
-### Computed Properties
+### Controls (Conditional and Derived Properties)
 
 ```typescript
-computed: {
+controls: {
   visible: '../category === "premium"',
   readOnly: '../locked === true',
-  watch: ['../category'],   // 명시적 의존성
+  watch: ['../category'],   // Explicit dependency
 }
 ```
+
+Reserved group keys, child scope and shallow types are declared once in `src/constants/reservedSchemaKeys.ts`; validation and key enumerations derive from it. Authoring type owners check exact key parity so a new key cannot silently drift. See the package and buildNodes DETAIL contracts for ownership and read-site trust.
+For control value types and examples, use the [schema reference](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/schema-reference#controls).
 
 ### Validation Modes
 
 `OnChange` | `OnRequest` | `None`
 
+## Fractal Contracts in This Package
+
+Applies the root `Module Contract Principles` to this package.
+
+- `src/index.ts` is the only public surface (`exports` has `"."` alone) and lists every export by name. Docs, README and agent skills show only names reachable from it. Adding a name is a contract change: enumerate the built `dist/index.d.ts` and compare before merging.
+- Standard fractal shape: the root holds `INTENT.md`, `DETAIL.md`, `index.ts` and at most one implementation file named after the fractal (`components/Form/Form.tsx`). Child fractals sit under a role compartment (`components/Form/components/FormCore/`, `components/FieldProxy/components/FieldInputBridge/`), each with `index.ts`, its documents, and its own `components/`·`utils/` for helpers only it uses. Types live in a `types/` compartment split by concern (`src/core/engine/record/types/`), not in a root `type.ts`. Compartments are organs: no `index.ts` inside them, files are imported directly (`src/constants/bitmask`, not `src/constants`). Inside one organ, entry functions follow their siblings' shape: all files or all directories, never a mix.
+- A fractal named after a role (`hooks`, `types`) keeps its files in topic compartments, never in a compartment that repeats the role name (`src/hooks/fieldNode/`·`src/hooks/form/`, `src/types/schema/`·`field/`·`error/`·`rolled/`; never `hooks/hooks/` or `types/types/`). Helpers extracted from a function go into a topic compartment beside their siblings, not into a directory named after the function with its own `utils/` (no `analyze/populateNodeChildren/utils/`). `src/hooks` stays a fractal because it composes `core`, `providers` and `components`; an organ may not import its owner's child fractals (model B1, guarded by `src/__tests__/importModel.test.ts`).
+- Tests live in each fractal's `__tests__/` and import that fractal's internal files directly (`../runtime/FieldNode`, not `..` or `@/schema-form/core`). A test that needs another fractal's internals moves into that fractal; a fixture shared by two fractals sits in the `__tests__/fixtures/` of their lowest common fractal. `src/__tests__/e2e`, `scenarios`, `migration` and `agents-examples` are external consumers and import the root `index.ts`. A parent-level test that must reach a child fractal's internals (for example through `vi.mock`) is declared in the parent's `DETAIL.md` (see `src/core/engine/DETAIL.md`).
+- Benchmarks live inside the nearest fractal's `__benchmarks__/` and import internals directly. `bench/distEngine/` loads built workspace bundles and installed 0.16.x bundles for diagnostic and version comparisons. `bench/` and `stories/` are ignored by filid, so reviewers check those imports by hand. A bench never justifies adding a name to an `index.ts`.
+- Error codes come from one place: `FormErrorCode` and `FormWarningCode` (`src/errors/`), exported from the root. Product code emits codes through these constants, never as string literals.
+
 ## Render-Level Test Harness (`src/__tests__/`)
 
-버그 다수는 **node tree는 맞는데 렌더된 DOM이 어긋나는** 구간(초기 마운트 priming, 가지 전환, 배열 identity, Refresh-gated 비제어 입력)에서 발생한다. node-tree 전용 단위 테스트는 이를 못 잡는다.
+Vitest uses five projects: `unit` runs TypeScript core tests in Node, `render`
+runs React tests and DOM-dependent TypeScript tests in jsdom, and `storybook`
+runs portable stories through addon-vitest in headless Chromium, `react18` repeats the render project on React 18, and `production` checks the built bundles. Run `yarn test --run --project <name>` to select a project.
+The dedicated `verify-unit` and `verify-render` bundle runs shadow wheel, verify table, and derive shadow checks via `yarn workspace @canard/schema-form test:verify --run`; default `unit`, `render`, and `react18` projects exercise the shipped skip/table configuration with derive shadow disabled.
 
-- `src/__tests__/renderForm.tsx` — 공유 하니스. 실제 `<Form>`을 렌더하고 **두 레이어를 동시 검증**: 존재는 `[data-path]` 기반 `exists(path)`, 값은 `id={path}` 기반 `value/checked(path)`, 트리는 `node(path)/getValue()`, 가상화 placeholder는 `deferred(path)/deferredPaths()`. `flushOnMount:false`(동기 priming 단언), `instrument`(remount 감지), `strictMode`, `validator`(AJV), `caughtErrors`(수렴 가드), userEvent(`type/selectOption/toggle/addItem/removeItem`) 지원.
-- `src/__tests__/scenarios/*.render.test.tsx` — 시나리오 패밀리별 스위트(composition/array/computed/refresh/reset/validation/...). 파일당 ≤15 케이스. 신규 시나리오는 여기에 추가한다.
-- 검증된 product 버그는 `it.fails('... // BUG: ...')`로 표면화(스위트는 green 유지). src를 고쳐 통과시키지 말 것.
-- Final spec behavior is asserted through a renderForm scenario; a node-tree test accompanies it, never replaces it.
+- `src/__tests__/renderForm.tsx` remains the legacy Form regression harness.
+  It observes both DOM (`data-path`, input values, deferred placeholders) and
+  node state, with StrictMode, validators, caught errors, and user interactions.
+- Existing render scenarios keep their location and assertions until the engine
+  switch. Known legacy defects retain their explicit `it.fails` records.
+- New shared scenarios belong to private `@aileron/schema-form-scenarios` as pure
+  data. The package cannot import schema-form, including types; inject forms,
+  handles, and adapters through structural contracts.
+- Core scenario runners consume the shared families. New Form e2e runners belong
+  to `src/__tests__/e2e/<family>.test.tsx`, with at most 15 cases per file.
+  A scenario needing consumer-only spies or boundary assertions gets its own
+  file. Shared screen steps run through `playScenario(scenario, element)`.
+- The renderer registers its handle on the wrapper root or render container.
+  `playScenario` searches the received element and descendants, so story and
+  render contexts share the same call shape.
+- Scenario stories render the current public Form entry, mirror the same data,
+  and call `playScenario` from `play`; usage stories may assert their own readouts (the handle call log and what the story itself renders); behavior contracts stay in shared scenarios.
+- Final observable behavior needs a render scenario; a core test alone does not
+  verify DOM behavior. Harness skeleton tests and empty families claim no engine
+  behavior coverage.
+
+Filid case-cap exemptions name only runners consuming canonical shared scenario data or shared fixtures. Keep those imports so one data source serves every engine and renderer; copying the catalogue into each runner would let coverage drift. Local literal parity rows use ordinary case caps once their declaration and read-only uses are statically countable. Literal validator parity tables keep `as const`; catalogue validation receives a one-parameter identity projection so the static counter can prove the table binding does not escape while `indexDeclaredRows` still type-checks and validates every declared row against the shared catalogue. The exact exempt file list belongs in `.filid/config.json`, and the ownership contract records the reason.
 
 ## Class Member Ordering (Domain-First)
 
@@ -107,13 +151,14 @@ Identity → Tree Structure → Value Management → Computed Properties → Sta
 
 ## Key Hooks
 
-- `useSchemaNodeTracker`, `useSchemaNodeSubscribe`, `useChildNodeComponentMap`, `useChildNodeErrors`, `useFormSubmit` (`useSchemaNode` 는 내부 전용, 공개 index 미노출)
+- `useFieldErrors` observes one field’s formatted feedback; see [validation UX](docs/agents/skills/schema-form-skill/knowledge/validation-ux.md#read-one-fields-errors).
+- `useFieldNodeTracker`, `useFieldNodeSubscribe`, `useChildFieldMap`, `useChildFieldErrors`, `useFormSubmit` (`useFieldNode` is internal and absent from the public index)
 
 ## Key Type Utilities
 
-- `InferValueType<Schema>`, `InferSchemaNode<Schema>`, `FormHandle<Schema, Value>` (모두 공개 index 노출 — README `TypeScript Support` 절이 문서화)
-- `InferValueType` 은 `as const` 스키마에서만 의미 있음(없으면 `type` 이 `string` 으로 넓어져 `any`). `properties`/`items` 를 재귀하되 **모든 키를 optional** 로 내고 `Record<string, any>` 와 교차한다 — `computed.active` false·`options.omitEmpty` 가 런타임에 키를 제거하므로 required 표기는 지킬 수 없는 약속이고, 열린 타입이라야 `oneOf` 분기 키가 초과 속성으로 거부되지 않는다(`additionalProperties: false` 면 닫힘). 정확한 형태가 필요하면 `Form<Schema, Value>` / `FormHandle<Schema, Value>` 2번째 인자로 직접 주입할 것 — `defaultValue` 에 구체 객체를 넘기면 `Value` 가 그 리터럴에서 required 키로 추론돼 `FormHandle` 의 기본 `Value` 와 어긋나므로, ref 를 함께 쓸 때는 주입이 필수다
-- nullable 스키마는 `type: [..., 'null']` 과 deprecated `nullable: true` 둘 다 값 타입에 `| null` 을 붙인다 — 런타임(`BranchStrategy`·`validateSchemaType`)이 null 을 허용하므로 타입도 같은 계약을 따른다
+- `InferValueType<Schema>`, `InferFieldNode<Schema>`, `FormHandle<Schema, Value>` (public exports; see [TypeScript inference](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference#typescript))
+- Apply `as const` for useful `InferValueType` inference; widened `type` falls back to `any`. It recurses through `properties`, finite `prefixItems` tuples and `items`. Object keys are optional because inactive or omitted fields can disappear, and objects stay open unless `additionalProperties: false` so keys from `oneOf`/`anyOf` branches are not rejected as excess properties. Finite literal `prefixItems` infer optional-position tuples (see [TypeScript inference](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference#typescript) for the value contract and consumer impact). Supply `Form<Schema, Value>` / `FormHandle<Schema, Value>` explicitly when exact values are required; a concrete `defaultValue` can infer required keys that differ from the handle's default `Value`, so use the same explicit type with a ref.
+- Nullable schemas add `| null` to the value type for both `type: [..., 'null']` and `nullable: true`. The runtime (`BranchStrategy` and `validateSchemaType`) accepts null, so the types follow the same contract. `nullable: true` is officially supported, equivalent to adding `'null'` to the `type` array, and produces no error or warning.
 
 ## Dependencies
 
@@ -121,4 +166,8 @@ Identity → Tree Structure → Value Management → Computed Properties → Sta
 
 ## Build Output
 
-`dist/index.cjs` + `dist/index.mjs` + `dist/index.d.ts` — raw 약 240KB / gzip 약 44KB. 비압축 배포는 의도된 선택(최종 minify 는 소비자 번들러에 위임)
+Runtime bundles are `dist/index.mjs`, `dist/index.node.mjs`, and `dist/index.cjs`; declarations remain in `dist/index.d.ts`. The `node` export condition selects `index.node.mjs` for imports and `index.cjs` for require. Both Node outputs read `NODE_ENV` once at load and retain that decision after later environment changes. The default ESM keeps call-site comparisons. All runtime outputs intentionally remain unminified so consumer bundlers perform final minification.
+
+## Declaration compatibility check
+
+`build:verify:types` checks every public package export from fresh built declarations in strict NodeNext and Bundler consumers with `skipLibCheck: false`; `build` runs it after declaration generation. This checks ESM consumer declarations, independently of source aliases and the workspace's Bundler-only typecheck. Build workspace dependencies first. The shared declaration fixer handles static `from`, side-effect imports and inline `import()` references, including current and parent directory indexes. It preserves string literal types/comments and emits `.js` for `.d.ts` targets or `.mjs` for `.d.mts` targets. Its unit tests run once through the root `test:build-scripts` command, not in each package build.

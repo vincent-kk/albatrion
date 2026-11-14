@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>배치 처리 손익분기점 벤치마크</title>
+    <title>Batch processing break-even benchmark</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -184,83 +184,83 @@
 </head>
 <body>
     <div class="container">
-        <h1>🚀 배치 처리 손익분기점 벤치마크</h1>
+        <h1>🚀 Batch processing break-even benchmark</h1>
         
         <div class="section">
-            <h3>📋 테스트 설정</h3>
+            <h3>📋 Test settings</h3>
             <div class="controls">
                 <div class="input-group">
-                    <label>작업 복잡도</label>
+                    <label>Work complexity</label>
                     <select id="complexity">
-                        <option value="light">가벼운 작업 (~0.01ms)</option>
-                        <option value="medium" selected>중간 작업 (~0.1ms)</option>
-                        <option value="heavy">무거운 작업 (~0.5ms)</option>
-                        <option value="very-heavy">매우 무거운 작업 (~2ms)</option>
-                        <option value="custom">사용자 정의</option>
+                        <option value="light">Light work (~0.01ms)</option>
+                        <option value="medium" selected>Medium work (~0.1ms)</option>
+                        <option value="heavy">Heavy work (~0.5ms)</option>
+                        <option value="very-heavy">Very heavy work (~2ms)</option>
+                        <option value="custom">Custom</option>
                     </select>
-                    <small>작업의 복잡도를 선택하세요</small>
+                    <small>Select the work complexity</small>
                 </div>
                 
                 <div class="input-group" id="custom-loops" style="display: none;">
-                    <label>반복 횟수</label>
+                    <label>Iterations</label>
                     <input type="number" id="custom-loop-count" value="1000" min="10" max="100000">
-                    <small>사용자 정의 작업의 반복 횟수</small>
+                    <small>Iterations for custom work</small>
                 </div>
                 
                 <div class="input-group">
-                    <label>배치 처리 방식</label>
+                    <label>Batch method</label>
                     <select id="batch-method">
                         <option value="microtask" selected>Microtask (Promise)</option>
                         <option value="setTimeout">setTimeout 0</option>
-                        <option value="both">둘 다 비교</option>
+                        <option value="both">Compare both</option>
                     </select>
-                    <small>비교할 비동기 처리 방식</small>
+                    <small>Asynchronous processing method to compare</small>
                 </div>
                 
                 <div class="input-group">
-                    <label>테스트 반복 횟수</label>
+                    <label>Test iterations</label>
                     <input type="number" id="test-iterations" value="5" min="1" max="20">
-                    <small>정확한 측정을 위한 반복 횟수</small>
+                    <small>Iterations for accurate measurements</small>
                 </div>
                 
                 <div class="input-group">
-                    <label>최대 배치 크기</label>
+                    <label>Maximum batch size</label>
                     <input type="number" id="max-batch-size" value="50" min="5" max="200">
-                    <small>테스트할 최대 배치 크기</small>
+                    <small>Maximum batch size to test</small>
                 </div>
             </div>
             
             <div class="button-group">
-                <button class="btn-primary" onclick="runSingleTest()">단일 테스트 실행</button>
-                <button class="btn-primary" onclick="runFullAnalysis()">전체 분석 실행</button>
-                <button class="btn-secondary" onclick="clearResults()">결과 초기화</button>
+                <button class="btn-primary" onclick="runSingleTest()">Run single test</button>
+                <button class="btn-primary" onclick="runFullAnalysis()">Run full analysis</button>
+                <button class="btn-secondary" onclick="clearResults()">Clear results</button>
             </div>
         </div>
 
         <div id="status" class="status" style="display: none;"></div>
 
         <div class="section">
-            <h3>📊 테스트 결과</h3>
+            <h3>📊 Test results</h3>
             <div id="single-work-info" style="display: none;">
-                <strong>단일 작업 시간:</strong> <span id="single-time"></span>ms
-                <strong style="margin-left: 20px;">예상 손익분기점:</strong> <span id="estimated-breakeven"></span>개
+                <strong>Single-operation time:</strong> <span id="single-time"></span>ms
+                <strong style="margin-left: 20px;">Estimated break-even point:</strong> <span id="estimated-breakeven"></span> items
             </div>
             
             <table class="results-table">
                 <thead>
                     <tr>
-                        <th>배치 크기</th>
-                        <th>동기 실행 (ms)</th>
+                        <th>Batch size</th>
+                        <th>Synchronous execution (ms)</th>
                         <th id="async-header">Microtask (ms)</th>
-                        <th>오버헤드 (ms)</th>
-                        <th>성능 비율</th>
-                        <th>결과</th>
+                        <th>Overhead (ms)</th>
+                        <th>Performance ratio</th>
+                        <th>Result</th>
                     </tr>
                 </thead>
                 <tbody id="results-tbody">
                     <tr>
                         <td colspan="6" style="text-align: center; color: #6c757d; padding: 40px;">
-                            테스트를 실행하여 손익분기점을 확인하세요
+                            Run a test to find the break-even point
                         </td>
                     </tr>
                 </tbody>
@@ -268,7 +268,7 @@
         </div>
 
         <div id="summary" class="summary" style="display: none;">
-            <h4>📈 분석 결과</h4>
+            <h4>📈 Analysis results</h4>
             <div id="summary-content"></div>
         </div>
     </div>
@@ -336,7 +336,7 @@
             } else if (method === 'setTimeout') {
                 header.textContent = 'setTimeout (ms)';
             } else {
-                header.textContent = '비동기 처리 (ms)';
+                header.textContent = 'Asynchronous processing (ms)';
             }
         }
 
@@ -406,15 +406,15 @@
                 row.className = 'highlight';
             }
             
-            const resultText = ratio < 1 ? '🎯 배치 유리' : 
-                              ratio < 1.1 ? '⚖️ 거의 동일' : '❌ 동기 유리';
+            const resultText = ratio < 1 ? '🎯 Batching wins' :
+                              ratio < 1.1 ? '⚖️ Nearly equal' : '❌ Synchronous wins';
             
             row.innerHTML = `
                 <td>${batchSize}</td>
                 <td>${syncTime.toFixed(4)}</td>
                 <td>${asyncTime.toFixed(4)}</td>
                 <td>${overhead > 0 ? '+' : ''}${overhead.toFixed(4)}</td>
-                <td>${ratio.toFixed(2)}배</td>
+                <td>${ratio.toFixed(2)}x</td>
                 <td>${resultText}</td>
             `;
             
@@ -431,41 +431,41 @@
             let analysis = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">';
             
             // 손익분기점 분석
-            analysis += '<div><h5>🎯 손익분기점 분석</h5>';
+            analysis += '<div><h5>🎯 Break-even analysis</h5>';
             if (optimalResults.length > 0) {
                 const firstOptimal = optimalResults[0];
-                analysis += `<p><strong>${firstOptimal.batchSize}개부터 배치 처리가 유리합니다!</strong></p>`;
-                analysis += `<p>최적 성능: ${firstOptimal.batchSize}개 배치에서 ${((1 - firstOptimal.ratio) * 100).toFixed(1)}% 성능 향상</p>`;
+                analysis += `<p><strong>Batching wins from ${firstOptimal.batchSize} items!</strong></p>`;
+                analysis += `<p>Best performance: batch size ${firstOptimal.batchSize} items, ${((1 - firstOptimal.ratio) * 100).toFixed(1)}% improvement</p>`;
             } else if (breakEvenPoint) {
-                analysis += `<p><strong>${breakEvenPoint.batchSize}개 근처에서 성능이 비슷합니다</strong></p>`;
+                analysis += `<p><strong>Performance is similar near ${breakEvenPoint.batchSize} items</strong></p>`;
             } else {
-                analysis += '<p><strong>테스트 범위에서는 동기 처리가 계속 유리합니다</strong></p>';
+                analysis += '<p><strong>Synchronous processing wins throughout the tested range</strong></p>';
                 const minRatio = Math.min(...results.map(r => r.ratio));
                 const minResult = results.find(r => r.ratio === minRatio);
-                analysis += `<p>가장 좋은 결과: ${minResult.batchSize}개에서 ${minResult.ratio.toFixed(2)}배</p>`;
+                analysis += `<p>Best result: ${minResult.batchSize} items, ${minResult.ratio.toFixed(2)}x</p>`;
             }
             analysis += '</div>';
             
             // 오버헤드 분석
             const avgOverhead = results.reduce((sum, r) => sum + r.overhead, 0) / results.length;
-            analysis += '<div><h5>⚡ 오버헤드 분석</h5>';
-            analysis += `<p>평균 오버헤드: <strong>${avgOverhead.toFixed(4)}ms</strong></p>`;
-            analysis += `<p>단일 작업 시간: <strong>${singleWorkTime.toFixed(4)}ms</strong></p>`;
-            analysis += `<p>이론적 손익분기점: <strong>${Math.ceil(avgOverhead / singleWorkTime)}개</strong></p>`;
+            analysis += '<div><h5>⚡ Overhead analysis</h5>';
+            analysis += `<p>Average overhead: <strong>${avgOverhead.toFixed(4)}ms</strong></p>`;
+            analysis += `<p>Single-operation time: <strong>${singleWorkTime.toFixed(4)}ms</strong></p>`;
+            analysis += `<p>Theoretical break-even point: <strong>${Math.ceil(avgOverhead / singleWorkTime)} items</strong></p>`;
             analysis += '</div>';
             
             analysis += '</div>';
             
             // 추천사항
             analysis += '<div style="margin-top: 15px; padding: 15px; background: #e8f4fd; border-radius: 6px;">';
-            analysis += '<h5 style="color: #1976d2; margin-top: 0;">💡 권장사항</h5>';
+            analysis += '<h5 style="color: #1976d2; margin-top: 0;">💡 Recommendations</h5>';
             
             if (optimalResults.length > 0) {
-                analysis += `<p>✅ <strong>${optimalResults[0].batchSize}개 이상의 작업</strong>은 배치 처리를 고려하세요</p>`;
-                analysis += '<p>✅ UI 응답성이 중요하다면 더 작은 단위로도 배치 처리 고려</p>';
+                analysis += `<p>✅ <strong>${optimalResults[0].batchSize} or more operations</strong>: consider batching</p>`;
+                analysis += '<p>✅ Consider batching smaller groups if UI responsiveness matters</p>';
             } else {
-                analysis += '<p>⚠️ 이 수준의 작업은 동기 처리가 더 효율적입니다</p>';
-                analysis += '<p>💡 하지만 UI 블로킹 방지를 위해서는 여전히 배치 처리가 필요할 수 있습니다</p>';
+                analysis += '<p>⚠️ Synchronous processing is more efficient for this level of work</p>';
+                analysis += '<p>💡 Batching may still be needed to prevent UI blocking</p>';
             }
             
             analysis += '</div>';
@@ -480,7 +480,7 @@
             const method = document.getElementById('batch-method').value;
             const workFunction = workFunctions[complexity];
             
-            showStatus('단일 작업 시간 측정 중...');
+            showStatus('Measuring single-operation time...');
             
             try {
                 await new Promise(resolve => setTimeout(resolve, 100)); // UI 업데이트 대기
@@ -494,11 +494,11 @@
                 const estimatedBreakeven = Math.ceil(0.1 / singleTime);
                 document.getElementById('estimated-breakeven').textContent = estimatedBreakeven;
                 
-                showStatus('단일 작업 시간 측정 완료!', 'completed');
+                showStatus('Single-operation measurement complete!', 'completed');
                 setTimeout(hideStatus, 2000);
                 
             } catch (error) {
-                showStatus('측정 중 오류가 발생했습니다: ' + error.message, 'error');
+                showStatus('Measurement failed: ' + error.message, 'error');
             }
         }
 
@@ -509,7 +509,7 @@
             const maxBatchSize = parseInt(document.getElementById('max-batch-size').value);
             const workFunction = workFunctions[complexity];
             
-            showStatus('전체 분석 시작...');
+            showStatus('Starting full analysis...');
             currentResults = [];
             
             // 결과 테이블 초기화
@@ -518,7 +518,7 @@
             
             try {
                 // 단일 작업 시간 측정
-                showStatus('단일 작업 시간 측정 중...');
+                showStatus('Measuring single-operation time...');
                 await new Promise(resolve => setTimeout(resolve, 100));
                 
                 const singleTime = measureSingleWork(workFunction, 1000);
@@ -531,7 +531,7 @@
                 
                 for (let i = 0; i < batchSizes.length; i++) {
                     const batchSize = batchSizes[i];
-                    showStatus(`배치 크기 ${batchSize} 테스트 중... (${i + 1}/${batchSizes.length})`);
+                    showStatus(`Testing batch size ${batchSize}... (${i + 1}/${batchSizes.length})`);
                     await new Promise(resolve => setTimeout(resolve, 50));
                     
                     let syncTimes = [];
@@ -569,11 +569,11 @@
                 // 분석 결과 업데이트
                 updateSummary(currentResults, singleTime);
                 
-                showStatus('전체 분석 완료!', 'completed');
+                showStatus('Full analysis complete!', 'completed');
                 setTimeout(hideStatus, 3000);
                 
             } catch (error) {
-                showStatus('분석 중 오류가 발생했습니다: ' + error.message, 'error');
+                showStatus('Analysis failed: ' + error.message, 'error');
             }
         }
 
@@ -581,7 +581,7 @@
             document.getElementById('results-tbody').innerHTML = `
                 <tr>
                     <td colspan="6" style="text-align: center; color: #6c757d; padding: 40px;">
-                        테스트를 실행하여 손익분기점을 확인하세요
+                        Run a test to find the break-even point
                     </td>
                 </tr>
             `;

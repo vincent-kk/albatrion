@@ -1,341 +1,43 @@
 ---
-sidebar_label: 'Core Concepts'
+sidebar_label: '핵심 개념'
 sidebar_position: 3
 ---
 
-import ForAI from '@site/src/components/ForAI';
+# 핵심 개념
 
-# Core Concepts
+## 형상·형 해석·검증 {#shape-value-validation}
 
-## JSON Schema as the Single Source of Truth
+폼 엔진은 참여 중인 선언으로 필드를 구성합니다. `minimum`, `minItems` 같은 제약은 검증기가 판정하며 모든 쓰기의 값을 잘라 내거나 배열 데이터를 만들지 않습니다. 형 해석에서 변환이 명확하면 값을 변환할 수 있습니다. 모호하거나 변환할 수 없는 값은 소비자와 검증기가 처리할 misfit으로 남습니다.
 
-폼 구조, 필드 타입, 검증 규칙, 조건부 로직은 모두 단일 JSON Schema 객체에 인코딩됩니다.
-라이브러리는 마운트 시 이 스키마를 파싱하여 내부 **노드 트리**를 구성합니다 —
-스키마 필드당 하나의 노드. 컴포넌트 코드에서 폼 필드나 검증 규칙을 수동으로 정의할 필요가 없습니다.
+존재와 표시를 제어하려면 [active·visible controls](./schema-reference#controls)를 비교하고, 이슈 배분과 표시는 [검증 표시](./validation#visibility)를 참조하십시오.
 
-```ts
-const schema = {
-  type: 'object',
-  properties: {
-    title: { type: 'string', minLength: 1 },
-    price: { type: 'number', minimum: 0 },
-    inStock: { type: 'boolean' },
-    tags: { type: 'array', items: { type: 'string' } },
-  },
-  required: ['title', 'price'],
-};
-// → ObjectNode
-//     ├── StringNode  (title)
-//     ├── NumberNode  (price)
-//     ├── BooleanNode (inStock)
-//     └── ArrayNode   (tags)
-//           └── StringNode (items)
-```
+## 노드 종류와 전략 {#node-types}
 
-## Node Tree
+| 노드                                             | 의미                                                                     |
+| ------------------------------------------------ | ------------------------------------------------------------------------ |
+| StringNode / NumberNode / BooleanNode / NullNode | 말단 값이며 integer도 NumberNode입니다                               |
+| ObjectNode / ArrayNode                           | 분기 전략에서는 자식 노드, 말단 전략에서는 전체 값 입력 하나입니다 |
+| UnionNode                                        | null이 아닌 여러 종류를 위한 말단 노드입니다                            |
+| VirtualNode                                      | `options.virtual`로 기존 형제 속성을 묶는 합성 분기입니다              |
 
-각 노드는 자체 값, 검증 오류, 상태 플래그(`dirty`, `touched`, `validated`)를
-소유하는 반응형 객체입니다. 변경 사항은 위로 전파됩니다: 리프 노드의 값이 변경되면
-모든 상위 노드가 `UpdateValue` 이벤트를 받고 집계된 값을 업데이트합니다.
+virtual 노드는 레이아웃 그룹이며 조건 분기 노드가 아닙니다. object·array 전략은 명시적 `options.terminal`, `presentation.FieldInput`의 컴포넌트, 분기 전략 순으로 정합니다. [전략 불변 조건](./schema-reference#terminal-strategy)을 참조하십시오.
 
-### Node State Flags
+## 배열 데이터와 배열 UI {#arrays}
 
-| Property       | Type                | Description                         |
-| -------------- | ------------------- | ----------------------------------- |
-| `value`        | `any`               | Current value                       |
-| `defaultValue` | `any`               | Value at initialization             |
-| `errors`       | `JSONSchemaError[]` | Validation errors for this node     |
-| `dirty`        | `boolean`           | Value changed since initialization  |
-| `touched`      | `boolean`           | User has interacted with this field |
-| `validated`    | `boolean`           | Validation has been run             |
-| `visible`      | `boolean`           | Computed — controls visibility      |
-| `active`       | `boolean`           | Computed — controls active state    |
-| `readOnly`     | `boolean`           | Computed or inherited               |
-| `disabled`     | `boolean`           | Computed or inherited               |
-| `initialized`  | `boolean`           | Node has completed initialization   |
-| `required`     | `boolean`           | Field is required in parent schema  |
-| `nullable`     | `boolean`           | Schema type includes `"null"`       |
+`minItems`는 초기화·reset·재활성화 때 배열 항목을 만들지 않습니다. 코어 내장 배열 입력은 `maxItems`를 넘지 않는 범위에서 최소 개수에 맞춘 빈 UI 슬롯을 표시할 수 있고, 슬롯에 입력이 들어오면 그 위치를 데이터로 기록합니다. 빈 슬롯의 입력 종류는 활성 항목 스키마를 우선하고, 없으면 `prefixItems[index]`, `items` 순으로 정합니다. `maxItems`에서는 추가 버튼을 숨기고 readOnly가 아니면 `minItems`와 무관하게 제거 버튼을 표시합니다. UI 플러그인은 자체 배열 동작을 제공하며 Antd6 입력은 [튜플 예제](./examples/tuple-arrays)를 참조하십시오.
 
-### Node Navigation
+루트의 빈 배열은 `[]`를 방출합니다. `omitEmpty`는 부모에 전파할 때 빈 값을 제거하며 루트를 제거하지 않습니다. nullable·덮어쓰기 동작은 [값 규칙](./schema-reference#value-states), 필터 사용은 [배열 출력 예제](./examples/array-output-filters)를 참조하십시오.
 
-```ts
-// Absolute path from root (RFC 6901 JSONPointer)
-const node = rootNode.find('/address/street');
+## 렌더링과 설정 수명 {#rendering}
 
-// Relative path from current node
-const sibling = node.find('./city');
+Form의 `children`은 루트 자동 레이아웃을 대체합니다. 생략한 입력을 다른 곳에 자동으로 보충하지 않습니다. 같은 경로를 두 번 렌더링하면 입력 두 개가 생깁니다. defaultValue로 시작해 자체 초안을 유지하는 내장 입력은 refresh 전까지 다른 입력의 타이핑을 반영하지 않습니다. 사용자 controlled 입력은 현재 value 속성을 따라 두 렌더링을 즉시 동기화할 수 있습니다.
 
-// Find all matching nodes
-const allItems = rootNode.findAll('/items/*');
-```
+기본 그룹은 [등록된 Label·ErrorMessage 부품](./api-reference#renderer-parts)을 조립합니다. 그룹 레이아웃을 복사하지 않고 슬롯 교체로 표현을 바꿀 수 있습니다. 분기의 legend는 여전히 필드 이름을 직접 쓰고 배열 항목의 말단 라벨은 생략하므로 LabelRenderer가 그 제목을 바꾸거나 생략된 라벨을 더하지 않습니다.
 
-## Plugin Architecture
+렌더러, `formatError`, 입력 정의와 입력 맵은 불변 참조를 교체하면 마운트 후에도 적용됩니다. 입력 선택 변경은 값·상태·외부 오류를 유지하고, 선택된 입력과 그 조상 입력이 모두 같으면 DOM을 보존합니다. 부모 입력이 교체되면 선택된 자식 컴포넌트가 같아도 그 안의 DOM과 미커밋 초안은 재생성됩니다. 렌더러 교체는 그 렌더러가 소유한 UI 하위 트리를 다시 만듭니다. [설정 수명](./api-reference#configuration-lifetime)을 참조하십시오.
 
-라이브러리는 두 개의 독립적인 플러그인 레이어로 분리되어 있습니다.
-어떤 validator와 UI 라이브러리도 조합할 수 있습니다.
+## 폼이 수행하는 작업 측정 {#performance}
 
-```
-┌─────────────────────────────────────────────────────┐
-│                  SchemaFormPlugin                    │
-│                                                      │
-│  FormGroup   FormLabel   FormInput   FormError       │  ← UI layer
-│  formTypeInputDefinitions                            │
-├─────────────────────────────────────────────────────┤
-│                  ValidatorPlugin                     │
-│                                                      │
-│  bind(instance)                                      │  ← Validation layer
-│  compile(jsonSchema) → ValidateFunction              │
-└─────────────────────────────────────────────────────┘
-```
+큰 폼은 컴파일과 명시적 검증·제출 비용을 측정한 뒤 [검증 모드](./validation#modes)를 선택하십시오. 검증을 미뤄도 렌더링이 큰 비용일 수 있으므로 [가상화](./api-reference#virtualization)를 평가할 때 모든 입력을 사용할 수 있을 때까지의 시간도 측정하십시오.
 
-### Plugin Merge Behavior
-
-When multiple plugins are registered, the merge rules are:
-
-| Property                                           | Merge strategy               |
-| -------------------------------------------------- | ---------------------------- |
-| `FormGroup`, `FormLabel`, `FormInput`, `FormError` | Last wins                    |
-| `formTypeInputDefinitions`                         | Prepended (first match wins) |
-| `validator`                                        | Last wins                    |
-| `formatError`                                      | Last wins                    |
-
-## FormType System
-
-`FormTypeInputDefinition`은 **테스트 조건**과
-**React 컴포넌트**를 쌍으로 연결합니다. 라이브러리는 등록된 모든 정의를
-우선순위 순서로 평가하고, 첫 번째 매칭 컴포넌트를 사용하여 필드를 렌더링합니다.
-
-```ts
-// Object test — declarative
-const definition: FormTypeInputDefinition = {
-  test: { type: 'string', format: 'date' },  // matches date fields
-  Component: DatePickerInput,
-};
-
-// Function test — imperative
-const definition: FormTypeInputDefinition = {
-  test: (hint) => hint.jsonSchema.widget === 'richtext',
-  Component: RichTextEditor,
-};
-
-// Hint object available in test function:
-type Hint = {
-  type: JSONSchemaType;       // 'string' | 'number' | 'boolean' | ...
-  path: string;               // JSONPointer path
-  required: boolean;
-  nullable: boolean;
-  jsonSchema: JSONSchema;
-  format?: string;
-  formType?: string;          // custom jsonSchema.formType field
-};
-```
-
-### FormTypeInputMap (path-based override)
-
-```ts
-// Map specific paths to specific components
-const formTypeInputMap: FormTypeInputMap = {
-  '/user/avatar':     AvatarUploader,
-  '/items/*/price':   CurrencyInput,   // * matches any segment
-};
-
-<Form jsonSchema={schema} formTypeInputMap={formTypeInputMap} />
-```
-
-## Computed Properties
-
-필드는 `computed` (또는 `&computed`) 키의 JSONPointer 표현식을 사용하여
-형제 또는 부모 값에 반응할 수 있습니다. 의존성은 표현식에서 자동으로 추적되거나,
-`watch`를 통해 명시적으로 선언됩니다.
-
-```ts
-{
-  type: 'object',
-  properties: {
-    isPremium: { type: 'boolean' },
-    discount: {
-      type: 'number',
-      computed: {
-        visible:  '../isPremium === true',   // show only for premium
-        readOnly: '../isPremium === false',  // lock if not premium
-        watch: ['../isPremium'],             // explicit dep (optional)
-      },
-    },
-  },
-}
-```
-
-Supported computed keys: `visible`, `active`, `readOnly`, `disabled`, `watch`.
-
-### JSONPointer Extensions (computed scope only)
-
-| Syntax     | Meaning                                        |
-| ---------- | ---------------------------------------------- |
-| `../field` | Parent node's `field`                          |
-| `./field`  | Current node's `field` (relative)              |
-| `..`       | Navigate to parent                             |
-| `*`        | Wildcard — any segment (FormTypeInputMap only) |
-
-## Schema Composition
-
-라이브러리는 모든 표준 JSON Schema 구성 키워드를 지원합니다.
-`oneOf`와 `anyOf` 브랜치는 커스텀 `&if` 표현식을
-사용하여 활성화를 필드 값에 바인딩할 수 있습니다.
-
-```ts
-// Standard if/then/else
-{
-  if:   { properties: { type: { enum: ['movie'] } } },
-  then: { properties: { releaseDate: { type: 'string', format: 'date' } } },
-  else: { properties: { version:     { type: 'string' } } },
-}
-
-// oneOf with &if expression (exclusive branches)
-{
-  oneOf: [
-    { '&if': "./type === 'movie'", properties: { director: { type: 'string' } } },
-    { '&if': "./type === 'game'",  properties: { platform: { type: 'string' } } },
-  ],
-}
-
-// anyOf with &if (non-exclusive, multiple can be active)
-{
-  anyOf: [
-    { '&if': './flag1 === true', properties: { field1: { type: 'string' } } },
-    { '&if': './flag2 === true', properties: { field2: { type: 'string' } } },
-  ],
-}
-
-// allOf (always merged)
-{
-  allOf: [
-    { properties: { firstName: { type: 'string' } } },
-    { properties: { lastName:  { type: 'string' } } },
-    { required: ['firstName', 'lastName'] },
-  ],
-}
-```
-
-### Conditional setValue Filtering
-
-**부모 노드**가 `setValue()`를 호출하면, 활성 `oneOf`/`anyOf`
-브랜치와 일치하지 않는 필드는 자동으로 값에서 제거됩니다. **자식 노드**가
-`setValue()`를 호출하면 이 필터링이 우회됩니다 — 현재 브랜치 조건과
-관계없이 값이 전파됩니다.
-
-## Array Output Filters
-
-배열 스키마는 `options` 아래에 출력 필터를 지정할 수 있습니다. 이 필터는
-배열이 **내보내는 값** — 부모 전파, 루트 validation, 외부 표면(`onChange`,
-`getValue()`, `submit`) — 만 정제하며, 자식 노드와 raw `node.value`는 모든
-항목을 유지하므로 미리 노출한 빈 input이 그대로 렌더링됩니다.
-
-```tsx
-const jsonSchema = {
-  type: 'array',
-  minItems: 3, // 빈 input 3개가 먼저 렌더링됨
-  items: { type: 'string' },
-  options: { omitTrailing: true },
-};
-// 사용자가 첫 번째 input만 채우면:
-// getValue() / onChange / validation 값은 ['first']
-```
-
-- **`omitTrailing`** (opt-in)은 **후행** 연속 `undefined` 항목만 제거합니다.
-  선행·중간 `undefined`는 보존되어 error `dataPath`와 validation index
-  정합이 유지됩니다.
-- **`omitEmpty`** (기본 활성)는 빈 배열을 부모 전파 경로에서 `undefined`로
-  변환합니다. 필터 순서는 `omitTrailing → omitEmpty`입니다.
-- 정제된 출력은 `node.normalizedValue`로 노출되고 `node.value`는 raw를
-  유지합니다. 커스텀 배열 `FormTypeInput`에서는 행 수를 `value.length`가
-  아니라 `node.children` 기준으로 세야 합니다.
-
-## Validation System
-
-### ValidationMode
-
-```ts
-enum ValidationMode {
-  None      = 0,   // No automatic validation
-  OnChange  = 1,   // Validate after every setValue()
-  OnRequest = 2,   // Validate only when validate() is called
-}
-
-// Default: OnChange | OnRequest (bitwise OR)
-<Form validationMode={ValidationMode.OnChange | ValidationMode.OnRequest} />
-```
-
-### ShowError
-
-```ts
-enum ShowError {
-  Dirty        = 1,  // show when node.dirty === true
-  Touched      = 2,  // show when node.touched === true
-  DirtyTouched = 3,  // show when both dirty AND touched (default)
-}
-
-<Form showError={ShowError.DirtyTouched} />  // default
-<Form showError={true} />                    // always show
-<Form showError={false} />                   // never show
-```
-
-### Error Structure
-
-```ts
-interface JSONSchemaError {
-  dataPath: string; // JSONPointer to the failing field
-  keyword: string; // JSON Schema keyword (e.g., 'minLength', 'required')
-  message: string;
-  details: any; // keyword-specific details
-  source: any; // raw error from the validator library
-}
-```
-
-## Event System
-
-노드는 배치 이벤트 시스템을 통해 통신합니다. 동일한 동기 호출 스택에서 예약된 이벤트는
-단일 배치로 병합되어 다음 마이크로태스크에서 디스패치됩니다. `UpdateValue`는
-예외로, 초기화 완료 후 동기적으로 발생합니다(즉시 모드).
-
-```ts
-// Key event types (NodeEventType enum)
-UpdateValue; // value changed — synchronous after init
-UpdateState; // dirty/touched/validated changed
-UpdateError; // validation errors changed
-UpdateComputedProperties; // computed visible/readOnly/disabled changed
-UpdateChildren; // array/object children added or removed
-RequestRefresh; // internal: sync uncontrolled component
-RequestRemount; // external: force full component remount
-```
-
-<ForAI>
-
-## AI Concept Glossary
-
-| Term                                                     | Definition                                                                                                 |
-| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `SchemaNode`                                             | Base interface for all nodes — the public API surface                                                      |
-| `StringNode` / `NumberNode` / `BooleanNode` / `NullNode` | Terminal nodes — no children                                                                               |
-| `ObjectNode` / `ArrayNode`                               | Branch nodes — have children                                                                               |
-| `VirtualNode`                                            | Non-schema node created for conditional branches (`oneOf`/`anyOf`)                                         |
-| `BranchStrategy`                                         | Strategy for complex nested structures with child nodes                                                    |
-| `TerminalStrategy`                                       | Strategy for simple non-nested structures                                                                  |
-| `FormTypeInputDefinition`                                | `{ test, Component }` pair — maps a schema pattern to a React component                                    |
-| `FormTypeInputMap`                                       | `{ [jsonPointerPath]: Component }` — path-based component override                                         |
-| `FormTypeInputProps`                                     | Props interface all custom input components must satisfy                                                   |
-| `FormTypeRendererProps`                                  | Props for `FormGroup`/`FormLabel`/`FormInput`/`FormError` renderer components                              |
-| `SchemaFormPlugin`                                       | Plugin object with optional renderer components + `formTypeInputDefinitions` + `validator` + `formatError` |
-| `ValidatorPlugin`                                        | `{ bind(instance), compile(jsonSchema) → ValidateFunction }`                                               |
-| `ValidateFunction`                                       | `(value) => JSONSchemaError[] \| null \| Promise<...>`                                                     |
-| `computed` / `&computed`                                 | JSON Schema extension for reactive field properties                                                        |
-| `&if`                                                    | JSON Schema extension — expression to activate a `oneOf`/`anyOf` branch                                    |
-| `enhancedValue`                                          | Value including virtual/conditional field values — used for validation                                     |
-| `ShowError`                                              | Enum controlling when validation errors are displayed                                                      |
-| `ValidationMode`                                         | Enum controlling when validation runs                                                                      |
-| `NodeEventType`                                          | Enum of all events nodes can emit                                                                          |
-| `SetValueOption`                                         | Bitwise options for `setValue()` — `Overwrite`, `Merge`, `Isolate`                                         |
-| `FormHandle`                                             | Ref interface for imperative form control                                                                  |
-| `FormProvider`                                           | Context provider for sharing plugin config across a subtree                                                |
-| `JSONPointer`                                            | RFC 6901 path string (e.g., `/address/street`) — extended with `..`, `.`, `*`                              |
-
-</ForAI>
+`onChange`는 동기 실행합니다. 적절한 경우 비용이 큰 소비자 상태 갱신을 React `startTransition`으로 감싸고 애플리케이션에서 결과를 측정하십시오. CSS 격리에는 의도한 크기와 레이아웃 검증이 필요하며 래퍼 추가만으로 성능을 보장하지 않습니다.

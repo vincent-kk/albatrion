@@ -13,7 +13,7 @@ Uses `oneOf` with `const` field matching to display completely different field s
 - `oneOf` with `const` — exclusive schema branching
 - full_time: salary + bonus + benefits (nested object) + probation
 - part_time: contract type + weekly hours
-- contractor: contract type + conditional working hours (`computed.active`)
+- contractor: contract type + conditional working hours (`controls.active`)
 :::
 
 <LazyDemo load={() => import('@site/src/components/demos/examples/EmploymentContractDemo')} />

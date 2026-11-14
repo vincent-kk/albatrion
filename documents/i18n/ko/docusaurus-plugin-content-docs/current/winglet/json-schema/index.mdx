@@ -13,41 +13,77 @@ JSON Schema 조작을 위한 유틸리티 라이브러리입니다.
 방문자 패턴 기반의 깊이 우선 스키마 순회, `$ref` 참조 해결,
 순환 참조 감지, 스키마 타입 가드 함수를 제공합니다.
 
-## Installation
+## 설치 {#installation}
 
 ```bash
 yarn add @winglet/json-schema
 ```
 
-## Sub-path Exports
+## 서브패스 내보내기 {#sub-path-exports}
 
-| Import path | Contents |
+| 가져오기 경로 | 내용 |
 |---|---|
-| `@winglet/json-schema` | All exports |
-| `@winglet/json-schema/scanner` | `JSONSchemaScanner` (synchronous) |
+| `@winglet/json-schema` | 모든 내보내기 |
+| `@winglet/json-schema/scanner` | `JSONSchemaScanner` (동기식) |
 | `@winglet/json-schema/async-scanner` | `JSONSchemaScannerAsync` |
-| `@winglet/json-schema/filter` | Schema type-guard functions |
+| `@winglet/json-schema/filter` | 스키마 타입 가드 함수 |
 
-## Key Exports
+## 주요 내보내기 {#key-exports}
 
-### Schema Scanner
+### 스키마 스캐너 {#schema-scanner}
 
-- `JSONSchemaScanner` — depth-first traversal with `enter`/`exit` visitor callbacks
-- `JSONSchemaScannerAsync` — async variant for remote `$ref` resolution
+- `JSONSchemaScanner`는 `enter`/`exit` 방문자 콜백으로 깊이 우선 순회합니다.
+- `JSONSchemaScannerAsync`는 원격 `$ref` 참조 해결을 위한 비동기 변형입니다.
 
-### Schema Filters (`/filter`)
+### 스키마 필터 (`/filter`) {#schema-filters-filter}
 
-Type-guard functions for each JSON Schema type:
+각 JSON Schema 타입에 대한 타입 가드 함수입니다:
 
 - `isObjectSchema`, `isArraySchema`, `isStringSchema`, `isNumberSchema`, `isBooleanSchema`, `isNullSchema`
-- Nullable/Non-nullable variants: `isNonNullableObjectSchema`, `isNullableObjectSchema`, etc.
+- null 허용/비허용 변형에는 `isNonNullableObjectSchema`, `isNullableObjectSchema` 등이 있습니다.
 - `isCompatibleSchemaType`, `isIdenticalSchemaType`
 
-### Types
+### 타입 {#types}
 
-- `InferValueType<Schema>` — infers TypeScript type from a JSON Schema definition
+- `InferValueType<Schema>`는 JSON Schema 정의에서 TypeScript 타입을 추론합니다.
 
-## Usage Examples
+#### 튜플 추론 {#tuple-inference}
+
+`as const`로 스키마 리터럴을 보존하십시오. 정적으로 길이가 유한한 readonly `prefixItems` 튜플은 각 위치를 재귀 추론하여 수정 가능한 선택적 튜플이 됩니다. `prefixItems`는 최소 길이를 강제하지 않고 추론은 `minItems`를 사용하지 않으므로 빈 배열이나 짧은 접두부도 대입할 수 있습니다.
+
+문자열·숫자 접두부에서 `items`는 나머지 항목만 결정합니다:
+
+| `items` | 추론한 값 |
+| --- | --- |
+| `false` | `[string?, number?]` |
+| 생략 또는 `true` | `[string?, number?, ...any[]]` |
+| `{ type: 'boolean' }` | `[string?, number?, ...boolean[]]` |
+
+```ts
+import type { InferValueType } from '@winglet/json-schema';
+
+const pairSchema = {
+  type: 'array',
+  prefixItems: [{ type: 'string' }, { type: 'number' }],
+  items: false,
+} as const;
+
+type Pair = InferValueType<typeof pairSchema>;
+// [string?, number?]
+const empty: Pair = [];
+const partial: Pair = ['label'];
+
+const restSchema = { ...pairSchema, items: { type: 'boolean' } } as const;
+type WithRest = InferValueType<typeof restSchema>;
+// [string?, number?, ...boolean[]]
+const value: WithRest = ['label', 3, true, false];
+```
+
+넓어진 배열·비리터럴 접두부는 기존 `items` 폴백을 유지합니다. 동종 `items` 스키마는 항목의 값 타입으로 된 배열을 추론합니다. 유한 접두부가 없으면 `items: false`와 `additionalItems`를 쓰는 구식 초안의 `items` 배열은 계속 `any[]`를 추론하며 튜플 추론을 적용하지 않습니다.
+
+유한 접두부 추론은 `any[]`보다 좁으므로 자유로운 위치나 초과 항목에 의존하는 코드에는 컴파일 오류가 날 수 있습니다. 접두부와 나머지 항목 스키마에 맞는 값을 사용하거나 다른 계약이 필요하면 애플리케이션의 값 타입을 명시하십시오.
+
+## 사용 예제 {#usage-examples}
 
 ```ts
 import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
@@ -83,12 +119,12 @@ isArraySchema({ type: 'array', items: {} });         // true
 
 <ForAI>
 
-## AI Reference
+## AI 참조 {#ai-reference}
 
-**Package**: `@winglet/json-schema` v0.10.0
-**Purpose**: JSON Schema traversal, type-guard filters, and $ref resolution.
+**패키지**: `@winglet/json-schema` v0.10.0
+**목적**: JSON Schema 순회, 타입 가드 필터, $ref 참조 해결을 제공합니다.
 
-### Key exports
+### 주요 내보내기 {#key-exports-1}
 ```
 ./scanner → JSONSchemaScanner
             JSONScannerOptions (type)

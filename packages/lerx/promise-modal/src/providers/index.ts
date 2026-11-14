@@ -8,3 +8,4 @@ export {
 } from './ConfigurationContext';
 
 export { useUserDefinedContext } from './UserDefinedContext';
+export { useModalDuration, useDestroyAfter } from './ModalManagerContext';

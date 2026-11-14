@@ -1,20 +1,20 @@
 import { JSONPath } from '@winglet/json/path';
 
-import type { SchemaNode } from '@/schema-form/core';
+import type { FieldNode } from '@/schema-form/core';
 
 /**
- * AbstractNode 트리에서 주어진 경로에 해당하는 노드를 찾습니다.
- * @param target - 검색을 시작할 루트 노드
- * @param segments - 찾고자 하는 노드의 경로 세그먼트 배열 (예: ["root", "child", "0", "grandchild"])
- * @returns 찾은 노드 또는 null
+ * Finds a node by JSONPath segments in a FieldNode tree.
+ * @param target - Node at which traversal starts; null returns null.
+ * @param segments - Ordered JSONPath segments, including root or parent markers.
+ * @returns Matching node, or null when a segment cannot be resolved.
  */
 export const find = (
-  target: any | null,
+  target: FieldNode | null,
   segments: string[],
-): SchemaNode | null => {
+): FieldNode | null => {
   if (!target) return null;
-  if (!segments.length) return target as SchemaNode;
-  let cursor = target as SchemaNode;
+  if (!segments.length) return target as FieldNode;
+  let cursor = target as FieldNode;
   for (const segment of segments) {
     if (segment === JSONPath.Root) {
       cursor = cursor.rootNode;
@@ -27,8 +27,8 @@ export const find = (
       if (!children?.length) return null;
       let found = false;
       for (const child of children) {
-        if (child.node.name !== segment) continue;
-        cursor = child.node;
+        if (child.name !== segment) continue;
+        cursor = child;
         found = true;
         break;
       }

@@ -2,35 +2,37 @@
 
 ## Purpose
 
-Form당 하나씩 존재하는 상태형 가상화 조율자. 공유 IntersectionObserver, idle backfill 펌프, reveal 레지스트리를 소유하며 placeholder → 실제 컴포넌트 전환(reveal)을 조율한다. 유일한 생성 진입점은 `static create()`이며, SSR 등 IntersectionObserver 부재 환경이거나 virtualization이 비활성화된 입력이면 null을 반환한다.
+폼 하나의 관찰 자원과 노출 기록을 소유합니다. 입력 컨테이너와 게이트의 위치를 구별하고, 노드 identity에 붙은 단방향 기록으로 값 변경·배열 재배치·소비층 재생성에서 포커스와 선택이 사라지는 것을 막습니다. 자원 공유와 Placeholder 격리의 이유는 [DETAIL](./DETAIL.md)에 둡니다.
 
 ## Conventions
 
-- 게이트 판정은 self-selecting 메서드(`forBranch`/`forChild`)로 노출 — 소비 측은 옵셔널 체이닝으로 조합하고 옵션 원값(`options`)은 비공개 유지
-- IntersectionObserver 콜백과 idle tick, 두 reveal 트리거는 사설 `reveal()` 한 곳으로 수렴 — registry 삭제·unobserve·콜백 실행을 함께 수행
-- idle 백필은 `backfill === VirtualizationBackfill.Idle`일 때만 기동 (register 시 조건부 시작)
-- 슬라이스당 reveal 상한(`MAX_REVEALS_PER_SLICE`=25)과 최소 잔여 idle 예산(`MIN_IDLE_BUDGET_MS`=4ms)으로 커밋 크기를 제한
+- 게이트 판정은 자기 자신 또는 null을 돌려주는 self-selecting 메서드(`forBranch`/`forChild`)로 노출한다. 소비하는 쪽은 옵셔널 체이닝으로 조합하고, 옵션 원값(`options`)은 비공개로 둔다.
+- IntersectionObserver·idle tick·경로 공개의 reveal 트리거는 비공개 `reveal()` 한 곳으로 모은다. 이곳에서 registry 삭제, unobserve, 콜백 실행을 함께 처리한다.
+- idle 백필은 `backfill === VirtualizationBackfill.Idle`일 때만 시작하며, register 시점에 조건을 확인해 시작한다.
+- idle 콜백의 reveal 개수와 잔여 예산 기준을 유지합니다. 하위 트리의 실제 작업시간 상한으로 오인하지 않도록 [DETAIL](./DETAIL.md)의 예산 한계를 따릅니다.
 
 ## Boundaries
 
 ### Always do
 
-- register/unregister/disconnect는 멱등하게 유지 — 중복 호출·순서 뒤바뀜에도 안전해야 함
-- markRevealed는 단방향(defer-once) — 한 번 revealed된 노드는 다시 placeholder로 되돌리지 않음
-- 인스턴스 생성은 항상 `create()` 팩토리 경유 — 비활성/SSR/IO 부재 시 null 반환 로직을 재사용
+- register/unregister/disconnect는 멱등하게 유지한다. 중복 호출이나 순서가 뒤바뀐 호출에도 안전해야 한다.
+- markRevealed는 단방향(defer-once)이다. 한 번 revealed된 노드는 다시 placeholder로 되돌리지 않는다.
+- 인스턴스는 항상 `create()` 팩토리로 만든다. SSR, IO 부재 시 null을 반환하는 로직을 재사용하기 위해서다.
+
+- 비활성에도 노출 이력을 유지하고, 옵션이 달라진 commit에서만 revision을 통지합니다.
 
 ### Ask first
 
-- idle 슬라이스 예산(`MAX_REVEALS_PER_SLICE`, `MIN_IDLE_BUDGET_MS`) 또는 폴백 예산(`scheduleIdle.ts`의 `FALLBACK_BUDGET_MS`) 변경
-- `options`(threshold/eagerCount/rootMargin/backfill/estimateHeight) 해석 방식 변경 — 값 정의는 `resolveVirtualizationOptions` 소유
+- idle 슬라이스 예산(`MAX_REVEALS_PER_SLICE`, `MIN_IDLE_BUDGET_MS`) 또는 폴백 예산(`utils/scheduleIdle.ts`의 `FALLBACK_BUDGET_MS`)을 바꾸는 경우
+- `options`(threshold/eagerCount/rootMargin/backfill/estimateHeight)를 해석하는 방식을 바꾸는 경우. 값의 정의는 `resolveVirtualizationOptions`가 소유한다.
 - reveal 정책(defer-once) 자체를 되돌리는 방향의 변경
 
 ### Never do
 
-- `create()`를 우회한 직접 `new VirtualizationManager()` 인스턴스화 (단위 테스트 제외)
-- React 런타임 import 추가 — 예외: `Placeholder` 방어용 `withErrorBoundary`/`isReactComponent`, type-only `ComponentType`
-- `registry`/`revealedNodes`를 클래스 외부에서 직접 변경
+- `create()`를 거치지 않고 `new VirtualizationManager()`로 직접 인스턴스를 만드는 것(단위 테스트는 예외)
+- Placeholder 방어와 전용 보고 훅 이외의 React 런타임 의존을 추가하는 것. 렌더 수명은 소비층이 소유합니다.
+- `registry`/`revealedNodes`를 클래스 밖에서 직접 변경하는 것
 
 ## Dependencies
 
-idle callback을 제공하지 않는 환경에서도 백필을 진행할 수 있도록 취소 가능한 macrotask 폴백을 사용합니다. 옵션의 의미는 resolveVirtualizationOptions가 소유하며, 형제 프랙탈의 진입점을 통해 타입과 값을 소비합니다.
+Placeholder를 폼마다 한 번 격리하기 위해 FormErrorContext의 전용 보고 훅만 소비합니다. 필드별 보고기를 생성자에 붙잡으면 다른 필드의 경로·폼으로 보고할 수 있으므로 보고기는 렌더 때 읽습니다.

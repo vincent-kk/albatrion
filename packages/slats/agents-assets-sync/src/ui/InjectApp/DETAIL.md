@@ -3,7 +3,7 @@
 ## Requirements
 
 - `Phase` 는 `kind` 로 판별되는 union 이다. reducer 는 `useInjectSession` 이 보내는 `InjectEvent` 에 반응해 kind 사이를 전이한다. 알 수 없는 이벤트는 무시하고 현재 국면을 그대로 돌려준다.
-- Phase kind:
+- Phase의 kind:
   - `booting` — 초기 union 멤버. 화면에서는 `resolving` 과 같은 분기로 그려진다.
   - `resolving` — target 해석 중. `InjectApp` 이 실제로 시작하는 국면이다.
   - `agent-select` — Ink `AgentPicker` 대기. `pending: (agents) => void` 보유
@@ -59,14 +59,7 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 
 국면 전이 자체의 승인 그룹(`AC-PHASE-*`)은 `ui/DETAIL.md` 로 옮겼다 — reducer 가 `ui/reducer/` 로 이동했기 때문이다.
 
-## History
-
-- 2026-08-06 — `phaseReducer` 가 `ui/reducer/` 로 이동해 이 fractal 의 계약에서 빠졌다. organ `InjectApp/utils` 가 소유자 밖 `ui/hooks/usePhase.ts` 에 소비되어 entry point 경유 경로가 없던 상태를 해소한 결과다. `AC-PHASE-*` 네 그룹도 함께 `ui/DETAIL.md` 로 옮겼다.
-- 2026-08-06 — `## API Contracts` 를 entry point 가 실제로 수출하는 심볼로 좁히고, 나머지를 `## Internal Unit Contracts` 로 분리했다. 두 계층이 한 제목 아래 섞여 무엇이 계약 변경인지 판별할 수 없었다.
-
-- 2026-08-06 — 존재하지 않는 `plan-built` 이벤트가 계약에서 제거되고, 실제 이벤트 8종(`agent-needed`, `agent-selected`, `scope-needed`, `planning-started`, `plan-step`, `plans-ready`, `apply-start`, `focus-target`)이 기록됐다. `agent-select` 국면도 함께 누락돼 있었다.
-- 2026-08-06 — 초기 국면이 `renderInjectApp` 에서 `{ kind: 'booting' }` 으로 만들어진다는 기술이 폐기됐다. `InjectApp` 이 `usePhase` 에 `resolving` 을 넘긴다.
 
 ## Last Updated
 
-2026-08-06 — `phaseReducer` 이동에 맞춰 계약을 좁혔다. 공개 계약은 entry point 표면(`renderInjectApp`, `InjectApp`)만 담고, 국면 전이 승인 그룹은 `ui/DETAIL.md` 로 넘겼다.
+Ink 진입점, 화면 조립 또는 phase 소비 책임이 바뀌면 갱신합니다.

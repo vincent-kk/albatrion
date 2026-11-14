@@ -1,116 +1,11 @@
-# Claude Code Guidelines for Albatrion Project
+# Albatrion Agent Guidance
 
-This document provides project-specific guidelines for Claude Code when working on the Albatrion monorepo. Detailed rules, skills, and commands are maintained under `.claude/`.
+Codex loads this file. The guidance it relies on lives in two other files, which this file does not copy; read both before any task:
 
-## 🏗️ Project Structure
-
-This is a **yarn-based monorepo** with the following structure:
-
-- **Root**: Configuration and shared tooling
-- **Packages**: Individual libraries in `packages/**/*` with their own CLAUDE.md files
-- **Workspaces**: Configured for yarn workspaces
-
-## 📋 Important Commands
-
-Use **yarn** commands (not npm) for this project:
-
-- `yarn lint` - Check code style across all packages
-- `yarn typecheck` - Verify TypeScript types across all packages
-- `yarn test` - Run tests across all packages
-- `yarn run:all <command>` - Run command across all workspaces
-
-## 📦 Working with Individual Packages
-
-When working on specific packages, **always check the package-specific CLAUDE.md** in each package directory:
-
-- Each package has its own `CLAUDE.md` with specific commands and guidelines
-- Package-specific commands use yarn workspace syntax: `yarn workspace @scope/package-name <command>`
-- Example: `yarn workspace @canard/schema-form build`
-
-## 🔧 Agent Assets (`.claude/`)
-
-All agent assets live under `.claude/`. The lists below are the complete inventory — nothing else exists.
-
-### Rules — `.claude/rules/`
-
-Declarative rules that apply at all times. Loaded at session start.
-
-| Family    | Files                                                                                                                                                                           |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `seiri_*` | `agent-legible`, `code-comments`, `cognitive-discipline`, `context-efficiency`, `function-boundaries`, `naming`, `public-contract`, `reuse-first`, `structure`, `test-validity` |
-| `filid_*` | `code-placement`, `fractal-boundaries`, `module-documents`, `verification-records`                                                                                              |
-
-Precedence: repository instructions (this document, per-package CLAUDE.md) > repository conventions > the rules above.
-
-### Skills — `.claude/skills/`
-
-| Skill                         | Purpose                                                                                        |
-| ----------------------------- | ---------------------------------------------------------------------------------------------- |
-| `ui-plugin-guidelines`        | Compatibility verification and structure design between a UI library and `@canard/schema-form` |
-| `react-plugin-implementation` | React-based `@canard/schema-form` plugin implementation patterns                               |
-| `release-note-generator`      | Release notes written from git change data                                                     |
-| `agents-docs-asset-wiring`    | Wire a package's `docs/agents` assets into the `@slats/agents-assets-sync` engine              |
-
-### Commands — `.claude/commands/`
-
-| Command                  | Purpose                                   |
-| ------------------------ | ----------------------------------------- |
-| `/create-canard-plugin`  | Create a new `@canard/schema-form` plugin |
-| `/generate-package-docs` | Generate package documentation            |
-
-Any other slash command comes from Claude Code itself or from an installed plugin (seiri, filid, and so on); this repository does not define them.
-
-## 🎯 Quick Reference for Claude Code
-
-When working on this monorepo:
-
-### 1. **First Priority**: Check Package-Specific CLAUDE.md
-
-- Each package in `packages/**/*` has its own `CLAUDE.md` with specific guidelines
-- Always read the package-specific CLAUDE.md before working on that package
-- Package CLAUDE.md files contain architecture details, testing commands, and development patterns
-
-### 2. **Command Strategy**
-
-- Use `yarn` (not npm) for all commands
-- For monorepo-wide operations: `yarn <command>` (lint, typecheck, test)
-- For package-specific operations, you have two options:
-  - **Full syntax**: `yarn workspace @scope/package-name <command>`
-  - **Shortcut commands**: Many packages have shortcuts defined in root package.json
-    - Examples: `yarn schemaForm`, `yarn reactUtils`, `yarn promiseModal`
-    - See root package.json scripts section for all available shortcuts
-- Check each package's CLAUDE.md for available commands
-
-### 3. **Development Workflow**
-
-1. Read and follow all rules in the `.claude/rules` directory
-2. Check the specific package's CLAUDE.md for detailed guidance
-3. Use yarn workspace commands for package-specific operations
-4. Run yarn lint, typecheck, and tests before completing tasks
-5. Follow the project structure and naming conventions
-6. Bump the package version in its `package.json` when releasing — this repository does not use changesets or CHANGELOG files, so the commit message is the only durable record of a behavior change
-
-### 4. **Available Packages**
-
-Major package groups include:
-
-- **@canard/schema-form\***: Form generation libraries with various UI plugins
-- **@winglet/\***: Utility libraries (common-utils, react-utils, json, etc.)
-- **@lerx/promise-modal**: Modal management
-
----
-
-> **Important**: This CLAUDE.md is for monorepo-level guidance. For package-specific work, always consult the individual package's CLAUDE.md first.
->
-> Rules, skills, and commands live under `.claude/`. Keep this document's inventory in sync when they change — a stale pointer here misleads every agent that reads it.
->
-> Copyright © 2025 Vincent K. Kelvin. All rights reserved.
-
+- `CLAUDE.md`: project structure, commands, agent assets, module contract principles, repository requirements and the development workflow. It applies to Codex as written.
+- `DOCUMENTATION.md`: the principles for the documents this repository writes, within the scope it states.
 
 # Repository Requirements
-
-- For arrays with fewer than 5,000 elements, prefer direct array operations for one-off work. Avoid constructing a `Set` only to inspect its size or perform a single lookup. Use a `Set` when repeated membership operations reuse the index enough to amortize construction. Verify performance-sensitive choices with measurements.
-- Exclude build outputs from commits. Run the designated builds and artifact checks, but stage source changes separately from generated runtime bundles and compiled assets.
 
 <!-- FILID:START:filid_fractal-boundaries.md -->
 # Fractal Boundaries
@@ -128,23 +23,25 @@ Major package groups include:
 
 Resolve in this strict order: (1) `INTENT.md` present → fractal; (2) `DETAIL.md` present → fractal — a missing-INTENT signal; (3) double-underscore-wrapped or dot-prefixed infrastructure name → organ; (4) name in the known organ list → organ; (5) a registered adapter reports a **module** index → fractal; (6) a leaf directory with no fractal children → organ; (7) an adapter proves both statelessness and no side effects → pure-function; (8) otherwise → organ. Only module entries classify; executable, framework, manifest and `entryPointOverrides` entries feed the entry-point surface instead. A leaf that never claimed isolation is an organ even when nothing in it has an effect.
 
-- Default organ names: `components`, `utils`, `types`, `hooks`, `helpers`, `lib`, `styles`, `assets`, `constants`, `test`, `tests`, `spec`, `specs`, `fixtures`, `e2e`; config extends the list via `structure.additionalOrganNames`. Docs-as-code names (`references`, `docs`, `plans`) stay off it — one would silently reclassify a real code module of that name.
+- Default organ names: `components`, `utils`, `types`, `hooks`, `helpers`, `lib`, `styles`, `assets`, `constants`, `test`, `tests`, `spec`, `specs`, `fixtures`, `e2e`; config extends the list via `structure.additionalOrganNames`. Docs-as-code names (`references`, `docs`, `plans`) stay off it — one would silently reclassify a real code module of that name. Verification organs — directories whose name is in `verification.organNames` (default: `__tests__`, `__benchmarks__`, `test`, `tests`, `spec`, `specs`, `fixtures`, `e2e`) — hold verification code; every file under one is verification code, suffix or not.
 
 ## 2. Classification describes; it never prescribes
 
 Traversal continues inside organs: a nested directory with its own documents or module index is its own fractal. `hybrid` is never auto-assigned, and unproven purity stays an organ. What a node _should_ be is a rule result, not a classification: an organ consumed from outside its owner's subtree is reported with the consumer paths as evidence, never silently reclassified — which is what lets a non-FCA codebase be adopted.
 
-When the shape is yours to decide: a directory that others call by name while its internals stay free to change is a fractal — whether or not the package publishes it — and a fractal owns the implementation of its contract. An entry point that only re-exports a parent's organs is a facade, not a fractal: move the implementation in, or drop the claim.
+When the shape is yours to decide: a directory that others call by name while its internals stay free to change is a fractal — whether or not the package publishes it — and a fractal owns the implementation of its contract. An entry point that only re-exports a parent's organs is a facade, not a fractal: move the implementation in, or drop the claim. Dropping the claim is a demotion: remove the entry point, then delete `INTENT.md` and `DETAIL.md` and record the demotion in the parent's `DETAIL.md`.
 
 ## 3. A fractal is crossed through its entry point
 
-Every fractal and hybrid has an adapter-reported module, executable, framework or manifest entry point — a package manifest that declares the public surface IS the boundary; it states a surface, it does not classify — and organs and pure-function nodes need none. An enumerated surface declares its exports by name, and widening it is a contract change; an opaque or unsupported framework surface keeps its uncertainty instead of passing. Sibling fractals import the sibling's entry point — never an internal file, and never a shared parent barrel that re-exports the sibling — while inside one fractal, files import concrete internal peers directly, not their own local entry point.
+Every fractal and hybrid has an adapter-reported module, executable, framework or manifest entry point — a package manifest that declares the public surface IS the boundary; it states a surface, it does not classify — and organs and pure-function nodes need none. An enumerated surface declares its exports by name, and widening it is a contract change; an opaque or unsupported framework surface keeps its uncertainty instead of passing. Sibling fractals import the sibling's entry point — never an internal file, and never a shared parent barrel that re-exports the sibling — while inside one fractal, files import concrete internal peers directly, not their own local entry point. No unit uses its own fractal's entry point or any ancestor's entry point. An ancestor's entry point is a window for units outside the lineage: it re-exposes the unit's siblings, so using it from inside sees a sibling through the parent's facade. This holds for verification code too; the verification exemption in §5 covers placement, not this rule.
 
 A published subpath is an address for outside consumers, not a unit of ownership. When in-package consumers need more than the public gets, separate the published facade from the fractal's entry point — never lift the implementation out to keep the surface small.
 
 ## 4. A fractal root holds documents and entry points, not code
 
 A fractal root contains its documents, adapter-reported entry points, at most one eponymous implementation, and adapter-confirmed framework peers. Any other implementation file belongs in an organ or a child fractal, unless config grants a scoped allowed-peer override.
+
+A fractal's root is its first image: the entry point and the files beside it are what a reader sees first, at the highest attention. Every root file and every entry-point name has a consumer outside the fractal; one without is a defect, not leftover code. A consumer is product code outside the fractal's subtree — the parent is outside — and verification, benchmark and demonstration code is not one, except code declared to exercise the package's public surface, which consumes the root entry point only.
 
 Beside those, a fractal's level shows two kinds of directory, told apart by name alone: child fractals, named for their responsibility, and compartments under conventional organ names (§1's list). A topic-named organ sits inside a compartment, not beside the child fractals. Compartments may be several and may hold fractals; a level that exists to tell kinds apart is judged only by whether the listing got easier to read.
 
@@ -160,7 +57,8 @@ An organ has no entry point, so "route through the entry point" cannot apply to 
 
 - Inside the owner's subtree a nested fractal may import an organ's concrete files directly — that is the shape lowest-common-fractal placement produces.
 - A unit with external consumers belongs at _their_ lowest common fractal, so staying put is a deliberate choice that carries a reason; a direct import from outside is sometimes correct — the standing case is a build whose target the entry point cannot represent — but it is declared, not assumed. Both declarations live in the owning fractal's `DETAIL.md`, each with its reason. An organ consumed from outside with neither declaration is a finding that names both resolutions — promote it to a fractal, or move it to its consumers' lowest common fractal — and cites the consumer paths. The same declaration covers a fractal's internals: a consumer barred from the entry point by something the boundary cannot represent declares the exemption rather than widening the contract; undeclared, it stays a violation.
-- **A verification file lives inside what it verifies; within that owner it is not judged by this rule, and its references do not close a cycle.** Checking an internal unit means reaching it; the alternative exports internals for tests alone. One that reaches into another fractal's internals is misplaced, not exempt. Which files are verification comes from the adapter, not from a filename pattern.
+- **An organ does not use the fractal's direct child fractals, neither their entry points nor their internals.** A child may use the parent's organs and the parent may use the child's entry point; the moment a parent's organ uses the child, a layer cycle (organ → child → organ) becomes possible. Only the fractal's own body — its eponymous implementation and its entry-point wiring — assembles its children. Exempt: verification organs, which nothing uses, and fractals nested inside the organ itself, which are that organ's internals.
+- **Verification code is not a consumer and is not judged by this rule, wherever it sits.** Checking an internal unit means reaching it; the alternative exports internals for tests alone. Verification code — tests, benchmarks, and the scaffolding beside them under a verification organ — imports what it verifies directly, in any fractal, and its references do not close a cycle. It lives inside the fractal nearest to what it verifies, so a reach into another fractal's internals is a placement signal, not a violation. The cost is accepted: a test coupled to an internal breaks the moment the internal changes, which is cheap because it is visible; a test that stays green while the code it covers is wrong is the dangerous one and is deleted. Which directories are verification organs comes from configuration, confirmed once at setup; outside them, which files are verification code comes from the adapter.
 
 ## 6. The graph is acyclic and depth is a toll
 
@@ -288,7 +186,7 @@ It sits in the test directory — `__tests__/`, or the repository's own conventi
 
 ## 1. A unit sits with the contract it implements; shared code sits at its users' lowest common fractal
 
-A unit belongs to the fractal whose contract it implements. Only a unit serving the implementations of two or more fractals is shared: compute the lowest common fractal of the owners that use it and place the unit under it — their common ancestor is the address; anything higher is a guess. Count the consumers that use the unit: code that merely constructs it and hands it on is wiring, and counting wiring pulls everything up to the composition root. A unit with one using owner is an organ of that owner — one user is not shared code. A unit with a contract of its own, published or not, becomes a child fractal instead, with its intent, detail and entry-point artifacts.
+A unit belongs to the fractal whose contract it implements. Only a unit serving the implementations of two or more fractals is shared: compute the lowest common fractal of the owners that use it and place the unit under it — their common ancestor is the address; anything higher is a guess. A consumer is product code outside the unit's fractal subtree; verification, benchmark and demonstration code is not a consumer and never pulls a unit upward. Count the consumers that use the unit: code that merely constructs it and hands it on is wiring, and counting wiring pulls everything up to the composition root. A unit with one using owner is an organ of that owner — one user is not shared code. A unit with a contract of its own, published or not, becomes a child fractal instead, with its intent, detail and entry-point artifacts.
 
 ## 2. An organ cannot be a lowest common ancestor
 
@@ -344,7 +242,7 @@ When a direct call and an indirect mechanism are equally capable, choose direct 
 
 ## 1. Export only what has a consumer
 
-An export with no consumer carries a stated intent — or gets removed. Remove leftovers your change added or orphaned; leave a pre-existing one for a deliberate cleanup (`seiri_reuse-first` §3). Usage is tool-checkable; intent you must write.
+An export with no consumer carries a stated intent — or gets removed. Remove leftovers your change added or orphaned; leave a pre-existing one for a deliberate cleanup. Usage is tool-checkable; intent you must write. A consumer of a module's entry point is product code outside that module's subtree; the parent is outside. Verification, benchmark and demonstration code is not a consumer, except code declared to exercise the package's public surface, which consumes the root entry point only.
 
 ## 2. Name every re-export
 
@@ -352,15 +250,15 @@ Wildcard re-exports hide the surface three ways: a new symbol in an internal fil
 
 ## 3. Entry points declare, internals implement
 
-The set of symbols reachable from the entry point IS the public contract; everything behind it is free to change. An entry point holds re-exports and wiring, not implementation; consumers outside the module hold only entry-point symbols.
+The set of symbols reachable from the entry point IS the public contract; everything behind it is free to change. An entry point holds re-exports and wiring, not implementation; consumers outside the module hold only entry-point symbols. The split is structural at every scale, not only at the entry point: in a directory with no entry point, the units it offers sit at its top and whatever serves only them sits beneath. A reader tells a unit's reach from its path, without searching for importers.
 
 ## 4. Framework-invoked files are entry points too
 
-A file the framework calls by convention — routes, pages, handlers, plugin manifests — is public surface even though no import names it. Treat changes to its exported shape as contract changes, and label the convention that invokes it (`seiri_agent-legible` §1).
+A file the framework calls by convention — routes, pages, handlers, plugin manifests — is public surface even though no import names it. Treat changes to its exported shape as contract changes, and label the convention that invokes it in one line at the file's head.
 
 ---
 
-**This rule is working if:** the public surface can be enumerated by reading entry points, and removing an internal symbol breaks no consumer. **This rule is wrong for you if:** the code is a single-file script or notebook with no module boundary — there is no contract to keep small.
+**This rule is working if:** the public surface can be enumerated by reading entry points, who may import a file can be predicted from its path and a search confirms it, and removing an internal symbol breaks no consumer. **This rule is wrong for you if:** the code is a single-file script or notebook with no module boundary — there is no contract to keep small.
 <!-- SEIRI:END:seiri_public-contract.md -->
 
 <!-- SEIRI:START:seiri_test-validity.md -->
@@ -433,7 +331,7 @@ Nothing speculative. Validation at trust boundaries (public APIs, user input, ex
 
 ## 3. Surgical changes
 
-Every changed line traces to the request. Remove what YOUR change orphaned; leave pre-existing dead code in place, mentioned, not buried in an unrelated diff.
+Every changed line traces to the request. Remove what YOUR change orphaned; leave pre-existing dead code in place, mentioned, not buried in an unrelated diff. A root file or entry-point name without an outside consumer is not ordinary dead code: remove it or move it below the root.
 
 ---
 

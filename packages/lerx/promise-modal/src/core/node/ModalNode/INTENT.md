@@ -6,9 +6,11 @@ AbstractNode를 확장한 구체 모달 노드 구현체. Alert, Confirm, Prompt
 
 ## Conventions
 
+- 미입력 prompt의 확인과 returnOnCancel 취소는 undefined를 보존합니다.
+
 - 모든 노드는 AbstractNode<T, B> 제네릭 기반
 - 구독 기반 상태 업데이트: subscribe/notify 패턴
-- Promise 생명주기: 생성 → 상태 변경 → resolve → 정리 (reject는 내부 오류 전용)
+- Promise 생명주기: 생성 → 최초 resolve/reject로 확정 → 정리 (렌더 오류는 reject)
 - AlertNode: 닫기 시 void resolve
 - ConfirmNode: 확인=true, 취소=false resolve
 - PromptNode: 확인=입력값 resolve, 취소=null resolve (returnOnCancel=true면 현재 입력값)
@@ -19,7 +21,7 @@ AbstractNode를 확장한 구체 모달 노드 구현체. Alert, Confirm, Prompt
 
 - AbstractNode의 추상 메서드 구현
 - 제네릭 타입 파라미터 일관성 유지
-- 노드 정리(cleanup) 시 구독 해제
+- 구독 cleanup은 구독자가 소유하고 파괴는 모든 변경을 publish
 
 ### Ask first
 

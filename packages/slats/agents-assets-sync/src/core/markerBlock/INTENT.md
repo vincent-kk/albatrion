@@ -2,12 +2,12 @@
 
 ## Purpose
 
-Read and write this tool's own comment-delimited blocks inside an `AGENTS.md` that other tools also append to. A rule file becomes one block, so a block's body hash is comparable to the manifest hash for that file and the copy/skip/diverged verdict stays identical to the file-copy path.
+다른 도구도 내용을 추가하는 `AGENTS.md` 안에서 이 도구 소유의 주석 구분 블록을 읽고 씁니다. 규칙 파일 하나가 블록 하나가 되므로 블록 본문 해시를 해당 파일의 매니페스트 해시와 비교할 수 있으며, 복사·생략·불일치 판정이 파일 복사 경로와 같습니다.
 
 ## Conventions
 
-- Marker shape is `<!-- AGENTS-ASSETS-SYNC:START:<packageName>:<relPath> -->`, mirroring the `FILID:` / `SEIRI:` markers the same file already carries.
-- `createBlockPattern` returns a new regex per call; a shared global regex carries `lastIndex` and would skip matches.
+- 마커 형식은 `<!-- AGENTS-ASSETS-SYNC:START:<packageName>:<relPath> -->`이며 같은 파일의 `FILID:` / `SEIRI:` 마커 형식을 따릅니다.
+- `createBlockPattern`은 호출마다 새 정규식을 반환합니다. 공유 전역 정규식은 `lastIndex`를 보유하여 일치를 건너뛸 수 있습니다.
 
 ## Boundaries
 

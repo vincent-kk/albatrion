@@ -1,0 +1,116 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
+import type { Optional } from '@aileron/declare';
+
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+
+import type { FieldNodeRecord } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import type {
+  DeriveResetInteractionDecision,
+  DeriveTraceEntry,
+} from '../../types/decisions';
+import type { DeriveState } from '../../types/state';
+import { getDeriveRuleKey } from '../rules/getDeriveRuleKey';
+import { getDeriveRuleTable } from '../rules/getDeriveRuleTable';
+import { addActiveRuleKey } from './addActiveRuleKey';
+import { evaluateScopedExpression } from './evaluateScopedExpression';
+import type { ScopedExpressionResult } from './evaluateScopedExpression';
+import { getDeriveSourceNodes } from './getDeriveSourceNodes';
+import { getRuleTargets } from './getRuleTargets';
+import { getSelectedDeclarationIds } from './getSelectedDeclarationIds';
+
+/**
+ * Decide final interaction resets from loaded values or false-to-true edges.
+ * @param root - Final calculated tree whose source values remain untouched
+ * @param state - Last commit and current settlement rule values
+ * @returns Nodes to clear, optional trace, and all authored expression failures
+ */
+export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
+  root: Self,
+  state: DeriveState<Self>,
+): DeriveResetInteractionDecision<Self> => {
+  const table = getDeriveRuleTable(root.runtime.blueprint);
+  const pending = getDeriveSourceNodes(root, state);
+  const nodes: Self[] = [];
+  const resetNodes = new Set<Self>();
+  const trace: DeriveTraceEntry[] = [];
+  const evaluatedExpressions = new Map<string, ScopedExpressionResult>();
+  let failures: Optional<
+    DeriveResetInteractionDecision<Self>['failures'][number][]
+  >;
+  while (pending.length) {
+    const node = pending.pop();
+    if (!node || node.detached) continue;
+    state.visitedSourcePaths.add(node.path);
+    const selected = getSelectedDeclarationIds(node, state);
+    for (const id of selected)
+      for (const rule of table.byDeclaration.get(id) ?? []) {
+        if (rule.kind !== 'resetInteraction') continue;
+        for (const target of getRuleTargets(node, rule, state)) {
+          const key = getDeriveRuleKey(
+            node.path,
+            getBlueprintNodeIdentity(node.blueprintNode),
+            rule,
+            target,
+            target.runtime,
+          );
+          addActiveRuleKey(state, node.path, key);
+          const previous = state.committedRuleValues.get(key);
+          const previousExists = state.committedRuleValues.has(key);
+          let current: boolean;
+          try {
+            const evaluated = evaluateScopedExpression(
+              root,
+              node,
+              rule,
+              evaluatedExpressions,
+            );
+            if (evaluated.threw) throw evaluated.cause;
+            current = !!evaluated.value;
+          } catch (cause) {
+            (failures ??= []).push({
+              sourcePath: node.path,
+              schemaPath: rule.schemaPath,
+              cause,
+            });
+            state.consumedRuleValues.set(key, false);
+            continue;
+          }
+          state.consumedRuleValues.set(key, current);
+          const load =
+            state.loadScope &&
+            (node.path === state.loadScope.path ||
+              isDescendantPath(node.path, state.loadScope.path));
+          if (
+            !current ||
+            !(
+              load ||
+              state.entered.has(target) ||
+              state.revived.has(target) ||
+              (previousExists && !previous)
+            )
+          )
+            continue;
+          if (!resetNodes.has(target)) {
+            resetNodes.add(target);
+            nodes.push(target);
+          }
+          if (state.trace)
+            trace.push({
+              phase: 'commit',
+              kind: rule.kind,
+              sourcePath: node.path,
+              targetPath: target.path,
+              previousValue: previous,
+              nextValue: current,
+              result: 'applied',
+            });
+        }
+      }
+    if (!state.sourcePaths)
+      for (let index = (node.children?.length ?? 0) - 1; index >= 0; index--)
+        pending.push(node.children![index]);
+  }
+  return { nodes, trace, failures: failures ?? EMPTY_ARRAY };
+};

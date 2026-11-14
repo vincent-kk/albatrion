@@ -2,10 +2,10 @@ import '@testing-library/jest-dom';
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { JSONSchema } from '@winglet/json-schema';
-
+import type { JSONSchema } from '@/schema-form';
 import { VirtualizationBackfill } from '@/schema-form';
 
+import { settleValidation } from '../helpers/settleValidation';
 import { renderForm } from '../renderForm';
 
 /**
@@ -93,7 +93,11 @@ describe('deferred-mount under StrictMode', () => {
   it('gates fields and keeps placeholders registered across the simulated remount', async () => {
     const form = await renderForm(flatSchema(20), {
       strictMode: true,
-      virtualization: { threshold: 10, eagerCount: 3, backfill: VirtualizationBackfill.None },
+      virtualization: {
+        threshold: 10,
+        eagerCount: 3,
+        backfill: VirtualizationBackfill.None,
+      },
     });
     expect(form.exists('/f02')).toBe(true);
     expect(form.deferredPaths()).toHaveLength(17);
@@ -113,7 +117,11 @@ describe('deferred-mount under StrictMode', () => {
   it('idle backfill drains every placeholder after the disconnect/resume cycle', async () => {
     const form = await renderForm(flatSchema(20), {
       strictMode: true,
-      virtualization: { threshold: 10, eagerCount: 3, backfill: VirtualizationBackfill.Idle },
+      virtualization: {
+        threshold: 10,
+        eagerCount: 3,
+        backfill: VirtualizationBackfill.Idle,
+      },
     });
     while (form.deferredPaths().length > 0 && idleQueue.length > 0)
       await flushIdle();
@@ -126,11 +134,15 @@ describe('deferred-mount under StrictMode', () => {
   it('handle.focus(path) force-reveals and focuses under StrictMode (single replay)', async () => {
     const form = await renderForm(flatSchema(20), {
       strictMode: true,
-      virtualization: { threshold: 10, eagerCount: 3, backfill: VirtualizationBackfill.None },
+      virtualization: {
+        threshold: 10,
+        eagerCount: 3,
+        backfill: VirtualizationBackfill.None,
+      },
     });
     await act(async () => {
       form.handle.focus('/f15');
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await settleValidation(() => form.handle.node);
     });
     expect(form.exists('/f15')).toBe(true);
     expect(document.activeElement).toBe(form.field('/f15'));

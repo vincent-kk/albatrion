@@ -1,0 +1,95 @@
+/// <reference lib="es2021.weakref" />
+
+import type { AjvInstance as Ajv } from '../types/AjvInstance';
+
+import { cloneInstance, PLUGIN_KEY_PREFIX } from './cloneInstance';
+import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
+
+/** Provisional cap: Ajv's code scope keeps functions after removeSchema. */
+const MAX_TRANSIENT_ROOTS = 64;
+
+/** Dynamic-scope keywords; a root naming none of them as a key needs no guard anchor table. */
+const DYNAMIC_KEYWORDS: ReadonlySet<string> = new Set(['$dynamicAnchor', '$recursiveAnchor', '$dynamicRef', '$recursiveRef']);
+
+/** Ajv instances and registration key retained for one root identity. */
+export interface SchemaRootRegistration {
+  /** Direct schemas are owned and released with this root's guard instance. */
+  readonly directGuards: (object | boolean)[];
+  /** Self-containment is computed once per object in this bound profile. */
+  readonly guardChecks: WeakMap<object, boolean>;
+  /** Base instance this root was registered against; `$id` conflicts are tracked per base. */
+  readonly base: Ajv;
+  readonly validation: Ajv;
+  guard?: Ajv;
+  readonly key: string;
+  readonly rootId: string;
+  readonly ids: readonly string[];
+  /** Whether any key in the root is a dynamic-scope keyword (data included); when false, root-pointer guards skip the dynamic-anchor collection. */
+  readonly hasDynamicKeywords: boolean;
+  readonly validationCopy?: object;
+  /** Whether `validationCopy` is registered on `validation`; set only by a successful `registerValidationRoot`. */
+  validationRegistered: boolean;
+  guardCopy?: object;
+}
+
+/** A bounded shared compiler for ID-free roots on one binding. */
+export interface SchemaCompilerPool {
+  readonly base: Ajv;
+  current: Ajv;
+  count: number;
+}
+
+/** Monotonic keys avoid collisions with registrations retained across binds. */
+let nextSchemaRootKey = 0;
+
+/** Record one copy, leaving its guard instance, its validation registration and the ID-free validation cache empty. */
+export const registerSchemaRoot = (
+  root: object,
+  instance: Ajv,
+  roots: WeakMap<object, SchemaRootRegistration>,
+  active: WeakRef<SchemaRootRegistration>[],
+  finalizer: FinalizationRegistry<SchemaRootRegistration>,
+  pool: SchemaCompilerPool,
+): SchemaRootRegistration => {
+  const previous = roots.get(root);
+  if (previous) return previous;
+  const ids: string[] = [];
+  let hasDynamicKeywords = false;
+  JSON.stringify(root, (name, value: unknown) => {
+    if (name === '$id' && typeof value === 'string') ids.push(value);
+    if (DYNAMIC_KEYWORDS.has(name)) hasDynamicKeywords = true;
+    return value;
+  });
+  if (ids.length)
+    for (let index = active.length - 1; index >= 0; index--)
+      if (!active[index].deref()) active.splice(index, 1);
+  const shared = ids.length ? instanceIdRegistrationsOf(instance) : [];
+  for (let index = shared.length - 1; index >= 0; index--)
+    if (!shared[index].deref()) shared.splice(index, 1);
+  const conflict = ids.some((id) =>
+    active.some((ref) => ref.deref()?.ids.includes(id)) ||
+    shared.some((ref) => ref.deref()?.ids.includes(id)));
+  if (!ids.length && pool.count === MAX_TRANSIENT_ROOTS) {
+    pool.current = cloneInstance(pool.base, !!pool.base.opts.allErrors);
+    pool.count = 0;
+  }
+  const validation = conflict ? cloneInstance(instance, !!instance.opts.allErrors)
+    : ids.length ? instance : pool.current;
+  if (!ids.length) pool.count++;
+  const key = `${PLUGIN_KEY_PREFIX}${++nextSchemaRootKey}`;
+  const validationCopy: object | undefined = ids.length
+    ? JSON.parse(JSON.stringify(root)) : undefined;
+  const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : key;
+  const registration: SchemaRootRegistration = {
+    base: instance, validation, key, rootId, ids, validationCopy, validationRegistered: false,
+    directGuards: [], guardChecks: new WeakMap(), hasDynamicKeywords,
+  };
+  roots.set(root, registration);
+  finalizer.register(root, registration, registration);
+  if (ids.length) {
+    const ref = new WeakRef(registration);
+    active.push(ref);
+    shared.push(ref);
+  }
+  return registration;
+};
