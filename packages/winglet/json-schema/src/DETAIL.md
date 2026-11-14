@@ -20,8 +20,6 @@
 
 값의 집합은 이름 붙인 상수 한 곳에 두고 코드에는 날 숫자와 날 문자열을 쓰지 않습니다. 호출자가 비교하는 값(`JSONSchemaScanErrorCode`, `Dialect`, `ReferenceSkipReason`)은 `as const` 객체와 거기서 유도한 형으로 공개합니다. 내부에서만 쓰는 비트와 상한(`DialectFlag`, `DialectMask`, `ScanLimit`, `LegacyMode`, `ScanStage`)은 `const enum`으로 둡니다. 빌드가 `const enum` 항목을 숫자로 치환하므로 노드마다 도는 경로에서 비용이 없기 때문이며, 같은 값을 모듈 상수로 가져와 복제 루프에서 읽으면 참조 인라인 묶음이 느려지는 것이 측정되었습니다. 한 `const enum`이 다른 파일의 `const enum`을 참조하면 치환되지 않고 런타임 객체가 남으므로, 서로 참조하는 `const enum`은 한 파일에 둡니다.
 
-형 검사는 `@winglet/common-utils/filter`의 `isString`·`isObject`·`isArray` 등을 씁니다. 예외는 노드마다 도는 `utils/JSONSchemaScanner/utils/engine/`과 `utils/schemaCopy/cloneSchema.ts`이며, 여기서는 `typeof`와 `Array.isArray`를 직접 씁니다. 형이 이미 `Schema | boolean`인 값을 객체 쪽으로 좁히는 `typeof x === 'object'`도 그대로 둡니다. `isObject`는 `null`에 거짓을 돌려주므로, 바꾸면 `null` 문서가 오류 없이 색인됩니다. 엔진에 필터 호출을 넣으면 순회 묶음이 4%에서 5% 느려지는 것이 `benchmark/compare`의 두 빌드 교대 측정으로 확인되었습니다.
-
 방언 인식·어휘 컴파일·스키마 복제와 속성 쓰기는 스캐너와 해소기의 최저 공통 소유자인 루트의 공통 organ에 둡니다. 공개 scanner 하위 경로는 내부 헬퍼를 노출하지 않습니다.
 
 참조 해소기는 객체 프로토콜이며 비동기 해소기의 resolve만 PromiseLike 결과를 허용합니다.

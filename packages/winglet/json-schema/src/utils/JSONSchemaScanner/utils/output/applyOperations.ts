@@ -1,4 +1,4 @@
-import { isArray, isArrayIndex } from '@winglet/common-utils/filter';
+import { isArrayIndex } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { clone } from '@winglet/common-utils/object';
 
@@ -57,7 +57,7 @@ export function applyOperations(
     const prototype = Object.getPrototypeOf(source);
     const firstKey = children.keys().next().value!;
     const target = (
-      isArray(value)
+      Array.isArray(value)
         ? new Array(value.length)
         : value == null && isArrayIndex(firstKey)
           ? []

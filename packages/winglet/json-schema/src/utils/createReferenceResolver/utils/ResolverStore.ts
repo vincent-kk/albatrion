@@ -1,9 +1,3 @@
-import {
-  isArray,
-  isBoolean,
-  isObject,
-  isString,
-} from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
@@ -95,17 +89,19 @@ export class ResolverStore {
    * @returns Parent or a cached context for a resource-bearing original child.
    */
   public child(parent: ResolverContext, schema: SchemaValue): ResolverContext {
-    if (isBoolean(schema)) return parent;
+    if (typeof schema === 'boolean') return parent;
     const old =
       parent.resource.dialect === Dialect.Draft04 ||
       parent.resource.dialect === Dialect.Draft06 ||
       parent.resource.dialect === Dialect.Draft07;
-    if (old && isString(schema.$ref)) return parent;
-    const id = isString(schema.$id)
-      ? schema.$id
-      : parent.resource.dialect === Dialect.Draft04 && isString(schema.id)
-        ? schema.id
-        : undefined;
+    if (old && typeof schema.$ref === 'string') return parent;
+    const id =
+      typeof schema.$id === 'string'
+        ? schema.$id
+        : parent.resource.dialect === Dialect.Draft04 &&
+            typeof schema.id === 'string'
+          ? schema.id
+          : undefined;
     if (id === undefined) return parent;
     const absolute = resolveURI(id, parent.resource.uri);
     if (absolute === undefined) return parent;
@@ -136,7 +132,7 @@ export class ResolverStore {
    * @returns Recognized declaration or the fallback.
    */
   private dialect(uri: unknown, fallback: Dialect): Dialect {
-    if (!isString(uri)) return fallback;
+    if (typeof uri !== 'string') return fallback;
     const flag = detectDialect(uri);
     if (flag !== undefined) return DIALECT_NAMES[flag];
     return this.dialectAliases.get(normalizeSchemaUri(uri)) ?? fallback;
@@ -165,13 +161,14 @@ export class ResolverStore {
     let uri = retrieval;
     if (
       typeof schema === 'object' &&
-      !(dialect.startsWith('draft-') && isString(schema.$ref))
+      !(dialect.startsWith('draft-') && typeof schema.$ref === 'string')
     ) {
-      const id = isString(schema.$id)
-        ? schema.$id
-        : dialect === Dialect.Draft04 && isString(schema.id)
-          ? schema.id
-          : undefined;
+      const id =
+        typeof schema.$id === 'string'
+          ? schema.$id
+          : dialect === Dialect.Draft04 && typeof schema.id === 'string'
+            ? schema.id
+            : undefined;
       if (id !== undefined)
         uri = resolveURI(id, retrieval)?.split('#')[0] ?? retrieval;
     }
@@ -298,7 +295,7 @@ export class ResolverStore {
    */
   private registerAnchors(location: Location): void {
     const schema = location.schema;
-    if (isBoolean(schema)) return;
+    if (typeof schema === 'boolean') return;
     const resource = location.context.resource,
       dialect = resource.dialect;
     if (schema.$recursiveAnchor === true && dialect === Dialect.Draft201909)
@@ -306,16 +303,19 @@ export class ResolverStore {
     const declarations: Array<[string, boolean]> = [];
     if (
       (dialect === Dialect.Draft201909 || dialect === Dialect.Draft202012) &&
-      isString(schema.$anchor)
+      typeof schema.$anchor === 'string'
     )
       declarations.push([schema.$anchor, false]);
-    if (dialect === Dialect.Draft202012 && isString(schema.$dynamicAnchor)) {
+    if (
+      dialect === Dialect.Draft202012 &&
+      typeof schema.$dynamicAnchor === 'string'
+    ) {
       declarations.push([schema.$dynamicAnchor, true]);
       resource.dynamic = true;
     }
-    if (dialect.startsWith('draft-') && !isString(schema.$ref)) {
+    if (dialect.startsWith('draft-') && typeof schema.$ref !== 'string') {
       const id = dialect === Dialect.Draft04 ? schema.id : schema.$id;
-      if (isString(id)) {
+      if (typeof id === 'string') {
         const absolute = resolveURI(id, resource.uri);
         if (absolute?.includes('#')) {
           try {
@@ -413,14 +413,20 @@ export class ResolverStore {
       context: ResolverContext = { resource },
       pointer = resource.path;
     for (const raw of fragment ? fragment.slice(1).split('/') : []) {
-      if (!isObject(value)) return;
+      if (value === null || typeof value !== 'object') return;
       const key = unescapeSegment(raw);
       if (!hasOwnProperty(value, key)) return;
       value = (value as Record<string, unknown>)[key];
       pointer += '/' + escapeSegment(key);
       context = resource.document.paths.get(pointer)?.context ?? context;
     }
-    if (!(isBoolean(value) || (isObject(value) && !isArray(value)))) return;
+    if (
+      !(
+        typeof value === 'boolean' ||
+        (value !== null && typeof value === 'object' && !Array.isArray(value))
+      )
+    )
+      return;
     const location: Location = {
       schema: value as SchemaValue,
       path,
@@ -577,8 +583,9 @@ export class ResolverStore {
                 descriptor &&
                 (descriptor.kind === 'schemaMap' ||
                   descriptor.kind === 'objectMap') &&
-                isObject(value) &&
-                !isArray(value)
+                value !== null &&
+                typeof value === 'object' &&
+                !Array.isArray(value)
               )
                 containers.add(entry.path + '/' + escapeSegment(key));
             }
@@ -628,7 +635,7 @@ export class ResolverStore {
       for (const key of identifiers) delete item.copy[key];
       for (const key of ['$ref', '$dynamicRef']) {
         if (
-          !isString(item.source[key]) ||
+          typeof item.source[key] !== 'string' ||
           (key === '$dynamicRef' &&
             context.resource.dialect !== Dialect.Draft202012)
         )

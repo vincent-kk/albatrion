@@ -1,4 +1,3 @@
-import { isString } from '@winglet/common-utils/filter';
 import { compilePointer, unescapePath } from '@winglet/json/pointer';
 
 import type { OperationNode, OutputOperation } from '../type';
@@ -17,7 +16,7 @@ export function buildOperationTree(
   let previousParent = root;
   for (const operation of operations) {
     const path = operation.path;
-    const separator = isString(path) ? path.lastIndexOf('/') : -1;
+    const separator = typeof path === 'string' ? path.lastIndexOf('/') : -1;
     const prefix = separator < 0 ? undefined : path.slice(0, separator);
     let node: OperationNode;
     let token: string;
