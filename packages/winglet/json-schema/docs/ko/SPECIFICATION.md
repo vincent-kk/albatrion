@@ -205,7 +205,7 @@ console.assert(inactive.includes('#/additionalProperties'));
 
 ## 어휘 선택
 
-기본 어휘는 합성·조건·객체/배열 applicator·정의 컨테이너·스키마 값 dependencies를 포함합니다. keywords는 전체를 대체하고 additionalKeywords는 선택된 어휘 뒤에 덧붙입니다. 중복은 마지막 서술자의 종류와 위치가 이깁니다. 서술자 dialects는 발견 여부 대신 inert 여부를 정합니다. objectMap은 키를 dataPath에 덧붙이고 schemaMap은 덧붙이지 않습니다. 스키마 목록은 컨테이너 대신 원소를 방문합니다.
+기본 어휘는 합성·조건·객체/배열 applicator·정의 컨테이너·스키마 값 dependencies를 포함합니다. keywords는 전체를 대체하고 additionalKeywords는 선택된 어휘 뒤에 덧붙입니다. 중복은 마지막 서술자의 종류와 위치가 이깁니다. 서술자 dialects는 발견 여부 대신 inert 여부를 정합니다. objectMap은 키를 dataPath에 덧붙이고 schemaMap은 덧붙이지 않습니다. 스키마 목록은 컨테이너 대신 원소를 방문합니다. `DEFAULT_KEYWORDS`, `Dialect`, `KeywordDescriptor`, `KeywordKind`는 스캐너 코드를 불러오지 않는 `@winglet/json-schema/keyword`에서도 내보냅니다.
 
 색인·이동 검사·공개 순회가 일치하도록 내장 해소기와 스캐너에 같은 어휘 옵션을 주세요. 편의 함수 resolveReference는 어휘를 양쪽에 전달합니다. 사용자 키워드 이름과 맵 키도 JSON Pointer로 이스케이프합니다.
 

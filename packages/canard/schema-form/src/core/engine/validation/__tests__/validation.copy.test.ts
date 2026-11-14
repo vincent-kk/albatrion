@@ -62,4 +62,62 @@ describe('validator schema copy', () => {
       items: [{ type: 'string' }, { enum: [{ controls: { retained: true } }] }],
     });
   });
+
+  it('VALIDATE-004 strips form groups at every schema keyword position', () => {
+    const extended = () => ({
+      type: 'string',
+      controls: { active: true },
+      options: { trim: true },
+      presentation: { label: 'form' },
+    });
+    const authored = {
+      $defs: { a: extended() },
+      definitions: { a: extended() },
+      additionalProperties: extended(),
+      not: extended(),
+      if: extended(),
+      then: extended(),
+      else: extended(),
+      allOf: [extended()],
+      anyOf: [extended()],
+      oneOf: [extended()],
+      prefixItems: [extended(), extended()],
+      items: extended(),
+      properties: { a: extended() },
+      patternProperties: { '^a': extended() },
+      dependentSchemas: { a: extended() },
+      propertyNames: extended(),
+      contains: extended(),
+      additionalItems: extended(),
+      unevaluatedProperties: extended(),
+      unevaluatedItems: extended(),
+      contentSchema: extended(),
+      dependencies: { a: extended(), b: ['a'] },
+    };
+    const stripped = { type: 'string' };
+    expect(createValidatorCopy(authored)).toEqual({
+      $defs: { a: stripped },
+      definitions: { a: stripped },
+      additionalProperties: stripped,
+      not: stripped,
+      if: stripped,
+      then: stripped,
+      else: stripped,
+      allOf: [stripped],
+      anyOf: [stripped],
+      oneOf: [stripped],
+      prefixItems: [stripped, stripped],
+      items: stripped,
+      properties: { a: stripped },
+      patternProperties: { '^a': stripped },
+      dependentSchemas: { a: stripped },
+      propertyNames: stripped,
+      contains: stripped,
+      additionalItems: stripped,
+      unevaluatedProperties: stripped,
+      unevaluatedItems: stripped,
+      contentSchema: stripped,
+      dependencies: { a: stripped, b: ['a'] },
+    });
+  });
 });

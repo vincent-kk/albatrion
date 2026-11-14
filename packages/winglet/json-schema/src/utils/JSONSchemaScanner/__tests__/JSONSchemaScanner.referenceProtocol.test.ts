@@ -4,7 +4,7 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JSONSchemaScannerAsync } from '../async/JSONSchemaScannerAsync';
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
-import type { ReferenceResolver, ReferenceStep } from '../type';
+import type { ReferenceResolver, ReferenceStep } from '../utils/type';
 
 /** Explicit provider for engine-only protocol tests; it never depends on scanner entries. */
 function provider(resolve: ReferenceResolver['resolve']): ReferenceResolver {

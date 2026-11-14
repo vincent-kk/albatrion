@@ -1,14 +1,14 @@
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import { DialectFlag, DialectMask } from '../../../dialect/DialectFlag';
-import { DEFAULT_DIALECT } from '../../../dialect/defaultDialect';
-import { detectDialect } from '../../../dialect/detectDialect';
-import { DIALECT_FLAGS } from '../../../dialect/dialectFlags';
-import { JSONSchemaScanError } from '../../../error/JSONSchemaScanError';
-import { JSONSchemaScanErrorCode } from '../../../error/JSONSchemaScanErrorCode';
-import { ScanLimit } from '../../../limits/ScanLimit';
-import type { OrderedKeywordDescriptor } from '../../../vocabulary/type';
-import { DEFAULT_KEYWORD_MAP } from '../vocabulary/defaultKeywords';
+import { DialectFlag, DialectMask } from '../dialectFlag/DialectFlag';
+import { DEFAULT_DIALECT } from '../dialectFlag/defaultDialect';
+import { detectDialect } from '../dialectFlag/detectDialect';
+import { DIALECT_FLAGS } from '../dialectFlag/dialectFlags';
+import { JSONSchemaScanError } from '../error/JSONSchemaScanError';
+import { JSONSchemaScanErrorCode } from '../error/JSONSchemaScanErrorCode';
+import { DEFAULT_KEYWORD_MAP } from '../keywordMap/defaultKeywordMap';
+import type { OrderedKeywordDescriptor } from '../keywordMap/type';
+import { ScanLimit } from '../limits/ScanLimit';
 import type {
   DialectScope,
   EngineEntry,

@@ -47,6 +47,12 @@
       "source": "./src/filters/index.ts",
       "import": "./dist/filters/index.mjs",
       "require": "./dist/filters/index.cjs"
+    },
+    "./keyword": {
+      "types": "./dist/keyword/index.d.ts",
+      "source": "./src/keyword/index.ts",
+      "import": "./dist/keyword/index.mjs",
+      "require": "./dist/keyword/index.cjs"
     }
   },
   "main": "dist/index.cjs",

@@ -1,5 +1,5 @@
-import { JSONSchemaScanError } from '../../../error/JSONSchemaScanError';
-import { JSONSchemaScanErrorCode } from '../../../error/JSONSchemaScanErrorCode';
+import { JSONSchemaScanError } from '../error/JSONSchemaScanError';
+import { JSONSchemaScanErrorCode } from '../error/JSONSchemaScanErrorCode';
 import { applyOperations } from './applyOperations';
 import type { OutputOperation } from './type';
 

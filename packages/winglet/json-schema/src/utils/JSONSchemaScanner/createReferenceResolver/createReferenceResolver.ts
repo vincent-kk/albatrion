@@ -1,4 +1,4 @@
-import type { ReferenceResolver } from '../JSONSchemaScanner/type';
+import type { ReferenceResolver } from '../utils/type';
 import { ResolverStore } from './utils/ResolverStore';
 import type {
   ReferenceResolverOptions,

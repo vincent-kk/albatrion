@@ -1,6 +1,6 @@
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import type { Dialect, KeywordDescriptor } from '../../JSONSchemaScanner/type';
+import type { Dialect, KeywordDescriptor } from '../../../../keyword';
 
 /** Supported JSON schema values in documents and registered resources. */
 export type SchemaValue = UnknownSchema | boolean;

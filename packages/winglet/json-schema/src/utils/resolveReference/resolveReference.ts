@@ -1,8 +1,10 @@
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import { JSONSchemaScanner } from '../JSONSchemaScanner/sync';
-import { createReferenceResolver } from '../createReferenceResolver';
-import type { ReferenceResolverOptions } from '../createReferenceResolver';
+import {
+  JSONSchemaScanner,
+  createReferenceResolver,
+} from '../JSONSchemaScanner';
+import type { ReferenceResolverOptions } from '../JSONSchemaScanner';
 
 /**
  * Resolve a document in one public scan using the built-in indexed provider.

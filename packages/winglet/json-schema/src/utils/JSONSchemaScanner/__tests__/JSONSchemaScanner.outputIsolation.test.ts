@@ -4,7 +4,7 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JSONSchemaScannerAsync } from '../async/JSONSchemaScannerAsync';
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
-import type { JSONScannerOptions } from '../type';
+import type { JSONScannerOptions } from '../utils/type';
 import { createTestResolver } from './fixtures/createTestResolver';
 
 /** Common result surface keeps both drivers' private state out of the test contract. */

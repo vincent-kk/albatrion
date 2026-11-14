@@ -34,7 +34,7 @@ console.assert(schema.properties.value.$ref === '#/$defs/Allowed');
 
 - Use `JSONSchemaScanner` with `createReferenceResolver` when you need visitors, filtering or transformation. Without a resolver, scanning does not inline references.
 - Use `JSONSchemaScannerAsync` with `createReferenceResolverAsync` when callbacks or document supply must be awaited. The caller’s `load` function supplies documents; the package performs no automatic network or filesystem access.
-- Schema guards also have the `@winglet/json-schema/filter` subpath; synchronous and asynchronous scanners have `/scanner` and `/async-scanner`. Import resolver factories from the package root.
+- Schema guards also have the `@winglet/json-schema/filter` subpath; synchronous and asynchronous scanners have `/scanner` and `/async-scanner`. `Dialect`, `DEFAULT_KEYWORDS` and the keyword descriptor types have `/keyword`, which loads no scanner code. Import resolver factories from the package root.
 
 ## Read the behavior and limits
 

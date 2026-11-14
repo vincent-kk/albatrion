@@ -2,19 +2,19 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
-import { DialectFlag, DialectMask } from '../../../../../dialect/DialectFlag';
-import { DIALECT_FLAGS } from '../../../../../dialect/dialectFlags';
-import { JSONSchemaScanError } from '../../../../../error/JSONSchemaScanError';
-import { JSONSchemaScanErrorCode } from '../../../../../error/JSONSchemaScanErrorCode';
-import { ScanLimit } from '../../../../../limits/ScanLimit';
-import { ReferenceSkipReason } from '../../../../../referenceOutcome/ReferenceSkipReason';
-import { cloneSchema } from '../../../../../schemaCopy/cloneSchema';
+import { DialectFlag, DialectMask } from '../../../dialectFlag/DialectFlag';
+import { DIALECT_FLAGS } from '../../../dialectFlag/dialectFlags';
+import { JSONSchemaScanError } from '../../../error/JSONSchemaScanError';
+import { JSONSchemaScanErrorCode } from '../../../error/JSONSchemaScanErrorCode';
+import { ScanLimit } from '../../../limits/ScanLimit';
+import { ReferenceSkipReason } from '../../../referenceOutcome/ReferenceSkipReason';
+import { cloneSchema } from '../../../schemaCopy/cloneSchema';
 import type {
   ReferenceKeyword,
   ReferenceResolver,
   ReferenceResolverAsync,
   ReferenceStep,
-} from '../../../../type';
+} from '../../../type';
 import type { EngineEntry, ScanConfig } from '../../type';
 import { LegacyMode } from '../LegacyMode';
 import { getReferenceKeywords } from '../getReferenceKeywords';

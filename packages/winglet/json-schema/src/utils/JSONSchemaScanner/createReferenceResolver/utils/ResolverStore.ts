@@ -1,24 +1,18 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
-import {
-  DEFAULT_KEYWORDS,
-  JSONSchemaScanner,
-} from '../../JSONSchemaScanner/sync';
-import type {
-  ReferenceKeyword,
-  ReferenceStep,
-} from '../../JSONSchemaScanner/type';
-import { Dialect } from '../../dialect/Dialect';
-import { DEFAULT_DIALECT } from '../../dialect/defaultDialect';
-import { detectDialect } from '../../dialect/detectDialect';
-import { DIALECT_NAMES } from '../../dialect/dialectNames';
-import { normalizeSchemaUri } from '../../dialect/normalizeSchemaUri';
-import { JSONSchemaScanError } from '../../error/JSONSchemaScanError';
-import { JSONSchemaScanErrorCode } from '../../error/JSONSchemaScanErrorCode';
-import { ReferenceSkipReason } from '../../referenceOutcome/ReferenceSkipReason';
-import { cloneSchema } from '../../schemaCopy/cloneSchema';
-import { buildKeywordMap } from '../../vocabulary/buildKeywordMap';
+import { DEFAULT_KEYWORDS, Dialect } from '../../../../keyword';
+import { JSONSchemaScanner } from '../../sync';
+import { DEFAULT_DIALECT } from '../../utils/dialectFlag/defaultDialect';
+import { detectDialect } from '../../utils/dialectFlag/detectDialect';
+import { DIALECT_NAMES } from '../../utils/dialectFlag/dialectNames';
+import { normalizeSchemaUri } from '../../utils/dialectFlag/normalizeSchemaUri';
+import { JSONSchemaScanError } from '../../utils/error/JSONSchemaScanError';
+import { JSONSchemaScanErrorCode } from '../../utils/error/JSONSchemaScanErrorCode';
+import { buildKeywordMap } from '../../utils/keywordMap/buildKeywordMap';
+import { ReferenceSkipReason } from '../../utils/referenceOutcome/ReferenceSkipReason';
+import { cloneSchema } from '../../utils/schemaCopy/cloneSchema';
+import type { ReferenceKeyword, ReferenceStep } from '../../utils/type';
 import { resolveURI } from './resolveURI';
 import { shortestReference } from './shortestReference';
 import type {

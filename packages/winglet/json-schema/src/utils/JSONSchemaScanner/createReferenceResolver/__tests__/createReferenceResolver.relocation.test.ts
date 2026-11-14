@@ -213,9 +213,7 @@ describe('old dialect sibling address preservation', () => {
   );
 
   it('keeps the old root identifier and recursive address container in async output', async () => {
-    const { JSONSchemaScannerAsync } = await import(
-      '../../JSONSchemaScanner/async'
-    );
+    const { JSONSchemaScannerAsync } = await import('../../async');
     const { createReferenceResolverAsync } = await import(
       '../utils/createReferenceResolverAsync'
     );

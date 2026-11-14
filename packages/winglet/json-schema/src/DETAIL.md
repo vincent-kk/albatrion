@@ -16,11 +16,11 @@
 - 유한 접두부 뒤의 `items: false`는 rest를 없애고, 생략 또는 `true`는 `...any[]`, 스키마는 그 값 형의 rest를 붙입니다. 이는 `any[]`보다 좁은 형이므로 자유로운 위치·길이에 의존하는 소비자 코드는 컴파일 오류가 날 수 있습니다. 넓어진 배열·비리터럴 접두부, 접두부 없는 homogeneous `items`, 구식 `items` 배열과 `additionalItems`의 추론은 유지합니다.
 - 튜플의 재귀 추론은 TypeScript의 인스턴스화 한도를 확장하지 않습니다. 지원하는 유한 접두부와 중첩 형태는 [튜플 타입 검증](types/__tests__/InferValueType.tuple.type.test.ts)으로 확인합니다.
 
-방문자·필터·mutate의 동기 반환과 Promise 반환 허용 범위를 구분합니다. `JSONSchemaScanError`는 패키지에서 공개해 호출자가 `instanceof`와 안정적인 오류 코드로 실패를 구분할 수 있습니다. 오류 코드는 `utils/error/JSONSchemaScanErrorCode.ts`의 표 한 곳에만 정의하고, 던지는 쪽은 문자열 대신 그 표의 항목을 씁니다. 코드를 흩어 적으면 어떤 코드가 있는지 한눈에 볼 수 없고 오타가 컴파일을 통과하기 때문입니다. 오류 클래스와 표는 스캐너·해소기·복제가 함께 쓰므로 루트의 공통 organ에 둡니다.
+방문자·필터·mutate의 동기 반환과 Promise 반환 허용 범위를 구분합니다. `JSONSchemaScanError`는 패키지에서 공개해 호출자가 `instanceof`와 안정적인 오류 코드로 실패를 구분할 수 있습니다. 오류 코드는 `utils/JSONSchemaScanner/utils/error/JSONSchemaScanErrorCode.ts`의 표 한 곳에만 정의하고, 던지는 쪽은 문자열 대신 그 표의 항목을 씁니다. 코드를 흩어 적으면 어떤 코드가 있는지 한눈에 볼 수 없고 오타가 컴파일을 통과하기 때문입니다. 오류 클래스와 표는 스캐너·해소기·복제가 함께 쓰므로 스캐너 모듈의 organ에 둡니다.
 
 값의 집합은 이름 붙인 상수 한 곳에 두고 코드에는 날 숫자와 날 문자열을 쓰지 않습니다. 호출자가 비교하는 값(`JSONSchemaScanErrorCode`, `Dialect`, `ReferenceSkipReason`)은 `as const` 객체와 거기서 유도한 형으로 공개합니다. 내부에서만 쓰는 비트와 상한(`DialectFlag`, `DialectMask`, `ScanLimit`, `LegacyMode`, `ScanStage`)은 `const enum`으로 둡니다. 빌드가 `const enum` 항목을 숫자로 치환하므로 노드마다 도는 경로에서 비용이 없기 때문이며, 같은 값을 모듈 상수로 가져와 복제 루프에서 읽으면 참조 인라인 묶음이 느려지는 것이 측정되었습니다. 한 `const enum`이 다른 파일의 `const enum`을 참조하면 치환되지 않고 런타임 객체가 남으므로, 서로 참조하는 `const enum`은 한 파일에 둡니다.
 
-방언 인식·어휘 컴파일·스키마 복제와 속성 쓰기는 스캐너와 해소기의 최저 공통 소유자인 루트의 공통 organ에 둡니다. 공개 scanner 하위 경로는 내부 헬퍼를 노출하지 않습니다.
+스키마 선언(`Dialect`, `DEFAULT_KEYWORDS`, `KeywordDescriptor`, `KeywordKind`)은 JSON Schema 자체를 서술하므로 keyword 모듈이 소유하고 `keyword` 하위 경로로도 공개합니다. 선언만 필요한 소비자가 루트나 `scanner` 하위 경로를 거쳐 스캐너와 키워드 표 컴파일까지 불러오지 않게 하기 위해서이며, 그래서 keyword 모듈은 스캐너 코드를 가져오지 않습니다. 방언 비트·판별, 어휘 컴파일, 스키마 복제와 속성 쓰기, 오류와 상한, 내장 해소기는 스캔을 위한 표현과 구현이므로 스캐너 모듈이 소유합니다. 해소기를 스캐너 안에 두는 이유는 [스캐너 계약](utils/JSONSchemaScanner/DETAIL.md)에 있습니다. 공개 scanner 하위 경로는 내부 헬퍼를 노출하지 않습니다.
 
 참조 해소기는 객체 프로토콜이며 비동기 해소기의 resolve만 PromiseLike 결과를 허용합니다.
 
@@ -28,7 +28,7 @@
 
 출력은 순회 중 기록한 교체 연산을 첫 `getValue()`에서 적용합니다. 먼저 경로별 최종 연산을 합성해 나중 조상 교체로 버려질 하위 값을 복제하지 않습니다. 그래야 버린 값의 순환이나 복제 효과가 최종 출력의 오류로 되살아나지 않습니다. 연속한 연산의 원시 부모 경로가 같으면 직전 부모 오버레이를 재사용하며, 조상 교체 뒤에는 이전 하위 경로를 재사용하지 않습니다. 캐시 상태는 getValue의 출력 계산에만 속합니다. 연산 경로의 컨테이너와 변형되지 않은 나머지 값을 복사해 입력·mutate 반환값·해소기 대상에 쓰지 않습니다. 연산이 없으면 입력 참조를 그대로 반환합니다. 계산 여부를 결과값과 분리하므로 boolean 루트와 `false` 결과도 그대로 캐시합니다.
 
-평범한 객체와 배열의 복제는 재귀를 쓰지 않고, 반복 등장한 객체는 위치마다 따로 복제합니다. 배열의 빈 칸은 유지하고 symbol 키는 복사하지 않으며, 자기 `__proto__` 키는 데이터 속성으로 보존합니다. 그 밖의 값은 범용 clone에 위임하므로 깊이 안전은 평범한 JSON 값에 한정됩니다. [복제 검증](utils/schemaCopy/__tests__/cloneSchema.test.ts)은 깊은 컨테이너·별칭·희소 배열·데이터 순환과 비평범한 값의 위임을 고정하고, [깊은 출력 검증](utils/JSONSchemaScanner/__tests__/JSONSchemaScanner.deepOutput.test.ts)은 두 드라이버의 깊은 변환과 대상 복제를 확인합니다.
+평범한 객체와 배열의 복제는 재귀를 쓰지 않고, 반복 등장한 객체는 위치마다 따로 복제합니다. 배열의 빈 칸은 유지하고 symbol 키는 복사하지 않으며, 자기 `__proto__` 키는 데이터 속성으로 보존합니다. 그 밖의 값은 범용 clone에 위임하므로 깊이 안전은 평범한 JSON 값에 한정됩니다. [복제 검증](utils/JSONSchemaScanner/utils/schemaCopy/__tests__/cloneSchema.test.ts)은 깊은 컨테이너·별칭·희소 배열·데이터 순환과 비평범한 값의 위임을 고정하고, [깊은 출력 검증](utils/JSONSchemaScanner/__tests__/JSONSchemaScanner.deepOutput.test.ts)은 두 드라이버의 깊은 변환과 대상 복제를 확인합니다.
 
 물리 순환은 Brent 방식의 조상 체크포인트로 검사합니다. 자식을 갖는 노드가 깊이 256 이상의 2의 거듭제곱 위치에 있으면 체크포인트를 쌓고, 그 노드가 끝나면 제거합니다. 더 깊은 노드는 현재 체크포인트 객체와 같은지만 비교하므로 얕은 입력에 집합 연산을 추가하지 않으며, 현재 경로의 조상만 비교해 별칭 DAG를 순환으로 오인하지 않습니다. 복제는 스키마 깊이 대신 자체 명시적 스택 깊이에 같은 규칙을 적용하며, 순환은 `schema-cycle` 오류입니다.
 
@@ -50,20 +50,7 @@
 
 ## Acceptance Criteria
 
-### scanner-sync — 동기 스캐너 순회·참조 해석 계약
-
-- exit 방문자에서 `references` 결과로 참조 위치를 확인하고 내장 해소기로 순회하면 `getValue()`가 참조를 인라인한 최종 스키마를 반환한다.
-- 중첩된 `$defs`(정의 내부에 또 다른 정의가 있는 경우)도 각각 고유한 JSON 포인터 경로로 구분되어 해석된다.
-- 자기 자신 또는 상위 정의를 가리키는 순환 `$ref`가 있어도 순회는 종료하며, 순환된 지점은 1레벨만 해석되고 더 깊은 재귀 지점은 `$ref` 그대로 남는다 — 무한 루프 미발생을 별도 케이스로도 확인한다.
-- `oneOf` 등 구성 키워드 내부에 중첩된 `$ref`도 탐지·해석 대상이며, 해석 후에도 `additionalProperties`처럼 관련 없는 키워드는 원본 그대로 보존된다.
-
-### scanner-async — 비동기 스캐너 콜백·참조 해석 계약
-
-- 동기 스캐너와 동일한 실제 데이터 시나리오(중첩 `$defs`, 순환 참조, `oneOf` 내부 참조, 무관한 키워드 보존)를 `await scan()` 경로로도 동일하게 재현한다.
-- 방문자 콜백이 동기 함수여도(async로 감싸지 않아도) 정상 동작하며, `enter`가 각 노드의 경로·깊이·키워드 정보를 담아 호출된다.
-- 해소기의 resolve가 resolved 태그를 반환하면 `references`에 성공과 정규 URI를 기록하며, skipped 태그의 unresolved 결과는 원본 참조를 보존한다. 비동기 스캐너는 태그 결과를 기다린다.
-- 방문자의 `enter`/`exit`가 각각 프로미스를 반환하면 `scan()`은 각 콜백이 완료될 때까지 순서대로 기다린 뒤 다음 단계로 진행한다(호출 순서로 검증).
-- `scan()` 이전의 `getValue()`는 `undefined`를 반환하고, 참조가 없는 스키마를 스캔한 뒤의 `getValue()`는 원본 스키마와 동일한 값을 반환한다.
+스캐너 순회·참조 해석의 수용 기준은 [스캐너 계약](utils/JSONSchemaScanner/DETAIL.md)이 소유합니다.
 
 ### value-tuples — 유한 접두부의 위치별 값 추론
 

@@ -1,4 +1,4 @@
-import { Dialect } from './Dialect';
+import { Dialect } from '../../../../keyword';
 import { DialectFlag } from './DialectFlag';
 
 /** Dialect bit back to its public name. */

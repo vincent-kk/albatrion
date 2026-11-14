@@ -4,7 +4,7 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JSONSchemaScannerAsync } from '../async/JSONSchemaScannerAsync';
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
-import type { SchemaEntry, SchemaVisitor } from '../type';
+import type { SchemaEntry, SchemaVisitor } from '../utils/type';
 
 /** Structural test surface avoids combining the drivers' unrelated private state and explicit this types. */
 type ScannerConstructor = new (config: { visitor: SchemaVisitor }) => {

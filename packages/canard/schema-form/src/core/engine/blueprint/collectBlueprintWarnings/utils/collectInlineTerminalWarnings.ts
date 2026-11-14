@@ -11,6 +11,11 @@ import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../errors';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
+import {
+  SCHEMA_LIST_KEYWORDS,
+  SCHEMA_MAP_KEYWORDS,
+  SCHEMA_SINGLE_KEYWORDS,
+} from '../../../constants/schemaKeywords';
 import type { BlueprintDiagnostic } from '../../types/blueprint';
 import type { BlueprintNode } from '../../types/node';
 import type { BlueprintSchema } from '../../types/schema';
@@ -18,32 +23,6 @@ import { readSchemaObject } from '../../utils/analyze/readSchemaObject';
 
 /** Form-only groups that a terminal ignores. */
 const FORM_GROUP_KEYS = Object.values(SCHEMA_GROUP);
-
-/** Keywords whose value maps names to child schemas. */
-const SCHEMA_MAP_KEYWORDS = [
-  'properties',
-  'patternProperties',
-  '$defs',
-  'definitions',
-  'dependentSchemas',
-];
-
-/** Keywords whose value lists child schemas. */
-const SCHEMA_LIST_KEYWORDS = ['allOf', 'oneOf', 'anyOf', 'prefixItems'];
-
-/** Keywords whose value is one child schema or a tuple of them. */
-const SCHEMA_SINGLE_KEYWORDS = [
-  'items',
-  'additionalItems',
-  'additionalProperties',
-  'contains',
-  'not',
-  'if',
-  'then',
-  'else',
-  'unevaluatedProperties',
-  'unevaluatedItems',
-];
 
 /**
  * Find ignored form groups below a terminal without following reference targets.

@@ -1,4 +1,4 @@
-import { Dialect } from './Dialect';
+import { Dialect } from '../../../../keyword';
 import { DialectFlag } from './DialectFlag';
 
 /** Dialect name to its bit, for callers that hold a name from options or a resolver. */

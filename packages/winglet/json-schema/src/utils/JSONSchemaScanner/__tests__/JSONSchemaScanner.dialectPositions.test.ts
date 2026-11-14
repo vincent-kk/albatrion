@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
+import type { Dialect } from '../../../keyword';
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
-import type { Dialect, SchemaEntry } from '../type';
+import type { SchemaEntry } from '../utils/type';
 
 /** Explicit dialect rows pin the complete vocabulary independently of descriptor masks. */
 const positions = [
