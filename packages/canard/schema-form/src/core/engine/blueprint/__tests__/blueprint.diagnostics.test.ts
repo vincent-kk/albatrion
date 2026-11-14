@@ -242,6 +242,51 @@ describe('blueprint diagnostic data and late collection', () => {
       }),
     ]);
   });
+  it('inspects terminal propertyNames, contentSchema and dependencies schema positions', () => {
+    const collect = vi.fn();
+    blueprint(
+      {
+        type: 'object',
+        properties: {
+          value: {
+            type: 'object',
+            options: { terminal: true },
+            propertyNames: { controls: { visible: true } },
+            dependencies: {
+              a: { presentation: { inputType: 'text' } },
+              b: ['a'],
+            },
+            properties: {
+              text: {
+                type: 'string',
+                contentSchema: { options: { trim: true } },
+              },
+            },
+          },
+        },
+      },
+      { collect },
+    );
+    const warnings = collect.mock.calls
+      .map(([diagnostic]) => diagnostic)
+      .filter(
+        (diagnostic) =>
+          diagnostic.code === FormWarningCode.TerminalSubtreeKeyIgnoredForForm,
+      );
+    expect(warnings).toEqual([
+      expect.objectContaining({
+        schemaPath: '#/properties/value',
+        details: {
+          keys: ['controls', 'options', 'presentation'],
+          paths: [
+            '#/properties/value/dependencies/a',
+            '#/properties/value/properties/text/contentSchema',
+            '#/properties/value/propertyNames',
+          ],
+        },
+      }),
+    ]);
+  });
   it('defers warning scans and collects once when a cached root gains a collector', () => {
     const cache = new WeakMap<object, BlueprintCacheEntry[]>();
     const collect = vi.fn();

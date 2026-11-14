@@ -4,38 +4,23 @@ import type { Dictionary } from '@aileron/declare';
 
 import type { BlueprintSchema } from '../../../blueprint';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
+import {
+  SCHEMA_LIST_KEYWORDS,
+  SCHEMA_MAP_KEYWORDS,
+  SCHEMA_SINGLE_KEYWORDS,
+} from '../../../constants/schemaKeywords';
 
 /** Form groups are excluded together without maintaining a second vocabulary. */
 const FORM_GROUP_KEYS: readonly string[] = Object.values(SCHEMA_GROUP);
 
 /** Schema-valued keyword slots traversed as schemas rather than annotation data. */
-const SCHEMA_KEYS = new Set([
-  'additionalProperties',
-  'unevaluatedProperties',
-  'propertyNames',
-  'contains',
-  'items',
-  'not',
-  'if',
-  'then',
-  'else',
-  'additionalItems',
-  'unevaluatedItems',
-  'contentSchema',
-]);
+const SCHEMA_KEYS = new Set(SCHEMA_SINGLE_KEYWORDS);
 
 /** Object maps whose values are authored subschemas. */
-const SCHEMA_MAP_KEYS = new Set([
-  'properties',
-  'patternProperties',
-  '$defs',
-  'definitions',
-  'dependentSchemas',
-  'dependencies',
-]);
+const SCHEMA_MAP_KEYS = new Set(SCHEMA_MAP_KEYWORDS);
 
 /** Ordered arrays whose entries are authored subschemas. */
-const SCHEMA_ARRAY_KEYS = new Set(['allOf', 'anyOf', 'oneOf', 'prefixItems']);
+const SCHEMA_ARRAY_KEYS = new Set(SCHEMA_LIST_KEYWORDS);
 
 /**
  * Deep-copy authored schema data while excluding form extensions at schema positions.
