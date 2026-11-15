@@ -32,20 +32,20 @@ export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   prior: Dictionary<Self>,
 ): boolean => {
-  const append = context.arrayAppend;
-  if (append?.host === node && append.isValid) {
-    if (canReuseAppendedChild(node, context, prior, append)) return true;
-    append.isValid = false;
+  const arrayAppend = context.arrayAppend;
+  if (arrayAppend?.host === node && arrayAppend.isValid) {
+    if (canReuseAppendedChild(node, context, prior, arrayAppend)) return true;
+    arrayAppend.isValid = false;
   }
-  const pop = context.arrayPop;
-  if (pop?.host === node && pop.isValid) {
-    if (canReuseTruncatedChildren(node, context, prior, pop)) return true;
-    pop.isValid = false;
+  const arrayPop = context.arrayPop;
+  if (arrayPop?.host === node && arrayPop.isValid) {
+    if (canReuseTruncatedChildren(node, context, prior, arrayPop)) return true;
+    arrayPop.isValid = false;
   }
-  const splice = context.arraySplice;
-  if (splice?.host === node && splice.isValid) {
-    if (canReuseSplicedChildren(node, context, prior, splice)) return true;
-    splice.isValid = false;
+  const arraySplice = context.arraySplice;
+  if (arraySplice?.host === node && arraySplice.isValid) {
+    if (canReuseSplicedChildren(node, context, prior, arraySplice)) return true;
+    arraySplice.isValid = false;
   }
   const capabilities = node.runtime.blueprint.capabilities;
   const oldCount = context.arrayCounts.get(node);

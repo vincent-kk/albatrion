@@ -44,7 +44,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
   const items: Dictionary<Self> = host.childrenByName ?? Object.create(null);
   const previous = host.children ?? [];
   const removedItem = entry ? undefined : items[String(index)];
-  const removed = removedItem?.storedValue;
+  const removedValue = removedItem?.storedValue;
   const slot = proof.plan.slots[0];
   const value = slot && 'value' in slot ? slot.value : undefined;
   const inserted = entry ? createChildNode(host, entry) : undefined;
@@ -148,5 +148,5 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
     host.path,
     nextSnapshot,
   );
-  return removed;
+  return removedValue;
 };

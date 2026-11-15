@@ -40,7 +40,7 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const state = getDeriveState(context);
   if (!state || context.exceededBudget) return;
-  const previousTransition = context.isInTransition;
+  const wasInTransition = context.isInTransition;
   try {
     while (true) {
       state.sourcePaths = context.loadScope
@@ -164,6 +164,6 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
     }
   } finally {
     context.isAutomatic = false;
-    context.isInTransition = previousTransition;
+    context.isInTransition = wasInTransition;
   }
 };

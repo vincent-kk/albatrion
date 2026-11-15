@@ -62,9 +62,9 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     engineModes.gateSelection !== 'off' &&
     dependencies.hasSplitOwners;
   if (split) {
-    const dirty = context.dirtyPaths;
-    if (dirty instanceof DirtyPathSet)
-      dirty.configureSplitOwners(dependencies.splitOwners);
+    const dirtyPaths = context.dirtyPaths;
+    if (dirtyPaths instanceof DirtyPathSet)
+      dirtyPaths.configureSplitOwners(dependencies.splitOwners);
     for (const changed of context.changedSource)
       dependencies.registerAffectedOwners(changed, context.root, {
         recordHit: (bucket, liveRanks) => {
@@ -72,12 +72,12 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
             bucket,
             epoch,
           );
-          return dirty instanceof DirtyPathSet
-            ? dirty.planSplitAnchors(bucket, liveRanks, epoch)
+          return dirtyPaths instanceof DirtyPathSet
+            ? dirtyPaths.planSplitAnchors(bucket, liveRanks, epoch)
             : [];
         },
         registerOwner: (path, kind) => {
-          dirty.add(path);
+          dirtyPaths.add(path);
           if (kind === 'plain') context.dependencyOwnerPaths.add(path);
           else if (kind === 'split')
             (context.splitMarks ??= new Map<string, number>()).set(path, epoch);

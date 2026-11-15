@@ -62,11 +62,11 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
     );
     memo.byEntry = entries;
   }
-  const registered = context.presenceRegistrations;
+  const presenceRegistrations = context.presenceRegistrations;
   const ownNames = Object.getPrototypeOf(prior) === null;
   return (entry) => {
     if (
-      context.presenceRegistrations !== registered ||
+      context.presenceRegistrations !== presenceRegistrations ||
       context.pathChanges.length > 0 ||
       context.distributedInputs.has(node)
     )

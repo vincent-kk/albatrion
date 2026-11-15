@@ -258,10 +258,10 @@ export class VirtualizationManager {
    * @returns Nothing; another position of the same field cannot settle this request.
    */
   public settleReveal(gate: DeferredGate): void {
-    const tracked = this.trackedReveal;
-    if (!tracked || tracked.gate !== gate) return;
+    const trackedReveal = this.trackedReveal;
+    if (!trackedReveal || trackedReveal.gate !== gate) return;
     this.trackedReveal = undefined;
-    tracked.onSettled();
+    trackedReveal.onSettled();
   }
 
   /**
@@ -270,17 +270,17 @@ export class VirtualizationManager {
    * @returns Nothing; a microtask settles only the same still-absent tracked position.
    */
   public releaseGate(element: Element): void {
-    const tracked = this.trackedReveal;
-    if (!tracked || tracked.element !== element) return;
+    const trackedReveal = this.trackedReveal;
+    if (!trackedReveal || trackedReveal.element !== element) return;
     queueMicrotask(() => {
       if (
-        this.trackedReveal !== tracked ||
+        this.trackedReveal !== trackedReveal ||
         this.registry.has(element) ||
         this.revealing.has(element)
       )
         return;
       this.trackedReveal = undefined;
-      tracked.onSettled();
+      trackedReveal.onSettled();
     });
   }
 

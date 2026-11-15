@@ -337,18 +337,18 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     return changed;
   }
   const nextChildren = flushed ? (node.children ?? []) : Object.values(next);
-  const published = node.children;
+  const publishedChildren = node.children;
   const sameAsBefore = isSameChildList(before, nextChildren);
   if (!sameAsBefore) changed = true;
   node.children = captureFieldNodeChange(
     node,
     'children',
-    published === before
+    publishedChildren === before
       ? sameAsBefore
         ? before
         : nextChildren
-      : isSameChildList(published, nextChildren)
-        ? published
+      : isSameChildList(publishedChildren, nextChildren)
+        ? publishedChildren
         : nextChildren,
   );
   if (changed) context.changedNodes.add(node);

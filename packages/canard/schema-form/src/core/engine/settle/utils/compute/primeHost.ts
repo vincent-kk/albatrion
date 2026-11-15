@@ -178,11 +178,11 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
   }
   node.childrenByName = baseline;
   const children = Object.values(baseline);
-  const published = node.children;
+  const publishedChildren = node.children;
   node.children = captureFieldNodeChange(
     node,
     'children',
-    isSameChildList(published, children) ? published : children,
+    isSameChildList(publishedChildren, children) ? publishedChildren : children,
   );
   if (context.fixedFirstLoad) prepareFixedFirstHost(node, context, true);
 };

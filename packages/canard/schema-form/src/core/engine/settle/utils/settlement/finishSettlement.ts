@@ -80,18 +80,18 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
     context.kind !== FieldNodeWriteKind.Load &&
     context.arrayCounts.size > 0
   ) {
-    const append = context.arrayAppend;
-    const pop = context.arrayPop;
+    const arrayAppend = context.arrayAppend;
+    const arrayPop = context.arrayPop;
     // The append's or pop's tail application already published a dense slot per item.
     const aligned =
-      append &&
-      append.host.runtime.loadSnapshot === append.snapshot &&
-      append.host.itemCount === append.count + 1
-        ? append.host
-        : pop &&
-            pop.host.runtime.loadSnapshot === pop.snapshot &&
-            pop.host.itemCount === pop.count - 1
-          ? pop.host
+      arrayAppend &&
+      arrayAppend.host.runtime.loadSnapshot === arrayAppend.snapshot &&
+      arrayAppend.host.itemCount === arrayAppend.count + 1
+        ? arrayAppend.host
+        : arrayPop &&
+            arrayPop.host.runtime.loadSnapshot === arrayPop.snapshot &&
+            arrayPop.host.itemCount === arrayPop.count - 1
+          ? arrayPop.host
           : undefined;
     const resized: Self[] = [];
     for (const [host, previousCount] of context.arrayCounts)

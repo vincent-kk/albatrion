@@ -39,8 +39,9 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
       String(index) === name
         ? getItemEntries(template, index)
         : undefined;
-    const selected = live?.childrenByName?.[name]?.blueprintNode;
-    const item = items?.find((entry) => entry.node === selected) ?? items?.[0];
+    const liveBlueprintNode = live?.childrenByName?.[name]?.blueprintNode;
+    const item =
+      items?.find((entry) => entry.node === liveBlueprintNode) ?? items?.[0];
     if (items) siblings = items;
     const found = item
       ? { entry: item, position: index }

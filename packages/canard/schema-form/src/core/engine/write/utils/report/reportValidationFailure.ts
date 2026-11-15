@@ -23,7 +23,7 @@ export const reportValidationFailure = (
   failure: unknown,
 ): void => {
   if (runtime.errorReporter?.hasConsumer()) {
-    const wasReporting = runtime.isReportingErrors;
+    const wasReportingErrors = runtime.isReportingErrors;
     runtime.isReportingErrors = true;
     try {
       runtime.errorReporter.report({
@@ -39,7 +39,7 @@ export const reportValidationFailure = (
     } catch (reporterFailure) {
       reportOwnerlessFailure(reporterFailure);
     } finally {
-      runtime.isReportingErrors = wasReporting;
+      runtime.isReportingErrors = wasReportingErrors;
     }
   }
   try {

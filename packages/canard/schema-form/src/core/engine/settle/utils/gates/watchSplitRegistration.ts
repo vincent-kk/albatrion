@@ -13,12 +13,12 @@ export const watchSplitRegistration = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   if (engineModes.gateSelection !== 'verify' || !context.hasGates) return;
-  const dirty = context.dirtyPaths;
+  const dirtyPaths = context.dirtyPaths;
   const shape = context.shapeDirtyPaths;
   const owners = context.dependencyOwnerPaths;
-  const add = dirty.add;
-  const remove = dirty.delete;
-  const clear = dirty.clear;
+  const add = dirtyPaths.add;
+  const remove = dirtyPaths.delete;
+  const clear = dirtyPaths.clear;
   const addShape = shape.add;
   const addOwner = owners.add;
   const shadow = (context.registrationShadow = {
@@ -28,31 +28,31 @@ export const watchSplitRegistration = <Self extends FieldNodeRecord<Self>>(
     isRegistering: false,
     supplementInsertions: 0,
     restore: () => {
-      dirty.add = add;
-      dirty.delete = remove;
-      dirty.clear = clear;
+      dirtyPaths.add = add;
+      dirtyPaths.delete = remove;
+      dirtyPaths.clear = clear;
       shape.add = addShape;
       owners.add = addOwner;
-      if (dirty instanceof DirtyPathSet)
-        dirty.restoreRegistrationObserver = undefined;
+      if (dirtyPaths instanceof DirtyPathSet)
+        dirtyPaths.restoreRegistrationObserver = undefined;
       verifyGateSelection(
         shadow.supplementInsertions === 0,
         'S4 supplement insertions must be zero',
       );
     },
   });
-  for (const path of dirty) shadow.dirtyPaths.add(path);
+  for (const path of dirtyPaths) shadow.dirtyPaths.add(path);
   for (const path of shape) shadow.shape.add(path);
   for (const path of owners) shadow.owners.add(path);
-  dirty.add = function (path: string) {
+  dirtyPaths.add = function (path: string) {
     if (!shadow.isRegistering) shadow.dirtyPaths.add(path);
     return add.call(this, path);
   };
-  dirty.delete = function (path: string) {
+  dirtyPaths.delete = function (path: string) {
     if (!shadow.isRegistering) shadow.dirtyPaths.delete(path);
     return remove.call(this, path);
   };
-  dirty.clear = function () {
+  dirtyPaths.clear = function () {
     verifyGateSelection(false, 'S3 gated dirty set cleared during settlement');
     return clear.call(this);
   };
@@ -64,6 +64,6 @@ export const watchSplitRegistration = <Self extends FieldNodeRecord<Self>>(
     if (!shadow.isRegistering) shadow.owners.add(path);
     return addOwner.call(this, path);
   };
-  if (dirty instanceof DirtyPathSet)
-    dirty.restoreRegistrationObserver = shadow.restore;
+  if (dirtyPaths instanceof DirtyPathSet)
+    dirtyPaths.restoreRegistrationObserver = shadow.restore;
 };

@@ -111,12 +111,12 @@ export const assembleObject: Behavior['assemble'] = (
       return patch ?? previous;
     }
   }
-  const preferred = getStaticChoices(node.schema).propertyOrder;
+  const propertyOrder = getStaticChoices(node.schema).propertyOrder;
   const entries = node.blueprintNode.childEntries;
   if (
     previous === undefined &&
     node.extras === undefined &&
-    preferred.length === 0 &&
+    propertyOrder.length === 0 &&
     entries.length === children.length
   ) {
     const result: Dictionary<unknown> = {};
@@ -151,15 +151,15 @@ export const assembleObject: Behavior['assemble'] = (
       return result;
     }
   }
-  const extra = node.extras;
+  const rawExtras = node.extras;
   const extras =
-    extra !== null && typeof extra === 'object' && !isArray(extra)
-      ? extra
+    rawExtras !== null && typeof rawExtras === 'object' && !isArray(rawExtras)
+      ? rawExtras
       : undefined;
   if (
     previous === undefined &&
     children.length === 0 &&
-    preferred.length === 0 &&
+    propertyOrder.length === 0 &&
     entries.length === 0 &&
     extras
   ) {
@@ -188,7 +188,7 @@ export const assembleObject: Behavior['assemble'] = (
       childValues.set(child.name, child.storedOutputValue);
   const names: string[] = [];
   const seen = new Set<string>();
-  for (const name of preferred) {
+  for (const name of propertyOrder) {
     if (childValues.has(name)) {
       if (childValues.get(name) !== undefined && !seen.has(name)) {
         names.push(name);

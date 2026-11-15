@@ -25,16 +25,16 @@ export const flushPresenceTemplates = <Self extends FieldNodeRecord<Self>>(
   host: Optional<Self>,
   context: SettlementContext<Self>,
 ): boolean => {
-  const pending = context.presenceTemplates;
-  if (!pending?.size) return false;
+  const presenceTemplates = context.presenceTemplates;
+  if (!presenceTemplates?.size) return false;
   let found = false;
   let marked = false;
   const features = getFeatureNodeIndex(context.root.runtime.blueprint);
   const dependencies = getDependencyIndex(context.root.runtime.blueprint);
-  for (const [key, entry] of pending) {
+  for (const [key, entry] of presenceTemplates) {
     if (host !== undefined && entry.host !== host.path) continue;
     found = true;
-    pending.delete(key);
+    presenceTemplates.delete(key);
     for (const owner of expandTemplatePaths(
       context.root,
       entry.template,

@@ -11,17 +11,17 @@ import type { ChildSelectionFrame } from '../selectEntryStep';
 export const publishPreparedSelection = <Self extends FieldNodeRecord<Self>>(
   frame: ChildSelectionFrame<Self>,
 ): readonly Self[] => {
-  const prepared = frame.preparedStatic!;
+  const preparedStatic = frame.preparedStatic!;
   const names = Object.keys(frame.preparedDynamic!);
-  let same = names.length === prepared.dynamicNames.length;
+  let same = names.length === preparedStatic.dynamicNames.length;
   if (same) {
     for (let index = 0, count = names.length; index < count; index++) {
       const name = names[index];
 
       if (
         !(
-          name === prepared.dynamicNames[index] &&
-          frame.next[name] === prepared.selectedChildrenByName[name]
+          name === preparedStatic.dynamicNames[index] &&
+          frame.next[name] === preparedStatic.selectedChildrenByName[name]
         )
       ) {
         same = false;
@@ -31,20 +31,22 @@ export const publishPreparedSelection = <Self extends FieldNodeRecord<Self>>(
   }
 
   if (!same) {
-    prepared.selectedChildrenByName = Object.assign(
+    preparedStatic.selectedChildrenByName = Object.assign(
       Object.create(null),
-      prepared.baseline,
+      preparedStatic.baseline,
       frame.preparedDynamic,
     );
-    prepared.selectedChildren = Object.values(prepared.selectedChildrenByName);
+    preparedStatic.selectedChildren = Object.values(
+      preparedStatic.selectedChildrenByName,
+    );
     frame.hasChanged = true;
   }
-  prepared.dynamicNames = names;
-  frame.node.childrenByName = prepared.selectedChildrenByName;
+  preparedStatic.dynamicNames = names;
+  frame.node.childrenByName = preparedStatic.selectedChildrenByName;
   frame.node.children = captureFieldNodeChange(
     frame.node,
     'children',
-    prepared.selectedChildren,
+    preparedStatic.selectedChildren,
   );
-  return prepared.selectedChildren;
+  return preparedStatic.selectedChildren;
 };

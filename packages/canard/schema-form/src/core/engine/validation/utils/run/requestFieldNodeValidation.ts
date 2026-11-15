@@ -31,20 +31,23 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
   )
     return;
   runtime.isValidationPending = true;
-  const active = runtime.activeValidationRun;
-  if (active && active.stamp === runtime.validationStamp)
-    for (const target of active.targets)
+  const activeValidationRun = runtime.activeValidationRun;
+  if (
+    activeValidationRun &&
+    activeValidationRun.stamp === runtime.validationStamp
+  )
+    for (const target of activeValidationRun.targets)
       (runtime.validationPendingTargets ??= new Set()).add(target);
   runtime.validationStamp = (runtime.validationStamp ?? 0) + 1;
   runtime.validationRequestStamp = runtime.validationStamp;
   (runtime.validationPendingTargets ??= new Set()).add(node);
   const epoch = runtime.validationEpoch;
-  const load = runtime.validationLoadStamp;
+  const validationLoadStamp = runtime.validationLoadStamp;
   runtime.runValidation = () => {
     if (
       node.rootNode.isDisposed ||
       runtime.validationEpoch !== epoch ||
-      runtime.validationLoadStamp !== load ||
+      runtime.validationLoadStamp !== validationLoadStamp ||
       runtime.validationMode === ValidationMode.None ||
       runtime.validationStamp !== runtime.validationRequestStamp
     ) {
@@ -61,7 +64,10 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
       .then((result) => {
         if (runtime.activeValidationRun === running)
           runtime.activeValidationRun = undefined;
-        if (!isFieldNodeValidationCurrent(node, load, epoch, stamp)) return;
+        if (
+          !isFieldNodeValidationCurrent(node, validationLoadStamp, epoch, stamp)
+        )
+          return;
         if (result === null) {
           settleFieldNodeValidation(node, stamp);
           return;
@@ -76,7 +82,15 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
         routeValidationIssues(targets, issues);
         runtime.validationResult = { commit, issues };
         settleFieldNodeValidation(node, stamp);
-        if (isFieldNodeValidationCurrent(node, load, epoch, stamp, commit))
+        if (
+          isFieldNodeValidationCurrent(
+            node,
+            validationLoadStamp,
+            epoch,
+            stamp,
+            commit,
+          )
+        )
           deliver(issues, commit);
       })
       .catch((failure: unknown) => {

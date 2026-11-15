@@ -42,11 +42,11 @@ export const rebuildRootExternalErrors = <Self extends FieldNodeRecord<Self>>(
   root: Self,
 ): void => {
   const runtime = root.runtime;
-  const pending = runtime.pendingExternalErrorNodes;
-  if (!pending?.size) return;
+  const pendingExternalErrorNodes = runtime.pendingExternalErrorNodes;
+  if (!pendingExternalErrorNodes?.size) return;
   runtime.pendingExternalErrorNodes = undefined;
   const nodes: Self[] = [];
-  for (const candidate of pending)
+  for (const candidate of pendingExternalErrorNodes)
     if (isPendingNode<Self>(candidate, runtime)) nodes.push(candidate);
   if (!nodes.length) return;
   const contributions = (runtime.externalContributions ??= new Map<

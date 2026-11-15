@@ -27,30 +27,31 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
   const host =
     (node.behavior.type === 'array' || node.behavior.type === 'object') &&
     node.behavior.strategy === 'branch';
-  const append = context.arrayAppend;
+  const arrayAppend = context.arrayAppend;
   const appending =
-    append !== undefined &&
-    append.host === node &&
-    append.isValid &&
+    arrayAppend !== undefined &&
+    arrayAppend.host === node &&
+    arrayAppend.isValid &&
     !recalculated &&
-    node.children === append.children &&
-    (node.storedValue === append.value ||
-      node.storedValue === append.assembledValue);
-  const pop = context.arrayPop;
+    node.children === arrayAppend.children &&
+    (node.storedValue === arrayAppend.value ||
+      node.storedValue === arrayAppend.assembledValue);
+  const arrayPop = context.arrayPop;
   const truncating =
-    pop !== undefined &&
-    pop.host === node &&
-    pop.isValid &&
+    arrayPop !== undefined &&
+    arrayPop.host === node &&
+    arrayPop.isValid &&
     !recalculated &&
-    node.children === pop.children &&
-    (node.storedValue === pop.value || node.storedValue === pop.assembledValue);
+    node.children === arrayPop.children &&
+    (node.storedValue === arrayPop.value ||
+      node.storedValue === arrayPop.assembledValue);
   const hint =
     recalculated && host
       ? { isIncremental: false }
       : appending
-        ? { isIncremental: false, previousItemCount: append.count }
+        ? { isIncremental: false, previousItemCount: arrayAppend.count }
         : truncating
-          ? { isIncremental: false, remainingItemCount: pop.count - 1 }
+          ? { isIncremental: false, remainingItemCount: arrayPop.count - 1 }
           : undefined;
   const assembled = node.behavior.assemble(
     node,
@@ -58,8 +59,8 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
     recalculated,
     hint,
   );
-  if (appending && hint?.isIncremental) append.assembledValue = assembled;
-  if (truncating && hint?.isIncremental) pop.assembledValue = assembled;
+  if (appending && hint?.isIncremental) arrayAppend.assembledValue = assembled;
+  if (truncating && hint?.isIncremental) arrayPop.assembledValue = assembled;
   const previousValue = node.storedValue;
   let same = false;
   if (hint?.isIncremental) {

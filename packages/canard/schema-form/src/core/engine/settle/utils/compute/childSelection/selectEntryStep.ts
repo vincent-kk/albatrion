@@ -137,13 +137,13 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     activeIds = discriminator.ids;
   } else if (step && !step.isGeneral) {
     const version = context.gateExceptionVersion;
-    const admitted =
+    const isTableAdmitted =
       frame.isTableAdmitted ??
       (!step.gate || evaluateGate(step.gate, context, node));
-    declarations = admitted ? entry.declarations : NO_DECLARATIONS;
-    activeIds = admitted ? step.ids : NO_ACTIVE_IDS;
+    declarations = isTableAdmitted ? entry.declarations : NO_DECLARATIONS;
+    activeIds = isTableAdmitted ? step.ids : NO_ACTIVE_IDS;
     threw =
-      !admitted &&
+      !isTableAdmitted &&
       (frame.hasTableThrown === true ||
         context.gateExceptionVersion !== version);
   } else if (context.hasGates) {
@@ -357,7 +357,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
         node.blueprintNode,
       )
     : undefined;
-  const effective =
+  const effectiveSchema =
     discriminator?.schema ??
     admittedEdge?.schema ??
     mergeEffectiveSchema(
@@ -365,7 +365,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       context.hasGates ? ids : NO_ACTIVE_IDS,
       { mode: 'runtime', isAtomic },
     );
-  if (child.schema !== effective) {
+  if (child.schema !== effectiveSchema) {
     captureProjectionBaseline(
       node,
       child,
@@ -374,7 +374,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     );
     if (!context.originalSchemas.has(child.path))
       context.originalSchemas.set(child.path, child.schema);
-    child.schema = captureFieldNodeChange(child, 'schema', effective);
+    child.schema = captureFieldNodeChange(child, 'schema', effectiveSchema);
     context.dirtyPaths.add(child.path);
     if (child.behavior.strategy === 'branch')
       context.shapeDirtyPaths.add(child.path);
@@ -382,7 +382,9 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     frame.hasChanged = true;
     entryChanged = true;
   }
-  if (admittedEdge ? admittedEdge.hasConflict : effective.hasTypeConflict) {
+  if (
+    admittedEdge ? admittedEdge.hasConflict : effectiveSchema.hasTypeConflict
+  ) {
     recordSettlementFailure(
       context,
       new SchemaFormError(

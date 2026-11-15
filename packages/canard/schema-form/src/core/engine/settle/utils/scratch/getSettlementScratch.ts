@@ -9,14 +9,14 @@ import { DirtyPathSet } from './DirtyPathSet';
 export const getSettlementScratch = <Self>(
   runtime: FieldNodeRuntime<Self>,
 ): SettlementScratch<Self> => {
-  const cached = runtime.settlementScratch;
+  const settlementScratch = runtime.settlementScratch;
   const dirtyChildrenByParent =
-    cached && !cached.isInUse
-      ? cached.dirtyChildrenByParent
+    settlementScratch && !settlementScratch.isInUse
+      ? settlementScratch.dirtyChildrenByParent
       : new Map<string, Map<string, string>>();
   const scratch: SettlementScratch<Self> =
-    cached && !cached.isInUse
-      ? cached
+    settlementScratch && !settlementScratch.isInUse
+      ? settlementScratch
       : {
           isInUse: false,
           enteredNodes: new Set<Self>(),
@@ -43,7 +43,7 @@ export const getSettlementScratch = <Self>(
           stateDirtyNodes: new Set<Self>(),
           originalSchemas: new Map(),
         };
-  if (!cached) runtime.settlementScratch = scratch;
+  if (!settlementScratch) runtime.settlementScratch = scratch;
   scratch.isInUse = true;
   return scratch;
 };

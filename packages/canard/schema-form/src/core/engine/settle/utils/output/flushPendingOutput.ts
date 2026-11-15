@@ -18,12 +18,14 @@ export const flushPendingOutput = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   if (!context.pendingOutputs?.delete(node)) return false;
   const children = selectedChildren ?? Object.values(node.childrenByName ?? {});
-  const published = node.children;
+  const publishedChildren = node.children;
   node.children = captureFieldNodeChange(
     node,
     'children',
     selectedChildren ??
-      (isSameChildList(published, children) ? published : children),
+      (isSameChildList(publishedChildren, children)
+        ? publishedChildren
+        : children),
   );
   updateOutput(node, context);
   return true;

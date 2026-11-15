@@ -22,20 +22,21 @@ export const reuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
   prior: Dictionary<Self>,
   computeChild: Fn<[child: Self]>,
 ): void => {
-  const append = context.arrayAppend;
-  if (append?.host === node && append.isValid) {
-    if (!append.entry) return;
-    const child = prior[String(append.count)];
-    const ids = staticIds(append.entry, node.blueprintNode);
+  const arrayAppend = context.arrayAppend;
+  if (arrayAppend?.host === node && arrayAppend.isValid) {
+    if (!arrayAppend.entry) return;
+    const child = prior[String(arrayAppend.count)];
+    const ids = staticIds(arrayAppend.entry, node.blueprintNode);
     if (context.selectedDeclarationIds.get(child) !== ids)
       context.selectedDeclarationIds.set(child, ids);
     if (context.dirtyPaths.has(child.path)) computeChild(child);
     return;
   }
-  const pop = context.arrayPop;
-  if (pop?.host === node && pop.isValid) return;
-  const splice = context.arraySplice;
-  const start = splice?.host === node && splice.isValid ? splice.index : 0;
+  const arrayPop = context.arrayPop;
+  if (arrayPop?.host === node && arrayPop.isValid) return;
+  const arraySplice = context.arraySplice;
+  const start =
+    arraySplice?.host === node && arraySplice.isValid ? arraySplice.index : 0;
   for (let index = start; index < node.itemCount; index++) {
     const entry = getItemEntry(node.blueprintNode, index);
     if (!entry) continue;

@@ -208,10 +208,10 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         watchIndex?.remove(node);
         continue;
       }
-      const initialized = node.isDeliveryInitialized;
+      const isDeliveryInitialized = node.isDeliveryInitialized;
       const changes = node.deliveryChanges;
       const previousWatchValues = node.deliveryWatchValues ?? EMPTY_ARRAY;
-      const pending = node.pendingDelivery?.payload;
+      const pendingPayload = node.pendingDelivery?.payload;
       const hasWatch = watchNodes.has(node.blueprintNode.id);
       const watched = hasWatch ? readFieldNodeWatchValues(node) : EMPTY_ARRAY;
       if (hasWatch) {
@@ -222,10 +222,10 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         } else runtime.deliveryWatchIndex?.remove(node);
       }
       let watchChanged =
-        initialized && watched.length !== previousWatchValues.length;
+        isDeliveryInitialized && watched.length !== previousWatchValues.length;
       for (
         let index = 0;
-        initialized && !watchChanged && index < watched.length;
+        isDeliveryInitialized && !watchChanged && index < watched.length;
         index++
       )
         if (!isSameDeliveryValue(watched[index], previousWatchValues[index]))
@@ -233,7 +233,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       const silent = canOmitFieldNodePayload(node);
       mark = silent ? markSilent : markFieldNodeEvent;
       silentMask = BIT_MASK_NONE;
-      if (initialized) {
+      if (isDeliveryInitialized) {
         if (
           changes & FieldNodeEventType.UpdateValue &&
           (!isSameDeliveryValue(node.deliveryPreviousValue, node.storedValue) ||
@@ -244,7 +244,8 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         ) {
           if (silent) mark(node, FieldNodeEventType.UpdateValue);
           else {
-            const pendingValue = pending?.[FieldNodeEventType.UpdateValue];
+            const pendingValue =
+              pendingPayload?.[FieldNodeEventType.UpdateValue];
             const oldValue =
               pendingValue !== null && typeof pendingValue === 'object'
                 ? Reflect.get(pendingValue, 'previous')
@@ -282,7 +283,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         ) {
           if (silent) mark(node, FieldNodeEventType.UpdatePath);
           else {
-            const pendingPath = pending?.[FieldNodeEventType.UpdatePath];
+            const pendingPath = pendingPayload?.[FieldNodeEventType.UpdatePath];
             const oldPath =
               pendingPath !== null && typeof pendingPath === 'object'
                 ? Reflect.get(pendingPath, 'previous')
@@ -332,7 +333,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
           if (silent) mark(node, FieldNodeEventType.UpdateJsonSchema);
           else {
             const pendingSchema =
-              pending?.[FieldNodeEventType.UpdateJsonSchema];
+              pendingPayload?.[FieldNodeEventType.UpdateJsonSchema];
             const oldSchema =
               pendingSchema !== null && typeof pendingSchema === 'object'
                 ? Reflect.get(pendingSchema, 'previous')

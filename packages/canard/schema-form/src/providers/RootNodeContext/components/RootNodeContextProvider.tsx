@@ -118,16 +118,21 @@ export const RootNodeContextProvider = ({
   const [, update] = useVersion();
   const reset = useHandle(
     (option?: Parameters<RootBinding['reset']>[0], rebuild = false) => {
-      const used = committed.current;
-      commitRootLoadSettings(store.load, store, used, committedPolicy.current);
-      store.load = resetRootLoad(store.load, used, option, rebuild);
+      const committedProps = committed.current;
+      commitRootLoadSettings(
+        store.load,
+        store,
+        committedProps,
+        committedPolicy.current,
+      );
+      store.load = resetRootLoad(store.load, committedProps, option, rebuild);
       store.unsubscribe();
       store.unsubscribe = subscribeRootLoad(store.load, store);
       if (store.load.root) scheduleLoadValidation(store.load, store);
       binding.current.root = store.load.root;
       attachedFilesMap.clear();
       onReset();
-      pending.current = { props: used, option };
+      pending.current = { props: committedProps, option };
       update();
       for (const listener of store.listeners) listener();
       try {
@@ -186,18 +191,22 @@ export const RootNodeContextProvider = ({
     )
       reset(requested?.option);
     else if (requested) {
-      const { props: used, option } = requested;
+      const { props: requestedProps, option } = requested;
       if (
-        !isSameSchema(used.jsonSchema, current.jsonSchema) ||
-        !isSameSchema(used.defaultValue, current.defaultValue) ||
-        !isSameSchema(used.errors, current.errors)
+        !isSameSchema(requestedProps.jsonSchema, current.jsonSchema) ||
+        !isSameSchema(requestedProps.defaultValue, current.defaultValue) ||
+        !isSameSchema(requestedProps.errors, current.errors)
       )
         reset(option);
     }
-    const active = store.load;
-    const root = active.root;
-    commitRootLoadSettings(active, store, current, errorVisibility);
-    if (root && store.load === active && previous.context !== current.context)
+    const activeLoad = store.load;
+    const root = activeLoad.root;
+    commitRootLoadSettings(activeLoad, store, current, errorVisibility);
+    if (
+      root &&
+      store.load === activeLoad &&
+      previous.context !== current.context
+    )
       setContext(root, context);
   });
 
@@ -258,8 +267,8 @@ export const RootNodeContextProvider = ({
   useLayoutEffect(() => {
     const root = load.root;
     const validator = load.props.validator;
-    const authored = load.props.jsonSchema;
-    if (root && validator) retainValidationRoot(validator, authored);
+    const jsonSchema = load.props.jsonSchema;
+    if (root && validator) retainValidationRoot(validator, jsonSchema);
     if (!load.isPrepared) {
       if (store.load === load) {
         store.unsubscribe();
@@ -273,7 +282,7 @@ export const RootNodeContextProvider = ({
       } else load.isPrepared = true;
     }
     return () => {
-      if (root && validator) releaseValidationRoot(validator, authored);
+      if (root && validator) releaseValidationRoot(validator, jsonSchema);
     };
   }, [load, reporter, store]);
 
