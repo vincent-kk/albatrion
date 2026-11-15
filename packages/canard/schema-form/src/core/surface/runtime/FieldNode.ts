@@ -59,31 +59,16 @@ import { SetValueOption } from '../type';
 
 /** Runtime record implementation; the public FieldNode name denotes a union type. */
 export class FieldNode implements FieldNodeRecord<FieldNode> {
-  readonly behavior: Behavior<FieldNode>;
-  readonly runtime: FieldNodeRuntime<FieldNode>;
-  readonly blueprintNode: BlueprintNode;
   parent: Nullable<FieldNode>;
-  private readonly root: FieldNode;
-  private storedName: string;
-  private storedEscapedName: string;
-  private storedPath: string;
-  private storedDepth: number;
-  private storedIsRequired: boolean;
-  private readonly storedIsNullable: boolean;
-  private readonly storedSchemaType: Optional<BlueprintSchemaType>;
   childrenByName: Nullable<Dictionary<FieldNode>>;
-  private storedChildren: Nullable<readonly FieldNode[]>;
   itemKey: Nullable<number>;
   itemCount: number;
   nextItemKey: number;
-  private storedSource: unknown;
-  private storedExtras: unknown;
-  private storedIsActive: boolean;
-  private storedIsVisible: boolean;
-  private storedIsReadOnly: boolean;
-  private storedIsDisabled: boolean;
+
   storedValue: unknown;
   storedOutputValue: unknown;
+
+  schema: EffectiveSchema;
   /** Current output at this path retained by the divergence read memo. */
   divergenceCurrent: unknown;
   /** Concrete path whose parsed segments this occurrence retains. */
@@ -94,8 +79,10 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   divergenceBase: unknown;
   /** Pure comparison result for the retained path values. */
   storedIsDivergent: boolean;
-  schema: EffectiveSchema;
+
   storedState: FieldNodeRecord<FieldNode>['storedState'];
+  interactionEpoch: number;
+
   /** Per-bit counts copied only after this occurrence first receives delivery. */
   revisionLedger: Readonly<Record<number, number>>;
   isDeliveryInitialized: boolean;
@@ -111,9 +98,31 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   pendingDelivery: FieldNodeRecord<FieldNode>['pendingDelivery'];
   pendingRevisionMask: number;
   pendingNonSettleDelivery: FieldNodeRecord<FieldNode>['pendingNonSettleDelivery'];
-  isDetached: boolean;
-  isDisposed: boolean;
-  interactionEpoch: number;
+
+  private readonly __behavior__: Behavior<FieldNode>;
+  private readonly __blueprintNode__: BlueprintNode;
+  private readonly __schemaType__: Optional<BlueprintSchemaType>;
+  private readonly __isNullable__: boolean;
+  private readonly __rootNode__: FieldNode;
+  private readonly __runtime__: FieldNodeRuntime<FieldNode>;
+
+  private __depth__: number;
+  private __name__: string;
+  private __escapedName__: string;
+  private __path__: string;
+  private __children__: Nullable<readonly FieldNode[]>;
+
+  private __source__: unknown;
+  private __extras__: unknown;
+
+  private __isRequired__: boolean;
+  private __isActive__: boolean;
+  private __isVisible__: boolean;
+  private __isReadOnly__: boolean;
+  private __isDisabled__: boolean;
+
+  private __isDetached__: boolean;
+  private __isDisposed__: boolean;
 
   constructor(
     behavior: Behavior<FieldNode>,
@@ -129,38 +138,21 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     schema: EffectiveSchema,
     state: FieldNodeRecord<FieldNode>['storedState'],
   ) {
-    this.behavior = behavior;
-    this.runtime = runtime;
-    this.blueprintNode = blueprintNode;
     this.parent = parent;
-    this.root = parent?.rootNode ?? this;
-    this.storedName = name;
-    this.storedEscapedName = escapedName;
-    this.storedPath = path;
-    this.storedDepth = depth;
-    this.storedIsRequired = false;
-    this.storedIsNullable = blueprintNode.isNullable;
-    this.storedSchemaType = blueprintNode.schemaType;
     this.childrenByName = childrenByName;
-    this.storedChildren = children;
     this.itemKey = null;
     this.itemCount = 0;
     this.nextItemKey = 0;
-    this.storedSource = undefined;
-    this.storedExtras = undefined;
-    this.storedIsActive = true;
-    this.storedIsVisible = true;
-    this.storedIsReadOnly = false;
-    this.storedIsDisabled = false;
     this.storedValue = undefined;
     this.storedOutputValue = undefined;
+    this.schema = schema;
     this.divergenceCurrent = undefined;
     this.divergencePath = undefined;
     this.divergenceSegments = undefined;
     this.divergenceBase = undefined;
     this.storedIsDivergent = false;
-    this.schema = schema;
     this.storedState = state;
+    this.interactionEpoch = 0;
     this.revisionLedger = EMPTY_REVISION_LEDGER;
     this.isDeliveryInitialized = false;
     this.deliveryChanges = BIT_MASK_NONE;
@@ -175,162 +167,90 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.pendingDelivery = undefined;
     this.pendingRevisionMask = BIT_MASK_NONE;
     this.pendingNonSettleDelivery = undefined;
-    this.isDetached = false;
-    this.isDisposed = false;
-    this.interactionEpoch = 0;
+    this.__behavior__ = behavior;
+    this.__blueprintNode__ = blueprintNode;
+    this.__schemaType__ = blueprintNode.schemaType;
+    this.__isNullable__ = blueprintNode.isNullable;
+    this.__rootNode__ = parent?.rootNode ?? this;
+    this.__runtime__ = runtime;
+    this.__depth__ = depth;
+    this.__name__ = name;
+    this.__escapedName__ = escapedName;
+    this.__path__ = path;
+    this.__children__ = children;
+    this.__source__ = undefined;
+    this.__extras__ = undefined;
+    this.__isRequired__ = false;
+    this.__isActive__ = true;
+    this.__isVisible__ = true;
+    this.__isReadOnly__ = false;
+    this.__isDisabled__ = false;
+    this.__isDetached__ = false;
+    this.__isDisposed__ = false;
   }
 
+  /** Shared calculation row selected for this node kind and strategy. */
+  get behavior() {
+    return this.__behavior__;
+  }
+  /** Immutable analysis template for this occurrence. */
+  get blueprintNode() {
+    return this.__blueprintNode__;
+  }
   get type() {
-    return this.behavior.type;
+    return this.__behavior__.type;
   }
   get strategy() {
-    return this.behavior.strategy;
+    return this.__behavior__.strategy;
   }
   get schemaType() {
-    return this.storedSchemaType;
+    return this.__schemaType__;
   }
   get jsonSchema() {
     return this.schema.schema;
   }
-  /** Whether the effective declaration requires this occurrence. */
-  get isRequired() {
-    return this.storedIsRequired;
-  }
-  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
-  set isRequired(value: boolean) {
-    this.storedIsRequired = value;
-  }
   get isNullable() {
-    return this.storedIsNullable;
+    return this.__isNullable__;
   }
-  get depth() {
-    return this.storedDepth;
-  }
-  set depth(value: number) {
-    this.storedDepth = value;
-  }
+
   get isRoot() {
     return this.parent === null;
   }
   get rootNode() {
-    return this.root;
+    return this.__rootNode__;
   }
   get parentNode() {
     return this.parent;
   }
+  get depth() {
+    return this.__depth__;
+  }
+  set depth(value: number) {
+    this.__depth__ = value;
+  }
   get name() {
-    return this.storedName;
+    return this.__name__;
   }
   set name(value: string) {
-    this.storedName = value;
+    this.__name__ = value;
   }
   get escapedName() {
-    return this.storedEscapedName;
+    return this.__escapedName__;
   }
   set escapedName(value: string) {
-    this.storedEscapedName = value;
+    this.__escapedName__ = value;
   }
   get path() {
-    return this.storedPath;
+    return this.__path__;
   }
   set path(value: string) {
-    this.storedPath = value;
+    this.__path__ = value;
   }
   get children() {
-    return this.storedChildren;
+    return this.__children__;
   }
   set children(value: Nullable<readonly FieldNode[]>) {
-    this.storedChildren = value;
-  }
-  get source() {
-    return this.storedSource;
-  }
-  set source(value: unknown) {
-    this.storedSource = value;
-  }
-  get extras() {
-    return this.storedExtras;
-  }
-  set extras(value: unknown) {
-    this.storedExtras = value;
-  }
-  get value() {
-    return this.storedValue;
-  }
-  get outputValue() {
-    return this.storedOutputValue;
-  }
-  get inactiveValues() {
-    return readFieldNodeInactiveValues<FieldNode>(this);
-  }
-  /** Whether this occurrence remains in the current shape. */
-  get isActive() {
-    return this.storedIsActive;
-  }
-  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
-  set isActive(value: boolean) {
-    this.storedIsActive = value;
-  }
-  /** Local visibility after active declarations are combined. */
-  get isVisible() {
-    return this.storedIsVisible;
-  }
-  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
-  set isVisible(value: boolean) {
-    this.storedIsVisible = value;
-  }
-  /** Whether this occurrence is active and visible, independent of disabled state. */
-  get isPresent() {
-    return this.isActive && this.isVisible;
-  }
-  /** Local read-only state including the standard schema readOnly flag. */
-  get isReadOnly() {
-    return this.storedIsReadOnly;
-  }
-  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
-  set isReadOnly(value: boolean) {
-    this.storedIsReadOnly = value;
-  }
-  /** Local input lock independent of presence. */
-  get isDisabled() {
-    return this.storedIsDisabled;
-  }
-  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
-  set isDisabled(value: boolean) {
-    this.storedIsDisabled = value;
-  }
-  /** Effective watched values read from the emitted tree. */
-  get watchValues() {
-    return readFieldNodeWatchValues<FieldNode>(this);
-  }
-  /** Shared context reference supplied by the current Form binding. */
-  get context() {
-    return this.runtime.context;
-  }
-  /** Whether the retained source value misses the effective accepted types. */
-  get isMisfit() {
-    return readFieldNodeIsMisfit<FieldNode>(this);
-  }
-  get misfits() {
-    return readFieldNodeMisfits<FieldNode>(this);
-  }
-  get diagnostics(): FieldNodeRuntime<FieldNode>['diagnostics'] {
-    return this.runtime.diagnostics;
-  }
-  get defaultValue() {
-    return readFieldNodeDefaultValue<FieldNode>(this);
-  }
-  /** Output difference from the last root load. Re-read on the root node's UpdateValue, UpdateState or RequestRefresh and this node's UpdatePath; rebind when the root or node changes. Both root-load paths deliver RequestRefresh, including a same-output reset. Detached references do not gain new events. */
-  get isDivergent(): boolean {
-    return readFieldNodeIsDivergent<FieldNode>(this);
-  }
-  /** User-input state truthiness; re-read on UpdateState, including for detached references. */
-  get isEdited(): boolean {
-    return !!this.state[FieldNodeState.Edited];
-  }
-  /** Blur state truthiness; re-read on UpdateState, including for detached references. */
-  get isTouched(): boolean {
-    return !!this.state[FieldNodeState.Touched];
+    this.__children__ = value;
   }
   find(pointer?: Nullable<string | readonly string[]>) {
     return find<FieldNode>(this, pointer);
@@ -341,6 +261,31 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   /** Visit this occurrence and its current-shape subtree in preorder; writes settle once at the end. */
   visitSubtree(visitor: Fn<[node: FieldNode], void | boolean>) {
     return dispatchVisitSubtree<FieldNode>(this, visitor);
+  }
+
+  get source() {
+    return this.__source__;
+  }
+  set source(value: unknown) {
+    this.__source__ = value;
+  }
+  get extras() {
+    return this.__extras__;
+  }
+  set extras(value: unknown) {
+    this.__extras__ = value;
+  }
+  get value() {
+    return this.storedValue;
+  }
+  get outputValue() {
+    return this.storedOutputValue;
+  }
+  get defaultValue() {
+    return readFieldNodeDefaultValue<FieldNode>(this);
+  }
+  get inactiveValues() {
+    return readFieldNodeInactiveValues<FieldNode>(this);
   }
   setValue(value: unknown, option: SetValueOption = SetValueOption.Overwrite) {
     return dispatchSetValue<FieldNode>(this, value, option);
@@ -372,6 +317,67 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   resetSubtree(option: SetValueOption = SetValueOption.Overwrite) {
     return dispatchResetSubtree<FieldNode>(this, option);
   }
+
+  /** Effective watched values read from the emitted tree. */
+  get watchValues() {
+    return readFieldNodeWatchValues<FieldNode>(this);
+  }
+  /** Whether the effective declaration requires this occurrence. */
+  get isRequired() {
+    return this.__isRequired__;
+  }
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isRequired(value: boolean) {
+    this.__isRequired__ = value;
+  }
+  /** Whether this occurrence remains in the current shape. */
+  get isActive() {
+    return this.__isActive__;
+  }
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isActive(value: boolean) {
+    this.__isActive__ = value;
+  }
+  /** Local visibility after active declarations are combined. */
+  get isVisible() {
+    return this.__isVisible__;
+  }
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isVisible(value: boolean) {
+    this.__isVisible__ = value;
+  }
+  /** Whether this occurrence is active and visible, independent of disabled state. */
+  get isPresent() {
+    return this.isActive && this.isVisible;
+  }
+  /** Local read-only state including the standard schema readOnly flag. */
+  get isReadOnly() {
+    return this.__isReadOnly__;
+  }
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isReadOnly(value: boolean) {
+    this.__isReadOnly__ = value;
+  }
+  /** Local input lock independent of presence. */
+  get isDisabled() {
+    return this.__isDisabled__;
+  }
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isDisabled(value: boolean) {
+    this.__isDisabled__ = value;
+  }
+  /** Whether the retained source value misses the effective accepted types. */
+  get isMisfit() {
+    return readFieldNodeIsMisfit<FieldNode>(this);
+  }
+  get misfits() {
+    return readFieldNodeMisfits<FieldNode>(this);
+  }
+  /** Output difference from the last root load. Re-read on the root node's UpdateValue, UpdateState or RequestRefresh and this node's UpdatePath; rebind when the root or node changes. Both root-load paths deliver RequestRefresh, including a same-output reset. Detached references do not gain new events. */
+  get isDivergent(): boolean {
+    return readFieldNodeIsDivergent<FieldNode>(this);
+  }
+
   /** Local interaction flags, patched through the dispatcher on assignment. */
   get state() {
     return this.storedState;
@@ -383,9 +389,17 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   setState(state: NodeStateFlags) {
     return dispatchSetState<FieldNode>(this, state);
   }
+  /** User-input state truthiness; re-read on UpdateState, including for detached references. */
+  get isEdited(): boolean {
+    return !!this.state[FieldNodeState.Edited];
+  }
+  /** Blur state truthiness; re-read on UpdateState, including for detached references. */
+  get isTouched(): boolean {
+    return !!this.state[FieldNodeState.Touched];
+  }
   /** Interaction flags present on at least one node in the current tree shape. */
   get globalState() {
-    return this.runtime.globalState;
+    return this.__runtime__.globalState;
   }
   /** Patch interaction flags throughout this live subtree. */
   setSubtreeState(state: NodeStateFlags) {
@@ -395,13 +409,14 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   clearSubtreeState() {
     return dispatchClearSubtreeState<FieldNode>(this);
   }
+
   /** Displayed validator and external issues for this occurrence. */
   get errors() {
     return readFieldNodeErrors<FieldNode>(this);
   }
   /** Ordered whole-tree validator issues. */
   get globalErrors() {
-    return this.runtime.globalErrors ?? EMPTY_ARRAY;
+    return this.__runtime__.globalErrors ?? EMPTY_ARRAY;
   }
   /** Replace this occurrence's external issues; a non-root write also replaces the root list's issues at this path. */
   setExternalErrors(errors: readonly ValidationIssue[]) {
@@ -415,6 +430,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   validate() {
     return dispatchValidate<FieldNode>(this);
   }
+
   /** Subscribe to future event deliveries. */
   subscribe(listener: FieldNodeListener) {
     return subscribeFieldNode<FieldNode>(this, listener);
@@ -434,5 +450,34 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   /** Group synchronous writes in one outer delivery boundary. */
   batch(fn: Fn) {
     return dispatchBatch<FieldNode>(this, fn);
+  }
+
+  /** Per-tree services and settlement records. */
+  get runtime() {
+    return this.__runtime__;
+  }
+  /** Shared context reference supplied by the current Form binding. */
+  get context() {
+    return this.__runtime__.context;
+  }
+  get diagnostics(): FieldNodeRuntime<FieldNode>['diagnostics'] {
+    return this.__runtime__.diagnostics;
+  }
+
+  /** Whether this reference has left the live shape. */
+  get isDetached() {
+    return this.__isDetached__;
+  }
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isDetached(value: boolean) {
+    this.__isDetached__ = value;
+  }
+  /** Whether binding adoption retired this tree; reads retain the preceding commit. */
+  get isDisposed() {
+    return this.__isDisposed__;
+  }
+  /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
+  set isDisposed(value: boolean) {
+    this.__isDisposed__ = value;
   }
 }

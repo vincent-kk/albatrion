@@ -30,6 +30,11 @@ describe('FieldNode PR-2 surface', () => {
     );
     expect(detail).toMatch(/^### surface-members —/m);
     const rows = [
+      { name: 'behavior', kind: 'getter-only' },
+      { name: 'runtime', kind: 'getter-only' },
+      { name: 'blueprintNode', kind: 'getter-only' },
+      { name: 'isDetached', kind: 'getter/setter' },
+      { name: 'isDisposed', kind: 'getter/setter' },
       { name: 'type', kind: 'getter' },
       { name: 'strategy', kind: 'getter' },
       { name: 'schemaType', kind: 'getter' },
@@ -90,7 +95,7 @@ describe('FieldNode PR-2 surface', () => {
       { name: 'clearSubtreeState', kind: 'method' },
       { name: 'batch', kind: 'method' },
     ];
-    expect(rows).toHaveLength(59);
+    expect(rows).toHaveLength(64);
     const prototype = RuntimeFieldNode.prototype;
     expect(
       Object.getOwnPropertyNames(prototype)
@@ -106,6 +111,7 @@ describe('FieldNode PR-2 surface', () => {
       ).toBe('function');
       if (row.kind === 'getter/setter')
         expect(typeof descriptor?.set).toBe('function');
+      if (row.kind === 'getter-only') expect(descriptor?.set).toBeUndefined();
     }
   });
 
@@ -168,14 +174,14 @@ describe('FieldNode PR-2 surface', () => {
       },
     });
     root.setValue({ first: 'one', second: 2 });
-    expect(root.children).toBe(Reflect.get(root, 'storedChildren'));
+    expect(root.children).toBe(Reflect.get(root, '__children__'));
     expect(root.children).toEqual([root.find('/first'), root.find('/second')]);
   });
 
   it('TEST-070 26C-01 returns the stored array children by reference', () => {
     const root = makeTree({ type: 'array', items: { type: 'string' } });
     root.setValue(['a']);
-    expect(root.children).toBe(Reflect.get(root, 'storedChildren'));
+    expect(root.children).toBe(Reflect.get(root, '__children__'));
   });
 
   it('SURFACE-005 GOAL-058 delegates synchronous verbs and ERROR-197 rejects strings', () => {
