@@ -57,17 +57,38 @@ import type { ValidationIssue } from '../../engine';
 import { FieldNodeState } from '../../engine';
 import { SetValueOption } from '../type';
 
-/** Runtime record implementation; the public FieldNode name denotes a union type. */
+/**
+ * Runtime record implementation; the public FieldNode name denotes a union type.
+ *
+ * Field forms follow rule 8 of NAMING_CONVENTIONS.md. A `__name__` field is a private backing
+ * field that only this class touches; other code reaches it through the accessor of the same name.
+ * A public field is a `FieldNodeRecord` slot that engine modules read and write directly, so it
+ * cannot be private. A `stored` prefix marks a slot behind the public member named by the rest of
+ * its name: that member is read-only, memoized or dispatching, so the raw slot needs a name of its
+ * own. The `stored` slots, which stay in their domain groups below, are:
+ * - `storedValue` behind `value`, which is read-only; writes go through `setValue` and the array commands.
+ * - `storedOutputValue` behind `outputValue`, which is read-only.
+ * - `storedIsDivergent` behind `isDivergent`, which memoizes its comparison.
+ * - `storedState` behind `state`, whose setter dispatches a patch.
+ */
 export class FieldNode implements FieldNodeRecord<FieldNode> {
+  /** Structural parent, null only at the root; engine traversals walk it, and consumers read it as `parentNode`. */
   parent: Nullable<FieldNode>;
+  /** Direct children of the last committed shape, keyed by name. */
   childrenByName: Nullable<Dictionary<FieldNode>>;
+  /** Creation-order nonce of an array item; null on nodes that are not array items. */
   itemKey: Nullable<number>;
+  /** Number of positions an array host holds, including positions without a template. */
   itemCount: number;
+  /** Next creation-order nonce this array host hands out. */
   nextItemKey: number;
 
+  /** Backing field for `value`, written directly by the engine. */
   storedValue: unknown;
+  /** Backing field for `outputValue`, written directly by the engine. */
   storedOutputValue: unknown;
 
+  /** Effective schema merged from the active declarations; `jsonSchema` reads its `schema`. */
   schema: EffectiveSchema;
   /** Current output at this path retained by the divergence read memo. */
   divergenceCurrent: unknown;
@@ -77,51 +98,86 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   divergenceSegments: readonly PointerSegment[] | undefined;
   /** Last root load output at this path retained by the divergence read memo. */
   divergenceBase: unknown;
-  /** Pure comparison result for the retained path values. */
+  /** Backing field for `isDivergent`: the memoized comparison, reused while `divergenceCurrent` and `divergenceBase` keep their identities. */
   storedIsDivergent: boolean;
 
+  /** Backing field for `state`: interaction flags the engine replaces directly, whereas the public `state` setter dispatches a patch. */
   storedState: FieldNodeRecord<FieldNode>['storedState'];
+  /** Raised each time this node's interaction state is cleared, so deferred touched callbacks from an earlier lifetime are dropped. */
   interactionEpoch: number;
 
   /** Per-bit counts copied only after this occurrence first receives delivery. */
   revisionLedger: Readonly<Record<number, number>>;
+  /** Whether the first delivery comparison has run; change capture starts only after it. */
   isDeliveryInitialized: boolean;
+  /** Event bits whose pre-change baseline this commit has already captured. */
   deliveryChanges: number;
+  /** `storedValue` before this commit's first value change. */
   deliveryPreviousValue: unknown;
+  /** `storedOutputValue` before this commit's first value change. */
   deliveryPreviousOutputValue: unknown;
+  /** Path before this commit's first rekey. */
   deliveryPreviousPath: Optional<string>;
+  /** Child array before this commit's first shape change. */
   deliveryPreviousChildren: Optional<Nullable<readonly FieldNode[]>>;
+  /** Packed isActive, isVisible, isReadOnly and isDisabled before their first change in this commit. */
   deliveryPreviousComputedBits: Optional<number>;
+  /** Effective schema before this commit's first schema change. */
   deliveryPreviousSchema: Optional<EffectiveSchema>;
+  /** Interaction flags before settlement clears or patches them; a direct state dispatch moves this baseline forward. */
   deliveryPreviousState: Optional<NodeStateFlags>;
+  /** Watch values from the last comparison; set only on declared watch targets. */
   deliveryWatchValues: Optional<readonly unknown[]>;
+  /** Event bits and payloads waiting for the next settlement delivery wave. */
   pendingDelivery: FieldNodeRecord<FieldNode>['pendingDelivery'];
+  /** Revision bits to advance once at this commit, whether or not anyone listens. */
   pendingRevisionMask: number;
+  /** State and command events waiting for their own delivery wave, apart from settlement. */
   pendingNonSettleDelivery: FieldNodeRecord<FieldNode>['pendingNonSettleDelivery'];
 
+  /** Backing field for `behavior`. */
   private readonly __behavior__: Behavior<FieldNode>;
+  /** Backing field for `blueprintNode`. */
   private readonly __blueprintNode__: BlueprintNode;
+  /** Backing field for `schemaType`. */
   private readonly __schemaType__: Optional<BlueprintSchemaType>;
+  /** Backing field for `isNullable`. */
   private readonly __isNullable__: boolean;
+  /** Backing field for `rootNode`. */
   private readonly __rootNode__: FieldNode;
+  /** Backing field for `runtime`. */
   private readonly __runtime__: FieldNodeRuntime<FieldNode>;
 
+  /** Backing field for `depth`. */
   private __depth__: number;
+  /** Backing field for `name`. */
   private __name__: string;
+  /** Backing field for `escapedName`. */
   private __escapedName__: string;
+  /** Backing field for `path`. */
   private __path__: string;
+  /** Backing field for `children`. */
   private __children__: Nullable<readonly FieldNode[]>;
 
+  /** Backing field for `source`. */
   private __source__: unknown;
+  /** Backing field for `extras`. */
   private __extras__: unknown;
 
+  /** Backing field for `isRequired`. */
   private __isRequired__: boolean;
+  /** Backing field for `isActive`. */
   private __isActive__: boolean;
+  /** Backing field for `isVisible`. */
   private __isVisible__: boolean;
+  /** Backing field for `isReadOnly`. */
   private __isReadOnly__: boolean;
+  /** Backing field for `isDisabled`. */
   private __isDisabled__: boolean;
 
+  /** Backing field for `isDetached`. */
   private __isDetached__: boolean;
+  /** Backing field for `isDisposed`. */
   private __isDisposed__: boolean;
 
   constructor(
@@ -197,58 +253,76 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   get blueprintNode() {
     return this.__blueprintNode__;
   }
+  /** Node kind that discriminates the public node union. */
   get type() {
     return this.__behavior__.type;
   }
+  /** Whether this node manages child nodes (`'branch'`) or holds its whole value itself (`'terminal'`). */
   get strategy() {
     return this.__behavior__.strategy;
   }
+  /** JSON types the static declaration allows, fixed at analysis and undefined on virtual nodes; not the gated `jsonSchema.type`. */
   get schemaType() {
     return this.__schemaType__;
   }
+  /** Effective JSON Schema merged from the currently active declarations. */
   get jsonSchema() {
     return this.schema.schema;
   }
+  /** Whether the fixed type permits null, through `type: [..., 'null']` or `nullable: true`. */
   get isNullable() {
     return this.__isNullable__;
   }
 
+  /** Whether this node is the root, the only node without a parent. */
   get isRoot() {
     return this.parent === null;
   }
+  /** Root of the tree this node was created in, kept after the node detaches. */
   get rootNode() {
     return this.__rootNode__;
   }
+  /** Structural parent, or null at the root. */
   get parentNode() {
     return this.parent;
   }
+  /** Number of structural edges from the root. */
   get depth() {
     return this.__depth__;
   }
+  /** Publish the engine's new depth through the matching record field. @param value - Edge count from the root. */
   set depth(value: number) {
     this.__depth__ = value;
   }
+  /** Unescaped name within the parent. */
   get name() {
     return this.__name__;
   }
+  /** Publish the engine's new name through the matching record field. @param value - Unescaped name within the parent. */
   set name(value: string) {
     this.__name__ = value;
   }
+  /** Name within the parent, escaped for JSON Pointer. */
   get escapedName() {
     return this.__escapedName__;
   }
+  /** Publish the engine's new escaped name through the matching record field. @param value - JSON Pointer-escaped name. */
   set escapedName(value: string) {
     this.__escapedName__ = value;
   }
+  /** Canonical absolute JSON Pointer of this occurrence; re-read on UpdatePath. */
   get path() {
     return this.__path__;
   }
+  /** Publish the engine's new path through the matching record field. @param value - Canonical absolute JSON Pointer. */
   set path(value: string) {
     this.__path__ = value;
   }
+  /** Direct children in the last committed shape; null on terminal nodes. */
   get children() {
     return this.__children__;
   }
+  /** Publish the engine's committed child array through the matching record field. @param value - Children of the new shape, or null on terminal nodes. */
   set children(value: Nullable<readonly FieldNode[]>) {
     this.__children__ = value;
   }
@@ -263,27 +337,35 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     return dispatchVisitSubtree<FieldNode>(this, visitor);
   }
 
+  /** Interpreted terminal source or a branch's non-plain source; an input of value calculation. */
   get source() {
     return this.__source__;
   }
+  /** Publish the engine's interpreted source through the matching record field. @param value - New source. */
   set source(value: unknown) {
     this.__source__ = value;
   }
+  /** Undeclared object keys retained in incoming own-key order. */
   get extras() {
     return this.__extras__;
   }
+  /** Publish the engine's retained extras through the matching record field. @param value - Undeclared object keys. */
   set extras(value: unknown) {
     this.__extras__ = value;
   }
+  /** Current local value before output projection; write it through `setValue` or the array commands. */
   get value() {
     return this.storedValue;
   }
+  /** Value after the schema options project it, such as `omitTrailingEmpty` trimming; the root's is the form's submitted value. */
   get outputValue() {
     return this.storedOutputValue;
   }
+  /** Source at this path in the form's load snapshot, unaffected by later caller writes. */
   get defaultValue() {
     return readFieldNodeDefaultValue<FieldNode>(this);
   }
+  /** Values kept for inactive descendants as path and value pairs in document order; a detached reference reads its final commit. */
   get inactiveValues() {
     return readFieldNodeInactiveValues<FieldNode>(this);
   }
@@ -370,6 +452,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   get isMisfit() {
     return readFieldNodeIsMisfit<FieldNode>(this);
   }
+  /** Paths in this subtree whose retained source misses the accepted types; a detached reference reads its final commit. */
   get misfits() {
     return readFieldNodeMisfits<FieldNode>(this);
   }
@@ -382,6 +465,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   get state() {
     return this.storedState;
   }
+  /** Dispatch a shallow patch of the interaction flags, like `setState`. @param value - Flags to merge. */
   set state(value: NodeStateFlags) {
     dispatchSetState<FieldNode>(this, value);
   }
@@ -460,6 +544,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   get context() {
     return this.__runtime__.context;
   }
+  /** Settlement health of the whole tree, retained until the next form-level load. */
   get diagnostics(): FieldNodeRuntime<FieldNode>['diagnostics'] {
     return this.__runtime__.diagnostics;
   }
