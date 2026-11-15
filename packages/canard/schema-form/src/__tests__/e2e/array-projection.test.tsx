@@ -80,4 +80,8 @@ describe('array-projection — TEST-011 / TEST-023 shared screen runner', () => 
   it('VALUE-034 omitTrailingEmpty trims a trailing null even when items accept null', async () => {
     await run('array.omit-trailing-empty-nullable');
   });
+
+  it('VALUE-034 omitTrailingEmpty outputs [] from a root array whose every item is trimmed', async () => {
+    await run('array.omit-trailing-empty-root');
+  });
 });

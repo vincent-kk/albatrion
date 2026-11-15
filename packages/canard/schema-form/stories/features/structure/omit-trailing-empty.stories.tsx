@@ -32,3 +32,6 @@ export const NestedTerminalTail: Story = createFeatureStory(findScenario(arraySc
 
 /** Shared scenario `array.omit-trailing-empty-nullable`. */
 export const NullableTail: Story = createFeatureStory(findScenario(arrayScenarios, 'array.omit-trailing-empty-nullable'));
+
+/** Shared scenario `array.omit-trailing-empty-root`. */
+export const RootAllEmpty: Story = createFeatureStory(findScenario(arrayScenarios, 'array.omit-trailing-empty-root'));

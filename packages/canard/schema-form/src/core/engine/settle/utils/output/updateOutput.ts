@@ -6,6 +6,7 @@ import { FieldNodeEventType, captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../types/settlement';
+import { keepRootEmit } from './keepRootEmit';
 import { keepsChildEmissions } from './utils/keepsChildEmissions';
 
 /**
@@ -100,13 +101,11 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
     sameValue(node.deliveryPreviousLocal, local)
   )
     local = node.deliveryPreviousLocal;
-  let projected = node.behavior.project(node, local);
-  if (
-    node.parent === null &&
-    projected === undefined &&
-    (node.behavior.type === 'object' || node.behavior.type === 'array')
-  )
-    projected = local;
+  const projected = keepRootEmit(
+    node,
+    local,
+    node.behavior.project(node, local),
+  );
   let emit =
     node.emit === node.local && projected === local
       ? local

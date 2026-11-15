@@ -128,4 +128,12 @@ export const arrayRenderScenarios: readonly FormScenario[] = [
       { action: 'setValue', path: '', value: ['a', null], expect: { outputValue: ['a'], shape: { '/1': 'present' } } },
     ],
   },
+  {
+    name: 'array.omit-trailing-empty-root',
+    description: 'array.omit-trailing-empty: VALUE-034 a root array whose every item is trimmed outputs [] instead of its untrimmed items.',
+    schema: { type: 'array', items: { type: 'string' }, options: { omitTrailingEmpty: true } },
+    steps: [
+      { action: 'setValue', path: '', value: ['', null], expect: { outputValue: [], shape: { '/1': 'present' } } },
+    ],
+  },
 ];
