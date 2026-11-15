@@ -26,21 +26,13 @@ export const dispatchLoadValidation = <Self extends FieldNodeRecord<Self>>(
     runtime.isValidationUnavailable
   )
     return false;
-  const validationLoadStamp = runtime.validationLoadStamp;
+  const load = runtime.validationLoadStamp;
   const epoch = runtime.validationEpoch;
   const stamp = runtime.validationStamp;
   const commit = runtime.commitNumber ?? 0;
   ensureValidationFailureReporter(runtime);
   reportMissingValidator(root);
-  if (
-    !isFieldNodeValidationCurrent(
-      root,
-      validationLoadStamp,
-      epoch,
-      stamp,
-      commit,
-    )
-  )
+  if (!isFieldNodeValidationCurrent(root, load, epoch, stamp, commit))
     return false;
   try {
     if (!assertValidationRootReady(root)) return false;
@@ -57,13 +49,7 @@ export const dispatchLoadValidation = <Self extends FieldNodeRecord<Self>>(
     return false;
   }
   return (
-    isFieldNodeValidationCurrent(
-      root,
-      validationLoadStamp,
-      epoch,
-      stamp,
-      commit,
-    ) &&
+    isFieldNodeValidationCurrent(root, load, epoch, stamp, commit) &&
     ((runtime.validationMode ?? ValidationMode.None) &
       ValidationMode.OnChange) !==
       BIT_MASK_NONE &&
