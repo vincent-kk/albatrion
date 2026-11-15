@@ -17,3 +17,18 @@ export const LeadingHoles: Story = createFeatureStory(findScenario(arrayScenario
 
 /** Shared scenario `array.empty-output`. */
 export const EmptyOutput: Story = createFeatureStory(findScenario(arrayScenarios, 'array.empty-output'));
+
+/** Shared scenario `array.omit-trailing-empty-objects`. */
+export const EmptyObjectTail: Story = createFeatureStory(findScenario(arrayScenarios, 'array.omit-trailing-empty-objects'));
+
+/** Shared scenario `array.omit-trailing-empty-terminal`. */
+export const TerminalTail: Story = createFeatureStory(findScenario(arrayScenarios, 'array.omit-trailing-empty-terminal'));
+
+/** Shared scenario `array.omit-trailing-empty-nested-branch`. */
+export const NestedBranchTail: Story = createFeatureStory(findScenario(arrayScenarios, 'array.omit-trailing-empty-nested-branch'));
+
+/** Shared scenario `array.omit-trailing-empty-nested-terminal`. */
+export const NestedTerminalTail: Story = createFeatureStory(findScenario(arrayScenarios, 'array.omit-trailing-empty-nested-terminal'));
+
+/** Shared scenario `array.omit-trailing-empty-nullable`. */
+export const NullableTail: Story = createFeatureStory(findScenario(arrayScenarios, 'array.omit-trailing-empty-nullable'));

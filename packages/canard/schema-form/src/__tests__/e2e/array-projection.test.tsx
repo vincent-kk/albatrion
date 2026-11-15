@@ -60,4 +60,24 @@ describe('array-projection — TEST-011 / TEST-023 shared screen runner', () => 
   it('LANDING-149 terminal array ignores tuple fill and resets the whole value', async () => {
     await run('array.terminal-array-external-reset');
   });
+
+  it('VALUE-034 omitTrailingEmpty trims an empty object emitted by an item that keeps empty values', async () => {
+    await run('array.omit-trailing-empty-objects');
+  });
+
+  it('VALUE-034 omitTrailingEmpty trims the same empty tail from a terminal array', async () => {
+    await run('array.omit-trailing-empty-terminal');
+  });
+
+  it('VALUE-034 omitTrailingEmpty trims a branch row whose fields are all omitted', async () => {
+    await run('array.omit-trailing-empty-nested-branch');
+  });
+
+  it('VALUE-034 omitTrailingEmpty keeps a nested empty field in a terminal array', async () => {
+    await run('array.omit-trailing-empty-nested-terminal');
+  });
+
+  it('VALUE-034 omitTrailingEmpty trims a trailing null even when items accept null', async () => {
+    await run('array.omit-trailing-empty-nullable');
+  });
 });

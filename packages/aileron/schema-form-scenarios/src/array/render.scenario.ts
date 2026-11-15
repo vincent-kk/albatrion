@@ -82,4 +82,50 @@ export const arrayRenderScenarios: readonly FormScenario[] = [
       { action: 'reset', expect: { outputValue: ['external'] } },
     ],
   },
+  {
+    name: 'array.omit-trailing-empty-objects',
+    description: 'array.omit-trailing-empty: VALUE-034 trims an empty object an item emits even when the item keeps empty values.',
+    schema: {
+      type: 'array', options: { omitTrailingEmpty: true },
+      items: { type: 'object', properties: { name: { type: 'string' } }, options: { omitEmpty: false } },
+    },
+    steps: [
+      { action: 'setValue', path: '', value: [{ name: 'a' }, {}], expect: { outputValue: [{ name: 'a' }], shape: { '/1': 'present' } } },
+    ],
+  },
+  {
+    name: 'array.omit-trailing-empty-terminal',
+    description: 'array.omit-trailing-empty: VALUE-034 a terminal array trims the same empty tail as a branch array.',
+    schema: { type: 'array', items: { type: 'string' }, options: { terminal: true, omitTrailingEmpty: true } },
+    steps: [
+      { action: 'setValue', path: '', value: ['a', '', null], expect: { outputValue: ['a'], values: { '': ['a', '', null] } } },
+    ],
+  },
+  {
+    name: 'array.omit-trailing-empty-nested-branch',
+    description: 'array.omit-trailing-empty: VALUE-034 a branch row whose fields are all omitted outputs nothing and is trimmed.',
+    schema: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' } } }, options: { omitTrailingEmpty: true } },
+    steps: [
+      { action: 'setValue', path: '', value: [{ name: 'a' }, { name: '' }], expect: { outputValue: [{ name: 'a' }], shape: { '/1': 'present' } } },
+    ],
+  },
+  {
+    name: 'array.omit-trailing-empty-nested-terminal',
+    description: 'array.omit-trailing-empty: VALUE-034 a terminal array judges raw items shallowly, so a nested empty field stays.',
+    schema: {
+      type: 'array', options: { terminal: true, omitTrailingEmpty: true },
+      items: { type: 'object', properties: { name: { type: 'string' } } },
+    },
+    steps: [
+      { action: 'setValue', path: '', value: [{ name: 'a' }, { name: '' }], expect: { outputValue: [{ name: 'a' }, { name: '' }] } },
+    ],
+  },
+  {
+    name: 'array.omit-trailing-empty-nullable',
+    description: 'array.omit-trailing-empty: VALUE-034 a trailing null is trimmed even when the item schema accepts null.',
+    schema: rows,
+    steps: [
+      { action: 'setValue', path: '', value: ['a', null], expect: { outputValue: ['a'], shape: { '/1': 'present' } } },
+    ],
+  },
 ];

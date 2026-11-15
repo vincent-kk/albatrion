@@ -16,7 +16,7 @@ export const projectBranchArray: Behavior['project'] = (node, local) => {
   if (!isArray(local)) return undefined;
   const choices = getStaticChoices(node.schema);
   const projected = choices.omitTrailingEmpty
-    ? omitTrailingEmptyArray(local, node)
+    ? omitTrailingEmptyArray(local)
     : local;
   return choices.omitEmpty ? omitEmptyArray(projected) : projected;
 };

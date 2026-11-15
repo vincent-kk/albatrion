@@ -1,45 +1,26 @@
-import type { FieldNodeRecord } from '../../../../record';
+import { isEmptyArray, isEmptyPlainObject } from '@winglet/common-utils/filter';
+
 import { trimmedArrays } from '../../../../utils/cache/valueMemos';
-import { getArrayItemTemplate } from '../value/getArrayItemTemplate';
 
 /**
- * Trim trailing nullish source items or unfilled branch slots without mutation.
- * @param value - Local or terminal array whose suffix may be omitted
- * @param node - Branch host for detecting item holes; absent for terminal source
- * @returns Original array when unchanged, otherwise a memoized copied prefix
+ * Tell whether one array item counts as empty for trailing omission.
+ * @param item - Assembled branch slot or terminal source item
+ * @returns Whether the item is null, undefined, '', an empty array or a plain object without own keys
  */
-export const omitTrailingEmptyArray = <Self>(
+const isEmptyItem = (item: unknown): boolean =>
+  item == null || item === '' || isEmptyArray(item) || isEmptyPlainObject(item);
+
+/**
+ * Trim the trailing run of empty items without mutation, with one rule for branch and terminal arrays.
+ * The check is shallow and ignores item schemas, so a nullable item's null is trimmed while `{ name: '' }`, Date and File stay.
+ * @param value - Assembled branch local or terminal source whose empty suffix is omitted
+ * @returns Original array when its last item is not empty, otherwise a memoized copied prefix
+ */
+export const omitTrailingEmptyArray = (
   value: readonly unknown[],
-  node?: FieldNodeRecord<Self>,
 ): readonly unknown[] => {
   let end = value.length;
-  while (end > 0) {
-    const index = end - 1;
-    if (!node) {
-      if (value[index] != null) break;
-    } else {
-      const template = getArrayItemTemplate(node, index);
-      if (!template) {
-        if (value[index] != null) break;
-      } else {
-        const child = node.structure?.[String(index)];
-        const emission =
-          child !== null && typeof child === 'object' && 'emit' in child
-            ? child.emit
-            : undefined;
-        if (
-          emission !== undefined &&
-          !(
-            emission === null &&
-            template.kind !== 'object' &&
-            template.kind !== 'array'
-          )
-        )
-          break;
-      }
-    }
-    end--;
-  }
+  while (end > 0 && isEmptyItem(value[end - 1])) end--;
   if (end === value.length) return value;
   const cached = trimmedArrays.get(value);
   if (cached?.end === end) {
