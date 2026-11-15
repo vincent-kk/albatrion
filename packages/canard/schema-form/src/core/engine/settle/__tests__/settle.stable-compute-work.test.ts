@@ -28,7 +28,7 @@ it('keeps dirty work and child post-order without per-node shape or appearance m
     },
   });
   loadFieldNodeAtMount(root, { value: 'before' }, WriteOption.Overwrite);
-  const leaf = root.structure!.value;
+  const leaf = root.childrenByName!.value;
   for (let index = 0; index < 2; index++) {
     const value = index === 0 ? 'first' : 'later';
     const scratch = getSettlementScratch(root.runtime);
@@ -49,7 +49,7 @@ it('keeps dirty work and child post-order without per-node shape or appearance m
     expect(visits).toEqual(['/value', '']);
     expect([...context.stateDirtyNodes]).toEqual([root, leaf]);
     expect(context.dirtyPaths.size).toBe(0);
-    expect(root.emit).toEqual({ value, sibling: 3 });
+    expect(root.storedOutputValue).toEqual({ value, sibling: 3 });
     shape.mockRestore();
     entered.mockRestore();
     finishSettlement(context, scratch);
@@ -76,13 +76,13 @@ it('retains child selection and fills for a branchless shape change', () => {
   loadFieldNodeAtMount(root, { rows: [] }, WriteOption.Overwrite);
   const select = vi.spyOn(selections, 'selectChildren');
   writeFieldNode(
-    root.structure!.rows,
+    root.childrenByName!.rows,
     [{}],
     FieldNodeWriteKind.CallerReplace,
     WriteOption.Overwrite,
   );
   expect(select.mock.calls.length).toBeGreaterThan(0);
-  expect(root.emit).toEqual({ rows: [{ value: 'filled' }] });
+  expect(root.storedOutputValue).toEqual({ rows: [{ value: 'filled' }] });
 });
 
 it('retains gate visits, appearance fills and exit when a declaration changes', () => {
@@ -100,20 +100,20 @@ it('retains gate visits, appearance fills and exit when a declaration changes', 
   loadFieldNodeAtMount(root, { flag: false }, WriteOption.Overwrite);
   const select = vi.spyOn(selections, 'selectChildren');
   writeFieldNode(
-    root.structure!.flag,
+    root.childrenByName!.flag,
     true,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
   expect(select.mock.calls.length).toBeGreaterThan(0);
-  expect(root.emit).toEqual({ flag: true, gated: 'filled' });
-  const gated = root.structure!.gated;
+  expect(root.storedOutputValue).toEqual({ flag: true, gated: 'filled' });
+  const gated = root.childrenByName!.gated;
   writeFieldNode(
-    root.structure!.flag,
+    root.childrenByName!.flag,
     false,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
-  expect(gated.detached).toBe(true);
-  expect(root.emit).toEqual({ flag: false });
+  expect(gated.isDetached).toBe(true);
+  expect(root.storedOutputValue).toEqual({ flag: false });
 });

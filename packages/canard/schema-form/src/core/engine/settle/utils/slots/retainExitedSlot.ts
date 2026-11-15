@@ -38,12 +38,12 @@ export const retainExitedSlot = <Self extends FieldNodeRecord<Self>>(
   );
   node.retainedSourceOverlay = result.overlay;
   markSlotChange(host, entry, context.entered.has(node) ? undefined : node);
-  if (!result.retain) {
+  if (!result.canRetain) {
     host.inactiveSlots?.delete(entry);
     host.inactiveSlotOverlays?.delete(entry);
     return;
   }
-  const instance = result.compacted
+  const instance = result.isCompacted
     ? cloneSlotSubtree(
         host,
         entry,

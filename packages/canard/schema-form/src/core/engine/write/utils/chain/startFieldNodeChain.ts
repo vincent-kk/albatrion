@@ -21,10 +21,10 @@ export const startFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
       : undefined;
   if (!runtime.enclosingChain) runtime.chainOrigin = origin;
   runtime.chainRoot = root;
-  runtime.chainInitialEmit = root.emit;
+  runtime.chainInitialOutputValue = root.storedOutputValue;
   runtime.chainErrors = [];
   runtime.chainOccurrences = [];
   runtime.feedbackBudget = 0;
   runtime.feedbackBlockedListeners = undefined;
-  runtime.feedbackLimitReported = false;
+  runtime.isFeedbackLimitReported = false;
 };

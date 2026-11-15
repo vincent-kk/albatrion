@@ -11,14 +11,14 @@ export const getSettlementScratch = <Self>(
 ): SettlementScratch<Self> => {
   const cached = runtime.settlementScratch;
   const dirtyChildrenByParent =
-    cached && !cached.inUse
+    cached && !cached.isInUse
       ? cached.dirtyChildrenByParent
       : new Map<string, Map<string, string>>();
   const scratch: SettlementScratch<Self> =
-    cached && !cached.inUse
+    cached && !cached.isInUse
       ? cached
       : {
-          inUse: false,
+          isInUse: false,
           entered: new Set<Self>(),
           revived: new Set<Self>(),
           exited: new Set<Self>(),
@@ -44,6 +44,6 @@ export const getSettlementScratch = <Self>(
           originalSchemas: new Map(),
         };
   if (!cached) runtime.settlementScratch = scratch;
-  scratch.inUse = true;
+  scratch.isInUse = true;
   return scratch;
 };

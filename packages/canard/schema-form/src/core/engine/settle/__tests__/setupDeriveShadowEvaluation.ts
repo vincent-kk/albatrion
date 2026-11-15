@@ -8,9 +8,9 @@ import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 const previousModes = {
   gateSelection: engineModes.gateSelection,
   gateWheel: engineModes.gateWheel,
-  deriveShadow: engineModes.deriveShadow,
+  isDeriveShadowEnabled: engineModes.isDeriveShadowEnabled,
 };
-engineModes.setMode('deriveShadow', true);
+engineModes.setMode('isDeriveShadowEnabled', true);
 engineModes.setMode('gateWheel', 'shadow');
 engineModes.setMode('gateSelection', 'verify');
 
@@ -33,6 +33,6 @@ afterAll(() => {
   } finally {
     engineModes.setMode('gateSelection', previousModes.gateSelection);
     engineModes.setMode('gateWheel', previousModes.gateWheel);
-    engineModes.setMode('deriveShadow', previousModes.deriveShadow);
+    engineModes.setMode('isDeriveShadowEnabled', previousModes.isDeriveShadowEnabled);
   }
 });

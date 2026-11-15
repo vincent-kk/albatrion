@@ -120,10 +120,10 @@ export const applyConstraintKeywords = (
         {},
         options,
       );
-    state.conflictingConst = true;
-  } else if (constant !== undefined && !state.conflictingConst)
+    state.hasConflictingConst = true;
+  } else if (constant !== undefined && !state.hasConflictingConst)
     target.const = constant;
-  if (state.conflictingConst) {
+  if (state.hasConflictingConst) {
     delete target.const;
     target.enum = [];
     ownedSchemaValues.add(target.enum);

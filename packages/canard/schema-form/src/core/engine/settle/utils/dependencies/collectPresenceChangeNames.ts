@@ -16,22 +16,22 @@ import type { PreparedStaticHost } from '../compute/childSelection/utils/prepare
  * @param context - Settlement-local membership witnesses and host lifecycle changes
  * @returns Escaped names in departure/replacement order followed by arrival order.
  * Unproven, nullified, or entering/departing hosts retain the original full scans.
- * The bounded path advances this host's settlement witness to the current structure.
+ * The bounded path advances this host's settlement witness to the current children-by-name map.
  */
 export const collectPresenceChangeNames = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   previous: Readonly<Dictionary<Self>>,
   context: SettlementContext<Self>,
 ): string[] => {
-  const structure = host.structure ?? {};
+  const childrenByName = host.childrenByName ?? {};
   const witness = context.presenceSelections?.get(host);
   const prepared = witness
     ? getHostDerived<'preparedStaticHost', PreparedStaticHost<Self>>(host)
         .preparedStaticHost
     : undefined;
   const bounded =
-    witness?.structure === previous &&
-    prepared?.selectedStructure === structure &&
+    witness?.childrenByName === previous &&
+    prepared?.selectedChildrenByName === childrenByName &&
     context.preparedStaticHosts?.has(host) &&
     host.source !== null &&
     !context.entered.has(host) &&
@@ -42,24 +42,24 @@ export const collectPresenceChangeNames = <Self extends FieldNodeRecord<Self>>(
   if (bounded) {
     for (const name of witness.names)
       if (
-        !hasOwnProperty(structure, name) ||
-        previous[name] !== structure[name]
+        !hasOwnProperty(childrenByName, name) ||
+        previous[name] !== childrenByName[name]
       )
         names.push(formatSegment(name));
     for (const name of prepared.dynamicNames)
       if (!hasOwnProperty(previous, name)) names.push(formatSegment(name));
     context.presenceSelections!.set(host, {
-      structure,
+      childrenByName,
       names: prepared.dynamicNames,
     });
   } else {
     for (const name in previous)
       if (
-        !hasOwnProperty(structure, name) ||
-        previous[name] !== structure[name]
+        !hasOwnProperty(childrenByName, name) ||
+        previous[name] !== childrenByName[name]
       )
         names.push(formatSegment(name));
-    for (const name in structure)
+    for (const name in childrenByName)
       if (!hasOwnProperty(previous, name)) names.push(formatSegment(name));
   }
   return names;

@@ -10,10 +10,10 @@ export const updateSlotChildIndex = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   name: string,
 ): void => {
-  const live = host.structure?.[name];
+  const live = host.childrenByName?.[name];
   if (
     live &&
-    !live.detached &&
+    !live.isDetached &&
     (live.inactiveSlots?.size ||
       live.inactiveSlotOverlays?.size ||
       live.inactiveSlotChildren?.size)

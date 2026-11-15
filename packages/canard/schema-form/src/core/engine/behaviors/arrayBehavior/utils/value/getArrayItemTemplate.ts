@@ -10,10 +10,10 @@ import type { FieldNodeRecord } from '../../../../record';
  * @returns Selected or first blueprint, or undefined for an undeclared position
  */
 export const getArrayItemTemplate = (
-  node: Pick<FieldNodeRecord<unknown>, 'blueprintNode' | 'structure'>,
+  node: Pick<FieldNodeRecord<unknown>, 'blueprintNode' | 'childrenByName'>,
   index: number,
 ): Optional<BlueprintNode> => {
-  const child = node.structure?.[String(index)];
+  const child = node.childrenByName?.[String(index)];
   const candidates = node.blueprintNode.prefixItems?.[index]
     ? node.blueprintNode.prefixItemCandidates?.[index]
     : node.blueprintNode.itemCandidates;

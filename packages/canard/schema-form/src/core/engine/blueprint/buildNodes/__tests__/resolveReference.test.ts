@@ -13,9 +13,9 @@ const createContext = (
 ): AnalysisContext => ({
   hasChildTargets: false,
   hasTemplateRecursion: false,
-  staticFirstLoad: true,
+  isStaticFirstLoad: true,
   capabilities: {
-    branchless: true,
+    isBranchless: true,
     hasExpressions: false,
     hasDerive: false,
     hasWatch: false,

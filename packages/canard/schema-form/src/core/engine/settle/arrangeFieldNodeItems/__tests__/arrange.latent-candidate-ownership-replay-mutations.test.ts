@@ -101,7 +101,7 @@ it.each([
   if (operation === 'insert') dispatchInsert(list, 0, {});
   else dispatchRemove(list, 0);
   const name = operation === 'insert' ? '1' : '0';
-  expect(list.structure?.[name]).toBeUndefined();
+  expect(list.childrenByName?.[name]).toBeUndefined();
   expect(hasRetainedSlotOwnSource(root, '/list/' + name, 'object')).toBe(true);
   dispatchSetValue(getDispatchNode(root, 'destinationOn'), true);
   const expected = {
@@ -109,11 +109,11 @@ it.each([
     list: operation === 'insert' ? [{}, value] : [value],
   };
   expect(getDispatchNode(list, name).source).toEqual(value);
-  expect(root.local).toEqual(expected);
-  expect(root.emit).toEqual(expected);
+  expect(root.storedValue).toEqual(expected);
+  expect(root.storedOutputValue).toEqual(expected);
   expect(
     events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
-  ).toMatchObject({ current: { local: expected, emit: expected } });
+  ).toMatchObject({ current: { value: expected, outputValue: expected } });
   await dispatchValidate(root);
   expect(validationInputs.at(-1)).toEqual(expected);
   expect(hasRetainedSlotOwnSource(root, '/list/' + name, 'object')).toBe(false);
@@ -204,12 +204,12 @@ it.each([
       destinationOn: true,
       list: operation === 'insert' ? [{}, { extra: 9 }] : [{ extra: 9 }],
     };
-    expect(root.local).toEqual(expected);
-    expect(root.emit).toEqual(expected);
+    expect(root.storedValue).toEqual(expected);
+    expect(root.storedOutputValue).toEqual(expected);
     expect(getDispatchNode(list, to).extras).toEqual({ extra: 9 });
     expect(
       events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
-    ).toMatchObject({ current: { local: expected, emit: expected } });
+    ).toMatchObject({ current: { value: expected, outputValue: expected } });
     await dispatchValidate(root);
     expect(validationInputs.at(-1)).toEqual(expected);
     expect(hasRetainedSlotOwnSource(root, '/list/' + to, 'object')).toBe(false);

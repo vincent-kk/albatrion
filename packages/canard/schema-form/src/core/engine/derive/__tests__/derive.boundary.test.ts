@@ -23,7 +23,9 @@ describe('derive rule table', () => {
     });
     loadFieldNodeAtMount(root, { 'a~b': 'value' }, WriteOption.Overwrite);
     const state = { sourcePaths: new Set(['/a~b', '/a~0b']) };
-    expect(getDeriveSourceNodes(root, state)).toEqual([root.structure!['a~b']]);
+    expect(getDeriveSourceNodes(root, state)).toEqual([
+      root.childrenByName!['a~b'],
+    ]);
   });
 
   it('SETTLE-017 builds rule expressions without per-rule array searches', () => {
@@ -114,9 +116,9 @@ describe('derive expression failures', () => {
     expect(() =>
       loadFieldNodeAtMount(root, { source: 'D' }, WriteOption.Overwrite),
     ).toThrow('Derive expression failed');
-    expect(root.structure?.a?.source).toBe('fill-a');
-    expect(root.structure?.d?.source).toBe('D');
-    expect(root.structure?.e?.source).toBe('D');
+    expect(root.childrenByName?.a?.source).toBe('fill-a');
+    expect(root.childrenByName?.d?.source).toBe('D');
+    expect(root.childrenByName?.e?.source).toBe('D');
     expect(root.runtime.diagnostics.cause).toBe('expression');
   });
 
@@ -136,7 +138,7 @@ describe('derive expression failures', () => {
     expect(() =>
       loadFieldNodeAtMount(root, { trigger: 'go' }, WriteOption.Overwrite),
     ).toThrow('Injection target missing');
-    expect(root.structure?.a?.source).toBe('fill-a');
+    expect(root.childrenByName?.a?.source).toBe('fill-a');
     expect(root.runtime.diagnostics.cause).toBe('injectTarget');
   });
 
@@ -155,7 +157,7 @@ describe('derive expression failures', () => {
     expect(() =>
       loadFieldNodeAtMount(root, { target: 'X' }, WriteOption.Overwrite),
     ).toThrow('Derive expression failed');
-    expect(root.structure?.target?.source).toBe('X');
+    expect(root.childrenByName?.target?.source).toBe('X');
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'expression',
@@ -163,7 +165,7 @@ describe('derive expression failures', () => {
     });
     expect(() =>
       writeFieldNode(
-        root.structure!.target,
+        root.childrenByName!.target,
         'X',
         FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
@@ -186,7 +188,7 @@ describe('derive expression failures', () => {
     expect(() =>
       loadFieldNodeAtMount(root, { target: 'X' }, WriteOption.Overwrite),
     ).toThrow('Derive expression failed');
-    expect(root.structure?.target?.source).toBe('X');
+    expect(root.childrenByName?.target?.source).toBe('X');
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'expression',
@@ -207,6 +209,6 @@ describe('derive expression failures', () => {
       loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite),
     ).toThrow();
     expect(root.runtime.diagnostics.cause).toBe('writeShape');
-    expect(root.structure?.['source']?.source).toBe('A');
+    expect(root.childrenByName?.['source']?.source).toBe('A');
   });
 });

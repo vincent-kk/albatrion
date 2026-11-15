@@ -119,7 +119,7 @@ describe('mount-prepared child selection metadata runtime visits', () => {
         expect(builds.plans).toHaveLength(1);
         const mountPlans = builds.plans.length;
         writeFieldNode(
-          root.structure!.common,
+          root.childrenByName!.common,
           'new common',
           FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
@@ -137,7 +137,7 @@ describe('mount-prepared child selection metadata runtime visits', () => {
           flushVisits.fill(0);
           const beforeWrite = builds.plans.length;
           writeFieldNode(
-            root.structure!.kind,
+            root.childrenByName!.kind,
             kind,
             FieldNodeWriteKind.Input,
             WriteOption.Overwrite,
@@ -191,7 +191,7 @@ describe('mount-prepared child selection metadata runtime visits', () => {
         loadFieldNodeAtMount(root, { kind: 'off' }, option);
         for (const kind of ['on', 'off', 'on'])
           writeFieldNode(
-            root.structure!.kind,
+            root.childrenByName!.kind,
             kind,
             FieldNodeWriteKind.Input,
             option,
@@ -211,7 +211,7 @@ describe('mount-prepared child selection metadata runtime visits', () => {
       loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
       for (const kind of ['absent', 'kind_0', 'absent'])
         writeFieldNode(
-          root.structure!.kind,
+          root.childrenByName!.kind,
           kind,
           FieldNodeWriteKind.Input,
           WriteOption.Overwrite,

@@ -5,8 +5,8 @@ import type { FieldNodeRecord } from '../../../record';
  * @param node - Live or retired occurrence whose lifetime is observed
  * @returns Its monotone counter, independent of event revisions
  */
-export const readFieldNodeInteractionReset = <
+export const readFieldNodeInteractionEpoch = <
   Self extends FieldNodeRecord<Self>,
 >(
   node: Self,
-): number => node.interactionReset;
+): number => node.interactionEpoch;

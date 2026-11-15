@@ -31,7 +31,7 @@ const Input = ({ node, value, onChange }: FieldInputProps) => (
       onChange(event.target.value);
     }}
     onBlur={() =>
-      blurPending.set(node, !!readFieldNodeRuntime(node).validationPending)
+      blurPending.set(node, !!readFieldNodeRuntime(node).isValidationPending)
     }
   />
 );
@@ -167,16 +167,16 @@ const check = async (canvas: HTMLElement, touched: boolean, same: boolean) => {
       await started;
       await frame();
       expect(handle.node!.state[2]).toBe(true);
-      expect(!!readFieldNodeRuntime(handle.node!).validationPending).toBe(true);
+      expect(!!readFieldNodeRuntime(handle.node!).isValidationPending).toBe(true);
       expect(error.textContent).toBe('');
       control.hold = false;
       control.pending.splice(0).forEach((resolve) => resolve());
     }
     for (let round = 0; round < 12; round++) {
       await frame();
-      if (!readFieldNodeRuntime(handle.node!).validationPending) break;
+      if (!readFieldNodeRuntime(handle.node!).isValidationPending) break;
     }
-    expect(!!readFieldNodeRuntime(handle.node!).validationPending).toBe(false);
+    expect(!!readFieldNodeRuntime(handle.node!).isValidationPending).toBe(false);
     if (same) {
       expect(error.textContent).toBe('too short');
       const firstShown = samples.findIndex((value) => value === 'too short');

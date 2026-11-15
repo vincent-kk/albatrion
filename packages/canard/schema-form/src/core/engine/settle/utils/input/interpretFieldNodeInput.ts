@@ -30,7 +30,7 @@ export const interpretFieldNodeInput = <Self extends FieldNodeRecord<Self>>(
   template = live?.blueprintNode ?? template;
   const row = BEHAVIORS[template.kind]?.[template.strategy];
   const value = row
-    ? row.interpret(input, staticSpec(template.schemaType, template.nullable))
+    ? row.interpret(input, staticSpec(template.schemaType, template.isNullable))
     : input;
   if (
     template.strategy !== 'branch' ||
@@ -44,7 +44,7 @@ export const interpretFieldNodeInput = <Self extends FieldNodeRecord<Self>>(
     if (template.kind === 'array' && isArray(value)) {
       let copy: Optional<unknown[]>;
       for (let index = 0; index < value.length; index++) {
-        const item = live?.structure?.[String(index)];
+        const item = live?.childrenByName?.[String(index)];
         const candidates = getItemEntries(template, index);
         const child =
           item?.blueprintNode ??
@@ -70,7 +70,7 @@ export const interpretFieldNodeInput = <Self extends FieldNodeRecord<Self>>(
       }
       let copy: Optional<Dictionary<unknown>>;
       for (const name of Object.keys(value)) {
-        const item = live?.structure?.[name];
+        const item = live?.childrenByName?.[name];
         const child = item?.blueprintNode ?? children.get(name);
         if (!child) continue;
         const next = interpretFieldNodeInput(child, value[name], item, seen);

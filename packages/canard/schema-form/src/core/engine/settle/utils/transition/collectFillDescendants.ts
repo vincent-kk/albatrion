@@ -23,11 +23,11 @@ export const collectFillDescendants = <Self extends FieldNodeRecord<Self>>(
   const firstEvaluations = context.hasGates ? new Set<Self>() : undefined;
   for (let index = 0; index < count; index++) {
     const node = appearances.next().value!;
-    if (node.detached || !node.parent) continue;
+    if (node.isDetached || !node.parent) continue;
     const parentOrigin = ancestors.get(node.parent);
     if (
       parentOrigin === undefined &&
-      !context.distributedInputs.get(node.parent)?.automatic
+      !context.distributedInputs.get(node.parent)?.isAutomatic
     )
       continue;
     const newItem =

@@ -17,7 +17,7 @@ export const commitSlotChanges = <Self extends FieldNodeRecord<Self>>(
   if (!hosts?.size) return;
   const visited = new Set<Self>();
   for (const host of hosts) {
-    if (!host.detached) {
+    if (!host.isDetached) {
       for (const [entry, previous] of host.inactiveSlotBaselines ?? []) {
         preserveSlotValueMemos(
           previous.instance,
@@ -35,7 +35,7 @@ export const commitSlotChanges = <Self extends FieldNodeRecord<Self>>(
         expireOccupiedSlotMemos(
           host.inactiveSlots?.get(entry),
           host.inactiveSlotOverlays?.get(entry),
-          host.structure?.[entry.name],
+          host.childrenByName?.[entry.name],
         );
       }
     }
@@ -45,11 +45,11 @@ export const commitSlotChanges = <Self extends FieldNodeRecord<Self>>(
       current = current.parent
     ) {
       const parent = current.parent;
-      if (parent && !parent.detached)
+      if (parent && !parent.isDetached)
         updateSlotChildIndex(parent, current.name);
-      if (current.detached || visited.has(current)) continue;
+      if (current.isDetached || visited.has(current)) continue;
       visited.add(current);
-      current.inactiveValuesDirty = true;
+      current.isInactiveValuesDirty = true;
     }
   }
   hosts.clear();

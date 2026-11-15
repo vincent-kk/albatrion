@@ -35,7 +35,7 @@ export interface SchemaInput {
   gates: readonly BlueprintGate[];
   order: readonly number[];
   role: PropertyDeclaration['role'];
-  inherited: boolean;
+  isInherited: boolean;
   hostPath: string;
   fragment?: MutableFragment;
   isFragment?: boolean;
@@ -46,8 +46,8 @@ export interface AnalysisContext {
   hasChildTargets: boolean;
   /** Authored inactiveValue presence; absent graphs skip resolver metadata preparation. */
   hasInactiveValues?: true;
-  /** Literal/default and finite-shape evidence, independent of branchless evidence. */
-  staticFirstLoad: boolean;
+  /** Literal/default and finite-shape evidence, independent of the `capabilities.isBranchless` evidence. */
+  isStaticFirstLoad: boolean;
   /** Monotonic evidence that construction hit a template still being built. */
   hasTemplateRecursion: boolean;
   /** Monotonic feature evidence collected together with authored declarations. */

@@ -21,11 +21,11 @@ export const conversionCandidates = <Self extends FieldNodeRecord<Self>>(
     const converted = node.behavior.interpret(node.source, {
       kinds: kind,
       mask: BIT_MASK_NONE,
-      nullable: node.nullable,
+      isNullable: node.isNullable,
     });
     if (
       !Object.is(converted, node.source) &&
-      !isMisfit(converted, kind, node.nullable)
+      !isMisfit(converted, kind, node.isNullable)
     )
       candidates.push(kind);
   }

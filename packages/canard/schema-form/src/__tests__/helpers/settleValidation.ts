@@ -17,7 +17,7 @@ export const settleValidation = async (
     if (!root) return;
     const runtime = readFieldNodeRuntime(root);
     if (
-      !runtime.validationPending &&
+      !runtime.isValidationPending &&
       !runtime.revealBaselineNodes?.size &&
       !runtime.revealPolicy?.entries.length
     )

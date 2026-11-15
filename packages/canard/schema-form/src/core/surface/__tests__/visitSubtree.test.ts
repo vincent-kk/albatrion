@@ -77,7 +77,7 @@ describe('SURFACE-062 visitSubtree order and range', () => {
     expect(collectPaths(root)).toEqual(['', '/flag']);
   });
 
-  it('walks the subtree a detached node was detached with, as other structure reads do', () => {
+  it('walks the subtree a detached node was detached with, as other childrenByName reads do', () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -93,7 +93,7 @@ describe('SURFACE-062 visitSubtree order and range', () => {
     const target = root.find('/target');
     if (!target) throw new Error('Expected /target');
     root.find('/flag')?.setValue(false);
-    expect(Reflect.get(target, 'detached')).toBe(true);
+    expect(Reflect.get(target, 'isDetached')).toBe(true);
     expect(collectPaths(target)).toEqual(['/target', '/target/inner']);
   });
 

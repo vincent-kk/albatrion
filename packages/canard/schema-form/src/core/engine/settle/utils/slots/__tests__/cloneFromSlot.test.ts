@@ -86,9 +86,9 @@ it('copies source channels and rebinds every active and inactive parent', () => 
     expect(candidate).not.toBe(hidden);
     expect(candidate?.parent).toBe(clone);
     expect(candidate?.source).toBe('hidden');
-    expect(candidate?.detached).toBe(true);
+    expect(candidate?.isDetached).toBe(true);
     expect(instance.inactiveSlots.get(hiddenEntry)).toBe(hidden);
-    expect(instance.detached).toBe(true);
+    expect(instance.isDetached).toBe(true);
     expect(hidden.parent).toBe(instance);
     expect(merge).not.toHaveBeenCalled();
   } finally {

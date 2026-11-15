@@ -248,7 +248,7 @@ describe('chain error reporting', () => {
       }
     });
     subscribeFieldNode(root, () => {
-      const amount = root.structure?.amount;
+      const amount = root.childrenByName?.amount;
       if (amount && amount.source !== 'bad') dispatchSetValue(amount, 'bad');
     });
     expect(() => dispatchSetValue(root, { amount: 1 })).toThrow(failure);

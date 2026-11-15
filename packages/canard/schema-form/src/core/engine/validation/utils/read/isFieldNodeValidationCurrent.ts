@@ -22,7 +22,7 @@ export const isFieldNodeValidationCurrent = <
   const root = node.rootNode;
   const runtime = root.runtime;
   return (
-    !node.disposed &&
+    !node.isDisposed &&
     isFieldNodeValidationLifetimeCurrent(root, epoch) &&
     runtime.validationLoadStamp === load &&
     runtime.validationStamp === stamp &&

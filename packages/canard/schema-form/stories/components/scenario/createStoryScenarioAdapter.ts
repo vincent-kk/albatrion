@@ -53,7 +53,7 @@ export function createStoryScenarioAdapter(context: StoryScenarioContext): Scena
     async settle() {
       for (let round = 0; round < 64; round++) {
         await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => scheduleMacrotask(resolve))));
-        if (!handle.node || !readFieldNodeRuntime(handle.node).validationPending) return;
+        if (!handle.node || !readFieldNodeRuntime(handle.node).isValidationPending) return;
       }
       throw new Error('Story validation did not settle within 64 frame rounds');
     },

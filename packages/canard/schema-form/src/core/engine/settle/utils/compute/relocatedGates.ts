@@ -10,4 +10,4 @@ import type { GateOccurrence } from '../gates/type';
 export const relocatedGates = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): readonly GateOccurrence[] =>
-  getGateRegistry(node.runtime).relocated(node.path);
+  getGateRegistry(node.runtime).relocatedOccurrences(node.path);

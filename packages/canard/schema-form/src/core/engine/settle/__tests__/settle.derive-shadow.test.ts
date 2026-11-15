@@ -12,15 +12,15 @@ import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 /** Restore the package setup's switch after each consumer-mode counterexample. */
-const setupEnabled = engineModes.deriveShadow;
+const setupEnabled = engineModes.isDeriveShadowEnabled;
 
 afterEach(() => {
-  engineModes.setMode('deriveShadow', setupEnabled);
+  engineModes.setMode('isDeriveShadowEnabled', setupEnabled);
   vi.unstubAllEnvs();
 });
 
 it('does not run shadow with the internal flag off even when NODE_ENV is test', () => {
-  engineModes.setMode('deriveShadow', false);
+  engineModes.setMode('isDeriveShadowEnabled', false);
   vi.stubEnv('NODE_ENV', 'test');
   const { root, blueprint } = createTestTree({
     type: 'object',
@@ -34,7 +34,7 @@ it('does not run shadow with the internal flag off even when NODE_ENV is test', 
   DeriveConvergenceTargets.set(blueprint, new Set(['/a', '/b']));
   expect(() =>
     writeFieldNode(
-      root.structure!['source'],
+      root.childrenByName!['source'],
       3,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -45,5 +45,5 @@ it('does not run shadow with the internal flag off even when NODE_ENV is test', 
 it('defaults to off in a fresh module without package test setup', async () => {
   vi.resetModules();
   const fresh = await import('../../utils/cache/engineModes');
-  expect(fresh.engineModes.deriveShadow).toBe(false);
+  expect(fresh.engineModes.isDeriveShadowEnabled).toBe(false);
 });

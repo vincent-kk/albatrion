@@ -22,7 +22,7 @@ export {
   relayFieldNodeInput,
   writeFieldNodeInput,
   finishFieldNodeInput,
-  readFieldNodeInteractionReset,
+  readFieldNodeInteractionEpoch,
   startFieldNodeLoadValidation,
   readFieldNodeRevealBaseline,
   observeFieldNodeReports,

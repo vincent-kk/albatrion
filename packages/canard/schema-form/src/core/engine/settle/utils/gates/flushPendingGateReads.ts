@@ -27,7 +27,7 @@ interface GateReadPlan {
     childSuffix?: string;
   }[];
   /** Recursive templates keep eager publication before descendant changes. */
-  recursive: boolean;
+  isRecursive: boolean;
 }
 
 /** Templates share their read plan across array items and settlement calls. */
@@ -44,15 +44,15 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
   path: string,
   context: SettlementContext<Self>,
 ): void => {
-  if (context.root.runtime.blueprint.capabilities.branchless) return;
+  if (context.root.runtime.blueprint.capabilities.isBranchless) return;
   if (!context.pendingOutputs?.size) return;
   let plan = getHostDerived<'readPlans', GateReadPlan>(template).readPlans;
   if (!plan) {
-    const built: GateReadPlan = { occurrences: [], recursive: false };
+    const built: GateReadPlan = { occurrences: [], isRecursive: false };
     const ancestors = new Set<BlueprintNode>();
     const visit = (node: BlueprintNode, suffix: string): void => {
       if (ancestors.has(node)) {
-        built.recursive = true;
+        built.isRecursive = true;
         return;
       }
       ancestors.add(node);
@@ -101,7 +101,7 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
     plan = built;
     getHostDerived<'readPlans', GateReadPlan>(template).readPlans = plan;
   }
-  if (plan.recursive) {
+  if (plan.isRecursive) {
     for (const host of context.pendingOutputs)
       flushPendingOutput(host, context);
     return;
@@ -118,12 +118,12 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
         if (typeof name !== 'string') continue;
         if (
           host.source !== undefined ||
-          !host.structure ||
+          !host.childrenByName ||
           (host.behavior.type !== 'array' &&
-          Object.getPrototypeOf(host.structure) === null
+          Object.getPrototypeOf(host.childrenByName) === null
             ? // structure values are always live nodes, so undefined means absent.
-              host.structure[name] === undefined
-            : !hasOwnProperty(host.structure, name))
+              host.childrenByName[name] === undefined
+            : !hasOwnProperty(host.childrenByName, name))
         )
           flushPendingOutput(host, context);
       }

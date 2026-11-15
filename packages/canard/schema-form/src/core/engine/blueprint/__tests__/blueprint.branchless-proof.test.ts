@@ -24,7 +24,7 @@ describe('branchless declaration reach and independent capabilities', () => {
       options: { virtual: { pair: { fields: ['ref', 'extra'] } } },
     });
     expect(Reflect.get(result, 'capabilities')).toEqual({
-      branchless: true,
+      isBranchless: true,
       hasExpressions: false,
       hasDerive: false,
       hasWatch: false,
@@ -79,7 +79,7 @@ describe('branchless declaration reach and independent capabilities', () => {
             : { type: 'object', ...mechanisms[mechanism] };
         const result = blueprint(reaches[reach](child));
         expect(
-          Reflect.get(result, 'capabilities').branchless,
+          Reflect.get(result, 'capabilities').isBranchless,
           `reach ${reach}, mechanism ${mechanism}`,
         ).toBe(false);
       }
@@ -91,7 +91,7 @@ describe('branchless declaration reach and independent capabilities', () => {
       properties: { a: { type: 'number' } },
       controls: { fields: [{ targets: ['a'], controls: { active: false } }] },
     });
-    expect(Reflect.get(controlled, 'capabilities').branchless).toBe(false);
+    expect(Reflect.get(controlled, 'capabilities').isBranchless).toBe(false);
     const ignored = blueprint({
       type: 'object',
       $defs: { unused: { type: 'object', if: {} } },
@@ -103,7 +103,7 @@ describe('branchless declaration reach and independent capabilities', () => {
         },
       },
     });
-    expect(Reflect.get(ignored, 'capabilities').branchless).toBe(true);
+    expect(Reflect.get(ignored, 'capabilities').isBranchless).toBe(true);
   });
 
   it('retains state/watch indexes when those features have no gates', () => {
@@ -116,7 +116,7 @@ describe('branchless declaration reach and independent capabilities', () => {
     });
     const capabilities = Reflect.get(result, 'capabilities');
     expect(capabilities).toMatchObject({
-      branchless: true,
+      isBranchless: true,
       hasState: true,
       hasWatch: true,
       hasDependencies: true,

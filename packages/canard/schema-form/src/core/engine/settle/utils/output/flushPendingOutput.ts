@@ -6,7 +6,7 @@ import { updateOutput } from './updateOutput';
 
 /**
  * Publish completed child selections before a gate consumes their host value.
- * @param node - Selecting host with an eagerly updated structure
+ * @param node - Selecting host with an eagerly updated `childrenByName`
  * @param context - Settlement-local deferred assembly queue
  * @param selectedChildren - Already finalized membership, avoiding a redundant full-list scan
  * @returns Whether a queued host was assembled
@@ -17,7 +17,7 @@ export const flushPendingOutput = <Self extends FieldNodeRecord<Self>>(
   selectedChildren?: readonly Self[],
 ): boolean => {
   if (!context.pendingOutputs?.delete(node)) return false;
-  const children = selectedChildren ?? Object.values(node.structure ?? {});
+  const children = selectedChildren ?? Object.values(node.childrenByName ?? {});
   const published = node.children;
   node.children = captureFieldNodeChange(
     node,

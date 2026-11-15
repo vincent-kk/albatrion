@@ -34,7 +34,7 @@ export const canReuseAppendedChild = <Self extends FieldNodeRecord<Self>>(
     !context.hasGates &&
     node.source === undefined &&
     node.itemCount === proof.count + 1 &&
-    node.structure === prior &&
+    node.childrenByName === prior &&
     node.children === proof.children &&
     !context.distributedInputs.has(node) &&
     context.pathChanges.length === 0 &&
@@ -55,6 +55,6 @@ export const canReuseAppendedChild = <Self extends FieldNodeRecord<Self>>(
         child.path === path &&
         child.schema === proof.schema &&
         child.isActive &&
-        !child.detached)
+        !child.isDetached)
   );
 };

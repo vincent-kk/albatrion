@@ -22,23 +22,23 @@ describe('pure gate projection baseline', () => {
       })),
     });
     loadFieldNodeAtMount(root, { kind: 'a' }, WriteOption.Overwrite);
-    expect(root.emit).toEqual({ kind: 'a', a: 'a' });
-    expect(root.emit).toBe(root.emit);
+    expect(root.storedOutputValue).toEqual({ kind: 'a', a: 'a' });
+    expect(root.storedOutputValue).toBe(root.storedOutputValue);
     writeFieldNode(
-      root.structure!.kind,
+      root.childrenByName!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.emit).toEqual({ kind: 'b', b: 'b' });
-    const emitted = root.emit;
+    expect(root.storedOutputValue).toEqual({ kind: 'b', b: 'b' });
+    const storedOutputValue = root.storedOutputValue;
     writeFieldNode(
-      root.structure!.kind,
+      root.childrenByName!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.emit).toBe(emitted);
+    expect(root.storedOutputValue).toBe(storedOutputValue);
   });
 
   it('keeps user callbacks and repeated throws on the full evaluation path', () => {
@@ -55,7 +55,7 @@ describe('pure gate projection baseline', () => {
     });
     root.runtime.context = { gate: callback };
     loadFieldNodeAtMount(root, { kind: 'a' }, WriteOption.Overwrite);
-    expect(root.emit).toEqual({ kind: 'a', payload: 'P' });
+    expect(root.storedOutputValue).toEqual({ kind: 'a', payload: 'P' });
     expect(callback.mock.calls.length).toBeGreaterThan(1);
     const throwing = vi.fn(() => {
       throw new Error('gate');
@@ -96,12 +96,16 @@ describe('pure gate projection baseline', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.toggle,
+      root.childrenByName!.toggle,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.emit).toEqual({ kind: 'a', toggle: true, payload: 'P' });
+    expect(root.storedOutputValue).toEqual({
+      kind: 'a',
+      toggle: true,
+      payload: 'P',
+    });
   });
 
   it('recovers the projected value after another gate throws', () => {
@@ -135,7 +139,7 @@ describe('pure gate projection baseline', () => {
     };
     expect(() =>
       writeFieldNode(
-        root.structure!.toggle,
+        root.childrenByName!.toggle,
         true,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
@@ -143,11 +147,15 @@ describe('pure gate projection baseline', () => {
     ).toThrow();
     root.runtime.context = { gate: () => true };
     writeFieldNode(
-      root.structure!.toggle,
+      root.childrenByName!.toggle,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.emit).toEqual({ kind: 'a', toggle: false, payload: 'P' });
+    expect(root.storedOutputValue).toEqual({
+      kind: 'a',
+      toggle: false,
+      payload: 'P',
+    });
   });
 });

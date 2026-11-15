@@ -17,7 +17,7 @@ it('LANDING-173 singleton type arrays honor nullable true', async () => {
     { defaultValue: null },
   );
   expect(form.handle.node?.type).toBe('string');
-  expect(form.handle.node?.nullable).toBe(true);
+  expect(form.handle.node?.isNullable).toBe(true);
   expect(form.getValue()).toBeNull();
   expect(form.field('')).not.toBeNull();
 });
@@ -36,7 +36,7 @@ it('LANDING-178 typeless nullable false overlay does not remove null', async () 
     { type: ['string', 'null'], allOf: [{ nullable: false }] },
     { defaultValue: null },
   );
-  expect(form.handle.node?.nullable).toBe(true);
+  expect(form.handle.node?.isNullable).toBe(true);
   expect(form.getValue()).toBeNull();
   expect(form.field('')).not.toBeNull();
 });

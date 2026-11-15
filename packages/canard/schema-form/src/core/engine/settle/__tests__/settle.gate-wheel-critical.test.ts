@@ -17,7 +17,7 @@ describe('gate-wheel input evidence at critical wheels', () => {
       const proving = vi.spyOn(predicate, 'canSkipGateWheel');
       const decisions: { round: number; allowed: boolean }[][] = [];
       const observations: {
-        emit: unknown;
+        outputValue: unknown;
         declarations: readonly number[] | undefined;
       }[] = [];
       try {
@@ -28,7 +28,7 @@ describe('gate-wheel input evidence at critical wheels', () => {
           },
           (root) => {
             observations.push({
-              emit: root.emit,
+              outputValue: root.storedOutputValue,
               declarations: root.runtime.committedDeclarationIds?.get(
                 getCommittedDeclarationKey(root, root.runtime),
               ),
@@ -58,10 +58,14 @@ describe('gate-wheel input evidence at critical wheels', () => {
           ? observations[observations.length - 1]
           : observations[1];
         if (prefix.startsWith('S3')) {
-          expect(observation.emit).toEqual({ mode: 'x', p: 'P', extra: 'on' });
+          expect(observation.outputValue).toEqual({
+            mode: 'x',
+            p: 'P',
+            extra: 'on',
+          });
           expect(observation.declarations).toEqual([0, 1, 2]);
         } else {
-          expect(observation.emit).toEqual({ flag: true });
+          expect(observation.outputValue).toEqual({ flag: true });
           expect(observation.declarations).toEqual([0, 2]);
         }
       } finally {
@@ -119,7 +123,7 @@ describe('gate-wheel input evidence at critical wheels', () => {
           engineModes.setMode('gateWheel', 'skip');
         },
         (root) => {
-          values.push(root.emit);
+          values.push(root.storedOutputValue);
         },
       );
       expect(values[0]).toEqual({ mode: 'x', akey: true, bkey: true });

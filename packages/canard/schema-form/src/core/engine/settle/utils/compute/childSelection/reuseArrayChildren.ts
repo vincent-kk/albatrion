@@ -23,7 +23,7 @@ export const reuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
   computeChild: Fn<[child: Self]>,
 ): void => {
   const append = context.arrayAppend;
-  if (append?.host === node && append.valid) {
+  if (append?.host === node && append.isValid) {
     if (!append.entry) return;
     const child = prior[String(append.count)];
     const ids = staticIds(append.entry, node.blueprintNode);
@@ -33,9 +33,9 @@ export const reuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
     return;
   }
   const pop = context.arrayPop;
-  if (pop?.host === node && pop.valid) return;
+  if (pop?.host === node && pop.isValid) return;
   const splice = context.arraySplice;
-  const start = splice?.host === node && splice.valid ? splice.index : 0;
+  const start = splice?.host === node && splice.isValid ? splice.index : 0;
   for (let index = start; index < node.itemCount; index++) {
     const entry = getItemEntry(node.blueprintNode, index);
     if (!entry) continue;

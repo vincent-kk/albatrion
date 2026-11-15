@@ -6,11 +6,11 @@ import { omitTrailingEmptyArray } from '../utils/projection/omitTrailingEmptyArr
 describe('trailing empty projection', () => {
   it('VALUE-034 trims trailing empty objects and nulls left by object items', () => {
     const kept = { name: 'kept' };
-    const local = [kept, null, {}];
-    const projected = omitTrailingEmptyArray(local);
+    const value = [kept, null, {}];
+    const projected = omitTrailingEmptyArray(value);
     expect(projected).toEqual([kept]);
     expect(projected[0]).toBe(kept);
-    expect(local).toEqual([kept, null, {}]);
+    expect(value).toEqual([kept, null, {}]);
   });
 
   it('VALUE-034 trims trailing empty strings, arrays, objects and nil', () => {

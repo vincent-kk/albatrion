@@ -6,7 +6,7 @@
 
 ## API Contracts
 
-반환의 schema와 typeConflict를 구별합니다. 게이트 판정·활성 집합 선택·형 충돌의 실행 처분은 [settle](../../settle/DETAIL.md)이 소유하며, 이 모듈은 전달받은 활성 ID로 기여를 선택하고 합칩니다. 키워드별 잎 교차의 동등 판정은 [schemaIntersection](../../../../helpers/schemaIntersection/DETAIL.md)을 따릅니다.
+반환의 schema와 hasTypeConflict를 구별합니다. 게이트 판정·활성 집합 선택·형 충돌의 실행 처분은 [settle](../../settle/DETAIL.md)이 소유하며, 이 모듈은 전달받은 활성 ID로 기여를 선택하고 합칩니다. 키워드별 잎 교차의 동등 판정은 [schemaIntersection](../../../../helpers/schemaIntersection/DETAIL.md)을 따릅니다.
 
 ## Acceptance Criteria
 
@@ -36,7 +36,7 @@ derived·injectTo·unsetValue·resetInteraction·fields·unsetOnInactive·inacti
 
 ### BLUEPRINT-040 — 정적 형 정체성과 유효 목록을 구별합니다
 
-schemaType·nullable은 정적 정체성이며, 유효 schema.type은 그 정적 허용 집합에 선택된 type을 교차한 결과를 직렬화합니다. 추론한 형도 유효 type에 나타납니다. 좁혀지지 않으면 정적 scalar 또는 배열 참조를 재사용하고, 좁혀진 비어 있지 않은 목록은 동결 배열입니다. number에서 integer로 좁혀진 경우도 ['integer']입니다. null만 남으면 type은 null입니다. 형 교집합이 비면 enum 공집합으로 위장하지 않고 typeConflict를 반환하며 정적 type·nullable을 보존하여 실행 소유자가 충돌을 처리하게 합니다.
+schemaType·isNullable은 정적 정체성이며, 유효 schema.type은 그 정적 허용 집합에 선택된 type을 교차한 결과를 직렬화합니다. 추론한 형도 유효 type에 나타납니다. 좁혀지지 않으면 정적 scalar 또는 배열 참조를 재사용하고, 좁혀진 비어 있지 않은 목록은 동결 배열입니다. number에서 integer로 좁혀진 경우도 ['integer']입니다. null만 남으면 type은 null입니다. 형 교집합이 비면 enum 공집합으로 위장하지 않고 hasTypeConflict를 반환하며 정적 type·isNullable을 보존하여 실행 소유자가 충돌을 처리하게 합니다.
 
 ### BLUEPRINT-021 — 메모는 검사 정책을 분리합니다
 

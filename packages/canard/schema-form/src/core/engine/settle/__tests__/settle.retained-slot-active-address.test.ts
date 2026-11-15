@@ -24,9 +24,11 @@ it('keeps fresh clone memos empty and ignores writes through old lifetimes', () 
   const second = getDispatchNode(root, 'value');
   expect(second).not.toBe(first);
   expect(
-    ['inactiveValueMemo', 'inactiveValuesCache', 'inactiveValuesDirty'].filter(
-      (key) => Object.prototype.hasOwnProperty.call(second, key),
-    ),
+    [
+      'inactiveValueMemo',
+      'inactiveValuesCache',
+      'isInactiveValuesDirty',
+    ].filter((key) => Object.prototype.hasOwnProperty.call(second, key)),
   ).toEqual([]);
 
   dispatchSetValue(getDispatchNode(root, 'open'), false);
@@ -55,7 +57,7 @@ it('does not copy empty aggregate caches onto an active leaf clone', () => {
   dispatchSetValue(getDispatchNode(root, 'open'), true);
   const second = getDispatchNode(root, 'value');
   expect(
-    ['inactiveValuesCache', 'inactiveValuesDirty'].filter((key) =>
+    ['inactiveValuesCache', 'isInactiveValuesDirty'].filter((key) =>
       Object.prototype.hasOwnProperty.call(second, key),
     ),
   ).toEqual([]);

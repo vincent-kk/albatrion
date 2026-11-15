@@ -15,7 +15,7 @@ import { reportRootLoadValidation } from './reportRootLoadValidation';
  */
 export const subscribeRootLoad = (load: RootLoad, store: RootLoadStore): Fn =>
   load.root?.subscribe(({ type }) => {
-    if (!load.prepared || load.retired || !load.root) return;
+    if (!load.isPrepared || load.isRetired || !load.root) return;
     if (type & FieldNodeEventType.UpdateGlobalError)
       reportRootLoadValidation(load, store);
     if (type & FieldNodeEventType.UpdateDiagnostics)

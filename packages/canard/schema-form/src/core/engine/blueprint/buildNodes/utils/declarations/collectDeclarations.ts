@@ -62,7 +62,7 @@ export const collectDeclarations = (
   readAllowedTypes(input.schema, input.schemaPath, context.options);
   collectSchemaCapabilities(context, input.schema);
   if (input.gates.length || input.context === 'declaration')
-    context.capabilities.branchless = false;
+    context.capabilities.isBranchless = false;
   const gates: BlueprintGate[] = input.gates.slice();
   let matches = schema.controls?.active !== undefined;
   if (matches) {
@@ -117,11 +117,11 @@ export const collectDeclarations = (
     fragmentId: fragment.id,
     role: input.role,
     scope: input.isFragment ? 'fragment' : 'node',
-    validationOnly: false,
+    isValidationOnly: false,
     context: input.context,
     gates: fragment.gates.slice(),
     order: fragment.order.slice(),
-    inherited: input.inherited,
+    isInherited: input.isInherited,
     hostPath: input.hostPath,
   };
   if (schema.controls?.fields !== undefined) context.hasChildTargets = true;
@@ -135,10 +135,10 @@ export const collectDeclarations = (
   fragment[input.role === 'declaration' ? 'declares' : 'overlays'].push(
     declaration.id,
   );
-  if (input.inherited) fragment.inheritedOverlays.push(declaration.id);
+  if (input.isInherited) fragment.inheritedOverlays.push(declaration.id);
   result.push(declaration);
   const owner = ownerId ?? declaration.id;
-  if (!context.capabilities.branchless)
+  if (!context.capabilities.isBranchless)
     (context.declarationOwners ??= new Map()).set(declaration.id, owner);
   const discriminators =
     schema.controls?.discriminator === undefined
@@ -168,7 +168,7 @@ export const collectDeclarations = (
         gates,
         fragment,
         role: 'overlay',
-        inherited: true,
+        isInherited: true,
       },
       path,
       stack,
@@ -214,7 +214,7 @@ export const collectDeclarations = (
             schemaPath: appendSegment(input.schemaPath, 'if'),
             hostPath: path,
             condition: schema.if,
-            negated: keyword === 'else',
+            isNegated: keyword === 'else',
           }),
         );
       const branch = keyword === 'oneOf' || keyword === 'anyOf';
@@ -231,7 +231,7 @@ export const collectDeclarations = (
           gates: nestedGates,
           context: declarationOnly ? 'declaration' : 'conjunction',
           order: [...input.order, rank, keyword === 'else' ? 1 : index],
-          inherited: input.inherited,
+          isInherited: input.isInherited,
           hostPath: path,
           fragment,
           isFragment: true,

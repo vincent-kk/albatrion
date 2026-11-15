@@ -27,8 +27,8 @@ const createLoadState = (root: PlainNode): DeriveState<PlainNode> => ({
   loadScope: root,
   entered: new Set(),
   revived: new Set(),
-  suppressAutomaticWrites: false,
-  trace: false,
+  isAutomaticWriteSuppressed: false,
+  isTraceEnabled: false,
 });
 
 // filid:contract derive-failures

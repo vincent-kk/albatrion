@@ -12,7 +12,7 @@ import type { ChildSelectionFrame } from './selectEntryStep';
  * @param context - Ordinary gate inputs, selected IDs and failure collector
  * @param prior - Shape captured before this wheel's ungated start
  * @param computeChild - Existing dirty descent at the entry's original position
- * @param immediate - Whether ordinary entry changes queue host output
+ * @param isImmediate - Whether ordinary entry changes queue host output
  * @param publication - Receives the ordinary pending-output publication result
  * @returns The ordinary changed flag, or undefined when this host is not prepared
  */
@@ -23,8 +23,8 @@ export const selectFixedFirstContributions = <
   context: SettlementContext<Self>,
   prior: Dictionary<Self>,
   computeChild: Fn<[child: Self]>,
-  immediate: boolean,
-  publication?: { flushed: boolean },
+  isImmediate: boolean,
+  publication?: { isFlushed: boolean },
 ): boolean | undefined => {
   const preparation = context.fixedFirstLoad;
   if (!preparation?.hosts.has(node)) return undefined;
@@ -34,16 +34,16 @@ export const selectFixedFirstContributions = <
     context,
     prior,
     computeChild,
-    immediate,
-    next: node.structure!,
+    isImmediate,
+    next: node.childrenByName!,
     seen: new Map(),
     inactiveEntries: [],
-    changed: false,
-    flushReads: immediate,
+    hasChanged: false,
+    shouldFlushReads: isImmediate,
   };
   for (const entry of plan.affected) selectEntryStep(entry, undefined, frame);
   const flushed = flushPendingOutput(node, context);
-  if (publication) publication.flushed = flushed;
-  if (frame.changed) context.changedNodes.add(node);
-  return frame.changed;
+  if (publication) publication.isFlushed = flushed;
+  if (frame.hasChanged) context.changedNodes.add(node);
+  return frame.hasChanged;
 };

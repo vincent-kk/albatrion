@@ -28,7 +28,7 @@ import { selectEntryStep } from './selectEntryStep';
 import type { ChildSelectionFrame } from './selectEntryStep';
 import { selectFixedFirstContributions } from './selectFixedFirstContributions';
 import { staticShape } from './staticShape';
-import { createPreparedSelectionStructure } from './utils/createPreparedSelectionStructure';
+import { createPreparedChildrenByName } from './utils/createPreparedChildrenByName';
 import { createStaticEntryReuser } from './utils/createStaticEntryReuser';
 import { prepareStaticHost } from './utils/prepareStaticHost';
 import { publishPreparedSelection } from './utils/publishPreparedSelection';
@@ -40,9 +40,9 @@ import { publishPreparedSelection } from './utils/publishPreparedSelection';
  * @param context - Gate input, node factory, and deferred failure state
  * @param prior - Shape before the wheel's fixed ungated start
  * @param computeChild - Recursive descent used immediately after a gate change
- * @param immediate - Whether later gates must see each earlier projection
+ * @param isImmediate - Whether later gates must see each earlier projection
  * @param hasRelocated - Wheel's existing relocation evidence
- * @param preserveStructure - Whether presence comparison retains the preceding structure
+ * @param preserveChildrenByName - Whether presence comparison retains the preceding children-by-name map
  * @param publication - Receives whether selection already assembled the final child shape
  * @returns Whether shape or effective schemas changed during this round
  */
@@ -51,10 +51,10 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   prior: Dictionary<Self>,
   computeChild: Fn<[child: Self]>,
-  immediate: boolean,
+  isImmediate: boolean,
   hasRelocated = true,
-  preserveStructure = true,
-  publication?: { flushed: boolean },
+  preserveChildrenByName = true,
+  publication?: { isFlushed: boolean },
 ): boolean => {
   const fixed =
     context.fixedFirstLoad &&
@@ -63,7 +63,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       context,
       prior,
       computeChild,
-      immediate,
+      isImmediate,
       publication,
     );
   if (fixed !== undefined) return fixed;
@@ -76,7 +76,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   }
   if (
     node.behavior.type === 'object' &&
-    (!context.hasGates || !HostStaticPartition.get(node.blueprintNode).gated)
+    (!context.hasGates || !HostStaticPartition.get(node.blueprintNode).isGated)
   ) {
     const shape = staticShape(
       node.blueprintNode,
@@ -93,8 +93,8 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
           child.blueprintNode !== entry.node ||
           child.schema !== schema ||
           !child.isActive ||
-          child.detached ||
-          node.structure?.[entry.name] !== child
+          child.isDetached ||
+          node.childrenByName?.[entry.name] !== child
         ) {
           matches = false;
           break;
@@ -106,7 +106,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
           node,
           prior,
           context,
-          node.structure!,
+          node.childrenByName!,
           computeChild,
           false,
           hasRelocated,
@@ -136,7 +136,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     const fields = node.blueprintNode.fields;
     for (let index = 0; fields && index < fields.length; index++) {
       const field = fields[index];
-      const sibling = node.parent?.structure?.[field];
+      const sibling = node.parent?.childrenByName?.[field];
       if (!sibling) continue;
       next[field] = sibling;
       children.push(sibling);
@@ -144,7 +144,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     let changed = children.length !== before.length;
     for (let index = 0; !changed && index < children.length; index++)
       if (children[index] !== before[index]) changed = true;
-    node.structure = next;
+    node.childrenByName = next;
     node.children = captureFieldNodeChange(
       node,
       'children',
@@ -157,18 +157,18 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     return changed;
   }
   const before = node.children ?? [];
-  const current = node.structure;
+  const current = node.childrenByName;
   const prepared = prepareStaticHost(node, prior, context, hasRelocated);
   let reuse = prepared
     ? (entry: BlueprintChildEntry) => prepared.entries.has(entry.name)
-    : !preserveStructure && current && current !== prior
+    : !preserveChildrenByName && current && current !== prior
       ? createStaticEntryReuser(
           node,
           prior,
           context,
           current,
           computeChild,
-          immediate,
+          isImmediate,
           hasRelocated,
         )
       : undefined;
@@ -176,7 +176,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     ? Object.create(prepared.baseline)
     : undefined;
   const next: Dictionary<Self> = prepared
-    ? createPreparedSelectionStructure(
+    ? createPreparedChildrenByName(
         prepared.baseline,
         current,
         prepared.dynamicNames,
@@ -186,7 +186,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       ? current
       : { ...current };
   if (!prepared && next !== current) Object.setPrototypeOf(next, null);
-  // Mutate the private target directly; node.structure keeps the own-key gate view.
+  // Mutate the private target directly; node.childrenByName keeps the own-key gate view.
   const selectionTarget = dynamic ?? next;
   if (node.behavior.type === 'array') {
     const names = Object.keys(next);
@@ -201,7 +201,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     context,
     next,
     computeChild,
-    immediate,
+    isImmediate,
     hasRelocated,
   );
   const seen = new Map<string, BlueprintChildEntry['node']>();
@@ -228,8 +228,8 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     ? node.blueprintNode.childEntries
     : (prepared?.dynamicEntries ?? node.behavior.declareChildren(node));
   const count = direct ? direct.steps.length : entries.length;
-  const flushReads =
-    immediate && (!direct || context.kind === FieldNodeWriteKind.Load);
+  const shouldFlushReads =
+    isImmediate && (!direct || context.kind === FieldNodeWriteKind.Load);
   const frame: ChildSelectionFrame<Self> = {
     preparedStatic: prepared,
     preparedDynamic: dynamic,
@@ -240,19 +240,19 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     context,
     prior,
     computeChild,
-    immediate,
+    isImmediate,
     next: selectionTarget,
     seen,
     inactiveEntries,
-    changed,
-    flushReads,
-    reuseStatic: reuse,
+    hasChanged: changed,
+    shouldFlushReads,
+    canReuseStatic: reuse,
   };
   let selectedChildren: Optional<readonly Self[]>;
   try {
-    node.structure = next;
+    node.childrenByName = next;
     const round = direct && context.gateSelectionRounds?.get(node);
-    if (round?.active) selectTableChildren(frame, round);
+    if (round?.isActive) selectTableChildren(frame, round);
     else {
       for (let entryIndex = 0; entryIndex < count; entryIndex++) {
         const step = direct?.steps[entryIndex];
@@ -263,12 +263,12 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     }
     selectedChildren = prepared ? publishPreparedSelection(frame) : undefined;
   } finally {
-    if (prepared && node.structure === next)
-      node.structure = prepared.selectedStructure;
+    if (prepared && node.childrenByName === next)
+      node.childrenByName = prepared.selectedChildrenByName;
   }
-  changed = frame.changed;
+  changed = frame.hasChanged;
   const flushed = flushPendingOutput(node, context, selectedChildren);
-  if (publication) publication.flushed = flushed;
+  if (publication) publication.isFlushed = flushed;
   for (let index = 0; index < inactiveEntries.length; index++) {
     const entry = inactiveEntries[index];
     if (
@@ -290,7 +290,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     )
       continue;
     const path = appendSegment(node.path, entry.name);
-    if (distribution.preserveLatent) {
+    if (distribution.shouldPreserveLatent) {
       distributeMovedSource(
         context,
         path,
@@ -306,18 +306,18 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       entry.node,
       Reflect.get(distribution.input, entry.name),
       getSlotOrder(node, entry.name, entry.node),
-      distribution.whole,
+      distribution.isWhole,
       node.behavior.type === 'array'
         ? getItemEntries(node.blueprintNode, Number(entry.name))
         : node.blueprintNode.childEntries,
-      distribution.automatic,
+      distribution.isAutomatic,
     );
   }
   const priorNames = frame.priorDynamicNames ?? Object.keys(prior);
   for (let index = 0; index < priorNames.length; index++) {
     const name = priorNames[index];
     const child = prior[name];
-    if (node.structure![name] !== child) {
+    if (node.childrenByName![name] !== child) {
       if (context.hasGates) (context.presenceHosts ??= new Set()).add(node);
       if (node.behavior.type === 'array' && Number(name) >= node.itemCount)
         context.perished.add(child);

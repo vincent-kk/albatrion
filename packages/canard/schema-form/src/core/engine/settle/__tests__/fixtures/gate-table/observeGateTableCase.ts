@@ -131,7 +131,7 @@ export const observeGateTableCase = (
             path: child.path,
             entered: args[1].entered.has(child),
             revived: args[1].revived.has(child),
-            value: child.local,
+            value: child.storedValue,
           });
           computeChild(child);
         },
@@ -141,7 +141,7 @@ export const observeGateTableCase = (
       selections.push({
         host: node.path,
         changed: result,
-        structure: Object.keys(node.structure ?? {}),
+        childrenByName: Object.keys(node.childrenByName ?? {}),
         pendingExits: [...context.pendingExits.keys()],
         revived: [...context.revived].map((child) => child.path),
         entered: [...context.entered].map((child) => child.path),
@@ -179,7 +179,9 @@ export const observeGateTableCase = (
           hosts.push({
             path: node.path,
             identity: identityOf(node),
-            structure: node.structure ? Object.keys(node.structure) : null,
+            childrenByName: node.childrenByName
+              ? Object.keys(node.childrenByName)
+              : null,
             revision: node.revisionLedger,
             payload: node.pendingDelivery,
           });

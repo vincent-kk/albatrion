@@ -19,19 +19,19 @@ export const enterSlotClone = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const distribution = getChildDistribution(host, name, context, child.path);
-  if (!distribution || distribution.preserveLatent) return;
+  if (!distribution || distribution.shouldPreserveLatent) return;
   const supplied = hasDistributedChildInput(
     distribution.input,
     name,
     host.behavior.type === 'array',
   );
-  if (!supplied && !distribution.whole) return;
+  if (!supplied && !distribution.isWhole) return;
   const value = supplied ? Reflect.get(distribution.input, name) : undefined;
-  if (distribution.automatic) {
-    context.automatic = true;
+  if (distribution.isAutomatic) {
+    context.isAutomatic = true;
     context.writtenInputs.set(child, value);
     context.filledNodes.add(child);
   }
   markWrite(child, value, context);
-  if (distribution.automatic) context.automatic = false;
+  if (distribution.isAutomatic) context.isAutomatic = false;
 };

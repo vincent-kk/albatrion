@@ -39,19 +39,19 @@ export const applySlotOverlay = <Self extends FieldNodeRecord<Self>>(
           retainedItemNames: names,
         });
     }
-  } else if (ownsSource || overlay.replace) {
+  } else if (ownsSource || overlay.isWhole) {
     node.source = ownsSource ? overlay.source : undefined;
   }
-  if (hasOwnProperty(overlay, 'extras') || (overlay.replace && !arrayInput))
+  if (hasOwnProperty(overlay, 'extras') || (overlay.isWhole && !arrayInput))
     node.extras = overlay.extras;
   if (overlay.itemCount !== undefined) node.itemCount = overlay.itemCount;
   else if (
-    overlay.replace &&
+    overlay.isWhole &&
     node.behavior.type === 'array' &&
     !isArray(overlay.source)
   )
     node.itemCount = 0;
-  if (overlay.replace) {
+  if (overlay.isWhole) {
     node.inactiveSlotOverlays?.clear();
     for (const entry of node.inactiveSlots?.keys() ?? [])
       if (!overlay.children?.has(entry)) node.inactiveSlots?.delete(entry);
@@ -62,11 +62,11 @@ export const applySlotOverlay = <Self extends FieldNodeRecord<Self>>(
     if (!entry) continue;
     const patch = overlay.children?.get(entry);
     if (patch) applySlotOverlay(child, patch, context);
-    else if (overlay.replace && !arrayInput)
-      applySlotOverlay(child, { replace: true }, context);
+    else if (overlay.isWhole && !arrayInput)
+      applySlotOverlay(child, { isWhole: true }, context);
   }
   for (const [entry, patch] of overlay.children ?? []) {
-    const live = node.structure?.[entry.name];
+    const live = node.childrenByName?.[entry.name];
     if (live?.blueprintNode === entry.node) continue;
     (node.inactiveSlotOverlays ??= new Map()).set(entry, patch);
   }

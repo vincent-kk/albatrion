@@ -88,13 +88,13 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
     }
     for (const host of context.changedNodes) {
       if (
-        host.detached ||
+        host.isDetached ||
         host.blueprintNode.kind !== 'object' ||
         !host.children
       )
         continue;
       if (
-        host.deliveryInitialized &&
+        host.isDeliveryInitialized &&
         host.deliveryPreviousSchema === undefined &&
         !(host.deliveryChanges & FieldNodeEventType.UpdateChildren)
       )
@@ -113,7 +113,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         if (child.isRequired === next) continue;
         child.isRequired = next;
         candidates.add(child);
-        if (child.deliveryInitialized)
+        if (child.isDeliveryInitialized)
           markFieldNodeEvent(
             child,
             FieldNodeEventType.UpdateControlledProperties,
@@ -126,7 +126,8 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       if (runtime.deliveredContext !== runtime.context)
         for (const watcher of watchIndex.contextNodes) candidates.add(watcher);
       if (affectedPaths)
-        for (const path of affectedPaths) watchIndex.affected(path, candidates);
+        for (const path of affectedPaths)
+          watchIndex.collectAffected(path, candidates);
     }
     const isTreeNode = (value: unknown): value is Self =>
       value !== null &&
@@ -201,13 +202,13 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         clearFieldNodeChanges(node);
         continue;
       }
-      if (node.detached) {
+      if (node.isDetached) {
         clearFieldNodeChanges(node);
         node.deliveryWatchValues = undefined;
         watchIndex?.remove(node);
         continue;
       }
-      const initialized = node.deliveryInitialized;
+      const initialized = node.isDeliveryInitialized;
       const changes = node.deliveryChanges;
       const previousWatchValues = node.deliveryWatchValues ?? EMPTY_ARRAY;
       const pending = node.pendingDelivery?.payload;
@@ -235,8 +236,11 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       if (initialized) {
         if (
           changes & FieldNodeEventType.UpdateValue &&
-          (!isSameDeliveryValue(node.deliveryPreviousLocal, node.local) ||
-            !isSameDeliveryValue(node.deliveryPreviousEmit, node.emit))
+          (!isSameDeliveryValue(node.deliveryPreviousValue, node.storedValue) ||
+            !isSameDeliveryValue(
+              node.deliveryPreviousOutputValue,
+              node.storedOutputValue,
+            ))
         ) {
           if (silent) mark(node, FieldNodeEventType.UpdateValue);
           else {
@@ -246,14 +250,17 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
                 ? Reflect.get(pendingValue, 'previous')
                 : node.behavior.strategy === 'branch'
                   ? {
-                      local: node.deliveryPreviousLocal,
-                      emit: node.deliveryPreviousEmit,
+                      value: node.deliveryPreviousValue,
+                      outputValue: node.deliveryPreviousOutputValue,
                     }
-                  : node.deliveryPreviousLocal;
+                  : node.deliveryPreviousValue;
             const current =
               node.behavior.strategy === 'branch'
-                ? { local: node.local, emit: node.emit }
-                : node.local;
+                ? {
+                    value: node.storedValue,
+                    outputValue: node.storedOutputValue,
+                  }
+                : node.storedValue;
             const payload = { previous: oldValue, current };
             const source =
               automaticNodes.has(node) || context.filledNodes.has(node)
@@ -299,7 +306,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
           changes & FieldNodeEventType.UpdateState &&
           node.deliveryPreviousState !== node.interactionState
         ) {
-          runtime.stateChanged = true;
+          runtime.hasStateChanged = true;
           if (
             !(
               (node.pendingNonSettleDelivery?.type ?? BIT_MASK_NONE) &
@@ -310,7 +317,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         }
         if (
           (changes & FieldNodeEventType.UpdateControlledProperties &&
-            node.deliveryPreviousComputed !==
+            node.deliveryPreviousComputedBits !==
               (+node.isActive |
                 (+node.isVisible << VISIBLE_BIT_SHIFT) |
                 (+node.isReadOnly << READ_ONLY_BIT_SHIFT) |
@@ -348,8 +355,8 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         else {
           const current =
             node.behavior.strategy === 'branch'
-              ? { local: node.local, emit: node.emit }
-              : node.local;
+              ? { value: node.storedValue, outputValue: node.storedOutputValue }
+              : node.storedValue;
           const payload = { previous: undefined, current };
           const source =
             automaticNodes.has(node) || context.filledNodes.has(node)
@@ -372,19 +379,19 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         mark(node, FieldNodeEventType.RequestRefresh);
       else if (refreshTargets?.has(node.path))
         mark(node, FieldNodeEventType.RequestRefresh);
-      node.deliveryInitialized = true;
+      node.isDeliveryInitialized = true;
       if (hasWatch) node.deliveryWatchValues = watched;
       clearFieldNodeChanges(node);
-      if (silentMask) node.pendingRevision |= silentMask;
-      if (node.pendingRevision) {
+      if (silentMask) node.pendingRevisionMask |= silentMask;
+      if (node.pendingRevisionMask) {
         if (silent)
-          advanceFieldNodeRevision(node, node.pendingRevision, silent);
+          advanceFieldNodeRevision(node, node.pendingRevisionMask, silent);
         else
           node.revisionLedger = new FieldNodeRevisionLedger(
             node.revisionLedger,
-            node.pendingRevision,
+            node.pendingRevisionMask,
           );
-        node.pendingRevision = BIT_MASK_NONE;
+        node.pendingRevisionMask = BIT_MASK_NONE;
       }
     }
     globalState.finish();
@@ -395,12 +402,12 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
     const seenDeparting = new Set<Self>();
     while (departing.length) {
       const node = departing.pop();
-      if (!node || !node.detached || seenDeparting.has(node)) continue;
+      if (!node || !node.isDetached || seenDeparting.has(node)) continue;
       seenDeparting.add(node);
       clearFieldNodeChanges(node);
       node.deliveryWatchValues = undefined;
       node.pendingDelivery = undefined;
-      node.pendingRevision = BIT_MASK_NONE;
+      node.pendingRevisionMask = BIT_MASK_NONE;
       node.pendingNonSettleDelivery = undefined;
       runtime.deliveryWatchIndex?.remove(node);
       runtime.deliveries?.delete(node);

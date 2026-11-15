@@ -135,8 +135,8 @@ describe('virtual writes and referenced siblings', () => {
     expect(root.find('/period')).toBeNull();
     expect(root.find('/startDate')).toBe(startDate);
     expect(root.find('/endDate')).toBe(endDate);
-    expect(Reflect.get(startDate, 'detached')).toBe(false);
-    expect(Reflect.get(endDate, 'detached')).toBe(false);
+    expect(Reflect.get(startDate, 'isDetached')).toBe(false);
+    expect(Reflect.get(endDate, 'isDetached')).toBe(false);
   });
 
   it('42C-02 keeps a real sibling gate registered when its virtual group exits', () => {

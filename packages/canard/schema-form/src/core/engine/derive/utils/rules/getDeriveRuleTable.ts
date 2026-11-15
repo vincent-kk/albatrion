@@ -34,7 +34,7 @@ interface RuleGroup {
   /** Target name for a parent-scoped rule. */
   readonly targetName?: string;
   /** Whether the rule addresses the repeated array item template. */
-  readonly targetItems?: boolean;
+  readonly isItemTarget?: boolean;
   /** Fragment child declarations that must still be selected. */
   readonly targetDeclarationIds?: readonly number[];
   /** Same-name target templates whose watches can extend a derived expression. */
@@ -112,7 +112,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
               schemaPath: appendSegment(declaration.schemaPath, 'controls'),
               layer: 'fragment',
               targetName: entry.name,
-              targetItems: entry.items,
+              isItemTarget: entry.items,
               targetDeclarationIds: mapArray(selected, (child) => child.id),
               targetNodes: [entry.node],
             });
@@ -185,7 +185,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
             schemaPath,
             layer: group.layer,
             targetName: group.targetName,
-            targetItems: group.targetItems,
+            isItemTarget: group.isItemTarget,
             targetDeclarationIds: group.targetDeclarationIds,
             dependencies,
             watchDependencies,

@@ -24,14 +24,14 @@ export const collectSchemaCapabilities = (
 ): void => {
   const record = readSchemaObject(schema);
   const capabilities = context.capabilities;
-  if (context.staticFirstLoad) {
+  if (context.isStaticFirstLoad) {
     const fallback = Object.getOwnPropertyDescriptor(record, 'default');
     if (
       fallback &&
       (!('value' in fallback) ||
         (fallback.value !== undefined && !isLiteralDefault(fallback.value)))
     )
-      context.staticFirstLoad = false;
+      context.isStaticFirstLoad = false;
   }
   if (
     record.oneOf !== undefined ||
@@ -40,7 +40,7 @@ export const collectSchemaCapabilities = (
     record.then !== undefined ||
     record.else !== undefined
   )
-    capabilities.branchless = false;
+    capabilities.isBranchless = false;
   if (record.readOnly !== undefined) capabilities.hasState = true;
   const controls = record.controls;
   if (!controls) return;
@@ -53,8 +53,8 @@ export const collectSchemaCapabilities = (
       group.unsetValue !== undefined ||
       group.injectTo !== undefined
     )
-      context.staticFirstLoad = false;
-    if (group.active !== undefined) capabilities.branchless = false;
+      context.isStaticFirstLoad = false;
+    if (group.active !== undefined) capabilities.isBranchless = false;
     if (group.watch !== undefined) capabilities.hasWatch = true;
     for (let key = 0; key < STATE_CONTROL_KEYS.length; key++)
       if (group[STATE_CONTROL_KEYS[key]] !== undefined) {

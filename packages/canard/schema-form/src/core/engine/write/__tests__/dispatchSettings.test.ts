@@ -39,7 +39,7 @@ it('keeps settings deferred after a nested onChange write returns', () => {
   };
   dispatchSetValue(root, ' outer ');
   expect(settingInside).not.toBe(true);
-  expect(root.emit).toBe('nested');
+  expect(root.storedOutputValue).toBe('nested');
   expect(runtime.disableAutomaticWrites).toBe(true);
 });
 
@@ -49,22 +49,22 @@ it('flushes only the last deferred settings at the outermost chain exit', () => 
   const applyFirst = vi.fn();
   const applyLast = vi.fn();
   let armed = true;
-  let pendingInside: typeof runtime.pendingSettings;
+  let pendingInside: typeof runtime.applyPendingSettings;
   runtime.onChange = () => {
     if (!armed) return;
     armed = false;
     dispatchSetValue(root, 'nested');
-    runtime.pendingSettings = applyFirst;
+    runtime.applyPendingSettings = applyFirst;
     flushFieldNodeSettings(runtime);
-    runtime.pendingSettings = applyLast;
+    runtime.applyPendingSettings = applyLast;
     flushFieldNodeSettings(runtime);
-    pendingInside = runtime.pendingSettings;
+    pendingInside = runtime.applyPendingSettings;
   };
   dispatchSetValue(root, 'outer');
   expect(pendingInside).toBe(applyLast);
   expect(applyFirst).not.toHaveBeenCalled();
   expect(applyLast).toHaveBeenCalledOnce();
-  expect(runtime.pendingSettings).toBeUndefined();
+  expect(runtime.applyPendingSettings).toBeUndefined();
 });
 
 it('defers write defaults through reentrant writes until the outer batch ends', () => {
@@ -83,12 +83,12 @@ it('defers write defaults through reentrant writes until the outer batch ends', 
     dispatchFinishInput(root);
   });
   expect(runtime.disableAutomaticWrites).toBe(true);
-  expect(root.emit).toBe('a');
+  expect(root.storedOutputValue).toBe('a');
   dispatchSetValue(root, ' b ');
   dispatchFinishInput(root);
-  expect(root.emit).toBe(' b ');
+  expect(root.storedOutputValue).toBe(' b ');
   dispatchFinishInput(root, WriteOption.EnableAutomaticWrites);
-  expect(root.emit).toBe('b');
+  expect(root.storedOutputValue).toBe('b');
 });
 
 it('late explicit failure cannot mark the new mode unavailable or report', async () => {
@@ -103,7 +103,7 @@ it('late explicit failure cannot mark the new mode unavailable or report', async
   const promise = dispatchValidate(root);
   dispatchUpdateSettings(root, { validationMode: ValidationMode.None });
   await expect(promise).rejects.toBeDefined();
-  expect(runtime.validationUnavailable).not.toBe(true);
+  expect(runtime.isValidationUnavailable).not.toBe(true);
   expect(report).not.toHaveBeenCalled();
 });
 
@@ -150,7 +150,7 @@ it('applies a mode committed by an explicit validation error handler before the 
       dispatchUpdateSettings(root, { validationMode: ValidationMode.None }),
   };
   await expect(dispatchValidate(root)).rejects.toBeDefined();
-  expect(runtime.pendingSettings).toBeUndefined();
+  expect(runtime.applyPendingSettings).toBeUndefined();
   expect(runtime.validationMode).toBe(ValidationMode.None);
   await expect(dispatchValidate(root)).resolves.toEqual([]);
   expect(validate).toHaveBeenCalledOnce();

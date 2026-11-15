@@ -41,8 +41,8 @@ it('keeps count and shape memos independent for two trees sharing one blueprint'
     { values: ['b', 'c'], sibling: 'y' },
     WriteOption.Overwrite,
   );
-  const left = first.structure!.values;
-  const right = second.structure!.values;
+  const left = first.childrenByName!.values;
+  const right = second.childrenByName!.values;
   const selected = left.behavior.declareChildren(left);
   right.behavior.declareChildren(right);
   expect(left.behavior.declareChildren(left)).toBe(selected);
@@ -55,8 +55,8 @@ it('keeps count and shape memos independent for two trees sharing one blueprint'
   expect(Reflect.get(first.runtime, 'objectShapes')).not.toBe(
     Reflect.get(second.runtime, 'objectShapes'),
   );
-  expect(first.local).toEqual({ values: ['a'], sibling: 'x' });
-  expect(second.local).toEqual({ values: ['b', 'c'], sibling: 'y' });
+  expect(first.storedValue).toEqual({ values: ['a'], sibling: 'x' });
+  expect(second.storedValue).toEqual({ values: ['b', 'c'], sibling: 'y' });
 });
 
 it('drops recomputable stores on form reset and disposal, preserving partial-reset stores', () => {
@@ -70,7 +70,7 @@ it('drops recomputable stores on form reset and disposal, preserving partial-res
     Reflect.set(root.runtime, name, memo);
     memo.set(sentinel, {});
   }
-  resetFieldNodeSubtree(root.structure!.sibling, WriteOption.Overwrite);
+  resetFieldNodeSubtree(root.childrenByName!.sibling, WriteOption.Overwrite);
   for (const name of stores)
     expect(Reflect.get(root.runtime, name)!.has(sentinel)).toBe(true);
   const runtime = root.runtime;

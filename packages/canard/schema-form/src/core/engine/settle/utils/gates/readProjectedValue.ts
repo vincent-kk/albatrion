@@ -9,18 +9,18 @@ import { getGateRegistry } from './getGateRegistry';
 
 /**
  * Read a publication only after its changed source has been calculated.
- * @param node - Record whose emission is requested
+ * @param node - Record whose output value is requested
  * @param context - Source changes and calculated records for this settlement
- * @returns Published emission, or undefined while its changed source is pending
+ * @returns Published output value, or undefined while its changed source is pending
  */
-const projectedEmission = <Self extends FieldNodeRecord<Self>>(
+const projectedOutputValue = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): unknown =>
-  node.emit === undefined ||
+  node.storedOutputValue === undefined ||
   (context.changedSource.has(node.path) && !context.changedNodes.has(node))
     ? undefined
-    : node.emit;
+    : node.storedOutputValue;
 
 /**
  * Read a path only from the current projected value and undeclared extras.
@@ -34,17 +34,21 @@ export const readProjectedValue = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   let node: Self = context.root;
   if (!path) flushPendingOutput(node, context);
-  let value = projectedEmission(node, context);
+  let value = projectedOutputValue(node, context);
   if (!path) return value;
   let atNode = true;
-  const segments = node.runtime.blueprint.capabilities.branchless
+  const segments = node.runtime.blueprint.capabilities.isBranchless
     ? getCachedPointerSegments(node.runtime, path)
     : getGateRegistry(node.runtime).pathSegments(path);
   for (let index = 0; index < segments.length; index++) {
     const name = segments[index];
     if (typeof name !== 'string') return undefined;
     if (!atNode) {
-      if (value === null || typeof value !== 'object' || !hasOwnProperty(value, name))
+      if (
+        value === null ||
+        typeof value !== 'object' ||
+        !hasOwnProperty(value, name)
+      )
         return undefined;
       value = Reflect.get(value, name);
       continue;
@@ -54,7 +58,7 @@ export const readProjectedValue = <Self extends FieldNodeRecord<Self>>(
       node.source !== undefined &&
       flushPendingOutput(node, context)
     )
-      value = projectedEmission(node, context);
+      value = projectedOutputValue(node, context);
     if (
       node.behavior.strategy === 'branch' &&
       node.source !== undefined &&
@@ -64,22 +68,22 @@ export const readProjectedValue = <Self extends FieldNodeRecord<Self>>(
         !hasOwnProperty(value, name))
     )
       return undefined;
-    const structure = node.structure;
-    const child = structure
+    const childrenByName = node.childrenByName;
+    const child = childrenByName
       ? node.behavior.type !== 'array' &&
-        Object.getPrototypeOf(structure) === null
-        ? structure[name]
-        : hasOwnProperty(structure, name)
-          ? structure[name]
+        Object.getPrototypeOf(childrenByName) === null
+        ? childrenByName[name]
+        : hasOwnProperty(childrenByName, name)
+          ? childrenByName[name]
           : undefined
       : undefined;
     if (child) {
       node = child;
       atNode = true;
-      value = projectedEmission(node, context);
+      value = projectedOutputValue(node, context);
     } else {
       if (flushPendingOutput(node, context))
-        value = projectedEmission(node, context);
+        value = projectedOutputValue(node, context);
       atNode = false;
       if (
         value !== null &&
@@ -101,6 +105,6 @@ export const readProjectedValue = <Self extends FieldNodeRecord<Self>>(
     }
   }
   if (atNode && flushPendingOutput(node, context))
-    value = projectedEmission(node, context);
+    value = projectedOutputValue(node, context);
   return value;
 };

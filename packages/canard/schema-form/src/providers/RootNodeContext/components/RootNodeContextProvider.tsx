@@ -107,7 +107,7 @@ export const RootNodeContextProvider = ({
   const reportedMapError = useRef<SchemaFormError>(undefined);
   if (reporter) {
     reporter.root = load.root;
-    reporter.pendingLoad = () => flushRootLoad(load, true);
+    reporter.drainPendingLoad = () => flushRootLoad(load, true);
   }
   const pending = useRef<
     Optional<{
@@ -212,7 +212,7 @@ export const RootNodeContextProvider = ({
         root: store.load.root,
         error: errorVisibilityError,
         records: [],
-        prepared: true,
+        isPrepared: true,
         reporter,
       });
     reportedPolicyError.current = errorVisibilityError;
@@ -226,7 +226,7 @@ export const RootNodeContextProvider = ({
         root: store.load.root,
         error: inputMapError,
         records: [],
-        prepared: true,
+        isPrepared: true,
         reporter,
       });
     reportedMapError.current = inputMapError;
@@ -236,7 +236,7 @@ export const RootNodeContextProvider = ({
       !store.load.root &&
       (store.load.props.errorVisibilityError || store.load.props.inputMapError)
     ) {
-      store.load.retired = true;
+      store.load.isRetired = true;
       reporter?.beginLoad();
       store.load = createRootLoad(committed.current, reporter);
       binding.current.root = store.load.root;
@@ -260,17 +260,17 @@ export const RootNodeContextProvider = ({
     const validator = load.props.validator;
     const authored = load.props.jsonSchema;
     if (root && validator) retainValidationRoot(validator, authored);
-    if (!load.prepared) {
+    if (!load.isPrepared) {
       if (store.load === load) {
         store.unsubscribe();
         store.unsubscribe = subscribeRootLoad(load, store);
-        load.prepared = true;
+        load.isPrepared = true;
         flushRootLoad(load);
         if (root) {
           applyFormErrors(root, load.props.errors, undefined, 'load');
           scheduleLoadValidation(load, store);
         }
-      } else load.prepared = true;
+      } else load.isPrepared = true;
     }
     return () => {
       if (root && validator) releaseValidationRoot(validator, authored);

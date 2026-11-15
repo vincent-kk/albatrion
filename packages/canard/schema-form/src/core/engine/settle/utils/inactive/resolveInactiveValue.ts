@@ -29,7 +29,8 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
   let outer = exit;
   for (
     let ancestor = exit.parent;
-    ancestor?.parent && ancestor.parent.structure?.[ancestor.name] !== ancestor;
+    ancestor?.parent &&
+    ancestor.parent.childrenByName?.[ancestor.name] !== ancestor;
     ancestor = ancestor.parent
   )
     outer = ancestor;
@@ -52,7 +53,7 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
   if (clear) return;
   const inputs = getInactiveValueContext(node, context);
   const value = getLoadValue(
-    context.previousEmit,
+    context.previousOutputValue,
     inputs.dataPath,
     getSlotPathNames(node.runtime, inputs.dataPath),
   );
@@ -71,7 +72,7 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
         context,
         ordinal++,
       );
-      failed ||= resolved.failed;
+      failed ||= resolved.hasFailed;
       if (resolved.value !== undefined) result = resolved.value;
     }
   if (failed) return;
@@ -84,7 +85,7 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
       context,
       ordinal,
     );
-    if (resolved.failed) return;
+    if (resolved.hasFailed) return;
     result = resolved.value;
   }
   if (result !== undefined)

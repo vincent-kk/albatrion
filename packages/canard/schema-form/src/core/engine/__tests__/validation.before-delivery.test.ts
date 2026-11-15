@@ -26,7 +26,7 @@ it('IR-6 W3 pending precedes the first synchronous value subscriber', async () =
     new Set([
       (event: FieldNodeDelivery) => {
         if (event.type & FieldNodeEventType.UpdateValue)
-          reads.push(root.rootNode.runtime.validationPending ?? false);
+          reads.push(root.rootNode.runtime.isValidationPending ?? false);
       },
     ]),
   );
@@ -34,7 +34,7 @@ it('IR-6 W3 pending precedes the first synchronous value subscriber', async () =
   expect(reads).toEqual([true]);
   clock.frame();
   await clock.task();
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
 });
 
 it('IR-6 W3 a delivery that cancels the automatic request releases its early hold', () => {
@@ -51,7 +51,7 @@ it('IR-6 W3 a delivery that cancels the automatic request releases its early hol
     new Set([
       (event: FieldNodeDelivery) => {
         if (event.type & FieldNodeEventType.UpdateValue) {
-          reads.push(root.rootNode.runtime.validationPending ?? false);
+          reads.push(root.rootNode.runtime.isValidationPending ?? false);
           runtime.validationMode = ValidationMode.None;
         }
       },
@@ -59,7 +59,7 @@ it('IR-6 W3 a delivery that cancels the automatic request releases its early hol
   );
   dispatchSetValue(root, 'new');
   expect(reads).toEqual([true]);
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
   expect(runtime.validationCadence).toBeUndefined();
 });
 
@@ -76,15 +76,18 @@ it('IR-6 W3 a reverting chain does not release an earlier queued request', async
     root,
     new Set([
       (event: FieldNodeDelivery) => {
-        if (event.type & FieldNodeEventType.UpdateValue && root.emit === 'b')
+        if (
+          event.type & FieldNodeEventType.UpdateValue &&
+          root.storedOutputValue === 'b'
+        )
           dispatchSetValue(root, 'a');
       },
     ]),
   );
   dispatchSetValue(root, 'b');
-  expect(root.emit).toBe('a');
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(true);
+  expect(root.storedOutputValue).toBe('a');
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(true);
   clock.frame();
   await clock.task();
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
 });

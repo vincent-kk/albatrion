@@ -35,5 +35,5 @@ export const releaseSettlementScratch = <Self>(
   if (scratch.changedNodes.size) scratch.changedNodes.clear();
   if (scratch.stateDirtyNodes.size) scratch.stateDirtyNodes.clear();
   if (scratch.originalSchemas.size) scratch.originalSchemas.clear();
-  scratch.inUse = false;
+  scratch.isInUse = false;
 };

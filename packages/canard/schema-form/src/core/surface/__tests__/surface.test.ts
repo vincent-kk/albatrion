@@ -35,7 +35,7 @@ describe('FieldNode PR-2 surface', () => {
       { name: 'schemaType', kind: 'getter' },
       { name: 'jsonSchema', kind: 'getter' },
       { name: 'isRequired', kind: 'getter' },
-      { name: 'nullable', kind: 'getter' },
+      { name: 'isNullable', kind: 'getter' },
       { name: 'depth', kind: 'getter' },
       { name: 'isRoot', kind: 'getter' },
       { name: 'rootNode', kind: 'getter' },

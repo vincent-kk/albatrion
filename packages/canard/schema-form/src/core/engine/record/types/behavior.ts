@@ -49,18 +49,18 @@ export interface Behavior<Self = unknown> {
     children: readonly Node[],
     recalculated?: readonly Node[],
     hint?: {
-      /** Set by the row when it compared only recalculated or appended slots, or truncated its previous local. */
-      incremental: boolean;
+      /** Set by the row when it compared only recalculated or appended slots, or truncated its previous stored value. */
+      isIncremental: boolean;
       /** Previous item count when settlement holds a valid append proof for this host. */
-      append?: number;
+      previousItemCount?: number;
       /** Remaining item count when settlement holds a valid pop proof for this host. */
-      truncate?: number;
+      remainingItemCount?: number;
     },
   ): unknown;
-  /** Project a local value into the outgoing value. */
+  /** Project a stored value into the output value. */
   project<Node extends Self>(
     node: FieldNodeRecord<Node>,
-    local: unknown,
+    value: unknown,
   ): unknown;
   /** Return a completed input string, or undefined when there is no write. */
   finishInput<Node extends Self>(node: FieldNodeRecord<Node>): Optional<string>;

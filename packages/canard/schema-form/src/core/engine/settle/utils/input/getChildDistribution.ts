@@ -4,7 +4,7 @@ import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { Distribution, FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
-import { isWithinReplacePaths } from './isWithinReplacePaths';
+import { isWithinReplacementPaths } from './isWithinReplacementPaths';
 
 /**
  * Read a child input without redistributing a restored candidate-owned array slot.
@@ -21,8 +21,8 @@ export const getChildDistribution = <Self extends FieldNodeRecord<Self>>(
   path?: string,
 ): Optional<Distribution> => {
   if (
-    context.replacePaths !== undefined &&
-    !isWithinReplacePaths(context, path ?? appendSegment(host.path, name))
+    context.replacementPaths !== undefined &&
+    !isWithinReplacementPaths(context, path ?? appendSegment(host.path, name))
   )
     return undefined;
   const distribution = context.distributedInputs.get(host);

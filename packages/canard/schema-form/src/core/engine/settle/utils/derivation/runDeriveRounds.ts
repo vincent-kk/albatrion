@@ -40,14 +40,15 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const state = getDeriveState(context);
   if (!state || context.exceededBudget) return;
-  const previousTransition = context.inTransition;
+  const previousTransition = context.isInTransition;
   try {
     while (true) {
       state.sourcePaths = context.loadScope
         ? undefined
         : collectDeriveSourcePaths(context);
       const decision = evaluateDeriveRound(context.root, state);
-      if (state.trace) (context.traceRounds ??= []).push([...decision.trace]);
+      if (state.isTraceEnabled)
+        (context.traceRounds ??= []).push([...decision.trace]);
       for (const failure of decision.failures) {
         recordSettlementFailure(
           context,
@@ -85,7 +86,7 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
         if (
           !write.target ||
           write.target.blueprintNode.kind === 'virtual' ||
-          !sameValue(write.target.emit, write.value)
+          !sameValue(write.target.storedOutputValue, write.value)
         )
           changed.push(write);
       }
@@ -106,9 +107,9 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
         return;
       }
       context.deriveRounds = (context.deriveRounds ?? 0) + 1;
-      context.automaticChanged = false;
-      context.automatic = true;
-      context.inTransition = true;
+      context.hasAutomaticChanged = false;
+      context.isAutomatic = true;
+      context.isInTransition = true;
       const terminalTargets = DeriveConvergenceTargets.getOrCollect(
         context.root.runtime.blueprint,
       );
@@ -124,7 +125,7 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
           maxLite(state.appliedRanks.get(write.targetPath) ?? 0, write.rank),
         );
       }
-      context.automatic = false;
+      context.isAutomatic = false;
       registerRecalculation(context);
       context.hostWheelExceeded = undefined;
       computeNode(context.root, context);
@@ -144,7 +145,7 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
       }
       if (context.exceededBudget) return;
       if (skipConfirmation) {
-        if (engineModes.deriveShadow) {
+        if (engineModes.isDeriveShadowEnabled) {
           state.sourcePaths = context.loadScope
             ? undefined
             : collectDeriveSourcePaths(context);
@@ -157,12 +158,12 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
               'Derive convergence proof failed: confirmation was not empty',
             );
         }
-        if (state.trace) (context.traceRounds ??= []).push([]);
+        if (state.isTraceEnabled) (context.traceRounds ??= []).push([]);
         return;
       }
     }
   } finally {
-    context.automatic = false;
-    context.inTransition = previousTransition;
+    context.isAutomatic = false;
+    context.isInTransition = previousTransition;
   }
 };

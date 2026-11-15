@@ -248,7 +248,7 @@ describe('round9 PR-3 derive regression', () => {
   it('r9.mjs:178 SETTLE-011 commits the caller base on budget failure', () => {
     expect(budgetTree().outputValue).toEqual({ a: 0, b: 0 });
   });
-  it('r9.mjs:179 SETTLE-011 emit agrees with committed source', () => {
+  it('r9.mjs:179 SETTLE-011 output value agrees with committed source', () => {
     const root = budgetTree();
     expect(root.outputValue).toEqual({
       a: root.find('/a')?.source,

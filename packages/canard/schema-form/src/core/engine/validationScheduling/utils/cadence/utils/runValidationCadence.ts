@@ -15,15 +15,15 @@ export const runValidationCadence = (
   onRun: Fn<[fallback: boolean]>,
   fallback: boolean,
 ): void => {
-  if (state.cancelled) return;
+  if (state.isCancelled) return;
   state.cancelPending = undefined;
   const startedAt = state.now();
-  state.requested = false;
+  state.isRequested = false;
   state.phase = fallback ? 'idle' : 'watch';
   try {
     if (state.run()) state.lastRun = startedAt;
   } finally {
-    if (!state.cancelled && state.phase === 'watch')
+    if (!state.isCancelled && state.phase === 'watch')
       scheduleValidationCadenceFrame(state, onFrame, onRun);
   }
 };

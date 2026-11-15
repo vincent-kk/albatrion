@@ -10,7 +10,7 @@ import { isMember } from '../isMember';
 const spec = (kinds: UnionSpec['kinds'], nullable = false): UnionSpec => ({
   kinds,
   mask: 0,
-  nullable,
+  isNullable: nullable,
 });
 
 describe('parse conversion table', () => {

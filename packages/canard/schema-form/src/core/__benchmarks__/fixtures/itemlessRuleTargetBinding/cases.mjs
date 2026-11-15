@@ -309,7 +309,7 @@ const cases = [
           defaultValue: { source: 1, list: [1] },
         });
         engine.mountFieldNode(tree);
-        const list = tree.structure.list,
+        const list = tree.childrenByName.list,
           old = list.children[0],
           getter =
             options.negative === 'wrong-module' && label === 'source'
@@ -321,7 +321,7 @@ const cases = [
           );
         assert.equal(typeof oldID, 'number');
         engine.dispatchRemove(list, 0);
-        assert.equal(old.detached, true);
+        assert.equal(old.isDetached, true);
         assert.equal(getter(old), oldID);
         engine.dispatchPush(list, 9);
         const current = list.children[0],

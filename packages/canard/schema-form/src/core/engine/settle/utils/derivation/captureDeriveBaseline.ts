@@ -17,7 +17,7 @@ export const captureDeriveBaseline = <Self extends FieldNodeRecord<Self>>(
   evaluateDeriveRound(context.root, {
     ...state,
     loadScope: undefined,
-    suppressAutomaticWrites: true,
-    trace: false,
+    isAutomaticWriteSuppressed: true,
+    isTraceEnabled: false,
   });
 };

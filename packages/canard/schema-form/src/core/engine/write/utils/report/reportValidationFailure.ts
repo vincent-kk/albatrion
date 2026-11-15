@@ -14,17 +14,17 @@ export const reportValidationFailure = (
   runtime: Pick<
     FieldNodeRuntime<unknown>,
     | 'errorReporter'
-    | 'reportingErrors'
-    | 'pendingSettings'
+    | 'isReportingErrors'
+    | 'applyPendingSettings'
     | 'entryDepth'
     | 'chainRoot'
-    | 'flushingQueuedEvents'
+    | 'isFlushingQueuedEvents'
   >,
   failure: unknown,
 ): void => {
   if (runtime.errorReporter?.hasConsumer()) {
-    const wasReporting = runtime.reportingErrors;
-    runtime.reportingErrors = true;
+    const wasReporting = runtime.isReportingErrors;
+    runtime.isReportingErrors = true;
     try {
       runtime.errorReporter.report({
         level: 'error',
@@ -39,7 +39,7 @@ export const reportValidationFailure = (
     } catch (reporterFailure) {
       reportOwnerlessFailure(reporterFailure);
     } finally {
-      runtime.reportingErrors = wasReporting;
+      runtime.isReportingErrors = wasReporting;
     }
   }
   try {

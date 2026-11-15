@@ -36,7 +36,7 @@ export const readAbsentSlotSource = <Self extends FieldNodeRecord<Self>>(
   const distribution = getChildDistribution(host, name, context, path);
   if (
     distribution &&
-    !distribution.automatic &&
+    !distribution.isAutomatic &&
     hasDistributedChildInput(distribution.input, name, true)
   ) {
     const input = isArray(distribution.input)

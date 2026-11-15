@@ -31,7 +31,7 @@ describe('H2 non-wheel reference preservation', () => {
       dispatchMount(root, {}, WriteOption.Overwrite, {
         deferValidation: true,
       });
-      const leaf = root.structure!['pad_' + (count - 1)];
+      const leaf = root.childrenByName!['pad_' + (count - 1)];
       dispatchSetValue(leaf, -2);
       const compare = vi.spyOn(comparisons, 'sameValue');
       const keys = vi.spyOn(Object, 'keys');
@@ -48,7 +48,7 @@ describe('H2 non-wheel reference preservation', () => {
       keys.mockRestore();
       compare.mockRestore();
       console.info('H2_WORK', JSON.stringify({ count, calls, wholeKeys }));
-      expect(Reflect.get(Object(root.emit), leaf.name)).toBe(-1);
+      expect(Reflect.get(Object(root.storedOutputValue), leaf.name)).toBe(-1);
       expect(calls).toBeLessThanOrEqual(3);
       // Module spies miss sameValue's local recursion; key enumeration exposes that work.
       expect(wholeKeys).toBe(0);
@@ -94,8 +94,8 @@ describe('H2 non-wheel reference preservation', () => {
       WriteOption.Overwrite,
       { deferValidation: true },
     );
-    const outer = root.structure!.outer;
-    const group = outer.structure!.group;
+    const outer = root.childrenByName!.outer;
+    const group = outer.childrenByName!.group;
     const before = [outer, group].map((node) => ({
       node,
       value: Reflect.get(node, 'value'),
@@ -105,11 +105,11 @@ describe('H2 non-wheel reference preservation', () => {
       isActive: node.isActive,
       revision: node.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0,
     }));
-    const previousOther = root.structure!.other.local;
+    const previousOther = root.childrenByName!.other.storedValue;
 
-    dispatchSetValue(group.structure!.value, 1);
+    dispatchSetValue(group.childrenByName!.value, 1);
 
-    expect(root.structure!.other.local).not.toBe(previousOther);
+    expect(root.childrenByName!.other.storedValue).not.toBe(previousOther);
     for (const previous of before) {
       const node = previous.node;
       expect(Reflect.get(node, 'value')).toBe(previous.value);
@@ -121,7 +121,11 @@ describe('H2 non-wheel reference preservation', () => {
         previous.revision,
       );
     }
-    expect(Reflect.get(Object(root.local), 'outer')).toBe(outer.emit);
-    expect(Reflect.get(Object(outer.local), 'group')).toBe(group.emit);
+    expect(Reflect.get(Object(root.storedValue), 'outer')).toBe(
+      outer.storedOutputValue,
+    );
+    expect(Reflect.get(Object(outer.storedValue), 'group')).toBe(
+      group.storedOutputValue,
+    );
   });
 });

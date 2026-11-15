@@ -23,5 +23,5 @@ export interface GateSelectionRound {
   /** Hoisted scalar tag paths whose proven constraint-only schema can become dirty. */
   stableSchemaPaths: readonly string[];
   /** Whether dirty marks still belong to this round. */
-  active: boolean;
+  isActive: boolean;
 }

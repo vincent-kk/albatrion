@@ -23,13 +23,17 @@ export const captureAbsentSlotInputs = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): Optional<InactiveSlotOverlay> => {
   const distribution = context.distributedInputs.get(node);
-  if (!distribution || distribution.automatic || distribution.preserveLatent)
+  if (
+    !distribution ||
+    distribution.isAutomatic ||
+    distribution.shouldPreserveLatent
+  )
     return undefined;
   let children: Optional<Map<BlueprintChildEntry, InactiveSlotOverlay>>;
   const array = node.behavior.type === 'array';
   const packed = (overlay: InactiveSlotOverlay): InactiveSlotOverlay => ({
     ...overlay,
-    packedArrayInput: true,
+    isPackedArrayInput: true,
     ...(overlay.children
       ? {
           children: new Map(
@@ -42,7 +46,7 @@ export const captureAbsentSlotInputs = <Self extends FieldNodeRecord<Self>>(
       : undefined),
   });
   for (const name of Object.keys(distribution.input ?? {})) {
-    if (node.structure?.[name]) continue;
+    if (node.childrenByName?.[name]) continue;
     const current = getChildDistribution(node, name, context);
     if (!current || !hasDistributedChildInput(current.input, name, array))
       continue;
@@ -56,7 +60,7 @@ export const captureAbsentSlotInputs = <Self extends FieldNodeRecord<Self>>(
       Reflect.get(current.input, name),
       prior.instance,
       prior.overlay,
-      current.whole,
+      current.isWhole,
     );
     (children ??= new Map()).set(
       entry,

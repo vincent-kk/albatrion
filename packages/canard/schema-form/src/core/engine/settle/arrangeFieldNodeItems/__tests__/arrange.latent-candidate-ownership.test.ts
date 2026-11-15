@@ -40,11 +40,13 @@ describe('tuple source-slot candidate ownership', () => {
       root.runtime.disableAutomaticWrites = true;
       dispatchInsert(list, 0, {});
       const moved = getDispatchNode(list, '1');
-      expect(instance.detached).toBe(true);
+      expect(instance.isDetached).toBe(true);
       expect(moved).not.toBe(instance);
       expect(getDispatchNode(moved, ...names).source).toBe(37);
-      expect(moved.local).toEqual(depth === 1 ? { v: 37 } : { box: { v: 37 } });
-      expect(moved.emit).toEqual(moved.local);
+      expect(moved.storedValue).toEqual(
+        depth === 1 ? { v: 37 } : { box: { v: 37 } },
+      );
+      expect(moved.storedOutputValue).toEqual(moved.storedValue);
     },
   );
 
@@ -126,7 +128,7 @@ describe('tuple source-slot candidate ownership', () => {
 
       if (operation === 'insert') dispatchInsert(list, 0, {});
       else dispatchRemove(list, 0);
-      expect(original.detached).toBe(true);
+      expect(original.isDetached).toBe(true);
       expect(getDispatchNode(list, String(destination))).not.toBe(original);
       expect(readRetainedSlotSource(root, `/list/${destination}/v`, kind)).toBe(
         value,
@@ -140,12 +142,12 @@ describe('tuple source-slot candidate ownership', () => {
       expect(getDispatchNode(list, String(destination), 'v').source).toBe(
         value,
       );
-      expect(list.local).toEqual(
+      expect(list.storedValue).toEqual(
         operation === 'insert'
           ? [{}, { v: value }, { v: value }]
           : [{ v: value }],
       );
-      expect(list.emit).toEqual(list.local);
+      expect(list.storedOutputValue).toEqual(list.storedValue);
       expect(root.runtime.loadSnapshot).toMatchObject({
         list:
           operation === 'insert'
@@ -211,9 +213,9 @@ describe('tuple source-slot candidate ownership', () => {
       root.runtime.disableAutomaticWrites = true;
       dispatchPush(list, {});
       dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-      expect(list.local).toEqual([{}]);
+      expect(list.storedValue).toEqual([{}]);
       dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-      expect(list.local).toEqual([{}]);
+      expect(list.storedValue).toEqual([{}]);
     },
   );
 });

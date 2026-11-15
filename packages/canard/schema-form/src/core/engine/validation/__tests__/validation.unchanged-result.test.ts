@@ -80,7 +80,7 @@ describe('207C-01 deep-equal root results keep references and send no error wave
     );
     dispatchMount(root, { name: 'a' });
     runtime.validationMode = ValidationMode.OnChange;
-    const name = root.structure!.name!;
+    const name = root.childrenByName!.name!;
     dispatchSetValue(name, 'b');
     await settle();
     const globalErrors = runtime.globalErrors;
@@ -104,7 +104,7 @@ describe('207C-01 deep-equal root results keep references and send no error wave
     );
     dispatchMount(root, { name: 'a' });
     runtime.validationMode = ValidationMode.OnChange;
-    const name = root.structure!.name!;
+    const name = root.childrenByName!.name!;
     dispatchSetValue(name, 'b');
     await settle();
     const globalErrors = runtime.globalErrors;
@@ -124,7 +124,7 @@ describe('207C-01 deep-equal root results keep references and send no error wave
     );
     dispatchMount(root, { name: 'a' });
     runtime.validationMode = ValidationMode.OnChange;
-    const name = root.structure!.name!;
+    const name = root.childrenByName!.name!;
     dispatchSetExternalErrors(name, [{ dataPath: '/name', message: 'taken' }]);
     dispatchSetValue(name, 'b');
     await settle();
@@ -170,7 +170,7 @@ describe('207C-01 deep-equal root results keep references and send no error wave
     );
     dispatchMount(root, { name: 'a' });
     await dispatchValidate(root);
-    const name = root.structure!.name!;
+    const name = root.childrenByName!.name!;
     requestFieldNodeValidation(name, () => undefined);
     await settle();
     const globalErrors = runtime.globalErrors;
@@ -190,13 +190,13 @@ describe('207C-01 deep-equal root results keep references and send no error wave
     );
     dispatchMount(root, ['a', 'b']);
     await dispatchValidate(root);
-    const removed = root.structure![0]!;
-    const successor = root.structure![1]!;
+    const removed = root.childrenByName![0]!;
+    const successor = root.childrenByName![1]!;
     expect(readFieldNodeErrors(removed)).toHaveLength(1);
     dispatchRemove(root, 0);
     const successorBits = recordErrorBits(successor);
     await dispatchValidate(root);
-    expect(root.structure![0]).toBe(successor);
+    expect(root.childrenByName![0]).toBe(successor);
     expect(
       readFieldNodeErrors(successor).map((issue) => issue.message),
     ).toEqual(['bad first item']);
@@ -225,11 +225,11 @@ describe('207C-01 deep-equal root results keep references and send no error wave
     );
     dispatchMount(root, { kind: 'x', value: 'a' });
     await dispatchValidate(root);
-    const value = root.structure!.value!;
+    const value = root.childrenByName!.value!;
     expect(readFieldNodeErrors(value)).toHaveLength(1);
-    dispatchSetValue(root.structure!.kind!, 'y');
+    dispatchSetValue(root.childrenByName!.kind!, 'y');
     await dispatchValidate(root);
-    expect(root.structure!.value).toBe(value);
+    expect(root.childrenByName!.value).toBe(value);
     expect(readFieldNodeErrors(value)).toEqual([]);
   });
 });

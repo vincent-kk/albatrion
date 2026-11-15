@@ -20,7 +20,7 @@ export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
   for (const owner of context.contextOwners ?? []) paths.add(owner);
   const dependencies = getDependencyIndex(context.root.runtime.blueprint);
   for (const changed of context.changedSource) {
-    for (const owner of dependencies.affected(changed, context.root))
+    for (const owner of dependencies.affectedOwners(changed, context.root))
       paths.add(owner);
     let path = changed;
     while (true) {

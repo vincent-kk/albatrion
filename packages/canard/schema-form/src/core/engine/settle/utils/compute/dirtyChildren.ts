@@ -10,7 +10,7 @@ import { DirtyPathSet } from '../scratch/DirtyPathSet';
 
 /**
  * Resolve only scheduled direct children instead of scanning a host's shape.
- * @param node - Branch host with the current name-to-child structure
+ * @param node - Branch host with the current `childrenByName` map
  * @param context - Absolute dirty paths for this write
  * @returns Each live direct child on a dirty path once
  */
@@ -25,8 +25,8 @@ export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
     const name = parsePointerSegment(encoded);
     if (typeof name !== 'string') continue;
     const child =
-      node.structure && hasOwnProperty(node.structure, name)
-        ? node.structure[name]
+      node.childrenByName && hasOwnProperty(node.childrenByName, name)
+        ? node.childrenByName[name]
         : undefined;
     if (child && !(seen ? seen.has(child) : children.indexOf(child) !== -1)) {
       if (

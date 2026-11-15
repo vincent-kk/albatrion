@@ -38,7 +38,7 @@ export const prepareArraySplice = <Self extends FieldNodeRecord<Self>>(
     !admitsStaticArrayTail(node)
   )
     return undefined;
-  const items = node.structure;
+  const items = node.childrenByName;
   const children = node.children;
   for (let position = index; position < count; position++) {
     const item = items?.[String(position)];
@@ -60,7 +60,7 @@ export const prepareArraySplice = <Self extends FieldNodeRecord<Self>>(
         slots: EMPTY_ARRAY,
         result: { source: 'removed', index },
       },
-      valid: true,
+      isValid: true,
     };
   const entry = getItemEntry(template, index);
   if (!entry || entry.node.kind === 'virtual' || !entry.declarations.length)
@@ -69,7 +69,7 @@ export const prepareArraySplice = <Self extends FieldNodeRecord<Self>>(
     mode: 'runtime',
     isAtomic: node.runtime.blueprint.isAtomic,
   });
-  if (schema.typeConflict) return undefined;
+  if (schema.hasTypeConflict) return undefined;
   return {
     host: node,
     count,
@@ -81,6 +81,6 @@ export const prepareArraySplice = <Self extends FieldNodeRecord<Self>>(
       slots: [{ value: operation.value }],
       result: LENGTH_RESULT,
     },
-    valid: true,
+    isValid: true,
   };
 };

@@ -24,7 +24,7 @@ export const expireOccupiedSlotMemos = <Self extends FieldNodeRecord<Self>>(
     expireOccupiedSlotMemos(
       child.instance,
       child.overlay,
-      live.structure?.[entry.name],
+      live.childrenByName?.[entry.name],
     );
   }
 };

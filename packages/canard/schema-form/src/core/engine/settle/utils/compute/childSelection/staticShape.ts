@@ -70,7 +70,7 @@ export const staticShape = (
       hasOwnProperty(selected, entry.name) ||
       entry.node.kind === 'virtual' ||
       !entry.declarations.length ||
-      schema.typeConflict ||
+      schema.hasTypeConflict ||
       hasGate
     ) {
       continue;

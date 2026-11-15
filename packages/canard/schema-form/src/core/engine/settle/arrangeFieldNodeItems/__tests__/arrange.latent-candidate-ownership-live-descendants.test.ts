@@ -70,12 +70,12 @@ it.each([
       kind: 'number',
       list: operation === 'insert' ? [{}, value] : [value],
     };
-    expect(root.local).toEqual(expected);
-    expect(root.emit).toEqual(expected);
+    expect(root.storedValue).toEqual(expected);
+    expect(root.storedOutputValue).toEqual(expected);
     expect(
       events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
     ).toMatchObject({
-      current: { local: expected, emit: expected },
+      current: { value: expected, outputValue: expected },
     });
     await dispatchValidate(root);
     expect(inputs.at(-1)).toEqual(expected);

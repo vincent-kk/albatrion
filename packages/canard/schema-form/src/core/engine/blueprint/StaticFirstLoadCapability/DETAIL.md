@@ -6,7 +6,7 @@
 
 ## API Contracts
 
-has는 내부 staticFirstLoadEligible만 읽으며 사실이 없는 입력은 false입니다. 공개 노드 필드나 별도 등록 저장소를 추가하지 않습니다. 자격의 증명과 별도의 fixedFirstLoadPlan은 [부모](../DETAIL.md)의 계약을 따릅니다.
+has는 내부 isStaticFirstLoadEligible만 읽으며 사실이 없는 입력은 false입니다. 공개 노드 필드나 별도 등록 저장소를 추가하지 않습니다. 자격의 증명과 별도의 fixedFirstLoadPlan은 [부모](../DETAIL.md)의 계약을 따릅니다.
 
 ## Acceptance Criteria
 

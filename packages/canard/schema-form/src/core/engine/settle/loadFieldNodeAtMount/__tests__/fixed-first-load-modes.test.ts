@@ -36,7 +36,7 @@ it.each([
     engineModes.setMode('gatePredicate', predicate);
     engineModes.setMode('gateSelection', selection);
     engineModes.setMode('gateWheel', wheel);
-    engineModes.setMode('deriveShadow', derive);
+    engineModes.setMode('isDeriveShadowEnabled', derive);
     try {
       const actual = observeFixedFirstLoad(schema, { dispatch: true });
       const oracle = observeFixedFirstLoad(schema, {
@@ -45,14 +45,22 @@ it.each([
       });
       expect(actual.snapshot()).toEqual(oracle.snapshot());
       expect(actual.prepared).toBe(admitted);
-      dispatchSetValue(actual.root.structure!.kind, 'b', WriteOption.Overwrite);
-      dispatchSetValue(oracle.root.structure!.kind, 'b', WriteOption.Overwrite);
+      dispatchSetValue(
+        actual.root.childrenByName!.kind,
+        'b',
+        WriteOption.Overwrite,
+      );
+      dispatchSetValue(
+        oracle.root.childrenByName!.kind,
+        'b',
+        WriteOption.Overwrite,
+      );
       expect(actual.snapshot()).toEqual(oracle.snapshot());
     } finally {
       engineModes.setMode('gatePredicate', 'on');
       engineModes.setMode('gateSelection', 'table');
       engineModes.setMode('gateWheel', 'skip');
-      engineModes.setMode('deriveShadow', false);
+      engineModes.setMode('isDeriveShadowEnabled', false);
     }
   },
 );

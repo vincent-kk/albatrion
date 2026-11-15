@@ -103,7 +103,7 @@ describe('static push through the append path matches the general path', () => {
         { apply: (root) => dispatchPush(root, 'b'), append: true },
       ],
     );
-    expect(candidate.local).toEqual(['a', 'b']);
+    expect(candidate.storedValue).toEqual(['a', 'b']);
   });
 
   it('creates nested object items eagerly and fills only their missing literal defaults', () => {
@@ -136,7 +136,9 @@ describe('static push through the append path matches the general path', () => {
         { apply: (root) => dispatchPush(root, {}), append: true },
       ],
     );
-    expect(candidate.children![1].structure!.nested.children).toHaveLength(1);
+    expect(candidate.children![1].childrenByName!.nested.children).toHaveLength(
+      1,
+    );
   });
 
   it('appends to a non-root array without changing its sibling', () => {
@@ -151,17 +153,20 @@ describe('static push through the append path matches the general path', () => {
       { rows: [1, 2], sibling: 'same' },
       [
         {
-          apply: (root) => dispatchPush(root.structure!.rows, 3),
+          apply: (root) => dispatchPush(root.childrenByName!.rows, 3),
           append: true,
         },
         {
-          apply: (root) => dispatchPush(root.structure!.rows, 4),
+          apply: (root) => dispatchPush(root.childrenByName!.rows, 4),
           append: true,
         },
       ],
-      (root) => root.structure!.rows,
+      (root) => root.childrenByName!.rows,
     );
-    expect(candidate.emit).toEqual({ rows: [1, 2, 3, 4], sibling: 'same' });
+    expect(candidate.storedOutputValue).toEqual({
+      rows: [1, 2, 3, 4],
+      sibling: 'same',
+    });
   });
 
   it('keeps load-snapshot defaults and reset sources across pushes, a remove and a reset', () => {
@@ -196,7 +201,7 @@ describe('static push through the append path matches the general path', () => {
           { apply: (root) => dispatchPush(root, count + 1), append: true },
         ],
       );
-      expect(candidate.local).toHaveLength(count + 2);
+      expect(candidate.storedValue).toHaveLength(count + 2);
     },
   );
 });

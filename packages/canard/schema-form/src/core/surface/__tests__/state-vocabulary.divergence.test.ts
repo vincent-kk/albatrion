@@ -115,7 +115,7 @@ describe('state-vocabulary output divergence', () => {
     root.find('/1')?.setValue('filled hole');
     expect(root.find('/1')?.isDivergent).toBe(true);
   });
-  it('a moved array item invalidates its memo even when its own emit is unchanged', () => {
+  it('a moved array item invalidates its memo even when its own output value is unchanged', () => {
     const root = makeVocabularyTree(
       { type: 'array', items: { type: 'string' } },
       ['a', 'b', 'c'],

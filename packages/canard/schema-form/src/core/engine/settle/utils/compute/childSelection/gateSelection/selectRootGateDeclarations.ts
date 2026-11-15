@@ -22,7 +22,7 @@ export const selectRootGateDeclarations = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): Optional<BlueprintNode['declarations'][number][]> => {
   const round = context.gateSelectionRounds?.get(node);
-  const root = round?.active ? round.table.root : undefined;
+  const root = round?.isActive ? round.table.root : undefined;
   if (!round || !root) return undefined;
   let selected: readonly number[] = root.ungatedIndices;
   for (const group of root.groups)

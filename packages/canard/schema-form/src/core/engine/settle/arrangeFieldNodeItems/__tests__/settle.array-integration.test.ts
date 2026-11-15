@@ -94,7 +94,7 @@ describe('array integration runtime stores', () => {
       node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     const item = root.children![1];
-    const leaf = item.structure!.n;
+    const leaf = item.childrenByName!.n;
     const scratch = getSettlementScratch(root.runtime);
     try {
       const context = createSettlementContext(
@@ -140,7 +140,7 @@ describe('array integration runtime stores', () => {
         WriteOption.Overwrite,
       );
       const item = root.children![kind === 'pop' ? 1 : 0];
-      const leaf = item.structure!.n;
+      const leaf = item.childrenByName!.n;
       item.interactionState = { touched: true };
       leaf.interactionState = { edited: true };
       const deltas = new Map<string, number>();
@@ -176,7 +176,7 @@ describe('array integration runtime stores', () => {
       WriteOption.Overwrite,
     );
     const item = root.children![0];
-    const leaf = item.structure!.n;
+    const leaf = item.childrenByName!.n;
     const runtime = root.runtime;
     for (const node of [item, leaf]) {
       (runtime.nodeErrors ??= new Map()).set(node, [{ dataPath: node.path }]);
@@ -190,7 +190,7 @@ describe('array integration runtime stores', () => {
       (runtime.queuedNonSettleEvents ??= new Set()).add(node);
       node.pendingNonSettleDelivery = { type: 1 };
       (runtime.revisionNodes ??= new Set()).add(node);
-      node.pendingRevision = 1;
+      node.pendingRevisionMask = 1;
       runtime.deliveries!.add(node);
       node.pendingDelivery = { type: 1 };
     }
@@ -205,7 +205,7 @@ describe('array integration runtime stores', () => {
       expect(runtime.deliveryWatchIndex?.allNodes.has(node)).toBe(false);
       expect(runtime.deliveries?.has(node)).toBe(false);
       expect(runtime.revisionNodes?.has(node)).toBe(false);
-      expect(node.pendingRevision).toBe(0);
+      expect(node.pendingRevisionMask).toBe(0);
       expect(runtime.queuedNonSettleEvents?.has(node)).toBe(false);
       expect(runtime.nodeErrors?.has(node)).toBe(false);
       expect(runtime.validationErrors?.has(node)).toBe(false);

@@ -175,7 +175,7 @@ describe('cold blueprint child declaration binding', () => {
             hostPath: '/first"\\\t',
             evaluationReads: [],
             condition: {},
-            negated: true,
+            isNegated: true,
             appliesWhen: [owner, { ...owner, schemaPath: 'c' }, owner],
           };
           const collision = {
@@ -195,7 +195,7 @@ describe('cold blueprint child declaration binding', () => {
                   gate,
                   collision,
                   gate,
-                  { ...gate, negated: false },
+                  { ...gate, isNegated: false },
                   { ...gate, appliesWhen: [] },
                 ],
               },

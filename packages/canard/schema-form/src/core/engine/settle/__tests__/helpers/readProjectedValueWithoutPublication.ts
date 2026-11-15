@@ -18,12 +18,12 @@ export const readProjectedValueWithoutPublication = <
   path: string,
 ): unknown => {
   let node = context.root;
-  const emission = (record: Self): unknown =>
-    record.emit === undefined ||
+  const readOutputValue = (record: Self): unknown =>
+    record.storedOutputValue === undefined ||
     (context.changedSource.has(record.path) &&
       !context.changedNodes.has(record))
       ? undefined
-      : record.emit;
+      : record.storedOutputValue;
   const assertPublished = (record: Self): void => {
     if (context.pendingOutputs?.has(record))
       throw new Error(
@@ -31,7 +31,7 @@ export const readProjectedValueWithoutPublication = <
       );
   };
   if (!path) assertPublished(node);
-  let value = emission(node);
+  let value = readOutputValue(node);
   if (!path) return value;
   let atNode = true;
   const encoded = path.slice(1).split('/');
@@ -49,13 +49,13 @@ export const readProjectedValueWithoutPublication = <
     )
       return undefined;
     const child =
-      node.structure && hasOwnProperty(node.structure, name)
-        ? node.structure[name]
+      node.childrenByName && hasOwnProperty(node.childrenByName, name)
+        ? node.childrenByName[name]
         : undefined;
     if (child) {
       node = child;
       atNode = true;
-      value = emission(node);
+      value = readOutputValue(node);
       continue;
     }
     assertPublished(node);

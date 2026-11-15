@@ -19,10 +19,10 @@ export const getRuleTargets = <Self extends FieldNodeRecord<Self>>(
   rule: DeriveRule,
   state: DeriveState<Self>,
 ): readonly Self[] => {
-  if (rule.targetName === undefined && !rule.targetItems) return [source];
-  const children = source.structure;
+  if (rule.targetName === undefined && !rule.isItemTarget) return [source];
+  const children = source.childrenByName;
   // A repeated array template addresses every live item; declaration selection filters below.
-  const targets = rule.targetItems
+  const targets = rule.isItemTarget
     ? (source.children ?? EMPTY_ARRAY)
     : children &&
         rule.targetName !== undefined &&
@@ -31,7 +31,7 @@ export const getRuleTargets = <Self extends FieldNodeRecord<Self>>(
       : EMPTY_ARRAY;
 
   return filterArray(targets, (target) => {
-    if (target.detached) return false;
+    if (target.isDetached) return false;
     if (rule.layer !== 'fragment' || !rule.targetDeclarationIds) return true;
     for (const id of rule.targetDeclarationIds)
       if (getSelectedDeclarationIds(target, state).indexOf(id) !== -1)

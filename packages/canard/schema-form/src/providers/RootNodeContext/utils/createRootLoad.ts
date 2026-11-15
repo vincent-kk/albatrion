@@ -24,7 +24,7 @@ export const createRootLoad = (
   const load: RootLoad = {
     props,
     records: [],
-    prepared: false,
+    isPrepared: false,
     reporter,
     warningScope: reporter?.warningScope,
   };
@@ -41,11 +41,11 @@ export const createRootLoad = (
       isAtomic: isRenderAtomic,
       errorReporter: {
         hasConsumer: () =>
-          !load.retired &&
+          !load.isRetired &&
           (reporter?.hasConsumer() ?? process.env.NODE_ENV !== 'production'),
         report: (record) => {
-          if (load.retired) return;
-          if (load.prepared) {
+          if (load.isRetired) return;
+          if (load.isPrepared) {
             if (reporter && load.root) reporter.root = load.root;
             reporter?.report(record);
           } else {
@@ -58,10 +58,10 @@ export const createRootLoad = (
         },
       },
       onChange: (value) => {
-        if (load.prepared && !load.retired) load.props.onChange?.(value);
+        if (load.isPrepared && !load.isRetired) load.props.onChange?.(value);
       },
       onStateChange: () => {
-        if (load.prepared && !load.retired && load.root)
+        if (load.isPrepared && !load.isRetired && load.root)
           load.props.onStateChange?.(load.root.globalState);
       },
     });

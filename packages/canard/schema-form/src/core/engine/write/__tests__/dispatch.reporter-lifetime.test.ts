@@ -52,7 +52,7 @@ it.each([
     tree.runtime.validationMode = ValidationMode.OnChange;
     tree.runtime.validationCadence = { request() {}, cancel() {} };
     dispatchSetValue(tree.root, 'pending');
-    expect(tree.runtime.validationPending).toBe(true);
+    expect(tree.runtime.isValidationPending).toBe(true);
     const released = vi.fn(() => {
       if (channel === 'cleanup callbacks') throw new Error('release callback');
     });
@@ -74,7 +74,7 @@ it.each([
       if (channel === 'cleanup callbacks') throw new Error('settings callback');
     });
     const unsubscribe = subscribeFieldNode(tree.root, () => {
-      tree.runtime.pendingSettings = applied;
+      tree.runtime.applyPendingSettings = applied;
       if (channel === 'record delivery') throw new Error('recorded listener');
       armed = true;
       if (channel === 'listener') throw new Error('listener');
@@ -93,7 +93,7 @@ it.each([
       failure,
     );
     expect(report).not.toHaveBeenCalled();
-    expect(tree.runtime.validationPending).toBe(false);
+    expect(tree.runtime.isValidationPending).toBe(false);
     expect(released).toHaveBeenCalledTimes(1);
     expect(applied).toHaveBeenCalledTimes(1);
     unsubscribe();
@@ -135,7 +135,7 @@ it.each(['listener', 'onStateChange', 'onChange'])(
     if (channel === 'onChange') tree.runtime.onChange = nested;
     if (channel === 'onStateChange') {
       tree.runtime.onStateChange = nested;
-      tree.runtime.stateChanged = true;
+      tree.runtime.hasStateChanged = true;
     }
     expect(() => dispatchSetValue(tree.root, 'next')).toThrow(failure);
     expect(report).not.toHaveBeenCalled();
@@ -166,7 +166,7 @@ it.each([1, 2])(
       }),
     ).toThrow(failure);
     expect(report).not.toHaveBeenCalled();
-    expect(previous.root.disposed).toBe(true);
+    expect(previous.root.isDisposed).toBe(true);
     expect(active.runtime.entryDepth).toBe(0);
     expectRecovery(active, report);
   },
@@ -224,6 +224,6 @@ it('cleans up a standalone collector on an owner adopted during its wave', () =>
   expect(() => dispatchSetState(previous.root, { touched: true })).toThrow(
     failure,
   );
-  expect(previous.root.disposed).toBe(true);
+  expect(previous.root.isDisposed).toBe(true);
   expectRecovery(next, report);
 });

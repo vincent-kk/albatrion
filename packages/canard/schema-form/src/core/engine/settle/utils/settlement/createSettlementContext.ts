@@ -33,24 +33,24 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
     (option & WriteOption.DisableAutomaticWrites) !== BIT_MASK_NONE;
   const enable = (option & WriteOption.EnableAutomaticWrites) !== BIT_MASK_NONE;
   const hasSplitRegistration =
-    !blueprint.capabilities.branchless &&
+    !blueprint.capabilities.isBranchless &&
     prepareGateSelection(blueprint, kind !== FieldNodeWriteKind.Load);
   const context: SettlementContext<Self> = {
     root,
-    previousEmit: root.emit,
+    previousOutputValue: root.storedOutputValue,
     previousContext: runtime.context,
     target: node,
     kind,
     option,
     hasGates:
-      !blueprint.capabilities.branchless && getTransitionCap(blueprint) > 1,
+      !blueprint.capabilities.isBranchless && getTransitionCap(blueprint) > 1,
     virtualReferenceIndex: StaticFirstLoadCapability.has(blueprint)
       ? null
       : getVirtualReferenceIndex(blueprint),
-    suppressAutomaticWrites:
+    isAutomaticWriteSuppressed:
       disable || (!enable && runtime.disableAutomaticWrites === true),
     loadScope: kind === FieldNodeWriteKind.Load ? node : undefined,
-    replaceScope: replaces ? node : undefined,
+    replacementScope: replaces ? node : undefined,
     entered: scratch.entered,
     revived: scratch.revived,
     exited: scratch.exited,
@@ -67,9 +67,9 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
     arrayCounts: scratch.arrayCounts,
     pathChanges: scratch.pathChanges,
     filledNodes: scratch.filledNodes,
-    inTransition: false,
-    automatic: false,
-    automaticChanged: false,
+    isInTransition: false,
+    isAutomatic: false,
+    hasAutomaticChanged: false,
     dirtyPaths: scratch.dirtyPaths,
     dirtyChildrenByParent: scratch.dirtyChildrenByParent,
     dependencyOwnerPaths: scratch.dependencyOwnerPaths,

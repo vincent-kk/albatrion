@@ -24,7 +24,7 @@ describe('blueprint gated and declaration-only types', () => {
       expect(node).toMatchObject({
         kind,
         schemaType,
-        nullable: false,
+        isNullable: false,
         strategy: 'terminal',
       });
       expect(
@@ -61,7 +61,7 @@ describe('blueprint gated and declaration-only types', () => {
     ]);
     expect(
       root.childEntries.map(
-        (edge) => edge.node.declarations[0].gates[0].negated,
+        (edge) => edge.node.declarations[0].gates[0].isNegated,
       ),
     ).toEqual([false, true]);
   });
@@ -91,7 +91,7 @@ describe('blueprint gated and declaration-only types', () => {
         .filter((declaration) => declaration.gates.length)
         .map((declaration) => declaration.id),
     );
-    expect(effective.typeConflict).toBe(true);
+    expect(effective.hasTypeConflict).toBe(true);
     expect(effective.schema).not.toHaveProperty('enum');
   });
 
@@ -116,7 +116,7 @@ describe('blueprint gated and declaration-only types', () => {
         .filter((declaration) => declaration.gates.length)
         .map((declaration) => declaration.id),
     );
-    expect(effective.typeConflict).toBe(true);
+    expect(effective.hasTypeConflict).toBe(true);
     expect(effective.schema).toMatchObject({ nullable: true });
     expect(effective.schema).not.toHaveProperty('enum');
   });
@@ -160,7 +160,7 @@ describe('blueprint gated and declaration-only types', () => {
     expect(node).toMatchObject({
       kind: 'number',
       schemaType: 'number',
-      nullable: true,
+      isNullable: true,
     });
   });
   it('E40 exposes the retained conflict as a result signal, never as enum empty', () => {
@@ -182,11 +182,11 @@ describe('blueprint gated and declaration-only types', () => {
       .filter((declaration) => declaration.gates.length)
       .map((declaration) => declaration.id);
     const effective = mergeEffectiveSchema(node, gated);
-    expect(effective.typeConflict).toBe(true);
+    expect(effective.hasTypeConflict).toBe(true);
     expect(effective.schema).not.toHaveProperty('enum');
     expect(effective.schema).toMatchObject({ type: node.schemaType });
     expect(mergeEffectiveSchema(node, gated)).toBe(effective);
-    expect(mergeEffectiveSchema(node, [gated[0]]).typeConflict).toBe(false);
+    expect(mergeEffectiveSchema(node, [gated[0]]).hasTypeConflict).toBe(false);
     expect(node).toMatchObject({ kind: 'union', strategy: 'terminal' });
   });
 

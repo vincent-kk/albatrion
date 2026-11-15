@@ -48,16 +48,16 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
   const prepared = prepareStaticHost(node, prior, context, hasRelocated);
   if (prepared) {
     (context.presenceSelections ??= new Map()).set(node, {
-      structure: prior,
+      childrenByName: prior,
       names: prepared.dynamicNames,
     });
     (context.preparedStaticPriorNames ??= new Map()).set(
       node,
       prepared.dynamicNames,
     );
-    if (prepared.selectedStructure === prior)
+    if (prepared.selectedChildrenByName === prior)
       prepared.selectedChildren = node.children ?? [];
-    node.structure = prepared.baseline;
+    node.childrenByName = prepared.baseline;
     node.children = captureFieldNodeChange(
       node,
       'children',
@@ -167,10 +167,10 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
       context.changedNodes.add(child);
     }
     child.isActive = captureFieldNodeChange(child, 'isActive', true);
-    child.detached = false;
+    child.isDetached = false;
     baseline[entry.name] = child;
   }
-  node.structure = baseline;
+  node.childrenByName = baseline;
   const children = Object.values(baseline);
   const published = node.children;
   node.children = captureFieldNodeChange(

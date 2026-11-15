@@ -22,7 +22,7 @@ export const buildFixedFirstLoadPlan = (
 ): FixedFirstLoadPlan | undefined => {
   const capabilities = blueprint.capabilities;
   if (
-    capabilities.branchless ||
+    capabilities.isBranchless ||
     !finiteLiteral ||
     capabilities.hasExpressions ||
     capabilities.hasDerive ||

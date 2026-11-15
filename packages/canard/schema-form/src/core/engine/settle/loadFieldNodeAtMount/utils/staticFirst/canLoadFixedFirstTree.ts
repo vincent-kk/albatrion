@@ -13,13 +13,13 @@ export const canLoadFixedFirstTree = <Self extends FieldNodeRecord<Self>>(
 ): boolean =>
   value === undefined &&
   root.parent === null &&
-  !root.disposed &&
-  !root.detached &&
-  !root.deliveryInitialized &&
+  !root.isDisposed &&
+  !root.isDetached &&
+  !root.isDeliveryInitialized &&
   !root.runtime.commitNumber &&
   !root.children?.length &&
   !root.pendingDelivery &&
-  !root.pendingRevision &&
+  !root.pendingRevisionMask &&
   root.source === undefined &&
   root.extras === undefined &&
   !root.runtime.deliveries?.size &&
@@ -27,4 +27,4 @@ export const canLoadFixedFirstTree = <Self extends FieldNodeRecord<Self>>(
   root.runtime.blueprint.fixedFirstLoadPlan !== undefined &&
   engineModes.gateSelection !== 'verify' &&
   engineModes.gateWheel !== 'shadow' &&
-  !engineModes.deriveShadow;
+  !engineModes.isDeriveShadowEnabled;

@@ -15,7 +15,7 @@ export interface InactiveSlotValueMemo {
 /** Source-channel patch owned by a host rather than its detached instance. */
 export interface InactiveSlotOverlay {
   /** Discard unspecified channels and descendants instead of inheriting them. */
-  readonly replace?: boolean;
+  readonly isWhole?: boolean;
   /** An own property distinguishes an explicit clear from no source override. */
   readonly source?: unknown;
   /** An own property distinguishes cleared extras from inherited extras. */
@@ -25,7 +25,7 @@ export interface InactiveSlotOverlay {
   /** Array positions retained even when no declared item has a source. */
   readonly itemCount?: number;
   /** Descendant input patches belong only to the packed array's own value. */
-  readonly packedArrayInput?: boolean;
+  readonly isPackedArrayInput?: boolean;
   /** Last published item; allocated only by an inactive-value read. */
   valueMemo?: InactiveSlotValueMemo;
 }

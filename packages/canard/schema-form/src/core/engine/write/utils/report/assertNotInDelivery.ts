@@ -8,9 +8,9 @@ import type { FieldNodeRuntime } from '../../../record';
  * @throws FormErrorCode.WriteInObserver before the write can join a chain
  */
 export const assertNotInDelivery = (
-  runtime: Pick<FieldNodeRuntime<unknown>, 'reportingErrors'>,
+  runtime: Pick<FieldNodeRuntime<unknown>, 'isReportingErrors'>,
 ): void => {
-  if (runtime.reportingErrors)
+  if (runtime.isReportingErrors)
     throw new SchemaFormError(
       FormErrorCode.WriteInObserver,
       'A form cannot be written while its error observer is running',

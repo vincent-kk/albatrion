@@ -16,7 +16,7 @@ export const getSlotPathNames = (
   path: string,
 ): Optional<readonly string[]> => {
   const segments =
-    runtime.blueprint && !runtime.blueprint.capabilities.branchless
+    runtime.blueprint && !runtime.blueprint.capabilities.isBranchless
       ? getDependencyIndex(runtime.blueprint).pathSegments(path, runtime)
       : getCachedPointerSegments(runtime, path);
   return isNamedPointerSegments(segments) ? segments : undefined;

@@ -15,7 +15,7 @@ export const getGateExpression = (
   blueprint: Blueprint,
   schemaPath: string,
 ): Optional<BlueprintExpression> => {
-  if (blueprint.capabilities.branchless) return undefined;
+  if (blueprint.capabilities.isBranchless) return undefined;
   let expressions = getBlueprintDerived<
     'gateExpressions',
     ReadonlyMap<string, BlueprintExpression>

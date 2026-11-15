@@ -39,7 +39,7 @@ describe('dispatcher commands', () => {
 
     expect(seen).toEqual([FieldNodeEventType.RequestRemount]);
     expect(root.source).toBeUndefined();
-    expect(root.emit).toBeUndefined();
+    expect(root.storedOutputValue).toBeUndefined();
     expect(runtime.commitNumber).toBe(before);
     expect(runtime.entryDepth).toBe(0);
     expect(readFieldNodeRevision(root, FieldNodeEventType.RequestRemount)).toBe(
@@ -81,7 +81,7 @@ describe('dispatcher commands', () => {
 
   it('NODE-044 ignores commands to a detached occurrence', () => {
     const { root } = createDispatchTree({ type: 'string' });
-    root.detached = true;
+    root.isDetached = true;
     const seen = vi.fn();
     subscribeFieldNode(root, seen);
     dispatchRequest(root, FieldNodeRequestType.Focus);
@@ -90,7 +90,7 @@ describe('dispatcher commands', () => {
 
   it('ERROR-029 refuses commands while the error observer is active', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
-    runtime.reportingErrors = true;
+    runtime.isReportingErrors = true;
     expect(() =>
       dispatchRequest(root, FieldNodeRequestType.Focus),
     ).toThrowError(

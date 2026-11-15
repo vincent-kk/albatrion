@@ -18,10 +18,10 @@ describe('validator cache', () => {
     expect(readValidationEntry(first, root)).toBe(entry);
     expect(entry.copy).not.toBe(root);
     expect(compile).not.toHaveBeenCalled();
-    expect(entry.compiled).toBe(false);
+    expect(entry.isCompiled).toBe(false);
     compileValidationEntry(first, root, entry);
     compileValidationEntry(first, root, entry);
-    expect(entry.compiled).toBe(true);
+    expect(entry.isCompiled).toBe(true);
     expect(compile).toHaveBeenCalledTimes(1);
     expect(compile).toHaveBeenCalledWith(entry.copy);
     expect(readValidationEntry(first, { ...root })).not.toBe(entry);

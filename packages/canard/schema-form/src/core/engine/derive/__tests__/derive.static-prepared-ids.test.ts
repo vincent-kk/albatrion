@@ -24,12 +24,12 @@ it('prefers current selections, then static witnesses, then the committed fallba
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   writeFieldNode(
-    root.structure!.kind,
+    root.childrenByName!.kind,
     true,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
-  const fixed = root.structure!.fixed;
+  const fixed = root.childrenByName!.fixed;
   const selected = new Map<typeof fixed, readonly number[]>();
   const state = {
     ...createFragmentLoadState(root),

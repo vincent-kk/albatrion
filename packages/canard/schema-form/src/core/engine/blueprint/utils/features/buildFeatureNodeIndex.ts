@@ -65,7 +65,10 @@ export const buildFeatureNodeIndex = (
       });
     let owners: Optional<readonly ReadonlySet<string>[]>;
     for (const declaration of node.declarations) {
-      if (declaration.validationOnly || typeof declaration.schema !== 'object')
+      if (
+        declaration.isValidationOnly ||
+        typeof declaration.schema !== 'object'
+      )
         continue;
       const schema = declaration.schema;
       const controls = readValidatedControls(schema);
@@ -95,7 +98,7 @@ export const buildFeatureNodeIndex = (
     for (const child of children)
       for (const declaration of child.declarations) {
         if (
-          declaration.validationOnly ||
+          declaration.isValidationOnly ||
           declaration.scope !== 'node' ||
           typeof declaration.schema !== 'object'
         )

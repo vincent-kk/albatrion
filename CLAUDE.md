@@ -42,7 +42,7 @@ Declarative rules. `filid_module-documents`, `filid_verification-records` and `s
 | `seiri_*` | `agent-legible`, `code-comments`, `context-efficiency`, `function-boundaries`, `naming`, `public-contract`, `reuse-first`, `structure`, `test-validity` |
 | `filid_*` | `code-placement`, `fractal-boundaries`, `module-documents`, `verification-records`                                                                      |
 
-Precedence: repository instructions (this document, `DOCUMENTATION.md`, per-package CLAUDE.md) > repository conventions > the rules above.
+Precedence: repository instructions (this document, `DOCUMENTATION.md`, `NAMING_CONVENTIONS.md`, per-package CLAUDE.md) > repository conventions > the rules above.
 
 ### Skills — `.claude/skills/`
 
@@ -79,6 +79,10 @@ Owner principles for every package that has adopted FCA (directories with `INTEN
 
 @DOCUMENTATION.md
 
+## 🏷️ Naming
+
+[`NAMING_CONVENTIONS.md`](NAMING_CONVENTIONS.md) decides the part of speech of member names in every package: verbs for methods (a pure query may name its result), nouns for values, `is` for state booleans and prefix-less adjectives for input vocabulary. Read it before you name, rename or review a member.
+
 ## 📏 Repository Requirements
 
 - For arrays with fewer than 5,000 elements, prefer direct array operations for one-off work. Avoid constructing a `Set` only to inspect its size or perform a single lookup. Use a `Set` when repeated membership operations reuse the index enough to amortize construction. Verify performance-sensitive choices with measurements.
@@ -111,7 +115,7 @@ When working on this monorepo:
 2. Check the specific package's CLAUDE.md for detailed guidance
 3. Use yarn workspace commands for package-specific operations
 4. Run lint, typecheck and tests for the workspaces you changed (`yarn workspace <name> <script>`, with `--run` for Vitest), and reproduce CI with the affected-workspace procedure under Important Commands
-5. Follow the project structure and naming conventions
+5. Follow the project structure and [`NAMING_CONVENTIONS.md`](NAMING_CONVENTIONS.md)
 6. Record releases as the change records section of `DOCUMENTATION.md` describes, and publish as `scripts/PUBLISHING.md` describes; `yarn changeset:version` needs a `GITHUB_TOKEN`
 7. Before adding a root file or an `index.ts` export, name its consumer outside the fractal (see Module Contract Principles)
 

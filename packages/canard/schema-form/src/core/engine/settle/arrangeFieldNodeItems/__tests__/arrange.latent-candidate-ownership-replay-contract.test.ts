@@ -69,8 +69,8 @@ it.each([
   else dispatchRemove(root, 0);
   const moved = getDispatchNode(root, fixture.destinationIndex);
   if (scene.mode !== 'terminal-null') {
-    expect(moved.local).toEqual(fixture.expectedMoved);
-    expect(moved.emit).toEqual(fixture.expectedMoved);
+    expect(moved.storedValue).toEqual(fixture.expectedMoved);
+    expect(moved.storedOutputValue).toEqual(fixture.expectedMoved);
   }
   if (
     scene.mode === 'object-terminal' ||
@@ -78,12 +78,12 @@ it.each([
     scene.mode === 'array-terminal'
   )
     expect(moved.source).toEqual(fixture.expectedMoved);
-  expect(root.local).toEqual(fixture.expected);
-  expect(root.emit).toEqual(fixture.expected);
+  expect(root.storedValue).toEqual(fixture.expected);
+  expect(root.storedOutputValue).toEqual(fixture.expected);
   expect(
     events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
   ).toMatchObject({
-    current: { local: fixture.expected, emit: fixture.expected },
+    current: { value: fixture.expected, outputValue: fixture.expected },
   });
   await dispatchValidate(root);
   expect(validationInputs.at(-1)).toEqual(fixture.expected);
@@ -96,11 +96,11 @@ it.each([
     const expected =
       scene.operation === 'insert' ? [{}, expectedMoved] : [expectedMoved];
     expect(getDispatchNode(moved, 'v').source).toBe(123);
-    expect(root.local).toEqual(expected);
-    expect(root.emit).toEqual(expected);
+    expect(root.storedValue).toEqual(expected);
+    expect(root.storedOutputValue).toEqual(expected);
     expect(
       events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
-    ).toMatchObject({ current: { local: expected, emit: expected } });
+    ).toMatchObject({ current: { value: expected, outputValue: expected } });
     await dispatchValidate(root);
     expect(validationInputs.at(-1)).toEqual(expected);
   }

@@ -43,7 +43,7 @@ describe('interpreted child static specs', () => {
       } finally {
         query.mockRestore();
       }
-      expect(root.emit).toEqual(expected);
+      expect(root.storedOutputValue).toEqual(expected);
       expect(
         root.children!.every((child, index) => child === children[index]),
       ).toBe(true);

@@ -24,20 +24,20 @@ describe('settled value rule layers', () => {
       },
     });
     loadFieldNodeAtMount(root, { source: 'first' }, WriteOption.Overwrite);
-    expect([root.structure?.a?.source, root.structure?.b?.source]).toEqual([
-      'first',
-      'first',
-    ]);
+    expect([
+      root.childrenByName?.a?.source,
+      root.childrenByName?.b?.source,
+    ]).toEqual(['first', 'first']);
     writeFieldNode(
-      root.structure!['source'],
+      root.childrenByName!['source'],
       'second',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect([root.structure?.a?.source, root.structure?.b?.source]).toEqual([
-      'second',
-      'second',
-    ]);
+    expect([
+      root.childrenByName?.a?.source,
+      root.childrenByName?.b?.source,
+    ]).toEqual(['second', 'second']);
   });
 
   it('CONTROLS-077 fragment derived reaches direct children only', () => {
@@ -61,8 +61,8 @@ describe('settled value rule layers', () => {
       { source: 'from-source' },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.inside?.source).toBe('from-source');
-    expect(root.structure?.outside?.source).toBeUndefined();
+    expect(root.childrenByName?.inside?.source).toBe('from-source');
+    expect(root.childrenByName?.outside?.source).toBeUndefined();
   });
 
   it('CONTROLS-073 fields derived evaluates once for all targets', () => {
@@ -77,10 +77,10 @@ describe('settled value rule layers', () => {
     root.runtime.context = { derive };
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     expect(derive).toHaveBeenCalledTimes(1);
-    expect([root.structure?.a?.source, root.structure?.b?.source]).toEqual([
-      'shared',
-      'shared',
-    ]);
+    expect([
+      root.childrenByName?.a?.source,
+      root.childrenByName?.b?.source,
+    ]).toEqual(['shared', 'shared']);
   });
 
   it('CONTROLS-073 fields unsetValue evaluates one expression for all targets', () => {
@@ -97,10 +97,10 @@ describe('settled value rule layers', () => {
     root.runtime.context = { clear };
     loadFieldNodeAtMount(root, { a: 'A', b: 'B' }, WriteOption.Overwrite);
     expect(clear).toHaveBeenCalledTimes(2);
-    expect([root.structure?.a?.source, root.structure?.b?.source]).toEqual([
-      undefined,
-      undefined,
-    ]);
+    expect([
+      root.childrenByName?.a?.source,
+      root.childrenByName?.b?.source,
+    ]).toEqual([undefined, undefined]);
   });
 
   it('CONTROLS-073 fields resetInteraction evaluates once for all targets', () => {
@@ -127,32 +127,32 @@ describe('settled value rule layers', () => {
       { trigger: false, a: 'A', b: 'B' },
       WriteOption.Overwrite,
     );
-    root.structure!.a.interactionState = {
+    root.childrenByName!.a.interactionState = {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
-    root.structure!.b.interactionState = {
+    root.childrenByName!.b.interactionState = {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
     writeFieldNode(
-      root.structure!.trigger,
+      root.childrenByName!.trigger,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(reset).toHaveBeenCalledTimes(1);
-    expect(root.structure?.a?.interactionState[FieldNodeState.Edited]).toBe(
-      false,
-    );
-    expect(root.structure?.a?.interactionState[FieldNodeState.Touched]).toBe(
-      false,
-    );
-    expect(root.structure?.b?.interactionState[FieldNodeState.Edited]).toBe(
-      false,
-    );
-    expect(root.structure?.b?.interactionState[FieldNodeState.Touched]).toBe(
-      false,
-    );
+    expect(
+      root.childrenByName?.a?.interactionState[FieldNodeState.Edited],
+    ).toBe(false);
+    expect(
+      root.childrenByName?.a?.interactionState[FieldNodeState.Touched],
+    ).toBe(false);
+    expect(
+      root.childrenByName?.b?.interactionState[FieldNodeState.Edited],
+    ).toBe(false);
+    expect(
+      root.childrenByName?.b?.interactionState[FieldNodeState.Touched],
+    ).toBe(false);
   });
 });

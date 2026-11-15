@@ -35,14 +35,14 @@ const observe = (root: PlainNode) => {
   const pending = [root];
   while (pending.length) {
     const node = pending.pop()!;
-    expect(node.local).toBe(node.local);
+    expect(node.storedValue).toBe(node.storedValue);
     expect(node.children).toBe(node.children);
     nodes.push({
       path: node.path,
       source: node.source,
       extras: node.extras,
-      local: node.local,
-      emit: node.emit,
+      value: node.storedValue,
+      outputValue: node.storedOutputValue,
       isRequired: node.isRequired,
       isActive: node.isActive,
       isVisible: node.isVisible,
@@ -51,7 +51,7 @@ const observe = (root: PlainNode) => {
       state: node.interactionState,
       revisions: { ...node.revisionLedger },
       delivery: node.pendingDelivery,
-      initialized: node.deliveryInitialized,
+      initialized: node.isDeliveryInitialized,
       itemKey: node.itemKey,
     });
     const children = node.children;
@@ -108,7 +108,7 @@ const compare = (
   expect(observe(actual)).toEqual(observe(oracle));
   expect(actual.runtime.commitNumber).toBe(1);
   for (const node of actual.runtime.deliveries ?? []) {
-    expect(node.deliveryInitialized).toBe(true);
+    expect(node.isDeliveryInitialized).toBe(true);
     expect(node.revisionLedger[FieldNodeEventType.RequestRefresh]).toBe(1);
   }
   return { actual, oracle, actualError, eligible };
@@ -126,22 +126,22 @@ it('matches flat defaults, integer and escaped names, required and subsequent wr
       '~tail': { type: 'string' },
     },
   });
-  const sibling = actual.structure!['2'];
+  const sibling = actual.childrenByName!['2'];
   for (const value of ['b', 'a', 'a']) {
     writeFieldNode(
-      actual.structure!['a/b'],
+      actual.childrenByName!['a/b'],
       value,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      oracle.structure!['a/b'],
+      oracle.childrenByName!['a/b'],
       value,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(observe(actual)).toEqual(observe(oracle));
-    expect(actual.structure!['2']).toBe(sibling);
+    expect(actual.childrenByName!['2']).toBe(sibling);
   }
 });
 
@@ -186,7 +186,7 @@ it.each([0, 1, 1000])('matches array defaults with %i items', (count) => {
   expect(actualError).toBeUndefined();
   expect(eligible).toBe(!genericFirstLoad);
   expect(actual.runtime.diagnostics).toEqual({ status: 'stable' });
-  expect(actual.emit).toEqual(
+  expect(actual.storedOutputValue).toEqual(
     count === 0
       ? {}
       : {
@@ -269,8 +269,8 @@ it('finishes every revision before any queued delivery can be observed', () => {
   const nodes = [...(actual.runtime.deliveries ?? [])];
   for (const _delivery of nodes)
     for (const node of nodes) {
-      expect(node.deliveryInitialized).toBe(true);
-      expect(node.pendingRevision).toBe(0);
+      expect(node.isDeliveryInitialized).toBe(true);
+      expect(node.pendingRevisionMask).toBe(0);
       expect(node.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(1);
     }
 });
@@ -309,8 +309,10 @@ it('matches a literal null container default without filling its children', () =
     },
   });
   expect(eligible).toBe(!genericFirstLoad);
-  expect(actual.emit).toEqual({ account: null });
-  expect(actual.structure?.account?.structure?.kind?.source).toBeUndefined();
+  expect(actual.storedOutputValue).toEqual({ account: null });
+  expect(
+    actual.childrenByName?.account?.childrenByName?.kind?.source,
+  ).toBeUndefined();
 });
 
 it('matches literal null and wrong-kind defaults with ordered warning records', () => {
@@ -393,7 +395,7 @@ it('does not expose intermediate values to a synchronous reporter during first l
   const observed: unknown[] = [];
   const report = vi.fn(() =>
     observed.push({
-      value: root.local,
+      value: root.storedValue,
       commit: root.runtime.commitNumber,
       revisions: root.revisionLedger,
     }),
@@ -404,7 +406,7 @@ it('does not expose intermediate values to a synchronous reporter during first l
   expect(report).not.toHaveBeenCalled();
   expect(warning).not.toHaveBeenCalled();
   expect(observed).toEqual([]);
-  expect(root.local).toEqual({ group: { mismatch: 'bad' }, tail: 2 });
+  expect(root.storedValue).toEqual({ group: { mismatch: 'bad' }, tail: 2 });
   expect(
     [...(root.runtime.pendingWarningRecords?.values() ?? [])].map(
       (record) => record.path,
@@ -434,8 +436,8 @@ it('delivers the same listener payloads after all nodes and global state are fin
         const pending = root.runtime.commitNumber === 1 ? [root] : [];
         while (pending.length) {
           const current = pending.pop()!;
-          expect(current.deliveryInitialized).toBe(true);
-          expect(current.pendingRevision).toBe(0);
+          expect(current.isDeliveryInitialized).toBe(true);
+          expect(current.pendingRevisionMask).toBe(0);
           expect(
             current.revisionLedger[FieldNodeEventType.RequestRefresh],
           ).toBe(1);
@@ -468,7 +470,7 @@ it('delivers the same listener payloads after all nodes and global state are fin
     forceStaticGeneric?.mockRestore();
     for (const value of ['again', 'leaf', 'leaf'])
       dispatchSetValue(
-        root.structure!.nested.structure!.leaf,
+        root.childrenByName!.nested.childrenByName!.leaf,
         value,
         WriteOption.Overwrite,
       );

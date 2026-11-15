@@ -33,7 +33,7 @@ interface FieldNodeWatchDeliveryIndex {
   /** Forget an occurrence that left the shape or lost its watch list. */
   remove(node: unknown): void;
   /** Add watchers of path ancestors and descendants to the candidate set. */
-  affected(path: string, candidates: Set<unknown>): void;
+  collectAffected(path: string, candidates: Set<unknown>): void;
 }
 
 /** Settlement health for the most recent or first degraded commit. */
@@ -83,7 +83,7 @@ export interface MisfitRecord {
   readonly path: string;
   readonly expected: {
     readonly schemaType: BlueprintSchemaType;
-    readonly nullable: boolean;
+    readonly isNullable: boolean;
     readonly effective: BlueprintSchemaType;
   };
   readonly received:
@@ -106,19 +106,19 @@ export interface Distribution {
   /** Interpreted input distributed from this host during the current write. */
   readonly input: unknown;
   /** Whether absent child names are replaced as well. */
-  readonly whole: boolean;
+  readonly isWhole: boolean;
   /** Whether this distribution was an automatic transition write. */
-  readonly automatic: boolean;
+  readonly isAutomatic: boolean;
   /** Restored array positions whose sources remain under candidate-specific latent keys. */
   readonly retainedItemNames?: readonly string[];
   /** Surviving-slot reconstruction whose stored candidates remain authoritative. */
-  readonly preserveLatent?: boolean;
+  readonly shouldPreserveLatent?: boolean;
 }
 
 /** Reusable settlement work containers bound to one tree's node type. */
 export interface SettlementScratch<Self> {
   /** Whether a synchronous settlement currently owns these containers. */
-  inUse: boolean;
+  isInUse: boolean;
   /** Occurrences that first appeared during this settlement. */
   entered: Set<Self>;
   /** Pending occurrences reused during a later host wheel. */
@@ -152,7 +152,7 @@ export interface SettlementScratch<Self> {
     previousItems: Self[];
     previousItemCount: number;
     previousExtras: unknown;
-    restored?: boolean;
+    isRestored?: boolean;
   }[];
   /** First array length observed in this settlement for snapshot alignment. */
   arrayCounts: Map<Self, number>;
@@ -180,13 +180,13 @@ export interface SettlementScratch<Self> {
   originalSchemas: Map<string, EffectiveSchema>;
 }
 
-/** Last input emission retained until the first synchronous settlement. */
+/** Last relayed input output value retained until the first synchronous settlement. */
 interface FieldNodeInputRelay<Self> {
   /** Input occurrence whose final value is checked before omitting Refresh. */
   node: Self;
-  /** Occurrence path at emission, which must still match at settlement. */
+  /** Occurrence path when the relay was recorded, which must still match at settlement. */
   path: string;
-  /** Evaluated emitted value compared by the delivery-value identity rule. */
+  /** Evaluated output value compared by the delivery-value identity rule. */
   value: unknown;
 }
 
@@ -207,7 +207,7 @@ export interface FieldNodeRuntime<Self>
   /** Nodes with revision bits marked before the commit visitor reaches them. */
   revisionNodes?: Set<Self>;
   /** Once publicly read, this tree permanently retains delivery payloads. */
-  revisionObserved?: boolean;
+  isRevisionObserved?: boolean;
   /** Unobserved bit-only transitions retained only by the current commit. */
   revisionTransitions?: WeakMap<
     object,
@@ -232,7 +232,7 @@ export interface FieldNodeRuntime<Self>
   /** Replacement root used to finish a rebuilt open entry. */
   adoptedRoot?: unknown;
   /** Emitted root reference observed before this entry. */
-  chainInitialEmit?: unknown;
+  chainInitialOutputValue?: unknown;
   /** Failures retained in occurrence order until the chain finishes. */
   chainErrors?: unknown[];
   /** Outermost chain or standalone verdict-wave operation, cleared after delivery. */
@@ -254,7 +254,7 @@ export interface FieldNodeRuntime<Self>
     readonly outer?: FieldNodeRuntime<Self>['enclosingChain'];
   };
   /** True only while this form invokes its error reporter. */
-  reportingErrors?: boolean;
+  isReportingErrors?: boolean;
   /** Schema locations supplied by a binding after reference-only reset rebuilding. */
   rebuiltReferenceSchemaPaths?: readonly string[];
   /** Per-node subscribers, allocated only for a subscribed tree. */
@@ -262,16 +262,16 @@ export interface FieldNodeRuntime<Self>
   /** Instance-bound exit resolvers; allocated only for registered nodes. */
   inactiveListeners?: Map<unknown, Set<InactiveValueResolver<unknown>>>;
   /** True only while a synchronous exit resolver is executing. */
-  resolvingInactiveValue?: boolean;
+  isResolvingInactiveValue?: boolean;
   /** Subscriber currently producing a delivery callback. */
   currentListener?: Fn<[event: FieldNodeDelivery]>;
   /** Feedback producers already stopped at this chain's wave budget. */
   feedbackBlockedListeners?: Set<Fn<[event: FieldNodeDelivery]>>;
   /** Whether this chain already recorded its feedback limit failure. */
-  feedbackLimitReported?: boolean;
+  isFeedbackLimitReported?: boolean;
   /** Number of active nested batch callbacks. */
   batchDepth?: number;
-  /** Last input emission per node, consumed by the first synchronous settlement. */
+  /** Last relayed input output value per node, consumed by the first synchronous settlement. */
   inputRelays?: FieldNodeInputRelay<Self>[];
   /** Number of active nested `visitSubtree` walks on this tree. */
   visitDepth?: number;
@@ -285,17 +285,17 @@ export interface FieldNodeRuntime<Self>
     source?: FieldNodeWriteKind.Input | FieldNodeWriteKind.Automatic;
   }[];
   /** Load defers validation until the binding's slot. */
-  deferLoadValidation?: boolean;
+  shouldDeferLoadValidation?: boolean;
   /** External errors awaiting the replacement tree's first committed shape. */
   adoptedExternalErrors?: Map<string, readonly { dataPath: string }[]>;
-  /** Reset scopes requiring validation even with an unchanged root emit. */
+  /** Reset scopes requiring validation even with an unchanged root output value. */
   validationTargets?: Set<Self>;
   /** Non-settlement events coalesced independently from commit deliveries. */
   queuedNonSettleEvents?: Set<Self>;
   /** Whether a non-settlement wave is draining, preventing listener reentry. */
-  flushingQueuedEvents?: boolean;
+  isFlushingQueuedEvents?: boolean;
   /** Whether interaction flags changed since the last outer delivery. */
-  stateChanged?: boolean;
+  hasStateChanged?: boolean;
   /** Warning identities already reported for this tree. */
   warningKeys?: Set<string>;
   /** Warnings held until the public entry commits and finishes delivery. */
@@ -307,13 +307,13 @@ export interface FieldNodeRuntime<Self>
   /** Failed guards already reported by this consuming tree. */
   reportedGuardFailures?: Set<string>;
   /** Development mount currently defers guard failures until its commit. */
-  mountingGuardPass?: boolean;
+  isInMountingGuardPass?: boolean;
   /** Host observer for structured failures and warnings. */
   errorReporter?: FormErrorReporter;
   /** Selected validation engine, narrowed by the validation layer. */
   validator?: unknown;
   /** Latest binding settings, deferred until the outer engine chain finishes. */
-  pendingSettings?: Fn;
+  applyPendingSettings?: Fn;
   /** Effective trigger lifetime, independent of root-load and value commits. */
   validationEpoch?: number;
   /** Request stamp at the latest activation; only a subsequent full request replaces its verdict. */
@@ -339,17 +339,17 @@ export interface FieldNodeRuntime<Self>
   /** Nodes whose displayed validator issues changed in the last result. */
   validationChangedNodes?: Set<Self>;
   /** True after this load discovers that whole-schema compilation failed. */
-  validationUnavailable?: boolean;
+  isValidationUnavailable?: boolean;
   /** Whether this load has reported its one whole-schema compilation failure. */
-  validationCompileReported?: boolean;
+  isValidationCompileReported?: boolean;
   /** Dispatcher-owned path for asynchronous execution and delivery failures. */
   reportValidationFailure?: Fn<[failure: unknown]>;
   /** Lazily owned domain-free automatic timing lifetime, cancelled on root disposal. */
   validationCadence?: ValidationCadence;
   /** Latest domain callback selected by the cadence without inspecting its contents. */
-  validationRun?: Fn<[], boolean>;
+  runValidation?: Fn<[], boolean>;
   /** A write-triggered verdict is still pending. */
-  validationPending?: boolean;
+  isValidationPending?: boolean;
   /** Only occurrences that currently hold a reveal baseline. */
   revealBaselineNodes?: Set<FieldNodeRecord<Self>>;
   /** Committed Form policy and its unreleased prior committed values with their generations. */
@@ -364,7 +364,7 @@ export interface FieldNodeRuntime<Self>
   /** Monotone generation shared by every node and policy history append. */
   revealBaselineGeneration?: number;
   /** A nonpending record owes a one-shot post-paint drop. */
-  revealDropOwed?: boolean;
+  isRevealDropOwed?: boolean;
   /** Identity invalidates an obsolete drop without changing the timing slot contract. */
   revealDropTask?: object;
   /** Stamp owned by the active chain's pre-delivery pending record. */
@@ -374,9 +374,9 @@ export interface FieldNodeRuntime<Self>
   /** Subtree scopes merged into the next cadence-selected validation run. */
   validationPendingTargets?: Set<Self>;
   /** Newest started cadence or root run still owing target routing; handed to its successor before supersession. */
-  validationRunning?: { stamp: number; targets: ReadonlySet<Self> };
+  activeValidationRun?: { stamp: number; targets: ReadonlySet<Self> };
   /** True after a routing replaced the routed list, until the validation wave publishes it. */
-  validationListChanged?: boolean;
+  hasValidationListChanged?: boolean;
   /** Most recent result and its commit number. */
   validationResult?: {
     readonly commit: number;

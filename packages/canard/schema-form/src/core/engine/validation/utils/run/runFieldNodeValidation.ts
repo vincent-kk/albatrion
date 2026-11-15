@@ -28,7 +28,7 @@ export const runFieldNodeValidation = async <
     const validate = assertValidationRootReady(node);
     if (!validate) return null;
     try {
-      const issues = (await validate(node.rootNode.emit)) ?? [];
+      const issues = (await validate(node.rootNode.storedOutputValue)) ?? [];
       let normalized: Optional<ValidationIssue[]>;
       for (let index = 0; index < issues.length; index++) {
         const issue = normalizeValidationIssue(issues[index]);

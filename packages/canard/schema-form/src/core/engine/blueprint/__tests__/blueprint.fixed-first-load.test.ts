@@ -24,8 +24,8 @@ it('T1 stores immutable mount-only evidence without broadening either old proof'
   expect(plan).toBeDefined();
   expect(Object.isFrozen(plan)).toBe(true);
   expect(Object.keys(result)).not.toContain('fixedFirstLoadPlan');
-  expect(result.capabilities.branchless).toBe(false);
-  expect(result.staticFirstLoadEligible).toBe(false);
+  expect(result.capabilities.isBranchless).toBe(false);
+  expect(result.isStaticFirstLoadEligible).toBe(false);
   expect(StaticFirstLoadCapability.has(result)).toBe(false);
   engineModes.setMode('gateSelection', 'off');
   expect(blueprint(schema, { cache })).toBe(result);
@@ -33,6 +33,6 @@ it('T1 stores immutable mount-only evidence without broadening either old proof'
 });
 it('T1 leaves the old branchless array route unchanged and without a new plan', () => {
   const result = blueprint({ type: 'array', items: { type: 'string' } });
-  expect(result.staticFirstLoadEligible).toBe(true);
+  expect(result.isStaticFirstLoadEligible).toBe(true);
   expect(Reflect.get(result, 'fixedFirstLoadPlan')).toBeUndefined();
 });

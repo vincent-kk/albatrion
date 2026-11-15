@@ -335,9 +335,9 @@ describe('array settlement lifecycle', () => {
       cause: 'budget',
       exceededBudget: 'transition',
     });
-    expect(root.structure?.items?.itemCount).toBe(0);
-    expect(root.structure?.items?.children).toEqual([]);
-    expect(root.structure?.items?.nextItemKey).toBeGreaterThan(0);
+    expect(root.childrenByName?.items?.itemCount).toBe(0);
+    expect(root.childrenByName?.items?.children).toEqual([]);
+    expect(root.childrenByName?.items?.nextItemKey).toBeGreaterThan(0);
   });
 
   it('35C-05 restores prior item references and extras after automatic array growth', () => {
@@ -385,9 +385,9 @@ describe('array settlement lifecycle', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const host = root.structure!.items;
+    const host = root.childrenByName!.items;
     const first = host.children![0];
-    const tuple = root.structure!.tuple;
+    const tuple = root.childrenByName!.tuple;
     const tupleFirst = tuple.children![0];
     const previousExtras = tuple.extras;
     expect(() =>

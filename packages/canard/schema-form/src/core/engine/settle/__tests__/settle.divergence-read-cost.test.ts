@@ -23,7 +23,7 @@ const getDispatchChild = (
   node: ReturnType<typeof createDispatchTree>['root'],
   name: string,
 ) => {
-  const child = node.structure?.[name];
+  const child = node.childrenByName?.[name];
   if (!child) throw new Error('Missing fixture child ' + name);
   return child;
 };
@@ -168,7 +168,7 @@ it('a second sweep of 320 branchless nodes parses no pointer segments', () => {
     Array.from({ length: 320 }, (_, i) => ['f' + i, 'v']),
   );
   const { root, runtime } = mount({ type: 'object', properties }, input);
-  expect(runtime.blueprint.capabilities.branchless).toBe(true);
+  expect(runtime.blueprint.capabilities.isBranchless).toBe(true);
   const nodes = root.children ?? [];
   expect(nodes).toHaveLength(320);
   const parse = vi.spyOn(pointers, 'parsePointerSegments');

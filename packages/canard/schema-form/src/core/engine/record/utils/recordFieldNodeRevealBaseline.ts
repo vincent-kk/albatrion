@@ -25,5 +25,5 @@ export const recordFieldNodeRevealBaseline = <Self>(
     sequence,
   });
   (runtime.revealBaselineNodes ??= new Set()).add(node);
-  if (!runtime.validationPending) runtime.revealDropOwed = true;
+  if (!runtime.isValidationPending) runtime.isRevealDropOwed = true;
 };

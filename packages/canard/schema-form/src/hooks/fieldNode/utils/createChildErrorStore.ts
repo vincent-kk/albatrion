@@ -26,7 +26,7 @@ export const createChildErrorStore = (
   const state: ChildErrorStoreState = {
     base: '',
     version: 0,
-    subscribed: false,
+    isSubscribed: false,
   };
   return {
     subscribe: (listener: Fn) =>
@@ -34,7 +34,7 @@ export const createChildErrorStore = (
         ? NOOP_FUNCTION
         : subscribeChildErrorStore(node, children, state, listener),
     getSnapshot: () => {
-      if (!state.subscribed) {
+      if (!state.isSubscribed) {
         const revision = readChildErrorSnapshot(node);
         if (revision !== state.closedRevision) return revision;
       }

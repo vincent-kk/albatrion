@@ -27,7 +27,7 @@ export const collectRetainedSlotSources = <Self extends FieldNodeRecord<Self>>(
       const child = getSlotSource(instance, entry, overlay);
       const address = path + '/' + escapeSegment(entry.name);
       const inactive =
-        retained || !!child.instance?.detached || !!child.overlay;
+        retained || !!child.instance?.isDetached || !!child.overlay;
       if (inactive)
         result.push({
           path: address,

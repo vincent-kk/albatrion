@@ -40,8 +40,8 @@ export interface WatchExitObservation {
   marks: unknown[];
   /** Listener deliveries in delivery order. */
   delivered: unknown[];
-  /** Root emitted value after the step. */
-  emit: unknown;
+  /** Root output value after the step. */
+  outputValue: unknown;
   /** Paths of the live watchers still held by the reverse watch index, sorted. */
   watchers: string[];
   /** Paths whose watch values were re-read in this step's commit, sorted. */
@@ -99,8 +99,8 @@ export const compareWatchExitDeliveries = (
     if (forced)
       indexSpy.mockImplementation(() => {
         const index = create();
-        const affected = index.affected.bind(index);
-        index.affected = (path, candidates) => {
+        const affected = index.collectAffected.bind(index);
+        index.collectAffected = (path, candidates) => {
           for (const watcher of index.allNodes) candidates.add(watcher);
           affected(path, candidates);
         };
@@ -132,7 +132,7 @@ export const compareWatchExitDeliveries = (
         history.push({
           marks: [...marks],
           delivered: [...delivered],
-          emit: structuredClone(root.emit),
+          outputValue: structuredClone(root.storedOutputValue),
           watchers: watchers.sort(),
           reread: reread.sort(),
         });
@@ -148,14 +148,14 @@ export const compareWatchExitDeliveries = (
   const shared = ({
     marks,
     delivered,
-    emit,
+    outputValue,
     watchers,
   }: WatchExitObservation) => ({
     marks: [...marks].sort((left, right) =>
       pathOf(left).localeCompare(pathOf(right)),
     ),
     delivered,
-    emit,
+    outputValue,
     watchers,
   });
   expect(

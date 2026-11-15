@@ -46,13 +46,13 @@ export const runGateSelectionCase = (
         schema: node.schema,
         source: node.source,
         extras: node.extras,
-        local: node.local,
-        emit: node.emit,
+        storedValue: node.storedValue,
+        storedOutputValue: node.storedOutputValue,
         isActive: node.isActive,
         isVisible: node.isVisible,
         isDisabled: node.isDisabled,
         revisions: node.revisionLedger,
-        pendingRevision: node.pendingRevision,
+        pendingRevisionMask: node.pendingRevisionMask,
         delivery: node.pendingDelivery,
         deliveryChanges: node.deliveryChanges,
       });
@@ -85,7 +85,7 @@ export const runGateSelectionCase = (
     let target = root;
     for (const segment of write.path?.slice(1).split('/') ?? [])
       target =
-        target.structure![segment.replace(/~1/g, '/').replace(/~0/g, '~')];
+        target.childrenByName![segment.replace(/~1/g, '/').replace(/~0/g, '~')];
     failure = undefined;
     try {
       if (write.reset === 'form')

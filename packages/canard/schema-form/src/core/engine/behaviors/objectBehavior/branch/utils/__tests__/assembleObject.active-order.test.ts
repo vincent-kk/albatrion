@@ -26,9 +26,9 @@ const fixture = () => {
   });
   const node = {
     runtime: {},
-    local: {},
+    storedValue: {},
     extras: undefined,
-    schema: { schema: { type: 'object' }, typeConflict: false },
+    schema: { schema: { type: 'object' }, hasTypeConflict: false },
     blueprintNode: { childEntries: observed },
   } as unknown as Parameters<typeof assembleObject>[0];
   const index = new Map<string, Map<object, number>>([
@@ -45,8 +45,8 @@ const fixture = () => {
     node.blueprintNode,
   ).childOrderIndex = index;
   const children = [
-    { name: 'beta', emit: 2 },
-    { name: 'alpha', emit: 1, blueprintNode: replacement },
+    { name: 'beta', storedOutputValue: 2 },
+    { name: 'alpha', storedOutputValue: 1, blueprintNode: replacement },
   ];
   return { node, children, reads: () => reads };
 };
@@ -91,10 +91,10 @@ describe('prepared active-name order', () => {
     const { node, children } = fixture();
     node.schema = {
       schema: { type: 'object', options: { propertyOrder: ['extra', 'beta'] } },
-      typeConflict: false,
+      hasTypeConflict: false,
     } as typeof node.schema;
     node.extras = { extra: NaN, absent: undefined };
-    children[0].emit = NaN;
+    children[0].storedOutputValue = NaN;
     const expected = assembleObjectBaseline(node, children);
     const result = assembleObject(node, children);
     expect(result).toEqual(expected);
@@ -104,7 +104,7 @@ describe('prepared active-name order', () => {
       'alpha',
       'absent',
     ]);
-    node.local = result;
+    node.storedValue = result;
     expect(assembleObject(node, children)).toBe(result);
   });
 });

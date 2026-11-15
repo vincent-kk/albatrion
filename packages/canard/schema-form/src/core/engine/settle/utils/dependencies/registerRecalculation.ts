@@ -40,7 +40,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   const epoch = (context.registrationEpoch =
     (context.registrationEpoch ?? 0) + 1);
   const shadow =
-    engineModes.gateSelection === 'verify' && !context.shadowRegistration
+    engineModes.gateSelection === 'verify' && !context.isShadowRegistration
       ? context.registrationShadow
       : undefined;
   if (shadow) {
@@ -51,12 +51,12 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
       shapeDirtyPaths: shadow.shape,
       dependencyOwnerPaths: shadow.owners,
       registrationShadow: undefined,
-      shadowRegistration: true,
+      isShadowRegistration: true,
     });
-    shadow.registering = true;
+    shadow.isRegistering = true;
   }
   const split =
-    !context.shadowRegistration &&
+    !context.isShadowRegistration &&
     context.hasGates &&
     engineModes.gateSelection !== 'off' &&
     dependencies.hasSplitOwners;
@@ -65,14 +65,14 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     if (dirty instanceof DirtyPathSet)
       dirty.configureSplitOwners(dependencies.splitOwners);
     for (const changed of context.changedSource)
-      dependencies.affectedForRegistration(changed, context.root, {
-        hit: (bucket, liveRanks) => {
+      dependencies.registerAffectedOwners(changed, context.root, {
+        recordHit: (bucket, liveRanks) => {
           (context.splitHitEpochs ??= new Map()).set(bucket, epoch);
           return dirty instanceof DirtyPathSet
             ? dirty.planSplitAnchors(bucket, liveRanks, epoch)
             : [];
         },
-        owner: (path, kind) => {
+        registerOwner: (path, kind) => {
           dirty.add(path);
           if (kind === 'plain') context.dependencyOwnerPaths.add(path);
           else if (kind === 'split')
@@ -84,7 +84,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
       });
   } else {
     for (const changed of context.changedSource)
-      for (const declarationPath of dependencies.affected(
+      for (const declarationPath of dependencies.affectedOwners(
         changed,
         context.root,
       )) {
@@ -127,7 +127,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   }
 
   if (shadow) {
-    shadow.registering = false;
+    shadow.isRegistering = false;
     let matches = context.shapeDirtyPaths.size === shadow.shape.size;
     if (matches) {
       const shadowShapeEntries = [...shadow.shape];
@@ -166,7 +166,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
             node = undefined;
             break;
           }
-          node = node?.structure?.[segment];
+          node = node?.childrenByName?.[segment];
         }
         verifyGateSelection(!node, 'S3 removed a living split owner: ' + path);
       }

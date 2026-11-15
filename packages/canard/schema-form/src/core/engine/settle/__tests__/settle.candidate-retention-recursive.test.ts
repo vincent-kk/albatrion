@@ -69,6 +69,6 @@ it('R2 recursive candidate clearing preserves the closed root at each depth', ()
     const { root } = createDispatchTree(schema);
     dispatchMount(root, { a: true, b: false, v: input });
     dispatchSetValue(getDispatchNode(root, 'a'), false);
-    expect(root.local).toEqual({ a: false, b: false });
+    expect(root.storedValue).toEqual({ a: false, b: false });
   }
 });

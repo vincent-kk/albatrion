@@ -26,7 +26,7 @@ export const dropFieldNodeRevealBaselines = <
     runtime.revealPolicy.entries = runtime.revealPolicy.entries.filter(
       (entry) => entry.generation > cutoff,
     );
-  runtime.revealDropOwed = false;
+  runtime.isRevealDropOwed = false;
   runtime.revealDropTask = undefined;
   return !!(
     runtime.revealBaselineNodes?.size || runtime.revealPolicy?.entries.length

@@ -40,7 +40,7 @@ it('DR-3 B2 retries after the collision ends but waits for a third retained root
   expect(compile.mock.calls[2][0]).toBe(entry.copy);
   expect(entry.guards.get('/if')?.guard).toBe(guard);
   expect(entry.failure).toBeUndefined();
-  expect(entry.duplicate).toBeUndefined();
+  expect(entry.isDuplicate).toBeUndefined();
   expect(entry.rejection).toBeUndefined();
   assertValidationRootReady(tree.root);
   expect(compile).toHaveBeenCalledTimes(3);

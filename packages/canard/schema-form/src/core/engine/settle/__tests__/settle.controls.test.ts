@@ -34,7 +34,7 @@ describe('settled controls', () => {
       properties: { field: { type: 'string', controls: { readOnly: false } } },
     });
     loadFieldNodeAtMount(root, { field: 'a' }, WriteOption.Overwrite);
-    expect(root.structure?.field?.isReadOnly).toBe(true);
+    expect(root.childrenByName?.field?.isReadOnly).toBe(true);
   });
 
   it('CONTROLS-082 disabled OR keeps a true own key over parent false', () => {
@@ -46,7 +46,7 @@ describe('settled controls', () => {
       properties: { field: { type: 'string', controls: { disabled: true } } },
     });
     loadFieldNodeAtMount(root, { field: 'a' }, WriteOption.Overwrite);
-    expect(root.structure?.field?.isDisabled).toBe(true);
+    expect(root.childrenByName?.field?.isDisabled).toBe(true);
   });
 
   it('CONTROLS-082 visible AND combines false across declaration positions', () => {
@@ -58,7 +58,7 @@ describe('settled controls', () => {
       properties: { field: { type: 'string', controls: { visible: true } } },
     });
     loadFieldNodeAtMount(root, { field: 'a' }, WriteOption.Overwrite);
-    expect(root.structure?.field?.isVisible).toBe(false);
+    expect(root.childrenByName?.field?.isVisible).toBe(false);
   });
 
   it('CONTROLS-082 standard readOnly is OR merged with controls', () => {
@@ -73,7 +73,7 @@ describe('settled controls', () => {
       },
     });
     loadFieldNodeAtMount(root, { field: 'a' }, WriteOption.Overwrite);
-    expect(root.structure?.field?.isReadOnly).toBe(true);
+    expect(root.childrenByName?.field?.isReadOnly).toBe(true);
   });
 
   it('CONTROLS-073 fields entry expression uses its host for every target', () => {
@@ -93,8 +93,8 @@ describe('settled controls', () => {
       { lock: true, a: 'a', b: 'b' },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.a?.isDisabled).toBe(true);
-    expect(root.structure?.b?.isDisabled).toBe(true);
+    expect(root.childrenByName?.a?.isDisabled).toBe(true);
+    expect(root.childrenByName?.b?.isDisabled).toBe(true);
   });
 
   it('state key expressions follow a later dependency change', () => {
@@ -114,18 +114,18 @@ describe('settled controls', () => {
       WriteOption.Overwrite,
     );
     expect([
-      root.structure?.target?.isVisible,
-      root.structure?.target?.isDisabled,
+      root.childrenByName?.target?.isVisible,
+      root.childrenByName?.target?.isDisabled,
     ]).toEqual([false, false]);
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       true,
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect([
-      root.structure?.target?.isVisible,
-      root.structure?.target?.isDisabled,
+      root.childrenByName?.target?.isVisible,
+      root.childrenByName?.target?.isDisabled,
     ]).toEqual([true, true]);
   });
 
@@ -150,21 +150,21 @@ describe('settled controls', () => {
       { x: false, unrelated: 'a', child: 'c' },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.child?.isVisible).toBe(false);
+    expect(root.childrenByName?.child?.isVisible).toBe(false);
     writeFieldNode(
-      root.structure!.x,
+      root.childrenByName!.x,
       true,
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.child?.isVisible).toBe(true);
+    expect(root.childrenByName?.child?.isVisible).toBe(true);
     writeFieldNode(
-      root.structure!.unrelated,
+      root.childrenByName!.unrelated,
       'b',
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.child?.isVisible).toBe(true);
+    expect(root.childrenByName?.child?.isVisible).toBe(true);
   });
 
   it('state keys visit no fragment children for an unrelated leaf write', () => {
@@ -191,7 +191,7 @@ describe('settled controls', () => {
     );
     let publishedChildren = 0;
     for (let index = 0; index < allOf.length; index += 1) {
-      const child = root.structure?.[`fragment${index}`];
+      const child = root.childrenByName?.[`fragment${index}`];
       expect(child).toBeDefined();
       let visible = child!.isVisible;
       Object.defineProperty(child, 'visible', {
@@ -204,7 +204,7 @@ describe('settled controls', () => {
       });
     }
     writeFieldNode(
-      root.structure!.unrelated,
+      root.childrenByName!.unrelated,
       'b',
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
@@ -232,8 +232,8 @@ describe('settled controls', () => {
       { inside: 'i', outside: 'o' },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.inside?.isVisible).toBe(false);
-    expect(root.structure?.outside?.isVisible).toBe(true);
+    expect(root.childrenByName?.inside?.isVisible).toBe(false);
+    expect(root.childrenByName?.outside?.isVisible).toBe(true);
   });
 
   it('CONTROLS-045 no root inheritance keeps root state local', () => {
@@ -252,9 +252,9 @@ describe('settled controls', () => {
       false,
     ]);
     expect([
-      root.structure?.child?.isReadOnly,
-      root.structure?.child?.isDisabled,
-      root.structure?.child?.isVisible,
+      root.childrenByName?.child?.isReadOnly,
+      root.childrenByName?.child?.isDisabled,
+      root.childrenByName?.child?.isVisible,
     ]).toEqual([false, false, true]);
   });
 
@@ -275,24 +275,24 @@ describe('settled controls', () => {
     });
     loadFieldNodeAtMount(root, { source: 'a' }, WriteOption.Overwrite);
     expect([
-      root.structure?.target?.isReadOnly,
-      root.structure?.target?.isDisabled,
+      root.childrenByName?.target?.isReadOnly,
+      root.childrenByName?.target?.isDisabled,
     ]).toEqual([true, true]);
-    expect(root.structure?.target?.source).toBe('a');
+    expect(root.childrenByName?.target?.source).toBe('a');
     writeFieldNode(
-      root.structure!.target,
+      root.childrenByName!.target,
       'manual',
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.source).toBe('manual');
+    expect(root.childrenByName?.target?.source).toBe('manual');
     writeFieldNode(
-      root.structure!['source'],
+      root.childrenByName!['source'],
       'b',
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.source).toBe('b');
+    expect(root.childrenByName?.target?.source).toBe('b');
   });
 
   it('28C-07 watchValues reads effective watch paths and memoizes a commit; CONTROLS-019 a single-string watch is not a watch', () => {
@@ -356,14 +356,14 @@ describe('settled controls', () => {
       { shown: true, branch: { child: 'c' } },
       WriteOption.Overwrite,
     );
-    const child = root.structure!.branch.structure!.child;
+    const child = root.childrenByName!.branch.childrenByName!.child;
     writeFieldNode(
-      root.structure!.shown,
+      root.childrenByName!.shown,
       false,
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(child.detached).toBe(true);
+    expect(child.isDetached).toBe(true);
     expect([child.isVisible, child.isReadOnly, child.isDisabled]).toEqual([
       false,
       true,

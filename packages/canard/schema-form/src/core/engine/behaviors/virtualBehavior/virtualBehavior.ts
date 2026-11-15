@@ -4,13 +4,13 @@ import { finishNoInput } from '../utils/slots/finishNoInput';
 import { interpretIdentity } from '../utils/slots/interpretIdentity';
 import { rejectArrayOperation } from '../utils/slots/rejectArrayOperation';
 import { assembleVirtualTuple } from './utils/tuple/assembleVirtualTuple';
-import { projectNoEmit } from './utils/value/projectNoEmit';
+import { projectNoOutputValue } from './utils/value/projectNoOutputValue';
 
 /** Calculation row for a group of references to real sibling nodes. */
 export const virtualBehavior: Behavior = Object.freeze({
   interpret: interpretIdentity,
   assemble: assembleVirtualTuple,
-  project: projectNoEmit,
+  project: projectNoOutputValue,
   finishInput: finishNoInput,
   declareChildren: declareBlueprintChildren,
   arrange: rejectArrayOperation,

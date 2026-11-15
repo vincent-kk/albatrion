@@ -29,7 +29,7 @@ export interface DeriveState<Self extends FieldNodeRecord<Self>> {
   /** Existing occurrences restored after a temporary exit in this settlement. */
   readonly revived: ReadonlySet<Self>;
   /** Whether this call inhibits automatic writes. */
-  readonly suppressAutomaticWrites: boolean;
+  readonly isAutomaticWriteSuppressed: boolean;
   /** Whether development trace entries should be allocated. */
-  readonly trace: boolean;
+  readonly isTraceEnabled: boolean;
 }

@@ -15,7 +15,7 @@ export const isRelayedInput = <Self extends FieldNodeRecord<Self>>(
     (relay) =>
       relay.path === path &&
       relay.node.path === path &&
-      !relay.node.detached &&
-      !relay.node.disposed &&
-      isSameDeliveryValue(relay.node.local, relay.value),
+      !relay.node.isDetached &&
+      !relay.node.isDisposed &&
+      isSameDeliveryValue(relay.node.storedValue, relay.value),
   );

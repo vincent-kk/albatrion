@@ -38,19 +38,23 @@ it.each([['insert'], ['remove']] as const)(
     const destination = operation === 'insert' ? 1 : 0;
     const old = getDispatchNode(list, String(source));
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-    expect(getDispatchNode(old, '0', 'v').local).toBe(37);
+    expect(getDispatchNode(old, '0', 'v').storedValue).toBe(37);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
     runtime.disableAutomaticWrites = true;
     if (operation === 'insert') dispatchInsert(list, 0, []);
     else dispatchRemove(list, 0);
-    expect(old.detached).toBe(true);
-    expect(getDispatchNode(list, String(destination), '0', 'v').local).toBe(37);
+    expect(old.isDetached).toBe(true);
+    expect(
+      getDispatchNode(list, String(destination), '0', 'v').storedValue,
+    ).toBe(37);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-    expect(getDispatchNode(list, String(destination), '0', 'v').local).toBe(
-      'live',
-    );
+    expect(
+      getDispatchNode(list, String(destination), '0', 'v').storedValue,
+    ).toBe('live');
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-    expect(getDispatchNode(list, String(destination), '0', 'v').local).toBe(37);
+    expect(
+      getDispatchNode(list, String(destination), '0', 'v').storedValue,
+    ).toBe(37);
   },
 );
 

@@ -5,7 +5,7 @@ import { getHostDerived } from '../../utils/cache/derivedRecords';
 import { selectChildren } from '../utils/compute/childSelection/selectChildren';
 import type { ChildSelectionFrame } from '../utils/compute/childSelection/selectEntryStep';
 import * as selection from '../utils/compute/childSelection/selectEntryStep';
-import { createPreparedSelectionStructure } from '../utils/compute/childSelection/utils/createPreparedSelectionStructure';
+import { createPreparedChildrenByName } from '../utils/compute/childSelection/utils/createPreparedChildrenByName';
 import { prepareStaticHost } from '../utils/compute/childSelection/utils/prepareStaticHost';
 import { publishPreparedSelection } from '../utils/compute/childSelection/utils/publishPreparedSelection';
 import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
@@ -17,9 +17,9 @@ afterEach(() => vi.restoreAllMocks());
 it('does not publish an admitted name whose recursive candidate never entered the view', () => {
   const { root, prepared, scratch, context } =
     createPreparedPublicationFixture();
-  const prior = root.structure!;
+  const prior = root.childrenByName!;
   const dynamic: Record<string, PlainNode> = Object.create(prepared.baseline);
-  const next = createPreparedSelectionStructure(
+  const next = createPreparedChildrenByName(
     prepared.baseline,
     prior,
     prepared.dynamicNames,
@@ -32,18 +32,18 @@ it('does not publish an admitted name whose recursive candidate never entered th
     context,
     prior,
     computeChild: () => {},
-    immediate: false,
+    isImmediate: false,
     next,
     seen: new Map([['phantom', root.blueprintNode]]),
     inactiveEntries: [],
-    changed: false,
-    flushReads: false,
+    hasChanged: false,
+    shouldFlushReads: false,
   };
   try {
     publishPreparedSelection(frame);
     expect(prepared.dynamicNames).toEqual(['x']);
-    expect(root.structure).toBe(prior);
-    expect(root.structure!.phantom).toBeUndefined();
+    expect(root.childrenByName).toBe(prior);
+    expect(root.childrenByName!.phantom).toBeUndefined();
   } finally {
     releaseSettlementScratch(scratch);
   }
@@ -51,7 +51,7 @@ it('does not publish an admitted name whose recursive candidate never entered th
 
 it('restores the finalized shape when a prepared selection throws', () => {
   const { root, scratch, context } = createPreparedPublicationFixture();
-  const prior = root.structure!;
+  const prior = root.childrenByName!;
   vi.spyOn(selection, 'selectEntryStep').mockImplementation(() => {
     throw new Error('selection failure');
   });
@@ -59,9 +59,9 @@ it('restores the finalized shape when a prepared selection throws', () => {
     expect(() =>
       selectChildren(root, context, prior, () => {}, false, false),
     ).toThrow('selection failure');
-    expect(root.structure).toBe(prior);
+    expect(root.childrenByName).toBe(prior);
     expect(() => {
-      root.structure!.kind = prior.kind;
+      root.childrenByName!.kind = prior.kind;
     }).not.toThrow();
   } finally {
     releaseSettlementScratch(scratch);
@@ -70,15 +70,15 @@ it('restores the finalized shape when a prepared selection throws', () => {
 
 it('captures the prior full child list when preparation follows a general prime', () => {
   const { root, scratch, context } = createPreparedPublicationFixture();
-  const prior = root.structure!;
+  const prior = root.childrenByName!;
   const children = root.children!;
   delete getHostDerived(root).preparedStaticHost;
-  root.structure = { kind: prior.kind };
+  root.childrenByName = { kind: prior.kind };
   root.children = [prior.kind];
   try {
     const prepared = prepareStaticHost(root, prior, context, false);
     expect(prepared?.selectedChildren).toEqual(children);
-    expect(prepared?.selectedStructure).toBe(prior);
+    expect(prepared?.selectedChildrenByName).toBe(prior);
   } finally {
     releaseSettlementScratch(scratch);
   }

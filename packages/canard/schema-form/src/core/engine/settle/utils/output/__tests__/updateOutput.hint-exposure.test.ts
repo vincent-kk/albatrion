@@ -69,7 +69,7 @@ it('never exposes any hint through emitted values or delivered payloads', () => 
   dispatchMount(root, undefined, WriteOption.Overwrite);
   for (const value of [3, 4, 1, 1])
     dispatchSetValue(
-      root.structure!.nested.structure!.value,
+      root.childrenByName!.nested.childrenByName!.value,
       value,
       WriteOption.Overwrite,
     );
@@ -78,8 +78,8 @@ it('never exposes any hint through emitted values or delivered payloads', () => 
   const pending = [root];
   while (pending.length) {
     const node = pending.pop()!;
-    expect(containsHint(node.emit, hints), node.path).toBe(false);
-    expect(containsHint(node.local, hints), node.path).toBe(false);
+    expect(containsHint(node.storedOutputValue, hints), node.path).toBe(false);
+    expect(containsHint(node.storedValue, hints), node.path).toBe(false);
     expect(containsHint(node.pendingDelivery?.payload, hints), node.path).toBe(
       false,
     );

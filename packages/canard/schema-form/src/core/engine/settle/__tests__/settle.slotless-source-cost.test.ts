@@ -34,5 +34,5 @@ it('prepares a unique-kind terminal write without slot checks, overlay lookups o
   expect(prune).not.toHaveBeenCalled();
   expect(apply).not.toHaveBeenCalled();
   expect(lookup).not.toHaveBeenCalled();
-  expect(root.local).toEqual({ type: 'a', x: 'A', y: 1 });
+  expect(root.storedValue).toEqual({ type: 'a', x: 'A', y: 1 });
 });

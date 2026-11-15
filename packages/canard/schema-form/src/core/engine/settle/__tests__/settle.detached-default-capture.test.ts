@@ -21,11 +21,11 @@ const requireNode = (root: DispatchTestNode, path: string) => {
 const detach = (node: DispatchTestNode, load?: { readonly value: unknown }) => {
   const snapshot = {
     schema: node.schema.schema,
-    emit: node.rootNode.emit,
+    outputValue: node.rootNode.storedOutputValue,
     context: node.runtime.context,
   };
   captureDetachedFieldNodeReads(node, snapshot, load);
-  node.detached = true;
+  node.isDetached = true;
 };
 
 describe('468C-01 exit default read characterization', () => {
@@ -114,7 +114,7 @@ describe('468C-01 exit default read characterization', () => {
 
   it('keeps an absent already detached default undefined', () => {
     const root = createDetachedCaptureTree({ type: 'string' }, 'live-source');
-    root.detached = true;
+    root.isDetached = true;
     detach(root);
     expect(readFieldNodeDefaultValue(root)).toBeUndefined();
   });
@@ -183,7 +183,7 @@ describe('468C-01 exit default read characterization', () => {
     expect(readFieldNodeDefaultValue(requireNode(root, '/end'))).toBe('b');
   });
 
-  it('uses the departing branch schema and prior emission for watched reads', () => {
+  it('uses the departing branch schema and prior output value for watched reads', () => {
     const root = createDetachedCaptureTree(
       {
         type: 'object',
@@ -204,11 +204,11 @@ describe('468C-01 exit default read characterization', () => {
     };
     captureDetachedFieldNodeReads(node, {
       schema: original,
-      emit: { first: 7, second: 8 },
+      outputValue: { first: 7, second: 8 },
       context,
     });
-    node.detached = true;
-    root.emit = { first: 10, second: 11 };
+    node.isDetached = true;
+    root.storedOutputValue = { first: 10, second: 11 };
     root.runtime.context = { later: true };
     const watched = readFieldNodeWatchValues(node);
     expect(watched).toEqual([7, context]);
@@ -311,7 +311,7 @@ describe('468C-01 exit default read characterization', () => {
     detach(node);
     root.runtime.misfitPaths.clear();
     root.runtime.misfitsMemo?.clear();
-    root.emit = { source: 9, field: 1 };
+    root.storedOutputValue = { source: 9, field: 1 };
     expect(readFieldNodeWatchValues(node)).toEqual([3]);
     expect(readFieldNodeIsMisfit(node)).toBe(true);
     expect(readFieldNodeMisfits(node)).toBe(paths);

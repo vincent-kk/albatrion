@@ -118,7 +118,7 @@ class WatchDeliveryIndex {
   }
 
   /** Add watchers whose paths contain or descend from a changed path. */
-  affected(path: string, candidates: Set<unknown>): void {
+  collectAffected(path: string, candidates: Set<unknown>): void {
     let current: Optional<WatchPathNode> = this.root;
     for (const watcher of current.watchers) candidates.add(watcher);
     for (const segment of getCachedPointerSegments(this.runtime, path)) {

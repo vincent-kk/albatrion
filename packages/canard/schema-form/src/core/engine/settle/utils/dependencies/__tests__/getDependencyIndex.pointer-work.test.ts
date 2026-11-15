@@ -57,17 +57,20 @@ it('reuses authored arrays across affected, presence and exact live queries', ()
   wrapper.mockClear();
   decoder.mockClear();
   for (let repeat = 0; repeat < 3; repeat++) {
-    expect(index.affected('/flag', root)).toContain('/reader');
+    expect(index.affectedOwners('/flag', root)).toContain('/reader');
     expect(
-      index.affectedByPresence('', 'flag', undefined, {}, root.runtime).owners,
+      index.affectedOwnersByPresence('', 'flag', undefined, {}, root.runtime)
+        .owners,
     ).toContain('/reader');
     const registered: string[] = [];
-    index.affectedForRegistration('/flag', root, {
-      hit: () => [],
-      owner: (path) => registered.push(path),
+    index.registerAffectedOwners('/flag', root, {
+      recordHit: () => [],
+      registerOwner: (path) => registered.push(path),
     });
     expect(registered).toContain('/reader');
-    expect(getLivePresenceNode(root, '/reader')).toBe(root.structure!.reader);
+    expect(getLivePresenceNode(root, '/reader')).toBe(
+      root.childrenByName!.reader,
+    );
   }
   expect(wrapper).not.toHaveBeenCalled();
   expect(decoder).not.toHaveBeenCalled();
@@ -95,9 +98,9 @@ it('retains split host syntax while querying the current table owners', () => {
   const hostSegments = index.pathSegments('');
   decoder.mockClear();
   const owners: string[] = [];
-  index.affectedForRegistration('/kind', root, {
-    hit: () => [],
-    owner: (path) => owners.push(path),
+  index.registerAffectedOwners('/kind', root, {
+    recordHit: () => [],
+    registerOwner: (path) => owners.push(path),
   });
   expect(owners).toContain('/a');
   expect(owners).not.toContain('/b');
@@ -111,11 +114,11 @@ it('keeps dynamic query misses runtime-owned and bounded without growing static 
   const authored = index.pathSegments('/reader');
   const first = index.pathSegments('/history/0', root.runtime);
   decoder.mockClear();
-  index.affected('/history/0', root);
+  index.affectedOwners('/history/0', root);
   expect(index.pathSegments('/history/0', root.runtime)).toBe(first);
   expect(decoder).not.toHaveBeenCalled();
   for (let position = 1; position <= 256; position++)
-    index.affected(`/history/${position}`, root);
+    index.affectedOwners(`/history/${position}`, root);
   decoder.mockClear();
   const refilled = index.pathSegments('/history/0', root.runtime);
   expect(refilled).toEqual(first);
@@ -132,17 +135,17 @@ it('isolates presence syntax by runtime and leaves ownerless misses unretained',
   const { root, blueprint } = tree();
   const index = getDependencyIndex(blueprint);
   const runtime = {};
-  index.affectedByPresence('/history', '0', undefined, {}, root.runtime);
+  index.affectedOwnersByPresence('/history', '0', undefined, {}, root.runtime);
   const first = index.pathSegments('/history/0', root.runtime);
   decoder.mockClear();
-  index.affectedByPresence('/history', '0', undefined, {}, root.runtime);
+  index.affectedOwnersByPresence('/history', '0', undefined, {}, root.runtime);
   expect(decoder).not.toHaveBeenCalled();
-  index.affectedByPresence('/history', '0', undefined, {}, runtime);
+  index.affectedOwnersByPresence('/history', '0', undefined, {}, runtime);
   expect(index.pathSegments('/history/0', runtime)).not.toBe(first);
   expect(decoder).toHaveBeenCalledTimes(2);
   decoder.mockClear();
-  index.affectedByPresence('/history', '0');
-  index.affectedByPresence('/history', '0');
+  index.affectedOwnersByPresence('/history', '0');
+  index.affectedOwnersByPresence('/history', '0');
   expect(decoder).toHaveBeenCalledTimes(4);
 });
 

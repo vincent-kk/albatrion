@@ -15,7 +15,7 @@ export interface HostWheelPlan {
   readonly relocated: readonly GateOccurrence[];
   readonly gates: readonly BlueprintGate[];
   cap?: number;
-  readonly baselineEligible: boolean;
+  readonly isBaselineEligible: boolean;
 }
 
 /**
@@ -77,7 +77,7 @@ export const prepareHostWheelPlan = <Self extends FieldNodeRecord<Self>>(
     itemCount: node.itemCount,
     relocated,
     gates,
-    baselineEligible: matches,
+    isBaselineEligible: matches,
   };
   if (!previous) record.wheelPlan = plan;
   return plan;

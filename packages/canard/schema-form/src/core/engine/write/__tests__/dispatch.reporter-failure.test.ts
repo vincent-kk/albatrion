@@ -159,7 +159,7 @@ it.each(['listener', 'onChange', 'onStateChange'])(
     if (channel === 'onChange') tree.runtime.onChange = nested;
     if (channel === 'onStateChange') {
       tree.runtime.onStateChange = nested;
-      tree.runtime.stateChanged = true;
+      tree.runtime.hasStateChanged = true;
     }
     expect(() => dispatchSetValue(tree.root, 'next')).toThrow(failure);
     expect(calls).toBe(1);

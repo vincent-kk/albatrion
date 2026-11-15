@@ -58,15 +58,23 @@ it('T5 preserves first writes, schema events, identities and selected IDs across
     dispatch: true,
     general: true,
   });
-  const child = actual.root.structure!.value;
+  const child = actual.root.childrenByName!.value;
   const children = actual.root.children;
   for (const kind of ['b', 'a', 'a']) {
-    dispatchSetValue(actual.root.structure!.kind, kind, WriteOption.Overwrite);
-    dispatchSetValue(oracle.root.structure!.kind, kind, WriteOption.Overwrite);
+    dispatchSetValue(
+      actual.root.childrenByName!.kind,
+      kind,
+      WriteOption.Overwrite,
+    );
+    dispatchSetValue(
+      oracle.root.childrenByName!.kind,
+      kind,
+      WriteOption.Overwrite,
+    );
     expect(actual.snapshot()).toEqual(oracle.snapshot());
-    expect(actual.root.structure!.value).toBe(child);
+    expect(actual.root.childrenByName!.value).toBe(child);
     expect(actual.root.children).toBe(children);
-    expect(child.emit).toBe('x');
+    expect(child.storedOutputValue).toBe('x');
     expect(child.schema.schema).toMatchObject(
       kind === 'a' ? { minLength: 2 } : { maxLength: 3 },
     );

@@ -27,10 +27,10 @@ export const dispatchResetForm = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   if (!enterFieldNodeChain(root, 'load')) return;
   clearWarningKeys(root.runtime);
-  root.runtime.validationUnavailable = false;
-  root.runtime.validationCompileReported = false;
+  root.runtime.isValidationUnavailable = false;
+  root.runtime.isValidationCompileReported = false;
   root.runtime.validationStamp = (root.runtime.validationStamp ?? 0) + 1;
-  root.runtime.deferLoadValidation = settings.deferValidation === true;
+  root.runtime.shouldDeferLoadValidation = settings.deferValidation === true;
   if (settings.deferValidation) {
     root.runtime.validationPendingTargets = undefined;
     settleFieldNodeValidation(root);

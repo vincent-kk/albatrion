@@ -47,7 +47,7 @@ it('LANDING-129 union leaves render the default string draft input', async () =>
     { defaultValue: 'draft' },
   );
   expect(form.handle.node?.type).toBe('union');
-  expect(form.handle.node?.nullable).toBe(true);
+  expect(form.handle.node?.isNullable).toBe(true);
   expect(form.value('')).toBe('draft');
   await form.type('', '42');
   expect(form.getValue()).toBe('42');

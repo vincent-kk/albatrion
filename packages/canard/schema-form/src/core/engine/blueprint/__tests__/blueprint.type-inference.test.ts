@@ -83,7 +83,7 @@ describe('blueprint untyped primitive branches', () => {
     expect(blueprint(schema).root).toMatchObject({
       kind,
       schemaType,
-      nullable,
+      isNullable: nullable,
       strategy: kind === 'object' ? 'branch' : 'terminal',
     });
   });

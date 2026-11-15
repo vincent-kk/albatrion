@@ -13,15 +13,15 @@ export const clearFieldNodeChanges = <Self>(
 ): void => {
   const changes = node.deliveryChanges;
   if (changes & FieldNodeEventType.UpdateValue) {
-    node.deliveryPreviousLocal = undefined;
-    node.deliveryPreviousEmit = undefined;
+    node.deliveryPreviousValue = undefined;
+    node.deliveryPreviousOutputValue = undefined;
   }
   if (changes & FieldNodeEventType.UpdatePath)
     node.deliveryPreviousPath = undefined;
   if (changes & FieldNodeEventType.UpdateChildren)
     node.deliveryPreviousChildren = undefined;
   if (changes & FieldNodeEventType.UpdateControlledProperties)
-    node.deliveryPreviousComputed = undefined;
+    node.deliveryPreviousComputedBits = undefined;
   if (changes & FieldNodeEventType.UpdateJsonSchema)
     node.deliveryPreviousSchema = undefined;
   if (changes & FieldNodeEventType.UpdateState)

@@ -76,7 +76,7 @@ describe('standalone wave failures', () => {
     expect(() => dispatchRequest(root, FieldNodeRequestType.Focus)).toThrow(
       failure,
     );
-    expect(child.emit).toBe('after');
+    expect(child.storedOutputValue).toBe('after');
     expect(report).toHaveBeenCalledTimes(1);
     expect(report.mock.calls[0][0]).toMatchObject({
       code: 'SCHEMA_FORM_ERROR.LISTENER_THREW',
@@ -113,7 +113,7 @@ describe('standalone wave failures', () => {
     expect(() =>
       dispatchSetState(root, { [FieldNodeState.Edited]: true }),
     ).toThrow(failure);
-    expect(child.emit).toBe('after');
+    expect(child.storedOutputValue).toBe('after');
     expect(report).toHaveBeenCalledTimes(1);
     expect(report.mock.calls[0][0]).toMatchObject({
       code: 'SCHEMA_FORM_ERROR.LISTENER_THREW',
@@ -150,7 +150,7 @@ describe('standalone wave failures', () => {
     expect(() => dispatchRequest(root, FieldNodeRequestType.Focus)).toThrow(
       failure,
     );
-    expect(child.emit).toBe('after');
+    expect(child.storedOutputValue).toBe('after');
     expect(report).toHaveBeenCalledTimes(1);
     expect(report.mock.calls[0][0]).toMatchObject({
       code: 'SCHEMA_FORM_ERROR.LISTENER_THREW',
@@ -232,7 +232,7 @@ describe('standalone wave failures', () => {
     });
 
     expect(() => dispatchSetValue(a, 'after')).toThrow(failure);
-    expect(b.emit).toBe('after');
+    expect(b.storedOutputValue).toBe('after');
     expect(report).toHaveBeenCalledTimes(1);
     expect(report.mock.calls[0][0]).toMatchObject({
       error: failure,
@@ -276,8 +276,8 @@ describe('standalone wave failures', () => {
     expect(() => dispatchRequest(root, FieldNodeRequestType.Focus)).toThrow(
       failure,
     );
-    expect(a.emit).toBe('from onChange');
-    expect(b.emit).toBe('after');
+    expect(a.storedOutputValue).toBe('from onChange');
+    expect(b.storedOutputValue).toBe('after');
     expect(report).toHaveBeenCalledTimes(1);
     expect(report.mock.calls[0][0]).toMatchObject({
       error: failure,

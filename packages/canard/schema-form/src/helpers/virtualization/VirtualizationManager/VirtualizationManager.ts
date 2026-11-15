@@ -59,7 +59,7 @@ export class VirtualizationManager {
   private observerGeneration = 0;
 
   /** Whether committed options enable gating and deferred focus. */
-  public get enabled(): boolean {
+  public get isEnabled(): boolean {
     return this.options !== null;
   }
 

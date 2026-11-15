@@ -170,7 +170,7 @@ For a child without a controlled declaration:
 
 ## Node values, state, and array operations {#nodes}
 
-Read node identity/tree through `type`, `strategy`, `schemaType`, `jsonSchema`, `path`, `name`, `escapedName`, `depth`, `rootNode`, `parentNode`, and `children`. Terminals have null children. `value` is the interpreted/local value; `outputValue` is emitted JSON; `source`, `extras`, and `inactiveValues` describe retained input. `isRequired`, `nullable`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`, `misfits`, `watchValues`, `context`, and `diagnostics` describe the current node. `isPresent` means active and visible, independent of disabled state.
+Read node identity/tree through `type`, `strategy`, `schemaType`, `jsonSchema`, `path`, `name`, `escapedName`, `depth`, `rootNode`, `parentNode`, and `children`. Terminals have null children. `value` is the interpreted value; `outputValue` is emitted JSON; `source`, `extras`, and `inactiveValues` describe retained input. `isRequired`, `isNullable`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`, `misfits`, `watchValues`, `context`, and `diagnostics` describe the current node. `isPresent` means active and visible, independent of disabled state.
 
 The root's parentNode is null. A missing `find()` result is null; `findNodes()` returns [] when nothing matches.
 

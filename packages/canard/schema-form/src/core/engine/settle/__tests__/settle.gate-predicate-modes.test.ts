@@ -154,19 +154,19 @@ describe('gate predicate reference and shadow modes', () => {
         const snapshots: unknown[] = [];
         loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
         snapshots.push({
-          value: root.emit,
-          keys: Object.keys(root.structure ?? {}),
+          value: root.storedOutputValue,
+          keys: Object.keys(root.childrenByName ?? {}),
         });
         for (const tag of ['tag_2', 'unknown', 'tag_0']) {
           writeFieldNode(
-            root.structure!.kind,
+            root.childrenByName!.kind,
             tag,
             FieldNodeWriteKind.Input,
             WriteOption.Overwrite,
           );
           snapshots.push({
-            value: root.emit,
-            keys: Object.keys(root.structure ?? {}),
+            value: root.storedOutputValue,
+            keys: Object.keys(root.childrenByName ?? {}),
           });
         }
         captures.push(snapshots);
@@ -194,8 +194,8 @@ describe('gate predicate reference and shadow modes', () => {
         },
         (root: PlainNode) => {
           snapshots.push({
-            value: root.emit,
-            keys: Object.keys(root.structure ?? {}),
+            value: root.storedOutputValue,
+            keys: Object.keys(root.childrenByName ?? {}),
           });
         },
       );

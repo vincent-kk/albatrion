@@ -32,8 +32,8 @@ it('registers a fragment-derived array item watch under the wildcard operator', 
     WriteOption.Overwrite,
   );
   const index = getDependencyIndex(blueprint);
-  expect(index.affected('/list/0/x', root)).toContain('/list');
-  expect(index.affected('/list/0/y', root)).not.toContain('/list');
+  expect(index.affectedOwners('/list/0/x', root)).toContain('/list');
+  expect(index.affectedOwners('/list/0/y', root)).not.toContain('/list');
 });
 
 it('registers a fragment-derived object property named * under its literal percent form', () => {
@@ -62,6 +62,6 @@ it('registers a fragment-derived object property named * under its literal perce
     { group: { source: 'A', '*': { sub: 's' } } },
   );
   const index = getDependencyIndex(root.runtime.blueprint);
-  expect(index.affected('/group/%2A/sub', root)).toContain('/group');
-  expect(index.affected('/group/0/sub', root)).not.toContain('/group');
+  expect(index.affectedOwners('/group/%2A/sub', root)).toContain('/group');
+  expect(index.affectedOwners('/group/0/sub', root)).not.toContain('/group');
 });

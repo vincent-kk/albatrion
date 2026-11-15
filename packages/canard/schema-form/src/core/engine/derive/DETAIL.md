@@ -28,11 +28,11 @@ derived의 의존 튜플은 자기 식의 경로와 대상 템플릿의 모든 �
 
 ### CONTROLS-080 — 식은 투영된 트리와 현재 맥락을 읽습니다
 
-선언 호스트를 기준으로 경로를 풀고 이번 판정의 root.emit에서 자기 속성만 따라 읽습니다. extras·터미널 내부의 값도 경로로 읽히며 원시값 아래·없는 경로·연산자 경로는 undefined입니다. 원본·잠복 원본을 식의 별도 입력으로 만들지 않습니다. 맥락을 읽는 derived·unsetValue·resetInteraction은 맥락 변경을 기준과 비교하지만 injectTo는 원천 방출이 같으면 맥락만으로 발화하지 않습니다. 같은 식이 화면과 다른 원본을 읽는 이중 의미를 막습니다.
+선언 호스트를 기준으로 경로를 풀고 이번 판정의 `root.storedOutputValue`에서 자기 속성만 따라 읽습니다. extras·터미널 내부의 값도 경로로 읽히며 원시값 아래·없는 경로·연산자 경로는 undefined입니다. 원본·잠복 원본을 식의 별도 입력으로 만들지 않습니다. 맥락을 읽는 derived·unsetValue·resetInteraction은 맥락 변경을 기준과 비교하지만 injectTo는 원천 방출이 같으면 맥락만으로 발화하지 않습니다. 같은 식이 화면과 다른 원본을 읽는 이중 의미를 막습니다.
 
 ### derive-fragment-array-reset — CONTROLS-029: 상호작용은 최종 형상에서 초기화합니다
 
-resetInteraction은 최종 형상에서 참으로 바뀌거나 로드·새 대상 발생의 참인 식에 한해 edited·touched 초기화 대상을 돌려줍니다. 값은 쓰지 않으므로 자동 값 쓰기가 억제되어도 판정합니다. 조각 재활성화에서 남아 있던 공유 아이템과 새로 들어온 아이템의 기준을 구별해 이미 소비한 참 조건이 상호작용을 매번 지우지 않게 합니다. 실제 플래그·interactionReset·revision 변경은 settle의 커밋이 담당합니다.
+resetInteraction은 최종 형상에서 참으로 바뀌거나 로드·새 대상 발생의 참인 식에 한해 edited·touched 초기화 대상을 돌려줍니다. 값은 쓰지 않으므로 자동 값 쓰기가 억제되어도 판정합니다. 조각 재활성화에서 남아 있던 공유 아이템과 새로 들어온 아이템의 기준을 구별해 이미 소비한 참 조건이 상호작용을 매번 지우지 않게 합니다. 실제 플래그·`interactionEpoch`·revision 변경은 settle의 커밋이 담당합니다.
 
 ### derive-static-prepared-ids — 현재 선택을 준비물보다 우선합니다
 

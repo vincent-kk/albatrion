@@ -23,9 +23,9 @@ it('keeps compiler creation facts outside enumerable blueprint observables', () 
   const expression = analysis.expressions.find(
     (item) => item.key === 'derived',
   )!;
-  expect(Object.keys(analysis)).not.toContain('staticFirstLoadEligible');
-  expect(Object.keys(expression)).not.toContain('completeReads');
-  expect(Reflect.get(expression, 'completeReads')).toBe(true);
+  expect(Object.keys(analysis)).not.toContain('isStaticFirstLoadEligible');
+  expect(Object.keys(expression)).not.toContain('hasCompleteReads');
+  expect(Reflect.get(expression, 'hasCompleteReads')).toBe(true);
 });
 
 it('retains one record per immutable key and starts without eager slots', () => {
@@ -86,7 +86,7 @@ it('replaces both records on mode transitions while preserving creation facts', 
     (item) => item.key === 'derived',
   )!;
   expect(StaticFirstLoadCapability.has(analysis)).toBe(true);
-  expect(Reflect.get(expression, 'completeReads')).toBe(true);
+  expect(Reflect.get(expression, 'hasCompleteReads')).toBe(true);
   engineModes.setMode('gateSelection', previous);
   expect(getBlueprintDerived(analysis)).toBe(first);
   try {
@@ -94,7 +94,7 @@ it('replaces both records on mode transitions while preserving creation facts', 
     expect(getBlueprintDerived(analysis)).not.toBe(first);
     expect(getHostDerived(analysis.root)).not.toBe(host);
     expect(StaticFirstLoadCapability.has(analysis)).toBe(true);
-    expect(Reflect.get(expression, 'completeReads')).toBe(true);
+    expect(Reflect.get(expression, 'hasCompleteReads')).toBe(true);
   } finally {
     engineModes.setMode('gateSelection', previous);
   }

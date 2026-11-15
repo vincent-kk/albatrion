@@ -36,8 +36,8 @@ export const readValidationEntry = (
   const entry: ValidationEntry = {
     copy: createValidatorCopy(authoredRoot),
     guards: new Map(),
-    compiled: false,
-    eagerCompiled: false,
+    isCompiled: false,
+    isEagerCompiled: false,
   };
   roots.set(authoredRoot, entry);
   return entry;

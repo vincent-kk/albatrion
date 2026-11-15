@@ -59,7 +59,9 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
         true,
         true,
         child.overlay,
-        node.structure?.[entry.name] === child.instance ? context : undefined,
+        node.childrenByName?.[entry.name] === child.instance
+          ? context
+          : undefined,
         sourceContext,
       );
       if (!result.hasSource) continue;
@@ -72,7 +74,7 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
         target,
         materializeKeptSlotOverlay(entry.node, child.instance, result.overlay),
       );
-      if (!retained || node.structure?.[name] === child.instance)
+      if (!retained || node.childrenByName?.[name] === child.instance)
         value = readSlotSourceTree(entry.node, child.instance, result.overlay);
       retained = true;
     } while (position < entries.length && entries[position].name === name);
@@ -85,11 +87,11 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
       overlays: children,
     });
   return {
-    replace: true,
+    isWhole: true,
     source: source.length ? Object.freeze(source) : undefined,
     extras: undefined,
     itemCount: source.length,
-    packedArrayInput: true,
+    isPackedArrayInput: true,
     children,
   };
 };

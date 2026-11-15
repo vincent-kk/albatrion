@@ -13,7 +13,7 @@ export const commitFieldNodeRevealPolicy = <Self extends FieldNodeRecord<Self>>(
   const root = node.rootNode;
   const runtime = root.runtime;
   if (
-    root.disposed ||
+    root.isDisposed ||
     !((runtime.validationMode ?? ValidationMode.None) & ValidationMode.OnChange)
   )
     return;
@@ -27,6 +27,6 @@ export const commitFieldNodeRevealPolicy = <Self extends FieldNodeRecord<Self>>(
     (runtime.revealBaselineGeneration ?? 0) + 1);
   policy.entries.push({ value: policy.value, generation });
   policy.value = value;
-  if (!runtime.validationPending) runtime.revealDropOwed = true;
+  if (!runtime.isValidationPending) runtime.isRevealDropOwed = true;
   scheduleFieldNodeRevealDrop(root);
 };

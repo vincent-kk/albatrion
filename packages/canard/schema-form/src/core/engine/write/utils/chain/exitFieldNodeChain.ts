@@ -123,7 +123,7 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
       }
       guardRecords.clear();
     }
-    const changed = runtime.chainInitialEmit !== root.emit;
+    const changed = runtime.chainInitialOutputValue !== root.storedOutputValue;
     const requests = runtime.validationTargets;
     if (prepareFieldNodeValidation(root)) {
       if (changed && !requests?.has(root)) requestFieldNodeValidationWave(root);
@@ -135,11 +135,11 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
     scheduleFieldNodeRevealDrop(root);
     runtime.validationPendingEntryStamp = undefined;
     runtime.validationTargets = undefined;
-    runtime.deferLoadValidation = undefined;
+    runtime.shouldDeferLoadValidation = undefined;
     runtime.entryDepth = 0;
     errors = runtime.chainErrors ?? [];
-    if (runtime.stateChanged) {
-      runtime.stateChanged = false;
+    if (runtime.hasStateChanged) {
+      runtime.hasStateChanged = false;
       try {
         runtime.onStateChange?.();
       } catch (error) {
@@ -160,7 +160,7 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
       } else {
         runtime.onChangeBudget = (runtime.onChangeBudget ?? 0) + 1;
         try {
-          runtime.onChange(root.emit);
+          runtime.onChange(root.storedOutputValue);
         } catch (error) {
           captureChainError(resolveFieldNodeChainRoot(root).runtime, error);
         } finally {
@@ -191,7 +191,7 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
     runtime.chainRoot = undefined;
     runtime.feedbackBudget = 0;
     runtime.feedbackBlockedListeners = undefined;
-    runtime.feedbackLimitReported = false;
+    runtime.isFeedbackLimitReported = false;
     runtime.chainOccurrences = enclosing?.occurrences;
     // Adoptions during this chain left every runtime it passed through pointing at the
     // chain's shared error list; return them to the enclosing state as well.

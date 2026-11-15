@@ -68,22 +68,22 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   private storedEscapedName: string;
   private storedPath: string;
   private storedDepth: number;
-  private storedRequired: boolean;
-  private readonly storedNullable: boolean;
+  private storedIsRequired: boolean;
+  private readonly storedIsNullable: boolean;
   private readonly storedSchemaType: Optional<BlueprintSchemaType>;
-  structure: Nullable<Dictionary<FieldNode>>;
+  childrenByName: Nullable<Dictionary<FieldNode>>;
   private storedChildren: Nullable<readonly FieldNode[]>;
   itemKey: Nullable<number>;
   itemCount: number;
   nextItemKey: number;
   private storedSource: unknown;
   private storedExtras: unknown;
-  private storedActive: boolean;
-  private storedVisible: boolean;
-  private storedReadOnly: boolean;
-  private storedDisabled: boolean;
-  local: unknown;
-  emit: unknown;
+  private storedIsActive: boolean;
+  private storedIsVisible: boolean;
+  private storedIsReadOnly: boolean;
+  private storedIsDisabled: boolean;
+  storedValue: unknown;
+  storedOutputValue: unknown;
   /** Current output at this path retained by the divergence read memo. */
   divergenceCurrent: unknown;
   /** Concrete path whose parsed segments this occurrence retains. */
@@ -93,27 +93,27 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   /** Last root load output at this path retained by the divergence read memo. */
   divergenceBase: unknown;
   /** Pure comparison result for the retained path values. */
-  divergenceResult: boolean;
+  storedIsDivergent: boolean;
   schema: EffectiveSchema;
   interactionState: FieldNodeRecord<FieldNode>['interactionState'];
   /** Per-bit counts copied only after this occurrence first receives delivery. */
   revisionLedger: Readonly<Record<number, number>>;
-  deliveryInitialized: boolean;
+  isDeliveryInitialized: boolean;
   deliveryChanges: number;
-  deliveryPreviousLocal: unknown;
-  deliveryPreviousEmit: unknown;
+  deliveryPreviousValue: unknown;
+  deliveryPreviousOutputValue: unknown;
   deliveryPreviousPath: Optional<string>;
   deliveryPreviousChildren: Optional<Nullable<readonly FieldNode[]>>;
-  deliveryPreviousComputed: Optional<number>;
+  deliveryPreviousComputedBits: Optional<number>;
   deliveryPreviousSchema: Optional<EffectiveSchema>;
   deliveryPreviousState: Optional<NodeStateFlags>;
   deliveryWatchValues: Optional<readonly unknown[]>;
   pendingDelivery: FieldNodeRecord<FieldNode>['pendingDelivery'];
-  pendingRevision: number;
+  pendingRevisionMask: number;
   pendingNonSettleDelivery: FieldNodeRecord<FieldNode>['pendingNonSettleDelivery'];
-  detached: boolean;
-  disposed: boolean;
-  interactionReset: number;
+  isDetached: boolean;
+  isDisposed: boolean;
+  interactionEpoch: number;
 
   constructor(
     behavior: Behavior<FieldNode>,
@@ -124,7 +124,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     escapedName: string,
     path: string,
     depth: number,
-    structure: Nullable<Dictionary<FieldNode>>,
+    childrenByName: Nullable<Dictionary<FieldNode>>,
     children: Nullable<readonly FieldNode[]>,
     schema: EffectiveSchema,
     state: FieldNodeRecord<FieldNode>['interactionState'],
@@ -138,46 +138,46 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.storedEscapedName = escapedName;
     this.storedPath = path;
     this.storedDepth = depth;
-    this.storedRequired = false;
-    this.storedNullable = blueprintNode.nullable;
+    this.storedIsRequired = false;
+    this.storedIsNullable = blueprintNode.isNullable;
     this.storedSchemaType = blueprintNode.schemaType;
-    this.structure = structure;
+    this.childrenByName = childrenByName;
     this.storedChildren = children;
     this.itemKey = null;
     this.itemCount = 0;
     this.nextItemKey = 0;
     this.storedSource = undefined;
     this.storedExtras = undefined;
-    this.storedActive = true;
-    this.storedVisible = true;
-    this.storedReadOnly = false;
-    this.storedDisabled = false;
-    this.local = undefined;
-    this.emit = undefined;
+    this.storedIsActive = true;
+    this.storedIsVisible = true;
+    this.storedIsReadOnly = false;
+    this.storedIsDisabled = false;
+    this.storedValue = undefined;
+    this.storedOutputValue = undefined;
     this.divergenceCurrent = undefined;
     this.divergencePath = undefined;
     this.divergenceSegments = undefined;
     this.divergenceBase = undefined;
-    this.divergenceResult = false;
+    this.storedIsDivergent = false;
     this.schema = schema;
     this.interactionState = state;
     this.revisionLedger = EMPTY_REVISION_LEDGER;
-    this.deliveryInitialized = false;
+    this.isDeliveryInitialized = false;
     this.deliveryChanges = BIT_MASK_NONE;
-    this.deliveryPreviousLocal = undefined;
-    this.deliveryPreviousEmit = undefined;
+    this.deliveryPreviousValue = undefined;
+    this.deliveryPreviousOutputValue = undefined;
     this.deliveryPreviousPath = undefined;
     this.deliveryPreviousChildren = undefined;
-    this.deliveryPreviousComputed = undefined;
+    this.deliveryPreviousComputedBits = undefined;
     this.deliveryPreviousSchema = undefined;
     this.deliveryPreviousState = undefined;
     this.deliveryWatchValues = undefined;
     this.pendingDelivery = undefined;
-    this.pendingRevision = BIT_MASK_NONE;
+    this.pendingRevisionMask = BIT_MASK_NONE;
     this.pendingNonSettleDelivery = undefined;
-    this.detached = false;
-    this.disposed = false;
-    this.interactionReset = 0;
+    this.isDetached = false;
+    this.isDisposed = false;
+    this.interactionEpoch = 0;
   }
 
   get type() {
@@ -194,14 +194,14 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   }
   /** Whether the effective declaration requires this occurrence. */
   get isRequired() {
-    return this.storedRequired;
+    return this.storedIsRequired;
   }
   /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
   set isRequired(value: boolean) {
-    this.storedRequired = value;
+    this.storedIsRequired = value;
   }
-  get nullable() {
-    return this.storedNullable;
+  get isNullable() {
+    return this.storedIsNullable;
   }
   get depth() {
     return this.storedDepth;
@@ -255,29 +255,29 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.storedExtras = value;
   }
   get value() {
-    return this.local;
+    return this.storedValue;
   }
   get outputValue() {
-    return this.emit;
+    return this.storedOutputValue;
   }
   get inactiveValues() {
     return readFieldNodeInactiveValues<FieldNode>(this);
   }
   /** Whether this occurrence remains in the current shape. */
   get isActive() {
-    return this.storedActive;
+    return this.storedIsActive;
   }
   /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
   set isActive(value: boolean) {
-    this.storedActive = value;
+    this.storedIsActive = value;
   }
   /** Local visibility after active declarations are combined. */
   get isVisible() {
-    return this.storedVisible;
+    return this.storedIsVisible;
   }
   /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
   set isVisible(value: boolean) {
-    this.storedVisible = value;
+    this.storedIsVisible = value;
   }
   /** Whether this occurrence is active and visible, independent of disabled state. */
   get isPresent() {
@@ -285,19 +285,19 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   }
   /** Local read-only state including the standard schema readOnly flag. */
   get isReadOnly() {
-    return this.storedReadOnly;
+    return this.storedIsReadOnly;
   }
   /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
   set isReadOnly(value: boolean) {
-    this.storedReadOnly = value;
+    this.storedIsReadOnly = value;
   }
   /** Local input lock independent of presence. */
   get isDisabled() {
-    return this.storedDisabled;
+    return this.storedIsDisabled;
   }
   /** Publish the engine decision through the matching record field. @param value - Settled boolean decision. */
   set isDisabled(value: boolean) {
-    this.storedDisabled = value;
+    this.storedIsDisabled = value;
   }
   /** Effective watched values read from the emitted tree. */
   get watchValues() {

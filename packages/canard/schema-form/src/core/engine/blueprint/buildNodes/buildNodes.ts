@@ -39,7 +39,7 @@ export const buildNodes = (
   const cached =
     context.templates.get(boundKey) ?? context.constructing.get(key);
   if (context.constructing.has(key)) {
-    context.staticFirstLoad = false;
+    context.isStaticFirstLoad = false;
     context.hasTemplateRecursion = true;
   }
   if (cached) return cached;
@@ -62,10 +62,10 @@ export const buildNodes = (
   for (let index = 0; index < groups.length; index++) {
     const group = groups[index];
     const nonNull: SchemaTypeName[] = [];
-    let nullable = false;
+    let isNullable = false;
     for (let type = 0; type < group.allowed.length; type++) {
       const allowed = group.allowed[type];
-      if (allowed === 'null') nullable = true;
+      if (allowed === 'null') isNullable = true;
       else nonNull.push(allowed);
     }
     const schemaType: BlueprintSchemaType =
@@ -88,7 +88,7 @@ export const buildNodes = (
               ...declaration,
               gates: [...declaration.gates],
               order: [...declaration.order],
-              validationOnly: true,
+              isValidationOnly: true,
             }
           : declaration;
       if (process.env.NODE_ENV !== 'production' && owned !== declaration) {
@@ -105,7 +105,7 @@ export const buildNodes = (
       schemaPath: inputs[0].schemaPath,
       kind,
       schemaType,
-      nullable,
+      isNullable,
       strategy: resolveNodeStrategy(context, kind, group.declarations),
       declarations:
         process.env.NODE_ENV !== 'production'
@@ -130,7 +130,7 @@ export const buildNodes = (
     if (
       ownedDeclarations.length === 1 &&
       ownedDeclarations[0].gates.length === 0 &&
-      !node.nullable &&
+      !node.isNullable &&
       context.options.isAtomic === undefined &&
       context.options.collect === undefined
     ) {
@@ -140,7 +140,7 @@ export const buildNodes = (
         declaration.context === 'conjunction' &&
         declaration.role === 'declaration' &&
         declaration.scope === 'node' &&
-        !declaration.validationOnly &&
+        !declaration.isValidationOnly &&
         (typeof schema === 'boolean' ||
           (schema.nullable === undefined &&
             schema.pattern === undefined &&

@@ -57,7 +57,7 @@ it.each(['skip', 'shadow'] as const)(
     const spy = vi.spyOn(selection, 'selectEntryStep');
     const assemblies = vi.spyOn(output, 'updateOutput');
     try {
-      dispatchSetValue(root.structure!.type, 'b');
+      dispatchSetValue(root.childrenByName!.type, 'b');
       expect(spy.mock.calls.length).toBeLessThanOrEqual(24);
       expect(
         assemblies.mock.calls.filter(([node]) => node === root),

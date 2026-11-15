@@ -75,7 +75,7 @@ describe('detached FieldNode references', () => {
       { flag: false, target: 'other' },
       SetValueOption.Overwrite,
     );
-    expect(Reflect.get(target, 'detached')).toBe(true);
+    expect(Reflect.get(target, 'isDetached')).toBe(true);
     expect(target.isMisfit).toBe(true);
     expect(target.misfits).toEqual(['/target']);
     expect(target.defaultValue).toBe('bad');
@@ -105,7 +105,7 @@ describe('detached FieldNode references', () => {
     root.find('/flag')?.setValue(false);
     expect(group.isActive).toBe(false);
     expect(leaf.isActive).toBe(false);
-    expect(Reflect.get(leaf, 'detached')).toBe(true);
+    expect(Reflect.get(leaf, 'isDetached')).toBe(true);
     const commit = Reflect.get(runtime, 'commitNumber');
     leaf.setValue('x');
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);

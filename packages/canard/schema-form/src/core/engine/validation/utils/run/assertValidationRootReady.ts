@@ -36,7 +36,7 @@ export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
     typeof id === 'string' &&
     entry.failure instanceof Error &&
     DUPLICATE_SCHEMA_ID_MESSAGE.test(entry.failure.message) &&
-    entry.duplicate === true;
+    entry.isDuplicate === true;
 
   throw (entry.rejection ??= new SchemaFormError(
     FormErrorCode.ValidatorCompileFailed,

@@ -90,7 +90,7 @@ it.each(['insert', 'remove'] as const)(
       const destination = operation === 'insert' ? source + 1 : source - 1;
       const path = `/list/${destination}/v`;
       const stringKey = JSON.stringify([path, 'string']);
-      expect(list.structure?.[String(destination)]).toBeUndefined();
+      expect(list.childrenByName?.[String(destination)]).toBeUndefined();
       expect(readRetainedSlotSource(root, path, 'string')).toBe(values[source]);
       expect(readRetainedSlotSource(root, path, 'number')).toBe(37);
       const stringMetadata = metadata[source].string;

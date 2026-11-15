@@ -23,7 +23,7 @@ it('removes fixed writable, latent, wrong-kind and effective-type work on normal
     },
   });
   loadFieldNodeAtMount(root, { value: 'before' }, WriteOption.Overwrite);
-  const leaf = root.structure!.value;
+  const leaf = root.childrenByName!.value;
   const assertWritable = vi.spyOn(writable, 'assertFieldNodeWritable');
   const release = vi.spyOn(wrongKind, 'releaseWrongKindHosts');
   const effective = vi.spyOn(types, 'effectiveType');
@@ -34,7 +34,7 @@ it('removes fixed writable, latent, wrong-kind and effective-type work on normal
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.emit).toEqual({ value, sibling: 3 });
+    expect(root.storedOutputValue).toEqual({ value, sibling: 3 });
   }
   expect(assertWritable).not.toHaveBeenCalled();
   expect(release).not.toHaveBeenCalled();
@@ -53,7 +53,7 @@ it('retains general checks and derived writes when their inputs exist', () => {
     },
   });
   loadFieldNodeAtMount(root, { value: 'before' }, WriteOption.Overwrite);
-  const leaf = root.structure!.value;
+  const leaf = root.childrenByName!.value;
   const assertWritable = vi.spyOn(writable, 'assertFieldNodeWritable');
   const release = vi.spyOn(wrongKind, 'releaseWrongKindHosts');
   writeFieldNode(
@@ -64,8 +64,8 @@ it('retains general checks and derived writes when their inputs exist', () => {
   );
   expect(assertWritable).toHaveBeenCalledTimes(1);
   expect(release).toHaveBeenCalledTimes(1);
-  expect(root.emit).toEqual({ value: 'after', copy: 'after' });
-  leaf.disposed = true;
+  expect(root.storedOutputValue).toEqual({ value: 'after', copy: 'after' });
+  leaf.isDisposed = true;
   expect(() =>
     writeFieldNode(
       leaf,
@@ -74,5 +74,5 @@ it('retains general checks and derived writes when their inputs exist', () => {
       WriteOption.Overwrite,
     ),
   ).toThrow('Cannot write disposed node');
-  expect(root.emit).toEqual({ value: 'after', copy: 'after' });
+  expect(root.storedOutputValue).toEqual({ value: 'after', copy: 'after' });
 });

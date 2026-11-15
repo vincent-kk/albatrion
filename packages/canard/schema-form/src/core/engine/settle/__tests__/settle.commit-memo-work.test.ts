@@ -27,12 +27,12 @@ it('keeps a still-empty mismatch row as built, without clearing or reinserting t
   for (let index = 0; index < 2; index++) {
     const value = index === 0 ? 'first' : 'later';
     writeFieldNode(
-      root.structure!.value,
+      root.childrenByName!.value,
       value,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.emit).toEqual({ value, sibling: 3 });
+    expect(root.storedOutputValue).toEqual({ value, sibling: 3 });
     expect(memo.get('')).toEqual({ commit: 1, paths: [] });
     expect(memo.get('')!.paths).toBe(paths);
     expect(root.runtime.misfitRecords).toEqual([]);
@@ -57,7 +57,7 @@ it('clears ancestor rows on mismatch recovery and retains its warning and commit
     { group: { value: 'before' } },
     WriteOption.Overwrite,
   );
-  const leaf = root.structure!.group.structure!.value;
+  const leaf = root.childrenByName!.group.childrenByName!.value;
   writeFieldNode(
     leaf,
     { invalid: true },
@@ -83,7 +83,7 @@ it('clears ancestor rows on mismatch recovery and retains its warning and commit
   expect(memo.get('')).toEqual({ commit: 3, paths: [] });
   expect(root.runtime.misfitRecords).toEqual([]);
   expect(root.runtime.misfitPaths.size).toBe(0);
-  expect(root.emit).toEqual({ group: { value: 'recovered' } });
+  expect(root.storedOutputValue).toEqual({ group: { value: 'recovered' } });
 });
 
 it('resets additional subtree memo rows instead of keeping an older commit', () => {
@@ -99,7 +99,7 @@ it('resets additional subtree memo rows instead of keeping an older commit', () 
   const clear = vi.spyOn(memo, 'clear');
   const set = vi.spyOn(memo, 'set');
   writeFieldNode(
-    root.structure!.value,
+    root.childrenByName!.value,
     'after',
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,

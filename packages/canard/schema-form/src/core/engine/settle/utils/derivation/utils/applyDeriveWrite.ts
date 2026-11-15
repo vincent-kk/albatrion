@@ -37,7 +37,7 @@ export const applyDeriveWrite = <Self extends FieldNodeRecord<Self>>(
   const values = isArray(write.value) ? write.value : [];
   const fields = write.target.blueprintNode.fields ?? [];
   for (let index = 0; index < fields.length; index++) {
-    const sibling = write.target.parent?.structure?.[fields[index]];
+    const sibling = write.target.parent?.childrenByName?.[fields[index]];
     if (sibling) markWrite(sibling, values[index], context);
   }
 };

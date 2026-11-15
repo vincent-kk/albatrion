@@ -11,4 +11,4 @@ export const isFieldNodeValidationLifetimeCurrent = <
 >(
   root: Self,
   epoch: number | undefined,
-): boolean => !root.disposed && root.runtime.validationEpoch === epoch;
+): boolean => !root.isDisposed && root.runtime.validationEpoch === epoch;

@@ -40,7 +40,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   if (
     !context.hasGates &&
-    context.root.runtime.blueprint.capabilities.branchless &&
+    context.root.runtime.blueprint.capabilities.isBranchless &&
     context.shapeDirtyPaths.size === 0 &&
     context.entered.size === 0
   ) {
@@ -71,8 +71,8 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     context.kind === FieldNodeWriteKind.Load &&
     node.behavior.type === 'object' &&
     node.behavior.strategy === 'branch' &&
-    !node.deliveryInitialized &&
-    !context.suppressAutomaticWrites &&
+    !node.isDeliveryInitialized &&
+    !context.isAutomaticWriteSuppressed &&
     !context.hasGates &&
     context.writtenInputs.get(node) === undefined &&
     hasIndependentLeafDefaults(node.runtime.blueprint)
@@ -111,11 +111,11 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     context.dirtyPaths.delete(node.path);
     return;
   }
-  const previousLocal = node.local;
-  const previousEmit = node.emit;
+  const previousValue = node.storedValue;
+  const previousOutputValue = node.storedOutputValue;
   const previousChildren = node.children;
   const previousSchema = node.schema;
-  const previousActive = node.isActive;
+  const wasActive = node.isActive;
   if (!context.shapeDirtyPaths.has(node.path)) {
     const recalculated = dirtyChildren(node, context);
     let registrations = context.presenceRegistrations ?? 0;
@@ -154,13 +154,13 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     if (context.presenceMetrics) context.presenceMetrics.ancestorWheels++;
   }
   const previous = {
-    local: previousLocal,
-    emit: previousEmit,
+    value: previousValue,
+    outputValue: previousOutputValue,
     children: previousChildren,
     schema: previousSchema,
-    active: previousActive,
+    isActive: wasActive,
   };
-  const prior = node.structure ?? {};
+  const prior = node.childrenByName ?? {};
   let wheelPlan = context.hasGates ? prepareHostWheelPlan(node) : undefined;
   let gates = wheelPlan?.gates ?? [];
   const relocated = wheelPlan?.relocated ?? [];
@@ -169,7 +169,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   for (let index = 0; index < initialDirty.length; index++)
     computeNode(initialDirty[index], context);
   const deferBaseline =
-    wheelPlan?.baselineEligible === true &&
+    wheelPlan?.isBaselineEligible === true &&
     context.kind !== FieldNodeWriteKind.Load &&
     !context.distributedInputs.has(node) &&
     context.pathChanges.length === 0;
@@ -192,15 +192,15 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   let registered = false;
   let hasRelocated = relocated.length > 0;
   for (let round = 0; round < cap; round++) {
-    const roundLocal = node.local;
-    const roundEmit = node.emit;
+    const roundStoredValue = node.storedValue;
+    const roundStoredOutputValue = node.storedOutputValue;
     const frame: Optional<GateWheelFrame> =
       gates.length > 0 && context.kind !== FieldNodeWriteKind.Load
         ? {
             inputs: new Map(),
-            consistent: true,
+            isConsistent: true,
             gateCount: gates.length,
-            throwVersion: context.gateThrowVersion,
+            exceptionVersion: context.gateExceptionVersion,
             ...(engineModes.gateWheel === 'shadow' ? { evaluations: [] } : {}),
           }
         : undefined;
@@ -215,7 +215,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
         context.presenceClock,
       );
     }
-    const publication = { flushed: false };
+    const publication = { isFlushed: false };
     const changed = selectChildren(
       node,
       context,
@@ -230,7 +230,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     if (flagged || registered)
       registered =
         registerPresenceChanges(node, lastStructure, context) || registered;
-    if (registered) lastStructure = node.structure ?? {};
+    if (registered) lastStructure = node.childrenByName ?? {};
     flushPresenceTemplates(node, context);
     const dirty = dirtyChildren(node, context);
     for (let index = 0; index < dirty.length; index++)
@@ -243,8 +243,8 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
       !changed &&
       dirty.length === 0 &&
       !context.pendingOutputs?.has(node) &&
-      node.local === roundLocal &&
-      node.emit === roundEmit &&
+      node.storedValue === roundStoredValue &&
+      node.storedOutputValue === roundStoredOutputValue &&
       !context.distributedInputs.has(node) &&
       context.pathChanges.length === 0;
     if (context.initialOutputs) context.initialOutputs.push(node);
@@ -252,7 +252,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
       !unchangedPublication &&
       (!deferBaseline ||
         hasRelocated ||
-        !publication.flushed ||
+        !publication.isFlushed ||
         dirty.length > 0 ||
         context.pendingOutputs?.has(node))
     )
@@ -275,7 +275,8 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     const publishedChanged =
       !outputChanged &&
       context.kind !== FieldNodeWriteKind.Load &&
-      (node.local !== roundLocal || node.emit !== roundEmit) &&
+      (node.storedValue !== roundStoredValue ||
+        node.storedOutputValue !== roundStoredOutputValue) &&
       scheduleChangedRelocatedGates(currentRelocated, context);
     const wheelChanged =
       schemaChanged || changed || outputChanged || publishedChanged;

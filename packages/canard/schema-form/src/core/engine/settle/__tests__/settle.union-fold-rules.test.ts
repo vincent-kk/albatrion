@@ -24,7 +24,7 @@ describe('union fold committed rule identities', () => {
       { left: true, right: false, source: 'first' },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.shared?.source).toBe('first');
+    expect(root.childrenByName?.shared?.source).toBe('first');
     expect(
       [...root.runtime.committedRuleValues!.keys()]
         .map((key) => JSON.parse(key))
@@ -41,7 +41,7 @@ describe('union fold committed rule identities', () => {
       FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
-    expect(root.structure?.shared?.source).toBe('second');
+    expect(root.childrenByName?.shared?.source).toBe('second');
     const keys = [...root.runtime.committedRuleValues!.keys()]
       .map((key) => JSON.parse(key))
       .filter((key) => key[0] === '/shared');
@@ -113,7 +113,7 @@ describe('union fold committed rule identities', () => {
       FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
-    expect(root.structure?.shared?.source).toBe(17);
+    expect(root.childrenByName?.shared?.source).toBe(17);
   });
 
   it('fills each union fold once when a sibling default changes the selected fold', () => {
@@ -134,8 +134,11 @@ describe('union fold committed rule identities', () => {
       ],
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-    expect(root.structure?.shared?.schemaType).toEqual(['string', 'boolean']);
-    expect(root.structure?.shared?.source).toBe(true);
+    expect(root.childrenByName?.shared?.schemaType).toEqual([
+      'string',
+      'boolean',
+    ]);
+    expect(root.childrenByName?.shared?.source).toBe(true);
     expect(root.runtime.diagnostics.status).toBe('stable');
   });
 });

@@ -21,7 +21,7 @@ export interface GatePredicate {
   /** Reusable positional buffer and call object for proven pure evaluations. */
   readonly arguments: GatePredicateInputs;
   /** Whether input equality proves that reusing the last result is valid. */
-  readonly memoizable: boolean;
+  readonly isMemoizable: boolean;
   /** Execute the expression, strict tag predicate, or lazily bound validator. */
   readonly evaluate: Fn<[inputs: GatePredicateInputs], Optional<boolean>>;
 }

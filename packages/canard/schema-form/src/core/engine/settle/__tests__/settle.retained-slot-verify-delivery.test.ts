@@ -52,7 +52,7 @@ it('replays the resolved batch without invoking its callback again', () => {
   });
   dispatchBatch(root, callback);
   expect(callback).toHaveBeenCalledTimes(1);
-  expect(root.local).toEqual({ open: false, count: 3 });
+  expect(root.storedValue).toEqual({ open: false, count: 3 });
 });
 
 it('compares frozen detached reads after external state and error inputs', () => {
@@ -63,5 +63,5 @@ it('compares frozen detached reads after external state and error inputs', () =>
   dispatchSetExternalErrors(old, [{ dataPath: '/value', message: 'external' }]);
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(old.detached).toBe(true);
+  expect(old.isDetached).toBe(true);
 });

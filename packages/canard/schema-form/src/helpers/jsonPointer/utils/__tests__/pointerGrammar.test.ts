@@ -42,12 +42,12 @@ describe('pointer grammar', () => {
   });
 
   it('preserves prefixes, empty names and the array input shape', () => {
-    expect(parsePointer('#')).toEqual({ absolute: true, segments: [] });
-    expect(parsePointer('#/')).toEqual({ absolute: true, segments: [''] });
-    expect(parsePointer('/')).toEqual({ absolute: true, segments: [''] });
-    expect(parsePointer('')).toEqual({ absolute: false, segments: [] });
+    expect(parsePointer('#')).toEqual({ isAbsolute: true, segments: [] });
+    expect(parsePointer('#/')).toEqual({ isAbsolute: true, segments: [''] });
+    expect(parsePointer('/')).toEqual({ isAbsolute: true, segments: [''] });
+    expect(parsePointer('')).toEqual({ isAbsolute: false, segments: [] });
     expect(parsePointer(['#', '%2A', '*', '#'])).toEqual({
-      absolute: true,
+      isAbsolute: true,
       segments: ['*', PointerOperator.Wildcard, '#'],
     });
     const ordinary = ['child', 'rate%20'];

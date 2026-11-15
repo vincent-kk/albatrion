@@ -321,7 +321,7 @@ try {
             defaultValue: { source: 1, list: [1] },
           });
           engine.mountFieldNode(tree);
-          const list = tree.structure.list,
+          const list = tree.childrenByName.list,
             old = list.children[0],
             getter =
               options.negative === 'wrong-module' && label === 'source'
@@ -344,7 +344,7 @@ try {
           );
           const historicalKey = historicalNormalize(oldKey);
           engine.dispatchRemove(list, 0);
-          assert.equal(old.detached, true);
+          assert.equal(old.isDetached, true);
           assert.equal(
             historicalNormalize(oldKey),
             historicalKey,
@@ -437,14 +437,14 @@ try {
           );
           const codec = new fixture.ObservationCodec();
           f.known.forEach((node, index) => codec.nodes.set(node, index + 1));
-          f.owner.detached = true;
+          f.owner.isDetached = true;
           reject(
             'current-attachment',
             () =>
               fixture.captureObservationState(f.tree, f.known, codec, getter),
             /attachment/,
           );
-          f.owner.detached = false;
+          f.owner.isDetached = false;
         }
         return {
           wrongModuleDirections: rows,

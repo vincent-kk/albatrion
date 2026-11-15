@@ -388,7 +388,7 @@ describe('positional readers outside the static admission recompute the shifted 
 });
 
 describe('the splice admission reads the shared static admission and the tail', () => {
-  it('admits middle positions only and checks every tail position against structure and children', () => {
+  it('admits middle positions only and checks every tail position against childrenByName and children', () => {
     const root = mounted(
       { type: 'array', items: { type: 'number' } },
       [1, 2, 3, 4],
@@ -406,16 +406,16 @@ describe('the splice admission reads the shared static admission and the tail', 
       prepareArraySplice(root, { kind: 'insert', index: 4, value: 0 }),
     ).toBe(undefined);
     expect(prepareArraySplice(root, { kind: 'pop' })).toBe(undefined);
-    const structure = root.structure!;
-    root.structure = { ...structure, '3': structure['2'] };
+    const childrenByName = root.childrenByName!;
+    root.childrenByName = { ...childrenByName, '3': childrenByName['2'] };
     expect(prepareArraySplice(root, { kind: 'remove', index: 1 })).toBe(
       undefined,
     );
-    root.structure = { ...structure, '0': structure['1'] };
+    root.childrenByName = { ...childrenByName, '0': childrenByName['1'] };
     expect(prepareArraySplice(root, { kind: 'remove', index: 1 })?.count).toBe(
       4,
     );
-    root.structure = structure;
+    root.childrenByName = childrenByName;
   });
 
   it('the application alone publishes the cut prefix, the shifted tail and a dense snapshot before selection runs', () => {
@@ -438,8 +438,8 @@ describe('the splice admission reads the shared static admission and the tail', 
         return {
           removed,
           before,
-          keys: Object.keys(root.structure!),
-          structure: Object.values(root.structure!),
+          keys: Object.keys(root.childrenByName!),
+          childrenByName: Object.values(root.childrenByName!),
           children: root.children,
           count: root.itemCount,
           snapshot: root.runtime.loadSnapshot,
@@ -452,14 +452,14 @@ describe('the splice admission reads the shared static admission and the tail', 
     const kept = [0, 2, 3, 4].map((position) => removal.before[position]);
     expect(removal.removed).toBe(2);
     expect(removal.keys).toEqual(['0', '1', '2', '3']);
-    expect(removal.structure).toEqual(kept);
+    expect(removal.childrenByName).toEqual(kept);
     expect(removal.children).toEqual(kept);
     expect(removal.count).toBe(4);
     expect(removal.snapshot).toEqual([1, 3, 4, 5]);
 
     const insertion = splice({ kind: 'insert', index: 2, value: 9 });
     expect(insertion.keys).toEqual(['0', '1', '2', '3', '4', '5']);
-    expect(insertion.children).toEqual(insertion.structure);
+    expect(insertion.children).toEqual(insertion.childrenByName);
     expect(
       insertion.children!.filter((child, position) =>
         position === 2
@@ -492,7 +492,7 @@ describe('the splice admission reads the shared static admission and the tail', 
         { apply: (root) => dispatchRemove(root, 0), splice: true },
       ],
     );
-    expect(candidate.emit).toEqual([3, 4]);
+    expect(candidate.storedOutputValue).toEqual([3, 4]);
   });
 });
 
@@ -522,7 +522,12 @@ describe('the splice selection proof reads only the tail', () => {
       ],
     );
     expect(proof).toHaveBeenCalledTimes(2);
-    expect(candidate.emit).toEqual([{ v: 1 }, { v: 9 }, { v: 3 }, { v: 4 }]);
+    expect(candidate.storedOutputValue).toEqual([
+      { v: 1 },
+      { v: 9 },
+      { v: 3 },
+      { v: 4 },
+    ]);
   });
 
   it('accepts the published splice and rejects each moved fact', () => {
@@ -538,7 +543,7 @@ describe('the splice selection proof reads only the tail', () => {
         WriteOption.Overwrite,
         scratch,
       );
-      const prior = root.structure!;
+      const prior = root.childrenByName!;
       const children = root.children!;
       const proof: ArraySpliceProof<DispatchTestNode> = {
         host: root,
@@ -551,7 +556,7 @@ describe('the splice selection proof reads only the tail', () => {
         },
         children,
         pathChanges: 0,
-        valid: true,
+        isValid: true,
       };
       const check = (structure = prior) =>
         canReuseSplicedChildren(root, context, structure, proof);
@@ -585,9 +590,9 @@ describe('the splice selection proof reads only the tail', () => {
       proof.pathChanges = 1;
       expect(check()).toBe(false);
       proof.pathChanges = 0;
-      root.structure = { ...prior, '2': prior['3'] };
-      expect(check(root.structure)).toBe(false);
-      root.structure = prior;
+      root.childrenByName = { ...prior, '2': prior['3'] };
+      expect(check(root.childrenByName)).toBe(false);
+      root.childrenByName = prior;
 
       context.hasGates = true;
       expect(check()).toBe(false);
@@ -597,8 +602,8 @@ describe('the splice selection proof reads only the tail', () => {
       context.pendingExits.clear();
       context.distributedInputs.set(root, {
         input: [],
-        whole: true,
-        automatic: false,
+        isWhole: true,
+        isAutomatic: false,
       });
       expect(check()).toBe(false);
       context.distributedInputs.clear();

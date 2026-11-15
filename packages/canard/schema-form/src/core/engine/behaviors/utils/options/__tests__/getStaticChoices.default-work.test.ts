@@ -3,8 +3,11 @@ import { expect, it, vi } from 'vitest';
 import { getStaticChoices } from '../getStaticChoices';
 
 it('links optionless effective schemas to one frozen default while keeping each memo lookup', () => {
-  const first = { schema: { type: 'string' as const }, typeConflict: false };
-  const second = { schema: { type: 'number' as const }, typeConflict: false };
+  const first = { schema: { type: 'string' as const }, hasTypeConflict: false };
+  const second = {
+    schema: { type: 'number' as const },
+    hasTypeConflict: false,
+  };
   const freeze = vi.spyOn(Object, 'freeze');
   let left, right, repeated;
   let calls = 0;
@@ -41,7 +44,7 @@ it('keeps options and validated propertyOrder independent from the default and a
         propertyOrder: keys,
       },
     },
-    typeConflict: false,
+    hasTypeConflict: false,
   };
   const result = getStaticChoices(effective);
   expect(result).toEqual({
@@ -54,7 +57,7 @@ it('keeps options and validated propertyOrder independent from the default and a
   expect(Object.isFrozen(result.propertyOrder)).toBe(true);
   expect(Object.isFrozen(keys)).toBe(false);
   expect(getStaticChoices(effective)).toBe(result);
-  expect(getStaticChoices({ schema: true, typeConflict: false })).not.toBe(
+  expect(getStaticChoices({ schema: true, hasTypeConflict: false })).not.toBe(
     result,
   );
 });

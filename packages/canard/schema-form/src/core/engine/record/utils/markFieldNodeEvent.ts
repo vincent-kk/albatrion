@@ -28,6 +28,6 @@ export const markFieldNodeEvent = <Self extends FieldNodeRecord<Self>>(
       options: options === undefined ? undefined : { [bit]: options },
     };
   deliveries.add(node);
-  node.pendingRevision |= bit;
+  node.pendingRevisionMask |= bit;
   (node.runtime.revisionNodes ??= new Set()).add(node);
 };

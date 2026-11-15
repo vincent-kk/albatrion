@@ -20,6 +20,9 @@ export const captureProjectionBaseline = <Self extends FieldNodeRecord<Self>>(
   let children = hosts.get(host);
   if (!children) hosts.set(host, (children = new Map()));
   if (!children.has(child))
-    children.set(child, { schema: child.schema, emit: child.emit });
+    children.set(child, {
+      schema: child.schema,
+      outputValue: child.storedOutputValue,
+    });
   (context.presenceHosts ??= new Set()).add(host);
 };

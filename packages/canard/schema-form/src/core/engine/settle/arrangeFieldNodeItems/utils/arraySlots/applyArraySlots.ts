@@ -48,7 +48,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   if (canApplyArrayTail(host, plan)) return applyArrayTail(host, plan, context);
   const oldCount = host.itemCount;
-  const oldItems = host.structure ?? {};
+  const oldItems = host.childrenByName ?? {};
   // With an item template and no tuple positions, extras or whole source, only a slot without a live node reads source.
   let sourceSlots =
     host.source === undefined &&
@@ -66,7 +66,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     removedIndex < 0
       ? undefined
       : removedItem
-        ? removedItem.local
+        ? removedItem.storedValue
         : (sourceSlots ??= readSourceSlots(host, context))[removedIndex];
   const registry = getGateRegistry(host.runtime);
   if (context.hasGates)
@@ -75,7 +75,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   const nextSource: unknown[] = [];
   const nextSnapshot: unknown[] = [];
   const reused = new Set<Self>();
-  const created: { node: Self; value: unknown; moved: boolean }[] = [];
+  const created: { node: Self; value: unknown; isMoved: boolean }[] = [];
   let deferred = false;
   const destinations = new Map<number, number>();
   const candidateMoves = host.blueprintNode.hasCandidateDescendants === true;
@@ -90,28 +90,28 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       from !== undefined && candidateMoves
         ? getItemEntries(host.blueprintNode, from)
         : undefined;
-    let moved = false;
+    let isMoved = false;
     if (from !== undefined && candidateMoves) {
-      moved = candidates.length > 1;
-      if (!moved)
+      isMoved = candidates.length > 1;
+      if (!isMoved)
         for (const candidate of candidates)
           if (candidate.node.hasCandidateDescendants) {
-            moved = true;
+            isMoved = true;
             break;
           }
-      if (!moved && sourceCandidates) {
-        moved = sourceCandidates.length > 1;
-        if (!moved)
+      if (!isMoved && sourceCandidates) {
+        isMoved = sourceCandidates.length > 1;
+        if (!isMoved)
           for (const candidate of sourceCandidates)
             if (candidate.node.hasCandidateDescendants) {
-              moved = true;
+              isMoved = true;
               break;
             }
       }
     }
-    if (from !== undefined && moved) destinations.set(from, index);
+    if (from !== undefined && isMoved) destinations.set(from, index);
     const entry = candidates[0];
-    if (!entry && !moved) continue;
+    if (!entry && !isMoved) continue;
     const old = from === undefined ? undefined : oldItems[String(from)];
     if (old) {
       let compatible = false;
@@ -123,7 +123,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       if (compatible) {
         nextItems[String(index)] = old;
         reused.add(old);
-        if (from !== undefined && !moved) destinations.set(from, index);
+        if (from !== undefined && !isMoved) destinations.set(from, index);
         continue;
       }
     }
@@ -131,8 +131,8 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       from === undefined || sourceSlots
         ? value
         : (sourceSlots = readSourceSlots(host, context))[from];
-    if (from !== undefined && !old && !moved) destinations.set(from, index);
-    if (old && moved) {
+    if (from !== undefined && !old && !isMoved) destinations.set(from, index);
+    if (old && isMoved) {
       const binding = getRetainedChildEntry(host, old.name, old.blueprintNode);
       if (binding) {
         markSlotChange(host, binding, old, context);
@@ -147,11 +147,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     }
     const node = createChildNode(host, entry);
     nextItems[String(index)] = node;
-    created.push({
-      node,
-      value: source,
-      moved,
-    });
+    created.push({ node, value: source, isMoved });
   }
   const moves: ArrayPathMove[] = [];
   for (let index = 0; index < oldCount; index++) {
@@ -169,12 +165,12 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       (departing) => {
         if (!departing.runtime.detachedReads?.has(departing))
           captureDetachedFieldNodeReads(departing, {
-            emit: context.previousEmit,
+            outputValue: context.previousOutputValue,
             context: context.previousContext,
             schema: departing.schema.schema,
           });
       },
-      { owned: true },
+      { isOwned: true },
     );
   }
   rekeyArraySlotBindings(host, moves, context);
@@ -208,13 +204,13 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
           context.shapeDirtyPaths.add(descendant.path);
         context.changedNodes.add(descendant);
       },
-      { owned: true },
+      { isOwned: true },
     );
   }
   host.itemCount = plan.slots.length;
   host.source = undefined;
   host.extras = arrayExtras(host, nextSource);
-  host.structure = nextItems;
+  host.childrenByName = nextItems;
   host.children = captureFieldNodeChange(
     host,
     'children',
@@ -228,18 +224,18 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   if (deferred) {
     const distribution: Distribution = {
       input: nextSource,
-      whole: false,
-      automatic: false,
+      isWhole: false,
+      isAutomatic: false,
     };
     context.distributedInputs.set(host, {
       ...distribution,
-      preserveLatent: true,
+      shouldPreserveLatent: true,
     });
   }
-  for (const { node, value, moved } of created) {
+  for (const { node, value, isMoved } of created) {
     context.entered.add(node);
 
-    if (moved) replayMovedSource(node, value, context);
+    if (isMoved) replayMovedSource(node, value, context);
     else markWrite(node, value, context);
   }
   if (context.hasGates)
@@ -249,7 +245,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
         (node) => {
           registry.register(node);
         },
-        { owned: true },
+        { isOwned: true },
       );
   host.runtime.loadSnapshot = setLoadValue(
     host.runtime.loadSnapshot,

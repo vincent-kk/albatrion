@@ -55,9 +55,9 @@ const makeRecord = (
   path: '',
   depth: 0,
   isRequired: false,
-  nullable: false,
+  isNullable: false,
   schemaType: blueprintNode.schemaType,
-  structure: null,
+  childrenByName: null,
   children: null,
   itemKey: null,
   itemCount: 0,
@@ -68,29 +68,29 @@ const makeRecord = (
   isVisible: true,
   isReadOnly: false,
   isDisabled: false,
-  local: undefined,
-  emit: undefined,
+  storedValue: undefined,
+  storedOutputValue: undefined,
   divergenceCurrent: undefined,
   divergencePath: undefined,
   divergenceSegments: undefined,
   divergenceBase: undefined,
-  divergenceResult: false,
-  schema: { schema: { options }, typeConflict: false },
+  storedIsDivergent: false,
+  schema: { schema: { options }, hasTypeConflict: false },
   interactionState: {},
   revisionLedger: EMPTY_REVISION_LEDGER,
-  deliveryInitialized: false,
+  isDeliveryInitialized: false,
   deliveryChanges: 0,
-  pendingRevision: 0,
-  detached: false,
-  disposed: false,
-  interactionReset: 0,
+  pendingRevisionMask: 0,
+  isDetached: false,
+  isDisposed: false,
+  interactionEpoch: 0,
 });
 
 /** Construct the read-only scalar interpretation restriction. */
 const spec = (kinds: UnionSpec['kinds']): UnionSpec => ({
   kinds,
   mask: 0,
-  nullable: false,
+  isNullable: false,
 });
 
 describe('behavior rows', () => {
@@ -162,7 +162,7 @@ describe('behavior rows', () => {
     expect(getStaticChoices(node.schema)).toBe(choices);
     node.schema = {
       schema: { options: { omitEmpty: false } },
-      typeConflict: false,
+      hasTypeConflict: false,
     };
     expect(stringBehavior.project(node, '')).toBe('');
   });
@@ -189,7 +189,7 @@ describe('behavior rows', () => {
     const second = { value: 'two' };
     const tuple = virtualBehavior.assemble(node, [first, second]);
     expect(tuple).toEqual([1, 'two']);
-    node.local = tuple;
+    node.storedValue = tuple;
     expect(virtualBehavior.assemble(node, [first, second])).toBe(tuple);
     expect(virtualBehavior.project(node, tuple)).toBeUndefined();
     expect(virtualBehavior.declareChildren(node)).toBe(
@@ -234,22 +234,22 @@ describe('behavior rows', () => {
       propertyOrder: ['second'],
     });
     const children = [
-      { name: 'first', emit: 1 },
-      { name: 'second', emit: 2 },
+      { name: 'first', storedOutputValue: 1 },
+      { name: 'second', storedOutputValue: 2 },
     ];
     node.extras = { other: 3 };
-    const local = objectBehavior.branch.assemble(node, children);
-    if (local === null || typeof local !== 'object')
+    const value = objectBehavior.branch.assemble(node, children);
+    if (value === null || typeof value !== 'object')
       throw new Error('object assembly returned a scalar');
-    expect(Object.keys(local)).toEqual(['second', 'first', 'other']);
-    expect(local).toEqual({ second: 2, first: 1, other: 3 });
-    node.local = local;
-    expect(objectBehavior.branch.assemble(node, children)).toBe(local);
-    children[0].emit = 4;
+    expect(Object.keys(value)).toEqual(['second', 'first', 'other']);
+    expect(value).toEqual({ second: 2, first: 1, other: 3 });
+    node.storedValue = value;
+    expect(objectBehavior.branch.assemble(node, children)).toBe(value);
+    children[0].storedOutputValue = 4;
     const changed = objectBehavior.branch.assemble(node, children);
-    expect(changed).not.toBe(local);
+    expect(changed).not.toBe(value);
     expect(changed).toEqual({ second: 2, first: 4, other: 3 });
-    node.local = changed;
+    node.storedValue = changed;
     node.extras = { other: 3, last: 5 };
     const expanded = objectBehavior.branch.assemble(node, children);
     if (expanded === null || typeof expanded !== 'object')

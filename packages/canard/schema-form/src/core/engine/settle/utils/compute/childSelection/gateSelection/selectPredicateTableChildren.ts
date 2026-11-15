@@ -28,7 +28,7 @@ export const selectPredicateTableChildren = <
   round: GateSelectionRound,
 ): void => {
   const { table } = round;
-  const reuse = frame.reuseStatic;
+  const reuse = frame.canReuseStatic;
   let selected = getTableVisitSteps(frame, table);
   const active = new Set<number>();
   let throwing: Optional<Set<number>>;
@@ -64,7 +64,7 @@ export const selectPredicateTableChildren = <
       verify &&
       engineModes.gateWheel === 'skip' &&
       tableStep &&
-      frame.flushReads &&
+      frame.shouldFlushReads &&
       frame.context.pendingOutputs?.size
     )
       verifyTablePrePublication(frame.node, frame.context, step.entry);
@@ -83,7 +83,7 @@ export const selectPredicateTableChildren = <
       table.predicateGroups[predicateIndex].steps[0] <= index
     ) {
       const group = table.predicateGroups[predicateIndex++];
-      const version = frame.context.gateThrowVersion;
+      const version = frame.context.gateExceptionVersion;
       const occurrence = getGateRegistry(frame.node.runtime).locate(
         frame.node,
         group.gate,
@@ -93,7 +93,7 @@ export const selectPredicateTableChildren = <
       if (cached ?? evaluateGate(group.gate, frame.context, frame.node)) {
         predicateSteps = group.steps;
         predicateCursor = 0;
-      } else if (frame.context.gateThrowVersion !== version) {
+      } else if (frame.context.gateExceptionVersion !== version) {
         selected = mergeGateSteps(selected, group.steps);
         (firstThrow ??= new Set()).add(index);
         for (const entry of group.steps) (throwing ??= new Set()).add(entry);
@@ -113,14 +113,14 @@ export const selectPredicateTableChildren = <
       if (verify) verifyUnvisitedGateStep(frame, step);
       continue;
     }
-    frame.tableVerdict =
+    frame.isTableAdmitted =
       tableStep && (!failedPredicate || firstThrow?.has(index))
         ? admitted
         : undefined;
-    frame.tableThrew = firstThrow?.has(index);
+    frame.hasTableThrown = firstThrow?.has(index);
     if (reuse?.(step.entry)) continue;
     selectEntryStep(step.entry, step, frame);
   }
-  frame.tableVerdict = undefined;
-  frame.tableThrew = undefined;
+  frame.isTableAdmitted = undefined;
+  frame.hasTableThrown = undefined;
 };

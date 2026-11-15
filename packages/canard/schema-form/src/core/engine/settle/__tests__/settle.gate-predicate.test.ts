@@ -61,7 +61,7 @@ describe('unified gate predicates', () => {
       ).not.toBeNull();
       expect(getGateSelectionTable(blueprint.root, blueprint)).not.toBeNull();
       writeFieldNode(
-        root.structure!.kind,
+        root.childrenByName!.kind,
         'tag_79',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
@@ -70,12 +70,12 @@ describe('unified gate predicates', () => {
       const selecting = vi.spyOn(selection, 'selectChildren');
       const evaluating = vi.spyOn(gateEvaluation, 'evaluateGate');
       writeFieldNode(
-        root.structure!.kind,
+        root.childrenByName!.kind,
         'tag_0',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
-      expect(root.emit).toEqual({
+      expect(root.storedOutputValue).toEqual({
         kind: 'tag_0',
         payload_0_a: 'A',
         payload_0_b: 1,
@@ -150,7 +150,7 @@ describe('unified gate predicates', () => {
     expect(evaluateGate(gate, context, root)).toBe(false);
     expect(evaluateGate(gate, context, root)).toBe(false);
     expect(calls).toHaveBeenCalledTimes(2);
-    expect(context.gateThrowVersion).toBe(2);
+    expect(context.gateExceptionVersion).toBe(2);
   });
 
   it('exposes the same reads/evaluate predicate contract for all kinds', () => {
@@ -190,12 +190,12 @@ describe('unified gate predicates', () => {
     loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
     expect(getGateSelectionTable(blueprint.root, blueprint)).not.toBeNull();
     writeFieldNode(
-      root.structure!.kind,
+      root.childrenByName!.kind,
       'tag_2',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.emit).toEqual({
+    expect(root.storedOutputValue).toEqual({
       kind: 'tag_2',
       payload_2_a: 'A',
       payload_2_b: 1,
@@ -273,7 +273,7 @@ describe('unified gate predicates', () => {
     evaluateGate(gates[1], context, root);
     expect(calls.mock.calls).toHaveLength(2);
     expect(calls.mock.calls[0][0]).toBe(calls.mock.calls[1][0]);
-    expect(calls.mock.calls[0][0]).toEqual(root.emit);
+    expect(calls.mock.calls[0][0]).toEqual(root.storedOutputValue);
   });
 
   it('keeps whole-host guards sensitive to an earlier entry in the same wheel', () => {
@@ -317,13 +317,13 @@ describe('unified gate predicates', () => {
       return changed;
     });
     writeFieldNode(
-      root.structure!.enabled,
+      root.childrenByName!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(rounds.flat()).toContainEqual({ enabled: true, a: 'A' });
-    expect(root.emit).toEqual({ enabled: true, a: 'A', b: 'B' });
+    expect(root.storedOutputValue).toEqual({ enabled: true, a: 'A', b: 'B' });
   });
 
   it('reuses a pure expression result without invoking the compiled function again', () => {
@@ -380,8 +380,8 @@ describe('unified gate predicates', () => {
       [{ kind: 'tag_0' }, { kind: 'tag_1' }],
       WriteOption.Overwrite,
     );
-    const first = root.structure!['0'];
-    const second = root.structure!['1'];
+    const first = root.childrenByName!['0'];
+    const second = root.childrenByName!['1'];
     const gate = first.blueprintNode.declarations
       .flatMap((declaration) => declaration.gates)
       .find((entry) => entry.kind === 'if')!;
@@ -445,7 +445,7 @@ describe('unified gate predicates', () => {
     let failure: unknown;
     try {
       writeFieldNode(
-        root.structure!.kind,
+        root.childrenByName!.kind,
         'tag_1',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
@@ -466,6 +466,6 @@ describe('unified gate predicates', () => {
       status: 'degraded',
       cause: 'expression',
     });
-    expect(root.emit).toEqual({ kind: 'tag_1' });
+    expect(root.storedOutputValue).toEqual({ kind: 'tag_1' });
   });
 });

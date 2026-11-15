@@ -94,7 +94,7 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
     mapArray(active, (declaration) => declaration.id),
     { mode: 'runtime', isAtomic: node.runtime.blueprint?.isAtomic },
   );
-  if (effective.typeConflict) {
+  if (effective.hasTypeConflict) {
     recordSettlementFailure(
       context,
       new SchemaFormError(

@@ -19,7 +19,7 @@ export const finishQueuedErrors = (
   runtime: Pick<
     FieldNodeRuntime<unknown>,
     | 'errorReporter'
-    | 'reportingErrors'
+    | 'isReportingErrors'
     | 'reportedGuardFailures'
     | 'chainErrors'
     | 'enclosingChain'

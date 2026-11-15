@@ -83,7 +83,7 @@ describe('blueprint fragment ownership and strategies', () => {
       properties: { a: { $ref: '#/$defs/scalar', minimum: 2 } },
     });
     const overlay = result.root.childEntries[0].node.declarations.find(
-      (declaration) => declaration.inherited,
+      (declaration) => declaration.isInherited,
     )!;
     expect(result.fragments[overlay.fragmentId].inheritedOverlays).toContain(
       overlay.id,

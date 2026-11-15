@@ -36,7 +36,10 @@ export const evaluateInjectTo = <Self extends FieldNodeRecord<Self>>(
   if (typeof rule.literal !== 'function') return NO_INJECT_WRITES;
   let result: unknown;
   try {
-    result = rule.literal(source.emit, getInjectToContext(source, root));
+    result = rule.literal(
+      source.storedOutputValue,
+      getInjectToContext(source, root),
+    );
   } catch (cause) {
     return {
       writes: [],

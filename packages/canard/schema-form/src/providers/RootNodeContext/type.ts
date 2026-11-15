@@ -47,13 +47,13 @@ export interface RootLoad {
   /** Speculative failure for the first boundary, or replacement reset failure kept only for its caller. */
   error?: unknown;
   /** First commit ran; deliver every form callback while effects are disconnected, until reset retires this load. */
-  prepared: boolean;
+  isPrepared: boolean;
   /** Latest scheduled load slot, including same-root reset generations. */
   loadValidation?: object;
   /** A reset replaced this load; it delivers nothing more to the consumer. */
-  retired?: boolean;
+  isRetired?: boolean;
   /** Records or construction errors have crossed the commit, replacement reset, or root-fallback boundary. */
-  reported?: boolean;
+  isReported?: boolean;
   /** Instance reporter outside the root boundary; absent when no Form error provider is mounted. */
   reporter?: FormErrorService;
 }

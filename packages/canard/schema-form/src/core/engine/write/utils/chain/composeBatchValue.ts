@@ -19,7 +19,7 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   writes: readonly { node: Self; value: unknown; option: WriteOption }[],
 ): unknown => {
-  let value = root.local;
+  let value = root.storedValue;
   for (const write of writes) {
     const names = parsePointerSegments(write.node.path);
     if (!isNamedPointerSegments(names))
@@ -35,7 +35,7 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
     const values = isArray(write.value) ? write.value : undefined;
     const parentNames = names.slice(0, -1);
     for (let index = 0; index < fields.length; index++) {
-      if (!write.node.parent?.structure?.[fields[index]]) continue;
+      if (!write.node.parent?.childrenByName?.[fields[index]]) continue;
       value = replaceAtPath(
         value,
         [...parentNames, fields[index]],

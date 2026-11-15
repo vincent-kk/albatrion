@@ -50,13 +50,13 @@ describe('root declaration tables retain selection and warning observations', ()
           );
           for (const kind of ['both', 'b', 'none', 'both']) {
             writeFieldNode(
-              root.structure!.kind,
+              root.childrenByName!.kind,
               kind,
               FieldNodeWriteKind.Input,
               WriteOption.Overwrite,
             );
             history.push({
-              emit: root.emit,
+              outputValue: root.storedOutputValue,
               schema: root.schema,
               ids: [...(root.runtime.committedDeclarationIds ?? [])],
               warnings: [...(root.runtime.warningKeys ?? [])],

@@ -10,9 +10,9 @@ import { writeSlotPath } from './writeSlotPath';
  * @param template - Kind selected by the first-declaration rule
  * @param value - Caller input interpreted at this candidate
  * @param _order - Retained caller ordering metadata
- * @param whole - Whether omitted descendants are replaced
+ * @param isWhole - Whether omitted descendants are replaced
  * @param _siblings - Retained caller declaration context
- * @param automatic - Whether the input belongs to a reversible automatic write
+ * @param isAutomatic - Whether the input belongs to a reversible automatic write
  * @returns Whether an interpreted terminal descendant can be emitted
  */
 export const writeInactiveSource = <Self extends FieldNodeRecord<Self>>(
@@ -21,8 +21,16 @@ export const writeInactiveSource = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
   value: unknown,
   _order: readonly number[],
-  whole: boolean,
+  isWhole: boolean,
   _siblings: readonly BlueprintChildEntry[],
-  automatic = false,
+  isAutomatic = false,
 ): boolean =>
-  writeSlotPath(context.root, path, template, value, whole, context, automatic);
+  writeSlotPath(
+    context.root,
+    path,
+    template,
+    value,
+    isWhole,
+    context,
+    isAutomatic,
+  );

@@ -26,12 +26,12 @@ export const deliverValidationWave = <Self extends FieldNodeRecord<Self>>(
       runtime.validationErrors?.get(changed) ?? [],
     );
   runtime.validationChangedNodes = undefined;
-  if (runtime.validationListChanged)
+  if (runtime.hasValidationListChanged)
     queueNonSettleEvent(
       node.rootNode,
       FieldNodeEventType.UpdateGlobalError,
       issues,
     );
-  runtime.validationListChanged = undefined;
+  runtime.hasValidationListChanged = undefined;
   flushQueuedEvents(node.rootNode, false, 'validate');
 };

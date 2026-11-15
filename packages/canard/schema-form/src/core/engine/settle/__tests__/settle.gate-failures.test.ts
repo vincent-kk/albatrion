@@ -100,7 +100,7 @@ describe('round 55 direct settlement regression', () => {
         ],
       },
     });
-    expect(root.emit).toEqual({ input: 'value' });
+    expect(root.storedOutputValue).toEqual({ input: 'value' });
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'expression',
@@ -139,6 +139,6 @@ describe('round 55 direct settlement regression', () => {
         details: expect.objectContaining({ cause }),
       }),
     );
-    expect(root.emit).toEqual({ input: 'value' });
+    expect(root.storedOutputValue).toEqual({ input: 'value' });
   });
 });

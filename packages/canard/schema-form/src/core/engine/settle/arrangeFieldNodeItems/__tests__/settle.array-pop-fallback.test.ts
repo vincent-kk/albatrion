@@ -266,7 +266,7 @@ describe('pop admission declines and the general path settles', () => {
       ],
     );
     expect(proof).toHaveBeenCalled();
-    expect(candidate.emit).toEqual([{ v: 1 }]);
+    expect(candidate.storedOutputValue).toEqual([{ v: 1 }]);
 
     const { root } = createDispatchTree({
       type: 'array',
@@ -278,12 +278,12 @@ describe('pop admission declines and the general path settles', () => {
     const selected = vi.spyOn(ids, 'staticIds');
     expect(dispatchPop(root)).toBe(4);
     expect(selected.mock.calls.length).toBeGreaterThanOrEqual(3);
-    expect(root.local).toEqual([1, 2, 3]);
+    expect(root.storedValue).toEqual([1, 2, 3]);
   });
 });
 
 describe('the truncation proof reads only facts a later write could move', () => {
-  it('admission requires the last live node at the end of both structure and children', () => {
+  it('admission requires the last live node at the end of both childrenByName and children', () => {
     const { root } = createDispatchTree({
       type: 'array',
       items: { type: 'number' },
@@ -291,11 +291,11 @@ describe('the truncation proof reads only facts a later write could move', () =>
     dispatchMount(root, [1, 2, 3], WriteOption.Overwrite, {
       deferValidation: true,
     });
-    const structure = root.structure!;
+    const childrenByName = root.childrenByName!;
     expect(prepareArrayPop(root, { kind: 'pop' })?.count).toBe(3);
-    root.structure = { ...structure, '2': structure['0'] };
+    root.childrenByName = { ...childrenByName, '2': childrenByName['0'] };
     expect(prepareArrayPop(root, { kind: 'pop' })).toBeUndefined();
-    root.structure = structure;
+    root.childrenByName = childrenByName;
     expect(prepareArrayPop(root, { kind: 'remove', index: 2 })?.count).toBe(3);
   });
 
@@ -315,7 +315,7 @@ describe('the truncation proof reads only facts a later write could move', () =>
         WriteOption.Overwrite,
         scratch,
       );
-      const prior = root.structure!;
+      const prior = root.childrenByName!;
       const proof: ArrayPopProof<DispatchTestNode> = {
         host: root,
         count: 4,
@@ -324,9 +324,9 @@ describe('the truncation proof reads only facts a later write could move', () =>
           slots: [],
           result: { source: 'removed', index: 3 },
         },
-        local: root.local,
+        value: root.storedValue,
         children: root.children,
-        valid: true,
+        isValid: true,
       };
       const check = () =>
         canReuseTruncatedChildren(root, context, prior, proof);
@@ -358,8 +358,8 @@ describe('the truncation proof reads only facts a later write could move', () =>
       context.pendingExits.clear();
       context.distributedInputs.set(root, {
         input: [],
-        whole: true,
-        automatic: false,
+        isWhole: true,
+        isAutomatic: false,
       });
       expect(check()).toBe(false);
       context.distributedInputs.clear();

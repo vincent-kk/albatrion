@@ -39,7 +39,7 @@ it.each([3, 5])(
       ),
     ).toHaveLength(0);
     expect(missing.mock.calls).toHaveLength(4 ** depth);
-    let value = root.emit;
+    let value = root.storedOutputValue;
     for (let level = 0; level < depth; level++)
       value = Reflect.get(value as object, 'f0');
     expect(value).toBe('filled');
@@ -114,13 +114,13 @@ it('preserves parent default priority and existing descendant sources', () => {
   };
   const { root } = createTestTree(definition);
   loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
-  expect(root.emit).toEqual({ group: { value: 'parent' } });
+  expect(root.storedOutputValue).toEqual({ group: { value: 'parent' } });
   loadFieldNodeAtMount(
     root,
     { group: { value: 'existing' } },
     WriteOption.Overwrite,
   );
-  expect(root.emit).toEqual({ group: { value: 'existing' } });
+  expect(root.storedOutputValue).toEqual({ group: { value: 'existing' } });
 });
 
 it('preserves frontier order across conversion and restores general mode after clear', () => {

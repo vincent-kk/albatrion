@@ -138,7 +138,7 @@ describe('child selection against pinned HEAD', () => {
         expect(expected.keptOut, label).toEqual([]);
         expect(
           actual.keptOut.filter(
-            (host) => !host.sameLocal || host.valueDelivery,
+            (host) => !host.sameValue || host.valueDelivery,
           ),
           label,
         ).toEqual([]);

@@ -21,6 +21,6 @@ export const createFragmentLoadState = (
   loadScope: root,
   entered: new Set(),
   revived: new Set(),
-  suppressAutomaticWrites: false,
-  trace: false,
+  isAutomaticWriteSuppressed: false,
+  isTraceEnabled: false,
 });

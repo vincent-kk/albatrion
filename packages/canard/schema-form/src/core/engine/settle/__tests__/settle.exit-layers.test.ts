@@ -35,7 +35,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -63,7 +63,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -90,7 +90,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -118,7 +118,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -150,7 +150,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -190,14 +190,14 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.addr?.structure?.city?.source).toBe('C');
+    expect(root.childrenByName?.addr?.childrenByName?.city?.source).toBe('C');
     expect(hasRetainedSlotOwnSource(root, '/addr/zip', 'string')).toBe(false);
-    expect(root.structure?.addr?.extras).toEqual({ extra: 'E' });
+    expect(root.childrenByName?.addr?.extras).toEqual({ extra: 'E' });
   });
 
   it('WRITE-033 fields subtree policy reaches exiting descendants', () => {
@@ -229,7 +229,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -278,13 +278,13 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.branch.structure!.show,
+      root.childrenByName!.branch.childrenByName!.show,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -324,13 +324,13 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.branch.structure!.show,
+      root.childrenByName!.branch.childrenByName!.show,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -361,13 +361,13 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.clear,
+      root.childrenByName!.clear,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -408,7 +408,7 @@ describe('settled exit policy layers', () => {
     });
     const calls = explode.mock.calls.length;
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -442,7 +442,7 @@ describe('settled exit policy layers', () => {
       ),
     ).toBe(true);
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -469,8 +469,8 @@ describe('settled exit policy layers', () => {
       },
     });
     loadFieldNodeAtMount(root, { hidden: 'held' }, WriteOption.Overwrite);
-    expect(root.structure?.hidden?.isVisible).toBe(false);
-    expect(root.structure?.hidden?.source).toBe('held');
+    expect(root.childrenByName?.hidden?.isVisible).toBe(false);
+    expect(root.childrenByName?.hidden?.source).toBe('held');
   });
 
   it('FRAGMENT-050 exit not edge evaluates no departing fragment value rule', () => {
@@ -499,7 +499,7 @@ describe('settled exit policy layers', () => {
     );
     const calls = read.mock.calls.length;
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,

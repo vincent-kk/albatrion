@@ -177,12 +177,12 @@ describe('the general slot path reads the source tree only when a slot needs it'
       dispatchInsert(root, 1, 9);
       const counts = [slots.mock.calls.length, read.mock.calls.length];
       vi.restoreAllMocks();
-      return { removed, counts, emit: root.emit };
+      return { removed, counts, outputValue: root.storedOutputValue };
     };
     expect(declined(NUMBERS)).toEqual({
       removed: 1,
       counts: [2, 0],
-      emit: [0, 9, 2, 3, 4],
+      outputValue: [0, 9, 2, 3, 4],
     });
     const tuple = declined({
       type: 'array',
@@ -191,6 +191,6 @@ describe('the general slot path reads the source tree only when a slot needs it'
     });
     expect(tuple.counts[0]).toBe(2);
     expect(tuple.counts[1]).toBeGreaterThan(0);
-    expect(tuple.emit).toEqual([0, 9, 2, 3, 4]);
+    expect(tuple.outputValue).toEqual([0, 9, 2, 3, 4]);
   });
 });

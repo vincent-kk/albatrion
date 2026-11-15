@@ -42,7 +42,7 @@ it('builds each ungated child input once with the authored field order', () => {
   expect(work.keys).toEqual([
     'context',
     'gates',
-    'inherited',
+    'isInherited',
     'hostPath',
     'fragment',
     'role',

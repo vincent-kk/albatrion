@@ -34,9 +34,9 @@ it('compares schemas and revisions when a retained nested kind changes', () => {
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(getDispatchNode(root, 'group', 'value').local).toBe(37);
+  expect(getDispatchNode(root, 'group', 'value').storedValue).toBe(37);
   dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-  expect(getDispatchNode(root, 'group', 'value').local).toBe('saved');
+  expect(getDispatchNode(root, 'group', 'value').storedValue).toBe('saved');
 });
 
 it('compares inactive descendants after a gate changes while their host is absent', () => {
@@ -58,9 +58,9 @@ it('compares inactive descendants after a gate changes while their host is absen
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   dispatchSetValue(getDispatchNode(root, 'allow'), false);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(getDispatchNode(root, 'group').local).toEqual({});
+  expect(getDispatchNode(root, 'group').storedValue).toEqual({});
   dispatchSetValue(getDispatchNode(root, 'allow'), true);
-  expect(getDispatchNode(root, 'group', 'value').local).toBe('saved');
+  expect(getDispatchNode(root, 'group', 'value').storedValue).toBe('saved');
 });
 
 it('compares cloned array subtrees and a following structural move', () => {
@@ -92,7 +92,7 @@ it('compares cloned array subtrees and a following structural move', () => {
   dispatchSetValue(getDispatchNode(root, 'open'), true);
   expect(getDispatchNode(root, 'group', 'list', '0')).not.toBe(old);
   dispatchRemove(getDispatchNode(root, 'group', 'list'), 0);
-  expect(getDispatchNode(root, 'group', 'list', '0', 'text').local).toBe(
+  expect(getDispatchNode(root, 'group', 'list', '0', 'text').storedValue).toBe(
     'second',
   );
 });

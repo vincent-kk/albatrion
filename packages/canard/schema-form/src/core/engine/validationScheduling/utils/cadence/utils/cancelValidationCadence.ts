@@ -6,7 +6,7 @@ import type { ValidationCadenceState } from '../../../types/validationCadence';
 export const cancelValidationCadence = (
   state: ValidationCadenceState,
 ): void => {
-  state.cancelled = true;
+  state.isCancelled = true;
   state.cancelPending?.();
   state.cancelPending = undefined;
   state.phase = 'idle';

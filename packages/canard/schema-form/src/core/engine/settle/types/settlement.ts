@@ -41,7 +41,7 @@ interface ProjectionBaseline {
   /** Effective schema before its first change or at the last presence comparison. */
   schema: EffectiveSchema;
   /** Emitted value before its first schema change or at the last comparison. */
-  emit: unknown;
+  outputValue: unknown;
 }
 
 /** Call-local evidence of one admitted static push; it never outlives its settlement. */
@@ -56,16 +56,16 @@ export interface ArrayAppendProof<Self extends FieldNodeRecord<Self>> {
   schema?: EffectiveSchema;
   /** Tail-only proposal: the new slot alone, applied at offset `count`. */
   plan: Extract<ArrayArrangePlan, { kind: 'slots' }>;
-  /** Host local before the push, an array of `count` slots. */
-  local: unknown;
+  /** Host stored value before the push, an array of `count` slots. */
+  value: unknown;
   /** Children array published by the tail application. */
   children?: Nullable<readonly Self[]>;
   /** Root load snapshot published by the tail application. */
   snapshot?: unknown;
-  /** First local assembled through the append hint. */
+  /** First value assembled through the append hint. */
   assembled?: unknown;
   /** Cleared when a selection-time check fails; later phases then use the general path. */
-  valid: boolean;
+  isValid: boolean;
 }
 
 /** Call-local evidence of one admitted static pop or remove of the last position; it never outlives its settlement. */
@@ -76,16 +76,16 @@ export interface ArrayPopProof<Self extends FieldNodeRecord<Self>> {
   count: number;
   /** Tail-only proposal: no slot, applied at offset `count - 1`, reporting the removed value. */
   plan: Extract<ArrayArrangePlan, { kind: 'slots' }>;
-  /** Host local before the pop, an array of `count` slots. */
-  local: unknown;
+  /** Host stored value before the pop, an array of `count` slots. */
+  value: unknown;
   /** Children array published by the tail application. */
   children?: Nullable<readonly Self[]>;
   /** Root load snapshot published by the tail application. */
   snapshot?: unknown;
-  /** First local assembled through the truncate hint. */
+  /** First value assembled through the truncate hint. */
   assembled?: unknown;
   /** Cleared when a selection-time check fails; later phases then use the general path. */
-  valid: boolean;
+  isValid: boolean;
 }
 
 /** Call-local evidence of one admitted static middle remove or insert; it never outlives its settlement. */
@@ -107,7 +107,7 @@ export interface ArraySpliceProof<Self extends FieldNodeRecord<Self>> {
   /** Length of the settlement's path-change list after the splice application renamed the tail. */
   pathChanges?: number;
   /** Cleared when a selection-time check fails; selection then uses the general path. */
-  valid: boolean;
+  isValid: boolean;
 }
 
 /** One synchronous write's work list and deferred failures. */
@@ -122,7 +122,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   presenceSelections?: Map<
     Self,
     {
-      readonly structure: Readonly<Dictionary<Self>>;
+      readonly childrenByName: Readonly<Dictionary<Self>>;
       readonly names: readonly string[];
     }
   >;
@@ -133,7 +133,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Live root reached through the record boundary. */
   root: Self;
   /** Emitted root reference from the preceding committed shape. */
-  previousEmit: unknown;
+  previousOutputValue: unknown;
   /** Successful exit results, retained only for this settlement and applied after source capture. */
   inactiveValueOverrides?: Map<Self, unknown>;
   /** First pre-move address per moved node, built once by an exit resolver. */
@@ -151,7 +151,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
     path: string;
     source: FieldNodeWriteKind;
     keys?: readonly string[];
-    /** Sibling paths an overwriting virtual write replaces; the batch form of virtualReplacePaths. */
+    /** Sibling paths an overwriting virtual write replaces; the batch form of virtualReplacementPaths. */
     fields?: readonly string[];
   }[];
   /** Public bit mask retained for the development trace entry. */
@@ -166,13 +166,13 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   writeEpoch?: number;
   /** Verify-only independent dirty membership from the marking input log. */
   writeEpochShadow?: DirtyPathSet;
-  /** Hosts whose direct child identity or projected emission may have changed. */
+  /** Hosts whose direct child identity or projected output value may have changed. */
   presenceHosts?: Set<Self>;
   /** Latest actual dependency reads of relocated occurrences in this settlement. */
   relocatedReads?: Map<GateOccurrence, RelocatedGateReads>;
   /** Retained child projection baselines grouped by their existing host wheel. */
   projectionBaselines?: Map<Self, Map<Self, ProjectionBaseline>>;
-  /** Emitted child paths whose identity or projected emission changed in this settlement. */
+  /** Emitted child paths whose identity or projected output value changed in this settlement. */
   changedPresence?: Set<string>;
   /** Ancestor prefixes accumulated only when a new presence path is added. */
   presencePrefixes?: Set<string>;
@@ -218,15 +218,15 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Cached reverse references, absent for a blueprint without virtual nodes. */
   virtualReferenceIndex: Nullable<VirtualReferenceIndex>;
   /** Call-local suppression after explicit bits override the form default. */
-  suppressAutomaticWrites: boolean;
+  isAutomaticWriteSuppressed: boolean;
   /** Load boundary whose current shape begins a new appearance lifetime. */
   loadScope?: Self;
   /** Whole-replacement boundary whose subtree keeps only the written source per path. */
-  replaceScope?: Self;
-  /** Multi-write batch scopes: each marked path, or each received key's child path of a shallow Merge; bounds replacement instead of replaceScope (191C-01). */
-  replacePaths?: readonly string[];
+  replacementScope?: Self;
+  /** Multi-write batch scopes: each marked path, or each received key's child path of a shallow Merge; bounds replacement instead of `replacementScope` (191C-01). */
+  replacementPaths?: readonly string[];
   /** Real sibling paths replaced by a caller write through a virtual node. */
-  virtualReplacePaths?: string[];
+  virtualReplacementPaths?: string[];
   /** Nodes newly present after calculation or reset by this load. */
   entered: Set<Self>;
   /** Reused pending occurrences whose sources must remain visible to fills. */
@@ -244,7 +244,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Exits whose selecting gate threw and therefore cannot clear their subtree. */
   throwingGateExits?: Set<Self>;
   /** Incremented by each thrown gate evaluation to identify its selecting edge. */
-  gateThrowVersion?: number;
+  gateExceptionVersion?: number;
   /** Actual inputs of the current host wheel; nested compute calls save and restore it. */
   gateWheelFrame?: GateWheelFrame;
   /** Per-host eligibility and watched values for the current wheel round only. */
@@ -262,12 +262,12 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
     dirty: DirtyPathSet;
     shape: Set<string>;
     owners: Set<string>;
-    registering: boolean;
+    isRegistering: boolean;
     supplementInsertions: number;
     restore: Fn;
   };
   /** Only the independent verification pass takes the old source registration path. */
-  shadowRegistration?: boolean;
+  isShadowRegistration?: boolean;
   /** Active declaration choices published only after this call commits. */
   selectedDeclarationIds: Map<Self, readonly number[]>;
   /** Original inputs retained for effective-list interpretation. */
@@ -289,7 +289,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
     previousItems: Self[];
     previousItemCount: number;
     previousExtras: unknown;
-    restored?: boolean;
+    isRestored?: boolean;
   }[];
   /** Initial array lengths for non-load snapshot alignment. */
   arrayCounts: Map<Self, number>;
@@ -308,7 +308,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Nodes whose missing input received a default during this call. */
   filledNodes: Set<Self>;
   /** Whether shape updates belong to reversible automatic transition work. */
-  inTransition: boolean;
+  isInTransition: boolean;
   /** First source bindings changed by reversible transition work, local to this call. */
   slotAutomaticLog?: Map<
     Self,
@@ -319,9 +319,9 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Exit-only plans; private retained clones consume them before this call ends. */
   compactedSlotSources?: Map<Self, CompactedSlotSources<Self>>;
   /** Whether marking is currently applying a transition write. */
-  automatic: boolean;
+  isAutomatic: boolean;
   /** True when the current transition round changed either state channel. */
-  automaticChanged: boolean;
+  hasAutomaticChanged: boolean;
   /** Paths scheduled by the write and the blueprint dependency index. */
   dirtyPaths: Set<string>;
   /** Dirty descendant paths and their direct child names by ancestor. */

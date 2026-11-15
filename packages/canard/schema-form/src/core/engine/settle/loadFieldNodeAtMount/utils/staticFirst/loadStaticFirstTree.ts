@@ -27,10 +27,10 @@ import { readStaticFirstWarning } from './readStaticFirstWarning';
 interface Frame<Self> {
   node: Self;
   input: unknown;
-  automatic: boolean;
+  isAutomatic: boolean;
   /** An object or array branch ancestor holds a wrong-kind source, so no default fills here. */
-  blocked: boolean;
-  entered: boolean;
+  isBlocked: boolean;
+  hasEntered: boolean;
   index: number;
   entries: readonly BlueprintChildEntry[];
   required: readonly unknown[];
@@ -60,9 +60,9 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
     {
       node: root,
       input: undefined,
-      automatic: false,
-      blocked: false,
-      entered: false,
+      isAutomatic: false,
+      isBlocked: false,
+      hasEntered: false,
       index: 0,
       entries: EMPTY_ARRAY,
       required: EMPTY_ARRAY,
@@ -76,8 +76,8 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
   while (stack.length) {
     const frame = stack[stack.length - 1];
     const node = frame.node;
-    if (!frame.entered) {
-      frame.entered = true;
+    if (!frame.hasEntered) {
+      frame.hasEntered = true;
       frame.order = order++;
       deliveries.add(node);
       const schema = node.schema.schema;
@@ -89,7 +89,7 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
           : undefined;
       let input = frame.input;
       if (
-        !frame.blocked &&
+        !frame.isBlocked &&
         !suppress &&
         fallback !== undefined &&
         !(
@@ -100,15 +100,15 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
         isMissingStaticInput(node.blueprintNode, input)
       ) {
         input = fallback;
-        frame.automatic = true;
+        frame.isAutomatic = true;
       }
       const value = node.behavior.interpret(
         input,
-        staticSpec(node.schemaType, node.nullable),
+        staticSpec(node.schemaType, node.isNullable),
       );
       frame.input = value;
       if (node.behavior.strategy === 'branch') {
-        node.structure = Object.create(null);
+        node.childrenByName = Object.create(null);
         node.children = frame.children = [];
         if (node.behavior.type === 'array') {
           const array = isArray(value);
@@ -143,7 +143,7 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
     if (frame.index < frame.entries.length) {
       const entry = frame.entries[frame.index++];
       const child = createChildNode(node, entry);
-      node.structure![entry.name] = child;
+      node.childrenByName![entry.name] = child;
       frame.children!.push(child);
       child.isRequired = frame.required.includes(entry.name);
       const input =
@@ -155,11 +155,11 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
       stack.push({
         node: child,
         input,
-        automatic: frame.automatic,
-        blocked:
-          frame.blocked ||
+        isAutomatic: frame.isAutomatic,
+        isBlocked:
+          frame.isBlocked ||
           (node.behavior.strategy === 'branch' && node.source !== undefined),
-        entered: false,
+        hasEntered: false,
         index: 0,
         entries: EMPTY_ARRAY,
         required: EMPTY_ARRAY,
@@ -169,13 +169,13 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
       continue;
     }
     assembleStaticFirstNode(node);
-    commitStaticFirstNode(node, frame.automatic);
-    const warning = readStaticFirstWarning(node, frame.automatic);
+    commitStaticFirstNode(node, frame.isAutomatic);
+    const warning = readStaticFirstWarning(node, frame.isAutomatic);
     if (warning) (warnings ??= []).push({ order: frame.order, warning });
     stack.pop();
   }
   runtime.commitNumber = commit;
   if (deltas) publishGlobalStateDeltas(root, deltas);
-  runtime.loadBaseline = { value: root.emit };
+  runtime.loadBaseline = { value: root.storedOutputValue };
   finishStaticFirstLoad(root, option, warnings);
 };

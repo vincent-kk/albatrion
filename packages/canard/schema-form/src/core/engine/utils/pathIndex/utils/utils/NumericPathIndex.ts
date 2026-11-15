@@ -9,7 +9,7 @@ export class NumericPathIndex {
   private readonly lengths = new Map<number, NumericNode>();
 
   /** Whether no slots remain registered. */
-  get empty(): boolean {
+  get isEmpty(): boolean {
     return this.lengths.size === 0;
   }
 

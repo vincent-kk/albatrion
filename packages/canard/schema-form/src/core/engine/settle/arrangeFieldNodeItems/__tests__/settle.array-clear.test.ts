@@ -178,13 +178,13 @@ describe('clear empties the host by host prefix with positional detached reads',
           FieldNodeEventType.RequestRefresh,
       ],
     ]);
-    expect(host.local).toEqual([]);
+    expect(host.storedValue).toEqual([]);
     for (let index = 0; index < former.length; index++) {
       const node = former[index];
-      expect(node.detached).toBe(true);
+      expect(node.isDetached).toBe(true);
       expect(node.isActive).toBe(false);
       expect(node.pendingDelivery).toBeUndefined();
-      expect(node.pendingRevision).toBe(0);
+      expect(node.pendingRevisionMask).toBe(0);
       expect({ ...node.revisionLedger }).toEqual(ledgers[index]);
     }
     expect(root.runtime.detachedReads?.get(former[0])?.defaultValue).toEqual({

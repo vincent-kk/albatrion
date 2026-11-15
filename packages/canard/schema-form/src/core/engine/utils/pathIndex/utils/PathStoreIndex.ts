@@ -20,7 +20,7 @@ interface PathPrefix {
   /** Last decoded name, classified once when this prefix is constructed. */
   segment: string;
   /** Whether the segment addresses a canonical safe-integer array slot. */
-  numeric: boolean;
+  isNumeric: boolean;
   /** Keys whose occurrence paths lie at or below this prefix. */
   keys: Set<string>;
   /** Keys with an occurrence exactly at this prefix. */
@@ -139,12 +139,12 @@ export class PathStoreIndex {
         path: current,
         parent,
         segment,
-        numeric: current !== $.Root && isCanonicalArraySlot(segment),
+        isNumeric: current !== $.Root && isCanonicalArraySlot(segment),
         keys: new Set(),
         exact: new Set(),
       };
       this.prefixes.set(current, prefix);
-      if (prefix.numeric && parent) {
+      if (prefix.isNumeric && parent) {
         let slots = this.slots.get(parent.path);
         if (!slots)
           this.slots.set(parent.path, (slots = new NumericPathIndex()));
@@ -158,10 +158,10 @@ export class PathStoreIndex {
   /** Release an unreferenced prefix and its numeric slot registration. */
   private dropPrefix(prefix: PathPrefix): void {
     this.prefixes.delete(prefix.path);
-    if (!prefix.numeric || !prefix.parent) return;
+    if (!prefix.isNumeric || !prefix.parent) return;
     const slots = this.slots.get(prefix.parent.path);
     slots?.delete(prefix.segment);
-    if (slots?.empty) this.slots.delete(prefix.parent.path);
+    if (slots?.isEmpty) this.slots.delete(prefix.parent.path);
   }
 }
 

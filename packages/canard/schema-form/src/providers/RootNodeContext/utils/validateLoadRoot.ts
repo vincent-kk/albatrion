@@ -14,7 +14,7 @@ export const validateLoadRoot = (root: FieldNode, load: RootLoad): void => {
   const epoch = readFieldNodeValidationEpoch(root);
   void root.validate().catch((failure: unknown) => {
     if (
-      !load.retired &&
+      !load.isRetired &&
       load.root === root &&
       readFieldNodeValidationEpoch(root) === epoch
     )

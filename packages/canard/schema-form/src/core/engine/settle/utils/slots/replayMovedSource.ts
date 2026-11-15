@@ -21,6 +21,6 @@ export const replayMovedSource = <Self extends FieldNodeRecord<Self>>(
   if (distribution)
     context.distributedInputs.set(node, {
       ...distribution,
-      preserveLatent: true,
+      shouldPreserveLatent: true,
     });
 };

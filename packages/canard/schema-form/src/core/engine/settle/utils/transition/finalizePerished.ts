@@ -11,7 +11,7 @@ import { prunePerishedPaths } from './prunePerishedPaths';
 import { detachPerishedNode } from './utils/detachPerishedNode';
 
 /** Visit only the subtree owned by each perished item. */
-const OWNED = { owned: true } as const;
+const OWNED = { isOwned: true } as const;
 
 /**
  * Detach final length-removed items without exit clearing or latent capture.
@@ -32,7 +32,7 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
   const detach = (departing: Self): void =>
     detachPerishedNode(departing, context, rekeyed);
   for (const node of context.perished) {
-    if (node.parent?.structure?.[node.name] === node) continue;
+    if (node.parent?.childrenByName?.[node.name] === node) continue;
     rekeyed = node.parent
       ? context.rekeyedArrayMoves?.get(node.parent)?.[Number(node.name)]
       : undefined;
@@ -45,7 +45,7 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
         ? parent.itemCount
         : undefined;
     if (
-      !parent?.structure?.[node.name] &&
+      !parent?.childrenByName?.[node.name] &&
       (destinationCount === undefined || Number(node.name) >= destinationCount)
     )
       (perishedPaths ??= new Set()).add(node.path);
@@ -72,7 +72,7 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
   }
   const resizedHosts = new Map<string, number>();
   for (const [host, previousCount] of context.arrayCounts)
-    if (!host.detached && host.itemCount !== previousCount) {
+    if (!host.isDetached && host.itemCount !== previousCount) {
       pruneArraySlotTail(host, context);
       resizedHosts.set(host.path, host.itemCount);
     }

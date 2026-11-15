@@ -17,11 +17,11 @@ export interface ValidationCadenceState {
   /** Current timing phase. */
   phase: 'idle' | 'leading' | 'watch' | 'carry' | 'running' | 'fallback';
   /** A request since the most recent run start or observed frame. */
-  requested: boolean;
+  isRequested: boolean;
   /** Time the most recent automatic callback started. */
   lastRun?: number;
   /** Permanent cancellation state. */
-  cancelled: boolean;
+  isCancelled: boolean;
   /** All currently pending host handles, cancelled together. */
   cancelPending?: Fn;
 }

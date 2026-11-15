@@ -42,7 +42,7 @@ describe('validator-owned path strings that are not routable pointers', () => {
       const root = mountWithIssue(issue);
       const verdict = await dispatchValidate(root);
       expect(verdict).toHaveLength(1);
-      const shown = readFieldNodeErrors(root.structure?.name ?? root);
+      const shown = readFieldNodeErrors(root.childrenByName?.name ?? root);
       expect(shown).toHaveLength(1);
       expect(shown[0].schemaPath).toBe(schemaPath);
     },
@@ -58,7 +58,9 @@ describe('validator-owned path strings that are not routable pointers', () => {
       const root = mountWithIssue(issue);
       const verdict = await dispatchValidate(root);
       expect(verdict).toEqual([issue]);
-      expect(readFieldNodeErrors(root.structure?.name ?? root)).toEqual([]);
+      expect(readFieldNodeErrors(root.childrenByName?.name ?? root)).toEqual(
+        [],
+      );
       expect(readFieldNodeErrors(root)).toEqual([]);
     },
   );

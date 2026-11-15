@@ -73,7 +73,7 @@ User-injected render surfaces (FieldRenderer/FieldInput and virtualization Place
 - `registerPlugin()` — Global plugin registration (required before rendering)
 - `node.find('/path')` — JSONPointer node lookup (`..` for the parent; `*` wildcard support is limited)
 - `node.value` — read a virtual group tuple through `FormHandle.findNode('/period')`, narrow with `isVirtualNode`, then read its `value`; see [virtual schema](docs/agents/skills/schema-form-skill/knowledge/virtual-schema.md).
-- `node.outputValue` — Value refined by schema options. `FormHandle.getValue`/`submit`, root emission, and parent-side hydration snapshots read this value. `ArrayNode` applies `options.omitTrailingEmpty` trimming here (`omitEmpty` applies only to the parent propagation path).
+- `node.outputValue` — Value refined by schema options. `FormHandle.getValue`/`submit`, root output value, and parent-side hydration snapshots read this value. `ArrayNode` applies `options.omitTrailingEmpty` trimming here (`omitEmpty` applies only to the parent propagation path).
 - `node.validate()` / `node.errors`
 - `node.subscribe()` — Subscribes to node events (returns a cleanup function). Events delivered before subscription are not replayed; state mirrors use the `onSubscribe` catch-up in `useFieldNodeSubscribe`.
 - `node.revision(mask?)` — Monotonic revision of delivered event batches (counted regardless of listeners to detect gaps for late subscribers; `useFieldNodeTracker` uses it as the useSyncExternalStore snapshot)

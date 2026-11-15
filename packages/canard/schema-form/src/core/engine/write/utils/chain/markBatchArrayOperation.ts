@@ -54,7 +54,7 @@ export const markBatchArrayOperation = <Self extends FieldNodeRecord<Self>>(
         : plan.result.source === 'updated'
           ? plan.result.index
           : -1;
-    const live = node.structure?.[String(index)];
+    const live = node.childrenByName?.[String(index)];
     const candidates = getItemEntries(node.blueprintNode, index);
     const template =
       live?.blueprintNode ??
@@ -65,7 +65,7 @@ export const markBatchArrayOperation = <Self extends FieldNodeRecord<Self>>(
   }
   if (plan.result.source === 'removed') {
     const index = plan.result.index;
-    const live = node.structure?.[String(index)];
+    const live = node.childrenByName?.[String(index)];
     const candidates = getItemEntries(node.blueprintNode, index);
     const template =
       live?.blueprintNode ??

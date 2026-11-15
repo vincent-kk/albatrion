@@ -82,7 +82,7 @@ it('IR-6 D React18 legacy release preserves a reentrant layout write history (Re
   await ref.current!.validate();
   expect(writes).toBe(1);
   expect(ref.current!.node!.value).toBe('abc');
-  expect(readFieldNodeRuntime(ref.current!.node!).validationPending).toBe(true);
+  expect(readFieldNodeRuntime(ref.current!.node!).isValidationPending).toBe(true);
   expect(view.getByTestId('error').textContent).toBe('');
   await act(async () => {
     clock.frame();

@@ -15,7 +15,7 @@ export const scheduleValidationCadenceFrame = (
   onRun: Fn<[fallback: boolean]>,
 ): void => {
   if (!canScheduleValidationFrame()) {
-    if (state.phase === 'watch' && !state.requested) {
+    if (state.phase === 'watch' && !state.isRequested) {
       state.phase = 'idle';
       return;
     }
@@ -24,7 +24,7 @@ export const scheduleValidationCadenceFrame = (
   }
   state.cancelPending = queueValidationFrame(onFrame, () => {
     state.cancelPending = undefined;
-    if (state.phase === 'watch' && !state.requested) state.phase = 'idle';
+    if (state.phase === 'watch' && !state.isRequested) state.phase = 'idle';
     else onRun(true);
   });
 };

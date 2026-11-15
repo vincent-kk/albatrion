@@ -36,7 +36,7 @@ export const compileBlueprintExpressions = (
       declarationIndex++
     ) {
       const declaration = declarations[declarationIndex];
-      if (visited.has(declaration.id) || declaration.validationOnly) continue;
+      if (visited.has(declaration.id) || declaration.isValidationOnly) continue;
       visited.add(declaration.id);
       const controls = readSchemaObject(declaration.schema).controls;
       if (!controls) continue;
@@ -123,7 +123,7 @@ export const compileBlueprintExpressions = (
             evaluate,
             ...(key === 'active' && equality ? { equality } : {}),
           };
-          Object.defineProperty(compiled, 'completeReads', {
+          Object.defineProperty(compiled, 'hasCompleteReads', {
             value:
               (context.capabilities.hasDerive || key === 'active') &&
               hasCompleteExpressionReads(source),

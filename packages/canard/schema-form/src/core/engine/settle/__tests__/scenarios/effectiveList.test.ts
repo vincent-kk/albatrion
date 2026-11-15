@@ -44,7 +44,7 @@ describe('core effective-list scenario', () => {
       execute: (step) => {
         if (step.action === 'setValue')
           writeFieldNode(
-            step.path === '' ? root : root.structure!.enabled,
+            step.path === '' ? root : root.childrenByName!.enabled,
             step.value,
             step.path === ''
               ? FieldNodeWriteKind.CallerReplace
@@ -53,19 +53,19 @@ describe('core effective-list scenario', () => {
           );
       },
       assert: (expected) => {
-        expect(root.emit).toEqual(expected.outputValue);
-        expect(root.structure?.a?.schemaType).toBe('number');
-        expect(root.structure?.a?.schema.schema).toMatchObject({
+        expect(root.storedOutputValue).toEqual(expected.outputValue);
+        expect(root.childrenByName?.a?.schemaType).toBe('number');
+        expect(root.childrenByName?.a?.schema.schema).toMatchObject({
           type: 'number',
         });
-        const effective = root.structure?.a?.schema.schema;
+        const effective = root.childrenByName?.a?.schema.schema;
         if (
           effective === null ||
           typeof effective !== 'object' ||
           !('type' in effective)
         )
           throw new Error('Missing E26 effective type');
-        expect(effective.type).toBe(root.structure?.a?.schemaType);
+        expect(effective.type).toBe(root.childrenByName?.a?.schemaType);
       },
     });
     expect(result.executedSteps).toBe(2);

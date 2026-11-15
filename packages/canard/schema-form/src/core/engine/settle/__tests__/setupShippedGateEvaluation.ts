@@ -7,14 +7,14 @@ import { engineModes } from '../../utils/cache/engineModes';
 const previousModes = {
   gateSelection: engineModes.gateSelection,
   gateWheel: engineModes.gateWheel,
-  deriveShadow: engineModes.deriveShadow,
+  isDeriveShadowEnabled: engineModes.isDeriveShadowEnabled,
 };
-engineModes.setMode('deriveShadow', false);
+engineModes.setMode('isDeriveShadowEnabled', false);
 engineModes.setMode('gateWheel', 'skip');
 engineModes.setMode('gateSelection', 'table');
 
 afterAll(() => {
   engineModes.setMode('gateSelection', previousModes.gateSelection);
   engineModes.setMode('gateWheel', previousModes.gateWheel);
-  engineModes.setMode('deriveShadow', previousModes.deriveShadow);
+  engineModes.setMode('isDeriveShadowEnabled', previousModes.isDeriveShadowEnabled);
 });

@@ -32,7 +32,7 @@ export interface PreparedStaticHost<Self> {
   /** Dynamic candidates retain blueprint author order even without a direct plan. */
   readonly dynamicEntries: readonly BlueprintChildEntry[];
   /** Last ordinary shape and child list, never mutated by an in-progress selection. */
-  selectedStructure: Dictionary<Self>;
+  selectedChildrenByName: Dictionary<Self>;
   selectedChildren: readonly Self[];
   /** Previous dynamic names are used only for cleanup, not to admit children. */
   dynamicNames: readonly string[];
@@ -43,7 +43,7 @@ export interface PreparedStaticHost<Self> {
 /**
  * Validate a fixed static baseline once per eligible live object-host lifetime.
  * @param node - Host with a unique static partition and immutable templates
- * @param prior - Previously published structure used only as occurrence witnesses
+ * @param prior - Previously published `childrenByName` used only as occurrence witnesses
  * @param context - Load, distribution and path changes invalidate the witnesses
  * @param hasRelocated - Relocated gates force the original selection path
  * @returns Prepared baseline, or undefined when the original path is required
@@ -85,7 +85,7 @@ export const prepareStaticHost = <Self extends FieldNodeRecord<Self>>(
   }
   const partition = HostStaticPartition.get(node.blueprintNode);
   if (
-    !partition.gated ||
+    !partition.isGated ||
     partition.hasGatedOverlays ||
     !partition.staticEntries.length
   )
@@ -114,7 +114,7 @@ export const prepareStaticHost = <Self extends FieldNodeRecord<Self>>(
       child.blueprintNode !== entry.node ||
       child.schema !== schema ||
       !child.isActive ||
-      child.detached ||
+      child.isDetached ||
       (prepared && prepared.baseline[entry.name] !== child)
     ) {
       if (prepared && verify) throw new Error('Static host witness mismatch');
@@ -138,9 +138,11 @@ export const prepareStaticHost = <Self extends FieldNodeRecord<Self>>(
       node.blueprintNode.childEntries,
       (entry) => !entries.has(entry.name),
     ),
-    selectedStructure: prior,
+    selectedChildrenByName: prior,
     selectedChildren:
-      node.structure === prior ? (node.children ?? []) : Object.values(prior),
+      node.childrenByName === prior
+        ? (node.children ?? [])
+        : Object.values(prior),
     dynamicNames: filterArray(Object.keys(prior), (name) => !entries.has(name)),
     alwaysSteps: filterArray(
       getHostDerived<'gateSelectionTable', Nullable<GateSelectionTable>>(

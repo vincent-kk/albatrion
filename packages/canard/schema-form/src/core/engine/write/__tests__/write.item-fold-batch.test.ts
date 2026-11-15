@@ -17,7 +17,7 @@ it.each(['items', 'prefixItems'] satisfies readonly (
       { a: false, b: true, list: [7] },
       WriteOption.Overwrite,
     );
-    const list = root.structure!.list;
+    const list = root.childrenByName!.list;
     expect(
       markBatchArrayOperation(list, { kind: 'update', index: 0, value: 12 }),
     ).toBe(12);
@@ -30,7 +30,7 @@ it.each(['items', 'prefixItems'] satisfies readonly (
       { a: false, b: true, list: [] },
       WriteOption.Overwrite,
     );
-    const pending = empty.structure!.list;
+    const pending = empty.childrenByName!.list;
     expect(markBatchArrayOperation(pending, { kind: 'push', value: 7 })).toBe(
       1,
     );

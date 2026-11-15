@@ -41,9 +41,9 @@ it.each(['append', 'pop', 'splice'] as const)(
         admitted++;
         expect(args[1].hasGates).toBe(false);
         expect(
-          args[1].arrayAppend?.valid ||
-            args[1].arrayPop?.valid ||
-            args[1].arraySplice?.valid,
+          args[1].arrayAppend?.isValid ||
+            args[1].arrayPop?.isValid ||
+            args[1].arraySplice?.isValid,
         ).toBe(true);
       }
       return result;

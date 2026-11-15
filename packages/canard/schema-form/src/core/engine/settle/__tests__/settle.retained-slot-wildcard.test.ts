@@ -33,7 +33,7 @@ it.each(['off', 'on', 'verify'] as const)(
       { path: '/group/plain', value: 'plain' },
     ]);
     dispatchSetValue(getDispatchNode(root, 'open'), true);
-    expect(root.emit).toEqual({
+    expect(root.storedOutputValue).toEqual({
       open: true,
       group: { '*': { x: 'loaded' }, plain: 'plain' },
     });
@@ -48,7 +48,7 @@ it.each(['off', 'on', 'verify'] as const)(
       { path: '/group/plain', value: 'fresh' },
     ]);
     dispatchSetValue(getDispatchNode(root, 'open'), true);
-    expect(root.emit).toEqual({
+    expect(root.storedOutputValue).toEqual({
       open: true,
       group: { '*': { x: 'replacement' }, plain: 'fresh' },
     });

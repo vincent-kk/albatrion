@@ -61,7 +61,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
       'pair',
     ));
     for (const [node, ids] of context.selectedDeclarationIds)
-      if (!node.detached)
+      if (!node.isDetached)
         declarations.set(getCommittedDeclarationKey(node, node.runtime), ids);
   }
   if (context.failures?.length && runtime.diagnostics.status !== 'degraded')
@@ -97,12 +97,12 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   let warnings: Optional<MisfitRecord[]>;
   let warningTasks: Optional<Map<Self, Fn>>;
   markCommitDeliveries(context, (node) => {
-    if (!context.changedNodes.has(node) || node.detached) return;
+    if (!context.changedNodes.has(node) || node.isDetached) return;
     const schemaType = node.schemaType;
     const effective = effectiveType(node);
     // Only a virtual node lacks a JSON type, and it never misfits.
     if (schemaType === undefined || effective === undefined) return;
-    const misfit = isMisfit(node.source, effective, node.nullable);
+    const misfit = isMisfit(node.source, effective, node.isNullable);
     const wasOn = runtime.misfitPaths.has(node.path);
     if (misfit) runtime.misfitPaths.add(node.path);
     else runtime.misfitPaths.delete(node.path);
@@ -127,7 +127,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
           path: node.path,
           expected: {
             schemaType,
-            nullable: node.nullable,
+            isNullable: node.isNullable,
             effective,
           },
           received: receivedType(node.source),
@@ -250,7 +250,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   }
   runtime.misfitsMemo = misfitsMemo;
   for (const node of context.entered)
-    if (!node.detached) {
+    if (!node.isDetached) {
       if (node.inactiveValueMemo !== undefined)
         node.inactiveValueMemo = undefined;
       const parent = node.parent;
@@ -262,5 +262,5 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     }
   if (runtime.slotDirtyHosts?.size) commitSlotChanges(context.root);
   if (loadScope === context.root)
-    runtime.loadBaseline = { value: context.root.emit };
+    runtime.loadBaseline = { value: context.root.storedOutputValue };
 };

@@ -51,7 +51,7 @@ it('matches the latent publication while preserving a detached host own view', (
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   root.inactiveSlots = new Map([[groupEntry, group]]);
   root.inactiveSlotChildren.clear();
-  root.inactiveValuesDirty = true;
+  root.isInactiveValuesDirty = true;
   const values = materializeInactiveSlotValues(root);
   expect(values).toEqual([
     { path: '/group/childOpen', value: false },
@@ -89,7 +89,7 @@ it('represents inherited clearing as an overlay while leaving the source unchang
   const entry = getRetainedChildEntry(root, group.name, group.blueprintNode);
   if (!entry) throw new Error('Expected binding');
   const result = createExitSlotOverlay(group, false, true);
-  expect(result.retain).toBe(true);
+  expect(result.canRetain).toBe(true);
   root.inactiveSlots = new Map([[entry, group]]);
   if (result.overlay)
     root.inactiveSlotOverlays = new Map([[entry, result.overlay]]);

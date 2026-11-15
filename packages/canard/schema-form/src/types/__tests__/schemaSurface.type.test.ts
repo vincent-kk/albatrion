@@ -89,7 +89,7 @@ describe('schema authoring surface', () => {
     >();
   });
 
-  it('declares options.propertyOrder as the emitted key order on object schemas', () => {
+  it('declares options.propertyOrder as the output key order on object schemas', () => {
     type PropertyOrder<
       Schema extends { options?: { propertyOrder?: unknown } },
     > = NonNullable<Schema['options']>['propertyOrder'];

@@ -28,11 +28,11 @@ export interface Blueprint {
   /** Separate mount-only fixed-membership proof; absence requires ordinary load. */
   readonly fixedFirstLoadPlan?: FixedFirstLoadPlan;
   /** Compiler-only creation fact, retained across derived-record resets. */
-  readonly staticFirstLoadEligible?: boolean;
+  readonly isStaticFirstLoadEligible?: boolean;
   /** Independent absence proofs over every authored position declaration collection reaches. */
   readonly capabilities: {
     /** No disjunction, if, discriminator or active control was reached. */
-    readonly branchless: boolean;
+    readonly isBranchless: boolean;
     /** At least one supported control was authored as an expression string. */
     readonly hasExpressions: boolean;
     /** Automatic value/interaction rules exist independently of gates. */
@@ -78,7 +78,7 @@ export type EqualityLiteral = Nullable<string | number | boolean>;
 /** A compiled expression never executed during schema analysis. */
 export interface BlueprintExpression {
   /** Compiler-only complete-read proof fixed before this expression is frozen. */
-  readonly completeReads?: boolean;
+  readonly hasCompleteReads?: boolean;
   /** Contribution whose controls contain this expression. */
   readonly declarationId: number;
   /** Original expression position used in compilation diagnostics. */

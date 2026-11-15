@@ -57,7 +57,7 @@ describe('static array selection matches the full route', () => {
         { apply: (node) => dispatchPush(node, {}), reuse: true },
       ],
     );
-    expect(root.emit).toEqual([
+    expect(root.storedOutputValue).toEqual([
       { value: 'old', fill: 7, nested: [1, 2] },
       { value: 'new', fill: 7, nested: [3] },
       { fill: 7 },
@@ -76,7 +76,7 @@ describe('static array selection matches the full route', () => {
         { apply: (node) => dispatchPop(node), reuse: true },
       ],
     );
-    expect(root.emit).toEqual([]);
+    expect(root.storedOutputValue).toEqual([]);
   });
 
   it('preserves tuple extras, dense undefined slots and projection on append and pop', () => {
@@ -128,7 +128,7 @@ describe('static array selection matches the full route', () => {
         {
           apply: (node) =>
             dispatchSetValue(
-              node.structure!['0'].structure!.show,
+              node.childrenByName!['0'].childrenByName!.show,
               true,
               WriteOption.Overwrite,
             ),
@@ -136,7 +136,7 @@ describe('static array selection matches the full route', () => {
         },
       ],
     );
-    expect(root.emit).toEqual([
+    expect(root.storedOutputValue).toEqual([
       { show: true, value: 'filled' },
       { show: true, value: 'filled' },
     ]);
@@ -160,7 +160,7 @@ describe('static array selection matches the full route', () => {
         {
           apply: (node) =>
             dispatchSetValue(
-              node.structure!['0'].structure!['source'],
+              node.childrenByName!['0'].childrenByName!['source'],
               4,
               WriteOption.Overwrite,
             ),
@@ -168,7 +168,7 @@ describe('static array selection matches the full route', () => {
         },
       ],
     );
-    expect(root.emit).toEqual([
+    expect(root.storedOutputValue).toEqual([
       { source: 4, doubled: 8 },
       { source: 3, doubled: 6 },
     ]);
@@ -194,7 +194,7 @@ describe('static array selection matches the full route', () => {
       [{ source: 2 }],
       [{ apply: (node) => dispatchPush(node, { source: 3 }), reuse: false }],
     );
-    expect(root.emit).toEqual([
+    expect(root.storedOutputValue).toEqual([
       { source: 2, target: 2 },
       { source: 3, target: 3 },
     ]);
@@ -220,7 +220,7 @@ describe('static array selection matches the full route', () => {
         },
       ],
     );
-    expect(root.emit).toEqual([
+    expect(root.storedOutputValue).toEqual([
       { flag: true, value: 'a' },
       { flag: false, value: 'b' },
     ]);
@@ -237,11 +237,17 @@ describe('static array selection matches the full route', () => {
       },
       { rows: [1, 2], sibling: 'same' },
       [
-        { apply: (node) => dispatchPush(node.structure!.rows, 3), reuse: true },
-        { apply: (node) => dispatchPop(node.structure!.rows), reuse: true },
+        {
+          apply: (node) => dispatchPush(node.childrenByName!.rows, 3),
+          reuse: true,
+        },
+        {
+          apply: (node) => dispatchPop(node.childrenByName!.rows),
+          reuse: true,
+        },
       ],
     );
-    expect(root.emit).toEqual({ rows: [1, 2], sibling: 'same' });
+    expect(root.storedOutputValue).toEqual({ rows: [1, 2], sibling: 'same' });
   });
 
   it('retains full selection for a removal that moves paths under a gate or an expression', () => {
@@ -363,7 +369,7 @@ describe('static array selection matches the full route', () => {
         ),
       ).toHaveLength(0);
       expect(visits.filter((path) => path === child.path)).toHaveLength(0);
-      expect(root.structure![child.name]).toBe(child);
+      expect(root.childrenByName![child.name]).toBe(child);
     }
     expect(visits.filter((path) => /^select:\/\d+$/.test(path))).toHaveLength(
       0,

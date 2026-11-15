@@ -70,13 +70,13 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
           appendSegment(node.path, name),
         )
       : EMPTY_ARRAY,
-    active: true,
+    isActive: true,
   });
   if (engineModes.gateSelection === 'verify') {
     if (context.gateWheelFrame)
       context.gateWheelFrame.selectionShadow = {
         inputs: new Map(),
-        consistent: true,
+        isConsistent: true,
       };
     watchGateSelectionDirty(context);
   }

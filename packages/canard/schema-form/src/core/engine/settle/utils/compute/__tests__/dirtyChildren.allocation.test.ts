@@ -73,8 +73,8 @@ describe('dirty child membership allocation', () => {
       ]),
     );
     expect(dirtyChildren(root, context)).toEqual([
-      root.structure!.b,
-      root.structure!.a,
+      root.childrenByName!.b,
+      root.childrenByName!.a,
     ]);
   });
 });

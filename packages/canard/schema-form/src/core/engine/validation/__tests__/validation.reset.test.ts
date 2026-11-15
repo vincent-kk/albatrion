@@ -29,22 +29,22 @@ describe('subtree load validation scope', () => {
     runtime.warningKeys = new Set(['other-subtree-warning']);
     runtime.misfitPaths.add('/b');
     const before = runtime.validationStamp ?? 0;
-    const a = root.structure?.a ?? root;
-    const b = root.structure?.b ?? root;
-    const bValue = b.emit;
+    const a = root.childrenByName?.a ?? root;
+    const b = root.childrenByName?.b ?? root;
+    const bValue = b.storedOutputValue;
     dispatchResetSubtree(a);
     expect(runtime.validationStamp).toBe(before + 1);
     expect(runtime.validationPendingTargets?.has(a)).toBe(true);
     expect(runtime.validationPendingTargets?.has(root)).toBe(false);
     dispatchBatch(root, () => {
       dispatchResetSubtree(a);
-      expect(a.emit).toBe('A');
+      expect(a.storedOutputValue).toBe('A');
       expect(runtime.validationStamp).toBe(before + 1);
     });
     expect(runtime.validationStamp).toBe(before + 2);
     expect(runtime.validationPendingTargets?.has(a)).toBe(true);
     expect(runtime.validationPendingTargets?.has(root)).toBe(false);
-    expect(b.emit).toBe(bValue);
+    expect(b.storedOutputValue).toBe(bValue);
     expect(runtime.warningKeys).toEqual(new Set(['other-subtree-warning']));
     expect(runtime.misfitPaths.has('/b')).toBe(true);
   });

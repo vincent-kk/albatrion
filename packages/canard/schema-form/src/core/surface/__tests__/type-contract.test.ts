@@ -28,7 +28,7 @@ type PublicKeys =
   | 'schemaType'
   | 'jsonSchema'
   | 'isRequired'
-  | 'nullable'
+  | 'isNullable'
   | 'depth'
   | 'isRoot'
   | 'rootNode'

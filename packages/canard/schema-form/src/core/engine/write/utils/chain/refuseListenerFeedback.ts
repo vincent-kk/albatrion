@@ -17,7 +17,7 @@ export const refuseListenerFeedback = <Self>(
   )
     return false;
   (runtime.feedbackBlockedListeners ??= new Set()).add(runtime.currentListener);
-  if (!runtime.feedbackLimitReported) {
+  if (!runtime.isFeedbackLimitReported) {
     captureChainError(
       runtime,
       new SchemaFormError(
@@ -25,7 +25,7 @@ export const refuseListenerFeedback = <Self>(
         'Listener feedback exceeded 25 waves',
       ),
     );
-    runtime.feedbackLimitReported = true;
+    runtime.isFeedbackLimitReported = true;
   }
   return true;
 };

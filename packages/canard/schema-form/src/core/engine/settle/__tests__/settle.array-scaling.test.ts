@@ -248,7 +248,7 @@ describe('44C-01 array settlement scaling', () => {
       loadFieldNodeAtMount(root, value, WriteOption.Overwrite);
       if (process.env.SETTLE_SCALING_PROBE)
         console.info(`51C-01 object host assemblies: ${assemblies}`);
-      expect(root.emit).toEqual(value);
+      expect(root.storedOutputValue).toEqual(value);
       expect(assemblies).toBeLessThan(10);
     } finally {
       Reflect.set(root, 'behavior', behavior);
@@ -312,8 +312,8 @@ describe('44C-01 array settlement scaling', () => {
     for (const value of observations.slice(0, settled))
       expect(value).toEqual(inProgress);
     for (const value of observations.slice(settled))
-      expect(value).toEqual(root.emit);
-    expect(root.emit).toEqual({
+      expect(value).toEqual(root.storedOutputValue);
+    expect(root.storedOutputValue).toEqual({
       first: { value: 'entered' },
       current: { value: 'in-progress', primer: 'ready', reader: 'visible' },
     });
@@ -353,13 +353,15 @@ describe('44C-01 array settlement scaling', () => {
     });
     if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
     const index = getDependencyIndex(root.runtime.blueprint);
-    const affected = index.affected.bind(index);
+    const affected = index.affectedOwners.bind(index);
     let owners = 0;
-    const spy = vi.spyOn(index, 'affected').mockImplementation((path, tree) => {
-      const result = affected(path, tree);
-      owners += result.length;
-      return result;
-    });
+    const spy = vi
+      .spyOn(index, 'affectedOwners')
+      .mockImplementation((path, tree) => {
+        const result = affected(path, tree);
+        owners += result.length;
+        return result;
+      });
     try {
       root.setValue({
         rows: Array.from({ length: count }, (_, row) => ({
@@ -746,12 +748,15 @@ describe('44C-01 array settlement scaling', () => {
   it('NODE-026 visits only dirty item slots on a 2,000-item keystroke', () => {
     const { root } = makeFieldNodeTree(schema);
     root.setValue(items(2000, 0));
-    const structure = Reflect.get(root, 'structure') as Record<string, unknown>;
+    const childrenByName = Reflect.get(root, 'childrenByName') as Record<
+      string,
+      unknown
+    >;
     let slotReads = 0;
     Reflect.set(
       root,
-      'structure',
-      new Proxy(structure, {
+      'childrenByName',
+      new Proxy(childrenByName, {
         get(target, property, receiver) {
           if (typeof property === 'string' && /^\d+$/.test(property))
             slotReads++;

@@ -16,7 +16,7 @@ const isDispatchTestNode = (value: unknown): value is DispatchTestNode =>
   typeof value === 'object' &&
   'runtime' in value &&
   'rootNode' in value &&
-  'structure' in value;
+  'childrenByName' in value;
 
 /**
  * Build a real tree for dispatcher tests.

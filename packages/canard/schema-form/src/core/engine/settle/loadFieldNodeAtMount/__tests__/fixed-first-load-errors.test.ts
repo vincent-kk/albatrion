@@ -44,10 +44,10 @@ it.each([
       general: true,
     });
     expect(actual.snapshot()).toEqual(oracle.snapshot());
-    expect(actual.root.structure!.value.schema.schema).not.toHaveProperty(
+    expect(actual.root.childrenByName!.value.schema.schema).not.toHaveProperty(
       'minLength',
     );
-    expect(actual.root.structure!.value.schema.schema).not.toHaveProperty(
+    expect(actual.root.childrenByName!.value.schema.schema).not.toHaveProperty(
       'maxLength',
     );
     expectFixedFirstLoadRoute(actual);

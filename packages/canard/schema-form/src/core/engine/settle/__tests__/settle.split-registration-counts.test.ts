@@ -34,8 +34,8 @@ it('keeps registration owners and dirtyChildren sweeps constant at N=5 and N=80'
         );
         loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
         const index = getDependencyIndex(blueprint);
-        const affected = index.affected;
-        const split = index.affectedForRegistration;
+        const affectedOwners = index.affectedOwners;
+        const split = index.registerAffectedOwners;
         const register = registration.registerRecalculation;
         const dirty = traversal.dirtyChildren;
         const row = {
@@ -46,18 +46,18 @@ it('keeps registration owners and dirtyChildren sweeps constant at N=5 and N=80'
           dormant: 0,
         };
         let visited = 0;
-        vi.spyOn(index, 'affected').mockImplementation((...args) => {
-          const owners = affected.apply(index, args);
+        vi.spyOn(index, 'affectedOwners').mockImplementation((...args) => {
+          const owners = affectedOwners.apply(index, args);
           visited += owners.length;
           return owners;
         });
-        vi.spyOn(index, 'affectedForRegistration').mockImplementation(
+        vi.spyOn(index, 'registerAffectedOwners').mockImplementation(
           (changed, node, sink) =>
             split.call(index, changed, node, {
               ...sink,
-              owner: (...args) => {
+              registerOwner: (...args) => {
                 visited++;
-                sink.owner(...args);
+                sink.registerOwner(...args);
               },
             }),
         );
@@ -70,7 +70,7 @@ it('keeps registration owners and dirtyChildren sweeps constant at N=5 and N=80'
               row.dormant = [...context.dirtyPaths].filter(
                 (path) =>
                   path.startsWith('/payload_') &&
-                  !root.structure?.[path.slice(1)],
+                  !root.childrenByName?.[path.slice(1)],
               ).length;
           },
         );
@@ -83,7 +83,7 @@ it('keeps registration owners and dirtyChildren sweeps constant at N=5 and N=80'
         );
         try {
           writeFieldNode(
-            root.structure!.kind,
+            root.childrenByName!.kind,
             `kind_${count - 1}`,
             FieldNodeWriteKind.Input,
             WriteOption.Overwrite,

@@ -23,27 +23,27 @@ export const observePresenceChangeNames = () => {
   const collect = presence.collectPresenceChangeNames;
   vi.spyOn(presence, 'collectPresenceChangeNames').mockImplementation(
     (host, previous, context) => {
-      const structure = host.structure ?? {};
+      const childrenByName = host.childrenByName ?? {};
       const expected: string[] = [];
       for (const name in previous)
         if (
-          !hasOwnProperty(structure, name) ||
-          previous[name] !== structure[name]
+          !hasOwnProperty(childrenByName, name) ||
+          previous[name] !== childrenByName[name]
         )
           expected.push(formatSegment(name));
-      for (const name in structure)
+      for (const name in childrenByName)
         if (!hasOwnProperty(previous, name)) expected.push(formatSegment(name));
       const witness = context.presenceSelections?.get(host);
       const prepared = getHostDerived<
         'preparedStaticHost',
-        { selectedStructure: typeof structure }
+        { selectedChildrenByName: typeof childrenByName }
       >(host).preparedStaticHost;
       counts.calls++;
       if (!witness || !prepared || !context.preparedStaticHosts?.has(host))
         counts.missing++;
       else if (
-        witness.structure !== previous ||
-        prepared.selectedStructure !== structure
+        witness.childrenByName !== previous ||
+        prepared.selectedChildrenByName !== childrenByName
       )
         counts.mismatch++;
       else if (host.source === null) counts.null++;

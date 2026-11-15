@@ -25,7 +25,7 @@ export const dispatchSetState = <Self extends FieldNodeRecord<Self>>(
   state: NodeStateFlags,
 ): void => {
   assertFieldNodeWritable(node);
-  if (node.detached) return;
+  if (node.isDetached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
   if (refuseListenerFeedback(runtime)) return;
@@ -38,7 +38,7 @@ export const dispatchSetState = <Self extends FieldNodeRecord<Self>>(
   publishGlobalStateDeltas(node.rootNode, deltas);
   if (node.deliveryChanges & FieldNodeEventType.UpdateState)
     node.deliveryPreviousState = node.interactionState;
-  runtime.stateChanged = true;
+  runtime.hasStateChanged = true;
   queueNonSettleEvent(
     node,
     FieldNodeEventType.UpdateState,

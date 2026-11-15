@@ -58,7 +58,7 @@ export const rebuildRootExternalErrors = <Self extends FieldNodeRecord<Self>>(
     const previous = contributions.get(node);
     if (previous)
       for (let at = 0; at < previous.length; at++) retired.add(previous[at]);
-    if (node.detached) {
+    if (node.isDetached) {
       contributions.delete(node);
       continue;
     }
@@ -91,7 +91,7 @@ export const rebuildRootExternalErrors = <Self extends FieldNodeRecord<Self>>(
   }
   for (let index = 0; index < nodes.length; index++) {
     const node = nodes[index];
-    if (node.detached) continue;
+    if (node.isDetached) continue;
     const list = runtime.nodeErrors?.get(node);
     if (list) {
       for (let at = 0; at < list.length; at++)

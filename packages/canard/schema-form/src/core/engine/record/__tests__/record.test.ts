@@ -28,7 +28,7 @@ const makeRecord = (): FieldNodeRecord<PathNode> => {
     behavior: {
       interpret: (input) => input,
       assemble: (_node, children) => children,
-      project: (_node, local) => local,
+      project: (_node, value) => value,
       finishInput: () => undefined,
       declareChildren: (node) => node.blueprintNode.childEntries,
       arrange: () => ({ kind: 'noop' }),
@@ -57,9 +57,9 @@ const makeRecord = (): FieldNodeRecord<PathNode> => {
     path: '',
     depth: 0,
     isRequired: false,
-    nullable: false,
+    isNullable: false,
     schemaType: blueprintNode.schemaType,
-    structure: {},
+    childrenByName: {},
     children: [],
     itemKey: null,
     itemCount: 0,
@@ -70,22 +70,22 @@ const makeRecord = (): FieldNodeRecord<PathNode> => {
     isVisible: true,
     isReadOnly: false,
     isDisabled: false,
-    local: undefined,
-    emit: undefined,
+    storedValue: undefined,
+    storedOutputValue: undefined,
     divergenceCurrent: undefined,
     divergencePath: undefined,
     divergenceSegments: undefined,
     divergenceBase: undefined,
-    divergenceResult: false,
-    schema: { schema: {}, typeConflict: false },
+    storedIsDivergent: false,
+    schema: { schema: {}, hasTypeConflict: false },
     interactionState: {},
     revisionLedger: EMPTY_REVISION_LEDGER,
-    deliveryInitialized: false,
+    isDeliveryInitialized: false,
     deliveryChanges: 0,
-    pendingRevision: 0,
-    detached: false,
-    disposed: false,
-    interactionReset: 0,
+    pendingRevisionMask: 0,
+    isDetached: false,
+    isDisposed: false,
+    interactionEpoch: 0,
   };
 };
 
@@ -93,26 +93,34 @@ const makeRecord = (): FieldNodeRecord<PathNode> => {
 describe('record layout operations', () => {
   it('captures the first value baseline while later writes and A-B-A retain it', () => {
     const node = makeRecord();
-    node.deliveryInitialized = true;
-    node.local = node.emit = 'A';
-    node.local = captureFieldNodeChange(node, 'local', 'B');
-    node.emit = captureFieldNodeChange(node, 'emit', 'C');
+    node.isDeliveryInitialized = true;
+    node.storedValue = node.storedOutputValue = 'A';
+    node.storedValue = captureFieldNodeChange(node, 'storedValue', 'B');
+    node.storedOutputValue = captureFieldNodeChange(
+      node,
+      'storedOutputValue',
+      'C',
+    );
     expect(node.deliveryChanges).toBe(FieldNodeEventType.UpdateValue);
-    expect(node.deliveryPreviousLocal).toBe('A');
-    expect(node.deliveryPreviousEmit).toBe('A');
-    node.local = captureFieldNodeChange(node, 'local', 'A');
-    node.emit = captureFieldNodeChange(node, 'emit', 'A');
-    expect(node.deliveryPreviousLocal).toBe(node.local);
-    expect(node.deliveryPreviousEmit).toBe(node.emit);
+    expect(node.deliveryPreviousValue).toBe('A');
+    expect(node.deliveryPreviousOutputValue).toBe('A');
+    node.storedValue = captureFieldNodeChange(node, 'storedValue', 'A');
+    node.storedOutputValue = captureFieldNodeChange(
+      node,
+      'storedOutputValue',
+      'A',
+    );
+    expect(node.deliveryPreviousValue).toBe(node.storedValue);
+    expect(node.deliveryPreviousOutputValue).toBe(node.storedOutputValue);
     clearFieldNodeChanges(node);
     expect(node.deliveryChanges).toBe(0);
-    expect(node.deliveryPreviousLocal).toBeUndefined();
-    expect(node.deliveryPreviousEmit).toBeUndefined();
+    expect(node.deliveryPreviousValue).toBeUndefined();
+    expect(node.deliveryPreviousOutputValue).toBeUndefined();
   });
 
   it('keeps distinct first baselines for path, children, computed, schema and state', () => {
     const node = makeRecord();
-    node.deliveryInitialized = true;
+    node.isDeliveryInitialized = true;
     const children = node.children,
       schema = node.schema,
       state = node.interactionState;
@@ -122,21 +130,21 @@ describe('record layout operations', () => {
     node.isDisabled = captureFieldNodeChange(node, 'isDisabled', true);
     node.schema = captureFieldNodeChange(node, 'schema', {
       schema: { title: 'next' },
-      typeConflict: false,
+      hasTypeConflict: false,
     });
     node.interactionState = captureFieldNodeChange(node, 'interactionState', {
       edited: true,
     });
     expect(node.deliveryPreviousPath).toBe('');
     expect(node.deliveryPreviousChildren).toBe(children);
-    expect(node.deliveryPreviousComputed).toBe(3);
+    expect(node.deliveryPreviousComputedBits).toBe(3);
     expect(node.deliveryPreviousSchema).toBe(schema);
     expect(node.deliveryPreviousState).toBe(state);
     clearFieldNodeChanges(node);
     expect([
       node.deliveryPreviousPath,
       node.deliveryPreviousChildren,
-      node.deliveryPreviousComputed,
+      node.deliveryPreviousComputedBits,
       node.deliveryPreviousSchema,
       node.deliveryPreviousState,
     ]).toEqual([undefined, undefined, undefined, undefined, undefined]);
@@ -147,11 +155,13 @@ describe('record layout operations', () => {
 
   it('allocates no change records for initialization or equal assignments', () => {
     const node = makeRecord();
-    expect(captureFieldNodeChange(node, 'local', 'first')).toBe('first');
+    expect(captureFieldNodeChange(node, 'storedValue', 'first')).toBe('first');
     expect(node.deliveryChanges).toBe(0);
-    expect(node.local).toBeUndefined();
-    node.deliveryInitialized = true;
-    expect(captureFieldNodeChange(node, 'local', undefined)).toBeUndefined();
+    expect(node.storedValue).toBeUndefined();
+    node.isDeliveryInitialized = true;
+    expect(
+      captureFieldNodeChange(node, 'storedValue', undefined),
+    ).toBeUndefined();
     expect(node.deliveryChanges).toBe(0);
     expect(node.runtime.deliveryAffectedPaths).toBeUndefined();
   });
@@ -191,7 +201,7 @@ describe('record layout operations', () => {
 
   it('leaves a detached reference unchanged when interaction flags are patched', () => {
     const node = makeRecord();
-    node.detached = true;
+    node.isDetached = true;
     const state = node.interactionState;
     patchFieldNodeInteractionState(node, { touched: true });
     expect(node.interactionState).toBe(state);

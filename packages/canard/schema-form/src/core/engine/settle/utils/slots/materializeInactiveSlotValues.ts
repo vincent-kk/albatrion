@@ -16,7 +16,7 @@ export const materializeInactiveSlotValues = <
 >(
   host: Self,
 ): readonly { path: string; value: unknown }[] => {
-  if (host.inactiveValuesCache && !host.inactiveValuesDirty)
+  if (host.inactiveValuesCache && !host.isInactiveValuesDirty)
     return host.inactiveValuesCache;
   const values: InactiveSlotCandidate[] = [];
   collectHostSlotValues(
@@ -39,7 +39,7 @@ export const materializeInactiveSlotValues = <
       chosen.set(candidate.entry.path, candidate.entry);
   const next = [...chosen.values()];
   const previous = host.inactiveValuesCache;
-  host.inactiveValuesDirty = false;
+  host.isInactiveValuesDirty = false;
   if (previous?.length === next.length) {
     let unchanged = true;
     for (let index = 0; index < previous.length; index++)

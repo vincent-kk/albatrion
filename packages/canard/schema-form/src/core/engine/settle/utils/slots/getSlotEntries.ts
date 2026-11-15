@@ -19,7 +19,7 @@ export const getSlotEntries = <Self extends FieldNodeRecord<Self>>(
   template: Optional<BlueprintNode> = host?.blueprintNode,
 ): readonly BlueprintChildEntry[] => {
   const entries = new Set<BlueprintChildEntry>();
-  if (!overlay?.replace)
+  if (!overlay?.isWhole)
     for (const child of host?.children ?? []) {
       if (child.parent !== host || !host) continue;
       const entry = getRetainedChildEntry(
@@ -29,7 +29,7 @@ export const getSlotEntries = <Self extends FieldNodeRecord<Self>>(
       );
       if (entry) entries.add(entry);
     }
-  if (!overlay?.replace) {
+  if (!overlay?.isWhole) {
     for (const entry of host?.inactiveSlots?.keys() ?? []) entries.add(entry);
     for (const entry of host?.inactiveSlotOverlays?.keys() ?? [])
       entries.add(entry);

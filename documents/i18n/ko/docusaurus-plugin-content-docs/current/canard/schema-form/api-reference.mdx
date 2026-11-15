@@ -170,7 +170,7 @@ controlled 선언이 없는 자식에는 다음 한계가 있습니다.
 
 ## 노드 값·상태·배열 연산 {#nodes}
 
-동일성·트리는 `type`, `strategy`, `schemaType`, `jsonSchema`, `path`, `name`, `escapedName`, `depth`, `rootNode`, `parentNode`, `children`으로 읽습니다. 말단 children은 null입니다. `value`는 해석된 로컬 값, `outputValue`는 방출 JSON, `source`, `extras`, `inactiveValues`는 보존된 입력을 나타냅니다. `isRequired`, `nullable`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`, `misfits`, `watchValues`, `context`, `diagnostics`는 현재 노드 상태입니다. `isPresent`는 disabled와 무관하게 active이면서 visible임을 뜻합니다.
+동일성·트리는 `type`, `strategy`, `schemaType`, `jsonSchema`, `path`, `name`, `escapedName`, `depth`, `rootNode`, `parentNode`, `children`으로 읽습니다. 말단 children은 null입니다. `value`는 해석된 값, `outputValue`는 방출 JSON, `source`, `extras`, `inactiveValues`는 보존된 입력을 나타냅니다. `isRequired`, `isNullable`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`, `misfits`, `watchValues`, `context`, `diagnostics`는 현재 노드 상태입니다. `isPresent`는 disabled와 무관하게 active이면서 visible임을 뜻합니다.
 
 루트의 parentNode는 null입니다. `find()`의 일치 노드가 없으면 null, `findNodes()`는 []를 반환합니다.
 

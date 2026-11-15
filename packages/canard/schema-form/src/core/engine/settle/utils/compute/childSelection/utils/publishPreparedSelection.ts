@@ -21,7 +21,7 @@ export const publishPreparedSelection = <Self extends FieldNodeRecord<Self>>(
       if (
         !(
           name === prepared.dynamicNames[index] &&
-          frame.next[name] === prepared.selectedStructure[name]
+          frame.next[name] === prepared.selectedChildrenByName[name]
         )
       ) {
         same = false;
@@ -31,16 +31,16 @@ export const publishPreparedSelection = <Self extends FieldNodeRecord<Self>>(
   }
 
   if (!same) {
-    prepared.selectedStructure = Object.assign(
+    prepared.selectedChildrenByName = Object.assign(
       Object.create(null),
       prepared.baseline,
       frame.preparedDynamic,
     );
-    prepared.selectedChildren = Object.values(prepared.selectedStructure);
-    frame.changed = true;
+    prepared.selectedChildren = Object.values(prepared.selectedChildrenByName);
+    frame.hasChanged = true;
   }
   prepared.dynamicNames = names;
-  frame.node.structure = prepared.selectedStructure;
+  frame.node.childrenByName = prepared.selectedChildrenByName;
   frame.node.children = captureFieldNodeChange(
     frame.node,
     'children',

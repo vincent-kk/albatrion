@@ -28,7 +28,7 @@ export const resolveSlotSource = <Self extends FieldNodeRecord<Self>>(
     const selected =
       depth === names.length - 1
         ? target
-        : instance?.structure?.[name]?.blueprintNode;
+        : instance?.childrenByName?.[name]?.blueprintNode;
     const entry = getSlotPathEntry(template, instance, overlay, name, selected);
     if (!entry) return { instance: undefined, overlay: undefined };
     const child: {

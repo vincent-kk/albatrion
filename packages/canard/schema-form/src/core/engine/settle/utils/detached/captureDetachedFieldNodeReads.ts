@@ -9,7 +9,7 @@ import { readFieldNodeDefaultValue } from '../loadValues/readFieldNodeDefaultVal
 /**
  * Retain the last committed reads before an exiting node's live path is cleared.
  * @param node - Departing occurrence whose reference remains externally readable
- * @param watchSnapshot - Previous emission and effective schema for watched reads
+ * @param watchSnapshot - Previous output value and effective schema for watched reads
  * @param load - The node's load source when the caller already read it, equal to `readFieldNodeDefaultValue(node)`; read here when absent
  * @returns Nothing; the tree runtime retains frozen reads by node identity
  */

@@ -35,14 +35,14 @@ it.each(['items', 'prefixItems'] satisfies readonly (
     { later: true, list: [{}] },
     WriteOption.Overwrite,
   );
-  const list = root.structure!.list;
-  expect(list.local).toEqual([{}]);
-  expect(list.emit).toBeUndefined();
+  const list = root.childrenByName!.list;
+  expect(list.storedValue).toEqual([{}]);
+  expect(list.storedOutputValue).toBeUndefined();
   writeFieldNode(
-    list.structure!['0'],
+    list.childrenByName!['0'],
     null,
     FieldNodeWriteKind.CallerReplace,
     WriteOption.Overwrite,
   );
-  expect(list.emit).toBeUndefined();
+  expect(list.storedOutputValue).toBeUndefined();
 });

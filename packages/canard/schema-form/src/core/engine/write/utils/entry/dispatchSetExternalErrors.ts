@@ -20,7 +20,7 @@ export const dispatchSetExternalErrors = <Self extends FieldNodeRecord<Self>>(
   errors: readonly ValidationIssue[],
 ): void => {
   assertFieldNodeWritable(node);
-  if (node.detached) return;
+  if (node.isDetached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
   if (refuseListenerFeedback(runtime)) return;

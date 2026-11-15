@@ -60,7 +60,7 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
   const occurrence = registry.locate(owner, gate, edgeName);
   const hostPath = occurrence.hostPath;
   const predicate = occurrence.predicate;
-  const reusable = !reference && !!context.kind && predicate.memoizable;
+  const reusable = !reference && !!context.kind && predicate.isMemoizable;
   const input = reusable ? predicate.arguments : undefined;
   try {
     const view =
@@ -153,7 +153,7 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
     if (
       !reference &&
       context.kind &&
-      predicate.memoizable &&
+      predicate.isMemoizable &&
       result !== undefined
     )
       if (memo) {
@@ -164,7 +164,7 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
   } catch (cause) {
     if (!reference) occurrence.memo = undefined;
     const runtime = context.root.runtime;
-    context.gateThrowVersion = (context.gateThrowVersion ?? 0) + 1;
+    context.gateExceptionVersion = (context.gateExceptionVersion ?? 0) + 1;
     const code =
       gate.kind === 'if'
         ? FormErrorCode.GuardFailed
@@ -189,7 +189,7 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
     }
 
     const failure =
-      runtime.mountingGuardPass || repeated
+      runtime.isInMountingGuardPass || repeated
         ? undefined
         : new SchemaFormError(
             code,
@@ -239,21 +239,21 @@ export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
   edgeName?: string,
   reference = false,
 ): boolean => {
-  const version = context.gateThrowVersion;
+  const version = context.gateExceptionVersion;
   const value = evaluateGateValue(gate, context, owner, edgeName, reference);
   const frame = context.gateWheelFrame;
   if (
     !reference &&
     frame &&
-    context.gateSelectionRounds?.get(owner)?.active &&
-    version === context.gateThrowVersion
+    context.gateSelectionRounds?.get(owner)?.isActive &&
+    version === context.gateExceptionVersion
   ) {
     const occurrence = getGateRegistry(owner.runtime).locate(
       owner,
       gate,
       edgeName,
     );
-    if (occurrence.predicate.memoizable)
+    if (occurrence.predicate.isMemoizable)
       (frame.predicateResults ??= new Map()).set(occurrence, value);
   }
   context.gateWheelFrame?.evaluations?.push({

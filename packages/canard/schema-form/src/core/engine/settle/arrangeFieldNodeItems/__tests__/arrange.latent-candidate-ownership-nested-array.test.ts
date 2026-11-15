@@ -49,15 +49,15 @@ it.each(['insert', 'remove'] as const)(
     runtime.disableAutomaticWrites = true;
     if (operation === 'insert') dispatchInsert(list, 0, []);
     else dispatchRemove(list, 0);
-    expect(old.detached).toBe(true);
+    expect(old.isDetached).toBe(true);
     expect(getDispatchNode(list, String(destination), '0', 'v').source).toBe(
       37,
     );
 
-    expect(list.local).toEqual(
+    expect(list.storedValue).toEqual(
       operation === 'insert' ? [[], [{ v: 37 }]] : [[{ v: 37 }]],
     );
-    expect(root.emit).toEqual(root.local);
+    expect(root.storedOutputValue).toEqual(root.storedValue);
     expect(readRetainedSlotSource(root, path, 'string')).toBe('live');
 
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');

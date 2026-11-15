@@ -63,7 +63,7 @@ export const createRenderScenarioAdapter = (
         const field = form.field(step.path);
         if (
           node &&
-          !node.nullable &&
+          !node.isNullable &&
           (node.type === 'string' || node.type === 'number') &&
           field?.tagName === 'INPUT' &&
           (field.type === 'text' || field.type === 'number')

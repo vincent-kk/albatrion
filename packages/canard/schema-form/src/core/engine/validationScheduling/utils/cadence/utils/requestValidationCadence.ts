@@ -13,8 +13,8 @@ export const requestValidationCadence = (
   state: ValidationCadenceState,
   onRun: Fn<[fallback: boolean]>,
 ): void => {
-  if (state.cancelled) return;
-  state.requested = true;
+  if (state.isCancelled) return;
+  state.isRequested = true;
   if (!canScheduleValidationFrame()) {
     if (state.phase === 'fallback') return;
     state.cancelPending?.();

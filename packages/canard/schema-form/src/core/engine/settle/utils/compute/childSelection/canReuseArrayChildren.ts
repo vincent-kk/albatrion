@@ -23,8 +23,8 @@ const NO_ACTIVE_IDS: readonly number[] = EMPTY_ARRAY;
  * when that check fails the proof is invalidated and the full proof runs.
  * Writes nothing else; publication belongs to the caller.
  * @param node - Array host whose structural operation already published its slots
- * @param context - Settlement facts the proof reads: gate presence, previous item counts, distributed inputs, path changes, pending exits, previous emit and entered records
- * @param prior - Structure captured before the host's selection round
+ * @param context - Settlement facts the proof reads: gate presence, previous item counts, distributed inputs, path changes, pending exits, previous output value and entered records
+ * @param prior - Children-by-name map captured before the host's selection round
  * @returns Whether every slot is proven to keep its static selection
  */
 export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
@@ -33,26 +33,26 @@ export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
   prior: Dictionary<Self>,
 ): boolean => {
   const append = context.arrayAppend;
-  if (append?.host === node && append.valid) {
+  if (append?.host === node && append.isValid) {
     if (canReuseAppendedChild(node, context, prior, append)) return true;
-    append.valid = false;
+    append.isValid = false;
   }
   const pop = context.arrayPop;
-  if (pop?.host === node && pop.valid) {
+  if (pop?.host === node && pop.isValid) {
     if (canReuseTruncatedChildren(node, context, prior, pop)) return true;
-    pop.valid = false;
+    pop.isValid = false;
   }
   const splice = context.arraySplice;
-  if (splice?.host === node && splice.valid) {
+  if (splice?.host === node && splice.isValid) {
     if (canReuseSplicedChildren(node, context, prior, splice)) return true;
-    splice.valid = false;
+    splice.isValid = false;
   }
   const capabilities = node.runtime.blueprint.capabilities;
   const oldCount = context.arrayCounts.get(node);
   const children = node.children;
   if (
     context.hasGates ||
-    !capabilities.branchless ||
+    !capabilities.isBranchless ||
     capabilities.hasExpressions ||
     capabilities.hasDerive ||
     oldCount === undefined ||
@@ -61,9 +61,9 @@ export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
     context.distributedInputs.has(node) ||
     context.pathChanges.length > 0 ||
     context.pendingExits.size > 0 ||
-    node.structure !== prior ||
+    node.childrenByName !== prior ||
     !children ||
-    !isArray(getLoadValue(context.previousEmit, node.path))
+    !isArray(getLoadValue(context.previousOutputValue, node.path))
   )
     return false;
   const prefixCount = minLite(oldCount, node.itemCount);
@@ -88,8 +88,8 @@ export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
       child.path !== appendSegment(node.path, entry.name) ||
       child.schema !== schema ||
       !child.isActive ||
-      child.detached ||
-      schema.typeConflict ||
+      child.isDetached ||
+      schema.hasTypeConflict ||
       entry.node.kind === 'virtual' ||
       !entry.declarations.length ||
       (index < prefixCount && context.entered.has(child))

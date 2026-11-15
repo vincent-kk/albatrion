@@ -52,14 +52,14 @@ const hasOriginalInput = <Self extends FieldNodeRecord<Self>>(
   const distribution = context.distributedInputs.get(node);
   if (
     distribution &&
-    !distribution.automatic &&
+    !distribution.isAutomatic &&
     distribution.input !== undefined
   )
     return true;
   if (
     node.behavior.type === 'array' &&
     node.itemCount > 0 &&
-    !distribution?.automatic &&
+    !distribution?.isAutomatic &&
     !context.filledNodes.has(node)
   )
     return true;

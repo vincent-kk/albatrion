@@ -76,7 +76,7 @@ describe('mergeEffectiveSchema', () => {
     const validationOnly = createEffectiveFieldNode(
       [{ title: 'host' }, { title: 'validator only', type: 'number' }],
       {},
-      [{}, { role: 'overlay', validationOnly: true }],
+      [{}, { role: 'overlay', isValidationOnly: true }],
     );
     expect(
       mergeEffectiveSchema(validationOnly, [], { mode: 'static' }).schema,
@@ -298,7 +298,7 @@ describe('mergeEffectiveSchema', () => {
     });
     const nullable = createEffectiveFieldNode(
       [{ type: ['number', 'null'] }, { type: 'number' }],
-      { kind: 'number', schemaType: 'number', nullable: true },
+      { kind: 'number', schemaType: 'number', isNullable: true },
     );
     expect(mergeEffectiveSchema(nullable, []).schema).toMatchObject({
       type: 'number',
@@ -306,7 +306,7 @@ describe('mergeEffectiveSchema', () => {
     });
     const nullOnly = createEffectiveFieldNode(
       [{ type: ['number', 'null'] }, { type: 'null' }],
-      { kind: 'number', schemaType: 'number', nullable: true },
+      { kind: 'number', schemaType: 'number', isNullable: true },
     );
     expect(mergeEffectiveSchema(nullOnly, []).schema).toMatchObject({
       type: 'null',
@@ -321,7 +321,7 @@ describe('mergeEffectiveSchema', () => {
       [{}, { gates: [gate] }],
     );
     const conflicted = mergeEffectiveSchema(node, [1]);
-    expect(conflicted.typeConflict).toBe(true);
+    expect(conflicted.hasTypeConflict).toBe(true);
     expect(conflicted.schema).toMatchObject({ type: 'string' });
     expect(conflicted.schema).not.toHaveProperty('enum');
     expect(node.declarations[1].schema).toEqual({ type: 'number' });
@@ -527,10 +527,10 @@ describe('mergeEffectiveSchema', () => {
         [{}, { gates: [gate] }],
       );
       const conflicted = mergeEffectiveSchema(node, [1]);
-      expect(conflicted.typeConflict).toBe(true);
+      expect(conflicted.hasTypeConflict).toBe(true);
       expect(conflicted.schema).toMatchObject({ type: 'string' });
       expect(conflicted.schema).not.toHaveProperty('enum');
-      expect(mergeEffectiveSchema(node, []).typeConflict).toBe(false);
+      expect(mergeEffectiveSchema(node, []).hasTypeConflict).toBe(false);
     });
 
     it('keeps const conflicts as enum empty without a type conflict', () => {
@@ -539,7 +539,7 @@ describe('mergeEffectiveSchema', () => {
         { gates: [gate] },
       ]);
       const result = mergeEffectiveSchema(node, [1]);
-      expect(result.typeConflict).toBe(false);
+      expect(result.hasTypeConflict).toBe(false);
       expect(result.schema).toMatchObject({ enum: [] });
     });
 
@@ -557,7 +557,7 @@ describe('mergeEffectiveSchema', () => {
         createEffectiveFieldNode([false]),
         [],
       );
-      expect(forbidden).toEqual({ schema: false, typeConflict: false });
+      expect(forbidden).toEqual({ schema: false, hasTypeConflict: false });
       expect(
         mergeEffectiveSchema(createEffectiveFieldNode([false, {}]), []),
       ).not.toBe(forbidden);

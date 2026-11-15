@@ -34,9 +34,9 @@ it('builds active IDs and resolves each issue once for one merged validation run
   const activeIds = vi.spyOn(declarations, 'values');
   const paths = vi.spyOn(pointer, 'parsePointer');
   try {
-    expect(root.runtime.validationRun?.()).toBe(true);
+    expect(root.runtime.runValidation?.()).toBe(true);
     await new Promise<void>((resolve) => setImmediate(resolve));
-    expect(root.runtime.validationPending).toBe(false);
+    expect(root.runtime.isValidationPending).toBe(false);
     expect(
       (root.children ?? []).every(
         (child) => readFieldNodeErrors(child).length === 1,

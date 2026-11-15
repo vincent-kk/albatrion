@@ -6,7 +6,7 @@ import type { BlueprintChildEntry, BlueprintNode } from '../../types/node';
 /** Authored static membership; contains no occurrence or gate verdict. */
 interface Partition {
   /** Whether any authored contribution requires gate-dependent selection. */
-  readonly gated: boolean;
+  readonly isGated: boolean;
   /** A gated overlay shares an entry with an unconditional declaration. */
   readonly hasGatedOverlays: boolean;
   /** Unique nonvirtual edges with ungated declarations and overlays. */
@@ -68,7 +68,7 @@ export class HostStaticPartition {
           gated = true;
           break;
         }
-    const partition = { hasGatedOverlays, gated, staticEntries };
+    const partition = { hasGatedOverlays, isGated: gated, staticEntries };
     getHostDerived<'staticPartition', Partition>(host).staticPartition =
       partition;
     return partition;

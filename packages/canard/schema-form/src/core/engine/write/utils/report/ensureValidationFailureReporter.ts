@@ -9,11 +9,11 @@ export const ensureValidationFailureReporter = (
     FieldNodeRuntime<unknown>,
     | 'reportValidationFailure'
     | 'errorReporter'
-    | 'reportingErrors'
-    | 'pendingSettings'
+    | 'isReportingErrors'
+    | 'applyPendingSettings'
     | 'entryDepth'
     | 'chainRoot'
-    | 'flushingQueuedEvents'
+    | 'isFlushingQueuedEvents'
   >,
 ): void => {
   runtime.reportValidationFailure ??= (failure) =>

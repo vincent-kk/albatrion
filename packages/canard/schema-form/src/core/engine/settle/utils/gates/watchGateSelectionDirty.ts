@@ -15,7 +15,7 @@ export const watchGateSelectionDirty = <Self extends FieldNodeRecord<Self>>(
   const add = dirty.add;
   dirty.add = function (path: string) {
     for (const round of context.gateSelectionRounds?.values() ?? [])
-      if (round.active)
+      if (round.isActive)
         verifyGateSelection(
           round.watchedPaths.indexOf(path) === -1 ||
             round.stableSchemaPaths.indexOf(path) !== -1,

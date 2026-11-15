@@ -28,21 +28,21 @@ export const enterFieldNode = <Self extends FieldNodeRecord<Self>>(
       name,
       host.behavior.type === 'array',
     );
-  if (distribution?.preserveLatent)
+  if (distribution?.shouldPreserveLatent)
     replayMovedSource(
       child,
       write ? Reflect.get(distribution.input, name) : undefined,
       context,
     );
-  else if (write || distribution?.whole) {
+  else if (write || distribution?.isWhole) {
     const value = write ? Reflect.get(distribution.input, name) : undefined;
-    if (distribution.automatic) {
-      context.automatic = true;
+    if (distribution.isAutomatic) {
+      context.isAutomatic = true;
       context.writtenInputs.set(child, value);
       context.filledNodes.add(child);
     }
     markWrite(child, value, context);
-    if (distribution.automatic) context.automatic = false;
+    if (distribution.isAutomatic) context.isAutomatic = false;
   } else if (child.behavior.strategy === 'terminal')
     markWrite(child, undefined, context);
   else {

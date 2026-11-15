@@ -97,7 +97,7 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
     for (const [host, previousCount] of context.arrayCounts)
       if (
         host !== aligned &&
-        !host.detached &&
+        !host.isDetached &&
         host.itemCount !== previousCount
       )
         resized.push(host);

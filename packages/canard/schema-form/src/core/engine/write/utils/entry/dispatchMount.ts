@@ -30,13 +30,13 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   if (!enterFieldNodeChain(root, 'load')) return;
   clearWarningKeys(root.runtime);
-  root.runtime.validationUnavailable = false;
-  root.runtime.validationCompileReported = false;
+  root.runtime.isValidationUnavailable = false;
+  root.runtime.isValidationCompileReported = false;
   root.runtime.validationStamp = (root.runtime.validationStamp ?? 0) + 1;
-  root.runtime.deferLoadValidation = settings.deferValidation === true;
+  root.runtime.shouldDeferLoadValidation = settings.deferValidation === true;
   if (!settings.deferValidation)
     (root.runtime.validationTargets ??= new Set()).add(root);
-  root.runtime.mountingGuardPass = process.env.NODE_ENV !== 'production';
+  root.runtime.isInMountingGuardPass = process.env.NODE_ENV !== 'production';
   try {
     try {
       loadFieldNodeAtMount(root, value, option);
@@ -72,11 +72,11 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
       }
     }
   } catch (error) {
-    root.runtime.mountingGuardPass = false;
+    root.runtime.isInMountingGuardPass = false;
     root.runtime.validationLoadStamp = root.runtime.validationStamp ?? 0;
     exitFailedFieldNodeChain(root, error);
   }
-  root.runtime.mountingGuardPass = false;
+  root.runtime.isInMountingGuardPass = false;
   root.runtime.validationLoadStamp = root.runtime.validationStamp ?? 0;
   exitFieldNodeChain(root);
 };

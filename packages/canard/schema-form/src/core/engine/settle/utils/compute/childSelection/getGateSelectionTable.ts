@@ -83,7 +83,7 @@ export const getGateSelectionTable = (
   >();
   for (let index = 0; index < plan.steps.length; index++) {
     const step = plan.steps[index];
-    if (step.general) stableSchemaNames.push(step.entry.name);
+    if (step.isGeneral) stableSchemaNames.push(step.entry.name);
     const gate = step.gate;
     stepIndexByName.set(step.entry.name, index);
     const expression = gate
@@ -107,7 +107,7 @@ export const getGateSelectionTable = (
       gate?.kind === 'if'
         ? getIfGateReadNames(gate.condition, blueprint)
         : engineModes.gatePredicate !== 'off' &&
-            expression?.completeReads &&
+            expression?.hasCompleteReads &&
             !equality
           ? mapArray(expression.dependencies, (dependency) =>
               watchedNames.get(resolveDependencyPath(host.path, dependency)),

@@ -10,17 +10,17 @@ export const prepareFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
   const runtime = node.rootNode.runtime;
   if (
     !runtime.entryDepth ||
-    runtime.deferLoadValidation ||
+    runtime.shouldDeferLoadValidation ||
     !(
       (runtime.validationMode ?? ValidationMode.None) & ValidationMode.OnChange
     ) ||
-    runtime.validationUnavailable ||
-    (runtime.chainInitialEmit === node.rootNode.emit &&
+    runtime.isValidationUnavailable ||
+    (runtime.chainInitialOutputValue === node.rootNode.storedOutputValue &&
       !runtime.validationTargets?.size)
   )
     return false;
-  if (!runtime.validationPending)
+  if (!runtime.isValidationPending)
     runtime.validationPendingEntryStamp ??= runtime.validationStamp ??= 0;
-  runtime.validationPending = true;
+  runtime.isValidationPending = true;
   return true;
 };

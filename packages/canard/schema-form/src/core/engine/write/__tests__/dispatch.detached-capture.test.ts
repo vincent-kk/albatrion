@@ -23,7 +23,7 @@ describe('65C-03 detached nodes keep no delivery capture', () => {
     const item = rows?.children?.[0];
     if (!rows || !item) throw new Error('Mounted rows item is missing');
     dispatchClear(rows);
-    expect(item.detached).toBe(true);
+    expect(item.isDetached).toBe(true);
     dispatchResetSubtree(item);
     expect(item.deliveryChanges).toBe(0);
     expect(runtime.deliveryAffectedPaths?.size ?? 0).toBe(0);

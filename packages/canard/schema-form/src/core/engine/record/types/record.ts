@@ -52,11 +52,11 @@ export interface FieldNodeRecord<Self> {
   /** Whether the current declaration requires this node. */
   isRequired: boolean;
   /** Whether the fixed type permits null. */
-  readonly nullable: boolean;
+  readonly isNullable: boolean;
   /** Stable JSON type restriction retained from blueprint analysis; undefined on virtual nodes. */
   readonly schemaType: Optional<BlueprintSchemaType>;
   /** Direct children in the last committed shape, keyed by their names. */
-  structure: Nullable<Dictionary<Self>>;
+  childrenByName: Nullable<Dictionary<Self>>;
   /** Stored public child array for the last committed shape. */
   children: Nullable<readonly Self[]>;
   /** Previously active occurrences retained by their exact blueprint binding. */
@@ -72,11 +72,11 @@ export interface FieldNodeRecord<Self> {
   /** Frozen materialization for this reference's committed inactive sources. */
   inactiveValuesCache?: readonly { path: string; value: unknown }[];
   /** Whether a committed slot or descendant change invalidated this host read. */
-  inactiveValuesDirty?: boolean;
+  isInactiveValuesDirty?: boolean;
   /** Last item published from this inactive lifetime; absent on active clones. */
   inactiveValueMemo?: InactiveSlotValueMemo;
   /** Last-live explicit keep/clear decision; an own undefined means inheritance. */
-  retainedExitPolicy?: boolean;
+  shouldUnsetOnInactive?: boolean;
   /** Creation-order nonce for an array item, absent on other nodes. */
   itemKey: Nullable<number>;
   /** Number of array host positions, including positions without templates. */
@@ -96,9 +96,9 @@ export interface FieldNodeRecord<Self> {
   /** Local disabled result after all active state declarations are combined. */
   isDisabled: boolean;
   /** Calculated local value before output projection. */
-  local: unknown;
+  storedValue: unknown;
   /** Calculated output value. */
-  emit: unknown;
+  storedOutputValue: unknown;
   /** Current output at this occurrence's path when divergence was last read. */
   divergenceCurrent: unknown;
   /** Concrete path whose parsed segments this occurrence retains. */
@@ -108,7 +108,7 @@ export interface FieldNodeRecord<Self> {
   /** Baseline output at this occurrence's path when divergence was last read. */
   divergenceBase: unknown;
   /** Pure comparison result for the two retained path values. */
-  divergenceResult: boolean;
+  storedIsDivergent: boolean;
   /** Merged effective schema for the active declarations. */
   schema: EffectiveSchema;
   /** Stored interaction flags updated by shallow patches. */
@@ -126,18 +126,18 @@ export interface FieldNodeRecord<Self> {
   /** Per-bit commit counts, allocated on the first delivery. */
   revisionLedger: Readonly<Record<number, number>>;
   /** Whether this occurrence has completed its initial delivery comparison. */
-  deliveryInitialized: boolean;
+  isDeliveryInitialized: boolean;
   /** Event kinds with first-change baselines pending this commit. */
   deliveryChanges: number;
   /** Value/output identities at the first value change in this commit. */
-  deliveryPreviousLocal?: unknown;
-  deliveryPreviousEmit?: unknown;
+  deliveryPreviousValue?: unknown;
+  deliveryPreviousOutputValue?: unknown;
   /** Address before this commit's first rekey. */
   deliveryPreviousPath?: string;
   /** Child identity collection before the first shape change. */
   deliveryPreviousChildren?: Nullable<readonly Self[]>;
   /** Packed active/visible/readOnly/disabled values before their first change. */
-  deliveryPreviousComputed?: number;
+  deliveryPreviousComputedBits?: number;
   /** Effective schema identity before this commit's first schema change. */
   deliveryPreviousSchema?: EffectiveSchema;
   /** Interaction state before settlement clears or patches it. */
@@ -147,13 +147,13 @@ export interface FieldNodeRecord<Self> {
   /** Event bits and immutable payloads awaiting the next settlement wave. */
   pendingDelivery?: FieldNodeDelivery;
   /** Bits to advance once at this commit, independently of listeners. */
-  pendingRevision: number;
+  pendingRevisionMask: number;
   /** State and command events awaiting their separate wave. */
   pendingNonSettleDelivery?: FieldNodeDelivery;
   /** Whether this reference has left the live shape. */
-  detached: boolean;
+  isDetached: boolean;
   /** Retired by binding adoption; reads retain the preceding commit. */
-  disposed: boolean;
+  isDisposed: boolean;
   /** Monotone interaction lifetime, independent of event delivery. */
-  interactionReset: number;
+  interactionEpoch: number;
 }

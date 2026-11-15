@@ -37,14 +37,14 @@ describe('single extras comparison observations', () => {
       root.runtime.onChange = changed;
       const delivered: number[] = [];
       subscribeFieldNode(root, ({ type }) => delivered.push(type));
-      const local = root.local,
-        emit = root.emit,
+      const value = root.storedValue,
+        outputValue = root.storedOutputValue,
         extras = root.extras;
       const revisions = root.revisionLedger;
       for (const option of [WriteOption.Overwrite, WriteOption.Merge]) {
         dispatchWriteInput(root, structuredClone(input), option);
-        expect(root.local).toBe(local);
-        expect(root.emit).toBe(emit);
+        expect(root.storedValue).toBe(value);
+        expect(root.storedOutputValue).toBe(outputValue);
         expect(root.extras).toBe(extras);
         expect(root.revisionLedger).toEqual(revisions);
         expect(
@@ -73,7 +73,7 @@ describe('single extras comparison observations', () => {
       {},
     ]) {
       const previous = root.extras;
-      const output = root.emit;
+      const output = root.storedOutputValue;
       const revision = root.revisionLedger;
       const expected = referenceNextExtras(
         previous,
@@ -92,7 +92,7 @@ describe('single extras comparison observations', () => {
         Object.keys(Object(expected)),
       );
       expect(root.extras === previous).toBe(equal);
-      expect(root.emit === output).toBe(equal);
+      expect(root.storedOutputValue === output).toBe(equal);
       expect(
         delivered.some((type) => type & FieldNodeEventType.UpdateValue),
       ).toBe(!equal);
@@ -112,8 +112,8 @@ describe('single extras comparison observations', () => {
       const input = [1, NaN, undefined];
       dispatchMount(root, input);
       dispatchWriteInput(root, [...input]);
-      const local = root.local,
-        emit = root.emit,
+      const value = root.storedValue,
+        outputValue = root.storedOutputValue,
         extras = root.extras;
       const revisions = root.revisionLedger;
       const changed = vi.fn();
@@ -122,8 +122,8 @@ describe('single extras comparison observations', () => {
       subscribeFieldNode(root, ({ type }) => delivered.push(type));
       for (const option of [WriteOption.Overwrite, WriteOption.Merge]) {
         dispatchWriteInput(root, [...input], option);
-        expect(root.local).toBe(local);
-        expect(root.emit).toBe(emit);
+        expect(root.storedValue).toBe(value);
+        expect(root.storedOutputValue).toBe(outputValue);
         expect(root.extras).toBe(extras);
         expect(root.revisionLedger).toEqual(revisions);
         expect(
@@ -143,17 +143,17 @@ describe('single extras comparison observations', () => {
       const { root } = createDispatchTree(schema);
       dispatchMount(root, [1, 2]);
       const children = root.children,
-        local = root.local,
+        value = root.storedValue,
         extras = root.extras;
       const revision =
         root.revisionLedger[FieldNodeEventType.UpdateChildren] ?? 0;
       const delivered: number[] = [];
       subscribeFieldNode(root, ({ type }) => delivered.push(type));
       dispatchPush(root, 3);
-      expect(root.local).not.toBe(local);
+      expect(root.storedValue).not.toBe(value);
       expect(root.children).not.toBe(children);
       expect(root.extras).not.toBe(extras);
-      expect(root.emit).toEqual([1, 2, 3]);
+      expect(root.storedOutputValue).toEqual([1, 2, 3]);
       expect(
         root.revisionLedger[FieldNodeEventType.UpdateChildren],
       ).toBeGreaterThan(revision);
@@ -161,14 +161,14 @@ describe('single extras comparison observations', () => {
         delivered.some((type) => type & FieldNodeEventType.UpdateValue),
       ).toBe(true);
       expect(dispatchPop(root)).toBe(3);
-      const beforeBatch = root.emit;
+      const beforeBatch = root.storedOutputValue;
       const changed = vi.fn();
       root.runtime.onChange = changed;
       dispatchBatch(root, () => {
         expect(dispatchRemove(root, 1)).toBe(2);
         expect(dispatchInsert(root, 1, 2)).toBe(2);
       });
-      expect(root.emit).toBe(beforeBatch);
+      expect(root.storedOutputValue).toBe(beforeBatch);
       expect(changed).not.toHaveBeenCalled();
     },
   );
@@ -196,7 +196,7 @@ describe('single extras comparison observations', () => {
         .extra,
     ).toBe(previous.extra);
     dispatchWriteInput(root, { flag: true }, WriteOption.Merge);
-    expect(root.emit).toEqual({
+    expect(root.storedOutputValue).toEqual({
       flag: true,
       h: { known: 1, extra: { value: 2 } },
     });

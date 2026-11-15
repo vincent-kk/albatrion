@@ -38,13 +38,13 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       node.path === scope.path ||
       isDescendantPath(node.path, scope.path));
   const applyPolicy =
-    !context.suppressAutomaticWrites && !context.exceededBudget;
+    !context.isAutomaticWriteSuppressed && !context.exceededBudget;
   finalizePerished(context);
   let misfitIndex: Optional<Map<string, Set<string>>>;
   for (const node of context.pendingExits.values()) {
-    if (node.detached) continue;
+    if (node.isDetached) continue;
     const parent = node.parent;
-    if (parent?.structure?.[node.name] === node) continue;
+    if (parent?.childrenByName?.[node.name] === node) continue;
     context.exited.add(node);
     const rekeyed =
       context.rekeyedArrayMoves &&
@@ -64,21 +64,21 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
           resolveInactiveValue(departing, node, context);
         if (!departing.runtime.detachedReads?.has(departing))
           captureDetachedFieldNodeReads(departing, {
-            emit: context.previousEmit,
+            outputValue: context.previousOutputValue,
             context: context.previousContext,
             schema:
               context.originalSchemas.get(departing.path)?.schema ??
               departing.schema.schema,
           });
         if (rekeyed) departing.runtime.misfitPaths.delete(departing.path);
-        departing.detached = true;
+        departing.isDetached = true;
         departing.isActive = captureFieldNodeChange(
           departing,
           'isActive',
           false,
         );
       },
-      { owned: true },
+      { isOwned: true },
     );
     getGateRegistry(node.runtime).remove(node);
     if (rekeyed) continue;
@@ -110,7 +110,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
   }
   withdrawDetachedFills(context);
   for (const node of context.exited)
-    if (!inLoadScope(node) && node.detached)
+    if (!inLoadScope(node) && node.isDetached)
       retainExitedSlot(
         node,
         context,
@@ -123,7 +123,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
   finalizeRestoredSlotSource(context);
   for (const node of context.exited)
     for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent)
-      if (!ancestor.detached) affectedAncestors.add(ancestor);
+      if (!ancestor.isDetached) affectedAncestors.add(ancestor);
   for (const ancestor of [...affectedAncestors].sort(
     (left, right) => right.path.length - left.path.length,
   ))

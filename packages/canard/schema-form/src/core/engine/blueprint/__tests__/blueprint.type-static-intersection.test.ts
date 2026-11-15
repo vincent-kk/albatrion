@@ -92,7 +92,7 @@ describe('blueprint static type conjunction', () => {
     expect(blueprint(schema).root).toMatchObject({
       kind,
       schemaType,
-      nullable,
+      isNullable: nullable,
       strategy: 'terminal',
     });
   });
@@ -113,7 +113,7 @@ describe('blueprint static type conjunction', () => {
       expect(blueprint({ allOf: declarations }).root).toMatchObject({
         kind: 'string',
         schemaType: 'string',
-        nullable: false,
+        isNullable: false,
         strategy: 'terminal',
       });
   });
@@ -123,7 +123,7 @@ describe('blueprint static type conjunction', () => {
     ).toMatchObject({
       kind: 'null',
       schemaType: 'null',
-      nullable: true,
+      isNullable: true,
       strategy: 'terminal',
     });
   });
@@ -144,12 +144,16 @@ describe('blueprint static type conjunction', () => {
     ];
     const outcome = (left: unknown, right: unknown) => {
       try {
-        const { kind, schemaType, nullable } = blueprint({
+        const {
+          kind,
+          schemaType,
+          isNullable: nullable,
+        } = blueprint({
           allOf: [{ type: left }, { type: right }],
         }).root;
         return {
           kind,
-          nullable,
+          isNullable: nullable,
           schemaType: isArray(schemaType) ? [...schemaType].sort() : schemaType,
         };
       } catch (error: any) {

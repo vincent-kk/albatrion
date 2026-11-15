@@ -33,7 +33,7 @@ it('nested-d6-f4 bulk consumes 5461 paths with zero parent-map slice calls', () 
   engineModes.setMode('gateSelection', 'table');
   const { root } = createDispatchTree(nested(6));
   dispatchMount(root, undefined);
-  const input = changed(root.emit);
+  const input = changed(root.storedOutputValue);
   const original = DirtyPathSet.prototype.delete;
   const slice = String.prototype.slice;
   let insideDelete = false;
@@ -81,7 +81,7 @@ it('nested-d6-f4 bulk consumes 5461 paths with zero parent-map slice calls', () 
       'DIRTY_CONSUME_COST',
       JSON.stringify({ deletes, consumes, slices, nodes: 5461 }),
     );
-    expect(root.emit).toEqual(input);
+    expect(root.storedOutputValue).toEqual(input);
     expect(slices).toBe(0);
     expect(deletes).toBe(0);
     expect(consumes).toBeLessThanOrEqual(5461);

@@ -55,13 +55,17 @@ it('expands retained template syntax against the current array in document order
   expect(decoder).toHaveBeenCalledTimes(1);
   decoder.mockClear();
   expect(
-    index.affected('/flag', root).filter((path) => path.endsWith('/reader')),
+    index
+      .affectedOwners('/flag', root)
+      .filter((path) => path.endsWith('/reader')),
   ).toEqual(['/rows/0/reader', '/rows/1/reader']);
   expect(decoder).not.toHaveBeenCalled();
   dispatchSetValue(getDispatchNode(root, 'rows'), [{ reader: 'C' }]);
   decoder.mockClear();
   expect(
-    index.affected('/flag', root).filter((path) => path.endsWith('/reader')),
+    index
+      .affectedOwners('/flag', root)
+      .filter((path) => path.endsWith('/reader')),
   ).toEqual(['/rows/0/reader']);
   expect(index.pathSegments('/rows/*/reader')).toBe(template);
   expect(decoder).not.toHaveBeenCalled();
@@ -72,7 +76,9 @@ it('expands retained template syntax against the current array in document order
   ]);
   decoder.mockClear();
   expect(
-    index.affected('/flag', root).filter((path) => path.endsWith('/reader')),
+    index
+      .affectedOwners('/flag', root)
+      .filter((path) => path.endsWith('/reader')),
   ).toEqual(['/rows/0/reader', '/rows/1/reader', '/rows/2/reader']);
   expect(decoder).not.toHaveBeenCalled();
 });
@@ -110,12 +116,22 @@ it('reuses folded watched arrays while keeping concrete presence intersections e
   decoder.mockClear();
   for (let repeat = 0; repeat < 2; repeat++) {
     expect(
-      index.affectedByPresence('/rows/0', 'active', undefined, {}, root.runtime)
-        .outerTemplates,
+      index.affectedOwnersByPresence(
+        '/rows/0',
+        'active',
+        undefined,
+        {},
+        root.runtime,
+      ).outerTemplates,
     ).toContain('/rows/*/reader');
     expect(
-      index.affectedByPresence('/rows/1', 'active', undefined, {}, root.runtime)
-        .outerTemplates,
+      index.affectedOwnersByPresence(
+        '/rows/1',
+        'active',
+        undefined,
+        {},
+        root.runtime,
+      ).outerTemplates,
     ).not.toContain('/rows/*/reader');
   }
   expect(decoder).not.toHaveBeenCalled();
@@ -141,9 +157,11 @@ it('keeps canonical numeric wildcard matching distinct from numeric-looking name
     { rows: [{ flag: true, reader: 'R' }] },
   );
   const index = getDependencyIndex(root.runtime.blueprint);
-  expect(index.affected('/rows/0/flag', root)).toContain('/rows/0/reader');
+  expect(index.affectedOwners('/rows/0/flag', root)).toContain(
+    '/rows/0/reader',
+  );
   for (const name of ['01', '-1', '1.0'])
-    expect(index.affected(`/rows/${name}/flag`, root)).not.toContain(
+    expect(index.affectedOwners(`/rows/${name}/flag`, root)).not.toContain(
       `/rows/${name}/reader`,
     );
 });

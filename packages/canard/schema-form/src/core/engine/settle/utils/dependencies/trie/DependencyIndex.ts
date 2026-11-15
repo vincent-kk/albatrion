@@ -59,7 +59,7 @@ interface DependencyNode {
     /** Absolute owner path, possibly containing array wildcards. */
     path: string;
     /** Whether changed indices can bind every wildcard in this owner. */
-    bindable: boolean;
+    isBindable: boolean;
     /** Original reads folded onto this host; absent for an unconditional host read. */
     watched?: string[];
   }[];
@@ -81,7 +81,7 @@ export class DependencyIndex {
   /** Static path evidence shared by registration, deletion and owner predicates. */
   readonly splitOwners = new Map<string, SplitOwner>();
   /** Injection is idempotent even when no table owner qualifies. */
-  private registrationPrepared = false;
+  private isRegistrationPrepared = false;
   /** Finite authored syntax; query misses belong only to the querying runtime. */
   private readonly preparedSegments = new Map<
     string,
@@ -167,10 +167,10 @@ export class DependencyIndex {
         for (const rule of rules.byDeclaration.get(declaration.id) ?? []) {
           if (
             rule.kind !== 'derived' ||
-            (rule.targetName === undefined && !rule.targetItems)
+            (rule.targetName === undefined && !rule.isItemTarget)
           )
             continue;
-          const targetPath = rule.targetItems
+          const targetPath = rule.isItemTarget
             ? joinPointer([
                 ...(this.preparedSegments.get(declaration.path) ?? []),
                 PointerOperator.Wildcard,
@@ -206,8 +206,8 @@ export class DependencyIndex {
   prepareRegistration(
     tables: ReadonlyMap<BlueprintNode, RegistrationTable>,
   ): void {
-    if (this.registrationPrepared || !this.blueprint || !tables.size) return;
-    this.registrationPrepared = true;
+    if (this.isRegistrationPrepared || !this.blueprint || !tables.size) return;
+    this.isRegistrationPrepared = true;
     const candidates = new Map<string, string>();
     const plain = new Set(this.ordinaryOwners);
     for (const node of this.blueprint.nodes) {
@@ -339,7 +339,7 @@ export class DependencyIndex {
    * @param sink - Settlement effects and deferred rank-positioned anchors
    * @returns Nothing; presence and derive queries keep using the full owners array
    */
-  affectedForRegistration<Self extends FieldNodeRecord<Self>>(
+  registerAffectedOwners<Self extends FieldNodeRecord<Self>>(
     changedPath: string,
     root: Self,
     sink: RegistrationSink,
@@ -351,7 +351,7 @@ export class DependencyIndex {
       const events: { rank: number; emit: Fn }[] = [];
       for (const { rank, entry } of node.plainOwners ??
         mapArray(node.owners, (entry, rank) => ({ entry, rank }))) {
-        const path = entry.bindable
+        const path = entry.isBindable
           ? bindTemplatePath(entry.path, changedPath)
           : entry.path;
         const paths = hasPointerOperator(path, PointerOperator.Wildcard)
@@ -367,7 +367,7 @@ export class DependencyIndex {
             for (const concrete of paths)
               if (!emitted.has(concrete)) {
                 emitted.add(concrete);
-                sink.owner(concrete, 'plain');
+                sink.registerOwner(concrete, 'plain');
               }
           },
         });
@@ -375,14 +375,15 @@ export class DependencyIndex {
       for (const bucket of node.splitBuckets ?? []) {
         let host: Optional<Self> = root;
         for (const segment of this.pathSegments(bucket.hostPath))
-          if (typeof segment === 'string') host = host?.structure?.[segment];
+          if (typeof segment === 'string')
+            host = host?.childrenByName?.[segment];
           else {
             host = undefined;
             break;
           }
         const living: { path: string; rank: number }[] = [];
-        if (host?.structure)
-          for (const name of Object.keys(host.structure)) {
+        if (host?.childrenByName)
+          for (const name of Object.keys(host.childrenByName)) {
             const rank = bucket.ranksByName.get(name);
             if (rank !== undefined)
               living.push({
@@ -391,7 +392,7 @@ export class DependencyIndex {
               });
           }
         living.sort((left, right) => left.rank - right.rank);
-        for (const anchor of sink.hit(
+        for (const anchor of sink.recordHit(
           bucket,
           mapArray(living, (entry) => entry.rank),
         ))
@@ -401,7 +402,7 @@ export class DependencyIndex {
           emit: () => {
             if (!hostsEmitted.has(bucket.hostPath)) {
               hostsEmitted.add(bucket.hostPath);
-              sink.owner(bucket.hostPath, 'host', bucket);
+              sink.registerOwner(bucket.hostPath, 'host', bucket);
             }
           },
         });
@@ -411,7 +412,7 @@ export class DependencyIndex {
             emit: () => {
               if (!emitted.has(entry.path)) {
                 emitted.add(entry.path);
-                sink.owner(entry.path, 'split', bucket);
+                sink.registerOwner(entry.path, 'split', bucket);
               }
             },
           });
@@ -438,7 +439,7 @@ export class DependencyIndex {
   }
 
   /** Return owners whose reads intersect a changed path in either direction. */
-  affected<Self extends FieldNodeRecord<Self>>(
+  affectedOwners<Self extends FieldNodeRecord<Self>>(
     changedPath: string,
     root: Self,
   ): readonly string[] {
@@ -452,7 +453,7 @@ export class DependencyIndex {
     let current: DependencyNode[] = [rootIndex];
     const collect = (node: DependencyNode): void => {
       for (const entry of node.owners) {
-        const path = entry.bindable
+        const path = entry.isBindable
           ? bindTemplatePath(entry.path, changedPath)
           : entry.path;
         if (hasPointerOperator(path, PointerOperator.Wildcard))
@@ -501,7 +502,7 @@ export class DependencyIndex {
    * @param runtime - Optional root runtime owning bounded dynamic syntax
    * @returns Bound owners, state-only owners and unbound templates for each query phase
    */
-  affectedByPresence(
+  affectedOwnersByPresence(
     hostPath: string,
     childSegment: string,
     metrics?: { ownerInsertions: number },
@@ -640,7 +641,7 @@ export class DependencyIndex {
             }
           if (!intersects) continue;
         }
-        const path = entry.bindable
+        const path = entry.isBindable
           ? bindTemplatePath(entry.path, changedPath)
           : entry.path;
         if (hasPointerOperator(path, PointerOperator.Wildcard))
@@ -718,7 +719,7 @@ export class DependencyIndex {
       }
       current.owners.push({
         path: owner,
-        bindable: allMatch,
+        isBindable: allMatch,
         ...(watchedPath !== originalWatchedPath
           ? { watched: [originalWatchedPath] }
           : {}),

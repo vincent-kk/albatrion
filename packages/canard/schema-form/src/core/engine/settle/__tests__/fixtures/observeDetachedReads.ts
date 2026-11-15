@@ -11,7 +11,7 @@ export const observeDetachedReads = (
   former: readonly PlainNode[],
 ): unknown[] =>
   former.map((node) => [
-    node.detached,
+    node.isDetached,
     root.runtime.detachedReads?.get(node),
     root.runtime.watchValuesMemo?.get(node)?.values,
   ]);

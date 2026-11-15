@@ -185,26 +185,26 @@ it.each(['cadence-resolve', 'cadence-reject', 'root-resolve'] as const)(
     await f.frames();
     act(() => f.ref.current!.findNode('/b')!.resetSubtree());
     await f.frames();
-    const successor = runtime.validationRunning;
+    const successor = runtime.activeValidationRun;
     expect(successor).toBeDefined();
     await f.complete(
       1,
       owner === 'cadence-reject' ? new Error('older cadence') : undefined,
     );
     if (explicit) await explicit;
-    expect(runtime.validationRunning).toBe(successor);
+    expect(runtime.activeValidationRun).toBe(successor);
     act(() => f.ref.current!.findNode('/a')!.resetSubtree());
     await f.frames();
     await f.complete(3);
     expect(f.ref.current!.findNode('/b')!.errors).toHaveLength(1);
     await f.complete(2);
-    expect(runtime.validationRunning).toBeUndefined();
+    expect(runtime.activeValidationRun).toBeUndefined();
     act(() => f.ref.current!.findNode('/a')!.resetSubtree());
     await f.frames();
-    expect(runtime.validationRunning).toBeDefined();
+    expect(runtime.activeValidationRun).toBeDefined();
     act(() => f.ref.current!.rebuild());
     expect(f.ref.current!.node).not.toBe(root);
-    expect(runtime.validationRunning).toBeUndefined();
+    expect(runtime.activeValidationRun).toBeUndefined();
     await f.complete(4);
   },
 );

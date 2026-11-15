@@ -14,7 +14,7 @@ export const withdrawDetachedFills = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   for (const node of context.filledNodes) {
-    if (!node.detached) continue;
+    if (!node.isDetached) continue;
     restoreArrayStructure(context, node);
     restoreSlotSources(context, node.path);
     for (let index = context.automaticLog.length - 1; index >= 0; index--) {

@@ -37,8 +37,8 @@ describe('whole-write epoch entry guards', () => {
       'batch',
       (root) =>
         dispatchBatch(root, () => {
-          dispatchSetValue(root.structure!.h, { v: 4, w: 5 });
-          dispatchSetValue(root.structure!.s, 6);
+          dispatchSetValue(root.childrenByName!.h, { v: 4, w: 5 });
+          dispatchSetValue(root.childrenByName!.s, 6);
         }),
     ],
     [
@@ -46,8 +46,8 @@ describe('whole-write epoch entry guards', () => {
       (root) =>
         dispatchVisitSubtree(root, (node) => {
           if (node !== root) return;
-          dispatchSetValue(root.structure!.h, { v: 4, w: 5 });
-          dispatchSetValue(root.structure!.s, 6);
+          dispatchSetValue(root.childrenByName!.h, { v: 4, w: 5 });
+          dispatchSetValue(root.childrenByName!.s, 6);
         }),
     ],
     ['load', (root) => dispatchMount(root, { h: { v: 4, w: 5 }, s: 6 })],
@@ -66,17 +66,17 @@ describe('whole-write epoch entry guards', () => {
     const add = vi.spyOn(DirtyPathSet.prototype, 'add');
     write(root);
     expect(add.mock.calls.length).toBeGreaterThan(0);
-    expect(root.emit).toEqual({ h: { v: 4, w: 5 }, s: 6 });
+    expect(root.storedOutputValue).toEqual({ h: { v: 4, w: 5 }, s: 6 });
   });
 
   it('keeps path bookkeeping while correcting an existing misfit', () => {
     const root = createTree();
-    dispatchSetValue(root.structure!.h.structure!.v, 'wrong');
+    dispatchSetValue(root.childrenByName!.h.childrenByName!.v, 'wrong');
     expect(root.runtime.misfitPaths.size).toBeGreaterThan(0);
     const add = vi.spyOn(DirtyPathSet.prototype, 'add');
     dispatchSetValue(root, { h: { v: 4, w: 5 }, s: 6 });
     expect(add.mock.calls.length).toBeGreaterThan(0);
-    expect(root.emit).toEqual({ h: { v: 4, w: 5 }, s: 6 });
+    expect(root.storedOutputValue).toEqual({ h: { v: 4, w: 5 }, s: 6 });
   });
 
   it('admits a static array replacement that retains the item count', () => {
@@ -92,6 +92,6 @@ describe('whole-write epoch entry guards', () => {
         (dirty) => dirty === root.runtime.settlementScratch?.dirtyPaths,
       ).length,
     ).toBe(0);
-    expect(root.emit).toEqual([4, 5, 6]);
+    expect(root.storedOutputValue).toEqual([4, 5, 6]);
   });
 });

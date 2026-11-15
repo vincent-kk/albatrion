@@ -11,7 +11,7 @@ import {
 export const hasWildcardPath = (path: string): boolean => {
   const parsed = parsePointer(path);
   return (
-    parsed.absolute &&
+    parsed.isAbsolute &&
     parsed.segments[parsed.segments.length - 1] !== '' &&
     parsed.segments.indexOf(PointerOperator.Wildcard) !== -1
   );

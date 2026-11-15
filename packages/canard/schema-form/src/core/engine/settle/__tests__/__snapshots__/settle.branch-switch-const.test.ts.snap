@@ -2,19 +2,19 @@
 
 exports[`branch-switch constant-factor regression records > finds the identical pending exit when its gate throws in a later wheel 1`] = `
 {
-  "detached": true,
   "exits": [
     false,
     false,
     true,
     true,
   ],
+  "isDetached": true,
   "latent": "G",
-  "local": {
+  "status": "degraded",
+  "value": {
     "a": 1,
     "t": true,
   },
-  "status": "degraded",
 }
 `;
 

@@ -63,8 +63,8 @@ describe('context state keys', () => {
     loadFieldNodeAtMount(root, { a: 'a', b: 'b' }, WriteOption.Overwrite);
     expect(locked).toHaveBeenCalledTimes(1);
     expect([
-      root.structure?.a?.isReadOnly,
-      root.structure?.b?.isReadOnly,
+      root.childrenByName?.a?.isReadOnly,
+      root.childrenByName?.b?.isReadOnly,
     ]).toEqual([true, true]);
   });
 
@@ -87,7 +87,7 @@ describe('context state keys', () => {
       status: 'degraded',
       cause: 'expression',
     });
-    expect(root.structure?.child?.isVisible).toBe(true);
+    expect(root.childrenByName?.child?.isVisible).toBe(true);
   });
 });
 
@@ -120,13 +120,13 @@ describe('state-key failures during settlement', () => {
     );
     expect(() =>
       writeFieldNode(
-        root.structure!.flag,
+        root.childrenByName!.flag,
         false,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       ),
     ).toThrow('State key expression failed');
-    expect(root.structure?.secret).toBeUndefined();
+    expect(root.childrenByName?.secret).toBeUndefined();
     expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 });

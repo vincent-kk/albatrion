@@ -15,7 +15,7 @@ export const clearSubtreeState = <Self extends FieldNodeRecord<Self>>(
     const current = pending.pop();
     if (!current || visited.has(current)) continue;
     visited.add(current);
-    current.interactionReset += 1;
+    current.interactionEpoch += 1;
     current.interactionState = captureFieldNodeChange(
       current,
       'interactionState',

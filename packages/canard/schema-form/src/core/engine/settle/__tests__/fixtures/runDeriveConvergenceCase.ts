@@ -46,7 +46,7 @@ export const runDeriveConvergenceCase = (
     | undefined;
   const enabled = process.env.ROUND99_SKIP !== 'off';
   const environment = process.env.NODE_ENV;
-  const shadowEnabled = engineModes.deriveShadow;
+  const shadowEnabled = engineModes.isDeriveShadowEnabled;
   const variants = enabled && environment === 'test' ? 3 : 2;
   if (enabled) expect(sidecar, 'first-write convergence proof').toBeDefined();
   const observations: string[][] = [];
@@ -54,7 +54,7 @@ export const runDeriveConvergenceCase = (
   for (let variant = 0; variant < variants; variant++) {
     if (variant === 2) {
       vi.stubEnv('NODE_ENV', 'development');
-      engineModes.setMode('deriveShadow', false);
+      engineModes.setMode('isDeriveShadowEnabled', false);
     }
     const { root, blueprint } = createTestTree(schema);
     if (variant === 0 || !enabled) sidecar?.set(blueprint, undefined);
@@ -93,7 +93,8 @@ export const runDeriveConvergenceCase = (
             const write = writes[step];
             let target = root;
             const segments = write.path.split('/').filter(isTruthy);
-            for (const segment of segments) target = target.structure![segment];
+            for (const segment of segments)
+              target = target.childrenByName![segment];
             writeFieldNode(
               target,
               write.value,
@@ -112,7 +113,7 @@ export const runDeriveConvergenceCase = (
             path: node.path,
             kind: node.blueprintNode.kind,
             source: node.source,
-            emit: node.emit,
+            outputValue: node.storedOutputValue,
             extras: node.extras,
             isReadOnly: node.isReadOnly,
             isVisible: node.isVisible,
@@ -151,7 +152,7 @@ export const runDeriveConvergenceCase = (
       contextSpy.mockRestore();
       decisionSpy.mockRestore();
       if (variant === 2) {
-        engineModes.setMode('deriveShadow', shadowEnabled);
+        engineModes.setMode('isDeriveShadowEnabled', shadowEnabled);
         vi.stubEnv('NODE_ENV', environment);
       }
     }

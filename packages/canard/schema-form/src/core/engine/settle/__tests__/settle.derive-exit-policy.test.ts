@@ -33,7 +33,7 @@ describe('derive baseline alongside exit policy', () => {
       { clear: true, f: true, target: 'a' },
       WriteOption.Overwrite,
     );
-    const target = root.structure!.target;
+    const target = root.childrenByName!.target;
     target.interactionState = {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,

@@ -46,7 +46,7 @@ describe('table invariants reject actual positional violations', () => {
     const before = gateSelectionTable.violations;
     expect(() =>
       writeFieldNode(
-        root.structure!.kind,
+        root.childrenByName!.kind,
         'b',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
@@ -68,7 +68,7 @@ describe('table invariants reject actual positional violations', () => {
     const before = gateSelectionTable.violations;
     expect(() =>
       writeFieldNode(
-        root.structure!.kind,
+        root.childrenByName!.kind,
         'b',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
@@ -88,7 +88,7 @@ describe('table invariants reject actual positional violations', () => {
     const before = gateSelectionTable.violations;
     expect(() =>
       writeFieldNode(
-        root.structure!.kind,
+        root.childrenByName!.kind,
         'b',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
@@ -111,7 +111,7 @@ describe('table invariants reject actual positional violations', () => {
     const before = gateSelectionTable.violations;
     expect(() =>
       writeFieldNode(
-        root.structure!.kind,
+        root.childrenByName!.kind,
         'b',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
@@ -129,14 +129,14 @@ describe('table invariants reject actual positional violations', () => {
       (context, path) => {
         const value = read(context, path);
         if (path === '/kind' && ++calls > 1)
-          (context.pendingOutputs ??= new Set()).add(root.structure!.kind);
+          (context.pendingOutputs ??= new Set()).add(root.childrenByName!.kind);
         return value;
       },
     );
     const before = gateSelectionTable.violations;
     expect(() =>
       writeFieldNode(
-        root.structure!.kind,
+        root.childrenByName!.kind,
         'b',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
@@ -153,7 +153,7 @@ describe('table invariants reject actual positional violations', () => {
       const { root } = createTestTree(gateTableLoadingCases[14].schema);
       loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
       writeFieldNode(
-        root.structure!.country,
+        root.childrenByName!.country,
         'US',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
@@ -190,7 +190,7 @@ describe('table invariants reject actual positional violations', () => {
     const before = gateSelectionTable.violations;
     expect(() =>
       writeFieldNode(
-        root.structure!.kind,
+        root.childrenByName!.kind,
         'b',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
@@ -212,7 +212,7 @@ describe('table invariants reject actual positional violations', () => {
     const before = gateSelectionTable.violations;
     expect(() =>
       writeFieldNode(
-        root.structure!.kind,
+        root.childrenByName!.kind,
         'b',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
@@ -233,7 +233,7 @@ describe('table invariants reject actual positional violations', () => {
     const before = gateSelectionTable.violations;
     expect(() =>
       writeFieldNode(
-        root.structure!.kind,
+        root.childrenByName!.kind,
         'b',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
@@ -249,13 +249,13 @@ describe('table invariants reject actual positional violations', () => {
     vi.spyOn(inputs, 'recordGateInput').mockImplementation(
       (context, path, value, kind) => {
         record(context, path, value, kind);
-        context.gateWheelFrame!.consistent = false;
+        context.gateWheelFrame!.isConsistent = false;
       },
     );
     const before = gateSelectionTable.violations;
     expect(() =>
       writeFieldNode(
-        root.structure!.kind,
+        root.childrenByName!.kind,
         'b',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,

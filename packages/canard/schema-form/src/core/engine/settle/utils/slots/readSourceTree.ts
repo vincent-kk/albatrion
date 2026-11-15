@@ -24,7 +24,7 @@ export const readSourceTree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): unknown => {
-  if (node.detached)
+  if (node.isDetached)
     return readSlotSourceTree(node.blueprintNode, node, undefined);
   if (node.source !== undefined || node.behavior.strategy === 'terminal')
     return node.source;
@@ -40,7 +40,7 @@ export const readSourceTree = <Self extends FieldNodeRecord<Self>>(
           : undefined;
       else {
         tailStart++;
-        const item = node.structure?.[String(index)];
+        const item = node.childrenByName?.[String(index)];
         value = item
           ? readSourceTree(item, context)
           : readAbsentSlotSource(node, index, candidates, context);
@@ -55,7 +55,7 @@ export const readSourceTree = <Self extends FieldNodeRecord<Self>>(
   let found = Object.keys(value).length > 0;
   for (const entry of node.blueprintNode.childEntries) {
     if (hasOwnProperty(value, entry.name)) continue;
-    const child = node.structure?.[entry.name];
+    const child = node.childrenByName?.[entry.name];
     const source = child
       ? readSourceTree(child, context)
       : readInactiveSlotSource(

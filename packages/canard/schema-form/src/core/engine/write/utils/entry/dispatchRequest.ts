@@ -17,7 +17,7 @@ export const dispatchRequest = <Self extends FieldNodeRecord<Self>>(
   kind: FieldNodeRequestType,
 ): void => {
   assertFieldNodeWritable(node);
-  if (node.detached) return;
+  if (node.isDetached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
   if (

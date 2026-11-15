@@ -56,7 +56,7 @@ export interface FieldInputProps<
   /** Path of field node assigned to FieldInput Component */
   path: Node['path'];
   /** Whether this field accepts null as a valid value (derived from schema type array including 'null') */
-  nullable: Node['nullable'];
+  nullable: Node['isNullable'];
   /** @deprecated Use useFieldErrors(node). */
   errors?: never;
   /** @deprecated Use useFieldErrors(node). */
@@ -217,7 +217,7 @@ export type FieldInputHint = {
   path: string;
   /** FieldNode['isRequired']; the React hint key stays required. */
   required: boolean;
-  /** FieldNode['nullable'] */
+  /** FieldNode['isNullable'] */
   nullable: boolean;
   /** JSONSchema */
   jsonSchema: JSONSchema | JSONSchemaWithVirtual;

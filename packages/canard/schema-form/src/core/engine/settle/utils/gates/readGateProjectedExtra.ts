@@ -27,18 +27,18 @@ export const readGateProjectedExtra = <Self extends FieldNodeRecord<Self>>(
   else {
     hostNode = context.root;
     const segments = hostPath
-      ? context.root.runtime.blueprint.capabilities.branchless
+      ? context.root.runtime.blueprint.capabilities.isBranchless
         ? getCachedPointerSegments(context.root.runtime, hostPath)
         : getGateRegistry(context.root.runtime).pathSegments(hostPath)
       : [];
     for (let index = 0; index < segments.length; index++) {
-      const structure: Optional<Nullable<Dictionary<Self>>> =
-        hostNode?.structure;
+      const childrenByName: Optional<Nullable<Dictionary<Self>>> =
+        hostNode?.childrenByName;
       const name = segments[index];
       if (typeof name !== 'string') return undefined;
       hostNode =
-        structure && hasOwnProperty(structure, name)
-          ? structure[name]
+        childrenByName && hasOwnProperty(childrenByName, name)
+          ? childrenByName[name]
           : undefined;
     }
   }

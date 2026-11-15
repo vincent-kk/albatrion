@@ -15,7 +15,7 @@ export const markSlotChange = <Self extends FieldNodeRecord<Self>>(
   active?: Self,
   context?: SettlementContext<Self>,
 ): void => {
-  if (context?.inTransition) {
+  if (context?.isInTransition) {
     const journal = (context.slotAutomaticLog ??= new Map());
     let bindings = journal.get(host);
     if (!bindings) journal.set(host, (bindings = new Map()));
@@ -30,7 +30,7 @@ export const markSlotChange = <Self extends FieldNodeRecord<Self>>(
     baselines.set(entry, {
       active:
         active ??
-        (host.deliveryInitialized
+        (host.isDeliveryInitialized
           ? (host.deliveryPreviousChildren ?? host.children)?.find(
               (child) => child.parent === host && child.name === entry.name,
             )
@@ -41,11 +41,12 @@ export const markSlotChange = <Self extends FieldNodeRecord<Self>>(
   (host.runtime.slotDirtyHosts ??= new Set()).add(host);
   for (
     let child = host;
-    !child.detached && child.parent;
+    !child.isDetached && child.parent;
     child = child.parent
   ) {
     const parent = child.parent;
-    if (parent.detached || parent.structure?.[child.name] !== child) break;
+    if (parent.isDetached || parent.childrenByName?.[child.name] !== child)
+      break;
     (parent.inactiveSlotChildren ??= new Map()).set(child.name, child);
   }
 };

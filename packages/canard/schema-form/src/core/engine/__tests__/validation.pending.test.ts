@@ -27,17 +27,17 @@ it('IR-6 H pending clears before one release per accepted explicit root verdict'
   dispatchMount(root, 'old');
   runtime.validationMode = ValidationMode.OnChange;
   const settled = vi.fn(() =>
-    expect(root.rootNode.runtime.validationPending ?? false).toBe(false),
+    expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false),
   );
   const unsubscribe = subscribeFieldNodeRevealReleased(root, settled);
   dispatchSetValue(root, 'new');
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(true);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(true);
   clock.frame();
   await clock.task();
   expect(settled).toHaveBeenCalledTimes(1);
   dispatchSetValue(root, 'newer');
   await dispatchValidate(root);
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
   expect(settled).toHaveBeenCalledTimes(2);
   clock.frame();
   await clock.task();
@@ -70,10 +70,10 @@ it.each(['null', 'throw', 'compile'] as const)(
     const listener = vi.fn();
     subscribeFieldNodeRevealReleased(root, listener);
     dispatchSetValue(root, 'new');
-    expect(root.rootNode.runtime.validationPending ?? false).toBe(true);
+    expect(root.rootNode.runtime.isValidationPending ?? false).toBe(true);
     clock.frame();
     await clock.task();
-    expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
+    expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
     expect(listener).toHaveBeenCalledTimes(mode === 'compile' ? 2 : 1);
   },
 );
@@ -96,14 +96,14 @@ it('IR-6 a commit-only discard keeps pending until the newest verdict', async ()
   runtime.commitNumber = (runtime.commitNumber ?? 0) + 1;
   finish([]);
   await clock.task();
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(true);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(true);
   clock.frame();
   await clock.task();
   clock.frame();
   await clock.task();
   finish([]);
   await clock.task();
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
   expect(runtime.validationResult?.commit).toBe(runtime.commitNumber);
 });
 
@@ -127,7 +127,7 @@ it('IR-6 an obsolete asynchronous run cannot release a newer write hold', async 
   dispatchSetValue(root, 'second');
   finishes[0]();
   await clock.task();
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(true);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(true);
   expect(listener).not.toHaveBeenCalled();
   clock.frame();
   await clock.task();
@@ -135,7 +135,7 @@ it('IR-6 an obsolete asynchronous run cannot release a newer write hold', async 
   await clock.task();
   finishes[1]();
   await clock.task();
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
   expect(listener).toHaveBeenCalledTimes(1);
 });
 
@@ -153,10 +153,10 @@ it('IR-6 subtree validate preserves a pending write verdict', async () => {
   runtime.validationMode = ValidationMode.OnChange;
   dispatchSetValue(root, { name: 'new' });
   await dispatchValidate(root.children![0]);
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(true);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(true);
   clock.frame();
   await clock.task();
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
 });
 
 it.each([ValidationMode.None, ValidationMode.OnRequest])(
@@ -175,7 +175,7 @@ it.each([ValidationMode.None, ValidationMode.OnRequest])(
     subscribeFieldNodeRevealReleased(root, listener);
     runtime.validationMode = mode;
     dispatchResetForm(root, 'reset');
-    expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
+    expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
     expect(listener).toHaveBeenCalledTimes(1);
     clock.frame();
     await clock.task();
@@ -238,7 +238,7 @@ it.each(['null', 'execute', 'compile', 'commit'] as const)(
       await expect(verdict).rejects.toBeDefined();
     else await verdict;
     if (mode === 'commit') {
-      expect(root.rootNode.runtime.validationPending ?? false).toBe(true);
+      expect(root.rootNode.runtime.isValidationPending ?? false).toBe(true);
       expect(listener).not.toHaveBeenCalled();
       clock.frame();
       await clock.task();
@@ -247,7 +247,7 @@ it.each(['null', 'execute', 'compile', 'commit'] as const)(
       finish([]);
       await clock.task();
     }
-    expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
+    expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
     expect(listener).toHaveBeenCalledTimes(1);
     clock.frame();
     await clock.task();
@@ -270,5 +270,5 @@ it('IR-6 unsubscribed release listeners stay silent during explicit root validat
   expect(subscribed).toHaveBeenCalledTimes(1);
   stop();
   expect(listener).not.toHaveBeenCalled();
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
 });

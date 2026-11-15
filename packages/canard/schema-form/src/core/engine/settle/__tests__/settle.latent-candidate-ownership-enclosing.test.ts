@@ -75,12 +75,12 @@ it('V1 independent nested exit preserves a source shared with an enclosing sibli
   dispatchSetValue(getDispatchNode(root, 'b'), true);
   const expected = { ...initial, inner: false };
   expect(getDispatchNode(root, 'v', '0', '0').source).toBe(5);
-  expect(root.local).toEqual(expected);
-  expect(root.emit).toEqual(expected);
+  expect(root.storedValue).toEqual(expected);
+  expect(root.storedOutputValue).toEqual(expected);
   expect(
     events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
   ).toMatchObject({
-    current: { local: expected, emit: expected },
+    current: { value: expected, outputValue: expected },
   });
   await dispatchValidate(root);
   expect(inputs.at(-1)).toEqual(expected);

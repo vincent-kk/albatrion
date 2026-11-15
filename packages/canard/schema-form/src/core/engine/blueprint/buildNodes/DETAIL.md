@@ -20,11 +20,11 @@ $defs·definitions와 prefixItems·items 튜플을 모두 읽습니다. 옛 튜�
 
 ### BLUEPRINT-010 — 공유 단위는 이름과 접은 종류입니다
 
-같은 이름의 정적 연언은 하나의 노드를 정합니다. 정적 소유 선언이 없는 자리는 같은 fold끼리 후보를 공유하며, 서로 다른 fold의 무게이트 선언은 SHARED_NODE_KIND_CONFLICT입니다. 게이트 후보의 동시 활성은 분석에서 추정하지 않습니다. union도 fold 집합이 같아야 같은 종류이며, number/integer·nullable·형 나열 순서는 정체성에 잘못 포함하지 않습니다. 이 규칙을 아이템·additionalItems·각 prefixItems 자리에도 적용해 뒤쪽 종류가 사라지지 않게 합니다. 단일 후보 필드는 첫 후보이며, 여러 후보를 처리하는 소비자는 작성 순서의 전체 후보를 사용합니다.
+같은 이름의 정적 연언은 하나의 노드를 정합니다. 정적 소유 선언이 없는 자리는 같은 fold끼리 후보를 공유하며, 서로 다른 fold의 무게이트 선언은 SHARED_NODE_KIND_CONFLICT입니다. 게이트 후보의 동시 활성은 분석에서 추정하지 않습니다. union도 fold 집합이 같아야 같은 종류이며, number/integer·isNullable·형 나열 순서는 정체성에 잘못 포함하지 않습니다. 이 규칙을 아이템·additionalItems·각 prefixItems 자리에도 적용해 뒤쪽 종류가 사라지지 않게 합니다. 단일 후보 필드는 첫 후보이며, 여러 후보를 처리하는 소비자는 작성 순서의 전체 후보를 사용합니다.
 
 ### BLUEPRINT-041 — 정적 허용 집합이 종류를 결정합니다
 
-본체·게이트 없는 allOf·$ref의 type은 null을 포함하여 교차하고 integer는 number의 부분집합입니다. 빈 정적 교집합만 형 충돌이며 {null}은 null 종류입니다. 게이트는 정적 kind·schemaType·nullable·전략을 재선택하지 않고 유효 목록만 좁힙니다. 정적 소유가 있는 자리의 게이트 없는 선언 분기는 그 fold의 부분집합일 때 존재만 더하고, 밖이면 정적 공유 충돌입니다. 임의의 선언 순서로 종류가 바뀌는 일을 막습니다.
+본체·게이트 없는 allOf·$ref의 type은 null을 포함하여 교차하고 integer는 number의 부분집합입니다. 빈 정적 교집합만 형 충돌이며 {null}은 null 종류입니다. 게이트는 정적 kind·schemaType·isNullable·전략을 재선택하지 않고 유효 목록만 좁힙니다. 정적 소유가 있는 자리의 게이트 없는 선언 분기는 그 fold의 부분집합일 때 존재만 더하고, 밖이면 정적 공유 충돌입니다. 임의의 선언 순서로 종류가 바뀌는 일을 막습니다.
 
 ### BLUEPRINT-044 — 형 표기와 종류 접기를 구별합니다
 
@@ -40,7 +40,7 @@ $defs·definitions와 prefixItems·items 튜플을 모두 읽습니다. 옛 튜�
 
 ### BLUEPRINT-050 — 분기 없는 원시 리터럴 추론
 
-정적 type과 게이트 없는 분기가 모두 없는 칸은 const·enum의 단일 비null 원시 종류로 추론할 수 있고 null은 nullable로 남깁니다. 여러 비null 종류나 객체·배열 리터럴은 명시적 type을 요구합니다. 이 제한된 추론을 분기 선택 자동 감지로 확대하지 않습니다.
+정적 type과 게이트 없는 분기가 모두 없는 칸은 const·enum의 단일 비null 원시 종류로 추론할 수 있고 null은 isNullable로 남깁니다. 여러 비null 종류나 객체·배열 리터럴은 명시적 type을 요구합니다. 이 제한된 추론을 분기 선택 자동 감지로 확대하지 않습니다.
 
 ### BLUEPRINT-036 — 전략은 생성 후 고정입니다
 

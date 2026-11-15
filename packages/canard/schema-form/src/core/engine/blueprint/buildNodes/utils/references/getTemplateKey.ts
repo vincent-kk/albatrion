@@ -75,7 +75,7 @@ export const getTemplateKey = (
         ':' +
         gate.schemaPath +
         ':' +
-        !!gate.negated +
+        !!gate.isNegated +
         ':' +
         owners.join(',');
       if (gates.indexOf(descriptor) !== -1) continue;

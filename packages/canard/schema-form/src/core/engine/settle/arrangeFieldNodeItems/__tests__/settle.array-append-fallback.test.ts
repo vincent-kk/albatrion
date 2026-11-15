@@ -206,7 +206,7 @@ describe('append admission declines and the general path settles', () => {
     );
   });
 
-  it('a non-root empty array whose emission is omitted, until it holds an item', () => {
+  it('a non-root empty array whose output value is omitted, until it holds an item', () => {
     compareArrayAppend(
       {
         type: 'object',
@@ -215,15 +215,15 @@ describe('append admission declines and the general path settles', () => {
       { rows: [] },
       [
         {
-          apply: (root) => dispatchPush(root.structure!.rows, 1),
+          apply: (root) => dispatchPush(root.childrenByName!.rows, 1),
           append: false,
         },
         {
-          apply: (root) => dispatchPush(root.structure!.rows, 2),
+          apply: (root) => dispatchPush(root.childrenByName!.rows, 2),
           append: true,
         },
       ],
-      (root) => root.structure!.rows,
+      (root) => root.childrenByName!.rows,
     );
   });
 

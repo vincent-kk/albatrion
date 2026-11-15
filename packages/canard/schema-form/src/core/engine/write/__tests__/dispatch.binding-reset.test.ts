@@ -36,12 +36,12 @@ describe('binding load lifetime', () => {
         return 'late';
       }),
     ).not.toThrow();
-    expect(previous.root.local).toBe('old');
+    expect(previous.root.storedValue).toBe('old');
     expect(previous.root.interactionState).toBe(oldState);
     expect(previous.runtime.nodeErrors?.get(previous.root)).toEqual([
       { dataPath: '', message: 'kept' },
     ]);
-    expect(next.root.local).toBe('new');
+    expect(next.root.storedValue).toBe('new');
   });
 
   it('REACT-024 virtual aliases advance interaction reset once per occurrence', () => {
@@ -55,9 +55,9 @@ describe('binding load lifetime', () => {
     dispatchMount(root, { child: 'old' });
     const child = getDispatchChild(root, 'child');
     dispatchClearSubtreeState(root);
-    expect(child.interactionReset).toBe(1);
+    expect(child.interactionEpoch).toBe(1);
     dispatchResetForm(root, { child: 'new' });
-    expect(child.interactionReset).toBe(2);
+    expect(child.interactionEpoch).toBe(2);
   });
 
   it('WRITE-046 disposed validation cannot mutate the last committed errors', async () => {
@@ -112,25 +112,25 @@ describe('binding load lifetime', () => {
     dispatchMount(previous.root, { child: 'old' });
     const child = getDispatchChild(previous.root, 'child');
     const nodes = [previous.root, child];
-    const values = nodes.map((node) => node.local);
+    const values = nodes.map((node) => node.storedValue);
     const children = previous.root.children;
     const listener = vi.fn();
     const counters = nodes.map((node) => {
       subscribeFieldNode(node, listener);
       return [
         readFieldNodeRevision(node, FieldNodeEventType.RequestRefresh),
-        node.interactionReset,
+        node.interactionEpoch,
       ];
     });
     const next = createDispatchTree(schema);
     adoptFieldNodeChain(previous.root, next.root);
     for (const [index, node] of nodes.entries()) {
-      expect(node.disposed).toBe(true);
-      expect(node.local).toBe(values[index]);
+      expect(node.isDisposed).toBe(true);
+      expect(node.storedValue).toBe(values[index]);
       expect(
         readFieldNodeRevision(node, FieldNodeEventType.RequestRefresh),
       ).toBe(counters[index][0] + 1);
-      expect(node.interactionReset).toBe(counters[index][1] + 1);
+      expect(node.interactionEpoch).toBe(counters[index][1] + 1);
     }
     expect(previous.root.children).toBe(children);
     expect(child.parent).toBe(previous.root);
@@ -139,7 +139,7 @@ describe('binding load lifetime', () => {
     expect(listener).not.toHaveBeenCalled();
     dispatchMount(next.root, { child: 'new' });
     expect(listener).not.toHaveBeenCalled();
-    expect(child.local).toBe('old');
+    expect(child.storedValue).toBe('old');
   });
 
   it('WRITE-046 marked late input is dropped and unmarked writes throw DISPOSED_NODE_WRITE', () => {
@@ -148,7 +148,7 @@ describe('binding load lifetime', () => {
     const child = getDispatchChild(previous.root, 'child');
     adoptFieldNodeChain(previous.root, createDispatchTree(schema).root);
     expect(() => dispatchWriteInput(child, 'late')).not.toThrow();
-    expect(child.local).toBe('old');
+    expect(child.storedValue).toBe('old');
     expect(() => dispatchSetValue(child, 'late')).toThrowError(
       expect.objectContaining({
         code: expect.stringContaining('DISPOSED_NODE_WRITE'),
@@ -173,15 +173,15 @@ describe('binding load lifetime', () => {
     });
     dispatchMount(root, { clear: false, child: 'old' });
     const child = getDispatchChild(root, 'child');
-    expect(child.interactionReset).toBe(0);
+    expect(child.interactionEpoch).toBe(0);
     dispatchSetValue(child, 'new');
-    expect(child.interactionReset).toBe(0);
+    expect(child.interactionEpoch).toBe(0);
     dispatchClearSubtreeState(child);
-    expect(child.interactionReset).toBe(1);
+    expect(child.interactionEpoch).toBe(1);
     dispatchSetState(child, { [FieldNodeState.Touched]: true });
     dispatchSetValue(getDispatchChild(root, 'clear'), true);
-    expect(child.interactionReset).toBe(2);
+    expect(child.interactionEpoch).toBe(2);
     dispatchResetForm(root, { clear: false, child: 'base' });
-    expect(child.interactionReset).toBe(3);
+    expect(child.interactionEpoch).toBe(3);
   });
 });

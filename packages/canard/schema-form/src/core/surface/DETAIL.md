@@ -17,7 +17,7 @@
 
 ### SURFACE-050 — 읽기의 의미와 주소
 
-- `value`는 노드의 합성 값, `outputValue`는 그 노드가 내보내는 값입니다. 부모의 투영이 더 적용될 수 있으므로 local 값과 루트 출력의 경로 값이 같은 참조라는 약속을 만들지 않습니다. 폼 밖의 값 읽기는 루트 출력이며 제출이라는 동작 이름을 값 이름으로 사용하지 않습니다.
+- `value`는 노드의 합성 값, `outputValue`는 그 노드가 내보내는 값입니다. 부모의 투영이 더 적용될 수 있으므로 `value`와 루트 출력의 경로 값이 같은 참조라는 약속을 만들지 않습니다. 폼 밖의 값 읽기는 루트 출력이며 제출이라는 동작 이름을 값 이름으로 사용하지 않습니다.
 - 상태 저하도 커밋된 값 읽기를 막지 않습니다. 진단은 트리 전체의 상태이며 떼어진 참조의 `diagnostics`·`globalState`·`globalErrors`·`context`도 공유 runtime을 읽습니다. 이것을 마지막 커밋에 고정되는 노드별 읽기와 혼동하지 않습니다.
 - 공유 노드는 여러 선언에서 생길 수 있으므로 공개 `schemaPath` 하나로 신원을 표현하지 않습니다. React 바인딩은 인스턴스 신원을 사용하며, 스키마 오류 주소는 검증의 책임입니다. 공개 분기 선택 명령도 두지 않아 작성한 게이트 규칙과 별도 선택 상태가 충돌하지 않게 합니다.
 
@@ -29,9 +29,9 @@ NODE-010·SURFACE-005·SURFACE-034·SURFACE-058. 멤버 계약 시험과 공개 
 
 ### surface-types — 판별과 참조
 
-NODE-015·NODE-041·NODE-046·NODE-049·NODE-050·NODE-057·NODE-058·NODE-059. `type`은 노드 종류이고 `schemaType`은 정적 선언으로 계산한 JSON 허용 종류를 보존합니다. integer 노드는 number 종류이며 virtual에는 JSON 종류가 없어 `schemaType`이 undefined입니다. 정적 목록과 게이트가 좁힌 유효 `jsonSchema.type`을 같은 것으로 취급하지 않습니다. type·strategy·nullable·schemaType은 인스턴스 수명 동안 고정되며 같은 청사진 칸의 schemaType 목록은 동결 참조를 공유합니다. null은 nullable로 분리하고 number와 함께 있는 integer는 허용 집합 계산에서 흡수될 수 있으므로 저자의 type 배열을 그대로 복사한 필드로 해석하지 않습니다.
+NODE-015·NODE-041·NODE-046·NODE-049·NODE-050·NODE-057·NODE-058·NODE-059. `type`은 노드 종류이고 `schemaType`은 정적 선언으로 계산한 JSON 허용 종류를 보존합니다. integer 노드는 number 종류이며 virtual에는 JSON 종류가 없어 `schemaType`이 undefined입니다. 정적 목록과 게이트가 좁힌 유효 `jsonSchema.type`을 같은 것으로 취급하지 않습니다. type·strategy·isNullable·schemaType은 인스턴스 수명 동안 고정되며 같은 청사진 칸의 schemaType 목록은 동결 참조를 공유합니다. null은 isNullable로 분리하고 number와 함께 있는 integer는 허용 집합 계산에서 흡수될 수 있으므로 저자의 type 배열을 그대로 복사한 필드로 해석하지 않습니다.
 
-`UnionNode<Types, Nullable>`는 `isMisfit`로 읽기를 좁히며 false는 유효 목록과 nullable에 맞는 종류라는 뜻이지 검증 통과가 아닙니다. 알려지지 않은 값을 읽을 수 있어도 쓰기 허용 형을 unknown으로 넓히지 않습니다. 일반 React 입력 props와 노드 전용 `FieldNodeInputProps`는 서로 다른 형이며 [입력 형 계약](../../types/DETAIL.md)을 따릅니다. 정적 추론은 참조·게이트·복합 연언의 실행 결과를 추측하지 않습니다.
+`UnionNode<Types, Nullable>`는 `isMisfit`로 읽기를 좁히며 false는 유효 목록과 isNullable에 맞는 종류라는 뜻이지 검증 통과가 아닙니다. 알려지지 않은 값을 읽을 수 있어도 쓰기 허용 형을 unknown으로 넓히지 않습니다. 일반 React 입력 props와 노드 전용 `FieldNodeInputProps`는 서로 다른 형이며 [입력 형 계약](../../types/DETAIL.md)을 따릅니다. 정적 추론은 참조·게이트·복합 연언의 실행 결과를 추측하지 않습니다.
 
 부재를 받는 종류·전략 가드는 null과 undefined에서 false이고 추가 할당을 하지 않습니다. parent·terminal children·단일 탐색의 부재인 null은 JSON 값 null·NullNode·nullable과 별개입니다. 복수 탐색은 빈 목록이며 실제 노드 작업에는 노드를 필수로 둡니다.
 

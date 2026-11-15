@@ -33,7 +33,7 @@ describe('dispatcher external errors', () => {
     ]);
     expect(readFieldNodeRevision(root, FieldNodeEventType.UpdateError)).toBe(1);
     expect(root.source).toBeUndefined();
-    expect(root.emit).toBeUndefined();
+    expect(root.storedOutputValue).toBeUndefined();
     expect(runtime.commitNumber).toBe(before);
     expect(onChange).not.toHaveBeenCalled();
     expect(runtime.validationStamp).toBe(validationStamp);
@@ -64,7 +64,7 @@ describe('dispatcher external errors', () => {
 
   it('NODE-044 ignores external errors on a detached occurrence', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
-    root.detached = true;
+    root.isDetached = true;
     dispatchSetExternalErrors(root, [{ dataPath: '', message: 'ignored' }]);
     dispatchClearExternalErrors(root);
     expect(runtime.nodeErrors?.has(root) ?? false).toBe(false);
@@ -73,7 +73,7 @@ describe('dispatcher external errors', () => {
 
   it('ERROR-029 refuses external errors during error delivery', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
-    runtime.reportingErrors = true;
+    runtime.isReportingErrors = true;
     expect(() =>
       dispatchSetExternalErrors(root, [{ dataPath: '' }]),
     ).toThrowError(

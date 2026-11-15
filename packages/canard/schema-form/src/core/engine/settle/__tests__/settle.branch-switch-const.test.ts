@@ -65,7 +65,7 @@ describe('branch-switch constant-factor regression records', () => {
       ],
     });
     loadFieldNodeAtMount(root, { s: 0, p: 'keep' }, WriteOption.Overwrite);
-    const original = root.structure!.p;
+    const original = root.childrenByName!.p;
     const selected = selection.selectChildren;
     const counts: number[] = [];
     vi.spyOn(selection, 'selectChildren').mockImplementation((...args) => {
@@ -81,14 +81,14 @@ describe('branch-switch constant-factor regression records', () => {
       return changed;
     });
     writeFieldNode(
-      root.structure!.s,
+      root.childrenByName!.s,
       1,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(Math.max(...counts)).toBe(2);
-    expect(root.structure!.p).toBe(original);
-    expect(original.local).toBe('keep');
+    expect(root.childrenByName!.p).toBe(original);
+    expect(original.storedValue).toBe('keep');
   });
 
   it('encodes no unrelated inactive path while the outgoing branch is pending', () => {
@@ -110,12 +110,12 @@ describe('branch-switch constant-factor regression records', () => {
       return Reflect.apply(stringify, JSON, args);
     });
     writeFieldNode(
-      root.structure!.kind,
+      root.childrenByName!.kind,
       9,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.local).toEqual({ kind: 9, payload_9: 'value_9' });
+    expect(root.storedValue).toEqual({ kind: 9, payload_9: 'value_9' });
     expect(unrelated).toEqual([]);
   });
 
@@ -143,7 +143,7 @@ describe('branch-switch constant-factor regression records', () => {
       },
     };
     loadFieldNodeAtMount(root, { g: 'G' }, WriteOption.Overwrite);
-    const original = root.structure!.g;
+    const original = root.childrenByName!.g;
     const selected = selection.selectChildren;
     const exits: boolean[] = [];
     vi.spyOn(selection, 'selectChildren').mockImplementation((...args) => {
@@ -155,7 +155,7 @@ describe('branch-switch constant-factor regression records', () => {
     armed = true;
     expect(() =>
       writeFieldNode(
-        root.structure!.t,
+        root.childrenByName!.t,
         true,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
@@ -164,8 +164,8 @@ describe('branch-switch constant-factor regression records', () => {
     expect(exits).toContain(true);
     expect({
       exits,
-      local: root.local,
-      detached: original.detached,
+      value: root.storedValue,
+      isDetached: original.isDetached,
       latent: readRetainedSlotSource(root, '/g', 'string'),
       status: root.runtime.diagnostics.status,
     }).toMatchSnapshot();
@@ -283,7 +283,7 @@ describe('branch-switch constant-factor regression records', () => {
       },
     );
     writeFieldNode(
-      root.structure!.kind,
+      root.childrenByName!.kind,
       9,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -297,7 +297,7 @@ describe('branch-switch constant-factor regression records', () => {
     present = false;
     seen.length = 0;
     writeFieldNode(
-      root.structure!.kind,
+      root.childrenByName!.kind,
       0,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,

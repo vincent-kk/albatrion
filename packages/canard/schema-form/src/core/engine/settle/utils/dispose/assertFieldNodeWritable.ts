@@ -10,7 +10,7 @@ import type { FieldNodeRecord } from '../../../record';
 export const assertFieldNodeWritable = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): void => {
-  if (node.disposed || node.rootNode.disposed)
+  if (node.isDisposed || node.rootNode.isDisposed)
     throw new SchemaFormError(
       FormErrorCode.DisposedNodeWrite,
       `Cannot write disposed node at ${node.path}`,

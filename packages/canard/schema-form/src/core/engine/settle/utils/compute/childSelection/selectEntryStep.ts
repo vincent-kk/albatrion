@@ -50,7 +50,7 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   readonly preparedDynamic?: Dictionary<Self>;
   /** Original dynamic membership is retained solely for exit comparison. */
   readonly priorDynamicNames?: readonly string[];
-  /** Host whose current structure is selected. */
+  /** Host whose current `childrenByName` is selected. */
   readonly node: Self;
   /** Settlement effects, dirty paths, failures, latent state and gate evidence. */
   readonly context: SettlementContext<Self>;
@@ -59,7 +59,7 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   /** Recursive computation called immediately for a dirty admitted child. */
   readonly computeChild: Fn<[child: Self]>;
   /** Whether entry changes queue host projection before later gates. */
-  readonly immediate: boolean;
+  readonly isImmediate: boolean;
   /** Ordered mutable target; prepared selection inherits static entries while host reads use a view. */
   readonly next: Dictionary<Self>;
   /** First admitted blueprint identity for each authored name. */
@@ -67,15 +67,15 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   /** Rejected entries collected for the unchanged latent-distribution pass. */
   readonly inactiveEntries: BlueprintChildEntry[];
   /** Whether any visited entry changed shape or effective schema. */
-  changed: boolean;
+  hasChanged: boolean;
   /** Whether a general-path entry must flush pending gate reads first. */
-  readonly flushReads: boolean;
+  readonly shouldFlushReads: boolean;
   /** Prepared once by selectChildren; table and general paths share this entry predicate. */
-  readonly reuseStatic?: Fn<[entry: BlueprintChildEntry], boolean>;
+  readonly canReuseStatic?: Fn<[entry: BlueprintChildEntry], boolean>;
   /** Present only for a table step; its pure recognized expression cannot throw. */
-  tableVerdict?: boolean;
+  isTableAdmitted?: boolean;
   /** A table predicate failed at its original first evaluation position. */
-  tableThrew?: boolean;
+  hasTableThrown?: boolean;
 }
 
 /**
@@ -83,7 +83,7 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
  * @param entry - Candidate edge whose declarations, blueprint and name are evaluated
  * @param step - Prepared gate and declaration IDs, or undefined for general selection
  * @param frame - Host, context, prior shape, compute callback, immediate/flush flags,
- * current structure, admitted-name map, inactive list and accumulated changed flag
+ * current `childrenByName`, admitted-name map, inactive list and accumulated changed flag
  * @returns Nothing; mutates frame.changed, frame.next, frame.seen and frame.inactiveEntries
  * @remarks Gate reads may publish pending projections and record inputs or failures.
  * Updates throwing exits, presence hosts, projection baselines, recursion budget, perished/pending exit
@@ -102,13 +102,13 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     context,
     prior,
     computeChild,
-    immediate,
+    isImmediate,
     next,
     seen,
     inactiveEntries,
-    flushReads,
+    shouldFlushReads,
   } = frame;
-  if (flushReads && context.pendingOutputs?.size)
+  if (shouldFlushReads && context.pendingOutputs?.size)
     flushPendingGateReads(
       entry.node,
       appendSegment(node.path, entry.name),
@@ -121,7 +121,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   let discriminator: Optional<PreparedDiscriminatorEntry>;
   if (step?.discriminatorSelection) {
     const round = context.gateSelectionRounds?.get(node);
-    const tagGroup = round?.active
+    const tagGroup = round?.isActive
       ? round.table.groups.find((group) => group.watchedName === entry.name)
       : undefined;
     if (tagGroup)
@@ -135,23 +135,24 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   if (discriminator) {
     declarations = entry.declarations;
     activeIds = discriminator.ids;
-  } else if (step && !step.general) {
-    const version = context.gateThrowVersion;
+  } else if (step && !step.isGeneral) {
+    const version = context.gateExceptionVersion;
     const admitted =
-      frame.tableVerdict ??
+      frame.isTableAdmitted ??
       (!step.gate || evaluateGate(step.gate, context, node));
     declarations = admitted ? entry.declarations : NO_DECLARATIONS;
     activeIds = admitted ? step.ids : NO_ACTIVE_IDS;
     threw =
       !admitted &&
-      (frame.tableThrew === true || context.gateThrowVersion !== version);
+      (frame.hasTableThrown === true ||
+        context.gateExceptionVersion !== version);
   } else if (context.hasGates) {
     // Allocated at the first rejected declaration; until then every one is admitted.
     let active: Optional<(typeof entry.declarations)[number][]>;
     let ids: Optional<number[]>;
     for (let index = 0; index < entry.declarations.length; index++) {
       const declaration = entry.declarations[index];
-      const version = context.gateThrowVersion;
+      const version = context.gateExceptionVersion;
       let admitted = true;
       for (
         let gateIndex = 0;
@@ -159,7 +160,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
         gateIndex++
       ) {
         const gate = declaration.gates[gateIndex];
-        const previousDecision = step?.general
+        const previousDecision = step?.isGeneral
           ? context.gateWheelFrame?.predicateResults?.get(
               getGateRegistry(node.runtime).locate(node, gate),
             )
@@ -191,7 +192,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       } else {
         active ??= entry.declarations.slice(0, index);
         ids ??= mapArray(active, (kept) => kept.id);
-        if (context.gateThrowVersion !== version) threw = true;
+        if (context.gateExceptionVersion !== version) threw = true;
       }
     }
     fullyAdmitted = active === undefined;
@@ -227,8 +228,8 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       next[entry.name].blueprintNode === entry.node
     ) {
       delete next[entry.name];
-      frame.changed = true;
-      if (immediate) {
+      frame.hasChanged = true;
+      if (isImmediate) {
         (context.pendingOutputs ??= new Set()).add(node);
       }
     }
@@ -339,7 +340,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     else enterFieldNode(node, child, entry.name, context);
     if (child.behavior.strategy === 'branch')
       context.shapeDirtyPaths.add(child.path);
-    frame.changed = true;
+    frame.hasChanged = true;
     entryChanged = true;
   }
   const ids = activeIds ?? staticIds(entry, node.blueprintNode);
@@ -378,10 +379,10 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     if (child.behavior.strategy === 'branch')
       context.shapeDirtyPaths.add(child.path);
     context.changedNodes.add(child);
-    frame.changed = true;
+    frame.hasChanged = true;
     entryChanged = true;
   }
-  if (admittedEdge ? admittedEdge.conflict : effective.typeConflict) {
+  if (admittedEdge ? admittedEdge.hasConflict : effective.hasTypeConflict) {
     recordSettlementFailure(
       context,
       new SchemaFormError(
@@ -393,9 +394,9 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     );
   }
   child.isActive = captureFieldNodeChange(child, 'isActive', true);
-  child.detached = false;
+  child.isDetached = false;
   if (next[entry.name] !== child) {
-    frame.changed = true;
+    frame.hasChanged = true;
     entryChanged = true;
   }
   next[entry.name] = child;
@@ -407,7 +408,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     computeChild(child);
     entryChanged = true;
   }
-  if (immediate && entryChanged) {
+  if (isImmediate && entryChanged) {
     (context.pendingOutputs ??= new Set()).add(node);
   }
 };

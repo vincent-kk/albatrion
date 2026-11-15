@@ -175,7 +175,7 @@ export const collectBlueprintWarnings = (
 
           if (
             value === null
-              ? !tag.nullable
+              ? !tag.isNullable
               : !allowed.includes(
                   isArray(value)
                     ? 'array'

@@ -27,7 +27,10 @@ describe('CONTROLS-077 reset candidate membership cost', () => {
         WriteOption.Overwrite,
       );
       /** Loaded state makes both rules fire on every live target. */
-      const state = { ...createFragmentLoadState(root), trace: true };
+      const state = {
+        ...createFragmentLoadState(root),
+        isTraceEnabled: true,
+      };
       /** Target identities restrict instrumentation to candidate membership. */
       const targets = new Map<unknown, number>(
         root.children?.map((child, index) => [child, index]),

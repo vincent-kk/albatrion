@@ -42,9 +42,9 @@ it.each(['record', 'skip', 'shadow'] as const)(
           engineModes.setMode('gateWheel', mode);
         },
         (root) =>
-          expect(root.structure?.p?.structure?.child !== undefined).toBe(
-            root.structure?.later?.emit === true,
-          ),
+          expect(
+            root.childrenByName?.p?.childrenByName?.child !== undefined,
+          ).toBe(root.childrenByName?.later?.storedOutputValue === true),
       );
     } finally {
       engineModes.setMode('gateWheel', previousMode);
@@ -95,9 +95,9 @@ it.each(['record', 'skip', 'shadow'] as const)(
           engineModes.setMode('gateWheel', mode);
         },
         (root) => {
-          const current = root.structure?.X?.structure?.current;
-          expect(current?.structure?.reader !== undefined).toBe(
-            current?.structure?.a?.emit === 'A',
+          const current = root.childrenByName?.X?.childrenByName?.current;
+          expect(current?.childrenByName?.reader !== undefined).toBe(
+            current?.childrenByName?.a?.storedOutputValue === 'A',
           );
         },
       );
@@ -166,8 +166,10 @@ it.each([false, true])(
           engineModes.setMode('gateWheel', mode);
         },
         (root) => {
-          if (root.structure?.mode?.emit === 'x')
-            expect(root.structure.p?.structure?.child?.emit).toBe('P');
+          if (root.childrenByName?.mode?.storedOutputValue === 'x')
+            expect(
+              root.childrenByName.p?.childrenByName?.child?.storedOutputValue,
+            ).toBe('P');
           return [...(root.runtime.committedDeclarationIds ?? [])];
         },
       ).map((observation) => {
@@ -187,7 +189,10 @@ it.each([false, true])(
         () => {
           engineModes.setMode('gateWheel', 'record');
         },
-        (root) => expect(root.structure?.p?.structure?.child?.emit).toBe('P'),
+        (root) =>
+          expect(
+            root.childrenByName?.p?.childrenByName?.child?.storedOutputValue,
+          ).toBe('P'),
       );
       const expected = run('record');
       decisions.length = 0;

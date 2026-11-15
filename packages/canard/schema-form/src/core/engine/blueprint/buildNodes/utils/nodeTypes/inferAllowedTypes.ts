@@ -47,7 +47,7 @@ export const inferAllowedTypes = (
   isBranch = false,
 ): Optional<readonly SchemaTypeName[]> => {
   if (visiting.includes(schemaPath)) return EMPTY_ARRAY;
-  const cycle = isBranch ? { found: false } : undefined;
+  const cycle = isBranch ? { isFound: false } : undefined;
   const parts = collectStaticSchemas(
     context,
     schema,
@@ -55,7 +55,7 @@ export const inferAllowedTypes = (
     EMPTY_ARRAY,
     cycle,
   );
-  const hasBranchCycle = isBranch && cycle?.found;
+  const hasBranchCycle = isBranch && cycle?.isFound;
   let hasTypeCycle: boolean;
   if (!hasBranchCycle) {
     hasTypeCycle = false;

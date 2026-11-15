@@ -39,7 +39,7 @@ export const pruneSlotSources = <Self extends FieldNodeRecord<Self>>(
     host.inactiveSlots?.clear();
     host.inactiveSlotOverlays?.clear();
     for (const child of host.inactiveSlotChildren?.values() ?? [])
-      if (host.structure?.[child.name] === child && !child.detached)
+      if (host.childrenByName?.[child.name] === child && !child.isDetached)
         clear(child);
   };
   const patch = (
@@ -47,7 +47,7 @@ export const pruneSlotSources = <Self extends FieldNodeRecord<Self>>(
     overlay: Optional<InactiveSlotOverlay>,
     position: number,
   ): InactiveSlotOverlay => {
-    if (position === parts.length) return { replace: true };
+    if (position === parts.length) return { isWhole: true };
     const children = new Map(overlay?.children);
     for (const entry of getSlotEntries(instance, overlay)) {
       if (entry.name !== parts[position]) continue;
@@ -81,8 +81,8 @@ export const pruneSlotSources = <Self extends FieldNodeRecord<Self>>(
           ),
         );
     }
-    const live = host.structure?.[name];
-    if (live && !live.detached) visit(live, position + 1);
+    const live = host.childrenByName?.[name];
+    if (live && !live.isDetached) visit(live, position + 1);
   };
   visit(root, 0);
 };

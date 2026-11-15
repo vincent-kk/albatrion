@@ -132,7 +132,7 @@ export const populateVirtualNodes = (
             host.childEntries.length + groups.size,
           ],
           role: 'declaration',
-          inherited: declaration.inherited,
+          isInherited: declaration.isInherited,
           hostPath: host.path,
           fragment: context.fragments[declaration.fragmentId],
         },
@@ -170,7 +170,7 @@ export const populateVirtualNodes = (
       schemaPath: group.declarations[0].schemaPath,
       kind: 'virtual',
       schemaType: undefined,
-      nullable: false,
+      isNullable: false,
       strategy: resolveNodeStrategy(context, 'virtual', group.declarations),
       declarations:
         process.env.NODE_ENV !== 'production'

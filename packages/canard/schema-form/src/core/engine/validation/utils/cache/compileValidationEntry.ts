@@ -16,15 +16,15 @@ export const compileValidationEntry = (
   authoredRoot: BlueprintSchema,
   entry: ValidationEntry,
 ): void => {
-  if (entry.compiled) return;
-  entry.compiled = true;
+  if (entry.isCompiled) return;
+  entry.isCompiled = true;
   evictSameIdRoots(validator, authoredRoot);
   try {
     entry.validate = validator.compile(entry.copy);
     clearDuplicateGuardFailures(entry);
   } catch (error) {
     entry.failure = error;
-    entry.duplicate =
+    entry.isDuplicate =
       error instanceof Error &&
       DUPLICATE_SCHEMA_ID_MESSAGE.test(error.message) &&
       hasRetainedValidationRootId(validator, authoredRoot);

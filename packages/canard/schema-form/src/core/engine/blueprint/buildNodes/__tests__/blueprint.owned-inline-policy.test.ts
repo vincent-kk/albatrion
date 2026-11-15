@@ -310,7 +310,7 @@ describe('owned-inline ownership and protection', () => {
     expect(
       mergeEffectiveSchema(createEffectiveFieldNode([false]), []),
     ).not.toBe(first);
-    expect(first).toEqual({ schema: false, typeConflict: false });
+    expect(first).toEqual({ schema: false, hasTypeConflict: false });
     expect(Object.isFrozen(first)).toBe(DEVELOPMENT);
   });
 

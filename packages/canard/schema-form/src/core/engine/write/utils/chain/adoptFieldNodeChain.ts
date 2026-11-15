@@ -37,7 +37,7 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   const next = nextRoot.runtime;
   next.entryDepth = previous.entryDepth;
   next.chainRoot = nextRoot;
-  next.chainInitialEmit = previous.chainInitialEmit;
+  next.chainInitialOutputValue = previous.chainInitialOutputValue;
   next.chainErrors = previous.chainErrors;
   next.chainOrigin = previous.chainOrigin;
   next.chainOccurrences = previous.chainOccurrences;
@@ -45,7 +45,7 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   next.errorReporter ??= previous.errorReporter;
   next.feedbackBudget = previous.feedbackBudget;
   next.feedbackBlockedListeners = previous.feedbackBlockedListeners;
-  next.feedbackLimitReported = previous.feedbackLimitReported;
+  next.isFeedbackLimitReported = previous.isFeedbackLimitReported;
   next.currentListener = previous.currentListener;
   next.onChangeBudget = previous.onChangeBudget;
   next.batchDepth = previous.batchDepth;
@@ -57,7 +57,7 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
     : undefined;
   next.deliveries = previous.deliveries;
   next.queuedNonSettleEvents = previous.queuedNonSettleEvents;
-  next.stateChanged = previous.stateChanged;
+  next.hasStateChanged = previous.hasStateChanged;
   next.adoptedExternalErrors = new Map(previous.adoptedExternalErrors);
   for (const [node, errors] of previous.nodeErrors ?? [])
     if (
@@ -124,7 +124,7 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
     previous.visitBatchEntry = undefined;
     previous.deliveries = undefined;
     previous.queuedNonSettleEvents = undefined;
-    previous.stateChanged = undefined;
+    previous.hasStateChanged = undefined;
     previous.chainOccurrences = undefined;
     previous.enclosingChain = undefined;
     previous.pendingWarningRecords = undefined;

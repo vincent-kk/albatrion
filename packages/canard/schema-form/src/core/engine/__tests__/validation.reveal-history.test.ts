@@ -43,7 +43,7 @@ const fixture = () => {
 };
 it('IR-6 H separate standalone writes retain every pre-change state in generation order', () => {
   const { a, runtime } = fixture();
-  runtime.validationPending = true;
+  runtime.isValidationPending = true;
   const first = a.interactionState;
   dispatchSetState(a, { 4: false });
   const second = a.interactionState;
@@ -129,7 +129,7 @@ it.each(['setState', 'setSubtreeState', 'clearState'] as const)(
 it('IR-6 D accepted root validation releases quiet history without a frame', async () => {
   const { root, a, runtime } = fixture();
   dispatchSetState(a, { 4: true });
-  expect(runtime.validationPending).toBeFalsy();
+  expect(runtime.isValidationPending).toBeFalsy();
   await dispatchValidate(root);
   expect(a.revealBaseline).toBeUndefined();
   expect(runtime.revealDropTask).toBeUndefined();
@@ -164,7 +164,7 @@ it('IR-6 H disposal clears release listeners before settling and stays silent', 
     revealReleaseListeners: listeners,
     revealPolicy: { value: false, entries: [] },
   });
-  runtime.validationPending = true;
+  runtime.isValidationPending = true;
   dispatchSetState(a, { 4: true });
   disposeFieldNodeTree(root);
   expect(listeners.size).toBe(0);

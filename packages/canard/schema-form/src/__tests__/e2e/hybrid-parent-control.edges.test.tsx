@@ -412,7 +412,7 @@ it('E12 preserves a draft emitted through a renderer Input callback override', a
   expect(form.field('')).toBe(input);
 });
 
-it('E13 preserves both child emissions in one event when the parent uses an updater', async () => {
+it('E13 preserves both child output values in one event when the parent uses an updater', async () => {
   form = await renderForm(schemaFor());
   const a = form.field('/a')!;
   const b = form.field('/b')!;

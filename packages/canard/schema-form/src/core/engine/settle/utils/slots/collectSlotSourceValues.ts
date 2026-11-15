@@ -42,19 +42,19 @@ export const collectSlotSourceValues = <Self extends FieldNodeRecord<Self>>(
   const ownsSource = overlay !== undefined && hasOwnProperty(overlay, 'source');
   const source = ownsSource
     ? overlay?.source
-    : overlay?.replace
+    : overlay?.isWhole
       ? undefined
       : instance?.source;
   const array = template.kind === 'array' && template.strategy === 'branch';
   const composed =
-    array && instance !== undefined && !ownsSource && !overlay?.replace;
+    array && instance !== undefined && !ownsSource && !overlay?.isWhole;
   let value: unknown;
   if (!patchOnly || ownsSource) {
     if (template.strategy === 'terminal') value = source;
     else if (
       source !== undefined &&
       ((array && isArray(source)) ||
-        isMisfit(source, template.schemaType, template.nullable))
+        isMisfit(source, template.schemaType, template.isNullable))
     )
       value = source;
     else if (composed) {
@@ -68,7 +68,7 @@ export const collectSlotSourceValues = <Self extends FieldNodeRecord<Self>>(
         : materialized;
     }
   }
-  if (value !== undefined && !live && !overlay?.packedArrayInput)
+  if (value !== undefined && !live && !overlay?.isPackedArrayInput)
     values.push({
       order,
       entry: readSlotValueEntry(instance, overlay, path, value, composed),
@@ -93,7 +93,7 @@ export const collectSlotSourceValues = <Self extends FieldNodeRecord<Self>>(
       child.overlay,
       appendSegment(path, entry.name),
       [...order, getSlotEntryPosition(template, entry)],
-      live?.structure?.[entry.name],
+      live?.childrenByName?.[entry.name],
       values,
       patchOnly || (packed && !candidate),
     );

@@ -16,7 +16,7 @@ export const resetFieldNodeSubtree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   option: WriteOption,
 ): void => {
-  if (node.detached) return;
+  if (node.isDetached) return;
   const value = getLoadValue(node.runtime.loadSnapshot, node.path);
   node.runtime.loadSnapshot = setLoadValue(
     node.runtime.loadSnapshot,

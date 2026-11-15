@@ -31,15 +31,17 @@ it('keeps caller whole coverage after a later automatic write in its batch', () 
     },
   });
   dispatchSetValue(root, { open: true, group: { x: 'before' } });
-  const x = root.structure!.group.structure!.x;
+  const x = root.childrenByName!.group.childrenByName!.x;
   dispatchBatch(root, () => {
     dispatchSetValue(x, ' caller ');
     dispatchFinishInput(x);
-    dispatchSetValue(root.structure!.open, false);
+    dispatchSetValue(root.childrenByName!.open, false);
   });
   expect(resolver).not.toHaveBeenCalled();
-  dispatchSetValue(root.structure!.open, true);
-  expect(root.structure!.group.structure!.x.local).toBe('caller');
+  dispatchSetValue(root.childrenByName!.open, true);
+  expect(root.childrenByName!.group.childrenByName!.x.storedValue).toBe(
+    'caller',
+  );
 });
 
 it('keeps whole coverage when a later empty merge shares its batch', () => {
@@ -86,8 +88,10 @@ it('treats a form input merge like a caller merge', () => {
   dispatchSetValue(root, { open: true, group: { x: 'before' } });
   dispatchWriteInput(root, { open: false, group: {} }, WriteOption.Merge);
   expect(resolver).toHaveBeenCalledTimes(1);
-  dispatchSetValue(root.structure!.open, true);
-  expect(root.structure!.group.structure!.x.local).toBe('resolved');
+  dispatchSetValue(root.childrenByName!.open, true);
+  expect(root.childrenByName!.group.childrenByName!.x.storedValue).toBe(
+    'resolved',
+  );
 });
 
 it('treats a received key below a batched merge as a whole input', () => {

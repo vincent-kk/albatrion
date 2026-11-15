@@ -38,12 +38,12 @@ it('does not enter any empty phase on first or later singleton writes', () => {
   ];
   for (const value of ['first', 'later']) {
     writeFieldNode(
-      root.structure!.value,
+      root.childrenByName!.value,
       value,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.emit).toEqual({ value, sibling: 3 });
+    expect(root.storedOutputValue).toEqual({ value, sibling: 3 });
     expect(spies.map((spy) => spy.mock.calls.length)).toEqual([
       0, 0, 0, 0, 0, 0, 0,
     ]);
@@ -68,7 +68,7 @@ it('keeps appearance fills and array finalization when their inputs exist', () =
     FieldNodeWriteKind.CallerReplace,
     WriteOption.Overwrite,
   );
-  expect(root.emit).toEqual([{ value: 'filled' }]);
+  expect(root.storedOutputValue).toEqual([{ value: 'filled' }]);
   expect(fill).toHaveBeenCalledTimes(1);
   expect(exit).toHaveBeenCalledTimes(1);
   expect(align).toHaveBeenCalledTimes(1);
@@ -79,8 +79,8 @@ it('keeps appearance fills and array finalization when their inputs exist', () =
     FieldNodeWriteKind.CallerReplace,
     WriteOption.Overwrite,
   );
-  expect(root.emit).toEqual([]);
-  expect(departed.detached).toBe(true);
+  expect(root.storedOutputValue).toEqual([]);
+  expect(departed.isDetached).toBe(true);
   expect(exit).toHaveBeenCalledTimes(2);
   expect(align).toHaveBeenCalledTimes(2);
   expect(run).not.toHaveBeenCalled();
@@ -108,12 +108,12 @@ it('does not skip gates, rule evaluation or rule commits with actual work', () =
   const policy = vi.spyOn(exitRules, 'commitExitPolicyValues');
   const exit = vi.spyOn(exits, 'finalizeExits');
   writeFieldNode(
-    root.structure!['source'],
+    root.childrenByName!['source'],
     0,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
-  expect(root.emit).toEqual({ source: 0, target: 1 });
+  expect(root.storedOutputValue).toEqual({ source: 0, target: 1 });
   expect(run).toHaveBeenCalledTimes(1);
   expect(run.mock.calls[0][0].deriveRounds).toBe(1);
   expect(commit).toHaveBeenCalledTimes(1);

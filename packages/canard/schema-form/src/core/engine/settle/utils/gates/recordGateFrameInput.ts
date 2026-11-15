@@ -9,7 +9,7 @@ import type { GateWheelFrame, GateWheelInput } from '../../types/gateWheel';
  * @returns Nothing; stores the first input and marks differing repeats inconsistent
  */
 export const recordGateFrameInput = (
-  frame: Optional<Pick<GateWheelFrame, 'inputs' | 'consistent'>>,
+  frame: Optional<Pick<GateWheelFrame, 'inputs' | 'isConsistent'>>,
   input: GateWheelInput,
 ): void => {
   if (!frame) return;
@@ -18,6 +18,6 @@ export const recordGateFrameInput = (
     (input.kind === 'value' ? input.path : `${input.kind}:${input.path}`);
   const previous = frame.inputs.get(key);
   if (previous) {
-    if (!Object.is(previous.value, input.value)) frame.consistent = false;
+    if (!Object.is(previous.value, input.value)) frame.isConsistent = false;
   } else frame.inputs.set(key, input);
 };

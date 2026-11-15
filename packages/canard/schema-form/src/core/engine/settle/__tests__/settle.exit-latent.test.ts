@@ -43,7 +43,7 @@ describe('latent descendant exit policies', () => {
       const parse = vi.spyOn(JSON, 'parse');
       try {
         writeFieldNode(
-          root.structure!.flag,
+          root.childrenByName!.flag,
           false,
           FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
@@ -84,7 +84,7 @@ describe('latent descendant exit policies', () => {
       FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
-    expect(root.structure?.secret).toBeUndefined();
+    expect(root.childrenByName?.secret).toBeUndefined();
     expect(readRetainedSlotSource(root, '/secret', 'string')).toBe('held');
   });
 
@@ -109,13 +109,13 @@ describe('latent descendant exit policies', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.clear,
+      root.childrenByName!.clear,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -159,14 +159,14 @@ describe('latent descendant exit policies', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.outer.structure!.kind,
+      root.childrenByName!.outer.childrenByName!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(readRetainedSlotSource(root, '/outer/value', 'string')).toBe('held');
     writeFieldNode(
-      root.structure!.show,
+      root.childrenByName!.show,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -210,7 +210,7 @@ describe('latent descendant exit policies', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.branch.structure!.gate,
+      root.childrenByName!.branch.childrenByName!.gate,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.DisableAutomaticWrites,
@@ -224,7 +224,7 @@ describe('latent descendant exit policies', () => {
       ),
     ).toBe(false);
     writeFieldNode(
-      root.structure!.show,
+      root.childrenByName!.show,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,

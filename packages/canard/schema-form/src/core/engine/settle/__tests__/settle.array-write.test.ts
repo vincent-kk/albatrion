@@ -45,7 +45,7 @@ describe('array settlement writes', () => {
       edited: true,
     });
     expect(root.children!.map((item) => item.itemKey)).toEqual([0, 1, 2]);
-    expect(root.local).toEqual(['x', 'y', 'z']);
+    expect(root.storedValue).toEqual(['x', 'y', 'z']);
   });
 
   it('WRITE-090 and LANDING-202 fill only a new tail on a non-load write', () => {
@@ -109,7 +109,7 @@ describe('array settlement writes', () => {
     root.setValue(['x'], WriteOption.Merge);
     expect(root.value).toEqual(['x']);
     expect(root.children).toEqual([first]);
-    expect(Reflect.get(perished, 'detached')).toBe(true);
+    expect(Reflect.get(perished, 'isDetached')).toBe(true);
     expect(perished.value).toBe('b');
     expect(hasRetainedSlotOwnSource(root, '/1', 'string')).toBe(false);
   });
@@ -129,7 +129,7 @@ describe('array settlement writes', () => {
     expect(root.itemCount).toBe(4);
     expect(root.children).toHaveLength(2);
     expect(root.extras).toEqual(['c', 'd']);
-    expect(root.local).toEqual(['a', 2, 'c', 'd']);
+    expect(root.storedValue).toEqual(['a', 2, 'c', 'd']);
     expect(root.children![0].schemaType).toBe(
       root.blueprintNode.prefixItems![0].schemaType,
     );
@@ -199,7 +199,7 @@ describe('array settlement writes', () => {
     expect(root.itemCount).toBe(0);
     expect(root.children).toEqual([]);
     expect(root.extras).toBeUndefined();
-    expect(old.detached).toBe(true);
+    expect(old.isDetached).toBe(true);
     writeFieldNode(
       root,
       ['b'],

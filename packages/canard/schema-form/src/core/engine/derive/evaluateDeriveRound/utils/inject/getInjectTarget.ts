@@ -39,7 +39,7 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
       String(index) === name
         ? getItemEntries(template, index)
         : undefined;
-    const selected = live?.structure?.[name]?.blueprintNode;
+    const selected = live?.childrenByName?.[name]?.blueprintNode;
     const item = items?.find((entry) => entry.node === selected) ?? items?.[0];
     if (items) siblings = items;
     const found = item
@@ -47,10 +47,11 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
       : getDeriveChildEntry(template, name);
     if (!found) return undefined;
     order.push(found.position);
-    const structure: Nullable<Dictionary<Self>> = live?.structure ?? null;
+    const childrenByName: Nullable<Dictionary<Self>> =
+      live?.childrenByName ?? null;
     live =
-      structure && hasOwnProperty(structure, name)
-        ? structure[name]
+      childrenByName && hasOwnProperty(childrenByName, name)
+        ? childrenByName[name]
         : undefined;
     template = live?.blueprintNode ?? found.entry.node;
   }

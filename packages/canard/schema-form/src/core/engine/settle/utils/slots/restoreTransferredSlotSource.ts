@@ -43,7 +43,7 @@ export const restoreTransferredSlotSource = <
   if (distribution)
     context.distributedInputs.set(node, {
       ...distribution,
-      preserveLatent: true,
+      shouldPreserveLatent: true,
     });
   markRestoredSlotSource(node, context);
 };

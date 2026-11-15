@@ -40,7 +40,7 @@ describe('18C-53 reference schemaPath attribution', () => {
     const { root } = createDispatchTree(schema, undefined, validator);
     dispatchMount(root, { kind: 'x', value: 'a' });
     routeValidationIssues([root], ajv8Issues);
-    const shown = readFieldNodeErrors(root.structure?.value ?? root);
+    const shown = readFieldNodeErrors(root.childrenByName?.value ?? root);
     expect(
       shown.some((issue) => issue.schemaPath?.includes('$defs/xRule')),
     ).toBe(true);
@@ -67,11 +67,11 @@ describe('18C-53 reference schemaPath attribution', () => {
     ];
     routeValidationIssues([root], legacyShapes);
     expect(runtime.globalErrors).toBe(legacyShapes);
-    expect(readFieldNodeErrors(root.structure?.value ?? root)).toContain(
+    expect(readFieldNodeErrors(root.childrenByName?.value ?? root)).toContain(
       legacyShapes[0],
     );
-    expect(readFieldNodeErrors(root.structure?.value ?? root)).not.toContain(
-      legacyShapes[1],
-    );
+    expect(
+      readFieldNodeErrors(root.childrenByName?.value ?? root),
+    ).not.toContain(legacyShapes[1]);
   });
 });

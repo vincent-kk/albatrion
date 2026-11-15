@@ -7,9 +7,9 @@ import { getLoadValue } from '../loadValues/getLoadValue';
 import { getSlotPathNames } from '../slots/getSlotPathNames';
 
 /**
- * Bind exit resolvers to the preceding committed emission and schemas.
+ * Bind exit resolvers to the preceding committed output value and schemas.
  * @param node - Occurrence about to leave its last active lifetime
- * @param context - Settlement holding the previous emission and binding context
+ * @param context - Settlement holding the previous output value and binding context
  * @returns The injectTo-shaped context without any current-round value reads
  */
 export const getInactiveValueContext = <Self extends FieldNodeRecord<Self>>(
@@ -30,7 +30,7 @@ export const getInactiveValueContext = <Self extends FieldNodeRecord<Self>>(
       context.originalSchemas.get(node.path)?.schema ?? node.schema.schema,
     parentValue: parent
       ? getLoadValue(
-          context.previousEmit,
+          context.previousOutputValue,
           parentPath,
           getSlotPathNames(node.runtime, parentPath),
         )
@@ -39,7 +39,7 @@ export const getInactiveValueContext = <Self extends FieldNodeRecord<Self>>(
       ? (context.originalSchemas.get(parent.path)?.schema ??
         parent.schema.schema)
       : null,
-    rootValue: context.previousEmit,
+    rootValue: context.previousOutputValue,
     rootJSONSchema:
       context.originalSchemas.get(root.path)?.schema ?? root.schema.schema,
     context: context.previousContext ?? {},

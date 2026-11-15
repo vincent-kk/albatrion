@@ -48,7 +48,7 @@ const expectResting = (...trees: Tree[]): void => {
       'currentListener',
     ])
       expect(Reflect.get(runtime, key), key).toBeUndefined();
-    expect(Reflect.get(runtime, 'flushingQueuedEvents') ?? false).toBe(false);
+    expect(Reflect.get(runtime, 'isFlushingQueuedEvents') ?? false).toBe(false);
   }
 };
 

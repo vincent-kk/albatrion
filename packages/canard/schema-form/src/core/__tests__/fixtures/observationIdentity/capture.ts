@@ -97,13 +97,13 @@ function stateOf(
     root: node.rootNode,
     source: node.source,
     extras: node.extras,
-    local: node.local,
-    emit: node.emit,
+    storedValue: node.storedValue,
+    storedOutputValue: node.storedOutputValue,
     value: node.value,
-    output: node.outputValue,
+    outputValue: node.outputValue,
     defaultValue: node.defaultValue,
     children: node.children,
-    structure: node.structure,
+    childrenByName: node.childrenByName,
     schema: node.schema.schema,
     isActive: node.isActive,
     isVisible: node.isVisible,
@@ -113,7 +113,7 @@ function stateOf(
     state: node.interactionState,
     revisions: { ...node.revisionLedger },
     delivery: node.pendingDelivery,
-    detached: node.detached,
+    isDetached: node.isDetached,
     errors: node.errors,
     isMisfit: node.isMisfit,
     inactiveValues: node.inactiveValues,
@@ -183,7 +183,7 @@ export function captureObservationState(
       const owner = known.find((node) => readExistingId(node) === parts[7]);
       if (
         !owner ||
-        owner.detached ||
+        owner.isDetached ||
         !current.includes(owner) ||
         owner.runtime !== runtime ||
         owner.rootNode !== root
@@ -299,7 +299,12 @@ export function captureObservation(
     referenceMatrix.push({ preRequested: codec.id(preRequested) });
   const retain = () =>
     known
-      .flatMap((node) => [node.children, node.extras, node.local, node.emit])
+      .flatMap((node) => [
+        node.children,
+        node.extras,
+        node.storedValue,
+        node.storedOutputValue,
+      ])
       .concat([root.runtime.loadSnapshot]);
   const run = (action: () => unknown) => {
     const containers = retain();
@@ -327,8 +332,8 @@ export function captureObservation(
         parent: node.parent ? codec.nodes.get(node.parent) : null,
         children: codec.id(node.children),
         extras: codec.id(node.extras),
-        local: codec.id(node.local),
-        emit: codec.id(node.emit),
+        storedValue: codec.id(node.storedValue),
+        storedOutputValue: codec.id(node.storedOutputValue),
         snapshot: codec.id(root.runtime.loadSnapshot),
       })),
     );

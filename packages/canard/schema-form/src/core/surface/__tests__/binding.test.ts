@@ -4,7 +4,7 @@ import { adoptFieldNodeTree } from '../utils/binding/adoptFieldNodeTree';
 import { buildFieldNodeTree } from '../utils/binding/buildFieldNodeTree';
 import { finishFieldNodeInput } from '../utils/binding/finishFieldNodeInput';
 import { mountFieldNode } from '../utils/binding/mountFieldNode';
-import { readFieldNodeInteractionReset } from '../utils/binding/readFieldNodeInteractionReset';
+import { readFieldNodeInteractionEpoch } from '../utils/binding/readFieldNodeInteractionEpoch';
 import { reloadFieldNodeForm } from '../utils/binding/reloadFieldNodeForm';
 import { writeFieldNodeInput } from '../utils/binding/writeFieldNodeInput';
 
@@ -38,10 +38,10 @@ describe('binding-only surface', () => {
     writeFieldNodeInput(child, ' changed ');
     finishFieldNodeInput(child);
     expect(child.value).toBe('changed');
-    expect(readFieldNodeInteractionReset(child)).toBe(0);
+    expect(readFieldNodeInteractionEpoch(child)).toBe(0);
     reloadFieldNodeForm(root, root.defaultValue);
     expect(child.value).toBe('initial');
-    expect(readFieldNodeInteractionReset(child)).toBe(1);
+    expect(readFieldNodeInteractionEpoch(child)).toBe(1);
   });
 
   it('WRITE-046 binding adoption preserves old values and rejects unmarked writes', () => {

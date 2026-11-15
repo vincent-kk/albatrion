@@ -24,9 +24,9 @@ describe('commit candidate membership', () => {
       },
     });
     loadFieldNodeAtMount(root, { a: 'a', b: 'b', extra: 'x' }, 0);
-    const a = root.structure!.a,
-      b = root.structure!.b,
-      extra = root.structure!.extra;
+    const a = root.childrenByName!.a,
+      b = root.childrenByName!.b,
+      extra = root.childrenByName!.extra;
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(
       root,
@@ -44,7 +44,7 @@ describe('commit candidate membership', () => {
       markCommitDeliveries(context, (node) => order.push(node.path));
       expect(order).toEqual(['/b', '', '/a', '/extra']);
       for (const node of [extra, b, a, root]) {
-        expect(node.pendingRevision).toBe(0);
+        expect(node.pendingRevisionMask).toBe(0);
         expect(node.revisionLedger[FieldNodeEventType.RequestFocus]).toBe(1);
       }
     } finally {

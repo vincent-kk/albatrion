@@ -26,14 +26,14 @@ export const dispatchSetSubtreeState = <Self extends FieldNodeRecord<Self>>(
   state: NodeStateFlags,
 ): void => {
   assertFieldNodeWritable(node);
-  if (node.detached) return;
+  if (node.isDetached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
   if (refuseListenerFeedback(runtime)) return;
   advanceFieldNodeRevealSequence(node);
   const deltas = new Map<string, number>();
   visitFieldNodes(node, (current) => {
-    if (current.detached) return false;
+    if (current.isDetached) return false;
     const previous = current.interactionState;
     patchFieldNodeInteractionState(current, state);
     if (previous !== current.interactionState) {
@@ -45,7 +45,7 @@ export const dispatchSetSubtreeState = <Self extends FieldNodeRecord<Self>>(
       );
       if (current.deliveryChanges & FieldNodeEventType.UpdateState)
         current.deliveryPreviousState = current.interactionState;
-      runtime.stateChanged = true;
+      runtime.hasStateChanged = true;
       queueNonSettleEvent(
         current,
         FieldNodeEventType.UpdateState,

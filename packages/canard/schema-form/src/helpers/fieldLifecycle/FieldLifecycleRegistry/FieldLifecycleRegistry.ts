@@ -10,7 +10,7 @@ import type { FieldLifecycleHandler } from '../types/fieldLifecycle';
 /** Cancellation remains visible after the queue is detached from its Map. */
 interface Entry {
   /** False after cancellation or execution. */
-  active: boolean;
+  isActive: boolean;
   /** Pure action producer owned by this reservation. */
   handler: FieldLifecycleHandler;
 }
@@ -63,12 +63,12 @@ export class FieldLifecycleRegistry {
     const map = this.queues[lifecycle];
     let queue = map.get(node);
     if (!queue) map.set(node, (queue = []));
-    const entry: Entry = { active: true, handler };
+    const entry: Entry = { isActive: true, handler };
     queue.push(entry);
     this.pendingMask |= lifecycle;
     return () => {
-      if (!entry.active) return;
-      entry.active = false;
+      if (!entry.isActive) return;
+      entry.isActive = false;
       if (map.get(node) !== queue) return;
       queue.splice(queue.indexOf(entry), 1);
       if (queue.length === 0) map.delete(node);
@@ -91,8 +91,8 @@ export class FieldLifecycleRegistry {
     const event = Object.freeze({ node, type: lifecycle });
     let action = FieldLifecycleAction.None;
     for (const entry of queue) {
-      if (!entry.active) continue;
-      entry.active = false;
+      if (!entry.isActive) continue;
+      entry.isActive = false;
       try {
         action |= entry.handler(event);
       } catch (error) {

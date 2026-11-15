@@ -72,12 +72,12 @@ describe('candidate-owned latent descendant cleanup', () => {
         b: false,
         ...(slot === 'property' ? {} : { list: [{}] }),
       };
-      expect(root.local).toEqual(absent);
-      expect(root.emit).toEqual(absent);
+      expect(root.storedValue).toEqual(absent);
+      expect(root.storedOutputValue).toEqual(absent);
       expect(
         events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
       ).toMatchObject({
-        current: { local: absent, emit: absent },
+        current: { value: absent, outputValue: absent },
       });
       await dispatchValidate(root);
       expect(validationInputs.at(-1)).toEqual(absent);
@@ -88,12 +88,12 @@ describe('candidate-owned latent descendant cleanup', () => {
           ? getDispatchNode(root, 'box', 'v')
           : getDispatchNode(root, 'list', '0');
       expect(getDispatchNode(candidate, 'x').source).toBe(5);
-      expect(root.local).toEqual(initial);
-      expect(root.emit).toEqual(initial);
+      expect(root.storedValue).toEqual(initial);
+      expect(root.storedOutputValue).toEqual(initial);
       expect(
         events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
       ).toMatchObject({
-        current: { local: initial, emit: initial },
+        current: { value: initial, outputValue: initial },
       });
       await dispatchValidate(root);
       expect(validationInputs.at(-1)).toEqual(initial);

@@ -27,7 +27,7 @@ export const commitGlobalState = <Self extends FieldNodeRecord<Self>>(
   const deltas = new Map<string, number>();
   const departing = new Set<Self>();
   const pending = [...context.exited];
-  for (const node of context.perished) if (node.detached) pending.push(node);
+  for (const node of context.perished) if (node.isDetached) pending.push(node);
   while (pending.length) {
     const node = pending.pop();
     if (!node || departing.has(node)) continue;
@@ -38,13 +38,13 @@ export const commitGlobalState = <Self extends FieldNodeRecord<Self>>(
   if (
     context.kind === FieldNodeWriteKind.Load &&
     context.loadScope &&
-    !context.loadScope.detached
+    !context.loadScope.isDetached
   ) {
     const pending = [context.loadScope];
     loadNodes = new Set<Self>();
     while (pending.length) {
       const node = pending.pop();
-      if (!node || node.detached || loadNodes.has(node)) continue;
+      if (!node || node.isDetached || loadNodes.has(node)) continue;
       loadNodes.add(node);
       for (const child of node.children ?? []) pending.push(child);
     }
@@ -58,15 +58,15 @@ export const commitGlobalState = <Self extends FieldNodeRecord<Self>>(
           ? (node.deliveryPreviousState ?? node.interactionState)
           : node.interactionState;
       if (departing.size && departing.has(node)) {
-        if (!context.entered.has(node) || node.deliveryInitialized)
+        if (!context.entered.has(node) || node.isDeliveryInitialized)
           accumulateGlobalStateDeltas(deltas, previousState, {});
-        if (node.detached) return;
+        if (node.isDetached) return;
       }
-      if (node.detached) return;
+      if (node.isDetached) return;
       if (context.entered.size && context.entered.has(node)) {
         accumulateGlobalStateDeltas(
           deltas,
-          node.deliveryInitialized ? previousState : {},
+          node.isDeliveryInitialized ? previousState : {},
           node.interactionState,
         );
         return;

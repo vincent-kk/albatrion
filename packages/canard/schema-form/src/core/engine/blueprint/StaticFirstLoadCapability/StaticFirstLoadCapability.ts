@@ -4,6 +4,6 @@ import type { Blueprint } from '../types/blueprint';
 export class StaticFirstLoadCapability {
   /** Read the fixed proof without scanning declarations or allocating storage. */
   static has(blueprint: Blueprint): boolean {
-    return blueprint.staticFirstLoadEligible === true;
+    return blueprint.isStaticFirstLoadEligible === true;
   }
 }

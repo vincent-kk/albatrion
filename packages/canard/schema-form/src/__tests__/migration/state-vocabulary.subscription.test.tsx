@@ -37,7 +37,7 @@ const DivergenceProbe = ({ node }: { node: FieldNode }) => {
   return <output data-testid="divergence">{String(node.isDivergent)}</output>;
 };
 
-it('root output events refresh a trimmed array item with no local value, path or state event', () => {
+it('root output events refresh a trimmed array item with no stored value, path or state event', () => {
   const ref = createRef<FormHandle>();
   const schema: JSONSchema = {
     type: 'array',
@@ -55,14 +55,14 @@ it('root output events refresh a trimmed array item with no local value, path or
     const probe = render(<DivergenceProbe node={node} />);
     try {
       expect(probe.getByTestId('divergence').textContent).toBe('false');
-      const local: number[] = [];
-      const unsubscribe = node.subscribe(({ type }) => local.push(type));
+      const eventTypes: number[] = [];
+      const unsubscribe = node.subscribe(({ type }) => eventTypes.push(type));
       expect(root.outputValue).toEqual([]);
       act(() => root.push('x'));
       expect(root.outputValue).toEqual([null, 'x']);
       unsubscribe();
       expect(
-        local.every(
+        eventTypes.every(
           (type) =>
             !(
               type &

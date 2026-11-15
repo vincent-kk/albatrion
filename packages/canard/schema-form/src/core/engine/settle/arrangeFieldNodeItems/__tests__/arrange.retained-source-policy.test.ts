@@ -63,6 +63,8 @@ it.each([[false], [true]] as const)(
     expect(getDispatchNode(root, 'list').itemCount).toBe(1);
     expect(readFieldNodeInactiveValues(root)).toEqual(kept);
     dispatchSetValue(getDispatchNode(root, 'show'), true);
-    expect(getDispatchNode(root, 'list').local).toEqual([{ keep: 'held' }]);
+    expect(getDispatchNode(root, 'list').storedValue).toEqual([
+      { keep: 'held' },
+    ]);
   },
 );

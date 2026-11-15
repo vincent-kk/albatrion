@@ -70,21 +70,26 @@ export const rekeyArrayRuntimePaths = <Self>(
     key: string;
     path: string;
     record: Optional<PendingFormErrorRecord>;
-    remembered: boolean;
+    isRemembered: boolean;
   }[] = [];
   for (const key of warningKeys) {
     const parts: unknown = JSON.parse(key);
     if (!isArray(parts) || typeof parts[1] !== 'string') continue;
     const path = mapPath(parts[1]);
     const record = runtime.pendingWarningRecords?.get(key);
-    const remembered = runtime.warningKeys?.has(key) === true;
+    const isRemembered = runtime.warningKeys?.has(key) === true;
     indexFieldNodeWarning(runtime, key, parts[1], undefined, true);
     if (path === undefined) continue;
     parts[1] = path;
-    warningMoves.push({ key: JSON.stringify(parts), path, record, remembered });
+    warningMoves.push({
+      key: JSON.stringify(parts),
+      path,
+      record,
+      isRemembered,
+    });
   }
   for (const move of warningMoves) {
-    if (move.remembered) (runtime.warningKeys ??= new Set()).add(move.key);
+    if (move.isRemembered) (runtime.warningKeys ??= new Set()).add(move.key);
     indexFieldNodeWarning(runtime, move.key, move.path, move.record);
   }
   rekeyPairedPathStore(stores.declarations, changed, mapPath);

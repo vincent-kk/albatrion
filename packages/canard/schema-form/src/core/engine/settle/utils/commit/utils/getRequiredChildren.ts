@@ -19,7 +19,7 @@ export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
   const previousRequired =
     typeof previousSchema === 'object' ? previousSchema.required : undefined;
   if (
-    !host.deliveryInitialized ||
+    !host.isDeliveryInitialized ||
     host.deliveryPreviousSchema === host.schema ||
     previousRequired !== required
   )
@@ -27,9 +27,9 @@ export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
   const children: Self[] = [];
   for (const child of entered)
     if (
-      !child.detached &&
+      !child.isDetached &&
       child.parent === host &&
-      host.structure?.[child.name] === child
+      host.childrenByName?.[child.name] === child
     )
       children.push(child);
   let matches = children.length > 1;

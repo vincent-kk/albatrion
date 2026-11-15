@@ -60,7 +60,7 @@ const sequentialRoute = <Self extends FieldNodeRecord<Self>>(
     let resolved = true;
     if (path) {
       const parsed = parsePointer(path);
-      if (!parsed.absolute) continue;
+      if (!parsed.isAbsolute) continue;
       const segments = parsed.segments;
       for (
         let segmentIndex = 0;
@@ -72,12 +72,12 @@ const sequentialRoute = <Self extends FieldNodeRecord<Self>>(
           resolved = false;
           break;
         }
-        if (node.structure === null) break;
-        if (!hasOwnProperty(node.structure, key)) {
+        if (node.childrenByName === null) break;
+        if (!hasOwnProperty(node.childrenByName, key)) {
           resolved = false;
           break;
         }
-        const child = node.structure[key];
+        const child = node.childrenByName[key];
         if (!child) {
           resolved = false;
           break;
@@ -87,7 +87,7 @@ const sequentialRoute = <Self extends FieldNodeRecord<Self>>(
       if (!resolved) continue;
     }
     if (issue.rejectedKey) {
-      while (node.parent && node.structure === null) node = node.parent;
+      while (node.parent && node.childrenByName === null) node = node.parent;
     }
     if (!inScope(node)) continue;
     const previous = next.get(node) ?? [];
@@ -112,7 +112,7 @@ const sequentialRoute = <Self extends FieldNodeRecord<Self>>(
   else runtime.validationChangedNodes = changed;
   if (runtime.routedValidationErrors !== issues) {
     runtime.routedValidationErrors = issues;
-    runtime.validationListChanged = true;
+    runtime.hasValidationListChanged = true;
     updateFieldNodeGlobalErrors(root);
   }
   for (const node of changed) runtime.combinedErrors?.delete(node);
@@ -152,10 +152,10 @@ const compareRoutes = (
     defaultValue: { group: { a: 'a', b: 'b' }, outside: 'outside' },
     validationMode: 2,
   });
-  const group = root.structure?.group;
-  const a = group?.structure?.a;
-  const b = group?.structure?.b;
-  const outside = root.structure?.outside;
+  const group = root.childrenByName?.group;
+  const a = group?.childrenByName?.a;
+  const b = group?.childrenByName?.b;
+  const outside = root.childrenByName?.outside;
   if (!group || !a || !b || !outside)
     throw new Error('Missing route fixture nodes');
   const staleRoot = createRoutingTree({
@@ -199,7 +199,7 @@ const compareRoutes = (
     runtime.combinedErrors = new Map(combined);
     runtime.validationChangedNodes = undefined;
     runtime.routedValidationErrors = undefined;
-    runtime.validationListChanged = undefined;
+    runtime.hasValidationListChanged = undefined;
     runtime.globalErrors = undefined;
   };
   const targets =
@@ -220,7 +220,7 @@ const compareRoutes = (
     changed: new Set(runtime.validationChangedNodes),
     combined: new Map(runtime.combinedErrors),
     routed: runtime.routedValidationErrors,
-    listChanged: runtime.validationListChanged,
+    listChanged: runtime.hasValidationListChanged,
     global: runtime.globalErrors,
   };
   reset();
@@ -234,7 +234,7 @@ const compareRoutes = (
   expect(actualReturn).toEqual(expectedReturn);
   expect(runtime.combinedErrors).toEqual(expected.combined);
   expect(runtime.routedValidationErrors).toBe(expected.routed);
-  expect(runtime.validationListChanged).toBe(expected.listChanged);
+  expect(runtime.hasValidationListChanged).toBe(expected.listChanged);
   expect(runtime.globalErrors).toBe(expected.global);
   for (const [node, previous] of initial)
     if (expected.errors.get(node) === previous)
@@ -265,9 +265,9 @@ it('uses a detached target path for strict descendants without selecting its liv
   if (!retired) throw new Error('Missing retiring target');
   dispatchRemove(root, 0);
   const live = (root.children ?? [])[0];
-  const child = live?.structure?.a;
+  const child = live?.childrenByName?.a;
   if (!live || !child) throw new Error('Missing replacement nodes');
-  expect(retired.detached).toBe(true);
+  expect(retired.isDetached).toBe(true);
   const issue = { dataPath: '/0/a', message: 'descendant' };
   const prior = [{ dataPath: '/0', message: 'live replacement' }];
   const seed = new Map<unknown, readonly unknown[]>([
@@ -300,7 +300,7 @@ it('filters an inactive union issue and preserves rejected-key host attribution 
     defaultValue: { kind: 'x', value: 'a' },
     validationMode: 2,
   });
-  const value = root.structure?.value;
+  const value = root.childrenByName?.value;
   if (!value) throw new Error('Missing union value');
   const issues = [
     {

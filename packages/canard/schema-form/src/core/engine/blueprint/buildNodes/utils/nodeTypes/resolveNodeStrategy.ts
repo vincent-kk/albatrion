@@ -30,7 +30,7 @@ export const resolveNodeStrategy = (
   const relevant = filterArray(
     declarations,
     (declaration) =>
-      !declaration.validationOnly &&
+      !declaration.isValidationOnly &&
       (declaration.context === 'conjunction' ||
         (count === 1 && declaration.role === 'declaration')),
   );
@@ -65,7 +65,7 @@ export const resolveNodeStrategy = (
         gate.kind,
         gate.schemaPath,
         gate.hostPath,
-        gate.negated,
+        gate.isNegated,
       ]);
       let child = current.children.get(key);
       if (!child) {

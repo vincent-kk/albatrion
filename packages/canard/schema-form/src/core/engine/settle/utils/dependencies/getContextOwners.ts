@@ -50,7 +50,7 @@ export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
             const rule = declarationRules[position];
             const hasTargetedDerivation =
               rule.kind === 'derived' &&
-              (rule.targetName !== undefined || rule.targetItems);
+              (rule.targetName !== undefined || rule.isItemTarget);
             let matches: Optional<boolean>;
             if (hasTargetedDerivation) {
               matches = false;

@@ -75,7 +75,7 @@ const OBJECTS: BlueprintSchema = {
 // filid:contract settle-array-insert
 describe('array insert', () => {
   describe('matches the whole write of the same array', () => {
-    it('NODE-051 inserts in the middle with equal values, emissions, deliveries and host revisions', () => {
+    it('NODE-051 inserts in the middle with equal values, output values, deliveries and host revisions', () => {
       const { inserted, whole, observe, defaults } = compareArrayInsert(
         STRINGS,
         ['a', 'b', 'c'],
@@ -83,7 +83,7 @@ describe('array insert', () => {
         'x',
       );
       expect(inserted.result).toBe(4);
-      expect(inserted.root.local).toEqual(['a', 'x', 'b', 'c']);
+      expect(inserted.root.storedValue).toEqual(['a', 'x', 'b', 'c']);
       expect(observe(inserted)).toEqual(observe(whole));
       expect(inserted.root.revisionLedger).toEqual(whole.root.revisionLedger);
       expectInsertIdentity(inserted, 1);
@@ -121,7 +121,7 @@ describe('array insert', () => {
         { n: 'x', tags: ['y'] },
       );
       const grandchildren = inserted.before.map(
-        (item) => item.structure?.['n'],
+        (item) => item.childrenByName?.['n'],
       );
       expect(inserted.result).toBe(3);
       expect(observe(inserted)).toEqual(observe(whole));
@@ -129,13 +129,14 @@ describe('array insert', () => {
       expectInsertIdentity(inserted, 0);
       expect(defaults[0]).toEqual(['', next]);
       grandchildren.forEach((grandchild, position) => {
-        expect(inserted.root.children![position + 1].structure?.['n']).toBe(
-          grandchild,
-        );
+        expect(
+          inserted.root.children![position + 1].childrenByName?.['n'],
+        ).toBe(grandchild);
         expect(grandchild?.path).toBe('/' + (position + 1) + '/n');
       });
       expect(
-        inserted.root.children![1].structure?.['tags']?.children?.[0]?.path,
+        inserted.root.children![1].childrenByName?.['tags']?.children?.[0]
+          ?.path,
       ).toBe('/1/tags/0');
     });
 
@@ -190,8 +191,10 @@ describe('array insert', () => {
         expect(itemsOf(inserted).map(({ key, path }) => [key, path])).toEqual(
           itemsOf(pushed).map(({ key, path }) => [key, path]),
         );
-        expect(inserted.root.local).toEqual(pushed.root.local);
-        expect(inserted.root.emit).toEqual(pushed.root.emit);
+        expect(inserted.root.storedValue).toEqual(pushed.root.storedValue);
+        expect(inserted.root.storedOutputValue).toEqual(
+          pushed.root.storedOutputValue,
+        );
         expect(inserted.root.runtime.loadSnapshot).toEqual(
           pushed.root.runtime.loadSnapshot,
         );
@@ -208,9 +211,9 @@ describe('array insert', () => {
     it('35C-06 leaves the array untouched for a negative, larger, fractional or NaN index and returns the length', () => {
       for (const index of [-1, 4, 1.5, Number.NaN]) {
         const run = runArrayWrite(STRINGS, ['a', 'b', 'c'], (root) => {
-          const local = root.local;
+          const value = root.storedValue;
           const result = dispatchInsert(root, index, 'x');
-          expect(root.local).toBe(local);
+          expect(root.storedValue).toBe(value);
           return result;
         });
         expect(run.result).toBe(3);
@@ -238,10 +241,12 @@ describe('array insert', () => {
           dispatchPush(root, 'x'),
         );
         expect(inserted.result).toBe(1);
-        expect(inserted.root.local).toEqual(['x']);
+        expect(inserted.root.storedValue).toEqual(['x']);
         expect(inserted.root.source).toBeUndefined();
         expect(inserted.root.runtime.misfitPaths.size).toBe(0);
-        expect(inserted.root.emit).toEqual(pushed.root.emit);
+        expect(inserted.root.storedOutputValue).toEqual(
+          pushed.root.storedOutputValue,
+        );
         expect(inserted.deliveredPaths).toEqual(pushed.deliveredPaths);
         expect(inserted.root.runtime.loadSnapshot).toEqual(
           pushed.root.runtime.loadSnapshot,
@@ -264,7 +269,7 @@ describe('array insert', () => {
       const whole = runArrayWrite(terminal, input, (root) =>
         dispatchSetValue(root, ['a', 'x', 'b'], WriteOption.Overwrite),
       );
-      expect(run.root.emit).toEqual(whole.root.emit);
+      expect(run.root.storedOutputValue).toEqual(whole.root.storedOutputValue);
       expect(run.deliveredPaths).toEqual(whole.deliveredPaths);
       for (const index of [-1, 3, 0.5])
         expect(
@@ -305,14 +310,14 @@ describe('array insert', () => {
         FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
-      const former = root.structure!.list;
+      const former = root.childrenByName!.list;
       writeFieldNode(
-        root.structure!.show,
+        root.childrenByName!.show,
         false,
         FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
-      expect(former.detached).toBe(true);
+      expect(former.isDetached).toBe(true);
       expect(
         arrangeFieldNodeItems(former, { kind: 'insert', index: 1, value: 'x' }),
       ).toBe(2);
@@ -324,12 +329,12 @@ describe('array insert', () => {
         'b',
       ]);
       writeFieldNode(
-        root.structure!.show,
+        root.childrenByName!.show,
         true,
         FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
-      expect(root.structure!.list.local).toEqual(['a', 'b']);
+      expect(root.childrenByName!.list.storedValue).toEqual(['a', 'b']);
     });
   });
 
@@ -349,8 +354,8 @@ describe('array insert', () => {
       ]);
       dispatchSetValue(items[1], 'edited', WriteOption.Overwrite);
       dispatchResetSubtree(items[1], WriteOption.Overwrite);
-      expect(items[1].local).toBe('x');
-      expect(run.root.local).toEqual(['a', 'x', 'b', 'c']);
+      expect(items[1].storedValue).toBe('x');
+      expect(run.root.storedValue).toEqual(['a', 'x', 'b', 'c']);
     });
 
     it('WRITE-088 WRITE-099 fills an omitted value from the item default and snapshots undefined', () => {
@@ -360,7 +365,7 @@ describe('array insert', () => {
         (root) => dispatchInsert(root, 1),
       );
       expect(run.result).toBe(3);
-      expect(run.root.local).toEqual(['a', 'd', 'b']);
+      expect(run.root.storedValue).toEqual(['a', 'd', 'b']);
       expect(run.root.runtime.loadSnapshot).toEqual(['a', undefined, 'b']);
       expect(run.snapshot).toEqual(['a', 'b']);
     });

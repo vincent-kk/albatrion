@@ -17,7 +17,7 @@ export const detachPerishedNode = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   if (!departing.runtime.detachedReads?.has(departing))
     captureDetachedFieldNodeReads(departing, {
-      emit: context.previousEmit,
+      outputValue: context.previousOutputValue,
       context: context.previousContext,
       schema:
         context.originalSchemas.get(departing.path)?.schema ??
@@ -27,6 +27,6 @@ export const detachPerishedNode = <Self extends FieldNodeRecord<Self>>(
     departing.runtime.misfitPaths.delete(
       rekeyed.current + departing.path.slice(rekeyed.previous.length),
     );
-  departing.detached = true;
+  departing.isDetached = true;
   departing.isActive = captureFieldNodeChange(departing, 'isActive', false);
 };

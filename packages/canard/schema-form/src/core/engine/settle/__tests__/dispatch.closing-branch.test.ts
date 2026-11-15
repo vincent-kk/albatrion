@@ -57,7 +57,7 @@ const closeAndReopen = (
   return {
     closedSource,
     closedSize,
-    reopened: getDispatchChild(root, 'tags').emit,
+    reopened: getDispatchChild(root, 'tags').storedOutputValue,
     reopenedSize: readFieldNodeInactiveValues(root).length,
     commits,
   };
@@ -184,7 +184,7 @@ describe('nested array growth in the write that closes its branch (211C-01 A)', 
       items: [{ n: '1' }, { n: '2' }],
     });
     dispatchSetValue(getDispatchChild(root, 'kind'), 'list');
-    expect(root.emit).toEqual({
+    expect(root.storedOutputValue).toEqual({
       kind: 'list',
       group: { tags: ['a', 'b'] },
       rows: [{ sub: ['x', 'y'] }],
@@ -239,13 +239,13 @@ describe('object child first written in the write that closes its ancestor (211C
     dispatchSetValue(getDispatchChild(root, 'kind'), 'list');
     const info = getDispatchChild(root, 'info');
     return {
-      emit: info.emit,
-      b: info.structure?.b !== undefined,
-      c: getDispatchChild(info, 'obj').structure?.c !== undefined,
-      x: getDispatchChild(info, 'arr').structure?.['0'] !== undefined,
+      outputValue: info.storedOutputValue,
+      b: info.childrenByName?.b !== undefined,
+      c: getDispatchChild(info, 'obj').childrenByName?.c !== undefined,
+      x: getDispatchChild(info, 'arr').childrenByName?.['0'] !== undefined,
     };
   };
-  const restored = { emit: written, b: true, c: true, x: true };
+  const restored = { outputValue: written, b: true, c: true, x: true };
 
   it('keeps string, object and array children on a whole write that closes the ancestor', () => {
     const { root } = mountInfo();

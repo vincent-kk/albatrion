@@ -14,7 +14,7 @@ export const readFieldNodeErrors = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): readonly ValidationIssue[] => {
   const runtime = node.rootNode.runtime;
-  if (node.detached)
+  if (node.isDetached)
     return runtime.detachedReads?.get(node)?.errors ?? EMPTY_ARRAY;
   const external = runtime.nodeErrors?.get(node);
   const validation = runtime.validationErrors?.get(node);

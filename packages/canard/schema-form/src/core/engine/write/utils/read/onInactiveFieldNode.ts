@@ -15,7 +15,7 @@ export const onInactiveFieldNode = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   listener: InactiveValueResolver<unknown>,
 ): Fn => {
-  if (node.disposed || node.rootNode.disposed) return NOOP_FUNCTION;
+  if (node.isDisposed || node.rootNode.isDisposed) return NOOP_FUNCTION;
   const runtime = node.runtime;
   const listeners = (runtime.inactiveListeners ??= new Map());
   const subscriptions = listeners.get(node) ?? new Set();

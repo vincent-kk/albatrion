@@ -18,7 +18,7 @@ export const createFormErrorService = (): FormErrorService => {
   const service: FormErrorService = {
     hasConsumer: () =>
       !!service.onError || process.env.NODE_ENV !== 'production',
-    load: 0,
+    loadEpoch: 0,
     warningScope: {},
     reportInLoad(record, scope) {
       const previous = reportScope;
@@ -30,7 +30,7 @@ export const createFormErrorService = (): FormErrorService => {
       }
     },
     beginLoad: () => {
-      service.load++;
+      service.loadEpoch++;
       service.warningScope = {};
     },
     report(record) {

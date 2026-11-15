@@ -52,7 +52,7 @@ export class DirtyPathSet extends Set<string> {
   readonly childrenByParent: Map<string, Map<string, string>>;
 
   /** Ungated computation consumes live nodes only after their children. */
-  private postOrder = false;
+  private storedIsPostOrder = false;
 
   /**
    * @param childrenByParent - Scratch index cleared with this set
@@ -64,7 +64,7 @@ export class DirtyPathSet extends Set<string> {
 
   /** Whether dirty paths already use the direct-edge post-order index. */
   get isPostOrder(): boolean {
-    return this.postOrder;
+    return this.storedIsPostOrder;
   }
 
   /**
@@ -195,8 +195,8 @@ export class DirtyPathSet extends Set<string> {
    * @returns Nothing; indexes each unique prefix once in first-descendant order
    */
   beginPostOrder(): void {
-    if (this.postOrder) return;
-    this.postOrder = true;
+    if (this.storedIsPostOrder) return;
+    this.storedIsPostOrder = true;
     this.childrenByParent.clear();
     const linked = new Set<string>();
     for (const path of this) {
@@ -220,7 +220,7 @@ export class DirtyPathSet extends Set<string> {
 
   override add(path: string): this {
     if (this.has(path)) return this;
-    if (this.postOrder) {
+    if (this.storedIsPostOrder) {
       let current = path;
       while (!this.has(current)) {
         super.add(current);
@@ -259,7 +259,7 @@ export class DirtyPathSet extends Set<string> {
 
   override delete(path: string): boolean {
     if (!super.delete(path)) return false;
-    if (this.postOrder) {
+    if (this.storedIsPostOrder) {
       if (path) {
         const parent = resolvePointer(path, $.Parent);
         const children = this.childrenByParent.get(parent);
@@ -288,7 +288,7 @@ export class DirtyPathSet extends Set<string> {
    * @throws S6 verification failure in verify mode when a post-order child is still dirty
    */
   consume(path: string): boolean {
-    if (!this.postOrder) return this.delete(path);
+    if (!this.storedIsPostOrder) return this.delete(path);
     if (engineModes.gateSelection === 'verify')
       for (const child of this.childrenByParent.get(path)?.keys() ?? [])
         verifyGateSelection(
@@ -303,7 +303,7 @@ export class DirtyPathSet extends Set<string> {
   override clear(): void {
     super.clear();
     this.childrenByParent.clear();
-    this.postOrder = false;
+    this.storedIsPostOrder = false;
     this.splitOwners = undefined;
     this.splitRuns.clear();
     this.memberAnchors.clear();

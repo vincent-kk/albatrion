@@ -19,8 +19,8 @@ it('preserves values, errors, delivery payloads, revisions, commits and empty ro
     },
   });
   loadFieldNodeAtMount(root, { value: 'before' }, WriteOption.Overwrite);
-  const leaf = root.structure!.value;
-  const sibling = root.structure!.sibling;
+  const leaf = root.childrenByName!.value;
+  const sibling = root.childrenByName!.sibling;
   const siblingRevision = sibling.revisionLedger;
   let previous = 'before';
   for (let index = 0; index < 2; index++) {
@@ -37,7 +37,7 @@ it('preserves values, errors, delivery payloads, revisions, commits and empty ro
         WriteOption.Overwrite,
       ),
     ).not.toThrow();
-    expect(root.emit).toEqual({ value, sibling: 3 });
+    expect(root.storedOutputValue).toEqual({ value, sibling: 3 });
     expect(root.runtime.diagnostics.status).toBe('stable');
     expect(root.runtime.combinedErrors?.size ?? 0).toBe(0);
     expect(
@@ -68,18 +68,18 @@ it('preserves actual derive rounds, automatic delivery and deferred expression e
     },
   });
   loadFieldNodeAtMount(root, { source: 1 }, WriteOption.Overwrite);
-  const target = root.structure!.target;
+  const target = root.childrenByName!.target;
   for (const node of root.runtime.deliveries ?? [])
     node.pendingDelivery = undefined;
   root.runtime.deliveries?.clear();
   const revision = target.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0;
   writeFieldNode(
-    root.structure!['source'],
+    root.childrenByName!['source'],
     2,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
-  expect(root.emit).toEqual({ source: 2, target: 3 });
+  expect(root.storedOutputValue).toEqual({ source: 2, target: 3 });
   expect(root.runtime.commitNumber).toBe(2);
   expect(target.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(
     revision + 1,
@@ -117,7 +117,7 @@ it('preserves actual derive rounds, automatic delivery and deferred expression e
       WriteOption.Overwrite,
     ),
   ).toThrow('Derive expression failed');
-  expect(broken.emit).toEqual({ source: 1, target: 7 });
+  expect(broken.storedOutputValue).toEqual({ source: 1, target: 7 });
   expect(broken.runtime.commitNumber).toBe(1);
   expect(broken.runtime.diagnostics).toMatchObject({
     status: 'degraded',

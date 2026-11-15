@@ -10,18 +10,18 @@ import { receivedType } from '../../../utils/commit/receivedType';
 /**
  * Prepare a first-load mismatch in the same post-order finalization visit.
  * @param node - Occurrence with final source, schema and output
- * @param automatic - Whether a literal default supplied this source
+ * @param isAutomatic - Whether a literal default supplied this source
  * @returns Warning data, or undefined without allocating warning storage
  */
 export const readStaticFirstWarning = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  automatic: boolean,
+  isAutomatic: boolean,
 ): Optional<MisfitRecord> => {
   const schemaType = node.schemaType;
   const effective = effectiveType(node);
   // Only a virtual node lacks a JSON type, and it never misfits.
   if (schemaType === undefined || effective === undefined) return undefined;
-  if (!isMisfit(node.source, effective, node.nullable)) return undefined;
+  if (!isMisfit(node.source, effective, node.isNullable)) return undefined;
   const candidates = conversionCandidates(node, effective);
   const ambiguous = candidates.length > 1;
   return {
@@ -30,12 +30,12 @@ export const readStaticFirstWarning = <Self extends FieldNodeRecord<Self>>(
     path: node.path,
     expected: {
       schemaType,
-      nullable: node.nullable,
+      isNullable: node.isNullable,
       effective,
     },
     received: receivedType(node.source),
     reason: ambiguous ? 'ambiguous' : 'unconvertible',
     ...(ambiguous ? { candidates } : {}),
-    source: automatic ? 'fill' : 'load',
+    source: isAutomatic ? 'fill' : 'load',
   };
 };

@@ -38,7 +38,7 @@ it('IR-6 R-a automatic commit-only discard keeps pending and delivers the newest
   expect(runtime.commitNumber).toBeGreaterThan(commit);
   finishes[0]([{ dataPath: '', message: 'discarded' }]);
   await clock.task();
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(true);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(true);
   clock.frame();
   await clock.task();
   clock.frame();
@@ -46,7 +46,7 @@ it('IR-6 R-a automatic commit-only discard keeps pending and delivers the newest
   expect(finishes).toHaveLength(2);
   finishes[1]([{ dataPath: '', message: 'newest' }]);
   await clock.task();
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
   expect(runtime.validationResult?.issues[0]).toMatchObject({
     message: 'newest',
   });
@@ -63,20 +63,20 @@ it('IR-6 R-a an asynchronous initial explicit mount verdict requeues OnChange ev
   dispatchMount(root, 'initial', undefined, { deferValidation: true });
   runtime.validationMode = ValidationMode.OnChange;
   const mount = dispatchValidate(root);
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
   dispatchContextChange(root, { changed: true });
   finishes[0]([]);
   await mount;
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(true);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(true);
   clock.frame();
   await clock.task();
   expect(finishes).toHaveLength(2);
   finishes[1]([]);
   await clock.task();
   expect(runtime.validationResult?.commit).toBe(runtime.commitNumber);
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
 });
-it('IR-6 R-a equal-content setValue preserves emit while a changed commit still owes a current verdict', async () => {
+it('IR-6 R-a equal-content setValue preserves the output value while a changed commit still owes a current verdict', async () => {
   const clock = createValidationFrameClock();
   const finishes: ((issues: readonly []) => void)[] = [];
   const { root, runtime } = createDispatchTree(
@@ -93,14 +93,14 @@ it('IR-6 R-a equal-content setValue preserves emit while a changed commit still 
   dispatchSetValue(root, { a: 'new' });
   clock.frame();
   await clock.task();
-  const emit = root.emit;
+  const outputValue = root.storedOutputValue;
   const commit = runtime.commitNumber!;
   dispatchSetValue(root, { a: 'new' });
-  expect(root.emit).toBe(emit);
+  expect(root.storedOutputValue).toBe(outputValue);
   expect(runtime.commitNumber).toBeGreaterThan(commit);
   finishes[0]([]);
   await clock.task();
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(true);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(true);
   clock.frame();
   await clock.task();
   clock.frame();
@@ -108,7 +108,7 @@ it('IR-6 R-a equal-content setValue preserves emit while a changed commit still 
   expect(finishes).toHaveLength(2);
   finishes[1]([]);
   await clock.task();
-  expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
+  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
   expect(runtime.validationResult?.commit).toBe(runtime.commitNumber);
 });
 
@@ -153,5 +153,5 @@ it('IR-6 H commit-only retry preserves both root and subtree request targets', a
   expect(runtime.validationErrors?.get(child)).toEqual([
     expect.objectContaining({ message: 'latest' }),
   ]);
-  expect(runtime.validationPending).toBe(false);
+  expect(runtime.isValidationPending).toBe(false);
 });

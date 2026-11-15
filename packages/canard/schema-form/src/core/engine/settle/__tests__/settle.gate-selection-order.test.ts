@@ -51,11 +51,11 @@ describe('gate selection original-site shadow precondition', () => {
     expect(() => readProjectedValueWithoutPublication(context, '')).toThrow(
       'consumed or published',
     );
-    context.pendingOutputs!.add(root.structure!.kind);
+    context.pendingOutputs!.add(root.childrenByName!.kind);
     expect(() =>
       readProjectedValueWithoutPublication(context, '/kind'),
     ).toThrow('/kind');
-    context.pendingOutputs!.delete(root.structure!.kind);
+    context.pendingOutputs!.delete(root.childrenByName!.kind);
     root.source = null;
     expect(() =>
       readProjectedValueWithoutPublication(context, '/kind'),
@@ -65,7 +65,7 @@ describe('gate selection original-site shadow precondition', () => {
   it('full evaluation preserves the fixed branch transition and repeated references', () => {
     const { root } = createTestTree(SCHEMA);
     loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
-    expect(root.emit).toEqual({
+    expect(root.storedOutputValue).toEqual({
       common: 'shared',
       kind: 'kind_0',
       payload_0_a: 'a_0',
@@ -73,13 +73,13 @@ describe('gate selection original-site shadow precondition', () => {
       payload_0_c: true,
     });
     writeFieldNode(
-      root.structure!.kind,
+      root.childrenByName!.kind,
       'kind_4',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    const value = root.emit;
-    expect(root.emit).toBe(value);
+    const value = root.storedOutputValue;
+    expect(root.storedOutputValue).toBe(value);
     expect(value).toEqual({
       common: 'shared',
       kind: 'kind_4',
@@ -118,7 +118,7 @@ describe('gate selection original-site shadow precondition', () => {
         if (!expression) return result;
         const changedBefore = [...context.changedNodes];
         const pendingBefore = [...(context.pendingOutputs ?? [])];
-        const versionBefore = context.gateThrowVersion;
+        const versionBefore = context.gateExceptionVersion;
         try {
           const dependencies: unknown[] = [];
           for (let index = 0; index < expression.dependencies.length; index++)
@@ -146,14 +146,14 @@ describe('gate selection original-site shadow precondition', () => {
         }
         expect([...context.changedNodes]).toEqual(changedBefore);
         expect([...(context.pendingOutputs ?? [])]).toEqual(pendingBefore);
-        expect(context.gateThrowVersion).toBe(versionBefore);
+        expect(context.gateExceptionVersion).toBe(versionBefore);
         return result;
       });
     try {
       loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
       phase = 'update';
       writeFieldNode(
-        root.structure!.kind,
+        root.childrenByName!.kind,
         'kind_4',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,

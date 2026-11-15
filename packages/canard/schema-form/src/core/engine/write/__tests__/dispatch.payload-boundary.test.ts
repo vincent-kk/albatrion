@@ -174,8 +174,8 @@ describe('payload boundary differential characterization', () => {
       properties: { a: { type: 'string' } },
     });
     dispatchSetValue(root, { a: 'A' });
-    const before = root.local,
-      beforeEmit = root.emit;
+    const before = root.storedValue,
+      beforeOutputValue = root.storedOutputValue;
     const events: FieldNodeDelivery[] = [];
     subscribeFieldNode(root, (event) => events.push(event));
     subscribeFieldNode(root, (event) => events.push(event));
@@ -183,21 +183,21 @@ describe('payload boundary differential characterization', () => {
     expect(events[0]).toBe(events[1]);
     const payload = value(events[0]);
     expect(payload).toEqual({
-      previous: { local: before, emit: beforeEmit },
-      current: { local: root.local, emit: root.emit },
+      previous: { value: before, outputValue: beforeOutputValue },
+      current: { value: root.storedValue, outputValue: root.storedOutputValue },
     });
-    expect((payload as { previous: { local: unknown } }).previous.local).toBe(
+    expect((payload as { previous: { value: unknown } }).previous.value).toBe(
       before,
     );
-    expect((payload as { current: { local: unknown } }).current.local).toBe(
-      root.local,
+    expect((payload as { current: { value: unknown } }).current.value).toBe(
+      root.storedValue,
     );
-    expect((payload as { previous: { emit: unknown } }).previous.emit).toBe(
-      beforeEmit,
-    );
-    expect((payload as { current: { emit: unknown } }).current.emit).toBe(
-      root.emit,
-    );
+    expect(
+      (payload as { previous: { outputValue: unknown } }).previous.outputValue,
+    ).toBe(beforeOutputValue);
+    expect(
+      (payload as { current: { outputValue: unknown } }).current.outputValue,
+    ).toBe(root.storedOutputValue);
     expect(Object.isFrozen(payload)).toBe(true);
     expect(Object.isFrozen((payload as { current: object }).current)).toBe(
       false,

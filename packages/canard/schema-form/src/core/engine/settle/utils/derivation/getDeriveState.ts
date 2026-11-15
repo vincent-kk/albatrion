@@ -29,8 +29,8 @@ export const getDeriveState = <Self extends FieldNodeRecord<Self>>(
     loadScope: context.loadScope,
     entered: context.entered,
     revived: context.revived,
-    suppressAutomaticWrites: context.suppressAutomaticWrites,
-    trace: process.env.NODE_ENV !== 'production',
+    isAutomaticWriteSuppressed: context.isAutomaticWriteSuppressed,
+    isTraceEnabled: process.env.NODE_ENV !== 'production',
   };
   context.deriveState = state;
   return state;
