@@ -28,7 +28,8 @@ Where the filters apply — and where they never do:
 
 Rules of thumb:
 
-- Leading/middle empty items are never removed — indices must stay aligned with error `dataPath`s and validation params.
+- Leading/middle empty items are never removed — indices must stay aligned with error `dataPath`s and validation params. A branch array emits an item with no output as `null` (object items `{}`, array items `[]`), whether or not `omitTrailingEmpty` is on, because JSON has no `undefined` array slot; a terminal array emits its items as given.
+- To keep a placeholder at the tail, leave `omitTrailingEmpty` off for that array, or emit a value that is not empty (`false`, `0`, `{ placeholder: true }`); in a branch array, a row field with `omitEmpty: false` keeps the row as `{ name: '' }`.
 - Primary use case: let users add rows and leave the trailing ones empty without polluting the submitted/validated value. Validation sees the trimmed value, so trailing empty items do not count toward `minItems`.
 - A reset restores the loaded value and creates no items for `minItems`; a plain `setValue(undefined)` clears every item.
 - In a custom array `FieldInput`, derive row count from `node.children` (or `ChildFields`), never from `value.length` — the emitted value is shorter than the rendered rows by design.

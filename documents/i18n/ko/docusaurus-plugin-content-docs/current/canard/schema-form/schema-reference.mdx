@@ -40,7 +40,7 @@ sidebar_position: 4
 
 `presentation.required`는 렌더러와 입력의 공통 필수 표시를 설정하며 [required 덮어쓰기 계약](./api-reference#composition)을 따릅니다. `presentation.controlled`와는 독립적입니다.
 
-`options.trim`은 타이핑마다가 아니라 blur 때 저장 문자열을 trim합니다. `omitTrailingEmpty`는 원시 자식 노드를 삭제하지 않고 정규화된 배열 출력의 끝에 이어지는 빈 항목(`null`, `undefined`, `''`, `[]`, `{}`)을 제거합니다. 이 규칙은 항목 스키마를 보지 않으므로 항목이 null을 허용해도 끝의 `null`이 제거됩니다. 검사는 각 항목의 출력값만 얕게 보므로 terminal 배열의 `{ name: '' }`는 남지만, 필드가 모두 생략된 branch 항목은 `{}`를 내보내 제거됩니다. `omitEmpty`의 기본값은 true, `trim`, `omitTrailingEmpty`의 기본값은 false입니다. [배열 출력 예제](./examples/array-output-filters)를 참조하십시오.
+`options.trim`은 타이핑마다가 아니라 blur 때 저장 문자열을 trim합니다. `omitTrailingEmpty`는 원시 자식 노드를 삭제하지 않고 정규화된 배열 출력의 끝에 이어지는 빈 항목(`null`, `undefined`, `''`, `[]`, `{}`)을 제거합니다. 이 규칙은 항목 스키마를 보지 않으므로 항목이 null을 허용해도 끝의 `null`이 제거됩니다. 검사는 각 항목의 출력값만 얕게 보므로 terminal 배열의 `{ name: '' }`는 남지만, 필드가 모두 생략된 branch 항목은 `{}`를 내보내 제거됩니다. 꼬리에 자리표시자를 남기려면 그 배열에서 옵션을 끄거나 `false`, `0`, `{ placeholder: true }`처럼 비어 있지 않은 값을 내보내십시오. `omitEmpty`의 기본값은 true, `trim`, `omitTrailingEmpty`의 기본값은 false입니다. [배열 출력 예제](./examples/array-output-filters)를 참조하십시오.
 
 `options.propertyOrder`는 화면 필드가 아니라 방출 객체의 키를 정렬합니다. 지정 키, 나머지 선언 키, 도착한 추가 키 순이며 없는 값을 만들지는 않습니다. 정수형 키는 JavaScript의 키 정렬 규칙을 따릅니다.
 

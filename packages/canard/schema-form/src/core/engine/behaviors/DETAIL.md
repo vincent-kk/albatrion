@@ -50,7 +50,7 @@
 
 ### empty-values — 빈 객체는 평범한 빈 객체만 셉니다
 
-omitEmpty와 omitTrailingEmpty는 빈 객체를 같은 뜻으로 판정합니다. 프로토타입이 Object.prototype이나 null인 평범한 객체 중 자기 열거 키가 없는 것만 빈 객체이며(isEmptyPlainObject), Date·File·클래스 인스턴스는 키가 없어도 실제 데이터라서 방출합니다. 자기 키만 세는 판정은 이런 값을 빈 객체로 보아 string·union·object 노드의 방출에서 오류 없이 지웁니다. 투영(projectEmpty·omitEmptyObject)과 정착의 방출 예측(isOmittedEmpty)이 같은 판정을 써야 예측한 방출과 실제 방출이 어긋나지 않습니다.
+omitEmpty와 omitTrailingEmpty는 빈 객체를 같은 뜻으로 판정합니다. 프로토타입이 Object.prototype이나 null인 평범한 객체 중 자기 열거 키가 없는 것만 빈 객체이며(isEmptyPlainObject), Date·File·클래스 인스턴스는 키가 없어도 실제 데이터라서 방출합니다. 자기 키만 세는 판정은 이런 값을 빈 객체로 보아 string·union·object 노드의 방출에서 오류 없이 지웁니다. 투영(projectEmpty·omitEmptyObject)과 정착의 방출 예측(isOmittedEmpty)은 같은 함수로 빈 객체를 판정해서, 빈 객체의 뜻 때문에 예측과 방출이 갈라지지 않습니다. 예측은 정적 omitEmpty만 읽고 종류별 투영과 omitTrailingEmpty는 읽지 않으므로, number·boolean 노드의 빈 값이나 terminal 배열의 꼬리 생략에서는 예측과 실제 방출이 다를 수 있습니다.
 
 ## Last Updated
 
