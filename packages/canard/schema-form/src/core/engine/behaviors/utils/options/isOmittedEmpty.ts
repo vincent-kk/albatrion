@@ -1,5 +1,5 @@
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
-import { isArray } from '@winglet/common-utils/filter';
+import { isEmptyArray, isEmptyPlainObject } from '@winglet/common-utils/filter';
 
 import { mergeEffectiveSchema } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
@@ -31,12 +31,5 @@ export const isOmittedEmpty = (
     ).omitEmpty
   )
     return false;
-  if (value === '') return true;
-  if (isArray(value)) return value.length === 0;
-  if (value === null || typeof value !== 'object') return false;
-  const prototype = Object.getPrototypeOf(value);
-  return (
-    (prototype === Object.prototype || prototype === null) &&
-    Object.keys(value).length === 0
-  );
+  return value === '' || isEmptyArray(value) || isEmptyPlainObject(value);
 };

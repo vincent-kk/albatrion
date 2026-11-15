@@ -1,19 +1,12 @@
-import { isArray, isEmptyObject } from '@winglet/common-utils/filter';
+import { isEmptyArray, isEmptyPlainObject } from '@winglet/common-utils/filter';
 
 import type { Behavior } from '../../../record';
 import { getStaticChoices } from '../options/getStaticChoices';
 
-/** Omit empty whole values while preserving every non-empty input reference. */
+/** Omit an empty string, array or plain object while preserving every other input reference, including keyless Date and File values. */
 export const projectEmpty: Behavior['project'] = (node, local) => {
   if (!getStaticChoices(node.schema).omitEmpty) return local;
-  if (
-    local === '' ||
-    (isArray(local) && local.length === 0) ||
-    (local !== null &&
-      typeof local === 'object' &&
-      !isArray(local) &&
-      isEmptyObject(local))
-  )
+  if (local === '' || isEmptyArray(local) || isEmptyPlainObject(local))
     return undefined;
   return local;
 };
