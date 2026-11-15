@@ -1,6 +1,9 @@
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 
+/** Annotates the lazily created `slotRestoredSource`; an argument-less `new Map()` would be `Map<any, any>`. */
+type SlotRestoredSource<Self> = Map<Self, boolean>;
+
 /**
  * Mark restoration as a fresh lifetime's own source, including overlay exclusions.
  * @param node - Fresh clone or input-only occurrence with its current restored channels
@@ -11,7 +14,8 @@ export const markRestoredSlotSource = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): void => {
-  const preceding = (context.slotRestoredSource ??= new Map<Self, boolean>());
+  const preceding: SlotRestoredSource<Self> = (context.slotRestoredSource ??=
+    new Map());
   if (!preceding.has(node))
     preceding.set(node, context.changedSource.has(node.path));
   if (

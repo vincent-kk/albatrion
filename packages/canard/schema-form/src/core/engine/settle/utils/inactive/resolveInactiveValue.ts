@@ -12,6 +12,9 @@ import { getInactiveValueContext } from './getInactiveValueContext';
 import { hasExplicitInactiveValue } from './hasExplicitInactiveValue';
 import { readInactiveValueDeclaration } from './readInactiveValueDeclaration';
 
+/** Annotates the lazily created `inactiveValueOverrides`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveValueOverrides<Self> = Map<Self, unknown>;
+
 /**
  * Resolve one normal retained exit before detaching its public lifetime.
  * @param node - Configured occurrence in the departing owned subtree
@@ -88,9 +91,9 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
     if (resolved.hasFailed) return;
     result = resolved.value;
   }
-  if (result !== undefined)
-    (context.inactiveValueOverrides ??= new Map<Self, unknown>()).set(
-      node,
-      result,
-    );
+  if (result !== undefined) {
+    const overrides: InactiveValueOverrides<Self> =
+      (context.inactiveValueOverrides ??= new Map());
+    overrides.set(node, result);
+  }
 };

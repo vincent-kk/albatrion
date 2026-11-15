@@ -34,6 +34,14 @@ import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 import { applyArrayTail } from './applyArrayTail';
 import { canApplyArrayTail } from './canApplyArrayTail';
 
+/** Annotates the lazily created `inactiveSlots`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlots<Self> = Map<BlueprintChildEntry, Self>;
+/** Annotates the lazily created `rekeyedArrayMoves`; an argument-less `new Map()` would be `Map<any, any>`. */
+type RekeyedArrayMoves<Self> = Map<
+  Self,
+  readonly { previous: string; current?: string }[]
+>;
+
 /**
  * Apply a branch plan before calculation while paths are free to change.
  * The host's source tree is composed only when a slot reads it: extras, a whole source, or a removed or retained slot without a live node.
@@ -137,10 +145,8 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       const binding = getRetainedChildEntry(host, old.name, old.blueprintNode);
       if (binding) {
         markSlotChange(host, binding, old, context);
-        (host.inactiveSlots ??= new Map<BlueprintChildEntry, Self>()).set(
-          binding,
-          old,
-        );
+        const slots: InactiveSlots<Self> = (host.inactiveSlots ??= new Map());
+        slots.set(binding, old);
       }
     }
     if (!entry) continue;
@@ -179,11 +185,11 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   }
   rekeyArraySlotBindings(host, moves, context);
   rekeyArrayRuntimePaths(host.runtime, host.path, moves);
-  if (candidateMoves)
-    (context.rekeyedArrayMoves ??= new Map<
-      Self,
-      readonly { previous: string; current?: string }[]
-    >()).set(host, moves);
+  if (candidateMoves) {
+    const arrayMoves: RekeyedArrayMoves<Self> = (context.rekeyedArrayMoves ??=
+      new Map());
+    arrayMoves.set(host, moves);
+  }
   for (const [name, item] of Object.entries(nextItems)) {
     if (!reused.has(item) || item.name === name) continue;
     visitFieldNodes(

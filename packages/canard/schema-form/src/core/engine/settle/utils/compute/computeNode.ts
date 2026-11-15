@@ -27,6 +27,11 @@ import { computeStableNode } from './utils/computeStableNode';
 import { hasIndependentLeafDefaults } from './utils/hasIndependentLeafDefaults';
 import { prepareHostWheelPlan } from './utils/prepareHostWheelPlan';
 
+/** Annotates the lazily created `presenceComputeStarts`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PresenceComputeStarts<Self> = Map<Self, number>;
+/** Annotates the lazily created `presenceRoundStarts`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PresenceRoundStarts<Self> = Map<Self, number>;
+
 /**
  * Finish a dirty subtree with one descent and a bounded host gate wheel.
  * This helper stays here because it recurses through the exported wrapper; a separate file would create an import cycle.
@@ -50,10 +55,9 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   if (!context.dirtyPaths.has(node.path)) return;
   if (context.hasGates) {
     context.presenceClock = (context.presenceClock ?? 0) + 1;
-    (context.presenceComputeStarts ??= new Map<Self, number>()).set(
-      node,
-      context.presenceClock,
-    );
+    const starts: PresenceComputeStarts<Self> =
+      (context.presenceComputeStarts ??= new Map());
+    starts.set(node, context.presenceClock);
   }
   if (engineModes.gateWheel === 'record') {
     const metrics = (context.presenceMetrics ??= {
@@ -211,10 +215,9 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
       node.parent === null && selectNodeSchema(node, context);
     if (context.hasGates) {
       context.presenceClock = (context.presenceClock ?? 0) + 1;
-      (context.presenceRoundStarts ??= new Map<Self, number>()).set(
-        node,
-        context.presenceClock,
-      );
+      const starts: PresenceRoundStarts<Self> = (context.presenceRoundStarts ??=
+        new Map());
+      starts.set(node, context.presenceClock);
     }
     const publication = { isFlushed: false };
     const changed = selectChildren(

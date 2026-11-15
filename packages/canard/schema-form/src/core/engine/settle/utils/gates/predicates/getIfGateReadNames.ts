@@ -5,6 +5,9 @@ import type { Nullable, Optional } from '@aileron/declare';
 import { getBlueprintDerived } from '../../../../utils/cache/derivedRecords';
 import { collectIfGateReadNames } from './collectIfGateReadNames';
 
+/** Read-name memo stored on the blueprint; also annotates its lazy creation, where `new Map()` would be `Map<any, any>`. */
+type IfGateReadNames = Map<object, Nullable<readonly string[]>>;
+
 /**
  * Cache a finite property-read proof without executing or decompiling a guard.
  * @param condition - Authored immutable JSON Schema condition
@@ -18,16 +21,10 @@ export const getIfGateReadNames = (
   if (typeof condition === 'boolean') return EMPTY_ARRAY;
   if (!condition || typeof condition !== 'object') return undefined;
   const record = blueprint
-    ? getBlueprintDerived<
-        'ifGateReadNames',
-        Map<object, Nullable<readonly string[]>>
-      >(blueprint)
+    ? getBlueprintDerived<'ifGateReadNames', IfGateReadNames>(blueprint)
     : undefined;
-  const memo = record
-    ? (record.ifGateReadNames ??= new Map<
-        object,
-        Nullable<readonly string[]>
-      >())
+  const memo: IfGateReadNames | undefined = record
+    ? (record.ifGateReadNames ??= new Map())
     : undefined;
   const cached = memo?.get(condition);
   if (cached !== undefined) return cached ?? undefined;

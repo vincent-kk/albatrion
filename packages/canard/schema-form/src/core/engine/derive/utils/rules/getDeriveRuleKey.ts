@@ -24,10 +24,7 @@ export const getDeriveRuleKey = (
   },
   runtime: Pick<TreeMemoStores, 'deriveTargetIds'>,
 ): string => {
-  const TARGET_IDS = (runtime.deriveTargetIds ??= new WeakMap<
-    object,
-    number
-  >());
+  const TARGET_IDS = (runtime.deriveTargetIds ??= new WeakMap());
   let targetId = TARGET_IDS.get(target);
   if (targetId === undefined) {
     targetId = ++nextTargetId;

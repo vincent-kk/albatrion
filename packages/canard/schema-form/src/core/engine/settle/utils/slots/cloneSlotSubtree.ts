@@ -10,6 +10,9 @@ import { getRetainedChildEntry } from './getRetainedChildEntry';
 import { hasAdditionalInactiveSources } from './hasAdditionalInactiveSources';
 import { markRestoredSlotSource } from './markRestoredSlotSource';
 
+/** Annotates the lazily created `inactiveSlotChildren`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlotChildren<Self> = Map<string, Self>;
+
 /**
  * Rebind retained state without sharing any node or parent link with its source.
  * @param host - New parent that owns the clone's address and array nonce
@@ -99,11 +102,11 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
         copied.inactiveSlots?.size ||
         copied.inactiveSlotOverlays?.size ||
         copied.inactiveSlotChildren?.size
-      )
-        (node.inactiveSlotChildren ??= new Map<string, Self>()).set(
-          binding.name,
-          copied,
-        );
+      ) {
+        const slotChildren: InactiveSlotChildren<Self> =
+          (node.inactiveSlotChildren ??= new Map());
+        slotChildren.set(binding.name, copied);
+      }
     }
     node.childrenByName = childrenByName;
     node.children = children;

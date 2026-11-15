@@ -8,6 +8,9 @@ import { markWrite } from '../input/markWrite';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
 import { markRestoredSlotSource } from './markRestoredSlotSource';
 
+/** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
+
 /**
  * Apply a host-owned patch only to a newly issued instance subtree.
  * @param node - Fresh clone or blueprint occurrence, never the retained source
@@ -69,10 +72,9 @@ export const applySlotOverlay = <Self extends FieldNodeRecord<Self>>(
   for (const [entry, patch] of overlay.children ?? []) {
     const live = node.childrenByName?.[entry.name];
     if (live?.blueprintNode === entry.node) continue;
-    (node.inactiveSlotOverlays ??= new Map<
-      BlueprintChildEntry,
-      InactiveSlotOverlay
-    >()).set(entry, patch);
+    const overlays: InactiveSlotOverlays = (node.inactiveSlotOverlays ??=
+      new Map());
+    overlays.set(entry, patch);
   }
   markRestoredSlotSource(node, context);
   context.changedNodes.add(node);

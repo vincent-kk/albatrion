@@ -95,9 +95,7 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
     };
   if (!next) return memo!.values;
   const values = next.length ? Object.freeze(next) : EMPTY_ARRAY;
-  const cache =
-    runtime.watchValuesMemo ??
-    new WeakMap<object, { commit: number; values: readonly unknown[] }>();
+  const cache = runtime.watchValuesMemo ?? new WeakMap();
   cache.set(node, { commit, values });
   runtime.watchValuesMemo = cache;
   return values;

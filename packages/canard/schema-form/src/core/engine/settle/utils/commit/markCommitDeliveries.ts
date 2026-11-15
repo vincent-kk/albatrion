@@ -44,7 +44,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
   visit?: Fn<[node: Self]>,
 ): void => {
   const runtime = context.root.runtime;
-  runtime.deliveries ??= new Set<Self>();
+  runtime.deliveries ??= new Set();
   const previousTransitions = runtime.revisionTransitions;
   try {
     const refreshTargets = runtime.refreshTargets;
@@ -57,7 +57,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
     const watchNodes = getFeatureNodeIndex(runtime.blueprint).watchNodes;
     let affectedPaths: Optional<Set<string>>;
     if (watchIndex?.allNodes.size) {
-      affectedPaths = runtime.deliveryAffectedPaths ?? new Set<string>();
+      affectedPaths = runtime.deliveryAffectedPaths ?? new Set();
       for (const node of context.enteredNodes) affectedPaths.add(node.path);
       for (const node of context.exitedNodes)
         affectedPaths.add(node.deliveryPreviousPath ?? node.path);

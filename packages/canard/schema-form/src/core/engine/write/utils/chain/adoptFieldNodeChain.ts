@@ -14,6 +14,9 @@ import { captureChainError } from './captureChainError';
 import { abortFieldNodeChain } from './chainAbort';
 import { restoreAdoptedExternalErrors } from './restoreAdoptedExternalErrors';
 
+/** Annotates the lazily created `pendingWarningRecords`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PendingWarningRecords = Map<string, PendingFormErrorRecord>;
+
 /**
  * Transfer an open entry to a rebuilt root before its outer call completes.
  * @param previousRoot - Root being retired by the binding
@@ -104,10 +107,9 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
           { details: { schemaPaths: paths } },
         );
         if (record) {
-          (next.pendingWarningRecords ??= new Map<
-            string,
-            PendingFormErrorRecord
-          >()).set(JSON.stringify([code, $.Root]), record);
+          const records: PendingWarningRecords = (next.pendingWarningRecords ??=
+            new Map());
+          records.set(JSON.stringify([code, $.Root]), record);
           next.chainOccurrences?.push({ kind: 'record', record });
         }
       }

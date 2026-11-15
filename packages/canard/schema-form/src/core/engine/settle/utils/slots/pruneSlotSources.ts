@@ -10,6 +10,9 @@ import { getSlotPathNames } from './getSlotPathNames';
 import { getSlotSource } from './getSlotSource';
 import { markSlotChange } from './markSlotChange';
 
+/** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
+
 /**
  * Erase retained sources in a replacement scope without changing frozen instances.
  * @param root - Current tree whose live owners receive clearing patches
@@ -71,11 +74,10 @@ export const pruneSlotSources = <Self extends FieldNodeRecord<Self>>(
       if (position + 1 === parts.length) {
         host.inactiveSlots?.delete(entry);
         host.inactiveSlotOverlays?.delete(entry);
-      } else
-        (host.inactiveSlotOverlays ??= new Map<
-          BlueprintChildEntry,
-          InactiveSlotOverlay
-        >()).set(
+      } else {
+        const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
+          new Map());
+        overlays.set(
           entry,
           patch(
             host.inactiveSlots?.get(entry),
@@ -83,6 +85,7 @@ export const pruneSlotSources = <Self extends FieldNodeRecord<Self>>(
             position + 1,
           ),
         );
+      }
     }
     const live = host.childrenByName?.[name];
     if (live && !live.isDetached) visit(live, position + 1);

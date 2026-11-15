@@ -23,6 +23,9 @@ import { getLivePresenceNode } from './getLivePresenceNode';
 import { publishPresenceOwner } from './publishPresenceOwner';
 import { registerProjectionChanges } from './registerProjectionChanges';
 
+/** Annotates the lazily created `presenceQueryCursors`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PresenceQueryCursors = Map<string, PresenceQueryCursor>;
+
 /** Parent pointer of a non-root occurrence, preserving escaped segments. */
 const parentOf = (path: string): string => resolvePointer(path, $.Parent);
 
@@ -142,10 +145,8 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
     ancestor = parentOf(ancestor)
   ) {
     if (!context.shapeDirtyPaths.has(ancestor)) {
-      const cursors = (context.presenceQueryCursors ??= new Map<
-        string,
-        PresenceQueryCursor
-      >());
+      const cursors: PresenceQueryCursors = (context.presenceQueryCursors ??=
+        new Map());
       let cursor = cursors.get(ancestor);
       if (!cursor) {
         cursor = { changed: 0, prefixes: 0, index: 0 };

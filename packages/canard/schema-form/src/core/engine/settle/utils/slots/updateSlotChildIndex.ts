@@ -1,5 +1,8 @@
 import type { FieldNodeRecord } from '../../../record';
 
+/** Annotates the lazily created `inactiveSlotChildren`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlotChildren<Self> = Map<string, Self>;
+
 /**
  * Keep one live child branch in its owner's inactive-source read index.
  * @param host - Live parent whose source-bearing child references are updated
@@ -17,7 +20,9 @@ export const updateSlotChildIndex = <Self extends FieldNodeRecord<Self>>(
     (live.inactiveSlots?.size ||
       live.inactiveSlotOverlays?.size ||
       live.inactiveSlotChildren?.size)
-  )
-    (host.inactiveSlotChildren ??= new Map<string, Self>()).set(name, live);
-  else host.inactiveSlotChildren?.delete(name);
+  ) {
+    const children: InactiveSlotChildren<Self> = (host.inactiveSlotChildren ??=
+      new Map());
+    children.set(name, live);
+  } else host.inactiveSlotChildren?.delete(name);
 };

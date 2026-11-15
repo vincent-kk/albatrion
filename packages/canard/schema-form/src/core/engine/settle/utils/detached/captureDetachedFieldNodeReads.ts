@@ -34,8 +34,7 @@ export const captureDetachedFieldNodeReads = <
     isReadOnly: node.isReadOnly,
     isDisabled: node.isDisabled,
   });
-  const detachedReads =
-    runtime.detachedReads ?? new WeakMap<object, typeof reads>();
+  const detachedReads = runtime.detachedReads ?? new WeakMap();
   runtime.detachedReads = detachedReads;
   detachedReads.set(node, reads);
 };

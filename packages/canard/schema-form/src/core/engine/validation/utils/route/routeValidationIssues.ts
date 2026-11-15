@@ -10,6 +10,9 @@ import { createValidationScope } from './createValidationScope';
 import { isOffUnionBranchIssue } from './isOffUnionBranchIssue';
 import { updateFieldNodeGlobalErrors } from './updateFieldNodeGlobalErrors';
 
+/** Annotates the lazily created `validationErrors`; an argument-less `new Map()` would be `Map<any, any>`. */
+type ValidationErrors = Map<unknown, readonly unknown[]>;
+
 /** Identify a record owned by this tree without an unchecked type assertion. */
 const isOwnedNode = <Self extends FieldNodeRecord<Self>>(
   candidate: unknown,
@@ -34,8 +37,7 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
   if (!first) return new Set();
   const root = first.rootNode;
   const runtime = root.runtime;
-  const before =
-    runtime.validationErrors ?? new Map<unknown, readonly unknown[]>();
+  const before: ValidationErrors = runtime.validationErrors ?? new Map();
   const next = new Map<unknown, readonly unknown[]>(before);
   let activeIds: Optional<Set<number>>;
   if (issues.length > 0 && runtime.committedDeclarationIds?.size) {

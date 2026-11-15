@@ -5,6 +5,9 @@ import type { Fn } from '@aileron/declare';
 import type { FieldNodeRecord } from '../../../record';
 import type { InactiveValueResolver } from '../../../types/controls';
 
+/** Annotates the lazily created `inactiveListeners`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveListeners = Map<unknown, Set<InactiveValueResolver<unknown>>>;
+
 /**
  * Register a synchronous retained-value resolver for one public node lifetime.
  * @param node - Instance whose normal retained gate exit is observed
@@ -17,10 +20,8 @@ export const onInactiveFieldNode = <Self extends FieldNodeRecord<Self>>(
 ): Fn => {
   if (node.isDisposed || node.rootNode.isDisposed) return NOOP_FUNCTION;
   const runtime = node.runtime;
-  const listeners = (runtime.inactiveListeners ??= new Map<
-    unknown,
-    Set<InactiveValueResolver<unknown>>
-  >());
+  const listeners: InactiveListeners = (runtime.inactiveListeners ??=
+    new Map());
   const subscriptions = listeners.get(node) ?? new Set();
   subscriptions.add(listener);
   listeners.set(node, subscriptions);

@@ -10,6 +10,11 @@ import type { ValidationIssue } from '../../../../validation';
 import { queueNonSettleEvent } from '../../chain/queueNonSettleEvent';
 import { publishRootExternalErrors } from './publishRootExternalErrors';
 
+/** Annotates the lazily created `externalContributions`; an argument-less `new Map()` would be `Map<any, any>`. */
+type ExternalContributions = Map<unknown, readonly { dataPath: string }[]>;
+/** Annotates the lazily created `nodeErrors`; an argument-less `new Map()` would be `Map<any, any>`. */
+type NodeErrors = Map<unknown, readonly { dataPath: string }[]>;
+
 /** Shared empty list for a node whose external entry was removed. */
 const NO_ISSUES: readonly ValidationIssue[] = [];
 
@@ -49,10 +54,8 @@ export const rebuildRootExternalErrors = <Self extends FieldNodeRecord<Self>>(
   for (const candidate of pendingExternalErrorNodes)
     if (isPendingNode<Self>(candidate, runtime)) nodes.push(candidate);
   if (!nodes.length) return;
-  const contributions = (runtime.externalContributions ??= new Map<
-    unknown,
-    readonly { dataPath: string }[]
-  >());
+  const contributions: ExternalContributions =
+    (runtime.externalContributions ??= new Map());
   const placed = new Set<ValidationIssue>();
   const retired = new Set<ValidationIssue>();
   const paths = new Set<string>();
@@ -106,12 +109,10 @@ export const rebuildRootExternalErrors = <Self extends FieldNodeRecord<Self>>(
     } else contributions.delete(node);
   }
   if (!changed) return;
-  if (next.length)
-    (runtime.nodeErrors ??= new Map<
-      unknown,
-      readonly { dataPath: string }[]
-    >()).set(root, next);
-  else runtime.nodeErrors?.delete(root);
+  if (next.length) {
+    const errors: NodeErrors = (runtime.nodeErrors ??= new Map());
+    errors.set(root, next);
+  } else runtime.nodeErrors?.delete(root);
   publishRootExternalErrors(root);
   queueNonSettleEvent(root, FieldNodeEventType.UpdateError, next);
 };

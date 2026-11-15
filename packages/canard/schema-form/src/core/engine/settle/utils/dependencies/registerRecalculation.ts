@@ -15,6 +15,11 @@ import { verifyWriteEpoch } from '../input/utils/verifyWriteEpoch';
 import { DirtyPathSet } from '../scratch/DirtyPathSet';
 import { getDependencyIndex } from './getDependencyIndex';
 
+/** Annotates the lazily created `splitHitEpochs`; an argument-less `new Map()` would be `Map<any, any>`. */
+type SplitHitEpochs = Map<SplitBucket, number>;
+/** Annotates the lazily created `splitMarks`; an argument-less `new Map()` would be `Map<any, any>`. */
+type SplitMarks = Map<string, number>;
+
 /**
  * Schedule changed nodes, ancestors, and blueprint reverse dependency owners.
  * @param context - Marked write with its changed source paths
@@ -68,10 +73,8 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     for (const changed of context.changedSource)
       dependencies.registerAffectedOwners(changed, context.root, {
         recordHit: (bucket, liveRanks) => {
-          (context.splitHitEpochs ??= new Map<SplitBucket, number>()).set(
-            bucket,
-            epoch,
-          );
+          const epochs: SplitHitEpochs = (context.splitHitEpochs ??= new Map());
+          epochs.set(bucket, epoch);
           return dirtyPaths instanceof DirtyPathSet
             ? dirtyPaths.planSplitAnchors(bucket, liveRanks, epoch)
             : [];
@@ -79,8 +82,10 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
         registerOwner: (path, kind) => {
           dirtyPaths.add(path);
           if (kind === 'plain') context.dependencyOwnerPaths.add(path);
-          else if (kind === 'split')
-            (context.splitMarks ??= new Map<string, number>()).set(path, epoch);
+          else if (kind === 'split') {
+            const marks: SplitMarks = (context.splitMarks ??= new Map());
+            marks.set(path, epoch);
+          }
           context.shapeDirtyPaths.add(
             kind === 'host' ? path : resolvePointer(path, $.Parent),
           );

@@ -36,6 +36,9 @@ import type {
   NodeSurface,
 } from '../type';
 
+/** Annotates the lazily created `pendingWarningRecords`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PendingWarningRecords = Map<string, PendingFormErrorRecord>;
+
 /** Empty active-declaration list: only ungated contributions apply. */
 const NO_ACTIVE_DECLARATION_IDS: readonly number[] = EMPTY_ARRAY;
 
@@ -166,11 +169,10 @@ export function fieldNodeFactory(
   if (runtime.errorReporter?.hasConsumer())
     collectBlueprintWarnings(analysis, (diagnostic) => {
       const record = createFormErrorRecord(true, diagnostic);
-      if (record)
-        (runtime.pendingWarningRecords ??= new Map<
-          string,
-          PendingFormErrorRecord
-        >()).set(
+      if (record) {
+        const records: PendingWarningRecords =
+          (runtime.pendingWarningRecords ??= new Map());
+        records.set(
           JSON.stringify([
             record.code,
             diagnostic.schemaPath,
@@ -178,6 +180,7 @@ export function fieldNodeFactory(
           ]),
           record,
         );
+      }
     });
   const authoredSchema = analysis.schema;
   if (

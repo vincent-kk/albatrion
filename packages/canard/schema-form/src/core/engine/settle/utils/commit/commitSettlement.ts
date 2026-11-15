@@ -76,7 +76,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
         : {}),
       commit,
     };
-  const refreshTargets = runtime.refreshTargets ?? new Set<string>();
+  const refreshTargets = runtime.refreshTargets ?? new Set();
   refreshTargets.clear();
   const loadScope =
     context.kind === FieldNodeWriteKind.Load ? context.loadScope : undefined;
@@ -117,7 +117,8 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
       )
     )
       return;
-    (warningTasks ??= new Map<Self, Fn<[], void>>()).set(node, () => {
+    warningTasks ??= new Map();
+    warningTasks.set(node, () => {
       if (misfit && !wasOn) {
         const candidates = conversionCandidates(node, effective);
         const ambiguous = candidates.length > 1;

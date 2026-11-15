@@ -3,6 +3,9 @@ import type { SettlementContext } from '../../types/settlement';
 import { verifyGateSelection } from '../gates/verifyGateSelection';
 import { getDependencyIndex } from './getDependencyIndex';
 
+/** Annotates the lazily created `splitMarks`; an argument-less `new Map()` would be `Map<any, any>`. */
+type SplitMarks = Map<string, number>;
+
 /**
  * Defend an entry/revival against a hit newer than its last applied generation.
  * @param child - Newly entered or revived child after ordinary entry marking
@@ -27,7 +30,8 @@ export const supplementSplitOwner = <Self extends FieldNodeRecord<Self>>(
   );
   if (lastHit > (context.splitMarks?.get(child.path) ?? -1)) {
     context.dirtyPaths.add(child.path);
-    (context.splitMarks ??= new Map<string, number>()).set(child.path, lastHit);
+    const marks: SplitMarks = (context.splitMarks ??= new Map());
+    marks.set(child.path, lastHit);
     if (!dirtyBefore && context.registrationShadow)
       context.registrationShadow.supplementInsertions++;
   }

@@ -10,6 +10,12 @@ import { getSlotSource } from './getSlotSource';
 import { materializeKeptSlotOverlay } from './materializeKeptSlotOverlay';
 import { readSlotSourceTree } from './readSlotSourceTree';
 
+/** Annotates the lazily created `compactedSlotSources`; an argument-less `new Map()` would be `Map<any, any>`. */
+type CompactedSlotSourcesMap<Self extends FieldNodeRecord<Self>> = Map<
+  Self,
+  CompactedSlotSources<Self>
+>;
+
 /** Recursive exit resolver supplied by the owner to keep dependencies acyclic. */
 type ResolveExit<Self extends FieldNodeRecord<Self>> = Fn<
   [
@@ -81,15 +87,15 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
     } while (position < entries.length && entries[position].name === name);
     if (retained) source.push(value);
   }
-  if (sourceContext && source.length)
-    (sourceContext.compactedSlotSources ??= new Map<
-      Self,
-      CompactedSlotSources<Self>
-    >()).set(node, {
+  if (sourceContext && source.length) {
+    const slotSources: CompactedSlotSourcesMap<Self> =
+      (sourceContext.compactedSlotSources ??= new Map());
+    slotSources.set(node, {
       itemCount: source.length,
       sources,
       overlays: children,
     });
+  }
   return {
     isWhole: true,
     source: source.length ? Object.freeze(source) : undefined,

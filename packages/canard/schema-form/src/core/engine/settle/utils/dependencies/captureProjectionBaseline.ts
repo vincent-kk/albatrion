@@ -4,6 +4,9 @@ import type {
   SettlementContext,
 } from '../../types/settlement';
 
+/** Annotates the lazily created `projectionBaselines`; an argument-less `new Map()` would be `Map<any, any>`. */
+type ProjectionBaselines<Self> = Map<Self, Map<Self, ProjectionBaseline>>;
+
 /**
  * Capture a retained child's projection before its first effective-schema change.
  * @param host - Existing branch wheel that owns the child's presence registration
@@ -19,10 +22,8 @@ export const captureProjectionBaseline = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   if (!context.hasGates || !retained) return;
-  const hosts = (context.projectionBaselines ??= new Map<
-    Self,
-    Map<Self, ProjectionBaseline>
-  >());
+  const hosts: ProjectionBaselines<Self> = (context.projectionBaselines ??=
+    new Map());
   let children = hosts.get(host);
   if (!children) hosts.set(host, (children = new Map()));
   if (!children.has(child))

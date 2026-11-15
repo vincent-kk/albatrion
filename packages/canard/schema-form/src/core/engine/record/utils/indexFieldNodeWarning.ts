@@ -6,6 +6,11 @@ import {
 import type { PendingFormErrorRecord } from '../../../../errors';
 import type { FieldNodeRuntime } from '../types/runtime';
 
+/** Annotates the lazily created `pendingWarningRecords`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PendingWarningRecords = Map<string, PendingFormErrorRecord>;
+/** Annotates the lazily created `warningKeysByPath`; an argument-less `new Map()` would be `Map<any, any>`. */
+type WarningKeysByPath = Map<string, Set<string>>;
+
 /**
  * Index a warning at every data-path ancestor, or forget its current identity.
  * @param runtime - Tree owning warning keys, records, and the optional path index
@@ -25,15 +30,15 @@ export const indexFieldNodeWarning = <Self>(
   if (remove) {
     runtime.warningKeys?.delete(key);
     runtime.pendingWarningRecords?.delete(key);
-  } else if (record)
-    (runtime.pendingWarningRecords ??= new Map<
-      string,
-      PendingFormErrorRecord
-    >()).set(key, record);
+  } else if (record) {
+    const records: PendingWarningRecords = (runtime.pendingWarningRecords ??=
+      new Map());
+    records.set(key, record);
+  }
   if (path === undefined) return;
-  const index = remove
+  const index: WarningKeysByPath | undefined = remove
     ? runtime.warningKeysByPath
-    : (runtime.warningKeysByPath ??= new Map<string, Set<string>>());
+    : (runtime.warningKeysByPath ??= new Map());
   if (!index) return;
   let ancestor = path;
   while (true) {

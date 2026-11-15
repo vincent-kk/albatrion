@@ -14,6 +14,9 @@ import type { SettlementContext } from '../../types/settlement';
 import { getGateSelectionTable } from '../compute/childSelection/getGateSelectionTable';
 import { watchGateSelectionDirty } from './watchGateSelectionDirty';
 
+/** Annotates the lazily created `gateSelectionRounds`; an argument-less `new Map()` would be `Map<any, any>`. */
+type GateSelectionRounds<Self> = Map<Self, GateSelectionRound>;
+
 /**
  * Decide G1–G4 once before either root declarations or children execute this round.
  * @param node - Host occurrence after the fixed baseline and initial dirty children
@@ -61,21 +64,20 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
   if (hasDirtyWatchedPath) {
     return;
   }
-  (context.gateSelectionRounds ??= new Map<Self, GateSelectionRound>()).set(
-    node,
-    {
-      round,
-      table,
-      values: new Map(),
-      watchedPaths,
-      stableSchemaPaths: table.stableSchemaNames.length
-        ? mapArray(table.stableSchemaNames, (name) =>
-            appendSegment(node.path, name),
-          )
-        : EMPTY_ARRAY,
-      isActive: true,
-    },
-  );
+  const rounds: GateSelectionRounds<Self> = (context.gateSelectionRounds ??=
+    new Map());
+  rounds.set(node, {
+    round,
+    table,
+    values: new Map(),
+    watchedPaths,
+    stableSchemaPaths: table.stableSchemaNames.length
+      ? mapArray(table.stableSchemaNames, (name) =>
+          appendSegment(node.path, name),
+        )
+      : EMPTY_ARRAY,
+    isActive: true,
+  });
   if (engineModes.gateSelection === 'verify') {
     if (context.gateWheelFrame)
       context.gateWheelFrame.selectionShadow = {

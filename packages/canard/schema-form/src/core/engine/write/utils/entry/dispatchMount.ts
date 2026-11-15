@@ -11,6 +11,9 @@ import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { restoreAdoptedExternalErrors } from '../chain/restoreAdoptedExternalErrors';
 import { clearWarningKeys } from '../report/clearWarningKeys';
 
+/** Annotates the lazily created `pendingWarningRecords`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PendingWarningRecords = Map<string, PendingFormErrorRecord>;
+
 /** Shared mount settings for a load that validates immediately. */
 const NO_MOUNT_SETTINGS: { deferValidation?: boolean } = {};
 
@@ -64,10 +67,9 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
           code: FormWarningCode.ValidatorMissing,
           message: 'Validation is disabled because no validator was selected',
         };
-        (runtime.pendingWarningRecords ??= new Map<
-          string,
-          PendingFormErrorRecord
-        >()).set(FormWarningCode.ValidatorMissing, record);
+        const records: PendingWarningRecords =
+          (runtime.pendingWarningRecords ??= new Map());
+        records.set(FormWarningCode.ValidatorMissing, record);
         runtime.chainOccurrences?.push({ kind: 'record', record });
       }
     }

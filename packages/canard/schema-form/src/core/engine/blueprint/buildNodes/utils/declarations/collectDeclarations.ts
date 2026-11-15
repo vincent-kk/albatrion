@@ -22,6 +22,9 @@ import { validateControlGroups } from './validateControlGroups';
 import { validatePresentation } from './validatePresentation';
 import { validateSchemaOptions } from './validateSchemaOptions';
 
+/** Annotates the lazily created `declarationOwners`; an argument-less `new Map()` would be `Map<any, any>`. */
+type DeclarationOwners = Map<number, number>;
+
 /** Keyword ranks form the authored total order, independent of object insertion order. */
 const FRAGMENT_KEYWORDS = [
   ['allOf', 1],
@@ -138,17 +141,16 @@ export const collectDeclarations = (
   if (input.isInherited) fragment.inheritedOverlays.push(declaration.id);
   result.push(declaration);
   const owner = ownerId ?? declaration.id;
-  if (!context.capabilities.isBranchless)
-    (context.declarationOwners ??= new Map<number, number>()).set(
-      declaration.id,
-      owner,
-    );
+  if (!context.capabilities.isBranchless) {
+    const owners: DeclarationOwners = (context.declarationOwners ??= new Map());
+    owners.set(declaration.id, owner);
+  }
   const discriminators =
     schema.controls?.discriminator === undefined
       ? undefined
       : readDiscriminatorBranches(context, input.schema, input.schemaPath);
   if (discriminators?.size) {
-    context.discriminatorBranches ??= new Set<string>();
+    context.discriminatorBranches ??= new Set();
     for (const branchPath of discriminators.keys())
       context.discriminatorBranches.add(branchPath);
   }

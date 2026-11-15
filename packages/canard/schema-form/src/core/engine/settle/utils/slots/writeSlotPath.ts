@@ -12,6 +12,9 @@ import { getSlotPathNames } from './getSlotPathNames';
 import { getSlotSource } from './getSlotSource';
 import { markSlotChange } from './markSlotChange';
 
+/** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
+
 /**
  * Write an absent address through its nearest live slot owner.
  * @param root - Current tree, whose retained sources remain immutable
@@ -122,10 +125,9 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
       return { ...previous, children };
     };
     markSlotChange(host, entry, undefined, context);
-    (host.inactiveSlotOverlays ??= new Map<
-      BlueprintChildEntry,
-      InactiveSlotOverlay
-    >()).set(entry, patch(entry.node, instance, previous, depth + 1));
+    const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
+      new Map());
+    overlays.set(entry, patch(entry.node, instance, previous, depth + 1));
     for (const other of entries) {
       if (
         preserveCandidates ||

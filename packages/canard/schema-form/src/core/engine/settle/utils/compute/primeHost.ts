@@ -27,6 +27,17 @@ import { createChildNode } from './createChildNode';
 import { enterFieldNode } from './enterFieldNode';
 import { prepareFixedFirstHost } from './firstLoad/prepareFixedFirstHost';
 
+/** Annotates the lazily created `presenceSelections`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PresenceSelections<Self> = Map<
+  Self,
+  {
+    readonly childrenByName: Readonly<Dictionary<Self>>;
+    readonly names: readonly string[];
+  }
+>;
+/** Annotates the lazily created `preparedStaticPriorNames`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PreparedStaticPriorNames<Self> = Map<Self, readonly string[]>;
+
 /** Empty active-declaration list: only ungated contributions apply. */
 const NO_ACTIVE_DECLARATION_IDS: readonly number[] = EMPTY_ARRAY;
 
@@ -47,20 +58,15 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
   if (context.fixedFirstLoad && prepareFixedFirstHost(node, context)) return;
   const prepared = prepareStaticHost(node, prior, context, hasRelocated);
   if (prepared) {
-    (context.presenceSelections ??= new Map<
-      Self,
-      {
-        readonly childrenByName: Readonly<Dictionary<Self>>;
-        readonly names: readonly string[];
-      }
-    >()).set(node, {
+    const selections: PresenceSelections<Self> = (context.presenceSelections ??=
+      new Map());
+    selections.set(node, {
       childrenByName: prior,
       names: prepared.dynamicNames,
     });
-    (context.preparedStaticPriorNames ??= new Map<
-      Self,
-      readonly string[]
-    >()).set(node, prepared.dynamicNames);
+    const names: PreparedStaticPriorNames<Self> =
+      (context.preparedStaticPriorNames ??= new Map());
+    names.set(node, prepared.dynamicNames);
     if (prepared.selectedChildrenByName === prior)
       prepared.selectedChildren = node.children ?? [];
     node.childrenByName = prepared.baseline;

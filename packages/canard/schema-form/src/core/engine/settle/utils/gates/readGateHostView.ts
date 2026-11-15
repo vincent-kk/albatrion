@@ -8,6 +8,9 @@ import type { SettlementContext } from '../../types/settlement';
 import { readGateProjectedExtra } from './readGateProjectedExtra';
 import { readProjectedValue } from './readProjectedValue';
 
+/** Annotates the lazily created `gateHostViews`; an argument-less `new Map()` would be `Map<any, any>`. */
+type GateHostViews = Map<string, GateHostView>;
+
 /**
  * Share one full input view while immediate publication keeps both identities equal.
  * @param context - Current synchronous settlement; views never cross its lifetime
@@ -27,7 +30,7 @@ export const readGateHostView = <Self extends FieldNodeRecord<Self>>(
     projectedValue,
     owner,
   );
-  const views = (context.gateHostViews ??= new Map<string, GateHostView>());
+  const views: GateHostViews = (context.gateHostViews ??= new Map());
   const cached = views.get(hostPath);
   if (
     cached &&

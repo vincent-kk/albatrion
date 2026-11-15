@@ -10,6 +10,7 @@
 - Use `hasOwnProperty` from `@winglet/common-utils/lib` for own-key checks instead of calling `Object.prototype.hasOwnProperty` directly.
 - Use `isArray` from `@winglet/common-utils/filter` for array checks instead of calling `Array.isArray` directly (consumer-facing doc examples may show the native call).
 - Use `EMPTY_ARRAY`/`EMPTY_OBJECT` from `@winglet/common-utils/constant` for shared empty values, except identity sentinels.
+- Keep type arguments out of lazy creation: an argument-less `new Map()` is `Map<any, any>`, so `field ??= new Map()` takes its type from a type alias declared outside the function and annotated on the binding that receives it. A `let` that already declares its type narrows after `x ??= new Map()` and needs no alias. `Set`, `WeakMap` and `WeakSet` infer their arguments from the field and take none.
 
 ## Commands
 

@@ -2,6 +2,19 @@ import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotBaseline } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 
+/** Annotates the lazily created `slotAutomaticLog`; an argument-less `new Map()` would be `Map<any, any>`. */
+type SlotAutomaticLog<Self> = Map<
+  Self,
+  Map<BlueprintChildEntry, InactiveSlotBaseline<Self>>
+>;
+/** Annotates the lazily created `inactiveSlotBaselines`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlotBaselines<Self> = Map<
+  BlueprintChildEntry,
+  InactiveSlotBaseline<Self>
+>;
+/** Annotates the lazily created `inactiveSlotChildren`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlotChildren<Self> = Map<string, Self>;
+
 /**
  * Retain one binding's published view before changing its pending source.
  * @param host - Owner of the mutable slots and their next publication
@@ -16,10 +29,8 @@ export const markSlotChange = <Self extends FieldNodeRecord<Self>>(
   context?: SettlementContext<Self>,
 ): void => {
   if (context?.isInTransition) {
-    const journal = (context.slotAutomaticLog ??= new Map<
-      Self,
-      Map<BlueprintChildEntry, InactiveSlotBaseline<Self>>
-    >());
+    const journal: SlotAutomaticLog<Self> = (context.slotAutomaticLog ??=
+      new Map());
     let bindings = journal.get(host);
     if (!bindings) journal.set(host, (bindings = new Map()));
     if (!bindings.has(entry))
@@ -28,10 +39,8 @@ export const markSlotChange = <Self extends FieldNodeRecord<Self>>(
         overlay: host.inactiveSlotOverlays?.get(entry),
       });
   }
-  const baselines = (host.inactiveSlotBaselines ??= new Map<
-    BlueprintChildEntry,
-    InactiveSlotBaseline<Self>
-  >());
+  const baselines: InactiveSlotBaselines<Self> = (host.inactiveSlotBaselines ??=
+    new Map());
   if (!baselines.has(entry))
     baselines.set(entry, {
       activeNode:
@@ -53,9 +62,8 @@ export const markSlotChange = <Self extends FieldNodeRecord<Self>>(
     const parent = child.parent;
     if (parent.isDetached || parent.childrenByName?.[child.name] !== child)
       break;
-    (parent.inactiveSlotChildren ??= new Map<string, Self>()).set(
-      child.name,
-      child,
-    );
+    const children: InactiveSlotChildren<Self> =
+      (parent.inactiveSlotChildren ??= new Map());
+    children.set(child.name, child);
   }
 };
