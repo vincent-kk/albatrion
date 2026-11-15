@@ -28,16 +28,25 @@ describe('URI and pointer addressing', () => {
     });
   });
   it.each([
-    ['#%2F$defs%2FA', 'A'],
+    // fast-uri keeps %2F encoded in fragments, so Ajv cannot compile this
+    // reference; the oracle compares against the once-decoded pointer instead.
+    ['#%2F$defs%2FA', 'A', '#/$defs/A'],
     ['#/$defs/a~01', 'a~1'],
     ['#/$defs/a~1b', 'a/b'],
     ['#/$defs/a%20b', 'a b'],
     ['#/$defs/%252F', '%2F'],
-  ])('decodes %s once before splitting pointer tokens', (reference, key) => {
-    const schema = { $defs: { [key]: { const: key } }, $ref: reference };
-    expect(scan(schema).output.allOf).toEqual([{ const: key }]);
-    assertEquivalent(schema, scan(schema).output, [key, 0, null]);
-  });
+  ])(
+    'decodes %s once before splitting pointer tokens',
+    (reference, key, oracleReference = reference) => {
+      const schema = { $defs: { [key]: { const: key } }, $ref: reference };
+      expect(scan(schema).output.allOf).toEqual([{ const: key }]);
+      assertEquivalent(
+        { ...schema, $ref: oracleReference },
+        scan(schema).output,
+        [key, 0, null],
+      );
+    },
+  );
   it.each(['#/%ZZ', '#/missing', '#/toString', '#%252F$defs%252FA'])(
     'keeps unavailable own targets %s',
     (reference) => {
