@@ -33,16 +33,16 @@ export const useFieldInput = (
   const path = node.path;
   const misfit = node.isMisfit;
   const required = node.isRequired;
-  const inlineFieldInput = schema.presentation?.FieldInput;
+  const inline = schema.presentation?.FieldInput;
   const Inline = useMemo(
     () =>
-      isReactComponent(inlineFieldInput)
-        ? { Component: withFieldInputErrorBoundary(inlineFieldInput) }
+      isReactComponent(inline)
+        ? { Component: withFieldInputErrorBoundary(inline) }
         : null,
-    [inlineFieldInput],
+    [inline],
   );
   return useMemo(() => {
-    if (disabled || inlineFieldInput === null) return null;
+    if (disabled || inline === null) return null;
     if (Inline) return Inline;
     const hint: FieldInputHint = {
       type: node.type,
@@ -71,7 +71,7 @@ export const useFieldInput = (
     misfit,
     required,
     disabled,
-    inlineFieldInput,
+    inline,
     Inline,
     fromFieldInputMap,
     fromFieldInputDefinitions,

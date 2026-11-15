@@ -208,7 +208,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         watchIndex?.remove(node);
         continue;
       }
-      const isDeliveryInitialized = node.isDeliveryInitialized;
+      const initialized = node.isDeliveryInitialized;
       const changes = node.deliveryChanges;
       const previousWatchValues = node.deliveryWatchValues ?? EMPTY_ARRAY;
       const pendingPayload = node.pendingDelivery?.payload;
@@ -222,10 +222,10 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         } else runtime.deliveryWatchIndex?.remove(node);
       }
       let watchChanged =
-        isDeliveryInitialized && watched.length !== previousWatchValues.length;
+        initialized && watched.length !== previousWatchValues.length;
       for (
         let index = 0;
-        isDeliveryInitialized && !watchChanged && index < watched.length;
+        initialized && !watchChanged && index < watched.length;
         index++
       )
         if (!isSameDeliveryValue(watched[index], previousWatchValues[index]))
@@ -233,7 +233,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       const silent = canOmitFieldNodePayload(node);
       mark = silent ? markSilent : markFieldNodeEvent;
       silentMask = BIT_MASK_NONE;
-      if (isDeliveryInitialized) {
+      if (initialized) {
         if (
           changes & FieldNodeEventType.UpdateValue &&
           (!isSameDeliveryValue(node.deliveryPreviousValue, node.storedValue) ||

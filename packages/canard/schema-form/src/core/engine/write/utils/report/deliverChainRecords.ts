@@ -41,7 +41,7 @@ export const deliverChainRecords = (
         console.warn(record.code, record.message, record.details);
       continue;
     }
-    const wasReportingErrors = runtime.isReportingErrors;
+    const previous = runtime.isReportingErrors;
     runtime.isReportingErrors = true;
     try {
       reporter.report(delivered);
@@ -49,7 +49,7 @@ export const deliverChainRecords = (
       if (caller) failures.push(error);
       else reportOwnerlessFailure(error);
     } finally {
-      runtime.isReportingErrors = wasReportingErrors;
+      runtime.isReportingErrors = previous;
     }
   }
   if (!caller && original !== undefined) reportOwnerlessFailure(original);

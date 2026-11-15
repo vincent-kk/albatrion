@@ -25,7 +25,7 @@ export const callInactiveValueResolver = <Self extends FieldNodeRecord<Self>>(
   if (typeof resolver !== 'function')
     return { value: resolver, hasFailed: false };
   const runtime = node.runtime;
-  const wasResolvingInactiveValue = runtime.isResolvingInactiveValue;
+  const previous = runtime.isResolvingInactiveValue;
   runtime.isResolvingInactiveValue = true;
   try {
     return { value: resolver(value, inputs), hasFailed: false };
@@ -42,6 +42,6 @@ export const callInactiveValueResolver = <Self extends FieldNodeRecord<Self>>(
     );
     return { value: undefined, hasFailed: true };
   } finally {
-    runtime.isResolvingInactiveValue = wasResolvingInactiveValue;
+    runtime.isResolvingInactiveValue = previous;
   }
 };

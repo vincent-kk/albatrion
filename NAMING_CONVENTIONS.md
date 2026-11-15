@@ -24,7 +24,7 @@ Not flags, so outside rules 5 to 7: a field that boxes one boolean whose meaning
 
 ## Applying a rename
 
-- Local variables and parameters that hold a member's value take the member's name.
+- Local variables and parameters that hold a member's value take the member's name. A local whose uses stay inside one function and close to its declaration may instead take a short name that abbreviates the member (`load` for `validationLoadStamp`, `active` for `activeValidationRun`). A long-lived local, such as a flag saved at the start of a function and restored at its end, keeps the member's name.
 - Rename by symbol (the TypeScript language service), never by text search, then update comments, string literals, test titles and documents in the same pull request.
 - A symbol rename does not reach string keys (`'x' in`, `Reflect.get`, `hasOwnProperty`, `Object.defineProperty`, `toHaveProperty`), values typed `any`, objects behind `as unknown as`, JavaScript files, code inside template strings, or stored test data. Search these by the old name in the same change: they compile and then read `undefined`, and a test that asserts absence or a zero count keeps passing without testing anything.
 - Code that predates this file may not follow it yet. A new member follows these rules; when that would mix two forms in one type, rename the type's existing members in the same change.
