@@ -202,7 +202,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
     );
     const instance = root.childrenByName!['source'];
     const watcher = root.childrenByName!.watcher;
-    instance.interactionState = { [FieldNodeState.Touched]: true };
+    instance.storedState = { [FieldNodeState.Touched]: true };
     const before = root.runtime.commitNumber;
 
     writeFieldNode(

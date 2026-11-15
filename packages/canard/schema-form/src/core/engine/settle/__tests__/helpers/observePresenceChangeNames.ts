@@ -15,10 +15,10 @@ export const observePresenceChangeNames = () => {
     missing: 0,
     mismatch: 0,
     null: 0,
-    entered: 0,
-    exited: 0,
-    perished: 0,
-    revived: 0,
+    enteredNodes: 0,
+    exitedNodes: 0,
+    perishedNodes: 0,
+    revivedNodes: 0,
   };
   const collect = presence.collectPresenceChangeNames;
   vi.spyOn(presence, 'collectPresenceChangeNames').mockImplementation(
@@ -47,10 +47,10 @@ export const observePresenceChangeNames = () => {
       )
         counts.mismatch++;
       else if (host.source === null) counts.null++;
-      else if (context.entered.has(host)) counts.entered++;
-      else if (context.exited.has(host)) counts.exited++;
-      else if (context.perished.has(host)) counts.perished++;
-      else if (context.revived.has(host)) counts.revived++;
+      else if (context.enteredNodes.has(host)) counts.enteredNodes++;
+      else if (context.exitedNodes.has(host)) counts.exitedNodes++;
+      else if (context.perishedNodes.has(host)) counts.perishedNodes++;
+      else if (context.revivedNodes.has(host)) counts.revivedNodes++;
       else counts.bounded++;
       const actual = collect(host, previous, context);
       expect(actual).toEqual(expected);

@@ -112,7 +112,7 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
     if (node.behavior.type === 'array' && node.behavior.strategy === 'branch')
       context.arrayCounts.set(node, 0);
     markRestoredSlotSource(node, context);
-    context.entered.add(node);
+    context.enteredNodes.add(node);
     context.changedNodes.add(node);
     context.dirtyPaths.add(node.path);
     if (node.behavior.strategy === 'branch')

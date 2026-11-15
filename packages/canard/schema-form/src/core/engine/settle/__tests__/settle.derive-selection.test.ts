@@ -79,7 +79,7 @@ describe('active derive declarations', () => {
       WriteOption.Overwrite,
     );
     const target = root.childrenByName!.H.childrenByName!.x;
-    target.interactionState = {
+    target.storedState = {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
@@ -89,8 +89,8 @@ describe('active derive declarations', () => {
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
-    expect(target.interactionState[FieldNodeState.Touched]).toBe(true);
+    expect(target.storedState[FieldNodeState.Edited]).toBe(true);
+    expect(target.storedState[FieldNodeState.Touched]).toBe(true);
   });
 
   it('FRAGMENT-050 shared node baseline only on depth-two if activation', () => {
@@ -336,7 +336,7 @@ describe('active derive declarations', () => {
       WriteOption.Overwrite,
     );
     const target = root.childrenByName!.H.childrenByName!.P;
-    target.interactionState = {
+    target.storedState = {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
@@ -347,8 +347,8 @@ describe('active derive declarations', () => {
       WriteOption.Overwrite,
     );
     expect(target.childrenByName?.q?.source).toBe('user');
-    expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
-    expect(target.interactionState[FieldNodeState.Touched]).toBe(true);
+    expect(target.storedState[FieldNodeState.Edited]).toBe(true);
+    expect(target.storedState[FieldNodeState.Touched]).toBe(true);
   });
 
   it('FRAGMENT-050 shared node baseline only after inactive declaration reselects', () => {
@@ -939,7 +939,7 @@ describe('newly selected declaration baselines', () => {
       WriteOption.Overwrite,
     );
     const target = root.childrenByName!.x;
-    target.interactionState = {
+    target.storedState = {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
@@ -949,15 +949,15 @@ describe('newly selected declaration baselines', () => {
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
+    expect(target.storedState[FieldNodeState.Edited]).toBe(true);
     writeFieldNode(
       root.childrenByName!.c,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(target.interactionState[FieldNodeState.Edited]).toBe(false);
-    expect(target.interactionState[FieldNodeState.Touched]).toBe(false);
+    expect(target.storedState[FieldNodeState.Edited]).toBe(false);
+    expect(target.storedState[FieldNodeState.Touched]).toBe(false);
   });
 
   it('FRAGMENT-050 if/then shared injectTo fires on its next source edge', () => {

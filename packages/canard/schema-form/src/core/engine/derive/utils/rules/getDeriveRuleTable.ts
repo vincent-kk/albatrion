@@ -46,7 +46,7 @@ interface FragmentTarget {
   /** Property name or tuple position; absent for the item template. */
   readonly name?: string;
   /** Set only for the repeated array item template. */
-  readonly items?: true;
+  readonly isItemTemplate?: true;
   /** Child template node. */
   readonly node: BlueprintNode;
   /** Declarations the child template carries. */
@@ -92,7 +92,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
           ...mapArray(
             node.itemCandidates ?? (node.item ? [node.item] : []),
             (item) => ({
-              items: true as const,
+              isItemTemplate: true as const,
               node: item,
               declarations: item.declarations,
             }),
@@ -112,7 +112,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
               schemaPath: appendSegment(declaration.schemaPath, 'controls'),
               layer: 'fragment',
               targetName: entry.name,
-              isItemTarget: entry.items,
+              isItemTarget: entry.isItemTemplate,
               targetDeclarationIds: mapArray(selected, (child) => child.id),
               targetNodes: [entry.node],
             });

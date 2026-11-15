@@ -61,7 +61,7 @@ describe('array prefix parity', () => {
         [{ name: 'kept' }, { name: 'removed' }],
         { kind: 'remove', index: 1 },
         (root) => {
-          root.children![0].interactionState = { touched: true };
+          root.children![0].storedState = { touched: true };
         },
         undefined,
         true,

@@ -6,13 +6,13 @@ import type { SettlementContext } from '../../types/settlement';
  * Retain one binding's published view before changing its pending source.
  * @param host - Owner of the mutable slots and their next publication
  * @param entry - Binding changed by entry, exit, pruning, or an overlay write
- * @param active - Last committed active child when this mutation is its final exit
+ * @param activeNode - Last committed active child when this mutation is its final exit
  * @returns Nothing; the next commit can publish only affected hosts and ancestors
  */
 export const markSlotChange = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   entry: BlueprintChildEntry,
-  active?: Self,
+  activeNode?: Self,
   context?: SettlementContext<Self>,
 ): void => {
   if (context?.isInTransition) {
@@ -34,8 +34,8 @@ export const markSlotChange = <Self extends FieldNodeRecord<Self>>(
   >());
   if (!baselines.has(entry))
     baselines.set(entry, {
-      active:
-        active ??
+      activeNode:
+        activeNode ??
         (host.isDeliveryInitialized
           ? (host.deliveryPreviousChildren ?? host.children)?.find(
               (child) => child.parent === host && child.name === entry.name,

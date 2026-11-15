@@ -111,7 +111,7 @@ describe('I9 array costs follow changed paths', () => {
         for (const watcher of watchers)
           if (
             context.changedNodes.has(watcher) ||
-            context.entered.has(watcher) ||
+            context.enteredNodes.has(watcher) ||
             context.stateDirtyNodes.has(watcher) ||
             context.pathChanges.some((change) => change.node === watcher)
           )

@@ -58,10 +58,10 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
     let affectedPaths: Optional<Set<string>>;
     if (watchIndex?.allNodes.size) {
       affectedPaths = runtime.deliveryAffectedPaths ?? new Set<string>();
-      for (const node of context.entered) affectedPaths.add(node.path);
-      for (const node of context.exited)
+      for (const node of context.enteredNodes) affectedPaths.add(node.path);
+      for (const node of context.exitedNodes)
         affectedPaths.add(node.deliveryPreviousPath ?? node.path);
-      for (const node of context.perished)
+      for (const node of context.perishedNodes)
         affectedPaths.add(node.deliveryPreviousPath ?? node.path);
       for (const change of context.pathChanges) {
         affectedPaths.add(change.previous);
@@ -79,7 +79,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
     }
     const candidates = new Set<unknown>();
     const enteredByParent = new Map<Self, Self[]>();
-    for (const child of context.entered) {
+    for (const child of context.enteredNodes) {
       const parent = child.parent;
       if (!parent) continue;
       const children = enteredByParent.get(parent);
@@ -154,10 +154,10 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
     runtime.deliveredDiagnostics = runtime.diagnostics;
     const globalState = commitGlobalState(context);
     const { departing: globalDeparting, loadNodes } = globalState;
-    const { entered, changedNodes, stateDirtyNodes } = context;
+    const { enteredNodes, changedNodes, stateDirtyNodes } = context;
     const sources: readonly Optional<ReadonlySet<unknown>>[] = [
       globalDeparting,
-      entered,
+      enteredNodes,
       changedNodes,
       stateDirtyNodes,
       loadNodes,
@@ -181,7 +181,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         (sourceIndex > 0 &&
           globalDeparting.size &&
           globalDeparting.has(node)) ||
-        (sourceIndex > 1 && entered.size && entered.has(node)) ||
+        (sourceIndex > 1 && enteredNodes.size && enteredNodes.has(node)) ||
         (sourceIndex > 2 && changedNodes.size && changedNodes.has(node)) ||
         (sourceIndex > 3 &&
           stateDirtyNodes.size &&
@@ -195,7 +195,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         !(sourceIndex >= 1 && sourceIndex <= 3) &&
         sourceIndex !== 5 &&
         !candidates.has(node) &&
-        !(entered.size && entered.has(node)) &&
+        !(enteredNodes.size && enteredNodes.has(node)) &&
         !(changedNodes.size && changedNodes.has(node)) &&
         !(stateDirtyNodes.size && stateDirtyNodes.has(node))
       ) {
@@ -304,7 +304,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
           mark(node, FieldNodeEventType.UpdateChildren);
         if (
           changes & FieldNodeEventType.UpdateState &&
-          node.deliveryPreviousState !== node.interactionState
+          node.deliveryPreviousState !== node.storedState
         ) {
           runtime.hasStateChanged = true;
           if (
@@ -397,8 +397,8 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
     globalState.finish();
     runtime.revisionNodes?.clear();
     const departing: Self[] = [];
-    for (const node of context.exited) departing.push(node);
-    for (const node of context.perished) departing.push(node);
+    for (const node of context.exitedNodes) departing.push(node);
+    for (const node of context.perishedNodes) departing.push(node);
     const seenDeparting = new Set<Self>();
     while (departing.length) {
       const node = departing.pop();

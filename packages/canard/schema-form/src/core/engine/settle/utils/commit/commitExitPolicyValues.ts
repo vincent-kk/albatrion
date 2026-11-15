@@ -64,7 +64,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
   const expressions = getExitExpressions(context.root.runtime.blueprint);
   if (expressions.size === 0) return;
   const runtime = context.root.runtime;
-  for (const exited of context.exited)
+  for (const exited of context.exitedNodes)
     visitFieldNodes(
       exited,
       (node) => {

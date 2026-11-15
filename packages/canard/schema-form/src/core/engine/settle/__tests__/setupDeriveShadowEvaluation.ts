@@ -28,11 +28,14 @@ afterAll(() => {
     if (Object.keys(assertions).length)
       console.log('GATE_TABLE_ASSERTIONS', JSON.stringify(assertions));
     expect(gateWheelEvaluation.nonNoop).toBe(0);
-    if (gateWheelEvaluation.predictions || gateWheelEvaluation.missed)
+    if (gateWheelEvaluation.predictionCount || gateWheelEvaluation.missCount)
       console.log('gate-wheel-shadow', JSON.stringify(gateWheelEvaluation));
   } finally {
     engineModes.setMode('gateSelection', previousModes.gateSelection);
     engineModes.setMode('gateWheel', previousModes.gateWheel);
-    engineModes.setMode('isDeriveShadowEnabled', previousModes.isDeriveShadowEnabled);
+    engineModes.setMode(
+      'isDeriveShadowEnabled',
+      previousModes.isDeriveShadowEnabled,
+    );
   }
 });

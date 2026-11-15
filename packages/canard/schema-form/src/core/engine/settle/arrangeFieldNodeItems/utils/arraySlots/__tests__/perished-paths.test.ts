@@ -86,7 +86,7 @@ const truncateTail = (count: number) => {
     expect(root.itemCount).toBe(1);
     expect(root.children).toHaveLength(1);
     expect(root.children![0].path).toBe('/0');
-    expect(context.perished.size).toBe(count - 1);
+    expect(context.perishedNodes.size).toBe(count - 1);
     return pruned.mock.calls[0][1];
   } finally {
     releaseSettlementScratch(scratch);

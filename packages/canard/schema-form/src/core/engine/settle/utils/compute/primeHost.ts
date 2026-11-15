@@ -137,17 +137,17 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
         : slotOverlay
           ? createFromSlotOverlay(node, entry, slotOverlay, context)
           : createChildNode(node, entry));
-    context.perished.delete(child);
+    context.perishedNodes.delete(child);
     if (key !== undefined && context.pendingExits.delete(key)) {
       const path = appendSegment(node.path, entry.name);
       updatePendingExitIndex(context, path, -1);
     }
     if (pending && child === pending) {
-      context.revived.add(child);
+      context.revivedNodes.add(child);
     }
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     if (!priorChild && !pending) {
-      context.entered.add(child);
+      context.enteredNodes.add(child);
 
       if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
       else if (slotSource || slotOverlay)

@@ -18,7 +18,7 @@ const CHANGE_BITS = {
   isReadOnly: FieldNodeEventType.UpdateControlledProperties,
   isDisabled: FieldNodeEventType.UpdateControlledProperties,
   schema: FieldNodeEventType.UpdateJsonSchema,
-  interactionState: FieldNodeEventType.UpdateState,
+  storedState: FieldNodeEventType.UpdateState,
 };
 
 /**
@@ -39,11 +39,7 @@ export const captureFieldNodeChange = <
 ): Value => {
   if (node[field] === value || !node.isDeliveryInitialized || node.isDetached)
     return value;
-  if (
-    field === 'interactionState' ||
-    field === 'isActive' ||
-    field === 'isVisible'
-  )
+  if (field === 'storedState' || field === 'isActive' || field === 'isVisible')
     recordFieldNodeRevealBaseline(node);
   const bit = CHANGE_BITS[field];
   if (!(node.deliveryChanges & bit)) {
@@ -69,7 +65,7 @@ export const captureFieldNodeChange = <
         node.deliveryPreviousSchema = node.schema;
         break;
       case FieldNodeEventType.UpdateState:
-        node.deliveryPreviousState = node.interactionState;
+        node.deliveryPreviousState = node.storedState;
     }
     node.deliveryChanges |= bit;
   }

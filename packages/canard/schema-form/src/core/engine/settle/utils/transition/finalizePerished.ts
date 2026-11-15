@@ -31,7 +31,7 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
   let rekeyed: Optional<{ previous: string; current?: string }>;
   const detach = (departing: Self): void =>
     detachPerishedNode(departing, context, rekeyed);
-  for (const node of context.perished) {
+  for (const node of context.perishedNodes) {
     if (node.parent?.childrenByName?.[node.name] === node) continue;
     rekeyed = node.parent
       ? context.rekeyedArrayMoves?.get(node.parent)?.[Number(node.name)]

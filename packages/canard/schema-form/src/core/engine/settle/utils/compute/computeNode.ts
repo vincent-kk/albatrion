@@ -42,7 +42,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     !context.hasGates &&
     context.root.runtime.blueprint.capabilities.isBranchless &&
     context.shapeDirtyPaths.size === 0 &&
-    context.entered.size === 0
+    context.enteredNodes.size === 0
   ) {
     computeStableNode(node, context);
     return;
@@ -83,7 +83,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     !context.hasGates &&
     node.parent !== null &&
     node.behavior.strategy === 'terminal' &&
-    context.entered.has(node)
+    context.enteredNodes.has(node)
   ) {
     if (context.initialOutputs) context.initialOutputs.push(node);
     else updateOutput(node, context);
@@ -163,8 +163,9 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   const prior = node.childrenByName ?? {};
   let wheelPlan = context.hasGates ? prepareHostWheelPlan(node) : undefined;
   let gates = wheelPlan?.gates ?? [];
-  const relocated = wheelPlan?.relocated ?? [];
-  if (gates.length > 0) primeHost(node, prior, context, relocated.length > 0);
+  const relocatedOccurrences = wheelPlan?.relocatedOccurrences ?? [];
+  if (gates.length > 0)
+    primeHost(node, prior, context, relocatedOccurrences.length > 0);
   const initialDirty = dirtyChildren(node, context);
   for (let index = 0; index < initialDirty.length; index++)
     computeNode(initialDirty[index], context);
@@ -190,7 +191,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   let previousPredicate: Optional<boolean>;
   let lastStructure = prior;
   let registered = false;
-  let hasRelocated = relocated.length > 0;
+  let hasRelocated = relocatedOccurrences.length > 0;
   for (let round = 0; round < cap; round++) {
     const roundStoredValue = node.storedValue;
     const roundStoredOutputValue = node.storedOutputValue;
@@ -259,8 +260,8 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
       outputChanged = updateOutput(node, context);
     if (wheelPlan) wheelPlan = prepareHostWheelPlan(node, wheelPlan);
     gates = wheelPlan?.gates ?? gates;
-    const currentRelocated = wheelPlan?.relocated ?? [];
-    hasRelocated = currentRelocated.length > 0;
+    const currentRelocatedOccurrences = wheelPlan?.relocatedOccurrences ?? [];
+    hasRelocated = currentRelocatedOccurrences.length > 0;
     cap = wheelPlan
       ? context.distributedInputs.size > 0 || wheelPlan.cap === undefined
         ? (wheelPlan.cap = getHostWheelBudgetCap(
@@ -271,28 +272,29 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
           ))
         : wheelPlan.cap
       : 1;
-    if (outputChanged) scheduleRelocatedGates(currentRelocated, context);
+    if (outputChanged)
+      scheduleRelocatedGates(currentRelocatedOccurrences, context);
     const publishedChanged =
       !outputChanged &&
       context.kind !== FieldNodeWriteKind.Load &&
       (node.storedValue !== roundStoredValue ||
         node.storedOutputValue !== roundStoredOutputValue) &&
-      scheduleChangedRelocatedGates(currentRelocated, context);
+      scheduleChangedRelocatedGates(currentRelocatedOccurrences, context);
     const wheelChanged =
       schemaChanged || changed || outputChanged || publishedChanged;
     finishGateTableRound(node, context);
     if (frame && confirmation)
       verifyGateWheelConfirmation(confirmation, frame, wheelChanged);
     if (frame && previousPredicate === false && !wheelChanged)
-      gateWheelEvaluation.missed++;
+      gateWheelEvaluation.missCount++;
     const skip =
       frame !== undefined &&
       wheelChanged &&
       canSkipGateWheel(node, context, frame, round, cap, gates.length);
     if (skip) {
-      gateWheelEvaluation.predictions++;
+      gateWheelEvaluation.predictionCount++;
       if (engineModes.gateWheel === 'skip') {
-        gateWheelEvaluation.skipped++;
+        gateWheelEvaluation.skipCount++;
         preserveReferences(node, previous, context);
         context.dirtyPaths.delete(node.path);
         return;

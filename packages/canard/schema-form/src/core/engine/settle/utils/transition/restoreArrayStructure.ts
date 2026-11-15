@@ -38,8 +38,8 @@ export const restoreArrayStructure = <Self extends FieldNodeRecord<Self>>(
               'isActive',
               false,
             );
-            context.entered.delete(current);
-            context.perished.delete(current);
+            context.enteredNodes.delete(current);
+            context.perishedNodes.delete(current);
           },
           { isOwned: true },
         );
@@ -49,7 +49,7 @@ export const restoreArrayStructure = <Self extends FieldNodeRecord<Self>>(
       childrenByName[item.name] = item;
       item.isDetached = false;
       item.isActive = captureFieldNodeChange(item, 'isActive', true);
-      context.perished.delete(item);
+      context.perishedNodes.delete(item);
     }
     host.childrenByName = childrenByName;
     host.children = captureFieldNodeChange(host, 'children', previousItems);

@@ -113,7 +113,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
     const item = items[key];
     if (length) moves.push({ previous: appendSegment(host.path, index) });
     if (!item) continue;
-    context.perished.add(item);
+    context.perishedNodes.add(item);
     // Equals the item's load-path walk: its path is the host's plus this position,
     // and the load snapshot is not replaced before the end of this application.
     const load =
@@ -156,7 +156,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   context.dirtyPaths.add(host.path);
   context.shapeDirtyPaths.add(host.path);
   for (const { node, value } of created) {
-    context.entered.add(node);
+    context.enteredNodes.add(node);
 
     markWrite(node, value, context);
   }

@@ -14,7 +14,7 @@ import type { SettlementContext } from '../../types/settlement';
 /**
  * Accumulate global-state deltas for the departing and load sources and expose the visitor the commit uses for the five global sources.
  * The visitor adds a node's state keys to the global counts when no state existed before, so `visit` must be called only for nodes
- * from the five global sources (departing, entered, changed, stateDirty, load); `markCommitDeliveries` assembles the visit order and
+ * from the five global sources (`departing`, `enteredNodes`, `changedNodes`, `stateDirtyNodes`, `loadNodes`); `markCommitDeliveries` assembles the visit order and
  * never passes an additional candidate to it.
  * @param context - Final shape facts, including revived perished candidates
  * @returns Departing/load sources, the global-source visitor and the delta publication
@@ -26,8 +26,9 @@ export const commitGlobalState = <Self extends FieldNodeRecord<Self>>(
   const hadGlobalState = runtime.globalStateCounts.size > 0;
   const deltas = new Map<string, number>();
   const departing = new Set<Self>();
-  const pending = [...context.exited];
-  for (const node of context.perished) if (node.isDetached) pending.push(node);
+  const pending = [...context.exitedNodes];
+  for (const node of context.perishedNodes)
+    if (node.isDetached) pending.push(node);
   while (pending.length) {
     const node = pending.pop();
     if (!node || departing.has(node)) continue;
@@ -55,34 +56,31 @@ export const commitGlobalState = <Self extends FieldNodeRecord<Self>>(
     visit(node: Self): void {
       const previousState =
         node.deliveryChanges & FieldNodeEventType.UpdateState
-          ? (node.deliveryPreviousState ?? node.interactionState)
-          : node.interactionState;
+          ? (node.deliveryPreviousState ?? node.storedState)
+          : node.storedState;
       if (departing.size && departing.has(node)) {
-        if (!context.entered.has(node) || node.isDeliveryInitialized)
+        if (!context.enteredNodes.has(node) || node.isDeliveryInitialized)
           accumulateGlobalStateDeltas(deltas, previousState, {});
         if (node.isDetached) return;
       }
       if (node.isDetached) return;
-      if (context.entered.size && context.entered.has(node)) {
+      if (context.enteredNodes.size && context.enteredNodes.has(node)) {
         accumulateGlobalStateDeltas(
           deltas,
           node.isDeliveryInitialized ? previousState : {},
-          node.interactionState,
+          node.storedState,
         );
         return;
       }
       if (!hadGlobalState) {
-        for (const key in node.interactionState)
-          if (
-            hasOwnProperty(node.interactionState, key) &&
-            node.interactionState[key]
-          )
+        for (const key in node.storedState)
+          if (hasOwnProperty(node.storedState, key) && node.storedState[key])
             deltas.set(key, (deltas.get(key) ?? 0) + 1);
         return;
       }
       const previous = previousState;
-      if (previous !== node.interactionState)
-        accumulateGlobalStateDeltas(deltas, previous, node.interactionState);
+      if (previous !== node.storedState)
+        accumulateGlobalStateDeltas(deltas, previous, node.storedState);
     },
     finish(): void {
       publishGlobalStateDeltas(context.root, deltas);

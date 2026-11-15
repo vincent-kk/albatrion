@@ -163,7 +163,7 @@ it('passes only each host own entering children to the required subset', () => {
     scratch,
   );
   context.changedNodes.add(left).add(right);
-  context.entered.add(left.childrenByName!.a).add(right.childrenByName!.b);
+  context.enteredNodes.add(left.childrenByName!.a).add(right.childrenByName!.b);
   left.deliveryChanges |= FieldNodeEventType.UpdateChildren;
   right.deliveryChanges |= FieldNodeEventType.UpdateChildren;
   const subsets = vi.spyOn(requiredChildren, 'getRequiredChildren');

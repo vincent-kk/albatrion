@@ -133,7 +133,7 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
             : EMPTY_ARRAY;
         }
       } else node.source = value;
-      const state = node.interactionState;
+      const state = node.storedState;
       for (const key in state)
         if (hasOwnProperty(state, key) && state[key]) {
           deltas ??= new Map();

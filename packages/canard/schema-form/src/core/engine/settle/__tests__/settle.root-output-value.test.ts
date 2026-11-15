@@ -16,10 +16,10 @@ const trimmedStrings = (terminal: boolean): BlueprintSchema => ({
   options: { omitTrailingEmpty: true, terminal },
 });
 
-// filid:contract settle-root-emission
+// filid:contract settle-root-output-value
 describe('a root object or array never omits itself', () => {
   it.each([false, true])(
-    'settle-root-emission emits [] when terminal=%s trims every item at mount',
+    'settle-root-output-value outputs [] when terminal=%s trims every item at mount',
     (terminal) => {
       const { root } = createTestTree(trimmedStrings(terminal));
       loadFieldNodeAtMount(root, ['', null], WriteOption.Overwrite);
@@ -28,7 +28,7 @@ describe('a root object or array never omits itself', () => {
   );
 
   it.each([false, true])(
-    'settle-root-emission emits [] when terminal=%s trims every item after a write',
+    'settle-root-output-value outputs [] when terminal=%s trims every item after a write',
     (terminal) => {
       const { root } = createTestTree(trimmedStrings(terminal));
       loadFieldNodeAtMount(root, ['a'], WriteOption.Overwrite);
@@ -42,7 +42,7 @@ describe('a root object or array never omits itself', () => {
     },
   );
 
-  it('settle-root-emission emits [] when a literal default trims every item on the static first load', () => {
+  it('settle-root-output-value outputs [] when a literal default trims every item on the static first load', () => {
     const { root } = createTestTree({
       type: 'array',
       items: { type: 'string' },
@@ -54,7 +54,7 @@ describe('a root object or array never omits itself', () => {
     expect(root.storedOutputValue).toEqual([]);
   });
 
-  it('settle-root-emission keeps the empty stored value of a root object and array', () => {
+  it('settle-root-output-value keeps the empty stored value of a root object and array', () => {
     const object = createTestTree({
       type: 'object',
       properties: { name: { type: 'string' } },

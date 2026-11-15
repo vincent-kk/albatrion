@@ -453,7 +453,7 @@ describe('settlement delivery ledger', () => {
       WriteOption.Overwrite,
     );
     const target = root.childrenByName!.target;
-    target.interactionState = {
+    target.storedState = {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };

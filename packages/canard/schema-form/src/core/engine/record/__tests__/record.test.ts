@@ -78,7 +78,7 @@ const makeRecord = (): FieldNodeRecord<PathNode> => {
     divergenceBase: undefined,
     storedIsDivergent: false,
     schema: { schema: {}, hasTypeConflict: false },
-    interactionState: {},
+    storedState: {},
     revisionLedger: EMPTY_REVISION_LEDGER,
     isDeliveryInitialized: false,
     deliveryChanges: 0,
@@ -123,7 +123,7 @@ describe('record layout operations', () => {
     node.isDeliveryInitialized = true;
     const children = node.children,
       schema = node.schema,
-      state = node.interactionState;
+      state = node.storedState;
     node.path = captureFieldNodeChange(node, 'path', '/next');
     node.children = captureFieldNodeChange(node, 'children', []);
     node.isVisible = captureFieldNodeChange(node, 'isVisible', false);
@@ -132,7 +132,7 @@ describe('record layout operations', () => {
       schema: { title: 'next' },
       hasTypeConflict: false,
     });
-    node.interactionState = captureFieldNodeChange(node, 'interactionState', {
+    node.storedState = captureFieldNodeChange(node, 'storedState', {
       edited: true,
     });
     expect(node.deliveryPreviousPath).toBe('');
@@ -150,7 +150,7 @@ describe('record layout operations', () => {
     ]).toEqual([undefined, undefined, undefined, undefined, undefined]);
     expect(node.path).toBe('/next');
     expect(node.isVisible).toBe(false);
-    expect(node.interactionState).toEqual({ edited: true });
+    expect(node.storedState).toEqual({ edited: true });
   });
 
   it('allocates no change records for initialization or equal assignments', () => {
@@ -202,17 +202,17 @@ describe('record layout operations', () => {
   it('leaves a detached reference unchanged when interaction flags are patched', () => {
     const node = makeRecord();
     node.isDetached = true;
-    const state = node.interactionState;
+    const state = node.storedState;
     patchFieldNodeInteractionState(node, { touched: true });
-    expect(node.interactionState).toBe(state);
-    expect(node.interactionState).toEqual({});
+    expect(node.storedState).toBe(state);
+    expect(node.storedState).toEqual({});
   });
 
   it('retains the state reference for a no-op interaction patch', () => {
     const node = makeRecord();
-    node.interactionState = { touched: true };
-    const state = node.interactionState;
+    node.storedState = { touched: true };
+    const state = node.storedState;
     patchFieldNodeInteractionState(node, { touched: true });
-    expect(node.interactionState).toBe(state);
+    expect(node.storedState).toBe(state);
   });
 });

@@ -127,11 +127,11 @@ describe('settled value rule layers', () => {
       { trigger: false, a: 'A', b: 'B' },
       WriteOption.Overwrite,
     );
-    root.childrenByName!.a.interactionState = {
+    root.childrenByName!.a.storedState = {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
-    root.childrenByName!.b.interactionState = {
+    root.childrenByName!.b.storedState = {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
@@ -142,17 +142,17 @@ describe('settled value rule layers', () => {
       WriteOption.Overwrite,
     );
     expect(reset).toHaveBeenCalledTimes(1);
-    expect(
-      root.childrenByName?.a?.interactionState[FieldNodeState.Edited],
-    ).toBe(false);
-    expect(
-      root.childrenByName?.a?.interactionState[FieldNodeState.Touched],
-    ).toBe(false);
-    expect(
-      root.childrenByName?.b?.interactionState[FieldNodeState.Edited],
-    ).toBe(false);
-    expect(
-      root.childrenByName?.b?.interactionState[FieldNodeState.Touched],
-    ).toBe(false);
+    expect(root.childrenByName?.a?.storedState[FieldNodeState.Edited]).toBe(
+      false,
+    );
+    expect(root.childrenByName?.a?.storedState[FieldNodeState.Touched]).toBe(
+      false,
+    );
+    expect(root.childrenByName?.b?.storedState[FieldNodeState.Edited]).toBe(
+      false,
+    );
+    expect(root.childrenByName?.b?.storedState[FieldNodeState.Touched]).toBe(
+      false,
+    );
   });
 });

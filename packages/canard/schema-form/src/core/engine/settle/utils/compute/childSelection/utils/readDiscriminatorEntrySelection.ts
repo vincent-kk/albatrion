@@ -27,7 +27,7 @@ export const readDiscriminatorEntrySelection = (
   isAtomic: BlueprintOptions['isAtomic'],
 ): PreparedDiscriminatorEntry => {
   const bucket = selection.buckets.get(value) ?? EMPTY_ARRAY;
-  const cached = selection.prepared.get(bucket);
+  const cached = selection.preparedEntries.get(bucket);
   if (cached) return cached;
   const ids = mapArray(
     mergeGateSteps(selection.baseline, bucket),
@@ -38,6 +38,6 @@ export const readDiscriminatorEntrySelection = (
     isAtomic,
   });
   const prepared = { ids, schema };
-  selection.prepared.set(bucket, prepared);
+  selection.preparedEntries.set(bucket, prepared);
   return prepared;
 };

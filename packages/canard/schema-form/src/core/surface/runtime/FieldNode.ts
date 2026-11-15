@@ -95,7 +95,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   /** Pure comparison result for the retained path values. */
   storedIsDivergent: boolean;
   schema: EffectiveSchema;
-  interactionState: FieldNodeRecord<FieldNode>['interactionState'];
+  storedState: FieldNodeRecord<FieldNode>['storedState'];
   /** Per-bit counts copied only after this occurrence first receives delivery. */
   revisionLedger: Readonly<Record<number, number>>;
   isDeliveryInitialized: boolean;
@@ -127,7 +127,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     childrenByName: Nullable<Dictionary<FieldNode>>,
     children: Nullable<readonly FieldNode[]>,
     schema: EffectiveSchema,
-    state: FieldNodeRecord<FieldNode>['interactionState'],
+    state: FieldNodeRecord<FieldNode>['storedState'],
   ) {
     this.behavior = behavior;
     this.runtime = runtime;
@@ -160,7 +160,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.divergenceBase = undefined;
     this.storedIsDivergent = false;
     this.schema = schema;
-    this.interactionState = state;
+    this.storedState = state;
     this.revisionLedger = EMPTY_REVISION_LEDGER;
     this.isDeliveryInitialized = false;
     this.deliveryChanges = BIT_MASK_NONE;
@@ -374,7 +374,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   }
   /** Local interaction flags, patched through the dispatcher on assignment. */
   get state() {
-    return this.interactionState;
+    return this.storedState;
   }
   set state(value: NodeStateFlags) {
     dispatchSetState<FieldNode>(this, value);

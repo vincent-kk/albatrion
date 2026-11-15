@@ -4,7 +4,7 @@ import { createPreparedChildrenByName } from '../utils/compute/childSelection/ut
 import { readProjectedValue } from '../utils/gates/readProjectedValue';
 import { createGateReadFixture } from './fixtures/createGateReadFixture';
 
-// filid:contract settle-projected-structure-read
+// filid:contract settle-projected-children-read
 describe('projected childrenByName reads', () => {
   it.each(['dictionary', 'prepared-view'])(
     'reads a %s without allocating own-key descriptors',

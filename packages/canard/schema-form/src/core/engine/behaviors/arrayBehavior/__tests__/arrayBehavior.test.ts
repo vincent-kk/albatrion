@@ -64,7 +64,7 @@ const makeRecord = (
   divergenceBase: undefined,
   storedIsDivergent: false,
   schema: { schema: { options }, hasTypeConflict: false },
-  interactionState: {},
+  storedState: {},
   revisionLedger: EMPTY_REVISION_LEDGER,
   isDeliveryInitialized: false,
   deliveryChanges: 0,

@@ -51,7 +51,7 @@ export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
     const expected = dirtyChildren(node, {
       ...context,
       registrationShadow: undefined,
-      dirtyChildrenByParent: shadow.dirty.childrenByParent,
+      dirtyChildrenByParent: shadow.dirtyPaths.childrenByParent,
     });
     let matches = children.length === expected.length;
     if (matches) {

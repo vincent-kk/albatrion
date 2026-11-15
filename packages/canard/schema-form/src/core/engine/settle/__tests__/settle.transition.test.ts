@@ -437,10 +437,10 @@ describe('settle transitions and loads', () => {
     });
     resetFieldNodeSubtree(root.childrenByName!.left, WriteOption.Overwrite);
     expect(
-      root.childrenByName?.left?.interactionState[FieldNodeState.Touched],
+      root.childrenByName?.left?.storedState[FieldNodeState.Touched],
     ).toBeUndefined();
     expect(
-      root.childrenByName?.right?.interactionState[FieldNodeState.Touched],
+      root.childrenByName?.right?.storedState[FieldNodeState.Touched],
     ).toBe(true);
     expect([...root.runtime.misfitPaths].sort()).toEqual(['/left', '/right']);
     expect(root.runtime.misfitRecords?.map((record) => record.path)).toEqual([

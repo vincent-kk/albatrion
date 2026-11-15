@@ -136,7 +136,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
           source: context.filledNodes.has(node)
             ? 'fill'
             : context.kind === FieldNodeWriteKind.Load &&
-                context.entered.has(node)
+                context.enteredNodes.has(node)
               ? 'load'
               : context.changedSource.has(node.path)
                 ? context.kind
@@ -210,7 +210,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   const built = runtime.misfitsMemoBuild;
   if (
     built?.memo !== misfitsMemo ||
-    built.mutations !== runtime.misfitPaths.mutations ||
+    built.mutationCount !== runtime.misfitPaths.mutationCount ||
     built.size !== misfitsMemo.size
   ) {
     if (runtime.misfitPaths.size === 0) {
@@ -245,11 +245,11 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     runtime.misfitsMemoBuild = {
       memo: misfitsMemo,
       size: misfitsMemo.size,
-      mutations: runtime.misfitPaths.mutations,
+      mutationCount: runtime.misfitPaths.mutationCount,
     };
   }
   runtime.misfitsMemo = misfitsMemo;
-  for (const node of context.entered)
+  for (const node of context.enteredNodes)
     if (!node.isDetached) {
       if (node.inactiveValueMemo !== undefined)
         node.inactiveValueMemo = undefined;

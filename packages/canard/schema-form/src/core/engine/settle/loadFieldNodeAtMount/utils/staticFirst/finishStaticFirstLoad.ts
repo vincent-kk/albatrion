@@ -97,7 +97,7 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
   runtime.misfitsMemoBuild = {
     memo,
     size: memo.size,
-    mutations: runtime.misfitPaths.mutations,
+    mutationCount: runtime.misfitPaths.mutationCount,
   };
   runtime.deliveredDiagnostics = runtime.diagnostics;
   runtime.deliveredContext = runtime.context;

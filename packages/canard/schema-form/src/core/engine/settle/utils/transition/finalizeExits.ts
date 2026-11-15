@@ -45,7 +45,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
     if (node.isDetached) continue;
     const parent = node.parent;
     if (parent?.childrenByName?.[node.name] === node) continue;
-    context.exited.add(node);
+    context.exitedNodes.add(node);
     const rekeyed =
       context.rekeyedArrayMoves &&
       isRekeyedDestination(node, context.rekeyedArrayMoves);
@@ -58,7 +58,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
           applyPolicy &&
           !rekeyed &&
           !inLoadScope(node) &&
-          !context.entered.has(node) &&
+          !context.enteredNodes.has(node) &&
           !context.throwingGateExits?.has(node)
         )
           resolveInactiveValue(departing, node, context);
@@ -109,19 +109,19 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
     }
   }
   withdrawDetachedFills(context);
-  for (const node of context.exited)
+  for (const node of context.exitedNodes)
     if (!inLoadScope(node) && node.isDetached)
       retainExitedSlot(
         node,
         context,
         applyPolicy &&
-          !context.entered.has(node) &&
+          !context.enteredNodes.has(node) &&
           !context.throwingGateExits?.has(node),
       );
   if (context.inactiveValueOverrides) applyInactiveValues(context);
   const affectedAncestors = new Set<Self>();
   finalizeRestoredSlotSource(context);
-  for (const node of context.exited)
+  for (const node of context.exitedNodes)
     for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent)
       if (!ancestor.isDetached) affectedAncestors.add(ancestor);
   for (const ancestor of [...affectedAncestors].sort(

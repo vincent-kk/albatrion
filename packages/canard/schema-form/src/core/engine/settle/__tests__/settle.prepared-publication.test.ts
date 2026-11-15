@@ -34,7 +34,7 @@ it('does not publish an admitted name whose recursive candidate never entered th
     computeChild: () => {},
     isImmediate: false,
     next,
-    seen: new Map([['phantom', root.blueprintNode]]),
+    seenNodesByName: new Map([['phantom', root.blueprintNode]]),
     inactiveEntries: [],
     hasChanged: false,
     shouldFlushReads: false,

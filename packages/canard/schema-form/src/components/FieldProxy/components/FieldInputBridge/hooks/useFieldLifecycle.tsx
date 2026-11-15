@@ -1,4 +1,4 @@
-// committed is read during render to mount a detector only for already committed positions with Render work.
+// isCommittedRef is read during render to mount a detector only for already committed positions with Render work.
 import {
   type ReactNode,
   type RefObject,
@@ -45,12 +45,12 @@ export const useFieldLifecycle = (
   attachedFiles?: AttachedFilesStore,
 ) => {
   const position = useMemo(() => {
-    const committed = { current: false };
+    const isCommittedRef = { current: false };
     let registered: Nullable<HTMLDivElement> = null;
     let fired = false;
     const ref = (element: Nullable<HTMLDivElement>) => {
       container.current = element;
-      if (!element || !committed.current || element === registered) return;
+      if (!element || !isCommittedRef.current || element === registered) return;
       releaseComposition();
       if (registered) virtualizationManager?.detachInput(registered);
       virtualizationManager?.attachInput(element, node);
@@ -77,29 +77,29 @@ export const useFieldLifecycle = (
       if (!fired) {
         fired = true;
         if (lifecycle && element) {
-          if (lifecycle.pending & FieldLifecycle.Mount)
+          if (lifecycle.pendingMask & FieldLifecycle.Mount)
             runSlotAction(element, lifecycle.fire(node, FieldLifecycle.Mount));
-          if (lifecycle.pending & FieldLifecycle.Render)
+          if (lifecycle.pendingMask & FieldLifecycle.Render)
             runSlotAction(element, lifecycle.fire(node, FieldLifecycle.Render));
         }
       }
-      committed.current = true;
+      isCommittedRef.current = true;
       return () => {
-        committed.current = false;
+        isCommittedRef.current = false;
         releaseComposition();
         unsubscribe();
         if (registered) virtualizationManager?.detachInput(registered);
         if (
           registered &&
           lifecycle &&
-          lifecycle.pending & FieldLifecycle.Unmount
+          lifecycle.pendingMask & FieldLifecycle.Unmount
         )
           lifecycle.fire(node, FieldLifecycle.Unmount);
         registered = null;
       };
     };
     const position = {
-      committed,
+      isCommittedRef,
       effect,
       ref,
       epoch: 0,
@@ -121,13 +121,13 @@ export const useFieldLifecycle = (
   useLayoutEffect(effect, [effect]);
   position.detector =
     lifecycle &&
-    position.committed.current &&
-    lifecycle.pending & FieldLifecycle.Render &&
+    position.isCommittedRef.current &&
+    lifecycle.pendingMask & FieldLifecycle.Render &&
     lifecycle.has(node, FieldLifecycle.Render) ? (
       <FieldLifecycleRender
         node={node}
         container={container}
-        committed={position.committed}
+        isCommittedRef={position.isCommittedRef}
         lifecycle={lifecycle}
       />
     ) : null;

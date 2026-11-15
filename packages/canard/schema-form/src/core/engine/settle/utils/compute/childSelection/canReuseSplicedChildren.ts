@@ -68,7 +68,8 @@ export const canReuseSplicedChildren = <Self extends FieldNodeRecord<Self>>(
       schema.hasTypeConflict ||
       entry.node.kind === 'virtual' ||
       !entry.declarations.length ||
-      (context.entered.has(child) && !(proof.entry && index === proof.index))
+      (context.enteredNodes.has(child) &&
+        !(proof.entry && index === proof.index))
     )
       return false;
   }

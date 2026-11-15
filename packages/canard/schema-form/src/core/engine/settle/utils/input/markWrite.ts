@@ -52,7 +52,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   )
     assertVirtualWriteShape(node, input);
   if (context.loadScope) {
-    context.entered.add(node);
+    context.enteredNodes.add(node);
   }
   if (context.kind === FieldNodeWriteKind.Load) context.changedNodes.add(node);
   if (

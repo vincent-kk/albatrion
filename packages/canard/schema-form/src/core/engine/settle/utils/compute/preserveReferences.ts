@@ -67,7 +67,7 @@ export const preserveReferences = <Self extends FieldNodeRecord<Self>>(
       (context.originalSchemas.get(node.path) ?? previous.schema) &&
     node.isActive === previous.isActive &&
     !context.changedSource.has(node.path) &&
-    !context.entered.has(node)
+    !context.enteredNodes.has(node)
   )
     context.changedNodes.delete(node);
 };

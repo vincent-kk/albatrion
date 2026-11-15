@@ -86,8 +86,8 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
             !current ||
             !(
               load ||
-              state.entered.has(target) ||
-              state.revived.has(target) ||
+              state.enteredNodes.has(target) ||
+              state.revivedNodes.has(target) ||
               (previousExists && !previous)
             )
           )

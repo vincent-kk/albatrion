@@ -32,23 +32,23 @@ export const dispatchClearSubtreeState = <Self extends FieldNodeRecord<Self>>(
   visitFieldNodes(node, (current) => {
     if (current.isDetached) return false;
     current.interactionEpoch += 1;
-    if (Object.keys(current.interactionState).length) {
-      const previous = current.interactionState;
+    if (Object.keys(current.storedState).length) {
+      const previous = current.storedState;
       recordFieldNodeRevealBaseline(current);
-      current.interactionState = {};
+      current.storedState = {};
       accumulateGlobalStateDeltas(
         deltas,
         previous,
-        current.interactionState,
+        current.storedState,
         previous,
       );
       if (current.deliveryChanges & FieldNodeEventType.UpdateState)
-        current.deliveryPreviousState = current.interactionState;
+        current.deliveryPreviousState = current.storedState;
       runtime.hasStateChanged = true;
       queueNonSettleEvent(
         current,
         FieldNodeEventType.UpdateState,
-        current.interactionState,
+        current.storedState,
       );
     }
     return true;

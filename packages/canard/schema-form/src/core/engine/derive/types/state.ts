@@ -25,9 +25,9 @@ export interface DeriveState<Self extends FieldNodeRecord<Self>> {
   /** Source subtree whose load resets rule baselines. */
   readonly loadScope?: Self;
   /** Nodes newly created or explicitly reloaded during this settlement. */
-  readonly entered: ReadonlySet<Self>;
+  readonly enteredNodes: ReadonlySet<Self>;
   /** Existing occurrences restored after a temporary exit in this settlement. */
-  readonly revived: ReadonlySet<Self>;
+  readonly revivedNodes: ReadonlySet<Self>;
   /** Whether this call inhibits automatic writes. */
   readonly isAutomaticWriteSuppressed: boolean;
   /** Whether development trace entries should be allocated. */

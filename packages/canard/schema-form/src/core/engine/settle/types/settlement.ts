@@ -63,7 +63,7 @@ export interface ArrayAppendProof<Self extends FieldNodeRecord<Self>> {
   /** Root load snapshot published by the tail application. */
   snapshot?: unknown;
   /** First value assembled through the append hint. */
-  assembled?: unknown;
+  assembledValue?: unknown;
   /** Cleared when a selection-time check fails; later phases then use the general path. */
   isValid: boolean;
 }
@@ -83,7 +83,7 @@ export interface ArrayPopProof<Self extends FieldNodeRecord<Self>> {
   /** Root load snapshot published by the tail application. */
   snapshot?: unknown;
   /** First value assembled through the truncate hint. */
-  assembled?: unknown;
+  assembledValue?: unknown;
   /** Cleared when a selection-time check fails; later phases then use the general path. */
   isValid: boolean;
 }
@@ -228,11 +228,11 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Real sibling paths replaced by a caller write through a virtual node. */
   virtualReplacementPaths?: string[];
   /** Nodes newly present after calculation or reset by this load. */
-  entered: Set<Self>;
+  enteredNodes: Set<Self>;
   /** Reused pending occurrences whose sources must remain visible to fills. */
-  revived: Set<Self>;
+  revivedNodes: Set<Self>;
   /** Nodes detached from the previous shape during this call. */
-  exited: Set<Self>;
+  exitedNodes: Set<Self>;
   /** Nodes absent in a middle round and eligible for same-instance reentry. */
   pendingExits: Map<string, Self>;
   /** Host-to-child pending counts, shared with scratch after the first exit. */
@@ -240,7 +240,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Scratch owner receives the lazily allocated pending-path index. */
   pendingExitScratch?: SettlementScratch<Self>;
   /** Array items removed by length, without exit policy. */
-  perished: Set<Self>;
+  perishedNodes: Set<Self>;
   /** Exits whose selecting gate threw and therefore cannot clear their subtree. */
   throwingGateExits?: Set<Self>;
   /** Incremented by each thrown gate evaluation to identify its selecting edge. */
@@ -259,7 +259,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   splitMarks?: Map<string, number>;
   /** Verify-only full-registration history, retained for the complete settlement. */
   registrationShadow?: {
-    dirty: DirtyPathSet;
+    dirtyPaths: DirtyPathSet;
     shape: Set<string>;
     owners: Set<string>;
     isRegistering: boolean;

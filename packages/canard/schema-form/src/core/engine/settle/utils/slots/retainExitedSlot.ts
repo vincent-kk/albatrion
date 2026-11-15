@@ -38,7 +38,11 @@ export const retainExitedSlot = <Self extends FieldNodeRecord<Self>>(
     context,
   );
   node.retainedSourceOverlay = result.overlay;
-  markSlotChange(host, entry, context.entered.has(node) ? undefined : node);
+  markSlotChange(
+    host,
+    entry,
+    context.enteredNodes.has(node) ? undefined : node,
+  );
   if (!result.canRetain) {
     host.inactiveSlots?.delete(entry);
     host.inactiveSlotOverlays?.delete(entry);

@@ -4,7 +4,7 @@ import { createPreparedChildrenByName } from '../utils/compute/childSelection/ut
 import { flushPendingGateReads } from '../utils/gates/flushPendingGateReads';
 import { createGateReadFixture } from './fixtures/createGateReadFixture';
 
-// filid:contract settle-pending-structure-read
+// filid:contract settle-pending-children-read
 describe('pending gate childrenByName reads', () => {
   it.each(['dictionary', 'prepared-view'])(
     'checks a %s without own-key descriptors',
@@ -54,7 +54,7 @@ describe('pending gate childrenByName reads', () => {
   );
 
   it.each(['constructor', '__proto__', 'toString'])(
-    'preserves an own node named %s when it emits undefined',
+    'preserves an own node named %s when its output value is undefined',
     (name) => {
       const { root, context, release } = createGateReadFixture(
         {

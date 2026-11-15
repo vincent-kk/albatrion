@@ -181,7 +181,7 @@ describe('binding input relay', () => {
     dispatchSetExternalErrors(previous.root, [
       { dataPath: '', message: 'kept' },
     ]);
-    const state = previous.root.interactionState;
+    const state = previous.root.storedState;
     const next = createDispatchTree({ type: 'string' });
     expect(() =>
       dispatchRelayInput(previous.root, 'x', OPTION, () => {
@@ -192,7 +192,7 @@ describe('binding input relay', () => {
     ).not.toThrow();
     expect(previous.runtime.inputRelays).toBeUndefined();
     expect(next.runtime.inputRelays).toBeUndefined();
-    expect(previous.root.interactionState).toBe(state);
+    expect(previous.root.storedState).toBe(state);
     expect(previous.runtime.nodeErrors?.get(previous.root)).toEqual([
       { dataPath: '', message: 'kept' },
     ]);

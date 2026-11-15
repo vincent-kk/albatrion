@@ -322,7 +322,7 @@ export class VirtualizationManager {
     return this.observer;
   }
 
-  private idleTick = (deadline: IdleDeadlineLike): void => {
+  private runIdleTick = (deadline: IdleDeadlineLike): void => {
     this.cancelIdle = null;
     const iterator = this.registry.keys();
     let reveals = 0;
@@ -343,7 +343,7 @@ export class VirtualizationManager {
     if (this.cancelIdle !== null || this.registry.size === 0) return;
     const generation = this.observerGeneration;
     this.cancelIdle = scheduleIdle((deadline) => {
-      if (generation === this.observerGeneration) this.idleTick(deadline);
+      if (generation === this.observerGeneration) this.runIdleTick(deadline);
     });
   }
 

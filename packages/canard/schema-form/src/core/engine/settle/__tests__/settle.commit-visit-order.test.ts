@@ -98,11 +98,11 @@ describe('commit source visit characterization', () => {
     loadFieldNodeAtMount(root, { enabled: true, a: 'A', b: 'B' }, 0);
     dispatchBatch(root, () => {});
     const { a, b } = root.childrenByName!;
-    a.interactionState = { arbitrary: true };
+    a.storedState = { arbitrary: true };
     root.runtime.globalStateCounts.set('arbitrary', 1);
     root.runtime.globalState = { arbitrary: true };
-    a.interactionState = captureFieldNodeChange(a, 'interactionState', {});
-    b.interactionState = captureFieldNodeChange(b, 'interactionState', {
+    a.storedState = captureFieldNodeChange(a, 'storedState', {});
+    b.storedState = captureFieldNodeChange(b, 'storedState', {
       arbitrary: true,
     });
     const scratch = getSettlementScratch(root.runtime);
@@ -112,7 +112,7 @@ describe('commit source visit characterization', () => {
       0,
       scratch,
     );
-    context.entered.add(b);
+    context.enteredNodes.add(b);
     context.changedNodes.add(a);
     context.stateDirtyNodes.add(b);
     const order: string[] = [];
@@ -356,7 +356,7 @@ describe('commit source visit characterization', () => {
       0,
       scratch,
     );
-    context.exited.add(a);
+    context.exitedNodes.add(a);
     context.stateDirtyNodes.add(b);
     const order: string[] = [];
     try {

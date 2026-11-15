@@ -92,7 +92,7 @@ export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
       schema.hasTypeConflict ||
       entry.node.kind === 'virtual' ||
       !entry.declarations.length ||
-      (index < prefixCount && context.entered.has(child))
+      (index < prefixCount && context.enteredNodes.has(child))
     )
       return false;
   }

@@ -51,7 +51,8 @@ describe('same-name union fold selection', () => {
         if (node === root) {
           pending.push(context.pendingExits.get(key) === original);
           revived.push(
-            context.revived.has(original) && !context.pendingExits.has(key),
+            context.revivedNodes.has(original) &&
+              !context.pendingExits.has(key),
           );
         }
         return changed;

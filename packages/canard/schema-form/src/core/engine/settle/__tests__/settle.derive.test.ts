@@ -168,8 +168,8 @@ describe('settle derivation', () => {
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(target.interactionState[FieldNodeState.Edited]).toBe(false);
-    expect(target.interactionState[FieldNodeState.Touched]).toBe(false);
+    expect(target.storedState[FieldNodeState.Edited]).toBe(false);
+    expect(target.storedState[FieldNodeState.Touched]).toBe(false);
     expect(
       target.revisionLedger[FieldNodeEventType.UpdateState],
     ).toBeGreaterThan(revision);
@@ -208,10 +208,10 @@ describe('settle derivation', () => {
     );
     expect(root.childrenByName?.target?.source).toBe('manual');
     expect(
-      root.childrenByName?.target?.interactionState[FieldNodeState.Edited],
+      root.childrenByName?.target?.storedState[FieldNodeState.Edited],
     ).toBe(false);
     expect(
-      root.childrenByName?.target?.interactionState[FieldNodeState.Touched],
+      root.childrenByName?.target?.storedState[FieldNodeState.Touched],
     ).toBe(false);
   });
 

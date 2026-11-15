@@ -40,7 +40,7 @@ describe('array settlement writes', () => {
     );
     expect(root.children![0]).toBe(first);
     expect(root.children![1]).toBe(second);
-    expect(root.children![1].interactionState).toMatchObject({
+    expect(root.children![1].storedState).toMatchObject({
       touched: true,
       edited: true,
     });
@@ -239,7 +239,7 @@ describe('array settlement writes', () => {
       scratch,
     );
     transient.root.source = 7;
-    context.entered.add(pending);
+    context.enteredNodes.add(pending);
     try {
       expect(hasWrongKindBranchAncestor(pending)).toBe(true);
       transitionSettlement(context);

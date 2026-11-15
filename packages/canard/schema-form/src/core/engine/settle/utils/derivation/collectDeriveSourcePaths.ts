@@ -29,7 +29,7 @@ export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
       path = resolvePointer(path, $.Parent);
     }
   }
-  for (const node of context.entered) {
+  for (const node of context.enteredNodes) {
     paths.add(node.path);
     if (node.parent) paths.add(node.parent.path);
   }

@@ -33,7 +33,7 @@ export interface InactiveSlotOverlay {
 /** Previously published source held until pending writes reach a commit. */
 export interface InactiveSlotBaseline<Self> {
   /** Previously active child whose own inactive descendants were already published. */
-  readonly active?: Self;
+  readonly activeNode?: Self;
   /** Instance visible to the preceding inactive-value publication. */
   readonly instance: Optional<Self>;
   /** Patch visible before the first unpublished mutation of this binding. */

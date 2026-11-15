@@ -67,7 +67,7 @@ describe('commit candidate Set work', () => {
       0,
       scratch,
     );
-    context.exited.add(a);
+    context.exitedNodes.add(a);
     const nativeAdd = Set.prototype.add;
     let adds = 0;
     const spy = vi.spyOn(Set.prototype, 'add').mockImplementation(function <T>(

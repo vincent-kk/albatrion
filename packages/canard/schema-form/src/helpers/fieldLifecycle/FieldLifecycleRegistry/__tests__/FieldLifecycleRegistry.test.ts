@@ -32,7 +32,7 @@ describe('FieldLifecycleRegistry', () => {
     expect(registry.fire(node, FieldLifecycle.Mount)).toBe(
       FieldLifecycleAction.None,
     );
-    expect(registry.pending).toBe(0);
+    expect(registry.pendingMask).toBe(0);
   });
   it('leaves reservations made during fire for the next event', () => {
     const registry = new FieldLifecycleRegistry(vi.fn());
@@ -45,7 +45,7 @@ describe('FieldLifecycleRegistry', () => {
       FieldLifecycleAction.Focus,
     );
     expect(next).not.toHaveBeenCalled();
-    expect(registry.pending).toBe(FieldLifecycle.Render);
+    expect(registry.pendingMask).toBe(FieldLifecycle.Render);
     expect(registry.fire(node, FieldLifecycle.Render)).toBe(
       FieldLifecycleAction.Select,
     );
@@ -57,7 +57,7 @@ describe('FieldLifecycleRegistry', () => {
     const cancel = registry.reserve(node, FieldLifecycle.Mount, handler);
     cancel();
     cancel();
-    expect(registry.pending).toBe(0);
+    expect(registry.pendingMask).toBe(0);
     expect(registry.has(node, FieldLifecycle.Mount)).toBe(false);
     registry.fire(node, FieldLifecycle.Mount);
     expect(handler).not.toHaveBeenCalled();
@@ -117,19 +117,19 @@ describe('FieldLifecycleRegistry', () => {
       FieldLifecycle.Unmount,
       () => FieldLifecycleAction.None,
     );
-    expect(registry.pending).toBe(
+    expect(registry.pendingMask).toBe(
       FieldLifecycle.Mount | FieldLifecycle.Unmount,
     );
     registry.fire(node, FieldLifecycle.Mount);
     expect(registry.has(node, FieldLifecycle.Mount)).toBe(false);
     expect(registry.has(other, FieldLifecycle.Mount)).toBe(true);
-    expect(registry.pending).toBe(
+    expect(registry.pendingMask).toBe(
       FieldLifecycle.Mount | FieldLifecycle.Unmount,
     );
     registry.fire(other, FieldLifecycle.Mount);
-    expect(registry.pending).toBe(FieldLifecycle.Unmount);
+    expect(registry.pendingMask).toBe(FieldLifecycle.Unmount);
     registry.fire(node, FieldLifecycle.Unmount);
-    expect(registry.pending).toBe(0);
+    expect(registry.pendingMask).toBe(0);
   });
   it('reports a handler failure and continues in reservation order', () => {
     const report = vi.fn();

@@ -141,7 +141,7 @@ setValue(getValue())의 멱등은 방출·채움·에지에 관한 것입니다.
 
 손대지 않은 값만 omitEmpty·omitTrailingEmpty를 건너뛰는 옵션을 두지 않습니다. 방출은 현재 상태의 투영이어야 같은 값의 출력이 편집 여부에 따라 달라지지 않습니다. 첫 편집 전까지 입력을 그대로 방출하는 별도 경로도 기본값·미선언 키·투영이 첫 입력에서 갑자기 바뀌게 하므로 두지 않습니다. 자동 쓰기 억제는 선언된 쓰기를 막는 것이며 투영을 끄는 선택이 아닙니다.
 
-### settle-root-emission — 루트는 omitEmpty로 자신을 지우지 않습니다
+### settle-root-output-value — 루트는 omitEmpty로 자신을 지우지 않습니다
 
 루트 객체·배열의 투영이 없음이면 합성값(`storedValue`)으로 대체합니다. `storedValue`가 비어 있으면 그 참조를, 비어 있지 않은 배열이면 새 빈 배열을 방출하며, terminal 루트에 입력이 없어 `storedValue`가 undefined이면 undefined를 방출합니다. getValue·submit은 루트 방출을 폼 값으로 읽으므로, 루트가 omitEmpty로 사라지면 선언한 객체·배열 대신 undefined를 받습니다. 비어 있지 않은 배열 `storedValue`의 투영이 없음이 되는 경우는 omitTrailingEmpty가 꼬리를 모두 잘라 남은 빈 배열을 omitEmpty가 지운 경우뿐이므로([arrayBehavior 계약](../behaviors/arrayBehavior/DETAIL.md)), `storedValue`로 대체하면 잘라 낸 꼬리가 되살아나 getValue가 자르기 전 값을 돌려줍니다. 일반 갱신과 정적 최초 로드의 두 방출 자리는 이 규칙을 함수 하나로 공유합니다. 리터럴 기본값을 가진 branch 배열 루트는 정적 최초 로드에서도 항목을 가지므로 두 자리 모두 이 경우를 만납니다.
 
@@ -647,11 +647,11 @@ misfits는 원본과 현재 유효 형상의 계산 결과이며 검증 통과�
 
 살아 있는 snapshot 없는 빈 watch 읽기는 이전 메모도 비어 있을 때 공유 EMPTY_ARRAY를 반환하며 witness·메모를 할당하지 않습니다. 이전 값이 비어 있지 않으면 정리 경로를 유지하여 detach 뒤에도 낡은 감시 값이 남지 않게 합니다. snapshot 읽기는 현재 watch와 별도로 이전 입력을 포착하므로 이 생략에 포함하지 않습니다.
 
-### settle-projected-structure-read — 자체 노드 조회와 후퇴
+### settle-projected-children-read — 자체 노드 조회와 후퇴
 
 노드만 저장하는 비배열 null-prototype 구조에서만 직접 노드 조회를 own-key 증거로 사용합니다. 일반 prototype·배열·source·`storedOutputValue`·extras의 임의 값에는 own-key 검사를 유지하여 상속 속성이나 undefined 방출을 노드 부재로 오인하지 않습니다.
 
-### settle-pending-structure-read — pending 호스트 노드의 존재
+### settle-pending-children-read — pending 호스트 노드의 존재
 
 pending 읽기도 노드 존재와 그 노드의 undefined 출력 값을 구별합니다. 이미 존재하는 노드를 부재로 보아 호스트를 미리 flush하면 같은 바퀴의 관측 순서가 달라집니다.
 

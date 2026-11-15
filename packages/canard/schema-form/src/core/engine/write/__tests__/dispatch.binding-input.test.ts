@@ -106,7 +106,7 @@ describe('binding input entries', () => {
     dispatchWriteInput(root, 'new');
     expect(root.storedValue).toBe('new');
     expect(runtime.nodeErrors?.has(root)).toBe(false);
-    expect(root.interactionState[FieldNodeState.Edited]).toBe(true);
+    expect(root.storedState[FieldNodeState.Edited]).toBe(true);
     expect(runtime.commitNumber).toBe((before ?? 0) + 1);
   });
 
@@ -161,7 +161,7 @@ describe('binding input entries', () => {
     const errors = [{ dataPath: '', message: 'external' }];
     dispatchSetExternalErrors(root, errors);
     dispatchSetState(root, { [FieldNodeState.Edited]: true });
-    const state = root.interactionState;
+    const state = root.storedState;
     const listener = vi.fn();
     subscribeFieldNode(root, listener);
     const refresh = readFieldNodeRevision(
@@ -171,7 +171,7 @@ describe('binding input entries', () => {
     dispatchFinishInput(root);
     expect(root.storedValue).toBe('value');
     expect(runtime.nodeErrors?.get(root)).toBe(errors);
-    expect(root.interactionState).toBe(state);
+    expect(root.storedState).toBe(state);
     expect(readFieldNodeRevision(root, FieldNodeEventType.RequestRefresh)).toBe(
       refresh + 1,
     );
@@ -263,7 +263,7 @@ describe('binding input of a virtual node (R2)', () => {
       'Invalid virtual node values at /period',
     );
     expect(runtime.nodeErrors?.get(period)).toEqual([issue]);
-    expect(period.interactionState).toEqual({});
+    expect(period.storedState).toEqual({});
     expect(root.storedOutputValue).toEqual({ startDate: 's0', endDate: 'e0' });
   });
 });

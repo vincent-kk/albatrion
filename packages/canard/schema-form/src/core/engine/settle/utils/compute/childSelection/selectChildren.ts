@@ -204,7 +204,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     isImmediate,
     hasRelocated,
   );
-  const seen = new Map<string, BlueprintChildEntry['node']>();
+  const seenNodesByName = new Map<string, BlueprintChildEntry['node']>();
   const inactiveEntries: BlueprintChildEntry[] = [];
   let changed = false;
   const cached =
@@ -242,7 +242,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     computeChild,
     isImmediate,
     next: selectionTarget,
-    seen,
+    seenNodesByName,
     inactiveEntries,
     hasChanged: changed,
     shouldFlushReads,
@@ -273,12 +273,12 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     const entry = inactiveEntries[index];
     if (
       selectionTarget[entry.name] ||
-      seen.has(entry.name) ||
+      seenNodesByName.has(entry.name) ||
       (context.kind !== FieldNodeWriteKind.Load &&
         hasOwnProperty(prior, entry.name))
     )
       continue;
-    seen.set(entry.name, entry.node);
+    seenNodesByName.set(entry.name, entry.node);
     const distribution = getChildDistribution(node, entry.name, context);
     if (
       !distribution ||
@@ -320,7 +320,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     if (node.childrenByName![name] !== child) {
       if (context.hasGates) (context.presenceHosts ??= new Set()).add(node);
       if (node.behavior.type === 'array' && Number(name) >= node.itemCount)
-        context.perished.add(child);
+        context.perishedNodes.add(child);
       else {
         const key = JSON.stringify([
           child.path,

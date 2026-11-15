@@ -34,22 +34,17 @@ export const dispatchSetSubtreeState = <Self extends FieldNodeRecord<Self>>(
   const deltas = new Map<string, number>();
   visitFieldNodes(node, (current) => {
     if (current.isDetached) return false;
-    const previous = current.interactionState;
+    const previous = current.storedState;
     patchFieldNodeInteractionState(current, state);
-    if (previous !== current.interactionState) {
-      accumulateGlobalStateDeltas(
-        deltas,
-        previous,
-        current.interactionState,
-        state,
-      );
+    if (previous !== current.storedState) {
+      accumulateGlobalStateDeltas(deltas, previous, current.storedState, state);
       if (current.deliveryChanges & FieldNodeEventType.UpdateState)
-        current.deliveryPreviousState = current.interactionState;
+        current.deliveryPreviousState = current.storedState;
       runtime.hasStateChanged = true;
       queueNonSettleEvent(
         current,
         FieldNodeEventType.UpdateState,
-        current.interactionState,
+        current.storedState,
       );
     }
     return true;

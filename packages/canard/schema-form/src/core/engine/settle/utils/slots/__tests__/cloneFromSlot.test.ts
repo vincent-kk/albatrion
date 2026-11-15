@@ -77,8 +77,10 @@ it('copies source channels and rebinds every active and inactive parent', () => 
     expect(clone.parent).toBe(root);
     expect(clone.extras).toEqual({ extra: 7 });
     expect(getDispatchNode(clone, 'leaf').source).toBe('kept');
-    expect(getDispatchNode(clone, 'leaf').interactionState).toEqual({});
-    expect(context.entered.has(getDispatchNode(clone, 'list', '0'))).toBe(true);
+    expect(getDispatchNode(clone, 'leaf').storedState).toEqual({});
+    expect(context.enteredNodes.has(getDispatchNode(clone, 'list', '0'))).toBe(
+      true,
+    );
     expect(getDispatchNode(clone, 'list', '0').itemKey).toBeGreaterThan(
       oldItem.itemKey!,
     );

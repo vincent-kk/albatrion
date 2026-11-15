@@ -18,7 +18,10 @@ export interface DiscriminatorEntrySelection {
   /** Strict primitive tags to matching gated declaration positions. */
   readonly buckets: ReadonlyMap<unknown, readonly number[]>;
   /** Lazy pure schema preparation keyed by static buckets, never caller values. */
-  readonly prepared: WeakMap<readonly number[], PreparedDiscriminatorEntry>;
+  readonly preparedEntries: WeakMap<
+    readonly number[],
+    PreparedDiscriminatorEntry
+  >;
 }
 
 /**
@@ -66,5 +69,5 @@ export const prepareDiscriminatorEntrySelection = (
       else buckets.set(value, [index]);
     }
   }
-  return { baseline, buckets, prepared: new WeakMap() };
+  return { baseline, buckets, preparedEntries: new WeakMap() };
 };

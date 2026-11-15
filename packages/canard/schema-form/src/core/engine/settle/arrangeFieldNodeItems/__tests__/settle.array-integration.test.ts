@@ -141,12 +141,12 @@ describe('array integration runtime stores', () => {
       );
       const item = root.children![kind === 'pop' ? 1 : 0];
       const leaf = item.childrenByName!.n;
-      item.interactionState = { touched: true };
-      leaf.interactionState = { edited: true };
+      item.storedState = { touched: true };
+      leaf.storedState = { edited: true };
       const deltas = new Map<string, number>();
       for (const node of [item, leaf]) {
-        accumulateGlobalStateDeltas(deltas, {}, node.interactionState);
-        node.deliveryPreviousState = node.interactionState;
+        accumulateGlobalStateDeltas(deltas, {}, node.storedState);
+        node.deliveryPreviousState = node.storedState;
         node.deliveryChanges |= FieldNodeEventType.UpdateState;
       }
       publishGlobalStateDeltas(root, deltas);

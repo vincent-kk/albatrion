@@ -42,7 +42,7 @@ const fixture = () => {
 };
 it('IR-6 H records each standalone write and drops its entries by captured generation', async () => {
   const { a, runtime, clock } = fixture();
-  const before = a.interactionState;
+  const before = a.storedState;
   dispatchSetState(a, { 2: true });
   expect(a.revealBaseline).toMatchObject({
     entries: [{ state: before, isPresent: true }],
@@ -63,11 +63,11 @@ it('IR-6 Y2 ignores identical touched patches and never clears touched on a repe
   dispatchSetState(a, { 2: true });
   clock.frame();
   await clock.task();
-  const state = a.interactionState;
+  const state = a.storedState;
   const generation = runtime.revealBaselineGeneration;
   dispatchSetState(a, { 2: true });
-  expect(a.interactionState).toBe(state);
-  expect(a.interactionState[2]).toBe(true);
+  expect(a.storedState).toBe(state);
+  expect(a.storedState[2]).toBe(true);
   expect(a.revealBaseline).toBeUndefined();
   expect(runtime.revealBaselineGeneration).toBe(generation);
 });
@@ -99,10 +99,10 @@ it('IR-6 Y2 clearing subtree state captures the prior flags before its direct em
   dispatchSetSubtreeState(root, { 4: true });
   clock.frame();
   await clock.task();
-  const state = a.interactionState;
+  const state = a.storedState;
   dispatchClearSubtreeState(root);
   expect(a.revealBaseline?.entries[0].state).toBe(state);
-  expect(a.interactionState).toEqual({});
+  expect(a.storedState).toEqual({});
 });
 it('IR-6 Y2 capture records enabled before a controls change without scheduling in record', () => {
   const { a, runtime } = fixture();

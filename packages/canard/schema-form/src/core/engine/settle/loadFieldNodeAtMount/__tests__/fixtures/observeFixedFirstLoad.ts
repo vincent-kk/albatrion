@@ -162,7 +162,7 @@ export const observeFixedFirstLoad = (
         visible: node.isVisible,
         readOnly: node.isReadOnly,
         disabled: node.isDisabled,
-        state: node.interactionState,
+        state: node.storedState,
         ids: root.runtime.committedDeclarationIds?.get(
           getCommittedDeclarationKey(node, node.runtime),
         ),

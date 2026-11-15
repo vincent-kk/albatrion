@@ -23,7 +23,7 @@ describe('EVENT-062 43C-01 settlement shape counts', () => {
     root.runtime.nodeFactory = (entry, parent, runtime) => {
       const node = createNode(entry, parent, runtime);
       if ('name' in entry && entry.name === 'target')
-        node.interactionState = { [FieldNodeState.Edited]: true };
+        node.storedState = { [FieldNodeState.Edited]: true };
       return node;
     };
     writeFieldNode(

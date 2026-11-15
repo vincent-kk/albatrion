@@ -19,8 +19,8 @@ export const createFragmentLoadState = (
   appliedRanks: new Map(),
   visitedSourcePaths: new Set(),
   loadScope: root,
-  entered: new Set(),
-  revived: new Set(),
+  enteredNodes: new Set(),
+  revivedNodes: new Set(),
   isAutomaticWriteSuppressed: false,
   isTraceEnabled: false,
 });

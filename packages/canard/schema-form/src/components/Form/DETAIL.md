@@ -58,7 +58,7 @@ Form은 완성된 `jsonSchema` 하나를 받습니다. 표현·제어 설정을 
 
 reset은 값 초기화의 기본 연산이고 옵션·커밋 재대조·rebuild의 의미는 [RootNodeContext](../../providers/RootNodeContext/DETAIL.md)에 둡니다(WRITE-015·WRITE-044·SURFACE-064). UI만 다시 만드는 remount나 전체 Form 인스턴스를 새로 만드는 key와 혼동하지 않습니다(REACT-025).
 
-### emit-normalized — 방출 경로는 정제 값을 냅니다
+### output-value-normalized — 방출 경로는 정제 값을 냅니다
 
 핸들의 읽기·제출과 변경 방출은 투영 값, 입력은 원본 값입니다. 정제 규칙은 core가 소유하므로 Form이 정제 때문에 배열의 입력 DOM이나 노드를 제거하지 않습니다(LANDING-067). 핸들 값 선택은 [FormCore](components/FormCore/DETAIL.md), 방출은 [RootNodeContext](../../providers/RootNodeContext/DETAIL.md)를 따릅니다.
 
@@ -66,7 +66,7 @@ reset은 값 초기화의 기본 연산이고 옵션·커밋 재대조·rebuild�
 
 제출 차단과 네이티브 판정 공개는 [FormCore](components/FormCore/DETAIL.md)의 계약입니다. 검증 오류를 실행 실패로 보고하거나 명시적 제출에 네이티브 오류 공개를 적용하지 않습니다.
 
-### emit-dedupe — 로드별 방출 수명
+### output-value-dedupe — 로드별 방출 수명
 
 준비된 현행 load와 동일 참조 방출 억제는 [RootNodeContext](../../providers/RootNodeContext/DETAIL.md)가 소유합니다. React 숨김·이펙트 정리와 load 은퇴를 같은 의미로 취급하지 않습니다.
 

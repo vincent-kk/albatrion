@@ -48,7 +48,7 @@ const observe = (root: PlainNode) => {
       isVisible: node.isVisible,
       isReadOnly: node.isReadOnly,
       isDisabled: node.isDisabled,
-      state: node.interactionState,
+      state: node.storedState,
       revisions: { ...node.revisionLedger },
       delivery: node.pendingDelivery,
       initialized: node.isDeliveryInitialized,
@@ -429,7 +429,7 @@ it('delivers the same listener payloads after all nodes and global state are fin
   const run = (generic: boolean) => {
     const { root } = createTestTree(schema);
     root.runtime.validationMode = 0;
-    root.interactionState = { touched: true };
+    root.storedState = { touched: true };
     const delivered: unknown[] = [];
     const listen = (node: PlainNode) =>
       subscribeFieldNode(node, (event) => {

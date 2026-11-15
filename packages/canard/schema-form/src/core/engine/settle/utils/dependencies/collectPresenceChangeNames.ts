@@ -34,10 +34,10 @@ export const collectPresenceChangeNames = <Self extends FieldNodeRecord<Self>>(
     prepared?.selectedChildrenByName === childrenByName &&
     context.preparedStaticHosts?.has(host) &&
     host.source !== null &&
-    !context.entered.has(host) &&
-    !context.exited.has(host) &&
-    !context.perished.has(host) &&
-    !context.revived.has(host);
+    !context.enteredNodes.has(host) &&
+    !context.exitedNodes.has(host) &&
+    !context.perishedNodes.has(host) &&
+    !context.revivedNodes.has(host);
   const names: string[] = [];
   if (bounded) {
     for (const name of witness.names)

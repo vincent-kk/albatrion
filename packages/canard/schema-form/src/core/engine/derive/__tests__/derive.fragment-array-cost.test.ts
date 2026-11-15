@@ -53,7 +53,7 @@ describe('CONTROLS-077 reset candidate membership cost', () => {
           }
           return includes.call(this, value, fromIndex);
         });
-      /** Loaded targets bypass entered/revived checks before collection. */
+      /** Loaded targets bypass `enteredNodes`/`revivedNodes` checks before collection. */
       const setMembership = vi
         .spyOn(Set.prototype, 'has')
         .mockImplementation(function (this: Set<unknown>, value) {

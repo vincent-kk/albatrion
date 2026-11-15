@@ -120,17 +120,17 @@ export interface SettlementScratch<Self> {
   /** Whether a synchronous settlement currently owns these containers. */
   isInUse: boolean;
   /** Occurrences that first appeared during this settlement. */
-  entered: Set<Self>;
+  enteredNodes: Set<Self>;
   /** Pending occurrences reused during a later host wheel. */
-  revived: Set<Self>;
+  revivedNodes: Set<Self>;
   /** Previously committed occurrences absent from the final shape. */
-  exited: Set<Self>;
+  exitedNodes: Set<Self>;
   /** Temporarily absent occurrences, addressed by path and blueprint kind. */
   pendingExits: Map<string, Self>;
   /** Lazily allocated host-to-child pending counts, cleared alongside pendingExits. */
   pendingExitPaths?: Map<string, Map<string, number>>;
   /** Array items removed by length rather than declaration gating. */
-  perished: Set<Self>;
+  perishedNodes: Set<Self>;
   /** Active declaration choices waiting for commit. */
   selectedDeclarationIds: Map<Self, readonly number[]>;
   /** Original caller and fill inputs retained for effective-list interpretation. */
@@ -455,8 +455,8 @@ export interface FieldNodeRuntime<Self>
     readonly memo: NonNullable<FieldNodeRuntime<Self>['misfitsMemo']>;
     /** Row count the build left. */
     readonly size: number;
-    /** `misfitPaths.mutations` the build read. */
-    readonly mutations: number;
+    /** `misfitPaths.mutationCount` the build read. */
+    readonly mutationCount: number;
   };
   /** Frozen last-commit reads for departed references, allocated on first exit. */
   detachedReads?: WeakMap<object, DetachedFieldNodeReads>;

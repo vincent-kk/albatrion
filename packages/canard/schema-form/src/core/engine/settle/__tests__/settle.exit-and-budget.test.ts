@@ -495,7 +495,7 @@ describe('settle exits and budgets', () => {
     );
     const scratch = ordinary.runtime.settlementScratch;
     expect(scratch?.isInUse).toBe(false);
-    expect(scratch?.entered.size).toBe(0);
+    expect(scratch?.enteredNodes.size).toBe(0);
     expect(scratch?.writtenInputs.size).toBe(0);
     writeFieldNode(
       ordinary,
@@ -521,7 +521,7 @@ describe('settle exits and budgets', () => {
       ),
     ).toThrow();
     expect(unstable.runtime.settlementScratch?.isInUse).toBe(false);
-    expect(unstable.runtime.settlementScratch?.entered.size).toBe(0);
+    expect(unstable.runtime.settlementScratch?.enteredNodes.size).toBe(0);
     expect(unstable.runtime.settlementScratch?.automaticLog).toHaveLength(0);
     expect(unstable.runtime.settlementScratch?.changedNodes.size).toBe(0);
   });

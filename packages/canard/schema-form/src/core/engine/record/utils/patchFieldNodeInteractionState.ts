@@ -9,8 +9,8 @@ export const patchFieldNodeInteractionState = <Self>(
   patch: Partial<NodeStateFlags>,
 ): void => {
   if (node.isDetached) return;
-  const next = shallowPatch(node.interactionState, patch);
-  if (next === node.interactionState) return;
+  const next = shallowPatch(node.storedState, patch);
+  if (next === node.storedState) return;
   recordFieldNodeRevealBaseline(node);
-  node.interactionState = next;
+  node.storedState = next;
 };

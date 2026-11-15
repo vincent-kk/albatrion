@@ -91,7 +91,7 @@ export const runChildSelectionHistory = (
         isDisabled: node.isDisabled,
         isRequired: node.isRequired,
         errors: node.errors,
-        state: node.interactionState,
+        state: node.storedState,
         revisions: node.revisionLedger,
         pending: node.pendingDelivery,
         referenceStable:

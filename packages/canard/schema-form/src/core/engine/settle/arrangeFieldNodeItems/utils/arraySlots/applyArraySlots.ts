@@ -39,7 +39,7 @@ import { canApplyArrayTail } from './canApplyArrayTail';
  * The host's source tree is composed only when a slot reads it: extras, a whole source, or a removed or retained slot without a live node.
  * @param host - Live array occurrence whose positions the plan replaces
  * @param plan - Pure source-position proposal from the array behavior
- * @param context - One settlement's entered, perished, and changed-path facts
+ * @param context - One settlement's `enteredNodes`, `perishedNodes` and changed-path facts
  * @returns Last committed value of a removed position, if requested
  */
 export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
@@ -163,7 +163,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
         current === undefined ? undefined : appendSegment(host.path, current),
     });
     if (!item || reused.has(item)) continue;
-    context.perished.add(item);
+    context.perishedNodes.add(item);
     visitFieldNodes(
       item,
       (departing) => {
@@ -240,7 +240,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     });
   }
   for (const { node, value, isMoved } of created) {
-    context.entered.add(node);
+    context.enteredNodes.add(node);
 
     if (isMoved) replayMovedSource(node, value, context);
     else markWrite(node, value, context);

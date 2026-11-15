@@ -77,11 +77,11 @@ it('allocates no reused scratch containers and clears only populated work lists'
     expect(scratch).toBe(cached);
     expect(allocations).toEqual({ maps: 0, sets: 0 });
     const unused = [
-      scratch.entered,
-      scratch.revived,
-      scratch.exited,
+      scratch.enteredNodes,
+      scratch.revivedNodes,
+      scratch.exitedNodes,
       scratch.pendingExits,
-      scratch.perished,
+      scratch.perishedNodes,
       scratch.selectedDeclarationIds,
       scratch.writtenInputs,
       scratch.distributedInputs,

@@ -201,7 +201,10 @@ it('matches full presence traversal when a prepared host exits and re-enters', (
   );
   expect(root.childrenByName!.host.childrenByName!.kind).toBeDefined();
   expect(
-    counts.missing + counts.entered + counts.exited + counts.revived,
+    counts.missing +
+      counts.enteredNodes +
+      counts.exitedNodes +
+      counts.revivedNodes,
   ).toBeGreaterThan(0);
 });
 
@@ -272,12 +275,12 @@ it('reaches every full-scan fallback with a previously prepared host', () => {
     collectPresenceChangeNames(root, childrenByName, context);
     const previous = Object.assign(Object.create(null), childrenByName);
     delete previous.kind;
-    const lifecycle: ('entered' | 'exited' | 'perished' | 'revived')[] = [
-      'entered',
-      'exited',
-      'perished',
-      'revived',
-    ];
+    const lifecycle: (
+      | 'enteredNodes'
+      | 'exitedNodes'
+      | 'perishedNodes'
+      | 'revivedNodes'
+    )[] = ['enteredNodes', 'exitedNodes', 'perishedNodes', 'revivedNodes'];
     for (const kind of lifecycle) {
       context.presenceSelections.set(root, {
         childrenByName: previous,

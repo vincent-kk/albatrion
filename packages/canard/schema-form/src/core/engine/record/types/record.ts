@@ -112,7 +112,7 @@ export interface FieldNodeRecord<Self> {
   /** Merged effective schema for the active declarations. */
   schema: EffectiveSchema;
   /** Stored interaction flags updated by shallow patches. */
-  interactionState: NodeStateFlags;
+  storedState: NodeStateFlags;
   /** Unreleased pre-change eligibility entries, one per public write sequence, cut by release generation. */
   revealBaseline?: {
     entries: {

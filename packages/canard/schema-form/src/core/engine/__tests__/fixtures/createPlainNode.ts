@@ -93,7 +93,7 @@ export const createPlainNode = (
     divergenceBase: undefined,
     storedIsDivergent: false,
     schema: mergeEffectiveSchema(template, [], { mode: 'runtime' }),
-    interactionState: {},
+    storedState: {},
     revisionLedger: EMPTY_REVISION_LEDGER,
     isDeliveryInitialized: false,
     deliveryChanges: 0,

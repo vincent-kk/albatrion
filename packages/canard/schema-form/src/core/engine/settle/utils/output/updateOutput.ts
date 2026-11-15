@@ -11,8 +11,8 @@ import { keepsChildOutputValues } from './utils/keepsChildOutputValues';
 
 /**
  * Assemble and project a node once from its current child order.
- * For the host of a still-valid append proof it passes the appended position to the row and records the first appended assembly in `arrayAppend.assembled`;
- * for the host of a still-valid pop proof it passes the remaining item count and records the first truncated assembly in `arrayPop.assembled`.
+ * For the host of a still-valid append proof it passes the appended position to the row and records the first appended assembly in `arrayAppend.assembledValue`;
+ * for the host of a still-valid pop proof it passes the remaining item count and records the first truncated assembly in `arrayPop.assembledValue`.
  * @param node - Live node whose row owns assembly and projection
  * @param context - Current commit's changed-node set and the optional `arrayAppend` and `arrayPop` proofs it reads
  * @param recalculated - Direct children recomputed with an unchanged host shape
@@ -35,7 +35,7 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
     !recalculated &&
     node.children === append.children &&
     (node.storedValue === append.value ||
-      node.storedValue === append.assembled);
+      node.storedValue === append.assembledValue);
   const pop = context.arrayPop;
   const truncating =
     pop !== undefined &&
@@ -43,7 +43,7 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
     pop.isValid &&
     !recalculated &&
     node.children === pop.children &&
-    (node.storedValue === pop.value || node.storedValue === pop.assembled);
+    (node.storedValue === pop.value || node.storedValue === pop.assembledValue);
   const hint =
     recalculated && host
       ? { isIncremental: false }
@@ -58,8 +58,8 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
     recalculated,
     hint,
   );
-  if (appending && hint?.isIncremental) append.assembled = assembled;
-  if (truncating && hint?.isIncremental) pop.assembled = assembled;
+  if (appending && hint?.isIncremental) append.assembledValue = assembled;
+  if (truncating && hint?.isIncremental) pop.assembledValue = assembled;
   const previousValue = node.storedValue;
   let same = false;
   if (hint?.isIncremental) {

@@ -15,7 +15,7 @@ interface Props {
   /** Input container used for actions after queue processing. */
   container: RefObject<Nullable<HTMLDivElement>>;
   /** Cleared in mutation cleanup before an updated position mounts again. */
-  committed: RefObject<boolean>;
+  isCommittedRef: RefObject<boolean>;
   /** Form-local queue service. */
   lifecycle: FieldLifecycleRegistry;
 }
@@ -24,14 +24,14 @@ interface Props {
 export const FieldLifecycleRender = ({
   node,
   container,
-  committed,
+  isCommittedRef,
   lifecycle,
 }: Props) => {
   const lastEffect = useRef<Fn>(undefined);
   const effect = () => {
     if (lastEffect.current === effect) return;
     lastEffect.current = effect;
-    if (committed.current)
+    if (isCommittedRef.current)
       runSlotAction(
         container.current,
         lifecycle.fire(node, FieldLifecycle.Render),

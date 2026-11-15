@@ -20,26 +20,33 @@ export const readGateHostView = <Self extends FieldNodeRecord<Self>>(
   hostPath: string,
   owner: Self,
 ): GateHostView => {
-  const projected = readProjectedValue(context, hostPath);
-  const extra = readGateProjectedExtra(context, hostPath, projected, owner);
+  const projectedValue = readProjectedValue(context, hostPath);
+  const extra = readGateProjectedExtra(
+    context,
+    hostPath,
+    projectedValue,
+    owner,
+  );
   const views = (context.gateHostViews ??= new Map<string, GateHostView>());
   const cached = views.get(hostPath);
   if (
     cached &&
-    Object.is(cached.projected, projected) &&
+    Object.is(cached.projectedValue, projectedValue) &&
     Object.is(cached.extra, extra)
   )
     return cached;
   const host =
-    projected !== null && typeof projected === 'object' && !isArray(projected)
-      ? projected
+    projectedValue !== null &&
+    typeof projectedValue === 'object' &&
+    !isArray(projectedValue)
+      ? projectedValue
       : undefined;
   const extras =
     extra !== null && typeof extra === 'object' && !isArray(extra)
       ? extra
       : undefined;
   const value: Dictionary<unknown> = { ...host, ...extras };
-  const view = { projected, extra, value };
+  const view = { projectedValue, extra, value };
   views.set(hostPath, view);
   return view;
 };

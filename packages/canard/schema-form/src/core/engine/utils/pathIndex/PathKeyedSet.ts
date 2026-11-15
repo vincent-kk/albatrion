@@ -5,15 +5,15 @@ export class PathKeyedSet extends Set<string> {
   /** Persistent lookup metadata owned from construction. */
   readonly pathIndex = new PathStoreIndex();
   /** Calls that changed the stored paths since construction. */
-  private mutationCount = 0;
+  private storedMutationCount = 0;
 
   /**
    * Count calls that changed the stored paths: an add of a new path, a delete
    * that removed one, every clear and every replacePaths. Equal counts read at
    * two moments mean no such call happened in between.
    */
-  get mutations(): number {
-    return this.mutationCount;
+  get mutationCount(): number {
+    return this.storedMutationCount;
   }
 
   /** Create an empty indexed set before inserting optional initial paths. */
@@ -26,7 +26,7 @@ export class PathKeyedSet extends Set<string> {
   override add(path: string): this {
     if (!this.has(path)) {
       this.pathIndex.add(path, [path]);
-      this.mutationCount++;
+      this.storedMutationCount++;
     }
     return super.add(path);
   }
@@ -35,7 +35,7 @@ export class PathKeyedSet extends Set<string> {
   override delete(path: string): boolean {
     this.pathIndex.delete(path);
     const removed = super.delete(path);
-    if (removed) this.mutationCount++;
+    if (removed) this.storedMutationCount++;
     return removed;
   }
 
@@ -43,12 +43,12 @@ export class PathKeyedSet extends Set<string> {
   override clear(): void {
     this.pathIndex.clear();
     super.clear();
-    this.mutationCount++;
+    this.storedMutationCount++;
   }
 
   /** Replace distinct affected paths with surviving destinations in two phases. */
   replacePaths(moves: readonly { previous: string; current?: string }[]): void {
-    this.mutationCount++;
+    this.storedMutationCount++;
     this.pathIndex.beginBatch();
     try {
       for (const move of moves) {

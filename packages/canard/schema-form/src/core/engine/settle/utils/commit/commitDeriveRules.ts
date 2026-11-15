@@ -46,18 +46,18 @@ export const commitDeriveRules = <Self extends FieldNodeRecord<Self>>(
   }
   for (const node of decision.nodes) {
     node.interactionEpoch += 1;
-    const previous = node.interactionState;
-    node.interactionState = captureFieldNodeChange(
+    const previous = node.storedState;
+    node.storedState = captureFieldNodeChange(
       node,
-      'interactionState',
-      shallowPatch(node.interactionState, CLEAN_STATE_PATCH),
+      'storedState',
+      shallowPatch(node.storedState, CLEAN_STATE_PATCH),
     );
-    if (node.interactionState !== previous) context.changedNodes.add(node);
+    if (node.storedState !== previous) context.changedNodes.add(node);
   }
   const runtime = context.root.runtime;
   for (const path of state.visitedSourcePaths)
     pruneCommittedRuleKeys(runtime, path, 'source');
-  for (const exited of context.exited)
+  for (const exited of context.exitedNodes)
     visitFieldNodes(
       exited,
       (node) => {

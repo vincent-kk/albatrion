@@ -3,7 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { FieldNodeRecord } from '../../../record';
 
 /**
- * Keep a root object or array from omitting itself under omitEmpty (settle-root-emission).
+ * Keep a root object or array from omitting itself under omitEmpty (settle-root-output-value).
  * @param node - Node whose row projected stored value into output value
  * @param value - Assembled value the projection read
  * @param outputValue - Projected value of `value`

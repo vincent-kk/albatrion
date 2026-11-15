@@ -37,5 +37,5 @@ export const verifyGateWheelConfirmation = (
     gateWheelEvaluation.nonNoop++;
     throw new Error('Gate wheel predicate predicted a non-no-op confirmation');
   }
-  gateWheelEvaluation.confirmations++;
+  gateWheelEvaluation.confirmationCount++;
 };

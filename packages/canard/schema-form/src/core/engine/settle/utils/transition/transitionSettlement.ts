@@ -31,8 +31,8 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
   if (context.isAutomaticWriteSuppressed || context.exceededBudget) return;
   if (
     !context.hasGates &&
-    context.entered.size === 0 &&
-    context.exited.size === 0
+    context.enteredNodes.size === 0 &&
+    context.exitedNodes.size === 0
   ) {
     let narrowed = false;
     for (const node of context.writtenInputs.keys())
@@ -60,8 +60,8 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
     const enteredByDepth: Self[][] = descendantsByDepth ?? [];
     descendantsByDepth = undefined;
     if (!continuingFill) {
-      appearances = context.entered.values();
-      appearanceCount = context.entered.size;
+      appearances = context.enteredNodes.values();
+      appearanceCount = context.enteredNodes.size;
       for (let index = 0; index < appearanceCount; index++) {
         const node = appearances.next().value!;
         (enteredByDepth[node.depth] ??= []).push(node);
@@ -236,8 +236,8 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
       context.isInTransition = false;
       return;
     }
-    if (fillAncestors && context.entered.size > appearanceCount) {
-      const count = context.entered.size;
+    if (fillAncestors && context.enteredNodes.size > appearanceCount) {
+      const count = context.enteredNodes.size;
       descendantsByDepth = collectFillDescendants(
         context,
         appearances!,

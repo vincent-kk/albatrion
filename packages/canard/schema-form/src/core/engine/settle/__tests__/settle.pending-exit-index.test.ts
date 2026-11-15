@@ -46,7 +46,7 @@ describe('both pending-exit index layers at all five maintenance sites', () => {
     expectPendingExitIndex(context);
     delete root.childrenByName!.a;
     selectChildren(root, context, {}, () => {}, true);
-    expect(context.revived.has(child)).toBe(true);
+    expect(context.revivedNodes.has(child)).toBe(true);
     expect(context.pendingExits.size).toBe(0);
     expectPendingExitIndex(context);
   });
@@ -84,7 +84,7 @@ describe('both pending-exit index layers at all five maintenance sites', () => {
     context.pendingExits.set('["/0/a","string"]', child);
     updatePendingExitIndex(context, '/0/a', 1);
     expectPendingExitIndex(context);
-    context.perished.add(item);
+    context.perishedNodes.add(item);
     delete root.childrenByName!['0'];
     root.children = [];
     root.itemCount = 0;

@@ -83,7 +83,7 @@ export const createNode = (
     divergenceBase: undefined,
     storedIsDivergent: false,
     schema: { schema: {}, hasTypeConflict: false },
-    interactionState: {},
+    storedState: {},
     revisionLedger: EMPTY_REVISION_LEDGER,
     isDeliveryInitialized: false,
     deliveryChanges: 0,

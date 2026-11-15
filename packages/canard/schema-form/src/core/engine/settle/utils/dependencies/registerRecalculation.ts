@@ -47,8 +47,8 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   if (shadow) {
     registerRecalculation({
       ...context,
-      dirtyPaths: shadow.dirty,
-      dirtyChildrenByParent: shadow.dirty.childrenByParent,
+      dirtyPaths: shadow.dirtyPaths,
+      dirtyChildrenByParent: shadow.dirtyPaths.childrenByParent,
       shapeDirtyPaths: shadow.shape,
       dependencyOwnerPaths: shadow.owners,
       registrationShadow: undefined,
@@ -151,10 +151,10 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     verifyGateSelection(matches, 'S3 shape dirty differs after registration');
     for (const path of context.dirtyPaths)
       verifyGateSelection(
-        shadow.dirty.has(path),
+        shadow.dirtyPaths.has(path),
         'S3 optimized dirty adds an unknown path: ' + path,
       );
-    for (const path of shadow.dirty)
+    for (const path of shadow.dirtyPaths)
       if (!context.dirtyPaths.has(path)) {
         const owner = dependencies.splitOwners.get(path);
         verifyGateSelection(

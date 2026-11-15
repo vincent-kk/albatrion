@@ -120,8 +120,8 @@ describe('dispatcher budgets', () => {
     });
 
     expect(() => dispatchSetValue(root, 'go')).toThrow();
-    expect(root.interactionState[FieldNodeState.Touched]).toBe(true);
-    expect(root.interactionState[FieldNodeState.Edited]).toBeUndefined();
+    expect(root.storedState[FieldNodeState.Touched]).toBe(true);
+    expect(root.storedState[FieldNodeState.Edited]).toBeUndefined();
     expect(runtime.nodeErrors?.get(root)).toBe(issues);
     expect(observed).toHaveLength(26);
     expect(readFieldNodeRevision(root, FieldNodeEventType.UpdateState)).toBe(1);

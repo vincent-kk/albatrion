@@ -41,7 +41,7 @@ it('keeps dirty work and child post-order without per-node shape or appearance m
     markWrite(leaf, value, context);
     registerRecalculation(context);
     const shape = vi.spyOn(context.shapeDirtyPaths, 'has');
-    const entered = vi.spyOn(context.entered, 'has');
+    const entered = vi.spyOn(context.enteredNodes, 'has');
     visits.length = 0;
     computeNode(root, context);
     expect(shape).not.toHaveBeenCalled();

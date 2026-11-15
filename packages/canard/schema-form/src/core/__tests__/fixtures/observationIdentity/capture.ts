@@ -110,7 +110,7 @@ function stateOf(
     isReadOnly: node.isReadOnly,
     isDisabled: node.isDisabled,
     isRequired: node.isRequired,
-    state: node.interactionState,
+    state: node.storedState,
     revisions: { ...node.revisionLedger },
     delivery: node.pendingDelivery,
     isDetached: node.isDetached,

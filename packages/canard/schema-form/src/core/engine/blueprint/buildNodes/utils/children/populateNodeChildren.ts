@@ -194,7 +194,7 @@ export const populateNodeChildren = (
         const discriminator = input.gates[discriminatorIndex];
         if (
           discriminator?.kind === 'discriminator' &&
-          discriminator.condition.lift === false
+          discriminator.condition.canLift === false
         )
           continue;
         const entry = existing ?? { path, inputs: [] };

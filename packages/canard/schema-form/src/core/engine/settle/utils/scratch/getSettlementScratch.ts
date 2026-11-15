@@ -19,11 +19,11 @@ export const getSettlementScratch = <Self>(
       ? cached
       : {
           isInUse: false,
-          entered: new Set<Self>(),
-          revived: new Set<Self>(),
-          exited: new Set<Self>(),
+          enteredNodes: new Set<Self>(),
+          revivedNodes: new Set<Self>(),
+          exitedNodes: new Set<Self>(),
           pendingExits: new Map<string, Self>(),
-          perished: new Set<Self>(),
+          perishedNodes: new Set<Self>(),
           selectedDeclarationIds: new Map<Self, readonly number[]>(),
           writtenInputs: new Map<Self, unknown>(),
           distributedInputs: new Map(),

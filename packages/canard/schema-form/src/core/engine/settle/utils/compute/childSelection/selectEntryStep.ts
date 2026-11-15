@@ -63,7 +63,7 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   /** Ordered mutable target; prepared selection inherits static entries while host reads use a view. */
   readonly next: Dictionary<Self>;
   /** First admitted blueprint identity for each authored name. */
-  readonly seen: Map<string, BlueprintChildEntry['node']>;
+  readonly seenNodesByName: Map<string, BlueprintChildEntry['node']>;
   /** Rejected entries collected for the unchanged latent-distribution pass. */
   readonly inactiveEntries: BlueprintChildEntry[];
   /** Whether any visited entry changed shape or effective schema. */
@@ -84,10 +84,10 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
  * @param step - Prepared gate and declaration IDs, or undefined for general selection
  * @param frame - Host, context, prior shape, compute callback, immediate/flush flags,
  * current `childrenByName`, admitted-name map, inactive list and accumulated changed flag
- * @returns Nothing; mutates frame.changed, frame.next, frame.seen and frame.inactiveEntries
+ * @returns Nothing; mutates frame.changed, frame.next, frame.seenNodesByName and frame.inactiveEntries
  * @remarks Gate reads may publish pending projections and record inputs or failures.
  * Updates throwing exits, presence hosts, projection baselines, recursion budget, perished/pending exit
- * maps and path counts, revived/entered sets and latent-entry indexes, gate registry,
+ * maps and path counts, `revivedNodes`/`enteredNodes` sets and latent-entry indexes, gate registry,
  * selected declaration IDs, original schemas, dirty/shape/state/change records,
  * child schema/active/detached state and pending host outputs. Creates or enters
  * missing children and calls frame.computeChild for dirty admitted children.
@@ -104,7 +104,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     computeChild,
     isImmediate,
     next,
-    seen,
+    seenNodesByName,
     inactiveEntries,
     shouldFlushReads,
   } = frame;
@@ -224,7 +224,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       inactiveEntries.push(entry);
     if (
       next[entry.name] &&
-      !seen.has(entry.name) &&
+      !seenNodesByName.has(entry.name) &&
       next[entry.name].blueprintNode === entry.node
     ) {
       delete next[entry.name];
@@ -240,8 +240,8 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     : undefined;
   if (retained?.blueprintNode === entry.node)
     context.throwingGateExits?.delete(retained);
-  if (seen.has(entry.name)) {
-    if (seen.get(entry.name) !== entry.node) {
+  if (seenNodesByName.has(entry.name)) {
+    if (seenNodesByName.get(entry.name) !== entry.node) {
       const path = appendSegment(node.path, entry.name);
       recordSettlementFailure(
         context,
@@ -255,7 +255,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     }
     return;
   }
-  seen.set(entry.name, entry.node);
+  seenNodesByName.set(entry.name, entry.node);
   const priorChild =
     hasOwnProperty(prior, entry.name) &&
     prior[entry.name].blueprintNode === entry.node
@@ -321,18 +321,18 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       : slotOverlay
         ? createFromSlotOverlay(node, entry, slotOverlay, context)
         : createChildNode(node, entry));
-  context.perished.delete(child);
+  context.perishedNodes.delete(child);
   if (key !== undefined && context.pendingExits.delete(key)) {
     const path = appendSegment(node.path, entry.name);
     updatePendingExitIndex(context, path, -1);
   }
   if (pending && child === pending) {
-    context.revived.add(child);
+    context.revivedNodes.add(child);
   }
   if (context.hasGates) getGateRegistry(child.runtime).register(child);
   let entryChanged = false;
   if (!priorChild && !currentChild && !pending) {
-    context.entered.add(child);
+    context.enteredNodes.add(child);
 
     if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
     else if (slotSource || slotOverlay)

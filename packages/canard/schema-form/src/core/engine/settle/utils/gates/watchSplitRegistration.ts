@@ -22,7 +22,7 @@ export const watchSplitRegistration = <Self extends FieldNodeRecord<Self>>(
   const addShape = shape.add;
   const addOwner = owners.add;
   const shadow = (context.registrationShadow = {
-    dirty: new DirtyPathSet(new Map()),
+    dirtyPaths: new DirtyPathSet(new Map()),
     shape: new Set<string>(),
     owners: new Set<string>(),
     isRegistering: false,
@@ -41,15 +41,15 @@ export const watchSplitRegistration = <Self extends FieldNodeRecord<Self>>(
       );
     },
   });
-  for (const path of dirty) shadow.dirty.add(path);
+  for (const path of dirty) shadow.dirtyPaths.add(path);
   for (const path of shape) shadow.shape.add(path);
   for (const path of owners) shadow.owners.add(path);
   dirty.add = function (path: string) {
-    if (!shadow.isRegistering) shadow.dirty.add(path);
+    if (!shadow.isRegistering) shadow.dirtyPaths.add(path);
     return add.call(this, path);
   };
   dirty.delete = function (path: string) {
-    if (!shadow.isRegistering) shadow.dirty.delete(path);
+    if (!shadow.isRegistering) shadow.dirtyPaths.delete(path);
     return remove.call(this, path);
   };
   dirty.clear = function () {

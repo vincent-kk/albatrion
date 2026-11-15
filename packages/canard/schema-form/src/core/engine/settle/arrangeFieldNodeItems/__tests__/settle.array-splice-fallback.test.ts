@@ -568,15 +568,15 @@ describe('the splice selection proof reads only the tail', () => {
       expect(check()).toBe(false);
       context.dirtyChildrenByParent.delete(root.path);
 
-      context.entered.add(children[1]);
+      context.enteredNodes.add(children[1]);
       expect(check()).toBe(false);
       proof.count = 3;
       proof.entry = getItemEntry(root.blueprintNode, 1);
       expect(check()).toBe(true);
-      context.entered.clear();
-      context.entered.add(children[2]);
+      context.enteredNodes.clear();
+      context.enteredNodes.add(children[2]);
       expect(check()).toBe(false);
-      context.entered.clear();
+      context.enteredNodes.clear();
       proof.count = 5;
       proof.entry = undefined;
 

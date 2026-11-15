@@ -86,7 +86,7 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
                 ? hasOwnProperty(view!.value, site.name!)
                 : gate.kind === 'if' ||
                     (gate.kind === 'discriminator' && site.path === hostPath)
-                  ? view?.projected
+                  ? view?.projectedValue
                   : gate.kind === 'discriminator'
                     ? hasOwnProperty(view!.value, gate.condition.propertyName)
                       ? view!.value[gate.condition.propertyName]

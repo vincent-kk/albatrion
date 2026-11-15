@@ -27,7 +27,7 @@ describe('binding load lifetime', () => {
     dispatchSetExternalErrors(previous.root, [
       { dataPath: '', message: 'kept' },
     ]);
-    const oldState = previous.root.interactionState;
+    const oldState = previous.root.storedState;
     const next = createDispatchTree({ type: 'string' }, 'new');
     expect(() =>
       dispatchWriteInput(previous.root, () => {
@@ -37,7 +37,7 @@ describe('binding load lifetime', () => {
       }),
     ).not.toThrow();
     expect(previous.root.storedValue).toBe('old');
-    expect(previous.root.interactionState).toBe(oldState);
+    expect(previous.root.storedState).toBe(oldState);
     expect(previous.runtime.nodeErrors?.get(previous.root)).toEqual([
       { dataPath: '', message: 'kept' },
     ]);

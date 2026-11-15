@@ -27,8 +27,8 @@ export const getDeriveState = <Self extends FieldNodeRecord<Self>>(
     appliedRanks: new Map(),
     visitedSourcePaths: new Set(),
     loadScope: context.loadScope,
-    entered: context.entered,
-    revived: context.revived,
+    enteredNodes: context.enteredNodes,
+    revivedNodes: context.revivedNodes,
     isAutomaticWriteSuppressed: context.isAutomaticWriteSuppressed,
     isTraceEnabled: process.env.NODE_ENV !== 'production',
   };

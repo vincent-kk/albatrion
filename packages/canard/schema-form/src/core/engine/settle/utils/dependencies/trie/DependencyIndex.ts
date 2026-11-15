@@ -61,7 +61,7 @@ interface DependencyNode {
     /** Whether changed indices can bind every wildcard in this owner. */
     isBindable: boolean;
     /** Original reads folded onto this host; absent for an unconditional host read. */
-    watched?: string[];
+    watchedPaths?: string[];
   }[];
   /** Reused membership index preserves linear registration and owner order. */
   ownerPaths: Set<string>;
@@ -267,7 +267,8 @@ export class DependencyIndex {
     while (pending.length) {
       const node = pending.pop()!;
       allNodes.push(node);
-      for (const entry of node.owners) if (entry.watched) plain.add(entry.path);
+      for (const entry of node.owners)
+        if (entry.watchedPaths) plain.add(entry.path);
       pending.push(...node.children.values());
     }
     const runNumbers = new Map<string, number>();
@@ -279,7 +280,7 @@ export class DependencyIndex {
       for (let rank = 0; rank < node.owners.length; rank++) {
         const entry = node.owners[rank];
         const host = candidates.get(entry.path);
-        if (host === undefined || plain.has(entry.path) || entry.watched) {
+        if (host === undefined || plain.has(entry.path) || entry.watchedPaths) {
           node.plainOwners.push({ rank, entry });
           continue;
         }
@@ -625,9 +626,9 @@ export class DependencyIndex {
     const sizeBefore = owners.size;
     for (const node of nodes) {
       for (const entry of node.owners) {
-        if (entry.watched) {
+        if (entry.watchedPaths) {
           let intersects = false;
-          for (const watched of entry.watched)
+          for (const watched of entry.watchedPaths)
             if (
               intersectsWatchedPath(
                 watched,
@@ -721,19 +722,19 @@ export class DependencyIndex {
         path: owner,
         isBindable: allMatch,
         ...(watchedPath !== originalWatchedPath
-          ? { watched: [originalWatchedPath] }
+          ? { watchedPaths: [originalWatchedPath] }
           : {}),
       });
     } else {
       const entry = current.owners.find(
         (candidate) => candidate.path === owner,
       )!;
-      if (watchedPath === originalWatchedPath) delete entry.watched;
+      if (watchedPath === originalWatchedPath) delete entry.watchedPaths;
       else if (
-        entry.watched &&
-        entry.watched.indexOf(originalWatchedPath) === -1
+        entry.watchedPaths &&
+        entry.watchedPaths.indexOf(originalWatchedPath) === -1
       )
-        entry.watched.push(originalWatchedPath);
+        entry.watchedPaths.push(originalWatchedPath);
     }
   }
 }

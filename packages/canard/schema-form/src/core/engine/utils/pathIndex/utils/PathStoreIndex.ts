@@ -36,7 +36,7 @@ export class PathStoreIndex {
   /** Numeric slot radix for each indexed host. */
   private readonly slots = new Map<string, NumericPathIndex>();
   /** Empty prefixes to discard only after all destinations have been inserted. */
-  private readonly pending = new Set<PathPrefix>();
+  private readonly pendingPrefixes = new Set<PathPrefix>();
   /** Nested batches defer prefix cleanup until the outer batch closes. */
   private batchDepth = 0;
 
@@ -66,7 +66,7 @@ export class PathStoreIndex {
       while (ancestor) {
         ancestor.keys.delete(key);
         if (!ancestor.keys.size) {
-          if (this.batchDepth) this.pending.add(ancestor);
+          if (this.batchDepth) this.pendingPrefixes.add(ancestor);
           else this.dropPrefix(ancestor);
         }
         ancestor = ancestor.parent;
@@ -82,9 +82,9 @@ export class PathStoreIndex {
   /** Discard only prefixes still empty after the outer batch. */
   endBatch(): void {
     if (--this.batchDepth) return;
-    for (const prefix of this.pending)
+    for (const prefix of this.pendingPrefixes)
       if (!prefix.keys.size) this.dropPrefix(prefix);
-    this.pending.clear();
+    this.pendingPrefixes.clear();
   }
 
   /** Drop all indexed references. */
@@ -92,7 +92,7 @@ export class PathStoreIndex {
     this.pathsByKey.clear();
     this.prefixes.clear();
     this.slots.clear();
-    this.pending.clear();
+    this.pendingPrefixes.clear();
     this.batchDepth = 0;
   }
 

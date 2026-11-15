@@ -36,12 +36,13 @@ export const selectFixedFirstContributions = <
     computeChild,
     isImmediate,
     next: node.childrenByName!,
-    seen: new Map(),
+    seenNodesByName: new Map(),
     inactiveEntries: [],
     hasChanged: false,
     shouldFlushReads: isImmediate,
   };
-  for (const entry of plan.affected) selectEntryStep(entry, undefined, frame);
+  for (const entry of plan.affectedEntries)
+    selectEntryStep(entry, undefined, frame);
   const flushed = flushPendingOutput(node, context);
   if (publication) publication.isFlushed = flushed;
   if (frame.hasChanged) context.changedNodes.add(node);

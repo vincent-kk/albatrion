@@ -84,7 +84,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
   }
 
   if (removedItem) {
-    context.perished.add(removedItem);
+    context.perishedNodes.add(removedItem);
     visitFieldNodes(
       removedItem,
       (departing) => {
@@ -139,7 +139,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
   context.dirtyPaths.add(host.path);
   context.shapeDirtyPaths.add(host.path);
   if (inserted) {
-    context.entered.add(inserted);
+    context.enteredNodes.add(inserted);
 
     markWrite(inserted, value, context);
   }

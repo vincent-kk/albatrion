@@ -52,8 +52,8 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
   if (
     !context.exceededBudget &&
     (context.hasGates ||
-      context.entered.size > 0 ||
-      context.exited.size > 0 ||
+      context.enteredNodes.size > 0 ||
+      context.exitedNodes.size > 0 ||
       context.writtenInputs.size > 1 ||
       (context.writtenInputs.size === 1 &&
         (!context.writtenInputs.has(context.target) ||
@@ -68,10 +68,10 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
   publishStateKeys(context);
   if (
     context.pendingExits.size > 0 ||
-    context.perished.size > 0 ||
-    context.entered.size > 0 ||
-    context.revived.size > 0 ||
-    context.exited.size > 0 ||
+    context.perishedNodes.size > 0 ||
+    context.enteredNodes.size > 0 ||
+    context.revivedNodes.size > 0 ||
+    context.exitedNodes.size > 0 ||
     context.filledNodes.size > 0 ||
     context.arrayCounts.size > 0
   )

@@ -98,7 +98,9 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
               isDescendantPath(node.path, state.loadScope.path));
           const appeared =
             !consumed &&
-            (load || state.entered.has(target) || state.revived.has(target));
+            (load ||
+              state.enteredNodes.has(target) ||
+              state.revivedNodes.has(target));
           if (rule.kind === 'injectTo') {
             const current = node.storedOutputValue;
             state.consumedRuleValues.set(key, current);
