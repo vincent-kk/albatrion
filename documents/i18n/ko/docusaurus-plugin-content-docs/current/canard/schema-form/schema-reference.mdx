@@ -22,7 +22,7 @@ sidebar_position: 4
 | `controls` | `watch` | 런타임은 문자열 또는 문자열 배열; 공개 형은 배열 |
 | `controls` | `default`, `inactiveValue` | 모든 값; 리터럴·해석기 의미 유지 |
 | `controls` | `fields`, `injectTo`, `discriminator` | 각각 fields 항목 배열·함수·비어 있지 않은 문자열; 기존 범위·형상 규칙 적용 |
-| `options` | `terminal`, `omitEmpty`, `omitTrailing`, `trim` | boolean |
+| `options` | `terminal`, `omitEmpty`, `omitTrailingEmpty`, `trim` | boolean |
 | `options` | `propertyOrder` | 문자열 배열; `*`는 와일드카드가 아닌 실제 속성 이름 |
 | `options` | `virtual` | 기존 fields 검사를 따르는 가상 그룹 선언 |
 | `presentation` | `inputType` | 문자열 |
@@ -40,7 +40,7 @@ sidebar_position: 4
 
 `presentation.required`는 렌더러와 입력의 공통 필수 표시를 설정하며 [required 덮어쓰기 계약](./api-reference#composition)을 따릅니다. `presentation.controlled`와는 독립적입니다.
 
-`options.trim`은 타이핑마다가 아니라 blur 때 저장 문자열을 trim합니다. `omitTrailing`은 원시 자식 노드를 삭제하지 않고 정규화된 배열 출력의 뒤쪽 `undefined`를 제거합니다. `omitEmpty`의 기본값은 true, `trim`, `omitTrailing`의 기본값은 false입니다. [배열 출력 예제](./examples/array-output-filters)를 참조하십시오.
+`options.trim`은 타이핑마다가 아니라 blur 때 저장 문자열을 trim합니다. `omitTrailingEmpty`는 원시 자식 노드를 삭제하지 않고 정규화된 배열 출력의 뒤쪽 `undefined`를 제거합니다. `omitEmpty`의 기본값은 true, `trim`, `omitTrailingEmpty`의 기본값은 false입니다. [배열 출력 예제](./examples/array-output-filters)를 참조하십시오.
 
 `options.propertyOrder`는 화면 필드가 아니라 방출 객체의 키를 정렬합니다. 지정 키, 나머지 선언 키, 도착한 추가 키 순이며 없는 값을 만들지는 않습니다. 정수형 키는 JavaScript의 키 정렬 규칙을 따릅니다.
 

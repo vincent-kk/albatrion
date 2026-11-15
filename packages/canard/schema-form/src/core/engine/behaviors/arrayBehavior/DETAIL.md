@@ -24,9 +24,9 @@ branch의 비배열 원본에는 아이템이 없습니다. 객체 branch의 선
 
 ### array-projection — 꼬리 생략은 실제 방출과 빈자리를 구별합니다
 
-branch의 omitTrailing은 방출 없는 자리의 채움, 잎이 방출한 null, 청사진 없는 자리의 undefined·null로 이뤄진 최대 꼬리만 자릅니다. omitEmpty를 끈 객체·배열 아이템이 실제로 방출한 {}·[]는 유지합니다. terminal은 자식 방출의 증거가 없으므로 원본 꼬리의 undefined·null만 자릅니다. 그 뒤 omitEmpty를 적용하며 두 투영 모두 원본과 아이템 구조를 바꾸지 않습니다.
+branch의 omitTrailingEmpty는 방출 없는 자리의 채움, 잎이 방출한 null, 청사진 없는 자리의 undefined·null로 이뤄진 최대 꼬리만 자릅니다. omitEmpty를 끈 객체·배열 아이템이 실제로 방출한 {}·[]는 유지합니다. terminal은 자식 방출의 증거가 없으므로 원본 꼬리의 undefined·null만 자릅니다. 그 뒤 omitEmpty를 적용하며 두 투영 모두 원본과 아이템 구조를 바꾸지 않습니다.
 
-따라서 꼬리가 생략된 방출로 새로 마운트하면 아이템 수가 줄 수 있습니다. 또 방출 없는 문자열 아이템을 채운 null은 저장·로드 뒤 실제 null이어서 nullable이 아닌 아이템에서 misfit이 켜질 수 있습니다. 두 트리를 같게 하려고 원본 아이템을 지우거나 로드된 null을 undefined로 되돌리지 않습니다. nullable을 허용하거나 꼬리 빈자리에 omitTrailing을 적용하는 선택은 작성자가 합니다.
+따라서 꼬리가 생략된 방출로 새로 마운트하면 아이템 수가 줄 수 있습니다. 또 방출 없는 문자열 아이템을 채운 null은 저장·로드 뒤 실제 null이어서 nullable이 아닌 아이템에서 misfit이 켜질 수 있습니다. 두 트리를 같게 하려고 원본 아이템을 지우거나 로드된 null을 undefined로 되돌리지 않습니다. nullable을 허용하거나 꼬리 빈자리에 omitTrailingEmpty를 적용하는 선택은 작성자가 합니다.
 
 ### array-terminal — 통째 원본과 자리별 합성을 섞지 않습니다
 

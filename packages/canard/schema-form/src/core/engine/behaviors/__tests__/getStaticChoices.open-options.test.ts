@@ -5,7 +5,7 @@ import { getStaticChoices } from '../utils/options/getStaticChoices';
 it('ignores option-shaped class instances and arrays for every static choice', () => {
   class Choices {
     omitEmpty = false;
-    omitTrailing = true;
+    omitTrailingEmpty = true;
     trim = true;
     propertyOrder = ['b', 'a'];
   }
@@ -22,7 +22,7 @@ it('preserves validated booleans and string order, copies arrays, and reuses the
     schema: {
       options: {
         omitEmpty: false,
-        omitTrailing: true,
+        omitTrailingEmpty: true,
         trim: true,
         propertyOrder,
       },
@@ -32,7 +32,7 @@ it('preserves validated booleans and string order, copies arrays, and reuses the
   const choices = getStaticChoices(effective);
   expect(choices).toEqual({
     omitEmpty: false,
-    omitTrailing: true,
+    omitTrailingEmpty: true,
     trim: true,
     propertyOrder,
   });
@@ -42,13 +42,13 @@ it('preserves validated booleans and string order, copies arrays, and reuses the
   expect(
     getStaticChoices({
       schema: {
-        options: { omitEmpty: true, omitTrailing: false, trim: false },
+        options: { omitEmpty: true, omitTrailingEmpty: false, trim: false },
       },
       typeConflict: false,
     }),
   ).toEqual({
     omitEmpty: true,
-    omitTrailing: false,
+    omitTrailingEmpty: false,
     trim: false,
     propertyOrder: [],
   });

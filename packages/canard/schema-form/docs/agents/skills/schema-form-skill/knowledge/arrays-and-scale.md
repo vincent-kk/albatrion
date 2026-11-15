@@ -13,9 +13,9 @@ Obtain a candidate via `formRef.current?.findNode('/items')` and narrow it with 
 
 Array operations require a real array node: narrow a possibly missing lookup with `isArrayNode` before mutation. Visitors, virtualization `Placeholder`, and an `estimateHeight` callback also receive required nodes. Observation hooks accepting absence do not widen these inputs; a node holding JSON null, a `NullNode`, and a nullable schema do not represent a missing reference.
 
-## Array Output Filters (omitTrailing / omitEmpty)
+## Array Output Filters (omitTrailingEmpty / omitEmpty)
 
-`options.omitTrailing: true` (opt-in) trims **trailing** consecutive `undefined` items from the array's outgoing value; `options.omitEmpty` (on by default) turns an empty array into `undefined` on the parent path. Filter order: `omitTrailing → omitEmpty`.
+`options.omitTrailingEmpty: true` (opt-in) trims **trailing** consecutive `undefined` items from the array's outgoing value; `options.omitEmpty` (on by default) turns an empty array into `undefined` on the parent path. Filter order: `omitTrailingEmpty → omitEmpty`.
 
 Where the filters apply — and where they never do:
 

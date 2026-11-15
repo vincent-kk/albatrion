@@ -18,12 +18,12 @@ const schema = {
   properties: {
     tags: {
       type: 'array',
-      title: 'Tags — omitTrailing',
+      title: 'Tags — omitTrailingEmpty',
       description:
         'Add rows and leave the last ones empty; only what you filled in is emitted',
       minItems: 3,
       items: { type: 'string', presentation: { FieldInputProps: { placeholder: 'tag' } } },
-      options: { omitTrailing: true },
+      options: { omitTrailingEmpty: true },
     },
     notes: {
       type: 'array',
@@ -35,12 +35,12 @@ const schema = {
     },
     aliases: {
       type: 'array',
-      title: 'Aliases — omitTrailing + omitEmpty: false',
+      title: 'Aliases — omitTrailingEmpty + omitEmpty: false',
       description:
         'Trailing rows are trimmed, but an all-empty array stays [] instead of disappearing',
       minItems: 3,
       items: { type: 'string', presentation: { FieldInputProps: { placeholder: 'alias' } } },
-      options: { omitTrailing: true, omitEmpty: false },
+      options: { omitTrailingEmpty: true, omitEmpty: false },
     },
   },
 };

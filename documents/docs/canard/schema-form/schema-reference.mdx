@@ -22,7 +22,7 @@ At blueprint load, a defined reserved value must have the shallow type below; `u
 | `controls` | `watch` | string or array of strings at runtime; the public type uses an array |
 | `controls` | `default`, `inactiveValue` | any value; literal/resolver semantics remain unchanged |
 | `controls` | `fields`, `injectTo`, `discriminator` | fields-entry array, function, nonempty string respectively; existing scope and shape rules apply |
-| `options` | `terminal`, `omitEmpty`, `omitTrailing`, `trim` | boolean |
+| `options` | `terminal`, `omitEmpty`, `omitTrailingEmpty`, `trim` | boolean |
 | `options` | `propertyOrder` | array of strings; `*` is a literal property name, not a wildcard |
 | `options` | `virtual` | virtual-group declarations with the existing fields checks |
 | `presentation` | `inputType` | string |
@@ -40,7 +40,7 @@ The same control value checks apply inside fields entries and fragments, within 
 
 `presentation.required` sets the display indicator shared by renderer and input; see [the required override contract](./api-reference#composition). It is independent of `presentation.controlled`.
 
-`options.trim` trims the stored string on blur, not on every keystroke. `omitTrailing` removes trailing `undefined` entries from normalized array output without deleting their raw child nodes. `omitEmpty` defaults to true; `trim` and `omitTrailing` default to false. See the [array output example](./examples/array-output-filters).
+`options.trim` trims the stored string on blur, not on every keystroke. `omitTrailingEmpty` removes trailing `undefined` entries from normalized array output without deleting their raw child nodes. `omitEmpty` defaults to true; `trim` and `omitTrailingEmpty` default to false. See the [array output example](./examples/array-output-filters).
 
 `options.propertyOrder` orders emitted object keys, not fields on screen: listed keys first, then remaining declared keys, then arriving additional keys. It creates no absent values, and integer-like keys still follow JavaScript's key ordering.
 

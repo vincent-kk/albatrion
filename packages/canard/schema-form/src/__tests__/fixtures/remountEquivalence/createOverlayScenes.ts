@@ -19,9 +19,9 @@ export function createOverlayScenes(): RemountScene[] {
       base: {
         type: 'array',
         items: { type: 'string' },
-        options: { omitTrailing: false },
+        options: { omitTrailingEmpty: false },
       },
-      overlay: { options: { omitTrailing: true } },
+      overlay: { options: { omitTrailingEmpty: true } },
       value: ['x', undefined],
       read: '(../../source/data).length === 2',
       gate: '(../../../source/data).length === 2',

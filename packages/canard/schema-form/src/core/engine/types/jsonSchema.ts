@@ -71,7 +71,7 @@ interface AuthoredSchemaBase<
     /** Omit empty output values (default: true). */
     omitEmpty?: boolean;
     /** Trim trailing undefined array items from output. */
-    omitTrailing?: boolean;
+    omitTrailingEmpty?: boolean;
     /** Trim string input when it is finished. */
     trim?: boolean;
     /** Consumer extensions are not interpreted by the engine. */

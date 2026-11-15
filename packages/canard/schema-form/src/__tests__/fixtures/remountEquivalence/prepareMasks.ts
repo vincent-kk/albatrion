@@ -70,8 +70,8 @@ export function prepareMasks(
     if (mask.category === 'omitEmpty' && options?.omitEmpty !== true)
       throw new Error(`MASK_OPTION_NOT_ENABLED ${mask.path}`);
     if (
-      mask.category === 'omitTrailing' &&
-      (options?.omitTrailing !== true ||
+      mask.category === 'omitTrailingEmpty' &&
+      (options?.omitTrailingEmpty !== true ||
         mask.trimmedIndex === undefined ||
         !mask.projectionOwner ||
         !path.startsWith(`${mask.projectionOwner}/${mask.trimmedIndex}`))

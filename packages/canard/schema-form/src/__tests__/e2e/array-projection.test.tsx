@@ -37,8 +37,8 @@ describe('array-projection — TEST-011 / TEST-023 shared screen runner', () => 
     await run('array.nullable-slots-reset');
   });
 
-  it('VALUE-034 omitTrailing trims trailing holes and preserves leading null slots', async () => {
-    await run('array.omit-trailing-leading-holes');
+  it('VALUE-034 omitTrailingEmpty trims trailing holes and preserves leading null slots', async () => {
+    await run('array.omit-trailing-empty-leading-holes');
   });
 
   it('LANDING-023 branch arrays inject projected output and retain edited slots', async () => {

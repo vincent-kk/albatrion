@@ -8,7 +8,7 @@ import { getArrayItemTemplate } from '../value/getArrayItemTemplate';
  * @param node - Branch host for detecting item holes; absent for terminal source
  * @returns Original array when unchanged, otherwise a memoized copied prefix
  */
-export const omitTrailingArray = <Self>(
+export const omitTrailingEmptyArray = <Self>(
   value: readonly unknown[],
   node?: FieldNodeRecord<Self>,
 ): readonly unknown[] => {

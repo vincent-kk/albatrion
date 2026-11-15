@@ -41,10 +41,10 @@ export const PrefixItems: Story = {
   },
 };
 
-/** TEST-025: omit-trailing mirrors shared SCN data in the browser. */
-export const OmitTrailing: Story = {
-  name: 'omit-trailing',
-  args: { scenario: arrayScenarios.find((scenario) => scenario.name === 'array.omit-trailing')! },
+/** TEST-025: omit-trailing-empty mirrors shared SCN data in the browser. */
+export const OmitTrailingEmpty: Story = {
+  name: 'omit-trailing-empty',
+  args: { scenario: arrayScenarios.find((scenario) => scenario.name === 'array.omit-trailing-empty')! },
   play: async ({ args, canvasElement, step }) => {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);

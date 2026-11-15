@@ -46,11 +46,11 @@ describe('append admission declines and the general path settles', () => {
     ['watch', itemsWith({ watch: ['../key'] }), [{ key: 1 }], true],
     ['expression', itemsWith({ readOnly: '../flag' }), [{ flag: true }], true],
     [
-      'omitTrailing',
+      'omitTrailingEmpty',
       {
         type: 'array',
         items: { type: 'number' },
-        options: { omitTrailing: true },
+        options: { omitTrailingEmpty: true },
       },
       [1, null],
       true,

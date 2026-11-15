@@ -3,7 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { Behavior } from '../../../../record';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
 import { omitEmptyArray } from './omitEmptyArray';
-import { omitTrailingArray } from './omitTrailingArray';
+import { omitTrailingEmptyArray } from './omitTrailingEmptyArray';
 
 /**
  * Project an opaque array with cached omission bits and no source mutation.
@@ -15,6 +15,8 @@ export const projectTerminalArray: Behavior['project'] = (node, local) => {
   if (node.source !== undefined && !isArray(node.source)) return node.source;
   if (!isArray(local)) return undefined;
   const choices = getStaticChoices(node.schema);
-  const projected = choices.omitTrailing ? omitTrailingArray(local) : local;
+  const projected = choices.omitTrailingEmpty
+    ? omitTrailingEmptyArray(local)
+    : local;
   return choices.omitEmpty ? omitEmptyArray(projected) : projected;
 };

@@ -14,7 +14,7 @@ it.each(['items', 'prefixItems'] satisfies readonly (
       later: { type: 'boolean' },
       list: {
         type: 'array',
-        options: { omitTrailing: true },
+        options: { omitTrailingEmpty: true },
         allOf: [
           {
             controls: { active: '!../later' },

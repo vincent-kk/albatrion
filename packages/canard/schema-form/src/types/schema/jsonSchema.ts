@@ -155,7 +155,7 @@ export type NonNullableArraySchema<Options extends Dictionary = object> =
     WingletNonNullableArraySchema<Options, JSONSchemaChildren<Options>> & {
       options?: {
         /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array (default: false) */
-        omitTrailing?: boolean;
+        omitTrailingEmpty?: boolean;
         /** Build the node as one input over the whole value (`true`) or as child nodes (`false`); overrides the renderer's choice (default: terminal when `presentation.FieldInput` is a component, branch otherwise) */
         terminal?: boolean;
       };
@@ -166,7 +166,7 @@ export type NullableArraySchema<Options extends Dictionary = object> =
     WingletNullableArraySchema<Options, JSONSchemaChildren<Options>> & {
       options?: {
         /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array (default: false) */
-        omitTrailing?: boolean;
+        omitTrailingEmpty?: boolean;
         /** Build the node as one input over the whole value (`true`) or as child nodes (`false`); overrides the renderer's choice (default: terminal when `presentation.FieldInput` is a component, branch otherwise) */
         terminal?: boolean;
       };
