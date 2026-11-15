@@ -409,7 +409,7 @@ const largeSchema: JSONSchema = {
   type: 'object',
   properties: Object.fromEntries(
     Array.from({ length: 100 }, (_, index) => [
-      `f${String(index).padStart(3, '0')}`,
+      `f${('' + index).padStart(3, '0')}`,
       { type: 'string' },
     ]),
   ),

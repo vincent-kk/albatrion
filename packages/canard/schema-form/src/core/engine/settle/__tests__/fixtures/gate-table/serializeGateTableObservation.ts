@@ -41,7 +41,7 @@ export const serializeGateTableObservation = (
         };
       if (value === undefined) return { $undefined: true };
       if (typeof value === 'number' && !Number.isFinite(value))
-        return { $number: String(value) };
+        return { $number: '' + value };
       if (Object.is(value, -0)) return { $number: '-0' };
       if (typeof value === 'function') return { $function: true };
       if (value instanceof Map) return [...value];

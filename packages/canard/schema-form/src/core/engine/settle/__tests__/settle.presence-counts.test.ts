@@ -262,7 +262,7 @@ it.each(['record', 'skip', 'shadow'] as const)(
       for (const index of [0, 1])
         for (const enabled of [false, true]) {
           dispatchSetValue(
-            getDispatchNode(root, 'items', String(index), 'enabled'),
+            getDispatchNode(root, 'items', '' + index, 'enabled'),
             enabled,
           );
           const expected = mountPresenceTree(schema, {

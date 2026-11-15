@@ -102,7 +102,7 @@ const FieldInputNumber = ({
 
   const handleBlur = useHandle((event: FocusEvent<HTMLInputElement>) => {
     if (draftRef.current === null && !event.target.validity.badInput) return;
-    event.target.value = typeof value === 'number' ? String(value) : '';
+    event.target.value = typeof value === 'number' ? '' + value : '';
     draftRef.current = null;
   });
 

@@ -75,7 +75,7 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
       const candidates = getItemEntries(node.blueprintNode, source.length);
       const target = candidates.find(
         (candidate) => candidate.node === entry.node,
-      ) ?? { ...entry, name: String(source.length) };
+      ) ?? { ...entry, name: '' + source.length };
       sources.set(target, child.instance);
       children.set(
         target,

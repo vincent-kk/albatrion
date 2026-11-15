@@ -27,7 +27,7 @@ export const prepareArrayPop = <Self extends FieldNodeRecord<Self>>(
     !admitsStaticArrayTail(node)
   )
     return undefined;
-  const last = node.childrenByName?.[String(index)];
+  const last = node.childrenByName?.['' + index];
   if (!last || node.children?.[index] !== last) return undefined;
   return {
     host: node,

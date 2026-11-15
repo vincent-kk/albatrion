@@ -23,7 +23,7 @@ export const hasDistributedChildInput = (
     return (
       Number.isInteger(index) &&
       index >= 0 &&
-      String(index) === name &&
+      '' + index === name &&
       index < input.length
     );
   }

@@ -43,7 +43,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
   const length = entry ? count + 1 : count - 1;
   const items: Dictionary<Self> = host.childrenByName ?? Object.create(null);
   const previous = host.children ?? [];
-  const removedItem = entry ? undefined : items[String(index)];
+  const removedItem = entry ? undefined : items['' + index];
   const removedValue = removedItem?.storedValue;
   const slot = proof.plan.slots[0];
   const value = slot && 'value' in slot ? slot.value : undefined;
@@ -67,8 +67,8 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
       });
     }
     for (let position = count; position > index; position--)
-      items[String(position)] = items[String(position - 1)];
-    items[String(index)] = inserted;
+      items['' + position] = items['' + (position - 1)];
+    items['' + index] = inserted;
   } else {
     moves.push({ previous: appendSegment(host.path, index) });
     for (let position = index + 1; position < count; position++) {
@@ -78,9 +78,9 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
         previous: appendSegment(host.path, position),
         current: appendSegment(host.path, position - 1),
       });
-      items[String(position - 1)] = items[String(position)];
+      items['' + (position - 1)] = items['' + position];
     }
-    delete items[String(count - 1)];
+    delete items['' + (count - 1)];
   }
 
   if (removedItem) {
@@ -106,8 +106,8 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
     position < length;
     position++
   ) {
-    const item = items[String(position)];
-    const name = String(position);
+    const item = items['' + position];
+    const name = '' + position;
     visitFieldNodes(
       item,
       (descendant) => {

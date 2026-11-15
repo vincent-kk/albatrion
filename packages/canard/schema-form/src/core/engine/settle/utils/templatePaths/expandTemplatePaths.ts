@@ -49,7 +49,7 @@ export const expandTemplatePaths = <Self extends FieldNodeRecord<Self>>(
       node.blueprintNode.item !== undefined
     ) {
       for (let index = node.itemCount - 1; index >= 0; index--) {
-        const name = String(index);
+        const name = '' + index;
         const child = node.childrenByName?.[name];
         if (depth + 1 === segments.length || child)
           pending.push({

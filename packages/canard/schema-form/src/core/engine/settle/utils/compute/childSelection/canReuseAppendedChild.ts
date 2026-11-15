@@ -26,7 +26,7 @@ export const canReuseAppendedChild = <Self extends FieldNodeRecord<Self>>(
   prior: Dictionary<Self>,
   proof: ArrayAppendProof<Self>,
 ): boolean => {
-  const name = String(proof.count);
+  const name = '' + proof.count;
   const path = appendSegment(node.path, name);
   const child = prior[name];
   const dirty = context.dirtyChildrenByParent.get(node.path);

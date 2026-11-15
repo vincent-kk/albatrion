@@ -7,7 +7,7 @@ describe('composite cases', () => {
   it('number CX-01 to CX-24 in order with unique names and an expectation on every top-level step', () => {
     const names = compositeCases.map((item) => item.scenario.name);
     expect(new Set(names).size).toBe(24);
-    names.forEach((name, index) => expect(name.startsWith(`composite.cx${String(index + 1).padStart(2, '0')}-`), name).toBe(true));
+    names.forEach((name, index) => expect(name.startsWith(`composite.cx${('' + (index + 1)).padStart(2, '0')}-`), name).toBe(true));
     for (const { scenario } of compositeCases) {
       expect(scenario.description, scenario.name).toBeTruthy();
       expect(scenario.steps.every((step) => step.expect !== undefined), scenario.name).toBe(true);

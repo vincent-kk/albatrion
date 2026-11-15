@@ -39,7 +39,7 @@ it.each(['insert', 'remove'] as const)(
     const sourcePath = `/list/${source}/0/v`;
     const path = `/list/${destination}/0/v`;
     const list = getDispatchNode(root, 'list');
-    const old = getDispatchNode(list, String(source));
+    const old = getDispatchNode(list, '' + source);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
     expect(getDispatchNode(old, '0', 'v').source).toBe(37);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
@@ -50,9 +50,7 @@ it.each(['insert', 'remove'] as const)(
     if (operation === 'insert') dispatchInsert(list, 0, []);
     else dispatchRemove(list, 0);
     expect(old.isDetached).toBe(true);
-    expect(getDispatchNode(list, String(destination), '0', 'v').source).toBe(
-      37,
-    );
+    expect(getDispatchNode(list, '' + destination, '0', 'v').source).toBe(37);
 
     expect(list.storedValue).toEqual(
       operation === 'insert' ? [[], [{ v: 37 }]] : [[{ v: 37 }]],
@@ -61,15 +59,13 @@ it.each(['insert', 'remove'] as const)(
     expect(readRetainedSlotSource(root, path, 'string')).toBe('live');
 
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-    expect(getDispatchNode(list, String(destination), '0', 'v').source).toBe(
+    expect(getDispatchNode(list, '' + destination, '0', 'v').source).toBe(
       'live',
     );
     expect(readRetainedSlotSource(root, path, 'number')).toBe(37);
 
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-    expect(getDispatchNode(list, String(destination), '0', 'v').source).toBe(
-      37,
-    );
+    expect(getDispatchNode(list, '' + destination, '0', 'v').source).toBe(37);
     expect(readRetainedSlotSource(root, path, 'string')).toBe('live');
     expect(runtime.loadSnapshot).toEqual(
       operation === 'insert'

@@ -86,7 +86,7 @@ export const createRenderScenarioAdapter = (
           return;
         }
         if (field?.type === 'number' && typeof step.value === 'number') {
-          await form.type(step.path, String(step.value));
+          await form.type(step.path, '' + step.value);
           return;
         }
       }

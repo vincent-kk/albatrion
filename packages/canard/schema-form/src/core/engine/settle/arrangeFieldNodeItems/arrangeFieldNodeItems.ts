@@ -89,7 +89,7 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
     );
     return resultOf(node, plan, previous);
   }
-  if (plan.kind === 'update' && !node.childrenByName?.[String(plan.index)]) {
+  if (plan.kind === 'update' && !node.childrenByName?.['' + plan.index]) {
     const scratch = getSettlementScratch(node.rootNode.runtime);
     const context = createSettlementContext(
       node,
@@ -111,7 +111,7 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const item = node.childrenByName?.[String(plan.index)];
+    const item = node.childrenByName?.['' + plan.index];
     if (item) return item.storedValue;
     const readScratch = getSettlementScratch(node.rootNode.runtime);
     try {
@@ -128,7 +128,7 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
     }
   }
   if (plan.kind === 'update') {
-    const item = node.childrenByName?.[String(plan.index)];
+    const item = node.childrenByName?.['' + plan.index];
     if (!item) return undefined;
     writeFieldNode(
       item,

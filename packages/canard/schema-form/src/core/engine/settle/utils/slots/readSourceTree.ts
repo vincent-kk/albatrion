@@ -40,7 +40,7 @@ export const readSourceTree = <Self extends FieldNodeRecord<Self>>(
           : undefined;
       else {
         tailStart++;
-        const item = node.childrenByName?.[String(index)];
+        const item = node.childrenByName?.['' + index];
         value = item
           ? readSourceTree(item, context)
           : readAbsentSlotSource(node, index, candidates, context);

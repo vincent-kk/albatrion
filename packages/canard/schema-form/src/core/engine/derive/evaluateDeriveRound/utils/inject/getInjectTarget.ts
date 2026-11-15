@@ -36,7 +36,7 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
       template.kind === 'array' &&
       Number.isInteger(index) &&
       index >= 0 &&
-      String(index) === name
+      '' + index === name
         ? getItemEntries(template, index)
         : undefined;
     const selected = live?.childrenByName?.[name]?.blueprintNode;

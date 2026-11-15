@@ -45,7 +45,7 @@ export const observeDirtyPostOrderWrites = async (
             type: 'object',
             properties: Object.fromEntries(
               Array.from({ length: 100 }, (_, index) => [
-                `field_${String(index).padStart(3, '0')}`,
+                `field_${('' + index).padStart(3, '0')}`,
                 { type: 'string', default: `value_${index}` },
               ]),
             ),

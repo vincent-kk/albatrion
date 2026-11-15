@@ -33,7 +33,7 @@ describe('interpreted child static specs', () => {
         ]),
       );
       const strings = Object.fromEntries(
-        Object.entries(expected).map(([key, value]) => [key, String(value)]),
+        Object.entries(expected).map(([key, value]) => [key, '' + value]),
       );
       const query = vi.spyOn(specs, 'staticSpec');
       let calls: number;

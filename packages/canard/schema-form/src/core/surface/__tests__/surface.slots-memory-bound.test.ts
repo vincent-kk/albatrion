@@ -58,7 +58,7 @@ it('retains recursive candidates only through the supplied finite value depth', 
   if (!(root instanceof FieldNode)) throw new Error('Expected runtime');
   let value: unknown = { id: 'leaf', children: [] };
   for (let depth = 0; depth < 4; depth++)
-    value = { id: String(depth), children: [value] };
+    value = { id: '' + depth, children: [value] };
   root.setValue({ open: true, tree: value });
   expect(root.find('/tree')!.value).toEqual(value);
   const bound = countRetainedSlotNodes(root);

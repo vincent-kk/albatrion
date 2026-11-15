@@ -83,7 +83,7 @@ export function direct(input: any, trusted = false): string {
       while (start > 0) {
         const key = keys[start - 1];
         const number = Number(key);
-        if (String(number >>> 0) === key && number !== 4294967295) break;
+        if ('' + (number >>> 0) === key && number !== 4294967295) break;
         start--;
       }
       keys = keys.slice(start);

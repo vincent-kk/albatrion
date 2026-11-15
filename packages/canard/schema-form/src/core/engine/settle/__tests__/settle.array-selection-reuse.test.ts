@@ -31,7 +31,7 @@ const STATIC_ITEMS: BlueprintSchema = {
 };
 
 /** Six static items, so N/2 = 3 and N-2 = 4. */
-const SIX = Array.from({ length: 6 }, (_, value) => ({ value: String(value) }));
+const SIX = Array.from({ length: 6 }, (_, value) => ({ value: '' + value }));
 
 // filid:contract settle-array-selection-reuse
 describe('static array selection matches the full route', () => {
@@ -297,8 +297,9 @@ describe('static array selection matches the full route', () => {
           .filter((name) => /^\d+$/.test(name));
         published.mockRestore();
         expect(positions).toEqual(
-          Array.from({ length: SIX.length + delta - index }, (_, offset) =>
-            String(index + offset),
+          Array.from(
+            { length: SIX.length + delta - index },
+            (_, offset) => '' + (index + offset),
           ),
         );
       }

@@ -223,7 +223,7 @@ describe('static whole writes skip same-value leaves and keep same-key hosts out
   it('writes an array of objects of the same length with one nested change and a hole', async () => {
     const items = Array.from({ length: 4 }, (_, index) => ({
       v: index,
-      w: String(index),
+      w: '' + index,
     }));
     const sparse: unknown[] = [...items];
     delete sparse[2];

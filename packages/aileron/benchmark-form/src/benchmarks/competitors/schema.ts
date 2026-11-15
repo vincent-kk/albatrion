@@ -15,7 +15,7 @@ import { buildFlatSchema } from '../../fixtures/scale-schemas';
 export { buildFlatSchema };
 
 export const flatFieldName = (index: number): string =>
-  `field_${String(index).padStart(3, '0')}`;
+  `field_${('' + index).padStart(3, '0')}`;
 
 /** rjsf wants the same shape under its own nominal type. Built identically. */
 export const flatRjsfSchema = (fieldCount: number): RJSFSchema => {

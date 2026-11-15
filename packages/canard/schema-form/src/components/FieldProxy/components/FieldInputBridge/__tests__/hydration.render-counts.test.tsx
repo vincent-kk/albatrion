@@ -64,7 +64,7 @@ it.each([false, true])(
               properties: Object.fromEntries(
                 Array.from({ length: 40 }, (_, index) => [
                   `f${index}`,
-                  { type: 'string', default: String(index) },
+                  { type: 'string', default: '' + index },
                 ]),
               ),
             },

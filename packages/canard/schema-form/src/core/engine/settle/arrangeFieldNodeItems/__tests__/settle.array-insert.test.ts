@@ -46,7 +46,7 @@ const expectInsertIdentity = (run: ArrayWriteRun, index: number) => {
   expect(items).toHaveLength(run.before.length + 1);
   for (let position = 0; position < items.length; position++) {
     const { item, key, name, path } = items[position];
-    expect(name).toBe(String(position));
+    expect(name).toBe('' + position);
     expect(path).toBe('/' + position);
     expect(item.parent).toBe(run.root);
     if (position === index) {

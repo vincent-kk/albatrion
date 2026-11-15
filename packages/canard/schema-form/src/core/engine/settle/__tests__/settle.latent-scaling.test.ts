@@ -26,11 +26,11 @@ describe('49C-01 SETTLE-017 latent occurrence scaling', () => {
       },
     });
     const b = Array.from({ length: count }, (_, index) => ({
-      x: String(index),
+      x: '' + index,
     }));
     const a = Array.from({ length: count }, (_, index) => ({
       on: false,
-      v: String(index),
+      v: '' + index,
     }));
     root.setValue({ flag: true, b, a });
     const stringify = JSON.stringify;

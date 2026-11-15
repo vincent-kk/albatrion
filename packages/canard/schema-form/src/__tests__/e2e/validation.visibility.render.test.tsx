@@ -337,7 +337,7 @@ it('IR-6 a newly enabled display during synchronous continuous input reveals at 
   vi.spyOn(performance, 'now').mockImplementation(clock.now);
   for (let frame = 0; frame < 8; frame++) {
     await act(async () => {
-      ref.current!.setValue(String(frame));
+      ref.current!.setValue('' + frame);
       if (frame === 1) ref.current!.revealErrors();
       clock.frame();
       await clock.task();

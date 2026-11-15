@@ -70,7 +70,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   const oldSnapshot = isArray(snapshot) ? snapshot : [];
   const removedIndex =
     plan.result.source === 'removed' ? plan.result.index : -1;
-  const removedItem = oldItems[String(removedIndex)];
+  const removedItem = oldItems['' + removedIndex];
   const removed =
     removedIndex < 0
       ? undefined
@@ -121,7 +121,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     if (from !== undefined && isMoved) destinations.set(from, index);
     const entry = candidates[0];
     if (!entry && !isMoved) continue;
-    const old = from === undefined ? undefined : oldItems[String(from)];
+    const old = from === undefined ? undefined : oldItems['' + from];
     if (old) {
       let compatible = false;
       for (const candidate of candidates)
@@ -130,7 +130,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
           break;
         }
       if (compatible) {
-        nextItems[String(index)] = old;
+        nextItems['' + index] = old;
         reused.add(old);
         if (from !== undefined && !isMoved) destinations.set(from, index);
         continue;
@@ -156,12 +156,12 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       continue;
     }
     const node = createChildNode(host, entry);
-    nextItems[String(index)] = node;
+    nextItems['' + index] = node;
     created.push({ node, value: source, isMoved });
   }
   const moves: ArrayPathMove[] = [];
   for (let index = 0; index < oldCount; index++) {
-    const item = oldItems[String(index)];
+    const item = oldItems['' + index];
     const current = destinations.get(index);
     moves.push({
       previous: appendSegment(host.path, index),

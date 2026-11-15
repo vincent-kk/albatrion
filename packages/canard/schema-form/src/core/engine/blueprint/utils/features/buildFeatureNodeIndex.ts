@@ -41,7 +41,7 @@ export const buildFeatureNodeIndex = (
       ...node.childEntries,
       ...(node.prefixItems ?? []).flatMap((item, index) =>
         mapArray(node.prefixItemCandidates?.[index] ?? [item], (child) => ({
-          name: String(index),
+          name: '' + index,
           node: child,
           declarations: child.declarations,
         })),

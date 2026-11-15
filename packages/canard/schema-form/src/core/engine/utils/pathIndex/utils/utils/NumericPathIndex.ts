@@ -52,7 +52,7 @@ export class NumericPathIndex {
 
   /** Visit only slots at or above the new array length. */
   *tail(count: number): IterableIterator<string> {
-    const lower = String(count);
+    const lower = '' + count;
     for (const [length, root] of this.lengths) {
       if (length < lower.length) continue;
       const pending = [{ node: root, prefix: '' }];

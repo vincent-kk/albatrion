@@ -44,7 +44,7 @@ export const interpretFieldNodeInput = <Self extends FieldNodeRecord<Self>>(
     if (template.kind === 'array' && isArray(value)) {
       let copy: Optional<unknown[]>;
       for (let index = 0; index < value.length; index++) {
-        const item = live?.childrenByName?.[String(index)];
+        const item = live?.childrenByName?.['' + index];
         const candidates = getItemEntries(template, index);
         const child =
           item?.blueprintNode ??

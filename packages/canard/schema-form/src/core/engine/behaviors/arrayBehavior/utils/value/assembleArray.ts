@@ -86,7 +86,7 @@ export const assembleArray: Behavior['assemble'] = (
       return result;
     }
     const template = getArrayItemTemplate(node, previousItemCount);
-    const child = node.childrenByName?.[String(previousItemCount)];
+    const child = node.childrenByName?.['' + previousItemCount];
     if (template && child !== null && typeof child === 'object') {
       const outputValue =
         'storedOutputValue' in child ? child.storedOutputValue : undefined;
@@ -171,7 +171,7 @@ export const assembleArray: Behavior['assemble'] = (
       continue;
     }
     tailStart++;
-    const child = node.childrenByName?.[String(index)];
+    const child = node.childrenByName?.['' + index];
     const outputValue =
       child !== null &&
       typeof child === 'object' &&

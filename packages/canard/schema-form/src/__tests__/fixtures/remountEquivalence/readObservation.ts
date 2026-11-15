@@ -47,8 +47,8 @@ export function readObservation(root: FieldNode): Record<string, unknown> {
             Object.entries(node.state).filter(
               ([key]) =>
                 ![
-                  String(FieldNodeState.Edited),
-                  String(FieldNodeState.Touched),
+                  '' + FieldNodeState.Edited,
+                  '' + FieldNodeState.Touched,
                 ].includes(key),
             ),
           ),

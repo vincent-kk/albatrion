@@ -238,7 +238,7 @@ describe('NODE-051 identity on the splice path', () => {
     for (let index = 1; index < run.before.length; index++) {
       expect(children[index + 1]).toBe(run.before[index]);
       expect(children[index + 1].itemKey).toBe(run.keys[index]);
-      expect(children[index + 1].name).toBe(String(index + 1));
+      expect(children[index + 1].name).toBe('' + (index + 1));
       expect(children[index + 1].path).toBe('/' + (index + 1));
       expect(children[index + 1].parent).toBe(run.root);
     }

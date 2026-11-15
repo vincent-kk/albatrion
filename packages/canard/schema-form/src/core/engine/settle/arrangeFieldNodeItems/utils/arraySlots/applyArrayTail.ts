@@ -61,7 +61,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   const templateCount = host.blueprintNode.prefixItems?.length ?? 0;
   const removedIndex =
     plan.result.source === 'removed' ? plan.result.index : -1;
-  const removedItem = items[String(removedIndex)];
+  const removedItem = items['' + removedIndex];
   const removedEntry =
     removedIndex < 0
       ? undefined
@@ -101,7 +101,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
       continue;
     }
     const node = createChildNode(host, entry);
-    items[String(index)] = node;
+    items['' + index] = node;
     children.push(node);
     created.push({ node, value: slot.value });
   }
@@ -109,7 +109,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   const moves: ArrayPathMove[] = [];
   let perishedPaths: Optional<string[]>;
   for (let index = prefixCount; index < oldCount; index++) {
-    const key = String(index);
+    const key = '' + index;
     const item = items[key];
     if (length) moves.push({ previous: appendSegment(host.path, index) });
     if (!item) continue;
@@ -137,7 +137,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
       { isOwned: true },
     );
     if (length) (perishedPaths ??= []).push(item.path);
-    delete items[String(index)];
+    delete items['' + index];
   }
   if (!length) clearArrayRuntimePaths(host.runtime, host.path, oldCount);
   else {

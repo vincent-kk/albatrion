@@ -45,7 +45,7 @@ it.each([['insert'], ['remove']] as const)(
     const list = getDispatchNode(root, 'list');
     const index = operation === 'insert' ? 0 : 1;
     const destination = operation === 'insert' ? 1 : 0;
-    const old = getDispatchNode(getDispatchNode(list, String(index)), 'v');
+    const old = getDispatchNode(getDispatchNode(list, '' + index), 'v');
     dispatchSetValue(getDispatchNode(root, 'show'), false);
     const frozen = readFieldNodeInactiveValues(old);
     if (operation === 'insert') dispatchInsert(list, 0, {});
@@ -57,8 +57,7 @@ it.each([['insert'], ['remove']] as const)(
     dispatchSetValue(old, 33);
     dispatchSetValue(getDispatchNode(root, 'show'), true);
     expect(
-      getDispatchNode(getDispatchNode(list, String(destination)), 'v')
-        .storedValue,
+      getDispatchNode(getDispatchNode(list, '' + destination), 'v').storedValue,
     ).toBe(index ? 22 : 11);
     expect(old.storedValue).toBe(index ? 22 : 11);
     expect(readFieldNodeInactiveValues(old)).toBe(frozen);

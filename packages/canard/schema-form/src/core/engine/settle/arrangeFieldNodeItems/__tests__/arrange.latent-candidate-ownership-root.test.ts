@@ -128,7 +128,7 @@ describe('moving tuple slot-root candidate sources', () => {
       dispatchSetValue(getDispatchNode(root, 'a'), true);
     }
     const list = getDispatchNode(root, 'list');
-    const original = getDispatchNode(list, String(sourceIndex));
+    const original = getDispatchNode(list, '' + sourceIndex);
     expect(original.source).toBe(liveValue);
 
     if (mode === 'retained') {
@@ -147,7 +147,7 @@ describe('moving tuple slot-root candidate sources', () => {
     const inserted = live === 'string' ? 'new' : 99;
     if (operation === 'insert') dispatchInsert(list, 0, inserted);
     else dispatchRemove(list, 0);
-    const moved = getDispatchNode(list, String(destination));
+    const moved = getDispatchNode(list, '' + destination);
     const expectedValue =
       mode === 'retained'
         ? stored
@@ -187,7 +187,7 @@ describe('moving tuple slot-root candidate sources', () => {
 
     if (operation === 'insert') dispatchRemove(list, 0);
     else dispatchInsert(list, 0, stored);
-    const restored = getDispatchNode(list, String(sourceIndex));
+    const restored = getDispatchNode(list, '' + sourceIndex);
     expect(restored.source).toBe(liveValue);
     expect(readRetainedSlotSource(root, `/list/${sourceIndex}`, other)).toBe(
       stored,
@@ -195,14 +195,14 @@ describe('moving tuple slot-root candidate sources', () => {
 
     dispatchSetValue(getDispatchNode(root, 'a'), false);
     dispatchSetValue(getDispatchNode(root, 'b'), true);
-    expect(getDispatchNode(list, String(sourceIndex)).source).toBe(stored);
+    expect(getDispatchNode(list, '' + sourceIndex).source).toBe(stored);
     expect(readRetainedSlotSource(root, `/list/${sourceIndex}`, live)).toBe(
       liveValue,
     );
 
     dispatchSetValue(getDispatchNode(root, 'b'), false);
     dispatchSetValue(getDispatchNode(root, 'a'), true);
-    expect(getDispatchNode(list, String(sourceIndex)).source).toBe(liveValue);
+    expect(getDispatchNode(list, '' + sourceIndex).source).toBe(liveValue);
     const returned = {
       a: true,
       b: false,

@@ -237,9 +237,7 @@ describe('static pop through the truncation path matches the general path', () =
       expect(observe(popped)).toEqual(observe(whole));
       expect(defaultsOf(popped.root)).toEqual(defaultsOf(whole.root));
       expect(
-        popped.root.children?.every(
-          (item, index) => item.name === String(index),
-        ),
+        popped.root.children?.every((item, index) => item.name === '' + index),
       ).toBe(true);
     },
   );

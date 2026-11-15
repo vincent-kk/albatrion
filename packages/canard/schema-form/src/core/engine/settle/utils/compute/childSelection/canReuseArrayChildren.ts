@@ -71,7 +71,7 @@ export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
   for (let index = 0; index < node.itemCount; index++) {
     const entry = getItemEntry(node.blueprintNode, index);
     if (!entry) {
-      if (prior[String(index)] !== undefined) return false;
+      if (prior['' + index] !== undefined) return false;
       continue;
     }
     const child = children[position++];

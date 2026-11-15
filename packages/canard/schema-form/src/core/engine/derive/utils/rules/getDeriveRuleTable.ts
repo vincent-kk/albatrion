@@ -84,7 +84,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
           ...node.childEntries,
           ...(node.prefixItems ?? []).flatMap((first, index) =>
             mapArray(node.prefixItemCandidates?.[index] ?? [first], (item) => ({
-              name: String(index),
+              name: '' + index,
               node: item,
               declarations: item.declarations,
             })),

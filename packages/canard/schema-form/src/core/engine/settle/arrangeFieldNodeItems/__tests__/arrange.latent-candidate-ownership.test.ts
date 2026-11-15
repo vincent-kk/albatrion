@@ -117,7 +117,7 @@ describe('tuple source-slot candidate ownership', () => {
       const list = getDispatchNode(root, 'list');
       const sourceIndex = operation === 'insert' ? 0 : 1;
       const destination = operation === 'insert' ? 1 : 0;
-      const original = getDispatchNode(list, String(sourceIndex));
+      const original = getDispatchNode(list, '' + sourceIndex);
       dispatchSetValue(
         getDispatchNode(root, 'kind'),
         kind === 'string' ? 'number' : 'string',
@@ -129,7 +129,7 @@ describe('tuple source-slot candidate ownership', () => {
       if (operation === 'insert') dispatchInsert(list, 0, {});
       else dispatchRemove(list, 0);
       expect(original.isDetached).toBe(true);
-      expect(getDispatchNode(list, String(destination))).not.toBe(original);
+      expect(getDispatchNode(list, '' + destination)).not.toBe(original);
       expect(readRetainedSlotSource(root, `/list/${destination}/v`, kind)).toBe(
         value,
       );
@@ -139,9 +139,7 @@ describe('tuple source-slot candidate ownership', () => {
           hasRetainedSlotOwnSource(root, `/list/${sourceIndex}/v`, kind),
         ).toBe(false);
       dispatchSetValue(getDispatchNode(root, 'kind'), kind);
-      expect(getDispatchNode(list, String(destination), 'v').source).toBe(
-        value,
-      );
+      expect(getDispatchNode(list, '' + destination, 'v').source).toBe(value);
       expect(list.storedValue).toEqual(
         operation === 'insert'
           ? [{}, { v: value }, { v: value }]
@@ -186,11 +184,11 @@ describe('tuple source-slot candidate ownership', () => {
       ).toBe(37);
 
       dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-      expect(getDispatchNode(list, String(destination), 'v').source).toBe(
+      expect(getDispatchNode(list, '' + destination, 'v').source).toBe(
         source === 0 ? 'first' : 'second',
       );
       dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-      expect(getDispatchNode(list, String(destination), 'v').source).toBe(37);
+      expect(getDispatchNode(list, '' + destination, 'v').source).toBe(37);
     },
   );
 

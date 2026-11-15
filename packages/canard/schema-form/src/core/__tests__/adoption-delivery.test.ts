@@ -314,7 +314,7 @@ describe('adoption from a form callback or a nested chain', () => {
         active = next;
         expect(Reflect.get(next.runtime, 'onChangeBudget')).toBe(5);
       }
-      active.root.find('/second')?.setValue(String(calls));
+      active.root.find('/second')?.setValue('' + calls);
     };
     Reflect.set(previous.runtime, 'onChange', change);
     Reflect.set(next.runtime, 'onChange', change);
@@ -379,7 +379,7 @@ describe('adoption limits', () => {
     let calls = 0;
     const writeSecond = (tree: Tree) => {
       calls += 1;
-      tree.root.find('/second')?.setValue(String(calls));
+      tree.root.find('/second')?.setValue('' + calls);
     };
     previous.root.subscribe((event) => {
       if (!(event.type & FieldNodeEventType.UpdateValue)) return;

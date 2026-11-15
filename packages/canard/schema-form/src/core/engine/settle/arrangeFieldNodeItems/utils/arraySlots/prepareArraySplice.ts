@@ -41,11 +41,11 @@ export const prepareArraySplice = <Self extends FieldNodeRecord<Self>>(
   const items = node.childrenByName;
   const children = node.children;
   for (let position = index; position < count; position++) {
-    const item = items?.[String(position)];
+    const item = items?.['' + position];
     if (
       !item ||
       children?.[position] !== item ||
-      item.name !== String(position) ||
+      item.name !== '' + position ||
       item.blueprintNode !== template.item
     )
       return undefined;

@@ -18,7 +18,7 @@ import type { EquivalentJSONSchema as JSONSchema } from '../../fixtures/equivale
 export function buildFlatSchema(fieldCount: number): JSONSchema {
   const properties: Record<string, JSONSchema> = {};
   for (let i = 0; i < fieldCount; i++) {
-    const key = `field_${String(i).padStart(3, '0')}`;
+    const key = `field_${('' + i).padStart(3, '0')}`;
     properties[key] = { type: 'string', default: `value_${i}` };
   }
   return {

@@ -50,7 +50,7 @@ export const readSlotSourceTree = <Self extends FieldNodeRecord<Self>>(
       declaredCount++;
       let item: unknown;
       const active =
-        !overlay?.isWhole && instance?.childrenByName?.[String(index)];
+        !overlay?.isWhole && instance?.childrenByName?.['' + index];
       if (active) {
         const entry = entries.find(
           (entry) => entry.node === active.blueprintNode,

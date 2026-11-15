@@ -25,7 +25,7 @@ export const reuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
   const arrayAppend = context.arrayAppend;
   if (arrayAppend?.host === node && arrayAppend.isValid) {
     if (!arrayAppend.entry) return;
-    const child = prior[String(arrayAppend.count)];
+    const child = prior['' + arrayAppend.count];
     const ids = staticIds(arrayAppend.entry, node.blueprintNode);
     if (context.selectedDeclarationIds.get(child) !== ids)
       context.selectedDeclarationIds.set(child, ids);

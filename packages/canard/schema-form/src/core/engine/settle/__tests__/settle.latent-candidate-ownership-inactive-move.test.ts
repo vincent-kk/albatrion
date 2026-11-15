@@ -90,7 +90,7 @@ it.each(['insert', 'remove'] as const)(
       const destination = operation === 'insert' ? source + 1 : source - 1;
       const path = `/list/${destination}/v`;
       const stringKey = JSON.stringify([path, 'string']);
-      expect(list.childrenByName?.[String(destination)]).toBeUndefined();
+      expect(list.childrenByName?.['' + destination]).toBeUndefined();
       expect(readRetainedSlotSource(root, path, 'string')).toBe(values[source]);
       expect(readRetainedSlotSource(root, path, 'number')).toBe(37);
       const stringMetadata = metadata[source].string;
@@ -120,11 +120,11 @@ it.each(['insert', 'remove'] as const)(
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
     const retained = operation === 'insert' ? values : values.slice(1);
     for (let index = 0; index < retained.length; index++)
-      expect(getDispatchNode(list, String(index), 'v').source).toBe(
+      expect(getDispatchNode(list, '' + index, 'v').source).toBe(
         retained[index],
       );
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
     for (let index = 0; index < retained.length; index++)
-      expect(getDispatchNode(list, String(index), 'v').source).toBe(37);
+      expect(getDispatchNode(list, '' + index, 'v').source).toBe(37);
   },
 );

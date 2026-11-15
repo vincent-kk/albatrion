@@ -10,7 +10,7 @@ export function encodeValue(
 ): unknown {
   if (value === undefined) return ['undefined'];
   if (typeof value === 'number' && !Number.isFinite(value))
-    return ['number', String(value)];
+    return ['number', '' + value];
   if (typeof value === 'function') return ['function', String(value)];
   if (value === null || typeof value !== 'object') return value;
   if (ancestors.includes(value)) throw new Error('CYCLIC_OBSERVATION');

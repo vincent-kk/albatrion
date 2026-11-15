@@ -33,7 +33,7 @@ it.each(['insert', 'remove', 'shift'] as const)(
         root,
         Array.from({ length: count }, (_, index) => ({
           open: true,
-          value: String(index),
+          value: '' + index,
         })),
       );
       for (const item of root.children ?? [])

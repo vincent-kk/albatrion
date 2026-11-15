@@ -42,7 +42,7 @@ export const pruneArrayTailPaths = <Self>(
         Number.isInteger(index) &&
         index >= count &&
         index >= 0 &&
-        String(index) === segment
+        '' + index === segment
       )
         removed.add(appendSegment(host, segment));
     }

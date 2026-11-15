@@ -29,7 +29,7 @@ export class ObservationCodec {
       if (typeof input === 'number') {
         if (Number.isNaN(input)) return ['number', 'NaN'];
         if (Object.is(input, -0)) return ['number', '-0'];
-        if (!Number.isFinite(input)) return ['number', String(input)];
+        if (!Number.isFinite(input)) return ['number', '' + input];
       }
       if (typeof input === 'function') return ['function', String(input)];
       if (input === null || typeof input !== 'object') return input;

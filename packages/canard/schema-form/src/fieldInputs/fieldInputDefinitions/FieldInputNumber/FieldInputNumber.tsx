@@ -50,7 +50,7 @@ export const FieldInputNumber = ({
             value == null ||
             (typeof value === 'number' && !Number.isFinite(value))
               ? ''
-              : String(value);
+              : '' + value;
       }}
       style={style}
       className={className}
