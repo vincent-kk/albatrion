@@ -84,8 +84,8 @@ describe('array — TEST-011 / TEST-023 shared screen runner', () => {
     await run('array.terminal-verbs');
   });
 
-  it('VALUE-034 array.omit-trailing', async () => {
-    await run('array.omit-trailing');
+  it('VALUE-034 array.omit-trailing-empty', async () => {
+    await run('array.omit-trailing-empty');
   });
 
   it('NODE-051 array.position-reconcile', async () => {

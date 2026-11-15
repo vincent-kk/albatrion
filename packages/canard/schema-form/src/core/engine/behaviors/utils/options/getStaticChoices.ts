@@ -10,7 +10,7 @@ export type { StaticChoices } from '../../../types/staticChoices';
 /** Optionless schemas link to this producer-frozen default selection. */
 const DEFAULT_CHOICES: StaticChoices = Object.freeze({
   omitEmpty: true,
-  omitTrailing: false,
+  omitTrailingEmpty: false,
   trim: false,
   propertyOrder: EMPTY_ARRAY,
 });
@@ -28,7 +28,7 @@ export const getStaticChoices = (effective: EffectiveSchema): StaticChoices => {
   }
   const choices: StaticChoices = Object.freeze({
     omitEmpty: options.omitEmpty ?? true,
-    omitTrailing: options.omitTrailing ?? false,
+    omitTrailingEmpty: options.omitTrailingEmpty ?? false,
     trim: options.trim ?? false,
     propertyOrder:
       options.propertyOrder === undefined

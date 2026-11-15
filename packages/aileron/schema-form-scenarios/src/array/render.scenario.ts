@@ -1,13 +1,13 @@
 import type { FormScenario } from '../types';
 
 /** VALUE-034 projects holes without removing editable slots. */
-const rows = { type: 'array', items: { type: ['string', 'null'] }, options: { omitTrailing: true } };
+const rows = { type: 'array', items: { type: ['string', 'null'] }, options: { omitTrailingEmpty: true } };
 
 /** Screen dispositions retain explicit slots instead of assuming minItems fill. */
 export const arrayRenderScenarios: readonly FormScenario[] = [
   {
     name: 'array.nullable-slots-reset',
-    description: 'array.omit-trailing.injection: VALUE-034 filters projection only; nullable container null survives reset.',
+    description: 'array.omit-trailing-empty.injection: VALUE-034 filters projection only; nullable container null survives reset.',
     schema: { ...rows, type: ['array', 'null'] }, initialValue: null,
     steps: [
       { action: 'batch', steps: [], expect: { outputValue: null, shape: { '/0': 'absent' } } },
@@ -16,8 +16,8 @@ export const arrayRenderScenarios: readonly FormScenario[] = [
     ],
   },
   {
-    name: 'array.omit-trailing-leading-holes',
-    description: 'array.omit-trailing.injection: VALUE-034 leading and interior holes emit null; TEST-020 mount is silent.',
+    name: 'array.omit-trailing-empty-leading-holes',
+    description: 'array.omit-trailing-empty.injection: VALUE-034 leading and interior holes emit null; TEST-020 mount is silent.',
     schema: rows, initialValue: [undefined, 'middle', undefined],
     steps: [
       { action: 'batch', steps: [], expect: { outputValue: [null, 'middle'], shape: { '/0': 'present', '/2': 'present' } } },
@@ -27,7 +27,7 @@ export const arrayRenderScenarios: readonly FormScenario[] = [
   },
   {
     name: 'array.branch-projection-injection',
-    description: 'array.omit-trailing.composite and conditional: LANDING-023 reads output; LANDING-018 retains inactive source.',
+    description: 'array.omit-trailing-empty.composite and conditional: LANDING-023 reads output; LANDING-018 retains inactive source.',
     schema: { type: 'object', properties: { shown: { type: 'boolean' }, copy: rows }, allOf: [{
       controls: { active: './shown' }, properties: { rows: { ...rows, controls: {
         injectTo: (value: unknown) => ({ '../copy': value }),
@@ -42,7 +42,7 @@ export const arrayRenderScenarios: readonly FormScenario[] = [
   },
   {
     name: 'array.min-items-explicit-slots',
-    description: 'array.omit-trailing: LANDING-116 input owns constraints, VALUE-034 projection preserves source slots.',
+    description: 'array.omit-trailing-empty: LANDING-116 input owns constraints, VALUE-034 projection preserves source slots.',
     schema: { ...rows, minItems: 3 }, initialValue: [],
     steps: [
       { action: 'batch', steps: [], expect: { shape: { '/0': 'absent' }, outputValue: [] } },
@@ -80,6 +80,60 @@ export const arrayRenderScenarios: readonly FormScenario[] = [
       { action: 'batch', steps: [], expect: { outputValue: ['external'], shape: { '/0': 'absent' } } },
       { action: 'setValue', path: '', value: ['edited', 2], expect: { outputValue: ['edited', 2] } },
       { action: 'reset', expect: { outputValue: ['external'] } },
+    ],
+  },
+  {
+    name: 'array.omit-trailing-empty-objects',
+    description: 'array.omit-trailing-empty: VALUE-034 trims an empty object an item emits even when the item keeps empty values.',
+    schema: {
+      type: 'array', options: { omitTrailingEmpty: true },
+      items: { type: 'object', properties: { name: { type: 'string' } }, options: { omitEmpty: false } },
+    },
+    steps: [
+      { action: 'setValue', path: '', value: [{ name: 'a' }, {}], expect: { outputValue: [{ name: 'a' }], shape: { '/1': 'present' } } },
+    ],
+  },
+  {
+    name: 'array.omit-trailing-empty-terminal',
+    description: 'array.omit-trailing-empty: VALUE-034 a terminal array trims the same empty tail as a branch array.',
+    schema: { type: 'array', items: { type: 'string' }, options: { terminal: true, omitTrailingEmpty: true } },
+    steps: [
+      { action: 'setValue', path: '', value: ['a', '', null], expect: { outputValue: ['a'], values: { '': ['a', '', null] } } },
+    ],
+  },
+  {
+    name: 'array.omit-trailing-empty-nested-branch',
+    description: 'array.omit-trailing-empty: VALUE-034 a branch row whose fields are all omitted outputs nothing and is trimmed.',
+    schema: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' } } }, options: { omitTrailingEmpty: true } },
+    steps: [
+      { action: 'setValue', path: '', value: [{ name: 'a' }, { name: '' }], expect: { outputValue: [{ name: 'a' }], shape: { '/1': 'present' } } },
+    ],
+  },
+  {
+    name: 'array.omit-trailing-empty-nested-terminal',
+    description: 'array.omit-trailing-empty: VALUE-034 a terminal array judges raw items shallowly, so a nested empty field stays.',
+    schema: {
+      type: 'array', options: { terminal: true, omitTrailingEmpty: true },
+      items: { type: 'object', properties: { name: { type: 'string' } } },
+    },
+    steps: [
+      { action: 'setValue', path: '', value: [{ name: 'a' }, { name: '' }], expect: { outputValue: [{ name: 'a' }, { name: '' }] } },
+    ],
+  },
+  {
+    name: 'array.omit-trailing-empty-nullable',
+    description: 'array.omit-trailing-empty: VALUE-034 a trailing null is trimmed even when the item schema accepts null.',
+    schema: rows,
+    steps: [
+      { action: 'setValue', path: '', value: ['a', null], expect: { outputValue: ['a'], shape: { '/1': 'present' } } },
+    ],
+  },
+  {
+    name: 'array.omit-trailing-empty-root',
+    description: 'array.omit-trailing-empty: VALUE-034 a root array whose every item is trimmed outputs [] instead of its untrimmed items.',
+    schema: { type: 'array', items: { type: 'string' }, options: { omitTrailingEmpty: true } },
+    steps: [
+      { action: 'setValue', path: '', value: ['', null], expect: { outputValue: [], shape: { '/1': 'present' } } },
     ],
   },
 ];

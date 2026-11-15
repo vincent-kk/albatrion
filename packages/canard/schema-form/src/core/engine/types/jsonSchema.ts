@@ -70,8 +70,8 @@ interface AuthoredSchemaBase<
     propertyOrder?: readonly string[];
     /** Omit empty output values (default: true). */
     omitEmpty?: boolean;
-    /** Trim trailing undefined array items from output. */
-    omitTrailing?: boolean;
+    /** Trim the trailing run of null, undefined, '', [] and {} array items from output. */
+    omitTrailingEmpty?: boolean;
     /** Trim string input when it is finished. */
     trim?: boolean;
     /** Consumer extensions are not interpreted by the engine. */

@@ -7,14 +7,14 @@ import { FieldNodeWriteKind, WriteOption } from '../../../types/value';
 it.each(['items', 'prefixItems'] satisfies readonly (
   | 'items'
   | 'prefixItems'
-)[])('%s fills and trims slots using the live later object fold', (keyword) => {
+)[])('%s fills from the live object fold and trims its null', (keyword) => {
   const { root } = createTestTree({
     type: 'object',
     properties: {
       later: { type: 'boolean' },
       list: {
         type: 'array',
-        options: { omitTrailing: true },
+        options: { omitTrailingEmpty: true },
         allOf: [
           {
             controls: { active: '!../later' },
@@ -44,5 +44,5 @@ it.each(['items', 'prefixItems'] satisfies readonly (
     FieldNodeWriteKind.CallerReplace,
     WriteOption.Overwrite,
   );
-  expect(list.emit).toEqual([null]);
+  expect(list.emit).toBeUndefined();
 });

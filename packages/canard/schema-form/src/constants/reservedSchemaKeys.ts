@@ -62,7 +62,7 @@ export const RESERVED_SCHEMA_KEYS = {
     virtual: { shallow: 'object', omitFromEffective: true },
     propertyOrder: { shallow: 'string[]' },
     omitEmpty: { shallow: 'boolean' },
-    omitTrailing: { shallow: 'boolean' },
+    omitTrailingEmpty: { shallow: 'boolean' },
     trim: { shallow: 'boolean' },
   },
   presentation: {

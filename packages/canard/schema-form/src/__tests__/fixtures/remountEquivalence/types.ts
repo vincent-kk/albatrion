@@ -33,7 +33,7 @@ export interface ObservationMask {
   updated?: unknown;
   projectionOwner?: string;
   trimmedIndex?: number;
-  category: 'omitEmpty' | 'omitTrailing' | 'fill' | 'lifecycle';
+  category: 'omitEmpty' | 'omitTrailingEmpty' | 'fill' | 'lifecycle';
   clause: string;
 }
 

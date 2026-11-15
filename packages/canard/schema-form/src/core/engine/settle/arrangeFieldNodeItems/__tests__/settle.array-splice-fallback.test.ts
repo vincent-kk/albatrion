@@ -123,11 +123,11 @@ describe('splice admission declines and the general path settles', () => {
       { from: 'z' },
     ],
     [
-      'omitTrailing',
+      'omitTrailingEmpty',
       {
         type: 'array',
         items: { type: 'number' },
-        options: { omitTrailing: true },
+        options: { omitTrailingEmpty: true },
       },
       [1, 2, null],
       4,

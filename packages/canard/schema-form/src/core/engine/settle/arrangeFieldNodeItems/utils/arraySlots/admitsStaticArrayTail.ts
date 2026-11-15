@@ -47,7 +47,7 @@ export const admitsStaticArrayTail = <Self extends FieldNodeRecord<Self>>(
     !isArray(local) ||
     local.length !== count ||
     (count > 0 && !node.structure) ||
-    getStaticChoices(node.schema).omitTrailing ||
+    getStaticChoices(node.schema).omitTrailingEmpty ||
     !isArray(getLoadValue(node.rootNode.emit, node.path))
   );
 };

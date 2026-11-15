@@ -8,7 +8,7 @@ import { updateSlotScenario } from './update-slot.scenario';
 import { wholeWriteScenario } from './whole-write.scenario';
 import { itemsPrefixScenario } from './items-prefix.scenario';
 import { terminalVerbsScenario } from './terminal-verbs.scenario';
-import { omitTrailingScenario } from './omit-trailing.scenario';
+import { omitTrailingEmptyScenario } from './omit-trailing-empty.scenario';
 import { positionReconcileScenario } from './position-reconcile.scenario';
 import { extrasTailScenario } from './extras-tail.scenario';
 import { extraBecomesNodeScenario } from './extra-becomes-node.scenario';
@@ -20,7 +20,7 @@ import { sourceBStructureScenario } from './source-b-structure.scenario';
 export const arrayScenarios: readonly FormScenario[] = [
   pushSlotScenario, popSlotScenario, removeSlotScenario, clearSlotsScenario,
   updateSlotScenario, wholeWriteScenario, itemsPrefixScenario,
-  terminalVerbsScenario, omitTrailingScenario, positionReconcileScenario,
+  terminalVerbsScenario, omitTrailingEmptyScenario, positionReconcileScenario,
   extrasTailScenario, extraBecomesNodeScenario, landing202Scenario,
   emptyOutputScenario, sourceBStructureScenario,
   ...arrayRenderScenarios,

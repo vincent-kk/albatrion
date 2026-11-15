@@ -21,7 +21,7 @@ it('links optionless effective schemas to one frozen default while keeping each 
   expect(repeated).toBe(left);
   expect(left).toEqual({
     omitEmpty: true,
-    omitTrailing: false,
+    omitTrailingEmpty: false,
     trim: false,
     propertyOrder: [],
   });
@@ -36,7 +36,7 @@ it('keeps options and validated propertyOrder independent from the default and a
       type: 'object' as const,
       options: {
         omitEmpty: false,
-        omitTrailing: true,
+        omitTrailingEmpty: true,
         trim: true,
         propertyOrder: keys,
       },
@@ -46,7 +46,7 @@ it('keeps options and validated propertyOrder independent from the default and a
   const result = getStaticChoices(effective);
   expect(result).toEqual({
     omitEmpty: false,
-    omitTrailing: true,
+    omitTrailingEmpty: true,
     trim: true,
     propertyOrder: ['second', 'first'],
   });

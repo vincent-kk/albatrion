@@ -48,6 +48,10 @@
 
 생략·trim·키 순서 선택은 유효 스키마별로 메모하고, options가 없거나 평범한 객체가 아닌 스키마는 생산 시 동결한 기본 선택을 공유합니다. 알려진 옵션 값의 형은 청사진 생성 때 검사하므로 정적 선택에서 재검사하거나 잘못된 배열 원소를 걸러내지 않습니다. 유효 스키마 자체를 합쳐 공유하거나 호출자가 소유한 options·propertyOrder를 그대로 보유하지 않습니다. 매 호출의 선택 객체·배열 할당을 줄이면서 서로 다른 스키마의 선택과 입력 소유권이 섞이지 않게 합니다. 노드별 합성 메모와 값 identity 메모의 수명은 record 계약을 따릅니다.
 
+### empty-values — 빈 객체는 평범한 빈 객체만 셉니다
+
+omitEmpty와 omitTrailingEmpty는 빈 객체를 같은 뜻으로 판정합니다. 프로토타입이 Object.prototype이나 null인 평범한 객체 중 자기 열거 키가 없는 것만 빈 객체이며(isEmptyPlainObject), Date·File·클래스 인스턴스는 키가 없어도 실제 데이터라서 방출합니다. 자기 키만 세는 판정은 이런 값을 빈 객체로 보아 string·union·object 노드의 방출에서 오류 없이 지웁니다. 투영(projectEmpty·omitEmptyObject)과 정착의 방출 예측(isOmittedEmpty)은 같은 함수로 빈 객체를 판정해서, 빈 객체의 뜻 때문에 예측과 방출이 갈라지지 않습니다. 예측은 정적 omitEmpty만 읽고 종류별 투영과 omitTrailingEmpty는 읽지 않으므로, number·boolean 노드의 빈 값이나 terminal 배열의 꼬리 생략에서는 예측과 실제 방출이 다를 수 있습니다.
+
 ## Last Updated
 
-행의 경계·공유 방식·정적 선택 메모 또는 해석 정책의 소유권이 바뀔 때 갱신합니다.
+행의 경계·공유 방식·정적 선택 메모·빈 값 판정 또는 해석 정책의 소유권이 바뀔 때 갱신합니다.

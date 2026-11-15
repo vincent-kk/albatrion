@@ -41,7 +41,7 @@ it('TEST-020 mount settlement exposes trimmed defaults without onChange', async 
   form = await renderForm(
     {
       type: 'array',
-      options: { omitTrailing: true },
+      options: { omitTrailingEmpty: true },
       items: { type: ['string', 'null'] },
     },
     {

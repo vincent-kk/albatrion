@@ -1,6 +1,7 @@
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
 import type { FieldNodeRecord } from '../../../../record';
+import { keepRootEmit } from '../../../utils/output/keepRootEmit';
 
 /**
  * Assemble and project once, with separate fixed-kind behavior call sites.
@@ -39,10 +40,5 @@ export const assembleStaticFirstNode = <Self extends FieldNodeRecord<Self>>(
       emit = node.behavior.project(node, local);
   }
   node.local = local;
-  node.emit =
-    node.parent === null &&
-    emit === undefined &&
-    (node.behavior.type === 'object' || node.behavior.type === 'array')
-      ? local
-      : emit;
+  node.emit = keepRootEmit(node, local, emit);
 };

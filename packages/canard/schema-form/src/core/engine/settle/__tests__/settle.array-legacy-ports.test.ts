@@ -177,7 +177,7 @@ describe('array legacy contract ports', () => {
     expect(root.outputValue).toEqual([null]);
   });
 
-  it('GOAL-074 restores omitTrailing slots from source after branch reactivation', () => {
+  it('GOAL-074 restores omitTrailingEmpty slots from source after branch reactivation', () => {
     const { root } = makeRecordTree({
       type: 'object',
       properties: {
@@ -186,7 +186,7 @@ describe('array legacy contract ports', () => {
           type: 'array',
           controls: { active: '../active' },
           items: { type: 'string' },
-          options: { omitTrailing: true },
+          options: { omitTrailingEmpty: true },
         },
       },
     });

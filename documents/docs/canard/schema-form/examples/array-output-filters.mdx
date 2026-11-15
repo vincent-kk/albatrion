@@ -19,8 +19,8 @@ After adding three rows and leaving them empty, the JSON display shows:
 
 | Path | Options | JSON display |
 | --- | --- | --- |
-| /tags | omitTrailing: true | Key absent |
+| /tags | omitTrailingEmpty: true | Key absent |
 | /notes | defaults | [null, null, null] |
-| /aliases | omitTrailing: true, omitEmpty: false | [] |
+| /aliases | omitTrailingEmpty: true, omitEmpty: false | [] |
 
-JSON.stringify displays undefined array slots as null; these are not explicit null writes. Validation reads emitted output, so one filled row with trailing empty rows omitted is checked as length one. Read row counts and output using the [node value and children contract](../api-reference#nodes).
+Empty rows emit `null` placeholders to keep positions; these are not explicit null writes. Validation reads emitted output, so one filled row with trailing empty rows omitted is checked as length one. Read row counts and output using the [node value and children contract](../api-reference#nodes).

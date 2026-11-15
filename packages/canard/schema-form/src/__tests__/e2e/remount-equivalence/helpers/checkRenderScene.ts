@@ -103,7 +103,7 @@ export async function checkRenderScene(scene: RemountScene) {
           );
           for (const category of [
             'omitEmpty',
-            'omitTrailing',
+            'omitTrailingEmpty',
             'fill',
             'lifecycle',
           ] as const)

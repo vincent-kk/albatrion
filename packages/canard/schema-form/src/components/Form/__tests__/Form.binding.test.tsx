@@ -126,7 +126,7 @@ describe('Form engine binding', () => {
         jsonSchema={{
           type: 'array',
           items: { type: 'string' },
-          options: { omitTrailing: true },
+          options: { omitTrailingEmpty: true },
         }}
         defaultValue={['a', undefined]}
         onSubmit={submit}

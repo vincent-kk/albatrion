@@ -75,11 +75,11 @@ describe('pop admission declines and the general path settles', () => {
       [{ from: 'a' }, { to: 'b' }],
     ],
     [
-      'omitTrailing',
+      'omitTrailingEmpty',
       {
         type: 'array',
         items: { type: 'number' },
-        options: { omitTrailing: true },
+        options: { omitTrailingEmpty: true },
       },
       [1, null],
     ],

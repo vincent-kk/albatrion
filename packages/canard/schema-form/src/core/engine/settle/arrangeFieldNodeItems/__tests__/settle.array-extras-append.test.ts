@@ -143,7 +143,7 @@ describe('extras-only static array appends', () => {
     expect(Object.keys(snapshot)).toEqual(['1']);
   });
 
-  it.each(['tuple tail', 'omitTrailing', 'whole source', 'batch', 'load'])(
+  it.each(['tuple tail', 'omitTrailingEmpty', 'whole source', 'batch', 'load'])(
     'retains the %s exclusion',
     (scene) => {
       const schema: BlueprintSchema = {
@@ -151,8 +151,8 @@ describe('extras-only static array appends', () => {
         ...(scene === 'tuple tail'
           ? { prefixItems: [{ type: 'number' }] }
           : {}),
-        ...(scene === 'omitTrailing'
-          ? { options: { omitTrailing: true } }
+        ...(scene === 'omitTrailingEmpty'
+          ? { options: { omitTrailingEmpty: true } }
           : {}),
       };
       compareArrayAppend(schema, scene === 'whole source' ? 'source' : [1], [

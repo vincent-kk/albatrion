@@ -162,7 +162,7 @@ describe('array branch calculation', () => {
       items: { type: 'string' },
     }).root;
     const node = makeRecord(arrayBehavior.branch, template, undefined, {
-      omitTrailing: true,
+      omitTrailingEmpty: true,
     });
     node.itemCount = 3;
     node.structure = { '0': { emit: 'kept' }, '1': { emit: null } };
@@ -191,18 +191,18 @@ describe('array branch calculation', () => {
       items: false,
     }).root;
     const node = makeRecord(arrayBehavior.branch, template, undefined, {
-      omitTrailing: true,
+      omitTrailingEmpty: true,
     });
     node.itemCount = 4;
-    const emitted = {};
+    const emitted = { name: 'kept' };
     node.structure = { '0': { emit: emitted } };
     node.extras = [null, undefined];
     const local = arrayBehavior.branch.assemble(node, []);
-    expect(local).toEqual([{}, [], null, undefined]);
+    expect(local).toEqual([{ name: 'kept' }, [], null, undefined]);
     const projected = arrayBehavior.branch.project(node, local);
-    expect(projected).toEqual([{}]);
+    expect(projected).toEqual([{ name: 'kept' }]);
     if (isArray(projected)) expect(projected[0]).toBe(emitted);
-    expect(local).toEqual([{}, [], null, undefined]);
+    expect(local).toEqual([{ name: 'kept' }, [], null, undefined]);
   });
 
   it('NODE-005 plans branch push, pop, remove, update, and clear', () => {
@@ -440,14 +440,14 @@ describe('array terminal calculation', () => {
       arrayBehavior.terminal,
       blueprint({ type: 'array' }).root,
       source,
-      { omitTrailing: true },
+      { omitTrailingEmpty: true },
     );
     const projected = arrayBehavior.terminal.project(node, source);
     expect(projected).toEqual(['kept']);
     expect(arrayBehavior.terminal.project(node, source)).toBe(projected);
     expect(source).toEqual(['kept', null, undefined]);
     node.schema = {
-      schema: { options: { omitTrailing: false } },
+      schema: { options: { omitTrailingEmpty: false } },
       typeConflict: false,
     };
     expect(arrayBehavior.terminal.project(node, source)).toBe(source);

@@ -31,6 +31,7 @@ Use this guide as a conversion checklist, then consult the linked current contra
 | `injectTo`                      | `controls.injectTo`                              |
 | `terminal`                      | `options.terminal`                               |
 | `propertyKeys`                  | `options.propertyOrder`                          |
+| `options.omitTrailing`          | `options.omitTrailingEmpty`                      |
 | `virtual / type: 'virtual'`     | `options.virtual: { <name>: { fields: [...] } }` |
 
 Use the [authoring groups](./schema-reference#authoring-groups) for library settings and their extension rules. Move input settings to presentation.FieldInputProps and check [branch selection](./schema-reference#composition) rather than assuming oneOf chooses one form branch automatically.
@@ -210,7 +211,7 @@ Migrate custom definitions with the [input selection contract](./schema-referenc
 
 Use application tests to decide whether each item applies; renaming imports alone does not cover the release line.
 
-- Check null, undefined, empty strings and containers, nullable-parent promotion and array replacement against [value states](./schema-reference#value-states). `minItems` is a constraint, not a promise to create submitted entries. Empty inputs publish undefined; explicit null is intentional. `omitTrailing` filters output without deleting raw nodes, and `propertyOrder` orders output keys, not screen fields.
+- Check null, undefined, empty strings and containers, nullable-parent promotion and array replacement against [value states](./schema-reference#value-states). `minItems` is a constraint, not a promise to create submitted entries. Empty inputs publish undefined; explicit null is intentional. `omitTrailingEmpty` filters output without deleting raw nodes and, unlike 0.x `omitTrailing`, also removes trailing `null`, `''`, `[]` and `{}`, and `propertyOrder` orders output keys, not screen fields.
 - Replace timing assumptions: `onChange` and node notifications settle synchronously at the outer write boundary. Test batches and callbacks that write again, and use [event revisions and subscription catch-up](./api-reference#events-hooks) instead of waiting for an assumed microtask.
 - Audit conditional composition: ungated oneOf/anyOf branches all participate in shape; validation is separate. Use controls or a discriminator for branch selection, provide a validator for if, and test shared-property conflicts, nullable branches and terminal strategy. See [composition](./schema-reference#composition) and [discriminators](./schema-reference#discriminator).
 - Distinguish Edited/Touched from `isDivergent` and the current load baseline. Reacquire nodes on reentry/root replacement; detached nodes do not write into the live form. Replace cleanup-time writes with the [inactive resolver contract](./api-reference#inactive-listeners).

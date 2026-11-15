@@ -1,10 +1,10 @@
 import type { FormScenario } from '../types';
 
 /** Trailing null slots are filtered from output while source item positions remain. */
-export const omitTrailingScenario = {
-  name: 'array.omit-trailing',
-  description: 'TEST-018 VALUE-034: omitTrailing trims only the output tail.',
-  schema: { type: 'array', items: { type: 'string' }, options: { omitTrailing: true } },
+export const omitTrailingEmptyScenario = {
+  name: 'array.omit-trailing-empty',
+  description: 'TEST-018 VALUE-034: omitTrailingEmpty trims only the output tail.',
+  schema: { type: 'array', items: { type: 'string' }, options: { omitTrailingEmpty: true } },
   steps: [
     { action: 'setValue', path: '', value: ['a', null, null], expect: {
       shape: { '/0': 'present', '/1': 'present', '/2': 'present' },

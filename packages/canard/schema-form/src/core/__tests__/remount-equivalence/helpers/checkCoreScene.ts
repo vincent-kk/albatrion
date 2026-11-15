@@ -77,7 +77,7 @@ export async function checkCoreScene(
       );
       for (const category of [
         'omitEmpty',
-        'omitTrailing',
+        'omitTrailingEmpty',
         'fill',
         'lifecycle',
       ] as const) {

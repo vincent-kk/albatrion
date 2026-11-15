@@ -124,7 +124,7 @@ export function makeItemlessScene(id: string): ItemlessScene {
   if (id === 'omit-empty-trailing') {
     scene.schema = {
       type: 'array',
-      options: { omitEmpty: true, omitTrailing: true },
+      options: { omitEmpty: true, omitTrailingEmpty: true },
     };
     scene.input = [1, undefined, null];
   }

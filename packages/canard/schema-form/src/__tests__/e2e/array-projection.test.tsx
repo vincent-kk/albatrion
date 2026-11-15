@@ -37,8 +37,8 @@ describe('array-projection — TEST-011 / TEST-023 shared screen runner', () => 
     await run('array.nullable-slots-reset');
   });
 
-  it('VALUE-034 omitTrailing trims trailing holes and preserves leading null slots', async () => {
-    await run('array.omit-trailing-leading-holes');
+  it('VALUE-034 omitTrailingEmpty trims trailing holes and preserves leading null slots', async () => {
+    await run('array.omit-trailing-empty-leading-holes');
   });
 
   it('LANDING-023 branch arrays inject projected output and retain edited slots', async () => {
@@ -59,5 +59,29 @@ describe('array-projection — TEST-011 / TEST-023 shared screen runner', () => 
 
   it('LANDING-149 terminal array ignores tuple fill and resets the whole value', async () => {
     await run('array.terminal-array-external-reset');
+  });
+
+  it('VALUE-034 omitTrailingEmpty trims an empty object emitted by an item that keeps empty values', async () => {
+    await run('array.omit-trailing-empty-objects');
+  });
+
+  it('VALUE-034 omitTrailingEmpty trims the same empty tail from a terminal array', async () => {
+    await run('array.omit-trailing-empty-terminal');
+  });
+
+  it('VALUE-034 omitTrailingEmpty trims a branch row whose fields are all omitted', async () => {
+    await run('array.omit-trailing-empty-nested-branch');
+  });
+
+  it('VALUE-034 omitTrailingEmpty keeps a nested empty field in a terminal array', async () => {
+    await run('array.omit-trailing-empty-nested-terminal');
+  });
+
+  it('VALUE-034 omitTrailingEmpty trims a trailing null even when items accept null', async () => {
+    await run('array.omit-trailing-empty-nullable');
+  });
+
+  it('VALUE-034 omitTrailingEmpty outputs [] from a root array whose every item is trimmed', async () => {
+    await run('array.omit-trailing-empty-root');
   });
 });

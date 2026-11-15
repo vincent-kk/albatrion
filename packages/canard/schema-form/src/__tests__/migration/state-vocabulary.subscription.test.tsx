@@ -42,7 +42,7 @@ it('root output events refresh a trimmed array item with no local value, path or
   const schema: JSONSchema = {
     type: 'array',
     items: { type: 'string' },
-    options: { omitTrailing: true, omitEmpty: false },
+    options: { omitTrailingEmpty: true, omitEmpty: false },
   };
   const view = render(
     <Form ref={ref} jsonSchema={schema} defaultValue={['']} />,

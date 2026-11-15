@@ -112,7 +112,7 @@ describe('NODE-051 / VALUE-034 — array consumer observations', () => {
     const form = await renderForm(
       {
         type: 'array',
-        options: { omitTrailing: true },
+        options: { omitTrailingEmpty: true },
         items: { type: 'string', minLength: 2 },
       },
       {

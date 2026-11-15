@@ -7,7 +7,7 @@ describe('reserved option value shapes', () => {
   it.each([
     ['terminal', 'true', 'boolean'],
     ['omitEmpty', 0, 'boolean'],
-    ['omitTrailing', null, 'boolean'],
+    ['omitTrailingEmpty', null, 'boolean'],
     ['trim', {}, 'boolean'],
     ['propertyOrder', 'a', 'string[]'],
     ['propertyOrder', ['a', 1], 'string[]'],
@@ -43,7 +43,7 @@ describe('reserved option value shapes', () => {
           options: {
             terminal: value,
             omitEmpty: value,
-            omitTrailing: value,
+            omitTrailingEmpty: value,
             trim: value,
             propertyOrder: ['', '*', 'a', 'a'],
           },

@@ -85,7 +85,7 @@ describe('static array selection matches the full route', () => {
         type: 'array',
         prefixItems: [{ type: 'string' }],
         items: false,
-        options: { omitTrailing: true },
+        options: { omitTrailingEmpty: true },
       },
       ['kept', undefined, 'extra'],
       [
