@@ -10,7 +10,7 @@
 
 - R-g: 현재 form-level load마다 별도 private warning scope를 소유한다. 이전 load에서 옮겨 온 기록은 원래 scope에서 dedup하며 현재 load와 합치지 않는다. scope는 buffered records가 보유하는 동안만 유지하고 경고 scope는 공개 origin과 독립적이며 호스트 싱크·오류 identity dedup은 유지한다(ERROR-204).
 
-onError는 insertion effect로 갱신되어 숨김 commit에서도 최신입니다. 루트 선택·prepared/retired·대기 로드의 배달은 [RootNodeContext](../RootNodeContext/DETAIL.md)가 소유합니다. 보고기를 유지한다는 이유로 로드를 채택하거나 폐기하지 않습니다.
+onError는 insertion effect로 갱신되어 숨김 commit에서도 최신입니다. 루트 선택·isPrepared/isRetired·대기 로드의 배달은 [RootNodeContext](../RootNodeContext/DETAIL.md)가 소유합니다. 보고기를 유지한다는 이유로 로드를 채택하거나 폐기하지 않습니다.
 
 이 Context는 최신 소비자, 오류 객체 동일성 기준 capture 중복 제거, 로드별 경고 중복 제거, 전달 가드, componentStack만 담은 경계 콜백을 제공합니다. 보고기에 묶인 root가 있으면 onError를 코어 관찰자 범위에서 실행하고 예외에도 직전 상태를 복원합니다. 새 로드는 별도 경고 scope와 로드 번호를 만들지만 StrictMode 정리는 이를 초기화하지 않습니다. 코어 기록은 원래 details 참조를 유지합니다.
 

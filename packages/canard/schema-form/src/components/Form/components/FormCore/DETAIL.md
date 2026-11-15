@@ -14,13 +14,13 @@ Provider 조립은 외부 설정을 안쪽 소비자가 읽는 고정 의존 순
 
 `revealErrors()`는 임시 Always, `resetErrorVisibility()`는 최신 기본 정책 복귀이며 검증하거나 노드 상태를 쓰지 않습니다. Form > FormProvider > AfterEditAndTouch로 선택한 실효 기본 정책이 바뀐 commit, reset·rebuild·루트 교체는 공개를 해제합니다. 같은 정책 재렌더와 Form override에 가려진 Provider 변경은 공개를 유지합니다.
 
-공개 명령은 발급 시점의 정책 세대·load를 보유합니다. 실효 기본 정책 변경 commit에서만 세대를 증가시키므로 대기 중인 공개가 A→B→A 변경을 건너 부활하지 않습니다. 중단된 render는 세대와 committed 설정을 바꾸지 않습니다. 잘못된 선택 정책은 마지막 유효 committed 정책을 유지하며 오류를 보관하고, 보고·초기 로드 차단·복구는 RootNodeContext가 맡습니다. 가려진 Provider 값 때문에 별도 오류를 만들지 않습니다.
+공개 명령은 발급 시점의 정책 세대·loadEpoch을 보유합니다. 실효 기본 정책 변경 commit에서만 세대를 증가시키므로 대기 중인 공개가 A→B→A 변경을 건너 부활하지 않습니다. 중단된 render는 세대와 committed 설정을 바꾸지 않습니다. 잘못된 선택 정책은 마지막 유효 committed 정책을 유지하며 오류를 보관하고, 보고·초기 로드 차단·복구는 RootNodeContext가 맡습니다. 가려진 Provider 값 때문에 별도 오류를 만들지 않습니다.
 
 ### submit-validation-epoch — 비동기 제출과 설정 수명
 
 제출 값과 validate 반환은 시작 snapshot의 결과입니다. callback은 시작 시 마지막 committed prop을 잡으며 mode 변경이 이미 시작한 유효 제출의 callback을 취소하지 않습니다. 명시적 submit·validate Promise의 정착과 최신 화면 게시 여부는 구별합니다.
 
-네이티브 판정의 공개·focus는 시작 load·root·validation epoch와 연결 상태를 판정 도착 및 공개 뒤에 다시 검사합니다. 비동기 실패의 capture·host 보고는 root 동일성과 epoch로 차단하며 같은 root reset·ordinary supersession만으로 버리지 않습니다. React 18 legacy root의 동기 공개 commit 사이에 사용자 layout effect가 reset하거나 정책을 Never로 바꿀 수 있으므로 초점 직전에도 committed 정책·잠금과 후보를 다시 읽습니다. 버려진 render 설정이 명령에 새어들지 않게 committed ref를 사용합니다.
+네이티브 판정의 공개·focus는 시작 loadEpoch·root·validation epoch와 연결 상태를 판정 도착 및 공개 뒤에 다시 검사합니다. 비동기 실패의 capture·host 보고는 root 동일성과 epoch로 차단하며 같은 root reset·ordinary supersession만으로 버리지 않습니다. React 18 legacy root의 동기 공개 commit 사이에 사용자 layout effect가 reset하거나 정책을 Never로 바꿀 수 있으므로 초점 직전에도 committed 정책·잠금과 후보를 다시 읽습니다. 버려진 render 설정이 명령에 새어들지 않게 committed ref를 사용합니다.
 
 - FormRoot는 마운트 시 가상화 manager identity와 라이프사이클 레지스트리를 고정하고 Context 요소를 직접 조립합니다. Provider 컴포넌트를 추가하지 않아 고정 렌더 수를 지킵니다. 처리기 오류는 ListenerThrew, origin render, 노드 경로로 보고하며 문자열 변환이 실패해도 고정 메시지와 원래 error 값을 보존합니다. 보고기가 던지면 호스트 오류 통로로 넘깁니다. 호스트도 던지면 더 보고할 곳이 없으므로 삼키며 나머지 큐를 계속 실행합니다.
 - 컴포넌트 호출 수 보존은 렌더 비용이 없다는 뜻이 아닙니다. FormRoot는 폼별 레지스트리·가상화 값·요청 ref와 안정된 보고·초점 핸들러를 보유하고, 렌더마다 그 훅·초기화 클로저·핸들러 클로저를 평가합니다. 이 고정 비용을 필드 수에 비례하는 작업이나 추가 Provider 컴포넌트로 늘리지 않습니다. 지연 초점 요청 동안에는 문서 리스너 두 개(focusin·focusout)와 예약·취소 클로저가 생기며 요청 종료 때 정리합니다. 폼 DOM ref는 IO가 지원되고 virtualization prop이 활성인 폼에만 연결합니다. 활성화 렌더의 mutation 단계에 ref가 붙어 첫 layout 포커스 요청도 폼 DOM을 읽을 수 있습니다. 비활성에는 ref를 해제하여 일반 입력 쓰기 경로에 사용하지 않는 host ref 비용을 남기지 않습니다. 옵션은 layout commit에서 manager에 반영하며 중단된 렌더는 실행 설정을 바꾸지 않습니다. 포커스도 manager의 현재 활성 상태를 확인하여 비활성에서는 기존 직접 노드 요청으로 끝냅니다.
