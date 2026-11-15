@@ -126,7 +126,7 @@ buildNodes의 BLUEPRINT-017·FRAGMENT-048을 따릅니다. 모양 오류가 무�
 
 ### blueprint-property-addresses — 경로가 이름을 바꾸지 않습니다
 
-속성 이름이 정확히 %2A·%2E·%2E%2E·%40이면 왕복 시 예약 연산자로 바뀌므로 RESERVED_PROPERTY_NAME으로 거부합니다. 문자 그대로의 *·.·..·@와 대소문자가 다른 퍼센트 이름까지 금지하지 않습니다.
+속성 이름이 정확히 %2A·%2E·%2E%2E·%40이면 왕복 시 예약 연산자로 바뀌므로 RESERVED_PROPERTY_NAME으로 거부합니다. 문자 그대로의 \*·.·..·@와 대소문자가 다른 퍼센트 이름까지 금지하지 않습니다.
 
 ### feature-index-item-fragment — 아이템의 직접 소유를 보존합니다
 

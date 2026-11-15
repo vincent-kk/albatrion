@@ -139,8 +139,11 @@ export const FieldInputBridge = memo(
         const onFileAttach =
           onFileAttachRef.current || overrideOnFileAttachRef?.current;
         if (onFileAttach) return onFileAttach(files);
-        attachedFilesMap.attach(attachmentOwner.current, node,
-          files === undefined ? undefined : isArray(files) ? files : [files]);
+        attachedFilesMap.attach(
+          attachmentOwner.current,
+          node,
+          files === undefined ? undefined : isArray(files) ? files : [files],
+        );
       },
       [
         accepts,
