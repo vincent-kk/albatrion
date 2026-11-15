@@ -12,6 +12,7 @@ import {
 
 import { getFeatureNodeIndex } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
+import type { PresenceQueryCursor } from '../../types/presenceQueryCursor';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { collectPresenceChangeNames } from './collectPresenceChangeNames';
@@ -141,7 +142,10 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
     ancestor = parentOf(ancestor)
   ) {
     if (!context.shapeDirtyPaths.has(ancestor)) {
-      const cursors = (context.presenceQueryCursors ??= new Map());
+      const cursors = (context.presenceQueryCursors ??= new Map<
+        string,
+        PresenceQueryCursor
+      >());
       let cursor = cursors.get(ancestor);
       if (!cursor) {
         cursor = { changed: 0, prefixes: 0, index: 0 };

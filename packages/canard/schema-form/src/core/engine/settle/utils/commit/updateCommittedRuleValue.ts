@@ -40,14 +40,20 @@ export const updateCommittedRuleValue = <Self>(
   let sourceKeys = runtime.committedRuleKeysBySource?.get(source);
   if (!sourceKeys) {
     sourceKeys = new Set();
-    (runtime.committedRuleKeysBySource ??= new Map()).set(source, sourceKeys);
+    (runtime.committedRuleKeysBySource ??= new Map<string, Set<string>>()).set(
+      source,
+      sourceKeys,
+    );
   }
   sourceKeys.add(key);
   if (target === undefined) return;
   let targetKeys = runtime.committedRuleKeysByTarget?.get(target);
   if (!targetKeys) {
     targetKeys = new Set();
-    (runtime.committedRuleKeysByTarget ??= new Map()).set(target, targetKeys);
+    (runtime.committedRuleKeysByTarget ??= new Map<string, Set<string>>()).set(
+      target,
+      targetKeys,
+    );
   }
   targetKeys.add(key);
 };

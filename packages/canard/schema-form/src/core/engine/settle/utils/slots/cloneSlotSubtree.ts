@@ -100,7 +100,10 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
         copied.inactiveSlotOverlays?.size ||
         copied.inactiveSlotChildren?.size
       )
-        (node.inactiveSlotChildren ??= new Map()).set(binding.name, copied);
+        (node.inactiveSlotChildren ??= new Map<string, Self>()).set(
+          binding.name,
+          copied,
+        );
     }
     node.childrenByName = childrenByName;
     node.children = children;

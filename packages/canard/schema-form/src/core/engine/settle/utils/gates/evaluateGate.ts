@@ -11,12 +11,14 @@ import type { PendingFormErrorRecord } from '../../../../../errors';
 import type { BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
+import type { RelocatedGateReads } from '../../types/gateWheel';
 import type { SettlementContext } from '../../types/settlement';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { getGateRegistry } from './getGateRegistry';
 import { readGateHostView } from './readGateHostView';
 import { readProjectedValue } from './readProjectedValue';
 import { recordGateInput } from './recordGateInput';
+import type { GateOccurrence } from './type';
 
 /**
  * Evaluate one bound gate with the real expression or validator guard.
@@ -99,7 +101,10 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
       gate.kind === 'active' &&
       occurrence.evaluationHostPath !== occurrence.hostPath
     )
-      (context.relocatedReads ??= new Map()).set(occurrence, {
+      (context.relocatedReads ??= new Map<
+        GateOccurrence,
+        RelocatedGateReads
+      >()).set(occurrence, {
         paths: occurrence.watchPaths,
         values: dependencies,
       });
@@ -124,10 +129,10 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
           code: FormWarningCode.ValidatorMissing,
           message: 'Validation is disabled because no validator was selected',
         };
-        (runtime.pendingWarningRecords ??= new Map()).set(
-          FormWarningCode.ValidatorMissing,
-          record,
-        );
+        (runtime.pendingWarningRecords ??= new Map<
+          string,
+          PendingFormErrorRecord
+        >()).set(FormWarningCode.ValidatorMissing, record);
         runtime.chainOccurrences?.push({ kind: 'record', record });
       }
       if (
@@ -141,10 +146,10 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
           message: 'Conditional schema is inactive without a validator',
           schemaPath: gate.schemaPath,
         };
-        (runtime.pendingWarningRecords ??= new Map()).set(
-          FormWarningCode.ConditionalSchemaWithoutValidator,
-          record,
-        );
+        (runtime.pendingWarningRecords ??= new Map<
+          string,
+          PendingFormErrorRecord
+        >()).set(FormWarningCode.ConditionalSchemaWithoutValidator, record);
         runtime.chainOccurrences?.push({ kind: 'record', record });
       }
       return false;
@@ -211,7 +216,10 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
         details: { cause },
         origin: runtime.chainOrigin,
       };
-      (runtime.guardFailureRecords ??= new Map()).set(gate.schemaPath, record);
+      (runtime.guardFailureRecords ??= new Map<
+        string,
+        PendingFormErrorRecord
+      >()).set(gate.schemaPath, record);
       runtime.chainOccurrences?.push({ kind: 'record', record });
     }
     if (failure) recordSettlementFailure(context, failure, 'expression');
@@ -254,7 +262,10 @@ export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
       edgeName,
     );
     if (occurrence.predicate.isMemoizable)
-      (frame.predicateResults ??= new Map()).set(occurrence, value);
+      (frame.predicateResults ??= new Map<object, boolean>()).set(
+        occurrence,
+        value,
+      );
   }
   context.gateWheelFrame?.evaluations?.push({
     gate,

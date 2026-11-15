@@ -18,10 +18,17 @@ export const restoreAdoptedExternalErrors = <
   for (const [path, errors] of runtime.adoptedExternalErrors ?? []) {
     const node = find(root, path);
     if (!node) continue;
-    (runtime.nodeErrors ??= new Map()).set(node, errors);
+    (runtime.nodeErrors ??= new Map<
+      unknown,
+      readonly { dataPath: string }[]
+    >()).set(node, errors);
     try {
       if (node === root) updateFieldNodeGlobalErrors(root);
-      else (runtime.externalContributions ??= new Map()).set(node, errors);
+      else
+        (runtime.externalContributions ??= new Map<
+          unknown,
+          readonly { dataPath: string }[]
+        >()).set(node, errors);
     } catch (error) {
       runtime.nodeErrors?.delete(node);
       throw error;

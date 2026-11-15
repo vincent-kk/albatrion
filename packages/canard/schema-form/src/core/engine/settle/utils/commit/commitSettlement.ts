@@ -117,7 +117,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
       )
     )
       return;
-    (warningTasks ??= new Map()).set(node, () => {
+    (warningTasks ??= new Map<Self, Fn<[], void>>()).set(node, () => {
       if (misfit && !wasOn) {
         const candidates = conversionCandidates(node, effective);
         const ambiguous = candidates.length > 1;

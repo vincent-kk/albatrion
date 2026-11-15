@@ -89,5 +89,8 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
     result = resolved.value;
   }
   if (result !== undefined)
-    (context.inactiveValueOverrides ??= new Map()).set(node, result);
+    (context.inactiveValueOverrides ??= new Map<Self, unknown>()).set(
+      node,
+      result,
+    );
 };

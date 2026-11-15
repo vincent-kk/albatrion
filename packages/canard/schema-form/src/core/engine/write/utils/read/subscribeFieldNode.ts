@@ -17,7 +17,8 @@ export const subscribeFieldNode = <Self extends FieldNodeRecord<Self>>(
 ): Fn => {
   if (node.isDisposed || node.rootNode.isDisposed) return NOOP_FUNCTION;
   const runtime = node.rootNode.runtime;
-  const listeners = runtime.listeners ?? new Map();
+  const listeners =
+    runtime.listeners ?? new Map<unknown, Set<FieldNodeListener>>();
   const subscriptions = listeners.get(node) ?? new Set();
   subscriptions.add(listener);
   listeners.set(node, subscriptions);

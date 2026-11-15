@@ -62,7 +62,7 @@ export const captureAbsentSlotInputs = <Self extends FieldNodeRecord<Self>>(
       prior.overlay,
       current.isWhole,
     );
-    (children ??= new Map()).set(
+    (children ??= new Map<BlueprintChildEntry, InactiveSlotOverlay>()).set(
       entry,
       array && !node.blueprintNode.hasCandidateDescendants
         ? packed(result.overlay)

@@ -36,7 +36,10 @@ export const restoreTransferredSlotSource = <
         cloneSlotSubtree(node, entry, prior.instance, context, false),
       );
     if (prior.overlay)
-      (node.inactiveSlotOverlays ??= new Map()).set(entry, prior.overlay);
+      (node.inactiveSlotOverlays ??= new Map<
+        BlueprintChildEntry,
+        InactiveSlotOverlay
+      >()).set(entry, prior.overlay);
   }
   markWrite(node, input, context);
   const distribution = context.distributedInputs.get(node);

@@ -1,7 +1,7 @@
 import type { Optional } from '@aileron/declare';
 
 import { getItemEntries } from '../../../blueprint';
-import type { BlueprintNode } from '../../../blueprint';
+import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
@@ -122,10 +122,10 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
       return { ...previous, children };
     };
     markSlotChange(host, entry, undefined, context);
-    (host.inactiveSlotOverlays ??= new Map()).set(
-      entry,
-      patch(entry.node, instance, previous, depth + 1),
-    );
+    (host.inactiveSlotOverlays ??= new Map<
+      BlueprintChildEntry,
+      InactiveSlotOverlay
+    >()).set(entry, patch(entry.node, instance, previous, depth + 1));
     for (const other of entries) {
       if (
         preserveCandidates ||

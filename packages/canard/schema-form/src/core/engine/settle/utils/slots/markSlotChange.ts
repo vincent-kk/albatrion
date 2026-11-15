@@ -1,5 +1,5 @@
 import type { BlueprintChildEntry } from '../../../blueprint';
-import type { FieldNodeRecord } from '../../../record';
+import type { FieldNodeRecord, InactiveSlotBaseline } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 
 /**
@@ -16,7 +16,10 @@ export const markSlotChange = <Self extends FieldNodeRecord<Self>>(
   context?: SettlementContext<Self>,
 ): void => {
   if (context?.isInTransition) {
-    const journal = (context.slotAutomaticLog ??= new Map());
+    const journal = (context.slotAutomaticLog ??= new Map<
+      Self,
+      Map<BlueprintChildEntry, InactiveSlotBaseline<Self>>
+    >());
     let bindings = journal.get(host);
     if (!bindings) journal.set(host, (bindings = new Map()));
     if (!bindings.has(entry))
@@ -25,7 +28,10 @@ export const markSlotChange = <Self extends FieldNodeRecord<Self>>(
         overlay: host.inactiveSlotOverlays?.get(entry),
       });
   }
-  const baselines = (host.inactiveSlotBaselines ??= new Map());
+  const baselines = (host.inactiveSlotBaselines ??= new Map<
+    BlueprintChildEntry,
+    InactiveSlotBaseline<Self>
+  >());
   if (!baselines.has(entry))
     baselines.set(entry, {
       active:
@@ -47,6 +53,9 @@ export const markSlotChange = <Self extends FieldNodeRecord<Self>>(
     const parent = child.parent;
     if (parent.isDetached || parent.childrenByName?.[child.name] !== child)
       break;
-    (parent.inactiveSlotChildren ??= new Map()).set(child.name, child);
+    (parent.inactiveSlotChildren ??= new Map<string, Self>()).set(
+      child.name,
+      child,
+    );
   }
 };

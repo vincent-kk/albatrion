@@ -1,5 +1,8 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../types/settlement';
+import type {
+  ProjectionBaseline,
+  SettlementContext,
+} from '../../types/settlement';
 
 /**
  * Capture a retained child's projection before its first effective-schema change.
@@ -16,7 +19,10 @@ export const captureProjectionBaseline = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   if (!context.hasGates || !retained) return;
-  const hosts = (context.projectionBaselines ??= new Map());
+  const hosts = (context.projectionBaselines ??= new Map<
+    Self,
+    Map<Self, ProjectionBaseline>
+  >());
   let children = hosts.get(host);
   if (!children) hosts.set(host, (children = new Map()));
   if (!children.has(child))

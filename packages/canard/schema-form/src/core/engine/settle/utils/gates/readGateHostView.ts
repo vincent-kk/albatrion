@@ -22,7 +22,7 @@ export const readGateHostView = <Self extends FieldNodeRecord<Self>>(
 ): GateHostView => {
   const projected = readProjectedValue(context, hostPath);
   const extra = readGateProjectedExtra(context, hostPath, projected, owner);
-  const views = (context.gateHostViews ??= new Map());
+  const views = (context.gateHostViews ??= new Map<string, GateHostView>());
   const cached = views.get(hostPath);
   if (
     cached &&

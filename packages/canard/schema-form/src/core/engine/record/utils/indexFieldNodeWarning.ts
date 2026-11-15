@@ -26,11 +26,14 @@ export const indexFieldNodeWarning = <Self>(
     runtime.warningKeys?.delete(key);
     runtime.pendingWarningRecords?.delete(key);
   } else if (record)
-    (runtime.pendingWarningRecords ??= new Map()).set(key, record);
+    (runtime.pendingWarningRecords ??= new Map<
+      string,
+      PendingFormErrorRecord
+    >()).set(key, record);
   if (path === undefined) return;
   const index = remove
     ? runtime.warningKeysByPath
-    : (runtime.warningKeysByPath ??= new Map());
+    : (runtime.warningKeysByPath ??= new Map<string, Set<string>>());
   if (!index) return;
   let ancestor = path;
   while (true) {

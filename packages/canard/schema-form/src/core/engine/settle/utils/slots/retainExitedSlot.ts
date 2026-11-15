@@ -1,4 +1,5 @@
-import type { FieldNodeRecord } from '../../../record';
+import type { BlueprintChildEntry } from '../../../blueprint';
+import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { isReplacedLivePath } from '../transition/isReplacedLivePath';
 import { readDepartingAncestorPolicy } from '../transition/readDepartingAncestorPolicy';
@@ -53,8 +54,14 @@ export const retainExitedSlot = <Self extends FieldNodeRecord<Self>>(
         context.compactedSlotSources,
       )
     : node;
-  (host.inactiveSlots ??= new Map()).set(entry, instance);
+  (host.inactiveSlots ??= new Map<BlueprintChildEntry, Self>()).set(
+    entry,
+    instance,
+  );
   if (result.overlay)
-    (host.inactiveSlotOverlays ??= new Map()).set(entry, result.overlay);
+    (host.inactiveSlotOverlays ??= new Map<
+      BlueprintChildEntry,
+      InactiveSlotOverlay
+    >()).set(entry, result.overlay);
   else host.inactiveSlotOverlays?.delete(entry);
 };

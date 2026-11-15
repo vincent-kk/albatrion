@@ -3,7 +3,8 @@ import {
   isDescendantPath,
 } from '@/schema-form/helpers/jsonPointer';
 
-import type { FieldNodeRecord } from '../../../record';
+import type { BlueprintChildEntry } from '../../../blueprint';
+import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { markSlotChange } from './markSlotChange';
 
@@ -28,10 +29,16 @@ export const restoreSlotSources = <Self extends FieldNodeRecord<Self>>(
         continue;
       markSlotChange(host, entry);
       if (previous.instance)
-        (host.inactiveSlots ??= new Map()).set(entry, previous.instance);
+        (host.inactiveSlots ??= new Map<BlueprintChildEntry, Self>()).set(
+          entry,
+          previous.instance,
+        );
       else host.inactiveSlots?.delete(entry);
       if (previous.overlay)
-        (host.inactiveSlotOverlays ??= new Map()).set(entry, previous.overlay);
+        (host.inactiveSlotOverlays ??= new Map<
+          BlueprintChildEntry,
+          InactiveSlotOverlay
+        >()).set(entry, previous.overlay);
       else host.inactiveSlotOverlays?.delete(entry);
     }
 };

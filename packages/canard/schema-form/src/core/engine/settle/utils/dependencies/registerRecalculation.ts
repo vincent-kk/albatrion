@@ -8,6 +8,7 @@ import {
 import type { FieldNodeRecord } from '../../../record';
 import { engineModes } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
+import type { SplitBucket } from '../../types/splitRegistration';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { verifyGateSelection } from '../gates/verifyGateSelection';
 import { verifyWriteEpoch } from '../input/utils/verifyWriteEpoch';
@@ -67,7 +68,10 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     for (const changed of context.changedSource)
       dependencies.registerAffectedOwners(changed, context.root, {
         recordHit: (bucket, liveRanks) => {
-          (context.splitHitEpochs ??= new Map()).set(bucket, epoch);
+          (context.splitHitEpochs ??= new Map<SplitBucket, number>()).set(
+            bucket,
+            epoch,
+          );
           return dirty instanceof DirtyPathSet
             ? dirty.planSplitAnchors(bucket, liveRanks, epoch)
             : [];
@@ -76,7 +80,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
           dirty.add(path);
           if (kind === 'plain') context.dependencyOwnerPaths.add(path);
           else if (kind === 'split')
-            (context.splitMarks ??= new Map()).set(path, epoch);
+            (context.splitMarks ??= new Map<string, number>()).set(path, epoch);
           context.shapeDirtyPaths.add(
             kind === 'host' ? path : resolvePointer(path, $.Parent),
           );

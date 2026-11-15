@@ -47,7 +47,14 @@ export const readFieldNodeErrors = <Self extends FieldNodeRecord<Self>>(
   )
     return cached.errors;
   const errors = [...external, ...validation];
-  (runtime.combinedErrors ??= new Map()).set(node, {
+  (runtime.combinedErrors ??= new Map<
+    unknown,
+    {
+      readonly external?: readonly unknown[];
+      readonly validation?: readonly unknown[];
+      readonly errors: readonly unknown[];
+    }
+  >()).set(node, {
     external,
     validation,
     errors,

@@ -9,6 +9,7 @@ import {
 } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../errors';
+import type { PendingFormErrorRecord } from '../../../errors';
 import type {
   Behavior,
   Blueprint,
@@ -166,7 +167,10 @@ export function fieldNodeFactory(
     collectBlueprintWarnings(analysis, (diagnostic) => {
       const record = createFormErrorRecord(true, diagnostic);
       if (record)
-        (runtime.pendingWarningRecords ??= new Map()).set(
+        (runtime.pendingWarningRecords ??= new Map<
+          string,
+          PendingFormErrorRecord
+        >()).set(
           JSON.stringify([
             record.code,
             diagnostic.schemaPath,

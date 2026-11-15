@@ -3,6 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../errors';
+import type { PendingFormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import { assertFieldNodeWritable, disposeFieldNodeTree } from '../../../settle';
@@ -103,10 +104,10 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
           { details: { schemaPaths: paths } },
         );
         if (record) {
-          (next.pendingWarningRecords ??= new Map()).set(
-            JSON.stringify([code, $.Root]),
-            record,
-          );
+          (next.pendingWarningRecords ??= new Map<
+            string,
+            PendingFormErrorRecord
+          >()).set(JSON.stringify([code, $.Root]), record);
           next.chainOccurrences?.push({ kind: 'record', record });
         }
       }

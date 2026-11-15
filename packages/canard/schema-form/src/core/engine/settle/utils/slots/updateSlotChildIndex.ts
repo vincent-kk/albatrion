@@ -18,6 +18,6 @@ export const updateSlotChildIndex = <Self extends FieldNodeRecord<Self>>(
       live.inactiveSlotOverlays?.size ||
       live.inactiveSlotChildren?.size)
   )
-    (host.inactiveSlotChildren ??= new Map()).set(name, live);
+    (host.inactiveSlotChildren ??= new Map<string, Self>()).set(name, live);
   else host.inactiveSlotChildren?.delete(name);
 };

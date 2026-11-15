@@ -27,7 +27,7 @@ export const supplementSplitOwner = <Self extends FieldNodeRecord<Self>>(
   );
   if (lastHit > (context.splitMarks?.get(child.path) ?? -1)) {
     context.dirtyPaths.add(child.path);
-    (context.splitMarks ??= new Map()).set(child.path, lastHit);
+    (context.splitMarks ??= new Map<string, number>()).set(child.path, lastHit);
     if (!dirtyBefore && context.registrationShadow)
       context.registrationShadow.supplementInsertions++;
   }

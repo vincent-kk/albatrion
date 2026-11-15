@@ -5,6 +5,7 @@ import type { Dictionary } from '@aileron/declare';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntries } from '../../../../blueprint';
+import type { BlueprintChildEntry } from '../../../../blueprint';
 import { visitFieldNodes } from '../../../../navigation';
 import type {
   ArrayArrangePlan,
@@ -136,7 +137,10 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       const binding = getRetainedChildEntry(host, old.name, old.blueprintNode);
       if (binding) {
         markSlotChange(host, binding, old, context);
-        (host.inactiveSlots ??= new Map()).set(binding, old);
+        (host.inactiveSlots ??= new Map<BlueprintChildEntry, Self>()).set(
+          binding,
+          old,
+        );
       }
     }
     if (!entry) continue;
@@ -176,7 +180,10 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   rekeyArraySlotBindings(host, moves, context);
   rekeyArrayRuntimePaths(host.runtime, host.path, moves);
   if (candidateMoves)
-    (context.rekeyedArrayMoves ??= new Map()).set(host, moves);
+    (context.rekeyedArrayMoves ??= new Map<
+      Self,
+      readonly { previous: string; current?: string }[]
+    >()).set(host, moves);
   for (const [name, item] of Object.entries(nextItems)) {
     if (!reused.has(item) || item.name === name) continue;
     visitFieldNodes(

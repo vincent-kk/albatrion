@@ -25,7 +25,10 @@ export const dispatchSetExternalErrors = <Self extends FieldNodeRecord<Self>>(
   assertNotInDelivery(runtime);
   if (refuseListenerFeedback(runtime)) return;
   if (runtime.nodeErrors?.get(node) === errors) return;
-  (runtime.nodeErrors ??= new Map()).set(node, errors);
+  (runtime.nodeErrors ??= new Map<
+    unknown,
+    readonly { dataPath: string }[]
+  >()).set(node, errors);
   if (node === node.rootNode) publishRootExternalErrors(node);
   else propagateExternalErrorsToRoot(node);
   queueNonSettleEvent(node, FieldNodeEventType.UpdateError, errors);

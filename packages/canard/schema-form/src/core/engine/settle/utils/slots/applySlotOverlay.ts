@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { markWrite } from '../input/markWrite';
@@ -68,7 +69,10 @@ export const applySlotOverlay = <Self extends FieldNodeRecord<Self>>(
   for (const [entry, patch] of overlay.children ?? []) {
     const live = node.childrenByName?.[entry.name];
     if (live?.blueprintNode === entry.node) continue;
-    (node.inactiveSlotOverlays ??= new Map()).set(entry, patch);
+    (node.inactiveSlotOverlays ??= new Map<
+      BlueprintChildEntry,
+      InactiveSlotOverlay
+    >()).set(entry, patch);
   }
   markRestoredSlotSource(node, context);
   context.changedNodes.add(node);

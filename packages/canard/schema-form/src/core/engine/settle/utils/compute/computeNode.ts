@@ -50,7 +50,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   if (!context.dirtyPaths.has(node.path)) return;
   if (context.hasGates) {
     context.presenceClock = (context.presenceClock ?? 0) + 1;
-    (context.presenceComputeStarts ??= new Map()).set(
+    (context.presenceComputeStarts ??= new Map<Self, number>()).set(
       node,
       context.presenceClock,
     );
@@ -210,7 +210,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
       node.parent === null && selectNodeSchema(node, context);
     if (context.hasGates) {
       context.presenceClock = (context.presenceClock ?? 0) + 1;
-      (context.presenceRoundStarts ??= new Map()).set(
+      (context.presenceRoundStarts ??= new Map<Self, number>()).set(
         node,
         context.presenceClock,
       );

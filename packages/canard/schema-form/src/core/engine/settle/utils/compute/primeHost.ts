@@ -47,14 +47,20 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
   if (context.fixedFirstLoad && prepareFixedFirstHost(node, context)) return;
   const prepared = prepareStaticHost(node, prior, context, hasRelocated);
   if (prepared) {
-    (context.presenceSelections ??= new Map()).set(node, {
+    (context.presenceSelections ??= new Map<
+      Self,
+      {
+        readonly childrenByName: Readonly<Dictionary<Self>>;
+        readonly names: readonly string[];
+      }
+    >()).set(node, {
       childrenByName: prior,
       names: prepared.dynamicNames,
     });
-    (context.preparedStaticPriorNames ??= new Map()).set(
-      node,
-      prepared.dynamicNames,
-    );
+    (context.preparedStaticPriorNames ??= new Map<
+      Self,
+      readonly string[]
+    >()).set(node, prepared.dynamicNames);
     if (prepared.selectedChildrenByName === prior)
       prepared.selectedChildren = node.children ?? [];
     node.childrenByName = prepared.baseline;

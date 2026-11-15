@@ -37,7 +37,7 @@ export type VirtualReferenceIndex = ReadonlyMap<
 >;
 
 /** Last compared projection references for one retained child in a settlement. */
-interface ProjectionBaseline {
+export interface ProjectionBaseline {
   /** Effective schema before its first change or at the last presence comparison. */
   schema: EffectiveSchema;
   /** Emitted value before its first schema change or at the last comparison. */

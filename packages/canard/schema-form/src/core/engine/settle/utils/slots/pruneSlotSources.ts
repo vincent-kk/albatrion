@@ -72,7 +72,10 @@ export const pruneSlotSources = <Self extends FieldNodeRecord<Self>>(
         host.inactiveSlots?.delete(entry);
         host.inactiveSlotOverlays?.delete(entry);
       } else
-        (host.inactiveSlotOverlays ??= new Map()).set(
+        (host.inactiveSlotOverlays ??= new Map<
+          BlueprintChildEntry,
+          InactiveSlotOverlay
+        >()).set(
           entry,
           patch(
             host.inactiveSlots?.get(entry),

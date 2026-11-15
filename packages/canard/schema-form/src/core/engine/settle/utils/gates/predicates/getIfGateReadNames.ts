@@ -23,7 +23,12 @@ export const getIfGateReadNames = (
         Map<object, Nullable<readonly string[]>>
       >(blueprint)
     : undefined;
-  const memo = record ? (record.ifGateReadNames ??= new Map()) : undefined;
+  const memo = record
+    ? (record.ifGateReadNames ??= new Map<
+        object,
+        Nullable<readonly string[]>
+      >())
+    : undefined;
   const cached = memo?.get(condition);
   if (cached !== undefined) return cached ?? undefined;
   const names: string[] = [];

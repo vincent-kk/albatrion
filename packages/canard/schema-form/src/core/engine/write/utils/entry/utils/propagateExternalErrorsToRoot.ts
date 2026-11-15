@@ -49,7 +49,10 @@ export const rebuildRootExternalErrors = <Self extends FieldNodeRecord<Self>>(
   for (const candidate of pending)
     if (isPendingNode<Self>(candidate, runtime)) nodes.push(candidate);
   if (!nodes.length) return;
-  const contributions = (runtime.externalContributions ??= new Map());
+  const contributions = (runtime.externalContributions ??= new Map<
+    unknown,
+    readonly { dataPath: string }[]
+  >());
   const placed = new Set<ValidationIssue>();
   const retired = new Set<ValidationIssue>();
   const paths = new Set<string>();
@@ -103,7 +106,11 @@ export const rebuildRootExternalErrors = <Self extends FieldNodeRecord<Self>>(
     } else contributions.delete(node);
   }
   if (!changed) return;
-  if (next.length) (runtime.nodeErrors ??= new Map()).set(root, next);
+  if (next.length)
+    (runtime.nodeErrors ??= new Map<
+      unknown,
+      readonly { dataPath: string }[]
+    >()).set(root, next);
   else runtime.nodeErrors?.delete(root);
   publishRootExternalErrors(root);
   queueNonSettleEvent(root, FieldNodeEventType.UpdateError, next);

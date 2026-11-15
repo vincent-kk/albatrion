@@ -29,7 +29,10 @@ export const deferPresenceTemplate = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   stamp: number,
 ): boolean => {
-  const pending = (context.presenceTemplates ??= new Map());
+  const pending = (context.presenceTemplates ??= new Map<
+    string,
+    PendingPresenceTemplate
+  >());
   const key = kind + '\u0000' + template;
   const entry = pending.get(key);
   if (!entry) {

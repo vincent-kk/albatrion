@@ -57,8 +57,16 @@ export const rekeyArraySlotBindings = <Self extends FieldNodeRecord<Self>>(
   }
   for (const { entry, instance, overlay } of pending) {
     markSlotChange(host, entry, undefined, context);
-    if (instance) (host.inactiveSlots ??= new Map()).set(entry, instance);
-    if (overlay) (host.inactiveSlotOverlays ??= new Map()).set(entry, overlay);
+    if (instance)
+      (host.inactiveSlots ??= new Map<BlueprintChildEntry, Self>()).set(
+        entry,
+        instance,
+      );
+    if (overlay)
+      (host.inactiveSlotOverlays ??= new Map<
+        BlueprintChildEntry,
+        InactiveSlotOverlay
+      >()).set(entry, overlay);
   }
   if (
     host.inactiveSlots?.size ||

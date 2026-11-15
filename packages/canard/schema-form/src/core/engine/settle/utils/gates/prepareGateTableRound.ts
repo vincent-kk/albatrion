@@ -9,6 +9,7 @@ import type { FieldNodeRecord } from '../../../record';
 import { FieldNodeWriteKind } from '../../../types/value';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { engineModes } from '../../../utils/cache/engineModes';
+import type { GateSelectionRound } from '../../types/gateSelectionRound';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateSelectionTable } from '../compute/childSelection/getGateSelectionTable';
 import { watchGateSelectionDirty } from './watchGateSelectionDirty';
@@ -60,18 +61,21 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
   if (hasDirtyWatchedPath) {
     return;
   }
-  (context.gateSelectionRounds ??= new Map()).set(node, {
-    round,
-    table,
-    values: new Map(),
-    watchedPaths,
-    stableSchemaPaths: table.stableSchemaNames.length
-      ? mapArray(table.stableSchemaNames, (name) =>
-          appendSegment(node.path, name),
-        )
-      : EMPTY_ARRAY,
-    isActive: true,
-  });
+  (context.gateSelectionRounds ??= new Map<Self, GateSelectionRound>()).set(
+    node,
+    {
+      round,
+      table,
+      values: new Map(),
+      watchedPaths,
+      stableSchemaPaths: table.stableSchemaNames.length
+        ? mapArray(table.stableSchemaNames, (name) =>
+            appendSegment(node.path, name),
+          )
+        : EMPTY_ARRAY,
+      isActive: true,
+    },
+  );
   if (engineModes.gateSelection === 'verify') {
     if (context.gateWheelFrame)
       context.gateWheelFrame.selectionShadow = {

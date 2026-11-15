@@ -4,6 +4,7 @@ import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
+import type { CompactedSlotSources } from '../../types/slots';
 import { getSlotEntries } from './getSlotEntries';
 import { getSlotSource } from './getSlotSource';
 import { materializeKeptSlotOverlay } from './materializeKeptSlotOverlay';
@@ -81,7 +82,10 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
     if (retained) source.push(value);
   }
   if (sourceContext && source.length)
-    (sourceContext.compactedSlotSources ??= new Map()).set(node, {
+    (sourceContext.compactedSlotSources ??= new Map<
+      Self,
+      CompactedSlotSources<Self>
+    >()).set(node, {
       itemCount: source.length,
       sources,
       overlays: children,

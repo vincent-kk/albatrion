@@ -64,10 +64,10 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
           code: FormWarningCode.ValidatorMissing,
           message: 'Validation is disabled because no validator was selected',
         };
-        (runtime.pendingWarningRecords ??= new Map()).set(
-          FormWarningCode.ValidatorMissing,
-          record,
-        );
+        (runtime.pendingWarningRecords ??= new Map<
+          string,
+          PendingFormErrorRecord
+        >()).set(FormWarningCode.ValidatorMissing, record);
         runtime.chainOccurrences?.push({ kind: 'record', record });
       }
     }

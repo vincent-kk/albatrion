@@ -139,7 +139,10 @@ export const collectDeclarations = (
   result.push(declaration);
   const owner = ownerId ?? declaration.id;
   if (!context.capabilities.isBranchless)
-    (context.declarationOwners ??= new Map()).set(declaration.id, owner);
+    (context.declarationOwners ??= new Map<number, number>()).set(
+      declaration.id,
+      owner,
+    );
   const discriminators =
     schema.controls?.discriminator === undefined
       ? undefined

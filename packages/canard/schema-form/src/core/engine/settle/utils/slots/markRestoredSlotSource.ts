@@ -11,7 +11,7 @@ export const markRestoredSlotSource = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): void => {
-  const preceding = (context.slotRestoredSource ??= new Map());
+  const preceding = (context.slotRestoredSource ??= new Map<Self, boolean>());
   if (!preceding.has(node))
     preceding.set(node, context.changedSource.has(node.path));
   if (

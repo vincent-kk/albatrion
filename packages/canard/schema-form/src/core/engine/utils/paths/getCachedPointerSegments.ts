@@ -19,7 +19,10 @@ export const getCachedPointerSegments = (
   path: string,
 ): readonly PointerSegment[] => {
   const derived = getHostDerived<'pointerSegments', PointerSegments>(runtime);
-  const cache = (derived.pointerSegments ??= new Map());
+  const cache = (derived.pointerSegments ??= new Map<
+    string,
+    readonly PointerSegment[]
+  >());
   let segments = cache.get(path);
   if (segments === undefined) {
     segments = parsePointerSegments(path);
