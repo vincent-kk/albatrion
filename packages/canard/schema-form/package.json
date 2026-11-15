@@ -67,7 +67,7 @@
     "storybook": "yarn run -T storybook dev -p 6006",
     "test": "vitest",
     "test:production": "NODE_ENV=production vitest run --project production --reporter=dot --configLoader runner --cache false",
-    "test:verify": "vitest --project verify-unit --project verify-render",
+    "test:verify": "vitest --config vitest.verify.config.ts",
     "typecheck": "tsc --noEmit --composite false --rootDir . -p tsconfig.json",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
@@ -95,7 +95,7 @@
     "rolldown": "^1.2.0",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.7.2",
-    "vitest": "^3.2.6"
+    "vitest": "^4.1.12"
   },
   "peerDependencies": {
     "react": ">=18 <20",

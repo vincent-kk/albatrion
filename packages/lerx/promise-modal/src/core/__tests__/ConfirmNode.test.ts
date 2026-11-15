@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ConfirmNode } from '../node/ModalNode/ConfirmNode';
 
@@ -9,10 +9,10 @@ describe('ConfirmNode', () => {
     type: 'confirm';
     title: string;
     content: string;
-    handleResolve: ReturnType<typeof vi.fn>;
+    handleResolve: Mock;
   };
   let node: ConfirmNode<null>;
-  let handleResolve: ReturnType<typeof vi.fn>;
+  let handleResolve: Mock;
 
   beforeEach(() => {
     handleResolve = vi.fn();

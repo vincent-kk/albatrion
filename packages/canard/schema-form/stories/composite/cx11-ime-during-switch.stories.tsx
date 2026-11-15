@@ -11,7 +11,7 @@ import { createCompositeStory } from './utils/createCompositeStory';
  * Load Vitest's runtime-owned CDP context after the composite play's Browser Mode guard.
  * @returns The Browser Mode context used for native composition and input locators.
  */
-const browserContext = () => import('@vitest/browser/context');
+const browserContext = () => import('vitest/browser');
 
 export default { title: 'Composite/CX11ImeDuringSwitch', component: FeatureStory, tags: ['autodocs'] } satisfies Meta<typeof FeatureStory>;
 type Story = StoryObj<typeof FeatureStory>;

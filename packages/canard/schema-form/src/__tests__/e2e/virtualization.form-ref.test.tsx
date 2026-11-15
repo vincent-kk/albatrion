@@ -1,9 +1,14 @@
 import { act } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { liveOptions, mountVirtualization } from './helpers/liveVirtualization';
 
 const { observeFormRef } = vi.hoisted(() => ({ observeFormRef: vi.fn() }));
+
+// vi.restoreAllMocks in the shared helper does not clear vi.fn call history.
+beforeEach(() => {
+  observeFormRef.mockClear();
+});
 
 // Observe host refs through the real JSX runtime without importing form internals.
 vi.mock('react/jsx-dev-runtime', async (importOriginal) => {

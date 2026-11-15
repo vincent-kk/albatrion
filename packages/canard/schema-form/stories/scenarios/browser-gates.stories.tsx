@@ -1,6 +1,6 @@
 // Loaded by Storybook CSF; named exports are the U11 Chromium gates.
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type {} from '@vitest/browser/providers/playwright';
+import type {} from '@vitest/browser-playwright';
 import { expect, userEvent, waitFor } from 'storybook/test';
 
 import { BrowserGateForm } from '../components/gates/BrowserGateForm';
@@ -18,7 +18,7 @@ type Story = StoryObj<typeof BrowserGateForm>;
  * Load Vitest's runtime-owned CDP and locator API after the play's Browser Mode guard.
  * @returns The Browser Mode context; importing it outside that mode throws.
  */
-const browserContext = () => import('@vitest/browser/context');
+const browserContext = () => import('vitest/browser');
 
 /** Wait for the browser's React commit without replacing real input events. */
 const committed = () =>
