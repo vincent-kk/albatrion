@@ -42,6 +42,18 @@ describe('a root object or array never omits itself', () => {
     },
   );
 
+  it('settle-root-emission emits [] when a literal default trims every item on the static first load', () => {
+    const { root } = createTestTree({
+      type: 'array',
+      items: { type: 'string' },
+      default: ['', null],
+      options: { omitTrailingEmpty: true },
+    });
+    loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
+    expect(root.children).toHaveLength(2);
+    expect(root.emit).toEqual([]);
+  });
+
   it('settle-root-emission keeps the empty local of a root object and array', () => {
     const object = createTestTree({
       type: 'object',
@@ -49,6 +61,7 @@ describe('a root object or array never omits itself', () => {
     }).root;
     loadFieldNodeAtMount(object, { name: '' }, WriteOption.Overwrite);
     expect(object.emit).toEqual({});
+    expect(object.emit).toBe(object.local);
 
     const array = createTestTree(trimmedStrings(false)).root;
     loadFieldNodeAtMount(array, [], WriteOption.Overwrite);

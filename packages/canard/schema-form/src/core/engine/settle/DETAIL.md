@@ -143,7 +143,7 @@ setValue(getValue())의 멱등은 방출·채움·에지에 관한 것입니다.
 
 ### settle-root-emission — 루트는 omitEmpty로 자신을 지우지 않습니다
 
-루트 객체·배열의 투영이 없음이면 비운 값을 방출합니다. 원본이 비어 있으면 원본 참조를, 비어 있지 않은 배열이면 새 빈 배열을 방출합니다. getValue·submit은 루트 방출을 폼 값으로 읽으므로, 루트가 사라지면 선언한 객체·배열 대신 undefined를 받습니다. 비어 있지 않은 배열 원본의 투영이 없음이 되는 경우는 omitTrailingEmpty가 꼬리를 모두 잘라 남은 빈 배열을 omitEmpty가 지운 경우뿐이므로([arrayBehavior 계약](../behaviors/arrayBehavior/DETAIL.md)), 원본으로 대체하면 잘라 낸 꼬리가 되살아나 getValue가 자르기 전 값을 돌려줍니다. 일반 갱신과 정적 최초 로드의 두 방출 자리는 이 규칙을 함수 하나로 공유합니다.
+루트 객체·배열의 투영이 없음이면 합성값(local)으로 대체합니다. local이 비어 있으면 그 참조를, 비어 있지 않은 배열이면 새 빈 배열을 방출하며, terminal 루트에 입력이 없어 local이 undefined이면 undefined를 방출합니다. getValue·submit은 루트 방출을 폼 값으로 읽으므로, 루트가 omitEmpty로 사라지면 선언한 객체·배열 대신 undefined를 받습니다. 비어 있지 않은 배열 local의 투영이 없음이 되는 경우는 omitTrailingEmpty가 꼬리를 모두 잘라 남은 빈 배열을 omitEmpty가 지운 경우뿐이므로([arrayBehavior 계약](../behaviors/arrayBehavior/DETAIL.md)), local로 대체하면 잘라 낸 꼬리가 되살아나 getValue가 자르기 전 값을 돌려줍니다. 일반 갱신과 정적 최초 로드의 두 방출 자리는 이 규칙을 함수 하나로 공유합니다. 리터럴 기본값을 가진 branch 배열 루트는 정적 최초 로드에서도 항목을 가지므로 두 자리 모두 이 경우를 만납니다.
 
 ### WRITE-031 — 나감 정책은 마지막 살아 있던 선언을 읽습니다
 
