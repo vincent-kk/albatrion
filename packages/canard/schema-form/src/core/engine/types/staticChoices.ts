@@ -2,7 +2,7 @@
 export interface StaticChoices {
   /** Whether an empty scalar or object is absent from output. */
   readonly omitEmpty: boolean;
-  /** Whether nullish and unfilled trailing array positions are excluded. */
+  /** Whether the trailing run of null, undefined, empty-string, empty-array and empty-plain-object positions is excluded. */
   readonly omitTrailingEmpty: boolean;
   /** Whether completed string input loses surrounding whitespace. */
   readonly trim: boolean;

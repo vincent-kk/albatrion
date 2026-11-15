@@ -15,7 +15,9 @@ Array operations require a real array node: narrow a possibly missing lookup wit
 
 ## Array Output Filters (omitTrailingEmpty / omitEmpty)
 
-`options.omitTrailingEmpty: true` (opt-in) trims **trailing** consecutive `undefined` items from the array's outgoing value; `options.omitEmpty` (on by default) turns an empty array into `undefined` on the parent path. Filter order: `omitTrailingEmpty → omitEmpty`.
+`options.omitTrailingEmpty: true` (opt-in) trims the **trailing** run of empty items (`null`, `undefined`, `''`, `[]`, `{}`) from the array's outgoing value; `options.omitEmpty` (on by default) turns an empty array into `undefined` on the parent path. Filter order: `omitTrailingEmpty → omitEmpty`.
+
+The trim rule is the same for branch and terminal arrays and ignores the item schema: a trailing `null` is trimmed even when the item schema accepts null, so leave the option off where a trailing `null` carries meaning. The check is shallow and reads each item's output: in a terminal array `{ name: '' }` stays, so a terminal input should emit `undefined` or `{}` for an empty row; in a branch array an object item whose fields are all omitted outputs `{}` and is trimmed. An item's own `omitEmpty: false` does not keep an empty value at the tail.
 
 Where the filters apply — and where they never do:
 
@@ -26,7 +28,7 @@ Where the filters apply — and where they never do:
 
 Rules of thumb:
 
-- Leading/middle `undefined` are never removed — indices must stay aligned with error `dataPath`s and validation params.
+- Leading/middle empty items are never removed — indices must stay aligned with error `dataPath`s and validation params.
 - Primary use case: let users add rows and leave the trailing ones empty without polluting the submitted/validated value. Validation sees the trimmed value, so trailing empty items do not count toward `minItems`.
 - A reset restores the loaded value and creates no items for `minItems`; a plain `setValue(undefined)` clears every item.
 - In a custom array `FieldInput`, derive row count from `node.children` (or `ChildFields`), never from `value.length` — the emitted value is shorter than the rendered rows by design.

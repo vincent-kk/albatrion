@@ -154,7 +154,7 @@ export type NonNullableArraySchema<Options extends Dictionary = object> =
   BasicSchema &
     WingletNonNullableArraySchema<Options, JSONSchemaChildren<Options>> & {
       options?: {
-        /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array (default: false) */
+        /** Remove the trailing run of empty items (`null`, `undefined`, `''`, `[]`, `{}`) from the array's normalized value (parent propagation, root validation, external emission); the shallow rule ignores the item schema, so a trailing `null` is removed even when the item schema accepts null, and it reads each item's output, so a terminal array keeps `{ name: '' }` while a branch object item whose fields are all omitted outputs `{}` and is removed; child nodes keep the raw array (default: false) */
         omitTrailingEmpty?: boolean;
         /** Build the node as one input over the whole value (`true`) or as child nodes (`false`); overrides the renderer's choice (default: terminal when `presentation.FieldInput` is a component, branch otherwise) */
         terminal?: boolean;
@@ -165,7 +165,7 @@ export type NullableArraySchema<Options extends Dictionary = object> =
   BasicSchema &
     WingletNullableArraySchema<Options, JSONSchemaChildren<Options>> & {
       options?: {
-        /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array (default: false) */
+        /** Remove the trailing run of empty items (`null`, `undefined`, `''`, `[]`, `{}`) from the array's normalized value (parent propagation, root validation, external emission); the shallow rule ignores the item schema, so a trailing `null` is removed even when the item schema accepts null, and it reads each item's output, so a terminal array keeps `{ name: '' }` while a branch object item whose fields are all omitted outputs `{}` and is removed; child nodes keep the raw array (default: false) */
         omitTrailingEmpty?: boolean;
         /** Build the node as one input over the whole value (`true`) or as child nodes (`false`); overrides the renderer's choice (default: terminal when `presentation.FieldInput` is a component, branch otherwise) */
         terminal?: boolean;

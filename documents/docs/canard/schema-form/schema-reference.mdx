@@ -40,7 +40,7 @@ The same control value checks apply inside fields entries and fragments, within 
 
 `presentation.required` sets the display indicator shared by renderer and input; see [the required override contract](./api-reference#composition). It is independent of `presentation.controlled`.
 
-`options.trim` trims the stored string on blur, not on every keystroke. `omitTrailingEmpty` removes trailing `undefined` entries from normalized array output without deleting their raw child nodes. `omitEmpty` defaults to true; `trim` and `omitTrailingEmpty` default to false. See the [array output example](./examples/array-output-filters).
+`options.trim` trims the stored string on blur, not on every keystroke. `omitTrailingEmpty` removes the trailing run of empty items (`null`, `undefined`, `''`, `[]`, `{}`) from normalized array output without deleting their raw child nodes. The rule ignores the item schema, so a trailing `null` is removed even when items accept null. The check is shallow on each item's output: `{ name: '' }` stays in a terminal array, but a branch item whose fields are all omitted outputs `{}` and is removed. `omitEmpty` defaults to true; `trim` and `omitTrailingEmpty` default to false. See the [array output example](./examples/array-output-filters).
 
 `options.propertyOrder` orders emitted object keys, not fields on screen: listed keys first, then remaining declared keys, then arriving additional keys. It creates no absent values, and integer-like keys still follow JavaScript's key ordering.
 
@@ -54,7 +54,7 @@ Among static ungated declarations, later `options.terminal` values win; a `$ref`
 
 ## Nullable, empty, and misfit values {#value-states}
 
-`nullable: true` is a supported spelling for adding `'null'` to `type`; that spelling alone does not warn. Explicit `null`, `undefined`, and empty containers are different states. `null`, `false`, and `0` are values; `undefined` clears a field, and an empty string also clears it under default `omitEmpty`. `null` is not removed by `omitEmpty` or array output filters.
+`nullable: true` is a supported spelling for adding `'null'` to `type`; that spelling alone does not warn. Explicit `null`, `undefined`, and empty containers are different states. `null`, `false`, and `0` are values; `undefined` clears a field, and an empty string also clears it under default `omitEmpty`. `omitEmpty` does not remove `null`; `omitTrailingEmpty` removes it only from the end of an array.
 
 For a nullable object or array holding null:
 
