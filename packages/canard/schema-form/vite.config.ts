@@ -1,30 +1,21 @@
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
+import { playwright } from '@vitest/browser-playwright';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'path';
 import { defineConfig } from 'vitest/config';
 
+import { bundleTests, renderTests } from './vitest.projectFiles';
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-/** DOM-backed product tests run in the render project. */
-const renderTests = [
-  'src/**/*.test.tsx',
-  'src/**/helpers/virtualization/VirtualizationManager/__tests__/VirtualizationManager.test.ts',
-];
-
-/** Shadow setup contracts and stored full-visitation histories run in verification projects. */
+/** Shadow setup contracts and stored full-visitation histories run only in the vitest.verify.config.ts projects. */
 const verifyOnlyTests = [
   'src/core/engine/settle/__tests__/settle.derive-shadow-setup.test.ts',
   'src/core/engine/settle/__tests__/settle.gate-selection-preparation-invariants.test.ts',
   'src/core/engine/settle/__tests__/settle.gate-table-characterization.test.ts',
   'src/core/engine/settle/__tests__/settle.gate-table-key-order.test.ts',
   'src/core/engine/settle/__tests__/settle.gate-table-wheel-characterization.test.ts',
-];
-
-/** Built-bundle tests run only in the production project after a build. */
-const bundleTests = [
-  'src/core/surface/__tests__/detached.production.test.ts',
-  'src/__tests__/e2e/exact-focus.production.test.ts',
 ];
 
 const resolvePackage = createRequire(import.meta.url).resolve;
@@ -55,7 +46,6 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    project: ['unit', 'render', 'react18', 'production', 'storybook'],
     projects: [
       {
         extends: true,
@@ -126,16 +116,15 @@ export default defineConfig({
                 /react18/,
                 /react-dom18/,
                 /@testing-library\/(react|dom|user-event)/,
+                // Native imports of optimized chunks drop the ?v= query and load a second React.
+                /\/node_modules\/\.vite\/vitest\//,
               ],
             },
-          },
-          testTransformMode: {
-            web: [`${__dirname}/src/**/*.ts`, `${__dirname}/src/**/*.tsx`],
           },
           // Bundle CommonJS requires through the aliases, including testing-library's React imports.
           deps: {
             optimizer: {
-              web: {
+              client: {
                 enabled: true,
                 include: [
                   'react18',
@@ -155,41 +144,10 @@ export default defineConfig({
       },
       {
         extends: true,
-        test: {
-          name: 'verify-unit',
-          // Independent slot replay doubles work in the complete BF fixture corpus.
-          testTimeout: 30000,
-          setupFiles: [
-            'src/core/engine/settle/__tests__/setupDeriveShadowEvaluation.ts',
-          ],
-          environment: 'node',
-          include: ['src/**/*.{spec,test}.ts'],
-          exclude: [...renderTests, ...bundleTests],
-        },
-      },
-      {
-        extends: true,
-        test: {
-          name: 'verify-render',
-          testTimeout: 30000,
-          setupFiles: [
-            'src/core/engine/settle/__tests__/setupDeriveShadowEvaluation.ts',
-          ],
-          environment: 'jsdom',
-          include: renderTests,
-          provide: { reactMajor: '19' },
-        },
-      },
-      {
-        extends: true,
         esbuild: { jsxDev: false },
         test: {
           name: 'production',
           environment: 'jsdom',
-          testTransformMode: {
-            ssr: [`${__dirname}/src/**/*.ts`],
-            web: [`${__dirname}/src/**/*.tsx`],
-          },
           include: [
             'src/core/engine/blueprint/**/__tests__/*.owned-inline*.test.{ts,tsx}',
             ...bundleTests,
@@ -207,7 +165,7 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            provider: 'playwright',
+            provider: playwright(),
             instances: [{ browser: 'chromium' }],
           },
           setupFiles: ['.storybook/vitest.setup.ts'],

@@ -78,7 +78,6 @@ test("root inputs and selector changes are global while unrelated tooling is ign
     "tsconfig.base.json",
     "eslint.config.mjs",
     "eslint/rules.js",
-    "vitest.workspace.ts",
     ".yarn/releases/x.cjs",
     ".github/workflows/ci.yml",
     "scripts/ci/helpers/x.mjs",

@@ -15,7 +15,6 @@ export function classifyChangedFile(file, workspaces) {
     ".nvmrc",
     "tsconfig.base.json",
     "eslint.config.mjs",
-    "vitest.workspace.ts",
     ".github/workflows/ci.yml",
   ];
   if (

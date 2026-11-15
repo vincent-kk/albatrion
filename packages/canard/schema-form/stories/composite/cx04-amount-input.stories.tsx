@@ -13,7 +13,7 @@ import { submitButtonLayout } from './utils/submitButtonLayout';
  * Load Vitest's runtime-owned CDP context after the composite play's Browser Mode guard.
  * @returns The Browser Mode context used for native number-input drafts.
  */
-const browserContext = () => import('@vitest/browser/context');
+const browserContext = () => import('vitest/browser');
 
 export default { title: 'Composite/CX04AmountInput', component: FeatureStory, tags: ['autodocs'] } satisfies Meta<typeof FeatureStory>;
 type Story = StoryObj<typeof FeatureStory>;

@@ -1,3 +1,4 @@
+import type { Plugin } from 'esbuild';
 import { createRequire } from 'node:module';
 import { defineConfig, mergeConfig } from 'vitest/config';
 
@@ -26,6 +27,32 @@ const react18Aliases = [
           .replace(/^react$/, 'react18'),
 }));
 
+/** Routes CommonJS React requires inside bundled dependencies to the React 18 aliases. */
+const react18CommonJsAliases: Plugin = {
+  name: 'react18-commonjs-aliases',
+  setup(build) {
+    build.onResolve({ filter: /^react(?:-dom)?(?:\/.*)?$/ }, ({ path }) => ({
+      path: resolvePackage(
+        path
+          .replace(/^react-dom/, 'react-dom18')
+          .replace(/^react\//, 'react18/')
+          .replace(/^react$/, 'react18'),
+      ),
+    }));
+  },
+};
+
+/** Dependencies bundled for both jsdom (client) and `@vitest-environment node` (ssr) test files. */
+const react18Dependencies = [
+  'react18',
+  'react-dom18',
+  'react-dom18/client',
+  'react-dom18/server.browser',
+  'react-dom18/test-utils',
+  '@testing-library/react',
+  '@testing-library/dom',
+];
+
 // Loaded by test:react18; dependency bundling routes CommonJS React imports too.
 export default mergeConfig(
   config,
@@ -35,25 +62,11 @@ export default mergeConfig(
       dedupe: ['react', 'react-dom'],
     },
     optimizeDeps: {
-      esbuildOptions: {
-        plugins: [
-          {
-            name: 'react18-commonjs-aliases',
-            setup(build) {
-              build.onResolve(
-                { filter: /^react(?:-dom)?(?:\/.*)?$/ },
-                ({ path }) => ({
-                  path: resolvePackage(
-                    path
-                      .replace(/^react-dom/, 'react-dom18')
-                      .replace(/^react\//, 'react18/')
-                      .replace(/^react$/, 'react18'),
-                  ),
-                }),
-              );
-            },
-          },
-        ],
+      esbuildOptions: { plugins: [react18CommonJsAliases] },
+    },
+    ssr: {
+      optimizeDeps: {
+        esbuildOptions: { plugins: [react18CommonJsAliases] },
       },
     },
     test: {
@@ -65,26 +78,15 @@ export default mergeConfig(
             /react-dom18/,
             /@testing-library\/(react|dom)/,
             /@lerx\/promise-modal/,
+            // Native imports of optimized chunks drop the ?v= query and load a second React.
+            /\/node_modules\/\.vite\/vitest\//,
           ],
         },
       },
-      testTransformMode: {
-        web: [`${__dirname}/src/**/*.ts`, `${__dirname}/src/**/*.tsx`],
-      },
       deps: {
         optimizer: {
-          web: {
-            enabled: true,
-            include: [
-              'react18',
-              'react-dom18',
-              'react-dom18/client',
-              'react-dom18/server.browser',
-              'react-dom18/test-utils',
-              '@testing-library/react',
-              '@testing-library/dom',
-            ],
-          },
+          client: { enabled: true, include: react18Dependencies },
+          ssr: { enabled: true, include: react18Dependencies },
         },
       },
     },

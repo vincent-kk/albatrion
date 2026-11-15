@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
@@ -25,9 +26,18 @@ type CollectSchemaCapabilities = (
   ...rest: unknown[]
 ) => void;
 
+/**
+ * Resolves a path relative to this file into an absolute file path.
+ * Vitest resolves a relative dynamic import against the file's root-relative URL,
+ * where segments above the package root clamp to `/`, so a sibling workspace is
+ * imported by absolute path instead.
+ */
+const resolveSibling = (relative: string) =>
+  fileURLToPath(new URL(relative, import.meta.url));
 /** Runtime fixture loading keeps BF sources outside this package's TypeScript root. */
-const fixturePath =
-  '../../../../../../aileron/benchmark-form/fixtures/equivalent/index.ts';
+const fixturePath = resolveSibling(
+  '../../../../../../aileron/benchmark-form/fixtures/equivalent/index.ts',
+);
 const { equivalentFixtures } = (await import(fixturePath)) as {
   equivalentFixtures: readonly {
     name: string;
@@ -36,8 +46,9 @@ const { equivalentFixtures } = (await import(fixturePath)) as {
   }[];
 };
 /** The fixture's own interpreter covers set, push and remove operations. */
-const interactionPath =
-  '../../../../../../aileron/benchmark-form/fixtures/equivalent/utils/applyInteraction.ts';
+const interactionPath = resolveSibling(
+  '../../../../../../aileron/benchmark-form/fixtures/equivalent/utils/applyInteraction.ts',
+);
 const { applyInteraction } = await import(interactionPath);
 
 const generic = vi.hoisted(() => ({ enabled: false }));

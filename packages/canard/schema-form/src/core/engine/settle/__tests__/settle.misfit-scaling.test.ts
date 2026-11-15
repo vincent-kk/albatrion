@@ -145,18 +145,18 @@ describe('49C-01 SETTLE-017 proportional settlement work', () => {
     root.resetSubtree();
     const iterate = Array.prototype[Symbol.iterator];
     let copiedElements = 0;
-    const spy = vi
-      .spyOn(Array.prototype, Symbol.iterator)
-      .mockImplementation(function (this: unknown[]) {
-        if (
-          this.length === count &&
-          this[0] !== null &&
-          typeof this[0] === 'object' &&
-          'tags' in this[0]
-        )
-          copiedElements += this.length;
-        return Reflect.apply(iterate, this, []) as ArrayIterator<unknown>;
-      });
+    // A Vitest spy iterates arrays while recording a call, so spying on the
+    // array iterator recurses; the iterator is replaced and restored directly.
+    Array.prototype[Symbol.iterator] = function (this: unknown[]) {
+      if (
+        this.length === count &&
+        this[0] !== null &&
+        typeof this[0] === 'object' &&
+        'tags' in this[0]
+      )
+        copiedElements += this.length;
+      return Reflect.apply(iterate, this, []) as ArrayIterator<unknown>;
+    };
     try {
       root.setValue(
         Array.from({ length: count }, () => ({ tags: ['a', 'b'] })),
@@ -167,7 +167,7 @@ describe('49C-01 SETTLE-017 proportional settlement work', () => {
         Array.from({ length: count }, () => ({ tags: ['a', undefined] })),
       );
     } finally {
-      spy.mockRestore();
+      Array.prototype[Symbol.iterator] = iterate;
     }
   });
 

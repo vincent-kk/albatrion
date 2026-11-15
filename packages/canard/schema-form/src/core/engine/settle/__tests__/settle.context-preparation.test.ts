@@ -112,6 +112,8 @@ it('allocates no reused scratch containers and clears only populated work lists'
     expect(scratch.dirtyChildrenByParent.size).toBe(0);
     expect(scratch.changedSource.size).toBe(0);
     expect(scratch.isInUse).toBe(false);
+    // vi.spyOn on a method that is already spied returns that spy with its call history.
+    vi.restoreAllMocks();
   }
 });
 

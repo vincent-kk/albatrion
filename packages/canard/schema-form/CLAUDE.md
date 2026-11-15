@@ -121,7 +121,7 @@ Applies the root `Module Contract Principles` to this package.
 Vitest uses five projects: `unit` runs TypeScript core tests in Node, `render`
 runs React tests and DOM-dependent TypeScript tests in jsdom, and `storybook`
 runs portable stories through addon-vitest in headless Chromium, `react18` repeats the render project on React 18, and `production` checks the built bundles. Run `yarn test --run --project <name>` to select a project.
-The dedicated `verify-unit` and `verify-render` bundle runs shadow wheel, verify table, and derive shadow checks via `yarn workspace @canard/schema-form test:verify --run`; default `unit`, `render`, and `react18` projects exercise the shipped skip/table configuration with derive shadow disabled.
+The dedicated `verify-unit` and `verify-render` projects live in `vitest.verify.config.ts`, so `yarn test --project verify-unit` matches nothing; they run shadow wheel, verify table, and derive shadow checks via `yarn workspace @canard/schema-form test:verify --run`; default `unit`, `render`, and `react18` projects exercise the shipped skip/table configuration with derive shadow disabled.
 
 - `src/__tests__/renderForm.tsx` remains the legacy Form regression harness.
   It observes both DOM (`data-path`, input values, deferred placeholders) and
