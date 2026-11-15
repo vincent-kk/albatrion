@@ -14,7 +14,7 @@ const EDITED_STATE_PATCH = { [FieldNodeState.Edited]: true };
 
 /**
  * Relay one evaluated input through an overridden callback and its synchronous batch.
- * Record the node's last emission in runtime.inputRelays for the first settlement;
+ * Record the node's last relayed output value in runtime.inputRelays for the first settlement;
  * clear external errors and mark the surviving input edited in the same batch.
  * @param node - Input occurrence whose unchanged committed value may omit Refresh
  * @param input - Value or updater evaluated against the call-site pending value
@@ -31,14 +31,14 @@ export const dispatchRelayInput = <
   option: Option,
   relay: Fn<[value: unknown, option: Option]>,
 ): void => {
-  if (node.disposed || node.rootNode.disposed) return;
+  if (node.isDisposed || node.rootNode.isDisposed) return;
   const marking = isBatchMarking(node);
   const runtime = node.rootNode.runtime;
   try {
     dispatchBatch(node, () => {
       const value =
         typeof input === 'function'
-          ? input(marking ? readBatchValue(node) : node.local)
+          ? input(marking ? readBatchValue(node) : node.storedValue)
           : input;
       const relays = (runtime.inputRelays ??= []);
       const record = { node, path: node.path, value };
@@ -46,7 +46,7 @@ export const dispatchRelayInput = <
       if (index === -1) relays.push(record);
       else relays[index] = record;
       relay(value, option);
-      if (node.disposed || node.rootNode.disposed) return;
+      if (node.isDisposed || node.rootNode.isDisposed) return;
       dispatchClearExternalErrors(node);
       dispatchSetState(node, EDITED_STATE_PATCH);
     });

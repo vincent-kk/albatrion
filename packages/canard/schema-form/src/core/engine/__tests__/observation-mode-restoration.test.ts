@@ -8,7 +8,7 @@ it('restores every mode changed by a generated observation fixture, including ex
   const previous = [
     engineModes.gateSelection,
     engineModes.gateWheel,
-    engineModes.deriveShadow,
+    engineModes.isDeriveShadowEnabled,
   ];
   const create = new Function(
     'engineModes',
@@ -20,7 +20,10 @@ it('restores every mode changed by a generated observation fixture, including ex
   try {
     expect(fixture.__readGateTableVerification().mode).toBe('verify');
     engineModes.setMode('gateWheel', 'record');
-    engineModes.setMode('deriveShadow', !engineModes.deriveShadow);
+    engineModes.setMode(
+      'isDeriveShadowEnabled',
+      !engineModes.isDeriveShadowEnabled,
+    );
     throw new Error('scene failed');
   } catch (error) {
     expect((error as Error).message).toBe('scene failed');
@@ -30,6 +33,6 @@ it('restores every mode changed by a generated observation fixture, including ex
   expect([
     engineModes.gateSelection,
     engineModes.gateWheel,
-    engineModes.deriveShadow,
+    engineModes.isDeriveShadowEnabled,
   ]).toEqual(previous);
 });

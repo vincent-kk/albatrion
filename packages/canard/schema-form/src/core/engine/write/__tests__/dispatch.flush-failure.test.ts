@@ -60,7 +60,7 @@ const ownKeysFailure = (error: Error) =>
 /** Shared postconditions distinguish a caught throw from a completed chain. */
 const expectFailedFlush = (tree: ReturnType<typeof setup>, error: unknown) => {
   expect(tree.runtime.entryDepth).toBe(0);
-  expect(tree.root.local).toEqual({ a: { b: 'old' }, other: 'old' });
+  expect(tree.root.storedValue).toEqual({ a: { b: 'old' }, other: 'old' });
   expect(tree.runtime.batchWrites).toBeUndefined();
   expect(tree.runtime.inputRelays).toBeUndefined();
   expect(tree.report).toHaveBeenCalledTimes(1);

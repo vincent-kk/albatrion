@@ -1,7 +1,7 @@
 import type { Optional } from '@aileron/declare';
 
 import { getItemEntries } from '../../../blueprint';
-import type { BlueprintNode } from '../../../blueprint';
+import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
@@ -12,15 +12,18 @@ import { getSlotPathNames } from './getSlotPathNames';
 import { getSlotSource } from './getSlotSource';
 import { markSlotChange } from './markSlotChange';
 
+/** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
+
 /**
  * Write an absent address through its nearest live slot owner.
  * @param root - Current tree, whose retained sources remain immutable
  * @param path - Current write address
  * @param target - Exact kind selected for the addressed occurrence
  * @param input - Caller input interpreted only at the target
- * @param whole - Whether the target's missing descendants are replaced
+ * @param isWhole - Whether the target's missing descendants are replaced
  * @param context - Optional automatic-write rollback scope
- * @param automatic - Whether projected child writes preserve wrong-kind ancestor source
+ * @param isAutomatic - Whether projected child writes preserve wrong-kind ancestor source
  * @param preserveCandidates - Structural replay keeps other kinds at the same address
  * @returns Whether a terminal descendant has a projected value
  */
@@ -29,9 +32,9 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
   path: string,
   target: BlueprintNode,
   input: unknown,
-  whole: boolean,
+  isWhole: boolean,
   context?: SettlementContext<Self>,
-  automatic = false,
+  isAutomatic = false,
   preserveCandidates = false,
 ): boolean => {
   const names = getSlotPathNames(root.runtime, path);
@@ -54,11 +57,11 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
     );
     const entry = requested && getSlotBinding(host, requested);
     if (!entry) return false;
-    const live = host.structure?.[name];
+    const live = host.childrenByName?.[name];
     if (
       depth < names.length - 1 &&
       live?.blueprintNode === entry.node &&
-      !live.detached
+      !live.isDetached
     ) {
       host = live;
       continue;
@@ -78,10 +81,10 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
           input,
           instance,
           previous,
-          whole,
-          automatic,
+          isWhole,
+          isAutomatic,
         );
-        wrote = result.wrote;
+        wrote = result.hasWritten;
         return result.overlay;
       }
       const name = names[index];
@@ -112,20 +115,19 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
           other.name !== name ||
           getBlueprintNodeIdentity(other.node) ===
             getBlueprintNodeIdentity(binding.node) ||
-          instance?.structure?.[name]?.blueprintNode === other.node
+          instance?.childrenByName?.[name]?.blueprintNode === other.node
         )
           continue;
         const prior = getSlotSource(instance, other, previous);
         if (prior.instance || prior.overlay)
-          children.set(other, { replace: true });
+          children.set(other, { isWhole: true });
       }
       return { ...previous, children };
     };
     markSlotChange(host, entry, undefined, context);
-    (host.inactiveSlotOverlays ??= new Map()).set(
-      entry,
-      patch(entry.node, instance, previous, depth + 1),
-    );
+    const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
+      new Map());
+    overlays.set(entry, patch(entry.node, instance, previous, depth + 1));
     for (const other of entries) {
       if (
         preserveCandidates ||

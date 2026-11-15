@@ -51,7 +51,7 @@ export const readReferenceOnlySchemaPaths = (
       }
     }
     if (seen.get(left)?.has(right)) continue;
-    const seenRight = seen.get(left) ?? new Set<object>();
+    const seenRight = seen.get(left) ?? new Set();
     seenRight.add(right);
     seen.set(left, seenRight);
     const leftKeys = Object.keys(left);

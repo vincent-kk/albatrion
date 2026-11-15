@@ -8,7 +8,7 @@ import { isArray } from '@winglet/common-utils/filter';
 export const normalizeSelectionObservation = (value: unknown): unknown => {
   if (value === undefined) return { scalar: 'undefined' };
   if (typeof value === 'number' && !Number.isFinite(value))
-    return { scalar: String(value) };
+    return { scalar: '' + value };
   if (Object.is(value, -0)) return { scalar: '-0' };
   if (typeof value === 'function') return { scalar: 'function' };
   if (value === null || typeof value !== 'object') return value;

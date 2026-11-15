@@ -27,7 +27,7 @@ export const prepareArrayPop = <Self extends FieldNodeRecord<Self>>(
     !admitsStaticArrayTail(node)
   )
     return undefined;
-  const last = node.structure?.[String(index)];
+  const last = node.childrenByName?.['' + index];
   if (!last || node.children?.[index] !== last) return undefined;
   return {
     host: node,
@@ -37,7 +37,7 @@ export const prepareArrayPop = <Self extends FieldNodeRecord<Self>>(
       slots: EMPTY_ARRAY,
       result: { source: 'removed', index },
     },
-    local: node.local,
-    valid: true,
+    value: node.storedValue,
+    isValid: true,
   };
 };

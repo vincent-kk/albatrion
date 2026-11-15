@@ -173,7 +173,7 @@ it('keeps fallback dependency order, eager syntax errors and proof descriptors',
     ]);
     for (const entry of result.expressions)
       expect(
-        Object.getOwnPropertyDescriptor(entry, 'completeReads'),
+        Object.getOwnPropertyDescriptor(entry, 'hasCompleteReads'),
       ).toMatchObject({ value: true, enumerable: false, writable: false });
     expect(() =>
       blueprint({

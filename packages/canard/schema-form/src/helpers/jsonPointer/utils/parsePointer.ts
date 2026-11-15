@@ -6,17 +6,17 @@ import { parsePointerSegments } from './parsePointerSegments';
 /** Parsed address with its absoluteness. */
 export interface ParsedPointer {
   /** Whether the address was absolute (`#`, `/…` or `#/…`, or an array starting with `#`). */
-  readonly absolute: boolean;
+  readonly isAbsolute: boolean;
   /** Decoded names and operator symbols; callers must not mutate the array. */
   readonly segments: readonly PointerSegment[];
 }
 
 const RELATIVE_EMPTY: ParsedPointer = Object.freeze({
-  absolute: false,
+  isAbsolute: false,
   segments: parsePointerSegments($.Root),
 });
 const ABSOLUTE_EMPTY: ParsedPointer = Object.freeze({
-  absolute: true,
+  isAbsolute: true,
   segments: parsePointerSegments($.Fragment),
 });
 
@@ -31,7 +31,7 @@ export const parsePointer = (
   if (pointer === $.Root) return RELATIVE_EMPTY;
   if (pointer === $.Fragment) return ABSOLUTE_EMPTY;
   return {
-    absolute: isAbsolutePointer(pointer),
+    isAbsolute: isAbsolutePointer(pointer),
     segments: parsePointerSegments(pointer),
   };
 };

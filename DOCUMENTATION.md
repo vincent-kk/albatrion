@@ -4,7 +4,7 @@ This file is the only home of the principles for the documents this repository w
 
 ## Scope
 
-The principles cover every document this repository authors for a person or an agent: module documents (`INTENT.md`, `DETAIL.md`), `CLAUDE.md` and `AGENTS.md`, the repository skills and commands under `.claude/`, packaged agent documents (`packages/**/docs/agents/**`), package documentation and the documentation site. Change records (commit messages, pull request descriptions, changesets, the `CHANGELOG.md` files generated from them, and release notes) record history by design and are outside them; changesets follow the change records section below. The plugin-managed rule files under `.claude/rules/` and their blocks in `AGENTS.md` are outside this file. Under the precedence stated in `CLAUDE.md`, this file outranks `.claude/rules/`.
+The principles cover every document this repository authors for a person or an agent: module documents (`INTENT.md`, `DETAIL.md`), `CLAUDE.md`, `AGENTS.md` and `NAMING_CONVENTIONS.md`, the repository skills and commands under `.claude/`, packaged agent documents (`packages/**/docs/agents/**`), package documentation and the documentation site. Change records (commit messages, pull request descriptions, changesets, the `CHANGELOG.md` files generated from them, and release notes) record history by design and are outside them; changesets follow the change records section below. The plugin-managed rule files under `.claude/rules/` and their blocks in `AGENTS.md` are outside this file. Under the precedence stated in `CLAUDE.md`, this file outranks `.claude/rules/`.
 
 ## Principles
 
@@ -18,7 +18,7 @@ The principles cover every document this repository authors for a person or an a
 
 ## Language
 
-Each document has one language: the language its explanation is written in. `INTENT.md` and `DETAIL.md` are written in Korean. `CLAUDE.md`, `AGENTS.md`, this file, everything under `.claude/`, packaged agent documents and code comments are written in English. A `README`, a site page and any other document take the language of their file name or tree (`README-ko_kr.md`, `docs/ko` and `documents/i18n/ko` are Korean).
+Each document has one language: the language its explanation is written in. `INTENT.md` and `DETAIL.md` are written in Korean. `CLAUDE.md`, `AGENTS.md`, `NAMING_CONVENTIONS.md`, this file, everything under `.claude/`, packaged agent documents and code comments are written in English. A `README`, a site page and any other document take the language of their file name or tree (`README-ko_kr.md`, `docs/ko` and `documents/i18n/ko` are Korean).
 
 The rule binds prose, not every word. Headings, code and the comments inside it, identifiers, commands, paths, literal values, established technical terms and references to other documents or standards may stay in English in a document of any language, as they commonly do; translating a name breaks search and the link to the thing it names. A document breaks the rule only when its explanation switches language: a sentence, list item or table cell of prose written in a language other than its document's, which makes the reader change languages in the middle of one explanation.
 

@@ -12,6 +12,9 @@ import { getInactiveValueContext } from './getInactiveValueContext';
 import { hasExplicitInactiveValue } from './hasExplicitInactiveValue';
 import { readInactiveValueDeclaration } from './readInactiveValueDeclaration';
 
+/** Annotates the lazily created `inactiveValueOverrides`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveValueOverrides<Self> = Map<Self, unknown>;
+
 /**
  * Resolve one normal retained exit before detaching its public lifetime.
  * @param node - Configured occurrence in the departing owned subtree
@@ -24,19 +27,20 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
   exit: Self,
   context: SettlementContext<Self>,
 ): void => {
-  if (context.entered.has(node) || isReplacedLivePath(context, exit.path))
+  if (context.enteredNodes.has(node) || isReplacedLivePath(context, exit.path))
     return;
   let outer = exit;
   for (
     let ancestor = exit.parent;
-    ancestor?.parent && ancestor.parent.structure?.[ancestor.name] !== ancestor;
+    ancestor?.parent &&
+    ancestor.parent.childrenByName?.[ancestor.name] !== ancestor;
     ancestor = ancestor.parent
   )
     outer = ancestor;
   if (hasExplicitInactiveValue(node, outer, context)) return;
   if (
     outer !== exit &&
-    (context.entered.has(outer) || context.throwingGateExits?.has(outer))
+    (context.enteredNodes.has(outer) || context.throwingGateExits?.has(outer))
   )
     return;
   const lineage: Self[] = [];
@@ -52,7 +56,7 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
   if (clear) return;
   const inputs = getInactiveValueContext(node, context);
   const value = getLoadValue(
-    context.previousEmit,
+    context.previousOutputValue,
     inputs.dataPath,
     getSlotPathNames(node.runtime, inputs.dataPath),
   );
@@ -71,7 +75,7 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
         context,
         ordinal++,
       );
-      failed ||= resolved.failed;
+      failed ||= resolved.hasFailed;
       if (resolved.value !== undefined) result = resolved.value;
     }
   if (failed) return;
@@ -84,9 +88,12 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
       context,
       ordinal,
     );
-    if (resolved.failed) return;
+    if (resolved.hasFailed) return;
     result = resolved.value;
   }
-  if (result !== undefined)
-    (context.inactiveValueOverrides ??= new Map()).set(node, result);
+  if (result !== undefined) {
+    const overrides: InactiveValueOverrides<Self> =
+      (context.inactiveValueOverrides ??= new Map());
+    overrides.set(node, result);
+  }
 };

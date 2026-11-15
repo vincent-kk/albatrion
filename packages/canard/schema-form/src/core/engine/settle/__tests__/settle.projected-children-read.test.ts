@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { createPreparedSelectionStructure } from '../utils/compute/childSelection/utils/createPreparedSelectionStructure';
+import { createPreparedChildrenByName } from '../utils/compute/childSelection/utils/createPreparedChildrenByName';
 import { readProjectedValue } from '../utils/gates/readProjectedValue';
 import { createGateReadFixture } from './fixtures/createGateReadFixture';
 
-// filid:contract settle-projected-structure-read
-describe('projected structure reads', () => {
+// filid:contract settle-projected-children-read
+describe('projected childrenByName reads', () => {
   it.each(['dictionary', 'prepared-view'])(
     'reads a %s without allocating own-key descriptors',
     (shape) => {
@@ -15,18 +15,18 @@ describe('projected structure reads', () => {
       );
       let descriptors = 0;
       try {
-        const baseline = root.structure!;
+        const baseline = root.childrenByName!;
         expect(Object.getPrototypeOf(baseline)).toBe(null);
         const target =
           shape === 'dictionary'
             ? baseline
-            : createPreparedSelectionStructure(
+            : createPreparedChildrenByName(
                 baseline,
                 baseline,
                 [],
                 Object.create(baseline),
               );
-        root.structure = new Proxy(target, {
+        root.childrenByName = new Proxy(target, {
           getOwnPropertyDescriptor(target, name) {
             descriptors++;
             return Reflect.getOwnPropertyDescriptor(target, name);
@@ -58,15 +58,15 @@ describe('projected structure reads', () => {
     },
   );
 
-  it('rejects an inherited node on an ordinary-prototype structure', () => {
+  it('rejects an inherited node on an ordinary-prototype childrenByName map', () => {
     const { root, context, release } = createGateReadFixture(
       { type: 'object', properties: { field: { type: 'string' } } },
       { field: 'kept' },
     );
     try {
-      const ordinary = { ...root.structure };
+      const ordinary = { ...root.childrenByName };
       Object.setPrototypeOf(ordinary, { inherited: ordinary.field });
-      root.structure = ordinary;
+      root.childrenByName = ordinary;
       expect(readProjectedValue(context, '/inherited')).toBeUndefined();
       expect(readProjectedValue(context, '/field')).toBe('kept');
     } finally {
@@ -83,7 +83,7 @@ describe('projected structure reads', () => {
     );
     let descriptors = 0;
     try {
-      root.structure = new Proxy(root.structure!, {
+      root.childrenByName = new Proxy(root.childrenByName!, {
         getOwnPropertyDescriptor(target, name) {
           descriptors++;
           return Reflect.getOwnPropertyDescriptor(target, name);

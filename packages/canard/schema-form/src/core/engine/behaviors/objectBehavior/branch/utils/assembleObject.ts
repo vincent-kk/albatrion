@@ -17,7 +17,7 @@ export const assembleObject: Behavior['assemble'] = (
   recalculated,
   hint,
 ) => {
-  const previous = node.local;
+  const previous = node.storedValue;
   const stable = node.runtime.objectShapes?.get(node);
   if (
     recalculated &&
@@ -37,26 +37,26 @@ export const assembleObject: Behavior['assemble'] = (
         typeof child !== 'object' ||
         !('name' in child) ||
         typeof child.name !== 'string' ||
-        !('emit' in child)
+        !('storedOutputValue' in child)
       ) {
         sameKeys = false;
         break;
       }
       const oldHasKey = hasOwnProperty(previous, child.name);
-      if ((child.emit === undefined) === oldHasKey) {
+      if ((child.storedOutputValue === undefined) === oldHasKey) {
         sameKeys = false;
         break;
       }
       if (
         oldHasKey &&
-        !Object.is(child.emit, Reflect.get(previous, child.name))
+        !Object.is(child.storedOutputValue, Reflect.get(previous, child.name))
       ) {
         if (!patch) patch = copyObjectValue(previous, stable.names.length);
-        writeObjectKey(patch, child.name, child.emit);
+        writeObjectKey(patch, child.name, child.storedOutputValue);
       }
     }
     if (sameKeys) {
-      hint.incremental = true;
+      hint.isIncremental = true;
       if (patch) objectKeyCounts.set(patch, stable.names.length);
       return patch ?? previous;
     }
@@ -87,22 +87,22 @@ export const assembleObject: Behavior['assemble'] = (
           typeof child !== 'object' ||
           !('name' in child) ||
           typeof child.name !== 'string' ||
-          !('emit' in child)
+          !('storedOutputValue' in child)
         ) {
           sameKeys = false;
           break;
         }
         const oldHasKey = hasOwnProperty(previous, child.name);
-        if ((child.emit === undefined) === oldHasKey) {
+        if ((child.storedOutputValue === undefined) === oldHasKey) {
           sameKeys = false;
           break;
         }
         if (
           oldHasKey &&
-          !Object.is(child.emit, Reflect.get(previous, child.name))
+          !Object.is(child.storedOutputValue, Reflect.get(previous, child.name))
         ) {
           if (!patch) patch = copyObjectValue(previous, oldNames.length);
-          writeObjectKey(patch, child.name, child.emit);
+          writeObjectKey(patch, child.name, child.storedOutputValue);
         }
       }
     }
@@ -111,12 +111,12 @@ export const assembleObject: Behavior['assemble'] = (
       return patch ?? previous;
     }
   }
-  const preferred = getStaticChoices(node.schema).propertyOrder;
+  const propertyOrder = getStaticChoices(node.schema).propertyOrder;
   const entries = node.blueprintNode.childEntries;
   if (
     previous === undefined &&
     node.extras === undefined &&
-    preferred.length === 0 &&
+    propertyOrder.length === 0 &&
     entries.length === children.length
   ) {
     const result: Dictionary<unknown> = {};
@@ -129,15 +129,15 @@ export const assembleObject: Behavior['assemble'] = (
         typeof child !== 'object' ||
         !('name' in child) ||
         typeof child.name !== 'string' ||
-        !('emit' in child) ||
+        !('storedOutputValue' in child) ||
         entries[index].name !== child.name
       ) {
         aligned = false;
         break;
       }
-      if (child.emit !== undefined) {
+      if (child.storedOutputValue !== undefined) {
         names.push(child.name);
-        writeObjectKey(result, child.name, child.emit);
+        writeObjectKey(result, child.name, child.storedOutputValue);
       }
     }
     if (aligned) {
@@ -151,15 +151,15 @@ export const assembleObject: Behavior['assemble'] = (
       return result;
     }
   }
-  const extra = node.extras;
+  const rawExtras = node.extras;
   const extras =
-    extra !== null && typeof extra === 'object' && !isArray(extra)
-      ? extra
+    rawExtras !== null && typeof rawExtras === 'object' && !isArray(rawExtras)
+      ? rawExtras
       : undefined;
   if (
     previous === undefined &&
     children.length === 0 &&
-    preferred.length === 0 &&
+    propertyOrder.length === 0 &&
     entries.length === 0 &&
     extras
   ) {
@@ -183,12 +183,12 @@ export const assembleObject: Behavior['assemble'] = (
       typeof child === 'object' &&
       'name' in child &&
       typeof child.name === 'string' &&
-      'emit' in child
+      'storedOutputValue' in child
     )
-      childValues.set(child.name, child.emit);
+      childValues.set(child.name, child.storedOutputValue);
   const names: string[] = [];
   const seen = new Set<string>();
-  for (const name of preferred) {
+  for (const name of propertyOrder) {
     if (childValues.has(name)) {
       if (childValues.get(name) !== undefined && !seen.has(name)) {
         names.push(name);

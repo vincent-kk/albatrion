@@ -53,8 +53,10 @@ it('new node vocabulary follows input, reset, rebuild and validator changes', ()
     expect(validated.node.isDivergent).toBe(true);
     act(() => validated.setValue(9));
     expect(validated.node.isDivergent).toBe(false);
+    expect(validated.node.isNullable).toBe(false);
     for (const name of [
       'required',
+      'nullable',
       'active',
       'visible',
       'enabled',

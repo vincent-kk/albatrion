@@ -13,7 +13,7 @@ describe('round 19 untyped host inference', () => {
     ).toMatchObject({
       kind: 'object',
       schemaType: 'object',
-      nullable: true,
+      isNullable: true,
       strategy: 'branch',
     });
   });
@@ -132,7 +132,7 @@ describe('round 19 untyped host inference', () => {
       expect(blueprint(schema).root).toMatchObject({
         kind,
         schemaType,
-        nullable,
+        isNullable: nullable,
         strategy: 'terminal',
       });
     },

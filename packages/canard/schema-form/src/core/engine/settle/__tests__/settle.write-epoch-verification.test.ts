@@ -28,7 +28,7 @@ it('verify mode compares epoch members against an independent path shadow', () =
   const before = gateSelectionTable.assertions.S7 ?? 0;
   dispatchSetValue(root, { a: 'new' });
   expect(gateSelectionTable.assertions.S7).toBeGreaterThan(before);
-  expect(root.emit).toEqual({ a: 'new' });
+  expect(root.storedOutputValue).toEqual({ a: 'new' });
 });
 
 it('verify mode rejects a missing actual node generation before computation', () => {
@@ -42,7 +42,7 @@ it('verify mode rejects a missing actual node generation before computation', ()
   const register = registration.registerRecalculation;
   vi.spyOn(registration, 'registerRecalculation').mockImplementation(
     (context) => {
-      Reflect.set(root.structure!.a, 'writeEpoch', 0);
+      Reflect.set(root.childrenByName!.a, 'writeEpoch', 0);
       register(context);
     },
   );

@@ -72,7 +72,7 @@ export const createGatePredicate = (
   if (matches) {
     let allowsMemoization = gate.kind !== 'active';
     if (!allowsMemoization) {
-      let matches2 = expression?.completeReads === true;
+      let matches2 = expression?.hasCompleteReads === true;
       if (matches2) {
         let readsContext = false;
         for (let index = 0, count = reads.length; index < count; index++) {
@@ -94,7 +94,7 @@ export const createGatePredicate = (
     names,
     inputs,
     arguments: { values: new Array<unknown>(inputs.length), view: undefined },
-    memoizable: matches,
+    isMemoizable: matches,
     evaluate: (input) => {
       if (gate.kind === 'if') {
         guard ??= readFieldNodeGuard(runtime, gate);
@@ -104,7 +104,7 @@ export const createGatePredicate = (
           throw new TypeError(
             `Guard at ${gate.schemaPath} did not return a boolean`,
           );
-        return gate.negated ? !result : result;
+        return gate.isNegated ? !result : result;
       }
       if (gate.kind === 'discriminator') {
         const value =

@@ -124,7 +124,7 @@ export const compareArrayClear = (
             `bulk cleanup at step ${index}`,
           ).toBe(step.bulk ? 1 : 0);
         const current = select(root);
-        for (const node of former) if (node.detached) departed.add(node);
+        for (const node of former) if (node.isDetached) departed.add(node);
         const gates = observeGateRegistry(root, departed);
         expect(
           gates?.stale ?? [],

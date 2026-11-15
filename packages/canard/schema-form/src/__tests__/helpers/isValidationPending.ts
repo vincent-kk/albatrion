@@ -5,4 +5,4 @@ import { readFieldNodeRuntime } from './readFieldNodeRuntime';
  * @param node - Current or retired public occurrence.
  * @returns Whether its root owes a write verdict. */
 export const isValidationPending = (node: FieldNode): boolean =>
-  !!readFieldNodeRuntime(node).validationPending;
+  !!readFieldNodeRuntime(node).isValidationPending;

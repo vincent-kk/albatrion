@@ -109,7 +109,7 @@ describe('ERROR-004 ERROR-005 58C-01 all settle settlement failures', () => {
           exceededBudget: 'derive',
           iterations: 25,
         });
-        expect(root.emit).toMatchObject({ left: 0, right: 0 });
+        expect(root.storedOutputValue).toMatchObject({ left: 0, right: 0 });
       }
     },
   );

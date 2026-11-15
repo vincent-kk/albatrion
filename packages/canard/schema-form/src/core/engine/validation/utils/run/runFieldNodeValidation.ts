@@ -20,15 +20,15 @@ export const runFieldNodeValidation = async <
 >(
   node: Self,
 ): Promise<Nullable<readonly ValidationIssue[]>> => {
-  const selected = node.rootNode.runtime.validator;
-  const validator = isValidator(selected) ? selected : undefined;
+  const rawValidator = node.rootNode.runtime.validator;
+  const validator = isValidator(rawValidator) ? rawValidator : undefined;
   const authoredRoot = node.rootNode.runtime.blueprint.schema;
   if (validator) pinValidationRoot(validator, authoredRoot);
   try {
     const validate = assertValidationRootReady(node);
     if (!validate) return null;
     try {
-      const issues = (await validate(node.rootNode.emit)) ?? [];
+      const issues = (await validate(node.rootNode.storedOutputValue)) ?? [];
       let normalized: Optional<ValidationIssue[]>;
       for (let index = 0; index < issues.length; index++) {
         const issue = normalizeValidationIssue(issues[index]);

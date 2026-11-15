@@ -5,15 +5,15 @@ import { assembleObject } from '../assembleObject';
 
 it('assembles aligned first children without Map or Set allocation and preserves omitted/prototype keys', () => {
   const children = [
-    { name: 'first', emit: 1 },
-    { name: 'empty', emit: undefined },
-    { name: '__proto__', emit: 2 },
+    { name: 'first', storedOutputValue: 1 },
+    { name: 'empty', storedOutputValue: undefined },
+    { name: '__proto__', storedOutputValue: 2 },
   ];
   const node = {
     runtime: {},
-    local: undefined,
+    storedValue: undefined,
     extras: undefined,
-    schema: { schema: { type: 'object' }, typeConflict: false },
+    schema: { schema: { type: 'object' }, hasTypeConflict: false },
     blueprintNode: {
       childEntries: children.map((child) => ({ name: child.name })),
     },
@@ -47,25 +47,25 @@ it('assembles aligned first children without Map or Set allocation and preserves
   expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
   expect((result as Record<string, unknown>).__proto__).toBe(2);
   expect(objectKeyCounts.get(result as object)).toBe(2);
-  node.local = result;
+  node.storedValue = result;
   expect(assembleObject(node, children)).toBe(result);
 });
 
 it('keeps declaration/preferred/extras order when first-child order needs the generic assembly', () => {
   const children = [
-    { name: 'second', emit: 2 },
-    { name: 'first', emit: 1 },
+    { name: 'second', storedOutputValue: 2 },
+    { name: 'first', storedOutputValue: 1 },
   ];
   const node = {
     runtime: {},
-    local: undefined,
+    storedValue: undefined,
     extras: { extra: 3 },
     schema: {
       schema: {
         type: 'object',
         options: { propertyOrder: ['extra', 'second'] },
       },
-      typeConflict: false,
+      hasTypeConflict: false,
     },
     blueprintNode: { childEntries: [{ name: 'first' }, { name: 'second' }] },
   } as unknown as Parameters<typeof assembleObject>[0];
@@ -75,7 +75,7 @@ it('keeps declaration/preferred/extras order when first-child order needs the ge
     'first',
   ]);
   node.extras = undefined;
-  node.schema = { schema: { type: 'object' }, typeConflict: false };
+  node.schema = { schema: { type: 'object' }, hasTypeConflict: false };
   expect(Object.keys(assembleObject(node, children) as object)).toEqual([
     'first',
     'second',

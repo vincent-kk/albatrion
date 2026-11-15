@@ -67,7 +67,7 @@ export interface NodeSurface<
   readonly jsonSchema: BlueprintSchema;
   /** Whether the effective declaration requires this occurrence. */
   readonly isRequired: boolean;
-  readonly nullable: Nullable;
+  readonly isNullable: Nullable;
   readonly depth: number;
   readonly isRoot: boolean;
   readonly rootNode: FieldNode;

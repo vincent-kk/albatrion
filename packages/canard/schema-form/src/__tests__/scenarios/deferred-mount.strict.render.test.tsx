@@ -68,7 +68,7 @@ const flatSchema = (count: number): JSONSchema => ({
   type: 'object',
   properties: Object.fromEntries(
     Array.from({ length: count }, (_, index) => [
-      `f${String(index).padStart(2, '0')}`,
+      `f${('' + index).padStart(2, '0')}`,
       { type: 'string', default: `v${index}` },
     ]),
   ),

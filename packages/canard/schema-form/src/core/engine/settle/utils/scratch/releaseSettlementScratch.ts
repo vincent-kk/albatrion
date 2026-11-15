@@ -11,12 +11,12 @@ export const releaseSettlementScratch = <Self>(
 ): void => {
   if (scratch.dirtyPaths instanceof DirtyPathSet)
     scratch.dirtyPaths.restoreRegistrationObserver?.();
-  if (scratch.entered.size) scratch.entered.clear();
-  if (scratch.revived.size) scratch.revived.clear();
-  if (scratch.exited.size) scratch.exited.clear();
+  if (scratch.enteredNodes.size) scratch.enteredNodes.clear();
+  if (scratch.revivedNodes.size) scratch.revivedNodes.clear();
+  if (scratch.exitedNodes.size) scratch.exitedNodes.clear();
   if (scratch.pendingExits.size) scratch.pendingExits.clear();
   if (scratch.pendingExitPaths?.size) scratch.pendingExitPaths.clear();
-  if (scratch.perished.size) scratch.perished.clear();
+  if (scratch.perishedNodes.size) scratch.perishedNodes.clear();
   if (scratch.selectedDeclarationIds.size)
     scratch.selectedDeclarationIds.clear();
   if (scratch.writtenInputs.size) scratch.writtenInputs.clear();
@@ -35,5 +35,5 @@ export const releaseSettlementScratch = <Self>(
   if (scratch.changedNodes.size) scratch.changedNodes.clear();
   if (scratch.stateDirtyNodes.size) scratch.stateDirtyNodes.clear();
   if (scratch.originalSchemas.size) scratch.originalSchemas.clear();
-  scratch.inUse = false;
+  scratch.isInUse = false;
 };

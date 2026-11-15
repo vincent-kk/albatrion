@@ -17,19 +17,19 @@ describe('watch-free exit snapshots', () => {
       properties: { field: { type: 'string' } },
     });
     loadFieldNodeAtMount(root, { field: 'kept' }, WriteOption.Overwrite);
-    const field = root.structure!.field;
+    const field = root.childrenByName!.field;
     expect(root.runtime.blueprint.capabilities.hasWatch).toBe(false);
     const lookup = vi.spyOn(derived, 'getHostDerived');
     captureDetachedFieldNodeReads(field, {
       schema: field.schema.schema,
-      emit: root.emit,
+      outputValue: root.storedOutputValue,
     });
     expect(lookup.mock.calls.filter(([owner]) => owner === field)).toHaveLength(
       0,
     );
     expect(root.runtime.watchValuesMemo?.has(field) ?? false).toBe(false);
     expect(root.runtime.detachedReads?.has(field)).toBe(true);
-    field.detached = true;
+    field.isDetached = true;
     const empty = readFieldNodeWatchValues(field);
     expect(empty).toEqual([]);
     expect(Object.isFrozen(empty)).toBe(true);
@@ -41,18 +41,18 @@ describe('watch-free exit snapshots', () => {
       properties: { field: { type: 'string' } },
     });
     loadFieldNodeAtMount(root, { field: 'kept' }, WriteOption.Overwrite);
-    const field = root.structure!.field;
+    const field = root.childrenByName!.field;
     const empty = readFieldNodeWatchValues(field, {
       schema: field.schema.schema,
-      emit: root.emit,
+      outputValue: root.storedOutputValue,
     });
     const memo = root.runtime.watchValuesMemo!.get(field);
     captureDetachedFieldNodeReads(field, {
       schema: field.schema.schema,
-      emit: root.emit,
+      outputValue: root.storedOutputValue,
     });
     expect(root.runtime.watchValuesMemo!.get(field)).toBe(memo);
-    field.detached = true;
+    field.isDetached = true;
     expect(readFieldNodeWatchValues(field)).toBe(empty);
   });
 
@@ -69,15 +69,15 @@ describe('watch-free exit snapshots', () => {
       { source: 7, field: 'kept' },
       WriteOption.Overwrite,
     );
-    const field = root.structure!.field;
+    const field = root.childrenByName!.field;
     const previous = readFieldNodeWatchValues(field);
     expect(previous).toEqual([7]);
     expect(root.runtime.blueprint.capabilities.hasWatch).toBe(true);
     captureDetachedFieldNodeReads(field, {
       schema: { type: 'string', controls: { watch: [] } },
-      emit: root.emit,
+      outputValue: root.storedOutputValue,
     });
-    field.detached = true;
+    field.isDetached = true;
     expect(readFieldNodeWatchValues(field)).toEqual([]);
     expect(previous).toEqual([7]);
   });
@@ -95,14 +95,14 @@ describe('watch-free exit snapshots', () => {
       { source: 7, field: 'kept' },
       WriteOption.Overwrite,
     );
-    const field = root.structure!.field;
+    const field = root.childrenByName!.field;
     captureDetachedFieldNodeReads(field, {
       schema: field.schema.schema,
-      emit: root.emit,
+      outputValue: root.storedOutputValue,
     });
-    field.detached = true;
+    field.isDetached = true;
     const captured = readFieldNodeWatchValues(field);
-    root.emit = { source: 19, field: 'next' };
+    root.storedOutputValue = { source: 19, field: 'next' };
     expect(readFieldNodeWatchValues(field)).toBe(captured);
     expect(captured).toEqual([7]);
     expect(Object.isFrozen(captured)).toBe(true);

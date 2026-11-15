@@ -10,18 +10,18 @@ import { DirtyPathSet } from '../../scratch/DirtyPathSet';
 export const watchWriteEpoch = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
-  const dirty = context.dirtyPaths;
-  if (!(dirty instanceof DirtyPathSet)) return;
+  const dirtyPaths = context.dirtyPaths;
+  if (!(dirtyPaths instanceof DirtyPathSet)) return;
   const shadow = (context.writeEpochShadow = new DirtyPathSet(new Map()));
   shadow.beginPostOrder();
   const inputs = context.writtenInputs;
   const set = inputs.set;
-  const restore = dirty.restoreRegistrationObserver;
+  const restore = dirtyPaths.restoreRegistrationObserver;
   inputs.set = function (node, value) {
     shadow.add(node.path);
     return set.call(this, node, value);
   };
-  dirty.restoreRegistrationObserver = () => {
+  dirtyPaths.restoreRegistrationObserver = () => {
     inputs.set = set;
     restore?.();
   };

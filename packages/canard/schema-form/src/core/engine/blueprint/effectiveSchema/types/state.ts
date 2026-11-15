@@ -21,7 +21,7 @@ export interface EffectiveSchemaState {
   /** Accepted type intersection, including null; absent for virtual nodes. */
   allowedTypes: Optional<readonly SchemaTypeName[]>;
   /** A conflicting const stays impossible even when later constants are added. */
-  conflictingConst: boolean;
-  /** Empty type intersections belong to settlement and surface as `typeConflict`. */
-  conflictingType: boolean;
+  hasConflictingConst: boolean;
+  /** Empty type intersections belong to settlement and surface as `hasTypeConflict`. */
+  hasConflictingType: boolean;
 }

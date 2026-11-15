@@ -16,11 +16,11 @@ export const observeValidationCadenceFrame = (
   onFrame: Fn,
   onRun: Fn<[fallback: boolean]>,
 ): void => {
-  if (state.cancelled) return;
+  if (state.isCancelled) return;
   state.cancelPending = undefined;
   const action = decideValidationCadence(
     state.phase === 'watch' ? 'watch' : 'carry',
-    state.requested,
+    state.isRequested,
     state.lastRun === undefined ? Infinity : state.now() - state.lastRun,
   );
   if (action === 'idle') {
@@ -33,6 +33,6 @@ export const observeValidationCadenceFrame = (
     return;
   }
   state.phase = 'carry';
-  state.requested = false;
+  state.isRequested = false;
   scheduleValidationCadenceFrame(state, onFrame, onRun);
 };

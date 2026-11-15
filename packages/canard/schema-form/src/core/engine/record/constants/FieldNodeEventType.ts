@@ -24,7 +24,7 @@ export enum FieldNodeEventType {
   Initialized = BIT_FLAG_00,
   /** The absolute path changed. */
   UpdatePath = BIT_FLAG_01,
-  /** The local or emitted value changed. */
+  /** The stored or output value changed. */
   UpdateValue = BIT_FLAG_02,
   /** Interaction flags changed. */
   UpdateState = BIT_FLAG_03,

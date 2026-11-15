@@ -71,7 +71,8 @@ const INPUT = { h: { flag: true, key: 1, field: 2 }, s: 's', rows: [[1], [2]] };
  * @param root - Root of a `hostWith` tree
  * @returns The host record
  */
-const hostOf = (root: DispatchTestNode): DispatchTestNode => root.structure!.h;
+const hostOf = (root: DispatchTestNode): DispatchTestNode =>
+  root.childrenByName!.h;
 
 // filid:contract settle-static-same-value-write-fallback
 describe('same-value admission declines and the general path settles', () => {
@@ -83,7 +84,8 @@ describe('same-value admission declines and the general path settles', () => {
   ])('%s', async (_, controls) => {
     await compareSameValueWrite(hostWith(controls), INPUT, [
       {
-        apply: (root) => dispatchSetValue(hostOf(root), hostOf(root).emit),
+        apply: (root) =>
+          dispatchSetValue(hostOf(root), hostOf(root).storedOutputValue),
         skip: false,
       },
     ]);
@@ -92,7 +94,8 @@ describe('same-value admission declines and the general path settles', () => {
   it('a static control form admits the same write', async () => {
     await compareSameValueWrite(hostWith({}), INPUT, [
       {
-        apply: (root) => dispatchSetValue(hostOf(root), hostOf(root).emit),
+        apply: (root) =>
+          dispatchSetValue(hostOf(root), hostOf(root).storedOutputValue),
         skip: true,
       },
     ]);
@@ -103,7 +106,7 @@ describe('same-value admission declines and the general path settles', () => {
     await compareSameValueWrite(SCOPED, SCOPED_INPUT, [
       {
         apply: (root) => {
-          const rows = root.structure!.a.structure!.rows;
+          const rows = root.childrenByName!.a.childrenByName!.rows;
           popped = rows.children![1];
           return dispatchPop(rows);
         },
@@ -111,19 +114,23 @@ describe('same-value admission declines and the general path settles', () => {
       },
       { apply: () => dispatchPush(popped!, 5), skip: false },
       {
-        apply: (root) => dispatchSetValue(root.structure!.b.structure!.w, 3),
+        apply: (root) =>
+          dispatchSetValue(root.childrenByName!.b.childrenByName!.w, 3),
         skip: false,
       },
       {
         apply: (root) => {
           expect(root.runtime.misfitPaths.size).toBe(0);
-          return dispatchSetValue(root.structure!.b, root.structure!.b.emit);
+          return dispatchSetValue(
+            root.childrenByName!.b,
+            root.childrenByName!.b.storedOutputValue,
+          );
         },
         skip: true,
       },
       {
         apply: (root) =>
-          dispatchSetValue(root.structure!.a, { v: 1 }, WriteOption.Merge),
+          dispatchSetValue(root.childrenByName!.a, { v: 1 }, WriteOption.Merge),
         skip: true,
       },
     ]);
@@ -134,7 +141,7 @@ describe('same-value admission declines and the general path settles', () => {
     await compareSameValueWrite(SCOPED, SCOPED_INPUT, [
       {
         apply: (root) => {
-          const rows = root.structure!.a.structure!.rows;
+          const rows = root.childrenByName!.a.childrenByName!.rows;
           popped = rows.children![1];
           return dispatchPop(rows);
         },
@@ -142,12 +149,13 @@ describe('same-value admission declines and the general path settles', () => {
       },
       { apply: () => dispatchPush(popped!, 5), skip: false },
       {
-        apply: (root) => dispatchSetValue(root.structure!.b.structure!.w, 3),
+        apply: (root) =>
+          dispatchSetValue(root.childrenByName!.b.childrenByName!.w, 3),
         skip: false,
       },
       {
         apply: (root) => {
-          dispatchSetValue(root, root.emit);
+          dispatchSetValue(root, root.storedOutputValue);
         },
         skip: true,
       },
@@ -159,17 +167,23 @@ describe('same-value admission declines and the general path settles', () => {
       {
         apply: (root) => {
           expect(root.runtime.misfitPaths.size).toBeGreaterThan(0);
-          return dispatchSetValue(root.structure!.a, root.structure!.a.emit);
+          return dispatchSetValue(
+            root.childrenByName!.a,
+            root.childrenByName!.a.storedOutputValue,
+          );
         },
         skip: true,
       },
       {
         apply: (root) =>
-          dispatchSetValue(root.structure!.b, root.structure!.b.emit),
+          dispatchSetValue(
+            root.childrenByName!.b,
+            root.childrenByName!.b.storedOutputValue,
+          ),
         skip: false,
       },
       {
-        apply: (root) => dispatchSetValue(root, root.emit),
+        apply: (root) => dispatchSetValue(root, root.storedOutputValue),
         skip: false,
       },
     ]);
@@ -178,14 +192,14 @@ describe('same-value admission declines and the general path settles', () => {
   it('a load, a multi-write batch and a visit walk with two writes', async () => {
     await compareSameValueWrite(hostWith({}), INPUT, [
       {
-        apply: (root) => dispatchMount(root, root.emit),
+        apply: (root) => dispatchMount(root, root.storedOutputValue),
         skip: false,
       },
       {
         apply: (root) =>
           dispatchBatch(root, () => {
-            dispatchSetValue(hostOf(root), hostOf(root).emit);
-            dispatchSetValue(root.structure!.s, 't');
+            dispatchSetValue(hostOf(root), hostOf(root).storedOutputValue);
+            dispatchSetValue(root.childrenByName!.s, 't');
           }),
         skip: false,
       },
@@ -193,8 +207,8 @@ describe('same-value admission declines and the general path settles', () => {
         apply: (root) =>
           dispatchVisitSubtree(root, (node) => {
             if (node !== root) return;
-            dispatchSetValue(hostOf(root), hostOf(root).emit);
-            dispatchSetValue(root.structure!.s, 'u');
+            dispatchSetValue(hostOf(root), hostOf(root).storedOutputValue);
+            dispatchSetValue(root.childrenByName!.s, 'u');
           }),
         skip: false,
       },
@@ -252,12 +266,12 @@ describe('same-value admission declines and the general path settles', () => {
     vi.spyOn(admission, 'admitsSameValueWrite').mockImplementation(
       (node, context) => {
         const admitted = admit(node, context);
-        if (context.automatic) automatic.push(admitted);
+        if (context.isAutomatic) automatic.push(admitted);
         return admitted;
       },
     );
     dispatchPush(root);
-    expect(root.emit).toEqual([{ v: 1 }, { v: 7 }]);
+    expect(root.storedOutputValue).toEqual([{ v: 1 }, { v: 7 }]);
     expect(automatic.length).toBeGreaterThan(0);
     expect(automatic.every((admitted) => !admitted)).toBe(true);
   });

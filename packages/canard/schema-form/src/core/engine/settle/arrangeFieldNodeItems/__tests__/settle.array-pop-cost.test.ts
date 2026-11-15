@@ -117,7 +117,7 @@ const measure = (count: number, verb: (root: DispatchTestNode) => unknown) => {
     for (const undo of restore) undo();
   }
   expect(removed).toBe(count - 1);
-  expect(root.local).toHaveLength(count - 1);
+  expect(root.storedValue).toHaveLength(count - 1);
   expect(admit.mock.results.some((call) => call.value !== undefined)).toBe(
     true,
   );

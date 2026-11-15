@@ -42,14 +42,14 @@ describe('active derive declarations', () => {
       { H: { enabled: false, s: 'S1', x: 'own' } },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.H?.structure?.x?.source).toBe('own');
+    expect(root.childrenByName?.H?.childrenByName?.x?.source).toBe('own');
     writeFieldNode(
-      root.structure!.H.structure!.enabled,
+      root.childrenByName!.H.childrenByName!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.H?.structure?.x?.source).toBe('own');
+    expect(root.childrenByName?.H?.childrenByName?.x?.source).toBe('own');
   });
 
   it('FRAGMENT-050 shared node baseline only for resetInteraction', () => {
@@ -78,19 +78,19 @@ describe('active derive declarations', () => {
       { H: { enabled: false, x: 'own' } },
       WriteOption.Overwrite,
     );
-    const target = root.structure!.H.structure!.x;
-    target.interactionState = {
+    const target = root.childrenByName!.H.childrenByName!.x;
+    target.storedState = {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
     writeFieldNode(
-      root.structure!.H.structure!.enabled,
+      root.childrenByName!.H.childrenByName!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
-    expect(target.interactionState[FieldNodeState.Touched]).toBe(true);
+    expect(target.storedState[FieldNodeState.Edited]).toBe(true);
+    expect(target.storedState[FieldNodeState.Touched]).toBe(true);
   });
 
   it('FRAGMENT-050 shared node baseline only on depth-two if activation', () => {
@@ -128,12 +128,14 @@ describe('active derive declarations', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.G.structure!.H.structure!.enabled,
+      root.childrenByName!.G.childrenByName!.H.childrenByName!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.G?.structure?.H?.structure?.x?.source).toBe('own');
+    expect(
+      root.childrenByName?.G?.childrenByName?.H?.childrenByName?.x?.source,
+    ).toBe('own');
   });
 
   it('SETTLE-003 non-root effective schema and selection match a fresh load on both flips', () => {
@@ -170,19 +172,25 @@ describe('active derive declarations', () => {
     const selectedKey = JSON.stringify(['/H', 'object']);
     for (const enabled of [true, false]) {
       writeFieldNode(
-        root.structure!.H.structure!.enabled,
+        root.childrenByName!.H.childrenByName!.enabled,
         enabled,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
       const { root: fresh } = createTestTree(schema);
-      loadFieldNodeAtMount(fresh, root.emit, WriteOption.Overwrite);
-      expect(root.structure?.H?.schema).toEqual(fresh.structure?.H?.schema);
+      loadFieldNodeAtMount(
+        fresh,
+        root.storedOutputValue,
+        WriteOption.Overwrite,
+      );
+      expect(root.childrenByName?.H?.schema).toEqual(
+        fresh.childrenByName?.H?.schema,
+      );
       expect(root.runtime.committedDeclarationIds?.get(selectedKey)).toEqual(
         fresh.runtime.committedDeclarationIds?.get(selectedKey),
       );
-      expect(Object.keys(root.structure!.H.structure!)).toEqual(
-        Object.keys(fresh.structure!.H.structure!),
+      expect(Object.keys(root.childrenByName!.H.childrenByName!)).toEqual(
+        Object.keys(fresh.childrenByName!.H.childrenByName!),
       );
     }
   });
@@ -204,21 +212,21 @@ describe('active derive declarations', () => {
       },
     });
     loadFieldNodeAtMount(root, { t: 'T1' }, WriteOption.Overwrite);
-    expect(root.structure?.H?.structure?.x?.source).toBe('T1');
+    expect(root.childrenByName?.H?.childrenByName?.x?.source).toBe('T1');
     writeFieldNode(
-      root.structure!.t,
+      root.childrenByName!.t,
       'T2',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.H?.structure?.x?.source).toBe('T2');
+    expect(root.childrenByName?.H?.childrenByName?.x?.source).toBe('T2');
     writeFieldNode(
-      root.structure!.t,
+      root.childrenByName!.t,
       'T3',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.H?.structure?.x?.source).toBe('T3');
+    expect(root.childrenByName?.H?.childrenByName?.x?.source).toBe('T3');
   });
 
   it('CONTROLS-077 fragment unsetValue consumes a false-to-true dependency edge', () => {
@@ -242,14 +250,14 @@ describe('active derive declarations', () => {
       { c: false, H: { x: 'v' } },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.H?.structure?.x?.source).toBe('v');
+    expect(root.childrenByName?.H?.childrenByName?.x?.source).toBe('v');
     writeFieldNode(
-      root.structure!.c,
+      root.childrenByName!.c,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.H?.structure?.x?.source).toBeUndefined();
+    expect(root.childrenByName?.H?.childrenByName?.x?.source).toBeUndefined();
   });
 
   it('SETTLE-049 inactive ancestor fragment does not derive on a nested write', () => {
@@ -287,13 +295,17 @@ describe('active derive declarations', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.H.structure!.P.structure!.q,
+      root.childrenByName!.H.childrenByName!.P.childrenByName!.q,
       'user',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.H?.structure?.P?.structure?.q?.source).toBe('user');
-    expect(root.structure?.H?.structure?.P?.structure?.r?.source).toBe('r0');
+    expect(
+      root.childrenByName?.H?.childrenByName?.P?.childrenByName?.q?.source,
+    ).toBe('user');
+    expect(
+      root.childrenByName?.H?.childrenByName?.P?.childrenByName?.r?.source,
+    ).toBe('r0');
     expect(derive).not.toHaveBeenCalled();
   });
 
@@ -323,20 +335,20 @@ describe('active derive declarations', () => {
       { flag: false, H: { P: { q: 'q0' } } },
       WriteOption.Overwrite,
     );
-    const target = root.structure!.H.structure!.P;
-    target.interactionState = {
+    const target = root.childrenByName!.H.childrenByName!.P;
+    target.storedState = {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
     writeFieldNode(
-      target.structure!.q,
+      target.childrenByName!.q,
       'user',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(target.structure?.q?.source).toBe('user');
-    expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
-    expect(target.interactionState[FieldNodeState.Touched]).toBe(true);
+    expect(target.childrenByName?.q?.source).toBe('user');
+    expect(target.storedState[FieldNodeState.Edited]).toBe(true);
+    expect(target.storedState[FieldNodeState.Touched]).toBe(true);
   });
 
   it('FRAGMENT-050 shared node baseline only after inactive declaration reselects', () => {
@@ -362,32 +374,32 @@ describe('active derive declarations', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!['source'],
+      root.childrenByName!['source'],
       'B',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.source).toBe('manual');
+    expect(root.childrenByName?.target?.source).toBe('manual');
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.source).toBe('manual');
+    expect(root.childrenByName?.target?.source).toBe('manual');
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!['source'],
+      root.childrenByName!['source'],
       'C',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.source).toBe('manual');
+    expect(root.childrenByName?.target?.source).toBe('manual');
   });
 
   it('FRAGMENT-050 shared node baseline only for allOf derived, then source change fires', () => {
@@ -413,19 +425,19 @@ describe('active derive declarations', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.source).toBe('manual');
+    expect(root.childrenByName?.target?.source).toBe('manual');
     writeFieldNode(
-      root.structure!['source'],
+      root.childrenByName!['source'],
       'B',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.source).toBe('B');
+    expect(root.childrenByName?.target?.source).toBe('B');
   });
 
   it('FRAGMENT-050 newly entered node fires for allOf derived', () => {
@@ -450,12 +462,12 @@ describe('active derive declarations', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.source).toBe('A');
+    expect(root.childrenByName?.target?.source).toBe('A');
   });
 
   it('FRAGMENT-050 shared node baseline only for then derived, then source change fires', () => {
@@ -480,19 +492,19 @@ describe('active derive declarations', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.enabled,
+      root.childrenByName!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.source).toBe('own');
+    expect(root.childrenByName?.x?.source).toBe('own');
     writeFieldNode(
-      root.structure!.s,
+      root.childrenByName!.s,
       'S2',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.source).toBe('S2');
+    expect(root.childrenByName?.x?.source).toBe('S2');
   });
 
   it('FRAGMENT-050 newly entered node fires for then derived', () => {
@@ -516,12 +528,12 @@ describe('active derive declarations', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.enabled,
+      root.childrenByName!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.source).toBe('S1');
+    expect(root.childrenByName?.x?.source).toBe('S1');
   });
 
   it('FRAGMENT-050 shared node baseline only for unsetValue, then false-to-true fires', () => {
@@ -547,26 +559,26 @@ describe('active derive declarations', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.source).toBe('held');
+    expect(root.childrenByName?.target?.source).toBe('held');
     writeFieldNode(
-      root.structure!.clear,
+      root.childrenByName!.clear,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.source).toBe('held');
+    expect(root.childrenByName?.target?.source).toBe('held');
     writeFieldNode(
-      root.structure!.clear,
+      root.childrenByName!.clear,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.source).toBeUndefined();
+    expect(root.childrenByName?.target?.source).toBeUndefined();
   });
 
   it('FRAGMENT-050 shared injectTo baseline only and newly entered source fires', () => {
@@ -595,21 +607,21 @@ describe('active derive declarations', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      shared.structure!.flag,
+      shared.childrenByName!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(shared.structure?.output?.source).toBe('manual');
+    expect(shared.childrenByName?.output?.source).toBe('manual');
     expect(injectTo).not.toHaveBeenCalled();
     writeFieldNode(
-      shared.structure!['source'],
+      shared.childrenByName!['source'],
       'B',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(injectTo).toHaveBeenCalledWith('B', expect.any(Object));
-    expect(shared.structure?.output?.source).toBe('from-B');
+    expect(shared.childrenByName?.output?.source).toBe('from-B');
 
     injectTo.mockClear();
     const entered = createTestTree({
@@ -633,14 +645,14 @@ describe('active derive declarations', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      entered.structure!.flag,
+      entered.childrenByName!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(entered.structure?.['source']?.source).toBe('A');
+    expect(entered.childrenByName?.['source']?.source).toBe('A');
     expect(injectTo).toHaveBeenCalledWith('A', expect.any(Object));
-    expect(entered.structure?.output?.source).toBe('from-A');
+    expect(entered.childrenByName?.output?.source).toBe('from-A');
   });
 });
 
@@ -674,13 +686,13 @@ describe('newly selected declaration baselines', () => {
     const key = JSON.stringify(['/x', 'string']);
     const before = root.runtime.committedDeclarationIds?.get(key);
     writeFieldNode(
-      root.structure!.x,
+      root.childrenByName!.x,
       'm',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.enabled,
+      root.childrenByName!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -688,14 +700,14 @@ describe('newly selected declaration baselines', () => {
     const after = root.runtime.committedDeclarationIds?.get(key);
     expect(after?.length).toBe(before?.length);
     expect(after).not.toEqual(before);
-    expect(root.structure?.x?.source).toBe('m');
+    expect(root.childrenByName?.x?.source).toBe('m');
     writeFieldNode(
-      root.structure!.s,
+      root.childrenByName!.s,
       'S2',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.source).toBe('S2');
+    expect(root.childrenByName?.x?.source).toBe('S2');
   });
 
   it('FRAGMENT-050 root if/then shared derived fires on its next source edge', () => {
@@ -719,26 +731,26 @@ describe('newly selected declaration baselines', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.enabled,
+      root.childrenByName!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.source).toBe('own');
+    expect(root.childrenByName?.x?.source).toBe('own');
     writeFieldNode(
-      root.structure!.s,
+      root.childrenByName!.s,
       'S2',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.source).toBe('S2');
+    expect(root.childrenByName?.x?.source).toBe('S2');
     writeFieldNode(
-      root.structure!.s,
+      root.childrenByName!.s,
       'S3',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.source).toBe('S3');
+    expect(root.childrenByName?.x?.source).toBe('S3');
   });
 
   it('FRAGMENT-050 depth-one if/then shared derived fires on its next source edge', () => {
@@ -770,19 +782,19 @@ describe('newly selected declaration baselines', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.H.structure!.enabled,
+      root.childrenByName!.H.childrenByName!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.H?.structure?.x?.source).toBe('own');
+    expect(root.childrenByName?.H?.childrenByName?.x?.source).toBe('own');
     writeFieldNode(
-      root.structure!.H.structure!.s,
+      root.childrenByName!.H.childrenByName!.s,
       'S2',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.H?.structure?.x?.source).toBe('S2');
+    expect(root.childrenByName?.H?.childrenByName?.x?.source).toBe('S2');
   });
 
   it('FRAGMENT-050 allOf if/then shared derived fires on its next source edge', () => {
@@ -813,19 +825,19 @@ describe('newly selected declaration baselines', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.enabled,
+      root.childrenByName!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.source).toBe('own');
+    expect(root.childrenByName?.x?.source).toBe('own');
     writeFieldNode(
-      root.structure!.s,
+      root.childrenByName!.s,
       'S2',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.source).toBe('S2');
+    expect(root.childrenByName?.x?.source).toBe('S2');
   });
 
   it('FRAGMENT-050 discriminator shared derived fires after switching branch', () => {
@@ -855,19 +867,19 @@ describe('newly selected declaration baselines', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.kind,
+      root.childrenByName!.kind,
       'a',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.source).toBe('own');
+    expect(root.childrenByName?.x?.source).toBe('own');
     writeFieldNode(
-      root.structure!.s,
+      root.childrenByName!.s,
       'S2',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.source).toBe('S2');
+    expect(root.childrenByName?.x?.source).toBe('S2');
   });
 
   it('FRAGMENT-050 if/then shared unsetValue fires on its next false-to-true edge', () => {
@@ -891,19 +903,19 @@ describe('newly selected declaration baselines', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.enabled,
+      root.childrenByName!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.source).toBe('keep');
+    expect(root.childrenByName?.x?.source).toBe('keep');
     writeFieldNode(
-      root.structure!.c,
+      root.childrenByName!.c,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.x?.source).toBeUndefined();
+    expect(root.childrenByName?.x?.source).toBeUndefined();
   });
 
   it('FRAGMENT-050 if/then shared resetInteraction fires on its next edge', () => {
@@ -926,26 +938,26 @@ describe('newly selected declaration baselines', () => {
       { enabled: false, c: false, x: 'keep' },
       WriteOption.Overwrite,
     );
-    const target = root.structure!.x;
-    target.interactionState = {
+    const target = root.childrenByName!.x;
+    target.storedState = {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
     writeFieldNode(
-      root.structure!.enabled,
+      root.childrenByName!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
+    expect(target.storedState[FieldNodeState.Edited]).toBe(true);
     writeFieldNode(
-      root.structure!.c,
+      root.childrenByName!.c,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(target.interactionState[FieldNodeState.Edited]).toBe(false);
-    expect(target.interactionState[FieldNodeState.Touched]).toBe(false);
+    expect(target.storedState[FieldNodeState.Edited]).toBe(false);
+    expect(target.storedState[FieldNodeState.Touched]).toBe(false);
   });
 
   it('FRAGMENT-050 if/then shared injectTo fires on its next source edge', () => {
@@ -970,20 +982,20 @@ describe('newly selected declaration baselines', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.enabled,
+      root.childrenByName!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.out?.source).toBe('manual');
+    expect(root.childrenByName?.out?.source).toBe('manual');
     expect(injectTo).not.toHaveBeenCalled();
     writeFieldNode(
-      root.structure!.src,
+      root.childrenByName!.src,
       'B',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(injectTo).toHaveBeenCalledWith('B', expect.any(Object));
-    expect(root.structure?.out?.source).toBe('from-B');
+    expect(root.childrenByName?.out?.source).toBe('from-B');
   });
 });

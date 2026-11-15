@@ -28,7 +28,7 @@ export {
   dispatchVisitSubtree,
   dispatchRelayInput,
   dispatchWriteInput,
-  readFieldNodeInteractionReset,
+  readFieldNodeInteractionEpoch,
   readFieldNodeRevision,
   subscribeFieldNode,
   onInactiveFieldNode,

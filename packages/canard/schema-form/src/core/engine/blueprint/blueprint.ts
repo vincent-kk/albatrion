@@ -48,10 +48,10 @@ export const blueprint = (
   }
   const context: AnalysisContext = {
     hasChildTargets: false,
-    staticFirstLoad: true,
+    isStaticFirstLoad: true,
     hasTemplateRecursion: false,
     capabilities: {
-      branchless: true,
+      isBranchless: true,
       hasExpressions: false,
       hasDerive: false,
       hasWatch: false,
@@ -79,7 +79,7 @@ export const blueprint = (
         role: 'declaration',
         gates: [],
         order: [],
-        inherited: false,
+        isInherited: false,
         hostPath: $.Root,
       },
     ],
@@ -102,7 +102,7 @@ export const blueprint = (
       ((node.kind === 'object' || node.kind === 'array') &&
         node.strategy !== 'branch')
     )
-      context.staticFirstLoad = false;
+      context.isStaticFirstLoad = false;
     if (process.env.NODE_ENV !== 'production') {
       Object.freeze(node.childEntries);
       Object.freeze(node);
@@ -130,16 +130,16 @@ export const blueprint = (
   };
   const fixedFirstLoadPlan = buildFixedFirstLoadPlan(
     result,
-    context.staticFirstLoad,
+    context.isStaticFirstLoad,
   );
   if (fixedFirstLoadPlan)
     Object.defineProperty(result, 'fixedFirstLoadPlan', {
       value: fixedFirstLoadPlan,
     });
-  Object.defineProperty(result, 'staticFirstLoadEligible', {
+  Object.defineProperty(result, 'isStaticFirstLoadEligible', {
     value:
-      context.staticFirstLoad &&
-      context.capabilities.branchless &&
+      context.isStaticFirstLoad &&
+      context.capabilities.isBranchless &&
       !context.capabilities.hasExpressions &&
       !context.capabilities.hasDerive &&
       !context.capabilities.hasWatch &&

@@ -275,7 +275,7 @@ class GateRegistry {
   }
 
   /** Read relocated gates at one host without scanning other templates. */
-  relocated(path: string): readonly GateOccurrence[] {
+  relocatedOccurrences(path: string): readonly GateOccurrence[] {
     const bucket = this.relocatedBuckets.get(path);
     if (!bucket?.size) return EMPTY_OCCURRENCES;
     let list = this.relocatedLists.get(path);
@@ -550,7 +550,7 @@ type GateRegistryView = Pick<
   | 'hasRegisteredPathKind'
   | 'register'
   | 'locate'
-  | 'relocated'
+  | 'relocatedOccurrences'
   | 'mayChangeAt'
   | 'mayPresenceChangeAt'
   | 'mayChangeOwnDeclarationAt'
@@ -569,7 +569,7 @@ const EMPTY_REGISTRY: GateRegistryView = Object.freeze({
   locate: (): never => {
     throw new Error('A branchless blueprint has no gate occurrences');
   },
-  relocated: () => EMPTY_OCCURRENCES,
+  relocatedOccurrences: () => EMPTY_OCCURRENCES,
   mayChangeAt: () => false,
   mayPresenceChangeAt: () => false,
   mayChangeOwnDeclarationAt: () => false,
@@ -593,7 +593,7 @@ const EMPTY_GATE_MEMO: ReadonlyMap<BlueprintGate, RegisteredGateOccurrence> =
 export const getGateRegistry = (runtime: {
   blueprint: Blueprint;
 }): GateRegistryView => {
-  if (runtime.blueprint.capabilities.branchless) return EMPTY_REGISTRY;
+  if (runtime.blueprint.capabilities.isBranchless) return EMPTY_REGISTRY;
   let registry = REGISTRIES.get(runtime);
   if (!registry) {
     registry = new GateRegistry(runtime.blueprint, runtime);

@@ -43,9 +43,9 @@ describe('observer write boundary', () => {
       },
     );
     dispatchMount(root, { open: true, leaf: 'a', other: 'b' });
-    const old = root.structure!.leaf;
-    const other = root.structure!.other;
-    dispatchSetValue(root.structure!.open, false);
+    const old = root.childrenByName!.leaf;
+    const other = root.childrenByName!.other;
+    dispatchSetValue(root.childrenByName!.open, false);
     observing = true;
     subscribeFieldNode(root, () => {
       throw new Error('listener');
@@ -56,7 +56,7 @@ describe('observer write boundary', () => {
     if (!(seen[0] instanceof SchemaFormError))
       throw new Error('Expected write failure');
     expect(seen[0].code).toBe(FormErrorCode.WriteInObserver);
-    expect(other.local).toBe('value');
+    expect(other.storedValue).toBe('value');
   });
   it('ERROR-029 WRITE-099 rejects a same-form write immediately without recursion', () => {
     const seen: unknown[] = [];
@@ -85,7 +85,7 @@ describe('observer write boundary', () => {
     if (!(seen[0] instanceof SchemaFormError))
       throw new Error('Expected write failure');
     expect(seen[0].code).toBe(FormErrorCode.WriteInObserver);
-    expect(root.emit).toBe('value');
+    expect(root.storedOutputValue).toBe('value');
   });
 
   it('ERROR-029 allows writes on another form while reporting', () => {
@@ -103,7 +103,7 @@ describe('observer write boundary', () => {
       throw new Error('listener');
     });
     expect(() => dispatchSetValue(root, 'source')).toThrow();
-    expect(other.root.emit).toBe('allowed');
+    expect(other.root.storedOutputValue).toBe('allowed');
   });
 
   it('ERROR-008 ownerless fallback reports once without Node emission', () => {

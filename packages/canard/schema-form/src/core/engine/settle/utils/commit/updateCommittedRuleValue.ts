@@ -3,6 +3,11 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { FieldNodeRuntime } from '../../../record';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 
+/** Annotates the lazily created `committedRuleKeysBySource`; an argument-less `new Map()` would be `Map<any, any>`. */
+type CommittedRuleKeysBySource = Map<string, Set<string>>;
+/** Annotates the lazily created `committedRuleKeysByTarget`; an argument-less `new Map()` would be `Map<any, any>`. */
+type CommittedRuleKeysByTarget = Map<string, Set<string>>;
+
 /**
  * Mutate one committed baseline and its source and target path indexes together.
  * @param runtime - Tree-owned baseline store and occurrence indexes
@@ -40,14 +45,18 @@ export const updateCommittedRuleValue = <Self>(
   let sourceKeys = runtime.committedRuleKeysBySource?.get(source);
   if (!sourceKeys) {
     sourceKeys = new Set();
-    (runtime.committedRuleKeysBySource ??= new Map()).set(source, sourceKeys);
+    const bySource: CommittedRuleKeysBySource =
+      (runtime.committedRuleKeysBySource ??= new Map());
+    bySource.set(source, sourceKeys);
   }
   sourceKeys.add(key);
   if (target === undefined) return;
   let targetKeys = runtime.committedRuleKeysByTarget?.get(target);
   if (!targetKeys) {
     targetKeys = new Set();
-    (runtime.committedRuleKeysByTarget ??= new Map()).set(target, targetKeys);
+    const byTarget: CommittedRuleKeysByTarget =
+      (runtime.committedRuleKeysByTarget ??= new Map());
+    byTarget.set(target, targetKeys);
   }
   targetKeys.add(key);
 };

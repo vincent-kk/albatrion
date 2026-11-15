@@ -97,7 +97,7 @@ describe('candidate cleanup preserves broad clearing contracts', () => {
         operation === 'form-reset' ? undefined : 7,
       );
       dispatchSetValue(getDispatchNode(root, 'a'), true);
-      expect(getDispatchNode(root, 'box', 'v').local).toEqual(
+      expect(getDispatchNode(root, 'box', 'v').storedValue).toEqual(
         operation === 'subtree-reset' ? { x: 1 } : {},
       );
       dispatchSetValue(getDispatchNode(root, 'outside', 'show'), true);

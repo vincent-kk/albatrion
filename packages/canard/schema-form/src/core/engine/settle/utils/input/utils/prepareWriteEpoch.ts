@@ -17,12 +17,12 @@ export const prepareWriteEpoch = <Self extends FieldNodeRecord<Self>>(
   const runtime = node.runtime;
   if (
     node.behavior.strategy !== 'branch' ||
-    node.detached ||
-    node.disposed ||
-    context.replaceScope !== node ||
+    node.isDetached ||
+    node.isDisposed ||
+    context.replacementScope !== node ||
     (context.kind !== FieldNodeWriteKind.CallerReplace &&
       context.kind !== FieldNodeWriteKind.Input) ||
-    context.replacePaths !== undefined ||
+    context.replacementPaths !== undefined ||
     runtime.batchDepth ||
     runtime.visitDepth ||
     context.root.inactiveSlots?.size ||

@@ -22,7 +22,7 @@ import type { DiscriminatorEntrySelection } from './utils/prepareDiscriminatorEn
 /** One authored evaluation position; eligible table gates use their bucket verdict. */
 export interface DirectChildSelection {
   /** A discriminator's hoisted tag keeps its authored multi-declaration selector. */
-  readonly general?: boolean;
+  readonly isGeneral?: boolean;
   /** Strict tag-to-declaration metadata for a stable hoisted discriminator key. */
   readonly discriminatorSelection?: DiscriminatorEntrySelection;
   /** Original edge retained for creation and inactive-exit handling. */
@@ -107,7 +107,7 @@ export const getDirectChildSelectionPlan = (
         entry,
         gate: undefined,
         ids: [],
-        general: true,
+        isGeneral: true,
         discriminatorSelection: prepareDiscriminatorEntrySelection(entry),
       });
       continue;
@@ -148,7 +148,7 @@ export const getDirectChildSelectionPlan = (
         (gate.kind === 'active' &&
           (!expression ||
             (expression.dependencies.length !== 1 &&
-              !expression.completeReads))) ||
+              !expression.hasCompleteReads))) ||
         (gate.kind === 'if' &&
           getIfGateReadNames(gate.condition, blueprint) === undefined)
       ) {

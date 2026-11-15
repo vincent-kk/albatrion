@@ -6,13 +6,13 @@ import { FieldNodeEventType, captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../types/settlement';
-import { keepRootEmit } from './keepRootEmit';
-import { keepsChildEmissions } from './utils/keepsChildEmissions';
+import { keepRootOutputValue } from './keepRootOutputValue';
+import { keepsChildOutputValues } from './utils/keepsChildOutputValues';
 
 /**
  * Assemble and project a node once from its current child order.
- * For the host of a still-valid append proof it passes the appended position to the row and records the first appended assembly in `arrayAppend.assembled`;
- * for the host of a still-valid pop proof it passes the remaining item count and records the first truncated assembly in `arrayPop.assembled`.
+ * For the host of a still-valid append proof it passes the appended position to the row and records the first appended assembly in `arrayAppend.assembledValue`;
+ * for the host of a still-valid pop proof it passes the remaining item count and records the first truncated assembly in `arrayPop.assembledValue`.
  * @param node - Live node whose row owns assembly and projection
  * @param context - Current commit's changed-node set and the optional `arrayAppend` and `arrayPop` proofs it reads
  * @param recalculated - Direct children recomputed with an unchanged host shape
@@ -27,29 +27,31 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
   const host =
     (node.behavior.type === 'array' || node.behavior.type === 'object') &&
     node.behavior.strategy === 'branch';
-  const append = context.arrayAppend;
+  const arrayAppend = context.arrayAppend;
   const appending =
-    append !== undefined &&
-    append.host === node &&
-    append.valid &&
+    arrayAppend !== undefined &&
+    arrayAppend.host === node &&
+    arrayAppend.isValid &&
     !recalculated &&
-    node.children === append.children &&
-    (node.local === append.local || node.local === append.assembled);
-  const pop = context.arrayPop;
+    node.children === arrayAppend.children &&
+    (node.storedValue === arrayAppend.value ||
+      node.storedValue === arrayAppend.assembledValue);
+  const arrayPop = context.arrayPop;
   const truncating =
-    pop !== undefined &&
-    pop.host === node &&
-    pop.valid &&
+    arrayPop !== undefined &&
+    arrayPop.host === node &&
+    arrayPop.isValid &&
     !recalculated &&
-    node.children === pop.children &&
-    (node.local === pop.local || node.local === pop.assembled);
+    node.children === arrayPop.children &&
+    (node.storedValue === arrayPop.value ||
+      node.storedValue === arrayPop.assembledValue);
   const hint =
     recalculated && host
-      ? { incremental: false }
+      ? { isIncremental: false }
       : appending
-        ? { incremental: false, append: append.count }
+        ? { isIncremental: false, previousItemCount: arrayAppend.count }
         : truncating
-          ? { incremental: false, truncate: pop.count - 1 }
+          ? { isIncremental: false, remainingItemCount: arrayPop.count - 1 }
           : undefined;
   const assembled = node.behavior.assemble(
     node,
@@ -57,15 +59,15 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
     recalculated,
     hint,
   );
-  if (appending && hint?.incremental) append.assembled = assembled;
-  if (truncating && hint?.incremental) pop.assembled = assembled;
-  const previousLocal = node.local;
+  if (appending && hint?.isIncremental) arrayAppend.assembledValue = assembled;
+  if (truncating && hint?.isIncremental) arrayPop.assembledValue = assembled;
+  const previousValue = node.storedValue;
   let same = false;
-  if (hint?.incremental) {
+  if (hint?.isIncremental) {
     if (
       node.behavior.type === 'object' &&
-      previousLocal !== null &&
-      typeof previousLocal === 'object' &&
+      previousValue !== null &&
+      typeof previousValue === 'object' &&
       assembled !== null &&
       typeof assembled === 'object' &&
       recalculated
@@ -74,7 +76,7 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
       for (const child of recalculated)
         if (
           !sameValue(
-            Reflect.get(previousLocal, child.name),
+            Reflect.get(previousValue, child.name),
             Reflect.get(assembled, child.name),
           )
         ) {
@@ -82,50 +84,55 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
           break;
         }
     }
-  } else same = sameValue(node.local, assembled);
-  let local = same ? node.local : assembled;
-  const baseline = node.deliveryPreviousLocal;
+  } else same = sameValue(node.storedValue, assembled);
+  let value = same ? node.storedValue : assembled;
+  const baseline = node.deliveryPreviousValue;
   const revisit =
     (node.deliveryChanges & FieldNodeEventType.UpdateValue) !== BIT_MASK_NONE &&
-    local !== baseline &&
-    !(isArray(baseline) && isArray(local) && baseline.length !== local.length);
+    value !== baseline &&
+    !(isArray(baseline) && isArray(value) && baseline.length !== value.length);
   if (
     revisit &&
     (!host ||
       ((!recalculated ||
-        keepsChildEmissions(node.deliveryPreviousLocal, recalculated)) &&
-        keepsChildEmissions(
-          node.deliveryPreviousLocal,
+        keepsChildOutputValues(node.deliveryPreviousValue, recalculated)) &&
+        keepsChildOutputValues(
+          node.deliveryPreviousValue,
           node.children ?? [],
         ))) &&
-    sameValue(node.deliveryPreviousLocal, local)
+    sameValue(node.deliveryPreviousValue, value)
   )
-    local = node.deliveryPreviousLocal;
-  const projected = keepRootEmit(
+    value = node.deliveryPreviousValue;
+  const projected = keepRootOutputValue(
     node,
-    local,
-    node.behavior.project(node, local),
+    value,
+    node.behavior.project(node, value),
   );
-  let emit =
-    node.emit === node.local && projected === local
-      ? local
-      : sameValue(node.emit, projected)
-        ? node.emit
+  let outputValue =
+    node.storedOutputValue === node.storedValue && projected === value
+      ? value
+      : sameValue(node.storedOutputValue, projected)
+        ? node.storedOutputValue
         : projected;
   if (
     node.deliveryChanges & FieldNodeEventType.UpdateValue &&
-    emit !== node.deliveryPreviousEmit &&
+    outputValue !== node.deliveryPreviousOutputValue &&
     !(
       revisit &&
-      emit === local &&
-      node.deliveryPreviousEmit === node.deliveryPreviousLocal
+      outputValue === value &&
+      node.deliveryPreviousOutputValue === node.deliveryPreviousValue
     ) &&
-    sameValue(node.deliveryPreviousEmit, emit)
+    sameValue(node.deliveryPreviousOutputValue, outputValue)
   )
-    emit = node.deliveryPreviousEmit;
-  const changed = local !== node.local || emit !== node.emit;
-  node.local = captureFieldNodeChange(node, 'local', local);
-  node.emit = captureFieldNodeChange(node, 'emit', emit);
+    outputValue = node.deliveryPreviousOutputValue;
+  const changed =
+    value !== node.storedValue || outputValue !== node.storedOutputValue;
+  node.storedValue = captureFieldNodeChange(node, 'storedValue', value);
+  node.storedOutputValue = captureFieldNodeChange(
+    node,
+    'storedOutputValue',
+    outputValue,
+  );
   if (changed) {
     context.changedNodes.add(node);
     const parent = node.parent;
@@ -134,8 +141,8 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
       const names = index.get(parent.blueprintNode)?.get(node.name);
       if (names)
         for (const name of names) {
-          const virtual = parent.structure?.[name];
-          if (virtual?.behavior.type === 'virtual' && !virtual.detached)
+          const virtual = parent.childrenByName?.[name];
+          if (virtual?.behavior.type === 'virtual' && !virtual.isDetached)
             updateOutput(virtual, context);
         }
     }

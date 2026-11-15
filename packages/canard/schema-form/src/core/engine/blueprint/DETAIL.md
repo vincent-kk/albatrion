@@ -42,7 +42,7 @@ FE 전용 조건부 필드는 단일 스키마의 properties와 controls.active�
 
 ### fixed-first-load-proof — 마운트 전용 증거의 독립성
 
-fixedFirstLoadPlan은 staticFirstLoadEligible·branchless와 독립된 비열거·읽기 전용 생성 사실입니다. 기존 자격을 역산하지 않고 최종 검사까지 남은 유한·리터럴 증거를 받으며, 모드 초기화나 캐시 재사용으로 지우지 않습니다. 검증기 판정·살아 있는 레코드를 보유하지 않아 분석 재사용이 실행 상태를 공유하지 않게 합니다.
+fixedFirstLoadPlan은 isStaticFirstLoadEligible·capabilities.isBranchless와 독립된 비열거·읽기 전용 생성 사실입니다. 기존 자격을 역산하지 않고 최종 검사까지 남은 유한·리터럴 증거를 받으며, 모드 초기화나 캐시 재사용으로 지우지 않습니다. 검증기 판정·살아 있는 레코드를 보유하지 않아 분석 재사용이 실행 상태를 공유하지 않게 합니다.
 
 ### fixed-first-load-fallback — 닫힌 overlay 언어
 
@@ -126,7 +126,7 @@ buildNodes의 BLUEPRINT-017·FRAGMENT-048을 따릅니다. 모양 오류가 무�
 
 ### blueprint-property-addresses — 경로가 이름을 바꾸지 않습니다
 
-속성 이름이 정확히 %2A·%2E·%2E%2E·%40이면 왕복 시 예약 연산자로 바뀌므로 RESERVED_PROPERTY_NAME으로 거부합니다. 문자 그대로의 *·.·..·@와 대소문자가 다른 퍼센트 이름까지 금지하지 않습니다.
+속성 이름이 정확히 %2A·%2E·%2E%2E·%40이면 왕복 시 예약 연산자로 바뀌므로 RESERVED_PROPERTY_NAME으로 거부합니다. 문자 그대로의 \*·.·..·@와 대소문자가 다른 퍼센트 이름까지 금지하지 않습니다.
 
 ### feature-index-item-fragment — 아이템의 직접 소유를 보존합니다
 

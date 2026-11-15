@@ -11,12 +11,23 @@ import type { PendingFormErrorRecord } from '../../../../../errors';
 import type { BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
+import type { RelocatedGateReads } from '../../types/gateWheel';
 import type { SettlementContext } from '../../types/settlement';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { getGateRegistry } from './getGateRegistry';
 import { readGateHostView } from './readGateHostView';
 import { readProjectedValue } from './readProjectedValue';
 import { recordGateInput } from './recordGateInput';
+import type { GateOccurrence } from './type';
+
+/** Annotates the lazily created `relocatedReads`; an argument-less `new Map()` would be `Map<any, any>`. */
+type RelocatedReads = Map<GateOccurrence, RelocatedGateReads>;
+/** Annotates the lazily created `pendingWarningRecords`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PendingWarningRecords = Map<string, PendingFormErrorRecord>;
+/** Annotates the lazily created `guardFailureRecords`; an argument-less `new Map()` would be `Map<any, any>`. */
+type GuardFailureRecords = Map<string, PendingFormErrorRecord>;
+/** Annotates the lazily created `predicateResults`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PredicateResults = Map<object, boolean>;
 
 /**
  * Evaluate one bound gate with the real expression or validator guard.
@@ -60,7 +71,7 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
   const occurrence = registry.locate(owner, gate, edgeName);
   const hostPath = occurrence.hostPath;
   const predicate = occurrence.predicate;
-  const reusable = !reference && !!context.kind && predicate.memoizable;
+  const reusable = !reference && !!context.kind && predicate.isMemoizable;
   const input = reusable ? predicate.arguments : undefined;
   try {
     const view =
@@ -84,7 +95,7 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
                 ? hasOwnProperty(view!.value, site.name!)
                 : gate.kind === 'if' ||
                     (gate.kind === 'discriminator' && site.path === hostPath)
-                  ? view?.projected
+                  ? view?.projectedValue
                   : gate.kind === 'discriminator'
                     ? hasOwnProperty(view!.value, gate.condition.propertyName)
                       ? view!.value[gate.condition.propertyName]
@@ -98,11 +109,13 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
     if (
       gate.kind === 'active' &&
       occurrence.evaluationHostPath !== occurrence.hostPath
-    )
-      (context.relocatedReads ??= new Map()).set(occurrence, {
+    ) {
+      const reads: RelocatedReads = (context.relocatedReads ??= new Map());
+      reads.set(occurrence, {
         paths: occurrence.watchPaths,
         values: dependencies,
       });
+    }
     if (reusable && identical && memo) return memo.value;
     if (!reference) occurrence.memo = undefined;
     const args = input ?? { values: dependencies, view: undefined };
@@ -124,10 +137,9 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
           code: FormWarningCode.ValidatorMissing,
           message: 'Validation is disabled because no validator was selected',
         };
-        (runtime.pendingWarningRecords ??= new Map()).set(
-          FormWarningCode.ValidatorMissing,
-          record,
-        );
+        const records: PendingWarningRecords =
+          (runtime.pendingWarningRecords ??= new Map());
+        records.set(FormWarningCode.ValidatorMissing, record);
         runtime.chainOccurrences?.push({ kind: 'record', record });
       }
       if (
@@ -141,10 +153,9 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
           message: 'Conditional schema is inactive without a validator',
           schemaPath: gate.schemaPath,
         };
-        (runtime.pendingWarningRecords ??= new Map()).set(
-          FormWarningCode.ConditionalSchemaWithoutValidator,
-          record,
-        );
+        const records: PendingWarningRecords =
+          (runtime.pendingWarningRecords ??= new Map());
+        records.set(FormWarningCode.ConditionalSchemaWithoutValidator, record);
         runtime.chainOccurrences?.push({ kind: 'record', record });
       }
       return false;
@@ -153,7 +164,7 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
     if (
       !reference &&
       context.kind &&
-      predicate.memoizable &&
+      predicate.isMemoizable &&
       result !== undefined
     )
       if (memo) {
@@ -164,7 +175,7 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
   } catch (cause) {
     if (!reference) occurrence.memo = undefined;
     const runtime = context.root.runtime;
-    context.gateThrowVersion = (context.gateThrowVersion ?? 0) + 1;
+    context.gateExceptionVersion = (context.gateExceptionVersion ?? 0) + 1;
     const code =
       gate.kind === 'if'
         ? FormErrorCode.GuardFailed
@@ -189,7 +200,7 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
     }
 
     const failure =
-      runtime.mountingGuardPass || repeated
+      runtime.isInMountingGuardPass || repeated
         ? undefined
         : new SchemaFormError(
             code,
@@ -211,7 +222,9 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
         details: { cause },
         origin: runtime.chainOrigin,
       };
-      (runtime.guardFailureRecords ??= new Map()).set(gate.schemaPath, record);
+      const records: GuardFailureRecords = (runtime.guardFailureRecords ??=
+        new Map());
+      records.set(gate.schemaPath, record);
       runtime.chainOccurrences?.push({ kind: 'record', record });
     }
     if (failure) recordSettlementFailure(context, failure, 'expression');
@@ -239,22 +252,24 @@ export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
   edgeName?: string,
   reference = false,
 ): boolean => {
-  const version = context.gateThrowVersion;
+  const version = context.gateExceptionVersion;
   const value = evaluateGateValue(gate, context, owner, edgeName, reference);
   const frame = context.gateWheelFrame;
   if (
     !reference &&
     frame &&
-    context.gateSelectionRounds?.get(owner)?.active &&
-    version === context.gateThrowVersion
+    context.gateSelectionRounds?.get(owner)?.isActive &&
+    version === context.gateExceptionVersion
   ) {
     const occurrence = getGateRegistry(owner.runtime).locate(
       owner,
       gate,
       edgeName,
     );
-    if (occurrence.predicate.memoizable)
-      (frame.predicateResults ??= new Map()).set(occurrence, value);
+    if (occurrence.predicate.isMemoizable) {
+      const results: PredicateResults = (frame.predicateResults ??= new Map());
+      results.set(occurrence, value);
+    }
   }
   context.gateWheelFrame?.evaluations?.push({
     gate,

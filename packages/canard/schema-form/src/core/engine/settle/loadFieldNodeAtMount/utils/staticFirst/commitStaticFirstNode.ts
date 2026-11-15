@@ -15,13 +15,13 @@ const STATIC_FIRST_DELIVERY_TYPE =
 
 /**
  * Finalize one reserved first-load delivery after its children complete.
- * @param node - Occurrence with final local/emit, schema and required state
- * @param automatic - Whether this node or an ancestor supplied a literal default
+ * @param node - Occurrence with final stored and output values, schema and required state
+ * @param isAutomatic - Whether this node or an ancestor supplied a literal default
  * @returns Nothing; all revisions are committed before the dispatcher runs
  */
 export const commitStaticFirstNode = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  automatic: boolean,
+  isAutomatic: boolean,
 ): void => {
   const type = STATIC_FIRST_DELIVERY_TYPE;
   const silent = canOmitFieldNodePayload(node);
@@ -29,8 +29,8 @@ export const commitStaticFirstNode = <Self extends FieldNodeRecord<Self>>(
   else {
     const current =
       node.behavior.strategy === 'branch'
-        ? { local: node.local, emit: node.emit }
-        : node.local;
+        ? { value: node.storedValue, outputValue: node.storedOutputValue }
+        : node.storedValue;
     const payload = { previous: undefined, current };
     node.pendingDelivery = {
       type,
@@ -42,19 +42,19 @@ export const commitStaticFirstNode = <Self extends FieldNodeRecord<Self>>(
       },
       options: {
         [FieldNodeEventType.UpdateValue]: {
-          source: automatic
+          source: isAutomatic
             ? FieldNodeWriteKind.Automatic
             : FieldNodeWriteKind.Load,
         },
       },
     };
   }
-  node.deliveryInitialized = true;
+  node.isDeliveryInitialized = true;
   if (silent) advanceFieldNodeRevision(node, type, silent);
   else
     node.revisionLedger = new FieldNodeRevisionLedger(
       node.revisionLedger,
       type,
     );
-  node.pendingRevision = BIT_MASK_NONE;
+  node.pendingRevisionMask = BIT_MASK_NONE;
 };

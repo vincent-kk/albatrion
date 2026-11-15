@@ -21,10 +21,12 @@ describe('tuple host registration before the host exists', () => {
     const before = gateSelectionTable.violations;
     const history = runGateSelectionCase(tupleGateHostCase) as {
       failure: unknown;
-      nodes: { path: string; emit: unknown }[];
+      nodes: { path: string; storedOutputValue: unknown }[];
     }[];
     expect(history.map((row) => row.failure)).toEqual([undefined, undefined]);
-    expect(history[1].nodes.find((node) => node.path === '')?.emit).toEqual({
+    expect(
+      history[1].nodes.find((node) => node.path === '')?.storedOutputValue,
+    ).toEqual({
       arr: [{ kind: 'b', b: 'B' }],
     });
     expect(gateSelectionTable.violations).toBe(before);

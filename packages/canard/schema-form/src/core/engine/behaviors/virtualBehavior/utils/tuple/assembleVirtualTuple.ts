@@ -5,7 +5,7 @@ import { readVirtualValue } from './readVirtualValue';
 
 /** Assemble referenced sibling values in the blueprint's field order. */
 export const assembleVirtualTuple: Behavior['assemble'] = (node, children) => {
-  const previous = node.local;
+  const previous = node.storedValue;
   if (isArray(previous) && previous.length === children.length) {
     let unchanged = true;
     for (let index = 0; index < children.length; index++)

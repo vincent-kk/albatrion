@@ -15,7 +15,7 @@ export const pruneArraySlotTail = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   for (const [name, child] of host.inactiveSlotChildren ?? []) {
-    if (Number(name) < host.itemCount && host.structure?.[name] === child)
+    if (Number(name) < host.itemCount && host.childrenByName?.[name] === child)
       continue;
     const entry = getRetainedChildEntry(host, name, child.blueprintNode);
     if (entry) markSlotChange(host, entry, child, context);

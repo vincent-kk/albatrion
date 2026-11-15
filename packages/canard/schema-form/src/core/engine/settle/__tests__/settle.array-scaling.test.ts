@@ -47,7 +47,7 @@ const gatedRows = (count: number) => {
   root.setValue({
     flag: true,
     rows: Array.from({ length: count }, (_, index) => ({
-      child: String(index),
+      child: '' + index,
     })),
   });
   return { root, runtime: root.runtime };
@@ -229,10 +229,7 @@ describe('44C-01 array settlement scaling', () => {
     const value = {
       flag: true,
       ...Object.fromEntries(
-        Array.from({ length: count }, (_, index) => [
-          `g${index}`,
-          String(index),
-        ]),
+        Array.from({ length: count }, (_, index) => [`g${index}`, '' + index]),
       ),
     };
     const behavior = root.behavior;
@@ -248,7 +245,7 @@ describe('44C-01 array settlement scaling', () => {
       loadFieldNodeAtMount(root, value, WriteOption.Overwrite);
       if (process.env.SETTLE_SCALING_PROBE)
         console.info(`51C-01 object host assemblies: ${assemblies}`);
-      expect(root.emit).toEqual(value);
+      expect(root.storedOutputValue).toEqual(value);
       expect(assemblies).toBeLessThan(10);
     } finally {
       Reflect.set(root, 'behavior', behavior);
@@ -312,8 +309,8 @@ describe('44C-01 array settlement scaling', () => {
     for (const value of observations.slice(0, settled))
       expect(value).toEqual(inProgress);
     for (const value of observations.slice(settled))
-      expect(value).toEqual(root.emit);
-    expect(root.emit).toEqual({
+      expect(value).toEqual(root.storedOutputValue);
+    expect(root.storedOutputValue).toEqual({
       first: { value: 'entered' },
       current: { value: 'in-progress', primer: 'ready', reader: 'visible' },
     });
@@ -348,23 +345,25 @@ describe('44C-01 array settlement scaling', () => {
     });
     root.setValue({
       rows: Array.from({ length: count }, (_, index) => ({
-        list: [{ on: false, value: String(index) }],
+        list: [{ on: false, value: '' + index }],
       })),
     });
     if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
     const index = getDependencyIndex(root.runtime.blueprint);
-    const affected = index.affected.bind(index);
+    const affected = index.affectedOwners.bind(index);
     let owners = 0;
-    const spy = vi.spyOn(index, 'affected').mockImplementation((path, tree) => {
-      const result = affected(path, tree);
-      owners += result.length;
-      return result;
-    });
+    const spy = vi
+      .spyOn(index, 'affectedOwners')
+      .mockImplementation((path, tree) => {
+        const result = affected(path, tree);
+        owners += result.length;
+        return result;
+      });
     try {
       root.setValue({
         rows: Array.from({ length: count }, (_, row) => ({
           list: [
-            { on: false, value: String(row) },
+            { on: false, value: '' + row },
             { on: false, value: 'added' },
           ],
         })),
@@ -440,11 +439,11 @@ describe('44C-01 array settlement scaling', () => {
     for (const count of [1, 7, 13]) {
       const { root } = gatedRows(count);
       const rows = Array.from({ length: count }, (_, index) => ({
-        child: String(index),
+        child: '' + index,
       }));
       const inactive = Array.from({ length: count }, (_, index) => ({
         path: `/rows/${index}/child`,
-        value: String(index),
+        value: '' + index,
       }));
       for (const flag of [false, true, false]) {
         root.find('/flag')!.setValue(flag);
@@ -480,7 +479,7 @@ describe('44C-01 array settlement scaling', () => {
     }).root;
     if (!isTestFieldNode(tags)) throw new Error('Expected a runtime FieldNode');
     const tagRows = Array.from({ length: count }, (_, index) => ({
-      tags: [String(index)],
+      tags: ['' + index],
     }));
     tags.setValue({ flag: true, rows: tagRows });
     const tagVisits = countSlotEntryQueries(() =>
@@ -528,7 +527,7 @@ describe('44C-01 array settlement scaling', () => {
     }).root;
     if (!isTestFieldNode(list)) throw new Error('Expected a runtime FieldNode');
     const listRows = Array.from({ length: count }, (_, index) => ({
-      list: [{ on: false, child: String(index) }],
+      list: [{ on: false, child: '' + index }],
     }));
     list.setValue({ flag: true, rows: listRows });
     const listVisits = countSlotEntryQueries(() =>
@@ -575,7 +574,7 @@ describe('44C-01 array settlement scaling', () => {
     const absentRows = Object.fromEntries(
       Array.from({ length: count }, (_, index) => [
         `g${index}`,
-        { child: String(index) },
+        { child: '' + index },
       ]),
     );
     absent.setValue({ flag: false });
@@ -586,7 +585,7 @@ describe('44C-01 array settlement scaling', () => {
     expect(absent.inactiveValues).toEqual(
       Array.from({ length: count }, (_, index) => ({
         path: `/g${index}/child`,
-        value: String(index),
+        value: '' + index,
       })),
     );
     absent.find('/flag')!.setValue(true);
@@ -746,12 +745,15 @@ describe('44C-01 array settlement scaling', () => {
   it('NODE-026 visits only dirty item slots on a 2,000-item keystroke', () => {
     const { root } = makeFieldNodeTree(schema);
     root.setValue(items(2000, 0));
-    const structure = Reflect.get(root, 'structure') as Record<string, unknown>;
+    const childrenByName = Reflect.get(root, 'childrenByName') as Record<
+      string,
+      unknown
+    >;
     let slotReads = 0;
     Reflect.set(
       root,
-      'structure',
-      new Proxy(structure, {
+      'childrenByName',
+      new Proxy(childrenByName, {
         get(target, property, receiver) {
           if (typeof property === 'string' && /^\d+$/.test(property))
             slotReads++;

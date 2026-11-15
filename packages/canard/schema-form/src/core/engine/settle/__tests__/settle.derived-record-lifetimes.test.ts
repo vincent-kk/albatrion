@@ -110,7 +110,7 @@ it('keeps the by-entry derivative lazy after preparing a static shape', () => {
   );
   const reuser = createStaticEntryReuser(
     root,
-    root.structure!,
+    root.childrenByName!,
     context,
     {},
     undefined,
@@ -151,10 +151,10 @@ it('owns presence traversal memos in separate settlement contexts, outside the s
   );
   expect(first.dependencyPresenceMemo).toBeUndefined();
   expect(second.dependencyPresenceMemo).toBeUndefined();
-  index.affectedByPresence('', 'flag', undefined, first);
+  index.affectedOwnersByPresence('', 'flag', undefined, first);
   expect(first.dependencyPresenceMemo).toBeInstanceOf(Map);
   expect(second.dependencyPresenceMemo).toBeUndefined();
-  index.affectedByPresence('', 'flag', undefined, second);
+  index.affectedOwnersByPresence('', 'flag', undefined, second);
   expect(first.dependencyPresenceMemo).not.toBe(second.dependencyPresenceMemo);
   expect(Reflect.get(index, 'presenceMemos')).toBeUndefined();
 });

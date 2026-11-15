@@ -74,7 +74,7 @@ it('has no extra collisions on an adversarial scalar and structural corpus', () 
   for (let i = 0; i < 500; i++) {
     const object: any = {
       [String.fromCharCode(random() % 128) + ':{};']:
-        random() % 2 ? String(random()) : random(),
+        random() % 2 ? '' + random() : random(),
       list: [random(), undefined, 'x:' + random()],
     };
     if (i % 3 === 0) object.self = object;

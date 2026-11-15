@@ -25,10 +25,10 @@ const createLoadState = (root: PlainNode): DeriveState<PlainNode> => ({
   appliedRanks: new Map(),
   visitedSourcePaths: new Set(),
   loadScope: root,
-  entered: new Set(),
-  revived: new Set(),
-  suppressAutomaticWrites: false,
-  trace: false,
+  enteredNodes: new Set(),
+  revivedNodes: new Set(),
+  isAutomaticWriteSuppressed: false,
+  isTraceEnabled: false,
 });
 
 // filid:contract derive-failures

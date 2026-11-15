@@ -29,7 +29,7 @@ it.each(['flush', 'reset'] as const)(
       if (record.message === 'target') throw handler;
     });
     const service: FormErrorService = {
-      load: 0,
+      loadEpoch: 0,
       warningScope: {},
       beginLoad: vi.fn(),
       capture: vi.fn(),

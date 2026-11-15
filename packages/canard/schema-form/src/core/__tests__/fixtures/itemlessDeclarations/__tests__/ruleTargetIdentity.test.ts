@@ -6,9 +6,9 @@ import {
   createRuleTargetIdentity,
 } from '../ruleTargetIdentity';
 
-const node = (path = '/target', detached = false) => ({
+const node = (path = '/target', isDetached = false) => ({
   path,
-  detached,
+  isDetached,
   blueprintNode: { kind: 'number' },
 });
 const key = (id: number, path = '/target') =>
@@ -69,7 +69,7 @@ describe('rule-owner identity regression record', () => {
   });
   it('distinguishes a retained non-live occurrence at the same path and kind', () => {
     const c = context();
-    c.old.detached = false;
+    c.old.isDetached = false;
     expect(c.normalize(key(41))).not.toBe(c.normalize(key(42)));
   });
   it('rejects a nonexistent or foreign-module owner ID', () => {

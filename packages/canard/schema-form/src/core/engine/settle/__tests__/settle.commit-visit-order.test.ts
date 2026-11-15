@@ -52,13 +52,13 @@ describe('commit source visit characterization', () => {
       0,
     );
     dispatchBatch(root, () => {});
-    const { left, right } = root.structure!;
+    const { left, right } = root.childrenByName!;
     const nodes = [
-      left.structure!.a,
-      left.structure!.b,
+      left.childrenByName!.a,
+      left.childrenByName!.b,
       left,
-      right.structure!.a,
-      right.structure!.b,
+      right.childrenByName!.a,
+      right.childrenByName!.b,
       right,
       root,
     ];
@@ -97,12 +97,12 @@ describe('commit source visit characterization', () => {
     });
     loadFieldNodeAtMount(root, { enabled: true, a: 'A', b: 'B' }, 0);
     dispatchBatch(root, () => {});
-    const { a, b } = root.structure!;
-    a.interactionState = { arbitrary: true };
+    const { a, b } = root.childrenByName!;
+    a.storedState = { arbitrary: true };
     root.runtime.globalStateCounts.set('arbitrary', 1);
     root.runtime.globalState = { arbitrary: true };
-    a.interactionState = captureFieldNodeChange(a, 'interactionState', {});
-    b.interactionState = captureFieldNodeChange(b, 'interactionState', {
+    a.storedState = captureFieldNodeChange(a, 'storedState', {});
+    b.storedState = captureFieldNodeChange(b, 'storedState', {
       arbitrary: true,
     });
     const scratch = getSettlementScratch(root.runtime);
@@ -112,7 +112,7 @@ describe('commit source visit characterization', () => {
       0,
       scratch,
     );
-    context.entered.add(b);
+    context.enteredNodes.add(b);
     context.changedNodes.add(a);
     context.stateDirtyNodes.add(b);
     const order: string[] = [];
@@ -131,7 +131,7 @@ describe('commit source visit characterization', () => {
 
   it('visits unchanged load-only siblings after changed and state candidates', () => {
     const root = fixture();
-    const { a, b, c } = root.structure!;
+    const { a, b, c } = root.childrenByName!;
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(
       root,
@@ -155,7 +155,7 @@ describe('commit source visit characterization', () => {
 
   it('visits a required-only child after global candidates and before the root extra', () => {
     const root = fixture();
-    const { a, b } = root.structure!;
+    const { a, b } = root.childrenByName!;
     root.schema = {
       ...root.schema,
       schema: {
@@ -194,7 +194,7 @@ describe('commit source visit characterization', () => {
       0,
       scratch,
     );
-    context.changedNodes.add(root.structure!.b);
+    context.changedNodes.add(root.childrenByName!.b);
     root.runtime.diagnostics = { status: 'degraded', cause: 'budget' };
     const before = root.revisionLedger[E.UpdateDiagnostics] ?? 0;
     const order: string[] = [];
@@ -210,7 +210,7 @@ describe('commit source visit characterization', () => {
 
   it('deduplicates overlapping path and context watchers after global candidates', () => {
     const root = fixture();
-    const { a, b, c } = root.structure!;
+    const { a, b, c } = root.childrenByName!;
     const index = createWatchDeliveryIndex();
     index.update(a, ['/b', '@']);
     index.update(c, ['/b', '/old']);
@@ -226,7 +226,7 @@ describe('commit source visit characterization', () => {
     );
     context.changedNodes.add(a);
     context.pathChanges.push({ node: b, previous: '/old', current: '/b' });
-    c.detached = true;
+    c.isDetached = true;
     const order: string[] = [];
     try {
       markCommitDeliveries(context, (node) => order.push(node.path));
@@ -240,7 +240,7 @@ describe('commit source visit characterization', () => {
 
   it('keeps visit order and revisions when an earlier wave listener settles a later node', () => {
     const root = fixture();
-    const { a, b } = root.structure!;
+    const { a, b } = root.childrenByName!;
     const order: string[][] = [];
     const events: unknown[] = [];
     const commit = (node: typeof a, value: string) => {
@@ -251,8 +251,12 @@ describe('commit source visit characterization', () => {
         0,
         scratch,
       );
-      node.local = captureFieldNodeChange(node, 'local', value);
-      node.emit = captureFieldNodeChange(node, 'emit', value);
+      node.storedValue = captureFieldNodeChange(node, 'storedValue', value);
+      node.storedOutputValue = captureFieldNodeChange(
+        node,
+        'storedOutputValue',
+        value,
+      );
       context.changedNodes.add(node);
       const visited: string[] = [];
       try {
@@ -300,7 +304,7 @@ describe('commit source visit characterization', () => {
 
   it('preserves direct marks left by an exception in the next commit', () => {
     const root = fixture();
-    const { a, b } = root.structure!;
+    const { a, b } = root.childrenByName!;
     markFieldNodeEvent(a, E.RequestFocus);
     const scratch = getSettlementScratch(root.runtime);
     const first = createSettlementContext(
@@ -334,7 +338,7 @@ describe('commit source visit characterization', () => {
       markCommitDeliveries(next, (node) => order.push(node.path));
       expect(order).toEqual(['/b', '', '/a']);
       expect(a.revisionLedger[E.RequestFocus]).toBe(1);
-      expect(a.pendingRevision).toBe(0);
+      expect(a.pendingRevisionMask).toBe(0);
     } finally {
       releaseSettlementScratch(nextScratch);
     }
@@ -342,9 +346,9 @@ describe('commit source visit characterization', () => {
 
   it('visits departing descendants first and removes their pending signals', () => {
     const root = fixture();
-    const { a, b } = root.structure!;
+    const { a, b } = root.childrenByName!;
     markFieldNodeEvent(a, E.RequestFocus);
-    a.detached = true;
+    a.isDetached = true;
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(
       root,
@@ -352,7 +356,7 @@ describe('commit source visit characterization', () => {
       0,
       scratch,
     );
-    context.exited.add(a);
+    context.exitedNodes.add(a);
     context.stateDirtyNodes.add(b);
     const order: string[] = [];
     try {

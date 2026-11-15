@@ -12,6 +12,7 @@ import {
 
 import { getFeatureNodeIndex } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
+import type { PresenceQueryCursor } from '../../types/presenceQueryCursor';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { collectPresenceChangeNames } from './collectPresenceChangeNames';
@@ -22,15 +23,18 @@ import { getLivePresenceNode } from './getLivePresenceNode';
 import { publishPresenceOwner } from './publishPresenceOwner';
 import { registerProjectionChanges } from './registerProjectionChanges';
 
+/** Annotates the lazily created `presenceQueryCursors`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PresenceQueryCursors = Map<string, PresenceQueryCursor>;
+
 /** Parent pointer of a non-root occurrence, preserving escaped segments. */
 const parentOf = (path: string): string => resolvePointer(path, $.Parent);
 
 /**
- * Register child identity or projected emission changes in their existing host wheel.
+ * Register child identity or projected output-value changes in their existing host wheel.
  * @param host - Live branch whose latest round has finished computing children
  * @param previous - Name-to-node identities at the preceding round's end
  * @param context - Call-local dirty indexes and accumulated presence evidence
- * @returns Whether any child identity or projected emission differs, even if no reader was scheduled
+ * @returns Whether any child identity or projected output value differs, even if no reader was scheduled
  */
 export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
   host: Self,
@@ -39,7 +43,7 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   if (!context.hasGates) return false;
   if (context.presenceMetrics) context.presenceMetrics.calls++;
-  const structure = host.structure ?? {};
+  const childrenByName = host.childrenByName ?? {};
   const names = collectPresenceChangeNames(host, previous, context);
   registerProjectionChanges(host, names, context);
   if (names.length === 0) return false;
@@ -57,8 +61,8 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
     const rawName = parsePointerSegment(name);
     if (typeof rawName !== 'string') continue;
     const path = appendSegment(host.path, rawName);
-    const child = hasOwnProperty(structure, rawName)
-      ? structure[rawName]
+    const child = hasOwnProperty(childrenByName, rawName)
+      ? childrenByName[rawName]
       : undefined;
     const computeStart = child
       ? (context.presenceComputeStarts?.get(child) ?? 0)
@@ -78,7 +82,7 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
         prefixLog.push(prefix);
       }
     }
-    const affected = dependencies.affectedByPresence(
+    const affected = dependencies.affectedOwnersByPresence(
       host.path,
       name,
       context.presenceMetrics,
@@ -141,7 +145,8 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
     ancestor = parentOf(ancestor)
   ) {
     if (!context.shapeDirtyPaths.has(ancestor)) {
-      const cursors = (context.presenceQueryCursors ??= new Map());
+      const cursors: PresenceQueryCursors = (context.presenceQueryCursors ??=
+        new Map());
       let cursor = cursors.get(ancestor);
       if (!cursor) {
         cursor = { changed: 0, prefixes: 0, index: 0 };

@@ -3,9 +3,15 @@ import {
   isDescendantPath,
 } from '@/schema-form/helpers/jsonPointer';
 
-import type { FieldNodeRecord } from '../../../record';
+import type { BlueprintChildEntry } from '../../../blueprint';
+import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { markSlotChange } from './markSlotChange';
+
+/** Annotates the lazily created `inactiveSlots`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlots<Self> = Map<BlueprintChildEntry, Self>;
+/** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
 
 /**
  * Restore bindings changed after the caller's Source B boundary.
@@ -27,11 +33,14 @@ export const restoreSlotSources = <Self extends FieldNodeRecord<Self>>(
       )
         continue;
       markSlotChange(host, entry);
-      if (previous.instance)
-        (host.inactiveSlots ??= new Map()).set(entry, previous.instance);
-      else host.inactiveSlots?.delete(entry);
-      if (previous.overlay)
-        (host.inactiveSlotOverlays ??= new Map()).set(entry, previous.overlay);
-      else host.inactiveSlotOverlays?.delete(entry);
+      if (previous.instance) {
+        const slots: InactiveSlots<Self> = (host.inactiveSlots ??= new Map());
+        slots.set(entry, previous.instance);
+      } else host.inactiveSlots?.delete(entry);
+      if (previous.overlay) {
+        const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
+          new Map());
+        overlays.set(entry, previous.overlay);
+      } else host.inactiveSlotOverlays?.delete(entry);
     }
 };

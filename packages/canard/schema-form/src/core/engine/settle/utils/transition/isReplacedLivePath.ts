@@ -16,13 +16,13 @@ export const isReplacedLivePath = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   path: string,
 ): boolean => {
-  const scope = context.replaceScope;
+  const scope = context.replacementScope;
   const withinScope =
     scope !== undefined &&
     (!scope.path || path === scope.path || isDescendantPath(path, scope.path));
   let matchesVirtualReplacement: Optional<boolean> = undefined;
 
-  const virtualReplacementPaths = context.virtualReplacePaths;
+  const virtualReplacementPaths = context.virtualReplacementPaths;
   if (virtualReplacementPaths != null) {
     matchesVirtualReplacement = false;
     for (
@@ -42,7 +42,7 @@ export const isReplacedLivePath = <Self extends FieldNodeRecord<Self>>(
   const withinVirtual = matchesVirtualReplacement ?? false;
   let matchesBatchReplacement: Optional<boolean> = undefined;
 
-  const replacementPaths = context.replacePaths;
+  const replacementPaths = context.replacementPaths;
   if (replacementPaths != null) {
     matchesBatchReplacement = false;
     for (
@@ -62,5 +62,5 @@ export const isReplacedLivePath = <Self extends FieldNodeRecord<Self>>(
   const withinBatch = matchesBatchReplacement ?? false;
   if (!withinScope && !withinVirtual && !withinBatch) return false;
   const live = find(context.root, path);
-  return live !== null && !live.detached;
+  return live !== null && !live.isDetached;
 };

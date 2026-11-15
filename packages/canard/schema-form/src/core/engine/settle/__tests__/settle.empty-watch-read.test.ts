@@ -18,7 +18,7 @@ it('allocates no memo or witness for repeated empty live reads', () => {
     expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
   expect(lookup).not.toHaveBeenCalled();
   expect(root.runtime.watchValuesMemo).toBeUndefined();
-  root.detached = true;
+  root.isDetached = true;
   expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
 });
 
@@ -41,7 +41,7 @@ it('clears real watch values before reusing an empty memo and detaching', () => 
   expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
   expect(root.runtime.watchValuesMemo!.get(root)).toBe(memo);
   expect(lookup).not.toHaveBeenCalled();
-  root.detached = true;
+  root.isDetached = true;
   expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
   expect(watched).toEqual([root.runtime.context]);
 });
@@ -52,7 +52,7 @@ it('retains snapshot memo writes and restores empty live reads', () => {
   const snapshot = {
     schema: { type: 'string' as const, controls: { watch: ['@'] } },
     context: { prior: true },
-    emit: 'value',
+    outputValue: 'value',
   };
   expect(readFieldNodeWatchValues(root, snapshot)).toEqual([snapshot.context]);
   expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);

@@ -5,6 +5,9 @@ import {
 
 import { getHostDerived } from '../cache/derivedRecords';
 
+/** Annotates the lazily created `pointerSegments`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PointerSegmentsMap = Map<string, readonly PointerSegment[]>;
+
 const POINTER_SEGMENT_LIMIT = 256;
 type PointerSegments = Map<string, readonly PointerSegment[]>;
 
@@ -19,7 +22,7 @@ export const getCachedPointerSegments = (
   path: string,
 ): readonly PointerSegment[] => {
   const derived = getHostDerived<'pointerSegments', PointerSegments>(runtime);
-  const cache = (derived.pointerSegments ??= new Map());
+  const cache: PointerSegmentsMap = (derived.pointerSegments ??= new Map());
   let segments = cache.get(path);
   if (segments === undefined) {
     segments = parsePointerSegments(path);

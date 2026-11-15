@@ -25,7 +25,7 @@ describe('array fragment derive candidates', () => {
         (rule) => rule.layer === 'fragment',
       );
       expect(rules).toHaveLength(2);
-      expect(rules.map((rule) => [rule.targetName, rule.targetItems])).toEqual(
+      expect(rules.map((rule) => [rule.targetName, rule.isItemTarget])).toEqual(
         keyword === 'items'
           ? [
               [undefined, true],
@@ -46,7 +46,7 @@ describe('array fragment derive candidates', () => {
         { a: false, b: true, list: [0] },
         WriteOption.Overwrite,
       );
-      expect(root.structure!.list.structure!['0'].source).toBe(42);
+      expect(root.childrenByName!.list.childrenByName!['0'].source).toBe(42);
     },
   );
 });

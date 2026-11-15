@@ -23,7 +23,7 @@ export interface EffectiveSchema {
   /** Frozen hints for this active set; false when a contributing schema forbids every value. */
   readonly schema: BlueprintSchema;
   /** True when the active gated types share nothing with the static accepted set. */
-  readonly typeConflict: boolean;
+  readonly hasTypeConflict: boolean;
 }
 
 /** Separate memo contexts prevent runtime conflicts from bypassing static validation. */

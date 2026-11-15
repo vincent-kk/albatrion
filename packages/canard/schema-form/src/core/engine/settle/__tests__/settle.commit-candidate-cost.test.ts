@@ -58,8 +58,8 @@ describe('commit candidate Set work', () => {
     });
     loadFieldNodeAtMount(root, { a: 'A' }, 0);
     dispatchBatch(root, () => {});
-    const a = root.structure!.a;
-    a.detached = true;
+    const a = root.childrenByName!.a;
+    a.isDetached = true;
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(
       root,
@@ -67,7 +67,7 @@ describe('commit candidate Set work', () => {
       0,
       scratch,
     );
-    context.exited.add(a);
+    context.exitedNodes.add(a);
     const nativeAdd = Set.prototype.add;
     let adds = 0;
     const spy = vi.spyOn(Set.prototype, 'add').mockImplementation(function <T>(

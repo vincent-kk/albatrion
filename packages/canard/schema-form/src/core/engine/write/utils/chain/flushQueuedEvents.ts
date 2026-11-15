@@ -25,7 +25,7 @@ const isQueuedNode = <Self extends FieldNodeRecord<Self>>(
   candidate !== null &&
   typeof candidate === 'object' &&
   Reflect.get(candidate, 'runtime') === runtime &&
-  Reflect.get(candidate, 'detached') === false;
+  Reflect.get(candidate, 'isDetached') === false;
 
 /**
  * Deliver merged non-settlement bits in waves after committed events; a non-root
@@ -42,8 +42,8 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
   origin: 'load' | 'write' | 'validate',
 ): void => {
   const entryRuntime = root.runtime;
-  if (entryRuntime.flushingQueuedEvents) return;
-  entryRuntime.flushingQueuedEvents = true;
+  if (entryRuntime.isFlushingQueuedEvents) return;
+  entryRuntime.isFlushingQueuedEvents = true;
   const standalone = !entryRuntime.entryDepth && !entryRuntime.chainErrors;
   const previousOrigin = entryRuntime.chainOrigin;
   const previousErrors = entryRuntime.chainErrors;
@@ -63,12 +63,12 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
     for (;;) {
       active = resolveFieldNodeChainRoot(active, owners);
       runtime = active.runtime;
-      runtime.flushingQueuedEvents = true;
+      runtime.isFlushingQueuedEvents = true;
       if (
         !runtime.pendingExternalErrorNodes?.size &&
         !runtime.queuedNonSettleEvents?.size &&
         !runtime.deliveries?.size &&
-        !(!runtime.entryDepth && runtime.stateChanged)
+        !(!runtime.entryDepth && runtime.hasStateChanged)
       )
         break;
       if (runtime.pendingExternalErrorNodes?.size) {
@@ -117,7 +117,7 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
         deliverWave(active, pending);
         continue;
       }
-      runtime.stateChanged = false;
+      runtime.hasStateChanged = false;
       try {
         runtime.onStateChange?.();
       } catch (error) {
@@ -151,7 +151,7 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
     throw error;
   } finally {
     for (const owner of owners) {
-      owner.flushingQueuedEvents = false;
+      owner.isFlushingQueuedEvents = false;
       if (!standalone) continue;
       owner.chainOrigin = previousOrigin;
       owner.chainErrors = previousErrors;

@@ -46,14 +46,14 @@ describe('gate dependency read work', () => {
     const order: string[] = [];
     try {
       loadFieldNodeAtMount(root, { a: 'A', b: 'B' }, WriteOption.Overwrite);
-      expect(root.emit).toEqual({ a: 'A', b: 'B', payload: 'P' });
+      expect(root.storedOutputValue).toEqual({ a: 'A', b: 'B', payload: 'P' });
       writeFieldNode(
-        root.structure!.a,
+        root.childrenByName!.a,
         'other',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
-      expect(root.emit).toEqual({ a: 'other', b: 'B' });
+      expect(root.storedOutputValue).toEqual({ a: 'other', b: 'B' });
       for (const [, path] of projected.mock.calls)
         if (path === '/a' || path === '/b') order.push(path);
     } finally {

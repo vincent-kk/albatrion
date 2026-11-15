@@ -141,7 +141,12 @@ it('compacts relocated watch records during 500 distinct item registrations', ()
     cursor,
   );
   for (let index = 1; index <= 500; index++) {
-    const item = { ...instance, path: `/items/${index}/name` };
+    // A spread copies own fields only; blueprintNode is a prototype getter.
+    const item = {
+      ...instance,
+      blueprintNode: instance.blueprintNode,
+      path: `/items/${index}/name`,
+    };
     registry.register(item);
     const indexes = Reflect.get(registry, 'watchIndex') as Map<
       string,

@@ -55,7 +55,7 @@ describe('static middle remove and insert through the splice path match the gene
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       [remove(0), remove(1), remove(4), remove(5), remove(5, false)],
     );
-    expect(candidate.emit).toEqual([1, 3, 4, 5, 7]);
+    expect(candidate.storedOutputValue).toEqual([1, 3, 4, 5, 7]);
   });
 
   it('inserts number items, undefined and -0 at 0, 1, N/2 and N-2, leaves N to push, and declines after a misfit NaN', () => {
@@ -89,7 +89,7 @@ describe('static middle remove and insert through the splice path match the gene
       remove(4),
       insert(4, { nested: [7] }),
     ]);
-    expect(candidate.emit).toHaveLength(6);
+    expect(candidate.storedOutputValue).toHaveLength(6);
     expect(candidate.children!.map((child) => child.path)).toEqual([
       '/0',
       '/1',
@@ -238,7 +238,7 @@ describe('NODE-051 identity on the splice path', () => {
     for (let index = 1; index < run.before.length; index++) {
       expect(children[index + 1]).toBe(run.before[index]);
       expect(children[index + 1].itemKey).toBe(run.keys[index]);
-      expect(children[index + 1].name).toBe(String(index + 1));
+      expect(children[index + 1].name).toBe('' + (index + 1));
       expect(children[index + 1].path).toBe('/' + (index + 1));
       expect(children[index + 1].parent).toBe(run.root);
     }
@@ -249,7 +249,7 @@ describe('NODE-051 identity on the splice path', () => {
     const rest = removed.root.children!;
     expect(removed.result).toBe(11);
     expect(rest[0]).toBe(removed.before[0]);
-    expect(removed.before[1].detached).toBe(true);
+    expect(removed.before[1].isDetached).toBe(true);
     for (let index = 2; index < removed.before.length; index++) {
       expect(rest[index - 1]).toBe(removed.before[index]);
       expect(rest[index - 1].itemKey).toBe(removed.keys[index]);

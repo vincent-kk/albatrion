@@ -20,18 +20,18 @@ export const observeArraySettlement = (root: PlainNode): unknown => {
       nextKey: node.nextItemKey,
       source: node.source,
       extras: node.extras,
-      value: node.local,
-      output: node.emit,
+      value: node.storedValue,
+      output: node.storedOutputValue,
       schema: node.schema.schema,
       isActive: node.isActive,
       isVisible: node.isVisible,
       isReadOnly: node.isReadOnly,
       isDisabled: node.isDisabled,
       isRequired: node.isRequired,
-      state: node.interactionState,
+      state: node.storedState,
       revisions: { ...node.revisionLedger },
       delivery: node.pendingDelivery,
-      detached: node.detached,
+      isDetached: node.isDetached,
     });
     for (let index = (node.children?.length ?? 0) - 1; index >= 0; index--)
       pending.push(node.children![index]);

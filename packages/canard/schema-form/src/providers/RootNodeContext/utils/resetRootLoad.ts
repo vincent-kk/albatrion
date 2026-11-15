@@ -77,8 +77,8 @@ export const resetRootLoad = (
     previous.reporter?.capture(next.error, 'load');
     return previous;
   }
-  next.prepared = true;
-  next.reported = true;
+  next.isPrepared = true;
+  next.isReported = true;
   const replacement = next.root;
   if (next.reporter) next.reporter.root = replacement;
   const load = () => {
@@ -94,7 +94,7 @@ export const resetRootLoad = (
   } catch (error) {
     next.error = error;
   }
-  if (!previous.prepared && previous.records.length) {
+  if (!previous.isPrepared && previous.records.length) {
     next.recordScopes ??= new WeakMap();
     for (const record of previous.records) {
       const scope = previous.recordScopes?.get(record);
@@ -105,7 +105,7 @@ export const resetRootLoad = (
     }
     next.records = previous.records.splice(0).concat(next.records);
   }
-  previous.retired = true;
+  previous.isRetired = true;
   for (const record of next.records.splice(0)) {
     try {
       reportBufferedRootRecord(next, record);
@@ -113,8 +113,8 @@ export const resetRootLoad = (
       reportFailureToHost(error);
     }
   }
-  if (!previous.prepared && !previous.reported) {
-    previous.reported = true;
+  if (!previous.isPrepared && !previous.isReported) {
+    previous.isReported = true;
     if (previous.error) {
       previous.reporter?.capture(previous.error, 'load');
       reportFailureToHost(previous.error);

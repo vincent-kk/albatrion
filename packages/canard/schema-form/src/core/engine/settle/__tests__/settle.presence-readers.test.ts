@@ -172,8 +172,12 @@ describe.each(['record', 'skip', 'shadow'] as const)(
       const root = mountPresenceTree(presenceCousinSchema, value('y'));
       dispatchSetValue(getDispatchNode(root, 'mode'), 'x');
       const fresh = mountPresenceTree(presenceCousinSchema, value('x'));
-      expect(getDispatchNode(root, 'p', 'child').emit).toEqual('P');
-      expect(getDispatchNode(fresh, 'p', 'child').emit).toEqual('P');
+      expect(getDispatchNode(root, 'p', 'child').storedOutputValue).toEqual(
+        'P',
+      );
+      expect(getDispatchNode(fresh, 'p', 'child').storedOutputValue).toEqual(
+        'P',
+      );
       expect(observePresenceTree(root)).toEqual(observePresenceTree(fresh));
     });
 

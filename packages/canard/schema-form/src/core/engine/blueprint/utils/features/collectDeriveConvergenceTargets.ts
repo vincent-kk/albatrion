@@ -72,7 +72,7 @@ export const collectDeriveConvergenceTargets = (
   }
   const reads = new Set<string>();
   const expressions = blueprint.expressions;
-  const gateExpressions = blueprint.capabilities.branchless
+  const gateExpressions = blueprint.capabilities.isBranchless
     ? undefined
     : new Map<string, BlueprintExpression>();
   for (let index = 0; index < expressions.length; index++) {

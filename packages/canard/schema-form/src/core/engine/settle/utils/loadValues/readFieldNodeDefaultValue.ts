@@ -11,12 +11,12 @@ import { getLoadValue } from './getLoadValue';
 export const readFieldNodeDefaultValue = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): unknown =>
-  node.detached
+  node.isDetached
     ? node.runtime.detachedReads?.get(node)?.defaultValue
     : getLoadValue(
         node.runtime.loadSnapshot,
         node.path,
-        node.runtime.blueprint.capabilities.branchless
+        node.runtime.blueprint.capabilities.isBranchless
           ? getCachedPointerSegments(node.runtime, node.path)
           : getDependencyIndex(node.runtime.blueprint).pathSegments(
               node.path,

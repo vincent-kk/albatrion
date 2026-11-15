@@ -8,4 +8,4 @@ import type { FieldNodeRecord } from '../../../record';
  */
 export const isBatchMarking = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-): boolean => !!node.rootNode.runtime.batchDepth && !node.detached;
+): boolean => !!node.rootNode.runtime.batchDepth && !node.isDetached;

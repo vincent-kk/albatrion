@@ -12,7 +12,7 @@ import type { SettlementContext } from '../../types/settlement';
  * @param writeOrigins - Call-ordered batch origins as flushBatchWrites recorded them
  * @returns Paths whose subtrees the batch replaces, in origin order, possibly repeated
  */
-export const collectReplacePaths = <Self extends FieldNodeRecord<Self>>(
+export const collectReplacementPaths = <Self extends FieldNodeRecord<Self>>(
   writeOrigins: NonNullable<SettlementContext<Self>['writeOrigins']>,
 ): string[] => {
   const paths: string[] = [];

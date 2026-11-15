@@ -26,9 +26,9 @@ it('connects the real slot order writer to object assembly without dormant visit
   });
   const node = {
     runtime: {},
-    local: {},
+    storedValue: {},
     extras: undefined,
-    schema: { schema: { type: 'object' }, typeConflict: false },
+    schema: { schema: { type: 'object' }, hasTypeConflict: false },
     blueprintNode: { childEntries: observed },
   } as unknown as Parameters<typeof objectBehavior.branch.assemble>[0];
   expect(
@@ -41,8 +41,8 @@ it('connects the real slot order writer to object assembly without dormant visit
   expect(reads).toBeGreaterThan(0);
   reads = 0;
   const result = objectBehavior.branch.assemble(node, [
-    { name: 'beta', emit: 2 },
-    { name: 'alpha', emit: 1, blueprintNode: replacement },
+    { name: 'beta', storedOutputValue: 2 },
+    { name: 'alpha', storedOutputValue: 1, blueprintNode: replacement },
   ]);
   expect(result).toEqual({ alpha: 1, beta: 2 });
   expect(Object.keys(result as object)).toEqual(['alpha', 'beta']);

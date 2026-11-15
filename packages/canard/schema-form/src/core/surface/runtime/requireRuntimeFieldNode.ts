@@ -14,7 +14,7 @@ export const requireRuntimeFieldNode = (
 ): RuntimeFieldNode => {
   if (
     node instanceof RuntimeFieldNode &&
-    (!rootOnly || (node.isRoot && !node.detached))
+    (!rootOnly || (node.isRoot && !node.isDetached))
   )
     return node;
   throw new TypeError(

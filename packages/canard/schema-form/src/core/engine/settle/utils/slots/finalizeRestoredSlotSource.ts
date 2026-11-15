@@ -11,7 +11,7 @@ export const finalizeRestoredSlotSource = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   for (const [node, preceding] of context.slotRestoredSource ?? []) {
-    if (!node.detached || preceding) continue;
+    if (!node.isDetached || preceding) continue;
     const live = find(context.root, node.path);
     if (
       live &&

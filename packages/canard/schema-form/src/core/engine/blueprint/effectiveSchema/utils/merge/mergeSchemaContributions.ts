@@ -37,17 +37,17 @@ export const mergeSchemaContributions = (
   const state: EffectiveSchemaState = {
     schema: {},
     patterns: [],
-    conflictingConst: false,
-    conflictingType: false,
+    hasConflictingConst: false,
+    hasConflictingType: false,
     allowedTypes:
-      staticTypes && node.nullable && staticTypes.indexOf('null') === -1
+      staticTypes && node.isNullable && staticTypes.indexOf('null') === -1
         ? [...staticTypes, 'null']
         : staticTypes,
   };
   for (let index = 0; index < declarations.length; index++) {
     const declaration = declarations[index];
     if (declaration.schema === false)
-      return freezeEffectiveSchema({ schema: false, typeConflict: false });
+      return freezeEffectiveSchema({ schema: false, hasTypeConflict: false });
     if (declaration.schema === true) continue;
     applySchemaContribution(state, declaration, options);
   }

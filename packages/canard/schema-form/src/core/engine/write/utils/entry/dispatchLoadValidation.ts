@@ -23,7 +23,7 @@ export const dispatchLoadValidation = <Self extends FieldNodeRecord<Self>>(
   const runtime = root.runtime;
   if (
     runtime.validationMode === ValidationMode.None ||
-    runtime.validationUnavailable
+    runtime.isValidationUnavailable
   )
     return false;
   const load = runtime.validationLoadStamp;

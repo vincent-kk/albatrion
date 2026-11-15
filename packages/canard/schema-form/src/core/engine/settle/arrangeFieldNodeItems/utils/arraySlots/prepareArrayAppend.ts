@@ -45,7 +45,7 @@ export const prepareArrayAppend = <Self extends FieldNodeRecord<Self>>(
         isAtomic: node.runtime.blueprint.isAtomic,
       })
     : undefined;
-  if (schema?.typeConflict) return undefined;
+  if (schema?.hasTypeConflict) return undefined;
   return {
     host: node,
     count,
@@ -56,7 +56,7 @@ export const prepareArrayAppend = <Self extends FieldNodeRecord<Self>>(
       slots: [{ value: operation.value }],
       result: LENGTH_RESULT,
     },
-    local: node.local,
-    valid: true,
+    value: node.storedValue,
+    isValid: true,
   };
 };

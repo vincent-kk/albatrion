@@ -27,6 +27,17 @@ import { createChildNode } from './createChildNode';
 import { enterFieldNode } from './enterFieldNode';
 import { prepareFixedFirstHost } from './firstLoad/prepareFixedFirstHost';
 
+/** Annotates the lazily created `presenceSelections`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PresenceSelections<Self> = Map<
+  Self,
+  {
+    readonly childrenByName: Readonly<Dictionary<Self>>;
+    readonly names: readonly string[];
+  }
+>;
+/** Annotates the lazily created `preparedStaticPriorNames`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PreparedStaticPriorNames<Self> = Map<Self, readonly string[]>;
+
 /** Empty active-declaration list: only ungated contributions apply. */
 const NO_ACTIVE_DECLARATION_IDS: readonly number[] = EMPTY_ARRAY;
 
@@ -47,17 +58,18 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
   if (context.fixedFirstLoad && prepareFixedFirstHost(node, context)) return;
   const prepared = prepareStaticHost(node, prior, context, hasRelocated);
   if (prepared) {
-    (context.presenceSelections ??= new Map()).set(node, {
-      structure: prior,
+    const selections: PresenceSelections<Self> = (context.presenceSelections ??=
+      new Map());
+    selections.set(node, {
+      childrenByName: prior,
       names: prepared.dynamicNames,
     });
-    (context.preparedStaticPriorNames ??= new Map()).set(
-      node,
-      prepared.dynamicNames,
-    );
-    if (prepared.selectedStructure === prior)
+    const names: PreparedStaticPriorNames<Self> =
+      (context.preparedStaticPriorNames ??= new Map());
+    names.set(node, prepared.dynamicNames);
+    if (prepared.selectedChildrenByName === prior)
       prepared.selectedChildren = node.children ?? [];
-    node.structure = prepared.baseline;
+    node.childrenByName = prepared.baseline;
     node.children = captureFieldNodeChange(
       node,
       'children',
@@ -131,17 +143,17 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
         : slotOverlay
           ? createFromSlotOverlay(node, entry, slotOverlay, context)
           : createChildNode(node, entry));
-    context.perished.delete(child);
+    context.perishedNodes.delete(child);
     if (key !== undefined && context.pendingExits.delete(key)) {
       const path = appendSegment(node.path, entry.name);
       updatePendingExitIndex(context, path, -1);
     }
     if (pending && child === pending) {
-      context.revived.add(child);
+      context.revivedNodes.add(child);
     }
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     if (!priorChild && !pending) {
-      context.entered.add(child);
+      context.enteredNodes.add(child);
 
       if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
       else if (slotSource || slotOverlay)
@@ -167,16 +179,16 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
       context.changedNodes.add(child);
     }
     child.isActive = captureFieldNodeChange(child, 'isActive', true);
-    child.detached = false;
+    child.isDetached = false;
     baseline[entry.name] = child;
   }
-  node.structure = baseline;
+  node.childrenByName = baseline;
   const children = Object.values(baseline);
-  const published = node.children;
+  const publishedChildren = node.children;
   node.children = captureFieldNodeChange(
     node,
     'children',
-    isSameChildList(published, children) ? published : children,
+    isSameChildList(publishedChildren, children) ? publishedChildren : children,
   );
   if (context.fixedFirstLoad) prepareFixedFirstHost(node, context, true);
 };

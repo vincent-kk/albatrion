@@ -23,8 +23,8 @@ export const createValidationCadence = (
     run,
     now,
     phase: 'idle',
-    requested: false,
-    cancelled: false,
+    isRequested: false,
+    isCancelled: false,
   };
   const onFrame = () => observeValidationCadenceFrame(state, onFrame, onRun);
   const onRun = (fallback: boolean) =>

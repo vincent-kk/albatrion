@@ -58,7 +58,7 @@ describe('gate predicate allocation bounds', () => {
       });
       for (const tag of ['tag_79', 'tag_0', 'tag_79'])
         writeFieldNode(
-          root.structure!.kind,
+          root.childrenByName!.kind,
           tag,
           FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
@@ -70,7 +70,7 @@ describe('gate predicate allocation bounds', () => {
         expect(calls.has(prepared)).toBe(true);
         for (const input of calls) expect(input.view).toBeUndefined();
       }
-      expect(root.emit).toEqual({
+      expect(root.storedOutputValue).toEqual({
         kind: 'tag_79',
         payload_79_a: 'A',
         payload_79_b: 1,
@@ -114,7 +114,7 @@ describe('gate predicate allocation bounds', () => {
       const before = evaluate.mock.calls.length;
       expect(() =>
         writeFieldNode(
-          root.structure!.kind,
+          root.childrenByName!.kind,
           tag,
           FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
@@ -134,7 +134,7 @@ describe('gate predicate allocation bounds', () => {
     const { root } = createTestTree(createGatePredicateSchema('active'));
     loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
     writeFieldNode(
-      root.structure!.kind,
+      root.childrenByName!.kind,
       'tag_79',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -151,7 +151,7 @@ describe('gate predicate allocation bounds', () => {
     );
     for (const tag of ['tag_0', 'tag_79', 'tag_0'])
       writeFieldNode(
-        root.structure!.kind,
+        root.childrenByName!.kind,
         tag,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,

@@ -23,9 +23,9 @@ describe('omitEmpty counts only plain objects as empty', () => {
       { text: date, either: date, meta: date },
       WriteOption.Overwrite,
     );
-    expect(root.structure!.text.emit).toBe(date);
-    expect(root.structure!.either.emit).toBe(date);
-    expect(root.structure!.meta.emit).toBe(date);
+    expect(root.childrenByName!.text.storedOutputValue).toBe(date);
+    expect(root.childrenByName!.either.storedOutputValue).toBe(date);
+    expect(root.childrenByName!.meta.storedOutputValue).toBe(date);
   });
 
   it('empty-values still omits empty strings and empty plain objects', () => {
@@ -42,9 +42,9 @@ describe('omitEmpty counts only plain objects as empty', () => {
       { text: '', either: Object.create(null), meta: {} },
       WriteOption.Overwrite,
     );
-    expect(root.structure!.text.emit).toBeUndefined();
-    expect(root.structure!.either.emit).toBeUndefined();
-    expect(root.structure!.meta.emit).toBeUndefined();
+    expect(root.childrenByName!.text.storedOutputValue).toBeUndefined();
+    expect(root.childrenByName!.either.storedOutputValue).toBeUndefined();
+    expect(root.childrenByName!.meta.storedOutputValue).toBeUndefined();
   });
 
   it('empty-values predicts the same emission for latent leaves', () => {

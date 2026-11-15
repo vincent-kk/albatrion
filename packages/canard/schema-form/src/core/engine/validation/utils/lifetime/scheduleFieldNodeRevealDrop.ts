@@ -11,21 +11,21 @@ export const scheduleFieldNodeRevealDrop = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const root = node.rootNode;
   const runtime = root.runtime;
-  if (root.disposed || !runtime.revealDropOwed || runtime.revealDropTask)
+  if (root.isDisposed || !runtime.isRevealDropOwed || runtime.revealDropTask)
     return;
   const token = {};
   const generation = runtime.revealBaselineGeneration ?? 0;
   runtime.revealDropTask = token;
   scheduleValidationSlot(() => {
-    if (root.disposed || runtime.revealDropTask !== token) return;
-    if (runtime.validationPending) {
-      runtime.revealDropOwed = false;
+    if (root.isDisposed || runtime.revealDropTask !== token) return;
+    if (runtime.isValidationPending) {
+      runtime.isRevealDropOwed = false;
       runtime.revealDropTask = undefined;
       return;
     }
     const remains = dropFieldNodeRevealBaselines(root, generation);
     if (remains) {
-      runtime.revealDropOwed = true;
+      runtime.isRevealDropOwed = true;
       scheduleFieldNodeRevealDrop(root);
     }
     notifyFieldNodeRevealReleased(root);

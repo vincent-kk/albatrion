@@ -28,7 +28,7 @@ it('keeps declared off-write payload out of the host source and inactive host va
   });
   dispatchMount(root, { open: false });
   dispatchSetValue(root, { open: false, list: [7, 'tail'] });
-  expect(root.emit).toEqual({ open: false });
+  expect(root.storedOutputValue).toEqual({ open: false });
   expect(readRetainedSlotSource(root, '/list', 'array')).toEqual([
     undefined,
     'tail',
@@ -78,7 +78,7 @@ it('replaces nested off-write array scope on a partial parent write', () => {
   ]);
   dispatchSetValue(getDispatchNode(root, 'a'), true);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(root.emit).toEqual({
+  expect(root.storedOutputValue).toEqual({
     open: true,
     a: true,
     b: false,
@@ -165,7 +165,7 @@ it.each([
     expect(
       hasRetainedSlotOwnSource(root, path, reversed ? 'number' : 'string'),
     ).toBe(false);
-    expect(root.emit).toEqual({ open: false, a: false, b: false });
+    expect(root.storedOutputValue).toEqual({ open: false, a: false, b: false });
     for (const b of [bFirst, !bFirst]) {
       dispatchSetValue(getDispatchNode(root, b ? 'a' : 'b'), false);
       dispatchSetValue(getDispatchNode(root, b ? 'b' : 'a'), true);
@@ -177,7 +177,7 @@ it.each([
           : layout === 'object'
             ? [shown === undefined ? {} : { v: shown }]
             : [[shown ?? null]];
-      expect(getDispatchNode(root, 'list').emit).toEqual(expected);
+      expect(getDispatchNode(root, 'list').storedOutputValue).toEqual(expected);
       if (shown === undefined)
         expect(readRetainedSlotSource(root, path, kind)).toBe(value);
     }
@@ -219,11 +219,14 @@ it.each([false, true])(
     );
     dispatchSetValue(getDispatchNode(root, reversed ? 'a' : 'b'), true);
     dispatchSetValue(getDispatchNode(root, 'open'), true);
-    expect(getDispatchNode(root, 'list').emit).toEqual([null, ...tail]);
+    expect(getDispatchNode(root, 'list').storedOutputValue).toEqual([
+      null,
+      ...tail,
+    ]);
     expect(getDispatchNode(root, 'list').itemCount).toBe(3);
     dispatchSetValue(getDispatchNode(root, reversed ? 'a' : 'b'), false);
     dispatchSetValue(getDispatchNode(root, reversed ? 'b' : 'a'), true);
-    expect(getDispatchNode(root, 'list').emit).toEqual([
+    expect(getDispatchNode(root, 'list').storedOutputValue).toEqual([
       reversed ? '7' : 7,
       ...tail,
     ]);

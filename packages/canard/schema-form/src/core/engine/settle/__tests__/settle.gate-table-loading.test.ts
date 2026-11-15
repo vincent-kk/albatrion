@@ -45,7 +45,8 @@ describe('gate table load and reset observations', () => {
         ) {
           const reset = history.observations[1];
           expect(
-            reset.nodes.find(({ path }: { path: string }) => path === '').emit,
+            reset.nodes.find(({ path }: { path: string }) => path === '')
+              .storedOutputValue,
           ).toEqual({
             common: 'shared',
             kind: 'b',
@@ -66,7 +67,7 @@ describe('gate table load and reset observations', () => {
           expect(
             history.observations[2].nodes.find(
               ({ path }: { path: string }) => path === '',
-            ).emit,
+            ).storedOutputValue,
           ).toEqual({
             common: 'shared',
             kind: 'a',

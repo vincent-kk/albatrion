@@ -78,7 +78,7 @@ describe('same schema id trees', () => {
     await expect(dispatchValidate(newTree.root)).rejects.toMatchObject({
       details: { reason: 'duplicateSchemaId', $id: 'urn:shared' },
     });
-    expect(oldTree.root.emit).toBe('kept');
+    expect(oldTree.root.storedOutputValue).toBe('kept');
     expect(await dispatchValidate(oldTree.root)).toEqual([]);
   });
 
@@ -267,7 +267,7 @@ describe('same schema id trees', () => {
       expect(entry.failure).toMatchObject({
         message: expect.stringContaining('must NOT have duplicate items'),
       });
-      expect(entry.duplicate).not.toBe(true);
+      expect(entry.isDuplicate).not.toBe(true);
       releaseValidationRoot(validator, valid);
       const tree = createDispatchTree(invalid, undefined, validator);
       const calls = compile.mock.calls.length;

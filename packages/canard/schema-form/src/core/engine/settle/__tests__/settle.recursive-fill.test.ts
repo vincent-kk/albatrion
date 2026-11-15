@@ -60,13 +60,14 @@ describe('92C-01 원본 없는 재귀 사슬', () => {
       { id: 'root', children: [] },
     );
     expect(
-      arrangeFieldNodeItems(root.structure!.children, {
+      arrangeFieldNodeItems(root.childrenByName!.children, {
         kind: 'push',
         value: undefined,
       }),
     ).toBe(1);
     expect(
-      root.structure!.children.children![0].structure!.children.local,
+      root.childrenByName!.children.children![0].childrenByName!.children
+        .storedValue,
     ).toEqual([]);
     expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
   });
@@ -81,9 +82,10 @@ describe('92C-01 원본 없는 재귀 사슬', () => {
       },
       [{ next: [{ next: [] }] }],
     );
-    expect(root.emit).toEqual([{ next: [{}] }]);
+    expect(root.storedOutputValue).toEqual([{ next: [{}] }]);
     expect(
-      root.children![0].structure!.next.children![0].structure!.next.local,
+      root.children![0].childrenByName!.next.children![0].childrenByName!.next
+        .storedValue,
     ).toEqual([]);
     expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
   });
@@ -97,8 +99,8 @@ describe('92C-01 원본 없는 재귀 사슬', () => {
         properties: { next: { $ref: '#' } },
       },
     });
-    expect(root.emit).toEqual([{}]);
-    expect(root.children![0].structure!.next.local).toEqual([]);
+    expect(root.storedOutputValue).toEqual([{}]);
+    expect(root.children![0].childrenByName!.next.storedValue).toEqual([]);
     expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
   });
 
@@ -186,7 +188,9 @@ describe('92C-03 첫 평가와 게이트 뒤집힘의 라운드', () => {
           },
         },
       });
-      expect(root.emit).toEqual([{ a: true, branch: { label: 'next-round' } }]);
+      expect(root.storedOutputValue).toEqual([
+        { a: true, branch: { label: 'next-round' } },
+      ]);
       const continuations = collect.mock.results.filter(
         (result) => result.value !== undefined,
       ).length;
@@ -223,7 +227,9 @@ describe('92C-03 첫 평가와 게이트 뒤집힘의 라운드', () => {
           },
         },
       });
-      expect(root.emit).toEqual([{ nested: [{ label: 'filled' }] }]);
+      expect(root.storedOutputValue).toEqual([
+        { nested: [{ label: 'filled' }] },
+      ]);
       const continuations = collect.mock.results.filter(
         (result) => result.value !== undefined,
       ).length;
@@ -243,7 +249,9 @@ describe('92C-03 첫 평가와 게이트 뒤집힘의 라운드', () => {
     try {
       const root = loadGeneric(gatedItemSchema);
       expect(transitionCap.getTransitionCap(root.runtime.blueprint)).toBe(4);
-      expect(root.emit).toEqual([{ a: true, b: true, c: true, d: true }]);
+      expect(root.storedOutputValue).toEqual([
+        { a: true, b: true, c: true, d: true },
+      ]);
       expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
       const continuations = collect.mock.results.filter(
         (result) => result.value !== undefined,
@@ -318,7 +326,7 @@ describe('92C-03 첫 평가와 게이트 뒤집힘의 라운드', () => {
         items: itemSchema,
       });
       expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
-      expect(root.emit).toEqual([
+      expect(root.storedOutputValue).toEqual([
         { value: -1, label: 'item', priority: 'control' },
       ]);
       expect(transitionCap.getTransitionCap(root.runtime.blueprint)).toBe(1);

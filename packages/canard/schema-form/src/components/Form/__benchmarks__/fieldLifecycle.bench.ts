@@ -81,11 +81,11 @@ describe('fieldLifecycle', () => {
       const input = form.container.querySelector('input[id="/f0"]');
       if (!input) throw new Error('missing write target');
       write = () => {
-        fireEvent.change(input, { target: { value: String(++value) } });
+        fireEvent.change(input, { target: { value: '' + ++value } });
       };
     },
     teardown: () => {
-      expect(form.handle.current?.findNode('/f0')?.value).toBe(String(value));
+      expect(form.handle.current?.findNode('/f0')?.value).toBe('' + value);
       form.dispose();
     },
   });

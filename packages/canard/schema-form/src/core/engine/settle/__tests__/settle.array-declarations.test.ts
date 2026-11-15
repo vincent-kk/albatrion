@@ -96,7 +96,7 @@ describe('array item declarations', () => {
     root.find('/showSecond')?.setValue(false);
     expect(root.find('/arr')?.value).toEqual([{ x: 'A' }, {}]);
     expect(root.find('/arr')?.children).toHaveLength(1);
-    expect(second && Reflect.get(second, 'detached')).toBe(true);
+    expect(second && Reflect.get(second, 'isDetached')).toBe(true);
     root.find('/showSecond')?.setValue(true);
     expect(root.find('/arr/1')?.value).toEqual({ x: 'B' });
   });

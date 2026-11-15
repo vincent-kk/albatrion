@@ -64,22 +64,23 @@ const FLAT: BlueprintSchema = {
  * @returns The child record
  */
 const at = (node: DispatchTestNode, name: string): DispatchTestNode =>
-  node.structure![name];
+  node.childrenByName![name];
 
 /**
- * Read a host's current emission as a plain object.
+ * Read a host's current output value as a plain object.
  * @param node - Object host
- * @returns Its emitted value
+ * @returns Its output value
  */
-const emitOf = (node: DispatchTestNode): Record<string, unknown> =>
-  Object(node.emit);
+const outputValueOf = (node: DispatchTestNode): Record<string, unknown> =>
+  Object(node.storedOutputValue);
 
 // filid:contract settle-static-same-value-write
 describe('static whole writes skip same-value leaves and keep same-key hosts out of shape-dirty', () => {
   it('writes the same reference back to an object host, setValue(getValue())', async () => {
     const { candidate } = await compareSameValueWrite(SCHEMA, INPUT, [
       {
-        apply: (root) => dispatchSetValue(at(root, 'h'), at(root, 'h').emit),
+        apply: (root) =>
+          dispatchSetValue(at(root, 'h'), at(root, 'h').storedOutputValue),
         skip: true,
       },
     ]);
@@ -91,7 +92,10 @@ describe('static whole writes skip same-value leaves and keep same-key hosts out
     const { candidate } = await compareSameValueWrite(SCHEMA, INPUT, [
       {
         apply: (root) =>
-          dispatchSetValue(at(root, 'h'), { ...emitOf(at(root, 'h')), a: 2 }),
+          dispatchSetValue(at(root, 'h'), {
+            ...outputValueOf(at(root, 'h')),
+            a: 2,
+          }),
         skip: true,
       },
     ]);
@@ -119,7 +123,7 @@ describe('static whole writes skip same-value leaves and keep same-key hosts out
     await compareSameValueWrite(SCHEMA, INPUT, [
       {
         apply: (root) => {
-          const value = emitOf(at(root, 'h'));
+          const value = outputValueOf(at(root, 'h'));
           dispatchSetValue(at(root, 'h'), {
             ...value,
             n: { ...Object(value.n) },
@@ -138,7 +142,8 @@ describe('static whole writes skip same-value leaves and keep same-key hosts out
         skip: false,
       },
       {
-        apply: (root) => dispatchSetValue(at(root, 'h'), at(root, 'h').emit),
+        apply: (root) =>
+          dispatchSetValue(at(root, 'h'), at(root, 'h').storedOutputValue),
         skip: true,
       },
       {
@@ -191,7 +196,7 @@ describe('static whole writes skip same-value leaves and keep same-key hosts out
       {
         apply: (root) => {
           const list = at(at(root, 'h'), 'list');
-          dispatchSetValue(list, list.emit);
+          dispatchSetValue(list, list.storedOutputValue);
         },
         skip: true,
       },
@@ -218,7 +223,7 @@ describe('static whole writes skip same-value leaves and keep same-key hosts out
   it('writes an array of objects of the same length with one nested change and a hole', async () => {
     const items = Array.from({ length: 4 }, (_, index) => ({
       v: index,
-      w: String(index),
+      w: '' + index,
     }));
     const sparse: unknown[] = [...items];
     delete sparse[2];
@@ -243,7 +248,7 @@ describe('static whole writes skip same-value leaves and keep same-key hosts out
           skip: true,
         },
         {
-          apply: (root) => dispatchSetValue(root, root.emit),
+          apply: (root) => dispatchSetValue(root, root.storedOutputValue),
           skip: true,
         },
         {
@@ -292,11 +297,12 @@ describe('static whole writes skip same-value leaves and keep same-key hosts out
   it('writes the root whole with one key changed and then its own value back', async () => {
     const { candidate } = await compareSameValueWrite(SCHEMA, INPUT, [
       {
-        apply: (root) => dispatchSetValue(root, { ...emitOf(root), s: 't' }),
+        apply: (root) =>
+          dispatchSetValue(root, { ...outputValueOf(root), s: 't' }),
         skip: true,
       },
       {
-        apply: (root) => dispatchSetValue(root, root.emit),
+        apply: (root) => dispatchSetValue(root, root.storedOutputValue),
         skip: true,
       },
     ]);
@@ -309,13 +315,14 @@ describe('static whole writes skip same-value leaves and keep same-key hosts out
         apply: (root) =>
           dispatchWriteInput(
             at(root, 'h'),
-            { ...emitOf(at(root, 'h')), a: 3 },
+            { ...outputValueOf(at(root, 'h')), a: 3 },
             WriteOption.Overwrite,
           ),
         skip: true,
       },
       {
-        apply: (root) => dispatchWriteInput(at(root, 'h'), at(root, 'h').emit),
+        apply: (root) =>
+          dispatchWriteInput(at(root, 'h'), at(root, 'h').storedOutputValue),
         skip: true,
       },
     ]);
@@ -324,12 +331,16 @@ describe('static whole writes skip same-value leaves and keep same-key hosts out
   it('keeps the defaulted leaf and its default source across same-value writes', async () => {
     await compareSameValueWrite(SCHEMA, { h: { a: 1 } }, [
       {
-        apply: (root) => dispatchSetValue(at(root, 'h'), at(root, 'h').emit),
+        apply: (root) =>
+          dispatchSetValue(at(root, 'h'), at(root, 'h').storedOutputValue),
         skip: true,
       },
       {
         apply: (root) =>
-          dispatchSetValue(at(root, 'h'), { ...emitOf(at(root, 'h')), a: 2 }),
+          dispatchSetValue(at(root, 'h'), {
+            ...outputValueOf(at(root, 'h')),
+            a: 2,
+          }),
         skip: true,
       },
     ]);

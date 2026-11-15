@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import { FieldNodeWriteKind } from '../../../../types/value';
-import { collectReplacePaths } from '../collectReplacePaths';
+import { collectReplacementPaths } from '../collectReplacementPaths';
 
-describe('collectReplacePaths (191C-01)', () => {
+describe('collectReplacementPaths (191C-01)', () => {
   it('returns each caller path and expands a shallow Merge into child paths', () => {
     expect(
-      collectReplacePaths([
+      collectReplacementPaths([
         { path: '/note', source: FieldNodeWriteKind.CallerReplace },
         {
           path: '',
@@ -20,7 +20,7 @@ describe('collectReplacePaths (191C-01)', () => {
 
   it('escapes received keys as pointer segments', () => {
     expect(
-      collectReplacePaths([
+      collectReplacementPaths([
         {
           path: '',
           source: FieldNodeWriteKind.CallerPartial,
@@ -32,7 +32,7 @@ describe('collectReplacePaths (191C-01)', () => {
 
   it('skips automatic origins and keeps order and repeats of the rest', () => {
     expect(
-      collectReplacePaths([
+      collectReplacementPaths([
         { path: '/value', source: FieldNodeWriteKind.Automatic },
         { path: '/k', source: FieldNodeWriteKind.CallerReplace },
         { path: '/k', source: FieldNodeWriteKind.CallerReplace },
@@ -41,6 +41,6 @@ describe('collectReplacePaths (191C-01)', () => {
   });
 
   it('returns an empty list for an empty input', () => {
-    expect(collectReplacePaths([])).toEqual([]);
+    expect(collectReplacementPaths([])).toEqual([]);
   });
 });

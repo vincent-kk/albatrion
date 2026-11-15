@@ -50,7 +50,7 @@ export const useFieldInput = (
       misfit,
       path,
       required,
-      nullable: node.nullable,
+      nullable: node.isNullable,
       jsonSchema: schema,
       format: typeof schema.format === 'string' ? schema.format : undefined,
       inputType: schema.presentation?.inputType,

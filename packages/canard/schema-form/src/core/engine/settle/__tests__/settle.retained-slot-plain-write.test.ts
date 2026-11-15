@@ -18,7 +18,7 @@ it('skips source bookkeeping when a plain write changes no inactive source', () 
   const value = getDispatchNode(root, 'value');
   dispatchSetValue(value, 'next');
   expect(publish).not.toHaveBeenCalled();
-  expect(root.local).toEqual({ value: 'next' });
+  expect(root.storedValue).toEqual({ value: 'next' });
   expect(getDispatchNode(root, 'value')).toBe(value);
 });
 

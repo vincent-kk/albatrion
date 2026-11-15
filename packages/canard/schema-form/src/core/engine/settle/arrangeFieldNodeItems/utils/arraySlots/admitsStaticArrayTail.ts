@@ -10,7 +10,7 @@ import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
  * Every condition is a fixed number of reads; the verb-specific position checks belong to the caller.
  * @param node - Write target of a public array verb, outside batch marking
  * @param allowExtras - Only append may admit a host with no item or prefix templates and an extras slot per item
- * @returns Whether the settled static branch host retains every local and emitted position with matching children or append-only undeclared slots
+ * @returns Whether the settled static branch host retains every stored and output position with matching children or append-only undeclared slots
  */
 export const admitsStaticArrayTail = <Self extends FieldNodeRecord<Self>>(
   node: Self,
@@ -18,7 +18,7 @@ export const admitsStaticArrayTail = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   const runtime = node.runtime;
   const count = node.itemCount;
-  const local = node.local;
+  const value = node.storedValue;
   const extrasOnly =
     allowExtras &&
     !node.blueprintNode.item &&
@@ -27,9 +27,9 @@ export const admitsStaticArrayTail = <Self extends FieldNodeRecord<Self>>(
     node.behavior.arrange !== BEHAVIORS.array?.branch?.arrange ||
     node.behavior.type !== 'array' ||
     node.behavior.strategy !== 'branch' ||
-    node.detached ||
+    node.isDetached ||
     !node.isActive ||
-    !node.deliveryInitialized ||
+    !node.isDeliveryInitialized ||
     runtime.batchDepth ||
     runtime.visitDepth ||
     !StaticFirstLoadCapability.has(runtime.blueprint) ||
@@ -44,10 +44,10 @@ export const admitsStaticArrayTail = <Self extends FieldNodeRecord<Self>>(
       : node.extras !== undefined ||
         !node.blueprintNode.item ||
         (node.children?.length ?? 0) !== count) ||
-    !isArray(local) ||
-    local.length !== count ||
-    (count > 0 && !node.structure) ||
+    !isArray(value) ||
+    value.length !== count ||
+    (count > 0 && !node.childrenByName) ||
     getStaticChoices(node.schema).omitTrailingEmpty ||
-    !isArray(getLoadValue(node.rootNode.emit, node.path))
+    !isArray(getLoadValue(node.rootNode.storedOutputValue, node.path))
   );
 };

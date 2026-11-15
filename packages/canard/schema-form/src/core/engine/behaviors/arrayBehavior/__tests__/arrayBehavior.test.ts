@@ -43,9 +43,9 @@ const makeRecord = (
   path: '/list',
   depth: 0,
   isRequired: false,
-  nullable: false,
+  isNullable: false,
   schemaType: template.schemaType,
-  structure: null,
+  childrenByName: null,
   children: null,
   itemKey: null,
   itemCount: 0,
@@ -56,22 +56,22 @@ const makeRecord = (
   isVisible: true,
   isReadOnly: false,
   isDisabled: false,
-  local: undefined,
-  emit: undefined,
+  storedValue: undefined,
+  storedOutputValue: undefined,
   divergenceCurrent: undefined,
   divergencePath: undefined,
   divergenceSegments: undefined,
   divergenceBase: undefined,
-  divergenceResult: false,
-  schema: { schema: { options }, typeConflict: false },
-  interactionState: {},
+  storedIsDivergent: false,
+  schema: { schema: { options }, hasTypeConflict: false },
+  storedState: {},
   revisionLedger: EMPTY_REVISION_LEDGER,
-  deliveryInitialized: false,
+  isDeliveryInitialized: false,
   deliveryChanges: 0,
-  pendingRevision: 0,
-  detached: false,
-  disposed: false,
-  interactionReset: 0,
+  pendingRevisionMask: 0,
+  isDetached: false,
+  isDisposed: false,
+  interactionEpoch: 0,
 });
 
 // filid:contract array-branch
@@ -101,7 +101,7 @@ describe('array branch calculation', () => {
     );
   });
 
-  it('VALUE-034 fills absent object, array, and leaf emissions by kind', () => {
+  it('VALUE-034 fills absent object, array, and leaf output values by kind', () => {
     const template = blueprint({
       type: 'array',
       prefixItems: [{ type: 'object' }, { type: 'array' }, { type: 'string' }],
@@ -114,7 +114,7 @@ describe('array branch calculation', () => {
       arrayBehavior.branch.interpret([1], {
         kinds: 'array',
         mask: 0,
-        nullable: false,
+        isNullable: false,
       }),
     ).toEqual([1]);
     const wrong = { unexpected: true };
@@ -122,7 +122,7 @@ describe('array branch calculation', () => {
       arrayBehavior.branch.interpret(wrong, {
         kinds: 'array',
         mask: 0,
-        nullable: false,
+        isNullable: false,
       }),
     ).toBe(wrong);
   });
@@ -136,7 +136,7 @@ describe('array branch calculation', () => {
     }).root;
     const node = makeRecord(arrayBehavior.branch, template);
     node.itemCount = 1;
-    node.structure = { '0': { emit: undefined } };
+    node.childrenByName = { '0': { storedOutputValue: undefined } };
     expect(arrayBehavior.branch.assemble(node, [])).toEqual([null]);
   });
 
@@ -148,12 +148,12 @@ describe('array branch calculation', () => {
     }).root;
     const node = makeRecord(arrayBehavior.branch, template);
     node.itemCount = 3;
-    node.structure = { '0': { emit: 'first' } };
+    node.childrenByName = { '0': { storedOutputValue: 'first' } };
     node.extras = ['second', 'third'];
-    const local = arrayBehavior.branch.assemble(node, []);
-    expect(local).toEqual(['first', 'second', 'third']);
-    node.local = local;
-    expect(arrayBehavior.branch.assemble(node, [])).toBe(local);
+    const value = arrayBehavior.branch.assemble(node, []);
+    expect(value).toEqual(['first', 'second', 'third']);
+    node.storedValue = value;
+    expect(arrayBehavior.branch.assemble(node, [])).toBe(value);
   });
 
   it('LANDING-085 trims trailing holes and empty output without mutation', () => {
@@ -165,19 +165,22 @@ describe('array branch calculation', () => {
       omitTrailingEmpty: true,
     });
     node.itemCount = 3;
-    node.structure = { '0': { emit: 'kept' }, '1': { emit: null } };
-    const local = arrayBehavior.branch.assemble(node, []);
-    expect(local).toEqual(['kept', null, null]);
-    const projected = arrayBehavior.branch.project(node, local);
+    node.childrenByName = {
+      '0': { storedOutputValue: 'kept' },
+      '1': { storedOutputValue: null },
+    };
+    const value = arrayBehavior.branch.assemble(node, []);
+    expect(value).toEqual(['kept', null, null]);
+    const projected = arrayBehavior.branch.project(node, value);
     expect(projected).toEqual(['kept']);
-    expect(arrayBehavior.branch.project(node, local)).toBe(projected);
-    expect(local).toEqual(['kept', null, null]);
-    node.structure = null;
+    expect(arrayBehavior.branch.project(node, value)).toBe(projected);
+    expect(value).toEqual(['kept', null, null]);
+    node.childrenByName = null;
     node.itemCount = 0;
     expect(arrayBehavior.branch.project(node, [])).toBeUndefined();
     node.schema = {
       schema: { options: { omitEmpty: false } },
-      typeConflict: false,
+      hasTypeConflict: false,
     };
     expect(arrayBehavior.branch.project(node, [])).toEqual([]);
     node.source = { wrong: true };
@@ -194,15 +197,15 @@ describe('array branch calculation', () => {
       omitTrailingEmpty: true,
     });
     node.itemCount = 4;
-    const emitted = { name: 'kept' };
-    node.structure = { '0': { emit: emitted } };
+    const childOutputValue = { name: 'kept' };
+    node.childrenByName = { '0': { storedOutputValue: childOutputValue } };
     node.extras = [null, undefined];
-    const local = arrayBehavior.branch.assemble(node, []);
-    expect(local).toEqual([{ name: 'kept' }, [], null, undefined]);
-    const projected = arrayBehavior.branch.project(node, local);
+    const value = arrayBehavior.branch.assemble(node, []);
+    expect(value).toEqual([{ name: 'kept' }, [], null, undefined]);
+    const projected = arrayBehavior.branch.project(node, value);
     expect(projected).toEqual([{ name: 'kept' }]);
-    if (isArray(projected)) expect(projected[0]).toBe(emitted);
-    expect(local).toEqual([{ name: 'kept' }, [], null, undefined]);
+    if (isArray(projected)) expect(projected[0]).toBe(childOutputValue);
+    expect(value).toEqual([{ name: 'kept' }, [], null, undefined]);
   });
 
   it('NODE-005 plans branch push, pop, remove, update, and clear', () => {
@@ -448,7 +451,7 @@ describe('array terminal calculation', () => {
     expect(source).toEqual(['kept', null, undefined]);
     node.schema = {
       schema: { options: { omitTrailingEmpty: false } },
-      typeConflict: false,
+      hasTypeConflict: false,
     };
     expect(arrayBehavior.terminal.project(node, source)).toBe(source);
     node.source = 3;

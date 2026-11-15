@@ -25,7 +25,7 @@ type MockFieldNodeOverrides = {
   isRequired?: boolean;
   isReadOnly?: boolean;
   isDisabled?: boolean;
-  nullable?: boolean;
+  isNullable?: boolean;
   isPresent?: boolean;
   isRoot?: boolean;
   depth?: number;
@@ -67,7 +67,7 @@ export const createMockFieldNode = (
     isRequired: false,
     isReadOnly: false,
     isDisabled: false,
-    nullable: false,
+    isNullable: false,
     isPresent: true,
 
     // Tree properties
@@ -350,7 +350,7 @@ export const testScenarios = {
     createStringNode({
       path: 'user.nickname',
       name: 'nickname',
-      nullable: true,
+      isNullable: true,
       value: null,
     }),
 };

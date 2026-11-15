@@ -9,9 +9,13 @@ import type { FieldNodeRecord } from '../../../record';
 import { FieldNodeWriteKind } from '../../../types/value';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { engineModes } from '../../../utils/cache/engineModes';
+import type { GateSelectionRound } from '../../types/gateSelectionRound';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateSelectionTable } from '../compute/childSelection/getGateSelectionTable';
 import { watchGateSelectionDirty } from './watchGateSelectionDirty';
+
+/** Annotates the lazily created `gateSelectionRounds`; an argument-less `new Map()` would be `Map<any, any>`. */
+type GateSelectionRounds<Self> = Map<Self, GateSelectionRound>;
 
 /**
  * Decide G1–G4 once before either root declarations or children execute this round.
@@ -60,7 +64,9 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
   if (hasDirtyWatchedPath) {
     return;
   }
-  (context.gateSelectionRounds ??= new Map()).set(node, {
+  const rounds: GateSelectionRounds<Self> = (context.gateSelectionRounds ??=
+    new Map());
+  rounds.set(node, {
     round,
     table,
     values: new Map(),
@@ -70,13 +76,13 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
           appendSegment(node.path, name),
         )
       : EMPTY_ARRAY,
-    active: true,
+    isActive: true,
   });
   if (engineModes.gateSelection === 'verify') {
     if (context.gateWheelFrame)
       context.gateWheelFrame.selectionShadow = {
         inputs: new Map(),
-        consistent: true,
+        isConsistent: true,
       };
     watchGateSelectionDirty(context);
   }

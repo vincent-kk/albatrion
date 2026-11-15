@@ -31,7 +31,7 @@ export const getItemEntries = (
     : (template.itemCandidates ?? (first ? [first] : []));
   const result: BlueprintChildEntry[] = [];
   for (const node of candidates) {
-    const name = String(index);
+    const name = '' + index;
     const schemaPath = getItemSchemaPath(template, index, node);
     const declarations = [];
     for (let position = 0; position < node.declarations.length; position++) {

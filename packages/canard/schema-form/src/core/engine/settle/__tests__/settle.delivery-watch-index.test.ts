@@ -37,7 +37,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const watchers = Object.values(root.structure!).filter((node) =>
+    const watchers = Object.values(root.childrenByName!).filter((node) =>
       node.name.startsWith('watcher'),
     );
     const before = root.runtime.commitNumber;
@@ -52,7 +52,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     writeFieldNode(
-      root.structure!.x,
+      root.childrenByName!.x,
       1,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -75,7 +75,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     writeFieldNode(
-      root.structure!.anchor,
+      root.childrenByName!.anchor,
       1,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -115,7 +115,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const watcher = root.structure!.watcher;
+    const watcher = root.childrenByName!.watcher;
     expect(root.runtime.watchValuesMemo?.get(watcher)?.values).toEqual([
       undefined,
     ]);
@@ -124,12 +124,12 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
     root.runtime.deliveries?.clear();
 
     writeFieldNode(
-      root.structure!.enabled,
+      root.childrenByName!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.conditional).toBeDefined();
+    expect(root.childrenByName?.conditional).toBeDefined();
     expect(root.runtime.watchValuesMemo?.get(watcher)?.values).toEqual([
       'arrived',
     ]);
@@ -154,13 +154,13 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const watcher = root.structure!.watcher;
+    const watcher = root.childrenByName!.watcher;
     for (const node of root.runtime.deliveries ?? [])
       node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
 
     writeFieldNode(
-      root.structure!.x,
+      root.childrenByName!.x,
       1,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -200,9 +200,9 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const instance = root.structure!['source'];
-    const watcher = root.structure!.watcher;
-    instance.interactionState = { [FieldNodeState.Touched]: true };
+    const instance = root.childrenByName!['source'];
+    const watcher = root.childrenByName!.watcher;
+    instance.storedState = { [FieldNodeState.Touched]: true };
     const before = root.runtime.commitNumber;
 
     writeFieldNode(
@@ -236,19 +236,19 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const watcher = root.structure!.watcher;
+    const watcher = root.childrenByName!.watcher;
     expect(watcher.deliveryWatchValues).toEqual(['arrived']);
     for (const node of root.runtime.deliveries ?? [])
       node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
 
     writeFieldNode(
-      root.structure!.enabled,
+      root.childrenByName!.enabled,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure!.conditional).toBeUndefined();
+    expect(root.childrenByName!.conditional).toBeUndefined();
     expect(root.runtime.watchValuesMemo?.get(watcher)?.values).toEqual([
       undefined,
     ]);
@@ -283,30 +283,30 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const watcher = root.structure!.group.structure!.watcher;
+    const watcher = root.childrenByName!.group.childrenByName!.watcher;
     expect(root.runtime.deliveryWatchIndex?.allNodes.has(watcher)).toBe(true);
 
     for (let index = 0; index < 50; index++) {
       writeFieldNode(
-        root.structure!.enabled,
+        root.childrenByName!.enabled,
         false,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
       writeFieldNode(
-        root.structure!.enabled,
+        root.childrenByName!.enabled,
         true,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
     }
     writeFieldNode(
-      root.structure!.enabled,
+      root.childrenByName!.enabled,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(watcher.detached).toBe(true);
+    expect(watcher.isDetached).toBe(true);
     expect(root.runtime.deliveryWatchIndex?.allNodes.size).toBe(0);
   });
 
@@ -330,16 +330,16 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.x,
+      root.childrenByName!.x,
       5,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    const watchers = Object.values(root.structure!).filter((node) =>
+    const watchers = Object.values(root.childrenByName!).filter((node) =>
       node.name.startsWith('watcher'),
     );
 
-    resetFieldNodeSubtree(root.structure!.x, WriteOption.Overwrite);
+    resetFieldNodeSubtree(root.childrenByName!.x, WriteOption.Overwrite);
     expect(watchers).toHaveLength(1_000);
     expect(
       watchers.filter(
@@ -375,16 +375,16 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const watcher = root.structure!.watcher;
+    const watcher = root.childrenByName!.watcher;
     expect(root.runtime.deliveryWatchIndex?.allNodes.has(watcher)).toBe(true);
 
     writeFieldNode(
-      root.structure!.enabled,
+      root.childrenByName!.enabled,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(watcher.detached).toBe(true);
+    expect(watcher.isDetached).toBe(true);
     expect(root.runtime.deliveryWatchIndex?.allNodes.has(watcher)).toBe(false);
   });
 });

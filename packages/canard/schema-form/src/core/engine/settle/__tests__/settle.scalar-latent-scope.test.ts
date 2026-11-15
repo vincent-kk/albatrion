@@ -52,9 +52,9 @@ it('H4 keeps the scalar fast path after an ignored exited-item write', () => {
   const { root, leaf, other, seen } = createScopeTree();
   const retired = getDispatchNode(root, 'other', '0');
   dispatchSetValue(other, []);
-  expect(retired.detached).toBe(true);
+  expect(retired.isDetached).toBe(true);
   dispatchSetValue(retired, 11);
-  expect(root.runtime.blueprint.capabilities.branchless).toBe(true);
+  expect(root.runtime.blueprint.capabilities.isBranchless).toBe(true);
   expect(readRetainedSlotSource(root, '/other/0', 'number')).toBeUndefined();
   seen.length = 0;
   beginObservation();
@@ -62,7 +62,7 @@ it('H4 keeps the scalar fast path after an ignored exited-item write', () => {
   dispatchSetValue(leaf, 1);
 
   expect(observed.fast).toEqual([true]);
-  expect(root.emit).toEqual({ group: { stable: 1 } });
+  expect(root.storedOutputValue).toEqual({ group: { stable: 1 } });
   expect(readRetainedSlotSource(root, '/other/0', 'number')).toBeUndefined();
   expect(seen).toEqual(['', '/group', '/group/stable']);
 });

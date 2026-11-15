@@ -15,42 +15,42 @@ export const observePresenceChangeNames = () => {
     missing: 0,
     mismatch: 0,
     null: 0,
-    entered: 0,
-    exited: 0,
-    perished: 0,
-    revived: 0,
+    enteredNodes: 0,
+    exitedNodes: 0,
+    perishedNodes: 0,
+    revivedNodes: 0,
   };
   const collect = presence.collectPresenceChangeNames;
   vi.spyOn(presence, 'collectPresenceChangeNames').mockImplementation(
     (host, previous, context) => {
-      const structure = host.structure ?? {};
+      const childrenByName = host.childrenByName ?? {};
       const expected: string[] = [];
       for (const name in previous)
         if (
-          !hasOwnProperty(structure, name) ||
-          previous[name] !== structure[name]
+          !hasOwnProperty(childrenByName, name) ||
+          previous[name] !== childrenByName[name]
         )
           expected.push(formatSegment(name));
-      for (const name in structure)
+      for (const name in childrenByName)
         if (!hasOwnProperty(previous, name)) expected.push(formatSegment(name));
       const witness = context.presenceSelections?.get(host);
       const prepared = getHostDerived<
         'preparedStaticHost',
-        { selectedStructure: typeof structure }
+        { selectedChildrenByName: typeof childrenByName }
       >(host).preparedStaticHost;
       counts.calls++;
       if (!witness || !prepared || !context.preparedStaticHosts?.has(host))
         counts.missing++;
       else if (
-        witness.structure !== previous ||
-        prepared.selectedStructure !== structure
+        witness.childrenByName !== previous ||
+        prepared.selectedChildrenByName !== childrenByName
       )
         counts.mismatch++;
       else if (host.source === null) counts.null++;
-      else if (context.entered.has(host)) counts.entered++;
-      else if (context.exited.has(host)) counts.exited++;
-      else if (context.perished.has(host)) counts.perished++;
-      else if (context.revived.has(host)) counts.revived++;
+      else if (context.enteredNodes.has(host)) counts.enteredNodes++;
+      else if (context.exitedNodes.has(host)) counts.exitedNodes++;
+      else if (context.perishedNodes.has(host)) counts.perishedNodes++;
+      else if (context.revivedNodes.has(host)) counts.revivedNodes++;
       else counts.bounded++;
       const actual = collect(host, previous, context);
       expect(actual).toEqual(expected);

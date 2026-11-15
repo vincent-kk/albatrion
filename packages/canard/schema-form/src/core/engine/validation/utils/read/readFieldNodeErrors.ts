@@ -5,6 +5,16 @@ import type { Optional } from '@aileron/declare';
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../types/issue';
 
+/** Annotates the lazily created `combinedErrors`; an argument-less `new Map()` would be `Map<any, any>`. */
+type CombinedErrors = Map<
+  unknown,
+  {
+    readonly external?: readonly unknown[];
+    readonly validation?: readonly unknown[];
+    readonly errors: readonly unknown[];
+  }
+>;
+
 /**
  * Read a node's displayed external and validator issues without recomputing them.
  * @param node - Occurrence whose current errors are requested.
@@ -14,7 +24,7 @@ export const readFieldNodeErrors = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): readonly ValidationIssue[] => {
   const runtime = node.rootNode.runtime;
-  if (node.detached)
+  if (node.isDetached)
     return runtime.detachedReads?.get(node)?.errors ?? EMPTY_ARRAY;
   const external = runtime.nodeErrors?.get(node);
   const validation = runtime.validationErrors?.get(node);
@@ -47,7 +57,8 @@ export const readFieldNodeErrors = <Self extends FieldNodeRecord<Self>>(
   )
     return cached.errors;
   const errors = [...external, ...validation];
-  (runtime.combinedErrors ??= new Map()).set(node, {
+  const combinedErrors: CombinedErrors = (runtime.combinedErrors ??= new Map());
+  combinedErrors.set(node, {
     external,
     validation,
     errors,

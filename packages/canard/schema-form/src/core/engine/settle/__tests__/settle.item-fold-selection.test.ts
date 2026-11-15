@@ -86,20 +86,20 @@ describe('array item fold selection', () => {
         },
       });
       dispatchMount(root, { open: true, a: false, b: true, list: [50, 70] });
-      dispatchSetValue(root.structure!.list, [5, 7]);
+      dispatchSetValue(root.childrenByName!.list, [5, 7]);
       const distributions = vi.spyOn(
         root.runtime.settlementScratch!.distributedInputs,
         'set',
       );
-      dispatchSetValue(root.structure!.open, false);
-      dispatchSetValue(root.structure!.open, true);
-      const list = root.structure!.list;
-      expect(list.local).toEqual([5, 7]);
+      dispatchSetValue(root.childrenByName!.open, false);
+      dispatchSetValue(root.childrenByName!.open, true);
+      const list = root.childrenByName!.list;
+      expect(list.storedValue).toEqual([5, 7]);
       distributions.mockClear();
       let expected: number[];
       switch (operation) {
         case 'same-position':
-          dispatchSetValue(list.structure!['1'], 37);
+          dispatchSetValue(list.childrenByName!['1'], 37);
           expected = [5, 37];
           break;
         case 'whole-array':
@@ -133,8 +133,8 @@ describe('array item fold selection', () => {
           expect(root.runtime.loadSnapshot).toMatchObject({ list: expected });
           break;
       }
-      expect(root.structure!.list.local).toEqual(expected);
-      expect(root.structure!.list.emit).toEqual(expected);
+      expect(root.childrenByName!.list.storedValue).toEqual(expected);
+      expect(root.childrenByName!.list.storedOutputValue).toEqual(expected);
     },
   );
 
@@ -163,21 +163,21 @@ describe('array item fold selection', () => {
         root.runtime.settlementScratch!.distributedInputs,
         'set',
       );
-      dispatchSetValue(root.structure!.open, false);
-      dispatchSetValue(root.structure!.open, true);
-      const list = root.structure!.list;
-      expect(list.local).toEqual([1, 2]);
+      dispatchSetValue(root.childrenByName!.open, false);
+      dispatchSetValue(root.childrenByName!.open, true);
+      const list = root.childrenByName!.list;
+      expect(list.storedValue).toEqual([1, 2]);
       distributions.mockClear();
-      dispatchSetValue(list.structure!['0'], 3);
-      expect(list.local).toEqual([3, 2]);
+      dispatchSetValue(list.childrenByName!['0'], 3);
+      expect(list.storedValue).toEqual([3, 2]);
       dispatchSetValue(list, [4, 5]);
-      expect(list.local).toEqual([4, 5]);
+      expect(list.storedValue).toEqual([4, 5]);
       dispatchPush(list, 6);
-      expect(list.local).toEqual([4, 5, 6]);
+      expect(list.storedValue).toEqual([4, 5, 6]);
       dispatchResetSubtree(list);
-      expect(list.local).toEqual([1, 2, 6]);
+      expect(list.storedValue).toEqual([1, 2, 6]);
       dispatchMount(root, { open: true, list: [7, 8] });
-      expect(root.structure!.list.local).toEqual([7, 8]);
+      expect(root.childrenByName!.list.storedValue).toEqual([7, 8]);
       const written = distributions.mock.calls.filter(
         ([host]) => host.path === '/list',
       );
@@ -237,45 +237,45 @@ describe('array item fold selection', () => {
         validator,
       );
       dispatchMount(root, { open: true, a: true, b: false, list: ['A'] });
-      expect(root.structure!.list.structure!['0'].source).toBe('A');
-      if (absentBeforeClose) dispatchSetValue(root.structure!.a, false);
-      dispatchSetValue(root.structure!.open, false);
-      if (!absentBeforeClose) dispatchSetValue(root.structure!.a, false);
+      expect(root.childrenByName!.list.childrenByName!['0'].source).toBe('A');
+      if (absentBeforeClose) dispatchSetValue(root.childrenByName!.a, false);
+      dispatchSetValue(root.childrenByName!.open, false);
+      if (!absentBeforeClose) dispatchSetValue(root.childrenByName!.a, false);
       const events: FieldNodeDelivery[] = [];
       subscribeFieldNode(root, (event) => events.push(event));
-      dispatchSetValue(root.structure!.b, true);
-      dispatchSetValue(root.structure!.open, true);
-      const list = root.structure!.list;
-      expect(list.structure!['0'].blueprintNode.kind).toBe('number');
-      expect(list.structure!['0'].source).toBeUndefined();
+      dispatchSetValue(root.childrenByName!.b, true);
+      dispatchSetValue(root.childrenByName!.open, true);
+      const list = root.childrenByName!.list;
+      expect(list.childrenByName!['0'].blueprintNode.kind).toBe('number');
+      expect(list.childrenByName!['0'].source).toBeUndefined();
       const later = { open: true, a: false, b: true, list: [null] };
-      expect(root.local).toEqual(later);
-      expect(root.emit).toEqual(later);
+      expect(root.storedValue).toEqual(later);
+      expect(root.storedOutputValue).toEqual(later);
       expect(events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue]).toEqual({
         previous: {
-          local: { open: false, a: false, b: true },
-          emit: { open: false, a: false, b: true },
+          value: { open: false, a: false, b: true },
+          outputValue: { open: false, a: false, b: true },
         },
-        current: { local: later, emit: later },
+        current: { value: later, outputValue: later },
       });
       await dispatchValidate(root);
       expect(validationInputs.at(-1)).toEqual(later);
       expect(root.runtime.loadSnapshot).toMatchObject({ list: ['A'] });
-      dispatchSetValue(root.structure!.open, false);
-      dispatchSetValue(root.structure!.b, false);
-      dispatchSetValue(root.structure!.a, true);
-      dispatchSetValue(root.structure!.open, true);
-      expect(root.structure!.list.structure!['0'].blueprintNode.kind).toBe(
-        'string',
-      );
-      expect(root.structure!.list.structure!['0'].source).toBe('A');
+      dispatchSetValue(root.childrenByName!.open, false);
+      dispatchSetValue(root.childrenByName!.b, false);
+      dispatchSetValue(root.childrenByName!.a, true);
+      dispatchSetValue(root.childrenByName!.open, true);
+      expect(
+        root.childrenByName!.list.childrenByName!['0'].blueprintNode.kind,
+      ).toBe('string');
+      expect(root.childrenByName!.list.childrenByName!['0'].source).toBe('A');
       const earlier = { open: true, a: true, b: false, list: ['A'] };
-      expect(root.local).toEqual(earlier);
-      expect(root.emit).toEqual(earlier);
+      expect(root.storedValue).toEqual(earlier);
+      expect(root.storedOutputValue).toEqual(earlier);
       expect(
         events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
       ).toMatchObject({
-        current: { local: earlier, emit: earlier },
+        current: { value: earlier, outputValue: earlier },
       });
       await dispatchValidate(root);
       expect(validationInputs.at(-1)).toEqual(earlier);
@@ -294,25 +294,25 @@ describe('array item fold selection', () => {
         { a: false, b: true, list: [7] },
         WriteOption.Overwrite,
       );
-      const list = root.structure!.list;
-      expect(list.structure!['0'].blueprintNode.kind).toBe('number');
-      expect(list.structure!['0'].source).toBe(7);
+      const list = root.childrenByName!.list;
+      expect(list.childrenByName!['0'].blueprintNode.kind).toBe('number');
+      expect(list.childrenByName!['0'].source).toBe(7);
       writeFieldNode(
         root,
         { a: true, b: false, list: ['first'] },
         FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
-      expect(list.structure!['0'].blueprintNode.kind).toBe('string');
-      expect(list.structure!['0'].source).toBe('first');
+      expect(list.childrenByName!['0'].blueprintNode.kind).toBe('string');
+      expect(list.childrenByName!['0'].source).toBe('first');
       writeFieldNode(
         root,
         { a: false, b: true, list: [8] },
         FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
-      expect(list.structure!['0'].blueprintNode.kind).toBe('number');
-      expect(list.structure!['0'].source).toBe(8);
+      expect(list.childrenByName!['0'].blueprintNode.kind).toBe('number');
+      expect(list.childrenByName!['0'].source).toBe(8);
       expect(list.children).toHaveLength(1);
       expect(root.runtime.diagnostics.status).toBe('stable');
     },
@@ -331,7 +331,7 @@ describe('array item fold selection', () => {
         WriteOption.Overwrite,
       );
       writeFieldNode(
-        root.structure!.b,
+        root.childrenByName!.b,
         false,
         FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
@@ -344,14 +344,16 @@ describe('array item fold selection', () => {
           WriteOption.Overwrite,
           scratch,
         );
-        expect(root.structure!.list.children).toHaveLength(0);
-        expect(readSourceTree(root.structure!.list, context)).toEqual([42]);
-        const list = root.structure!.list;
+        expect(root.childrenByName!.list.children).toHaveLength(0);
+        expect(readSourceTree(root.childrenByName!.list, context)).toEqual([
+          42,
+        ]);
+        const list = root.childrenByName!.list;
         expect(interpretFieldNodeInput(list.blueprintNode, [12])).toEqual([12]);
         context.distributedInputs.set(list, {
           input: [12],
-          whole: false,
-          automatic: false,
+          isWhole: false,
+          isAutomatic: false,
         });
         expect(readSourceTree(list, context)).toEqual([12]);
       } finally {
@@ -374,10 +376,10 @@ describe('array item fold selection', () => {
         { a: !later, b: later, list: [later ? 7 : 'first'] },
         WriteOption.Overwrite,
       );
-      const survivor = root.structure!.list.blueprintNode;
+      const survivor = root.childrenByName!.list.blueprintNode;
       expect(() =>
         writeFieldNode(
-          root.structure![later ? 'a' : 'b'],
+          root.childrenByName![later ? 'a' : 'b'],
           true,
           FieldNodeWriteKind.CallerReplace,
           WriteOption.Overwrite,
@@ -389,9 +391,9 @@ describe('array item fold selection', () => {
           details: { path: '/list/0' },
         }),
       );
-      const list = root.structure!.list;
+      const list = root.childrenByName!.list;
       expect(list.blueprintNode).toBe(survivor);
-      expect(list.structure!['0'].blueprintNode.kind).toBe('string');
+      expect(list.childrenByName!['0'].blueprintNode.kind).toBe('string');
       expect(list.children).toHaveLength(1);
       expect(root.runtime.diagnostics).toMatchObject({
         status: 'degraded',
@@ -413,33 +415,33 @@ describe('array item fold selection', () => {
         WriteOption.Overwrite,
       );
       writeFieldNode(
-        root.structure!.a,
+        root.childrenByName!.a,
         false,
         FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
       writeFieldNode(
-        root.structure!.b,
+        root.childrenByName!.b,
         true,
         FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
-      const list = root.structure!.list;
-      expect(list.structure!['0'].blueprintNode.kind).toBe('number');
-      expect(list.structure!['0'].source).toBeUndefined();
+      const list = root.childrenByName!.list;
+      expect(list.childrenByName!['0'].blueprintNode.kind).toBe('number');
+      expect(list.childrenByName!['0'].source).toBeUndefined();
       writeFieldNode(
-        root.structure!.b,
+        root.childrenByName!.b,
         false,
         FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
       writeFieldNode(
-        root.structure!.a,
+        root.childrenByName!.a,
         true,
         FieldNodeWriteKind.CallerReplace,
         WriteOption.Overwrite,
       );
-      expect(list.structure!['0'].source).toBe('retained');
+      expect(list.childrenByName!['0'].source).toBe('retained');
     },
   );
 });

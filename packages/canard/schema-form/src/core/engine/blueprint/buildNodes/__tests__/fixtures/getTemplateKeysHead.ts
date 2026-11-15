@@ -21,7 +21,7 @@ export const getTemplateKeysHead = (
           : input.schemaPath;
       const gates = input.gates.map(
         (gate) =>
-          `${gate.kind}:${gate.schemaPath}:${Boolean(gate.negated)}:${
+          `${gate.kind}:${gate.schemaPath}:${Boolean(gate.isNegated)}:${
             gate.appliesWhen
               ?.map((owner) => owner.schemaPath)
               .filter((path, index, paths) => paths.indexOf(path) === index)

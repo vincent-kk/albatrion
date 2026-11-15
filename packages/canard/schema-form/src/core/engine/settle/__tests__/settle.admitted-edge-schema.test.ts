@@ -159,7 +159,7 @@ describe('L2 (d1) GOAL-011 fully admitted edges reuse a constant schema', () => 
     loadFieldNodeAtMount(root, { k: 0, x: 'v' }, WriteOption.Overwrite);
     expect(spy.mock.calls.map(([entry]) => entry.name)).not.toContain('x');
     writeFieldNode(
-      root.structure!.k,
+      root.childrenByName!.k,
       1,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -201,10 +201,10 @@ describe('L2 (d1) GOAL-011 fully admitted edges reuse a constant schema', () => 
       { sw: 1, a: 'A', b: 'B', c: 'C' },
       WriteOption.Overwrite,
     );
-    const a = root.structure!.a;
+    const a = root.childrenByName!.a;
     const schema = a.schema;
     writeFieldNode(
-      root.structure!.c,
+      root.childrenByName!.c,
       'C2',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,

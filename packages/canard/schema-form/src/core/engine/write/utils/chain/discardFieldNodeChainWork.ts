@@ -13,13 +13,13 @@ export const discardFieldNodeChainWork = <Self extends FieldNodeRecord<Self>>(
   runtime.pendingExternalErrorNodes = undefined;
   runtime.pendingWarningRecords = undefined;
   runtime.guardFailureRecords = undefined;
-  runtime.stateChanged = false;
-  if (runtime.validationPending)
+  runtime.hasStateChanged = false;
+  if (runtime.isValidationPending)
     runtime.validationStamp = (runtime.validationStamp ?? 0) + 1;
   runtime.validationPendingTargets = undefined;
-  runtime.validationRun = undefined;
+  runtime.runValidation = undefined;
   runtime.validationRequestStamp = undefined;
   runtime.validationPendingEntryStamp = undefined;
   runtime.validationTargets = undefined;
-  runtime.deferLoadValidation = undefined;
+  runtime.shouldDeferLoadValidation = undefined;
 };

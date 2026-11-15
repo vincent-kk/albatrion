@@ -29,12 +29,12 @@ interface SplitAnchor {
 
 /** First-hit membership is implicit; later representatives use explicit path keys. */
 interface SplitRunState {
-  /** Initial anchor represents every static rank outside excluded. */
+  /** Initial anchor represents every static rank outside `excludedRanks`. */
   initial?: SplitAnchor;
   /** Initially live and already consumed initial representatives. */
-  excluded: Set<number>;
+  excludedRanks: Set<number>;
   /** Deleted members eligible for representation at a later hit. */
-  released: Map<number, string>;
+  releasedPathsByRank: Map<number, string>;
 }
 
 /** Dirty paths retain descendant order or close an ungated post-order frontier. */
@@ -52,7 +52,7 @@ export class DirtyPathSet extends Set<string> {
   readonly childrenByParent: Map<string, Map<string, string>>;
 
   /** Ungated computation consumes live nodes only after their children. */
-  private postOrder = false;
+  private storedIsPostOrder = false;
 
   /**
    * @param childrenByParent - Scratch index cleared with this set
@@ -64,7 +64,7 @@ export class DirtyPathSet extends Set<string> {
 
   /** Whether dirty paths already use the direct-edge post-order index. */
   get isPostOrder(): boolean {
-    return this.postOrder;
+    return this.storedIsPostOrder;
   }
 
   /**
@@ -93,8 +93,8 @@ export class DirtyPathSet extends Set<string> {
     const first = !states;
     if (!states) {
       states = mapArray(bucket.runs, () => ({
-        excluded: new Set(),
-        released: new Map(),
+        excludedRanks: new Set(),
+        releasedPathsByRank: new Map(),
       }));
       this.splitRuns.set(bucket, states);
     }
@@ -113,22 +113,22 @@ export class DirtyPathSet extends Set<string> {
           liveCursor < liveRanks.length &&
           liveRanks[liveCursor] <= lastRank
         )
-          state.excluded.add(liveRanks[liveCursor++]);
-        count = definition.ranks.length - state.excluded.size;
+          state.excludedRanks.add(liveRanks[liveCursor++]);
+        count = definition.ranks.length - state.excludedRanks.size;
         if (count)
           for (const candidate of definition.ranks)
-            if (!state.excluded.has(candidate)) {
+            if (!state.excludedRanks.has(candidate)) {
               rank = candidate;
               break;
             }
       } else {
-        for (const [releasedRank, path] of state.released)
+        for (const [releasedRank, path] of state.releasedPathsByRank)
           if (!living.has(releasedRank)) {
             represented.push(path);
             count++;
             if (rank === undefined || releasedRank < rank) rank = releasedRank;
           }
-        state.released.clear();
+        state.releasedPathsByRank.clear();
       }
       if (rank === undefined || !count) continue;
       const anchor: SplitAnchor = {
@@ -172,11 +172,11 @@ export class DirtyPathSet extends Set<string> {
     if (!state) return;
     let anchor = this.memberAnchors.get(path);
     if (anchor) this.memberAnchors.delete(path);
-    else if (state.initial && !state.excluded.has(owner.rank)) {
+    else if (state.initial && !state.excludedRanks.has(owner.rank)) {
       anchor = state.initial;
-      state.excluded.add(owner.rank);
+      state.excludedRanks.add(owner.rank);
     }
-    state.released.set(owner.rank, path);
+    state.releasedPathsByRank.set(owner.rank, path);
     if (!anchor || --anchor.count !== 0) return;
     let parent: string = $.Root;
     while (parent !== anchor.hostPath) {
@@ -195,8 +195,8 @@ export class DirtyPathSet extends Set<string> {
    * @returns Nothing; indexes each unique prefix once in first-descendant order
    */
   beginPostOrder(): void {
-    if (this.postOrder) return;
-    this.postOrder = true;
+    if (this.storedIsPostOrder) return;
+    this.storedIsPostOrder = true;
     this.childrenByParent.clear();
     const linked = new Set<string>();
     for (const path of this) {
@@ -220,7 +220,7 @@ export class DirtyPathSet extends Set<string> {
 
   override add(path: string): this {
     if (this.has(path)) return this;
-    if (this.postOrder) {
+    if (this.storedIsPostOrder) {
       let current = path;
       while (!this.has(current)) {
         super.add(current);
@@ -259,7 +259,7 @@ export class DirtyPathSet extends Set<string> {
 
   override delete(path: string): boolean {
     if (!super.delete(path)) return false;
-    if (this.postOrder) {
+    if (this.storedIsPostOrder) {
       if (path) {
         const parent = resolvePointer(path, $.Parent);
         const children = this.childrenByParent.get(parent);
@@ -288,7 +288,7 @@ export class DirtyPathSet extends Set<string> {
    * @throws S6 verification failure in verify mode when a post-order child is still dirty
    */
   consume(path: string): boolean {
-    if (!this.postOrder) return this.delete(path);
+    if (!this.storedIsPostOrder) return this.delete(path);
     if (engineModes.gateSelection === 'verify')
       for (const child of this.childrenByParent.get(path)?.keys() ?? [])
         verifyGateSelection(
@@ -303,7 +303,7 @@ export class DirtyPathSet extends Set<string> {
   override clear(): void {
     super.clear();
     this.childrenByParent.clear();
-    this.postOrder = false;
+    this.storedIsPostOrder = false;
     this.splitOwners = undefined;
     this.splitRuns.clear();
     this.memberAnchors.clear();

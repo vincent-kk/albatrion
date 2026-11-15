@@ -47,15 +47,15 @@ describe('direct exit-policy child ownership', () => {
       ]),
     });
     const collect = vi.spyOn(layers, 'getControlLayers');
-    dispatchWriteInput(root.structure!.h.structure!.probe, -1);
+    dispatchWriteInput(root.childrenByName!.h.childrenByName!.probe, -1);
     const controlCalls = collect.mock.calls.length;
     collect.mockClear();
-    dispatchWriteInput(root.structure!.flag, false);
+    dispatchWriteInput(root.childrenByName!.flag, false);
     const exitCalls = collect.mock.calls.length;
     expect(controlCalls).toBeLessThanOrEqual(24);
     expect(exitCalls).toBeGreaterThan(0);
     expect(exitCalls).toBeLessThanOrEqual(84);
-    expect(root.emit).toEqual({ flag: false, h: { probe: -1 } });
+    expect(root.storedOutputValue).toEqual({ flag: false, h: { probe: -1 } });
   });
 
   it.each(['current', 'committed', 'authored', 'unselected'] as const)(
@@ -79,7 +79,7 @@ describe('direct exit-policy child ownership', () => {
         WriteOption.Overwrite,
       );
       policy.mockClear();
-      const child = root.structure!.secret;
+      const child = root.childrenByName!.secret;
       const scratch = getSettlementScratch(root.runtime);
       try {
         const context = createSettlementContext(
@@ -165,15 +165,19 @@ describe('direct exit-policy child ownership', () => {
     root.runtime.onChange = changed;
     dispatchMount(root, { flag: true, probe: 0, secret: 'S' });
     changed.mockClear();
-    dispatchWriteInput(root.structure!.probe, -1);
-    expect(root.emit).toEqual({ flag: true, probe: -1, secret: 'S' });
+    dispatchWriteInput(root.childrenByName!.probe, -1);
+    expect(root.storedOutputValue).toEqual({
+      flag: true,
+      probe: -1,
+      secret: 'S',
+    });
     expect(changed.mock.calls.map(([value]) => value)).toEqual([
       { flag: true, probe: -1, secret: 'S' },
     ]);
     changed.mockClear();
-    const old = root.structure!.secret;
-    dispatchWriteInput(root.structure!.flag, false);
-    expect(old.detached).toBe(true);
+    const old = root.childrenByName!.secret;
+    dispatchWriteInput(root.childrenByName!.flag, false);
+    expect(old.isDetached).toBe(true);
     expect(old.source).toBe('S');
     expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(
       scene.keep,
@@ -181,7 +185,9 @@ describe('direct exit-policy child ownership', () => {
     expect(changed.mock.calls.map(([value]) => value)).toEqual([
       { flag: false, probe: -1 },
     ]);
-    dispatchWriteInput(root.structure!.flag, true);
-    expect(root.structure!.secret.source).toBe(scene.keep ? 'S' : undefined);
+    dispatchWriteInput(root.childrenByName!.flag, true);
+    expect(root.childrenByName!.secret.source).toBe(
+      scene.keep ? 'S' : undefined,
+    );
   });
 });

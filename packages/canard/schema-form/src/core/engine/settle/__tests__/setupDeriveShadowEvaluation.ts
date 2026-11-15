@@ -8,9 +8,9 @@ import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 const previousModes = {
   gateSelection: engineModes.gateSelection,
   gateWheel: engineModes.gateWheel,
-  deriveShadow: engineModes.deriveShadow,
+  isDeriveShadowEnabled: engineModes.isDeriveShadowEnabled,
 };
-engineModes.setMode('deriveShadow', true);
+engineModes.setMode('isDeriveShadowEnabled', true);
 engineModes.setMode('gateWheel', 'shadow');
 engineModes.setMode('gateSelection', 'verify');
 
@@ -28,11 +28,14 @@ afterAll(() => {
     if (Object.keys(assertions).length)
       console.log('GATE_TABLE_ASSERTIONS', JSON.stringify(assertions));
     expect(gateWheelEvaluation.nonNoop).toBe(0);
-    if (gateWheelEvaluation.predictions || gateWheelEvaluation.missed)
+    if (gateWheelEvaluation.predictionCount || gateWheelEvaluation.missCount)
       console.log('gate-wheel-shadow', JSON.stringify(gateWheelEvaluation));
   } finally {
     engineModes.setMode('gateSelection', previousModes.gateSelection);
     engineModes.setMode('gateWheel', previousModes.gateWheel);
-    engineModes.setMode('deriveShadow', previousModes.deriveShadow);
+    engineModes.setMode(
+      'isDeriveShadowEnabled',
+      previousModes.isDeriveShadowEnabled,
+    );
   }
 });

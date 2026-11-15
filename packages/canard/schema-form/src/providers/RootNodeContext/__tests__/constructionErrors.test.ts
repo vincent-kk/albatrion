@@ -15,7 +15,7 @@ it.each([false, true])(
     vi.stubGlobal('reportError', host);
     const capture = vi.fn();
     const reporter: FormErrorService = {
-      load: 0,
+      loadEpoch: 0,
       warningScope: {},
       beginLoad: vi.fn(),
       capture,
@@ -29,15 +29,15 @@ it.each([false, true])(
     );
     const failure = new Error('construction before first commit');
     first.error = failure;
-    first.reported = reported;
+    first.isReported = reported;
     const second = resetRootLoad(
       first,
       { jsonSchema: { type: 'number' }, validationMode: ValidationMode.None },
       undefined,
       true,
     );
-    expect(first.prepared).toBe(false);
-    expect(first.reported).toBe(true);
+    expect(first.isPrepared).toBe(false);
+    expect(first.isReported).toBe(true);
     expect(capture).toHaveBeenCalledTimes(reported ? 0 : 1);
     expect(host).toHaveBeenCalledTimes(reported ? 0 : 1);
     if (!reported) {

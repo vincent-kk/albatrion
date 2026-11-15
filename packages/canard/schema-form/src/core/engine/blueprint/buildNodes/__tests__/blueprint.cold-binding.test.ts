@@ -175,7 +175,7 @@ describe('cold blueprint child declaration binding', () => {
             hostPath: '/first"\\\t',
             evaluationReads: [],
             condition: {},
-            negated: true,
+            isNegated: true,
             appliesWhen: [owner, { ...owner, schemaPath: 'c' }, owner],
           };
           const collision = {
@@ -195,7 +195,7 @@ describe('cold blueprint child declaration binding', () => {
                   gate,
                   collision,
                   gate,
-                  { ...gate, negated: false },
+                  { ...gate, isNegated: false },
                   { ...gate, appliesWhen: [] },
                 ],
               },
@@ -236,7 +236,7 @@ describe('cold blueprint child declaration binding', () => {
   it('counts declaration materializations and keeps every reachable declaration frozen', () => {
     const properties: Record<string, BlueprintSchema> = {};
     for (let index = 0; index < 25; index++)
-      properties[`field_${index}`] = { type: 'string', default: String(index) };
+      properties[`field_${index}`] = { type: 'string', default: '' + index };
     const frozen = vi.spyOn(Object, 'freeze');
     const result = blueprint({ type: 'object', properties });
     const declarations = frozen.mock.calls.filter(

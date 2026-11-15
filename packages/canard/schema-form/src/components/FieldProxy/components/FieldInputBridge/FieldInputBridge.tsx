@@ -11,7 +11,7 @@ import { FieldNodeState } from '@/schema-form/core';
 import {
   SetValueOption,
   finishFieldNodeInput,
-  readFieldNodeInteractionReset,
+  readFieldNodeInteractionEpoch,
   relayFieldNodeInput,
   writeFieldNodeInput,
 } from '@/schema-form/core';
@@ -139,8 +139,11 @@ export const FieldInputBridge = memo(
         const onFileAttach =
           onFileAttachRef.current || overrideOnFileAttachRef?.current;
         if (onFileAttach) return onFileAttach(files);
-        attachedFilesMap.attach(attachmentOwner.current, node,
-          files === undefined ? undefined : isArray(files) ? files : [files]);
+        attachedFilesMap.attach(
+          attachmentOwner.current,
+          node,
+          files === undefined ? undefined : isArray(files) ? files : [files],
+        );
       },
       [
         accepts,
@@ -159,14 +162,14 @@ export const FieldInputBridge = memo(
     }, []);
     const handleBlur = useCallback(() => {
       if (!accepts()) return;
-      const reset = readFieldNodeInteractionReset(node);
+      const reset = readFieldNodeInteractionEpoch(node);
       finishFieldNodeInput(node);
       if (node.state[2]) return;
       requestId.current = requestAnimationFrame(() => {
         if (
           selection.active &&
           isLive() &&
-          reset === readFieldNodeInteractionReset(node) &&
+          reset === readFieldNodeInteractionEpoch(node) &&
           !node.state[2]
         )
           node.setState(TOUCHED_STATE_PATCH);
@@ -218,7 +221,7 @@ export const FieldInputBridge = memo(
           misfit={node.isMisfit}
           name={node.name}
           path={node.path}
-          nullable={node.nullable}
+          nullable={node.isNullable}
           watchValues={node.watchValues}
           ChildFields={ChildFields}
           context={context}

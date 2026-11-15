@@ -45,13 +45,13 @@ export interface SplitAnchorEvent {
 /** Registration effects supplied by the settlement, independent of trie traversal. */
 export interface RegistrationSink {
   /** Register one deduplicated concrete owner or table host in original order. */
-  owner(
+  registerOwner(
     path: string,
     kind: 'plain' | 'host' | 'split',
     bucket?: SplitBucket,
   ): void;
   /** Record a bucket hit and plan its anchors before ordered emission. */
-  hit(
+  recordHit(
     bucket: SplitBucket,
     liveRanks: readonly number[],
   ): readonly SplitAnchorEvent[];

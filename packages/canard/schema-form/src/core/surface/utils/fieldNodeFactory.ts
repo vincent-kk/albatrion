@@ -9,6 +9,7 @@ import {
 } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../errors';
+import type { PendingFormErrorRecord } from '../../../errors';
 import type {
   Behavior,
   Blueprint,
@@ -34,6 +35,9 @@ import type {
   InferFieldNode,
   NodeSurface,
 } from '../type';
+
+/** Annotates the lazily created `pendingWarningRecords`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PendingWarningRecords = Map<string, PendingFormErrorRecord>;
 
 /** Empty active-declaration list: only ungated contributions apply. */
 const NO_ACTIVE_DECLARATION_IDS: readonly number[] = EMPTY_ARRAY;
@@ -76,14 +80,14 @@ export type FieldNodeRuntimeSeed = PartialBy<
     | 'revisionNodes'
     | 'queuedNonSettleEvents'
     | 'validationPendingTargets'
-    | 'validationRunning'
+    | 'activeValidationRun'
     | 'revealBaselineNodes'
     | 'revealPolicy'
     | 'revealWriteSequence'
     | 'revealReleaseVersion'
     | 'revealReleaseListeners'
     | 'revealBaselineGeneration'
-    | 'revealDropOwed'
+    | 'isRevealDropOwed'
     | 'revealDropTask'
     | 'validator'
   >,
@@ -165,8 +169,10 @@ export function fieldNodeFactory(
   if (runtime.errorReporter?.hasConsumer())
     collectBlueprintWarnings(analysis, (diagnostic) => {
       const record = createFormErrorRecord(true, diagnostic);
-      if (record)
-        (runtime.pendingWarningRecords ??= new Map()).set(
+      if (record) {
+        const records: PendingWarningRecords =
+          (runtime.pendingWarningRecords ??= new Map());
+        records.set(
           JSON.stringify([
             record.code,
             diagnostic.schemaPath,
@@ -174,6 +180,7 @@ export function fieldNodeFactory(
           ]),
           record,
         );
+      }
     });
   const authoredSchema = analysis.schema;
   if (

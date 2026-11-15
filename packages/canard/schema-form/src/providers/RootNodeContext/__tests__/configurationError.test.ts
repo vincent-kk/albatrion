@@ -13,7 +13,7 @@ it('keeps configuration failure speculative until the load is flushed once', () 
   vi.stubGlobal('reportError', host);
   const capture = vi.fn();
   const reporter: FormErrorService = {
-    load: 0,
+    loadEpoch: 0,
     warningScope: {},
     beginLoad: vi.fn(),
     capture,

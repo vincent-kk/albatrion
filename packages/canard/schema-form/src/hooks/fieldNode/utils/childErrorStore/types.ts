@@ -7,7 +7,7 @@ export interface ChildErrorStoreState {
   /** Number of qualifying notifications since the base was established. */
   version: number;
   /** Whether a listener currently owns the revision base. */
-  subscribed: boolean;
+  isSubscribed: boolean;
   /** Last close's current vector; absence distinguishes a new store from a reconnect. */
   closedRevision?: string;
 }

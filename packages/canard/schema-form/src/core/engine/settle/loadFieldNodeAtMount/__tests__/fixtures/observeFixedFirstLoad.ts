@@ -82,11 +82,11 @@ export const observeFixedFirstLoad = (
       const pending = [root];
       while (pending.length) {
         const current = pending.pop()!;
-        expect(current.pendingRevision).toBe(0);
-        expect(current.deliveryInitialized).toBe(true);
+        expect(current.pendingRevisionMask).toBe(0);
+        expect(current.isDeliveryInitialized).toBe(true);
         pending.push(...(current.children ?? []));
       }
-      delivered.push({ path: node.path, event, value: root.emit });
+      delivered.push({ path: node.path, event, value: root.storedOutputValue });
     });
   listen(root);
   let allocations = 0;
@@ -155,20 +155,20 @@ export const observeFixedFirstLoad = (
         schema: node.schema.schema,
         source: node.source,
         extras: node.extras,
-        local: node.local,
-        emit: node.emit,
+        value: node.storedValue,
+        outputValue: node.storedOutputValue,
         required: node.isRequired,
-        active: node.isActive,
+        isActive: node.isActive,
         visible: node.isVisible,
         readOnly: node.isReadOnly,
         disabled: node.isDisabled,
-        state: node.interactionState,
+        state: node.storedState,
         ids: root.runtime.committedDeclarationIds?.get(
           getCommittedDeclarationKey(node, node.runtime),
         ),
         revisions: { ...node.revisionLedger },
         delivery: node.pendingDelivery,
-        initialized: node.deliveryInitialized,
+        initialized: node.isDeliveryInitialized,
         children: node.children?.map((child) => child.path),
       });
       pending.push(...(node.children ?? []));
@@ -208,7 +208,7 @@ export const observeFixedFirstLoad = (
 export const isFixedFirstLoadAdmissible = (): boolean =>
   engineModes.gateSelection !== 'verify' &&
   engineModes.gateWheel !== 'shadow' &&
-  !engineModes.deriveShadow;
+  !engineModes.isDeriveShadowEnabled;
 
 /** Assert route evidence while retaining compiler eligibility in verifier projects. */
 export const expectFixedFirstLoadRoute = (

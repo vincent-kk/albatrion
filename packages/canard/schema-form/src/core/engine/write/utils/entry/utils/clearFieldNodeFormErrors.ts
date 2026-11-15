@@ -30,7 +30,7 @@ export const clearFieldNodeFormErrors = <Self extends FieldNodeRecord<Self>>(
   runtime.nodeErrors?.clear();
   runtime.adoptedExternalErrors = undefined;
   runtime.validationResult = undefined;
-  runtime.validationListChanged = undefined;
+  runtime.hasValidationListChanged = undefined;
   if (
     !((runtime.validationMode ?? ValidationMode.None) & ValidationMode.OnChange)
   ) {

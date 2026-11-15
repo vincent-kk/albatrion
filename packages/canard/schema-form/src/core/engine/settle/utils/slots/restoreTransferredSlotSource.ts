@@ -10,6 +10,11 @@ import { getSlotSource } from './getSlotSource';
 import { markRestoredSlotSource } from './markRestoredSlotSource';
 import { readSlotSourceTree } from './readSlotSourceTree';
 
+/** Annotates the lazily created `inactiveSlots`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlots<Self> = Map<BlueprintChildEntry, Self>;
+/** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
+
 /**
  * Rebind a moved candidate to a different blueprint while preserving every child kind.
  * @param node - Fresh destination occurrence with no previously published lifetime
@@ -30,20 +35,25 @@ export const restoreTransferredSlotSource = <
   const input = readSlotSourceTree(template, instance, overlay);
   for (const entry of getSlotEntries(instance, overlay, template)) {
     const prior = getSlotSource(instance, entry, overlay);
-    if (prior.instance)
-      (node.inactiveSlots ??= new Map<BlueprintChildEntry, Self>()).set(
+    if (prior.instance) {
+      const slots: InactiveSlots<Self> = (node.inactiveSlots ??= new Map());
+      slots.set(
         entry,
         cloneSlotSubtree(node, entry, prior.instance, context, false),
       );
-    if (prior.overlay)
-      (node.inactiveSlotOverlays ??= new Map()).set(entry, prior.overlay);
+    }
+    if (prior.overlay) {
+      const overlays: InactiveSlotOverlays = (node.inactiveSlotOverlays ??=
+        new Map());
+      overlays.set(entry, prior.overlay);
+    }
   }
   markWrite(node, input, context);
   const distribution = context.distributedInputs.get(node);
   if (distribution)
     context.distributedInputs.set(node, {
       ...distribution,
-      preserveLatent: true,
+      shouldPreserveLatent: true,
     });
   markRestoredSlotSource(node, context);
 };

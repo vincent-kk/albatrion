@@ -10,6 +10,9 @@ import { getSlotPathNames } from './getSlotPathNames';
 import { getSlotSource } from './getSlotSource';
 import { markSlotChange } from './markSlotChange';
 
+/** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
+
 /**
  * Erase retained sources in a replacement scope without changing frozen instances.
  * @param root - Current tree whose live owners receive clearing patches
@@ -39,7 +42,7 @@ export const pruneSlotSources = <Self extends FieldNodeRecord<Self>>(
     host.inactiveSlots?.clear();
     host.inactiveSlotOverlays?.clear();
     for (const child of host.inactiveSlotChildren?.values() ?? [])
-      if (host.structure?.[child.name] === child && !child.detached)
+      if (host.childrenByName?.[child.name] === child && !child.isDetached)
         clear(child);
   };
   const patch = (
@@ -47,7 +50,7 @@ export const pruneSlotSources = <Self extends FieldNodeRecord<Self>>(
     overlay: Optional<InactiveSlotOverlay>,
     position: number,
   ): InactiveSlotOverlay => {
-    if (position === parts.length) return { replace: true };
+    if (position === parts.length) return { isWhole: true };
     const children = new Map(overlay?.children);
     for (const entry of getSlotEntries(instance, overlay)) {
       if (entry.name !== parts[position]) continue;
@@ -71,8 +74,10 @@ export const pruneSlotSources = <Self extends FieldNodeRecord<Self>>(
       if (position + 1 === parts.length) {
         host.inactiveSlots?.delete(entry);
         host.inactiveSlotOverlays?.delete(entry);
-      } else
-        (host.inactiveSlotOverlays ??= new Map()).set(
+      } else {
+        const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
+          new Map());
+        overlays.set(
           entry,
           patch(
             host.inactiveSlots?.get(entry),
@@ -80,9 +85,10 @@ export const pruneSlotSources = <Self extends FieldNodeRecord<Self>>(
             position + 1,
           ),
         );
+      }
     }
-    const live = host.structure?.[name];
-    if (live && !live.detached) visit(live, position + 1);
+    const live = host.childrenByName?.[name];
+    if (live && !live.isDetached) visit(live, position + 1);
   };
   visit(root, 0);
 };

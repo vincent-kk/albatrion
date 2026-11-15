@@ -6,13 +6,13 @@ interface Modes {
   gatePredicate: 'on' | 'off';
   gateSelection: 'table' | 'off' | 'verify';
   gateWheel: 'skip' | 'record' | 'shadow';
-  deriveShadow: boolean;
+  isDeriveShadowEnabled: boolean;
 }
 const modes: Modes = {
   gatePredicate: 'on',
   gateSelection: 'table',
   gateWheel: 'skip',
-  deriveShadow: false,
+  isDeriveShadowEnabled: false,
 };
 /** All mode changes pass through setMode; counters remain with their producers. */
 export const engineModes = {
@@ -26,8 +26,8 @@ export const engineModes = {
   get gateWheel(): Modes['gateWheel'] {
     return modes.gateWheel;
   },
-  get deriveShadow(): boolean {
-    return modes.deriveShadow;
+  get isDeriveShadowEnabled(): boolean {
+    return modes.isDeriveShadowEnabled;
   },
   /** Set before building trees; changing this test/bench control invalidates existing tree contexts. */
   setMode<Name extends keyof Modes>(name: Name, value: Modes[Name]): void {

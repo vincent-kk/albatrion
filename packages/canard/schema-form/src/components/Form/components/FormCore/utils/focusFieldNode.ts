@@ -53,14 +53,14 @@ export const focusFieldNode = (
   request.onCancel(
     lifecycle.reserve(target, FieldLifecycle.Mount, () => {
       mountHandled = true;
-      return request.live && !hasMoved()
+      return request.isLive && !hasMoved()
         ? FieldLifecycleAction.Focus
         : FieldLifecycleAction.None;
     }),
   );
   if (!manager.revealPath(target, () => request.cancel())) {
     queueMicrotask(() => {
-      const shouldFocus = request.live && !mountHandled && !hasMoved();
+      const shouldFocus = request.isLive && !mountHandled && !hasMoved();
       request.cancel();
       if (shouldFocus) target.request(FieldNodeRequestType.Focus);
     });

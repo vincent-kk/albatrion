@@ -44,7 +44,7 @@ export const createNode = (
     behavior: {
       interpret: (input) => input,
       assemble: (_record, children) => children,
-      project: (_record, local) => local,
+      project: (_record, value) => value,
       finishInput: () => undefined,
       declareChildren: (record) => record.blueprintNode.childEntries,
       arrange: () => ({ kind: 'noop' }),
@@ -62,9 +62,9 @@ export const createNode = (
     path: parent === null ? '' : `${parent.path}/${escapedName}`,
     depth: parent === null ? 0 : parent.depth + 1,
     isRequired: false,
-    nullable: false,
+    isNullable: false,
     schemaType: template.schemaType,
-    structure: strategy === 'branch' ? {} : null,
+    childrenByName: strategy === 'branch' ? {} : null,
     children: strategy === 'branch' ? [] : null,
     itemKey: null,
     itemCount: 0,
@@ -75,25 +75,25 @@ export const createNode = (
     isVisible: true,
     isReadOnly: false,
     isDisabled: false,
-    local: undefined,
-    emit: undefined,
+    storedValue: undefined,
+    storedOutputValue: undefined,
     divergenceCurrent: undefined,
     divergencePath: undefined,
     divergenceSegments: undefined,
     divergenceBase: undefined,
-    divergenceResult: false,
-    schema: { schema: {}, typeConflict: false },
-    interactionState: {},
+    storedIsDivergent: false,
+    schema: { schema: {}, hasTypeConflict: false },
+    storedState: {},
     revisionLedger: EMPTY_REVISION_LEDGER,
-    deliveryInitialized: false,
+    isDeliveryInitialized: false,
     deliveryChanges: 0,
-    pendingRevision: 0,
-    detached: false,
-    disposed: false,
-    interactionReset: 0,
+    pendingRevisionMask: 0,
+    isDetached: false,
+    isDisposed: false,
+    interactionEpoch: 0,
   };
-  if (parent?.structure !== null && parent !== null) {
-    parent.structure[name] = node;
+  if (parent?.childrenByName !== null && parent !== null) {
+    parent.childrenByName[name] = node;
     parent.children = [...(parent.children ?? []), node];
   }
   return node;

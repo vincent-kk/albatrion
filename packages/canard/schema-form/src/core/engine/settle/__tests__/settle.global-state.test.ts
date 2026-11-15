@@ -23,7 +23,7 @@ describe('EVENT-062 43C-01 settlement shape counts', () => {
     root.runtime.nodeFactory = (entry, parent, runtime) => {
       const node = createNode(entry, parent, runtime);
       if ('name' in entry && entry.name === 'target')
-        node.interactionState = { [FieldNodeState.Edited]: true };
+        node.storedState = { [FieldNodeState.Edited]: true };
       return node;
     };
     writeFieldNode(
@@ -34,14 +34,14 @@ describe('EVENT-062 43C-01 settlement shape counts', () => {
     );
     expect(root.runtime.globalState).toEqual({ [FieldNodeState.Edited]: true });
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
     expect(root.runtime.globalState).toEqual({});
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       true,
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,

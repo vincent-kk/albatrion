@@ -104,11 +104,11 @@ export const observeGateTableCase = (
     .spyOn(selection, 'selectChildren')
     .mockImplementation((...args) => {
       const context = args[1];
-      if (!observedRevivalSets.includes(context.revived)) {
-        observedRevivalSets.push(context.revived);
-        const add = context.revived.add;
+      if (!observedRevivalSets.includes(context.revivedNodes)) {
+        observedRevivalSets.push(context.revivedNodes);
+        const add = context.revivedNodes.add;
         const revivalSpy = vi
-          .spyOn(context.revived, 'add')
+          .spyOn(context.revivedNodes, 'add')
           .mockImplementation((child) => {
             revivals.push(child.path);
             timeline.push({
@@ -116,7 +116,7 @@ export const observeGateTableCase = (
               path: child.path,
               identity: identityOf(child),
             });
-            return add.call(context.revived, child);
+            return add.call(context.revivedNodes, child);
           });
         restoreRevivalSpies.push(() => revivalSpy.mockRestore());
       }
@@ -129,9 +129,9 @@ export const observeGateTableCase = (
           timeline.push({
             event: 'computeChild',
             path: child.path,
-            entered: args[1].entered.has(child),
-            revived: args[1].revived.has(child),
-            value: child.local,
+            entered: args[1].enteredNodes.has(child),
+            revived: args[1].revivedNodes.has(child),
+            value: child.storedValue,
           });
           computeChild(child);
         },
@@ -141,10 +141,10 @@ export const observeGateTableCase = (
       selections.push({
         host: node.path,
         changed: result,
-        structure: Object.keys(node.structure ?? {}),
+        childrenByName: Object.keys(node.childrenByName ?? {}),
         pendingExits: [...context.pendingExits.keys()],
-        revived: [...context.revived].map((child) => child.path),
-        entered: [...context.entered].map((child) => child.path),
+        revived: [...context.revivedNodes].map((child) => child.path),
+        entered: [...context.enteredNodes].map((child) => child.path),
         throwingExits: [...(context.throwingGateExits ?? [])].map(
           (child) => child.path,
         ),
@@ -159,8 +159,8 @@ export const observeGateTableCase = (
         kind: context.kind,
         changedNodes: [...context.changedNodes].map((node) => node.path),
         stateDirtyNodes: [...context.stateDirtyNodes].map((node) => node.path),
-        entered: [...context.entered].map((node) => node.path),
-        revived: [...context.revived].map((node) => node.path),
+        entered: [...context.enteredNodes].map((node) => node.path),
+        revived: [...context.revivedNodes].map((node) => node.path),
         pendingExits: [...context.pendingExits.keys()],
         pendingExitPaths: observePendingExitPaths(context),
         failures: context.failures,
@@ -179,7 +179,9 @@ export const observeGateTableCase = (
           hosts.push({
             path: node.path,
             identity: identityOf(node),
-            structure: node.structure ? Object.keys(node.structure) : null,
+            childrenByName: node.childrenByName
+              ? Object.keys(node.childrenByName)
+              : null,
             revision: node.revisionLedger,
             payload: node.pendingDelivery,
           });

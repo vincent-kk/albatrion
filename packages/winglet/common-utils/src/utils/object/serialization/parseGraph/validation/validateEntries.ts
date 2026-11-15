@@ -21,7 +21,7 @@ export function validateEntries(
     if (
       length !== undefined &&
       (key === 'length' ||
-        (String(Number(key) >>> 0) === key &&
+        ('' + (Number(key) >>> 0) === key &&
           Number(key) < 4294967295 &&
           Number(key) >= length))
     )

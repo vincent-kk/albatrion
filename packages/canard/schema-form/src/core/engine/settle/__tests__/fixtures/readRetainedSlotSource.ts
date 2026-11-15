@@ -53,7 +53,7 @@ const findRetainedSlot = <Self extends FieldNodeRecord<Self>>(
           getBlueprintNodeIdentity(entry.node) !== token
         )
           continue;
-        if (child.instance && !child.instance.detached) continue;
+        if (child.instance && !child.instance.isDetached) continue;
         if (!child.overlay && !child.instance) continue;
         return { entry, template: entry.node, ...child };
       }
@@ -97,13 +97,13 @@ export const hasRetainedSlotOwnSource = (
   const source =
     overlay && hasOwnProperty(overlay, 'source')
       ? overlay.source
-      : overlay?.replace
+      : overlay?.isWhole
         ? undefined
         : instance?.source;
   const extras =
     overlay && hasOwnProperty(overlay, 'extras')
       ? overlay.extras
-      : overlay?.replace
+      : overlay?.isWhole
         ? undefined
         : instance?.extras;
   return source !== undefined || extras !== undefined;

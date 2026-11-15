@@ -7,6 +7,7 @@ it('runtime property names and enum keys expose the new vocabulary without alias
   const names = Object.getOwnPropertyNames(FieldNode.prototype);
   for (const name of [
     'isRequired',
+    'isNullable',
     'isActive',
     'isVisible',
     'isPresent',
@@ -20,6 +21,7 @@ it('runtime property names and enum keys expose the new vocabulary without alias
     expect(names).toContain(name);
   for (const name of [
     'required',
+    'nullable',
     'active',
     'visible',
     'enabled',

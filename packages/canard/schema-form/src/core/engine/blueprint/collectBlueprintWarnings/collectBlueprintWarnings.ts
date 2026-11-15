@@ -144,14 +144,14 @@ export const collectBlueprintWarnings = (
       for (const gate of declaration.gates) {
         if (gate.kind !== 'discriminator') continue;
         const descriptor = gate.condition;
-        if (descriptor.kindUnreachable || descriptor.values.length === 0) {
+        if (descriptor.isKindUnreachable || descriptor.values.length === 0) {
           emit({
             code: FormWarningCode.DiscriminatorBranchUnreachable,
             level: 'warning',
             schemaPath: gate.schemaPath,
             details: {
               propertyName: descriptor.propertyName,
-              reason: descriptor.kindUnreachable ? 'kind' : 'empty',
+              reason: descriptor.isKindUnreachable ? 'kind' : 'empty',
             },
           });
           continue;
@@ -175,7 +175,7 @@ export const collectBlueprintWarnings = (
 
           if (
             value === null
-              ? !tag.nullable
+              ? !tag.isNullable
               : !allowed.includes(
                   isArray(value)
                     ? 'array'

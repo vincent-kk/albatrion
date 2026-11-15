@@ -85,8 +85,8 @@ describe('dispatcher delivery waves', () => {
     const seen: string[] = [];
     subscribeFieldNode(root, (event) => {
       if (!(event.type & FieldNodeEventType.UpdateValue)) return;
-      seen.push(String(root.emit));
-      if (root.emit === 'first') dispatchSetValue(root, 'second');
+      seen.push(String(root.storedOutputValue));
+      if (root.storedOutputValue === 'first') dispatchSetValue(root, 'second');
     });
     dispatchSetValue(root, 'first');
     expect(seen).toEqual(['first', 'second']);
@@ -149,7 +149,7 @@ describe('dispatcher delivery waves', () => {
     subscribeFieldNode(child, () => {
       calls += 1;
     });
-    child.detached = true;
+    child.isDetached = true;
     runtime.deliveries?.add(child);
     child.pendingDelivery = { type: FieldNodeEventType.UpdateValue };
     dispatchBatch(root, () => {});

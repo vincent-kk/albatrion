@@ -24,10 +24,10 @@ export const getLivePresenceNode = <Self extends FieldNodeRecord<Self>>(
     const name = segment;
     if (typeof name !== 'string') return undefined;
     live =
-      live?.structure && hasOwnProperty(live.structure, name)
-        ? live.structure[name]
+      live?.childrenByName && hasOwnProperty(live.childrenByName, name)
+        ? live.childrenByName[name]
         : undefined;
     if (!live) break;
   }
-  return live && !live.detached ? live : undefined;
+  return live && !live.isDetached ? live : undefined;
 };

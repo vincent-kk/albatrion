@@ -37,7 +37,7 @@ export const collectInlineTerminalWarnings = (
   const pending: {
     schema: BlueprintSchema;
     schemaPath: string;
-    root: boolean;
+    isRoot: boolean;
     ancestors: object[];
   }[] = mapArray(
     filterArray(
@@ -47,7 +47,7 @@ export const collectInlineTerminalWarnings = (
     ({ schema, schemaPath }) => ({
       schema,
       schemaPath,
-      root: true,
+      isRoot: true,
       ancestors: [],
     }),
   );
@@ -62,7 +62,7 @@ export const collectInlineTerminalWarnings = (
       continue;
     const ancestors = [...entry.ancestors, entry.schema];
     const record = readSchemaObject(entry.schema);
-    if (!entry.root)
+    if (!entry.isRoot)
       for (const keyword of FORM_GROUP_KEYS)
         if (record[keyword] !== undefined) {
           if (keyword === SCHEMA_GROUP.options) {
@@ -89,7 +89,7 @@ export const collectInlineTerminalWarnings = (
               appendSegment(entry.schemaPath, keyword),
               name,
             ),
-            root: false,
+            isRoot: false,
             ancestors,
           });
     /* eslint-enable @typescript-eslint/consistent-type-assertions */
@@ -110,7 +110,7 @@ export const collectInlineTerminalWarnings = (
               appendSegment(entry.schemaPath, keyword),
               index,
             ),
-            root: false,
+            isRoot: false,
             ancestors,
           });
         }
@@ -130,7 +130,7 @@ export const collectInlineTerminalWarnings = (
               appendSegment(entry.schemaPath, keyword),
               index,
             ),
-            root: false,
+            isRoot: false,
             ancestors,
           });
         }
@@ -139,7 +139,7 @@ export const collectInlineTerminalWarnings = (
           pending.push({
             schema: child,
             schemaPath: appendSegment(entry.schemaPath, keyword),
-            root: false,
+            isRoot: false,
             ancestors,
           });
       }

@@ -10,6 +10,9 @@ import { createValidationScope } from './createValidationScope';
 import { isOffUnionBranchIssue } from './isOffUnionBranchIssue';
 import { updateFieldNodeGlobalErrors } from './updateFieldNodeGlobalErrors';
 
+/** Annotates the lazily created `validationErrors`; an argument-less `new Map()` would be `Map<any, any>`. */
+type ValidationErrors = Map<unknown, readonly unknown[]>;
+
 /** Identify a record owned by this tree without an unchecked type assertion. */
 const isOwnedNode = <Self extends FieldNodeRecord<Self>>(
   candidate: unknown,
@@ -34,8 +37,7 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
   if (!first) return new Set();
   const root = first.rootNode;
   const runtime = root.runtime;
-  const before =
-    runtime.validationErrors ?? new Map<unknown, readonly unknown[]>();
+  const before: ValidationErrors = runtime.validationErrors ?? new Map();
   const next = new Map<unknown, readonly unknown[]>(before);
   let activeIds: Optional<Set<number>>;
   if (issues.length > 0 && runtime.committedDeclarationIds?.size) {
@@ -55,7 +57,7 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
     let resolved = true;
     if (path) {
       const parsed = parsePointer(path);
-      if (!parsed.absolute) continue;
+      if (!parsed.isAbsolute) continue;
       const segments = parsed.segments;
       for (
         let segmentIndex = 0;
@@ -67,12 +69,12 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
           resolved = false;
           break;
         }
-        if (node.structure === null) break;
-        if (!hasOwnProperty(node.structure, key)) {
+        if (node.childrenByName === null) break;
+        if (!hasOwnProperty(node.childrenByName, key)) {
           resolved = false;
           break;
         }
-        const child = node.structure[key];
+        const child = node.childrenByName[key];
         if (!child) {
           resolved = false;
           break;
@@ -82,7 +84,7 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
       if (!resolved) continue;
     }
     if (issue.rejectedKey) {
-      while (node.parent && node.structure === null) node = node.parent;
+      while (node.parent && node.childrenByName === null) node = node.parent;
     }
     if (!inScope(node)) continue;
     const previous = next.get(node) ?? [];
@@ -107,7 +109,7 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
   else runtime.validationChangedNodes = changed;
   if (runtime.routedValidationErrors !== issues) {
     runtime.routedValidationErrors = issues;
-    runtime.validationListChanged = true;
+    runtime.hasValidationListChanged = true;
     updateFieldNodeGlobalErrors(root);
   }
   for (const node of changed) runtime.combinedErrors?.delete(node);

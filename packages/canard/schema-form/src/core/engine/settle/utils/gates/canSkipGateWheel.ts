@@ -31,9 +31,9 @@ export const canSkipGateWheel = <Self extends FieldNodeRecord<Self>>(
     round + 1 >= cap ||
     gateCount !== frame.gateCount ||
     dirtyChildren(node, context).length !== 0 ||
-    context.gateThrowVersion !== frame.throwVersion ||
+    context.gateExceptionVersion !== frame.exceptionVersion ||
     (context.pendingOutputs?.size ?? 0) !== 0 ||
-    !frame.consistent ||
+    !frame.isConsistent ||
     context.kind === FieldNodeWriteKind.Load ||
     context.distributedInputs.has(node) ||
     context.exceededBudget

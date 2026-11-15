@@ -43,10 +43,10 @@ const fixture = () => {
 };
 it('IR-6 H separate standalone writes retain every pre-change state in generation order', () => {
   const { a, runtime } = fixture();
-  runtime.validationPending = true;
-  const first = a.interactionState;
+  runtime.isValidationPending = true;
+  const first = a.storedState;
   dispatchSetState(a, { 4: false });
-  const second = a.interactionState;
+  const second = a.storedState;
   dispatchSetState(a, { 4: true });
   expect(a.revealBaseline).toMatchObject({
     entries: [
@@ -60,7 +60,7 @@ it('IR-6 H an intermediate hide within one batch coalesces to its painted entry'
   dispatchSetState(a, { 4: true });
   clock.frame();
   return clock.task().then(() => {
-    const before = a.interactionState;
+    const before = a.storedState;
     dispatchBatch(root, () => {
       dispatchSetState(a, { 4: false });
       dispatchSetState(a, { 4: true });
@@ -75,7 +75,7 @@ it('IR-6 H a subtree walk shares one sequence across its standalone state writes
   dispatchSetState(a, { 4: true });
   clock.frame();
   await clock.task();
-  const before = a.interactionState;
+  const before = a.storedState;
   dispatchVisitSubtree(root, (node) => {
     if (node === a) {
       dispatchSetState(a, { 4: false });
@@ -129,7 +129,7 @@ it.each(['setState', 'setSubtreeState', 'clearState'] as const)(
 it('IR-6 D accepted root validation releases quiet history without a frame', async () => {
   const { root, a, runtime } = fixture();
   dispatchSetState(a, { 4: true });
-  expect(runtime.validationPending).toBeFalsy();
+  expect(runtime.isValidationPending).toBeFalsy();
   await dispatchValidate(root);
   expect(a.revealBaseline).toBeUndefined();
   expect(runtime.revealDropTask).toBeUndefined();
@@ -164,7 +164,7 @@ it('IR-6 H disposal clears release listeners before settling and stays silent', 
     revealReleaseListeners: listeners,
     revealPolicy: { value: false, entries: [] },
   });
-  runtime.validationPending = true;
+  runtime.isValidationPending = true;
   dispatchSetState(a, { 4: true });
   disposeFieldNodeTree(root);
   expect(listeners.size).toBe(0);

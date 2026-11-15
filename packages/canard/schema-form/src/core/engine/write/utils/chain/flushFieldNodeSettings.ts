@@ -9,12 +9,12 @@ import type { FieldNodeRuntime } from '../../../record';
 export const flushFieldNodeSettings = (
   runtime: Pick<
     FieldNodeRuntime<unknown>,
-    | 'pendingSettings'
+    | 'applyPendingSettings'
     | 'entryDepth'
     | 'chainRoot'
     | 'chainErrors'
-    | 'flushingQueuedEvents'
-    | 'reportingErrors'
+    | 'isFlushingQueuedEvents'
+    | 'isReportingErrors'
   >,
   preserveFailure?: { readonly error: unknown },
 ): void => {
@@ -22,12 +22,12 @@ export const flushFieldNodeSettings = (
     runtime.entryDepth ||
     runtime.chainRoot ||
     runtime.chainErrors ||
-    runtime.flushingQueuedEvents ||
-    runtime.reportingErrors
+    runtime.isFlushingQueuedEvents ||
+    runtime.isReportingErrors
   )
     return;
-  const apply = runtime.pendingSettings;
-  runtime.pendingSettings = undefined;
+  const apply = runtime.applyPendingSettings;
+  runtime.applyPendingSettings = undefined;
   try {
     apply?.();
   } catch (error) {

@@ -12,7 +12,7 @@ it('AM16 deliverChainRecords expands an ownerless handler bundle', () => {
     errors: [X, Y],
   });
   const runtime = {
-    reportingErrors: false,
+    isReportingErrors: false,
     errorReporter: {
       hasConsumer: () => true,
       report: vi.fn(() => {
@@ -39,7 +39,7 @@ it('AM16 deliverChainRecords expands an ownerless handler bundle', () => {
     expect(host).toHaveBeenCalledTimes(2);
     expect(host.mock.calls[0][0]).toBe(X);
     expect(host.mock.calls[1][0]).toBe(Y);
-    expect(runtime.reportingErrors).toBe(false);
+    expect(runtime.isReportingErrors).toBe(false);
   } finally {
     host.mockRestore();
   }
@@ -53,7 +53,7 @@ it('AM16 reportValidationFailure expands handler leaves before the original', ()
     errors: [X, Y],
   });
   const runtime = {
-    reportingErrors: false,
+    isReportingErrors: false,
     errorReporter: {
       hasConsumer: () => true,
       report: vi.fn(() => {
@@ -69,7 +69,7 @@ it('AM16 reportValidationFailure expands handler leaves before the original', ()
     expect(host.mock.calls[0][0]).toBe(X);
     expect(host.mock.calls[1][0]).toBe(Y);
     expect(host.mock.calls[2][0]).toBe(E);
-    expect(runtime.reportingErrors).toBe(false);
+    expect(runtime.isReportingErrors).toBe(false);
   } finally {
     host.mockRestore();
   }
@@ -85,7 +85,7 @@ it('AM16 reportValidationFailure expands the original bundle without a reporter'
   );
   const host = vi.spyOn(console, 'error').mockImplementation(() => undefined);
   try {
-    reportValidationFailure({ reportingErrors: false }, failure);
+    reportValidationFailure({ isReportingErrors: false }, failure);
     expect(host).toHaveBeenCalledTimes(2);
     expect(host.mock.calls[0][0]).toBe(X);
     expect(host.mock.calls[1][0]).toBe(Y);

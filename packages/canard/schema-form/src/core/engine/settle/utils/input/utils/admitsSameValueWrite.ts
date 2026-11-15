@@ -19,11 +19,11 @@ export const admitsSameValueWrite = <Self extends FieldNodeRecord<Self>>(
   return !(
     context.kind === FieldNodeWriteKind.Load ||
     context.kind === FieldNodeWriteKind.Automatic ||
-    context.automatic ||
+    context.isAutomatic ||
     context.hasGates ||
     context.loadScope !== undefined ||
-    context.replacePaths !== undefined ||
-    node.detached ||
+    context.replacementPaths !== undefined ||
+    node.isDetached ||
     runtime.batchDepth ||
     runtime.visitDepth ||
     !StaticFirstLoadCapability.has(runtime.blueprint) ||

@@ -19,7 +19,7 @@ export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
   const previousRequired =
     typeof previousSchema === 'object' ? previousSchema.required : undefined;
   if (
-    !host.deliveryInitialized ||
+    !host.isDeliveryInitialized ||
     host.deliveryPreviousSchema === host.schema ||
     previousRequired !== required
   )
@@ -27,9 +27,9 @@ export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
   const children: Self[] = [];
   for (const child of entered)
     if (
-      !child.detached &&
+      !child.isDetached &&
       child.parent === host &&
-      host.structure?.[child.name] === child
+      host.childrenByName?.[child.name] === child
     )
       children.push(child);
   let matches = children.length > 1;
@@ -50,7 +50,7 @@ export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
 
       const index = Number(child.name) >>> 0;
 
-      if (index !== 0xffffffff && String(index) === child.name) {
+      if (index !== 0xffffffff && '' + index === child.name) {
         matches = true;
         break;
       }
@@ -61,9 +61,9 @@ export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
       const leftIndex = Number(left.name) >>> 0;
       const rightIndex = Number(right.name) >>> 0;
       const leftInteger =
-        leftIndex !== 0xffffffff && String(leftIndex) === left.name;
+        leftIndex !== 0xffffffff && '' + leftIndex === left.name;
       const rightInteger =
-        rightIndex !== 0xffffffff && String(rightIndex) === right.name;
+        rightIndex !== 0xffffffff && '' + rightIndex === right.name;
       return leftInteger
         ? rightInteger
           ? leftIndex - rightIndex

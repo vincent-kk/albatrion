@@ -28,12 +28,12 @@ describe('VirtualizationManager selection API', () => {
     for (const input of [undefined, false]) {
       const manager = VirtualizationManager.create(input);
       expect(manager).toBeInstanceOf(VirtualizationManager);
-      expect(manager!.enabled).toBe(false);
+      expect(manager!.isEnabled).toBe(false);
       expect(manager!.forBranch(100)).toBeNull();
       const node = {} as FieldNode;
       manager!.markRevealed(node);
       manager!.updateOptions({ threshold: 1, eagerCount: 0 });
-      expect(manager!.enabled).toBe(true);
+      expect(manager!.isEnabled).toBe(true);
       expect(manager!.forChild(0, node)).toBeNull();
     }
   });

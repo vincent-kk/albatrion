@@ -5,6 +5,9 @@ import type { Fn } from '@aileron/declare';
 import type { FieldNodeRecord } from '../../../record';
 import type { FieldNodeListener } from '../../types/listener';
 
+/** Annotates the lazily created `listeners`; an argument-less `new Map()` would be `Map<any, any>`. */
+type Listeners = Map<unknown, Set<FieldNodeListener>>;
+
 /**
  * Subscribe to future deliveries for one occurrence.
  * @param node - Occurrence whose events are observed
@@ -15,9 +18,9 @@ export const subscribeFieldNode = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   listener: FieldNodeListener,
 ): Fn => {
-  if (node.disposed || node.rootNode.disposed) return NOOP_FUNCTION;
+  if (node.isDisposed || node.rootNode.isDisposed) return NOOP_FUNCTION;
   const runtime = node.rootNode.runtime;
-  const listeners = runtime.listeners ?? new Map();
+  const listeners: Listeners = runtime.listeners ?? new Map();
   const subscriptions = listeners.get(node) ?? new Set();
   subscriptions.add(listener);
   listeners.set(node, subscriptions);

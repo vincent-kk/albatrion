@@ -35,13 +35,13 @@ export const interpretFieldNodeDraft = (
   const value = interpret(draft, {
     kinds,
     mask: 0,
-    nullable: node.nullable,
+    isNullable: node.isNullable,
   });
   let isInterpretedMember = value === undefined;
   if (!isInterpretedMember) {
     let selectedResult: boolean;
     if (value === null) {
-      selectedResult = node.nullable;
+      selectedResult = node.isNullable;
     } else {
       let matchesAllowedKind = false;
       for (let index = 0, count = kinds.length; index < count; index++) {

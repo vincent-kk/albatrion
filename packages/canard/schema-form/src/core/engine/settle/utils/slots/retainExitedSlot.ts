@@ -1,4 +1,5 @@
-import type { FieldNodeRecord } from '../../../record';
+import type { BlueprintChildEntry } from '../../../blueprint';
+import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { isReplacedLivePath } from '../transition/isReplacedLivePath';
 import { readDepartingAncestorPolicy } from '../transition/readDepartingAncestorPolicy';
@@ -6,6 +7,11 @@ import { cloneSlotSubtree } from './cloneSlotSubtree';
 import { createExitSlotOverlay } from './createExitSlotOverlay';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
 import { markSlotChange } from './markSlotChange';
+
+/** Annotates the lazily created `inactiveSlots`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlots<Self> = Map<BlueprintChildEntry, Self>;
+/** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
 
 /**
  * Retain an exit's instance and source policy without a latent serialization.
@@ -37,13 +43,17 @@ export const retainExitedSlot = <Self extends FieldNodeRecord<Self>>(
     context,
   );
   node.retainedSourceOverlay = result.overlay;
-  markSlotChange(host, entry, context.entered.has(node) ? undefined : node);
-  if (!result.retain) {
+  markSlotChange(
+    host,
+    entry,
+    context.enteredNodes.has(node) ? undefined : node,
+  );
+  if (!result.canRetain) {
     host.inactiveSlots?.delete(entry);
     host.inactiveSlotOverlays?.delete(entry);
     return;
   }
-  const instance = result.compacted
+  const instance = result.isCompacted
     ? cloneSlotSubtree(
         host,
         entry,
@@ -53,8 +63,11 @@ export const retainExitedSlot = <Self extends FieldNodeRecord<Self>>(
         context.compactedSlotSources,
       )
     : node;
-  (host.inactiveSlots ??= new Map()).set(entry, instance);
-  if (result.overlay)
-    (host.inactiveSlotOverlays ??= new Map()).set(entry, result.overlay);
-  else host.inactiveSlotOverlays?.delete(entry);
+  const slots: InactiveSlots<Self> = (host.inactiveSlots ??= new Map());
+  slots.set(entry, instance);
+  if (result.overlay) {
+    const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
+      new Map());
+    overlays.set(entry, result.overlay);
+  } else host.inactiveSlotOverlays?.delete(entry);
 };

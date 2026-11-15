@@ -62,7 +62,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
   state.activeUnsetTargets.clear();
   while (pending.length) {
     const node = pending.pop();
-    if (!node || node.detached) continue;
+    if (!node || node.isDetached) continue;
     state.visitedSourcePaths.add(node.path);
     if (state.sourcePaths) {
       const sourceKeys = state.activeRuleKeysBySource.get(node.path);
@@ -98,9 +98,11 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
               isDescendantPath(node.path, state.loadScope.path));
           const appeared =
             !consumed &&
-            (load || state.entered.has(target) || state.revived.has(target));
+            (load ||
+              state.enteredNodes.has(target) ||
+              state.revivedNodes.has(target));
           if (rule.kind === 'injectTo') {
-            const current = node.emit;
+            const current = node.storedOutputValue;
             state.consumedRuleValues.set(key, current);
             if (
               state.loadScope &&
@@ -124,7 +126,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
                 trace,
                 traceWinners,
               );
-            if (evaluated.writes.length === 0 && state.trace)
+            if (evaluated.writes.length === 0 && state.isTraceEnabled)
               trace.push({
                 phase: 'derive',
                 kind: 'injectTo',
@@ -165,7 +167,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
                   rule,
                   evaluatedExpressions,
                 );
-                if (evaluated.threw) throw evaluated.cause;
+                if (evaluated.hasThrown) throw evaluated.cause;
                 value = evaluated.value;
               }
             } else {
@@ -175,7 +177,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
                 rule,
                 evaluatedExpressions,
               );
-              if (evaluated.threw) throw evaluated.cause;
+              if (evaluated.hasThrown) throw evaluated.cause;
               current = !!evaluated.value;
               if (!(current && (appeared || (priorExists && !prior))))
                 value = undefined;
@@ -199,13 +201,13 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
               : current === true && (appeared || (priorExists && !prior));
           if (!fired) continue;
           if (rule.kind === 'derived' && value === undefined) {
-            if (state.trace)
+            if (state.isTraceEnabled)
               trace.push({
                 phase: 'derive',
                 kind: rule.kind,
                 sourcePath: node.path,
                 targetPath: target.path,
-                previousValue: target.emit,
+                previousValue: target.storedOutputValue,
                 nextValue: value,
                 result: 'undefined',
               });

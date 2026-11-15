@@ -75,7 +75,7 @@ const permutations = <T>(items: readonly T[]): T[][] =>
 const spec = (kinds: UnionSpec['kinds'], nullable = false): UnionSpec => ({
   kinds,
   mask: 0,
-  nullable,
+  isNullable: nullable,
 });
 
 describe('rule A exhaustive properties', () => {

@@ -27,11 +27,11 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
   const runtime = root.runtime;
   if (
     runtime.validationMode === ValidationMode.None ||
-    runtime.validationUnavailable
+    runtime.isValidationUnavailable
   )
     return;
-  runtime.validationPending = true;
-  const active = runtime.validationRunning;
+  runtime.isValidationPending = true;
+  const active = runtime.activeValidationRun;
   if (active && active.stamp === runtime.validationStamp)
     for (const target of active.targets)
       (runtime.validationPendingTargets ??= new Set()).add(target);
@@ -40,9 +40,9 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
   (runtime.validationPendingTargets ??= new Set()).add(node);
   const epoch = runtime.validationEpoch;
   const load = runtime.validationLoadStamp;
-  runtime.validationRun = () => {
+  runtime.runValidation = () => {
     if (
-      node.rootNode.disposed ||
+      node.rootNode.isDisposed ||
       runtime.validationEpoch !== epoch ||
       runtime.validationLoadStamp !== load ||
       runtime.validationMode === ValidationMode.None ||
@@ -55,12 +55,12 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
     runtime.validationPendingTargets = undefined;
     const stamp = runtime.validationStamp ?? 0;
     const running = { stamp, targets };
-    runtime.validationRunning = running;
+    runtime.activeValidationRun = running;
     const commit = runtime.commitNumber ?? 0;
     void runFieldNodeValidation(node)
       .then((result) => {
-        if (runtime.validationRunning === running)
-          runtime.validationRunning = undefined;
+        if (runtime.activeValidationRun === running)
+          runtime.activeValidationRun = undefined;
         if (!isFieldNodeValidationCurrent(node, load, epoch, stamp)) return;
         if (result === null) {
           settleFieldNodeValidation(node, stamp);
@@ -80,8 +80,8 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
           deliver(issues, commit);
       })
       .catch((failure: unknown) => {
-        if (runtime.validationRunning === running)
-          runtime.validationRunning = undefined;
+        if (runtime.activeValidationRun === running)
+          runtime.activeValidationRun = undefined;
         if (
           !isFieldNodeValidationLifetimeCurrent(root, epoch) ||
           runtime.validationStamp !== stamp
@@ -101,7 +101,7 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
     return true;
   };
   runtime.validationCadence ??= createValidationCadence(
-    () => runtime.validationRun?.() ?? false,
+    () => runtime.runValidation?.() ?? false,
     () => performance.now(),
   );
   runtime.validationCadence.request();

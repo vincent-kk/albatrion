@@ -31,14 +31,14 @@ const previousModes = {
   gatePredicate: engineModes.gatePredicate,
   gateSelection: engineModes.gateSelection,
   gateWheel: engineModes.gateWheel,
-  deriveShadow: engineModes.deriveShadow,
+  isDeriveShadowEnabled: engineModes.isDeriveShadowEnabled,
 };
 
 beforeEach(() => {
   engineModes.setMode('gatePredicate', 'on');
   engineModes.setMode('gateSelection', 'table');
   engineModes.setMode('gateWheel', 'skip');
-  engineModes.setMode('deriveShadow', false);
+  engineModes.setMode('isDeriveShadowEnabled', false);
 });
 
 afterEach(() => {
@@ -46,7 +46,10 @@ afterEach(() => {
   engineModes.setMode('gatePredicate', previousModes.gatePredicate);
   engineModes.setMode('gateSelection', previousModes.gateSelection);
   engineModes.setMode('gateWheel', previousModes.gateWheel);
-  engineModes.setMode('deriveShadow', previousModes.deriveShadow);
+  engineModes.setMode(
+    'isDeriveShadowEnabled',
+    previousModes.isDeriveShadowEnabled,
+  );
 });
 
 /** Observe both entry points so renaming a parser cannot manufacture zero work. */
@@ -76,8 +79,8 @@ describe('prepared canonical pointer work', () => {
     );
     dispatchMount(root, { value: 1 }, undefined, { deferValidation: true });
     parsers.decoder.mockClear();
-    dispatchSetValue(root.structure!.value, 2);
-    expect(root.emit).toEqual({ value: 2 });
+    dispatchSetValue(root.childrenByName!.value, 2);
+    expect(root.storedOutputValue).toEqual({ value: 2 });
     expect(parsers.decoder).not.toHaveBeenCalled();
   });
 
@@ -98,7 +101,7 @@ describe('prepared canonical pointer work', () => {
     });
     dispatchMount(root, undefined, undefined, { deferValidation: true });
     expect(parsers.decoder.mock.calls.length).toBeGreaterThan(0);
-    const type = root.structure!.type;
+    const type = root.childrenByName!.type;
     const registry = getGateRegistry(root.runtime);
     const preparedCount = parsers.decoder.mock.calls.length;
     const typeSegments = registry.pathSegments('/type');
@@ -107,8 +110,8 @@ describe('prepared canonical pointer work', () => {
       parsers.wrapper.mockClear();
       parsers.decoder.mockClear();
       dispatchSetValue(type, value);
-      expect(root.emit).toEqual({ type: value, x: 'A', y: 1 });
-      expect(root.structure!.type).toBe(type);
+      expect(root.storedOutputValue).toEqual({ type: value, x: 'A', y: 1 });
+      expect(root.childrenByName!.type).toBe(type);
       expect(registry.pathSegments('/type')).toBe(typeSegments);
       expect(parsers.wrapper).not.toHaveBeenCalled();
       expect(parsers.decoder).not.toHaveBeenCalled();
@@ -127,16 +130,16 @@ describe('prepared canonical pointer work', () => {
       );
       dispatchMount(root, undefined, undefined, { deferValidation: true });
       expect(parsers.decoder.mock.calls.length).toBeGreaterThan(0);
-      const kind = root.structure!.kind;
+      const kind = root.childrenByName!.kind;
       for (const index of [79, 0, 79, 0, 79, 0]) {
         parsers.wrapper.mockClear();
         parsers.decoder.mockClear();
         dispatchSetValue(kind, `kind_${index}`);
-        expect(root.emit).toMatchObject({
+        expect(root.storedOutputValue).toMatchObject({
           kind: `kind_${index}`,
           [`payload_${index}_a`]: `a_${index}`,
         });
-        expect(root.structure!.kind).toBe(kind);
+        expect(root.childrenByName!.kind).toBe(kind);
         expect(parsers.wrapper).not.toHaveBeenCalled();
         expect(parsers.decoder).not.toHaveBeenCalled();
       }

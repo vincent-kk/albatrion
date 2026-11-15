@@ -26,8 +26,8 @@ describe('nested extras path projection', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target?.isActive).toBe(true);
-    expect(root.emit).toEqual(
+    expect(root.childrenByName?.target?.isActive).toBe(true);
+    expect(root.storedOutputValue).toEqual(
       expect.objectContaining({ flag: false, target: 'kept' }),
     );
   });
@@ -49,7 +49,9 @@ describe('nested extras path projection', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.target).toBeUndefined();
-    expect(root.emit).not.toEqual(expect.objectContaining({ target: 'kept' }));
+    expect(root.childrenByName?.target).toBeUndefined();
+    expect(root.storedOutputValue).not.toEqual(
+      expect.objectContaining({ target: 'kept' }),
+    );
   });
 });

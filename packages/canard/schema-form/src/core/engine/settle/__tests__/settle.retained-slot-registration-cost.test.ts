@@ -52,7 +52,9 @@ it('leaves gate binding to selected entry for both source constructors', () => {
     expect(clone).not.toBe(instance);
     expect(clone).not.toBe(fresh);
     expect(getDispatchNode(clone, 'value').source).toBe('held');
-    expect(context.entered.has(getDispatchNode(clone, 'value'))).toBe(true);
+    expect(context.enteredNodes.has(getDispatchNode(clone, 'value'))).toBe(
+      true,
+    );
   } finally {
     releaseSettlementScratch(scratch);
   }

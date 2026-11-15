@@ -10,4 +10,4 @@ import { formatSegment } from './formatSegment';
 export const appendSegment = (
   parentPath: string,
   name: string | number,
-): string => appendFormattedSegment(parentPath, formatSegment(String(name)));
+): string => appendFormattedSegment(parentPath, formatSegment('' + name));

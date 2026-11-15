@@ -10,6 +10,9 @@ import { getRetainedChildEntry } from './getRetainedChildEntry';
 import { hasAdditionalInactiveSources } from './hasAdditionalInactiveSources';
 import { markRestoredSlotSource } from './markRestoredSlotSource';
 
+/** Annotates the lazily created `inactiveSlotChildren`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlotChildren<Self> = Map<string, Self>;
+
 /**
  * Rebind retained state without sharing any node or parent link with its source.
  * @param host - New parent that owns the clone's address and array nonce
@@ -40,21 +43,21 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
     !hasAdditionalInactiveSources(instance)
   ) {
     node.inactiveValuesCache = instance.inactiveValuesCache;
-    node.inactiveValuesDirty = true;
+    node.isInactiveValuesDirty = true;
   }
   if (host.behavior.type === 'array' && host.behavior.strategy === 'branch')
     node.itemKey = host.nextItemKey++;
   if (!entering) {
     node.isActive = false;
-    node.detached = true;
+    node.isDetached = true;
     node.retainedSourceOverlay = instance.retainedSourceOverlay;
-    if (hasOwnProperty(instance, 'retainedExitPolicy'))
-      node.retainedExitPolicy = instance.retainedExitPolicy;
+    if (hasOwnProperty(instance, 'shouldUnsetOnInactive'))
+      node.shouldUnsetOnInactive = instance.shouldUnsetOnInactive;
   }
   const compaction = compactions?.get(instance);
   if (compaction) {
     node.itemCount = compaction.itemCount;
-    node.structure = Object.create(null);
+    node.childrenByName = Object.create(null);
     node.children = [];
     node.inactiveSlots = new Map();
     node.inactiveSlotOverlays = new Map(compaction.overlays);
@@ -74,8 +77,8 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
         cloneSlotSubtree(node, binding, retained, context, false, compactions),
       );
   }
-  if (!compaction && instance.children && instance.structure) {
-    const structure: Dictionary<Self> = Object.create(null);
+  if (!compaction && instance.children && instance.childrenByName) {
+    const childrenByName: Dictionary<Self> = Object.create(null);
     const children: Self[] = [];
     for (const child of instance.children) {
       if (child.parent !== instance) continue;
@@ -93,23 +96,26 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
         entering,
         compactions,
       );
-      structure[binding.name] = copied;
+      childrenByName[binding.name] = copied;
       children.push(copied);
       if (
         copied.inactiveSlots?.size ||
         copied.inactiveSlotOverlays?.size ||
         copied.inactiveSlotChildren?.size
-      )
-        (node.inactiveSlotChildren ??= new Map()).set(binding.name, copied);
+      ) {
+        const slotChildren: InactiveSlotChildren<Self> =
+          (node.inactiveSlotChildren ??= new Map());
+        slotChildren.set(binding.name, copied);
+      }
     }
-    node.structure = structure;
+    node.childrenByName = childrenByName;
     node.children = children;
   }
   if (entering) {
     if (node.behavior.type === 'array' && node.behavior.strategy === 'branch')
       context.arrayCounts.set(node, 0);
     markRestoredSlotSource(node, context);
-    context.entered.add(node);
+    context.enteredNodes.add(node);
     context.changedNodes.add(node);
     context.dirtyPaths.add(node.path);
     if (node.behavior.strategy === 'branch')

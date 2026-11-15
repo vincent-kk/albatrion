@@ -8,10 +8,10 @@ import type { FieldNodeRecord } from '../../../record';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { readValidatedControls } from '../../../utils/controls/readValidatedControls';
 import { readStateDependency } from './readStateDependency';
-import type { EmissionSnapshot } from './readStateDependency';
+import type { OutputValueSnapshot } from './readStateDependency';
 
 /** Final effective schema and emitted inputs from the preceding commit. */
-export interface WatchValuesSnapshot extends EmissionSnapshot {
+export interface WatchValuesSnapshot extends OutputValueSnapshot {
   /** Effective schema before the departing node's last settlement. */
   readonly schema: BlueprintSchema;
 }
@@ -21,8 +21,8 @@ interface WatchValuesWitness {
   schema: BlueprintSchema;
   watch: unknown;
   path: string;
-  snapshot: boolean;
-  contextAbsent: boolean;
+  isSnapshotRead: boolean;
+  isContextAbsent: boolean;
 }
 
 /**
@@ -38,8 +38,8 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
   const runtime = node.runtime;
   const commit = runtime.commitNumber ?? 0;
   const memo = runtime.watchValuesMemo?.get(node);
-  if (!snapshot && memo && node.detached) return memo.values;
-  if (node.detached) return EMPTY_ARRAY;
+  if (!snapshot && memo && node.isDetached) return memo.values;
+  if (node.isDetached) return EMPTY_ARRAY;
   const schema = snapshot?.schema ?? node.schema.schema;
   const watch = readValidatedControls(schema)?.watch;
   const paths = isArray(watch) ? watch : EMPTY_ARRAY;
@@ -58,8 +58,8 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
     witness.schema === schema &&
     witness.watch === watch &&
     witness.path === node.path &&
-    !witness.snapshot &&
-    witness.contextAbsent &&
+    !witness.isSnapshotRead &&
+    witness.isContextAbsent &&
     selectedContext == null;
   let next: Optional<unknown[]> = reusable ? undefined : [];
   for (let index = 0; index < paths.length; index++) {
@@ -83,21 +83,19 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
     witness.schema = schema;
     witness.watch = watch;
     witness.path = node.path;
-    witness.snapshot = snapshot !== undefined;
-    witness.contextAbsent = selectedContext == null;
+    witness.isSnapshotRead = snapshot !== undefined;
+    witness.isContextAbsent = selectedContext == null;
   } else
     derived.watchValuesWitness = {
       schema,
       watch,
       path: node.path,
-      snapshot: snapshot !== undefined,
-      contextAbsent: selectedContext == null,
+      isSnapshotRead: snapshot !== undefined,
+      isContextAbsent: selectedContext == null,
     };
   if (!next) return memo!.values;
   const values = next.length ? Object.freeze(next) : EMPTY_ARRAY;
-  const cache =
-    runtime.watchValuesMemo ??
-    new WeakMap<object, { commit: number; values: readonly unknown[] }>();
+  const cache = runtime.watchValuesMemo ?? new WeakMap();
   cache.set(node, { commit, values });
   runtime.watchValuesMemo = cache;
   return values;

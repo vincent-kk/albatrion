@@ -32,8 +32,8 @@ interface ChildSelectionRuntime {
 export interface KeptOutHost {
   /** Host path; its `selectChildren` point may be missing from that write. */
   path: string;
-  /** Whether the host's local after the write is the reference it held before the write. */
-  sameLocal: boolean;
+  /** Whether the host's stored value after the write is the reference it held before the write. */
+  sameValue: boolean;
   /** Whether the write delivered `UpdateValue` or `UpdateChildren` to the host. */
   valueDelivery: boolean;
 }
@@ -89,7 +89,7 @@ export const buildChildSelectionRuntime = async (
   const { build } = require('esbuild') as typeof import('esbuild');
   const points: unknown[] = [];
   const keptOut: KeptOutHost[] = [];
-  const pendingKeptOut: { host: ChildSelectionRuntimeNode; local: unknown }[] =
+  const pendingKeptOut: { host: ChildSelectionRuntimeNode; value: unknown }[] =
     [];
   const observer = (
     label: string,
@@ -103,14 +103,14 @@ export const buildChildSelectionRuntime = async (
         node.behavior.type !== 'virtual' &&
         !context.shapeDirtyPaths.has(node.path)
       )
-        pendingKeptOut.push({ host: node, local: before[0] });
+        pendingKeptOut.push({ host: node, value: before[0] });
       return;
     }
     if (label === 'markCommitDeliveries')
-      for (const { host, local } of pendingKeptOut.splice(0))
+      for (const { host, value } of pendingKeptOut.splice(0))
         keptOut.push({
           path: host.path,
-          sameLocal: host.local === local,
+          sameValue: host.storedValue === value,
           valueDelivery:
             ((host.pendingDelivery?.type ?? 0) &
               (FieldNodeEventType.UpdateValue |
@@ -119,21 +119,21 @@ export const buildChildSelectionRuntime = async (
         });
     if (
       label === 'updateOutput' &&
-      before[0] === node.local &&
-      before[1] === node.emit
+      before[0] === node.storedValue &&
+      before[1] === node.storedOutputValue
     )
       return;
     points.push(
       normalizeSelectionObservation({
         label,
         path: node.path,
-        value: node.local,
-        emit: node.emit,
+        value: node.storedValue,
+        outputValue: node.storedOutputValue,
         children: node.children,
         schema: node.schema,
         changedNodes: [...context.changedNodes],
         pendingOutputs: [...(context.pendingOutputs ?? [])],
-        gateThrowVersion: context.gateThrowVersion,
+        gateExceptionVersion: context.gateExceptionVersion,
         deliveries: [...(context.root.runtime.deliveries ?? [])].map(
           (candidate) => ({
             node: candidate,
@@ -323,11 +323,11 @@ export const buildChildSelectionRuntime = async (
                                 ts.factory.createArrayLiteralExpression([
                                   ts.factory.createPropertyAccessExpression(
                                     owner,
-                                    'local',
+                                    'storedValue',
                                   ),
                                   ts.factory.createPropertyAccessExpression(
                                     owner,
-                                    'emit',
+                                    'storedOutputValue',
                                   ),
                                 ]),
                               ),

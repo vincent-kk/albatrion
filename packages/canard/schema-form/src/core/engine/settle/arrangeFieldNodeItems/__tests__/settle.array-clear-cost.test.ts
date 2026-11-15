@@ -39,7 +39,7 @@ const measure = (count: number) => {
     getGateRegistry: vi.spyOn(gates, 'getGateRegistry'),
   };
   dispatchClear(root);
-  expect(root.local).toEqual([]);
+  expect(root.storedValue).toEqual([]);
   const calls: Record<string, number> = {};
   for (const [name, spy] of Object.entries(spies))
     calls[name] = spy.mock.calls.length;

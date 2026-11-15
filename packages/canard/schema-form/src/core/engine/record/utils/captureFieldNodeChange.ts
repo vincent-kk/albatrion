@@ -9,8 +9,8 @@ import { recordFieldNodeRevealBaseline } from './recordFieldNodeRevealBaseline';
 
 /** Field decisions that contribute to one committed event kind. */
 const CHANGE_BITS = {
-  local: FieldNodeEventType.UpdateValue,
-  emit: FieldNodeEventType.UpdateValue,
+  storedValue: FieldNodeEventType.UpdateValue,
+  storedOutputValue: FieldNodeEventType.UpdateValue,
   path: FieldNodeEventType.UpdatePath,
   children: FieldNodeEventType.UpdateChildren,
   isActive: FieldNodeEventType.UpdateControlledProperties,
@@ -18,7 +18,7 @@ const CHANGE_BITS = {
   isReadOnly: FieldNodeEventType.UpdateControlledProperties,
   isDisabled: FieldNodeEventType.UpdateControlledProperties,
   schema: FieldNodeEventType.UpdateJsonSchema,
-  interactionState: FieldNodeEventType.UpdateState,
+  storedState: FieldNodeEventType.UpdateState,
 };
 
 /**
@@ -37,20 +37,16 @@ export const captureFieldNodeChange = <
   field: Key,
   value: Value,
 ): Value => {
-  if (node[field] === value || !node.deliveryInitialized || node.detached)
+  if (node[field] === value || !node.isDeliveryInitialized || node.isDetached)
     return value;
-  if (
-    field === 'interactionState' ||
-    field === 'isActive' ||
-    field === 'isVisible'
-  )
+  if (field === 'storedState' || field === 'isActive' || field === 'isVisible')
     recordFieldNodeRevealBaseline(node);
   const bit = CHANGE_BITS[field];
   if (!(node.deliveryChanges & bit)) {
     switch (bit) {
       case FieldNodeEventType.UpdateValue:
-        node.deliveryPreviousLocal = node.local;
-        node.deliveryPreviousEmit = node.emit;
+        node.deliveryPreviousValue = node.storedValue;
+        node.deliveryPreviousOutputValue = node.storedOutputValue;
         break;
       case FieldNodeEventType.UpdatePath:
         node.deliveryPreviousPath = node.path;
@@ -59,7 +55,7 @@ export const captureFieldNodeChange = <
         node.deliveryPreviousChildren = node.children;
         break;
       case FieldNodeEventType.UpdateControlledProperties:
-        node.deliveryPreviousComputed =
+        node.deliveryPreviousComputedBits =
           +node.isActive |
           (+node.isVisible << VISIBLE_BIT_SHIFT) |
           (+node.isReadOnly << READ_ONLY_BIT_SHIFT) |
@@ -69,7 +65,7 @@ export const captureFieldNodeChange = <
         node.deliveryPreviousSchema = node.schema;
         break;
       case FieldNodeEventType.UpdateState:
-        node.deliveryPreviousState = node.interactionState;
+        node.deliveryPreviousState = node.storedState;
     }
     node.deliveryChanges |= bit;
   }

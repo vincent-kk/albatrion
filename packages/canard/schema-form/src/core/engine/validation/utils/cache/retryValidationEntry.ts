@@ -17,12 +17,12 @@ export const retryValidationEntry = (
 ): void => {
   if (
     !entry.failure ||
-    entry.duplicate !== true ||
-    entry.retried === true ||
+    entry.isDuplicate !== true ||
+    entry.hasRetried === true ||
     hasRetainedValidationRootId(validator, authoredRoot)
   )
     return;
-  entry.retried = true;
+  entry.hasRetried = true;
   evictSameIdRoots(validator, authoredRoot);
   try {
     entry.validate = validator.compile(entry.copy);
@@ -30,7 +30,7 @@ export const retryValidationEntry = (
     return;
   }
   delete entry.failure;
-  delete entry.duplicate;
+  delete entry.isDuplicate;
   delete entry.rejection;
   clearDuplicateGuardFailures(entry);
 };

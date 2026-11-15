@@ -9,11 +9,11 @@ it('ignores option-shaped class instances and arrays for every static choice', (
     trim = true;
     propertyOrder = ['b', 'a'];
   }
-  const defaults = getStaticChoices({ schema: {}, typeConflict: false });
+  const defaults = getStaticChoices({ schema: {}, hasTypeConflict: false });
   for (const options of [new Choices(), Object.assign([], new Choices())])
-    expect(getStaticChoices({ schema: { options }, typeConflict: false })).toBe(
-      defaults,
-    );
+    expect(
+      getStaticChoices({ schema: { options }, hasTypeConflict: false }),
+    ).toBe(defaults);
 });
 
 it('preserves validated booleans and string order, copies arrays, and reuses the cache', () => {
@@ -27,7 +27,7 @@ it('preserves validated booleans and string order, copies arrays, and reuses the
         propertyOrder,
       },
     },
-    typeConflict: false,
+    hasTypeConflict: false,
   };
   const choices = getStaticChoices(effective);
   expect(choices).toEqual({
@@ -44,7 +44,7 @@ it('preserves validated booleans and string order, copies arrays, and reuses the
       schema: {
         options: { omitEmpty: true, omitTrailingEmpty: false, trim: false },
       },
-      typeConflict: false,
+      hasTypeConflict: false,
     }),
   ).toEqual({
     omitEmpty: true,

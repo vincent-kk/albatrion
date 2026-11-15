@@ -82,9 +82,9 @@ describe('dispatcher state events', () => {
 
     dispatchSetState(root, { [FieldNodeState.Edited]: true });
 
-    expect(root.interactionState[FieldNodeState.Edited]).toBe(true);
+    expect(root.storedState[FieldNodeState.Edited]).toBe(true);
     expect(root.source).toBeUndefined();
-    expect(root.emit).toBeUndefined();
+    expect(root.storedOutputValue).toBeUndefined();
     expect(runtime.commitNumber).toBe(before);
     expect(seen).toEqual([
       FieldNodeEventType.UpdateState | FieldNodeEventType.UpdateGlobalState,
@@ -144,43 +144,43 @@ describe('dispatcher state events', () => {
     const second = getDispatchChild(root, 'second');
 
     dispatchSetSubtreeState(first, { [FieldNodeState.Edited]: true });
-    expect(first.interactionState[FieldNodeState.Edited]).toBe(true);
-    expect(second.interactionState[FieldNodeState.Edited]).toBeUndefined();
+    expect(first.storedState[FieldNodeState.Edited]).toBe(true);
+    expect(second.storedState[FieldNodeState.Edited]).toBeUndefined();
     dispatchClearSubtreeState(first);
-    expect(first.interactionState[FieldNodeState.Edited]).toBeUndefined();
+    expect(first.storedState[FieldNodeState.Edited]).toBeUndefined();
   });
 
   it('NODE-044 ignores state writes on a detached occurrence', () => {
     const { root } = createDispatchTree({ type: 'string' });
-    root.detached = true;
-    const before = root.interactionState;
+    root.isDetached = true;
+    const before = root.storedState;
     dispatchSetState(root, { [FieldNodeState.Edited]: true });
     dispatchSetSubtreeState(root, { [FieldNodeState.Touched]: true });
     dispatchClearSubtreeState(root);
-    expect(root.interactionState).toBe(before);
+    expect(root.storedState).toBe(before);
     expect(readFieldNodeRevision(root, FieldNodeEventType.UpdateState)).toBe(0);
   });
 
   it('NODE-044 treats a detached target as a no-op during report delivery', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
-    root.detached = true;
-    runtime.reportingErrors = true;
+    root.isDetached = true;
+    runtime.isReportingErrors = true;
     expect(() =>
       dispatchSetState(root, { [FieldNodeState.Edited]: true }),
     ).not.toThrow();
     expect(() => dispatchClearSubtreeState(root)).not.toThrow();
-    expect(root.interactionState[FieldNodeState.Edited]).toBeUndefined();
+    expect(root.storedState[FieldNodeState.Edited]).toBeUndefined();
   });
 
   it('ERROR-029 refuses state writes while the error observer is active', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
-    runtime.reportingErrors = true;
+    runtime.isReportingErrors = true;
     expect(() =>
       dispatchSetState(root, { [FieldNodeState.Edited]: true }),
     ).toThrowError(
       expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' }),
     );
-    expect(root.interactionState[FieldNodeState.Edited]).toBeUndefined();
+    expect(root.storedState[FieldNodeState.Edited]).toBeUndefined();
   });
 
   it('EVENT-067 surfaces an onStateChange failure after state delivery', () => {
@@ -203,7 +203,7 @@ describe('dispatcher state events', () => {
     let callbacks = 0;
     subscribeFieldNode(root, (event) => {
       if (event.type & FieldNodeEventType.UpdateState)
-        seen.push(root.interactionState[FieldNodeState.Touched] === true);
+        seen.push(root.storedState[FieldNodeState.Touched] === true);
     });
     runtime.onStateChange = () => {
       callbacks += 1;
@@ -224,7 +224,7 @@ describe('dispatcher state events', () => {
     let callbacks = 0;
     subscribeFieldNode(root, (event) => {
       if (event.type & FieldNodeEventType.UpdateState)
-        seen.push(root.interactionState[FieldNodeState.Touched] === true);
+        seen.push(root.storedState[FieldNodeState.Touched] === true);
     });
     runtime.onStateChange = () => {
       callbacks += 1;

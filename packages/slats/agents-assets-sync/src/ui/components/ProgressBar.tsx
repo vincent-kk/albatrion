@@ -44,7 +44,7 @@ export function ProgressBar({
       </Text>
       <Text color={colors.muted}>
         {' '}
-        {String(percent).padStart(3)}%
+        {('' + percent).padStart(3)}%
       </Text>
       <Text color={colors.muted} dimColor>
         {'  '}({done}/{total}

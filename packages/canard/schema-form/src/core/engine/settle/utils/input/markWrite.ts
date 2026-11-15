@@ -40,19 +40,19 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   input: unknown,
   context: SettlementContext<Self>,
-  spec: UnionSpec = staticSpec(node.schemaType, node.nullable),
+  spec: UnionSpec = staticSpec(node.schemaType, node.isNullable),
   changedValue: unknown = UNINTERPRETED,
 ): void => {
-  if (context.writeEpoch !== undefined && context.automatic)
+  if (context.writeEpoch !== undefined && context.isAutomatic)
     restoreWriteEpochPaths(context);
   if (
     node.behavior.type === 'virtual' &&
-    !context.automatic &&
+    !context.isAutomatic &&
     context.kind !== FieldNodeWriteKind.Load
   )
     assertVirtualWriteShape(node, input);
   if (context.loadScope) {
-    context.entered.add(node);
+    context.enteredNodes.add(node);
   }
   if (context.kind === FieldNodeWriteKind.Load) context.changedNodes.add(node);
   if (
@@ -61,8 +61,8 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   )
     context.shapeDirtyPaths.add(node.path);
   const isMerge =
-    context.kind === FieldNodeWriteKind.CallerPartial && !context.automatic;
-  if (!context.automatic) context.writtenInputs.set(node, input);
+    context.kind === FieldNodeWriteKind.CallerPartial && !context.isAutomatic;
+  if (!context.isAutomatic) context.writtenInputs.set(node, input);
   else
     context.automaticLog.push({
       node,
@@ -77,7 +77,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
       node.source = value;
       context.changedSource.add(node.path);
       context.changedNodes.add(node);
-      if (context.automatic) context.automaticChanged = true;
+      if (context.isAutomatic) context.hasAutomaticChanged = true;
     }
     if (context.writeEpoch !== undefined) node.writeEpoch = context.writeEpoch;
     else context.dirtyPaths.add(node.path);
@@ -88,14 +88,14 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     const fields = node.blueprintNode.fields ?? [];
     const values = isArray(value) ? value : undefined;
     for (let index = 0; index < fields.length; index++) {
-      const sibling = node.parent?.structure?.[fields[index]];
+      const sibling = node.parent?.childrenByName?.[fields[index]];
       if (!sibling) continue;
       if (
-        !context.automatic &&
+        !context.isAutomatic &&
         context.kind !== FieldNodeWriteKind.Load &&
         !isMerge
       ) {
-        (context.virtualReplacePaths ??= []).push(sibling.path);
+        (context.virtualReplacementPaths ??= []).push(sibling.path);
         pruneInactiveSources(sibling.runtime, sibling.path, undefined, context);
       }
       markWrite(sibling, values?.[index], context);
@@ -109,7 +109,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
 
   if (node.behavior.type === 'array') {
     const previousItemCount = node.itemCount;
-    if (context.automatic)
+    if (context.isAutomatic)
       context.arrayStructureLog.push({
         host: node,
         previousItems: [...(node.children ?? [])],
@@ -123,23 +123,23 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     nextSource = isArray(value) ? undefined : value;
     extras = isArray(value) ? arrayExtras(node, value) : undefined;
     whole = true;
-    if (isMerge && node !== context.replaceScope)
+    if (isMerge && node !== context.replacementScope)
       pruneInactiveSources(node.runtime, node.path, undefined, context);
   } else {
     if (!isPlain(value)) {
       nextSource = value;
       extras = undefined;
       whole = true;
-      if (isMerge && node !== context.replaceScope)
+      if (isMerge && node !== context.replacementScope)
         pruneInactiveSources(node.runtime, node.path, undefined, context);
     } else {
       const declared = getDeclaredChildNames(node.blueprintNode);
       whole = false;
       if (!isMerge) {
-        const replacePaths = context.replacePaths;
-        if (replacePaths === undefined) whole = true;
+        const replacementPaths = context.replacementPaths;
+        if (replacementPaths === undefined) whole = true;
         else
-          for (const path of replacePaths)
+          for (const path of replacementPaths)
             if (node.path === path || isDescendantPath(node.path, path)) {
               whole = true;
               break;
@@ -167,18 +167,18 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     node.extras = extras;
     context.changedSource.add(node.path);
     context.changedNodes.add(node);
-    if (context.automatic) context.automaticChanged = true;
+    if (context.isAutomatic) context.hasAutomaticChanged = true;
   }
   context.distributedInputs.set(node, {
     input: value,
-    whole,
-    automatic: context.automatic,
+    isWhole: whole,
+    isAutomatic: context.isAutomatic,
   });
   if (context.writeEpoch !== undefined) node.writeEpoch = context.writeEpoch;
   else context.dirtyPaths.add(node.path);
   if (!sameShape) context.shapeDirtyPaths.add(node.path);
-  if (node.structure === null) return;
-  for (const name of Object.keys(node.structure)) {
+  if (node.childrenByName === null) return;
+  for (const name of Object.keys(node.childrenByName)) {
     if (node.behavior.type === 'array' && Number(name) >= node.itemCount)
       continue;
     if (
@@ -186,7 +186,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
       !hasDistributedChildInput(value, name, node.behavior.type === 'array')
     )
       continue;
-    const child = node.structure[name];
+    const child = node.childrenByName[name];
     if (child.behavior.type === 'virtual') continue;
     const childInput = hasDistributedChildInput(
       value,
@@ -198,12 +198,12 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     let childSpec: Optional<UnionSpec>;
     let interpreted: unknown = UNINTERPRETED;
     if (sameShape && child.behavior.strategy !== 'branch') {
-      childSpec = staticSpec(child.schemaType, child.nullable);
+      childSpec = staticSpec(child.schemaType, child.isNullable);
       interpreted = child.behavior.interpret(childInput, childSpec);
     }
     if (interpreted !== UNINTERPRETED && sameValue(child.source, interpreted))
       continue;
-    if (context.automatic) {
+    if (context.isAutomatic) {
       context.writtenInputs.set(child, childInput);
       context.filledNodes.add(child);
     }

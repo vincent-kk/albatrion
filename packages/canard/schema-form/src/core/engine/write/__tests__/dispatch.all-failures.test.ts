@@ -111,7 +111,7 @@ describe('ERROR-004 ERROR-005 58C-01 all dispatch settlement failures', () => {
           exceededBudget: 'derive',
           iterations: 25,
         });
-        expect(root.emit).toMatchObject({ left: 0, right: 0 });
+        expect(root.storedOutputValue).toMatchObject({ left: 0, right: 0 });
       }
     },
   );
@@ -211,7 +211,7 @@ describe('ERROR-004 ERROR-005 58C-01 all dispatch settlement failures', () => {
       ...evaluated,
     ]);
     expect(root.runtime.diagnostics.cause).toBe('sharedConflict');
-    expect(root.emit).toMatchObject({ filled: 'fill' });
+    expect(root.storedOutputValue).toMatchObject({ filled: 'fill' });
   });
 
   it('throws a single non-gate error itself', () => {

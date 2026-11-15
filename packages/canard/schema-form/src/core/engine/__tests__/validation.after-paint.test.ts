@@ -64,7 +64,7 @@ describe('validation after synchronous writes', () => {
     expect(validate).not.toHaveBeenCalled();
     expect(delivered).not.toHaveBeenCalled();
     await settle();
-    expect(validate).toHaveBeenCalledExactlyOnceWith(root.emit);
+    expect(validate).toHaveBeenCalledExactlyOnceWith(root.storedOutputValue);
     expect(delivered).toHaveBeenCalledTimes(1);
   });
 
@@ -82,7 +82,7 @@ describe('validation after synchronous writes', () => {
     await Promise.resolve();
     dispatchSetValue(root, { a: 'newest', b: '' });
     await settle();
-    expect(validate).toHaveBeenCalledExactlyOnceWith(root.emit);
+    expect(validate).toHaveBeenCalledExactlyOnceWith(root.storedOutputValue);
   });
 
   it('IR-6 (e) subtree validate preserves a queued whole-form request', async () => {
@@ -97,12 +97,12 @@ describe('validation after synchronous writes', () => {
     await dispatchValidate(root);
     runtime.validationMode = ValidationMode.OnChange;
     dispatchSetValue(root, { a: 'new-a', b: 'new-b' });
-    await dispatchValidate(root.structure!.a);
+    await dispatchValidate(root.childrenByName!.a);
     await settle();
-    expect(runtime.validationErrors?.get(root.structure!.a)).toEqual([
+    expect(runtime.validationErrors?.get(root.childrenByName!.a)).toEqual([
       { dataPath: '/a', message: 'new-a' },
     ]);
-    expect(runtime.validationErrors?.get(root.structure!.b)).toEqual([
+    expect(runtime.validationErrors?.get(root.childrenByName!.b)).toEqual([
       { dataPath: '/b', message: 'new-b' },
     ]);
   });
@@ -118,7 +118,7 @@ describe('validation after synchronous writes', () => {
     dispatchSetValue(root, { a: 'new-a', b: 'new-b' });
     await settle();
     expect(completions).toHaveLength(1);
-    const subtree = dispatchValidate(root.structure!.a);
+    const subtree = dispatchValidate(root.childrenByName!.a);
     const issues = [
       { dataPath: '/a', message: 'new-a' },
       { dataPath: '/b', message: 'new-b' },
@@ -127,7 +127,7 @@ describe('validation after synchronous writes', () => {
     await subtree;
     completions[0](issues);
     await settle();
-    expect(runtime.validationErrors?.get(root.structure!.b)).toEqual([
+    expect(runtime.validationErrors?.get(root.childrenByName!.b)).toEqual([
       { dataPath: '/b', message: 'new-b' },
     ]);
   });

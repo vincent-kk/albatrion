@@ -28,21 +28,21 @@ import { withdrawDetachedFills } from './withdrawDetachedFills';
 export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
-  if (context.suppressAutomaticWrites || context.exceededBudget) return;
+  if (context.isAutomaticWriteSuppressed || context.exceededBudget) return;
   if (
     !context.hasGates &&
-    context.entered.size === 0 &&
-    context.exited.size === 0
+    context.enteredNodes.size === 0 &&
+    context.exitedNodes.size === 0
   ) {
     let narrowed = false;
     for (const node of context.writtenInputs.keys())
-      if (!node.detached && effectiveType(node) !== node.schemaType) {
+      if (!node.isDetached && effectiveType(node) !== node.schemaType) {
         narrowed = true;
         break;
       }
     if (!narrowed) return;
   }
-  context.inTransition = true;
+  context.isInTransition = true;
   const cap = getTransitionCap(context.root.runtime.blueprint);
   const filled = context.hasGates ? new Set<string>() : undefined;
   const filledNodes = context.hasGates ? undefined : new Set<Self>();
@@ -54,14 +54,14 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
   let appearanceCount = 0;
   let rounds = 0;
   while (true) {
-    context.automaticChanged = false;
+    context.hasAutomaticChanged = false;
     newArrayHosts?.clear();
     const continuingFill = descendantsByDepth !== undefined;
     const enteredByDepth: Self[][] = descendantsByDepth ?? [];
     descendantsByDepth = undefined;
     if (!continuingFill) {
-      appearances = context.entered.values();
-      appearanceCount = context.entered.size;
+      appearances = context.enteredNodes.values();
+      appearanceCount = context.enteredNodes.size;
       for (let index = 0; index < appearanceCount; index++) {
         const node = appearances.next().value!;
         (enteredByDepth[node.depth] ??= []).push(node);
@@ -73,7 +73,7 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
       for (let index = 0; index < entered.length; index++) {
         const node = entered[index];
         if (
-          node.detached ||
+          node.isDetached ||
           (context.pendingExits.size !== 0 &&
             context.pendingExits.has(
               JSON.stringify([
@@ -116,7 +116,7 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
               'budget',
             );
             context.exceededBudget = 'recursion';
-            context.inTransition = false;
+            context.isInTransition = false;
             return;
           }
           (fillHosts ??= new Set()).add(node);
@@ -125,7 +125,7 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
             fillAncestors.set(node, node.itemCount);
         }
         context.filledNodes.add(node);
-        context.automatic = true;
+        context.isAutomatic = true;
         context.writtenInputs.set(node, value);
         // markWrite logs array structure only for branch hosts and array nodes.
         const logsStructure =
@@ -134,7 +134,7 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
           ? context.arrayStructureLog.length
           : 0;
         markWrite(node, value, context);
-        context.automatic = false;
+        context.isAutomatic = false;
         if (logsStructure)
           for (
             let logIndex = arrayLogStart;
@@ -158,7 +158,7 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
     }
     for (const [node, original] of context.writtenInputs) {
       if (
-        node.detached ||
+        node.isDetached ||
         (context.pendingExits.size !== 0 &&
           context.pendingExits.has(
             JSON.stringify([
@@ -170,9 +170,14 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
         continue;
       const effective = effectiveType(node);
       if (effective === node.schemaType) continue;
-      context.automatic = true;
-      markWrite(node, original, context, staticSpec(effective, node.nullable));
-      context.automatic = false;
+      context.isAutomatic = true;
+      markWrite(
+        node,
+        original,
+        context,
+        staticSpec(effective, node.isNullable),
+      );
+      context.isAutomatic = false;
     }
     if (context.initialOutputs) {
       const outputs = context.initialOutputs;
@@ -180,13 +185,13 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
       for (let index = 0; index < outputs.length; index++)
         updateOutput(outputs[index], context);
       context.dirtyPaths.clear();
-      context.inTransition = false;
+      context.isInTransition = false;
       return;
     }
-    if (!context.automaticChanged) {
+    if (!context.hasAutomaticChanged) {
       if (continuingFill && context.hasGates) continue;
       withdrawDetachedFills(context);
-      context.inTransition = false;
+      context.isInTransition = false;
       return;
     }
     if (!continuingFill) rounds++;
@@ -202,7 +207,7 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
       );
       context.exceededBudget = 'transition';
       context.iterations = cap;
-      context.inTransition = false;
+      context.isInTransition = false;
       return;
     }
     registerRecalculation(context);
@@ -222,17 +227,17 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
       context.iterations = context.hostWheelExceeded;
     }
     if (context.exceededBudget) {
-      context.inTransition = false;
+      context.isInTransition = false;
       return;
     }
     if (context.root.runtime.blueprint.capabilities.hasDerive)
       runDeriveRounds(context);
     if (context.exceededBudget) {
-      context.inTransition = false;
+      context.isInTransition = false;
       return;
     }
-    if (fillAncestors && context.entered.size > appearanceCount) {
-      const count = context.entered.size;
+    if (fillAncestors && context.enteredNodes.size > appearanceCount) {
+      const count = context.enteredNodes.size;
       descendantsByDepth = collectFillDescendants(
         context,
         appearances!,

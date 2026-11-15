@@ -18,7 +18,7 @@ export const getSlotBinding = <Self extends FieldNodeRecord<Self>>(
 ): BlueprintChildEntry => {
   if (
     overlay?.children?.has(entry) ||
-    (!overlay?.replace &&
+    (!overlay?.isWhole &&
       (host?.inactiveSlots?.has(entry) ||
         host?.inactiveSlotOverlays?.has(entry)))
   )
@@ -30,7 +30,7 @@ export const getSlotBinding = <Self extends FieldNodeRecord<Self>>(
       getBlueprintNodeIdentity(binding.node) === token
     )
       return binding;
-  if (!overlay?.replace) {
+  if (!overlay?.isWhole) {
     for (const binding of host?.inactiveSlots?.keys() ?? [])
       if (
         binding.name === entry.name &&

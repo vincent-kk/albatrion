@@ -5,7 +5,7 @@ export interface FixedFirstHostPlan {
   /** Baseline edges; every name has exactly one unconditional identity. */
   readonly entries: readonly BlueprintChildEntry[];
   /** Original entry sites that can select conditional contributions. */
-  readonly affected: readonly BlueprintChildEntry[];
+  readonly affectedEntries: readonly BlueprintChildEntry[];
 }
 
 /** Mount-only shape proof, containing no occurrences, validator or verdict. */

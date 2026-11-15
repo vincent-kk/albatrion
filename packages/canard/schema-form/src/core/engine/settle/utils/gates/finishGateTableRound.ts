@@ -20,7 +20,7 @@ export const finishGateTableRound = <Self extends FieldNodeRecord<Self>>(
     const shadow = frame?.selectionShadow;
     if (frame && shadow) {
       verifyGateSelection(
-        frame.consistent === shadow.consistent,
+        frame.isConsistent === shadow.isConsistent,
         'S5 consistent differs',
       );
       verifyGateSelection(
@@ -35,6 +35,6 @@ export const finishGateTableRound = <Self extends FieldNodeRecord<Self>>(
         );
     }
   }
-  round.active = false;
+  round.isActive = false;
   context.gateSelectionRounds!.delete(node);
 };

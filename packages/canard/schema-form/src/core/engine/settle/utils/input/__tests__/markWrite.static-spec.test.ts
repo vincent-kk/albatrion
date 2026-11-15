@@ -33,7 +33,7 @@ describe('interpreted child static specs', () => {
         ]),
       );
       const strings = Object.fromEntries(
-        Object.entries(expected).map(([key, value]) => [key, String(value)]),
+        Object.entries(expected).map(([key, value]) => [key, '' + value]),
       );
       const query = vi.spyOn(specs, 'staticSpec');
       let calls: number;
@@ -43,7 +43,7 @@ describe('interpreted child static specs', () => {
       } finally {
         query.mockRestore();
       }
-      expect(root.emit).toEqual(expected);
+      expect(root.storedOutputValue).toEqual(expected);
       expect(
         root.children!.every((child, index) => child === children[index]),
       ).toBe(true);

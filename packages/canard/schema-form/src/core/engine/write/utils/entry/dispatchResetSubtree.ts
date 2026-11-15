@@ -20,7 +20,7 @@ export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   option: WriteOption = WriteOption.Overwrite,
 ): void => {
-  if (node.detached) {
+  if (node.isDetached) {
     refuseInactiveResolverWrite(node);
     return;
   }

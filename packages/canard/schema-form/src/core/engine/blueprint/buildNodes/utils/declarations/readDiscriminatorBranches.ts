@@ -240,7 +240,7 @@ export const readDiscriminatorBranches = (
           propertyName,
           values: Object.freeze([...values]),
           ...(!values.length
-            ? { lift: false }
+            ? { canLift: false }
             : hostTagTypes !== undefined &&
                 ((mask !== undefined &&
                   (mask & foldAllowedTypes(hostTagTypes)) === BIT_MASK_NONE) ||
@@ -258,7 +258,7 @@ export const readDiscriminatorBranches = (
                                 : typeof value === type,
                         ),
                   ))
-              ? { lift: false, kindUnreachable: true }
+              ? { canLift: false, isKindUnreachable: true }
               : {}),
         }),
       );

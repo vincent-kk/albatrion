@@ -103,16 +103,16 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   const focusRequest = useRef<FocusRequest>(undefined);
   const focusNode = useHandle((target: FieldNode | null | undefined) => {
     focusRequest.current?.cancel();
-    const load = loads.current;
+    const loadEpoch = loads.current;
     const root = binding.current.root;
     const request = new FocusRequest(
-      () => loads.current === load && binding.current.root === root,
+      () => loads.current === loadEpoch && binding.current.root === root,
     );
     focusRequest.current = request;
     focusFieldNode(
       target,
       formRef.current,
-      virtualization.manager?.enabled ? virtualization.manager : null,
+      virtualization.manager?.isEnabled ? virtualization.manager : null,
       lifecycle,
       request,
     );
@@ -133,12 +133,12 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
       : committed.current.errorVisibility;
   const [reveal, setReveal] = useState<{
     base: ErrorVisibility;
-    load: number;
+    loadEpoch: number;
     generation: number;
   }>();
   const errorVisibility =
     reveal?.base === basePolicy &&
-    reveal.load === loads.current &&
+    reveal.loadEpoch === loads.current &&
     reveal.generation === policyGeneration.current
       ? ErrorVisibility.Always
       : basePolicy;
@@ -154,7 +154,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     if (
       reveal &&
       (reveal.base !== basePolicy ||
-        reveal.load !== loads.current ||
+        reveal.loadEpoch !== loads.current ||
         reveal.generation !== policyGeneration.current)
     )
       setReveal(undefined);
@@ -175,14 +175,14 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   }, []);
   const revealErrors = useCallback(() => {
     const base = committed.current.errorVisibility;
-    const load = loads.current;
+    const loadEpoch = loads.current;
     const generation = policyGeneration.current;
     setReveal((previous) =>
       previous?.base === base &&
-      previous.load === load &&
+      previous.loadEpoch === loadEpoch &&
       previous.generation === generation
         ? previous
-        : { base, load, generation },
+        : { base, loadEpoch, generation },
     );
   }, []);
   const resetErrorVisibility = useCallback(() => setReveal(undefined), []);
@@ -197,10 +197,10 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     (native?: unknown) => {
       const isNative = native === true;
       const root = binding.current.root;
-      const load = loads.current;
+      const loadEpoch = loads.current;
       const isCurrentValidation = captureValidationLifetime();
       const isCurrent = () =>
-        mounted.current && loads.current === load && isCurrentValidation();
+        mounted.current && loads.current === loadEpoch && isCurrentValidation();
       return submitForm(
         root,
         committed.current.onSubmit,

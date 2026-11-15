@@ -17,7 +17,7 @@ it('keeps a detached instance in the host without capturing latent source', () =
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   expect(root.inactiveSlots).toBeInstanceOf(Map);
   expect([...(root.inactiveSlots?.values() ?? [])]).toContain(old);
-  expect(old.detached).toBe(true);
+  expect(old.isDetached).toBe(true);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
   expect(getDispatchNode(root, 'value')).not.toBe(old);
   expect(getDispatchNode(root, 'value').source).toBe('held');

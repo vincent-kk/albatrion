@@ -75,7 +75,7 @@ describe('child selection plan lookup runtime counts', () => {
       for (const kind of ['on', 'off', 'on', 'off', 'on']) {
         calls.count = 0;
         writeFieldNode(
-          root.structure!.kind,
+          root.childrenByName!.kind,
           kind,
           FieldNodeWriteKind.Input,
           option,
@@ -193,7 +193,7 @@ describe('child selection plan lookup runtime counts', () => {
         calls.count = 0;
         candidateVisits.fill(0);
         writeFieldNode(
-          root.structure!.kind,
+          root.childrenByName!.kind,
           kind,
           FieldNodeWriteKind.Input,
           WriteOption.Overwrite,

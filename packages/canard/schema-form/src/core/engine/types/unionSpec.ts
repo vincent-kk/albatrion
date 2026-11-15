@@ -9,5 +9,5 @@ export interface UnionSpec {
   /** Bit mask of the same allowed types. */
   readonly mask: number;
   /** Whether null remains an allowed input. */
-  readonly nullable: boolean;
+  readonly isNullable: boolean;
 }

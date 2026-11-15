@@ -55,14 +55,14 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
       reporter &&
       isDetectableTerminal(node)
     ) {
-      let readLoad = reporter.load;
+      let readLoad = reporter.loadEpoch;
       const get = (
         target: object,
         key: string | symbol,
         receiver?: unknown,
       ): unknown => {
-        if (readLoad !== reporter.load) {
-          readLoad = reporter.load;
+        if (readLoad !== reporter.loadEpoch) {
+          readLoad = reporter.loadEpoch;
           accessed.current &= CLEAR_ACCESSED_MASK;
         }
         if (

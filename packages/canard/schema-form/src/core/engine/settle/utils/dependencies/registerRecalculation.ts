@@ -8,11 +8,17 @@ import {
 import type { FieldNodeRecord } from '../../../record';
 import { engineModes } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
+import type { SplitBucket } from '../../types/splitRegistration';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { verifyGateSelection } from '../gates/verifyGateSelection';
 import { verifyWriteEpoch } from '../input/utils/verifyWriteEpoch';
 import { DirtyPathSet } from '../scratch/DirtyPathSet';
 import { getDependencyIndex } from './getDependencyIndex';
+
+/** Annotates the lazily created `splitHitEpochs`; an argument-less `new Map()` would be `Map<any, any>`. */
+type SplitHitEpochs = Map<SplitBucket, number>;
+/** Annotates the lazily created `splitMarks`; an argument-less `new Map()` would be `Map<any, any>`. */
+type SplitMarks = Map<string, number>;
 
 /**
  * Schedule changed nodes, ancestors, and blueprint reverse dependency owners.
@@ -40,43 +46,46 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   const epoch = (context.registrationEpoch =
     (context.registrationEpoch ?? 0) + 1);
   const shadow =
-    engineModes.gateSelection === 'verify' && !context.shadowRegistration
+    engineModes.gateSelection === 'verify' && !context.isShadowRegistration
       ? context.registrationShadow
       : undefined;
   if (shadow) {
     registerRecalculation({
       ...context,
-      dirtyPaths: shadow.dirty,
-      dirtyChildrenByParent: shadow.dirty.childrenByParent,
+      dirtyPaths: shadow.dirtyPaths,
+      dirtyChildrenByParent: shadow.dirtyPaths.childrenByParent,
       shapeDirtyPaths: shadow.shape,
       dependencyOwnerPaths: shadow.owners,
       registrationShadow: undefined,
-      shadowRegistration: true,
+      isShadowRegistration: true,
     });
-    shadow.registering = true;
+    shadow.isRegistering = true;
   }
   const split =
-    !context.shadowRegistration &&
+    !context.isShadowRegistration &&
     context.hasGates &&
     engineModes.gateSelection !== 'off' &&
     dependencies.hasSplitOwners;
   if (split) {
-    const dirty = context.dirtyPaths;
-    if (dirty instanceof DirtyPathSet)
-      dirty.configureSplitOwners(dependencies.splitOwners);
+    const dirtyPaths = context.dirtyPaths;
+    if (dirtyPaths instanceof DirtyPathSet)
+      dirtyPaths.configureSplitOwners(dependencies.splitOwners);
     for (const changed of context.changedSource)
-      dependencies.affectedForRegistration(changed, context.root, {
-        hit: (bucket, liveRanks) => {
-          (context.splitHitEpochs ??= new Map()).set(bucket, epoch);
-          return dirty instanceof DirtyPathSet
-            ? dirty.planSplitAnchors(bucket, liveRanks, epoch)
+      dependencies.registerAffectedOwners(changed, context.root, {
+        recordHit: (bucket, liveRanks) => {
+          const epochs: SplitHitEpochs = (context.splitHitEpochs ??= new Map());
+          epochs.set(bucket, epoch);
+          return dirtyPaths instanceof DirtyPathSet
+            ? dirtyPaths.planSplitAnchors(bucket, liveRanks, epoch)
             : [];
         },
-        owner: (path, kind) => {
-          dirty.add(path);
+        registerOwner: (path, kind) => {
+          dirtyPaths.add(path);
           if (kind === 'plain') context.dependencyOwnerPaths.add(path);
-          else if (kind === 'split')
-            (context.splitMarks ??= new Map()).set(path, epoch);
+          else if (kind === 'split') {
+            const marks: SplitMarks = (context.splitMarks ??= new Map());
+            marks.set(path, epoch);
+          }
           context.shapeDirtyPaths.add(
             kind === 'host' ? path : resolvePointer(path, $.Parent),
           );
@@ -84,7 +93,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
       });
   } else {
     for (const changed of context.changedSource)
-      for (const declarationPath of dependencies.affected(
+      for (const declarationPath of dependencies.affectedOwners(
         changed,
         context.root,
       )) {
@@ -127,7 +136,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   }
 
   if (shadow) {
-    shadow.registering = false;
+    shadow.isRegistering = false;
     let matches = context.shapeDirtyPaths.size === shadow.shape.size;
     if (matches) {
       const shadowShapeEntries = [...shadow.shape];
@@ -147,10 +156,10 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     verifyGateSelection(matches, 'S3 shape dirty differs after registration');
     for (const path of context.dirtyPaths)
       verifyGateSelection(
-        shadow.dirty.has(path),
+        shadow.dirtyPaths.has(path),
         'S3 optimized dirty adds an unknown path: ' + path,
       );
-    for (const path of shadow.dirty)
+    for (const path of shadow.dirtyPaths)
       if (!context.dirtyPaths.has(path)) {
         const owner = dependencies.splitOwners.get(path);
         verifyGateSelection(
@@ -166,7 +175,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
             node = undefined;
             break;
           }
-          node = node?.structure?.[segment];
+          node = node?.childrenByName?.[segment];
         }
         verifyGateSelection(!node, 'S3 removed a living split owner: ' + path);
       }

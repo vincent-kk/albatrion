@@ -61,7 +61,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
       'pair',
     ));
     for (const [node, ids] of context.selectedDeclarationIds)
-      if (!node.detached)
+      if (!node.isDetached)
         declarations.set(getCommittedDeclarationKey(node, node.runtime), ids);
   }
   if (context.failures?.length && runtime.diagnostics.status !== 'degraded')
@@ -76,7 +76,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
         : {}),
       commit,
     };
-  const refreshTargets = runtime.refreshTargets ?? new Set<string>();
+  const refreshTargets = runtime.refreshTargets ?? new Set();
   refreshTargets.clear();
   const loadScope =
     context.kind === FieldNodeWriteKind.Load ? context.loadScope : undefined;
@@ -97,12 +97,12 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   let warnings: Optional<MisfitRecord[]>;
   let warningTasks: Optional<Map<Self, Fn>>;
   markCommitDeliveries(context, (node) => {
-    if (!context.changedNodes.has(node) || node.detached) return;
+    if (!context.changedNodes.has(node) || node.isDetached) return;
     const schemaType = node.schemaType;
     const effective = effectiveType(node);
     // Only a virtual node lacks a JSON type, and it never misfits.
     if (schemaType === undefined || effective === undefined) return;
-    const misfit = isMisfit(node.source, effective, node.nullable);
+    const misfit = isMisfit(node.source, effective, node.isNullable);
     const wasOn = runtime.misfitPaths.has(node.path);
     if (misfit) runtime.misfitPaths.add(node.path);
     else runtime.misfitPaths.delete(node.path);
@@ -117,7 +117,8 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
       )
     )
       return;
-    (warningTasks ??= new Map()).set(node, () => {
+    warningTasks ??= new Map();
+    warningTasks.set(node, () => {
       if (misfit && !wasOn) {
         const candidates = conversionCandidates(node, effective);
         const ambiguous = candidates.length > 1;
@@ -127,7 +128,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
           path: node.path,
           expected: {
             schemaType,
-            nullable: node.nullable,
+            isNullable: node.isNullable,
             effective,
           },
           received: receivedType(node.source),
@@ -136,7 +137,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
           source: context.filledNodes.has(node)
             ? 'fill'
             : context.kind === FieldNodeWriteKind.Load &&
-                context.entered.has(node)
+                context.enteredNodes.has(node)
               ? 'load'
               : context.changedSource.has(node.path)
                 ? context.kind
@@ -210,7 +211,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   const built = runtime.misfitsMemoBuild;
   if (
     built?.memo !== misfitsMemo ||
-    built.mutations !== runtime.misfitPaths.mutations ||
+    built.mutationCount !== runtime.misfitPaths.mutationCount ||
     built.size !== misfitsMemo.size
   ) {
     if (runtime.misfitPaths.size === 0) {
@@ -245,12 +246,12 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     runtime.misfitsMemoBuild = {
       memo: misfitsMemo,
       size: misfitsMemo.size,
-      mutations: runtime.misfitPaths.mutations,
+      mutationCount: runtime.misfitPaths.mutationCount,
     };
   }
   runtime.misfitsMemo = misfitsMemo;
-  for (const node of context.entered)
-    if (!node.detached) {
+  for (const node of context.enteredNodes)
+    if (!node.isDetached) {
       if (node.inactiveValueMemo !== undefined)
         node.inactiveValueMemo = undefined;
       const parent = node.parent;
@@ -262,5 +263,5 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     }
   if (runtime.slotDirtyHosts?.size) commitSlotChanges(context.root);
   if (loadScope === context.root)
-    runtime.loadBaseline = { value: context.root.emit };
+    runtime.loadBaseline = { value: context.root.storedOutputValue };
 };

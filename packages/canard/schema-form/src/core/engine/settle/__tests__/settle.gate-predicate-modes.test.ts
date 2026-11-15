@@ -59,14 +59,14 @@ describe('gate predicate reference and shadow modes', () => {
     )!;
     const selecting = vi.spyOn(selection, 'selectChildren');
     const counts: { wheels: number; skipped: number }[] = [];
-    let skipped = gateWheelEvaluation.skipped;
+    let skipCount = gateWheelEvaluation.skipCount;
     runGateSelectionCase(fixture, undefined, (root) => {
       counts.push({
         wheels: selecting.mock.calls.filter(([node]) => node === root).length,
-        skipped: gateWheelEvaluation.skipped - skipped,
+        skipped: gateWheelEvaluation.skipCount - skipCount,
       });
       selecting.mockClear();
-      skipped = gateWheelEvaluation.skipped;
+      skipCount = gateWheelEvaluation.skipCount;
     });
     expect(counts[1]).toEqual({ wheels: 1, skipped: 1 });
   });
@@ -88,7 +88,7 @@ describe('gate predicate reference and shadow modes', () => {
             };
       const selecting = vi.spyOn(selection, 'selectChildren');
       const counts: { wheels: number; skipped: number }[] = [];
-      let skipped = gateWheelEvaluation.skipped;
+      let skipCount = gateWheelEvaluation.skipCount;
       const schema = fixture.schema;
       if (!schema || typeof schema !== 'object')
         throw new Error('S6 requires an object schema');
@@ -111,10 +111,10 @@ describe('gate predicate reference and shadow modes', () => {
           counts.push({
             wheels: selecting.mock.calls.filter(([node]) => node === root)
               .length,
-            skipped: gateWheelEvaluation.skipped - skipped,
+            skipped: gateWheelEvaluation.skipCount - skipCount,
           });
           selecting.mockClear();
-          skipped = gateWheelEvaluation.skipped;
+          skipCount = gateWheelEvaluation.skipCount;
         },
       );
       expect(counts[1]).toEqual({ wheels: 2, skipped: 0 });
@@ -129,14 +129,14 @@ describe('gate predicate reference and shadow modes', () => {
     )!;
     const selecting = vi.spyOn(selection, 'selectChildren');
     const counts: { wheels: number; skipped: number }[] = [];
-    let skipped = gateWheelEvaluation.skipped;
+    let skipCount = gateWheelEvaluation.skipCount;
     runGateSelectionCase(fixture, undefined, (root) => {
       counts.push({
         wheels: selecting.mock.calls.filter(([node]) => node === root).length,
-        skipped: gateWheelEvaluation.skipped - skipped,
+        skipped: gateWheelEvaluation.skipCount - skipCount,
       });
       selecting.mockClear();
-      skipped = gateWheelEvaluation.skipped;
+      skipCount = gateWheelEvaluation.skipCount;
     });
     expect(counts[1]).toEqual({ wheels: 2, skipped: 0 });
   });
@@ -154,19 +154,19 @@ describe('gate predicate reference and shadow modes', () => {
         const snapshots: unknown[] = [];
         loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
         snapshots.push({
-          value: root.emit,
-          keys: Object.keys(root.structure ?? {}),
+          value: root.storedOutputValue,
+          keys: Object.keys(root.childrenByName ?? {}),
         });
         for (const tag of ['tag_2', 'unknown', 'tag_0']) {
           writeFieldNode(
-            root.structure!.kind,
+            root.childrenByName!.kind,
             tag,
             FieldNodeWriteKind.Input,
             WriteOption.Overwrite,
           );
           snapshots.push({
-            value: root.emit,
-            keys: Object.keys(root.structure ?? {}),
+            value: root.storedOutputValue,
+            keys: Object.keys(root.childrenByName ?? {}),
           });
         }
         captures.push(snapshots);
@@ -181,7 +181,7 @@ describe('gate predicate reference and shadow modes', () => {
       entry.name.startsWith('S6 validator'),
     )!;
     const captures: unknown[][] = [];
-    const confirmations = gateWheelEvaluation.confirmations;
+    const confirmationCount = gateWheelEvaluation.confirmationCount;
     const failures = gateWheelEvaluation.nonNoop;
     for (const mode of ['off', 'on'] as const) {
       const snapshots: unknown[] = [];
@@ -194,15 +194,17 @@ describe('gate predicate reference and shadow modes', () => {
         },
         (root: PlainNode) => {
           snapshots.push({
-            value: root.emit,
-            keys: Object.keys(root.structure ?? {}),
+            value: root.storedOutputValue,
+            keys: Object.keys(root.childrenByName ?? {}),
           });
         },
       );
       captures.push(snapshots);
     }
     expect(captures[1]).toEqual(captures[0]);
-    expect(gateWheelEvaluation.confirmations).toBeGreaterThan(confirmations);
+    expect(gateWheelEvaluation.confirmationCount).toBeGreaterThan(
+      confirmationCount,
+    );
     expect(gateWheelEvaluation.nonNoop).toBe(failures);
   });
 });

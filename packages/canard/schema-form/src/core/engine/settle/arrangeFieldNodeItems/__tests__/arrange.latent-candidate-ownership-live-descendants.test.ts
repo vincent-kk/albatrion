@@ -49,40 +49,36 @@ it.each([
     const destination = operation === 'insert' ? 1 : 0;
     const names = depth === 1 ? ['v'] : ['box', 'v'];
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-    expect(getDispatchNode(list, String(source), ...names).source).toBe(37);
+    expect(getDispatchNode(list, '' + source, ...names).source).toBe(37);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-    const original = getDispatchNode(list, String(source), ...names);
+    const original = getDispatchNode(list, '' + source, ...names);
     expect(original.source).toBe('live');
     root.runtime.disableAutomaticWrites = true;
     const path = `/list/${destination}/` + names.join('/');
     if (operation === 'insert') dispatchInsert(list, 0, {});
     else dispatchRemove(list, 0);
-    expect(getDispatchNode(list, String(destination), ...names).source).toBe(
-      37,
-    );
+    expect(getDispatchNode(list, '' + destination, ...names).source).toBe(37);
     expect(readRetainedSlotSource(root, path, 'string')).toBe('live');
 
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-    expect(getDispatchNode(list, String(destination), ...names).source).toBe(
+    expect(getDispatchNode(list, '' + destination, ...names).source).toBe(
       'live',
     );
     const expected = {
       kind: 'number',
       list: operation === 'insert' ? [{}, value] : [value],
     };
-    expect(root.local).toEqual(expected);
-    expect(root.emit).toEqual(expected);
+    expect(root.storedValue).toEqual(expected);
+    expect(root.storedOutputValue).toEqual(expected);
     expect(
       events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
     ).toMatchObject({
-      current: { local: expected, emit: expected },
+      current: { value: expected, outputValue: expected },
     });
     await dispatchValidate(root);
     expect(inputs.at(-1)).toEqual(expected);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-    expect(getDispatchNode(list, String(destination), ...names).source).toBe(
-      37,
-    );
+    expect(getDispatchNode(list, '' + destination, ...names).source).toBe(37);
   },
 );
 

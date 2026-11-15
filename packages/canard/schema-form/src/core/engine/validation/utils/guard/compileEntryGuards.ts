@@ -16,8 +16,8 @@ export const compileEntryGuards = (
   validator: Validator,
   analysis: Blueprint,
 ): void => {
-  if (entry.eagerCompiled) return;
-  entry.eagerCompiled = true;
+  if (entry.isEagerCompiled) return;
+  entry.isEagerCompiled = true;
   const gates: BlueprintGate[] = [];
   for (const node of analysis.nodes) {
     for (const declaration of node.declarations)

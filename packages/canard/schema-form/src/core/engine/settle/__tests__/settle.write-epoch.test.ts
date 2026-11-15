@@ -76,9 +76,9 @@ describe('whole-write epoch scheduling', () => {
       const { root } = createDispatchTree(nested(depth));
       dispatchMount(root, undefined);
       for (let round = 0; round < 2; round++) {
-        const next = changed(root.emit);
+        const next = changed(root.storedOutputValue);
         const work = measure(root, () => dispatchSetValue(root, next));
-        expect(root.emit).toEqual(next);
+        expect(root.storedOutputValue).toEqual(next);
         expect(work.adds).toBe(0);
         expect(work.consumes).toBe(0);
         expect(work.childLists).toBe(0);
@@ -94,15 +94,15 @@ describe('whole-write epoch scheduling', () => {
       const log: unknown[] = [];
       for (const node of nodes)
         subscribeFieldNode(node, (event) => log.push([node.path, event]));
-      const next = changed(root.emit);
+      const next = changed(root.storedOutputValue);
       dispatchSetValue(root, next);
-      dispatchSetValue(root, root.emit);
+      dispatchSetValue(root, root.storedOutputValue);
       const branch = root.children![1];
-      dispatchSetValue(branch, changed(branch.emit));
+      dispatchSetValue(branch, changed(branch.storedOutputValue));
       return {
         log,
-        local: root.local,
-        emit: root.emit,
+        value: root.storedValue,
+        outputValue: root.storedOutputValue,
         revisions: nodes.map((node) => [
           node.path,
           readFieldNodeRevision(node),
@@ -116,26 +116,26 @@ describe('whole-write epoch scheduling', () => {
     // Shipping-path consume counts exclude the independent verification replay.
     const { root } = createDispatchTree(nested(6));
     dispatchMount(root, undefined);
-    const next = changed(root.emit);
+    const next = changed(root.storedOutputValue);
     const work = measure(root, () =>
       dispatchSetValue(root, next, WriteOption.Merge),
     );
     expect(work.consumes).toBe(5461);
-    expect(root.emit).toEqual(next);
+    expect(root.storedOutputValue).toEqual(next);
   });
 
   it('does not compute unchanged leaves or traverse a sibling subtree', () => {
     const { root } = createDispatchTree(nested(3));
     dispatchMount(root, undefined);
     const sibling = root.children![3];
-    const previous = sibling.emit;
+    const previous = sibling.storedOutputValue;
     const host = root.children![0];
     const unchanged = host.children![0];
     const revision = readFieldNodeRevision(unchanged);
-    dispatchSetValue(host, host.emit);
+    dispatchSetValue(host, host.storedOutputValue);
     expect(readFieldNodeRevision(unchanged)).toBe(revision);
-    expect(sibling.emit).toBe(previous);
-    expect(root.emit).toEqual(root.local);
+    expect(sibling.storedOutputValue).toBe(previous);
+    expect(root.storedOutputValue).toEqual(root.storedValue);
   });
 
   it.each<[string, BlueprintSchema]>([
@@ -188,21 +188,21 @@ describe('whole-write epoch scheduling', () => {
     expect(
       measure(root, () => dispatchSetValue(root, next)).adds,
     ).toBeGreaterThan(0);
-    expect(root.emit).toEqual(next);
+    expect(root.storedOutputValue).toEqual(next);
     dispatchSetValue(root, { first: 3, rows: [4, 5, 6] });
-    expect(root.emit).toEqual({ first: 3, rows: [4, 5, 6] });
+    expect(root.storedOutputValue).toEqual({ first: 3, rows: [4, 5, 6] });
   });
 
   it('falls back for partial writes and preserves omitted keys', () => {
     const { root } = createDispatchTree(nested(2));
     dispatchMount(root, undefined);
-    const previous = root.children![1].emit;
+    const previous = root.children![1].storedOutputValue;
     expect(
       measure(root, () =>
         dispatchSetValue(root, { n0: { n0: 'partial' } }, WriteOption.Merge),
       ).adds,
     ).toBeGreaterThan(0);
-    expect(root.children![1].emit).toBe(previous);
+    expect(root.children![1].storedOutputValue).toBe(previous);
   });
 
   it('falls back for missing keys and wrong-kind hosts without losing preceding writes', () => {
@@ -213,7 +213,7 @@ describe('whole-write epoch scheduling', () => {
         dispatchSetValue(root, { n0: { n0: 'changed' }, n1: null }),
       ).adds,
     ).toBeGreaterThan(0);
-    expect(Object(root.emit).n0.n0).toBe('changed');
-    expect(Object(root.emit).n1).toBeNull();
+    expect(Object(root.storedOutputValue).n0.n0).toBe('changed');
+    expect(Object(root.storedOutputValue).n1).toBeNull();
   });
 });

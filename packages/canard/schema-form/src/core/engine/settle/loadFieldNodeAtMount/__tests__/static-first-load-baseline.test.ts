@@ -14,7 +14,7 @@ const getDispatchChild = (
   node: ReturnType<typeof createDispatchTree>['root'],
   name: string,
 ) => {
-  const child = node.structure?.[name];
+  const child = node.childrenByName?.[name];
   if (!child) throw new Error('Missing fixture child ' + name);
   return child;
 };

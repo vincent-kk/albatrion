@@ -24,7 +24,7 @@ export const observeGateRegistry = (
     paths.push([
       path,
       Reflect.get(entry, 'kind'),
-      Reflect.get(Object(node), 'detached'),
+      Reflect.get(Object(node), 'isDetached'),
       Reflect.get(entry, 'occurrences')?.length,
     ]);
   }

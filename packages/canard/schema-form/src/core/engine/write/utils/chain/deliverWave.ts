@@ -47,7 +47,7 @@ export const deliverWave = <Self extends FieldNodeRecord<Self>>(
     compareDocumentOrder(left.node, right.node, siblingIndexes),
   );
   for (const { node, event, listeners } of fixed) {
-    if (node.detached) continue;
+    if (node.isDetached) continue;
     for (const listener of listeners) {
       if (
         !runtime.listeners?.get(node)?.has(listener) ||

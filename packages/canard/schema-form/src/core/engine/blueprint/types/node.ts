@@ -16,7 +16,7 @@ interface BlueprintGateBase {
   /** Absolute read paths or relative parent-climb counts; context reads are excluded. */
   readonly evaluationReads: readonly (string | number)[];
   /** Select the complementary if branch without executing it. */
-  readonly negated?: boolean;
+  readonly isNegated?: boolean;
   /** A `controls.fields` rule applies only while its owning declaration is active. */
   readonly appliesWhen?: readonly BlueprintGate[];
 }
@@ -28,9 +28,9 @@ type DiscriminatorCondition = {
   /** Authored tag values retained without coercion. */
   readonly values: readonly unknown[];
   /** An impossible tag contributes no child declaration or lifted input. */
-  readonly lift?: false;
+  readonly canLift?: false;
   /** Host-declared tag kinds make every value of this branch unreachable. */
-  readonly kindUnreachable?: true;
+  readonly isKindUnreachable?: true;
 };
 
 /** Declarative gate; analysis stores kind-specific conditions but never evaluates them. */
@@ -75,7 +75,7 @@ export interface PropertyDeclaration {
   /** Fragment controls govern declared direct children, never the host input. */
   readonly scope: 'node' | 'fragment';
   /** Primitive/union disjunctive constraints remain validator-only schema data. */
-  readonly validationOnly: boolean;
+  readonly isValidationOnly: boolean;
   /** Disjunctive declarations do not constrain shared nodes. */
   readonly context: 'conjunction' | 'declaration';
   /** All conditions that must hold for this contribution. Empty means always active. */
@@ -83,7 +83,7 @@ export interface PropertyDeclaration {
   /** Lexicographic keyword-rank/index path, independent of object key order. */
   readonly order: readonly number[];
   /** True for overlays inherited from a referring host. */
-  readonly inherited: boolean;
+  readonly isInherited: boolean;
   /** Referring host owning inherited overlays, including reused reference templates. */
   readonly hostPath: string;
 }
@@ -124,10 +124,10 @@ export interface BlueprintNode {
   readonly schemaPath: string;
   /** Stable dispatch kind independent of gate state. */
   readonly kind: BlueprintNodeKind;
-  /** Static accepted JSON type restriction, with null represented by nullable; undefined on virtual nodes, which have no JSON type. */
+  /** Static accepted JSON type restriction, with null represented by `isNullable`; undefined on virtual nodes, which have no JSON type. */
   readonly schemaType: Optional<BlueprintSchemaType>;
   /** Whether the static accepted set contains null. */
-  readonly nullable: boolean;
+  readonly isNullable: boolean;
   /** Fixed branch or terminal strategy. */
   readonly strategy: NodeStrategy;
   /** All authored contributions in total order. */

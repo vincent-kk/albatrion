@@ -40,7 +40,7 @@ it('releases prepared validation and applies deferred settings after scheduling 
     ),
   );
   expect(() => dispatchSetValue(tree.root, 'next')).toThrow(failure);
-  expect(tree.runtime.validationPending).toBe(false);
+  expect(tree.runtime.isValidationPending).toBe(false);
   expect(released).toHaveBeenCalled();
   expect(applied).toHaveBeenCalledTimes(1);
   unsubscribe();
@@ -232,7 +232,7 @@ it('keeps a failed reporter out of deferred settings callbacks while preserving 
   };
   const applied = vi.fn(() => dispatchSetValue(tree.root, 'settings'));
   const unsubscribe = subscribeFieldNode(tree.root, () => {
-    if (tree.root.local === 'next') {
+    if (tree.root.storedValue === 'next') {
       dispatchUpdateSettings(
         tree.root,
         {

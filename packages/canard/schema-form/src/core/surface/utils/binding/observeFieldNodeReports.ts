@@ -13,11 +13,11 @@ import type { FieldNode } from '../../type';
  */
 export const observeFieldNodeReports = (root: FieldNode, deliver: Fn): void => {
   const runtime = requireRuntimeFieldNode(root, true).runtime;
-  const previous = runtime.reportingErrors;
-  runtime.reportingErrors = true;
+  const previous = runtime.isReportingErrors;
+  runtime.isReportingErrors = true;
   try {
     deliver();
   } finally {
-    runtime.reportingErrors = previous;
+    runtime.isReportingErrors = previous;
   }
 };

@@ -9,7 +9,7 @@ import * as reuseProof from '../../utils/compute/childSelection/canReuseArrayChi
 import * as reuse from '../../utils/compute/childSelection/reuseArrayChildren';
 import * as ids from '../../utils/compute/childSelection/staticIds';
 import * as alignment from '../../utils/loadValues/alignArraySnapshotSlots';
-import * as emissions from '../../utils/output/utils/keepsChildEmissions';
+import * as emissions from '../../utils/output/utils/keepsChildOutputValues';
 import * as tailProof from '../utils/arraySlots/canApplyArrayTail';
 import * as admission from '../utils/arraySlots/prepareArrayAppend';
 
@@ -122,14 +122,14 @@ describe('an admitted push does prefix work independent of the item count', () =
       { deferValidation: true },
     );
     const admit = vi.spyOn(admission, 'prepareArrayAppend');
-    const scan = vi.spyOn(emissions, 'keepsChildEmissions');
+    const scan = vi.spyOn(emissions, 'keepsChildOutputValues');
 
     expect(dispatchPush(root, {})).toBe(2001);
 
     expect(admit.mock.results.some((call) => call.value !== undefined)).toBe(
       true,
     );
-    expect(root.children![2000].structure!.a.emit).toBe(1);
+    expect(root.children![2000].childrenByName!.a.storedOutputValue).toBe(1);
     expect(
       scan.mock.calls.filter(([, children]) => children.length >= 1000),
     ).toHaveLength(0);

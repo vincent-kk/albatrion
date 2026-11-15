@@ -18,7 +18,7 @@ export const readDepartingAncestorPolicy = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): boolean => {
   for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent) {
-    if (ancestor.detached) continue;
+    if (ancestor.isDetached) continue;
     const previous = getControlLayers(ancestor, emptyReadonlyMap, true);
     const departed = filterArray(previous, (group) => {
       const key = JSON.stringify([

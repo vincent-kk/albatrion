@@ -2,7 +2,7 @@ import { expect, it } from 'vitest';
 
 import { createRetainedSlotTree } from './fixtures/createRetainedSlotTree';
 
-// filid:contract surface-slot-interaction-reset
+// filid:contract surface-slot-interaction-epoch
 it('clones sources without carrying interaction or external errors into re-entry', () => {
   const tree = createRetainedSlotTree();
   tree.group.setState({ edited: true, touched: true });

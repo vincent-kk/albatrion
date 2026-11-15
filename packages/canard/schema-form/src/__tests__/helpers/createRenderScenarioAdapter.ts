@@ -63,7 +63,7 @@ export const createRenderScenarioAdapter = (
         const field = form.field(step.path);
         if (
           node &&
-          !node.nullable &&
+          !node.isNullable &&
           (node.type === 'string' || node.type === 'number') &&
           field?.tagName === 'INPUT' &&
           (field.type === 'text' || field.type === 'number')
@@ -86,7 +86,7 @@ export const createRenderScenarioAdapter = (
           return;
         }
         if (field?.type === 'number' && typeof step.value === 'number') {
-          await form.type(step.path, String(step.value));
+          await form.type(step.path, '' + step.value);
           return;
         }
       }
@@ -121,11 +121,7 @@ export const createRenderScenarioAdapter = (
         expect(form.node(path), `identity ${path}`).toBe(
           priorNodes.get(source),
         );
-      for (const key of [
-        'defaultValues',
-        'schemaTypes',
-        'extras',
-      ] as const)
+      for (const key of ['defaultValues', 'schemaTypes', 'extras'] as const)
         for (const [path, value] of Object.entries(observation[key] ?? {})) {
           const property =
             key === 'defaultValues'

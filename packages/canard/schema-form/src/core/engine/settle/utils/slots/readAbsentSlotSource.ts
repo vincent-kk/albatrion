@@ -31,12 +31,12 @@ export const readAbsentSlotSource = <Self extends FieldNodeRecord<Self>>(
   candidates: readonly BlueprintChildEntry[],
   context: SettlementContext<Self>,
 ): unknown => {
-  const name = String(index);
+  const name = '' + index;
   const path = appendSegment(host.path, name);
   const distribution = getChildDistribution(host, name, context, path);
   if (
     distribution &&
-    !distribution.automatic &&
+    !distribution.isAutomatic &&
     hasDistributedChildInput(distribution.input, name, true)
   ) {
     const input = isArray(distribution.input)

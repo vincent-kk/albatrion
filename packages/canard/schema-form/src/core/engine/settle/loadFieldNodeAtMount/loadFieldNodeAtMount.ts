@@ -29,7 +29,7 @@ export const loadFieldNodeAtMount = <Self extends FieldNodeRecord<Self>>(
   try {
     const blueprint = root.runtime.blueprint;
     if (
-      !blueprint.capabilities.branchless &&
+      !blueprint.capabilities.isBranchless &&
       blueprint.capabilities.hasExpressions
     )
       prepareGateSelection(blueprint);

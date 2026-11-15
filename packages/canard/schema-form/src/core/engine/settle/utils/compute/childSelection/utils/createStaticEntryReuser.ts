@@ -18,12 +18,12 @@ import type { StaticShapeMemo } from '../staticShape';
 
 /**
  * Prepare one selection call to reuse only its fixed ungated entries.
- * @param node - Object host whose current structure is being selected
+ * @param node - Object host whose current `childrenByName` is being selected
  * @param prior - Shape captured before this wheel's fixed baseline
  * @param context - Write scope and dirty child work
- * @param next - Destination structure, including the priming baseline
+ * @param next - Destination `childrenByName` map, including the priming baseline
  * @param computeChild - Dirty-child computation, absent while priming
- * @param immediate - Whether child computation queues host publication
+ * @param isImmediate - Whether child computation queues host publication
  * @param hasRelocated - Existing wheel evidence; unknown callers keep the general path
  * @returns An entry reuser, or undefined when this host call needs general selection
  */
@@ -33,7 +33,7 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   next: Dictionary<Self>,
   computeChild?: Fn<[child: Self]>,
-  immediate = false,
+  isImmediate = false,
   hasRelocated = true,
 ): Optional<Fn<[entry: BlueprintChildEntry], boolean>> => {
   if (
@@ -62,11 +62,11 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
     );
     memo.byEntry = entries;
   }
-  const registered = context.presenceRegistrations;
+  const presenceRegistrations = context.presenceRegistrations;
   const ownNames = Object.getPrototypeOf(prior) === null;
   return (entry) => {
     if (
-      context.presenceRegistrations !== registered ||
+      context.presenceRegistrations !== presenceRegistrations ||
       context.pathChanges.length > 0 ||
       context.distributedInputs.has(node)
     )
@@ -85,8 +85,8 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
       child.blueprintNode !== entry.node ||
       child.schema !== selected.schema ||
       !child.isActive ||
-      child.detached ||
-      node.structure?.[entry.name] !== child ||
+      child.isDetached ||
+      node.childrenByName?.[entry.name] !== child ||
       (next[entry.name] !== undefined && next[entry.name] !== child)
     )
       return false;
@@ -95,7 +95,7 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
       context.selectedDeclarationIds.set(child, selected.ids);
     if (computeChild && context.dirtyPaths.has(child.path)) {
       computeChild(child);
-      if (immediate) (context.pendingOutputs ??= new Set()).add(node);
+      if (isImmediate) (context.pendingOutputs ??= new Set()).add(node);
     }
     return true;
   };

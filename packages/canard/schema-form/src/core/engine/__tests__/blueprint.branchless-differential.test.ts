@@ -54,7 +54,7 @@ vi.mock(
         actual.collectSchemaCapabilities(...args);
         if (generic.enabled) {
           const capabilities = args[0].capabilities;
-          capabilities.branchless = false;
+          capabilities.isBranchless = false;
           capabilities.hasExpressions = true;
           capabilities.hasDerive = true;
           capabilities.hasWatch = true;

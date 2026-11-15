@@ -80,8 +80,8 @@ it.each(['destination', 'nested', 'direct-control'] as const)(
         : scene === 'nested'
           ? { values: [{ v: 37 }] }
           : [{ v: 37 }];
-    expect(list.emit).toEqual([expected]);
+    expect(list.storedOutputValue).toEqual([expected]);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-    expect(list.emit).toEqual([initial]);
+    expect(list.storedOutputValue).toEqual([initial]);
   },
 );

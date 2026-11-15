@@ -36,8 +36,8 @@ describe('static first load assembly', () => {
       },
     });
     loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
-    expect(root.local).toEqual({ nested: { b: 2, a: 'a' }, last: false });
-    expect(root.local).toBe(root.emit);
+    expect(root.storedValue).toEqual({ nested: { b: 2, a: 'a' }, last: false });
+    expect(root.storedValue).toBe(root.storedOutputValue);
     expect(
       [...(root.runtime.deliveries ?? [])].map((node) => node.path),
     ).toEqual(['', '/nested', '/nested/b', '/nested/a', '/last']);
@@ -54,7 +54,7 @@ describe('static first load assembly', () => {
   it('preserves input priority, container defaults, suppression and dependent defaults', () => {
     const scalar = createTestTree({ type: 'string', default: 'scalar' }).root;
     loadFieldNodeAtMount(scalar, undefined, WriteOption.Overwrite);
-    expect(scalar.local).toBe('scalar');
+    expect(scalar.storedValue).toBe('scalar');
     const schema = {
       type: 'object' as const,
       properties: {
@@ -70,15 +70,17 @@ describe('static first load assembly', () => {
     };
     const { root } = createTestTree(schema);
     loadFieldNodeAtMount(root, { a: 9 }, WriteOption.Overwrite);
-    expect(root.local).toEqual({ a: 9, group: { b: 'container' } });
+    expect(root.storedValue).toEqual({ a: 9, group: { b: 'container' } });
     const suppressed = createTestTree(schema).root;
     loadFieldNodeAtMount(
       suppressed,
       undefined,
       WriteOption.DisableAutomaticWrites,
     );
-    expect(suppressed.structure!.a.local).toBeUndefined();
-    expect(suppressed.structure!.group.structure!.b.local).toBeUndefined();
+    expect(suppressed.childrenByName!.a.storedValue).toBeUndefined();
+    expect(
+      suppressed.childrenByName!.group.childrenByName!.b.storedValue,
+    ).toBeUndefined();
     const dependent = createTestTree({
       type: 'object',
       properties: {
@@ -87,7 +89,7 @@ describe('static first load assembly', () => {
       },
     }).root;
     loadFieldNodeAtMount(dependent, undefined, WriteOption.Overwrite);
-    expect(dependent.local).toEqual({ a: 1, b: 2 });
+    expect(dependent.storedValue).toEqual({ a: 1, b: 2 });
   });
 
   it('preserves revisions and pending delivery for an empty delivery commit', () => {
@@ -103,7 +105,7 @@ describe('static first load assembly', () => {
       getSettlementScratch(root.runtime),
     );
     markCommitDeliveries(context);
-    expect(root.local).toBe('same');
+    expect(root.storedValue).toBe('same');
     expect(root.runtime.deliveries?.size).toBe(0);
     expect(root.revisionLedger).toBe(revision);
     expect(root.pendingDelivery).toBeUndefined();
@@ -125,19 +127,19 @@ describe('static first load assembly', () => {
       },
     });
     loadFieldNodeAtMount(root, { items: ['a', 'b'] }, WriteOption.Overwrite);
-    expect(root.local).toEqual({ items: ['a', 'b'], value: 'control' });
-    expect(readDefault(root.structure!.value, new Map())).toBe('control');
-    expect(readDefault(root.structure!.items.children![1], new Map())).toBe(
-      'fallback',
-    );
+    expect(root.storedValue).toEqual({ items: ['a', 'b'], value: 'control' });
+    expect(readDefault(root.childrenByName!.value, new Map())).toBe('control');
+    expect(
+      readDefault(root.childrenByName!.items.children![1], new Map()),
+    ).toBe('fallback');
     expect(root.runtime.committedDeclarationIds?.size ?? 0).toBe(0);
     writeFieldNode(
-      root.structure!.value,
+      root.childrenByName!.value,
       'next',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(readDefault(root.structure!.value, new Map())).toBe('control');
+    expect(readDefault(root.childrenByName!.value, new Map())).toBe('control');
     expect(root.runtime.committedDeclarationIds?.size ?? 0).toBe(0);
   });
 
@@ -153,21 +155,21 @@ describe('static first load assembly', () => {
       },
     });
     loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
-    expect(root.local).toEqual({ 'a/b': 7, group: { leaf: 'x' } });
+    expect(root.storedValue).toEqual({ 'a/b': 7, group: { leaf: 'x' } });
     expect(root.children?.map((node) => node.name)).toEqual(['a/b', 'group']);
-    const child = root.structure!['a/b'];
+    const child = root.childrenByName!['a/b'];
     expect(child.path).toBe('/a~1b');
-    const value = root.local;
+    const value = root.storedValue;
     const children = root.children;
     const revision = child.revisionLedger[FieldNodeEventType.UpdateValue];
     writeFieldNode(child, 7, FieldNodeWriteKind.Input, WriteOption.Overwrite);
-    expect(root.local).toBe(value);
+    expect(root.storedValue).toBe(value);
     expect(root.children).toBe(children);
     writeFieldNode(child, 8, FieldNodeWriteKind.Input, WriteOption.Overwrite);
     expect(child.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(
       revision + 1,
     );
-    expect(root.structure!['a/b']).toBe(child);
+    expect(root.childrenByName!['a/b']).toBe(child);
   });
 
   it('does not serialize empty pending-exit and latent lookups during static selection', () => {
@@ -189,7 +191,7 @@ describe('static first load assembly', () => {
     );
     // At most one committed declaration key is needed per child.
     expect(selectionCalls.length).toBeLessThanOrEqual(2);
-    expect(root.local).toEqual({ a: 1, b: 2 });
+    expect(root.storedValue).toEqual({ a: 1, b: 2 });
   });
 });
 

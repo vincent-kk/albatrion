@@ -81,11 +81,11 @@ it.each<MoveCase>([
     const path = `/list/${to}/${names.join('/')}`;
     const list = getDispatchNode(root, 'list');
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-    expect(getDispatchNode(list, String(from), ...names).source).toBe(37);
+    expect(getDispatchNode(list, '' + from, ...names).source).toBe(37);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-    expect(getDispatchNode(list, String(from), ...names).source).toBe('live');
+    expect(getDispatchNode(list, '' + from, ...names).source).toBe('live');
     dispatchSetValue(getDispatchNode(root, 'show'), false);
-    expect(list.structure?.[String(from)]).toBeUndefined();
+    expect(list.childrenByName?.['' + from]).toBeUndefined();
     expect(readRetainedSlotSource(root, sourcePath, 'number')).toBe(37);
     expect(readRetainedSlotSource(root, sourcePath, 'string')).toBe('live');
 
@@ -99,14 +99,14 @@ it.each<MoveCase>([
       kind: 'string',
       list: operation === 'insert' ? [{}, expectedValue] : [expectedValue],
     };
-    const moved = getDispatchNode(list, String(to), ...names);
+    const moved = getDispatchNode(list, '' + to, ...names);
     expect(moved.blueprintNode.kind).toBe('number');
     expect(moved.source).toBe(37);
-    expect(root.local).toEqual(expected);
-    expect(root.emit).toEqual(expected);
+    expect(root.storedValue).toEqual(expected);
+    expect(root.storedOutputValue).toEqual(expected);
     expect(
       events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
-    ).toMatchObject({ current: { local: expected, emit: expected } });
+    ).toMatchObject({ current: { value: expected, outputValue: expected } });
     await dispatchValidate(root);
     expect(validationInputs.at(-1)).toEqual(expected);
     expect([...runtime.misfitPaths]).toEqual([]);

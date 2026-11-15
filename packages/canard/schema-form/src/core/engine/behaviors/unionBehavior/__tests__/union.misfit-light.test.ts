@@ -102,7 +102,7 @@ describe('TEST-077 union mismatch lamp', () => {
         path: '',
         expected: {
           schemaType: root.schemaType,
-          nullable: false,
+          isNullable: false,
           effective: root.schemaType,
         },
         reason: 'unconvertible',

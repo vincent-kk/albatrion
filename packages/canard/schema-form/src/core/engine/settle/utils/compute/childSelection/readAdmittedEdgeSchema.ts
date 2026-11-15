@@ -15,7 +15,7 @@ interface AdmittedEdgeSchema {
   /** Effective schema merged from every declaration of the edge. */
   readonly schema: EffectiveSchema;
   /** Whether the merge reported an empty type intersection. */
-  readonly conflict: boolean;
+  readonly hasConflict: boolean;
   /** Atomic-value predicate identity the merge received. */
   readonly isAtomic: BlueprintOptions['isAtomic'];
 }
@@ -52,7 +52,7 @@ export const readAdmittedEdgeSchema = (
   });
   const admitted: AdmittedEdgeSchema = {
     schema,
-    conflict: schema.typeConflict,
+    hasConflict: schema.hasTypeConflict,
     isAtomic,
   };
   entries.set(entry, admitted);

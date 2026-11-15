@@ -18,7 +18,7 @@ export const restoreArrayStructure = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   for (let index = context.arrayStructureLog.length - 1; index >= 0; index--) {
     const entry = context.arrayStructureLog[index];
-    if (entry.restored) continue;
+    if (entry.isRestored) continue;
     const { host, previousItems, previousItemCount, previousExtras } = entry;
     if (within) {
       let ancestor: Nullable<Self> = host;
@@ -32,31 +32,31 @@ export const restoreArrayStructure = <Self extends FieldNodeRecord<Self>>(
         visitFieldNodes(
           item,
           (current) => {
-            current.detached = true;
+            current.isDetached = true;
             current.isActive = captureFieldNodeChange(
               current,
               'isActive',
               false,
             );
-            context.entered.delete(current);
-            context.perished.delete(current);
+            context.enteredNodes.delete(current);
+            context.perishedNodes.delete(current);
           },
-          { owned: true },
+          { isOwned: true },
         );
       }
-    const structure: Dictionary<Self> = Object.create(null);
+    const childrenByName: Dictionary<Self> = Object.create(null);
     for (const item of previousItems) {
-      structure[item.name] = item;
-      item.detached = false;
+      childrenByName[item.name] = item;
+      item.isDetached = false;
       item.isActive = captureFieldNodeChange(item, 'isActive', true);
-      context.perished.delete(item);
+      context.perishedNodes.delete(item);
     }
-    host.structure = structure;
+    host.childrenByName = childrenByName;
     host.children = captureFieldNodeChange(host, 'children', previousItems);
     host.itemCount = previousItemCount;
     host.extras = previousExtras;
     context.dirtyPaths.add(host.path);
     context.shapeDirtyPaths.add(host.path);
-    entry.restored = true;
+    entry.isRestored = true;
   }
 };

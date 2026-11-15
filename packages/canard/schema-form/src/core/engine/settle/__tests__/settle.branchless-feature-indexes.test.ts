@@ -30,7 +30,7 @@ describe('branchless feature indexes and empty rule tables', () => {
       },
     });
     const analysis = Reflect.get(root, 'runtime').blueprint;
-    expect(analysis.capabilities.branchless).toBe(true);
+    expect(analysis.capabilities.isBranchless).toBe(true);
     expect(getDeriveRuleTable(analysis).rules).toHaveLength(1);
     const target = root.find('/target')!;
     const index = getFeatureNodeIndex(analysis);
@@ -41,7 +41,7 @@ describe('branchless feature indexes and empty rule tables', () => {
       true,
     );
     expect(
-      getDependencyIndex(analysis).affected(
+      getDependencyIndex(analysis).affectedOwners(
         '/source',
         Reflect.get(root as object, 'rootNode'),
       ),

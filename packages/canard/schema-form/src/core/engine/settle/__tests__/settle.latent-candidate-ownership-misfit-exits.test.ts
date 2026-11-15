@@ -67,7 +67,7 @@ it.each([
     const destination = scene.operation === 'insert' ? 1 : 0;
     const sourcePath = `/list/${source}/v`;
     const path = `/list/${destination}/v`;
-    const oldItem = getDispatchNode(list, String(source));
+    const oldItem = getDispatchNode(list, '' + source);
     const oldChild = getDispatchNode(oldItem, 'v');
     expect(oldChild.source).toBe('bad');
     expect([...runtime.misfitPaths]).toEqual([sourcePath]);
@@ -79,20 +79,20 @@ it.each([
     if (scene.operation === 'insert') dispatchInsert(list, 0, {});
     else dispatchRemove(list, 0);
     expect(runtime.commitNumber).toBe((commit ?? 0) + 1);
-    const moved = list.structure?.[String(destination)];
+    const moved = list.childrenByName?.['' + destination];
     if (scene.inactive) expect(moved).toBeUndefined();
     else {
       expect(moved).toBeDefined();
-      expect(moved?.structure?.v).toBeUndefined();
+      expect(moved?.childrenByName?.v).toBeUndefined();
       if (scene.layout === 'items') expect(moved).toBe(oldItem);
     }
-    expect(oldChild.detached).toBe(true);
+    expect(oldChild.isDetached).toBe(true);
     expect([...runtime.misfitPaths]).toEqual([]);
     expect(runtime.misfitsMemo?.get('')?.paths).toEqual([]);
     expect(runtime.misfitsMemo?.has(path)).toBe(false);
     expect(readFieldNodeMisfits(root)).toEqual([]);
     expect(readFieldNodeInactiveValues(root)).toEqual([{ path, value: 'bad' }]);
-    expect(root.emit).toEqual({
+    expect(root.storedOutputValue).toEqual({
       list: scene.operation === 'insert' ? [{}, {}, {}] : [{}, {}],
     });
     expect(runtime.misfitRecords).toEqual([]);

@@ -28,16 +28,16 @@ it('ERROR-019 retains missing-validator warnings without exposing intermediate s
   const observed: unknown[] = [];
   const report = vi.fn(() =>
     observed.push({
-      value: root.local,
+      value: root.storedValue,
       commit: root.runtime.commitNumber,
-      initialized: root.deliveryInitialized,
+      initialized: root.isDeliveryInitialized,
     }),
   );
   root.runtime.errorReporter = { hasConsumer: () => true, report };
   loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
   expect(report).not.toHaveBeenCalled();
   expect(observed).toEqual([]);
-  expect(root.local).toEqual({ value: 'ready' });
+  expect(root.storedValue).toEqual({ value: 'ready' });
   expect(root.runtime.commitNumber).toBe(1);
   expect(
     [...(root.runtime.pendingWarningRecords?.values() ?? [])].map(

@@ -57,7 +57,7 @@ export const populateNodeChildren = (
       const base = {
         context: declaration.context,
         gates: declaration.gates,
-        inherited: declaration.inherited,
+        isInherited: declaration.isInherited,
         hostPath: node.path,
         fragment: context.fragments[declaration.fragmentId],
         role: 'declaration' as const,
@@ -74,7 +74,7 @@ export const populateNodeChildren = (
         const input: SchemaInput = {
           context: base.context,
           gates: base.gates,
-          inherited: base.inherited,
+          isInherited: base.isInherited,
           hostPath: base.hostPath,
           fragment: base.fragment,
           role: base.role,
@@ -145,7 +145,7 @@ export const populateNodeChildren = (
     const base = {
       context: declaration.context,
       gates: declaration.gates,
-      inherited: declaration.inherited,
+      isInherited: declaration.isInherited,
       hostPath: node.path,
       fragment: context.fragments[declaration.fragmentId],
       role: 'declaration' as const,
@@ -194,7 +194,7 @@ export const populateNodeChildren = (
         const discriminator = input.gates[discriminatorIndex];
         if (
           discriminator?.kind === 'discriminator' &&
-          discriminator.condition.lift === false
+          discriminator.condition.canLift === false
         )
           continue;
         const entry = existing ?? { path, inputs: [] };
@@ -301,7 +301,7 @@ export const populateNodeChildren = (
     node.item = candidates[0];
     if (candidates.length > 1) {
       node.itemCandidates = candidates;
-      context.staticFirstLoad = false;
+      context.isStaticFirstLoad = false;
     }
   }
 
@@ -323,7 +323,7 @@ export const populateNodeChildren = (
     }
     if (hasPrefixCandidates) {
       node.prefixItemCandidates = candidates;
-      context.staticFirstLoad = false;
+      context.isStaticFirstLoad = false;
     }
   }
   if (process.env.NODE_ENV !== 'production') {

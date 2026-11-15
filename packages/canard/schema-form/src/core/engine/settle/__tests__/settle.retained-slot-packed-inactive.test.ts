@@ -33,6 +33,6 @@ it.each(['off', 'on', 'verify'] as const)(
       { path: '/a', value: a },
     ]);
     dispatchSetValue(getDispatchNode(root, 'flag'), true);
-    expect(root.local).toEqual({ flag: true, a: [{}, {}] });
+    expect(root.storedValue).toEqual({ flag: true, a: [{}, {}] });
   },
 );

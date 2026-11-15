@@ -8,6 +8,6 @@ import type { FieldNodeRecord } from '../../../record';
 export const readFieldNodeIsMisfit = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): boolean =>
-  node.detached
+  node.isDetached
     ? (node.runtime.detachedReads?.get(node)?.isMisfit ?? false)
     : node.runtime.misfitPaths.has(node.path);

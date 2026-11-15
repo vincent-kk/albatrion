@@ -34,7 +34,7 @@ describe('committed relay eligibility', () => {
         expect(isRelayedInput(relays, '/0')).toBe(true);
         arrangeFieldNodeItems(root, { kind: 'insert', index: 0, value: 'x' });
         expect(input.path).toBe('/1');
-        expect(input.local).toBe('x');
+        expect(input.storedValue).toBe('x');
         expect(isRelayedInput(relays, '/0')).toBe(false);
         expect(isRelayedInput(relays, '/1')).toBe(false);
       });
@@ -50,18 +50,18 @@ describe('committed relay eligibility', () => {
       },
     });
     dispatchMount(root, { show: true, input: 'x' });
-    const input = root.structure!.input;
+    const input = root.childrenByName!.input;
     dispatchRelayInput(input, 'x', OPTION, () => {
       const relays = runtime.inputRelays!;
       writeFieldNode(
-        root.structure!.show,
+        root.childrenByName!.show,
         false,
         FieldNodeWriteKind.CallerReplace,
         OPTION,
       );
-      expect(input.detached).toBe(true);
-      expect(input.disposed).toBeFalsy();
-      expect(input.local).toBe('x');
+      expect(input.isDetached).toBe(true);
+      expect(input.isDisposed).toBeFalsy();
+      expect(input.storedValue).toBe('x');
       expect(isRelayedInput(relays, input.path)).toBe(false);
     });
   });
@@ -73,8 +73,8 @@ describe('committed relay eligibility', () => {
     dispatchRelayInput(previous.root, 'x', OPTION, () => {
       const relays = previous.runtime.inputRelays!;
       adoptFieldNodeChain(previous.root, next.root);
-      expect(previous.root.disposed).toBe(true);
-      expect(previous.root.detached).toBeFalsy();
+      expect(previous.root.isDisposed).toBe(true);
+      expect(previous.root.isDetached).toBeFalsy();
       expect(isRelayedInput(relays, '')).toBe(false);
       dispatchMount(next.root, 'next');
     });

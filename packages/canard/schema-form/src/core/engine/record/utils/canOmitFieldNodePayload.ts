@@ -10,5 +10,5 @@ export const canOmitFieldNodePayload = <Self>(
 ): boolean =>
   node.runtime.entryDepth === 1 &&
   !node.runtime.listeners?.size &&
-  !node.runtime.revisionObserved &&
+  !node.runtime.isRevisionObserved &&
   !node.pendingDelivery;

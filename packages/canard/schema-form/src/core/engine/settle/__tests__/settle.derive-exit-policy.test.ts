@@ -33,8 +33,8 @@ describe('derive baseline alongside exit policy', () => {
       { clear: true, f: true, target: 'a' },
       WriteOption.Overwrite,
     );
-    const target = root.structure!.target;
-    target.interactionState = {
+    const target = root.childrenByName!.target;
+    target.storedState = {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
@@ -45,6 +45,6 @@ describe('derive baseline alongside exit policy', () => {
       WriteOption.Overwrite,
     );
     expect(target.source).toBe('b');
-    expect(target.interactionState[FieldNodeState.Edited]).toBe(true);
+    expect(target.storedState[FieldNodeState.Edited]).toBe(true);
   });
 });

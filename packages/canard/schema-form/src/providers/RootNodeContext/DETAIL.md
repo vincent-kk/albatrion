@@ -28,7 +28,7 @@ React의 터미널·원자 판정과 app 소유 청사진 캐시는 생성 인�
 
 ### REACT-007 — 준비된 load의 수명
 
-첫 commit 전 load는 변경·상태·진단 콜백을 버리고 오류 기록만 보관합니다. 확정 commit은 루트 구독과 prepared 표시 뒤 기록을 flush하고 외부 오류·로드 검증을 연결합니다. StrictMode 재연결은 이미 준비된 load를 다시 flush하거나 예약하지 않습니다. 준비된 현행 load는 effect 연결 여부와 무관하게 engine chain 끝에서 콜백과 기록을 전달합니다. 교체된 load는 reset 사슬 뒤 은퇴하며 소비자 기록을 다시 배달하지 않습니다.
+첫 commit 전 load는 변경·상태·진단 콜백을 버리고 오류 기록만 보관합니다. 확정 commit은 루트 구독과 isPrepared 표시 뒤 기록을 flush하고 외부 오류·로드 검증을 연결합니다. StrictMode 재연결은 이미 준비된 load를 다시 flush하거나 예약하지 않습니다. 준비된 현행 load는 effect 연결 여부와 무관하게 engine chain 끝에서 콜백과 기록을 전달합니다. 교체된 load는 reset 사슬 뒤 은퇴하며 소비자 기록을 다시 배달하지 않습니다.
 
 React는 숨김과 실제 unmount를 같은 cleanup으로 표현하므로 루트 구독은 cleanup에서 끊지 않습니다. retained handle·노드의 쓰기·reset·rebuild·validate·submit과 예약 슬롯은 unmount 뒤에도 전달할 수 있습니다. cleanup은 검증 캐시 retain만 해제하며 그 뒤 만든 새 루트는 retain하지 않아 축출 후 재컴파일할 수 있습니다.
 
@@ -38,7 +38,7 @@ React는 숨김과 실제 unmount를 같은 cleanup으로 표현하므로 루트
 
 생성·mount 실패는 렌더에서 잡아 load에 보관합니다. 공유 충돌은 루트를 제거하여 fallback으로 가고, 커밋 가능한 정착 실패는 degraded 트리를 유지합니다. 렌더 중 소비자 callback을 호출하지 않으며 SSR에는 commit 보고가 없습니다. 확정 load가 오류를 한 번 보고하고 host에 전달합니다. reset의 caller 오류와 자동 슬롯 실패는 별도 경로입니다.
 
-교체 전 never-prepared load의 기록은 원래 root·warning scope를 보존해 새 build 기록 앞에 옮깁니다. mount 사슬 기록이 build 기록보다 먼저 전달될 수 있고 binding 교체 전 보고 중 handle.node는 옛 루트일 수 있습니다. 기록별 handler 실패를 격리하여 나머지 기록과 교체를 계속합니다. 새 load는 prepared·reported를 함께 확정하되 caller에게 던질 error는 보존하여 pending flush에서 같은 실패를 재보고하지 않습니다. 옛 생성 실패도 한 번만 capture·host 보고합니다.
+교체 전 never-prepared load의 기록은 원래 root·warning scope를 보존해 새 build 기록 앞에 옮깁니다. mount 사슬 기록이 build 기록보다 먼저 전달될 수 있고 binding 교체 전 보고 중 handle.node는 옛 루트일 수 있습니다. 기록별 handler 실패를 격리하여 나머지 기록과 교체를 계속합니다. 새 load는 isPrepared·isReported를 함께 확정하되 caller에게 던질 error는 보존하여 pending flush에서 같은 실패를 재보고하지 않습니다. 옛 생성 실패도 한 번만 capture·host 보고합니다.
 
 버퍼 기록의 원래 root뿐 아니라 현행 root에도 오류 관찰자 guard를 적용하여 onError가 새 폼에 쓰는 우회를 막습니다. 실패 묶음의 잎 순회·빈 묶음 처리는 FormErrorContext의 책임입니다. 검증 슬롯은 엔진이 보고한 오류를 다시 capture하지 않습니다.
 

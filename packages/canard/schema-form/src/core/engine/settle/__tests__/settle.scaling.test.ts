@@ -27,16 +27,16 @@ it('82C-01 restores equal composite children without inspecting unchanged siblin
     { child: { value: 'same' }, sibling: 'kept' },
     WriteOption.Overwrite,
   );
-  const previous = root.local;
-  const child = root.structure!.child;
-  child.emit = { value: 'same' };
+  const previous = root.storedValue;
+  const child = root.childrenByName!.child;
+  child.storedOutputValue = { value: 'same' };
   updateOutput(
     root,
     { changedNodes: new Set() } as SettlementContext<typeof root>,
     [child],
   );
-  expect(root.local).toBe(previous);
-  expect(root.emit).toBe(previous);
+  expect(root.storedValue).toBe(previous);
+  expect(root.storedOutputValue).toBe(previous);
 });
 
 it('82C-01 skips ancestor walks for an acyclic blueprint', () => {
@@ -96,7 +96,7 @@ it('82C-01 indexes shared dependency owners without pairwise comparisons', () =>
     receiver,
   ) {
     return some.call(this, (value, index, array) => {
-      if (value && typeof value === 'object' && 'bindable' in value)
+      if (value && typeof value === 'object' && 'isBindable' in value)
         comparisons++;
       return callback.call(receiver, value, index, array);
     });
@@ -133,7 +133,7 @@ it('82C-01 collects gate identities without quadratic array membership', () => {
     return includes.call(this, value, from);
   });
   loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
-  expect(root.emit).toEqual({ kind: '0', value0: 'value' });
+  expect(root.storedOutputValue).toEqual({ kind: '0', value0: 'value' });
   expect(comparisons).toBe(0);
 });
 
@@ -162,6 +162,9 @@ it('82C-01 fills nested mounts without sorting entered records', () => {
     return sort.call(this, compare);
   });
   loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
-  expect(root.emit).toEqual({ left: { value: 'a' }, right: { value: 'b' } });
+  expect(root.storedOutputValue).toEqual({
+    left: { value: 'a' },
+    right: { value: 'b' },
+  });
   expect(sortedRecords).toBe(0);
 });

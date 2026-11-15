@@ -44,7 +44,7 @@ it.each([100, 1000])(
     dispatchMount(root, input, undefined, { deferValidation: true });
     expect(marks).toHaveBeenCalledTimes(0);
     expect(root.runtime.deliveries?.size).toBe(0);
-    expect(root.local).toEqual(input);
+    expect(root.storedValue).toEqual(input);
     for (const node of [root, ...root.children!]) {
       expect(
         readFieldNodeRevision(node, records.FieldNodeEventType.UpdateValue),
@@ -52,7 +52,7 @@ it.each([100, 1000])(
       expect(
         readFieldNodeRevision(node, records.FieldNodeEventType.RequestRefresh),
       ).toBe(1);
-      expect(node.pendingRevision).toBe(0);
+      expect(node.pendingRevisionMask).toBe(0);
     }
   },
 );

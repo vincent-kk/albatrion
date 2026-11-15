@@ -8,11 +8,11 @@ import type { SettlementContext } from '../../types/settlement';
 
 /** Calculated identities held at entry to one bounded node computation. */
 export interface CalculatedSnapshot<Self> {
-  local: unknown;
-  emit: unknown;
+  value: unknown;
+  outputValue: unknown;
   children: Nullable<readonly Self[]>;
   schema: EffectiveSchema;
-  active: boolean;
+  isActive: boolean;
 }
 
 /**
@@ -28,10 +28,18 @@ export const preserveReferences = <Self extends FieldNodeRecord<Self>>(
   previous: CalculatedSnapshot<Self>,
   context: SettlementContext<Self>,
 ): void => {
-  if (sameValue(previous.local, node.local))
-    node.local = captureFieldNodeChange(node, 'local', previous.local);
-  if (sameValue(previous.emit, node.emit))
-    node.emit = captureFieldNodeChange(node, 'emit', previous.emit);
+  if (sameValue(previous.value, node.storedValue))
+    node.storedValue = captureFieldNodeChange(
+      node,
+      'storedValue',
+      previous.value,
+    );
+  if (sameValue(previous.outputValue, node.storedOutputValue))
+    node.storedOutputValue = captureFieldNodeChange(
+      node,
+      'storedOutputValue',
+      previous.outputValue,
+    );
   if (
     previous.children !== node.children &&
     previous.children &&
@@ -52,14 +60,14 @@ export const preserveReferences = <Self extends FieldNodeRecord<Self>>(
       );
   }
   if (
-    node.local === previous.local &&
-    node.emit === previous.emit &&
+    node.storedValue === previous.value &&
+    node.storedOutputValue === previous.outputValue &&
     node.children === previous.children &&
     node.schema ===
       (context.originalSchemas.get(node.path) ?? previous.schema) &&
-    node.isActive === previous.active &&
+    node.isActive === previous.isActive &&
     !context.changedSource.has(node.path) &&
-    !context.entered.has(node)
+    !context.enteredNodes.has(node)
   )
     context.changedNodes.delete(node);
 };

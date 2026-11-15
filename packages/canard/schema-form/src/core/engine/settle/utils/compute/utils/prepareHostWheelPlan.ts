@@ -12,10 +12,10 @@ export interface HostWheelPlan {
   readonly blueprint: Blueprint;
   readonly path: string;
   readonly itemCount: number;
-  readonly relocated: readonly GateOccurrence[];
+  readonly relocatedOccurrences: readonly GateOccurrence[];
   readonly gates: readonly BlueprintGate[];
   cap?: number;
-  readonly baselineEligible: boolean;
+  readonly isBaselineEligible: boolean;
 }
 
 /**
@@ -30,22 +30,22 @@ export const prepareHostWheelPlan = <Self extends FieldNodeRecord<Self>>(
 ): HostWheelPlan => {
   const record = getHostDerived<'wheelPlan', HostWheelPlan>(node);
   const cached = previous ?? record.wheelPlan;
-  const relocated = relocatedGates(node);
+  const relocatedOccurrences = relocatedGates(node);
   if (
     cached &&
     (previous !== undefined || node.behavior.type === 'object') &&
     cached.blueprint === node.runtime.blueprint &&
     cached.path === node.path &&
     cached.itemCount === node.itemCount &&
-    cached.relocated === relocated
+    cached.relocatedOccurrences === relocatedOccurrences
   )
     return cached;
   const list = getStaticGateList(node);
   let gates = previous?.gates ?? list.gates;
-  if (relocated.length) {
+  if (relocatedOccurrences.length) {
     const collected = [...gates];
     const seen = new Set(gates);
-    for (const occurrence of relocated)
+    for (const occurrence of relocatedOccurrences)
       if (!seen.has(occurrence.gate)) {
         seen.add(occurrence.gate);
         collected.push(occurrence.gate);
@@ -56,7 +56,7 @@ export const prepareHostWheelPlan = <Self extends FieldNodeRecord<Self>>(
   let matches =
     gates.length > 0 &&
     node.behavior.type === 'object' &&
-    relocated.length === 0 &&
+    relocatedOccurrences.length === 0 &&
     !partition.hasGatedOverlays &&
     partition.staticEntries.length > 0;
   if (matches) {
@@ -75,9 +75,9 @@ export const prepareHostWheelPlan = <Self extends FieldNodeRecord<Self>>(
     blueprint: node.runtime.blueprint,
     path: node.path,
     itemCount: node.itemCount,
-    relocated,
+    relocatedOccurrences,
     gates,
-    baselineEligible: matches,
+    isBaselineEligible: matches,
   };
   if (!previous) record.wheelPlan = plan;
   return plan;

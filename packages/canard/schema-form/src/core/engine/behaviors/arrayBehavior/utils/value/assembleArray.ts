@@ -33,8 +33,8 @@ const rememberShape = <Self>(
  * @param node - Array host with committed child projections and tail extras
  * @param children - Current ordered item nodes
  * @param recalculated - Direct items computed during an unchanged-shape write
- * @param hint - Reports whether only the recalculated slots were compared; an `append` count from a valid append proof patches only that slot into one copy of the previous local, and a `truncate` count from a valid pop proof keeps that many leading slots of the previous local in one copy
- * @returns Local array, reusing its prior reference when elements are identical
+ * @param hint - Reports whether only the recalculated slots were compared; a `previousItemCount` from a valid append proof patches only the appended slot into one copy of the previous stored value, and a `remainingItemCount` from a valid pop proof keeps that many leading slots of the previous stored value in one copy
+ * @returns Stored array value, reusing its prior reference when elements are identical
  */
 export const assembleArray: Behavior['assemble'] = (
   node,
@@ -42,28 +42,30 @@ export const assembleArray: Behavior['assemble'] = (
   recalculated,
   hint,
 ) => {
-  const previous = isArray(node.local) ? node.local : undefined;
-  const truncate = hint?.truncate;
+  const previous = isArray(node.storedValue) ? node.storedValue : undefined;
+  const remainingItemCount = hint?.remainingItemCount;
   if (
     hint &&
-    truncate !== undefined &&
+    remainingItemCount !== undefined &&
     previous &&
-    node.itemCount === truncate &&
-    (previous.length === truncate + 1 || previous.length === truncate)
+    node.itemCount === remainingItemCount &&
+    (previous.length === remainingItemCount + 1 ||
+      previous.length === remainingItemCount)
   ) {
     rememberShape(node, children);
-    hint.incremental = true;
-    return previous.length === truncate
+    hint.isIncremental = true;
+    return previous.length === remainingItemCount
       ? previous
-      : previous.slice(0, truncate);
+      : previous.slice(0, remainingItemCount);
   }
-  const append = hint?.append;
+  const previousItemCount = hint?.previousItemCount;
   if (
     hint &&
-    append !== undefined &&
+    previousItemCount !== undefined &&
     previous &&
-    node.itemCount === append + 1 &&
-    (previous.length === append || previous.length === append + 1)
+    node.itemCount === previousItemCount + 1 &&
+    (previous.length === previousItemCount ||
+      previous.length === previousItemCount + 1)
   ) {
     const extras = node.extras;
     if (
@@ -71,32 +73,38 @@ export const assembleArray: Behavior['assemble'] = (
       !node.blueprintNode.prefixItems?.length &&
       children.length === 0 &&
       isArray(extras) &&
-      extras.length === append + 1
+      extras.length === previousItemCount + 1
     ) {
-      const value = extras[append];
+      const value = extras[previousItemCount];
       rememberShape(node, children);
-      hint.incremental = true;
-      if (previous.length === append) return previous.concat([value]);
-      if (Object.is(value, previous[append])) return previous;
+      hint.isIncremental = true;
+      if (previous.length === previousItemCount)
+        return previous.concat([value]);
+      if (Object.is(value, previous[previousItemCount])) return previous;
       const result = previous.slice();
-      result[append] = value;
+      result[previousItemCount] = value;
       return result;
     }
-    const template = getArrayItemTemplate(node, append);
-    const child = node.structure?.[String(append)];
+    const template = getArrayItemTemplate(node, previousItemCount);
+    const child = node.childrenByName?.['' + previousItemCount];
     if (template && child !== null && typeof child === 'object') {
-      const emission = 'emit' in child ? child.emit : undefined;
+      const outputValue =
+        'storedOutputValue' in child ? child.storedOutputValue : undefined;
       const value =
-        emission === undefined
-          ? holeValue(template.kind, previous[append])
-          : emission;
+        outputValue === undefined
+          ? holeValue(template.kind, previous[previousItemCount])
+          : outputValue;
       rememberShape(node, children);
-      hint.incremental = true;
-      if (previous.length === append + 1 && Object.is(value, previous[append]))
+      hint.isIncremental = true;
+      if (
+        previous.length === previousItemCount + 1 &&
+        Object.is(value, previous[previousItemCount])
+      )
         return previous;
-      if (previous.length === append) return previous.concat([value]);
+      if (previous.length === previousItemCount)
+        return previous.concat([value]);
       const result = previous.slice();
-      result[append] = value;
+      result[previousItemCount] = value;
       return result;
     }
   }
@@ -118,7 +126,7 @@ export const assembleArray: Behavior['assemble'] = (
         typeof child !== 'object' ||
         !('name' in child) ||
         typeof child.name !== 'string' ||
-        !('emit' in child)
+        !('storedOutputValue' in child)
       ) {
         valid = false;
         break;
@@ -128,7 +136,7 @@ export const assembleArray: Behavior['assemble'] = (
         !Number.isInteger(index) ||
         index < 0 ||
         index >= node.itemCount ||
-        node.structure?.[child.name] !== child
+        node.childrenByName?.[child.name] !== child
       ) {
         valid = false;
         break;
@@ -138,18 +146,18 @@ export const assembleArray: Behavior['assemble'] = (
         valid = false;
         break;
       }
-      const emission = child.emit;
+      const outputValue = child.storedOutputValue;
       const value =
-        emission === undefined
+        outputValue === undefined
           ? holeValue(template.kind, previous[index])
-          : emission;
+          : outputValue;
       if (!Object.is(value, previous[index])) {
         if (!patch) patch = previous.slice();
         patch[index] = value;
       }
     }
     if (valid) {
-      if (hint) hint.incremental = true;
+      if (hint) hint.isIncremental = true;
       return patch ?? previous;
     }
   }
@@ -163,15 +171,17 @@ export const assembleArray: Behavior['assemble'] = (
       continue;
     }
     tailStart++;
-    const child = node.structure?.[String(index)];
-    const emission =
-      child !== null && typeof child === 'object' && 'emit' in child
-        ? child.emit
+    const child = node.childrenByName?.['' + index];
+    const outputValue =
+      child !== null &&
+      typeof child === 'object' &&
+      'storedOutputValue' in child
+        ? child.storedOutputValue
         : undefined;
     result.push(
-      emission === undefined
+      outputValue === undefined
         ? holeValue(template.kind, previous?.[index])
-        : emission,
+        : outputValue,
     );
   }
   rememberShape(node, children);

@@ -36,7 +36,7 @@ it('nested-d6-f4 bulk has no split release, shadow read or split registration in
     ).toBe('fbd03ab6337cc6d81692519816c5778f7f6f907f346dba9dc00261f5c37cc1f2');
     const { root } = createDispatchTree(schema);
     dispatchMount(root, undefined);
-    const value = changed(structuredClone(root.emit));
+    const value = changed(structuredClone(root.storedOutputValue));
     const release = vi.spyOn(
       DirtyPathSet.prototype as unknown as {
         releaseSplitMember(path: string): void;
@@ -46,7 +46,7 @@ it('nested-d6-f4 bulk has no split release, shadow read or split registration in
     const index = getDependencyIndex(root.runtime.blueprint);
     const split = vi.spyOn(
       Object.getPrototypeOf(index) as typeof index,
-      'affectedForRegistration',
+      'registerAffectedOwners',
     );
     const register = registration.registerRecalculation;
     let shadowReads = 0;
@@ -74,7 +74,7 @@ it('nested-d6-f4 bulk has no split release, shadow read or split registration in
     expect.soft(release).not.toHaveBeenCalled();
     expect.soft(shadowReads).toBe(0);
     expect(split).not.toHaveBeenCalled();
-    expect(root.emit).toEqual(value);
+    expect(root.storedOutputValue).toEqual(value);
   } finally {
     engineModes.setMode('gateSelection', mode);
     vi.restoreAllMocks();

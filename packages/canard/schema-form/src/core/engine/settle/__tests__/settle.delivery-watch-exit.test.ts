@@ -247,7 +247,7 @@ describe('L2 (c) EVENT-064 exits look up the watch index', () => {
         { anchor: 0, list: ['a', 'b', 'c'], gated: 'g' },
         [{ path: '/list', apply }],
       );
-      expect(step.emit).not.toHaveProperty('gated');
+      expect(step.outputValue).not.toHaveProperty('gated');
       expect(movedPaths(step)).toEqual(moved);
       expect(watchMarks(step).sort()).toEqual(['/w1', '/wg', '/wl', '/wr']);
     },
@@ -279,8 +279,8 @@ describe('L2 (c) EVENT-064 exits look up the watch index', () => {
         { path: '/list', apply: (list) => dispatchInsert(list, 0, 'a') },
       ],
     );
-    expect(history[0].emit).not.toHaveProperty('grp');
-    expect(history[1].emit).toHaveProperty('grp', { inner: [1, 2, 3] });
+    expect(history[0].outputValue).not.toHaveProperty('grp');
+    expect(history[1].outputValue).toHaveProperty('grp', { inner: [1, 2, 3] });
     expect(history.map(movedPaths)).toEqual([
       ['/list/0', '/list/1'],
       ['/list/1', '/list/2'],
@@ -347,7 +347,7 @@ describe('L2 (c) EVENT-064 exits look up the watch index', () => {
       },
       [{ path: '/groups/1/rows', apply: (rows) => dispatchRemove(rows, 0) }],
     );
-    expect(step.emit).toEqual({
+    expect(step.outputValue).toEqual({
       anchor: 0,
       groups: [
         { rows: [{ on: true, tags: ['a0'] }] },

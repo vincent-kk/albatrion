@@ -24,7 +24,7 @@ const expectRecovery = (root: DispatchTestNode) => {
   subscribeFieldNode(root, event);
   runtime.onChange = onChange;
   const value =
-    typeof root.local === 'string'
+    typeof root.storedValue === 'string'
       ? 'recovered independently'
       : { recovered: true };
   dispatchSetValue(root, value);
@@ -107,7 +107,7 @@ describe('chain exit failure recovery', () => {
     };
     expect(() => dispatchMount(root, 'mounted')).toThrow(failure);
     expect(runtime.entryDepth).toBe(0);
-    expect(runtime.mountingGuardPass).toBe(false);
+    expect(runtime.isInMountingGuardPass).toBe(false);
     expect(order).toEqual(['onChange', 'report']);
     expectRecovery(root);
   });
@@ -123,7 +123,7 @@ describe('chain exit failure recovery', () => {
     };
     expect(() => dispatchMount(root, 'mounted')).toThrow(failure);
     expect(runtime.entryDepth).toBe(0);
-    expect(runtime.mountingGuardPass).toBe(false);
+    expect(runtime.isInMountingGuardPass).toBe(false);
     expectRecovery(root);
   });
 
@@ -367,12 +367,12 @@ describe('chain exit failure recovery', () => {
       report,
     };
     subscribeFieldNode(root, () => {
-      if (root.local !== 'nested') return;
+      if (root.storedValue !== 'nested') return;
       failConsumer = true;
       throw new Error('nested listener');
     });
     runtime.onChange = () => {
-      if (root.local === 'mounted') dispatchSetValue(root, 'nested');
+      if (root.storedValue === 'mounted') dispatchSetValue(root, 'nested');
     };
     expect(() => dispatchMount(root, 'mounted')).toThrow(failure);
     expect(report).not.toHaveBeenCalled();
@@ -406,7 +406,7 @@ describe('chain exit failure recovery', () => {
     expect(() => dispatchMount(root, 'mounted')).toThrow(failure);
     expect(runtime.entryDepth).toBe(0);
     expect(runtime.chainErrors).toBeUndefined();
-    expect(runtime.mountingGuardPass).toBe(false);
+    expect(runtime.isInMountingGuardPass).toBe(false);
     expectRecovery(root);
   });
 
@@ -426,8 +426,8 @@ describe('chain exit failure recovery', () => {
     expect(runtime.chainErrors).toBeUndefined();
     expect(runtime.validationPendingEntryStamp).toBeUndefined();
     expect(runtime.validationTargets).toBeUndefined();
-    expect(runtime.deferLoadValidation).toBeUndefined();
-    expect(runtime.validationPending).toBe(false);
+    expect(runtime.shouldDeferLoadValidation).toBeUndefined();
+    expect(runtime.isValidationPending).toBe(false);
     runtime.validationMode = ValidationMode.None;
     runtime.validationCadence = undefined;
     const onChange = vi.fn();

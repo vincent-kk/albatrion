@@ -59,7 +59,7 @@ export class VirtualizationManager {
   private observerGeneration = 0;
 
   /** Whether committed options enable gating and deferred focus. */
-  public get enabled(): boolean {
+  public get isEnabled(): boolean {
     return this.options !== null;
   }
 
@@ -258,10 +258,10 @@ export class VirtualizationManager {
    * @returns Nothing; another position of the same field cannot settle this request.
    */
   public settleReveal(gate: DeferredGate): void {
-    const tracked = this.trackedReveal;
-    if (!tracked || tracked.gate !== gate) return;
+    const trackedReveal = this.trackedReveal;
+    if (!trackedReveal || trackedReveal.gate !== gate) return;
     this.trackedReveal = undefined;
-    tracked.onSettled();
+    trackedReveal.onSettled();
   }
 
   /**
@@ -270,17 +270,17 @@ export class VirtualizationManager {
    * @returns Nothing; a microtask settles only the same still-absent tracked position.
    */
   public releaseGate(element: Element): void {
-    const tracked = this.trackedReveal;
-    if (!tracked || tracked.element !== element) return;
+    const trackedReveal = this.trackedReveal;
+    if (!trackedReveal || trackedReveal.element !== element) return;
     queueMicrotask(() => {
       if (
-        this.trackedReveal !== tracked ||
+        this.trackedReveal !== trackedReveal ||
         this.registry.has(element) ||
         this.revealing.has(element)
       )
         return;
       this.trackedReveal = undefined;
-      tracked.onSettled();
+      trackedReveal.onSettled();
     });
   }
 
@@ -322,7 +322,7 @@ export class VirtualizationManager {
     return this.observer;
   }
 
-  private idleTick = (deadline: IdleDeadlineLike): void => {
+  private runIdleTick = (deadline: IdleDeadlineLike): void => {
     this.cancelIdle = null;
     const iterator = this.registry.keys();
     let reveals = 0;
@@ -343,7 +343,7 @@ export class VirtualizationManager {
     if (this.cancelIdle !== null || this.registry.size === 0) return;
     const generation = this.observerGeneration;
     this.cancelIdle = scheduleIdle((deadline) => {
-      if (generation === this.observerGeneration) this.idleTick(deadline);
+      if (generation === this.observerGeneration) this.runIdleTick(deadline);
     });
   }
 

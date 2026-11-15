@@ -42,7 +42,7 @@ it.each([
     if (!absent) dispatchSetValue(getDispatchNode(root, 'a'), false);
     dispatchSetValue(getDispatchNode(root, 'b'), true);
     dispatchSetValue(getDispatchNode(root, 'open'), true);
-    expect(getDispatchNode(root, 'list').local).toEqual([null]);
+    expect(getDispatchNode(root, 'list').storedValue).toEqual([null]);
     dispatchSetValue(getDispatchNode(root, 'open'), false);
     const second = readFieldNodeInactiveValues(root);
     expect(second).toEqual([
@@ -53,6 +53,6 @@ it.each([
     dispatchSetValue(getDispatchNode(root, 'b'), false);
     dispatchSetValue(getDispatchNode(root, 'a'), true);
     dispatchSetValue(getDispatchNode(root, 'open'), true);
-    expect(getDispatchNode(root, 'list').local).toEqual(['A']);
+    expect(getDispatchNode(root, 'list').storedValue).toEqual(['A']);
   },
 );

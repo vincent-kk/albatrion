@@ -52,8 +52,8 @@ it.each([false, true])(
     dispatchSetValue(item, { drop: 100 });
     expect(writer).not.toHaveBeenCalled();
     dispatchSetValue(getDispatchNode(root, 'open'), true);
-    expect(getDispatchNode(root, 'list').local).toEqual([]);
-    expect(getDispatchNode(root, 'kept').local).toBe(2);
+    expect(getDispatchNode(root, 'list').storedValue).toEqual([]);
+    expect(getDispatchNode(root, 'kept').storedValue).toBe(2);
   },
 );
 
@@ -97,8 +97,8 @@ it('drops latent writes below a cleared inner array of a kept outer item', () =>
   dispatchSetValue(old, 9);
   expect(writer).not.toHaveBeenCalled();
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(getDispatchNode(root, 'list').local).toEqual([{ keep: 1 }]);
-  expect(getDispatchNode(root, 'kept').local).toBe(7);
+  expect(getDispatchNode(root, 'list').storedValue).toEqual([{ keep: 1 }]);
+  expect(getDispatchNode(root, 'kept').storedValue).toBe(7);
 });
 
 it('drops latent writes through an already inactive zero-survivor descendant', () => {
@@ -139,6 +139,6 @@ it('drops latent writes through an already inactive zero-survivor descendant', (
   dispatchSetValue(old, 5);
   expect(writer).not.toHaveBeenCalled();
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(getDispatchNode(root, 'list').local).toEqual([]);
-  expect(getDispatchNode(root, 'kept').local).toBe(7);
+  expect(getDispatchNode(root, 'list').storedValue).toEqual([]);
+  expect(getDispatchNode(root, 'kept').storedValue).toBe(7);
 });

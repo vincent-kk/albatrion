@@ -24,7 +24,7 @@ export const selectLiteralTableChildren = <Self extends FieldNodeRecord<Self>>(
   round: GateSelectionRound,
 ): void => {
   const { table } = round;
-  const reuse = frame.reuseStatic;
+  const reuse = frame.canReuseStatic;
   let selected = getTableVisitSteps(frame, table);
   const active = new Set<number>();
   const verify = engineModes.gateSelection === 'verify';
@@ -50,7 +50,7 @@ export const selectLiteralTableChildren = <Self extends FieldNodeRecord<Self>>(
       verify &&
       engineModes.gateWheel === 'skip' &&
       tableStep &&
-      frame.flushReads &&
+      frame.shouldFlushReads &&
       frame.context.pendingOutputs?.size
     )
       verifyTablePrePublication(frame.node, frame.context, step.entry);
@@ -74,9 +74,9 @@ export const selectLiteralTableChildren = <Self extends FieldNodeRecord<Self>>(
       if (verify) verifyUnvisitedGateStep(frame, step);
       continue;
     }
-    frame.tableVerdict = tableStep ? admitted : undefined;
+    frame.isTableAdmitted = tableStep ? admitted : undefined;
     if (reuse?.(step.entry)) continue;
     selectEntryStep(step.entry, step, frame);
   }
-  frame.tableVerdict = undefined;
+  frame.isTableAdmitted = undefined;
 };

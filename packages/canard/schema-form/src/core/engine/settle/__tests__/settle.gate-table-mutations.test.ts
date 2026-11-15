@@ -49,7 +49,7 @@ describe('named decision-62 mutation witnesses', () => {
     selectChildren(
       root,
       context,
-      root.structure!,
+      root.childrenByName!,
       () => events.push('compute'),
       true,
     );
@@ -61,11 +61,12 @@ describe('named decision-62 mutation witnesses', () => {
   it('V2 removing R3 leaves a pending exit unvisited and violates S2′', () => {
     engineModes.setMode('gateSelection', 'verify');
     const { root, context } = gateTableScene();
-    const child = root.structure!.a;
+    const child = root.childrenByName!.a;
     context.pendingExits.set('["/a","string"]', child);
     updatePendingExitIndex(context, '/a', 1);
-    delete root.structure!.a;
-    root.structure!.kind.local = root.structure!.kind.emit = 'b';
+    delete root.childrenByName!.a;
+    root.childrenByName!.kind.storedValue =
+      root.childrenByName!.kind.storedOutputValue = 'b';
     const get = visits.getTableVisitSteps;
     vi.spyOn(visits, 'getTableVisitSteps').mockImplementation((frame, table) =>
       get(frame, table).filter(
@@ -83,12 +84,13 @@ describe('named decision-62 mutation witnesses', () => {
   it('V3 removing R4 loses a dormant caller input and violates S2′', () => {
     engineModes.setMode('gateSelection', 'verify');
     const { root, context } = gateTableScene();
-    delete root.structure!.a;
-    root.structure!.kind.local = root.structure!.kind.emit = 'b';
+    delete root.childrenByName!.a;
+    root.childrenByName!.kind.storedValue =
+      root.childrenByName!.kind.storedOutputValue = 'b';
     context.distributedInputs.set(root, {
       input: { a: 'dormant' },
-      whole: false,
-      automatic: false,
+      isWhole: false,
+      isAutomatic: false,
     });
     const get = visits.getTableVisitSteps;
     vi.spyOn(visits, 'getTableVisitSteps').mockImplementation((frame, table) =>
@@ -107,12 +109,12 @@ describe('named decision-62 mutation witnesses', () => {
   it('V2 retains the required pending-exit visit without a fault injection', () => {
     engineModes.setMode('gateSelection', 'verify');
     const { root, context } = gateTableScene();
-    context.pendingExits.set('["/a","string"]', root.structure!.a);
+    context.pendingExits.set('["/a","string"]', root.childrenByName!.a);
     updatePendingExitIndex(context, '/a', 1);
-    delete root.structure!.a;
-    root.structure!.kind.source =
-      root.structure!.kind.local =
-      root.structure!.kind.emit =
+    delete root.childrenByName!.a;
+    root.childrenByName!.kind.source =
+      root.childrenByName!.kind.storedValue =
+      root.childrenByName!.kind.storedOutputValue =
         'b';
     prepareGateTableRound(root, context, 0);
     expect(() =>
@@ -126,15 +128,15 @@ describe('named decision-62 mutation witnesses', () => {
       engineModes.setMode('gateSelection', mode);
 
       const { root, context } = gateTableScene();
-      delete root.structure!.a;
-      root.structure!.kind.source =
-        root.structure!.kind.local =
-        root.structure!.kind.emit =
+      delete root.childrenByName!.a;
+      root.childrenByName!.kind.source =
+        root.childrenByName!.kind.storedValue =
+        root.childrenByName!.kind.storedOutputValue =
           'b';
       context.distributedInputs.set(root, {
         input: { a: 'dormant' },
-        whole: false,
-        automatic: false,
+        isWhole: false,
+        isAutomatic: false,
       });
       prepareGateTableRound(root, context, 0);
       selectChildren(root, context, {}, () => {}, true);

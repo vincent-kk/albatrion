@@ -20,8 +20,8 @@ export const disposeFieldNodeTree = <Self extends FieldNodeRecord<Self>>(
   const runtime = root.runtime;
   runtime.validationCadence?.cancel();
   runtime.validationCadence = undefined;
-  runtime.validationRun = undefined;
-  runtime.validationRunning = undefined;
+  runtime.runValidation = undefined;
+  runtime.activeValidationRun = undefined;
   runtime.revealReleaseListeners?.clear();
   settleFieldNodeValidation(root);
   releaseFieldNodeRevealHistory(root);
@@ -30,18 +30,18 @@ export const disposeFieldNodeTree = <Self extends FieldNodeRecord<Self>>(
   visitFieldNodes(
     root,
     (node) => {
-      if (node.disposed) return;
-      node.disposed = true;
-      node.interactionReset += 1;
+      if (node.isDisposed) return;
+      node.isDisposed = true;
+      node.interactionEpoch += 1;
       node.revisionLedger = new FieldNodeRevisionLedger(
         node.revisionLedger,
         FieldNodeEventType.RequestRefresh,
       );
       node.pendingDelivery = undefined;
-      node.pendingRevision = BIT_MASK_NONE;
+      node.pendingRevisionMask = BIT_MASK_NONE;
       node.pendingNonSettleDelivery = undefined;
     },
-    { owned: true },
+    { isOwned: true },
   );
   for (const subscriptions of runtime.listeners?.values() ?? [])
     subscriptions.clear();

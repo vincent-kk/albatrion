@@ -25,11 +25,11 @@ const makeNode = (
 ) =>
   ({
     runtime: {},
-    local: undefined,
+    storedValue: undefined,
     extras,
     schema: {
       schema: { type: 'object', options: { propertyOrder } },
-      typeConflict: false,
+      hasTypeConflict: false,
     },
     blueprintNode: { childEntries },
   }) as unknown as Parameters<typeof assembleObject>[0];
@@ -102,10 +102,10 @@ it.each([3, 1000])(
     let baseline = assembleObjectBaseline(baselineNode, children);
     for (const addKey of [false, true]) {
       if (addKey) extras.added = { retained: true };
-      node.local = actual;
-      baselineNode.local = baseline;
-      const hint = { incremental: false };
-      const baselineHint = { incremental: false };
+      node.storedValue = actual;
+      baselineNode.storedValue = baseline;
+      const hint = { isIncremental: false };
+      const baselineHint = { isIncremental: false };
       const next = assembleObject(node, children, [], hint);
       const baselineNext = assembleObjectBaseline(
         baselineNode,
@@ -115,7 +115,7 @@ it.each([3, 1000])(
       );
       expectEquivalent(next, baselineNext);
       expect(hint).toEqual(baselineHint);
-      expect(hint.incremental).toBe(true);
+      expect(hint.isIncremental).toBe(true);
       expect(Object.is(next, actual)).toBe(Object.is(baselineNext, baseline));
       const full = assembleObject(node, children);
       const baselineFull = assembleObjectBaseline(baselineNode, children);

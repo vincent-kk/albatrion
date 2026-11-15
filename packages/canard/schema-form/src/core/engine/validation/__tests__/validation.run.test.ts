@@ -106,7 +106,7 @@ describe('validation execution', () => {
       'root',
     ]);
     expect(
-      readFieldNodeErrors(root.structure?.name ?? root).map(
+      readFieldNodeErrors(root.childrenByName?.name ?? root).map(
         (issue) => issue.message,
       ),
     ).toEqual(['child']);
@@ -184,7 +184,7 @@ describe('validation execution', () => {
     );
     dispatchMount(root, { nested: 'value' });
     await dispatchValidate(root);
-    expect(validate).toHaveBeenCalledWith(root.emit);
+    expect(validate).toHaveBeenCalledWith(root.storedOutputValue);
   });
 
   it('18C-101 coalesces two scoped requests without losing either target', async () => {
@@ -210,8 +210,8 @@ describe('validation execution', () => {
     );
     dispatchMount(root, { a: 'a', b: 'b' });
     runtime.validationMode = ValidationMode.OnRequest;
-    const a = root.structure?.a ?? root;
-    const b = root.structure?.b ?? root;
+    const a = root.childrenByName?.a ?? root;
+    const b = root.childrenByName?.b ?? root;
     requestFieldNodeValidation(a, () => undefined);
     requestFieldNodeValidation(b, () => undefined);
     await new Promise((resolve) => setImmediate(resolve));

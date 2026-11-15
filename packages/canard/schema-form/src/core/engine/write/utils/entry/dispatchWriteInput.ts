@@ -22,10 +22,10 @@ export const dispatchWriteInput = <Self extends FieldNodeRecord<Self>>(
   input: unknown,
   option?: WriteOption,
 ): void => {
-  if (node.disposed || node.rootNode.disposed) return;
+  if (node.isDisposed || node.rootNode.isDisposed) return;
   dispatchBatch(node, () => {
     dispatchSetValue(node, input, option, FieldNodeWriteKind.Input);
-    if (node.disposed || node.rootNode.disposed) return;
+    if (node.isDisposed || node.rootNode.isDisposed) return;
     dispatchClearExternalErrors(node);
     dispatchSetState(node, EDITED_STATE_PATCH);
   });

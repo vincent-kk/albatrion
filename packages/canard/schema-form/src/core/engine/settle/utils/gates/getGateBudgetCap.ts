@@ -92,7 +92,7 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
 
 /** Count authored decisions across the finite analysis once per tree. */
 export const getTransitionBudgetCap = (blueprint: Blueprint): number =>
-  blueprint.capabilities.branchless ? 1 : getIndex(blueprint).transitionCap;
+  blueprint.capabilities.isBranchless ? 1 : getIndex(blueprint).transitionCap;
 
 /** Reuse one host ceiling until its relocated gate list changes. */
 export const getHostWheelBudgetCap = (
@@ -101,7 +101,7 @@ export const getHostWheelBudgetCap = (
   gates: readonly BlueprintGate[],
   runtime: Pick<TreeMemoStores<unknown, BlueprintGate>, 'hostBudgetCaps'>,
 ): number => {
-  if (blueprint.capabilities.branchless) return 1;
+  if (blueprint.capabilities.isBranchless) return 1;
   const cached = runtime.hostBudgetCaps?.get(host);
   if (cached && cached.gates.length === gates.length) {
     let unchanged = true;

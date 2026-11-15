@@ -73,10 +73,10 @@ export const compareArrayAppend = (
         const host = select(root);
         const children = host.children;
         const formerChildren = [...(children ?? [])];
-        const local = host.local;
-        const formerLocal = slotsOf(local);
-        const emit = host.emit;
-        const formerEmit = slotsOf(emit);
+        const value = host.storedValue;
+        const formerValue = slotsOf(value);
+        const outputValue = host.storedOutputValue;
+        const formerOutputValue = slotsOf(outputValue);
         const snapshot = root.runtime.loadSnapshot;
         const formerSnapshot = structuredClone(snapshot);
         let result: unknown;
@@ -95,22 +95,22 @@ export const compareArrayAppend = (
         expect(children ? [...children] : children).toEqual(
           children ? formerChildren : children,
         );
-        expect(slotsOf(local)).toEqual(formerLocal);
-        expect(slotsOf(emit)).toEqual(formerEmit);
+        expect(slotsOf(value)).toEqual(formerValue);
+        expect(slotsOf(outputValue)).toEqual(formerOutputValue);
         expect(snapshot).toStrictEqual(formerSnapshot);
         const current = select(root);
         history.push({
           result,
           delivered: [...delivered],
           settlement: observeArraySelection(root),
-          local: slotsOf(current.local),
-          emit: slotsOf(current.emit),
+          value: slotsOf(current.storedValue),
+          outputValue: slotsOf(current.storedOutputValue),
           defaults: defaultsOf(root),
           owners: formerChildren.map(
             (child, index) =>
               current.children?.[index] === child &&
               child.parent === current &&
-              !child.detached,
+              !child.isDetached,
           ),
         });
       }

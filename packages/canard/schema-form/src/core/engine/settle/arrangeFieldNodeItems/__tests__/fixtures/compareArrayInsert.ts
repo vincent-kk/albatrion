@@ -34,8 +34,8 @@ export const compareArrayInsert = (
     dispatchSetValue(root, next, WriteOption.Overwrite),
   );
   const observe = (run: ArrayWriteRun) => ({
-    local: slotsOf(run.root.local),
-    emit: slotsOf(run.root.emit),
+    value: slotsOf(run.root.storedValue),
+    outputValue: slotsOf(run.root.storedOutputValue),
     deliveredPaths: run.deliveredPaths,
     changes: run.changes,
   });

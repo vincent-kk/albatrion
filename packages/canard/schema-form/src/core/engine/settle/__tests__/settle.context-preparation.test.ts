@@ -34,12 +34,12 @@ it('does not prepare absent gates or virtual references on first or later writes
   const reference = vi.spyOn(references, 'getVirtualReferenceIndex');
   for (const value of ['first', 'later']) {
     writeFieldNode(
-      root.structure!.value,
+      root.childrenByName!.value,
       value,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.emit).toEqual({ value, sibling: 3 });
+    expect(root.storedOutputValue).toEqual({ value, sibling: 3 });
     expect([cap.mock.calls.length, reference.mock.calls.length]).toEqual([
       0, 0,
     ]);
@@ -77,11 +77,11 @@ it('allocates no reused scratch containers and clears only populated work lists'
     expect(scratch).toBe(cached);
     expect(allocations).toEqual({ maps: 0, sets: 0 });
     const unused = [
-      scratch.entered,
-      scratch.revived,
-      scratch.exited,
+      scratch.enteredNodes,
+      scratch.revivedNodes,
+      scratch.exitedNodes,
       scratch.pendingExits,
-      scratch.perished,
+      scratch.perishedNodes,
       scratch.selectedDeclarationIds,
       scratch.writtenInputs,
       scratch.distributedInputs,
@@ -111,7 +111,7 @@ it('allocates no reused scratch containers and clears only populated work lists'
     expect(scratch.dirtyPaths.size).toBe(0);
     expect(scratch.dirtyChildrenByParent.size).toBe(0);
     expect(scratch.changedSource.size).toBe(0);
-    expect(scratch.inUse).toBe(false);
+    expect(scratch.isInUse).toBe(false);
   }
 });
 
@@ -124,8 +124,8 @@ it('preserves output identity, payloads, revisions, commits and call-local flags
     },
   });
   loadFieldNodeAtMount(root, { value: 'before' }, WriteOption.Overwrite);
-  const leaf = root.structure!.value,
-    sibling = root.structure!.sibling;
+  const leaf = root.childrenByName!.value,
+    sibling = root.childrenByName!.sibling;
   const siblingRevision = sibling.revisionLedger;
   let previous = 'before';
   for (let index = 0; index < 2; index++) {
@@ -142,7 +142,7 @@ it('preserves output identity, payloads, revisions, commits and call-local flags
         ? WriteOption.DisableAutomaticWrites
         : WriteOption.EnableAutomaticWrites,
     );
-    expect(root.emit).toEqual({ value, sibling: 3 });
+    expect(root.storedOutputValue).toEqual({ value, sibling: 3 });
     expect(
       leaf.pendingDelivery?.payload?.[FieldNodeEventType.UpdateValue],
     ).toEqual({ previous, current: value });
@@ -162,14 +162,14 @@ it('preserves output identity, payloads, revisions, commits and call-local flags
     expect(root.runtime.settlementTrace?.rounds).toEqual([]);
     previous = value;
   }
-  const emit = root.emit;
+  const outputValue = root.storedOutputValue;
   writeFieldNode(
     leaf,
     previous,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
-  expect(root.emit).toBe(emit);
+  expect(root.storedOutputValue).toBe(outputValue);
 });
 
 it('retains preparation and cleanup for actual gates, derivation and errors', () => {
@@ -190,9 +190,13 @@ it('retains preparation and cleanup for actual gates, derivation and errors', ()
   loadFieldNodeAtMount(root, { source: 1 }, WriteOption.Overwrite);
   const cap = vi.spyOn(caps, 'getTransitionCap');
   const reference = vi.spyOn(references, 'getVirtualReferenceIndex');
-  const instance = root.structure!['source'];
+  const instance = root.childrenByName!['source'];
   writeFieldNode(instance, 2, FieldNodeWriteKind.Input, WriteOption.Overwrite);
-  expect(root.emit).toEqual({ source: 2, derived: 3, gated: 'filled' });
+  expect(root.storedOutputValue).toEqual({
+    source: 2,
+    derived: 3,
+    gated: 'filled',
+  });
   expect(cap).toHaveBeenCalled();
   expect(reference).toHaveBeenCalled();
   expect(() =>
@@ -204,7 +208,7 @@ it('retains preparation and cleanup for actual gates, derivation and errors', ()
     ),
   ).toThrow();
   const scratch = root.runtime.settlementScratch!;
-  expect(scratch.inUse).toBe(false);
+  expect(scratch.isInUse).toBe(false);
   for (const container of Object.values(scratch))
     if (container instanceof Map || container instanceof Set)
       expect(container.size).toBe(0);
@@ -217,7 +221,11 @@ it('retains preparation and cleanup for actual gates, derivation and errors', ()
     ),
   ).not.toThrow();
   expect(root.runtime.settlementScratch).toBe(scratch);
-  expect(root.emit).toEqual({ source: 3, derived: 4, gated: 'filled' });
+  expect(root.storedOutputValue).toEqual({
+    source: 3,
+    derived: 4,
+    gated: 'filled',
+  });
 });
 
 it('keeps nested scratch independent and resets an empty postorder mode', () => {
@@ -241,9 +249,9 @@ it('keeps nested scratch independent and resets an empty postorder mode', () => 
   (inner.dirtyPaths as DirtyPathSet).beginPostOrder();
   releaseSettlementScratch(inner);
   expect(first.changedSource.has('/outer')).toBe(true);
-  expect(outer.inUse).toBe(true);
-  expect(first.suppressAutomaticWrites).toBe(true);
-  expect(nested.suppressAutomaticWrites).toBe(false);
+  expect(outer.isInUse).toBe(true);
+  expect(first.isAutomaticWriteSuppressed).toBe(true);
+  expect(nested.isAutomaticWriteSuppressed).toBe(false);
   inner.dirtyPaths.add('/group/value');
   expect(inner.dirtyPaths.has('')).toBe(false);
   expect(inner.dirtyChildrenByParent.get('')?.get('/group/value')).toBe(
@@ -261,6 +269,6 @@ it('keeps nested scratch independent and resets an empty postorder mode', () => 
   expect(reused).toBe(outer);
   expect(later).not.toBe(first);
   expect(later.changedSource.size).toBe(0);
-  expect(later.suppressAutomaticWrites).toBe(false);
+  expect(later.isAutomaticWriteSuppressed).toBe(false);
   releaseSettlementScratch(reused);
 });

@@ -17,7 +17,7 @@ export const dispatchFinishInput = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   option: WriteOption = WriteOption.Overwrite,
 ): void => {
-  if (node.disposed || node.rootNode.disposed) return;
+  if (node.isDisposed || node.rootNode.isDisposed) return;
   if (!enterFieldNodeChain(node)) return;
   try {
     const runtime = node.rootNode.runtime;

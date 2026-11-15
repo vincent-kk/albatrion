@@ -48,11 +48,11 @@ it.each([
       filter.mockRestore();
     }
     expect(filterCalls).toBeLessThanOrEqual(filters);
-    expect(root.emit).toEqual({
+    expect(root.storedOutputValue).toEqual({
       open: false,
       list: new Array(slots).fill(null),
     });
-    expect(root.local).toEqual(root.emit);
+    expect(root.storedValue).toEqual(root.storedOutputValue);
     const inactive = [];
     for (let index = 0; index < slots; index++) {
       const path = '/list/' + index;
@@ -61,7 +61,7 @@ it.each([
     }
     expect(readInactiveValuesAt(root, '')).toEqual(inactive);
     dispatchSetValue(open, true);
-    expect(root.emit).toEqual({ open: true, list: values });
+    expect(root.storedOutputValue).toEqual({ open: true, list: values });
   },
 );
 
@@ -88,16 +88,16 @@ it.each([{ slots: 1 }, { slots: 32 }])(
     const open = getDispatchNode(root, 'open');
     runtime.disableAutomaticWrites = true;
     dispatchSetValue(open, false);
-    expect(root.emit).toEqual({
+    expect(root.storedOutputValue).toEqual({
       open: false,
       list: new Array(slots).fill(null),
     });
-    expect(root.local).toEqual(root.emit);
+    expect(root.storedValue).toEqual(root.storedOutputValue);
     for (let index = 0; index < slots; index++)
       expect(readRetainedSlotSource(root, '/list/' + index, 'string')).toBe(
         'kept',
       );
     dispatchSetValue(open, true);
-    expect(root.emit).toEqual({ open: true, list: values });
+    expect(root.storedOutputValue).toEqual({ open: true, list: values });
   },
 );

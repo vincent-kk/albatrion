@@ -54,7 +54,7 @@ describe('90C-01 같은 전이 라운드의 호스트 채움 자손', () => {
         default: defaults,
         items: itemSchema,
       });
-      expect(root.emit).toEqual(
+      expect(root.storedOutputValue).toEqual(
         defaults.map(({ value }) => ({
           value,
           label: 'item',
@@ -80,7 +80,7 @@ describe('90C-01 같은 전이 라운드의 호스트 채움 자손', () => {
         },
       },
     });
-    expect(root.emit).toEqual([
+    expect(root.storedOutputValue).toEqual([
       { nested: [{ value: 7, label: 'item', priority: 'control' }] },
     ]);
     expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
@@ -92,7 +92,7 @@ describe('90C-01 같은 전이 라운드의 호스트 채움 자손', () => {
       default: { items: [{ value: 8 }] },
       properties: { items: { type: 'array', items: itemSchema } },
     });
-    expect(root.emit).toEqual({
+    expect(root.storedOutputValue).toEqual({
       items: [{ value: 8, label: 'item', priority: 'control' }],
     });
     expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
@@ -105,9 +105,11 @@ describe('90C-01 같은 전이 라운드의 호스트 채움 자손', () => {
       items: itemSchema,
     };
     const option = WriteOption.Overwrite | WriteOption.DisableAutomaticWrites;
-    expect(loadGeneric(schema, undefined, option).emit).toEqual([]);
+    expect(loadGeneric(schema, undefined, option).storedOutputValue).toEqual(
+      [],
+    );
     const supplied = loadGeneric(schema, [{ value: 2 }], option);
-    expect(supplied.emit).toEqual([{ value: 2 }]);
+    expect(supplied.storedOutputValue).toEqual([{ value: 2 }]);
     expect(supplied.runtime.diagnostics).toEqual({ status: 'stable' });
   });
 
@@ -120,7 +122,7 @@ describe('90C-01 같은 전이 라운드의 호스트 채움 자손', () => {
       arrangeFieldNodeItems(root, { kind: 'push', value: { value: 4 } }),
     ).toBe(2);
     expect(root.children![0]).toBe(first);
-    expect(root.emit).toEqual([
+    expect(root.storedOutputValue).toEqual([
       { value: 3, label: 'given', priority: 'control' },
       { value: 4, label: 'item', priority: 'control' },
     ]);
@@ -161,7 +163,7 @@ describe('90C-01 같은 전이 라운드의 호스트 채움 자손', () => {
         },
       },
     });
-    expect(root.structure!.gated.source).toBe('gate');
+    expect(root.childrenByName!.gated.source).toBe('gate');
     expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
   });
 
@@ -186,8 +188,8 @@ describe('90C-01 같은 전이 라운드의 호스트 채움 자손', () => {
         },
       },
     });
-    expect(root.emit).toEqual([{ value: 3, derived: 4 }]);
-    expect(root.children![0].structure!.hidden.source).toBeUndefined();
+    expect(root.storedOutputValue).toEqual([{ value: 3, derived: 4 }]);
+    expect(root.children![0].childrenByName!.hidden.source).toBeUndefined();
     expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
   });
 
@@ -217,7 +219,7 @@ describe('90C-01 같은 전이 라운드의 호스트 채움 자손', () => {
       },
       { allow: true },
     );
-    expect(root.emit).toEqual({
+    expect(root.storedOutputValue).toEqual({
       allow: true,
       children: [
         {

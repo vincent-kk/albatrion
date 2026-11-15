@@ -14,7 +14,7 @@ export const observePresenceTree = (root: DispatchTestNode) => {
     nodes.push({
       path: node.path,
       present: true,
-      emit: node.emit,
+      outputValue: node.storedOutputValue,
       isActive: node.isActive,
       isVisible: node.isVisible,
       isReadOnly: node.isReadOnly,
@@ -27,5 +27,9 @@ export const observePresenceTree = (root: DispatchTestNode) => {
     for (let index = children.length - 1; index >= 0; index--)
       if (children[index].parent === node) pending.push(children[index]);
   }
-  return { emit: root.emit, status: root.runtime.diagnostics.status, nodes };
+  return {
+    outputValue: root.storedOutputValue,
+    status: root.runtime.diagnostics.status,
+    nodes,
+  };
 };

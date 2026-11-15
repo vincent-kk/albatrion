@@ -21,7 +21,7 @@ describe('dispatcher entry chain', () => {
     const seen: number[] = [];
     subscribeFieldNode(root, (event) => seen.push(event.type));
     dispatchSetValue(root, 'value');
-    expect(root.emit).toBe('value');
+    expect(root.storedOutputValue).toBe('value');
     expect(seen.some((type) => !!(type & FieldNodeEventType.UpdateValue))).toBe(
       true,
     );
@@ -77,8 +77,8 @@ describe('dispatcher entry chain', () => {
     expect(runtime.context).toEqual({ label: 'next' });
     dispatchSetValue(getDispatchChild(root, 'child'), 'changed');
     dispatchResetSubtree(getDispatchChild(root, 'child'));
-    expect(getDispatchChild(root, 'child').emit).toBe('initial');
+    expect(getDispatchChild(root, 'child').storedOutputValue).toBe('initial');
     dispatchResetForm(root, { child: 'new' });
-    expect(getDispatchChild(root, 'child').emit).toBe('new');
+    expect(getDispatchChild(root, 'child').storedOutputValue).toBe('new');
   });
 });

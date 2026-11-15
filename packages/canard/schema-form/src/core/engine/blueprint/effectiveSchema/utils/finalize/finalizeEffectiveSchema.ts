@@ -14,7 +14,7 @@ import { freezeEffectiveSchema } from './freezeEffectiveSchema';
  * @param state - Completed private accumulation state.
  * @param node - Static kind and shared schemaType identity.
  * @returns A public frozen schema in a development-protected envelope; static type identity survives when not narrowed or in conflict, and static nullable stays on conflict, and an
- * empty type intersection is reported by `typeConflict` instead of an enum. A virtual node's schema carries the internal type `virtual`.
+ * empty type intersection is reported by `hasTypeConflict` instead of an enum. A virtual node's schema carries the internal type `virtual`.
  */
 export const finalizeEffectiveSchema = (
   state: EffectiveSchemaState,
@@ -55,23 +55,23 @@ export const finalizeEffectiveSchema = (
   schema.type =
     node.kind === 'virtual'
       ? 'virtual'
-      : state.conflictingType || unchanged
+      : state.hasConflictingType || unchanged
         ? node.schemaType
         : types?.length === 0
           ? 'null'
           : types;
   if (schema.type === types && types !== undefined)
     ownedSchemaValues.add(types);
-  if (state.conflictingType) {
-    if (node.nullable) schema.nullable = true;
-  } else if (node.nullable || state.allowedTypes?.includes('null'))
-    schema.nullable = state.allowedTypes?.includes('null') ?? node.nullable;
-  if (state.conflictingConst) {
+  if (state.hasConflictingType) {
+    if (node.isNullable) schema.nullable = true;
+  } else if (node.isNullable || state.allowedTypes?.includes('null'))
+    schema.nullable = state.allowedTypes?.includes('null') ?? node.isNullable;
+  if (state.hasConflictingConst) {
     schema.enum = [];
     ownedSchemaValues.add(schema.enum);
   }
   return freezeEffectiveSchema({
     schema,
-    typeConflict: state.conflictingType,
+    hasTypeConflict: state.hasConflictingType,
   });
 };

@@ -48,12 +48,10 @@ export const canApplyArrayTail = <Self extends FieldNodeRecord<Self>>(
     const slot = plan.slots[index];
     if (!('from' in slot) || slot.from !== index) return false;
     const entry = getItemEntry(host.blueprintNode, index);
-    const item = host.structure?.[String(index)];
+    const item = host.childrenByName?.['' + index];
     if (
       entry
-        ? !item ||
-          item.blueprintNode !== entry.node ||
-          item.name !== String(index)
+        ? !item || item.blueprintNode !== entry.node || item.name !== '' + index
         : item !== undefined
     )
       return false;

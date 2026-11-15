@@ -29,7 +29,7 @@ export const mergeSingleStaticContribution = (
     options.mode !== 'static' ||
     options.isAtomic !== undefined ||
     options.collect !== undefined ||
-    node.nullable ||
+    node.isNullable ||
     node.kind === 'virtual' ||
     node.declarations.length !== 1 ||
     declarations.length !== 1
@@ -43,7 +43,7 @@ export const mergeSingleStaticContribution = (
     declaration.context !== 'conjunction' ||
     declaration.role !== 'declaration' ||
     declaration.scope !== 'node' ||
-    declaration.validationOnly ||
+    declaration.isValidationOnly ||
     typeof source === 'boolean' ||
     typeof source.type !== 'string' ||
     source.type !== node.schemaType ||
@@ -87,5 +87,5 @@ export const mergeSingleStaticContribution = (
     } else schema[key] = value;
   }
   schema.type = node.schemaType;
-  return freezeEffectiveSchema({ schema, typeConflict: false });
+  return freezeEffectiveSchema({ schema, hasTypeConflict: false });
 };

@@ -26,7 +26,7 @@ describe('FieldNode PR-2 surface', () => {
       'isVirtualNode',
       'mountFieldNode',
       'observeFieldNodeReports',
-      'readFieldNodeInteractionReset',
+      'readFieldNodeInteractionEpoch',
       'readFieldNodeRevealBaseline',
       'readFieldNodeRevealPolicy',
       'readFieldNodeRevealVersion',

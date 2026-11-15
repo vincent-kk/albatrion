@@ -8,15 +8,15 @@ import { omitTrailingEmptyArray } from './omitTrailingEmptyArray';
 /**
  * Project an opaque array with cached omission bits and no source mutation.
  * @param node - Terminal record supplying source kind and effective options
- * @param local - Whole source array proposed for output
+ * @param value - Whole source array proposed for output
  * @returns Emitted source or undefined when omitted by shape or options
  */
-export const projectTerminalArray: Behavior['project'] = (node, local) => {
+export const projectTerminalArray: Behavior['project'] = (node, value) => {
   if (node.source !== undefined && !isArray(node.source)) return node.source;
-  if (!isArray(local)) return undefined;
+  if (!isArray(value)) return undefined;
   const choices = getStaticChoices(node.schema);
   const projected = choices.omitTrailingEmpty
-    ? omitTrailingEmptyArray(local)
-    : local;
+    ? omitTrailingEmptyArray(value)
+    : value;
   return choices.omitEmpty ? omitEmptyArray(projected) : projected;
 };

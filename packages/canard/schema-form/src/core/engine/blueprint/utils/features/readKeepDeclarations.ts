@@ -6,9 +6,9 @@ import { isKeepControls } from './isKeepControls';
 /** Where a template's authored declarations place a possible explicit keep. */
 interface KeepDeclarations {
   /** A node-scope declaration of the template governs the template itself. */
-  readonly own: boolean;
+  readonly hasOwnKeep: boolean;
   /** A fragment-scope or `controls.fields` declaration governs the template's children. */
-  readonly child: boolean;
+  readonly hasChildKeep: boolean;
 }
 
 /**
@@ -19,16 +19,16 @@ interface KeepDeclarations {
 export const readKeepDeclarations = (
   declarations: readonly PropertyDeclaration[],
 ): KeepDeclarations => {
-  let own = false;
-  let child = false;
+  let hasOwnKeep = false;
+  let hasChildKeep = false;
   for (const declaration of declarations) {
     if (!declaration.schema || typeof declaration.schema !== 'object') continue;
     const controls = readValidatedControls(declaration.schema);
     if (isKeepControls(controls)) {
-      if (declaration.scope === 'node') own = true;
-      else child = true;
+      if (declaration.scope === 'node') hasOwnKeep = true;
+      else hasChildKeep = true;
     }
-    if (!child && hasKeepFields(controls)) child = true;
+    if (!hasChildKeep && hasKeepFields(controls)) hasChildKeep = true;
   }
-  return { own, child };
+  return { hasOwnKeep, hasChildKeep };
 };

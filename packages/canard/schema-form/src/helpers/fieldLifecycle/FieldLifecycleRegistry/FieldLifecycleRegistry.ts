@@ -10,7 +10,7 @@ import type { FieldLifecycleHandler } from '../types/fieldLifecycle';
 /** Cancellation remains visible after the queue is detached from its Map. */
 interface Entry {
   /** False after cancellation or execution. */
-  active: boolean;
+  isActive: boolean;
   /** Pure action producer owned by this reservation. */
   handler: FieldLifecycleHandler;
 }
@@ -24,7 +24,7 @@ export class FieldLifecycleRegistry {
     [FieldLifecycle.Render]: new Map<FieldNode, Entry[]>(),
   };
   /** Updated on queue changes so idle consumers perform only a property read. */
-  private pendingMask = BIT_MASK_NONE;
+  private storedPendingMask = BIT_MASK_NONE;
   /** Consumer-owned nonthrowing error sink. */
   private readonly onHandlerError: Fn<[error: unknown, node: FieldNode]>;
 
@@ -34,8 +34,8 @@ export class FieldLifecycleRegistry {
   }
 
   /** Bitmask of points with queued handlers; zero on the idle path. */
-  get pending(): number {
-    return this.pendingMask;
+  get pendingMask(): number {
+    return this.storedPendingMask;
   }
 
   /**
@@ -63,16 +63,16 @@ export class FieldLifecycleRegistry {
     const map = this.queues[lifecycle];
     let queue = map.get(node);
     if (!queue) map.set(node, (queue = []));
-    const entry: Entry = { active: true, handler };
+    const entry: Entry = { isActive: true, handler };
     queue.push(entry);
-    this.pendingMask |= lifecycle;
+    this.storedPendingMask |= lifecycle;
     return () => {
-      if (!entry.active) return;
-      entry.active = false;
+      if (!entry.isActive) return;
+      entry.isActive = false;
       if (map.get(node) !== queue) return;
       queue.splice(queue.indexOf(entry), 1);
       if (queue.length === 0) map.delete(node);
-      if (map.size === 0) this.pendingMask &= ~lifecycle;
+      if (map.size === 0) this.storedPendingMask &= ~lifecycle;
     };
   }
 
@@ -87,12 +87,12 @@ export class FieldLifecycleRegistry {
     const queue = map.get(node);
     if (!queue) return FieldLifecycleAction.None;
     map.delete(node);
-    if (map.size === 0) this.pendingMask &= ~lifecycle;
+    if (map.size === 0) this.storedPendingMask &= ~lifecycle;
     const event = Object.freeze({ node, type: lifecycle });
     let action = FieldLifecycleAction.None;
     for (const entry of queue) {
-      if (!entry.active) continue;
-      entry.active = false;
+      if (!entry.isActive) continue;
+      entry.isActive = false;
       try {
         action |= entry.handler(event);
       } catch (error) {

@@ -29,7 +29,7 @@ export const resolveNodeTypes = (
   allowed: readonly SchemaTypeName[];
   declarations: readonly PropertyDeclaration[];
 }[] => {
-  const fixed = context.capabilities.branchless
+  const fixed = context.capabilities.isBranchless
     ? declarations
     : filterArray(
         declarations,
@@ -71,7 +71,7 @@ export const resolveNodeTypes = (
         fixed[0].schema,
         fixed[0].schemaPath,
       );
-    if (context.capabilities.branchless)
+    if (context.capabilities.isBranchless)
       return [{ allowed: allowed!, declarations }];
     const mask = foldAllowedTypes(allowed!);
     for (const declaration of declarations) {

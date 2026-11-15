@@ -11,6 +11,11 @@ import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { markSlotChange } from './markSlotChange';
 
+/** Annotates the lazily created `inactiveSlots`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlots<Self> = Map<BlueprintChildEntry, Self>;
+/** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
+
 /**
  * Move retained item bindings, including foreign declarations, in two phases without path collisions.
  * @param host - Array whose live items have not yet published their new structure
@@ -57,8 +62,15 @@ export const rekeyArraySlotBindings = <Self extends FieldNodeRecord<Self>>(
   }
   for (const { entry, instance, overlay } of pending) {
     markSlotChange(host, entry, undefined, context);
-    if (instance) (host.inactiveSlots ??= new Map()).set(entry, instance);
-    if (overlay) (host.inactiveSlotOverlays ??= new Map()).set(entry, overlay);
+    if (instance) {
+      const slots: InactiveSlots<Self> = (host.inactiveSlots ??= new Map());
+      slots.set(entry, instance);
+    }
+    if (overlay) {
+      const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
+        new Map());
+      overlays.set(entry, overlay);
+    }
   }
   if (
     host.inactiveSlots?.size ||

@@ -36,7 +36,7 @@ describe('gate-form-one-key confirmation wheel counts', () => {
     const evaluating = vi.spyOn(gates, 'evaluateGate');
     try {
       writeFieldNode(
-        root.structure!.sw,
+        root.childrenByName!.sw,
         2,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
@@ -123,8 +123,8 @@ describe('gate-form-one-key confirmation wheel counts', () => {
       )!;
       const previousMode = engineModes.gateWheel;
       const selecting = vi.spyOn(selection, 'selectChildren');
-      const measurements: { wheels: number; skipped: number }[] = [];
-      let previousSkips = gateWheelEvaluation.skipped;
+      const measurements: { wheels: number; skipCount: number }[] = [];
+      let previousSkips = gateWheelEvaluation.skipCount;
       try {
         runGateSelectionCase(
           fixture,
@@ -135,19 +135,19 @@ describe('gate-form-one-key confirmation wheel counts', () => {
             measurements.push({
               wheels: selecting.mock.calls.filter(([node]) => node.path === '')
                 .length,
-              skipped: gateWheelEvaluation.skipped - previousSkips,
+              skipCount: gateWheelEvaluation.skipCount - previousSkips,
             });
             selecting.mockClear();
-            previousSkips = gateWheelEvaluation.skipped;
+            previousSkips = gateWheelEvaluation.skipCount;
           },
         );
-        expect(measurements[0].skipped).toBe(0);
+        expect(measurements[0].skipCount).toBe(0);
         if (prefix.startsWith('S6')) {
-          expect(measurements[1].skipped).toBe(0);
+          expect(measurements[1].skipCount).toBe(0);
           expect(measurements[1].wheels).toBe(
             prefix.includes('unrelated') ? 0 : 2,
           );
-        } else expect(measurements[1].skipped).toBeGreaterThan(0);
+        } else expect(measurements[1].skipCount).toBeGreaterThan(0);
       } finally {
         engineModes.setMode('gatePredicate', previousPredicate);
         selecting.mockRestore();
@@ -161,18 +161,20 @@ describe('gate-form-one-key confirmation wheel counts', () => {
       item.name.startsWith('S6 validator'),
     )!;
     const previousMode = engineModes.gateWheel;
-    const beforeSkips = gateWheelEvaluation.skipped;
-    const beforeConfirmations = gateWheelEvaluation.confirmations;
+    const beforeSkips = gateWheelEvaluation.skipCount;
+    const beforeConfirmations = gateWheelEvaluation.confirmationCount;
     try {
       const emptyChild = { ...fixture, input: { kind: 'y' } };
       runGateSelectionCase(emptyChild, () => {
         engineModes.setMode('gateWheel', 'skip');
       });
-      expect(gateWheelEvaluation.skipped - beforeSkips).toBe(1);
+      expect(gateWheelEvaluation.skipCount - beforeSkips).toBe(1);
       runGateSelectionCase(emptyChild, () => {
         engineModes.setMode('gateWheel', 'shadow');
       });
-      expect(gateWheelEvaluation.confirmations - beforeConfirmations).toBe(1);
+      expect(gateWheelEvaluation.confirmationCount - beforeConfirmations).toBe(
+        1,
+      );
       expect(gateWheelEvaluation.nonNoop).toBe(0);
     } finally {
       engineModes.setMode('gateWheel', previousMode);

@@ -29,14 +29,15 @@ export const finalizeDeriveTrace = <Self extends FieldNodeRecord<Self>>(
             node = undefined;
             break;
           }
-          const children: Nullable<Dictionary<Self>> = node?.structure ?? null;
+          const children: Nullable<Dictionary<Self>> =
+            node?.childrenByName ?? null;
           node =
             children && hasOwnProperty(children, name)
               ? children[name]
               : undefined;
           if (!node) break;
         }
-        exists = !!(node && !node.detached);
+        exists = !!(node && !node.isDetached);
         live.set(entry.targetPath, exists);
       }
       if (!exists) round[index] = { ...entry, result: 'withdrawn' };

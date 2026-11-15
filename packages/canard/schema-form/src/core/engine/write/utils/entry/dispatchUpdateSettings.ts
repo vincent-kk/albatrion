@@ -27,16 +27,16 @@ export const dispatchUpdateSettings = <Self extends FieldNodeRecord<Self>>(
   > & { errorVisibility?: unknown },
   onModeChange?: Fn,
 ): void => {
-  if (root.disposed) return;
+  if (root.isDisposed) return;
   const runtime = root.runtime;
   if (
     runtime.entryDepth ||
     runtime.chainRoot ||
     runtime.chainErrors ||
-    runtime.flushingQueuedEvents ||
-    runtime.reportingErrors
+    runtime.isFlushingQueuedEvents ||
+    runtime.isReportingErrors
   ) {
-    runtime.pendingSettings = () =>
+    runtime.applyPendingSettings = () =>
       dispatchUpdateSettings(root, settings, onModeChange);
     return;
   }

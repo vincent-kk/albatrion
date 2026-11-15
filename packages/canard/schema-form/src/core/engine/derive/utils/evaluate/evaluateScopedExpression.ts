@@ -9,7 +9,7 @@ export interface ScopedExpressionResult {
   /** Expression result, including undefined when that was returned. */
   readonly value: unknown;
   /** Whether the authored expression threw. */
-  readonly threw: boolean;
+  readonly hasThrown: boolean;
   /** Original thrown value retained for the settlement error. */
   readonly cause?: unknown;
 }
@@ -28,7 +28,7 @@ export const evaluateScopedExpression = <Self extends FieldNodeRecord<Self>>(
   rule: DeriveRule,
   cache: Map<string, ScopedExpressionResult>,
 ): ScopedExpressionResult => {
-  if (!rule.expression) return { value: rule.literal, threw: false };
+  if (!rule.expression) return { value: rule.literal, hasThrown: false };
   const key = JSON.stringify([host.path, rule.schemaPath]);
   const cached = cache.get(key);
   if (cached) return cached;
@@ -40,10 +40,10 @@ export const evaluateScopedExpression = <Self extends FieldNodeRecord<Self>>(
           readDeriveDependency(root, host.path, dependency),
         ),
       ),
-      threw: false,
+      hasThrown: false,
     };
   } catch (cause) {
-    result = { value: undefined, threw: true, cause };
+    result = { value: undefined, hasThrown: true, cause };
   }
   cache.set(key, result);
   return result;

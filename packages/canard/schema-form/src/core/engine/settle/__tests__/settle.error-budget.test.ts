@@ -39,7 +39,7 @@ describe('expression failures with a derive budget', () => {
       'SCHEMA_FORM_ERROR.EXPRESSION_THREW',
       'SCHEMA_FORM_ERROR.BUDGET_EXCEEDED',
     ]);
-    expect(root.emit).toEqual({ left: 0, right: 0 });
+    expect(root.storedOutputValue).toEqual({ left: 0, right: 0 });
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'expression',

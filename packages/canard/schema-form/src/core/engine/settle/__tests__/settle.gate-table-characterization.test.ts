@@ -9,7 +9,7 @@ import { gateSelectionCases } from './fixtures/gateSelectionCases';
 
 /** Narrow observation fields used to prove that the critical scenes really execute. */
 interface GateTableObservation {
-  nodes: { path: string; local: unknown }[];
+  nodes: { path: string; storedValue: unknown }[];
   failure: unknown;
   extra: {
     hosts: { path: string; identity: number }[];
@@ -151,10 +151,12 @@ describe('decision-62 pre-extraction gate-table characterization', () => {
       )!;
       const after = final.extra.hosts.find((node) => node.path === '/pb')!;
       expect(final.failure).toEqual({ $undefined: true });
-      expect(final.nodes.find((node) => node.path === '')?.local).toEqual({
-        kind: 'b',
-        pb: 'kept',
-      });
+      expect(final.nodes.find((node) => node.path === '')?.storedValue).toEqual(
+        {
+          kind: 'b',
+          pb: 'kept',
+        },
+      );
       expect(
         final.extra.revivals.filter((path) => path === '/pb').length,
       ).toBeGreaterThanOrEqual(1);

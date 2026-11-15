@@ -25,7 +25,7 @@ describe('candidate exit policy ownership', () => {
     dispatchSetValue(getDispatchNode(root, 'b'), false);
     expect(readRetainedSlotSource(root, '/v/x', 'number')).toBe(5);
     dispatchSetValue(getDispatchNode(root, 'a'), true);
-    expect(getDispatchNode(root, 'v').local).toEqual({ x: 5 });
+    expect(getDispatchNode(root, 'v').storedValue).toEqual({ x: 5 });
   });
 
   it('array clearing isolates siblings and honors owned latent retain overrides', () => {
@@ -83,7 +83,7 @@ describe('candidate exit policy ownership', () => {
       expect(readRetainedSlotSource(root, '/v/0', 'number')).toBe(5);
       dispatchSetValue(getDispatchNode(root, 'a'), true);
       expect(getDispatchNode(root, 'v', '0').source).toBe(5);
-      expect(getDispatchNode(root, 'v').local).toEqual({ '0': 5 });
+      expect(getDispatchNode(root, 'v').storedValue).toEqual({ '0': 5 });
     },
   );
 });

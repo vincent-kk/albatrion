@@ -43,7 +43,7 @@ it.each(['table', 'verify'] as const)(
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     writeFieldNode(
-      root.structure!.type,
+      root.childrenByName!.type,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -51,9 +51,9 @@ it.each(['table', 'verify'] as const)(
     expect(
       getHostDerived(root.blueprintNode).directChildSelectionPlan,
     ).toBeNull();
-    const structure = root.structure!;
+    const childrenByName = root.childrenByName!;
     const children = root.children;
-    const names = Object.keys(structure);
+    const names = Object.keys(childrenByName);
     const original = reuser.createStaticEntryReuser;
     let callbacks = 0;
     vi.spyOn(reuser, 'createStaticEntryReuser').mockImplementation(
@@ -72,11 +72,11 @@ it.each(['table', 'verify'] as const)(
     const values = Object.values;
     let fullEnumerations = 0;
     vi.spyOn(Object, 'values').mockImplementation((object) => {
-      if (object === root.structure) fullEnumerations++;
+      if (object === root.childrenByName) fullEnumerations++;
       return values(object);
     });
     writeFieldNode(
-      root.structure!.type,
+      root.childrenByName!.type,
       'a',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -96,10 +96,10 @@ it.each(['table', 'verify'] as const)(
       copies: 0,
       fullEnumerations: 0,
     });
-    expect(root.structure).toBe(structure);
+    expect(root.childrenByName).toBe(childrenByName);
     expect(root.children).toBe(children);
-    expect(Object.keys(structure)).toEqual(names);
-    expect(root.local).toMatchObject({
+    expect(Object.keys(childrenByName)).toEqual(names);
+    expect(root.storedValue).toMatchObject({
       type: 'a',
       x: 'a',
       y: 'a',
@@ -127,29 +127,34 @@ it('publishes ordinary shapes in numeric-key order with reserved static names', 
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   writeFieldNode(
-    root.structure!.kind,
+    root.childrenByName!.kind,
     true,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
-  const structure = root.structure!;
-  const names = Object.keys(structure);
+  const childrenByName = root.childrenByName!;
+  const names = Object.keys(childrenByName);
   const children = [...root.children!];
   writeFieldNode(
-    root.structure!.kind,
+    root.childrenByName!.kind,
     false,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
-  expect(Object.keys(root.structure!)).toEqual(['1', '2', 'kind', '__proto__']);
+  expect(Object.keys(root.childrenByName!)).toEqual([
+    '1',
+    '2',
+    'kind',
+    '__proto__',
+  ]);
   expect(root.children!.map((child) => child.name)).toEqual([
     '1',
     '2',
     'kind',
     '__proto__',
   ]);
-  expect(hasOwnProperty(root.structure!, '__proto__')).toBe(true);
-  expect(Object.getPrototypeOf(root.structure)).toBeNull();
-  expect(Object.keys(structure)).toEqual(names);
+  expect(hasOwnProperty(root.childrenByName!, '__proto__')).toBe(true);
+  expect(Object.getPrototypeOf(root.childrenByName)).toBeNull();
+  expect(Object.keys(childrenByName)).toEqual(names);
   expect(children).not.toEqual(root.children);
 });

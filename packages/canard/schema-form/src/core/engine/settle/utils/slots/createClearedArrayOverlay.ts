@@ -4,10 +4,17 @@ import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
+import type { CompactedSlotSources } from '../../types/slots';
 import { getSlotEntries } from './getSlotEntries';
 import { getSlotSource } from './getSlotSource';
 import { materializeKeptSlotOverlay } from './materializeKeptSlotOverlay';
 import { readSlotSourceTree } from './readSlotSourceTree';
+
+/** Annotates the lazily created `compactedSlotSources`; an argument-less `new Map()` would be `Map<any, any>`. */
+type CompactedSlotSourcesMap<Self extends FieldNodeRecord<Self>> = Map<
+  Self,
+  CompactedSlotSources<Self>
+>;
 
 /** Recursive exit resolver supplied by the owner to keep dependencies acyclic. */
 type ResolveExit<Self extends FieldNodeRecord<Self>> = Fn<
@@ -59,37 +66,42 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
         true,
         true,
         child.overlay,
-        node.structure?.[entry.name] === child.instance ? context : undefined,
+        node.childrenByName?.[entry.name] === child.instance
+          ? context
+          : undefined,
         sourceContext,
       );
       if (!result.hasSource) continue;
       const candidates = getItemEntries(node.blueprintNode, source.length);
       const target = candidates.find(
         (candidate) => candidate.node === entry.node,
-      ) ?? { ...entry, name: String(source.length) };
+      ) ?? { ...entry, name: '' + source.length };
       sources.set(target, child.instance);
       children.set(
         target,
         materializeKeptSlotOverlay(entry.node, child.instance, result.overlay),
       );
-      if (!retained || node.structure?.[name] === child.instance)
+      if (!retained || node.childrenByName?.[name] === child.instance)
         value = readSlotSourceTree(entry.node, child.instance, result.overlay);
       retained = true;
     } while (position < entries.length && entries[position].name === name);
     if (retained) source.push(value);
   }
-  if (sourceContext && source.length)
-    (sourceContext.compactedSlotSources ??= new Map()).set(node, {
+  if (sourceContext && source.length) {
+    const slotSources: CompactedSlotSourcesMap<Self> =
+      (sourceContext.compactedSlotSources ??= new Map());
+    slotSources.set(node, {
       itemCount: source.length,
       sources,
       overlays: children,
     });
+  }
   return {
-    replace: true,
+    isWhole: true,
     source: source.length ? Object.freeze(source) : undefined,
     extras: undefined,
     itemCount: source.length,
-    packedArrayInput: true,
+    isPackedArrayInput: true,
     children,
   };
 };

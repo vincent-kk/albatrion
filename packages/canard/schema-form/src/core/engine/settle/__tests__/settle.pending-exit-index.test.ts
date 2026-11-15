@@ -28,10 +28,10 @@ describe('both pending-exit index layers at all five maintenance sites', () => {
   it('V4 selectChildren exit registration equals a recomputation', () => {
     const { root, context } = gateTableScene();
     engineModes.setMode('gateSelection', 'off');
-    const prior = { ...root.structure };
-    root.structure!.kind.source =
-      root.structure!.kind.local =
-      root.structure!.kind.emit =
+    const prior = { ...root.childrenByName };
+    root.childrenByName!.kind.source =
+      root.childrenByName!.kind.storedValue =
+      root.childrenByName!.kind.storedOutputValue =
         'b';
     selectChildren(root, context, prior, () => {}, true);
     expect(context.pendingExits.size).toBe(1);
@@ -40,27 +40,27 @@ describe('both pending-exit index layers at all five maintenance sites', () => {
 
   it('selectEntryStep revival deletes both the child count and empty host bucket', () => {
     const { root, context } = gateTableScene();
-    const child = root.structure!.a;
+    const child = root.childrenByName!.a;
     context.pendingExits.set('["/a","string"]', child);
     updatePendingExitIndex(context, '/a', 1);
     expectPendingExitIndex(context);
-    delete root.structure!.a;
+    delete root.childrenByName!.a;
     selectChildren(root, context, {}, () => {}, true);
-    expect(context.revived.has(child)).toBe(true);
+    expect(context.revivedNodes.has(child)).toBe(true);
     expect(context.pendingExits.size).toBe(0);
     expectPendingExitIndex(context);
   });
 
   it('primeHost baseline revival removes both layers', () => {
     const { root, context } = gateTableScene();
-    const prior = { ...root.structure };
+    const prior = { ...root.childrenByName };
     const child = prior.common;
     delete prior.common;
-    delete root.structure!.common;
+    delete root.childrenByName!.common;
     context.pendingExits.set('["/common","string"]', child);
     updatePendingExitIndex(context, '/common', 1);
     primeHost(root, prior, context);
-    expect(root.structure!.common).toBe(child);
+    expect(root.childrenByName!.common).toBe(child);
     expect(context.pendingExits.size).toBe(0);
     expectPendingExitIndex(context);
   });
@@ -71,9 +71,9 @@ describe('both pending-exit index layers at all five maintenance sites', () => {
       items: { type: 'object', properties: { a: { type: 'string' } } },
     });
     loadFieldNodeAtMount(root, [{ a: 'A' }], WriteOption.Overwrite);
-    const item = root.structure!['0'];
-    const child = item.structure!.a;
-    delete item.structure!.a;
+    const item = root.childrenByName!['0'];
+    const child = item.childrenByName!.a;
+    delete item.childrenByName!.a;
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(
       root,
@@ -84,8 +84,8 @@ describe('both pending-exit index layers at all five maintenance sites', () => {
     context.pendingExits.set('["/0/a","string"]', child);
     updatePendingExitIndex(context, '/0/a', 1);
     expectPendingExitIndex(context);
-    context.perished.add(item);
-    delete root.structure!['0'];
+    context.perishedNodes.add(item);
+    delete root.childrenByName!['0'];
     root.children = [];
     root.itemCount = 0;
     finalizePerished(context);
@@ -96,7 +96,7 @@ describe('both pending-exit index layers at all five maintenance sites', () => {
   it('scratch release clears and reuses the lazily created two-layer index', () => {
     const { root, scratch, context } = gateTableScene();
     expect(context.pendingExitPaths).toBeUndefined();
-    context.pendingExits.set('["/a","string"]', root.structure!.a);
+    context.pendingExits.set('["/a","string"]', root.childrenByName!.a);
     updatePendingExitIndex(context, '/a', 1);
     const index = context.pendingExitPaths;
     expect(index).toBe(scratch.pendingExitPaths);
@@ -121,7 +121,7 @@ describe('both pending-exit index layers at all five maintenance sites', () => {
       ['["/a","number"]', '/a'],
       ['["/other/a","string"]', '/other/a'],
     ]) {
-      context.pendingExits.set(key, root.structure!.a);
+      context.pendingExits.set(key, root.childrenByName!.a);
       updatePendingExitIndex(context, path, 1);
       expectPendingExitIndex(context);
     }

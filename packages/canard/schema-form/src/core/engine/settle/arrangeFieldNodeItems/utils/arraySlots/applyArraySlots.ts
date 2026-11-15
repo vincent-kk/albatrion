@@ -5,6 +5,7 @@ import type { Dictionary } from '@aileron/declare';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntries } from '../../../../blueprint';
+import type { BlueprintChildEntry } from '../../../../blueprint';
 import { visitFieldNodes } from '../../../../navigation';
 import type {
   ArrayArrangePlan,
@@ -33,12 +34,20 @@ import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 import { applyArrayTail } from './applyArrayTail';
 import { canApplyArrayTail } from './canApplyArrayTail';
 
+/** Annotates the lazily created `inactiveSlots`; an argument-less `new Map()` would be `Map<any, any>`. */
+type InactiveSlots<Self> = Map<BlueprintChildEntry, Self>;
+/** Annotates the lazily created `rekeyedArrayMoves`; an argument-less `new Map()` would be `Map<any, any>`. */
+type RekeyedArrayMoves<Self> = Map<
+  Self,
+  readonly { previous: string; current?: string }[]
+>;
+
 /**
  * Apply a branch plan before calculation while paths are free to change.
  * The host's source tree is composed only when a slot reads it: extras, a whole source, or a removed or retained slot without a live node.
  * @param host - Live array occurrence whose positions the plan replaces
  * @param plan - Pure source-position proposal from the array behavior
- * @param context - One settlement's entered, perished, and changed-path facts
+ * @param context - One settlement's `enteredNodes`, `perishedNodes` and changed-path facts
  * @returns Last committed value of a removed position, if requested
  */
 export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
@@ -48,7 +57,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   if (canApplyArrayTail(host, plan)) return applyArrayTail(host, plan, context);
   const oldCount = host.itemCount;
-  const oldItems = host.structure ?? {};
+  const oldItems = host.childrenByName ?? {};
   // With an item template and no tuple positions, extras or whole source, only a slot without a live node reads source.
   let sourceSlots =
     host.source === undefined &&
@@ -61,12 +70,12 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   const oldSnapshot = isArray(snapshot) ? snapshot : [];
   const removedIndex =
     plan.result.source === 'removed' ? plan.result.index : -1;
-  const removedItem = oldItems[String(removedIndex)];
+  const removedItem = oldItems['' + removedIndex];
   const removed =
     removedIndex < 0
       ? undefined
       : removedItem
-        ? removedItem.local
+        ? removedItem.storedValue
         : (sourceSlots ??= readSourceSlots(host, context))[removedIndex];
   const registry = getGateRegistry(host.runtime);
   if (context.hasGates)
@@ -75,7 +84,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   const nextSource: unknown[] = [];
   const nextSnapshot: unknown[] = [];
   const reused = new Set<Self>();
-  const created: { node: Self; value: unknown; moved: boolean }[] = [];
+  const created: { node: Self; value: unknown; isMoved: boolean }[] = [];
   let deferred = false;
   const destinations = new Map<number, number>();
   const candidateMoves = host.blueprintNode.hasCandidateDescendants === true;
@@ -90,29 +99,29 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       from !== undefined && candidateMoves
         ? getItemEntries(host.blueprintNode, from)
         : undefined;
-    let moved = false;
+    let isMoved = false;
     if (from !== undefined && candidateMoves) {
-      moved = candidates.length > 1;
-      if (!moved)
+      isMoved = candidates.length > 1;
+      if (!isMoved)
         for (const candidate of candidates)
           if (candidate.node.hasCandidateDescendants) {
-            moved = true;
+            isMoved = true;
             break;
           }
-      if (!moved && sourceCandidates) {
-        moved = sourceCandidates.length > 1;
-        if (!moved)
+      if (!isMoved && sourceCandidates) {
+        isMoved = sourceCandidates.length > 1;
+        if (!isMoved)
           for (const candidate of sourceCandidates)
             if (candidate.node.hasCandidateDescendants) {
-              moved = true;
+              isMoved = true;
               break;
             }
       }
     }
-    if (from !== undefined && moved) destinations.set(from, index);
+    if (from !== undefined && isMoved) destinations.set(from, index);
     const entry = candidates[0];
-    if (!entry && !moved) continue;
-    const old = from === undefined ? undefined : oldItems[String(from)];
+    if (!entry && !isMoved) continue;
+    const old = from === undefined ? undefined : oldItems['' + from];
     if (old) {
       let compatible = false;
       for (const candidate of candidates)
@@ -121,9 +130,9 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
           break;
         }
       if (compatible) {
-        nextItems[String(index)] = old;
+        nextItems['' + index] = old;
         reused.add(old);
-        if (from !== undefined && !moved) destinations.set(from, index);
+        if (from !== undefined && !isMoved) destinations.set(from, index);
         continue;
       }
     }
@@ -131,12 +140,13 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       from === undefined || sourceSlots
         ? value
         : (sourceSlots = readSourceSlots(host, context))[from];
-    if (from !== undefined && !old && !moved) destinations.set(from, index);
-    if (old && moved) {
+    if (from !== undefined && !old && !isMoved) destinations.set(from, index);
+    if (old && isMoved) {
       const binding = getRetainedChildEntry(host, old.name, old.blueprintNode);
       if (binding) {
         markSlotChange(host, binding, old, context);
-        (host.inactiveSlots ??= new Map()).set(binding, old);
+        const slots: InactiveSlots<Self> = (host.inactiveSlots ??= new Map());
+        slots.set(binding, old);
       }
     }
     if (!entry) continue;
@@ -146,16 +156,12 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       continue;
     }
     const node = createChildNode(host, entry);
-    nextItems[String(index)] = node;
-    created.push({
-      node,
-      value: source,
-      moved,
-    });
+    nextItems['' + index] = node;
+    created.push({ node, value: source, isMoved });
   }
   const moves: ArrayPathMove[] = [];
   for (let index = 0; index < oldCount; index++) {
-    const item = oldItems[String(index)];
+    const item = oldItems['' + index];
     const current = destinations.get(index);
     moves.push({
       previous: appendSegment(host.path, index),
@@ -163,24 +169,27 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
         current === undefined ? undefined : appendSegment(host.path, current),
     });
     if (!item || reused.has(item)) continue;
-    context.perished.add(item);
+    context.perishedNodes.add(item);
     visitFieldNodes(
       item,
       (departing) => {
         if (!departing.runtime.detachedReads?.has(departing))
           captureDetachedFieldNodeReads(departing, {
-            emit: context.previousEmit,
+            outputValue: context.previousOutputValue,
             context: context.previousContext,
             schema: departing.schema.schema,
           });
       },
-      { owned: true },
+      { isOwned: true },
     );
   }
   rekeyArraySlotBindings(host, moves, context);
   rekeyArrayRuntimePaths(host.runtime, host.path, moves);
-  if (candidateMoves)
-    (context.rekeyedArrayMoves ??= new Map()).set(host, moves);
+  if (candidateMoves) {
+    const arrayMoves: RekeyedArrayMoves<Self> = (context.rekeyedArrayMoves ??=
+      new Map());
+    arrayMoves.set(host, moves);
+  }
   for (const [name, item] of Object.entries(nextItems)) {
     if (!reused.has(item) || item.name === name) continue;
     visitFieldNodes(
@@ -208,13 +217,13 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
           context.shapeDirtyPaths.add(descendant.path);
         context.changedNodes.add(descendant);
       },
-      { owned: true },
+      { isOwned: true },
     );
   }
   host.itemCount = plan.slots.length;
   host.source = undefined;
   host.extras = arrayExtras(host, nextSource);
-  host.structure = nextItems;
+  host.childrenByName = nextItems;
   host.children = captureFieldNodeChange(
     host,
     'children',
@@ -228,18 +237,18 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   if (deferred) {
     const distribution: Distribution = {
       input: nextSource,
-      whole: false,
-      automatic: false,
+      isWhole: false,
+      isAutomatic: false,
     };
     context.distributedInputs.set(host, {
       ...distribution,
-      preserveLatent: true,
+      shouldPreserveLatent: true,
     });
   }
-  for (const { node, value, moved } of created) {
-    context.entered.add(node);
+  for (const { node, value, isMoved } of created) {
+    context.enteredNodes.add(node);
 
-    if (moved) replayMovedSource(node, value, context);
+    if (isMoved) replayMovedSource(node, value, context);
     else markWrite(node, value, context);
   }
   if (context.hasGates)
@@ -249,7 +258,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
         (node) => {
           registry.register(node);
         },
-        { owned: true },
+        { isOwned: true },
       );
   host.runtime.loadSnapshot = setLoadValue(
     host.runtime.loadSnapshot,

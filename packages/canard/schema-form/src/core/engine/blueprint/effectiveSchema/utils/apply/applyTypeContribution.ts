@@ -35,5 +35,5 @@ export const applyTypeContribution = (
       },
       options,
     );
-  state.conflictingType = true;
+  state.hasConflictingType = true;
 };

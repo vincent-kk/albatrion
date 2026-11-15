@@ -1,44 +1,44 @@
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
 import type { FieldNodeRecord } from '../../../../record';
-import { keepRootEmit } from '../../../utils/output/keepRootEmit';
+import { keepRootOutputValue } from '../../../utils/output/keepRootOutputValue';
 
 /**
  * Assemble and project once, with separate fixed-kind behavior call sites.
  * @param node - First-load occurrence whose children have completed
- * @returns Nothing; eager local/emit values are ready before delivery
+ * @returns Nothing; eager stored and output values are ready before delivery
  */
 export const assembleStaticFirstNode = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): void => {
   const children = node.children ?? EMPTY_ARRAY;
-  let local: unknown;
-  let emit: unknown;
+  let value: unknown;
+  let outputValue: unknown;
   switch (node.behavior.type) {
     case 'object':
-      local = node.behavior.assemble(node, children);
-      emit = node.behavior.project(node, local);
+      value = node.behavior.assemble(node, children);
+      outputValue = node.behavior.project(node, value);
       break;
     case 'array':
-      local = node.behavior.assemble(node, children);
-      emit = node.behavior.project(node, local);
+      value = node.behavior.assemble(node, children);
+      outputValue = node.behavior.project(node, value);
       break;
     case 'string':
-      local = node.behavior.assemble(node, children);
-      emit = node.behavior.project(node, local);
+      value = node.behavior.assemble(node, children);
+      outputValue = node.behavior.project(node, value);
       break;
     case 'number':
-      local = node.behavior.assemble(node, children);
-      emit = node.behavior.project(node, local);
+      value = node.behavior.assemble(node, children);
+      outputValue = node.behavior.project(node, value);
       break;
     case 'boolean':
-      local = node.behavior.assemble(node, children);
-      emit = node.behavior.project(node, local);
+      value = node.behavior.assemble(node, children);
+      outputValue = node.behavior.project(node, value);
       break;
     case 'null':
-      local = node.behavior.assemble(node, children);
-      emit = node.behavior.project(node, local);
+      value = node.behavior.assemble(node, children);
+      outputValue = node.behavior.project(node, value);
   }
-  node.local = local;
-  node.emit = keepRootEmit(node, local, emit);
+  node.storedValue = value;
+  node.storedOutputValue = keepRootOutputValue(node, value, outputValue);
 };

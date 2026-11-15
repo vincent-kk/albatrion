@@ -18,7 +18,7 @@
 
 첫 리스너 전에 전체 리비전과 payload·전역 상태·커밋 번호를 확정합니다. 자식 우선 계산과 문서 순서 배달은 다른 순서이므로 배달 자리를 진입 때 예약하고 확정 뒤 기존 디스패처가 전달하게 합니다. 정착 도중 리스너·보고기를 동기로 부르지 않습니다. 자격 확정 뒤 커밋 하나만 예약하고, 실행이 시작된 뒤 실패해도 다른 마운트 경로로 다시 시도하지 않습니다.
 
-입력 loadSnapshot과 출력 loadBaseline은 다릅니다. 최종 root.emit 기준은 커밋·전역 상태 확정 뒤 보관하며, 자세한 기준 수명은 부모의 VALUE-044를 따릅니다. 정상·예외 종료 모두 호출 소유 준비물을 해제하고 revision 전이 메모를 진입 전 상태로 복원하여 재진입이 이전 마운트의 증인을 사용하지 않게 합니다.
+입력 loadSnapshot과 출력 loadBaseline은 다릅니다. 최종 `root.storedOutputValue` 기준은 커밋·전역 상태 확정 뒤 보관하며, 자세한 기준 수명은 부모의 VALUE-044를 따릅니다. 정상·예외 종료 모두 호출 소유 준비물을 해제하고 revision 전이 메모를 진입 전 상태로 복원하여 재진입이 이전 마운트의 증인을 사용하지 않게 합니다.
 
 ### static-first-admission — 무게이트 로더의 좁은 증명
 
@@ -28,7 +28,7 @@
 
 ### fixed-first-admission — 조건부 경로는 일반 정착을 유지합니다
 
-별도의 불변 fixedFirstLoadPlan과 같은 fresh-root·undefined 입력 증명이 있을 때 조건부 경로를 사용합니다. verify 표·shadow 바퀴·deriveShadow 조합은 지원 증명이 없으므로 변경 전에 일반 경로로 보냅니다. 이 경로를 무게이트 로더의 단일 조립·scratch 부재 보장으로 확장하지 않습니다.
+별도의 불변 fixedFirstLoadPlan과 같은 fresh-root·undefined 입력 증명이 있을 때 조건부 경로를 사용합니다. verify 표·shadow 바퀴·isDeriveShadowEnabled 조합은 지원 증명이 없으므로 변경 전에 일반 경로로 보냅니다. 이 경로를 무게이트 로더의 단일 조립·scratch 부재 보장으로 확장하지 않습니다.
 
 조건부 경로는 무조건 발생 baseline을 한 번 구성하고 매 compute epoch에 영향 자식을 무게이트 유효 스키마로 복원합니다. 비루트 if 호스트의 부모 incoming edge와 영향 child contribution을 원래 자리에서 선택하고, 루트 자체 선언 선택은 루트에만 남깁니다. 각 호스트를 별도 선평가하거나 최종값을 미리 계산하지 않습니다. default 뒤의 guard 입력·호출 순서와 횟수·확인 라운드·출력 조립·required/control·오류 의미를 일반 정착이 계속 소유하게 하려는 경계입니다.
 

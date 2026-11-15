@@ -57,19 +57,19 @@ it.each([
     dispatchSetValue(getDispatchNode(root, 'b'), false);
     dispatchSetValue(getDispatchNode(root, 'a'), true);
     const sourceIndex = operation === 'insert' ? 0 : 1;
-    const original = getDispatchNode(list, String(sourceIndex));
-    expect(original.local).toBe(liveValue);
+    const original = getDispatchNode(list, '' + sourceIndex);
+    expect(original.storedValue).toBe(liveValue);
     if (operation === 'insert') dispatchInsert(list, 0, liveValue);
     else dispatchRemove(list, 0);
     const destination = operation === 'insert' ? 1 : 0;
-    expect(getDispatchNode(list, String(destination)).local).toBe(stored);
-    expect(original.detached).toBe(true);
+    expect(getDispatchNode(list, '' + destination).storedValue).toBe(stored);
+    expect(original.isDetached).toBe(true);
     if (operation === 'insert') dispatchRemove(list, 0);
     else dispatchInsert(list, 0, stored);
-    expect(getDispatchNode(list, String(sourceIndex)).local).toBe(liveValue);
+    expect(getDispatchNode(list, '' + sourceIndex).storedValue).toBe(liveValue);
     dispatchSetValue(getDispatchNode(root, 'a'), false);
     dispatchSetValue(getDispatchNode(root, 'b'), true);
-    expect(getDispatchNode(list, String(sourceIndex)).local).toBe(stored);
+    expect(getDispatchNode(list, '' + sourceIndex).storedValue).toBe(stored);
     expect(readFieldNodeInactiveValues(root)).toEqual([]);
   },
 );

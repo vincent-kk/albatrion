@@ -19,7 +19,7 @@ export const materializeKeptSlotOverlay = <Self extends FieldNodeRecord<Self>>(
   instance: Optional<Self>,
   overlay: Optional<InactiveSlotOverlay>,
 ): InactiveSlotOverlay => {
-  const inherited = overlay?.replace ? undefined : instance;
+  const inherited = overlay?.isWhole ? undefined : instance;
   const source =
     overlay && hasOwnProperty(overlay, 'source')
       ? overlay.source
@@ -39,7 +39,7 @@ export const materializeKeptSlotOverlay = <Self extends FieldNodeRecord<Self>>(
     }
   return {
     ...overlay,
-    replace: true,
+    isWhole: true,
     source,
     extras,
     ...(template.kind === 'array'

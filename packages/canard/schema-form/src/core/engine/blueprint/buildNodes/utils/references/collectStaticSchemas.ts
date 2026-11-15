@@ -21,10 +21,10 @@ export const collectStaticSchemas = (
   schema: BlueprintSchema,
   schemaPath: string,
   visiting: readonly string[] = EMPTY_ARRAY,
-  cycle?: { found: boolean },
+  cycle?: { isFound: boolean },
 ): { schema: BlueprintSchema; schemaPath: string }[] => {
   if (visiting.includes(schemaPath)) {
-    if (cycle) cycle.found = true;
+    if (cycle) cycle.isFound = true;
     return [];
   }
   const result = [{ schema, schemaPath }];

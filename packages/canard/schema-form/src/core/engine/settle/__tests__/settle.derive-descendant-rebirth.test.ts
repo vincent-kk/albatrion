@@ -30,15 +30,17 @@ describe('settle descendant rebirth regression', () => {
       { present: true, source: 'A', group: { target: 'manual' } },
       WriteOption.Overwrite,
     );
-    expect(root.structure?.group?.structure?.target?.source).toBe('A');
+    expect(root.childrenByName?.group?.childrenByName?.target?.source).toBe(
+      'A',
+    );
 
     writeFieldNode(
-      root.structure!.present,
+      root.childrenByName!.present,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.group).toBeUndefined();
+    expect(root.childrenByName?.group).toBeUndefined();
     expect(
       [...(root.runtime.committedRuleValues?.keys() ?? [])].some((key) =>
         key.startsWith('["/group/target",'),
@@ -46,7 +48,7 @@ describe('settle descendant rebirth regression', () => {
     ).toBe(false);
 
     writeFieldNode(
-      root.structure!.present,
+      root.childrenByName!.present,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -89,7 +91,7 @@ describe('settle descendant rebirth regression', () => {
     ).toBe(true);
 
     writeFieldNode(
-      root.structure!.present,
+      root.childrenByName!.present,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -101,7 +103,7 @@ describe('settle descendant rebirth regression', () => {
     ).toBe(false);
 
     writeFieldNode(
-      root.structure!.present,
+      root.childrenByName!.present,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,

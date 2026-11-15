@@ -31,7 +31,7 @@ describe('empty fragment work', () => {
     expect(result.fragments).toHaveLength(1);
     expect(result.root.declarations).toHaveLength(1);
     expect(result.root.declarations[0].schema).toBe(schema);
-    expect(result.capabilities.branchless).toBe(true);
+    expect(result.capabilities.isBranchless).toBe(true);
     console.log(
       `106COUNT empty-fragment keyword-array-check=${work.keywordChecks}`,
     );

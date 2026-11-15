@@ -25,8 +25,8 @@ import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 
 /**
  * Apply an admitted middle remove or insert by cutting at the edited position and splicing only the tail.
- * Positions before `proof.index` keep their nodes, keys, source, load-snapshot slots and structure entries, and are never read.
- * Mutates `host.structure` in place; the tail items shift by one position and are renamed in the general path's order.
+ * Positions before `proof.index` keep their nodes, keys, source, load-snapshot slots and children-by-name entries, and are never read.
+ * Mutates `host.childrenByName` in place; the tail items shift by one position and are renamed in the general path's order.
  * Admission proved the blueprint ungated, so no gate is removed or registered here.
  * Renamed tail descendants are re-published and marked changed but not scheduled for recalculation: no value or selection of a static blueprint reads a position.
  * @param host - Live static branch array admitted by prepareArraySplice
@@ -41,10 +41,10 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   const { count, index, entry } = proof;
   const length = entry ? count + 1 : count - 1;
-  const items: Dictionary<Self> = host.structure ?? Object.create(null);
+  const items: Dictionary<Self> = host.childrenByName ?? Object.create(null);
   const previous = host.children ?? [];
-  const removedItem = entry ? undefined : items[String(index)];
-  const removed = removedItem?.local;
+  const removedItem = entry ? undefined : items['' + index];
+  const removedValue = removedItem?.storedValue;
   const slot = proof.plan.slots[0];
   const value = slot && 'value' in slot ? slot.value : undefined;
   const inserted = entry ? createChildNode(host, entry) : undefined;
@@ -67,8 +67,8 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
       });
     }
     for (let position = count; position > index; position--)
-      items[String(position)] = items[String(position - 1)];
-    items[String(index)] = inserted;
+      items['' + position] = items['' + (position - 1)];
+    items['' + index] = inserted;
   } else {
     moves.push({ previous: appendSegment(host.path, index) });
     for (let position = index + 1; position < count; position++) {
@@ -78,24 +78,24 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
         previous: appendSegment(host.path, position),
         current: appendSegment(host.path, position - 1),
       });
-      items[String(position - 1)] = items[String(position)];
+      items['' + (position - 1)] = items['' + position];
     }
-    delete items[String(count - 1)];
+    delete items['' + (count - 1)];
   }
 
   if (removedItem) {
-    context.perished.add(removedItem);
+    context.perishedNodes.add(removedItem);
     visitFieldNodes(
       removedItem,
       (departing) => {
         if (!departing.runtime.detachedReads?.has(departing))
           captureDetachedFieldNodeReads(departing, {
-            emit: context.previousEmit,
+            outputValue: context.previousOutputValue,
             context: context.previousContext,
             schema: departing.schema.schema,
           });
       },
-      { owned: true },
+      { isOwned: true },
     );
     prunePerishedPaths(host.runtime, [removedItem.path]);
   }
@@ -106,8 +106,8 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
     position < length;
     position++
   ) {
-    const item = items[String(position)];
-    const name = String(position);
+    const item = items['' + position];
+    const name = '' + position;
     visitFieldNodes(
       item,
       (descendant) => {
@@ -125,13 +125,13 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
         // Not marked dirty: the static admission leaves no gate or expression that could read a position.
         context.changedNodes.add(descendant);
       },
-      { owned: true },
+      { isOwned: true },
     );
   }
   host.itemCount = length;
   host.source = undefined;
   host.extras = undefined;
-  host.structure = items;
+  host.childrenByName = items;
   host.children = captureFieldNodeChange(host, 'children', children);
   context.arrayCounts.set(host, count);
   context.changedSource.add(host.path);
@@ -139,7 +139,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
   context.dirtyPaths.add(host.path);
   context.shapeDirtyPaths.add(host.path);
   if (inserted) {
-    context.entered.add(inserted);
+    context.enteredNodes.add(inserted);
 
     markWrite(inserted, value, context);
   }
@@ -148,5 +148,5 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
     host.path,
     nextSnapshot,
   );
-  return removed;
+  return removedValue;
 };

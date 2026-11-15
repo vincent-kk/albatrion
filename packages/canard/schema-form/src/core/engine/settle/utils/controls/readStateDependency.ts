@@ -7,10 +7,10 @@ import { PointerOperator } from '@/schema-form/helpers/jsonPointer';
 import type { FieldNodeRecord } from '../../../record';
 import { getStateDependencyPlan } from './getStateDependencyPlan';
 
-/** Emission and context retained before a settlement changes the live tree. */
-export interface EmissionSnapshot {
+/** Output value and context retained before a settlement changes the live tree. */
+export interface OutputValueSnapshot {
   /** Previously emitted root value. */
-  readonly emit: unknown;
+  readonly outputValue: unknown;
   /** Previously bound context object. */
   readonly context?: Readonly<Dictionary<unknown>>;
 }
@@ -29,7 +29,7 @@ export const readStateDependency = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   hostPath: string,
   dependency: string,
-  snapshot?: EmissionSnapshot,
+  snapshot?: OutputValueSnapshot,
   owner: object = root.runtime,
   absentContext?: object,
 ): unknown => {
@@ -45,7 +45,7 @@ export const readStateDependency = <Self extends FieldNodeRecord<Self>>(
       absentContext ??
       {}
     );
-  let value: unknown = snapshot ? snapshot.emit : root.emit;
+  let value: unknown = snapshot ? snapshot.outputValue : root.storedOutputValue;
   for (const name of segments) {
     if (value === null || typeof value !== 'object') return undefined;
     if (typeof name !== 'string') return undefined;

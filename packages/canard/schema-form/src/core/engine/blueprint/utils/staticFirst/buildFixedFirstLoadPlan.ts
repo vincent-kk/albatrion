@@ -22,7 +22,7 @@ export const buildFixedFirstLoadPlan = (
 ): FixedFirstLoadPlan | undefined => {
   const capabilities = blueprint.capabilities;
   if (
-    capabilities.branchless ||
+    capabilities.isBranchless ||
     !finiteLiteral ||
     capabilities.hasExpressions ||
     capabilities.hasDerive ||
@@ -43,10 +43,10 @@ export const buildFixedFirstLoadPlan = (
     )
       return undefined;
     let children: Map<string, BlueprintChildEntry> | undefined;
-    let affected: BlueprintChildEntry[] | undefined;
+    let affectedEntries: BlueprintChildEntry[] | undefined;
     if (node.kind === 'object') {
       children = new Map();
-      affected = [];
+      affectedEntries = [];
       for (const entry of node.childEntries) {
         if (children.has(entry.name)) return undefined;
         let baseline = 0;
@@ -57,7 +57,7 @@ export const buildFixedFirstLoadPlan = (
         }
         if (baseline !== 1) return undefined;
         children.set(entry.name, entry);
-        if (gated) affected.push(entry);
+        if (gated) affectedEntries.push(entry);
       }
     }
     let localIf = false;
@@ -111,10 +111,10 @@ export const buildFixedFirstLoadPlan = (
       )
         return undefined;
     }
-    if (affected && (localIf || affected.length > 0))
+    if (affectedEntries && (localIf || affectedEntries.length > 0))
       hosts[node.id] = Object.freeze({
         entries: node.childEntries,
-        affected: Object.freeze(affected),
+        affectedEntries: Object.freeze(affectedEntries),
       });
   }
   return hasIf ? Object.freeze({ hosts: Object.freeze(hosts) }) : undefined;

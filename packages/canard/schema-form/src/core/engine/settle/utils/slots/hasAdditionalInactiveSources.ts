@@ -21,18 +21,18 @@ export const hasAdditionalInactiveSources = <
   const own = overlay && hasOwnProperty(overlay, 'source');
   const source = own
     ? overlay.source
-    : overlay?.replace
+    : overlay?.isWhole
       ? undefined
       : instance.source;
   if (instance.behavior.strategy === 'terminal') return source !== undefined;
-  if (instance.behavior.type === 'array' && !own && !overlay?.replace)
+  if (instance.behavior.type === 'array' && !own && !overlay?.isWhole)
     return true;
   if (
     source !== undefined &&
-    isMisfit(source, instance.schemaType, instance.nullable)
+    isMisfit(source, instance.schemaType, instance.isNullable)
   )
     return true;
-  if (overlay?.replace) return false;
+  if (overlay?.isWhole) return false;
   for (const child of instance.children ?? []) {
     if (child.parent !== instance) continue;
     const binding = getRetainedChildEntry(

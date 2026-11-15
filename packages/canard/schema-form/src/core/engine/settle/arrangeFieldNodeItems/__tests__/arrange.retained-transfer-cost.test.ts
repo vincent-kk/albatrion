@@ -33,7 +33,7 @@ it.each(['insert', 'remove', 'shift'] as const)(
         root,
         Array.from({ length: count }, (_, index) => ({
           open: true,
-          value: String(index),
+          value: '' + index,
         })),
       );
       for (const item of root.children ?? [])
@@ -44,7 +44,7 @@ it.each(['insert', 'remove', 'shift'] as const)(
       if (operation === 'insert') dispatchInsert(root, 0, { open: false });
       else if (operation === 'remove') dispatchRemove(root, 0);
       else {
-        const first = root.children?.[0]?.local;
+        const first = root.children?.[0]?.storedValue;
         dispatchRemove(root, 0);
         dispatchInsert(root, count - 1, first);
       }

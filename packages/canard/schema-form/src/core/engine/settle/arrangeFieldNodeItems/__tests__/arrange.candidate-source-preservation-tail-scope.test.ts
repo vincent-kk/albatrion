@@ -100,7 +100,7 @@ it.each([
     expect(readFieldNodeInactiveValues(root)).toEqual([
       { path: sourcePath, value },
     ]);
-    expect(root.emit).toEqual({
+    expect(root.storedOutputValue).toEqual({
       open: false,
       list: [
         ...prefix,

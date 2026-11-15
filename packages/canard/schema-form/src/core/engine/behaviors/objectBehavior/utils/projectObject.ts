@@ -5,7 +5,7 @@ import { getStaticChoices } from '../../utils/options/getStaticChoices';
 import { omitEmptyObject } from './omitEmptyObject';
 
 /** Emit wrong-kind host source without children, then project an object host. */
-export const projectObject: Behavior['project'] = (node, local) => {
+export const projectObject: Behavior['project'] = (node, value) => {
   if (
     node.source !== undefined &&
     (node.source === null ||
@@ -14,6 +14,6 @@ export const projectObject: Behavior['project'] = (node, local) => {
   )
     return node.source;
   return getStaticChoices(node.schema).omitEmpty
-    ? omitEmptyObject(local)
-    : local;
+    ? omitEmptyObject(value)
+    : value;
 };

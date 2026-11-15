@@ -92,7 +92,7 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
           fields:
             !partial && write.node.behavior.type === 'virtual'
               ? (write.node.blueprintNode.fields ?? []).flatMap((field) => {
-                  const sibling = write.node.parent?.structure?.[field];
+                  const sibling = write.node.parent?.childrenByName?.[field];
                   return sibling ? [sibling.path] : [];
                 })
               : undefined,

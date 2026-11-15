@@ -39,7 +39,7 @@ describe('binding input entries', () => {
       dispatchWriteInput(input, 'typed');
       dispatchSetValue(root, { other: 'external' }, WriteOption.Merge);
     });
-    expect(input.local).toBe('typed');
+    expect(input.storedValue).toBe('typed');
     expect(
       listener.mock.calls[0][0].options[FieldNodeEventType.UpdateValue],
     ).toEqual({ source: FieldNodeWriteKind.Input });
@@ -91,7 +91,7 @@ describe('binding input entries', () => {
       dispatchWriteInput(root, ' new ');
       dispatchFinishInput(root);
     });
-    expect(root.local).toBe('new');
+    expect(root.storedValue).toBe('new');
     expect(
       listener.mock.calls[0][0].options[FieldNodeEventType.UpdateValue],
     ).toEqual({ source: FieldNodeWriteKind.Automatic });
@@ -104,9 +104,9 @@ describe('binding input entries', () => {
     dispatchSetExternalErrors(root, [{ dataPath: '', message: 'external' }]);
     const before = runtime.commitNumber;
     dispatchWriteInput(root, 'new');
-    expect(root.local).toBe('new');
+    expect(root.storedValue).toBe('new');
     expect(runtime.nodeErrors?.has(root)).toBe(false);
-    expect(root.interactionState[FieldNodeState.Edited]).toBe(true);
+    expect(root.storedState[FieldNodeState.Edited]).toBe(true);
     expect(runtime.commitNumber).toBe((before ?? 0) + 1);
   });
 
@@ -161,7 +161,7 @@ describe('binding input entries', () => {
     const errors = [{ dataPath: '', message: 'external' }];
     dispatchSetExternalErrors(root, errors);
     dispatchSetState(root, { [FieldNodeState.Edited]: true });
-    const state = root.interactionState;
+    const state = root.storedState;
     const listener = vi.fn();
     subscribeFieldNode(root, listener);
     const refresh = readFieldNodeRevision(
@@ -169,9 +169,9 @@ describe('binding input entries', () => {
       FieldNodeEventType.RequestRefresh,
     );
     dispatchFinishInput(root);
-    expect(root.local).toBe('value');
+    expect(root.storedValue).toBe('value');
     expect(runtime.nodeErrors?.get(root)).toBe(errors);
-    expect(root.interactionState).toBe(state);
+    expect(root.storedState).toBe(state);
     expect(readFieldNodeRevision(root, FieldNodeEventType.RequestRefresh)).toBe(
       refresh + 1,
     );
@@ -203,10 +203,10 @@ describe('binding input entries', () => {
     runtime.disableAutomaticWrites = true;
     const commit = runtime.commitNumber;
     dispatchFinishInput(root);
-    expect(root.local).toBe(' value ');
+    expect(root.storedValue).toBe(' value ');
     runtime.disableAutomaticWrites = false;
     dispatchFinishInput(root, WriteOption.DisableAutomaticWrites);
-    expect(root.local).toBe(' value ');
+    expect(root.storedValue).toBe(' value ');
     expect(runtime.commitNumber).toBe(commit);
   });
 
@@ -263,7 +263,7 @@ describe('binding input of a virtual node (R2)', () => {
       'Invalid virtual node values at /period',
     );
     expect(runtime.nodeErrors?.get(period)).toEqual([issue]);
-    expect(period.interactionState).toEqual({});
-    expect(root.emit).toEqual({ startDate: 's0', endDate: 'e0' });
+    expect(period.storedState).toEqual({});
+    expect(root.storedOutputValue).toEqual({ startDate: 's0', endDate: 'e0' });
   });
 });

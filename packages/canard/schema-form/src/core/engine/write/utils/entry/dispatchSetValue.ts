@@ -26,7 +26,7 @@ export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
   if (refuseDetachedWrite(node)) return;
   if (
     source === FieldNodeWriteKind.Input &&
-    (node.disposed || node.rootNode.disposed)
+    (node.isDisposed || node.rootNode.isDisposed)
   )
     return;
   if (!enterFieldNodeChain(node)) return;
@@ -40,7 +40,7 @@ export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
     const marking = isBatchMarking(node);
     const value =
       typeof input === 'function'
-        ? input(marking ? readBatchValue(node) : node.local)
+        ? input(marking ? readBatchValue(node) : node.storedValue)
         : input;
     if (marking) {
       if (node.behavior.type === 'virtual')

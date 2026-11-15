@@ -13,13 +13,13 @@ export const failValidationCompile = <Self extends FieldNodeRecord<Self>>(
   const root = node.rootNode;
   const runtime = root.runtime;
   const epoch = runtime.validationEpoch;
-  runtime.validationUnavailable = true;
+  runtime.isValidationUnavailable = true;
   settleFieldNodeValidation(node);
   if (
     !isFieldNodeValidationLifetimeCurrent(root, epoch) ||
-    runtime.validationCompileReported
+    runtime.isValidationCompileReported
   )
     return;
-  runtime.validationCompileReported = true;
+  runtime.isValidationCompileReported = true;
   runtime.reportValidationFailure?.(failure);
 };

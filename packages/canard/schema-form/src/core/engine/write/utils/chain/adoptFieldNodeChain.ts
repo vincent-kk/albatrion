@@ -3,6 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../errors';
+import type { PendingFormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import { assertFieldNodeWritable, disposeFieldNodeTree } from '../../../settle';
@@ -12,6 +13,9 @@ import { readReferenceOnlySchemaPaths } from '../report/readReferenceOnlySchemaP
 import { captureChainError } from './captureChainError';
 import { abortFieldNodeChain } from './chainAbort';
 import { restoreAdoptedExternalErrors } from './restoreAdoptedExternalErrors';
+
+/** Annotates the lazily created `pendingWarningRecords`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PendingWarningRecords = Map<string, PendingFormErrorRecord>;
 
 /**
  * Transfer an open entry to a rebuilt root before its outer call completes.
@@ -37,7 +41,7 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   const next = nextRoot.runtime;
   next.entryDepth = previous.entryDepth;
   next.chainRoot = nextRoot;
-  next.chainInitialEmit = previous.chainInitialEmit;
+  next.chainInitialOutputValue = previous.chainInitialOutputValue;
   next.chainErrors = previous.chainErrors;
   next.chainOrigin = previous.chainOrigin;
   next.chainOccurrences = previous.chainOccurrences;
@@ -45,7 +49,7 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   next.errorReporter ??= previous.errorReporter;
   next.feedbackBudget = previous.feedbackBudget;
   next.feedbackBlockedListeners = previous.feedbackBlockedListeners;
-  next.feedbackLimitReported = previous.feedbackLimitReported;
+  next.isFeedbackLimitReported = previous.isFeedbackLimitReported;
   next.currentListener = previous.currentListener;
   next.onChangeBudget = previous.onChangeBudget;
   next.batchDepth = previous.batchDepth;
@@ -57,7 +61,7 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
     : undefined;
   next.deliveries = previous.deliveries;
   next.queuedNonSettleEvents = previous.queuedNonSettleEvents;
-  next.stateChanged = previous.stateChanged;
+  next.hasStateChanged = previous.hasStateChanged;
   next.adoptedExternalErrors = new Map(previous.adoptedExternalErrors);
   for (const [node, errors] of previous.nodeErrors ?? [])
     if (
@@ -103,10 +107,9 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
           { details: { schemaPaths: paths } },
         );
         if (record) {
-          (next.pendingWarningRecords ??= new Map()).set(
-            JSON.stringify([code, $.Root]),
-            record,
-          );
+          const records: PendingWarningRecords = (next.pendingWarningRecords ??=
+            new Map());
+          records.set(JSON.stringify([code, $.Root]), record);
           next.chainOccurrences?.push({ kind: 'record', record });
         }
       }
@@ -124,7 +127,7 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
     previous.visitBatchEntry = undefined;
     previous.deliveries = undefined;
     previous.queuedNonSettleEvents = undefined;
-    previous.stateChanged = undefined;
+    previous.hasStateChanged = undefined;
     previous.chainOccurrences = undefined;
     previous.enclosingChain = undefined;
     previous.pendingWarningRecords = undefined;

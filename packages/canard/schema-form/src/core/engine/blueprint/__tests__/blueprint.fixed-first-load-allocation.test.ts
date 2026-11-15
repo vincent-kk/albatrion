@@ -27,14 +27,16 @@ it('preserves the complete plan, borrowed entries and frozen affected order', ()
     hosts: {
       [root.id]: {
         entries: root.childEntries,
-        affected: [root.childEntries.find((entry) => entry.name === 'field_0')],
+        affectedEntries: [
+          root.childEntries.find((entry) => entry.name === 'field_0'),
+        ],
       },
     },
   };
   expect(plan).toEqual(expected);
   expect(plan).toEqual(analysis.fixedFirstLoadPlan);
   expect(plan.hosts[root.id].entries).toBe(root.childEntries);
-  expect(Object.isFrozen(plan.hosts[root.id].affected)).toBe(true);
+  expect(Object.isFrozen(plan.hosts[root.id].affectedEntries)).toBe(true);
   expect(Object.isFrozen(plan.hosts[root.id])).toBe(true);
   expect(Object.isFrozen(plan.hosts)).toBe(true);
   expect(Object.isFrozen(plan)).toBe(true);

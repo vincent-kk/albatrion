@@ -189,8 +189,8 @@ describe('derive rule table under the shared owner rule', () => {
         (rule: {
           kind: string;
           targetName?: string;
-          targetItems?: boolean;
-        }) => [rule.kind, rule.targetName, rule.targetItems],
+          isItemTarget?: boolean;
+        }) => [rule.kind, rule.targetName, rule.isItemTarget],
       ),
     ).toEqual([
       ['derived', undefined, true],

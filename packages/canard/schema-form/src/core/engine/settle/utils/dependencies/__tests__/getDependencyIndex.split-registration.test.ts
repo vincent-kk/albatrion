@@ -37,17 +37,17 @@ describe('dependency registration table injection', () => {
         [blueprint.root, getGateSelectionTable(blueprint.root, blueprint)!],
       ]),
     );
-    const before = index.affected('/kind', root);
+    const before = index.affectedOwners('/kind', root);
     const registered: string[] = [];
     const plain: string[] = [];
     const hosts: string[] = [];
-    index.affectedForRegistration('/kind', root, {
-      owner: (path, kind) => {
+    index.registerAffectedOwners('/kind', root, {
+      registerOwner: (path, kind) => {
         if (!registered.includes(path)) registered.push(path);
         if (kind === 'plain') plain.push(path);
         if (kind === 'host') hosts.push(path);
       },
-      hit: () => [],
+      recordHit: () => [],
     });
     expect(before).toHaveLength(241);
     expect(registered).toEqual(['', '/p0a', '/p0b', '/p0c']);
@@ -55,7 +55,7 @@ describe('dependency registration table injection', () => {
       before.filter((path) => !index.splitOwners.has(path)),
     );
     expect(hosts).toEqual(['']);
-    expect(index.affected('/kind', root)).toEqual(before);
+    expect(index.affectedOwners('/kind', root)).toEqual(before);
   });
 
   it('never splits an owner with a non-table state-key contribution', () => {

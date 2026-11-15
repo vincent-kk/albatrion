@@ -67,7 +67,7 @@ describe('extras-only static array appends', () => {
       ]);
       expect(input).toStrictEqual(before);
       expect(payload).toEqual({ untouched: [3, 4] });
-      expect(candidate.local).toEqual([...input, payload, undefined, 9]);
+      expect(candidate.storedValue).toEqual([...input, payload, undefined, 9]);
     },
   );
 
@@ -77,15 +77,15 @@ describe('extras-only static array appends', () => {
       { list: [1, 2] },
       [
         {
-          apply: (root) => dispatchPush(root.structure!.list, 3),
+          apply: (root) => dispatchPush(root.childrenByName!.list, 3),
           append: true,
         },
         {
-          apply: (root) => dispatchInsert(root.structure!.list, 3, 4),
+          apply: (root) => dispatchInsert(root.childrenByName!.list, 3, 4),
           append: true,
         },
       ],
-      (root) => root.structure!.list,
+      (root) => root.childrenByName!.list,
     );
   });
 
@@ -94,7 +94,7 @@ describe('extras-only static array appends', () => {
     dispatchMount(root, [1, 2]);
     const children = root.children;
     const extras = root.extras;
-    const local = root.local;
+    const value = root.storedValue;
     const snapshot = root.runtime.loadSnapshot;
     const revision =
       root.revisionLedger[FieldNodeEventType.UpdateChildren] ?? 0;
@@ -104,11 +104,11 @@ describe('extras-only static array appends', () => {
     expect(root.children).not.toBe(children);
     expect(root.children).toEqual([]);
     expect(root.extras).not.toBe(extras);
-    expect(root.local).not.toBe(local);
+    expect(root.storedValue).not.toBe(value);
     expect(root.runtime.loadSnapshot).not.toBe(snapshot);
     expect(children).toEqual([]);
     expect(extras).toEqual([1, 2]);
-    expect(local).toEqual([1, 2]);
+    expect(value).toEqual([1, 2]);
     expect(snapshot).toEqual([1, 2]);
     expect(
       delivered.some((type) => type & FieldNodeEventType.UpdateChildren),
@@ -181,11 +181,11 @@ describe('extras-only static array appends', () => {
       { flag: true, list: [1] },
       [
         {
-          apply: (root) => dispatchPush(root.structure!.list, 2),
+          apply: (root) => dispatchPush(root.childrenByName!.list, 2),
           append: false,
         },
       ],
-      (root) => root.structure!.list,
+      (root) => root.childrenByName!.list,
     );
     compareArrayAppend(
       { type: 'array' },

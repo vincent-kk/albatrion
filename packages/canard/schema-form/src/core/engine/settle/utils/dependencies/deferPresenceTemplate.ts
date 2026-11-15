@@ -13,6 +13,9 @@ import type { PendingPresenceTemplate } from '../../types/pendingPresenceTemplat
 import type { SettlementContext } from '../../types/settlement';
 import { getDependencyIndex } from './getDependencyIndex';
 
+/** Annotates the lazily created `presenceTemplates`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PresenceTemplates = Map<string, PendingPresenceTemplate>;
+
 /**
  * Park one unbound reader and schedule its static host without expanding it.
  * @param template - Absolute reader pointer containing an unbound wildcard
@@ -29,7 +32,7 @@ export const deferPresenceTemplate = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   stamp: number,
 ): boolean => {
-  const pending = (context.presenceTemplates ??= new Map());
+  const pending: PresenceTemplates = (context.presenceTemplates ??= new Map());
   const key = kind + '\u0000' + template;
   const entry = pending.get(key);
   if (!entry) {

@@ -18,7 +18,7 @@ import { releaseSettlementScratch } from '../scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../settlement/createSettlementContext';
 import { finishSettlement } from '../settlement/finishSettlement';
 import { prepareSourcePruner } from '../slots/prepareSourcePruner';
-import { collectReplacePaths } from './collectReplacePaths';
+import { collectReplacementPaths } from './collectReplacementPaths';
 import { markWrongKindAncestors } from './markWrongKindAncestors';
 import { releaseWrongKindHosts } from './releaseWrongKindHosts';
 
@@ -45,17 +45,20 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
   writeOrigins?: SettlementContext<Self>['writeOrigins'],
   fixedFirstLoadPlan?: Blueprint['fixedFirstLoadPlan'],
 ): void => {
-  if (node.detached) return;
+  if (node.isDetached) return;
   const root = node.rootNode;
-  if (source === FieldNodeWriteKind.Input && (node.disposed || root.disposed))
+  if (
+    source === FieldNodeWriteKind.Input &&
+    (node.isDisposed || root.isDisposed)
+  )
     return;
   const schema = node.schema.schema;
   const inputType = typeof input;
   const scalarWrite =
     node.parent !== null &&
-    !node.disposed &&
-    !root.disposed &&
-    root.runtime.blueprint.capabilities.branchless &&
+    !node.isDisposed &&
+    !root.isDisposed &&
+    root.runtime.blueprint.capabilities.isBranchless &&
     !root.runtime.blueprint.capabilities.hasDerive &&
     (kind === FieldNodeWriteKind.Input ||
       kind === FieldNodeWriteKind.CallerReplace ||
@@ -102,7 +105,7 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
     context.fixedFirstLoad = { plan: fixedFirstLoadPlan, hosts: new Map() };
   context.source = source;
   context.writeOrigins = writeOrigins;
-  if (batch) context.replacePaths = collectReplacePaths(writeOrigins);
+  if (batch) context.replacementPaths = collectReplacementPaths(writeOrigins);
   if (!scalarWrite && replaces) prepareWriteEpoch(context);
   try {
     if (context.hasGates)

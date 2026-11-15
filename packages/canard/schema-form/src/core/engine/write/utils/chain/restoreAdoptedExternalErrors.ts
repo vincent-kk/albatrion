@@ -4,6 +4,11 @@ import { FieldNodeEventType } from '../../../record';
 import { updateFieldNodeGlobalErrors } from '../../../validation';
 import { queueNonSettleEvent } from './queueNonSettleEvent';
 
+/** Annotates the lazily created `nodeErrors`; an argument-less `new Map()` would be `Map<any, any>`. */
+type NodeErrors = Map<unknown, readonly { dataPath: string }[]>;
+/** Annotates the lazily created `externalContributions`; an argument-less `new Map()` would be `Map<any, any>`. */
+type ExternalContributions = Map<unknown, readonly { dataPath: string }[]>;
+
 /**
  * Resolve handed-over path keys against the replacement's committed shape.
  * @param root - New root after construction or mount
@@ -18,10 +23,15 @@ export const restoreAdoptedExternalErrors = <
   for (const [path, errors] of runtime.adoptedExternalErrors ?? []) {
     const node = find(root, path);
     if (!node) continue;
-    (runtime.nodeErrors ??= new Map()).set(node, errors);
+    const nodeErrors: NodeErrors = (runtime.nodeErrors ??= new Map());
+    nodeErrors.set(node, errors);
     try {
       if (node === root) updateFieldNodeGlobalErrors(root);
-      else (runtime.externalContributions ??= new Map()).set(node, errors);
+      else {
+        const contributions: ExternalContributions =
+          (runtime.externalContributions ??= new Map());
+        contributions.set(node, errors);
+      }
     } catch (error) {
       runtime.nodeErrors?.delete(node);
       throw error;

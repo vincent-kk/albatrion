@@ -25,12 +25,12 @@ describe('validation issue attribution', () => {
     routeValidationIssues([root], issues);
     expect(runtime.globalErrors).toBe(issues);
     expect(
-      readFieldNodeErrors(root.structure?.host ?? root).map(
+      readFieldNodeErrors(root.childrenByName?.host ?? root).map(
         (issue) => issue.message,
       ),
     ).toEqual(['extra']);
     expect(
-      readFieldNodeErrors(root.structure?.terminal ?? root).map(
+      readFieldNodeErrors(root.childrenByName?.terminal ?? root).map(
         (issue) => issue.message,
       ),
     ).toEqual(['inner']);
@@ -49,9 +49,9 @@ describe('validation issue attribution', () => {
       },
     });
     dispatchMount(root, { held: { name: 'a' } });
-    const held = root.structure?.held ?? root;
+    const held = root.childrenByName?.held ?? root;
     expect(held).not.toBe(root);
-    expect(held.structure).toBeNull();
+    expect(held.childrenByName).toBeNull();
     const inner = { dataPath: '/held', message: 'inner' };
     const rejected = {
       dataPath: '/held',
@@ -106,7 +106,9 @@ describe('validation issue attribution', () => {
         },
       ],
     );
-    expect(readFieldNodeErrors(root.structure?.value ?? root)).toHaveLength(3);
+    expect(
+      readFieldNodeErrors(root.childrenByName?.value ?? root),
+    ).toHaveLength(3);
   });
 
   describe('terminal roots', () => {
@@ -119,7 +121,7 @@ describe('validation issue attribution', () => {
       dispatchMount(root, { name: 'a' });
       const issue = { dataPath: '/name', message: 'short' };
       routeValidationIssues([root], [issue]);
-      expect(root.structure).toBeNull();
+      expect(root.childrenByName).toBeNull();
       expect(readFieldNodeErrors(root)).toEqual([issue]);
       expect(readFieldNodeErrors(root)[0].dataPath).toBe('/name');
       expect(runtime.globalErrors).toEqual([issue]);
@@ -159,7 +161,7 @@ describe('validation issue attribution', () => {
       dispatchMount(root, ['a']);
       const issue = { dataPath: '/0', message: 'item' };
       routeValidationIssues([root], [issue]);
-      expect(root.structure).toBeNull();
+      expect(root.childrenByName).toBeNull();
       expect(readFieldNodeErrors(root)).toEqual([issue]);
     });
 
@@ -168,7 +170,7 @@ describe('validation issue attribution', () => {
       dispatchMount(root, { name: 'a' });
       const issue = { dataPath: '/name', message: 'inner' };
       routeValidationIssues([root], [issue]);
-      expect(root.structure).toBeNull();
+      expect(root.childrenByName).toBeNull();
       expect(readFieldNodeErrors(root)).toEqual([issue]);
     });
 
@@ -186,7 +188,7 @@ describe('validation issue attribution', () => {
       dispatchMount(root, { held: { name: 'a' } });
       const issue = { dataPath: '/held/name', message: 'short' };
       routeValidationIssues([root], [issue]);
-      const held = root.structure?.held ?? root;
+      const held = root.childrenByName?.held ?? root;
       expect(held).not.toBe(root);
       expect(readFieldNodeErrors(held)).toEqual([issue]);
       expect(readFieldNodeErrors(root)).toEqual([]);
@@ -223,7 +225,7 @@ describe('validation issue attribution', () => {
       ];
       routeValidationIssues([root], issues);
       expect(readFieldNodeErrors(root)).toEqual([]);
-      expect(readFieldNodeErrors(root.structure?.name ?? root)).toEqual([
+      expect(readFieldNodeErrors(root.childrenByName?.name ?? root)).toEqual([
         issues[1],
       ]);
       expect(runtime.globalErrors).toBe(issues);
@@ -237,7 +239,7 @@ describe('validation issue attribution', () => {
       dispatchMount(root, { '': 'empty', name: 'ordinary' });
       const issue = { dataPath: '/', message: 'empty-name issue' };
       routeValidationIssues([root], [issue]);
-      expect(readFieldNodeErrors(root.structure?.[''] ?? root)).toEqual([
+      expect(readFieldNodeErrors(root.childrenByName?.[''] ?? root)).toEqual([
         issue,
       ]);
       expect(readFieldNodeErrors(root)).toEqual([]);

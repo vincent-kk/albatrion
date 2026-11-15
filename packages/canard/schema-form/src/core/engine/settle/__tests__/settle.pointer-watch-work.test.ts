@@ -42,7 +42,7 @@ vi.mock(
 afterEach(() => vi.restoreAllMocks());
 
 describe('watch dependency syntax ownership', () => {
-  it('shares prepared syntax between value and delivery reads while traversing current emit', () => {
+  it('shares prepared syntax between value and delivery reads while traversing current output value', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -55,7 +55,7 @@ describe('watch dependency syntax ownership', () => {
       { source: 1, watcher: 'w' },
       WriteOption.Overwrite,
     );
-    const watcher = root.structure!.watcher;
+    const watcher = root.childrenByName!.watcher;
     const resolve = vi.spyOn(dependencyPaths, 'resolveDependencyPath');
     const wrapper = vi.spyOn(pointer, 'parsePointer');
     decoder.mockClear();
@@ -67,7 +67,7 @@ describe('watch dependency syntax ownership', () => {
     const values = readFieldNodeWatchValues(watcher);
     expect(readFieldNodeWatchValues(watcher)).toBe(values);
     expect(getWatchDeliveryPaths(watcher)).toEqual(['/source', '@']);
-    root.emit = { source: 2, watcher: 'w' };
+    root.storedOutputValue = { source: 2, watcher: 'w' };
     const context = { replacement: true };
     root.runtime.context = context;
     expect(readFieldNodeWatchValues(watcher)).toEqual([2, context]);
@@ -90,10 +90,10 @@ describe('watch dependency syntax ownership', () => {
     });
     loadFieldNodeAtMount(root, { watcher: 'w' }, WriteOption.Overwrite);
     Reflect.set(root.runtime, 'context', undefined);
-    const watcher = root.structure!.watcher;
+    const watcher = root.childrenByName!.watcher;
     const first = readFieldNodeWatchValues(watcher);
     expect(readFieldNodeWatchValues(watcher)).toBe(first);
-    expect(readFieldNodeWatchValues(root.structure!.other)[0]).not.toBe(
+    expect(readFieldNodeWatchValues(root.childrenByName!.other)[0]).not.toBe(
       first[0],
     );
     root.runtime.commitNumber = (root.runtime.commitNumber ?? 0) + 1;
@@ -156,14 +156,14 @@ describe('watch dependency syntax ownership', () => {
     expect(index.contextNodes.size).toBe(0);
     index.update(watcher, ['/replacement/nested']);
     const oldCandidates = new Set<unknown>();
-    index.affected('/source', oldCandidates);
+    index.collectAffected('/source', oldCandidates);
     expect(oldCandidates.size).toBe(0);
     const newCandidates = new Set<unknown>();
-    index.affected('/replacement', newCandidates);
+    index.collectAffected('/replacement', newCandidates);
     expect([...newCandidates]).toEqual([watcher]);
     wrapper.mockClear();
     decoder.mockClear();
-    index.affected('/replacement', newCandidates);
+    index.collectAffected('/replacement', newCandidates);
     expect(wrapper).not.toHaveBeenCalled();
     expect(decoder).not.toHaveBeenCalled();
   });
@@ -182,7 +182,7 @@ describe('watch dependency syntax ownership', () => {
       { a: 1, b: 2, watcher: 'w' },
       WriteOption.Overwrite,
     );
-    const watcher = root.structure!.watcher;
+    const watcher = root.childrenByName!.watcher;
     expect(readFieldNodeWatchValues(watcher)).toEqual([1]);
     watcher.schema = {
       ...watcher.schema,
@@ -213,10 +213,10 @@ describe('watch dependency syntax ownership', () => {
         FieldNodeEventType.UpdateControlledProperties,
     ).toBe(FieldNodeEventType.UpdateControlledProperties);
     const previous = new Set<unknown>();
-    root.runtime.deliveryWatchIndex!.affected('/a', previous);
+    root.runtime.deliveryWatchIndex!.collectAffected('/a', previous);
     expect(previous.has(watcher)).toBe(false);
     const current = new Set<unknown>();
-    root.runtime.deliveryWatchIndex!.affected('/b', current);
+    root.runtime.deliveryWatchIndex!.collectAffected('/b', current);
     expect(current.has(watcher)).toBe(true);
     expect(root.runtime.deliveryWatchIndex!.contextNodes.has(watcher)).toBe(
       true,
@@ -239,7 +239,7 @@ describe('watch dependency syntax ownership', () => {
     expect(root.runtime.deliveryWatchIndex!.allNodes.has(watcher)).toBe(false);
   });
 
-  it('selects prior schema, context and emission independently of the current watch plan', () => {
+  it('selects prior schema, context and output value independently of the current watch plan', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -250,9 +250,9 @@ describe('watch dependency syntax ownership', () => {
       },
     });
     loadFieldNodeAtMount(root, { watcher: 'w' }, WriteOption.Overwrite);
-    const watcher = root.structure!.watcher;
+    const watcher = root.childrenByName!.watcher;
     const currentContext = { version: 'current' };
-    root.emit = { current: 'now', previous: 'wrong' };
+    root.storedOutputValue = { current: 'now', previous: 'wrong' };
     root.runtime.context = currentContext;
     expect(readFieldNodeWatchValues(watcher)).toEqual(['now', currentContext]);
     const previousContext = { version: 'previous' };
@@ -261,7 +261,7 @@ describe('watch dependency syntax ownership', () => {
         type: 'string' as const,
         controls: { watch: ['/previous', '@'] },
       },
-      emit: { current: 'wrong', previous: 'then' },
+      outputValue: { current: 'wrong', previous: 'then' },
       context: previousContext,
     };
     expect(readFieldNodeWatchValues(watcher, snapshot)).toEqual([
@@ -275,10 +275,10 @@ describe('watch dependency syntax ownership', () => {
     expect(
       readFieldNodeWatchValues(watcher, {
         ...snapshot,
-        emit: { previous: 'later snapshot' },
+        outputValue: { previous: 'later snapshot' },
       }),
     ).toEqual(['later snapshot', previousContext]);
-    watcher.detached = true;
+    watcher.isDetached = true;
     expect(readFieldNodeWatchValues(watcher)).toEqual([
       'later snapshot',
       previousContext,
@@ -300,20 +300,23 @@ describe('watch dependency syntax ownership', () => {
       { source: 'first', watcher: 'a' },
       { source: 'second', watcher: 'b' },
     ]);
-    const oldWatcher = root.structure!['0'].structure!.watcher;
-    const retained = root.structure!['1'].structure!.watcher;
+    const oldWatcher = root.childrenByName!['0'].childrenByName!.watcher;
+    const retained = root.childrenByName!['1'].childrenByName!.watcher;
     expect(readFieldNodeWatchValues(retained)).toEqual(['second']);
     dispatchRemove(root, 0);
-    expect(root.structure!['0'].structure!.watcher).toBe(retained);
+    expect(root.childrenByName!['0'].childrenByName!.watcher).toBe(retained);
     expect(retained.path).toBe('/0/watcher');
     expect(getWatchDeliveryPaths(retained)).toEqual(['/0/source']);
     expect(root.runtime.deliveryWatchIndex!.allNodes.has(oldWatcher)).toBe(
       false,
     );
     const stale = new Set<unknown>();
-    root.runtime.deliveryWatchIndex!.affected('/1/source', stale);
+    root.runtime.deliveryWatchIndex!.collectAffected('/1/source', stale);
     expect(stale.has(retained)).toBe(false);
-    dispatchSetValue(root.structure!['0'].structure!['source'], 'changed');
+    dispatchSetValue(
+      root.childrenByName!['0'].childrenByName!['source'],
+      'changed',
+    );
     expect(readFieldNodeWatchValues(retained)).toEqual(['changed']);
     expect(retained.deliveryWatchValues).toEqual(['changed']);
   });

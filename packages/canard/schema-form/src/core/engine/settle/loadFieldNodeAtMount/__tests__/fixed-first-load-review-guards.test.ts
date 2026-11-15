@@ -69,11 +69,11 @@ it.each([false, true])(
         ),
       ).toBe(true);
     }
-    for (const host of [actual.root, actual.root.structure!.group]) {
-      expect(host.structure!.value.schema.schema).toMatchObject(
+    for (const host of [actual.root, actual.root.childrenByName!.group]) {
+      expect(host.childrenByName!.value.schema.schema).toMatchObject(
         negated ? { maxLength: 3 } : { minLength: 2 },
       );
-      for (const node of [host, host.structure!.value])
+      for (const node of [host, host.childrenByName!.value])
         expect(
           actual.root.runtime.committedDeclarationIds?.get(
             getCommittedDeclarationKey(node, node.runtime),
@@ -123,7 +123,7 @@ it('T4 crossing baseline and selected constraints remain runtime validation outc
   expectFixedFirstLoadRoute(actual);
   expect(actual.error).toBeUndefined();
   expect(actual.snapshot()).toEqual(oracle.snapshot());
-  expect(actual.root.structure!.value.schema.schema).toMatchObject({
+  expect(actual.root.childrenByName!.value.schema.schema).toMatchObject({
     minLength: 2,
     maxLength: 1,
   });
@@ -144,7 +144,7 @@ it('T4 opaque reference guard retains whole-host reads and ordinary inputs', () 
   expect(actual.error).toBeUndefined();
   expect(actual.calls.length).toBeGreaterThan(0);
   expect(actual.snapshot()).toEqual(oracle.snapshot());
-  expect(actual.root.structure!.value.schema.schema).toMatchObject({
+  expect(actual.root.childrenByName!.value.schema.schema).toMatchObject({
     minLength: 2,
   });
 });

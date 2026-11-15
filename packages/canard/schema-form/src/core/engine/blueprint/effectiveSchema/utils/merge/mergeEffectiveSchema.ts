@@ -23,7 +23,7 @@ const DEFAULT_MERGE_OPTIONS: EffectiveSchemaOptions = {};
  * @param options - Static error policy and renderer atomic-value predicate.
  * @param memo - Optional caller-owned memo; omission uses the module's weak node cache.
  * @returns Shared result record for this active set; runtime const/enum conflicts remain schema
- * data and a type conflict is exposed as `typeConflict`.
+ * data and a type conflict is exposed as `hasTypeConflict`.
  * @throws Static intersection failures with their contributing authored location.
  */
 export const mergeEffectiveSchema = (

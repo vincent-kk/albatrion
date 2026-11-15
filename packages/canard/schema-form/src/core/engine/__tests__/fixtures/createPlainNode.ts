@@ -42,8 +42,8 @@ export const createPlainNode = (
       visits.push(node.path);
       return Reflect.apply(row.assemble, undefined, [node, children]);
     },
-    project: (node, local) =>
-      Reflect.apply(row.project, undefined, [node, local]),
+    project: (node, value) =>
+      Reflect.apply(row.project, undefined, [node, value]),
     finishInput: (node) => Reflect.apply(row.finishInput, undefined, [node]),
     declareChildren: (node) => {
       const entries: readonly BlueprintChildEntry[] = Reflect.apply(
@@ -72,9 +72,9 @@ export const createPlainNode = (
     path: parent ? `${parent.path}/${escapedName}` : '',
     depth: parent ? parent.depth + 1 : 0,
     isRequired: false,
-    nullable: template.nullable,
+    isNullable: template.isNullable,
     schemaType: template.schemaType,
-    structure: template.strategy === 'branch' ? {} : null,
+    childrenByName: template.strategy === 'branch' ? {} : null,
     children: template.strategy === 'branch' ? [] : null,
     itemKey: null,
     itemCount: 0,
@@ -85,23 +85,23 @@ export const createPlainNode = (
     isVisible: true,
     isReadOnly: false,
     isDisabled: false,
-    local: undefined,
-    emit: undefined,
+    storedValue: undefined,
+    storedOutputValue: undefined,
     divergenceCurrent: undefined,
     divergencePath: undefined,
     divergenceSegments: undefined,
     divergenceBase: undefined,
-    divergenceResult: false,
+    storedIsDivergent: false,
     schema: mergeEffectiveSchema(template, [], { mode: 'runtime' }),
-    interactionState: {},
+    storedState: {},
     revisionLedger: EMPTY_REVISION_LEDGER,
-    deliveryInitialized: false,
+    isDeliveryInitialized: false,
     deliveryChanges: 0,
     pendingDelivery: undefined,
-    pendingRevision: 0,
+    pendingRevisionMask: 0,
     pendingNonSettleDelivery: undefined,
-    detached: false,
-    disposed: false,
-    interactionReset: 0,
+    isDetached: false,
+    isDisposed: false,
+    interactionEpoch: 0,
   };
 };

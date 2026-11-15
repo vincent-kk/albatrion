@@ -263,7 +263,7 @@ describe('complete observation oracle regression record', () => {
       c.codec.nodes,
     );
     const before = normalize(key);
-    owner.detached = true;
+    owner.isDetached = true;
     expect(normalize(key)).toBe(before);
     expect(c.capture).toThrow(/attachment/);
   });

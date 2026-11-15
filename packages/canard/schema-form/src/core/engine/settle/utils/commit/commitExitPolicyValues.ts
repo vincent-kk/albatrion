@@ -64,13 +64,13 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
   const expressions = getExitExpressions(context.root.runtime.blueprint);
   if (expressions.size === 0) return;
   const runtime = context.root.runtime;
-  for (const exited of context.exited)
+  for (const exited of context.exitedNodes)
     visitFieldNodes(
       exited,
       (node) => {
         pruneCommittedRuleKeys(runtime, node.path, 'exitPolicy');
       },
-      { owned: true },
+      { isOwned: true },
     );
   if (context.kind === FieldNodeWriteKind.Load && context.loadScope)
     visitFieldNodes(
@@ -78,11 +78,11 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
       (node) => {
         pruneCommittedRuleKeys(runtime, node.path, 'exitPolicy');
       },
-      { owned: true },
+      { isOwned: true },
     );
   const candidates = new Set(context.stateDirtyNodes);
   for (const source of context.stateDirtyNodes) {
-    if (source.detached || !source.structure) continue;
+    if (source.isDetached || !source.childrenByName) continue;
     if (
       context.kind !== FieldNodeWriteKind.Load &&
       !isDependencyOwner(context, source.path) &&
@@ -141,9 +141,12 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
         if (!itemControls || typeof itemControls.unsetOnInactive !== 'string')
           continue;
         for (const name of item.targets) {
-          if (name === undefined || !hasOwnProperty(source.structure, name))
+          if (
+            name === undefined ||
+            !hasOwnProperty(source.childrenByName, name)
+          )
             continue;
-          candidates.add(source.structure[name]);
+          candidates.add(source.childrenByName[name]);
           break;
         }
       }
@@ -151,7 +154,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
   }
   const evaluated = new Set<string>();
   for (const node of candidates) {
-    if (node.detached) continue;
+    if (node.isDetached) continue;
     for (const group of getControlLayers(
       node,
       context.selectedDeclarationIds,

@@ -10,6 +10,11 @@ import type { ValidationIssue } from '../../../../validation';
 import { queueNonSettleEvent } from '../../chain/queueNonSettleEvent';
 import { publishRootExternalErrors } from './publishRootExternalErrors';
 
+/** Annotates the lazily created `externalContributions`; an argument-less `new Map()` would be `Map<any, any>`. */
+type ExternalContributions = Map<unknown, readonly { dataPath: string }[]>;
+/** Annotates the lazily created `nodeErrors`; an argument-less `new Map()` would be `Map<any, any>`. */
+type NodeErrors = Map<unknown, readonly { dataPath: string }[]>;
+
 /** Shared empty list for a node whose external entry was removed. */
 const NO_ISSUES: readonly ValidationIssue[] = [];
 
@@ -49,7 +54,8 @@ export const rebuildRootExternalErrors = <Self extends FieldNodeRecord<Self>>(
   for (const candidate of pending)
     if (isPendingNode<Self>(candidate, runtime)) nodes.push(candidate);
   if (!nodes.length) return;
-  const contributions = (runtime.externalContributions ??= new Map());
+  const contributions: ExternalContributions =
+    (runtime.externalContributions ??= new Map());
   const placed = new Set<ValidationIssue>();
   const retired = new Set<ValidationIssue>();
   const paths = new Set<string>();
@@ -58,7 +64,7 @@ export const rebuildRootExternalErrors = <Self extends FieldNodeRecord<Self>>(
     const previous = contributions.get(node);
     if (previous)
       for (let at = 0; at < previous.length; at++) retired.add(previous[at]);
-    if (node.detached) {
+    if (node.isDetached) {
       contributions.delete(node);
       continue;
     }
@@ -91,7 +97,7 @@ export const rebuildRootExternalErrors = <Self extends FieldNodeRecord<Self>>(
   }
   for (let index = 0; index < nodes.length; index++) {
     const node = nodes[index];
-    if (node.detached) continue;
+    if (node.isDetached) continue;
     const list = runtime.nodeErrors?.get(node);
     if (list) {
       for (let at = 0; at < list.length; at++)
@@ -103,8 +109,10 @@ export const rebuildRootExternalErrors = <Self extends FieldNodeRecord<Self>>(
     } else contributions.delete(node);
   }
   if (!changed) return;
-  if (next.length) (runtime.nodeErrors ??= new Map()).set(root, next);
-  else runtime.nodeErrors?.delete(root);
+  if (next.length) {
+    const errors: NodeErrors = (runtime.nodeErrors ??= new Map());
+    errors.set(root, next);
+  } else runtime.nodeErrors?.delete(root);
   publishRootExternalErrors(root);
   queueNonSettleEvent(root, FieldNodeEventType.UpdateError, next);
 };

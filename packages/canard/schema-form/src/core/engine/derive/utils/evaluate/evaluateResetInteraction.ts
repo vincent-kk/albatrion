@@ -41,7 +41,7 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
   >;
   while (pending.length) {
     const node = pending.pop();
-    if (!node || node.detached) continue;
+    if (!node || node.isDetached) continue;
     state.visitedSourcePaths.add(node.path);
     const selected = getSelectedDeclarationIds(node, state);
     for (const id of selected)
@@ -66,7 +66,7 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
               rule,
               evaluatedExpressions,
             );
-            if (evaluated.threw) throw evaluated.cause;
+            if (evaluated.hasThrown) throw evaluated.cause;
             current = !!evaluated.value;
           } catch (cause) {
             (failures ??= []).push({
@@ -86,8 +86,8 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
             !current ||
             !(
               load ||
-              state.entered.has(target) ||
-              state.revived.has(target) ||
+              state.enteredNodes.has(target) ||
+              state.revivedNodes.has(target) ||
               (previousExists && !previous)
             )
           )
@@ -96,7 +96,7 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
             resetNodes.add(target);
             nodes.push(target);
           }
-          if (state.trace)
+          if (state.isTraceEnabled)
             trace.push({
               phase: 'commit',
               kind: rule.kind,

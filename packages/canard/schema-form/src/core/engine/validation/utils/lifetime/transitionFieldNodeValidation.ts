@@ -29,12 +29,12 @@ export const transitionFieldNodeValidation = <
   runtime.validationActivationStamp = runtime.validationStamp;
   runtime.validationCadence?.cancel();
   runtime.validationCadence = undefined;
-  runtime.validationRun = undefined;
+  runtime.runValidation = undefined;
   runtime.validationRequestStamp = undefined;
   runtime.validationPendingTargets = undefined;
-  runtime.validationRunning = undefined;
+  runtime.activeValidationRun = undefined;
   runtime.validationPendingEntryStamp = undefined;
-  runtime.validationPending = false;
+  runtime.isValidationPending = false;
   dropFieldNodeRevealBaselines(root);
   runtime.revealPolicy = { value: policy, entries: [] };
   return true;

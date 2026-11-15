@@ -11,10 +11,10 @@ export const settleFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const runtime = node.rootNode.runtime;
   if (stamp !== undefined && runtime.validationStamp !== stamp) return;
-  if (!runtime.validationPending) {
-    if (runtime.validationUnavailable) releaseFieldNodeRevealHistory(node);
+  if (!runtime.isValidationPending) {
+    if (runtime.isValidationUnavailable) releaseFieldNodeRevealHistory(node);
     return;
   }
-  runtime.validationPending = false;
+  runtime.isValidationPending = false;
   releaseFieldNodeRevealHistory(node);
 };

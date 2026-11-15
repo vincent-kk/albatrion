@@ -33,15 +33,15 @@ export const dispatchBatch = <Self extends FieldNodeRecord<Self>>(
   try {
     fn();
   } catch (error) {
-    const active = resolveFieldNodeChainRoot(node.rootNode).runtime;
-    if ((active.batchDepth ?? 0) > 1) throw error;
-    captureChainError(active, error);
+    const activeRuntime = resolveFieldNodeChainRoot(node.rootNode).runtime;
+    if ((activeRuntime.batchDepth ?? 0) > 1) throw error;
+    captureChainError(activeRuntime, error);
   } finally {
     const activeRoot = resolveFieldNodeChainRoot(node.rootNode);
-    const active = activeRoot.runtime;
-    active.batchDepth = (active.batchDepth ?? 1) - 1;
+    const activeRuntime = activeRoot.runtime;
+    activeRuntime.batchDepth = (activeRuntime.batchDepth ?? 1) - 1;
     try {
-      if (!active.batchDepth) flushBatchWrites(activeRoot);
+      if (!activeRuntime.batchDepth) flushBatchWrites(activeRoot);
     } catch (error) {
       exitFailedFieldNodeChain(node, error);
     }

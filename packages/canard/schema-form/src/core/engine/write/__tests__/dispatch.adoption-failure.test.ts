@@ -67,7 +67,7 @@ it('finishes the owner link when the injected reporter throws during adoption', 
   expect(previous.runtime.entryDepth).toBe(0);
   expect(next.runtime.entryDepth).toBe(0);
   expect(previous.runtime.adoptedRoot).toBe(next.root);
-  expect(previous.root.disposed).toBe(true);
+  expect(previous.root.isDisposed).toBe(true);
   next.runtime.errorReporter = undefined;
   const event = vi.fn();
   const onChange = vi.fn();
@@ -149,7 +149,7 @@ it('completes adoption and mount after previous-root external aggregation fails'
     }),
   ).toThrow(failure);
   expect(mounted).toBe(true);
-  expect(previous.root.disposed).toBe(true);
+  expect(previous.root.isDisposed).toBe(true);
   expect(report.mock.calls.map(([record]) => record.error)).toEqual([failure]);
   const event = vi.fn();
   const onChange = vi.fn();
@@ -193,7 +193,7 @@ it('settles the adopted owner when aggregation capture itself loses its reporter
       adoptFieldNodeChain(previous.root, next.root);
     }),
   ).toThrow(failure);
-  expect(previous.root.disposed).toBe(true);
+  expect(previous.root.isDisposed).toBe(true);
   expect(report).not.toHaveBeenCalled();
   armed = false;
   const event = vi.fn();

@@ -1,4 +1,4 @@
-import type { Fn, Nullable } from '@aileron/declare';
+import type { Fn } from '@aileron/declare';
 
 import {
   BIT_FLAG_00,
@@ -30,27 +30,6 @@ export enum WriteOption {
   DisableAutomaticWrites = BIT_FLAG_02,
   /** Enable automatic writes even when the form suppresses them. */
   EnableAutomaticWrites = BIT_FLAG_03,
-}
-
-/**
- * Options for resetting a node to its initial or computed value.
- * @typeParam Value - The value type of the node
- */
-export interface ResetOptions<Value = unknown> {
-  /** Whether to update the scoped property (for oneOf/anyOf branches) */
-  updateScoped?: boolean;
-  /** Whether to force composition processing while resetting */
-  isolate?: boolean;
-  /** Whether to prefer the latest (current) value over the initial value */
-  preferLatest?: boolean;
-  /** Whether to apply the derived value when preferLatest is true and derivedValue is defined */
-  applyDerivedValue?: boolean;
-  /** Whether to check the default value first when preferLatest is true */
-  checkDefaultValueFirst?: boolean;
-  /** Explicit input value with highest priority - overrides all other values */
-  inputValue?: Nullable<Value>;
-  /** Fallback value used in the default value calculation logic */
-  fallbackValue?: Nullable<Value>;
 }
 
 /**

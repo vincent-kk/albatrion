@@ -68,7 +68,12 @@ describe('blueprint explicit type syntax', () => {
     ['E9', { type: ['null'] }, 'null', 'null', true, 'terminal'],
   ] as const)('%s', (_id, schema, kind, schemaType, nullable, strategy) => {
     const node = blueprint(schema).root;
-    expect(node).toMatchObject({ kind, schemaType, nullable, strategy });
+    expect(node).toMatchObject({
+      kind,
+      schemaType,
+      isNullable: nullable,
+      strategy,
+    });
     expect(isArray(node.schemaType)).toBe(kind === 'union');
     if (isArray(node.schemaType))
       expect(Object.isFrozen(node.schemaType)).toBe(true);

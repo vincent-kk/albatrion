@@ -81,10 +81,10 @@ export const compareArraySplice = (
         const children = host.children;
         const formerChildren = [...(children ?? [])];
         const formerKeys = formerChildren.map((child) => child.itemKey);
-        const local = host.local;
-        const formerLocal = slotsOf(local);
-        const emit = host.emit;
-        const formerEmit = slotsOf(emit);
+        const value = host.storedValue;
+        const formerValue = slotsOf(value);
+        const outputValue = host.storedOutputValue;
+        const formerOutputValue = slotsOf(outputValue);
         const snapshot = root.runtime.loadSnapshot;
         const formerSnapshot = structuredClone(snapshot);
         let result: unknown;
@@ -108,16 +108,16 @@ export const compareArraySplice = (
         expect(children ? [...children] : children).toEqual(
           children ? formerChildren : children,
         );
-        expect(slotsOf(local)).toEqual(formerLocal);
-        expect(slotsOf(emit)).toEqual(formerEmit);
+        expect(slotsOf(value)).toEqual(formerValue);
+        expect(slotsOf(outputValue)).toEqual(formerOutputValue);
         expect(snapshot).toStrictEqual(formerSnapshot);
         const current = select(root);
         history.push({
           result: slotsOf(result),
           delivered: [...delivered],
           settlement: observeArraySelection(root),
-          local: slotsOf(current.local),
-          emit: slotsOf(current.emit),
+          value: slotsOf(current.storedValue),
+          outputValue: slotsOf(current.storedOutputValue),
           defaults: defaultsOf(root),
           departed: observeDetachedReads(root, formerChildren),
           positions: formerChildren.map((child, position) => ({
@@ -126,7 +126,7 @@ export const compareArraySplice = (
             name: child.name,
             path: child.path,
             parent: child.parent === current,
-            detached: child.detached,
+            isDetached: child.isDetached,
           })),
         });
       }

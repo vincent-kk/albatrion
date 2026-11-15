@@ -68,7 +68,7 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
   for (const source of stateDirtyNodes) {
     const targets = index.stateKeyChildren.get(source.blueprintNode.id);
     if (!targets) continue;
-    if (source.detached || !source.children?.length) continue;
+    if (source.isDetached || !source.children?.length) continue;
     if (!expandFrom(source)) continue;
     for (const child of source.children)
       if (
@@ -82,8 +82,8 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
   let failures: Optional<CalculatedStateKeys<Self>['failures'][number][]>;
   for (const node of candidates) {
     if (
-      node.detached ||
-      (node.parent && node.parent.structure?.[node.name] !== node)
+      node.isDetached ||
+      (node.parent && node.parent.childrenByName?.[node.name] !== node)
     )
       continue;
     const schema = node.schema.schema;

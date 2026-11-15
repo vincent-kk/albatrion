@@ -29,8 +29,8 @@ describe('compiled active gate workspace characterization', () => {
                 return expression.evaluate(dependencies);
               },
             };
-            Object.defineProperty(wrapped, 'completeReads', {
-              value: expression.completeReads,
+            Object.defineProperty(wrapped, 'hasCompleteReads', {
+              value: expression.hasCompleteReads,
             });
             return Object.freeze(wrapped);
           }),
@@ -83,7 +83,7 @@ describe('compiled active gate workspace characterization', () => {
           expect(calls).toEqual(
             throws ? [['B'], ['A', 'B']] : [['B'], ['A', 'B'], ['A', 'B']],
           );
-          expect(context.gateThrowVersion).toBe(throws ? 1 : undefined);
+          expect(context.gateExceptionVersion).toBe(throws ? 1 : undefined);
           expect([...context.changedNodes]).toEqual([]);
           expect([...context.pendingOutputs!]).toEqual([]);
         } finally {

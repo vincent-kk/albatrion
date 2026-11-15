@@ -39,15 +39,15 @@ it('retains every candidate through an undeclared tail and old writes', () => {
   const oldNumber = getDispatchNode(list, '1', 'v');
   dispatchSetValue(getDispatchNode(root, 'number'), false);
   dispatchInsert(list, 0, {});
-  expect(list.local).toEqual([{}, {}, { v: 'kept' }]);
+  expect(list.storedValue).toEqual([{}, {}, { v: 'kept' }]);
   expect(readFieldNodeInactiveValues(root)).toContainEqual({
     path: '/list/2/v',
     value: 37,
   });
   dispatchSetValue(oldNumber, 81);
   dispatchRemove(list, 0);
-  expect(getDispatchNode(list, '1', 'v').local).toBe('kept');
+  expect(getDispatchNode(list, '1', 'v').storedValue).toBe('kept');
   dispatchSetValue(getDispatchNode(root, 'number'), true);
-  expect(getDispatchNode(list, '1', 'v').local).toBe(37);
-  expect(oldNumber.local).toBe(37);
+  expect(getDispatchNode(list, '1', 'v').storedValue).toBe(37);
+  expect(oldNumber.storedValue).toBe(37);
 });

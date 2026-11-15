@@ -10,6 +10,7 @@
 - Use `hasOwnProperty` from `@winglet/common-utils/lib` for own-key checks instead of calling `Object.prototype.hasOwnProperty` directly.
 - Use `isArray` from `@winglet/common-utils/filter` for array checks instead of calling `Array.isArray` directly (consumer-facing doc examples may show the native call).
 - Use `EMPTY_ARRAY`/`EMPTY_OBJECT` from `@winglet/common-utils/constant` for shared empty values, except identity sentinels.
+- Keep type arguments out of lazy creation: an argument-less `new Map()` is `Map<any, any>`, so `field ??= new Map()` takes its type from a type alias declared outside the function and annotated on the binding that receives it. A `let` that already declares its type narrows after `x ??= new Map()` and needs no alias. `Set`, `WeakMap` and `WeakSet` infer their arguments from the field and take none.
 
 ## Commands
 
@@ -73,7 +74,7 @@ User-injected render surfaces (FieldRenderer/FieldInput and virtualization Place
 - `registerPlugin()` — Global plugin registration (required before rendering)
 - `node.find('/path')` — JSONPointer node lookup (`..` for the parent; `*` wildcard support is limited)
 - `node.value` — read a virtual group tuple through `FormHandle.findNode('/period')`, narrow with `isVirtualNode`, then read its `value`; see [virtual schema](docs/agents/skills/schema-form-skill/knowledge/virtual-schema.md).
-- `node.outputValue` — Value refined by schema options. `FormHandle.getValue`/`submit`, root emission, and parent-side hydration snapshots read this value. `ArrayNode` applies `options.omitTrailingEmpty` trimming here (`omitEmpty` applies only to the parent propagation path).
+- `node.outputValue` — Value refined by schema options. `FormHandle.getValue`/`submit`, root output value, and parent-side hydration snapshots read this value. `ArrayNode` applies `options.omitTrailingEmpty` trimming here (`omitEmpty` applies only to the parent propagation path).
 - `node.validate()` / `node.errors`
 - `node.subscribe()` — Subscribes to node events (returns a cleanup function). Events delivered before subscription are not replayed; state mirrors use the `onSubscribe` catch-up in `useFieldNodeSubscribe`.
 - `node.revision(mask?)` — Monotonic revision of delivered event batches (counted regardless of listeners to detect gaps for late subscribers; `useFieldNodeTracker` uses it as the useSyncExternalStore snapshot)

@@ -11,6 +11,9 @@ import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { restoreAdoptedExternalErrors } from '../chain/restoreAdoptedExternalErrors';
 import { clearWarningKeys } from '../report/clearWarningKeys';
 
+/** Annotates the lazily created `pendingWarningRecords`; an argument-less `new Map()` would be `Map<any, any>`. */
+type PendingWarningRecords = Map<string, PendingFormErrorRecord>;
+
 /** Shared mount settings for a load that validates immediately. */
 const NO_MOUNT_SETTINGS: { deferValidation?: boolean } = {};
 
@@ -30,13 +33,13 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   if (!enterFieldNodeChain(root, 'load')) return;
   clearWarningKeys(root.runtime);
-  root.runtime.validationUnavailable = false;
-  root.runtime.validationCompileReported = false;
+  root.runtime.isValidationUnavailable = false;
+  root.runtime.isValidationCompileReported = false;
   root.runtime.validationStamp = (root.runtime.validationStamp ?? 0) + 1;
-  root.runtime.deferLoadValidation = settings.deferValidation === true;
+  root.runtime.shouldDeferLoadValidation = settings.deferValidation === true;
   if (!settings.deferValidation)
     (root.runtime.validationTargets ??= new Set()).add(root);
-  root.runtime.mountingGuardPass = process.env.NODE_ENV !== 'production';
+  root.runtime.isInMountingGuardPass = process.env.NODE_ENV !== 'production';
   try {
     try {
       loadFieldNodeAtMount(root, value, option);
@@ -64,19 +67,18 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
           code: FormWarningCode.ValidatorMissing,
           message: 'Validation is disabled because no validator was selected',
         };
-        (runtime.pendingWarningRecords ??= new Map()).set(
-          FormWarningCode.ValidatorMissing,
-          record,
-        );
+        const records: PendingWarningRecords =
+          (runtime.pendingWarningRecords ??= new Map());
+        records.set(FormWarningCode.ValidatorMissing, record);
         runtime.chainOccurrences?.push({ kind: 'record', record });
       }
     }
   } catch (error) {
-    root.runtime.mountingGuardPass = false;
+    root.runtime.isInMountingGuardPass = false;
     root.runtime.validationLoadStamp = root.runtime.validationStamp ?? 0;
     exitFailedFieldNodeChain(root, error);
   }
-  root.runtime.mountingGuardPass = false;
+  root.runtime.isInMountingGuardPass = false;
   root.runtime.validationLoadStamp = root.runtime.validationStamp ?? 0;
   exitFieldNodeChain(root);
 };

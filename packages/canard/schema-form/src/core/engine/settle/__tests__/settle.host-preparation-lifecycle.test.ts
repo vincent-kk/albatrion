@@ -23,7 +23,7 @@ it('reports the original derive budget failure after prepared-host revival', () 
   loadFieldNodeAtMount(root, fixture.input, WriteOption.Overwrite);
   expect(() =>
     writeFieldNode(
-      root.structure!.src,
+      root.childrenByName!.src,
       'go',
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
@@ -37,7 +37,7 @@ it('does not copy or enumerate the prepared gate list on a scalar switch', () =>
   const { root } = createTestTree(preparedHostSchema);
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   writeFieldNode(
-    root.structure!.kind,
+    root.childrenByName!.kind,
     1,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
@@ -48,12 +48,12 @@ it('does not copy or enumerate the prepared gate list on a scalar switch', () =>
   });
   try {
     writeFieldNode(
-      root.structure!.kind,
+      root.childrenByName!.kind,
       0,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.local).toEqual({ kind: 0, fixed: 'fixed', a: 'a' });
+    expect(root.storedValue).toEqual({ kind: 0, fixed: 'fixed', a: 'a' });
   } finally {
     iterator.mockRestore();
   }
@@ -65,7 +65,7 @@ it.each(['form', 'subtree'] as const)(
     const { root } = createTestTree(preparedHostSchema);
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     writeFieldNode(
-      root.structure!.kind,
+      root.childrenByName!.kind,
       1,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -74,7 +74,7 @@ it.each(['form', 'subtree'] as const)(
     if (kind === 'form') resetFieldNodeForm(root, {}, WriteOption.Overwrite);
     else resetFieldNodeSubtree(root, WriteOption.Overwrite);
     expect(getHostDerived(root).preparedStaticHost).toBeUndefined();
-    expect(root.structure!.kind.source).toBe(0);
+    expect(root.childrenByName!.kind.source).toBe(0);
   },
 );
 
@@ -87,33 +87,33 @@ it('prepares a new wheel for a host that leaves and re-enters', () => {
     },
   });
   loadFieldNodeAtMount(root, { show: true }, WriteOption.Overwrite);
-  const old = root.structure!.host;
+  const old = root.childrenByName!.host;
   const plan = getHostDerived(old).wheelPlan;
   expect(plan).toBeDefined();
   writeFieldNode(
-    root.structure!.show,
+    root.childrenByName!.show,
     false,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
   writeFieldNode(
-    root.structure!.show,
+    root.childrenByName!.show,
     true,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
-  const current = root.structure!.host;
+  const current = root.childrenByName!.host;
   expect(current).not.toBe(old);
   expect(getHostDerived(current).wheelPlan).not.toBe(plan);
-  expect(current.structure!.kind.path).toBe('/host/kind');
+  expect(current.childrenByName!.kind.path).toBe('/host/kind');
 });
 
 it('rebinds occurrence witnesses after array rearrangement', () => {
   const { root } = createTestTree({ type: 'array', items: preparedHostSchema });
   loadFieldNodeAtMount(root, [{}, {}], WriteOption.Overwrite);
-  const moved = root.structure!['0'];
+  const moved = root.childrenByName!['0'];
   writeFieldNode(
-    moved.structure!.kind,
+    moved.childrenByName!.kind,
     1,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
@@ -121,23 +121,23 @@ it('rebinds occurrence witnesses after array rearrangement', () => {
   const before = getHostDerived(moved).preparedStaticHost;
   expect(before).toBeDefined();
   arrangeFieldNodeItems(root, { kind: 'insert', index: 0, value: {} });
-  const host = root.structure!['1'];
+  const host = root.childrenByName!['1'];
   writeFieldNode(
-    host.structure!.kind,
+    host.childrenByName!.kind,
     0,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
   expect(getHostDerived(host).preparedStaticHost).not.toBe(before);
-  expect(host.structure!.fixed.path).toBe('/1/fixed');
-  expect(host.local).toEqual({ kind: 0, fixed: 'fixed', a: 'a' });
+  expect(host.childrenByName!.fixed.path).toBe('/1/fixed');
+  expect(host.storedValue).toEqual({ kind: 0, fixed: 'fixed', a: 'a' });
 });
 
 it('discards witnesses after a selection failure and recovers with a new baseline', () => {
   const { root } = createTestTree(preparedHostSchema);
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   writeFieldNode(
-    root.structure!.kind,
+    root.childrenByName!.kind,
     1,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
@@ -151,7 +151,7 @@ it('discards witnesses after a selection failure and recovers with a new baselin
     });
   expect(() =>
     writeFieldNode(
-      root.structure!.kind,
+      root.childrenByName!.kind,
       0,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -160,11 +160,11 @@ it('discards witnesses after a selection failure and recovers with a new baselin
   select.mockRestore();
   expect(getHostDerived(root).preparedStaticHost).toBeUndefined();
   writeFieldNode(
-    root.structure!.kind,
+    root.childrenByName!.kind,
     1,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
   expect(getHostDerived(root).preparedStaticHost).not.toBe(previous);
-  expect(root.local).toEqual({ kind: 1, fixed: 'fixed', b: 'b' });
+  expect(root.storedValue).toEqual({ kind: 1, fixed: 'fixed', b: 'b' });
 });

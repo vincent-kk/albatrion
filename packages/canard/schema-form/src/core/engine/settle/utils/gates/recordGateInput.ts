@@ -30,12 +30,12 @@ export const recordGateInput = <Self extends FieldNodeRecord<Self>>(
   const key = site?.key ?? (kind === 'value' ? path : kind + ':' + path);
   const previous = frame.inputs.get(key);
   if (previous) {
-    if (!Object.is(previous.value, value)) frame.consistent = false;
+    if (!Object.is(previous.value, value)) frame.isConsistent = false;
     if (frame.selectionShadow) {
       const shadow = frame.selectionShadow.inputs.get(key);
       if (shadow) {
         if (!Object.is(shadow.value, value))
-          frame.selectionShadow.consistent = false;
+          frame.selectionShadow.isConsistent = false;
       } else
         recordGateFrameInput(frame.selectionShadow, {
           path,

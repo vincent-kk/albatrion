@@ -22,12 +22,12 @@ export const selectRootGateDeclarations = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): Optional<BlueprintNode['declarations'][number][]> => {
   const round = context.gateSelectionRounds?.get(node);
-  const root = round?.active ? round.table.root : undefined;
+  const root = round?.isActive ? round.table.root : undefined;
   if (!round || !root) return undefined;
-  let selected: readonly number[] = root.ungatedIndices;
+  let selectedIndices: readonly number[] = root.ungatedIndices;
   for (const group of root.groups)
-    selected = mergeGateSteps(
-      selected,
+    selectedIndices = mergeGateSteps(
+      selectedIndices,
       readGateBucket(
         group.buckets,
         readGateSelectionGroup(node, context, group),
@@ -37,7 +37,7 @@ export const selectRootGateDeclarations = <Self extends FieldNodeRecord<Self>>(
     engineModes.gateSelection === 'verify' ||
     engineModes.gateWheel === 'shadow'
   ) {
-    const admitted = new Set(selected);
+    const admitted = new Set(selectedIndices);
     for (
       let index = 0;
       index < node.blueprintNode.declarations.length;
@@ -47,5 +47,8 @@ export const selectRootGateDeclarations = <Self extends FieldNodeRecord<Self>>(
       if (gate) verifyTableGate(node, context, gate, admitted.has(index));
     }
   }
-  return mapArray(selected, (index) => node.blueprintNode.declarations[index]);
+  return mapArray(
+    selectedIndices,
+    (index) => node.blueprintNode.declarations[index],
+  );
 };

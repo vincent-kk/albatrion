@@ -25,16 +25,16 @@ describe('settle transitions and loads', () => {
       },
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-    expect(root.structure?.name?.source).toBe('filled');
+    expect(root.childrenByName?.name?.source).toBe('filled');
     writeFieldNode(
       root,
       {},
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.name?.source).toBeUndefined();
+    expect(root.childrenByName?.name?.source).toBeUndefined();
     resetFieldNodeForm(root, {}, WriteOption.Overwrite);
-    expect(root.structure?.name?.source).toBe('filled');
+    expect(root.childrenByName?.name?.source).toBe('filled');
   });
 
   it('TEST-069 SetValueOption Overwrite replaces missing child source without a new lifetime', () => {
@@ -61,13 +61,15 @@ describe('settle transitions and loads', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.name?.source).toBeUndefined();
-    expect(root.structure?.gated?.source).toBe('new');
+    expect(root.childrenByName?.name?.source).toBeUndefined();
+    expect(root.childrenByName?.gated?.source).toBe('new');
     expect(root.runtime.loadSnapshot).toEqual({
       name: 'original',
       flag: false,
     });
-    expect(readFieldNodeDefaultValue(root.structure!.name)).toBe('original');
+    expect(readFieldNodeDefaultValue(root.childrenByName!.name)).toBe(
+      'original',
+    );
   });
 
   it('TEST-069 SetValueOption Merge retains missing keys and replaces a non-object V WRITE-079', () => {
@@ -95,7 +97,12 @@ describe('settle transitions and loads', () => {
       FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
-    expect(root.emit).toEqual({ a: 'new', b: 'B', flag: true, gated: 'new' });
+    expect(root.storedOutputValue).toEqual({
+      a: 'new',
+      b: 'B',
+      flag: true,
+      gated: 'new',
+    });
     writeFieldNode(
       root,
       null,
@@ -103,7 +110,7 @@ describe('settle transitions and loads', () => {
       WriteOption.Merge,
     );
     expect(root.source).toBeNull();
-    expect(root.structure?.a?.source).toBeUndefined();
+    expect(root.childrenByName?.a?.source).toBeUndefined();
     expect(root.runtime.misfitPaths.has('')).toBe(true);
   });
 
@@ -119,9 +126,9 @@ describe('settle transitions and loads', () => {
       {},
       WriteOption.Overwrite | WriteOption.DisableAutomaticWrites,
     );
-    expect(root.structure?.name?.source).toBeUndefined();
+    expect(root.childrenByName?.name?.source).toBeUndefined();
     resetFieldNodeForm(root, {}, WriteOption.Overwrite);
-    expect(root.structure?.name?.source).toBe('filled');
+    expect(root.childrenByName?.name?.source).toBe('filled');
   });
 
   it('TEST-069 SetValueOption EnableAutomaticWrites overrides Form suppression', () => {
@@ -137,7 +144,7 @@ describe('settle transitions and loads', () => {
       {},
       WriteOption.Overwrite | WriteOption.EnableAutomaticWrites,
     );
-    expect(root.structure?.name?.source).toBe('filled');
+    expect(root.childrenByName?.name?.source).toBe('filled');
   });
 
   it('WRITE-015 suppression wins when a call sets both automatic-write bits', () => {
@@ -152,10 +159,10 @@ describe('settle transitions and loads', () => {
       WriteOption.DisableAutomaticWrites |
       WriteOption.EnableAutomaticWrites;
     loadFieldNodeAtMount(root, {}, both);
-    expect(root.structure?.name?.source).toBeUndefined();
+    expect(root.childrenByName?.name?.source).toBeUndefined();
     root.runtime.disableAutomaticWrites = true;
     resetFieldNodeForm(root, {}, both);
-    expect(root.structure?.name?.source).toBeUndefined();
+    expect(root.childrenByName?.name?.source).toBeUndefined();
   });
 
   it('SETTLE-049 and EVENT-072 resetSubtree loads only its subtree snapshot', () => {
@@ -175,20 +182,20 @@ describe('settle transitions and loads', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.left.structure!.a,
+      root.childrenByName!.left.childrenByName!.a,
       'changed',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.structure!.right,
+      root.childrenByName!.right,
       'changed',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    resetFieldNodeSubtree(root.structure!.left, WriteOption.Overwrite);
-    expect(root.structure?.left?.structure?.a?.source).toBe('D');
-    expect(root.structure?.right?.source).toBe('changed');
+    resetFieldNodeSubtree(root.childrenByName!.left, WriteOption.Overwrite);
+    expect(root.childrenByName?.left?.childrenByName?.a?.source).toBe('D');
+    expect(root.childrenByName?.right?.source).toBe('changed');
   });
 
   it('ERROR-204 form-level load resets diagnostics but subtree load does not', () => {
@@ -204,7 +211,7 @@ describe('settle transitions and loads', () => {
       cause: 'budget',
       commit: 1,
     };
-    resetFieldNodeSubtree(root.structure!.name, WriteOption.Overwrite);
+    resetFieldNodeSubtree(root.childrenByName!.name, WriteOption.Overwrite);
     expect(root.runtime.diagnostics.status).toBe('degraded');
     resetFieldNodeForm(root, { name: 'y' }, WriteOption.Overwrite);
     expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
@@ -227,10 +234,14 @@ describe('settle transitions and loads', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.user?.structure?.name?.source).toBeUndefined();
+    expect(
+      root.childrenByName?.user?.childrenByName?.name?.source,
+    ).toBeUndefined();
     resetFieldNodeForm(root, { user: null }, WriteOption.Overwrite);
-    expect(root.structure?.user?.structure?.name?.source).toBeUndefined();
-    expect(root.emit).toEqual({ user: null });
+    expect(
+      root.childrenByName?.user?.childrenByName?.name?.source,
+    ).toBeUndefined();
+    expect(root.storedOutputValue).toEqual({ user: null });
   });
 
   it('VALUE-036 a loaded null object leaves its children unfilled exactly like a written null', () => {
@@ -258,17 +269,17 @@ describe('settle transitions and loads', () => {
       WriteOption.Overwrite,
     );
     for (const root of [loaded, written]) {
-      const account = root.structure!.account!;
-      expect(root.emit).toEqual({ account: null });
-      expect(account.structure?.first?.source).toBeUndefined();
-      expect(account.structure?.second?.source).toBeUndefined();
+      const account = root.childrenByName!.account!;
+      expect(root.storedOutputValue).toEqual({ account: null });
+      expect(account.childrenByName?.first?.source).toBeUndefined();
+      expect(account.childrenByName?.second?.source).toBeUndefined();
       writeFieldNode(
-        account.structure!.first!,
+        account.childrenByName!.first!,
         'typed',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
-      expect(root.emit).toEqual({ account: { first: 'typed' } });
+      expect(root.storedOutputValue).toEqual({ account: { first: 'typed' } });
     }
   });
 
@@ -283,8 +294,8 @@ describe('settle transitions and loads', () => {
       },
     });
     loadFieldNodeAtMount(root, { list: 'x' }, WriteOption.Overwrite);
-    expect(root.structure!.list!.source).toBe('x');
-    expect(root.structure!.list!.children).toEqual([]);
+    expect(root.childrenByName!.list!.source).toBe('x');
+    expect(root.childrenByName!.list!.children).toEqual([]);
   });
 
   it('WRITE-094 whole replacement clears latent source and is idempotent on a second call', () => {
@@ -300,22 +311,22 @@ describe('settle transitions and loads', () => {
       { flag: false, secret: 'latent' },
       WriteOption.Overwrite,
     );
-    const emitted = root.emit;
+    const storedOutputValue = root.storedOutputValue;
     writeFieldNode(
       root,
-      emitted,
+      storedOutputValue,
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.emit).toEqual(emitted);
-    const afterFirst = root.emit;
+    expect(root.storedOutputValue).toEqual(storedOutputValue);
+    const afterFirst = root.storedOutputValue;
     writeFieldNode(
       root,
       afterFirst,
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.emit).toBe(afterFirst);
+    expect(root.storedOutputValue).toBe(afterFirst);
     expect(root.runtime.refreshTargets?.size).toBe(0);
   });
 
@@ -332,15 +343,15 @@ describe('settle transitions and loads', () => {
       },
     });
     loadFieldNodeAtMount(root, { flag: true }, WriteOption.Overwrite);
-    expect(root.structure?.appeared).toBeUndefined();
+    expect(root.childrenByName?.appeared).toBeUndefined();
     writeFieldNode(
       root,
       undefined,
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.flag?.source).toBeUndefined();
-    expect(root.structure?.appeared?.source).toBe('A');
+    expect(root.childrenByName?.flag?.source).toBeUndefined();
+    expect(root.childrenByName?.appeared?.source).toBe('A');
   });
 
   it('NODE-044 detached write leaves every source unchanged', () => {
@@ -356,9 +367,9 @@ describe('settle transitions and loads', () => {
       { flag: true, secret: 'old' },
       WriteOption.Overwrite,
     );
-    const former = root.structure!.secret;
+    const former = root.childrenByName!.secret;
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -374,12 +385,12 @@ describe('settle transitions and loads', () => {
     expect(root.runtime.commitNumber).toBe(commit);
     expect(readRetainedSlotSource(root, '/secret', 'string')).toBe('old');
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.secret?.source).toBe('old');
+    expect(root.childrenByName?.secret?.source).toBe('old');
   });
 
   it('WRITE-082 fills a host from controls.default before default and distributes through interpret', () => {
@@ -398,11 +409,11 @@ describe('settle transitions and loads', () => {
       },
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-    expect(root.structure?.host?.structure?.x?.source).toBe(3);
-    expect(root.structure?.host?.structure?.y?.source).toBe('Y');
-    expect(root.structure?.host?.extras).toEqual({ extra: 'E' });
+    expect(root.childrenByName?.host?.childrenByName?.x?.source).toBe(3);
+    expect(root.childrenByName?.host?.childrenByName?.y?.source).toBe('Y');
+    expect(root.childrenByName?.host?.extras).toEqual({ extra: 'E' });
     resetFieldNodeForm(root, { host: {} }, WriteOption.Overwrite);
-    expect(root.structure?.host?.structure?.x?.source).toBe(3);
+    expect(root.childrenByName?.host?.childrenByName?.x?.source).toBe(3);
   });
 
   it('VALUE-030 subtree load resets only scoped interaction and mismatch records', () => {
@@ -418,18 +429,18 @@ describe('settle transitions and loads', () => {
       { left: 'bad', right: 'bad' },
       WriteOption.Overwrite,
     );
-    setTestInteractionState(root.structure!.left, {
+    setTestInteractionState(root.childrenByName!.left, {
       [FieldNodeState.Touched]: true,
     });
-    setTestInteractionState(root.structure!.right, {
+    setTestInteractionState(root.childrenByName!.right, {
       [FieldNodeState.Touched]: true,
     });
-    resetFieldNodeSubtree(root.structure!.left, WriteOption.Overwrite);
+    resetFieldNodeSubtree(root.childrenByName!.left, WriteOption.Overwrite);
     expect(
-      root.structure?.left?.interactionState[FieldNodeState.Touched],
+      root.childrenByName?.left?.storedState[FieldNodeState.Touched],
     ).toBeUndefined();
     expect(
-      root.structure?.right?.interactionState[FieldNodeState.Touched],
+      root.childrenByName?.right?.storedState[FieldNodeState.Touched],
     ).toBe(true);
     expect([...root.runtime.misfitPaths].sort()).toEqual(['/left', '/right']);
     expect(root.runtime.misfitRecords?.map((record) => record.path)).toEqual([

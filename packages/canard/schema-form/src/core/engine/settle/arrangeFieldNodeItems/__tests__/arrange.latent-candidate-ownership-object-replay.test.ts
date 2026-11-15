@@ -109,20 +109,20 @@ it.each<ReplayCase>([
     const inserted = { v: destination === 'declared' ? '5' : 5 };
     const expected =
       operation === 'insert' ? [inserted, expectedMoved] : [expectedMoved];
-    expect(moved.local).toEqual(expectedMoved);
-    expect(moved.emit).toEqual(expectedMoved);
+    expect(moved.storedValue).toEqual(expectedMoved);
+    expect(moved.storedOutputValue).toEqual(expectedMoved);
     if (destination === 'declared') {
       expect(getDispatchNode(moved, 'v').source).toBe(123);
       expect(moved.extras).toEqual(extras ? { extra: 9 } : undefined);
     } else {
-      expect(moved.structure?.v).toBeUndefined();
+      expect(moved.childrenByName?.v).toBeUndefined();
       expect(moved.extras).toEqual(expectedMoved);
     }
-    expect(root.local).toEqual(expected);
-    expect(root.emit).toEqual(expected);
+    expect(root.storedValue).toEqual(expected);
+    expect(root.storedOutputValue).toEqual(expected);
     expect(
       events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
-    ).toMatchObject({ current: { local: expected, emit: expected } });
+    ).toMatchObject({ current: { value: expected, outputValue: expected } });
     await dispatchValidate(root);
     expect(validationInputs.at(-1)).toEqual(expected);
     expect([...root.runtime.misfitPaths]).toEqual([]);

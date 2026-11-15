@@ -10,7 +10,7 @@ export const getDispatchChild = (
   parent: DispatchTestNode,
   name: string,
 ): DispatchTestNode => {
-  const child = parent.structure?.[name];
+  const child = parent.childrenByName?.[name];
   if (!child) throw new Error(`Missing test child ${name}`);
   return child;
 };

@@ -6,13 +6,13 @@
 
 ## API Contracts
 
-has는 내부 staticFirstLoadEligible만 읽으며 사실이 없는 입력은 false입니다. 공개 노드 필드나 별도 등록 저장소를 추가하지 않습니다. 자격의 증명과 별도의 fixedFirstLoadPlan은 [부모](../DETAIL.md)의 계약을 따릅니다.
+has는 내부 isStaticFirstLoadEligible만 읽으며 사실이 없는 입력은 false입니다. 공개 노드 필드나 별도 등록 저장소를 추가하지 않습니다. 자격의 증명과 별도의 fixedFirstLoadPlan은 [부모](../DETAIL.md)의 계약을 따릅니다.
 
 ## Acceptance Criteria
 
 ### static-first-load — 재분석 없는 보관
 
-비열거·읽기 전용 생성 사실을 그대로 조회하고 모드 초기화 뒤에도 유지합니다. 자격이 없음과 사실이 없음은 모두 일반 로드 경로로 보수적으로 돌아갑니다. 라이브 상태로 자격을 추정하거나 branchless와 같은 다른 capability를 자격 대신 읽지 않습니다.
+비열거·읽기 전용 생성 사실을 그대로 조회하고 모드 초기화 뒤에도 유지합니다. 자격이 없음과 사실이 없음은 모두 일반 로드 경로로 보수적으로 돌아갑니다. 라이브 상태로 자격을 추정하거나 isBranchless와 같은 다른 capability를 자격 대신 읽지 않습니다.
 
 ## Last Updated
 

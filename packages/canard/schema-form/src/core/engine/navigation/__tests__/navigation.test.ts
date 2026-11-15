@@ -38,7 +38,7 @@ describe('navigation over the committed shape', () => {
     const root = createNode('');
     const leaf = createNode('leaf', root, 'terminal');
     const absent = createNode('absent', root);
-    delete root.structure?.absent;
+    delete root.childrenByName?.absent;
     root.children = [leaf];
     expect(find(root, '/absent')).toBeNull();
     expect(findNodes(root, '/absent')).toEqual([]);
@@ -51,7 +51,7 @@ describe('navigation over the committed shape', () => {
     const root = createNode('');
     const first = createNode('first', root);
     const second = createNode('second', root);
-    if (root.structure !== null) root.structure.alias = first;
+    if (root.childrenByName !== null) root.childrenByName.alias = first;
     expect(findNodes(root, '/*')).toEqual([first, second]);
     expect(find(root, '/*')).toBe(first);
   });
@@ -60,7 +60,7 @@ describe('navigation over the committed shape', () => {
     const root = createNode('');
     const startDate = createNode('startDate', root);
     const period = createNode('period', root);
-    period.structure = { startDate };
+    period.childrenByName = { startDate };
     period.children = [startDate];
     expect(find(root, '/period/startDate')).toBe(startDate);
     expect(find(root, '/period/startDate')?.path).toBe('/startDate');
@@ -70,7 +70,7 @@ describe('navigation over the committed shape', () => {
     const root = createNode('');
     const first = createNode('first', root);
     const second = createNode('second', root);
-    second.structure = { first };
+    second.childrenByName = { first };
     second.children = [first];
     const visited: TestNode[] = [];
     visitFieldNodes(root, (node) => {
@@ -97,18 +97,18 @@ describe('navigation over the committed shape', () => {
     const first = createNode('first', root);
     const second = createNode('second', root);
     second.children = [first];
-    first.detached = true;
+    first.isDetached = true;
     const visited: TestNode[] = [];
     const record = (node: TestNode) => {
       visited.push(node);
     };
-    visitFieldNodes(second, record, { owned: true });
+    visitFieldNodes(second, record, { isOwned: true });
     expect(visited).toEqual([second]);
     visited.length = 0;
     visitFieldNodes(second, record);
     expect(visited).toEqual([second, first]);
     visited.length = 0;
-    visitFieldNodes(root, record, { owned: true });
+    visitFieldNodes(root, record, { isOwned: true });
     expect(visited).toEqual([root, first, second]);
   });
 });
@@ -119,9 +119,9 @@ describe('detached navigation reads', () => {
     const root = createNode('');
     const oldBranch = createNode('branch', root);
     const oldChild = createNode('oldChild', oldBranch);
-    oldBranch.detached = true;
-    oldChild.detached = true;
-    delete root.structure?.branch;
+    oldBranch.isDetached = true;
+    oldChild.isDetached = true;
+    delete root.childrenByName?.branch;
     root.children = [];
     const liveBranch = createNode('branch', root);
     const liveChild = createNode('liveChild', liveBranch);
@@ -135,9 +135,9 @@ describe('detached navigation reads', () => {
     const root = createNode('');
     const branch = createNode('branch', root);
     const child = createNode('child', branch);
-    branch.detached = true;
-    child.detached = true;
-    delete root.structure?.branch;
+    branch.isDetached = true;
+    child.isDetached = true;
+    delete root.childrenByName?.branch;
     root.children = [];
     createNode('live', root);
     expect(find(child, '..')).toBe(branch);

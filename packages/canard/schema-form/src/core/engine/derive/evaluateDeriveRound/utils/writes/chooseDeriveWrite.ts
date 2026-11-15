@@ -24,7 +24,7 @@ export const chooseDeriveWrite = <Self extends FieldNodeRecord<Self>>(
   const path = candidate.targetPath;
   const prior = winners.get(path);
   const wins =
-    !state.suppressAutomaticWrites &&
+    !state.isAutomaticWriteSuppressed &&
     candidate.rank >= (state.appliedRanks.get(path) ?? 0) &&
     (!prior || compareDeriveWrites(candidate, prior) >= 0);
   if (wins) {
@@ -32,17 +32,17 @@ export const chooseDeriveWrite = <Self extends FieldNodeRecord<Self>>(
     if (previousIndex !== undefined)
       trace[previousIndex] = { ...trace[previousIndex], result: 'lost' };
     winners.set(path, candidate);
-    if (state.trace) traceWinners.set(path, trace.length);
+    if (state.isTraceEnabled) traceWinners.set(path, trace.length);
   }
-  if (state.trace)
+  if (state.isTraceEnabled)
     trace.push({
       phase: 'derive',
       kind: candidate.kind,
       sourcePath,
       targetPath: path,
-      previousValue: candidate.target?.emit,
+      previousValue: candidate.target?.storedOutputValue,
       nextValue: candidate.value,
-      result: state.suppressAutomaticWrites
+      result: state.isAutomaticWriteSuppressed
         ? 'suppressed'
         : wins
           ? 'applied'

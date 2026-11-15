@@ -1,9 +1,10 @@
 # Albatrion Agent Guidance
 
-Codex loads this file. The guidance it relies on lives in two other files, which this file does not copy; read both before any task:
+Codex loads this file. The guidance it relies on lives in three other files, which this file does not copy; read all three before any task:
 
 - `CLAUDE.md`: project structure, commands, agent assets, module contract principles, repository requirements and the development workflow. It applies to Codex as written.
 - `DOCUMENTATION.md`: the principles for the documents this repository writes, within the scope it states.
+- `NAMING_CONVENTIONS.md`: the part of speech of member names in every package.
 
 # Repository Requirements
 

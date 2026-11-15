@@ -8,7 +8,7 @@ import { selectNodeSchema } from '../selectNodeSchema';
 /**
  * Consume a dirty frontier whose gates, appearances, and shape work are absent.
  * @param node - Live record reached under the caller's branchless stable proof
- * @param context - Call with empty entered and shapeDirtyPaths containers
+ * @param context - Call with empty `enteredNodes` and `shapeDirtyPaths` containers
  * @returns Nothing; updates records in child post-order and consumes dirty paths
  */
 export const computeStableNode = <Self extends FieldNodeRecord<Self>>(

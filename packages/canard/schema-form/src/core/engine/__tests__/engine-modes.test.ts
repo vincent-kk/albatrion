@@ -26,16 +26,16 @@ it('rebuilds derived records only when one engine mode actually changes', () => 
 it('clears derived records for wheel and derivation mode changes too', () => {
   const { blueprint } = createTestTree({ type: 'string' });
   const wheel = engineModes.gateWheel;
-  const derive = engineModes.deriveShadow;
+  const derive = engineModes.isDeriveShadowEnabled;
   try {
     const first = HostStaticPartition.get(blueprint.root);
     engineModes.setMode('gateWheel', wheel === 'record' ? 'skip' : 'record');
     const second = HostStaticPartition.get(blueprint.root);
     expect(second).not.toBe(first);
-    engineModes.setMode('deriveShadow', !derive);
+    engineModes.setMode('isDeriveShadowEnabled', !derive);
     expect(HostStaticPartition.get(blueprint.root)).not.toBe(second);
   } finally {
     engineModes.setMode('gateWheel', wheel);
-    engineModes.setMode('deriveShadow', derive);
+    engineModes.setMode('isDeriveShadowEnabled', derive);
   }
 });

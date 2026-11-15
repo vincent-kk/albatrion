@@ -25,7 +25,7 @@ export const prepareFixedFirstHost = <Self extends FieldNodeRecord<Self>>(
     if (!constructed) return false;
     const affected = [];
     for (const entry of plan.entries) {
-      const child = node.structure![entry.name];
+      const child = node.childrenByName![entry.name];
       if (
         entry.declarations.some((declaration) => declaration.gates.length > 0)
       )

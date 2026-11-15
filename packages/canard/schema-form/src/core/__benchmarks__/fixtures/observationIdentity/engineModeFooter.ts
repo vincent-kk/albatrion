@@ -3,13 +3,16 @@ export const engineModeFooter = (): string => `
 const __previousEngineModes = {
   gateSelection: engineModes.gateSelection,
   gateWheel: engineModes.gateWheel,
-  deriveShadow: engineModes.deriveShadow,
+  isDeriveShadowEnabled: engineModes.isDeriveShadowEnabled,
 };
 engineModes.setMode('gateSelection', 'verify');
 export const __restoreEngineModes = () => {
   engineModes.setMode('gateSelection', __previousEngineModes.gateSelection);
   engineModes.setMode('gateWheel', __previousEngineModes.gateWheel);
-  engineModes.setMode('deriveShadow', __previousEngineModes.deriveShadow);
+  engineModes.setMode(
+    'isDeriveShadowEnabled',
+    __previousEngineModes.isDeriveShadowEnabled,
+  );
 };
 export const __readGateTableVerification = () => ({mode: engineModes.gateSelection, violations: gateSelectionTable.violations, assertions: {...gateSelectionTable.assertions}});
 `;

@@ -34,15 +34,15 @@ export const collectHostSlotValues = <Self extends FieldNodeRecord<Self>>(
       ? baseline.overlay
       : host.inactiveSlotOverlays?.get(entry);
     const counterpart = baseline
-      ? baseline.active
-      : host.structure?.[entry.name];
+      ? baseline.activeNode
+      : host.childrenByName?.[entry.name];
     const childOrder = [
       ...order,
       getSlotEntryPosition(host.blueprintNode, entry),
     ];
-    if (baseline?.active && !active.has(baseline.active)) {
-      active.add(baseline.active);
-      collectHostSlotValues(baseline.active, childOrder, values);
+    if (baseline?.activeNode && !active.has(baseline.activeNode)) {
+      active.add(baseline.activeNode);
+      collectHostSlotValues(baseline.activeNode, childOrder, values);
     }
     collectSlotSourceValues(
       entry.node,
@@ -57,8 +57,8 @@ export const collectHostSlotValues = <Self extends FieldNodeRecord<Self>>(
   for (const child of host.inactiveSlotChildren?.values() ?? []) {
     if (
       active.has(child) ||
-      host.structure?.[child.name] !== child ||
-      !child.deliveryInitialized
+      host.childrenByName?.[child.name] !== child ||
+      !child.isDeliveryInitialized
     )
       continue;
     const entry = getRetainedChildEntry(host, child.name, child.blueprintNode);

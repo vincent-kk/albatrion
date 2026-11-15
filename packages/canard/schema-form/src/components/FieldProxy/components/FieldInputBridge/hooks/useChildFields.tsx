@@ -91,7 +91,7 @@ export const useChildFields = (
         CachedComponent.field = node.name;
         ChildFields.push(CachedComponent);
       } else {
-        const key = String(cache.nextKey++);
+        const key = '' + cache.nextKey++;
         // Deferrable is baked at creation so the component's hook set stays
         // static; revealed-ness itself is resolved dynamically by the gate.
         const deferredManager =

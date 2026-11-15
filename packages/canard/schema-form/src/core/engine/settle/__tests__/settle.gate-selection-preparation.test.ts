@@ -82,7 +82,7 @@ describe('mount-time gate selection preparation', () => {
     ).length;
     builds.mockClear();
     writer.writeFieldNode(
-      root.structure!.kind,
+      root.childrenByName!.kind,
       'kind_4',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -132,7 +132,7 @@ describe('mount-time gate selection preparation', () => {
       type: 'object',
       properties: { value: { type: 'string', controls: { visible: 'true' } } },
     });
-    expect(blueprint.capabilities.branchless).toBe(true);
+    expect(blueprint.capabilities.isBranchless).toBe(true);
     expect(blueprint.capabilities.hasExpressions).toBe(true);
     const tables = vi.spyOn(gateSelection, 'getGateSelectionTable');
     const builds = observeHostSlotWrites('directChildSelectionPlan');
@@ -150,7 +150,7 @@ describe('mount-time gate selection preparation', () => {
         { properties: { b: { type: 'string' } } },
       ],
     });
-    expect(blueprint.capabilities.branchless).toBe(false);
+    expect(blueprint.capabilities.isBranchless).toBe(false);
     expect(blueprint.capabilities.hasExpressions).toBe(false);
     const tables = vi.spyOn(gateSelection, 'getGateSelectionTable');
     const builds = observeHostSlotWrites('directChildSelectionPlan');
@@ -172,7 +172,7 @@ describe('mount-time gate selection preparation', () => {
     ).toBe(false);
     const builds = observeHostSlotWrites('directChildSelectionPlan');
     writer.writeFieldNode(
-      root.structure!.kind,
+      root.childrenByName!.kind,
       'kind_4',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,

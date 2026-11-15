@@ -33,13 +33,13 @@ export interface GateWheelFrame {
   /** First actual input at each distinct channel and path in this host wheel. */
   inputs: Map<string, GateWheelInput>;
   /** Whether every repeated read at an input site was Object.is-identical. */
-  consistent: boolean;
+  isConsistent: boolean;
   /** Registered gate count at the beginning of this host wheel. */
   gateCount: number;
   /** Settlement gate exception version at the beginning of this host wheel. */
-  throwVersion: Optional<number>;
+  exceptionVersion: Optional<number>;
   /** Independent full-evaluation inputs for table selection's verify mode. */
-  selectionShadow?: Pick<GateWheelFrame, 'inputs' | 'consistent'>;
+  selectionShadow?: Pick<GateWheelFrame, 'inputs' | 'isConsistent'>;
   /** Actual evaluation sequence retained only for shadow confirmation. */
   evaluations?: {
     /** Bound condition evaluated at this position, including prerequisites. */

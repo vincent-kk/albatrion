@@ -11,11 +11,11 @@ export const watchGateSelectionDirty = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   if (context.restoreGateSelectionDirty) return;
-  const dirty = context.dirtyPaths;
-  const add = dirty.add;
-  dirty.add = function (path: string) {
+  const dirtyPaths = context.dirtyPaths;
+  const add = dirtyPaths.add;
+  dirtyPaths.add = function (path: string) {
     for (const round of context.gateSelectionRounds?.values() ?? [])
-      if (round.active)
+      if (round.isActive)
         verifyGateSelection(
           round.watchedPaths.indexOf(path) === -1 ||
             round.stableSchemaPaths.indexOf(path) !== -1,
@@ -24,7 +24,7 @@ export const watchGateSelectionDirty = <Self extends FieldNodeRecord<Self>>(
     return add.call(this, path);
   };
   context.restoreGateSelectionDirty = () => {
-    dirty.add = add;
+    dirtyPaths.add = add;
     context.restoreGateSelectionDirty = undefined;
   };
 };

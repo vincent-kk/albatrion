@@ -9,6 +9,9 @@ import { assertNotInDelivery } from '../report/assertNotInDelivery';
 import { propagateExternalErrorsToRoot } from './utils/propagateExternalErrorsToRoot';
 import { publishRootExternalErrors } from './utils/publishRootExternalErrors';
 
+/** Annotates the lazily created `nodeErrors`; an argument-less `new Map()` would be `Map<any, any>`. */
+type NodeErrors = Map<unknown, readonly { dataPath: string }[]>;
+
 /**
  * Replace a live node's external issues without changing its source.
  * @param node - Occurrence receiving external validation issues
@@ -20,12 +23,13 @@ export const dispatchSetExternalErrors = <Self extends FieldNodeRecord<Self>>(
   errors: readonly ValidationIssue[],
 ): void => {
   assertFieldNodeWritable(node);
-  if (node.detached) return;
+  if (node.isDetached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
   if (refuseListenerFeedback(runtime)) return;
   if (runtime.nodeErrors?.get(node) === errors) return;
-  (runtime.nodeErrors ??= new Map()).set(node, errors);
+  const nodeErrors: NodeErrors = (runtime.nodeErrors ??= new Map());
+  nodeErrors.set(node, errors);
   if (node === node.rootNode) publishRootExternalErrors(node);
   else propagateExternalErrorsToRoot(node);
   queueNonSettleEvent(node, FieldNodeEventType.UpdateError, errors);

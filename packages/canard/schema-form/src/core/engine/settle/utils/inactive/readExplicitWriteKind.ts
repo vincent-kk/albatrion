@@ -25,7 +25,7 @@ export const readExplicitWriteKind = <Self extends FieldNodeRecord<Self>>(
   // Batch replacement paths retain earlier whole writes after later merges.
   let matchesReplacementPath: Optional<boolean> = undefined;
 
-  const replacementPaths = context.replacePaths;
+  const replacementPaths = context.replacementPaths;
   if (replacementPaths != null) {
     matchesReplacementPath = false;
     for (

@@ -5,12 +5,12 @@ import { FocusRequest } from '../FocusRequest';
 it('follows current load identity until cancellation', () => {
   let current = true;
   const request = new FocusRequest(() => current);
-  expect(request.live).toBe(true);
+  expect(request.isLive).toBe(true);
   current = false;
-  expect(request.live).toBe(false);
+  expect(request.isLive).toBe(false);
   current = true;
   request.cancel();
-  expect(request.live).toBe(false);
+  expect(request.isLive).toBe(false);
 });
 it('cleans in registration order exactly once, including late registration', () => {
   const request = new FocusRequest(() => true);

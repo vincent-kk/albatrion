@@ -28,9 +28,9 @@ it('preserves reachable explicit-clear descendants when exit writes are suppress
   dispatchMount(root, { a: true, v: { x: 37 } });
   runtime.disableAutomaticWrites = true;
   dispatchSetValue(getDispatchNode(root, 'a'), false);
-  expect(root.emit).toEqual({ a: false });
+  expect(root.storedOutputValue).toEqual({ a: false });
   expect(readRetainedSlotSource(root, '/v/x', 'number')).toBe(37);
   expect(readInactiveValuesAt(root, '')).toEqual([{ path: '/v/x', value: 37 }]);
   dispatchSetValue(getDispatchNode(root, 'a'), true);
-  expect(root.emit).toEqual({ a: true, v: { x: 37 } });
+  expect(root.storedOutputValue).toEqual({ a: true, v: { x: 37 } });
 });

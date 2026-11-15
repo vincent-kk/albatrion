@@ -7,7 +7,7 @@ export const useBoundaryReporter = (path?: string) => {
   const reporter = useFormErrorContext();
   return useCallback(
     (error: unknown, info: { componentStack?: string }) => {
-      if (path === undefined) reporter?.pendingLoad?.();
+      if (path === undefined) reporter?.drainPendingLoad?.();
       reporter?.capture(error, 'render', info.componentStack ?? '', path);
     },
     [reporter, path],

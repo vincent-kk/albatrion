@@ -16,7 +16,10 @@ import { reportOwnerlessFailure } from './reportOwnerlessFailure';
  * @returns Handler failures in delivery order for final bundling
  */
 export const deliverChainRecords = (
-  runtime: Pick<FieldNodeRuntime<unknown>, 'errorReporter' | 'reportingErrors'>,
+  runtime: Pick<
+    FieldNodeRuntime<unknown>,
+    'errorReporter' | 'isReportingErrors'
+  >,
   records: readonly PendingFormErrorRecord[],
   original: unknown,
   caller: boolean,
@@ -38,15 +41,15 @@ export const deliverChainRecords = (
         console.warn(record.code, record.message, record.details);
       continue;
     }
-    const previous = runtime.reportingErrors;
-    runtime.reportingErrors = true;
+    const previous = runtime.isReportingErrors;
+    runtime.isReportingErrors = true;
     try {
       reporter.report(delivered);
     } catch (error) {
       if (caller) failures.push(error);
       else reportOwnerlessFailure(error);
     } finally {
-      runtime.reportingErrors = previous;
+      runtime.isReportingErrors = previous;
     }
   }
   if (!caller && original !== undefined) reportOwnerlessFailure(original);

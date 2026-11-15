@@ -12,9 +12,11 @@ import { readKeepDeclarations } from './readKeepDeclarations';
 export const markKeepDescendants = (nodes: readonly MutableNode[]): void => {
   let pending: Optional<MutableNode[]>;
   for (const node of nodes) {
-    const { own, child } = readKeepDeclarations(node.declarations);
-    if (child) node.hasKeepDescendants = true;
-    if (own || child) (pending ??= []).push(node);
+    const { hasOwnKeep, hasChildKeep } = readKeepDeclarations(
+      node.declarations,
+    );
+    if (hasChildKeep) node.hasKeepDescendants = true;
+    if (hasOwnKeep || hasChildKeep) (pending ??= []).push(node);
   }
   if (!pending) return;
   const parents = collectTemplateParents(nodes);

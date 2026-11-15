@@ -27,7 +27,7 @@ export const commitDeriveRules = <Self extends FieldNodeRecord<Self>>(
   const state = getDeriveState(context);
   if (!state) return;
   const decision = evaluateResetInteraction(context.root, state);
-  if (state.trace && decision.trace.length)
+  if (state.isTraceEnabled && decision.trace.length)
     (context.traceRounds ??= []).push([...decision.trace]);
   for (const failure of decision.failures) {
     recordSettlementFailure(
@@ -45,25 +45,25 @@ export const commitDeriveRules = <Self extends FieldNodeRecord<Self>>(
     );
   }
   for (const node of decision.nodes) {
-    node.interactionReset += 1;
-    const previous = node.interactionState;
-    node.interactionState = captureFieldNodeChange(
+    node.interactionEpoch += 1;
+    const previous = node.storedState;
+    node.storedState = captureFieldNodeChange(
       node,
-      'interactionState',
-      shallowPatch(node.interactionState, CLEAN_STATE_PATCH),
+      'storedState',
+      shallowPatch(node.storedState, CLEAN_STATE_PATCH),
     );
-    if (node.interactionState !== previous) context.changedNodes.add(node);
+    if (node.storedState !== previous) context.changedNodes.add(node);
   }
   const runtime = context.root.runtime;
   for (const path of state.visitedSourcePaths)
     pruneCommittedRuleKeys(runtime, path, 'source');
-  for (const exited of context.exited)
+  for (const exited of context.exitedNodes)
     visitFieldNodes(
       exited,
       (node) => {
         pruneCommittedRuleKeys(runtime, node.path, 'occurrence');
       },
-      { owned: true },
+      { isOwned: true },
     );
   for (const key of state.activeRuleKeys)
     if (state.consumedRuleValues.has(key))

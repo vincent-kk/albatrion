@@ -10,7 +10,7 @@ import { createTestTree } from './fixtures/createTestTree';
 const isFixedFirstLoadAdmissible = (): boolean =>
   engineModes.gateSelection !== 'verify' &&
   engineModes.gateWheel !== 'shadow' &&
-  !engineModes.deriveShadow;
+  !engineModes.isDeriveShadowEnabled;
 
 // filid:contract fixed-first-load-validation
 it('T9 selects synchronous guards while whole compilation stays deferred on the authored copy', async () => {
@@ -43,7 +43,9 @@ it('T9 selects synchronous guards while whole compilation stays deferred on the 
     ).length;
     expect(compile).not.toHaveBeenCalled();
     expect(compileGuard).toHaveBeenCalledTimes(1);
-    expect(root.structure!.value.schema.schema).toMatchObject({ minLength: 2 });
+    expect(root.childrenByName!.value.schema.schema).toMatchObject({
+      minLength: 2,
+    });
     const issues = await dispatchValidate(root);
     expect(compile).toHaveBeenCalledTimes(1);
     expect(compile.mock.calls[0][0]).toMatchObject({
@@ -59,8 +61,8 @@ it('T9 selects synchronous guards while whole compilation stays deferred on the 
       deliveries,
       selectedSlots,
       plan,
-      value: root.emit,
-      schema: root.structure!.value.schema.schema,
+      value: root.storedOutputValue,
+      schema: root.childrenByName!.value.schema.schema,
       revision: root.revisionLedger,
       commit: root.runtime.commitNumber,
     };

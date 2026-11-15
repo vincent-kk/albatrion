@@ -14,7 +14,7 @@ import { resetRootLoad } from '../utils/resetRootLoad';
 it('IR-7 T3 a never-prepared replacement transfers its record origin and flushes once', () => {
   const roots: (FieldNode | undefined)[] = [];
   const reporter: FormErrorService = {
-    load: 0,
+    loadEpoch: 0,
     warningScope: {},
     reportInLoad: (record) => reporter.report(record),
     beginLoad: vi.fn(),
@@ -41,8 +41,8 @@ it('IR-7 T3 a never-prepared replacement transfers its record origin and flushes
     undefined,
     true,
   );
-  expect(first.prepared).toBe(false);
-  expect(second.prepared).toBe(true);
+  expect(first.isPrepared).toBe(false);
+  expect(second.isPrepared).toBe(true);
   expect(second.records).toEqual([]);
   expect(roots).toEqual([first.root]);
   expect(reporter.root).toBe(second.root);
@@ -69,7 +69,7 @@ it('DR-17 red reset forwards a never-prepared load bundle by leaf identity', () 
       undefined,
       true,
     );
-    expect(first.prepared).toBe(false);
+    expect(first.isPrepared).toBe(false);
     expect(host).toHaveBeenCalledTimes(2);
     expect(host.mock.calls[0][0]).toBe(A);
     expect(host.mock.calls[1][0]).toBe(B);

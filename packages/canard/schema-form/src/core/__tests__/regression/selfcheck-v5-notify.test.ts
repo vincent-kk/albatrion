@@ -37,7 +37,7 @@ const nestedTree = () => {
 
 // filid:contract factory-single-path
 describe('selfcheck-v5 notification ports', () => {
-  it('selfcheck-v5.mjs:348 keeps the root emit reference when an omitted nested field becomes empty', () => {
+  it('selfcheck-v5.mjs:348 keeps the root output value reference when an omitted nested field becomes empty', () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -105,7 +105,7 @@ describe('selfcheck-v5 notification ports', () => {
       'leaf',
     ]);
     expect(seen[0].payload).toMatchObject({
-      current: { emit: { x: 'a2', y: 'b' } },
+      current: { outputValue: { x: 'a2', y: 'b' } },
     });
     expect(seen[0].value).toEqual({ x: 'a3', y: 'b' });
     expect(seen[1].payload).toMatchObject({ current: 'a2' });

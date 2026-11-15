@@ -21,7 +21,7 @@ export const dispatchClearExternalErrors = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): void => {
   assertFieldNodeWritable(node);
-  if (node.detached) return;
+  if (node.isDetached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
   if (refuseListenerFeedback(runtime)) return;

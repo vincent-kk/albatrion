@@ -9,21 +9,21 @@ import { DirtyPathSet } from './DirtyPathSet';
 export const getSettlementScratch = <Self>(
   runtime: FieldNodeRuntime<Self>,
 ): SettlementScratch<Self> => {
-  const cached = runtime.settlementScratch;
+  const settlementScratch = runtime.settlementScratch;
   const dirtyChildrenByParent =
-    cached && !cached.inUse
-      ? cached.dirtyChildrenByParent
+    settlementScratch && !settlementScratch.isInUse
+      ? settlementScratch.dirtyChildrenByParent
       : new Map<string, Map<string, string>>();
   const scratch: SettlementScratch<Self> =
-    cached && !cached.inUse
-      ? cached
+    settlementScratch && !settlementScratch.isInUse
+      ? settlementScratch
       : {
-          inUse: false,
-          entered: new Set<Self>(),
-          revived: new Set<Self>(),
-          exited: new Set<Self>(),
+          isInUse: false,
+          enteredNodes: new Set<Self>(),
+          revivedNodes: new Set<Self>(),
+          exitedNodes: new Set<Self>(),
           pendingExits: new Map<string, Self>(),
-          perished: new Set<Self>(),
+          perishedNodes: new Set<Self>(),
           selectedDeclarationIds: new Map<Self, readonly number[]>(),
           writtenInputs: new Map<Self, unknown>(),
           distributedInputs: new Map(),
@@ -43,7 +43,7 @@ export const getSettlementScratch = <Self>(
           stateDirtyNodes: new Set<Self>(),
           originalSchemas: new Map(),
         };
-  if (!cached) runtime.settlementScratch = scratch;
-  scratch.inUse = true;
+  if (!settlementScratch) runtime.settlementScratch = scratch;
+  scratch.isInUse = true;
   return scratch;
 };

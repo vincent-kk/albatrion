@@ -35,10 +35,10 @@ const readPositionLoadValue = (hostValue: unknown, key: string): unknown =>
 
 /**
  * Apply a proven prefix-preserving proposal without composing retained source trees.
- * Mutates `host.structure` in place, reusing prefix entries and adding or deleting only tail keys.
+ * Mutates `host.childrenByName` in place, reusing prefix entries and adding or deleting only tail keys.
  * A perished item's detached defaultValue is filled from the host's load value by position (NODE-044 reads unchanged).
  * An empty result (clear, or a pop of the only item) removes the host's path-store entries by host prefix instead of per-position re-keying.
- * Callers collecting perishedPaths remove at most one tail slot (append/pop); reassess its structure if multi-slot callers are added.
+ * Callers collecting perishedPaths remove at most one tail slot (append/pop); reassess its children-by-name map if multi-slot callers are added.
  * @param host - Live branch array with no whole source override
  * @param plan - Proposal accepted by canApplyArrayTail, prepareArrayAppend or prepareArrayPop; appended slots carry values and retained prefix slots are never read
  * @param context - Settlement receiving the same lifecycle and dirty facts as a full plan
@@ -54,14 +54,14 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   const oldCount = host.itemCount;
   const length = offset + plan.slots.length;
   const prefixCount = minLite(oldCount, length);
-  const items: Dictionary<Self> = host.structure ?? Object.create(null);
+  const items: Dictionary<Self> = host.childrenByName ?? Object.create(null);
   const snapshot = getLoadValue(host.runtime.loadSnapshot, host.path);
   const oldSnapshot = isArray(snapshot) ? snapshot : [];
   const oldExtras = isArray(host.extras) ? host.extras : [];
   const templateCount = host.blueprintNode.prefixItems?.length ?? 0;
   const removedIndex =
     plan.result.source === 'removed' ? plan.result.index : -1;
-  const removedItem = items[String(removedIndex)];
+  const removedItem = items['' + removedIndex];
   const removedEntry =
     removedIndex < 0
       ? undefined
@@ -70,7 +70,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
     removedIndex < 0
       ? undefined
       : removedItem
-        ? removedItem.local
+        ? removedItem.storedValue
         : removedEntry
           ? readInactiveSlotSource(
               context,
@@ -101,7 +101,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
       continue;
     }
     const node = createChildNode(host, entry);
-    items[String(index)] = node;
+    items['' + index] = node;
     children.push(node);
     created.push({ node, value: slot.value });
   }
@@ -109,15 +109,15 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   const moves: ArrayPathMove[] = [];
   let perishedPaths: Optional<string[]>;
   for (let index = prefixCount; index < oldCount; index++) {
-    const key = String(index);
+    const key = '' + index;
     const item = items[key];
     if (length) moves.push({ previous: appendSegment(host.path, index) });
     if (!item) continue;
-    context.perished.add(item);
+    context.perishedNodes.add(item);
     // Equals the item's load-path walk: its path is the host's plus this position,
     // and the load snapshot is not replaced before the end of this application.
     const load =
-      !item.detached && item.path === appendSegment(host.path, key)
+      !item.isDetached && item.path === appendSegment(host.path, key)
         ? { value: readPositionLoadValue(snapshot, key) }
         : undefined;
     visitFieldNodes(
@@ -127,17 +127,17 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
           captureDetachedFieldNodeReads(
             departing,
             {
-              emit: context.previousEmit,
+              outputValue: context.previousOutputValue,
               context: context.previousContext,
               schema: departing.schema.schema,
             },
             departing === item ? load : undefined,
           );
       },
-      { owned: true },
+      { isOwned: true },
     );
     if (length) (perishedPaths ??= []).push(item.path);
-    delete items[String(index)];
+    delete items['' + index];
   }
   if (!length) clearArrayRuntimePaths(host.runtime, host.path, oldCount);
   else {
@@ -148,7 +148,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   host.itemCount = length;
   host.source = undefined;
   host.extras = extras.length ? extras : undefined;
-  host.structure = items;
+  host.childrenByName = items;
   host.children = captureFieldNodeChange(host, 'children', children);
   context.arrayCounts.set(host, oldCount);
   context.changedSource.add(host.path);
@@ -156,7 +156,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   context.dirtyPaths.add(host.path);
   context.shapeDirtyPaths.add(host.path);
   for (const { node, value } of created) {
-    context.entered.add(node);
+    context.enteredNodes.add(node);
 
     markWrite(node, value, context);
   }
@@ -167,7 +167,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
         (node) => {
           registry.register(node);
         },
-        { owned: true },
+        { isOwned: true },
       );
   host.runtime.loadSnapshot = setLoadValue(
     host.runtime.loadSnapshot,

@@ -32,22 +32,22 @@ it('retains integer property order and untouched references across static select
   expect([...(root.runtime.deliveries ?? [])].map((node) => node.path)).toEqual(
     ['', '/2', '/10', '/nested', '/nested/leaf'],
   );
-  const nested = root.structure!.nested;
-  const value = nested.local;
+  const nested = root.childrenByName!.nested;
+  const value = nested.storedValue;
   const children = root.children;
   const revision = nested.revisionLedger;
   writeFieldNode(
-    root.structure!['2'],
+    root.childrenByName!['2'],
     'next',
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
   );
-  expect(root.local).toEqual({
+  expect(root.storedValue).toEqual({
     '2': 'next',
     '10': 'ten',
     nested: { leaf: 'leaf' },
   });
   expect(root.children).toBe(children);
-  expect(nested.local).toBe(value);
+  expect(nested.storedValue).toBe(value);
   expect(nested.revisionLedger).toBe(revision);
 });

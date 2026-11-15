@@ -21,13 +21,14 @@ export const callInactiveValueResolver = <Self extends FieldNodeRecord<Self>>(
   inputs: InactiveValueContext,
   context: SettlementContext<Self>,
   ordinal: number,
-): { value: unknown; failed: boolean } => {
-  if (typeof resolver !== 'function') return { value: resolver, failed: false };
+): { value: unknown; hasFailed: boolean } => {
+  if (typeof resolver !== 'function')
+    return { value: resolver, hasFailed: false };
   const runtime = node.runtime;
-  const previous = runtime.resolvingInactiveValue;
-  runtime.resolvingInactiveValue = true;
+  const previous = runtime.isResolvingInactiveValue;
+  runtime.isResolvingInactiveValue = true;
   try {
-    return { value: resolver(value, inputs), failed: false };
+    return { value: resolver(value, inputs), hasFailed: false };
   } catch (cause) {
     recordSettlementFailure(
       context,
@@ -39,8 +40,8 @@ export const callInactiveValueResolver = <Self extends FieldNodeRecord<Self>>(
       'expression',
       [node.path, 'inactiveValue', ordinal].join('\u0000'),
     );
-    return { value: undefined, failed: true };
+    return { value: undefined, hasFailed: true };
   } finally {
-    runtime.resolvingInactiveValue = previous;
+    runtime.isResolvingInactiveValue = previous;
   }
 };

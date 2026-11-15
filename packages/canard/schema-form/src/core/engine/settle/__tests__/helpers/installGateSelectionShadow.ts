@@ -17,7 +17,7 @@ export const installGateSelectionShadow = () => {
       const actual = original(context, path);
       const changed = [...context.changedNodes];
       const pending = [...(context.pendingOutputs ?? [])];
-      const version = context.gateThrowVersion;
+      const version = context.gateExceptionVersion;
       try {
         const shadow = readProjectedValueWithoutPublication(context, path);
         expect(shadow).toBe(actual);
@@ -29,7 +29,7 @@ export const installGateSelectionShadow = () => {
       }
       expect([...context.changedNodes]).toEqual(changed);
       expect([...(context.pendingOutputs ?? [])]).toEqual(pending);
-      expect(context.gateThrowVersion).toBe(version);
+      expect(context.gateExceptionVersion).toBe(version);
       return actual;
     });
   return {

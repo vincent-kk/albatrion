@@ -34,28 +34,28 @@ describe('derive rule locality', () => {
       { t: 'T1', flag: true, x: '' },
       WriteOption.Overwrite,
     );
-    const observed = [root.structure?.x?.source];
+    const observed = [root.childrenByName?.x?.source];
     writeFieldNode(
-      root.structure!.x,
+      root.childrenByName!.x,
       'manual',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    observed.push(root.structure?.x?.source);
+    observed.push(root.childrenByName?.x?.source);
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    observed.push(root.structure?.x?.source);
+    observed.push(root.childrenByName?.x?.source);
     writeFieldNode(
-      root.structure!.flag,
+      root.childrenByName!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    observed.push(root.structure?.x?.source);
+    observed.push(root.childrenByName?.x?.source);
     expect(observed).toEqual(['T1', 'manual', 'manual', 'manual']);
   });
 
@@ -91,24 +91,24 @@ describe('derive rule locality', () => {
         WriteOption.Overwrite,
       );
       writeFieldNode(
-        root.structure!.H.structure!.x,
+        root.childrenByName!.H.childrenByName!.x,
         'manual',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
       writeFieldNode(
-        root.structure!.s,
+        root.childrenByName!.s,
         'b',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
       writeFieldNode(
-        root.structure!.H.structure!.y,
+        root.childrenByName!.H.childrenByName!.y,
         'Y',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
-      expect(root.structure?.H?.structure?.x?.source).toBe('manual');
+      expect(root.childrenByName?.H?.childrenByName?.x?.source).toBe('manual');
     },
   );
 
@@ -135,7 +135,7 @@ describe('derive rule locality', () => {
       const parse = vi.spyOn(JSON, 'parse');
       try {
         writeFieldNode(
-          root.structure!.changed,
+          root.childrenByName!.changed,
           'B',
           FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
@@ -176,7 +176,7 @@ describe('derive rule locality', () => {
       { left: { source: 'A' }, right: { value: 'R' } },
       WriteOption.Overwrite,
     );
-    const right = root.structure!.right;
+    const right = root.childrenByName!.right;
     Object.defineProperty(right, 'children', {
       configurable: true,
       get: () => {
@@ -184,11 +184,11 @@ describe('derive rule locality', () => {
       },
     });
     writeFieldNode(
-      root.structure!.left.structure!['source'],
+      root.childrenByName!.left.childrenByName!['source'],
       'B',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.structure?.left?.structure?.target?.source).toBe('B');
+    expect(root.childrenByName?.left?.childrenByName?.target?.source).toBe('B');
   });
 });

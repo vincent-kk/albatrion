@@ -6,7 +6,7 @@ export { adoptFieldNodeTree } from './utils/binding/adoptFieldNodeTree';
 export { relayFieldNodeInput } from './utils/binding/relayFieldNodeInput';
 export { writeFieldNodeInput } from './utils/binding/writeFieldNodeInput';
 export { finishFieldNodeInput } from './utils/binding/finishFieldNodeInput';
-export { readFieldNodeInteractionReset } from './utils/binding/readFieldNodeInteractionReset';
+export { readFieldNodeInteractionEpoch } from './utils/binding/readFieldNodeInteractionEpoch';
 export { startFieldNodeLoadValidation } from './utils/binding/startFieldNodeLoadValidation';
 export { observeFieldNodeReports } from './utils/binding/observeFieldNodeReports';
 export { interpretFieldNodeDraft } from './utils/binding/interpretFieldNodeDraft';
