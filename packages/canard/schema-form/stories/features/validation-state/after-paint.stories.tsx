@@ -167,7 +167,9 @@ const check = async (canvas: HTMLElement, touched: boolean, same: boolean) => {
       await started;
       await frame();
       expect(handle.node!.state[2]).toBe(true);
-      expect(!!readFieldNodeRuntime(handle.node!).isValidationPending).toBe(true);
+      expect(!!readFieldNodeRuntime(handle.node!).isValidationPending).toBe(
+        true,
+      );
       expect(error.textContent).toBe('');
       control.hold = false;
       control.pending.splice(0).forEach((resolve) => resolve());
@@ -176,7 +178,9 @@ const check = async (canvas: HTMLElement, touched: boolean, same: boolean) => {
       await frame();
       if (!readFieldNodeRuntime(handle.node!).isValidationPending) break;
     }
-    expect(!!readFieldNodeRuntime(handle.node!).isValidationPending).toBe(false);
+    expect(!!readFieldNodeRuntime(handle.node!).isValidationPending).toBe(
+      false,
+    );
     if (same) {
       expect(error.textContent).toBe('too short');
       const firstShown = samples.findIndex((value) => value === 'too short');

@@ -16,5 +16,8 @@ engineModes.setMode('gateSelection', 'table');
 afterAll(() => {
   engineModes.setMode('gateSelection', previousModes.gateSelection);
   engineModes.setMode('gateWheel', previousModes.gateWheel);
-  engineModes.setMode('isDeriveShadowEnabled', previousModes.isDeriveShadowEnabled);
+  engineModes.setMode(
+    'isDeriveShadowEnabled',
+    previousModes.isDeriveShadowEnabled,
+  );
 });

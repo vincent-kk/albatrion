@@ -46,7 +46,10 @@ afterEach(() => {
   engineModes.setMode('gatePredicate', previousModes.gatePredicate);
   engineModes.setMode('gateSelection', previousModes.gateSelection);
   engineModes.setMode('gateWheel', previousModes.gateWheel);
-  engineModes.setMode('isDeriveShadowEnabled', previousModes.isDeriveShadowEnabled);
+  engineModes.setMode(
+    'isDeriveShadowEnabled',
+    previousModes.isDeriveShadowEnabled,
+  );
 });
 
 /** Observe both entry points so renaming a parser cannot manufacture zero work. */
