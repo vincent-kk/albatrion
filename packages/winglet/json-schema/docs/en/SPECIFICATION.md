@@ -65,7 +65,7 @@ console.assert(!('minLength' in schema.properties.name));
 
 ## Built-in resolution
 
-`resolveReference(schema, options)` is the synchronous convenience form. Use a scanner and resolver factory when you need callbacks or scan options. The root is indexed at construction; `resources` are documents keyed by absolute retrieval URI and indexed on first lookup. `baseURI` supplies an address for an anonymous root. `$id` creates resource bases; draft-04 also uses `id`. `$anchor` declares static fragments in 2019-09 and 2020-12; draft-06/07 also accept fragment-only `$id` names and draft-04 uses `id`. Anchors and JSON Pointers resolve to canonical locations, so aliases share cycle identity. Pointer fragments are percent-decoded once, then tokens unescape `~1` and `~0`; only own properties are followed.
+`resolveReference(schema, options)` is the synchronous convenience form. Use a scanner and resolver factory when you need callbacks or scan options. The root is indexed at construction; `resources` are documents keyed by absolute retrieval URI and indexed on first lookup. `baseURI` supplies an address for an anonymous root. `$id` creates resource bases, and draft-04 uses `id` instead; each schema's own `$schema` decides which keyword applies. An empty identifier, or one with only an empty fragment, in a subschema names the address of its base, so it is a duplicate identifier wherever the enclosing resource already declares that address. An identifier with a non-empty fragment never declares a resource: draft-04/06/07 register its plain-name fragment as an anchor of the document it names and resolve references inside it against that document, while 2019-09 and 2020-12 ignore it as invalid. `$anchor` declares static fragments in 2019-09 and 2020-12. References and identifiers resolve by RFC 3986 section 5.2 under every base. Without a base, relative values stay relative, so `$id: "other.json"` and `$ref: "other.json"` in one anonymous document name the same subschema; a reference to it from another resource stays in place (`relocation`), because a relative address cannot be rewritten for another base. Control characters, spaces and backslashes are percent-encoded first, so `" "` is never an empty reference. A relative document address is never looked up in `resources` or passed to `load`. Anchors and JSON Pointers resolve to canonical locations, so aliases share cycle identity. Pointer fragments are percent-decoded once, then tokens unescape `~1` and `~0`; only own properties are followed.
 
 Targets are prepared for their host resource, with reference strings rewritten when a safe move needs it. This preparation inspects the entire target independently of the public filter and maxDepth. Matching target/host templates are cached by the resolver, then each inline occurrence is copied to avoid output aliases. Definition containers remain addressable.
 
@@ -104,7 +104,7 @@ console.assert(schema.properties.name.$ref === 'types.json#/$defs/Text');
 
 ## Asynchronous document supply
 
-The package never fetches documents itself. The synchronous resolver only uses the root and registered resources. The asynchronous resolver calls your `load` only for an unavailable absolute document URI, without its fragment; registered resources take precedence. Supply undefined for a missing document. Pending requests and their completed/missing results are shared per URI by that resolver; loader errors propagate. Create a fresh resolver when the source set changes.
+The package never fetches documents itself. The synchronous resolver only uses the root and registered resources. The asynchronous resolver calls your `load` only for an unavailable absolute document URI, without its fragment; registered resources take precedence. A name that a draft-04/06/07 fragment identifier already registered resolves without loading the document it names. Supply undefined for a missing document. Pending requests and their completed/missing results are shared per URI by that resolver; loader errors propagate. Create a fresh resolver when the source set changes.
 
 Await `JSONSchemaScannerAsync.scan()` before using synchronous getValue. Its callbacks and resolver resolve operation are awaited sequentially; root/child/dialect remain synchronous. The synchronous scanner does not wait for callback return values; use the async scanner even when an async visitor is assignable to a void-returning callback. A custom resolver returning a Promise to the synchronous scanner is an invalid result. Fetching, retries, authentication and cancellation belong to the caller’s loader.
 
@@ -302,11 +302,11 @@ The original reference remains when:
 - moving it changes the dialect of the target or a removed resource boundary;
 - a rewritten copy contains `$recursiveRef`, or a removed resource defines `$dynamicAnchor`/`$recursiveAnchor` scope;
 - reference/identifier occurrences outside recognized schema positions and default/const/enum/examples data cannot be rewritten safely;
-- a URI cannot be rewritten, including a cross-resource address to an anonymous document without an identifier or base.
+- a URI cannot be rewritten, including a cross-resource address to a resource without an absolute address.
 
 An identifier-free target in the same resource can be copied directly. Other safe moves remove identifier boundaries and rewrite reference URIs from their original bases. Data-keyword values are not rewritten. A `$dynamicRef` whose initial fragment is declared by `$dynamicAnchor` stays dynamic; otherwise it behaves like `$ref`. A `$recursiveRef` targeting `$recursiveAnchor`:true stays dynamic.
 
-Relative document paths cannot be formed against a non-hierarchical base URI. An empty reference is not a document path; like `#`, it names the current document under any base, including a missing or non-hierarchical one. Supply absolute references or a hierarchical baseURI. This example returns an unresolved outcome.
+A relative path against a non-hierarchical base resolves by RFC 3986 (RFC 8141 section 4.3): `child.json` against `urn:example:root` names `urn:child.json`, not `urn:example:child.json`. An empty reference names the current document under any base. Supply absolute references or a hierarchical baseURI when a relative path must reach a sibling document. This example returns an unresolved outcome.
 
 <!-- example: opaque -->
 
@@ -324,6 +324,7 @@ const absolute = resolver.resolve('urn:example:child.json', '$ref', context);
 console.assert(
   relative.status === 'skipped' && relative.reason === 'unresolved',
 );
+console.assert(relative.uri === 'urn:child.json');
 console.assert(absolute.status === 'resolved');
 ```
 
