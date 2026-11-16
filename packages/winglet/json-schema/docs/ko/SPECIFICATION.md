@@ -306,7 +306,7 @@ console.assert(reasons.includes('relocation'));
 
 같은 자원의 식별자 없는 대상은 단순 복사가 가능합니다. 다른 이동은 식별자 경계를 제거하고 참조 URI를 원래 기준에서 다시 씁니다. 데이터 키워드 값은 다시 쓰지 않습니다. `$dynamicRef`의 첫 조각이 `$dynamicAnchor`로 선언된 것이면 dynamic으로 남고, 그 외에는 `$ref`처럼 동작합니다. `$recursiveRef`는 대상에 `$recursiveAnchor`:true가 있으면 dynamic으로 남습니다.
 
-계층이 없는 기준 URI에서는 상대 문서 경로를 구성할 수 없습니다. 절대 참조 또는 계층적인 baseURI를 제공하세요. 이 예제는 미해결 결과를 보여 줍니다.
+계층이 없는 기준 URI에서는 상대 문서 경로를 구성할 수 없습니다. 빈 참조는 문서 경로가 아니므로 `#`처럼 현재 문서를 가리키며, 기준이 없거나 계층이 없는 기준에서도 마찬가지입니다. 절대 참조 또는 계층적인 baseURI를 제공하세요. 이 예제는 미해결 결과를 보여 줍니다.
 
 <!-- example: opaque -->
 

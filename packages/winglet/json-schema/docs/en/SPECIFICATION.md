@@ -306,7 +306,7 @@ The original reference remains when:
 
 An identifier-free target in the same resource can be copied directly. Other safe moves remove identifier boundaries and rewrite reference URIs from their original bases. Data-keyword values are not rewritten. A `$dynamicRef` whose initial fragment is declared by `$dynamicAnchor` stays dynamic; otherwise it behaves like `$ref`. A `$recursiveRef` targeting `$recursiveAnchor`:true stays dynamic.
 
-Relative document paths cannot be formed against a non-hierarchical base URI. Supply absolute references or a hierarchical baseURI. This example returns an unresolved outcome.
+Relative document paths cannot be formed against a non-hierarchical base URI. An empty reference is not a document path; like `#`, it names the current document under any base, including a missing or non-hierarchical one. Supply absolute references or a hierarchical baseURI. This example returns an unresolved outcome.
 
 <!-- example: opaque -->
 
