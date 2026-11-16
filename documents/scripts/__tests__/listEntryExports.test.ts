@@ -77,7 +77,7 @@ describe('listEntryExports', () => {
     assert.equal(leaf.filePath, inPackage('nested/dir/a.d.ts'));
     assert.equal(leaf.declaredName, 'leaf');
     assert.equal(leaf.hops, 2);
-    assert.equal(leaf.external, null);
+    assert.equal(leaf.externalSpecifier, null);
   });
 
   it('counts each file an `export *` chain passes through', () => {
@@ -103,22 +103,22 @@ describe('listEntryExports', () => {
     const inline = exportOf('inline/index.d.ts', 'Inline');
     assert.equal(inline.hops, 0);
     assert.equal(inline.filePath, inPackage('inline/index.d.ts'));
-    assert.equal(inline.typeOnly, false);
+    assert.equal(inline.isTypeOnly, false);
   });
 
   it('marks an imported value exported by a specifier-less `export type` as type-only, one file away', () => {
     const base = exportOf('inline/index.d.ts', 'Base');
-    assert.equal(base.typeOnly, true);
+    assert.equal(base.isTypeOnly, true);
     assert.equal(base.hops, 1);
     assert.equal(base.filePath, inPackage('inline/Base.d.ts'));
   });
 
   it('keeps a name declared as both a const and a type as a value', () => {
-    assert.equal(exportOf('inline/index.d.ts', 'Both').typeOnly, false);
+    assert.equal(exportOf('inline/index.d.ts', 'Both').isTypeOnly, false);
   });
 
   it('marks a value that arrives through `export type *` as type-only', () => {
-    assert.equal(exportOf('typestar/index.d.ts', 'valueThroughTypeStar').typeOnly, true);
+    assert.equal(exportOf('typestar/index.d.ts', 'valueThroughTypeStar').isTypeOnly, true);
   });
 
   it('reports a re-export of a declaration outside the package with its module and re-export site', () => {
@@ -128,8 +128,8 @@ describe('listEntryExports', () => {
       declaredName: 'isValidElement',
       filePath: site,
       hops: 1,
-      typeOnly: false,
-      external: 'extlib',
+      isTypeOnly: false,
+      externalSpecifier: 'extlib',
       reexportSite: site,
     });
   });
@@ -137,7 +137,7 @@ describe('listEntryExports', () => {
   it('reports a re-export from a module that cannot be resolved the same way', () => {
     const site = inPackage('missing/index.d.ts');
     const renamed = exportOf('missing/index.d.ts', 'renamed');
-    assert.equal(renamed.external, 'missing-module');
+    assert.equal(renamed.externalSpecifier, 'missing-module');
     assert.equal(renamed.declaredName, 'gone');
     assert.equal(renamed.reexportSite, site);
     assert.equal(renamed.filePath, site);
@@ -146,7 +146,7 @@ describe('listEntryExports', () => {
   it('reports an `export *` from a module outside the package as external', () => {
     const site = inPackage('outside-star/index.d.ts');
     const exported = exportOf('outside-star/index.d.ts', 'isValidElement');
-    assert.equal(exported.external, 'extlib');
+    assert.equal(exported.externalSpecifier, 'extlib');
     assert.equal(exported.reexportSite, site);
     assert.equal(exported.filePath, site);
     assert.equal(exported.declaredName, 'isValidElement');

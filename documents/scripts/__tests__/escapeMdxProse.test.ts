@@ -24,6 +24,21 @@ describe('escapeMdxProse', () => {
     assert.equal(escapeMdxProse('Accepts Array<T> values.'), 'Accepts Array&lt;T> values.');
   });
 
+  it('escapes an angle bracket that starts a comparison or a closing tag', () => {
+    assert.equal(escapeMdxProse('True when a <= b.'), 'True when a &lt;= b.');
+    assert.equal(escapeMdxProse('Ends with </b> here.'), 'Ends with &lt;/b> here.');
+    assert.equal(escapeMdxProse('a < b'), 'a < b');
+  });
+
+  it('leaves a brace the source already escaped as it is', () => {
+    assert.equal(escapeMdxProse('Escaped \\{ok\\} already.'), 'Escaped \\{ok\\} already.');
+  });
+
+  it('treats only a matching backtick run as a code span', () => {
+    assert.equal(escapeMdxProse('a `` b {x} ` c'), 'a `` b \\{x\\} ` c');
+    assert.equal(escapeMdxProse('``a`b`` {c}'), '``a`b`` \\{c\\}');
+  });
+
   it('leaves inline code spans untouched', () => {
     assert.equal(escapeMdxProse('Pass `{ a: 1 }` or `{@link x}` or `Array<T>`.'), 'Pass `{ a: 1 }` or `{@link x}` or `Array<T>`.');
   });

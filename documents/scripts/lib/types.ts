@@ -90,7 +90,7 @@ export interface ImportPath {
   /** Name the entry point exports. */
   exportedName: string;
   /** Whether the entry exports the name for type positions only, so it is imported with `import type`. */
-  typeOnly: boolean;
+  isTypeOnly: boolean;
 }
 
 /** Where a declaration that a package re-exports from another module comes from. */

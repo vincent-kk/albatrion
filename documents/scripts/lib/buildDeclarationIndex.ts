@@ -77,15 +77,15 @@ export function buildDeclarationIndex(pkg: PackageEntry): DeclarationIndex {
   }
 
   const parsedFiles = new Map<string, ParsedFunction[]>();
-  const candidates: Array<{ page: DeclarationPage; deprecated: boolean; refs: ExportRef[] }> = [];
+  const candidates: Array<{ page: DeclarationPage; isDeprecated: boolean; refs: ExportRef[] }> = [];
   const undocumented: UndocumentedExport[] = [];
   for (const [key, refs] of groups) {
-    const { declaredName, filePath, external } = refs[0].item;
+    const { declaredName, filePath, externalSpecifier } = refs[0].item;
     const canonical = selectEntry(refs, entries, filePath);
     const names = refs.filter(ref => ref.entry === canonical).map(ref => ref.item.exportedName);
     const pageName = names.includes(declaredName) ? declaredName : [...names].sort()[0];
-    const parsed = external
-      ? parseReexportJSDoc(filePath, { moduleSpecifier: external, originalName: declaredName }, pkg.name, pkg.version, canonical.category)
+    const parsed = externalSpecifier
+      ? parseReexportJSDoc(filePath, { moduleSpecifier: externalSpecifier, originalName: declaredName }, pkg.name, pkg.version, canonical.category)
       : findDeclaration(parsedFiles, filePath, declaredName, pkg);
     if (!parsed) {
       undocumented.push(...refs.map(ref => ({ entryKey: ref.entry.entryKey, exportedName: ref.item.exportedName, filePath })));
@@ -94,7 +94,7 @@ export function buildDeclarationIndex(pkg: PackageEntry): DeclarationIndex {
     const importPaths = orderImportPaths(refs, canonical, pageName, pkg.name);
     candidates.push({
       page: { key, pageName, category: canonical.category, parsed: { ...parsed, name: pageName, categoryPath: canonical.category, importPaths }, importPaths },
-      deprecated: parsed.deprecated || refs.some(ref => ref.entry.deprecatedNames.has(ref.item.exportedName)),
+      isDeprecated: parsed.deprecated || refs.some(ref => ref.entry.deprecatedNames.has(ref.item.exportedName)),
       refs,
     });
   }
@@ -156,7 +156,7 @@ function orderImportPaths(refs: ExportRef[], canonical: IndexedEntry, pageName: 
       entryKey: entry.entryKey,
       moduleSpecifier: entry.category ? `${packageName}/${entry.category}` : packageName,
       exportedName: item.exportedName,
-      typeOnly: item.typeOnly,
+      isTypeOnly: item.isTypeOnly,
     }));
 }
 
@@ -164,7 +164,7 @@ function orderImportPaths(refs: ExportRef[], canonical: IndexedEntry, pageName: 
  * Keeps one page per page path compared ignoring case: a lone page, or the
  * one current page among deprecated ones.
  */
-function dropDeprecatedCollisions<T extends { page: DeclarationPage; deprecated: boolean }>(packageName: string, candidates: T[]): T[] {
+function dropDeprecatedCollisions<T extends { page: DeclarationPage; isDeprecated: boolean }>(packageName: string, candidates: T[]): T[] {
   const byPath = new Map<string, T[]>();
   for (const candidate of candidates) {
     const key = pagePath(candidate.page.category, candidate.page.pageName).toLowerCase();
@@ -172,7 +172,7 @@ function dropDeprecatedCollisions<T extends { page: DeclarationPage; deprecated:
   }
   return [...byPath.values()].map(same => {
     if (same.length === 1) return same[0];
-    const current = same.filter(candidate => !candidate.deprecated);
+    const current = same.filter(candidate => !candidate.isDeprecated);
     if (current.length === 1) return current[0];
     const described = same.map(({ page }) => `${pagePath(page.category, page.pageName)} (${page.parsed.sourceFile})`).sort();
     throw new Error(`page path collision: ${packageName} ${described.join(', ')}`);

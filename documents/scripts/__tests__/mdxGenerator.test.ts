@@ -20,9 +20,9 @@ const parsed = (overrides: Partial<ParsedFunction>): ParsedFunction => ({
   categoryPath: 'pointer-manipulator',
   sourceFile: '/pkg/dist/getValue.d.ts',
   importPaths: [
-    { entryKey: './pointer-manipulator', moduleSpecifier: '@winglet/json/pointer-manipulator', exportedName: 'getValue', typeOnly: false },
-    { entryKey: './pointer', moduleSpecifier: '@winglet/json/pointer', exportedName: 'getValue', typeOnly: false },
-    { entryKey: '.', moduleSpecifier: '@winglet/json', exportedName: 'getValue', typeOnly: false },
+    { entryKey: './pointer-manipulator', moduleSpecifier: '@winglet/json/pointer-manipulator', exportedName: 'getValue', isTypeOnly: false },
+    { entryKey: './pointer', moduleSpecifier: '@winglet/json/pointer', exportedName: 'getValue', isTypeOnly: false },
+    { entryKey: '.', moduleSpecifier: '@winglet/json', exportedName: 'getValue', isTypeOnly: false },
   ],
   externalSource: null,
   ...overrides,
@@ -56,9 +56,9 @@ describe('generateMdx', () => {
       parsed({
         name: 'unescapePath',
         importPaths: [
-          { entryKey: './pointer-escape', moduleSpecifier: '@winglet/json/pointer-escape', exportedName: 'unescapePath', typeOnly: false },
-          { entryKey: './pointer-escape', moduleSpecifier: '@winglet/json/pointer-escape', exportedName: 'unescapeSegment', typeOnly: false },
-          { entryKey: '.', moduleSpecifier: '@winglet/json', exportedName: 'unescapeSegment', typeOnly: true },
+          { entryKey: './pointer-escape', moduleSpecifier: '@winglet/json/pointer-escape', exportedName: 'unescapePath', isTypeOnly: false },
+          { entryKey: './pointer-escape', moduleSpecifier: '@winglet/json/pointer-escape', exportedName: 'unescapeSegment', isTypeOnly: false },
+          { entryKey: '.', moduleSpecifier: '@winglet/json', exportedName: 'unescapeSegment', isTypeOnly: true },
         ],
       }),
     );
@@ -81,6 +81,11 @@ describe('generateMdx', () => {
     assert.ok(generateMdx(parsed({ name: 'deep', categoryPath: 'inner/deep' })).includes('\nslug: deep\n'));
   });
 
+  it('renders an inline link tag in an example title as text', () => {
+    const mdx = generateMdx(parsed({ examples: [{ title: 'Use {@link gcd}', code: 'gcd(4, 6);' }] }));
+    assert.ok(mdx.includes('### Use `gcd`\n'));
+  });
+
   it('states the source module of a re-exported declaration after the Import section', () => {
     const mdx = generateMdx(
       parsed({
@@ -89,7 +94,7 @@ describe('generateMdx', () => {
         typeSignature: "export { isValidElement as isReactElement } from 'react';",
         externalSource: { moduleSpecifier: 'react', originalName: 'isValidElement' },
         importPaths: [
-          { entryKey: './filter', moduleSpecifier: '@winglet/react-utils/filter', exportedName: 'isReactElement', typeOnly: false },
+          { entryKey: './filter', moduleSpecifier: '@winglet/react-utils/filter', exportedName: 'isReactElement', isTypeOnly: false },
         ],
       }),
     );

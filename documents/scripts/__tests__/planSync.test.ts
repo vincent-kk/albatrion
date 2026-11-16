@@ -54,6 +54,10 @@ before(() => {
   write('packages/winglet/unbuilt/package.json', packageJSON('@winglet/unbuilt', ['./alpha']));
   write('documents/docs/winglet/unbuilt/index.mdx', '# unbuilt\n');
 
+  write('packages/winglet/halfbuilt/package.json', packageJSON('@winglet/halfbuilt', ['./alpha']));
+  write('packages/winglet/halfbuilt/dist/index.d.ts', 'export {};\n');
+  write('documents/docs/winglet/halfbuilt/index.mdx', '# halfbuilt\n');
+
   write(
     'documents/redirects.winglet.json',
     JSON.stringify([
@@ -84,9 +88,13 @@ describe('planSync', () => {
     assert.deepEqual(result.deletes, []);
   });
 
+  it('reports a package with one sub-path declaration file missing as not built', () => {
+    assert.deepEqual(plan('halfbuilt').errors, ['not built: @winglet/halfbuilt']);
+  });
+
   it('reports every package error together when no package is selected', () => {
     const result = plan(null);
-    assert.equal(result.errors.length, 2);
+    assert.equal(result.errors.length, 3);
     assert.deepEqual(result.writes, []);
   });
 

@@ -37,7 +37,7 @@ const pageOf = (index: DeclarationIndex, category: string, pageName: string): De
 };
 
 const importLines = (page: DeclarationPage): string[] =>
-  page.importPaths.map(item => `${item.typeOnly ? 'type ' : ''}${item.exportedName} ${item.moduleSpecifier}`);
+  page.importPaths.map(item => `${item.isTypeOnly ? 'type ' : ''}${item.exportedName} ${item.moduleSpecifier}`);
 
 let fake: DeclarationIndex;
 

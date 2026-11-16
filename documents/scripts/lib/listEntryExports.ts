@@ -13,9 +13,9 @@ export interface EntryExport {
   /** File boundaries crossed from the entry file to `filePath`: 0 inside the entry file, otherwise 1 or more, each `export *` step counted. */
   hops: number;
   /** True when the resolved symbol has no value meaning, or any step of the path is an `export type`, `import type` or `type` specifier. */
-  typeOnly: boolean;
+  isTypeOnly: boolean;
   /** Module specifier of the re-export when the declaration lies outside the package or its module cannot be resolved; otherwise null. */
-  external: string | null;
+  externalSpecifier: string | null;
   /** For an external re-export, absolute path of the last file inside the package on the re-export path; otherwise null. */
   reexportSite: string | null;
 }
@@ -25,7 +25,7 @@ interface StarEdge {
   fromFile: string;
   toFile: string;
   specifier: string;
-  typeOnly: boolean;
+  isTypeOnly: boolean;
 }
 
 const COMPILER_OPTIONS: ts.CompilerOptions = {
@@ -71,13 +71,13 @@ function traceExport(
   packageRoot: string,
 ): EntryExport {
   const exportedName = exportSymbol.name;
-  const external = (declaredName: string, site: string, specifier: string, typeOnly: boolean): EntryExport => ({
+  const external = (declaredName: string, site: string, specifier: string, isTypeOnly: boolean): EntryExport => ({
     exportedName,
     declaredName,
     filePath: path.resolve(site),
     hops,
-    typeOnly,
-    external: specifier,
+    isTypeOnly,
+    externalSpecifier: specifier,
     reexportSite: path.resolve(site),
   });
   let symbol = exportSymbol;
@@ -93,11 +93,11 @@ function traceExport(
       if (!edges) throw new Error(`cannot trace ${exportedName} from ${currentFile.fileName} to ${declarationFile.fileName}`);
       const exit = edges.findIndex(edge => isOutside(edge.toFile, packageRoot));
       const crossed = exit === -1 ? edges : edges.slice(0, exit + 1);
-      typeOnlyPath ||= crossed.some(edge => edge.typeOnly);
+      typeOnlyPath ||= crossed.some(edge => edge.isTypeOnly);
       if (exit !== -1) {
         hops += exit;
-        const typeOnly = typeOnlyPath || !(symbol.flags & ts.SymbolFlags.Value);
-        return external(symbol.name, edges[exit].fromFile, edges[exit].specifier, typeOnly);
+        const isTypeOnly = typeOnlyPath || !(symbol.flags & ts.SymbolFlags.Value);
+        return external(symbol.name, edges[exit].fromFile, edges[exit].specifier, isTypeOnly);
       }
       hops += edges.length;
       currentFile = declarationFile;
@@ -108,8 +108,8 @@ function traceExport(
     if (specifier) {
       const targetFile = resolveModuleFile(checker, specifier);
       if (!targetFile || isOutside(targetFile.fileName, packageRoot)) {
-        const typeOnly = typeOnlyPath || !(checker.getAliasedSymbol(symbol).flags & ts.SymbolFlags.Value);
-        return external(aliasTargetName(declaration, symbol), currentFile.fileName, specifier.text, typeOnly);
+        const isTypeOnly = typeOnlyPath || !(checker.getAliasedSymbol(symbol).flags & ts.SymbolFlags.Value);
+        return external(aliasTargetName(declaration, symbol), currentFile.fileName, specifier.text, isTypeOnly);
       }
       if (targetFile !== currentFile) hops += 1;
       currentFile = targetFile;
@@ -123,8 +123,8 @@ function traceExport(
     declaredName: symbol.name,
     filePath: path.resolve(currentFile.fileName),
     hops,
-    typeOnly: typeOnlyPath || !(symbol.flags & ts.SymbolFlags.Value),
-    external: null,
+    isTypeOnly: typeOnlyPath || !(symbol.flags & ts.SymbolFlags.Value),
+    externalSpecifier: null,
     reexportSite: null,
   };
 }
@@ -147,7 +147,7 @@ function traceStarPath(checker: ts.TypeChecker, fromFile: ts.SourceFile, targetF
       if (!target || visited.has(target)) continue;
       const path = [
         ...edges,
-        { fromFile: file.fileName, toFile: target.fileName, specifier: specifier.text, typeOnly: statement.isTypeOnly },
+        { fromFile: file.fileName, toFile: target.fileName, specifier: specifier.text, isTypeOnly: statement.isTypeOnly },
       ];
       if (target === targetFile) return path;
       visited.add(target);

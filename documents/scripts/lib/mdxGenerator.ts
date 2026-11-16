@@ -55,7 +55,7 @@ export function generateMdx(parsed: ParsedFunction): string {
   lines.push('');
   lines.push('```typescript');
   for (const item of parsed.importPaths) {
-    lines.push(`import ${item.typeOnly ? 'type ' : ''}{ ${item.exportedName} } from '${item.moduleSpecifier}';`);
+    lines.push(`import ${item.isTypeOnly ? 'type ' : ''}{ ${item.exportedName} } from '${item.moduleSpecifier}';`);
   }
   lines.push('```');
   lines.push('');
@@ -111,7 +111,7 @@ export function generateMdx(parsed: ParsedFunction): string {
     lines.push('');
     for (const example of parsed.examples) {
       if (example.title) {
-        lines.push(`### ${example.title}`);
+        lines.push(`### ${escapeMdxProse(example.title)}`);
         lines.push('');
       }
       lines.push('```typescript');
