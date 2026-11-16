@@ -1,4 +1,4 @@
-import { createRef } from 'react';
+import { createRef, useLayoutEffect } from 'react';
 
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
@@ -74,3 +74,43 @@ it('ordinary uncontrolled Refresh rejects the old callback', () => {
   act(() => pending('retired response'));
   expect(ref.current!.getValue()).toBe('reset');
 });
+
+it.each([true, false])(
+  'controlled=%s layout cleanup cannot change values or attachments',
+  (initial) => {
+    let armed = false;
+    let cleanupCount = 0;
+    const Input = ({ onChange, onFileAttach }: FieldInputProps) => {
+      useLayoutEffect(
+        () => () => {
+          if (!armed) return;
+          cleanupCount++;
+          onChange('retired cleanup');
+          onFileAttach(new File(['retired'], 'retired.txt'));
+        },
+        [],
+      );
+      return <input />;
+    };
+    const schema = { type: 'string' } as const;
+    const ref = createRef<FormHandle<typeof schema>>();
+    const tree = (controlled: boolean) => (
+      <Form
+        ref={ref}
+        jsonSchema={schema}
+        defaultValue="before"
+        fieldInputDefinitions={[
+          { test: { type: 'string' }, Component: Input, controlled },
+        ]}
+      />
+    );
+    const view = render(tree(initial));
+    act(() => ref.current!.setValue('reset'));
+    armed = true;
+    view.rerender(tree(!initial));
+    expect(cleanupCount).toBe(1);
+    expect.soft(ref.current!.getValue()).toBe('reset');
+    expect.soft(ref.current!.getAttachedFilesMap().size).toBe(0);
+    armed = false;
+  },
+);
