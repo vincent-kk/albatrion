@@ -7,8 +7,8 @@ Breaking change: rename and retype presentation slots as `LabelRenderer`, `Input
 Before:
 
 ```tsx
-const Label = ({ name }: FieldRendererProps) => <>{name}</>;
-registerPlugin({ FormLabelRenderer: Label });
+const Label = ({ name }: FormTypeRendererProps) => <>{name}</>;
+registerPlugin({ FormLabel: Label });
 <Form.Error path="/name" />;
 ```
 
