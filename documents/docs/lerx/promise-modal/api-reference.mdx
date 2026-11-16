@@ -32,7 +32,7 @@ function alert<B = any>(options: AlertProps<B>): Promise<void>
 | `footer` | `AlertFooterRender \| { confirm?: ReactNode; hideConfirm?: boolean } \| false` | — | Footer config; `false` hides footer |
 | `background` | `ModalBackground<B>` | — | Data passed to `BackgroundComponent` |
 | `dimmed` | `boolean` | — | Whether to dim backdrop |
-| `duration` | `number` | — | Per-modal animation duration override (ms) |
+| `duration` | `` number \| `${number}ms` \| `${number}s` `` | — | Per-modal animation duration override (ms) |
 | `manualDestroy` | `boolean` | `false` | If `true`, modal is not destroyed automatically after closing animation |
 | `closeOnBackdropClick` | `boolean` | `true` | Close when backdrop is clicked |
 | `group` | `string` | — | Group identifier for ordering |
@@ -89,10 +89,10 @@ if (confirmed) await deleteItem();
 
 ### `prompt<T>(options)`
 
-Displays an input modal. Returns a promise that resolves to the value entered by the user, or `undefined` if cancelled (unless `returnOnCancel` is set).
+Displays an input modal. Returns a promise that resolves to the value entered by the user, or `null` if cancelled. Confirming without any input resolves `undefined`. With `returnOnCancel: true`, a cancel resolves the current value instead (the `defaultValue` before any input).
 
 ```ts
-function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined>
+function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined | null>
 ```
 
 **`PromptProps<T>`** extends `AlertProps` with:
@@ -184,7 +184,7 @@ Returns `alert`, `confirm`, and `prompt` handlers tied to the component's lifecy
 function useModal(configuration?: OverridableHandleProps): {
   alert: <B>(options: AlertProps<B>) => Promise<void>;
   confirm: <B>(options: ConfirmProps<B>) => Promise<boolean>;
-  prompt: <T, B>(options: PromptProps<T, B>) => Promise<T | undefined>;
+  prompt: <T, B>(options: PromptProps<T, B>) => Promise<T | undefined | null>;
 }
 ```
 
@@ -349,10 +349,16 @@ interface ModalBackground<B> {
 ```ts
 interface ModalOptions {
   zIndex?: number;
-  duration?: number | string;
-  backdrop?: string | CSSProperties;
+  duration?: number | `${number}ms` | `${number}s`;
+  backdrop?: Color | CSSProperties;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
+  /** Escape override; otherwise inherits the backdrop click setting. Escape closes the first accepting visible pending modal from the top. */
+  closeOnEscape?: boolean;
+  /** Traps Tab only when the top visible pending modal is dimmed; defaults to true. */
+  trapFocus?: boolean;
+  /** Locks body scrolling while a pending dimmed modal is visible; defaults to true. */
+  lockScroll?: boolean;
 }
 ```
 
@@ -387,7 +393,7 @@ type ConfirmContentProps<Context = object> = {
 // Core functions (usable outside React)
 export function alert<B = any>(options: AlertProps<B>): Promise<void>
 export function confirm<B = any>(options: ConfirmProps<B>): Promise<boolean>
-export function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined>
+export function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined | null>
 
 // Provider
 export const ModalProvider: ForwardRefExoticComponent<ModalProviderProps & RefAttributes<ModalProviderHandle>>
@@ -416,14 +422,19 @@ export type { WrapperComponentProps }
 ```ts
 interface BaseModal<T, B> {
   group?: string;
+  subtype?: 'info' | 'success' | 'warning' | 'error';
   title?: ReactNode;
   subtitle?: ReactNode;
   background?: ModalBackground<B>;   // { data?: B }
   dimmed?: boolean;
-  duration?: number;
+  duration?: ModalOptions['duration'];
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
-  handleResolve?: (result: T | null) => void;
+  closeOnEscape?: boolean;
+  trapFocus?: boolean;
+  lockScroll?: boolean;
+  handleResolve?: (result: T | undefined | null) => void;  // internal
+  handleReject?: (error: unknown) => void;                 // internal
   ForegroundComponent?: ComponentType<PropsWithChildren<ModalFrameProps>>;
   BackgroundComponent?: ComponentType<ModalFrameProps>;
 }
@@ -433,7 +444,7 @@ interface BaseModal<T, B> {
 
 - `alert` resolves `void` when any close action fires.
 - `confirm` resolves `true` on confirm, `false` on cancel or backdrop click.
-- `prompt` resolves the current input value on confirm, `undefined` on cancel (or `defaultValue` if `returnOnCancel: true`).
+- `prompt` resolves the current input value on confirm, `null` on an ordinary cancel, and `undefined` when confirmed without input. With `returnOnCancel: true`, a cancel resolves the current value (the `defaultValue` before any input).
 - `manualDestroy: true` keeps the modal node alive after `onClose`; the caller must call `onDestroy` to remove it from the DOM.
 - Static `alert`/`confirm`/`prompt` are singletons that persist across component unmounts. `useModal` variants are closed on unmount.
 - Custom `ForegroundComponent` receives `visible` (boolean) for driving enter/exit animations and `onDestroy` for deferred cleanup.
