@@ -42,7 +42,7 @@ GOAL-061·WRITE-083. blur는 입력 마침을 알리고 touched를 다음 프레
 
 입력은 현재 binding의 살아 있는 노드, 활성 선택 토큰, 적용 Refresh 세대를 함께 검사합니다. 마운트된 자식을 가진 컨테이너에는 Refresh 세대 검사를 적용하지 않지만 노드·선택 수명 검사는 유지합니다. 첫 자식 layout 쓰기는 binding 준비 전 Context 루트로 수락합니다. 교체된 루트의 늦은 값·파일 쓰기는 현재 폼을 바꾸지 않습니다.
 
-선택 토큰은 A→B→A에서도 각 선택 수명마다 다릅니다. 선택 어댑터의 insertion effect가 원본 입력 layout cleanup보다 먼저 폐기하여 cleanup에서 호출한 값·파일 callback도 막습니다. 중단된 렌더는 현재 선택을 폐기하지 않습니다. 파일 첨부는 같은 수명 검사를 받고 unmount에서 경로의 첨부 상태를 제거합니다.
+선택 토큰은 A→B→A에서도 각 선택 수명마다 다릅니다. controlled 선언 전환도 새 선택 수명으로 취급하여 같은 원본 컴포넌트의 이전 값·파일 콜백이 교체된 입력을 변경하지 못하게 합니다. 선택 어댑터의 insertion effect가 원본 입력 layout cleanup보다 먼저 폐기하여 cleanup에서 호출한 값·파일 callback도 막습니다. 중단된 렌더는 현재 선택을 폐기하지 않습니다. 파일 첨부는 같은 수명 검사를 받고 unmount에서 경로의 첨부 상태를 제거합니다.
 
 ### REACT-028 — Refresh와 자식 소유권
 

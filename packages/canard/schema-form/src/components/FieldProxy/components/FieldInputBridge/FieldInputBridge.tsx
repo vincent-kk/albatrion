@@ -100,7 +100,7 @@ export const FieldInputBridge = memo(
     // Each committed container and input selection owns its callback lifetime.
     const selection = useMemorize(
       () => ({ active: false }),
-      [FieldInput, position.epoch],
+      [FieldInput, position.epoch, controlled],
     );
     const accepts = useCallback(
       () =>
