@@ -97,7 +97,7 @@ console.log(gcd(100, 50)); // 50`}
 **Decimal precision:** decimal inputs are scaled to integers by a power of ten
 derived from their decimal places. When that scaling overflows to infinity the
 result is `NaN` rather than an arbitrary finite value. Results needing more than
-{@link MAX_FRACTION_DIGITS} fraction digits skip the final rounding pass, since
+`MAX_FRACTION_DIGITS` fraction digits skip the final rounding pass, since
 `toFixed` rejects counts above that limit.
 
 **Use Cases:**

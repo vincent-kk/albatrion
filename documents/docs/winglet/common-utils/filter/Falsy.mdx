@@ -35,4 +35,4 @@ export type Falsy = false | null | undefined | '' | 0 | 0n
 `NaN` is falsy at runtime but has no type-level representation, so it cannot appear
 here. A consequence: inside `isFalsy(value: number)` the value narrows to `0` even
 when it is `NaN`. Widening this member to `number` instead would swallow every
-number and break `Exclude` in {@link isTruthy}; this is the lesser gap.
+number and break `Exclude` in `isTruthy`; this is the lesser gap.
