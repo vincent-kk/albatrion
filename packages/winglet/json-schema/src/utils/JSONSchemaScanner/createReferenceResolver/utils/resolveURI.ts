@@ -8,10 +8,12 @@ export function resolveURI(
   reference: string,
   base: string,
 ): string | undefined {
+  // The URL parser rejects an empty input against opaque bases such as urn:,
+  // although an empty reference always names the current document like '#'.
+  const written = reference || '#';
   try {
-    if (!base && reference === '') return '#';
-    if (!base && reference.startsWith('#')) return reference;
-    return base ? new URL(reference, base).href : new URL(reference).href;
+    if (!base && written.startsWith('#')) return written;
+    return base ? new URL(written, base).href : new URL(written).href;
   } catch {
     return undefined;
   }

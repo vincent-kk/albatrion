@@ -4,7 +4,7 @@ import { createReferenceResolver } from '../createReferenceResolver';
 import { createReferenceResolverAsync } from '../utils/createReferenceResolverAsync';
 import { scan } from './fixtures/scan';
 
-describe('anonymous same-document references', () => {
+describe('empty same-document references', () => {
   it('resolves an empty reference to the same boolean root as #', () => {
     const resolver = createReferenceResolver(false);
     const context = resolver.root(false);
@@ -30,6 +30,28 @@ describe('anonymous same-document references', () => {
       expect.objectContaining({ uri: '#', skipped: 'cycle' }),
     );
   });
+
+  it.each(['urn:example:root', 'tag:example.com,2024:root'])(
+    'resolves an empty reference like # under the opaque base %s',
+    (id) => {
+      const schema = { $id: id, $ref: '' };
+      const resolver = createReferenceResolver(schema);
+      const context = resolver.root(schema);
+      expect(resolver.resolve('', '$ref', context)).toEqual(
+        resolver.resolve('#', '$ref', context),
+      );
+      const empty = scan(schema, { unresolvedReference: 'throw' });
+      const hash = scan(
+        { $id: id, $ref: '#' },
+        { unresolvedReference: 'throw' },
+      );
+      expect(empty.outcomes.get('#')).toEqual(
+        hash.outcomes
+          .get('#')!
+          .map((outcome) => ({ ...outcome, reference: '' })),
+      );
+    },
+  );
 
   it('resolves an empty asynchronous reference without loading a document', async () => {
     const load = vi.fn();
