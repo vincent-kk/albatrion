@@ -1,0 +1,28 @@
+---
+title: 'Dialect'
+sidebar_label: 'Dialect'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# Dialect
+
+Supported JSON Schema dialects; values are the names options and resolvers exchange.
+
+## Signature
+
+```typescript
+const Dialect: {
+    /** JSON Schema draft-04. */
+    readonly Draft04: "draft-04";
+    /** JSON Schema draft-06. */
+    readonly Draft06: "draft-06";
+    /** JSON Schema draft-07. */
+    readonly Draft07: "draft-07";
+    /** JSON Schema 2019-09. */
+    readonly Draft201909: "2019-09";
+    /** JSON Schema 2020-12. */
+    readonly Draft202012: "2020-12";
+}
+```

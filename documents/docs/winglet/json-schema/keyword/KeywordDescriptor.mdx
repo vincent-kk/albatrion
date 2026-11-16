@@ -16,5 +16,7 @@ A single entry in the traversal vocabulary: which keyword to descend into and ho
 interface KeywordDescriptor {
     keyword: string;
     kind: KeywordKind;
+    /** Accepted schema-position dialects; omission accepts every supported dialect. */
+    dialects?: readonly Dialect[];
 }
 ```
