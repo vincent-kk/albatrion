@@ -276,7 +276,7 @@ Use transpilers like Babel to convert the code to match your target environment.
 - **[`getSymbols`](./src/utils/object/getSymbols.ts)**: Function to return all symbol properties of an object as an array
 - **[`hasUndefined`](./src/utils/object/hasUndefined.ts)**: Function to check if an object has undefined values
 - **[`isReservedName`](./src/utils/object/isReservedName.ts)**: Function to check whether a key is a reserved member name that must go through the data-property primitives
-- **[`merge`](./src/utils/object/merge.ts)**: Function to merge multiple objects
+- **[`merge`](./src/utils/object/merge/merge.ts)**: Function to merge multiple objects
 - **[`removePrototype`](./src/utils/object/removePrototype.ts)**: Function to remove the prototype chain from an existing object
 - **[`removeUndefined`](./src/utils/object/removeUndefined.ts)**: Function to remove properties with undefined values from an object
 - **[`setDataProperty`](./src/utils/object/setDataProperty.ts)**: Function to write a property while treating reserved member names as opaque own data, never triggering the `__proto__` setter
