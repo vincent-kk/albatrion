@@ -163,13 +163,13 @@ export class ModalManager {
     ModalManager.__state__.focused.clear();
     ModalManager.__state__.anchor?.remove();
     ModalManager.__state__.anchor = null;
-    ModalManager.destroyStyleSheet();
     bootstrap?.notify(null);
     const next = ModalManager.__state__.bootstraps.entries().next().value;
     if (next) {
       ModalManager.attach(next[0], next[1].root, next[1].notify);
       return;
     }
+    ModalManager.destroyStyleSheet();
     const generation = ModalManager.__state__.generation;
     queueMicrotask(() => {
       if (generation !== ModalManager.__state__.generation) return;
