@@ -81,11 +81,49 @@ export interface Example {
   code: string;
 }
 
+/** One line of a page's `## Import` section: a name one entry point exports. */
+export interface ImportPath {
+  /** Key of the entry in the package `exports` map, "." for the root. */
+  entryKey: string;
+  /** Specifier a consumer imports from, e.g. "@winglet/json/pointer". */
+  moduleSpecifier: string;
+  /** Name the entry point exports. */
+  exportedName: string;
+  /** Whether the entry exports the name for type positions only, so it is imported with `import type`. */
+  typeOnly: boolean;
+}
+
+/** Where a declaration that a package re-exports from another module comes from. */
+export interface ExternalSource {
+  /** Module the package re-exports from, e.g. "react". */
+  moduleSpecifier: string;
+  /** Name of the declaration in that module, e.g. "isValidElement". */
+  originalName: string;
+}
+
+/** An exported name that no generated page documents. */
+export interface UndocumentedExport {
+  /** Key of the entry in the package `exports` map, "." for the root. */
+  entryKey: string;
+  /** Name the entry point exports. */
+  exportedName: string;
+  /** Absolute path of the file that holds the declaration or the re-export. */
+  filePath: string;
+}
+
+/** One client-side redirect, as `@docusaurus/plugin-client-redirects` reads it. */
+export interface Redirect {
+  /** Site path without the base URL that no page serves, e.g. "/docs/winglet/json/pointer/getValue". */
+  from: string;
+  /** Site path of the canonical page. */
+  to: string;
+}
+
 export interface ParsedFunction {
-  /** Symbol name, e.g. "chunk" */
+  /** Symbol name, e.g. "chunk"; on a generated page, the page name */
   name: string;
-  /** Kind of declaration */
-  kind: 'function' | 'class' | 'const' | 'type' | 'interface' | 'enum';
+  /** Kind of declaration; a re-export of a declaration from another module is `re-export` */
+  kind: 'function' | 'class' | 'const' | 'type' | 'interface' | 'enum' | 're-export';
   /** Description text before first @tag */
   description: string;
   /** Full type signature from the declaration */
@@ -106,10 +144,14 @@ export interface ParsedFunction {
   packageName: string;
   /** Package version, e.g. "0.10.0" */
   packageVersion: string;
-  /** Category path from sub-path export, e.g. "array" */
+  /** Category directory of the page, e.g. "array"; empty for a page directly under the package directory */
   categoryPath: string;
   /** Absolute path to the source .d.ts file */
   sourceFile: string;
+  /** Every way to import the declaration, canonical entry first; empty until the declaration index fills it */
+  importPaths: ImportPath[];
+  /** Source module of a re-exported declaration from outside the package; null for a declaration in the package */
+  externalSource: ExternalSource | null;
 }
 
 export interface CategoryMeta {
@@ -121,17 +163,4 @@ export interface CategoryMeta {
   collapsed: boolean;
   /** Unique key to avoid translation key conflicts across packages */
   key: string;
-}
-
-export interface DocSyncResult {
-  /** Number of files created */
-  created: number;
-  /** Number of files updated */
-  updated: number;
-  /** Number of files unchanged */
-  unchanged: number;
-  /** Number of files skipped (manual) */
-  skipped: number;
-  /** Number of stale files removed */
-  stale: number;
 }

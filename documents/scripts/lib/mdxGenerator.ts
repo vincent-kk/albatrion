@@ -1,5 +1,8 @@
 import type { ParsedFunction, CategoryMeta } from './types';
 
+/** Marker line that identifies a generated page; a page without it is maintained by hand and never written or deleted. */
+export const AUTO_MARKER = '<!-- sync-winglet-docs:auto -->';
+
 /** Category position mapping for common-utils sub-paths. */
 const CATEGORY_POSITIONS: Record<string, number> = {
   array: 1,
@@ -19,16 +22,22 @@ const CATEGORY_POSITIONS: Record<string, number> = {
 
 /**
  * Generate MDX content for a parsed function/symbol documentation page.
+ *
+ * A page whose name matches the last segment of its category directory,
+ * ignoring case, gets a `slug` so Docusaurus keeps its address at
+ * `<category>/<name>` even though it treats the page as the category index.
  */
 export function generateMdx(parsed: ParsedFunction): string {
   const lines: string[] = [];
+  const categoryDir = parsed.categoryPath.split('/').pop() ?? '';
 
   // Frontmatter
   lines.push('---');
   lines.push(`title: '${parsed.name}'`);
   lines.push(`sidebar_label: '${parsed.name}'`);
+  if (categoryDir.toLowerCase() === parsed.name.toLowerCase()) lines.push(`slug: ${parsed.name}`);
   lines.push('---');
-  lines.push('<!-- sync-winglet-docs:auto -->');
+  lines.push(AUTO_MARKER);
   lines.push('');
   lines.push("import WingletPlayground from '@site/src/components/WingletPlayground';");
   lines.push('');
@@ -38,6 +47,22 @@ export function generateMdx(parsed: ParsedFunction): string {
   lines.push('');
   if (parsed.description) {
     lines.push(escapeMdxContent(parsed.description));
+    lines.push('');
+  }
+
+  lines.push('## Import');
+  lines.push('');
+  lines.push('```typescript');
+  for (const item of parsed.importPaths) {
+    lines.push(`import ${item.typeOnly ? 'type ' : ''}{ ${item.exportedName} } from '${item.moduleSpecifier}';`);
+  }
+  lines.push('```');
+  lines.push('');
+
+  if (parsed.externalSource) {
+    lines.push(
+      `Re-exported from \`${parsed.externalSource.moduleSpecifier}\` as \`${parsed.externalSource.originalName}\`.`,
+    );
     lines.push('');
   }
 
