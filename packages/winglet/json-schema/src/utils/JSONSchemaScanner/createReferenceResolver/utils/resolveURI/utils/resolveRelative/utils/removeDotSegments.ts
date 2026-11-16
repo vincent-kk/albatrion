@@ -4,8 +4,8 @@
  * @param climb Whether a `..` above the start of a path that does not start with `/` stays, so
  *   that the unknown default base of a document without an absolute address can complete it.
  * @returns The path without dot segments. A path starting with `/` never climbs above its root,
- *   a path that does not start with `/` never gains one, and a final `.` or `..` leaves a
- *   trailing `/`.
+ *   a final `.` or `..` leaves a trailing `/`, and an empty segment that a removed segment leaves
+ *   first makes the result start with `/` (`x/..//a` gives `/a`); the caller disambiguates it.
  */
 export function removeDotSegments(path: string, climb: boolean): string {
   const rooted = path.startsWith('/');

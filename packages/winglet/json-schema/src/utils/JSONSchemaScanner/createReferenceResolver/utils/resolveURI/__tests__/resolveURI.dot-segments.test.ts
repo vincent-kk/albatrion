@@ -17,6 +17,15 @@ it.each([
   ['a/b/..', '', 'a/'],
   ['/../x', '', '/x'],
   ['../../x', 'file:///C:/a/b.json', 'file:///C:/x'],
+  ['x/..//a', '', './/a'],
+  ['.//a', '', './/a'],
+  ['/.//a', '', '/.//a'],
+  ['/x/..//a', '', '/.//a'],
+  ['..//x', 'a/b', './/x'],
+  ['x/../a/b:c', '', 'a/b:c'],
+  ['./:x', '', './:x'],
+  ['../c', 'urn:example:a/b', 'urn:c'],
+  ['x/..//a', 'urn:example:root', 'urn:/a'],
 ])('resolves %j against %j to %j', (reference, base, expected) => {
   expect(resolveURI(reference, base)).toBe(expected);
 });

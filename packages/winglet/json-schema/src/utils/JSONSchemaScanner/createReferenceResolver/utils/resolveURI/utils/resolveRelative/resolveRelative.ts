@@ -23,20 +23,27 @@ export function resolveRelative(
     targetQuery = query ?? baseQuery;
   if (authority !== undefined || path !== '') {
     targetQuery = query;
-    targetPath = removeDotSegments(
+    const merged =
       authority !== undefined || path.startsWith('/')
         ? path
-        : mergePaths(basePath, path, baseAuthority !== undefined),
+        : mergePaths(basePath, path, baseAuthority !== undefined);
+    targetPath = removeDotSegments(
+      merged,
       scheme === undefined && baseAuthority === undefined,
     );
-    // An empty relative path would name the base document itself, and a colon in the first
-    // segment would read as a scheme (RFC 3986 section 4.2).
-    if (
-      scheme === undefined &&
-      targetAuthority === undefined &&
-      (targetPath === '' || /^[^/]*:/.test(targetPath))
-    )
-      targetPath = './' + targetPath;
+    // Without a scheme or authority, an empty path names the base document (RFC 3986 5.2.2), and a
+    // first-segment colon, a leading `//` or a leading `/` left by an empty segment reads as a
+    // scheme, an authority or a root (4.2); a leading dot segment keeps the written meaning.
+    if (scheme === undefined && targetAuthority === undefined) {
+      if (merged.startsWith('/')) {
+        if (targetPath.startsWith('//')) targetPath = '/.' + targetPath;
+      } else if (
+        targetPath === '' ||
+        targetPath.startsWith('/') ||
+        /^[^/]*:/.test(targetPath)
+      )
+        targetPath = './' + targetPath;
+    }
   }
   const target =
     (targetAuthority === undefined ? '' : '//' + targetAuthority) +

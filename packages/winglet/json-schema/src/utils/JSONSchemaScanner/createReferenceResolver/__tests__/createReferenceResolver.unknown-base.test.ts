@@ -218,6 +218,14 @@ describe('references and identifiers under an unknown, relative or opaque base',
     expect(output.properties.p).toEqual({ $ref: '#/$defs/t' });
   });
 
+  it.each([{}, { $id: 'https://example.com/root.json' }])(
+    'keeps an empty segment left by dot segments apart from a root path under %j',
+    (root) => {
+      const $defs = { a: { $id: 'x/..//a.json' }, b: { $id: '/a.json' } };
+      expect(() => createReferenceResolver({ ...root, $defs })).not.toThrow();
+    },
+  );
+
   it.each(ROOTS)(
     'declares the directory of the base for a ./ identifier under %j',
     (root) => {
