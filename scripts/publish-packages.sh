@@ -70,6 +70,27 @@ while IFS= read -r line; do
   entries+=("$name|$location")
 done < <(yarn workspaces list --json --no-private)
 
+# Publish dependencies before dependents: winglet has no in-repo dependency
+# outside itself, lerx and slats build on winglet, schema-form builds on both,
+# and the plugins build on schema-form. Order inside a rank is the list order.
+publish_rank() {
+  case "$1" in
+    packages/winglet/*) echo 0 ;;
+    packages/lerx/* | packages/slats/*) echo 1 ;;
+    packages/canard/schema-form) echo 2 ;;
+    *) echo 3 ;;
+  esac
+}
+sorted=()
+for rank in 0 1 2 3; do
+  for entry in "${entries[@]}"; do
+    if [ "$(publish_rank "${entry#*|}")" = "$rank" ]; then
+      sorted+=("$entry")
+    fi
+  done
+done
+entries=("${sorted[@]}")
+
 for entry in "${entries[@]}"; do
   name="${entry%%|*}"
   location="${entry#*|}"
@@ -116,6 +137,8 @@ for entry in "${entries[@]}"; do
     else
       echo "  ✗ failed: $name@$version"
       failed+=("$name@$version")
+      echo "  stopping: later packages may depend on $name"
+      break
     fi
   fi
 done
