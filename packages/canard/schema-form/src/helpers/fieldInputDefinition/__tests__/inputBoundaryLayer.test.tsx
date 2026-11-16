@@ -6,6 +6,8 @@ import { afterEach, expect, it } from 'vitest';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import type { FieldInputProps } from '@/schema-form/types';
 
+import { FieldInputErrorBoundary } from '../components/FieldInputErrorBoundary';
+
 afterEach(cleanup);
 
 it('F-B keeps the same boundary with a direct raw input child when Refresh applies a new generation', () => {
@@ -41,7 +43,7 @@ it('F-B keeps the same boundary with a direct raw input child when Refresh appli
     >
   )[fiberKey];
   expect(fiber.return.type).toBe(Input);
-  expect(fiber.return.return.type.name).toBe('ErrorBoundary');
+  expect(fiber.return.return.type).toBe(FieldInputErrorBoundary);
   const boundary = fiber.return.return.stateNode;
   initial.value = 'draft';
   initial.setSelectionRange(1, 3);
