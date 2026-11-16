@@ -233,8 +233,8 @@ Form.Label과 Form.ErrorMessage는 바깥 label/span을 더하지 않습니다. 
 
 ```tsx
 // 변경 전
-const LegacyLabel = ({ name }: FieldRendererProps) => <>{name}</>;
-registerPlugin({ FormLabelRenderer: LegacyLabel });
+const Label = ({ name }: FormTypeRendererProps) => <>{name}</>;
+registerPlugin({ FormLabel: Label });
 ```
 
 ```tsx
