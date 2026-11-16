@@ -1,48 +1,18 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
+import { dropDeprecatedCollisions } from './buildDeclarationIndex/dropDeprecatedCollisions';
+import { findDeclaration } from './buildDeclarationIndex/findDeclaration';
+import { listRedirects } from './buildDeclarationIndex/listRedirects';
+import { orderImportPaths } from './buildDeclarationIndex/orderImportPaths';
+import { selectEntry } from './buildDeclarationIndex/selectEntry';
+import type { DeclarationIndex, DeclarationPage, ExportRef, IndexedEntry } from './buildDeclarationIndex/types';
 import { collectDeprecatedExports } from './collectDeprecatedExports';
-import { type EntryExport, listEntryExports } from './listEntryExports';
-import { parseReexportJSDoc, parseRichJSDoc } from './parseRichJSDoc';
-import { selectCanonicalEntry } from './selectCanonicalEntry';
-import type { ImportPath, PackageEntry, ParsedFunction, Redirect, UndocumentedExport } from './types';
+import { listEntryExports } from './listEntryExports';
+import { parseReexportJSDoc } from './parseReexportJSDoc';
+import type { PackageEntry, ParsedFunction, UndocumentedExport } from './types';
 
-/** The generated page of one declaration. */
-export interface DeclarationPage {
-  /** `filePath + '#' + declaredName` of the declaration. */
-  key: string;
-  /** File name and title of the page. */
-  pageName: string;
-  /** Category directory of the page; '' places it directly under the package directory. */
-  category: string;
-  /** Page content, with `name`, `categoryPath` and `importPaths` set for this page. */
-  parsed: ParsedFunction;
-  /** Canonical entry first, then the other sub-paths in `exports` order, then the root. */
-  importPaths: ImportPath[];
-}
-
-/** Every page of a package, the exported names left without one, and the redirects to the pages. */
-export interface DeclarationIndex {
-  pages: DeclarationPage[];
-  undocumented: UndocumentedExport[];
-  /** Sorted by `from`. */
-  redirects: Redirect[];
-}
-
-/** One entry point of the package, with the category its canonical pages go to. */
-interface IndexedEntry {
-  entryKey: string;
-  dtsPath: string;
-  /** Real path of the directory that holds `dtsPath`. */
-  entryDir: string;
-  category: string;
-  exportsOrder: number;
-  /** Names whose export specifier carries the deprecation tag. */
-  deprecatedNames: Set<string>;
-}
-
-/** One way a declaration is exported: the entry and what it reports for the name. */
-type ExportRef = { entry: IndexedEntry; item: EntryExport };
+export type { DeclarationIndex, DeclarationPage };
 
 /**
  * Builds one page per declaration that a package's entry points export.
@@ -117,97 +87,4 @@ function findPackageRoot(pkg: PackageEntry): string {
     if (fs.existsSync(manifestPath) && JSON.parse(fs.readFileSync(manifestPath, 'utf-8')).name === pkg.name) return dir;
   }
   throw new Error(`no package.json named ${pkg.name} above ${pkg.mainDtsPath}`);
-}
-
-/** The canonical entry among the sub-paths that export a declaration, or the root when none does. */
-function selectEntry(refs: ExportRef[], entries: IndexedEntry[], declarationFile: string): IndexedEntry {
-  const hopsByEntry = new Map<IndexedEntry, number>();
-  for (const { entry, item } of refs) {
-    if (entry.entryKey !== '.') hopsByEntry.set(entry, Math.min(hopsByEntry.get(entry) ?? Infinity, item.hops));
-  }
-  if (hopsByEntry.size === 0) return entries[entries.length - 1];
-  const exporting = [...hopsByEntry];
-  const candidates = exporting.map(([entry, hops]) => ({ entryKey: entry.entryKey, entryDir: entry.entryDir, hops, exportsOrder: entry.exportsOrder }));
-  return exporting[candidates.indexOf(selectCanonicalEntry(candidates, declarationFile))][0];
-}
-
-/** The parsed declaration named `declaredName` in `filePath`, parsing each file once. */
-function findDeclaration(
-  parsedFiles: Map<string, ParsedFunction[]>,
-  filePath: string,
-  declaredName: string,
-  pkg: PackageEntry,
-): ParsedFunction | null {
-  let parsed = parsedFiles.get(filePath);
-  if (!parsed) {
-    parsed = parseRichJSDoc(filePath, pkg.name, pkg.version, '');
-    parsedFiles.set(filePath, parsed);
-  }
-  return parsed.find(item => item.name === declaredName) ?? null;
-}
-
-/** Import paths with the canonical entry first, then `exports` order with the root last; within an entry, the page name first. */
-function orderImportPaths(refs: ExportRef[], canonical: IndexedEntry, pageName: string, packageName: string): ImportPath[] {
-  const entryRank = (ref: ExportRef): number => (ref.entry === canonical ? -1 : ref.entry.exportsOrder);
-  const nameRank = (ref: ExportRef): string => (ref.item.exportedName === pageName ? '' : ref.item.exportedName);
-  return [...refs]
-    .sort((a, b) => entryRank(a) - entryRank(b) || compareText(nameRank(a), nameRank(b)))
-    .map(({ entry, item }) => ({
-      entryKey: entry.entryKey,
-      moduleSpecifier: entry.category ? `${packageName}/${entry.category}` : packageName,
-      exportedName: item.exportedName,
-      isTypeOnly: item.isTypeOnly,
-    }));
-}
-
-/**
- * Keeps one page per page path compared ignoring case: a lone page, or the
- * one current page among deprecated ones.
- */
-function dropDeprecatedCollisions<T extends { page: DeclarationPage; isDeprecated: boolean }>(packageName: string, candidates: T[]): T[] {
-  const byPath = new Map<string, T[]>();
-  for (const candidate of candidates) {
-    const key = pagePath(candidate.page.category, candidate.page.pageName).toLowerCase();
-    byPath.set(key, [...(byPath.get(key) ?? []), candidate]);
-  }
-  return [...byPath.values()].map(same => {
-    if (same.length === 1) return same[0];
-    const current = same.filter(candidate => !candidate.isDeprecated);
-    if (current.length === 1) return current[0];
-    const described = same.map(({ page }) => `${pagePath(page.category, page.pageName)} (${page.parsed.sourceFile})`).sort();
-    throw new Error(`page path collision: ${packageName} ${described.join(', ')}`);
-  });
-}
-
-/** Redirects from every non-canonical address of each page, sorted by `from`. */
-function listRedirects(pkg: PackageEntry, kept: Array<{ page: DeclarationPage; refs: ExportRef[] }>, entries: IndexedEntry[]): Redirect[] {
-  const base = `/docs/${pkg.namespace}/${pkg.shortName}`;
-  const address = (category: string, name: string): string => `${base}/${pagePath(category, name)}`;
-  const reserved = new Set(
-    [
-      ...kept.map(({ page }) => address(page.category, page.pageName)),
-      ...entries.filter(entry => entry.category).map(entry => `${base}/${entry.category}`),
-    ].map(item => item.toLowerCase()),
-  );
-  const hasSubPaths = entries.length > 1;
-  const redirects: Redirect[] = [];
-  for (const { page, refs } of kept) {
-    const to = address(page.category, page.pageName);
-    for (const { entry, item } of refs) {
-      if (hasSubPaths && entry.entryKey === '.') continue;
-      const from = address(entry.category, item.exportedName);
-      if (!reserved.has(from.toLowerCase())) redirects.push({ from, to });
-    }
-  }
-  return redirects.sort((a, b) => compareText(a.from, b.from));
-}
-
-/** `<category>/<name>`, or `<name>` for a page directly under the package directory. */
-function pagePath(category: string, name: string): string {
-  return category ? `${category}/${name}` : name;
-}
-
-/** Code-unit order, independent of the locale. */
-function compareText(a: string, b: string): number {
-  return a < b ? -1 : a > b ? 1 : 0;
 }

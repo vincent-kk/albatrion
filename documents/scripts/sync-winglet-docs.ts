@@ -16,7 +16,7 @@
  */
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { applySyncPlan } from './lib/manageDocs';
+import { applySyncPlan } from './lib/applySyncPlan';
 import { planSync } from './lib/planSync';
 
 const DOCUMENTS_DIR = path.resolve(__dirname, '..');

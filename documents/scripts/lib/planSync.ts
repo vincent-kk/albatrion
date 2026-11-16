@@ -1,22 +1,13 @@
-import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-import { type DeclarationPage, buildDeclarationIndex } from './buildDeclarationIndex';
-import { AUTO_MARKER, generateCategoryMeta, generateMdx, serializeCategoryJSON } from './mdxGenerator';
+import { buildDeclarationIndex } from './buildDeclarationIndex';
 import { discoverPackages, listUnbuiltPackages } from './packageRegistry';
+import { planPackageFiles } from './planSync/planPackageFiles';
+import { planRedirects } from './planSync/planRedirects';
+import type { SyncPlan } from './planSync/types';
 import type { Redirect } from './types';
 
-/** The file changes that bring the generated winglet pages in line with the built packages. */
-export interface SyncPlan {
-  /** Files to create or replace; empty when `errors` is not. */
-  writes: Array<{ path: string; content: string }>;
-  /** Files to remove; empty when `errors` is not. */
-  deletes: string[];
-  /** One line per problem that stops the sync: an unbuilt package, an exported name without a page, a page path collision. */
-  errors: string[];
-  /** Number of packages planned. */
-  packageCount: number;
-}
+export type { SyncPlan };
 
 const NAMESPACE = 'winglet';
 
@@ -74,70 +65,4 @@ export function planSync(options: { packageFilter: string | null; docsDir: strin
 
   if (errors.length > 0) return { writes: [], deletes: [], errors, packageCount: packages.length };
   return { writes, deletes, errors, packageCount: packages.length };
-}
-
-/** Writes and deletes under one package's docs directory. */
-function planPackageFiles(
-  pkgDocsDir: string,
-  shortName: string,
-  pages: DeclarationPage[],
-): Pick<SyncPlan, 'writes' | 'deletes'> {
-  const existing = listFiles(pkgDocsDir);
-  const writes: SyncPlan['writes'] = [];
-  const pagePaths = new Set<string>();
-  for (const page of pages) {
-    const filePath = path.join(pkgDocsDir, page.category, `${page.pageName}.mdx`);
-    pagePaths.add(filePath);
-    const current = readIfExists(filePath);
-    if (current !== null && !current.includes(AUTO_MARKER)) continue;
-    const content = generateMdx(page.parsed);
-    if (current !== content) writes.push({ path: filePath, content });
-  }
-  for (const category of new Set(pages.map(page => page.category).filter(Boolean))) {
-    const filePath = path.join(pkgDocsDir, category, '_category_.json');
-    const content = serializeCategoryJSON(generateCategoryMeta(category, shortName));
-    if (readIfExists(filePath) !== content) writes.push({ path: filePath, content });
-  }
-
-  const deletes = existing.filter(
-    filePath => filePath.endsWith('.mdx') && !pagePaths.has(filePath) && fs.readFileSync(filePath, 'utf-8').includes(AUTO_MARKER),
-  );
-  const remainingPages = [...existing.filter(filePath => filePath.endsWith('.mdx') && !deletes.includes(filePath)), ...pagePaths];
-  for (const metaPath of existing.filter(filePath => path.basename(filePath) === '_category_.json')) {
-    const categoryDir = path.dirname(metaPath) + path.sep;
-    if (!remainingPages.some(filePath => filePath.startsWith(categoryDir))) deletes.push(metaPath);
-  }
-  return { writes, deletes };
-}
-
-/**
- * The redirect list file write, or null when it is already current. Entries
- * whose `from` starts with none of `replacedPrefixes` are kept; a null
- * `replacedPrefixes` replaces the whole list.
- */
-function planRedirects(
-  filePath: string,
-  redirects: Redirect[],
-  replacedPrefixes: string[] | null,
-): SyncPlan['writes'][number] | null {
-  const current = readIfExists(filePath);
-  const previous: Redirect[] = current === null ? [] : JSON.parse(current);
-  const kept = replacedPrefixes === null ? [] : previous.filter(item => !replacedPrefixes.some(prefix => item.from.startsWith(prefix)));
-  const list = [...kept, ...redirects].sort((a, b) => (a.from < b.from ? -1 : a.from > b.from ? 1 : 0));
-  const content = JSON.stringify(list, null, 2) + '\n';
-  return content === current ? null : { path: filePath, content };
-}
-
-/** File content, or null when the file does not exist. */
-function readIfExists(filePath: string): string | null {
-  return fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : null;
-}
-
-/** Absolute paths of every file under `dir`; empty when it does not exist. */
-function listFiles(dir: string): string[] {
-  if (!fs.existsSync(dir)) return [];
-  return fs
-    .readdirSync(dir, { withFileTypes: true, recursive: true })
-    .filter(entry => entry.isFile())
-    .map(entry => path.join(entry.parentPath, entry.name));
 }
