@@ -138,16 +138,6 @@ describe('empty same-document references', () => {
 });
 
 describe('empty references the URL parser accepts', () => {
-  it('keeps an empty subschema $id under a hierarchical base as a duplicate identifier', () => {
-    const schema = {
-      $id: 'https://example.com/root.json',
-      $defs: { a: { $id: '' } },
-    };
-    expect(() => createReferenceResolver(schema)).toThrow(
-      /root\.json declared at # and #\/\$defs\/a/,
-    );
-  });
-
   it('keeps the relative spelling of an empty reference copied from another document', () => {
     const schema = {
       $id: 'https://example.com/root.json',

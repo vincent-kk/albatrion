@@ -32,26 +32,37 @@ export interface DocumentRecord {
   /** Original source locations indexed by document pointer. */
   paths: Map<string, Location>;
 }
-/** URI resource boundary; anchors belong to the whole resource. */
+/** A named fragment and the original occurrence it names. */
+export interface Anchor {
+  /** Original schema occurrence that the name identifies. */
+  location: Location;
+  /** Whether a dynamic reference may rebind the name in its dynamic scope. */
+  dynamic: boolean;
+}
+/** URI base boundary: a declared resource, or a base change that declares none. */
 export interface Resource {
-  /** Absolute document identifier, or empty for the anonymous root. */
+  /** Document address that references inside resolve against; empty for the anonymous root. */
   uri: string;
   /** Source document supplying this resource. */
   document: DocumentRecord;
-  /** Resource-root path inside that document. */
+  /** Resource-root path inside that document; empty for a base change, which is never registered. */
   path: string;
   /** Original resource-root schema. */
   schema: SchemaValue;
   /** Effective dialect at the resource root. */
   dialect: Dialect;
-  /** Named static and dynamic anchors with source locations. */
-  anchors: Map<string, { location: Location; dynamic: boolean }>;
   /** Any dynamic anchor or recursive anchor makes removal of this resource unsafe. */
   dynamic: boolean;
+  /**
+   * Nearest declared resource when this context only changes the base. A legacy identifier
+   * with a non-empty fragment names a location in another document without declaring that
+   * document, so canonical locations below it stay addressed through this resource.
+   */
+  owner?: Resource;
 }
 /** Lexical protocol context; unchanged descendants share the same object. */
 export interface ResolverContext {
-  /** Nearest recognized resource boundary. */
+  /** Nearest recognized identifier boundary: a declared resource or a base change. */
   resource: Resource;
 }
 /** Canonical identity is a resource-relative pointer, independent of anchor aliases. */
