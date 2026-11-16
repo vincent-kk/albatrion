@@ -1,5 +1,5 @@
 ---
-"@canard/schema-form": minor
+"@canard/schema-form": major
 ---
 
 Breaking change: the root `JSONSchemaError` validation-issue type is replaced by `ValidationIssue`. It describes an issue returned by a validator, not a thrown schema exception. Update type imports and construct issues with a `dataPath` and optional `keyword`, `message`, and validator-specific `source` diagnostics.

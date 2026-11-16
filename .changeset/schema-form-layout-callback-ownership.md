@@ -1,5 +1,5 @@
 ---
-"@canard/schema-form": minor
+"@canard/schema-form": major
 ---
 
 Breaking change: `Form.Input`, `Form.Render`, and `Form.Field` no longer accept `onChange` or `onFileAttach`. Untyped callers cannot replace the library's value storage, interaction tracking, or attachment registration with these props.

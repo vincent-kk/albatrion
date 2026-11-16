@@ -1,5 +1,5 @@
 ---
-"@canard/schema-form": minor
+"@canard/schema-form": major
 ---
 
 Breaking change: the array option `omitTrailing` is renamed to `omitTrailingEmpty`, and it now trims every trailing empty item instead of only `undefined`.

@@ -1,5 +1,5 @@
 ---
-"@canard/schema-form-antd6-plugin": minor
+"@canard/schema-form-antd6-plugin": major
 ---
 
 Breaking change: the plugin supplies `LabelRenderer` and `ErrorMessageRenderer` for the renderer-parts API and no longer supplies a pass-through input frame. Upgrade it together with the matching `@canard/schema-form` API, and rename explicitly wired slot props.

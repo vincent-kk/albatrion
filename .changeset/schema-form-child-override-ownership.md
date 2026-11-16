@@ -1,5 +1,5 @@
 ---
-"@canard/schema-form": minor
+"@canard/schema-form": major
 ---
 
 Breaking change: `value` and `defaultValue` are no longer override props on child inputs or `Form.Input`, `Form.Render`, and `Form.Field`. Values belong to the form node; untyped overrides cannot replace them.

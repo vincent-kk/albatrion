@@ -1,5 +1,5 @@
 ---
-"@winglet/json-schema": minor
+"@winglet/json-schema": major
 ---
 
 This is a breaking change to schema traversal, reference resolution, and scanner lifecycle behavior.

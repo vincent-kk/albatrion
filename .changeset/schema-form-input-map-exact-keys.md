@@ -1,5 +1,5 @@
 ---
-"@canard/schema-form": minor
+"@canard/schema-form": major
 ---
 
 Breaking change: `fieldInputMap` keys without a leading `^` no longer have a regular-expression fallback. Except for the existing one-segment `*` wildcard, they compare as text. There is no development warning, including for a plain key that relied on capturing descendants; that dependency cannot be detected automatically.
