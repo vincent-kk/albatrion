@@ -1,5 +1,5 @@
 ---
-"@canard/schema-form": minor
+"@canard/schema-form": major
 ---
 
 Breaking change: real inputs no longer receive `errors` or `errorVisible` props; use `useFieldErrors(node)` wherever an input or presentation renderer needs field feedback. Inputs that do not use the hook no longer re-render on error-only changes when no deferred refresh is pending.

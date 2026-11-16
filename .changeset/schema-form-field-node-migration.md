@@ -1,5 +1,5 @@
 ---
-"@canard/schema-form": minor
+"@canard/schema-form": major
 ---
 
 Breaking change: the node and input APIs use FieldNode and FieldInput names. Update named imports and their call sites using this migration table.

@@ -1,5 +1,5 @@
 ---
-"@canard/schema-form": minor
+"@canard/schema-form": major
 ---
 
 Breaking change: rename and retype presentation slots as `LabelRenderer`, `InputRenderer` and `ErrorMessageRenderer`, and use `Form.ErrorMessage` for standalone error content. A `FieldRenderer` receives bound `Label`, `Input` and `ErrorMessage` parts, so custom groups can reuse registered presentation without copying its markup.

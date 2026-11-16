@@ -1,5 +1,5 @@
 ---
-"@canard/schema-form": minor
+"@canard/schema-form": major
 ---
 
 Breaking change: the input-map compilation error code is `SCHEMA_FORM_ERROR.FIELD_INPUT_MAP`, available as `FormErrorCode.FieldInputMap`. Update comparisons with the thrown error's code.
