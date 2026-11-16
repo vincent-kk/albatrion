@@ -117,6 +117,7 @@ export class ModalManager {
     identity: object,
     root: HTMLElement | null,
     notify: Fn<[HTMLElement | null]>,
+    reuseStyleSheet = false,
   ): void {
     if (root === null) {
       if (ModalManager.__state__.owner === identity) {
@@ -145,7 +146,7 @@ export class ModalManager {
     ModalManager.__state__.owner = identity;
     ModalManager.__state__.generation++;
     const anchor = ModalManager.anchor({ root });
-    ModalManager.applyStyleSheet();
+    if (!reuseStyleSheet) ModalManager.applyStyleSheet();
     ModalManager.installKeyboardListener();
     ModalManager.updateAccessibility(true);
     notify(anchor);
@@ -166,7 +167,7 @@ export class ModalManager {
     bootstrap?.notify(null);
     const next = ModalManager.__state__.bootstraps.entries().next().value;
     if (next) {
-      ModalManager.attach(next[0], next[1].root, next[1].notify);
+      ModalManager.attach(next[0], next[1].root, next[1].notify, true);
       return;
     }
     ModalManager.destroyStyleSheet();

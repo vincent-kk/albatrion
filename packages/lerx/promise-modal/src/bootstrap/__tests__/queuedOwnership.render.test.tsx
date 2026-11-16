@@ -69,6 +69,7 @@ it('queued requests transferred to waiter use the waiter options', async () => {
 });
 
 it('retains shared styles during handoff and removes them with the final owner', async () => {
+  const applyStyles = vi.spyOn(ModalManager, 'applyStyleSheet');
   vi.spyOn(console, 'warn').mockImplementation(() => {});
   const view = render(
     <>
@@ -88,6 +89,7 @@ it('retains shared styles during handoff and removes them with the final owner',
   expect(style).toBeDefined();
   view.rerender(<BootstrapProvider key="waiter" />);
   expect(style.isConnected).toBe(true);
+  expect(applyStyles).toHaveBeenCalledTimes(1);
   view.unmount();
   expect(style.isConnected).toBe(false);
 });
