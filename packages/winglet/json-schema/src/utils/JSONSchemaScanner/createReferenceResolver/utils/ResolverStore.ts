@@ -13,7 +13,7 @@ import { buildKeywordMap } from '../../utils/keywordMap/buildKeywordMap';
 import { ReferenceSkipReason } from '../../utils/referenceOutcome/ReferenceSkipReason';
 import { cloneSchema } from '../../utils/schemaCopy/cloneSchema';
 import type { ReferenceKeyword, ReferenceStep } from '../../utils/type';
-import { resolveURI } from './resolveURI';
+import { resolveURI } from './resolveURI/resolveURI';
 import { shortestReference } from './shortestReference';
 import type {
   Anchor,
@@ -37,6 +37,8 @@ const identifiers = [
 ];
 /** Reference-shaped data is permitted below these annotation/assertion values without rewriting. */
 const dataKeywords = ['default', 'const', 'enum', 'examples'];
+/** An absolute URI starts with a scheme; any other address is relative to an unknown default base. */
+const absoluteURI = /^[A-Za-z][A-Za-z0-9+.-]*:/;
 
 /** Address registry and per-host template cache; scans are delegated to the public synchronous driver. */
 export class ResolverStore {
@@ -346,13 +348,13 @@ export class ResolverStore {
 
   /**
    * Supply a registered external document lazily; no I/O occurs here.
-   * @param uri Absolute document address.
+   * @param uri Document address; only an absolute one is looked up among registrations.
    * @returns Whether the resource is known after checking registrations.
    */
   public ensure(uri: string): boolean {
     if (this.resources.has(uri)) return true;
     const source = this.options.resources;
-    if (source && hasOwnProperty(source, uri)) {
+    if (absoluteURI.test(uri) && source && hasOwnProperty(source, uri)) {
       this.index(
         source[uri],
         uri,
@@ -378,21 +380,22 @@ export class ResolverStore {
    * Extract the absolute document address needed by an asynchronous loader.
    * @param reference Written reference.
    * @param context Current lexical host context.
-   * @returns Document URI, or undefined for an invalid relative reference and for a name that
-   *   a fragment identifier already registered, which resolves without its document.
+   * @returns Absolute document URI, or undefined for an invalid reference, for a target that
+   *   stays relative under an unknown base, and for a name that a fragment identifier already
+   *   registered, which resolves without its document.
    */
   public documentURI(
     reference: string,
     context: ResolverContext,
   ): string | undefined {
-    const absolute = resolveURI(reference, context.resource.uri);
-    if (absolute === undefined) return;
-    const hash = absolute.indexOf('#');
-    if (hash < 0) return absolute;
-    const uri = absolute.slice(0, hash);
+    const target = resolveURI(reference, context.resource.uri);
+    if (target === undefined || !absoluteURI.test(target)) return;
+    const hash = target.indexOf('#');
+    if (hash < 0) return target;
+    const uri = target.slice(0, hash);
     let name: string;
     try {
-      name = decodeURIComponent(absolute.slice(hash + 1));
+      name = decodeURIComponent(target.slice(hash + 1));
     } catch {
       return uri;
     }
@@ -559,7 +562,7 @@ export class ResolverStore {
       return { status: 'resolved', uri: location.uri, target };
     if (
       source.dialect !== host.dialect ||
-      (source !== host && (source.dynamic || !source.uri))
+      (source !== host && (source.dynamic || !absoluteURI.test(source.uri)))
     )
       return relocation;
     if (relevant.length === 0)
@@ -662,7 +665,7 @@ export class ResolverStore {
         );
         if (
           uri === undefined ||
-          (!uri.split('#')[0] && host !== context.resource)
+          (!absoluteURI.test(uri) && host !== context.resource)
         )
           return relocation;
         item.copy[key] = shortestReference(uri, host.uri);

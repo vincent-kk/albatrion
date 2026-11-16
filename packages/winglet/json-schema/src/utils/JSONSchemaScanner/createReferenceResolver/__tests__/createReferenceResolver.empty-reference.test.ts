@@ -21,6 +21,7 @@ describe('empty same-document references', () => {
     expect(resolver.resolve('other.json', '$ref', context)).toEqual({
       status: 'skipped',
       reason: 'unresolved',
+      uri: 'other.json',
     });
   });
 

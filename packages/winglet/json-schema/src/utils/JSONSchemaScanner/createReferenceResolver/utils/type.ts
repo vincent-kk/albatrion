@@ -27,7 +27,7 @@ export interface ReferenceResolverAsyncOptions
 }
 /** One document retains source pointers even when embedded resources change bases. */
 export interface DocumentRecord {
-  /** Stable retrieval address, possibly empty for an anonymous root. */
+  /** Stable retrieval address; empty for an anonymous root and relative for a relative baseURI. */
   uri: string;
   /** Original source locations indexed by document pointer. */
   paths: Map<string, Location>;
@@ -41,7 +41,10 @@ export interface Anchor {
 }
 /** URI base boundary: a declared resource, or a base change that declares none. */
 export interface Resource {
-  /** Document address that references inside resolve against; empty for the anonymous root. */
+  /**
+   * Document address that references inside resolve against; empty for the anonymous root and
+   * relative when the default base is unknown.
+   */
   uri: string;
   /** Source document supplying this resource. */
   document: DocumentRecord;
