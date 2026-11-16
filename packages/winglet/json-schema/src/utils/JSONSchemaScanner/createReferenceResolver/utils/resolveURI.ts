@@ -9,6 +9,7 @@ export function resolveURI(
   base: string,
 ): string | undefined {
   try {
+    if (!base && reference === '') return '#';
     if (!base && reference.startsWith('#')) return reference;
     return base ? new URL(reference, base).href : new URL(reference).href;
   } catch {
