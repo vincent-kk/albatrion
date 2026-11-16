@@ -33,6 +33,17 @@ Invalid escape sequences (e.g., `~2`, `~a`) are left unchanged rather than throw
 following a graceful degradation approach. This behavior aligns with the robustness principle
 of handling edge cases without disrupting the overall JSON Pointer resolution process.
 
+## Import
+
+```typescript
+import { unescapePath } from '@winglet/json/pointer-escape';
+import { unescapeSegment } from '@winglet/json/pointer-escape';
+import { unescapePath } from '@winglet/json/pointer';
+import { unescapeSegment } from '@winglet/json/pointer';
+import { unescapePath } from '@winglet/json';
+import { unescapeSegment } from '@winglet/json';
+```
+
 ## Signature
 
 ```typescript

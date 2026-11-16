@@ -28,6 +28,13 @@ always have access to the current value without recreating callbacks.
 - **vs useState**: This doesn't trigger re-renders when updated
 - **vs useCallback deps**: This avoids recreating callbacks when values change
 
+## Import
+
+```typescript
+import { useReference } from '@winglet/react-utils/hook';
+import { useReference } from '@winglet/react-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -101,7 +108,7 @@ useImperativeHandle(ref, () => ({
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.12.2" }}
+  dependencies={{ "@winglet/react-utils": "0.14.1" }}
   code={`// Problem: Stale state in async callback
 const [count, setCount] = useState(0);
 const handleAsync = useCallback(async () => {
@@ -150,3 +157,12 @@ useImperativeHandle(ref, () => ({
   hasItems: () => itemsRef.current.length > 0,
 }), [itemsRef]);`}
 />
+
+## Notes
+
+The ref is assigned during render rather than inside an effect, so the value is
+         already current for anything reading it in the same commit. The trade-off is
+         that a render React discards — a transition, `useDeferredValue`, a Suspense
+         retry — still leaves its value behind. Read `current` as "the latest value
+         React attempted", not "the latest value React committed"; when that distinction
+         matters, keep the value in state instead.

@@ -15,6 +15,13 @@ cancellation strategy: immediate task cancellation via the platform API and a bo
 to prevent execution if the task has already been queued but not yet cancelled. Leverages
 MessageChannelScheduler's automatic batching for optimal performance.
 
+## Import
+
+```typescript
+import { scheduleCancelableMacrotask } from '@winglet/common-utils/scheduler';
+import { scheduleCancelableMacrotask } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript

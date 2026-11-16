@@ -16,6 +16,13 @@ from the prototype chain — the primitive exists so reserved-member call
 sites can stay on one access contract. Like the `delete` operator, deleting
 a non-configurable own property throws in strict mode.
 
+## Import
+
+```typescript
+import { deleteDataProperty } from '@winglet/common-utils/object';
+import { deleteDataProperty } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript

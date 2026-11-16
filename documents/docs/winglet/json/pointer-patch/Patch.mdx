@@ -13,6 +13,14 @@ The value-carrying members are widened to `any` because a patch document is
 consumed as parsed JSON, where the value type is not known until the pointer is
 resolved against the target document.
 
+## Import
+
+```typescript
+import type { Patch } from '@winglet/json/pointer-patch';
+import type { Patch } from '@winglet/json/pointer';
+import type { Patch } from '@winglet/json';
+```
+
 ## Signature
 
 ```typescript

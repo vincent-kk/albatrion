@@ -22,25 +22,26 @@ triggering re-renders in memoized components.
 - **Event Handlers in Memoized Components**: Pass stable callbacks without breaking memoization
 - **Timer/Interval Callbacks**: Access latest state without recreating timers
 - **External Library Integration**: Provide callbacks that need current component state
-- **WebSocket/EventSource Handlers**: Handle real-time events with current state
 - **Debounced/Throttled Functions**: Maintain stable references while using fresh data
-### Key Benefits
-- Prevents unnecessary re-renders in child components
-- Eliminates the need to include all dependencies in useCallback
-- Avoids the complexity of managing refs manually
-- Works seamlessly with React.memo and useMemo optimizations
+
+## Import
+
+```typescript
+import { useHandle } from '@winglet/react-utils/hook';
+import { useHandle } from '@winglet/react-utils';
+```
 
 ## Signature
 
 ```typescript
-const useHandle: <P extends Array<any>, R>(handler?: (...args: P) => R) => ((...args: P) => R)
+function useHandle<P extends Array<any>, R>(handler: Fn<P, R>): Fn<P, R>
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `handler` | `-` | Optional function to be wrapped. If undefined, the returned function will return null |
+| `handler` | `-` | The function to wrap |
 
 ## Returns
 
@@ -51,82 +52,34 @@ A stable callback that always invokes the latest version of the handler
 ### Example 1
 
 ```typescript
-// Problem: Stale closure in interval
+// Stale closure in an interval, solved
 const [count, setCount] = useState(0);
-useEffect(() => {
-  const id = setInterval(() => {
-    console.log(count); // Always logs initial value
-  }, 1000);
-  return () => clearInterval(id);
-}, []); // Empty deps = stale closure
-
-// Solution: Using useHandle
-const [count, setCount] = useState(0);
-const logCount = useHandle(() => {
-  console.log(count); // Always logs current value
-});
+const logCount = useHandle(() => console.log(count)); // always the current count
 useEffect(() => {
   const id = setInterval(logCount, 1000);
   return () => clearInterval(id);
-}, [logCount]); // logCount reference never changes
+}, [logCount]); // logCount identity never changes
 
-// With memoized child components
+// Stable reference for a memoized child
 const ExpensiveChild = React.memo(({ onClick }) => { ... });
-const Parent = () => {
-  const [data, setData] = useState(initialData);
-
-  // This would cause re-renders:
-  // const handleClick = useCallback(() => process(data), [data]);
-
-  // This maintains stable reference:
-  const handleClick = useHandle(() => process(data));
-
-  return <ExpensiveChild onClick={handleClick} />;
-};
-
-// Optional handler support
-const safeHandler = useHandle(props.onComplete);
-// If props.onComplete is undefined, safeHandler returns null instead of throwing
+const handleClick = useHandle(() => process(data));
+return <ExpensiveChild onClick={handleClick} />;
 ```
 
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.12.2" }}
-  code={`// Problem: Stale closure in interval
+  dependencies={{ "@winglet/react-utils": "0.14.1" }}
+  code={`// Stale closure in an interval, solved
 const [count, setCount] = useState(0);
-useEffect(() => {
-  const id = setInterval(() => {
-    console.log(count); // Always logs initial value
-  }, 1000);
-  return () => clearInterval(id);
-}, []); // Empty deps = stale closure
-
-// Solution: Using useHandle
-const [count, setCount] = useState(0);
-const logCount = useHandle(() => {
-  console.log(count); // Always logs current value
-});
+const logCount = useHandle(() => console.log(count)); // always the current count
 useEffect(() => {
   const id = setInterval(logCount, 1000);
   return () => clearInterval(id);
-}, [logCount]); // logCount reference never changes
+}, [logCount]); // logCount identity never changes
 
-// With memoized child components
+// Stable reference for a memoized child
 const ExpensiveChild = React.memo(({ onClick }) => { ... });
-const Parent = () => {
-  const [data, setData] = useState(initialData);
-
-  // This would cause re-renders:
-  // const handleClick = useCallback(() => process(data), [data]);
-
-  // This maintains stable reference:
-  const handleClick = useHandle(() => process(data));
-
-  return <ExpensiveChild onClick={handleClick} />;
-};
-
-// Optional handler support
-const safeHandler = useHandle(props.onComplete);
-// If props.onComplete is undefined, safeHandler returns null instead of throwing`}
+const handleClick = useHandle(() => process(data));
+return <ExpensiveChild onClick={handleClick} />;`}
 />

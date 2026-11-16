@@ -13,6 +13,13 @@ This utility function examines the `type` property of a JSON schema to determine
 if it represents a nullable type. In JSON Schema, nullable types are expressed
 as an array containing the primary type and 'null' (e.g., `['string', 'null']`).
 
+## Import
+
+```typescript
+import { hasNullInType } from '@winglet/json-schema/filter';
+import { hasNullInType } from '@winglet/json-schema';
+```
+
 ## Signature
 
 ```typescript

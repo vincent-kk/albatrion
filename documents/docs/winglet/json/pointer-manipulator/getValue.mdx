@@ -26,6 +26,14 @@ runtime. Primitive values and non-plain objects throw INVALID_INPUT.
 Object/array calls retain the generic result contract; unknown input uses an
 unknown-result overload that callers must narrow before use.
 
+## Import
+
+```typescript
+import { getValue } from '@winglet/json/pointer-manipulator';
+import { getValue } from '@winglet/json/pointer';
+import { getValue } from '@winglet/json';
+```
+
 ## Signature
 
 ```typescript

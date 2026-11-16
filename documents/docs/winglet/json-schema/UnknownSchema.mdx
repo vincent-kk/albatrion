@@ -1,0 +1,26 @@
+---
+title: 'UnknownSchema'
+sidebar_label: 'UnknownSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# UnknownSchema
+
+Base type for any JSON Schema definition
+
+## Import
+
+```typescript
+import type { UnknownSchema } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+export type UnknownSchema = {
+    type?: string | readonly string[];
+    [key: string]: any;
+}
+```

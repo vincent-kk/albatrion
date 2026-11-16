@@ -22,6 +22,13 @@ manipulations that must complete before the user sees the initial render.
 Since this blocks painting, use sparingly. Only use when synchronous behavior
 is necessary to prevent visual issues.
 
+## Import
+
+```typescript
+import { useOnMountLayout } from '@winglet/react-utils/hook';
+import { useOnMountLayout } from '@winglet/react-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -93,7 +100,7 @@ useOnMountLayout(() => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.12.2" }}
+  dependencies={{ "@winglet/react-utils": "0.14.1" }}
   code={`// Prevent layout shift by measuring before paint
 useOnMountLayout(() => {
   const element = containerRef.current;

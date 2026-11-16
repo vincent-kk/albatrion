@@ -14,6 +14,13 @@ browser rendering. The returned cancellation function allows tasks to be cancell
 execution, preventing unnecessary work and maintaining smooth UI performance by not
 blocking rendering cycles with cancelled tasks.
 
+## Import
+
+```typescript
+import { scheduleCancelableMacrotaskSafe } from '@winglet/common-utils/scheduler';
+import { scheduleCancelableMacrotaskSafe } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript

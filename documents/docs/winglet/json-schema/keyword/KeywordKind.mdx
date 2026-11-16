@@ -15,6 +15,15 @@ How a keyword's value maps to child subschemas during traversal.
 - `objectMap`  — like `schemaMap` but the key contributes an (escaped) `dataPath` segment (`properties`).
 - `items`      — tuple (array, each child adds its index to `dataPath`) or single subschema (`items`, `prefixItems`).
 
+## Import
+
+```typescript
+import type { KeywordKind } from '@winglet/json-schema/keyword';
+import type { KeywordKind } from '@winglet/json-schema/scanner';
+import type { KeywordKind } from '@winglet/json-schema/async-scanner';
+import type { KeywordKind } from '@winglet/json-schema';
+```
+
 ## Signature
 
 ```typescript

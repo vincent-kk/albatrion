@@ -13,6 +13,13 @@ Uses `clearImmediate` (Node.js) or `clearTimeout` (browsers) to cancel scheduled
 This ensures that cancelled tasks don't interfere with browser rendering cycles and helps
 maintain optimal rendering performance by preventing unnecessary task execution.
 
+## Import
+
+```typescript
+import { cancelMacrotaskSafe } from '@winglet/common-utils/scheduler';
+import { cancelMacrotaskSafe } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
