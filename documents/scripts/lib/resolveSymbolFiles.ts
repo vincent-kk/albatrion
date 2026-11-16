@@ -9,7 +9,7 @@ export interface SymbolFileMap {
 
 /**
  * Resolve a barrel index.d.ts file to a map of symbol names to their individual .d.ts file paths.
- * Handles named re-exports, wildcard re-exports, and nested barrels.
+ * Handles named re-exports (followed through nested barrels), wildcard re-exports, and nested barrels.
  */
 export function resolveSymbolFiles(barrelPath: string): SymbolFileMap {
   const result: SymbolFileMap = {};
@@ -54,8 +54,13 @@ function resolveBarrel(
 
     // export { a, type B, c as D } from './file'; (also `export type { ... }`)
     if (statement.exportClause && ts.isNamedExports(statement.exportClause)) {
+      const nested: SymbolFileMap = {};
+      resolveBarrel(targetPath, nested, new Set(visited));
       for (const specifier of statement.exportClause.elements) {
-        result[specifier.name.text] = targetPath;
+        const sourceName = (specifier.propertyName ?? specifier.name).text;
+        result[specifier.name.text] = Object.hasOwn(nested, sourceName)
+          ? nested[sourceName]
+          : targetPath;
       }
       continue;
     }
