@@ -104,7 +104,7 @@ console.assert(schema.properties.name.$ref === 'types.json#/$defs/Text');
 
 ## Asynchronous document supply
 
-The package never fetches documents itself. The synchronous resolver only uses the root and registered resources. The asynchronous resolver calls your `load` only for an unavailable absolute document URI, without its fragment; registered resources take precedence. A name that a draft-04/06/07 fragment identifier already registered resolves without loading the document it names. Supply undefined for a missing document. Pending requests and their completed/missing results are shared per URI by that resolver; loader errors propagate. Create a fresh resolver when the source set changes.
+The package never fetches documents itself. The synchronous resolver only uses the root and registered resources. The asynchronous resolver calls your `load` only for an unavailable absolute document URI, without its fragment; registered resources take precedence. Supply undefined for a missing document. Pending requests and their completed/missing results are shared per URI by that resolver; loader errors propagate. Create a fresh resolver when the source set changes.
 
 Await `JSONSchemaScannerAsync.scan()` before using synchronous getValue. Its callbacks and resolver resolve operation are awaited sequentially; root/child/dialect remain synchronous. The synchronous scanner does not wait for callback return values; use the async scanner even when an async visitor is assignable to a void-returning callback. A custom resolver returning a Promise to the synchronous scanner is an invalid result. Fetching, retries, authentication and cancellation belong to the caller’s loader.
 

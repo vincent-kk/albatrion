@@ -148,18 +148,87 @@ describe('identifiers with a non-empty fragment', () => {
     });
   });
 
-  it('resolves a draft-07 name in an undeclared document without loading that document', async () => {
+  it('consults the document a draft-07 fragment identifier names, whether registered or loaded', async () => {
+    const other = 'https://example.com/other.json';
+    const schema = {
+      $schema: DRAFT07,
+      definitions: { a: { $id: other + '#foo', type: 'integer' } },
+    };
+    const document = { $schema: DRAFT07, definitions: { a: { $id: '#foo' } } };
+    const conflict = expect.objectContaining({
+      code: 'duplicate-identifier',
+      message:
+        other +
+        '#foo declared at #/definitions/a and ' +
+        other +
+        '#/definitions/a',
+    });
+    const synchronous = createReferenceResolver(schema, {
+      resources: { [other]: document },
+    });
+    expect(() =>
+      synchronous.resolve(other + '#foo', '$ref', synchronous.root(schema)),
+    ).toThrow(conflict);
+    const load = vi.fn(async () => document);
+    const asynchronous = createReferenceResolverAsync(schema, { load });
+    await expect(
+      asynchronous.resolve(other + '#foo', '$ref', asynchronous.root(schema)),
+    ).rejects.toThrow(conflict);
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(load).toHaveBeenCalledWith(other);
+  });
+
+  it('addresses a name below two draft-07 fragment identifiers from the nearest declared resource', () => {
     const schema = {
       $schema: DRAFT07,
       $id: ROOT,
-      definitions: { a: { $id: 'other.json#foo', type: 'integer' } },
+      definitions: {
+        a: {
+          $id: 'other.json#foo',
+          definitions: { c: { $id: 'third.json#bar', type: 'integer' } },
+        },
+      },
     };
-    const load = vi.fn();
-    const resolver = createReferenceResolverAsync(schema, { load });
+    const resolver = createReferenceResolver(schema);
     expect(
-      await resolver.resolve('other.json#foo', '$ref', resolver.root(schema)),
+      resolver.resolve('third.json#bar', '$ref', resolver.root(schema)),
+    ).toEqual({
+      status: 'resolved',
+      uri: ROOT + '#/definitions/a/definitions/c',
+      target: { type: 'integer' },
+    });
+  });
+
+  it('finds a draft-07 name by its written document address when that document declares another', () => {
+    const schema = {
+      $schema: DRAFT07,
+      definitions: { a: { $id: 'urn:example:x#foo', type: 'integer' } },
+    };
+    const resolver = createReferenceResolver(schema, {
+      resources: { 'urn:example:x': { $id: 'urn:example:y' } },
+    });
+    expect(
+      resolver.resolve('urn:example:x#foo', '$ref', resolver.root(schema)),
     ).toMatchObject({ status: 'resolved', target: { type: 'integer' } });
-    expect(load).not.toHaveBeenCalled();
+  });
+
+  it('finds a name of a registered document through its retrieval address', () => {
+    const schema = { $schema: DRAFT07 };
+    const resolver = createReferenceResolver(schema, {
+      resources: {
+        'urn:example:x': {
+          $schema: DRAFT07,
+          $id: 'urn:example:y',
+          definitions: { b: { $id: '#bar' } },
+        },
+      },
+    });
+    expect(
+      resolver.resolve('urn:example:x#bar', '$ref', resolver.root(schema)),
+    ).toMatchObject({
+      status: 'resolved',
+      uri: 'urn:example:y#/definitions/b',
+    });
   });
 
   it('declares the named document for an empty identifier below a draft-07 fragment identifier', () => {

@@ -380,9 +380,8 @@ export class ResolverStore {
    * Extract the absolute document address needed by an asynchronous loader.
    * @param reference Written reference.
    * @param context Current lexical host context.
-   * @returns Absolute document URI, or undefined for an invalid reference, for a target that
-   *   stays relative under an unknown base, and for a name that a fragment identifier already
-   *   registered, which resolves without its document.
+   * @returns Absolute document URI, or undefined for an invalid reference and for a target that
+   *   stays relative under an unknown base.
    */
   public documentURI(
     reference: string,
@@ -390,16 +389,7 @@ export class ResolverStore {
   ): string | undefined {
     const target = resolveURI(reference, context.resource.uri);
     if (target === undefined || !absoluteURI.test(target)) return;
-    const hash = target.indexOf('#');
-    if (hash < 0) return target;
-    const uri = target.slice(0, hash);
-    let name: string;
-    try {
-      name = decodeURIComponent(target.slice(hash + 1));
-    } catch {
-      return uri;
-    }
-    return this.anchors.get(uri)?.has(name) ? undefined : uri;
+    return target.split('#')[0];
   }
 
   /**
