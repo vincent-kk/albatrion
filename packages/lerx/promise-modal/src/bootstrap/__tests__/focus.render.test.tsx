@@ -70,6 +70,26 @@ it('wraps Tab and Shift+Tab at the last and first controls', () => {
   expect(document.activeElement).toBe(screen.getByText('dialog-last'));
 });
 
+it('wraps focus around closed details without targeting hidden controls', () => {
+  render(<BootstrapProvider />);
+  open('details', {
+    content: (
+      <>
+        <button>first</button>
+        <details>
+          <summary>last-visible</summary>
+          <button>hidden</button>
+        </details>
+      </>
+    ),
+  });
+  screen.getByText('first').focus();
+  tab(true);
+  expect(document.activeElement).toBe(screen.getByText('last-visible'));
+  tab();
+  expect(document.activeElement).toBe(screen.getByText('first'));
+});
+
 it('focuses an empty wrapper and traps Tab there', () => {
   render(<BootstrapProvider />);
   let handle!: ReturnType<typeof confirmHandler>;

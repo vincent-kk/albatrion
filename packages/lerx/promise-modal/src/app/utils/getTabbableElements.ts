@@ -21,6 +21,12 @@ export const getTabbableElements = (frame: HTMLElement, reverse = false): HTMLEl
         current = current.parentElement
       ) {
         if (current.hidden || current.hasAttribute('inert')) return false;
+        if (
+          current !== element &&
+          current.matches('details:not([open])') &&
+          !current.querySelector(':scope > summary')?.contains(element)
+        )
+          return false;
         const style =
           current.ownerDocument.defaultView?.getComputedStyle(current);
         if (
