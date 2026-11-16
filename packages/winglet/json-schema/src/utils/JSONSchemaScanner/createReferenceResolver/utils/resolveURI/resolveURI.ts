@@ -1,7 +1,5 @@
+import { isAbsoluteURI } from '../isAbsoluteURI';
 import { resolveRelative } from './utils/resolveRelative/resolveRelative';
-
-/** RFC 3986 scheme syntax, required of the text before a colon that precedes any `/`, `?` or `#`. */
-const SCHEME = /^[A-Za-z][A-Za-z0-9+.-]*$/;
 
 /**
  * Resolve a written reference or identifier by RFC 3986 section 5.2 under any base.
@@ -18,9 +16,8 @@ export function resolveURI(
   base: string,
 ): string | undefined {
   const written = encodeUnsafe(reference);
-  const delimiter = written.search(/[:/?#]/);
-  const scheme = delimiter >= 0 && written[delimiter] === ':';
-  if (scheme && !SCHEME.test(written.slice(0, delimiter))) return undefined;
+  const scheme = isAbsoluteURI(written);
+  if (!scheme && written[written.search(/[:/?#]/)] === ':') return undefined;
   try {
     if (isHierarchical(base)) return new URL(written, base).href;
     if (scheme) return new URL(written).href;

@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { createReferenceResolver } from '../createReferenceResolver';
 import { createReferenceResolverAsync } from '../utils/createReferenceResolverAsync';
 import { enterChild } from './fixtures/enterChild';
+import { scan } from './fixtures/scan';
 
 /** A relative embedded resource beside a root definition of the same pointer. */
 const RELATIVE_RESOURCE = {
@@ -193,5 +194,60 @@ describe('references and identifiers under an unknown, relative or opaque base',
     expect(
       resolver.resolve('other.json#/$defs/t', '$ref', resolver.root(schema)),
     ).toMatchObject({ status: 'skipped', reason: 'relocation' });
+  });
+
+  it('preserves a copy whose reference resolves inside a relative resource', () => {
+    const schema = {
+      properties: { p: { $ref: '#/$defs/t' } },
+      $defs: {
+        t: {
+          properties: {
+            n: {
+              $id: 'n.json',
+              properties: { q: { $ref: '#/$defs/m' } },
+              $defs: { m: { type: 'number' } },
+            },
+          },
+        },
+      },
+    };
+    const { output, outcomes } = scan(schema, { maxDepth: 1 });
+    expect(outcomes.get('#/properties/p')).toMatchObject([
+      { skipped: 'relocation' },
+    ]);
+    expect(output.properties.p).toEqual({ $ref: '#/$defs/t' });
+  });
+
+  it.each(ROOTS)(
+    'declares the directory of the base for a ./ identifier under %j',
+    (root) => {
+      expect(() =>
+        createReferenceResolver({ ...root, $defs: { a: { $id: './' } } }),
+      ).not.toThrow();
+    },
+  );
+
+  it('keeps a relative path relative when its first segment holds a colon', () => {
+    const schema = { $defs: { o: { $id: 'urn:example:other' } } };
+    const resolver = createReferenceResolver(schema);
+    expect(
+      resolver.resolve('x/../urn:example:other', '$ref', resolver.root(schema)),
+    ).toEqual({
+      status: 'skipped',
+      reason: 'unresolved',
+      uri: './urn:example:other',
+    });
+  });
+
+  it('does not load a relative path whose first segment holds a colon', async () => {
+    const schema = { type: 'object' };
+    const load = vi.fn();
+    const resolver = createReferenceResolverAsync(schema, { load });
+    await resolver.resolve(
+      'x/../mailto:someone',
+      '$ref',
+      resolver.root(schema),
+    );
+    expect(load).not.toHaveBeenCalled();
   });
 });

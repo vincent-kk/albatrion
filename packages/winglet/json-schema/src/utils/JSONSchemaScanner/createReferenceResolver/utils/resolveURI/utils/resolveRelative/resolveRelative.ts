@@ -1,7 +1,7 @@
 import { removeDotSegments } from './utils/removeDotSegments';
 
 /** RFC 3986 Appendix B; groups 2, 4, 5, 7 and 9 are the scheme, authority, path, query and fragment. */
-const PARTS = /^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
+const uriParts = /^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
 
 /**
  * Resolve a scheme-less reference against a base the URL parser cannot use (RFC 3986 5.2.2, 5.3).
@@ -15,9 +15,10 @@ export function resolveRelative(
   base: string,
 ): string | undefined {
   const [, , , , authority, path = '', , query, , fragment] =
-    PARTS.exec(reference) ?? [];
+    uriParts.exec(reference) ?? [];
   const [, , scheme, , baseAuthority, basePath = '', , baseQuery] =
-    PARTS.exec(base) ?? [];
+    uriParts.exec(base) ?? [];
+  const targetAuthority = authority ?? baseAuthority;
   let targetPath = basePath,
     targetQuery = query ?? baseQuery;
   if (authority !== undefined || path !== '') {
@@ -28,8 +29,15 @@ export function resolveRelative(
         : mergePaths(basePath, path, baseAuthority !== undefined),
       scheme === undefined && baseAuthority === undefined,
     );
+    // An empty relative path would name the base document itself, and a colon in the first
+    // segment would read as a scheme (RFC 3986 section 4.2).
+    if (
+      scheme === undefined &&
+      targetAuthority === undefined &&
+      (targetPath === '' || /^[^/]*:/.test(targetPath))
+    )
+      targetPath = './' + targetPath;
   }
-  const targetAuthority = authority ?? baseAuthority;
   const target =
     (targetAuthority === undefined ? '' : '//' + targetAuthority) +
     targetPath +

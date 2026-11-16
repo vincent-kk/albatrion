@@ -13,6 +13,7 @@ import { buildKeywordMap } from '../../utils/keywordMap/buildKeywordMap';
 import { ReferenceSkipReason } from '../../utils/referenceOutcome/ReferenceSkipReason';
 import { cloneSchema } from '../../utils/schemaCopy/cloneSchema';
 import type { ReferenceKeyword, ReferenceStep } from '../../utils/type';
+import { isAbsoluteURI } from './isAbsoluteURI';
 import { resolveURI } from './resolveURI/resolveURI';
 import { shortestReference } from './shortestReference';
 import type {
@@ -37,8 +38,6 @@ const identifiers = [
 ];
 /** Reference-shaped data is permitted below these annotation/assertion values without rewriting. */
 const dataKeywords = ['default', 'const', 'enum', 'examples'];
-/** An absolute URI starts with a scheme; any other address is relative to an unknown default base. */
-const absoluteURI = /^[A-Za-z][A-Za-z0-9+.-]*:/;
 
 /** Address registry and per-host template cache; scans are delegated to the public synchronous driver. */
 export class ResolverStore {
@@ -354,7 +353,7 @@ export class ResolverStore {
   public ensure(uri: string): boolean {
     if (this.resources.has(uri)) return true;
     const source = this.options.resources;
-    if (absoluteURI.test(uri) && source && hasOwnProperty(source, uri)) {
+    if (isAbsoluteURI(uri) && source && hasOwnProperty(source, uri)) {
       this.index(
         source[uri],
         uri,
@@ -388,7 +387,7 @@ export class ResolverStore {
     context: ResolverContext,
   ): string | undefined {
     const target = resolveURI(reference, context.resource.uri);
-    if (target === undefined || !absoluteURI.test(target)) return;
+    if (target === undefined || !isAbsoluteURI(target)) return;
     return target.split('#')[0];
   }
 
@@ -552,7 +551,7 @@ export class ResolverStore {
       return { status: 'resolved', uri: location.uri, target };
     if (
       source.dialect !== host.dialect ||
-      (source !== host && (source.dynamic || !absoluteURI.test(source.uri)))
+      (source !== host && (source.dynamic || !isAbsoluteURI(source.uri)))
     )
       return relocation;
     if (relevant.length === 0)
@@ -655,7 +654,7 @@ export class ResolverStore {
         );
         if (
           uri === undefined ||
-          (!absoluteURI.test(uri) && host !== context.resource)
+          (!isAbsoluteURI(uri) && host !== context.resource)
         )
           return relocation;
         item.copy[key] = shortestReference(uri, host.uri);
