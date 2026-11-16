@@ -22,15 +22,15 @@ const NUMERIC_KEY = /^\d+$/;
  * Determine whether an issue belongs exclusively to an inactive union fragment.
  * @param issue - Validator issue with an authored schema location.
  * @param blueprint - Fragment ownership table, including reference targets.
- * @param activeIds - Committed declaration identities collected once per routing pass.
+ * @param isActive - Committed branch evidence scoped to the issue data occurrence.
  * @returns True only when attribution is unique and a sibling is active.
  */
 export const isOffUnionBranchIssue = (
   issue: ValidationIssue,
   blueprint: Blueprint,
-  activeIds?: ReadonlySet<number>,
+  isActive: (fragment: SchemaFragment) => boolean,
 ): boolean => {
-  if (!issue.schemaPath || !activeIds) return false;
+  if (!issue.schemaPath) return false;
   const matches = filterArray(
     blueprint.fragments,
     (fragment) =>
@@ -90,25 +90,6 @@ export const isOffUnionBranchIssue = (
       isDescendantPath(fragment.schemaPath, unionPath),
   );
 
-  const isActive = (fragment: SchemaFragment): boolean => {
-    let hasActiveDeclaration = false;
-    for (const id of fragment.declares) {
-      if (activeIds.has(id)) {
-        hasActiveDeclaration = true;
-        break;
-      }
-    }
-    let isActiveFragment = hasActiveDeclaration;
-    if (!isActiveFragment) {
-      for (const id of fragment.overlays) {
-        if (activeIds.has(id)) {
-          isActiveFragment = true;
-          break;
-        }
-      }
-    }
-    return isActiveFragment;
-  };
   let matches2 = !isActive(owner);
   if (matches2) {
     matches2 = false;

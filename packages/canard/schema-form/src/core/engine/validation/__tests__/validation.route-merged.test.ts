@@ -2,8 +2,6 @@ import { expect, it } from 'vitest';
 
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { Optional } from '@aileron/declare';
-
 import { dispatchRemove } from '@/schema-form/core/engine/write';
 import {
   isDescendantPath,
@@ -12,6 +10,7 @@ import {
 
 import type { FieldNodeRecord } from '../../record';
 import type { ValidationIssue } from '../types/issue';
+import { createUnionBranchActivity } from '../utils/route/createUnionBranchActivity';
 import { isOffUnionBranchIssue } from '../utils/route/isOffUnionBranchIssue';
 import { routeValidationIssues } from '../utils/route/routeValidationIssues';
 import { updateFieldNodeGlobalErrors } from '../utils/route/updateFieldNodeGlobalErrors';
@@ -41,20 +40,13 @@ const sequentialRoute = <Self extends FieldNodeRecord<Self>>(
   const before =
     runtime.validationErrors ?? new Map<unknown, readonly unknown[]>();
   const next = new Map<unknown, readonly unknown[]>(before);
-  let activeIds: Optional<Set<number>>;
-  if (issues.length > 0 && runtime.committedDeclarationIds?.size) {
-    activeIds = new Set<number>();
-    for (const ids of runtime.committedDeclarationIds.values())
-      for (let index = 0; index < ids.length; index++)
-        activeIds.add(ids[index]);
-  }
+  const isActive = createUnionBranchActivity(root);
   const inScope = (node: Self): boolean =>
     node === target || isDescendantPath(node.path, target.path);
   for (const node of before.keys())
     if (isOwnedNode<Self>(node, runtime) && inScope(node)) next.delete(node);
   for (let index = 0; index < issues.length; index++) {
     const issue = issues[index];
-    if (isOffUnionBranchIssue(issue, runtime.blueprint, activeIds)) continue;
     const path = issue.dataPath;
     let node = root;
     let resolved = true;
@@ -86,6 +78,12 @@ const sequentialRoute = <Self extends FieldNodeRecord<Self>>(
       }
       if (!resolved) continue;
     }
+    if (
+      isOffUnionBranchIssue(issue, runtime.blueprint, (fragment) =>
+        isActive(fragment, node),
+      )
+    )
+      continue;
     if (issue.rejectedKey) {
       while (node.parent && node.childrenByName === null) node = node.parent;
     }
