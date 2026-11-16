@@ -21,12 +21,8 @@ interface JSONScannerOptionsAsync<Schema extends UnknownSchema = UnknownSchema, 
     mutate?: Fn<[
         entry: SchemaEntry<Schema>,
         context?: ContextType
-    ], Schema | void | Promise<Schema | void>>;
-    /** Function to resolve $ref references (may be async) */
-    resolveReference?: Fn<[
-        reference: string,
-        entry: SchemaEntry<Schema>,
-        context?: ContextType
-    ], Schema | Promise<Schema | undefined> | undefined>;
+    ], Schema | boolean | void | Promise<Schema | boolean | void>>;
+    /** Context-aware provider whose resolve operation alone may suspend. */
+    resolveReference?: ReferenceResolverAsync<any>;
 }
 ```
