@@ -50,7 +50,7 @@ export interface ModalManagerState {
   scope: string;
   /** CSS class identity is computed without browser globals. */
   hash: string;
-  /** The scope manager survives handoffs until final owner detach or reset. */
+  /** The scope manager exists only between browser attach and detach. */
   styleManager?: ReturnType<typeof styleManagerFactory>;
   /** Canonical CSS definitions survive detach for later initialization. */
   styleSheetDefinition: Map<string, string>;
