@@ -1,20 +1,19 @@
-import {
-  JSONPointer as $,
-  bindPointerTemplate,
-  isDescendantPath,
-  resolvePointer,
-} from '@/schema-form/helpers/jsonPointer';
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
-import type { PropertyDeclaration, SchemaFragment } from '../../../blueprint';
+import { bindPointerTemplate } from '@/schema-form/helpers/jsonPointer';
+
+import type { SchemaFragment } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
+import { collectConditionalTemplates } from './createUnionBranchActivity/collectConditionalTemplates';
+import { prepareDeclarationEvidence } from './createUnionBranchActivity/prepareDeclarationEvidence';
 
 /** Selected declarations and conditional branches for one live data host. */
 interface HostActivity {
   /** Direct IDs preserve host-overlay evidence. */
-  ids: Set<number>;
+  ids: readonly number[];
   /** Child declarations retain branch evidence when the host has no overlay. */
-  branches: Set<string>;
+  branches?: Set<string>;
 }
 
 /**
@@ -25,8 +24,20 @@ interface HostActivity {
 export const createUnionBranchActivity = <Self extends FieldNodeRecord<Self>>(
   root: Self,
 ): ((fragment: SchemaFragment, node: Self) => boolean) => {
-  const declarations = new Map<number, PropertyDeclaration>();
   const hosts = new Map<Self, HostActivity>();
+  let preparation:
+    | {
+        conditional: ReturnType<typeof collectConditionalTemplates>;
+        evidence: ReturnType<typeof prepareDeclarationEvidence>;
+      }
+    | undefined;
+  const visited = new Map<Self, readonly number[]>();
+  const getActivity = (node: Self): HostActivity => {
+    let activity = hosts.get(node);
+    if (!activity)
+      hosts.set(node, (activity = { ids: visited.get(node) ?? EMPTY_ARRAY }));
+    return activity;
+  };
   const runtime = root.runtime;
   return (fragment, node) => {
     const committed = runtime.committedDeclarationIds;
@@ -39,49 +50,43 @@ export const createUnionBranchActivity = <Self extends FieldNodeRecord<Self>>(
     )
       host = host.parent;
     if (!host) return false;
-    let activity = hosts.get(host);
-    if (!activity) {
-      if (!declarations.size)
-        for (const template of runtime.blueprint.nodes) {
-          for (const declaration of template.declarations)
-            declarations.set(declaration.id, declaration);
-          for (const entry of template.childEntries)
-            for (const declaration of entry.declarations)
-              declarations.set(declaration.id, declaration);
-        }
-      activity = { ids: new Set(), branches: new Set() };
+    if (!visited.has(host)) {
+      preparation ??= {
+        conditional: collectConditionalTemplates(runtime.blueprint),
+        evidence: prepareDeclarationEvidence(runtime.blueprint),
+      };
       const pending = [host];
       while (pending.length) {
         const current = pending.pop()!;
-        pending.push(...(current.children ?? []));
-        for (const id of committed.get(
-          getCommittedDeclarationKey(current, runtime),
-        ) ?? []) {
-          if (current === host) activity.ids.add(id);
-          const declaration = declarations.get(id);
-          if (!declaration) continue;
-          for (const gate of declaration.gates) {
-            let templatePath = declaration.path;
-            if (
-              templatePath !== gate.hostPath &&
-              !isDescendantPath(templatePath, gate.hostPath)
-            )
-              continue;
+        if (visited.has(current)) continue;
+        for (const child of current.children ?? [])
+          if (preparation.conditional.has(child.blueprintNode))
+            pending.push(child);
+        const ids =
+          committed.get(getCommittedDeclarationKey(current, runtime)) ??
+          EMPTY_ARRAY;
+        visited.set(current, ids);
+        const activity = hosts.get(current);
+        if (activity) activity.ids = ids;
+        for (const id of ids) {
+          for (const binding of preparation.evidence.get(id) ?? EMPTY_ARRAY) {
             let owner: Self | null = current;
-            while (owner && templatePath !== gate.hostPath) {
-              templatePath = resolvePointer(templatePath, $.Parent);
+            for (let step = 0; owner && step < binding.distance; step++)
               owner = owner.parent;
+            if (owner) {
+              const activity = getActivity(owner);
+              const branches = (activity.branches ??= new Set());
+              branches.add(binding.schemaPath);
             }
-            if (owner === host) activity.branches.add(gate.schemaPath);
           }
         }
       }
-      hosts.set(host, activity);
     }
+    const activity = getActivity(host);
     return (
-      activity.branches.has(fragment.schemaPath) ||
-      fragment.declares.some((id) => activity.ids.has(id)) ||
-      fragment.overlays.some((id) => activity.ids.has(id))
+      activity.branches?.has(fragment.schemaPath) === true ||
+      fragment.declares.some((id) => activity.ids.includes(id)) ||
+      fragment.overlays.some((id) => activity.ids.includes(id))
     );
   };
 };

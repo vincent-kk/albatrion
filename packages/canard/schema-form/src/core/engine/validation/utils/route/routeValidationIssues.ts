@@ -39,45 +39,58 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
   const before: ValidationErrors = runtime.validationErrors ?? new Map();
   const next = new Map<unknown, readonly unknown[]>(before);
   const isActive = createUnionBranchActivity(root);
+  const nodesByPath = new Map<string, Self | null>();
   const inScope = createValidationScope(scopes);
   for (const node of before.keys())
     if (isOwnedNode<Self>(node, runtime) && inScope(node)) next.delete(node);
   for (let index = 0; index < issues.length; index++) {
     const issue = issues[index];
     const path = issue.dataPath;
-    let node = root;
-    let resolved = true;
-    if (path) {
-      const parsed = parsePointer(path);
-      if (!parsed.isAbsolute) continue;
-      const segments = parsed.segments;
-      for (
-        let segmentIndex = 0;
-        segmentIndex < segments.length;
-        segmentIndex++
-      ) {
-        const key = segments[segmentIndex];
-        if (typeof key !== 'string') {
-          resolved = false;
-          break;
+    let node = nodesByPath.get(path);
+    if (node === null) continue;
+    if (node === undefined) {
+      node = root;
+      let resolved = true;
+      if (path) {
+        const parsed = parsePointer(path);
+        if (!parsed.isAbsolute) {
+          nodesByPath.set(path, null);
+          continue;
         }
-        if (node.childrenByName === null) break;
-        if (!hasOwnProperty(node.childrenByName, key)) {
-          resolved = false;
-          break;
+        const segments = parsed.segments;
+        for (
+          let segmentIndex = 0;
+          segmentIndex < segments.length;
+          segmentIndex++
+        ) {
+          const key = segments[segmentIndex];
+          if (typeof key !== 'string') {
+            resolved = false;
+            break;
+          }
+          if (node.childrenByName === null) break;
+          if (!hasOwnProperty(node.childrenByName, key)) {
+            resolved = false;
+            break;
+          }
+          const child: Self | undefined = node.childrenByName[key];
+          if (!child) {
+            resolved = false;
+            break;
+          }
+          node = child;
         }
-        const child = node.childrenByName[key];
-        if (!child) {
-          resolved = false;
-          break;
-        }
-        node = child;
       }
-      if (!resolved) continue;
+      if (!resolved) {
+        nodesByPath.set(path, null);
+        continue;
+      }
+      nodesByPath.set(path, node);
     }
+    const target = node;
     if (
       isOffUnionBranchIssue(issue, runtime.blueprint, (fragment) =>
-        isActive(fragment, node),
+        isActive(fragment, target),
       )
     )
       continue;
