@@ -6,7 +6,7 @@
 
 ## API Contracts
 
-제어값이 같으면 Context 참조를 유지합니다. 노드별 잠금과의 OR 결합·입력 콜백 집행은 [FieldInputBridge](../../components/FieldProxy/components/FieldInputBridge/DETAIL.md)가 소유하며, 이 Context는 노드별 값을 계산하지 않습니다.
+제어값이 같으면 Context 참조를 유지합니다. 폼당 하나의 ref가 커밋된 잠금을 보관하며 insertion effect에서만 갱신합니다. 오래된 입력 콜백도 현재 잠금을 따르고, 중단된 렌더의 잠금은 현재 입력에 새지 않습니다. 입력마다 effect를 추가하지 않아 필드 수에 비례하는 커밋 비용을 피합니다. 노드별 잠금과의 OR 결합·입력 콜백 집행은 [FieldInputBridge](../../components/FieldProxy/components/FieldInputBridge/DETAIL.md)가 소유하며, 이 Context는 노드별 값을 계산하지 않습니다.
 
 ## Acceptance Criteria
 

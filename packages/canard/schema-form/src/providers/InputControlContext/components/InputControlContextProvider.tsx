@@ -1,4 +1,9 @@
-import { type PropsWithChildren, useMemo } from 'react';
+import {
+  type PropsWithChildren,
+  useInsertionEffect,
+  useMemo,
+  useRef,
+} from 'react';
 
 import { InputControlContext } from './InputControlContext';
 
@@ -14,7 +19,14 @@ export const InputControlContextProvider = ({
   disabled,
   children,
 }: PropsWithChildren<InputControlContextProviderProps>) => {
-  const value = useMemo(() => ({ readOnly, disabled }), [readOnly, disabled]);
+  const controlRef = useRef({ readOnly, disabled });
+  useInsertionEffect(() => {
+    controlRef.current = { readOnly, disabled };
+  }, [readOnly, disabled]);
+  const value = useMemo(
+    () => ({ readOnly, disabled, controlRef }),
+    [readOnly, disabled],
+  );
   return (
     <InputControlContext.Provider value={value}>
       {children}
