@@ -1,3 +1,4 @@
+import { escapeMdxProse } from './escapeMdxProse';
 import type { ParsedFunction, CategoryMeta } from './types';
 
 /** Marker line that identifies a generated page; a page without it is maintained by hand and never written or deleted. */
@@ -46,7 +47,7 @@ export function generateMdx(parsed: ParsedFunction): string {
   lines.push(`# ${parsed.name}`);
   lines.push('');
   if (parsed.description) {
-    lines.push(escapeMdxContent(parsed.description));
+    lines.push(escapeMdxProse(parsed.description));
     lines.push('');
   }
 
@@ -82,7 +83,7 @@ export function generateMdx(parsed: ParsedFunction): string {
     lines.push('|------|------|-------------|');
     for (const param of parsed.params) {
       const type = param.type ? escapeTableCell(param.type) : '-';
-      const desc = escapeTableCell(param.description);
+      const desc = escapeTableCell(escapeMdxProse(param.description));
       lines.push(`| \`${param.name}\` | \`${type}\` | ${desc} |`);
     }
     lines.push('');
@@ -93,7 +94,7 @@ export function generateMdx(parsed: ParsedFunction): string {
     lines.push('## Returns');
     lines.push('');
     const returnType = parsed.returns.type ? `\`${parsed.returns.type}\`` : '';
-    const returnDesc = parsed.returns.description || '';
+    const returnDesc = escapeMdxProse(parsed.returns.description || '');
     if (returnType && returnDesc) {
       lines.push(`${returnType} — ${returnDesc}`);
     } else if (returnType) {
@@ -137,7 +138,7 @@ export function generateMdx(parsed: ParsedFunction): string {
   if (parsed.remarks) {
     lines.push('## Notes');
     lines.push('');
-    lines.push(escapeMdxContent(parsed.remarks));
+    lines.push(escapeMdxProse(parsed.remarks));
     lines.push('');
   }
 
@@ -176,33 +177,6 @@ function escapeTableCell(text: string): string {
 /** Escape backtick template literals for JSX embedding. */
 function escapeTemplateLiteral(code: string): string {
   return code.replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
-}
-
-/**
- * Escape content for safe MDX rendering.
- * MDX interprets bare `<` followed by alphanumeric as JSX tags.
- * Replaces `<` with `&lt;` outside of code blocks (``` fenced blocks).
- */
-function escapeMdxContent(text: string): string {
-  const lines = text.split('\n');
-  const result: string[] = [];
-  let inCodeBlock = false;
-
-  for (const line of lines) {
-    if (line.trim().startsWith('```')) {
-      inCodeBlock = !inCodeBlock;
-      result.push(line);
-      continue;
-    }
-    if (inCodeBlock) {
-      result.push(line);
-    } else {
-      // Escape < when followed by alphanumeric (would be parsed as JSX)
-      result.push(line.replace(/<(?=[\w\d])/g, '&lt;'));
-    }
-  }
-
-  return result.join('\n');
 }
 
 /** Capitalize the first letter of a string. */
