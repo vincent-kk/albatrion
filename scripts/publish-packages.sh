@@ -56,40 +56,17 @@ read_pkg_field() {
 echo "▶ publish-packages.sh (dry_run=$DRY_RUN, ci=$IS_CI)"
 echo ""
 
-# Collect (name, location) FIRST. Reading the list with `while ... done < <(...)`
-# ties the loop body's stdin to that pipe, so npm's interactive 2FA/OTP prompt
-# (local publishing) cannot reach the terminal. Gather entries now, then iterate
-# with the tty as stdin. `--no-private` still emits the monorepo root (no
-# `private: true`), so the location "." guard drops it.
+# Collect (name, location) FIRST, dependencies before dependents, from the
+# workspace dependencies yarn reports. Reading the list with
+# `while ... done < <(...)` around the publish loop would tie the loop body's
+# stdin to that pipe, so npm's interactive 2FA/OTP prompt (local publishing)
+# could not reach the terminal. The assignment also stops the script when the
+# ordering fails, which a process substitution would not.
+ordered=$(yarn workspaces list --json --verbose --no-private | node scripts/publish/printPublishOrder.mjs)
 entries=()
-while IFS= read -r line; do
-  [ -z "$line" ] && continue
-  location=$(printf '%s' "$line" | python3 -c "import json,sys; print(json.load(sys.stdin)['location'])")
-  name=$(printf '%s' "$line" | python3 -c "import json,sys; print(json.load(sys.stdin)['name'])")
-  [ "$location" = "." ] && continue
-  entries+=("$name|$location")
-done < <(yarn workspaces list --json --no-private)
-
-# Publish dependencies before dependents: winglet has no in-repo dependency
-# outside itself, lerx and slats build on winglet, schema-form builds on both,
-# and the plugins build on schema-form. Order inside a rank is the list order.
-publish_rank() {
-  case "$1" in
-    packages/winglet/*) echo 0 ;;
-    packages/lerx/* | packages/slats/*) echo 1 ;;
-    packages/canard/schema-form) echo 2 ;;
-    *) echo 3 ;;
-  esac
-}
-sorted=()
-for rank in 0 1 2 3; do
-  for entry in "${entries[@]}"; do
-    if [ "$(publish_rank "${entry#*|}")" = "$rank" ]; then
-      sorted+=("$entry")
-    fi
-  done
-done
-entries=("${sorted[@]}")
+while IFS= read -r entry; do
+  [ -n "$entry" ] && entries+=("$entry")
+done <<< "$ordered"
 
 for entry in "${entries[@]}"; do
   name="${entry%%|*}"
