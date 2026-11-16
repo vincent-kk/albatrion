@@ -1,4 +1,4 @@
-import { createRef, useLayoutEffect } from 'react';
+import { createRef, useLayoutEffect, useRef } from 'react';
 
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
@@ -81,14 +81,15 @@ it.each([true, false])(
     let armed = false;
     let cleanupCount = 0;
     const Input = ({ onChange, onFileAttach }: FieldInputProps) => {
+      const initial = useRef({ onChange, onFileAttach });
       useLayoutEffect(
         () => () => {
           if (!armed) return;
           cleanupCount++;
-          onChange('retired cleanup');
-          onFileAttach(new File(['retired'], 'retired.txt'));
+          initial.current.onChange('retired cleanup');
+          initial.current.onFileAttach(new File(['retired'], 'retired.txt'));
         },
-        [],
+        [initial],
       );
       return <input />;
     };

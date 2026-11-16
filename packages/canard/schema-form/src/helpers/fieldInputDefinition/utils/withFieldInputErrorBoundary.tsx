@@ -1,12 +1,11 @@
-import { type ComponentType, memo } from 'react';
+import { type ComponentType, memo, useInsertionEffect } from 'react';
 
-import { ErrorBoundary } from '@winglet/react-utils/hoc';
 import { useMemorize } from '@winglet/react-utils/hook';
 
 import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 import type { FieldInputProps } from '@/schema-form/types';
 
-import { FieldInputSelection } from '../components/FieldInputSelection';
+import { FieldInputErrorBoundary } from '../components/FieldInputErrorBoundary';
 import type { FieldInputBindingProps } from '../type';
 
 /** Resolver-owned adapters preserve raw component identity across input configuration sources. */
@@ -40,17 +39,24 @@ export const withFieldInputErrorBoundary = (
       [props.node, inputGeneration],
     );
     const onError = useBoundaryReporter(props.path);
+    useInsertionEffect(() => {
+      inputSelection.active = true;
+      return () => {
+        // Deletion visits this adapter before the raw input's layout cleanup.
+        inputSelection.active = false;
+      };
+    }, [inputSelection]);
     return (
-      <>
-        <FieldInputSelection selection={inputSelection} />
-        <ErrorBoundary onError={onError}>
-          <Component
-            {...props}
-            defaultValue={defaultValue}
-            key={inputGeneration}
-          />
-        </ErrorBoundary>
-      </>
+      <FieldInputErrorBoundary
+        onError={onError}
+        inputSelection={inputSelection}
+      >
+        <Component
+          {...props}
+          defaultValue={defaultValue}
+          key={inputGeneration}
+        />
+      </FieldInputErrorBoundary>
     );
   });
   adapters.set(Component, Boundary);
