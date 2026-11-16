@@ -38,7 +38,7 @@ jobs:
         with:
           node-version: 20.19.5
       - name: Test selection and runner without installing dependencies
-        run: node --test scripts/ci
+        run: node --test scripts/ci scripts/publish
       - name: Select affected workspaces
         id: select
         env:
