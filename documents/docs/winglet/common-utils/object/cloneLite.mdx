@@ -149,7 +149,7 @@ const slow = clone(simpleData); // ~15ms
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { cloneLite } from '@winglet/common-utils';
 
 // Primitives (returned as-is)
@@ -212,6 +212,10 @@ console.log(cloned.scores[0]); // 100`}
 - **Type Checking**: Only `isArray` and `isPlainObject` checks
 - **Property Copying**: Simple for-in loop for objects, indexed loop for arrays
 - **Sparse Array Support**: Preserves array holes via `in` operator check
+- **Prototype Preservation**: Plain-object clones keep the input prototype,
+  including `null`; ordinary objects use the `{}` fast path
+- **Reserved Member Safety**: An own `__proto__` key is cloned as an own
+  data property instead of replacing the clone's prototype
 
 **Performance Benchmarks** (Node.js v18, typical hardware):
 - Small objects (< 100 props): ~0.02ms (vs clone: ~0.1ms)
@@ -224,7 +228,7 @@ console.log(cloned.scores[0]); // 100`}
 **Safety Considerations:**
 - **Stack Overflow Risk**: Deep nesting (>10000 levels) or circular refs
 - **Type Loss**: Complex types become plain objects or are skipped
-- **Prototype Loss**: Class instances lose methods and inheritance
+- **Unsupported Prototypes**: Class instances are returned as-is
 - **Reference Sharing**: Unsupported types share references with original
 
 **Migration Path:**

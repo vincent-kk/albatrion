@@ -1,0 +1,28 @@
+---
+title: 'createSafeFingerprint'
+sidebar_label: 'createSafeFingerprint'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# createSafeFingerprint
+
+Creates a sorted, cycle-safe key without constructing graph wire data.
+
+## Signature
+
+```typescript
+function createSafeFingerprint(value: unknown, options?: SafeFingerprintOptions): string
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `-` | Data to inspect; opaque values use reference identity, ordinary getters may run. |
+| `options` | `-` | Recursive exclusions, optional prefix, and sorting enabled by default. |
+
+## Returns
+
+A comparison key; shared/copy subtrees and array holes/undefined may compare equally.

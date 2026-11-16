@@ -1,0 +1,77 @@
+---
+title: 'setImmediate'
+sidebar_label: 'setImmediate'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# setImmediate
+
+Schedules a callback function for immediate macro task execution.
+Provides a convenient global interface similar to Node.js setImmediate()
+with optimized performance through cached scheduler reference.
+
+## Signature
+
+```typescript
+const setImmediate: (callback: Fn) => number
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `callback` | `-` | Function to execute in the next macro task |
+
+## Returns
+
+Unique task ID for cancellation, or -1 if rejected
+
+## Examples
+
+### Basic immediate execution
+
+```typescript
+const taskId = setImmediate(() => {
+  console.log('Executed in next macro task');
+});
+
+// Cancel if needed
+clearImmediate(taskId);
+```
+
+### Batch processing with automatic optimization
+
+```typescript
+// These will be batched together automatically
+setImmediate(() => updateUI());
+setImmediate(() => processData());
+setImmediate(() => logAnalytics());
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
+  code={`const taskId = setImmediate(() => {
+  console.log('Executed in next macro task');
+});
+
+// Cancel if needed
+clearImmediate(taskId);`}
+/>
+
+## Notes
+
+**Performance Characteristics:**
+- Hot path optimization with cached scheduler reference
+- O(1) task scheduling with automatic batching
+- Minimal function call overhead
+- Efficient memory usage with shared scheduler instance
+
+**Execution Timing:**
+- Tasks execute in next macro task (after current call stack)
+- Earlier than setTimeout(fn, 0) in most environments
+- Automatic batching for tasks scheduled synchronously
+- Preserves execution order within batches

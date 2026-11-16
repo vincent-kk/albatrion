@@ -17,7 +17,7 @@ equality logic that cannot be expressed through simple value transformation.
 ## Signature
 
 ```typescript
-const uniqueWith: <Type>(source: Type[], isEqual: (item1: Type, item2: Type) => boolean) => Type[]
+const uniqueWith: <Type>(source: readonly Type[], isEqual: Fn<[item1: Type, item2: Type], boolean>) => Type[]
 ```
 
 ## Parameters
@@ -228,7 +228,7 @@ console.log(uniqueTasks);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { uniqueWith } from '@winglet/common-utils';
 
 const names = ['Alice', 'BOB', 'alice', 'Charlie', 'bob', 'CHARLIE'];

@@ -16,7 +16,7 @@ key filtering and transformation for object manipulation operations.
 ## Signature
 
 ```typescript
-const getObjectKeys: <Type extends Dictionary>(object: Type | undefined, omit?: Set<keyof Type> | Array<keyof Type>, sort?: Fn<[a: keyof Type, b: keyof Type], number>) => Array<keyof Type>
+const getObjectKeys: <Type extends Dictionary>(object: Type | undefined, omit?: Set<keyof Type> | readonly (keyof Type)[], sort?: Fn<[a: keyof Type, b: keyof Type], number>) => Array<keyof Type>
 ```
 
 ## Parameters
@@ -149,7 +149,7 @@ console.log(publicKeys); // ['id', 'personalInfo', 'preferences']
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { getObjectKeys } from '@winglet/common-utils';
 
 // Simple object keys

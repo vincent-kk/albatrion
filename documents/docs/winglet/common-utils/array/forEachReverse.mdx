@@ -17,7 +17,7 @@ reverse order or when searching backwards through an array.
 ## Signature
 
 ```typescript
-const forEachReverse: <Type>(array: Type[], callback: (item: Type, index: number, array: Type[]) => boolean | void) => void
+const forEachReverse: <Type>(array: readonly Type[], callback: Fn<[item: Type, index: number, array: readonly Type[]], boolean | void>) => void
 ```
 
 ## Parameters
@@ -179,7 +179,7 @@ forEachReverse(operations, (operation, index) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { forEachReverse } from '@winglet/common-utils';
 
 const numbers = [1, 2, 3, 4, 5];

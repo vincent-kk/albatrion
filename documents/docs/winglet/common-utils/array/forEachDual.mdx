@@ -16,7 +16,7 @@ early termination when the callback returns `false`.
 ## Signature
 
 ```typescript
-const forEachDual: <Type1, Type2>(array1: Type1[], array2: Type2[], callback: (item1: Type1 | undefined, item2: Type2 | undefined, index: number, array1: Type1[], array2: Type2[]) => boolean | void) => void
+const forEachDual: <Type1, Type2>(array1: readonly Type1[], array2: readonly Type2[], callback: Fn<[item1: Type1 | undefined, item2: Type2 | undefined, index: number, array1: readonly Type1[], array2: readonly Type2[]], boolean | void>) => void
 ```
 
 ## Parameters
@@ -173,7 +173,7 @@ forEachDual(xCoords, yCoords, (x, y, index) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { forEachDual } from '@winglet/common-utils';
 
 const names = ['Alice', 'Bob', 'Charlie'];

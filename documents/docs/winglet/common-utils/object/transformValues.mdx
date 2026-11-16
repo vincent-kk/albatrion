@@ -17,7 +17,7 @@ Provides full access to value, key, and parent object context.
 ## Signature
 
 ```typescript
-const transformValues: <Type extends object, Key extends keyof Type, Value>(object: Type, getValue: (value: Type[Key], key: Key, object: Type) => Value) => Record<Key, Value>
+const transformValues: <Type extends object, Key extends keyof Type, Value>(object: Type, getValue: Fn<[value: Type[Key], key: Key, object: Type], Value>) => Record<Key, Value>
 ```
 
 ## Parameters
@@ -29,7 +29,7 @@ const transformValues: <Type extends object, Key extends keyof Type, Value>(obje
 
 ## Returns
 
-New object with original keys and transformed values
+New prototype-free object with original keys and transformed values
 
 ## Examples
 
@@ -280,7 +280,7 @@ console.log(config);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { transformValues } from '@winglet/common-utils';
 
 // Double all numeric values

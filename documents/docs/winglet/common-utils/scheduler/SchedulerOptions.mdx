@@ -1,0 +1,19 @@
+---
+title: 'SchedulerOptions'
+sidebar_label: 'SchedulerOptions'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# SchedulerOptions
+
+## Signature
+
+```typescript
+interface SchedulerOptions {
+    readonly maxPendingTasks?: number;
+    readonly onTaskError?: Fn<[error: Error, taskId: number]> | null;
+    readonly onMaxTasksExceeded?: Fn<[], boolean | void> | null;
+}
+```

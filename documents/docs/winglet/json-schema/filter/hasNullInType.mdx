@@ -1,0 +1,51 @@
+---
+title: 'hasNullInType'
+sidebar_label: 'hasNullInType'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# hasNullInType
+
+Checks if a schema's type includes 'null', indicating it's a nullable type.
+This utility function examines the `type` property of a JSON schema to determine
+if it represents a nullable type. In JSON Schema, nullable types are expressed
+as an array containing the primary type and 'null' (e.g., `['string', 'null']`).
+
+## Signature
+
+```typescript
+const hasNullInType: (schema: UnknownSchema) => boolean
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `schema` | `-` | The JSON schema object to check for nullable type |
+
+## Returns
+
+`true` if the schema's type is an array containing 'null', `false` otherwise
+
+## Examples
+
+### Example 1
+
+```typescript
+hasNullInType({ type: 'string' }); // false
+hasNullInType({ type: ['string', 'null'] }); // true
+hasNullInType({ type: ['number', 'null'] }); // true
+hasNullInType({ type: 'null' }); // false (single 'null' type, not nullable array)
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/json-schema": "0.16.1" }}
+  code={`hasNullInType({ type: 'string' }); // false
+hasNullInType({ type: ['string', 'null'] }); // true
+hasNullInType({ type: ['number', 'null'] }); // true
+hasNullInType({ type: 'null' }); // false (single 'null' type, not nullable array)`}
+/>

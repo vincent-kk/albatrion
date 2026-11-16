@@ -1,0 +1,23 @@
+---
+title: 'FingerprintFactoryOptions'
+sidebar_label: 'FingerprintFactoryOptions'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# FingerprintFactoryOptions
+
+Sorting is configurable for safe mode; sorted mode always sorts its paths.
+
+## Signature
+
+```typescript
+export type FingerprintFactoryOptions = FactoryPolicy & ({
+    mode?: 'safe';
+    sort?: boolean;
+} | {
+    mode: 'fast' | 'sorted';
+    sort?: never;
+})
+```

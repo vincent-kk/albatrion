@@ -16,7 +16,7 @@ Object.prototype in their prototype chain.
 ## Signature
 
 ```typescript
-const hasOwnProperty: (value: unknown, key: PropertyKey) => key is keyof typeof value
+const hasOwnProperty: <Type>(value: Type, key: PropertyKey) => key is keyof Type
 ```
 
 ## Parameters
@@ -28,7 +28,7 @@ const hasOwnProperty: (value: unknown, key: PropertyKey) => key is keyof typeof 
 
 ## Returns
 
-Type-safe boolean indicating direct property ownership
+Whether `key` is an own property, narrowing it to `keyof Type`
 
 ## Examples
 
@@ -49,7 +49,7 @@ console.log(hasOwnProperty(nullObj, 'prop')); // true (safe even without prototy
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { hasOwnProperty } from '@winglet/common-utils';
 
 const obj = { name: 'John', age: 30 };

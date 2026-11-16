@@ -60,12 +60,16 @@ console.log(median([5, 1, 9, 3])); // 4 (sorted: [1,3,5,9], median: (3+5)/2)
 // Real data: test scores
 console.log(median([85, 90, 78, 92, 88])); // 88
 console.log(median([1.1, 2.2, 3.3, 4.4])); // 2.75
+
+// NaN makes the numeric sort comparator return NaN; the resulting placement
+// and median are not defined by this utility
+console.log(median([1, NaN, 3])); // runtime sort outcome dependent
 ```
 
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { median } from '@winglet/common-utils';
 
 // Odd length arrays (middle element)
@@ -85,6 +89,8 @@ console.log(median([10, 20])); // 15 ((10+20)/2)`}
 - For odd-length arrays: returns the exact middle element
 - For even-length arrays: returns average of two middle elements
 - Returns NaN for empty datasets
+- Inputs containing NaN have no defined median because the sort comparator
+  returns NaN and the result depends on the runtime's sort outcome
 
 **Use Cases:**
 - Statistical analysis and data science

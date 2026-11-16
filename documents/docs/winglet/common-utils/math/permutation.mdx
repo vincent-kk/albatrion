@@ -11,7 +11,8 @@ import WingletPlayground from '@site/src/components/WingletPlayground';
 Calculates the number of permutations (n permute r) using iterative method.
 Computes P(n, r) = n! / (n-r)! representing the number of ways to arrange
 r items from n total items where order matters. Uses efficient iterative
-calculation avoiding full factorial computation to prevent overflow.
+calculation without computing a full factorial. Results are exact only while
+the permutation count is within JavaScript's safe integer range.
 
 ## Signature
 
@@ -63,7 +64,7 @@ console.log(permutation(8, 4)); // 1680
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { permutation } from '@winglet/common-utils';
 
 console.log(permutation(5, 2)); // 20 (5×4 arrangements)
@@ -81,6 +82,7 @@ console.log(permutation(5, 5)); // 120 (all items: 5!)`}
 - P(n, n) = n! (full arrangement)
 - P(n, r) = 0 when r > n
 - Order matters (unlike combinations)
+- Results above `Number.MAX_SAFE_INTEGER` can silently lose integer precision
 
 **Use Cases:**
 - Arranging people in seats or positions

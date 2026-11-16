@@ -125,15 +125,18 @@ const deep = {
   }
 };
 
-// Clone only 2 levels deep (improves performance for deep structures)
+// maxDepth counts how many object levels are replicated, starting at the root
 const shallowClone = clone(deep, 2);
-console.log(shallowClone.level1 !== deep.level1); // true (cloned)
-console.log(shallowClone.level1.level2 !== deep.level1.level2); // true (cloned)
-console.log(shallowClone.level1.level2.level3 === deep.level1.level2.level3); // true (reference)
+console.log(shallowClone !== deep); // true (cloned, level 1)
+console.log(shallowClone.level1 !== deep.level1); // true (cloned, level 2)
+console.log(shallowClone.level1.level2 === deep.level1.level2); // true (reference, beyond the limit)
 
-// Changes to deep levels don't affect the original
-shallowClone.level1.level2.level3 = { modified: true };
+// Replacing a referenced branch on the clone leaves the original untouched
+shallowClone.level1.level2 = { modified: true };
 console.log(deep.level1.level2.level3.level4.data); // 'very deep' (unchanged)
+
+// maxDepth of 0 replicates nothing and hands back the input itself
+console.log(clone(deep, 0) === deep); // true
 ```
 
 ### Complex object with custom properties
@@ -159,7 +162,7 @@ console.log(cloned !== complex); // true (different reference)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { clone } from '@winglet/common-utils';
 
 // Primitives (returned as-is)
@@ -220,6 +223,11 @@ console.log(cloned.b.c); // 999`}
 - With circular references: +15% overhead
 - vs JSON.parse(JSON.stringify): ~3x slower but handles more types
 - vs Lodash cloneDeep: ~20% faster with better type support
+
+**When to use:**
+- **Pure JSON values** (schema copies, serialisable data): use `JSON.parse(JSON.stringify(value))`, which is the fastest and keeps an own `__proto__` key
+- **Date, Map, Set, typed arrays or circular references, no functions**: use the platform `structuredClone`
+- **Runtime objects with functions, class instances (prototype chain) or symbol keys**: use `clone`
 
 **Common Pitfalls:**
 - **Functions**: Cloned by reference (not implementation)

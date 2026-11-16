@@ -30,7 +30,7 @@ const clamp: (value: number, min: number, max: number) => number
 
 ## Returns
 
-The clamped value within [min, max] range
+The clamped value within [min, max] when min is less than or equal to max
 
 ## Examples
 
@@ -43,6 +43,7 @@ console.log(clamp(5, 0, 10));   // 5 (within range)
 console.log(clamp(-5, 0, 10));  // 0 (below minimum)
 console.log(clamp(15, 0, 10));  // 10 (above maximum)
 console.log(clamp(0.5, 0, 1));  // 0.5 (works with decimals)
+console.log(clamp(5, 10, 1));   // 10 (bounds are not reordered or validated)
 ```
 
 ### UI element positioning
@@ -62,19 +63,21 @@ function constrainPosition(x: number, y: number) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { clamp } from '@winglet/common-utils';
 
 console.log(clamp(5, 0, 10));   // 5 (within range)
 console.log(clamp(-5, 0, 10));  // 0 (below minimum)
 console.log(clamp(15, 0, 10));  // 10 (above maximum)
-console.log(clamp(0.5, 0, 1));  // 0.5 (works with decimals)`}
+console.log(clamp(0.5, 0, 1));  // 0.5 (works with decimals)
+console.log(clamp(5, 10, 1));   // 10 (bounds are not reordered or validated)`}
 />
 
 ## Notes
 
 **Special Cases:**
 - When min equals max, always returns that value
+- Does not validate bound order; when min > max, the lower-bound check runs first
 - Handles Infinity: clamps to boundary values
 - Returns NaN if value is NaN
 

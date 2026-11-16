@@ -1,0 +1,20 @@
+---
+title: 'SerializationOptions'
+sidebar_label: 'SerializationOptions'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# SerializationOptions
+
+Recursive property-exclusion policy for graph storage.
+
+## Signature
+
+```typescript
+interface SerializationOptions {
+    /** Own enumerable property names omitted recursively before reading values. */
+    omit?: readonly string[] | ReadonlySet<string>;
+}
+```

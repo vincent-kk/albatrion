@@ -23,12 +23,12 @@ const lcm: (left: number, right: number) => number
 
 | Name | Type | Description |
 |------|------|-------------|
-| `left` | `-` | First number (integer or decimal) |
-| `right` | `-` | Second number (integer or decimal) |
+| `left` | `-` | First number (finite integer or decimal) |
+| `right` | `-` | Second number (finite integer or decimal) |
 
 ## Returns
 
-Least common multiple of the two numbers
+Least common multiple of the two numbers, or `NaN` when either input is not finite or the underlying {@link gcd} cannot be computed
 
 ## Examples
 
@@ -56,12 +56,19 @@ console.log(lcm(0, 5)); // 0 (LCM with zero)
 console.log(lcm(7, 0)); // 0 (LCM with zero)
 console.log(lcm(-12, 8)); // 24 (absolute values used)
 console.log(lcm(-6, -9)); // 18 (absolute values used)
+
+// Values printed in exponential notation
+console.log(lcm(1e-7, 2e-7)); // 2e-7
+
+// Undefined results
+console.log(lcm(NaN, 5)); // NaN
+console.log(lcm(Infinity, 5)); // NaN
 ```
 
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { lcm } from '@winglet/common-utils';
 
 console.log(lcm(12, 8)); // 24 (smallest number divisible by both 12 and 8)

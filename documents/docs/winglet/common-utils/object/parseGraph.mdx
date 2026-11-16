@@ -1,0 +1,27 @@
+---
+title: 'parseGraph'
+sidebar_label: 'parseGraph'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# parseGraph
+
+Restores a versioned graph after validating all wire nodes and resource limits.
+
+## Signature
+
+```typescript
+function parseGraph(text: string): unknown
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `text` | `-` | JSON produced by stringifyGraph, at most 16 MiB UTF-8. |
+
+## Returns
+
+The supported value with shared and circular identities restored.

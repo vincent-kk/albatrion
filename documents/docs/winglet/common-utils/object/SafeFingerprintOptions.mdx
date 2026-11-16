@@ -1,0 +1,20 @@
+---
+title: 'SafeFingerprintOptions'
+sidebar_label: 'SafeFingerprintOptions'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# SafeFingerprintOptions
+
+Cycle-safe key options; sorting can be skipped when insertion order is meaningful.
+
+## Signature
+
+```typescript
+interface SafeFingerprintOptions extends FingerprintOptions {
+    /** Defaults to true; false preserves property insertion order. */
+    sort?: boolean;
+}
+```

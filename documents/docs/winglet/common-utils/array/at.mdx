@@ -16,7 +16,7 @@ Supports both single index retrieval and multiple index retrieval in a single ca
 ## Signature
 
 ```typescript
-const at: <Type, Indexes extends number[] | number, Result = Indexes extends number[] ? Type[] : Type>(array: readonly Type[], indexes: Indexes) => Result
+const at: <Type, Indexes extends readonly number[] | number, Result = Indexes extends readonly number[] ? (Type | undefined)[] : Type | undefined>(array: readonly Type[], indexes: Indexes) => Result
 ```
 
 ## Parameters
@@ -85,7 +85,7 @@ console.log(at([], 0)); // undefined
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { at } from '@winglet/common-utils';
 
 const numbers = [10, 20, 30, 40, 50];

@@ -16,7 +16,7 @@ making it suitable for large arrays.
 ## Signature
 
 ```typescript
-const difference: <Type>(source: Type[], exclude: Type[]) => Type[]
+const difference: <Type>(source: readonly Type[], exclude: readonly Type[]) => Type[]
 ```
 
 ## Parameters
@@ -93,7 +93,7 @@ console.log(difference(words, exclude));
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { difference } from '@winglet/common-utils';
 
 const fruits = ['apple', 'banana', 'orange', 'grape'];

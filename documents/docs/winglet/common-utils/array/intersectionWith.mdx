@@ -17,7 +17,7 @@ value transformation.
 ## Signature
 
 ```typescript
-const intersectionWith: <Type1, Type2>(source: Type1[], target: Type2[], isEqual: (source: Type1, target: Type2) => boolean) => Type1[]
+const intersectionWith: <Type1, Type2>(source: readonly Type1[], target: readonly Type2[], isEqual: Fn<[source: Type1, target: Type2], boolean>) => Type1[]
 ```
 
 ## Parameters
@@ -211,7 +211,7 @@ console.log(matchingEmails); // ['user@company.com', 'admin@company.com', 'suppo
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { intersectionWith } from '@winglet/common-utils';
 
 const products = [

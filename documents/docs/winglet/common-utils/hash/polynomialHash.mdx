@@ -26,7 +26,7 @@ const polynomialHash: (target: string, length?: number) => string
 | Name | Type | Description |
 |------|------|-------------|
 | `target` | `-` | The input string to hash. |
-| `length` | `-` | Desired length of the result identifier (default: 7, max: 7). |
+| `length` | `-` | Desired length of the result identifier (default: 7). A uint32 needs at most 7 base36 digits, so a longer length is zero-padded and a shorter one keeps the low-order digits. |
 
 ## Returns
 

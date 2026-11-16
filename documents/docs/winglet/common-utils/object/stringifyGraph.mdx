@@ -1,0 +1,28 @@
+---
+title: 'stringifyGraph'
+sidebar_label: 'stringifyGraph'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# stringifyGraph
+
+Stores supported data, cycles and shared references in a versioned JSON string.
+
+## Signature
+
+```typescript
+function stringifyGraph(value: unknown, options?: SerializationOptions): string
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `-` | Supported graph root; accessors and executable values are rejected. |
+| `options` | `-` | Recursive property exclusions, applied before reading values. |
+
+## Returns
+
+A string restored by parseGraph; throws TypeError for unsupported data or limits.

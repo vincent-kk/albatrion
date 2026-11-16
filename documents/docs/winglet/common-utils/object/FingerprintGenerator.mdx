@@ -1,0 +1,20 @@
+---
+title: 'FingerprintGenerator'
+sidebar_label: 'FingerprintGenerator'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# FingerprintGenerator
+
+Generates keys in one identity/cache scope with per-call property exclusions.
+
+## Signature
+
+```typescript
+export type FingerprintGenerator = Fn<[
+    value: unknown,
+    options?: Pick<FingerprintOptions, 'omit'>
+], string>
+```

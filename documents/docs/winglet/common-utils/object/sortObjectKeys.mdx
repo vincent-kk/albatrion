@@ -17,7 +17,7 @@ for consistent object structures and serialization.
 ## Signature
 
 ```typescript
-const sortObjectKeys: <Dict extends Dictionary>(object: Dict | Nullish, keys: string[], options?: {
+const sortObjectKeys: <Dict extends Dictionary>(object: Dict | Nullish, keys: readonly string[], options?: {
     ignoreUndefinedKey?: boolean;
     ignoreUndefinedValue?: boolean;
 }) => Dict
@@ -241,7 +241,7 @@ console.log(JSON.stringify(prepared, null, 2));
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { sortObjectKeys } from '@winglet/common-utils';
 
 // Reorder object properties

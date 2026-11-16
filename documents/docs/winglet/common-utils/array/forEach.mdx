@@ -16,7 +16,7 @@ more control than the standard forEach by allowing early exit from the loop.
 ## Signature
 
 ```typescript
-const forEach: <Type>(array: Type[], callback: (item: Type, index: number, array: Type[]) => boolean | void) => void
+const forEach: <Type>(array: readonly Type[], callback: Fn<[item: Type, index: number, array: readonly Type[]], boolean | void>) => void
 ```
 
 ## Parameters
@@ -155,7 +155,7 @@ forEach(items, (item, index, array) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { forEach } from '@winglet/common-utils';
 
 const numbers = [1, 2, 3, 4, 5];

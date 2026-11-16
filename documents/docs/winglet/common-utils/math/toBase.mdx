@@ -23,7 +23,7 @@ const toBase: (value: number, base: number) => string
 
 | Name | Type | Description |
 |------|------|-------------|
-| `value` | `-` | Integer to convert (must be an integer) |
+| `value` | `-` | Integer to convert; exact conversion requires a safe integer |
 | `base` | `-` | Target base from 2 to 36 (2=binary, 8=octal, 16=hex, etc.) |
 
 ## Returns
@@ -69,7 +69,7 @@ console.log(toBase(100, 10)); // "100" (decimal to decimal)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { toBase } from '@winglet/common-utils';
 
 // Binary (base 2)
@@ -93,6 +93,8 @@ console.log(toBase(419, 16)); // "1A3"`}
 - Base 10 (decimal): digits 0-9
 - Base 16 (hexadecimal): digits 0-9, A-F
 - Base 36 (maximum): digits 0-9, A-Z
+- Integers outside the safe integer range may already have lost digit information,
+  so the output represents the stored Number value rather than the intended integer
 
 **Use Cases:**
 - Number system conversion for educational purposes

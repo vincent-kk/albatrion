@@ -8,6 +8,11 @@ import WingletPlayground from '@site/src/components/WingletPlayground';
 
 # Patch
 
+Any single JSON Patch operation.
+The value-carrying members are widened to `any` because a patch document is
+consumed as parsed JSON, where the value type is not known until the pointer is
+resolved against the target document.
+
 ## Signature
 
 ```typescript

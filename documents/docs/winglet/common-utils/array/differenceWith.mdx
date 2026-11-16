@@ -18,7 +18,7 @@ with simple value transformation.
 ## Signature
 
 ```typescript
-const differenceWith: <Type1, Type2>(source: Type1[], exclude: Type2[], isEqual: (source: Type1, exclude: Type2) => boolean) => Type1[]
+const differenceWith: <Type1, Type2>(source: readonly Type1[], exclude: readonly Type2[], isEqual: Fn<[source: Type1, exclude: Type2], boolean>) => Type1[]
 ```
 
 ## Parameters
@@ -156,7 +156,7 @@ console.log(result); // [{ name: 'Conference', ... }, { name: 'Workshop', ... }]
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { differenceWith } from '@winglet/common-utils';
 
 const products = [

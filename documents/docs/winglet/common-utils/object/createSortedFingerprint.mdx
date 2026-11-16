@@ -1,0 +1,28 @@
+---
+title: 'createSortedFingerprint'
+sidebar_label: 'createSortedFingerprint'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# createSortedFingerprint
+
+Creates a sorted flattened-path key with cycle markers.
+
+## Signature
+
+```typescript
+function createSortedFingerprint(value: unknown, options?: FingerprintOptions): string
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `-` | Enumerable data; cycles become markers and Map/Set contents are not traversed. |
+| `options` | `-` | Recursive property exclusions and an optional prefix. |
+
+## Returns
+
+A string key retaining the legacy path/type ambiguities.

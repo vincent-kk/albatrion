@@ -1,0 +1,26 @@
+---
+title: 'MergeOptions'
+sidebar_label: 'MergeOptions'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# MergeOptions
+
+Optional deep-merge policies; omitted fields retain the default behavior.
+
+## Signature
+
+```typescript
+interface MergeOptions {
+    /** Replace arrays as a whole instead of recursively merging their indices. */
+    readonly arrayStrategy?: 'merge' | 'replace';
+    /** Treat matching values as opaque leaves whose later declaration wins. */
+    readonly isAtomic?: Fn<[value: unknown], boolean>;
+    /** Retain a one-sided object's identity instead of recursively copying it. */
+    readonly preserveReferences?: boolean;
+    /** Copy overlapping containers instead of mutating the target. */
+    readonly immutable?: boolean;
+}
+```

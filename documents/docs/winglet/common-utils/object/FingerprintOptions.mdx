@@ -1,0 +1,22 @@
+---
+title: 'FingerprintOptions'
+sidebar_label: 'FingerprintOptions'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# FingerprintOptions
+
+Property exclusions and an optional caller-controlled output prefix.
+
+## Signature
+
+```typescript
+interface FingerprintOptions {
+    /** Excluded property names; fast mode applies these only at the root. */
+    omit?: readonly string[] | ReadonlySet<string>;
+    /** Prepended verbatim, empty by default. */
+    prefix?: string;
+}
+```
