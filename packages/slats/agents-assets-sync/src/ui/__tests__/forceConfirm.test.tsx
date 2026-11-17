@@ -86,9 +86,9 @@ describe('ui — force confirmation covers what the run deletes', () => {
 
   it('lists an orphan the --force run deletes and asks before deleting it', async () => {
     const { plans, warnings } = await planWith(true);
-    expect(warnings.map((warning) => [warning.kind, warning.relPath])).toEqual(
-      [['warn-orphan', 'skills/pp/stale.md']],
-    );
+    expect(warnings.map((warning) => [warning.kind, warning.relPath])).toEqual([
+      ['warn-orphan', 'skills/pp/stale.md'],
+    ]);
 
     const events: InjectEvent['type'][] = [];
     const outcome = await Promise.race([
