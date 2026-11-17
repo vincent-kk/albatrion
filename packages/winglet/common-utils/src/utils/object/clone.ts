@@ -1,3 +1,9 @@
+import {
+  BOOLEAN_TAG,
+  NUMBER_TAG,
+  STRING_TAG,
+} from '@/common-utils/constant/typeTag';
+import { getTypeTag } from '@/common-utils/libs/getTypeTag';
 import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isArrayBuffer } from '@/common-utils/utils/filter/isArrayBuffer';
@@ -336,8 +342,24 @@ const replicate = <Type>(
 
   if (value instanceof Error) {
     type ErrorConstructor = new (...args: any[]) => Error;
-    const result = new (value.constructor as ErrorConstructor)(value.message);
+    // AggregateError takes (errors, message); its errors are cloned below once cached
+    const aggregate =
+      AggregateErrorConstructor !== undefined &&
+      value instanceof AggregateErrorConstructor
+        ? value
+        : null;
+    const result =
+      aggregate !== null
+        ? new (value.constructor as ErrorConstructor)([], value.message)
+        : new (value.constructor as ErrorConstructor)(value.message);
     cache.set(value, result);
+    if (aggregate !== null)
+      defineProperty(result, 'errors', {
+        value: replicate(aggregate.errors, limit, depth, cache),
+        writable: true,
+        enumerable: false,
+        configurable: true,
+      });
     if (hasOwnProperty(value, 'name')) result.name = value.name;
     result.stack = value.stack;
     if ('cause' in value)
@@ -348,7 +370,11 @@ const replicate = <Type>(
   }
 
   if (typeof value === 'object' && isCloneable(value)) {
-    const result = Object.create(getPrototypeOf(value));
+    const prototype = getPrototypeOf(value);
+    // Boxed primitives keep their value in an internal slot that Object.create lacks
+    const result =
+      (prototype !== OBJECT_PROTOTYPE && replicateBox(value!, prototype)) ||
+      Object.create(prototype);
     // `isCloneable` will not allow a nullish object to be passed.
     cache.set(value!, result);
     replicateProperties(result, value!, limit, depth, cache);
@@ -395,5 +421,48 @@ const replicateProperties = (
     }
 };
 
+/**
+ * Creates a new box holding the primitive of a boxed Number, String or Boolean.
+ *
+ * @param value - A cloneable object whose prototype is not `Object.prototype`
+ * @param prototype - The prototype the new box must carry
+ * @returns The new box, or `null` when `value` is not a boxed primitive
+ */
+const replicateBox = (
+  value: object,
+  prototype: object | null,
+): object | null => {
+  const tag = getTypeTag(value);
+  const box =
+    tag === NUMBER_TAG
+      ? Object(numberValueOf.call(value))
+      : tag === STRING_TAG
+        ? Object(stringValueOf.call(value))
+        : tag === BOOLEAN_TAG
+          ? Object(booleanValueOf.call(value))
+          : null;
+  if (box !== null && getPrototypeOf(box) !== prototype)
+    setPrototypeOf(box, prototype);
+  return box;
+};
+
+/**
+ * `AggregateError` where the runtime provides it; the ES2020 type library this package
+ * compiles against does not declare it.
+ */
+const AggregateErrorConstructor:
+  | (new (
+      errors: Iterable<unknown>,
+      message?: string,
+    ) => Error & {
+      errors: unknown[];
+    })
+  | undefined = Reflect.get(globalThis, 'AggregateError');
+const OBJECT_PROTOTYPE = Object.prototype;
 const getPrototypeOf = Object.getPrototypeOf;
+const setPrototypeOf = Object.setPrototypeOf;
+const defineProperty = Object.defineProperty;
+const numberValueOf = Number.prototype.valueOf;
+const stringValueOf = String.prototype.valueOf;
+const booleanValueOf = Boolean.prototype.valueOf;
 const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;

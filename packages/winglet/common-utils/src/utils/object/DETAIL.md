@@ -24,6 +24,8 @@
 - `clone(target, maxDepth?)`:
   - own `__proto__` 키는 `setDataProperty`를 거쳐 열거 가능한 own 데이터 속성으로 복제된다 — 프로토타입 대입이 아니다. 그 값은 다른 키와 같은 규칙으로 깊은 복제된다.
   - 예약 멤버 분기는 키가 `__proto__`일 때만 발생하고, 나머지 키의 대입과 쓰기 가능 여부 검사는 그대로다.
+  - 박싱된 Number·String·Boolean은 같은 원시값과 프로토타입을 가진 새 박스로 복제한다. 박스 판별은 프로토타입이 `Object.prototype`이 아닌 입력에서만 일어난다.
+  - `AggregateError`는 `message`와 함께 `errors`를 깊은 복제해 열거되지 않는 own 속성으로 둔다. 다른 Error는 생성자에 `message`만 넘긴다.
 - `cloneLite(target, maxDepth?)`:
   - own `__proto__` 키는 데이터 속성으로 복제된다 — 프로토타입 대입이 아니다.
   - `maxDepth`, 희소 배열, 중첩 구조, 비지원 타입 참조 반환 동작은 기존 계약 그대로다.
@@ -38,6 +40,10 @@ merge가 조상의 안전한 속성 프리미티브를 읽고 부모가 merge를
 - own `__proto__`를 가진 입력의 클론이 그 키를 한 단계와 두 단계 중첩 모두에서 열거 가능한 own 키로 보존하고 프로토타입이 `Object.prototype`이다.
 - 복제된 `__proto__` 값은 원본과 참조를 공유하지 않는다.
 - 기존 clone 스위트가 전량 통과하고, 일반 키 경로 bench에 유의미한 회귀가 없다.
+
+### clone-fidelity — clone 내장 상태와 상속 속성 정합
+
+- 박싱된 원시값의 복제는 같은 `valueOf()` 값을 내고, `AggregateError`의 복제는 `message`와 복제된 `errors`를 유지한다.
 
 ### serialization-surface — 직렬화 공개 경계
 
@@ -76,7 +82,6 @@ merge가 조상의 안전한 속성 프리미티브를 읽고 부모가 merge를
 - **Consumers**: `**/packages/winglet/common-utils/src/utils/object/merge/utils/mergeWithOptions.ts`, `**/packages/winglet/common-utils/src/utils/object/merge/__benchmarks__/merge-restructure/createMergeImplementation.ts`
 - **Direct import**: `allowed`
 - **Reason**: object 진입점은 merge를 재수출하므로 merge 재귀 구현이 그 진입점을 가져오면 순환 의존이 생깁니다. 측정 로더도 같은 함수 참조를 주입해야 하므로 직접 읽습니다.
-
 
 ## Last Updated
 
