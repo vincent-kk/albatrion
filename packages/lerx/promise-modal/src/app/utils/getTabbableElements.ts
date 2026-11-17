@@ -7,7 +7,7 @@
 export const getTabbableElements = (frame: HTMLElement, reverse = false): HTMLElement[] => {
   const stylesByElement = new Map<HTMLElement, CSSStyleDeclaration>();
   const candidates = frame.querySelectorAll<HTMLElement>(
-    'a[href], area[href], button, input, select, textarea, iframe, object, embed, [tabindex], [contenteditable="true"], audio[controls], video[controls], summary',
+    'a[href], area[href], button, input, select, textarea, iframe, object, embed, [tabindex], [contenteditable=""], [contenteditable="true" i], [contenteditable="plaintext-only" i], audio[controls], video[controls], summary',
   );
   return [...candidates]
     .filter((element) => {
