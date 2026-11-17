@@ -5,6 +5,7 @@
  * @returns Enabled nonnegative-tabindex controls in browser tab order.
  */
 export const getTabbableElements = (frame: HTMLElement, reverse = false): HTMLElement[] => {
+  const visibilityByElement = new Map<HTMLElement, boolean>();
   const candidates = frame.querySelectorAll<HTMLElement>(
     'a[href], area[href], button, input, select, textarea, iframe, object, embed, [tabindex], [contenteditable="true"], audio[controls], video[controls], summary',
   );
@@ -27,14 +28,17 @@ export const getTabbableElements = (frame: HTMLElement, reverse = false): HTMLEl
           !current.querySelector(':scope > summary')?.contains(element)
         )
           return false;
-        const style =
-          current.ownerDocument.defaultView?.getComputedStyle(current);
-        if (
-          style?.display === 'none' ||
-          style?.visibility === 'hidden' ||
-          style?.visibility === 'collapse'
-        )
-          return false;
+        let isVisible = visibilityByElement.get(current);
+        if (isVisible === undefined) {
+          const style =
+            current.ownerDocument.defaultView?.getComputedStyle(current);
+          isVisible =
+            style?.display !== 'none' &&
+            style?.visibility !== 'hidden' &&
+            style?.visibility !== 'collapse';
+          visibilityByElement.set(current, isVisible);
+        }
+        if (!isVisible) return false;
         if (current === frame) break;
       }
       return true;
