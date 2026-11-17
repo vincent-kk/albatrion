@@ -118,7 +118,7 @@ clear는 아이템과 그 보유 원본을 소멸시키고 inactiveValue나 unse
 
 [NODE-065](#node-065--생존-슬롯-이전과-재생성-비용의-한계)의 계약을 적용합니다.
 
-검증기 issue는 노드 동일성으로 보관되므로 이동한 노드를 따라가지만, 그 `dataPath`와 폼 전체 목록은 재검증 전까지 이전 주소를 가리킵니다. 재매김은 실제로 옮겨진 아이템 아래의 issue만 현재 경로를 담은 새 issue로 바꾸고, 소멸한 아이템의 issue는 폼 전체 목록에서 뺍니다. 배열을 비우는 일괄 정리도 모든 아이템이 소멸한 이동과 같은 결과를 냅니다. 재검증이 없는 OnRequest·None 모드에서 `getErrors()`의 경로가 이동 뒤 다른 아이템을 가리키는 것을 막기 위해서입니다. issue가 하나라도 옮겨지거나 빠지면 목록이 바뀐 노드마다 `UpdateError`를, 루트에 `UpdateGlobalError`를 같은 체인의 비정착 사건으로 대기시킵니다. `onValidate`는 루트의 `UpdateGlobalError`로만 전달되므로, 이 사건이 없으면 소비자가 이전 issue 객체를 계속 보기 때문입니다. 이동하지 않은 issue와 목록은 identity를 유지하고, 옮겨진 issue가 없으면 사건을 대기시키지 않으며, 보관한 issue가 없으면 추가 작업이 없습니다.
+검증기 issue는 노드 동일성으로 보관되므로 이동한 노드를 따라갑니다. 재매김은 실제로 옮겨진 아이템 아래의 issue만 현재 경로를 담은 새 issue로 바꾸고, 소멸한 아이템의 issue는 폼 전체 목록에서 뺍니다. 배열을 비우는 일괄 정리도 모든 아이템이 소멸한 이동과 같은 결과를 냅니다. 재검증이 없는 OnRequest·None 모드에서 `getErrors()`의 경로가 이동 뒤 다른 아이템을 가리키는 것을 막기 위해서입니다. issue가 하나라도 옮겨지거나 빠지면 목록이 바뀐 노드마다 `UpdateError`를, 루트에 `UpdateGlobalError`를 같은 체인의 비정착 사건으로 대기시킵니다. `onValidate`는 루트의 `UpdateGlobalError`로만 전달되므로, 이 사건이 없으면 소비자가 이전 issue 객체를 계속 보기 때문입니다. 이동하지 않은 issue와 목록은 identity를 유지하고, 옮겨진 issue가 없으면 사건을 대기시키지 않으며, 보관한 issue가 없으면 추가 작업이 없습니다.
 
 ## Last Updated
 
