@@ -28,9 +28,10 @@ import {
  * @param right - Second built-in object
  * @param tag - Shared `Object.prototype.toString` tag of both operands
  * @param compare - Recursive comparator applied to nested values
- * @returns Whether the two carry the same state, or `undefined` when this tag has no
- *   state rule, or when two errors share `name` and `message`, and the caller should
- *   fall back to comparing own keys
+ * @returns The final verdict for `Date`, `RegExp`, `Set` and `Map`; `false` when the
+ *   bytes, boxed value or error `name` and `message` differ; otherwise `undefined`, and
+ *   the caller goes on to compare own keys, so a matching state never hides own
+ *   properties that differ
  *
  * @remarks
  * `Set` members and `Map` keys are matched by SameValueZero, so object members match
@@ -78,25 +79,32 @@ export const equalsBuiltin = (
         return false;
     return true;
   }
+  // From here on, matching state only clears the way for the own-key comparison
   if (tag === ARRAY_BUFFER_TAG)
     return equalsBytes(
       new Uint8Array(left as ArrayBuffer),
       new Uint8Array(right as ArrayBuffer),
-    );
+    )
+      ? undefined
+      : false;
   if (tag === DATA_VIEW_TAG)
-    return equalsBytes(viewBytes(left), viewBytes(right));
+    return equalsBytes(viewBytes(left), viewBytes(right)) ? undefined : false;
   if (tag === NUMBER_TAG) {
     const leftNumber = numberValueOf.call(left);
     const rightNumber = numberValueOf.call(right);
-    return (
-      leftNumber === rightNumber ||
+    return leftNumber === rightNumber ||
       (leftNumber !== leftNumber && rightNumber !== rightNumber)
-    );
+      ? undefined
+      : false;
   }
   if (tag === STRING_TAG)
-    return stringValueOf.call(left) === stringValueOf.call(right);
+    return stringValueOf.call(left) === stringValueOf.call(right)
+      ? undefined
+      : false;
   if (tag === BOOLEAN_TAG)
-    return booleanValueOf.call(left) === booleanValueOf.call(right);
+    return booleanValueOf.call(left) === booleanValueOf.call(right)
+      ? undefined
+      : false;
   if (tag === ERROR_TAG)
     return (left as Error).name === (right as Error).name &&
       (left as Error).message === (right as Error).message
