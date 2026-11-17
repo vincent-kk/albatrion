@@ -121,9 +121,17 @@ export const applySinglePatch = (
         `Patch operation '${patch.op}' requires a string 'from' pointer`,
         { patch, index: patchIndex, operation: patch.op },
       );
-    if (patch.op === Operation.COPY)
-      value = cloneLite(getValue(source, patch.from));
-    else if (isCircularMoveReference(patch.from, patch.path))
+    if (patch.op === Operation.COPY) {
+      const copied = getValue(source, patch.from);
+      // RFC 6902 4.5: the from location must exist; JSON has no undefined value
+      if (copied === undefined)
+        throw new JSONPatchError(
+          'PATCH_OBJECT_PROPERTY_NOT_FOUND',
+          `Cannot copy from '${patch.from}' - location does not exist`,
+          { patch, patchIndex, from: patch.from, operation: patch.op },
+        );
+      value = cloneLite(copied);
+    } else if (isCircularMoveReference(patch.from, patch.path))
       throw new JSONPatchError(
         'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN',
         `Cannot move location '${patch.from}' to '${patch.path}' - target location is a descendant of the source location. This would create a circular reference.`,
