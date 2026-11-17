@@ -89,6 +89,12 @@ describe('scopeRules', () => {
     expect(scope(input)).toBe(output);
   });
 
+  test('drops a stray closing brace instead of prefixing it onto the next rule', () => {
+    expect(scope('.a { color: red } } .b { color: blue }')).toBe(
+      '.s .a{ color: red }.s .b{ color: blue }',
+    );
+  });
+
   test('drops a trailing rule without a matching brace', () => {
     expect(scope('.a{} @media (x) { .b{}')).toBe('.s .a{}');
   });
