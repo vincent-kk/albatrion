@@ -243,7 +243,7 @@ describe('applyPatch', () => {
 
       const result = applyPatch(source, patches);
 
-      expect(result).toEqual({ items: [10, 2, 3] });
+      expect(result).toEqual({ items: [10, 1, 2, 3] });
     });
   });
 
@@ -267,7 +267,7 @@ describe('applyPatch', () => {
 
       const result = applyPatch(source, patches);
 
-      expect(result).toEqual({ items: [1, 10, 3], value: 10 });
+      expect(result).toEqual({ items: [1, 10, 2, 3], value: 10 });
     });
   });
 

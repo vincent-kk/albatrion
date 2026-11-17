@@ -51,6 +51,19 @@ describe('applyPatch RFC 6902 conformance', () => {
       },
     );
 
+    it('leaves an immutable source unchanged after an array move', () => {
+      const source = { foo: ['all', 'grass', 'cows', 'eat'], bar: [{ n: 1 }] };
+      applyPatch(source, [
+        { op: Operation.MOVE, from: '/foo/1', path: '/foo/3' },
+        { op: Operation.MOVE, from: '/bar/0/n', path: '/n' },
+      ]);
+
+      expect(source).toEqual({
+        foo: ['all', 'grass', 'cows', 'eat'],
+        bar: [{ n: 1 }],
+      });
+    });
+
     it('inserts a moved object member into an array index', () => {
       expect(
         applyPatch({ items: [1, 2, 3], value: 10 }, [
@@ -115,6 +128,7 @@ describe('applyPatch RFC 6902 conformance', () => {
     it.each([
       [Operation.MOVE, { a: [1, 2] }, '/a/0', { a: [1, 2] }],
       [Operation.MOVE, { a: 1 }, '/a', { a: 1 }],
+      [Operation.MOVE, { a: 1 }, '', { a: 1 }],
       [Operation.COPY, { a: { b: 1 } }, '/a', { a: { b: 1 } }],
       // copy is an add at the target, and an add at an array index inserts
       [Operation.COPY, { a: [1, 2] }, '/a/0', { a: [1, 1, 2] }],

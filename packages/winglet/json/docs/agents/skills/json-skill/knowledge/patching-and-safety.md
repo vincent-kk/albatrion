@@ -44,7 +44,7 @@ applyPatch({ v: 999 }, guarded, { strict: true }); // throws PATCH_TEST_FAILED
 
 So a patch that looks guarded is only guarded if the applying side also opts in. Set `strict: true` on both ends, or the `test` operations are decoration.
 
-Everything else `applyPatch` rejects is independent of `strict` and always throws: `remove` of a missing property, `test` naming a missing property, an array index out of bounds or non-numeric, an unknown `op`, and `move`/`copy` whose destination lies inside the source subtree. The one case that never throws is `replace` on a path that does not exist — it is applied as an add, in both modes.
+Everything else `applyPatch` rejects is independent of `strict` and always throws: `remove` of a missing property, `test` naming a missing property, an array index out of bounds or non-numeric, an unknown `op`, a `move` whose `from` does not exist, and a `move` whose destination lies strictly inside its `from` subtree (a `move` onto its own `from` leaves the document unchanged, and `copy` has no location restriction). The one case that never throws is `replace` on a path that does not exist — it is applied as an add, in both modes.
 
 ## Who is allowed to mutate
 
@@ -77,7 +77,7 @@ The default `immutable: true` makes failure atomic from the caller's point of vi
 
 ## What compare produces
 
-Only `add`, `remove`, `replace`, and — under `strict` — `test`. It never emits `move` or `copy`, even when a subtree is relocated; that shows up as a `remove` plus an `add`. `move` and `copy` are accepted by `applyPatch` but must be hand-written.
+Only `add`, `remove`, `replace`, and — under `strict` — `test`. It never emits `move` or `copy`, even when a subtree is relocated; that shows up as a `remove` plus an `add`. `move` and `copy` are accepted by `applyPatch` but must be hand-written. Both follow RFC 6902: `move` removes `from` and then adds at `path`, resolved against the document after the removal, and `copy` adds a deep copy at `path`. At an array index both insert rather than overwrite — moving `/foo/1` to `/foo/3` in `['all', 'grass', 'cows', 'eat']` yields `['all', 'cows', 'eat', 'grass']`.
 
 Objects exposing a `toJSON()` method are serialized through it before comparison, so a domain model diffs as its JSON projection rather than by its class fields.
 
