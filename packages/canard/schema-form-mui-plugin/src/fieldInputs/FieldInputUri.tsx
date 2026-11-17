@@ -130,28 +130,32 @@ const FieldInputUri = ({
   const [protocol, setProtocol] = useState<string>(normalizedProtocols[0]);
 
 
-  const { initialProtocol, initialUri } = useMemo(() => {
+  const { initialProtocol, initialUri, protocolOptions } = useMemo(() => {
     if (typeof defaultValue !== 'string' || !defaultValue) {
       return {
         initialProtocol: normalizedProtocols[0],
         initialUri: '',
+        protocolOptions: normalizedProtocols,
       };
     }
 
     const parsed = parseUri(defaultValue);
     if (parsed) {
-      const normalizedDetected = normalizeProtocol(parsed.protocol);
+      // A stored scheme outside `protocols` stays selectable, so editing the path keeps it.
+      const detectedProtocol = normalizeProtocol(parsed.protocol);
       return {
-        initialProtocol: normalizedProtocols.includes(normalizedDetected)
-          ? normalizedDetected
-          : normalizedProtocols[0],
+        initialProtocol: detectedProtocol,
         initialUri: parsed.path,
+        protocolOptions: normalizedProtocols.includes(detectedProtocol)
+          ? normalizedProtocols
+          : [detectedProtocol, ...normalizedProtocols],
       };
     }
 
     return {
       initialProtocol: normalizedProtocols[0],
       initialUri: defaultValue,
+      protocolOptions: normalizedProtocols,
     };
   }, [defaultValue, normalizedProtocols]);
 
@@ -192,7 +196,7 @@ const FieldInputUri = ({
           size={size}
           displayEmpty
         >
-          {normalizedProtocols.map((prot) => (
+          {protocolOptions.map((prot) => (
             <MenuItem key={prot} value={prot}>
               {formatProtocolDisplay(prot)}
             </MenuItem>
