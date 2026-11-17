@@ -44,7 +44,7 @@ applyPatch({ v: 999 }, guarded); // throws PATCH_TEST_FAILED — drift is not ov
 
 `applyPatch`'s `strict` option is deprecated and ignored; passing it changes nothing.
 
-Everything else `applyPatch` rejects always throws as well: `remove` or `replace` of a missing property, `test` naming a missing property, an array index out of bounds or non-numeric, an unknown `op`, a `move` whose `from` does not exist, and a `move` whose destination lies strictly inside its `from` subtree (a `move` onto its own `from` leaves the document unchanged, and `copy` has no location restriction).
+Everything else `applyPatch` rejects always throws as well: `remove` or `replace` of a missing property, `test` naming a missing property, an array index out of bounds, non-numeric, or with a leading zero (`/a/01`), an unknown `op`, a `move` whose `from` does not exist, and a `move` whose destination lies strictly inside its `from` subtree (a `move` onto its own `from` leaves the document unchanged, and `copy` has no location restriction).
 
 ## Who is allowed to mutate
 

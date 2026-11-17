@@ -192,5 +192,16 @@ describe('applyPatch RFC 6902 conformance', () => {
         ),
       ).toBe('PATCH_ARRAY_INDEX_INVALID');
     });
+
+    it('still accepts the index 0 and multi-digit indexes', () => {
+      const source = { a: Array.from({ length: 12 }, (_, index) => index) };
+
+      expect(
+        applyPatch(source, [
+          { op: Operation.REMOVE, path: '/a/10' },
+          { op: Operation.REMOVE, path: '/a/0' },
+        ]),
+      ).toEqual({ a: [1, 2, 3, 4, 5, 6, 7, 8, 9, 11] });
+    });
   });
 });
