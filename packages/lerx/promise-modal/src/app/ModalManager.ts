@@ -145,10 +145,16 @@ export class ModalManager {
     }
     ModalManager.__state__.owner = identity;
     ModalManager.__state__.generation++;
+    const focused = ModalManager.__state__.anchor?.contains(
+      document.activeElement,
+    )
+      ? document.activeElement
+      : null;
     const anchor = ModalManager.anchor({ root });
     ModalManager.applyStyleSheet();
     ModalManager.installKeyboardListener();
     ModalManager.updateAccessibility(true);
+    if (focused instanceof HTMLElement) focused.focus();
     notify(anchor);
   }
   /** Detaches only this bootstrap; defers cancellation to preserve same-commit remounts. */
