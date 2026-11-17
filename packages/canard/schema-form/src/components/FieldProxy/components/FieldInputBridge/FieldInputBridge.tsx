@@ -77,7 +77,7 @@ export const FieldInputBridge = memo(
     const {
       readOnly: rootReadOnly,
       disabled: rootDisabled,
-      controlRef,
+      committedLockRef,
     } = useInputControlContext();
     const isLive = useLiveNode(node);
     const [
@@ -117,8 +117,8 @@ export const FieldInputBridge = memo(
       (value, option = SetValueOption.Overwrite) => {
         if (
           !accepts() ||
-          controlRef.current.readOnly ||
-          controlRef.current.disabled ||
+          committedLockRef.current.readOnly ||
+          committedLockRef.current.disabled ||
           node.isReadOnly ||
           node.isDisabled
         )
@@ -127,11 +127,18 @@ export const FieldInputBridge = memo(
         if (!onChange) writeFieldNodeInput(node, value, option);
         else relayFieldNodeInput(node, value, option, onChange);
       },
-      [accepts, controlRef, node, onChangeRef, overrideOnChangeRef],
+      [accepts, committedLockRef, node, onChangeRef, overrideOnChangeRef],
     );
     const handleFileAttach = useCallback(
       (files: Optional<File | File[]>) => {
-        if (!accepts()) return;
+        if (
+          !accepts() ||
+          committedLockRef.current.readOnly ||
+          committedLockRef.current.disabled ||
+          node.isReadOnly ||
+          node.isDisabled
+        )
+          return;
         const onFileAttach =
           onFileAttachRef.current || overrideOnFileAttachRef?.current;
         if (onFileAttach) return onFileAttach(files);
@@ -143,6 +150,7 @@ export const FieldInputBridge = memo(
       },
       [
         accepts,
+        committedLockRef,
         node,
         onFileAttachRef,
         overrideOnFileAttachRef,
