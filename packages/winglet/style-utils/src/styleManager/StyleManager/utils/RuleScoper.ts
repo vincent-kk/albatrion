@@ -32,8 +32,9 @@ const OPAQUE_START = /["'\\]|\/\*/g;
  * whose results are cached until the cursor passes them. When an opaque token
  * comes before the next structural character, only that token is skipped and
  * the search resumes, so braces, semicolons and commas inside strings, comments,
- * escapes never count as structure; a `/*` inside an unquoted `url(…)` opens no
- * comment either. The caches stay valid because every query moves forward.
+ * escapes never count as structure. Inside an unquoted `url(…)` a `/*` opens no
+ * comment and a `;` ends no statement; the URL is looked for only when one of
+ * those two is found. The caches stay valid because every query moves forward.
  * Known limit: a brace inside an unquoted `url(…)` still counts as structure.
  *
  * @example
@@ -200,7 +201,13 @@ export class RuleScoper {
         this.__opaque__ >= from
           ? this.__opaque__
           : this.__findOpaqueStart__(from);
-      if (opaque >= stop) return stop;
+      if (opaque >= stop) {
+        if (!isStatementEnd || stop !== this.__semicolon__) return stop;
+        const urlEnd = findEnclosingUrlEnd(css, segmentStart, stop);
+        if (urlEnd === -1) return stop;
+        from = urlEnd;
+        continue;
+      }
       from =
         css.charCodeAt(opaque) === SLASH
           ? skipCommentOrUrl(css, segmentStart, opaque)
@@ -222,17 +229,30 @@ export class RuleScoper {
 }
 
 /**
- * Skips the comment that opens at `comment`, unless an unquoted `url(` that began
- * in the plain segment before it still runs past it; then the whole `url(…)` is
- * skipped, since a `/*` inside it opens no comment.
+ * Finds the end of an unquoted `url(…)` that began in the plain segment
+ * `css[segmentStart, index)` and still runs past `index`, or `-1` when there is none.
+ * The character at `index` then belongs to the URL, not to the CSS structure.
+ */
+const findEnclosingUrlEnd = (
+  css: string,
+  segmentStart: number,
+  index: number,
+): number => {
+  const url = css.slice(segmentStart, index).search(LAST_URL_OPEN);
+  const urlEnd =
+    url === -1 ? -1 : findUnquotedUrlEnd(css, segmentStart + url + 3);
+  return urlEnd > index ? urlEnd : -1;
+};
+
+/**
+ * Skips the comment that opens at `comment`, or the whole unquoted `url(…)` that
+ * encloses it, since a `/*` inside a URL opens no comment.
  */
 const skipCommentOrUrl = (
   css: string,
   segmentStart: number,
   comment: number,
 ): number => {
-  const url = css.slice(segmentStart, comment).search(LAST_URL_OPEN);
-  const urlEnd =
-    url === -1 ? -1 : findUnquotedUrlEnd(css, segmentStart + url + 3);
-  return urlEnd > comment ? urlEnd : skipOpaqueToken(css, comment);
+  const urlEnd = findEnclosingUrlEnd(css, segmentStart, comment);
+  return urlEnd === -1 ? skipOpaqueToken(css, comment) : urlEnd;
 };
