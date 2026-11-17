@@ -31,6 +31,24 @@ describe('FRAGMENT-020 rejectedKey inside identified resources', () => {
     expect(issues?.find((issue) => issue.keyword === 'not')).toMatchObject({ dataPath: '/b/named', rejectedKey: 'x' });
   });
 
+  it.each(['default', 'enum'])('collects a resource declared by a field named %s', async (field) => {
+    ajvValidatorPlugin.bind!(new Ajv({ allErrors: true }));
+    const resource = {
+      $id: ID,
+      type: 'object',
+      properties: {
+        items: { type: 'array', if: { minItems: 1 }, then: false },
+        named: { type: 'object', not: { required: ['x'] } },
+      },
+    };
+    const schema = { type: 'object', properties: { [field]: resource, b: { $ref: ID } } };
+    const issues = await ajvValidatorPlugin.compile(schema as unknown as JSONSchema)({ b: { items: [1], named: { x: 1 } } });
+    const falseIssue = issues?.find((issue) => issue.keyword === 'false schema');
+    expect(falseIssue).toMatchObject({ dataPath: '/b/items' });
+    expect(falseIssue?.rejectedKey).toBeUndefined();
+    expect(issues?.find((issue) => issue.keyword === 'not')).toMatchObject({ dataPath: '/b/named', rejectedKey: 'x' });
+  });
+
   it.each(['auto', 'id'] as const)('identifies a draft-04 id resource when the bound Ajv uses schemaId %s', async (schemaId) => {
     ajvValidatorPlugin.bind!(new Ajv({ allErrors: true, schemaId }));
     const schema = { type: 'object', definitions: { item: item('id') }, properties: { b: { $ref: ID } } };
