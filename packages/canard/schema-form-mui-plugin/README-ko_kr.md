@@ -86,7 +86,7 @@ registerPlugin(plugin);
 
 - **역할**: 시간 선택을 위한 TimePicker
 - **적용 조건**: `type`이 `"string"`이고 `format`이 `"time"`인 경우
-- **추가 사항**: MUI X DatePickers 사용, HH:mm:00Z 형식으로 시간 저장
+- **추가 사항**: MUI X DatePickers 사용, 시간대 오프셋 없는 HH:mm:ss 형식으로 시간 저장
 
 ### **[`FieldInputRadioGroup.tsx`](./src/fieldInputs/FieldInputRadioGroup.tsx)**
 
@@ -96,7 +96,7 @@ registerPlugin(plugin);
 
 ### **[`FieldInputStringEnum.tsx`](./src/fieldInputs/FieldInputStringEnum.tsx)**
 
-- **역할**: string 또는 string 배열의 선택을 Select 드롭다운으로 표시
+- **역할**: string 값의 선택을 Select 드롭다운으로 표시
 - **적용 조건**: `type`이 `"string"`이고 `enum` 값이 존재하는 경우
 - **추가 사항**: FormControl과 InputLabel을 활용한 Material Design 스타일, 옵션별 커스텀 라벨 지원 (alias)
 
