@@ -1,6 +1,6 @@
 import type { ReferenceResolverAsync } from '../../../utils/type';
-import type { ReferenceResolverAsyncOptions } from '../../types/ReferenceResolverOptions';
-import type { SchemaValue } from '../../types/SchemaValue';
+import type { ReferenceResolverAsyncOptions } from '../../types/referenceResolverOptions';
+import type { SchemaValue } from '../../types/schemaValue';
 import { type ResolverContext, ResolverStore } from '../ResolverStore';
 
 /**

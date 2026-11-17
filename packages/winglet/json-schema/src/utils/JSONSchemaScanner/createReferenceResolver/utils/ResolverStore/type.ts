@@ -1,5 +1,5 @@
 import type { Dialect } from '../../../../../keyword';
-import type { SchemaValue } from '../../types/SchemaValue';
+import type { SchemaValue } from '../../types/schemaValue';
 
 /** One document retains source pointers even when embedded resources change bases. */
 export interface DocumentRecord {

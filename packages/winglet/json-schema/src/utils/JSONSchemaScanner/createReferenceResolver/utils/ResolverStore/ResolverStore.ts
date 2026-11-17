@@ -13,8 +13,8 @@ import { buildKeywordMap } from '../../../utils/keywordMap/buildKeywordMap';
 import { ReferenceSkipReason } from '../../../utils/referenceOutcome/ReferenceSkipReason';
 import { cloneSchema } from '../../../utils/schemaCopy/cloneSchema';
 import type { ReferenceKeyword, ReferenceStep } from '../../../utils/type';
-import type { ReferenceResolverOptions } from '../../types/ReferenceResolverOptions';
-import type { SchemaValue } from '../../types/SchemaValue';
+import type { ReferenceResolverOptions } from '../../types/referenceResolverOptions';
+import type { SchemaValue } from '../../types/schemaValue';
 import { isAbsoluteURI, resolveURI } from '../resolveURI';
 import type {
   Anchor,

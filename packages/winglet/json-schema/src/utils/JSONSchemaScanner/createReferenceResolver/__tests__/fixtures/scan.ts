@@ -3,7 +3,7 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 import { JSONSchemaScanner } from '../../../sync';
 import type { JSONScannerOptions, ReferenceOutcome } from '../../../utils/type';
 import { createReferenceResolver } from '../../createReferenceResolver';
-import type { ReferenceResolverOptions } from '../../types/ReferenceResolverOptions';
+import type { ReferenceResolverOptions } from '../../types/referenceResolverOptions';
 
 /** Scan a fixture with its original document indexed and capture completed outcomes by path. */
 export function scan(

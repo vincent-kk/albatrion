@@ -1,5 +1,5 @@
 import type { Dialect, KeywordDescriptor } from '../../../../keyword';
-import type { SchemaValue } from './SchemaValue';
+import type { SchemaValue } from './schemaValue';
 
 /** Construction options never cause implicit filesystem or network access. */
 export interface ReferenceResolverOptions {

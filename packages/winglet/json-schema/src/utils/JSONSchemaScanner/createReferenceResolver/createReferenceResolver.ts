@@ -1,6 +1,6 @@
 import type { ReferenceResolver } from '../utils/type';
-import type { ReferenceResolverOptions } from './types/ReferenceResolverOptions';
-import type { SchemaValue } from './types/SchemaValue';
+import type { ReferenceResolverOptions } from './types/referenceResolverOptions';
+import type { SchemaValue } from './types/schemaValue';
 import { type ResolverContext, ResolverStore } from './utils/ResolverStore';
 
 /**
