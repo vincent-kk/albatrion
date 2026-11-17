@@ -132,3 +132,19 @@ it('wraps Tab from a tabindex=-1 element after the last control', () => {
   expect(tab()).toBe(false);
   expect(document.activeElement?.id).toBe('first');
 });
+
+it('keeps native Tab from a tabindex=-1 element between controls', () => {
+  render(<BootstrapProvider />);
+  open(
+    <>
+      <button id="first">first</button>
+      <p id="note" tabIndex={-1}>
+        note
+      </p>
+      <button id="last">last</button>
+    </>,
+  );
+  (document.getElementById('note') as HTMLElement).focus();
+  expect(tab()).toBe(true);
+  expect(tab(true)).toBe(true);
+});
