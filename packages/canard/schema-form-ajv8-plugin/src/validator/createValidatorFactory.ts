@@ -25,13 +25,15 @@ export const createValidatorFactory = (ajv: Ajv, registry?: SchemaRootRegistry) 
     registration.validationAjv.removeSchema(transient);
     // AJV reports paths of an inlined `$ref` under the reference string, so the root's key stands in for `#`.
     const toAuthoredPath = registration.validationCopy ? createRootPathRewriter(`${registration.key}/`) : undefined;
+    // AJV reports the same schema paths on every run of this validator, so each not.required lookup walks the root once.
+    const notRequiredKeys = new Map<string, string | undefined>();
     return async (data) => {
       try {
         await validate(data);
         return null;
       } catch (thrown: unknown) {
         if (thrown instanceof Error && 'errors' in thrown && Array.isArray(thrown.errors))
-          return transformErrors(thrown.errors, jsonSchema, toAuthoredPath);
+          return transformErrors(thrown.errors, jsonSchema, toAuthoredPath, notRequiredKeys);
         throw thrown;
       }
     };
