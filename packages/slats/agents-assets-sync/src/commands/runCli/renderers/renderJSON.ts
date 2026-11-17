@@ -6,6 +6,7 @@ import {
   type Scope,
   applyAction,
   applyBlockActions,
+  assertDestinationRootsContained,
   buildPlan,
   computeNamespacePrefixes,
   partitionActions,
@@ -135,6 +136,11 @@ async function runUnit(
       relPaths: Object.keys(manifest.files),
       namespacePrefixes: computeNamespacePrefixes(manifest),
       assetKinds,
+    });
+    await assertDestinationRootsContained({
+      agentTarget,
+      assetKinds,
+      orphanScans,
     });
     const force = flags.force ?? false;
     const plan = await buildPlan({

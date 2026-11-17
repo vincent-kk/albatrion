@@ -8,6 +8,7 @@ import {
   type Scope,
   applyAction,
   applyBlockActions,
+  assertDestinationRootsContained,
   buildPlan,
   computeNamespacePrefixes,
   partitionActions,
@@ -107,6 +108,11 @@ async function renderOneUnit(
     namespacePrefixes: computeNamespacePrefixes(manifest),
     assetKinds,
   });
+  await assertDestinationRootsContained({
+    agentTarget,
+    assetKinds,
+    orphanScans,
+  });
   const force = flags.force ?? false;
   const plan = await buildPlan({
     sourceHashes: manifest.files,
@@ -122,7 +128,9 @@ async function renderOneUnit(
   // refused: the refusal below tells the user to inspect with --dry-run.
   if (plan.requiresForce && !force) {
     if (!flags.dryRun) {
-      logger.error('Re-run with --force to proceed, or inspect with --dry-run.');
+      logger.error(
+        'Re-run with --force to proceed, or inspect with --dry-run.',
+      );
       return 2;
     }
     logger.warn('Applying this plan requires --force.');

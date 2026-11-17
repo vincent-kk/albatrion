@@ -6,6 +6,7 @@ import {
   type AgentType,
   type AssetKind,
   type Scope,
+  assertDestinationRootsContained,
   buildPlan,
   computeNamespacePrefixes,
   resolveAgentTarget,
@@ -69,6 +70,11 @@ export function usePlanStep({
               namespacePrefixes: computeNamespacePrefixes(manifest),
               assetKinds,
             });
+            await assertDestinationRootsContained({
+              agentTarget,
+              assetKinds,
+              orphanScans,
+            });
             const plan = await buildPlan({
               sourceHashes: manifest.files,
               destinations,
@@ -88,7 +94,10 @@ export function usePlanStep({
                 });
               // `--force` plans an orphan as `delete`; the dialog still owes
               // the user that path before it disappears.
-              else if (action.kind === 'warn-orphan' || action.kind === 'delete')
+              else if (
+                action.kind === 'warn-orphan' ||
+                action.kind === 'delete'
+              )
                 warnings.push({
                   packageName: target.name,
                   agent,

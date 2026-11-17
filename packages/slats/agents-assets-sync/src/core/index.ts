@@ -29,6 +29,7 @@ export {
   type PlanInput,
 } from './buildPlan/index.js';
 export {
+  assertDestinationRootsContained,
   isValidAgent,
   resolveAgentTarget,
   resolveDestinations,
