@@ -17,7 +17,9 @@ handed out and returns that earlier reference whenever every property still matc
 1. **Reference Check**: return immediately when the reference is unchanged
 2. **Repeat Check**: a reference already compared is answered from that verdict
 3. **Key Count Comparison**: a differing property count is a fast rejection
-4. **Value Comparison**: shallow (`!==`) comparison of every own enumerable property
+4. **Value Comparison**: shallow (`!==`) comparison of every own enumerable property;
+an `undefined` value matches only when the previous object owns the same key, so a
+renamed key whose old and new values are both `undefined` still counts as a change
 5. **Reference Preservation**: return the previous reference when the contents match
 ### Performance Characteristics
 - **Best Case**: O(1) when the incoming reference was already seen
