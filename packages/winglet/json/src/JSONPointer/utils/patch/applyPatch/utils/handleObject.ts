@@ -35,16 +35,17 @@ export const handleObject = (
 ): any => {
   switch (patch.op) {
     case Operation.ADD:
-    case Operation.REPLACE:
     case Operation.MOVE:
     case Operation.COPY:
       setDataProperty(object, key, value);
       return source;
+    // RFC 6902 4.3: the replace target must exist, or the patch would add a member
+    case Operation.REPLACE:
     case Operation.REMOVE:
       if (!hasOwnProperty(object, key)) {
         throw new JSONPatchError(
           'PATCH_OBJECT_PROPERTY_NOT_FOUND',
-          `Cannot remove property '${key}' - property does not exist on object`,
+          `Cannot ${patch.op} property '${key}' - property does not exist on object`,
           {
             patch,
             patchIndex,
@@ -54,7 +55,8 @@ export const handleObject = (
           },
         );
       }
-      deleteDataProperty(object, key);
+      if (patch.op === Operation.REMOVE) deleteDataProperty(object, key);
+      else setDataProperty(object, key, value);
       return source;
     case Operation.TEST:
       if (!hasOwnProperty(object, key)) {
