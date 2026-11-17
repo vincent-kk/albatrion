@@ -16,7 +16,6 @@ import { JSONPatchError } from './error';
  * @param index - The array index to operate on
  * @param source - The root source document for move/copy operations
  * @param patchIndex - The index of the patch for error reporting
- * @param strict - Whether to use strict equality checking
  * @returns The modified source document
  * @throws {JSONPatchError} When operation fails or index is out of bounds
  * @internal
@@ -28,7 +27,6 @@ export const handleArray = (
   index: number,
   source: JSONRoot,
   patchIndex: number,
-  strict: boolean,
 ): any => {
   switch (patch.op) {
     // Move and copy are adds at the target (RFC 6902 4.4, 4.5), so an index inserts
@@ -100,7 +98,7 @@ export const handleArray = (
           },
         );
       }
-      if (!strict || equals(array[index], patch.value)) return source;
+      if (equals(array[index], patch.value)) return source;
       throw new JSONPatchError(
         'PATCH_TEST_FAILED',
         `Test operation failed at array index ${index}. Expected value does not match actual value`,

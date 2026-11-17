@@ -337,7 +337,7 @@ function applyPatch<Result>(
   source: object | any[],
   patches: Patch[],
   options?: {
-    strict?: boolean; // 기본값: false
+    strict?: boolean; // 사용 중단(deprecated) — 무시됨, test는 항상 값을 비교
     immutable?: boolean; // 기본값: true
   },
 ): Result;
@@ -567,6 +567,7 @@ type Patch =
 // 옵션 타입
 type CompareOptions = { strict?: boolean; immutable?: boolean };
 type ApplyPatchOptions = {
+  /** @deprecated ignored */
   strict?: boolean;
   immutable?: boolean;
 };
@@ -653,17 +654,15 @@ function safeGet<T>(obj: object, ptr: string, fallback: T): T {
 
 ## 성능
 
-| 상황                         | 권장 설정                                       |
-| ---------------------------- | ----------------------------------------------- |
-| 깊은 중첩 구조의 대용량 문서 | `immutable: false` — 딥 클론 오버헤드 제거      |
-| 순차적 패치 다량 적용        | `strict: false`(기본값) — 연산별 추가 검증 생략 |
-| 메모리 제약 환경             | `mergePatch`의 `immutable: false`               |
+| 상황                         | 권장 설정                                  |
+| ---------------------------- | ------------------------------------------ |
+| 깊은 중첩 구조의 대용량 문서 | `immutable: false` — 딥 클론 오버헤드 제거 |
+| 메모리 제약 환경             | `mergePatch`의 `immutable: false`          |
 
 ```typescript
 // 최고 성능 (신뢰할 수 있는 환경에서만 사용)
 applyPatch(source, patches, {
   immutable: false,
-  strict: false,
 });
 ```
 

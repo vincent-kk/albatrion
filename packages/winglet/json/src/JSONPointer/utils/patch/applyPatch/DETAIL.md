@@ -9,7 +9,8 @@
 ## API Contracts
 
 - `applyPatch(source, patches, options?)`:
-  - `options.strict`(기본 false): test 연산의 값 비교 등 추가 검증을 활성화한다.
+  - `options.strict`: 값을 읽지 않는 `@deprecated` 옵션이다. 기존 호출의 타입 호환을 위해 타입에만 남아 있다.
+  - `test`는 모든 모드에서 대상 값과 `value`를 깊은 비교하고, 불일치는 `PATCH_TEST_FAILED`로 패치 전체를 중단한다(RFC 6902 §4.6, §5). 비교를 끌 수 있으면 낙관적 동시성 제어 같은 방어 조건이 조용히 통과하고 뒤따르는 연산이 실행된다.
   - `options.immutable`(기본 true): 변경 경로 copy-on-write. false면 소스를 제자리에서 수정한다.
   - `protectPrototype` 옵션은 존재하지 않는다 — 0.13.x의 이 옵션은 제거되었다. 예약 멤버 안전성은 접근 프리미티브가 구조적으로 보증하므로 어떤 옵션 값으로도 끌 수 없고, 알 수 없는 옵션 키는 무시된다.
 - 경로 순회: 각 세그먼트의 읽기와 copy-on-write 기록은 데이터 속성 프리미티브를 경유한다. 예약 멤버 세그먼트는 일반 키와 동일하게 순회·기록된다 — 예외를 던지지 않는다.

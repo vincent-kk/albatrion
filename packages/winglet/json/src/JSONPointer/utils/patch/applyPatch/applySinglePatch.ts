@@ -46,7 +46,6 @@ import { removeMoveSource } from './utils/removeMoveSource';
  * @param source - The source object or array to apply the patch to
  * @param patch - A single JSON Patch operation containing op, path, and optional value
  * @param patchIndex - The index of this patch in the original patches array (for error reporting)
- * @param strict - Whether to enforce strict validation rules
  * @param cloned - Owned object references in immutable mode, or null in mutating mode
  *
  * @see https://datatracker.ietf.org/doc/html/rfc6901 - JSON Pointer specification
@@ -65,7 +64,7 @@ import { removeMoveSource } from './utils/removeMoveSource';
  * const source = { user: { name: "John", age: 30 } };
  * const patch = { op: "replace", path: "/user/age", value: 31 };
  *
- * const result = applySinglePatch(source, patch, 0, false, true, null);
+ * const result = applySinglePatch(source, patch, 0, null);
  * // Returns: { user: { name: "John", age: 31 } }
  * ```
  *
@@ -74,7 +73,7 @@ import { removeMoveSource } from './utils/removeMoveSource';
  * const sourceArray = [1, 2, 3];
  * const patch = { op: "add", path: "/1", value: 5 };
  *
- * const result = applySinglePatch(sourceArray, patch, 0, false, true, null);
+ * const result = applySinglePatch(sourceArray, patch, 0, null);
  * // Returns: [1, 5, 2, 3]
  * ```
  *
@@ -84,7 +83,7 @@ import { removeMoveSource } from './utils/removeMoveSource';
  * const source = { old: "data" };
  * const patch = { op: "replace", path: "", value: { new: "data" } };
  *
- * const result = applySinglePatch(source, patch, 0, false, true, null);
+ * const result = applySinglePatch(source, patch, 0, null);
  * // Returns: { new: "data" }
  * ```
  *
@@ -97,14 +96,13 @@ import { removeMoveSource } from './utils/removeMoveSource';
  *
  * // Throws JSONPatchError with PATCH_PATH_INVALID_INTERMEDIATE, exactly like
  * // any other missing intermediate path; Object.prototype is never touched
- * applySinglePatch(source, patch, 0, false, null);
+ * applySinglePatch(source, patch, 0, null);
  * ```
  */
 export const applySinglePatch = (
   source: JSONRoot,
   patch: Patch,
   patchIndex: number,
-  strict: boolean,
   cloned: WeakSet<object> | null,
 ): any => {
   // RFC 6902 4.4 and 4.5: move is "remove from, then add at path" and copy is "add a copy
@@ -142,7 +140,7 @@ export const applySinglePatch = (
   }
 
   if (patch.path === '' || patch.path === JSONPointer.Fragment)
-    return handleRootPatch(source, patch, value, patchIndex, strict);
+    return handleRootPatch(source, patch, value, patchIndex);
 
   const segments = patch.path.split('/');
 
@@ -172,18 +170,9 @@ export const applySinglePatch = (
           arrayIndex,
           source,
           patchIndex,
-          strict,
         );
       } else if (current && typeof current === 'object') {
-        return handleObject(
-          patch,
-          value,
-          current,
-          segment,
-          source,
-          patchIndex,
-          strict,
-        );
+        return handleObject(patch, value, current, segment, source, patchIndex);
       } else {
         throw new JSONPatchError(
           'PATCH_TARGET_NOT_OBJECT',

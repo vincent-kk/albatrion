@@ -21,7 +21,6 @@ import { JSONPatchError } from './error';
  * @param key - The property key to operate on
  * @param source - The root source document for move/copy operations
  * @param patchIndex - The index of the patch for error reporting
- * @param strict - Whether to use strict equality checking
  * @returns The modified source document
  * @throws {JSONPatchError} When operation fails or property validation fails
  * @internal
@@ -33,7 +32,6 @@ export const handleObject = (
   key: string,
   source: JSONRoot,
   patchIndex: number,
-  strict: boolean,
 ): any => {
   switch (patch.op) {
     case Operation.ADD:
@@ -73,7 +71,7 @@ export const handleObject = (
           },
         );
       }
-      if (!strict || equals(object[key], patch.value)) return source;
+      if (equals(object[key], patch.value)) return source;
       throw new JSONPatchError(
         'PATCH_TEST_FAILED',
         `Test operation failed for property '${key}'. Expected value does not match actual value`,

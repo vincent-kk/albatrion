@@ -237,7 +237,8 @@ interface CompareOptions {
 
 ```typescript
 interface ApplyPatchOptions {
-  strict?: boolean; // 엄격한 적용 모드 (기본값: false)
+  /** @deprecated 무시됩니다. `test` 연산은 항상 값을 비교합니다 */
+  strict?: boolean;
   immutable?: boolean; // 불변성 모드 (기본값: true)
 }
 ```
@@ -309,7 +310,6 @@ const patches = [
 // 예약 멤버 이름은 체인을 거치지 않고 own 데이터로 기록됩니다
 const result = applyPatch(data, patches, {
   immutable: true, // 원본 데이터 보존
-  strict: true, // 엄격한 검증
 });
 
 console.log(data); // 원본 데이터 유지
@@ -389,7 +389,6 @@ try {
 ## 성능 고려사항
 
 - **대용량 데이터**: 깊이가 깊은 객체나 큰 배열을 다룰 때는 `immutable: false` 옵션을 고려하세요
-- **빈번한 변경**: 많은 패치를 순차적으로 적용할 때는 `strict: false`로 성능을 향상시킬 수 있습니다
 - **메모리 사용**: 불변성 모드는 메모리를 더 사용하지만 안전성을 보장합니다
 
 ---
