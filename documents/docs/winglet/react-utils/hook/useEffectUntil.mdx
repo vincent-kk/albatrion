@@ -24,10 +24,17 @@ it will never run again, even if dependencies change.
 - The completion state persists across re-renders
 - No cleanup function is supported (use regular useEffect if cleanup is needed)
 
+## Import
+
+```typescript
+import { useEffectUntil } from '@winglet/react-utils/hook';
+import { useEffectUntil } from '@winglet/react-utils';
+```
+
 ## Signature
 
 ```typescript
-const useEffectUntil: <Dependencies extends DependencyList>(effect: () => boolean, dependencies?: Dependencies) => void
+const useEffectUntil: (effect: Fn<[], boolean>, dependencies?: DependencyList) => void
 ```
 
 ## Parameters
@@ -35,7 +42,7 @@ const useEffectUntil: <Dependencies extends DependencyList>(effect: () => boolea
 | Name | Type | Description |
 |------|------|-------------|
 | `effect` | `-` | A function that performs side effects and returns `true` when the condition is met |
-| `dependencies` | `-` | Optional dependency array that triggers re-execution when changed |
+| `dependencies` | `-` | Optional dependency array that triggers re-execution when changed. Omitting it re-runs the effect on every render until it returns `true` |
 
 ## Examples
 
@@ -80,7 +87,7 @@ useEffectUntil(() => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.12.2" }}
+  dependencies={{ "@winglet/react-utils": "0.14.1" }}
   code={`// Keep trying to connect until successful
 useEffectUntil(() => {
   const socket = connectToWebSocket();

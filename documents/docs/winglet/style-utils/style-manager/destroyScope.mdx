@@ -16,6 +16,13 @@ This function completely cleans up a style scope by:
 - Clearing all cached styles for the scope
 - Removing the scope instance from the StyleManager registry
 
+## Import
+
+```typescript
+import { destroyScope } from '@winglet/style-utils/style-manager';
+import { destroyScope } from '@winglet/style-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -44,7 +51,7 @@ destroyScope('my-scope');
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/style-utils": "0.12.2" }}
+  dependencies={{ "@winglet/style-utils": "0.14.1" }}
   code={`// Create and use a style scope
 const addStyle = styleManagerFactory('my-scope');
 const removeStyle = addStyle('button-style', '.button { color: red; }');

@@ -1,0 +1,23 @@
+---
+title: 'ObjectSchema'
+sidebar_label: 'ObjectSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# ObjectSchema
+
+Object type schema
+
+## Import
+
+```typescript
+import type { ObjectSchema } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+export type ObjectSchema<Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema> = NonNullableObjectSchema<Options, Schema> | NullableObjectSchema<Options, Schema>
+```

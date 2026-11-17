@@ -17,6 +17,13 @@ This factory function returns a curried function that allows you to:
 The returned function adds CSS styles that are automatically scoped with `className=".${scopeId}"`,
 ensuring styles only apply to elements within that scope.
 
+## Import
+
+```typescript
+import { styleManagerFactory } from '@winglet/style-utils/style-manager';
+import { styleManagerFactory } from '@winglet/style-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -79,7 +86,7 @@ cleanupFns.forEach(cleanup => cleanup());
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/style-utils": "0.12.2" }}
+  dependencies={{ "@winglet/style-utils": "0.14.1" }}
   code={`// Create a style manager for a specific component scope
 const addStyle = styleManagerFactory('header-component');
 

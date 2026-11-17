@@ -15,6 +15,13 @@ inherit any properties or methods from Object.prototype or any other
 prototype in its chain, making it similar to objects created with
 Object.create(null).
 
+## Import
+
+```typescript
+import { removePrototype } from '@winglet/common-utils/object';
+import { removePrototype } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -171,7 +178,7 @@ console.timeEnd('without prototype'); // ~3ms
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { removePrototype } from '@winglet/common-utils';
 
 // Regular object with prototype

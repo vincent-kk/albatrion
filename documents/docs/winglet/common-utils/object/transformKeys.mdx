@@ -14,10 +14,17 @@ keeping all values unchanged. Useful for key normalization, naming convention
 changes, and object schema transformations. Maintains type safety through
 generic constraints and preserves object relationships.
 
+## Import
+
+```typescript
+import { transformKeys } from '@winglet/common-utils/object';
+import { transformKeys } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
-const transformKeys: <Type extends Record<PropertyKey, any>, Key extends PropertyKey>(object: Type, getKey: (value: Type[keyof Type], key: keyof Type, object: Type) => Key) => Record<Key, Type[keyof Type]>
+const transformKeys: <Type extends Record<PropertyKey, any>, Key extends PropertyKey>(object: Type, getKey: Fn<[value: Type[keyof Type], key: keyof Type, object: Type], Key>) => Record<Key, Type[keyof Type]>
 ```
 
 ## Parameters
@@ -29,7 +36,7 @@ const transformKeys: <Type extends Record<PropertyKey, any>, Key extends Propert
 
 ## Returns
 
-New object with transformed keys and original values
+New prototype-free object with transformed keys and original values
 
 ## Examples
 
@@ -226,7 +233,7 @@ console.log(sanitized);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { transformKeys } from '@winglet/common-utils';
 
 // Add prefix to all keys

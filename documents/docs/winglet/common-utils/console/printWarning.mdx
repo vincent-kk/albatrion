@@ -10,10 +10,17 @@ import WingletPlayground from '@site/src/components/WingletPlayground';
 
 Prints a warning message to the console.
 
+## Import
+
+```typescript
+import { printWarning } from '@winglet/common-utils/console';
+import { printWarning } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
-const printWarning: (title: string, message: string[], options?: PrintConsoleOptions) => void
+const printWarning: (title: string, message: readonly string[], options?: PrintConsoleOptions) => void
 ```
 
 ## Parameters

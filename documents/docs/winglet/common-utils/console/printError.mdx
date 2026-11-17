@@ -10,10 +10,17 @@ import WingletPlayground from '@site/src/components/WingletPlayground';
 
 Print an error message to the console
 
+## Import
+
+```typescript
+import { printError } from '@winglet/common-utils/console';
+import { printError } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
-const printError: (title: string, message: string[], options?: PrintConsoleOptions) => void
+const printError: (title: string, message: readonly string[], options?: PrintConsoleOptions) => void
 ```
 
 ## Parameters

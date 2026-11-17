@@ -12,6 +12,13 @@ Lightweight version of the cx function that concatenates CSS class names.
 Only handles simple truthy/falsy filtering without object or array processing.
 Provides better performance for basic use cases where complex input types are not needed.
 
+## Import
+
+```typescript
+import { cxLite } from '@winglet/style-utils/util';
+import { cxLite } from '@winglet/style-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -52,7 +59,7 @@ cxLite('item', 123, 'selected') // 'item 123 selected'
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/style-utils": "0.12.2" }}
+  dependencies={{ "@winglet/style-utils": "0.14.1" }}
   code={`// Basic string concatenation
 cxLite('btn', 'primary') // 'btn primary'
 cxLite('btn', 'primary', 'large') // 'btn primary large'

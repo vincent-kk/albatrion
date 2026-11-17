@@ -12,6 +12,13 @@ Generates a random boolean value with equal probability.
 Uses Math.random() with 0.5 threshold to provide true/false values
 with approximately 50% probability each.
 
+## Import
+
+```typescript
+import { getRandomBoolean } from '@winglet/common-utils/lib';
+import { getRandomBoolean } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -40,7 +47,7 @@ if (getRandomBoolean()) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { getRandomBoolean } from '@winglet/common-utils';
 
 console.log(getRandomBoolean()); // true or false

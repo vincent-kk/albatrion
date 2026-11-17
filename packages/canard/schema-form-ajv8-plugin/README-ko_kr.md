@@ -100,7 +100,27 @@ registerPlugin(plugin);
 - **목적**: 선호하는 설정으로 구성된 커스텀 AJV 인스턴스를 제공할 수 있습니다
 - **사용법**: 선택적 - 호출하지 않으면 기본 AJV 인스턴스가 자동으로 생성됩니다
 - **장점**: AJV 설정, 커스텀 키워드, 포맷, 검증 규칙에 대한 완전한 제어 가능
+- **바인딩 규칙**: `coerceTypes`, `useDefaults`, `removeAdditional` 중 하나라도 활성화된 인스턴스는 즉시 거부되며, 이전 인스턴스가 계속 바인딩된 상태로 유지됩니다.
 - **바인딩 순서**: `bind`는 첫 컴파일 전에 한 번 부릅니다. 루트가 등록된 뒤 다시 바인딩하는 것은 지원하지 않으며, 이 플러그인에서는 이미 등록된 루트는 등록한 인스턴스에 그대로 남습니다.
+
+호출하는 쪽은 `group`(`'UNHANDLED_ERROR'`)과 `code`(`'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, 즉 `FormErrorCode.ValidatorBindRefused`의 값)로 이 거부를 구분합니다. core의 `isUnhandledError`는 이를 인식하지 않습니다.
+
+#### **`configure(options: { directGuardCompile?: boolean }): void`**
+
+자체 완결적인 가드는 기본적으로 원본 복사본 부분 스키마를 직접 컴파일합니다.
+이후 컴파일에서 등록된 루트 포인터 경로를 사용하려면 `directGuardCompile: false`로 설정합니다.
+이미 만들어진 판정 함수는 바뀌지 않으며, 생략한 옵션은 기존 값을 유지합니다.
+가드 내부 어디에서든 참조 키와 식별자 키가 있으면 항상 루트 경로가 필요합니다.
+자체 `$schema`를 선언한 루트나 `$schema`를 포함한 가드도 루트 포인터를 사용합니다.
+루트의 다른 부분을 컴파일할 때에만 나타나는 컴파일 오류(예: 해석되지 않는 `$ref`)는 전체 검증이 `VALIDATOR_COMPILE_FAILED`를 보고하게 만듭니다.
+또한 루트 포인터에서 컴파일되는 모든 가드도 실패시키는데, 이는 해당 경로의 한계입니다.
+직접 컴파일되는 자체 완결적인 가드는 가드 컴파일 실패가 그 가드 자신의 게이트에만 속하므로 계속 평가됩니다.
+가드는 AJV의 루트 메타 스키마 검증 없이(`validateSchema: false`) 컴파일되며, AJV의 루트 메타 스키마 검사는 전체 스키마 컴파일에서만 실행됩니다.
+사용자 정의 키워드의 메타 스키마 검사, 엄격 옵션, 코드 생성 검사는 가드를 컴파일할 때에도 그대로 적용됩니다.
+조건 바깥의 루트 메타 스키마 위반(예: 관련 없는 필드의 `multipleOf: 0`)은 어느 경로에서도 가드를 실패시키지 않습니다.
+기본 스키마 검증에서는 전체 검증이 `VALIDATOR_COMPILE_FAILED`를 보고하지만, `validateSchema: false`나 `'log'`로 바인딩한 인스턴스는 해당 옵션대로 컴파일됩니다.
+조건 스키마 자체 안의 메타 위반(예: `minLength: 1.5`)은 가드를 실패시키지 않으며, 가드는 AJV가 생성한 코드대로 평가됩니다.
+가드 인스턴스는 바인딩된 방언, 포맷, 키워드를 유지하되 `allErrors: false`와 `validateSchema: false`를 사용합니다. `release(root)`는 직접 컴파일된 가드도 함께 제거합니다.
 
 #### **`compile(jsonSchema)`**
 

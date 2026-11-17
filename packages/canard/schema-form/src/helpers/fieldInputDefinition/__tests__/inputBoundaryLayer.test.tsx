@@ -37,7 +37,7 @@ it('F-B keeps the same boundary with a direct raw input child when Refresh appli
       {
         return: {
           type: unknown;
-          return: { type: { name?: string }; stateNode: object };
+          return: { type: unknown; stateNode: object };
         };
       }
     >

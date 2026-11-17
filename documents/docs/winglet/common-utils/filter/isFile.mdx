@@ -14,6 +14,13 @@ File objects used in web applications for file handling. File objects extend
 Blob functionality with additional metadata like name and last modified time.
 Returns false in environments where File API is not available.
 
+## Import
+
+```typescript
+import { isFile } from '@winglet/common-utils/filter';
+import { isFile } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -340,7 +347,7 @@ function createFileIfSupported(content: string, filename: string): File | null {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isFile } from '@winglet/common-utils';
 
 // True cases - File instances (in browser environment)

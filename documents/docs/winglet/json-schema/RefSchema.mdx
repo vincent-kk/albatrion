@@ -1,0 +1,28 @@
+---
+title: 'RefSchema'
+sidebar_label: 'RefSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# RefSchema
+
+JSON Schema $ref reference
+
+## Import
+
+```typescript
+import type { RefSchema } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+interface RefSchema {
+    type?: undefined;
+    /** JSON Pointer reference to another schema */
+    $ref: string;
+    [alt: string]: any;
+}
+```

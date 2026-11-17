@@ -13,10 +13,17 @@ Transforms each element of the input array using the provided callback function 
 a new array containing the transformed elements. The callback receives the current element,
 its index, and the entire array as arguments, providing flexibility for complex transformations.
 
+## Import
+
+```typescript
+import { map } from '@winglet/common-utils/array';
+import { map } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
-const map: <Type, Result = Type>(array: Type[], callback: (item: Type, index: number, array: Type[]) => Result) => Result[]
+const map: <Type, Result = Type>(array: readonly Type[], callback: Fn<[item: Type, index: number, array: readonly Type[]], Result>) => Result[]
 ```
 
 ## Parameters
@@ -192,7 +199,7 @@ console.log(parsed);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { map } from '@winglet/common-utils';
 
 const numbers = [1, 2, 3, 4, 5];

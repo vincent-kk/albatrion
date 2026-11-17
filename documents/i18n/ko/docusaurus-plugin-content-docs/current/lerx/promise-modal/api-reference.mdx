@@ -32,7 +32,7 @@ function alert<B = any>(options: AlertProps<B>): Promise<void>
 | `footer` | `AlertFooterRender \| { confirm?: ReactNode; hideConfirm?: boolean } \| false` | — | 푸터 설정이며, `false`이면 푸터를 숨깁니다. |
 | `background` | `ModalBackground<B>` | — | `BackgroundComponent`에 전달하는 데이터 |
 | `dimmed` | `boolean` | — | 백드롭을 어둡게 할지 여부 |
-| `duration` | `number` | — | 모달별 애니메이션 지속 시간 재정의 (밀리초) |
+| `duration` | `` number \| `${number}ms` \| `${number}s` `` | — | 모달별 애니메이션 지속 시간 재정의 (밀리초) |
 | `manualDestroy` | `boolean` | `false` | `true`이면 닫기 애니메이션 후 모달을 자동으로 제거하지 않습니다. |
 | `closeOnBackdropClick` | `boolean` | `true` | 백드롭을 클릭하면 닫습니다. |
 | `group` | `string` | — | 순서 지정을 위한 그룹 식별자 |
@@ -89,10 +89,10 @@ if (confirmed) await deleteItem();
 
 ### `prompt<T>(options)`
 
-입력 모달을 표시합니다. 사용자가 입력한 값으로 이행되거나, 취소 시 `undefined`를 반환합니다 (`returnOnCancel` 설정 시 기본값 반환).
+입력 모달을 표시합니다. 사용자가 입력한 값으로 이행되거나, 취소 시 `null`로 이행됩니다. 입력 없이 확인하면 `undefined`로 이행됩니다. `returnOnCancel: true`이면 취소 시 현재 값(입력 전에는 `defaultValue`)으로 이행됩니다.
 
 ```ts
-function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined>
+function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined | null>
 ```
 
 **`PromptProps<T>`**는 `AlertProps`를 확장하여 다음 속성을 추가합니다:
@@ -184,7 +184,7 @@ ref.current?.initialize(containerElement);
 function useModal(configuration?: OverridableHandleProps): {
   alert: <B>(options: AlertProps<B>) => Promise<void>;
   confirm: <B>(options: ConfirmProps<B>) => Promise<boolean>;
-  prompt: <T, B>(options: PromptProps<T, B>) => Promise<T | undefined>;
+  prompt: <T, B>(options: PromptProps<T, B>) => Promise<T | undefined | null>;
 }
 ```
 
@@ -349,10 +349,16 @@ interface ModalBackground<B> {
 ```ts
 interface ModalOptions {
   zIndex?: number;
-  duration?: number | string;
-  backdrop?: string | CSSProperties;
+  duration?: number | `${number}ms` | `${number}s`;
+  backdrop?: Color | CSSProperties;
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
+  /** 이스케이프 재정의입니다. 지정하지 않으면 백드롭 클릭 설정을 따릅니다. 이스케이프는 위에서부터 처음으로 수락하는 표시 중인 대기 모달을 닫습니다. */
+  closeOnEscape?: boolean;
+  /** 맨 위에 표시된 대기 모달이 딤 처리된 경우에만 Tab 이동을 가둡니다. 기본값은 true입니다. */
+  trapFocus?: boolean;
+  /** 딤 처리된 대기 모달이 표시되는 동안 본문 스크롤을 잠급니다. 기본값은 true입니다. */
+  lockScroll?: boolean;
 }
 ```
 
@@ -387,7 +393,7 @@ type ConfirmContentProps<Context = object> = {
 // Core functions (usable outside React)
 export function alert<B = any>(options: AlertProps<B>): Promise<void>
 export function confirm<B = any>(options: ConfirmProps<B>): Promise<boolean>
-export function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined>
+export function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined | null>
 
 // Provider
 export const ModalProvider: ForwardRefExoticComponent<ModalProviderProps & RefAttributes<ModalProviderHandle>>
@@ -416,14 +422,19 @@ export type { WrapperComponentProps }
 ```ts
 interface BaseModal<T, B> {
   group?: string;
+  subtype?: 'info' | 'success' | 'warning' | 'error';
   title?: ReactNode;
   subtitle?: ReactNode;
   background?: ModalBackground<B>;   // { data?: B }
   dimmed?: boolean;
-  duration?: number;
+  duration?: ModalOptions['duration'];
   manualDestroy?: boolean;
   closeOnBackdropClick?: boolean;
-  handleResolve?: (result: T | null) => void;
+  closeOnEscape?: boolean;
+  trapFocus?: boolean;
+  lockScroll?: boolean;
+  handleResolve?: (result: T | undefined | null) => void;  // 내부용
+  handleReject?: (error: unknown) => void;                 // 내부용
   ForegroundComponent?: ComponentType<PropsWithChildren<ModalFrameProps>>;
   BackgroundComponent?: ComponentType<ModalFrameProps>;
 }
@@ -433,7 +444,7 @@ interface BaseModal<T, B> {
 
 - `alert`는 어떤 닫기 동작이 발생하든 `void`로 이행됩니다.
 - `confirm`은 확인 시 `true`, 취소 또는 백드롭 클릭 시 `false`로 이행됩니다.
-- `prompt`는 확인 시 현재 입력 값으로, 취소 시 `undefined`로 이행됩니다 (`returnOnCancel: true`이면 `defaultValue`로 이행됩니다).
+- `prompt`는 확인 시 현재 입력 값으로, 일반적인 취소 시 `null`로, 입력 없이 확인하면 `undefined`로 이행됩니다. `returnOnCancel: true`이면 취소 시 현재 값(입력 전에는 `defaultValue`)으로 이행됩니다.
 - `manualDestroy: true`는 `onClose` 이후에도 모달 노드를 유지합니다. DOM에서 제거하려면 호출자가 `onDestroy`를 호출해야 합니다.
 - 정적 `alert`/`confirm`/`prompt`는 컴포넌트가 언마운트되어도 유지되는 싱글턴입니다. `useModal` 변형은 언마운트 시 닫힙니다.
 - 사용자 정의 `ForegroundComponent`는 진입/퇴장 애니메이션을 구동하는 `visible`(불리언)과 지연 정리를 위한 `onDestroy`를 받습니다.

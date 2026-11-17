@@ -15,6 +15,13 @@ ensuring fast, deterministic, and compact hash generation.
 Note: This hash is **not cryptographically secure**, and is best suited
 for quick identification or lookup purposes (e.g. cache keys, short IDs).
 
+## Import
+
+```typescript
+import { polynomialHash } from '@winglet/common-utils/hash';
+import { polynomialHash } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -26,7 +33,7 @@ const polynomialHash: (target: string, length?: number) => string
 | Name | Type | Description |
 |------|------|-------------|
 | `target` | `-` | The input string to hash. |
-| `length` | `-` | Desired length of the result identifier (default: 7, max: 7). |
+| `length` | `-` | Desired length of the result identifier (default: 7). A uint32 needs at most 7 base36 digits, so a longer length is zero-padded and a shorter one keeps the low-order digits. |
 
 ## Returns
 

@@ -12,6 +12,13 @@ Determines whether a given JSON schema represents a non-nullable boolean type.
 Validates that the schema's `type` property is set to `'boolean'` (not an array),
 indicating it describes non-nullable boolean values.
 
+## Import
+
+```typescript
+import { isNonNullableBooleanSchema } from '@winglet/json-schema/filter';
+import { isNonNullableBooleanSchema } from '@winglet/json-schema';
+```
+
 ## Signature
 
 ```typescript
@@ -41,7 +48,7 @@ isNonNullableBooleanSchema({ type: 'string' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.15.1" }}
+  dependencies={{ "@winglet/json-schema": "0.16.1" }}
   code={`isNonNullableBooleanSchema({ type: 'boolean' }); // true
 isNonNullableBooleanSchema({ type: ['boolean', 'null'] }); // false
 isNonNullableBooleanSchema({ type: 'string' }); // false`}

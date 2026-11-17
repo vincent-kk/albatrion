@@ -14,6 +14,13 @@ consistent user experience with loading states, implementing minimum display tim
 feedback, and ensuring operations don't complete too quickly. The function executes
 immediately but the result is delayed, making it ideal for UI consistency scenarios.
 
+## Import
+
+```typescript
+import { waitAndReturn } from '@winglet/common-utils/promise';
+import { waitAndReturn } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -485,7 +492,7 @@ try {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { waitAndReturn } from '@winglet/common-utils';
 
 // Function executes immediately, but result returned after 1 second minimum
