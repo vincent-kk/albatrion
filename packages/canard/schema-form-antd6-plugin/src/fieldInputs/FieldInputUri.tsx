@@ -99,10 +99,6 @@ const FieldInputUri = ({
 
   const inputRef = useRef<any>(null);
 
-  // Only the protocol is stateful; the URI input remains uncontrolled.
-  const [protocol, setProtocol] = useState<string>(normalizedProtocols[0]);
-
-
   const { initialProtocol, initialUri } = useMemo(() => {
     if (typeof defaultValue !== 'string' || !defaultValue) {
       return {
@@ -125,6 +121,8 @@ const FieldInputUri = ({
     };
   }, [defaultValue, normalizedProtocols]);
 
+  // Only the protocol is stateful; the URI input remains uncontrolled.
+  const [protocol, setProtocol] = useState<string>(initialProtocol);
 
   useEffect(() => {
     setProtocol(initialProtocol);
