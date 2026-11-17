@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { createReferenceResolver } from '../createReferenceResolver';
 import { enterChild } from './fixtures/enterChild';
+import { scan } from './fixtures/scan';
 
 const DRAFT04 = 'http://json-schema.org/draft-04/schema#';
 const DRAFT07 = 'http://json-schema.org/draft-07/schema#';
@@ -126,5 +127,36 @@ describe('identifier keywords by dialect', () => {
     expect(
       resolver.resolve('urn:example:a', '$ref', resolver.root(schema)),
     ).toMatchObject({ status: 'skipped', reason: 'unresolved' });
+  });
+});
+
+describe('copied targets keep keywords that are not identifiers in their dialect', () => {
+  it('keeps id in a 2020-12 target', () => {
+    const schema = {
+      $defs: { A: { id: 'user', type: 'string' } },
+      properties: { p: { $ref: '#/$defs/A' } },
+    };
+    const { output } = scan(schema);
+    expect(output.properties!.p).toEqual({ id: 'user', type: 'string' });
+  });
+
+  it('keeps $anchor in a draft-07 target', () => {
+    const schema = {
+      $schema: DRAFT07,
+      definitions: { A: { $anchor: 'note', type: 'string' } },
+      properties: { p: { $ref: '#/definitions/A' } },
+    };
+    const { output } = scan(schema);
+    expect(output.properties!.p).toEqual({ $anchor: 'note', type: 'string' });
+  });
+
+  it('removes the 2020-12 $anchor and keeps id beside it', () => {
+    const schema = {
+      $schema: DRAFT2020,
+      $defs: { A: { $anchor: 'a', id: 'user', type: 'string' } },
+      properties: { p: { $ref: '#a' } },
+    };
+    const { output } = scan(schema);
+    expect(output.properties!.p).toEqual({ id: 'user', type: 'string' });
   });
 });
