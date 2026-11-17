@@ -9,6 +9,7 @@ import {
   findBlockBody,
   parseBlocks,
 } from '../markerBlock/index.js';
+import { isNoisePath } from '../utils/isNoisePath.js';
 import { toPosix } from '../utils/toPosix.js';
 import { walkFiles } from '../utils/walkFiles.js';
 import type { Action, ActionKind, InjectPlan, PlanInput } from './type.js';
@@ -76,7 +77,8 @@ async function classify(
   return blockBodyMatches(body, srcHash) ? 'skip-uptodate' : 'warn-diverged';
 }
 
-// Yield content this package installed earlier but no longer ships. A block
+// Yield content this package installed earlier but no longer ships. Noise the
+// source hasher drops was never installed, so it is never an orphan. A block
 // scan is limited to blocks the owner package wrote, so another package's
 // blocks in the same document are never proposed for deletion.
 async function* findOrphans(
@@ -86,8 +88,9 @@ async function* findOrphans(
 ): AsyncGenerator<{ relPath: string; target: Destination }> {
   if (scan.kind === 'directory') {
     for await (const abs of walkFiles(scan.scanRoot)) {
-      const relPath =
-        scan.relPathPrefix + toPosix(relative(scan.scanRoot, abs));
+      const scanRelPath = toPosix(relative(scan.scanRoot, abs));
+      if (isNoisePath(scanRelPath)) continue;
+      const relPath = scan.relPathPrefix + scanRelPath;
       if (known.has(relPath)) continue;
       yield { relPath, target: { kind: 'file', dstAbs: abs } };
     }
