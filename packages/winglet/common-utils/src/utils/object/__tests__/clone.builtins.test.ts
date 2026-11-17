@@ -143,14 +143,23 @@ describe('clone built-in types', () => {
     expect(cloned.kind).toBe('square');
   });
 
-  it('should keep the primitive value of a boxed primitive from another realm', () => {
-    const foreign: Number = runInNewContext('new Number(5)');
+  it.each([
+    ['Number', 'new Number(5)', 5],
+    ['String', "new String('ab')", 'ab'],
+    ['Boolean', 'new Boolean(false)', false],
+  ])(
+    'should keep the primitive value of a boxed %s from another realm',
+    (_, source, primitive) => {
+      const foreign: object = runInNewContext(source);
 
-    const cloned = clone(foreign);
+      const cloned = clone(foreign);
 
-    expect(cloned.valueOf()).toBe(5);
-    expect(Object.getPrototypeOf(cloned)).toBe(Object.getPrototypeOf(foreign));
-  });
+      expect(cloned.valueOf()).toBe(primitive);
+      expect(Object.getPrototypeOf(cloned)).toBe(
+        Object.getPrototypeOf(foreign),
+      );
+    },
+  );
 
   it('should clone an object that only forges a box tag as an ordinary instance', () => {
     class Forged {
