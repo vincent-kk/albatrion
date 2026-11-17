@@ -15,7 +15,6 @@ import { isSharedArrayBuffer } from '@/common-utils/utils/filter/isSharedArrayBu
 import { isTypedArray } from '@/common-utils/utils/filter/isTypedArray';
 
 import { getSymbols } from './getSymbols';
-import { setDataProperty } from './setDataProperty';
 
 /**
  * Creates a deep clone of any value with comprehensive type support and circular reference handling.
@@ -398,27 +397,51 @@ const replicateProperties = (
   depth: number,
   cache: Map<object, any>,
 ): void => {
-  const keys = Object.keys(source);
-  const length = keys.length;
-  if (length > 0)
-    for (let i = 0, k = keys[0]; i < length; i++, k = keys[i]) {
-      const descriptor = getOwnPropertyDescriptor(target, k);
-      if (descriptor == null || descriptor.writable) {
-        const cloned = replicate(source[k], limit, depth, cache);
-        // Plain assignment of an own '__proto__' key would swap the clone's
-        // prototype instead of copying the key, so only that key is defined.
-        if (k === '__proto__') setDataProperty(target, k, cloned);
-        else target[k] = cloned;
-      }
-    }
+  const keys: PropertyKey[] = Object.keys(source);
+  for (let i = 0, l = keys.length; i < l; i++)
+    replicateProperty(target, source, keys[i], limit, depth, cache);
   const symbols = getSymbols(source);
-  const symbolsLength = symbols.length;
-  if (symbolsLength > 0)
-    for (let i = 0, s = symbols[0]; i < symbolsLength; i++, s = symbols[i]) {
-      const descriptor = getOwnPropertyDescriptor(target, s);
-      if (descriptor == null || descriptor.writable)
-        target[s] = replicate(source[s], limit, depth, cache);
-    }
+  for (let i = 0, l = symbols.length; i < l; i++)
+    replicateProperty(target, source, symbols[i], limit, depth, cache);
+};
+
+/**
+ * Copies one own property of `source` onto `target` as an own data property.
+ *
+ * A key found nowhere on `target`'s chain is assigned. An inherited key is defined
+ * instead, because assignment would run an inherited setter (`__proto__` included) or
+ * fail on an inherited read-only property. An own key of `target` is overwritten only
+ * while it is writable.
+ *
+ * @param target - The clone receiving the property
+ * @param source - The original owning the property
+ * @param key - An own enumerable string key or own symbol of `source`
+ * @param limit - Maximum clone depth, passed through to `replicate`
+ * @param depth - Current clone depth, passed through to `replicate`
+ * @param cache - Originals mapped to their clones, passed through to `replicate`
+ */
+const replicateProperty = (
+  target: Record<PropertyKey, any>,
+  source: Record<PropertyKey, any>,
+  key: PropertyKey,
+  limit: number | undefined,
+  depth: number,
+  cache: Map<object, any>,
+): void => {
+  if (!(key in target)) {
+    target[key] = replicate(source[key], limit, depth, cache);
+    return;
+  }
+  const descriptor = getOwnPropertyDescriptor(target, key);
+  if (descriptor == null)
+    defineProperty(target, key, {
+      value: replicate(source[key], limit, depth, cache),
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    });
+  else if (descriptor.writable)
+    target[key] = replicate(source[key], limit, depth, cache);
 };
 
 /**
