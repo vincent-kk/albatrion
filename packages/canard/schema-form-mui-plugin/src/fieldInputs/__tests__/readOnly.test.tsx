@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 
-import { cleanup, fireEvent, render } from '@testing-library/react';
+import { act, cleanup, render } from '@testing-library/react';
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
 import { afterEach, expect, it } from 'vitest';
 
@@ -82,7 +82,7 @@ it('readOnly checkbox group keeps the displayed selection equal to the stored va
   expect(boxes[1].checked).toBe(false);
 });
 
-it('readOnly slider keeps the displayed value equal to the stored value', () => {
+it('readOnly slider keeps the displayed value equal to the stored value', async () => {
   const ref = createRef<FormHandle>();
   const { container } = render(
     <Form
@@ -101,7 +101,8 @@ it('readOnly slider keeps the displayed value equal to the stored value', () => 
   const thumb = container.querySelector<HTMLInputElement>(
     'input[type="range"]',
   )!;
-  fireEvent.keyDown(thumb, { key: 'End' });
+  act(() => thumb.focus());
+  await user().keyboard('{End}');
   expect(ref.current!.getValue()).toBe(15);
   expect(thumb.getAttribute('aria-valuenow')).toBe('15');
 });

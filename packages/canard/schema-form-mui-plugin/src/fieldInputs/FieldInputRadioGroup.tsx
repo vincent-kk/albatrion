@@ -39,6 +39,7 @@ const FieldInputRadioGroup = ({
   jsonSchema,
   required,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -88,7 +89,7 @@ const FieldInputRadioGroup = ({
       label={label}
       htmlFor={path}
       required={required}
-      disabled={disabled}
+      disabled={disabled || readOnly}
       labelPlacement="start"
       style={{
         display: 'flex',
@@ -107,7 +108,7 @@ const FieldInputRadioGroup = ({
             <FormControlLabel
               key={option.value}
               value={option.value}
-              disabled={disabled}
+              disabled={disabled || readOnly}
               control={
                 <Radio
                   size={size}

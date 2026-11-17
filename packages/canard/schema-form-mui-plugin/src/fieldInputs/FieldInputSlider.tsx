@@ -41,6 +41,7 @@ const FieldInputSlider = ({
   jsonSchema,
   required,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -95,7 +96,7 @@ const FieldInputSlider = ({
         step={step}
         onChange={handleChange}
         onChangeCommitted={handleChangeCommitted}
-        disabled={disabled}
+        disabled={disabled || readOnly}
         size={size}
         marks={showMarks}
         slotProps={{ input: { 'aria-invalid': misfit || undefined } }}
