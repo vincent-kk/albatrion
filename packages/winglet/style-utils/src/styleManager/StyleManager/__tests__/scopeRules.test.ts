@@ -41,6 +41,12 @@ describe('scopeRules', () => {
     );
   });
 
+  test('finds a selector list after commas inside earlier declarations', () => {
+    expect(scope('.a { color: rgb(1, 2, 3) } .b, .c { x: y } .d {}')).toBe(
+      '.s .a{ color: rgb(1, 2, 3) }.s .b,.s .c{ x: y }.s .d{}',
+    );
+  });
+
   test('drops a trailing rule without a matching brace', () => {
     expect(scope('.a{} @media (x) { .b{}')).toBe('.s .a{}');
   });
