@@ -20,7 +20,13 @@ export async function listDirectory(
   resolved: ResolvedLocations,
 ): Promise<DirectoryListing> {
   if (location.listing !== undefined) return location.listing;
-  const entries = await readdir(dir, { withFileTypes: true }).catch(() => []);
+  // A file system that leaves `d_type` unset reports every predicate false;
+  // such an entry could be a link, so it is dropped and checked by name.
+  const entries = (
+    await readdir(dir, { withFileTypes: true }).catch(() => [])
+  ).filter(
+    (entry) => entry.isFile() || entry.isDirectory() || entry.isSymbolicLink(),
+  );
   const listing: DirectoryListing = {
     names: new Set(entries.map((entry) => entry.name)),
     linkNames: new Set(
