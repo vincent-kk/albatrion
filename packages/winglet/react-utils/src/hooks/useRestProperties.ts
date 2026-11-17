@@ -2,6 +2,8 @@ import { useRef } from 'react';
 
 import type { Dictionary } from '@aileron/declare';
 
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+
 /**
  * Maintains referential stability for object props by returning the previous reference when the contents are shallow-equal.
  *
@@ -14,7 +16,9 @@ import type { Dictionary } from '@aileron/declare';
  * 1. **Reference Check**: return immediately when the reference is unchanged
  * 2. **Repeat Check**: a reference already compared is answered from that verdict
  * 3. **Key Count Comparison**: a differing property count is a fast rejection
- * 4. **Value Comparison**: shallow (`!==`) comparison of every own enumerable property
+ * 4. **Value Comparison**: shallow (`!==`) comparison of every own enumerable property;
+ *    an `undefined` value matches only when the previous object owns the same key, so a
+ *    renamed key whose old and new values are both `undefined` still counts as a change
  * 5. **Reference Preservation**: return the previous reference when the contents match
  *
  * ### Performance Characteristics
@@ -74,7 +78,11 @@ export const useRestProperties = <T extends Dictionary>(props: T): T => {
 
   for (let index = 0, length = keys.length; index < length; index++) {
     const key = keys[index];
-    if (props[key] !== previous[key]) {
+    const value = props[key];
+    if (
+      value !== previous[key] ||
+      (value === undefined && !hasOwnProperty(previous, key))
+    ) {
       previousRef.current = props;
       previousKeysRef.current = keys;
       return props;
