@@ -209,8 +209,9 @@ export const registerPlugin = (plugin: Nullable<SchemaFormPlugin>) => {
   try {
     const { fieldInputDefinitions, validator, formatError, ...renderKit } =
       plugin;
-    PluginManager.appendRenderKit(renderKit);
+    // Normalization is the only step that throws; running it first leaves a failed plugin unapplied.
     PluginManager.appendFieldInputDefinitions(fieldInputDefinitions);
+    PluginManager.appendRenderKit(renderKit);
     PluginManager.appendValidator(validator);
     PluginManager.appendFormatError(formatError);
   } catch (error) {
