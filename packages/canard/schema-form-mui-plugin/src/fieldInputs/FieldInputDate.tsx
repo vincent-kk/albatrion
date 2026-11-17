@@ -17,8 +17,6 @@ import type { MuiContext } from '../type';
 
 type DateJSONSchema = StringSchema & {
   format: 'date';
-  minimum?: string; // date string
-  maximum?: string; // date string
 };
 
 interface FieldInputDateProps
@@ -26,12 +24,15 @@ interface FieldInputDateProps
     MuiContext {
   label?: ReactNode;
   hideLabel?: boolean;
+  /** Earliest selectable date (YYYY-MM-DD), from `presentation.FieldInputProps.minimum`. */
+  minimum?: string;
+  /** Latest selectable date (YYYY-MM-DD), from `presentation.FieldInputProps.maximum`. */
+  maximum?: string;
 }
 
 const FieldInputDate = ({
   path,
   name,
-  jsonSchema,
   required,
   disabled,
   readOnly,
@@ -44,6 +45,8 @@ const FieldInputDate = ({
   fullWidth: fullWidthProp,
   hideLabel,
   misfit,
+  minimum,
+  maximum,
 }: FieldInputDateProps) => {
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
@@ -71,10 +74,10 @@ const FieldInputDate = ({
 
   const { minDate, maxDate } = useMemo(() => {
     return {
-      minDate: jsonSchema.minimum ? dayjs(jsonSchema.minimum) : undefined,
-      maxDate: jsonSchema.maximum ? dayjs(jsonSchema.maximum) : undefined,
+      minDate: minimum ? dayjs(minimum) : undefined,
+      maxDate: maximum ? dayjs(maximum) : undefined,
     };
-  }, [jsonSchema.minimum, jsonSchema.maximum]);
+  }, [minimum, maximum]);
 
   const handleChange = useHandle((newValue: Dayjs | null) => {
     if (newValue === null) {

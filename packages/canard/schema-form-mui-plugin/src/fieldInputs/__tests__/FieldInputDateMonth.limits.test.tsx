@@ -60,3 +60,15 @@ it('month picker reads minimum and maximum from presentation.FieldInputProps', (
   expect(props.minDate?.format('YYYY-MM')).toBe('2024-03');
   expect(props.maxDate?.format('YYYY-MM')).toBe('2024-06');
 });
+
+it('pickers receive no limits when none are given', () => {
+  render(
+    <Form
+      fieldInputDefinitions={[FieldInputMonthDefinition]}
+      jsonSchema={{ type: 'string', format: 'month' }}
+    />,
+  );
+  const props = received.props.at(-1)!;
+  expect(props.minDate).toBeUndefined();
+  expect(props.maxDate).toBeUndefined();
+});

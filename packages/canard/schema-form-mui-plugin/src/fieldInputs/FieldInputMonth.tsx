@@ -24,6 +24,10 @@ interface FieldInputMonthProps
     MuiContext {
   label?: ReactNode;
   hideLabel?: boolean;
+  /** Earliest selectable month (YYYY-MM), from `presentation.FieldInputProps.minimum`. */
+  minimum?: string;
+  /** Latest selectable month (YYYY-MM), from `presentation.FieldInputProps.maximum`. */
+  maximum?: string;
 }
 
 const FieldInputMonth = ({
@@ -41,6 +45,8 @@ const FieldInputMonth = ({
   fullWidth: fullWidthProp,
   hideLabel,
   misfit,
+  minimum,
+  maximum,
 }: FieldInputMonthProps) => {
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
@@ -66,6 +72,13 @@ const FieldInputMonth = ({
     hideLabel,
   ]);
 
+  const { minDate, maxDate } = useMemo(() => {
+    return {
+      minDate: minimum ? dayjs(minimum) : undefined,
+      maxDate: maximum ? dayjs(maximum) : undefined,
+    };
+  }, [minimum, maximum]);
+
   const handleChange = useHandle((newValue: Dayjs | null) => {
     if (newValue === null) {
       onChange(undefined);
@@ -87,6 +100,8 @@ const FieldInputMonth = ({
         onChange={handleChange}
         disabled={disabled}
         readOnly={readOnly}
+        minDate={minDate}
+        maxDate={maxDate}
         views={['year', 'month']}
         openTo="month"
         format="YYYY-MM"
