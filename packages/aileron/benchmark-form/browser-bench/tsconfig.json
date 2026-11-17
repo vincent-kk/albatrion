@@ -2,6 +2,7 @@
   "extends": "../../../../tsconfig.base.json",
   "compilerOptions": {
     "composite": false,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "rootDir": "../../../..",
     "types": ["node"],
     "noEmit": true
