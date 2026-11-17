@@ -10,7 +10,9 @@ import { transformDataPath } from './utils/transformDataPath';
  * @param ajv - Instance that compiles, or holds, the schema.
  * @param key - Key of a schema already registered on `ajv`; without one, `jsonSchema` is cloned
  *   and compiled here.
- * @returns A factory that compiles `jsonSchema` and converts its issues.
+ * @returns A factory whose `jsonSchema` is the object AJV compiles from: with a key, the
+ *   registered copy itself. Issue conversion reads that copy or the local clone, never an object
+ *   the caller can still mutate.
  */
 export const createValidatorFactory =
   (ajv: Ajv.Ajv, key?: string) =>
@@ -19,8 +21,9 @@ export const createValidatorFactory =
     const validate = key ? ajv.getSchema(key) : transient && ajv.compile(transient);
     if (transient) ajv.removeSchema(transient);
     if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
-    const resources = collectSchemaResources(jsonSchema);
-    const notRequiredKeyOf = createNotRequiredKeyLookup(jsonSchema, resources);
+    const compiled: object = transient ?? jsonSchema;
+    const resources = collectSchemaResources(compiled);
+    const notRequiredKeyOf = createNotRequiredKeyLookup(compiled, resources);
     return async (data) => {
       try {
         const valid = await validate(data);

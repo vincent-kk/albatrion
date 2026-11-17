@@ -52,7 +52,7 @@ export const createValidator = (
       const validate = createValidatorFactory(
         registered.validation,
         registered.validationCopy ? registered.key : undefined,
-      )(jsonSchema);
+      )(registered.validationCopy ?? jsonSchema);
       return async (value: unknown) => validate(value);
     },
     compileGuard: (root: JSONSchema, pointer: string) => {
