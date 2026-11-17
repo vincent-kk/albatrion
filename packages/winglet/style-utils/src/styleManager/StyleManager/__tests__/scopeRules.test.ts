@@ -33,6 +33,14 @@ describe('scopeRules', () => {
     );
   });
 
+  test('prefixes each selector split at top-level commas only', () => {
+    expect(
+      scope('.a, .b:is(.c, .d), [title="x,y"], .e\\,f, :root, :host { x: y }'),
+    ).toBe(
+      '.s .a,.s .b:is(.c, .d),.s [title="x,y"],.s .e\\,f,:root,:host{ x: y }',
+    );
+  });
+
   test('drops a trailing rule without a matching brace', () => {
     expect(scope('.a{} @media (x) { .b{}')).toBe('.s .a{}');
   });
