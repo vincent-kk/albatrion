@@ -44,15 +44,16 @@ export const transformDataPath = (
       rejectedKey = ajvError.propertyName;
     if (ajvError.keyword === 'not' && notRequiredKeyOf)
       rejectedKey = notRequiredKeyOf(ajvError.schemaPath) ?? rejectedKey;
-    result[i] = {
+    const issue: ValidationIssue = {
       dataPath: convertedDataPath,
       schemaPath: ajvError.schemaPath,
       keyword: ajvError.keyword,
       message: ajvError.message,
       details: { ...ajvError.params },
       source: ajvError,
-      ...(rejectedKey === undefined ? {} : { rejectedKey }),
     };
+    if (rejectedKey !== undefined) issue.rejectedKey = rejectedKey;
+    result[i] = issue;
   }
   return result;
 };
