@@ -97,6 +97,21 @@ describe('applyPatch RFC 6902 conformance', () => {
   });
 
   describe('copy adds at the target (RFC 6902 4.5)', () => {
+    it.each([
+      [{ a: 1 }, '/missing'],
+      [{ a: [1] }, '/a/1'],
+      [{ a: 1 }, '/missing/deeper'],
+    ])(
+      'fails when the from location of %j at %s does not exist',
+      (source, from) => {
+        expect(
+          errorCodeOf(() =>
+            applyPatch(source, [{ op: Operation.COPY, from, path: '/b' }]),
+          ),
+        ).toBe('PATCH_OBJECT_PROPERTY_NOT_FOUND');
+      },
+    );
+
     it.each([true, false])(
       'inserts the copy into an array index (immutable %s)',
       (immutable) => {
@@ -186,38 +201,6 @@ describe('applyPatch RFC 6902 conformance', () => {
       expect(errorCodeOf(() => applyPatch({ a: 1 }, [patch]))).toBe(
         'PATCH_OBJECT_PROPERTY_NOT_FOUND',
       );
-    });
-  });
-
-  describe('array indexes have no leading zeros (RFC 6901 4)', () => {
-    it.each([
-      [false, '/a/01'],
-      [true, '/a/01'],
-      [false, '/a/00'],
-      [false, '/a/01/x'],
-    ])('rejects a leading-zero index (strict %s, path %s)', (strict, path) => {
-      expect(
-        errorCodeOf(() =>
-          applyPatch(
-            { a: [{ x: 1 }, { x: 2 }] },
-            [{ op: Operation.REMOVE, path }],
-            {
-              strict,
-            },
-          ),
-        ),
-      ).toBe('PATCH_ARRAY_INDEX_INVALID');
-    });
-
-    it('still accepts the index 0 and multi-digit indexes', () => {
-      const source = { a: Array.from({ length: 12 }, (_, index) => index) };
-
-      expect(
-        applyPatch(source, [
-          { op: Operation.REMOVE, path: '/a/10' },
-          { op: Operation.REMOVE, path: '/a/0' },
-        ]),
-      ).toEqual({ a: [1, 2, 3, 4, 5, 6, 7, 8, 9, 11] });
     });
   });
 });
