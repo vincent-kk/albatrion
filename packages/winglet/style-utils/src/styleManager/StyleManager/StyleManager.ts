@@ -1,6 +1,7 @@
 import { compressCss } from '@/style-utils/utils/compressCss/compressCss';
 
 import { type StyleManagerConfig, type StyleRoot, getUniqueId } from './type';
+import { scopeRules } from './utils/scopeRules';
 
 /**
  * A scoped CSS management system that provides efficient style injection and cleanup.
@@ -281,41 +282,7 @@ export class StyleManager {
   private __scopeCSS__(css: string): string {
     // If it's Shadow DOM, no need to scope
     if (this.__isShadowDOM__) return css;
-
-    const scope = '.' + this.__scope__;
-    let result = '';
-    let currentIndex = 0;
-    const cssLength = css.length;
-
-    // Optimize CSS parsing: use more efficient methods instead of indexOf
-    while (currentIndex < cssLength) {
-      const ruleEnd = css.indexOf('}', currentIndex);
-      if (ruleEnd === -1) break;
-
-      const rule = css.slice(currentIndex, ruleEnd + 1);
-      const braceIndex = rule.indexOf('{');
-
-      if (braceIndex === -1) {
-        currentIndex = ruleEnd + 1;
-        continue;
-      }
-
-      const selector = rule.slice(0, braceIndex).trim();
-      const declarations = rule.slice(braceIndex);
-
-      if (!selector) {
-        currentIndex = ruleEnd + 1;
-        continue;
-      }
-
-      if (selector[0] === '@' || selector === ':root' || selector === ':host')
-        result += rule;
-      else result += scope + ' ' + selector + declarations;
-
-      currentIndex = ruleEnd + 1;
-    }
-
-    return result;
+    return scopeRules(css, 0, css.length, '.' + this.__scope__);
   }
 
   private __flush__(): void {
