@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'vitest';
 
-import { scopeRules } from '../utils/scopeRules';
+import { RuleScoper } from '../utils/RuleScoper';
 
 const SCOPE = '.s';
-const scope = (css: string) => scopeRules(css, 0, css.length, SCOPE);
+const scope = (css: string) => new RuleScoper(css, SCOPE).scopeSheet();
 
 /** Deterministic PRNG (mulberry32) so a failing sheet is reproducible from its seed. */
 const createRandom = (seed: number) => () => {
@@ -20,7 +20,7 @@ const SELECTORS = [
   '.c3:hover',
   'li + li',
   'a[title="x,{};y"]',
-  ".c4:is(.p, .q)",
+  '.c4:is(.p, .q)',
   "[data-a='}']",
   '.c5::before',
 ];
@@ -35,7 +35,7 @@ const DECLARATIONS = [
 const COMMENTS = ['/* { */', '/* } */', '/* ; , : */', '/**/'];
 
 const generateSheet = (random: () => number, depth: number): string => {
-  const pick = <T,>(items: T[]) => items[Math.floor(random() * items.length)];
+  const pick = <T>(items: T[]) => items[Math.floor(random() * items.length)];
   const space = () => pick(['', ' ', '\n  ']);
   let css = '';
   const count = 1 + Math.floor(random() * 4);
@@ -125,12 +125,15 @@ const parseRules = (css: string): FlatRule[] | null => {
   return rules;
 };
 
-describe('scopeRules differential property', () => {
+describe('RuleScoper differential property', () => {
   test('scopes every selector exactly once and keeps every rule', () => {
     for (let seed = 1; seed <= 300; seed++) {
       const input = generateSheet(createRandom(seed), 0);
       const inputRules = parseRules(input);
-      expect(inputRules, `seed ${seed} input must parse: ${input}`).not.toBeNull();
+      expect(
+        inputRules,
+        `seed ${seed} input must parse: ${input}`,
+      ).not.toBeNull();
       const expected = inputRules!.map((rule) => ({
         ...rule,
         selectors: rule.selectors.map((selector) => SCOPE + ' ' + selector),

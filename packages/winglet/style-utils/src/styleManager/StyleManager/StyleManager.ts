@@ -1,7 +1,7 @@
 import { compressCss } from '@/style-utils/utils/compressCss/compressCss';
 
 import { type StyleManagerConfig, type StyleRoot, getUniqueId } from './type';
-import { scopeRules } from './utils/scopeRules';
+import { RuleScoper } from './utils/RuleScoper';
 
 /**
  * A scoped CSS management system that provides efficient style injection and cleanup.
@@ -227,7 +227,6 @@ export class StyleManager {
    * ```
    */
   public destroy(): void {
-
     if (this.__frameId__) {
       cancelAnimationFrame(this.__frameId__);
       this.__frameId__ = 0;
@@ -282,7 +281,7 @@ export class StyleManager {
   private __scopeCSS__(css: string): string {
     // If it's Shadow DOM, no need to scope
     if (this.__isShadowDOM__) return css;
-    return scopeRules(css, 0, css.length, '.' + this.__scope__);
+    return new RuleScoper(css, '.' + this.__scope__).scopeSheet();
   }
 
   private __flush__(): void {
