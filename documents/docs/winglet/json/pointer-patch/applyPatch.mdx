@@ -20,7 +20,7 @@ The application process follows these principles:
 opaque own data — no patch input can modify the prototype chain
 - Immutable mode preserves the source with copy-on-write path cloning while unchanged
 subtrees remain structurally shared between the source and result
-- Strict mode enforces additional validation rules
+- A `test` operation compares values in every mode; a mismatch aborts the whole patch
 
 ## Import
 
@@ -79,8 +79,8 @@ const result = applyPatch(sourceArray, patches);
 ### Example 3
 
 ```typescript
-// Using strict mode for additional validation
-const result = applyPatch(source, patches, { strict: true, immutable: false });
+// Mutating the source in place
+const result = applyPatch(source, patches, { immutable: false });
 ```
 
 ## Playground
