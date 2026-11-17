@@ -44,13 +44,57 @@ describe('FRAGMENT-020 FRAGMENT-053 rejectedKey', () => {
     ['a single items schema', { properties: { a: { type: 'array', items: false } } }, { a: [1] }, '/a', '0'],
     ['a tuple items entry', { properties: { a: { type: 'array', items: [false] } } }, { a: [1] }, '/a', '0'],
     ['a property named items', { properties: { o: { type: 'object', properties: { items: false } } } }, { o: { items: 1 } }, '/o', 'items'],
-  ])('rejects the child key of a false schema under %s', async (_, schema, value, dataPath, rejectedKey) => {
+  ])('control: rejects the child key of a false schema under %s', async (_, schema, value, dataPath, rejectedKey) => {
     ajvValidatorPlugin.bind!(new Ajv({ allErrors: true }));
     const issues = await ajvValidatorPlugin.compile({ type: 'object', ...schema } as unknown as JSONSchema)(value);
     expect(issues?.find((issue) => issue.keyword === 'false schema')).toMatchObject({ dataPath, rejectedKey });
   });
 
-  it('classifies false schemas inside a resource with its own $id by their last segments', async () => {
+  it.each([
+    ['items', { type: 'array', if: { minItems: 1 }, then: false }, [1]],
+    ['properties', { type: 'object', if: { required: ['a'] }, then: false }, { a: 1 }],
+  ])('keeps a value-level false schema on a field named %s inside a resource with its own $id', async (name, field, value) => {
+    ajvValidatorPlugin.bind!(new Ajv({ allErrors: true }));
+    const id = 'http://example.com/review/item.json';
+    const schema = {
+      type: 'object',
+      definitions: { item: { $id: id, type: 'object', properties: { [name]: field } } },
+      properties: { b: { $ref: id } },
+    };
+    const issues = await ajvValidatorPlugin.compile(schema as unknown as JSONSchema)({ b: { [name]: value } });
+    const falseIssue = issues?.find((issue) => issue.keyword === 'false schema');
+    expect(falseIssue).toMatchObject({ dataPath: `/b/${name}` });
+    expect(falseIssue?.rejectedKey).toBeUndefined();
+  });
+
+  it.each([
+    ['a resource with its own $id', 'http://example.com/review/item.json', ['http://example.com/review/item.json']],
+    ['a resource whose $id extends another $id', 'http://example.com/review/item.json/inner.json', ['http://example.com/review/item.json', 'http://example.com/review/item.json/inner.json']],
+    ['a fragment reference into a resource', 'http://example.com/review/item.json#/definitions/host', ['http://example.com/review/item.json']],
+  ])('reports the not required rejected key under an encoded name inside %s', async (_, reference, ids) => {
+    ajvValidatorPlugin.bind!(new Ajv({ allErrors: true }));
+    const host = { type: 'object', properties: { '이름 a%': { type: 'object', not: { required: ['x'] } } } };
+    const [outer, inner] = ids;
+    const resource = inner
+      ? { $id: outer, definitions: { inner: { $id: inner, ...host } } }
+      : { $id: outer, ...host, definitions: { host } };
+    const schema = { type: 'object', definitions: { resource }, properties: { b: { $ref: reference } } };
+    const issues = await ajvValidatorPlugin.compile(schema as unknown as JSONSchema)({ b: { '이름 a%': { x: 1 } } });
+    expect(issues?.find((issue) => issue.keyword === 'not')).toMatchObject({ dataPath: '/b/이름 a%', rejectedKey: 'x' });
+  });
+
+  it.each([
+    ['without $id', {}],
+    ['with $id', { $id: 'http://example.com/review/mutated.json' }],
+  ])('reports the rejected key the compiled schema enforced after the caller mutates the schema (%s)', async (_, id) => {
+    ajvValidatorPlugin.bind!(new Ajv({ allErrors: true }));
+    const schema = { ...id, type: 'object', not: { required: ['x'] } };
+    const validate = ajvValidatorPlugin.compile(schema as JSONSchema);
+    schema.not.required = ['y'];
+    expect((await validate({ x: 1 }))?.[0]).toMatchObject({ keyword: 'not', rejectedKey: 'x' });
+  });
+
+  it('control: classifies false schemas inside a resource with its own $id by their last segments', async () => {
     ajvValidatorPlugin.bind!(new Ajv({ allErrors: true }));
     const schema = {
       type: 'object',
