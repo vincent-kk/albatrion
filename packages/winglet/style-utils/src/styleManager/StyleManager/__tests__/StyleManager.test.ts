@@ -167,10 +167,9 @@ describe('StyleManager', () => {
       );
       vi.runAllTimers();
 
-      const styleContent = getAppliedStyles(manager);
-      const opens = styleContent.split('{').length - 1;
-      const closes = styleContent.split('}').length - 1;
-      expect(closes).toBe(opens);
+      expect(getAppliedStyles(manager)).toBe(
+        '@media (max-width:1px){.bounty-media .a{color:red}}.bounty-media .b{color:blue}',
+      );
     });
   });
 
