@@ -150,7 +150,9 @@ describe.skipIf(blocker !== null)(
       expect(readFileSync(victim, 'utf-8')).toBe('keep\n');
       expect(readFileSync(join(deep, 'victim.md'), 'utf-8')).toBe('keep\n');
       expect(lstatSync(join(namespace, 'old.md')).isSymbolicLink()).toBe(true);
-      expect(lstatSync(join(namespace, 'knowledge')).isSymbolicLink()).toBe(true);
+      expect(lstatSync(join(namespace, 'knowledge')).isSymbolicLink()).toBe(
+        true,
+      );
     });
 
     // Control: a link that stays inside the project is allowed, as it is for

@@ -3,11 +3,14 @@ import {
   type AgentType,
   type AssetKind,
   type InjectReport,
+  type ResolvedLocations,
   type Scope,
   applyAction,
   applyBlockActions,
   assertDestinationRootsContained,
+  assertWriteTargetsContained,
   buildPlan,
+  collectFileWrites,
   computeNamespacePrefixes,
   partitionActions,
   resolveAgentTarget,
@@ -73,6 +76,8 @@ export async function renderJSON(
 ): Promise<number> {
   const dryRun = Boolean(flags.dryRun);
   const generatedAt = new Date().toISOString();
+  // Destination directories repeat across units; resolve each once per run.
+  const resolved: ResolvedLocations = new Map();
   const scope = parseScopeFlag(flags.scope);
   const agents = parseAgentFlag(flags.agent ?? [], false);
   const assets = parseAssetFlag(flags.asset ?? []);
@@ -99,6 +104,7 @@ export async function renderJSON(
         flags,
         originCwd,
         generatedAt,
+        resolved,
       );
       units.push(unit);
       if (unit.error) exitCode = 1;
@@ -118,6 +124,7 @@ async function runUnit(
   flags: DefaultFlags,
   originCwd: string,
   generatedAt: string,
+  resolved: ResolvedLocations,
 ): Promise<JSONUnit> {
   const agentTarget = resolveAgentTarget(agent, scope, originCwd);
   const base = {
@@ -148,6 +155,11 @@ async function runUnit(
       destinations,
       orphanScans,
       force,
+    });
+    await assertWriteTargetsContained({
+      agentTarget,
+      dstPaths: collectFileWrites(plan),
+      resolved,
     });
 
     const blocked = plan.requiresForce && !force;

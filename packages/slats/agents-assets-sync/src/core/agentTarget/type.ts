@@ -53,3 +53,17 @@ export type OrphanScan =
       /** Only blocks owned by this package are this scan's business. */
       readonly ownerPackage: string;
     };
+
+/** Where a path lands once symbolic links are followed. */
+export interface ResolvedLocation {
+  /** Real location; `null` for a dangling link, which a write would follow. */
+  readonly real: string | null;
+  /** Whether the path itself exists; a missing one is placed under its parent's real location. */
+  readonly exists: boolean;
+}
+
+/**
+ * Per-run cache of resolved destination paths, keyed by absolute path, so a
+ * directory shared by many files or units is resolved once per run.
+ */
+export type ResolvedLocations = Map<string, ResolvedLocation>;

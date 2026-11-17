@@ -1,4 +1,5 @@
 export { buildPlan } from './buildPlan.js';
+export { collectFileWrites } from './utils/collectFileWrites.js';
 export type {
   Action,
   ActionKind,

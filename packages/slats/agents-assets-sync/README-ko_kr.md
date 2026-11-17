@@ -224,7 +224,7 @@ asset 루트 하위의 모든 파일은 해시되어 `dist/agents-hashes.json` �
 
 - TTY 에서의 `--force`: `@inquirer/prompts.confirm` 으로 대화형 확인, 발산/고아 경로 최대 3개 표시.
 - 비-TTY 에서의 `--force`: 덮어쓰거나 삭제할 발산/고아 경로를 stderr 로 출력한 뒤 진행. 고아 삭제만 있는 실행도 똑같이 확인하고 출력합니다.
-- `--scope=project` 에서는 목적지 루트(`.claude/skills`, `.claude/rules`, `.claude/commands`, `.agents/skills`, `AGENTS.md`)나 스킬 디렉터리가 심볼릭 링크를 통해 프로젝트 밖으로 해석되면 그 경로를 명시하고 거부하며, 그곳에는 아무것도 쓰거나 지우지 않습니다. 저장소는 심볼릭 링크를 커밋할 수 있어서, 받아 온 프로젝트가 쓰기와 `--force` 삭제를 아무 곳으로나 돌릴 수 있기 때문입니다. `--scope=user` 는 이런 링크를 그대로 따릅니다. `~/.claude` 를 dotfiles 저장소로 링크하는 것은 의도된 구성입니다.
+- `--scope=project` 에서는 심볼릭 링크를 통해 프로젝트 밖으로 해석되는 목적지를 그 경로를 명시하고 거부하며, 그곳에는 아무것도 쓰거나 지우지 않습니다. 목적지 루트(`.claude/skills`, `.claude/rules`, `.claude/commands`, `.agents/skills`, `AGENTS.md`), 각 스킬 디렉터리, 그리고 실행이 쓰는 그 아래의 모든 디렉터리와 파일이 대상입니다. 프로젝트 안을 가리키는 링크는 따라가며, `--force` 는 링크를 통해 지우지 않습니다. 저장소는 심볼릭 링크를 커밋할 수 있어서, 받아 온 프로젝트가 쓰기와 `--force` 삭제를 아무 곳으로나 돌릴 수 있기 때문입니다. `--scope=user` 는 이런 링크를 그대로 따릅니다. `~/.claude` 를 dotfiles 저장소로 링크하는 것은 의도된 구성입니다.
 
 ## 아키텍처 불변식
 

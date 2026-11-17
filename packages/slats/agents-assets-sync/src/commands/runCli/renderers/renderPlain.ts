@@ -5,11 +5,14 @@ import {
   type AssetKind,
   type InjectPlan,
   type InjectReport,
+  type ResolvedLocations,
   type Scope,
   applyAction,
   applyBlockActions,
   assertDestinationRootsContained,
+  assertWriteTargetsContained,
   buildPlan,
+  collectFileWrites,
   computeNamespacePrefixes,
   partitionActions,
   resolveAgentTarget,
@@ -52,6 +55,8 @@ export async function renderPlain(
   // One stamp for the whole run: a computed manifest records when the run
   // looked, not when each unit happened to reach the hasher.
   const generatedAt = new Date().toISOString();
+  // Destination directories repeat across units; resolve each once per run.
+  const resolved: ResolvedLocations = new Map();
 
   const scope = resolveScopeFlag(flags.scope);
   const agents = resolveAgentFlag(flags.agent ?? [], false);
@@ -73,6 +78,7 @@ export async function renderPlain(
           flags,
           originCwd,
           generatedAt,
+          resolved,
         );
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
@@ -98,6 +104,7 @@ async function renderOneUnit(
   flags: DefaultFlags,
   originCwd: string,
   generatedAt: string,
+  resolved: ResolvedLocations,
 ): Promise<number> {
   const manifest = await resolveHashManifest(target, generatedAt);
   const agentTarget = resolveAgentTarget(agent, scope, originCwd);
@@ -119,6 +126,11 @@ async function renderOneUnit(
     destinations,
     orphanScans,
     force,
+  });
+  await assertWriteTargetsContained({
+    agentTarget,
+    dstPaths: collectFileWrites(plan),
+    resolved,
   });
 
   logger.info(`${target.name}@${target.version} → ${agentTarget.description}`);

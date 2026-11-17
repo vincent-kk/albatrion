@@ -24,6 +24,7 @@
 - `PlanInput` — `{ sourceHashes, destinations, orphanScans, force }`
   - `destinations` 에 없는 `sourceHashes` 키는 무시된다
 - `InjectPlan` — `{ actions: readonly Action[]; requiresForce: boolean }`
+- `collectFileWrites(plan: InjectPlan): string[]` — `copy` 와 `warn-diverged` 파일 액션의 목적지 경로. 렌더러가 적용 전 쓰기 대상 검사(`agentTarget` 의 `assertWriteTargetsContained`)에 넘긴다. 삭제와 블록 쓰기는 빠진다.
 
 ## Exported Types
 

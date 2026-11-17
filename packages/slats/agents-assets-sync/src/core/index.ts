@@ -22,6 +22,7 @@ export {
 } from './injectDocs/index.js';
 export {
   buildPlan,
+  collectFileWrites,
   type Action,
   type ActionKind,
   type ActionTarget,
@@ -30,6 +31,7 @@ export {
 } from './buildPlan/index.js';
 export {
   assertDestinationRootsContained,
+  assertWriteTargetsContained,
   isValidAgent,
   resolveAgentTarget,
   resolveDestinations,
@@ -39,6 +41,7 @@ export {
   type AssetKind,
   type Destination,
   type OrphanScan,
+  type ResolvedLocations,
 } from './agentTarget/index.js';
 export {
   MARKER_PREFIX,
