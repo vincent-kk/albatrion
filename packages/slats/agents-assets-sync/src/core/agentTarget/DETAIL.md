@@ -13,6 +13,7 @@
 - `rules` kind 이면서 `rulesMergeFile` 이 있으면 목적지는 `block` 이고 blockId 는 `formatBlockId(packageName, relPath)` 다.
 - 첫 세그먼트가 `.` 으로 시작하는 skill 디렉터리는 `Error` 로 거부한다. 그 네임스페이스는 agent 자신의 예약 공간이다 (Codex 는 built-in 을 스킬 디렉터리 아래의 `.system` 구획 에 둔다).
 - kind 뒤의 경로나 스킬 네임스페이스 접두사에 `..` 세그먼트가 하나라도 있으면 (`/` 와 `\` 어느 구분자든) `Error` 로 거부한다. 매니페스트 키는 배포된 `agents-hashes.json` 이나 공개 API 호출자에게서 오는 신뢰할 수 없는 입력이고, `join` 이 그런 세그먼트를 정규화하면 목적지가 kind 루트 밖이 되어 쓰기나 `--force` 삭제가 사용자의 다른 파일에 닿기 때문이다. 이름에 점이 들어 있을 뿐인 세그먼트(`a..b`)는 허용한다.
+- kind 는 첫 `/` 세그먼트에서 읽으므로 `/` 가 없는 역슬래시 키나 `C:/…` 같은 드라이브 문자 키는 목적지를 얻지 못하고 오류도 내지 않는다. 목적지를 얻은 키를 Windows 의 `path.win32.join` 이 루트 밖으로 해석하는지는 검증하지 않은 한계다. 경로 모듈을 주입할 수 없고 이 저장소의 CI 는 Windows 에서 돌지 않기 때문이다.
 - orphan 스캔은 호출자가 요청한 kind 에 대해서만 만들어진다. `skills` 는 네임스페이스별 디렉터리 스캔, `rules` 는 소유 패키지를 명시한 block-file 스캔이다.
 - 이 fractal 은 경로를 계산할 뿐 asset 파일을 만들거나 읽거나 쓰지 않는다.
 

@@ -40,6 +40,18 @@ describe('core/agentTarget — destinations stay inside their kind root', () => 
     },
   );
 
+  // Control: these keys never reach a destination because the kind is read
+  // from the first `/` segment, so no platform's `join` ever sees them. How
+  // `path.win32.join` treats a key that does reach it is not verified here.
+  it.each([
+    'skills\\pp\\..\\..\\..\\escaped.md',
+    'C:/Windows/Temp/evil.md',
+    'C:\\Windows\\Temp\\evil.md',
+  ])('control: gives %s no destination and does not throw', (relPath) => {
+    const { destinations } = resolve([relPath]);
+    expect(destinations.size).toBe(0);
+  });
+
   // Control: passes with or without the containment check; it fails only if
   // the check grows wide enough to refuse ordinary names.
   it('control: keeps a name that merely contains dots', () => {
