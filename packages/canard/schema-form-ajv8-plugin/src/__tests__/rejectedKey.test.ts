@@ -1,12 +1,13 @@
 import type { JSONSchema } from '@canard/schema-form';
 import { describe, expect, it } from 'vitest';
 
+import { plugin as plugin2020 } from '../2020';
 import { plugin } from '../default';
 
 const validate = (schema: object, data: unknown) =>
   plugin.validator.compile(schema as unknown as JSONSchema)(data);
 
-describe('ValidationIssue.rejectedKey from the default entry', () => {
+describe('ValidationIssue.rejectedKey', () => {
   it('does not fabricate a rejected key from the root required list for a not-required inside a nested $id resource', async () => {
     const schema = {
       type: 'object',
@@ -44,6 +45,27 @@ describe('ValidationIssue.rejectedKey from the default entry', () => {
     const falseIssue = issues?.find((issue) => issue.keyword === 'false schema');
     expect(falseIssue).toMatchObject({ dataPath: '/name' });
     expect(falseIssue?.rejectedKey).toBeUndefined();
+  });
+
+  it.each([
+    ['allOf', { properties: { f: { allOf: [false] } } }, { f: 1 }, '/f'],
+    ['an inlined $ref target', { definitions: { never: false }, properties: { f: { $ref: '#/definitions/never' } } }, { f: 1 }, '/f'],
+  ])('keeps a false schema reached through %s on the value', async (_, schema, data, dataPath) => {
+    const issues = await validate({ type: 'object', ...schema }, data);
+    const falseIssue = issues?.find((issue) => issue.keyword === 'false schema');
+    expect(falseIssue).toMatchObject({ dataPath });
+    expect(falseIssue?.rejectedKey).toBeUndefined();
+  });
+
+  it.each([
+    ['properties', plugin, { properties: { x: false } }, { x: 1 }, '', 'x'],
+    ['patternProperties', plugin, { patternProperties: { '^x': false } }, { xa: 1 }, '', 'xa'],
+    ['a single items schema', plugin, { properties: { a: { type: 'array', items: false } } }, { a: [1] }, '/a', '0'],
+    ['a tuple items entry', plugin, { properties: { a: { type: 'array', items: [false], minItems: 1, additionalItems: false } } }, { a: [1] }, '/a', '0'],
+    ['a prefixItems entry', plugin2020, { properties: { a: { type: 'array', prefixItems: [false], minItems: 1, items: false } } }, { a: [1] }, '/a', '0'],
+  ])('rejects the child key of a false schema under %s', async (_, entry, schema, data, dataPath, rejectedKey) => {
+    const issues = await entry.validator.compile({ type: 'object', ...schema } as unknown as JSONSchema)(data);
+    expect(issues?.find((issue) => issue.keyword === 'false schema')).toMatchObject({ dataPath, rejectedKey });
   });
 
   it('reports not-required rejected key under a property whose name needs URI encoding', async () => {
