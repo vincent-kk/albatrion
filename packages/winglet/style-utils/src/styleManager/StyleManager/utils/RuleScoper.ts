@@ -39,7 +39,8 @@ const OPAQUE_START = /["'\\]|\/\*/g;
  */
 export class RuleScoper {
   private readonly __css__: string;
-  private readonly __scope__: string;
+  /** Scope selector followed by one space, built once for every prefixed selector. */
+  private readonly __prefix__: string;
   /** Where the last `__scopeRuleList__` call stopped: past its `}`, or `-1` at an unterminated end. */
   private __end__ = 0;
   private __open__ = -1;
@@ -54,7 +55,7 @@ export class RuleScoper {
    */
   constructor(css: string, scope: string) {
     this.__css__ = css;
-    this.__scope__ = scope;
+    this.__prefix__ = scope + ' ';
   }
 
   /**
@@ -141,8 +142,8 @@ export class RuleScoper {
         }
         result +=
           (comma < stop
-            ? prefixSelectorList(css, cursor, stop, this.__scope__)
-            : prefixSelector(prelude, this.__scope__)) +
+            ? prefixSelectorList(css, cursor, stop, this.__prefix__)
+            : prefixSelector(prelude, this.__prefix__)) +
           css.slice(stop, close + 1);
       }
       cursor = close + 1;

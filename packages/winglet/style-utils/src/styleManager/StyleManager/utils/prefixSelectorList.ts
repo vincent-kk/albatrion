@@ -19,7 +19,7 @@ const NESTING_CHARACTER = /[("'\\/]/;
  * @param css - Stylesheet text
  * @param start - Index where the selector list starts
  * @param end - Index of the `{` that ends it
- * @param scope - Scope selector to prefix, such as `.my-widget`
+ * @param prefix - Scope selector followed by one space, such as `'.my-widget '`
  * @returns The list joined by `,`, each selector trimmed and passed through
  * `prefixSelector`. The list splits only at top-level commas: commas inside
  * parentheses, strings, comments or after a backslash belong to one selector.
@@ -28,7 +28,7 @@ export const prefixSelectorList = (
   css: string,
   start: number,
   end: number,
-  scope: string,
+  prefix: string,
 ): string => {
   let result = '';
   let partStart = start;
@@ -37,8 +37,11 @@ export const prefixSelectorList = (
     for (;;) {
       const comma = css.indexOf(',', partStart);
       if (comma === -1 || comma >= end)
-        return result + prefixSelector(css.slice(partStart, end).trim(), scope);
-      result += prefixSelector(css.slice(partStart, comma).trim(), scope) + ',';
+        return (
+          result + prefixSelector(css.slice(partStart, end).trim(), prefix)
+        );
+      result +=
+        prefixSelector(css.slice(partStart, comma).trim(), prefix) + ',';
       partStart = comma + 1;
     }
   }
@@ -49,7 +52,8 @@ export const prefixSelectorList = (
     if (code > SLASH && code !== BACKSLASH) continue;
     if (code === COMMA) {
       if (depth !== 0) continue;
-      result += prefixSelector(css.slice(partStart, index).trim(), scope) + ',';
+      result +=
+        prefixSelector(css.slice(partStart, index).trim(), prefix) + ',';
       partStart = index + 1;
     } else if (code === L_PAREN) {
       // Only `url(` can make a parenthesis opaque, and it ends in `l`.
@@ -65,5 +69,5 @@ export const prefixSelectorList = (
       if (next > index) index = next - 1;
     }
   }
-  return result + prefixSelector(css.slice(partStart, end).trim(), scope);
+  return result + prefixSelector(css.slice(partStart, end).trim(), prefix);
 };
