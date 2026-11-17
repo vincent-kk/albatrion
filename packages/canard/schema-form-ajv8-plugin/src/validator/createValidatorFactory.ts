@@ -2,6 +2,7 @@ import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
 import type { Ajv } from 'ajv';
 
 import { registerSchemaRoot, type SchemaRootRegistry } from './utils/registerSchemaRoot';
+import { createRootPathRewriter } from './utils/createRootPathRewriter';
 import { createSchemaRootRegistry } from './utils/createSchemaRootRegistry';
 import { registerValidationRoot } from './utils/registerValidationRoot';
 import { transformErrors } from './utils/transformErrors';
@@ -23,14 +24,14 @@ export const createValidatorFactory = (ajv: Ajv, registry?: SchemaRootRegistry) 
     const validate = registration.validationAjv.compile(transient);
     registration.validationAjv.removeSchema(transient);
     // AJV reports paths of an inlined `$ref` under the reference string, so the root's key stands in for `#`.
-    const rootReference = registration.validationCopy ? `${registration.key}/` : undefined;
+    const toAuthoredPath = registration.validationCopy ? createRootPathRewriter(`${registration.key}/`) : undefined;
     return async (data) => {
       try {
         await validate(data);
         return null;
       } catch (thrown: unknown) {
         if (thrown instanceof Error && 'errors' in thrown && Array.isArray(thrown.errors))
-          return transformErrors(thrown.errors, jsonSchema, rootReference);
+          return transformErrors(thrown.errors, jsonSchema, toAuthoredPath);
         throw thrown;
       }
     };
