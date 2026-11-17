@@ -16,7 +16,9 @@ const schemaAtPath = (root: unknown, path: string): unknown => {
   for (const part of path.slice(2).split('/')) {
     if (typeof current !== 'object' || current === null) return undefined;
     const segment = part.includes('%') ? decodeURIComponent(part) : part;
-    current = (current as Dictionary<unknown>)[segment.replace(/~1/g, '/').replace(/~0/g, '~')];
+    current = (current as Dictionary<unknown>)[
+      segment.includes('~') ? segment.replace(/~1/g, '/').replace(/~0/g, '~') : segment
+    ];
   }
   return current;
 };
@@ -31,9 +33,11 @@ const CHILD_SCHEMA_MAPS = ['properties', 'patternProperties', 'items', 'prefixIt
  *   applicator such as `then`, `allOf/0` or an inlined `$ref` target, where the value is rejected.
  */
 const isChildSchemaPath = (schemaPath: string): boolean => {
-  const segments = schemaPath.split('/');
-  const last = segments.at(-1) === 'false schema' ? segments.length - 2 : segments.length - 1;
-  return segments[last] === 'items' || CHILD_SCHEMA_MAPS.includes(segments[last - 1]);
+  const end = schemaPath.endsWith('/false schema') ? schemaPath.length - 13 : schemaPath.length;
+  const nameStart = schemaPath.lastIndexOf('/', end - 1) + 1;
+  if (schemaPath.slice(nameStart, end) === 'items') return true;
+  const keywordStart = schemaPath.lastIndexOf('/', nameStart - 2) + 1;
+  return CHILD_SCHEMA_MAPS.includes(schemaPath.slice(keywordStart, nameStart - 1));
 };
 
 /**
@@ -52,8 +56,10 @@ export const getRejectedKey = (error: ErrorObject, schemaPath: string, root: unk
   }
   if (error.keyword === 'propertyNames')
     return typeof error.params.propertyName === 'string' ? error.params.propertyName : undefined;
-  if (error.keyword === 'false schema' && error.instancePath && isChildSchemaPath(schemaPath))
-    return error.instancePath?.split('/').at(-1)?.replace(/~1/g, '/').replace(/~0/g, '~');
+  if (error.keyword === 'false schema' && error.instancePath && isChildSchemaPath(schemaPath)) {
+    const name = error.instancePath.slice(error.instancePath.lastIndexOf('/') + 1);
+    return name.includes('~') ? name.replace(/~1/g, '/').replace(/~0/g, '~') : name;
+  }
   if (error.keyword !== 'not') return undefined;
   const schema = schemaAtPath(root, schemaPath);
   if (typeof schema !== 'object' || schema === null) return undefined;

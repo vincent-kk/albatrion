@@ -68,6 +68,18 @@ describe('ValidationIssue.rejectedKey', () => {
     expect(issues?.find((issue) => issue.keyword === 'false schema')).toMatchObject({ dataPath, rejectedKey });
   });
 
+  it('unescapes JSON Pointer segments of property names that contain a slash or a tilde', async () => {
+    const schema = {
+      type: 'object',
+      properties: { 'a/b~c': { type: 'object', not: { required: ['x'] } }, 'd/e~f': false },
+    };
+    const issues = await validate(schema, { 'a/b~c': { x: 1 }, 'd/e~f': 1 });
+    expect(issues?.map((issue) => [issue.keyword, issue.dataPath, issue.rejectedKey])).toEqual([
+      ['not', '/a~1b~0c', 'x'],
+      ['false schema', '', 'd/e~f'],
+    ]);
+  });
+
   it('reports not-required rejected key under a property whose name needs URI encoding', async () => {
     const schema = {
       type: 'object',
