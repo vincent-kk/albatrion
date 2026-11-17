@@ -137,7 +137,8 @@ import { equalsRecursive } from './utils/equalsRecursive';
  * - All primitive types (string, number, boolean, null, undefined, symbol, bigint)
  * - Plain objects and arrays (deeply nested)
  * - Functions (reference equality only)
- * - Built-in objects like Date, RegExp (compared by reference)
+ * - Date, RegExp, Map, Set, ArrayBuffer, DataView and boxed primitives (compared by state)
+ * - Error (compared by `name` and `message`, then by own enumerable properties)
  *
  * **Function Selection Guide:**
  * ```typescript
@@ -213,7 +214,8 @@ import { equalsRecursive } from './utils/equalsRecursive';
  * **Limitations:**
  * - **Does not handle circular references** (causes stack overflow)
  * - Functions are compared by reference only, not by implementation
- * - Built-in objects (Date, RegExp, etc.) use reference equality
+ * - Set members and Map keys that are objects match by reference only
+ * - Typed arrays are compared by index value, so `0` and `-0` are equal
  * - Does not compare non-enumerable properties
  * - Symbol properties are not compared
  * - **Performance degrades** with very deep nesting (>50 levels)

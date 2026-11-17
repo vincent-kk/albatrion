@@ -281,7 +281,7 @@ const OBJECT_PROTOTYPE = Object.prototype;
  * **Supported Data Types:**
  * - **Primitives**: string, number, boolean, null, undefined, symbol, bigint
  * - **Objects**: Plain objects, arrays (including sparse), functions
- * - **Built-ins**: Date, RegExp, Error, Map, Set (reference equality)
+ * - **Built-ins**: Date, RegExp, Map, Set, boxed primitives and Error, compared by state
  * - **Binary Data**: ArrayBuffer, SharedArrayBuffer, TypedArrays, DataView
  * - **Custom Objects**: Objects with custom prototypes
  *
@@ -386,14 +386,6 @@ const stableEqualsRecursive = (
     // plain one both expose no own keys and would compare equal
     const tag = getTypeTag(left);
     if (tag !== getTypeTag(right)) return false;
-
-    if (tag === ARRAY_BUFFER_TAG)
-      return stableEqualsRecursive(
-        new Uint8Array(left as ArrayBufferLike),
-        new Uint8Array(right as ArrayBufferLike),
-        visited,
-        omits,
-      );
 
     if (ArrayBuffer.isView(left) && ArrayBuffer.isView(right)) {
       if (left.constructor !== right.constructor) return false;
