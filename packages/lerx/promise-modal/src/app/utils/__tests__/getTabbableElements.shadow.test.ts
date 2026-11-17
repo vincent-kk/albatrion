@@ -30,3 +30,28 @@ it('excludes shadow root controls under a hidden light ancestor', () => {
     getTabbableElements(buildFrame('hidden')).map((element) => element.id),
   ).toEqual(['light', 'after']);
 });
+
+it('keeps a shadow radio that shares a name with a light radio, since groups are per tree', () => {
+  const frame = document.createElement('div');
+  frame.innerHTML = '<input type="radio" name="g" id="light"><span id="host"></span>';
+  document.body.append(frame);
+  const root = frame.querySelector('#host')!.attachShadow({ mode: 'open' });
+  root.innerHTML = '<input type="radio" name="g" id="shadow">';
+  expect(getTabbableElements(frame).map((element) => element.id)).toEqual([
+    'light',
+    'shadow',
+  ]);
+});
+
+it('drops a light child of a shadow host that no slot renders', () => {
+  const frame = document.createElement('div');
+  frame.innerHTML =
+    '<button id="before">before</button><span id="host"><button id="ghost">ghost</button></span>';
+  document.body.append(frame);
+  const root = frame.querySelector('#host')!.attachShadow({ mode: 'open' });
+  root.innerHTML = '<button id="inner">inner</button>';
+  expect(getTabbableElements(frame).map((element) => element.id)).toEqual([
+    'before',
+    'inner',
+  ]);
+});
