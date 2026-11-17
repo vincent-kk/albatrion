@@ -23,6 +23,8 @@ The [validator plugin contract](../schema-form/src/app/plugin/DETAIL.md) owns th
 - Path normalization keeps allocation-free checks for already-normalized pointers and skips quote parsing for ordinary dot paths or a single unescaped quoted property; complex quoted paths retain the full decoder.
 - AJV6 dotted and single-quoted bracket paths are decoded using AJV6 string escapes, then escaped as JSON Pointer segments; a bound `jsonPointers: true` path is retained verbatim, including `/` for an empty-name child.
 - AJV6 reports `dataPath`; normalization converts it to JSON Pointer, appends missing required properties, preserves root `''` and carries rejected object keys separately. Treat these paths as plugin output, not a second routing policy.
+- A `false schema` issue rejects a key only at a `properties`, `patternProperties` or `items` position, judged by parsing the schema path from its resource root; reading only the last segments misroutes a field named `items` or `properties`. AJV6 starts a path inside another resource with the `$ref` string as written (`<id>/…` or `<id>#/…`), not `#`, so each validator collects its declared `$id`s once, longest first; a reference spelled differently from the authored `$id` falls back to the last two segments.
+- Rejected-key lookups read the schema AJV compiled (the transient clone, or the registered copy of a root with `$id`), never the caller's object, which may change after compile. Collection and lookups stay off the ordinary `#/` path's per-issue work.
 
 ## Declaration compatibility check
 
