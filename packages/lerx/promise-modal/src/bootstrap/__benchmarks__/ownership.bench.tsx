@@ -51,6 +51,8 @@ describe('ownership', () => {
       iterations: 100,
       warmupIterations: 10,
       setup: (task) => {
+        // Vitest 4.1.12 omits FnOptions when constructing Tinybench 2.9.0 tasks.
+        // Install per-iteration hooks here so setup and disposal are not timed.
         task.bench.throws = true;
         task.opts.beforeEach = () => {
           view = render(
@@ -66,6 +68,10 @@ describe('ownership', () => {
             </>,
           );
           confirmHandler({});
+          if (ModalManager.prerender.length !== 1)
+            throw new Error(
+              'Expected one queued request before owner handoff.',
+            );
         };
         task.opts.afterEach = () => {
           cleanup();
