@@ -3,7 +3,8 @@ import Ajv from 'ajv';
 
 import { collectSchemaResources } from './utils/schemaPath/collectSchemaResources';
 import { createChildSchemaPathTest } from './utils/schemaPath/createChildSchemaPathTest';
-import { isChildSchemaPath } from './utils/schemaPath/isChildSchemaPath';import { createNotRequiredKeyLookup } from './utils/schemaPath/createNotRequiredKeyLookup';
+import { createNotRequiredKeyLookup } from './utils/schemaPath/createNotRequiredKeyLookup';
+import { isChildSchemaPath } from './utils/schemaPath/isChildSchemaPath';
 import { transformDataPath } from './utils/transformDataPath';
 
 /**
