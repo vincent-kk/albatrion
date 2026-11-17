@@ -17,3 +17,13 @@ Use the Form callback to observe committed values. To take ownership of a write,
   )}
 </Form.Render>
 ```
+
+Form `readOnly` and `disabled` now also block input callbacks, not only the props they render. In 0.16 a field input's `onChange` checked only the field's own locks and `onFileAttach` checked none. Now, while the Form or the field is read-only or disabled, `onChange` and `onFileAttach` leave the value and the attached files unchanged, including relays through a hybrid parent's `<Child>` or a renderer's `<Input>`. Each call reads the lock the Form last committed: a delayed edit or attachment that arrives after locking is rejected, and one that arrives after unlocking, from the same live input, is applied. A child's layout effect that runs in the commit changing the lock already sees the new lock. Concurrent updates that have not committed keep the previous lock, while React 18 legacy roots can commit the new lock together with a Suspense fallback. Imperative writes such as `node.setValue` are not blocked, so use them when a locked Form must still change.
+
+```tsx
+// Before: a response that arrived while the Form was disabled was written.
+fetchSuggestion().then(onChange);
+
+// After: that onChange is ignored; write through the node to apply it anyway.
+fetchSuggestion().then((value) => node.setValue(value));
+```
