@@ -6,6 +6,7 @@ import type { Fn } from '@aileron/declare';
 import type { Batch, BatchLoader, DataLoaderOptions, MapLike } from './type';
 import {
   createBatch,
+  enqueueKey,
   failedDispatch,
   resolveCacheHits,
 } from './utils/dispatch';
@@ -423,21 +424,17 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
       );
     const batch = this.__acquireBatch__();
     const cacheMap = this.__cacheMap__;
-    const cacheKey = cacheMap ? this.__cacheKeyFn__(key) : null;
-    if (cacheMap && cacheKey) {
-      const cachedPromise = cacheMap.get(cacheKey);
-      if (cachedPromise) {
-        const cacheHits = batch.cacheHits || (batch.cacheHits = []);
-        return new Promise((resolve) =>
-          cacheHits.push(() => resolve(cachedPromise)),
-        );
-      }
+    if (cacheMap === null) return enqueueKey(batch, key);
+    const cacheKey = this.__cacheKeyFn__(key);
+    const cachedPromise = cacheMap.get(cacheKey);
+    if (cachedPromise) {
+      const cacheHits = batch.cacheHits || (batch.cacheHits = []);
+      return new Promise((resolve) =>
+        cacheHits.push(() => resolve(cachedPromise)),
+      );
     }
-    batch.keys.push(key);
-    const promise = new Promise<Value>((resolve, reject) =>
-      batch.promises.push({ resolve, reject }),
-    );
-    if (cacheMap && cacheKey) cacheMap.set(cacheKey, promise);
+    const promise = enqueueKey(batch, key);
+    cacheMap.set(cacheKey, promise);
     return promise;
   }
 
