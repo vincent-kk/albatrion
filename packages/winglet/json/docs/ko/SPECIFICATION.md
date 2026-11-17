@@ -134,9 +134,9 @@ function getValue<Output>(
 | `value`   | `object \| any[]`    | 원본 JSON 문서 (일반 객체 또는 배열)    |
 | `pointer` | `string \| string[]` | JSON Pointer 문자열 또는 참조 토큰 배열 |
 
-**반환값**: 지정된 위치의 값.
+**반환값**: 지정된 위치의 값. 위치가 없으면 `undefined`를 반환합니다. 일반 키는 own 속성 검사 없이 읽으므로 상속 멤버도 해석됩니다: `getValue({}, '/toString')`은 `Object.prototype.toString`을, `getValue({ a: [1] }, '/a/length')`는 `1`을 반환합니다. 예약 멤버 이름은 own 데이터로만 읽습니다([프로토타입 오염 방지](#프로토타입-오염-방지) 참고).
 
-**예외**: `INVALID_INPUT`, `INVALID_POINTER`, `PROPERTY_NOT_FOUND` 코드의 `JSONPointerError`.
+**예외**: `INVALID_INPUT` 또는 `INVALID_POINTER_TYPE` 코드의 `JSONPointerError`. 위치가 없는 것은 예외가 아닙니다.
 
 ```typescript
 import { getValue } from '@winglet/json/pointer-manipulator';
@@ -159,6 +159,9 @@ getValue(doc, ['store', 'books', '0']); // { title: 'RFC 6901', ... }
 const data = { 'a/b': 'slash', 'a~b': 'tilde' };
 getValue(data, '/a~1b'); // 'slash'
 getValue(data, '/a~0b'); // 'tilde'
+
+// 없는 위치
+getValue(doc, '/store/missing'); // undefined
 ```
 
 ### setValue
@@ -579,7 +582,7 @@ type ApplyPatchOptions = {
 
 ### 프로토타입 오염 방지
 
-예약 멤버 이름 `__proto__`, `constructor`, `prototype`은 불투명한 문자열, 즉 own 데이터 속성으로 처리됩니다 — RFC 6901/6902/7396이 멤버 이름을 규정하는 방식이며 `JSON.parse`가 이미 만들어내는 형태입니다. 읽기는 프로토타입 체인으로 넘어가지 않고(own이 아닌 예약 멤버는 `undefined`), 쓰기는 `__proto__` setter를 트리거하지 않는 own 데이터 속성을 만들며, 어떤 입력도 `Object.prototype` 등 상속 객체를 변경할 수 없습니다. 이 안전성은 구조적이어서 끌 수 있는 옵션이 존재하지 않습니다.
+예약 멤버 이름 `__proto__`, `constructor`, `prototype`은 불투명한 문자열, 즉 own 데이터 속성으로 처리됩니다 — RFC 6901/6902/7396이 멤버 이름을 규정하는 방식이며 `JSON.parse`가 이미 만들어내는 형태입니다. 이 이름들의 읽기는 프로토타입 체인으로 넘어가지 않고(own이 아닌 예약 멤버는 `undefined`), 쓰기는 `__proto__` setter를 트리거하지 않는 own 데이터 속성을 만들며, 어떤 입력도 `Object.prototype` 등 상속 객체를 변경할 수 없습니다. 이 안전성은 구조적이어서 끌 수 있는 옵션이 존재하지 않습니다.
 
 ```typescript
 // own 데이터 속성 — 프로토타입 체인은 건드리지 않고, 에러도 없음
@@ -610,42 +613,25 @@ getValue(new Map(), '/path'); // INVALID_INPUT 예외
 
 ## 에러 처리
 
-```typescript
-import { JSONPointerError, isJSONPointerError } from '@winglet/json';
+`getValue`와 `setValue`는 `JSONPointerError`를, `applyPatch`는 `JSONPatchError`를 던집니다. 두 클래스와 타입 가드는 내보내지 않으므로, 에러는 `name`(`'JSONPointer'` 또는 `'JSONPatch'`)과 `specific`에 담긴 코드로 식별합니다. `code` 속성에는 `'JSON_POINTER.INVALID_INPUT'`처럼 네임스페이스가 붙은 형태가 담깁니다.
 
-class JSONPointerError extends Error {
-  code: 'INVALID_INPUT' | 'INVALID_POINTER' | 'PROPERTY_NOT_FOUND';
-  details: Record<string, unknown>;
-}
-```
+| 코드                   | 발생 조건                                                                                          |
+| ---------------------- | -------------------------------------------------------------------------------------------------- |
+| `INVALID_INPUT`        | 입력이 일반 객체 또는 배열이 아닌 경우                                                             |
+| `INVALID_POINTER_TYPE` | 포인터가 문자열이나 문자열·숫자 배열이 아니거나, 문자열 포인터가 `/` 또는 `#`로 시작하지 않는 경우 |
 
-| 코드                 | 발생 조건                              |
-| -------------------- | -------------------------------------- |
-| `INVALID_INPUT`      | 입력이 일반 객체 또는 배열이 아닌 경우 |
-| `INVALID_POINTER`    | 포인터 문법이 잘못된 경우              |
-| `PROPERTY_NOT_FOUND` | 경로가 문서에 존재하지 않는 경우       |
+위치가 없는 것은 에러가 아닙니다: `getValue`는 `undefined`를 반환합니다.
 
 ```typescript
-import { JSONPointerError, getValue } from '@winglet/json';
+import { getValue } from '@winglet/json';
+
+getValue({}, '/missing'); // undefined
 
 try {
-  getValue({}, '/missing');
+  getValue(new Map(), '/a');
 } catch (e) {
-  if (e instanceof JSONPointerError) {
-    console.log(e.code); // 'PROPERTY_NOT_FOUND'
-    console.log(e.details); // { pointer: '/missing', ... }
-  }
-}
-
-// 타입 가드 활용
-function safeGet<T>(obj: object, ptr: string, fallback: T): T {
-  try {
-    return getValue(obj, ptr) as T;
-  } catch (e) {
-    if (isJSONPointerError(e) && e.code === 'PROPERTY_NOT_FOUND') {
-      return fallback;
-    }
-    throw e;
+  if (e instanceof Error && e.name === 'JSONPointer') {
+    console.log((e as Error & { specific: string }).specific); // 'INVALID_INPUT'
   }
 }
 ```

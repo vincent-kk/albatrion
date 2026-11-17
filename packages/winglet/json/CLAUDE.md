@@ -64,7 +64,7 @@ This is a TypeScript library implementing RFC 6901 (JSON Pointer) and RFC 6902 (
 
 **Security Features:**
 
-- Reserved member names (`__proto__`, `constructor`, `prototype`) are handled as opaque own data properties (RFC 6901/6902/7396-aligned) — reads never walk the prototype chain, writes never mutate inherited objects
+- Reserved member names (`__proto__`, `constructor`, `prototype`) are handled as opaque own data properties (RFC 6901/6902/7396-aligned) — reads of these names never walk the prototype chain, writes never mutate inherited objects; ordinary keys are read without an own-property check
 - Input validation for plain objects/arrays only
 - RFC-compliant escape sequence handling (`~0` for `~`, `~1` for `/`)
 
@@ -77,11 +77,10 @@ Most functions accept options objects with properties like:
 - `immutable: boolean` - Preserve original objects (default: true)
 
 **Error Handling:**
-Custom `JSONPointerError` class with structured error codes:
+Custom `JSONPointerError` class with structured error codes; a missing path is not an error (`getValue` returns `undefined`):
 
 - `INVALID_INPUT` - Invalid input types
-- `INVALID_POINTER` - Malformed pointer syntax
-- `PROPERTY_NOT_FOUND` - Non-existent paths
+- `INVALID_POINTER_TYPE` - Pointer of the wrong type or without a leading `/` or `#`
 
 **Type Safety:**
 Extensive TypeScript generics and type constraints using `Dictionary` and `Array<any>` types.
