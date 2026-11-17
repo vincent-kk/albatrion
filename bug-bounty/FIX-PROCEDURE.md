@@ -66,7 +66,8 @@
 
 ## 병합
 
-- CI가 통과하고 검토에 남은 지적이 없으면 지휘 세션이 병합합니다.
+- CI가 통과하고 검토에 남은 지적이 없으면 지휘 세션이 병합합니다. 검토 이후에 바뀐 부분이 있으면 그 부분을 확인한 뒤에, 속도가 확정되지 않은 항목이 있으면 조용한 시점에 다시 재서 확정한 뒤에 병합합니다.
+- 병합은 리베이스 병합(`gh pr merge --rebase`)으로 합니다. 저장소가 병합 커밋을 허용하지 않고, 스쿼시는 실패하는 테스트 커밋과 수정 커밋의 구분을 지웁니다.
 - 병합은 의존 순서를 따릅니다.
   1. `@slats/agents-assets-sync`, `@winglet/common-utils`, `@winglet/style-utils`
   2. `@winglet/json`, `@winglet/data-loader`, `@winglet/react-utils`
