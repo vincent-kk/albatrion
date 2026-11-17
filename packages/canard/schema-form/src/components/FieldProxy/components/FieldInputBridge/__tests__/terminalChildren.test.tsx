@@ -91,7 +91,7 @@ it.each([
     const warnings = () =>
       onError.mock.calls.filter(
         ([record]) =>
-          record.code === FormWarningCode.ChildNodeComponentsOnTerminal,
+          record.code === FormWarningCode.ChildFieldsReadOnTerminal,
       );
     await act(async () => {
       fireEvent.click(view.getByText('DR-15 read'));
@@ -208,7 +208,7 @@ it('DR-15 failed rebuild keeps the root and permits the next warning in the rene
   expect(
     onError.mock.calls.filter(
       ([record]) =>
-        record.code === FormWarningCode.ChildNodeComponentsOnTerminal,
+        record.code === FormWarningCode.ChildFieldsReadOnTerminal,
     ),
   ).toHaveLength(2);
 });
@@ -237,7 +237,7 @@ it('DR-15 preserves development warning delivery after unmount', async () => {
   expect(
     onError.mock.calls.filter(
       ([record]) =>
-        record.code === FormWarningCode.ChildNodeComponentsOnTerminal,
+        record.code === FormWarningCode.ChildFieldsReadOnTerminal,
     ),
   ).toHaveLength(1);
 });
@@ -325,7 +325,7 @@ it('ERROR-202 reports a terminal input first reading children in an event after 
   expect(
     onError.mock.calls.filter(
       ([record]) =>
-        record.code === 'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL',
+        record.code === 'SCHEMA_FORM_WARNING.CHILD_FIELDS_READ_ON_TERMINAL',
     ),
   ).toHaveLength(1);
   fireEvent.click(view.getByText('Read children'));
@@ -352,7 +352,7 @@ it('ERROR-202 reports a child layout read after the initial render', () => {
     />,
   );
   expect(onError.mock.calls.map(([record]) => record.code)).toEqual([
-    'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL',
+    'SCHEMA_FORM_WARNING.CHILD_FIELDS_READ_ON_TERMINAL',
   ]);
 });
 
@@ -381,7 +381,7 @@ it('ERROR-202 keeps the terminal empty list stable across a late render read', a
   });
   expect(lists[0]).toBe(lists[1]);
   expect(onError.mock.calls.map(([record]) => record.code)).toEqual([
-    'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL',
+    'SCHEMA_FORM_WARNING.CHILD_FIELDS_READ_ON_TERMINAL',
   ]);
 });
 
@@ -403,7 +403,7 @@ it('ERROR-202 reports the first terminal child read again after a retained-root 
   const warnings = () =>
     onError.mock.calls.filter(
       ([record]) =>
-        record.code === 'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL',
+        record.code === 'SCHEMA_FORM_WARNING.CHILD_FIELDS_READ_ON_TERMINAL',
     ).length;
   expect(warnings()).toBe(1);
   const root = ref.current!.node;

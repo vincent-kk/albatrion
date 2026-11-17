@@ -39,7 +39,7 @@ const UNDETECTED: TerminalChildren = Object.freeze([EMPTY_CHILDREN, () => {}]);
 /**
  * Detect terminal child-list reads; deferred warnings retain the read's load scope
  * and are dropped after the input's own root retires.
- * @param node - Live node whose terminal strategy has no child components.
+ * @param node - Live node whose terminal strategy has no child fields.
  * @returns A pair that stays the same object until the node or error reporter changes: a stable
  *          empty list (only development builds of an object or array made terminal by an inline
  *          input receive a read detector, round 180) and the commit marker that
@@ -80,8 +80,8 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
                 {
                   level: 'warning',
                   origin: 'render',
-                  code: FormWarningCode.ChildNodeComponentsOnTerminal,
-                  message: 'Terminal inputs have no child components',
+                  code: FormWarningCode.ChildFieldsReadOnTerminal,
+                  message: 'Terminal inputs have no child fields',
                   path: node.path,
                 },
                 scope,
@@ -97,8 +97,8 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
           reporter.report({
             level: 'warning',
             origin: 'render',
-            code: FormWarningCode.ChildNodeComponentsOnTerminal,
-            message: 'Terminal inputs have no child components',
+            code: FormWarningCode.ChildFieldsReadOnTerminal,
+            message: 'Terminal inputs have no child fields',
             path: node.path,
           });
       };
