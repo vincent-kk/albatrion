@@ -74,13 +74,13 @@ registerPlugin(plugin);
 
 - **역할**: 월 선택을 위한 DatePicker (월 모드)
 - **적용 조건**: `type`이 `"string"`이고 `format`이 `"month"`인 경우
-- **추가 사항**: MUI X DatePickers 사용, `presentation.FieldInputProps.minimum`과 `maximum`(YYYY-MM)으로 범위 제한 지원, YYYY-MM 형식
+- **추가 사항**: MUI X DatePickers 사용, `presentation.FieldInputProps.minimum`과 `maximum`(YYYY-MM)으로 범위 제한 지원(`2024-13`처럼 유효하지 않은 제한값은 무시), YYYY-MM 형식
 
 ### **[`FieldInputDate.tsx`](./src/fieldInputs/FieldInputDate.tsx)**
 
 - **역할**: 날짜 선택을 위한 DatePicker
 - **적용 조건**: `type`이 `"string"`이고 `format`이 `"date"`인 경우
-- **추가 사항**: MUI X DatePickers와 Dayjs 사용, `presentation.FieldInputProps.minimum`과 `maximum`(YYYY-MM-DD)으로 날짜 범위 제한 지원, YYYY-MM-DD 형식
+- **추가 사항**: MUI X DatePickers와 Dayjs 사용, `presentation.FieldInputProps.minimum`과 `maximum`(YYYY-MM-DD)으로 날짜 범위 제한 지원(`2024-02-31`처럼 유효하지 않은 제한값은 무시), YYYY-MM-DD 형식
 
 ### **[`FieldInputTime.tsx`](./src/fieldInputs/FieldInputTime.tsx)**
 
