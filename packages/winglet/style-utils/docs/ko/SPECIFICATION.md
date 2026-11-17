@@ -113,7 +113,7 @@ destroyScope('my-component'); // 스코프 전체 정리
 
 - **스코프별 싱글톤**: `StyleManager.get(scopeId, config)`는 (shadow root가 주어지면 그 단위로) 스코프당 공유 인스턴스를 반환합니다. 동일한 `scopeId`에 대한 여러 팩토리는 같은 스타일시트를 사용합니다.
 - **배칭 쓰기**: `add`와 `remove`는 dirty 플래그만 설정합니다. 단일 `requestAnimationFrame` flush에서 활성 규칙을 모두 결합해 `CSSStyleSheet.replaceSync`(또는 `<style>.textContent` 폴백)로 한 번에 씁니다.
-- **셀렉터 스코핑**: 셀렉터 목록을 최상위 쉼표로 나눈 각 셀렉터 앞에 `.scopeId `를 붙이며, 정확히 `:root` / `:host`인 셀렉터는 제외합니다. `@media`, `@supports`, `@container`, `@layer`, `@document`, `@starting-style` 안의 규칙도 같은 방식으로 스코핑하고, 그 밖의 at-rule(`@keyframes`, `@font-face`, `@import` 등)은 그대로 복사합니다. Shadow root 모드에서는 prefix를 전혀 추가하지 않습니다.
+- **셀렉터 스코핑**: 셀렉터 목록을 최상위 쉼표로 나눈 각 셀렉터 앞에 `.scopeId `를 붙이며, 정확히 `:root` / `:host`인 셀렉터는 제외합니다. `@media`, `@supports`, `@container`, `@layer`, `@scope`, `@document`, `@starting-style` 안의 규칙도 같은 방식으로 스코핑하고, 그 밖의 at-rule(`@keyframes`, `@font-face`, `@import` 등)은 그대로 복사합니다. 따옴표 문자열, 주석, 백슬래시 이스케이프 안의 중괄호·세미콜론·쉼표는 구조로 보지 않지만, 따옴표 없는 `url(…)` 안의 중괄호는 구조로 읽으므로 그런 URL은 따옴표로 감싸야 합니다. Shadow root 모드에서는 prefix를 전혀 추가하지 않습니다.
 - **듀얼 DOM 경로**: 모던 브라우저는 `adoptedStyleSheets`를 사용하고, 구형 환경에서는 `document.head`(또는 shadow 모드에서는 shadow root 안)에 `<style>` 요소를 추가합니다.
 
 ---
