@@ -120,7 +120,7 @@ Boolean and string switch inputs receive focus when clicked and participate in t
 
 ## Input Settings
 
-Per-input settings such as `lazy`, `marks` and `range` above go in `presentation.FieldInputProps`; the form spreads that object into the input's props.
+Per-input settings such as `lazy` and `marks` above go in `presentation.FieldInputProps`; the form spreads that object into the input's props.
 
 ```ts
 const jsonSchema = {
