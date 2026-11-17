@@ -152,6 +152,20 @@ describe('clone built-in types', () => {
     expect(Object.getPrototypeOf(cloned)).toBe(Object.getPrototypeOf(foreign));
   });
 
+  it('should clone an object that only forges a box tag as an ordinary instance', () => {
+    class Forged {
+      value = 1;
+      get [Symbol.toStringTag]() {
+        return 'Number';
+      }
+    }
+
+    const cloned = clone(new Forged());
+
+    expect(cloned).toBeInstanceOf(Forged);
+    expect(cloned.value).toBe(1);
+  });
+
   it('should clone an object built on a box prototype without a primitive value', () => {
     const original = Object.assign(Object.create(Number.prototype), { a: 1 });
 

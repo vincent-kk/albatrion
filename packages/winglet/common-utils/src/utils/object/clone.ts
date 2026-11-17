@@ -155,7 +155,7 @@ import { replicateBox } from './utils/clone/replicateBox';
  * **Supported Types:**
  * - **Primitives**: string, number, boolean, null, undefined, symbol, bigint
  * - **Objects**: Plain objects, arrays, functions (as-is)
- * - **Built-ins**: Date, RegExp, Map, Set, Error
+ * - **Built-ins**: Date, RegExp, Map, Set, Error (including `AggregateError`), boxed Number, String and Boolean from any realm
  * - **Binary Data**: ArrayBuffer, SharedArrayBuffer, TypedArrays, DataView
  * - **Web APIs**: File, Blob (when available)
  * - **Custom Objects**: Objects with custom prototypes
@@ -173,6 +173,12 @@ import { replicateBox } from './utils/clone/replicateBox';
  * - **Descriptor Respect**: Checks `writable` property descriptors before assignment
  * - **Prototype Chain**: Uses `Object.create(Object.getPrototypeOf(value))` to maintain inheritance
  * - **Type-Specific Cloning**: Specialized handlers for Date, RegExp, Map, Set, TypedArrays
+ *
+ * **Known Limits:**
+ * - What `clone` learns about a prototype chain (which inherited setters, getters and read-only
+ *   properties intercept assignment, and whether it is a boxed-primitive chain) is cached per
+ *   prototype at its first clone and never invalidated. A setter, getter or read-only property
+ *   added to that chain later is not seen: later clones assign that key, so an added setter runs.
  *
  * **Performance Considerations:**
  * - **Time Complexity**: O(n) where n is total number of properties/elements
