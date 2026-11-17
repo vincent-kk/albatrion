@@ -110,7 +110,7 @@ registerPlugin(plugin);
 
 - **역할**: 숫자 값을 슬라이더로 입력받기
 - **적용 조건**: `type`이 `"number"` 또는 `"integer"`이고 `inputType`이 `"slider"`인 경우
-- **추가 사항**: `minimum`, `maximum`, `multipleOf` 스키마 속성 지원, 지연 업데이트 옵션(`presentation.FieldInputProps.lazy`), 마크 표시 옵션, 값 라벨 자동 표시. 폼에 값이 없으면 첫 변경 전까지 thumb와 값 라벨이 숨겨지며, 키보드 포커스를 받은 thumb는 표시됩니다
+- **추가 사항**: `minimum`, `maximum`, `multipleOf` 스키마 속성 지원, 지연 업데이트 옵션(`presentation.FieldInputProps.lazy`), 마크 표시 옵션, 값 라벨 자동 표시. 폼에 값이 없으면 첫 변경 전까지 thumb와 값 라벨이 숨겨지며, 키보드 포커스를 받은 thumb는 표시됩니다. 이때 보조 기술에는 최솟값 대신 `Not set`을 알리며, `presentation.FieldInputProps.unsetValueText`로 문구를 바꿀 수 있습니다
 
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 
