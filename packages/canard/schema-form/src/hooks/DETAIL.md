@@ -44,7 +44,7 @@ ref 할당은 렌더를 만들지 않습니다. `formRef.current?.node`를 전�
 
 ### EVENT-044 — 제출 핸들 위임
 
-`useFormSubmit`은 현재 핸들의 submit을 호출하고 그 거부를 그대로 호출자에게 전달합니다. 훅이 검증·degraded 판정을 재구현하거나 거부를 삼키지 않습니다. 제출 차단과 native submit 보고는 [FormCore](../components/Form/components/FormCore/DETAIL.md)가 소유합니다. pending 구독은 연결 직후 현재 값을 검사하여 숨김 중 시작·완료를 따라잡습니다. 핸들이 없으면 제출은 undefined로 이행하며 pending도 undefined일 수 있습니다.
+`useFormSubmit`은 현재 핸들의 submit을 호출하고 그 거부를 그대로 호출자에게 전달합니다. 훅이 검증·degraded 판정을 재구현하거나 거부를 삼키지 않습니다. 제출 차단과 native submit 보고는 [FormCore](../components/Form/components/FormCore/DETAIL.md)가 소유합니다. pending 구독은 연결 직후 현재 값을 검사하여 숨김 중 시작·완료를 따라잡습니다. ref 대입은 렌더를 일으키지 않으므로, 훅을 쓰는 컴포넌트가 커밋될 때마다 구독한 submit이 ref의 현재 submit과 같은지 확인하고 다르면 새 submit에 다시 구독합니다. 훅보다 늦게 마운트되거나 key 교체·오류 복구로 다시 마운트된 Form의 pending을 놓치지 않기 위해서입니다. 이 확인은 훅 컴포넌트의 커밋에만 일어나므로, 그 컴포넌트가 다시 렌더되지 않는 채로 다른 곳에서 Form만 교체되면 다음 커밋까지 이전 submit을 따릅니다. 핸들이 없으면 제출은 undefined로 이행하며 pending도 undefined일 수 있습니다.
 
 ## Acceptance Criteria
 
