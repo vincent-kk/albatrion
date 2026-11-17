@@ -6,15 +6,15 @@ import type { ErrorObject } from 'ajv';
 /**
  * Normalize Ajv 6 paths and attach the key rejected by a constraint.
  * @param errors - AJV6 issues of one validation run.
- * @param isChildPath - Classifier of a `false schema` issue's schema path (see
- *   `createChildSchemaPathTest`); the default declares no `$id` resources.
+ * @param isChildPath - Classifier of a `false schema` issue's schema path: `isChildSchemaPath` for
+ *   a root without resources, which is the default, or `createChildSchemaPathTest` for one with them.
  * @param notRequiredKeyOf - Lookup from a `not` issue's schema path to the single name its schema
  *   requires (see `createNotRequiredKeyLookup`); without it `not` issues carry no rejected key.
  * @returns One issue per AJV6 issue, in order, with a JSON Pointer data path.
  */
 export const transformDataPath = (
   errors: ErrorObject[],
-  isChildPath: (schemaPath: string) => boolean = (schemaPath) => isChildSchemaPath(schemaPath, []),
+  isChildPath: (schemaPath: string) => boolean = isChildSchemaPath,
   notRequiredKeyOf?: (schemaPath: string) => string | undefined,
 ): ValidationIssue[] => {
   const result = new Array<ValidationIssue>(errors.length);
