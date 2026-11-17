@@ -95,6 +95,12 @@ describe('scopeRules', () => {
     );
   });
 
+  test('scopes the rules inside @scope', () => {
+    expect(scope('@scope (.a) { .b { color: red } } .c {}')).toBe(
+      '@scope (.a){.s .b{ color: red }}.s .c{}',
+    );
+  });
+
   test('drops a trailing rule without a matching brace', () => {
     expect(scope('.a{} @media (x) { .b{}')).toBe('.s .a{}');
   });
