@@ -133,7 +133,9 @@ export function blockBodyMatches(body: string, expected: Sha256Hex): boolean {
 function lfReadingMatches(body: string, expected: Sha256Hex): boolean {
   const lf = body.replace(/\r\n/g, '\n');
   if (hashEquals(hashContent(lf), expected)) return true;
-  return lf.endsWith('\n') && hashEquals(hashContent(lf.slice(0, -1)), expected);
+  return (
+    lf.endsWith('\n') && hashEquals(hashContent(lf.slice(0, -1)), expected)
+  );
 }
 
 // Scan for one block by exact identifier. Matching on the captured id rather
