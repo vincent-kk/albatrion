@@ -12,6 +12,7 @@
 - `resolveDestinations` 는 매니페스트 경로를 목적지로 사상한다. 선행 세그먼트가 알려진 kind 가 아니거나 호출자가 거른 kind 면 결과에서 **빠진다**. 이 부재가 kind 필터 실행이 아무것도 보고하거나 삭제하지 않게 막는 기제다.
 - `rules` kind 이면서 `rulesMergeFile` 이 있으면 목적지는 `block` 이고 blockId 는 `formatBlockId(packageName, relPath)` 다.
 - 첫 세그먼트가 `.` 으로 시작하는 skill 디렉터리는 `Error` 로 거부한다. 그 네임스페이스는 agent 자신의 예약 공간이다 (Codex 는 built-in 을 스킬 디렉터리 아래의 `.system` 구획 에 둔다).
+- kind 뒤의 경로나 스킬 네임스페이스 접두사에 `..` 세그먼트가 하나라도 있으면 (`/` 와 `\` 어느 구분자든) `Error` 로 거부한다. 매니페스트 키는 배포된 `agents-hashes.json` 이나 공개 API 호출자에게서 오는 신뢰할 수 없는 입력이고, `join` 이 그런 세그먼트를 정규화하면 목적지가 kind 루트 밖이 되어 쓰기나 `--force` 삭제가 사용자의 다른 파일에 닿기 때문이다. 이름에 점이 들어 있을 뿐인 세그먼트(`a..b`)는 허용한다.
 - orphan 스캔은 호출자가 요청한 kind 에 대해서만 만들어진다. `skills` 는 네임스페이스별 디렉터리 스캔, `rules` 는 소유 패키지를 명시한 block-file 스캔이다.
 - 이 fractal 은 경로를 계산할 뿐 asset 파일을 만들거나 읽거나 쓰지 않는다.
 
@@ -23,7 +24,7 @@
   - 선행 세그먼트가 알려진 kind 가 아니거나 뒤에 아무것도 없으면 `null`
 - `resolveDestinations(input): { destinations: Map<string, Destination>; orphanScans: OrphanScan[] }`
   - `input`: `{ agentTarget, packageName, relPaths, namespacePrefixes, assetKinds }`
-  - 예약 네임스페이스를 침범하는 skill 경로에서 throw
+  - 예약 네임스페이스를 침범하는 skill 경로, `..` 세그먼트를 가진 경로나 네임스페이스 접두사에서 throw
 
 ## Exported Types
 
@@ -56,6 +57,13 @@
 - rules 가 포함되면 `AGENTS.md` 에 대한 block-file orphan 스캔이 추가되고, 그 스캔은 소유 패키지를 명시한다.
 - 예약된 codex 네임스페이스를 가리는 skill 경로는 호출을 throw 시킨다.
 - 검증: `__tests__/agentTarget.test.ts`.
+
+### AC-TARGET-CONTAINMENT — 목적지는 kind 루트 밖으로 나가지 않는다
+
+- 모든 kind 에서 `..` 세그먼트를 가진 매니페스트 경로는 호출을 throw 시키고, 오류 메시지는 그 경로를 명시한다.
+- `..` 세그먼트를 가진 스킬 네임스페이스 접두사도 throw 시킨다. 그 접두사는 `--force` 가 지우는 고아 스캔 루트를 정하기 때문이다.
+- 점이 들어 있을 뿐인 이름은 그대로 목적지를 얻는다.
+- 검증: `__tests__/destinationContainment.test.ts`.
 
 ## Last Updated
 
