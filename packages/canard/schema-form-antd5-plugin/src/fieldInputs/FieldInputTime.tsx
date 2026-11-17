@@ -40,8 +40,7 @@ const FieldInputTime = ({
     <TimePicker
       id={path}
       name={name}
-      disabled={disabled}
-      readOnly={readOnly}
+      disabled={disabled || readOnly}
       format={'HH:mm'}
       defaultValue={initialValue}
       onChange={handleChange}
