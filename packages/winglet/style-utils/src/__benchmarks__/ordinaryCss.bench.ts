@@ -9,7 +9,7 @@ import { compressCss, styleManagerFactory } from '@/style-utils';
 const repeat = (make: (index: number) => string): string =>
   Array.from({ length: 200 }, (_, index) => make(index)).join('\n');
 
-/** promise-modal's background sheet: a real small sheet with no quotes or lists. */
+/** promise-modal's background sheet: a real small sheet of flat rules, the scoper's fast path. */
 const small = `
 .background-abc {
   display: none;
@@ -28,7 +28,7 @@ const small = `
 }
 `;
 
-/** Flat rules with comments, functions and every combinator. */
+/** Flat rules with comments, functions and every combinator; compressed, they take the fast path. */
 const large = repeat(
   (index) => `
 /* component ${index} */
@@ -65,7 +65,7 @@ const isLists = repeat(
     `.x${index}:is(.p, .q), a[title="t,${index}"], .y${index}:not(.r, .s) { color: red }`,
 );
 
-/** `@media` blocks whose inner rules are scoped. */
+/** `@media` blocks whose inner flat rules are scoped through the fast path. */
 const media = repeat(
   (index) =>
     `@media (min-width: ${index}px) { .m${index} { color: red } .n${index} > .o { margin: 0 } }`,
