@@ -51,15 +51,30 @@ describe('applyPatch array index syntax (RFC 6901 4)', () => {
   });
 
   // ~~ truncates to a 32-bit integer, so these indexes would wrap onto real elements
-  it.each([
+  const wrappingIndexPatches: Patch[] = [
     { op: Operation.REMOVE, path: '/a/4294967296' },
     { op: Operation.REMOVE, path: '/a/4294967295' },
     { op: Operation.ADD, path: '/a/4294967295', value: 9 },
     { op: Operation.REPLACE, path: '/a/1000000000', value: 9 },
     { op: Operation.MOVE, from: '/a/4294967296', path: '/b' },
-  ] as Patch[])('rejects an index longer than nine digits in %j', (patch) => {
-    expect(errorCodeOf(() => applyPatch({ a: [1, 2, 3] }, [patch]))).toBe(
-      'PATCH_ARRAY_INDEX_INVALID',
-    );
+  ];
+
+  it.each(wrappingIndexPatches)(
+    'rejects an index longer than nine digits in %j',
+    (patch) => {
+      expect(errorCodeOf(() => applyPatch({ a: [1, 2, 3] }, [patch]))).toBe(
+        'PATCH_ARRAY_INDEX_INVALID',
+      );
+    },
+  );
+
+  it('keeps nine-digit indexes on the bounds check', () => {
+    expect(
+      errorCodeOf(() =>
+        applyPatch({ a: [1] }, [
+          { op: Operation.REMOVE, path: '/a/999999999' },
+        ]),
+      ),
+    ).toBe('PATCH_ARRAY_INDEX_OUT_OF_BOUNDS');
   });
 });

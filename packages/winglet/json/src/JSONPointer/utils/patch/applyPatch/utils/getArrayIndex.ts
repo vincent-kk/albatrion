@@ -16,8 +16,13 @@ import { JSONPatchError } from './error';
  */
 export const getArrayIndex = (key: string, array: JSONArray): number => {
   if (key === '-') return array.length;
-  // RFC 6901 4: an index is "0" or digits without a leading zero
-  if (isArrayIndex(key) && (key.length === 1 || key.charCodeAt(0) !== 48))
+  // RFC 6901 4: an index is "0" or digits without a leading zero. ~~ truncates to 32
+  // bits, so more than nine digits would wrap onto a real element
+  if (
+    key.length < 10 &&
+    isArrayIndex(key) &&
+    (key.length === 1 || key.charCodeAt(0) !== 48)
+  )
     return ~~key;
   throw new JSONPatchError(
     'PATCH_ARRAY_INDEX_INVALID',
