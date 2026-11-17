@@ -32,6 +32,7 @@ A round finds defects that consumers would actually hit, proves each one with a 
 
 - Split the published packages into 8 to 12 hunter areas small enough for one hunter to probe deeply. Split `@canard/schema-form` into several areas (for example compile time and engine, React layer, validation with the AJV plugins), and split any area an earlier README lists under areas to revisit; group the small packages.
 - Give each hunter 4 to 6 angles by id from [references/angles.md](references/angles.md), at least 3 of them unused by earlier rounds in that area, plus the cross-package classes found so far as sibling targets.
+- When an area has fewer than 3 applicable angles left unused, first add angles to the catalog with the next free ids, derived from the previous round's cross-package classes; the round README names the added ids.
 - Lowering an area's priority means giving it fewer angles or sharing a hunter with a neighboring area; never drop a published package from the plan.
 - Write each area as one block: packages, modules to focus on, angle ids, and the earlier documents to read.
 
@@ -61,3 +62,12 @@ Write `bug-bounty/round-N/` as [references/report-format.md](references/report-f
 ## Cap and coverage
 
 Each hunter reports at most 20 findings, ranked by severity, and never pads its list to reach the cap; qualifying findings beyond the cap are listed one line each under Saturation. An area goes under "Areas to revisit" in the round README when its hunter reached the cap or its new angles produced a high or critical finding. It goes under "Areas to lower" when its new angles produced nothing at medium or above in two consecutive rounds.
+
+## Waves
+
+A wave is a run of consecutive rounds the user asks for together, such as rounds 3 to 5. Rounds alternate with fixing, as the round cycle in `bug-bounty/FIX-PROCEDURE.md` defines: a separate fix session fixes and merges a round's findings, then notifies this session with the new HEAD, and the next round runs at that HEAD.
+
+- Only the next round can be prepared ahead of time. It plans its areas after the previous round's `README.md` exists, because it reads that round's angles, classes, and areas to revisit.
+- A prepared round records "launch pending" in its progress note. At launch, refresh the base commit, the working-tree status, and the worktree list in the progress note and the brief.
+- Launch on the fix session's notice only when the user has approved that for the wave; otherwise tell the user the notice arrived and wait.
+- After step 6, send the fix session the round path and the files it may commit: everything under `bug-bounty/round-N/`, plus any change this round made to this skill or its angle catalog. The fix session commits and pushes them; stage nothing yourself, because both sessions share one git index.
