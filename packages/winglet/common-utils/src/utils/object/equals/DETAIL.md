@@ -18,7 +18,7 @@
 
 `stableEquals(left, right, omit?)`는 방문한 객체 쌍을 기록해 순환을 종료한다. 배열에서는 각 인덱스의 존재 여부도 비교하고, 객체에서는 `Reflect.ownKeys`로 얻는 문자열·심볼 키를 검사한다. 선택적 제외 키는 읽기 전용 배열로 받는다. 매우 깊은 비순환 입력은 여전히 재귀 호출 스택의 한도를 따른다.
 
-두 비교 정책은 Date의 시각, RegExp의 패턴과 플래그, Set의 구성원, Map의 키와 값, ArrayBuffer와 DataView가 가리키는 바이트, 박싱된 Number·String·Boolean의 원시값을 각각 검사한다. Set 구성원과 Map 키는 SameValueZero 기준으로 찾으므로 객체 키·구성원은 참조 동일성이 필요하고, Map 값은 선택한 정책으로 재귀 비교한다. Number 박스는 양쪽 NaN을 같게 본다. Error는 `name`과 `message`가 다르면 다르다고 판정하고, 같으면 선택한 정책의 키 비교를 이어 간다. `stack`, `cause`, `AggregateError`의 `errors`처럼 열거되지 않는 나머지 상태는 일반 비교가 관찰하지 않는다. 일반 비교의 typed array는 인덱스 값으로 비교하므로 `0`과 `-0`을 같게 보고, 안정 비교는 typed array의 바이트를 비교한다. 이 내장 상태 검사는 프로토타입이 `Object.prototype`이 아닌 피연산자에서만 실행되므로 일반 객체와 배열의 비교 비용을 늘리지 않는다.
+두 비교 정책은 Date의 시각, RegExp의 패턴과 플래그, Set의 구성원, Map의 키와 값, ArrayBuffer와 DataView가 가리키는 바이트, 박싱된 Number·String·Boolean의 원시값을 각각 검사한다. Set 구성원과 Map 키는 SameValueZero 기준으로 찾으므로 객체 키·구성원은 참조 동일성이 필요하고, Map 값은 선택한 정책으로 재귀 비교한다. Number 박스는 양쪽 NaN을 같게 본다. ArrayBuffer·DataView·박싱된 원시값은 바이트나 원시값이 다르면 다르다고 판정하고, 같으면 선택한 정책의 own 키 비교를 이어 간다. 그래서 같은 상태라도 own 속성(박스 하위 클래스의 필드 포함)이 다르면 다르다. Error도 `name`과 `message`가 다르면 다르다고 판정하고, 같으면 키 비교를 이어 간다. Date·RegExp·Map·Set은 상태 비교 결과로 판정을 끝내며 own 속성을 보지 않는다. 안정 비교는 DataView와 typed array를 자체 view 경로에서 바이트로만 비교하므로 그 own 속성을 보지 않는다. `stack`, `cause`, `AggregateError`의 `errors`처럼 열거되지 않는 나머지 상태는 일반 비교가 관찰하지 않는다. 일반 비교의 typed array는 인덱스 값으로 비교하므로 `0`과 `-0`을 같게 보고, 안정 비교는 typed array의 바이트를 비교한다. 이 내장 상태 검사는 프로토타입이 `Object.prototype`이 아닌 피연산자에서만 실행되므로 일반 객체와 배열의 비교 비용을 늘리지 않는다.
 
 제외 키가 있으면 두 객체 모두 제외 후 남은 키의 수를 비교한다. 내장 객체 상태 비교에는 선택한 재귀 비교 함수를 전달하여 두 정책이 같은 상태 규칙을 공유하면서 각자의 순환·키 관찰 정책을 유지한다.
 
@@ -39,7 +39,7 @@
 ### equals-builtins — 내장 상태 비교
 
 - Date와 RegExp는 내부 값을, Set은 구성원을, Map은 키와 재귀 비교한 값을 사용한다.
-- ArrayBuffer와 DataView는 바이트를, 박싱된 원시값은 원시값을, Error는 `name`과 `message`를 비교한 뒤 키 비교를 이어 간다.
+- ArrayBuffer와 DataView는 바이트를, 박싱된 원시값은 원시값을, Error는 `name`과 `message`를 비교하고, 상태가 같으면 own 키 비교를 이어 간다. 상태가 같아도 own 속성이 다르면 다르다.
 - Set의 객체 구성원과 Map의 객체 키는 참조 동일성이 있어야 일치한다.
 
 ### equals-omit — 제외 키 정책

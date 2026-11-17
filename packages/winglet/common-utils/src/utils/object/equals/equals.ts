@@ -137,7 +137,8 @@ import { equalsRecursive } from './utils/equalsRecursive';
  * - All primitive types (string, number, boolean, null, undefined, symbol, bigint)
  * - Plain objects and arrays (deeply nested)
  * - Functions (reference equality only)
- * - Date, RegExp, Map, Set, ArrayBuffer, DataView and boxed primitives (compared by state)
+ * - Date, RegExp, Map and Set (compared by state)
+ * - ArrayBuffer, DataView and boxed primitives (compared by state, then by own enumerable properties)
  * - Error (compared by `name` and `message`, then by own enumerable properties)
  *
  * **Function Selection Guide:**
