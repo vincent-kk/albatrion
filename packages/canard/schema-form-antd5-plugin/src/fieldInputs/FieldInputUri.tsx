@@ -125,15 +125,6 @@ const FieldInputUri = ({
     };
   }, [defaultValue, normalizedProtocols]);
 
-  // A stored scheme outside `protocols` stays selectable, so editing the path keeps it.
-  const protocolOptions = useMemo(
-    () =>
-      normalizedProtocols.includes(initialProtocol)
-        ? normalizedProtocols
-        : [initialProtocol, ...normalizedProtocols],
-    [initialProtocol, normalizedProtocols],
-  );
-
 
   useEffect(() => {
     setProtocol(initialProtocol);
@@ -164,6 +155,10 @@ const FieldInputUri = ({
   );
 
   const ProtocolDropdown = useMemo(() => {
+    // A stored scheme outside `protocols` stays selectable, so editing the path keeps it.
+    const protocolOptions = normalizedProtocols.includes(initialProtocol)
+      ? normalizedProtocols
+      : [initialProtocol, ...normalizedProtocols];
     return (
       <Select
         value={protocol}
@@ -177,7 +172,14 @@ const FieldInputUri = ({
         ))}
       </Select>
     );
-  }, [protocol, protocolOptions, disabled, readOnly, handleProtocolChange]);
+  }, [
+    protocol,
+    initialProtocol,
+    normalizedProtocols,
+    disabled,
+    readOnly,
+    handleProtocolChange,
+  ]);
 
   return (
     <Input
