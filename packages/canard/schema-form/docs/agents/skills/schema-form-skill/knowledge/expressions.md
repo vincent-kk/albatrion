@@ -18,6 +18,8 @@ conditionalField: {
 | `/abs/path` | Absolute from the form root                                                                                  |
 | `@.field`   | External data from the `context` prop                                                                        |
 
+Text inside a string literal is never a path: `../unit === "km /h"` compares with the text `km /h`, and `"a @ b"` stays text. Inside a template literal only the `${…}` placeholders are code, so `` `${../first} ${../last}` `` reads both fields. Comments (`// …`, `/* … */`) and regular expression literals are not code either, so `/km\/h/.test(../speed)` reads only `../speed`. A slash after a value is division: `(../price) / 100`. A regular expression literal that also reads as a whole absolute path, such as `/a/g`, is read as the path; write `new RegExp('a', 'g')` instead.
+
 Wildcards (`*`) are NOT valid in expressions. The most common expression bug is `/toggle` where `../toggle` was intended — see `troubleshooting.md`.
 
 ## active vs visible
