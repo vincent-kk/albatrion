@@ -52,6 +52,49 @@ it('publishes only on commit when presentation.FieldInputProps.lazy is true', as
   expect(ref.current!.getValue()).toBe(42);
 });
 
+it('stores a committed value equal to the minimum when the slider is unset', async () => {
+  const ref = createRef<FormHandle>();
+  render(
+    <Form
+      ref={ref}
+      fieldInputDefinitions={[FieldInputSliderDefinition]}
+      jsonSchema={{
+        type: 'number',
+        minimum: 10,
+        maximum: 20,
+        presentation: { inputType: 'slider' },
+      }}
+    />,
+  );
+  await act(async () => {});
+  expect(ref.current!.getValue()).toBeUndefined();
+  const props = received.props.at(-1)!;
+
+  // MUI skips onChange when the value stays at the minimum but still commits it.
+  await act(async () => props.onChangeCommitted!(new Event('mouseup'), 10));
+  expect(ref.current!.getValue()).toBe(10);
+});
+
+it('control: a commit does not write again when the slider holds a value and lazy is omitted', async () => {
+  const ref = createRef<FormHandle>();
+  render(
+    <Form
+      ref={ref}
+      fieldInputDefinitions={[FieldInputSliderDefinition]}
+      jsonSchema={{
+        type: 'number',
+        default: 0,
+        presentation: { inputType: 'slider' },
+      }}
+    />,
+  );
+  await act(async () => {});
+  const props = received.props.at(-1)!;
+
+  await act(async () => props.onChangeCommitted!(new Event('mouseup'), 42));
+  expect(ref.current!.getValue()).toBe(0);
+});
+
 it('publishes on every move when lazy is omitted', async () => {
   const ref = createRef<FormHandle>();
   render(
