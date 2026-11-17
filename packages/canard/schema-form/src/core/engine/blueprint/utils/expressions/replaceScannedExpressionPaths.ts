@@ -66,8 +66,9 @@ export const replaceScannedExpressionPaths = (
         JSON_POINTER_PATH_STICKY_REGEX.lastIndex = index;
         const path = JSON_POINTER_PATH_STICKY_REGEX.exec(expression);
         if (path !== null) {
-          output += expression.slice(copied, index) + replace(path[0]);
-          copied = index + path[0].length;
+          const text = braces.length ? cutAtOpenBrace(path[0]) : path[0];
+          output += expression.slice(copied, index) + replace(text);
+          copied = index + text.length;
           index = copied - 1;
           isAfterValue = true;
           continue;
@@ -78,4 +79,17 @@ export const replaceScannedExpressionPaths = (
     }
   }
   return copied ? output + expression.slice(copied) : expression;
+};
+
+/**
+ * Cut a path read inside a template placeholder at the first `}` it did not open, which closes an enclosing brace.
+ * @param path - Path match starting in placeholder code
+ * @returns The path up to that brace, or the whole path when every `}` closes a `{` of its own
+ */
+const cutAtOpenBrace = (path: string): string => {
+  let depth = 0;
+  for (let index = 0; index < path.length; index++)
+    if (path[index] === '{') depth++;
+    else if (path[index] === '}' && depth-- === 0) return path.slice(0, index);
+  return path;
 };
