@@ -44,6 +44,8 @@ const isChildSchemaPath = (schemaPath: string): boolean => {
  * @returns The property name, or undefined for host-only issues.
  */
 export const getRejectedKey = (error: ErrorObject, schemaPath: string, root: unknown): string | undefined => {
+  // AJV names the key on every issue raised inside `propertyNames`; the closing issue carries it in params.
+  if (typeof error.propertyName === 'string') return error.propertyName;
   if (error.keyword === 'additionalProperties' || error.keyword === 'unevaluatedProperties') {
     const property = error.params.additionalProperty ?? error.params.unevaluatedProperty;
     return typeof property === 'string' ? property : undefined;
