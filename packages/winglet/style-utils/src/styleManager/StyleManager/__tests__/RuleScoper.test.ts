@@ -78,6 +78,10 @@ describe('RuleScoper', () => {
       '@import url("https://example.com/a;b.css");.s .a{}',
     ],
     [
+      '@import url(http://x.com/a;b.css); .a{}',
+      '@import url(http://x.com/a;b.css);.s .a{}',
+    ],
+    [
       '@supports (content: ";") { .a { color: red } }',
       '@supports (content: ";"){.s .a{ color: red }}',
     ],
