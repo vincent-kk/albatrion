@@ -23,7 +23,7 @@ interface FieldInputSliderProps
   /**
    * Ignored: the schema type decides the shape. A numeric array schema renders a
    * range slider and a number schema renders a single thumb.
-   * @deprecated The slider no longer reads this setting.
+   * @deprecated Ignored. The schema type decides the shape.
    */
   range?: SliderProps['range'];
   /** Labeled stops on the track, from `presentation.FieldInputProps.marks`. */
