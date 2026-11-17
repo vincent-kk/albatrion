@@ -103,8 +103,9 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 ### AC-UI-FORCE-CONFIRM — 확인은 실행이 지우는 것까지 보여 준다
 
 - `--force` 실행이 고아 항목을 지우면 계획 단계는 그 경로를 `warn-orphan` 경고로 넘기고, `--yes` 가 없으면 확인 대화상자를 연다.
+- 대화상자의 수락 문구는 경고 종류로 정한다. 모두 고아면 `Yes, delete N path(s)`, 모두 갈라진 항목이면 `Yes, overwrite N path(s)`, 섞이면 `Yes, overwrite or delete N path(s)` 다. 삭제뿐인 계획에 덮어쓰기라고 답하게 하면 사용자는 지워질 파일을 승인한다는 사실을 놓친다.
 - `--dry-run` 은 `--force` 를 요구하는 계획에서도 실패 이벤트 없이 진행을 허락한다.
-- 검증: `__tests__/forceConfirm.test.tsx`.
+- 검증: `__tests__/forceConfirm.test.tsx`, `__tests__/confirmForceLabel.test.tsx`.
 
 
 ## Last Updated

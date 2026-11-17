@@ -32,8 +32,12 @@ export function ConfirmForce({
   const diverged = warnings.filter((w) => w.kind === 'warn-diverged').length;
   const orphans = warnings.filter((w) => w.kind === 'warn-orphan').length;
 
+  // The answer must name what accepting does: a deletion-only plan overwrites
+  // nothing, and an "overwrite" label would understate it.
+  const verb =
+    orphans === 0 ? 'overwrite' : diverged === 0 ? 'delete' : 'overwrite or delete';
   const items: Array<{ label: string; value: Choice }> = [
-    { label: `Yes, overwrite ${warnings.length} path(s)`, value: 'accept' },
+    { label: `Yes, ${verb} ${warnings.length} path(s)`, value: 'accept' },
     { label: 'No, cancel', value: 'cancel' },
   ];
   if (!showAll) {
