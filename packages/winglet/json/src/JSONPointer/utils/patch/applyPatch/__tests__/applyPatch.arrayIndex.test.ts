@@ -50,17 +50,18 @@ describe('applyPatch array index syntax (RFC 6901 4)', () => {
     ).toEqual({ a: [1, 2, 3, 4, 5, 6, 7, 8, 9, 11] });
   });
 
-  // ~~ truncates to a 32-bit integer, so these indexes would wrap onto real elements
+  // The largest array index is 4294967294 (2^32 - 2); a ~~ conversion of these keys
+  // would wrap onto real elements
   const wrappingIndexPatches: Patch[] = [
     { op: Operation.REMOVE, path: '/a/4294967296' },
     { op: Operation.REMOVE, path: '/a/4294967295' },
     { op: Operation.ADD, path: '/a/4294967295', value: 9 },
-    { op: Operation.REPLACE, path: '/a/1000000000', value: 9 },
+    { op: Operation.REMOVE, path: '/a/10000000000' },
     { op: Operation.MOVE, from: '/a/4294967296', path: '/b' },
   ];
 
   it.each(wrappingIndexPatches)(
-    'rejects an index longer than nine digits in %j',
+    'rejects an index past the largest array index in %j',
     (patch) => {
       expect(errorCodeOf(() => applyPatch({ a: [1, 2, 3] }, [patch]))).toBe(
         'PATCH_ARRAY_INDEX_INVALID',
@@ -68,13 +69,14 @@ describe('applyPatch array index syntax (RFC 6901 4)', () => {
     },
   );
 
-  it('keeps nine-digit indexes on the bounds check', () => {
-    expect(
-      errorCodeOf(() =>
-        applyPatch({ a: [1] }, [
-          { op: Operation.REMOVE, path: '/a/999999999' },
-        ]),
-      ),
-    ).toBe('PATCH_ARRAY_INDEX_OUT_OF_BOUNDS');
-  });
+  it.each(['/a/999999999', '/a/1000000000', '/a/4294967294'])(
+    'accepts %s as an index and checks it against the bounds',
+    (path) => {
+      expect(
+        errorCodeOf(() =>
+          applyPatch({ a: [1] }, [{ op: Operation.REMOVE, path }]),
+        ),
+      ).toBe('PATCH_ARRAY_INDEX_OUT_OF_BOUNDS');
+    },
+  );
 });
