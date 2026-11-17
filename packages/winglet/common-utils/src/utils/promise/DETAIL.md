@@ -4,7 +4,7 @@
 
 - `delay(ms?, { signal? })`는 지정한 ms 이후 resolve하는 Promise를 반환하고, `AbortSignal`로 취소하면 `AbortError`로 거부한다 — 호출 시점에 이미 abort된 signal은 타이머를 생성하지 않고 즉시 거부한다.
 - `timeout(ms?, { signal? })`은 정상 경로에서 항상 `TimeoutError`로 거부한다; 취소되면 `delay`가 던진 `AbortError`를 그대로 전파한다. 정상 resolve하는 경로는 없다.
-- `withTimeout(fn, ms, { signal? })`은 `fn()`과 `timeout(ms)`를 경주시켜 먼저 정착하는 쪽을 채택하고, 진 쪽의 타이머를 정리한다. `fn`이 동기적으로 throw하면 그 예외는 Promise 거부가 아니라 `withTimeout` 호출 자체의 동기 예외로 전파된다.
+- `withTimeout(fn, ms, { signal? })`은 `fn()`과 `timeout(ms)`를 경주시켜 먼저 정착하는 쪽을 채택하고, 진 쪽의 타이머를 정리한다. `fn`이 동기적으로 throw하면 그 예외는 Promise 거부가 아니라 `withTimeout` 호출 자체의 동기 예외로 전파된다. 호출 시점에 외부 `signal`이 이미 abort됐으면 `ms`를 기다리지 않고 즉시 `AbortError`로 거부한다.
 - `waitAndExecute(fn?, ms?)`은 지연 이후에 `fn`을 호출한다; `waitAndReturn(fn?, ms?)`은 `fn`을 즉시 호출하고 결과 전달만 지연한다. 둘 다 `fn`이 `undefined`면 `undefined`로 resolve한다.
 - `waitAndExecute`/`waitAndReturn`은 `AbortSignal` 옵션을 받지 않는다.
 
@@ -12,7 +12,7 @@
 
 - `delay(ms = 0, options?: DelayOptions): Promise<void>` — `options.signal`이 호출 전 이미 aborted면 `AbortError('SIGNAL_RECEIVED_BEFORE_RUN', ...)`로 즉시 거부(타이머 미생성); 대기 중 abort되면 `AbortError('SIGNAL_RECEIVED', ...)`로 거부.
 - `timeout(ms = 0, options?: DelayOptions): Promise<never>` — 내부적으로 `delay(ms, options)`를 await한 뒤 `TimeoutError('AFTER_DELAY', 'Timeout after ${ms}ms', { delay: ms })`를 던진다. `delay`가 취소로 거부하면 그 `AbortError`가 그대로 전파된다.
-- `withTimeout<T>(fn: AsyncFn<[], T>, ms: number, options?: DelayOptions): Promise<T>` — `fn()`을 abort 리스너 등록보다 먼저 호출한다(동기 throw가 signal에 리스너를 남기지 않기 위함). 내부 `AbortController`를 만들어 외부 `signal`과 연결하고, `Promise.race([fn(), timeout(ms, { signal: internal })])` 이후 `finally`에서 외부 리스너 제거와 내부 controller abort(대기 중이던 delay 타이머 정리)를 수행한다.
+- `withTimeout<T>(fn: AsyncFn<[], T>, ms: number, options?: DelayOptions): Promise<T>` — `fn()`을 abort 리스너 등록보다 먼저 호출한다(동기 throw가 signal에 리스너를 남기지 않기 위함). 내부 `AbortController`를 만들어 외부 `signal`과 연결하고(외부 `signal`이 이미 aborted면 리스너를 등록하지 않고 내부 controller를 바로 abort한다 — `abort` 이벤트는 이미 abort된 signal에서 다시 발생하지 않기 때문이다), `Promise.race([fn(), timeout(ms, { signal: internal })])` 이후 `finally`에서 외부 리스너 제거와 내부 controller abort(대기 중이던 delay 타이머 정리)를 수행한다.
 - `waitAndExecute<Return>(fn: Fn<[], Return> | undefined, ms = 0): Promise<Return | undefined>` — `await delay(ms)` 후 `fn`을 호출한다.
 - `waitAndReturn<Return>(fn: Fn<[], Return> | undefined, ms = 0): Promise<Return | undefined>` — `fn`을 `Promise.resolve().then(fn)`으로 즉시 시작하고 `delay(ms)`와 함께 `Promise.allSettled`로 대기한다; 첫 settled 결과(fn 쪽)가 rejected면 그 reason을 throw하고, 아니면 그 value를 반환한다. 이 방식이 대기 중인 거부를 핸들러 없이 방치하지 않는다.
 - `AbortError`/`TimeoutError`는 이 fractal이 아니라 `errors`가 소유하며 각각 `BaseError`를 상속한다; 이 fractal은 둘을 개별 파일 경로로 직접 import해 소비한다(공유 배럴 경유 아님).
@@ -47,6 +47,7 @@
 - `fn`이 timeout보다 먼저 resolve하면 내부 타이머가 즉시 정리된다(반복 호출에도 타이머가 누적되지 않는다).
 - `fn`이 동기적으로 throw하면 `withTimeout` 호출 자체가 그 예외로 동기적으로 throw하고, 호출자가 넘긴 signal에는 abort 리스너가 전혀 등록되지 않는다.
 - `fn`이 timeout보다 오래 걸리면 'Timeout after {ms}ms'로 거부되고, 외부 signal이 timeout보다 먼저 abort되면 'Abort signal received'로 거부된다.
+- 호출 전 이미 abort된 signal을 넘기면 timeout을 기다리지 않고 즉시 `AbortError`로 거부된다.
 
 ## Boundary Exemptions
 
