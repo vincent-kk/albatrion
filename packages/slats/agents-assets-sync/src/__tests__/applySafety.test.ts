@@ -105,7 +105,8 @@ describe.skipIf(blocker !== null)(
 
       expect(existsSync(escaped)).toBe(false);
       expect(result.status).not.toBe(0);
-      expect(result.stderr).toContain(escapeKey);
+      // The plain renderer reports a unit's error through the logger (stdout).
+      expect(`${result.stdout}${result.stderr}`).toContain(escapeKey);
     });
 
     it('lists orphan deletions on stderr in a non-interactive --force run', () => {
