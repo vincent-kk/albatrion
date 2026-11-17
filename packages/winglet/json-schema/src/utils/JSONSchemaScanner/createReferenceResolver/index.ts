@@ -3,7 +3,7 @@ export { createReferenceResolverAsync } from './utils/createReferenceResolverAsy
 export type {
   ReferenceResolverOptions,
   ReferenceResolverAsyncOptions,
-} from './utils/type';
+} from './types/referenceResolverOptions';
 export type {
   ReferenceResolver,
   ReferenceResolverAsync,

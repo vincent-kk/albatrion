@@ -293,7 +293,7 @@ console.assert(typeof unchanged === "object");
 
 ### Preserve references whose meaning cannot be fixed statically
 
-`$id` (and draft-04 `id`) identifies resources, `$anchor` names static fragments, and `$dynamicAnchor`/`$recursiveAnchor` express scope that may require preservation. Identifiers and anchors resolve to canonical locations; chains continue until completion or a configured limit, and an active ancestor cycle remains a reference without blocking reuse in siblings. Definitions remain address containers. In 2019-09 and 2020-12, sibling keywords keep applying and target branches append to `allOf`.
+`$id` (`id` in draft-04) identifies resources, `$anchor` names static fragments, and `$dynamicAnchor`/`$recursiveAnchor` express scope that may require preservation. Identifiers and anchors resolve to canonical locations; chains continue until completion or a configured limit, and an active ancestor cycle remains a reference without blocking reuse in siblings. Definitions remain address containers. In 2019-09 and 2020-12, sibling keywords keep applying and target branches append to `allOf`.
 
 In draft-07 and below, only string, number and null siblings are discarded; `$schema`, `definitions` and `$defs` are retained. Any other boolean, object or array sibling preserves the reference as `'relocation'`. This avoids deleting addressable locations or activating ignored sibling evaluation. Targets at/below inert positions, unsafe dialect/resource moves and dynamic scope also remain in place. Read `entry.references` rather than assuming an output contains no references.
 

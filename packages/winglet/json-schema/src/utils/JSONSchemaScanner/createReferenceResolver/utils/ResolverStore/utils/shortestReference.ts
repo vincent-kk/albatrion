@@ -1,7 +1,8 @@
 /**
  * Write an equivalent URI relative to the host when that spelling is shorter.
- * @param target Normalized absolute URI or anonymous fragment.
- * @param host Host resource's absolute document URI.
+ * @param target Resolved target; relative when its document has no absolute address.
+ * @param host Host resource's document address; empty for an anonymous document and relative
+ *   when the default base is unknown.
  * @returns A same-document fragment, shortest relative path candidate, or the absolute URI.
  */
 export function shortestReference(target: string, host: string): string {

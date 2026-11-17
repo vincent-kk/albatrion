@@ -1,28 +1,29 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
-import { DEFAULT_KEYWORDS, Dialect } from '../../../../keyword';
-import { JSONSchemaScanner } from '../../sync';
-import { DEFAULT_DIALECT } from '../../utils/dialectFlag/defaultDialect';
-import { detectDialect } from '../../utils/dialectFlag/detectDialect';
-import { DIALECT_NAMES } from '../../utils/dialectFlag/dialectNames';
-import { normalizeSchemaUri } from '../../utils/dialectFlag/normalizeSchemaUri';
-import { JSONSchemaScanError } from '../../utils/error/JSONSchemaScanError';
-import { JSONSchemaScanErrorCode } from '../../utils/error/JSONSchemaScanErrorCode';
-import { buildKeywordMap } from '../../utils/keywordMap/buildKeywordMap';
-import { ReferenceSkipReason } from '../../utils/referenceOutcome/ReferenceSkipReason';
-import { cloneSchema } from '../../utils/schemaCopy/cloneSchema';
-import type { ReferenceKeyword, ReferenceStep } from '../../utils/type';
-import { resolveURI } from './resolveURI';
-import { shortestReference } from './shortestReference';
+import { DEFAULT_KEYWORDS, Dialect } from '../../../../../keyword';
+import { JSONSchemaScanner } from '../../../sync';
+import { DEFAULT_DIALECT } from '../../../utils/dialectFlag/defaultDialect';
+import { detectDialect } from '../../../utils/dialectFlag/detectDialect';
+import { DIALECT_NAMES } from '../../../utils/dialectFlag/dialectNames';
+import { normalizeSchemaUri } from '../../../utils/dialectFlag/normalizeSchemaUri';
+import { JSONSchemaScanError } from '../../../utils/error/JSONSchemaScanError';
+import { JSONSchemaScanErrorCode } from '../../../utils/error/JSONSchemaScanErrorCode';
+import { buildKeywordMap } from '../../../utils/keywordMap/buildKeywordMap';
+import { ReferenceSkipReason } from '../../../utils/referenceOutcome/ReferenceSkipReason';
+import { cloneSchema } from '../../../utils/schemaCopy/cloneSchema';
+import type { ReferenceKeyword, ReferenceStep } from '../../../utils/type';
+import type { ReferenceResolverOptions } from '../../types/referenceResolverOptions';
+import type { SchemaValue } from '../../types/schemaValue';
+import { isAbsoluteURI, resolveURI } from '../resolveURI';
 import type {
+  Anchor,
   DocumentRecord,
   Location,
-  ReferenceResolverOptions,
   ResolverContext,
   Resource,
-  SchemaValue,
 } from './type';
+import { shortestReference } from './utils/shortestReference';
 
 /** These fields affect source scope and are removed only from proven relocatable template copies. */
 const identifiers = [
@@ -43,6 +44,8 @@ export class ResolverStore {
   public readonly initial: ResolverContext;
   /** Known resources include retrieval aliases and nested identifiers. */
   private resources = new Map<string, Resource>();
+  /** Named fragments by document address; a legacy fragment identifier can name a document no schema declares. */
+  private anchors = new Map<string, Map<string, Anchor>>();
   /** Cached lexical context changes; unchanged children use their parent directly. */
   private contexts = new WeakMap<
     ResolverContext,
@@ -80,39 +83,41 @@ export class ResolverStore {
    * Enter a recognized lexical resource once; unchanged children share context identity.
    * @param parent Already-entered parent resource.
    * @param schema Original lexical child or host-valid copied child.
-   * @returns Parent or a cached context for a resource-bearing original child.
+   * @returns The parent for a boolean schema, an identifier hidden by an old-dialect `$ref`,
+   *   an absent or unresolvable identifier, or a non-empty-fragment identifier that cannot
+   *   change the base; otherwise the cached context of the identified resource, or of a base
+   *   change that declares no resource.
    */
   public child(parent: ResolverContext, schema: SchemaValue): ResolverContext {
     if (typeof schema === 'boolean') return parent;
-    const old =
-      parent.resource.dialect === Dialect.Draft04 ||
-      parent.resource.dialect === Dialect.Draft06 ||
-      parent.resource.dialect === Dialect.Draft07;
-    if (old && typeof schema.$ref === 'string') return parent;
-    const id =
-      typeof schema.$id === 'string'
-        ? schema.$id
-        : parent.resource.dialect === Dialect.Draft04 &&
-            typeof schema.id === 'string'
-          ? schema.id
-          : undefined;
-    if (id === undefined) return parent;
-    const absolute = resolveURI(id, parent.resource.uri);
+    const enclosing = parent.resource;
+    if (
+      enclosing.dialect.startsWith('draft-') &&
+      typeof schema.$ref === 'string'
+    )
+      return parent;
+    const dialect = this.dialect(schema.$schema, enclosing.dialect);
+    const id = dialect === Dialect.Draft04 ? schema.id : schema.$id;
+    if (typeof id !== 'string') return parent;
+    const absolute = resolveURI(id, enclosing.uri);
     if (absolute === undefined) return parent;
-    const uri = absolute.split('#')[0];
-    if (uri === parent.resource.uri && absolute.includes('#')) return parent;
+    const hash = absolute.indexOf('#');
+    const uri = hash < 0 ? absolute : absolute.slice(0, hash);
+    const named = hash >= 0 && hash < absolute.length - 1;
+    if (named && (!dialect.startsWith('draft-') || uri === enclosing.uri))
+      return parent;
     let children = this.contexts.get(parent);
     const existing = children?.get(schema);
     if (existing) return existing;
     const resource: Resource = {
       uri,
-      document: parent.resource.document,
+      document: enclosing.document,
       path: '',
       schema,
-      dialect: this.dialect(schema.$schema, parent.resource.dialect),
-      anchors: new Map(),
+      dialect,
       dynamic: false,
     };
+    if (named) resource.owner = enclosing.owner ?? enclosing;
     const context = { resource };
     if (!children) this.contexts.set(parent, (children = new WeakMap()));
     children.set(schema, context);
@@ -157,13 +162,8 @@ export class ResolverStore {
       typeof schema === 'object' &&
       !(dialect.startsWith('draft-') && typeof schema.$ref === 'string')
     ) {
-      const id =
-        typeof schema.$id === 'string'
-          ? schema.$id
-          : dialect === Dialect.Draft04 && typeof schema.id === 'string'
-            ? schema.id
-            : undefined;
-      if (id !== undefined)
+      const id = dialect === Dialect.Draft04 ? schema.id : schema.$id;
+      if (typeof id === 'string')
         uri = resolveURI(id, retrieval)?.split('#')[0] ?? retrieval;
     }
     const initial: ResolverContext = {
@@ -173,7 +173,6 @@ export class ResolverStore {
         path: '#',
         schema,
         dialect,
-        anchors: new Map(),
         dynamic: false,
       },
     };
@@ -210,7 +209,10 @@ export class ResolverStore {
               : entry.inert
                 ? parent
                 : this.child(parent, entry.schema);
-          if (entry.depth === 0 || context !== parent) {
+          if (
+            entry.depth === 0 ||
+            (context !== parent && !context.resource.owner)
+          ) {
             if (context.resource.path && context.resource.path !== entry.path)
               this.duplicate(
                 context.resource.uri,
@@ -270,7 +272,7 @@ export class ResolverStore {
 
   /**
    * Fail with both source addresses for an ambiguous identifier.
-   * @param uri Conflicting address.
+   * @param uri Conflicting address; the empty address of an anonymous document is shown as `#`.
    * @param first Earlier declaration.
    * @param second Later declaration.
    * @returns Never.
@@ -278,7 +280,7 @@ export class ResolverStore {
   private duplicate(uri: string, first: string, second: string): never {
     throw new JSONSchemaScanError(
       JSONSchemaScanErrorCode.DuplicateIdentifier,
-      uri + ' declared at ' + first + ' and ' + second,
+      (uri || '#') + ' declared at ' + first + ' and ' + second,
     );
   }
 
@@ -323,27 +325,34 @@ export class ResolverStore {
         }
       }
     }
+    if (declarations.length === 0) return;
+    let names = this.anchors.get(resource.uri);
+    if (!names) this.anchors.set(resource.uri, (names = new Map()));
     for (const [name, dynamic] of declarations) {
-      const previous = resource.anchors.get(name);
-      if (previous && previous.location.path !== location.path)
+      const previous = names.get(name)?.location;
+      if (
+        previous &&
+        (previous.context.resource.document !== resource.document ||
+          previous.path !== location.path)
+      )
         this.duplicate(
           resource.uri + '#' + name,
-          previous.location.path,
-          location.path,
+          previous.context.resource.document.uri + previous.path,
+          resource.document.uri + location.path,
         );
-      resource.anchors.set(name, { location, dynamic });
+      names.set(name, { location, dynamic });
     }
   }
 
   /**
    * Supply a registered external document lazily; no I/O occurs here.
-   * @param uri Absolute document address.
+   * @param uri Document address; only an absolute one is looked up among registrations.
    * @returns Whether the resource is known after checking registrations.
    */
   public ensure(uri: string): boolean {
     if (this.resources.has(uri)) return true;
     const source = this.options.resources;
-    if (source && hasOwnProperty(source, uri)) {
+    if (isAbsoluteURI(uri) && source && hasOwnProperty(source, uri)) {
       this.index(
         source[uri],
         uri,
@@ -369,13 +378,16 @@ export class ResolverStore {
    * Extract the absolute document address needed by an asynchronous loader.
    * @param reference Written reference.
    * @param context Current lexical host context.
-   * @returns Document URI or undefined for an invalid relative reference.
+   * @returns Absolute document URI, or undefined for an invalid reference and for a target that
+   *   stays relative under an unknown base.
    */
   public documentURI(
     reference: string,
     context: ResolverContext,
   ): string | undefined {
-    return resolveURI(reference, context.resource.uri)?.split('#')[0];
+    const target = resolveURI(reference, context.resource.uri);
+    if (target === undefined || !isAbsoluteURI(target)) return;
+    return target.split('#')[0];
   }
 
   /**
@@ -383,23 +395,23 @@ export class ResolverStore {
    * @param absolute Fully resolved URI.
    * @returns Location and whether its named fragment is dynamic, or undefined.
    */
-  private locate(
-    absolute: string,
-  ): { location: Location; dynamic: boolean } | undefined {
+  private locate(absolute: string): Anchor | undefined {
     const hash = absolute.indexOf('#'),
       uri = hash < 0 ? absolute : absolute.slice(0, hash);
-    if (!this.ensure(uri)) return;
-    const resource = this.resources.get(uri)!;
+    const known = this.ensure(uri);
     let fragment: string;
     try {
       fragment = decodeURIComponent(hash < 0 ? '' : absolute.slice(hash + 1));
     } catch {
       return;
     }
-    if (fragment && !fragment.startsWith('/')) {
-      const anchor = resource.anchors.get(fragment);
-      return anchor && { location: anchor.location, dynamic: anchor.dynamic };
-    }
+    if (fragment && !fragment.startsWith('/'))
+      return (
+        this.anchors.get(uri)?.get(fragment) ??
+        this.anchors.get(this.resources.get(uri)?.uri ?? uri)?.get(fragment)
+      );
+    if (!known) return;
+    const resource = this.resources.get(uri)!;
     const path = resource.path + fragment;
     const existing = resource.document.paths.get(path);
     if (existing) return { location: existing, dynamic: false };
@@ -464,13 +476,14 @@ export class ResolverStore {
         uri: absolute,
       };
     const location = found.location;
-    if (!location.uri)
+    if (!location.uri) {
+      const owner =
+        location.context.resource.owner ?? location.context.resource;
       location.uri =
-        location.context.resource.uri +
+        owner.uri +
         '#' +
-        encodeURI(
-          location.path.slice(location.context.resource.path.length),
-        ).replace(/#/g, '%23');
+        encodeURI(location.path.slice(owner.path.length)).replace(/#/g, '%23');
+    }
     if (
       (keyword === '$dynamicRef' && found.dynamic) ||
       (keyword === '$recursiveRef' &&
@@ -537,7 +550,7 @@ export class ResolverStore {
       return { status: 'resolved', uri: location.uri, target };
     if (
       source.dialect !== host.dialect ||
-      (source !== host && (source.dynamic || !source.uri))
+      (source !== host && (source.dynamic || !isAbsoluteURI(source.uri)))
     )
       return relocation;
     if (relevant.length === 0)
@@ -640,7 +653,7 @@ export class ResolverStore {
         );
         if (
           uri === undefined ||
-          (!uri.split('#')[0] && host !== context.resource)
+          (!isAbsoluteURI(uri) && host !== context.resource)
         )
           return relocation;
         item.copy[key] = shortestReference(uri, host.uri);
