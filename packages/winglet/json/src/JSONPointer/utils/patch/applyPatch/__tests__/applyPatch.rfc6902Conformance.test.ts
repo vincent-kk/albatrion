@@ -98,19 +98,34 @@ describe('applyPatch RFC 6902 conformance', () => {
 
   describe('copy adds at the target (RFC 6902 4.5)', () => {
     it.each([
-      [{ a: 1 }, '/missing'],
-      [{ a: [1] }, '/a/1'],
-      [{ a: 1 }, '/missing/deeper'],
+      [{ a: 1 }, '/missing', 'PATCH_OBJECT_PROPERTY_NOT_FOUND'],
+      [{ a: [1] }, '/a/1', 'PATCH_ARRAY_INDEX_OUT_OF_BOUNDS'],
+      [{ a: 1 }, '/missing/deeper', 'PATCH_PATH_INVALID_INTERMEDIATE'],
     ])(
       'fails when the from location of %j at %s does not exist',
-      (source, from) => {
+      (source, from, code) => {
         expect(
           errorCodeOf(() =>
             applyPatch(source, [{ op: Operation.COPY, from, path: '/b' }]),
           ),
-        ).toBe('PATCH_OBJECT_PROPERTY_NOT_FOUND');
+        ).toBe(code);
       },
     );
+
+    it('copies a present undefined: an own undefined member, a hole, an undefined element', () => {
+      const holed: number[] = [];
+      holed[1] = 2;
+      const sources = [{ a: undefined }, { a: holed }, { a: [undefined, 2] }];
+      const froms = ['/a', '/a/0', '/a/0'];
+
+      sources.forEach((source, index) => {
+        const result = applyPatch(source, [
+          { op: Operation.COPY, from: froms[index], path: '/b' },
+        ]);
+        expect(Object.keys(result)).toContain('b');
+        expect(result.b).toBeUndefined();
+      });
+    });
 
     it.each([true, false])(
       'inserts the copy into an array index (immutable %s)',
