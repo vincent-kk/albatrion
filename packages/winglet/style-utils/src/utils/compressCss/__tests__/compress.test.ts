@@ -180,6 +180,12 @@ describe('compressCss', () => {
     );
   });
 
+  it('copies an unquoted url() verbatim, comment markers included', () => {
+    expect(
+      compressCss('.a { background: url(http://x.com/a/*b) } .b { color: red }'),
+    ).toBe('.a{background:url(http://x.com/a/*b)}.b{color:red}');
+  });
+
   it('keeps the whitespace calc() requires around +', () => {
     expect(compressCss('.a{width:calc(1px + 2px)}')).toBe(
       '.a{width:calc(1px + 2px)}',
