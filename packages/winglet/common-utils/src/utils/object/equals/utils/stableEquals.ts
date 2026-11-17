@@ -1,5 +1,6 @@
 import { ARRAY_BUFFER_TAG, OBJECT_TAG } from '@/common-utils/constant/typeTag';
 import { getTypeTag } from '@/common-utils/libs/getTypeTag';
+import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 
 import { countRetainedKeys } from './countRetainedKeys';
 import { equalsBuiltin } from './equalsBuiltin';
@@ -428,7 +429,7 @@ const stableEqualsRecursive = (
     return false;
   for (let i = 0, k = leftKeys[0]; i < leftLength; i++, k = leftKeys[i]) {
     if (omits?.has(k)) continue;
-    if (!Reflect.has(right, k)) return false;
+    if (!hasOwnProperty(right, k)) return false;
     if (
       stableEqualsRecursive(
         left[k as keyof typeof left],
