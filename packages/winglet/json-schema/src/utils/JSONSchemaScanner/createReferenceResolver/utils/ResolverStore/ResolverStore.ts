@@ -1,21 +1,18 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
-import { DEFAULT_KEYWORDS, Dialect } from '../../../../keyword';
-import { JSONSchemaScanner } from '../../sync';
-import { DEFAULT_DIALECT } from '../../utils/dialectFlag/defaultDialect';
-import { detectDialect } from '../../utils/dialectFlag/detectDialect';
-import { DIALECT_NAMES } from '../../utils/dialectFlag/dialectNames';
-import { normalizeSchemaUri } from '../../utils/dialectFlag/normalizeSchemaUri';
-import { JSONSchemaScanError } from '../../utils/error/JSONSchemaScanError';
-import { JSONSchemaScanErrorCode } from '../../utils/error/JSONSchemaScanErrorCode';
-import { buildKeywordMap } from '../../utils/keywordMap/buildKeywordMap';
-import { ReferenceSkipReason } from '../../utils/referenceOutcome/ReferenceSkipReason';
-import { cloneSchema } from '../../utils/schemaCopy/cloneSchema';
-import type { ReferenceKeyword, ReferenceStep } from '../../utils/type';
-import { isAbsoluteURI } from './isAbsoluteURI';
-import { resolveURI } from './resolveURI/resolveURI';
-import { shortestReference } from './shortestReference';
+import { DEFAULT_KEYWORDS, Dialect } from '../../../../../keyword';
+import { JSONSchemaScanner } from '../../../sync';
+import { DEFAULT_DIALECT } from '../../../utils/dialectFlag/defaultDialect';
+import { detectDialect } from '../../../utils/dialectFlag/detectDialect';
+import { DIALECT_NAMES } from '../../../utils/dialectFlag/dialectNames';
+import { normalizeSchemaUri } from '../../../utils/dialectFlag/normalizeSchemaUri';
+import { JSONSchemaScanError } from '../../../utils/error/JSONSchemaScanError';
+import { JSONSchemaScanErrorCode } from '../../../utils/error/JSONSchemaScanErrorCode';
+import { buildKeywordMap } from '../../../utils/keywordMap/buildKeywordMap';
+import { ReferenceSkipReason } from '../../../utils/referenceOutcome/ReferenceSkipReason';
+import { cloneSchema } from '../../../utils/schemaCopy/cloneSchema';
+import type { ReferenceKeyword, ReferenceStep } from '../../../utils/type';
 import type {
   Anchor,
   DocumentRecord,
@@ -24,7 +21,9 @@ import type {
   ResolverContext,
   Resource,
   SchemaValue,
-} from './type';
+} from '../../type';
+import { isAbsoluteURI, resolveURI } from '../resolveURI';
+import { shortestReference } from './utils/shortestReference';
 
 /** These fields affect source scope and are removed only from proven relocatable template copies. */
 const identifiers = [

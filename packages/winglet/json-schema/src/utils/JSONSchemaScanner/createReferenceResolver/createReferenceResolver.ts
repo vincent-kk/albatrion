@@ -1,10 +1,10 @@
 import type { ReferenceResolver } from '../utils/type';
-import { ResolverStore } from './utils/ResolverStore';
 import type {
   ReferenceResolverOptions,
   ResolverContext,
   SchemaValue,
-} from './utils/type';
+} from './type';
+import { ResolverStore } from './utils/ResolverStore/ResolverStore';
 
 /**
  * Construct an indexed synchronous resolver with host-specific immutable templates.

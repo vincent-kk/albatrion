@@ -1,4 +1,6 @@
-import { isAbsoluteURI } from '../isAbsoluteURI';
+import { encodeUnsafe } from './utils/encodeUnsafe';
+import { isAbsoluteURI } from './utils/isAbsoluteURI';
+import { isHierarchical } from './utils/isHierarchical';
 import { resolveRelative } from './utils/resolveRelative/resolveRelative';
 
 /**
@@ -25,35 +27,4 @@ export function resolveURI(
     return undefined;
   }
   return resolveRelative(written, base);
-}
-
-/**
- * Percent-encode what the URL parser deletes or rewrites: C0 controls, space and backslash.
- * @param reference Written value.
- * @returns The value with each such character as an uppercase `%XX` escape.
- */
-function encodeUnsafe(reference: string): string {
-  let written = '';
-  for (const character of reference)
-    written +=
-      character > ' ' && character !== '\\'
-        ? character
-        : '%' +
-          character.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0');
-  return written;
-}
-
-/**
- * Tell whether the URL parser can resolve against a base.
- * @param base Enclosing address.
- * @returns True when the base parses with an authority or a path starting with `/`; false for an
- *   empty, relative or opaque base such as `urn:example:root`.
- */
-function isHierarchical(base: string): boolean {
-  try {
-    const url = new URL(base);
-    return url.host !== '' || url.pathname.startsWith('/');
-  } catch {
-    return false;
-  }
 }

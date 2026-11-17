@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { JSONSchemaScannerAsync } from '../../async';
 import { createReferenceResolver } from '../createReferenceResolver';
-import { createReferenceResolverAsync } from '../utils/createReferenceResolverAsync';
+import { createReferenceResolverAsync } from '../utils/createReferenceResolverAsync/createReferenceResolverAsync';
 
 describe('explicit asynchronous resource loading', () => {
   it('coalesces in-flight document requests and reuses completed results', async () => {

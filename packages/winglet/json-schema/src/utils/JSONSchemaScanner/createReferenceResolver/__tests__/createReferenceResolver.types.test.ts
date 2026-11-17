@@ -1,7 +1,7 @@
 import { expectTypeOf, it } from 'vitest';
 
 import { createReferenceResolver } from '../createReferenceResolver';
-import { createReferenceResolverAsync } from '../utils/createReferenceResolverAsync';
+import { createReferenceResolverAsync } from '../utils/createReferenceResolverAsync/createReferenceResolverAsync';
 
 it('keeps built-in resource contexts opaque in the public protocol', () => {
   expectTypeOf(createReferenceResolver({}).root({})).toEqualTypeOf<unknown>();

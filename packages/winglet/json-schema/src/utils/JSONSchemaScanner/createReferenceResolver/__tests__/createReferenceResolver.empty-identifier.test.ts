@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { createReferenceResolver } from '../createReferenceResolver';
-import { createReferenceResolverAsync } from '../utils/createReferenceResolverAsync';
+import { createReferenceResolverAsync } from '../utils/createReferenceResolverAsync/createReferenceResolverAsync';
 
 const DRAFT04 = 'http://json-schema.org/draft-04/schema#';
 const DRAFT07 = 'http://json-schema.org/draft-07/schema#';
