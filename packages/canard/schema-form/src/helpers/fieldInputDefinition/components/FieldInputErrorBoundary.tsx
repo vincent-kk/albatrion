@@ -32,6 +32,6 @@ export class FieldInputErrorBoundary extends ErrorBoundary {
     return null;
   }
 
-  /** React requires this paired lifecycle when a boundary takes a pre-mutation snapshot. */
+  /** Pairs the snapshot lifecycle to satisfy React's development-time check. */
   componentDidUpdate(): void {}
 }
