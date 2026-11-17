@@ -1,5 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 import {
+  cloneLite,
   getDataProperty,
   isReservedName,
   setDataProperty,
@@ -7,15 +8,17 @@ import {
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
+import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
 import type { JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../patchModel';
-import { ensureOwnedFromPath } from './utils/ensureOwnedFromPath';
 import { JSONPatchError } from './utils/error';
 import { getArrayIndex } from './utils/getArrayIndex';
 import { handleArray } from './utils/handleArray';
 import { handleObject } from './utils/handleObject';
 import { handleRootPatch } from './utils/handleRootPatch';
+import { isCircularMoveReference } from './utils/isCircularMoveReference';
+import { removeMoveSource } from './utils/removeMoveSource';
 
 /**
  * Applies a single JSON Patch operation to a source object or array.
@@ -104,23 +107,42 @@ export const applySinglePatch = (
   strict: boolean,
   cloned: WeakSet<object> | null,
 ): any => {
-
-  if (patch.path === '' || patch.path === JSONPointer.Fragment)
-    return handleRootPatch(source, patch, patchIndex, strict);
-
-  // Judged by operation rather than key presence: `move` and `copy` require a `from`
-  // pointer, and a missing or non-string one must surface as a patch error rather than
-  // as a TypeError thrown from somewhere deeper
-  if (patch.op === Operation.MOVE || patch.op === Operation.COPY) {
+  // RFC 6902 4.4 and 4.5: move is "remove from, then add at path" and copy is "add a copy
+  // at path", so both resolve their value first and then share the add handlers. The value
+  // is read before the target path is walked, so the walk sees the document after removal
+  let value: unknown;
+  if (patch.op === Operation.ADD || patch.op === Operation.REPLACE)
+    value = patch.value;
+  else if (patch.op === Operation.MOVE || patch.op === Operation.COPY) {
+    // Judged by operation rather than key presence: `move` and `copy` require a `from`
+    // pointer, and a missing or non-string one must surface as a patch error rather than
+    // as a TypeError thrown from somewhere deeper
     if (typeof patch.from !== 'string')
       throw new JSONPatchError(
         'PATCH_PATH_INVALID',
         `Patch operation '${patch.op}' requires a string 'from' pointer`,
         { patch, index: patchIndex, operation: patch.op },
       );
-    if (patch.op === Operation.MOVE && cloned !== null)
-      ensureOwnedFromPath(source, patch.from, cloned);
+    if (patch.op === Operation.COPY)
+      value = cloneLite(getValue(source, patch.from));
+    else if (isCircularMoveReference(patch.from, patch.path))
+      throw new JSONPatchError(
+        'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN',
+        `Cannot move location '${patch.from}' to '${patch.path}' - target location is a descendant of the source location. This would create a circular reference.`,
+        {
+          patch,
+          patchIndex,
+          operation: patch.op,
+          from: patch.from,
+          path: patch.path,
+        },
+      );
+    else
+      value = removeMoveSource(source, patch.from, patch, patchIndex, cloned);
   }
+
+  if (patch.path === '' || patch.path === JSONPointer.Fragment)
+    return handleRootPatch(source, patch, value, patchIndex, strict);
 
   const segments = patch.path.split('/');
 
@@ -145,6 +167,7 @@ export const applySinglePatch = (
         const arrayIndex = getArrayIndex(segment, current);
         return handleArray(
           patch,
+          value,
           current,
           arrayIndex,
           source,
@@ -154,6 +177,7 @@ export const applySinglePatch = (
       } else if (current && typeof current === 'object') {
         return handleObject(
           patch,
+          value,
           current,
           segment,
           source,
@@ -195,7 +219,6 @@ export const applySinglePatch = (
       else current[segment] = next;
     }
     current = next;
-
 
     if (!current || typeof current !== 'object') {
       throw new JSONPatchError(
