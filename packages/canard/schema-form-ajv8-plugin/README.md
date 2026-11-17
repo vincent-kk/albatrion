@@ -133,6 +133,8 @@ The guard instance retains the bound dialect, formats and keywords with
 - **Purpose**: Creates a validator function from the provided JSON Schema
 - **Returns**: A validator factory function that can validate data against the schema
 - **Features**: Automatic `ValidationIssue` conversion and a root `dataPath` of `''`
+- **`schemaPath`**: The authored location as a `#/…` fragment, also when the root declares `$id`. An issue inside a nested `$id` resource that validation reaches through `$ref` keeps AJV's path under the reference (for example `urn:item/not`).
+- **`rejectedKey`**: For `not: { required: [key] }` with a single key, the key is read from the schema at a `#/…` path. An issue whose `schemaPath` is not a `#/…` fragment, such as one inside a nested `$id` resource, carries no `rejectedKey` and stays on the object that holds the value.
 
 #### **`compileGuard(root, pointer)` and `release(root)`**
 
