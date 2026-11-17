@@ -6,10 +6,12 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { resolveAgentTarget } from '../agentTarget.js';
+import type { AssetKind, OrphanScan, ResolvedLocations } from '../type.js';
+import { assertDestinationRootsContained } from '../utils/assertDestinationRootsContained.js';
 import { assertWriteTargetsContained } from '../utils/assertWriteTargetsContained.js';
 
 // Wrap, do not replace: every call still reaches the real file system, and the
-// spies only count what the write check asks of it.
+// spies only count what the checks ask of it.
 vi.mock('node:fs/promises', async (importOriginal) => {
   const actual = await importOriginal<typeof fsPromises>();
   return {
@@ -20,6 +22,7 @@ vi.mock('node:fs/promises', async (importOriginal) => {
   };
 });
 
+const KINDS: ReadonlySet<AssetKind> = new Set(['skills', 'rules', 'commands']);
 let root: string;
 
 // 40 files: 4 skills x (SKILL.md + 4 under refs/ + 5 under refs/deep/), in
@@ -35,53 +38,75 @@ function destinationFiles(): string[] {
   return paths;
 }
 
-async function countCalls(dstPaths: readonly string[]) {
-  vi.mocked(fsPromises.lstat).mockClear();
-  vi.mocked(fsPromises.readdir).mockClear();
-  vi.mocked(fsPromises.realpath).mockClear();
-  await assertWriteTargetsContained({
-    agentTarget: resolveAgentTarget('claude', 'project', root),
-    dstPaths,
-    resolved: new Map(),
-  });
-  return {
+function namespaceScans(): OrphanScan[] {
+  return [0, 1, 2, 3].map((s) => ({
+    kind: 'directory',
+    scanRoot: join(root, '.claude/skills', `sk${s}`),
+    relPathPrefix: `skills/sk${s}/`,
+  }));
+}
+
+function takeCounts() {
+  const counts = {
     realpath: vi.mocked(fsPromises.realpath).mock.calls.length,
     lstat: vi.mocked(fsPromises.lstat).mock.calls.length,
     readdir: vi.mocked(fsPromises.readdir).mock.calls.length,
   };
+  vi.mocked(fsPromises.realpath).mockClear();
+  vi.mocked(fsPromises.lstat).mockClear();
+  vi.mocked(fsPromises.readdir).mockClear();
+  return counts;
 }
 
-describe('core/agentTarget — write check cost on a 40-file skill tree', () => {
+// The sequence every renderer runs: the roots check, then the write check,
+// sharing one per-run cache.
+async function countBothChecks() {
+  const agentTarget = resolveAgentTarget('claude', 'project', root);
+  const resolved: ResolvedLocations = new Map();
+  takeCounts();
+  await assertDestinationRootsContained({
+    agentTarget,
+    assetKinds: KINDS,
+    orphanScans: namespaceScans(),
+    resolved,
+  });
+  const roots = takeCounts();
+  await assertWriteTargetsContained({
+    agentTarget,
+    dstPaths: destinationFiles(),
+    resolved,
+  });
+  return { roots, writes: takeCounts() };
+}
+
+describe('core/agentTarget — containment cost on a 40-file skill tree', () => {
   beforeEach(() => {
     root = mkdtempSync(join(tmpdir(), 'slats-call-count-'));
     writeFileSync(join(root, 'AGENTS.md'), '', 'utf-8');
   });
   afterEach(() => rmSync(root, { recursive: true, force: true }));
 
-  // Project root once; `.claude`, `.claude/skills` and the first skill fail
-  // once each; every later directory derives from a cached missing ancestor;
-  // no file is looked at because none can exist yet.
-  it('fresh install: 4 realpath, 3 lstat, 0 readdir', async () => {
-    expect(await countCalls(destinationFiles())).toEqual({
-      realpath: 4,
-      lstat: 3,
-      readdir: 0,
+  // Roots: the project root resolves, `.claude/skills` and `.claude` fail
+  // once each, and the other roots and namespaces derive from them. Writes:
+  // everything sits below a missing directory, so nothing is read.
+  it('fresh install: the write check makes no file-system call', async () => {
+    expect(await countBothChecks()).toEqual({
+      roots: { realpath: 3, lstat: 2, readdir: 0 },
+      writes: { realpath: 0, lstat: 0, readdir: 0 },
     });
   });
 
-  // Project root and each of the 12 directories once; the 8 directories that
-  // receive several files are listed once each, and the 4 that receive only
-  // SKILL.md use one lstat each.
-  it('overwrite: 13 realpath, 4 lstat, 8 readdir', async () => {
-    const files = destinationFiles();
-    for (const file of files) {
+  // Writes: per skill, the namespace, `refs` and `refs/deep` are each listed
+  // once; the listings decide every directory and file, so no realpath or
+  // lstat is needed (12 reads for 40 files).
+  it('overwrite: the write check lists each existing directory once', async () => {
+    for (const file of destinationFiles()) {
       mkdirSync(join(file, '..'), { recursive: true });
       writeFileSync(file, 'installed\n', 'utf-8');
     }
-    expect(await countCalls(files)).toEqual({
-      realpath: 13,
-      lstat: 4,
-      readdir: 8,
+    expect(await countBothChecks()).toEqual({
+      roots: { realpath: 9, lstat: 2, readdir: 0 },
+      writes: { realpath: 0, lstat: 0, readdir: 12 },
     });
   });
 });

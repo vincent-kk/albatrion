@@ -1,7 +1,8 @@
-import { lstat, readdir } from 'node:fs/promises';
+import { lstat } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import type { ResolvedLocation, ResolvedLocations } from '../type.js';
+import { listDirectory } from './listDirectory.js';
 
 /**
  * Fewest names written into one directory for which reading its listing
@@ -14,14 +15,16 @@ const LISTING_MIN_NAMES = 2;
 /**
  * Pick out the names in an existing directory that are symbolic links.
  *
- * Below `LISTING_MIN_NAMES` each name is checked with `lstat`; otherwise the
- * directory is listed once per run and the listing's link names are cached on
- * its entry in `resolved`. A name missing from the listing is not a link.
+ * When the directory's listing is already cached, or at least
+ * `LISTING_MIN_NAMES` names are written there, the listing (read once per run)
+ * decides every name it shows exactly. Any other name is checked with
+ * `lstat`: on a case-insensitive file system an unlisted name can still reach
+ * an existing entry, a link included, under different case.
  *
  * @param dir - absolute directory that `location` describes and that exists
  * @param names - entry names the run writes into `dir`
  * @param location - `dir`'s current entry in `resolved`
- * @param resolved - per-run cache; `dir`'s entry gains `linkNames` when listed
+ * @param resolved - per-run cache; `dir`'s entry gains `listing` when read
  * @returns the subset of `names` that are symbolic links
  */
 export async function findLinkedNames(
@@ -30,21 +33,16 @@ export async function findLinkedNames(
   location: ResolvedLocation,
   resolved: ResolvedLocations,
 ): Promise<string[]> {
-  if (names.length < LISTING_MIN_NAMES) {
-    const stats = await Promise.all(
-      names.map((name) => lstat(join(dir, name)).catch(() => null)),
-    );
-    return names.filter((_, index) => stats[index]?.isSymbolicLink());
-  }
-  let linkNames = location.linkNames;
-  if (linkNames === undefined) {
-    const entries = await readdir(dir, { withFileTypes: true }).catch(() => []);
-    linkNames = new Set(
-      entries
-        .filter((entry) => entry.isSymbolicLink())
-        .map((entry) => entry.name),
-    );
-    resolved.set(dir, { ...location, linkNames });
-  }
-  return names.filter((name) => linkNames.has(name));
+  const listing =
+    location.listing !== undefined || names.length >= LISTING_MIN_NAMES
+      ? await listDirectory(dir, location, resolved)
+      : undefined;
+  const unlisted = names.filter((name) => !listing?.names.has(name));
+  const stats = await Promise.all(
+    unlisted.map((name) => lstat(join(dir, name)).catch(() => null)),
+  );
+  return [
+    ...names.filter((name) => listing?.linkNames.has(name)),
+    ...unlisted.filter((_, index) => stats[index]?.isSymbolicLink()),
+  ];
 }

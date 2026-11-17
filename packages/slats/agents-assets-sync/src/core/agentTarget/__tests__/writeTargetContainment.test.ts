@@ -1,4 +1,5 @@
 import {
+  existsSync,
   mkdirSync,
   mkdtempSync,
   rmSync,
@@ -90,7 +91,7 @@ describe('core/agentTarget — written files resolve inside the project', () => 
     expect(resolved.get(namespace)).toEqual({
       real: expect.stringContaining('pp'),
       exists: true,
-      linkNames: new Set(),
+      listing: { names: new Set(), linkNames: new Set() },
     });
   });
 
@@ -132,6 +133,35 @@ describe('core/agentTarget — written files resolve inside the project', () => 
       if (isAllowed) await expect(check(written)).resolves.toBeUndefined();
       else await expect(check(written)).rejects.toThrow(link);
     });
+  });
+
+  // A name the listing does not show exactly can still reach a link of
+  // different case where the file system ignores case, so it is resolved
+  // through the file system rather than judged missing from the listing.
+  it('refuses case-flipped names that reach an outside link where case is ignored', async () => {
+    writeFileSync(join(outside, 'target.md'), '', 'utf-8');
+    symlinkSync(
+      join(outside, 'target.md'),
+      join(namespace, 'SKILL.md'),
+      'file',
+    );
+    symlinkSync(outside, join(namespace, 'knowledge'), 'dir');
+    writeFileSync(join(namespace, 'other.md'), '', 'utf-8');
+    const isCaseInsensitive = existsSync(join(namespace, 'skill.md'));
+    const fileWrites = [
+      join(namespace, 'skill.md'),
+      join(namespace, 'other.md'),
+    ];
+    const dirWrites = [
+      join(namespace, 'Knowledge/a.md'),
+      join(namespace, 'Knowledge/b.md'),
+    ];
+    for (const written of [fileWrites, dirWrites]) {
+      resolved = new Map();
+      const verdict = check(written);
+      if (isCaseInsensitive) await expect(verdict).rejects.toThrow();
+      else await expect(verdict).resolves.toBeUndefined();
+    }
   });
 
   // Control: user scope never checks, so a dotfiles link stays usable.

@@ -79,6 +79,7 @@ export function usePlanStep({
               agentTarget,
               assetKinds,
               orphanScans,
+              resolved,
             });
             const plan = await buildPlan({
               sourceHashes: manifest.files,
