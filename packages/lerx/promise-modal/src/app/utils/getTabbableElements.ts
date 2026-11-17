@@ -9,11 +9,14 @@ const CANDIDATE_SELECTOR = `${CONTROL_SELECTOR}, [contenteditable]`;
 /** Lowercased contenteditable values that make an element an editing host. */
 const EDITABLE_VALUES = ['', 'true', 'plaintext-only'];
 
+/** `NodeFilter.SHOW_ELEMENT`, inlined so collection needs no `NodeFilter` global. */
+const SHOW_ELEMENT = 1;
+
 /** Lists candidates in tree order, splicing open shadow roots in at their hosts. */
 const collectCandidates = (root: Element | ShadowRoot): HTMLElement[] => {
-  const walker = root.ownerDocument.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+  const walker = root.ownerDocument.createTreeWalker(root, SHOW_ELEMENT);
   let node = walker.nextNode();
-  while (node && !(node instanceof Element && node.shadowRoot)) node = walker.nextNode();
+  while (node && !('shadowRoot' in node && node.shadowRoot)) node = walker.nextNode();
   if (!node) return [...root.querySelectorAll<HTMLElement>(CANDIDATE_SELECTOR)];
   return [...root.querySelectorAll<HTMLElement>('*')].flatMap((element) => [
     ...(element.matches(CANDIDATE_SELECTOR) ? [element] : []),
@@ -25,7 +28,7 @@ const collectCandidates = (root: Element | ShadowRoot): HTMLElement[] => {
 const parentOf = (element: HTMLElement): HTMLElement | null => {
   if (element.parentElement) return element.parentElement;
   const root = element.parentNode;
-  return root instanceof ShadowRoot && root.host instanceof HTMLElement
+  return root && 'host' in root && root.host instanceof HTMLElement
     ? root.host
     : null;
 };
