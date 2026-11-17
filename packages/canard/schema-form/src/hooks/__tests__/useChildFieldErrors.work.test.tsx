@@ -4,6 +4,7 @@ import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
+import { ValidationMode } from '@/schema-form/core';
 import { FieldRendererContextProvider } from '@/schema-form/providers';
 
 import { useChildFieldErrors } from '../fieldNode/useChildFieldErrors';
@@ -18,7 +19,7 @@ it('joins the complete revision vector at most once for one subscribed child-err
     jsonSchema: { type: 'array', items: { type: 'string' } },
     defaultValue: Array(12).fill('a'),
     deferMountValidation: true,
-    validationMode: 2,
+    validationMode: ValidationMode.OnRequest,
   });
   const revisions = vi.spyOn(root, 'revision');
   const { result } = renderHook(() => useChildFieldErrors(root), {

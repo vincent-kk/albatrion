@@ -8,7 +8,7 @@ import { createValidationFrameClock } from '@/schema-form/__tests__/helpers/crea
 import { readFieldNodeRuntime } from '@/schema-form/__tests__/helpers/readFieldNodeRuntime';
 import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
-import { ValidationMode } from '@/schema-form/core';
+import { FieldNodeState, ValidationMode } from '@/schema-form/core';
 import { releaseFieldNodeRevealHistory } from '@/schema-form/core/engine/validation';
 import { useFieldErrors } from '@/schema-form/hooks';
 import {
@@ -189,7 +189,7 @@ it('catches an event-free release while a held display is hidden by Activity', a
   const view = render(wrap(false));
   // Freeze the state-only write's post-paint drop until the explicit release while hidden.
   createValidationFrameClock();
-  act(() => ref.current!.node!.setState({ 1: true }));
+  act(() => ref.current!.node!.setState({ [FieldNodeState.Edited]: true }));
   expect(rendererVisible).toBe(false);
   expect(inputVisible).toBe(false);
   const field = ref.current!.node!;

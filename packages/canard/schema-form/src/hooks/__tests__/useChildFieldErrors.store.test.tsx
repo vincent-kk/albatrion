@@ -4,6 +4,7 @@ import { act, cleanup, render, renderHook } from '@testing-library/react';
 import { afterEach, expect, inject, it, vi } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
+import { ValidationMode } from '@/schema-form/core';
 import { FieldRendererContextProvider } from '@/schema-form/providers';
 
 import { hideCommittedForm } from '../../__tests__/helpers/hideCommittedForm';
@@ -25,7 +26,7 @@ const createRoot = () =>
     jsonSchema: { type: 'array', items: { type: 'string' } },
     defaultValue: ['a', 'b'],
     deferMountValidation: true,
-    validationMode: 2,
+    validationMode: ValidationMode.OnRequest,
   });
 
 it.each([

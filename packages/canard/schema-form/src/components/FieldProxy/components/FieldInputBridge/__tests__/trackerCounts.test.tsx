@@ -8,6 +8,8 @@ import { Form, type FormHandle } from '@/schema-form/components/Form';
 import {
   FieldNodeEventType,
   FieldNodeRequestType,
+  FieldNodeState,
+  ValidationMode,
   isArrayNode,
 } from '@/schema-form/core';
 import type { FieldInputProps } from '@/schema-form/types';
@@ -106,7 +108,7 @@ it('retains five listeners for a labeled field with an array ancestor', () => {
   const view = render(
     <Form
       ref={ref}
-      validationMode={0}
+      validationMode={ValidationMode.None}
       jsonSchema={{
         type: 'array',
         items: {
@@ -139,7 +141,7 @@ it('F-E keeps one container render per array write through the last removal and 
   };
   const view = render(
     <Form
-      validationMode={0}
+      validationMode={ValidationMode.None}
       ref={ref}
       jsonSchema={{
         type: 'object',
@@ -209,7 +211,7 @@ it.each(['UpdateChildren', 'UpdateValue'] as const)(
     };
     const view = render(
       <Form
-        validationMode={0}
+        validationMode={ValidationMode.None}
         jsonSchema={
           event === 'UpdateChildren'
             ? { type: 'array', items: { type: 'string' } }
@@ -254,7 +256,7 @@ it('F-E applies coalesced child-owned Refresh once on the next delivery after ch
   const view = render(
     <Form
       ref={ref}
-      validationMode={0}
+      validationMode={ValidationMode.None}
       jsonSchema={{ type: 'object', properties: { name: { type: 'string' } } }}
       fieldInputDefinitions={[
         { test: { type: 'object' }, Component: Container },
@@ -281,13 +283,13 @@ it('F-E applies coalesced child-owned Refresh once on the next delivery after ch
   expect(view.container.querySelector('input')).toBeNull();
   expect(view.container.querySelector('section')).toBe(original);
   expect(mounts).toHaveBeenCalledTimes(1);
-  act(() => node.setState({ 2: true }));
+  act(() => node.setState({ [FieldNodeState.Touched]: true }));
   expect(view.container.querySelector('section')).not.toBe(original);
   expect(view.container.querySelector('input')).not.toBeNull();
   expect(mounts).toHaveBeenCalledTimes(2);
   expect(unmounts).toHaveBeenCalledTimes(1);
   expect(revision).toHaveBeenCalledWith(INPUT_TRACKING_EVENTS);
-  act(() => node.setState({ 2: false }));
+  act(() => node.setState({ [FieldNodeState.Touched]: false }));
   expect(mounts).toHaveBeenCalledTimes(2);
   expect(unmounts).toHaveBeenCalledTimes(1);
 });
@@ -324,7 +326,7 @@ it('F-E applies deferred Refresh once on a parent-driven render after child prox
   const form = (readOnly: boolean) => (
     <Form
       ref={ref}
-      validationMode={0}
+      validationMode={ValidationMode.None}
       jsonSchema={jsonSchema}
       defaultValue={defaultValue}
       fieldInputDefinitions={definitions}
@@ -437,13 +439,13 @@ it('F-E defers a child-layout Refresh at subscribe without an extra caller rende
       expect(mountedChildren.current).toBe(0);
       expect(view.container.querySelector('section')).toBe(original);
       expect(mounts).toHaveBeenCalledTimes(1);
-      act(() => node.setState({ 2: true }));
+      act(() => node.setState({ [FieldNodeState.Touched]: true }));
       const refreshed = view.container.querySelector('section');
       expect(refreshed).not.toBe(original);
       expect(view.getByLabelText('child')).not.toBeNull();
       expect(mounts).toHaveBeenCalledTimes(2);
       expect(unmounts).toHaveBeenCalledTimes(1);
-      act(() => node.setState({ 2: false }));
+      act(() => node.setState({ [FieldNodeState.Touched]: false }));
       expect(view.container.querySelector('section')).toBe(refreshed);
       expect(mounts).toHaveBeenCalledTimes(2);
       expect(unmounts).toHaveBeenCalledTimes(1);
@@ -460,7 +462,7 @@ it('F-E preserves 202 array-push-remove-100 commits and reads the next Refresh i
     <Profiler id="array-push-remove-100" onRender={commits}>
       <Form
         ref={ref}
-        validationMode={0}
+        validationMode={ValidationMode.None}
         jsonSchema={{
           type: 'object',
           properties: {

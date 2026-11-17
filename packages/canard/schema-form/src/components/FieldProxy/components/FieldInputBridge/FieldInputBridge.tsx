@@ -36,7 +36,7 @@ import { readFieldInputGeneration } from './utils/readFieldInputGeneration';
 import { resolveControlled } from './utils/resolveControlled';
 
 /** State patch that marks the field touched after blur. */
-const TOUCHED_STATE_PATCH = { [FieldNodeState.Touched]: true };
+const TOUCHED_STATE_PATCH = { [FieldNodeState.Touched]: true } as const;
 
 /** Bind one input draft to the live node without treating typing as a caller refresh. */
 export const FieldInputBridge = memo(
@@ -166,13 +166,13 @@ export const FieldInputBridge = memo(
       if (!accepts()) return;
       const reset = readFieldNodeInteractionEpoch(node);
       finishFieldNodeInput(node);
-      if (node.state[2]) return;
+      if (node.state[FieldNodeState.Touched]) return;
       requestId.current = requestAnimationFrame(() => {
         if (
           selection.active &&
           isLive() &&
           reset === readFieldNodeInteractionEpoch(node) &&
-          !node.state[2]
+          !node.state[FieldNodeState.Touched]
         )
           node.setState(TOUCHED_STATE_PATCH);
       });

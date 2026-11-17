@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import { default as corpus } from '@/schema-form/core/engine/__tests__/fixtures/ownedInlineHead.json';
 import { type AuthoredSchema } from '@/schema-form/core/engine/types/jsonSchema';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
 
 import { collectOwnedInlineRecords } from '../../__tests__/fixtures/collectOwnedInlineRecords';
 import { createEffectiveFieldNode } from '../../__tests__/fixtures/createEffectiveFieldNode';
@@ -335,7 +336,7 @@ describe('owned-inline ownership and protection', () => {
         type: 'array',
         items: { type: 'string', controls: { active: true } },
       },
-      validationMode: 0,
+      validationMode: ValidationMode.None,
     });
     const template = (
       root as unknown as {
@@ -387,11 +388,11 @@ describe('owned-inline ownership and protection', () => {
     };
     const first = nodeFromJSONSchema({
       jsonSchema: schema as AuthoredSchema,
-      validationMode: 0,
+      validationMode: ValidationMode.None,
     });
     const second = nodeFromJSONSchema({
       jsonSchema: schema as AuthoredSchema,
-      validationMode: 0,
+      validationMode: ValidationMode.None,
     });
     first.find('/nested/count')!.setValue(2);
     expect(second.value).toEqual(defaults);

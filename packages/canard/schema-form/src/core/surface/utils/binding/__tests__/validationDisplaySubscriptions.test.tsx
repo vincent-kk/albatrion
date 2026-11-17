@@ -5,6 +5,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
+import { FieldNodeState } from '@/schema-form/core/engine';
 import { useFieldErrors } from '@/schema-form/hooks';
 import { useChildFieldErrors } from '@/schema-form/hooks';
 import { ErrorVisibility } from '@/schema-form/types';
@@ -75,7 +76,7 @@ it('IR-6 W13 only the three holding displays subscribe and receive a 2000-field 
   act(() => {
     const leaf = ref.current!.findNode('/f0')!;
     leaf.setValue('new');
-    leaf.setState({ 4: true });
+    leaf.setState({ [FieldNodeState.ErrorVisibility]: true });
   });
   expect(listeners.size).toBe(3);
   expect(listeners.calls).toHaveLength(3);

@@ -1,3 +1,4 @@
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
 import {
   SetValueOption,
   buildFieldNodeTree,
@@ -74,7 +75,7 @@ export const observeDirtyPostOrderWrites = async (
   const log: string[] = [];
   const root = buildFieldNodeTree({
     jsonSchema: schema,
-    validationMode: 0,
+    validationMode: ValidationMode.None,
     onChange: (value) => log.push(`onChange ${JSON.stringify(value)}`),
   });
   mountFieldNode(root, undefined, undefined, { deferValidation: false });

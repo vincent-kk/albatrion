@@ -3,6 +3,7 @@ import { createRef, useLayoutEffect } from 'react';
 import { render } from '@testing-library/react';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
+import { ValidationMode } from '@/schema-form/core';
 import { useFieldErrors } from '@/schema-form/hooks';
 import { useWorkspaceContext } from '@/schema-form/providers';
 import type {
@@ -59,7 +60,7 @@ export const createRestructuringFrame = (virtualized = false) => {
         },
       }}
       defaultValue={{ field: 'initial' }}
-      validationMode={0}
+      validationMode={ValidationMode.None}
       errorVisibility={ErrorVisibility.Always}
       FieldRenderer={Group}
       InputRenderer={Frame}

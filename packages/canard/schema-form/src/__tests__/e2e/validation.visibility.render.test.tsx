@@ -3,7 +3,7 @@ import { createRef, useLayoutEffect } from 'react';
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { useFieldErrors } from '@/schema-form';
+import { FieldNodeState, useFieldErrors } from '@/schema-form';
 import {
   ErrorVisibility,
   type FieldInputProps,
@@ -80,7 +80,7 @@ it('IR-6 a touched field never commits its previous error when the first charact
     />,
   );
   await settleValidation(() => ref.current?.node);
-  act(() => ref.current!.node!.setState({ 2: true }));
+  act(() => ref.current!.node!.setState({ [FieldNodeState.Touched]: true }));
   commits.length = 0;
   fireEvent.change(view.getByLabelText('value'), { target: { value: 'a' } });
   expect(view.getByTestId('error').textContent).toBe('');
@@ -111,7 +111,7 @@ it.each(['required', 'changed'])(
       />,
     );
     await settleValidation(() => ref.current?.node);
-    act(() => ref.current!.node!.setState({ 2: true }));
+    act(() => ref.current!.node!.setState({ [FieldNodeState.Touched]: true }));
     commits.length = 0;
     fireEvent.change(view.getByLabelText('value'), { target: { value: 'a' } });
     expect(view.getByTestId('error').textContent).toBe('');
@@ -146,12 +146,17 @@ it('IR-6 an already visible error stays visible until its valid verdict, and hid
     />,
   );
   await settleValidation(() => ref.current?.node);
-  act(() => ref.current!.node!.setState({ 1: true, 2: true }));
+  act(() =>
+    ref.current!.node!.setState({
+      [FieldNodeState.Edited]: true,
+      [FieldNodeState.Touched]: true,
+    }),
+  );
   await advanceValidationFrame();
   expect(view.getByTestId('error').textContent).toBe('required');
   fireEvent.change(view.getByLabelText('value'), { target: { value: 'a' } });
   expect(view.getByTestId('error').textContent).toBe('required');
-  act(() => ref.current!.node!.setState({ 2: false }));
+  act(() => ref.current!.node!.setState({ [FieldNodeState.Touched]: false }));
   expect(view.getByTestId('error').textContent).toBe('');
   await settleValidation(() => ref.current?.node);
   expect(view.getByTestId('error').textContent).toBe('');
@@ -224,11 +229,11 @@ it('IR-6 submit reveals a still-invalid touched field and settles its hold', asy
     />,
   );
   await settleValidation(() => ref.current?.node);
-  act(() => ref.current!.node!.setState({ 2: true }));
+  act(() => ref.current!.node!.setState({ [FieldNodeState.Touched]: true }));
   act(() => {
     ref.current!.setValue('still-invalid');
     // Imperative writes retain edited; reveal the first-change condition during this pending request.
-    ref.current!.node!.setState({ 1: true });
+    ref.current!.node!.setState({ [FieldNodeState.Edited]: true });
   });
   expect(view.getByTestId('error').textContent).toBe('');
   await act(async () => {
@@ -247,7 +252,7 @@ it('IR-6 Touched mode holds the previous error when blur writes a trimmed value'
       value={String(value ?? '')}
       onBlur={() => {
         onChange('valid');
-        ref.current!.node!.setState({ 2: true });
+        ref.current!.node!.setState({ [FieldNodeState.Touched]: true });
       }}
       onChange={(event) => onChange(event.target.value)}
     />
@@ -390,7 +395,7 @@ it('IR-6 one settled delivery in 2000 fields rerenders only the holding leaf dis
   act(() => {
     const leaf = ref.current!.findNode('/f0')!;
     leaf.setValue('new');
-    leaf.setState({ 4: true });
+    leaf.setState({ [FieldNodeState.ErrorVisibility]: true });
   });
   counts.clear();
   await settleValidation(() => ref.current?.node);

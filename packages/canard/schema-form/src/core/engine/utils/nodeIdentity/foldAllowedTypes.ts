@@ -25,7 +25,7 @@ export const foldAllowedTypes = (
 };
 
 /** Integer shares number's bit; null owns a bit only for a null-only node. */
-const TYPE_MASK = {
+export const TYPE_MASK = {
   string: BIT_FLAG_00,
   number: BIT_FLAG_01,
   integer: BIT_FLAG_01,
