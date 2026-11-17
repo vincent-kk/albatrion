@@ -82,7 +82,7 @@ registerPlugin(plugin);
 - **적용 조건**:
   - `type`이 `"number"` 또는 `"integer"`이고 `format`이 `"slider"`인 경우
   - 또는 `type`이 `"array"`이고 `items.type`이 `"number"` 또는 `"integer"`이며 `format`이 `"slider"`인 경우 (범위 슬라이더)
-- **추가 사항**: `presentation.FieldInputProps.lazy`(`false`이면 움직일 때마다 값 반영), `marks`(마크 표시), `range`(범위 슬라이더)
+- **추가 사항**: `presentation.FieldInputProps.lazy`(`false`이면 움직일 때마다 값 반영), `marks`(마크 표시). 슬라이더 형태는 스키마 타입이 정합니다. 배열 스키마는 숫자 두 개의 배열만 기록하는 범위 슬라이더를, 숫자 스키마는 숫자만 기록하는 단일 핸들 슬라이더를 받으며, `presentation.FieldInputProps.range`는 무시됩니다
 
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 
@@ -120,7 +120,7 @@ boolean 및 string 스위치 입력은 클릭하면 포커스를 받고 자연�
 
 ## 입력 설정
 
-위의 `lazy`, `marks`, `range` 같은 입력별 설정은 `presentation.FieldInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
+위의 `lazy`, `marks` 같은 입력별 설정은 `presentation.FieldInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
 
 ```ts
 const jsonSchema = {
@@ -151,7 +151,7 @@ const jsonSchema = {
 6. **Fallback**: 기본 fallback 컴포넌트
 
 같은 우선순위 내에서는 배열의 앞순서가 우선합니다. 현재 플러그인의 컴포넌트는 다음 순서로 정의되어 있습니다:
-`FieldInputBooleanSwitch` → `FieldInputStringCheckbox` → `FieldInputStringSwitch` → `FieldInputRadioGroup` → `FieldInputArray` → `FieldInputSlider` → `FieldInputTextarea` → `FieldInputString` → `FieldInputNumber` → `FieldInputBoolean`
+`FieldInputBooleanSwitch` → `FieldInputStringCheckbox` → `FieldInputStringSwitch` → `FieldInputRadioGroup` → `FieldInputSlider` → `FieldInputArray` → `FieldInputTextarea` → `FieldInputString` → `FieldInputNumber` → `FieldInputBoolean`
 
 ---
 
