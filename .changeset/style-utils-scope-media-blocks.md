@@ -1,8 +1,8 @@
 ---
-"@winglet/style-utils": patch
+"@winglet/style-utils": major
 ---
 
-Rules inside `@media` and the other grouping at-rules injected through `styleManagerFactory` are now scoped, so a page that relied on them applying to the whole document must add the scope class to those elements or move the rules into a separate unscoped stylesheet. Previously the block also lost its closing brace, so every rule after it fell inside the media query:
+**Breaking:** rules inside `@media` and the other grouping at-rules injected through `styleManagerFactory` are now scoped, so they no longer apply to elements outside the scope. A page that relied on them applying to the whole document must add the scope class to an ancestor of those elements, or inject those rules through a separate unscoped stylesheet. Previously the block also lost its closing brace, so every rule after it fell inside the media query:
 
 ```ts
 const addStyle = styleManagerFactory("card");

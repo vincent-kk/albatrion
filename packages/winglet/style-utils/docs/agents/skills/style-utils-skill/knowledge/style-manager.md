@@ -84,7 +84,7 @@ addStyle('u', '.a { background: url(a{b.png); } .b { color: blue; }');
 // injected: ''
 ```
 
-Quote such a URL (`url("a{b.png")`). A `/*` inside an unquoted `url(…)`, in any letter case, opens no comment.
+Quote such a URL (`url("a{b.png")`). A `/*` inside an unquoted `url(…)`, in any letter case, opens no comment, and a `;` inside one does not end an `@import` or other statement. A function whose name only ends in `url`, such as `myurl(`, is not a URL and is read as ordinary CSS.
 
 **Comments between rules and stray `}` are dropped.** A `}` with no open block is removed instead of being glued onto the next selector.
 
