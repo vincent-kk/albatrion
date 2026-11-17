@@ -53,7 +53,7 @@ Corrections for claims that are commonly assumed and are wrong here:
 | `err.code === 'INVALID_INPUT'` matches                    | `.code` is namespaced: `'JSON_POINTER.INVALID_INPUT'`. The bare code is on `.specific`.                                                                                             |
 | `JSONPointerError` / `isJSONPointerError` can be imported | Neither is exported, from the main entry or any sub-path. Match on `.name` (`'JSONPointer'` / `'JSONPatch'`) or on `.code`.                                                         |
 | `compare` emits only `add`/`remove`/`replace`             | With `strict: true` it also emits a `test` guard before each `replace` and `remove`. `add` never gets a guard.                                                                      |
-| `strict: true` on `applyPatch` rejects RFC violations     | The option is deprecated and ignored. `replace` on a missing path silently adds it either way.                                                                                      |
+| `strict: true` on `applyPatch` rejects RFC violations     | The option is deprecated and ignored. RFC violations throw in every mode — `replace` of a missing member included.                                                                  |
 | `strict: false` makes `applyPatch` lenient                | Failures throw regardless of `strict`: a `test` whose value differs or whose location is missing, `remove` of a missing property, array index out of bounds.                        |
 | `escapePath` escapes `/` inside a key                     | It splits on `/` first, so a `/` is never escaped — `escapePath('config/database')` returns `'config/database'` unchanged.                                                          |
 | `unescapeSegment` is the inverse of `escapeSegment`       | `unescapeSegment` is an alias for `unescapePath` — the same function object.                                                                                                        |
@@ -73,7 +73,7 @@ Corrections for claims that are commonly assumed and are wrong here:
 ## Knowledge Router
 
 - [pointers-and-paths.md](./knowledge/pointers-and-paths.md) — `getValue`/`setValue` semantics, the escape trio, `getJSONPointer`, `getJSONPath`, and why the JSONPath-to-pointer bridge needs care.
-- [patching-and-safety.md](./knowledge/patching-and-safety.md) — prototype pollution, the `strict` guard pipeline, per-function immutability, Merge Patch replacement rules, partial application.
+- [patching-and-safety.md](./knowledge/patching-and-safety.md) — prototype pollution, the `test` guard pipeline, per-function immutability, Merge Patch replacement rules, partial application.
 
 ## API Truth
 
