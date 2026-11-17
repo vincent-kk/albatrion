@@ -2,25 +2,22 @@ import {
   ASTERISK,
   COLON,
   COMMA,
+  CR,
+  DOUBLE_QUOTE,
   GT,
   LBRACE,
+  LF,
   L_PAREN,
   PLUS,
   RBRACE,
   R_PAREN,
   SEMICOLON,
+  SINGLE_QUOTE,
   SLASH,
   SPACE,
+  TAB,
   TILDE,
 } from './constants/asciiByte';
-import {
-  BYTE_KIND,
-  ORDINARY,
-  QUOTE,
-  SLASH_START,
-  WHITESPACE,
-} from './constants/byteKind';
-import { findCommentEnd } from './utils/findCommentEnd';
 import { findStringEnd } from './utils/findStringEnd';
 import { isDeclarationColon } from './utils/isDeclarationColon';
 import { isInsideParens } from './utils/isInsideParens';
@@ -79,39 +76,67 @@ export const compressCss = (css: string): string => {
 
   let outputIndex = 0;
   let cursor = 0;
+  let inComment = false;
+  let lastByte = 0;
+  let byte: number;
 
   while (cursor < length) {
-    const byte = buffer[cursor];
-    const kind = BYTE_KIND[byte];
+    byte = buffer[cursor];
 
-    if (kind === ORDINARY) {
-      output[outputIndex++] = byte;
-      cursor++;
-      continue;
-    }
-
-    if (kind === SLASH_START) {
-      if (cursor + 1 < length && buffer[cursor + 1] === ASTERISK) {
-        cursor = findCommentEnd(buffer, cursor + 2);
+    if (inComment) {
+      if (
+        byte === ASTERISK &&
+        cursor + 1 < length &&
+        buffer[cursor + 1] === SLASH
+      ) {
+        inComment = false;
+        cursor += 2;
         continue;
       }
-      output[outputIndex++] = byte;
       cursor++;
       continue;
     }
 
-    if (kind === QUOTE) {
+    // Every byte with its own branch below is at most SEMICOLON, so one compare skips them all.
+    if (byte > SEMICOLON) {
+      output[outputIndex++] = byte;
+      lastByte = byte;
+      cursor++;
+      continue;
+    }
+
+    if (
+      byte === SLASH &&
+      cursor + 1 < length &&
+      buffer[cursor + 1] === ASTERISK
+    ) {
+      inComment = true;
+      cursor += 2;
+      continue;
+    }
+
+    if (byte === DOUBLE_QUOTE || byte === SINGLE_QUOTE) {
       const stringEnd = findStringEnd(buffer, cursor);
       output.set(buffer.subarray(cursor, stringEnd), outputIndex);
       outputIndex += stringEnd - cursor;
+      lastByte = buffer[stringEnd - 1];
       cursor = stringEnd;
       continue;
     }
 
-    if (kind === WHITESPACE) {
-      while (++cursor < length && BYTE_KIND[buffer[cursor]] === WHITESPACE);
+    if (byte === SPACE || byte === TAB || byte === LF || byte === CR) {
+      while (++cursor < length) {
+        const nextByte = buffer[cursor];
+        if (
+          nextByte !== SPACE &&
+          nextByte !== TAB &&
+          nextByte !== LF &&
+          nextByte !== CR
+        )
+          break;
+      }
       if (outputIndex > 0 && cursor < length) {
-        const prevByte = output[outputIndex - 1];
+        const prevByte = lastByte;
         const nextByte = buffer[cursor];
         const noSpaceAfter =
           prevByte === LBRACE ||
@@ -143,38 +168,55 @@ export const compressCss = (css: string): string => {
         else if (needsSpace && nextByte === COLON)
           needsSpace = !isDeclarationColon(buffer, cursor);
 
-        if (needsSpace || needsSpaceForFunction) output[outputIndex++] = SPACE;
+        if (needsSpace || needsSpaceForFunction) {
+          output[outputIndex++] = SPACE;
+          lastByte = SPACE;
+        }
       }
       continue;
     }
 
-    let index = cursor + 1;
-    while (index < length && buffer[index] === SEMICOLON) index++;
-    let head = index;
-    let foundNonWhitespace = false;
-    while (head < length && !foundNonWhitespace) {
-      while (head < length && BYTE_KIND[buffer[head]] === WHITESPACE) head++;
-      if (
-        head < length - 1 &&
-        buffer[head] === SLASH &&
-        buffer[head + 1] === ASTERISK
-      ) {
-        head += 2;
-        while (head < length - 1) {
-          if (buffer[head] === ASTERISK && buffer[head + 1] === SLASH) {
-            head += 2;
-            break;
-          }
+    if (byte === SEMICOLON) {
+      let index = cursor + 1;
+      while (index < length && buffer[index] === SEMICOLON) index++;
+      let head = index;
+      let foundNonWhitespace = false;
+      while (head < length && !foundNonWhitespace) {
+        while (
+          head < length &&
+          (buffer[head] === SPACE ||
+            buffer[head] === TAB ||
+            buffer[head] === LF ||
+            buffer[head] === CR)
+        )
           head++;
-        }
-      } else foundNonWhitespace = true;
-    }
-    if (head < length && buffer[head] === RBRACE) {
+        if (
+          head < length - 1 &&
+          buffer[head] === SLASH &&
+          buffer[head + 1] === ASTERISK
+        ) {
+          head += 2;
+          while (head < length - 1) {
+            if (buffer[head] === ASTERISK && buffer[head + 1] === SLASH) {
+              head += 2;
+              break;
+            }
+            head++;
+          }
+        } else foundNonWhitespace = true;
+      }
+      if (head < length && buffer[head] === RBRACE) {
+        cursor = index;
+        continue;
+      }
+      output[outputIndex++] = SEMICOLON;
+      lastByte = SEMICOLON;
       cursor = index;
       continue;
     }
-    output[outputIndex++] = SEMICOLON;
-    cursor = index;
+    output[outputIndex++] = byte;
+    lastByte = byte;
+    cursor++;
   }
 
   while (outputIndex > 0 && output[outputIndex - 1] === SPACE) outputIndex--;
