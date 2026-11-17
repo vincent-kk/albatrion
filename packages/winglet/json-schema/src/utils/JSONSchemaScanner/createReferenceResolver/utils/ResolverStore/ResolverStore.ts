@@ -427,30 +427,36 @@ export class ResolverStore {
    * @param uri Address known from another document's identifier, not from indexing at that address.
    * @param source Caller's registrations.
    * @returns Nothing; normalizes the keys only when some key is not already a canonical spelling.
-   * @throws Duplicate-identifier error when a registered key names this address.
+   * @throws Duplicate-identifier error when a registered key names this address; the address then
+   *   stays unchecked, so repeating the lookup on this resolver fails the same way.
    */
   private settle(
     uri: string,
     source: Readonly<Record<string, SchemaValue>>,
   ): void {
     this.settled.add(uri);
-    if (
-      this.registered === undefined &&
-      !hasOwnProperty(source, uri) &&
-      !(this.canonicalKeys ??= Object.keys(source).every(
-        isCanonicalRetrievalURI,
-      ))
-    )
-      this.registered = this.normalizeRegistered(source);
-    const schema = hasOwnProperty(source, uri)
-      ? source[uri]
-      : this.registered?.get(uri);
-    if (schema !== undefined && isAbsoluteURI(uri))
-      this.index(
-        schema,
-        uri,
-        this.options.defaultDialect ?? DEFAULT_DIALECT,
-      );
+    try {
+      if (
+        this.registered === undefined &&
+        !hasOwnProperty(source, uri) &&
+        !(this.canonicalKeys ??= Object.keys(source).every(
+          isCanonicalRetrievalURI,
+        ))
+      )
+        this.registered = this.normalizeRegistered(source);
+      const schema = hasOwnProperty(source, uri)
+        ? source[uri]
+        : this.registered?.get(uri);
+      if (schema !== undefined && isAbsoluteURI(uri))
+        this.index(
+          schema,
+          uri,
+          this.options.defaultDialect ?? DEFAULT_DIALECT,
+        );
+    } catch (error) {
+      this.settled.delete(uri);
+      throw error;
+    }
   }
 
   /**
