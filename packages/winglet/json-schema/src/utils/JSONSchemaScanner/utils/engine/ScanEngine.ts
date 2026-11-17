@@ -230,17 +230,18 @@ export class ScanEngine<
           schema !== null &&
           typeof schema === 'object'
         ) {
-          if (
-            typeof schema.$schema === 'string' &&
-            (top === 0 ||
-              (((this.dialect & DialectMask.Legacy) === 0 ||
-                typeof schema.$ref !== 'string') &&
-                (typeof schema.$id === 'string' ||
-                  (this.dialect === DialectFlag.Draft04 &&
-                    typeof schema.id === 'string'))))
-          ) {
+          if (typeof schema.$schema === 'string') {
             const dialect = detectDialect(schema.$schema);
-            if (dialect !== undefined && dialect !== this.dialect) {
+            if (
+              dialect !== undefined &&
+              dialect !== this.dialect &&
+              (top === 0 ||
+                (((this.dialect & DialectMask.Legacy) === 0 ||
+                  typeof schema.$ref !== 'string') &&
+                  typeof (dialect === DialectFlag.Draft04
+                    ? schema.id
+                    : schema.$id) === 'string'))
+            ) {
               (this.dialectScopes ??= []).push({
                 frame: top,
                 previous: this.dialect,
