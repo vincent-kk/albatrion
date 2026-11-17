@@ -2,6 +2,8 @@ import type { ErrorObject } from 'ajv';
 
 import type { Dictionary } from '@aileron/declare';
 
+import { isChildSchemaPath } from './isChildSchemaPath';
+
 /**
  * Resolves an authored subschema from a schema path local to the root.
  * @param root - Authored root supplied to error transformation.
@@ -21,23 +23,6 @@ const schemaAtPath = (root: unknown, path: string): unknown => {
     ];
   }
   return current;
-};
-
-/** Keywords whose subschema at `<keyword>/<name or index>` judges one child of the host. */
-const CHILD_SCHEMA_MAPS = ['properties', 'patternProperties', 'items', 'prefixItems'];
-
-/**
- * Tells whether a false schema stands where its host places one child, so the issue rejects that key.
- * @param schemaPath - The false schema's path, with or without AJV's trailing `false schema` segment.
- * @returns True at `<map keyword>/<name or index>` or a single `items`; false for an in-place
- *   applicator such as `then`, `allOf/0` or an inlined `$ref` target, where the value is rejected.
- */
-const isChildSchemaPath = (schemaPath: string): boolean => {
-  const end = schemaPath.endsWith('/false schema') ? schemaPath.length - 13 : schemaPath.length;
-  const nameStart = schemaPath.lastIndexOf('/', end - 1) + 1;
-  if (schemaPath.slice(nameStart, end) === 'items') return true;
-  const keywordStart = schemaPath.lastIndexOf('/', nameStart - 2) + 1;
-  return CHILD_SCHEMA_MAPS.includes(schemaPath.slice(keywordStart, nameStart - 1));
 };
 
 /**
