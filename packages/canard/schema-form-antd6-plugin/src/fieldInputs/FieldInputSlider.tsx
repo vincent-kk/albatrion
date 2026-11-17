@@ -1,6 +1,8 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
 import { Slider } from 'antd';
+
+import { useOnMountLayout } from '@winglet/react-utils/hook';
 
 import type {
   FieldInputDefinition,
@@ -27,6 +29,14 @@ const FieldInputSlider = ({
   lazy,
   misfit,
 }: FieldInputSliderProps) => {
+  const groupRef = useRef<HTMLDivElement>(null);
+  // Slider passes no props to its handle, so the marker that lets `focus(path)` reach it is set on the DOM.
+  useOnMountLayout(() => {
+    groupRef.current
+      ?.querySelector('[role="slider"]')
+      ?.setAttribute('data-focus-target', '');
+  });
+
   const handleChange = useCallback(
     (value: number | null) => {
       if (value === null) onChange(undefined);
@@ -47,7 +57,7 @@ const FieldInputSlider = ({
   }, [handleChange, jsonSchema, lazy]);
 
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div ref={groupRef} role="group" aria-invalid={misfit || undefined}>
       <Slider
         id={path}
         disabled={disabled || readOnly}
