@@ -35,16 +35,16 @@ const endsAtChildPosition = (path: string): boolean => {
 /**
  * Tells whether a false schema stands where its host places one child, so the issue rejects that key.
  * @param schemaPath - AJV6 schema path of a `false schema` issue, with or without its suffix.
- * @param resources - Resources of the compiled schema, longest id first.
+ * @param resources - Resources of the compiled schema, longest id first; omitted when it declares none.
  * @returns True when the schema is a `properties` or `patternProperties` entry, a single `items`
  *   or a tuple `items` entry; false for a schema applied to the value itself, such as `then`,
  *   `allOf/0`, an inlined `$ref` target or `propertyNames`. A `#/` path, or a path that starts
- *   with a declared `$id`, is parsed from its resource root, so a property named like a keyword is
- *   read as a name; any other path cannot be split from its base, so only its last two segments
- *   are read.
+ *   with a declared identifier, is parsed from its resource root, so a property named like a
+ *   keyword is read as a name; any other path cannot be split from its base, so only its last two
+ *   segments are read.
  */
-export const isChildSchemaPath = (schemaPath: string, resources: readonly SchemaResource[]): boolean => {
+export const isChildSchemaPath = (schemaPath: string, resources?: readonly SchemaResource[]): boolean => {
   if (schemaPath.startsWith('#/')) return CHILD_POSITION.test(schemaPath);
-  const local = localizeSchemaPath(schemaPath, resources);
+  const local = resources && localizeSchemaPath(schemaPath, resources);
   return local ? CHILD_POSITION.test(local.pointer) : endsAtChildPosition(schemaPath);
 };
