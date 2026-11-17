@@ -45,9 +45,13 @@ describe('core/markerBlock — CRLF line endings', () => {
     );
   });
 
-  it('still matches a source that itself uses CRLF', () => {
+  // Control: a source that is CRLF in the package matches by its own hash, so
+  // the LF reading is never the only way a CRLF block can match.
+  it('control: matches a CRLF source inside a CRLF document by its own hash', () => {
     const source = toCRLF(SOURCE);
-    const body = findBlockBody(upsertBlock('', ID, source), ID) ?? '';
+    const doc = toCRLF(upsertBlock('', ID, SOURCE));
+    const body = findBlockBody(doc, ID) ?? '';
+    expect(body).toBe(source);
     expect(blockBodyMatches(body, hashContent(source))).toBe(true);
   });
 });

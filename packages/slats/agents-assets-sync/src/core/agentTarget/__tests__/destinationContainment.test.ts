@@ -40,7 +40,9 @@ describe('core/agentTarget — destinations stay inside their kind root', () => 
     },
   );
 
-  it('keeps a name that merely contains dots', () => {
+  // Control: passes with or without the containment check; it fails only if
+  // the check grows wide enough to refuse ordinary names.
+  it('control: keeps a name that merely contains dots', () => {
     const { destinations, orphanScans } = resolve(
       ['skills/pp/a..b/SKILL.md', 'rules/x..md'],
       ['skills/pp/'],
