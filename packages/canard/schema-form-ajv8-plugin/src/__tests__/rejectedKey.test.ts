@@ -58,6 +58,16 @@ describe('ValidationIssue.rejectedKey', () => {
   });
 
   it.each([
+    ['items', { items: { type: 'string', if: { const: 'a' }, then: false } }, { items: 'a' }, '/items'],
+    ['properties', { properties: { type: 'string', if: { const: 'a' }, then: false } }, { properties: 'a' }, '/properties'],
+  ])('keeps then: false on a field named %s on the value', async (_, properties, data, dataPath) => {
+    const issues = await validate({ type: 'object', properties }, data);
+    const falseIssue = issues?.find((issue) => issue.keyword === 'false schema');
+    expect(falseIssue).toMatchObject({ dataPath });
+    expect(falseIssue?.rejectedKey).toBeUndefined();
+  });
+
+  it.each([
     ['properties', plugin, { properties: { x: false } }, { x: 1 }, '', 'x'],
     ['patternProperties', plugin, { patternProperties: { '^x': false } }, { xa: 1 }, '', 'xa'],
     ['a single items schema', plugin, { properties: { a: { type: 'array', items: false } } }, { a: [1] }, '/a', '0'],
