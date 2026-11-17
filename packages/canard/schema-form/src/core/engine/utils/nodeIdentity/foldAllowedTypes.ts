@@ -18,9 +18,13 @@ import {
 export const foldAllowedTypes = (
   types: Optional<keyof typeof TYPE_MASK | readonly (keyof typeof TYPE_MASK)[]>,
 ): number => {
-  const allowed = typeof types === 'string' ? [types] : (types ?? []);
+  if (types == null) return TYPE_MASK.null;
+  if (typeof types === 'string') return TYPE_MASK[types];
   let mask = BIT_MASK_NONE;
-  for (const type of allowed) if (type !== 'null') mask |= TYPE_MASK[type];
+  for (let index = 0, count = types.length; index < count; index++) {
+    const type = types[index];
+    if (type !== 'null') mask |= TYPE_MASK[type];
+  }
   return mask || TYPE_MASK.null;
 };
 

@@ -109,18 +109,21 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
         binding,
         patch(binding.node, prior.instance, prior.overlay, index + 1),
       );
-      for (const other of entries) {
-        if (
-          preserveCandidates ||
-          other.name !== name ||
-          getBlueprintNodeIdentity(other.node) ===
-            getBlueprintNodeIdentity(binding.node) ||
-          instance?.childrenByName?.[name]?.blueprintNode === other.node
-        )
-          continue;
-        const prior = getSlotSource(instance, other, previous);
-        if (prior.instance || prior.overlay)
-          children.set(other, { isWhole: true });
+      if (!preserveCandidates) {
+        let bindingIdentity: Optional<string>;
+        for (const other of entries) {
+          if (
+            other.name !== name ||
+            other.node === binding.node ||
+            instance?.childrenByName?.[name]?.blueprintNode === other.node ||
+            getBlueprintNodeIdentity(other.node) ===
+              (bindingIdentity ??= getBlueprintNodeIdentity(binding.node))
+          )
+            continue;
+          const prior = getSlotSource(instance, other, previous);
+          if (prior.instance || prior.overlay)
+            children.set(other, { isWhole: true });
+        }
       }
       return { ...previous, children };
     };
@@ -128,22 +131,22 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
     const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
       new Map());
     overlays.set(entry, patch(entry.node, instance, previous, depth + 1));
-    for (const other of entries) {
-      if (
-        preserveCandidates ||
-        other.name !== name ||
-        getBlueprintNodeIdentity(other.node) ===
-          getBlueprintNodeIdentity(entry.node)
-      )
-        continue;
-      if (
-        !host.inactiveSlots?.has(other) &&
-        !host.inactiveSlotOverlays?.has(other)
-      )
-        continue;
-      markSlotChange(host, other, undefined, context);
-      host.inactiveSlots?.delete(other);
-      host.inactiveSlotOverlays?.delete(other);
+    if (!preserveCandidates) {
+      let entryIdentity: Optional<string>;
+      for (const other of entries) {
+        if (
+          other.name !== name ||
+          other.node === entry.node ||
+          (!host.inactiveSlots?.has(other) &&
+            !host.inactiveSlotOverlays?.has(other)) ||
+          getBlueprintNodeIdentity(other.node) ===
+            (entryIdentity ??= getBlueprintNodeIdentity(entry.node))
+        )
+          continue;
+        markSlotChange(host, other, undefined, context);
+        host.inactiveSlots?.delete(other);
+        host.inactiveSlotOverlays?.delete(other);
+      }
     }
     return wrote;
   }

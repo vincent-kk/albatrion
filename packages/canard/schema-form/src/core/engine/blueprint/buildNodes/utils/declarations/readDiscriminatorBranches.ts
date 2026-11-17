@@ -93,6 +93,7 @@ export const readDiscriminatorBranches = (
   )
     return result;
   if (!isArray(host.oneOf) && !isArray(host.anyOf)) return result;
+  let hostTagMask: Optional<number>;
   for (const keyword of UNION_KEYWORDS) {
     if (!isArray(host[keyword])) continue;
     let previousMask: Optional<number>;
@@ -249,7 +250,8 @@ export const readDiscriminatorBranches = (
             ? { canLift: false }
             : hostTagTypes !== undefined &&
                 ((mask !== undefined &&
-                  (mask & foldAllowedTypes(hostTagTypes)) === BIT_MASK_NONE) ||
+                  (mask & (hostTagMask ??= foldAllowedTypes(hostTagTypes))) ===
+                    BIT_MASK_NONE) ||
                   !values.some((value) =>
                     value === null
                       ? hostTagTypes.includes('null')

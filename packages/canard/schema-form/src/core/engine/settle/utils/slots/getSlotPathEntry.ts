@@ -43,17 +43,18 @@ export const getSlotPathEntry = <Self extends FieldNodeRecord<Self>>(
     getSlotEntries(instance, overlay, template),
     (entry) => entry.name === name,
   );
+  let selectedIdentity: Optional<string>;
   return (
     retained.find((entry) => entry.node === selected) ??
     declared.find(
       (entry) =>
         getBlueprintNodeIdentity(entry.node) ===
-        getBlueprintNodeIdentity(selected),
+        (selectedIdentity ??= getBlueprintNodeIdentity(selected)),
     ) ??
     retained.find(
       (entry) =>
         getBlueprintNodeIdentity(entry.node) ===
-        getBlueprintNodeIdentity(selected),
+        (selectedIdentity ??= getBlueprintNodeIdentity(selected)),
     )
   );
 };
