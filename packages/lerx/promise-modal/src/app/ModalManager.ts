@@ -14,6 +14,7 @@ import type { Modal } from '@/promise-modal/types/modal';
 
 import { getModalManagerState } from './helpers/getModalManagerState/getModalManagerState';
 import { getTabbableElements } from './utils/getTabbableElements';
+import { hasControlAhead } from './utils/hasControlAhead';
 
 /** Owns global DOM effects and the external modal store; styles are lazy for SSR. */
 export class ModalManager {
@@ -372,9 +373,12 @@ export class ModalManager {
     const last = controls[controls.length - 1] ?? frame;
     const current = document.activeElement;
     if (
+      !current ||
       !frame.contains(current) ||
       current === frame ||
-      (event.shiftKey ? current === first : current === last)
+      current === (event.shiftKey ? first : last) ||
+      (!controls.some((control) => control === current) &&
+        !hasControlAhead(current, controls, event.shiftKey))
     ) {
       event.preventDefault();
       (event.shiftKey ? last : first).focus();
