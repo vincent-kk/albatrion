@@ -1,5 +1,6 @@
 import type { ValidationIssue } from '@canard/schema-form';
 import { toJSONPointer } from './dataPath/toJSONPointer';
+import { isChildSchemaPath } from './schemaPath/isChildSchemaPath';
 import type { ErrorObject } from 'ajv';
 
 import type { Dictionary } from '@aileron/declare';
@@ -20,7 +21,7 @@ export const transformDataPath = (errors: ErrorObject[], root?: object): Validat
       if (typeof missingProperty === 'string')
         convertedDataPath += `/${missingProperty.replace(/~/g, '~0').replace(/\//g, '~1')}`;
     }
-    if (ajvError.keyword === 'false schema' && convertedDataPath) {
+    if (ajvError.keyword === 'false schema' && convertedDataPath && isChildSchemaPath(ajvError.schemaPath)) {
       const lastSlash = convertedDataPath.lastIndexOf('/');
       rejectedKey = convertedDataPath.slice(lastSlash + 1)
         .replace(/~1/g, '/').replace(/~0/g, '~');
