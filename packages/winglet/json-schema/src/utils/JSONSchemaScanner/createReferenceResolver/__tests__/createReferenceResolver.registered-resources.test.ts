@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { JSONSchemaScannerAsync } from '../../async';
+import { JSONSchemaScanError } from '../../utils/error/JSONSchemaScanError';
+import { JSONSchemaScanErrorCode } from '../../utils/error/JSONSchemaScanErrorCode';
 import { createReferenceResolverAsync } from '../utils/createReferenceResolverAsync';
 import { scan } from './fixtures/scan';
 
@@ -108,6 +110,7 @@ describe('registered resources', () => {
   it.each([
     ['embedding document first', ['a', 'b'], 'https://ex.example/b.json'],
     ['embedded document first', ['b', 'a'], 'https://ex.example/b.json'],
+    ['embedding document first, upper-case key', ['a', 'b'], 'https://EX.example/b.json'],
     [
       'embedding document first, upper-case key after an upper-case lookup',
       ['c', 'a', 'b'],
@@ -135,6 +138,46 @@ describe('registered resources', () => {
       );
     },
   );
+
+  it('gives the same outcome for one set of resources in every reference order and lookup history', () => {
+    const resources = {
+      'https://ex.example/a.json': {
+        $id: 'https://ex.example/a.json',
+        $defs: { B: { $id: 'https://ex.example/b.json', type: 'string' } },
+      },
+      'https://EX.example/b.json': {
+        $id: 'https://ex.example/b.json',
+        type: 'number',
+      },
+      'https://EX.example/c.json': { type: 'boolean' },
+    };
+    const outcome = (names: string[]) => {
+      const schema = {
+        $id: 'https://ex.example/root.json',
+        properties: Object.fromEntries(
+          names.map((name) => [name, { $ref: name + '.json' }]),
+        ),
+      };
+      try {
+        return JSON.stringify(scan(schema, {}, { resources }).output);
+      } catch (error) {
+        return error instanceof JSONSchemaScanError ? error.code : error;
+      }
+    };
+    const histories = [
+      ['a', 'b'],
+      ['b', 'a'],
+      ['c', 'a', 'b'],
+      ['c', 'b', 'a'],
+      ['a', 'c', 'b'],
+      ['b', 'c', 'a'],
+      ['a', 'b', 'c'],
+      ['b', 'a', 'c'],
+    ];
+    expect(histories.map(outcome)).toEqual(
+      histories.map(() => JSONSchemaScanErrorCode.DuplicateIdentifier),
+    );
+  });
 
   it('indexes the registered documents once however many lookups miss', () => {
     let reads = 0;
