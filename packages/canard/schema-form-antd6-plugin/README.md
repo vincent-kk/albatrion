@@ -191,7 +191,7 @@ This plugin provides the following Ant Design v6 components:
 
 - **Role**: Display boolean values as checkboxes
 - **Applied when**: `type` is `"boolean"` (fallback when other conditions don't match)
-- **Additional features**: Support for `indeterminate` state for `undefined` values
+- **Additional features**: `null` and any other non-boolean value show the `indeterminate` state; an unset (`undefined`) value shows an unchecked box
 
 ---
 
