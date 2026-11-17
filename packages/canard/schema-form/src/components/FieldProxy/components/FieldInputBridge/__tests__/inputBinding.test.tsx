@@ -168,7 +168,7 @@ it('ERROR-202 reports terminal child access once with a frozen empty array', () 
   expect(
     onError.mock.calls.filter(
       ([record]) =>
-        record.code === 'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL',
+        record.code === 'SCHEMA_FORM_WARNING.CHILD_FIELDS_ON_TERMINAL',
     ),
   ).toHaveLength(1);
 });
