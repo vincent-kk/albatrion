@@ -51,8 +51,8 @@ afterEach(() => {
 });
 
 // The build-time script must stay pure Node ESM, so its walk and noise list
-// cannot be shared with `utils/computeHashManifest.ts`. These cases are what
-// keeps the two copies honest.
+// cannot be shared with `utils/computeHashManifest.ts` and
+// `core/utils/isNoisePath.ts`. These cases are what keeps the two copies honest.
 describe('computed vs built manifest', () => {
   async function built(): Promise<HashManifest> {
     await buildHashes({

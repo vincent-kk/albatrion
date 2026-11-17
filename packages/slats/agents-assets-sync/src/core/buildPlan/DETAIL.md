@@ -13,9 +13,10 @@
 - orphan 은 `--force` 가 있으면 `delete`, 없으면 `warn-orphan` 으로 나온다.
 - orphan 탐색은 호출자가 준 스캔만 돈다. 블록 스캔은 명시된 소유 패키지의 블록만 살피므로 다른 패키지나 다른 도구의 블록은 삭제 후보가 되지 않는다.
 - 존재하지 않는 orphan 스캔 루트는 실패가 아니다. 걷기가 조용히 비어 돌아온다.
+- 디렉터리 orphan 탐색은 원본 해시 계산과 같은 잡음 필터(`.omc` 구획, `.DS_Store`, `*.log`)로 걸러낸다. orphan 은 이 패키지가 예전에 설치했지만 더 이상 배포하지 않는 내용인데, 잡음 파일은 원본에서 처음부터 빠지므로 설치된 적이 없다. 거르지 않으면 Finder 가 만든 `.DS_Store` 하나가 실행을 종료 코드 2로 막고 `--force` 가 그것을 지운다.
 - 한 계획 안에서 같은 공유 문서를 여러 번 읽지 않는다 (`utils/readDocument.ts` 의 계획 단위 캐시).
 - 경로 비교는 POSIX 구분자로 정규화해서 한다 (`core/utils/toPosix.ts`).
-- 디렉터리 걷기와 POSIX 정규화는 `core/utils/` 의 공유 organ 에서 온다. `hashManifest/` 도 같은 것을 쓰며, 두 소비자의 최저 공통 fractal 이 `core/` 이기 때문이다.
+- 디렉터리 걷기, POSIX 정규화와 잡음 필터는 `core/utils/` 의 공유 organ 에서 온다. `hashManifest/` 도 같은 것을 쓰며, 두 소비자의 최저 공통 fractal 이 `core/` 이기 때문이다. 잡음 목록이 한 곳에 있어야 배포하지 않는 파일과 고아로 보지 않는 파일이 갈라지지 않는다.
 
 ## API Contracts
 
@@ -38,7 +39,8 @@
 - 설치본이 없는 항목은 `copy`, 같은 항목은 `skip-uptodate`, 다른 항목은 `warn-diverged` 가 된다.
 - 매니페스트에 없는데 스캔 루트 아래 남아 있는 파일은 orphan 으로 나온다.
 - 존재하지 않는 orphan 루트를 스캔해도 실패하지 않는다.
-- 검증: `__tests__/buildPlan.test.ts`.
+- 원본 해시 계산이 무시하는 잡음 파일은 `--force` 여부와 무관하게 orphan 이 아니다.
+- 검증: `__tests__/buildPlan.test.ts`, `__tests__/orphanPolicy.test.ts`.
 
 ### AC-PLAN-BLOCK — 블록 목적지의 판정
 
