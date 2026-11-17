@@ -145,11 +145,13 @@ export class ModalManager {
     }
     ModalManager.__state__.owner = identity;
     ModalManager.__state__.generation++;
-    const focused = ModalManager.__state__.anchor?.contains(
-      document.activeElement,
-    )
-      ? document.activeElement
-      : null;
+    const previous = ModalManager.__state__.anchor;
+    const focused =
+      previous &&
+      previous.parentElement !== root &&
+      previous.contains(document.activeElement)
+        ? document.activeElement
+        : null;
     const anchor = ModalManager.anchor({ root });
     ModalManager.applyStyleSheet();
     ModalManager.installKeyboardListener();
