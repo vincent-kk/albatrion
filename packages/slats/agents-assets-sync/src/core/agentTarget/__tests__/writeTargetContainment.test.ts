@@ -85,11 +85,52 @@ describe('core/agentTarget — written files resolve inside the project', () => 
     ).resolves.toBeUndefined();
   });
 
-  it('resolves each directory once into the shared cache', async () => {
+  it('resolves and lists each directory once into the shared cache', async () => {
     await check([join(namespace, 'a.md'), join(namespace, 'b.md')]);
     expect(resolved.get(namespace)).toEqual({
       real: expect.stringContaining('pp'),
       exists: true,
+      linkNames: new Set(),
+    });
+  });
+
+  // One written name is checked with `lstat`, two or more through one listing
+  // of the directory; both paths must reach the same verdict.
+  describe.each([
+    ['lstat (one name written)', [] as string[]],
+    ['listing (two names written)', ['sibling.md']],
+  ])('link detection through %s', (_label, extraNames) => {
+    const cases: Array<[string, (link: string) => void, boolean]> = [
+      [
+        'a file link outside the project',
+        (link) => {
+          writeFileSync(join(outside, 'target.md'), '', 'utf-8');
+          symlinkSync(join(outside, 'target.md'), link, 'file');
+        },
+        false,
+      ],
+      [
+        'a dangling file link',
+        (link) => symlinkSync(join(outside, 'missing.md'), link, 'file'),
+        false,
+      ],
+      [
+        'a file link inside the project',
+        (link) => {
+          writeFileSync(join(projectRoot, 'inside.md'), '', 'utf-8');
+          symlinkSync(join(projectRoot, 'inside.md'), link, 'file');
+        },
+        true,
+      ],
+      ['a regular file', (link) => writeFileSync(link, '', 'utf-8'), true],
+    ];
+    it.each(cases)('judges %s', async (_name, arrange, isAllowed) => {
+      const link = join(namespace, 'SKILL.md');
+      arrange(link);
+      writeFileSync(join(namespace, 'sibling.md'), '', 'utf-8');
+      const written = [link, ...extraNames.map((n) => join(namespace, n))];
+      if (isAllowed) await expect(check(written)).resolves.toBeUndefined();
+      else await expect(check(written)).rejects.toThrow(link);
     });
   });
 
