@@ -1,5 +1,6 @@
 import {
   ASTERISK,
+  BACKSLASH,
   COLON,
   COMMA,
   CR,
@@ -18,7 +19,7 @@ import {
   TAB,
   TILDE,
 } from './constants/asciiByte';
-import { findStringEnd } from './utils/findStringEnd';
+import { findUnquotedUrlEnd } from './utils/findUnquotedUrlEnd';
 import { isDeclarationColon } from './utils/isDeclarationColon';
 import { isInsideParens } from './utils/isInsideParens';
 
@@ -115,13 +116,30 @@ export const compressCss = (css: string): string => {
       continue;
     }
 
+    // Copied byte by byte: a subarray and set() per string costs more than the copy.
     if (byte === DOUBLE_QUOTE || byte === SINGLE_QUOTE) {
-      const stringEnd = findStringEnd(buffer, cursor);
-      output.set(buffer.subarray(cursor, stringEnd), outputIndex);
-      outputIndex += stringEnd - cursor;
-      lastByte = buffer[stringEnd - 1];
-      cursor = stringEnd;
+      output[outputIndex++] = byte;
+      while (++cursor < length) {
+        const stringByte = buffer[cursor];
+        output[outputIndex++] = stringByte;
+        if (stringByte === byte) {
+          cursor++;
+          break;
+        }
+        if (stringByte === BACKSLASH && cursor + 1 < length)
+          output[outputIndex++] = buffer[++cursor];
+      }
+      lastByte = output[outputIndex - 1];
       continue;
+    }
+
+    if (byte === L_PAREN) {
+      const urlEnd = findUnquotedUrlEnd(buffer, cursor);
+      if (urlEnd !== cursor) {
+        while (cursor < urlEnd) output[outputIndex++] = buffer[cursor++];
+        lastByte = output[outputIndex - 1];
+        continue;
+      }
     }
 
     if (byte === SPACE || byte === TAB || byte === LF || byte === CR) {

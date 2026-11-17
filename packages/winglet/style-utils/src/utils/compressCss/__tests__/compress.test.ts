@@ -182,7 +182,9 @@ describe('compressCss', () => {
 
   it('copies an unquoted url() verbatim, comment markers included', () => {
     expect(
-      compressCss('.a { background: url(http://x.com/a/*b) } .b { color: red }'),
+      compressCss(
+        '.a { background: url(http://x.com/a/*b) } .b { color: red }',
+      ),
     ).toBe('.a{background:url(http://x.com/a/*b)}.b{color:red}');
   });
 
