@@ -56,7 +56,8 @@
 
 - 유효하지 않은 컴포넌트·시험은 건너뛰고, 정규화 중에 컴포넌트를 렌더하거나 훅을 실행하지 않습니다. 선택 준비가 사용자 렌더의 부수 효과를 실행하지 않게 합니다.
 - 인라인·preferred·맵·정의 입력은 같은 사설 어댑터를 사용합니다. 입력 경계는 적용 세대 key 바깥에 두고, 원본 입력만 key를 바꾸어 Refresh가 실패한 경계를 우회 복구하지 않게 합니다. 경계의 재마운트 범위는 [FieldInputBridge 계약](../../components/FieldProxy/components/FieldInputBridge/DETAIL.md)에 둡니다.
-- 감싸개가 현재 입력 path로 폼 보고기를 읽고 비공개 적용 세대와 선택 수명 토큰을 소비합니다. 선택 토큰의 insertion effect는 이 감싸개가 소유하여, 삭제 시 원본 입력의 layout cleanup보다 먼저 토큰을 폐기합니다. 원본 입력에는 두 사설 prop을 전달하지 않으며 별도의 전달 전용 fiber를 만들지 않습니다.
+- 감싸개가 현재 입력 path로 폼 보고기를 읽고 비공개 적용 세대와 선택 수명 토큰을 소비합니다. 어댑터 삭제의 insertion cleanup은 원본 입력의 layout cleanup보다 먼저 선택을 폐기합니다. 같은 어댑터의 원본 key 교체에서는 자손 layout cleanup이 어댑터의 insertion cleanup보다 먼저 실행되므로 기존 오류 경계의 pre-mutation snapshot이 이전 선택을 폐기합니다. 이 순서를 렌더 단계로 옮기면 중단된 작업이 커밋된 입력을 무효화합니다.
+- 원본 입력에는 두 사설 prop을 전달하지 않으며 별도 fiber 없이 기존 경계 인스턴스를 유지합니다. 경계 props의 선택 참조 하나와 경계 갱신의 snapshot·후속 lifecycle 호출이 비용이며, 실행 시간은 벤치마크로 확인합니다.
 
 ## Last Updated
 

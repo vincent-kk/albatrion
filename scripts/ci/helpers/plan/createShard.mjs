@@ -39,7 +39,7 @@ export function createShard(name, affected, changed, workspaces, tier = "pr") {
   for (const workspace of selected.filter(
     (workspace) => workspace.scripts.test,
   )) {
-    if (workspace.name === "@canard/schema-form" && tier === "pr")
+    if (workspace.name === "@canard/schema-form" && tier === "pr") {
       steps.push({
         kind: "test",
         label: "Test schema-form unit",
@@ -52,7 +52,28 @@ export function createShard(name, affected, changed, workspaces, tier = "pr") {
           "unit",
         ],
       });
-    else if (workspace.name === "@canard/schema-form") {
+      steps.push({
+        kind: "test",
+        label: "Test schema-form input lifetime regressions on React19/React18",
+        args: [
+          "workspace",
+          workspace.name,
+          "test",
+          "--run",
+          "--project",
+          "render",
+          "--project",
+          "react18",
+          "src/__tests__/e2e/controlledCallbackLifetime.test.tsx",
+          "src/__tests__/e2e/controlledSelectionLifetime.test.tsx",
+          "src/__tests__/e2e/inputCallbackLocks.test.tsx",
+          "src/__tests__/e2e/inputCallbackLocks.lifecycle.test.tsx",
+          "src/__tests__/e2e/fileCallbackLocks.test.tsx",
+          "src/helpers/fieldInputDefinition/__tests__/inputBoundaryLayer.test.tsx",
+          "src/components/FieldProxy/__tests__/rendererBoundary.test.tsx",
+        ],
+      });
+    } else if (workspace.name === "@canard/schema-form") {
       steps.push({
         kind: "test",
         label: "Test schema-form unit/render/React18/Storybook",

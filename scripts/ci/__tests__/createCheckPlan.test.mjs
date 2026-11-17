@@ -119,7 +119,7 @@ test("production-testbed uses its manifest name and only builds when affected", 
   );
 });
 
-test("default pr tier runs only schema-form unit tests without a browser", () => {
+test("default pr tier runs schema-form unit and selected input lifetime regressions without a browser", () => {
   const plan = createCheckPlan(workspaces, [
     "packages/canard/schema-form/src/index.ts",
   ]);
@@ -145,6 +145,27 @@ test("default pr tier runs only schema-form unit tests without a browser", () =>
           "--run",
           "--project",
           "unit",
+        ],
+      },
+      {
+        kind: "test",
+        label: "Test schema-form input lifetime regressions on React19/React18",
+        args: [
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "render",
+          "--project",
+          "react18",
+          "src/__tests__/e2e/controlledCallbackLifetime.test.tsx",
+          "src/__tests__/e2e/controlledSelectionLifetime.test.tsx",
+          "src/__tests__/e2e/inputCallbackLocks.test.tsx",
+          "src/__tests__/e2e/inputCallbackLocks.lifecycle.test.tsx",
+          "src/__tests__/e2e/fileCallbackLocks.test.tsx",
+          "src/helpers/fieldInputDefinition/__tests__/inputBoundaryLayer.test.tsx",
+          "src/components/FieldProxy/__tests__/rendererBoundary.test.tsx",
         ],
       },
     ],

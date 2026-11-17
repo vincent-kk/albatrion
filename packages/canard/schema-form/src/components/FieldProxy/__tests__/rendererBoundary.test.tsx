@@ -3,6 +3,8 @@ import { createRef, useState } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { ErrorBoundary } from '@winglet/react-utils/hoc';
+
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { ErrorVisibility } from '@/schema-form/types';
 import type { FieldInputProps } from '@/schema-form/types';
@@ -31,12 +33,12 @@ const boundariesOf = (element: Element) => {
   let fiber = (element as unknown as Record<string, { return: unknown }>)[
     key
   ] as {
-    type?: { name?: string };
     stateNode?: object;
     return?: unknown;
   } | null;
   while (fiber) {
-    if (fiber.type?.name === 'ErrorBoundary') boundaries.push(fiber.stateNode!);
+    if (fiber.stateNode instanceof ErrorBoundary)
+      boundaries.push(fiber.stateNode);
     fiber = fiber.return as typeof fiber;
   }
   return boundaries;

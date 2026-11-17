@@ -34,7 +34,7 @@ CONTROLS-081·REACT-032. presentation의 입력 props는 표현 payload로 전�
 
 값·파일 callback은 자식 자신의 prop을 우선하고, 없으면 호출 시점의 부모 ref를 읽습니다. 부모의 재렌더만으로 메모된 형제 브리지가 다시 렌더된다고 가정하면 옛 클로저가 형제의 편집을 덮거나 첨부를 오래된 상태로 처리합니다. 자식 prop을 제거하면 현재 부모 callback으로 돌아가며, 부모 ref의 값을 브리지 렌더 시점에 복사하지 않습니다. 안정된 ref를 전달하므로 렌더마다 훅이나 할당을 추가하지 않습니다.
 
-CONTROLS-083. Form과 노드의 readOnly·disabled는 사용자 값 쓰기를 차단합니다. 표현 props의 잠금 합성과 실제 브리지 진입 검사를 혼동하지 않으며, 공개·자동 쓰기를 UI 잠금으로 거부하지 않습니다. 입력 자체의 제약 집행과 초안 표현은 [fieldInputs](../../../../fieldInputs/DETAIL.md)가 소유합니다.
+CONTROLS-083. Form과 노드의 readOnly·disabled는 사용자 값·파일 첨부 쓰기를 차단합니다. 첨부의 교체·제거와 부모·렌더러 중계에도 같은 잠금을 적용하여 값만 거부하고 제출 파일은 바뀌는 불일치를 막습니다. 콜백 생성 때의 잠금이 아닌 호출 시점에 커밋된 Form 잠금을 검사하여 지연 응답도 잠금 변경을 따릅니다. 잠금 게시와 자식 layout 단계의 순서는 [InputControlContext](../../../../providers/InputControlContext/DETAIL.md)가 소유합니다. 표현 props의 잠금 합성과 실제 브리지 진입 검사를 혼동하지 않으며, 공개·자동 쓰기를 UI 잠금으로 거부하지 않습니다. 입력 자체의 제약 집행과 초안 표현은 [fieldInputs](../../../../fieldInputs/DETAIL.md)가 소유합니다.
 
 GOAL-061·WRITE-083. blur는 입력 마침을 알리고 touched를 다음 프레임으로 미룹니다. focus는 예약을 취소하여 포커스 이동 중 오류 깜빡임을 막습니다. blur 때의 상호작용 초기화 번호가 바뀌면 늦은 touched를 버립니다. trim은 엔진의 자동 쓰기 정책을 따르며 blur 자체가 외부 오류를 지우거나 Edited를 세우지 않습니다.
 
@@ -42,7 +42,9 @@ GOAL-061·WRITE-083. blur는 입력 마침을 알리고 touched를 다음 프레
 
 입력은 현재 binding의 살아 있는 노드, 활성 선택 토큰, 적용 Refresh 세대를 함께 검사합니다. 마운트된 자식을 가진 컨테이너에는 Refresh 세대 검사를 적용하지 않지만 노드·선택 수명 검사는 유지합니다. 첫 자식 layout 쓰기는 binding 준비 전 Context 루트로 수락합니다. 교체된 루트의 늦은 값·파일 쓰기는 현재 폼을 바꾸지 않습니다.
 
-선택 토큰은 A→B→A에서도 각 선택 수명마다 다릅니다. 선택 어댑터의 insertion effect가 원본 입력 layout cleanup보다 먼저 폐기하여 cleanup에서 호출한 값·파일 callback도 막습니다. 중단된 렌더는 현재 선택을 폐기하지 않습니다. 파일 첨부는 같은 수명 검사를 받고 unmount에서 경로의 첨부 상태를 제거합니다.
+선택 토큰은 A→B→A에서도 각 선택 수명마다 다릅니다. 제어 선언은 실제 모드인 `controlled === true`로 구분합니다. `undefined`와 `false` 사이 변경은 DOM·이전 값·파일 콜백·예약된 blur를 유지합니다. 실제 모드가 바뀌면 같은 원본 컴포넌트라도 이전 콜백을 폐기하며, 자식 소유권이나 composition이 DOM 교체를 보류해도 이 수명 경계는 적용됩니다. 새로운 콜백의 Refresh 세대 검사는 그대로이므로 composition 중 보류된 외부 쓰기를 이전 draft로 덮지 못합니다.
+
+선택 폐기는 커밋에서 원본 입력 layout cleanup보다 먼저 일어나므로 cleanup의 값·파일 callback도 막고 중단된 렌더는 현재 선택을 폐기하지 않습니다. 해제 순서와 비용은 [입력 해석 어댑터](../../../../helpers/fieldInputDefinition/DETAIL.md)가 소유합니다. 파일 첨부는 같은 수명 검사를 받고 unmount에서 경로의 첨부 상태를 제거합니다.
 
 ### REACT-028 — Refresh와 자식 소유권
 

@@ -1,4 +1,9 @@
-import { type PropsWithChildren, useMemo } from 'react';
+import {
+  type PropsWithChildren,
+  useInsertionEffect,
+  useMemo,
+  useRef,
+} from 'react';
 
 import { InputControlContext } from './InputControlContext';
 
@@ -14,7 +19,16 @@ export const InputControlContextProvider = ({
   disabled,
   children,
 }: PropsWithChildren<InputControlContextProviderProps>) => {
-  const value = useMemo(() => ({ readOnly, disabled }), [readOnly, disabled]);
+  const isLocked = !!(readOnly || disabled);
+  const committedLockRef = useRef(isLocked);
+  // Publish before child layout setup without leaking uncommitted render values.
+  useInsertionEffect(() => {
+    committedLockRef.current = isLocked;
+  }, [isLocked]);
+  const value = useMemo(
+    () => ({ readOnly, disabled, committedLockRef }),
+    [readOnly, disabled],
+  );
   return (
     <InputControlContext.Provider value={value}>
       {children}
