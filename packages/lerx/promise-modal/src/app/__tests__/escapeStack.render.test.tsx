@@ -2,7 +2,11 @@ import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { BootstrapProvider } from '@/promise-modal/bootstrap';
-import { alertHandler, confirmHandler } from '@/promise-modal/core';
+import {
+  alertHandler,
+  confirmHandler,
+  promptHandler,
+} from '@/promise-modal/core';
 
 import { ModalManager } from '../ModalManager';
 
@@ -146,4 +150,35 @@ it('cancels exactly one accepting modal per press after skipping a nondimmed req
   expect(lower.modalNode?.settled).toBe(false);
   expect(upper.modalNode?.settled).toBe(false);
   expect(event.defaultPrevented).toBe(true);
+});
+
+it('closes at most one modal when the top prompt cancels itself on Escape', async () => {
+  render(<BootstrapProvider />);
+  let lower!: ReturnType<typeof confirmHandler>;
+  let upper!: ReturnType<typeof promptHandler<string>>;
+  act(() => {
+    lower = confirmHandler({ title: 'lower' });
+    upper = promptHandler<string>({
+      title: 'upper',
+      Input: ({ value, onChange, onCancel }) => (
+        <input
+          id="upper-input"
+          value={value ?? ''}
+          onChange={(event) => onChange(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') onCancel();
+          }}
+        />
+      ),
+    });
+  });
+  const input = document.getElementById('upper-input') as HTMLInputElement;
+  input.focus();
+  act(() => {
+    fireEvent.keyDown(input, { key: 'Escape' });
+  });
+
+  await expect(upper.promiseHandler).resolves.toBeNull();
+  expect(lower.modalNode?.settled).toBe(false);
+  expect(lower.modalNode?.visible).toBe(true);
 });
