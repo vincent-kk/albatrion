@@ -26,11 +26,11 @@ The third is the dangerous one, and it is easy to reach: deriving a per-instance
 
 Three selector forms pass through unprefixed:
 
-| Selector form              | Behavior                                                    |
-| -------------------------- | ----------------------------------------------------------- |
-| Anything starting with `@` | Header emitted verbatim (but see the at-rule failure below) |
-| Exactly `:root`            | Emitted verbatim                                            |
-| Exactly `:host`            | Emitted verbatim                                            |
+| Selector form              | Behavior                                                  |
+| -------------------------- | --------------------------------------------------------- |
+| Anything starting with `@` | Header emitted verbatim (inner rules: see at-rules below) |
+| Exactly `:root`            | Emitted verbatim                                          |
+| Exactly `:host`            | Emitted verbatim                                          |
 
 The `:root` exception is load-bearing rather than incidental: it is _why_ CSS-variable theming works through this library. A scope can inject `:root { --bg: #fff; }` and have it land globally, so a theme scope can rotate variables that every other scope consumes through `var(--bg)`:
 
@@ -44,36 +44,49 @@ function applyTheme(vars: string) {
 }
 ```
 
-"Exactly" is literal. `:root, .a { … }` and `:host([disabled]) { … }` are not bare, so they take the prefix and come out as `.scope:root,.a` and `.scope:host([disabled])` — both meaningless in document mode.
+"Exactly" is literal. `:root.dark { … }` and `:host([disabled]) { … }` are not bare, so they take the prefix and come out as `.scope :root.dark` and `.scope :host([disabled])` — both meaningless in document mode. In a selector list each selector is judged alone: `:root, .a { … }` becomes `:root,.scope .a{…}`.
 
-## Where the rewriter fails
+## How the rewriter walks rules
 
-The rewriter finds the next `}`, treats everything before the first `{` as one selector, and prefixes it. That model cannot represent nesting or selector lists, and it reports no error when it meets one.
+The rewriter finds each block's end by counting braces and prefixes every selector of a style rule. A selector list splits only at top-level commas, outside parentheses, quoted strings and backslash escapes:
 
-**Comma lists lose everything after the first selector.** `.a, .b { color: red; }` becomes `.scope .a,.b{color:red}` — `.b` escapes the scope and applies document-wide. Split selector lists into separate rules before injecting them.
+```typescript
+addStyle('list', '.a, .b:is(.c, .d) { color: red; }');
+// injected: '.my-widget .a,.my-widget .b:is(.c,.d){color:red}'
+```
 
-**At-rule blocks come out unbalanced.** The at-rule header is passed through, but the inner rules are consumed as part of that same slice (so they are never scoped), and the block's closing brace is dropped entirely:
+At-rules are handled by kind:
+
+| At-rule                                                                                                        | Behavior                                               |
+| -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `@media`, `@supports`, `@container`, `@layer`, `@document`, `@starting-style` (vendor-prefixed forms included) | Header kept, inner rules scoped recursively            |
+| Other block at-rules: `@keyframes`, `@font-face`, `@page`, …                                                   | Whole block copied unchanged, so `from`/`to` stay bare |
+| Statements ending in `;`: `@import`, `@charset`, `@layer a, b;`                                                | Copied unchanged                                       |
 
 ```typescript
 addStyle(
   'm',
   '@media (max-width: 768px) { .btn { color: red; } } .z { color: green; }',
 );
-// injected: '@media (max-width:768px){.btn{color:red}.scope .z{color:green}'
-```
-
-Two silent failures compound here: `.btn` leaks globally under the media query, and `.z` — a rule that had nothing to do with the media query — ends up nested inside the still-open block. `@keyframes` fares worse still, since its `to`/`from` steps read as ordinary selectors and get prefixed. Keep at-rules in their own `styleId`, or place them last in the string, and scope the inner selectors by hand:
-
-```typescript
-addStyle(
-  'responsive',
-  '@media (max-width: 768px) { .my-widget .btn { color: red; } }',
-);
+// injected: '@media (max-width:768px){.my-widget .btn{color:red}}.my-widget .z{color:green}'
 ```
 
 Names declared by `@keyframes` and `@font-face` are global regardless — nothing namespaces them per scope, so two scopes defining `fade-in` silently collide. Prefix the names yourself.
 
-**A leading pseudo-selector is compounded onto the scope.** `:hover { … }` is prefixed to `.scope :hover`, and the compression pass then removes the space, yielding `.scope:hover` — the scope container itself, not its descendants. The mechanism lives in `pure-utils.md`; the consequence is that top-level pseudo-selectors must be written against a real element (`.btn:hover`).
+**A leading pseudo-selector matches descendants.** `:hover { … }` becomes `.scope :hover` — any hovered element inside the scope container, not the container itself. Write top-level pseudo-selectors against a real element (`.btn:hover`).
+
+## Where the rewriter fails
+
+**A brace inside a string value cuts the rule.** The rewriter does not read quoted strings, so the `}` in `content: "}"` ends the rule early, the rest of its declarations become a bogus selector, and the rule after it loses its prefix:
+
+```typescript
+addStyle('s', '.a::before { content: "}"; color: red; } .b { color: blue; }');
+// injected: '.my-widget .a::before{content:"}.my-widget ";color:red}.b{color:blue}'
+```
+
+Write the brace as a CSS escape instead (`content: "\7d"`).
+
+**A trailing rule without its closing brace is dropped.** Nothing is injected for it, and no error is raised.
 
 ## Shadow DOM mode
 
@@ -97,7 +110,7 @@ class MyCard extends HTMLElement {
 }
 ```
 
-Rewriting is skipped because shadow encapsulation already isolates the selectors — and because prefixing would break `:host` and `::slotted(…)`, which must stay at the root of their selector. This also means the failure modes above do not apply in shadow mode: at-rules, comma lists, and pseudo-selectors all pass through untouched.
+Rewriting is skipped because shadow encapsulation already isolates the selectors — and because prefixing would break `:host` and `::slotted(…)`, which must stay at the root of their selector. This also means none of the rewriting above happens in shadow mode: at-rules, selector lists, and pseudo-selectors all pass through untouched, and a brace inside a string cannot cut a rule.
 
 Never reuse a document-mode factory for a shadow root, or one host's factory for another host. Both mistakes route CSS to the wrong root, and the symptom — styles appearing on `document` instead of inside the component — looks like a scoping bug rather than a wiring one.
 
@@ -119,7 +132,7 @@ The observable consequence is that **nothing is in the DOM until the next frame*
 
 The path is chosen per flush: `CSSStyleSheet.replaceSync` plus `adoptedStyleSheets` when both are available on the target root, otherwise a `<style>` element appended to the shadow root or to `document.head`. The fallback element carries `className = scopeId`, which makes it findable — `document.head.querySelector('style.my-widget')` is the quickest way to read back exactly what a scope injected.
 
-Neither path reports bad CSS. The fallback path only assigns `textContent`; the modern path calls `replaceSync`, which per CSSOM parses the text and **drops invalid rules rather than throwing**. So a selector the browser cannot parse — the digit-leading scope id above, or a mangled at-rule — does not raise anything anywhere. The rule simply never exists, and every valid rule around it applies normally. When a style is missing, read back what was actually injected instead of reasoning about the input.
+Neither path reports bad CSS. The fallback path only assigns `textContent`; the modern path calls `replaceSync`, which per CSSOM parses the text and **drops invalid rules rather than throwing**. So a selector the browser cannot parse — the digit-leading scope id above, or a rule cut short by a brace inside a string — does not raise anything anywhere. The rule simply never exists, and every valid rule around it applies normally. When a style is missing, read back what was actually injected instead of reasoning about the input.
 
 The modern path's `replaceSync` call is nonetheless wrapped in a `try`/`catch` that warns and returns. That is a defensive path — `replaceSync` throws on a non-modifiable sheet, not on malformed CSS, and the manager always constructs its own — but if it ever does fire, the failure mode is worth knowing: **the flush does not throw, and the sheet keeps its previous content**. Every style in the scope freezes at its last good state, with `StyleManager: Failed to apply CSS for scope "…"` on the console as the only evidence. The stored styles are not lost, so the next successful flush applies all of them.
 
@@ -174,7 +187,7 @@ Work down this list; each step rules out one layer.
 1. **Which mode?** `styleManagerFactory(id)` injects into `document`; `styleManagerFactory(id, { shadowRoot })` injects into that root. Styles showing up in the wrong place is almost always a missing `{ shadowRoot }`.
 2. **Document mode — is the scope class applied?** The rule is `.scopeId .selector`; it needs an ancestor with that class. This is the most frequent cause by a wide margin.
 3. **Has a frame passed?** Flushes are asynchronous. Assertions and reads taken in the same tick see nothing.
-4. **Is the selector one the rewriter mishandles?** An `@`-rule, a comma list, a bare `:root`/`:host`, or a leading pseudo-selector — check the injected text, not the input.
+4. **Is the selector one the rewriter mishandles?** A brace inside a string value, a compound `:root`/`:host`, or a leading pseudo-selector — check the injected text, not the input.
 5. **Shadow mode — is it on the right root?** Inspect `host.shadowRoot.adoptedStyleSheets` rather than `document.adoptedStyleSheets`.
 
 ## Test isolation

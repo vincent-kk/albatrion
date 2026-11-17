@@ -32,20 +32,16 @@ compressCss('.a { color: #ffffff; }'); // '.a{color:#ffffff}'
 
 That is the intended scope: it is a runtime whitespace pass sized for CSS you assemble in the browser, not a replacement for a build-time minifier. Reach for cssnano or lightningcss when you want real minification.
 
-### Block-comment markers inside string literals corrupt the output
+### Quoted strings pass through untouched
 
-The comment scanner has no notion of CSS string literals, so a `/*` inside a quoted value opens a comment that swallows everything up to the next `*/` — or to the end of the input if there is none:
+A single- or double-quoted string, backslash escapes included, is copied byte for byte, so comment markers and spacing inside it survive:
 
 ```typescript
-compressCss('.a::before { content: "/*"; color: red; }');
-// '.a::before{content:"'          ← rest of the stylesheet consumed
-compressCss('.a::before { content: "/* hi */"; color: red; }');
-// '.a::before{content:"";color:red}'  ← literal silently emptied
-compressCss('.a { background: url("a/*b.png"); }');
-// '.a{background:url("a'          ← same failure through a URL
+compressCss('.a::before { content: "/*"; color: red; }'); // '.a::before{content:"/*";color:red}'
+compressCss('.a { background: url("a/*b.png"); }'); // '.a{background:url("a/*b.png")}'
 ```
 
-This is data loss, not a cosmetic artifact, and it is silent. Escape the marker in the source (`content: "\\2f* … *\\2f"`) or keep block-comment bytes out of CSS string values. It also applies transitively to `styleManagerFactory`, which runs this pass on every `add` unless told the input is already compressed.
+An unquoted `url(a/*b.png)` is not a string, so its `/*` still opens a comment. Quote URLs that contain one.
 
 ### A comment ending a block leaves one orphan space
 
@@ -57,17 +53,19 @@ compressCss('.a {\n  color: red; /* note */\n}'); // '.a{color:red }'
 
 The artifact is locked by `src/utils/compressCss/__tests__/compress.test.ts:160`, whose input happens to end its block with a comment. Both that test and the `compressCss` JSDoc frame the space as a media-query quirk, and the JSDoc goes further — it ships an example asserting that `@media (max-width: 768px) { .container { padding: 0 16px; } }` returns `…{padding:0 16px }}`. It does not; without the trailing comment that input compresses cleanly. Since that JSDoc travels into `dist/*.d.ts`, an agent reading the declarations will carry the wrong rule. The trigger is a comment at the end of a block, in any context. Browsers parse the extra space correctly, so treat it as cosmetic; a `replace(/\s+\}/g, '}')` post-pass removes it at the cost of a second walk.
 
-### Space before `(` is preserved; space before `:` is not
+### Whitespace that carries meaning is kept
 
-Whitespace between an identifier and `(` survives, because dropping it would break at-rule preludes and function-like syntax:
+Three kinds of whitespace survive because removing them changes what the CSS means:
 
 ```typescript
 compressCss('@supports (a: b) and (c: d) { .a { b: c; } }');
-// '@supports (a:b) and (c:d){.a{b:c}}'
-compressCss('.a { width: calc(100% - 10px); }'); // '.a{width:calc(100% - 10px)}'
+// '@supports (a:b) and (c:d){.a{b:c}}'       ← space between an identifier and `(`
+compressCss('.a { width: calc(100% + 10px); }'); // '.a{width:calc(100% + 10px)}'
+compressCss('.scope :hover { color: red; }'); // '.scope :hover{color:red}'
+compressCss('.a { color : red; }'); // '.a{color:red}'
 ```
 
-The mirror image is not safe: `:` is treated as punctuation that never needs a leading space, so a descendant combinator in front of a pseudo-selector is destroyed — `.scope :hover` compresses to `.scope:hover`, which selects a different element. Nothing in `compressCss` can distinguish the two, which is why the style manager's scope prefixing has a matching failure case (see `style-manager.md`).
+Inside parentheses the spaces around `+` stay, because `calc()` requires them; outside parentheses `+` is the sibling combinator and loses them. A space before `:` stays unless the colon belongs to a declaration, because `.scope :hover` (a hovered descendant) and `.scope:hover` (the element itself) are different selectors. The colon test looks ahead for `;` or `}` before the next `{`; when it cannot tell, it keeps the space.
 
 ## Related
 
