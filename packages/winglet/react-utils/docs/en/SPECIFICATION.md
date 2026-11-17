@@ -439,18 +439,13 @@ function useOnUnmount(handler: Fn): void;
 
 **Parameters**:
 
-- `handler` — Cleanup function. Captured at mount time (stale closure).
-
-**Important**: Use `useReference` to access current state values in the cleanup function.
+- `handler` — Cleanup function. The handler passed on the most recent render is the one that runs, so it reads that render's props and state. It runs only on unmount, never on re-renders.
 
 ```tsx
-// Access current state on unmount
-const formDataRef = useReference(formData);
-const isDirtyRef = useReference(isDirty);
-
+// Reads the current formData and isDirty, not the mount-time values
 useOnUnmount(() => {
-  if (isDirtyRef.current) {
-    localStorage.setItem('draft', JSON.stringify(formDataRef.current));
+  if (isDirty) {
+    localStorage.setItem('draft', JSON.stringify(formData));
   }
 });
 ```
@@ -459,7 +454,7 @@ useOnUnmount(() => {
 
 ### useOnUnmountLayout
 
-Synchronous cleanup on unmount via `useLayoutEffect`.
+Synchronous cleanup on unmount via `useLayoutEffect`. Like `useOnUnmount`, it runs the handler passed on the most recent render.
 
 ```typescript
 function useOnUnmountLayout(handler: Fn): void;

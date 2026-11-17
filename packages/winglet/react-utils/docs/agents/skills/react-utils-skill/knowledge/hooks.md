@@ -62,11 +62,10 @@ const onSelect = useHandle(props.onSelect); // stable identity for the component
 
 Six thin wrappers over `useEffect` / `useLayoutEffect` with an empty dependency array: `useOnMount`, `useOnMountLayout`, `useOnUnmount`, `useOnUnmountLayout`, plus the conditional pair `useEffectUntil` and `useLayoutEffectUntil`. The `Layout` variants run before paint — they block it, so use them only when the DOM must settle before the browser draws.
 
-**The unmount pair captures its handler at mount.** `useOnUnmount(fn)` is `useEffect(() => fn, [])`, so `fn` is the closure from the first render forever. State read inside it yields mount-time values:
+**The unmount pair runs the latest handler.** `useOnUnmount(fn)` keeps `fn` in a ref updated every render, so the handler from the last render before unmount is the one that runs, and state read inside it is current. No `useReference` is needed:
 
 ```tsx
-const countRef = useReference(count);
-useOnUnmount(() => save(countRef.current)); // reading `count` directly would save the mount-time value
+useOnUnmount(() => save(count)); // saves the value from the last render, not from mount
 ```
 
 **`useEffectUntil` stops permanently.** The effect returns a boolean; the first `true` sets an internal flag and no later dependency change ever runs it again — remounting the component is the only reset. It also does **not support cleanup**: the return value is consumed as the stop signal, so a returned function is never treated as a teardown and never runs. Anything needing cleanup belongs in a plain `useEffect`. `useLayoutEffectUntil` is the same contract before paint.
