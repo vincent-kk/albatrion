@@ -5,9 +5,12 @@ import type { Fn } from '@aileron/declare';
 import {
   type AgentType,
   type AssetKind,
+  type ResolvedLocations,
   type Scope,
   assertDestinationRootsContained,
+  assertWriteTargetsContained,
   buildPlan,
+  collectFileWrites,
   computeNamespacePrefixes,
   resolveAgentTarget,
   resolveDestinations,
@@ -53,6 +56,8 @@ export function usePlanStep({
       // One stamp for the whole planning pass: a computed manifest records when
       // the run looked, not when each pair happened to reach the hasher.
       const generatedAt = new Date().toISOString();
+      // Destination directories repeat across pairs; resolve each once.
+      const resolved: ResolvedLocations = new Map();
       for (const agent of agents) {
         for (const target of targets) {
           if (cancelled) return;
@@ -80,6 +85,11 @@ export function usePlanStep({
               destinations,
               orphanScans,
               force,
+            });
+            await assertWriteTargetsContained({
+              agentTarget,
+              dstPaths: collectFileWrites(plan),
+              resolved,
             });
             results.push({ target, agentTarget, plan });
             for (const action of plan.actions) {

@@ -1,7 +1,11 @@
-import { lstat, realpath } from 'node:fs/promises';
-import { basename, dirname, join, sep } from 'node:path';
-
-import type { AgentTarget, AssetKind, OrphanScan } from '../type.js';
+import type {
+  AgentTarget,
+  AssetKind,
+  OrphanScan,
+  ResolvedLocations,
+} from '../type.js';
+import { isWithin } from './isWithin.js';
+import { resolveLocation } from './resolveLocation.js';
 
 interface AssertDestinationRootsContainedInput {
   readonly agentTarget: AgentTarget;
@@ -43,28 +47,13 @@ export async function assertDestinationRootsContained({
   for (const scan of orphanScans)
     if (scan.kind === 'directory') roots.push(scan.scanRoot);
 
-  const realProjectRoot = await realpath(projectRoot);
+  const resolved: ResolvedLocations = new Map();
+  const realRoot = (await resolveLocation(projectRoot, resolved)).real;
   for (const root of roots) {
-    const real = await resolveReal(root);
-    if (
-      real !== null &&
-      (real === realProjectRoot || real.startsWith(realProjectRoot + sep))
-    )
-      continue;
+    const { real } = await resolveLocation(root, resolved);
+    if (isWithin(realRoot ?? projectRoot, real)) continue;
     throw new Error(
       `[agents-assets-sync] ${root} resolves outside the project root ${projectRoot} through a symbolic link; project-scope destinations must stay inside the project.`,
     );
   }
-}
-
-// Where `path` lands once links are followed, read through the nearest
-// existing ancestor. `null` for a dangling link: a write would follow it.
-async function resolveReal(path: string): Promise<string | null> {
-  const real = await realpath(path).catch(() => null);
-  if (real !== null) return real;
-  if ((await lstat(path).catch(() => null))?.isSymbolicLink()) return null;
-  const parent = dirname(path);
-  if (parent === path) return path;
-  const realParent = await resolveReal(parent);
-  return realParent === null ? null : join(realParent, basename(path));
 }

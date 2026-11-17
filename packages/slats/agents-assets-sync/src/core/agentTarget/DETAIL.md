@@ -16,7 +16,10 @@
 - kind 는 첫 `/` 세그먼트에서 읽으므로 `/` 가 없는 역슬래시 키나 `C:/…` 같은 드라이브 문자 키는 목적지를 얻지 못하고 오류도 내지 않는다. 목적지를 얻은 키를 Windows 의 `path.win32.join` 이 루트 밖으로 해석하는지는 검증하지 않은 한계다. 경로 모듈을 주입할 수 없고 이 저장소의 CI 는 Windows 에서 돌지 않기 때문이다.
 - `project` scope 에서는 요청한 kind 의 목적지 루트(kind 디렉터리와 `AGENTS.md` 병합 파일)와 각 스킬 네임스페이스 디렉터리를 심볼릭 링크를 따라 해석한 위치가 `realpath(projectRoot)` 안에 있어야 한다. 아니면 그 경로를 명시한 `Error` 로 거부한다. 저장소는 심볼릭 링크를 커밋할 수 있으므로, 받아 온 프로젝트의 `.claude/skills -> /다른/곳` 같은 링크가 복사와 `--force` 삭제를 프로젝트 밖으로 보내기 때문이다. 해석에 실패하는 끊긴 링크도 거부한다. 아직 없는 경로는 가장 가까운 기존 조상의 해석 위치로 판단한다.
 - `user` scope 는 이 검사를 하지 않는다. `~/.claude` 나 `~/.claude/skills` 를 dotfiles 저장소로 링크하는 것은 사용자가 의도한 흔한 구성이고, 위협은 받아 온 프로젝트에 커밋된 링크이기 때문이다.
-- 검사는 실행 단위(패키지와 agent 쌍)마다 루트와 네임스페이스당 한 번이며 파일마다 하지 않는다. 네임스페이스 안쪽 더 깊은 곳의 심볼릭 디렉터리는 검사하지 않은 한계로 남는다. 고아 탐색의 `walkFiles` 는 링크를 건너뛰지만 복사는 그런 링크를 따라갈 수 있다.
+- 루트 검사는 실행 단위(패키지와 agent 쌍)마다 루트와 네임스페이스당 한 번이다.
+- 그 아래는 계획이 정해진 뒤 `assertWriteTargetsContained` 가 같은 규칙으로 검사한다. 계획이 복사하거나 덮어쓰는 파일마다 그 디렉터리를 해석해 프로젝트 안인지 보고, 디렉터리가 이미 있을 때만 그 파일 자리에 `lstat` 을 한 번 해서 프로젝트 밖을 가리키는 파일 링크를 거부한다. 디렉터리는 실행 전체에서 공유하는 캐시로 한 번만 해석하고, 없는 디렉터리는 캐시된 부모로 읽는다. 링크가 프로젝트 안을 가리키면 루트와 마찬가지로 허용한다. 받아 온 프로젝트가 네임스페이스 아래에 커밋한 `knowledge -> /다른/곳` 같은 디렉터리 링크나 `SKILL.md -> /다른/파일` 같은 파일 링크가 복사를 프로젝트 밖으로 보내기 때문이다.
+- 삭제에는 이 검사가 필요 없다. 고아 탐색의 `walkFiles` 는 디렉터리 목록이 링크라고 알려 주는 항목을 따라가지도 내놓지도 않으므로 `--force` 는 링크를 통해 지우지 않고 링크 자체도 남겨 둔다. 블록 쓰기는 루트로 검사한 병합 파일에만 한다.
+- 남은 한계: 검사와 실제 쓰기 사이에 다른 프로세스가 링크를 만들면 막지 못한다. 검사는 계획 직후 한 번이고 쓰기는 링크를 따르는 `copyFile` 이기 때문이다.
 - orphan 스캔은 호출자가 요청한 kind 에 대해서만 만들어진다. `skills` 는 네임스페이스별 디렉터리 스캔, `rules` 는 소유 패키지를 명시한 block-file 스캔이다.
 - 이 fractal 은 경로를 계산할 뿐 asset 파일을 만들거나 읽거나 쓰지 않는다.
 
@@ -29,6 +32,9 @@
 - `resolveDestinations(input): { destinations: Map<string, Destination>; orphanScans: OrphanScan[] }`
   - `input`: `{ agentTarget, packageName, relPaths, namespacePrefixes, assetKinds }`
   - 예약 네임스페이스를 침범하는 skill 경로, `..` 세그먼트를 가진 경로나 네임스페이스 접두사에서 throw
+- `assertWriteTargetsContained(input): Promise<void>`
+  - `input`: `{ agentTarget, dstPaths, resolved }`. `dstPaths` 는 계획이 복사하거나 덮어쓰는 파일(`collectFileWrites(plan)`), `resolved` 는 실행마다 하나 만들어 모든 단위가 공유하는 `ResolvedLocations` 캐시다.
+  - `project` scope 에서 파일의 디렉터리나 파일 링크가 프로젝트 밖으로 해석되거나 끊긴 링크를 지나면 그 경로를 명시해 reject 한다. `user` scope 는 즉시 resolve 한다.
 - `assertDestinationRootsContained(input): Promise<void>`
   - `input`: `{ agentTarget, assetKinds, orphanScans }`. `orphanScans` 는 `resolveDestinations` 의 결과이며, 그중 디렉터리 스캔 루트가 검사할 스킬 네임스페이스다.
   - `project` scope 에서 해석한 위치가 프로젝트 밖인 루트나 끊긴 링크가 있으면 그 경로를 명시해 reject 한다. `user` scope 는 즉시 resolve 한다.
@@ -77,7 +83,10 @@
 - `project` scope 에서 프로젝트 밖 디렉터리를 가리키는 kind 루트 링크와 스킬 네임스페이스 링크는 그 경로를 명시해 거부되고, 그 밖에는 아무것도 쓰거나 지워지지 않는다.
 - 프로젝트 안을 가리키는 링크와 아직 없는 루트는 통과한다. 끊긴 링크는 거부된다.
 - `user` scope 의 링크된 skills 루트를 통해서는 그대로 설치된다.
-- 검증: `__tests__/destinationRootContainment.test.ts`, 패키지의 `src/__tests__/symlinkedDestinations.test.ts`.
+- 네임스페이스 아래에서 프로젝트 밖을 가리키는 디렉터리 링크로 복사하거나 파일 링크를 덮어쓰려는 계획은 그 경로를 명시해 거부되고, 링크 대상은 바뀌지 않는다.
+- 프로젝트 안을 가리키는 아래쪽 링크와 `user` scope 의 파일 링크는 그대로 따라간다.
+- `--force` 는 고아 옆의 링크와 그 대상을 지우지 않고 그대로 0으로 끝난다.
+- 검증: `__tests__/destinationRootContainment.test.ts`, `__tests__/writeTargetContainment.test.ts`, 패키지의 `src/__tests__/symlinkedDestinations.test.ts`.
 
 ## Last Updated
 
