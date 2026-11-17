@@ -450,18 +450,13 @@ function useOnUnmount(handler: Fn): void;
 
 **매개변수**:
 
-- `handler` — 클린업 함수. 마운트 시점의 값을 캡처합니다 (오래된 클로저).
-
-**중요**: 클린업 함수 내에서 현재 state 값에 접근하려면 `useReference`를 사용하세요.
+- `handler` — 클린업 함수. 가장 최근 렌더에서 전달된 핸들러가 실행되므로, 그 렌더의 props와 state를 읽습니다. 리렌더 때는 실행되지 않고 언마운트 때만 실행됩니다.
 
 ```tsx
-// 언마운트 시 현재 state 접근
-const formDataRef = useReference(formData);
-const isDirtyRef = useReference(isDirty);
-
+// 마운트 시점의 값이 아니라 현재 formData와 isDirty를 읽습니다
 useOnUnmount(() => {
-  if (isDirtyRef.current) {
-    localStorage.setItem('draft', JSON.stringify(formDataRef.current));
+  if (isDirty) {
+    localStorage.setItem('draft', JSON.stringify(formData));
   }
 });
 ```
@@ -470,7 +465,7 @@ useOnUnmount(() => {
 
 ### useOnUnmountLayout
 
-`useLayoutEffect`를 통한 동기 언마운트 클린업.
+`useLayoutEffect`를 통한 동기 언마운트 클린업. `useOnUnmount`와 마찬가지로 가장 최근 렌더에서 전달된 핸들러를 실행합니다.
 
 ```typescript
 function useOnUnmountLayout(handler: Fn): void;
