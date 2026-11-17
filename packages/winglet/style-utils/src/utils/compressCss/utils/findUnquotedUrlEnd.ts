@@ -1,9 +1,11 @@
 import {
   BACKSLASH,
   DOUBLE_QUOTE,
+  HYPHEN,
   R_PAREN,
   SINGLE_QUOTE,
   SPACE,
+  UNDERSCORE,
 } from '../constants/asciiByte';
 
 /**
@@ -14,7 +16,7 @@ import {
  * @param open - Index of a `(` byte
  * @returns Index just past the closing `)`, `buffer.length` when it never closes,
  * or `open` itself when the `(` does not start an unquoted `url(` (another
- * function, or a quoted argument, which the string rule copies).
+ * function, such as `myurl(`, or a quoted argument, which the string rule copies).
  */
 export const findUnquotedUrlEnd = (
   buffer: Uint8Array,
@@ -24,7 +26,8 @@ export const findUnquotedUrlEnd = (
     open < 3 ||
     (buffer[open - 1] | 32) !== 108 ||
     (buffer[open - 2] | 32) !== 114 ||
-    (buffer[open - 3] | 32) !== 117
+    (buffer[open - 3] | 32) !== 117 ||
+    (open > 3 && isIdentifierByte(buffer[open - 4]))
   )
     return open;
   const length = buffer.length;
@@ -38,3 +41,12 @@ export const findUnquotedUrlEnd = (
   }
   return length;
 };
+
+/** Tells whether a byte can continue a CSS identifier; every byte of a non-ASCII character can. */
+const isIdentifierByte = (byte: number): boolean =>
+  byte >= 0x80 ||
+  byte === HYPHEN ||
+  byte === UNDERSCORE ||
+  byte === BACKSLASH ||
+  (byte >= 48 && byte <= 57) ||
+  ((byte | 32) >= 97 && (byte | 32) <= 122);

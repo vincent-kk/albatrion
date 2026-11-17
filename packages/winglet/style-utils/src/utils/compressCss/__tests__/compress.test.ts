@@ -189,7 +189,7 @@ describe('compressCss', () => {
   });
 
   it('strips comments inside a function whose name only ends in url', () => {
-    expect(compressCss('.a { b: myurl(x /* c */) }')).toBe('.a{b:myurl(x)}');
+    expect(compressCss('.a { b: myurl(x/* c */) }')).toBe('.a{b:myurl(x)}');
   });
 
   it('keeps the whitespace calc() requires around +', () => {

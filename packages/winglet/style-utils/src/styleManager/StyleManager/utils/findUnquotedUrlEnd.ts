@@ -1,8 +1,10 @@
 import {
   BACKSLASH,
   DOUBLE_QUOTE,
+  HYPHEN,
   R_PAREN,
   SINGLE_QUOTE,
+  UNDERSCORE,
   WHITESPACE_MAX,
 } from '../constants/charCode';
 
@@ -14,14 +16,15 @@ import {
  * @param open - Index of a `(`
  * @returns Index just past the closing `)`, `css.length` when it never closes, or
  * `open` itself when the `(` does not start an unquoted `url(` (another function,
- * or a quoted argument, which the string rules handle).
+ * such as `myurl(`, or a quoted argument, which the string rules handle).
  */
 export const findUnquotedUrlEnd = (css: string, open: number): number => {
   if (
     open < 3 ||
     (css.charCodeAt(open - 3) | 32) !== 117 ||
     (css.charCodeAt(open - 2) | 32) !== 114 ||
-    (css.charCodeAt(open - 1) | 32) !== 108
+    (css.charCodeAt(open - 1) | 32) !== 108 ||
+    (open > 3 && isIdentifierCode(css.charCodeAt(open - 4)))
   )
     return open;
   const length = css.length;
@@ -36,3 +39,12 @@ export const findUnquotedUrlEnd = (css: string, open: number): number => {
   }
   return length;
 };
+
+/** Tells whether a code unit can continue a CSS identifier, so `url` after it is not a function name. */
+const isIdentifierCode = (code: number): boolean =>
+  code >= 0x80 ||
+  code === HYPHEN ||
+  code === UNDERSCORE ||
+  code === BACKSLASH ||
+  (code >= 48 && code <= 57) ||
+  ((code | 32) >= 97 && (code | 32) <= 122);
