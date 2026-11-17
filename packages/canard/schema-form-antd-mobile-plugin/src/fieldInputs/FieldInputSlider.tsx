@@ -28,6 +28,7 @@ interface FieldInputSliderProps
 const FieldInputSlider = ({
   jsonSchema,
   type,
+  readOnly,
   disabled,
   defaultValue,
   onChange,
@@ -70,7 +71,7 @@ const FieldInputSlider = ({
   return (
     <div role="group" aria-invalid={misfit || undefined}>
       <Slider
-        disabled={disabled}
+        disabled={disabled || readOnly}
         min={min}
         max={max}
         step={step}
