@@ -181,14 +181,15 @@ function describe(
   return `${document} ▸ ${relPath}`;
 }
 
+// Under --force an orphan is already planned as `delete`, so the list names
+// deletions as well as overwrites: either one removes what the user had.
 function emitForceList(plan: InjectPlan): void {
   const divergent = plan.actions.filter(
-    (action) =>
-      action.kind === 'warn-diverged' || action.kind === 'warn-orphan',
+    (action) => action.kind === 'warn-diverged' || action.kind === 'delete',
   );
   if (divergent.length === 0) return;
   process.stderr.write(
-    `[agents-assets-sync] --force overwriting ${divergent.length} entry(ies) in non-interactive mode:\n`,
+    `[agents-assets-sync] --force overwriting or deleting ${divergent.length} entry(ies) in non-interactive mode:\n`,
   );
   for (const action of divergent) process.stderr.write(`  ${action.relPath}\n`);
 }

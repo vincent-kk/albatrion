@@ -77,21 +77,25 @@ export function usePlanStep({
             });
             results.push({ target, agentTarget, plan });
             for (const action of plan.actions) {
-              if (
-                action.kind === 'warn-diverged' ||
-                action.kind === 'warn-orphan'
-              ) {
+              if (action.kind === 'warn-diverged')
                 warnings.push({
                   packageName: target.name,
                   agent,
                   kind: action.kind,
                   relPath: action.relPath,
                   description:
-                    action.kind === 'warn-diverged'
-                      ? 'local differs from source (user edit or version change)'
-                      : 'exists locally but not in manifest',
+                    'local differs from source (user edit or version change)',
                 });
-              }
+              // `--force` plans an orphan as `delete`; the dialog still owes
+              // the user that path before it disappears.
+              else if (action.kind === 'warn-orphan' || action.kind === 'delete')
+                warnings.push({
+                  packageName: target.name,
+                  agent,
+                  kind: 'warn-orphan',
+                  relPath: action.relPath,
+                  description: 'exists locally but not in manifest',
+                });
             }
             dispatch({
               type: 'plan-step',

@@ -9,7 +9,7 @@
 - 파일 목적지 판정: 설치본이 없으면 `copy`, 해시가 같으면 `skip-uptodate`, 다르면 `warn-diverged`.
 - 블록 목적지 판정: 문서가 없거나 그 블록이 없으면 `copy`, 본문이 매니페스트와 맞으면 `skip-uptodate`, 아니면 `warn-diverged`.
 - `unsupported` 목적지는 `skip-unsupported` 이며 force 를 요구하지 않는다.
-- `warn-diverged` 는 `requiresForce` 를 세운다. `--force` 없이 발견된 모든 orphan 도 마찬가지다.
+- `warn-diverged` 와 발견된 모든 orphan 은 `--force` 여부와 무관하게 `requiresForce` 를 세운다. `requiresForce` 는 적용이 사용자 소유일 수 있는 내용을 덮어쓰거나 지운다는 뜻이다. 렌더러는 `--force` 가 없으면 이것으로 실행을 막고, `--force` 가 있으면 이것으로 대화형 확인과 비대화형 stderr 목록을 띄운다. `--force` 아래의 orphan 이 이 표시를 세우지 않으면 삭제가 확인도 목록도 없이 일어난다.
 - orphan 은 `--force` 가 있으면 `delete`, 없으면 `warn-orphan` 으로 나온다.
 - orphan 탐색은 호출자가 준 스캔만 돈다. 블록 스캔은 명시된 소유 패키지의 블록만 살피므로 다른 패키지나 다른 도구의 블록은 삭제 후보가 되지 않는다.
 - 존재하지 않는 orphan 스캔 루트는 실패가 아니다. 걷기가 조용히 비어 돌아온다.
@@ -52,7 +52,8 @@
 - 이 패키지가 더 이상 배포하지 않는 블록은 `warn-orphan` 으로 경고된다.
 - 같은 문서에 있는 다른 패키지의 블록은 건드리지 않는다.
 - `--force` 아래에서 낡은 블록은 `delete` 로 바뀐다.
-- 검증: `__tests__/buildPlan.test.ts`.
+- `--force` 아래에서 `delete` 가 된 orphan 도 `requiresForce` 를 세운다.
+- 검증: `__tests__/buildPlan.test.ts`, `__tests__/orphanPolicy.test.ts`.
 
 ### AC-PLAN-ABSENCE — 부재가 필터의 기제다
 
