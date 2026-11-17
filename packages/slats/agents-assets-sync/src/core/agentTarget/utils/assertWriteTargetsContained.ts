@@ -1,7 +1,8 @@
-import { lstat, realpath } from 'node:fs/promises';
-import { dirname } from 'node:path';
+import { realpath } from 'node:fs/promises';
+import { basename, dirname, join } from 'node:path';
 
 import type { AgentTarget, ResolvedLocations } from '../type.js';
+import { findLinkedNames } from './findLinkedNames.js';
 import { isWithin } from './isWithin.js';
 import { resolveLocation } from './resolveLocation.js';
 
@@ -19,9 +20,11 @@ interface AssertWriteTargetsContainedInput {
  *
  * `assertDestinationRootsContained` settles the roots and skill namespaces;
  * this settles everything under them that the plan writes: each distinct
- * destination directory is resolved once per run, and a destination file is
- * checked with one `lstat` only when its directory already exists, since a
- * file cannot be there otherwise. A link that stays inside the project is
+ * destination directory is resolved once per run, and the files written into
+ * a directory that already exists are checked for links through one listing
+ * of it per run, or one `lstat` per name when only one is written there (see
+ * `findLinkedNames`). A file cannot sit in a missing directory, so those cost
+ * nothing. Only a link is passed to `realpath`. A link that stays inside the project is
  * allowed, as it is for a root. Deletions need no check: the orphan scan never
  * follows a link, so it never proposes a path through one. User scope is
  * exempt, as for the roots.
@@ -38,8 +41,20 @@ export async function assertWriteTargetsContained({
   if (agentTarget.scope !== 'project') return;
   const { projectRoot } = agentTarget;
   const realRoot = (await resolveLocation(projectRoot, resolved)).real;
+  const namesByDir = new Map<string, string[]>();
   for (const dstAbs of dstPaths) {
-    const escape = await findEscape(dstAbs, realRoot ?? projectRoot, resolved);
+    const dir = dirname(dstAbs);
+    const names = namesByDir.get(dir);
+    if (names === undefined) namesByDir.set(dir, [basename(dstAbs)]);
+    else names.push(basename(dstAbs));
+  }
+  for (const [dir, names] of namesByDir) {
+    const escape = await findEscape(
+      dir,
+      names,
+      realRoot ?? projectRoot,
+      resolved,
+    );
     if (escape === null) continue;
     throw new Error(
       `[agents-assets-sync] ${escape} resolves outside the project root ${projectRoot} through a symbolic link; project-scope destinations must stay inside the project.`,
@@ -47,17 +62,19 @@ export async function assertWriteTargetsContained({
   }
 }
 
-// The directory or file that carries `dstAbs` outside `realRoot`, or `null`.
+// The directory, or the file written into it, that carries a write outside
+// `realRoot`; `null` when every write into `dir` stays inside.
 async function findEscape(
-  dstAbs: string,
+  dir: string,
+  names: readonly string[],
   realRoot: string,
   resolved: ResolvedLocations,
 ): Promise<string | null> {
-  const dir = dirname(dstAbs);
   const location = await resolveLocation(dir, resolved);
   if (!isWithin(realRoot, location.real)) return dir;
   if (!location.exists) return null;
-  if (!(await lstat(dstAbs).catch(() => null))?.isSymbolicLink()) return null;
-  const real = await realpath(dstAbs).catch(() => null);
-  return isWithin(realRoot, real) ? null : dstAbs;
+  for (const name of await findLinkedNames(dir, names, location, resolved))
+    if (!isWithin(realRoot, await realpath(join(dir, name)).catch(() => null)))
+      return join(dir, name);
+  return null;
 }
