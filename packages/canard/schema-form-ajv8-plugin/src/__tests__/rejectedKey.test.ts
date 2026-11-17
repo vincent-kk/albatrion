@@ -68,8 +68,24 @@ describe('ValidationIssue.rejectedKey', () => {
   });
 
   it.each([
+    ['allOf on a field named items', plugin, { properties: { items: { allOf: [false] } } }, { items: 1 }, '/items'],
+    ['a definition named items', plugin, { definitions: { items: false }, properties: { f: { $ref: '#/definitions/items' } } }, { f: 1 }, '/f'],
+    ['a $defs entry named items', plugin2020, { $defs: { items: false }, properties: { f: { $ref: '#/$defs/items' } } }, { f: 1 }, '/f'],
+    ['a schema dependency named items', plugin, { properties: { o: { type: 'object', dependencies: { items: false } } } }, { o: { items: 1 } }, '/o'],
+    ['a dependentSchemas entry named items', plugin2020, { properties: { o: { type: 'object', dependentSchemas: { items: false } } } }, { o: { items: 1 } }, '/o'],
+  ])('keeps a false schema under %s on the value', async (_, entry, schema, data, dataPath) => {
+    const issues = await entry.validator.compile({ type: 'object', ...schema } as unknown as JSONSchema)(data);
+    const falseIssue = issues?.find((issue) => issue.keyword === 'false schema');
+    expect(falseIssue).toMatchObject({ dataPath });
+    expect(falseIssue?.rejectedKey).toBeUndefined();
+  });
+
+  it.each([
     ['properties', plugin, { properties: { x: false } }, { x: 1 }, '', 'x'],
     ['patternProperties', plugin, { patternProperties: { '^x': false } }, { xa: 1 }, '', 'xa'],
+    ['properties, for a property named items', plugin, { properties: { items: false } }, { items: 1 }, '', 'items'],
+    ['properties of a single items schema', plugin, { properties: { a: { type: 'array', items: { type: 'object', properties: { x: false } } } } }, { a: [{ x: 1 }] }, '/a/0', 'x'],
+    ['single items of a field named items', plugin, { properties: { items: { type: 'array', items: false } } }, { items: [1] }, '/items', '0'],
     ['a single items schema', plugin, { properties: { a: { type: 'array', items: false } } }, { a: [1] }, '/a', '0'],
     ['a tuple items entry', plugin, { properties: { a: { type: 'array', items: [false], minItems: 1, additionalItems: false } } }, { a: [1] }, '/a', '0'],
     ['a prefixItems entry', plugin2020, { properties: { a: { type: 'array', prefixItems: [false], minItems: 1, items: false } } }, { a: [1] }, '/a', '0'],
