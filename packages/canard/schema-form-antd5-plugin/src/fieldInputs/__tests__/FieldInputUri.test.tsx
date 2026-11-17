@@ -78,6 +78,7 @@ it('editing a URI whose scheme is not in the protocol list keeps its scheme', as
       defaultValue={{ link: 'wss://example.com/socket' }}
     />,
   );
+  expect(screen.getByText('wss://')).toBeTruthy();
   await userEvent.type(view.container.querySelector('input#\\/link')!, '2');
   expect(onChange).toHaveBeenLastCalledWith({
     link: 'wss://example.com/socket2',
