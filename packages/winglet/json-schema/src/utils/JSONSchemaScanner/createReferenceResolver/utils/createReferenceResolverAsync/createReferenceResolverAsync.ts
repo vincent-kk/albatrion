@@ -1,10 +1,7 @@
 import type { ReferenceResolverAsync } from '../../../utils/type';
-import type {
-  ReferenceResolverAsyncOptions,
-  ResolverContext,
-  SchemaValue,
-} from '../../type';
-import { ResolverStore } from '../ResolverStore/ResolverStore';
+import type { ReferenceResolverAsyncOptions } from '../../types/ReferenceResolverOptions';
+import type { SchemaValue } from '../../types/SchemaValue';
+import { type ResolverContext, ResolverStore } from '../ResolverStore';
 
 /**
  * Construct an asynchronous resolver that only loads through the caller's function.

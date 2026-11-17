@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { createReferenceResolver } from '../createReferenceResolver';
-import { createReferenceResolverAsync } from '../utils/createReferenceResolverAsync/createReferenceResolverAsync';
+import { createReferenceResolverAsync } from '../utils/createReferenceResolverAsync';
 import { enterChild } from './fixtures/enterChild';
 import { scan } from './fixtures/scan';
 

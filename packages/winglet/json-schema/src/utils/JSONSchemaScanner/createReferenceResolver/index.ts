@@ -1,9 +1,9 @@
 export { createReferenceResolver } from './createReferenceResolver';
-export { createReferenceResolverAsync } from './utils/createReferenceResolverAsync/createReferenceResolverAsync';
+export { createReferenceResolverAsync } from './utils/createReferenceResolverAsync';
 export type {
   ReferenceResolverOptions,
   ReferenceResolverAsyncOptions,
-} from './type';
+} from './types/ReferenceResolverOptions';
 export type {
   ReferenceResolver,
   ReferenceResolverAsync,

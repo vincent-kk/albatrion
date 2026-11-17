@@ -8,7 +8,9 @@
 
 스캐너의 순회는 동기 스캐너 진입점으로, 방언과 기본 어휘 선언은 keyword 모듈 진입점으로 사용합니다. 오류·방언 판별·어휘 구성과 공통 복제는 상위 스캐너 모듈의 organ에서 가져와 내부 헬퍼를 공개 scanner API에 추가하지 않습니다.
 
-URI 참조 해석과 절대 URI 판별은 자식 프랙탈 `utils/resolveURI`의 진입점으로만 씁니다. RFC 3986 해석은 JSON Schema 개념과 무관한 자기 계약이라 경계를 따로 두며, 해소기가 그 내부 단계에 기대지 않아야 해석 규칙을 바꿀 때 영향 범위를 진입점의 두 이름으로 가늠할 수 있습니다.
+URI 참조 해석과 절대 URI 판별은 자식 프랙탈 `utils/resolveURI`의 진입점으로만 씁니다. RFC 3986 해석은 JSON Schema 개념과 무관한 자기 계약이라 경계를 따로 두며, 해소기가 그 내부 단계에 기대지 않아야 해석 규칙을 바꿀 때 영향 범위를 진입점의 이름만으로 가늠할 수 있습니다.
+
+색인 저장소 `ResolverStore`와 비동기 생성 함수 `createReferenceResolverAsync`도 자식 프랙탈이고, 서로와 `resolveURI`를 진입점으로만 씁니다. 저장소 루트 CLAUDE.md의 Imports follow lineage 원칙은 organ이 소유 프랙탈의 자식 프랙탈을 가져오지 못하게 해 organ → 자식 → organ 순환을 막으므로, `resolveURI`를 쓰는 저장소와 저장소를 쓰는 비동기 생성 함수는 organ으로 둘 수 없습니다.
 
 문맥은 불투명하게 전달해 색인 구조의 변경이 공개 계약으로 번지지 않게 합니다.
 

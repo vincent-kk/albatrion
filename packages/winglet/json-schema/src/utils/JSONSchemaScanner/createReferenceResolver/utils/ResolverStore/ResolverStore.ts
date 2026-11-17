@@ -13,16 +13,16 @@ import { buildKeywordMap } from '../../../utils/keywordMap/buildKeywordMap';
 import { ReferenceSkipReason } from '../../../utils/referenceOutcome/ReferenceSkipReason';
 import { cloneSchema } from '../../../utils/schemaCopy/cloneSchema';
 import type { ReferenceKeyword, ReferenceStep } from '../../../utils/type';
+import type { ReferenceResolverOptions } from '../../types/ReferenceResolverOptions';
+import type { SchemaValue } from '../../types/SchemaValue';
+import { isAbsoluteURI, resolveURI } from '../resolveURI';
 import type {
   Anchor,
   DocumentRecord,
   Location,
-  ReferenceResolverOptions,
   ResolverContext,
   Resource,
-  SchemaValue,
-} from '../../type';
-import { isAbsoluteURI, resolveURI } from '../resolveURI';
+} from './type';
 import { shortestReference } from './utils/shortestReference';
 
 /** These fields affect source scope and are removed only from proven relocatable template copies. */
