@@ -22,6 +22,13 @@ with an empty dependency array but with clearer intent.
 The handler can return a cleanup function that will be called when the
 component unmounts, making it perfect for managing resources.
 
+## Import
+
+```typescript
+import { useOnMount } from '@winglet/react-utils/hook';
+import { useOnMount } from '@winglet/react-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -88,7 +95,7 @@ useOnMount(() => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.12.2" }}
+  dependencies={{ "@winglet/react-utils": "0.14.1" }}
   code={`// Simple initialization
 useOnMount(() => {
   console.log('Component mounted!');

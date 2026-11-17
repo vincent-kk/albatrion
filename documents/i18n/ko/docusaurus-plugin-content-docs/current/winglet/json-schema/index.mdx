@@ -27,6 +27,7 @@ yarn add @winglet/json-schema
 | `@winglet/json-schema/scanner` | `JSONSchemaScanner` (동기식) |
 | `@winglet/json-schema/async-scanner` | `JSONSchemaScannerAsync` |
 | `@winglet/json-schema/filter` | 스키마 타입 가드 함수 |
+| `@winglet/json-schema/keyword` | `Dialect`, `DEFAULT_KEYWORDS`, `KeywordDescriptor`, `KeywordKind` (스캐너 코드 없음) |
 
 ## 주요 내보내기 {#key-exports}
 
@@ -34,6 +35,7 @@ yarn add @winglet/json-schema
 
 - `JSONSchemaScanner`는 `enter`/`exit` 방문자 콜백으로 깊이 우선 순회합니다.
 - `JSONSchemaScannerAsync`는 원격 `$ref` 참조 해결을 위한 비동기 변형입니다.
+- `resolveReference`, `createReferenceResolver`, `createReferenceResolverAsync`는 참조 해결 도우미이며 패키지 루트에서만 내보냅니다.
 
 ### 스키마 필터 (`/filter`) {#schema-filters-filter}
 
@@ -99,15 +101,16 @@ const schema = {
 const scanner = new JSONSchemaScanner({
   visitor: {
     enter(entry) {
+      if (typeof entry.schema === 'boolean') return;
       console.log(entry.path, entry.schema.type);
     },
   },
 });
 
 scanner.scan(schema);
-// '' 'object'
-// '/properties/name' 'string'
-// '/properties/age' 'number'
+// '#' 'object'
+// '#/properties/name' 'string'
+// '#/properties/age' 'number'
 ```
 
 ```ts
@@ -121,7 +124,7 @@ isArraySchema({ type: 'array', items: {} });         // true
 
 ## AI 참조 {#ai-reference}
 
-**패키지**: `@winglet/json-schema` v0.10.0
+**패키지**: `@winglet/json-schema`
 **목적**: JSON Schema 순회, 타입 가드 필터, $ref 참조 해결을 제공합니다.
 
 ### 주요 내보내기 {#key-exports-1}
@@ -153,6 +156,13 @@ isArraySchema({ type: 'array', items: {} });         // true
            hasNullInType
            isCompatibleSchemaType
            isIdenticalSchemaType
+./keyword → Dialect
+            DEFAULT_KEYWORDS
+            KeywordDescriptor (type)
+            KeywordKind (type)
+root only → resolveReference
+            createReferenceResolver
+            createReferenceResolverAsync
 ```
 
 </ForAI>

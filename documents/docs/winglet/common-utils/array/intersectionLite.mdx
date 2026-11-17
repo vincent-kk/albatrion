@@ -9,14 +9,21 @@ import WingletPlayground from '@site/src/components/WingletPlayground';
 # intersectionLite
 
 Returns elements from the source array that also exist in the target array.
-Lightweight version of the `intersection` function optimized for small arrays (< 100 elements).
-Uses indexOf for element checking instead of Set, providing better performance
-for small arrays while maintaining O(n*m) complexity.
+Small-array alternative to `intersection` with different equality semantics:
+this function uses `indexOf` and strict equality, while `intersection` uses a
+Set and SameValueZero equality. It maintains O(n*m) complexity.
+
+## Import
+
+```typescript
+import { intersectionLite } from '@winglet/common-utils/array';
+import { intersectionLite } from '@winglet/common-utils';
+```
 
 ## Signature
 
 ```typescript
-const intersectionLite: <Type>(source: Type[], target: Type[]) => Type[]
+const intersectionLite: <Type>(source: readonly Type[], target: readonly Type[]) => Type[]
 ```
 
 ## Parameters
@@ -106,6 +113,9 @@ console.log(intersectionLite([1, 2, 3], [4, 5, 6])); // []
 
 // All elements in common
 console.log(intersectionLite([1, 2, 3], [1, 2, 3])); // [1, 2, 3]
+
+// NaN is not equal to itself under indexOf's strict-equality lookup
+console.log(intersectionLite([NaN], [NaN])); // []
 ```
 
 ### Working with mixed data types
@@ -132,7 +142,7 @@ console.log('Granted:', grantedPermissions); // ['read', 'write']
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { intersectionLite } from '@winglet/common-utils';
 
 const array1 = [1, 2, 3, 4, 5];
@@ -143,7 +153,8 @@ console.log(intersectionLite(array1, array2)); // [3, 4, 5]`}
 
 ## Notes
 
-**Performance Optimization:** This is a lightweight alternative to the standard `intersection` function.
+**Performance Optimization:** This is a small-array alternative to `intersection`
+with intentionally different equality semantics.
 - For arrays with < 100 elements: Uses indexOf (O(n*m)) which is faster due to lower overhead
 - For arrays with >= 100 elements: Consider using `intersection` which uses Set (O(n+m))
 - Optimized loop structure with cached element reference reduces array access overhead

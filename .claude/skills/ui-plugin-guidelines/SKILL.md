@@ -185,7 +185,7 @@ const FormInputFrame = ({ children, node, required, readOnly, disabled, context 
 
 #### Optional formatError
 
-**Role**: JSONSchemaError → ReactNode conversion
+**Role**: ValidationIssue → ReactNode conversion
 
 ```typescript
 const formatError: FormatError = (error, node, context) => {

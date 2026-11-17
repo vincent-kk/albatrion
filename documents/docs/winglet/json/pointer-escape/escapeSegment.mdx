@@ -28,6 +28,14 @@ The function uses a character-by-character processing approach with pre-allocate
 for optimal performance, especially when dealing with longer strings that contain multiple
 special characters requiring escaping.
 
+## Import
+
+```typescript
+import { escapeSegment } from '@winglet/json/pointer-escape';
+import { escapeSegment } from '@winglet/json/pointer';
+import { escapeSegment } from '@winglet/json';
+```
+
 ## Signature
 
 ```typescript
@@ -118,7 +126,7 @@ const configPointer = `/${escapedConfigKey}/database`; // "/config~0prod/databas
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.15.0" }}
+  dependencies={{ "@winglet/json": "0.16.0" }}
   code={`// Basic character escaping
 escapeSegment('foo~bar');
 // Returns: "foo~0bar"

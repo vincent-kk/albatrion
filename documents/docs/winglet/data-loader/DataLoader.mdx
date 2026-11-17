@@ -14,6 +14,12 @@ at Facebook in 2010, which was designed to simplify and consolidate various key-
 While conceptually based on [GraphQL DataLoader](https://github.com/graphql/dataloader), this version is a
 ground-up rewrite focused on performance optimizations, type safety, and adaptation to specific runtime requirements.
 
+## Import
+
+```typescript
+import { DataLoader } from '@winglet/data-loader';
+```
+
 ## Signature
 
 ```typescript
@@ -43,7 +49,7 @@ async function batchLoadUsers(userIds: string[]): Promise<User[]> {
 // Create the DataLoader instance
 const userLoader = new DataLoader(batchLoadUsers, {
   maxBatchSize: 100, // Limit SQL query size
-  cache: true,       // Enable caching (default)
+  // Caching is enabled by default (a new Map); pass `cache: false` to disable
 });
 
 // Load individual users - automatically batched
@@ -201,14 +207,14 @@ class TtlMap<K, V> implements MapLike<K, V> {
 }
 
 const cachedLoader = new DataLoader(batchLoadPrices, {
-  cacheMap: new TtlMap(60000), // 1 minute TTL
+  cache: new TtlMap(60000), // 1 minute TTL
 });
 ```
 
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/data-loader": "0.12.2" }}
+  dependencies={{ "@winglet/data-loader": "0.14.1" }}
   code={`import { DataLoader } from '@winglet/data-loader';
 
 // Create a batch loading function
@@ -227,7 +233,7 @@ async function batchLoadUsers(userIds: string[]): Promise<User[]> {
 // Create the DataLoader instance
 const userLoader = new DataLoader(batchLoadUsers, {
   maxBatchSize: 100, // Limit SQL query size
-  cache: true,       // Enable caching (default)
+  // Caching is enabled by default (a new Map); pass \`cache: false\` to disable
 });
 
 // Load individual users - automatically batched

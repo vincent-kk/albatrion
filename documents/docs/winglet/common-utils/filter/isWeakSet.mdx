@@ -13,6 +13,13 @@ Provides reliable WeakSet detection using instanceof check with generic
 type support for type-safe WeakSet validation and processing. WeakSets
 provide garbage-collection-friendly storage for unique object references.
 
+## Import
+
+```typescript
+import { isWeakSet } from '@winglet/common-utils/filter';
+import { isWeakSet } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -341,7 +348,7 @@ class ResourceCleanupTracker {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isWeakSet } from '@winglet/common-utils';
 
 // True cases - WeakSet instances

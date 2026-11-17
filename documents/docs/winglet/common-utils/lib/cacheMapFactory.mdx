@@ -14,6 +14,13 @@ including size tracking, raw access, and fluent interface for cache operations.
 Ideal for implementing memoization, data caching, and key-value storage patterns
 with strong type safety and performance optimization.
 
+## Import
+
+```typescript
+import { cacheMapFactory } from '@winglet/common-utils/lib';
+import { cacheMapFactory } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -215,7 +222,7 @@ cache.raw.forEach((value, key) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { cacheMapFactory } from '@winglet/common-utils';
 
 const userCache = cacheMapFactory<Map<string, User>>();

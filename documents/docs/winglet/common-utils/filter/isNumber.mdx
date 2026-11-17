@@ -13,6 +13,13 @@ Provides reliable number type detection using native typeof check,
 identifying all number values including integers, floats, special
 numeric values (NaN, Infinity), and both positive and negative numbers.
 
+## Import
+
+```typescript
+import { isNumber } from '@winglet/common-utils/filter';
+import { isNumber } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -281,7 +288,7 @@ function calculateStatistics(values: unknown[]) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isNumber } from '@winglet/common-utils';
 
 // True cases - number type

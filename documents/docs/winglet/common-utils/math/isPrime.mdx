@@ -13,6 +13,13 @@ Tests whether the given integer has exactly two positive divisors: 1 and itself.
 Uses an efficient algorithm that only checks odd divisors up to the square root
 of the number, with special handling for 2 (the only even prime).
 
+## Import
+
+```typescript
+import { isPrime } from '@winglet/common-utils/math';
+import { isPrime } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -62,7 +69,7 @@ console.log(isPrime(-5)); // false (negative numbers not prime)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isPrime } from '@winglet/common-utils';
 
 // Prime numbers

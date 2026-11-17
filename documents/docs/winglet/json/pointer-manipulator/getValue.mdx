@@ -21,26 +21,35 @@ The function supports both string and array representations of JSON Pointers:
 Reference tokens are interpreted according to RFC 6901 escape sequences:
 - `~0` represents the literal character `~`
 - `~1` represents the literal character `/`
-The function performs strict validation on the input object, requiring it to be
-either a plain object or an array. This ensures type safety and prevents
-unexpected behavior with primitive values or non-plain objects.
+The function accepts unvalidated input and requires a plain object or array at
+runtime. Primitive values and non-plain objects throw INVALID_INPUT.
+Object/array calls retain the generic result contract; unknown input uses an
+unknown-result overload that callers must narrow before use.
+
+## Import
+
+```typescript
+import { getValue } from '@winglet/json/pointer-manipulator';
+import { getValue } from '@winglet/json/pointer';
+import { getValue } from '@winglet/json';
+```
 
 ## Signature
 
 ```typescript
-const getValue: <Output extends Dictionary | Array<any> = Dictionary | Array<any>>(value: Dictionary | Array<any>, pointer: string | (string | number)[]) => Output
+const getValue: GetValue
 ```
 
 ## Parameters
 
 | Name | Type | Description |
 |------|------|-------------|
-| `value` | `-` | The target JSON document to extract value from. Must be a plain object or array. Other types will throw an error. |
-| `pointer` | `-` | JSON Pointer specifying the location of the value to extract. Can be provided as: - String: JSON Pointer string following RFC 6901 format - Array: Sequence of reference tokens as string array |
+| `value` | `-` | The target JSON document; unknown input is validated at runtime. Must be a plain object or array. Other types will throw an error. |
+| `pointer` | `-` | JSON Pointer specifying the location of the value to extract. Can be provided as: - String: JSON Pointer string following RFC 6901 format - Array: Sequence of reference tokens as strings or numbers |
 
 ## Returns
 
-The value located at the specified JSON Pointer location. Returns any valid JSON value (object, array, string, number, boolean, null).
+The value located at the specified JSON Pointer location. Returns any valid JSON value (object, array, string, number, boolean, null). The unknown-input overload requires callers to narrow the result.
 
 ## Examples
 
@@ -130,7 +139,7 @@ getValue(complex, '/api/v1/endpoints/0/methods/1');
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.15.0" }}
+  dependencies={{ "@winglet/json": "0.16.0" }}
   code={`// Basic object property access
 const obj = {
   foo: {

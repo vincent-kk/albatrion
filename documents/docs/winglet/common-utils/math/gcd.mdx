@@ -13,6 +13,13 @@ Computes the largest positive integer that divides both numbers without remainde
 Supports both integers and decimal numbers by scaling decimals to integers with
 appropriate precision handling. Uses the efficient Euclidean algorithm for computation.
 
+## Import
+
+```typescript
+import { gcd } from '@winglet/common-utils/math';
+import { gcd } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -23,12 +30,12 @@ const gcd: (left: number, right: number) => number
 
 | Name | Type | Description |
 |------|------|-------------|
-| `left` | `-` | First number (integer or decimal) |
-| `right` | `-` | Second number (integer or decimal) |
+| `left` | `-` | First number (finite integer or decimal) |
+| `right` | `-` | Second number (finite integer or decimal) |
 
 ## Returns
 
-Greatest common divisor of the two numbers
+Greatest common divisor of the two numbers, or `NaN` when either input is not finite or scaling a decimal input overflows to infinity
 
 ## Examples
 
@@ -56,12 +63,19 @@ console.log(gcd(0, 5)); // 5 (GCD with zero)
 console.log(gcd(7, 0)); // 7 (GCD with zero)
 console.log(gcd(0, 0)); // 0 (by convention)
 console.log(gcd(-12, 8)); // 4 (absolute values used)
+
+// Values printed in exponential notation
+console.log(gcd(1e-7, 2e-7)); // 1e-7
+
+// Undefined results
+console.log(gcd(NaN, 5)); // NaN
+console.log(gcd(Infinity, 5)); // NaN
 ```
 
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { gcd } from '@winglet/common-utils';
 
 console.log(gcd(12, 8)); // 4 (largest number dividing both 12 and 8)
@@ -78,7 +92,13 @@ console.log(gcd(100, 50)); // 50`}
 - gcd(0, 0) = 0 by convention
 - gcd(a, b) = gcd(b, a) (commutative)
 - gcd(a, b) = gcd(|a|, |b|) (sign independent)
-- Always returns a non-negative result
+- Always returns a non-negative result, or `NaN` where no result is defined
+
+**Decimal precision:** decimal inputs are scaled to integers by a power of ten
+derived from their decimal places. When that scaling overflows to infinity the
+result is `NaN` rather than an arbitrary finite value. Results needing more than
+`MAX_FRACTION_DIGITS` fraction digits skip the final rounding pass, since
+`toFixed` rejects counts above that limit.
 
 **Use Cases:**
 - Simplifying fractions to lowest terms

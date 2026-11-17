@@ -14,6 +14,13 @@ when passed through Object(), which includes both primitive values that
 get wrapped and actual objects. This function has nuanced behavior and
 should be used with understanding of JavaScript's object coercion rules.
 
+## Import
+
+```typescript
+import { isPrimitiveObject } from '@winglet/common-utils/filter';
+import { isPrimitiveObject } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -213,7 +220,7 @@ console.log(analyzeValue(42));       // primitive number
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isPrimitiveObject } from '@winglet/common-utils';
 
 // True cases - objects (including boxed primitives)

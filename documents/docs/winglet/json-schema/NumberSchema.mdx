@@ -1,0 +1,23 @@
+---
+title: 'NumberSchema'
+sidebar_label: 'NumberSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# NumberSchema
+
+Number/Integer type schema
+
+## Import
+
+```typescript
+import type { NumberSchema } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+export type NumberSchema<Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema> = NonNullableNumberSchema<Options, Schema> | NullableNumberSchema<Options, Schema>
+```

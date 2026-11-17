@@ -1,0 +1,137 @@
+---
+title: 'TrackableHandlerOptions'
+sidebar_label: 'TrackableHandlerOptions'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# TrackableHandlerOptions
+
+Options used when creating a TrackableHandler.
+
+## Import
+
+```typescript
+import type { TrackableHandlerOptions } from '@winglet/common-utils/function';
+import type { TrackableHandlerOptions } from '@winglet/common-utils';
+```
+
+## Signature
+
+```typescript
+export type TrackableHandlerOptions<Args extends any[] = [], State extends Dictionary = {}> = {
+    /**
+     * Whether to prevent concurrent execution.
+     *
+     * If `true`, when a function is already running, new calls return `undefined`.
+     * If `false`, multiple function calls can execute simultaneously.
+     *
+     * @defaultValue true
+     *
+     * @example
+     * ```typescript
+     * // Prevent concurrent execution (default)
+     * { preventConcurrent: true }
+     *
+     * // Allow concurrent execution
+     * { preventConcurrent: false }
+     * ```
+     */
+    preventConcurrent?: boolean;
+    /**
+     * Initial value of the state.
+     *
+     * Defines the initial state of the handler when it is created.
+     *
+     * @example
+     * ```typescript
+     * {
+     *   initialState: {
+     *     loading: false,
+     *     data: null,
+     *     error: null,
+     *     requestCount: 0
+     *   }
+     * }
+     * ```
+     */
+    initialState?: State;
+    /**
+     * Callback called before executing the original function.
+     *
+     * Mainly used for setting loading state, incrementing request count, etc.
+     * If an exception occurs in this function, the original function will not be executed.
+     *
+     * @param args - Arguments passed to the original function
+     * @param stateManager - State management object
+     *
+     * @example
+     * ```typescript
+     * {
+     *   beforeExecute: (args, stateManager) => {
+     *     console.log('Starting API call:', args);
+     *     stateManager.update({ loading: true, error: null });
+     *   }
+     * }
+     * ```
+     */
+    beforeExecute?: Fn<[args: Args, stateManager: StateManager<State>]>;
+    /**
+     * Callback called after executing the original function.
+     *
+     * Always executed regardless of success/failure of the original function.
+     * Mainly used for clearing loading state, updating statistics, etc.
+     *
+     * @param args - Arguments passed to the original function
+     * @param stateManager - State management object
+     *
+     * @example
+     * ```typescript
+     * {
+     *   afterExecute: (args, stateManager) => {
+     *     console.log('API call completed');
+     *     stateManager.update(prev => ({
+     *       loading: false,
+     *       requestCount: prev.requestCount + 1
+     *     }));
+     *   }
+     * }
+     * ```
+     */
+    afterExecute?: Fn<[args: Args, stateManager: StateManager<State>]>;
+}
+```
+
+## Examples
+
+### Example 1
+
+```typescript
+const options: TrackableHandlerOptions<[string], { loading: boolean; data: User | null }> = {
+  preventConcurrent: true,
+  initialState: { loading: false, data: null },
+  beforeExecute: (args, stateManager) => {
+    stateManager.update({ loading: true });
+  },
+  afterExecute: (args, stateManager) => {
+    stateManager.update({ loading: false });
+  }
+};
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
+  code={`const options: TrackableHandlerOptions<[string], { loading: boolean; data: User | null }> = {
+  preventConcurrent: true,
+  initialState: { loading: false, data: null },
+  beforeExecute: (args, stateManager) => {
+    stateManager.update({ loading: true });
+  },
+  afterExecute: (args, stateManager) => {
+    stateManager.update({ loading: false });
+  }
+};`}
+/>

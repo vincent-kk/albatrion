@@ -27,6 +27,7 @@ yarn add @winglet/json-schema
 | `@winglet/json-schema/scanner` | `JSONSchemaScanner` (synchronous) |
 | `@winglet/json-schema/async-scanner` | `JSONSchemaScannerAsync` |
 | `@winglet/json-schema/filter` | Schema type-guard functions |
+| `@winglet/json-schema/keyword` | `Dialect`, `DEFAULT_KEYWORDS`, `KeywordDescriptor`, `KeywordKind` (no scanner code) |
 
 ## Key Exports
 
@@ -34,6 +35,7 @@ yarn add @winglet/json-schema
 
 - `JSONSchemaScanner` — depth-first traversal with `enter`/`exit` visitor callbacks
 - `JSONSchemaScannerAsync` — async variant for remote `$ref` resolution
+- `resolveReference`, `createReferenceResolver`, `createReferenceResolverAsync` — reference resolution helpers, exported from the package root only
 
 ### Schema Filters (`/filter`)
 
@@ -99,15 +101,16 @@ const schema = {
 const scanner = new JSONSchemaScanner({
   visitor: {
     enter(entry) {
+      if (typeof entry.schema === 'boolean') return;
       console.log(entry.path, entry.schema.type);
     },
   },
 });
 
 scanner.scan(schema);
-// '' 'object'
-// '/properties/name' 'string'
-// '/properties/age' 'number'
+// '#' 'object'
+// '#/properties/name' 'string'
+// '#/properties/age' 'number'
 ```
 
 ```ts
@@ -144,7 +147,7 @@ The CLI resolves `@winglet/json-schema/package.json` via `createRequire`, reads 
 
 ## AI Reference
 
-**Package**: `@winglet/json-schema` v0.10.0
+**Package**: `@winglet/json-schema`
 **Purpose**: JSON Schema traversal, type-guard filters, and $ref resolution.
 
 ### Key exports
@@ -176,6 +179,13 @@ The CLI resolves `@winglet/json-schema/package.json` via `createRequire`, reads 
            hasNullInType
            isCompatibleSchemaType
            isIdenticalSchemaType
+./keyword → Dialect
+            DEFAULT_KEYWORDS
+            KeywordDescriptor (type)
+            KeywordKind (type)
+root only → resolveReference
+            createReferenceResolver
+            createReferenceResolverAsync
 ```
 
 </ForAI>

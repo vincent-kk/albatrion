@@ -1,0 +1,29 @@
+---
+title: 'ErrorBoundaryReporter'
+sidebar_label: 'ErrorBoundaryReporter'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# ErrorBoundaryReporter
+
+Reports a caught render error with only React's component stack.
+
+## Import
+
+```typescript
+import type { ErrorBoundaryReporter } from '@winglet/react-utils/hoc';
+import type { ErrorBoundaryReporter } from '@winglet/react-utils';
+```
+
+## Signature
+
+```typescript
+export type ErrorBoundaryReporter = Fn<[
+    error: unknown,
+    info: {
+        componentStack?: string;
+    }
+]>
+```

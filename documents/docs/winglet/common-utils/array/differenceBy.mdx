@@ -14,10 +14,17 @@ Creates a new array containing elements from the source array that do not have
 matching transformed values in the exclude array. The mapper function is applied
 to elements from both arrays to extract comparable values.
 
+## Import
+
+```typescript
+import { differenceBy } from '@winglet/common-utils/array';
+import { differenceBy } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
-const differenceBy: <Type1, Type2>(source: Type1[], exclude: Type2[], mapper: (item: Type1 | Type2) => unknown) => Type1[]
+const differenceBy: <Type1, Type2>(source: readonly Type1[], exclude: readonly Type2[], mapper: Fn<[item: Type1 | Type2], unknown>) => Type1[]
 ```
 
 ## Parameters
@@ -138,7 +145,7 @@ console.log(nonEmployees); // [{ name: 'Charlie', age: 35 }]
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { differenceBy } from '@winglet/common-utils';
 
 const users = [

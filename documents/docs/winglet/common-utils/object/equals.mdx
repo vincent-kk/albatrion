@@ -13,10 +13,17 @@ Compares values recursively by examining all nested properties of objects and ar
 Provides special handling for NaN values (treats NaN === NaN as true, unlike standard equality).
 Supports optional property exclusion for partial comparisons and performance optimization.
 
+## Import
+
+```typescript
+import { equals } from '@winglet/common-utils/object';
+import { equals } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
-const equals: <Left, Right>(left: Left, right: Right, omit?: Set<PropertyKey> | Array<PropertyKey>) => boolean
+const equals: <Left, Right>(left: Left, right: Right, omit?: Set<PropertyKey> | readonly PropertyKey[]) => boolean
 ```
 
 ## Parameters
@@ -134,7 +141,7 @@ console.log(equals({ fn: fn1 }, { fn: fn3 })); // true (same reference)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { equals } from '@winglet/common-utils';
 
 // Primitive values

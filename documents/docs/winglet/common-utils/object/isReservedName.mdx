@@ -1,0 +1,61 @@
+---
+title: 'isReservedName'
+sidebar_label: 'isReservedName'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isReservedName
+
+Checks whether a key is a reserved member name whose plain property access
+can reach the prototype chain: `__proto__`, `constructor`, `prototype`.
+Shared predicate for the data-property primitives: performance-sensitive
+traversal loops branch on it so only reserved names take the special path
+(`getDataProperty` / `setDataProperty` / `deleteDataProperty`) while
+ordinary keys keep plain property access. Exactly these three strings
+return true — no other key is ever classified as reserved.
+
+## Import
+
+```typescript
+import { isReservedName } from '@winglet/common-utils/object';
+import { isReservedName } from '@winglet/common-utils';
+```
+
+## Signature
+
+```typescript
+const isReservedName: (key: string) => boolean
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `key` | `-` | Property key to classify |
+
+## Returns
+
+Whether the key must go through the data-property special path
+
+## Examples
+
+### Branching a hot loop on the shared predicate
+
+```typescript
+import { getDataProperty, isReservedName } from '@winglet/common-utils';
+
+const read = (target: object, key: string) =>
+  isReservedName(key) ? getDataProperty(target, key) : (target as any)[key];
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
+  code={`import { getDataProperty, isReservedName } from '@winglet/common-utils';
+
+const read = (target: object, key: string) =>
+  isReservedName(key) ? getDataProperty(target, key) : (target as any)[key];`}
+/>

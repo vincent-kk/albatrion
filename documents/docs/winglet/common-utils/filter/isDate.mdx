@@ -13,6 +13,13 @@ Provides reliable Date object detection using instanceof check for
 identifying JavaScript Date instances, regardless of how they were
 created or their validity state.
 
+## Import
+
+```typescript
+import { isDate } from '@winglet/common-utils/filter';
+import { isDate } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -164,7 +171,7 @@ function convertDateStringsToObjects(obj: any): any {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isDate } from '@winglet/common-utils';
 
 // True cases - Date objects

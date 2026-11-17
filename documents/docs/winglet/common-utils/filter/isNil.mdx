@@ -13,6 +13,13 @@ Provides reliable nil detection using loose equality check, identifying
 both null and undefined values in a single operation. Uses the `==` operator
 which treats null and undefined as equivalent.
 
+## Import
+
+```typescript
+import { isNil } from '@winglet/common-utils/filter';
+import { isNil } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -182,7 +189,7 @@ const config = {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isNil } from '@winglet/common-utils';
 
 // True cases - nil values

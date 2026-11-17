@@ -15,6 +15,13 @@ I/O events. In browsers and other environments, uses a custom MessageChannelSche
 `setImmediate` implementation that provides immediate macro task execution with automatic batching
 optimization, significantly outperforming traditional `setTimeout(0)` approaches.
 
+## Import
+
+```typescript
+import { scheduleMacrotask } from '@winglet/common-utils/scheduler';
+import { scheduleMacrotask } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -187,7 +194,7 @@ executionOrder.push('sync-2');
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { scheduleMacrotask } from '@winglet/common-utils';
 
 console.log('1: Synchronous code');

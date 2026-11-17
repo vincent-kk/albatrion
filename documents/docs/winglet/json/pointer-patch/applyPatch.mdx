@@ -1,0 +1,112 @@
+---
+title: 'applyPatch'
+sidebar_label: 'applyPatch'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# applyPatch
+
+Applies an array of JSON Patch operations to a source object or array.
+This function takes a source object/array and applies a sequence of JSON Patch operations
+to transform it according to the provided patches. The function supports all standard
+JSON Patch operations (ADD, REMOVE, REPLACE, MOVE, COPY, TEST) and provides flexible
+options for handling mutations and validation.
+The application process follows these principles:
+- Operations are applied sequentially in the order provided
+- Each operation is validated before application
+- Reserved member names (__proto__, constructor, prototype) are handled as
+opaque own data — no patch input can modify the prototype chain
+- Immutable mode preserves the source with copy-on-write path cloning while unchanged
+subtrees remain structurally shared between the source and result
+- Strict mode enforces additional validation rules
+
+## Import
+
+```typescript
+import { applyPatch } from '@winglet/json/pointer-patch';
+import { applyPatch } from '@winglet/json/pointer';
+import { applyPatch } from '@winglet/json';
+```
+
+## Signature
+
+```typescript
+const applyPatch: <Result extends JSONRoot = any>(source: JSONRoot, patches: Patch[], options?: ApplyPatchOptions) => Result
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `source` | `-` | The source object or array to apply patches to |
+| `patches` | `-` | An array of JSON Patch operations to apply sequentially |
+
+## Returns
+
+A new object/array with all patches applied. If immutable is true, returns a new instance; otherwise, modifies and returns the original source.
+
+## Examples
+
+### Example 1
+
+```typescript
+const source = { name: "John", age: 30, hobbies: ["reading"] };
+const patches = [
+  { op: "replace", path: "/age", value: 31 },
+  { op: "add", path: "/city", value: "NYC" },
+  { op: "add", path: "/hobbies/-", value: "coding" }
+];
+
+const result = applyPatch(source, patches);
+// Returns: { name: "John", age: 31, city: "NYC", hobbies: ["reading", "coding"] }
+```
+
+### Example 2
+
+```typescript
+const sourceArray = [1, 2, 3];
+const patches = [
+  { op: "replace", path: "/1", value: 5 },
+  { op: "add", path: "/3", value: 4 }
+];
+
+const result = applyPatch(sourceArray, patches);
+// Returns: [1, 5, 3, 4]
+```
+
+### Example 3
+
+```typescript
+// Using strict mode for additional validation
+const result = applyPatch(source, patches, { strict: true, immutable: false });
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/json": "0.16.0" }}
+  code={`const source = { name: "John", age: 30, hobbies: ["reading"] };
+const patches = [
+  { op: "replace", path: "/age", value: 31 },
+  { op: "add", path: "/city", value: "NYC" },
+  { op: "add", path: "/hobbies/-", value: "coding" }
+];
+
+const result = applyPatch(source, patches);
+// Returns: { name: "John", age: 31, city: "NYC", hobbies: ["reading", "coding"] }`}
+/>
+
+## Notes
+
+Immutable mode structurally shares unchanged subtrees. If the same object is referenced by
+multiple paths, only the path touched by a patch is detached from the source.
+
+Reserved member names (`__proto__`, `constructor`, `prototype`) addressed by a patch survive
+into the result as own data properties. Copy such a result with spread, `structuredClone`, or a
+JSON round-trip — each defines own data and keeps the key; assignment-based copies
+(`Object.assign`, `target[key] = value`) route through the inherited `__proto__` setter, which
+replaces the copy's prototype and drops the key. Test the result for plain objects with
+`Object.getPrototypeOf` or `instanceof`, not `value.constructor` — an own `constructor` shadows
+the inherited one.

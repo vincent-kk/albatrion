@@ -1,0 +1,25 @@
+---
+title: 'NullableNumberSchema'
+sidebar_label: 'NullableNumberSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# NullableNumberSchema
+
+Nullable number schema (type: ['number' | 'integer', 'null'])
+
+## Import
+
+```typescript
+import type { NullableNumberSchema } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+interface NullableNumberSchema<Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema> extends BaseNumberSchema<NumberValue, Options, Schema> {
+    type: readonly ['number' | 'integer', 'null'] | readonly ['null', 'number' | 'integer'];
+}
+```
