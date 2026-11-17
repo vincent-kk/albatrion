@@ -21,4 +21,18 @@ describe('ValidationIssue.schemaPath for a root with $id', () => {
     expect(issues?.map((issue) => issue.schemaPath).sort()).toEqual(['#/not', '#/properties/a/type']);
     expect(issues?.find((issue) => issue.keyword === 'not')?.rejectedKey).toBe('banned');
   });
+
+  it('keeps the fragment paths AJV reports when it calls a root with $id instead of inlining it', async () => {
+    const schema = {
+      $id: 'urn:schema-form-ajv8:schema-path-root-called',
+      type: 'object',
+      definitions: { text: { type: 'string' } },
+      properties: { a: { $ref: '#/definitions/text' }, b: { type: 'object', not: { required: ['z'] } } },
+    } as unknown as JSONSchema;
+    const issues = await plugin.validator.compile(schema)({ a: 1, b: { z: 1 } });
+    expect(issues?.map((issue) => [issue.schemaPath, issue.rejectedKey])).toEqual([
+      ['#/definitions/text/type', undefined],
+      ['#/properties/b/not', 'z'],
+    ]);
+  });
 });
