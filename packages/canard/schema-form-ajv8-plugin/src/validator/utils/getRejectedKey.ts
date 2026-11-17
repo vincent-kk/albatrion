@@ -21,6 +21,21 @@ const schemaAtPath = (root: unknown, path: string): unknown => {
   return current;
 };
 
+/** Keywords whose subschema at `<keyword>/<name or index>` judges one child of the host. */
+const CHILD_SCHEMA_MAPS = ['properties', 'patternProperties', 'items', 'prefixItems'];
+
+/**
+ * Tells whether a false schema stands where its host places one child, so the issue rejects that key.
+ * @param schemaPath - The false schema's path, with or without AJV's trailing `false schema` segment.
+ * @returns True at `<map keyword>/<name or index>` or a single `items`; false for an in-place
+ *   applicator such as `then`, `allOf/0` or an inlined `$ref` target, where the value is rejected.
+ */
+const isChildSchemaPath = (schemaPath: string): boolean => {
+  const segments = schemaPath.split('/');
+  const last = segments.at(-1) === 'false schema' ? segments.length - 2 : segments.length - 1;
+  return segments[last] === 'items' || CHILD_SCHEMA_MAPS.includes(segments[last - 1]);
+};
+
 /**
  * Finds a rejected property when AJV or a single-key negative schema identifies it.
  * @param error - AJV issue whose keyword determines the key source.
@@ -35,7 +50,7 @@ export const getRejectedKey = (error: ErrorObject, schemaPath: string, root: unk
   }
   if (error.keyword === 'propertyNames')
     return typeof error.params.propertyName === 'string' ? error.params.propertyName : undefined;
-  if (error.keyword === 'false schema' && error.instancePath)
+  if (error.keyword === 'false schema' && error.instancePath && isChildSchemaPath(schemaPath))
     return error.instancePath?.split('/').at(-1)?.replace(/~1/g, '/').replace(/~0/g, '~');
   if (error.keyword !== 'not') return undefined;
   const schema = schemaAtPath(root, schemaPath);
