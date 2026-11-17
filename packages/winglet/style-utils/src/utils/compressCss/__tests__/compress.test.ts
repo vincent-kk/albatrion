@@ -166,6 +166,14 @@ describe('compressCss', () => {
     expect(compressCss('.a :hover{color:red}')).toBe('.a :hover{color:red}');
   });
 
+  it('drops the space before a declaration colon but not before a selector colon', () => {
+    expect(
+      compressCss(
+        '.a { content : "{"; color : red } .b :is(.c) { x : y } :root{z:w}',
+      ),
+    ).toBe('.a{content:"{";color:red}.b :is(.c){x:y}:root{z:w}');
+  });
+
   it('keeps the whitespace calc() requires around +', () => {
     expect(compressCss('.a{width:calc(1px + 2px)}')).toBe(
       '.a{width:calc(1px + 2px)}',
