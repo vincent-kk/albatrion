@@ -25,6 +25,23 @@ export const enqueueKey = <Key, Value>(
   );
 };
 
+/**
+ * Registers a cache hit that the batch settles together with its own keys.
+ * Mutating the batch is the stated purpose: cache hits resolve when the batch is dispatched.
+ * @param batch - The open batch that settles the cache hit
+ * @param cachedPromise - The cached promise for the requested key
+ * @returns A new promise that follows the cached promise once the batch is dispatched
+ */
+export const enqueueCacheHit = <Key, Value>(
+  batch: Batch<Key, Value>,
+  cachedPromise: Promise<Value>,
+): Promise<Value> => {
+  const cacheHits = batch.cacheHits || (batch.cacheHits = []);
+  return new Promise<Value>((resolve) =>
+    cacheHits.push(() => resolve(cachedPromise)),
+  );
+};
+
 export const resolveCacheHits = <Key, Value>(batch: Batch<Key, Value>) => {
   if (!batch.cacheHits) return;
   for (const resolveCacheHit of batch.cacheHits) resolveCacheHit();
