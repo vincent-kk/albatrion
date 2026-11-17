@@ -3,7 +3,7 @@ import { memo, useCallback, useRef } from 'react';
 import { isArray } from '@winglet/common-utils/filter';
 import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
 
-import type { Optional } from '@aileron/declare';
+import type { Nullable, Optional } from '@aileron/declare';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
@@ -73,7 +73,9 @@ export const FieldInputBridge = memo(
     const [ChildFields, hydrationCommitRef, virtualizationManager] =
       useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
     const { attachedFilesMap, context } = useWorkspaceContext();
-    const attachmentOwner = useRef({});
+    const attachmentOwner = useRef<{ container: Nullable<HTMLDivElement> }>({
+      container: null,
+    });
     const {
       readOnly: rootReadOnly,
       disabled: rootDisabled,
@@ -140,6 +142,7 @@ export const FieldInputBridge = memo(
         const onFileAttach =
           onFileAttachRef.current || overrideOnFileAttachRef?.current;
         if (onFileAttach) return onFileAttach(files);
+        attachmentOwner.current.container = ref.current;
         attachedFilesMap.attach(
           attachmentOwner.current,
           node,
@@ -153,6 +156,7 @@ export const FieldInputBridge = memo(
         onFileAttachRef,
         overrideOnFileAttachRef,
         attachedFilesMap,
+        ref,
       ],
     );
     const requestId =
@@ -178,7 +182,9 @@ export const FieldInputBridge = memo(
       });
     }, [accepts, isLive, node, selection]);
     useOnUnmount(() => {
-      attachedFilesMap.detach(attachmentOwner.current);
+      // Activity hiding runs this cleanup with the DOM still connected; unmount has removed it.
+      if (!attachmentOwner.current.container?.isConnected)
+        attachedFilesMap.detach(attachmentOwner.current);
       if (requestId.current !== undefined)
         cancelAnimationFrame(requestId.current);
     });

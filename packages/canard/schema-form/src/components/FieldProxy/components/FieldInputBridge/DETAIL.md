@@ -2,7 +2,7 @@
 
 ## Requirements
 
-첨부 기록은 브리지별 소유 토큰과 노드 identity로 유지합니다. 기존 layout 구독의 경로 배달에서 모든 살아 있는 첨부를 현재 경로로 일괄 투영하여 배열 이동의 키 충돌을 막고, unmount는 자기 토큰만 해제합니다. 첨부가 없는 일반 입력에는 별도 effect·구독을 추가하지 않으며 경로 변경 비용은 첨부 수에 비례합니다.
+첨부 기록은 브리지별 소유 토큰과 노드 identity로 유지합니다. 기존 layout 구독의 경로 배달에서 모든 살아 있는 첨부를 현재 경로로 일괄 투영하여 배열 이동의 키 충돌을 막고, unmount는 자기 토큰만 해제합니다. React 19 Activity 숨김도 passive cleanup을 실행하지만 언마운트가 아니므로 첨부를 지우지 않습니다. 첨부 때의 입력 컨테이너를 소유 토큰에 기록하고, 그 요소가 문서에서 분리된 cleanup만 해제로 봅니다. 숨김은 DOM을 연결한 채 두고 실제 언마운트는 passive cleanup 전에 DOM을 떼어 내므로, 별도 effect 없이 두 경우를 구분합니다. 한계: 숨긴 채 언마운트된 브리지는 cleanup이 다시 실행되지 않아 그 기록이 reset이나 노드 부재까지 남고, 첨부 뒤 컨테이너가 교체된 입력을 숨기면 옛 요소가 분리되어 있으므로 첨부가 해제됩니다. 첨부가 없는 일반 입력에는 별도 effect·구독을 추가하지 않으며 경로 변경 비용은 첨부 수에 비례합니다.
 
 입력 시험이 읽는 misfit·required는 노드 identity가 같아도 다시 평가합니다. 렌더마다 원시 힌트 둘을 읽어 메모 키에 넣으며, 동일 원본 입력 어댑터의 identity는 유지하여 선택 재검사가 무관한 DOM 교체를 만들지 않게 합니다.
 
@@ -44,7 +44,7 @@ GOAL-061·WRITE-083. blur는 입력 마침을 알리고 touched를 다음 프레
 
 선택 토큰은 A→B→A에서도 각 선택 수명마다 다릅니다. 제어 선언은 실제 모드인 `controlled === true`로 구분합니다. `undefined`와 `false` 사이 변경은 DOM·이전 값·파일 콜백·예약된 blur를 유지합니다. 실제 모드가 바뀌면 같은 원본 컴포넌트라도 이전 콜백을 폐기하며, 자식 소유권이나 composition이 DOM 교체를 보류해도 이 수명 경계는 적용됩니다. 새로운 콜백의 Refresh 세대 검사는 그대로이므로 composition 중 보류된 외부 쓰기를 이전 draft로 덮지 못합니다.
 
-선택 폐기는 커밋에서 원본 입력 layout cleanup보다 먼저 일어나므로 cleanup의 값·파일 callback도 막고 중단된 렌더는 현재 선택을 폐기하지 않습니다. 해제 순서와 비용은 [입력 해석 어댑터](../../../../helpers/fieldInputDefinition/DETAIL.md)가 소유합니다. 파일 첨부는 같은 수명 검사를 받고 unmount에서 경로의 첨부 상태를 제거합니다.
+선택 폐기는 커밋에서 원본 입력 layout cleanup보다 먼저 일어나므로 cleanup의 값·파일 callback도 막고 중단된 렌더는 현재 선택을 폐기하지 않습니다. 해제 순서와 비용은 [입력 해석 어댑터](../../../../helpers/fieldInputDefinition/DETAIL.md)가 소유합니다. 파일 첨부는 같은 수명 검사를 받고 unmount에서 경로의 첨부 상태를 제거하며, Activity 숨김에서는 유지합니다.
 
 ### REACT-028 — Refresh와 자식 소유권
 
