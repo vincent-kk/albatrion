@@ -108,7 +108,11 @@ describe('registered resources', () => {
   it.each([
     ['embedding document first', ['a', 'b'], 'https://ex.example/b.json'],
     ['embedded document first', ['b', 'a'], 'https://ex.example/b.json'],
-    ['embedding document first, upper-case key', ['a', 'b'], 'https://EX.example/b.json'],
+    [
+      'embedding document first, upper-case key after an upper-case lookup',
+      ['c', 'a', 'b'],
+      'https://EX.example/b.json',
+    ],
   ])(
     'rejects a referenced registered document whose address another referenced one embeds, %s',
     (_order, names, bKey) => {
@@ -124,6 +128,7 @@ describe('registered resources', () => {
           $defs: { B: { $id: 'https://ex.example/b.json', type: 'string' } },
         },
         [bKey]: { $id: 'https://ex.example/b.json', type: 'number' },
+        'https://EX.example/c.json': { type: 'boolean' },
       };
       expect(() => scan(schema, {}, { resources })).toThrow(
         'https://ex.example/b.json declared at',

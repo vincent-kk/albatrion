@@ -386,13 +386,25 @@ export class ResolverStore {
    * @returns Whether the resource is known after checking registrations; an address no key names
    *   is known once indexing every registered document finds it embedded in one of them.
    * @throws Duplicate-identifier error when two keys normalize to one address with different documents,
-   *   or when indexing the registered documents finds an identifier declared twice.
+   *   or when indexing finds an identifier declared twice, including a known identifier whose address
+   *   is a registered key not yet indexed.
    */
   public ensure(uri: string): boolean {
-    if (this.resources.has(uri)) return true;
     const source = this.options.resources;
-    if (source === undefined || !isAbsoluteURI(uri)) return false;
+    const known = this.resources.get(uri);
+    if (known && (source === undefined || known.document.uri === uri))
+      return true;
+    if (source === undefined) return false;
     const dialect = this.options.defaultDialect ?? DEFAULT_DIALECT;
+    if (known) {
+      const schema = hasOwnProperty(source, uri)
+        ? source[uri]
+        : this.registered?.get(uri);
+      if (schema !== undefined && isAbsoluteURI(uri))
+        this.index(schema, uri, dialect);
+      return true;
+    }
+    if (!isAbsoluteURI(uri)) return false;
     if (hasOwnProperty(source, uri)) this.index(source[uri], uri, dialect);
     else {
       const registered = (this.registered ??=
