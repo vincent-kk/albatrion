@@ -101,6 +101,12 @@ describe('scopeRules', () => {
     );
   });
 
+  test('recognizes an at-rule after a leading comment', () => {
+    expect(scope('/* note */ @media (x) { .a { color: red } } .b {}')).toBe(
+      '@media (x){.s .a{ color: red }}.s .b{}',
+    );
+  });
+
   test('drops a trailing rule without a matching brace', () => {
     expect(scope('.a{} @media (x) { .b{}')).toBe('.s .a{}');
   });
