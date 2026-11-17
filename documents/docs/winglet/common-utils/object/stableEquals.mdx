@@ -316,7 +316,7 @@ console.log(obj1 === obj2); // false (different references)`}
 **Supported Data Types:**
 - **Primitives**: string, number, boolean, null, undefined, symbol, bigint
 - **Objects**: Plain objects, arrays (including sparse), functions
-- **Built-ins**: Date, RegExp, Error, Map, Set (reference equality)
+- **Built-ins**: Date, RegExp, Map, Set, boxed primitives and Error, compared by state
 - **Binary Data**: ArrayBuffer, SharedArrayBuffer, TypedArrays, DataView
 - **Custom Objects**: Objects with custom prototypes
 
