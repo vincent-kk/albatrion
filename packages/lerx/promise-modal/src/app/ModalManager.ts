@@ -359,6 +359,7 @@ export class ModalManager {
       const recorded = escape?.event === event ? escape.nodes : undefined;
       escape = undefined;
       if (
+        (event.key !== 'Escape' && event.key !== 'Tab') ||
         !ModalManager.__state__.anchor?.isConnected ||
         event.defaultPrevented ||
         event.isComposing ||
