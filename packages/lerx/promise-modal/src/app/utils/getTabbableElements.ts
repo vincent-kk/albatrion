@@ -1,3 +1,5 @@
+import { isUnslotted } from './isUnslotted';
+
 /** Elements that can enter sequential focus navigation without being editing hosts. */
 const CONTROL_SELECTOR =
   'a[href], area[href], button, input, select, textarea, iframe, object, embed, [tabindex], audio[controls], video[controls], summary';
@@ -12,16 +14,23 @@ const EDITABLE_VALUES = ['', 'true', 'plaintext-only'];
 /** `NodeFilter.SHOW_ELEMENT`, inlined so collection needs no `NodeFilter` global. */
 const SHOW_ELEMENT = 1;
 
-/** Lists candidates in tree order, splicing open shadow roots in at their hosts. */
+/**
+ * Lists candidates in tree order, splicing open shadow roots in at their hosts and
+ * skipping host children that no slot renders.
+ */
 const collectCandidates = (root: Element | ShadowRoot): HTMLElement[] => {
   const walker = root.ownerDocument.createTreeWalker(root, SHOW_ELEMENT);
   let node = walker.nextNode();
   while (node && !('shadowRoot' in node && node.shadowRoot)) node = walker.nextNode();
   if (!node) return [...root.querySelectorAll<HTMLElement>(CANDIDATE_SELECTOR)];
-  return [...root.querySelectorAll<HTMLElement>('*')].flatMap((element) => [
-    ...(element.matches(CANDIDATE_SELECTOR) ? [element] : []),
-    ...(element.shadowRoot ? collectCandidates(element.shadowRoot) : []),
-  ]);
+  return [...root.querySelectorAll<HTMLElement>('*')].flatMap((element) =>
+    isUnslotted(element, root)
+      ? []
+      : [
+          ...(element.matches(CANDIDATE_SELECTOR) ? [element] : []),
+          ...(element.shadowRoot ? collectCandidates(element.shadowRoot) : []),
+        ],
+  );
 };
 
 /** Steps to the parent element, crossing from a shadow root to its host. */
@@ -93,7 +102,8 @@ export const getTabbableElements = (frame: HTMLElement, reverse = false): HTMLEl
         return true;
       const group = elements.filter((candidate): candidate is HTMLInputElement =>
         candidate instanceof HTMLInputElement && candidate.type === 'radio' &&
-        candidate.name === element.name && candidate.form === element.form);
+        candidate.name === element.name && candidate.form === element.form &&
+        candidate.getRootNode() === element.getRootNode());
       const target = group.find((radio) => radio.checked) ?? (reverse ? group[group.length - 1] : group[0]);
       return element === target;
     });
