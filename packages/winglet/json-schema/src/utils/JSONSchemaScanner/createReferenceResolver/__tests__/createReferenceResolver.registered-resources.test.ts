@@ -105,6 +105,32 @@ describe('registered resources', () => {
     },
   );
 
+  it.each([
+    ['embedding document first', ['a', 'b'], 'https://ex.example/b.json'],
+    ['embedded document first', ['b', 'a'], 'https://ex.example/b.json'],
+    ['embedding document first, upper-case key', ['a', 'b'], 'https://EX.example/b.json'],
+  ])(
+    'rejects a referenced registered document whose address another referenced one embeds, %s',
+    (_order, names, bKey) => {
+      const schema = {
+        $id: 'https://ex.example/root.json',
+        properties: Object.fromEntries(
+          names.map((name) => [name, { $ref: name + '.json' }]),
+        ),
+      };
+      const resources = {
+        'https://ex.example/a.json': {
+          $id: 'https://ex.example/a.json',
+          $defs: { B: { $id: 'https://ex.example/b.json', type: 'string' } },
+        },
+        [bKey]: { $id: 'https://ex.example/b.json', type: 'number' },
+      };
+      expect(() => scan(schema, {}, { resources })).toThrow(
+        'https://ex.example/b.json declared at',
+      );
+    },
+  );
+
   it('indexes the registered documents once however many lookups miss', () => {
     let reads = 0;
     const document = {
