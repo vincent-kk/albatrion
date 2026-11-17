@@ -176,6 +176,7 @@ Every file under the asset root is hashed and tracked in `dist/agents-hashes.jso
 
 - `--force` on TTY opens an interactive confirm via `@inquirer/prompts.confirm`, listing up to 3 diverged/orphan paths.
 - `--force` on non-TTY prints the diverged and orphan paths it will overwrite or delete to stderr and proceeds. A run whose only change is deleting orphans is confirmed and listed the same way.
+- At `--scope=project`, a destination root (`.claude/skills`, `.claude/rules`, `.claude/commands`, `.agents/skills`, `AGENTS.md`) or a skill directory that a symlink resolves outside the project is refused, naming the path; nothing is written or deleted there. A repository can commit symlinks, so a cloned project could otherwise redirect writes and `--force` deletions anywhere. `--scope=user` follows such links on purpose: linking `~/.claude` to a dotfiles repository is a deliberate setup.
 
 ## Architectural Invariants
 
