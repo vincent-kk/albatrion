@@ -89,8 +89,7 @@ const FieldInputTimeRange = ({
     <DatePicker.RangePicker
       id={path}
       name={name}
-      disabled={disabled}
-      readOnly={readOnly}
+      disabled={disabled || readOnly}
       format={DATE_FORMAT}
       showTime={{ format: 'HH:mm' }}
       disabledDate={disabledDate}
