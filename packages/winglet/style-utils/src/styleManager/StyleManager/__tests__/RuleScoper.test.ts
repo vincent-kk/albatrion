@@ -120,6 +120,10 @@ describe('RuleScoper', () => {
       '.a { background: url(http://x.com/a/*b) } .b {}',
       '.s .a{ background: url(http://x.com/a/*b) }.s .b{}',
     ],
+    [
+      '.a { background: URL(http://x.com/a/*b) } .b {}',
+      '.s .a{ background: URL(http://x.com/a/*b) }.s .b{}',
+    ],
   ])('treats escapes and unquoted url() as opaque: %s', (input, output) => {
     expect(scope(input)).toBe(output);
   });
