@@ -261,18 +261,21 @@ const pointer = `/${escapeSegment(key)}/status`;
 
 ### convertJSONPointerToPath
 
-JSON Pointer 문자열을 언이스케이프된 참조 토큰 배열로 변환합니다.
+JSON Pointer 문자열을 점과 대괄호 표기의 데이터 경로 문자열(Ajv `dataPath` 형태)로 변환합니다. 숫자 세그먼트는 대괄호 인덱스가 되고, `-`는 `[]`가 되며, `.`을 포함한 세그먼트는 대괄호로 감쌉니다. 참조 토큰의 이스케이프는 풀지 않습니다: `~0`과 `~1`은 쓰인 그대로 남습니다. 이미 `.`, `$.`, `@.`로 시작하는 입력은 그대로 반환하므로 두 번 호출해도 안전합니다. 이스케이프를 푼 참조 토큰이 필요하면 `@winglet/json/pointer-manipulator`의 `compilePointer`를 사용합니다.
 
 ```typescript
-function convertJSONPointerToPath(pointer: string): string[];
+function convertJSONPointerToPath(pointer: string): string;
 ```
 
 ```typescript
 import { convertJSONPointerToPath } from '@winglet/json/pointer-common';
 
-convertJSONPointerToPath('/foo/bar'); // ['foo', 'bar']
-convertJSONPointerToPath('/a~1b/c~0d'); // ['a/b', 'c~d']
-convertJSONPointerToPath(''); // []
+convertJSONPointerToPath('/foo/bar'); // '.foo.bar'
+convertJSONPointerToPath('/users/0/name'); // '.users[0].name'
+convertJSONPointerToPath('/items/-/id'); // '.items[].id'
+convertJSONPointerToPath('/a.b/c'); // '.[a.b].c'
+convertJSONPointerToPath('/a~1b/c~0d'); // '.a~1b.c~0d' (이스케이프 유지)
+convertJSONPointerToPath(''); // '.'
 ```
 
 ---

@@ -267,18 +267,21 @@ const pointer = `/${escapeSegment(key)}/status`;
 
 ### convertJSONPointerToPath
 
-Converts a JSON Pointer string to an array of unescaped reference tokens.
+Converts a JSON Pointer string to a data path string in dot and bracket form (the Ajv `dataPath` shape). Numeric segments become bracket indexes, `-` becomes `[]`, and a segment containing `.` is wrapped in brackets. Reference tokens are not unescaped: `~0` and `~1` stay as written. Input that already starts with `.`, `$.` or `@.` is returned unchanged, so a second call is safe. To get unescaped reference tokens, use `compilePointer` from `@winglet/json/pointer-manipulator`.
 
 ```typescript
-function convertJSONPointerToPath(pointer: string): string[];
+function convertJSONPointerToPath(pointer: string): string;
 ```
 
 ```typescript
 import { convertJSONPointerToPath } from '@winglet/json/pointer-common';
 
-convertJSONPointerToPath('/foo/bar'); // ['foo', 'bar']
-convertJSONPointerToPath('/a~1b/c~0d'); // ['a/b', 'c~d']
-convertJSONPointerToPath(''); // []
+convertJSONPointerToPath('/foo/bar'); // '.foo.bar'
+convertJSONPointerToPath('/users/0/name'); // '.users[0].name'
+convertJSONPointerToPath('/items/-/id'); // '.items[].id'
+convertJSONPointerToPath('/a.b/c'); // '.[a.b].c'
+convertJSONPointerToPath('/a~1b/c~0d'); // '.a~1b.c~0d' (escapes kept)
+convertJSONPointerToPath(''); // '.'
 ```
 
 ---
