@@ -7,7 +7,9 @@ import {
   render,
   screen,
 } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import userEvent, {
+  PointerEventsCheckLevel,
+} from '@testing-library/user-event';
 import { afterEach, expect, it } from 'vitest';
 
 import { Form, type FormHandle } from '@canard/schema-form';
@@ -63,7 +65,9 @@ it('readOnly checkbox group keeps the displayed selection equal to the stored va
   const boxes = container.querySelectorAll<HTMLInputElement>(
     'input[type="checkbox"]',
   );
-  await userEvent.click(boxes[1]);
+  await userEvent
+    .setup({ pointerEventsCheck: PointerEventsCheckLevel.Never })
+    .click(boxes[1]);
   expect(ref.current!.getValue()).toEqual(['a']);
   expect(boxes[1].checked).toBe(false);
 });
