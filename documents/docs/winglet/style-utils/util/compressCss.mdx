@@ -12,6 +12,13 @@ Compresses CSS by removing unnecessary whitespace, comments, and redundant semic
 Uses byte-level processing for optimal performance while preserving CSS functionality.
 Prioritizes speed over perfect compression - some trailing spaces may remain.
 
+## Import
+
+```typescript
+import { compressCss } from '@winglet/style-utils/util';
+import { compressCss } from '@winglet/style-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -64,7 +71,7 @@ compressCss('') // Returns: ''
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/style-utils": "0.12.2" }}
+  dependencies={{ "@winglet/style-utils": "0.14.1" }}
   code={`Basic CSS compression:
 compressCss('.class { color: red; background: blue; }')
 // Returns: '.class{color:red;background:blue}'

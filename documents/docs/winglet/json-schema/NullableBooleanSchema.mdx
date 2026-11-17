@@ -1,0 +1,25 @@
+---
+title: 'NullableBooleanSchema'
+sidebar_label: 'NullableBooleanSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# NullableBooleanSchema
+
+Nullable boolean schema (type: ['boolean', 'null'])
+
+## Import
+
+```typescript
+import type { NullableBooleanSchema } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+interface NullableBooleanSchema<Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema> extends BasicSchema<BooleanValue, Options, Schema> {
+    type: readonly ['boolean', 'null'] | readonly ['null', 'boolean'];
+}
+```

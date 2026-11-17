@@ -1,0 +1,34 @@
+---
+title: 'isMessageChannelSchedulerError'
+sidebar_label: 'isMessageChannelSchedulerError'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isMessageChannelSchedulerError
+
+Type guard function to check if the given error is an AbortError
+
+## Import
+
+```typescript
+import { isMessageChannelSchedulerError } from '@winglet/common-utils/scheduler';
+import { isMessageChannelSchedulerError } from '@winglet/common-utils';
+```
+
+## Signature
+
+```typescript
+const isMessageChannelSchedulerError: (error: unknown) => error is MessageChannelSchedulerError
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `error` | `-` | The error object to check |
+
+## Returns
+
+Whether the error is an AbortError

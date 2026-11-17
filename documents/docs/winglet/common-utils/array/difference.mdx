@@ -13,10 +13,17 @@ Creates a new array containing only the elements from the source array that do n
 in the exclude array. Uses Set-based lookup for efficient O(1) exclusion checking,
 making it suitable for large arrays.
 
+## Import
+
+```typescript
+import { difference } from '@winglet/common-utils/array';
+import { difference } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
-const difference: <Type>(source: Type[], exclude: Type[]) => Type[]
+const difference: <Type>(source: readonly Type[], exclude: readonly Type[]) => Type[]
 ```
 
 ## Parameters
@@ -93,7 +100,7 @@ console.log(difference(words, exclude));
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { difference } from '@winglet/common-utils';
 
 const fruits = ['apple', 'banana', 'orange', 'grape'];

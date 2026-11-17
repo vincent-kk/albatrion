@@ -11,6 +11,13 @@ import WingletPlayground from '@site/src/components/WingletPlayground';
 Debounces a callback function execution based on dependency changes.
 Delays the callback execution until the specified timeout has passed without any dependency changes.
 
+## Import
+
+```typescript
+import { useDebounce } from '@winglet/react-utils/hook';
+import { useDebounce } from '@winglet/react-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -25,10 +32,15 @@ const useDebounce: (callback: Fn, dependencyList?: DependencyList, ms?: number, 
 | Name | Type | Description |
 |------|------|-------------|
 | `callback` | `-` | The function to debounce |
-| `dependencyList` | `-` | Array of dependencies that trigger the debounce when changed (defaults to `undefined`) |
+| `dependencyList` | `-` | Array of dependencies that trigger the debounce when changed. Omitting it (defaults to `undefined`) re-arms the debounce on every render |
 | `ms` | `-` | The delay in milliseconds before executing the callback (defaults to `0`) |
-| `options` | `-` | Configuration options for debounce behavior |
+| `options` | `-` | Configuration options for debounce behavior, captured once on mount |
 
 ## Returns
 
 An object containing debounce control functions
+
+## Notes
+
+`options` is read once on the initial render and later changes are
+         ignored, so pass a value that stays fixed for the component's lifetime.

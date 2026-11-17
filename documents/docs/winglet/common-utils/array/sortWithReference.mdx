@@ -12,10 +12,17 @@ Sorts an array based on the order defined in a reference array.
 Elements present in the reference array are sorted according to their order in the reference,
 while elements not in the reference array are placed after the sorted elements.
 
+## Import
+
+```typescript
+import { sortWithReference } from '@winglet/common-utils/array';
+import { sortWithReference } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
-const sortWithReference: <Value>(source: Value[], reference?: Value[]) => Value[]
+const sortWithReference: <Value>(source: Value[], reference?: readonly Value[]) => Value[]
 ```
 
 ## Parameters
@@ -43,7 +50,7 @@ const result = sortWithReference(target, reference);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`const target = ['c', 'a', 'b', 'd'];
 const reference = ['a', 'b', 'c'];
 const result = sortWithReference(target, reference);
@@ -52,8 +59,8 @@ const result = sortWithReference(target, reference);
 
 ## Notes
 
-- Time complexity: O(n + m) where n is target length and m is reference length
-- Space complexity: O(n + m) with minimal object creation
+- Time complexity: O(n + m + k log k), where k is the number of referenced groups present in the source
+- Space complexity: O(n + k), where n is source length
 - Elements not present in the reference array maintain their relative order at the end
 - The original target array is not modified (immutable operation)
 - Handles duplicate elements correctly

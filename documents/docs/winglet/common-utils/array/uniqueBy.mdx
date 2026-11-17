@@ -14,10 +14,17 @@ value when passed through the mapper function. Only the first occurrence of
 elements with the same mapped value is retained. Uses Map for efficient
 duplicate detection based on transformed values.
 
+## Import
+
+```typescript
+import { uniqueBy } from '@winglet/common-utils/array';
+import { uniqueBy } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
-const uniqueBy: <Type, SubType>(source: Type[], mapper: (item: Type) => SubType) => Type[]
+const uniqueBy: <Type, SubType>(source: readonly Type[], mapper: Fn<[item: Type], SubType>) => Type[]
 ```
 
 ## Parameters
@@ -228,7 +235,7 @@ console.log(uniqueCustomerProduct);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { uniqueBy } from '@winglet/common-utils';
 
 const users = [

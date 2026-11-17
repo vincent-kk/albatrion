@@ -42,6 +42,14 @@ Controls behavior when encountering `null` values in intermediate paths.
 Note: This only affects intermediate path segments, not the final target value.
 Setting a final value to `null` is always allowed regardless of this option
 
+## Import
+
+```typescript
+import { setValue } from '@winglet/json/pointer-manipulator';
+import { setValue } from '@winglet/json/pointer';
+import { setValue } from '@winglet/json';
+```
+
 ## Signature
 
 ```typescript
@@ -179,7 +187,7 @@ setValue(obj, '', { completely: "new" });
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json": "0.15.0" }}
+  dependencies={{ "@winglet/json": "0.16.0" }}
   code={`// Basic object property setting
 const obj = {
   foo: {

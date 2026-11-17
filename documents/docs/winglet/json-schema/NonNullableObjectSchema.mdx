@@ -1,0 +1,25 @@
+---
+title: 'NonNullableObjectSchema'
+sidebar_label: 'NonNullableObjectSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# NonNullableObjectSchema
+
+Non-nullable object schema (type: 'object')
+
+## Import
+
+```typescript
+import type { NonNullableObjectSchema } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+interface NonNullableObjectSchema<Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema> extends BaseObjectSchema<ObjectValue, Options, Schema> {
+    type: 'object';
+}
+```

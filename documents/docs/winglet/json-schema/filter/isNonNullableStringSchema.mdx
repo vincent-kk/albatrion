@@ -12,6 +12,13 @@ Determines whether a given JSON schema represents a non-nullable string type.
 Validates that the schema's `type` property is set to `'string'` (not an array),
 indicating it describes non-nullable string values.
 
+## Import
+
+```typescript
+import { isNonNullableStringSchema } from '@winglet/json-schema/filter';
+import { isNonNullableStringSchema } from '@winglet/json-schema';
+```
+
 ## Signature
 
 ```typescript
@@ -41,7 +48,7 @@ isNonNullableStringSchema({ type: 'number' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.15.1" }}
+  dependencies={{ "@winglet/json-schema": "0.16.1" }}
   code={`isNonNullableStringSchema({ type: 'string' }); // true
 isNonNullableStringSchema({ type: ['string', 'null'] }); // false
 isNonNullableStringSchema({ type: 'number' }); // false`}

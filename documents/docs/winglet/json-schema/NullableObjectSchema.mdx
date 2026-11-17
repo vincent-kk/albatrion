@@ -1,0 +1,25 @@
+---
+title: 'NullableObjectSchema'
+sidebar_label: 'NullableObjectSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# NullableObjectSchema
+
+Nullable object schema (type: ['object', 'null'])
+
+## Import
+
+```typescript
+import type { NullableObjectSchema } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+interface NullableObjectSchema<Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema> extends BaseObjectSchema<ObjectValue, Options, Schema> {
+    type: readonly ['object', 'null'] | readonly ['null', 'object'];
+}
+```

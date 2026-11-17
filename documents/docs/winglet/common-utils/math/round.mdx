@@ -13,6 +13,13 @@ Performs precise rounding by scaling the number, applying Math.round, then scali
 Handles floating-point precision issues better than naive approaches. Supports both
 positive precision (decimal places) and negative precision (rounding to tens, hundreds, etc.).
 
+## Import
+
+```typescript
+import { round } from '@winglet/common-utils/math';
+import { round } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -68,7 +75,7 @@ console.log(round(0.5, 0)); // 1 (rounds half up)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { round } from '@winglet/common-utils';
 
 // Default (integer rounding)

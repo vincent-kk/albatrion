@@ -13,6 +13,13 @@ Provides reliable Buffer detection with environment compatibility, identifying
 Node.js Buffer objects used for binary data handling. Returns false in browser
 environments where the global Buffer object is not defined.
 
+## Import
+
+```typescript
+import { isBuffer } from '@winglet/common-utils/filter';
+import { isBuffer } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -345,7 +352,7 @@ function createBufferFromData(data: number[] | string): Buffer | Uint8Array | nu
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isBuffer } from '@winglet/common-utils';
 
 // True cases - Buffer instances (in Node.js environment)

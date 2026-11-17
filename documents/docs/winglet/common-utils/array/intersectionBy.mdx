@@ -13,10 +13,17 @@ Creates a new array containing elements from the source array that have matching
 transformed values in the target array. The mapper function is used to extract
 comparable values from elements in both arrays for intersection comparison.
 
+## Import
+
+```typescript
+import { intersectionBy } from '@winglet/common-utils/array';
+import { intersectionBy } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
-const intersectionBy: <Type1, Type2>(source: Type1[], target: Type2[], mapper: (item: Type1 | Type2) => unknown) => Type1[]
+const intersectionBy: <Type1, Type2>(source: readonly Type1[], target: readonly Type2[], mapper: Fn<[item: Type1 | Type2], unknown>) => Type1[]
 ```
 
 ## Parameters
@@ -190,7 +197,7 @@ console.log(matchingAgePeople); // [{ name: 'Alice', age: 25 }, { name: 'Bob', a
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { intersectionBy } from '@winglet/common-utils';
 
 const users = [
