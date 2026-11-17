@@ -6,10 +6,10 @@ import {
   SLASH,
   WHITESPACE_MAX,
 } from '../constants/charCode';
-import { findBlockEnd } from './findBlockEnd';
-import { findPreludeEnd } from './findPreludeEnd';
+import { findUnquotedUrlEnd } from './findUnquotedUrlEnd';
 import { prefixSelector } from './prefixSelector';
 import { prefixSelectorList } from './prefixSelectorList';
+import { skipOpaqueToken } from './skipOpaqueToken';
 
 /**
  * At-rules whose block holds style rules, which are scoped recursively.
@@ -18,14 +18,20 @@ import { prefixSelectorList } from './prefixSelectorList';
 const GROUPING_AT_RULE =
   /^@(?:-[a-z]+-)?(?:media|supports|container|layer|scope|document|starting-style)(?![\w-])/i;
 
+/** Start of a quoted string, a comment or a backslash escape; `lastIndex` sets where the search starts. */
+const OPAQUE_START = /["'\\]|\/\*/g;
+
 /**
  * Prefixes every style rule of one stylesheet with a scope selector, in one forward pass.
  *
- * Structural characters (`{`, `}`, `;`, `,`) are located with native `indexOf`
- * searches whose results are cached until the cursor passes them. Only when a
- * string, comment, escape or unquoted `url(…)` may lie before the next structural
- * character does a rule fall back to the character-by-character scanners, which
- * skip those tokens. The caches stay valid because every query moves forward.
+ * Structural characters (`{`, `}`, `;`, `,`) and the starts of opaque tokens
+ * (quotes, `/*`, backslashes) are located with native `indexOf` searches
+ * whose results are cached until the cursor passes them. When an opaque token
+ * comes before the next structural character, only that token is skipped and
+ * the search resumes, so braces, semicolons and commas inside strings, comments,
+ * escapes never count as structure; a `/*` inside an unquoted `url(…)` opens no
+ * comment either. The caches stay valid because every query moves forward.
+ * Known limit: a brace inside an unquoted `url(…)` still counts as structure.
  *
  * @example
  * new RuleScoper('.a, .b { x: y } @media (x) { .c {} }', '.s').scopeSheet();
@@ -34,15 +40,13 @@ const GROUPING_AT_RULE =
 export class RuleScoper {
   private readonly __css__: string;
   private readonly __scope__: string;
-  private __result__ = '';
+  /** Where the last `__scopeRuleList__` call stopped: past its `}`, or `-1` at an unterminated end. */
+  private __end__ = 0;
   private __open__ = -1;
   private __close__ = -1;
   private __semicolon__ = -1;
   private __comma__ = -1;
-  private __doubleQuote__ = -1;
-  private __singleQuote__ = -1;
-  private __comment__ = -1;
-  private __backslash__ = -1;
+  private __opaque__ = -1;
 
   /**
    * @param css - Stylesheet text to scope
@@ -61,102 +65,97 @@ export class RuleScoper {
    * dropped, and a trailing rule without a matching `}` is dropped.
    */
   scopeSheet(): string {
-    this.__scopeRuleList__(0, false);
-    return this.__result__;
+    return this.__scopeRuleList__(0, false);
   }
 
   /**
-   * Appends the scoped rules that start at `cursor` to the result.
+   * Scopes the rule list that starts at `cursor`.
    *
-   * @returns For a nested list, the index just past its closing `}`, or `-1` when
-   * the text ends first; for the top-level list, the text length.
+   * @returns The scoped rules. Sets `__end__` to the index just past a nested
+   * list's closing `}`, or to `-1` when the text ends inside a nested list.
    */
-  private __scopeRuleList__(cursor: number, isNested: boolean): number {
+  private __scopeRuleList__(cursor: number, isNested: boolean): string {
     const css = this.__css__;
     const length = css.length;
+    let result = '';
     for (;;) {
       while (cursor < length && css.charCodeAt(cursor) <= WHITESPACE_MAX)
         cursor++;
-      if (cursor >= length) return isNested ? -1 : length;
+      if (cursor >= length) {
+        this.__end__ = -1;
+        return result;
+      }
       const first = css.charCodeAt(cursor);
       if (first === RBRACE) {
-        if (isNested) return cursor + 1;
+        if (isNested) {
+          this.__end__ = cursor + 1;
+          return result;
+        }
         cursor++;
         continue;
       }
       if (first === SLASH && css.charCodeAt(cursor + 1) === ASTERISK) {
-        const commentEnd = css.indexOf('*/', cursor + 2);
-        cursor = commentEnd === -1 ? length : commentEnd + 2;
+        cursor = skipOpaqueToken(css, cursor);
         continue;
       }
       const isAtRule = first === AT_SIGN;
-      const stop = this.__findPreludeEnd__(cursor, isAtRule);
+      const stop = this.__findStructure__(cursor, isAtRule);
       if (stop >= length) {
-        if (isAtRule) this.__result__ += css.slice(cursor).trim();
-        return isNested ? -1 : length;
+        if (isAtRule) result += css.slice(cursor).trim();
+        this.__end__ = -1;
+        return result;
       }
       const stopCode = css.charCodeAt(stop);
       if (stopCode === SEMICOLON) {
-        this.__result__ += css.slice(cursor, stop + 1);
+        result += css.slice(cursor, stop + 1);
         cursor = stop + 1;
         continue;
       }
       if (stopCode === RBRACE) {
-        if (isNested) return stop + 1;
+        if (isNested) {
+          this.__end__ = stop + 1;
+          return result;
+        }
         cursor = stop + 1;
         continue;
       }
       const prelude = css.slice(cursor, stop).trim();
       if (isAtRule && GROUPING_AT_RULE.test(prelude)) {
-        const mark = this.__result__.length;
-        this.__result__ += prelude + '{';
-        const end = this.__scopeRuleList__(stop + 1, true);
-        if (end === -1) {
-          this.__result__ = this.__result__.slice(0, mark);
-          return isNested ? -1 : length;
-        }
-        this.__result__ += '}';
-        cursor = end;
+        const inner = this.__scopeRuleList__(stop + 1, true);
+        if (this.__end__ === -1) return result;
+        result += prelude + '{' + inner + '}';
+        cursor = this.__end__;
         continue;
       }
       const close = this.__findBlockEnd__(stop);
-      if (close === -1) return isNested ? -1 : length;
-      if (isAtRule) this.__result__ += prelude + css.slice(stop, close + 1);
-      else if (prelude)
-        this.__result__ +=
-          this.__prefixPrelude__(prelude, cursor, stop) +
+      if (close === -1) {
+        this.__end__ = -1;
+        return result;
+      }
+      if (isAtRule) result += prelude + css.slice(stop, close + 1);
+      else if (prelude) {
+        let comma = this.__comma__;
+        if (comma < cursor) {
+          comma = css.indexOf(',', cursor);
+          this.__comma__ = comma = comma === -1 ? length : comma;
+        }
+        result +=
+          (comma < stop
+            ? prefixSelectorList(css, cursor, stop, this.__scope__)
+            : prefixSelector(prelude, this.__scope__)) +
           css.slice(stop, close + 1);
+      }
       cursor = close + 1;
     }
   }
 
-  /** Finds the first structural `{` or `}` (or `;` for an at-rule) at or after `from`. */
-  private __findPreludeEnd__(from: number, isAtRule: boolean): number {
-    const css = this.__css__;
-    this.__open__ = nextIndex(css, '{', this.__open__, from);
-    this.__close__ = nextIndex(css, '}', this.__close__, from);
-    let stop = Math.min(this.__open__, this.__close__);
-    if (isAtRule) {
-      this.__semicolon__ = nextIndex(css, ';', this.__semicolon__, from);
-      if (this.__semicolon__ < stop) stop = this.__semicolon__;
-    }
-    return this.__nextOpaqueStart__(from) < stop
-      ? findPreludeEnd(css, from, isAtRule)
-      : stop;
-  }
-
   /** Finds the `}` matching the `{` at `open`, or `-1` when the block never closes. */
   private __findBlockEnd__(open: number): number {
-    const css = this.__css__;
-    const length = css.length;
+    const length = this.__css__.length;
     let depth = 0;
     let position = open + 1;
     for (;;) {
-      this.__open__ = nextIndex(css, '{', this.__open__, position);
-      this.__close__ = nextIndex(css, '}', this.__close__, position);
-      const token = Math.min(this.__open__, this.__close__);
-      if (this.__nextOpaqueStart__(position) < token)
-        return findBlockEnd(css, open);
+      const token = this.__findStructure__(position, false);
       if (token >= length) return -1;
       if (token === this.__open__) depth++;
       else if (depth-- === 0) return token;
@@ -164,38 +163,72 @@ export class RuleScoper {
     }
   }
 
-  /** Index of the first quote, comment opener or backslash at or after `from`. */
-  private __nextOpaqueStart__(from: number): number {
+  /**
+   * Finds the first `{` or `}` (or `;` when `isStatementEnd`) at or after `from`
+   * outside every opaque token, or the text length when there is none.
+   */
+  private __findStructure__(from: number, isStatementEnd: boolean): number {
     const css = this.__css__;
-    this.__doubleQuote__ = nextIndex(css, '"', this.__doubleQuote__, from);
-    this.__singleQuote__ = nextIndex(css, "'", this.__singleQuote__, from);
-    this.__comment__ = nextIndex(css, '/*', this.__comment__, from);
-    this.__backslash__ = nextIndex(css, '\\', this.__backslash__, from);
-    return Math.min(
-      this.__doubleQuote__,
-      this.__singleQuote__,
-      this.__comment__,
-      this.__backslash__,
-    );
+    const length = css.length;
+    for (;;) {
+      const segmentStart = from;
+      let open = this.__open__;
+      if (open < from) {
+        open = css.indexOf('{', from);
+        this.__open__ = open = open === -1 ? length : open;
+      }
+      let close = this.__close__;
+      if (close < from) {
+        close = css.indexOf('}', from);
+        this.__close__ = close = close === -1 ? length : close;
+      }
+      let stop = open < close ? open : close;
+      if (isStatementEnd) {
+        let semicolon = this.__semicolon__;
+        if (semicolon < from) {
+          semicolon = css.indexOf(';', from);
+          this.__semicolon__ = semicolon =
+            semicolon === -1 ? length : semicolon;
+        }
+        if (semicolon < stop) stop = semicolon;
+      }
+      const opaque =
+        this.__opaque__ >= from
+          ? this.__opaque__
+          : this.__findOpaqueStart__(from);
+      if (opaque >= stop) return stop;
+      from =
+        css.charCodeAt(opaque) === SLASH
+          ? skipCommentOrUrl(css, segmentStart, opaque)
+          : skipOpaqueToken(css, opaque);
+    }
   }
 
-  /** Prefixes the selector prelude that spans `[from, stop)` of the text. */
-  private __prefixPrelude__(prelude: string, from: number, stop: number) {
-    this.__comma__ = nextIndex(this.__css__, ',', this.__comma__, from);
-    return this.__comma__ < stop
-      ? prefixSelectorList(prelude, this.__scope__)
-      : prefixSelector(prelude, this.__scope__);
+  /**
+   * Refreshes the cached start of the first quote, comment or backslash escape at
+   * or after `from`, and returns it. One regular-expression search costs one call
+   * however many kinds of token it looks for; four `indexOf` searches cost four.
+   */
+  private __findOpaqueStart__(from: number): number {
+    OPAQUE_START.lastIndex = from;
+    const match = OPAQUE_START.exec(this.__css__);
+    return (this.__opaque__ =
+      match === null ? this.__css__.length : match.index);
   }
 }
 
-/** Refreshes a cached search result once the cursor has passed it; `css.length` means none. */
-const nextIndex = (
+/**
+ * Skips the comment that opens at `comment`, unless an unquoted `url(` that began
+ * in the plain segment before it still runs past it; then the whole `url(…)` is
+ * skipped, since a `/*` inside it opens no comment.
+ */
+const skipCommentOrUrl = (
   css: string,
-  search: string,
-  cached: number,
-  from: number,
+  segmentStart: number,
+  comment: number,
 ): number => {
-  if (cached >= from) return cached;
-  const found = css.indexOf(search, from);
-  return found === -1 ? css.length : found;
+  const url = css.slice(segmentStart, comment).lastIndexOf('url(');
+  const urlEnd =
+    url === -1 ? -1 : findUnquotedUrlEnd(css, segmentStart + url + 3);
+  return urlEnd > comment ? urlEnd : skipOpaqueToken(css, comment);
 };

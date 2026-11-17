@@ -1,3 +1,10 @@
+import {
+  BACKSLASH,
+  COMMA,
+  L_PAREN,
+  R_PAREN,
+  SLASH,
+} from '../constants/charCode';
 import { prefixSelector } from './prefixSelector';
 import { skipOpaqueToken } from './skipOpaqueToken';
 
@@ -5,39 +12,58 @@ import { skipOpaqueToken } from './skipOpaqueToken';
 const NESTING_CHARACTER = /[("'\\/]/;
 
 /**
- * Prefixes every selector of a selector list with the scope class.
+ * Prefixes every selector of the selector list `css[start, end)` with the scope class.
+ * It reads the stylesheet by index instead of a substring, which keeps the scan on
+ * the stylesheet's own flat text.
  *
- * @param selectorList - Trimmed selector list of one style rule, such as `.a, .b:is(.c, .d)`
+ * @param css - Stylesheet text
+ * @param start - Index where the selector list starts
+ * @param end - Index of the `{` that ends it
  * @param scope - Scope selector to prefix, such as `.my-widget`
- * @returns The list joined by `,`, each selector passed through `prefixSelector`.
- * The list splits only at top-level commas: commas inside parentheses, strings,
- * comments or after a backslash belong to one selector.
+ * @returns The list joined by `,`, each selector trimmed and passed through
+ * `prefixSelector`. The list splits only at top-level commas: commas inside
+ * parentheses, strings, comments or after a backslash belong to one selector.
  */
 export const prefixSelectorList = (
-  selectorList: string,
+  css: string,
+  start: number,
+  end: number,
   scope: string,
 ): string => {
-  if (!NESTING_CHARACTER.test(selectorList)) {
-    const selectors = selectorList.split(',');
-    let result = prefixSelector(selectors[0].trim(), scope);
-    for (let index = 1; index < selectors.length; index++)
-      result += ',' + prefixSelector(selectors[index].trim(), scope);
-    return result;
-  }
   let result = '';
-  let partStart = 0;
-  let depth = 0;
-  for (let index = 0, length = selectorList.length; index < length; index++) {
-    const next = skipOpaqueToken(selectorList, index);
-    if (next !== index) index = next - 1;
-    else if (selectorList[index] === '(') depth++;
-    else if (selectorList[index] === ')') depth--;
-    else if (selectorList[index] === ',' && depth === 0) {
-      result +=
-        prefixSelector(selectorList.slice(partStart, index).trim(), scope) +
-        ',';
-      partStart = index + 1;
+  let partStart = start;
+  // Tested on the list alone: a search of the whole text could run to its end per list.
+  if (!NESTING_CHARACTER.test(css.slice(start, end))) {
+    for (;;) {
+      const comma = css.indexOf(',', partStart);
+      if (comma === -1 || comma >= end)
+        return result + prefixSelector(css.slice(partStart, end).trim(), scope);
+      result += prefixSelector(css.slice(partStart, comma).trim(), scope) + ',';
+      partStart = comma + 1;
     }
   }
-  return result + prefixSelector(selectorList.slice(partStart).trim(), scope);
+  let depth = 0;
+  for (let index = start; index < end; index++) {
+    const code = css.charCodeAt(index);
+    // Every character with a branch below is a slash or lower, or a backslash.
+    if (code > SLASH && code !== BACKSLASH) continue;
+    if (code === COMMA) {
+      if (depth !== 0) continue;
+      result += prefixSelector(css.slice(partStart, index).trim(), scope) + ',';
+      partStart = index + 1;
+    } else if (code === L_PAREN) {
+      // Only `url(` can make a parenthesis opaque, and it ends in `l`.
+      const next =
+        (css.charCodeAt(index - 1) | 32) === 108
+          ? skipOpaqueToken(css, index)
+          : index;
+      if (next > index) index = next - 1;
+      else depth++;
+    } else if (code === R_PAREN) depth--;
+    else {
+      const next = skipOpaqueToken(css, index);
+      if (next > index) index = next - 1;
+    }
+  }
+  return result + prefixSelector(css.slice(partStart, end).trim(), scope);
 };
