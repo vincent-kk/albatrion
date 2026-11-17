@@ -3,6 +3,8 @@ import type { ErrorObject } from 'ajv';
 
 import type { Dictionary } from '@aileron/declare';
 
+import { isChildSchemaPath } from './isChildSchemaPath';
+
 /** Escape tilde before slash when a required-property name needs encoding. */
 const TILDE = /~/g;
 /** Escape slash after tilde when encoding a required-property name. */
@@ -11,11 +13,13 @@ const SLASH = /\//g;
 /**
  * Transforms AJV7 error objects to schema-form error format.
  *
- * AJV7 uses JSONPointer format for dataPath by default, so minimal
- * transformation is needed. This function mainly handles the required
- * keyword errors by appending the missing property to the dataPath.
+ * `required` issues append the missing property to the dataPath. A key is rejected
+ * (`rejectedKey`, with the dataPath kept at the host object) by `propertyNames`,
+ * `additionalProperties`, `unevaluatedProperties`, a single-key `not.required`, and a
+ * `false` schema that stands at a child position; any other `false` schema rejects the value.
  *
  * @param errors - Array of AJV7 error objects
+ * @param root - Authored root, read only to find the key of a single-key `not.required`
  * @returns Array of transformed ValidationIssue objects
  */
 export const transformErrors = (errors: ErrorObject[], root?: object): ValidationIssue[] => {
@@ -25,21 +29,22 @@ export const transformErrors = (errors: ErrorObject[], root?: object): Validatio
     const ajvError = errors[i];
     let dataPath = transformDataPath(ajvError);
     let rejectedKey: string | undefined;
-    if (ajvError.keyword === 'false schema' && dataPath) {
-      const lastSlash = dataPath.lastIndexOf('/');
-      rejectedKey = dataPath.slice(lastSlash + 1)
-        .replace(/~1/g, '/').replace(/~0/g, '~');
-      dataPath = dataPath.slice(0, lastSlash);
-    }
-    if (ajvError.keyword === 'additionalProperties' && 'additionalProperty' in ajvError.params)
-      rejectedKey = String(ajvError.params.additionalProperty);
-    if (ajvError.keyword === 'unevaluatedProperties' && 'unevaluatedProperty' in ajvError.params)
-      rejectedKey = String(ajvError.params.unevaluatedProperty);
-    if (ajvError.keyword === 'propertyNames' && 'propertyName' in ajvError.params)
-      rejectedKey = String(ajvError.params.propertyName);
     if (typeof ajvError.propertyName === 'string')
       rejectedKey = ajvError.propertyName;
-    if (ajvError.keyword === 'not' && root && ajvError.schemaPath.startsWith('#/')) {
+    else if (ajvError.keyword === 'false schema') {
+      if (dataPath && isChildSchemaPath(ajvError.schemaPath)) {
+        const lastSlash = dataPath.lastIndexOf('/');
+        const name = dataPath.slice(lastSlash + 1);
+        rejectedKey = name.includes('~') ? name.replace(/~1/g, '/').replace(/~0/g, '~') : name;
+        dataPath = dataPath.slice(0, lastSlash);
+      }
+    } else if (ajvError.keyword === 'additionalProperties' && 'additionalProperty' in ajvError.params)
+      rejectedKey = String(ajvError.params.additionalProperty);
+    else if (ajvError.keyword === 'unevaluatedProperties' && 'unevaluatedProperty' in ajvError.params)
+      rejectedKey = String(ajvError.params.unevaluatedProperty);
+    else if (ajvError.keyword === 'propertyNames' && 'propertyName' in ajvError.params)
+      rejectedKey = String(ajvError.params.propertyName);
+    else if (ajvError.keyword === 'not' && root && ajvError.schemaPath.startsWith('#/')) {
       const segments = ajvError.schemaPath.slice(2).split('/');
       let target: unknown = root;
       for (const segment of segments) {
