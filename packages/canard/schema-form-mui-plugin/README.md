@@ -110,7 +110,7 @@ This plugin provides the following Material-UI components:
 
 - **Role**: Input numeric values using a slider
 - **Applied when**: `type` is `"number"` or `"integer"` and `inputType` is `"slider"`
-- **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties, lazy update option (`presentation.FieldInputProps.lazy`), mark display option, automatic value label display
+- **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties, lazy update option (`presentation.FieldInputProps.lazy`), mark display option, automatic value label display; while the form holds no value, the thumb and value label stay hidden (the thumb shows while it has keyboard focus) until the first change
 
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 

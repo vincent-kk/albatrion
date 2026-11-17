@@ -1,6 +1,6 @@
-import { type ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 
-import { Box, Slider, Typography } from '@mui/material';
+import { Box, Slider, Typography, sliderClasses } from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -35,6 +35,20 @@ interface FieldInputSliderProps
   lazy?: boolean;
 }
 
+/** Slider styles while the form holds a value. */
+const SLIDER_SX = { mt: 1 };
+
+/**
+ * Slider styles while the form holds no value: the thumb, which MUI places at the minimum,
+ * stays hidden unless it has keyboard focus, so the minimum is not shown as a stored value.
+ */
+const UNSET_SLIDER_SX = {
+  mt: 1,
+  [`& .${sliderClasses.thumb}:not(.${sliderClasses.focusVisible})`]: {
+    opacity: 0,
+  },
+};
+
 const FieldInputSlider = ({
   path,
   name,
@@ -62,7 +76,11 @@ const FieldInputSlider = ({
   const step = jsonSchema.multipleOf ?? 1;
   const isLazy = lazy ?? false;
 
+  // An external value change remounts this input, so a reset to undefined starts unset again.
+  const [isUnset, setIsUnset] = useState(typeof defaultValue !== 'number');
+
   const handleChange = useHandle((_, newValue: number | number[]) => {
+    if (isUnset) setIsUnset(false);
     if (!isLazy) {
       onChange(Array.isArray(newValue) ? newValue[0] : newValue);
     }
@@ -99,9 +117,13 @@ const FieldInputSlider = ({
         disabled={disabled || readOnly}
         size={size}
         marks={showMarks}
-        slotProps={{ input: { 'aria-invalid': misfit || undefined } }}
-        valueLabelDisplay="auto"
-        sx={{ mt: 1 }}
+        slotProps={{
+          input: isUnset
+            ? { 'aria-invalid': misfit || undefined, 'aria-valuenow': undefined }
+            : { 'aria-invalid': misfit || undefined },
+        }}
+        valueLabelDisplay={isUnset ? 'off' : 'auto'}
+        sx={isUnset ? UNSET_SLIDER_SX : SLIDER_SX}
       />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
         <Typography variant="caption" color="text.secondary">
