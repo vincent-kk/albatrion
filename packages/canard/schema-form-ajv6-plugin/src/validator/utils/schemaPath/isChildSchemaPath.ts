@@ -1,3 +1,6 @@
+import type { SchemaResource } from './collectSchemaResources';
+import { localizeSchemaPath } from './localizeSchemaPath';
+
 /** Keywords whose next segment names one child of the host, so a schema there judges that child. */
 const CHILD_MAP = 'properties|patternProperties';
 /** Keywords whose next segment names or indexes a subschema that judges the host itself. */
@@ -18,7 +21,7 @@ const FALSE_SCHEMA_SUFFIX = '/false schema';
 
 /**
  * Classifies by the last two segments when the pointer's start is unknown.
- * @param path - Schema path rooted at another resource's URI.
+ * @param path - Schema path rooted at a reference that matches no declared `$id`.
  * @returns True at `<properties|patternProperties|items>/<name or index>` or a single `items`.
  */
 const endsAtChildPosition = (path: string): boolean => {
@@ -32,11 +35,16 @@ const endsAtChildPosition = (path: string): boolean => {
 /**
  * Tells whether a false schema stands where its host places one child, so the issue rejects that key.
  * @param schemaPath - AJV6 schema path of a `false schema` issue, with or without its suffix.
+ * @param resources - Resources of the compiled schema, longest id first.
  * @returns True when the schema is a `properties` or `patternProperties` entry, a single `items`
  *   or a tuple `items` entry; false for a schema applied to the value itself, such as `then`,
- *   `allOf/0`, an inlined `$ref` target or `propertyNames`. A `#/` path is parsed from the root,
- *   so a property named like a keyword is read as a name; a path rooted at another resource's URI
- *   cannot be split from its base, so only its last two segments are read.
+ *   `allOf/0`, an inlined `$ref` target or `propertyNames`. A `#/` path, or a path that starts
+ *   with a declared `$id`, is parsed from its resource root, so a property named like a keyword is
+ *   read as a name; any other path cannot be split from its base, so only its last two segments
+ *   are read.
  */
-export const isChildSchemaPath = (schemaPath: string): boolean =>
-  schemaPath.startsWith('#/') ? CHILD_POSITION.test(schemaPath) : endsAtChildPosition(schemaPath);
+export const isChildSchemaPath = (schemaPath: string, resources: readonly SchemaResource[]): boolean => {
+  if (schemaPath.startsWith('#/')) return CHILD_POSITION.test(schemaPath);
+  const local = localizeSchemaPath(schemaPath, resources);
+  return local ? CHILD_POSITION.test(local.pointer) : endsAtChildPosition(schemaPath);
+};
