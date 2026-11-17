@@ -160,4 +160,21 @@ describe('compressCss', () => {
       '.container{width:100%;max-width:1200px;margin:0 auto}@media (max-width:768px){.container{padding:0 16px }}',
     );
   });
+
+  it('keeps the descendant combinator before a pseudo-class', () => {
+    // ".a :hover" (hovered descendant of .a) differs from ".a:hover" (hovered .a)
+    expect(compressCss('.a :hover{color:red}')).toBe('.a :hover{color:red}');
+  });
+
+  it('keeps the whitespace calc() requires around +', () => {
+    expect(compressCss('.a{width:calc(1px + 2px)}')).toBe(
+      '.a{width:calc(1px + 2px)}',
+    );
+  });
+
+  it('does not treat comment markers inside a string as a comment', () => {
+    expect(compressCss('.a{content:"/*"}.b{color:red}')).toBe(
+      '.a{content:"/*"}.b{color:red}',
+    );
+  });
 });
