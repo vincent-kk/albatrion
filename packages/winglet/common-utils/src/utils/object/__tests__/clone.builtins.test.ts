@@ -116,4 +116,38 @@ describe('clone built-in types', () => {
     expect(cloned.x).toBe(5);
     expect(cloned._x).toBe(0);
   });
+
+  it('should define own fields that shadow an inherited getter or read-only property', () => {
+    class Shape {
+      declare readonly kind: string;
+      get area() {
+        return 0;
+      }
+    }
+    Object.defineProperty(Shape.prototype, 'kind', {
+      value: 'shape',
+      writable: false,
+    });
+    const original = new Shape();
+    Object.defineProperty(original, 'area', { value: 4, enumerable: true });
+    Object.defineProperty(original, 'kind', {
+      value: 'square',
+      enumerable: true,
+    });
+
+    const cloned = clone(original);
+
+    expect(cloned).toBeInstanceOf(Shape);
+    expect(cloned.area).toBe(4);
+    expect(cloned.kind).toBe('square');
+  });
+
+  it('should clone an object built on a box prototype without a primitive value', () => {
+    const original = Object.assign(Object.create(Number.prototype), { a: 1 });
+
+    const cloned = clone(original);
+
+    expect(Object.getPrototypeOf(cloned)).toBe(Number.prototype);
+    expect(cloned.a).toBe(1);
+  });
 });

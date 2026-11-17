@@ -1,9 +1,3 @@
-import {
-  BOOLEAN_TAG,
-  NUMBER_TAG,
-  STRING_TAG,
-} from '@/common-utils/constant/typeTag';
-import { getTypeTag } from '@/common-utils/libs/getTypeTag';
 import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isArrayBuffer } from '@/common-utils/utils/filter/isArrayBuffer';
@@ -15,6 +9,8 @@ import { isSharedArrayBuffer } from '@/common-utils/utils/filter/isSharedArrayBu
 import { isTypedArray } from '@/common-utils/utils/filter/isTypedArray';
 
 import { getSymbols } from './getSymbols';
+import { getPrototypeProfile } from './utils/clone/getPrototypeProfile';
+import { replicateBox } from './utils/clone/replicateBox';
 
 /**
  * Creates a deep clone of any value with comprehensive type support and circular reference handling.
@@ -370,13 +366,20 @@ const replicate = <Type>(
 
   if (typeof value === 'object' && isCloneable(value)) {
     const prototype = getPrototypeOf(value);
+    const profile = getPrototypeProfile(prototype);
     // Boxed primitives keep their value in an internal slot that Object.create lacks
-    const result =
-      (prototype !== OBJECT_PROTOTYPE && replicateBox(value!, prototype)) ||
-      Object.create(prototype);
+    const box = profile.boxed ? replicateBox(value!, prototype) : null;
+    const result = box ?? Object.create(prototype);
     // `isCloneable` will not allow a nullish object to be passed.
     cache.set(value!, result);
-    replicateProperties(result, value!, limit, depth, cache);
+    replicateProperties(
+      result,
+      value!,
+      limit,
+      depth,
+      cache,
+      box === null ? profile.intercepted : undefined,
+    );
     return result as Type;
   }
 
@@ -388,7 +391,12 @@ const replicate = <Type>(
  *
  * @param target - Target object to copy properties to
  * @param source - Source object to copy properties from
+ * @param limit - Maximum clone depth, passed through to `replicate`
+ * @param depth - Current clone depth, passed through to `replicate`
  * @param cache - Map to track already cloned objects
+ * @param intercepted - For a target just created from its prototype, the inherited keys
+ *   besides `__proto__` that would intercept assignment (`null` when there are none);
+ *   `undefined` when `target` may already carry own properties
  */
 const replicateProperties = (
   target: Record<PropertyKey, any>,
@@ -396,22 +404,41 @@ const replicateProperties = (
   limit: number | undefined,
   depth: number,
   cache: Map<object, any>,
+  intercepted?: ReadonlySet<PropertyKey> | null,
 ): void => {
-  const keys: PropertyKey[] = Object.keys(source);
-  for (let i = 0, l = keys.length; i < l; i++)
-    replicateProperty(target, source, keys[i], limit, depth, cache);
+  const keys = Object.keys(source);
+  for (let i = 0, l = keys.length; i < l; i++) {
+    const key = keys[i];
+    if (intercepted === null && key !== '__proto__')
+      target[key] = replicate(source[key], limit, depth, cache);
+    else
+      replicateProperty(target, source, key, limit, depth, cache, intercepted);
+  }
   const symbols = getSymbols(source);
-  for (let i = 0, l = symbols.length; i < l; i++)
-    replicateProperty(target, source, symbols[i], limit, depth, cache);
+  for (let i = 0, l = symbols.length; i < l; i++) {
+    const symbol = symbols[i];
+    if (intercepted === null)
+      target[symbol] = replicate(source[symbol], limit, depth, cache);
+    else
+      replicateProperty(
+        target,
+        source,
+        symbol,
+        limit,
+        depth,
+        cache,
+        intercepted,
+      );
+  }
 };
 
 /**
  * Copies one own property of `source` onto `target` as an own data property.
  *
- * A key found nowhere on `target`'s chain is assigned. An inherited key is defined
- * instead, because assignment would run an inherited setter (`__proto__` included) or
- * fail on an inherited read-only property. An own key of `target` is overwritten only
- * while it is writable.
+ * A key that nothing on `target`'s chain intercepts is assigned. An intercepted key is
+ * defined instead, because assignment would run an inherited setter (`__proto__`
+ * included) or fail on an inherited read-only property. An own key of `target` is
+ * overwritten only while it is writable.
  *
  * @param target - The clone receiving the property
  * @param source - The original owning the property
@@ -419,6 +446,7 @@ const replicateProperties = (
  * @param limit - Maximum clone depth, passed through to `replicate`
  * @param depth - Current clone depth, passed through to `replicate`
  * @param cache - Originals mapped to their clones, passed through to `replicate`
+ * @param intercepted - As in `replicateProperties`; `undefined` checks `target` itself
  */
 const replicateProperty = (
   target: Record<PropertyKey, any>,
@@ -427,13 +455,21 @@ const replicateProperty = (
   limit: number | undefined,
   depth: number,
   cache: Map<object, any>,
+  intercepted: ReadonlySet<PropertyKey> | null | undefined,
 ): void => {
-  if (!(key in target)) {
+  const intercepts =
+    intercepted === undefined
+      ? key in target
+      : key === '__proto__' || (intercepted !== null && intercepted.has(key));
+  if (!intercepts) {
     target[key] = replicate(source[key], limit, depth, cache);
     return;
   }
-  const descriptor = getOwnPropertyDescriptor(target, key);
-  if (descriptor == null)
+  const descriptor =
+    intercepted === undefined
+      ? getOwnPropertyDescriptor(target, key)
+      : undefined;
+  if (descriptor === undefined)
     defineProperty(target, key, {
       value: replicate(source[key], limit, depth, cache),
       writable: true,
@@ -442,31 +478,6 @@ const replicateProperty = (
     });
   else if (descriptor.writable)
     target[key] = replicate(source[key], limit, depth, cache);
-};
-
-/**
- * Creates a new box holding the primitive of a boxed Number, String or Boolean.
- *
- * @param value - A cloneable object whose prototype is not `Object.prototype`
- * @param prototype - The prototype the new box must carry
- * @returns The new box, or `null` when `value` is not a boxed primitive
- */
-const replicateBox = (
-  value: object,
-  prototype: object | null,
-): object | null => {
-  const tag = getTypeTag(value);
-  const box =
-    tag === NUMBER_TAG
-      ? Object(numberValueOf.call(value))
-      : tag === STRING_TAG
-        ? Object(stringValueOf.call(value))
-        : tag === BOOLEAN_TAG
-          ? Object(booleanValueOf.call(value))
-          : null;
-  if (box !== null && getPrototypeOf(box) !== prototype)
-    setPrototypeOf(box, prototype);
-  return box;
 };
 
 /**
@@ -481,11 +492,6 @@ const AggregateErrorConstructor:
       errors: unknown[];
     })
   | undefined = Reflect.get(globalThis, 'AggregateError');
-const OBJECT_PROTOTYPE = Object.prototype;
 const getPrototypeOf = Object.getPrototypeOf;
-const setPrototypeOf = Object.setPrototypeOf;
 const defineProperty = Object.defineProperty;
-const numberValueOf = Number.prototype.valueOf;
-const stringValueOf = String.prototype.valueOf;
-const booleanValueOf = Boolean.prototype.valueOf;
 const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
