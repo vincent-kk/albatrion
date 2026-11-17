@@ -47,6 +47,27 @@ describe('scopeRules', () => {
     );
   });
 
+  test.each([
+    [
+      '.a { content: "{"; color: red } .b { color: blue }',
+      '.s .a{ content: "{"; color: red }.s .b{ color: blue }',
+    ],
+    [
+      ".foo[data-x='a,b{'] { color: red } .bar { color: blue }",
+      ".s .foo[data-x='a,b{']{ color: red }.s .bar{ color: blue }",
+    ],
+    [
+      '.a { color: red; /* { */ } .b { color: blue }',
+      '.s .a{ color: red; /* { */ }.s .b{ color: blue }',
+    ],
+    [
+      '.a { content: "}"; color: red } .b { color: blue }',
+      '.s .a{ content: "}"; color: red }.s .b{ color: blue }',
+    ],
+  ])('ignores braces inside strings and comments: %s', (input, output) => {
+    expect(scope(input)).toBe(output);
+  });
+
   test('drops a trailing rule without a matching brace', () => {
     expect(scope('.a{} @media (x) { .b{}')).toBe('.s .a{}');
   });
