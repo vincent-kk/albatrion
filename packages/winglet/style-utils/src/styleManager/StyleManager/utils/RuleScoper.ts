@@ -18,6 +18,9 @@ import { skipOpaqueToken } from './skipOpaqueToken';
 const GROUPING_AT_RULE =
   /^@(?:-[a-z]+-)?(?:media|supports|container|layer|scope|document|starting-style)(?![\w-])/i;
 
+/** The last `url(` of a text, in any case: CSS function names are case-insensitive. */
+const LAST_URL_OPEN = /url\((?![\s\S]*url\()/i;
+
 /** Start of a quoted string, a comment or a backslash escape; `lastIndex` sets where the search starts. */
 const OPAQUE_START = /["'\\]|\/\*/g;
 
@@ -228,7 +231,7 @@ const skipCommentOrUrl = (
   segmentStart: number,
   comment: number,
 ): number => {
-  const url = css.slice(segmentStart, comment).lastIndexOf('url(');
+  const url = css.slice(segmentStart, comment).search(LAST_URL_OPEN);
   const urlEnd =
     url === -1 ? -1 : findUnquotedUrlEnd(css, segmentStart + url + 3);
   return urlEnd > comment ? urlEnd : skipOpaqueToken(css, comment);
