@@ -86,4 +86,16 @@ describe('ValidationIssue.rejectedKey', () => {
     expect(issues?.map((issue) => issue.keyword)).toEqual(['pattern', 'propertyNames']);
     for (const issue of issues ?? []) expect(issue).toMatchObject({ dataPath: '/meta', rejectedKey: 'bad' });
   });
+
+  it('keeps the host of a false propertyNames schema and rejects the offending key', async () => {
+    const schema = {
+      type: 'object',
+      properties: { o: { type: 'object', properties: { m: { type: 'object', propertyNames: false } } } },
+    };
+    const issues = await validate(schema, { o: { m: { k: 1 } } });
+    expect(issues?.map((issue) => [issue.keyword, issue.dataPath, issue.rejectedKey])).toEqual([
+      ['false schema', '/o/m', 'k'],
+      ['propertyNames', '/o/m', 'k'],
+    ]);
+  });
 });
