@@ -148,3 +148,18 @@ it('keeps native Tab from a tabindex=-1 element between controls', () => {
   expect(tab()).toBe(true);
   expect(tab(true)).toBe(true);
 });
+
+it('keeps native Tab between controls inside an open shadow root', () => {
+  render(<BootstrapProvider />);
+  open(
+    <>
+      <button id="a">a</button>
+      {/* @ts-expect-error custom element without JSX typing */}
+      <trap-shadow-buttons />
+    </>,
+  );
+  const host = document.querySelector('trap-shadow-buttons')!;
+  (host.shadowRoot!.getElementById('s1') as HTMLElement).focus();
+  expect(tab()).toBe(true);
+  expect(deepActiveElement()?.id).toBe('s1');
+});

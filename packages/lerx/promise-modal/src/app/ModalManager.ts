@@ -371,10 +371,13 @@ export class ModalManager {
     const controls = getTabbableElements(frame, event.shiftKey);
     const first = controls[0] ?? frame;
     const last = controls[controls.length - 1] ?? frame;
-    const current = document.activeElement;
+    const active = document.activeElement;
+    let current = active;
+    while (current?.shadowRoot?.activeElement)
+      current = current.shadowRoot.activeElement;
     if (
       !current ||
-      !frame.contains(current) ||
+      !frame.contains(active) ||
       current === frame ||
       current === (event.shiftKey ? first : last) ||
       (!controls.some((control) => control === current) &&
