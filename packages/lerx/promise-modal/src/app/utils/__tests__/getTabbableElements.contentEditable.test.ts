@@ -15,7 +15,7 @@ const emulateEditableTabIndex = (root: HTMLElement) => {
     });
 };
 
-it.each(['', 'TRUE', 'plaintext-only', 'PLAINTEXT-ONLY'])(
+it.each(['', 'true', 'TRUE', 'plaintext-only', 'PLAINTEXT-ONLY'])(
   'treats contenteditable="%s" as a sequential focus target',
   (value) => {
     const frame = document.createElement('div');
@@ -25,6 +25,19 @@ it.each(['', 'TRUE', 'plaintext-only', 'PLAINTEXT-ONLY'])(
     expect(getTabbableElements(frame).map((element) => element.id)).toEqual([
       'first',
       'editor',
+    ]);
+  },
+);
+
+it.each(['false', 'FALSE'])(
+  'does not treat contenteditable="%s" as a focus target by itself',
+  (value) => {
+    const frame = document.createElement('div');
+    frame.innerHTML = `<button id="first">first</button><div id="editor" contenteditable="${value}">x</div>`;
+    document.body.append(frame);
+    emulateEditableTabIndex(frame);
+    expect(getTabbableElements(frame).map((element) => element.id)).toEqual([
+      'first',
     ]);
   },
 );
