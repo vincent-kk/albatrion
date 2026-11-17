@@ -66,7 +66,10 @@ export interface ResolvedLocation {
 
 /** What one `readdir` of a directory says about its entries. */
 export interface DirectoryListing {
-  /** Every entry name. */
+  /**
+   * Every entry that `readdir` typed as a file, a directory or a symbolic
+   * link. An untyped entry is left out, so callers check it like a missing name.
+   */
   readonly names: ReadonlySet<string>;
   /** The entries that are symbolic links. */
   readonly linkNames: ReadonlySet<string>;
