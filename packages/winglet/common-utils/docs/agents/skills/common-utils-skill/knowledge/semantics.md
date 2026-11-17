@@ -6,15 +6,17 @@ Organized by decision, not by module. Every claim here was read off `src/**` at 
 
 ### `equals` vs `stableEquals`
 
-|                           | `equals(left, right, omit?)`                                                                                                                          | `stableEquals(left, right)` |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| Circular references       | **stack overflow**                                                                                                                                    | safe (WeakMap-tracked)      |
-| Built-ins                 | compared by state: `Date`, `RegExp`, `Map`, `Set`, `ArrayBuffer`, `DataView`, boxed primitives; `Error` by `name` and `message`, then enumerable keys | same rules                  |
-| TypedArray                | compared by index value (`0` equals `-0`)                                                                                                             | compared by bytes           |
-| Symbol properties         | not compared                                                                                                                                          | compared                    |
-| Non-enumerable properties | not compared                                                                                                                                          | not compared                |
-| Omit keys                 | third argument, `Set` or array, applied at every level                                                                                                | not supported               |
-| Cost                      | the faster of the two                                                                                                                                 | roughly twice `equals`      |
+|                                             | `equals(left, right, omit?)`                                                   | `stableEquals(left, right, omit?)`                                                                    |
+| ------------------------------------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| Circular references                         | **stack overflow**                                                             | safe (visited pairs tracked in a `Map`)                                                               |
+| `Date`, `RegExp`, `Map`, `Set`              | compared by state alone                                                        | same                                                                                                  |
+| `ArrayBuffer`, `DataView`, boxed primitives | compared by bytes or primitive value, then by own enumerable keys              | same, but `DataView` by bytes alone                                                                   |
+| `Error`                                     | unequal when `name` or `message` differs, then compared by own enumerable keys | same, plus own non-enumerable keys such as `stack`, so errors created at different places are unequal |
+| TypedArray                                  | compared by index value (`0` equals `-0`)                                      | compared by bytes                                                                                     |
+| Symbol properties                           | not compared                                                                   | compared                                                                                              |
+| Non-enumerable properties                   | not compared                                                                   | compared (all own keys from `Reflect.ownKeys`)                                                        |
+| Omit keys                                   | third argument, `Set` or array, applied at every level                         | third argument, array, applied at every level                                                         |
+| Cost                                        | the faster of the two                                                          | roughly twice `equals`                                                                                |
 
 Both treat `NaN` as equal to `NaN`. Reach for `equals` by default; switch to `stableEquals` the moment the data can carry a cycle, symbol keys or sparse-array holes.
 
