@@ -422,7 +422,9 @@ export const withTimeout = <T>(
   const controller = new AbortController();
   const externalSignal = options?.signal;
   const abort = () => controller.abort();
-  externalSignal?.addEventListener('abort', abort, { once: true });
+  // An already-aborted signal never fires 'abort' again, so it is forwarded here
+  if (externalSignal?.aborted) controller.abort();
+  else externalSignal?.addEventListener('abort', abort, { once: true });
   return Promise.race([
     pending,
     timeout(ms, { ...options, signal: controller.signal }),
