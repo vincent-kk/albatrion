@@ -91,6 +91,8 @@ export class ResolverStore {
   >();
   /** Custom metaschema URI aliases are normalized once. */
   private dialectAliases = new Map<string, Dialect>();
+  /** Registered documents by normalized address, built by the first lookup that no key as written matches. */
+  private registered: Map<string, SchemaValue> | undefined;
 
   /**
    * Eagerly index the root while retaining registered documents for lazy lookup.
@@ -377,21 +379,43 @@ export class ResolverStore {
 
   /**
    * Supply a registered external document lazily; no I/O occurs here.
-   * @param uri Document address; only an absolute one is looked up among registrations.
+   * @param uri Normalized document address; only an absolute one is looked up among registrations.
    * @returns Whether the resource is known after checking registrations.
+   * @throws Duplicate-identifier error when two keys normalize to one address with different documents.
    */
   public ensure(uri: string): boolean {
     if (this.resources.has(uri)) return true;
     const source = this.options.resources;
-    if (isAbsoluteURI(uri) && source && hasOwnProperty(source, uri)) {
-      this.index(
-        source[uri],
-        uri,
-        this.options.defaultDialect ?? DEFAULT_DIALECT,
-      );
-      return this.resources.has(uri);
+    if (source === undefined || !isAbsoluteURI(uri)) return false;
+    const schema = hasOwnProperty(source, uri)
+      ? source[uri]
+      : (this.registered ??= this.normalizeRegistered(source)).get(uri);
+    if (schema === undefined) return false;
+    this.index(schema, uri, this.options.defaultDialect ?? DEFAULT_DIALECT);
+    return this.resources.has(uri);
+  }
+
+  /**
+   * Key registered documents by the address a reference to them resolves to.
+   * @param source Caller's registrations, keyed by absolute retrieval URI in any spelling.
+   * @returns Documents by normalized absolute address; keys that are not absolute URIs are left out.
+   * @throws Duplicate-identifier error naming both keys when they normalize to one address with different documents.
+   */
+  private normalizeRegistered(
+    source: Readonly<Record<string, SchemaValue>>,
+  ): Map<string, SchemaValue> {
+    const registered = new Map<string, SchemaValue>();
+    const keys = new Map<string, string>();
+    for (const key of Object.keys(source)) {
+      const uri = resolveURI(key, '');
+      if (uri === undefined || !isAbsoluteURI(uri)) continue;
+      const previous = keys.get(uri);
+      if (previous !== undefined && source[previous] !== source[key])
+        this.duplicate(uri, previous, key);
+      keys.set(uri, key);
+      registered.set(uri, source[key]);
     }
-    return false;
+    return registered;
   }
 
   /**
