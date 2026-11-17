@@ -22,8 +22,8 @@
 - `deleteDataProperty(target, key)`:
   - own 속성만 제거한다(JS `delete` 의미론). 예약 멤버 key로 호출해도 프로토타입 체인의 속성은 제거되지 않으며, 반환값은 `delete` 연산 결과와 같다.
 - `clone(target, maxDepth?)`:
-  - own `__proto__` 키는 `setDataProperty`를 거쳐 열거 가능한 own 데이터 속성으로 복제된다 — 프로토타입 대입이 아니다. 그 값은 다른 키와 같은 규칙으로 깊은 복제된다.
-  - 예약 멤버 분기는 키가 `__proto__`일 때만 발생하고, 나머지 키의 대입과 쓰기 가능 여부 검사는 그대로다.
+  - own `__proto__` 키는 상속된 키이므로 열거 가능한 own 데이터 속성으로 정의되어 복제된다 — 프로토타입 대입이 아니다. 그 값은 다른 키와 같은 규칙으로 깊은 복제된다.
+  - 복제 대상의 프로토타입 체인 어디에도 없는 키는 일반 대입으로 복사한다. 체인에 상속된 키(`__proto__`, 상속 접근자, 상속 읽기 전용 속성 포함)는 상속된 setter를 실행하지 않도록 열거 가능·쓰기 가능·구성 가능한 own 데이터 속성으로 정의하고, 복제 대상이 이미 가진 own 키는 쓰기 가능할 때만 대입한다. 체인에 없는 키는 `in` 검사 하나로 판정하므로 일반 키 경로에 속성 서술자 조회를 더하지 않는다.
   - 박싱된 Number·String·Boolean은 같은 원시값과 프로토타입을 가진 새 박스로 복제한다. 박스 판별은 프로토타입이 `Object.prototype`이 아닌 입력에서만 일어난다.
   - `AggregateError`는 `message`와 함께 `errors`를 깊은 복제해 열거되지 않는 own 속성으로 둔다. 다른 Error는 생성자에 `message`만 넘긴다.
 - `cloneLite(target, maxDepth?)`:
@@ -43,6 +43,7 @@ merge가 조상의 안전한 속성 프리미티브를 읽고 부모가 merge를
 
 ### clone-fidelity — clone 내장 상태와 상속 속성 정합
 
+- 상속 setter를 가리는 own 데이터 속성은 setter를 실행하지 않고 같은 값의 own 데이터 속성으로 복제된다.
 - 박싱된 원시값의 복제는 같은 `valueOf()` 값을 내고, `AggregateError`의 복제는 `message`와 복제된 `errors`를 유지한다.
 
 ### serialization-surface — 직렬화 공개 경계
