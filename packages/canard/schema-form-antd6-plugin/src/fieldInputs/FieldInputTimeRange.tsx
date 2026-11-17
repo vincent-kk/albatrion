@@ -29,6 +29,41 @@ type RangeValueType<T> = Parameter<
 
 type OnChangeRangeValueType<T> = RangeValueType<T> | null;
 
+type DisabledTimeType<T> = Parameter<
+  (typeof DatePicker<T>)['RangePicker']
+>['disabledTime'];
+
+const MINUTES_PER_DAY = 24 * 60;
+const HOURS = Array.from({ length: 24 }, (_, hour) => hour);
+const MINUTES = Array.from({ length: 60 }, (_, minute) => minute);
+
+/**
+ * Converts an `HH:mm:00Z` limit to the local minute of the day the time panel shows.
+ * @param limit - `minimum` or `maximum`; an empty or unparsable limit means no limit.
+ * @returns Minutes since local midnight, or `undefined` when there is no limit.
+ */
+const toLocalMinute = (limit: string | undefined) => {
+  if (!limit) return undefined;
+  const time = dayjs(limit, DATE_FORMAT);
+  return time.isValid() ? time.hour() * 60 + time.minute() : undefined;
+};
+
+/**
+ * Tells whether a local minute of the day lies outside the selectable window.
+ * @param minute - Minutes since local midnight.
+ * @param minimum - Window start, inclusive; when later than `maximum` the window wraps past midnight.
+ * @param maximum - Window end, inclusive.
+ * @returns `true` when the minute cannot be selected.
+ */
+const isOutsideWindow = (
+  minute: number,
+  minimum = 0,
+  maximum = MINUTES_PER_DAY - 1,
+) =>
+  minimum <= maximum
+    ? minute < minimum || minute > maximum
+    : minute < minimum && minute > maximum;
+
 interface FieldInputTimeRangeProps
   extends FieldInputPropsWithSchema<
     [string | null, string | null] | null,
@@ -66,16 +101,21 @@ const FieldInputTimeRange = ({
     [defaultValue],
   );
 
-  const disabledDate = useMemo(() => {
-    return (date: Dayjs | null) => {
-      if (!date) return false;
-      if (!minimum && !maximum) return false;
-      if (minimum && date.isBefore(dayjs(minimum, DATE_FORMAT), 'minute'))
-        return true;
-      if (maximum && date.isAfter(dayjs(maximum, DATE_FORMAT), 'minute'))
-        return true;
-      return false;
+  const disabledTime = useMemo<DisabledTimeType<Dayjs>>(() => {
+    const start = toLocalMinute(minimum);
+    const end = toLocalMinute(maximum);
+    if (start === undefined && end === undefined) return undefined;
+    const isDisabled = (hour: number, minute: number) =>
+      isOutsideWindow(hour * 60 + minute, start, end);
+    const limits = {
+      disabledHours: () =>
+        HOURS.filter((hour) =>
+          MINUTES.every((minute) => isDisabled(hour, minute)),
+        ),
+      disabledMinutes: (hour: number) =>
+        MINUTES.filter((minute) => isDisabled(hour, minute)),
     };
+    return () => limits;
   }, [minimum, maximum]);
 
   const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
@@ -92,7 +132,7 @@ const FieldInputTimeRange = ({
       disabled={disabled || readOnly}
       format={DATE_FORMAT}
       showTime={{ format: 'HH:mm' }}
-      disabledDate={disabledDate}
+      disabledTime={disabledTime}
       defaultValue={initialValue}
       onChange={handleChange}
       onPanelChange={handleChange}
