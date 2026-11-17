@@ -174,6 +174,12 @@ describe('compressCss', () => {
     ).toBe('.a{content:"{";color:red}.b :is(.c){x:y}:root{z:w}');
   });
 
+  it('ignores comments when deciding whether a colon starts a declaration', () => {
+    expect(compressCss('.a :hover /* } */ { color: red }')).toMatch(
+      /^\.a :hover ?\{color:red\}$/,
+    );
+  });
+
   it('keeps the whitespace calc() requires around +', () => {
     expect(compressCss('.a{width:calc(1px + 2px)}')).toBe(
       '.a{width:calc(1px + 2px)}',
