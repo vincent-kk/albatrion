@@ -68,7 +68,7 @@ This plugin provides the following Material-UI components:
 
 - **Role**: Special input field for URI entry (with protocol dropdown)
 - **Applied when**: `type` is `"string"` and `format` or `inputType` is `"uri"`
-- **Additional features**: Protocol selection dropdown, default protocol list support (http, https), custom protocol list via `presentation.FieldInputProps.protocols`, support for single-colon protocols like mailto/tel
+- **Additional features**: Protocol selection dropdown, default protocol list support (http, https), custom protocol list via `presentation.FieldInputProps.protocols`, support for single-colon protocols like mailto/tel; a value whose scheme is not in the list keeps that scheme, which the dropdown adds as an extra option
 
 ### **[`FieldInputMonth.tsx`](./src/fieldInputs/FieldInputMonth.tsx)**
 
