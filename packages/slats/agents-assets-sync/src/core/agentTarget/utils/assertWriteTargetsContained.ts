@@ -3,6 +3,7 @@ import { basename, dirname, join, sep } from 'node:path';
 
 import type { AgentTarget, ResolvedLocations } from '../type.js';
 import { findLinkedNames } from './findLinkedNames.js';
+import { groupByCachedAncestor } from './groupByCachedAncestor.js';
 import { isWithin } from './isWithin.js';
 import { locateDirectory } from './locateDirectory.js';
 import { resolveLocation } from './resolveLocation.js';
@@ -25,7 +26,9 @@ interface AssertWriteTargetsContainedInput {
  * (`locateDirectory`), so with `resolved` shared with the roots check an
  * existing subdirectory costs one listing that the files written into its
  * parent then reuse, and anything below a missing directory costs nothing.
- * Files are judged by those listings, or by one `lstat` where no listing is
+ * Directories under different cached ancestors (`groupByCachedAncestor`),
+ * such as two skill namespaces, are checked concurrently; when several
+ * escape, the first group's is reported. Files are judged by those listings, or by one `lstat` where no listing is
  * at hand (`findLinkedNames`). Only a link is passed to `realpath`. A link
  * that stays inside the project is allowed, as it is for a root. Deletions need no check: the orphan scan never
  * follows a link, so it never proposes a path through one. User scope is
@@ -55,19 +58,26 @@ export async function assertWriteTargetsContained({
   const dirs = [...namesByDir.keys()].sort(
     (a, b) => b.split(sep).length - a.split(sep).length,
   );
-  for (const dir of dirs) {
-    const names = namesByDir.get(dir) ?? [];
-    const escape = await findEscape(
-      dir,
-      names,
-      realRoot ?? projectRoot,
-      resolved,
-    );
-    if (escape === null) continue;
-    throw new Error(
-      `[agents-assets-sync] ${escape} resolves outside the project root ${projectRoot} through a symbolic link; project-scope destinations must stay inside the project.`,
-    );
-  }
+  const escapes = await Promise.all(
+    groupByCachedAncestor(dirs, resolved).map(async (group) => {
+      for (const dir of group) {
+        const names = namesByDir.get(dir) ?? [];
+        const escape = await findEscape(
+          dir,
+          names,
+          realRoot ?? projectRoot,
+          resolved,
+        );
+        if (escape !== null) return escape;
+      }
+      return null;
+    }),
+  );
+  const escape = escapes.find((found) => found !== null);
+  if (escape === undefined) return;
+  throw new Error(
+    `[agents-assets-sync] ${escape} resolves outside the project root ${projectRoot} through a symbolic link; project-scope destinations must stay inside the project.`,
+  );
 }
 
 // The directory, or the file written into it, that carries a write outside
