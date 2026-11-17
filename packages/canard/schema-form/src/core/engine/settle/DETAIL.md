@@ -649,6 +649,8 @@ misfits는 원본과 현재 유효 형상의 계산 결과이며 검증 통과�
 
 살아 있는 snapshot 없는 빈 watch 읽기는 이전 메모도 비어 있을 때 공유 EMPTY_ARRAY를 반환하며 witness·메모를 할당하지 않습니다. 이전 값이 비어 있지 않으면 정리 경로를 유지하여 detach 뒤에도 낡은 감시 값이 남지 않게 합니다. snapshot 읽기는 현재 watch와 별도로 이전 입력을 포착하므로 이 생략에 포함하지 않습니다.
 
+살아 있는 watch 읽기는 커밋이 바뀌어도 감시 값이 모두 Object.is로 같으면 이전 배열을 반환합니다. FieldInput이 받은 watchValues로 메모하거나 effect를 거는 소비자가 관련 없는 커밋마다 다시 계산하지 않게 하기 위해서입니다. 맥락 부재 값의 재사용은 같은 커밋 안에서만 허용합니다.
+
 ### settle-projected-children-read — 자체 노드 조회와 후퇴
 
 노드만 저장하는 비배열 null-prototype 구조에서만 직접 노드 조회를 own-key 증거로 사용합니다. 일반 prototype·배열·source·`storedOutputValue`·extras의 임의 값에는 own-key 검사를 유지하여 상속 속성이나 undefined 방출을 노드 부재로 오인하지 않습니다.
