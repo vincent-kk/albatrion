@@ -150,7 +150,7 @@ export class ModalManager {
       previous &&
       previous.parentElement !== root &&
       previous.contains(document.activeElement)
-        ? document.activeElement
+        ? ModalManager.innermostFocus(document.activeElement)
         : null;
     const anchor = ModalManager.anchor({ root });
     ModalManager.applyStyleSheet();
@@ -401,9 +401,7 @@ export class ModalManager {
     const first = controls[0] ?? frame;
     const last = controls[controls.length - 1] ?? frame;
     const active = document.activeElement;
-    let current = active;
-    while (current?.shadowRoot?.activeElement)
-      current = current.shadowRoot.activeElement;
+    const current = ModalManager.innermostFocus(active);
     if (
       !current ||
       !frame.contains(active) ||
@@ -415,6 +413,17 @@ export class ModalManager {
       event.preventDefault();
       (event.shiftKey ? last : first).focus();
     }
+  }
+  /**
+   * Follows open shadow roots down to the element that actually holds focus.
+   * @param element - A document-level focus target, usually `document.activeElement`.
+   * @returns The innermost focused element, or the input when no shadow root holds focus.
+   */
+  private static innermostFocus(element: Element | null): Element | null {
+    let current = element;
+    while (current?.shadowRoot?.activeElement)
+      current = current.shadowRoot.activeElement;
+    return current;
   }
   /** Releases the same callbacks installed by the current owner. */
   private static removeKeyboardListener(): void {
