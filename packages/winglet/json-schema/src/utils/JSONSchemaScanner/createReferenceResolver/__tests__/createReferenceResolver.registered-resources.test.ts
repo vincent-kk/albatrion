@@ -79,6 +79,32 @@ describe('registered resources', () => {
     ).toThrow('https://ex.example/shared.json declared at');
   });
 
+  it.each([
+    ['embedding document first', ['a', 'b']],
+    ['embedded document first', ['b', 'a']],
+  ])(
+    'rejects a registered document whose address another registered document embeds, %s',
+    (_order, keys) => {
+      const schema = {
+        $id: 'https://ex.example/root.json',
+        properties: { a: { $ref: 'missing.json' } },
+      };
+      const documents: Record<string, object> = {
+        a: {
+          $id: 'https://ex.example/a.json',
+          $defs: { B: { $id: 'https://ex.example/b.json', type: 'string' } },
+        },
+        b: { $id: 'https://ex.example/b.json', type: 'number' },
+      };
+      const resources = Object.fromEntries(
+        keys.map((key) => ['https://ex.example/' + key + '.json', documents[key]]),
+      );
+      expect(() => scan(schema, {}, { resources })).toThrow(
+        'https://ex.example/b.json declared at',
+      );
+    },
+  );
+
   it('finds a registration whose key spells the scheme and host in another case', () => {
     const schema = {
       $id: 'https://Ex.Example/root.json',
