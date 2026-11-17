@@ -4,6 +4,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs, { type Dayjs } from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -14,6 +15,23 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+
+// customParseFormat enables the strict parse below; the import does not extend dayjs by itself.
+dayjs.extend(customParseFormat);
+
+const LIMIT_FORMAT = 'YYYY-MM-DD';
+
+/**
+ * Parses a `minimum` or `maximum` limit strictly, so an overflowing date is rejected instead of
+ * rolled over (lenient dayjs reads `2024-02-31` as `2024-03-02`).
+ * @param limit - Limit in `YYYY-MM-DD` form; empty means no limit.
+ * @returns The limit, or `undefined` when it is empty or not a valid `YYYY-MM-DD` date.
+ */
+const parseLimit = (limit: string | undefined): Dayjs | undefined => {
+  if (!limit) return undefined;
+  const date = dayjs(limit, LIMIT_FORMAT, true);
+  return date.isValid() ? date : undefined;
+};
 
 type DateJSONSchema = StringSchema & {
   format: 'date';
@@ -74,8 +92,8 @@ const FieldInputDate = ({
 
   const { minDate, maxDate } = useMemo(() => {
     return {
-      minDate: minimum ? dayjs(minimum) : undefined,
-      maxDate: maximum ? dayjs(maximum) : undefined,
+      minDate: parseLimit(minimum),
+      maxDate: parseLimit(maximum),
     };
   }, [minimum, maximum]);
 
