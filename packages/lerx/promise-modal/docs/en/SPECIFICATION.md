@@ -146,7 +146,7 @@ The fallback foreground supplies `role="dialog"` and `aria-modal="true"`. Custom
 
 ## Ownership and route visibility
 
-One ModalProvider or useInitializeModal bootstrap owns the portal. Additional bootstraps warn once in development and wait; cleanup removes only that bootstrap’s ownership or waiting registration. The first waiter takes over when the owner leaves. With no waiter, a microtask cancels alive nodes unless the system reinitializes during the same commit. Pre-mount queued requests remain queued, so keep a browser bootstrap mounted to process them.
+One ModalProvider or useInitializeModal bootstrap owns the portal. Additional bootstraps warn once in development and wait; cleanup removes only that bootstrap’s ownership or waiting registration. The first waiter takes over when the owner leaves. Modals visible at that moment stay visible and follow the receiving provider's route, while modals already hidden by route keep their original route; frames and backgrounds still receive the original `initiator`. With no waiter, a microtask cancels alive nodes unless the system reinitializes during the same commit. Pre-mount queued requests remain queued, so keep a browser bootstrap mounted to process them.
 
 `alive` means retained in the store, `visible` means displayed, and `settled` means the first result or error is final. Route hiding preserves pending results; only pending nodes can reappear. Abort and caller cleanup cancel even hidden requests. A manual closed node may remain alive for exit animation but cannot show again. `useDestroyAfter` starts only after settlement.
 
