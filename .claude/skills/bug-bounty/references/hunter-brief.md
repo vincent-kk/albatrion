@@ -30,10 +30,12 @@ Classes found so far, to generalize into your area:
 
 ## Quality bar
 
+Correct behavior means, in this order: compliance with any standard the package implements, predictable behavior, and a reasonable interface. Predictable means that equivalent inputs and equivalent call orders give equivalent results, and that nothing changes silently across lifecycles. A reasonable interface is one whose types, names, and documents say what happens, and whose failures surface instead of vanishing. Use this order to decide the expected result a probe asserts, above all where the documents are silent.
+
 Report a finding only when all three hold:
 
 1. A consumer can hit it through the public API, or a documented extension point, with usage or input that a real application plausibly produces.
-2. It contradicts a contract or basic correctness. Contracts are README files, `docs/**`, `docs/agents/**`, `INTENT.md` and `DETAIL.md`, JSDoc, public types, `.changeset/*.md` at the repository root, and any standard the package claims to implement. Basic correctness covers crashes, hangs, leaks, stack overflows, wrong or stale values, lost updates, data loss, failure reported as success, and a crossed security or isolation boundary.
+2. It contradicts a contract, basic correctness, or predictability. Contracts are README files, `docs/**`, `docs/agents/**`, `INTENT.md` and `DETAIL.md`, JSDoc, public types, `.changeset/*.md` at the repository root, and any standard the package claims to implement. Basic correctness covers crashes, hangs, leaks, stack overflows, wrong or stale values, lost updates, data loss, failure reported as success, and a crossed security or isolation boundary. Equivalent inputs that give different results qualify even where no document addresses them, and so does an input that the public types accept but the implementation mishandles.
 3. A probe you ran fails because of it, and you can state in one sentence what goes wrong for whom.
 
 Not findings:
@@ -83,6 +85,7 @@ Report up to 20 findings ranked by severity. Never pad the list to reach the cap
 - The contract violated, cited as file:line or a standard clause.
 - Root cause as file:line, with a mechanism of two or three sentences.
 - Sibling of: an earlier item, or "new class".
+- Reopens: if `git log -L` on the root-cause lines shows a commit that fixed an earlier bug bounty item, that item and commit; otherwise "no".
 - Probe path, test name, actual versus expected, and the command that runs it.
 - Verification level and confidence.
 

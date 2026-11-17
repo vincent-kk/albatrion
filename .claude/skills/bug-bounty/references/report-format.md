@@ -37,6 +37,7 @@ Root-cause files: <common path>
 - Contract violated: <file:line or standard clause>
 - Root cause: <file:line and mechanism>
 - Relation to earlier rounds: <"Same class as round K item X" or "New class">
+- Reopens an earlier fix: <round K item X and the fix commit, or "No">
 - Reproduction: <test name, actual result, expected result>
 - Confidence: <level and verification level>
 
@@ -71,6 +72,9 @@ Omit the last section when it would be empty.
 
 ## Areas to lower
 <Areas whose new angles produced nothing at medium or above in two consecutive rounds, or "None".>
+
+## Wave decision
+<Whether another round runs. Name each stop signal from the skill's "Ending the wave" section that is present or absent (clean, trivial, oscillating, round limit), with the items behind it.>
 
 ## Probes and verification limits
 <Where the probes are and how to run them, and the limits of the verification levels.>

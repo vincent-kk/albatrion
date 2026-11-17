@@ -48,6 +48,7 @@ A round finds defects that consumers would actually hit, proves each one with a 
 - Map every failing test to exactly one role: a reported finding, a diagnostic or measurement test, a hypothesis the hunter judged not a bug, or an environment limit. Drop a finding whose test passes or fails for a different reason, or send it back to the hunter with SendMessage.
 - When a probe imports a built `dist`, confirm that no source file the finding blames is newer than that build (`find <package path>/src -newer <dist entry>`).
 - Judge each finding with the quality bar and severity sections of the brief; downgrade or drop what falls short. For every critical or high finding, read the cited code yourself.
+- For every finding at medium or above, check whether a commit that fixed an earlier bug bounty item changed its root-cause lines (`git log -L <start>,<end>:<file>`), and record the answer; it feeds the oscillation signal under Ending the wave.
 - Immediately copy the probes worth keeping to `bug-bounty/round-N/probes/<package-slug>/<hunter-id>/` and append the verdicts to `.progress/progress.md`, so another session can resume the round.
 
 ### 5. Record
@@ -71,3 +72,13 @@ A wave is a run of consecutive rounds the user asks for together, such as rounds
 - A prepared round records "launch pending" in its progress note. At launch, refresh the base commit, the working-tree status, and the worktree list in the progress note and the brief.
 - Launch on the fix session's notice only when the user has approved that for the wave; otherwise tell the user the notice arrived and wait.
 - After step 6, send the fix session the round path and the files it may commit: everything under `bug-bounty/round-N/`, plus any change this round made to this skill or its angle catalog. The fix session commits and pushes them; stage nothing yourself, because both sessions share one git index.
+
+## Ending the wave
+
+The wave runs at most to round 5 unless the user extends it. At step 6 of every round, decide whether another round runs, and stop early on any of these signals:
+
+- Clean: the round confirmed no finding at medium or above. This is the best ending.
+- Trivial: the round confirmed no critical or high finding, and its medium findings need inputs or usage that a typical application does not produce.
+- Oscillating: a finding at medium or above reopens behavior that an earlier round's fix decided, or the same function yields a finding of the same class for a third round. Churn between fixes means the contract itself is unsettled, and more hunting will not settle it; the owner has to decide the contract.
+
+Record the decision and the signals behind it in the round README, report it to the user, and say in the handoff to the fix session whether another round follows. Stopping ends only the hunting; the fix session still fixes the round's findings.
