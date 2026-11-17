@@ -1,19 +1,18 @@
+import { prefixSelector } from './prefixSelector';
+
 /**
  * Prefixes every selector of a selector list with the scope class.
  *
  * @param selectorList - Trimmed selector list of one style rule, such as `.a, .b:is(.c, .d)`
  * @param scope - Scope selector to prefix, such as `.my-widget`
- * @returns The list joined by `,`, each selector written as `${scope} ${selector}`.
+ * @returns The list joined by `,`, each selector passed through `prefixSelector`.
  * The list splits only at top-level commas: commas inside parentheses, quoted
- * strings or after a backslash belong to one selector. A selector that is
- * exactly `:root` or `:host` stays unprefixed.
+ * strings or after a backslash belong to one selector.
  */
 export const prefixSelectorList = (
   selectorList: string,
   scope: string,
 ): string => {
-  if (selectorList.indexOf(',') === -1)
-    return prefixSelector(selectorList, scope);
   let result = '';
   let partStart = 0;
   let depth = 0;
@@ -34,8 +33,3 @@ export const prefixSelectorList = (
   }
   return result + prefixSelector(selectorList.slice(partStart).trim(), scope);
 };
-
-const prefixSelector = (selector: string, scope: string): string =>
-  selector === ':root' || selector === ':host'
-    ? selector
-    : scope + ' ' + selector;

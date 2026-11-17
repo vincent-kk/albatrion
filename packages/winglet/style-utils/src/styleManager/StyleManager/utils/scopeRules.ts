@@ -1,4 +1,5 @@
 import { findBlockEnd } from './findBlockEnd';
+import { prefixSelector } from './prefixSelector';
 import { prefixSelectorList } from './prefixSelectorList';
 
 /**
@@ -29,6 +30,7 @@ export const scopeRules = (
   let result = '';
   let cursor = start;
   let open = css.indexOf('{', cursor);
+  let comma = -1;
   while (open !== -1 && open < end) {
     const prelude = css.slice(cursor, open).trim();
     if (prelude[0] === '@') {
@@ -46,8 +48,17 @@ export const scopeRules = (
       result += GROUPING_AT_RULE.test(prelude)
         ? prelude + '{' + scopeRules(css, open + 1, close, scope) + '}'
         : prelude + css.slice(open, close + 1);
-    else if (prelude)
-      result += prefixSelectorList(prelude, scope) + css.slice(open, close + 1);
+    else if (prelude) {
+      // One search over the whole text, reused until the cursor passes it, is cheaper than one per selector.
+      if (comma < cursor) {
+        comma = css.indexOf(',', cursor);
+        if (comma === -1) comma = css.length;
+      }
+      result +=
+        (comma < open
+          ? prefixSelectorList(prelude, scope)
+          : prefixSelector(prelude, scope)) + css.slice(open, close + 1);
+    }
     cursor = close + 1;
     // A flat block's first inner `{` search already found the next rule's `{`.
     open = nextOpen > close ? nextOpen : css.indexOf('{', cursor);
