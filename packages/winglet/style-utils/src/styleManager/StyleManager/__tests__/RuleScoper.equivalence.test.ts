@@ -57,6 +57,8 @@ const EDGE_FRAGMENTS = [
   '@media (x){.f{a:b}}',
   '@media (x){.f{a:b}.g{c:d}}',
   '}',
+  '.x}.y{a:b}',
+  '@media (x){.a}.b{c:d}}',
   '.e{}',
   '.e {}',
   '{a:b}',
