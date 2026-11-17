@@ -177,4 +177,10 @@ describe('compressCss', () => {
       '.a{content:"/*"}.b{color:red}',
     );
   });
+
+  it('ends a string only at an unescaped matching quote', () => {
+    expect(compressCss(".a{content:'\\'/*  \"'}.b{color:red}")).toBe(
+      ".a{content:'\\'/*  \"'}.b{color:red}",
+    );
+  });
 });
