@@ -1,0 +1,55 @@
+---
+title: 'Portal'
+sidebar_label: 'Portal'
+slug: Portal
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# Portal
+
+Portal system for rendering React components at different DOM locations while maintaining component hierarchy.
+Provides a complete portal solution including the main Portal component, DOM anchor placement,
+and Higher-Order Component wrapper for context provision. This system allows breaking out of
+CSS containment and z-index stacking contexts while preserving React's component tree structure.
+### Usage Patterns
+**Compound Object Pattern (Recommended for convenience):**
+```typescript
+import { Portal } from '@winglet/react-utils/portal';
+const App = Portal.with(() => (
+<div>
+<Portal>
+<Header /> // Header is rendered at Portal.Anchor location
+</Portal>
+<Portal.Anchor />
+</div>
+));
+```
+### Component References
+For detailed documentation with comprehensive examples and API details:
+- **Portal main component**: See `BasePortal` export
+- **Portal.with HOC**: See `withPortal` export
+- **Portal.Anchor component**: See `Anchor` export
+### Design Philosophy
+This dual-export approach provides both convenience and flexibility:
+- Use `Portal.*` for quick prototyping and compact code
+- Use individual imports when you need detailed documentation or tree-shaking
+- All approaches provide identical functionality and type safety
+
+## Import
+
+```typescript
+import { Portal } from '@winglet/react-utils/portal';
+import { Portal } from '@winglet/react-utils';
+```
+
+## Signature
+
+```typescript
+const Portal: {
+    (props: PropsWithChildren): null;
+    with: typeof withPortal;
+    Anchor: typeof Anchor;
+}
+```

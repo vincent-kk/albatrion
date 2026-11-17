@@ -1,0 +1,55 @@
+---
+title: 'isLazyComponent'
+sidebar_label: 'isLazyComponent'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# isLazyComponent
+
+Checks whether a value is a component created by `React.lazy`.
+`lazy` returns an object whose implementation resolves later, so the
+function-shaped checks miss it even though React renders it as a component.
+
+## Import
+
+```typescript
+import { isLazyComponent } from '@winglet/react-utils/filter';
+import { isLazyComponent } from '@winglet/react-utils';
+```
+
+## Signature
+
+```typescript
+const isLazyComponent: <Props extends object = any, Component extends LazyExoticComponent<ComponentType<Props>> = LazyExoticComponent<ComponentType<Props>>>(component: unknown) => component is Component
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `component` | `-` | Value to inspect |
+
+## Returns
+
+Whether the value is a lazy component
+
+## Examples
+
+### Example 1
+
+```typescript
+const Page = lazy(() => import('./Page'));
+isLazyComponent(Page); // true
+isLazyComponent(() => null); // false
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/react-utils": "0.14.1" }}
+  code={`const Page = lazy(() => import('./Page'));
+isLazyComponent(Page); // true
+isLazyComponent(() => null); // false`}
+/>

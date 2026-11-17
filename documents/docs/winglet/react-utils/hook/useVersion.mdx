@@ -28,6 +28,13 @@ Sometimes you need to force re-renders due to changes React can't automatically 
 - WebSocket/Server-sent events
 - LocalStorage/SessionStorage changes
 
+## Import
+
+```typescript
+import { useVersion } from '@winglet/react-utils/hook';
+import { useVersion } from '@winglet/react-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -269,7 +276,7 @@ const ErrorRecoveryComponent = () => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.12.2" }}
+  dependencies={{ "@winglet/react-utils": "0.14.1" }}
   code={`// Basic manual refresh functionality
 const DataList = () => {
   const [renderCount, refresh] = useVersion();

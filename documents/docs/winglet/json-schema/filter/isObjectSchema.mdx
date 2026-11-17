@@ -12,6 +12,13 @@ Determines whether a given JSON schema represents an object type (nullable or no
 This is a combined filter that matches both `{ type: 'object' }` and
 `{ type: ['object', 'null'] }` schemas.
 
+## Import
+
+```typescript
+import { isObjectSchema } from '@winglet/json-schema/filter';
+import { isObjectSchema } from '@winglet/json-schema';
+```
+
 ## Signature
 
 ```typescript
@@ -41,7 +48,7 @@ isObjectSchema({ type: 'array' }); // false
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/json-schema": "0.15.1" }}
+  dependencies={{ "@winglet/json-schema": "0.16.1" }}
   code={`isObjectSchema({ type: 'object', properties: { name: { type: 'string' } } }); // true
 isObjectSchema({ type: ['object', 'null'] }); // true
 isObjectSchema({ type: 'array' }); // false`}

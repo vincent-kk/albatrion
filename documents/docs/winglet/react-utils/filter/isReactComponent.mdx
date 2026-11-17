@@ -10,9 +10,16 @@ import WingletPlayground from '@site/src/components/WingletPlayground';
 
 Comprehensively determines whether a given value is any type of React component.
 Provides unified component detection by combining checks for all React component
-types: functional components, class components, and memoized components.
-This is useful when you need to identify any valid React component regardless
-of its implementation pattern.
+types: functional components, memoized components, forwardRef components,
+lazy components, and class components. This is useful when you need to identify
+any valid React component regardless of its implementation pattern.
+
+## Import
+
+```typescript
+import { isReactComponent } from '@winglet/react-utils/filter';
+import { isReactComponent } from '@winglet/react-utils';
+```
 
 ## Signature
 
@@ -57,7 +64,7 @@ const ForwardComp = forwardRef<HTMLDivElement>((props, ref) =>
 console.log(isReactComponent(FunctionComp)); // true
 console.log(isReactComponent(ClassComp)); // true
 console.log(isReactComponent(MemoComp)); // true
-console.log(isReactComponent(ForwardComp)); // false (the implementation does not support forwardRef)
+console.log(isReactComponent(ForwardComp)); // true
 console.log(isReactComponent('not a component')); // false
 console.log(isReactComponent({})); // false
 ```
@@ -107,7 +114,7 @@ function registerComponents(components: Record<string, unknown>): ComponentRegis
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.12.2" }}
+  dependencies={{ "@winglet/react-utils": "0.14.1" }}
   code={`import React, { Component, memo, forwardRef } from 'react';
 import { isReactComponent } from '@winglet/react-utils';
 
@@ -130,24 +137,23 @@ const ForwardComp = forwardRef<HTMLDivElement>((props, ref) =>
 console.log(isReactComponent(FunctionComp)); // true
 console.log(isReactComponent(ClassComp)); // true
 console.log(isReactComponent(MemoComp)); // true
-console.log(isReactComponent(ForwardComp)); // false (the implementation does not support forwardRef)
+console.log(isReactComponent(ForwardComp)); // true
 console.log(isReactComponent('not a component')); // false
 console.log(isReactComponent({})); // false`}
 />
 
 ## Notes
 
-This function combines three specific component type checks:
+This function combines five specific component type checks:
 - `isFunctionComponent()`: For function-based components
 - `isMemoComponent()`: For React.memo wrapped components
+- `isForwardRefComponent()`: For React.forwardRef wrapped components
+- `isLazyComponent()`: For React.lazy wrapped components
 - `isClassComponent()`: For class-based components
-
-Note: This function currently does not detect forwardRef components
-as they require a separate detection mechanism based on $$typeof.
 
 The order of checks is optimized for common usage patterns:
 1. Function components (most common in modern React)
-2. Memoized components (performance-optimized components)
+2. Exotic components branded with $$typeof (memo, forwardRef, lazy)
 3. Class components (legacy but still supported)
 
 This provides a single entry point for component validation without

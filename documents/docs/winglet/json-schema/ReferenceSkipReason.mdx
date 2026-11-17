@@ -1,0 +1,36 @@
+---
+title: 'ReferenceSkipReason'
+sidebar_label: 'ReferenceSkipReason'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# ReferenceSkipReason
+
+Every reason a reference stays in the output; reported on `entry.references[].skipped`.
+
+## Import
+
+```typescript
+import { ReferenceSkipReason } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+const ReferenceSkipReason: {
+    /** The reference sits in a definition container or below one; definitions stay address stores. */
+    readonly Definition: "definition";
+    /** The canonical target is already being expanded on the ancestor path. */
+    readonly Cycle: "cycle";
+    /** No resolver is configured, or the address or document is unavailable. */
+    readonly Unresolved: "unresolved";
+    /** The lookup needs a dynamic or recursive anchor rather than static binding. */
+    readonly Dynamic: "dynamic";
+    /** Moving the target cannot guarantee equivalent meaning and existing addresses. */
+    readonly Relocation: "relocation";
+    /** The target or composition position cannot be inlined. */
+    readonly Invalid: "invalid";
+}
+```

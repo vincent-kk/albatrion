@@ -13,6 +13,13 @@ Provides reliable truthy value detection using double negation,
 excluding all falsy values (false, null, undefined, '', 0, NaN)
 and providing TypeScript type narrowing to exclude falsy types.
 
+## Import
+
+```typescript
+import { isTruthy } from '@winglet/common-utils/filter';
+import { isTruthy } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -265,7 +272,7 @@ console.log(activeUsers); // [{ name: 'John', active: true }]
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isTruthy } from '@winglet/common-utils';
 
 // True cases - truthy values

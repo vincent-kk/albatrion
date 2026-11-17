@@ -1,0 +1,27 @@
+---
+title: 'InferJSONSchema'
+sidebar_label: 'InferJSONSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# InferJSONSchema
+
+Infers the appropriate Schema type based on the input value.
+- For nullable types (T | null), returns the corresponding Nullable schema
+- For non-nullable types, returns the standard schema
+- For pure null type, returns NullSchema
+Uses [T] extends [U] pattern to prevent distributive conditional types
+
+## Import
+
+```typescript
+import type { InferJSONSchema } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+export type InferJSONSchema<Value extends AllowedValue | unknown = any, Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema> = [Value] extends [null] ? NullSchema<Options, Schema> : IsNullable<Value> extends true ? InferNullableSchema<Exclude<Value, null>, Options, Schema> : InferNonNullableSchema<Value, Options, Schema>
+```

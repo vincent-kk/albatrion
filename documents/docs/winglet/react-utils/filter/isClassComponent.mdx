@@ -13,6 +13,13 @@ Performs runtime type checking by inspecting the component's prototype for the
 `isReactComponent` property, which is automatically added to class components
 that extend React.Component or React.PureComponent.
 
+## Import
+
+```typescript
+import { isClassComponent } from '@winglet/react-utils/filter';
+import { isClassComponent } from '@winglet/react-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -72,7 +79,7 @@ if (isClassComponent<Props>(someComponent)) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.12.2" }}
+  dependencies={{ "@winglet/react-utils": "0.14.1" }}
   code={`import React, { Component } from 'react';
 import { isClassComponent } from '@winglet/react-utils';
 

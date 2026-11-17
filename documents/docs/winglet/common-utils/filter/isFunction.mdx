@@ -14,6 +14,13 @@ type-safe function validation and processing. Detects all function types
 including regular functions, arrow functions, async functions, generators,
 and class constructors.
 
+## Import
+
+```typescript
+import { isFunction } from '@winglet/common-utils/filter';
+import { isFunction } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -131,7 +138,7 @@ function safeInvoke(fn: unknown, ...args: any[]) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isFunction } from '@winglet/common-utils';
 
 const regularFunc = function() { return 'hello'; };

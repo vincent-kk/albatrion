@@ -1,0 +1,32 @@
+---
+title: 'ReferenceResolver'
+sidebar_label: 'ReferenceResolver'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# ReferenceResolver
+
+Lexical resource context and host-valid synchronous target protocol.
+
+## Import
+
+```typescript
+import type { ReferenceResolver } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+interface ReferenceResolver<Context = unknown> {
+    /** Establish the document-root context without entering its identifier twice. */
+    root(schema: UnknownSchema | boolean): Context;
+    /** Enter an original lexical child; absent means the root context is fixed. */
+    child?(parent: Context, keyword: string, schema: UnknownSchema | boolean): Context;
+    /** Return the effective dialect for a context. */
+    dialect(context: Context): Dialect;
+    /** Resolve a written reference and return a target whose meaning already fits the host. */
+    resolve(reference: string, keyword: ReferenceKeyword, context: Context): ReferenceStep;
+}
+```

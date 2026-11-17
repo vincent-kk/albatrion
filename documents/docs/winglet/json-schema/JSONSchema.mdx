@@ -1,0 +1,23 @@
+---
+title: 'JSONSchema'
+sidebar_label: 'JSONSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# JSONSchema
+
+Standard JSON Schema union type
+
+## Import
+
+```typescript
+import type { JSONSchema } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+export type JSONSchema<Options extends Dictionary = object> = NonNullableNumberSchema<Options, JSONSchema> | NullableNumberSchema<Options, JSONSchema> | NonNullableStringSchema<Options, JSONSchema> | NullableStringSchema<Options, JSONSchema> | NonNullableBooleanSchema<Options, JSONSchema> | NullableBooleanSchema<Options, JSONSchema> | NonNullableArraySchema<Options, JSONSchema> | NullableArraySchema<Options, JSONSchema> | NonNullableObjectSchema<Options, JSONSchema> | NullableObjectSchema<Options, JSONSchema> | NullSchema<Options, JSONSchema>
+```

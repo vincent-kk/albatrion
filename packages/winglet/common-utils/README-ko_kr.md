@@ -269,7 +269,7 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 - **[`getSymbols`](./src/utils/object/getSymbols.ts)**: 객체의 모든 심볼 속성을 배열로 반환하는 함수
 - **[`hasUndefined`](./src/utils/object/hasUndefined.ts)**: 객체에 undefined 값이 있는지 확인하는 함수
 - **[`isReservedName`](./src/utils/object/isReservedName.ts)**: 키가 데이터 속성 프리미티브를 경유해야 하는 예약 멤버 이름인지 판별하는 함수
-- **[`merge`](./src/utils/object/merge.ts)**: 여러 객체를 병합하는 함수
+- **[`merge`](./src/utils/object/merge/merge.ts)**: 여러 객체를 병합하는 함수
 - **[`removePrototype`](./src/utils/object/removePrototype.ts)**: 기존 객체에서 프로토타입 체인을 제거하는 함수
 - **[`removeUndefined`](./src/utils/object/removeUndefined.ts)**: 객체에서 undefined 값을 가진 속성을 제거하는 함수
 - **[`setDataProperty`](./src/utils/object/setDataProperty.ts)**: 예약 멤버 이름을 불투명한 own 데이터로 취급하며 `__proto__` setter를 트리거하지 않고 속성을 쓰는 함수

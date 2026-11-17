@@ -13,6 +13,13 @@ Provides a unified interface for key extraction that handles arrays (returning
 string indices), objects (returning property names), and other types with
 fallback iteration. Optimized for performance with direct array handling.
 
+## Import
+
+```typescript
+import { getKeys } from '@winglet/common-utils/lib';
+import { getKeys } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -65,7 +72,7 @@ console.log(getKeys(undefined)); // []
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { getKeys } from '@winglet/common-utils';
 
 const array = ['a', 'b', 'c'];

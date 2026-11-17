@@ -13,10 +13,17 @@ Creates a new array containing elements that are present in both the source and 
 Uses Set-based lookup for efficient O(1) checking, making it suitable for large arrays.
 Maintains the order of elements as they appear in the source array.
 
+## Import
+
+```typescript
+import { intersection } from '@winglet/common-utils/array';
+import { intersection } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
-const intersection: <Type>(source: Type[], target: Type[]) => Type[]
+const intersection: <Type>(source: readonly Type[], target: readonly Type[]) => Type[]
 ```
 
 ## Parameters
@@ -132,7 +139,7 @@ console.log('Granted:', grantedPermissions); // ['read', 'write']
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { intersection } from '@winglet/common-utils';
 
 const array1 = [1, 2, 3, 4, 5];

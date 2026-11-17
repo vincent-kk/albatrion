@@ -1,0 +1,76 @@
+name: docs-sync
+
+# Checks that the generated winglet site pages and redirect list match the
+# built packages. It runs only when the packages, the generator or its outputs
+# change, because the check needs the six winglet packages built.
+on:
+  pull_request:
+    paths:
+      - packages/winglet/**
+      - packages/aileron/script/build/**
+      - documents/scripts/**
+      - documents/docs/winglet/**
+      - documents/redirects.winglet.json
+      - documents/package.json
+      - documents/tsconfig.json
+      - package.json
+      - yarn.lock
+      - .github/workflows/docs-sync.yml
+  push:
+    branches: [master]
+    paths:
+      - packages/winglet/**
+      - packages/aileron/script/build/**
+      - documents/scripts/**
+      - documents/docs/winglet/**
+      - documents/redirects.winglet.json
+      - documents/package.json
+      - documents/tsconfig.json
+      - package.json
+      - yarn.lock
+      - .github/workflows/docs-sync.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-sync-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      # The same heap limit as the ci workflow's check job, so the package
+      # builds and their typechecks run under the memory budget they get there.
+      NODE_OPTIONS: --max-old-space-size=4096
+    steps:
+      - name: Checkout event head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Enable Corepack
+        # Yarn must be available before setup-node resolves its package-manager cache.
+        run: corepack enable
+      - name: Setup Node and restore Yarn cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.19.5
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - name: Install immutable dependencies
+        run: yarn install --immutable
+      - name: Test the page generator
+        run: yarn workspace @albatrion/documents test:scripts
+      - name: Build the winglet packages
+        run: |
+          yarn workspace @winglet/common-utils build
+          yarn workspace @winglet/json build
+          yarn workspace @winglet/json-schema build
+          yarn workspace @winglet/data-loader build
+          yarn workspace @winglet/react-utils build
+          yarn workspace @winglet/style-utils build
+      - name: Check the generated pages and redirects
+        run: yarn workspace @albatrion/documents sync-winglet-docs:check

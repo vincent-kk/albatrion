@@ -56,19 +56,17 @@ read_pkg_field() {
 echo "▶ publish-packages.sh (dry_run=$DRY_RUN, ci=$IS_CI)"
 echo ""
 
-# Collect (name, location) FIRST. Reading the list with `while ... done < <(...)`
-# ties the loop body's stdin to that pipe, so npm's interactive 2FA/OTP prompt
-# (local publishing) cannot reach the terminal. Gather entries now, then iterate
-# with the tty as stdin. `--no-private` still emits the monorepo root (no
-# `private: true`), so the location "." guard drops it.
+# Collect (name, location) FIRST, dependencies before dependents, from the
+# workspace dependencies yarn reports. Reading the list with
+# `while ... done < <(...)` around the publish loop would tie the loop body's
+# stdin to that pipe, so npm's interactive 2FA/OTP prompt (local publishing)
+# could not reach the terminal. The assignment also stops the script when the
+# ordering fails, which a process substitution would not.
+ordered=$(yarn workspaces list --json --verbose --no-private | node scripts/publish/printPublishOrder.mjs)
 entries=()
-while IFS= read -r line; do
-  [ -z "$line" ] && continue
-  location=$(printf '%s' "$line" | python3 -c "import json,sys; print(json.load(sys.stdin)['location'])")
-  name=$(printf '%s' "$line" | python3 -c "import json,sys; print(json.load(sys.stdin)['name'])")
-  [ "$location" = "." ] && continue
-  entries+=("$name|$location")
-done < <(yarn workspaces list --json --no-private)
+while IFS= read -r entry; do
+  [ -n "$entry" ] && entries+=("$entry")
+done <<< "$ordered"
 
 for entry in "${entries[@]}"; do
   name="${entry%%|*}"
@@ -116,6 +114,8 @@ for entry in "${entries[@]}"; do
     else
       echo "  ✗ failed: $name@$version"
       failed+=("$name@$version")
+      echo "  stopping: later packages may depend on $name"
+      break
     fi
   fi
 done

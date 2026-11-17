@@ -14,6 +14,13 @@ deferred operations, creating artificial delays in testing, building retry mecha
 backoff, and coordinating timed sequences. Supports both synchronous and asynchronous functions
 with proper type safety and error propagation.
 
+## Import
+
+```typescript
+import { waitAndExecute } from '@winglet/common-utils/promise';
+import { waitAndExecute } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -391,7 +398,7 @@ emailInput.addEventListener('input', (e) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { waitAndExecute } from '@winglet/common-utils';
 
 // Execute after 2 seconds

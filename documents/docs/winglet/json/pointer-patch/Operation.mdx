@@ -1,0 +1,34 @@
+---
+title: 'Operation'
+sidebar_label: 'Operation'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# Operation
+
+JSON Patch operation names defined by RFC 6902 section 4.
+Declared as a const object rather than a TypeScript `enum` so the values survive
+`isolatedModules` erasure and can be compared against parsed JSON at runtime.
+
+## Import
+
+```typescript
+import { Operation } from '@winglet/json/pointer-patch';
+import { Operation } from '@winglet/json/pointer';
+import { Operation } from '@winglet/json';
+```
+
+## Signature
+
+```typescript
+const Operation: {
+    readonly ADD: "add";
+    readonly REPLACE: "replace";
+    readonly REMOVE: "remove";
+    readonly MOVE: "move";
+    readonly COPY: "copy";
+    readonly TEST: "test";
+}
+```

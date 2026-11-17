@@ -13,10 +13,17 @@ Transforms an array into a grouped object structure based on a key extraction
 function, enabling efficient data categorization, filtering, and analysis.
 Maintains original element order within each group.
 
+## Import
+
+```typescript
+import { groupBy } from '@winglet/common-utils/array';
+import { groupBy } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
-const groupBy: <Type, Key extends PropertyKey>(array: Type[], getKey: (item: Type) => Key) => Record<Key, Type[]>
+const groupBy: <Type, Key extends PropertyKey>(array: readonly Type[], getKey: Fn<[item: Type], Key>) => Record<Key, Type[]>
 ```
 
 ## Parameters
@@ -28,7 +35,7 @@ const groupBy: <Type, Key extends PropertyKey>(array: Type[], getKey: (item: Typ
 
 ## Returns
 
-Object with keys as group identifiers and values as element arrays
+Prototype-free object with keys as group identifiers and values as element arrays
 
 ## Examples
 
@@ -133,7 +140,7 @@ const byRole = groupBy(users, user => user.profile.role);
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { groupBy } from '@winglet/common-utils';
 
 interface Person {

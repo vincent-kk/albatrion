@@ -1,0 +1,94 @@
+---
+title: 'getPendingCount'
+sidebar_label: 'getPendingCount'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# getPendingCount
+
+Gets the current number of tasks waiting for execution.
+Provides visibility into scheduler queue depth for monitoring
+and debugging purposes.
+
+## Import
+
+```typescript
+import { getPendingCount } from '@winglet/common-utils/scheduler';
+import { getPendingCount } from '@winglet/common-utils';
+```
+
+## Signature
+
+```typescript
+const getPendingCount: () => number
+```
+
+## Returns
+
+Count of pending tasks, or 0 if scheduler is destroyed
+
+## Examples
+
+### Queue monitoring
+
+```typescript
+// Schedule some tasks
+setImmediate(() => task1());
+setImmediate(() => task2());
+setImmediate(() => task3());
+
+console.log(`Queue depth: ${getPendingCount()}`); // Output: Queue depth: 3
+
+// After tasks execute
+setImmediate(() => {
+  console.log(`Queue depth: ${getPendingCount()}`); // Output: Queue depth: 0
+});
+```
+
+### Backpressure detection
+
+```typescript
+function scheduleWithBackpressure(callback: Function) {
+  const queueDepth = getPendingCount();
+
+  if (queueDepth > 100) {
+    console.warn('High queue depth, consider throttling');
+    return -1; // Reject new work
+  }
+
+  return setImmediate(callback);
+}
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
+  code={`// Schedule some tasks
+setImmediate(() => task1());
+setImmediate(() => task2());
+setImmediate(() => task3());
+
+console.log(\`Queue depth: \${getPendingCount()}\`); // Output: Queue depth: 3
+
+// After tasks execute
+setImmediate(() => {
+  console.log(\`Queue depth: \${getPendingCount()}\`); // Output: Queue depth: 0
+});`}
+/>
+
+## Notes
+
+**Use Cases:**
+- Performance monitoring and queue depth tracking
+- Implementing backpressure mechanisms
+- Debugging task scheduling issues
+- Load balancing decisions in complex applications
+
+**Timing Considerations:**
+- Count reflects tasks scheduled but not yet executed
+- Value changes during batch execution cycles
+- Returns 0 immediately after all tasks complete
+- Accurate snapshot at time of call

@@ -1,0 +1,35 @@
+---
+title: 'createFingerprint'
+sidebar_label: 'createFingerprint'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# createFingerprint
+
+Creates a fast, shallow key using reverse root-key order.
+
+## Import
+
+```typescript
+import { createFingerprint } from '@winglet/common-utils/object';
+import { createFingerprint } from '@winglet/common-utils';
+```
+
+## Signature
+
+```typescript
+function createFingerprint(value: unknown, options?: FingerprintOptions): string
+```
+
+## Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `-` | JSON-compatible data; nested values use JSON.stringify and may throw. |
+| `options` | `-` | Root property exclusions and an optional prefix. |
+
+## Returns
+
+A string key; insertion order and legacy delimiter ambiguity are retained.
