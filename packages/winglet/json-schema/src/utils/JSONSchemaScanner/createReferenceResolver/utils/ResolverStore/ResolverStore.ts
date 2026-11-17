@@ -96,6 +96,8 @@ export class ResolverStore {
   private registered: Map<string, SchemaValue> | undefined;
   /** Whether every registered key is already spelled as resolution writes it; computed once, only by a known-address lookup. */
   private canonicalKeys: boolean | undefined;
+  /** Known addresses already checked against the registrations; the answer cannot change afterwards. */
+  private settled = new Set<string>();
   /** Retrieval addresses already passed to indexing; an embedded identifier at the same address does not count. */
   private indexed = new Set<string>();
 
@@ -393,29 +395,19 @@ export class ResolverStore {
    *   is a registered key not yet indexed.
    */
   public ensure(uri: string): boolean {
-    const source = this.options.resources;
     const known = this.resources.get(uri);
-    if (known && (source === undefined || known.document.uri === uri))
-      return true;
-    if (source === undefined) return false;
-    const dialect = this.options.defaultDialect ?? DEFAULT_DIALECT;
-    if (known) {
+    const source = this.options.resources;
+    if (known !== undefined) {
       if (
-        this.registered === undefined &&
-        !hasOwnProperty(source, uri) &&
-        !(this.canonicalKeys ??= Object.keys(source).every(
-          isCanonicalRetrievalURI,
-        ))
+        known.document.uri !== uri &&
+        source !== undefined &&
+        !this.settled.has(uri)
       )
-        this.registered = this.normalizeRegistered(source);
-      const schema = hasOwnProperty(source, uri)
-        ? source[uri]
-        : this.registered?.get(uri);
-      if (schema !== undefined && isAbsoluteURI(uri))
-        this.index(schema, uri, dialect);
+        this.settle(uri, source);
       return true;
     }
-    if (!isAbsoluteURI(uri)) return false;
+    if (source === undefined || !isAbsoluteURI(uri)) return false;
+    const dialect = this.options.defaultDialect ?? DEFAULT_DIALECT;
     if (hasOwnProperty(source, uri)) this.index(source[uri], uri, dialect);
     else {
       const registered = (this.registered ??=
@@ -428,6 +420,37 @@ export class ResolverStore {
             this.index(document, address, dialect);
     }
     return this.resources.has(uri);
+  }
+
+  /**
+   * Index the registered key for a known address that no indexing stored there, once per address.
+   * @param uri Address known from another document's identifier, not from indexing at that address.
+   * @param source Caller's registrations.
+   * @returns Nothing; normalizes the keys only when some key is not already a canonical spelling.
+   * @throws Duplicate-identifier error when a registered key names this address.
+   */
+  private settle(
+    uri: string,
+    source: Readonly<Record<string, SchemaValue>>,
+  ): void {
+    this.settled.add(uri);
+    if (
+      this.registered === undefined &&
+      !hasOwnProperty(source, uri) &&
+      !(this.canonicalKeys ??= Object.keys(source).every(
+        isCanonicalRetrievalURI,
+      ))
+    )
+      this.registered = this.normalizeRegistered(source);
+    const schema = hasOwnProperty(source, uri)
+      ? source[uri]
+      : this.registered?.get(uri);
+    if (schema !== undefined && isAbsoluteURI(uri))
+      this.index(
+        schema,
+        uri,
+        this.options.defaultDialect ?? DEFAULT_DIALECT,
+      );
   }
 
   /**
