@@ -212,7 +212,8 @@ export class ModalManager {
   /**
    * Restores an opener after page effects change, without stealing a peer's focus.
    * @param id - Settled or released modal to exclude from pending peer checks.
-   * @param target - Registration-time opener; disconnected elements are ignored.
+   * @param target - Registration-time opener; an inert or disconnected opener yields
+   * to the top remaining dimmed modal, and is otherwise ignored.
    */
   private static restoreFocus(
     id: number,
@@ -238,7 +239,10 @@ export class ModalManager {
       typeof target.focus === 'function'
     )
       target.focus();
-    else if (target?.closest('[inert]') && remaining[0])
+    else if (
+      (!target?.isConnected || target.closest('[inert]')) &&
+      remaining[0]
+    )
       ModalManager.focusFrame(remaining[0].id);
   }
   /**
