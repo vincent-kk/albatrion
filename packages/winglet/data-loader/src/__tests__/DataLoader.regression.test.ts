@@ -42,6 +42,39 @@ describe('immediate batchScheduler (fn) => fn()', () => {
     expect(result).toEqual({ settled: true, value: [10, 20, 10] });
     expect(calls).toEqual([[1], [2]]);
   });
+
+  it('clears the cache entry when batchLoader throws synchronously', async () => {
+    let attempts = 0;
+    const loader = new DataLoader<number, number>(
+      (keys) => {
+        attempts += 1;
+        if (attempts === 1) throw new Error('sync failure');
+        return Promise.resolve(keys.map((key) => key * 10));
+      },
+      { batchScheduler: (fn) => fn() },
+    );
+    await expect(loader.load(1)).rejects.toThrow('sync failure');
+    expect(await loader.load(1)).toBe(10);
+    expect(attempts).toBe(2);
+  });
+});
+
+describe('batch scheduling after a failed load', () => {
+  it('still dispatches later loads after cacheKeyFn throws', async () => {
+    const { loader, calls } = createRecordingLoader<number, number>(
+      (key) => key * 10,
+      {
+        cacheKeyFn: (key) => {
+          if (key < 0) throw new Error('negative key');
+          return key;
+        },
+      },
+    );
+    expect(() => loader.load(-1)).toThrow('negative key');
+    const result = await settleWithin(loader.load(1), 200);
+    expect(result).toEqual({ settled: true, value: 10 });
+    expect(calls).toEqual([[1]]);
+  });
 });
 
 describe('falsy cache keys', () => {
