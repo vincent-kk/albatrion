@@ -1,9 +1,8 @@
 import type { ValidationIssue } from '@canard/schema-form';
 import type { ErrorObject } from 'ajv';
 
-import type { Dictionary } from '@aileron/declare';
-
 import { isChildSchemaPath } from './isChildSchemaPath';
+import { resolveNotRequiredKey } from './resolveNotRequiredKey';
 
 /** Escape tilde before slash when a required-property name needs encoding. */
 const TILDE = /~/g;
@@ -44,17 +43,8 @@ export const transformErrors = (errors: ErrorObject[], root?: object): Validatio
       rejectedKey = String(ajvError.params.unevaluatedProperty);
     else if (ajvError.keyword === 'propertyNames' && 'propertyName' in ajvError.params)
       rejectedKey = String(ajvError.params.propertyName);
-    else if (ajvError.keyword === 'not' && root && ajvError.schemaPath.startsWith('#/')) {
-      const segments = ajvError.schemaPath.slice(2).split('/');
-      let target: unknown = root;
-      for (const segment of segments) {
-        if (typeof target !== 'object' || target === null) break;
-        target = (target as Dictionary<unknown>)[segment.replace(/~1/g, '/').replace(/~0/g, '~')];
-      }
-      if (typeof target === 'object' && target !== null && 'required' in target &&
-          Array.isArray(target.required) && target.required.length === 1 &&
-          typeof target.required[0] === 'string') rejectedKey = target.required[0];
-    }
+    else if (ajvError.keyword === 'not' && root)
+      rejectedKey = resolveNotRequiredKey(root, ajvError.schemaPath);
     result[i] = {
       dataPath,
       schemaPath: ajvError.schemaPath,
