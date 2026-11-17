@@ -49,4 +49,53 @@ describe('clone built-in types', () => {
     expect(cloned.index).toBe(match.index);
     expect(cloned.input).toBe(match.input);
   });
+
+  it('should keep the primitive value of boxed Number, String and Boolean', () => {
+    const number = clone(new Number(5));
+    const string = clone(new String('ab'));
+    const boolean = clone(new Boolean(false));
+
+    expect(number.valueOf()).toBe(5);
+    expect(string.valueOf()).toBe('ab');
+    expect(boolean.valueOf()).toBe(false);
+    expect(number).toBeInstanceOf(Number);
+  });
+
+  it('should keep the message and the cloned errors of an AggregateError', () => {
+    const inner = new Error('inner');
+    const original = new AggregateError([inner], 'boom');
+
+    const cloned = clone(original);
+
+    expect(cloned).toBeInstanceOf(AggregateError);
+    expect(cloned.message).toBe('boom');
+    expect(cloned.errors).toHaveLength(1);
+    expect(cloned.errors[0]).not.toBe(inner);
+    expect(cloned.errors[0].message).toBe('inner');
+    expect(Object.keys(cloned)).toEqual([]);
+  });
+
+  it('should define an own field that shadows an inherited setter instead of calling it', () => {
+    class Base {
+      _x = 0;
+      set x(value: number) {
+        this._x = value * 2;
+      }
+      get x() {
+        return this._x;
+      }
+    }
+    const original = new Base();
+    Object.defineProperty(original, 'x', {
+      value: 5,
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    });
+
+    const cloned = clone(original);
+
+    expect(cloned.x).toBe(5);
+    expect(cloned._x).toBe(0);
+  });
 });
