@@ -10,7 +10,7 @@
 - 첫 세그먼트가 `.`로 시작하는 스킬 디렉터리는 오류로 거부한다. 에이전트가 소유한 이름 공간이기 때문이다. Codex는 스킬 디렉터리 아래의 `.system` 구획 아래에 기본 스킬을 배포한다.
 - 계획 생성은 읽기 전용이다. `buildPlan`은 원본 해시와 목적지를 비교하여 `InjectPlan`을 반환하며 쓰지 않는다.
 - 블록도 파일과 같은 방식으로 판정한다. `blockBodyMatches`는 마커 사이의 본문과 매니페스트 해시를 비교하며 원본에 끝 개행이 없을 때 `upsertBlock`이 추가하는 개행 하나를 허용한다.
-- `warn-diverged`와 `--force` 없이 발견한 모든 고아 항목은 `requiresForce`를 설정한다. `skip-unsupported`는 설정하지 않는다.
+- `warn-diverged`와 발견한 모든 고아 항목은 `--force` 여부와 무관하게 `requiresForce`를 설정한다. `skip-unsupported`는 설정하지 않는다.
 - 계획 적용은 부수 효과만 수행한다. `applyAction`은 `file` 대상을 처리하고 `applyBlockActions`는 호출마다 공유 문서 하나를 다시 쓴다. 호출자가 문서를 하나씩 적용하므로 한 실행 안에서 같은 `AGENTS.md`에 쓰는 블록이 서로를 지우지 않는다. 이 보장은 한 실행 안으로 제한된다. 잠금이 아니므로 두 실행이 같은 문서를 동시에 쓰면 각자 읽은 내용을 저장하고 나중 쓰기가 우선한다. 이 도구의 마커 밖 내용은 바이트 단위로 보존된다.
 - `partitionActions`는 `force`가 허용된 경우에만 `warn-diverged`를 실행 가능하게 한다. CLI가 약속하는 "--force overwrites"는 이곳에서 지킨다.
 - 해시 계산은 결정적이며 `hashContent`/`hashFile`은 Node의 `crypto` 모듈만 사용한다.

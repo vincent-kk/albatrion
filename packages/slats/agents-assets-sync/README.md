@@ -175,7 +175,7 @@ Every file under the asset root is hashed and tracked in `dist/agents-hashes.jso
   - **file is outside the manifest but under a managed prefix (`skills/<name>/`)** → orphan; requires `--force` to delete
 
 - `--force` on TTY opens an interactive confirm via `@inquirer/prompts.confirm`, listing up to 3 diverged/orphan paths.
-- `--force` on non-TTY prints the divergent list to stderr and proceeds.
+- `--force` on non-TTY prints the diverged and orphan paths it will overwrite or delete to stderr and proceeds. A run whose only change is deleting orphans is confirmed and listed the same way.
 
 ## Architectural Invariants
 
@@ -251,6 +251,9 @@ and diverts every diagnostic to stderr, so the whole stream parses:
 
 One `unit` per `(package, agent)` pair. A flag error becomes `errors` with
 `exitCode: 2` and empty `units`, so a reader always has a document to parse.
+A unit's `requiresForce` is `true` whenever applying it overwrites diverged
+content or deletes orphans, with or without `--force`; without `--force` such a
+unit blocks the run with exit code 2.
 The exception is a failure upstream of the renderer — an unresolvable
 `--package` — where stdout stays empty and the exit code carries the verdict.
 

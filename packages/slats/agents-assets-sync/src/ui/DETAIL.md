@@ -12,6 +12,7 @@
 - 계획은 target 마다 순차적으로 세운다. 각 `(agent, package)` 쌍에 대해 `resolveAgentTarget` → `resolveHashManifest` → `computeNamespacePrefixes` → `resolveDestinations` → `buildPlan` 순서로 조합한다.
 - 해시를 댈 수 없는 target 은 여기 도달하지 않는다. dispatcher 가 렌더러를 고르기 전에 걸러내므로(`commands/runCli/DETAIL.md` 의 `AC-RUNCLI-GATE-VERDICT`), 이 계층은 그 판정을 내리지도 재현하지도 않는다. 직접 구동하는 검사가 없는 계층이 판정에 참여하면 그 판정만 조용히 어긋난다.
 - force 확인은 `ConfirmForce` 로 표면화되며, 그 아래의 promise 다리가 사용자 응답이나 취소에서 resolve 된다. 취소는 종료 코드 2다.
+- 확인 목록은 `warn-diverged` 와 `warn-orphan` 뿐 아니라 `--force` 가 고아 항목을 바꾼 `delete` 도 `warn-orphan` 경고로 담는다. 그렇지 않으면 `--force` 실행에서 지워질 파일이 대화상자에 나타나지 않는다.
 - 적용은 계획별로 `partitionActions` 로 갈라, 파일 작업은 `asyncPool(8, …)` 로 돌리고 블록 작업은 문서 단위로 하나씩 적용한다.
 - 진행률은 액션이 끝날 때마다 `apply-progress` 이벤트로 보고된다. 파일은 한 건씩, 블록 그룹은 그룹 크기만큼 `done` 이 증가한다.
 - `--dry-run` 은 적용을 건너뛰고 `summarize(plan, 0)` 로 바로 summary 에 들어가며 종료 코드 0을 낸다.
@@ -98,6 +99,11 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 - `ScopePicker` 를 열면 커서가 `project` 행에 놓이고 `user` 행에는 놓이지 않는다.
 - 화살표 없이 enter 만 오면 `project` 로 확정된다.
 - 검증: `__tests__/scopePicker.test.tsx`.
+
+### AC-UI-FORCE-CONFIRM — 확인은 실행이 지우는 것까지 보여 준다
+
+- `--force` 실행이 고아 항목을 지우면 계획 단계는 그 경로를 `warn-orphan` 경고로 넘기고, `--yes` 가 없으면 확인 대화상자를 연다.
+- 검증: `__tests__/forceConfirm.test.tsx`.
 
 
 ## Last Updated

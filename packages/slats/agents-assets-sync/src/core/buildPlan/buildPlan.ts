@@ -42,7 +42,9 @@ export async function buildPlan(input: PlanInput): Promise<InjectPlan> {
   const known = new Set(Object.keys(sourceHashes));
   for (const scan of orphanScans) {
     for await (const orphan of findOrphans(scan, known, readDocument)) {
-      if (!force) requiresForce = true;
+      // Deleting is as user-visible as overwriting: under --force the flag is
+      // what makes renderers confirm and list the deletion.
+      requiresForce = true;
       actions.push({
         kind: force ? 'delete' : 'warn-orphan',
         relPath: orphan.relPath,
