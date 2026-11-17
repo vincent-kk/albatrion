@@ -172,6 +172,14 @@ describe('compressCss', () => {
     );
   });
 
+  it('keeps + spacing only inside parentheses', () => {
+    expect(
+      compressCss(
+        '.x:is(.a) + .b, li:nth-child(2n + 1){width:calc((1px + 2px) * 2)}',
+      ),
+    ).toBe('.x:is(.a)+.b,li:nth-child(2n + 1){width:calc((1px + 2px) * 2)}');
+  });
+
   it('does not treat comment markers inside a string as a comment', () => {
     expect(compressCss('.a{content:"/*"}.b{color:red}')).toBe(
       '.a{content:"/*"}.b{color:red}',

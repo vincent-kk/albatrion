@@ -22,6 +22,7 @@ import {
 } from './constants/byteKind';
 import { findCommentEnd } from './utils/findCommentEnd';
 import { findStringEnd } from './utils/findStringEnd';
+import { isInsideParens } from './utils/isInsideParens';
 
 /**
  * Compresses CSS by removing unnecessary whitespace, comments, and redundant semicolons.
@@ -118,7 +119,6 @@ export const compressCss = (css: string): string => {
           prevByte === COLON ||
           prevByte === COMMA ||
           prevByte === GT ||
-          prevByte === PLUS ||
           prevByte === TILDE ||
           prevByte === L_PAREN;
 
@@ -129,7 +129,6 @@ export const compressCss = (css: string): string => {
           nextByte === COLON ||
           nextByte === COMMA ||
           nextByte === GT ||
-          nextByte === PLUS ||
           nextByte === TILDE ||
           nextByte === R_PAREN;
 
@@ -138,8 +137,11 @@ export const compressCss = (css: string): string => {
           ((prevByte >= 65 && prevByte <= 90) ||
             (prevByte >= 97 && prevByte <= 122));
 
-        if ((!noSpaceAfter && !noSpaceBefore) || needsSpaceForFunction)
-          output[outputIndex++] = SPACE;
+        let needsSpace = !noSpaceAfter && !noSpaceBefore;
+        if (needsSpace && (prevByte === PLUS || nextByte === PLUS))
+          needsSpace = isInsideParens(output, outputIndex);
+
+        if (needsSpace || needsSpaceForFunction) output[outputIndex++] = SPACE;
       }
       continue;
     }
