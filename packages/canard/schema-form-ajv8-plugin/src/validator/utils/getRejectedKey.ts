@@ -5,7 +5,8 @@ import type { Dictionary } from '@aileron/declare';
 /**
  * Resolves an authored subschema from a schema path local to the root.
  * @param root - Authored root supplied to error transformation.
- * @param path - Schema path; only a `#/` fragment is local to the root.
+ * @param path - Schema path; only a `#/` fragment is local to the root. AJV percent-encodes each
+ *   segment of the fragment after JSON Pointer escaping, so a segment is decoded in that order.
  * @returns The referenced subschema, or undefined when the path is outside the root's fragment
  *   (another resource such as `urn:item/not`) or names no schema.
  */
@@ -14,7 +15,8 @@ const schemaAtPath = (root: unknown, path: string): unknown => {
   let current = root;
   for (const part of path.slice(2).split('/')) {
     if (typeof current !== 'object' || current === null) return undefined;
-    current = (current as Dictionary<unknown>)[part.replace(/~1/g, '/').replace(/~0/g, '~')];
+    const segment = part.includes('%') ? decodeURIComponent(part) : part;
+    current = (current as Dictionary<unknown>)[segment.replace(/~1/g, '/').replace(/~0/g, '~')];
   }
   return current;
 };
