@@ -68,6 +68,27 @@ describe('scopeRules', () => {
     expect(scope(input)).toBe(output);
   });
 
+  test.each([
+    [
+      '@import "data:text/css;base64,AA"; .a{}',
+      '@import "data:text/css;base64,AA";.s .a{}',
+    ],
+    [
+      '@import url("https://example.com/a;b.css"); .a{}',
+      '@import url("https://example.com/a;b.css");.s .a{}',
+    ],
+    [
+      '@supports (content: ";") { .a { color: red } }',
+      '@supports (content: ";"){.s .a{ color: red }}',
+    ],
+    [
+      '@media screen /* ; */ and (min-width: 1px) { .a{} } .b{}',
+      '@media screen /* ; */ and (min-width: 1px){.s .a{}}.s .b{}',
+    ],
+  ])('ends a statement only at a real semicolon: %s', (input, output) => {
+    expect(scope(input)).toBe(output);
+  });
+
   test('drops a trailing rule without a matching brace', () => {
     expect(scope('.a{} @media (x) { .b{}')).toBe('.s .a{}');
   });
