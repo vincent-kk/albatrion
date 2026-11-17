@@ -10,20 +10,26 @@ export interface SchemaResource {
 
 /** Keywords whose values are data, not schemas, so an id-shaped member inside them identifies nothing. */
 const DATA_KEYWORDS = ['const', 'enum', 'examples', 'default'];
+/** Keywords whose values map names to schemas, so every key inside them is a name, never a keyword. */
+const NAME_MAPS = ['properties', 'patternProperties', 'definitions', 'dependencies'];
 
 /**
  * Appends every subschema under `value` that declares a non-empty string identifier; appending is its purpose.
  * @param value - Any JSON value of the schema tree; primitives end the walk.
+ * @param inNameMap - Whether `value` maps names to schemas; its keys are then walked unfiltered,
+ *   so a field named `default` or `enum` is still a schema, and the map itself declares no identifier.
  * @param legacyId - Whether the bound Ajv also reads draft-04 `id` (`schemaId` `'id'` or `'auto'`);
  *   `$id` wins when both are present, as in AJV6's own lookup.
  * @param resources - Accumulator that receives the resources in document order.
  */
-const pushResources = (value: unknown, legacyId: boolean, resources: SchemaResource[]): void => {
+const pushResources = (value: unknown, inNameMap: boolean, legacyId: boolean, resources: SchemaResource[]): void => {
   if (typeof value !== 'object' || value === null) return;
   const node = value as Dictionary<unknown>;
-  const id = typeof node.$id === 'string' ? node.$id : legacyId ? node.id : undefined;
+  const id = inNameMap ? undefined : typeof node.$id === 'string' ? node.$id : legacyId ? node.id : undefined;
   if (typeof id === 'string' && id !== '') resources.push({ id, schema: value });
-  for (const key in node) if (!DATA_KEYWORDS.includes(key)) pushResources(node[key], legacyId, resources);
+  for (const key in node)
+    if (inNameMap || !DATA_KEYWORDS.includes(key))
+      pushResources(node[key], !inNameMap && NAME_MAPS.includes(key), legacyId, resources);
 };
 
 /**
@@ -35,6 +41,6 @@ const pushResources = (value: unknown, legacyId: boolean, resources: SchemaResou
  */
 export const collectSchemaResources = (root: object, legacyId: boolean): SchemaResource[] => {
   const resources: SchemaResource[] = [];
-  pushResources(root, legacyId, resources);
+  pushResources(root, false, legacyId, resources);
   return resources.sort((left, right) => right.id.length - left.id.length);
 };
