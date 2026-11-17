@@ -214,6 +214,52 @@ it.each([
   },
 );
 
+it.each([
+  [true, false],
+  [true, undefined],
+  [false, true],
+  [undefined, true],
+] as const)(
+  'retires a pending blur scheduled before controlled=%s changes to %s',
+  (before, after) => {
+    const Input = (props: FieldInputProps) => (
+      <section aria-label="parent input">
+        <button aria-label="parent focus" />
+        {props.ChildFields.map((Child) => (
+          <Child key={Child.key} />
+        ))}
+      </section>
+    );
+    const Leaf = () => <input aria-label="child input" />;
+    const schema = {
+      type: 'object',
+      properties: {
+        field: { type: 'string', presentation: { FieldInput: Leaf } },
+      },
+    } as const;
+    const ref = createRef<FormHandle<typeof schema>>();
+    const tree = (controlled: boolean | undefined) => (
+      <Form
+        ref={ref}
+        jsonSchema={schema}
+        defaultValue={{ field: 'before' }}
+        fieldInputDefinitions={[
+          { test: { type: 'object' }, Component: Input, controlled },
+        ]}
+      />
+    );
+    const view = render(tree(before));
+    const parent = view.getByLabelText('parent input');
+    vi.useFakeTimers();
+    fireEvent.blur(view.getByLabelText('parent focus'));
+    expect(vi.getTimerCount()).toBeGreaterThan(0);
+    view.rerender(tree(after));
+    expect(view.getByLabelText('parent input')).toBe(parent);
+    act(() => vi.advanceTimersByTime(20));
+    expect(ref.current!.node!.state[FieldNodeState.Touched]).not.toBe(true);
+  },
+);
+
 it.each([false, undefined])(
   'retires controlled callbacks while composition delays uncontrolled=%s replacement',
   (controlled) => {
