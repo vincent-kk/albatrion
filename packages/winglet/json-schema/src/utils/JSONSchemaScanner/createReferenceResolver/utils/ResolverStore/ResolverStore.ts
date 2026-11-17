@@ -93,6 +93,8 @@ export class ResolverStore {
   private dialectAliases = new Map<string, Dialect>();
   /** Registered documents by normalized address, built by the first lookup that no key as written matches. */
   private registered: Map<string, SchemaValue> | undefined;
+  /** Retrieval addresses already passed to indexing; an embedded identifier at the same address does not count. */
+  private indexed = new Set<string>();
 
   /**
    * Eagerly index the root while retaining registered documents for lazy lookup.
@@ -280,6 +282,7 @@ export class ResolverStore {
         retrieval + '#',
       );
     this.resources.set(retrieval, initial.resource);
+    this.indexed.add(retrieval);
     return initial;
   }
 
@@ -398,7 +401,7 @@ export class ResolverStore {
       if (schema !== undefined) this.index(schema, uri, dialect);
       else
         for (const [address, document] of registered)
-          if (!this.resources.has(address))
+          if (!this.indexed.has(address))
             this.index(document, address, dialect);
     }
     return this.resources.has(uri);

@@ -105,6 +105,34 @@ describe('registered resources', () => {
     },
   );
 
+  it('indexes the registered documents once however many lookups miss', () => {
+    let reads = 0;
+    const document = {
+      $id: 'https://ex.example/counted.json',
+      get properties() {
+        reads++;
+        return { x: { type: 'string' } };
+      },
+    };
+    const readsFor = (missing: string[]) => {
+      reads = 0;
+      scan(
+        {
+          $id: 'https://ex.example/root.json',
+          properties: Object.fromEntries(
+            missing.map((name) => [name, { $ref: name + '.json' }]),
+          ),
+        },
+        {},
+        { resources: { 'https://ex.example/counted.json': document } },
+      );
+      return reads;
+    };
+    const once = readsFor(['missing']);
+    expect(once).toBeGreaterThan(0);
+    expect(readsFor(['missing', 'other', 'third'])).toBe(once);
+  });
+
   it('finds a registration whose key spells the scheme and host in another case', () => {
     const schema = {
       $id: 'https://Ex.Example/root.json',
