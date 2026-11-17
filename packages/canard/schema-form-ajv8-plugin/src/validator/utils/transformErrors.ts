@@ -25,15 +25,16 @@ export const transformErrors = (
       ? `#/${ajvError.schemaPath.slice(rootReference.length)}`
       : ajvError.schemaPath;
     const rejectedKey = getRejectedKey(ajvError, schemaPath, root);
-    result[i] = {
+    const issue: ValidationIssue = {
       dataPath: transformDataPath(ajvError, rejectedKey),
       schemaPath,
       keyword: ajvError.keyword,
       message: ajvError.message,
       details: ajvError.params,
       source: ajvError,
-      ...(rejectedKey === undefined ? {} : { rejectedKey }),
     };
+    if (rejectedKey !== undefined) issue.rejectedKey = rejectedKey;
+    result[i] = issue;
   }
   return result;
 };
