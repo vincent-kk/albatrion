@@ -22,6 +22,7 @@ import {
 } from './constants/byteKind';
 import { findCommentEnd } from './utils/findCommentEnd';
 import { findStringEnd } from './utils/findStringEnd';
+import { isDeclarationColon } from './utils/isDeclarationColon';
 import { isInsideParens } from './utils/isInsideParens';
 
 /**
@@ -126,7 +127,6 @@ export const compressCss = (css: string): string => {
           nextByte === LBRACE ||
           nextByte === RBRACE ||
           nextByte === SEMICOLON ||
-          nextByte === COLON ||
           nextByte === COMMA ||
           nextByte === GT ||
           nextByte === TILDE ||
@@ -140,6 +140,8 @@ export const compressCss = (css: string): string => {
         let needsSpace = !noSpaceAfter && !noSpaceBefore;
         if (needsSpace && (prevByte === PLUS || nextByte === PLUS))
           needsSpace = isInsideParens(output, outputIndex);
+        else if (needsSpace && nextByte === COLON)
+          needsSpace = !isDeclarationColon(buffer, cursor);
 
         if (needsSpace || needsSpaceForFunction) output[outputIndex++] = SPACE;
       }
