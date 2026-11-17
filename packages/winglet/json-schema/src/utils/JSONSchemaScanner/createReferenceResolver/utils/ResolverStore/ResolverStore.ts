@@ -23,6 +23,7 @@ import type {
   ResolverContext,
   Resource,
 } from './type';
+import { isCanonicalRetrievalURI } from './utils/isCanonicalRetrievalURI';
 import { shortestReference } from './utils/shortestReference';
 
 /** Identifier names of any dialect; a copy is inspected when one occurs, whatever its dialect. */
@@ -93,6 +94,8 @@ export class ResolverStore {
   private dialectAliases = new Map<string, Dialect>();
   /** Registered documents by normalized address, built by the first lookup that no key as written matches. */
   private registered: Map<string, SchemaValue> | undefined;
+  /** Whether every registered key is already spelled as resolution writes it; computed once, only by a known-address lookup. */
+  private canonicalKeys: boolean | undefined;
   /** Retrieval addresses already passed to indexing; an embedded identifier at the same address does not count. */
   private indexed = new Set<string>();
 
@@ -397,6 +400,14 @@ export class ResolverStore {
     if (source === undefined) return false;
     const dialect = this.options.defaultDialect ?? DEFAULT_DIALECT;
     if (known) {
+      if (
+        this.registered === undefined &&
+        !hasOwnProperty(source, uri) &&
+        !(this.canonicalKeys ??= Object.keys(source).every(
+          isCanonicalRetrievalURI,
+        ))
+      )
+        this.registered = this.normalizeRegistered(source);
       const schema = hasOwnProperty(source, uri)
         ? source[uri]
         : this.registered?.get(uri);
