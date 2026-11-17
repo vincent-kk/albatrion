@@ -22,8 +22,9 @@ export interface PrototypeProfile {
  * `Object.prototype` and `null` share one fixed profile without a lookup, since only
  * `__proto__` intercepts assignment there. Any other profile is cached per prototype in
  * module state and never invalidated: a member added to the chain after its first clone
- * is not in the profile, so it is assigned and an added setter runs; a member removed
- * later is defined, which gives the same result as assigning it.
+ * is not in the profile, so it is assigned: an added setter runs, and an added getter-only
+ * or read-only property makes the assignment throw a `TypeError`. A member removed later
+ * is defined, which gives the same result as assigning it.
  *
  * Box prototypes are recognized by their type tag (`Number.prototype` is itself a
  * Number object), so a box prototype from another realm counts as one.

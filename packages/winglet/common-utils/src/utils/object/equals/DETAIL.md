@@ -39,7 +39,7 @@
 ### equals-builtins — 내장 상태 비교
 
 - Date와 RegExp는 내부 값을, Set은 구성원을, Map은 키와 재귀 비교한 값을 사용한다.
-- ArrayBuffer와 DataView는 바이트를, 박싱된 원시값은 원시값을, Error는 `name`과 `message`를 비교하고, 상태가 같으면 own 키 비교를 이어 간다. 상태가 같아도 own 속성이 다르면 다르다.
+- ArrayBuffer와 DataView는 바이트를, 박싱된 원시값은 원시값을, Error는 `name`과 `message`를 비교하고, 상태가 같으면 own 키 비교를 이어 간다. 상태가 같아도 own 속성이 다르면 다르다. 단, 안정 비교는 DataView를 바이트로만 비교하므로 바이트가 같은 DataView는 own 속성이 달라도 같다.
 - Set의 객체 구성원과 Map의 객체 키는 참조 동일성이 있어야 일치한다.
 
 ### equals-omit — 제외 키 정책
