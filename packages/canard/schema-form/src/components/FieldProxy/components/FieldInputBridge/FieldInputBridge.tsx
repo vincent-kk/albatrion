@@ -117,8 +117,7 @@ export const FieldInputBridge = memo(
       (value, option = SetValueOption.Overwrite) => {
         if (
           !accepts() ||
-          committedLockRef.current.readOnly ||
-          committedLockRef.current.disabled ||
+          committedLockRef.current ||
           node.isReadOnly ||
           node.isDisabled
         )
@@ -133,8 +132,7 @@ export const FieldInputBridge = memo(
       (files: Optional<File | File[]>) => {
         if (
           !accepts() ||
-          committedLockRef.current.readOnly ||
-          committedLockRef.current.disabled ||
+          committedLockRef.current ||
           node.isReadOnly ||
           node.isDisabled
         )

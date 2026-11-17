@@ -14,6 +14,39 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { type FieldInputProps, Form, type FormHandle } from '../../index';
 
 afterEach(cleanup);
+
+it('keeps the input locked when one Form lock replaces the other', () => {
+  let input!: FieldInputProps;
+  const Input = (props: FieldInputProps) => {
+    input = props;
+    return <input value={String(props.value ?? '')} readOnly />;
+  };
+  const schema = {
+    type: 'string',
+    presentation: { FieldInput: Input, controlled: true },
+  } as const;
+  const ref = createRef<FormHandle<typeof schema>>();
+  const tree = (disabled: boolean, readOnly: boolean) => (
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      defaultValue="before"
+      disabled={disabled}
+      readOnly={readOnly}
+    />
+  );
+  const view = render(tree(true, false));
+  const pending = input.onChange;
+  view.rerender(tree(false, true));
+  expect(input.disabled).toBe(false);
+  expect(input.readOnly).toBe(true);
+  act(() => pending('while locked'));
+  expect(ref.current!.getValue()).toBe('before');
+  view.rerender(tree(false, false));
+  act(() => pending('after both unlock'));
+  expect(ref.current!.getValue()).toBe('after both unlock');
+});
+
 it.each(['disabled', 'readOnly'] as const)(
   'an outstanding input callback respects the latest Form %s',
   (lock) => {

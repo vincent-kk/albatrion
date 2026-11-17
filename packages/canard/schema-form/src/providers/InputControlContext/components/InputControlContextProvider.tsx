@@ -19,11 +19,12 @@ export const InputControlContextProvider = ({
   disabled,
   children,
 }: PropsWithChildren<InputControlContextProviderProps>) => {
-  const committedLockRef = useRef({ readOnly, disabled });
+  const isLocked = !!(readOnly || disabled);
+  const committedLockRef = useRef(isLocked);
   // Publish before child layout setup without leaking uncommitted render values.
   useInsertionEffect(() => {
-    committedLockRef.current = { readOnly, disabled };
-  }, [readOnly, disabled]);
+    committedLockRef.current = isLocked;
+  }, [isLocked]);
   const value = useMemo(
     () => ({ readOnly, disabled, committedLockRef }),
     [readOnly, disabled],
