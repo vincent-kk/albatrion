@@ -30,9 +30,16 @@ const schemaAtPath = (root: unknown, path: string): unknown => {
  * @param error - AJV issue whose keyword determines the key source.
  * @param schemaPath - The issue's schema path, already rewritten to the authored fragment.
  * @param root - Authored schema for negative-required lookup.
+ * @param notRequiredKeys - Lookups already made for this root, by schema path, misses included; a
+ *   `not` issue reads from it before walking the root and stores what the walk found.
  * @returns The property name, or undefined for host-only issues.
  */
-export const getRejectedKey = (error: ErrorObject, schemaPath: string, root: unknown): string | undefined => {
+export const getRejectedKey = (
+  error: ErrorObject,
+  schemaPath: string,
+  root: unknown,
+  notRequiredKeys?: Map<string, string | undefined>,
+): string | undefined => {
   // AJV names the key on every issue raised inside `propertyNames`; the closing issue carries it in params.
   if (typeof error.propertyName === 'string') return error.propertyName;
   if (error.keyword === 'additionalProperties' || error.keyword === 'unevaluatedProperties') {
@@ -46,10 +53,12 @@ export const getRejectedKey = (error: ErrorObject, schemaPath: string, root: unk
     return name.includes('~') ? name.replace(/~1/g, '/').replace(/~0/g, '~') : name;
   }
   if (error.keyword !== 'not') return undefined;
+  if (notRequiredKeys?.has(schemaPath)) return notRequiredKeys.get(schemaPath);
   const schema = schemaAtPath(root, schemaPath);
-  if (typeof schema !== 'object' || schema === null) return undefined;
-  const required = (schema as Dictionary<unknown>).required;
-  return Array.isArray(required) && required.length === 1 && typeof required[0] === 'string'
+  const required = typeof schema === 'object' && schema !== null ? (schema as Dictionary<unknown>).required : undefined;
+  const key = Array.isArray(required) && required.length === 1 && typeof required[0] === 'string'
     ? required[0]
     : undefined;
+  notRequiredKeys?.set(schemaPath, key);
+  return key;
 };
