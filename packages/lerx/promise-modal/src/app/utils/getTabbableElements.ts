@@ -1,6 +1,13 @@
-/** Elements that can enter sequential focus navigation before tabindex filtering. */
-const CANDIDATE_SELECTOR =
-  'a[href], area[href], button, input, select, textarea, iframe, object, embed, [tabindex], [contenteditable=""], [contenteditable="true" i], [contenteditable="plaintext-only" i], audio[controls], video[controls], summary';
+/** Elements that can enter sequential focus navigation without being editing hosts. */
+const CONTROL_SELECTOR =
+  'a[href], area[href], button, input, select, textarea, iframe, object, embed, [tabindex], audio[controls], video[controls], summary';
+/**
+ * Adds every contenteditable element; the filter keeps only editing-host values.
+ * Attribute presence keeps jsdom's selector matching as cheap as an exact value.
+ */
+const CANDIDATE_SELECTOR = `${CONTROL_SELECTOR}, [contenteditable]`;
+/** Lowercased contenteditable values that make an element an editing host. */
+const EDITABLE_VALUES = ['', 'true', 'plaintext-only'];
 
 /** Lists candidates in tree order, splicing open shadow roots in at their hosts. */
 const collectCandidates = (root: Element | ShadowRoot): HTMLElement[] => {
@@ -37,6 +44,13 @@ export const getTabbableElements = (frame: HTMLElement, reverse = false): HTMLEl
       if (
         element.tabIndex < 0 ||
         element.matches(':disabled, input[type="hidden"]')
+      )
+        return false;
+      const editable = element.getAttribute('contenteditable');
+      if (
+        editable !== null &&
+        !EDITABLE_VALUES.includes(editable.toLowerCase()) &&
+        !element.matches(CONTROL_SELECTOR)
       )
         return false;
       for (

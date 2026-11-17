@@ -41,3 +41,14 @@ it.each(['false', 'FALSE'])(
     ]);
   },
 );
+
+it('keeps a non-editable element that is tabbable for another reason', () => {
+  const frame = document.createElement('div');
+  frame.innerHTML =
+    '<button id="first">first</button><div id="panel" contenteditable="false" tabindex="0">x</div>';
+  document.body.append(frame);
+  expect(getTabbableElements(frame).map((element) => element.id)).toEqual([
+    'first',
+    'panel',
+  ]);
+});
