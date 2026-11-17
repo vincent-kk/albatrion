@@ -1,17 +1,21 @@
 import type { ValidationIssue } from '@canard/schema-form';
 import { toJSONPointer } from './dataPath/toJSONPointer';
+import type { SchemaResource } from './schemaPath/collectSchemaResources';
 import { isChildSchemaPath } from './schemaPath/isChildSchemaPath';
 import type { ErrorObject } from 'ajv';
 
 /**
  * Normalize Ajv 6 paths and attach the key rejected by a constraint.
  * @param errors - AJV6 issues of one validation run.
+ * @param resources - Resources of the compiled schema, longest id first (see
+ *   `collectSchemaResources`); a false schema inside one of them is classified from its root.
  * @param notRequiredKeyOf - Lookup from a `not` issue's schema path to the single name its schema
  *   requires (see `createNotRequiredKeyLookup`); without it `not` issues carry no rejected key.
  * @returns One issue per AJV6 issue, in order, with a JSON Pointer data path.
  */
 export const transformDataPath = (
   errors: ErrorObject[],
+  resources: readonly SchemaResource[] = [],
   notRequiredKeyOf?: (schemaPath: string) => string | undefined,
 ): ValidationIssue[] => {
   const result = new Array<ValidationIssue>(errors.length);
@@ -28,7 +32,7 @@ export const transformDataPath = (
       if (typeof missingProperty === 'string')
         convertedDataPath += `/${missingProperty.replace(/~/g, '~0').replace(/\//g, '~1')}`;
     }
-    if (ajvError.keyword === 'false schema' && convertedDataPath && isChildSchemaPath(ajvError.schemaPath)) {
+    if (ajvError.keyword === 'false schema' && convertedDataPath && isChildSchemaPath(ajvError.schemaPath, resources)) {
       const lastSlash = convertedDataPath.lastIndexOf('/');
       rejectedKey = convertedDataPath.slice(lastSlash + 1)
         .replace(/~1/g, '/').replace(/~0/g, '~');
