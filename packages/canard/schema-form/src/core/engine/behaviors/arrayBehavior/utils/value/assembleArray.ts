@@ -42,6 +42,7 @@ export const assembleArray: Behavior['assemble'] = (
   recalculated,
   hint,
 ) => {
+  if (node.source === null) return null;
   const previous = isArray(node.storedValue) ? node.storedValue : undefined;
   const remainingItemCount = hint?.remainingItemCount;
   if (

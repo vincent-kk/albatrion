@@ -17,6 +17,7 @@ export const assembleObject: Behavior['assemble'] = (
   recalculated,
   hint,
 ) => {
+  if (node.source === null) return null;
   const previous = node.storedValue;
   const stable = node.runtime.objectShapes?.get(node);
   if (
@@ -114,7 +115,7 @@ export const assembleObject: Behavior['assemble'] = (
   const propertyOrder = getStaticChoices(node.schema).propertyOrder;
   const entries = node.blueprintNode.childEntries;
   if (
-    previous === undefined &&
+    (previous === undefined || previous === null) &&
     node.extras === undefined &&
     propertyOrder.length === 0 &&
     entries.length === children.length
