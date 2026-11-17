@@ -1,9 +1,6 @@
-// Kept byte-identical to the list in `scripts/buildHashes.mjs`. The ban runs
-// one way — that script may not import from `src/`, because it must stay pure
-// Node ESM for rolldown — so a shared home would have to live under `scripts/`
-// with a hand-written `.d.mts`, the arrangement whose declaration drifted once
-// already. Until that trade is taken, `__tests__/computeHashManifest.spec.ts`
-// is what pins the two copies to the same output.
+// Byte-identical to the list in `scripts/buildHashes.mjs`, which must stay pure
+// Node ESM for rolldown and so cannot import this one;
+// `hashManifest/__tests__/computeHashManifest.spec.ts` pins both to one output.
 const NOISE = [/(^|\/)\.omc(\/|$)/, /(^|\/)\.DS_Store$/, /\.log$/];
 
 /**
