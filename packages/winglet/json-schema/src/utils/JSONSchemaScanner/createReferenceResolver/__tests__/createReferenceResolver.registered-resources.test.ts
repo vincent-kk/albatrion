@@ -72,4 +72,46 @@ describe('registered resources', () => {
     });
     expect(output.properties!.a).toEqual({ type: 'string' });
   });
+
+  it('accepts two spellings of one address that register the same document', () => {
+    const document = { type: 'string' };
+    const schema = {
+      $id: 'https://ex.example/root.json',
+      properties: { a: { $ref: 'types.json' } },
+    };
+    const { outcomes } = scan(
+      schema,
+      {},
+      {
+        resources: {
+          'https://EX.example/types.json': document,
+          'https://ex.EXAMPLE/types.json': document,
+        },
+      },
+    );
+    expect(outcomes.get('#/properties/a')?.[0]).toMatchObject({
+      resolved: true,
+    });
+  });
+
+  it('rejects two spellings of one address that register different documents', () => {
+    const schema = {
+      $id: 'https://ex.example/root.json',
+      properties: { a: { $ref: 'types.json' } },
+    };
+    expect(() =>
+      scan(
+        schema,
+        {},
+        {
+          resources: {
+            'https://EX.example/types.json': { type: 'string' },
+            'https://ex.EXAMPLE/types.json': { type: 'number' },
+          },
+        },
+      ),
+    ).toThrow(
+      'https://ex.example/types.json declared at https://EX.example/types.json and https://ex.EXAMPLE/types.json',
+    );
+  });
 });
