@@ -41,7 +41,11 @@ compressCss('.a::before { content: "/*"; color: red; }'); // '.a::before{content
 compressCss('.a { background: url("a/*b.png"); }'); // '.a{background:url("a/*b.png")}'
 ```
 
-An unquoted `url(a/*b.png)` is not a string, so its `/*` still opens a comment. Quote URLs that contain one.
+An unquoted `url(…)` is copied verbatim too, so a `/*` inside it opens no comment:
+
+```typescript
+compressCss('.a { background: url(a/*b.png); }'); // '.a{background:url(a/*b.png)}'
+```
 
 ### A comment ending a block leaves one orphan space
 

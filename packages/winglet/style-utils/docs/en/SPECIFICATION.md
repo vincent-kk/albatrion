@@ -113,7 +113,7 @@ destroyScope('my-component'); // tear down the whole scope
 
 - **Singleton per scope**: `StyleManager.get(scopeId, config)` returns a shared instance per scope (per shadow root, if provided). Multiple factories for the same `scopeId` feed the same stylesheet.
 - **Batched writes**: `add` and `remove` set a dirty flag; a single `requestAnimationFrame` flush concatenates all active rules and writes them via `CSSStyleSheet.replaceSync` (or `<style>.textContent` fallback).
-- **Selector scoping**: `.scopeId ` is prepended to every selector of a selector list (split at top-level commas) except the bare selectors `:root` / `:host`. Rules inside `@media`, `@supports`, `@container`, `@layer`, `@document` and `@starting-style` are scoped the same way; other at-rules (`@keyframes`, `@font-face`, `@import`, …) are copied unchanged. Shadow roots skip prefixing altogether.
+- **Selector scoping**: `.scopeId ` is prepended to every selector of a selector list (split at top-level commas) except the bare selectors `:root` / `:host`. Rules inside `@media`, `@supports`, `@container`, `@layer`, `@scope`, `@document` and `@starting-style` are scoped the same way; other at-rules (`@keyframes`, `@font-face`, `@import`, …) are copied unchanged. Braces, semicolons and commas inside quoted strings, comments and backslash escapes are not structure; a brace inside an unquoted `url(…)` still is, so quote such URLs. Shadow roots skip prefixing altogether.
 - **Dual DOM path**: modern browsers use `adoptedStyleSheets`; older environments get a `<style>` element in `document.head` (or inside the shadow root for shadow mode).
 
 ---
