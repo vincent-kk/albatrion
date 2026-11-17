@@ -9,7 +9,10 @@ import { Form, ValidationMode } from '@canard/schema-form';
 
 import { FieldInputTimeRangeDefinition } from '../FieldInputTimeRange';
 
-type PickerProps = Pick<ComponentProps<typeof AntdDatePicker>, 'disabledDate'>;
+type PickerProps = Pick<
+  ComponentProps<typeof AntdDatePicker.RangePicker>,
+  'disabledTime'
+>;
 
 const received = vi.hoisted(() => ({
   props: [] as { widget: string; props: PickerProps }[],
@@ -66,11 +69,52 @@ it('reads minimum and maximum from presentation.FieldInputProps', () => {
   );
   const last = received.props.at(-1)!;
   expect(last.widget).toBe('RangePicker');
-  const disabledDate = last.props.disabledDate!;
-  const info = { type: 'date' as const };
-  expect(disabledDate(dayjs('09:00:00+00:00', FORMAT), info)).toBe(true);
-  expect(disabledDate(dayjs('12:00:00+00:00', FORMAT), info)).toBe(false);
-  expect(disabledDate(dayjs('19:00:00+00:00', FORMAT), info)).toBe(true);
+  const disabledTime = last.props.disabledTime!;
+  const isDisabled = (value: string) => {
+    const time = dayjs(value, FORMAT);
+    const limits = disabledTime(time, 'start', {});
+    return (
+      !!limits.disabledHours?.().includes(time.hour()) ||
+      !!limits.disabledMinutes?.(time.hour()).includes(time.minute())
+    );
+  };
+  expect(isDisabled('09:00:00+00:00')).toBe(true);
+  expect(isDisabled('09:59:00+00:00')).toBe(true);
+  expect(isDisabled('10:00:00+00:00')).toBe(false);
+  expect(isDisabled('12:00:00+00:00')).toBe(false);
+  expect(isDisabled('18:00:00+00:00')).toBe(false);
+  expect(isDisabled('18:01:00+00:00')).toBe(true);
+  expect(isDisabled('19:00:00+00:00')).toBe(true);
+});
+
+it('keeps a limit window that wraps past local midnight', () => {
+  const local = (hour: number, minute: number) =>
+    dayjs().hour(hour).minute(minute).format(FORMAT);
+  render(
+    <Form
+      fieldInputDefinitions={[FieldInputTimeRangeDefinition]}
+      jsonSchema={{
+        type: 'array',
+        format: 'time-range',
+        items: { type: 'string' },
+        presentation: {
+          FieldInputProps: { minimum: local(22, 0), maximum: local(2, 0) },
+        },
+      }}
+    />,
+  );
+  const limits = received.props.at(-1)!.props.disabledTime!(
+    dayjs(),
+    'start',
+    {},
+  );
+  expect(limits.disabledHours?.()).toEqual([
+    3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+  ]);
+  expect(limits.disabledMinutes?.(2)).toEqual(
+    Array.from({ length: 59 }, (_, index) => index + 1),
+  );
+  expect(limits.disabledMinutes?.(23)).toEqual([]);
 });
 
 it('accepts minimum under options without a schema error', () => {
