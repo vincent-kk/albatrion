@@ -52,6 +52,7 @@ Precedence: repository instructions (this document, `DOCUMENTATION.md`, `NAMING_
 | `react-plugin-implementation` | React-based `@canard/schema-form` plugin implementation patterns                               |
 | `release-note-generator`      | Release notes written from git change data                                                     |
 | `agents-docs-asset-wiring`    | Wire a package's `docs/agents` assets into the `@slats/agents-assets-sync` engine              |
+| `bug-bounty`                  | Multi-agent bug bounty rounds, recorded under `bug-bounty/round-N/`                            |
 
 ### Commands — `.claude/commands/`
 
