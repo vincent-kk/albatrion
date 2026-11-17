@@ -10,6 +10,8 @@
 - 블록이 없으면 문서 끝에 덧붙인다. 문서가 개행으로 끝나지 않으면 개행 하나를 먼저 넣어 시작 marker 가 자기 줄에서 시작하게 한다.
 - 본문이 개행으로 끝나지 않으면 개행 하나를 붙여 쓴다. 그래서 되읽은 본문은 소스가 갖지 않은 바이트 하나를 가질 수 있다.
 - `blockBodyMatches` 는 그 개행 하나를 감안해 두 가지 읽기를 모두 시험한다. 이것이 블록 판정을 파일 해시 비교와 동일하게 유지한다.
+- marker 줄과 본문의 줄바꿈은 LF 와 CRLF 를 모두 인식한다. `core.autocrlf=true` 체크아웃은 `AGENTS.md` 전체를 CRLF 로 바꾸는데, 그 블록을 못 알아보면 다음 실행이 같은 id 의 블록을 하나 더 덧붙이고 옛 사본은 갱신도 고아 삭제도 되지 않는다. 쓰는 블록은 언제나 LF 다.
+- `blockBodyMatches` 는 앞의 두 읽기가 맞지 않고 본문에 CRLF 가 있으면 CRLF 를 LF 로 바꾼 본문으로 같은 두 읽기를 한 번 더 시험한다. 줄바꿈만 바뀐 블록은 내용이 바뀐 것이 아니므로 `--force` 를 요구하지 않는다. CRLF 로 된 원본은 첫 비교에서 그대로 맞는다.
 - 블록 탐색은 캡처된 id 를 비교해서 한다. id 로 정규식을 만들지 않는다 — 패키지 이름은 정규식 메타문자를 담는다.
 - `createBlockPattern` 은 호출마다 새 정규식을 돌려준다. 전역 정규식은 `lastIndex` 를 이월하므로 공유하면 일치를 건너뛴다.
 - `parseBlocks` 는 이 도구가 쓴 블록만, 문서 순서대로 읽는다.
@@ -20,14 +22,15 @@
 - parseBlocks는 소유 블록을 문서 순서대로 반환하며, 없으면 빈 배열을 반환합니다. 특정 블록 본문 조회는 해당 ID가 없으면 null을 반환합니다.
 - upsertBlock은 같은 ID가 있으면 제자리에서 교체하고, 없으면 문서 끝에 추가합니다. 필요한 후행 개행을 보충하되 다른 소유자의 내용을 변경하지 않습니다.
 - removeBlock은 해당 ID가 없으면 입력을 그대로 반환합니다.
-- 블록 본문 해시 비교는 원본에 없던 후행 개행 하나가 추가된 왕복 표현도 같은 내용으로 받아들입니다.
+- 블록 본문 해시 비교는 원본에 없던 후행 개행 하나가 추가된 왕복 표현도 같은 내용으로 받아들입니다. 줄바꿈만 CRLF 로 바뀐 본문도 같은 내용으로 받아들입니다.
+- 모든 함수는 CRLF 줄바꿈의 블록도 같은 블록으로 식별합니다.
 
 ## Internal Unit Contracts
 
 `utils/markerLine.ts` 의 단위다. `index.ts` 가 수출하지 않으므로 공개 계약이 아니며, 소비자는 `markerBlock.ts` 하나다.
 
 - `startMarker(blockId: string): string` / `endMarker(blockId: string): string`
-- `createBlockPattern(): RegExp` — 캡처 `1` = blockId, `2` = body
+- `createBlockPattern(): RegExp` — 캡처 `1` = blockId, `2` = body. marker 뒤의 줄바꿈은 `\n` 과 `\r\n` 을 모두 받는다.
 
 ## Exported Types
 
@@ -56,6 +59,13 @@
 - 매니페스트와 일치하는 본문은 `blockBodyMatches` 가 받아들이고, 변경된 본문은 거부한다.
 - `upsertBlock` 이 붙인 후행 개행 하나는 불일치로 취급되지 않는다.
 - 검증: `__tests__/markerBlock.test.ts`.
+
+### AC-MB-CRLF — CRLF 로 바뀐 문서의 블록도 같은 블록이다
+
+- CRLF 문서에서 `parseBlocks`, `findBlockBody`, `removeBlock` 은 LF 문서와 같은 블록을 찾고, `removeBlock` 은 marker 줄의 CRLF 까지 함께 지운다.
+- 그 블록에 대한 `upsertBlock` 은 덧붙이지 않고 제자리에서 교체한다.
+- 줄바꿈만 바뀐 본문은 LF 원본과 일치하고, 내용이 바뀐 본문은 여전히 불일치다.
+- 검증: `__tests__/crlfBlocks.test.ts`.
 
 ## Last Updated
 

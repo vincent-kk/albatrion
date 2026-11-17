@@ -111,12 +111,23 @@ export function removeBlock(content: string, blockId: string): string {
  * `upsertBlock` appends a newline when the source file lacks one, so a body
  * read back may hold one byte the source did not. Both readings are checked,
  * which keeps the verdict identical to the file-copy path's hash comparison.
+ * A body whose line endings a `core.autocrlf` checkout turned into CRLF is
+ * checked again with LF endings, since only the line endings changed.
  *
  * @param body - body returned by `parseBlocks` or `findBlockBody`
  * @param expected - the manifest's SHA-256 for the source file
  * @returns `true` when the body matches the manifest
  */
 export function blockBodyMatches(body: string, expected: Sha256Hex): boolean {
+  if (matchesEitherEnding(body, expected)) return true;
+  return (
+    body.includes('\r\n') &&
+    matchesEitherEnding(body.replace(/\r\n/g, '\n'), expected)
+  );
+}
+
+// The body as read, or without the one trailing newline `upsertBlock` adds.
+function matchesEitherEnding(body: string, expected: Sha256Hex): boolean {
   if (hashEquals(hashContent(body), expected)) return true;
   return (
     body.endsWith('\n') && hashEquals(hashContent(body.slice(0, -1)), expected)
