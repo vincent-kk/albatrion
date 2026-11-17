@@ -27,8 +27,8 @@ export const FormWarningCode = {
   ResetRebuiltByReference: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.ResetRebuiltByReference}`,
   /** Class: warning record; when: dependentSchemas is unsupported for form shape. */
   DependentSchemasIgnoredForForm: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.DependentSchemasIgnoredForForm}`,
-  /** Class: warning record; when: a terminal input reads empty child-node components. */
-  ChildNodeComponentsOnTerminal: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.ChildNodeComponentsOnTerminal}`,
+  /** Class: warning record; when: a terminal input reads empty child fields. */
+  ChildFieldsReadOnTerminal: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.ChildFieldsReadOnTerminal}`,
   /** Class: warning record; when: a terminal subtree declares a reserved key ignored by the form. */
   TerminalSubtreeKeyIgnoredForForm: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.TerminalSubtreeKeyIgnoredForForm}`,
   /** Class: warning record; when: a branch tag is empty or outside the admitted kinds. */
