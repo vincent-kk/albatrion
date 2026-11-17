@@ -61,7 +61,7 @@ export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
     registerValidationRoot(registered);
     const validate = createValidatorFactory(
       registered.validation, registered.validationCopy ? registered.key : undefined,
-    )(jsonSchema);
+    )(registered.validationCopy ?? jsonSchema);
     return async (value: unknown) => validate(value);
   },
   compileGuard: (root, pointer) => {
