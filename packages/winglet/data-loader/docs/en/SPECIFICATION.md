@@ -83,7 +83,7 @@ Batching relies on the JavaScript event loop. When `load(key)` is called:
 
 1. The key is appended to the **current batch**.
 2. If no scheduler is pending, one is registered using the configured `batchScheduler` (default: `process.nextTick`).
-3. All `load()` calls that occur synchronously within the same tick are accumulated into the same batch.
+3. With an asynchronous scheduler, such as the default, all `load()` calls that occur synchronously within the same tick are accumulated into the same batch. A synchronous scheduler such as `(fn) => fn()` dispatches each batch as soon as it is registered, so every `load()` becomes its own one-key batch, while a repeated key still resolves from the cache.
 4. When the scheduler fires, `__dispatchBatch__` calls the `BatchLoader` with all accumulated keys.
 
 ```
@@ -406,7 +406,9 @@ const userLoader = new DataLoader(batchLoadUsers, { maxBatchSize: 100 });
 ### Custom Scheduler
 
 ```typescript
-// Immediate dispatch — useful in testing or latency-sensitive code
+// Immediate dispatch — every load() dispatches its own one-key batch before it
+// returns; repeated keys still resolve from the cache. Useful in testing or
+// latency-sensitive code; defeats batching.
 const testLoader = new DataLoader(batchLoad, {
   batchScheduler: (fn) => fn(),
 });
