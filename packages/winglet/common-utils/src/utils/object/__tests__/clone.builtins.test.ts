@@ -1,3 +1,4 @@
+import { runInNewContext } from 'node:vm';
 import { describe, expect, it } from 'vitest';
 
 import { clone } from '../clone';
@@ -140,6 +141,15 @@ describe('clone built-in types', () => {
     expect(cloned).toBeInstanceOf(Shape);
     expect(cloned.area).toBe(4);
     expect(cloned.kind).toBe('square');
+  });
+
+  it('should keep the primitive value of a boxed primitive from another realm', () => {
+    const foreign: Number = runInNewContext('new Number(5)');
+
+    const cloned = clone(foreign);
+
+    expect(cloned.valueOf()).toBe(5);
+    expect(Object.getPrototypeOf(cloned)).toBe(Object.getPrototypeOf(foreign));
   });
 
   it('should clone an object built on a box prototype without a primitive value', () => {
