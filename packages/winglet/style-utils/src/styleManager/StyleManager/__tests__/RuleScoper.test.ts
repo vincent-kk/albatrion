@@ -132,6 +132,12 @@ describe('RuleScoper', () => {
     expect(scope(input)).toBe(output);
   });
 
+  test('reads only url( after a non-identifier character as a URL', () => {
+    expect(scope('.a { b: myurl(x /* ) } */) } .b {}')).toBe(
+      '.s .a{ b: myurl(x /* ) } */) }.s .b{}',
+    );
+  });
+
   test('drops a trailing rule without a matching brace', () => {
     expect(scope('.a{} @media (x) { .b{}')).toBe('.s .a{}');
   });
