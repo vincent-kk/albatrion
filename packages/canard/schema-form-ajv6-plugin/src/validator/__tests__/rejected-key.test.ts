@@ -50,6 +50,20 @@ describe('FRAGMENT-020 FRAGMENT-053 rejectedKey', () => {
     expect(issues?.find((issue) => issue.keyword === 'false schema')).toMatchObject({ dataPath, rejectedKey });
   });
 
+  it('classifies false schemas inside a resource with its own $id by their last segments', async () => {
+    ajvValidatorPlugin.bind!(new Ajv({ allErrors: true }));
+    const schema = {
+      type: 'object',
+      definitions: {
+        item: { $id: 'http://example.com/a/item.json', type: 'object', properties: { x: false, y: { if: true, then: false } } },
+      },
+      properties: { b: { $ref: 'http://example.com/a/item.json' } },
+    };
+    const issues = await ajvValidatorPlugin.compile(schema as unknown as JSONSchema)({ b: { x: 1, y: 1 } });
+    expect(issues?.filter((issue) => issue.keyword === 'false schema').map((issue) => [issue.dataPath, issue.rejectedKey]))
+      .toEqual([['/b', 'x'], ['/b/y', undefined]]);
+  });
+
   it('keeps the host of a false propertyNames schema and rejects the offending key', async () => {
     ajvValidatorPlugin.bind!(new Ajv({ allErrors: true }));
     const schema = {
