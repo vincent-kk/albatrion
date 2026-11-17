@@ -56,6 +56,29 @@ describe('registered resources', () => {
     expect(output.properties.nested).toEqual({ type: 'string' });
   });
 
+  it('rejects an identifier two registered documents declare once a lookup names no registration', () => {
+    const schema = {
+      $id: 'https://ex.example/root.json',
+      properties: { a: { $ref: 'missing.json' } },
+    };
+    const twin = (uri: string) => ({
+      $id: uri,
+      $defs: { T: { $id: 'https://ex.example/shared.json' } },
+    });
+    expect(() =>
+      scan(
+        schema,
+        {},
+        {
+          resources: {
+            'https://ex.example/a.json': twin('https://ex.example/a.json'),
+            'https://ex.example/b.json': twin('https://ex.example/b.json'),
+          },
+        },
+      ),
+    ).toThrow('https://ex.example/shared.json declared at');
+  });
+
   it('finds a registration whose key spells the scheme and host in another case', () => {
     const schema = {
       $id: 'https://Ex.Example/root.json',

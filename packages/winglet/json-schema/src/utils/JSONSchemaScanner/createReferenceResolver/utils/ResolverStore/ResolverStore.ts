@@ -380,18 +380,27 @@ export class ResolverStore {
   /**
    * Supply a registered external document lazily; no I/O occurs here.
    * @param uri Normalized document address; only an absolute one is looked up among registrations.
-   * @returns Whether the resource is known after checking registrations.
-   * @throws Duplicate-identifier error when two keys normalize to one address with different documents.
+   * @returns Whether the resource is known after checking registrations; an address no key names
+   *   is known once indexing every registered document finds it embedded in one of them.
+   * @throws Duplicate-identifier error when two keys normalize to one address with different documents,
+   *   or when indexing the registered documents finds an identifier declared twice.
    */
   public ensure(uri: string): boolean {
     if (this.resources.has(uri)) return true;
     const source = this.options.resources;
     if (source === undefined || !isAbsoluteURI(uri)) return false;
-    const schema = hasOwnProperty(source, uri)
-      ? source[uri]
-      : (this.registered ??= this.normalizeRegistered(source)).get(uri);
-    if (schema === undefined) return false;
-    this.index(schema, uri, this.options.defaultDialect ?? DEFAULT_DIALECT);
+    const dialect = this.options.defaultDialect ?? DEFAULT_DIALECT;
+    if (hasOwnProperty(source, uri)) this.index(source[uri], uri, dialect);
+    else {
+      const registered = (this.registered ??=
+        this.normalizeRegistered(source));
+      const schema = registered.get(uri);
+      if (schema !== undefined) this.index(schema, uri, dialect);
+      else
+        for (const [address, document] of registered)
+          if (!this.resources.has(address))
+            this.index(document, address, dialect);
+    }
     return this.resources.has(uri);
   }
 
