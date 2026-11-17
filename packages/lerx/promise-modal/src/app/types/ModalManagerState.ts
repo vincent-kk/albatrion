@@ -45,10 +45,15 @@ export interface ModalManagerState {
   /** The exact installed callback is shared by Escape and Tab handling. */
   keydown?: Fn<[event: KeyboardEvent]>;
   /**
-   * Capture-phase partner of `keydown` that records the modals open when Escape began.
+   * Capture-phase partner of `keydown` that records `settlements` when Escape began.
    * Optional so copies that predate it still share this state shape.
    */
   keydownCapture?: Fn<[event: KeyboardEvent]>;
+  /**
+   * Counts first settlements of visible nodes, so Escape can tell that a control
+   * already closed a modal during the same press. Optional for the same reason.
+   */
+  settlements?: number;
   /** The portal container belongs to the active bootstrap. */
   anchor: HTMLElement | null;
   /** A stable style scope survives provider handoffs and duplicate loads. */

@@ -64,6 +64,9 @@ export class ModalManager {
           node.settled && ModalManager.__state__.focusTargets.has(node.id);
         const target = ModalManager.__state__.focusTargets.get(node.id);
         if (restore) ModalManager.__state__.focusTargets.delete(node.id);
+        if (restore && node.visible)
+          ModalManager.__state__.settlements =
+            (ModalManager.__state__.settlements ?? 0) + 1;
         if (!node.alive) {
           ModalManager.__state__.nodeCleanups.get(node.id)?.();
           ModalManager.__state__.nodeCleanups.delete(node.id);
@@ -348,17 +351,19 @@ export class ModalManager {
   }
   /**
    * Installs one bubbling document handler, so controls may prevent defaults, and a
-   * capture partner that records the modals open before React handlers run Escape.
+   * capture partner that records the settlement count before React handlers run Escape.
    */
   private static installKeyboardListener(): void {
     if (ModalManager.__state__.keydown) return;
-    let escape: { event: KeyboardEvent; nodes: ModalNode[] } | undefined;
+    let escape: { event: KeyboardEvent; settlements?: number } | undefined;
     ModalManager.__state__.keydownCapture = (event) => {
       if (event.key === 'Escape')
-        escape = { event, nodes: ModalManager.visibleNodes() };
+        escape = { event, settlements: ModalManager.__state__.settlements };
     };
     ModalManager.__state__.keydown = (event) => {
-      const recorded = escape?.event === event ? escape.nodes : undefined;
+      const settledDuringPress =
+        escape?.event === event &&
+        escape.settlements !== ModalManager.__state__.settlements;
       escape = undefined;
       if (
         (event.key !== 'Escape' && event.key !== 'Tab') ||
@@ -369,9 +374,8 @@ export class ModalManager {
       )
         return;
       if (event.key === 'Escape') {
-        const nodes = recorded ?? ModalManager.visibleNodes();
-        if (nodes.some((node) => node.settled)) return;
-        for (const node of nodes) {
+        if (settledDuringPress) return;
+        for (const node of ModalManager.visibleNodes()) {
           if (node.closeOnEscape) {
             event.preventDefault();
             closeModal(node);

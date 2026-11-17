@@ -182,3 +182,36 @@ it('closes at most one modal when the top prompt cancels itself on Escape', asyn
   expect(lower.modalNode?.settled).toBe(false);
   expect(lower.modalNode?.visible).toBe(true);
 });
+
+it('still closes the top modal when only a hidden modal settles during the press', async () => {
+  render(<BootstrapProvider />);
+  let hidden!: ReturnType<typeof confirmHandler>;
+  let upper!: ReturnType<typeof promptHandler<string>>;
+  act(() => {
+    hidden = confirmHandler({ title: 'hidden' });
+    upper = promptHandler<string>({
+      title: 'upper',
+      Input: ({ value, onChange }) => (
+        <input
+          id="upper-input"
+          value={value ?? ''}
+          onChange={(event) => onChange(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') hidden.modalNode?.onClose();
+          }}
+        />
+      ),
+    });
+  });
+  act(() => hidden.modalNode?.onHide());
+  const input = document.getElementById('upper-input') as HTMLInputElement;
+  input.focus();
+  act(() => {
+    fireEvent.keyDown(input, { key: 'Escape' });
+  });
+
+  expect(hidden.modalNode?.settled).toBe(true);
+  expect(upper.modalNode?.settled).toBe(true);
+  await expect(hidden.promiseHandler).resolves.toBe(false);
+  await expect(upper.promiseHandler).resolves.toBeNull();
+});
