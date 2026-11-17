@@ -156,6 +156,8 @@ export class ModalManager {
     ModalManager.__state__.bootstraps.delete(identity);
     if (ModalManager.__state__.owner !== identity) return;
     ModalManager.__state__.owner = null;
+    ModalManager.__state__.openHandler =
+      ModalManager.__state__.defaultOpenHandler;
     ModalManager.removeKeyboardListener();
     ModalManager.releasePageEffects();
     ModalManager.__state__.focused.clear();

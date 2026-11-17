@@ -52,6 +52,7 @@
     "README.md"
   ],
   "scripts": {
+    "bench": "yarn run -T vitest bench --run",
     "build": "rolldown -c && yarn build:types && yarn build:hashes && yarn typecheck",
     "build:hashes": "agents-build-hashes",
     "build:publish:npm": "yarn build && yarn publish:npm",

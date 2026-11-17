@@ -15,6 +15,7 @@
 - prompt 반환 타입은 Promise<T | undefined | null>이며 확인과 returnOnCancel 취소는 값을 변환하지 않습니다. 렌더 전 returnOnCancel 취소는 defaultValue이고 일반 취소는 null입니다.
 - 호출 duration은 숫자 밀리초 또는 ms·s 문자열을 받으며 undefined는 상속합니다. AbortSignal은 거부가 아닌 취소로 처리합니다.
 - 확정은 한 번만 유효하며 확인·취소·거부 시 AbortSignal 리스너를 정리합니다. 경로로 숨겨져도 중단은 취소 값으로 완료됩니다.
+- 큐를 처리하는 도중 다른 요청이 확정되거나 중단되면 그 요청을 다시 열지 않습니다. 마운트 전에 취소된 요청이 닫힌 모달 트리로 나타나는 것을 막습니다.
 
 ## Acceptance Criteria
 

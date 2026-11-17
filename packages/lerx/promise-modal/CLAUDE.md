@@ -11,6 +11,8 @@ Use `yarn workspace @lerx/promise-modal <script>` from the repository root.
 - `test --run`: development React with jsdom; build first for public artifact tests.
 - `test:prod`: production React without Testing Library render suites.
 - `test:react18`: the same development contract using package-local React 18 aliases.
+- `bench`: the `__benchmarks__` suites with jsdom; compare before and after a change
+  only while no other build or test runs, because shared load skews the ratio.
 - `typecheck`: source and stories.
 - `lint`: source and tests.
 - `storybook`: development server on port 6006.
