@@ -23,10 +23,10 @@ describe('applyPatch security', () => {
       { op: Operation.COPY, from: '/__proto__', path: '/alias' },
     ];
 
-    const result = applyPatch<Record<string, unknown>>({}, patches);
-
-    expect(result.alias).toBeUndefined();
-    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
+    expect(() => applyPatch({}, patches)).toThrow(
+      expect.objectContaining({ specific: 'PATCH_OBJECT_PROPERTY_NOT_FOUND' }),
+    );
+    expect(Object.getPrototypeOf({})).toBe(Object.prototype);
   });
 
   it('copy 의 from 이 own 예약 멤버 데이터면 그 데이터가 복사되어야 한다', () => {
