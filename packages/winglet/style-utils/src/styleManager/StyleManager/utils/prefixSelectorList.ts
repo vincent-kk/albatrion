@@ -1,4 +1,8 @@
 import { prefixSelector } from './prefixSelector';
+import { skipOpaqueToken } from './skipOpaqueToken';
+
+/** Characters that may hide a comma from the list structure. */
+const NESTING_CHARACTER = /[("'\\/]/;
 
 /**
  * Prefixes every selector of a selector list with the scope class.
@@ -6,25 +10,29 @@ import { prefixSelector } from './prefixSelector';
  * @param selectorList - Trimmed selector list of one style rule, such as `.a, .b:is(.c, .d)`
  * @param scope - Scope selector to prefix, such as `.my-widget`
  * @returns The list joined by `,`, each selector passed through `prefixSelector`.
- * The list splits only at top-level commas: commas inside parentheses, quoted
- * strings or after a backslash belong to one selector.
+ * The list splits only at top-level commas: commas inside parentheses, strings,
+ * comments or after a backslash belong to one selector.
  */
 export const prefixSelectorList = (
   selectorList: string,
   scope: string,
 ): string => {
+  if (!NESTING_CHARACTER.test(selectorList)) {
+    const selectors = selectorList.split(',');
+    let result = prefixSelector(selectors[0].trim(), scope);
+    for (let index = 1; index < selectors.length; index++)
+      result += ',' + prefixSelector(selectors[index].trim(), scope);
+    return result;
+  }
   let result = '';
   let partStart = 0;
   let depth = 0;
-  let quote = '';
   for (let index = 0, length = selectorList.length; index < length; index++) {
-    const char = selectorList[index];
-    if (char === '\\') index++;
-    else if (quote) quote = char === quote ? '' : quote;
-    else if (char === '"' || char === "'") quote = char;
-    else if (char === '(') depth++;
-    else if (char === ')') depth--;
-    else if (char === ',' && depth === 0) {
+    const next = skipOpaqueToken(selectorList, index);
+    if (next !== index) index = next - 1;
+    else if (selectorList[index] === '(') depth++;
+    else if (selectorList[index] === ')') depth--;
+    else if (selectorList[index] === ',' && depth === 0) {
       result +=
         prefixSelector(selectorList.slice(partStart, index).trim(), scope) +
         ',';

@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest';
 
-import { scopeRules } from '../utils/scopeRules';
+import { RuleScoper } from '../utils/RuleScoper';
 
-const scope = (css: string) => scopeRules(css, 0, css.length, '.s');
+const scope = (css: string) => new RuleScoper(css, '.s').scopeSheet();
 
-describe('scopeRules', () => {
+describe('RuleScoper', () => {
   test('scopes rules nested in grouping at-rules and keeps later rules outside', () => {
     expect(
       scope(
@@ -111,6 +111,16 @@ describe('scopeRules', () => {
     ['@import url(a.css);', '@import url(a.css);'],
     ['@import url(a.css); @layer x', '@import url(a.css);@layer x'],
   ])('copies statements with no style rule after them: %s', (input, output) => {
+    expect(scope(input)).toBe(output);
+  });
+
+  test.each([
+    ['.a\\{ { x: y } .b {}', '.s .a\\{{ x: y }.s .b{}'],
+    [
+      '.a { background: url(http://x.com/a/*b) } .b {}',
+      '.s .a{ background: url(http://x.com/a/*b) }.s .b{}',
+    ],
+  ])('treats escapes and unquoted url() as opaque: %s', (input, output) => {
     expect(scope(input)).toBe(output);
   });
 
