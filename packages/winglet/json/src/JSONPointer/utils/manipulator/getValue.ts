@@ -46,14 +46,16 @@ type GetValue = {
  *                  - String: JSON Pointer string following RFC 6901 format
  *                  - Array: Sequence of reference tokens as strings or numbers
  *
- * @returns The value located at the specified JSON Pointer location.
- *          Returns any valid JSON value (object, array, string, number, boolean, null).
+ * @returns The value located at the specified JSON Pointer location, or `undefined` when
+ *          the location does not exist; a miss is not an error. Ordinary keys are read
+ *          without an own-property check, so inherited members such as `/toString` or an
+ *          array's `/length` resolve; reserved member names are read as own data only.
  *          The unknown-input overload requires callers to narrow the result.
  *
  * @throws {JSONPointerError} Thrown in the following cases:
  *         - **INVALID_INPUT**: When input is not a plain object or array
- *         - **INVALID_POINTER**: When pointer format is malformed
- *         - **PROPERTY_NOT_FOUND**: When the pointer references a non-existent path
+ *         - **INVALID_POINTER_TYPE**: When the pointer is not a string or an array of
+ *           strings and numbers, or a string pointer does not start with `/` or `#`
  *
  * @see https://datatracker.ietf.org/doc/html/rfc6901 - JSON Pointer specification
  *
