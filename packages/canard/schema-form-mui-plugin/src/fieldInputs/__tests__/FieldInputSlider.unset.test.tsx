@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 
-import { act, cleanup, render } from '@testing-library/react';
+import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import { Form, type FormHandle } from '@canard/schema-form';
@@ -26,13 +26,37 @@ const renderSlider = (defaultValue?: number) => {
   );
   const thumb = () =>
     container.querySelector<HTMLInputElement>('input[type="range"]')!;
-  return { ref, thumb };
+  const thumbOpacity = () =>
+    getComputedStyle(container.querySelector('.MuiSlider-thumb')!).opacity;
+  return { ref, thumb, thumbOpacity };
 };
 
 it('slider with no value does not display a value the form does not hold', () => {
   const { ref, thumb } = renderSlider();
   expect(ref.current!.getValue()).toBeUndefined();
   expect(thumb().getAttribute('aria-valuenow')).toBeNull();
+});
+
+it('an unset slider hides its thumb until it holds a value', () => {
+  const { thumb, thumbOpacity } = renderSlider();
+  expect(thumbOpacity()).toBe('0');
+  fireEvent.keyDown(thumb(), { key: 'End' });
+  expect(thumbOpacity()).not.toBe('0');
+});
+
+it('an unset slider stays keyboard operable and its first change sets the chosen value', () => {
+  const { ref, thumb } = renderSlider();
+  act(() => thumb().focus());
+  expect(document.activeElement).toBe(thumb());
+  fireEvent.keyDown(thumb(), { key: 'End' });
+  expect(ref.current!.getValue()).toBe(20);
+  expect(thumb().getAttribute('aria-valuenow')).toBe('20');
+});
+
+it('a slider with a value displays it', () => {
+  const { thumb, thumbOpacity } = renderSlider(15);
+  expect(thumb().getAttribute('aria-valuenow')).toBe('15');
+  expect(thumbOpacity()).not.toBe('0');
 });
 
 it('an external reset to undefined returns the slider to the unset state', async () => {
