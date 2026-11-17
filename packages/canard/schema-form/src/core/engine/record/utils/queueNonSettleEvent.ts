@@ -1,7 +1,8 @@
 import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
 
-import type { FieldNodeRecord } from '../../../record';
-import type { FieldNodeEventType, FieldNodeRequestType } from '../../../record';
+import type { FieldNodeEventType } from '../constants/FieldNodeEventType';
+import type { FieldNodeRequestType } from '../constants/FieldNodeRequestType';
+import type { FieldNodeRecord } from '../types/record';
 
 /**
  * Merge an event into the next wave without touching settlement's event table.

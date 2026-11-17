@@ -21,6 +21,7 @@ import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
 import { setLoadValue } from '../../../utils/loadValues/setLoadValue';
 import { prunePerishedPaths } from '../../../utils/transition/prunePerishedPaths';
 import type { ArrayPathMove } from '../../types/pathMoves';
+import { queueValidationIssueMoves } from '../rekey/queueValidationIssueMoves';
 import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 
 /**
@@ -99,7 +100,13 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
     );
     prunePerishedPaths(host.runtime, [removedItem.path]);
   }
-  rekeyArrayRuntimePaths(host.runtime, host.path, moves, index);
+  const issueOwners = rekeyArrayRuntimePaths(
+    host.runtime,
+    host.path,
+    moves,
+    index,
+  );
+  if (issueOwners) queueValidationIssueMoves(host.rootNode, issueOwners);
 
   for (
     let position = inserted ? index + 1 : index;

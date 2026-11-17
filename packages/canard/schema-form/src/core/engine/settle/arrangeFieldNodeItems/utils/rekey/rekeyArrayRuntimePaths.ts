@@ -20,6 +20,7 @@ import { prunePerishedPaths } from '../../../utils/transition/prunePerishedPaths
 import type { ArrayPathMove } from '../../types/pathMoves';
 import { rekeyCommittedRules } from './rekeyCommittedRules';
 import { rekeyPairedPathStore } from './rekeyPairedPathStore';
+import { rekeyValidationIssuePaths } from './rekeyValidationIssuePaths';
 
 export type { ArrayPathMove } from '../../types/pathMoves';
 
@@ -29,14 +30,14 @@ export type { ArrayPathMove } from '../../types/pathMoves';
  * @param hostPath - Array host whose position paths are being replaced
  * @param moves - Old slots after the preserved prefix, without destinations for perished slots
  * @param preservedPrefixCount - Proven unchanged leading positions; zero for a general plan
- * @returns Nothing; affected cached views are invalidated
+ * @returns Held validation-list owners rewritten by the move (see `rekeyValidationIssuePaths`); undefined when no issue moved
  */
 export const rekeyArrayRuntimePaths = <Self>(
   runtime: FieldNodeRuntime<Self>,
   hostPath: string,
   moves: readonly ArrayPathMove[],
   preservedPrefixCount: number = 0,
-): void => {
+): Optional<Set<unknown>> => {
   const stores = getRuntimePathStores(runtime);
   const unaddressed = new Set<string>();
   for (const store of [stores.declarations, stores.rules, stores.misfits]) {
@@ -94,6 +95,7 @@ export const rekeyArrayRuntimePaths = <Self>(
   }
   rekeyPairedPathStore(stores.declarations, changed, mapPath);
   rekeyCommittedRules(runtime, changed, mapPath);
+  const issueOwners = rekeyValidationIssuePaths(runtime, mapPath);
 
   const misfitKeys = new Set<string>();
   for (const move of changed)
@@ -115,4 +117,5 @@ export const rekeyArrayRuntimePaths = <Self>(
         keys.add(key);
     for (const key of keys) store.delete(key);
   }
+  return issueOwners;
 };

@@ -1,8 +1,7 @@
-import { FieldNodeRequestType } from '../../../record';
+import { FieldNodeRequestType, queueNonSettleEvent } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { assertFieldNodeWritable } from '../../../settle';
 import { closeNonSettleEntry } from '../chain/closeNonSettleEntry';
-import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
 
