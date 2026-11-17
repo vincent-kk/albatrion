@@ -49,7 +49,7 @@ const getValue: GetValue
 
 ## Returns
 
-The value located at the specified JSON Pointer location. Returns any valid JSON value (object, array, string, number, boolean, null). The unknown-input overload requires callers to narrow the result.
+The value located at the specified JSON Pointer location, or `undefined` when the location does not exist; a miss is not an error. Ordinary keys are read without an own-property check, so inherited members such as `/toString` or an array's `/length` resolve; reserved member names are read as own data only. The unknown-input overload requires callers to narrow the result.
 
 ## Examples
 
