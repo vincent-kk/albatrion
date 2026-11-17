@@ -86,7 +86,7 @@ This plugin provides the following Material-UI components:
 
 - **Role**: TimePicker for time selection
 - **Applied when**: `type` is `"string"` and `format` is `"time"`
-- **Additional features**: Uses MUI X DatePickers, time stored in HH:mm:00Z format
+- **Additional features**: Uses MUI X DatePickers, time stored in HH:mm:ss format, without a time-zone offset
 
 ### **[`FieldInputRadioGroup.tsx`](./src/fieldInputs/FieldInputRadioGroup.tsx)**
 
@@ -96,7 +96,7 @@ This plugin provides the following Material-UI components:
 
 ### **[`FieldInputStringEnum.tsx`](./src/fieldInputs/FieldInputStringEnum.tsx)**
 
-- **Role**: Display string or string array selection as Select dropdown
+- **Role**: Display a string selection as Select dropdown
 - **Applied when**: `type` is `"string"` and `enum` values exist
 - **Additional features**: Material Design styling with FormControl and InputLabel, support for custom labels per option (alias)
 
