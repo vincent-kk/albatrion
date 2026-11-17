@@ -12,6 +12,7 @@ import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
 import type { JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../patchModel';
+import { assertCopySourcePresent } from './utils/assertCopySourcePresent';
 import { JSONPatchError } from './utils/error';
 import { getArrayIndex } from './utils/getArrayIndex';
 import { handleArray } from './utils/handleArray';
@@ -123,14 +124,11 @@ export const applySinglePatch = (
       );
     if (patch.op === Operation.COPY) {
       const copied = getValue(source, patch.from);
-      // RFC 6902 4.5: the from location must exist; JSON has no undefined value
+      // RFC 6902 4.5: the from location must exist. Only an undefined read can name a
+      // missing location, so only that read pays for the second walk
       if (copied === undefined)
-        throw new JSONPatchError(
-          'PATCH_OBJECT_PROPERTY_NOT_FOUND',
-          `Cannot copy from '${patch.from}' - location does not exist`,
-          { patch, patchIndex, from: patch.from, operation: patch.op },
-        );
-      value = cloneLite(copied);
+        assertCopySourcePresent(source, patch.from, patch, patchIndex);
+      else value = cloneLite(copied);
     } else if (isCircularMoveReference(patch.from, patch.path))
       throw new JSONPatchError(
         'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN',

@@ -2,7 +2,6 @@ import { isArray } from '@winglet/common-utils/filter';
 import {
   deleteDataProperty,
   getDataProperty,
-  setDataProperty,
 } from '@winglet/common-utils/object';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
@@ -13,6 +12,7 @@ import type { Patch } from '../../../patchModel';
 import { JSONPatchError } from './error';
 import { getArrayIndex } from './getArrayIndex';
 import { isMissingMember } from './isMissingMember';
+import { resolveFromParent } from './resolveFromParent';
 
 /**
  * Removes the value at a MOVE operation's `from` location and returns it, the first half of
@@ -53,32 +53,14 @@ export const removeMoveSource = (
   const last = segments.length - 1;
   if (last === 0) return source;
 
-  let parent: any = source;
-  for (let cursor = 1; cursor < last; cursor++) {
-    const segment = unescapePath(segments[cursor]);
-    const index = isArray(parent) ? getArrayIndex(segment, parent) : -1;
-    let next: any =
-      index === -1 ? getDataProperty(parent, segment) : parent[index];
-    if (next === null || typeof next !== 'object')
-      throw new JSONPatchError(
-        'PATCH_PATH_INVALID_INTERMEDIATE',
-        `Cannot traverse 'from' pointer '${from}' - intermediate value at '${segments.slice(0, cursor + 1).join('/')}' is not an object or array`,
-        {
-          patch,
-          patchIndex,
-          from,
-          failedAtPath: segments.slice(0, cursor + 1).join('/'),
-          operation: patch.op,
-        },
-      );
-    if (cloned !== null && !cloned.has(next)) {
-      next = isArray(next) ? next.slice() : { ...next };
-      cloned.add(next);
-      if (index === -1) setDataProperty(parent, segment, next);
-      else parent[index] = next;
-    }
-    parent = next;
-  }
+  const parent = resolveFromParent(
+    source,
+    segments,
+    from,
+    patch,
+    patchIndex,
+    cloned,
+  );
 
   const key = unescapePath(segments[last]);
   if (isArray(parent)) {
