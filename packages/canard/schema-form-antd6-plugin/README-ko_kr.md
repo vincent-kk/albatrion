@@ -105,7 +105,7 @@ import 구문을 수정해 주세요:
 
 - **역할**: URI 입력을 위한 특수 입력 필드 (프로토콜 드롭다운 포함)
 - **적용 조건**: `type`이 `"string"`이고 `format` 또는 `inputType`이 `"uri"`인 경우
-- **추가 사항**: 프로토콜 선택 드롭다운, 기본 프로토콜 목록 지원 (http, https, ftp, mailto, tel), `presentation.FieldInputProps.protocols`로 커스텀 프로토콜 목록 설정
+- **추가 사항**: 프로토콜 선택 드롭다운, 기본 프로토콜 목록 지원 (http, https, ftp, mailto, tel), `presentation.FieldInputProps.protocols`로 커스텀 프로토콜 목록 설정. 목록에 없는 스킴을 가진 값은 그 스킴을 유지하며, 드롭다운에 해당 스킴이 추가 선택지로 나타납니다
 
 ### **[`FieldInputMonth.tsx`](./src/fieldInputs/FieldInputMonth.tsx)**
 
