@@ -74,8 +74,11 @@ export const FieldInputBridge = memo(
       useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
     const { attachedFilesMap, context } = useWorkspaceContext();
     const attachmentOwner = useRef({});
-    const { readOnly: rootReadOnly, disabled: rootDisabled } =
-      useInputControlContext();
+    const {
+      readOnly: rootReadOnly,
+      disabled: rootDisabled,
+      controlRef,
+    } = useInputControlContext();
     const isLive = useLiveNode(node);
     const [
       ref,
@@ -114,8 +117,8 @@ export const FieldInputBridge = memo(
       (value, option = SetValueOption.Overwrite) => {
         if (
           !accepts() ||
-          rootReadOnly ||
-          rootDisabled ||
+          controlRef.current.readOnly ||
+          controlRef.current.disabled ||
           node.isReadOnly ||
           node.isDisabled
         )
@@ -124,14 +127,7 @@ export const FieldInputBridge = memo(
         if (!onChange) writeFieldNodeInput(node, value, option);
         else relayFieldNodeInput(node, value, option, onChange);
       },
-      [
-        accepts,
-        rootReadOnly,
-        rootDisabled,
-        node,
-        onChangeRef,
-        overrideOnChangeRef,
-      ],
+      [accepts, controlRef, node, onChangeRef, overrideOnChangeRef],
     );
     const handleFileAttach = useCallback(
       (files: Optional<File | File[]>) => {
