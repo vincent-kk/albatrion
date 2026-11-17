@@ -33,7 +33,14 @@ interface FieldInputSliderProps
    * From `presentation.FieldInputProps.lazy`.
    */
   lazy?: boolean;
+  /**
+   * Announced as `aria-valuetext` while the form holds no value, in place of the minimum the
+   * thumb rests on. From `presentation.FieldInputProps.unsetValueText`; defaults to `Not set`.
+   */
+  unsetValueText?: string;
 }
+
+const DEFAULT_UNSET_VALUE_TEXT = 'Not set';
 
 /** Slider styles while the form holds a value. */
 const SLIDER_SX = { mt: 1 };
@@ -64,6 +71,7 @@ const FieldInputSlider = ({
   showMarks = false,
   hideLabel,
   lazy,
+  unsetValueText = DEFAULT_UNSET_VALUE_TEXT,
   misfit,
 }: FieldInputSliderProps) => {
   const [label, size] = useMemo(() => {
@@ -87,8 +95,13 @@ const FieldInputSlider = ({
   });
 
   const handleChangeCommitted = useHandle((_, newValue: number | number[]) => {
-    if (isLazy) {
-      onChange(Array.isArray(newValue) ? newValue[0] : newValue);
+    const value = Array.isArray(newValue) ? newValue[0] : newValue;
+    // MUI skips onChange for an unchanged value, so Home or a release on the minimum arrives only here.
+    if (isUnset) {
+      setIsUnset(false);
+      onChange(value);
+    } else if (isLazy) {
+      onChange(value);
     }
   });
 
@@ -119,7 +132,11 @@ const FieldInputSlider = ({
         marks={showMarks}
         slotProps={{
           input: isUnset
-            ? { 'aria-invalid': misfit || undefined, 'aria-valuenow': undefined }
+            ? {
+                'aria-invalid': misfit || undefined,
+                'aria-valuenow': undefined,
+                'aria-valuetext': unsetValueText,
+              }
             : { 'aria-invalid': misfit || undefined },
         }}
         valueLabelDisplay={isUnset ? 'off' : 'auto'}
