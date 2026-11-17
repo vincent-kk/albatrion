@@ -343,7 +343,7 @@ function applyPatch<Result>(
   source: object | any[],
   patches: Patch[],
   options?: {
-    strict?: boolean; // default: false
+    strict?: boolean; // deprecated and ignored — test always compares values
     immutable?: boolean; // default: true
   },
 ): Result;
@@ -573,6 +573,7 @@ type Patch =
 // Options
 type CompareOptions = { strict?: boolean; immutable?: boolean };
 type ApplyPatchOptions = {
+  /** @deprecated ignored */
   strict?: boolean;
   immutable?: boolean;
 };
@@ -647,17 +648,15 @@ try {
 
 ## Performance
 
-| Scenario                      | Recommendation                                                   |
-| ----------------------------- | ---------------------------------------------------------------- |
-| Large deeply-nested documents | `immutable: false` to avoid deep clone overhead                  |
-| Sequential patch application  | `strict: false` (default) — skips extra validation per operation |
-| Memory-sensitive environments | `immutable: false` in `mergePatch` to avoid cloning              |
+| Scenario                      | Recommendation                                      |
+| ----------------------------- | --------------------------------------------------- |
+| Large deeply-nested documents | `immutable: false` to avoid deep clone overhead     |
+| Memory-sensitive environments | `immutable: false` in `mergePatch` to avoid cloning |
 
 ```typescript
 // Maximum performance (trusted environment only)
 applyPatch(source, patches, {
   immutable: false,
-  strict: false,
 });
 ```
 

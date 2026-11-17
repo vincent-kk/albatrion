@@ -11,13 +11,13 @@ Applies when code addresses a location inside a JSON document, diffs two documen
 
 **Two modules, two jobs.** `JSONPointer` addresses one location and mutates or diffs at it (RFC 6901/6902/7396). `JSONPath` is a lookup helper that answers "where does this object live", in Goessner syntax. They are not two spellings of one idea, and their string formats do not interconvert cleanly — see the knowledge file before bridging them.
 
-**`strict` is one feature split across two functions.** `compare(strict: true)` _writes_ `test` guard operations into the patch; `applyPatch(strict: true)` _enforces_ them. Both default to `false`, so by default guards are neither written nor checked. Applying `[{op:'test',path:'/v',value:1},{op:'replace',path:'/v',value:2}]` to the drifted document `{v:999}` yields `{v:2}` with no error at all. Round-trip integrity requires `strict: true` on **both** ends.
+**`compare` writes `test` guards only on request; `applyPatch` always enforces them.** `compare(strict: true)` inserts a `test` operation carrying the old value before each `replace` and `remove`. `applyPatch` compares every `test` value in every mode and aborts the whole patch on a mismatch, so applying `[{op:'test',path:'/v',value:1},{op:'replace',path:'/v',value:2}]` to the drifted document `{v:999}` throws `PATCH_TEST_FAILED`. `applyPatch`'s own `strict` option is deprecated and ignored.
 
 **Immutability is per-function, not a library-wide policy.** There is no single `immutable` switch, and the word means something different in each place it appears. `setValue` always mutates. `compare` never mutates its inputs — its `immutable` option decides whether emitted patch values are deep clones or live references into the source. Only `applyPatch` and `mergePatch` protect the source document.
 
 **Externally supplied patches are a prototype-pollution vector.** The defense is on by default in `applyPatch`, where it throws, and always on in `setValue`, where it silently abandons the write. The two functions use different rules and report differently, so "protected" does not mean "you will hear about it".
 
-**Failures are silent more often than loud.** A missing read returns `undefined`; a blocked write returns the document; a `test` guard passes unchecked; a mis-chosen escape function yields a valid-looking wrong pointer. Check return values — an exception is not the library's usual way of telling you something went wrong.
+**Failures are silent more often than loud.** A missing read returns `undefined`; a blocked write returns the document; a mis-chosen escape function yields a valid-looking wrong pointer. Check return values — an exception is not the library's usual way of telling you something went wrong.
 
 ## Decision Guide
 
@@ -27,8 +27,8 @@ Applies when code addresses a location inside a JSON document, diffs two documen
 | Escaping: `escapePath` or `escapeSegment`?               | `escapePath` for a whole pointer whose `/` are structural separators. `escapeSegment` for one key that may itself contain `/` or `~`. Picking wrong is silent — see the knowledge file.                                        |
 | Need the pointer to a nested object?                     | `getJSONPointer(root, target)` from `@winglet/json/pointer-common`. Do **not** build it by converting a `getJSONPath` result.                                                                                                  |
 | Editing one element of an array?                         | JSON Patch. Merge Patch replaces an array wholesale at every depth — there is no element-level merge.                                                                                                                          |
-| Patch must refuse a document that changed underneath it? | `strict: true` on `compare` **and** on `applyPatch`. Either one alone does nothing.                                                                                                                                            |
-| Applying a patch from a client or network?               | `{ strict: true, immutable: true }` — `immutable` is already the default, and reserved-member safety is structural (no option involved).                                                                                       |
+| Patch must refuse a document that changed underneath it? | `compare(..., { strict: true })` to write `test` guards; `applyPatch` enforces them with no option.                                                                                                                            |
+| Applying a patch from a client or network?               | Defaults — `immutable: true` keeps the source untouched on failure, `test` guards are always enforced, and reserved-member safety is structural (no option involved).                                                          |
 
 ## Invariants & Gotchas
 
@@ -39,7 +39,7 @@ Defaults, from source. Omitting the options object applies all of them:
 | `getValue`   | —        | —                                                  | no options                              |
 | `setValue`   | —        | always mutates                                     | `overwrite: true`, `preserveNull: true` |
 | `compare`    | `false`  | `true`                                             | —                                       |
-| `applyPatch` | `false`  | `true`                                             | —                                       |
+| `applyPatch` | ignored  | `true`                                             | —                                       |
 | `mergePatch` | —        | `true` (3rd positional arg, not an options object) | —                                       |
 | `difference` | —        | —                                                  | no options                              |
 
@@ -53,8 +53,8 @@ Corrections for claims that are commonly assumed and are wrong here:
 | `err.code === 'INVALID_INPUT'` matches                    | `.code` is namespaced: `'JSON_POINTER.INVALID_INPUT'`. The bare code is on `.specific`.                                                                                             |
 | `JSONPointerError` / `isJSONPointerError` can be imported | Neither is exported, from the main entry or any sub-path. Match on `.name` (`'JSONPointer'` / `'JSONPatch'`) or on `.code`.                                                         |
 | `compare` emits only `add`/`remove`/`replace`             | With `strict: true` it also emits a `test` guard before each `replace` and `remove`. `add` never gets a guard.                                                                      |
-| `strict: true` on `applyPatch` rejects RFC violations     | It governs one thing: whether `test` operations compare values. `replace` on a missing path silently adds it either way.                                                            |
-| `strict: false` makes `applyPatch` lenient                | Unrelated failures throw regardless of `strict`: `remove` of a missing property, `test` on a missing property, array index out of bounds.                                           |
+| `strict: true` on `applyPatch` rejects RFC violations     | The option is deprecated and ignored. `replace` on a missing path silently adds it either way.                                                                                      |
+| `strict: false` makes `applyPatch` lenient                | Failures throw regardless of `strict`: a `test` whose value differs or whose location is missing, `remove` of a missing property, array index out of bounds.                        |
 | `escapePath` escapes `/` inside a key                     | It splits on `/` first, so a `/` is never escaped — `escapePath('config/database')` returns `'config/database'` unchanged.                                                          |
 | `unescapeSegment` is the inverse of `escapeSegment`       | `unescapeSegment` is an alias for `unescapePath` — the same function object.                                                                                                        |
 | `setValue` skips or rejects reserved member keys          | It writes them as own data properties, prototype untouched. There is no silent skip.                                                                                                |
@@ -104,7 +104,7 @@ setValue(doc, '/settings/theme', 'dark'); // mutates doc, creates missing parent
 setValue(doc, '/items/-', item); // '-' appends
 
 const patches = compare(before, after, { strict: true }); // writes test guards
-const next = applyPatch(before, patches, { strict: true }); // enforces them; before untouched
+const next = applyPatch(before, patches); // enforces them; before untouched
 
 const body = difference(before, after); // undefined when identical — guard it
 const merged = mergePatch(before, body);

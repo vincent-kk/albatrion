@@ -14,7 +14,6 @@ import { JSONPatchError } from './error';
  * @param value - The replacement document: `patch.value` for add and replace, the `from`
  *                value for move, and a deep copy of it for copy
  * @param patchIndex - The index of the patch for error reporting
- * @param strict - Whether to use strict equality checking
  * @returns The modified document or null for remove operations
  * @throws {JSONPatchError} When operation fails or is invalid
  * @internal
@@ -24,7 +23,6 @@ export const handleRootPatch = (
   patch: Patch,
   value: unknown,
   patchIndex: number,
-  strict: boolean,
 ): any => {
   switch (patch.op) {
     case Operation.ADD:
@@ -33,7 +31,7 @@ export const handleRootPatch = (
     case Operation.COPY:
       return value;
     case Operation.TEST:
-      if (!strict || equals(source, patch.value)) return source;
+      if (equals(source, patch.value)) return source;
       throw new JSONPatchError(
         'PATCH_TEST_FAILED',
         'Test operation failed at root level. Expected value does not match actual document value',

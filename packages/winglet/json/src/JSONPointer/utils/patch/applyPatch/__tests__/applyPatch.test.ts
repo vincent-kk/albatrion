@@ -357,15 +357,15 @@ describe('applyPatch', () => {
       }
     });
 
-    it('non-strict 모드에서는 테스트 실패에도 에러가 발생하지 않아야 한다', () => {
+    it('strict: false에서도 테스트가 실패하면 PATCH_TEST_FAILED 에러를 발생시켜야 한다', () => {
       const source = { name: 'John', age: 30 };
       const patches: Patch[] = [
         { op: Operation.TEST, path: '/name', value: 'Jane' },
       ];
 
-      const result = applyPatch(source, patches, { strict: false });
-
-      expect(result).toEqual(source);
+      expect(() => applyPatch(source, patches, { strict: false })).toThrow(
+        expect.objectContaining({ specific: 'PATCH_TEST_FAILED' }),
+      );
     });
   });
 

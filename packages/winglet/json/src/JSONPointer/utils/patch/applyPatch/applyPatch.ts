@@ -21,13 +21,13 @@ import type { ApplyPatchOptions } from './type';
  *   opaque own data — no patch input can modify the prototype chain
  * - Immutable mode preserves the source with copy-on-write path cloning while unchanged
  *   subtrees remain structurally shared between the source and result
- * - Strict mode enforces additional validation rules
+ * - A `test` operation compares values in every mode; a mismatch aborts the whole patch
  *
  * @template Result - The type of the result object/array, defaults to Source type
  *
  * @param source - The source object or array to apply patches to
  * @param patches - An array of JSON Patch operations to apply sequentially
- * @param options.strict - Whether to use strict validation (default: false)
+ * @param options.strict - Deprecated and ignored; `test` always compares values
  * @param options.immutable - Whether to preserve the source with copy-on-write path cloning
  *                            (default: true)
  *
@@ -50,7 +50,8 @@ import type { ApplyPatchOptions } from './type';
  *
  * @throws {JSONPatchError} When a patch operation fails due to:
  *         - Invalid path syntax or structure
- *         - Attempting to modify non-existent properties in strict mode
+ *         - Removing, replacing or moving from a non-existent location
+ *         - A `test` operation whose value does not match
  *         - Type mismatches between expected and actual values
  *         - Array index out of bounds or invalid format
  *
@@ -81,8 +82,8 @@ import type { ApplyPatchOptions } from './type';
  *
  * @example
  * ```typescript
- * // Using strict mode for additional validation
- * const result = applyPatch(source, patches, { strict: true, immutable: false });
+ * // Mutating the source in place
+ * const result = applyPatch(source, patches, { immutable: false });
  * ```
  */
 export const applyPatch = <Result extends JSONRoot = any>(
@@ -90,7 +91,6 @@ export const applyPatch = <Result extends JSONRoot = any>(
   patches: Patch[],
   options?: ApplyPatchOptions,
 ): Result => {
-  const strict = options?.strict ?? false;
   const immutable = options?.immutable ?? true;
 
   const cloned = immutable ? new WeakSet<object>() : null;
@@ -100,6 +100,6 @@ export const applyPatch = <Result extends JSONRoot = any>(
     cloned.add(result);
   }
   for (let i = 0, l = patches.length; i < l; i++)
-    result = applySinglePatch(result, patches[i], i, strict, cloned);
+    result = applySinglePatch(result, patches[i], i, cloned);
   return result as Result;
 };

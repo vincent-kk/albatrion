@@ -237,7 +237,8 @@ interface CompareOptions {
 
 ```typescript
 interface ApplyPatchOptions {
-  strict?: boolean; // Strict application mode (default: false)
+  /** @deprecated Ignored. `test` operations always compare values */
+  strict?: boolean;
   immutable?: boolean; // Immutable mode (default: true)
 }
 ```
@@ -309,7 +310,6 @@ const patches = [
 // reserved member names are written as own data, never through the chain
 const result = applyPatch(data, patches, {
   immutable: true, // Preserve original data
-  strict: true, // Strict validation
 });
 
 console.log(data); // Original data preserved
@@ -389,7 +389,6 @@ try {
 ## Performance Considerations
 
 - **Large Data**: Consider using `immutable: false` option when dealing with deeply nested objects or large arrays
-- **Frequent Changes**: Use `strict: false` to improve performance when applying many patches sequentially
 - **Memory Usage**: Immutable mode uses more memory but ensures safety
 
 ---
