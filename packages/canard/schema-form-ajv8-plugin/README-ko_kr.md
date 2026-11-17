@@ -128,7 +128,7 @@ registerPlugin(plugin);
 - **반환값**: 스키마에 대해 데이터를 검증할 수 있는 validator factory 함수
 - **기능**: 자동 오류 변환, 상세한 검증 메시지, 성능 최적화
 - **`schemaPath`**: 작성된 위치를 `#/…` 조각으로 제공하며, 루트가 `$id`를 선언해도 같습니다. 검증이 `$ref`로 들어가는 중첩 `$id` 자원 안의 오류는 참조 아래의 AJV 경로(예: `urn:item/not`)를 그대로 유지합니다.
-- **`rejectedKey`**: 키가 하나인 `not: { required: [key] }`는 `#/…` 경로의 스키마에서 키를 읽습니다. 중첩 `$id` 자원 안의 오류처럼 `schemaPath`가 `#/…` 조각이 아닌 오류는 `rejectedKey` 없이 값을 보관한 객체에 남습니다. `false` 스키마는 `properties`, `patternProperties`, `items`, `prefixItems` 아래처럼 자식 하나를 대표하는 위치에서만 그 자식의 키를 거부합니다. `then`, `allOf`, `$ref` 같은 제자리 키워드로 도달한 `false`는 값을 거부하며 그 `dataPath`에 남습니다. `propertyNames` 실패가 만드는 모든 오류는 안쪽 키워드의 오류까지 문제가 된 키를 가집니다.
+- **`rejectedKey`**: 키가 하나인 `not: { required: [key] }`는 `#/…` 경로의 스키마에서 키를 읽습니다. 이런 `not` 오류 중 중첩 `$id` 자원 안의 오류처럼 `schemaPath`가 `#/…` 조각이 아닌 오류는 `rejectedKey` 없이 값을 보관한 객체에 남습니다. `false` 스키마는 `properties`, `patternProperties`, `items`, `prefixItems` 아래처럼 자식 하나를 대표하는 위치에서만 그 자식의 키를 거부합니다. `then`, `allOf`, `$ref` 같은 제자리 키워드로 도달한 `false`는 값을 거부하며 그 `dataPath`에 남고, `items`처럼 이 키워드와 같은 이름을 가진 필드에서도 마찬가지입니다. `propertyNames` 실패가 만드는 모든 오류는 안쪽 키워드의 오류까지 문제가 된 키를 가집니다.
 
 #### **`compileGuard(root, pointer)`와 `release(root)`**
 
