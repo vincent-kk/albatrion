@@ -6,13 +6,20 @@ import { isArray } from '@winglet/common-utils/filter';
 import { isNumberSchema } from '@winglet/json-schema/filter';
 
 import type {
+  ArraySchema,
   FieldInputDefinition,
   FieldInputPropsWithSchema,
   NumberSchema,
 } from '@canard/schema-form';
 
+/** A numeric array schema, rendered as a range slider. */
+type NumberArraySchema = ArraySchema & { items: NumberSchema };
+
 interface FieldInputSliderProps
-  extends FieldInputPropsWithSchema<number | [number, number], NumberSchema> {
+  extends FieldInputPropsWithSchema<
+    number | [number, number],
+    NumberSchema | NumberArraySchema
+  > {
   /**
    * Ignored: the schema type decides the shape. A numeric array schema renders a
    * range slider and a number schema renders a single thumb.
