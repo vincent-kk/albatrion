@@ -1,8 +1,7 @@
-import { FieldNodeEventType } from '../../../record';
+import { FieldNodeEventType, queueNonSettleEvent } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../../validation';
 import { flushQueuedEvents } from './flushQueuedEvents';
-import { queueNonSettleEvent } from './queueNonSettleEvent';
 
 /**
  * Publish a stamped validation result through one separate non-settlement wave.

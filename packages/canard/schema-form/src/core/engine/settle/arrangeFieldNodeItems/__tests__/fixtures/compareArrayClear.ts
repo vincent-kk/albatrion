@@ -93,7 +93,7 @@ export const compareArrayClear = (
       cleanup.mockImplementation((runtime, hostPath, oldCount) => {
         expect(hostPath).toBe(select(root).path);
         prunePerishedPaths(runtime, perishedRootPaths);
-        rekeyArrayRuntimePaths(
+        return rekeyArrayRuntimePaths(
           runtime,
           hostPath,
           Array.from({ length: oldCount }, (_, index) => ({

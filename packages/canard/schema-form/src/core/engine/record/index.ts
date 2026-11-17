@@ -33,6 +33,7 @@ export { patchFieldNodeInteractionState } from './utils/patchFieldNodeInteractio
 export { shallowPatch } from './utils/shallowPatch';
 export { accumulateGlobalStateDeltas } from './utils/accumulateGlobalStateDeltas';
 export { publishGlobalStateDeltas } from './utils/publishGlobalStateDeltas';
+export { queueNonSettleEvent } from './utils/queueNonSettleEvent';
 
 export { captureFieldNodeChange } from './utils/captureFieldNodeChange';
 export { clearFieldNodeChanges } from './utils/clearFieldNodeChanges';

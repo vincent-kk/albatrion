@@ -1,9 +1,8 @@
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 
-import { FieldNodeEventType } from '../../../../record';
+import { FieldNodeEventType, queueNonSettleEvent } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
 import { updateFieldNodeGlobalErrors } from '../../../../validation';
-import { queueNonSettleEvent } from '../../chain/queueNonSettleEvent';
 
 /**
  * Recompute the form list after the root's external list changed and announce a changed aggregate.
