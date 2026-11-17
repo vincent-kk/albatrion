@@ -10,15 +10,20 @@
 
 ## Conventions
 
+- 공개 Props와 프레임 메타데이터는 소비자의 래퍼 선언을 지원하며 prompt는 미입력 undefined와 일반 취소 null을 구별합니다.
+
 - TypeScript + React, ES2022 타겟
 - 경로 별칭: `@/promise-modal` → `./src`
-- Promise 기반 API: 모달 함수는 Promise를 반환하여 사용자 인터랙션 결과를 resolve
+- Promise 기반 API: 모달 함수는 Promise를 반환하여 최초 결과를 resolve하거나 렌더 오류를 reject
 - Provider 패턴: 설정/상태를 Context로 분리
 - `@winglet/*` 유틸리티 의존 (common-utils, react-utils, style-utils)
 
 ## Boundaries
 
 ### Always do
+
+- 접근성 기본선의 전역 효과는 매니저가 소유하고 사용자 프레임은 이름·설명·역할을 제공
+- 브라우저의 호환 모듈 사본은 시스템 하나를 공유하고 배포 번들은 use client 경계를 선언
 
 - 새 모달 타입 추가 시 core/node에 노드 클래스, core/handle에 핸들러 함수 구현
 - 공개 API 변경 시 `src/index.ts` export 업데이트

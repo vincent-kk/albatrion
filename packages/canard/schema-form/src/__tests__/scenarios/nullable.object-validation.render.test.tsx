@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-import type { JSONSchema } from '@winglet/json-schema';
+import type { JSONSchema } from '@/schema-form';
 
 import { renderForm } from '../renderForm';
 
@@ -10,25 +10,30 @@ import { renderForm } from '../renderForm';
  * `null` is valid is the schema's decision. These cases pin what a validator
  * says about `null` next to a composition keyword whose branches declare no
  * `type`; `nullable.object-null-branch.render` covers the pattern that validates.
- * The `oneOf` schema here is one the form warns about in development
- * (`NULLABLE_ONE_OF_NULL_UNREACHABLE`): that warning describes this very failure.
+ * The form prints no warning for the `oneOf` schema here, so this failure
+ * shows only in validation.
  */
 describe('nullable.object-validation.render — validity of a preserved null is the schema’s decision', () => {
-  const branches = [
-    { '&if': "./kind === 'a'", properties: { aValue: { type: 'string' } } },
-    { '&if': "./kind === 'b'", properties: { bValue: { type: 'string' } } },
+  const branches: readonly JSONSchema[] = [
+    {
+      controls: { active: "./kind === 'a'" },
+      properties: { aValue: { type: 'string' } },
+    },
+    {
+      controls: { active: "./kind === 'b'" },
+      properties: { bValue: { type: 'string' } },
+    },
   ];
-  const target = (composition: 'oneOf' | 'anyOf') =>
-    ({
-      type: 'object',
-      properties: {
-        target: {
-          type: ['object', 'null'],
-          properties: { kind: { type: 'string', enum: ['a', 'b'] } },
-          [composition]: branches,
-        },
+  const target = (composition: 'oneOf' | 'anyOf'): JSONSchema => ({
+    type: 'object',
+    properties: {
+      target: {
+        type: ['object', 'null'],
+        properties: { kind: { type: 'string', enum: ['a', 'b'] } },
+        [composition]: branches,
       },
-    }) as JSONSchema;
+    },
+  });
 
   it('reports the oneOf error a validator gives for null: properties-only branches all match it', async () => {
     const form = await renderForm(target('oneOf'), {

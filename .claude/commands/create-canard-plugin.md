@@ -18,53 +18,46 @@ This command develops UI library plugins for @canard/schema-form by combining th
 
 ## Skills Used
 
-### 1. **canard-type-system** (`.claude/skills/canard-type-system/`)
+Paths marked `<new-plugin>` or shown in generated output are scaffold destinations, not existing repository references.
 
-- Role: Provides TypeScript type system for @canard/schema-form
-- Usage: Type definition stage, legacy type validation
-
-### 2. **ui-plugin-guidelines** (`.claude/skills/ui-plugin-guidelines/`)
+### 1. **ui-plugin-guidelines** (`.claude/skills/ui-plugin-guidelines/`)
 
 - Role: UI library compatibility verification and project structure design
 - Usage: Initial analysis stage, compatibility mapping
 
-### 3. **react-plugin-implementation** (`.claude/skills/react-plugin-implementation/`)
+### 2. **react-plugin-implementation** (`.claude/skills/react-plugin-implementation/`)
 
 - Role: Provides React component implementation patterns and optimization strategies
 - Usage: Component implementation stage
 
-### 4. **dependency-management** (`.claude/skills/dependency-management/`)
-
-- Role: package.json dependency configuration and version management
-- Usage: Project setup stage
-
-### 5. **phased-development** (`.claude/skills/phased-development/`)
-
-- Role: 5-phase development process and priority guide
-- Usage: Overall project roadmap planning
+Types come from `packages/canard/schema-form/src/index.ts` and
+`packages/canard/schema-form/src/types/field/`; consumer guidance lives in
+`packages/canard/schema-form/docs/agents/`. Use
+`packages/canard/schema-form-antd5-plugin/package.json` as the dependency reference.
+Roadmap priorities come from the compatibility analysis, not an additional skill.
 
 ## Execution Flow
 
 ### `/create-canard-plugin <UI_LIBRARY_NAME>` (Full Development)
 
-Skill execution order:
+Execution order:
 
 1. **ui-plugin-guidelines skill**: Compatibility analysis
    - UI library component mapping
    - Compatibility grading (✅ / ⚠️ / ❌)
    - Priority determination
 
-2. **canard-type-system skill**: Type definition reference
-   - FormTypeInputProps, FormTypeRendererProps, etc.
+2. **Current public type declarations**: Type definition reference
+   - FieldInputProps, FieldRendererProps, etc.
    - Context type design
-   - Legacy type validation
+   - Public export validation
 
-3. **phased-development skill**: Development roadmap planning
+3. **Compatibility-based roadmap**: Development roadmap planning
    - 5-phase development plan
    - Priority-based schedule
    - Milestone setting
 
-4. **dependency-management skill**: package.json generation
+4. **Reference plugin manifest**: package.json generation
    - dependencies/peerDependencies configuration
    - Version specification
 
@@ -77,14 +70,14 @@ Skill execution order:
 
 **Purpose**: Quick compatibility check without full development setup
 
-Skill execution order:
+Execution order:
 
 1. **ui-plugin-guidelines skill** (Primary)
    - Compatibility matrix creation
    - Implementation feasibility assessment
    - Priority determination
 
-2. **canard-type-system skill** (Supporting)
+2. **Current public type declarations** (Supporting)
    - Type requirements reference
    - Basic type compatibility check
 
@@ -106,7 +99,7 @@ Skill execution order:
 
 ...
 
-## Stage 2: Type System [canard-type-system]
+## Stage 2: Type System [public declarations]
 
 ```typescript
 interface ChakraContext {
@@ -115,13 +108,13 @@ interface ChakraContext {
 }
 ```
 
-## Stage 3: Development Roadmap [phased-development]
+## Stage 3: Development Roadmap [compatibility priorities]
 
 - Phase 1: Design and Verification (1-2 days)
 - Phase 2: Basic Infrastructure (2-3 days)
   ...
 
-## Stage 4: package.json [dependency-management]
+## Stage 4: package.json [reference manifest]
 
 ```json
 {
@@ -134,12 +127,12 @@ interface ChakraContext {
 
 ## Stage 5: Implementation Guide [react-plugin-implementation]
 
-### FormTypeInputString Implementation
+### FieldInputString Implementation
 
 ```typescript
-const FormTypeInputString = ({ ... }) => {
-  // Pattern code
-};
+const FieldInputString = ({ defaultValue, onChange }: FieldInputProps<string>) => (
+  <Input defaultValue={defaultValue} onChange={(event) => onChange(event.target.value || undefined)} />
+);
 ```
 ````
 
@@ -150,21 +143,21 @@ const FormTypeInputString = ({ ... }) => {
 ### Full Development Mode (Default)
 
 **Command**: `/create-canard-plugin <UI_LIBRARY_NAME>`
-**Execution**: 5 skills sequentially
+**Execution**: 5 stages using 2 skills and current repository sources
 
 1. ui-plugin-guidelines (compatibility analysis)
-2. canard-type-system (type definitions)
-3. phased-development (roadmap)
-4. dependency-management (package.json)
+2. Public declarations (type definitions)
+3. Compatibility priorities (roadmap)
+4. Reference plugin manifest (package.json)
 5. react-plugin-implementation (implementation guide)
 
 ### Compatibility-Only Mode
 
 **Command**: `/create-canard-plugin <UI_LIBRARY_NAME> --compatibility-only`
-**Execution**: 2 skills only
+**Execution**: Compatibility skill plus current public declarations
 
 1. ui-plugin-guidelines (Primary - compatibility matrix)
-2. canard-type-system (Supporting - type requirements)
+2. Public declarations (Supporting - type requirements)
 
 **Purpose**: Quick assessment before committing to full development
 
@@ -253,10 +246,10 @@ When you run `/create-canard-plugin <UI_LIBRARY_NAME>`, Claude will:
    - Extract UI library name and version
 
 2. **Route to appropriate mode**
-   - Full mode: Execute all 5 skills
-   - Compatibility-only: Execute 2 skills
+   - Full mode: Execute all 5 stages
+   - Compatibility-only: Analyze compatibility and check the public declarations
 
-3. **Execute skills in order**
+3. **Execute the stages in order**
    - Each skill reads from its knowledge/ directory
    - Tools may be invoked for automation
 
@@ -271,299 +264,297 @@ When you run `/create-canard-plugin <UI_LIBRARY_NAME>`, Claude will:
 
 ### 1. Plugin Template Auto-Generation
 
-- **Boilerplate 자동 생성**: 호환성 분석 완료 후 즉시 프로젝트 구조 생성
-  - 디렉토리 구조: `packages/{library-name}-plugin/`
-  - 파일 템플릿: package.json, tsconfig.json, README.md
-  - Component 스캐폴딩: 각 FormType에 대한 빈 컴포넌트 파일
-- **타입 정의 자동화**: FormTypeInputProps, Context 인터페이스 자동 생성
-  - UI 라이브러리별 맞춤 타입
-  - Props 확장 인터페이스
-  - Context 타입 정의
-- **설정 파일 생성**: Linter, Formatter, TypeScript 설정
-  - .eslintrc.js (React/TypeScript 규칙)
-  - .prettierrc (프로젝트 스타일)
-  - tsconfig.json (엄격한 타입 체크)
+- **Automatic boilerplate generation**: generate the project structure immediately after compatibility analysis completes
+  - Directory structure: `packages/{library-name}-plugin/`
+  - File templates: package.json, tsconfig.json, README.md
+  - Component scaffolding: one empty component file per input kind
+- **Type scaffold**: extend FieldInputProps and define the plugin context
+  - Types tailored to each UI library
+  - Interfaces that extend props
+  - Context type definitions
+- **Configuration file generation**: configure the linter, formatter and TypeScript
+  - .eslintrc.js (React/TypeScript rules)
+  - .prettierrc (project style)
+  - tsconfig.json (strict type checking)
 
 ### 2. Dependency Version Auto-Detection
 
-- **최신 버전 자동 확인**: WebSearch로 UI 라이브러리 최신 stable 버전 탐지
-  - npm registry 조회
-  - 호환성 버전 범위 계산
-  - peerDependencies 자동 설정
-- **의존성 충돌 감지**: 기존 monorepo 의존성과 충돌 사전 체크
-  - React 버전 호환성
-  - TypeScript 버전 호환성
-  - 중복 의존성 최적화 제안
-- **버전 범위 최적화**: 적절한 semver 범위 자동 추천
-  - ^: minor 버전 업데이트 허용
-  - ~: patch 버전만 허용
-  - 정확한 버전: breaking change 우려 시
+- **Automatic latest-version detection**: use WebSearch to detect the latest stable UI library version
+  - Query the npm registry
+  - Calculate compatible version ranges
+  - Configure peerDependencies automatically
+- **Dependency conflict detection**: check for conflicts with existing monorepo dependencies in advance
+  - React version compatibility
+  - TypeScript version compatibility
+  - Suggestions for optimizing duplicate dependencies
+- **Version range optimization**: recommend appropriate semver ranges automatically
+  - ^: allow minor version updates
+  - ~: allow patch versions only
+  - Exact version: when breaking changes are a concern
 
 ### 3. Test Case Auto-Generation
 
-- **각 FormType 기본 테스트**: 필수 테스트 케이스 자동 생성
-  - Rendering test: 컴포넌트 정상 렌더링 확인
-  - Props test: 필수 props 전달 확인
-  - Validation test: 입력 검증 로직 테스트
-- **Snapshot 테스트**: 각 컴포넌트 시각적 회귀 방지
+- **Basic tests per input kind**: generate the required behavior checks
+  - Rendering test: verify that the component renders correctly
+  - Props test: verify that required props are passed
+  - Validation test: test input validation logic
+- **Snapshot tests**: prevent visual regressions in each component
   - Initial render snapshot
   - Props variant snapshots
   - Error state snapshots
-- **Integration 테스트**: FormRenderer와 통합 테스트
-  - Schema 기반 렌더링
-  - Context 전달 확인
-  - Event handling 검증
+- **Integration tests**: mount Form with the plugin to verify the binding
+  - Schema-based rendering
+  - Verify context delivery
+  - Verify event handling
 
 **Example Template Output**:
 
 ```typescript
-// Auto-generated: packages/chakra-ui-plugin/src/components/FormTypeInputString.tsx
-import { FormTypeInputProps } from '@canard/schema-form';
+// Scaffold output: <new-plugin>/src/fieldInputs/FieldInputString.tsx
+import type { FieldInputDefinition, FieldInputProps } from '@canard/schema-form';
 import { Input } from '@chakra-ui/react';
-import { ChakraContext } from '../types';
 
-export const FormTypeInputString = <TValues extends Record<string, any>>({
-  name,
-  value,
-  onChange,
-  context,
-  ...props
-}: FormTypeInputProps<TValues, string, ChakraContext>) => {
-  return (
-    <Input
-      value={value || ''}
-      onChange={(e) => onChange(e.target.value)}
-      size={context?.size}
-      variant={context?.variant}
-      {...props}
-    />
-  );
-};
+interface ChakraContext {
+  size?: 'xs' | 'sm' | 'md' | 'lg';
+  variant?: 'outline' | 'filled' | 'flushed' | 'unstyled';
+}
+
+const FieldInputString = ({
+  path, name, value, onChange, context, required, disabled, readOnly,
+}: FieldInputProps<string, ChakraContext>) => (
+  <Input
+    id={path}
+    name={name}
+    value={value ?? ''}
+    onChange={(event) => onChange(event.target.value === '' ? undefined : event.target.value)}
+    size={context.size}
+    variant={context.variant}
+    isRequired={required}
+    isDisabled={disabled}
+    isReadOnly={readOnly}
+  />
+);
+
+export const FieldInputStringDefinition = {
+  Component: FieldInputString,
+  test: { type: 'string' },
+  controlled: true,
+} satisfies FieldInputDefinition;
 ```
 
 **Example Test Output**:
 
 ```typescript
-// Auto-generated: packages/chakra-ui-plugin/src/components/__tests__/FormTypeInputString.test.tsx
+// Scaffold output: <new-plugin>/src/fieldInputs/__tests__/FieldInputString.test.tsx
 import { render, screen, fireEvent } from '@testing-library/react';
-import { FormTypeInputString } from '../FormTypeInputString';
+import { vi } from 'vitest';
+import { Form } from '@canard/schema-form';
+import { FieldInputStringDefinition } from '../FieldInputString';
 
-describe('FormTypeInputString', () => {
-  it('should render input with correct value', () => {
-    const onChange = jest.fn();
-    render(
-      <FormTypeInputString
-        name="email"
-        value="test@example.com"
-        onChange={onChange}
-      />
-    );
+const definitions = [FieldInputStringDefinition];
+const schema = { type: 'string' } as const;
+
+describe('FieldInputString', () => {
+  it('renders the initial value', () => {
+    render(<Form jsonSchema={schema} defaultValue="test@example.com" fieldInputDefinitions={definitions} />);
     expect(screen.getByDisplayValue('test@example.com')).toBeInTheDocument();
   });
 
-  it('should call onChange when input changes', () => {
-    const onChange = jest.fn();
-    render(
-      <FormTypeInputString name="email" value="" onChange={onChange} />
-    );
-    fireEvent.change(screen.getByRole('textbox'), {
-      target: { value: 'new@example.com' }
-    });
+  it('publishes input changes', () => {
+    const onChange = vi.fn();
+    render(<Form jsonSchema={schema} fieldInputDefinitions={definitions} onChange={onChange} />);
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'new@example.com' } });
     expect(onChange).toHaveBeenCalledWith('new@example.com');
   });
 
-  it('should match snapshot', () => {
-    const { container } = render(
-      <FormTypeInputString name="email" value="" onChange={() => {}} />
-    );
+  it('renders the form snapshot', () => {
+    const { container } = render(<Form jsonSchema={schema} fieldInputDefinitions={definitions} />);
     expect(container).toMatchSnapshot();
   });
 });
 ```
 
+
 ---
 
-## ⚠️ 문제 해결 (Troubleshooting)
+## ⚠️ Troubleshooting
 
-### 스킬을 찾을 수 없는 경우
+### When a Skill Cannot Be Found
 
-**문제**: 필수 스킬 (`ui-plugin-guidelines`, `canard-type-system`, `react-plugin-implementation`, `dependency-management`, `phased-development`) 디렉토리가 없음
+**Problem**: the ui-plugin-guidelines or react-plugin-implementation skill directory is missing.
 
-**Fallback 동작**:
+**Fallback behavior**:
 
-1. ⚠️ 경고 메시지: "스킬이 없어 기본 방식으로 플러그인 개발 가이드를 제공합니다"
-2. 네이티브 방식으로 플러그인 가이드 생성:
-   - 수동 UI 라이브러리 분석
-   - 기본 TypeScript 타입 정의
-   - 일반적인 React 컴포넌트 패턴
-   - 간단한 의존성 설정
-3. 결과 품질: 호환성 매트릭스 및 단계별 로드맵 없음
+1. ⚠️ Warning message: "The skill is unavailable, so this plugin development guide uses the basic approach"
+2. Generate a plugin guide using the native approach:
+   - Manual UI library analysis
+   - Basic TypeScript type definitions
+   - General React component patterns
+   - Simple dependency configuration
+3. Output quality: no compatibility matrix or phased roadmap
 
-**해결 방법**:
+**Resolution**:
 
 ```bash
-# 스킬 디렉토리 확인
+# Check the skill directories
 ls -la .claude/skills/ui-plugin-guidelines/
-ls -la .claude/skills/canard-type-system/
 ls -la .claude/skills/react-plugin-implementation/
-ls -la .claude/skills/dependency-management/
-ls -la .claude/skills/phased-development/
 
-# 저장소에서 복원
+# Restore from the repository
 git checkout .claude/skills/
 ```
 
-### UI 라이브러리 정보 부족
+### Insufficient UI Library Information
 
-**문제**: 제공된 UI 라이브러리 이름이 모호하거나 정보 부족
+**Problem**: the supplied UI library name is ambiguous or information is insufficient
 
-**Fallback 동작**:
+**Fallback behavior**:
 
-1. ⚠️ UI 라이브러리 정보 부족 경고
-2. 대화형 질문 시작:
-   - 정확한 라이브러리 이름 확인
-   - 버전 정보 확인
-   - 공식 문서 URL 확인
-3. 충분한 정보 수집 후 진행
+1. ⚠️ Warn that UI library information is insufficient
+2. Start interactive questions:
+   - Confirm the exact library name
+   - Confirm the version
+   - Confirm the official documentation URL
+3. Proceed after collecting sufficient information
 
-**해결 방법**:
+**Resolution**:
 
 ```bash
-# 정확한 라이브러리 이름과 버전 제공
+# Provide the exact library name and version
 /create-canard-plugin "Material-UI v5" --compatibility-only
 
-# 공식 이름 확인
+# Check the official names
 # - "Material-UI" → "@mui/material"
 # - "Ant Design" → "antd"
 # - "Chakra UI" → "@chakra-ui/react"
 ```
 
-### --compatibility-only 모드 오류
+### --compatibility-only Mode Errors
 
-**문제**: 호환성 분석만 수행 시 오류 발생
+**Problem**: an error occurs when running compatibility analysis only
 
-**Fallback 동작**:
+**Fallback behavior**:
 
-1. ⚠️ 호환성 분석 실패 알림
-2. 전체 모드로 전환 제안
-3. 수동 호환성 체크 가이드 제공
+1. ⚠️ Report the compatibility analysis failure
+2. Suggest switching to full mode
+3. Provide a manual compatibility check guide
 
-**해결 방법**:
+**Resolution**:
 
 ```bash
-# 전체 모드로 시도
+# Try full mode
 /create-canard-plugin "UI Library Name"
 
-# 수동 호환성 확인
-# 1. UI 라이브러리 공식 문서 확인
-# 2. @canard/schema-form 요구사항 리스트 확인
-# 3. 컴포넌트 매칭 테이블 작성
+# Check compatibility manually
+# 1. Read the UI library official documentation
+# 2. Check the @canard/schema-form requirements list
+# 3. Create a component mapping table
 ```
 
-### Knowledge 파일 누락
+### Missing Knowledge Files
 
-**문제**: UI 패턴, 타입 시스템 가이드 파일 없음
+**Problem**: UI pattern or type system guide files are missing
 
-**Fallback 동작**:
+**Fallback behavior**:
 
-1. ⚠️ 가이드 파일 없음 경고
-2. 일반적인 React 패턴 적용
-3. 기본 TypeScript 타입 사용
+1. ⚠️ Warn that guide files are missing
+2. Apply general React patterns
+3. Use basic TypeScript types
 
-**해결 방법**:
+**Resolution**:
 
 ```bash
-# Knowledge 파일 확인
+# Check the knowledge files
 ls -la .claude/skills/*/knowledge/
 
-# 저장소에서 복원
+# Restore from the repository
 git checkout .claude/skills/*/knowledge/
 ```
 
-## 📖 사용 예시
+## 📖 Usage Examples
 
-### 기본 사용법
+### Basic Usage
 
 ```
 /create-canard-plugin "UI_LIBRARY_NAME"
 ```
 
-### 호환성 체크만
+### Compatibility Check Only
 
 ```
 /create-canard-plugin "UI_LIBRARY_NAME" --compatibility-only
 ```
 
-### 실제 시나리오
+### Practical Scenarios
 
-#### 시나리오 1: 빠른 호환성 체크
+#### Scenario 1: Quick Compatibility Check
 
 ```
-상황: Radix UI 사용 가능 여부 사전 확인
-명령: /create-canard-plugin "Radix UI" --compatibility-only
-결과:
-  📊 호환성 매트릭스
+Situation: check in advance whether Radix UI can be used
+Command: /create-canard-plugin "Radix UI" --compatibility-only
+Output:
+  📊 Compatibility matrix
   - String Input: ✅ 100%
   - Select: ✅ 95%
-  - DatePicker: ❌ 없음 (대안 필요)
-  종합 점수: 85% → 개발 진행 권장
+  - DatePicker: ❌ Missing (an alternative is required)
+  Overall score: 85% → development is recommended
 ```
 
-#### 시나리오 2: 전체 플러그인 개발
+#### Scenario 2: Full Plugin Development
 
 ```
-상황: Chakra UI v2 플러그인 완전 개발
-명령: /create-canard-plugin "Chakra UI v2"
-결과:
-  1. 호환성 분석 (ui-plugin-guidelines)
-  2. 타입 시스템 설계 (canard-type-system)
-  3. 5단계 개발 로드맵 (phased-development)
-  4. package.json 생성 (dependency-management)
-  5. 구현 가이드 제공 (react-plugin-implementation)
+Situation: develop a complete Chakra UI v2 plugin
+Command: /create-canard-plugin "Chakra UI v2"
+Output:
+  1. Compatibility analysis (ui-plugin-guidelines)
+  2. Check the current public declarations
+  3. Prioritize the 5-phase development roadmap from the compatibility findings
+  4. Generate package.json using the reference plugin manifest
+  5. Provide an implementation guide (react-plugin-implementation)
 ```
 
-#### 시나리오 3: 여러 라이브러리 비교
+#### Scenario 3: Compare Multiple Libraries
 
 ```
-상황: 3개 UI 라이브러리 중 최적 선택
-명령:
+Situation: choose the best of 3 UI libraries
+Commands:
   /create-canard-plugin "Chakra UI" --compatibility-only
   /create-canard-plugin "Material-UI" --compatibility-only
   /create-canard-plugin "Ant Design" --compatibility-only
-결과:
-  - 호환성 점수 비교 (Chakra: 88%, MUI: 92%, Ant: 85%)
-  - 최종 선택: Material-UI
-  → /create-canard-plugin "Material-UI v5" (전체 개발 진행)
+Output:
+  - Compare compatibility scores (Chakra: 88%, MUI: 92%, Ant: 85%)
+  - Final choice: Material-UI
+  → /create-canard-plugin "Material-UI v5" (proceed with full development)
 ```
 
-### 고급 기능 사용 예시
+### Advanced Feature Examples
 
-#### 예시 1: 템플릿 자동 생성
+#### Example 1: Automatic Template Generation
 
 ```
-상황: Chakra UI 플러그인 boilerplate 즉시 생성
-명령: /create-canard-plugin "Chakra UI v2"
-결과:
-  - 호환성 분석 완료 (88%)
-  - 자동 생성:
-    - packages/chakra-ui-plugin/
-      - src/components/FormTypeInputString.tsx (빈 템플릿)
+Situation: generate Chakra UI plugin boilerplate immediately
+Command: /create-canard-plugin "Chakra UI v2"
+Output:
+  - Compatibility analysis complete (88%)
+  - Generated automatically:
+    - <new-plugin>/
+      - src/fieldInputs/FieldInputString.tsx (empty template)
       - src/types/ChakraContext.ts
-      - package.json (의존성 포함)
+      - package.json (including dependencies)
       - tsconfig.json, .eslintrc.js
-      - README.md (사용 가이드)
-  - 즉시 구현 시작 가능
+      - README.md (usage guide)
+  - Implementation can start immediately
 ```
 
-#### 예시 2: 의존성 버전 자동 감지
+#### Example 2: Automatic Dependency Version Detection
 
 ```
-상황: 최신 stable 버전 자동 확인
-명령: /create-canard-plugin "Material-UI"
-결과:
-  - WebSearch로 최신 버전 조회: @mui/material@5.15.0
-  - 호환성 확인: React 18.x 필요
-  - 자동 생성 package.json:
+Situation: detect the latest stable version automatically
+Command: /create-canard-plugin "Material-UI"
+Output:
+  - Look up the latest version with WebSearch: @mui/material@5.15.0
+  - Compatibility check: React 18.x is required
+  - Automatically generated package.json:
     {
       "dependencies": {
         "@mui/material": "^5.15.0"
@@ -572,61 +563,61 @@ git checkout .claude/skills/*/knowledge/
         "react": "^18.0.0"
       }
     }
-  - 충돌 감지: 없음 ✅
+  - Conflict detection: none ✅
 ```
 
-#### 예시 3: 테스트 자동 생성
+#### Example 3: Automatic Test Generation
 
 ```
-상황: 모든 FormType 테스트 케이스 자동 생성
-명령: /create-canard-plugin "Chakra UI v2"
-결과:
-  - 각 컴포넌트별 3가지 테스트 자동 생성:
-    - FormTypeInputString.test.tsx (rendering, onChange, snapshot)
-    - FormTypeInputNumber.test.tsx (validation, onChange, snapshot)
-    - FormTypeSelect.test.tsx (options, onChange, snapshot)
-  - Integration 테스트:
-    - FormRenderer.integration.test.tsx (schema 기반 렌더링)
-  - 즉시 yarn test 실행 가능
+Scenario: generate behavior tests for every input kind
+Command: /create-canard-plugin "Chakra UI v2"
+Output:
+  - Generate 3 tests automatically for each component:
+    - FieldInputString.test.tsx (rendering, onChange, snapshot)
+    - FieldInputNumber.test.tsx (validation, onChange, snapshot)
+    - FieldInputStringEnum.test.tsx (options, onChange, snapshot)
+  - Integration tests:
+    - plugin.integration.test.tsx (schema-driven Form rendering)
+  - yarn test can run immediately
 ```
 
-#### 예시 4: 전체 워크플로우 자동화
+#### Example 4: Full Workflow Automation
 
 ```
-상황: 호환성 체크 → 템플릿 생성 → 테스트 생성 → 구현 시작
-명령:
+Situation: compatibility check → template generation → test generation → start implementation
+Commands:
   1. /create-canard-plugin "Radix UI" --compatibility-only
-  2. (호환성 85% → 진행 결정)
+  2. (85% compatibility → decide to proceed)
   3. /create-canard-plugin "Radix UI"
-결과:
-  - 완전한 프로젝트 구조 생성
-  - 의존성 자동 설치 명령: yarn install
-  - 테스트 프레임워크 설정 완료
-  - 구현 가이드 제공
-  - 즉시 개발 시작 가능
+Output:
+  - Generate the complete project structure
+  - Automatic dependency installation command: yarn install
+  - Test framework configuration complete
+  - Provide an implementation guide
+  - Development can start immediately
 ```
 
-## 💡 팁
+## 💡 Tips
 
-- **사전 확인 필수**: --compatibility-only로 먼저 검증 후 개발 시작
-- **버전 명시**: "Chakra UI v2"처럼 정확한 버전 지정
-- **80% 기준**: 호환성 80% 이상일 때 개발 권장
-- **대안 계획**: 호환성 낮은 컴포넌트는 fallback 전략 수립
-- **템플릿 활용**: 자동 생성된 boilerplate로 개발 시간 단축
-- **의존성 최신화**: WebSearch 자동 탐지로 항상 최신 stable 버전 사용
-- **테스트 커버리지**: 자동 생성 테스트로 기본 품질 보장
+- **Preliminary check required**: verify with --compatibility-only before starting development
+- **Specify the version**: provide the exact version, such as "Chakra UI v2"
+- **80% threshold**: development is recommended when compatibility is at least 80%
+- **Plan alternatives**: define a fallback strategy for components with low compatibility
+- **Use templates**: reduce development time with automatically generated boilerplate
+- **Keep dependencies current**: always use the latest stable version through automatic WebSearch detection
+- **Test coverage**: ensure basic quality with automatically generated tests
 
 ---
 
-## ✅ 성공 시 출력
+## ✅ Success Output
 
-### 호환성 체크 모드 (--compatibility-only)
+### Compatibility Check Mode (--compatibility-only)
 
 ```
-✅ Chakra UI v2 호환성 분석 완료!
+✅ Chakra UI v2 compatibility analysis complete!
 
-📊 호환성 매트릭스:
-| Schema Form 요구사항 | Chakra UI 컴포넌트 | 호환성 | 우선순위 |
+📊 Compatibility matrix:
+| Schema Form requirement | Chakra UI component | Compatibility | Priority |
 |---------------------|-------------------|--------|---------|
 | String Input        | Input             | ✅ 100% | P1      |
 | Select              | Select            | ✅ 95%  | P1      |
@@ -634,89 +625,88 @@ git checkout .claude/skills/*/knowledge/
 | DatePicker          | -                 | ❌ 0%   | P3      |
 | FileUpload          | -                 | ⚠️ 50%  | P2      |
 
-📈 종합 호환성: 88% ✅ (개발 진행 권장)
+📈 Overall compatibility: 88% ✅ (development is recommended)
 
-💡 권장사항:
-- ✅ 즉시 개발 가능: String, Select, Checkbox
-- ⚠️ 대안 필요: DatePicker (react-datepicker 통합 고려)
-- 📦 확장 구현: FileUpload (Chakra Box 기반 커스텀)
+💡 Recommendations:
+- ✅ Immediate development is possible: String, Select, Checkbox
+- ⚠️ An alternative is required: DatePicker (consider react-datepicker integration)
+- 📦 Extended implementation: FileUpload (custom implementation based on Chakra Box)
 
-⏱️ 분석 시간: 12초
+⏱️ Analysis time: 12 seconds
 
-💡 다음 단계:
-- 호환성 ≥ 80% → /create-canard-plugin "Chakra UI v2" (전체 개발 진행)
-- 호환성 < 80% → 다른 UI 라이브러리 검토
+💡 Next steps:
+- Compatibility ≥ 80% → /create-canard-plugin "Chakra UI v2" (proceed with full development)
+- Compatibility < 80% → consider another UI library
 ```
 
-### 전체 개발 모드
+### Full Development Mode
 
 ```
-✅ Chakra UI v2 플러그인 개발 계획 완료!
+✅ Chakra UI v2 plugin development plan complete!
 
-📊 5단계 개발 로드맵:
+📊 5-phase development roadmap:
 
-Phase 1: 설계 및 검증 (1-2일)
-- ✅ 호환성 분석 완료 (88%)
-- ✅ 타입 시스템 설계
-- ✅ Context 인터페이스 정의
+Phase 1: Design and verification (1-2 days)
+- ✅ Compatibility analysis complete (88%)
+- ✅ Type system design
+- ✅ Context interface definition
 
-Phase 2: 기본 인프라 (2-3일)
-- [ ] package.json 생성
-- [ ] 프로젝트 구조 설정
-- [ ] 의존성 설치
+Phase 2: Basic infrastructure (2-3 days)
+- [ ] Generate package.json
+- [ ] Set up the project structure
+- [ ] Install dependencies
 
-Phase 3: 핵심 컴포넌트 (3-5일)
-- [ ] FormTypeInputString 구현
-- [ ] FormTypeInputNumber 구현
-- [ ] FormTypeSelect 구현
+Phase 3: Core components (3-5 days)
+- [ ] Implement FieldInputString
+- [ ] Implement FieldInputNumber
+- [ ] Implement FieldInputStringEnum
 
-Phase 4: 테스트 및 문서화 (2-3일)
-Phase 5: 릴리즈 준비 (1일)
+Phase 4: Testing and documentation (2-3 days)
+Phase 5: Release preparation (1 day)
 
-📁 생성 예정 파일:
-- packages/chakra-ui-plugin/
+📁 Files to generate:
+- <new-plugin>/
   - package.json
   - src/components/
   - src/types/
   - README.md
 
-⏱️ 계획 생성 시간: 35초
-⏱️ 예상 개발 기간: 9-14일
+⏱️ Plan generation time: 35 seconds
+⏱️ Estimated development time: 9-14 days
 
-💡 다음 단계:
-1. 개발 로드맵 검토
-2. /requirements-execute로 구현 시작
-3. 각 Phase 완료 후 /code-review
+💡 Next steps:
+1. Review the development roadmap
+2. Implement the reviewed roadmap
+3. Review each completed phase
 ```
 
-## ❌ 실패 시 출력
+## ❌ Failure Output
 
 ```
-❌ 플러그인 개발 계획 생성 실패
+❌ Plugin development plan generation failed
 
-🔍 원인:
-- UI 라이브러리 정보 부족 ("Chakra UI" → 버전 명시 필요)
-- 또는: 필수 스킬 누락 (ui-plugin-guidelines, canard-type-system)
-- 또는: WebSearch 실패 (최신 버전 정보 확인 불가)
+🔍 Causes:
+- Insufficient UI library information ("Chakra UI" → specify the version)
+- Missing required skill: ui-plugin-guidelines or react-plugin-implementation
+- Or: WebSearch failure (the latest version information cannot be verified)
 
-💡 해결 방법:
-1. 정확한 라이브러리 이름과 버전 제공:
+💡 Resolution:
+1. Provide the exact library name and version:
    /create-canard-plugin "Chakra UI v2.8.0"
    /create-canard-plugin "@chakra-ui/react v2"
 
-2. 공식 문서 URL 확인:
+2. Check the official documentation URLs:
    - Chakra UI: https://chakra-ui.com
    - Material-UI: https://mui.com
    - Ant Design: https://ant.design
 
-3. 대화형 모드로 정보 수집:
+3. Collect information in interactive mode:
    /create-canard-plugin
-   (질문에 답변하며 라이브러리 정보 제공)
+   (Answer questions to provide library information)
 
-4. 스킬 복원:
+4. Restore the skills:
    git checkout .claude/skills/ui-plugin-guidelines/
-   git checkout .claude/skills/canard-type-system/
    git checkout .claude/skills/react-plugin-implementation/
 
-📚 추가 도움말: 먼저 --compatibility-only로 호환성 체크 권장
+📚 Additional help: a compatibility check with --compatibility-only is recommended first
 ```

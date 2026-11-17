@@ -1,11 +1,11 @@
-export { createFingerprint } from './createFingerprint';
-export { createSortedFingerprint } from './createSortedFingerprint';
-export { createSafeFingerprint } from './createSafeFingerprint';
-export { createFingerprintFactory } from './createFingerprintFactory';
+export { createFingerprint } from './utils/createFingerprint';
+export { createSortedFingerprint } from './utils/createSortedFingerprint';
+export { createSafeFingerprint } from './utils/createSafeFingerprint';
+export { createFingerprintFactory } from './utils/createFingerprintFactory';
 export type {
   FingerprintMode,
   FingerprintOptions,
   SafeFingerprintOptions,
   FingerprintFactoryOptions,
   FingerprintGenerator,
-} from './type';
+} from './types/type';

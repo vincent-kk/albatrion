@@ -1,0 +1,5 @@
+# Installed-release migration comparison
+
+`pluginMigration.test.ts` and `validatorMigration.test.ts` execute this directory's observer against two independent installations. Build the current core, Winglet dependencies and four UI plugins and AJV6/7/8 plugins first. Install core 0.16.1, UI and AJV6/7/8 plugins 0.16.0, React/ReactDOM 19.2.6 and jsdom 26.1.0 into a scratch project outside the repository. Set `SCHEMA_FORM_MIGRATION_BASELINE` to that project through the runner configuration, then run the schema-form unit project with the `Migration.test.ts` filter. Without that explicit baseline the test skips with its reason; it never downloads packages during a test.
+
+The observer loads each release's public CJS entries, React and renderer from its own installation. It ignores CSS imports because the assertions concern selection, native edits, node values and diagnostics, not layout or stylesheet correctness. Expected load failures are captured by code, so a missing module or setup failure cannot satisfy the old union assertion.

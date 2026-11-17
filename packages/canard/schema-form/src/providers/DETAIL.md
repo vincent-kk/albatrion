@@ -2,20 +2,21 @@
 
 ## Requirements
 
-폼 설정을 역할별 Context로 전달하고 Provider 간 의존 순서를 유지합니다.
+폼별 설정·작업공간과 엔진 루트의 수명을 Context 경계로 분리합니다. Context를 편의 저장소로 합치면 여러 폼의 상태와 설정이 섞이므로 각 소유자가 자기 계약을 유지합니다.
 
 ## API Contracts
 
-- 폼 수준 설정은 선택적 외부 설정보다 우선합니다.
-- 노드 생성·입력 제어·렌더링·가상화의 각 소비자는 해당 Context 계약으로 값을 얻습니다.
+조립 순서는 [FormCore](../components/Form/components/FormCore/DETAIL.md)가 소유합니다. 각 Context는 설정 전달과 자기 수명만 담당하며 노드 로드·준비·reset·검증 예약·콜백 전달을 상위 providers 계약으로 복제하지 않습니다. 해당 계약은 [RootNodeContext](RootNodeContext/DETAIL.md)에 둡니다.
+
+- 라이프사이클 소비자는 FieldLifecycleContext의 진입점을 직접 사용합니다. 상위 providers가 같은 이름을 재노출하지 않아 소유 경계를 우회하는 별도 주소를 만들지 않습니다.
+- 라이프사이클 레지스트리는 FormRoot가 소유하고 FieldLifecycleContext의 Context 요소가 전달합니다. 다른 Provider와 달리 래퍼 컴포넌트가 없으며 Form 재렌더의 고정 호출 수를 유지하기 위한 예외입니다.
 
 ## Acceptance Criteria
 
-### providers-contract — 관찰 가능한 동작
+### providers-contract — 폼별 소유권을 유지합니다
 
-- 여러 폼의 설정과 워크스페이스 데이터가 Provider 경계를 넘어 섞이지 않습니다.
-- Provider 정리 시 각 계층이 만든 구독과 가상화 자원을 해제합니다.
+선택적 외부 설정을 폼 수준 설정으로 덮어쓸 수 있어야 하며, 설정이나 workspace를 다른 Form 인스턴스와 공유 상태로 만들지 않습니다. 오류 보고와 가상화 자원도 각각 [FormErrorContext](FormErrorContext/DETAIL.md)와 [VirtualizationContext](VirtualizationContext/DETAIL.md)의 수명을 따릅니다. React 이펙트 정리와 엔진 load 은퇴를 구별하여 숨겨진 폼의 준비된 콜백을 실수로 끊지 않습니다.
 
 ## Last Updated
 
-2026-09-16
+Context 사이의 소유 경계 또는 조립 의존성이 바뀌면 갱신합니다.

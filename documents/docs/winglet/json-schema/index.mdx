@@ -27,6 +27,7 @@ yarn add @winglet/json-schema
 | `@winglet/json-schema/scanner` | `JSONSchemaScanner` (synchronous) |
 | `@winglet/json-schema/async-scanner` | `JSONSchemaScannerAsync` |
 | `@winglet/json-schema/filter` | Schema type-guard functions |
+| `@winglet/json-schema/keyword` | `Dialect`, `DEFAULT_KEYWORDS`, `KeywordDescriptor`, `KeywordKind` (no scanner code) |
 
 ## Key Exports
 
@@ -34,6 +35,7 @@ yarn add @winglet/json-schema
 
 - `JSONSchemaScanner` — depth-first traversal with `enter`/`exit` visitor callbacks
 - `JSONSchemaScannerAsync` — async variant for remote `$ref` resolution
+- `resolveReference`, `createReferenceResolver`, `createReferenceResolverAsync` — reference resolution helpers, exported from the package root only
 
 ### Schema Filters (`/filter`)
 
@@ -46,6 +48,42 @@ Type-guard functions for each JSON Schema type:
 ### Types
 
 - `InferValueType<Schema>` — infers TypeScript type from a JSON Schema definition
+
+#### Tuple inference {#tuple-inference}
+
+Preserve schema literals with `as const`. A statically finite readonly `prefixItems` tuple is inferred recursively as a mutable tuple with optional positions. `prefixItems` does not impose a minimum length, and inference does not use `minItems`, so empty arrays and shorter prefixes remain assignable.
+
+For a string/number prefix, `items` controls only the rest:
+
+| `items` | Inferred value |
+| --- | --- |
+| `false` | `[string?, number?]` |
+| Omitted or `true` | `[string?, number?, ...any[]]` |
+| `{ type: 'boolean' }` | `[string?, number?, ...boolean[]]` |
+
+```ts
+import type { InferValueType } from '@winglet/json-schema';
+
+const pairSchema = {
+  type: 'array',
+  prefixItems: [{ type: 'string' }, { type: 'number' }],
+  items: false,
+} as const;
+
+type Pair = InferValueType<typeof pairSchema>;
+// [string?, number?]
+const empty: Pair = [];
+const partial: Pair = ['label'];
+
+const restSchema = { ...pairSchema, items: { type: 'boolean' } } as const;
+type WithRest = InferValueType<typeof restSchema>;
+// [string?, number?, ...boolean[]]
+const value: WithRest = ['label', 3, true, false];
+```
+
+Widened arrays and non-literal prefixes retain the existing `items` fallback. Homogeneous `items` schemas still infer arrays of their item value type. Without a finite prefix, `items: false` and legacy draft `items` arrays with `additionalItems` still infer `any[]`; these forms do not receive tuple inference.
+
+Finite-prefix inference is narrower than `any[]`, so code relying on unrestricted positions or extra items can encounter compile errors. Supply values matching the prefix and rest schemas, or declare an explicit application value type when a different contract is needed.
 
 ## Usage Examples
 
@@ -63,15 +101,16 @@ const schema = {
 const scanner = new JSONSchemaScanner({
   visitor: {
     enter(entry) {
+      if (typeof entry.schema === 'boolean') return;
       console.log(entry.path, entry.schema.type);
     },
   },
 });
 
 scanner.scan(schema);
-// '' 'object'
-// '/properties/name' 'string'
-// '/properties/age' 'number'
+// '#' 'object'
+// '#/properties/name' 'string'
+// '#/properties/age' 'number'
 ```
 
 ```ts
@@ -108,7 +147,7 @@ The CLI resolves `@winglet/json-schema/package.json` via `createRequire`, reads 
 
 ## AI Reference
 
-**Package**: `@winglet/json-schema` v0.10.0
+**Package**: `@winglet/json-schema`
 **Purpose**: JSON Schema traversal, type-guard filters, and $ref resolution.
 
 ### Key exports
@@ -140,6 +179,13 @@ The CLI resolves `@winglet/json-schema/package.json` via `createRequire`, reads 
            hasNullInType
            isCompatibleSchemaType
            isIdenticalSchemaType
+./keyword → Dialect
+            DEFAULT_KEYWORDS
+            KeywordDescriptor (type)
+            KeywordKind (type)
+root only → resolveReference
+            createReferenceResolver
+            createReferenceResolverAsync
 ```
 
 </ForAI>

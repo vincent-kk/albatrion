@@ -2,7 +2,13 @@ import type { ComponentType, ReactNode } from 'react';
 
 import type { Dictionary } from '@aileron/declare';
 
-import { ErrorBoundary } from './components/ErrorBoundary';
+import {
+  ErrorBoundary,
+  type UseErrorBoundaryReporter,
+} from './components/ErrorBoundary';
+
+/** Returns no reporter when the wrapper's optional reporter hook is omitted. */
+const useDefaultReporter: UseErrorBoundaryReporter = () => undefined;
 
 /**
  * Wraps a React component with error boundary protection to prevent application crashes.
@@ -56,15 +62,20 @@ import { ErrorBoundary } from './components/ErrorBoundary';
  * @typeParam Props - The type definition for the component's props
  * @param Component - The React component to wrap with error boundary protection
  * @param fallback - Optional custom fallback JSX to display when an error occurs. If not provided, uses default error message
+ * @param useReporter - Hook called on every render to read an optional error reporter
  * @returns A new component that renders the original component with error boundary protection
  */
 export const withErrorBoundary = <Props extends Dictionary>(
   Component: ComponentType<Props>,
   fallback?: ReactNode,
+  useReporter: UseErrorBoundaryReporter = useDefaultReporter,
 ): ComponentType<Props> => {
-  return (props: Props) => (
-    <ErrorBoundary fallback={fallback}>
-      <Component {...props} />
-    </ErrorBoundary>
-  );
+  return (props: Props) => {
+    const onError = useReporter();
+    return (
+      <ErrorBoundary fallback={fallback} onError={onError}>
+        <Component {...props} />
+      </ErrorBoundary>
+    );
+  };
 };

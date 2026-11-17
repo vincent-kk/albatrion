@@ -13,6 +13,13 @@ Provides reliable TypedArray detection using ArrayBuffer.isView() combined
 with DataView exclusion, identifying all TypedArray variants including
 Uint8Array, Int32Array, Float64Array, and others used for binary data processing.
 
+## Import
+
+```typescript
+import { isTypedArray } from '@winglet/common-utils/filter';
+import { isTypedArray } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -80,7 +87,7 @@ function processBinaryData(data: unknown) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isTypedArray } from '@winglet/common-utils';
 
 // True cases - TypedArray instances

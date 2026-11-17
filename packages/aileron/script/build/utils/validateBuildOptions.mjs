@@ -1,5 +1,5 @@
 /**
- * 빌드 옵션의 유효성을 검증합니다.
+ * Rejects invalid transpilation build options.
  * @type {(options: {
  *   entrypoints?: string[];
  *   format?: string;
@@ -10,7 +10,7 @@
 export const validateBuildOptions = (options) => {
   const errors = [];
 
-  // entrypoints 검증
+
   if (!options.entrypoints || !Array.isArray(options.entrypoints)) {
     errors.push('entrypoints must be an array');
   } else if (options.entrypoints.length === 0) {
@@ -24,7 +24,7 @@ export const validateBuildOptions = (options) => {
     }
   }
 
-  // format 검증
+
   if (
     options.format &&
     !['esm', 'cjs', 'umd', 'iife'].includes(options.format)
@@ -34,14 +34,14 @@ export const validateBuildOptions = (options) => {
     );
   }
 
-  // extension 검증
+
   if (options.extension && !['js', 'cjs', 'mjs'].includes(options.extension)) {
     errors.push(
       `Invalid extension: ${options.extension}. Must be one of: js, cjs, mjs`,
     );
   }
 
-  // outDir 검증
+
   if (
     options.outDir &&
     (typeof options.outDir !== 'string' || !options.outDir.trim())
@@ -57,7 +57,7 @@ export const validateBuildOptions = (options) => {
 };
 
 /**
- * 번들 빌드 옵션의 유효성을 검증합니다.
+ * Rejects invalid bundle build options.
  * @type {(options: {
  *   entry?: string;
  *   entrypoints?: string[];
@@ -70,7 +70,7 @@ export const validateBuildOptions = (options) => {
 export const validateBundleOptions = (options) => {
   const errors = [];
 
-  // entry vs entrypoints 검증
+
   if (!options.entry && !options.entrypoints) {
     errors.push('Either entry or entrypoints must be provided');
   }
@@ -78,7 +78,7 @@ export const validateBundleOptions = (options) => {
     errors.push('Cannot provide both entry and entrypoints');
   }
 
-  // format 검증
+
   if (!options.format) {
     errors.push('format is required');
   } else if (!['esm', 'cjs', 'umd', 'iife'].includes(options.format)) {
@@ -87,7 +87,7 @@ export const validateBundleOptions = (options) => {
     );
   }
 
-  // 출력 설정 검증
+
   const isSingleBundle = !!options.entry;
   if (isSingleBundle && !options.outFile) {
     errors.push('outFile is required when using single entry');
@@ -96,7 +96,7 @@ export const validateBundleOptions = (options) => {
     errors.push('outDir is required when using multiple entrypoints');
   }
 
-  // UMD/IIFE 형식에서 name 필수
+
   if (
     (options.format === 'umd' || options.format === 'iife') &&
     !options.name

@@ -7,53 +7,41 @@ import LazyDemo from '@site/src/components/LazyDemo';
 
 # Virtualized Form
 
-A 300-field form mounted with render-level virtualization. Only the fields near
-the viewport mount as real inputs — the rest render as lightweight placeholders
-(styled here as shimmer skeletons) and are swapped in when they approach the
-viewport, on browser idle time, or when focused programmatically.
+Inspect deferred input mounting in this client-rendered example. The full node tree remains available while some input DOM is deferred.
 
-:::info Key Features
+## Live example {#live-demo}
 
-- `virtualization` — initial mount cost drops from O(all fields) to O(visible fields)
-- The node tree is always fully built: values, validation and `getValue()` include
-  deferred fields (open the **Values** panel below — every field has its default)
-- Placeholders carry `data-path` + `data-deferred`; the skeleton styling here is
-  plain CSS on the `[data-deferred]` attribute selector
-- Once a field mounts it never returns to a placeholder (defer-once)
-  :::
+<LazyDemo load={() => import('@site/src/components/demos/examples/VirtualizedFormDemo')} />
 
-Scroll the frame and watch the counter — fields materialize as they come within
-one viewport (`rootMargin: '100%'`) of the visible area. This demo uses
-`backfill: VirtualizationBackfill.None` so the windowing behavior stays visible;
-the default (`Idle`) progressively mounts the rest during browser idle time,
-restoring full-DOM behavior (tab order, autofill, Ctrl+F) within a few frames.
+This demo uses VirtualizationBackfill.None so scrolling reveals the deferred inputs. For defaults, DOM availability, SSR/hydration, IntersectionObserver fallback, and Suspense limits, see the [virtualization contract](../api-reference#virtualization).
 
-<LazyDemo
-  load={() => import('@site/src/components/demos/examples/VirtualizedFormDemo')}
-/>
-
-## Usage
+## Usage and evaluation {#usage}
 
 ```tsx
-import { Form, VirtualizationBackfill } from '@canard/schema-form';
+import { Form, type JSONSchema, VirtualizationBackfill } from '@canard/schema-form';
 
-// Defaults: threshold 30, eagerCount 20, rootMargin '100%',
-//           backfill VirtualizationBackfill.Idle, estimateHeight 40
-<Form jsonSchema={largeSchema} virtualization />
+const schema: JSONSchema = {
+  type: 'object',
+  properties: Object.fromEntries(
+    Array.from({ length: 40 }, (_, index) => [
+      `field_${index}`,
+      { type: 'string', default: `value_${index}` },
+    ]),
+  ),
+};
 
-// Tuned
-<Form
-  jsonSchema={largeSchema}
-  virtualization={{
-    threshold: 30,
-    eagerCount: 20,
-    rootMargin: '100%',
-    backfill: VirtualizationBackfill.Idle,
-    estimateHeight: (node) => (node.type === 'object' ? 320 : 48),
-    Placeholder: FieldSkeleton, // optional React component inside placeholders
-  }}
-/>
+export function DeferredForm() {
+  return (
+    <Form
+      jsonSchema={schema}
+      virtualization={{
+        threshold: 30,
+        eagerCount: 20,
+        backfill: VirtualizationBackfill.None,
+      }}
+    />
+  );
+}
 ```
 
-See the [API Reference](../api-reference#virtualization) for every option, the
-placeholder DOM contract, and the SSR caveat.
+Measure first interaction and the time until every input is available separately. Virtualization can reduce initial DOM work while adding later reveal work; no form-size or mobile timing guarantee follows from enabling it. Use [request-only validation and consumer scheduling](../core-concepts#performance) when those address your measured costs.

@@ -119,6 +119,7 @@ React 기능을 확장하는 다양한 커스텀 훅을 제공합니다.
 컴포넌트를 기능적으로 확장하는 HOC를 제공합니다.
 
 - [`withErrorBoundary`](./src/hoc/withErrorBoundary/withErrorBoundary.tsx) - 컴포넌트에 에러 바운더리를 추가합니다.
+- [`ErrorBoundary`](./src/hoc/withErrorBoundary/components/ErrorBoundary.tsx) - `withErrorBoundary`가 사용하는 에러 바운더리 컴포넌트로, `fallback`과 `onError` props와 함께 직접 사용할 수 있습니다.
 - [`withErrorBoundaryForwardRef`](./src/hoc/withErrorBoundary/withErrorBoundaryForwardRef.tsx) - 전달된 ref를 유지한 채 에러 바운더리를 추가합니다.
 - [`withUploader`](./src/hoc/withUploader/index.ts) - 파일 업로드 기능을 컴포넌트에 추가합니다.
 

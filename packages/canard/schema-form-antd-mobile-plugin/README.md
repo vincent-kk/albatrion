@@ -12,6 +12,8 @@
 
 `@canard/schema-form-antd-mobile-plugin` is a plugin for `@canard/schema-form` that provides Ant Design Mobile components.
 
+FieldRenderer composes the bound Label, Input, and ErrorMessage parts. LabelRenderer and ErrorMessageRenderer own their root elements and register as LabelRenderer and ErrorMessageRenderer. The plugin does not register an input frame.
+
 ---
 
 ## Notice
@@ -20,7 +22,7 @@
 
 📌 As the plugin's purpose is to enhance development convenience, it does not include every possible component.
 
-💡 If you need FormTypeInput components not included in this plugin, you can freely implement them following the official `@canard/schema-form` guidelines.
+💡 If you need FieldInput components not included in this plugin, you can freely implement them following the official `@canard/schema-form` guidelines.
 
 ---
 
@@ -31,7 +33,7 @@ yarn add @canard/schema-form @canard/schema-form-antd-mobile-plugin
 ```
 
 ```tsx
-import { SchemaForm, registerPlugin } from '@canard/schema-form';
+import { registerPlugin } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-antd-mobile-plugin';
 
 // Plugin will be registered globally
@@ -44,63 +46,63 @@ registerPlugin(plugin);
 
 This plugin provides the following Ant Design Mobile components:
 
-### **[`FormTypeInputBooleanSwitch.tsx`](./src/formTypeInputs/FormTypeInputBooleanSwitch.tsx)**
+### **[`FieldInputBooleanSwitch.tsx`](./src/fieldInputs/FieldInputBooleanSwitch.tsx)**
 
 - **Role**: Display boolean type data as a Switch component
-- **Applied when**: `type` is `"boolean"` and `formType` is `"switch"`
+- **Applied when**: `type` is `"boolean"` and `inputType` is `"switch"`
 - **Additional features**: Support for custom labels for `checked`/`unchecked` states
 
-### **[`FormTypeInputStringCheckbox.tsx`](./src/formTypeInputs/FormTypeInputStringCheckbox.tsx)**
+### **[`FieldInputStringCheckbox.tsx`](./src/fieldInputs/FieldInputStringCheckbox.tsx)**
 
 - **Role**: Display string arrays as checkbox groups
-- **Applied when**: `type` is `"array"`, `formType` is `"checkbox"`, `items.type` is `"string"`, and `enum` values exist
+- **Applied when**: `type` is `"array"`, `inputType` is `"checkbox"`, `items.type` is `"string"`, and `enum` values exist
 - **Additional features**: Support for custom labels for each checkbox option
 
-### **[`FormTypeInputStringSwitch.tsx`](./src/formTypeInputs/FormTypeInputStringSwitch.tsx)**
+### **[`FieldInputStringSwitch.tsx`](./src/fieldInputs/FieldInputStringSwitch.tsx)**
 
 - **Role**: Toggle between two string values using a Switch
-- **Applied when**: `type` is `"string"`, `formType` is `"switch"`, and the `enum` array has exactly 2 values
+- **Applied when**: `type` is `"string"`, `inputType` is `"switch"`, and the `enum` array has exactly 2 values
 - **Additional features**: Support for custom labels per switch state
 
-### **[`FormTypeInputRadioGroup.tsx`](./src/formTypeInputs/FormTypeInputRadioGroup.tsx)**
+### **[`FieldInputRadioGroup.tsx`](./src/fieldInputs/FieldInputRadioGroup.tsx)**
 
 - **Role**: Display single selection of string or number as radio group
-- **Applied when**: `type` is `"string"`, `"number"`, or `"integer"`, `formType` is `"radio"` or `"radiogroup"`, and `enum` values exist
+- **Applied when**: `type` is `"string"`, `"number"`, or `"integer"`, `inputType` is `"radio"` or `"radiogroup"`, and `enum` values exist
 - **Additional features**: Support for custom labels for radio options
 
-### **[`FormTypeInputArray.tsx`](./src/formTypeInputs/FormTypeInputArray.tsx)**
+### **[`FieldInputArray.tsx`](./src/fieldInputs/FieldInputArray.tsx)**
 
 - **Role**: Display array data as a list with dynamic add/remove capabilities
 - **Applied when**: `type` is `"array"`
 - **Additional features**: Add/remove buttons hidden in read-only mode
 
-### **[`FormTypeInputSlider.tsx`](./src/formTypeInputs/FormTypeInputSlider.tsx)**
+### **[`FieldInputSlider.tsx`](./src/fieldInputs/FieldInputSlider.tsx)**
 
 - **Role**: Input numeric values using a slider
 - **Applied when**:
   - `type` is `"number"` or `"integer"` and `format` is `"slider"`
   - or `type` is `"array"`, `items.type` is `"number"` or `"integer"`, and `format` is `"slider"` (range slider)
-- **Additional features**: Lazy update option, mark display, range slider support
+- **Additional features**: `presentation.FieldInputProps.lazy` (`false` publishes on every move), `marks` (mark display) and `range` (range slider)
 
-### **[`FormTypeInputTextarea.tsx`](./src/formTypeInputs/FormTypeInputTextarea.tsx)**
+### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 
 - **Role**: Text area for multiline text input
-- **Applied when**: `type` is `"string"` and `format` or `formType` is `"textarea"`
+- **Applied when**: `type` is `"string"` and `format` or `inputType` is `"textarea"`
 - **Additional features**: Support for automatic resizing via `minRows`, `maxRows`
 
-### **[`FormTypeInputString.tsx`](./src/formTypeInputs/FormTypeInputString.tsx)**
+### **[`FieldInputString.tsx`](./src/fieldInputs/FieldInputString.tsx)**
 
 - **Role**: Default string input field
 - **Applied when**: `type` is `"string"` (fallback when other conditions don't match)
 - **Additional features**: Operates as password input field when `format` is `"password"`
 
-### **[`FormTypeInputNumber.tsx`](./src/formTypeInputs/FormTypeInputNumber.tsx)**
+### **[`FieldInputNumber.tsx`](./src/fieldInputs/FieldInputNumber.tsx)**
 
 - **Role**: Stepper component for numeric input
 - **Applied when**: `type` is `"number"` or `"integer"` (fallback when other conditions don't match)
 - **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties
 
-### **[`FormTypeInputBoolean.tsx`](./src/formTypeInputs/FormTypeInputBoolean.tsx)**
+### **[`FieldInputBoolean.tsx`](./src/fieldInputs/FieldInputBoolean.tsx)**
 
 - **Role**: Display boolean values as checkboxes
 - **Applied when**: `type` is `"boolean"` (fallback when other conditions don't match)
@@ -108,19 +110,48 @@ This plugin provides the following Ant Design Mobile components:
 
 ---
 
+## Switch keyboard access
+
+`formRef.current.focus(path)` reaches the switch’s `data-focus-target` element.
+
+Boolean and string switch inputs receive focus when clicked and participate in the natural Tab order. Space and Enter toggle the focused switch once per press through the same value mapping as a click; holding a key does not toggle repeatedly, and Space does not scroll the page. Disabled switches cannot receive focus by click or Tab and ignore activation keys.
+
+---
+
+## Input Settings
+
+Per-input settings such as `lazy`, `marks` and `range` above go in `presentation.FieldInputProps`; the form spreads that object into the input's props.
+
+```ts
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    volume: {
+      type: 'number',
+      format: 'slider',
+      presentation: {
+        FieldInputProps: { lazy: false, marks: { 0: '0', 100: '100' } },
+      },
+    },
+  },
+};
+```
+
+Input settings belong in `presentation.FieldInputProps`, which is forwarded to the input. Custom `options` keys are accepted without errors or warnings, but these built-in inputs do not read their settings from that group.
+
 ## Component Priority
 
 Component selection is determined by the following priority order:
 
-1. **In-line component**: Component specified as `FormTypeInput` property in the schema
-2. **FormTypeInputMap**: Component explicitly mapped to a path
-3. **FormTypeInputDefinition**: Automatic selection through each component's `test` condition
-4. **Provider FormTypeInputDefinition**: Component definitions provided by parent Provider
+1. **In-line component**: Component specified as `FieldInput` property in the schema
+2. **FieldInputMap**: Component explicitly mapped to a path
+3. **FieldInputDefinition**: Automatic selection through each component's `test` condition
+4. **Provider FieldInputDefinition**: Component definitions provided by parent Provider
 5. **Plugin**: Components from registered plugins (including this plugin)
 6. **Fallback**: Default fallback components
 
 Within the same priority level, earlier items in the array take precedence. Components in this plugin are defined in the following order:
-`FormTypeInputBooleanSwitch` → `FormTypeInputStringCheckbox` → `FormTypeInputStringSwitch` → `FormTypeInputRadioGroup` → `FormTypeInputArray` → `FormTypeInputSlider` → `FormTypeInputTextarea` → `FormTypeInputString` → `FormTypeInputNumber` → `FormTypeInputBoolean`
+`FieldInputBooleanSwitch` → `FieldInputStringCheckbox` → `FieldInputStringSwitch` → `FieldInputRadioGroup` → `FieldInputArray` → `FieldInputSlider` → `FieldInputTextarea` → `FieldInputString` → `FieldInputNumber` → `FieldInputBoolean`
 
 ---
 

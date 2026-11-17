@@ -5,10 +5,10 @@ import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JSONSchemaScannerAsync } from '../async/JSONSchemaScannerAsync';
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
-import { EXTENDED_KEYWORDS } from '../utils/keywordDescriptors';
+import { createTestResolver } from './fixtures/createTestResolver';
 
 describe('JSONSchemaScanner - extensions', () => {
-  describe('additionalKeywords (E1) — opt-in, non-breaking', () => {
+  describe('built-in and custom vocabulary', () => {
     const schema: UnknownSchema = {
       type: 'object',
       properties: { a: { type: 'string' } },
@@ -28,18 +28,24 @@ describe('JSONSchemaScanner - extensions', () => {
       return paths;
     };
 
-    it('does NOT traverse extended keywords by default', () => {
+    it('traverses the union vocabulary by default', () => {
       const paths = visitedPaths();
-      expect(paths).toEqual(['#', '#/properties/a']);
+      expect(paths).toEqual([
+        '#',
+        '#/properties/a',
+        '#/patternProperties/^x-',
+        '#/dependentSchemas/a',
+        '#/propertyNames',
+        '#/contains',
+        '#/unevaluatedProperties',
+      ]);
     });
 
-    it('traverses extended keywords when EXTENDED_KEYWORDS is opted in', () => {
-      const paths = visitedPaths({ additionalKeywords: EXTENDED_KEYWORDS });
-      expect(paths).toContain('#/patternProperties/^x-');
-      expect(paths).toContain('#/propertyNames');
-      expect(paths).toContain('#/contains');
-      expect(paths).toContain('#/dependentSchemas/a');
-      expect(paths).toContain('#/unevaluatedProperties');
+    it('uses keywords to replace the built-in vocabulary', () => {
+      const paths = visitedPaths({
+        keywords: [{ keyword: 'properties', kind: 'objectMap' }],
+      });
+      expect(paths).toEqual(['#', '#/properties/a']);
     });
 
     it('supports a custom vendor keyword descriptor', () => {
@@ -59,13 +65,15 @@ describe('JSONSchemaScanner - extensions', () => {
     });
 
     it('keeps default properties traversal unchanged when extending', () => {
-      const paths = visitedPaths({ additionalKeywords: EXTENDED_KEYWORDS });
+      const paths = visitedPaths({
+        additionalKeywords: [{ keyword: 'vendor', kind: 'schema' }],
+      });
       expect(paths[0]).toBe('#');
       expect(paths).toContain('#/properties/a');
     });
   });
 
-  describe('cacheResolvedReference (P3) — opt-in memoization', () => {
+  describe('custom provider calls', () => {
     const schema: UnknownSchema = {
       type: 'object',
       properties: {
@@ -80,10 +88,10 @@ describe('JSONSchemaScanner - extensions', () => {
       let calls = 0;
       new JSONSchemaScanner({
         options: {
-          resolveReference: (ref) => {
+          resolveReference: createTestResolver((ref) => {
             calls++;
             return getValue(schema, ref);
-          },
+          }),
         },
       })
         .scan(schema)
@@ -91,47 +99,46 @@ describe('JSONSchemaScanner - extensions', () => {
       expect(calls).toBe(3);
     });
 
-    it('memoizes repeated references when enabled, output still un-aliased', () => {
+    it('calls each custom occurrence while keeping output unaliased', () => {
       let calls = 0;
       const out = new JSONSchemaScanner({
         options: {
-          cacheResolvedReference: true,
-          resolveReference: (ref) => {
+          resolveReference: createTestResolver((ref) => {
             calls++;
             return getValue(schema, ref);
-          },
+          }),
         },
       })
         .scan(schema)
         .getValue<UnknownSchema>()!;
-      expect(calls).toBe(1);
+      expect(calls).toBe(3);
       expect(out.properties.x).toEqual({ type: 'string' });
       expect(out.properties.x).not.toBe(out.properties.y);
     });
 
-    it('deduplicates the resolver under async too', async () => {
+    it('calls each custom async occurrence', async () => {
       let calls = 0;
       const scanner = new JSONSchemaScannerAsync({
         options: {
-          cacheResolvedReference: true,
-          resolveReference: async (ref) => {
+          resolveReference: createTestResolver(async (ref) => {
             calls++;
             return getValue(schema, ref);
-          },
+          }),
         },
       });
       await scanner.scan(schema);
-      expect(calls).toBe(1);
+      expect(calls).toBe(3);
     });
   });
 
-  describe('referenceSkipped reason (E3)', () => {
+  describe('reference preservation reasons (E3)', () => {
     it('marks a $ref with no resolver configured as "unresolved" (not "definition")', () => {
       const reasons: Array<[string, unknown]> = [];
       new JSONSchemaScanner({
         visitor: {
           exit: (e) => {
-            if (e.hasReference) reasons.push([e.path, e.referenceSkipped]);
+            if (e.references?.some((outcome) => !outcome.resolved))
+              reasons.push([e.path, e.references?.slice(-1)[0]?.skipped]);
           },
         },
       }).scan({ type: 'object', properties: { x: { $ref: '#/whatever' } } });
@@ -143,10 +150,11 @@ describe('JSONSchemaScanner - extensions', () => {
       new JSONSchemaScanner({
         visitor: {
           exit: (e) => {
-            if (e.hasReference) reasons.push([e.path, e.referenceSkipped]);
+            if (e.references?.some((outcome) => !outcome.resolved))
+              reasons.push([e.path, e.references?.slice(-1)[0]?.skipped]);
           },
         },
-        options: { resolveReference: () => undefined },
+        options: { resolveReference: createTestResolver(() => undefined) },
       }).scan({ type: 'object', properties: { x: { $ref: '#/nope' } } });
       expect(reasons).toContainEqual(['#/properties/x', 'unresolved']);
     });
@@ -166,10 +174,13 @@ describe('JSONSchemaScanner - extensions', () => {
       new JSONSchemaScanner({
         visitor: {
           exit: (e) => {
-            if (e.hasReference) reasons.set(e.path, e.referenceSkipped);
+            if (e.references?.some((outcome) => !outcome.resolved))
+              reasons.set(e.path, e.references?.slice(-1)[0]?.skipped);
           },
         },
-        options: { resolveReference: (ref) => getValue(schema, ref) },
+        options: {
+          resolveReference: createTestResolver((ref) => getValue(schema, ref)),
+        },
       }).scan(schema);
       // The $ref inside definitions is intentionally left as a definition,
       // while the inlined copy that re-references A is a cycle.

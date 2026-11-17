@@ -1,68 +1,54 @@
-# Type Inference — InferValueType and InferJSONSchema
+# Type decisions
 
-`InferValueType<Schema>` maps a schema definition to the runtime value type it describes; `InferJSONSchema<Value>` goes the other way, from a value type to its schema interface. The rules below are the ones that surprise people — the rest follows from the declarations in `dist/*.d.ts`.
+Use the installed declarations for the type hierarchy and the package's `docs/en/SPECIFICATION.md` for inference and guard policy. Inference describes partial values; it does not prove that data passed JSON Schema validation.
 
-## Recursion requires `as const`
+## Keep literal information
 
-Inference into `properties` and `items` needs literal types. Without `as const` (or `satisfies`), `type: 'object'` widens to `string` and you get the unrefined fallback, not a narrowed shape. The same applies to `nullable: true`: widened to `boolean`, it infers **without** `| null`, because a static type cannot know a runtime value. That direction is deliberate — being stricter than the runtime never admits a value the consumer would reject.
+Use as const for schema constants when you want properties, prefixes and nullable literals to participate in inference. Widened declarations retain broad fallbacks. A readonly schema declaration still infers mutable values.
 
-## Object inference rules
+## Choose partial inference or an explicit validated shape
 
-**Every inferred key is optional, `required` included.** This is not an oversight. A consumer cannot rely on a required key being present at runtime — a form may drop it (an inactive `computed.active` branch, `options.omitEmpty`) — so marking it required would let `value.key` type-check and then be `undefined`. If you know the exact shape, declare it and pass it explicitly instead of inferring it.
+InferValueType keeps every object property optional, even if required lists it, because it models partial values. Objects remain open unless additionalProperties:false; composition and reference constraints are not a complete static validator. If a consumer needs a required validated payload, define that payload and validate it instead of relying on inference to certify it. InferJSONSchema chooses a schema family from a value type and does not generate a properties map.
 
-**The result stays open.** It is intersected with `Record<string, any>` unless the schema sets `additionalProperties: false`. Open is the JSON Schema default, and the intersection is what keeps keys contributed by applicators this type does not model — `oneOf`/`anyOf` branches, `if`/`then`/`else`, `patternProperties`, `dependentSchemas`, `$ref` — from being rejected as excess properties. `additionalProperties: false` closes it, because that is what the schema asked for.
-
-**`-readonly` is applied**, so an `as const` schema does not propagate `readonly` onto the inferred value: the schema is frozen, the value it describes is not.
-
-## Unmodeled shapes fall back; they never narrow
-
-| Schema                                                                  | Inferred                        |
-| ----------------------------------------------------------------------- | ------------------------------- |
-| `properties` keyed by plain `string` (`Dictionary<JSONSchema>`)         | `Record<string, any>`           |
-| `items: false`                                                          | `any[]`                         |
-| no `type` at all                                                        | `any`                           |
-| `{ type: 'array' }` / `{ type: 'object' }` with no `items`/`properties` | `any[]` / `Record<string, any>` |
-
-A multi-type array is the exception to "falls back": `{ type: ['string', 'number'] }` infers `string | number`, **not** `any`. Older documentation claimed `any` here; the primary type is now extracted from every `type` array, so the union survives. A single-member array is unwrapped the same way, matching the runtime, which normalizes `['string']` to `'string'`.
+<!-- example: types -->
 
 ```typescript
-type A = InferValueType<{ type: 'string' }>; // string
-type B = InferValueType<{ type: 'integer' }>; // number
-type C = InferValueType<{ type: ['string', 'null'] }>; // string | null
-type D = InferValueType<{ type: ['string'] }>; // string
-type E = InferValueType<{ type: ['string', 'number'] }>; // string | number
-type F = InferValueType<{ type: 'string'; nullable: true }>; // string | null
-type G = InferValueType<{ type: 'null' }>; // null
+import type { InferJSONSchema, InferValueType } from '@winglet/json-schema';
 
-// Recursion — requires `as const`
-type H = InferValueType<{ type: 'array'; items: { type: 'string' } }>; // string[]
-type I = InferValueType<{
-  type: 'object';
-  properties: { id: { type: 'number' } };
-  required: ['id'];
-}>; // { id?: number } & Record<string, any>   ← still optional, still open
-
-type J = InferValueType<{
-  type: 'object';
-  properties: { id: { type: 'number' } };
-  additionalProperties: false;
-}>; // { id?: number }                          ← closed
+const schema = {
+  type: 'object',
+  properties: { id: { type: 'number' } },
+  required: ['id'],
+  additionalProperties: false,
+} as const;
+type Value = InferValueType<typeof schema>;
+const partial: Value = {};
+partial.id = 1;
+const nameSchema: InferJSONSchema<string> = { type: 'string', minLength: 1 };
+console.assert(nameSchema.type === 'string');
 ```
 
-## The reverse direction — `InferJSONSchema`
+## Respect tuple scope
 
-`InferJSONSchema<Value>` maps a value type to the schema interface describing it, which is what you want when typing a schema constant against a known payload type. Nullability in the value selects the nullable schema variant; object and array values map to the generic object/array interfaces rather than a shape-specific one.
+A finite prefixItems yields optional positions; items:false closes the tuple, omitted/true items adds an any[] rest, and a schema-valued items types the tail. `minItems` is not part of inference. Widened prefixes and legacy items arrays retain broad items inference. TypeScript's own recursive instantiation limits still apply.
+
+<!-- example: tuple -->
 
 ```typescript
-type A = InferJSONSchema<string>; // NonNullableStringSchema
-type B = InferJSONSchema<string | null>; // NullableStringSchema
-type C = InferJSONSchema<number>; // NonNullableNumberSchema
-type D = InferJSONSchema<boolean>; // NonNullableBooleanSchema
-type E = InferJSONSchema<string[]>; // NonNullableArraySchema
-type F = InferJSONSchema<{ id: string }>; // NonNullableObjectSchema
-type G = InferJSONSchema<null>; // NullSchema
+import type { InferValueType } from '@winglet/json-schema';
+
+const schema = {
+  type: 'array',
+  prefixItems: [{ type: 'string' }, { type: 'number' }],
+  items: false,
+} as const;
+type Pair = InferValueType<typeof schema>;
+const empty: Pair = [];
+const pair: Pair = ['name', 1];
+pair[0] = 'changed';
+console.assert(empty.length === 0 && pair[0] === 'changed');
 ```
 
-## `$ref` is structural, not a union member
+## Choose guards deliberately
 
-`RefSchema` is **not** a member of the `JSONSchema` union, so no guard narrows to it and inference does not follow it. The scanner identifies a reference node structurally, by `typeof schema.$ref === 'string'`. Check `$ref` the same way in your own code rather than testing membership in a schema type.
+Use union guards unless the task distinguishes nullable-array spelling. Number guards include integer, but strict type identity does not equate those labels; compatibility does. Nullable guards and hasNullInType inspect null inside a type array, so hasNullInType does not identify a pure null schema. Comparison functions additionally normalize OpenAPI nullable:true; guards inspect type. Boolean schema nodes need a typeof check before object guards. A structural reference object need not belong to the JSONSchema union, and inference does not follow reference targets.

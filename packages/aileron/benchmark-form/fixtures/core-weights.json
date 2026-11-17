@@ -1,0 +1,58 @@
+{
+  "mount-flat-500-none": {
+    "weight": 1,
+    "k": 1,
+    "basis": "One mount per session; matches the Node table's mount rows (weight 1)."
+  },
+  "mount-flat-500-validate": {
+    "weight": 1,
+    "k": 1,
+    "basis": "One mount per session; matches the Node table's mount rows (weight 1)."
+  },
+  "mount-if-flat-500-none": {
+    "weight": 1,
+    "k": 1,
+    "basis": "One mount per session; matches the Node table's mount rows (weight 1)."
+  },
+  "mount-if-flat-500-validate": {
+    "weight": 1,
+    "k": 1,
+    "basis": "One mount per session; matches the Node table's mount rows (weight 1)."
+  },
+  "mount-nested-d5-f4-validate": {
+    "weight": 1,
+    "k": 1,
+    "basis": "One mount per session; matches the Node table's mount-nested row (weight 1)."
+  },
+  "mount-array-1000-validate": {
+    "weight": 1,
+    "k": 1,
+    "basis": "One mount per session; matches the Node table's mount rows (weight 1)."
+  },
+  "type-flat-500-validate-nonburst": {
+    "weight": 5000,
+    "k": 1,
+    "basis": "The browser path goes through the FieldProxy subscription, so it matches the Node 'typing with subscribers' row (weight 5000)."
+  },
+  "type-array-1000-validate-nonburst": {
+    "weight": 1000,
+    "k": 1,
+    "basis": "No Node counterpart; harness assumption that typing inside an array is one fifth as frequent as flat typing."
+  },
+  "first-key-flat-500-validate": {
+    "weight": 1,
+    "k": 1,
+    "basis": "One first key per session: the owner rule's one-off first-write term, kept as its own row."
+  },
+  "first-key-flat-500-validate-after-load": {
+    "weight": 1,
+    "k": 1,
+    "basis": "One first key after load validation settles; kept alongside the immediate first key at the same weight to distinguish load overlap from settled-load input cost."
+  },
+  "rebuild-flat-500": {
+    "weight": 5,
+    "k": 1,
+    "basis": "Matches the Node bulk rows (weight 5).",
+    "excluded": "0.16.1 has no rebuild, so the row is excluded from this comparison."
+  }
+}

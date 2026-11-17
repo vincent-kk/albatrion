@@ -173,9 +173,10 @@ import { setDataProperty } from './setDataProperty';
  * - **Type Checking**: Only `isArray` and `isPlainObject` checks
  * - **Property Copying**: Simple for-in loop for objects, indexed loop for arrays
  * - **Sparse Array Support**: Preserves array holes via `in` operator check
+ * - **Prototype Preservation**: Plain-object clones keep the input prototype,
+ *   including `null`; ordinary objects use the `{}` fast path
  * - **Reserved Member Safety**: An own `__proto__` key is cloned as an own
- *   data property — the clone keeps the input's prototype instead of having
- *   it swapped by the `__proto__` setter
+ *   data property instead of replacing the clone's prototype
  *
  * **Performance Benchmarks** (Node.js v18, typical hardware):
  * - Small objects (< 100 props): ~0.02ms (vs clone: ~0.1ms)
@@ -188,7 +189,7 @@ import { setDataProperty } from './setDataProperty';
  * **Safety Considerations:**
  * - **Stack Overflow Risk**: Deep nesting (>10000 levels) or circular refs
  * - **Type Loss**: Complex types become plain objects or are skipped
- * - **Prototype Loss**: Class instances lose methods and inheritance
+ * - **Unsupported Prototypes**: Class instances are returned as-is
  * - **Reference Sharing**: Unsupported types share references with original
  *
  * **Migration Path:**
@@ -230,7 +231,9 @@ const replicate = <Type>(
   }
 
   if (isPlainObject(value)) {
-    const result: Dictionary = {};
+    const prototype = Object.getPrototypeOf(value);
+    const result: Dictionary =
+      prototype === Object.prototype ? {} : Object.create(prototype);
     const keys = Object.keys(value);
     const length = keys.length;
     if (length > 0)

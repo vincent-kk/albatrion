@@ -1,0 +1,59 @@
+import type { KeywordDescriptor } from '../types/KeywordDescriptor';
+import { Dialect } from './Dialect';
+
+/** Object schema locations accepted throughout all supported dialects. */
+const all: readonly Dialect[] = [
+  Dialect.Draft04,
+  Dialect.Draft06,
+  Dialect.Draft07,
+  Dialect.Draft201909,
+  Dialect.Draft202012,
+];
+/** Locations introduced with boolean schemas and draft-06 applicators. */
+const since06: readonly Dialect[] = [
+  Dialect.Draft06,
+  Dialect.Draft07,
+  Dialect.Draft201909,
+  Dialect.Draft202012,
+];
+/** Conditional applicators introduced in draft-07. */
+const since07: readonly Dialect[] = [
+  Dialect.Draft07,
+  Dialect.Draft201909,
+  Dialect.Draft202012,
+];
+/** Modern schema locations, including legacy locations retained by modern metaschemas. */
+const modern: readonly Dialect[] = [Dialect.Draft201909, Dialect.Draft202012];
+/** Tuple-tail schema position retained through 2019-09. */
+const tuple: readonly Dialect[] = [
+  Dialect.Draft04,
+  Dialect.Draft06,
+  Dialect.Draft07,
+  Dialect.Draft201909,
+];
+
+/** Union vocabulary in observable visit order; dialect membership changes inertness, never discovery. */
+export const DEFAULT_KEYWORDS: readonly KeywordDescriptor[] = [
+  { keyword: '$defs', kind: 'schemaMap', dialects: modern },
+  { keyword: 'definitions', kind: 'schemaMap', dialects: all },
+  { keyword: 'additionalProperties', kind: 'schema', dialects: all },
+  { keyword: 'not', kind: 'schema', dialects: all },
+  { keyword: 'if', kind: 'schema', dialects: since07 },
+  { keyword: 'then', kind: 'schema', dialects: since07 },
+  { keyword: 'else', kind: 'schema', dialects: since07 },
+  { keyword: 'allOf', kind: 'schemaList', dialects: all },
+  { keyword: 'anyOf', kind: 'schemaList', dialects: all },
+  { keyword: 'oneOf', kind: 'schemaList', dialects: all },
+  { keyword: 'prefixItems', kind: 'items', dialects: [Dialect.Draft202012] },
+  { keyword: 'items', kind: 'items', dialects: all },
+  { keyword: 'properties', kind: 'objectMap', dialects: all },
+  { keyword: 'patternProperties', kind: 'schemaMap', dialects: all },
+  { keyword: 'dependentSchemas', kind: 'schemaMap', dialects: modern },
+  { keyword: 'propertyNames', kind: 'schema', dialects: since06 },
+  { keyword: 'contains', kind: 'schema', dialects: since06 },
+  { keyword: 'additionalItems', kind: 'schema', dialects: tuple },
+  { keyword: 'unevaluatedProperties', kind: 'schema', dialects: modern },
+  { keyword: 'unevaluatedItems', kind: 'schema', dialects: modern },
+  { keyword: 'contentSchema', kind: 'schema', dialects: modern },
+  { keyword: 'dependencies', kind: 'schemaMap', dialects: all },
+];

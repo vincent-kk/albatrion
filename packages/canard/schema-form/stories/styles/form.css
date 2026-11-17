@@ -1,0 +1,259 @@
+/*
+ * Loaded by the core Storybook preview; styles the forms that stories render.
+ * The built-in fallback renderer writes inline styles (depth indents, array list and row gaps),
+ * so the rules that restyle them use !important and select by stable markup: `[data-path]`
+ * wrappers and the `title` of the array buttons ("remove item", "add item", "fill item").
+ */
+
+/* Labels and text controls. */
+:is(.sf-form, .sf-usage) label:not([hidden]) {
+  display: block;
+  margin-bottom: 6px;
+  font-size: var(--sf-text-sm);
+  font-weight: 500;
+}
+
+:is(.sf-form, .sf-usage) :is(input:not([type]), input[type='text'], input[type='number'], input[type='email'], input[type='date'], input[type='password'], input[type='month'], input[type='week'], input[type='time'], input[type='datetime-local'], select, textarea) {
+  width: 100%;
+  max-width: min(480px, 100%);
+  min-width: 0;
+  min-height: 40px;
+  padding: var(--sf-space-2) var(--sf-space-3);
+  border: 1px solid var(--sf-border-strong);
+  border-radius: var(--sf-radius-sm);
+  background: var(--sf-bg);
+  color: var(--sf-text);
+  font: inherit;
+  font-size: var(--sf-text-md);
+  transition: color var(--sf-duration), background-color var(--sf-duration), border-color var(--sf-duration);
+}
+:is(.sf-form, .sf-usage) :is(input, select, textarea):hover:not(:disabled, :focus) { border-color: var(--sf-text-muted); }
+
+/* A single select draws its chevron from tokens, so it matches the text inputs in both themes. */
+:is(.sf-form, .sf-usage) select:not([multiple]) {
+  appearance: none;
+  padding-right: 40px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--sf-text-muted) 50%),
+    linear-gradient(135deg, var(--sf-text-muted) 50%, transparent 50%);
+  background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+:is(.sf-form, .sf-usage) :is(input, select, textarea, button):focus-visible {
+  outline: 2px solid var(--sf-accent);
+  outline-offset: 1px;
+}
+
+/* aria-invalid marks a misfit value; it does not mark every validation error. */
+:is(.sf-form, .sf-usage) [aria-invalid='true'] { border-color: var(--sf-danger); }
+:is(.sf-form, .sf-usage) :is(input, select, textarea, button):disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* Checkboxes and radios. */
+:is(.sf-form, .sf-usage) input:is([type='checkbox'], [type='radio']) {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--sf-accent);
+  cursor: pointer;
+}
+:is(.sf-form, .sf-usage) label:not([hidden]):has(input:is([type='checkbox'], [type='radio'])) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sf-space-2);
+  min-height: 32px;
+  margin-bottom: 0;
+  cursor: pointer;
+}
+:is(.sf-form, .sf-usage) [role='group']:has(> label > input:is([type='checkbox'], [type='radio'])) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--sf-space-4);
+}
+/* A boolean field reads checkbox first, then its label, like a native checkbox row. */
+:is(.sf-form, .sf-usage) [data-path] > div:has(> [role='none'] > input[type='checkbox']:only-child) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--sf-space-2);
+}
+:is(.sf-form, .sf-usage) [data-path] > div:has(> [role='none'] > input[type='checkbox']:only-child) > label { order: 1; margin-bottom: 0; cursor: pointer; }
+:is(.sf-form, .sf-usage) [data-path] > div:has(> [role='none'] > input[type='checkbox']:only-child) > br { display: none; }
+:is(.sf-form, .sf-usage) [data-path] > div:has(> [role='none'] > input[type='checkbox']:only-child) > em { order: 2; flex-basis: 100%; }
+/* The same row for a composed Form.Input checkbox placed beside its Form.Label. */
+:is(.sf-form, .sf-usage) div:has(> [data-path] > [role='none'] > input[type='checkbox']:only-child) {
+  display: flex;
+  align-items: center;
+  gap: var(--sf-space-2);
+}
+:is(.sf-form, .sf-usage) div:has(> [data-path] > [role='none'] > input[type='checkbox']:only-child) label { margin-bottom: 0; cursor: pointer; }
+:is(.sf-form, .sf-usage) form > div:not([data-path], [role]) { margin-bottom: var(--sf-space-4); }
+
+/* Field rhythm: the frame spaces fields, replacing the fallback renderer's 5px-per-depth indent.
+   Custom renderer roots get the same spacing unless their own inline style sets it. */
+:is(.sf-form, .sf-usage) [data-path] > :is(fieldset, div) { margin-bottom: var(--sf-space-4); }
+:is(.sf-form, .sf-usage) [data-path] > :is(fieldset, div)[style] {
+  margin-left: 0 !important;
+  margin-bottom: var(--sf-space-4) !important;
+}
+:is(.sf-form, .sf-usage) fieldset {
+  min-width: 0;
+  margin: 0 0 var(--sf-space-4);
+  padding: var(--sf-space-4);
+  border: 1px solid var(--sf-border);
+  border-radius: var(--sf-radius-md);
+  background: var(--sf-bg);
+}
+:is(.sf-form, .sf-usage) fieldset fieldset { padding: var(--sf-space-3) var(--sf-space-4); background: var(--sf-surface); }
+:is(.sf-form, .sf-usage) fieldset fieldset fieldset { background: var(--sf-bg); }
+:is(.sf-form, .sf-usage) legend { padding: 0 var(--sf-space-1); font-size: var(--sf-text-sm); font-weight: 600; }
+:is(.sf-form, .sf-usage) :is(form, fieldset) > div { margin-bottom: var(--sf-space-4); }
+:is(.sf-form, .sf-usage) fieldset > div:is(:empty, :last-child) { margin-bottom: 0; }
+:is(.sf-form, .sf-usage) fieldset > div:last-child > [role='none'] > [data-path]:last-child > * { margin-bottom: 0 !important; }
+:is(.sf-form, .sf-usage) em { color: var(--sf-danger); font-style: normal; }
+
+/* Array lists: rows of an item beside its Remove button, empty minItems slots, then Add item. */
+:is(.sf-form, .sf-usage) div:has(> div > button[title='remove item'], > button[title='add item']) { gap: var(--sf-space-3) !important; }
+:is(.sf-form, .sf-usage) div:has(> button[title='add item']:first-child)::before {
+  content: 'No items yet.';
+  color: var(--sf-text-muted);
+  font-size: var(--sf-text-sm);
+}
+/* minItems slots that hold no item yet: an id-less input, dashed so it reads as an open place. */
+:is(.sf-form, .sf-usage) div:has(> div > button[title='remove item'], > button[title='add item']) > div > input:not([id], [type='checkbox']) {
+  border-style: dashed;
+  background: var(--sf-surface);
+}
+:is(.sf-form, .sf-usage) div:has(> button[title='remove item']) { gap: var(--sf-space-2) !important; }
+:is(.sf-form, .sf-usage) div:has(> button[title='remove item']) > [data-path] > :is(fieldset, div) {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-bottom: 0 !important;
+}
+:is(.sf-form, .sf-usage) div:has(> button[title='remove item']) > [data-path] > fieldset > legend {
+  padding: 0 var(--sf-space-2);
+  border: 1px solid var(--sf-border);
+  border-radius: var(--sf-radius-pill);
+  background: var(--sf-bg);
+  color: var(--sf-text-muted);
+  font-family: var(--sf-font-mono);
+  font-size: var(--sf-text-xs);
+}
+
+/* Plain buttons, including the fallback array's Remove and Fill item buttons. */
+:is(.sf-form, .sf-usage) button:not([style]) {
+  min-height: 36px;
+  padding: 6px 14px;
+  border: 1px solid var(--sf-border-strong);
+  border-radius: var(--sf-radius-sm);
+  background: var(--sf-surface-2);
+  color: var(--sf-text);
+  font: inherit;
+  font-size: var(--sf-text-sm);
+  cursor: pointer;
+  transition: color var(--sf-duration), background-color var(--sf-duration), border-color var(--sf-duration);
+}
+:is(.sf-form, .sf-usage) button:not([style]):hover:not(:disabled) {
+  background: color-mix(in srgb, var(--sf-surface-2), var(--sf-text) 8%);
+}
+:is(.sf-form, .sf-usage) button[type='submit']:not([style]) {
+  border: 0;
+  background: var(--sf-accent);
+  color: var(--sf-on-accent);
+}
+:is(.sf-form, .sf-usage) button[type='submit']:not([style]):hover:not(:disabled) {
+  background: color-mix(in srgb, var(--sf-accent), var(--sf-text) 8%);
+}
+
+/* Fallback array buttons, placed after the plain-button rules they refine. */
+:is(.sf-form, .sf-usage) button:is([title='remove item'], [title='fill item']) { min-height: 32px; padding: var(--sf-space-1) var(--sf-space-3); background: var(--sf-bg); color: var(--sf-text-muted); }
+:is(.sf-form, .sf-usage) button[title='remove item'] { flex: none; font-size: var(--sf-text-xs); }
+:is(.sf-form, .sf-usage) button[title='remove item']:hover:not(:disabled) {
+  border-color: var(--sf-danger);
+  background: var(--sf-danger-surface);
+  color: var(--sf-danger);
+}
+:is(.sf-form, .sf-usage) button[title='add item'] {
+  min-height: 36px;
+  padding: 6px 14px;
+  border: 1px dashed var(--sf-border-strong);
+  border-radius: var(--sf-radius-md);
+  background: transparent;
+  color: var(--sf-accent);
+  font: inherit;
+  font-size: var(--sf-text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--sf-duration), border-color var(--sf-duration);
+}
+:is(.sf-form, .sf-usage) button[title='add item']:hover:not(:disabled) { border-color: var(--sf-accent); background: var(--sf-accent-surface); }
+
+/* Native file pickers: the picker button matches the story buttons. */
+:is(.sf-form, .sf-usage) input[type='file'] { max-width: 100%; color: var(--sf-text-muted); font: inherit; font-size: var(--sf-text-sm); }
+:is(.sf-form, .sf-usage) input[type='file']::file-selector-button {
+  min-height: 36px;
+  margin-right: var(--sf-space-3);
+  padding: 6px 14px;
+  border: 1px solid var(--sf-border-strong);
+  border-radius: var(--sf-radius-sm);
+  background: var(--sf-surface-2);
+  color: var(--sf-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Entry list printed by the story's map-entry input above its key=value field. */
+:is(.sf-form, .sf-usage) output[data-map-entries]:not(:empty) {
+  display: block;
+  margin-bottom: var(--sf-space-2);
+  color: var(--sf-text-muted);
+  font-family: var(--sf-font-mono);
+  font-size: var(--sf-text-code);
+}
+
+/* Usage readouts are labelled by aria-label; the label is drawn above the value, outside its text. */
+.sf-usage :not(p) > output[aria-label]:not([aria-label='Form output']) {
+  display: block;
+  max-width: 100%;
+  margin: var(--sf-space-3) 0;
+  padding: var(--sf-space-2) var(--sf-space-3);
+  border-radius: var(--sf-radius-sm);
+  background: var(--sf-surface-2);
+  font-family: var(--sf-font-mono);
+  font-size: var(--sf-text-code);
+  overflow-wrap: anywhere;
+}
+.sf-usage :not(p) > output[aria-label]:not([aria-label='Form output'])::before {
+  content: attr(aria-label);
+  display: block;
+  margin-bottom: var(--sf-space-1);
+  color: var(--sf-text-muted);
+  font-family: var(--sf-font-sans);
+  font-size: var(--sf-text-xs);
+  font-weight: 600;
+}
+.sf-usage p > output { font-family: var(--sf-font-mono); font-size: var(--sf-text-code); }
+
+/* The value a story's Form children function receives. */
+:is(.sf-form, .sf-usage) output[aria-label='Form output']:not([hidden]) {
+  display: block;
+  margin-top: var(--sf-space-4);
+  padding-top: var(--sf-space-3);
+  border-top: 1px solid var(--sf-border);
+  color: var(--sf-text-muted);
+  font-family: var(--sf-font-mono);
+  font-size: var(--sf-text-code);
+  overflow-wrap: anywhere;
+}
+
+:is(.sf-form, .sf-usage) output[aria-label='Form output']:not([hidden])::before {
+  content: 'Output (children value)';
+  display: block;
+  margin-bottom: var(--sf-space-1);
+  color: var(--sf-text-muted);
+  font-family: var(--sf-font-sans);
+  font-size: var(--sf-text-xs);
+  font-weight: 500;
+}

@@ -1,5 +1,5 @@
 /**
- * package.json의 exports에서 entrypoints를 추출합니다.
+ * Extracts source entry points from package.json exports.
  * @type {(packageJSON: { exports?: Record<string, {source?: string}> }) => string[]}
  */
 export const getEntrypoints = (packageJSON) => {
@@ -32,7 +32,7 @@ export const getEntrypoints = (packageJSON) => {
 };
 
 /**
- * entrypoints의 유효성을 검증합니다.
+ * Rejects missing or invalid source entry points.
  * @type {(entrypoints: string[]) => void}
  */
 export const validateEntrypoints = (entrypoints) => {

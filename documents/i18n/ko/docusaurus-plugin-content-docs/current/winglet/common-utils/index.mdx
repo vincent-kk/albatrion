@@ -13,29 +13,29 @@ JavaScript/TypeScript 프로젝트를 위한 종합 유틸리티 라이브러리
 배열 처리, 객체 조작, Promise 핸들링, 타입 체크, 스케줄링, 해싱 등을
 트리 쉐이킹 가능한 서브패스 익스포트로 제공합니다.
 
-## Installation
+## 설치 {#installation}
 
 ```bash
 yarn add @winglet/common-utils
 ```
 
-## Sub-path Exports
+## 서브패스 내보내기 {#sub-path-exports}
 
-| Import path | Contents |
+| 가져오기 경로 | 내용 |
 |---|---|
-| `@winglet/common-utils` | All exports |
+| `@winglet/common-utils` | 모든 내보내기 |
 | `@winglet/common-utils/array` | `chunk`, `unique`, `uniqueBy`, `groupBy`, `difference`, `intersection`, `sortWithReference` |
 | `@winglet/common-utils/filter` | `isString`, `isNumber`, `isObject`, `isArray`, `isNil`, `isPlainObject`, `isTruthy` … |
 | `@winglet/common-utils/object` | `clone`, `merge`, `equals`, `serializeObject`, `transformKeys`, `removeUndefined` |
 | `@winglet/common-utils/function` | `debounce`, `throttle`, `getTrackableHandler` |
 | `@winglet/common-utils/promise` | `delay`, `timeout`, `withTimeout`, `waitAndExecute` |
 | `@winglet/common-utils/scheduler` | `scheduleMacrotask`, `scheduleMicrotask`, `scheduleNextTick` |
-| `@winglet/common-utils/hash` | Murmur3 hash, polynomial hash |
-| `@winglet/common-utils/convert` | Type conversion utilities |
-| `@winglet/common-utils/console` | Console helpers |
-| `@winglet/common-utils/math` | Math utilities |
+| `@winglet/common-utils/hash` | Murmur3 해시, 다항식 해시 |
+| `@winglet/common-utils/convert` | 타입 변환 유틸리티 |
+| `@winglet/common-utils/console` | 콘솔 헬퍼 |
+| `@winglet/common-utils/math` | 수학 유틸리티 |
 
-## Usage Examples
+## 사용 예제 {#usage-examples}
 
 ```ts
 import { chunk, unique, intersection } from '@winglet/common-utils/array';
@@ -69,21 +69,21 @@ await delay(1000);
 await withTimeout(fetchData(), 5000); // throws TimeoutError if >5s
 ```
 
-## Error Classes
+## 오류 클래스 {#error-classes}
 
-- `BaseError` — foundation error class
-- `AbortError` — operation cancellation
-- `InvalidTypeError` — type validation failures
-- `TimeoutError` — timeout scenarios
+- `BaseError`는 기본 오류 클래스입니다.
+- `AbortError`는 작업 취소에 사용합니다.
+- `InvalidTypeError`는 타입 검증 실패에 사용합니다.
+- `TimeoutError`는 시간 초과 상황에 사용합니다.
 
 <ForAI>
 
-## AI Reference
+## AI 참조 {#ai-reference}
 
-**Package**: `@winglet/common-utils` v0.10.0
-**Purpose**: General-purpose TypeScript utility functions.
+**패키지**: `@winglet/common-utils` v0.10.0
+**목적**: 범용 TypeScript 유틸리티 함수입니다.
 
-### Key exports
+### 주요 내보내기 {#key-exports}
 ```
 ./lib → cacheMapFactory
         cacheWeakMapFactory

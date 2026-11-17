@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import type { InjectEvent, TargetPlan, Warning } from '../types/index.js';
 
 interface RequestForceConfirmInput {
@@ -6,7 +8,7 @@ interface RequestForceConfirmInput {
   readonly force: boolean;
   /** `--yes`: approve without showing the dialog. */
   readonly autoApprove: boolean;
-  readonly dispatch: (event: InjectEvent) => void;
+  readonly dispatch: Fn<[event: InjectEvent]>;
 }
 
 /**

@@ -102,7 +102,11 @@ export const NestedModalProviderUsecase = () => {
       <button onClick={handleConfirm}>Open Confirm</button>
       <button onClick={handlePrompt}>Open Prompt: {value}</button>
       <ModalProvider SubtitleComponent={() => <div>Nested Modal</div>}>
-        <button onClick={handleAlert}>Open Inner Provider Alert</button>
+        <p>
+          The nested Provider waits; this request uses the active outer
+          Provider.
+        </p>
+        <button onClick={handleAlert}>Open through active Provider</button>
       </ModalProvider>
     </div>
   );
@@ -146,7 +150,7 @@ export const MultiModalUsecase = () => {
   };
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       for (let i = 0; i < 10; i++) {
         alert({
           title: 'Hello, world!',
@@ -168,6 +172,7 @@ export const MultiModalUsecase = () => {
         setValue(value ?? '');
       });
     }, 250);
+    return () => clearTimeout(timer);
   }, []);
 
   return (

@@ -18,16 +18,16 @@
 
 ### Always do
 
-- Each sub-fractal is reachable only through its `index.ts` barrel
-- Propagate exit code through `InjectReport.exitCode` (0 / 1 / 2)
+- 각 하위 프랙탈은 자신의 `index.ts` 배럴로만 접근합니다.
+- 종료 코드는 `InjectReport.exitCode`(0 / 1 / 2)로 전달합니다.
 
 ### Ask first
 
-- Adding a sub-fractal, or an agent to `AgentType`
-- Expanding the public API beyond what `commands/` and `ui/` consume
+- 하위 프랙탈을 추가하거나 `AgentType`에 에이전트를 추가할 때.
+- `commands/`와 `ui/`가 소비하는 범위를 넘어 공개 API를 넓힐 때.
 
 ### Never do
 
-- Import from `commands/` or `ui/` anywhere in this tree
-- Perform TTY prompts — prompting is a renderer concern
-- Touch content in a shared document outside this tool's own markers
+- 이 트리 안에서는 `commands/`나 `ui/`에서 가져오지 않습니다.
+- TTY 질문을 수행하지 않습니다. 질문은 렌더러의 책임입니다.
+- 공유 문서에서 이 도구 소유 마커 밖의 내용을 변경하지 않습니다.

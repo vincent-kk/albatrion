@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- 다이제스트는 SHA-256 이고 출력은 소문자 hex 다. `dist/agents-hashes.json` (schema v1) 이 기록하는 형식과 같아야 매니페스트 해시와 직접 비교된다.
+- 다이제스트는 SHA-256 이고 출력은 소문자 hex 다. 빌드 출력 디렉터리의 `agents-hashes.json` (schema v1) 이 기록하는 형식과 같아야 매니페스트 해시와 직접 비교된다.
 - `hashContent` 는 `Buffer` 와 `string` 을 모두 받는다. 파일 복사 경로는 바이트를, marker block 경로는 문자열 본문을 넘긴다.
 - `hashFile` 은 파일이 없으면(`ENOENT`) 던지지 않고 `null` 을 답한다. 이 soft miss 가 `buildPlan` 에서 "아직 설치되지 않음 → copy" 판정의 근거다.
 - `ENOENT` 이외의 오류는 삼키지 않고 그대로 전파한다.
@@ -29,14 +29,14 @@
 - 설치본이 없을 때 `hashFile` 이 `null` 을 답하면 계획은 `copy` 가 된다.
 - 설치본 해시가 매니페스트 해시와 같으면 계획은 `skip-uptodate` 가 된다.
 - 두 해시가 다르면 계획은 `warn-diverged` 가 되고 force 를 요구한다.
-- Verified by `core/buildPlan/__tests__/buildPlan.test.ts`.
+- 검증: `core/buildPlan/__tests__/buildPlan.test.ts`.
 
 ### AC-HASH-BLOCK — 블록 본문도 파일과 같은 잣대로 비교된다
 
 - 매니페스트 해시와 일치하는 블록 본문은 일치로 판정된다.
 - 손으로 수정된 블록 본문은 불일치로 판정된다.
-- Verified by `core/markerBlock/__tests__/markerBlock.test.ts` (`blockBodyMatches`).
+- 검증: `core/markerBlock/__tests__/markerBlock.test.ts` (`blockBodyMatches`).
 
 ## Last Updated
 
-2026-08-06 — 구현에서 계약을 추출해 최초 작성. 이 fractal 은 전용 테스트 파일을 갖지 않으며, 위 두 그룹은 호출자 테스트를 통해 검증된다.
+해시 입력이나 비교 계약이 바뀌면 갱신합니다.

@@ -1,0 +1,127 @@
+---
+title: 'MessageChannelScheduler'
+sidebar_label: 'MessageChannelScheduler'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# MessageChannelScheduler
+
+High-performance task scheduler using MessageChannel for macro task execution.
+Provides efficient scheduling of callback functions with automatic batching, cancellation
+support, and resource management. Uses MessageChannel API for precise timing control
+and better performance compared to setTimeout-based schedulers. Exposes a singleton
+instance through `getInstance()` and recreates it after explicit destruction.
+
+## Import
+
+```typescript
+import { MessageChannelScheduler } from '@winglet/common-utils/scheduler';
+import { MessageChannelScheduler } from '@winglet/common-utils';
+```
+
+## Signature
+
+```typescript
+class MessageChannelScheduler
+```
+
+## Examples
+
+### Basic usage with singleton pattern
+
+```typescript
+const scheduler = MessageChannelScheduler.getInstance();
+
+// Schedule immediate execution
+const taskId = scheduler.schedule(() => {
+  console.log('Task executed');
+});
+
+// Cancel if needed
+scheduler.cancel(taskId);
+```
+
+### Batch scheduling with automatic optimization
+
+```typescript
+const scheduler = MessageChannelScheduler.getInstance();
+
+// These will be batched together automatically
+const task1 = scheduler.schedule(() => updateUI());
+const task2 = scheduler.schedule(() => processData());
+const task3 = scheduler.schedule(() => sendAnalytics());
+
+// All tasks execute in single macro task
+```
+
+### Custom configuration with error handling
+
+```typescript
+const scheduler = MessageChannelScheduler.getInstance({
+  maxPendingTasks: 100,
+  onTaskError: (error, taskId) => {
+    console.error(`Task ${taskId} failed:`, error);
+  },
+  onMaxTasksExceeded: () => {
+    console.warn('Too many pending tasks, skipping');
+    return false; // Reject new tasks
+  }
+});
+
+// Schedule with protection
+const taskId = scheduler.schedule(riskyOperation);
+if (taskId === -1) {
+  // Task was rejected
+}
+```
+
+## Playground
+
+<WingletPlayground
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
+  code={`const scheduler = MessageChannelScheduler.getInstance();
+
+// Schedule immediate execution
+const taskId = scheduler.schedule(() => {
+  console.log('Task executed');
+});
+
+// Cancel if needed
+scheduler.cancel(taskId);`}
+/>
+
+## Notes
+
+**Key Features:**
+- **Automatic Batching**: Groups tasks scheduled in same sync context for efficiency
+- **Precise Timing**: Uses MessageChannel for immediate macro task execution
+- **Memory Efficient**: Optimized data structures and cleanup mechanisms
+- **Error Handling**: Configurable error handling without stopping other tasks
+- **Backpressure**: Configurable limits with custom overflow handling
+- **Cancellation**: Individual task cancellation with O(1) performance
+
+**Performance Characteristics:**
+- Task scheduling: O(1) amortized
+- Task cancellation: O(1) lookup and deletion
+- Batch execution: O(n) where n is batch size
+- Memory usage: Linear with pending task count
+
+**Execution Model:**
+1. Tasks scheduled synchronously are batched together
+2. Microtask triggers MessageChannel post for batch execution
+3. All batched tasks execute in single macro task context
+4. Errors are isolated per task without affecting others
+5. Cleanup happens automatically after batch completion
+
+**Singleton Behavior:**
+- `getInstance()` returns same instance across calls
+- Options only apply to first `getInstance()` call
+- Instance persists until explicitly destroyed
+
+**Resource Management:**
+- MessageChannel ports are properly closed on destroy
+- Task references are cleared to prevent memory leaks
+- Event listeners are removed during cleanup
+- No page-unload hook is installed; callers must invoke `destroy()` explicitly

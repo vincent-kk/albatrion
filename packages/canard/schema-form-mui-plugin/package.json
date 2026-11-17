@@ -66,6 +66,7 @@
     "@mui/material": "^7.0.0",
     "@mui/x-date-pickers": "^8.0.0",
     "@winglet/common-utils": "workspace:^",
+    "@winglet/json-schema": "workspace:^",
     "@winglet/react-utils": "workspace:^",
     "dayjs": "^1.0.0"
   },
@@ -82,6 +83,7 @@
     "typescript": "^5.7.2"
   },
   "peerDependencies": {
+    "@canard/schema-form": "workspace:^",
     "@emotion/react": ">=11.0.0",
     "@emotion/styled": ">=11.0.0",
     "@mui/icons-material": ">=7.0.0",

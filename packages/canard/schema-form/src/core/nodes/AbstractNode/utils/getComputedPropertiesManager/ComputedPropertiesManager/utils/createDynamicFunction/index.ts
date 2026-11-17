@@ -1,1 +1,0 @@
-export { createDynamicFunction } from './createDynamicFunction';

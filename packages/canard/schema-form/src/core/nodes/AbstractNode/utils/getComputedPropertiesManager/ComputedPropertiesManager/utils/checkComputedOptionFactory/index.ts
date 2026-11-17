@@ -1,1 +1,0 @@
-export { checkComputedOptionFactory } from './checkComputedOptionFactory';

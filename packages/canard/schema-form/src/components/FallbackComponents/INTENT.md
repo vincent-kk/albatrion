@@ -2,42 +2,26 @@
 
 ## Purpose
 
-JSON Schema 기반 폼 렌더링 시스템의 기본(fallback) 렌더러 컴포넌트 모음. 플러그인이나 사용자 정의 렌더러가 제공되지 않을 때 최소한의 HTML 구조로 폼을 표시한다.
-
-## Structure
-
-```
-FallbackComponents/
-  FormErrorRenderer.tsx   — 에러 메시지를 <em>으로 표시
-  FormGroupRenderer.tsx   — fieldset/div 기반 그룹 레이아웃
-  FormInputRenderer.tsx   — Input 컴포넌트를 그대로 렌더링
-  FormLabelRenderer.tsx   — 노드 이름을 텍스트로 반환
-  index.ts                — 4개 컴포넌트 re-export
-```
+사용자·플러그인 렌더러가 없을 때 최소 HTML 표시를 제공하는 마지막 폴백입니다.
 
 ## Conventions
 
-- TypeScript + React (TSX), 함수형 컴포넌트
-- 모든 컴포넌트는 `FormTypeRendererProps`를 props 타입으로 사용
-- 스타일은 인라인 style 객체로 최소한만 적용 (depth 기반 들여쓰기)
-- `FormGroupRenderer`는 `node.group === 'branch'`에 따라 fieldset/div를 분기
-- 배열 항목의 경우 label을 숨김 (`isArraySchema(node.parentNode)` 체크)
+- 입력 실행과 오류 해석은 전달받은 props에 맡깁니다. [DETAIL](DETAIL.md)의 접근성 연결을 유지합니다.
 
 ## Boundaries
 
 ### Always do
 
-- `FormTypeRendererProps` 타입을 props 인터페이스로 준수
-- `Input` prop을 `<Input />`으로 렌더링하여 실제 입력 위임
-- depth 0(루트)인 경우 `<Input />`만 렌더링 (FormGroupRenderer)
+- 묶인 Label·ErrorMessage를 조립하고 문구가 없는 그룹에는 오류 요소를 만들지 않습니다.
+- 기본 LabelRenderer·ErrorMessageRenderer는 훅 없는 순수 함수로 유지합니다. 묶인 부품이 직접 호출하여 컴포넌트 층을 생략하기 때문입니다.
+
+- 전달받은 Input을 렌더하고 루트에 불필요한 그룹을 더하지 않습니다.
+- 제목 id 규약을 유지하여 사용자 입력도 같은 접근성 연결을 사용할 수 있게 합니다.
 
 ### Ask first
 
-- 기본 HTML 구조(fieldset, div, em, label) 변경 시
-- 인라인 스타일 로직 수정 또는 CSS 클래스 도입 시
+- 기본 HTML·접근성·스타일 규약 또는 렌더러 props 계약을 바꿀 때
 
 ### Never do
 
-- 플러그인 시스템이나 PluginManager에 직접 의존
-- `FormTypeRendererProps` 외의 props 추가
-- 이 컴포넌트에 비즈니스 로직 또는 상태(state) 도입
+- PluginManager에 직접 의존하거나 자체 폼 상태·비즈니스 로직을 도입하지 않습니다.

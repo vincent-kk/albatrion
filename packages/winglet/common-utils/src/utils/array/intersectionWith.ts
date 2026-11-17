@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 /**
  * Returns the intersection of two arrays using a custom comparison function to determine equality.
  *
@@ -206,7 +208,7 @@
 export const intersectionWith = <Type1, Type2>(
   source: readonly Type1[],
   target: readonly Type2[],
-  isEqual: (source: Type1, target: Type2) => boolean,
+  isEqual: Fn<[source: Type1, target: Type2], boolean>,
 ): Type1[] => {
   const result: Type1[] = [];
   for (let i = 0, il = source.length; i < il; i++) {

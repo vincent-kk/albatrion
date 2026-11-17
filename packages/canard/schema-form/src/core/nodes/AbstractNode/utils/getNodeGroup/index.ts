@@ -1,1 +1,0 @@
-export { getNodeGroup } from './getNodeGroup';

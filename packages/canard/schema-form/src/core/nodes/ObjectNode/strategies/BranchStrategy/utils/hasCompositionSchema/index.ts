@@ -1,1 +1,0 @@
-export { hasCompositionSchema } from './hasCompositionSchema';

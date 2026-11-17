@@ -1,9 +1,6 @@
 import type { Dictionary, Fn } from '@aileron/declare';
 
-import type { ModalNode } from '@/promise-modal/core';
-
 import type { AlertModal } from './alert';
-import type { ModalBackground } from './background';
 import type { ConfirmModal } from './confirm';
 import type { PromptModal } from './prompt';
 
@@ -19,48 +16,26 @@ export type ManagedEntity = {
 
 export type ManagedModal<T = any, B = any> = ManagedEntity & Modal<T, B>;
 
-export type ModalFrameProps<Context extends Dictionary = object, B = any> = {
-  id: number;
-  type: 'alert' | 'confirm' | 'prompt';
-  alive: boolean;
-  visible: boolean;
-  initiator: string;
-  manualDestroy: boolean;
-  closeOnBackdropClick: boolean;
-  background?: ModalBackground<B>;
-  onConfirm: Fn;
-  onClose: Fn;
-  onChange: Fn<[value: any]>;
-  onDestroy: Fn;
-  onChangeOrder: Fn;
-  context: Context;
-};
-
 interface ModalIdProps {
-  modalId: ModalNode['id'];
+  modalId: ManagedEntity['id'];
 }
 
-export interface PresenterProps extends ModalIdProps {
-  getValue: Fn<[], number>;
-  increment: Fn<[], number>;
-  reset: Fn<[], number>;
-}
+/** Identifies one independently subscribed modal presenter. */
+export type PresenterProps = ModalIdProps;
 
 export interface ModalLayerProps extends ModalIdProps {
   onChangeOrder: Fn;
 }
 
 export interface ModalHandlersWithId {
-  onConfirm: Fn<[modalId: ModalNode['id']]>;
-  onClose: Fn<[modalId: ModalNode['id']]>;
-  onChange: Fn<[modalId: ModalNode['id'], value: any]>;
-  onDestroy: Fn<[modalId: ModalNode['id']]>;
+  /** Rejects one failed presentation without affecting peers. */
+  onReject: Fn<[modalId: number, error: unknown]>;
+  /** Rejects all alive nodes after an anchor-level failure. */
+  onRejectAll: Fn<[error: unknown]>;
+  /** Raises a node through the store-owned stacking order. */
+  onChangeOrder: Fn<[modalId: number]>;
+  onConfirm: Fn<[modalId: ManagedEntity['id']]>;
+  onClose: Fn<[modalId: ManagedEntity['id']]>;
+  onChange: Fn<[modalId: ManagedEntity['id'], value: any]>;
+  onDestroy: Fn<[modalId: ManagedEntity['id']]>;
 }
-
-export type ModalActions = {
-  modal: ModalNode | undefined;
-  onConfirm: Fn;
-  onClose: Fn;
-  onChange: Fn<[value: any]>;
-  onDestroy: Fn;
-};

@@ -13,7 +13,7 @@ GraphQL DataLoader에서 영감을 받은 비동기 데이터 페칭용 배칭 �
 같은 틱 내의 개별 `load()` 호출을 자동으로 하나의 배치 요청으로 모아
 N+1 쿼리 문제를 해소하며, 내장 Promise 캐시를 제공합니다.
 
-## Installation
+## 설치 {#installation}
 
 ```bash
 yarn add @winglet/data-loader
@@ -21,7 +21,7 @@ yarn add @winglet/data-loader
 
 ## API
 
-### Constructor
+### 생성자 {#constructor}
 
 ```ts
 import { DataLoader } from '@winglet/data-loader';
@@ -29,30 +29,30 @@ import { DataLoader } from '@winglet/data-loader';
 const loader = new DataLoader<Key, Value>(batchLoader, options?);
 ```
 
-`batchLoader` receives an array of keys and must return a `Promise` resolving to values (or `Error`) in the same order.
+`batchLoader`는 키 배열을 받으며, 같은 순서의 값(또는 `Error`)으로 이행되는 `Promise`를 반환해야 합니다.
 
-### Instance Methods
+### 인스턴스 메서드 {#instance-methods}
 
-| Method | Description |
+| 메서드 | 설명 |
 |---|---|
-| `load(key)` | Returns `Promise<Value>` for a single key; batches automatically |
-| `loadMany(keys)` | Returns `Promise<(Value \| Error)[]>` for multiple keys |
-| `clear(key)` | Removes a single key from the cache |
-| `clearAll()` | Clears the entire cache |
-| `prime(key, value)` | Pre-populates the cache |
+| `load(key)` | 단일 키에 대한 `Promise<Value>`를 반환하며, 자동으로 배칭합니다. |
+| `loadMany(keys)` | 여러 키에 대한 `Promise<(Value \| Error)[]>`를 반환합니다. |
+| `clear(key)` | 캐시에서 단일 키를 제거합니다. |
+| `clearAll()` | 전체 캐시를 비웁니다. |
+| `prime(key, value)` | 캐시를 미리 채웁니다. |
 
-### Options
+### 옵션 {#options}
 
-| Option | Type | Default | Description |
+| 옵션 | 타입 | 기본값 | 설명 |
 |---|---|---|---|
-| `batch` | `boolean` | `true` | Enable request batching |
-| `maxBatchSize` | `number` | `Infinity` | Max keys per batch |
-| `cache` | `boolean` | `true` | Enable promise caching |
-| `cacheKeyFn` | `(key) => CacheKey` | identity | Map key to cache key |
-| `cacheMap` | `MapLike` | `new Map()` | Custom cache implementation |
-| `scheduler` | `(fn) => void` | `process.nextTick` | Controls batching timing |
+| `batch` | `boolean` | `true` | 요청 배칭을 활성화합니다. |
+| `maxBatchSize` | `number` | `Infinity` | 배치당 최대 키 수 |
+| `cache` | `boolean` | `true` | 프로미스 캐싱을 활성화합니다. |
+| `cacheKeyFn` | `(key) => CacheKey` | 항등 함수 | 키를 캐시 키에 매핑합니다. |
+| `cacheMap` | `MapLike` | `new Map()` | 사용자 정의 캐시 구현 |
+| `scheduler` | `(fn) => void` | `process.nextTick` | 배칭 시점을 제어합니다. |
 
-## Usage Examples
+## 사용 예제 {#usage-examples}
 
 ```ts
 import { DataLoader } from '@winglet/data-loader';
@@ -79,39 +79,39 @@ userLoader.clearAll();
 
 <ForAI>
 
-## AI Reference
+## AI 참조 {#ai-reference}
 
-**Package**: `@winglet/data-loader` v0.10.0
-**Purpose**: Request batching and caching for async data fetching (inspired by GraphQL DataLoader).
+**패키지**: `@winglet/data-loader` v0.10.0
+**목적**: 비동기 데이터 페칭을 위한 요청 배칭 및 캐싱입니다 (GraphQL DataLoader에서 영감을 받았습니다).
 
-### Exports
+### 내보내기 {#exports}
 ```ts
 import { DataLoader } from '@winglet/data-loader';
 import type { DataLoaderOptions } from '@winglet/data-loader';
 ```
 
-### Constructor
+### 생성자 {#constructor-1}
 ```ts
 const loader = new DataLoader<Key, Value>(batchLoadFn, options?);
 // batchLoadFn: (keys: Key[]) => Promise<(Value | Error)[]>
 ```
 
-### Instance methods
-| Method | Returns | Description |
+### 인스턴스 메서드 {#instance-methods-1}
+| 메서드 | 반환값 | 설명 |
 |---|---|---|
-| `load(key)` | `Promise<Value>` | Single key; auto-batched within same tick |
-| `loadMany(keys)` | `Promise<(Value\|Error)[]>` | Multiple keys |
-| `clear(key)` | `this` | Remove single cache entry |
-| `clearAll()` | `this` | Clear entire cache |
-| `prime(key, value)` | `this` | Pre-populate cache |
+| `load(key)` | `Promise<Value>` | 단일 키이며, 같은 틱 내에서 자동으로 배칭합니다. |
+| `loadMany(keys)` | `Promise<(Value\|Error)[]>` | 여러 키 |
+| `clear(key)` | `this` | 단일 캐시 항목을 제거합니다. |
+| `clearAll()` | `this` | 전체 캐시를 비웁니다. |
+| `prime(key, value)` | `this` | 캐시를 미리 채웁니다. |
 
-### Options
-| Option | Type | Default |
+### 옵션 {#options-1}
+| 옵션 | 타입 | 기본값 |
 |---|---|---|
 | `batch` | `boolean` | `true` |
 | `maxBatchSize` | `number` | `Infinity` |
 | `cache` | `boolean` | `true` |
-| `cacheKeyFn` | `(key) => CacheKey` | identity |
+| `cacheKeyFn` | `(key) => CacheKey` | 항등 함수 |
 | `cacheMap` | `MapLike` | `new Map()` |
 | `scheduler` | `(fn) => void` | `process.nextTick` |
 

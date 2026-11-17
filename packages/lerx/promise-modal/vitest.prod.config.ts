@@ -23,6 +23,12 @@ export default defineConfig({
     include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     // Testing Library depends on act(), which production React does not ship;
     // the production rendering coverage lives in *.prod.test.* files instead.
-    exclude: [...configDefaults.exclude, '**/bootstrapLifecycle.test.tsx'],
+    exclude: [
+      ...configDefaults.exclude,
+      '**/*.render.test.tsx',
+      '**/bootstrapLifecycle.test.tsx',
+      '**/configurationOptions.test.tsx',
+      '**/publicApi.build.test.tsx',
+    ],
   },
 });

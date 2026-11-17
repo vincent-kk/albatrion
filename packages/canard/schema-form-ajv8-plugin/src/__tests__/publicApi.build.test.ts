@@ -1,7 +1,16 @@
 import type { ValidatorPlugin } from '@canard/schema-form';
-import { plugin } from '@canard/schema-form-ajv8-plugin';
-import { plugin as plugin2019 } from '@canard/schema-form-ajv8-plugin/2019';
-import { plugin as plugin2020 } from '@canard/schema-form-ajv8-plugin/2020';
+import { createValidator, plugin } from '@canard/schema-form-ajv8-plugin';
+import {
+  createValidator as createValidator2019,
+  plugin as plugin2019,
+} from '@canard/schema-form-ajv8-plugin/2019';
+import {
+  createValidator as createValidator2020,
+  plugin as plugin2020,
+} from '@canard/schema-form-ajv8-plugin/2020';
+import Ajv from 'ajv';
+import Ajv2019 from 'ajv/dist/2019.js';
+import Ajv2020 from 'ajv/dist/2020.js';
 import { describe, expect, it } from 'vitest';
 
 /**
@@ -25,22 +34,40 @@ type CompilableSchema = Parameters<ValidatorPlugin['compile']>[0];
 const stringSchema: CompilableSchema = { type: 'string' };
 
 describe.each([
-  ['.', plugin],
-  ['./2019', plugin2019],
-  ['./2020', plugin2020],
-])('@canard/schema-form-ajv8-plugin 빌드 산출물 — %s', (_subpath, entry) => {
-  it('유효한 데이터를 검증한다', async () => {
-    const validate = entry.validator.compile(stringSchema);
+  ['.', plugin, () => createValidator(new Ajv({ strictSchema: false }))],
+  [
+    './2019',
+    plugin2019,
+    () => createValidator2019(new Ajv2019({ strictSchema: false })),
+  ],
+  [
+    './2020',
+    plugin2020,
+    () => createValidator2020(new Ajv2020({ strictSchema: false })),
+  ],
+] as const)(
+  '@canard/schema-form-ajv8-plugin 빌드 산출물 — %s',
+  (_subpath, entry, create) => {
+    it('인스턴스별 createValidator 객체가 검증한다', async () => {
+      const validator = create();
 
-    await expect(validate('hello world')).resolves.toBeNull();
-  });
+      await expect(validator.compile(stringSchema)('x')).resolves.toBeNull();
+      expect(validator.compileGuard).toBeTypeOf('function');
+    });
 
-  it('무효한 데이터의 에러를 보고한다', async () => {
-    const validate = entry.validator.compile(stringSchema);
+    it('유효한 데이터를 검증한다', async () => {
+      const validate = entry.validator.compile(stringSchema);
 
-    const errors = await validate(123);
+      await expect(validate('hello world')).resolves.toBeNull();
+    });
 
-    expect(errors).toBeInstanceOf(Array);
-    expect(errors).not.toHaveLength(0);
-  });
-});
+    it('무효한 데이터의 에러를 보고한다', async () => {
+      const validate = entry.validator.compile(stringSchema);
+
+      const errors = await validate(123);
+
+      expect(errors).toBeInstanceOf(Array);
+      expect(errors).not.toHaveLength(0);
+    });
+  },
+);

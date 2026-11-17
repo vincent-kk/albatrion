@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 import {
   type InjectReport,
   applyAction,
@@ -12,7 +14,7 @@ interface ApplyStepInput {
   readonly plans: readonly TargetPlan[];
   readonly dryRun: boolean;
   readonly force: boolean;
-  readonly dispatch: (event: InjectEvent) => void;
+  readonly dispatch: Fn<[event: InjectEvent]>;
 }
 
 const CONCURRENCY = 8;

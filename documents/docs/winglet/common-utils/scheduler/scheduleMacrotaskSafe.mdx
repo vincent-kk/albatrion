@@ -14,6 +14,13 @@ This scheduling strategy guarantees that the browser has an opportunity to updat
 and process user interactions between task executions, preventing UI freezing and ensuring
 smooth rendering performance.
 
+## Import
+
+```typescript
+import { scheduleMacrotaskSafe } from '@winglet/common-utils/scheduler';
+import { scheduleMacrotaskSafe } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -217,7 +224,7 @@ function scheduleCleanup(resources: Resource[]) {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { scheduleMacrotask } from '@winglet/common-utils';
 
 console.log('1: Synchronous code');

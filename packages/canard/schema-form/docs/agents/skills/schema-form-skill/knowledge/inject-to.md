@@ -1,23 +1,26 @@
 # injectTo
 
-`injectTo` propagates a source field's value to other fields **once per change**; the targets stay user-editable afterward. Its sibling `derived` is continuous and overwrites edits — picking between them is a value-ownership decision:
+`injectTo` propagates a source field's value to other fields **once per change**; the targets stay user-editable afterward. Its sibling `derived` recomputes whenever one of its dependencies changes, replacing any value written to it; a value written to it directly stays until the next dependency change — picking between them is a value-ownership decision:
 
-|                   | `injectTo`                    | `derived`                             |
-| ----------------- | ----------------------------- | ------------------------------------- |
-| Direction         | Source → targets              | Dependencies → this field             |
-| After propagation | Target freely editable        | Recalculated — user edits overwritten |
-| Sync              | One-time per source change    | Continuous                            |
-| Use for           | Initial copy, default seeding | Always-computed values                |
+|                   | `injectTo`                    | `derived`                                               |
+| ----------------- | ----------------------------- | ------------------------------------------------------- |
+| Direction         | Source → targets              | Dependencies → this field                               |
+| After propagation | Target freely editable        | Recalculated on each dependency change, replacing edits |
+| Sync              | One-time per source change    | Continuous                                              |
+| Use for           | Initial copy, default seeding | Always-computed values                                  |
 
 ```typescript
 // injectTo: copy once, then independent
 name: {
   type: 'string',
-  injectTo: (value) => ({ '../nickname': value }),
+  controls: { injectTo: (value) => ({ '../nickname': value }) },
 },
 
 // derived: always computed
-totalPrice: { type: 'number', '&derived': '(../price ?? 0) * (../quantity ?? 1)' },
+totalPrice: {
+  type: 'number',
+  controls: { derived: '(../price ?? 0) * (../quantity ?? 1)' },
+},
 ```
 
 ## Handler Contract
@@ -27,12 +30,18 @@ The handler returns a map of **JSONPointer path → value**; relative (`../targe
 ```typescript
 source: {
   type: 'string',
-  injectTo: (value) => value.length > 5
-    ? { '../longTarget': value }
-    : { '../shortTarget': value, '/audit/lastShort': value },
+  controls: {
+    injectTo: (value: string | undefined) => value !== undefined && value.length > 5
+      ? { '../longTarget': value }
+      : { '../shortTarget': value, '/audit/lastShort': value },
+  },
 },
 ```
 
+The handler also runs when the form mounts, so it must accept an empty source value.
+
+Each write remounts the target's input unless it declares `controlled: true` (`field-input.md`).
+
 ## Cycles
 
-Injection chains are traced per change; a hop that would close a cycle (`A → B → … → A`) is **blocked silently** — earlier hops in the chain still apply, and nothing throws. Design chains as DAGs; the blocking is a safety net, not a feature to lean on.
+A cycle is not detected. Each settlement re-runs rules until no source value changes, up to 25 rounds; a cycle that converges (the same value comes back) stops on its own, while one that keeps producing new values exceeds the budget: the caller's write is kept, every automatic write from that settlement is reverted, `diagnostics` becomes `degraded` with `exceededBudget: 'derive'`, and the write throws. Design chains as DAGs.

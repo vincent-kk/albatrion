@@ -31,8 +31,8 @@ yarn publish:npm          # Publish to npm with public access
 
 ## Agent Docs Injector
 
-`docs/agents/**` 자산을 선택한 에이전트 위치에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
-`--agent` 로 대상 에이전트를 고른다 — `claude` 는 `.claude/{skills,rules,commands}`, `codex`/`agents` 는 `.agents/skills` + `AGENTS.md` 마커 블록(project scope 기준).
+Inject `docs/agents/**` assets into the selected agent's locations. Engine: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
+Select agents with `--agent`: `claude` uses `.claude/{skills,rules,commands}`; `codex`/`agents` use `.agents/skills` and marker blocks in `AGENTS.md` (at project scope).
 
 ```bash
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/data-loader --agent=claude --scope=user
@@ -43,8 +43,8 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/data-
 
 ### Isolation Guardrails
 
-- `src/**` 는 `docs/**` 와 `@slats/agents-assets-sync` 어느 것도 import 금지.
-- **절대 `exports` 에 `./docs/*` 를 추가하지 말 것.**
+- `src/**` MUST NOT import from `docs/**` or `@slats/agents-assets-sync`.
+- **Never add `./docs/*` to `exports`.**
 
 ## Architecture Overview
 
@@ -52,19 +52,19 @@ This is a TypeScript package that implements a batching and caching utility for 
 
 ### Core Components
 
-**DataLoader Class** (`/Users/Vincent/Workspace/albatrion/packages/winglet/data-loader/src/DataLoader.ts`)
+**DataLoader Class** (`src/DataLoader.ts`)
 - Main export that provides batching and caching functionality
 - Handles automatic request batching through a scheduler system
 - Implements a cache system using Map-like interfaces
 - Provides methods: `load()`, `loadMany()`, `clear()`, `clearAll()`, `prime()`
 
-**Type Definitions** (`/Users/Vincent/Workspace/albatrion/packages/winglet/data-loader/src/type.ts`)
+**Type Definitions** (`src/type.ts`)
 - `BatchLoader<Key, Value>`: Function type for batch loading operations
 - `DataLoaderOptions<Key, Value, CacheKey>`: Configuration options
 - `Batch<Key, Value>`: Internal batching structure
 - `MapLike<Key, Value>`: Cache interface definition
 
-**Utility Modules** (`/Users/Vincent/Workspace/albatrion/packages/winglet/data-loader/src/utils/`)
+**Utility Modules** (`src/utils/`)
 - `dispatch.ts`: Handles batch processing and cache hit resolution
 - `error.ts`: Custom error types for DataLoader operations
 - `prepare.ts`: Utility functions for preparing configuration options
@@ -89,7 +89,7 @@ This is a TypeScript package that implements a batching and caching utility for 
 
 ## Testing Strategy
 
-Tests are located in `/Users/Vincent/Workspace/albatrion/packages/winglet/data-loader/src/__tests__/` and cover:
+Tests are located in `src/__tests__/` and cover:
 - Basic batching functionality
 - Cache behavior and invalidation
 - Error handling scenarios

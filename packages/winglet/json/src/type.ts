@@ -1,5 +1,5 @@
 /**
- * JSON에서 허용되는 원시 타입들
+ * Primitive value types accepted by JSON.
  * @see https://datatracker.ietf.org/doc/html/rfc7396
  */
 export type JSONPrimitive = string | number | boolean | null;

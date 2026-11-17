@@ -1,3 +1,5 @@
+export { EMPTY_ARRAY } from './array';
+export { EMPTY_OBJECT } from './object';
 export {
   VOID_FUNCTION,
   NULL_FUNCTION,

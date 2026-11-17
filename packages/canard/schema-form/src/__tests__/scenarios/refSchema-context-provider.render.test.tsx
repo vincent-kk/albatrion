@@ -6,13 +6,14 @@ import { describe, expect, it } from 'vitest';
 
 import type { JSONSchema } from '@/schema-form';
 import {
+  type FieldInputDefinition,
+  type FieldInputProps,
   Form,
   type FormHandle,
   FormProvider,
-  type FormTypeInputDefinition,
-  type FormTypeInputProps,
 } from '@/schema-form';
 
+import { settleValidation } from '../helpers/settleValidation';
 import { renderForm } from '../renderForm';
 
 /**
@@ -24,9 +25,9 @@ import { renderForm } from '../renderForm';
  * Contract pinned here:
  *   - A `$ref` (to `$defs` or to a sibling subschema) resolves so the referenced
  *     subschema's fields RENDER (`[data-path]` / `id={path}`) and carry value.
- *   - The Form `context` prop reaches a FormTypeInput (`props.context`) and drives
- *     `computed.active` / `computed.readOnly` expressions that use `@`.
- *   - `FormProvider.formTypeInputDefinitions` are consumed by a nested Form, and
+ *   - The Form `context` prop reaches a FieldInput (`props.context`) and drives
+ *     `controls.active` / `controls.readOnly` expressions that use `@`.
+ *   - `FormProvider.fieldInputDefinitions` are consumed by a nested Form, and
  *     `FormProvider.context` reaches the form (Form-level context overriding it
  *     key-by-key per WorkspaceContextProvider's `{...external, ...form}` merge).
  *
@@ -98,7 +99,7 @@ const contextActiveSchema = {
     publicField: { type: 'string' },
     adminField: {
       type: 'string',
-      computed: { active: '@.userRole === "admin"' },
+      controls: { active: '@.userRole === "admin"' },
     },
   },
 } satisfies JSONSchema;
@@ -106,7 +107,7 @@ const contextActiveSchema = {
 const contextReadOnlySchema = {
   type: 'object',
   properties: {
-    bio: { type: 'string', computed: { readOnly: '@.mode === "view"' } },
+    bio: { type: 'string', controls: { readOnly: '@.mode === "view"' } },
   },
 } satisfies JSONSchema;
 
@@ -116,7 +117,7 @@ const contextProbeSchema = {
 } satisfies JSONSchema;
 
 /** Custom input that surfaces `props.context` and `props.readOnly` to the DOM. */
-const ContextProbe: FC<FormTypeInputProps<any>> = (props) => (
+const ContextProbe: FC<FieldInputProps<any>> = (props) => (
   <input
     id={props.path}
     data-context={JSON.stringify(props.context ?? null)}
@@ -126,7 +127,7 @@ const ContextProbe: FC<FormTypeInputProps<any>> = (props) => (
   />
 );
 
-const probeDefs: FormTypeInputDefinition[] = [
+const probeDefs: FieldInputDefinition[] = [
   { test: { type: 'string' }, Component: ContextProbe },
 ];
 
@@ -160,7 +161,7 @@ const renderWithProvider = async (
     );
   });
   await act(async () => {
-    await new Promise((r) => setTimeout(r, 0));
+    await settleValidation(() => ref.current?.node);
   });
   const container = utils.container;
   return {
@@ -189,11 +190,14 @@ const renderWithProvider = async (
  * props. `renderForm` and `renderWithProvider` both own the tree they mount, so a test
  * that changes a Form- or provider-level prop between renders needs its own root.
  */
-const renderSwappable = async (element: ReactElement) => {
+const renderSwappable = async (
+  element: ReactElement,
+  current: () => FormHandle['node'] | undefined,
+) => {
   let utils!: ReturnType<typeof render>;
   const drain = async () => {
     await act(async () => {
-      await new Promise((r) => setTimeout(r, 0));
+      await settleValidation(current);
     });
   };
   await act(async () => {
@@ -292,17 +296,17 @@ describe('$ref resolution renders the referenced subschema fields', () => {
   });
 });
 
-describe('context passed via Form context prop reaches FormTypeInput', () => {
+describe('context passed via Form context prop reaches FieldInput', () => {
   it('delivers the exact context object to props.context of the input', async () => {
     const form = await renderForm(contextProbeSchema, {
       context: { greeting: 'hello', count: 3 },
-      formTypeInputDefinitions: probeDefs,
+      fieldInputDefinitions: probeDefs,
       defaultValue: { greeting: 'hi' },
     });
 
     // DOM: the custom input received props.context verbatim.
-    const raw = form.field('/greeting')?.getAttribute('data-context');
-    expect(JSON.parse(raw ?? 'null')).toEqual({ greeting: 'hello', count: 3 });
+    const contextText = form.field('/greeting')?.getAttribute('data-context');
+    expect(JSON.parse(contextText ?? 'null')).toEqual({ greeting: 'hello', count: 3 });
     expect(form.value('/greeting')).toBe('hi');
     // Tree agrees on the underlying value.
     expect(form.node('/greeting')?.value).toBe('hi');
@@ -311,14 +315,19 @@ describe('context passed via Form context prop reaches FormTypeInput', () => {
   it('clears props.context when the Form context prop is emptied', async () => {
     // `WorkspaceContextProvider` stabilizes the prop through `useSnapshot`, so emptying
     // it is the non-empty -> empty transition that snapshot comparison must not skip.
+    const ref = createRef<FormHandle>();
     const mount = (context: object) => (
       <Form
+        ref={ref}
         jsonSchema={contextProbeSchema as any}
-        formTypeInputDefinitions={probeDefs}
+        fieldInputDefinitions={probeDefs}
         context={context}
       />
     );
-    const view = await renderSwappable(mount({ greeting: 'hello', count: 3 }));
+    const view = await renderSwappable(
+      mount({ greeting: 'hello', count: 3 }),
+      () => ref.current?.node,
+    );
     expect(view.contextOf('/greeting')).toEqual({
       greeting: 'hello',
       count: 3,
@@ -328,7 +337,7 @@ describe('context passed via Form context prop reaches FormTypeInput', () => {
     expect(view.contextOf('/greeting')).toEqual({});
   });
 
-  it('hides a context-gated `&active` field when the context disables it', async () => {
+  it('hides a context-gated `controls.active` field when the context disables it', async () => {
     const form = await renderForm(contextActiveSchema, {
       context: { userRole: 'user' },
       defaultValue: { publicField: 'p', adminField: 'secret' },
@@ -343,7 +352,7 @@ describe('context passed via Form context prop reaches FormTypeInput', () => {
     expect(value?.adminField).toBeUndefined();
   });
 
-  it('shows the context-gated `&active` field when the context enables it', async () => {
+  it('shows the context-gated `controls.active` field when the context enables it', async () => {
     const form = await renderForm(contextActiveSchema, {
       context: { userRole: 'admin' },
       defaultValue: { publicField: 'p', adminField: 'secret' },
@@ -357,10 +366,10 @@ describe('context passed via Form context prop reaches FormTypeInput', () => {
     expect(form.getValue()?.adminField).toBe('secret');
   });
 
-  it('drives computed.readOnly from context both ways (@.mode)', async () => {
+  it('drives controls.readOnly from context both ways (@.mode)', async () => {
     const viewForm = await renderForm(contextReadOnlySchema, {
       context: { mode: 'view' },
-      formTypeInputDefinitions: probeDefs,
+      fieldInputDefinitions: probeDefs,
       defaultValue: { bio: 'text' },
     });
     // DOM: readOnly true reaches the input; tree node marked readOnly.
@@ -369,7 +378,7 @@ describe('context passed via Form context prop reaches FormTypeInput', () => {
 
     const editForm = await renderForm(contextReadOnlySchema, {
       context: { mode: 'edit' },
-      formTypeInputDefinitions: probeDefs,
+      fieldInputDefinitions: probeDefs,
       defaultValue: { bio: 'text' },
     });
     // DOM: same schema, opposite context -> editable input.
@@ -383,18 +392,21 @@ describe('FormProvider supplies definitions/context to a nested Form', () => {
     type: 'object',
     properties: {
       name: { type: 'string' },
-      number: { type: 'number', formType: 'external-input1' },
+      number: {
+        type: 'number',
+        presentation: { inputType: 'external-input1' },
+      },
     },
   } satisfies JSONSchema;
 
-  it('renders a field via a FormProvider-supplied formTypeInputDefinition', async () => {
-    const Ext1: FC<FormTypeInputProps<any>> = () => (
+  it('renders a field via a FormProvider-supplied fieldInputDefinition', async () => {
+    const Ext1: FC<FieldInputProps<any>> = () => (
       <div data-testid="ext1">external input 1</div>
     );
     const form = await renderWithProvider(
       {
-        formTypeInputDefinitions: [
-          { test: { formType: 'external-input1' }, Component: Ext1 },
+        fieldInputDefinitions: [
+          { test: { inputType: 'external-input1' }, Component: Ext1 },
         ],
       },
       externalInputSchema,
@@ -410,14 +422,14 @@ describe('FormProvider supplies definitions/context to a nested Form', () => {
     expect(form.node('/number')?.value).toBe(10);
   });
 
-  it('reaches computed expressions through FormProvider.context alone', async () => {
+  it('reaches controls expressions through FormProvider.context alone', async () => {
     const form = await renderWithProvider(
       { context: { userRole: 'admin' } },
       contextActiveSchema,
       { defaultValue: { publicField: 'p', adminField: 'secret' } },
     );
 
-    // DOM: provider context (no Form-level context) enables the &active field.
+    // DOM: provider context (no Form-level context) enables the controls.active field.
     expect(form.exists('/adminField')).toBe(true);
     expect(form.value('/adminField')).toBe('secret');
     // Tree agrees.
@@ -431,14 +443,14 @@ describe('FormProvider supplies definitions/context to a nested Form', () => {
       contextProbeSchema,
       {
         context: { userRole: 'user' },
-        formTypeInputDefinitions: probeDefs,
+        fieldInputDefinitions: probeDefs,
         defaultValue: { greeting: 'merged' },
       },
     );
 
     // DOM: the input sees {...provider, ...form} -> userRole overridden, tier kept.
-    const raw = form.field('/greeting')?.getAttribute('data-context');
-    expect(JSON.parse(raw ?? 'null')).toEqual({
+    const contextText = form.field('/greeting')?.getAttribute('data-context');
+    expect(JSON.parse(contextText ?? 'null')).toEqual({
       userRole: 'user',
       tier: 'gold',
     });
@@ -451,16 +463,19 @@ describe('FormProvider supplies definitions/context to a nested Form', () => {
     // `ExternalFormContextProvider` stabilizes its own context through `useSnapshot`
     // too, so the base half of the `{...external, ...form}` merge has the same
     // non-empty -> empty transition to honour.
+    const ref = createRef<FormHandle>();
     const mount = (context: object) => (
       <FormProvider context={context}>
         <Form
+          ref={ref}
           jsonSchema={contextProbeSchema as any}
-          formTypeInputDefinitions={probeDefs}
+          fieldInputDefinitions={probeDefs}
         />
       </FormProvider>
     );
     const view = await renderSwappable(
       mount({ userRole: 'admin', tier: 'gold' }),
+      () => ref.current?.node,
     );
     expect(view.contextOf('/greeting')).toEqual({
       userRole: 'admin',

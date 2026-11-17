@@ -13,47 +13,47 @@ import ForAI from '@site/src/components/ForAI';
 RFC 6901(JSON Pointer)과 RFC 6902(JSON Patch)를 구현하며,
 프로토타입 오염 방지, 불변 연산, 서브패스 익스포트를 지원합니다.
 
-## Installation
+## 설치 {#installation}
 
 ```bash
 yarn add @winglet/json
 ```
 
-## Sub-path Exports
+## 서브패스 내보내기 {#sub-path-exports}
 
-| Import path | Contents |
+| 가져오기 경로 | 내용 |
 |---|---|
-| `@winglet/json` | All exports |
-| `@winglet/json/pointer` | Full JSON Pointer API |
+| `@winglet/json` | 모든 내보내기 |
+| `@winglet/json/pointer` | 전체 JSON Pointer API |
 | `@winglet/json/pointer-manipulator` | `getValue`, `setValue`, `compilePointer` |
-| `@winglet/json/pointer-patch` | JSON Patch operations |
+| `@winglet/json/pointer-patch` | JSON Patch 연산 |
 | `@winglet/json/pointer-escape` | `escapePath`, `unescapePath` |
-| `@winglet/json/path` | JSON Path constants |
+| `@winglet/json/path` | JSON Path 상수 |
 
-## Key Exports
+## 주요 내보내기 {#key-exports}
 
-### Pointer Manipulation (`/pointer-manipulator`)
+### 포인터 조작 (`/pointer-manipulator`) {#pointer-manipulation-pointer-manipulator}
 
-- `getValue(object, pointer, options?)` — read a value at a JSON Pointer path
-- `setValue(object, pointer, value, options?)` — write a value at the path
-- `compilePointer(pointer)` — compile a pointer to reusable segments
+- `getValue(object, pointer, options?)`는 JSON Pointer 경로의 값을 읽습니다.
+- `setValue(object, pointer, value, options?)`는 해당 경로에 값을 씁니다.
+- `compilePointer(pointer)`는 포인터를 재사용 가능한 세그먼트로 컴파일합니다.
 
 ### JSON Patch (`/pointer-patch`)
 
-- `compare(a, b, options?)` — generate RFC 6902 patch between two objects
-- `applyPatch(object, patches, options?)` — apply a patch array
-- `difference(a, b)` — generate RFC 7396 merge patch
-- `mergePatch(object, patch)` — apply a merge patch
+- `compare(a, b, options?)`는 두 객체 간의 RFC 6902 패치를 생성합니다.
+- `applyPatch(object, patches, options?)`는 패치 배열을 적용합니다.
+- `difference(a, b)`는 RFC 7396 병합 패치를 생성합니다.
+- `mergePatch(object, patch)`는 병합 패치를 적용합니다.
 
-### Options
+### 옵션 {#options}
 
-| Option | Default | Description |
+| 옵션 | 기본값 | 설명 |
 |---|---|---|
-| `immutable` | `true` | Return new object instead of mutating |
-| `protectPrototype` | `true` | Block `__proto__`, `constructor`, `prototype` |
-| `strict` | `false` | Throw on missing paths |
+| `immutable` | `true` | 원본을 변경하는 대신 새 객체를 반환합니다. |
+| `protectPrototype` | `true` | `__proto__`, `constructor`, `prototype`을 차단합니다. |
+| `strict` | `false` | 경로가 없으면 예외를 발생시킵니다. |
 
-## Usage Examples
+## 사용 예제 {#usage-examples}
 
 ```ts
 import { getValue, setValue } from '@winglet/json/pointer-manipulator';
@@ -78,12 +78,12 @@ applyPatch(a, patch); // { x: 1, y: 3, z: 4 }
 
 <ForAI>
 
-## AI Reference
+## AI 참조 {#ai-reference}
 
-**Package**: `@winglet/json` v0.10.0
-**Purpose**: RFC 6901 JSON Pointer and RFC 6902 JSON Patch with security protections.
+**패키지**: `@winglet/json` v0.10.0
+**목적**: 보안 보호 기능을 갖춘 RFC 6901 JSON Pointer 및 RFC 6902 JSON Patch입니다.
 
-### Key exports
+### 주요 내보내기 {#key-exports-1}
 ```
 ./path → JSONPath
 ./path-common → convertJSONPathToPointer

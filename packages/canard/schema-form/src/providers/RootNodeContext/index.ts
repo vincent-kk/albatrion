@@ -1,2 +1,4 @@
-export { RootNodeContextProvider } from './RootNodeContextProvider';
-export { useRootNodeContext } from './useRootNodeContext';
+export { RootNodeContextProvider } from './components/RootNodeContextProvider';
+export { useRootNodeContext } from './hooks/useRootNodeContext';
+export type { RootBinding } from './type';
+export { useLiveNode } from './hooks/useLiveNode';

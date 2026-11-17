@@ -1,32 +1,33 @@
 # CLAUDE.md
 
-`@canard/schema-form-antd-mobile-plugin` — Ant Design Mobile UI 컴포넌트를 `@canard/schema-form`에 연결하는 모바일 최적화 플러그인.
+`@canard/schema-form-antd-mobile-plugin` connects Ant Design Mobile UI components to `@canard/schema-form` with mobile optimization.
 
 ## Commands
 
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언
-yarn test              # Vitest 테스트
+yarn build             # ESM + CJS build + type declarations
+yarn test              # Vitest tests
 yarn lint              # ESLint
 yarn storybook         # Storybook dev (port 6006)
 ```
 
 ## Architecture
 
-플러그인은 `SchemaFormPlugin` 객체를 export:
-- `FormGroup` / `FormLabel` / `FormInput` / `FormError` — 기본 레이아웃 컴포넌트
-- `formTypeInputDefinitions` — 10개 모바일 입력 컴포넌트 정의 (우선순위 순)
+The plugin exports a `SchemaFormPlugin` object:
+- `FieldRenderer` composes bound input and error parts; `LabelRenderer` owns the label root.
+- `ErrorMessageRenderer` owns the error root. The plugin registers `LabelRenderer` and `ErrorMessageRenderer`, with no pass-through input frame.
+- `fieldInputDefinitions` — 10 mobile input component definitions (in priority order)
 
-**FormTypeInput 우선순위**: BooleanSwitch → StringCheckbox → StringSwitch → RadioGroup → Array → Slider → Textarea → String → Number → Boolean
+**FieldInput priority**: BooleanSwitch → StringCheckbox → StringSwitch → RadioGroup → Slider → Array → Textarea → String → Number → Boolean
 
-## Schema → Component 매핑
+## Schema → Component Mapping
 
-| 조건 | 컴포넌트 |
+| Condition | Component |
 |------|---------|
-| `type: boolean`, `formType: switch` | Switch |
-| `type: string`, `formType: checkbox` | Checkbox Group |
-| `type: string`, `formType: switch` | String Switch |
-| `type: string/integer`, `formType: radiogroup` | Radio Group |
+| `type: boolean`, `inputType: switch` | Switch |
+| `type: string`, `inputType: checkbox` | Checkbox Group |
+| `type: string`, `inputType: switch` | String Switch |
+| `type: string/integer`, `inputType: radiogroup` | Radio Group |
 | `type: array` | Dynamic List |
 | `format: slider` | Slider |
 | `format: textarea` | Textarea |
@@ -37,3 +38,9 @@ yarn storybook         # Storybook dev (port 6006)
 ## Peer Dependencies
 
 `@canard/schema-form`, `antd-mobile`, `dayjs`, React
+
+Enum UI identities encode the raw JSON scalar, while labels and aliases use its display string. Initial selection and change payloads use the same identity mapping so null and the string "null" remain distinct.
+
+## Verification tables
+
+Keep local parameter tables as static array literals at the Vitest each call so the case count can be audited without executing tests. Preserve case names, row order and assertions when relocating tables or splitting files by behavior. Shared scenario runners keep their canonical imported data rather than copying it into each runner.

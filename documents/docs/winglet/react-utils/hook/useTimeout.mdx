@@ -25,6 +25,13 @@ and safe callback updates without recreating timers.
 - **Conditional Delays**: Execute actions based on timeout state
 - **Loading States**: Auto-hide loading indicators after delay
 
+## Import
+
+```typescript
+import { useTimeout } from '@winglet/react-utils/hook';
+import { useTimeout } from '@winglet/react-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -120,7 +127,7 @@ const handleUserInput = () => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.12.2" }}
+  dependencies={{ "@winglet/react-utils": "0.14.1" }}
   code={`// Auto-dismiss notification
 const Notification = ({ message, duration = 3000 }) => {
   const { schedule, cancel } = useTimeout(() => {

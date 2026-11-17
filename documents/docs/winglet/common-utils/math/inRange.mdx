@@ -13,6 +13,13 @@ Determines whether the given value is greater than or equal to the minimum
 and less than or equal to the maximum bounds. Both bounds are inclusive,
 meaning the value can equal either the minimum or maximum and still be considered in range.
 
+## Import
+
+```typescript
+import { inRange } from '@winglet/common-utils/math';
+import { inRange } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -63,7 +70,7 @@ console.log(inRange(5, 5, 5)); // true (single point range)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { inRange } from '@winglet/common-utils';
 
 console.log(inRange(5, 1, 10)); // true (5 is between 1 and 10)

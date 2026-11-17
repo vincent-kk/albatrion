@@ -1,14 +1,16 @@
 import { useEffect } from 'react';
 
-import type { ConsumerPackage } from '../../types/index.js';
+import type { Fn } from '@aileron/declare';
+
 import { type AgentType, type Scope, isValidAgent } from '../../core/index.js';
+import type { ConsumerPackage } from '../../types/index.js';
 import type { InjectEvent } from '../types/index.js';
 
 interface UseResolveStepOptions {
   readonly targets: readonly ConsumerPackage[];
   readonly flags: { readonly agent?: string[]; readonly scope?: string };
-  readonly dispatch: (event: InjectEvent) => void;
-  readonly onResolved: (agents: readonly AgentType[], scope: Scope) => void;
+  readonly dispatch: Fn<[event: InjectEvent]>;
+  readonly onResolved: Fn<[agents: readonly AgentType[], scope: Scope]>;
 }
 
 /**

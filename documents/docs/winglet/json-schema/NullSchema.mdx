@@ -1,0 +1,25 @@
+---
+title: 'NullSchema'
+sidebar_label: 'NullSchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# NullSchema
+
+Null type schema
+
+## Import
+
+```typescript
+import type { NullSchema } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+interface NullSchema<Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema> extends BasicSchema<null, Options, Schema> {
+    type: 'null';
+}
+```

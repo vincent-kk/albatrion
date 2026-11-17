@@ -14,6 +14,13 @@ completes but before any macrotasks (setTimeout, I/O, rendering) are processed. 
 the most efficient microtask scheduling mechanism available in the current environment.
 Provides the highest execution priority in the JavaScript event loop.
 
+## Import
+
+```typescript
+import { scheduleMicrotask } from '@winglet/common-utils/scheduler';
+import { scheduleMicrotask } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -323,7 +330,7 @@ class PriorityMicrotaskScheduler {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { scheduleMicrotask } from '@winglet/common-utils';
 
 console.log('1: Synchronous code');

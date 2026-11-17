@@ -13,6 +13,13 @@ Direct alias for the native Math.abs method, providing consistent behavior
 for obtaining the non-negative value of any number. Handles special cases
 like Infinity and NaN according to JavaScript specifications.
 
+## Import
+
+```typescript
+import { abs } from '@winglet/common-utils/math';
+import { abs } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -58,7 +65,7 @@ console.log(distance(-5, 5));   // 10
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { abs } from '@winglet/common-utils';
 
 console.log(abs(5));      // 5

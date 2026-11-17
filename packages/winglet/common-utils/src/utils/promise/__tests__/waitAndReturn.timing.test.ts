@@ -8,15 +8,25 @@ import { waitAndReturn } from '../waitAndReturn';
  */
 describe('waitAndReturn timing', () => {
   it('should delay a synchronous throw until the wait has elapsed', async () => {
-    const start = Date.now();
-
-    await expect(
-      waitAndReturn(() => {
+    // 실제 타이머의 경과 시간은 흔들리므로 가상 타이머로 경계를 고정한다.
+    vi.useFakeTimers();
+    try {
+      const rejected = vi.fn();
+      const promise = waitAndReturn(() => {
         throw new Error('sync failure');
-      }, 60),
-    ).rejects.toThrow('sync failure');
+      }, 60);
+      const observed = promise.catch(rejected);
 
-    expect(Date.now() - start).toBeGreaterThanOrEqual(50);
+      await vi.advanceTimersByTimeAsync(59);
+      expect(rejected).not.toHaveBeenCalled();
+
+      await vi.advanceTimersByTimeAsync(1);
+      await observed;
+      expect(rejected).toHaveBeenCalledTimes(1);
+      await expect(promise).rejects.toThrow('sync failure');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('should not leave a rejected promise unhandled while waiting', async () => {

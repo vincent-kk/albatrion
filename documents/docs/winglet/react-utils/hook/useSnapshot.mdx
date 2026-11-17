@@ -36,6 +36,13 @@ Even identical contents break `useMemo`, `useCallback`, and `React.memo` optimiz
 - **Best for**: Complex nested objects, API responses, configuration objects
 - **Avoid for**: Large arrays, frequently changing data
 
+## Import
+
+```typescript
+import { useSnapshot } from '@winglet/react-utils/hook';
+import { useSnapshot } from '@winglet/react-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -197,7 +204,7 @@ const TodoList = ({ todos, filters }) => {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/react-utils": "0.12.2" }}
+  dependencies={{ "@winglet/react-utils": "0.14.1" }}
   code={`// ❌ Problem: Effect runs on every render despite identical content
 const MyComponent = ({ userData }) => {
   const config = { theme: userData.theme, locale: userData.locale };

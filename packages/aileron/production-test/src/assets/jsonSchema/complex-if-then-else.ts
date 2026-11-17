@@ -40,7 +40,7 @@ export const complexIfThenElseSchema = {
               type: "string",
               enum: ["male", "female", "other"],
               default: "male",
-              computed: {
+              controls: {
                 active: "../age >= 18",
               },
             },

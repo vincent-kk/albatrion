@@ -1,0 +1,32 @@
+import type { FormScenario } from '@aileron/schema-form-scenarios';
+import { playScenario } from '@aileron/schema-form-scenarios';
+import type { StoryObj } from '@storybook/react-vite';
+
+import { formatScenarioDescription } from '../../components/panels/utils/formatScenarioDescription';
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
+import type { FeatureStory } from './FeatureStory';
+
+/**
+ * Build a story that renders one shared scenario and asserts every step in its play function.
+ * @param scenario - Shared data imported from @aileron/schema-form-scenarios, never an inline schema.
+ * @returns A story whose docs description is the scenario description; play failures propagate.
+ */
+export function createFeatureStory(scenario: FormScenario): StoryObj<typeof FeatureStory> {
+  return {
+    args: { scenario },
+    parameters: {
+      docs: {
+        description: {
+          story: scenario.description ? formatScenarioDescription(scenario.description) : scenario.name,
+        },
+      },
+    },
+    play: async ({ args, canvasElement, step }) => {
+      if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
+      await playScenario(args.scenario, canvasElement);
+    },
+  };
+}

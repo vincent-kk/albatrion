@@ -1,0 +1,96 @@
+import type { ComponentType, ReactNode } from 'react';
+
+import type { Fn } from '@aileron/declare';
+
+import type {
+  AlertContentProps,
+  AlertFooterRender,
+} from '@/promise-modal/types/alert';
+import type { ModalBackground } from '@/promise-modal/types/background';
+import type {
+  BackgroundComponent,
+  FooterOptions,
+  ForegroundComponent,
+} from '@/promise-modal/types/base';
+import type {
+  ConfirmContentProps,
+  ConfirmFooterRender,
+} from '@/promise-modal/types/confirm';
+import type { ModalOptions } from '@/promise-modal/types/option';
+import type {
+  PromptContentProps,
+  PromptFooterRender,
+  PromptInputProps,
+} from '@/promise-modal/types/prompt';
+
+export interface OverridableHandleProps {
+  /** Modal group identifier for managing related modals */
+  group?: string;
+  /** Presentation subtype shared by all modal kinds */
+  subtype?: 'info' | 'success' | 'warning' | 'error';
+  /** Whether to dim the background */
+  dimmed?: boolean;
+  /** Nonnegative milliseconds or a decimal ms/s duration string. */
+  duration?: ModalOptions['duration'];
+  /** Retains the closed frame until onDestroy; a custom frame must finish its cleanup */
+  manualDestroy?: boolean;
+  /** Whether to close modal on backdrop click */
+  closeOnBackdropClick?: boolean;
+  /** Escape override; otherwise inherits the same-level backdrop click setting. */
+  closeOnEscape?: boolean;
+  /** Traps Tab only when the top visible pending modal is dimmed; defaults to true. */
+  trapFocus?: boolean;
+  /** Locks body scrolling while a pending dimmed modal is visible; defaults to true. */
+  lockScroll?: boolean;
+  /** Custom foreground component */
+  ForegroundComponent?: ForegroundComponent;
+  /** Custom background component */
+  BackgroundComponent?: BackgroundComponent;
+}
+
+interface BaseHandleProps<ContentProps, BackgroundValue>
+  extends OverridableHandleProps {
+  /** Modal title */
+  title?: ReactNode;
+  /** Modal subtitle */
+  subtitle?: ReactNode;
+  /** Modal content. Can be a ReactNode or a component */
+  content?: ReactNode | ComponentType<ContentProps>;
+  /** Background layer data and configuration */
+  background?: ModalBackground<BackgroundValue>;
+  /** Abort signal to cancel the modal */
+  signal?: AbortSignal;
+}
+
+export interface AlertProps<BackgroundValue>
+  extends BaseHandleProps<AlertContentProps, BackgroundValue> {
+  /** Footer configuration. Can be a render function, options object, or false */
+  footer?:
+    | AlertFooterRender
+    | Pick<FooterOptions, 'confirm' | 'hideConfirm'>
+    | false;
+}
+
+export interface ConfirmProps<BackgroundValue>
+  extends BaseHandleProps<ConfirmContentProps, BackgroundValue> {
+  /** Footer configuration. Can be a render function, options object, or false */
+  footer?: ConfirmFooterRender | FooterOptions | false;
+}
+
+export interface PromptProps<InputValue, BackgroundValue = any>
+  extends BaseHandleProps<PromptContentProps, BackgroundValue> {
+  /** Initial value for the input field */
+  defaultValue?: InputValue;
+  /** Input component that receives value, onChange, and other props */
+  Input: Fn<[props: PromptInputProps<InputValue>], ReactNode>;
+  /**
+   * Validation function. Returns true to disable the confirm button.
+   * Called with the current value, which stays undefined until the first
+   * input when no defaultValue is provided.
+   */
+  disabled?: Fn<[value: InputValue | undefined], boolean>;
+  /** If true, cancel resolves with the current input value instead of null */
+  returnOnCancel?: boolean;
+  /** Footer configuration. Can be a render function, options object, or false */
+  footer?: PromptFooterRender<InputValue> | FooterOptions | false;
+}

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-사용자가 정의한 커스텀 컴포넌트와 데이터를 모달 시스템 내부에 주입하는 Context.
+사용자가 정의한 context 데이터를 모달 시스템 내부에 주입하는 Context. UI 컴포넌트 선택은 ConfigurationContext가 소유합니다.
 
 ## Conventions
 
@@ -13,7 +13,7 @@
 
 ### Always do
 
-- 사용자 정의 컴포넌트는 이 Context를 통해서만 주입
+- 사용자 데이터만 이 Context로 전달하여 UI 선택 책임과 분리
 - 타입 안전성 유지
 
 ### Ask first

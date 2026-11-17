@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Produce the declarative action list an applier executes. Compares every manifest entry against what is already installed at the destination the caller resolved, and reports content this package installed earlier but no longer ships. Reads the filesystem; writes nothing.
+적용기가 실행하는 선언적 액션 목록을 만듭니다. 각 매니페스트 항목을 호출자가 해석한 목적지에 설치된 내용과 비교하고, 이 패키지가 이전에 설치했지만 더 이상 제공하지 않는 내용을 보고합니다. 파일시스템을 읽으며 쓰기는 수행하지 않습니다.
 
 ## Structure
 
@@ -10,8 +10,8 @@ Produce the declarative action list an applier executes. Compares every manifest
 
 ## Conventions
 
-- `ActionKind` and `ActionTarget` are orthogonal: the verdict does not depend on whether content is a file or a block inside a shared document. Consumers switch on `kind` first, then on `target.kind`.
-- Depends on sibling fractals `agentTarget/` (`Destination`, `OrphanScan`) and `markerBlock/` (block-body verdict), both through their `index.ts`. Both edges run one way; the graph stays acyclic.
+- `ActionKind`와 `ActionTarget`은 독립적입니다. 내용이 파일인지 공유 문서 안의 블록인지에 따라 판정이 달라지지 않습니다. 소비자는 `kind`로 먼저 분기한 뒤 `target.kind`로 분기합니다.
+- 형제 프랙탈 `agentTarget/`(`Destination`, `OrphanScan`)와 `markerBlock/`(블록 본문 판정)에 각각의 `index.ts`를 통해 의존합니다. 두 의존 방향은 단방향이며 그래프에 순환을 만들지 않습니다.
 
 ## Boundaries
 

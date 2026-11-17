@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Main Ink screen for the inject flow. Owns the top-level `InjectApp` React component that renders each phase, and `renderInjectApp`, which mounts it via `ink.render` and surfaces the final exit code. The `Phase` union lives in `ui/types/` and its reducer in `ui/reducer/`; this fractal consumes both.
+주입 흐름의 주 Ink 화면입니다. 각 phase를 렌더하는 최상위 `InjectApp` React 컴포넌트와 이를 `ink.render`로 마운트하여 최종 종료 코드를 전달하는 `renderInjectApp`을 소유합니다. `Phase` 합집합은 `ui/types/`에, 그 reducer는 `ui/reducer/`에 두며 이 프랙탈은 둘을 소비합니다.
 
 ## Conventions
 
@@ -13,15 +13,15 @@ Main Ink screen for the inject flow. Owns the top-level `InjectApp` React compon
 
 ### Always do
 
-- Surface the exit code through `useExitApp` inside `InjectApp`, not from outside — the reducer only records it on the `summary` phase
-- Drive pipeline transitions via `useInjectSession` hook; this fractal only consumes the resulting phase
+- 종료 코드는 바깥이 아닌 `InjectApp` 안에서 `useExitApp`으로 전달합니다. reducer는 `summary` phase에 이를 기록하기만 합니다.
+- 파이프라인 전이는 `useInjectSession` 훅으로 구동하고 이 프랙탈은 결과 phase만 소비합니다.
 
 ### Ask first
 
-- Adding a new `Phase` variant — bumps reducer + selectors + component switch, and may invalidate snapshot tests
-- Introducing a second Ink root (e.g. `ReportApp`) at this fractal level; prefer a sibling fractal under `ui/`
+- 새 `Phase` 변형을 추가할 때. reducer·선택기·컴포넌트 분기를 함께 바꾸며 snapshot 시험이 무효해질 수 있습니다.
+- 이 프랙탈 수준에 두 번째 Ink 루트(예: `ReportApp`)를 도입할 때. `ui/` 아래의 형제 프랙탈을 우선합니다.
 
 ### Never do
 
-- Write to `process.stdout`/`stderr` directly; all output goes through Ink's virtual DOM
-- Hold phase-transition logic here; `ui/reducer/` owns it and must stay framework-free
+- `process.stdout`/`stderr`에 직접 쓰지 않습니다. 모든 출력은 Ink의 가상 DOM을 거칩니다.
+- 이곳에 phase 전이 로직을 두지 않습니다. `ui/reducer/`가 이를 소유하며 프레임워크와 독립적으로 유지합니다.

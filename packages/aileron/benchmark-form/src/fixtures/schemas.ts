@@ -1,6 +1,6 @@
-import type { JSONSchema } from '@canard/schema-form';
+import type { EquivalentJSONSchema as JSONSchema } from '../../fixtures/equivalent/types';
 
-export const sampleSchemas = [
+export const sampleSchemas: JSONSchema[] = [
   // 간단한 폼
   {
     type: 'object',
@@ -330,9 +330,9 @@ export const sampleSchemas = [
       },
     },
   },
-] as JSONSchema[];
+] satisfies JSONSchema[];
 
-export const referenceSchemas = [
+export const referenceSchemas: JSONSchema[] = [
   {
     type: 'object',
     $defs: {
@@ -423,4 +423,4 @@ export const referenceSchemas = [
       },
     },
   },
-] as JSONSchema[];
+] satisfies JSONSchema[];

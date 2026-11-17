@@ -14,6 +14,13 @@ their equivalent millisecond values. Uses lazy-initialized regex with caching fo
 performance on repeated calls. Handles whitespace gracefully and provides robust validation
 for malformed inputs with predictable fallback behavior.
 
+## Import
+
+```typescript
+import { convertMsFromDuration } from '@winglet/common-utils/convert';
+import { convertMsFromDuration } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -191,7 +198,7 @@ console.timeEnd('cached-conversion'); // Significantly faster
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { convertMsFromDuration } from '@winglet/common-utils';
 
 // Millisecond conversions

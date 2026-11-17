@@ -2,12 +2,14 @@ import { Box, Text } from 'ink';
 import SelectInput from 'ink-select-input';
 import type React from 'react';
 
+import type { Fn } from '@aileron/declare';
+
 import type { Scope } from '../../core/index.js';
 import { colors } from '../theme/colors.js';
 import { icons } from '../theme/icons.js';
 
 interface ScopePickerProps {
-  readonly onSelect: (scope: Scope) => void;
+  readonly onSelect: Fn<[scope: Scope]>;
 }
 
 const ITEMS: Array<{ label: string; value: Scope; hint: string }> = [

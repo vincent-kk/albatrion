@@ -6,6 +6,8 @@
 
 ## Conventions
 
+- 컴포넌트 props는 마운트 시 고정하고 옵션의 undefined는 상속하며 지속시간은 ms 문자열로 정규화합니다.
+
 - 세분화된 훅: useConfigurationOptions, useConfigurationDuration, useConfigurationBackdrop
 - useConfigurationContext: 전체 설정 값 접근
 - Props를 통해 기본값 오버라이드 가능
@@ -13,6 +15,8 @@
 ## Boundaries
 
 ### Always do
+
+- Esc 상속은 미정값을 보존하고 포커스 가두기·스크롤 잠금은 기본 활성화
 
 - 새 설정 항목 추가 시 대응하는 훅 함께 제공
 - 기본값 정의는 Provider 내부에서 처리

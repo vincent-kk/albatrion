@@ -6,6 +6,8 @@
 
 ## Conventions
 
+- 요청 훅은 handle, 노드 파생 뷰와 수명 조작은 node가 소유하고 외부 조합은 각 경계의 진입점을 사용합니다.
+
 - handle: ModalManager.open()을 호출하여 모달 노드를 생성하고 Promise를 반환
 - node: AbstractNode를 확장한 구독 기반 상태 관리
 - Factory 패턴: nodeFactory가 모달 타입에 따라 적절한 노드 인스턴스 생성

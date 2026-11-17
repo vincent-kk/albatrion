@@ -1,4 +1,4 @@
-import type { FooterComponentProps } from '@/promise-modal/types';
+import type { FooterComponentProps } from '@/promise-modal/types/base';
 
 export const FallbackFooter = ({
   confirmLabel,

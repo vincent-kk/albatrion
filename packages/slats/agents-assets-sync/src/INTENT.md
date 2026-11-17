@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Shared CLI engine that lets any npm package ship one set of agent docs (skills, rules, commands) and inject them where each coding agent keeps them. The engine owns the `inject-agents-settings` dispatcher; consumers only declare `agents.assetPath` in `package.json` and let `agents-build-hashes` hash their asset tree at build time — where that build output is absent, the declared directory is hashed at run time instead. A package that declares nothing is reachable through `--asset-path`, which names the asset root at the call site.
+모든 npm 패키지가 에이전트 문서 한 묶음(skills, rules, commands)을 배포하고 각 코딩 에이전트의 보관 위치에 주입하도록 하는 공용 CLI 엔진입니다. 엔진은 `inject-agents-settings` 명령 분배기를 소유합니다. 소비자는 `package.json`에 `agents.assetPath`만 선언하고 빌드 때 `agents-build-hashes`로 자산 트리의 해시를 계산합니다. 그 빌드 출력이 없으면 실행 때 선언된 디렉터리의 해시를 계산합니다. 아무것도 선언하지 않은 패키지는 호출 위치에서 자산 루트를 지정하는 `--asset-path`로 접근할 수 있습니다.
 
 ## Structure
 
@@ -28,7 +28,7 @@ Shared CLI engine that lets any npm package ship one set of agent docs (skills, 
 ### Ask first
 
 - AgentType에 에이전트를 추가하거나 에이전트별 설치 위치를 바꾸는 변경
-- 현재 단일 dispatcher 외에 최상위 명령을 추가하는 변경
+- 현재 단일 명령 분배기 외에 최상위 명령을 추가하는 변경
 - runCli, HashManifest, InjectReport의 공개 형태를 바꾸는 변경
 
 ### Never do

@@ -1,0 +1,85 @@
+import { afterEach, expect, it, vi } from 'vitest';
+
+import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
+import { getHostDerived } from '../../utils/cache/derivedRecords';
+import { selectChildren } from '../utils/compute/childSelection/selectChildren';
+import type { ChildSelectionFrame } from '../utils/compute/childSelection/selectEntryStep';
+import * as selection from '../utils/compute/childSelection/selectEntryStep';
+import { createPreparedChildrenByName } from '../utils/compute/childSelection/utils/createPreparedChildrenByName';
+import { prepareStaticHost } from '../utils/compute/childSelection/utils/prepareStaticHost';
+import { publishPreparedSelection } from '../utils/compute/childSelection/utils/publishPreparedSelection';
+import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
+import { createPreparedPublicationFixture } from './helpers/createPreparedPublicationFixture';
+
+afterEach(() => vi.restoreAllMocks());
+
+// filid:contract settle-b9-prepared-publication
+it('does not publish an admitted name whose recursive candidate never entered the view', () => {
+  const { root, prepared, scratch, context } =
+    createPreparedPublicationFixture();
+  const prior = root.childrenByName!;
+  const dynamic: Record<string, PlainNode> = Object.create(prepared.baseline);
+  const next = createPreparedChildrenByName(
+    prepared.baseline,
+    prior,
+    prepared.dynamicNames,
+    dynamic,
+  );
+  const frame: ChildSelectionFrame<PlainNode> = {
+    preparedStatic: prepared,
+    preparedDynamic: dynamic,
+    node: root,
+    context,
+    prior,
+    computeChild: () => {},
+    isImmediate: false,
+    next,
+    seenNodesByName: new Map([['phantom', root.blueprintNode]]),
+    inactiveEntries: [],
+    hasChanged: false,
+    shouldFlushReads: false,
+  };
+  try {
+    publishPreparedSelection(frame);
+    expect(prepared.dynamicNames).toEqual(['x']);
+    expect(root.childrenByName).toBe(prior);
+    expect(root.childrenByName!.phantom).toBeUndefined();
+  } finally {
+    releaseSettlementScratch(scratch);
+  }
+});
+
+it('restores the finalized shape when a prepared selection throws', () => {
+  const { root, scratch, context } = createPreparedPublicationFixture();
+  const prior = root.childrenByName!;
+  vi.spyOn(selection, 'selectEntryStep').mockImplementation(() => {
+    throw new Error('selection failure');
+  });
+  try {
+    expect(() =>
+      selectChildren(root, context, prior, () => {}, false, false),
+    ).toThrow('selection failure');
+    expect(root.childrenByName).toBe(prior);
+    expect(() => {
+      root.childrenByName!.kind = prior.kind;
+    }).not.toThrow();
+  } finally {
+    releaseSettlementScratch(scratch);
+  }
+});
+
+it('captures the prior full child list when preparation follows a general prime', () => {
+  const { root, scratch, context } = createPreparedPublicationFixture();
+  const prior = root.childrenByName!;
+  const children = root.children!;
+  delete getHostDerived(root).preparedStaticHost;
+  root.childrenByName = { kind: prior.kind };
+  root.children = [prior.kind];
+  try {
+    const prepared = prepareStaticHost(root, prior, context, false);
+    expect(prepared?.selectedChildren).toEqual(children);
+    expect(prepared?.selectedChildrenByName).toBe(prior);
+  } finally {
+    releaseSettlementScratch(scratch);
+  }
+});

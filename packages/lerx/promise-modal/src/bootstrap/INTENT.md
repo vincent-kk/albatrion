@@ -10,6 +10,8 @@
 
 ## Conventions
 
+- 선언적 root와 initialize 중 마지막 값으로 초기화 위치를 결정하고 ref의 존재는 초기화 시점을 바꾸지 않습니다.
+
 - BootstrapProvider는 외부에서 `ModalProvider`로 이름을 바꿔 export
 - useBootstrap 훅은 `useInitializeModal`로 외부 export
 - Handle/Props 타입은 BootstrapProvider 내부 type.ts에 정의

@@ -1,174 +1,46 @@
 ---
-title: '@canard/schema-form'
-sidebar_label: 'schema-form'
+sidebar_label: '@canard/schema-form'
 sidebar_position: 1
 ---
 
 import PackageHeader from '@site/src/components/PackageHeader';
-import ForAI from '@site/src/components/ForAI';
 import LazyDemo from '@site/src/components/LazyDemo';
+
+# @canard/schema-form
+
+Build React forms from JSON Schema. Start with [installation](./quick-start), then use [core concepts](./core-concepts) to distinguish form shape, stored values, validation, and rendering.
+
+## Live demo {#live-demo}
 
 <PackageHeader name="@canard/schema-form" />
 
-JSON Schema-driven React form engine with a two-layer plugin architecture:
-a **Validator plugin** for JSON Schema validation and
-a **UI plugin** for form rendering components.
-Declare your data shape once in JSON Schema — the library builds, validates,
-and manages the full form state tree automatically.
-
-## Live Demo
-
-Try the interactive form below to see what `@canard/schema-form` can build from JSON Schema alone.
-This conference registration form demonstrates conditional fields, computed values, and 10+ input types — all driven by a single schema.
-
 <LazyDemo load={() => import('@site/src/components/demos/showcase/HeroDemo')} />
 
-:::tip More Examples
-Explore 10 interactive examples covering if/then/else, oneOf, computed values, and more in the [Examples](./examples) section.
-:::
+Explore the [examples](./examples) for conditional forms, arrays, computed values, and custom inputs.
 
-:::tip UI Plugins
-Each form above is rendered with the [antd6-plugin](../schema-form-antd6-plugin/). See individual plugin pages for component catalogs: [antd5](../schema-form-antd5-plugin/) | [antd6](../schema-form-antd6-plugin/) | [MUI](../schema-form-mui-plugin/) | [antd-mobile](../schema-form-antd-mobile-plugin/)
-:::
+## Find the right contract {#reading-guide}
 
-## Architecture
+- [Schema reference](./schema-reference): authoring groups, controls, nullable values, and UI input settings.
+- [Validation](./validation): scheduling, error visibility, validator adapters, and guard limits.
+- [API reference](./api-reference): Form, handles, renderers, hooks, node lifetime, and paths.
+- [Error reference](./error-reference): occurrence reporting, error guards, and diagnostic codes.
+- [Migration from 0.x](./migration-from-0x): replace schema keys and consumer API names.
 
-```
-JSON Schema
-    │
-    ▼
-nodeFromJSONSchema()          ← builds a typed node tree
-    │
-    ├── StringNode / NumberNode / BooleanNode / NullNode   (terminal)
-    ├── ObjectNode / ArrayNode                             (branch)
-    └── VirtualNode                                        (conditional / computed)
-    │
-    ▼
-Plugin System
-    ├── ValidatorPlugin       ← compile(jsonSchema) → ValidateFunction
-    └── SchemaFormPlugin      ← FormGroup / FormLabel / FormInput / FormError
-                                 + formTypeInputDefinitions
-    │
-    ▼
-<Form>  →  React component tree
-```
+## Coding-agent assets {#agent-assets}
 
-## Plugin System
+The installed package includes consumer rules, `schema-form-skill`, and its knowledge documents in `docs/agents`. The skill can be loaded for schema-form work or invoked as `/schema-form-skill` in a host that supports that invocation.
 
-The library ships with *no default validator and no default UI components*.
-Both must be supplied via plugins before rendering any form.
-Plugins are registered globally with `registerPlugin()` and affect every
-`<Form>` in the application.
-
-<ul>
-  <li><strong>Validator plugin</strong> — integrates any validation library (AJV, Zod, Yup, etc.) by implementing <code>compile(jsonSchema)</code>.</li>
-  <li><strong>UI plugin</strong> — provides <code>FormGroup</code>, <code>FormLabel</code>, <code>FormInput</code>, <code>FormError</code> renderer components and <code>formTypeInputDefinitions</code> for per-field input components.</li>
-</ul>
-
-Official plugin packages:
-
-<ul>
-  <li><code>@canard/schema-form-ajv8-plugin</code> — AJV 8 validator</li>
-  <li><code>@canard/schema-form-antd5-plugin</code> — Ant Design 5 UI</li>
-  <li><code>@canard/schema-form-mui6-plugin</code> — MUI 6 UI</li>
-</ul>
-
-## Node Types
-
-| Node | Schema types | Strategy |
-|---|---|---|
-| `StringNode` | `"string"` | terminal |
-| `NumberNode` | `"number"`, `"integer"` | terminal |
-| `BooleanNode` | `"boolean"` | terminal |
-| `NullNode` | `"null"` | terminal |
-| `ObjectNode` | `"object"` | branch (BranchStrategy or TerminalStrategy) |
-| `ArrayNode` | `"array"` | branch (BranchStrategy or TerminalStrategy) |
-| `VirtualNode` | conditional / oneOf / anyOf branches | special |
-
-## FormTypeInput Resolution Order
-
-When rendering a field, the library resolves which input component to use in this priority order (highest first):
-<ol>
-  <li>Direct <code>FormTypeInput</code> prop on <code>Form.Group</code></li>
-  <li><code>formTypeInputMap</code> path mapping on <code>&lt;Form&gt;</code></li>
-  <li>Form-level <code>formTypeInputDefinitions</code> prop</li>
-  <li><code>FormProvider</code> <code>formTypeInputDefinitions</code></li>
-  <li>Plugin-provided <code>formTypeInputDefinitions</code></li>
-</ol>
-
-## Claude Code Integration
-
-`@canard/schema-form` ships coding-agent assets — the `schema-form-skill` expert skill, its knowledge base, and the `schema-form-rule` authoring rule — under `docs/agents/`. Each release publishes them alongside the package so AI assistants can reason about the form engine with package-specific context.
-
-Inject those assets with `@slats/agents-assets-sync` (bin: `inject-agents-settings`). `--agent` decides where they land — `claude`, `codex`, or the vendor-neutral `agents`:
+After installing `@slats/agents-assets-sync` in your project, preview injection before applying it:
 
 ```bash
-# Into ~/.claude (user-level)
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
-
-# Into the nearest existing .claude, walking up from cwd
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=project
-
-# The same assets into Codex locations (skills into .agents/, rules into AGENTS.md)
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=codex --scope=project
-
-# Preview / overwrite flags
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user --dry-run
-npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user --force
+yarn exec inject-agents-settings --package=@canard/schema-form --agent=claude --scope=project --dry-run
+yarn exec inject-agents-settings --package=@canard/schema-form --agent=claude --scope=project
+yarn exec inject-agents-settings --package=@canard/schema-form --agent=codex --scope=project
+yarn exec inject-agents-settings --package=@canard/schema-form --agent=codex --scope=user
 ```
 
-The CLI resolves `@canard/schema-form/package.json` via `createRequire`, reads its `agents.assetPath` (`docs/agents`), and applies hash-based diff into the selected agent's asset locations (skip unchanged, warn on divergence, require `--force` to overwrite).
+`--agent=claude` writes assets under the selected scope's `.claude` location. Codex project scope uses `.agents/skills` and a managed marker block in `AGENTS.md`; Codex user scope uses `~/.codex/skills` and `~/.codex/AGENTS.md`. `--dry-run` previews changes without writing assets. Review divergent local assets before using `--force` to overwrite them.
 
-<ForAI>
+## License and questions {#support}
 
-## AI Reference
-
-**Package**: `@canard/schema-form` v0.10.5
-**Purpose**: JSON Schema-driven dynamic form generation for React with two-layer plugin architecture.
-
-### Plugin system
-```ts
-import type { SchemaFormPlugin } from '@canard/schema-form';
-import type { ValidatorPlugin } from '@canard/schema-form';
-import { registerPlugin } from '@canard/schema-form';
-```
-
-### Form component
-```ts
-import { Form } from '@canard/schema-form';
-import type { FormProps } from '@canard/schema-form';
-import type { FormHandle } from '@canard/schema-form';        // ref API: submit(), reset(), validate(), getValues()
-import type { FormChildrenProps } from '@canard/schema-form';  // render-prop children
-import type { FormLabelProps } from '@canard/schema-form';
-import type { FormErrorProps } from '@canard/schema-form';
-```
-
-### Node types
-```ts
-import type { SchemaNode } from '@canard/schema-form';
-import type { StringNode, NumberNode, BooleanNode, NullNode } from '@canard/schema-form';  // terminal
-import type { ObjectNode, ArrayNode } from '@canard/schema-form';                          // branch
-import type { VirtualNode } from '@canard/schema-form';                                    // conditional
-```
-
-### Enums
-```ts
-import { NodeState } from '@canard/schema-form';       // Initialized | Mounted | Unmounted
-import { ValidationMode } from '@canard/schema-form';  // OnChange | OnBlur | OnSubmit
-import { NodeEventType } from '@canard/schema-form';   // ValueChange | StateChange | ...
-import { SetValueOption } from '@canard/schema-form';  // Merge | Replace
-```
-
-### Type guards & error utilities
-```ts
-import { isArrayNode, isBooleanNode, isBranchNode, isNumberNode } from '@canard/schema-form';
-import { isSchemaFormError, isJSONSchemaError, isUnhandledError, isValidationError } from '@canard/schema-form';
-import { JSONPointer } from '@canard/schema-form';
-```
-
-### Architecture
-- No default validator or UI — both via plugins: `registerPlugin(plugin)`
-- Node tree: JSON Schema → nodeFromJSONSchema() → typed node tree
-- Input resolution: Direct prop > formTypeInputMap > form-level > FormProvider > plugin
-
-</ForAI>
+The packages use the [MIT license](https://github.com/vincent-kk/albatrion/blob/master/LICENSE). Send questions, bug reports, and suggestions to [GitHub Issues](https://github.com/vincent-kk/albatrion/issues).

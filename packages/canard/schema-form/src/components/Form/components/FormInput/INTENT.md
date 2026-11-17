@@ -1,0 +1,25 @@
+# FormInput — 필드 입력
+
+## Purpose
+
+Form.Input은 경로의 입력만 조합하고 입력 채널·오류 경계는 FieldProxy에 맡깁니다.
+
+## Conventions
+
+- 부모 Form의 정적 조각으로 제공하며 별도 폼 상태를 소유하지 않습니다.
+- 조각별 설정 수명과 이유는 [DETAIL](DETAIL.md)에 둡니다.
+
+## Boundaries
+
+### Always do
+
+- 필드 해석과 오류 격리는 FieldProxy에 맡겨 같은 정책의 이중 구현을 막습니다.
+- unwrapped는 덮어쓰기 통로에서 빼고 정적인 내부 조립 렌더러로 틀 선택을 전달합니다.
+
+### Ask first
+
+- 공개 props, 조각 설정 수명 또는 접근성 규약을 바꿀 때
+
+### Never do
+
+- FormCore나 형제 조각을 가져오거나 입력·노드 상태를 중복 소유하지 않습니다.

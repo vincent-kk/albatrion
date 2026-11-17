@@ -23,7 +23,7 @@
 - asset 루트 봉쇄는 **출처와 무관하게** 같다. 선언된 `agents.assetPath` 든 `--asset-path` 든, 해석된 위치가 packageRoot 안이어야 한다. 판정은 철자가 아니라 실제 위치로 한다 — `resolve` 는 어휘적이고 `stat` 은 링크를 따라가므로, 심볼릭 링크된 asset 루트는 검사를 통과하면서 디스크 어디든 가리킬 수 있기 때문이다. 여기서 읽은 바이트가 에이전트가 지시문으로 되읽는 디렉터리에 들어간다.
 - "실제 디렉터리여야 한다" 는 요구는 두 출처가 다르다. 플래그는 호출자가 있다고 단언한 경로이므로 부재가 오류다. 선언은 매니페스트를 동반하며 배포 tarball 이 소스 트리를 쳐냈을 수 있으므로 부재를 허용한다.
 - 그래서 scope alias 와 `--asset-path` 를 함께 주면 열거의 필터가 바뀐다. `agents.assetPath` 선언 여부가 아니라 그 디렉터리의 존재가 패키지를 남기고 거른다.
-- 해시 출처는 target 마다 실제로 답할 수 있는 쪽으로 정해진다. `--asset-path` 는 언제나 그 디렉터리를 진실로 삼는다. 선언된 `agents.assetPath` 는 `dist/agents-hashes.json` 이 있으면 그것을 읽고, 없으면 선언된 디렉터리를 런타임에 해싱한다. 선언은 "이 패키지가 에셋을 싣는다" 는 말이지 "빌드가 돌았다" 는 말이 아니므로, 빌드 산출물의 부재만으로 실행을 세우지 않는다.
+- 해시 출처는 target 마다 실제로 답할 수 있는 쪽으로 정해진다. `--asset-path` 는 언제나 그 디렉터리를 진실로 삼는다. 선언된 `agents.assetPath` 는 빌드 출력 디렉터리의 `agents-hashes.json` 이 있으면 그것을 읽고, 없으면 선언된 디렉터리를 런타임에 해싱한다. 선언은 "이 패키지가 에셋을 싣는다" 는 말이지 "빌드가 돌았다" 는 말이 아니므로, 빌드 산출물의 부재만으로 실행을 세우지 않는다.
 - 매니페스트도 디렉터리도 없으면 출처는 `manifest` 로 남아 게이트에 걸린다. 없는 디렉터리를 해싱하면 빈 매니페스트가 나오고, 빈 매니페스트는 이미 설치된 항목 전부를 orphan 으로 만든다 — `--force` 와 만나면 그 삭제가 실제로 실행된다. 답할 수 있는 출처가 하나도 없는 것은 계획할 수 없는 것이지, 아무것도 없다고 계획할 일이 아니다.
 - 게이트 판정은 렌더러 분기 **이전**, action 에서 한 번 내린다. 해시를 댈 수 없는 타깃은 `selectInjectableTargets` 가 사유와 함께 걸러내므로 렌더러는 그런 타깃을 아예 보지 않는다. 같은 술어를 세 렌더러가 각자 해석하면 실행 판정이 출력 형식에 따라 갈리는데, 판정은 실행의 것이지 렌더러의 것이 아니다.
 - 그 실패는 `agents.assetPath` 부재와 **같은** strict / soft skip 분기를 탄다. 중복 제거한 `--package` 값이 정확히 하나이고 그것이 패키지 이름이면 2로 종료하고, 서로 다른 값이 여럿이거나 scope alias 면 사유만 남기고 나머지 배치가 계속된다. 새 정책을 만들지 않는다.
@@ -69,8 +69,8 @@
 - `toConsumerPackages(metadata): Promise<ConsumerPackage[]>`
   - `assetRoot` 를 `packageRoot` 기준으로 해석하고, 해시 출처 판정을 `resolveHashSource` 에 맡긴다
 - `resolveHashSource(metadata, assetRoot): Promise<Pick<ConsumerPackage, 'hashSource' | 'hashesPresent'>>`
-  - `assetPathSource: 'flag'` → `'directory'`. 선언(`'package'`) 이면 `dist/agents-hashes.json` 이 있을 때 `'manifest'`, 없고 asset 디렉터리가 있으면 `'directory'`, 둘 다 없으면 `'manifest'` 로 남겨 게이트에 넘긴다
-  - `hashesPresent` 는 `dist/agents-hashes.json` 을 실제로 찾았을 때만 `true` 다. `'directory'` 로 정해진 target 은 그 파일을 읽지 않으므로 언제나 `false` 이며, 게이트도 이 값을 보지 않는다
+  - `assetPathSource: 'flag'` → `'directory'`. 선언(`'package'`) 이면 빌드 출력 디렉터리의 `agents-hashes.json` 이 있을 때 `'manifest'`, 없고 asset 디렉터리가 있으면 `'directory'`, 둘 다 없으면 `'manifest'` 로 남겨 게이트에 넘긴다
+  - `hashesPresent` 는 빌드 출력 디렉터리의 `agents-hashes.json` 을 실제로 찾았을 때만 `true` 다. `'directory'` 로 정해진 target 은 그 파일을 읽지 않으므로 언제나 `false` 이며, 게이트도 이 값을 보지 않는다
 - `renderOrFallback(targets, flags, originCwd, notices?, env?): Promise<number>`
 - `renderPlain(targets, flags, originCwd): Promise<number>`
 - `renderJSON(targets, flags, originCwd, notices?): Promise<number>`
@@ -85,7 +85,7 @@
 
 - `@<scope>` 는 scope alias, `@<scope>/<name>` 은 scoped 패키지, `<name>` 은 unscoped 패키지로 분류된다.
 - 빈 문자열, 단독 `@`, scope 나 name 이 빠진 형태, 여분의 슬래시, 대문자를 포함한 이름은 모두 invalid 다.
-- Verified by `__tests__/classifyTarget.spec.ts` (`filid:contract AC-RUNCLI-CLASSIFY`).
+- 검증: `__tests__/classifyTarget.spec.ts` (`filid:contract AC-RUNCLI-CLASSIFY`).
 
 ### AC-RUNCLI-RESOLVE — 단일 패키지 해석은 cwd 를 먼저 본다
 
@@ -96,7 +96,7 @@
 - asset 루트가 packageRoot 밖으로 해석되면 출처와 무관하게 거부한다 — `../` 로 나가는 선언도, 밖을 가리키는 심볼릭 링크도 마찬가지다.
 - packageRoot 안에 있지만 디렉터리가 아닌 경로는 "디렉터리가 아니다" 로 거부한다. 봉쇄 위반과 같은 문구를 쓰면 사용자는 경로를 패키지 안으로 옮기려 드는데, 정작 고칠 것은 디렉터리를 가리키는 일이다. 이 구분은 두 출처 모두에 적용된다.
 - 해석은 `createRequire` 가 보는 것까지만 닿는다. `exports` 가 `./package.json` 을 막고 main 진입점마저 `import` 조건만 가진 ESM 전용 패키지는 두 단계 모두 `ERR_PACKAGE_PATH_NOT_EXPORTED` 로 실패해 2로 종료한다 — `node_modules` 를 걷는 것은 이 organ 의 몫이 아니기 때문이다. 엔진 자신이 그런 패키지였으므로, 엔진은 자기 `package.json` 을 export 해서 자기 dispatcher 의 타깃이 된다.
-- Verified by `__tests__/resolvePackage.spec.ts` (`filid:contract AC-RUNCLI-RESOLVE`).
+- 검증: `__tests__/resolvePackage.spec.ts` (`filid:contract AC-RUNCLI-RESOLVE`).
 
 ### AC-RUNCLI-SCOPE-ALIAS — scope 열거의 권위는 선언된 이름이다
 
@@ -105,7 +105,7 @@
 - 점으로 시작하는 항목, `package.json` 이 없거나 깨진 항목, `name` 이 문자열이 아닌 항목은 건너뛴다.
 - 중복은 nearest-wins 로 제거되고 발견 순서(가까운 조상 우선)가 유지된다.
 - 일치가 0건이면 2로 종료한다.
-- Verified by `__tests__/resolveScopeAlias.spec.ts` (`filid:contract AC-RUNCLI-SCOPE-ALIAS`).
+- 검증: `__tests__/resolveScopeAlias.spec.ts` (`filid:contract AC-RUNCLI-SCOPE-ALIAS`).
 
 ### AC-RUNCLI-INSTALL-ROOTS — workspace 루트에서도 멤버가 설치한 패키지에 닿는다
 
@@ -113,7 +113,7 @@
 - 멤버만 설치한 패키지가 workspace 루트와 다른 멤버의 cwd 에서 해석된다. hoist 디렉터리에만 있는 패키지도 해석되지만, 같은 이름이 멤버에 있으면 멤버 쪽이 이긴다.
 - root marker 를 가진 조상이 없으면 cwd 아래를 걷지 않고 기존대로 2로 종료한다.
 - scope alias 는 멤버와 hoist 디렉터리의 scope 를 함께 열거한다. hoist 디렉터리는 어떤 멤버도 직접 선언하지 않은 전이 의존성까지 담으며, 이는 yarn 의 루트 hoist 가 열거해 주던 범위와 같다.
-- Verified by `__tests__/installRoots.spec.ts` (`filid:contract AC-RUNCLI-INSTALL-ROOTS`).
+- 검증: `__tests__/installRoots.spec.ts` (`filid:contract AC-RUNCLI-INSTALL-ROOTS`).
 
 ### AC-RUNCLI-ASSET-PATH — `--asset-path` 는 선언을 이기고 디렉터리를 진실로 만든다
 
@@ -122,15 +122,15 @@
 - 선언이 없는 패키지에 주면 해석에 성공한다 — 부재 검사를 건너뛰기 때문이다.
 - 존재하지 않는 디렉터리는 단일 타깃에서 2로 종료하고, 배치(`skipMissingAsset`)에서는 `null` 로 건너뛴다. packageRoot 밖으로 나가는 경로의 거부는 `AC-RUNCLI-RESOLVE` 가 두 출처 공통으로 소유한다.
 - 플래그가 해시 출처에 미치는 영향은 `AC-RUNCLI-HASH-SOURCE` 가 소유한다.
-- Verified by `__tests__/assetPathOverride.spec.ts` (`filid:contract AC-RUNCLI-ASSET-PATH`), `src/__tests__/cli.test.ts`.
+- 검증: `__tests__/assetPathOverride.spec.ts` (`filid:contract AC-RUNCLI-ASSET-PATH`), `src/__tests__/cli.test.ts`.
 
 ### AC-RUNCLI-HASH-SOURCE — 해시 출처는 답할 수 있는 쪽으로 정해진다
 
 - `assetPathSource: 'flag'` 인 target 은 매니페스트가 있어도 `hashSource: 'directory'` 이고 `hashesPresent` 는 `false` 다. `assetRoot` 는 플래그 값으로 계산된다.
-- 선언된 asset 경로에 `dist/agents-hashes.json` 이 있으면 `'manifest'` 이고 `hashesPresent` 는 `true` 다.
+- 선언된 asset 경로에 빌드 출력 디렉터리의 `agents-hashes.json` 이 있으면 `'manifest'` 이고 `hashesPresent` 는 `true` 다.
 - 선언된 asset 경로에 매니페스트가 없고 그 디렉터리가 있으면 `'directory'` 로 내려간다 — 빌드 없이 계획된다.
 - 매니페스트도 디렉터리도 없으면 `'manifest'` 인 채 `hashesPresent: false` 로 남아 게이트(`AC-MANIFEST-GATE`)에 걸린다. 그 뒤의 실행 판정은 `AC-RUNCLI-GATE-VERDICT` 가 소유한다.
-- Verified by `__tests__/hashSource.spec.ts` (`filid:contract AC-RUNCLI-HASH-SOURCE`), `src/__tests__/cli.test.ts`.
+- 검증: `__tests__/hashSource.spec.ts` (`filid:contract AC-RUNCLI-HASH-SOURCE`), `src/__tests__/cli.test.ts`.
 
 ### AC-RUNCLI-GATE-VERDICT — 게이트 판정은 실행의 것이지 렌더러의 것이 아니다
 
@@ -138,7 +138,7 @@
 - 패키지 이름 하나만 지목한 실행에서 그 하나가 걸리면 2로 종료한다. `--json` 이든 아니든 같다 — `--json` 은 렌더러 이전 실패의 관례대로 stdout 이 비고 진단은 stderr 로 간다.
 - 서로 다른 값이 여럿이거나 scope alias 인 실행은 사유를 남기고 0으로 끝난다. `--json` 은 그 사유를 `errors` 에 싣고 나머지 타깃의 `units` 를 낸다. `--json` 이든 아니든 같다.
 - 같은 패키지를 두 번 적어도(`--package=X,X`) 판정은 물러지지 않는다. 이 절은 `agents.assetPath` 부재에도 같이 적용된다 — 두 실패가 한 분기를 공유하기 때문이다.
-- Verified by `src/__tests__/cli.test.ts`.
+- 검증: `src/__tests__/cli.test.ts`.
 
 ### AC-RUNCLI-DISPATCH — 렌더러 분기와 무프롬프트 구동
 
@@ -148,27 +148,16 @@
 - `--agent=claude,codex` 는 agent 당 하나씩의 구간을 전사(transcript)에 낸다.
 - `--asset=skills` 는 `AGENTS.md` 항목을 계획에서 통째로 없앤다.
 - `--asset` 과 `--asset-path` 를 함께 줘도 서로의 값을 삼키지 않는다.
-- Verified by `src/__tests__/cli.test.ts`.
+- 검증: `src/__tests__/cli.test.ts`.
 
 ### AC-RUNCLI-JSON-STREAM — `--json` 은 stdout 을 독점한다
 
 - `--json` 실행의 stdout 전체가 하나의 JSON 객체로 파싱된다.
 - 플래그 오류는 느슨한 텍스트가 아니라 `exitCode: 2` 인 문서로 보고된다.
 - 렌더러에 닿기 전에 실패하면 stdout 은 비고 진단은 stderr 로만 나간다.
-- Verified by `src/__tests__/json.test.ts`.
+- 검증: `src/__tests__/json.test.ts`.
 
-## History
-
-- 2026-08-06 — strict 판정이 `--package` 원시 값 개수로 세어져, 같은 패키지를 두 번 적으면(`--package=X,X`) 판정이 0으로 물러졌다. 지목한 것은 여전히 한 패키지인데 말한 횟수가 결과를 바꾼 셈이다. 중복 제거 후 세도록 고쳤고, 이 분기를 공유하는 `agents.assetPath` 부재도 함께 정정됐다 — 그쪽은 이미 배포된 동작이지만, 문서가 처음부터 "값이 정확히 하나이고 그 값이 패키지 이름이면 strict" 라고 쓰고 있었으므로 계약이 아니라 구현이 틀린 쪽이었다.
-- 2026-08-06 — 게이트에 걸린 단일 타깃에 `--json` 을 주면 문서 대신 빈 stdout 이 나가는 것을 그대로 두기로 했다. 머신 리더에게 언제나 문서를 주는 편이 renderJSON 의 취지에 가깝지만, 그러려면 게이트 결과를 다시 렌더러로 실어 날라야 하고 — 방금 걷어낸 배선이다. 해석 불가 패키지와 같은 취급(렌더러 이전 실패 → 빈 stdout, 사유는 stderr, 판정은 exit code)으로 남긴다.
-- 2026-08-06 — 게이트 판정이 렌더러마다 달랐다. plain 과 Ink 는 걸린 타깃을 조용히 빼고 0으로 끝냈고, `--json` 은 같은 상황에서 1을 냈다 — 같은 입력에 출력 형식만으로 CI 판정이 갈렸다. 술어(`needsBuiltManifest`)는 한 곳이었지만 **그 답으로 무엇을 할지**는 아무도 소유하지 않은 것이 원인이라, 판정을 렌더러 분기 위 action 으로 올렸다. 새 정책 대신 `agents.assetPath` 부재가 이미 쓰던 strict / soft skip 분기를 그대로 쓴다. 렌더러가 판정을 못 하게 만드는 쪽을 택한 이유는, 셋이 합의하도록 고치면 넷째 렌더러가 생길 때 같은 버그가 다시 나기 때문이다.
-- 2026-08-06 — 선언이 packageRoot 안의 파일을 가리킬 때 "resolves outside" 라고 보고하던 오분류를 고쳤다. 봉쇄 검사는 이미 통과한 지점이었으므로 그 문구는 사실이 아니었고, 사용자를 엉뚱한 수정으로 이끌었다.
-- 2026-08-06 — `resolvePackage` 의 2단 해석이 ESM 전용 패키지 앞에서 멈춘다는 것이 드러났다. 두 단계 모두 `createRequire` 를 쓰는데, `require` 조건도 `./package.json` 도 없는 패키지는 subpath 와 bare specifier 양쪽에서 `ERR_PACKAGE_PATH_NOT_EXPORTED` 로 실패한다. 구 CJS 빌드는 main 진입점 fallback 으로 해석돼 이 구멍을 가리고 있었다. 해석기를 고치는 대신 엔진 매니페스트가 `./package.json` 을 export 하도록 한 이유는 경계다 — ESM 전용 패키지에 닿는 다른 길은 `node_modules` 를 걷는 것이고, 그것은 `resolveScopeAlias.ts` 만의 몫이다.
-- 2026-08-06 — 선언된 `agents.assetPath` 가 매니페스트 없이도 동작하게 됐다. 이전에는 `--asset-path` 로 부른 실행만 디렉터리를 해싱했고, 기본 경로는 `dist/agents-hashes.json` 이 없으면 아무것도 하지 않고 "빌드부터 하라" 고만 했다 — 같은 디렉터리가 거기 있는데도. 선언은 에셋의 위치를 말할 뿐 빌드 여부를 말하지 않으므로, 부재는 오류가 아니라 다른 출처로 내려갈 신호다. 디렉터리 존재를 조건에 넣은 것은 취향이 아니라 안전 장치다 — 없는 디렉터리의 빈 매니페스트는 설치된 항목 전부를 orphan 으로 만들고 `--force` 가 그것을 삭제한다.
-- 2026-08-06 — asset 루트 봉쇄가 선언 경로까지 확대됐다. 처음에는 `--asset-path` 에만 어휘적 검사를 뒀는데, 그러면 opt-in 경로만 보호되고 기본 경로(`agents.assetPath`)는 `../` 로 자유롭게 나가는 거꾸로 된 상태가 된다. 동시에 검사를 realpath 기준으로 옮겼다 — 어휘적 검사는 심볼릭 링크된 asset 루트를 막지 못하고, 그 경로로 읽힌 파일은 에이전트가 지시문으로 되읽는 곳에 안착한다.
-- 2026-08-06 — `--asset-path` 가 추가되며 "asset 루트는 `agents.assetPath` 가 정한다" 는 전제가 깨졌다. 선언 없이 `agents/` 나 `docs/` 에 에셋만 둔 패키지를 위해서다. fallback 이 아니라 override 로 정한 이유: 플래그가 조건부로 이기면 어느 경로가 쓰였는지 실행 결과만 보고는 알 수 없다. 같은 이유로 override 는 저장된 매니페스트도 무시한다 — 그 매니페스트가 기술하는 트리가 플래그가 가리키는 트리라는 보장이 없다.
-- 2026-08-06 — `--json` 이 plain 경로를 강제한다는 계약이 폐기됐다. `renderJSON` 이 독립 렌더러가 되었고, 분기에서 `--json` 이 TTY 판정보다 먼저 평가된다. 같은 변경으로 `parse*Flag` 계열이 생겼다 — JSON 렌더러는 플래그 오류에서 종료할 수 없고 그것을 자기 문서에 담아야 하기 때문이다.
 
 ## Last Updated
 
-2026-09-20 — install root 해석을 추가하고 `AC-RUNCLI-INSTALL-ROOTS` 를 신설. pnpm workspace 루트에서 `resolvePackage` 와 `resolveScopeAlias` 가 모두 빈손이던 문제의 수정이다. 이전 갱신: 게이트 판정을 action 으로 올리고 `AC-RUNCLI-GATE-VERDICT` 를 추가. `resolveTargets` 가 `strict` 를 값으로 돌려주고 `selectInjectableTargets` 가 걸러내므로, 렌더러는 해시를 댈 수 없는 타깃을 보지 못한다. 이전 갱신: 해석이 `createRequire` 가 보는 범위까지라는 한계를 `AC-RUNCLI-RESOLVE` 에 명시했고, 해시 출처 판정을 `resolveHashSource` 로 떼어내며 `AC-RUNCLI-HASH-SOURCE` 를 추가했다.
+대상 해석, 입력 거부 또는 렌더러 이전 실패 계약이 바뀌면 갱신합니다.

@@ -37,7 +37,7 @@
 
 ## Boundary Exemptions
 
-### `*.ts` — debounce/throttle flat 공개 함수 유지 (fractal root)
+### `*.ts` — debounce/throttle의 평면 공개 함수 유지 (프랙탈 루트)
 
 - **Consumers**: `entry-point`
 - **Direct import**: `allowed`
@@ -45,4 +45,4 @@
 
 ## Last Updated
 
-2026-08-18 — 최초 계약 작성
+호출 빈도 제어의 기본 옵션·예약·취소 계약이 바뀌면 갱신합니다.

@@ -2,39 +2,22 @@
 
 ## Purpose
 
-애플리케이션 수준에서 여러 `<Form>` 인스턴스에 공통 설정을 제공하는 외부 Context. 커스텀 렌더러·입력 정의·에러 표시 정책·검증 모드를 prop drilling 없이 폼 트리 전체에 주입한다.
-
-## Structure
-
-```
-ExternalFormContext/
-  ExternalFormContext.ts          — Context 객체 및 ExternalFormContext 인터페이스 정의
-  ExternalFormContextProvider.tsx — 공개 Provider 컴포넌트 (ExternalFormContextProviderProps)
-  useExternalFormContext.ts       — 내부 소비 훅
-  index.ts                        — Provider, 훅, Props 타입 re-export
-```
+여러 Form에 기본 설정을 공급하며 개별 폼 선택을 보존합니다.
 
 ## Conventions
 
-- TypeScript + React, Context 초기값은 `{} as ExternalFormContext` (빈 객체)
-- `formTypeInputDefinitions`는 Provider 마운트 시 `useConstant`로 고정 → 런타임 교체 불가
-- `context` prop은 `useSnapshot`으로 안정화하여 불필요한 리렌더 방지
-- Form-level props가 이 Context 값보다 항상 우선 (`FormTypeRendererContextProvider`에서 병합)
+- 세부 선택·수명과 소유자 연결은 [DETAIL](DETAIL.md)에 둡니다.
 
 ## Boundaries
 
 ### Always do
 
-- `formTypeInputDefinitions`를 `useConstant`로 고정하여 마운트 이후 변경 차단
-- `useExternalFormContext`는 `providers/` 내부에서만 사용 (`FormTypeRendererContext`, `RootNodeContext`, `WorkspaceContext`가 소비)
+- 정의는 불변 참조별로 재사용하여 무관한 기본값 변경이 입력을 교체하지 않게 합니다.
 
 ### Ask first
 
-- `ExternalFormContext` 인터페이스에 새 필드 추가 시 (Form-level 병합 로직 동시 수정 필요)
-- `validatorFactory`를 런타임에 교체해야 하는 요구사항 발생 시
+- 외부 설정의 공개 형이나 실시간 적용 수명을 바꿀 때
 
 ### Never do
 
-- 이 Context에서 SchemaNode를 직접 생성하거나 조작
-- 애플리케이션 코드에서 `useExternalFormContext`를 직접 import (`providers/index.ts` 통해 접근)
-- `ExternalFormContext` 초기값에 기본 렌더러를 하드코딩
+- 노드를 직접 생성·조작하거나 기본 Context에 플러그인 렌더러를 하드코딩하지 않습니다.

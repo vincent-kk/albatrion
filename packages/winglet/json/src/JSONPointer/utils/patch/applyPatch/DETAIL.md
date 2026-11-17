@@ -16,6 +16,8 @@
 - `move`/`copy`의 `from` 경로도 동일한 own 데이터 의미론으로 해석된다: own이 아닌 예약 멤버 위치는 존재하지 않는 위치와 동일하게 처리된다(프로토타입 객체가 값으로 새어나오지 않는다).
 - 배열 컨텍스트의 세그먼트는 정수 인덱스 또는 `-`만 허용되고, 그 외에는 `PATCH_ARRAY_INDEX_INVALID`다.
 
+예약 멤버 안전성은 구조적으로 보장되므로 옵션으로 끌 수 없습니다. 예약 경로의 거부가 필요한 호출자는 패치를 적용하기 전에 검증합니다.
+
 ## Acceptance Criteria
 
 ### reserved-data-patch — 예약 멤버 own 데이터 적용 (RC-6)
@@ -40,10 +42,6 @@
 - **Direct import**: `allowed`
 - **Reason**: 진입점 `applyPatch`와 단일 연산 코어는 한 몸의 두 파일이다 — organ 재배치는 경로 깊이만 늘리고 경계를 바꾸지 못한다. flat root peer가 의도된 형태다.
 
-## History
-
-- 2026-08-18 — `protectPrototype` 옵션 제거. 이전 의미론은 true(기본)=예약 멤버 경로에서 `JSONPatchError` throw, false=문서화되지 않은 제3의 동작(멤버를 데이터로 넣지 않으면서 반환 객체의 프로토타입을 교체)이었다. 예약 멤버를 own 데이터로 취급하는 RFC 정합 전환(J-3) 이후 안전성이 구조적 보증이 되어 옵션의 두 값이 구별되는 안전한 표현을 제공하지 못했고, 모노레포 내 외부 소비자도 없어 제거했다. throw에 의존하던 호출자는 사전 검증으로 대체해야 한다.
-
 ## Last Updated
 
-2026-08-18 — fractal 계약 문서 신설: 예약 멤버 own 데이터 적용, protectPrototype 제거
+applyPatch의 공개 경계·입력 해석·반환값 또는 실패 처리 계약이 바뀔 때 갱신합니다.

@@ -1,0 +1,26 @@
+---
+title: 'ReferenceResolverAsyncOptions'
+sidebar_label: 'ReferenceResolverAsyncOptions'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# ReferenceResolverAsyncOptions
+
+Async construction changes only the explicit document source.
+
+## Import
+
+```typescript
+import type { ReferenceResolverAsyncOptions } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+interface ReferenceResolverAsyncOptions extends ReferenceResolverOptions {
+    /** Load an absolute document URI; undefined is a cached missing document. */
+    load?: (uri: string) => PromiseLike<SchemaValue | undefined>;
+}
+```

@@ -1,126 +1,98 @@
-# Schema Scanner — behavior of JSONSchemaScanner & JSONSchemaScannerAsync
+# Scanner decisions
 
-Semantics you cannot read off the type declarations. For constructor shapes and option types, read `dist/*.d.ts`.
+Read the installed package's `docs/en/SPECIFICATION.md` for the complete traversal, preservation, relocation and error policy. These decisions help choose the right public operation without inventing an alternate resolver or tree walker.
 
-## The deferred-resolution model
+## Preserve meaning and ownership
 
-`scan()` never writes to the schema you pass it. Each mutation and each resolved `$ref` is appended to an internal list as a `[path, schema]` pair. `getValue()` is what applies them:
+Use the built-in resolver when identifiers, anchors, embedded resources or relative references matter. It indexes addressable schema positions and prepares copies that fit the host. The input document and provider target remain caller-owned; a reference that cannot be moved safely is an intentional result, not permission to merge its keys by hand.
 
-- **Before `scan()`** it returns `undefined`.
-- **On its first call** it deep-clones the original and replays every recorded pair onto the clone, then caches that result. Later calls return the cache.
-- **When the list is empty** it returns the **original object by reference** — no clone. So `scanner.scan(s).getValue() === s` holds for a read-only traversal, and consumers must not assume they own the result.
+The engine fills `entry.references` after enter, so inspect its final outcomes at exit. A chain can produce several outcomes. A successful inline does not imply that every descendant reference disappears: definitions, active ancestor cycles, dynamic scope, invalid positions and relocation can remain. `unresolvedReference: 'throw'` fails missing references only. It does not override these other preservation reasons.
 
-The list is filled by mutation _as well as_ by reference resolution, so a scan whose only effect is a `mutate` return also takes the clone path. A scan that resolves nothing and mutates nothing takes the identity path.
+Filter prunes public visits and maxDepth bounds child discovery; neither limits complete resolver indexing/template preparation. Configure `limits` when expansion needs a finite budget. Identifier-changing mutations fail, and identifiers in newly returned descendants are not registered. Restructure identifiers before constructing a resolver.
+
+## Dialects and custom positions
+
+Inert entries are observable but cannot produce output operations or resolve references. Guard `entry.inert` before semantic transformations. A retained old-dialect reference visits other sibling descendants as inert, while definitions and $defs stay definition address containers. To understand why an old-dialect sibling blocks inlining or a cross-resource target is relocation, read the specification's preservation section instead of weakening the condition.
+
+`keywords` replaces the vocabulary; `additionalKeywords` appends with the last duplicate winning. Give the built-in resolver and scanner matching options so a publicly visited custom position is also indexed and inspected. Only descriptor dialect membership changes inertness; it does not remove the position from traversal.
+
+## Custom provider decision
+
+Use `ReferenceResolver` or `ReferenceResolverAsync` from the root declarations. Return tagged resolved/skipped results. A resolved uri is canonical identity, and its target must already preserve meaning in the host context: the engine does not re-enter the target's resource scope. Normalize aliases to one uri to make ancestor cycle detection meaningful. Root, child and dialect are synchronous; only async resolve may suspend. Omit child only when one fixed root context is sufficient, and return the parent context when a lexical child changes nothing.
+
+This provider is sufficient for a canonical registry whose targets contain no identifiers or relative references:
+
+<!-- example: custom -->
 
 ```typescript
-const out = new JSONSchemaScanner().scan(schema).getValue();
-out === schema; // true — nothing was recorded, so nothing was cloned
-```
+import { JSONSchemaScanner } from '@winglet/json-schema';
+import type { ReferenceResolver, UnknownSchema } from '@winglet/json-schema';
 
-If a scan throws, internal state is reset and the error propagates: `getValue()` then returns `undefined` rather than a partial result.
-
-## Callback timing
-
-One visit per node runs `filter` → `mutate` → `enter` → `$ref` resolution → child discovery. `exit` runs after all descendants (inline for a leaf).
-
-The order has one consequence that costs people hours: **the reference fields are populated after `enter` returns.** During `enter`, `hasReference`, `referenceResolved`, `referencePath` and `referenceSkipped` are still unset on every entry. Read them in `exit`.
-
-```typescript
-new JSONSchemaScanner({
-  visitor: {
-    enter: (entry) => entry.referenceResolved, // always undefined — too early
-    exit: (entry) => entry.referenceResolved, // true once the $ref was inlined
+const registry = new Map<string, UnknownSchema | boolean>([
+  ['urn:example:Text', { type: 'string' }],
+]);
+const resolver: ReferenceResolver<void> = {
+  root: () => undefined,
+  dialect: () => '2020-12',
+  resolve(reference) {
+    const target = registry.get(reference);
+    return target === undefined
+      ? { status: 'skipped', reason: 'unresolved' }
+      : { status: 'resolved', uri: reference, target };
   },
-  options: { resolveReference },
-}).scan(schema);
+};
+const output = new JSONSchemaScanner({
+  options: { resolveReference: resolver },
+})
+  .scan({ $ref: 'urn:example:Text' })
+  .getValue();
+if (!output || typeof output === 'boolean')
+  throw new Error('Expected an object root');
+console.assert(output.type === 'string');
 ```
 
-`context` is passed by reference to every callback, so it is a shared mutable object: mutate it to accumulate results, and hold your own reference to it, since the scanner's options are private.
+## Document supply decision
 
-## The async scanner
+The package never fetches documents by itself. Use registered resources for documents already available and an explicit async load hook for other document URIs. Load receives an absolute URI without the fragment, and missing/pending results are cached per resolver. Supply a new resolver for changed sources. Waiting is sequential; preloading registered resources can avoid per-reference round trips. Network access, retry, authentication and cancellation remain in the caller's loader.
 
-`JSONSchemaScannerAsync` drives the same traversal core, so every rule here holds unchanged. Three differences:
-
-- `scan()` returns `Promise<this>` while `getValue()` stays synchronous, so the scan must be awaited first. `scanner.scan(s).getValue()` is a type error rather than a race.
-- **Every** callback may be async, `enter` and `exit` included — the driver awaits whatever a callback returns if it is thenable, and skips the microtask hop when it is not. The shared `SchemaVisitor` type declares `enter`/`exit` as void-returning, which still accepts an `async` function.
-- Resolution is **sequential, not parallel**: the DFS awaits each `resolveReference` before continuing, so N remote refs cost N round trips in series. For a large schema prefer a resolver backed by a prefetched map, and enable `cacheResolvedReference` when refs repeat.
-
-```typescript
-const scanner = new JSONSchemaScannerAsync({
-  options: { resolveReference: async (ref) => (await fetch(ref)).json() },
-});
-const result = (await scanner.scan(schema)).getValue();
-```
-
-## filter, mutate, maxDepth
-
-**`filter` returning `false`** drops the node and its whole subtree, and no `enter` or `exit` fires for it. Siblings are unaffected.
-
-**`mutate` returning a schema** replaces the node for the rest of the traversal (children are discovered from the replacement) and records the replacement for `getValue()`. Returning `undefined` leaves the node alone. The input schema is still never written to.
-
-**`maxDepth`** limits child discovery, not visiting: the node _at_ `maxDepth` is visited normally, its children are never pushed. Root is depth 0, so `maxDepth: 2` visits depths 0, 1 and 2.
-
-## $ref resolution and cycles
-
-`resolveReference(ref, entry, context)` is called only for a node whose `$ref` is a string — identified structurally, not by type membership. Two cases skip the resolver entirely, and each records why in `entry.referenceSkipped`:
-
-| `referenceSkipped` | Cause                                                                    |
-| ------------------ | ------------------------------------------------------------------------ |
-| `'definition'`     | The node lives under `$defs`/`definitions` — deliberately never resolved |
-| `'cycle'`          | The same ref is already being resolved on the current path               |
-| `'unresolved'`     | No resolver configured, or the resolver returned nothing                 |
-
-Cycle detection is per-`scan()`: a resolved ref is added to a `visitedReference` set and **removed again on that node's `Exit`**. That removal is the whole design. It means the set tracks _the current path_, not everything seen, so `A → B → A` terminates at the repeat while two sibling properties pointing at the same `$ref` both still resolve. A global seen-set would have silently dropped the second sibling.
-
-```typescript
-// A → B → A, with both definitions resolvable:
-//   exit '#/$defs/A/properties/b'                     → 'definition'
-//   exit '#/$defs/B/properties/a'                     → 'definition'
-//   exit '#/properties/root/properties/b/properties/a' → 'cycle'  ← terminates here
-```
-
-## Options that are easy to miss
-
-### `cloneResolvedSchema` (default `true`)
-
-Each resolved `$ref` is deep-cloned at inline time. Two occurrences of the same `$ref` therefore produce two independent objects in the output, and the object the resolver returned is never captured by the result.
-
-**This default changed.** Earlier versions behaved as if it were `false`, and docs written against them predict alias-sharing — that `out.properties.x === out.properties.y` for two identical `$ref`s, or that the output aliases `schema.definitions.A`. Both predictions are now wrong. Set `cloneResolvedSchema: false` to restore that behavior, or to skip the clone cost when your resolver already hands back a freshly-owned object.
-
-```typescript
-// default (true):  out.properties.x !== out.properties.y
-// false:           out.properties.x === schema.definitions.A
-```
-
-### `cacheResolvedReference` (default `false`)
-
-By default the resolver runs once **per occurrence** — three identical `$ref`s mean three calls. Enable it to memoize the raw resolver result per reference string, which is what you want for expensive or remote resolvers. Caching does not reintroduce aliasing: the cached result is cloned at each inline point (subject to `cloneResolvedSchema`), so the three outputs stay distinct while the resolver runs once. Works on the async scanner too.
-
-### `additionalKeywords` and the `EXTENDED_KEYWORDS` preset
-
-The traversal vocabulary is a list of keyword descriptors, and the built-in list is deliberately narrow. Applicator keywords outside it are **not descended into at all** — by default a node's `patternProperties`, `propertyNames`, `contains` and `dependentSchemas` subschemas are never visited. Opt in:
+<!-- example: load -->
 
 ```typescript
 import {
-  EXTENDED_KEYWORDS,
-  JSONSchemaScanner,
-} from '@winglet/json-schema/scanner';
+  JSONSchemaScannerAsync,
+  createReferenceResolverAsync,
+} from '@winglet/json-schema';
+import type { UnknownSchema } from '@winglet/json-schema';
 
-new JSONSchemaScanner({
-  options: { additionalKeywords: EXTENDED_KEYWORDS },
-}).scan(schema);
+const schema = {
+  $id: 'https://schemas.example/root.json',
+  properties: { first: { $ref: 'deny.json' }, second: { $ref: 'deny.json' } },
+};
+const documents: Record<string, UnknownSchema | boolean> = {
+  'https://schemas.example/deny.json': false,
+};
+const requested: string[] = [];
+const resolver = createReferenceResolverAsync(schema, {
+  load: async (uri) => {
+    requested.push(uri);
+    return documents[uri];
+  },
+});
+const scanner = new JSONSchemaScannerAsync({
+  options: { resolveReference: resolver },
+});
+await scanner.scan(schema);
+const output = scanner.getValue();
+if (!output || typeof output === 'boolean')
+  throw new Error('Expected an object root');
+console.assert(
+  output.properties.first === false && output.properties.second === false,
+);
+console.assert(requested.join(',') === 'https://schemas.example/deny.json');
 ```
 
-`EXTENDED_KEYWORDS` covers the draft 2019-09 / 2020-12 applicators: `patternProperties`, `dependentSchemas`, `propertyNames`, `contains`, `additionalItems`, `unevaluatedProperties`, `unevaluatedItems`, `contentSchema`. Draft-07 `dependencies` is excluded on purpose — its array form is not a subschema.
+## Result and failure handling
 
-You can also supply your own descriptors, e.g. `[{ keyword: 'x-widget', kind: 'schema' }]`, for vendor keywords. Two things to know: added descriptors are appended, so they are traversed **after** the built-ins (`properties` included); and a descriptor reusing a built-in keyword name **overrides** that built-in's kind and position rather than adding to it.
+An undefined mutate result keeps the current node; false is a replacement schema. Array containers are skipped as schema nodes, while boolean leaves reach callbacks. The same entry reaches enter and exit and may expose an updated schema at exit.
 
-## Child discovery order
-
-Children are discovered by matching the node's own keys against the vocabulary, then re-sorting into descriptor order — so **key insertion order in the schema is irrelevant** and traversal is stable:
-
-`$defs` → `definitions` → `additionalProperties` → `not` → `if` → `then` → `else` → `allOf` → `anyOf` → `oneOf` → `prefixItems` → `items` → `properties`
-
-Only non-null object subschemas become entries. `items: false`, a primitive property value, or a non-object element inside `allOf` is skipped rather than visited as a garbage node — which is also why `additionalProperties: false` produces no child. Inherited enumerable keys are not traversed; own keys only.
-
-Each child entry carries `path` (schema JSON Pointer, RFC 6901-escaped), `dataPath` (pointer to the data location — only `properties` and tuple `items` extend it), `depth`, `keyword`, and `variant` (property key, composition index, or absent).
+Call getValue only after scan completes. Calling scan or getValue on a running instance throws scan-in-progress; use another instance for independent work. A failed scan clears its state. Compare JSONSchemaScanError.code with the entries of the exported JSONSchemaScanErrorCode table for package failures and retain the cause of caller/loader errors. Read the specification before broadening a preservation rule or assuming depth safety for non-plain objects: the iterative guarantee covers ordinary JSON containers, not arbitrary getters and callbacks.

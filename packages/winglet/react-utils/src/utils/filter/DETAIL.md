@@ -50,10 +50,6 @@
 - **Direct import**: `allowed`
 - **Reason**: predicate마다 독립적으로 tree-shaking 가능해야 하는 함수당 한 파일 flat 컬렉션이 이 fractal의 정본 형태다. organ으로 내리면 배럴 깊이만 늘고, 서브패스 엔트리로 일부 predicate만 가져다 쓰는 외부 소비자(`@canard/schema-form` 등)의 번들 이득이 없다. zero-peer 승인은 `.filid` 설정의 scoped exempt와 쌍이다.
 
-## History
-
-- 2026-08-18 — `isForwardRefComponent`·`isLazyComponent`를 신설하고 `isReactComponent`의 판별 합성에 포함했다. 이전에는 forwardRef·lazy 값이 기존 predicate 중 어느 것도 인식하지 못해 `isReactComponent`가 false를 반환했고, 그 결과 소비자 쪽에서 렌더 대상이 조용히 `null`로 사라지는 회귀가 있었다.
-
 ## Last Updated
 
-2026-08-18 — 최초 계약 작성. 컴포넌트·엘리먼트 판별 predicate 계약 수립.
+filter의 공개 경계·입력 해석·반환값 또는 실패 처리 계약이 바뀔 때 갱신합니다.

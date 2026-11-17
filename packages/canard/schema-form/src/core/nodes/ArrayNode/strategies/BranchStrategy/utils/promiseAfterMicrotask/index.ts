@@ -1,1 +1,0 @@
-export { promiseAfterMicrotask } from './promiseAfterMicrotask';

@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 /**
  * Returns the intersection of two arrays using a transformation function to determine equality.
  *
@@ -186,7 +188,7 @@
 export const intersectionBy = <Type1, Type2>(
   source: readonly Type1[],
   target: readonly Type2[],
-  mapper: (item: Type1 | Type2) => unknown,
+  mapper: Fn<[item: Type1 | Type2], unknown>,
 ): Type1[] => {
   const targetSet = new Set<unknown>();
   for (let i = 0, e = target[0], l = target.length; i < l; i++, e = target[i])

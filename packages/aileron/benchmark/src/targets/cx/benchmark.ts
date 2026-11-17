@@ -13,7 +13,7 @@ const suite = new Benchmark.Suite();
 export const run = () => {
   return new Promise<Ratio>((resolve) => {
     suite
-      // clsx vs cx: 복잡한 테스트 케이스들
+
       .add('clsx (complex cases)', function () {
         for (let i = 0; i < testCases.length; i++) {
           const testCase = testCases[i];
@@ -34,7 +34,7 @@ export const run = () => {
           }
         }
       })
-      // clsxLite vs cxLite: 단순한 테스트 케이스들 (Lite 버전은 복잡한 처리 지원 안 함)
+
       .add('clsxLite (simple cases)', function () {
         for (let i = 0; i < simpleTestCases.length; i++) {
           const testCase = simpleTestCases[i];
@@ -55,7 +55,7 @@ export const run = () => {
           }
         }
       })
-      // 단일 호출 성능 비교
+
       .add('clsx (single call)', function () {
         clsx('btn', 'btn-primary', {
           'btn-large': true,
@@ -77,12 +77,12 @@ export const run = () => {
       .on('complete', function (this: Benchmark.Suite) {
         console.log('Fastest is ' + this.filter('fastest').map('name'));
 
-        // 카테고리별 결과 분석
+
         console.log('\n=== Performance Analysis ===');
 
         const results = Array.from(this as any);
 
-        // 복잡한 케이스 비교 (clsx vs cx)
+
         const clsxComplex: any = results.find(
           (r: any) => r.name === 'clsx (complex cases)',
         );
@@ -97,7 +97,7 @@ export const run = () => {
           );
         }
 
-        // 단순한 케이스 비교 (clsxLite vs cxLite)
+
         const clsxLiteSimple: any = results.find(
           (r: any) => r.name === 'clsxLite (simple cases)',
         );
@@ -112,7 +112,7 @@ export const run = () => {
           );
         }
 
-        // 단일 호출 비교
+
         const clsxSingle: any = results.find(
           (r: any) => r.name === 'clsx (single call)',
         );

@@ -3,7 +3,6 @@ import { describe, expect, it, vi } from 'vitest';
 import type { UnknownSchema } from '@/json-schema/types/jsonSchema';
 
 import { JSONSchemaScanner } from '../sync/JSONSchemaScanner';
-import { EXTENDED_KEYWORDS } from '../utils/keywordDescriptors';
 
 /**
  * Guards for the keyword-map / own-key traversal strategy. Each test targets a
@@ -115,15 +114,12 @@ describe('JSONSchemaScanner - traversal strategy invariants', () => {
     expect(paths).not.toContain('#/properties/a');
   });
 
-  it('R-E: opted-in extended keywords are ordered after the built-in ones', () => {
-    const order = depth1Keywords(
-      {
-        properties: { a: { type: 'string' } },
-        patternProperties: { '^x': { type: 'number' } },
-        contains: { type: 'string' },
-      },
-      { additionalKeywords: EXTENDED_KEYWORDS },
-    );
+  it('R-E: the expanded built-in vocabulary keeps its fixed order', () => {
+    const order = depth1Keywords({
+      properties: { a: { type: 'string' } },
+      patternProperties: { '^x': { type: 'number' } },
+      contains: { type: 'string' },
+    });
     expect(order.indexOf('properties')).toBeGreaterThanOrEqual(0);
     expect(order.indexOf('properties')).toBeLessThan(
       order.indexOf('patternProperties'),
@@ -176,7 +172,7 @@ describe('JSONSchemaScanner - traversal strategy invariants', () => {
     ]);
   });
 
-  it('an array subschema value is visited as a leaf without crashing', () => {
+  it('an array subschema value is skipped without crashing', () => {
     const schema = {
       type: 'object',
       properties: { a: [1, 2, 3] },
@@ -185,7 +181,7 @@ describe('JSONSchemaScanner - traversal strategy invariants', () => {
     expect(() => {
       paths = visitedPaths(schema);
     }).not.toThrow();
-    expect(paths).toContain('#/properties/a');
+    expect(paths).not.toContain('#/properties/a');
   });
 
   it('a boolean / primitive root schema is visited once with no children', () => {

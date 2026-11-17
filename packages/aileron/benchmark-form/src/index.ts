@@ -4,10 +4,6 @@ import path from 'node:path';
 
 import { Form as WorkspaceForm } from '@canard/schema-form';
 
-import { ARRAY_STRESS_RUNNERS } from './benchmarks/canard/array-node-stress';
-import { runFormRenderingV2 } from './benchmarks/canard/form-rendering';
-import { SCALE_INTERACTION_RUNNERS } from './benchmarks/canard/scale-interaction';
-import { SCALE_RENDERING_RUNNERS } from './benchmarks/canard/scale-rendering';
 import { forceGc } from './utils/setup-env';
 import { getSchemaFormVersions } from './utils/version-parser';
 
@@ -22,20 +18,32 @@ interface CategoryRunner {
   latestOnly?: boolean;
 }
 
-const CORE_CATEGORIES: CategoryRunner[] = [
-  { category: 'Form Rendering v2', run: runFormRenderingV2 },
-];
+async function selectCategories(): Promise<CategoryRunner[]> {
+  const { ARRAY_STRESS_RUNNERS } = await import(
+    './benchmarks/canard/array-node-stress'
+  );
+  const { runFormRenderingV2 } = await import(
+    './benchmarks/canard/form-rendering'
+  );
+  const { SCALE_INTERACTION_RUNNERS } = await import(
+    './benchmarks/canard/scale-interaction'
+  );
+  const { SCALE_RENDERING_RUNNERS } = await import(
+    './benchmarks/canard/scale-rendering'
+  );
+  const CORE_CATEGORIES: CategoryRunner[] = [
+    { category: 'Form Rendering v2', run: runFormRenderingV2 },
+  ];
 
-const SCALE_CATEGORIES: CategoryRunner[] = [
-  ...SCALE_RENDERING_RUNNERS,
-  ...SCALE_INTERACTION_RUNNERS,
-];
+  const SCALE_CATEGORIES: CategoryRunner[] = [
+    ...SCALE_RENDERING_RUNNERS,
+    ...SCALE_INTERACTION_RUNNERS,
+  ];
 
-const ARRAY_STRESS_CATEGORIES: CategoryRunner[] = ARRAY_STRESS_RUNNERS.map(
-  (r) => ({ ...r, latestOnly: true }),
-);
+  const ARRAY_STRESS_CATEGORIES: CategoryRunner[] = ARRAY_STRESS_RUNNERS.map(
+    (r) => ({ ...r, latestOnly: true }),
+  );
 
-function selectCategories(): CategoryRunner[] {
   const args = process.argv;
   const scale = args.includes('--scale');
   const arrayStress = args.includes('--array-stress');
@@ -153,6 +161,13 @@ function aggregate(runs: Array<Awaited<ReturnType<typeof runOnce>>>) {
 }
 
 async function main() {
+  if (process.argv.includes('--equivalent')) {
+    const { runEquivalentBenchmarks } = await import(
+      './benchmarks/canard/equivalent'
+    );
+    await runEquivalentBenchmarks();
+    return;
+  }
   const installed = await getSchemaFormVersions();
   const versionsFlag = process.argv.find((a) => a.startsWith('--versions='));
   const versions = versionsFlag
@@ -180,7 +195,7 @@ async function main() {
     return Math.max(0.5, parseFloat(flag.split('=')[1]) || 5);
   })();
 
-  const categories = selectCategories();
+  const categories = await selectCategories();
   // eslint-disable-next-line no-console
   console.log(
     `🚀 v2 bench | versions: ${versions.join(', ')} | repeat: ${n} | minSamples=${minSamples} maxTime=${maxTime}s | gc: ${typeof (globalThis as any).gc === 'function' ? 'on' : 'off'} | categories: ${categories.map((c) => c.category).join(', ') || '(none)'}`,

@@ -7,20 +7,31 @@ import { defineConfig } from 'vitest/config';
  * - `environment: 'node'` so we measure schema-form core hot paths without
  *   JSDOM overhead (JSDOM globals are still set up on demand inside specific
  *   benches that need them).
- * - `include` scoped to `bench/**` so test files are not picked up.
+ * - `include` covers the `__benchmarks__` verification organs so test files
+ *   are not picked up; `benchmark.include` selects the vitest suites by name.
  */
 export default defineConfig({
   resolve: {
     alias: {
+      '@/schema-form/__tests__/fixtures/nodeFromJSONSchema': resolve(
+        __dirname,
+        './bench/distEngine/nodeFromJSONSchema.ts',
+      ),
       '@/schema-form': resolve(__dirname, './src'),
     },
   },
   test: {
     globals: false,
     environment: 'node',
-    include: ['bench/**/*.bench.ts'],
+    fileParallelism: false,
+    maxWorkers: 1,
+    include: ['src/**/__benchmarks__/**/*.bench.ts'],
     benchmark: {
-      include: ['bench/**/*.bench.ts'],
+      include: [
+        'src/components/Form/__benchmarks__/fieldLifecycle.bench.ts',
+        'src/helpers/virtualization/VirtualizationManager/__benchmarks__/findRevealPath.bench.ts',
+        'src/core/__benchmarks__/{branch-strategy-init,compute-recalculate,event-cascade,find-node,nodeFromJSONSchema,object-pending-read,render-delay}.bench.ts',
+      ],
       outputJson: 'bench/.results/latest.json',
     },
   },

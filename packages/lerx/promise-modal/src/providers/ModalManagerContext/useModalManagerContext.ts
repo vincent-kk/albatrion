@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react';
 
-import type { ManagedModal } from '@/promise-modal/types';
+import type { ManagedModal } from '@/promise-modal/types/modal';
 
 import { ModalManagerContext } from './ModalManagerContext';
 

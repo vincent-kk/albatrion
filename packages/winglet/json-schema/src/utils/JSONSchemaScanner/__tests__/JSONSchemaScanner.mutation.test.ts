@@ -22,7 +22,7 @@ describe('JSONSchemaScanner - Schema Mutation', () => {
             // 이메일 필드에 포맷 유효성 검사 추가
             if (path.endsWith('/properties/email')) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 format: 'email',
                 description: 'User email address',
               };
@@ -31,7 +31,7 @@ describe('JSONSchemaScanner - Schema Mutation', () => {
             // 비밀번호 필드에 최소 길이 제약 추가
             if (path.endsWith('/properties/password')) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 minLength: 8,
                 pattern: '^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@$!%*#?&]{8,}$',
                 description:
@@ -42,7 +42,7 @@ describe('JSONSchemaScanner - Schema Mutation', () => {
             // 나이 필드에 범위 제약 추가
             if (path.endsWith('/properties/age')) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 minimum: 0,
                 maximum: 150,
                 description: 'User age',
@@ -102,7 +102,7 @@ describe('JSONSchemaScanner - Schema Mutation', () => {
             // 문자열 배열 아이템에 제약 추가
             if (path.endsWith('/properties/tags/items')) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 minLength: 1,
                 maxLength: 50,
                 pattern: '^[a-zA-Z0-9-_]+$',
@@ -112,7 +112,7 @@ describe('JSONSchemaScanner - Schema Mutation', () => {
             // 숫자 배열 아이템에 제약 추가
             if (path.endsWith('/properties/scores/items')) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 minimum: 0,
                 maximum: 100,
                 multipleOf: 0.1,
@@ -183,7 +183,7 @@ describe('JSONSchemaScanner - Schema Mutation', () => {
             // 이름 필드에 제약 추가
             if (path.endsWith('/properties/name')) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 minLength: 1,
                 maxLength: 100,
                 description: 'User display name',
@@ -193,7 +193,7 @@ describe('JSONSchemaScanner - Schema Mutation', () => {
             // 테마 필드에 enum 제약 추가
             if (path.endsWith('/properties/theme')) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 enum: ['light', 'dark', 'auto'],
                 default: 'auto',
                 description: 'UI theme preference',
@@ -259,27 +259,32 @@ describe('JSONSchemaScanner - Schema Mutation', () => {
         options: {
           mutate: ({ schema }) => {
             // 내부 필드에 readOnly 속성 추가
-            if (schema['x-internal']) {
+            if (typeof schema !== 'boolean' && schema['x-internal']) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 readOnly: true,
                 description: 'Internal use only',
               };
             }
 
             // 관리자 전용 필드에 writeOnly 속성 추가
-            if (schema['x-admin-only']) {
+            if (typeof schema !== 'boolean' && schema['x-admin-only']) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 writeOnly: true,
                 description: 'Admin access required',
               };
             }
 
             // 민감한 숫자 필드에 보안 제약 추가
-            if (schema['x-sensitive'] && schema.type === 'number') {
+            if (
+              typeof schema !== 'boolean' &&
+              schema['x-sensitive'] &&
+              typeof schema !== 'boolean' &&
+              schema.type === 'number'
+            ) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 minimum: 0,
                 format: 'encrypted',
                 description: 'Sensitive numeric data',
@@ -345,18 +350,26 @@ describe('JSONSchemaScanner - Schema Mutation', () => {
         options: {
           mutate: ({ schema, path }) => {
             // oneOf 내부의 문자열 타입에 제약 추가
-            if (path.includes('/oneOf/') && schema.type === 'string') {
+            if (
+              path.includes('/oneOf/') &&
+              typeof schema !== 'boolean' &&
+              schema.type === 'string'
+            ) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 minLength: 1,
                 description: 'Non-empty string value',
               };
             }
 
             // anyOf 내부의 배열 타입에 제약 추가
-            if (path.includes('/anyOf/') && schema.type === 'array') {
+            if (
+              path.includes('/anyOf/') &&
+              typeof schema !== 'boolean' &&
+              schema.type === 'array'
+            ) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 minItems: 1,
                 maxItems: 10,
                 description: 'Limited array items',
@@ -483,7 +496,7 @@ describe('JSONSchemaScanner - Schema Mutation', () => {
             if (path.endsWith('/properties/data')) {
               mutationCount++;
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 minLength: 1,
                 description: `Mutation ${mutationCount}`,
               };
@@ -523,7 +536,7 @@ describe('JSONSchemaScanner - Schema Mutation', () => {
             // modifyThis만 변경하고 나머지는 그대로 유지
             if (path.endsWith('/properties/modifyThis')) {
               return {
-                ...schema,
+                ...(typeof schema === 'object' ? schema : {}),
                 description: 'Modified field',
               };
             }

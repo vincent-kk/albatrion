@@ -1,4 +1,4 @@
-import type { FingerprintOptions } from '../type';
+import type { FingerprintOptions } from '../types/type';
 import { isOmitted } from './isOmitted';
 
 /** Produces the legacy shallow key format; nested values follow native JSON semantics. */

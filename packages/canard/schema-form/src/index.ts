@@ -7,10 +7,13 @@ export {
 export {
   Form,
   type FormChildrenProps,
-  type FormErrorProps,
+  type FormErrorMessageProps,
+  type RolledFormFieldProps as FormFieldProps,
   type FormHandle,
+  type RolledFormInputProps as FormInputProps,
   type FormLabelProps,
   type FormProps,
+  type RolledFormRenderProps as FormRenderProps,
 } from './components/Form';
 
 export {
@@ -18,6 +21,8 @@ export {
   isJSONSchemaError,
   isUnhandledError,
   isValidationError,
+  FormErrorCode,
+  FormWarningCode,
 } from './errors';
 
 export { JSONPointer } from './helpers/jsonPointer';
@@ -30,8 +35,11 @@ export type {
 } from './helpers/virtualization';
 
 export {
-  type SchemaNode,
-  type InferSchemaNode,
+  type InactiveValue,
+  type InactiveValueResolver,
+  type InactiveValueContext,
+  type FieldNode,
+  type InferFieldNode,
   type ArrayNode,
   type BooleanNode,
   type NullNode,
@@ -39,51 +47,82 @@ export {
   type ObjectNode,
   type StringNode,
   type VirtualNode,
-  NodeState,
+  type UnionNode,
+  type BranchNode,
+  type TerminalNode,
   ValidationMode,
-  PublicNodeEventType as NodeEventType,
-  PublicSetValueOption as SetValueOption,
+  FieldNodeEventType,
+  FieldNodeRequestType,
+  FieldNodeState,
+  SetValueOption,
   isArrayNode,
   isBooleanNode,
   isBranchNode,
   isNumberNode,
   isObjectNode,
-  isSchemaNode,
+  isFieldNode,
   isStringNode,
   isTerminalNode,
   isVirtualNode,
+  isUnionNode,
 } from './core';
 
-export { ShowError } from './types';
+export { ErrorVisibility } from './types';
 
 export type {
-  ChildNodeComponentProps,
-  FormTypeInputDefinition,
-  FormTypeInputMap,
-  FormTypeInputProps,
-  FormTypeInputPropsWithNode,
-  FormTypeInputPropsWithSchema,
-  FormTypeTestFn,
-  FormTypeTestObject,
+  ChildFieldProps,
+  FieldInputDefinition,
+  FieldInputMap,
+  FieldInputProps,
+  FieldInputPropsWithNode,
+  FieldInputPropsWithSchema,
+  FieldInputTestFn,
+  FieldInputTestObject,
   FormatError,
-  Hint,
+  LabelRendererProps,
+  ErrorMessageRendererProps,
+  InputRendererProps,
+  FieldInputHint,
+  FieldNodeType,
+  JSONSchema,
   InferValueType,
   InjectToHandler,
   ValidatorFactory,
   ValidateFunction,
-  PublicJSONSchemaError as JSONSchemaError,
+  ValidationIssue,
 } from './types';
 
-export type * from './types/rolled';
+export type {
+  RolledFieldRendererProps as FieldRendererProps,
+  RolledNonNullableBooleanSchema as NonNullableBooleanSchema,
+  RolledNullableBooleanSchema as NullableBooleanSchema,
+  RolledBooleanSchema as BooleanSchema,
+  RolledNonNullableNumberSchema as NonNullableNumberSchema,
+  RolledNullableNumberSchema as NullableNumberSchema,
+  RolledNumberSchema as NumberSchema,
+  RolledNonNullableStringSchema as NonNullableStringSchema,
+  RolledNullableStringSchema as NullableStringSchema,
+  RolledStringSchema as StringSchema,
+  RolledNonNullableArraySchema as NonNullableArraySchema,
+  RolledNullableArraySchema as NullableArraySchema,
+  RolledArraySchema as ArraySchema,
+  RolledNonNullableObjectSchema as NonNullableObjectSchema,
+  RolledNullableObjectSchema as NullableObjectSchema,
+  RolledObjectSchema as ObjectSchema,
+  RolledNullSchema as NullSchema,
+  RolledInferJSONSchema as InferJSONSchema,
+} from './types';
 
-export { useSchemaNodeTracker } from './hooks/useSchemaNodeTracker';
-export { useSchemaNodeSubscribe } from './hooks/useSchemaNodeSubscribe';
-export type { SchemaNodeSubscribeOptions } from './hooks/useSchemaNodeSubscribe';
-export { useChildNodeComponentMap } from './hooks/useChildNodeComponentMap';
-export { useChildNodeErrors } from './hooks/useChildNodeErrors';
-export { useFormSubmit } from './hooks/useFormSubmit';
+export { useFieldNodeTracker } from './hooks';
+export { useFieldNodeSubscribe } from './hooks';
+export type { FieldNodeSubscribeOptions } from './hooks';
+export { useChildFieldMap } from './hooks';
+export { useChildFieldErrors } from './hooks';
+export { useFormSubmit } from './hooks';
 
 export {
   ExternalFormContextProvider as FormProvider,
   type ExternalFormContextProviderProps as FormProviderProps,
 } from './providers';
+
+export { useFieldErrors } from './hooks';

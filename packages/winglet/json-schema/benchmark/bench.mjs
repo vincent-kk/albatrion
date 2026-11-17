@@ -1,25 +1,26 @@
 // Speed benchmark across corpora. Emits JSON (median/min/mean ms per corpus).
 import {
-  loadScanners,
-  genWide,
-  genDeep,
+  countVisited,
   genBranchy,
+  genDeep,
   genMixed,
   genRefHeavy,
-  getByPointer,
+  genWide,
+  loadScanners,
+  round,
   timeit,
   timeitAsync,
-  countVisited,
-  round,
-} from "./_lib.mjs";
+} from './_lib.mjs';
+import { observeResolver } from './observeResolver.mjs';
 
-const { JSONSchemaScanner, JSONSchemaScannerAsync } = await loadScanners();
+const { JSONSchemaScanner, JSONSchemaScannerAsync, createReferenceResolver } =
+  await loadScanners();
 
 const corpora = {
-  "branchy(6,5)": genBranchy(6, 5),
-  "wide(10000)": genWide(10000),
-  "deep(400)": genDeep(400),
-  "mixed(4,7)": genMixed(4, 7),
+  'branchy(6,5)': genBranchy(6, 5),
+  'wide(10000)': genWide(10000),
+  'deep(400)': genDeep(400),
+  'mixed(4,7)': genMixed(4, 7),
 };
 
 const report = { sync: {}, syncNoop: {}, async: {}, refHeavy: {}, meta: {} };
@@ -73,14 +74,14 @@ for (const [name, schema] of Object.entries(corpora)) {
   const t = timeit(
     () => {
       const s = new JSONSchemaScanner({
-        options: { resolveReference: (ref) => getByPointer(schema, ref) },
+        options: { resolveReference: createReferenceResolver(schema) },
       });
       s.scan(schema);
       s.getValue();
     },
     { warmup: 3, iters: 20 },
   );
-  report.refHeavy["refHeavy(300)+getValue"] = {
+  report.refHeavy['refHeavy(300)+getValue'] = {
     refs: 300,
     defNodes: nodesPerDef,
     median: round(t.median),
@@ -95,10 +96,9 @@ for (const [name, schema] of Object.entries(corpora)) {
   let calls = 0;
   new JSONSchemaScanner({
     options: {
-      resolveReference: (ref) => {
+      resolveReference: observeResolver(createReferenceResolver(schema), () => {
         calls++;
-        return getByPointer(schema, ref);
-      },
+      }),
     },
   })
     .scan(schema)

@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 /**
  * Creates a new array with elements that pass the test implemented by the provided callback function.
  *
@@ -135,7 +137,7 @@
  */
 export const filter = <Type>(
   array: readonly Type[],
-  callback: (item: Type, index: number, array: readonly Type[]) => boolean,
+  callback: Fn<[item: Type, index: number, array: readonly Type[]], boolean>,
 ): Type[] => {
   const result = new Array<Type>();
   for (let i = 0, l = array.length; i < l; i++)

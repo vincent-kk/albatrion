@@ -7,7 +7,7 @@ import {
   nodeFactory,
   promptHandler,
 } from '@/promise-modal/core';
-import type { Modal } from '@/promise-modal/types';
+import type { Modal } from '@/promise-modal/types/modal';
 
 import { ModalManager } from '../ModalManager';
 
@@ -25,6 +25,7 @@ const settleState = (promise: Promise<unknown>) =>
 const installOpenHandler = () => {
   const created: ModalNode[] = [];
   let sequence = 0;
+  ModalManager.anchor();
   ModalManager.openHandler = (modal: Modal) => {
     const modalNode = nodeFactory({
       duration: 0,
@@ -184,6 +185,7 @@ describe('prerender flow (real ModalManager, no mocking)', () => {
 
     const created: ModalNode[] = [];
     let sequence = 0;
+    ModalManager.anchor();
     ModalManager.openHandler = (modal: Modal) => {
       if (modal.title === 'flush-throw-target')
         throw new Error('flush failure');
@@ -207,6 +209,7 @@ describe('prerender flow (real ModalManager, no mocking)', () => {
   });
 
   it('openHandler가 throw하면 promise는 reject되어야 함', async () => {
+    ModalManager.anchor();
     ModalManager.openHandler = () => {
       throw new Error('Failed to open modal');
     };

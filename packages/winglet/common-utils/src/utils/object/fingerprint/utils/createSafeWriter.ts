@@ -1,4 +1,4 @@
-import type { FingerprintOptions } from '../type';
+import type { FingerprintOptions } from '../types/type';
 import { isOmitted } from './isOmitted';
 
 /** Creates a direct segment writer whose opaque references live within this closure. */
@@ -54,7 +54,7 @@ export function createSafeWriter(defaultSort = true) {
     if (array) {
       const segments: string[] = [];
       for (let i = 0; i < value.length; i++) {
-        const item = omit && isOmitted(String(i), omit) ? undefined : value[i];
+        const item = omit && isOmitted('' + i, omit) ? undefined : value[i];
         segments.push(
           item === undefined ? 'undefined' : walk(item, seen, omit, sort),
         );

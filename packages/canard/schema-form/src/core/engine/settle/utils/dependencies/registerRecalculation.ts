@@ -1,0 +1,183 @@
+import type { Optional } from '@aileron/declare';
+
+import {
+  JSONPointer as $,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
+
+import type { FieldNodeRecord } from '../../../record';
+import { engineModes } from '../../../utils/cache/engineModes';
+import type { SettlementContext } from '../../types/settlement';
+import type { SplitBucket } from '../../types/splitRegistration';
+import { getGateRegistry } from '../gates/getGateRegistry';
+import { verifyGateSelection } from '../gates/verifyGateSelection';
+import { verifyWriteEpoch } from '../input/utils/verifyWriteEpoch';
+import { DirtyPathSet } from '../scratch/DirtyPathSet';
+import { getDependencyIndex } from './getDependencyIndex';
+
+/** Annotates the lazily created `splitHitEpochs`; an argument-less `new Map()` would be `Map<any, any>`. */
+type SplitHitEpochs = Map<SplitBucket, number>;
+/** Annotates the lazily created `splitMarks`; an argument-less `new Map()` would be `Map<any, any>`. */
+type SplitMarks = Map<string, number>;
+
+/**
+ * Schedule changed nodes, ancestors, and blueprint reverse dependency owners.
+ * @param context - Marked write with its changed source paths
+ * @returns Nothing; extends its bounded dirty path set
+ */
+export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
+  context: SettlementContext<Self>,
+): void => {
+  if (context.writeEpoch !== undefined) {
+    if (context.target.parent !== null)
+      context.dirtyPaths.add(context.target.path);
+    let parent = context.target.parent;
+    while (parent) {
+      context.dirtyPaths.add(parent.path);
+      parent = parent.parent;
+    }
+    if (engineModes.gateSelection === 'verify') verifyWriteEpoch(context);
+    return;
+  }
+  if (!context.hasGates && context.dirtyPaths instanceof DirtyPathSet)
+    context.dirtyPaths.beginPostOrder();
+  const blueprint = context.root.runtime.blueprint;
+  const dependencies = getDependencyIndex(blueprint);
+  const epoch = (context.registrationEpoch =
+    (context.registrationEpoch ?? 0) + 1);
+  const shadow =
+    engineModes.gateSelection === 'verify' && !context.isShadowRegistration
+      ? context.registrationShadow
+      : undefined;
+  if (shadow) {
+    registerRecalculation({
+      ...context,
+      dirtyPaths: shadow.dirtyPaths,
+      dirtyChildrenByParent: shadow.dirtyPaths.childrenByParent,
+      shapeDirtyPaths: shadow.shape,
+      dependencyOwnerPaths: shadow.owners,
+      registrationShadow: undefined,
+      isShadowRegistration: true,
+    });
+    shadow.isRegistering = true;
+  }
+  const split =
+    !context.isShadowRegistration &&
+    context.hasGates &&
+    engineModes.gateSelection !== 'off' &&
+    dependencies.hasSplitOwners;
+  if (split) {
+    const dirtyPaths = context.dirtyPaths;
+    if (dirtyPaths instanceof DirtyPathSet)
+      dirtyPaths.configureSplitOwners(dependencies.splitOwners);
+    for (const changed of context.changedSource)
+      dependencies.registerAffectedOwners(changed, context.root, {
+        recordHit: (bucket, liveRanks) => {
+          const epochs: SplitHitEpochs = (context.splitHitEpochs ??= new Map());
+          epochs.set(bucket, epoch);
+          return dirtyPaths instanceof DirtyPathSet
+            ? dirtyPaths.planSplitAnchors(bucket, liveRanks, epoch)
+            : [];
+        },
+        registerOwner: (path, kind) => {
+          dirtyPaths.add(path);
+          if (kind === 'plain') context.dependencyOwnerPaths.add(path);
+          else if (kind === 'split') {
+            const marks: SplitMarks = (context.splitMarks ??= new Map());
+            marks.set(path, epoch);
+          }
+          context.shapeDirtyPaths.add(
+            kind === 'host' ? path : resolvePointer(path, $.Parent),
+          );
+        },
+      });
+  } else {
+    for (const changed of context.changedSource)
+      for (const declarationPath of dependencies.affectedOwners(
+        changed,
+        context.root,
+      )) {
+        context.dirtyPaths.add(declarationPath);
+        context.dependencyOwnerPaths.add(declarationPath);
+        context.shapeDirtyPaths.add(resolvePointer(declarationPath, $.Parent));
+      }
+  }
+  const expanded = new Set<string>();
+  for (const path of context.dirtyPaths) {
+    let ancestor = path;
+    while (ancestor && !expanded.has(ancestor)) {
+      expanded.add(ancestor);
+      ancestor = resolvePointer(ancestor, $.Parent);
+      context.dirtyPaths.add(ancestor);
+    }
+  }
+  if (context.hasGates) {
+    const changedAncestors = new Set<string>();
+    for (const changed of context.changedSource)
+      for (let prefix = changed; prefix; ) {
+        prefix = resolvePointer(prefix, $.Parent);
+        if (changedAncestors.has(prefix)) break;
+        changedAncestors.add(prefix);
+      }
+    const registry = getGateRegistry(context.root.runtime);
+    for (const path of context.dirtyPaths) {
+      if (registry.mayChangeAt(path, context.changedSource, changedAncestors))
+        context.shapeDirtyPaths.add(path);
+      if (
+        path &&
+        registry.mayChangeOwnDeclarationAt(
+          path,
+          context.changedSource,
+          changedAncestors,
+        )
+      )
+        context.shapeDirtyPaths.add(resolvePointer(path, $.Parent));
+    }
+  }
+
+  if (shadow) {
+    shadow.isRegistering = false;
+    let matches = context.shapeDirtyPaths.size === shadow.shape.size;
+    if (matches) {
+      const shadowShapeEntries = [...shadow.shape];
+      for (
+        let index = 0, count = shadowShapeEntries.length;
+        index < count;
+        index++
+      ) {
+        const path = shadowShapeEntries[index];
+
+        if (!context.shapeDirtyPaths.has(path)) {
+          matches = false;
+          break;
+        }
+      }
+    }
+    verifyGateSelection(matches, 'S3 shape dirty differs after registration');
+    for (const path of context.dirtyPaths)
+      verifyGateSelection(
+        shadow.dirtyPaths.has(path),
+        'S3 optimized dirty adds an unknown path: ' + path,
+      );
+    for (const path of shadow.dirtyPaths)
+      if (!context.dirtyPaths.has(path)) {
+        const owner = dependencies.splitOwners.get(path);
+        verifyGateSelection(
+          !!owner && !!context.splitHitEpochs?.has(owner.bucket),
+          'S3 removed a non-split owner: ' + path,
+        );
+        let node: Optional<Self> = context.root;
+        for (const segment of dependencies.pathSegments(
+          path,
+          context.root.runtime,
+        )) {
+          if (typeof segment !== 'string') {
+            node = undefined;
+            break;
+          }
+          node = node?.childrenByName?.[segment];
+        }
+        verifyGateSelection(!node, 'S3 removed a living split owner: ' + path);
+      }
+  }
+};

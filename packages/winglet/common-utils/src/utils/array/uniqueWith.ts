@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 /**
  * Removes duplicate elements from an array using a custom comparison function to determine equality.
  *
@@ -222,7 +224,7 @@
  */
 export const uniqueWith = <Type>(
   source: readonly Type[],
-  isEqual: (item1: Type, item2: Type) => boolean,
+  isEqual: Fn<[item1: Type, item2: Type], boolean>,
 ): Type[] => {
   const result: Type[] = [];
   for (let i = 0, il = source.length; i < il; i++) {

@@ -14,10 +14,17 @@ Uses JavaScript's Set data structure for efficient duplicate detection with
 SameValueZero equality algorithm. Maintains the order of first occurrence
 of each unique element.
 
+## Import
+
+```typescript
+import { unique } from '@winglet/common-utils/array';
+import { unique } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
-const unique: <Type>(source: Type[]) => Type[]
+const unique: <Type>(source: readonly Type[]) => Type[]
 ```
 
 ## Parameters
@@ -155,7 +162,7 @@ const manualUnique = largeArray.filter((item, index) => largeArray.indexOf(item)
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { unique } from '@winglet/common-utils';
 
 const numbers = [1, 2, 2, 3, 3, 3, 4, 5, 5];

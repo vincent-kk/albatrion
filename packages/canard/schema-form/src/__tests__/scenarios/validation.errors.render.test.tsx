@@ -6,6 +6,7 @@ import type { JSONSchema } from '@winglet/json-schema';
 
 import { isValidationError } from '@/schema-form';
 import { ValidationMode } from '@/schema-form/core';
+import { ErrorVisibility } from '@/schema-form/types';
 
 import { renderForm } from '../renderForm';
 
@@ -13,20 +14,20 @@ import { renderForm } from '../renderForm';
  * GAP-18 — Event coalescing / merge dropping a coordinated re-render.
  *
  * Validation drives TWO independent React subscriptions from the same merged
- * node-event batch: `SchemaNodeProxy` (re-renders the `<em>` error text via
- * `errorMessage`, gated by `errorVisible = checkShowError(node.state)`) and
- * `SchemaNodeInput` (the uncontrolled input value). A single value change must
+ * node-event batch: `FieldProxy` (re-renders the `<em>` error text via
+ * `errorMessage`, gated by `errorVisible = checkErrorVisibility(node.state)`) and
+ * `FieldInputBridge` (the uncontrolled input value). A single value change must
  * update BOTH the displayed value AND the error text together; the node tree's
  * `getErrors()` is the source of truth the DOM must mirror.
  *
  * Load-bearing facts (verified against src/):
  *   - Default `validationMode` is `OnChange | OnRequest`; `ValidationMode.None`
  *     disables the validator entirely (`ValidationManager.enabled === false`).
- *   - `<em>` (FormGroupRenderer) only shows non-empty text when
- *     `errorVisible` is true — every test passes `showError: true`
- *     (→ `ShowError.Always`) so the DOM mirror is observable.
+ *   - `<em>` (FieldRenderer) only shows non-empty text when
+ *     `errorVisible` is true — every test passes `errorVisibility: ErrorVisibility.Always`
+ *     (→ `ErrorVisibility.Always`) so the DOM mirror is observable.
  *   - The default `formatValidationError` resolves `jsonSchema.errorMessages`
- *     by keyword, falling back to the raw AJV message; schemas below pin
+ *     by keyword, falling back to the source AJV message; schemas below pin
  *     deterministic messages so DOM text is exact.
  *   - `Form.onSubmit` runs `rootNode.validate()` and THROWS a `ValidationError`
  *     when errors exist (so `onSubmit` is never invoked on invalid data); with
@@ -37,7 +38,7 @@ import { renderForm } from '../renderForm';
  */
 
 // ---------------------------------------------------------------------------
-// Schemas (mirrored from stories 21.Validation, 13.FormError, 19.SubmitUsecase)
+// Schemas (mirrored from stories 21.Validation, 13.ErrorHandling, 19.SubmitUsecase)
 // ---------------------------------------------------------------------------
 
 /** name(minLength) + email(pattern, required) — deterministic error messages. */
@@ -47,12 +48,14 @@ const credentialsSchema = {
     name: {
       type: 'string',
       minLength: 3,
-      errorMessages: { minLength: 'NAME_TOO_SHORT' },
+      presentation: { errorMessages: { minLength: 'NAME_TOO_SHORT' } },
     },
     email: {
       type: 'string',
       pattern: '^[^@\\s]+@[^@\\s]+$',
-      errorMessages: { pattern: 'BAD_EMAIL', required: 'EMAIL_REQUIRED' },
+      presentation: {
+        errorMessages: { pattern: 'BAD_EMAIL', required: 'EMAIL_REQUIRED' },
+      },
     },
   },
   required: ['email'],
@@ -66,12 +69,14 @@ const ageSchema = {
       type: 'number',
       minimum: 18,
       maximum: 99,
-      errorMessages: { minimum: 'AGE_TOO_LOW', maximum: 'AGE_TOO_HIGH' },
+      presentation: {
+        errorMessages: { minimum: 'AGE_TOO_LOW', maximum: 'AGE_TOO_HIGH' },
+      },
     },
   },
 } satisfies JSONSchema;
 
-/** Mirrors 13.FormError NoValidate / ExternalErrors story schema. */
+/** Mirrors 13.ErrorHandling NoValidate / ExternalErrors story schema. */
 const externalSchema = {
   type: 'object',
   properties: {
@@ -88,7 +93,7 @@ describe('GAP-18 ValidationMode.OnChange — error text mirrors the node tree', 
   it('shows minLength error in DOM and tree for an invalid initial value', async () => {
     const form = await renderForm(credentialsSchema, {
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       validationMode: ValidationMode.OnChange,
       defaultValue: { name: 'ab', email: 'a@b.com' },
     });
@@ -107,7 +112,7 @@ describe('GAP-18 ValidationMode.OnChange — error text mirrors the node tree', 
   it('shows no error text when every value is valid (DOM + tree)', async () => {
     const form = await renderForm(credentialsSchema, {
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       validationMode: ValidationMode.OnChange,
       defaultValue: { name: 'abc', email: 'a@b.com' },
     });
@@ -121,7 +126,7 @@ describe('GAP-18 ValidationMode.OnChange — error text mirrors the node tree', 
   it('surfaces then clears the error as the user types invalid -> valid', async () => {
     const form = await renderForm(credentialsSchema, {
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       validationMode: ValidationMode.OnChange,
       defaultValue: { name: 'abc', email: 'a@b.com' },
     });
@@ -154,7 +159,7 @@ describe('GAP-18 ValidationMode.None / OnRequest', () => {
   it('None disables validation: no errors in tree or DOM despite invalid value', async () => {
     const form = await renderForm(externalSchema, {
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       validationMode: ValidationMode.None,
     });
     await form.flush();
@@ -169,7 +174,7 @@ describe('GAP-18 ValidationMode.None / OnRequest', () => {
   it('OnRequest defers validation: a value change does not error until validate() runs', async () => {
     const form = await renderForm(credentialsSchema, {
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       validationMode: ValidationMode.OnRequest,
       defaultValue: { name: 'abc', email: 'a@b.com' },
     });
@@ -194,14 +199,14 @@ describe('GAP-18 ValidationMode.None / OnRequest', () => {
 });
 
 // ---------------------------------------------------------------------------
-// External errors prop (13.FormError ExternalErrors)
+// External errors prop (13.ErrorHandling ExternalErrors)
 // ---------------------------------------------------------------------------
 
 describe('GAP-18 external errors prop', () => {
   it('renders an externally-supplied error in DOM and exposes it in the tree', async () => {
     const form = await renderForm(externalSchema, {
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       validationMode: ValidationMode.None,
       errors: [
         {
@@ -237,7 +242,7 @@ describe('GAP-18 submit() validation gate', () => {
     const onSubmit = vi.fn().mockResolvedValue(undefined);
     const form = await renderForm(credentialsSchema, {
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       validationMode: ValidationMode.OnChange,
       defaultValue: { name: 'abc', email: 'a@b.com' },
       onSubmit,
@@ -260,7 +265,7 @@ describe('GAP-18 submit() validation gate', () => {
     const onSubmit = vi.fn().mockResolvedValue(undefined);
     const form = await renderForm(credentialsSchema, {
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       validationMode: ValidationMode.OnChange,
       defaultValue: { name: 'abc' }, // missing required email
       onSubmit,
@@ -278,7 +283,7 @@ describe('GAP-18 submit() validation gate', () => {
 
     expect(isValidationError(caught)).toBe(true);
     expect(onSubmit).not.toHaveBeenCalled();
-    // tree: required error on /email; DOM mirrors it (showError: true)
+    // tree: required error on /email; DOM mirrors it (errorVisibility: ErrorVisibility.Always)
     expect(
       form
         .getErrors()
@@ -291,7 +296,7 @@ describe('GAP-18 submit() validation gate', () => {
     const onSubmit = vi.fn().mockResolvedValue(undefined);
     const form = await renderForm(credentialsSchema, {
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       validationMode: ValidationMode.None,
       defaultValue: { name: 'abc' }, // missing required email
       onSubmit,
@@ -317,7 +322,7 @@ describe('GAP-18 keyword coverage (DOM + tree)', () => {
   it('required: missing field errors on its own path in DOM and tree', async () => {
     const form = await renderForm(credentialsSchema, {
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       validationMode: ValidationMode.OnChange,
       defaultValue: { name: 'abc' },
     });
@@ -337,7 +342,7 @@ describe('GAP-18 keyword coverage (DOM + tree)', () => {
   it('pattern: an invalid email shows the pattern message in DOM and tree', async () => {
     const form = await renderForm(credentialsSchema, {
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       validationMode: ValidationMode.OnChange,
       defaultValue: { name: 'abc', email: 'not-an-email' },
     });
@@ -353,7 +358,7 @@ describe('GAP-18 keyword coverage (DOM + tree)', () => {
   it('min/max: number range error tracks the value across two invalid states', async () => {
     const form = await renderForm(ageSchema, {
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       validationMode: ValidationMode.OnChange,
       defaultValue: { age: 5 },
     });
@@ -393,7 +398,7 @@ describe('GAP-18 coordinated value + error from one change', () => {
   it('a single edit updates the input value AND error text together', async () => {
     const form = await renderForm(credentialsSchema, {
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       validationMode: ValidationMode.OnChange,
       defaultValue: { name: 'abc', email: 'a@b.com' },
     });
@@ -415,7 +420,7 @@ describe('GAP-18 coordinated value + error from one change', () => {
   it('clearing the offending field removes the error while preserving siblings', async () => {
     const form = await renderForm(credentialsSchema, {
       validator: true,
-      showError: true,
+      errorVisibility: ErrorVisibility.Always,
       validationMode: ValidationMode.OnChange,
       defaultValue: { name: 'ab', email: 'a@b.com' },
     });

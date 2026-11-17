@@ -1,1 +1,0 @@
-export { getObservedValuesFactory } from './getObservedValuesFactory';

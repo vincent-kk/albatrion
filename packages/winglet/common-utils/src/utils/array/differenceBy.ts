@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 /**
  * Returns elements from the source array that are not present in the exclude array,
  * using a transformation function to determine element equality.
@@ -130,7 +132,7 @@
 export const differenceBy = <Type1, Type2>(
   source: readonly Type1[],
   exclude: readonly Type2[],
-  mapper: (item: Type1 | Type2) => unknown,
+  mapper: Fn<[item: Type1 | Type2], unknown>,
 ): Type1[] => {
   const excludeSet = new Set<unknown>();
   for (let i = 0, l = exclude.length; i < l; i++)

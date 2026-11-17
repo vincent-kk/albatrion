@@ -1,0 +1,25 @@
+---
+title: 'NullableArraySchema'
+sidebar_label: 'NullableArraySchema'
+---
+<!-- sync-winglet-docs:auto -->
+
+import WingletPlayground from '@site/src/components/WingletPlayground';
+
+# NullableArraySchema
+
+Nullable array schema (type: ['array', 'null'])
+
+## Import
+
+```typescript
+import type { NullableArraySchema } from '@winglet/json-schema';
+```
+
+## Signature
+
+```typescript
+interface NullableArraySchema<Options extends Dictionary = object, Schema extends UnknownSchema = JSONSchema> extends BaseArraySchema<ArrayValue, Options, Schema> {
+    type: readonly ['array', 'null'] | readonly ['null', 'array'];
+}
+```

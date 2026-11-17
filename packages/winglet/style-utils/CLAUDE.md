@@ -1,12 +1,12 @@
 # CLAUDE.md
 
-`@winglet/style-utils` — 스코프 CSS 주입, CSS 압축, className 유틸리티. 런타임 의존성 없음, framework-agnostic.
+`@winglet/style-utils` provides scoped CSS injection, CSS compression, and className utilities. It has no runtime dependencies and is framework-agnostic.
 
 ## Commands
 
 ```bash
-yarn build             # ESM + CJS 빌드 + 타입 선언
-yarn test              # Vitest 테스트 (jsdom)
+yarn build             # ESM + CJS build + type declarations
+yarn test              # Vitest tests (jsdom)
 yarn lint              # ESLint
 ```
 
@@ -19,31 +19,31 @@ import { cx, cxLite, compressCss } from '@winglet/style-utils/util';
 
 ## Key APIs
 
-**StyleManager** — 스코프 CSS 싱글톤 관리:
+**StyleManager** manages a scoped CSS singleton:
 ```typescript
 const addStyle = styleManagerFactory('my-scope');
-const removeStyles = addStyle('style-id', css);   // cleanup 함수 반환
-destroyScope('my-scope');                          // 전체 scope 정리
+const removeStyles = addStyle('style-id', css);   // Returns a cleanup function
+destroyScope('my-scope');                          // Cleans up the entire scope
 // Shadow DOM: styleManagerFactory('scope', { shadowRoot: el.shadowRoot })
 ```
 
 **ClassName**:
 ```typescript
-cx('base', { active: isActive }, ['a', 'b'])   // 객체/배열 지원
-cxLite('base', isActive && 'active', size)      // 경량 버전
+cx('base', { active: isActive }, ['a', 'b'])   // Supports objects/arrays
+cxLite('base', isActive && 'active', size)      // Lightweight variant
 ```
 
 ## Key Details
 
-- **CSS 스코핑**: `.scopeId .selector` 자동 prefix (`@rules`, `:root`, `:host` 제외)
-- **DOM API**: `adoptedStyleSheets` (모던) / `<style>` 요소 (레거시) 자동 선택
-- **배치 업데이트**: `requestAnimationFrame` 기반 DOM 업데이트 최적화
-- **메모리**: `destroy()` 호출 시 AnimationFrame 취소, DOM 제거, 캐시 초기화
+- **CSS Scoping**: Automatically prefixes `.scopeId .selector` (excluding `@rules`, `:root`, and `:host`)
+- **DOM API**: Automatically selects `adoptedStyleSheets` (modern) or `<style>` elements (legacy)
+- **Batch Updates**: Optimizes DOM updates with `requestAnimationFrame`
+- **Memory**: Calling `destroy()` cancels AnimationFrame, removes DOM, and clears caches
 
 ## Agent Docs Injector
 
-`docs/agents/**` 자산을 선택한 에이전트 위치에 주입. 엔진: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
-`--agent` 로 대상 에이전트를 고른다 — `claude` 는 `.claude/{skills,rules,commands}`, `codex`/`agents` 는 `.agents/skills` + `AGENTS.md` 마커 블록(project scope 기준).
+Inject `docs/agents/**` assets into the selected agent's locations. Engine: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
+Select agents with `--agent`: `claude` uses `.claude/{skills,rules,commands}`; `codex`/`agents` use `.agents/skills` and marker blocks in `AGENTS.md` (at project scope).
 
 ```bash
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/style-utils --agent=claude --scope=user

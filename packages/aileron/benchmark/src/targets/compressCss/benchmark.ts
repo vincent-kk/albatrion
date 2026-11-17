@@ -44,12 +44,12 @@ export const run = () => {
       .on('complete', function (this: Benchmark.Suite) {
         console.log('Fastest is ' + this.filter('fastest').map('name'));
 
-        // 카테고리별 결과 분석
+
         console.log('\n=== Performance Analysis ===');
 
         const results = Array.from(this as any);
 
-        // 복잡한 케이스 비교 (clsx vs cx)
+
         const clsxComplex: any = results.find(
           (r: any) => r.name === 'clsx (complex cases)',
         );
@@ -64,7 +64,7 @@ export const run = () => {
           );
         }
 
-        // 단순한 케이스 비교 (clsxLite vs cxLite)
+
         const clsxLiteSimple: any = results.find(
           (r: any) => r.name === 'clsxLite (simple cases)',
         );
@@ -79,7 +79,7 @@ export const run = () => {
           );
         }
 
-        // 단일 호출 비교
+
         const clsxSingle: any = results.find(
           (r: any) => r.name === 'clsx (single call)',
         );

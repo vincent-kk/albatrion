@@ -1,0 +1,103 @@
+import {
+  isArray,
+  isFunction,
+  isPlainObject,
+} from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+import { isReactComponent } from '@winglet/react-utils/filter';
+
+import { PRESENTATION_HINT_KEYS } from '@/schema-form/constants/reservedSchemaKeys';
+import { FormWarningCode } from '@/schema-form/errors';
+import type {
+  FieldInputDefinition,
+  FieldInputTestFn,
+  FieldInputTestObject,
+} from '@/schema-form/types';
+
+import type { NormalizedFieldInputDefinition } from '../type';
+import { withFieldInputErrorBoundary } from './withFieldInputErrorBoundary';
+
+/** Keep wrappers and one-time diagnostics at the definition's ownership point. */
+const cache = new WeakMap<
+  FieldInputDefinition,
+  NormalizedFieldInputDefinition
+>();
+/** The matching surface deliberately excludes extensions and mismatch state. */
+const testKeys = [
+  'type',
+  'schemaType',
+  'path',
+  'required',
+  'nullable',
+  'format',
+  ...PRESENTATION_HINT_KEYS,
+] as const satisfies readonly (keyof FieldInputTestObject)[];
+/** Membership view of `testKeys` for checking arbitrary authored keys. */
+const testKeySet: ReadonlySet<string> = new Set(testKeys);
+
+/** Normalize definitions in priority order, warning once for invalid object-test keys. */
+export const normalizeFieldInputDefinitions = (
+  definitions?: FieldInputDefinition[],
+): NormalizedFieldInputDefinition[] => {
+  const result: NormalizedFieldInputDefinition[] = [];
+  for (const definition of definitions ?? []) {
+    if (cache.has(definition)) {
+      result.push(cache.get(definition)!);
+      continue;
+    }
+    const { Component, test, controlled } = definition;
+    if (
+      !isReactComponent(Component) ||
+      (!isFunction(test) && !isPlainObject(test))
+    )
+      continue;
+
+    if (!isFunction(test)) {
+      const invalid: string[] = [];
+      for (const key of Object.keys(test))
+        if (!testKeySet.has(key)) invalid.push(key);
+      const types: readonly unknown[] = isArray(test.type)
+        ? test.type
+        : [test.type];
+      if (types.includes('integer')) invalid.push('type:integer');
+      if (invalid.length && process.env.NODE_ENV !== 'production')
+        console.warn(FormWarningCode.FieldInputTestInvalid, {
+          definition,
+          invalid,
+        });
+    }
+    const normalized = {
+      test: isFunction(test) ? test : fieldInputTestFnFactory(test),
+      Component: withFieldInputErrorBoundary(Component),
+      controlled: typeof controlled === 'boolean' ? controlled : undefined,
+    };
+    cache.set(definition, normalized);
+    result.push(normalized);
+  }
+  return result;
+};
+
+const fieldInputTestFnFactory = (
+  test: FieldInputTestObject,
+): FieldInputTestFn => {
+  const keys: (typeof testKeys)[number][] = [];
+  for (const key of testKeys) if (hasOwnProperty(test, key)) keys.push(key);
+
+  return (hint) => {
+    for (let index = 0, count = keys.length; index < count; index++) {
+      const key = keys[index];
+
+      const reference: unknown = test[key],
+        subject: unknown = hint[key];
+
+      if (
+        !(isArray(reference)
+          ? reference.includes(subject)
+          : reference === subject)
+      ) {
+        return false;
+      }
+    }
+    return true;
+  };
+};

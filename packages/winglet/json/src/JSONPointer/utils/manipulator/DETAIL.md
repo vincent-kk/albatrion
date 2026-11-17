@@ -45,11 +45,6 @@
 - **Direct import**: `allowed`
 - **Reason**: `getValue.ts`와 동일 — 배럴 pull-in 회피가 목적이며, flat root peer 형태도 함께 의도된 것이다.
 
-## History
-
-- 2026-08-18 — 예약 멤버 세그먼트 의미론을 "순회 중단 후 원본 반환(silent skip)"에서 RFC 정합 own 데이터 기록으로 전환. 판별·접근은 `@winglet/common-utils` 데이터 속성 프리미티브로 수렴. skip에 의존하던 호출자는 이제 예약 멤버 키가 own 데이터로 기록되는 것을 관측한다.
-- 2026-08-18 — 초판이 공표한 무변경 보증과 읽기 경로 자기 소유 필터가 구현보다 강한 계약이어서 cross-review에서 반증됨(CTR-002·CTR-003). 계약을 실제 의미론으로 정정. 이후 위 전환으로 예약 멤버에 한해 읽기 own 필터가 계약이 되었다.
-
 ## Last Updated
 
-2026-08-18 — 예약 멤버 세그먼트를 own 데이터 취급으로 전환(RFC 정합)
+manipulator의 공개 경계·입력 해석·반환값 또는 실패 처리 계약이 바뀔 때 갱신합니다.

@@ -2,7 +2,7 @@ export {
   getTrackableHandler,
   type TrackableHandlerFunction,
   type TrackableHandlerOptions,
-} from './enhance/getTrackableHandler';
+} from './enhance';
 export {
   debounce,
   type DebouncedFn,

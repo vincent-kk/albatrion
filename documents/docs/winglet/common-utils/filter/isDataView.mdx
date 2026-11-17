@@ -13,6 +13,13 @@ Provides reliable DataView detection using instanceof check for
 identifying binary data view objects used for reading and writing
 binary data in ArrayBuffers with specific endianness control.
 
+## Import
+
+```typescript
+import { isDataView } from '@winglet/common-utils/filter';
+import { isDataView } from '@winglet/common-utils';
+```
+
 ## Signature
 
 ```typescript
@@ -141,7 +148,7 @@ function parsePacketHeader(data: unknown): PacketHeader | null {
 ## Playground
 
 <WingletPlayground
-  dependencies={{ "@winglet/common-utils": "0.12.3" }}
+  dependencies={{ "@winglet/common-utils": "0.15.0" }}
   code={`import { isDataView } from '@winglet/common-utils';
 
 const buffer = new ArrayBuffer(16);

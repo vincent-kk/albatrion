@@ -20,4 +20,4 @@ Token과 GraphNode는 실제 결과 소비자인 parser에서 사용하는 경�
 
 ## Last Updated
 
-2026-09-18
+지원 값·참조 보존·제외 속성 또는 graph 자원 한도가 바뀔 때 갱신합니다.

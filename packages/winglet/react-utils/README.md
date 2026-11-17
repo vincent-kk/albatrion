@@ -115,6 +115,7 @@ Various custom hooks that extend React functionality.
 HOCs that functionally extend components.
 
 - [`withErrorBoundary`](./src/hoc/withErrorBoundary/withErrorBoundary.tsx) - Adds an error boundary to components.
+- [`ErrorBoundary`](./src/hoc/withErrorBoundary/components/ErrorBoundary.tsx) - The error boundary component used by `withErrorBoundary`, usable directly with `fallback` and `onError` props.
 - [`withErrorBoundaryForwardRef`](./src/hoc/withErrorBoundary/withErrorBoundaryForwardRef.tsx) - Adds an error boundary while preserving the component's forwarded ref.
 - [`withUploader`](./src/hoc/withUploader/index.ts) - Adds file upload functionality to components.
 

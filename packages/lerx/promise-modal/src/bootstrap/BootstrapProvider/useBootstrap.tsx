@@ -1,168 +1,42 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
-import { useOnMount } from '@winglet/react-utils/hook';
-
-import { usePathname as useDefaultPathname } from '@/promise-modal/hooks/useDefaultPathname';
+import { usePathname as useDefaultPathname } from '@/promise-modal/app';
 
 import { bootstrap } from './helpers/bootstrap';
+import { useInitialComponents } from './hooks/useInitialComponents';
 import { useInitialize } from './hooks/useInitialize';
 import type { BootstrapProviderProps } from './type';
 
 /**
- * Hook for bootstrapping the promise-modal system without a provider component.
- *
- * Provides the same functionality as BootstrapProvider but as a hook, allowing
- * more flexible integration patterns. Returns a portal element and an initialize
- * function for manual control.
- *
- * @param props - Configuration options (same as BootstrapProvider)
- * @param props.mode - 'auto' for automatic initialization, 'manual' for explicit control
- * @returns Object containing portal element and initialize function
- *
- * @example
- * Basic usage with automatic initialization:
- * ```tsx
- * function App() {
- *   const { portal } = useBootstrap({
- *     options: {
- *       duration: 200,
- *       backdrop: 'rgba(0, 0, 0, 0.8)',
- *     },
- *   });
- *
- *   return (
- *     <>
- *       <button onClick={() => alert({ title: 'Hello!' })}>Alert</button>
- *       <button onClick={() => confirm({ title: 'Confirm?' })}>Confirm</button>
- *       {portal}
- *     </>
- *   );
- * }
- * ```
- *
- * @example
- * Manual initialization with custom container:
- * ```tsx
- * function CustomModalApp() {
- *   const { portal, initialize } = useBootstrap({
- *     mode: 'manual',
- *     ForegroundComponent: CustomModal,
- *     options: {
- *       closeOnBackdropClick: false,
- *     },
- *   });
- *
- *   useEffect(() => {
- *     const container = document.getElementById('modal-root');
- *     if (container) {
- *       initialize(container);
- *     }
- *   }, [initialize]);
- *
- *   return (
- *     <div>
- *       <main>App Content</main>
- *       <div id="modal-root" />
- *       {portal}
- *     </div>
- *   );
- * }
- * ```
- *
- * @example
- * Integration with state management:
- * ```tsx
- * function ConnectedApp() {
- *   const user = useSelector(selectCurrentUser);
- *   const theme = useSelector(selectTheme);
- *
- *   const { portal } = useBootstrap({
- *     context: { userId: user?.id, theme },
- *     ContentComponent: ({ children, context }) => (
- *       <div data-theme={context.theme}>
- *         {children}
- *       </div>
- *     ),
- *   });
- *
- *   const handleDelete = async () => {
- *     const confirmed = await confirm({
- *       title: 'Delete Account',
- *       content: `Are you sure, ${user.name}?`,
- *     });
- *     if (confirmed) {
- *       dispatch(deleteAccount());
- *     }
- *   };
- *
- *   return (
- *     <>
- *       <button onClick={handleDelete}>Delete Account</button>
- *       {portal}
- *     </>
- *   );
- * }
- * ```
- *
- * @example
- * With custom hooks for specific modal types:
- * ```tsx
- * function useConfirmDialog() {
- *   const { portal } = useBootstrap({
- *     TitleComponent: ({ children }) => (
- *       <h3 className="confirm-title">
- *         <Icon name="warning" />
- *         {children}
- *       </h3>
- *     ),
- *     FooterComponent: ({ onConfirm, onClose }) => (
- *       <div className="confirm-footer">
- *         <button onClick={onClose}>Cancel</button>
- *         <button onClick={onConfirm} className="danger">
- *           Confirm
- *         </button>
- *       </div>
- *     ),
- *   });
- *
- *   const confirmAction = useCallback(
- *     (title: string, content: string) => {
- *       return confirm({ title, content });
- *     },
- *     [],
- *   );
- *
- *   return { portal, confirmAction };
- * }
- *
- * function App() {
- *   const { portal, confirmAction } = useConfirmDialog();
- *
- *   const handleDelete = async () => {
- *     const confirmed = await confirmAction(
- *       'Delete Item',
- *       'This action cannot be undone.',
- *     );
- *     if (confirmed) {
- *       // Perform deletion
- *     }
- *   };
- *
- *   return (
- *     <>
- *       <button onClick={handleDelete}>Delete</button>
- *       {portal}
- *     </>
- *   );
- * }
- * ```
- *
+ * Initializes the modal system when the caller renders the returned portal.
+ * @param props - Provider configuration plus auto/manual mode. Manual mode defers the initial root.
+ * @returns A portal to render and initialize(element), which selects the effective root.
  * @remarks
- * - Use `mode: 'manual'` when you need to control the initialization timing
- * - The portal element must be rendered in your component tree
- * - The modal system is a singleton: mount exactly one bootstrap
- *   (ModalProvider or useBootstrap) at a time
- * - Context changes will affect all modals created after the change
+ * An omitted root uses body; null detaches and queues new requests while preserving mounted modals.
+ * The last root prop change or initialize call wins. Component props stay fixed at mount;
+ * pass changing data through context. Additional bootstraps wait for the portal owner.
+ * @example
+ * ```tsx
+ * import { useEffect, useRef } from 'react';
+ * import { confirm, useInitializeModal } from '@lerx/promise-modal';
+ *
+ * function App() {
+ *   const root = useRef<HTMLDivElement>(null);
+ *   const { portal, initialize } = useInitializeModal({
+ *     mode: 'manual',
+ *     FooterComponent: ({ onConfirm, onCancel }) => <footer>
+ *       {onCancel && <button onClick={onCancel}>Cancel</button>}
+ *       <button onClick={onConfirm}>Confirm</button>
+ *     </footer>,
+ *   });
+ *   useEffect(() => { if (root.current) initialize(root.current); }, [initialize]);
+ *   return <>
+ *     <div ref={root} />
+ *     <button onClick={() => void confirm({ title: 'Continue?' })}>Open</button>
+ *     {portal}
+ *   </>;
+ * }
+ * ```
  */
 export const useBootstrap = ({
   usePathname: useExternalPathname,
@@ -175,41 +49,29 @@ export const useBootstrap = ({
   options,
   context,
   mode = 'auto',
+  root,
 }: BootstrapProviderProps & { mode?: 'manual' | 'auto' } = {}) => {
   const usePathname = useMemo(
     () => useExternalPathname || useDefaultPathname,
     [useExternalPathname],
   );
 
-  const { anchorRef, handleInitialize, handleReset } = useInitialize();
-
-  useOnMount(() => {
-    if (mode === 'auto') handleInitialize();
-    return () => {
-      // Only the instance that actually initialized owns the singleton state.
-      if (anchorRef.current === null) return;
-      anchorRef.current.remove();
-      handleReset();
-    };
+  const components = useInitialComponents({
+    ForegroundComponent,
+    BackgroundComponent,
+    TitleComponent,
+    SubtitleComponent,
+    ContentComponent,
+    FooterComponent,
   });
 
-  const initialize = useCallback(
-    (element: HTMLElement) => {
-      if (mode === 'manual') handleInitialize(element);
-    },
-    [mode, handleInitialize],
-  );
+  const { anchorRef, handleInitialize: initialize } = useInitialize(root, mode);
 
   const portal =
     anchorRef.current &&
     bootstrap({
+      ...components,
       usePathname,
-      ForegroundComponent,
-      BackgroundComponent,
-      TitleComponent,
-      SubtitleComponent,
-      ContentComponent,
-      FooterComponent,
       options,
       context,
       anchor: anchorRef.current,

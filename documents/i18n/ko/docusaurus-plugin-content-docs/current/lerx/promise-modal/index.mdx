@@ -12,33 +12,33 @@ import LazyDemo from '@site/src/components/LazyDemo';
 
 <PackageHeader
   name="@lerx/promise-modal"
-  description="Promise-based modal utility for React — alert, confirm, and prompt as async functions, usable inside and outside components."
+  description="React용 Promise 기반 모달 유틸리티로, alert, confirm, prompt를 비동기 함수로 제공하며 컴포넌트 내부와 외부에서 사용할 수 있습니다."
 />
 
-`@lerx/promise-modal`은 모달 인터랙션을 awaitable 프로미스로 전환합니다.
+`@lerx/promise-modal`은 모달 인터랙션을 대기 가능한 프로미스로 전환합니다.
 이벤트 핸들러, 비동기 함수, React 트리 외부 등 어디서든 `alert`, `confirm`,
 `prompt`를 호출하고 사용자 응답을 await할 수 있습니다.
 
 - React 컴포넌트 내부 및 외부 모두에서 사용 가능
 - alert, confirm, prompt 모달 타입 지원
-- 컴포넌트 슬롯 완전 커스터마이징 (foreground, background, title, footer 등)
+- 컴포넌트 슬롯 완전 커스터마이징 (`foreground`, `background`, `title`, `footer` 등)
 - 모달별 및 전역 설정
 - `useModal`을 통한 컴포넌트 라이프사이클 연동 모달
 
 ## 라이브 데모
 
-아래 버튼을 클릭하여 `alert`, `confirm`, `prompt`를 직접 사용해보세요 — 각각 사용자 응답으로 resolve되는 Promise를 반환합니다:
+아래 버튼을 클릭하여 `alert`, `confirm`, `prompt`를 직접 사용해보세요 — 각각 사용자 응답으로 이행되는 Promise를 반환합니다:
 
 <LazyDemo load={() => import('@site/src/components/demos/PromiseModalDemo')} />
 
-## Requirements
+## 요구 사항 {#requirements}
 
-- React 18 or 19
+- React 18 또는 19
 - Node.js 16.11.0+
 
-## Setup
+## 설정 {#setup}
 
-### 1. Wrap your app with `ModalProvider`
+### 1. `ModalProvider`로 앱 감싸기 {#1-wrap-your-app-with-modalprovider}
 
 ```tsx
 import { ModalProvider } from '@lerx/promise-modal';
@@ -52,7 +52,7 @@ function App() {
 }
 ```
 
-### 2. Call modal functions anywhere
+### 2. 어디서든 모달 함수 호출하기 {#2-call-modal-functions-anywhere}
 
 ```tsx
 import { alert, confirm, prompt } from '@lerx/promise-modal';
@@ -68,7 +68,7 @@ async function handleDelete() {
 }
 ```
 
-### 3. Use `useModal` inside components for lifecycle-scoped modals
+### 3. 컴포넌트 내부에서 `useModal`로 라이프사이클에 연동된 모달 사용하기 {#3-use-usemodal-inside-components-for-lifecycle-scoped-modals}
 
 ```tsx
 import { useModal } from '@lerx/promise-modal';
@@ -80,7 +80,7 @@ function MyComponent() {
 }
 ```
 
-## ModalProvider with custom components and options
+## 사용자 정의 컴포넌트와 옵션을 적용한 ModalProvider {#modalprovider-with-custom-components-and-options}
 
 ```tsx
 import { ModalProvider } from '@lerx/promise-modal';
@@ -109,23 +109,23 @@ function App() {
 
 <ForAI>
 
-## AI Reference
+## AI 참조 {#ai-reference}
 
-**Package**: `@lerx/promise-modal` v0.10.5
-**Purpose**: Promise-based modal management for React — alert, confirm, prompt as async functions.
+**패키지**: `@lerx/promise-modal` v0.10.5
+**목적**: React용 Promise 기반 모달 관리로, alert, confirm, prompt를 비동기 함수로 제공합니다.
 
-### Core functions (usable anywhere, including outside React)
+### 핵심 함수 (React 외부를 포함한 어디서든 사용 가능) {#core-functions-usable-anywhere-including-outside-react}
 ```ts
 import { alert, confirm, prompt } from '@lerx/promise-modal';
 ```
 
-### Provider
+### 프로바이더 {#provider}
 ```ts
 import { ModalProvider } from '@lerx/promise-modal';
 import type { ModalProviderHandle, ModalProviderProps } from '@lerx/promise-modal';
 ```
 
-### Hooks (inside React components)
+### 훅 (React 컴포넌트 내부) {#hooks-inside-react-components}
 ```ts
 import { useModal } from '@lerx/promise-modal';              // lifecycle-scoped modals
 import { useInitializeModal } from '@lerx/promise-modal';    // provider initialization
@@ -138,7 +138,7 @@ import { useDestroyAfter } from '@lerx/promise-modal';       // auto-destroy tim
 import { useSubscribeModal } from '@lerx/promise-modal';     // modal event subscription
 ```
 
-### Types
+### 타입 {#types}
 ```ts
 import type { ModalOptions } from '@lerx/promise-modal';
 import type { ModalFrameProps, ModalBackground } from '@lerx/promise-modal';
@@ -147,9 +147,9 @@ import type { AlertContentProps, ConfirmContentProps, PromptContentProps } from 
 import type { WrapperComponentProps } from '@lerx/promise-modal';
 ```
 
-### Architecture
-- `ModalProvider` wraps app → enables global modal rendering
-- `alert/confirm/prompt` → returns `Promise<boolean | string | void>`
-- `useModal()` → returns lifecycle-scoped instance (auto-closes on unmount)
+### 아키텍처 {#architecture}
+- `ModalProvider`로 앱을 감싸면 전역 모달 렌더링이 활성화됩니다.
+- `alert/confirm/prompt`는 `Promise<boolean | string | void>`를 반환합니다.
+- `useModal()`은 라이프사이클에 연동된 인스턴스를 반환합니다 (언마운트 시 자동으로 닫힙니다).
 
 </ForAI>

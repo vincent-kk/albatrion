@@ -2,112 +2,108 @@
 
 ## Requirements
 
-- The engine exposes a single `inject-agents-settings` bin (dispatcher). Consumers declare `agents.assetPath` in `package.json` — or the caller names it with `--asset-path`; the engine injects that tree into the locations each selected agent uses, for one explicitly-named target per invocation or a batch via scope alias.
-- Every choice is reachable by flag. A run with `--package`, `--agent`, `--scope` and, where content diverges, `--force --yes`, completes with no prompt at all.
-- `--package=<name>` is mandatory. The dispatcher resolves that one package's `package.json` via `createRequire(...).resolve()` and extracts `{ name, version, agents.assetPath }`, taking `--asset-path` in place of the declaration when it is given. A target is therefore reachable only when `createRequire` can see it — its `exports` expose `./package.json`, or its main entry is requireable. This package exposes its own, so the engine is targetable by its own dispatcher despite being ESM-only.
-- `--agent=<claude|codex|agents>` accepts repeats and comma-separated values. Omitted, an interactive TTY shows the picker; every other context exits 2. A run selecting both agents produces one plan per pair.
-- `--asset=<skills|rules|commands>` narrows the run. A kind left out is absent from the plan, so the run neither reports nor deletes anything belonging to it.
-- `--asset-path=<path>` names the asset root relative to each target's package root, for a package that ships assets in a directory like `agents/` or `docs/` without declaring one. It overrides `agents.assetPath` on every target and makes that directory the only source of hashes, so `dist/agents-hashes.json` is neither read nor required. An empty, absolute or `~`-prefixed value exits 2 before any filesystem IO; a path outside the package root or naming no directory exits 2 for a single target and is skipped in a batch.
-- Per-entry SHA-256 comparison: copy when missing, skip when equal, warn and require `--force` when different. A codex rule block is compared the same way, by the body between its markers.
-- `--force` overwrites diverged content. TTY: the Ink `ConfirmForce` dialog lists diverged and orphan entries first, unless `--yes`. Non-interactive: the list goes to stderr and the run proceeds.
-- `--dry-run`: print the plan, no writes.
-- `--json` selects a third renderer that writes exactly one JSON document to stdout and diverts every diagnostic to stderr; `--no-interactive` forces the plain render path instead. The document carries `schemaVersion`, `dryRun`, `exitCode`, `errors`, and one `unit` per `(package, agent)` pair holding that unit's destination, plan actions and report. A flag error becomes `errors` with `exitCode: 2` and empty `units`. `errors` also carries notices that did not fail the run — the reason each target was skipped — so `errors` being non-empty does not by itself mean `exitCode` is 2. A failure upstream of the renderer leaves stdout empty and reports through the exit code alone.
-- Missing `--scope` or `--agent` outside an interactive TTY: exit 2.
-- Missing `--package`, unresolvable package, missing `agents.assetPath` with no `--asset-path`, or an invalid `--agent`/`--asset`/`--asset-path` value: exit 2.
-- An asset root that resolves outside its package is refused whichever named it — a declared `agents.assetPath` and `--asset-path` are judged alike, on the resolved location rather than the spelling, so a symlink out of the package is refused too.
-- `dist/agents-hashes.json` (schema v1) is generated at build time by `buildHashes`; `previousVersions: {}` is reserved for future use. A run driven by `--asset-path` computes the same document in memory instead, so it needs no build output.
-- A declared `agents.assetPath` with no such file falls back to that same in-memory computation, so a package whose build has not run is still injectable. The fallback requires the declared directory to be there: hashing an absent one succeeds with an empty manifest, and an empty manifest makes every already-installed file an orphan that `--force` deletes. With neither present the target is reported and never planned.
-- That target is refused the same way one with no `agents.assetPath` is: exit 2 when the run named a single package, a reported skip when it named several or a whole scope. The refusal happens before the renderer is chosen, so the verdict is the run's and does not change with `--json`.
-- The version every surface reports — `--version`, the Ink banner and footer, the `--json` document — comes from `utils/version.ts`, generated from `package.json` by `scripts/inject-version.js`. `yarn version:sync` runs the generator, and `build`, `dev` and each `version:major|minor|patch` bump chain through it, so a bump cannot leave the reported version behind.
+- 렌더러는 대상의 실행 가능 여부를 다시 판정하지 않습니다. 새 렌더러를 추가해도 출력 방식에 따라 종료 코드가 달라지지 않게 하기 위한 경계입니다.
+- `@canard/schema-form@0.12.0`이 의존하는 `@slats/claude-assets-sync@^0.2.0`은 설치 호환성을 위해 레지스트리에 남겨야 합니다.
+
+- 엔진은 `inject-agents-settings` 실행 파일(명령 분배기) 하나를 노출합니다. 소비자는 `package.json`에 `agents.assetPath`를 선언하거나 호출자가 `--asset-path`로 지정합니다. 엔진은 이 트리를 선택된 각 에이전트가 사용하는 위치에 주입하며, 호출마다 명시한 대상 하나 또는 스코프 별칭으로 지정한 배치를 처리합니다.
+- 모든 선택은 플래그로 지정할 수 있습니다. `--package`, `--agent`, `--scope`와 내용이 달라진 경우의 `--force --yes`를 지정한 실행은 질문 없이 완료됩니다.
+- `--package=<name>`은 필수입니다. 명령 분배기는 `createRequire(...).resolve()`로 해당 패키지의 `package.json`을 해석하여 `{ name, version, agents.assetPath }`를 읽으며, `--asset-path`가 주어지면 선언 대신 사용합니다. 따라서 `createRequire`가 볼 수 있는 대상만 접근할 수 있습니다. 대상의 `exports`가 `./package.json`을 노출하거나 주 진입점을 require할 수 있어야 합니다. 이 패키지는 자신의 매니페스트를 노출하므로 ESM 전용이어도 자신의 명령 분배기로 지정할 수 있습니다.
+- `--agent=<claude|codex|agents>`는 반복 지정과 쉼표로 구분한 값을 허용합니다. 생략하면 대화형 TTY는 선택 화면을 표시하고 다른 모든 환경에서는 2로 종료합니다. 두 에이전트를 선택한 실행은 쌍마다 계획 하나를 만듭니다.
+- `--asset=<skills|rules|commands>`는 실행 범위를 좁힙니다. 제외한 종류는 계획에 없으므로 실행 중 그 종류의 항목을 보고하거나 삭제하지 않습니다.
+- `--asset-path=<path>`는 자산을 소비자 패키지의 agents 디렉터리나 `docs/` 같은 디렉터리에 배포하지만 선언하지 않은 패키지를 위해 각 대상의 패키지 루트에 상대적인 자산 루트를 지정합니다. 모든 대상에서 `agents.assetPath`를 덮어쓰고 해당 디렉터리만 해시 원본으로 삼으므로 빌드 출력 디렉터리의 `agents-hashes.json`을 읽거나 요구하지 않습니다. 빈 값·절대 경로·`~`로 시작하는 값은 파일시스템 IO 전에 2로 종료합니다. 패키지 루트 밖의 경로나 디렉터리를 가리키지 않는 경로는 단일 대상이면 2로 종료하고 배치에서는 건너뜁니다.
+- 항목별 SHA-256 비교에서 없으면 복사하고 같으면 건너뛰며 다르면 경고하고 `--force`를 요구합니다. codex 규칙 블록도 마커 사이의 본문으로 같은 방식으로 비교합니다.
+- `--force`는 내용이 달라진 항목을 덮어씁니다. TTY에서는 `--yes`가 없으면 Ink의 `ConfirmForce` 대화상자가 먼저 내용이 달라진 항목과 고아 항목을 나열합니다. 비대화형 실행에서는 목록을 stderr에 쓰고 실행을 계속합니다.
+- `--dry-run`은 계획만 출력하고 쓰지 않습니다.
+- `--json`은 stdout에 JSON 문서 하나만 쓰고 모든 진단을 stderr로 보내는 세 번째 렌더러를 선택합니다. `--no-interactive`는 대신 일반 텍스트 렌더 경로를 강제합니다. 문서는 `schemaVersion`, `dryRun`, `exitCode`, `errors`와 `(package, agent)` 쌍마다 목적지·계획 액션·보고를 담는 `unit` 하나를 가집니다. 플래그 오류는 `exitCode: 2` 및 빈 `units`와 함께 `errors`에 들어갑니다. 실행을 실패시키지 않은 각 대상의 생략 사유도 `errors`에 들어가므로 `errors`가 비어 있지 않다는 사실만으로 `exitCode`가 2인 것은 아닙니다. 렌더러보다 앞선 실패는 stdout을 비워 두고 종료 코드로만 보고합니다.
+- 대화형 TTY 밖에서 `--scope`나 `--agent`가 없으면 2로 종료합니다.
+- `--package` 누락, 해석할 수 없는 패키지, `--asset-path` 없이 `agents.assetPath` 누락, 유효하지 않은 `--agent`·`--asset`·`--asset-path` 값은 2로 종료합니다.
+- 자산 루트가 패키지 밖으로 해석되면 선언된 `agents.assetPath`와 `--asset-path` 중 어느 쪽에서 지정했든 거부합니다. 표기가 아니라 해석한 위치로 판단하므로 패키지 밖으로 향하는 심볼릭 링크도 거부합니다.
+- 빌드 출력 디렉터리의 `agents-hashes.json`(스키마 v1)은 빌드 때 `buildHashes`로 생성하며 `previousVersions: {}`는 향후 사용을 위해 예약합니다. `--asset-path`를 사용한 실행은 같은 문서를 메모리에서 계산하므로 빌드 출력이 필요하지 않습니다.
+- 선언된 `agents.assetPath`에 해당 파일이 없으면 같은 메모리 계산으로 대체하여 빌드하지 않은 패키지도 주입할 수 있습니다. 이 대체에는 선언된 디렉터리가 있어야 합니다. 없는 디렉터리의 해시는 빈 매니페스트로 성공하고 빈 매니페스트는 설치된 파일을 모두 `--force`가 삭제하는 고아 항목으로 만들기 때문입니다. 둘 다 없으면 대상을 보고하고 계획하지 않습니다.
+- 그 대상은 `agents.assetPath`가 없는 대상과 같은 방식으로 거부합니다. 패키지 하나를 지정한 실행은 2로 종료하고, 여러 패키지나 스코프 전체를 지정하면 생략을 보고합니다. 렌더러를 고르기 전에 거부하므로 이 판정은 실행의 책임이며 `--json`에 따라 달라지지 않습니다.
+- `--version`, Ink 배너·바닥글, `--json` 문서가 보고하는 버전은 모두 `scripts/inject-version.js`가 `package.json`에서 생성한 `utils/version.ts`를 사용합니다. `yarn version:sync`는 이 생성기를 실행하고 `build`, `dev` 및 각 `version:major|minor|patch` 변경이 이를 거치므로 보고하는 버전이 변경에서 뒤처지지 않습니다.
 
 ## API Contracts
 
-- `runCli(argv: string[]): Promise<void>` — CLI entry. Parses flags, resolves targets, branches via `renderOrFallback` to either Ink (`ui.renderInjectApp`) or plain (`renderPlain`). No other programmatic orchestrator is exposed; callers that need headless behaviour compose core primitives directly.
-- Core primitives re-exported via `.`: `readHashManifest`, `computeNamespacePrefixes`, `resolveProjectRoot`, `resolveAgentTarget`, `resolveDestinations`, `formatBlockId`, `parseBlocks`, `isValidScope`, `isValidAgent`, `MARKER_PREFIX`, `PROJECT_ANCHORS`, `PROJECT_ROOT_MARKERS`, `HASH_MANIFEST_FILENAME`. Full contracts in `core/DETAIL.md`.
-- `buildHashes(opts): Promise<{ outPath, fileCount }>` — `./buildHashes` subpath (Node ESM); standalone CLI is `agents-build-hashes`. All four of `packageRoot`, `packageName`, `packageVersion` and `assetPath` are required; the implementation throws without them, and the type declaration says so. Ignores `.omc/**`, `*.log`, `.DS_Store`.
+- `runCli(argv: string[]): Promise<void>`는 CLI 진입점입니다. 플래그를 읽고 대상을 해석한 뒤 `renderOrFallback`으로 Ink(`ui.renderInjectApp`) 또는 일반 텍스트(`renderPlain`)로 분기합니다. 다른 프로그래밍용 실행 조율기는 노출하지 않으며 비대화형 동작이 필요한 호출자는 코어 기본 연산을 직접 조합합니다.
+- `.`에서 재수출하는 코어 기본 연산은 `readHashManifest`, `computeNamespacePrefixes`, `resolveProjectRoot`, `resolveAgentTarget`, `resolveDestinations`, `formatBlockId`, `parseBlocks`, `isValidScope`, `isValidAgent`, `MARKER_PREFIX`, `PROJECT_ANCHORS`, `PROJECT_ROOT_MARKERS`, `HASH_MANIFEST_FILENAME`입니다. 전체 계약은 `core/DETAIL.md`에 있습니다.
+- `buildHashes(opts): Promise<{ outPath, fileCount }>`는 `./buildHashes` 서브패스(Node ESM)이며 독립 CLI는 `agents-build-hashes`입니다. `packageRoot`, `packageName`, `packageVersion`, `assetPath` 네 값은 모두 필수입니다. 없으면 구현이 예외를 던지고 타입 선언도 이를 명시합니다. `.omc/**`, `*.log`, `.DS_Store`는 무시합니다.
 
-## Subpath Exports
+## 서브패스 내보내기
 
-- `.` — ESM; `runCli` + core primitives + types
+- `.` — ESM, `runCli` + 코어 기본 연산 + 타입
 - `./buildHashes` — Node ESM; `buildHashes`
-- `./package.json` — the manifest itself. An ESM-only package is invisible to `createRequire`, and the dispatcher reads every target through it, so gating this subpath would make the engine the one package its own CLI cannot inject.
+- `./package.json`은 매니페스트 자체입니다. ESM 전용 패키지는 `createRequire`에서 보이지 않고 명령 분배기는 모든 대상을 이 방식으로 읽으므로, 이 서브패스를 막으면 엔진 자신만 자신의 CLI로 주입할 수 없는 패키지가 됩니다.
 
-## Exported Types
+## 내보내는 타입
 
 - `Scope`, `ProjectRootResolution`, `AssetType`
 - `AgentType`, `AssetKind`, `AgentTarget`, `Destination`, `OrphanScan`
 - `HashManifest`, `InjectReport`
 
+작업 함수와 화면 사건의 함수형 표기는 인자·반환 Promise·실패 전파를 보존합니다. 공통 별칭은 호출 감싸개가 아니므로 pool의 동시 실행이나 명령 종료 코드의 소유권을 바꾸지 않습니다.
+
 ## Acceptance Criteria
 
-### AC-JSON — machine-readable output is a single document
+### AC-JSON — 기계가 읽는 출력은 문서 하나입니다
 
-- Given `--json`, when the CLI runs, then the entire stdout stream parses as one JSON object with `schemaVersion: 1`.
-- Given several agents, then the document holds one `unit` per `(package, agent)` pair, each naming its destination and actions.
-- Given an invalid `--agent`, then the document still parses, `exitCode` is 2 and `errors` names the offending value.
-- Given an unresolvable `--package`, then stdout is empty and the diagnostic is on stderr.
-- Given `--asset-path`, then the unit carries a real plan and no manifest error — a directory source reaches the document by the same path a manifest source does.
-- Given every target skipped, then a document still arrives with `units: []` and `exitCode: 0`, and `errors` carries each skip reason. Resolving nothing is a run that did nothing, and a reader cannot tell that from a crash without a document.
-- Verified by `__tests__/json.test.ts`.
+- `--json`으로 CLI를 실행하면 stdout 전체가 `schemaVersion: 1`인 JSON 객체 하나로 파싱됩니다.
+- 에이전트가 여럿이면 문서는 `(package, agent)` 쌍마다 목적지와 액션을 명시하는 `unit` 하나를 담습니다.
+- 유효하지 않은 `--agent`가 주어져도 문서를 파싱할 수 있고 `exitCode`는 2이며 `errors`는 문제의 값을 명시합니다.
+- 해석할 수 없는 `--package`가 주어지면 stdout은 비어 있고 진단은 stderr에 있습니다.
+- `--asset-path`가 주어지면 unit은 실제 계획을 담고 매니페스트 오류는 없습니다. 디렉터리 원본도 매니페스트 원본과 같은 경로로 문서에 도달합니다.
+- 모든 대상을 건너뛰어도 `units: []`와 `exitCode: 0`인 문서를 출력하며 `errors`는 각 생략 사유를 담습니다. 아무것도 해석하지 못한 실행도 작업을 하지 않은 실행이며, 문서가 없으면 읽는 쪽에서 이를 비정상 종료와 구별할 수 없습니다.
+- `__tests__/json.test.ts`에서 검증합니다.
 
-### AC-CLI-FLAGS — the CLI is drivable without a prompt
+### AC-CLI-FLAGS — 질문 없이 CLI를 구동할 수 있습니다
 
-- Given `--package`, `--agent` and `--scope`, when the CLI runs on a non-TTY, then it completes without asking anything.
-- Given `--agent` is missing on a non-TTY, then the run exits 2.
-- Given an unknown `--agent` or `--asset` value, then the run exits 2.
-- Verified by `__tests__/cli.test.ts`.
+- `--package`, `--agent`, `--scope`를 지정하고 비TTY 환경에서 CLI를 실행하면 질문 없이 완료됩니다.
+- 비TTY 환경에서 `--agent`가 없으면 2로 종료합니다.
+- 알 수 없는 `--agent`나 `--asset` 값이 주어지면 2로 종료합니다.
+- `__tests__/cli.test.ts`에서 검증합니다.
 
-### AC-CLI-ROUTING — each agent receives its own plan
+### AC-CLI-ROUTING — 각 에이전트가 자신의 계획을 받습니다
 
-- Given `--agent=claude,codex`, when the CLI runs, then the transcript carries one section per agent.
-- Given `--agent=codex` at `project` scope, then rule entries name the `AGENTS.md` they merge into and skill entries name `.agents/skills`.
-- Given `--agent=codex --asset=skills`, then no `AGENTS.md` entry appears at all.
-- Verified by `__tests__/cli.test.ts`.
+- `--agent=claude,codex`가 주어지면 출력은 에이전트마다 구획 하나를 가집니다.
+- `project` 스코프에 `--agent=codex`가 주어지면 규칙 항목은 병합 대상인 `AGENTS.md`를 명시하고 스킬 항목은 `.agents/skills`를 명시합니다.
+- `--agent=codex --asset=skills`가 주어지면 `AGENTS.md` 항목은 나타나지 않습니다.
+- `__tests__/cli.test.ts`에서 검증합니다.
 
-### AC-CLI-ASSET-PATH — an undeclared asset tree is still injectable
+### AC-CLI-ASSET-PATH — 선언하지 않은 자산 트리도 주입할 수 있습니다
 
-- Given a package with no `agents.assetPath` and no `dist/agents-hashes.json`, when the run passes `--asset-path`, then the plan lists that directory's files and no manifest diagnostic appears.
-- Given the same package without `--asset-path`, then the run still exits 2.
-- Given `--asset` and `--asset-path` together, then neither consumes the other's value.
-- Given an absolute `--asset-path`, then the run exits 2.
-- Given a scope alias and `--asset-path`, then the packages that hold that directory are planned and the rest are skipped — the declaration stops being the filter.
-- Verified by `__tests__/cli.test.ts`.
+- `agents.assetPath`와 빌드 출력 디렉터리의 `agents-hashes.json`이 없는 패키지에 실행 시 `--asset-path`를 넘기면 계획은 그 디렉터리의 파일을 나열하고 매니페스트 진단은 나타나지 않습니다.
+- 같은 패키지에 `--asset-path`를 넘기지 않으면 2로 종료합니다.
+- `--asset`과 `--asset-path`를 함께 넘겨도 어느 쪽도 다른 쪽의 값을 소비하지 않습니다.
+- 절대 경로인 `--asset-path`를 넘기면 2로 종료합니다.
+- 스코프 별칭과 `--asset-path`를 넘기면 해당 디렉터리를 보유한 패키지만 계획하고 나머지는 건너뜁니다. 선언을 필터로 사용하지 않습니다.
+- `__tests__/cli.test.ts`에서 검증합니다.
 
-### AC-CLI-UNBUILT-MANIFEST — a declared asset tree is injectable before it is built
+### AC-CLI-UNBUILT-MANIFEST — 선언된 자산 트리는 빌드 전에도 주입할 수 있습니다
 
-- Given a package that declares `agents.assetPath` and ships no `dist/agents-hashes.json`, when the run names it with no `--asset-path`, then the declared directory is hashed at run time and the plan lists its files.
-- Given the same package with the declared directory absent as well, then no source can answer: the run names that and plans nothing for the target.
-- Given that package named alone, then the run exits 2 — with or without `--json`.
-- Given it reached through a scope alias alongside a usable package, then the run exits 0 and plans the usable one — with or without `--json`.
-- Verified by `__tests__/cli.test.ts`.
+- `agents.assetPath`를 선언하고 빌드 출력 디렉터리의 `agents-hashes.json`을 배포하지 않는 패키지를 `--asset-path` 없이 지정하면 실행 시 선언된 디렉터리의 해시를 계산하고 계획에 파일을 나열합니다.
+- 같은 패키지에 선언된 디렉터리도 없으면 어떤 원본도 응답할 수 없습니다. 실행은 그 사실을 명시하고 대상을 계획하지 않습니다.
+- 그 패키지만 지정하면 `--json` 사용 여부와 무관하게 2로 종료합니다.
+- 사용 가능한 패키지와 함께 스코프 별칭으로 도달하면 `--json` 사용 여부와 무관하게 0으로 종료하고 사용 가능한 패키지를 계획합니다.
+- `__tests__/cli.test.ts`에서 검증합니다.
 
-### AC-ASSET-PATH-APPLY — a computed manifest drives applying, not just planning
+### AC-ASSET-PATH-APPLY — 계산한 매니페스트는 계획뿐 아니라 적용도 구동합니다
 
-- Given a first applying run, then every asset under the named directory lands at its destination with the source bytes.
-- Given a second run with nothing changed, then it reports up-to-date and rewrites nothing.
-- Given a locally edited copy, then the run exits 2 asking for `--force`, and `--force` restores the source bytes and names the overwritten entries on stderr.
-- Given an edit to the source directory, then the next run sees it with no build step in between, and the run after `--force` settles to up-to-date.
-- Given `--agent=codex`, then the rule merges into `AGENTS.md` as a marker block, re-running is idempotent, and content outside this tool's markers survives byte for byte.
-- Verified by `__tests__/assetPathRoundTrip.test.ts`.
+- 처음 적용하는 실행에서는 지정한 디렉터리의 모든 자산이 원본 바이트 그대로 목적지에 도착합니다.
+- 아무것도 바꾸지 않은 두 번째 실행은 최신 상태를 보고하고 다시 쓰지 않습니다.
+- 로컬 복사본을 편집하면 실행은 `--force`를 요구하며 2로 종료합니다. `--force`는 원본 바이트를 복원하고 덮어쓴 항목을 stderr에 명시합니다.
+- 원본 디렉터리를 편집하면 다음 실행은 중간 빌드 없이 변경을 감지하며 `--force` 뒤의 실행은 최신 상태로 정착합니다.
+- `--agent=codex`를 사용하면 규칙을 `AGENTS.md`에 마커 블록으로 병합합니다. 반복 실행은 멱등이며 이 도구의 마커 밖 내용은 바이트 단위로 보존됩니다.
+- `__tests__/assetPathRoundTrip.test.ts`에서 검증합니다.
 
-### AC-VERSION-SYNC — the reported version is the manifest version
+### AC-VERSION-SYNC — 보고하는 버전은 매니페스트 버전입니다
 
-- Given the generated `utils/version.ts`, then `VERSION` equals the `version` field of `package.json`.
-- Verified by `__tests__/version.test.ts`.
+- 생성된 `utils/version.ts`의 `VERSION`은 `package.json`의 `version` 필드와 같습니다.
+- `__tests__/version.test.ts`에서 검증합니다.
 
-- The end-to-end suites drive the built bin, so `dist/` decides what they test. They refuse to run — naming the reason in the skip — when `dist/` is absent or older than `src/`; a silent skip hides the gap and a stale build reports green for code nobody ran. Verification files are excluded from that comparison, so editing a test does not demand a rebuild.
-- Those suites install their own consumer packages under a scratch root. They must not lean on a sibling workspace's `dist/agents-hashes.json`: it is git-ignored and no build of this package produces it, so a fresh checkout would not reproduce the result.
+- 종단 간 시험은 빌드한 실행 파일을 구동하므로 빌드 출력 디렉터리가 검증 대상을 결정합니다. 빌드 출력 디렉터리가 없거나 `src/`보다 오래되면 생략 사유를 명시하고 실행을 거부합니다. 조용한 생략은 검증 공백을 숨기고 오래된 빌드는 실행하지 않은 코드의 통과를 보고하기 때문입니다. 이 비교에서는 검증 파일을 제외하므로 시험을 편집해도 다시 빌드할 필요는 없습니다.
+- 이 시험은 임시 루트에 자신의 소비자 패키지를 설치합니다. 형제 워크스페이스의 빌드 출력 디렉터리의 `agents-hashes.json`에 의존하면 안 됩니다. 이 파일은 git에서 무시하고 이 패키지의 빌드로 생성하지 않으므로 새 체크아웃에서 같은 결과를 재현할 수 없기 때문입니다.
 
-## History
-
-- 2026-08-06 — The verdict for a target that can supply no hashes moved out of the renderers. All three asked the same predicate and then each decided for itself what it meant: plain and Ink dropped the target and finished at 0, `--json` reported 1 — so the same packages produced a different CI outcome depending on an output flag. The decision now happens once, before the renderer is chosen, on the strict / soft-skip split a missing `agents.assetPath` already used. Making the renderers unable to answer beats making them agree: a fourth renderer would otherwise reintroduce the same divergence.
-- 2026-08-06 — A declared `agents.assetPath` stopped requiring build output. `--asset-path` had been the only way to reach run-time hashing, so the default path did nothing at all for a package whose `dist/agents-hashes.json` was not built yet — while the very directory it declared sat there ready to hash. The fallback is conditional on that directory existing, and deliberately so: an absent one hashes to an empty manifest, and an empty manifest reclassifies every installed file as an orphan for `--force` to delete.
-- 2026-08-06 — `exports` gained `./package.json`. The ESM-only build left the engine unresolvable by `createRequire`, both on `<name>/package.json` and on the bare specifier, so `--package=@slats/agents-assets-sync` exited 2 and this repository's own `.claude/skills` could not be re-synced by the tool that owns them. The old CJS-built package resolved through the main-entry fallback and hid the gap. Exposing the manifest is the one fix that stays inside the boundary: reaching an ESM-only package any other way means walking `node_modules`, which `runCli/INTENT.md` reserves for `resolveScopeAlias.ts`.
-- 2026-08-06 — `utils/version.ts` had drifted to `0.1.0` while the manifest already read `0.1.1`. Only `build` and `dev` ran the generator, so a `version:*` bump left the constant behind and every surface reporting it stated the previous release until someone rebuilt. The bump scripts now chain `version:sync`, and `AC-VERSION-SYNC` keeps the two in step whether or not a build ran.
-- 2026-08-06 — `--asset-path` broke the assumption that `agents.assetPath` is the only way to name an asset root, so that a package shipping assets in `agents/` or `docs/` without declaring them is still injectable. It overrides rather than falls back, and ignores any stored manifest, because a conditional winner would leave the run's actual source unknowable from its output.
-- 2026-08-06 — `--json` became a real renderer. It previously forced the plain path while its help text promised structured output, so an agent parsing stdout got a colour-coded transcript. The logger gained a one-way switch to stderr because it wrote diagnostics to stdout, where they would corrupt the document.
-- 2026-08-05 — Migrated from `@slats/claude-assets-sync`, renamed in place at 0.3.5 and reset to 0.1.0. The consumer key moved from `claude` to `agents` because the contract now serves more than one agent, and every consumer in this repository moved with the rename — nothing builds or publishes the old name any more. What stays behind is only what npm already holds: `@canard/schema-form@0.12.0` was published against `@slats/claude-assets-sync@^0.2.0`, so those releases must remain on the registry for consumers that installed them.
 
 ## Last Updated
 
-2026-08-06 — Stated that the gate verdict is the run's rather than the renderer's and extended `AC-CLI-UNBUILT-MANIFEST` with the exit codes. Earlier the same day: recorded the run-time hashing fallback for a declared `agents.assetPath` with no built manifest.
+CLI 대상 판정, 해시 원본 또는 공개 실행 계약이 바뀌면 갱신합니다.

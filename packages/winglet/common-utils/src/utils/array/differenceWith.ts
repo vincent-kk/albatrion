@@ -1,3 +1,5 @@
+import type { Fn } from '@aileron/declare';
+
 /**
  * Returns elements from the source array that are not present in the exclude array,
  * using a custom comparison function to determine element equality.
@@ -148,7 +150,7 @@
 export const differenceWith = <Type1, Type2>(
   source: readonly Type1[],
   exclude: readonly Type2[],
-  isEqual: (source: Type1, exclude: Type2) => boolean,
+  isEqual: Fn<[source: Type1, exclude: Type2], boolean>,
 ): Type1[] => {
   const result: Type1[] = [];
   for (let i = 0, il = source.length; i < il; i++) {

@@ -1,12 +1,13 @@
 /**
- * Adds .js extensions to relative import paths in .d.ts files.
+ * Adds runtime extensions to relative module specifiers in declaration files.
  *
  * TypeScript's `tsc` emits .d.ts files with extensionless relative imports
  * (e.g., `export * from './clamp'`). This breaks `moduleResolution: "node16"`
  * and `"nodenext"` which require explicit file extensions in ESM.
  *
- * This script rewrites them to use .js extensions
- * (e.g., `export * from './clamp.js'`), which TypeScript maps to .d.ts files.
+ * TypeScript syntax selects imports/exports, import types and import-equals,
+ * leaving ordinary comments and string literal types intact. Module targets
+ * receive .js/.mjs; reference path directives receive .d.ts/.d.mts.
  *
  * Usage:
  *   import { fixDtsExtensions } from './utils/fixDtsExtensions.mjs';
@@ -18,14 +19,12 @@
 
 import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
+import ts from 'typescript';
 
 /**
- * Matches relative import/export paths without file extensions.
- * Captures: from './foo' | from '../bar/baz' | from './foo/index'
- * Excludes: paths that already have extensions (.js, .mjs, .cjs, .json, etc.)
+ * Recognizes relative paths, including current and parent directory indexes.
  */
-const RELATIVE_IMPORT_RE =
-  /(from\s+['"])(\.\.?\/[^'"]*?)(?<!\.\w+)(['"])/g;
+const RELATIVE_PATH_RE = /^\.\.?(?:\/|$)/;
 
 /**
  * Check if a path already has a known file extension.
@@ -56,27 +55,44 @@ export function fixDtsExtensions(dir) {
         walk(fullPath);
       } else if (entry.name.endsWith('.d.ts') || entry.name.endsWith('.d.mts')) {
         const content = readFileSync(fullPath, 'utf-8');
+        const source = ts.createSourceFile(fullPath, content, ts.ScriptTarget.Latest);
+        const specifiers = source.referencedFiles.map((reference) => ({
+          text: reference.fileName, position: reference.end, declaration: true,
+        }));
+        /** Visit only module-bearing syntax; string contents are never reparsed. */
+        const visit = (node) => {
+          const specifier = ts.isImportTypeNode(node) && ts.isLiteralTypeNode(node.argument)
+            ? node.argument.literal
+            : ts.isImportDeclaration(node) || ts.isExportDeclaration(node) ? node.moduleSpecifier
+            : ts.isImportEqualsDeclaration(node) && ts.isExternalModuleReference(node.moduleReference)
+              ? node.moduleReference.expression : undefined;
+          if (specifier && ts.isStringLiteral(specifier)) specifiers.push({
+            text: specifier.text, position: specifier.end - 1, declaration: false,
+          });
+          ts.forEachChild(node, visit);
+        };
+        visit(source);
         let fixCount = 0;
-
-        const fixed = content.replace(RELATIVE_IMPORT_RE, (match, prefix, importPath, suffix) => {
-          if (hasExtension(importPath)) return match;
-
+        let fixed = content;
+        // Descending insertions preserve the original syntax positions and quote escapes.
+        for (const specifier of specifiers.sort((left, right) => right.position - left.position)) {
+          const importPath = specifier.text;
+          if (!RELATIVE_PATH_RE.test(importPath) || hasExtension(importPath)) continue;
           const base = join(dirname(fullPath), importPath);
-
-          // Case 1: File import — ./clamp → ./clamp.js
-          if (existsSync(base + '.d.ts') || existsSync(base + '.d.mts')) {
-            fixCount++;
-            return `${prefix}${importPath}.js${suffix}`;
-          }
-
-          // Case 2: Directory import — ./declare → ./declare/index.js
-          if (existsSync(join(base, 'index.d.ts'))) {
-            fixCount++;
-            return `${prefix}${importPath}/index.js${suffix}`;
-          }
-
-          return match; // Don't rewrite if we can't verify
-        });
+          const trailingSlash = importPath.endsWith('/');
+          const directoryOnly = trailingSlash || /(?:^|\/)\.\.?$/.test(importPath);
+          const tsExtension = specifier.declaration ? '.d.ts' : '.js';
+          const mtsExtension = specifier.declaration ? '.d.mts' : '.mjs';
+          let suffix;
+          if (!directoryOnly && existsSync(base + '.d.ts')) suffix = tsExtension;
+          else if (!directoryOnly && existsSync(base + '.d.mts')) suffix = mtsExtension;
+          else if (existsSync(join(base, 'index.d.ts'))) suffix = `${trailingSlash ? '' : '/'}index${tsExtension}`;
+          else if (existsSync(join(base, 'index.d.mts'))) suffix = `${trailingSlash ? '' : '/'}index${mtsExtension}`;
+          if (!suffix) continue;
+          const position = specifier.position;
+          fixed = fixed.slice(0, position) + suffix + fixed.slice(position);
+          fixCount++;
+        }
 
         if (fixCount > 0) {
           writeFileSync(fullPath, fixed, 'utf-8');

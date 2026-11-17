@@ -5,8 +5,8 @@ import {
   useMemo,
 } from 'react';
 
-import { useActiveModalCount } from '@/promise-modal/hooks/useActiveModalCount';
-import type { ModalFrameProps } from '@/promise-modal/types';
+import { useActiveModalCount } from '@/promise-modal/app';
+import type { ModalFrameProps } from '@/promise-modal/types/frame';
 
 const MAX_MODAL_COUNT = 5;
 const MAX_MODAL_LEVEL = 3;
@@ -29,6 +29,8 @@ export const FallbackForegroundFrame = forwardRef(
     return (
       <div
         ref={ref}
+        role="dialog"
+        aria-modal="true"
         onClick={onChangeOrder}
         style={{
           marginBottom: `calc(25vh + ${level}px)`,

@@ -12,54 +12,54 @@ import ForAI from '@site/src/components/ForAI';
 커스텀 훅, 고차 컴포넌트(HOC), 포털 시스템, 헬퍼 함수를 제공하는 React 유틸리티 라이브러리입니다.
 React 16~19를 지원하며, 완전한 TypeScript 타입과 트리 쉐이킹 가능한 서브패스 익스포트를 제공합니다.
 
-## Installation
+## 설치 {#installation}
 
 ```bash
 yarn add @winglet/react-utils
 # peer deps: react >=16 <20, react-dom >=16 <20
 ```
 
-## Sub-path Exports
+## 서브패스 내보내기 {#sub-path-exports}
 
-| Import path | Contents |
+| 가져오기 경로 | 내용 |
 |---|---|
-| `@winglet/react-utils` | All exports |
-| `@winglet/react-utils/hook` | Custom hooks |
-| `@winglet/react-utils/hoc` | Higher-order components |
-| `@winglet/react-utils/portal` | Portal component system |
-| `@winglet/react-utils/filter` | React type-checking utilities |
-| `@winglet/react-utils/object` | React-specific object utilities |
-| `@winglet/react-utils/render` | Component rendering helpers |
+| `@winglet/react-utils` | 모든 내보내기 |
+| `@winglet/react-utils/hook` | 사용자 정의 훅 |
+| `@winglet/react-utils/hoc` | 고차 컴포넌트 |
+| `@winglet/react-utils/portal` | `Portal` 컴포넌트 시스템 |
+| `@winglet/react-utils/filter` | React 타입 검사 유틸리티 |
+| `@winglet/react-utils/object` | React 전용 객체 유틸리티 |
+| `@winglet/react-utils/render` | 컴포넌트 렌더링 헬퍼 |
 
-## Key Exports
+## 주요 내보내기 {#key-exports}
 
-### Hooks (`/hook`)
+### 훅 (`/hook`) {#hooks-hook}
 
-| Hook | Description |
+| 훅 | 설명 |
 |---|---|
-| `useConstant(factory)` | Memoizes a value on first render only |
-| `useHandle(fn)` | Stable callback that always calls the latest function |
-| `useMemorize(deps, factory)` | Enhanced memoization with intuitive API |
-| `useSnapshot(value)` | Returns a stable snapshot of a value |
-| `useDebounce(value, delay)` | Debounced value |
-| `useWindowSize()` | Tracks browser window dimensions |
-| `useEffectUntil(effect, condition)` | Runs effect until condition is true |
-| `useOnMount(fn)` | Runs callback once on mount |
-| `useOnUnmount(fn)` | Runs callback once on unmount |
+| `useConstant(factory)` | 첫 렌더링에서만 값을 메모이제이션합니다. |
+| `useHandle(fn)` | 항상 최신 함수를 호출하는 안정적인 콜백 |
+| `useMemorize(deps, factory)` | 직관적인 API를 제공하는 향상된 메모이제이션 |
+| `useSnapshot(value)` | 값의 안정적인 스냅샷을 반환합니다. |
+| `useDebounce(value, delay)` | 디바운스된 값 |
+| `useWindowSize()` | 브라우저 창 크기를 추적합니다. |
+| `useEffectUntil(effect, condition)` | 조건이 `true`가 될 때까지 이펙트를 실행합니다. |
+| `useOnMount(fn)` | 마운트 시 콜백을 한 번 실행합니다. |
+| `useOnUnmount(fn)` | 언마운트 시 콜백을 한 번 실행합니다. |
 
-### HOCs (`/hoc`)
+### 고차 컴포넌트 (`/hoc`) {#hocs-hoc}
 
-- `withErrorBoundary(Component, options)` — wraps with error boundary
-- `withErrorBoundaryForwardRef(Component, options)` — with ref forwarding
-- `withUploader(Component, options)` — file upload handling
+- `withErrorBoundary(Component, options)`는 오류 경계로 감쌉니다.
+- `withErrorBoundaryForwardRef(Component, options)`는 ref 전달을 지원합니다.
+- `withUploader(Component, options)`는 파일 업로드를 처리합니다.
 
-### Portal (`/portal`)
+### Portal (`/portal`) {#portal-portal}
 
-- `Portal` — renders children at a designated anchor in the DOM
-- `Portal.Anchor` — declares where portal content mounts
-- `withPortal(Component)` — HOC providing portal context
+- `Portal`은 DOM의 지정된 앵커에 `children`을 렌더링합니다.
+- `Portal.Anchor`는 포털 콘텐츠를 마운트할 위치를 선언합니다.
+- `withPortal(Component)`는 포털 컨텍스트를 제공하는 고차 컴포넌트입니다.
 
-## Usage Examples
+## 사용 예제 {#usage-examples}
 
 ```tsx
 import { useConstant, useHandle, useWindowSize } from '@winglet/react-utils/hook';
@@ -91,14 +91,14 @@ const App = withPortal(() => (
 
 <ForAI>
 
-## AI Reference
+## AI 참조 {#ai-reference}
 
-**Package**: `@winglet/react-utils` v0.10.0
-**Purpose**: React hooks, HOCs, portal system, and render utilities.
+**패키지**: `@winglet/react-utils` v0.10.0
+**목적**: React 훅, 고차 컴포넌트, 포털 시스템 및 렌더링 유틸리티입니다.
 
-### Key exports
+### 주요 내보내기 {#key-exports-1}
 ```
-./portal → Portal — Portal system for rendering React components at different DOM locations while maintaining component hierarchy.
+./portal → Portal — 컴포넌트 계층을 유지하면서 React 컴포넌트를 서로 다른 DOM 위치에 렌더링하는 포털 시스템입니다.
 ./hoc → withErrorBoundary
         withErrorBoundaryForwardRef
         withUploader

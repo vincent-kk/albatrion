@@ -14,6 +14,8 @@
 
 ### Always do
 
+- 보이는 어두운 배경은 클릭 취소 옵션과 무관하게 포인터 차단
+
 - backdrop 설정에 따른 클릭 핸들링 (닫기 여부)
 - 스코프된 CSS 클래스명 사용 (ModalManager.getHashedClassNames)
 

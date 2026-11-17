@@ -1,0 +1,131 @@
+/* Loaded by the core Storybook preview; StoryPanels, UsageHeader and HandleWorkbench own these class names. */
+:is(.sf-story, .sf-usage), :is(.sf-story, .sf-usage) * { box-sizing: border-box; }
+:is(.sf-story, .sf-usage) {
+  width: 100%;
+  max-width: 1280px;
+  min-width: 0;
+  color: var(--sf-text);
+  font-family: var(--sf-font-sans);
+  font-size: var(--sf-text-md);
+  line-height: 1.5;
+}
+.sf-story { container: sf-story / inline-size; padding: var(--sf-space-5); background: var(--sf-bg); }
+.sf-usage { overflow-x: auto; padding: var(--sf-space-1); }
+@media (max-width: 480px) { .sf-story { padding: var(--sf-space-4); } }
+
+/* Story header: where the story sits, what it checks, how it runs and what to try first. */
+.sf-story-header { display: grid; gap: var(--sf-space-3); margin-bottom: var(--sf-space-5); overflow-wrap: anywhere; }
+.sf-breadcrumb { margin: 0; color: var(--sf-text-muted); font-size: var(--sf-text-xs); font-weight: 500; letter-spacing: 0.02em; }
+.sf-title-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sf-space-2) var(--sf-space-3); }
+:is(.sf-story, .sf-usage) h2 { margin: 0; font-size: var(--sf-text-lg); font-weight: 600; line-height: 1.3; text-wrap: balance; }
+.sf-id { padding: 2px var(--sf-space-2); border: 1px solid var(--sf-border); border-radius: var(--sf-radius-sm); background: var(--sf-surface); color: var(--sf-text-muted); font-size: var(--sf-text-xs); }
+.sf-description { max-width: 72ch; margin: 0; color: var(--sf-text-muted); }
+.sf-rules { display: grid; gap: var(--sf-space-1); max-width: 72ch; margin: 0; padding: 0; list-style: none; color: var(--sf-text-muted); }
+.sf-rules > li { position: relative; padding-left: var(--sf-space-4); }
+.sf-rules > li::before { content: ''; position: absolute; top: 0.65em; left: 2px; width: 6px; height: 6px; border-radius: var(--sf-radius-pill); background: var(--sf-border-strong); }
+.sf-try:not([hidden]) {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sf-space-2);
+  max-width: 72ch;
+  margin: 0;
+  padding: var(--sf-space-3) var(--sf-space-4);
+  border-left: 3px solid var(--sf-accent);
+  border-radius: var(--sf-radius-sm);
+  background: var(--sf-accent-surface);
+  font-size: var(--sf-text-sm);
+}
+.sf-try > svg { flex: none; margin-top: 3px; color: var(--sf-accent); }
+.sf-try strong { font-weight: 600; }
+
+/* Chips: run configuration in the header and asserted observations in the play-step timeline. */
+.sf-chips { display: flex; flex-wrap: wrap; gap: var(--sf-space-2); margin: 0; padding: 0; list-style: none; }
+.sf-chip { display: inline-flex; align-items: baseline; gap: var(--sf-space-1); padding: 2px var(--sf-space-2); border: 1px solid var(--sf-border); border-radius: var(--sf-radius-pill); background: var(--sf-surface); font-size: var(--sf-text-xs); line-height: 1.6; }
+.sf-chip-key { color: var(--sf-text-muted); }
+.sf-chip-value { font-weight: 600; }
+
+/* Body: the form beside its inspector once the story container is wide enough, in canvas and docs alike. */
+.sf-story-body:not([hidden]) { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sf-space-5); }
+.sf-story-body > *, .sf-story fieldset { min-width: 0; }
+.sf-form { align-self: start; padding: var(--sf-space-5); border: 1px solid var(--sf-border); border-radius: var(--sf-radius-lg); background: var(--sf-surface); }
+.sf-inspector:not([hidden]) { display: grid; align-content: start; gap: var(--sf-space-3); min-width: 0; }
+@container sf-story (min-width: 880px) {
+  .sf-story-body:not([hidden]) { grid-template-columns: minmax(0, 3fr) minmax(300px, 2fr); }
+  .sf-story:not(.sf-story-docs) .sf-inspector { position: sticky; top: var(--sf-space-5); align-self: start; max-height: calc(100vh - 48px); overflow: auto; overscroll-behavior: contain; }
+}
+
+/* Inspector panels. */
+.sf-panel { min-width: 0; padding: var(--sf-space-4); border: 1px solid var(--sf-border); border-radius: var(--sf-radius-lg); background: var(--sf-bg); box-shadow: var(--sf-shadow-sm); font-size: var(--sf-text-sm); }
+.sf-panel h3:not([hidden]) { display: flex; align-items: center; gap: var(--sf-space-2); margin: 0 0 var(--sf-space-3); font-size: var(--sf-text-sm); font-weight: 600; }
+:is(.sf-panel, .sf-usage) h4 { display: flex; align-items: center; gap: var(--sf-space-2); margin: var(--sf-space-4) 0 var(--sf-space-2); color: var(--sf-text-muted); font-size: var(--sf-text-xs); font-weight: 600; letter-spacing: 0.02em; }
+.sf-panel h3 + h4 { margin-top: 0; }
+.sf-panel p { margin: var(--sf-space-2) 0; }
+:is(.sf-story, .sf-usage) pre { max-width: 100%; margin: 0; padding: var(--sf-space-3); overflow-x: auto; border-radius: var(--sf-radius-sm); background: var(--sf-surface-2); color: var(--sf-text); font-family: var(--sf-font-mono); font-size: var(--sf-text-code); line-height: 1.5; }
+:is(.sf-story, .sf-usage) code { font-family: var(--sf-font-mono); font-size: var(--sf-text-code); overflow-wrap: anywhere; }
+:is(.sf-story, .sf-usage) :not(pre) > code:not(.sf-id) { padding: 0 var(--sf-space-1); border-radius: 4px; background: var(--sf-surface-2); }
+.sf-muted { color: var(--sf-text-muted); }
+
+/* Disclosures: a rotating chevron instead of the native marker, so every summary reads the same. */
+:is(.sf-story, .sf-usage) summary { display: flex; align-items: center; gap: var(--sf-space-2); min-height: 24px; color: var(--sf-text); font-weight: 600; list-style: none; cursor: pointer; }
+:is(.sf-story, .sf-usage) summary::-webkit-details-marker { display: none; }
+:is(.sf-story, .sf-usage) summary::before { content: ''; flex: none; width: 6px; height: 6px; margin: 0 var(--sf-space-1) 2px 2px; border-right: 2px solid var(--sf-text-muted); border-bottom: 2px solid var(--sf-text-muted); transform: rotate(-45deg); transition: transform var(--sf-duration); }
+:is(.sf-story, .sf-usage) details[open] > summary::before { margin-bottom: 4px; transform: rotate(45deg); }
+:is(.sf-story, .sf-usage) summary:hover { color: var(--sf-accent); }
+:is(.sf-story, .sf-usage) summary:focus-visible { outline: 2px solid var(--sf-accent); outline-offset: var(--sf-space-1); border-radius: var(--sf-radius-sm); }
+:is(.sf-story, .sf-usage) details[open] > summary { margin-bottom: var(--sf-space-3); }
+.sf-subpanel { margin-top: var(--sf-space-4); padding-top: var(--sf-space-3); border-top: 1px solid var(--sf-border); }
+.sf-subpanel > summary { color: var(--sf-text-muted); font-size: var(--sf-text-xs); }
+.sf-subpanel[open] > summary { margin-bottom: var(--sf-space-2); }
+
+/* Tables. */
+.sf-table-scroll { max-width: 100%; overflow-x: auto; }
+:is(.sf-story, .sf-usage) table { width: 100%; border-collapse: collapse; text-align: left; }
+:is(.sf-story, .sf-usage) :is(th, td) { padding: var(--sf-space-2); border-bottom: 1px solid var(--sf-border); vertical-align: top; }
+:is(.sf-story, .sf-usage) th { color: var(--sf-text-muted); font-size: var(--sf-text-xs); font-weight: 600; }
+/* Paths and keywords stay whole; the table scrolls instead of breaking them mid-word. */
+:is(.sf-story, .sf-usage) td code { overflow-wrap: normal; white-space: nowrap; }
+.sf-usage table { max-width: 100%; margin-top: var(--sf-space-2); font-size: var(--sf-text-sm); }
+.sf-usage button:not([style]) { margin: 0 var(--sf-space-2) var(--sf-space-2) 0; }
+
+/* Badges carry a number or word beside their colour, never colour alone. */
+.sf-badge:not([hidden]) { display: inline-flex; align-items: center; gap: var(--sf-space-1); min-width: 24px; justify-content: center; padding: 0 var(--sf-space-2); border-radius: var(--sf-radius-pill); font-size: var(--sf-text-xs); font-weight: 600; line-height: 1.6; }
+.sf-badge > svg { width: 12px; height: 12px; }
+.sf-badge-neutral, .sf-kind-sync { background: var(--sf-surface-2); color: var(--sf-text-muted); }
+.sf-badge-danger, .sf-kind-throw { background: var(--sf-danger-surface); color: var(--sf-danger); }
+.sf-badge-success { background: var(--sf-success-surface); color: var(--sf-success); }
+.sf-kind-async { background: var(--sf-accent-surface); color: var(--sf-accent); }
+
+/* Empty states say what the absence means. */
+.sf-empty { display: flex; align-items: center; gap: var(--sf-space-2); margin: 0; color: var(--sf-text-muted); }
+.sf-empty > svg { flex: none; color: var(--sf-success); }
+
+/* Value differences: the kind is a word, the path is code, the values read before → after. */
+.sf-changes { display: grid; gap: var(--sf-space-1); margin: 0; padding: 0; list-style: none; }
+.sf-changes > li { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; gap: 2px var(--sf-space-2); padding: var(--sf-space-1) 0; border-bottom: 1px dashed var(--sf-border); }
+.sf-changes > li:last-child { border-bottom: 0; }
+.sf-changes > li > code { justify-self: start; }
+.sf-change-values { grid-column: 2; color: var(--sf-text-muted); font-family: var(--sf-font-mono); font-size: var(--sf-text-code); overflow-wrap: anywhere; }
+.sf-change-added { background: var(--sf-success-surface); color: var(--sf-success); }
+.sf-change-removed { background: var(--sf-danger-surface); color: var(--sf-danger); }
+.sf-change-changed { background: var(--sf-accent-surface); color: var(--sf-accent); }
+
+/* Play-step timeline: numbered operations and the observations each one asserts. */
+.sf-timeline { display: grid; gap: var(--sf-space-3); margin: 0; padding: 0; list-style: none; counter-reset: sf-step; }
+.sf-timeline > li { position: relative; display: grid; gap: var(--sf-space-1); padding-left: 32px; counter-increment: sf-step; }
+.sf-timeline > li::before { content: counter(sf-step); position: absolute; top: 0; left: 0; display: grid; place-items: center; width: 22px; height: 22px; border-radius: var(--sf-radius-pill); background: var(--sf-surface-2); color: var(--sf-text-muted); font-size: var(--sf-text-xs); font-weight: 600; }
+.sf-timeline > li:not(:last-child)::after { content: ''; position: absolute; top: 26px; bottom: calc(-1 * var(--sf-space-3) + 4px); left: 10px; width: 2px; background: var(--sf-border); }
+.sf-timeline .sf-timeline { gap: var(--sf-space-2); margin-top: var(--sf-space-2); }
+.sf-timeline .sf-timeline > li::before { background: var(--sf-bg); border: 1px solid var(--sf-border); }
+.sf-step-text { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+.sf-step-text code { font-weight: 400; }
+
+/* Prop-stage bar above feature forms that apply staged Form props. */
+.sf-stage { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sf-space-2) var(--sf-space-3); margin-bottom: var(--sf-space-4); padding: var(--sf-space-3); border: 1px dashed var(--sf-border-strong); border-radius: var(--sf-radius-md); font-size: var(--sf-text-sm); }
+.sf-stage-label { font-weight: 600; }
+.sf-stage-next { flex: 1 1 200px; color: var(--sf-text-muted); }
+
+/* Handle workbench (Usage/Form handle). */
+.sf-workbench { display: grid; gap: var(--sf-space-4); }
+.sf-toolbar { display: flex; flex-wrap: wrap; gap: var(--sf-space-2); }
+.sf-usage .sf-toolbar button:not([style]) { margin: 0; }
+.sf-workbench h3 { margin: 0; font-size: var(--sf-text-sm); font-weight: 600; }

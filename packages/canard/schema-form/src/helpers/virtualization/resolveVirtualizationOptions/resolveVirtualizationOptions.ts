@@ -1,3 +1,5 @@
+import type { Nullable, Optional } from '@aileron/declare';
+
 import {
   type ResolvedVirtualizationOptions,
   VirtualizationBackfill,
@@ -19,8 +21,8 @@ const DEFAULT_OPTIONS = {
  * @returns Resolved options, or `null` when virtualization is disabled
  */
 export const resolveVirtualizationOptions = (
-  input: boolean | VirtualizationOptions | undefined,
-): ResolvedVirtualizationOptions | null => {
+  input: Optional<boolean | VirtualizationOptions>,
+): Nullable<ResolvedVirtualizationOptions> => {
   if (!input) return null;
   if (input === true) return DEFAULT_OPTIONS;
   return {

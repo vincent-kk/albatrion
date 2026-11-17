@@ -1,0 +1,23 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
+import type { FieldNodeRecord } from '../../../record';
+import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
+import { getStaticDeclarationIds } from '../../../utils/controls/getStaticDeclarationIds';
+import type { DeriveState } from '../../types/state';
+
+/**
+ * Read the active declarations for a live occurrence across settlement calls.
+ * @param node - Live source or target whose kind distinguishes its baseline
+ * @param state - Current selections with last-commit fallback on untouched nodes
+ * @returns Selected IDs, or all authored IDs before an occurrence has a commit
+ */
+export const getSelectedDeclarationIds = <Self extends FieldNodeRecord<Self>>(
+  node: Self,
+  state: DeriveState<Self>,
+): readonly number[] =>
+  state.selectedDeclarationIds.get(node) ??
+  getStaticDeclarationIds(node) ??
+  node.runtime.committedDeclarationIds?.get(
+    getCommittedDeclarationKey(node, node.runtime),
+  ) ??
+  mapArray(node.blueprintNode.declarations, (declaration) => declaration.id);

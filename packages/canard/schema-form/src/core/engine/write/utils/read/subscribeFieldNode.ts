@@ -1,0 +1,32 @@
+import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
+
+import type { Fn } from '@aileron/declare';
+
+import type { FieldNodeRecord } from '../../../record';
+import type { FieldNodeListener } from '../../types/listener';
+
+/** Annotates the lazily created `listeners`; an argument-less `new Map()` would be `Map<any, any>`. */
+type Listeners = Map<unknown, Set<FieldNodeListener>>;
+
+/**
+ * Subscribe to future deliveries for one occurrence.
+ * @param node - Occurrence whose events are observed
+ * @param listener - Called once for a merged event in each wave
+ * @returns Cleanup that takes effect even during an active wave
+ */
+export const subscribeFieldNode = <Self extends FieldNodeRecord<Self>>(
+  node: Self,
+  listener: FieldNodeListener,
+): Fn => {
+  if (node.isDisposed || node.rootNode.isDisposed) return NOOP_FUNCTION;
+  const runtime = node.rootNode.runtime;
+  const listeners: Listeners = runtime.listeners ?? new Map();
+  const subscriptions = listeners.get(node) ?? new Set();
+  subscriptions.add(listener);
+  listeners.set(node, subscriptions);
+  runtime.listeners = listeners;
+  return () => {
+    subscriptions.delete(listener);
+    if (!subscriptions.size) listeners.delete(node);
+  };
+};
