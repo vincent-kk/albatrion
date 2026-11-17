@@ -22,13 +22,15 @@ export const createValidatorFactory = (ajv: Ajv, registry?: SchemaRootRegistry) 
       : { ...JSON.parse(JSON.stringify(jsonSchema)), $async: true };
     const validate = registration.validationAjv.compile(transient);
     registration.validationAjv.removeSchema(transient);
+    // AJV reports paths of an inlined `$ref` under the reference string, so the root's key stands in for `#`.
+    const rootReference = registration.validationCopy ? `${registration.key}/` : undefined;
     return async (data) => {
       try {
         await validate(data);
         return null;
       } catch (thrown: unknown) {
         if (thrown instanceof Error && 'errors' in thrown && Array.isArray(thrown.errors))
-          return transformErrors(thrown.errors, jsonSchema);
+          return transformErrors(thrown.errors, jsonSchema, rootReference);
         throw thrown;
       }
     };
