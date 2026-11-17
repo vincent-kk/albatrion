@@ -1,4 +1,5 @@
 import { findBlockEnd } from './findBlockEnd';
+import { prefixSelectorList } from './prefixSelectorList';
 
 /**
  * At-rules whose block holds style rules, which are scoped recursively.
@@ -46,10 +47,7 @@ export const scopeRules = (
         ? prelude + '{' + scopeRules(css, open + 1, close, scope) + '}'
         : prelude + css.slice(open, close + 1);
     else if (prelude)
-      result +=
-        (prelude === ':root' || prelude === ':host'
-          ? prelude
-          : scope + ' ' + prelude) + css.slice(open, close + 1);
+      result += prefixSelectorList(prelude, scope) + css.slice(open, close + 1);
     cursor = close + 1;
   }
   return result;
