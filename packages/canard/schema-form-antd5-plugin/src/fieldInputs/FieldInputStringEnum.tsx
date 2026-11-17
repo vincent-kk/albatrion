@@ -33,6 +33,7 @@ const FieldInputStringEnum = ({
   path,
   jsonSchema,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -99,7 +100,7 @@ const FieldInputStringEnum = ({
       id={path}
       mode={mode}
       placeholder={placeholder}
-      disabled={disabled}
+      disabled={disabled || readOnly}
       defaultValue={initialValue}
       onChange={handleChange}
       style={{ width: '100%' }}
