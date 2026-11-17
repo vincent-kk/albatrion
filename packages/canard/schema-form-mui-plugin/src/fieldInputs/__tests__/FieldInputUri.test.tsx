@@ -1,8 +1,10 @@
+import { createRef } from 'react';
+
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { Form, ValidationMode } from '@canard/schema-form';
+import { Form, type FormHandle, ValidationMode } from '@canard/schema-form';
 
 import { FieldInputUriDefinition } from '../FieldInputUri';
 
@@ -63,4 +65,22 @@ it('accepts protocols under options without a schema error', () => {
   expect(screen.queryByRole('alert')).toBeNull();
   expect(screen.queryByText('ftp://')).toBeNull();
   expect(screen.getByText('http://')).toBeTruthy();
+});
+
+it('editing a URI whose scheme is not in the protocol list keeps its scheme', async () => {
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      fieldInputDefinitions={[FieldInputUriDefinition]}
+      jsonSchema={{ type: 'string', format: 'uri' }}
+      defaultValue="wss://example.com/socket"
+    />,
+  );
+  await userEvent.type(
+    view.container.querySelector('input[type="text"]')!,
+    '2',
+  );
+  expect(ref.current!.getValue()).toBe('wss://example.com/socket2');
+  expect(screen.getByText('wss://')).toBeTruthy();
 });
