@@ -2,6 +2,12 @@ import { describe, expect, it } from 'vitest';
 
 import { clone } from '../clone';
 
+/** The ES2020 type library this package compiles against does not declare AggregateError. */
+const AggregateErrorConstructor: new (
+  errors: Iterable<unknown>,
+  message?: string,
+) => Error & { errors: Error[] } = Reflect.get(globalThis, 'AggregateError');
+
 /**
  * 내장 타입 복제의 충실도 — 메모리 격리와 참조 동일성 보존.
  * 일반 동작은 clone.test.ts 담당(이미 test-record 상한에 근접해 분할).
@@ -61,13 +67,25 @@ describe('clone built-in types', () => {
     expect(number).toBeInstanceOf(Number);
   });
 
+  it('should keep the prototype and own fields of a boxed primitive subclass', () => {
+    class Money extends Number {
+      currency = 'KRW';
+    }
+
+    const cloned = clone(new Money(10));
+
+    expect(cloned).toBeInstanceOf(Money);
+    expect(cloned.valueOf()).toBe(10);
+    expect(cloned.currency).toBe('KRW');
+  });
+
   it('should keep the message and the cloned errors of an AggregateError', () => {
     const inner = new Error('inner');
-    const original = new AggregateError([inner], 'boom');
+    const original = new AggregateErrorConstructor([inner], 'boom');
 
     const cloned = clone(original);
 
-    expect(cloned).toBeInstanceOf(AggregateError);
+    expect(cloned).toBeInstanceOf(AggregateErrorConstructor);
     expect(cloned.message).toBe('boom');
     expect(cloned.errors).toHaveLength(1);
     expect(cloned.errors[0]).not.toBe(inner);
