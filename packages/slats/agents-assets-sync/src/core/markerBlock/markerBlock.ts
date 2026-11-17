@@ -36,7 +36,7 @@ export function formatBlockId(packageName: string, relPath: string): string {
  */
 export function parseBlocks(content: string): ParsedBlock[] {
   const blocks: ParsedBlock[] = [];
-  const pattern = createBlockPattern();
+  const pattern = createBlockPattern(content);
   let match = pattern.exec(content);
   while (match !== null) {
     const blockId = match[1] as string;
@@ -119,19 +119,21 @@ export function removeBlock(content: string, blockId: string): string {
  * @returns `true` when the body matches the manifest
  */
 export function blockBodyMatches(body: string, expected: Sha256Hex): boolean {
-  if (matchesEitherEnding(body, expected)) return true;
-  return (
-    body.includes('\r\n') &&
-    matchesEitherEnding(body.replace(/\r\n/g, '\n'), expected)
-  );
+  if (hashEquals(hashContent(body), expected)) return true;
+  if (
+    body.endsWith('\n') &&
+    hashEquals(hashContent(body.slice(0, -1)), expected)
+  )
+    return true;
+  return body.indexOf('\r') !== -1 && lfReadingMatches(body, expected);
 }
 
-// The body as read, or without the one trailing newline `upsertBlock` adds.
-function matchesEitherEnding(body: string, expected: Sha256Hex): boolean {
-  if (hashEquals(hashContent(body), expected)) return true;
-  return (
-    body.endsWith('\n') && hashEquals(hashContent(body.slice(0, -1)), expected)
-  );
+// The same two readings after a `core.autocrlf` checkout's CRLF endings are
+// turned back into LF. Reached only for a body holding a carriage return.
+function lfReadingMatches(body: string, expected: Sha256Hex): boolean {
+  const lf = body.replace(/\r\n/g, '\n');
+  if (hashEquals(hashContent(lf), expected)) return true;
+  return lf.endsWith('\n') && hashEquals(hashContent(lf.slice(0, -1)), expected);
 }
 
 // Scan for one block by exact identifier. Matching on the captured id rather
@@ -140,7 +142,7 @@ function locateBlock(
   content: string,
   blockId: string,
 ): { start: number; end: number; body: string } | null {
-  const pattern = createBlockPattern();
+  const pattern = createBlockPattern(content);
   let match = pattern.exec(content);
   while (match !== null) {
     if (match[1] === blockId)
