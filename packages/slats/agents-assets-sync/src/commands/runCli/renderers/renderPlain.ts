@@ -118,9 +118,14 @@ async function renderOneUnit(
   logger.info(`${target.name}@${target.version} → ${agentTarget.description}`);
   printPlan(plan, agentTarget);
 
+  // A dry run writes nothing, so a plan that needs --force is reported, not
+  // refused: the refusal below tells the user to inspect with --dry-run.
   if (plan.requiresForce && !force) {
-    logger.error('Re-run with --force to proceed, or inspect with --dry-run.');
-    return 2;
+    if (!flags.dryRun) {
+      logger.error('Re-run with --force to proceed, or inspect with --dry-run.');
+      return 2;
+    }
+    logger.warn('Applying this plan requires --force.');
   }
   if (force) emitForceList(plan);
 

@@ -101,7 +101,8 @@ export async function renderJSON(
       );
       units.push(unit);
       if (unit.error) exitCode = 1;
-      else if (unit.requiresForce && !flags.force) exitCode = 2;
+      else if (unit.requiresForce && !flags.force && !flags.dryRun)
+        exitCode = 2;
     }
   }
 
@@ -149,7 +150,7 @@ async function runUnit(
         ...base,
         requiresForce: plan.requiresForce,
         actions: plan.actions,
-        report: summarize(plan, blocked ? 2 : 0),
+        report: summarize(plan, flags.dryRun ? 0 : 2),
       };
 
     const { fileActions, blockGroups } = partitionActions(plan.actions, force);

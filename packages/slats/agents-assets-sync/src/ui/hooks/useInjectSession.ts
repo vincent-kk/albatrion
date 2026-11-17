@@ -90,6 +90,7 @@ export function useInjectSession({
         warnings,
         force: Boolean(flags.force),
         autoApprove: Boolean(flags.yes),
+        dryRun: Boolean(flags.dryRun),
         dispatch,
       });
       if (!ok) return;
