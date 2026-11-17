@@ -62,8 +62,8 @@ const timedLoader = new DataLoader(batchLoad, {
   batchScheduler: (fn) => setTimeout(fn, 10),
 });
 
-// Immediate — dispatches within the current synchronous block, so only the
-// loads issued before this one are batched. Useful in tests; defeats batching.
+// Immediate — every load() dispatches its own one-key batch before it returns,
+// while repeated keys still resolve from the cache. Useful in tests; defeats batching.
 const syncLoader = new DataLoader(batchLoad, {
   batchScheduler: (fn) => fn(),
 });

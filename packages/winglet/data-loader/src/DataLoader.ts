@@ -244,23 +244,31 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
   /** The function that converts loader keys to cache keys */
   private readonly __cacheKeyFn__: Fn<[key: Key], CacheKey>;
 
-  /** The currently processing batch */
+  /** The most recently scheduled batch, which collects keys until it is dispatched */
   private __currentBatch__: Batch<Key, Value> | null = null;
 
   /**
-   * Acquires the current batch or creates a new batch
-   * @returns The currently available batch or a newly created batch
+   * Finds the scheduled batch that can still accept another key
+   * @returns The current batch while it is undispatched and below `maxBatchSize`, otherwise null
    */
-  private __acquireBatch__(): Batch<Key, Value> {
+  private __findOpenBatch__(): Batch<Key, Value> | null {
     const batch = this.__currentBatch__;
     if (batch && !batch.isResolved && batch.keys.length < this.__maxBatchSize__)
       return batch;
-    const nextBatch = createBatch<Key, Value>();
-    this.__currentBatch__ = nextBatch;
+    return null;
+  }
+
+  /**
+   * Makes a batch the current one and hands its dispatch to the batch scheduler.
+   * Called only after the batch holds its first request and cache entry, because a
+   * synchronous scheduler dispatches the batch before this method returns.
+   * @param batch - A new batch that already holds its first key or cache hit
+   */
+  private __scheduleBatch__(batch: Batch<Key, Value>): void {
+    this.__currentBatch__ = batch;
     this.__batchScheduler__(() => {
-      this.__dispatchBatch__(nextBatch);
+      this.__dispatchBatch__(batch);
     });
-    return nextBatch;
   }
 
   /**
@@ -422,19 +430,25 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
         `DataLoader > load's key must be a non-nil value: ${key}`,
         { key },
       );
-    const batch = this.__acquireBatch__();
+    const openBatch = this.__findOpenBatch__();
+    const batch = openBatch || createBatch<Key, Value>();
     const cacheMap = this.__cacheMap__;
-    if (cacheMap === null) return enqueueKey(batch, key);
-    const cacheKey = this.__cacheKeyFn__(key);
-    const cachedPromise = cacheMap.get(cacheKey);
-    if (cachedPromise) {
-      const cacheHits = batch.cacheHits || (batch.cacheHits = []);
-      return new Promise((resolve) =>
-        cacheHits.push(() => resolve(cachedPromise)),
-      );
+    let promise: Promise<Value>;
+    if (cacheMap === null) promise = enqueueKey(batch, key);
+    else {
+      const cacheKey = this.__cacheKeyFn__(key);
+      const cachedPromise = cacheMap.get(cacheKey);
+      if (cachedPromise) {
+        const cacheHits = batch.cacheHits || (batch.cacheHits = []);
+        promise = new Promise((resolve) =>
+          cacheHits.push(() => resolve(cachedPromise)),
+        );
+      } else {
+        promise = enqueueKey(batch, key);
+        cacheMap.set(cacheKey, promise);
+      }
     }
-    const promise = enqueueKey(batch, key);
-    cacheMap.set(cacheKey, promise);
+    if (openBatch === null) this.__scheduleBatch__(batch);
     return promise;
   }
 
