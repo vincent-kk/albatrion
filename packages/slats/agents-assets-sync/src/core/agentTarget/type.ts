@@ -60,11 +60,16 @@ export interface ResolvedLocation {
   readonly real: string | null;
   /** Whether the path itself exists; a missing one is placed under its parent's real location. */
   readonly exists: boolean;
-  /**
-   * Names of the symbolic links an existing directory lists, read once per
-   * run and only when the write check lists that directory.
-   */
-  readonly linkNames?: ReadonlySet<string>;
+  /** An existing directory's listing, read once per run and only on demand. */
+  readonly listing?: DirectoryListing;
+}
+
+/** What one `readdir` of a directory says about its entries. */
+export interface DirectoryListing {
+  /** Every entry name. */
+  readonly names: ReadonlySet<string>;
+  /** The entries that are symbolic links. */
+  readonly linkNames: ReadonlySet<string>;
 }
 
 /**

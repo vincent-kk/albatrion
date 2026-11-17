@@ -1,9 +1,10 @@
 import { realpath } from 'node:fs/promises';
-import { basename, dirname, join } from 'node:path';
+import { basename, dirname, join, sep } from 'node:path';
 
 import type { AgentTarget, ResolvedLocations } from '../type.js';
 import { findLinkedNames } from './findLinkedNames.js';
 import { isWithin } from './isWithin.js';
+import { locateDirectory } from './locateDirectory.js';
 import { resolveLocation } from './resolveLocation.js';
 
 interface AssertWriteTargetsContainedInput {
@@ -19,13 +20,14 @@ interface AssertWriteTargetsContainedInput {
  * would carry outside the project.
  *
  * `assertDestinationRootsContained` settles the roots and skill namespaces;
- * this settles everything under them that the plan writes: each distinct
- * destination directory is resolved once per run, and the files written into
- * a directory that already exists are checked for links through one listing
- * of it per run, or one `lstat` per name when only one is written there (see
- * `findLinkedNames`). A file cannot sit in a missing directory, so those cost
- * nothing. Only a link is passed to `realpath`. A link that stays inside the project is
- * allowed, as it is for a root. Deletions need no check: the orphan scan never
+ * this settles everything under them that the plan writes. Directories are
+ * visited deepest first and resolved from their parents' listings
+ * (`locateDirectory`), so with `resolved` shared with the roots check an
+ * existing subdirectory costs one listing that the files written into its
+ * parent then reuse, and anything below a missing directory costs nothing.
+ * Files are judged by those listings, or by one `lstat` where no listing is
+ * at hand (`findLinkedNames`). Only a link is passed to `realpath`. A link
+ * that stays inside the project is allowed, as it is for a root. Deletions need no check: the orphan scan never
  * follows a link, so it never proposes a path through one. User scope is
  * exempt, as for the roots.
  *
@@ -48,7 +50,13 @@ export async function assertWriteTargetsContained({
     if (names === undefined) namesByDir.set(dir, [basename(dstAbs)]);
     else names.push(basename(dstAbs));
   }
-  for (const [dir, names] of namesByDir) {
+  // Deepest first: a deeper directory's walk lists its ancestors, which the
+  // files written into those ancestors then reuse.
+  const dirs = [...namesByDir.keys()].sort(
+    (a, b) => b.split(sep).length - a.split(sep).length,
+  );
+  for (const dir of dirs) {
+    const names = namesByDir.get(dir) ?? [];
     const escape = await findEscape(
       dir,
       names,
@@ -70,9 +78,10 @@ async function findEscape(
   realRoot: string,
   resolved: ResolvedLocations,
 ): Promise<string | null> {
-  const location = await resolveLocation(dir, resolved);
-  if (!isWithin(realRoot, location.real)) return dir;
-  if (!location.exists) return null;
+  const located = await locateDirectory(dir, resolved);
+  if (!isWithin(realRoot, located.real)) return dir;
+  if (!located.exists) return null;
+  const location = resolved.get(dir) ?? located;
   for (const name of await findLinkedNames(dir, names, location, resolved))
     if (!isWithin(realRoot, await realpath(join(dir, name)).catch(() => null)))
       return join(dir, name);

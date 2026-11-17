@@ -42,6 +42,7 @@ function check(
     agentTarget,
     assetKinds,
     orphanScans,
+    resolved: new Map(),
   });
 }
 

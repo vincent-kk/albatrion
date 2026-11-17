@@ -148,6 +148,7 @@ async function runUnit(
       agentTarget,
       assetKinds,
       orphanScans,
+      resolved,
     });
     const force = flags.force ?? false;
     const plan = await buildPlan({

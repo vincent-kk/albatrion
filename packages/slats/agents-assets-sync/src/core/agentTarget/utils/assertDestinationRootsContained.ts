@@ -13,6 +13,8 @@ interface AssertDestinationRootsContainedInput {
   readonly assetKinds: ReadonlySet<AssetKind>;
   /** From `resolveDestinations`; each directory scan root is a skill namespace. */
   readonly orphanScans: readonly OrphanScan[];
+  /** Per-run cache, shared with `assertWriteTargetsContained`, which starts from these roots. */
+  readonly resolved: ResolvedLocations;
 }
 
 /**
@@ -34,6 +36,7 @@ export async function assertDestinationRootsContained({
   agentTarget,
   assetKinds,
   orphanScans,
+  resolved,
 }: AssertDestinationRootsContainedInput): Promise<void> {
   if (agentTarget.scope !== 'project') return;
   const { projectRoot, directoryRoots, rulesMergeFile } = agentTarget;
@@ -47,7 +50,6 @@ export async function assertDestinationRootsContained({
   for (const scan of orphanScans)
     if (scan.kind === 'directory') roots.push(scan.scanRoot);
 
-  const resolved: ResolvedLocations = new Map();
   const realRoot = (await resolveLocation(projectRoot, resolved)).real;
   for (const root of roots) {
     const { real } = await resolveLocation(root, resolved);

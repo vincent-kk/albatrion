@@ -119,6 +119,7 @@ async function renderOneUnit(
     agentTarget,
     assetKinds,
     orphanScans,
+    resolved,
   });
   const force = flags.force ?? false;
   const plan = await buildPlan({
