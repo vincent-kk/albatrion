@@ -28,9 +28,8 @@ export const scopeRules = (
 ): string => {
   let result = '';
   let cursor = start;
-  while (cursor < end) {
-    const open = css.indexOf('{', cursor);
-    if (open === -1 || open >= end) break;
+  let open = css.indexOf('{', cursor);
+  while (open !== -1 && open < end) {
     const prelude = css.slice(cursor, open).trim();
     if (prelude[0] === '@') {
       const statementEnd = css.indexOf(';', cursor);
@@ -40,7 +39,8 @@ export const scopeRules = (
         continue;
       }
     }
-    const close = findBlockEnd(css, open);
+    const nextOpen = css.indexOf('{', open + 1);
+    const close = findBlockEnd(css, open, nextOpen);
     if (close === -1 || close >= end) break;
     if (prelude[0] === '@')
       result += GROUPING_AT_RULE.test(prelude)
@@ -49,6 +49,8 @@ export const scopeRules = (
     else if (prelude)
       result += prefixSelectorList(prelude, scope) + css.slice(open, close + 1);
     cursor = close + 1;
+    // A flat block's first inner `{` search already found the next rule's `{`.
+    open = nextOpen > close ? nextOpen : css.indexOf('{', cursor);
   }
   return result;
 };
