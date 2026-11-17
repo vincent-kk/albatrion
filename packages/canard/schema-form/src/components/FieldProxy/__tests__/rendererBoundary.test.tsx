@@ -33,7 +33,6 @@ const boundariesOf = (element: Element) => {
   let fiber = (element as unknown as Record<string, { return: unknown }>)[
     key
   ] as {
-    type?: { name?: string };
     stateNode?: object;
     return?: unknown;
   } | null;

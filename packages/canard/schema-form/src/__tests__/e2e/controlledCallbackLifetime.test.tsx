@@ -6,9 +6,17 @@ import { afterEach, expect, it } from 'vitest';
 import { type FieldInputProps, Form, type FormHandle } from '../../index';
 
 afterEach(cleanup);
-it.each([true, false])(
-  'retired raw input callbacks are rejected after controlled=%s changes',
-  (initial) => {
+/** Only transitions between effective controlled and uncontrolled modes retire a selection. */
+const modeTransitions = [
+  [true, false],
+  [false, true],
+  [true, undefined],
+  [undefined, true],
+] as const;
+
+it.each(modeTransitions)(
+  'retired raw input callbacks are rejected after controlled=%s changes to %s',
+  (initial, next) => {
     let callback: FieldInputProps['onChange'];
     const Input = (props: FieldInputProps) => {
       callback = props.onChange;
@@ -17,7 +25,7 @@ it.each([true, false])(
       );
     };
     const schema = { type: 'string' } as const;
-    const definitions = (controlled: boolean) => [
+    const definitions = (controlled: boolean | undefined) => [
       { test: { type: 'string' as const }, Component: Input, controlled },
     ];
     const ref = createRef<FormHandle<typeof schema>>();
@@ -37,7 +45,7 @@ it.each([true, false])(
         ref={ref}
         jsonSchema={schema}
         defaultValue="before"
-        fieldInputDefinitions={definitions(!initial)}
+        fieldInputDefinitions={definitions(next)}
       />,
     );
     expect(view.getByTestId('input')).not.toBe(before);
@@ -75,27 +83,29 @@ it('ordinary uncontrolled Refresh rejects the old callback', () => {
   expect(ref.current!.getValue()).toBe('reset');
 });
 
-it.each([true, false])(
-  'controlled=%s layout cleanup cannot change values or attachments',
-  (initial) => {
+it.each(modeTransitions)(
+  'controlled=%s to %s layout cleanup cannot change values or attachments',
+  (initial, next) => {
     let armed = false;
     let cleanupCount = 0;
     const Input = ({ onChange, onFileAttach }: FieldInputProps) => {
-      const initial = useRef({ onChange, onFileAttach });
+      const initialCallbacks = useRef({ onChange, onFileAttach });
       useLayoutEffect(
         () => () => {
           if (!armed) return;
           cleanupCount++;
-          initial.current.onChange('retired cleanup');
-          initial.current.onFileAttach(new File(['retired'], 'retired.txt'));
+          initialCallbacks.current.onChange('retired cleanup');
+          initialCallbacks.current.onFileAttach(
+            new File(['retired'], 'retired.txt'),
+          );
         },
-        [initial],
+        [initialCallbacks],
       );
       return <input />;
     };
     const schema = { type: 'string' } as const;
     const ref = createRef<FormHandle<typeof schema>>();
-    const tree = (controlled: boolean) => (
+    const tree = (controlled: boolean | undefined) => (
       <Form
         ref={ref}
         jsonSchema={schema}
@@ -108,7 +118,7 @@ it.each([true, false])(
     const view = render(tree(initial));
     act(() => ref.current!.setValue('reset'));
     armed = true;
-    view.rerender(tree(!initial));
+    view.rerender(tree(next));
     expect(cleanupCount).toBe(1);
     expect.soft(ref.current!.getValue()).toBe('reset');
     expect.soft(ref.current!.getAttachedFilesMap().size).toBe(0);
