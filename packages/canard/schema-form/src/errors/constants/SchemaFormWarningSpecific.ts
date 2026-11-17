@@ -10,7 +10,7 @@ export const SchemaFormWarningSpecific = {
   MultipleGatedBranchesActive: 'MULTIPLE_GATED_BRANCHES_ACTIVE',
   ResetRebuiltByReference: 'RESET_REBUILT_BY_REFERENCE',
   DependentSchemasIgnoredForForm: 'DEPENDENT_SCHEMAS_IGNORED_FOR_FORM',
-  ChildFieldsOnTerminal: 'CHILD_FIELDS_ON_TERMINAL',
+  ChildFieldsReadOnTerminal: 'CHILD_FIELDS_READ_ON_TERMINAL',
   TerminalSubtreeKeyIgnoredForForm: 'TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM',
   DiscriminatorBranchUnreachable: 'DISCRIMINATOR_BRANCH_UNREACHABLE',
   NonJsonWholeValue: 'NON_JSON_WHOLE_VALUE',

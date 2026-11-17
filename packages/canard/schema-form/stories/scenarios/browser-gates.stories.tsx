@@ -250,7 +250,7 @@ export const EmptyChildDetectionCost: Story = {
     await expect(
       observations.warnings.filter(
         (code) =>
-          code === 'SCHEMA_FORM_WARNING.CHILD_FIELDS_ON_TERMINAL',
+          code === 'SCHEMA_FORM_WARNING.CHILD_FIELDS_READ_ON_TERMINAL',
       ),
     ).toHaveLength(1);
     for (const sample of observations.childReads) {

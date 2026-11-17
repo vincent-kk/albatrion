@@ -80,7 +80,7 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
                 {
                   level: 'warning',
                   origin: 'render',
-                  code: FormWarningCode.ChildFieldsOnTerminal,
+                  code: FormWarningCode.ChildFieldsReadOnTerminal,
                   message: 'Terminal inputs have no child fields',
                   path: node.path,
                 },
@@ -97,7 +97,7 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
           reporter.report({
             level: 'warning',
             origin: 'render',
-            code: FormWarningCode.ChildFieldsOnTerminal,
+            code: FormWarningCode.ChildFieldsReadOnTerminal,
             message: 'Terminal inputs have no child fields',
             path: node.path,
           });
