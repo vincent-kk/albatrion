@@ -12,13 +12,14 @@ export const createValidatorFactory =
     const validate = key ? ajv.getSchema(key) : transient && ajv.compile(transient);
     if (transient) ajv.removeSchema(transient);
     if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
+    const notRequiredKeys = new Map<string, string | null>();
     return async (data) => {
       try {
         const valid = await validate(data);
-        return valid ? null : transformErrors(validate.errors ?? [], jsonSchema);
+        return valid ? null : transformErrors(validate.errors ?? [], jsonSchema, notRequiredKeys);
       } catch (thrown) {
         if (thrown instanceof Error && 'errors' in thrown && Array.isArray(thrown.errors))
-          return transformErrors(thrown.errors, jsonSchema);
+          return transformErrors(thrown.errors, jsonSchema, notRequiredKeys);
         throw thrown;
       }
     };

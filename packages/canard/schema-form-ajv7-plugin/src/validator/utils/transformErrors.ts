@@ -19,9 +19,16 @@ const SLASH = /\//g;
  *
  * @param errors - Array of AJV7 error objects
  * @param root - Authored root, read only to find the key of a single-key `not.required`
+ * @param notRequiredKeys - Per-validator memo of that key by `not` schema path (`null` when the
+ *   path rejects no key); the root and its paths are fixed for one validator, so entries never expire.
+ *   Omitted, every `not` issue resolves the key again.
  * @returns Array of transformed ValidationIssue objects
  */
-export const transformErrors = (errors: ErrorObject[], root?: object): ValidationIssue[] => {
+export const transformErrors = (
+  errors: ErrorObject[],
+  root?: object,
+  notRequiredKeys?: Map<string, string | null>,
+): ValidationIssue[] => {
   if (!Array.isArray(errors)) return [];
   const result = new Array<ValidationIssue>(errors.length);
   for (let i = 0, l = errors.length; i < l; i++) {
@@ -43,17 +50,24 @@ export const transformErrors = (errors: ErrorObject[], root?: object): Validatio
       rejectedKey = String(ajvError.params.unevaluatedProperty);
     else if (ajvError.keyword === 'propertyNames' && 'propertyName' in ajvError.params)
       rejectedKey = String(ajvError.params.propertyName);
-    else if (ajvError.keyword === 'not' && root)
-      rejectedKey = resolveNotRequiredKey(root, ajvError.schemaPath);
-    result[i] = {
+    else if (ajvError.keyword === 'not' && root) {
+      const cached = notRequiredKeys?.get(ajvError.schemaPath);
+      if (cached !== undefined) rejectedKey = cached ?? undefined;
+      else {
+        rejectedKey = resolveNotRequiredKey(root, ajvError.schemaPath);
+        notRequiredKeys?.set(ajvError.schemaPath, rejectedKey ?? null);
+      }
+    }
+    const issue: ValidationIssue = {
       dataPath,
       schemaPath: ajvError.schemaPath,
       keyword: ajvError.keyword,
       message: ajvError.message,
       details: ajvError.params,
       source: ajvError,
-      ...(rejectedKey === undefined ? {} : { rejectedKey }),
     };
+    if (rejectedKey !== undefined) issue.rejectedKey = rejectedKey;
+    result[i] = issue;
   }
   return result;
 };
