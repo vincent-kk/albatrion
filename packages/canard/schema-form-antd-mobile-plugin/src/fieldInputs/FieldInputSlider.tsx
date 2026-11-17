@@ -13,7 +13,11 @@ import type {
 
 interface FieldInputSliderProps
   extends FieldInputPropsWithSchema<number | [number, number], NumberSchema> {
-  /** Two thumbs selecting a range, from `presentation.FieldInputProps.range`. */
+  /**
+   * Ignored: the schema type decides the shape. A numeric array schema renders a
+   * range slider and a number schema renders a single thumb.
+   * @deprecated The slider no longer reads this setting.
+   */
   range?: SliderProps['range'];
   /** Labeled stops on the track, from `presentation.FieldInputProps.marks`. */
   marks?: SliderProps['marks'];
@@ -23,14 +27,15 @@ interface FieldInputSliderProps
 
 const FieldInputSlider = ({
   jsonSchema,
+  type,
   disabled,
   defaultValue,
   onChange,
-  range,
   marks,
   lazy,
   misfit,
 }: FieldInputSliderProps) => {
+  const range = type === 'array';
   const initialValue = range
     ? isArray(defaultValue) &&
       defaultValue.length === 2 &&
@@ -43,11 +48,12 @@ const FieldInputSlider = ({
   const handleChange = useCallback(
     (value: number | [number, number] | null) => {
       if (value === null) onChange(undefined);
-      else if (typeof value === 'number') {
-        if (!Number.isNaN(value)) onChange(value);
-      } else if (!value.some(Number.isNaN)) onChange(value);
+      else if (range) {
+        if (isArray(value) && !value.some(Number.isNaN)) onChange(value);
+      } else if (typeof value === 'number' && !Number.isNaN(value))
+        onChange(value);
     },
-    [onChange],
+    [onChange, range],
   );
 
   const { min, max, step, ...changeHandler } = useMemo(() => {
