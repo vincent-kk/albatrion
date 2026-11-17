@@ -15,7 +15,7 @@
 - 확인 목록은 `warn-diverged` 와 `warn-orphan` 뿐 아니라 `--force` 가 고아 항목을 바꾼 `delete` 도 `warn-orphan` 경고로 담는다. 그렇지 않으면 `--force` 실행에서 지워질 파일이 대화상자에 나타나지 않는다.
 - 적용은 계획별로 `partitionActions` 로 갈라, 파일 작업은 `asyncPool(8, …)` 로 돌리고 블록 작업은 문서 단위로 하나씩 적용한다.
 - 진행률은 액션이 끝날 때마다 `apply-progress` 이벤트로 보고된다. 파일은 한 건씩, 블록 그룹은 그룹 크기만큼 `done` 이 증가한다.
-- `--dry-run` 은 적용을 건너뛰고 `summarize(plan, 0)` 로 바로 summary 에 들어가며 종료 코드 0을 낸다.
+- `--dry-run` 은 force 확인과 적용을 건너뛰고 `summarize(plan, 0)` 로 바로 summary 에 들어가며 종료 코드 0을 낸다. `--force` 를 요구하는 계획도 실패로 끝내지 않는다. 쓰지 않는 실행은 확인할 것도 막을 것도 없기 때문이다.
 - summary 는 target 마다 `summarize(plan, exitCode)` 로 그려진다.
 - 종료 코드: `0` 성공/최신/dry-run, `1` 런타임 오류, `2` 사용자 취소 또는 설정 누락.
 - 계획 중 던져진 오류는 실패한 plan step 으로 표면화된다.
@@ -103,6 +103,7 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 ### AC-UI-FORCE-CONFIRM — 확인은 실행이 지우는 것까지 보여 준다
 
 - `--force` 실행이 고아 항목을 지우면 계획 단계는 그 경로를 `warn-orphan` 경고로 넘기고, `--yes` 가 없으면 확인 대화상자를 연다.
+- `--dry-run` 은 `--force` 를 요구하는 계획에서도 실패 이벤트 없이 진행을 허락한다.
 - 검증: `__tests__/forceConfirm.test.tsx`.
 
 
