@@ -27,6 +27,7 @@ interface FieldInputRadioGroupProps
 
 const FieldInputRadioGroup = ({
   jsonSchema,
+  readOnly,
   disabled,
   defaultValue,
   onChange,
@@ -67,7 +68,7 @@ const FieldInputRadioGroup = ({
       style={{ display: 'flex', flexDirection: 'row', gap: 8, ...style }}
     >
       <Radio.Group
-        disabled={disabled}
+        disabled={disabled || readOnly}
         defaultValue={initialValue}
         onChange={handleChange}
       >

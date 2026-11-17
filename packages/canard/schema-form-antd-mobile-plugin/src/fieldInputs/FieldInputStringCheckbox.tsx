@@ -30,6 +30,7 @@ interface FieldInputStringCheckboxProps
 
 const FieldInputStringCheckbox = ({
   jsonSchema,
+  readOnly,
   disabled,
   defaultValue,
   onChange,
@@ -73,7 +74,7 @@ const FieldInputStringCheckbox = ({
       style={{ display: 'flex', flexDirection: 'row', gap: 8 }}
     >
       <Checkbox.Group
-        disabled={disabled}
+        disabled={disabled || readOnly}
         defaultValue={initialValue}
         onChange={handleChange}
       >
