@@ -25,7 +25,7 @@ import type {
 } from './type';
 import { shortestReference } from './utils/shortestReference';
 
-/** These fields affect source scope and are removed only from proven relocatable template copies. */
+/** Identifier names of any dialect; a copy is inspected when one occurs, whatever its dialect. */
 const identifiers = [
   '$id',
   'id',
@@ -35,6 +35,37 @@ const identifiers = [
   '$recursiveAnchor',
   '$vocabulary',
 ];
+/** Identifiers each dialect defines; elsewhere the same names are annotations a copy keeps. */
+const dialectIdentifiers: Readonly<Record<Dialect, readonly string[]>> = {
+  [Dialect.Draft04]: ['id', '$schema'],
+  [Dialect.Draft06]: ['$id', '$schema'],
+  [Dialect.Draft07]: ['$id', '$schema'],
+  [Dialect.Draft201909]: [
+    '$id',
+    '$schema',
+    '$anchor',
+    '$recursiveAnchor',
+    '$vocabulary',
+  ],
+  [Dialect.Draft202012]: [
+    '$id',
+    '$schema',
+    '$anchor',
+    '$dynamicAnchor',
+    '$vocabulary',
+  ],
+};
+/**
+ * Choose the identifier names of a copied position.
+ * @param context Indexed lexical context of the position, or undefined when indexing did not reach it.
+ * @returns Its resource dialect's identifiers, or every dialect's for an unindexed position.
+ */
+function identifiersAt(
+  context: ResolverContext | undefined,
+): readonly string[] {
+  return context ? dialectIdentifiers[context.resource.dialect] : identifiers;
+}
+
 /** Reference-shaped data is permitted below these annotation/assertion values without rewriting. */
 const dataKeywords = ['default', 'const', 'enum', 'examples'];
 
@@ -622,7 +653,9 @@ export class ResolverStore {
           (prefix) =>
             item.path === prefix || item.path.startsWith(prefix + '/'),
         ) &&
-        item.keys.some((key) => identifiers.includes(key)),
+        item.keys.some((key) =>
+          identifiersAt(positions.get(item.path)).includes(key),
+        ),
     );
     if (source === host && !hasIdentifiers)
       return { status: 'resolved', uri: location.uri, target };
@@ -639,7 +672,7 @@ export class ResolverStore {
       const context = positions.get(item.path);
       if (!context) return relocation;
       if (item.keys.includes('$recursiveRef')) return relocation;
-      for (const key of identifiers) delete item.copy[key];
+      for (const key of identifiersAt(context)) delete item.copy[key];
       for (const key of ['$ref', '$dynamicRef']) {
         if (
           typeof item.source[key] !== 'string' ||
