@@ -1,6 +1,8 @@
 import {
   ASTERISK,
   AT_SIGN,
+  COLON,
+  NON_ASCII_MIN,
   RBRACE,
   SEMICOLON,
   SLASH,
@@ -104,54 +106,138 @@ export class RuleScoper {
         continue;
       }
       const isAtRule = first === AT_SIGN;
-      const stop = this.__findStructure__(cursor, isAtRule);
-      if (stop >= length) {
-        if (isAtRule) result += css.slice(cursor).trim();
-        this.__end__ = -1;
-        return result;
-      }
-      const stopCode = css.charCodeAt(stop);
-      if (stopCode === SEMICOLON) {
-        result += css.slice(cursor, stop + 1);
-        cursor = stop + 1;
-        continue;
-      }
-      if (stopCode === RBRACE) {
-        if (isNested) {
-          this.__end__ = stop + 1;
+      let stop = isAtRule ? -1 : this.__findFlatPreludeEnd__(cursor);
+      if (stop === -1) {
+        stop = this.__findStructure__(cursor, isAtRule);
+        if (stop >= length) {
+          if (isAtRule) result += css.slice(cursor).trim();
+          this.__end__ = -1;
           return result;
         }
-        cursor = stop + 1;
-        continue;
+        const stopCode = css.charCodeAt(stop);
+        if (stopCode === SEMICOLON) {
+          result += css.slice(cursor, stop + 1);
+          cursor = stop + 1;
+          continue;
+        }
+        if (stopCode === RBRACE) {
+          if (isNested) {
+            this.__end__ = stop + 1;
+            return result;
+          }
+          cursor = stop + 1;
+          continue;
+        }
+        if (isAtRule) {
+          const prelude = css.slice(cursor, stop).trim();
+          if (GROUPING_AT_RULE.test(prelude)) {
+            const inner = this.__scopeRuleList__(stop + 1, true);
+            if (this.__end__ === -1) return result;
+            result += prelude + '{' + inner + '}';
+            cursor = this.__end__;
+            continue;
+          }
+          const close = this.__findBlockEnd__(stop);
+          if (close === -1) {
+            this.__end__ = -1;
+            return result;
+          }
+          result += prelude + css.slice(stop, close + 1);
+          cursor = close + 1;
+          continue;
+        }
       }
-      const prelude = css.slice(cursor, stop).trim();
-      if (isAtRule && GROUPING_AT_RULE.test(prelude)) {
-        const inner = this.__scopeRuleList__(stop + 1, true);
-        if (this.__end__ === -1) return result;
-        result += prelude + '{' + inner + '}';
-        cursor = this.__end__;
-        continue;
-      }
-      const close = this.__findBlockEnd__(stop);
+      const close = this.__findStyleBlockEnd__(stop);
       if (close === -1) {
         this.__end__ = -1;
         return result;
       }
-      if (isAtRule) result += prelude + css.slice(stop, close + 1);
-      else if (prelude) {
-        let comma = this.__comma__;
-        if (comma < cursor) {
-          comma = css.indexOf(',', cursor);
-          this.__comma__ = comma = comma === -1 ? length : comma;
-        }
-        result +=
-          (comma < stop
-            ? prefixSelectorList(css, cursor, stop, this.__prefix__)
-            : prefixSelector(prelude, this.__prefix__)) +
-          css.slice(stop, close + 1);
-      }
+      result += this.__scopeStyleRule__(cursor, stop, close);
       cursor = close + 1;
     }
+  }
+
+  /**
+   * Finds the `{` of a style rule whose prelude holds no `}` and no opaque token,
+   * refreshing the `{`, `}` and opaque caches from `cursor`.
+   *
+   * @returns The index of that `{`, or `-1` when the prelude needs `__findStructure__`.
+   */
+  private __findFlatPreludeEnd__(cursor: number): number {
+    const css = this.__css__;
+    let open = this.__open__;
+    if (open < cursor) {
+      open = css.indexOf('{', cursor);
+      this.__open__ = open = open === -1 ? css.length : open;
+    }
+    let close = this.__close__;
+    if (close < cursor) {
+      close = css.indexOf('}', cursor);
+      this.__close__ = close = close === -1 ? css.length : close;
+    }
+    const opaque =
+      this.__opaque__ >= cursor
+        ? this.__opaque__
+        : this.__findOpaqueStart__(cursor);
+    return open < close && open < opaque ? open : -1;
+  }
+
+  /**
+   * Finds the `}` that closes the style block opening at `open`. The `}` and opaque
+   * caches already point past `open`, so a block with no `{` and no opaque token
+   * before its first `}` ends there; any other block is walked by depth.
+   *
+   * @returns The index of the closing `}`, or `-1` when the block never closes.
+   */
+  private __findStyleBlockEnd__(open: number): number {
+    const css = this.__css__;
+    let nextOpen = css.indexOf('{', open + 1);
+    this.__open__ = nextOpen = nextOpen === -1 ? css.length : nextOpen;
+    const close = this.__close__;
+    return close < nextOpen && close < this.__opaque__
+      ? close
+      : this.__findBlockEnd__(open);
+  }
+
+  /**
+   * Prefixes the style rule whose prelude is `css[cursor, open)` and whose block
+   * ends at `close`.
+   *
+   * @returns The scoped rule, or `''` when the prelude is empty. A single selector
+   * that starts and ends with an ASCII non-space character other than a leading
+   * `:` is already trimmed, cannot be `:root` or `:host`, and touches its block, so
+   * it is emitted as one slice behind the prefix.
+   */
+  private __scopeStyleRule__(
+    cursor: number,
+    open: number,
+    close: number,
+  ): string {
+    const css = this.__css__;
+    let comma = this.__comma__;
+    if (comma < cursor) {
+      comma = css.indexOf(',', cursor);
+      this.__comma__ = comma = comma === -1 ? css.length : comma;
+    }
+    if (comma < open)
+      return (
+        prefixSelectorList(css, cursor, open, this.__prefix__) +
+        css.slice(open, close + 1)
+      );
+    const first = css.charCodeAt(cursor);
+    const last = css.charCodeAt(open - 1);
+    if (
+      open > cursor &&
+      first !== COLON &&
+      first < NON_ASCII_MIN &&
+      last > WHITESPACE_MAX &&
+      last < NON_ASCII_MIN
+    )
+      return this.__prefix__ + css.slice(cursor, close + 1);
+    const selector = css.slice(cursor, open).trim();
+    return selector
+      ? prefixSelector(selector, this.__prefix__) + css.slice(open, close + 1)
+      : '';
   }
 
   /** Finds the `}` matching the `{` at `open`, or `-1` when the block never closes. */
