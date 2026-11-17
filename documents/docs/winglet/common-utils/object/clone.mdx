@@ -213,7 +213,8 @@ console.log(cloned.b.c); // 999`}
 - What `clone` learns about a prototype chain (which inherited setters, getters and read-only
   properties intercept assignment, and whether it is a boxed-primitive chain) is cached per
   prototype at its first clone and never invalidated. A setter, getter or read-only property
-  added to that chain later is not seen: later clones assign that key, so an added setter runs.
+  added to that chain later is not seen: later clones assign that key, so an added setter runs,
+  and an added getter-only or read-only property makes `clone` throw a `TypeError`.
 
 **Performance Considerations:**
 - **Time Complexity**: O(n) where n is total number of properties/elements
