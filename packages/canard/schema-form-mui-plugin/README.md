@@ -74,13 +74,13 @@ This plugin provides the following Material-UI components:
 
 - **Role**: DatePicker for month selection (month mode)
 - **Applied when**: `type` is `"string"` and `format` is `"month"`
-- **Additional features**: Uses MUI X DatePickers, support for `minimum`, `maximum` range limits, YYYY-MM format
+- **Additional features**: Uses MUI X DatePickers, range limits through `presentation.FieldInputProps.minimum` and `maximum` (YYYY-MM), YYYY-MM format
 
 ### **[`FieldInputDate.tsx`](./src/fieldInputs/FieldInputDate.tsx)**
 
 - **Role**: DatePicker for date selection
 - **Applied when**: `type` is `"string"` and `format` is `"date"`
-- **Additional features**: Uses MUI X DatePickers with Dayjs, support for `minimum`, `maximum` date range limits, YYYY-MM-DD format
+- **Additional features**: Uses MUI X DatePickers with Dayjs, date range limits through `presentation.FieldInputProps.minimum` and `maximum` (YYYY-MM-DD), YYYY-MM-DD format
 
 ### **[`FieldInputTime.tsx`](./src/fieldInputs/FieldInputTime.tsx)**
 
