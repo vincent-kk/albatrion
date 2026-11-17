@@ -22,11 +22,13 @@ describe('applyPatch security', () => {
     const patches: Patch[] = [
       { op: Operation.COPY, from: '/__proto__', path: '/alias' },
     ];
+    const document = {};
 
-    expect(() => applyPatch({}, patches)).toThrow(
+    expect(() => applyPatch(document, patches)).toThrow(
       expect.objectContaining({ specific: 'PATCH_OBJECT_PROPERTY_NOT_FOUND' }),
     );
-    expect(Object.getPrototypeOf({})).toBe(Object.prototype);
+    expect(Object.getPrototypeOf(document)).toBe(Object.prototype);
+    expect(Object.keys(document)).toEqual([]);
   });
 
   it('copy 의 from 이 own 예약 멤버 데이터면 그 데이터가 복사되어야 한다', () => {
@@ -58,11 +60,13 @@ describe('applyPatch security', () => {
     const patches: Patch[] = [
       { op: Operation.MOVE, from: '/__proto__', path: '/alias' },
     ];
+    const document = {};
 
-    expect(() => applyPatch({}, patches)).toThrow(
+    expect(() => applyPatch(document, patches)).toThrow(
       expect.objectContaining({ specific: 'PATCH_OBJECT_PROPERTY_NOT_FOUND' }),
     );
-    expect(Object.getPrototypeOf({})).toBe(Object.prototype);
+    expect(Object.getPrototypeOf(document)).toBe(Object.prototype);
+    expect(Object.keys(document)).toEqual([]);
   });
 
   it('copy 는 원본과 메모리를 공유하지 않는 값을 만들어야 한다', () => {
