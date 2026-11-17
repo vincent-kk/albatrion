@@ -31,6 +31,18 @@ describe('expression paths inside string literals', () => {
     expect(result.expressions[0].evaluate(['go ../up or ./here'])).toBe(true);
   });
 
+  it('reads paths inside template placeholders but not template text', () => {
+    const result = compile('`${../source} /x ${{ a: 1 }.a}` === "v /x 1"');
+    expect(result.expressions[0].dependencies).toEqual(['../source']);
+    expect(result.expressions[0].evaluate(['v'])).toBe(true);
+  });
+
+  it('keeps a literal open across an escaped quote', () => {
+    const result = compile('../source === "say \\" ../not"');
+    expect(result.expressions[0].dependencies).toEqual(['../source']);
+    expect(result.expressions[0].evaluate(['say " ../not'])).toBe(true);
+  });
+
   it('reads a path after a regular-expression literal that holds a quote', () => {
     const result = compile('../source === /["]/ || ../other === 1');
     expect(result.expressions[0].dependencies).toEqual([
