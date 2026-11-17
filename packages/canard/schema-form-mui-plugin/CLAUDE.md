@@ -34,4 +34,6 @@ Components are selected automatically from the `type`, `format`, `inputType`, an
 
 Date, month and time pickers receive both disabled and readOnly from the form binding, including later lock changes. MUI owns the read-only interaction behavior.
 
+Radio group, checkbox group, boolean checkbox and slider receive `disabled={disabled || readOnly}`. They keep their own selection state and MUI gives them no read-only mode, so without it a read-only form displays a choice the core has already rejected.
+
 Enum UI identities encode the raw JSON scalar, while labels and aliases use its display string. Initial selection and change payloads use the same identity mapping so null and the string "null" remain distinct.
