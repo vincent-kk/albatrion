@@ -49,12 +49,15 @@ const added = [];
 const removed = [];
 const add = document.addEventListener.bind(document);
 const remove = document.removeEventListener.bind(document);
+/** Reads the capture flag from either form of the listener options argument. */
+const isCapture = (options) =>
+  options === true || (typeof options === 'object' && options?.capture === true);
 document.addEventListener = (type, listener, options) => {
-  if (type === 'keydown') added.push(listener);
+  if (type === 'keydown') added.push([listener, isCapture(options)]);
   return add(type, listener, options);
 };
 document.removeEventListener = (type, listener, options) => {
-  if (type === 'keydown') removed.push(listener);
+  if (type === 'keydown') removed.push([listener, isCapture(options)]);
   return remove(type, listener, options);
 };
 const opener = document.getElementById('opener');
@@ -88,7 +91,10 @@ flushSync(() =>
 );
 assert.equal(document.querySelector('input').value, 'initial');
 assert.equal(registry.ids.length, 1);
-assert.equal(added.length, 1);
+assert.deepEqual(
+  added.map(([, capture]) => capture),
+  [false, true],
+);
 assert.equal(opener.hasAttribute('inert'), true);
 flushSync(() => document.querySelector('[data-draft]').click());
 assert.equal(document.querySelector('input').value, 'draft');
@@ -98,12 +104,18 @@ await new Promise((resolve) => setTimeout(resolve, 20));
 flushSync(() => root.unmount());
 await Promise.resolve();
 assert.deepEqual(registry.ids, []);
-assert.equal(removed.length, 1);
-assert.equal(removed[0], added[0]);
+assert.equal(removed.length, 2);
+for (const [listener, capture] of added)
+  assert.ok(
+    removed.some(
+      ([removedListener, removedCapture]) =>
+        removedListener === listener && removedCapture === capture,
+    ),
+  );
 assert.equal(opener.hasAttribute('inert'), false);
 assert.notEqual(document.body.style.overflow, 'hidden');
 assert.equal(document.activeElement, opener);
 console.log(
-  `MODULE_COPIES_OK ${firstKind}+${secondKind} prompt=draft keydown=1 cleanup=1 exports=${Object.keys(first).sort().join(',')}`,
+  `MODULE_COPIES_OK ${firstKind}+${secondKind} prompt=draft keydown=bubble+capture cleanup=2 exports=${Object.keys(first).sort().join(',')}`,
 );
 dom.window.close();

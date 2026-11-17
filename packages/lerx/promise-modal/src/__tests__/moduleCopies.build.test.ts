@@ -15,7 +15,7 @@ it.each([
       { encoding: 'utf8' },
     );
     expect(output).toContain(
-      `MODULE_COPIES_OK ${first}+${second} prompt=draft keydown=1 cleanup=1`,
+      `MODULE_COPIES_OK ${first}+${second} prompt=draft keydown=bubble+capture cleanup=2`,
     );
   },
 );
