@@ -60,10 +60,15 @@ describe('immediate batchScheduler (fn) => fn()', () => {
 });
 
 describe('batch scheduling after a failed load', () => {
-  it('still dispatches later loads after cacheKeyFn throws', async () => {
+  it('schedules no batch for a load whose cacheKeyFn throws', async () => {
+    let scheduled = 0;
     const { loader, calls } = createRecordingLoader<number, number>(
       (key) => key * 10,
       {
+        batchScheduler: (fn) => {
+          scheduled += 1;
+          queueMicrotask(fn);
+        },
         cacheKeyFn: (key) => {
           if (key < 0) throw new Error('negative key');
           return key;
@@ -71,9 +76,14 @@ describe('batch scheduling after a failed load', () => {
       },
     );
     expect(() => loader.load(-1)).toThrow('negative key');
-    const result = await settleWithin(loader.load(1), 200);
-    expect(result).toEqual({ settled: true, value: 10 });
-    expect(calls).toEqual([[1]]);
+    expect(scheduled).toBe(0);
+    const result = await settleWithin(
+      Promise.all([loader.load(1), loader.load(2)]),
+      200,
+    );
+    expect(scheduled).toBe(1);
+    expect(result).toEqual({ settled: true, value: [10, 20] });
+    expect(calls).toEqual([[1, 2]]);
   });
 });
 
