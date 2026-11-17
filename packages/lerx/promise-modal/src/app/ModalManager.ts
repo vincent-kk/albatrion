@@ -342,10 +342,20 @@ export class ModalManager {
     ModalManager.updateInert(null);
     if (typeof document !== 'undefined') ModalManager.updateScrollLock(false);
   }
-  /** Installs exactly one bubbling document listener so controls may prevent defaults. */
+  /**
+   * Installs one bubbling document handler, so controls may prevent defaults, and a
+   * capture partner that records the modals open before React handlers run Escape.
+   */
   private static installKeyboardListener(): void {
     if (ModalManager.__state__.keydown) return;
+    let escape: { event: KeyboardEvent; nodes: ModalNode[] } | undefined;
+    ModalManager.__state__.keydownCapture = (event) => {
+      if (event.key === 'Escape')
+        escape = { event, nodes: ModalManager.visibleNodes() };
+    };
     ModalManager.__state__.keydown = (event) => {
+      const recorded = escape?.event === event ? escape.nodes : undefined;
+      escape = undefined;
       if (
         !ModalManager.__state__.anchor?.isConnected ||
         event.defaultPrevented ||
@@ -353,8 +363,9 @@ export class ModalManager {
         event.keyCode === 229
       )
         return;
-      const nodes = ModalManager.visibleNodes();
       if (event.key === 'Escape') {
+        const nodes = recorded ?? ModalManager.visibleNodes();
+        if (nodes.some((node) => node.settled)) return;
         for (const node of nodes) {
           if (node.closeOnEscape) {
             event.preventDefault();
@@ -364,11 +375,16 @@ export class ModalManager {
           if (node.dimmed) break;
         }
       } else if (event.key === 'Tab') {
-        const top = nodes[0];
+        const top = ModalManager.visibleNodes()[0];
         if (top?.dimmed && top.trapFocus) ModalManager.trapTab(event, top.id);
       }
     };
     document.addEventListener('keydown', ModalManager.__state__.keydown);
+    document.addEventListener(
+      'keydown',
+      ModalManager.__state__.keydownCapture,
+      true,
+    );
   }
   /**
    * Cycles the top frame's keyboard boundary; native navigation handles middle items.
@@ -397,8 +413,15 @@ export class ModalManager {
       (event.shiftKey ? last : first).focus();
     }
   }
-  /** Releases the same callback installed by the current owner. */
+  /** Releases the same callbacks installed by the current owner. */
   private static removeKeyboardListener(): void {
+    if (ModalManager.__state__.keydownCapture)
+      document.removeEventListener(
+        'keydown',
+        ModalManager.__state__.keydownCapture,
+        true,
+      );
+    ModalManager.__state__.keydownCapture = undefined;
     if (!ModalManager.__state__.keydown) return;
     document.removeEventListener('keydown', ModalManager.__state__.keydown);
     ModalManager.__state__.keydown = undefined;

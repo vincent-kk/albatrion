@@ -179,26 +179,39 @@ it('treats useModal configuration as per-modal data', () => {
   expect(node?.settled).toBe(true);
 });
 
-it('owns one keydown listener and removes it on detach and reset', () => {
+it('owns one bubbling keydown handler and its capture partner and removes both on detach and reset', () => {
   const add = vi.spyOn(document, 'addEventListener');
   const remove = vi.spyOn(document, 'removeEventListener');
+  /** Asserts one bubbling and one capturing registration since `from`, and returns them. */
+  const registered = (from: number) => {
+    const calls = add.mock.calls
+      .slice(from)
+      .filter(([type]) => type === 'keydown');
+    expect(calls.map(([, , capture]) => capture === true)).toEqual([
+      false,
+      true,
+    ]);
+    return calls;
+  };
+  /** Whether each registration was removed in the same phase it was added. */
+  const removedAll = (calls: typeof add.mock.calls) =>
+    calls.every(([, listener, capture]) =>
+      remove.mock.calls.some(
+        ([type, removed, removedCapture]) =>
+          type === 'keydown' &&
+          removed === listener &&
+          (removedCapture === true) === (capture === true),
+      ),
+    );
   const view = render(<BootstrapProvider />);
-  const calls = add.mock.calls.filter(([type]) => type === 'keydown');
-  expect(calls).toHaveLength(1);
+  const first = registered(0);
   view.unmount();
-  expect(
-    remove.mock.calls.some(
-      ([type, listener]) => type === 'keydown' && listener === calls[0][1],
-    ),
-  ).toBe(true);
+  expect(removedAll(first)).toBe(true);
+  const mark = add.mock.calls.length;
   const second = render(<BootstrapProvider />);
-  const latest = add.mock.calls.filter(([type]) => type === 'keydown').at(-1);
+  const latest = registered(mark);
   act(() => ModalManager.reset());
-  expect(
-    remove.mock.calls.some(
-      ([type, listener]) => type === 'keydown' && listener === latest?.[1],
-    ),
-  ).toBe(true);
+  expect(removedAll(latest)).toBe(true);
   second.unmount();
 });
 
