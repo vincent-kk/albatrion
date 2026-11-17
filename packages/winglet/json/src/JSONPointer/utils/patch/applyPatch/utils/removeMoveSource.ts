@@ -1,5 +1,4 @@
 import { isArray } from '@winglet/common-utils/filter';
-import { hasOwnProperty } from '@winglet/common-utils/lib';
 import {
   deleteDataProperty,
   getDataProperty,
@@ -13,6 +12,7 @@ import type { JSONRoot } from '@/json/type';
 import type { Patch } from '../../../patchModel';
 import { JSONPatchError } from './error';
 import { getArrayIndex } from './getArrayIndex';
+import { isMissingMember } from './isMissingMember';
 
 /**
  * Removes the value at a MOVE operation's `from` location and returns it, the first half of
@@ -97,13 +97,13 @@ export const removeMoveSource = (
       },
     );
   }
-  if (!hasOwnProperty(parent, key))
+  const value = getDataProperty(parent, key);
+  if (isMissingMember(parent, key, value))
     throw new JSONPatchError(
       'PATCH_OBJECT_PROPERTY_NOT_FOUND',
       `Cannot move property '${key}' - property does not exist on object`,
       { patch, patchIndex, from, missingProperty: key, operation: patch.op },
     );
-  const value = getDataProperty(parent, key);
   deleteDataProperty(parent, key);
   return value;
 };

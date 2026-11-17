@@ -33,8 +33,13 @@ export const handleArray = (
     case Operation.ADD:
     case Operation.MOVE:
     case Operation.COPY:
-      if (index <= array.length) {
+      if (index < array.length) {
         array.splice(index, 0, value);
+        return source;
+      }
+      // Appending through push avoids the splice call for the common `-` and end-index case
+      if (index === array.length) {
+        array.push(value);
         return source;
       }
       throw new JSONPatchError(
@@ -98,7 +103,8 @@ export const handleArray = (
           },
         );
       }
-      if (equals(array[index], patch.value)) return source;
+      if (array[index] === patch.value || equals(array[index], patch.value))
+        return source;
       throw new JSONPatchError(
         'PATCH_TEST_FAILED',
         `Test operation failed at array index ${index}. Expected value does not match actual value`,

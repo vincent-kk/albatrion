@@ -2,6 +2,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import {
   deleteDataProperty,
   equals,
+  getDataProperty,
   setDataProperty,
 } from '@winglet/common-utils/object';
 
@@ -9,6 +10,7 @@ import type { JSONObject, JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../../patchModel';
 import { JSONPatchError } from './error';
+import { isMissingMember } from './isMissingMember';
 
 /**
  * Handles JSON Patch operations on object properties.
@@ -41,11 +43,10 @@ export const handleObject = (
       return source;
     // RFC 6902 4.3: the replace target must exist, or the patch would add a member
     case Operation.REPLACE:
-    case Operation.REMOVE:
-      if (!hasOwnProperty(object, key)) {
+      if (isMissingMember(object, key, getDataProperty(object, key))) {
         throw new JSONPatchError(
           'PATCH_OBJECT_PROPERTY_NOT_FOUND',
-          `Cannot ${patch.op} property '${key}' - property does not exist on object`,
+          `Cannot replace property '${key}' - property does not exist on object`,
           {
             patch,
             patchIndex,
@@ -55,10 +56,25 @@ export const handleObject = (
           },
         );
       }
-      if (patch.op === Operation.REMOVE) deleteDataProperty(object, key);
-      else setDataProperty(object, key, value);
+      setDataProperty(object, key, value);
       return source;
-    case Operation.TEST:
+    case Operation.REMOVE:
+      if (!hasOwnProperty(object, key)) {
+        throw new JSONPatchError(
+          'PATCH_OBJECT_PROPERTY_NOT_FOUND',
+          `Cannot remove property '${key}' - property does not exist on object`,
+          {
+            patch,
+            patchIndex,
+            missingProperty: key,
+            availableProperties: Object.keys(object),
+            operation: patch.op,
+          },
+        );
+      }
+      deleteDataProperty(object, key);
+      return source;
+    case Operation.TEST: {
       if (!hasOwnProperty(object, key)) {
         throw new JSONPatchError(
           'PATCH_OBJECT_PROPERTY_NOT_FOUND',
@@ -73,19 +89,22 @@ export const handleObject = (
           },
         );
       }
-      if (equals(object[key], patch.value)) return source;
+      const current = object[key];
+      if (current === patch.value || equals(current, patch.value))
+        return source;
       throw new JSONPatchError(
         'PATCH_TEST_FAILED',
         `Test operation failed for property '${key}'. Expected value does not match actual value`,
         {
           patch,
           patchIndex,
-          actualValue: object[key],
+          actualValue: current,
           expectedValue: patch.value,
           property: key,
           operation: patch.op,
         },
       );
+    }
     default:
       throw new JSONPatchError(
         'PATCH_OPERATION_INVALID',

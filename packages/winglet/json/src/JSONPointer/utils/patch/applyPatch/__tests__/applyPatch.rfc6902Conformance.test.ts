@@ -82,6 +82,7 @@ describe('applyPatch RFC 6902 conformance', () => {
 
     it.each([
       [{ a: 1 }, '/missing', 'PATCH_OBJECT_PROPERTY_NOT_FOUND'],
+      [{ a: 1 }, '/toString', 'PATCH_OBJECT_PROPERTY_NOT_FOUND'],
       [{ a: [1] }, '/a/1', 'PATCH_ARRAY_INDEX_OUT_OF_BOUNDS'],
     ])(
       'fails when the from location of %j at %s does not exist',
@@ -171,6 +172,21 @@ describe('applyPatch RFC 6902 conformance', () => {
         ).toBe('PATCH_OBJECT_PROPERTY_NOT_FOUND');
       },
     );
+  });
+
+  describe('inherited members are not document members', () => {
+    it.each([
+      [
+        Operation.REPLACE,
+        { op: Operation.REPLACE, path: '/toString', value: 1 },
+      ],
+      [Operation.TEST, { op: Operation.TEST, path: '/toString', value: 1 }],
+      [Operation.TEST, { op: Operation.TEST, path: '/missing', value: 1 }],
+    ] as const)('%s of an absent member fails', (_, patch) => {
+      expect(errorCodeOf(() => applyPatch({ a: 1 }, [patch]))).toBe(
+        'PATCH_OBJECT_PROPERTY_NOT_FOUND',
+      );
+    });
   });
 
   describe('array indexes have no leading zeros (RFC 6901 4)', () => {
