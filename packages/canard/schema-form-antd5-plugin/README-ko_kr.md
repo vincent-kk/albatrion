@@ -170,7 +170,7 @@ registerPlugin(plugin);
 
 - **역할**: boolean 값을 체크박스로 표시
 - **적용 조건**: `type`이 `"boolean"`인 경우 (다른 조건에 해당하지 않는 fallback)
-- **추가 사항**: `undefined` 값에 대한 `indeterminate` 상태 지원
+- **추가 사항**: `null`과 불리언이 아닌 값은 `indeterminate` 상태로 표시되고, 값이 없는(`undefined`) 경우에는 체크되지 않은 상태로 표시됩니다
 
 ---
 
