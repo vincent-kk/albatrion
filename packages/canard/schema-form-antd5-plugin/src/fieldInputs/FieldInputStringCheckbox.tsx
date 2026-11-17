@@ -37,6 +37,7 @@ const FieldInputStringCheckbox = ({
   name,
   jsonSchema,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -77,7 +78,7 @@ const FieldInputStringCheckbox = ({
         name={name}
         style={{ display: 'flex' }}
         options={options}
-        disabled={disabled}
+        disabled={disabled || readOnly}
         defaultValue={initialValue}
         onChange={handleChange}
       />

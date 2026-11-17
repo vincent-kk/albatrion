@@ -36,6 +36,7 @@ const FieldInputRadioGroup = ({
   name,
   jsonSchema,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -72,7 +73,7 @@ const FieldInputRadioGroup = ({
       <Radio.Group
         id={path}
         name={name}
-        disabled={disabled}
+        disabled={disabled || readOnly}
         defaultValue={initialValue}
         options={options}
         onChange={handleChange}
