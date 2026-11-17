@@ -31,7 +31,7 @@ export const handleRootPatch = (
     case Operation.COPY:
       return value;
     case Operation.TEST:
-      if (equals(source, patch.value)) return source;
+      if (source === patch.value || equals(source, patch.value)) return source;
       throw new JSONPatchError(
         'PATCH_TEST_FAILED',
         'Test operation failed at root level. Expected value does not match actual document value',
