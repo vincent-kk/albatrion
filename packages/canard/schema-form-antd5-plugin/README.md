@@ -84,7 +84,7 @@ This plugin provides the following Ant Design components:
 
 - **Role**: Special input field for URI entry (with protocol dropdown)
 - **Applied when**: `type` is `"string"` and `format` or `inputType` is `"uri"`
-- **Additional features**: Protocol selection dropdown, default protocol list support (http, https, ftp, mailto, tel), custom protocol list via `presentation.FieldInputProps.protocols`
+- **Additional features**: Protocol selection dropdown, default protocol list support (http, https, ftp, mailto, tel), custom protocol list via `presentation.FieldInputProps.protocols`; a value whose scheme is not in the list keeps that scheme, which the dropdown adds as an extra option
 
 ### **[`FieldInputMonth.tsx`](./src/fieldInputs/FieldInputMonth.tsx)**
 
