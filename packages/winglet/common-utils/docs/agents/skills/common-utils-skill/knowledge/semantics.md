@@ -6,16 +6,17 @@ Organized by decision, not by module. Every claim here was read off `src/**` at 
 
 ### `equals` vs `stableEquals`
 
-|                              | `equals(left, right, omit?)`                           | `stableEquals(left, right)` |
-| ---------------------------- | ------------------------------------------------------ | --------------------------- |
-| Circular references          | **stack overflow**                                     | safe (WeakMap-tracked)      |
-| `Date`, `RegExp`, TypedArray | reference equality only                                | compared by value           |
-| Symbol properties            | not compared                                           | compared                    |
-| Non-enumerable properties    | not compared                                           | not compared                |
-| Omit keys                    | third argument, `Set` or array, applied at every level | not supported               |
-| Cost                         | the faster of the two                                  | roughly twice `equals`      |
+|                           | `equals(left, right, omit?)`                                                                                                                          | `stableEquals(left, right)` |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| Circular references       | **stack overflow**                                                                                                                                    | safe (WeakMap-tracked)      |
+| Built-ins                 | compared by state: `Date`, `RegExp`, `Map`, `Set`, `ArrayBuffer`, `DataView`, boxed primitives; `Error` by `name` and `message`, then enumerable keys | same rules                  |
+| TypedArray                | compared by index value (`0` equals `-0`)                                                                                                             | compared by bytes           |
+| Symbol properties         | not compared                                                                                                                                          | compared                    |
+| Non-enumerable properties | not compared                                                                                                                                          | not compared                |
+| Omit keys                 | third argument, `Set` or array, applied at every level                                                                                                | not supported               |
+| Cost                      | the faster of the two                                                                                                                                 | roughly twice `equals`      |
 
-Both treat `NaN` as equal to `NaN`. Reach for `equals` by default; switch to `stableEquals` the moment the data can carry a cycle or a built-in whose identity is not its value.
+Both treat `NaN` as equal to `NaN`. Reach for `equals` by default; switch to `stableEquals` the moment the data can carry a cycle, symbol keys or sparse-array holes.
 
 ```typescript
 // Ignore volatile keys at every nesting level, not just the top one.
@@ -50,13 +51,13 @@ minLite(3, 1); //  1   — two scalar arguments
 
 ### Graph serialization and fingerprint keys
 
-| API | Output | Use for |
-| --- | --- | --- |
-| `JSON.stringify` | ordinary JSON | standard JSON data |
-| `stringifyGraph` / `parseGraph` | graph JSON with reference tokens | cycles, shared references, and supported extended built-ins |
-| `createFingerprint` | reverse root-key pairs with native JSON for nested values | fast shallow comparison keys |
-| `createSortedFingerprint` | sorted flattened paths with cycle markers | order-independent path keys |
-| `createSafeFingerprint` | typed structural key with opaque identities | cycle-safe structural comparison keys |
+| API                             | Output                                                    | Use for                                                     |
+| ------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------- |
+| `JSON.stringify`                | ordinary JSON                                             | standard JSON data                                          |
+| `stringifyGraph` / `parseGraph` | graph JSON with reference tokens                          | cycles, shared references, and supported extended built-ins |
+| `createFingerprint`             | reverse root-key pairs with native JSON for nested values | fast shallow comparison keys                                |
+| `createSortedFingerprint`       | sorted flattened paths with cycle markers                 | order-independent path keys                                 |
+| `createSafeFingerprint`         | typed structural key with opaque identities               | cycle-safe structural comparison keys                       |
 
 ### `countKey` vs `countObjectKey`
 
@@ -86,9 +87,9 @@ await waitAndReturn(fn, 500); // call fn now, resolve after 500 ms — a minimum
 
 ## Circular-reference safety matrix
 
-| Safe | Unsafe — recursion, so a cycle overflows the stack | Unsafe — iterative, so a cycle spins forever |
-| --- | --- | --- |
-| `clone`, `stableEquals`, `stringifyGraph`, `createSortedFingerprint`, `createSafeFingerprint` | `cloneLite`, `equals`, `merge`, `removeUndefined` | `hasUndefined` |
+| Safe                                                                                          | Unsafe — recursion, so a cycle overflows the stack | Unsafe — iterative, so a cycle spins forever |
+| --------------------------------------------------------------------------------------------- | -------------------------------------------------- | -------------------------------------------- |
+| `clone`, `stableEquals`, `stringifyGraph`, `createSortedFingerprint`, `createSafeFingerprint` | `cloneLite`, `equals`, `merge`, `removeUndefined`  | `hasUndefined`                               |
 
 The safe implementations track visited objects in a `Map`/`WeakMap`; the rest have no guard at all. The two iterative ones are the worse failure: they consume memory in a loop instead of failing fast. When input can come from user data or a graph structure, this table picks the function.
 
