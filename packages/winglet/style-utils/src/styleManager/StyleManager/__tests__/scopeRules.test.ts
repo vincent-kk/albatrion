@@ -107,6 +107,13 @@ describe('scopeRules', () => {
     );
   });
 
+  test.each([
+    ['@import url(a.css);', '@import url(a.css);'],
+    ['@import url(a.css); @layer x', '@import url(a.css);@layer x'],
+  ])('copies statements with no style rule after them: %s', (input, output) => {
+    expect(scope(input)).toBe(output);
+  });
+
   test('drops a trailing rule without a matching brace', () => {
     expect(scope('.a{} @media (x) { .b{}')).toBe('.s .a{}');
   });
