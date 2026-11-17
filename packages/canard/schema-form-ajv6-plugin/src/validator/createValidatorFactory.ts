@@ -2,6 +2,7 @@ import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
 import Ajv from 'ajv';
 
 import { collectSchemaResources } from './utils/schemaPath/collectSchemaResources';
+import { createChildSchemaPathTest } from './utils/schemaPath/createChildSchemaPathTest';
 import { createNotRequiredKeyLookup } from './utils/schemaPath/createNotRequiredKeyLookup';
 import { transformDataPath } from './utils/transformDataPath';
 
@@ -23,14 +24,15 @@ export const createValidatorFactory =
     if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
     const compiled: object = transient ?? jsonSchema;
     const resources = collectSchemaResources(compiled);
+    const isChildPath = createChildSchemaPathTest(resources);
     const notRequiredKeyOf = createNotRequiredKeyLookup(compiled, resources);
     return async (data) => {
       try {
         const valid = await validate(data);
-        return valid ? null : transformDataPath(validate.errors ?? [], resources, notRequiredKeyOf);
+        return valid ? null : transformDataPath(validate.errors ?? [], isChildPath, notRequiredKeyOf);
       } catch (thrown) {
         if (thrown instanceof Ajv.ValidationError)
-          return transformDataPath(thrown.errors, resources, notRequiredKeyOf);
+          return transformDataPath(thrown.errors, isChildPath, notRequiredKeyOf);
         throw thrown;
       }
     };
