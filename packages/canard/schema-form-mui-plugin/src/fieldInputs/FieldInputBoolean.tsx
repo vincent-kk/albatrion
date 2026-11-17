@@ -23,6 +23,7 @@ const FieldInputBoolean = ({
   name,
   required,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -54,12 +55,12 @@ const FieldInputBoolean = ({
       label={label}
       htmlFor={path}
       required={required}
-      disabled={disabled}
+      disabled={disabled || readOnly}
       control={
         <Checkbox
           id={path}
           name={name}
-          disabled={disabled}
+          disabled={disabled || readOnly}
           indeterminate={indeterminate}
           defaultChecked={defaultChecked}
           onChange={handleChange}

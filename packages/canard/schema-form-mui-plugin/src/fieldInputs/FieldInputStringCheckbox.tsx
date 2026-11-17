@@ -39,6 +39,7 @@ const FieldInputStringCheckbox = ({
   jsonSchema,
   required,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -93,7 +94,7 @@ const FieldInputStringCheckbox = ({
       label={label}
       htmlFor={path}
       required={required}
-      disabled={disabled}
+      disabled={disabled || readOnly}
       labelPlacement="start"
       style={{
         display: 'flex',
@@ -108,7 +109,7 @@ const FieldInputStringCheckbox = ({
             return (
               <FormControlLabel
                 key={option.value}
-                disabled={disabled}
+                disabled={disabled || readOnly}
                 control={
                   <Checkbox
                     id={`${path}-${option.value}`}
