@@ -117,7 +117,14 @@ export const withUploader = <Props extends BaseProps>(
       const accept = useMemo(() => acceptFormat?.join(','), [acceptFormat]);
 
       const callbacks = { onClick, onChange };
-      const callbacksRef = useCommittedReference(useRef(callbacks), callbacks);
+      const callbacksRef = useRef(callbacks);
+      const previous = callbacksRef.current;
+      useCommittedReference(
+        callbacksRef,
+        previous.onClick === onClick && previous.onChange === onChange
+          ? previous
+          : callbacks,
+      );
       const { handleFileChange, handleClick } = useMemo(
         () => ({
           handleFileChange: ({ target }: ChangeEvent<HTMLInputElement>) => {
