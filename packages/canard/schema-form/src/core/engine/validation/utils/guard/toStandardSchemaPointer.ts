@@ -5,8 +5,10 @@ import { stripFragment } from '@/schema-form/helpers/jsonPointer';
  * @param schemaPath - Authored schema address whose reserved names use form escapes.
  * @returns A fragment-free pointer preserving ordinary percent names and ~ escapes.
  */
-export const toStandardSchemaPointer = (schemaPath: string): string =>
-  stripFragment(schemaPath).replace(
+export const toStandardSchemaPointer = (schemaPath: string): string => {
+  const pointer = stripFragment(schemaPath);
+  if (!pointer.includes('%')) return pointer;
+  return pointer.replace(
     /\/(%2A|%2E%2E|%2E|%40)(?=\/|$)/g,
     (_, token: string) =>
       '/' +
@@ -18,3 +20,4 @@ export const toStandardSchemaPointer = (schemaPath: string): string =>
             ? '.'
             : '..'),
   );
+};
