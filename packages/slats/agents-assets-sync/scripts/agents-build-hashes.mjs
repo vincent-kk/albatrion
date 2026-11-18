@@ -18,7 +18,7 @@ import { buildHashes } from './buildHashes.mjs';
 try {
   const packageRoot = process.cwd();
   const pkg = JSON.parse(
-    await readFile(resolve(packageRoot, 'package.json'), 'utf-8'),
+    (await readFile(resolve(packageRoot, 'package.json'), 'utf-8')).replace(/^\uFEFF/, ''),
   );
   if (typeof pkg.name !== 'string' || typeof pkg.version !== 'string') {
     throw new Error(
