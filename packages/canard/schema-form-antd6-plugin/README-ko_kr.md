@@ -272,7 +272,7 @@ Ant Design v6의 변경 사항에 대한 자세한 내용은 [공식 마이그�
 
 ## Form 범위의 컨트롤 식별자
 
-요소 id는 각 Form 범위로 구분됩니다. `path`는 JSON Pointer로 유지하며 DOM id로 사용하지 않습니다. 사용자 입력은 전달받은 `FieldInputProps.id`를 실제 컨트롤에 적용하고 단일 컨트롤의 레이블은 같은 값으로 `htmlFor`를 연결합니다. 사용자 `FieldRenderer`는 그룹 제목이나 legend에 `labelId`를 적용하고 그룹의 `aria-labelledby`로 연결합니다. 선택지마다 고유한 id를 사용합니다. 라디오의 native name은 scoped input id이며 나머지 입력은 말단 이름을 유지합니다.
+요소 id는 각 Form 범위로 구분됩니다. `path`는 JSON Pointer로 유지하며 DOM id로 사용하지 않습니다. 사용자 입력은 전달받은 `FieldInputProps.id`를 실제 컨트롤에 적용하고 단일 컨트롤의 레이블은 같은 값으로 `htmlFor`를 연결합니다. 사용자 `FieldRenderer`는 그룹 제목이나 legend에 `labelId`를 적용하고 그룹의 `aria-labelledby`로 연결합니다. 선택지마다 고유한 id를 사용합니다. `FieldInputProps.name`은 항상 말단 이름입니다. 라디오 그룹은 각 라디오의 native `name`에 `id`를 사용합니다.
 
 ```tsx
 const Input = ({ id, name }: FieldInputProps<string>) => <input id={id} name={name} />;
