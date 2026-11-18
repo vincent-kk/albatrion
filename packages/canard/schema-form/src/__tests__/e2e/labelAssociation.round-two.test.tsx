@@ -10,7 +10,7 @@ const schema = {
   properties: {
     name: { type: 'string', default: 'n' },
     obj: { type: 'object', properties: { x: { type: 'string' } } },
-    list: { type: 'array', items: { type: 'string' }, default: ['a', 'b'] },
+    list: { type: 'array', items: { type: 'string' }, default: ['a'] },
   },
 } as const;
 
@@ -29,3 +29,26 @@ it.for(['/name', '/list/*', '/obj/../name', '/list/0'])(
     expect(label.htmlFor).toBe(input.id);
   },
 );
+
+it('round-2 schema-form 10: ambiguous and missing queries keep their output', () => {
+  const view = render(
+    <Form
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          list: {
+            type: 'array',
+            items: { type: 'string' },
+            default: ['a', 'b'],
+          },
+        },
+      }}
+      validationMode={ValidationMode.None}
+    >
+      <Form.Label path="/list/*" />
+      <Form.Label path="/missing" />
+    </Form>,
+  );
+  expect(view.container.querySelector('label')?.htmlFor).toBe('/list/*');
+  expect(view.container.querySelectorAll('label')).toHaveLength(1);
+});
