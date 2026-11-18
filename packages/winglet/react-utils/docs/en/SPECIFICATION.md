@@ -55,7 +55,7 @@ yarn add @winglet/react-utils
 
 ```bash
 npm install react react-dom
-# React 16, 17, 18, or 19 are all supported
+# React >=16.14 <20 and React DOM >=16.14 <20 are supported
 ```
 
 ---

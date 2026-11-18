@@ -7,6 +7,8 @@
 - 각 재수출 심볼의 런타임 동작 계약은 그 심볼을 소유한 하위 organ·fractal의 문서 또는 구현이 정본이며, 이 문서는 집계 경계만 정의한다.
 - 패키지 매니페스트(`package.json`의 `exports`)는 루트와 별개로 하위 organ·fractal마다 독립 entry를 선언하고, 각 entry의 `source`는 그 대상 자신의 엔트리 포인트를 가리킨다.
 
+런타임의 JSX 변환과 훅을 제공하는 React와 React DOM 16.14 이상, 20 미만을 peer 범위로 요구한다.
+
 ## API Contracts
 
 - 루트 배럴은 하위 organ·fractal이 공개하는 모든 심볼을 이름 지정 재수출한다 — 개별 훅·HOC·컴포넌트·판별 유틸의 시그니처와 동작 계약은 그 심볼을 소유한 하위 문서 또는 구현이 정본이다.
