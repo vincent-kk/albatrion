@@ -136,7 +136,7 @@ export const withUploader = <Props extends BaseProps>(
             accept={accept}
             style={{ display: 'none' }}
             onChange={handleFileChange}
-            onClick={stopInputClick}
+            onClickCapture={stopInputClick}
             ref={inputRef}
           />
           <Component {...(props as Props)} onClick={handleClick} />
