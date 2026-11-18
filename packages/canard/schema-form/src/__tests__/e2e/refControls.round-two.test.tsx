@@ -107,36 +107,33 @@ describe('round-2 schema-form 2: reused template dependencies', () => {
     },
   );
   it('rebinds derived reads at recursive array depths', async () => {
-    const handle = createRef<FormHandle>();
-    render(
-      <Form
-        ref={handle}
-        validationMode={ValidationMode.None}
-        jsonSchema={{
-          $defs: {
-            n: {
-              type: 'object',
-              properties: {
-                name: { type: 'string' },
-                label: {
-                  type: 'string',
-                  controls: { derived: '(../name) + "#"' },
-                },
-                kids: { type: 'array', items: { $ref: '#/$defs/n' } },
-              },
-            },
+    const run = async (ref: boolean) => {
+      const level = (depth: number): JSONSchema => ({
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          label: { type: 'string', controls: { derived: '(../name) + "#"' } },
+          kids: {
+            type: 'array',
+            items: ref ? { $ref: '#/$defs/n' } : depth ? level(depth - 1) : false,
           },
-          $ref: '#/$defs/n',
-        }}
-        defaultValue={{
-          name: 'r',
-          kids: [{ name: 'c', kids: [{ name: 'g' }] }],
-        }}
-      />,
-    );
-    await act(() =>
-      handle.current!.findNode('/kids/0/kids/0/name')!.setValue('h'),
-    );
-    expect(handle.current!.findNode('/kids/0/kids/0/label')!.value).toBe('h#');
+        },
+      });
+      const handle = createRef<FormHandle>();
+      const view = render(
+        <Form
+          ref={handle}
+          validationMode={ValidationMode.None}
+          jsonSchema={
+            ref ? { $defs: { n: level(0) }, $ref: '#/$defs/n' } : level(3)
+          }
+          defaultValue={{ name: 'r', kids: [{ name: 'c', kids: [{ name: 'g' }] }] }} />,
+      );
+      await act(() => handle.current!.findNode('/kids/0/kids/0/name')!.setValue('h'));
+      const result = handle.current!.getValue();
+      view.unmount();
+      return result;
+    };
+    expect(await run(true)).toEqual(await run(false));
   });
 });
