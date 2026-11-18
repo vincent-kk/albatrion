@@ -4,6 +4,8 @@ import { getTrackableHandler } from '../getTrackableHandler';
 
 describe('round-2 common-utils 2: subscriber failure cleanup', () => {
   it('recovers after a start subscriber throws', async () => {
+    const report = vi.fn();
+    vi.stubGlobal('reportError', report);
     const origin = vi.fn(async () => 1);
     const handler = getTrackableHandler(origin);
     const unsubscribe = handler.subscribe(() => {
@@ -13,6 +15,9 @@ describe('round-2 common-utils 2: subscriber failure cleanup', () => {
     expect(handler.pending).toBe(false);
     unsubscribe();
     expect(await handler()).toBe(await origin());
+    expect(report).toHaveBeenCalledTimes(1);
+    expect(report).toHaveBeenCalledWith(expect.objectContaining({ message: 'listener' }));
+    vi.unstubAllGlobals();
   });
 });
 
