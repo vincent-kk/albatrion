@@ -40,7 +40,7 @@ Choosing wrong causes silent data loss (`active` where `visible` was intended) o
 
 ## watch and derived
 
-- `watch` declares extra dependencies as an array of paths: `controls: { watch: ['../items'] }`. Their values reach the input as `watchValues` and join the dependency set of the node's `derived` expression. A path followed by a property access must be parenthesized: `(../items).length > 0`.
+- `watch` declares extra dependencies as an array of paths: `controls: { watch: ['../items'] }`. Their values reach the input as `watchValues` and join the dependency set of the node's `derived` expression. A path followed by a property access must be parenthesized: `(../items)?.length > 0`. Empty arrays with omitEmpty emit undefined, so optional chaining is required. If a throwing expression degrades the form, correct the expression and perform a form-level reset or load to recover; ordinary writes do not clear degraded status.
 - `derived` computes the field's value from its dependencies and recomputes whenever one of them changes, **replacing any value written to it**; a value written directly stays until the next dependency change. For one-time propagation that stays editable, use `injectTo` instead (`inject-to.md`).
 - Keep expressions to boolean/arithmetic/comparison. For list reductions, watch the source and compute inside the component:
 
