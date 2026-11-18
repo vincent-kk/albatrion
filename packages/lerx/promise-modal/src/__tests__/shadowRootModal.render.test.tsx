@@ -1,4 +1,10 @@
-import { act, cleanup, fireEvent, render } from '@testing-library/react';
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import { ModalProvider, confirm } from '@/promise-modal';
@@ -151,6 +157,37 @@ it('(round-2 promise-modal 1, 3) preserves the top peer focus when a lower modal
   const light = retainsPeer(false);
   reset();
   const shadow = retainsPeer(true);
+  expect(light).toBe(true);
+  expect(shadow).toBe(light);
+});
+
+it('(round-2 promise-modal 3) falls back from an inert opener across light and shadow ancestors', () => {
+  function fallsBack(shadowed: boolean) {
+    const host = document.createElement('div');
+    document.body.append(host);
+    const tree = shadowed ? host.attachShadow({ mode: 'open' }) : host;
+    const opener = document.createElement('button');
+    tree.append(opener);
+    render(<ModalProvider />);
+    opener.focus();
+    act(() => {
+      void confirm({ title: 'Lower' });
+    });
+    const lowerId = ModalManager.ids[0];
+    act(() => {
+      void confirm({ title: 'Remaining' });
+    });
+    document.body.tabIndex = -1;
+    document.body.focus();
+    act(() => ModalManager.node(lowerId)?.onClose());
+    const frame = screen.getByText('Remaining').closest('[tabindex="-1"]');
+    const retained = !!frame?.contains(document.activeElement);
+    document.body.removeAttribute('tabindex');
+    return retained;
+  }
+  const light = fallsBack(false);
+  reset();
+  const shadow = fallsBack(true);
   expect(light).toBe(true);
   expect(shadow).toBe(light);
 });
