@@ -2,6 +2,7 @@ import { Fragment, memo, useMemo } from 'react';
 
 import { isString } from '@winglet/common-utils/filter';
 import { useHandle } from '@winglet/react-utils/hook';
+import { isReactComponent } from '@winglet/react-utils/filter';
 import { renderComponent } from '@winglet/react-utils/render';
 
 import type { ConfirmNode } from '@/promise-modal/core/node';
@@ -56,11 +57,11 @@ export const ConfirmInner = memo(
               {content}
             </ContentComponent>
           ) : (
-            renderComponent(content, {
+            (typeof content === 'function' || isReactComponent(content)) ? renderComponent(content, {
               onConfirm: handleConfirm,
               onCancel: handleClose,
               context: userDefinedContext,
-            })
+            }) : content
           ))}
         {footer !== false &&
           (typeof footer === 'function' ? (
