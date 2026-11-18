@@ -111,7 +111,7 @@ export class RuleScoper {
       if (stop === -1) {
         stop = this.__findStructure__(cursor, isAtRule);
         if (stop >= length) {
-          if (isAtRule) result += css.slice(cursor).trim() + ';';
+          if (isAtRule) result += css.slice(cursor).trim();
           this.__end__ = -1;
           return result;
         }
