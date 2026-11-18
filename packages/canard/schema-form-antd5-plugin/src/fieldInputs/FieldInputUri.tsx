@@ -1,7 +1,6 @@
 import {
   type ChangeEvent,
   useCallback,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -124,9 +123,6 @@ const FieldInputUri = ({
   // Only the protocol is stateful; the URI input remains uncontrolled.
   const [protocol, setProtocol] = useState<string>(initialProtocol);
 
-  useEffect(() => {
-    setProtocol(initialProtocol);
-  }, [initialProtocol]);
 
   const handleProtocolChange = useCallback(
     (value: string) => {
