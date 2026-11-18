@@ -38,7 +38,9 @@ export class FieldNodeRevisionLedger {
               (_, index) => previous[1 << index],
             );
     this[EXTERNAL_REVISION_COUNT] =
-      (previous[EXTERNAL_VALUE_REVISION] ?? 0) +
+      (previous instanceof FieldNodeRevisionLedger
+        ? previous[EXTERNAL_REVISION_COUNT]
+        : 0) +
       (mask & EXTERNAL_VALUE_REVISION ? 1 : 0);
     let remaining = mask & (KNOWN_BITS & ~EXTERNAL_VALUE_REVISION);
     while (remaining) {
