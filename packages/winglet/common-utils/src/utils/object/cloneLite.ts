@@ -104,7 +104,7 @@ import { setDataProperty } from './setDataProperty';
  * const partialClone = cloneLite(deepStructure, 3);
  * console.log(partialClone.config !== deepStructure.config); // true (cloned)
  * console.log(partialClone.config.database !== deepStructure.config.database); // true (cloned)
- * console.log(partialClone.config.database.connection !== deepStructure.config.database.connection); // true (cloned)
+ * console.log(partialClone.config.database.connection === deepStructure.config.database.connection); // true (reference)
  * console.log(partialClone.config.database.connection.pool === deepStructure.config.database.connection.pool); // true (reference)
  *
  * // Useful for creating shallow snapshots of deep structures

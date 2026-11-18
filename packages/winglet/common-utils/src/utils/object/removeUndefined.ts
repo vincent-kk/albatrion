@@ -293,9 +293,10 @@ import { setDataProperty } from './setDataProperty';
  * - May change object/array references even when no undefined values exist
  * - Performance impact on very large nested structures
  */
-export const removeUndefined = <Type>(input: Type): Type => {
+export function removeUndefined<Type>(input: Type): Type;
+export function removeUndefined(input: unknown): unknown {
   if (isArray(input)) {
-    const result = [] as typeof input;
+    const result: unknown[] = [];
     for (let i = 0, l = input.length; i < l; i++) {
       const item = removeUndefined(input[i]);
       if (item !== undefined) result[result.length] = item;
@@ -303,16 +304,16 @@ export const removeUndefined = <Type>(input: Type): Type => {
     return result;
   }
   if (isPlainObject(input)) {
-    const result = {} as typeof input;
-    const keys = Object.keys(input) as Array<keyof Type>;
+    const result: Record<string, unknown> = {};
+    const keys = Object.keys(input);
     for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
-      const value = removeUndefined(input[k] as object);
+      const value = removeUndefined(input[k]);
       if (value !== undefined) {
         if (k === '__proto__') setDataProperty(result, k, value);
-        else (result as any)[k] = value;
+        else result[k] = value;
       }
     }
     return result;
   }
   return input;
-};
+}
