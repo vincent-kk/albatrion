@@ -1,5 +1,5 @@
 import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
-import Ajv from 'ajv';
+import type Ajv from 'ajv';
 
 import { collectSchemaResources } from './utils/schemaPath/collectSchemaResources';
 import { createChildSchemaPathTest } from './utils/schemaPath/createChildSchemaPathTest';
@@ -33,7 +33,7 @@ export const createValidatorFactory =
         const valid = await validate(data);
         return valid ? null : transformDataPath(validate.errors ?? [], isChildPath, notRequiredKeyOf);
       } catch (thrown) {
-        if (thrown instanceof Ajv.ValidationError)
+        if (thrown !== null && typeof thrown === 'object' && 'ajv' in thrown && thrown.ajv === true && 'validation' in thrown && thrown.validation === true && 'errors' in thrown && Array.isArray(thrown.errors))
           return transformDataPath(thrown.errors, isChildPath, notRequiredKeyOf);
         throw thrown;
       }
