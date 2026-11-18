@@ -75,10 +75,12 @@ const FieldInputStringEnum = ({
       )
         ? defaultValue.map((value) => JSON.stringify(value))
         : undefined;
+    // A null array value means no selection, not the null option.
+    if (mode === 'multiple') return undefined;
     return defaultValue === null || typeof defaultValue === 'string'
       ? JSON.stringify(defaultValue)
       : undefined;
-  }, [defaultValue]);
+  }, [defaultValue, mode]);
 
   const handleChange = useHandle((value: string | string[]) => {
     if (Array.isArray(value)) {
