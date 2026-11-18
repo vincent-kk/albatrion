@@ -25,6 +25,7 @@ export const equalsRecursive = (
   omits: Set<PropertyKey> | null,
 ): boolean => {
   if (left === right || (left !== left && right !== right)) return true;
+  if (left === null || right === null || typeof left !== 'object' || typeof right !== 'object') return false;
   const pending: unknown[] = [left, right];
   while (pending.length) {
     right = pending.pop();
