@@ -8,6 +8,7 @@ import {
 } from '@/schema-form/helpers/schemaIdentity';
 
 import type { RootLoad, RootLoadProps } from '../type';
+import { applyFormErrors } from './applyFormErrors';
 
 /**
  * Build a speculative root; prepared current loads deliver even while effects are disconnected.
@@ -65,10 +66,12 @@ export const createRootLoad = (
           load.props.onStateChange?.(load.root.globalState);
       },
     });
-    if (mount)
+    if (mount) {
       mountFieldNode(load.root, undefined, undefined, {
         deferValidation: true,
       });
+      if (props.errors?.length) applyFormErrors(load.root, props.errors, undefined, 'load');
+    }
   } catch (error) {
     load.error = error;
     if (load.root?.diagnostics.cause === 'sharedConflict')
