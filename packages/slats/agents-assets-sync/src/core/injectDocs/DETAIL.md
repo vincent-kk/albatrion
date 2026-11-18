@@ -12,6 +12,7 @@
 - `applyBlockActions` 는 하나의 공유 문서를 한 번의 read-modify-write 로 처리한다. 문서가 없으면 빈 내용에서 시작하고, 상위 디렉터리를 만들어 쓴다.
 - 문서 변환은 바이트와 일대일 대응하는 문자열로 원본을 유지하고, 새 마커와 본문만 UTF-8로 인코딩합니다. 손상된 UTF-8이나 다른 인코딩의 사용자 본문도 재인코딩하지 않습니다.
 - 이 도구의 블록 바깥 내용은 바이트 단위로 살아남는다. 문서는 다른 도구와 사용자의 땅이기도 하다.
+- 강제 적용으로 실제 덮어쓴 항목은 updated에 기록하고 diverged 경고에서 제외합니다. 미적용·미리보기·실패한 항목은 갱신으로 보고하지 않습니다.
 - `summarize` 는 순수하다. 계획이 이미 모든 판정을 담고 있으므로 파일시스템도 환경변수도 읽지 않는다.
 - `skip-uptodate` 와 `skip-unsupported` 는 함께 `skipped` 로 집계되고, `warn-diverged` 와 `warn-orphan` 은 사유(`'diverged'` / `'orphan'`)를 단 `warnings` 로 집계된다.
 - `exitCode` 는 호출자가 정해 넘기며 `InjectReport` 를 통해 전파된다.

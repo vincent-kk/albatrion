@@ -174,7 +174,9 @@ async function renderOneUnit(
     plan,
     failedActions.length ? 1 : 0,
     failedActions,
+    [...fileActions, ...[...blockGroups.values()].flat()],
   );
+  for (const path of report.updated) logger.file('update', path);
   return report.exitCode;
 }
 

@@ -196,7 +196,7 @@ async function runUnit(
       ...base,
       requiresForce: plan.requiresForce,
       actions: plan.actions,
-      report: summarize(plan, failedActions.length ? 1 : 0, failedActions),
+      report: summarize(plan, failedActions.length ? 1 : 0, failedActions, [...fileActions, ...[...blockGroups.values()].flat()]),
       ...(failedActions.length
         ? {
             error: `Failed to apply: ${failedActions.map((action) => action.relPath).join(', ')}`,

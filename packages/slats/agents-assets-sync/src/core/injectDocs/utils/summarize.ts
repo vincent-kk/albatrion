@@ -16,6 +16,7 @@ export function summarize(
   plan: InjectPlan,
   exitCode: 0 | 1 | 2,
   failedActions: readonly Action[] = [],
+  appliedActions: readonly Action[] = [],
 ): InjectReport {
   const report: InjectReport = {
     created: [],
@@ -35,8 +36,10 @@ export function summarize(
       report.skipped.push(action.relPath);
     else if (action.kind === 'skip-unsupported')
       report.skipped.push(action.relPath);
-    else if (action.kind === 'warn-diverged')
-      report.warnings.push({ relPath: action.relPath, reason: 'diverged' });
+    else if (action.kind === 'warn-diverged') {
+      if (appliedActions.includes(action)) report.updated.push(action.relPath);
+      else report.warnings.push({ relPath: action.relPath, reason: 'diverged' });
+    }
     else if (action.kind === 'warn-orphan')
       report.warnings.push({ relPath: action.relPath, reason: 'orphan' });
     else if (action.kind === 'delete') report.deleted.push(action.relPath);
