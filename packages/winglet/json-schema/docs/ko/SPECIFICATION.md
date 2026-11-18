@@ -104,6 +104,8 @@ console.assert(schema.properties.name.$ref === 'types.json#/$defs/Text');
 
 ## 비동기 문서 공급
 
+로더가 거부한 요청은 오류를 전파하며 캐시에서 제거합니다. 다음 명시적 resolve가 다시 시도하고, 성공·미발견·진행 중 요청은 공유합니다. 한 resolve 안에서는 자동 재시도하지 않습니다.
+
 패키지는 스스로 문서를 가져오지 않습니다. 동기 해소기는 루트와 등록 자원만 사용합니다. 비동기 해소기는 등록 자원으로 충족되지 않은 절대 문서 URI를 조각 없이 load에 전달합니다. 없는 문서는 undefined로 반환합니다. 진행 중 요청과 완료·미발견 결과는 해당 해소기에서 URI별로 공유하며 공급 함수의 오류는 전파합니다. 공급 문서 집합이 바뀌면 새 해소기를 만드세요.
 
 `JSONSchemaScannerAsync.scan()`을 기다린 뒤 동기 getValue를 호출합니다. 콜백과 해소기의 resolve는 순차적으로 기다리고 root/child/dialect는 동기입니다. 동기 스캐너는 콜백 반환값을 기다리지 않습니다. async 방문자가 void 콜백 타입에 대입되어도 대기가 필요하면 비동기 스캐너를 사용하세요. 동기 스캐너에 Promise를 돌려주는 사용자 해소기는 잘못된 결과입니다. 가져오기·재시도·인증·취소는 호출자의 공급 함수가 담당합니다.
@@ -114,9 +116,6 @@ console.assert(schema.properties.name.$ref === 'types.json#/$defs/Text');
 import {
   JSONSchemaScannerAsync,
   createReferenceResolverAsync,
-
-로더가 거부한 요청은 오류를 전파하며 캐시에서 제거합니다. 다음 명시적 resolve가 다시 시도하고, 성공·미발견·진행 중 요청은 공유합니다. 한 resolve 안에서는 자동 재시도하지 않습니다.
-
 } from '@winglet/json-schema';
 import type { UnknownSchema } from '@winglet/json-schema';
 
