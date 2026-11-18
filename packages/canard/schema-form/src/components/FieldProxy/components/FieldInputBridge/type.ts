@@ -45,10 +45,8 @@ export const REACTIVE_RERENDERING_EVENTS =
   FieldNodeEventType.UpdateJsonSchema |
   FieldNodeEventType.UpdatePath;
 
-/** Child ownership shares the input's existing mount-count cell across Activity cleanup. */
+/** Child ownership shares the existing child-field cache across Activity cleanup. */
 export interface ChildInputOwnership {
-  /** Number of child proxies with connected layout effects. */
-  current: number;
   /** External-value revision captured by the first child render. */
   externalValueRevision?: number;
   /** Raw input identity owning this record. */

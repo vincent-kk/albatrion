@@ -36,10 +36,9 @@ const getNoManager = () => null;
  * @param NodeProxy - FieldProxy
  * @param mountedChildren - Count of committed child proxies, kept by each child's layout effect
  * @param terminalChildren - List from `useTerminalChildren`, returned as is for terminal nodes and empty branches
- * @param childValueRevision - Optional input ownership cell that pins the external revision on first child render.
  * @returns Child fields and an optional ref that the input's existing layout
  *          effect marks true before passive snapshot consistency checks,
- *          plus the form manager used to record the slot's real input commit
+ *          plus the form manager and its persistent child-ownership record
  *
  * @remarks `node.children` is read during render and kept consistent by the
  *          input's combined `useSyncExternalStore` tracker, so
@@ -57,11 +56,11 @@ export const useChildFields = (
   NodeProxy: ComponentType<FieldProxyProps>,
   mountedChildren: RefObject<number>,
   terminalChildren: ChildField[],
-  childValueRevision?: ChildInputOwnership,
 ): readonly [
   ChildField[],
   RefObject<boolean> | undefined,
   VirtualizationManager | null,
+  ChildInputOwnership,
 ] => {
   const children = node.children;
 
@@ -76,13 +75,14 @@ export const useChildFields = (
     getSnapshot,
     getNoManager,
   );
-  const cache = useLazyConstant(() => ({
+  const cache = useLazyConstant<ChildInputOwnership & {
+    fields: WeakMap<FieldNode, ChildField>;
+    nextKey: number;
+  }>(() => ({
     fields: new WeakMap<FieldNode, ChildField>(),
     nextKey: 0,
-    ownership: childValueRevision,
   }));
 
-  cache.ownership = childValueRevision;
   const ChildFields = useMemo(() => {
     if (isTerminalNode(node) || children === null) return terminalChildren;
     const manager = snapshot ?? (hydratedRef.current ? formManager : null);
@@ -110,10 +110,9 @@ export const useChildFields = (
             ...restProps
           }: ChildFieldProps) => {
             if (
-              cache.ownership &&
-              cache.ownership.externalValueRevision === undefined
+              cache.externalValueRevision === undefined
             )
-              cache.ownership.externalValueRevision = branch.revision(
+              cache.externalValueRevision = branch.revision(
                 EXTERNAL_VALUE_REVISION,
               );
             useLayoutEffect(() => {
@@ -172,5 +171,6 @@ export const useChildFields = (
     ChildFields,
     snapshot === null && formManager !== null ? hydratedRef : undefined,
     formManager,
+    cache,
   ];
 };
