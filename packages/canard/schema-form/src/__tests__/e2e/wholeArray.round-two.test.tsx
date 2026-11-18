@@ -318,8 +318,10 @@ it('round-2 schema-form 3: refresh starts a fresh child-ownership lifetime', asy
     const view = render(tree());
     fireEvent.click(view.getByText('toggle children'));
     fireEvent.click(view.getByText('toggle children'));
-    if (refresh) act(() => ref.current!.refresh());
+    const beforeRefresh = view.getByTestId('owned-value').parentElement;
+    if (refresh) act(() => ref.current!.refresh('/list'));
     else view.rerender(tree(true));
+    expect(view.getByTestId('owned-value').parentElement).not.toBe(beforeRefresh);
     await act(() => ref.current!.setValue({ list: ['external'] }));
     const result = view.getByTestId('owned-value').textContent;
     view.unmount();
