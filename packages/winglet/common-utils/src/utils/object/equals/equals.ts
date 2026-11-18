@@ -213,7 +213,7 @@ import { equalsRecursive } from './utils/equalsRecursive';
  * ```
  *
  * **Limitations:**
- * - **Does not handle circular references** (causes stack overflow)
+ * - **Does not handle circular references** (comparison does not terminate)
  * - Functions are compared by reference only, not by implementation
  * - Set members and Map keys that are objects match by reference only
  * - Typed arrays are compared by index value, so `0` and `-0` are equal
@@ -222,10 +222,10 @@ import { equalsRecursive } from './utils/equalsRecursive';
  * - **Performance degrades** with very deep nesting (>50 levels)
  *
  * **Production Considerations:**
- * - **Memory**: Monitor stack usage with deeply nested objects
+ * - **Memory**: Pending comparisons use an explicit work stack
  * - **Performance**: Consider memoization for frequently compared objects
  * - **Error Handling**: Wrap in try-catch for user-provided data
- * - **Security**: Validate object depth to prevent stack overflow attacks
+ * - **Security**: Reject cyclic untrusted input before comparing it
  * - **Testing**: Verify behavior with your specific data structures
  *
  * **Browser/Runtime Compatibility:**
