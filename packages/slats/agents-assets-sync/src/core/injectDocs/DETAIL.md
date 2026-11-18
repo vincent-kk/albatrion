@@ -26,7 +26,8 @@
 - `applyAction(action: Action, assetRoot: string): Promise<void>`
   - `file` 이외의 목적지에서는 무동작
 - `applyBlockActions(fileAbs: string, actions: readonly Action[], assetRoot: string): Promise<void>`
-- `summarize(plan: InjectPlan, exitCode: 0 | 1 | 2, failedActions?: readonly Action[]): InjectReport`
+- `summarize(plan: InjectPlan, exitCode: 0 | 1 | 2, failedActions?: readonly Action[], appliedActions?: readonly Action[]): InjectReport`
+  - 실제 적용한 액션을 전달하면 실패 항목을 제외한 강제 덮어쓰기를 updated로 집계합니다. 생략하면 미리보기 의미를 유지합니다.
 
 ## Exported Types
 
