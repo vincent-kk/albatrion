@@ -96,33 +96,37 @@ export const collectDeclarations = (
       }),
     );
   }
+  let referenceTarget: ReturnType<typeof resolveReference> | undefined;
   if (typeof schema.$ref === 'string') {
-    const references = new Set(visiting);
-    references.add(input.schemaPath);
+    let references: Set<string> | undefined;
     let reference = schema.$ref;
     let location = input.schemaPath;
     while (true) {
       const target = resolveReference(context, reference, location);
-      if (references.has(target.schemaPath)) break;
-      references.add(target.schemaPath);
-      const targetSchema = readSchemaObject(target.schema);
-      const schemaPath = appendSegment(
-        appendSegment(target.schemaPath, 'controls'),
-        'active',
-      );
+      referenceTarget ??= target;
       if (
-        targetSchema.controls?.active !== undefined &&
-        !gates.some((gate) => gate.schemaPath === schemaPath)
-      )
-        gates.push(
-          createBlueprintGate({
-            kind: 'active',
-            schemaPath,
-            hostPath: path,
-            condition: targetSchema.controls.active,
-          }),
+        target.schemaPath === input.schemaPath ||
+        visiting.includes(target.schemaPath) ||
+        references?.has(target.schemaPath)
+      ) break;
+      const targetSchema = readSchemaObject(target.schema);
+      if (targetSchema.controls?.active !== undefined) {
+        const schemaPath = appendSegment(
+          appendSegment(target.schemaPath, 'controls'),
+          'active',
         );
+        if (!gates.some((gate) => gate.schemaPath === schemaPath))
+          gates.push(
+            createBlueprintGate({
+              kind: 'active',
+              schemaPath,
+              hostPath: path,
+              condition: targetSchema.controls.active,
+            }),
+          );
+      }
       if (typeof targetSchema.$ref !== 'string') break;
+      (references ??= new Set()).add(target.schemaPath);
       reference = targetSchema.$ref;
       location = target.schemaPath;
     }
@@ -195,7 +199,7 @@ export const collectDeclarations = (
     return result;
   const stack = [...visiting, input.schemaPath];
   if (typeof schema.$ref === 'string') {
-    const target = resolveReference(context, schema.$ref, input.schemaPath);
+    const target = referenceTarget ?? resolveReference(context, schema.$ref, input.schemaPath);
     collectDeclarations(
       context,
       {
