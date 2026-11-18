@@ -26,7 +26,7 @@ import { destroyScope } from '@winglet/style-utils';
 ## Signature
 
 ```typescript
-const destroyScope: (scopeId: string) => void
+const destroyScope: (scopeId: string, config?: StyleManagerConfig) => void
 ```
 
 ## Parameters
@@ -34,6 +34,11 @@ const destroyScope: (scopeId: string) => void
 | Name | Type | Description |
 |------|------|-------------|
 | `scopeId` | `-` | The unique identifier of the scope to destroy |
+| `config` | `-` | The ShadowRoot target; omitted for the document scope |
+
+## Returns
+
+Nothing after releasing the target scope
 
 ## Examples
 
