@@ -56,7 +56,7 @@ degraded 거부는 origin submit 기록을 한 번 보고한 뒤 caller에게 �
 
 현행 네이티브 판정은 committed 기본 정책이 Never가 아닐 때 공개합니다. Form의 disabled·readOnly는 공개를 막지 않고 focus만 막습니다. 후보는 present 조상 아래에서 자기 errors가 있고 disabled·readOnly가 아니며 자기 ErrorVisibility가 false가 아닌 노드의 전위 첫 항목입니다. 루트는 다른 후보가 없을 때만 고르므로 관련 없는 첫 입력으로 이동하지 않습니다. 선택 입력이 focus할 수 없더라도 다음 후보로 넘어가지 않아 트리 순서를 결정적으로 유지합니다.
 
-native 여부는 `true`만 인정합니다. handle.submit을 클릭 핸들러로 직접 넘겼을 때 이벤트 객체를 native 신호로 오인하지 않습니다. 네이티브 이벤트 기본 동작은 억제하며 안정적인 제출 함수 참조로 무관한 prop 변경이 FormRootProxy까지 전파되지 않게 합니다.
+native 여부는 `true`만 인정합니다. handle.submit을 클릭 핸들러로 직접 넘겼을 때 이벤트 객체를 native 신호로 오인하지 않습니다. 네이티브 submit은 event.target이 자기 form인 경우에만 처리합니다. portal 안쪽 Form에서 올라온 React 사건은 바깥 Form의 검증·공개·초점·제출을 시작하지 않습니다. 자기 네이티브 이벤트 기본 동작은 억제하며 안정적인 제출 함수 참조로 무관한 prop 변경이 FormRootProxy까지 전파되지 않게 합니다.
 
 ### root-boundary — ERROR-088·ERROR-091·ERROR-112: 보고기를 경계 바깥에 둡니다
 

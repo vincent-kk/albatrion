@@ -235,6 +235,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   const handleSubmit = useMemo(() => getTrackableHandler(submit), [submit]);
   const handleNativeSubmit = useCallback(
     async (event: SyntheticEvent) => {
+      if (event.target !== event.currentTarget) return;
       event.preventDefault();
       const isCurrent = captureValidationLifetime();
       try {
