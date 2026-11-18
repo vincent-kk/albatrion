@@ -187,6 +187,8 @@ const Input = ({ id, name }: FieldInputProps<string>) => <input id={id} name={na
 
 해당 Form 안에서 `formElement.querySelector('[data-path="/email"] input')`처럼 조회하거나 컨트롤이 받은 id로 레이블을 연결합니다. Form API가 반환하는 값은 스키마 형태를 유지합니다.
 
+서버 렌더링 한계: 라이브러리가 해당 native 속성 prop을 제공하지 않으므로 Stepper 실제 입력의 id/name, Switch DOM id, 라디오 native name, Slider thumb의 id와 `aria-labelledby` 연결은 hydration에서 완성됩니다. 라디오 선택지 id와 Switch의 `aria-labelledby`는 서버 HTML에도 포함됩니다. 선택지와 라이브러리 내부 상태가 갱신되어도 native name 연결을 유지합니다.
+
 ## 연락처
 
 프로젝트와 관련된 문의나 제안은 이슈를 생성해 주세요.

@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 
-import { cleanup, render, fireEvent, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import { Form } from '@canard/schema-form';
@@ -39,11 +39,18 @@ it('names newly rendered radio options while the field id stays unchanged (round
     ),
   ).toEqual([props.id, props.id]);
   fireEvent.click(view.container.querySelectorAll('input')[1]);
-  await waitFor(() => expect(Array.from(view.container.querySelectorAll<HTMLInputElement>('input'), input => input.name)).toEqual([props.id, props.id]));
+  await waitFor(() =>
+    expect(
+      Array.from(
+        view.container.querySelectorAll<HTMLInputElement>('input'),
+        (input) => input.name,
+      ),
+    ).toEqual([props.id, props.id]),
+  );
   view.rerender(
     <Component
       {...props}
-      jsonSchema={{ ...props.jsonSchema, enum: ['one', 'two', 'three'] }}
+      jsonSchema={{ type: 'string', enum: ['one', 'two', 'three'] }}
     />,
   );
   const inputs = view.container.querySelectorAll<HTMLInputElement>('input');

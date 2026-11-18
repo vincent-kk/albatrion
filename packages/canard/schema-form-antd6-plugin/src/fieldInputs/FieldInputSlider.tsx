@@ -28,7 +28,7 @@ const FieldInputSlider = ({
   misfit,
   'aria-labelledby': labelledBy,
 }: FieldInputSliderProps) => {
-  // The library exposes its real handle only through the mounted DOM.
+  // Ant Design exposes handle ARIA props, but its public id targets the slider root.
   const markFocusTarget = useCallback(
     (group: HTMLDivElement | null) => {
       const handle = group?.querySelector<HTMLElement>('[role="slider"]');
@@ -62,6 +62,7 @@ const FieldInputSlider = ({
   return (
     <div ref={markFocusTarget} role="group" aria-invalid={misfit || undefined}>
       <Slider
+        ariaLabelledByForHandle={labelledBy}
         disabled={disabled || readOnly}
         min={min}
         max={max}
