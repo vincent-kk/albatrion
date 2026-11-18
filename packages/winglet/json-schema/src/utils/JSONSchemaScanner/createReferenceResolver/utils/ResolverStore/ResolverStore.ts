@@ -233,62 +233,83 @@ export class ResolverStore {
               reason: ReferenceSkipReason.Unresolved,
             }),
           };
-    new JSONSchemaScanner({
-      options: {
-        resolveReference: indexProvider,
-        defaultDialect: initial.resource.dialect,
-        keywords: this.options.keywords,
-        additionalKeywords: this.options.additionalKeywords,
-      },
-      visitor: {
-        enter: (entry) => {
-          const parent = stack[stack.length - 1]?.context ?? initial;
-          const context =
-            entry.depth === 0
-              ? initial
-              : entry.inert
-                ? parent
-                : this.child(parent, entry.schema);
-          if (
-            entry.depth === 0 ||
-            (context !== parent && !context.resource.owner)
-          ) {
-            if (context.resource.path && context.resource.path !== entry.path)
-              this.duplicate(
-                context.resource.uri,
-                context.resource.document.uri + context.resource.path,
-                retrieval + entry.path,
-              );
-            if (!context.resource.path) context.resource.path = entry.path;
-            this.registerResource(context.resource);
-          }
-          const location: Location = {
-            schema: entry.schema,
-            path: entry.path,
-            context,
-            uri: '',
-            inert: !!entry.inert,
-          };
-          document.paths.set(entry.path, location);
-          if (!entry.inert && typeof entry.schema === 'object')
-            this.registerAnchors(location);
-          stack.push({ depth: entry.depth, context });
+    try {
+      new JSONSchemaScanner({
+        options: {
+          resolveReference: indexProvider,
+          defaultDialect: initial.resource.dialect,
+          keywords: this.options.keywords,
+          additionalKeywords: this.options.additionalKeywords,
         },
-        exit: () => {
-          stack.pop();
+        visitor: {
+          enter: (entry) => {
+            const parent = stack[stack.length - 1]?.context ?? initial;
+            const context =
+              entry.depth === 0
+                ? initial
+                : entry.inert
+                  ? parent
+                  : this.child(parent, entry.schema);
+            if (
+              entry.depth === 0 ||
+              (context !== parent && !context.resource.owner)
+            ) {
+              if (context.resource.path && context.resource.path !== entry.path)
+                this.duplicate(
+                  context.resource.uri,
+                  context.resource.document.uri + context.resource.path,
+                  retrieval + entry.path,
+                );
+              if (!context.resource.path) context.resource.path = entry.path;
+              this.registerResource(context.resource);
+            }
+            const location: Location = {
+              schema: entry.schema,
+              path: entry.path,
+              context,
+              uri: '',
+              inert: !!entry.inert,
+            };
+            document.paths.set(entry.path, location);
+            if (!entry.inert && typeof entry.schema === 'object')
+              this.registerAnchors(location);
+            stack.push({ depth: entry.depth, context });
+          },
+          exit: () => {
+            stack.pop();
+          },
         },
-      },
-    }).scan(schema);
-    const prior = this.resources.get(retrieval);
-    if (prior && (prior.document !== document || prior.path !== '#'))
-      this.duplicate(
-        retrieval,
-        prior.document.uri + prior.path,
-        retrieval + '#',
-      );
-    this.resources.set(retrieval, initial.resource);
-    this.indexed.add(retrieval);
-    return initial;
+      }).scan(schema);
+      const prior = this.resources.get(retrieval);
+      if (prior && (prior.document !== document || prior.path !== '#'))
+        this.duplicate(
+          retrieval,
+          prior.document.uri + prior.path,
+          retrieval + '#',
+        );
+      this.resources.set(retrieval, initial.resource);
+      this.indexed.add(retrieval);
+      return initial;
+    } catch (error) {
+      this.discard(document);
+      throw error;
+    }
+  }
+
+  /**
+   * Remove only registrations owned by a rejected indexing attempt.
+   * @param document Failed attempt; committed documents are never overwritten during indexing.
+   * @returns Nothing; successful registrations and cached requests remain intact.
+   */
+  private discard(document: DocumentRecord): void {
+    for (const [uri, resource] of this.resources)
+      if (resource.document === document) this.resources.delete(uri);
+    for (const [uri, names] of this.anchors) {
+      for (const [name, anchor] of names)
+        if (anchor.location.context.resource.document === document)
+          names.delete(name);
+      if (names.size === 0) this.anchors.delete(uri);
+    }
   }
 
   /**
@@ -410,8 +431,7 @@ export class ResolverStore {
     const dialect = this.options.defaultDialect ?? DEFAULT_DIALECT;
     if (hasOwnProperty(source, uri)) this.index(source[uri], uri, dialect);
     else {
-      const registered = (this.registered ??=
-        this.normalizeRegistered(source));
+      const registered = (this.registered ??= this.normalizeRegistered(source));
       const schema = registered.get(uri);
       if (schema !== undefined) this.index(schema, uri, dialect);
       else
@@ -448,11 +468,7 @@ export class ResolverStore {
         ? source[uri]
         : this.registered?.get(uri);
       if (schema !== undefined && isAbsoluteURI(uri))
-        this.index(
-          schema,
-          uri,
-          this.options.defaultDialect ?? DEFAULT_DIALECT,
-        );
+        this.index(schema, uri, this.options.defaultDialect ?? DEFAULT_DIALECT);
     } catch (error) {
       this.settled.delete(uri);
       throw error;
