@@ -13,6 +13,8 @@ import type {
 
 import type { MuiContext } from '../type';
 
+import { getOwnLabel } from './utils/enum/getOwnLabel';
+
 type RadioGroupStringJSONSchema = StringSchema & {
   radioLabels?: string[];
 };
@@ -64,7 +66,7 @@ const FieldInputRadioGroup = ({
       return {
         value,
         rawValue,
-        label: radioLabels?.[index] || alias?.['' + rawValue] || '' + rawValue,
+        label: radioLabels?.[index] || getOwnLabel(alias, '' + rawValue) || '' + rawValue,
       };
     });
   }, [jsonSchema, alias]);
