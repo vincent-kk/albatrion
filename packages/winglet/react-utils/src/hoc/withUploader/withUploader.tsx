@@ -2,7 +2,6 @@ import {
   type ChangeEvent,
   type ComponentType,
   Fragment,
-  type MouseEvent as ReactMouseEvent,
   memo,
   useMemo,
   useRef,
@@ -13,6 +12,7 @@ import { isFunction } from '@winglet/common-utils/filter';
 import type { Fn } from '@aileron/declare';
 
 import { useHandle } from '../../hooks/useHandle';
+import { openFilePicker } from './utils/openFilePicker';
 
 interface BaseProps {
   onClick?: Fn<[e?: MouseEvent]>;
@@ -126,7 +126,8 @@ export const withUploader = <Props extends BaseProps>(
 
       const handleClick = useHandle((e: MouseEvent) => {
         if (isFunction(onClick)) onClick(e);
-        inputRef.current?.click();
+        const input = inputRef.current;
+        if (input) openFilePicker(input);
       });
 
       return (
@@ -136,7 +137,6 @@ export const withUploader = <Props extends BaseProps>(
             accept={accept}
             style={{ display: 'none' }}
             onChange={handleFileChange}
-            onClickCapture={stopInputClick}
             ref={inputRef}
           />
           <Component {...(props as Props)} onClick={handleClick} />
@@ -144,8 +144,3 @@ export const withUploader = <Props extends BaseProps>(
       );
     },
   );
-
-/** Stops the hidden input activation from duplicating the user click upstream. */
-const stopInputClick = (event: ReactMouseEvent<HTMLInputElement>): void => {
-  event.stopPropagation();
-};

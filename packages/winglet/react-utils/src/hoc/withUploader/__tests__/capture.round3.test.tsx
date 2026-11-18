@@ -1,9 +1,13 @@
 import type { ReactNode } from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
+
 import { withUploader } from '../withUploader';
 
-afterEach(() => { document.body.innerHTML = ''; });
+afterEach(() => {
+  document.body.innerHTML = '';
+});
 
 describe('r3 react-utils: withUploader click containment (DETAIL: only the original click reaches ancestor handlers)', () => {
   const Button = ({
@@ -13,7 +17,10 @@ describe('r3 react-utils: withUploader click containment (DETAIL: only the origi
     onClick?: (event?: MouseEvent) => void;
     children?: ReactNode;
   }) => (
-    <button data-testid="upload" onClick={(event) => onClick?.(event.nativeEvent)}>
+    <button
+      data-testid="upload"
+      onClick={(event) => onClick?.(event.nativeEvent)}
+    >
       {children}
     </button>
   );
@@ -69,4 +76,3 @@ describe('r3 react-utils: withUploader click containment (DETAIL: only the origi
     });
   });
 });
-
