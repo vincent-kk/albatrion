@@ -29,15 +29,7 @@ export async function requestForceConfirm({
 }: RequestForceConfirmInput): Promise<boolean> {
   const hasWarnings = plans.some((p) => p.plan.requiresForce);
   if (!hasWarnings || dryRun) return true;
-  if (!force) {
-    dispatch({
-      type: 'fail',
-      error: new Error(
-        'Re-run with --force to proceed, or inspect with --dry-run.',
-      ),
-    });
-    return false;
-  }
+  if (!force) return true;
   // No dialog is shown, so no phase transition is needed: `applyAllPlans`
   // moves on from `diff-review` with its own `apply-start`.
   if (autoApprove) return true;

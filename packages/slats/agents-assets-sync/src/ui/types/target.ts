@@ -13,6 +13,8 @@ export interface TargetPlan {
   readonly target: ConsumerPackage;
   readonly agentTarget: AgentTarget;
   readonly plan: InjectPlan;
+  /** Planning failure retained alongside successful units. */
+  readonly error?: string;
 }
 
 export interface Warning {

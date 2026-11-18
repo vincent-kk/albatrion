@@ -45,7 +45,7 @@ export function InjectApp(props: InjectAppProps): React.ReactElement {
 
   useExitApp({
     enabled: phase.kind === 'error',
-    exitCode: 1,
+    exitCode: phase.kind === 'error' ? (phase.exitCode ?? 1) : 1,
     onExit: handleExit,
     delayMs: 100,
   });
@@ -175,6 +175,11 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
               plan={tp.plan}
               expanded={false}
             />
+          ))}
+          {phase.plans.filter((tp) => tp.error).map((tp) => (
+            <Text key={`${tp.target.name}:${tp.agentTarget.agent}`} color={colors.danger}>
+              {tp.target.name}: {tp.error}
+            </Text>
           ))}
           <Summary
             reports={phase.reports}

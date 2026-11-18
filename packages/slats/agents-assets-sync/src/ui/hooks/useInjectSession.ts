@@ -39,7 +39,7 @@ export function useInjectSession({
   // here can only be an empty flag — which means every kind.
   const assetKinds = useMemo(() => {
     const requested = (flags.asset ?? []).filter((value): value is AssetKind =>
-      ALL_KINDS.includes(value as AssetKind),
+      ALL_KINDS.some((kind) => kind === value),
     );
     return new Set<AssetKind>(requested.length > 0 ? requested : ALL_KINDS);
   }, [flags.asset]);
@@ -80,7 +80,7 @@ export function useInjectSession({
         dispatch({
           type: 'done',
           reports: [],
-          exitCode: 2,
+          exitCode: 0,
           dryRun: Boolean(flags.dryRun),
         });
         return;

@@ -122,6 +122,9 @@ export function usePlanStep({
               step: { packageName: target.name, agent, status: 'done' },
             });
           } catch (error) {
+            results.push({ target, agentTarget: resolveAgentTarget(agent, scope, originCwd),
+              plan: { actions: [], requiresForce: false },
+              error: error instanceof Error ? error.message : String(error) });
             dispatch({
               type: 'plan-step',
               step: {
