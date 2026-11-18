@@ -10,7 +10,7 @@
 
 세 함수는 각각 다른 목적의 키 생성기입니다. createFingerprint는 빠른 shallow 키를 생성하며 top-level 속성만 omit하고 중첩 값에는 native JSON을 사용합니다. 속성 삽입 순서에 민감하고 native JSON의 손실·예외·toJSON 동작을 따릅니다. createSortedFingerprint는 경로 flatten 정렬을 사용하며 재귀 omit과 순환 marker를 제공합니다. 두 경로는 delimiter·타입·빈 컨테이너 구분이 모호할 수 있으며 Map/Set payload를 비교하지 않습니다.
 
-createSafeFingerprint는 정렬·순환 처리 키입니다. plain object/array의 내용을 비교하고 Date/RegExp는 값을, Map/Set/함수/사용자 인스턴스/symbol 값은 참조 identity를 비교합니다. Map/Set 내부 mutation은 키를 바꾸지 않습니다. standalone 함수의 opaque identity 범위는 module 수명이며 factory는 독립 범위입니다. factory 간 또는 프로세스 간 opaque 키 비교는 보장하지 않습니다. safe는 순환 종료와 타입/문자열 경계 구분의 의미이며 암호학적 hash나 복원 형식이 아닙니다.
+createSafeFingerprint는 정렬·순환 처리 키입니다. realm이 달라도 plain object·array의 내용과 Date·RegExp의 값을 동일하게 비교합니다. 다른 realm의 일반 객체를 opaque identity로 기록하면 입력 변경을 놓치므로 동일한 plain 판정과 슬롯 검증을 사용합니다. plain object/array의 내용을 비교하고 Date/RegExp는 값을, Map/Set/함수/사용자 인스턴스/symbol 값은 참조 identity를 비교합니다. Map/Set 내부 mutation은 키를 바꾸지 않습니다. standalone 함수의 opaque identity 범위는 module 수명이며 factory는 독립 범위입니다. factory 간 또는 프로세스 간 opaque 키 비교는 보장하지 않습니다. safe는 순환 종료와 타입/문자열 경계 구분의 의미이며 암호학적 hash나 복원 형식이 아닙니다.
 
 세 함수는 { omit?, prefix? }를 받고 prefix 기본값은 빈 문자열입니다. createFingerprintFactory({ mode?: 'fast'|'sorted'|'safe', cache?: 'none'|'immutable', prefix? })는 생성 시 mode/prefix를 고정하며 mode 기본값은 safe입니다. 호출 옵션은 omit입니다. 기본은 mutation을 반영하고 immutable은 호출자가 깊은 불변성을 보장할 때만 사용합니다. omit 집합 변경은 매 호출 반영하며 완료된 root 결과만 cache에 저장합니다. 변경 불가능한 입력이라는 전제에서도 실패한 부분 결과는 저장하지 않습니다.
 
