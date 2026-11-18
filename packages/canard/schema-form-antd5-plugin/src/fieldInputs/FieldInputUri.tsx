@@ -2,7 +2,6 @@ import {
   type ChangeEvent,
   useCallback,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 
@@ -26,7 +25,6 @@ type StringJSONSchema = StringSchema & {
 
 const DEFAULT_PROTOCOLS = ['http', 'https', 'ftp', 'mailto', 'tel'];
 
-
 interface FieldInputUriProps
   extends FieldInputPropsWithSchema<
     string | null,
@@ -43,7 +41,7 @@ const FieldInputUri = ({
   name,
   readOnly,
   disabled,
-  defaultValue,
+  value,
   onChange,
   context,
   placeholder,
@@ -51,56 +49,39 @@ const FieldInputUri = ({
   protocols,
   misfit,
 }: FieldInputUriProps) => {
-
   const normalizedProtocols = useMemo(() => {
     const rawProtocols = protocols || DEFAULT_PROTOCOLS;
     return rawProtocols.map(formatProtocol);
   }, [protocols]);
 
-
-  const inputRef = useRef<any>(null);
-
-  const { initialProtocol, initialUri } = useMemo(() => {
-    if (typeof defaultValue !== 'string') {
-      return {
-        initialProtocol: normalizedProtocols[0] ?? '',
-        initialUri: '',
-      };
-    }
-
-    const parsed = parseUri(defaultValue);
-    return { initialProtocol: parsed.protocol, initialUri: parsed.path };
-  }, [defaultValue, normalizedProtocols]);
-
-  // Only the protocol is stateful; the URI input remains uncontrolled.
-  const [protocol, setProtocol] = useState<string>(initialProtocol);
-
+  const parsed = useMemo(() => typeof value === 'string' ? parseUri(value) : undefined, [value]);
+  const [lastProtocol, setLastProtocol] = useState(parsed?.protocol ?? normalizedProtocols[0] ?? '');
+  const protocol = parsed?.protocol ?? lastProtocol;
+  const uri = parsed?.path ?? '';
+  const protocolOptions = useMemo(() => normalizedProtocols.includes(protocol) ? normalizedProtocols : [protocol, ...normalizedProtocols], [normalizedProtocols, protocol]);
 
   const handleProtocolChange = useCallback(
     (value: string) => {
-      setProtocol(value);
+      setLastProtocol(value);
 
-      const currentUri = inputRef.current?.input?.value || '';
-      const newValue = `${value}${currentUri}` || undefined;
+      const currentUri = uri;
+      const newValue = currentUri ? `${value}${currentUri}` : undefined;
       onChange(newValue);
     },
-    [onChange],
+    [onChange, uri],
   );
 
   const handleUriChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       const newUri = event.target.value;
-      const newValue = `${protocol}${newUri}` || undefined;
+      setLastProtocol(protocol);
+      const newValue = newUri ? `${protocol}${newUri}` : undefined;
       onChange(newValue);
     },
     [protocol, onChange],
   );
 
   const ProtocolDropdown = useMemo(() => {
-    // A stored scheme outside `protocols` stays selectable, so editing the path keeps it.
-    const protocolOptions = normalizedProtocols.includes(initialProtocol)
-      ? normalizedProtocols
-      : [initialProtocol, ...normalizedProtocols];
     return (
       <Select
         value={protocol}
@@ -116,8 +97,7 @@ const FieldInputUri = ({
     );
   }, [
     protocol,
-    initialProtocol,
-    normalizedProtocols,
+    protocolOptions,
     disabled,
     readOnly,
     handleProtocolChange,
@@ -126,25 +106,25 @@ const FieldInputUri = ({
   return (
     <Space.Compact block size={size || context?.size}>
       {ProtocolDropdown}
-    <Input
-      ref={inputRef}
-      id={path}
-      name={name}
-      readOnly={readOnly}
-      disabled={disabled}
-      placeholder={placeholder}
-      defaultValue={initialUri}
-      onChange={handleUriChange}
-      size={size || context?.size}
-      status={misfit ? 'error' : undefined}
-      aria-invalid={misfit || undefined}
-    />
+      <Input
+        id={path}
+        name={name}
+        readOnly={readOnly}
+        disabled={disabled}
+        placeholder={placeholder}
+        value={uri}
+        onChange={handleUriChange}
+        size={size || context?.size}
+        status={misfit ? 'error' : undefined}
+        aria-invalid={misfit || undefined}
+      />
     </Space.Compact>
   );
 };
 
 export const FieldInputUriDefinition = {
   Component: FieldInputUri,
+  controlled: true,
   test: ({ type, format, inputType }) =>
     type === 'string' && (format === 'uri' || inputType === 'uri'),
 } satisfies FieldInputDefinition;
