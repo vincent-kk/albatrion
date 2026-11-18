@@ -49,7 +49,10 @@ export const ForegroundFrame = ({
         foreground,
         modal.visible && active,
         (modal.visible ||
-          (modal.manualDestroy && modal.settled && modal.isVisibleAtSettlement && modal.alive)) &&
+          (modal.manualDestroy &&
+            modal.settled &&
+            modal.isVisibleAtSettlement &&
+            modal.alive)) &&
           visible,
       )}
     >

@@ -1,12 +1,11 @@
 import { useRef } from 'react';
 
-import { useIsomorphicLayoutEffect } from '@/promise-modal/hooks/useIsomorphicLayoutEffect';
-
 import type { Fn } from '@aileron/declare';
 
 import type { ModalNode } from '@/promise-modal/core/node';
 import { closeModal } from '@/promise-modal/core/node';
 import { mergeDefined } from '@/promise-modal/helpers/mergeDefined';
+import { useIsomorphicLayoutEffect } from '@/promise-modal/hooks/useIsomorphicLayoutEffect';
 
 import type {
   AlertProps,
@@ -77,17 +76,20 @@ export const useModal = (configuration?: OverridableHandleProps) => {
     },
   );
 
-  useIsomorphicLayoutEffect(() => () => {
-    const results = modalResultsRef.current;
-    modalResultsRef.current = [];
-    queueMicrotask(() => {
-      for (const result of results) {
-        const modalNode = result.modalNode;
-        if (modalNode) closeModal(modalNode);
-        else result.cancel();
-      }
-    });
-  }, []);
+  useIsomorphicLayoutEffect(
+    () => () => {
+      const results = modalResultsRef.current;
+      modalResultsRef.current = [];
+      queueMicrotask(() => {
+        for (const result of results) {
+          const modalNode = result.modalNode;
+          if (modalNode) closeModal(modalNode);
+          else result.cancel();
+        }
+      });
+    },
+    [],
+  );
 
   return {
     alert: alertRef.current,

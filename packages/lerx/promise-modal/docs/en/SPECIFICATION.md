@@ -148,6 +148,8 @@ The fallback foreground supplies `role="dialog"` and `aria-modal="true"`. Custom
 
 One ModalProvider or useInitializeModal bootstrap owns the portal. Additional bootstraps warn once in development and wait; cleanup removes only that bootstrap’s ownership or waiting registration. The first waiter takes over when the owner leaves. Modals visible at that moment stay visible and follow the receiving provider's route, while modals already hidden by route keep their original route; frames and backgrounds still receive the original `initiator`. With no waiter, a microtask cancels alive nodes unless the system reinitializes during the same commit. Pre-mount queued requests remain queued, so keep a browser bootstrap mounted to process them.
 
+Hiding only the Provider with Activity or a re-suspended Suspense boundary releases its keyboard, focus and page effects while keeping requests from outside the hidden subtree pending. The same modal and prompt value return when the Provider is shown. A hidden useModal caller still cancels its own requests; actual Provider removal cancels or hands over as described above. To cancel on Provider hide, abort explicitly or unmount the Provider.
+
 `alive` means retained in the store, `visible` means displayed, and `settled` means the first result or error is final. Route hiding preserves pending results; only pending nodes can reappear. Abort and caller cleanup cancel even hidden requests. A manual closed node may remain alive for exit animation but cannot show again. `useDestroyAfter` starts only after settlement.
 
 The default pathname hook uses Navigation API events when available, otherwise polls only with alive nodes, including hidden requests and exit frames. Default requests use pathname at opening time. Supply a router hook returning `{ pathname }` to track your router; the following example uses context so both the page and modal content can change the same route.
@@ -255,3 +257,4 @@ Catch opening and render failures at the requesting call. A presenter failure re
 React 18 and 19 share the same public contract. Both runtime bundles start with use client; DOM-free import and server rendering remain supported without layout-effect warnings. Server rendering creates no portal, counts zero modals, and must not call browser modal functions.
 
 Compatible internal state versions share a system within one JavaScript realm, including requests, style identity, ownership, keyboard, and page effects. Incompatible versions remain isolated and warn in development. Other windows/realms are not shared: root examples target elements in the current document, not an iframe document. CommonJS TypeScript-specific .d.cts declarations are not supplied.
+

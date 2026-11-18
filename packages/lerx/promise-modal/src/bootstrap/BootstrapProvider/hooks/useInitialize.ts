@@ -19,7 +19,9 @@ export const useInitialize = (
 ) => {
   const [, update] = useVersion();
   const identity = useRef({});
-  const lifetime = useRef<{ generation: number; observer?: MutationObserver }>({ generation: 0 });
+  const lifetime = useRef<{ generation: number; observer?: MutationObserver }>({
+    generation: 0,
+  });
   const anchorRef = useRef<HTMLElement | null>(null);
   const effectiveRoot = useRef(mode === 'manual' ? null : root);
   const previousRoot = useRef(root);
