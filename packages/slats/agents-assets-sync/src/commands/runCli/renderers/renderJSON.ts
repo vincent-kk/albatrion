@@ -108,7 +108,7 @@ export async function renderJSON(
       );
       units.push(unit);
       if (unit.error) exitCode = 1;
-      else if (unit.requiresForce && !flags.force && !flags.dryRun)
+      else if (exitCode === 0 && unit.requiresForce && !flags.force && !flags.dryRun)
         exitCode = 2;
     }
   }
