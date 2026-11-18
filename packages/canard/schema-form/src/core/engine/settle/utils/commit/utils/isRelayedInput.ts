@@ -12,10 +12,9 @@ import { isSameDeliveryValue } from './isSameDeliveryValue';
 export const isRelayedInput = <Self extends FieldNodeRecord<Self>>(
   relays: Readonly<NonNullable<FieldNodeRuntime<Self>['inputRelays']>>,
   path: string,
-): boolean => {
-  for (let index = 0; index < relays.length; index++) {
-    const relay = relays[index];
-    if (
+): boolean =>
+  relays.some(
+    (relay) =>
       relay.path === path &&
       relay.node.path === path &&
       !relay.node.isDetached &&
@@ -23,9 +22,5 @@ export const isRelayedInput = <Self extends FieldNodeRecord<Self>>(
       (isSameDeliveryValue(relay.node.storedValue, relay.value) ||
         (relay.node.behavior.type === 'array' &&
           relay.node.behavior.strategy === 'branch' &&
-          equals(relay.node.storedValue, relay.value)))
-    )
-      return true;
-  }
-  return false;
-};
+          equals(relay.node.storedValue, relay.value))),
+  );
