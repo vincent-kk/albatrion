@@ -8,6 +8,7 @@
 
 - 공통 무효 표시와 값 보존 정책은 [상위 계약](../../DETAIL.md)에 둡니다.
 - 선택지 연결과 묶음 이름의 공통 규약은 [문자열 checkbox 계약](../FieldInputStringCheckbox/DETAIL.md)에 둡니다. 두 입력의 접근성 연결 규칙이 따로 달라지지 않게 합니다.
+- name prop은 다른 입력과 같은 말단 이름입니다. 각 라디오의 native name에는 전달된 scoped id를 사용하여 서로 다른 필드·Form의 선택을 격리합니다.
 
 ## Acceptance Criteria
 

@@ -263,12 +263,7 @@ export const FieldInputBridge = memo(
           schemaType={node.schemaType}
           misfit={node.isMisfit}
           id={formId + ':' + node.path}
-          name={
-            presentation?.inputType === 'radio' ||
-            presentation?.inputType === 'radiogroup'
-              ? formId + ':' + node.path
-              : node.name
-          }
+          name={node.name}
           path={node.path}
           nullable={node.isNullable}
           watchValues={node.watchValues}

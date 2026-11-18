@@ -15,7 +15,6 @@ import type { RadioLabelsContext } from './type';
 /** Render a radio group for a string enum node. */
 export const FieldInputStringRadio = ({
   id: fieldId,
-  name,
   jsonSchema,
   readOnly,
   disabled,
@@ -65,7 +64,7 @@ export const FieldInputStringRadio = ({
             <input
               type="radio"
               id={id}
-              name={name}
+              name={fieldId}
               readOnly={readOnly}
               disabled={disabled}
               value={value}

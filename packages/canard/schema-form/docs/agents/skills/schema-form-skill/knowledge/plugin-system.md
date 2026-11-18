@@ -132,4 +132,4 @@ const application = (
 
 Use the same token for every compatible copy belonging to that application. Different scopes and the unscoped registry never inherit each other's registrations. `registerPlugin(null, { scope: applicationScope })` resets only that scope, including its deduplication record. Without an option, `registerPlugin(null)` still resets the realm-shared defaults. Register before rendering: registration is not reactive, and scoped registries live for the lifetime of the realm.
 
-Custom inputs and plugin renderers follow [control identifiers and author responsibility](field-input.md#control-identifiers-and-author-responsibility): use the supplied id on a focusable control, labelId for a group title, and the scoped id as a native radio group name. path stays the data pointer.
+Custom inputs and plugin renderers follow [control identifiers and author responsibility](field-input.md#control-identifiers-and-author-responsibility): use the supplied id on a focusable control, labelId for a group title, and the scoped id as a native radio group name. The name prop always remains the leaf name; path stays the data pointer.

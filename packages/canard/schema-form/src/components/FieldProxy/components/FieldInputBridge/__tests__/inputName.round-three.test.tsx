@@ -38,7 +38,8 @@ it.each(['radio', 'radiogroup'] as const)(
         />
       </>,
     );
-    const [plain, hinted] = view.getAllByRole<HTMLInputElement>('textbox');
+    const [plain, hinted] =
+      view.container.querySelectorAll<HTMLInputElement>('input');
     expect(plain.name).toBe('Field');
     expect(hinted.name).toBe(plain.name);
     expect(hinted.id).not.toBe(plain.id);
@@ -80,7 +81,10 @@ it.each(['radio', 'radiogroup'] as const)(
     expect(plain.textContent).toBe('Field');
     expect(hinted.textContent).toBe(plain.textContent);
     expect(
-      view.getAllByRole<HTMLInputElement>('textbox').map((input) => input.name),
+      Array.from(
+        view.container.querySelectorAll<HTMLInputElement>('input'),
+        (input) => input.name,
+      ),
     ).toEqual(['Field', 'Field']);
   },
 );

@@ -20,7 +20,7 @@ const Input = ({ id, defaultValue }: FieldInputProps) => (
 );
 ```
 
-`Label` and `Form.Label` use the scoped id for `htmlFor`; title ids and radio/checkbox group `aria-labelledby` use `label:` followed by that id. A FieldRenderer receives `labelId` for its title or legend. For `presentation.inputType: 'radio'` and `'radiogroup'`, `name` also changes from the leaf name (for example `method`) to the scoped full path. Native submission and `FormData` therefore use distinct scoped keys for billing and shipping radios; `FormHandle.getValue()` retains the schema-shaped value. Other input names remain unchanged. Custom radio inputs use `id` for their native group name.
+`Label` and `Form.Label` use the scoped id for `htmlFor`; title ids and radio/checkbox group `aria-labelledby` use `label:` followed by that id. A FieldRenderer receives `labelId` for its title or legend. The `name` prop always remains the leaf name (for example `method`), regardless of presentation hints or which input definition is selected. Each radio input uses its `id` prop as the native group name instead of forwarding the `name` prop; a radio hint alone never changes a text fallback or a custom input's name. Native submission and `FormData` therefore use distinct scoped keys for billing and shipping radios; `FormHandle.getValue()` retains the schema-shaped value. Other native input names remain unchanged. Custom radio inputs migrate `name={name}` to `name={id}` on every radio option; their `name` prop remains available for a label fallback or data naming.
 
 React 18 and 19 server rendering and hydration preserve the same scope. Applications with independent server-rendered React roots supply distinct, matching `identifierPrefix` values on the server and client.
 

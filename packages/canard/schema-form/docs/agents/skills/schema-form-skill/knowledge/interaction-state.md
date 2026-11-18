@@ -137,4 +137,4 @@ Then edit back through the input: divergence becomes false while Edited remains 
 Clear state and verify the value remains; reset and verify the loaded output, cleared interaction flags and false divergence together.
 Replace default/schema props without resetting and verify that the tree and baseline remain until reset.
 
-Custom inputs and plugin renderers follow [control identifiers and author responsibility](field-input.md#control-identifiers-and-author-responsibility): use the supplied id on a focusable control, labelId for a group title, and the scoped id as a native radio group name. path stays the data pointer.
+Custom inputs and plugin renderers follow [control identifiers and author responsibility](field-input.md#control-identifiers-and-author-responsibility): use the supplied id on a focusable control, labelId for a group title, and the scoped id as a native radio group name. The name prop always remains the leaf name; path stays the data pointer.

@@ -51,9 +51,9 @@ export interface FieldInputProps<
   schemaType: Node['schemaType'];
   /** Whether the stored value mismatches the accepted kinds. */
   misfit: Node['isMisfit'];
-  /** Name of field node assigned to FieldInput Component */
+  /** Leaf field name (key or index), unchanged by input selection hints. */
   name: Node['name'];
-  /** DOM id scoped to this Form; use this for the input element, not path. */
+  /** Form-scoped DOM id; use on the focusable control and as the native radio group name. */
   id: string;
   /** Path of field node assigned to FieldInput Component */
   path: Node['path'];
@@ -124,8 +124,9 @@ export interface UnknownFieldInputProps {
   disabled: boolean;
   required: boolean;
   node: any;
+  /** Leaf field name (key or index), unchanged by input selection hints. */
   name: string;
-  /** DOM id scoped to this Form, distinct from the data path. */
+  /** Form-scoped DOM id; use on the focusable control and as the native radio group name. */
   id: string;
   path: string;
   type: FieldNodeType;

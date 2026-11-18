@@ -96,4 +96,4 @@ Clear the source errors and check that the summary disappears; a hidden message 
 
 The child-error aggregate deliberately includes hidden children. FieldRenderer and useFieldErrors visibility still require isPresent; the aggregate does not apply that filter.
 
-Use the supplied id for a custom focusable control and native radio names, and FieldRenderer.labelId for group titles; [the identifier contract](field-input.md#control-identifiers-and-author-responsibility) keeps these separate from the data path.
+Use the supplied id for a custom focusable control and native radio names, and FieldRenderer.labelId for group titles; [the identifier contract](field-input.md#control-identifiers-and-author-responsibility) keeps these separate from the data path, while the name prop always remains the leaf name.
