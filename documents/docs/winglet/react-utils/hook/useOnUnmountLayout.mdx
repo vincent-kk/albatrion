@@ -22,7 +22,7 @@ shifts, and DOM inconsistencies during component removal.
 **This blocks browser painting** — use sparingly and only when synchronous cleanup
 is essential to prevent visual artifacts. For most cleanup, prefer `useOnUnmount`.
 ### Handler Freshness
-The handler passed on the most recent render is the one that runs, so it observes the
+The handler passed on the most recent committed render is the one that runs, so it observes the
 props and state of that render. The handler is never invoked on re-renders, only on
 unmount.
 

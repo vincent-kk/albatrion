@@ -328,10 +328,10 @@ try {
 
 **Execution Flow:**
 1. Check concurrent execution prevention (if enabled)
-2. Call `beforeExecute` hook with arguments and state manager
-3. Set `pending` to `true` and notify subscribers
+2. Reserve pending execution, then call and await a thenable `beforeExecute` result
+3. Notify subscribers after the hook settles
 4. Execute original function
-5. Call `afterExecute` hook (always, regardless of success/failure)
+5. Call `afterExecute` after execution starts and await any returned thenable
 6. Set `pending` to `false` and notify subscribers
 7. Return original function result or `undefined` if prevented
 

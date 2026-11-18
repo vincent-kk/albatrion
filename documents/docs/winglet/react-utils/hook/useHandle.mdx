@@ -8,9 +8,9 @@ import WingletPlayground from '@site/src/components/WingletPlayground';
 
 # useHandle
 
-Creates a stable callback reference that always invokes the latest version of the provided handler.
+Creates a stable callback reference that always invokes the latest committed version of the provided handler.
 This hook solves the common "stale closure" problem in React by maintaining a stable
-function reference while ensuring it always calls the most recent version of your handler.
+function reference while ensuring it always calls the most recent committed version of your handler.
 It combines the benefits of `useCallback` (stable reference) with the flexibility of
 always having access to the latest props and state.
 ### Problem it Solves
@@ -45,7 +45,7 @@ function useHandle<P extends Array<any>, R>(handler: Fn<P, R>): Fn<P, R>
 
 ## Returns
 
-A stable callback that always invokes the latest version of the handler
+A stable callback that always invokes the latest committed version of the handler
 
 ## Examples
 
@@ -83,3 +83,9 @@ const ExpensiveChild = React.memo(({ onClick }) => { ... });
 const handleClick = useHandle(() => process(data));
 return <ExpensiveChild onClick={handleClick} />;`}
 />
+
+## Notes
+
+React 18 and 19 publish handlers before layout effects. React 16.14 and 17
+publish during the parent layout effect, so a child layout effect may read the prior commit.
+Render attempts that suspend, throw, or are abandoned never replace the handler.
