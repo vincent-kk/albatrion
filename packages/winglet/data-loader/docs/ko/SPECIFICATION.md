@@ -376,7 +376,7 @@ class TtlMap<K, V> {
 }
 
 const cachedLoader = new DataLoader(batchLoad, {
-  cacheMap: new TtlMap(60_000), // 1분 TTL
+  cache: new TtlMap(60_000), // 1분 TTL
 });
 ```
 
