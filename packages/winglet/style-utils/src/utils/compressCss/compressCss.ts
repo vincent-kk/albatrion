@@ -29,7 +29,7 @@ import { isInsideParens } from './utils/isInsideParens';
  * Prioritizes speed over perfect compression - some trailing spaces may remain.
  *
  * @param css - The CSS string to compress
- * @returns A compressed CSS string with minimal whitespace and no comments
+ * @returns A compressed CSS string; empty comments retain boundaries between adjacent tokens
  *
  * @note This function prioritizes performance over perfect compression.
  * Some trailing spaces may remain in certain contexts (e.g., media queries)
@@ -92,6 +92,15 @@ export const compressCss = (css: string): string => {
       ) {
         inComment = false;
         cursor += 2;
+        const nextByte = buffer[cursor];
+        if (lastByte > SPACE && nextByte > SPACE &&
+          !isTokenBoundary(lastByte) && !isTokenBoundary(nextByte)) {
+          output[outputIndex++] = SLASH;
+          output[outputIndex++] = ASTERISK;
+          output[outputIndex++] = ASTERISK;
+          output[outputIndex++] = SLASH;
+          lastByte = SLASH;
+        }
         continue;
       }
       cursor++;
@@ -249,3 +258,7 @@ export const compressCss = (css: string): string => {
 
   return decoder.decode(output.subarray(0, outputIndex));
 };
+
+/** Tells whether punctuation already separates adjacent CSS tokens. */
+const isTokenBoundary = (byte: number): boolean =>
+  byte === LBRACE || byte === RBRACE || byte === COLON || byte === SEMICOLON || byte === COMMA || byte === R_PAREN;
