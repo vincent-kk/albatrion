@@ -66,13 +66,17 @@ import { BASE_36_DIGITS } from './constant';
  * Space complexity is O(1) excluding input string.
  */
 export const fromBase = (value: string, base: number): number => {
-  if (typeof value !== 'string' || (value.length === 0 || value === '-'))
+  if (typeof value !== 'string' || value.length === 0)
     throw new Error('Value must be a non-empty string');
   if (!Number.isInteger(base) || base < 2 || base > 36)
     throw new Error('Base must be an integer between 2 and 36');
 
   const isNegative = value[0] === '-';
-  const cleanValue = isNegative ? value.slice(1) : value;
+  let cleanValue = value;
+  if (isNegative) {
+    if (value.length === 1) throw new Error('Value must be a non-empty string');
+    cleanValue = value.slice(1);
+  }
   const upperValue = cleanValue.toUpperCase();
 
   let result = 0;
