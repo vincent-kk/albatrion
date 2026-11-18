@@ -158,6 +158,7 @@ async function runUnit(
     const force = flags.force ?? false;
     const plan = await buildPlan({
       sourceHashes: manifest.files,
+              ...(target.hashSource === 'manifest' ? { assetRoot: target.assetRoot } : {}),
       destinations,
       orphanScans,
       force,
