@@ -113,7 +113,7 @@ Use sub-path imports to reduce bundle size:
 | `@winglet/react-utils/hook`   | All 18 hooks                                                                                       |
 | `@winglet/react-utils/hoc`    | `withErrorBoundary`, `withErrorBoundaryForwardRef`, `withUploader`                                 |
 | `@winglet/react-utils/portal` | `Portal` compound object                                                                           |
-| `@winglet/react-utils/filter` | `isReactComponent`, `isReactElement`, `isClassComponent`, `isFunctionComponent`, `isMemoComponent` |
+| `@winglet/react-utils/filter` | `isReactComponent`, `isReactElement`, `isClassComponent`, `isFunctionComponent`, `isMemoComponent`, `isForwardRefComponent`, `isLazyComponent` |
 | `@winglet/react-utils/object` | `remainOnlyReactComponent`                                                                         |
 | `@winglet/react-utils/render` | `renderComponent`                                                                                  |
 
@@ -889,7 +889,7 @@ function isReactComponent<Props = any>(
 
 Returns `true` for function components, class components, and `React.memo` wrapped components.
 
-**Does not detect**: `React.forwardRef` components.
+Also detects `React.forwardRef` and `React.lazy` components. Use `isForwardRefComponent` and `isLazyComponent` to distinguish these types.
 
 ```tsx
 isReactComponent(() => <div />); // true
@@ -901,7 +901,7 @@ isReactComponent(
     }
   },
 ); // true
-isReactComponent(React.forwardRef((_, ref) => <div ref={ref} />)); // false
+isReactComponent(React.forwardRef((_, ref) => <div ref={ref} />)); // true
 isReactComponent(<div />); // false (element, not component)
 isReactComponent('string'); // false
 ```

@@ -49,41 +49,11 @@ Behavior worth knowing before debugging it:
 - **Falsy selections are dropped**: `onChange` only fires when a file is present, so cancelling the dialog is silent.
 - The result is `memo`-wrapped, and `onClick`, `onChange`, and `acceptFormat` are consumed by the HOC. Everything else, `children` included, forwards to the wrapped component, which must accept an `onClick` prop.
 
-## Type-guard gaps
+## Component type guards
 
-The `filter` guards are narrow structural checks, and two of them are wrong in ways that matter:
+`isReactComponent` accepts functions, classes, `memo`, `forwardRef`, and `lazy` components. Use `isForwardRefComponent` and `isLazyComponent` when the wrapper type matters. `isReactElement` is React's `isValidElement` and checks an element rather than a component type.
 
-| Guard                 | True for                                              | Blind spot                                                                      |
-| --------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `isFunctionComponent` | **any function** without `prototype.isReactComponent` | utilities, event handlers, class factories — all pass                           |
-| `isClassComponent`    | classes extending `Component` / `PureComponent`       | —                                                                               |
-| `isMemoComponent`     | `$$typeof === Symbol.for('react.memo')`               | —                                                                               |
-| `isReactComponent`    | the union of the three above                          | **`forwardRef` components fail** — they are objects with a different `$$typeof` |
-| `isReactElement`      | React's own `isValidElement`                          | — (an element, not a component)                                                 |
-
-Detect `forwardRef` yourself when it matters:
-
-```typescript
-const isForwardRef = (x: unknown): boolean =>
-  typeof x === 'object' &&
-  x !== null &&
-  (x as any).$$typeof === Symbol.for('react.forward_ref');
-```
-
-`memo(forwardRef(...))` does pass `isReactComponent`, because the outer `memo` wrapper is what gets inspected — so the gap only bites on bare `forwardRef`.
-
-**`remainOnlyReactComponent` inherits both defects.** It keeps dictionary entries passing `isReactComponent`, which means a registry loses its `forwardRef` components silently and keeps unrelated helper functions:
-
-```typescript
-remainOnlyReactComponent({
-  Button, // function component → kept
-  Input, // forwardRef        → DROPPED
-  formatDate, // plain function    → kept
-  config: { a: 1 }, // object            → removed
-});
-```
-
-Validate the survivors downstream if the registry mixes functions with components.
+`isFunctionComponent` accepts any function without `prototype.isReactComponent`, including ordinary helpers. `remainOnlyReactComponent` keeps dictionary entries accepted by `isReactComponent`, including bare `forwardRef` and `lazy` components; validate unrelated helper functions downstream when a registry mixes them with components.
 
 ## `renderComponent`
 
@@ -93,7 +63,7 @@ One call site accepting a component type, a pre-rendered element, or nothing:
 | ----------------------------------------------- | ----------------------------------- |
 | falsy — `null`, `undefined`, `0`, `''`, `false` | `null`                              |
 | React element                                   | **returned as-is, `props` ignored** |
-| function / class / memo component               | `createElement(Component, props)`   |
+| function / class / memo / forwardRef / lazy component               | `createElement(Component, props)`   |
 | string, number, or anything else                | `null`                              |
 
 Two consequences. Passing an element and props is a silent no-op — there is no `cloneElement`, so the props are discarded rather than merged. And strings and numbers render as `null`, not as text: `renderComponent('Submit')` produces nothing. A prop that may be a label _or_ a component needs its own string branch before this call.
