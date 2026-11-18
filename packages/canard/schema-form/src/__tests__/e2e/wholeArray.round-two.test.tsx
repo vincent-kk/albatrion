@@ -73,16 +73,19 @@ it.each([false, true])(
         jsonSchema={schema}
         defaultValue={{ list: ['a'] }}
         validationMode={ValidationMode.None}
+        fieldInputMap={{ '/list': WholeArray }}
       >
-        <Form.Input
-          path="/list"
-          FieldInput={WholeArray}
-          onChange={
-            relay
-              ? (value) => ref.current!.findNode('/list')!.setValue(value)
-              : undefined
-          }
-        />
+        <Form.Render path="/list">
+          {({ Input }) => (
+            <Input
+              onChange={
+                relay
+                  ? (value) => ref.current!.findNode('/list')!.setValue(value)
+                  : undefined
+              }
+            />
+          )}
+        </Form.Render>
       </Form>,
     );
     const input = view.container.querySelector('input')!;
@@ -263,7 +266,6 @@ it('round-2 schema-form 3: Activity keeps child ownership while subscriptions di
   );
   const view = render(tree('visible'));
   const section = view.container.querySelector('section')!;
-  const input = view.container.querySelector('input')!;
   const handle = ref.current!;
   view.rerender(tree('hidden'));
   await act(() => handle.findNode('/list/0')!.setValue('b'));

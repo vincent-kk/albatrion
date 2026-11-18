@@ -83,7 +83,6 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   const loadScope =
     context.kind === FieldNodeWriteKind.Load ? context.loadScope : undefined;
   const relays = runtime.inputRelays;
-  if (relays !== undefined) runtime.inputRelays = undefined;
   for (const path of context.changedSource) {
     if (
       loadScope &&
@@ -204,6 +203,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
       }
     });
   });
+  if (relays !== undefined) runtime.inputRelays = undefined;
   if (warningTasks)
     for (const node of context.changedNodes) warningTasks.get(node)?.();
   runtime.misfitRecords = warnings ? Object.freeze(warnings) : EMPTY_ARRAY;

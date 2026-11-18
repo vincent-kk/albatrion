@@ -1,7 +1,11 @@
 import { memo, useCallback, useRef } from 'react';
 
 import { isArray } from '@winglet/common-utils/filter';
-import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
+import {
+  useLazyConstant,
+  useMemorize,
+  useOnUnmount,
+} from '@winglet/react-utils/hook';
 
 import type { Nullable, Optional } from '@aileron/declare';
 
@@ -31,7 +35,7 @@ import { useFieldInput } from './hooks/useFieldInput';
 import { useFieldInputControl } from './hooks/useFieldInputControl';
 import { useFieldLifecycle } from './hooks/useFieldLifecycle';
 import { useTerminalChildren } from './hooks/useTerminalChildren';
-import type { FieldInputBridgeProps } from './type';
+import type { ChildInputOwnership, FieldInputBridgeProps } from './type';
 import { readFieldInputGeneration } from './utils/readFieldInputGeneration';
 import { resolveControlled } from './utils/resolveControlled';
 
@@ -67,11 +71,30 @@ export const FieldInputBridge = memo(
       PreferredFieldInput ? undefined : selected?.controlled,
       presentation?.controlled,
     );
-    const mountedChildren = useRef(0);
+    const mountedChildren = useLazyConstant<ChildInputOwnership>(() => ({
+      current: 0,
+    }));
+    const childValueRevision = mountedChildren;
+    if (
+      mountedChildren.input !== FieldInput ||
+      mountedChildren.frame !== Frame ||
+      mountedChildren.isControlled !== (controlled === true)
+    ) {
+      mountedChildren.input = FieldInput;
+      mountedChildren.frame = Frame;
+      mountedChildren.isControlled = controlled === true;
+      mountedChildren.externalValueRevision = undefined;
+    }
     const [terminalChildren, commitTerminalChildren] =
       useTerminalChildren(node);
     const [ChildFields, hydrationCommitRef, virtualizationManager] =
-      useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
+      useChildFields(
+        node,
+        NodeProxy,
+        mountedChildren,
+        terminalChildren,
+        childValueRevision,
+      );
     const { attachedFilesMap, context } = useWorkspaceContext();
     const attachmentOwner = useRef<{ container: Nullable<HTMLDivElement> }>({
       container: null,
@@ -89,7 +112,12 @@ export const FieldInputBridge = memo(
       handleCompositionEnd,
       update,
       releaseComposition,
-    ] = useFieldInputControl(node, mountedChildren, controlled);
+    ] = useFieldInputControl(
+      node,
+      mountedChildren,
+      controlled,
+      childValueRevision,
+    );
     const lifecycle = useFieldLifecycleContext();
     const position = useFieldLifecycle(
       node,
@@ -112,8 +140,13 @@ export const FieldInputBridge = memo(
         selection.active &&
         isLive() &&
         (mountedChildren.current > 0 ||
-          generation === readFieldInputGeneration(node, controlled)),
-      [node, generation, isLive, selection, controlled],
+          generation ===
+            readFieldInputGeneration(
+              node,
+              controlled,
+              childValueRevision.externalValueRevision,
+            )),
+      [node, generation, isLive, selection, controlled, childValueRevision, mountedChildren],
     );
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
       (value, option = SetValueOption.Overwrite) => {
