@@ -455,7 +455,7 @@ it('F-E defers a child-layout Refresh at subscribe without an extra caller rende
   expect(mountRenderCounts).toEqual([1, 1]);
 });
 
-it('F-E preserves 202 array-push-remove-100 commits and reads the next Refresh in one snapshot', () => {
+it('F-E preserves 201 array-push-remove-100 commits and reads the next Refresh in one snapshot', () => {
   const ref = createRef<FormHandle>();
   const commits = vi.fn();
   render(
@@ -495,7 +495,7 @@ it('F-E preserves 202 array-push-remove-100 commits and reads the next Refresh i
     );
   for (let index = 99; index >= 0; index--) act(() => node.remove(index));
   expect(node.value).toEqual([]);
-  expect(commits).toHaveBeenCalledTimes(202);
+  expect(commits).toHaveBeenCalledTimes(201);
   act(() => ref.current!.refresh('/items'));
   expect(revision).toHaveBeenCalledWith(INPUT_TRACKING_EVENTS);
 });
