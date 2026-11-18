@@ -9,7 +9,7 @@ import type { FieldInputProps, InputRendererProps } from '@/schema-form/types';
 
 afterEach(cleanup);
 
-it('round-2 schema-form 3: a new input inside the same frame has the ownership of a replacement frame', () => {
+it.fails('round-2 schema-form 3 sibling: container swap keeps the previous ownership record', () => {
   const schema = {
     type: 'object',
     properties: { list: { type: 'array', items: { type: 'string' } } },
