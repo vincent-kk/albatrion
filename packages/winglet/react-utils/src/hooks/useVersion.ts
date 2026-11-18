@@ -2,7 +2,7 @@ import { useReducer, useRef } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import { useReference } from './useReference';
+import { useCommittedReference } from './utils/useCommittedReference';
 
 /**
  * Provides a manual re-render trigger with optional side effects and render counting.
@@ -247,6 +247,9 @@ import { useReference } from './useReference';
  * };
  * ```
  *
+ * @remarks Callback reads use the last committed render. React 18 and 19 publish
+ * before layout effects; older supported React peers publish in the parent layout effect.
+ *
  * @param callback - Optional function to execute before incrementing the version and triggering re-render
  * @returns A tuple of [version, updateVersion]:
  *   - version: Current version number (starts at 0, increments with each update)
@@ -254,7 +257,7 @@ import { useReference } from './useReference';
  */
 export const useVersion = (callback?: Fn) => {
   const [version, update] = useReducer(increment, 0);
-  const callbackRef = useReference(callback);
+  const callbackRef = useCommittedReference(callback);
   const updateRef = useRef(() => {
     callbackRef.current?.();
     update();

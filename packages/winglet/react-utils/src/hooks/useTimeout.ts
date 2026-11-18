@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import { useReference } from './useReference';
+import { useCommittedReference } from './utils/useCommittedReference';
 
 type UseTimeoutReturn = {
   isIdle: Fn<[], boolean>;
@@ -21,7 +21,7 @@ type UseTimeoutReturn = {
  * - **Manual Control**: Explicitly schedule, reschedule, or cancel timeouts
  * - **State Tracking**: Check if a timeout is pending with `isIdle()`
  * - **Safe Updates**: Callback updates don't affect running timers
- * - **Auto-cleanup**: Prevents memory leaks on unmount
+ * - **Auto-cleanup**: Cancels on unmount; retained schedule callbacks do no work after cleanup
  * - **Reschedule Support**: Calling schedule() resets existing timers
  *
  * ### Use Cases
@@ -103,6 +103,9 @@ type UseTimeoutReturn = {
  * };
  * ```
  *
+ * @remarks Callback reads use the last committed render. React 18 and 19 publish
+ * before layout effects; older supported React peers publish in the parent layout effect.
+ *
  * @param callback - The function to execute after the timeout. Can be updated without affecting running timers
  * @param timeout - The delay in milliseconds before executing the callback (default: 0)
  * @returns {Object} Control object with three methods:
@@ -116,7 +119,7 @@ export const useTimeout = (
 ): UseTimeoutReturn => {
   const idleRef = useRef<boolean>(true);
   const timerIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const callbackRef = useReference(callback);
+  const callbackRef = useCommittedReference(callback);
 
   const isIdle = useCallback(() => idleRef.current, []);
 

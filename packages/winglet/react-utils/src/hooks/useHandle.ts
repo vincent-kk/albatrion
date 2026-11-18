@@ -2,13 +2,13 @@ import { useCallback } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import { useReference } from './useReference';
+import { useCommittedReference } from './utils/useCommittedReference';
 
 /**
- * Creates a stable callback reference that always invokes the latest version of the provided handler.
+ * Creates a stable callback reference that always invokes the latest committed version of the provided handler.
  *
  * This hook solves the common "stale closure" problem in React by maintaining a stable
- * function reference while ensuring it always calls the most recent version of your handler.
+ * function reference while ensuring it always calls the most recent committed version of your handler.
  * It combines the benefits of `useCallback` (stable reference) with the flexibility of
  * always having access to the latest props and state.
  *
@@ -40,10 +40,14 @@ import { useReference } from './useReference';
  * return <ExpensiveChild onClick={handleClick} />;
  * ```
  *
+ * @remarks React 18 and 19 publish handlers before layout effects. React 16.14 and 17
+ * publish during the parent layout effect, so a child layout effect may read the prior commit.
+ * Render attempts that suspend, throw, or are abandoned never replace the handler.
+ *
  * @typeParam P - The array type of the handler's parameters
  * @typeParam R - The return type of the handler
  * @param handler - The function to wrap
- * @returns A stable callback that always invokes the latest version of the handler
+ * @returns A stable callback that always invokes the latest committed version of the handler
  */
 export function useHandle<P extends Array<any>, R>(handler: Fn<P, R>): Fn<P, R>;
 /**
@@ -70,7 +74,7 @@ export function useHandle<P extends Array<any>, R>(
 export function useHandle<P extends Array<any>, R>(
   handler?: Fn<P, R>,
 ): Fn<P, R | null> {
-  const handlerRef = useReference(handler);
+  const handlerRef = useCommittedReference(handler);
   return useCallback(
     (...args: P) => {
       const latest = handlerRef.current;

@@ -1,10 +1,14 @@
 import { Suspense, startTransition, useState } from 'react';
+
 import { act, render } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+
 import { useHandle } from '../useHandle';
 import { useTimeout } from '../useTimeout';
 
-afterEach(() => { document.body.innerHTML = ''; });
+afterEach(() => {
+  document.body.innerHTML = '';
+});
 
 describe('r3 react-utils: useTimeout after unmount (JSDoc: "Auto-cleanup: Prevents memory leaks on unmount")', () => {
   it('schedule() called after unmount does not run the callback', async () => {
@@ -70,4 +74,3 @@ describe('r3 react-utils: useHandle and an uncommitted transition render', () =>
     expect({ shown, handled }).toEqual({ shown: 'A', handled: 'A' });
   });
 });
-
