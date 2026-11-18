@@ -51,7 +51,7 @@ export const ForegroundFrame = ({
         (modal.visible ||
           (modal.manualDestroy &&
             modal.settled &&
-            modal.isVisibleAtSettlement &&
+            modal.isVisibleAtSettlement !== false &&
             modal.alive)) &&
           visible,
       )}
