@@ -20,8 +20,8 @@
 ## 작업 단위
 
 - 1라운드는 패키지 하나에 구현 작업자 하나, 워크트리 하나, PR 하나입니다. 2라운드부터는 아래 네 묶음이 각각 작업 단위이며, 묶음 하나에 구현 작업자 하나, 워크트리 하나, 독립 검토 한 번, PR 하나입니다. 패키지마다 빌드, 검토, CI를 따로 돌리는 시간을 줄이기 위해서입니다. 워크트리는 `1.0.0/bugbounty`에서 갈라진 Orca 하위 워크트리입니다.
-  1. 유틸리티 묶음: `@winglet/common-utils`, `@winglet/react-utils`, `@winglet/json`, `@winglet/json-schema`, `@winglet/data-loader`, `@winglet/style-utils`, `@slats/agents-assets-sync`
-  2. `@lerx/promise-modal`
+  1. 유틸리티 묶음: `@winglet/common-utils`, `@winglet/react-utils`, `@winglet/json`, `@winglet/json-schema`, `@winglet/data-loader`, `@winglet/style-utils`
+  2. `@lerx/promise-modal`과 `@slats/agents-assets-sync`
   3. `@canard/schema-form`
   4. 플러그인 묶음: `ajv6`, `ajv7`, `ajv8`, `antd5`, `antd6`, `antd-mobile`, `mui` 플러그인
 - 묶음 안에서도 실패하는 테스트 커밋과 수정 커밋은 항목마다 분리하고, 속도는 바뀐 함수마다 잽니다. 항목 하나가 막히면 그 항목만 다음 라운드로 넘기고 묶음의 나머지는 병합합니다.
@@ -80,7 +80,7 @@
   4. `@canard/schema-form`과 `ajv8`, `ajv7`, `ajv6` 플러그인
   5. `antd5` 플러그인, 이어서 `antd6`, `mui`, `antd-mobile` 플러그인
 - 앞 단계가 병합되면 뒤 단계 작업자는 리베이스하고 의존 패키지를 다시 빌드한 뒤 검사를 다시 돌립니다.
-- 2라운드부터의 병합 순서는 유틸리티 묶음, 이어서 `@lerx/promise-modal`과 `@canard/schema-form`, 마지막으로 플러그인 묶음입니다. 네 묶음의 구현은 동시에 진행하고, 플러그인 묶음은 `@canard/schema-form`이 병합된 뒤 한 번만 리베이스합니다.
+- 2라운드부터의 병합 순서는 유틸리티 묶음, 이어서 `@lerx/promise-modal` 묶음과 `@canard/schema-form`, 마지막으로 플러그인 묶음입니다. 네 묶음의 구현은 동시에 진행하고, 플러그인 묶음은 `@canard/schema-form`이 병합된 뒤 한 번만 리베이스합니다.
 
 ## 라운드 순환
 
