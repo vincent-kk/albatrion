@@ -75,10 +75,11 @@ const FieldInputStringEnum = ({
       )
         ? defaultValue.map((value) => JSON.stringify(value))
         : undefined;
+    if (mode === 'multiple') return undefined;
     return defaultValue === null || typeof defaultValue === 'string'
       ? JSON.stringify(defaultValue)
       : undefined;
-  }, [defaultValue]);
+  }, [defaultValue, mode]);
 
   const handleChange = useHandle((value: string | string[]) => {
     if (Array.isArray(value)) {
