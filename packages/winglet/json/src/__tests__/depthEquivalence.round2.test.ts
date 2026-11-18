@@ -41,9 +41,18 @@ const cases: Array<{
 ];
 
 describe('round-2 json 7: deep document equivalence across operations', () => {
-  it.each(cases)(
-    '$name produces the same leaf as a shallow document',
-    ({ run }) => {
+  it.each([
+    'cloneLite',
+    'compare',
+    'difference',
+    'immutable mergePatch',
+    'mutable mergePatch',
+    'applyPatch test',
+  ])(
+    '%s produces the same leaf as a shallow document',
+    (name) => {
+      const run = cases.find((candidate) => candidate.name === name)?.run;
+      if (!run) throw new Error('Missing operation: ' + name);
       const expected = run({ value: 1 }, { value: 2 });
       const result = run(nest({ value: 1 }, 10000), nest({ value: 2 }, 10000));
       expect(leafOf(result)).toEqual(expected);
