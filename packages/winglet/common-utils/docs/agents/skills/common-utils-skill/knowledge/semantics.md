@@ -171,13 +171,13 @@ const handler = getTrackableHandler(origin, {
 
 Execution order, and where each guarantee comes from:
 
-1. When `preventConcurrent` is set and a call is in flight, the new call resolves `undefined` cast as `Result` — `origin` never runs, and nothing is notified.
-2. `beforeExecute` runs **before** `pending` flips, so it observes `pending === false`. If it throws, the returned promise rejects, `origin` is skipped, and **`afterExecute` does not run** — it sits inside a `try` that has not been entered yet.
-3. `pending` becomes `true`, subscribers are notified.
-4. `origin` runs; its errors propagate to the caller untouched.
-5. In `finally`: `afterExecute`, then `pending` becomes `false`, then subscribers are notified.
+1. When `preventConcurrent` is set and a call is in flight, the new call resolves `undefined`; `origin` never runs and nothing is notified.
+2. The call reserves `pending === true` before `beforeExecute`, so a synchronous re-entry or another call during an asynchronous hook is guarded. A returned promise or thenable is awaited; ordinary synchronous returns do not add a microtask. A before-hook throw or rejection rejects the handler, skips `origin`, clears pending, and does not run `afterExecute`.
+3. Subscribers receive the start notification after `beforeExecute` settles, then `origin` runs.
+4. After the operation starts, `afterExecute` runs even when the start notification or `origin` fails. A returned promise or thenable is awaited before cleanup. Pending remains true while a hook never settles; with concurrent calls allowed, it remains true until the last call finishes.
+5. Cleanup updates pending and notifies completion. Hook state writes are batched into lifecycle notifications; a stored update function called outside a hook publishes immediately. Every update replaces the state object.
 
-Subscribers are notified at exactly those two transitions. `stateManager.update()` does not publish on its own — updates made inside the hooks become visible because a notification follows them. Each update replaces the state object, so `.state` is a new reference every time.
+A throwing subscriber cannot prevent other subscribers from being notified. The first start-notification error rejects the handler; completion-notification errors preserve the operation's result and are reported to the host through `reportError` or a separately scheduled throw.
 
 The surface is `.pending`, `.state`, and `.subscribe(listener) => unsubscribe`. All three are non-enumerable and non-configurable: they survive property access but vanish from spreads and `Object.keys`. There is no `.loading`, no `.execute()`, no `.clear()`, and no `onError` option.
 

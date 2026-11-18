@@ -36,7 +36,7 @@ Applies when the consuming project imports from `@winglet/common-utils` or one o
 - **`merge` mutates `target`, and merges arrays index-wise rather than by concatenation.** `merge({a:[1,2]},{a:[3]})` yields `{a:[3,2]}` — the target's surplus elements survive. Clone first when the caller owns `target`.
 - **`debounce` and `throttle` discard the wrapped function's return value** — both are declared to return `void`. `.execute()` clears the stored arguments, so calling it twice in a row runs the function once.
 - **An aborted `signal` permanently neuters a debounced or throttled function.** Every later call returns early; there is no way to re-arm it.
-- **`getTrackableHandler` blocks concurrent calls by default** (`preventConcurrent: true`), and the blocked call resolves `undefined` cast as `Result` — a silent type hole at the call site.
+- **`getTrackableHandler` blocks concurrent calls by default** (`preventConcurrent: true`), and a blocked call resolves `undefined`. The guard also covers lifecycle hooks and their asynchronous waits.
 - **`.pending`, `.state`, and `.subscribe` are non-enumerable**, so they disappear from `{...handler}` and `Object.keys`. A trackable handler has no `.execute()`, `.clear()`, or `onError` — those belong to `debounce`/`throttle`.
 - **`clone(target, maxDepth)` returns nodes at or beyond `maxDepth` by reference**, so a depth-bounded clone silently shares mutable state with its original.
 - Before trusting a remembered signature, check `knowledge/corrections.md` — the package README contains four errors that agents reproduce verbatim.

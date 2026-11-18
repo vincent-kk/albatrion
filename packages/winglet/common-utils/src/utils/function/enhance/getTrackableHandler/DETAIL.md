@@ -9,6 +9,8 @@
 
 구독자가 던져도 모든 구독자에게 순서대로 알립니다. 시작 통지의 첫 예외는 핸들러 거부로 전파하고, 추가 시작 오류와 완료 통지 오류는 reportError 또는 별도 throw 태스크로 호스트에 보고합니다. 완료 구독자 오류는 원본의 성공·실패 결과를 바꾸지 않습니다.
 
+훅이 Promise 또는 thenable을 반환하면 그 정착을 기다리고 동기 반환은 같은 tick에서 진행합니다. before 훅의 거부는 원본 실행을 막고, after 훅의 거부는 pending 정리 후 전파합니다. 정착하지 않는 훅을 기다리는 동안에도 pending과 동시·재진입 차단은 유지됩니다. 훅이 있는지 생성 시 한 번 선택하여 훅이 없는 호출 경로에는 훅 반환값 검사를 넣지 않습니다.
+
 ## API Contracts
 
 - `getTrackableHandler(origin, options?)` → 상태·구독·`pending`이 결합된 핸들러. `options`: `preventConcurrent`(기본 `true`), `initialState`, `beforeExecute`, `afterExecute`.
@@ -19,7 +21,7 @@
 
 ### lifecycle-publish — 실행 라이프사이클과 구독 통지
 
-- `beforeExecute` → `pending=true` 통지 → 원본 함수 실행 → `afterExecute`(항상) → `pending` 갱신 통지 순서로 진행되며, 훅이 정의되지 않아도 통지는 정확히 두 번 발생한다.
+- `pending=true`로 호출을 예약 → `beforeExecute` 정착 → 시작 통지 → 원본 함수 실행 → `afterExecute`(항상) → `pending` 갱신 통지 순서로 진행되며, 훅이 정의되지 않아도 통지는 정확히 두 번 발생한다.
 - 동일 리스너를 두 번 구독해도 한 번만 등록되어 통지 횟수가 늘지 않는다.
 - 훅 실행 중 이뤄진 state 갱신은 훅 종료 시점의 통지 하나로 접히고, 훅 밖에서 나중에 호출된 갱신 함수는 즉시 개별 통지된다.
 
