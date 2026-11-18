@@ -17,7 +17,7 @@ const example = (file: string, marker: string, expression: string): unknown => {
       expect(exports.has(binding.trim().split(/\s+as\s+/)[0])).toBe(true);
   const code = ts.transpileModule(source + '\nexports.result = (' + expression + ');', { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
   const output: { result?: unknown } = {};
-  runInNewContext(code, { exports: output, require: () => api, console: { log() {}, error() {} } });
+  runInNewContext(code, { exports: output, require: () => api, Error, console: { log() {}, error() {} } });
   return output.result;
 };
 

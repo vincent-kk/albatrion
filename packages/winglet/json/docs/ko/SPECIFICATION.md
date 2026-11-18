@@ -63,17 +63,18 @@ const theme = getValue(document, '/settings/theme');
 setValue(document, '/settings/theme', 'light');
 
 // 두 객체의 차이를 패치 배열로 생성
+const source = { name: 'Alice', age: 30 };
 const patches = compare(
-  { name: 'Alice', age: 25 },
-  { name: 'Alice', age: 26, city: 'Seoul' },
+  source,
+  { name: 'Alice', age: 31, city: 'Seoul' },
 );
 // [
-//   { op: 'replace', path: '/age', value: 26 },
+//   { op: 'replace', path: '/age', value: 31 },
 //   { op: 'add', path: '/city', value: 'Seoul' }
 // ]
 
 // 패치 적용 (기본값: 원본 불변)
-const updated = applyPatch(document, patches);
+const updated = applyPatch(source, patches);
 ```
 
 ---
@@ -481,7 +482,7 @@ function getJSONPath<Root extends object, Target>(
 ): string | null;
 ```
 
-`target`이 `root` 내에서 찾을 수 없거나 리프 노드의 원시값이면 `null`을 반환합니다.
+`target`이 객체 또는 원시값으로 도달 가능하면 첫 일치 경로를 반환하고, `root`에서 찾을 수 없으면 `null`을 반환합니다.
 
 ```typescript
 import { getJSONPath } from '@winglet/json/path-common';
@@ -511,10 +512,10 @@ function convertJSONPathToPointer(jsonPath: string): string;
 ```typescript
 import { convertJSONPathToPointer } from '@winglet/json/path-common';
 
-convertJSONPathToPointer('$.foo.bar'); // '/foo/bar'
-convertJSONPathToPointer('$.users[0].name'); // '/users/0/name'
-convertJSONPathToPointer('$'); // ''
-convertJSONPathToPointer("$['a/b'].c"); // '/a~1b/c'
+convertJSONPathToPointer('$.foo.bar'); // '/$/foo/bar'
+convertJSONPathToPointer('$.users[0].name'); // '/$/users/0/name'
+convertJSONPathToPointer('$'); // '/$'
+convertJSONPathToPointer("$['a/b'].c"); // "/$/'a/b'/c"
 ```
 
 ---

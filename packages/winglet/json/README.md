@@ -287,10 +287,11 @@ const theme = getValue(data, '/users/0/preferences/theme');
 console.log(theme); // "dark"
 
 // Value setting
+const before = JSON.parse(JSON.stringify(data));
 const updated = setValue(data, '/settings/app/version', '1.1.0');
 
 // Change comparison
-const patches = compare(data, updated);
+const patches = compare(before, updated);
 console.log(patches);
 // [{ op: "replace", path: "/settings/app/version", value: "1.1.0" }]
 ```
@@ -371,15 +372,15 @@ const withNewItem = setValue(data, '/items/-', 'date');
 ## Error Handling
 
 ```typescript
-import { JSONPointerError, getValue } from '@winglet/json';
+import { getValue } from '@winglet/json';
 
+const missing = getValue({}, '/nonexistent/path'); // undefined
 try {
-  const value = getValue({}, '/nonexistent/path');
+  getValue({}, 'invalid-pointer');
 } catch (error) {
-  if (error instanceof JSONPointerError) {
-    console.error('JSON Pointer Error:', error.message);
-    console.error('Error Code:', error.code);
-    console.error('Additional Details:', error.details);
+  if (error instanceof Error && error.name === 'JSONPointer') {
+    console.error(error.message);
+    if ('specific' in error) console.error(error.specific);
   }
 }
 ```

@@ -287,10 +287,11 @@ const theme = getValue(data, '/users/0/preferences/theme');
 console.log(theme); // "dark"
 
 // 값 설정
+const before = JSON.parse(JSON.stringify(data));
 const updated = setValue(data, '/settings/app/version', '1.1.0');
 
 // 변경사항 비교
-const patches = compare(data, updated);
+const patches = compare(before, updated);
 console.log(patches);
 // [{ op: "replace", path: "/settings/app/version", value: "1.1.0" }]
 ```
@@ -371,15 +372,15 @@ const withNewItem = setValue(data, '/items/-', 'date');
 ## 오류 처리
 
 ```typescript
-import { JSONPointerError, getValue } from '@winglet/json';
+import { getValue } from '@winglet/json';
 
+const missing = getValue({}, '/nonexistent/path'); // undefined
 try {
-  const value = getValue({}, '/nonexistent/path');
+  getValue({}, 'invalid-pointer');
 } catch (error) {
-  if (error instanceof JSONPointerError) {
-    console.error('JSON Pointer 오류:', error.message);
-    console.error('오류 코드:', error.code);
-    console.error('추가 정보:', error.details);
+  if (error instanceof Error && error.name === 'JSONPointer') {
+    console.error(error.message);
+    if ('specific' in error) console.error(error.specific);
   }
 }
 ```

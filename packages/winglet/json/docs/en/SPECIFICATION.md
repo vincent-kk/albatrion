@@ -63,8 +63,9 @@ const theme = getValue(document, '/settings/theme');
 setValue(document, '/settings/theme', 'light');
 
 // Generate a diff
+const source = { name: 'Alice', age: 30 };
 const patches = compare(
-  { name: 'Alice', age: 30 },
+  source,
   { name: 'Alice', age: 31, city: 'Seoul' },
 );
 // [
@@ -73,8 +74,8 @@ const patches = compare(
 // ]
 
 // Apply patches
-const updated = applyPatch(document, patches);
-// original document unchanged (immutable: true by default)
+const updated = applyPatch(source, patches);
+// source remains unchanged (immutable: true by default)
 ```
 
 ---
@@ -487,7 +488,7 @@ function getJSONPath<Root extends object, Target>(
 ): string | null;
 ```
 
-Returns `null` when `target` is not reachable from `root` or is a primitive at a leaf node.
+Returns the first matching path for reachable objects or primitive values, and `null` when `target` is not reachable from `root`.
 
 ```typescript
 import { getJSONPath } from '@winglet/json/path-common';
@@ -517,10 +518,10 @@ function convertJSONPathToPointer(jsonPath: string): string;
 ```typescript
 import { convertJSONPathToPointer } from '@winglet/json/path-common';
 
-convertJSONPathToPointer('$.foo.bar'); // '/foo/bar'
-convertJSONPathToPointer('$.users[0].name'); // '/users/0/name'
-convertJSONPathToPointer('$'); // ''
-convertJSONPathToPointer("$['a/b'].c"); // '/a~1b/c'
+convertJSONPathToPointer('$.foo.bar'); // '/$/foo/bar'
+convertJSONPathToPointer('$.users[0].name'); // '/$/users/0/name'
+convertJSONPathToPointer('$'); // '/$'
+convertJSONPathToPointer("$['a/b'].c"); // "/$/'a/b'/c"
 ```
 
 ---
