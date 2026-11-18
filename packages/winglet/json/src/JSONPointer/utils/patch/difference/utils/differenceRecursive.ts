@@ -4,6 +4,8 @@ import { cloneLite, equals, setDataProperty } from '@winglet/common-utils/object
 
 import type { JSONObject } from '@/json/type';
 
+import { differenceDeep } from './differenceDeep';
+
 /**
  * Builds the merge patch for two corresponding plain-object nodes.
  *
@@ -19,7 +21,9 @@ import type { JSONObject } from '@/json/type';
 export const differenceRecursive = (
   source: JSONObject,
   target: JSONObject,
+  depth = 0,
 ): JSONObject | undefined => {
+  if (depth === 256) return differenceDeep(source, target);
   let patch: JSONObject | undefined = undefined;
   let hasRemoved = false;
   const sourceKeys = Object.keys(source);
@@ -37,7 +41,7 @@ export const differenceRecursive = (
         setDataProperty(patch ??= {}, key, null);
         hasRemoved = true;
       } else if (isPlainObject(sourceValue) && isPlainObject(targetValue)) {
-        const child = differenceRecursive(sourceValue, targetValue);
+        const child = differenceRecursive(sourceValue, targetValue, depth + 1);
         if (child !== undefined) setDataProperty(patch ??= {}, key, child);
       } else if (!equals(sourceValue, targetValue))
         setDataProperty(patch ??= {}, key, cloneLite(targetValue));

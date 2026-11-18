@@ -27,3 +27,22 @@ describe('round-2 json 7: deep document equivalence across operations', () => {
     expect(leafOf(result)).toEqual(expected);
   });
 });
+
+
+describe('round-2 json 7: deep traversal preserves shallow policies', () => {
+  it.each([false, true])('preserves compare ordering and values (strict %s)', strict => {
+    const source = { list: [1, 2, 3], value: { x: 1 }, removed: 4 };
+    const target = { list: [9], value: [1, 2], added: 5 };
+    const shallow = compare(source, target, { strict });
+    const prefix = '/k'.repeat(300);
+    const deep = compare(nest(source, 300), nest(target, 300), { strict });
+    expect(deep.map(patch => ({ ...patch, path: patch.path.slice(prefix.length) }))).toEqual(shallow);
+  });
+  it('preserves reserved data, deletions and additions below a deep prefix', () => {
+    const source = { ['__proto__']: { x: 1 }, remove: 2 };
+    const target = { ['__proto__']: { x: 3 }, added: [1, 2] };
+    const patch = difference(nest(source, 300), nest(target, 300));
+    expect(leafOf(patch)).toEqual(difference(source, target));
+    expect(leafOf(mergePatch(nest(source, 300), patch))).toEqual(mergePatch(source, difference(source, target)));
+  });
+});

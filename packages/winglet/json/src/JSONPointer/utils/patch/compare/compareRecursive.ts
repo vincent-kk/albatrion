@@ -7,6 +7,7 @@ import type { JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../patchModel';
 import { processValue } from './utils/processValue';
+import { compareDeep } from './utils/compareDeep';
 
 /**
  * Recursively compares two objects/arrays and populates the fetches array with difference operations.
@@ -41,7 +42,9 @@ export const compareRecursive = <
   path: string,
   strict: boolean,
   immutable: boolean,
+  depth = 0,
 ) => {
+  if (depth === 256) return compareDeep(source, target, patches, path, strict, immutable, serializable);
   // @ts-expect-error: when target and source are same reference, it should return immediately
   if (source === target || (source !== source && target !== target)) return;
 
@@ -62,6 +65,7 @@ export const compareRecursive = <
         path,
         strict,
         immutable,
+        depth + 1,
       );
       return;
     }
@@ -148,6 +152,7 @@ export const compareRecursive = <
           path + JSONPointer.Separator + escapeSegment(key),
           strict,
           immutable,
+          depth + 1,
         );
       } else {
         // Value type change - replace the value
