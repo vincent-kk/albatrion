@@ -8,6 +8,7 @@ import {
   type FieldInputProps,
   Form,
   type FormHandle,
+  FormProvider,
   type SchemaFormPlugin,
   type ValidateFunction,
   type ValidationIssue,
@@ -139,4 +140,28 @@ it('treats a null verdict as valid and a list as issues, through compile and For
       expect.objectContaining({ keyword: 'minLength' }),
     ]);
   });
+});
+
+it('isolates application registrations with the documented scope example', () => {
+  const myPlugin = {
+    fieldInputDefinitions: [
+      {
+        test: { type: 'string' as const },
+        Component: () => <input aria-label="isolated" />,
+      },
+    ],
+  };
+  const schema = { type: 'string' } as const;
+  // prettier-ignore
+  {
+const applicationScope = Symbol('application');
+registerPlugin(myPlugin, { scope: applicationScope });
+const application = (
+  <FormProvider pluginScope={applicationScope}>
+    <Form jsonSchema={schema} />
+  </FormProvider>
+);
+    expect(render(application).getByLabelText('isolated')).toBeTruthy();
+    registerPlugin(null, { scope: applicationScope });
+  }
 });

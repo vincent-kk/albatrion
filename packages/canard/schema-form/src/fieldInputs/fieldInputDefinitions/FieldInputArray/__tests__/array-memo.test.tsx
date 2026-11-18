@@ -79,6 +79,7 @@ it('skips list rendering for value-only props and observes style and schema prop
     schemaType: node.schemaType,
     misfit: false,
     name: '',
+    id: 'form:',
     path: '',
     nullable: false,
     watchValues: [],

@@ -21,7 +21,15 @@ export function readDomNode(node: Node, ids: readonly string[]): unknown {
       value
         .split(' ')
         .map((token) =>
-          ids.includes(token) ? `react-id-${ids.indexOf(token)}` : token,
+          ids.reduce(
+            (normalized, id, index) =>
+              token === id ||
+              token.startsWith(id + ':') ||
+              token.startsWith('label:' + id + ':')
+                ? normalized.replace(id, `react-id-${index}`)
+                : normalized,
+            token,
+          ),
         )
         .join(' '),
     ])

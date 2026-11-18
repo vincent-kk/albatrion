@@ -41,22 +41,37 @@ it.each(INPUT_SUPPLIES)(
     };
     const view = renderInputSupply(Field, supply, undefined, undefined, Peer);
     const errors = view.container.textContent;
-    expect(view.container.querySelector('[id="/field"]')).toBeNull();
+    expect(
+      view.container.querySelector(
+        ':is([id="/field"], [id$=":/field"]):not(label):not(legend)',
+      ),
+    ).toBeNull();
     expect(errors).toContain('An unexpected error has occurred');
     const stoppedAt = renders;
     fail = false;
-    fireEvent.change(view.container.querySelector('[id="/peer"]')!, {
-      target: { value: 'write' },
-    });
+    fireEvent.change(
+      view.container.querySelector(
+        ':is([id="/peer"], [id$=":/peer"]):not(label):not(legend)',
+      )!,
+      {
+        target: { value: 'write' },
+      },
+    );
     expect(view.ref.current!.findNode('/field')!.value).toBe('committed');
     expect(
-      view.container.querySelector('[id="/field"]'),
+      view.container.querySelector(
+        ':is([id="/field"], [id$=":/field"]):not(label):not(legend)',
+      ),
       'Peer write must preserve the failed boundary',
     ).toBeNull();
     expect(renders).toBe(stoppedAt);
     expect(view.container.textContent).toBe(errors);
     act(() => view.ref.current!.refresh('/field'));
-    expect(view.container.querySelector('[id="/field"]')).toBeNull();
+    expect(
+      view.container.querySelector(
+        ':is([id="/field"], [id$=":/field"]):not(label):not(legend)',
+      ),
+    ).toBeNull();
     expect(renders).toBe(stoppedAt);
   },
 );
@@ -71,14 +86,28 @@ it.each(INPUT_SUPPLIES)(
       return <input id={path} defaultValue={defaultValue} />;
     };
     const view = renderInputSupply(Field, supply);
-    expect(view.container.querySelector('[id="/field"]')).toBeNull();
-    const peer = view.container.querySelector('[id="/peer"]');
+    expect(
+      view.container.querySelector(
+        ':is([id="/field"], [id$=":/field"]):not(label):not(legend)',
+      ),
+    ).toBeNull();
+    const peer = view.container.querySelector(
+      ':is([id="/peer"], [id$=":/peer"]):not(label):not(legend)',
+    );
     fail = false;
     act(() => view.ref.current!.remount('/field'));
     expect(
-      (view.container.querySelector('[id="/field"]') as HTMLInputElement).value,
+      (
+        view.container.querySelector(
+          ':is([id="/field"], [id$=":/field"]):not(label):not(legend)',
+        ) as HTMLInputElement
+      ).value,
     ).toBe('initial');
-    expect(view.container.querySelector('[id="/peer"]')).toBe(peer);
+    expect(
+      view.container.querySelector(
+        ':is([id="/peer"], [id$=":/peer"]):not(label):not(legend)',
+      ),
+    ).toBe(peer);
   },
 );
 
@@ -92,11 +121,19 @@ it.each(INPUT_SUPPLIES)(
       return <input id={path} defaultValue={defaultValue} />;
     };
     const view = renderInputSupply(Field, supply);
-    expect(view.container.querySelector('[id="/field"]')).toBeNull();
+    expect(
+      view.container.querySelector(
+        ':is([id="/field"], [id$=":/field"]):not(label):not(legend)',
+      ),
+    ).toBeNull();
     fail = false;
     view.replaceForm();
     expect(
-      (view.container.querySelector('[id="/field"]') as HTMLInputElement).value,
+      (
+        view.container.querySelector(
+          ':is([id="/field"], [id$=":/field"]):not(label):not(legend)',
+        ) as HTMLInputElement
+      ).value,
     ).toBe('initial');
   },
 );

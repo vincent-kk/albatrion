@@ -61,7 +61,9 @@ describe('LANDING-087 reveal identity across array reindexing', () => {
         {} as IntersectionObserver,
       );
     });
-    const revealedInput = form.container.querySelector('input[id="/items/11"]');
+    const revealedInput = form.container.querySelector(
+      'input:is([id="/items/11"], [id$=":/items/11"]):not(label):not(legend)',
+    );
     expect(revealedInput).not.toBeNull();
     expect(form.value('/items/11')).toBe('v11');
 
@@ -71,9 +73,11 @@ describe('LANDING-087 reveal identity across array reindexing', () => {
     expect(form.deferred('/items/10')).toBe(false);
     expect(form.exists('/items/10')).toBe(true);
     expect(form.value('/items/10')).toBe('v11');
-    expect(form.container.querySelector('input[id="/items/10"]')).toBe(
-      revealedInput,
-    );
+    expect(
+      form.container.querySelector(
+        'input:is([id="/items/10"], [id$=":/items/10"]):not(label):not(legend)',
+      ),
+    ).toBe(revealedInput);
     expect(
       form.container.querySelectorAll('[data-path="/items/10"]'),
     ).toHaveLength(1);

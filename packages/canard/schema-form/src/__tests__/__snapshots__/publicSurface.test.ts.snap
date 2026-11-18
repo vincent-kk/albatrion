@@ -58,7 +58,7 @@ FormHandle	type	FormHandle<Schema, Value>
 FormInputProps	type	Roll<FormInputProps<Value>>
 FormLabelProps	type	FormLabelProps
 FormProps	type	FormProps<Schema, Value>
-FormProvider	value	({ fieldInputDefinitions, FieldRenderer, LabelRenderer, InputRenderer, ErrorMessageRenderer, formatError, errorVisibility, validationMode, context: inputContext, validatorFactory, children, }: PropsWithChildren<ExternalFormContextProviderProps>) => Element
+FormProvider	value	({ pluginScope, fieldInputDefinitions, FieldRenderer, LabelRenderer, InputRenderer, ErrorMessageRenderer, formatError, errorVisibility, validationMode, context: inputContext, validatorFactory, children, }: PropsWithChildren<ExternalFormContextProviderProps>) => Element
 FormProviderProps	type	ExternalFormContextProviderProps
 FormRenderProps	type	Roll<FormRenderProps<Value>>
 FormWarningCode	value+type	{ readonly AllOfKeywordIgnoredForForm: "SCHEMA_FORM_WARNING.ALL_OF_KEYWORD_IGNORED_FOR_FORM"; readonly NullBranchIgnoredForForm: "SCHEMA_FORM_WARNING.NULL_BRANCH_IGNORED_FOR_FORM"; readonly VirtualizationDisabledForForm: "SCHEMA_FORM_WARNING.VIRTUALIZATION_DISABLED_FOR_FORM"; readonly IfWithoutElseFalse: "SCHEMA_FORM_WARNING.IF_WITHOUT_ELSE_FALSE"; readonly LockOnNonTerminalObject: "SCHEMA_FORM_WARNING.LOCK_ON_NON_TERMINAL_OBJECT"; readonly ConditionalSchemaWithoutValidator: "SCHEMA_FORM_WARNING.CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR"; readonly ValidatorMissing: "SCHEMA_FORM_WARNING.VALIDATOR_MISSING"; readonly MultipleGatedBranchesActive: "SCHEMA_FORM_WARNING.MULTIPLE_GATED_BRANCHES_ACTIVE"; readonly ResetRebuiltByReference: "SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE"; readonly DependentSchemasIgnoredForForm: "SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM"; readonly ChildFieldsReadOnTerminal: "SCHEMA_FORM_WARNING.CHILD_FIELDS_READ_ON_TERMINAL"; readonly TerminalSubtreeKeyIgnoredForForm: "SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM"; readonly DiscriminatorBranchUnreachable: "SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE"; readonly NonJsonWholeValue: "SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE"; readonly FieldInputTestInvalid: "SCHEMA_FORM_WARNING.FIELD_INPUT_TEST_INVALID"; readonly Misfit: "SCHEMA_FORM_WARNING.MISFIT"; readonly DialectMismatch: "SCHEMA_FORM_WARNING.DIALECT_MISMATCH"; readonly DetachedNodeWrite: "SCHEMA_FORM_WARNING.DETACHED_NODE_WRITE"; readonly InactiveValueWithUnsetOnInactive: "SCHEMA_FORM_WARNING.INACTIVE_VALUE_WITH_UNSET_ON_INACTIVE"; readonly WriteInInactiveResolver: "SCHEMA_FORM_WARNING.WRITE_IN_INACTIVE_RESOLVER"; readonly DiscriminatorIgnoredForForm: "SCHEMA_FORM_WARNING.DISCRIMINATOR_IGNORED_FOR_FORM"; readonly IfOnNonObjectHost: "SCHEMA_FORM_WARNING.IF_ON_NON_OBJECT_HOST"; }
@@ -120,11 +120,18 @@ isUnhandledError	value	(error: unknown) => error is UnhandledError
 isUnionNode	value	(node: FieldNode | Nullish) => node is UnionNode
 isValidationError	value	(error: unknown) => error is ValidationError
 isVirtualNode	value	(node: FieldNode | Nullish) => node is VirtualNode
-registerPlugin	value	(plugin: Nullable<SchemaFormPlugin>) => void
+registerPlugin	value	(plugin: Nullable<SchemaFormPlugin>, options?: { scope: string | symbol; } | undefined) => void
 useChildFieldErrors	value	(node: FieldNode, disabled?: boolean | undefined) => { errorMessage: ReactNode; errorVisible: boolean; formattedError: ReactNode; childErrorVisibleList: boolean[]; formattedErrors: ReactNode[]; errorMatrix: (readonly ValidationIssue<unknown>[])[]; }
 useChildFieldMap	value	<Value extends Dictionary>(ChildFields: ChildField[]) => ChildFieldMap<Required<Value>>
 useFieldErrors	value	(node: FieldNode) => { errors: readonly ValidationIssue<unknown>[]; errorVisible: boolean; errorMessage: ReactNode; formatError: FormatError; }
 useFieldNodeSubscribe	value	<Node extends { subscribe(listener: Parameters<FieldNode["subscribe"]>[0]): Fn; revision(mask?: number): number; }>(node: Nullish | Node, listener: FieldNodeListener, options?: FieldNodeSubscribeOptions<Node> | undefined) => void
 useFieldNodeTracker	value	<Node extends { subscribe(listener: Parameters<FieldNode["subscribe"]>[0]): Fn; revision(mask?: number): number; }>(node: Nullish | Node, tracking?: number) => number
 useFormSubmit	value	<Schema extends JSONSchema, Value extends AllowedValue = InferValueType<Schema>>(ref: RefObject<Nullable<FormHandle<Schema, Value>>>) => { submit: () => Promise<void | undefined>; pending: boolean | undefined; }"
+`;
+
+exports[`round-3 identifier additions have the approved public string types 1`] = `
+[
+  "FieldInputProps.id: string",
+  "FieldRendererProps.labelId: string",
+]
 `;

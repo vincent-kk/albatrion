@@ -90,7 +90,11 @@ afterEach(() => {
 // filid:contract exact-focus
 it('focuses the nested target and preserves the unrelated placeholder', async () => {
   handle.current!.focus(target);
-  await vi.waitFor(() => expect(document.activeElement?.id).toBe(target));
+  await vi.waitFor(() =>
+    expect(document.activeElement).toBe(
+      container.querySelector(`input[id$=":${target}"]`),
+    ),
+  );
   expect(
     container.querySelector('[data-deferred][data-path="/sibling"]'),
   ).not.toBeNull();
@@ -99,17 +103,29 @@ it('focuses the exact invalid field after native submission', async () => {
   container
     .querySelector('form')!
     .dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-  await vi.waitFor(() => expect(document.activeElement?.id).toBe(target));
+  await vi.waitFor(() =>
+    expect(document.activeElement).toBe(
+      container.querySelector(`input[id$=":${target}"]`),
+    ),
+  );
 });
 it('lets a newer request replace a pending reveal', async () => {
   const focus = vi.spyOn(HTMLElement.prototype, 'focus');
   handle.current!.focus(target);
   handle.current!.focus('/sibling');
   await vi.waitFor(() =>
-    expect(container.querySelector(`input[id="${target}"]`)).not.toBeNull(),
+    expect(
+      container.querySelector(
+        `input:is([id="${target}"], [id$=":${target}"]):not(label):not(legend)`,
+      ),
+    ).not.toBeNull(),
   );
-  expect(document.activeElement?.id).toBe('/sibling');
-  const older = container.querySelector(`input[id="${target}"]`);
+  expect(document.activeElement).toBe(
+    container.querySelector('input[id$=":/sibling"]'),
+  );
+  const older = container.querySelector(
+    `input:is([id="${target}"], [id$=":${target}"]):not(label):not(legend)`,
+  );
   expect(
     focus.mock.contexts.filter((element) => element === older),
   ).toHaveLength(0);
@@ -117,8 +133,14 @@ it('lets a newer request replace a pending reveal', async () => {
 it('calls the target input focus exactly once', async () => {
   const focus = vi.spyOn(HTMLElement.prototype, 'focus');
   handle.current!.focus(target);
-  await vi.waitFor(() => expect(document.activeElement?.id).toBe(target));
-  const input = container.querySelector(`input[id="${target}"]`);
+  await vi.waitFor(() =>
+    expect(document.activeElement).toBe(
+      container.querySelector(`input[id$=":${target}"]`),
+    ),
+  );
+  const input = container.querySelector(
+    `input:is([id="${target}"], [id$=":${target}"]):not(label):not(legend)`,
+  );
   expect(
     focus.mock.contexts.filter((element) => element === input),
   ).toHaveLength(1);
@@ -127,8 +149,9 @@ it('calls the target input focus exactly once', async () => {
 it.each(['focusin', 'round trip', 'blur to body'] as const)(
   'preserves user movement after a pending request: %s',
   async (movement) => {
-    const first =
-      container.querySelector<HTMLInputElement>('input[id="/first"]')!;
+    const first = container.querySelector<HTMLInputElement>(
+      'input:is([id="/first"], [id$=":/first"]):not(label):not(legend)',
+    )!;
     const outside = document.body.appendChild(document.createElement('button'));
     const focus = vi.spyOn(HTMLElement.prototype, 'focus');
     try {
@@ -140,9 +163,15 @@ it.each(['focusin', 'round trip', 'blur to body'] as const)(
         if (movement === 'round trip') first.focus();
       }
       await vi.waitFor(() =>
-        expect(container.querySelector(`input[id="${target}"]`)).not.toBeNull(),
+        expect(
+          container.querySelector(
+            `input:is([id="${target}"], [id$=":${target}"]):not(label):not(legend)`,
+          ),
+        ).not.toBeNull(),
       );
-      const revealed = container.querySelector(`input[id="${target}"]`);
+      const revealed = container.querySelector(
+        `input:is([id="${target}"], [id$=":${target}"]):not(label):not(legend)`,
+      );
       expect(
         focus.mock.contexts.filter((element) => element === revealed),
       ).toHaveLength(0);

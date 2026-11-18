@@ -35,7 +35,9 @@ describe.each([false, true])('exact handle focus strict=%s', (strictMode) => {
     expect(form.field(focusTarget)).toBeNull();
     const focus = vi.spyOn(HTMLElement.prototype, 'focus');
     await act(async () => form.handle.focus(focusTarget));
-    expect(document.activeElement?.id).toBe(focusTarget);
+    expect(
+      document.activeElement?.closest('[data-path]')?.getAttribute('data-path'),
+    ).toBe(focusTarget);
     expect(form.field(focusTarget)).not.toBeNull();
     expect(document.activeElement).toBe(form.field(focusTarget));
     expect(

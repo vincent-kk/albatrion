@@ -116,7 +116,9 @@ export const mountNativeSubmitForm = async ({
     validator,
     user: userEvent.setup(),
     field: (path: string) =>
-      view.container.querySelector<HTMLElement>(`[id="${path}"]`),
+      view.container.querySelector<HTMLElement>(
+        `:is([id="${path}"], [id$=":${path}"]):not(label):not(legend)`,
+      ),
     errorText: (path: string) => view.getByTestId('error:' + path).textContent,
     button: () => view.getByRole('button', { name: 'submit' }),
     spyFocusRequests: (path: string) => {

@@ -55,7 +55,9 @@ describe.skipIf(inject('reactMajor') !== '18')(
       );
       handle.current!.focus(focusTarget);
       expect(document.activeElement).toBe(
-        view.container.querySelector('input[id="/sibling"]'),
+        view.container.querySelector(
+          'input:is([id="/sibling"], [id$=":/sibling"]):not(label):not(legend)',
+        ),
       );
     });
     it('cancels the target-owned gate request during synchronous mount reentry', () => {
@@ -75,7 +77,9 @@ describe.skipIf(inject('reactMajor') !== '18')(
       );
       handle.current!.focus('/sibling');
       expect(document.activeElement).toBe(
-        view.container.querySelector('input[id="/first"]'),
+        view.container.querySelector(
+          'input:is([id="/first"], [id$=":/first"]):not(label):not(legend)',
+        ),
       );
     });
     it('does not deliver a delayed target Focus after the batch and steal moved focus', () => {
@@ -94,13 +98,17 @@ describe.skipIf(inject('reactMajor') !== '18')(
       );
       const focus = vi.spyOn(HTMLElement.prototype, 'focus');
       handle.current!.node!.batch(() => handle.current!.focus(focusTarget));
-      const target = view.container.querySelector(`input[id="${focusTarget}"]`);
+      const target = view.container.querySelector(
+        `input:is([id="${focusTarget}"], [id$=":${focusTarget}"]):not(label):not(legend)`,
+      );
       expect(target).not.toBeNull();
       expect(
         focus.mock.contexts.filter((element) => element === target),
       ).toHaveLength(1);
       expect(document.activeElement).toBe(
-        view.container.querySelector('input[id="/first"]'),
+        view.container.querySelector(
+          'input:is([id="/first"], [id$=":/first"]):not(label):not(legend)',
+        ),
       );
     });
     it('focuses the exact invalid input on a legacy native submission', async () => {
@@ -115,7 +123,7 @@ describe.skipIf(inject('reactMajor') !== '18')(
       fireEvent.submit(view.container.querySelector('form')!);
       await waitFor(() => {
         const target = view.container.querySelector(
-          `input[id="${focusTarget}"]`,
+          `input:is([id="${focusTarget}"], [id$=":${focusTarget}"]):not(label):not(legend)`,
         );
         expect(target).not.toBeNull();
         expect(document.activeElement).toBe(target);

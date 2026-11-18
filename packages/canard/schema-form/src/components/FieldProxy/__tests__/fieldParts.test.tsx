@@ -74,8 +74,8 @@ it('binds label defaults without implicitly passing errors or context', () => {
     name: node.name,
     jsonSchema: node.jsonSchema,
     required: false,
-    htmlFor: '/a',
-    id: 'label:/a',
+    htmlFor: expect.stringMatching(/^.+:\/a$/),
+    id: expect.stringMatching(/^label:.+:\/a$/),
     children: node.name,
   });
   expect(props.required).toBe(
@@ -256,21 +256,22 @@ it('updates a memo-cached label address after array reordering', () => {
       FieldRenderer={Group}
     />,
   );
-  expect(view.container.querySelector('label[for="/1/name"]')?.id).toBe(
-    'label:/1/name',
+  expect(view.container.querySelector('label[for$=":/1/name"]')?.id).toMatch(
+    /^label:.+:\/1\/name$/,
   );
   act(() => {
     const node = ref.current!.node;
     if (!node || !isArrayNode(node)) throw new Error('missing array');
     node.remove(0);
   });
-  expect(view.container.querySelector('label[for="/0/name"]')?.id).toBe(
-    'label:/0/name',
+  expect(view.container.querySelector('label[for$=":/0/name"]')?.id).toMatch(
+    /^label:.+:\/0\/name$/,
   );
-  expect(view.container.querySelector('label[for="/1/name"]')).toBeNull();
+  expect(view.container.querySelector('label[for$=":/1/name"]')).toBeNull();
   expect(
-    view.container.querySelector<HTMLInputElement>('input[id="/0/name"]')
-      ?.value,
+    view.container.querySelector<HTMLInputElement>(
+      'input:is([id="/0/name"], [id$=":/0/name"]):not(label):not(legend)',
+    )?.value,
   ).toBe('second');
 });
 
@@ -304,21 +305,26 @@ it.each([false, true])(
         FieldRenderer={Group}
       />,
     );
-    const label = view.container.querySelector('label[for="/1/name"]');
+    const label = view.container.querySelector('label[for$=":/1/name"]');
     expect(label).not.toBeNull();
     act(() => {
       const node = ref.current!.node;
       if (!node || !isArrayNode(node)) throw new Error('missing array');
       node.remove(0);
     });
-    const shifted = view.container.querySelector('label[for="/0/name"]');
+    const shifted = view.container.querySelector('label[for$=":/0/name"]');
     expect(shifted).toBe(label);
-    expect(shifted?.getAttribute('for')).toBe('/0/name');
-    expect(shifted?.id).toBe('label:/0/name');
-    expect(view.container.querySelector('label[for="/1/name"]')).toBeNull();
+    expect(shifted?.getAttribute('for')).toBe(
+      view.container.querySelector(
+        'input:is([id="/0/name"], [id$=":/0/name"]):not(label):not(legend)',
+      )?.id,
+    );
+    expect(shifted?.id).toMatch(/^label:.+:\/0\/name$/);
+    expect(view.container.querySelector('label[for$=":/1/name"]')).toBeNull();
     expect(
-      view.container.querySelector<HTMLInputElement>('input[id="/0/name"]')
-        ?.value,
+      view.container.querySelector<HTMLInputElement>(
+        'input:is([id="/0/name"], [id$=":/0/name"]):not(label):not(legend)',
+      )?.value,
     ).toBe('second');
   },
 );
@@ -366,7 +372,9 @@ it('retains a cached error part DOM and delivers its new path after removal', ()
   const shifted = view.container.querySelector('em[data-error-path="/0/name"]');
   expect(shifted).toBe(error);
   expect(shifted?.textContent).toBe('/0/name');
-  expect(view.container.querySelector('em[data-error-path="/1/name"]')).toBeNull();
+  expect(
+    view.container.querySelector('em[data-error-path="/1/name"]'),
+  ).toBeNull();
 });
 
 it('renders registered memo parts with their own React hooks', () => {
@@ -398,7 +406,7 @@ it('renders registered memo parts with their own React hooks', () => {
       errors={[{ dataPath: '/a', message: 'Issue' }]}
     />,
   );
-  const label = view.container.querySelector('label[for="/a"]');
+  const label = view.container.querySelector('label[for$=":/a"]');
   const error = view.getByText('Issue');
   expect(label).not.toBeNull();
   expect(label?.getAttribute('data-hook-id')).toBeTruthy();
@@ -426,7 +434,7 @@ it('retains label calls and DOM through formatter, visibility, context and input
       formatError={() => 'same'}
     />,
   );
-  const labelNode = view.container.querySelector('label[for="/a"]');
+  const labelNode = view.container.querySelector('label[for$=":/a"]');
   const errorNode = view.getByText('same');
   const calls = label.mock.calls.length;
   view.rerender(
@@ -446,10 +454,15 @@ it('retains label calls and DOM through formatter, visibility, context and input
     />,
   );
   expect(view.getByText('same')).toBe(errorNode);
-  fireEvent.change(view.container.querySelector('input[id="/a"]')!, {
-    target: { value: 'typed' },
-  });
-  expect(view.container.querySelector('label[for="/a"]')).toBe(labelNode);
+  fireEvent.change(
+    view.container.querySelector(
+      'input:is([id="/a"], [id$=":/a"]):not(label):not(legend)',
+    )!,
+    {
+      target: { value: 'typed' },
+    },
+  );
+  expect(view.container.querySelector('label[for$=":/a"]')).toBe(labelNode);
   expect(view.container.querySelector('[data-path="/a"] em')).toBe(errorNode);
   expect(label).toHaveBeenCalledTimes(calls);
 });
@@ -472,12 +485,26 @@ it('isolates formatter failures and recovers without replacing a healthy sibling
       }}
     />,
   );
-  const sibling = view.container.querySelector('input[id="/b"]');
+  const sibling = view.container.querySelector(
+    'input:is([id="/b"], [id$=":/b"]):not(label):not(legend)',
+  );
   expect(sibling).not.toBeNull();
-  expect(view.container.querySelector('input[id="/a"]')).toBeNull();
+  expect(
+    view.container.querySelector(
+      'input:is([id="/a"], [id$=":/a"]):not(label):not(legend)',
+    ),
+  ).toBeNull();
   view.rerender(<Form {...props} formatError={(error) => error.message} />);
-  expect(view.container.querySelector('input[id="/a"]')).not.toBeNull();
-  expect(view.container.querySelector('input[id="/b"]')).toBe(sibling);
+  expect(
+    view.container.querySelector(
+      'input:is([id="/a"], [id$=":/a"]):not(label):not(legend)',
+    ),
+  ).not.toBeNull();
+  expect(
+    view.container.querySelector(
+      'input:is([id="/b"], [id$=":/b"]):not(label):not(legend)',
+    ),
+  ).toBe(sibling);
 });
 
 it.each(['LabelRenderer', 'ErrorMessageRenderer'] as const)(
@@ -501,12 +528,26 @@ it.each(['LabelRenderer', 'ErrorMessageRenderer'] as const)(
       FieldRenderer: Parts,
     };
     const view = render(<Form {...props} {...{ [slot]: Broken }} />);
-    const sibling = view.container.querySelector('input[id="/b"]');
+    const sibling = view.container.querySelector(
+      'input:is([id="/b"], [id$=":/b"]):not(label):not(legend)',
+    );
     expect(sibling).not.toBeNull();
-    expect(view.container.querySelector('input[id="/a"]')).toBeNull();
+    expect(
+      view.container.querySelector(
+        'input:is([id="/a"], [id$=":/a"]):not(label):not(legend)',
+      ),
+    ).toBeNull();
     view.rerender(<Form {...props} {...{ [slot]: Healthy }} />);
-    expect(view.container.querySelector('input[id="/a"]')).not.toBeNull();
-    expect(view.container.querySelector('input[id="/b"]')).toBe(sibling);
+    expect(
+      view.container.querySelector(
+        'input:is([id="/a"], [id$=":/a"]):not(label):not(legend)',
+      ),
+    ).not.toBeNull();
+    expect(
+      view.container.querySelector(
+        'input:is([id="/b"], [id$=":/b"]):not(label):not(legend)',
+      ),
+    ).toBe(sibling);
   },
 );
 
@@ -537,8 +578,10 @@ it('replaces each renderer independently without remounting healthy peers', () =
       ErrorMessageRenderer={FirstError}
     />,
   );
-  const input = view.container.querySelector('input[id="/a"]');
-  const label = view.container.querySelector('label[for="/a"]');
+  const input = view.container.querySelector(
+    'input:is([id="/a"], [id$=":/a"]):not(label):not(legend)',
+  );
+  const label = view.container.querySelector('label[for$=":/a"]');
   const error = view.getByText('Issue');
   view.rerender(
     <Form
@@ -547,10 +590,14 @@ it('replaces each renderer independently without remounting healthy peers', () =
       ErrorMessageRenderer={FirstError}
     />,
   );
-  const nextLabel = view.container.querySelector('label[for="/a"]');
+  const nextLabel = view.container.querySelector('label[for$=":/a"]');
   expect(nextLabel).not.toBe(label);
   expect(view.getByText('Issue')).toBe(error);
-  expect(view.container.querySelector('input[id="/a"]')).toBe(input);
+  expect(
+    view.container.querySelector(
+      'input:is([id="/a"], [id$=":/a"]):not(label):not(legend)',
+    ),
+  ).toBe(input);
   view.rerender(
     <Form
       {...props}
@@ -558,7 +605,11 @@ it('replaces each renderer independently without remounting healthy peers', () =
       ErrorMessageRenderer={NextError}
     />,
   );
-  expect(view.container.querySelector('label[for="/a"]')).toBe(nextLabel);
+  expect(view.container.querySelector('label[for$=":/a"]')).toBe(nextLabel);
   expect(view.getByText('Issue')).not.toBe(error);
-  expect(view.container.querySelector('input[id="/a"]')).toBe(input);
+  expect(
+    view.container.querySelector(
+      'input:is([id="/a"], [id$=":/a"]):not(label):not(legend)',
+    ),
+  ).toBe(input);
 });

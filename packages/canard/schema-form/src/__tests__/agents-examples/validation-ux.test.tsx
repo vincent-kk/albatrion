@@ -65,12 +65,13 @@ const nameSchema = {
 /** Render the library's resolved display decision beside a custom input.
  * @param props - FieldInput props supplied by Form; publishes edits and blur state.
  * @returns The editable field and its eligible first error. */
-function NameInput({ value, onChange, node }: FieldInputProps<string>) {
+function NameInput({ id, value, onChange, node }: FieldInputProps<string>) {
   const { errors, errorVisible } = useFieldErrors(node);
 
   return (
     <>
       <input
+        id={id}
         aria-label="Name"
         value={value ?? ''}
         onChange={(event) => onChange(event.target.value || undefined)}

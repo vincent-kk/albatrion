@@ -94,7 +94,7 @@ it('treats a form input merge like a caller merge', () => {
   );
 });
 
-it('treats a received key below a batched merge as a whole input', () => {
+it('keeps omitted descendants below a batched Merge just as a sequential Merge does', () => {
   const resolver = vi.fn(() => 'resolved');
   const { root } = makeFieldNodeTree({
     type: 'object',
@@ -115,9 +115,9 @@ it('treats a received key below a batched merge as a whole input', () => {
     root.setValue({ open: false, group: {} }, WriteOption.Merge);
     root.find('/stable')!.setValue('next');
   });
-  expect(resolver).not.toHaveBeenCalled();
+  expect(resolver).toHaveBeenCalledTimes(1);
   root.find('/open')!.setValue(true);
-  expect(root.find('/group/x')!.value).toBeUndefined();
+  expect(root.find('/group/x')!.value).toBe('resolved');
 });
 
 it.each([false, true])(

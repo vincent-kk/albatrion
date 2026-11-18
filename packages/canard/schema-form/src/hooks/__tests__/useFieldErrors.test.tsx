@@ -115,9 +115,14 @@ it.each(['input', 'frame', 'label', 'error'] as const)(
         .current!.findNode('/a')!
         .setExternalErrors([{ dataPath: '/a', message: 'external' }]),
     );
-    fireEvent.change(view.container.querySelector('input[id="/a"]')!, {
-      target: { value: 'edited' },
-    });
+    fireEvent.change(
+      view.container.querySelector(
+        'input:is([id="/a"], [id$=":/a"]):not(label):not(legend)',
+      )!,
+      {
+        target: { value: 'edited' },
+      },
+    );
     act(() =>
       ref.current!.findNode('/a')!.setState({ [FieldNodeState.Touched]: true }),
     );
@@ -126,7 +131,11 @@ it.each(['input', 'frame', 'label', 'error'] as const)(
     act(() => releaseFieldNodeRevealHistory(ref.current!.node!));
     expect(actual.get('/a')?.errorVisible).toBe(true);
     act(() => ref.current!.findNode('/show')!.setValue(false));
-    expect(view.container.querySelector('input[id="/a"]')).toBeNull();
+    expect(
+      view.container.querySelector(
+        'input:is([id="/a"], [id$=":/a"]):not(label):not(legend)',
+      ),
+    ).toBeNull();
     act(() => ref.current!.findNode('/show')!.setValue(true));
     await settleValidation(() => ref.current?.node);
     view.rerender(
@@ -329,9 +338,9 @@ it('isolates a formatter thrown from the input hook from a healthy sibling', () 
   shouldThrow = true;
   act(() => replace());
   expect(view.queryByLabelText('a')).toBeNull();
-  expect(view.container.querySelector('label[for="/a"]')).not.toBeNull();
+  expect(view.container.querySelector('label[for$=":/a"]')).not.toBeNull();
   view.rerender(<Form {...props} formatError={(error) => error.message} />);
   expect(view.queryByLabelText('a')).toBeNull();
   expect(view.getByLabelText('b')).toBe(sibling);
-  expect(view.container.querySelector('label[for="/a"]')).not.toBeNull();
+  expect(view.container.querySelector('label[for$=":/a"]')).not.toBeNull();
 });

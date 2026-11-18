@@ -204,7 +204,9 @@ const runStep = async (
     });
   else if (step.act === 'type')
     await userEvent.type(
-      container.querySelector<HTMLInputElement>(`input[id="${step.path}"]`)!,
+      container.querySelector<HTMLInputElement>(
+        `input:is([id="${step.path}"], [id$=":${step.path}"]):not(label):not(legend)`,
+      )!,
       step.text,
     );
   else if (step.act === 'merge')
@@ -286,7 +288,10 @@ const runStep = async (
     for (const [path, shown] of Object.entries(step.shown))
       expect(
         Boolean(
-          Array.from(container.querySelectorAll('em')).find((message) => message.closest('[data-path]')?.matches(`[data-path="${path}"]`))
+          Array.from(container.querySelectorAll('em'))
+            .find((message) =>
+              message.closest('[data-path]')?.matches(`[data-path="${path}"]`),
+            )
             ?.textContent?.trim(),
         ),
         `${label} ${path}`,
@@ -294,7 +299,11 @@ const runStep = async (
   if (step.act === 'mounted' && !step.browserOnly)
     for (const [path, mounted] of Object.entries(step.mounted))
       expect(
-        Boolean(container.querySelector(`input[id="${path}"]`)),
+        Boolean(
+          container.querySelector(
+            `input:is([id="${path}"], [id$=":${path}"]):not(label):not(legend)`,
+          ),
+        ),
         `${label} ${path}`,
       ).toBe(mounted);
 };

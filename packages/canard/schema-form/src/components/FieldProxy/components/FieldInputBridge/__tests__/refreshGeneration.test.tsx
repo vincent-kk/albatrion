@@ -32,16 +32,18 @@ it.each(INPUT_SUPPLIES)(
       );
     };
     const view = renderInputSupply(Field, supply);
-    const peer = view.container.querySelector('[id="/peer"]');
+    const peer = view.container.querySelector(
+      ':is([id="/peer"], [id$=":/peer"]):not(label):not(legend)',
+    );
     const initial = view.container.querySelector(
-      '[id="/field"]',
+      ':is([id="/field"], [id$=":/field"]):not(label):not(legend)',
     ) as HTMLInputElement;
     initial.focus();
     initial.value = 'uncommitted';
     initial.setSelectionRange(2, 5);
     act(() => view.ref.current!.findNode('/field')!.setValue('committed'));
     const committed = view.container.querySelector(
-      '[id="/field"]',
+      ':is([id="/field"], [id$=":/field"]):not(label):not(legend)',
     ) as HTMLInputElement;
     expect(committed).not.toBe(initial);
     expect(committed.value).toBe('committed');
@@ -50,14 +52,18 @@ it.each(INPUT_SUPPLIES)(
     committed.setSelectionRange(1, 4);
     act(() => view.ref.current!.refresh('/field'));
     const refreshed = view.container.querySelector(
-      '[id="/field"]',
+      ':is([id="/field"], [id$=":/field"]):not(label):not(legend)',
     ) as HTMLInputElement;
     expect(refreshed).not.toBe(committed);
     expect(refreshed.value).toBe('committed');
     expect(refreshed.selectionStart).toBe(refreshed.selectionEnd);
     expect(document.activeElement).not.toBe(refreshed);
     expect(mounts).toBe(3);
-    expect(view.container.querySelector('[id="/peer"]')).toBe(peer);
+    expect(
+      view.container.querySelector(
+        ':is([id="/peer"], [id$=":/peer"]):not(label):not(legend)',
+      ),
+    ).toBe(peer);
     expect(view.ref.current!.findNode('/field')!.value).toBe('committed');
     expect(props!).not.toHaveProperty('inputGeneration');
   },
@@ -73,7 +79,7 @@ it.each(INPUT_SUPPLIES)(
     };
     const view = renderInputSupply(Field, supply);
     const initial = view.container.querySelector(
-      '[id="/field"]',
+      ':is([id="/field"], [id$=":/field"]):not(label):not(legend)',
     ) as HTMLInputElement;
     const node = view.ref.current!.findNode('/field')!;
     const revision = node.revision(FieldNodeEventType.RequestRefresh);
@@ -86,12 +92,16 @@ it.each(INPUT_SUPPLIES)(
     expect(node.revision(FieldNodeEventType.RequestRefresh)).toBeGreaterThan(
       revision,
     );
-    expect(view.container.querySelector('[id="/field"]')).toBe(initial);
+    expect(
+      view.container.querySelector(
+        ':is([id="/field"], [id$=":/field"]):not(label):not(legend)',
+      ),
+    ).toBe(initial);
     expect(initial.value).toBe('composing');
     expect(mounts).toBe(1);
     fireEvent.compositionEnd(initial);
     const replacement = view.container.querySelector(
-      '[id="/field"]',
+      ':is([id="/field"], [id$=":/field"]):not(label):not(legend)',
     ) as HTMLInputElement;
     expect(replacement).not.toBe(initial);
     expect(replacement.value).toBe('committed');
@@ -124,7 +134,9 @@ it.each(INPUT_SUPPLIES)(
       { child: 'initial' },
     );
     const container = view.container.querySelector('[data-container="/field"]');
-    const child = view.container.querySelector('[id="/field/child"]');
+    const child = view.container.querySelector(
+      ':is([id="/field/child"], [id$=":/field/child"]):not(label):not(legend)',
+    );
     expect(child, view.container.innerHTML).not.toBeNull();
     act(() => view.ref.current!.refresh('/field'));
     expect(view.container.querySelector('[data-container="/field"]')).toBe(
@@ -138,8 +150,11 @@ it.each(INPUT_SUPPLIES)(
     );
     expect(mounts).toBe(1);
     expect(
-      (view.container.querySelector('[id="/field/child"]') as HTMLInputElement)
-        .value,
+      (
+        view.container.querySelector(
+          ':is([id="/field/child"], [id$=":/field/child"]):not(label):not(legend)',
+        ) as HTMLInputElement
+      ).value,
     ).toBe('committed');
     expect(view.ref.current!.findNode('/field')!.value).toEqual({
       child: 'committed',

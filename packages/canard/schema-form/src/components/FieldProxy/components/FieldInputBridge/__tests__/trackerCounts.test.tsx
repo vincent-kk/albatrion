@@ -120,7 +120,9 @@ it('retains five listeners for a labeled field with an array ancestor', () => {
     />,
   );
   const node = ref.current!.findNode('/0/field')!;
-  expect(view.container.querySelector('label[for="/0/field"]')).not.toBeNull();
+  expect(
+    view.container.querySelector('label[for$=":/0/field"]'),
+  ).not.toBeNull();
   expect(active.get(node)).toBe(5);
   view.unmount();
   expect(active.get(node)).toBe(0);

@@ -94,9 +94,12 @@ describe('features — handle-layout consumer-only', () => {
         ).toEqual({ replaced: stage.replaced, values: scenario.initialValue });
         // jsdom's select() leaves focus where it was, so focus moves are checked here only for focus; the story checks both in Chromium.
         if (stage.act === 'focus')
-          expect(document.activeElement?.id, `focus at stage ${index}`).toBe(
-            stage.activeId,
-          );
+          expect(
+            document.activeElement
+              ?.closest('[data-path]')
+              ?.getAttribute('data-path'),
+            `focus at stage ${index}`,
+          ).toBe(stage.activeId);
         if (stage.act === 'select' && target instanceof HTMLInputElement)
           expect(
             [target.selectionStart, target.selectionEnd],
@@ -144,7 +147,7 @@ describe('features — handle-layout consumer-only', () => {
       const copies = () =>
         Array.from(
           form.container.querySelectorAll<HTMLInputElement>(
-            `input[id="${layoutPlan.repeated}"]`,
+            `input:is([id="${layoutPlan.repeated}"], [id$=":${layoutPlan.repeated}"]):not(label):not(legend)`,
           ),
         );
       await form.user.type(copies()[0], layoutPlan.typed);
@@ -152,7 +155,11 @@ describe('features — handle-layout consumer-only', () => {
       expect({
         copies: copies().map((input) => input.value),
         omitted: layoutPlan.omitted.map((path) =>
-          Boolean(form.container.querySelector(`[id="${path}"]`)),
+          Boolean(
+            form.container.querySelector(
+              `:is([id="${path}"], [id$=":${path}"]):not(label):not(legend)`,
+            ),
+          ),
         ),
         rendered: form.container.querySelector(
           `[data-render="${layoutPlan.render}"]`,
@@ -206,7 +213,10 @@ describe('features — handle-layout consumer-only', () => {
         titleReadOnly: handle!.findNode('/title')!.isReadOnly,
         secretVisible: handle!.findNode('/secret')!.isVisible,
         codeMessageShown: Boolean(
-          Array.from(container.querySelectorAll('em')).find((message) => message.closest('[data-path]')?.matches('[data-path="/code"]'))
+          Array.from(container.querySelectorAll('em'))
+            .find((message) =>
+              message.closest('[data-path]')?.matches('[data-path="/code"]'),
+            )
             ?.textContent?.trim(),
         ),
       }).toEqual(providerLayers.expected);

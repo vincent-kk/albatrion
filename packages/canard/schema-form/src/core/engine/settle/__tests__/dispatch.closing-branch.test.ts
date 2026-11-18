@@ -83,12 +83,12 @@ describe('array growth in the write that closes its branch (211C-01 A)', () => {
         dispatchSetValue(getDispatchChild(root, 'kind'), 'single');
       }),
     );
-    expect(result.commits).toBe(1);
+    expect(result.commits).toBe(2);
     expect(result.closedSource).toEqual(['a', 'b', 'c', 'd']);
     expect(result.reopened).toEqual(['a', 'b', 'c', 'd']);
   });
 
-  it('keeps a pushed item when the batch closes the branch before the push', () => {
+  it('rejects a retired handle push after the batch closes its parent branch', () => {
     const result = closeAndReopen((root) =>
       dispatchBatch(root, () => {
         dispatchSetValue(getDispatchChild(root, 'kind'), 'single');
@@ -96,7 +96,7 @@ describe('array growth in the write that closes its branch (211C-01 A)', () => {
       }),
     );
     expect(result.commits).toBe(1);
-    expect(result.reopened).toEqual(['a', 'b', 'c', 'd']);
+    expect(result.reopened).toEqual(['a', 'b', 'c']);
   });
 
   it('interprets a new slot like an entering item', () => {

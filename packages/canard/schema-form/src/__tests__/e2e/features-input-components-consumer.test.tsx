@@ -349,7 +349,7 @@ describe('features — input-components consumer-only', () => {
         }
         await form.flush(BLUR_FRAME_MS);
         const card = form.container.querySelector<HTMLElement>(
-          '[id="/address"][data-card-fields]',
+          ':is([id="/address"], [id$=":/address"]):not(label):not(legend)[data-card-fields]',
         )!;
         expect(
           {
