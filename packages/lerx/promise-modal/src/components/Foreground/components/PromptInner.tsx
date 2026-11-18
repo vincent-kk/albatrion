@@ -2,6 +2,7 @@ import { Fragment, memo, useMemo, useRef, useState } from 'react';
 
 import { isFunction, isString } from '@winglet/common-utils/filter';
 import { useHandle } from '@winglet/react-utils/hook';
+import { isReactComponent } from '@winglet/react-utils/filter';
 import { renderComponent } from '@winglet/react-utils/render';
 
 import type { Fn } from '@aileron/declare';
@@ -97,11 +98,11 @@ export const PromptInner = memo(
               {content}
             </ContentComponent>
           ) : (
-            renderComponent(content, {
+            (typeof content === 'function' || isReactComponent(content)) ? renderComponent(content, {
               onConfirm: handleConfirm,
               onCancel: handleClose,
               context: userDefinedContext,
-            })
+            }) : content
           ))}
 
         {Input && (
