@@ -64,9 +64,21 @@ export const combination = (n: number, r: number): number => {
   if (r === 0 || r === n) return 1;
   if (r > n - r) r = n - r;
   let result = 1;
-  for (let i = 0; i < r; i++) {
-    result *= n - i;
-    result /= i + 1;
+  if (n <= 51) {
+    for (let i = 0; i < r; i++) {
+      result *= n - i;
+      result /= i + 1;
+    }
+    return Math.round(result);
   }
-  return Math.round(result);
+  for (let i = 0; i < r; i++) {
+    const product = result * (n - i);
+    if (product > Number.MAX_SAFE_INTEGER) {
+      let exact = BigInt(result);
+      for (; i < r; i++) exact = exact * BigInt(n - i) / BigInt(i + 1);
+      return Number(exact);
+    }
+    result = product / (i + 1);
+  }
+  return result;
 };
