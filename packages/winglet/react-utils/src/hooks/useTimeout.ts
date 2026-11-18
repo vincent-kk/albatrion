@@ -10,6 +10,22 @@ type UseTimeoutReturn = {
   cancel: Fn;
 };
 
+/** Mutable timer state and stable controls owned by a single hook instance. */
+type TimeoutState = {
+  /** Callback from the last committed render. */
+  current: Fn;
+  /** Whether no timer is pending. */
+  idle: boolean;
+  /** Current host timer, or null after cancellation or completion. */
+  timer: ReturnType<typeof setTimeout> | null;
+  /** Whether the hook's effects are active. */
+  mounted: boolean;
+  /** Stable timer cancellation control. */
+  cancel: Fn;
+  /** Stable query for pending work. */
+  isIdle: Fn<[], boolean>;
+};
+
 /**
  * Provides imperative control over setTimeout with React-friendly state management.
  *
@@ -117,43 +133,43 @@ export const useTimeout = (
   callback: Fn,
   timeout: number = 0,
 ): UseTimeoutReturn => {
-  const mountedRef = useRef(true);
-  const idleRef = useRef<boolean>(true);
-  const timerIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const callbackRef = useCommittedReference(useRef(callback), callback);
-
-  const isIdle = useCallback(() => idleRef.current, []);
-
+  const holder = useRef<TimeoutState | null>(null);
+  if (holder.current === null) {
+    const state: TimeoutState = {
+      current: callback,
+      idle: true,
+      timer: null,
+      mounted: true,
+      cancel: () => {
+        state.idle = true;
+        if (state.timer !== null) {
+          clearTimeout(state.timer);
+          state.timer = null;
+        }
+      },
+      isIdle: () => state.idle,
+    };
+    holder.current = state;
+  }
+  const state = useCommittedReference(holder.current, callback);
   const schedule = useCallback(() => {
-    if (!mountedRef.current) return;
-    idleRef.current = false;
-    if (timerIdRef.current !== null) clearTimeout(timerIdRef.current);
-    timerIdRef.current = setTimeout(() => {
-      idleRef.current = true;
-      timerIdRef.current = null;
-      callbackRef.current();
+    if (!state.mounted) return;
+    state.idle = false;
+    if (state.timer !== null) clearTimeout(state.timer);
+    state.timer = setTimeout(() => {
+      state.idle = true;
+      state.timer = null;
+      state.current();
     }, timeout);
-  }, [timeout, callbackRef]);
-
-  const cancel = useCallback(() => {
-    idleRef.current = true;
-    if (timerIdRef.current !== null) {
-      clearTimeout(timerIdRef.current);
-      timerIdRef.current = null;
-    }
-  }, []);
+  }, [timeout, state]);
 
   useEffect(() => {
-    mountedRef.current = true;
+    state.mounted = true;
     return () => {
-      mountedRef.current = false;
-      cancel();
+      state.mounted = false;
+      state.cancel();
     };
-  }, [cancel]);
+  }, [state]);
 
-  return {
-    isIdle,
-    schedule,
-    cancel,
-  } as const;
+  return { isIdle: state.isIdle, schedule, cancel: state.cancel };
 };
