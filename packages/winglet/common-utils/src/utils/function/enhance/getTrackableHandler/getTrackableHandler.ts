@@ -600,4 +600,3 @@ export function getTrackableHandler<
 
   return handler as TrackableHandlerFunction<Args, Result, State>;
 }
-
