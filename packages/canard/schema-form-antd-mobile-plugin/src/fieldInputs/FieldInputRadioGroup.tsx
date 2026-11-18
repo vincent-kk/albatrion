@@ -12,6 +12,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { getOwnLabel } from './utils/enum/getOwnLabel';
+
 interface FieldInputRadioGroupProps
   extends FieldInputPropsWithSchema<
     string | number | null,
@@ -44,7 +46,7 @@ const FieldInputRadioGroup = ({
           return {
             value,
             rawValue,
-            label: labels['' + rawValue] || '' + rawValue,
+            label: getOwnLabel(labels, '' + rawValue) || '' + rawValue,
           };
         })
       : [];
