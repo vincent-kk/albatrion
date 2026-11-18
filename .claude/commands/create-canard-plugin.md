@@ -307,6 +307,8 @@ When you run `/create-canard-plugin <UI_LIBRARY_NAME>`, Claude will:
   - Verify context delivery
   - Verify event handling
 
+Use the core-supplied `FieldInputProps.id` on the actual control and the same value for a single-control label's `htmlFor`. Keep `path` for data lookup. Group titles use `FieldRendererProps.labelId` and `aria-labelledby`, each option has its own id, and native radio names use the scoped input id; other inputs keep their leaf names.
+
 **Example Template Output**:
 
 ```typescript
@@ -320,10 +322,10 @@ interface ChakraContext {
 }
 
 const FieldInputString = ({
-  path, name, value, onChange, context, required, disabled, readOnly,
+  id, name, value, onChange, context, required, disabled, readOnly,
 }: FieldInputProps<string, ChakraContext>) => (
   <Input
-    id={path}
+    id={id}
     name={name}
     value={value ?? ''}
     onChange={(event) => onChange(event.target.value === '' ? undefined : event.target.value)}
