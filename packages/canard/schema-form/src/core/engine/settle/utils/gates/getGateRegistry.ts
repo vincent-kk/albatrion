@@ -182,7 +182,7 @@ class GateRegistry {
           (memo ??= new Map()),
           gate.schemaPath ===
             appendSegment(
-              appendSegment(node.blueprintNode.schemaPath, 'controls'),
+              appendSegment(declaration.schemaPath, 'controls'),
               'active',
             )
             ? node.path
