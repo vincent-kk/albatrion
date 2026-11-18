@@ -8,7 +8,8 @@
 
 ## API Contracts
 
-- `isEmpty(value)`: `null`/`undefined`는 true, 함수는 항상 false. 객체가 아닌 원시값은 `isFalsy` 판정에 위임한다. `Map`/`Set`은 `size === 0`로 판단하고, 그 외 객체는 own enumerable 키가 하나도 없을 때만 true다.
+- `isEmpty(value)`: `null`/`undefined`는 true, 함수는 항상 false. 객체가 아닌 원시값은 `isFalsy` 판정에 위임한다. `Map`/`Set`은 현재 realm의 인스턴스만 `size === 0`로 판단하고, 그 외 객체는 own enumerable 키가 하나도 없을 때만 true다.
+- 다른 realm의 Map/Set은 size를 인식하지 못하고 own enumerable 키로만 판정합니다. realm 검사는 빈 일반 객체 경로에 비용을 더하므로 이 한계를 유지합니다.
 - `isEmptyObject(value)`: own enumerable 키 유무만 확인한다 — `Date`/`Error`/`Map`/`Set`/`WeakMap`/`WeakSet`/`Promise` 인스턴스도 own enumerable 키가 없어 true를 반환한다(문서화된 성능 트레이드오프이며 고칠 계획이 없다).
 - `isEmptyPlainObject(value)`: `isPlainObject` 판정을 먼저 통과해야 하므로 위 내장 타입 전부에 false를 반환하는, 더 느리지만 정확한 대안이다.
 - `isPlainObject(value)`: 프로토타입이 `null`이거나 `Object.prototype`이거나 그 조부모가 `null`이며, 내부 타입 태그가 `[object Object]`인 경우만 true다 — 커스텀 `Symbol.toStringTag`를 가진 객체는 제외된다.
