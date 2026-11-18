@@ -21,6 +21,8 @@ Earlier findings are recorded in {{EARLIER_ROUND_DIRS}}. Each folder has a `READ
 - Do not report an earlier finding again, and do not report a finding with the same root cause (same function, same mechanism).
 - A new instance of an earlier class in a different function or package is a new finding. Name the earlier item it is a sibling of.
 - Items an earlier document lists under "Open leads" (Korean in rounds 1 and 2: "확인하지 못한 가능성") are open leads. Confirming one with a failing probe is a new finding; cite the document.
+- An earlier round's `FIXES.md`, when present, lists the fix commits and the same-class siblings fixed along with each item. A listed fix or sibling that still fails is a regression: report it, with Reopens filled in.
+- `FIXES.md` also records decided behavior and known limits (Korean headings in rounds 1 and 2: "결정과 근거" and "알려진 한계"). Read those sections for your packages and do not report what they describe. A different input that reaches the same code and breaks something the decision or limit does not cover is a new finding; name the limit it goes past.
 - If a probe trips over a known bug, work around it rather than report it.
 - Do not re-check the hypotheses an earlier document lists under "Hypotheses checked and not bugs" (Korean in rounds 1 and 2: "버그가 아니라고 확인한 가설").
 
@@ -85,7 +87,7 @@ Report up to 20 findings ranked by severity. Never pad the list to reach the cap
 - The contract violated, cited as file:line or a standard clause.
 - Root cause as file:line, with a mechanism of two or three sentences.
 - Sibling of: an earlier item, or "new class".
-- Reopens: if `git log -L` on the root-cause lines shows a commit that fixed an earlier bug bounty item, that item and commit; otherwise "no".
+- Reopens: if `git log -L` on the root-cause lines shows a commit that fixed an earlier bug bounty item, that item and commit; otherwise "no". Fix commit messages name their item as `round-K <package> <item>`, and `bug-bounty/round-K/FIXES.md` lists a round's fix commits.
 - Probe path, test name, actual versus expected, and the command that runs it.
 - Verification level and confidence.
 
