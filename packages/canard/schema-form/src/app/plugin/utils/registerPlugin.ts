@@ -10,7 +10,7 @@ import { formatRegisterPluginError } from './formatRegisterPluginError';
 import { getPluginRegistry } from './getPluginRegistry';
 
 /** Registration fingerprints share the same realm ownership as plugin state. */
-const registry = getPluginRegistry();
+const { getPluginKey, registeredPlugins } = getPluginRegistry();
 
 /**
  * Registers a schema form plugin to extend or customize form functionality globally.
@@ -202,8 +202,8 @@ export const registerPlugin = (plugin: Nullable<SchemaFormPlugin>) => {
     return;
   }
   if (!isPlainObject(plugin)) return;
-  const hash = registry.getPluginKey(plugin);
-  if (registry.registeredPlugins.has(hash)) return;
+  const hash = getPluginKey(plugin);
+  if (registeredPlugins.has(hash)) return;
   try {
     const { fieldInputDefinitions, validator, formatError, ...renderKit } =
       plugin;
@@ -222,5 +222,5 @@ export const registerPlugin = (plugin: Nullable<SchemaFormPlugin>) => {
       },
     );
   }
-  registry.registeredPlugins.add(hash);
+  registeredPlugins.add(hash);
 };
