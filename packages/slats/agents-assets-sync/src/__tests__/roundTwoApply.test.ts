@@ -5,6 +5,7 @@ import {
   mkdirSync,
   mkdtempSync,
   readdirSync,
+  readFileSync,
   rmSync,
   symlinkSync,
   writeFileSync,
@@ -51,8 +52,15 @@ const probeFs = () => {
   const caseInsensitive = existsSync(join(dir, 'CASE'));
   writeFileSync(join(dir, 'é'), 'x');
   const normInsensitive = existsSync(join(dir, 'é'));
+  writeFileSync(join(dir, 'Σ'), 'x');
+  writeFileSync(join(dir, 'ß'), 'x');
+  writeFileSync(join(dir, 'ſ'), 'x');
+  const isSigmaInsensitive = existsSync(join(dir, 'ς'));
+  const isSharpSInsensitive = existsSync(join(dir, 'SS'));
+  const isCapitalSharpSInsensitive = existsSync(join(dir, 'ẞ'));
+  const isLongSInsensitive = existsSync(join(dir, 'S'));
   rmSync(dir, { recursive: true, force: true });
-  return { caseInsensitive, normInsensitive };
+  return { caseInsensitive, normInsensitive, isSigmaInsensitive, isSharpSInsensitive, isCapitalSharpSInsensitive, isLongSInsensitive };
 };
 const FS = probeFs();
 
@@ -178,6 +186,29 @@ describe('r2-periphery agents-assets-sync probes (temp dirs only)', () => {
       );
     },
   );
+
+  describe.each([
+    ['isSigmaInsensitive', 'Σ.md', 'ς.md'],
+    ['isSharpSInsensitive', 'ß.md', 'SS.md'],
+    ['isCapitalSharpSInsensitive', 'ẞ.md', 'ß.md'],
+    ['isLongSInsensitive', 'ſ.md', 'S.md'],
+  ] as const)('Unicode aliases %s', (flag, previousName, currentName) => {
+    it.skipIf(!FS[flag])('(round-2 agents-assets-sync 2) preserves Unicode case aliases like an unchanged file (requires matching filesystem case folding)', () => {
+      writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
+      writeAt(join(assetRoot, 'skills/pp', previousName), '# unicode\n');
+      const initial = run('--agent=claude', ...BASE);
+      const installed = join(projectRoot, '.claude/skills/pp');
+      const baseline = { status: initial.status, body: readFileSync(join(installed, previousName), 'utf8') };
+      rmSync(join(assetRoot, 'skills/pp', previousName));
+      writeAt(join(assetRoot, 'skills/pp', currentName), '# unicode\n');
+      setVersion('2.0.0');
+      const plain = run('--agent=claude', ...BASE);
+      const forced = run('--agent=claude', ...BASE, '--force', '--yes');
+      const target = join(installed, currentName);
+      expect({ status: forced.status, body: existsSync(target) ? readFileSync(target, 'utf8') : null }).toEqual(baseline);
+      expect(plain.status).toBe(baseline.status);
+    });
+  });
 
   it('(round-2 agents-assets-sync 3) a blocked multi-agent run exits with the same code in plain and --json', () => {
     writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
