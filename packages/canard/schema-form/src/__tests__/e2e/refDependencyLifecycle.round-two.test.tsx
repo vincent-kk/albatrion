@@ -135,44 +135,39 @@ describe('round-2 schema-form 2: dependency occurrence lifecycle', () => {
     expect(await run(true)).toEqual(await run(false));
   });
   it('rebinds recursive array occurrences after insert, move and remove', async () => {
-    const handle = createRef<FormHandle>();
-    render(
-      <Form
-        ref={handle}
-        jsonSchema={{
-          $defs: {
-            n: {
-              type: 'object',
-              properties: {
-                name: { type: 'string' },
-                label: {
-                  type: 'string',
-                  controls: { derived: '(../name) + "#"' },
-                },
-                kids: { type: 'array', items: { $ref: '#/$defs/n' } },
-              },
-            },
+    const run = async (ref: boolean) => {
+      const level = (depth: number): JSONSchema => ({
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          label: { type: 'string', controls: { derived: '(../name) + "#"' } },
+          kids: {
+            type: 'array',
+            items: ref ? { $ref: '#/$defs/n' } : depth ? level(depth - 1) : false,
           },
-          $ref: '#/$defs/n',
-        }}
-        defaultValue={{
-          name: 'r',
-          kids: [{ name: 'c', kids: [{ name: 'g' }, { name: 'h' }] }],
-        }}
-        validationMode={ValidationMode.None}
-      />,
-    );
-    const kids = handle.current!.findNode('/kids/0/kids')!;
-    if (!isArrayNode(kids)) throw new Error('Expected array');
-    await act(() => kids.insert(0, { name: 'inserted' }));
-    await act(() => kids.insert(0, kids.remove(2)));
-    await act(() => kids.remove(1));
-    await act(() =>
-      handle.current!.findNode('/kids/0/kids/0/name')!.setValue('changed'),
-    );
-    expect(handle.current!.findNode('/kids/0/kids/0/label')!.value).toBe(
-      'changed#',
-    );
+        },
+      });
+      const handle = createRef<FormHandle>();
+      const view = render(
+        <Form
+          ref={handle}
+          validationMode={ValidationMode.None}
+          jsonSchema={
+            ref ? { $defs: { n: level(0) }, $ref: '#/$defs/n' } : level(3)
+          }
+          defaultValue={{ name: 'r', kids: [{ name: 'c', kids: [{ name: 'g' }, { name: 'h' }] }] }} />,
+      );
+      const kids = handle.current!.findNode('/kids/0/kids')!;
+      if (!isArrayNode(kids)) throw new Error('Expected array');
+      await act(() => kids.insert(0, { name: 'inserted' }));
+      await act(() => kids.insert(0, kids.remove(2)));
+      await act(() => kids.remove(1));
+      await act(() => handle.current!.findNode('/kids/0/kids/0/name')!.setValue('changed'));
+      const result = handle.current!.getValue();
+      view.unmount();
+      return result;
+    };
+    expect(await run(true)).toEqual(await run(false));
   });
   it('rebinds two oneOf candidates at the same occurrence path', async () => {
     const run = async (ref: boolean) => {
