@@ -113,7 +113,7 @@ const SafeWidget = withErrorBoundary(Widget, <p>로드에 실패했습니다.</p
 | `@winglet/react-utils/hook`   | 18개 훅 전체                                                                                       |
 | `@winglet/react-utils/hoc`    | `withErrorBoundary`, `withErrorBoundaryForwardRef`, `withUploader`                                 |
 | `@winglet/react-utils/portal` | `Portal` 복합 객체                                                                                 |
-| `@winglet/react-utils/filter` | `isReactComponent`, `isReactElement`, `isClassComponent`, `isFunctionComponent`, `isMemoComponent` |
+| `@winglet/react-utils/filter` | `isReactComponent`, `isReactElement`, `isClassComponent`, `isFunctionComponent`, `isMemoComponent`, `isForwardRefComponent`, `isLazyComponent` |
 | `@winglet/react-utils/object` | `remainOnlyReactComponent`                                                                         |
 | `@winglet/react-utils/render` | `renderComponent`                                                                                  |
 
@@ -922,7 +922,7 @@ function isReactComponent<Props = any>(
 
 함수 컴포넌트, 클래스 컴포넌트, `React.memo` 래핑 컴포넌트에 대해 `true`를 반환합니다.
 
-**감지하지 않음**: `React.forwardRef` 컴포넌트.
+`React.forwardRef`와 `React.lazy` 컴포넌트도 감지합니다. 각각 `isForwardRefComponent`와 `isLazyComponent`로 구분합니다.
 
 ```tsx
 isReactComponent(() => <div />); // true
@@ -934,7 +934,7 @@ isReactComponent(
     }
   },
 ); // true
-isReactComponent(React.forwardRef((_, ref) => <div ref={ref} />)); // false
+isReactComponent(React.forwardRef((_, ref) => <div ref={ref} />)); // true
 isReactComponent(<div />); // false (엘리먼트, 컴포넌트 아님)
 ```
 
