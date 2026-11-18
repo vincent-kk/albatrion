@@ -1,6 +1,7 @@
 import type { Fn } from '@aileron/declare';
 
 import {
+  type Action,
   type InjectReport,
   applyAction,
   applyBlockActions,
@@ -53,17 +54,22 @@ export async function applyAllPlans({
       tp.plan.actions,
       force,
     );
-    await asyncPool(CONCURRENCY, fileActions, async (action) => {
+    const results = await asyncPool(CONCURRENCY, fileActions, async (action) => {
       await applyAction(action, tp.target.assetRoot);
       done += 1;
       dispatch({ type: 'apply-progress', done, current: action.relPath });
     });
+    const failedActions: Action[] = fileActions.filter((_, index) => results[index].status === 'rejected');
     for (const [fileAbs, group] of blockGroups) {
-      await applyBlockActions(fileAbs, group, tp.target.assetRoot);
+      try {
+        await applyBlockActions(fileAbs, group, tp.target.assetRoot);
+      } catch {
+        failedActions.push(...group);
+      }
       done += group.length;
       dispatch({ type: 'apply-progress', done, current: fileAbs });
     }
-    reports.push(summarize(tp.plan, 0));
+    reports.push(summarize(tp.plan, failedActions.length ? 1 : 0, failedActions));
   }
 
   const hasFailure = reports.some((r) => r.exitCode !== 0);

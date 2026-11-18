@@ -1,7 +1,6 @@
 import { copyFile, mkdir, unlink } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
-import { logger } from '../../../utils/logger.js';
 import type { Action } from '../../buildPlan/index.js';
 
 /**
@@ -29,10 +28,6 @@ export async function applyAction(
   }
   if (action.kind === 'delete')
     await unlink(dstAbs).catch((error) => {
-      if (error?.code !== 'ENOENT') {
-        logger.warn(
-          `[agents-assets-sync] unlink failed: ${dstAbs} (${error?.code ?? error})`,
-        );
-      }
+      if (error?.code !== 'ENOENT') throw error;
     });
 }

@@ -173,17 +173,24 @@ async function runUnit(
       };
 
     const { fileActions, blockGroups } = partitionActions(plan.actions, force);
-    await asyncPool(COPY_CONCURRENCY, fileActions, (action) =>
+    const results = await asyncPool(COPY_CONCURRENCY, fileActions, (action) =>
       applyAction(action, target.assetRoot),
     );
-    for (const [fileAbs, group] of blockGroups)
-      await applyBlockActions(fileAbs, group, target.assetRoot);
+    const failedActions: Action[] = fileActions.filter((_, index) => results[index].status === 'rejected');
+    for (const [fileAbs, group] of blockGroups) {
+      try {
+        await applyBlockActions(fileAbs, group, target.assetRoot);
+      } catch {
+        failedActions.push(...group);
+      }
+    }
 
     return {
       ...base,
       requiresForce: plan.requiresForce,
       actions: plan.actions,
-      report: summarize(plan, 0),
+      report: summarize(plan, failedActions.length ? 1 : 0, failedActions),
+      ...(failedActions.length ? { error: `Failed to apply: ${failedActions.map((action) => action.relPath).join(', ')}` } : {}),
     };
   } catch (error) {
     return {

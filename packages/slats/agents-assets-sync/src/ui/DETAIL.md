@@ -20,6 +20,8 @@
 - 종료 코드: `0` 성공/최신/dry-run, `1` 런타임 오류, `2` 사용자 취소 또는 설정 누락.
 - 계획 중 던져진 오류는 실패한 plan step 으로 표면화된다.
 
+- 파일·블록 적용 실패는 보고서의 failed 경고와 종료 코드 1로 전달한다. 성공한 작업만 생성·삭제 목록에 남기고 다른 작업은 계속한다.
+
 ## API Contracts
 
 - `renderInjectApp(input: RenderInput): Promise<number>`
