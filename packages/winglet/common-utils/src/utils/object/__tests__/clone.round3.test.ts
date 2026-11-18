@@ -15,6 +15,14 @@ describe('round-3 clone realm equivalence', () => {
     ['ArrayBuffer', 'Uint8Array.from([1,2,3]).buffer', 'v => Array.from(new Uint8Array(v))'],
     ['SharedArrayBuffer', 'new SharedArrayBuffer(8)', 'v => [v.byteLength, new Uint8Array(v).length]'],
     ['DataView', 'new DataView(new ArrayBuffer(8),2,4)', 'v => [v.byteOffset,v.byteLength,v.getUint8(0)]'],
+    ['Uint8Array', 'new Uint8Array([1,2])', 'v => Array.from(v)'],
+    ['Uint8ClampedArray', 'new Uint8ClampedArray([1,255])', 'v => Array.from(v)'],
+    ['Int16Array', 'new Int16Array([-1,2])', 'v => Array.from(v)'],
+    ['Uint16Array', 'new Uint16Array([1,2])', 'v => Array.from(v)'],
+    ['Int32Array', 'new Int32Array([-1,2])', 'v => Array.from(v)'],
+    ['Uint32Array', 'new Uint32Array([1,2])', 'v => Array.from(v)'],
+    ['Float32Array', 'new Float32Array([1.5,NaN])', 'v => Array.from(v)'],
+    ['BigUint64Array', 'new BigUint64Array([1n,2n])', 'v => Array.from(v)'],
     ['Int8Array', 'new Int8Array([-1,2])', 'v => Array.from(v)'],
     ['Float64Array', 'new Float64Array([1.5,NaN])', 'v => Array.from(v)'],
     ['BigInt64Array', 'new BigInt64Array([1n,-2n])', 'v => Array.from(v)'],
@@ -49,4 +57,37 @@ describe('round-3 clone realm equivalence', () => {
       expect(clone(value)).not.toBe(value);
     }
   });
+  it('foreign error stack and non-enumerable custom name match local cloning', () => {
+    const value: Error = runInNewContext('Object.defineProperty(new TypeError("m"),"name",{value:"Custom",configurable:true})');
+    const copy = clone(value);
+    expect(copy.stack).toBe(value.stack);
+    expect(copy.name).toBe(value.name);
+  });
+
+  it('extra collection keys follow the same documented limit in both realms', () => {
+    for (const expression of ['new Map([["a",1]])','new Set([1])']) {
+      const local: object = runInThisContext(expression);
+      const foreign: object = runInNewContext(expression);
+      const symbol = Symbol('extra');
+      for (const value of [local,foreign]) {
+        Reflect.set(value,'extra',2); Reflect.set(value,symbol,3);
+      }
+      expect(Reflect.ownKeys(clone(foreign))).toEqual(Reflect.ownKeys(clone(local)));
+    }
+  });
+
+  it.skipIf(typeof Blob === 'undefined')('vm-created Blob subclass preserves its bytes through the available host API', async () => {
+    const value: Blob = runInNewContext('new (class ForeignBlob extends Blob {})(["abc"],{type:"text/plain"})',{Blob});
+    const copy = clone(value);
+    expect(await copy.text()).toBe(await value.text());
+    expect(copy.type).toBe(value.type); expect(copy).not.toBe(value);
+  });
+
+  it.skipIf(typeof File === 'undefined')('vm-created File subclass preserves metadata through the available host API', async () => {
+    const value: File = runInNewContext('new (class ForeignFile extends File {})(["abc"],"a.txt",{lastModified:7})',{File});
+    const copy = clone(value);
+    expect([copy.name,copy.lastModified,await copy.text()]).toEqual([value.name,value.lastModified,await value.text()]);
+    expect(copy).not.toBe(value);
+  });
+
 });
