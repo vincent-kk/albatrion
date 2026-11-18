@@ -109,6 +109,8 @@ useFieldLifecycle의 cleanup이 안정된 releaseComposition을 호출하므로 
 - 오류는 FormRoot의 던지지 않는 보고기로 보내 나머지 예약과 입력 트리를 유지합니다. 큐 의미는 [fieldLifecycle](../../../../helpers/fieldLifecycle/DETAIL.md)의 계약을 따릅니다.
 - 빈 경로에도 Context 읽기, effect 메모와 의존성 비교, composition 보류 셀의 ref 읽기 및 비트 확인 비용은 남습니다. effect 함수·isCommittedRef 셀·재실행 표시·컨테이너 callback ref·위치 epoch는 의존성이 바뀔 때만 새로 만들며 별도의 ref 훅은 두지 않습니다. 메모 팩토리 클로저와 의존성 배열은 렌더마다 평가됩니다. 새 effect·노드 리스너는 없습니다. Render 감지기의 호출과 effect는 해당 노드 예약이 있을 때만 발생합니다. 가상화 입력 Map 쓰기는 마운트·정리·실제 컨테이너 교체에만 있습니다.
 
+확정 Refresh로 입력을 새 key에 마운트할 때는 자식 소유 이력을 새로 시작하며 Activity 효과 해제로는 지우지 않습니다.
+
 입력의 자식 소유 이력은 기존 자식 필드 캐시와 수명을 공유하며 별도 hook이나 소유 객체를 할당하지 않습니다. 자식 layout 연결 수는 별도 ref로 유지하여 명시적 Refresh의 기존 대기 조건을 보존합니다.
 
 ## Acceptance Criteria

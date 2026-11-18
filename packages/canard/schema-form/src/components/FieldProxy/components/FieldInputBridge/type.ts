@@ -47,6 +47,8 @@ export const REACTIVE_RERENDERING_EVENTS =
 
 /** Child ownership shares the existing child-field cache across Activity cleanup. */
 export interface ChildInputOwnership {
+  /** Field binding identity owning this record. */
+  node?: FieldNode;
   /** External-value revision captured by the first child render. */
   externalValueRevision?: number;
   /** Raw input identity owning this record. */

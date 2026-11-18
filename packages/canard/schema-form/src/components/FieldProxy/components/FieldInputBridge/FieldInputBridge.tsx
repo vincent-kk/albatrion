@@ -81,10 +81,13 @@ export const FieldInputBridge = memo(
         terminalChildren,
       );
     if (
-      childValueRevision.input !== FieldInput ||
-      childValueRevision.frame !== Frame ||
-      childValueRevision.isControlled !== (controlled === true)
+      node.strategy === 'branch' &&
+      (childValueRevision.node !== node ||
+        childValueRevision.input !== FieldInput ||
+        childValueRevision.frame !== Frame ||
+        childValueRevision.isControlled !== (controlled === true))
     ) {
+      childValueRevision.node = node;
       childValueRevision.input = FieldInput;
       childValueRevision.frame = Frame;
       childValueRevision.isControlled = controlled === true;
