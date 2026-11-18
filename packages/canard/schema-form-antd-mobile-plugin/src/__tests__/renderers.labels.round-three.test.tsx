@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import { Form } from '@canard/schema-form';
 
-import { plugin } from '../../index';
+import { plugin } from '../index';
 
 afterEach(cleanup);
 
