@@ -269,7 +269,7 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
     this.__currentBatch__ = batch;
     const schedule = this.__batchScheduler__;
     schedule(() => {
-      this.__dispatchBatch__(batch);
+      if (!batch.isResolved) this.__dispatchBatch__(batch);
     });
   }
 
@@ -446,7 +446,17 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
         cacheMap.set(cacheKey, promise);
       }
     }
-    if (openBatch === null) this.__scheduleBatch__(batch);
+    if (openBatch === null) {
+      try { this.__scheduleBatch__(batch); }
+      catch (error) {
+        batch.isResolved = true;
+        if (this.__currentBatch__ === batch) this.__currentBatch__ = null;
+        // The throwing load never exposes this promise to its caller.
+        void promise.catch(() => {});
+        failedDispatch(this, batch, error);
+        throw error;
+      }
+    }
     return promise;
   }
 

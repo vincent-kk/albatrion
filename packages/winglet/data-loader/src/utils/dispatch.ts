@@ -47,7 +47,7 @@ export const resolveCacheHits = <Key, Value>(batch: Batch<Key, Value>) => {
   for (const resolveCacheHit of batch.cacheHits) resolveCacheHit();
 };
 
-export const failedDispatch = <E extends Error>(
+export const failedDispatch = <E>(
   loader: DataLoader<any, any>,
   batch: Batch<any, any>,
   error: E,
