@@ -6,6 +6,8 @@ settled는 최초 resolve 또는 reject에서 true가 되며 후속 결과는 �
 
 ## API Contracts
 
+- 최초 resolve·reject가 발생한 시점의 visible을 isVisibleAtSettlement로 보관합니다. 같은 커밋에서 경로 숨김과 확정이 연달아 일어나거나 동시 렌더가 중단되어도 이 사실이 정확해야 하므로, 프레임의 별도 구독이나 렌더 기록이 아니라 노드가 소유합니다. 숨긴 상태에서 확정된 수동 파괴 모달은 종료 애니메이션을 표시하지 않습니다.
+
 - 각 노드는 유효 closeOnEscape와 trapFocus·lockScroll 옵션을 보존하여 매니저가 전역 접근성 동작을 결정합니다.
 
 - prompt 확인과 returnOnCancel 취소는 현재 값을 그대로 반환하고 일반 취소만 null입니다. 결과 채널은 T | undefined | null을 수용합니다.
