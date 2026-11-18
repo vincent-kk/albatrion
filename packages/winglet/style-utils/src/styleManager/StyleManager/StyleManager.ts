@@ -283,10 +283,8 @@ export class StyleManager {
 
   private __scopeCSS__(css: string): string {
     // If it's Shadow DOM, no need to scope
-    if (this.__isShadowDOM__) return terminateStatement(css);
-    return terminateStatement(
-      new RuleScoper(css, '.' + this.__scope__).scopeSheet(),
-    );
+    if (this.__isShadowDOM__) return css;
+    return new RuleScoper(css, '.' + this.__scope__).scopeSheet();
   }
 
   private __flush__(): void {
@@ -300,7 +298,8 @@ export class StyleManager {
     const styleCount = this.__processedStyles__.size;
     const styles = new Array(styleCount);
     let index = 0;
-    for (const css of this.__processedStyles__.values()) styles[index++] = css;
+    for (const css of this.__processedStyles__.values())
+      styles[index++] = styleCount > 1 ? terminateStatement(css) : css;
     const result = styles.join('\n');
     this.__applyCSS__(result);
   }

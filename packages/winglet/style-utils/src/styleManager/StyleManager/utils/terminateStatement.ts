@@ -6,7 +6,8 @@ import { skipOpaqueToken } from './skipOpaqueToken';
  * @returns The original fragment, with a semicolon when its final top-level at-rule lacks one
  */
 export const terminateStatement = (css: string): string => {
-  const last = css.charCodeAt(css.length - 1);
+  const trimmed = css.trimEnd();
+  const last = trimmed.charCodeAt(trimmed.length - 1);
   if (last === 125 || last === 59) return css;
   let depth = 0;
   let statement = -1;
