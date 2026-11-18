@@ -30,6 +30,7 @@ import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import { commitGlobalState } from './commitGlobalState';
 import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
 import { getRequiredChildren } from './utils/getRequiredChildren';
+import { getInputCommitTracking } from './utils/getInputCommitTracking';
 import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
 import { isExternalBranchValueChange } from './utils/isExternalBranchValueChange';
 import { isSameDeliveryValue } from './utils/isSameDeliveryValue';
@@ -49,25 +50,13 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
   runtime.deliveries ??= new Set();
   const previousTransitions = runtime.revisionTransitions;
   try {
-    const origins = context.writeOrigins;
-    const hasInputBatch =
-      origins !== undefined &&
-      origins.length > 1 &&
-      origins.some((origin) => origin.source === FieldNodeWriteKind.Input);
-    const inputPath =
-      origins?.length === 1
-        ? origins[0].source === FieldNodeWriteKind.Input
-          ? origins[0].path
-          : undefined
-        : !origins?.length &&
-            (context.source ?? context.kind) === FieldNodeWriteKind.Input
-          ? context.target.path
-          : undefined;
-    const hasRelay = !!runtime.inputRelays?.length;
-    const tracksInput = inputPath !== undefined || hasInputBatch || hasRelay;
+    const isLoad = context.kind === FieldNodeWriteKind.Load;
+    const inputTracking =
+      isLoad
+        ? undefined
+        : getInputCommitTracking(context, !!runtime.inputRelays?.length);
     const refreshTargets = runtime.refreshTargets;
-    const loadScope =
-      context.kind === FieldNodeWriteKind.Load ? context.loadScope : undefined;
+    const loadScope = isLoad ? context.loadScope : undefined;
     const automaticNodes = new Set<Self>();
     for (let index = 0; index < context.automaticLog.length; index++)
       automaticNodes.add(context.automaticLog[index].node);
@@ -261,10 +250,11 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
             ))
         ) {
           if (
-            tracksInput &&
+            inputTracking &&
             node.behavior.strategy === 'branch' &&
-            context.kind !== FieldNodeWriteKind.Load &&
-            (hasInputBatch || hasRelay || node.path === inputPath) &&
+            (inputTracking.hasInputBatch ||
+              inputTracking.hasRelay ||
+              node.path === inputTracking.inputPath) &&
             !isExternalBranchValueChange(context, node)
           )
             node.pendingRevisionMask |= INPUT_VALUE_REVISION;
