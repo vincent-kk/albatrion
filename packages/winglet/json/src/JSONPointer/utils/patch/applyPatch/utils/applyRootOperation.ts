@@ -1,4 +1,3 @@
-import { isArray } from '@winglet/common-utils/filter';
 import { cloneLite } from '@winglet/common-utils/object';
 
 import { getValue } from '@/json/JSONPointer/utils/manipulator';
@@ -13,7 +12,7 @@ import { removeMoveSource } from './removeMoveSource';
 
 /**
  * Resolves and applies an operation whose target is the root document.
- * @param source - Current document, owned in immutable mode
+ * @param source - Current document, owned before an operation removes a nested source
  * @param patch - Original operation retained for error reporting
  * @param patchIndex - Position in the patch sequence
  * @param cloned - Owned containers, or null for mutable operation
@@ -50,19 +49,6 @@ export const applyRootOperation = (
       else value = cloneLite(copied);
     } else
       value = removeMoveSource(source, from, patch, patchIndex, cloned, '');
-  }
-  if (
-    (operation === Operation.MOVE ||
-      operation === Operation.ADD ||
-      operation === Operation.REPLACE) &&
-    cloned !== null &&
-    value !== null &&
-    typeof value === 'object' &&
-    !cloned.has(value)
-  ) {
-    const owned = isArray(value) ? value.slice() : { ...value };
-    cloned.add(owned);
-    value = owned;
   }
   return handleRootPatch(source, patch, value, patchIndex);
 };

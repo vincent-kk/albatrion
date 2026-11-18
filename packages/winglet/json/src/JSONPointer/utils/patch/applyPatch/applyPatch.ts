@@ -2,7 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { JSONRoot } from '@/json/type';
 
-import type { Patch } from '../../patchModel';
+import { Operation, type Patch } from '../../patchModel';
 import { applySinglePatch } from './applySinglePatch';
 import type { ApplyPatchOptions } from './type';
 
@@ -19,8 +19,10 @@ import type { ApplyPatchOptions } from './type';
  * - Each operation is validated before application
  * - Reserved member names (__proto__, constructor, prototype) are handled as
  *   opaque own data — no patch input can modify the prototype chain
- * - Immutable mode preserves the source with copy-on-write path cloning while unchanged
- *   subtrees remain structurally shared between the source and result
+ * - Immutable mode never mutates the source or any patch value; containers not written
+ *   remain structurally shared with both the source and patch values
+ * - Root add, replace and move install values by reference like nested operations;
+ *   a later write obtains ownership only when it needs to change that container
  * - A `test` operation compares values in every mode; a mismatch aborts the whole patch
  *
  * @template Result - The type of the result object/array, defaults to Source type
@@ -33,12 +35,13 @@ import type { ApplyPatchOptions } from './type';
  *
  * @see https://datatracker.ietf.org/doc/html/rfc6902
  *
- * @returns A new object/array with all patches applied. If immutable is true, returns a new
- *          instance; otherwise, modifies and returns the original source.
+ * @returns The patched document. Immutable mode preserves caller-owned graphs but can
+ *          return a root patch value itself. Mutable mode can modify the original source.
  *
  * @remarks
- * Immutable mode structurally shares unchanged subtrees. If the same object is referenced by
- * multiple paths, only the path touched by a patch is detached from the source.
+ * Immutable mode structurally shares containers with the source and patch values. A final
+ * root add or replace returns its value itself, just as a nested add installs that value
+ * itself. If an object has several paths, only a path written by a patch is detached.
  *
  * Reserved member names (`__proto__`, `constructor`, `prototype`) addressed by a patch survive
  * into the result as own data properties. Copy such a result with spread, `structuredClone`, or a
@@ -99,7 +102,27 @@ export const applyPatch = <Result extends JSONRoot = any>(
     result = isArray(source) ? source.slice() : { ...source };
     cloned.add(result);
   }
-  for (let i = 0, l = patches.length; i < l; i++)
-    result = applySinglePatch(result, patches[i], i, cloned);
+  let rootUnowned = false;
+  for (let i = 0, l = patches.length; i < l; i++) {
+    const patch = patches[i];
+    if (
+      rootUnowned &&
+      cloned !== null &&
+      result !== null &&
+      typeof result === 'object'
+    ) {
+      const readsOrReplacesRoot =
+        patch.path === '' &&
+        (patch.op !== Operation.MOVE || patch.from === '' || patch.from === '#');
+      if (!readsOrReplacesRoot) {
+        result = isArray(result) ? result.slice() : { ...result };
+        cloned.add(result);
+        rootUnowned = false;
+      }
+    }
+    const previous = result;
+    result = applySinglePatch(result, patch, i, cloned);
+    if (result !== previous) rootUnowned = cloned !== null;
+  }
   return result as Result;
 };
