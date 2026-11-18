@@ -21,7 +21,7 @@ import { usePortalAnchor } from './context/usePortalContext';
  * - Creates a stable DOM reference point for portal rendering
  * - Accepts all standard HTML div attributes for styling and behavior
  * - Automatically connects to the nearest Portal context provider
- * - Supports multiple anchors within the same Portal context (first one wins)
+ * - Use one anchor per Portal.with scope
  * - Maintains accessibility and document structure
  *
  * ### Positioning and Styling

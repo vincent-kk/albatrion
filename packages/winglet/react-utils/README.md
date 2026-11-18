@@ -210,6 +210,8 @@ const App = () => <SafeComponent />;
 
 #### Portal
 
+Portal renders a native React portal from its source position into `Portal.Anchor`. Context reads and click bubbling follow the source React ancestors, through `Portal.with` and beyond. A provider wrapping only the source is visible inside its content. To isolate clicks, stop propagation in the portal content; to share provider values throughout the scope, place the provider above `Portal.with`. Activity hide/show preserves subtree state. Before an anchor attaches, including server rendering and the first hydration render, content is absent; attaching or replacing the anchor updates the destination.
+
 Render component content at different locations in the DOM tree.
 This feature is useful when implementing sticky headers.
 

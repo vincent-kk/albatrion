@@ -22,7 +22,7 @@ Applies when choosing between this package's hooks, wiring its Portal system, or
 
 `useConstant` and `useMemorize` accept the same argument shape and do the opposite thing with it. Confusing that pair is the most common defect in this package's usage.
 
-**The Portal system inverts ownership.** `<Portal>` renders `null` where you write it and registers its children into context; the provider renders every registration through `createPortal` into a single anchor ref that all `Portal.Anchor` instances share. Where content lands is a property of the provider, never of the `<Portal>` call site.
+**Portal follows its source React ancestry.** Portal renders a native React portal from its source position into `Portal.Anchor`. Context reads and click bubbling follow the source React ancestors, through `Portal.with` and beyond. A provider wrapping only the source is visible inside its content. To isolate clicks, stop propagation in the portal content; to share provider values throughout the scope, place the provider above `Portal.with`. Activity hide/show preserves subtree state. Before an anchor attaches, including server rendering and the first hydration render, content is absent; attaching or replacing the anchor updates the destination.
 
 ## Decision Guide
 
