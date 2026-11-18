@@ -9,6 +9,7 @@
 - `applyAction` 은 `file` 목적지만 다룬다. 블록 목적지가 들어오면 실패하지 않고 아무것도 하지 않는다 — 계획 전체를 풀에 먹이는 호출자가 실수로 문서를 망가뜨릴 수 없게 한다.
 - `applyAction` 은 `copy` 와 `warn-diverged` 에서 상위 디렉터리를 만들고 소스를 복사한다. `delete` 에서 `ENOENT` 는 조용히 넘어가고, 그 외 실패는 호출자에게 전파한다.
 - `applyBlockActions` 는 하나의 공유 문서를 한 번의 read-modify-write 로 처리한다. 문서가 없으면 빈 내용에서 시작하고, 상위 디렉터리를 만들어 쓴다.
+- 문서 변환은 바이트와 일대일 대응하는 문자열로 원본을 유지하고, 새 마커와 본문만 UTF-8로 인코딩합니다. 손상된 UTF-8이나 다른 인코딩의 사용자 본문도 재인코딩하지 않습니다.
 - 이 도구의 블록 바깥 내용은 바이트 단위로 살아남는다. 문서는 다른 도구와 사용자의 땅이기도 하다.
 - `summarize` 는 순수하다. 계획이 이미 모든 판정을 담고 있으므로 파일시스템도 환경변수도 읽지 않는다.
 - `skip-uptodate` 와 `skip-unsupported` 는 함께 `skipped` 로 집계되고, `warn-diverged` 와 `warn-orphan` 은 사유(`'diverged'` / `'orphan'`)를 단 `warnings` 로 집계된다.
