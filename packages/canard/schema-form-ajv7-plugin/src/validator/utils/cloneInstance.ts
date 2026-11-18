@@ -5,7 +5,7 @@ import type { Options } from 'ajv';
 export const PLUGIN_KEY_PREFIX = 'urn:canard:schema-form:ajv7:';
 
 /**
- * Clone a bound Ajv 7 profile, including consumer schemas and keywords.
+ * Isolate schema caches while keeping the bound formats and keyword registries live.
  * @param instance - Bound instance whose options, formats, keywords and consumer schemas are copied
  * @param allErrors - Error collection of the clone
  * @param validateSchema - Schema validation of the clone; defaults to the bound instance's setting
@@ -18,16 +18,11 @@ export const cloneInstance = (
 ): Ajv => {
   const Constructor = instance.constructor as new (options?: Options) => Ajv;
   const clone = new Constructor({ ...instance.opts, allErrors, validateSchema });
-  for (const [name, format] of Object.entries(instance.formats))
-    if (format !== undefined) clone.addFormat(name, format);
-  for (const name of Object.keys(clone.RULES.keywords))
-    clone.removeKeyword(name);
-  for (const name of Object.keys(instance.RULES.keywords)) {
-    if (clone.RULES.keywords[name]) continue;
-    const definition = instance.getKeyword(name);
-    if (definition && typeof definition === 'object') clone.addKeyword({ ...definition, keyword: name, implements: undefined });
-    else clone.addKeyword(name);
-  }
+  // Schema caches are isolated; future compiles read the bound instance's live rules.
+  Object.defineProperties(clone, {
+    formats: { value: instance.formats },
+    RULES: { value: instance.RULES },
+  });
   for (const [key, env] of Object.entries(instance.schemas))
     if (env && !key.startsWith(PLUGIN_KEY_PREFIX) && !clone.schemas[key])
       clone.addSchema(env.schema, key);
