@@ -10,7 +10,7 @@ JSONPath 구문, 스키마 검증, 직렬화는 소유하지 않는다 — 각�
 
 - 예약 멤버 이름(`__proto__`, `constructor`, `prototype`)은 불투명한 문자열, 즉 own 데이터 속성으로 취급한다(RFC 6901/6902/7396 정합 — 세 RFC 모두 멤버 이름을 불투명 문자열로 규정한다). 예약 멤버의 읽기·쓰기·삭제는 `@winglet/common-utils`의 데이터 속성 프리미티브(`getDataProperty`/`setDataProperty`/`deleteDataProperty`)를 경유하며 프로토타입 체인과 접촉하지 않는다.
 - 어떤 연산 경로에서도 `Object.prototype`을 포함한 상속 객체는 변경되지 않는다 — 이 무오염 불변식은 옵션이 아니라 구조적 보증이다.
-- 세 공개 쓰기 API(`setValue`, `applyPatch`, `mergePatch`)는 동일한 예약 멤버 입력에 동일하게 관측되는 결과(반환 문서의 own 키, 프로토타입 불변, 에러 없음)를 낸다.
+- 세 공개 쓰기 API(`setValue`, `applyPatch`, `mergePatch`)는 예약 멤버를 자기 데이터로 읽고 쓰며 프로토타입을 보존합니다. 중간 경로 생성·존재 조건은 각 API의 표준과 계약이 정합니다.
 - 루트 포인터는 `''`(빈 문자열)과 `#` 두 형태를 모두 허용한다. 단독 슬래시는 루트가 아니라 빈 문자열 키를 가리킨다.
 
 ## Boundaries
