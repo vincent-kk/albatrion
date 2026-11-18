@@ -1,3 +1,5 @@
+/// <reference lib="es2021.weakref" />
+
 import { setFlagsFromString } from 'node:v8';
 import { runInNewContext } from 'node:vm';
 

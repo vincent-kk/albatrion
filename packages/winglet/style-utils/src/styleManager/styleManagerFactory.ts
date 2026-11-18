@@ -14,7 +14,11 @@ import { StyleManager, type StyleManagerConfig } from './StyleManager';
  * The returned function adds CSS styles that are automatically scoped with `className=".${scopeId}"`,
  * ensuring styles only apply to elements within that scope.
  *
+ * Discard the injector and its cleanup functions after destroyScope; create a new
+ * factory before injecting into that scope again.
+ *
  * @param scopeId - The unique identifier for the style scope
+ * @param config - Optional ShadowRoot target, omitted for document styles
  * @returns A function that accepts (styleId, cssString) and returns a cleanup function
  *
  * @example
