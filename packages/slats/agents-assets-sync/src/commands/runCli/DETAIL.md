@@ -38,6 +38,8 @@
 
 - 적용 실패는 종료 코드 1이며 JSON 보고서는 실패 항목을 생성·삭제 목록에서 제외하고 failed 경고를 담는다.
 
+- 여러 단위의 종료 코드는 출력 방식과 순서에 관계없이 실행 오류 1, force 차단 2, 성공 0 순으로 집계한다.
+
 ## API Contracts
 
 - `runCli(argv: readonly string[] = process.argv): Promise<void>`

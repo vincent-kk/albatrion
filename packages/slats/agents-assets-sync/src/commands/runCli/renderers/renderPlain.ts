@@ -63,8 +63,7 @@ export async function renderPlain(
   const agents = resolveAgentFlag(flags.agent ?? [], false);
   const assetKinds = resolveAssetFlag(flags.asset ?? []);
 
-  const fatalOnError = targets.length * agents.length === 1;
-  let failureCount = 0;
+  let resultCode = 0;
 
   for (const target of targets) {
     for (const agent of agents) {
@@ -87,14 +86,11 @@ export async function renderPlain(
         exitCode = 1;
       }
 
-      if (exitCode !== 0) {
-        if (fatalOnError) return exitCode;
-        failureCount += 1;
-      }
+      if (exitCode === 1 || (exitCode === 2 && resultCode === 0)) resultCode = exitCode;
     }
   }
 
-  return failureCount > 0 ? 1 : 0;
+  return resultCode;
 }
 
 async function renderOneUnit(
