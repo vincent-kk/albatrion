@@ -58,4 +58,34 @@ describe('ajv7 createValidator: format and keyword added to the bound instance a
   it('with 65 earlier roots the later keyword is validated the same way', async () => {
     expect(await keywordVerdictAfter(65)).toEqual(await keywordVerdictAfter(1));
   });
+  it('a guard compiled after the keyword was added agrees with whole validation of the same root', async () => {
+    const ajv = new Ajv({ allErrors: true, strict: false });
+    const validator = createValidator(ajv);
+    const root = {
+      type: 'object',
+      properties: {
+        a: { type: 'object', if: { properties: { n: { minimum: 0 } } }, then: {} },
+        b: { type: 'object', if: { properties: { n: { isEven: true } } }, then: {} },
+      },
+    } satisfies JSONSchema;
+    validator.compileGuard(root, '/properties/a/if');
+    ajv.addKeyword({
+      keyword: 'isEven',
+      type: 'number',
+      validate: (schema: boolean, data: number) => !schema || data % 2 === 0,
+    });
+    const guardB = validator.compileGuard(root, '/properties/b/if');
+    const whole = await validator.compile(root)({ b: { n: 3 } });
+    const plain = new Ajv({ allErrors: true, strict: false });
+    plain.addKeyword({
+      keyword: 'isEven',
+      type: 'number',
+      validate: (schema: boolean, data: number) => !schema || data % 2 === 0,
+    });
+    expect({
+      guard: guardB({ n: 3 }),
+      plainIf: plain.validate({ properties: { n: { isEven: true } } }, { n: 3 }),
+      wholeIssues: (whole ?? []).length,
+    }).toEqual({ guard: false, plainIf: false, wholeIssues: 0 });
+  });
 });
