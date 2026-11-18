@@ -4,7 +4,6 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { createValidator } from '../index';
 
-
 const formatSchema: JSONSchema = {
   type: 'object',
   properties: { code: { type: 'string', format: 'even' } },
@@ -16,9 +15,14 @@ const verdictAfter = async (earlierRoots: number) => {
     const ajv = new Ajv({ allErrors: true, strict: false });
     const validator = createValidator(ajv);
     for (let index = 0; index < earlierRoots; index++)
-      validator.compile({ type: 'string', title: 'root ' + index } satisfies JSONSchema);
+      validator.compile({
+        type: 'string',
+        title: 'root ' + index,
+      } satisfies JSONSchema);
     ajv.addFormat('even', /^[02468]+$/);
-    const issues = await validator.compile({ ...formatSchema } satisfies JSONSchema)({ code: '13' });
+    const issues = await validator.compile({
+      ...formatSchema,
+    } satisfies JSONSchema)({ code: '13' });
     return (issues ?? []).map((issue) => issue.keyword);
   } finally {
     warn.mockRestore();
@@ -29,7 +33,10 @@ const keywordVerdictAfter = async (earlierRoots: number) => {
   const ajv = new Ajv({ allErrors: true, strict: false });
   const validator = createValidator(ajv);
   for (let index = 0; index < earlierRoots; index++)
-    validator.compile({ type: 'string', title: 'root ' + index } satisfies JSONSchema);
+    validator.compile({
+      type: 'string',
+      title: 'root ' + index,
+    } satisfies JSONSchema);
   ajv.addKeyword({
     keyword: 'isEven',
     type: 'number',
@@ -64,8 +71,16 @@ describe('ajv7 createValidator: format and keyword added to the bound instance a
     const root = {
       type: 'object',
       properties: {
-        a: { type: 'object', if: { properties: { n: { minimum: 0 } } }, then: {} },
-        b: { type: 'object', if: { properties: { n: { isEven: true } } }, then: {} },
+        a: {
+          type: 'object',
+          if: { properties: { n: { minimum: 0 } } },
+          then: {},
+        },
+        b: {
+          type: 'object',
+          if: { properties: { n: { isEven: true } } },
+          then: {},
+        },
       },
     } satisfies JSONSchema;
     validator.compileGuard(root, '/properties/a/if');
@@ -84,8 +99,33 @@ describe('ajv7 createValidator: format and keyword added to the bound instance a
     });
     expect({
       guard: guardB({ n: 3 }),
-      plainIf: plain.validate({ properties: { n: { isEven: true } } }, { n: 3 }),
+      plainIf: plain.validate(
+        { properties: { n: { isEven: true } } },
+        { n: 3 },
+      ),
       wholeIssues: (whole ?? []).length,
     }).toEqual({ guard: false, plainIf: false, wholeIssues: 0 });
   });
 });
+
+it.each([true, false])(
+  'late rule registration agrees across direct and contextual guards (%s)',
+  (directGuardCompile) => {
+    const ajv = new Ajv({ allErrors: true, strict: false });
+    const validator = createValidator(ajv, { directGuardCompile });
+    const root = {
+      type: 'object',
+      properties: {
+        a: { if: { minimum: 0 } },
+        b: { if: { type: 'number', isEven: true } },
+      },
+    } as const;
+    validator.compileGuard(root, '/properties/a/if');
+    ajv.addKeyword({
+      keyword: 'isEven',
+      type: 'number',
+      validate: (schema: boolean, data: number) => !schema || data % 2 === 0,
+    });
+    expect(validator.compileGuard(root, '/properties/b/if')(3)).toBe(false);
+  },
+);

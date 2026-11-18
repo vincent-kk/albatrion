@@ -66,7 +66,10 @@ describe('radio fields that share a leaf name (mui)', () => {
       <Form
         fieldInputDefinitions={[FieldInputRadioGroupDefinition]}
         jsonSchema={nestedSchema}
-        defaultValue={{ billing: { method: 'card' }, shipping: { method: 'cash' } }}
+        defaultValue={{
+          billing: { method: 'card' },
+          shipping: { method: 'cash' },
+        }}
         onError={() => {}}
       />,
     );
@@ -127,9 +130,13 @@ describe('radio fields that share a leaf name (mui)', () => {
       first: first.native,
       second: second.native,
       sharedName:
-        [...first.names, ...second.names].every((name) => name !== "") &&
+        [...first.names, ...second.names].every((name) => name !== '') &&
         new Set([...first.names, ...second.names]).size === 1,
-    }).toEqual({ first: [true, false], second: [false, true], sharedName: false });
+    }).toEqual({
+      first: [true, false],
+      second: [false, true],
+      sharedName: false,
+    });
   });
 
   it('control: a single radio field keeps its loaded selection checked', () => {

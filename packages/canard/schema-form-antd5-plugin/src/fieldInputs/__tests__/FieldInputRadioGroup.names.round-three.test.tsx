@@ -54,7 +54,9 @@ const radiosOf = (container: HTMLElement, path: string) => {
     native: radios.map((radio) => radio.checked),
     shown: radios.map(
       (radio) =>
-        !!radio.closest('label')?.classList.contains('ant-radio-wrapper-checked'),
+        !!radio
+          .closest('label')
+          ?.classList.contains('ant-radio-wrapper-checked'),
     ),
     names: radios.map((radio) => radio.name),
   };
@@ -66,7 +68,10 @@ describe('radio fields that share a leaf name (antd5)', () => {
       <Form
         fieldInputDefinitions={[FieldInputRadioGroupDefinition]}
         jsonSchema={nestedSchema}
-        defaultValue={{ billing: { method: 'card' }, shipping: { method: 'cash' } }}
+        defaultValue={{
+          billing: { method: 'card' },
+          shipping: { method: 'cash' },
+        }}
         onError={() => {}}
       />,
     );
@@ -127,9 +132,13 @@ describe('radio fields that share a leaf name (antd5)', () => {
       first: first.native,
       second: second.native,
       sharedName:
-        [...first.names, ...second.names].every((name) => name !== "") &&
+        [...first.names, ...second.names].every((name) => name !== '') &&
         new Set([...first.names, ...second.names]).size === 1,
-    }).toEqual({ first: [true, false], second: [false, true], sharedName: false });
+    }).toEqual({
+      first: [true, false],
+      second: [false, true],
+      sharedName: false,
+    });
   });
 
   it('control: a single radio field keeps its loaded selection checked', () => {

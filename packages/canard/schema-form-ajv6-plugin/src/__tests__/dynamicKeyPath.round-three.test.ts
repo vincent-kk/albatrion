@@ -1,6 +1,8 @@
 import type { JSONSchema } from '@canard/schema-form';
+import Ajv from 'ajv';
 import { describe, expect, it } from 'vitest';
 
+import { createValidatorFactory } from '../index';
 import { plugin } from '../index';
 
 /**
@@ -22,26 +24,37 @@ describe('ajv6 dataPath of dynamic property names', () => {
     [''],
     ['a/b~c'],
     ["a']['b"],
-  ])('additionalProperties issue for key %j points at that key', async (key) => {
-    const result = await validate(
-      { type: 'object', additionalProperties: { type: 'string', minLength: 30 } },
-      { [key]: 'short' },
-    );
-    expect(result).toEqual([['minLength', '/' + key.replace(/~/g, '~0').replace(/\//g, '~1')]]);
-  });
+  ])(
+    'additionalProperties issue for key %j points at that key',
+    async (key) => {
+      const result = await validate(
+        {
+          type: 'object',
+          additionalProperties: { type: 'string', minLength: 30 },
+        },
+        { [key]: 'short' },
+      );
+      expect(result).toEqual([
+        ['minLength', '/' + key.replace(/~/g, '~0').replace(/\//g, '~1')],
+      ]);
+    },
+  );
 
   it.each([["it's"], ['C:\\new'], ['plain']])(
     'patternProperties issue for key %j points at that key',
     async (key) => {
       const result = await validate(
-        { type: 'object', patternProperties: { '.': { type: 'string', minLength: 30 } } },
+        {
+          type: 'object',
+          patternProperties: { '.': { type: 'string', minLength: 30 } },
+        },
         { [key]: 'short' },
       );
       expect(result).toEqual([['minLength', '/' + key]]);
     },
   );
 
-  it("a nested issue under dynamic key \"it's\" does not point at the root field of the same name", async () => {
+  it('a nested issue under dynamic key "it\'s" does not point at the root field of the same name', async () => {
     const result = await validate(
       {
         type: 'object',
@@ -56,3 +69,32 @@ describe('ajv6 dataPath of dynamic property names', () => {
     expect(result).toEqual([['minLength', "/it's/x"]]);
   });
 });
+
+it.each([undefined, false, true])(
+  'preserves the bound jsonPointers option %j after successful and failed compilation',
+  (jsonPointers) => {
+    const ajv = new Ajv({
+      allErrors: true,
+      ...(jsonPointers === undefined ? {} : { jsonPointers }),
+    });
+    const before = {
+      value: ajv._opts.jsonPointers,
+      own: Object.prototype.hasOwnProperty.call(ajv._opts, 'jsonPointers'),
+    };
+    createValidatorFactory(ajv)({ type: 'string' });
+    expect({
+      value: ajv._opts.jsonPointers,
+      own: Object.prototype.hasOwnProperty.call(ajv._opts, 'jsonPointers'),
+    }).toEqual(before);
+    expect(() =>
+      createValidatorFactory(ajv)({
+        type: 'object',
+        properties: { value: { $ref: 'https://missing.invalid/schema' } },
+      }),
+    ).toThrow();
+    expect({
+      value: ajv._opts.jsonPointers,
+      own: Object.prototype.hasOwnProperty.call(ajv._opts, 'jsonPointers'),
+    }).toEqual(before);
+  },
+);

@@ -69,7 +69,12 @@ describe('slider label association (antd-mobile)', () => {
         jsonSchema={{
           type: 'object',
           properties: {
-            level: { type: 'number', format: 'slider', minimum: 0, maximum: 10 },
+            level: {
+              type: 'number',
+              format: 'slider',
+              minimum: 0,
+              maximum: 10,
+            },
           },
         }}
         onError={() => {}}
