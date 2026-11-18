@@ -189,7 +189,8 @@ export function fieldNodeFactory(
     authoredSchema !== null &&
     typeof authoredSchema === 'object' &&
     typeof authoredSchema.$schema === 'string' &&
-    validator.dialect !== authoredSchema.$schema
+    validator.dialect !== authoredSchema.$schema &&
+    validator.dialect.replace(/#$/, '') !== authoredSchema.$schema.replace(/#$/, '')
   ) {
     const record = createFormErrorRecord(
       true,
