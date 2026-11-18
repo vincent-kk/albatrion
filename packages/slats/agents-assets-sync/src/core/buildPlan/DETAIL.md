@@ -18,6 +18,8 @@
 - 경로 비교는 POSIX 구분자로 정규화해서 한다 (`core/utils/toPosix.ts`).
 - 디렉터리 걷기, POSIX 정규화와 잡음 필터는 `core/utils/` 의 공유 organ 에서 온다. `hashManifest/` 도 같은 것을 쓰며, 두 소비자의 최저 공통 fractal 이 `core/` 이기 때문이다. 잡음 목록이 한 곳에 있어야 배포하지 않는 파일과 고아로 보지 않는 파일이 갈라지지 않는다.
 
+- 이름의 대소문자·Unicode 정규화만 다른 후보는 목적지와 dev/ino가 같은지 확인한다. 파일시스템이 동일 파일로 해석하는 이름은 고아가 아니며 삭제하지 않는다. 구분하는 볼륨의 서로 다른 파일은 고아로 유지한다.
+
 ## API Contracts
 
 - `buildPlan(input: PlanInput): Promise<InjectPlan>`
