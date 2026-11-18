@@ -14,6 +14,7 @@ import type { JSONRoot } from '@/json/type';
 import { Operation, type Patch } from '../../patchModel';
 import { assertCopySourcePresent } from './utils/assertCopySourcePresent';
 import { JSONPatchError } from './utils/error';
+import { decodePatchFragment } from './utils/decodePatchFragment';
 import { getArrayIndex } from './utils/getArrayIndex';
 import { handleArray } from './utils/handleArray';
 import { handleObject } from './utils/handleObject';
@@ -106,6 +107,7 @@ export const applySinglePatch = (
   patchIndex: number,
   cloned: WeakSet<object> | null,
 ): any => {
+  const path = patch.path.charCodeAt(0) === 35 ? decodePatchFragment(patch.path, patch, patchIndex) : patch.path;
   // RFC 6902 4.4 and 4.5: move is "remove from, then add at path" and copy is "add a copy
   // at path", so both resolve their value first and then share the add handlers. The value
   // is read before the target path is walked, so the walk sees the document after removal
@@ -116,20 +118,22 @@ export const applySinglePatch = (
     // Judged by operation rather than key presence: `move` and `copy` require a `from`
     // pointer, and a missing or non-string one must surface as a patch error rather than
     // as a TypeError thrown from somewhere deeper
-    if (typeof patch.from !== 'string')
+    let from = patch.from;
+    if (typeof from !== 'string')
       throw new JSONPatchError(
         'PATCH_PATH_INVALID',
         `Patch operation '${patch.op}' requires a string 'from' pointer`,
         { patch, index: patchIndex, operation: patch.op },
       );
+    if (from.charCodeAt(0) === 35) from = decodePatchFragment(from, patch, patchIndex);
     if (patch.op === Operation.COPY) {
-      const copied = getValue(source, patch.from);
+      const copied = getValue(source, from);
       // RFC 6902 4.5: the from location must exist. Only an undefined read can name a
       // missing location, so only that read pays for the second walk
       if (copied === undefined)
-        assertCopySourcePresent(source, patch.from, patch, patchIndex);
+        assertCopySourcePresent(source, from, patch, patchIndex);
       else value = cloneLite(copied);
-    } else if (isCircularMoveReference(patch.from, patch.path))
+    } else if (isCircularMoveReference(from, path))
       throw new JSONPatchError(
         'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN',
         `Cannot move location '${patch.from}' to '${patch.path}' - target location is a descendant of the source location. This would create a circular reference.`,
@@ -142,10 +146,10 @@ export const applySinglePatch = (
         },
       );
     else
-      value = removeMoveSource(source, patch.from, patch, patchIndex, cloned);
+      value = removeMoveSource(source, from, patch, patchIndex, cloned);
   }
 
-  if (patch.path === '' || patch.path === JSONPointer.Fragment) {
+  if (path === '' || path === JSONPointer.Fragment) {
     if (patch.op === Operation.MOVE && cloned !== null && value !== null && typeof value === 'object' && !cloned.has(value)) {
       const owned = isArray(value) ? value.slice() : { ...value };
       cloned.add(owned);
@@ -154,7 +158,7 @@ export const applySinglePatch = (
     return handleRootPatch(source, patch, value, patchIndex);
   }
 
-  const segments = patch.path.split('/');
+  const segments = path.split('/');
 
   // Same set compilePointer accepts: a leading separator or the URI fragment form.
   // The walk starts at index 1, so anything else silently drops its first segment
