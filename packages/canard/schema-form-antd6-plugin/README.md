@@ -272,7 +272,7 @@ This repository is licensed under the MIT License. Please refer to the [`LICENSE
 
 ## Scoped control identifiers
 
-Element ids are scoped to each Form. `path` remains the JSON Pointer and is never the DOM id. Custom inputs use the supplied `FieldInputProps.id`, and single-control labels use the same value for `htmlFor`. A custom `FieldRenderer` uses `labelId` on a group title or legend and `aria-labelledby` on the group; each option has its own id. Native radio names use the scoped input id; other inputs keep their leaf names.
+Element ids are scoped to each Form. `path` remains the JSON Pointer and is never the DOM id. Custom inputs use the supplied `FieldInputProps.id`, and single-control labels use the same value for `htmlFor`. A custom `FieldRenderer` uses `labelId` on a group title or legend and `aria-labelledby` on the group; each option has its own id. `FieldInputProps.name` is always the leaf name. Radio groups use `id` as the native `name` of their radios.
 
 ```tsx
 const Input = ({ id, name }: FieldInputProps<string>) => <input id={id} name={name} />;
