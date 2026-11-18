@@ -43,3 +43,7 @@ Enum UI identities encode the raw JSON scalar, while labels and aliases use its 
 ## Verification tables
 
 Keep local parameter tables as static array literals at the Vitest each call so the case count can be audited without executing tests. Preserve case names, row order and assertions when relocating tables or splitting files by behavior. Shared scenario runners keep their canonical imported data rather than copying it into each runner.
+
+## Control identifiers
+
+Use `FieldInputProps.id` on the real focusable control; `path` remains a JSON Pointer for data access. Single-control labels target that same id. A group renderer uses `FieldRendererProps.labelId` for its title or legend and connects the group with `aria-labelledby`; options have their own ids. Native radio names use the scoped id, while other input names retain their leaf meaning. The core supplies these addresses; do not build an element id from path.
