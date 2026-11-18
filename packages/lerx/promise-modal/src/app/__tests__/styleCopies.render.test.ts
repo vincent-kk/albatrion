@@ -64,3 +64,33 @@ it('(round-2 promise-modal 6) removes the shared stylesheet when another compati
   await flushFrames();
   expect(styleCount()).toBe(1);
 });
+
+it('(round-2 promise-modal 6) removes a shadow stylesheet through either compatible copy', async () => {
+  const first = await loadManager();
+  first.reset();
+  const second = await loadManager();
+  async function release(otherCopy: boolean) {
+    const host = document.createElement('div');
+    document.body.append(host);
+    const shadow = host.attachShadow({ mode: 'open' });
+    const mount = document.createElement('div');
+    shadow.append(mount);
+    const owner = {};
+    first.defineStyleSheet('shadow-probe', '.probe{color:red}');
+    first.attach(owner, mount, vi.fn());
+    await flushFrames();
+    const count = () =>
+      shadow.querySelectorAll('style').length +
+      (shadow.adoptedStyleSheets?.length ?? 0);
+    expect(count()).toBe(1);
+    (otherCopy ? second : first).detach(owner);
+    await flushFrames();
+    const remaining = count();
+    host.remove();
+    return remaining;
+  }
+  const sameCopy = await release(false);
+  const otherCopy = await release(true);
+  expect(sameCopy).toBe(0);
+  expect(otherCopy).toBe(sameCopy);
+});
