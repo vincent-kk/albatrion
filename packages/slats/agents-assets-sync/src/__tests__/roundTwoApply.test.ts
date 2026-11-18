@@ -285,4 +285,35 @@ describe('r2-periphery agents-assets-sync probes (temp dirs only)', () => {
       expect(JSON.parse(bom.stdout)).toEqual(JSON.parse(ordinary.stdout));
     },
   );
+  it.each([PACKAGE, '@r2-periphery'])(
+    '(round-2 agents-assets-sync 5) resolves BOM through an encapsulated package entry equivalently via %s',
+    (target) => {
+      writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
+      writeAt(join(packageRoot, 'index.js'), 'export {};\n');
+      const metadata = { name: PACKAGE, version: '1.0.0', exports: { '.': './index.js' } };
+      writeAt(join(packageRoot, 'package.json'), JSON.stringify(metadata));
+      const ordinary = run(
+        '--package',
+        target,
+        '--agent=claude',
+        ...BASE,
+        '--dry-run',
+        '--json',
+      );
+      writeAt(
+        join(packageRoot, 'package.json'),
+        '\uFEFF' + JSON.stringify(metadata),
+      );
+      const bom = run(
+        '--package',
+        target,
+        '--agent=claude',
+        ...BASE,
+        '--dry-run',
+        '--json',
+      );
+      expect(bom.status).toBe(ordinary.status);
+      expect(JSON.parse(bom.stdout)).toEqual(JSON.parse(ordinary.stdout));
+    },
+  );
 });
