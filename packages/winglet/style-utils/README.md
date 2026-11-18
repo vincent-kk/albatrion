@@ -522,6 +522,8 @@ const addShadowStyle = styleManagerFactory('shadow-scope', {
 
 #### `destroyScope(scopeId: string, config?: StyleManagerConfig): void`
 
+After destroying a scope, discard its existing injector and cleanup functions. Create a new factory to inject again; reusing the destroyed injector can leave styles outside the registry.
+
 Pass the same `{ shadowRoot }` used for `styleManagerFactory` to release a Shadow DOM scope. Without this option, only the document scope is released. Detached shadow hosts are not retained by the registry.
 
 Destroys a specific style scope and removes all associated styles from the DOM.

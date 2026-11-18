@@ -4,7 +4,8 @@
 
 - `destroyScope(scopeId, config?)`는 같은 대상의 `StyleManager.get(scopeId, config)`를 호출한 뒤 그 인스턴스의 `destroy()`를 호출하고 `void`를 반환한다.
 - `styleManagerFactory(scopeId, config?)`는 `StyleManager.get(scopeId, config)`로 싱글톤을 획득한 뒤, `(styleId, cssString, compress?)`를 받아 `manager.add(...)`를 호출하고 `() => manager.remove(styleId)` 형태의 cleanup 함수를 반환하는 함수를 돌려준다.
-- 두 함수 모두 스코프 생명주기 상태를 자체적으로 갖지 않는다 — 모든 상태는 `StyleManager` 싱글톤 레지스트리가 소유한다.
+- 주입 함수와 cleanup은 최초 매니저에 묶인다. `destroyScope` 이후에는 둘 다 버리고 새 팩토리를 만든다. 파괴된 매니저에 다시 주입하면 레지스트리 밖 스타일이 남을 수 있다.
+- 레지스트리는 활성 매니저만 소유하며 외부 주입 함수는 매니저를 강하게 참조한다.
 
 ## API Contracts
 
