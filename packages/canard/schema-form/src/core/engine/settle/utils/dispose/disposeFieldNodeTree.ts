@@ -1,7 +1,7 @@
 import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
 
 import { visitFieldNodes } from '../../../navigation';
-import { FieldNodeEventType, createFieldNodeRevisionLedger } from '../../../record';
+import { FieldNodeEventType, FieldNodeRevisionLedger } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { clearTreeMemoStores } from '../../../utils/cache/clearTreeMemoStores';
 import {
@@ -33,7 +33,7 @@ export const disposeFieldNodeTree = <Self extends FieldNodeRecord<Self>>(
       if (node.isDisposed) return;
       node.isDisposed = true;
       node.interactionEpoch += 1;
-      node.revisionLedger = createFieldNodeRevisionLedger(
+      node.revisionLedger = new FieldNodeRevisionLedger(
         node.revisionLedger,
         FieldNodeEventType.RequestRefresh,
       );

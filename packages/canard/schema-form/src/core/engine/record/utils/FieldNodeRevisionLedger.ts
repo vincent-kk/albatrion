@@ -1,3 +1,5 @@
+import { INPUT_VALUE_REVISION } from '@/schema-form/constants/externalValueRevision';
+
 import { FieldNodeEventType } from '../constants/FieldNodeEventType';
 import { EMPTY_REVISION_LEDGER } from '../constants/emptyRevisionLedger';
 
@@ -36,6 +38,8 @@ export class FieldNodeRevisionLedger {
       counts[index] = (counts[index] ?? 0) + 1;
       remaining &= remaining - 1;
     }
+    if (mask & INPUT_VALUE_REVISION)
+      counts[KNOWN_BIT_COUNT] = (counts[KNOWN_BIT_COUNT] ?? 0) + 1;
     this.counts = counts;
   }
 
@@ -53,6 +57,11 @@ export class FieldNodeRevisionLedger {
       remaining &= remaining - 1;
     }
     return revision;
+  }
+
+  /** Internal own-input count, excluded from public revision sums. */
+  get [INPUT_VALUE_REVISION]() {
+    return this.counts[KNOWN_BIT_COUNT];
   }
 
   /** Initialization counter. */

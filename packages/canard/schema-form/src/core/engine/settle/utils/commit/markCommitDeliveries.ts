@@ -15,7 +15,7 @@ import { getFeatureNodeIndex } from '../../../blueprint';
 import {
   DISABLED_BIT_SHIFT,
   FieldNodeEventType,
-  createFieldNodeRevisionLedger,
+  FieldNodeRevisionLedger,
   READ_ONLY_BIT_SHIFT,
   VISIBLE_BIT_SHIFT,
   advanceFieldNodeRevision,
@@ -414,7 +414,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         if (silent)
           advanceFieldNodeRevision(node, node.pendingRevisionMask, silent);
         else
-          node.revisionLedger = createFieldNodeRevisionLedger(
+          node.revisionLedger = new FieldNodeRevisionLedger(
             node.revisionLedger,
             node.pendingRevisionMask,
           );
