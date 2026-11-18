@@ -9,7 +9,6 @@ import {
 } from '@mui/material';
 
 import { isArray } from '@winglet/common-utils/filter';
-import { isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
@@ -20,6 +19,7 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type StringCheckboxJSONSchema = ArraySchema & {
@@ -153,9 +153,5 @@ const FieldInputStringCheckbox = ({
 
 export const FieldInputStringCheckboxDefinition = {
   Component: FieldInputStringCheckbox,
-  test: ({ type, inputType, jsonSchema }) =>
-    type === 'array' &&
-    inputType === 'checkbox' &&
-    isStringSchema(jsonSchema.items) &&
-    !!jsonSchema.items?.enum?.length,
+  test: isCheckboxGroupInput,
 } satisfies FieldInputDefinition;
