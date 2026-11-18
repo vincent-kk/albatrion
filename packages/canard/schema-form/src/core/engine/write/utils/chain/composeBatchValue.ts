@@ -29,7 +29,13 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
         ? (write.node.blueprintNode.fields ?? [])
         : undefined;
     if (fields === undefined) {
-      value = replaceAtPath(value, names, write.value, write.option);
+      value = replaceAtPath(
+        value,
+        names,
+        write.value,
+        write.option,
+        write.node,
+      );
       continue;
     }
     const values = isArray(write.value) ? write.value : undefined;
@@ -41,6 +47,7 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
         [...parentNames, fields[index]],
         values?.[index],
         write.option,
+        write.node.parent?.childrenByName?.[fields[index]],
       );
     }
   }

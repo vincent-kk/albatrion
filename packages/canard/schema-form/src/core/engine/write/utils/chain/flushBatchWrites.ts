@@ -1,4 +1,3 @@
-import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { Optional } from '@aileron/declare';
@@ -10,6 +9,7 @@ import { FieldNodeWriteKind } from '../../../types/value';
 import { WriteOption } from '../../../types/value';
 import { captureChainError } from './captureChainError';
 import { composeBatchValue } from './composeBatchValue';
+import { collectMarkedMergeOrigins } from './utils/collectMarkedMergeOrigins';
 
 /**
  * Commit the final marked value of each batch target before delivery.
@@ -62,8 +62,7 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
       source = allMatch2 ? FieldNodeWriteKind.Automatic : undefined;
     }
 
-    const origins = mapArray(
-      writes,
+    const origins = writes.flatMap(
       (
         write,
       ): {
@@ -71,32 +70,40 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
         source: FieldNodeWriteKind;
         keys?: readonly string[];
         fields?: readonly string[];
-      } => {
+      }[] => {
         const partial =
           (write.option & WriteOption.Merge) === WriteOption.Merge &&
           !(write.option & WriteOption.Replace);
-        return {
-          path: write.node.path,
-          source:
-            write.source ??
-            (partial
-              ? FieldNodeWriteKind.CallerPartial
-              : FieldNodeWriteKind.CallerReplace),
-          keys:
-            partial &&
-            write.value !== null &&
-            typeof write.value === 'object' &&
-            !isArray(write.value)
-              ? Object.keys(write.value)
-              : undefined,
-          fields:
-            !partial && write.node.behavior.type === 'virtual'
-              ? (write.node.blueprintNode.fields ?? []).flatMap((field) => {
-                  const sibling = write.node.parent?.childrenByName?.[field];
-                  return sibling ? [sibling.path] : [];
-                })
-              : undefined,
-        };
+        if (partial && write.source !== FieldNodeWriteKind.Automatic)
+          return collectMarkedMergeOrigins(
+            write.node,
+            write.value,
+            write.source ?? FieldNodeWriteKind.CallerPartial,
+          );
+        return [
+          {
+            path: write.node.path,
+            source:
+              write.source ??
+              (partial
+                ? FieldNodeWriteKind.CallerPartial
+                : FieldNodeWriteKind.CallerReplace),
+            keys:
+              partial &&
+              write.value !== null &&
+              typeof write.value === 'object' &&
+              !isArray(write.value)
+                ? Object.keys(write.value)
+                : undefined,
+            fields:
+              !partial && write.node.behavior.type === 'virtual'
+                ? (write.node.blueprintNode.fields ?? []).flatMap((field) => {
+                    const sibling = write.node.parent?.childrenByName?.[field];
+                    return sibling ? [sibling.path] : [];
+                  })
+                : undefined,
+          },
+        ];
       },
     );
     writeFieldNode(

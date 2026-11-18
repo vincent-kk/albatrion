@@ -1,23 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { FieldNodeRecord } from '../../../../record';
 import { WriteOption } from '../../../../types/value';
-
-/** Select replacement or a shallow object merge for one marked target. */
-const markedValue = (
-  previous: unknown,
-  incoming: unknown,
-  option: WriteOption,
-): unknown =>
-  (option & WriteOption.Merge) === WriteOption.Merge &&
-  !(option & WriteOption.Replace) &&
-  previous !== null &&
-  incoming !== null &&
-  typeof previous === 'object' &&
-  typeof incoming === 'object' &&
-  !isArray(previous) &&
-  !isArray(incoming)
-    ? { ...previous, ...incoming }
-    : incoming;
+import { mergeMarkedValue } from './mergeMarkedValue';
 
 /**
  * Replace one marked path while retaining untouched committed references.
@@ -27,13 +12,17 @@ const markedValue = (
  * @param option - Merge or replacement selection
  * @returns Candidate value with one path overlaid
  */
-export const replaceAtPath = (
+export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
   current: unknown,
   names: readonly string[],
   incoming: unknown,
   option: WriteOption,
+  node?: Self,
 ): unknown => {
-  if (!names.length) return markedValue(current, incoming, option);
+  if (!names.length)
+    return option & WriteOption.Merge && !(option & WriteOption.Replace)
+      ? mergeMarkedValue(node, current, incoming)
+      : incoming;
   const [name, ...rest] = names;
   if (isArray(current)) {
     const next = [...current];
@@ -42,6 +31,7 @@ export const replaceAtPath = (
       rest,
       incoming,
       option,
+      node,
     );
     return next;
   }
@@ -49,6 +39,12 @@ export const replaceAtPath = (
     current !== null && typeof current === 'object' ? { ...current } : {};
   return {
     ...next,
-    [name]: replaceAtPath(Reflect.get(next, name), rest, incoming, option),
+    [name]: replaceAtPath(
+      Reflect.get(next, name),
+      rest,
+      incoming,
+      option,
+      node,
+    ),
   };
 };

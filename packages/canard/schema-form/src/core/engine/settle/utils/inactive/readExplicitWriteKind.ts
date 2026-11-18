@@ -62,7 +62,7 @@ export const readExplicitWriteKind = <Self extends FieldNodeRecord<Self>>(
     if (origin.source === FieldNodeWriteKind.Automatic)
       return FieldNodeWriteKind.Automatic;
     if (!origin.keys) return FieldNodeWriteKind.CallerReplace;
-    // A single-write merge is deep; a batched merge replaces each received key whole.
+    // Deep batch merges carry partial branch scopes and separate replacement leaves.
     return origins.length === 1 || inputPath === path
       ? FieldNodeWriteKind.CallerPartial
       : FieldNodeWriteKind.CallerReplace;
