@@ -1,5 +1,8 @@
 import { resolveGlobalSelector } from './prefixSelector/resolveGlobalSelector';
 
+/** Prefixes that can begin root/host tokens, including escaped name characters. */
+const GLOBAL_CANDIDATE = /^:(?:\\|\/|r(?:\\|o(?:o|\\))|h(?:\\|o(?:s|\\)))/i;
+
 /**
  * Prefixes one selector with the scope.
  *
@@ -12,18 +15,7 @@ export const prefixSelector = (selector: string, prefix: string): string => {
   if (!selector) return selector;
   const first = selector.charCodeAt(0);
   if (first !== 58 && first !== 47) return prefix + selector;
-  if (first === 47) return resolveGlobalSelector(selector, prefix);
-  const initial = selector.charCodeAt(1);
-  if (initial !== 92 && initial !== 47) {
-    const lower = initial | 32;
-    if (lower !== 104 && lower !== 114) return prefix + selector;
-    const second = selector.charCodeAt(2);
-    if (second !== 92) {
-      if ((second | 32) !== 111) return prefix + selector;
-      const third = selector.charCodeAt(3);
-      if (third !== 92 && (third | 32) !== (lower === 104 ? 115 : 111))
-        return prefix + selector;
-    }
-  }
-  return resolveGlobalSelector(selector, prefix);
+  return first === 47 || GLOBAL_CANDIDATE.test(selector)
+    ? resolveGlobalSelector(selector, prefix)
+    : prefix + selector;
 };
