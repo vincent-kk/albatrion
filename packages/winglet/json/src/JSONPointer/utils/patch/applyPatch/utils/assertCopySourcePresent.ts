@@ -7,6 +7,7 @@ import type { JSONRoot } from '@/json/type';
 
 import type { Patch } from '../../../patchModel';
 import { JSONPatchError } from './error';
+import { decodePatchFragment } from './decodePatchFragment';
 import { getArrayIndex } from './getArrayIndex';
 import { resolveFromParent } from './resolveFromParent';
 
@@ -33,6 +34,8 @@ export const assertCopySourcePresent = (
   patchIndex: number,
 ): void => {
   const segments = from.split(JSONPointer.Separator);
+  if (from[0] === JSONPointer.Fragment)
+    return assertCopySourcePresent(source, decodePatchFragment(from, patch, patchIndex), patch, patchIndex);
   const parent = resolveFromParent(
     source,
     segments,

@@ -8,6 +8,7 @@
 
 ## API Contracts
 
+- 빈 루트와 슬래시 포인터의 기존 분기에서 위치를 판정하고, prefix가 다른 분기에서만 URI fragment를 해제한다. 일반 포인터에는 fragment 판별 비교를 추가하지 않는다.
 - URI fragment의 percent escape는 path와 from 모두 위치 해석 전에 한 번 해제합니다. 해제한 경로로 이동의 진접두사를 판정하므로 서로 다른 표기가 하위 이동 금지를 우회하지 않습니다. 잘못된 escape는 기존 `PATCH_PATH_INVALID` 오류로 실패합니다.
 
 
