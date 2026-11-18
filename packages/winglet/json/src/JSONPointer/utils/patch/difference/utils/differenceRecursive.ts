@@ -1,6 +1,10 @@
 import { isPlainObject } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { cloneLite, equals, setDataProperty } from '@winglet/common-utils/object';
+import {
+  cloneLite,
+  equals,
+  setDataProperty,
+} from '@winglet/common-utils/object';
 
 import type { JSONObject } from '@/json/type';
 
@@ -29,7 +33,8 @@ export const differenceRecursive = (
   const sourceKeys = Object.keys(source);
   for (let i = 0, l = sourceKeys.length; i < l; i++) {
     const key = sourceKeys[i];
-    const reserved = key === '__proto__' || key === 'constructor' || key === 'prototype';
+    const reserved =
+      key === '__proto__' || key === 'constructor' || key === 'prototype';
     const sourceValue = source[key];
     if (hasOwnProperty(target, key)) {
       const targetValue = target[key];
@@ -39,33 +44,34 @@ export const differenceRecursive = (
       )
         continue;
       if (targetValue === undefined) {
-        if (reserved) setDataProperty(patch ??= {}, key, null);
+        if (reserved) setDataProperty((patch ??= {}), key, null);
         else (patch ??= {})[key] = null;
         hasRemoved = true;
       } else if (isPlainObject(sourceValue) && isPlainObject(targetValue)) {
         const child = differenceRecursive(sourceValue, targetValue, depth + 1);
         if (child !== undefined) {
-          if (reserved) setDataProperty(patch ??= {}, key, child);
+          if (reserved) setDataProperty((patch ??= {}), key, child);
           else (patch ??= {})[key] = child;
         }
       } else if (!equals(sourceValue, targetValue)) {
-        if (reserved) setDataProperty(patch ??= {}, key, cloneLite(targetValue));
+        if (reserved)
+          setDataProperty((patch ??= {}), key, cloneLite(targetValue));
         else (patch ??= {})[key] = cloneLite(targetValue);
       }
     } else {
-      if (reserved) setDataProperty(patch ??= {}, key, null);
+      if (reserved) setDataProperty((patch ??= {}), key, null);
       else (patch ??= {})[key] = null;
       hasRemoved = true;
     }
   }
   const targetKeys = Object.keys(target);
-  if (!hasRemoved && targetKeys.length === sourceKeys.length)
-    return patch;
+  if (!hasRemoved && targetKeys.length === sourceKeys.length) return patch;
   for (let i = 0, l = targetKeys.length; i < l; i++) {
     const key = targetKeys[i];
     const targetValue = target[key];
     if (hasOwnProperty(source, key) || targetValue === undefined) continue;
-    if (key === '__proto__' || key === 'constructor' || key === 'prototype') setDataProperty(patch ??= {}, key, cloneLite(targetValue));
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype')
+      setDataProperty((patch ??= {}), key, cloneLite(targetValue));
     else (patch ??= {})[key] = cloneLite(targetValue);
   }
   return patch;

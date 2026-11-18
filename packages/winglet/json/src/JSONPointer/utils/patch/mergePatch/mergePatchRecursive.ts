@@ -1,4 +1,5 @@
 import { isPlainObject } from '@winglet/common-utils/filter';
+
 import type { JSONObject } from '@/json/type';
 
 import { mergePatchDeep } from './utils/mergePatchDeep';

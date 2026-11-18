@@ -24,5 +24,11 @@ import { StyleManager, type StyleManagerConfig } from './StyleManager';
  * destroyScope('my-scope');
  * ```
  */
-export const destroyScope = (scopeId: string, config?: StyleManagerConfig): void =>
-  (config === undefined ? StyleManager.get(scopeId) : StyleManager.get(scopeId, config)).destroy();
+export const destroyScope = (
+  scopeId: string,
+  config?: StyleManagerConfig,
+): void =>
+  (config === undefined
+    ? StyleManager.get(scopeId)
+    : StyleManager.get(scopeId, config)
+  ).destroy();

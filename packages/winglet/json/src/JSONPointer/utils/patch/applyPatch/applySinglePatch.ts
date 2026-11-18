@@ -13,8 +13,8 @@ import type { JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../patchModel';
 import { assertCopySourcePresent } from './utils/assertCopySourcePresent';
-import { JSONPatchError } from './utils/error';
 import { decodePatchFragment } from './utils/decodePatchFragment';
+import { JSONPatchError } from './utils/error';
 import { getArrayIndex } from './utils/getArrayIndex';
 import { handleArray } from './utils/handleArray';
 import { handleObject } from './utils/handleObject';
@@ -108,7 +108,10 @@ export const applySinglePatch = (
   cloned: WeakSet<object> | null,
 ): any => {
   const operation = patch.op;
-  const path = patch.path[0] === '#' ? decodePatchFragment(patch.path, patch, patchIndex) : patch.path;
+  const path =
+    patch.path[0] === '#'
+      ? decodePatchFragment(patch.path, patch, patchIndex)
+      : patch.path;
   // RFC 6902 4.4 and 4.5: move is "remove from, then add at path" and copy is "add a copy
   // at path", so both resolve their value first and then share the add handlers. The value
   // is read before the target path is walked, so the walk sees the document after removal
@@ -146,12 +149,17 @@ export const applySinglePatch = (
           path: patch.path,
         },
       );
-    else
-      value = removeMoveSource(source, from, patch, patchIndex, cloned);
+    else value = removeMoveSource(source, from, patch, patchIndex, cloned);
   }
 
   if (path === '') {
-    if (operation === Operation.MOVE && cloned !== null && value !== null && typeof value === 'object' && !cloned.has(value)) {
+    if (
+      operation === Operation.MOVE &&
+      cloned !== null &&
+      value !== null &&
+      typeof value === 'object' &&
+      !cloned.has(value)
+    ) {
       const owned = isArray(value) ? value.slice() : { ...value };
       cloned.add(owned);
       value = owned;

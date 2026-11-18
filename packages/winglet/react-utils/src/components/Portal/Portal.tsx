@@ -1,4 +1,5 @@
 import { type PropsWithChildren, memo } from 'react';
+
 import { createPortal } from 'react-dom';
 
 import { usePortalContext } from './context/usePortalContext';

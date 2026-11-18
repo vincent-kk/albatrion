@@ -1,7 +1,9 @@
 const Buffer = globalThis.Buffer;
 
 /** Native Buffer shape when Node globals are available, otherwise its byte-array base. */
-type BufferValue = typeof globalThis extends { Buffer: { isBuffer: (value: unknown) => value is infer Value } }
+type BufferValue = typeof globalThis extends {
+  Buffer: { isBuffer: (value: unknown) => value is infer Value };
+}
   ? Value
   : Uint8Array;
 

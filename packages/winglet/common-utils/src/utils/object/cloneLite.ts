@@ -3,9 +3,9 @@ import type { Dictionary } from '@aileron/declare';
 import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
 
-import { setDataProperty } from './setDataProperty';
 import { replicateDeep } from './cloneLite/utils/replicateDeep';
 import { replicateShallow } from './cloneLite/utils/replicateShallow';
+import { setDataProperty } from './setDataProperty';
 
 /**
  * Creates a lightweight deep clone of simple data structures with maximum performance.
@@ -208,7 +208,12 @@ import { replicateShallow } from './cloneLite/utils/replicateShallow';
 export const cloneLite = <Type>(target: Type, maxDepth?: number): Type =>
   maxDepth === 1
     ? replicateShallow(target)
-    : replicate(target, maxDepth, 0, maxDepth !== undefined && maxDepth < 256 ? maxDepth : 256);
+    : replicate(
+        target,
+        maxDepth,
+        0,
+        maxDepth !== undefined && maxDepth < 256 ? maxDepth : 256,
+      );
 
 /**
  * Recursively clones a value using minimal type checking for maximum performance.
