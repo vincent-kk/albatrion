@@ -1,6 +1,12 @@
-import { type ChangeEvent, useCallback, useMemo, useState } from 'react';
+import {
+  type ChangeEvent,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
-import { Input, Select, Space } from 'antd';
+import { Input, type InputRef, Select, Space } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
 import { map } from '@winglet/common-utils/array';
@@ -49,6 +55,7 @@ const FieldInputUri = ({
     return rawProtocols.map(formatProtocol);
   }, [protocols]);
 
+  const inputRef = useRef<InputRef>(null);
   const parsed = useMemo(
     () => (typeof value === 'string' ? parseUri(value) : undefined),
     [value],
@@ -70,11 +77,11 @@ const FieldInputUri = ({
     (value: string) => {
       setLastProtocol(value);
 
-      const currentUri = uri;
+      const currentUri = inputRef.current?.input?.value || '';
       const newValue = currentUri ? `${value}${currentUri}` : undefined;
       onChange(newValue);
     },
-    [onChange, uri],
+    [onChange],
   );
 
   const handleUriChange = useCallback(
@@ -107,6 +114,7 @@ const FieldInputUri = ({
     <Space.Compact block size={size || context?.size}>
       {ProtocolDropdown}
       <Input
+        ref={inputRef}
         id={path}
         name={name}
         readOnly={readOnly}
