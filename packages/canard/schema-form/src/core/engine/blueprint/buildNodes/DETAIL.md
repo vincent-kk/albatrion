@@ -8,6 +8,8 @@
 
 부모가 주입하는 predicate로 전략과 원자성을 판정합니다. 정적 힌트 교차는 [effectiveSchema](../effectiveSchema/DETAIL.md), 무조건 순환 검사는 [validateShape](../validateShape/DETAIL.md), 완성된 직계 자식 대상 검사는 [validateChildTargets](../validateChildTargets/DETAIL.md)가 소유합니다. 실제 게이트 충돌과 발생별 재귀 확장은 [settle](../../settle/DETAIL.md)로 넘깁니다.
 
+active 선언이 없는 참조는 게이트 경로를 만들지 않으며, 같은 선언의 게이트 수집과 전개는 참조 해석을 공유합니다. 일반 참조가 사용하지 않는 게이트의 비용을 부담하지 않게 합니다.
+
 ## Acceptance Criteria
 
 ### BLUEPRINT-004 — 호스트에 결합한 상속 overlay
