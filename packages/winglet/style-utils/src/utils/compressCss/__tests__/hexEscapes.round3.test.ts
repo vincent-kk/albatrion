@@ -31,3 +31,10 @@ it('round-3 style-utils 1: escaped URL function names preserve literal comments 
     expect(compressCss(css).replace(name, 'url')).toBe(compressCss(css.replace(name, 'url')));
   }
 });
+
+it('round-3 style-utils 1: escaped identifier prefixes do not turn other functions into URL tokens', () => {
+  for (const name of [String.raw`foo\20 url`, String.raw`foo\20 u\72l`, String.raw`foo\.url`, String.raw`foo\.u\72l`, String.raw`myu\72l`]) {
+    const css = `.a { x: ${name}(1/*removed*/2); }`;
+    expect(compressCss(css)).not.toContain('removed');
+  }
+});
