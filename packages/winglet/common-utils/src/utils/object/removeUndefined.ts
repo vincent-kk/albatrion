@@ -1,6 +1,8 @@
 import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
 
+import { setDataProperty } from './setDataProperty';
+
 /**
  * Recursively removes undefined values from nested data structures.
  *
@@ -305,7 +307,10 @@ export const removeUndefined = <Type>(input: Type): Type => {
     const keys = Object.keys(input) as Array<keyof Type>;
     for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
       const value = removeUndefined(input[k] as object);
-      if (value !== undefined) (result as any)[k] = value;
+      if (value !== undefined) {
+        if (k === '__proto__') setDataProperty(result, k, value);
+        else (result as any)[k] = value;
+      }
     }
     return result;
   }
