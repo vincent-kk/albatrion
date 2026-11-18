@@ -33,7 +33,11 @@ const findQuoteEnd = (css: string, open: number, quote: number): number => {
   for (let index = open + 1, length = css.length; index < length; index++) {
     const code = css.charCodeAt(index);
     if (code === quote) return index + 1;
-    if (code === BACKSLASH) index++;
+    if (code === 10 || code === 13 || code === 12) return index;
+    if (code === BACKSLASH) {
+      index++;
+      if (css.charCodeAt(index) === 13 && css.charCodeAt(index + 1) === 10) index++;
+    }
   }
   return css.length;
 };

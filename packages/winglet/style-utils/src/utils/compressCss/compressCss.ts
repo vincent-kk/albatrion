@@ -133,13 +133,17 @@ export const compressCss = (css: string): string => {
       output[outputIndex++] = byte;
       while (++cursor < length) {
         const stringByte = buffer[cursor];
+        if (stringByte === LF || stringByte === CR || stringByte === 12) break;
         output[outputIndex++] = stringByte;
         if (stringByte === byte) {
           cursor++;
           break;
         }
-        if (stringByte === BACKSLASH && cursor + 1 < length)
+        if (stringByte === BACKSLASH && cursor + 1 < length) {
           output[outputIndex++] = buffer[++cursor];
+          if (buffer[cursor] === CR && buffer[cursor + 1] === LF)
+            output[outputIndex++] = buffer[++cursor];
+        }
       }
       lastByte = output[outputIndex - 1];
       continue;
