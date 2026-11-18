@@ -276,7 +276,7 @@ export const RootNodeContextProvider = ({
         load.isPrepared = true;
         flushRootLoad(load);
         if (root) {
-          applyFormErrors(root, load.props.errors, undefined, 'load');
+          if (root.globalErrors.length) reportRootLoadValidation(load, store);
           scheduleLoadValidation(load, store);
         }
       } else load.isPrepared = true;
