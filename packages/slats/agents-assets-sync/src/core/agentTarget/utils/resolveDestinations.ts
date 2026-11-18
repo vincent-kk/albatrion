@@ -114,7 +114,7 @@ function assertContained(manifestPath: string): void {
 // (Codex ships built-ins under `skills/.system/`). Writing there would look
 // like a built-in and could be overwritten by the agent's own updates.
 function assertNotReserved(kind: AssetKind, rest: string): void {
-  if (!rest.startsWith('.')) return;
+  if (kind !== 'skills' || !rest.startsWith('.')) return;
   throw new Error(
     `[agents-assets-sync] ${kind}/${rest} starts with a dot; that namespace is reserved by the agent and cannot receive injected assets.`,
   );
