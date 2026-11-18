@@ -27,9 +27,7 @@ const visibleOptions = () =>
   );
 
 const search = (text: string) => {
-  const input = document.querySelector(
-    '[role="combobox"]',
-  ) as HTMLInputElement;
+  const input = document.querySelector('[role="combobox"]') as HTMLInputElement;
   fireEvent.mouseDown(input);
   act(() => {
     fireEvent.change(input, { target: { value: text } });
@@ -40,7 +38,9 @@ const schema = {
   type: 'array',
   items: { type: 'string', enum: ['kr', 'us', 'jp'] },
   presentation: {
-    FieldInputProps: { alias: { kr: '대한민국', us: 'United States', jp: '日本' } },
+    FieldInputProps: {
+      alias: { kr: '대한민국', us: 'United States', jp: '日本' },
+    },
   },
 } as const;
 

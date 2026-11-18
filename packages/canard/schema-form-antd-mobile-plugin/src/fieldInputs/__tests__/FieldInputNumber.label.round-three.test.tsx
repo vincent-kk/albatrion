@@ -11,16 +11,14 @@ afterEach(cleanup);
 const labelTarget = (container: HTMLElement, path: string) => {
   const field = container.querySelector(`[data-path="${path}"]`)!;
   const label = field.querySelector('label');
-  const target = label?.htmlFor
-    ? document.getElementById(label.htmlFor)
-    : null;
+  const target = label?.htmlFor ? document.getElementById(label.htmlFor) : null;
   return target ? target.tagName.toLowerCase() : null;
 };
 
 describe('field label association (antd-mobile)', () => {
   it.each([
-    ['/count', { type: 'number' }, 'input'],
-    ['/name', { type: 'string' }, 'input'],
+    ['/count', { type: 'number' as const }, 'input'],
+    ['/name', { type: 'string' as const }, 'input'],
   ])('the label of %s points at its control', (path, schema, tag) => {
     const { container } = render(
       <Form

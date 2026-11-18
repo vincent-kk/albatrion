@@ -1,4 +1,3 @@
-import { renderToString } from 'react-dom/server';
 import { Activity, type ReactNode, createRef, useState } from 'react';
 
 import {
@@ -9,6 +8,7 @@ import {
   screen,
   within,
 } from '@testing-library/react';
+import { renderToString } from 'react-dom/server';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@canard/schema-form';
@@ -83,11 +83,34 @@ it.each([
 ])(
   'round-trips %j through mount, external write, reset, Activity and edits',
   async (value, scheme, path) => {
-    const markup = renderToString(<Form fieldInputDefinitions={[FieldInputUriDefinition]} jsonSchema={{type:'object',properties:{link:{type:'string',format:'uri',options:{omitEmpty:false},presentation:{FieldInputProps:{protocols:['http','https']}}}}}} defaultValue={{link:value}} />);
-    const server = document.createElement('div'); server.innerHTML=markup;
-    const serverPrefix = server.querySelector('.ant-select')?.textContent ?? server.querySelector('[role="combobox"]')?.textContent;
+    const markup = renderToString(
+      <Form
+        fieldInputDefinitions={[FieldInputUriDefinition]}
+        jsonSchema={{
+          type: 'object',
+          properties: {
+            link: {
+              type: 'string',
+              format: 'uri',
+              options: { omitEmpty: false },
+              presentation: {
+                FieldInputProps: { protocols: ['http', 'https'] },
+              },
+            },
+          },
+        }}
+        defaultValue={{ link: value }}
+      />,
+    );
+    const server = document.createElement('div');
+    server.innerHTML = markup;
+    const serverPrefix =
+      server.querySelector('.ant-select')?.textContent ??
+      server.querySelector('[role="combobox"]')?.textContent;
     expect(serverPrefix).toBe(scheme || 'No scheme');
-    expect(server.querySelector<HTMLInputElement>('input#\\/link')?.value).toBe(path);
+    expect(server.querySelector<HTMLInputElement>('input#\\/link')?.value).toBe(
+      path,
+    );
     const ref = createRef<FormHandle>();
     render(
       <Host>
@@ -100,7 +123,7 @@ it.each([
               link: {
                 type: 'string',
                 format: 'uri',
- options: { omitEmpty: false },
+                options: { omitEmpty: false },
                 presentation: {
                   FieldInputProps: { protocols: ['http', 'https'] },
                 },

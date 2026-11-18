@@ -13,7 +13,9 @@ const visibleOptions = () =>
   );
 
 const search = (text: string) => {
-  const input = document.querySelector<HTMLInputElement>('.ant-select-selection-search-input')!;
+  const input = document.querySelector<HTMLInputElement>(
+    '.ant-select-selection-search-input',
+  )!;
   fireEvent.mouseDown(document.querySelector('.ant-select-selector')!);
   act(() => {
     fireEvent.change(input, { target: { value: text } });
@@ -24,7 +26,9 @@ const schema = {
   type: 'array',
   items: { type: 'string', enum: ['kr', 'us', 'jp'] },
   presentation: {
-    FieldInputProps: { alias: { kr: '대한민국', us: 'United States', jp: '日本' } },
+    FieldInputProps: {
+      alias: { kr: '대한민국', us: 'United States', jp: '日本' },
+    },
   },
 } as const;
 
