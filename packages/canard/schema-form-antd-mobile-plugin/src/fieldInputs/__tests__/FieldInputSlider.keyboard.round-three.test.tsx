@@ -129,11 +129,29 @@ it('preserves the precision of decimal keyboard steps', () => {
   expect(ref.current!.getValue()).toBe(0.246913578);
 });
 
-it('keyboard navigation agrees for equivalent sorted and unsorted range displays',()=>{
- const move=(value:number[])=>{
-  const ref=createRef<FormHandle>();const view=render(<Form ref={ref} fieldInputDefinitions={[FieldInputSliderDefinition]} jsonSchema={{type:'array',format:'slider',items:{type:'number',minimum:0,maximum:10,multipleOf:1}}} defaultValue={value}/>);
-  fireEvent.keyDown(view.container.querySelector('[role="slider"]')!,{key:'ArrowRight'});
-  const result=ref.current!.getValue();cleanup();return result;
- };
- const ordered=move([2,8]);expect(ordered).toEqual([3,8]);expect(move([8,2])).toEqual(ordered);
+it('keyboard navigation agrees for equivalent sorted and unsorted range displays', () => {
+  const move = (value: number[]) => {
+    const ref = createRef<FormHandle>();
+    const view = render(
+      <Form
+        ref={ref}
+        fieldInputDefinitions={[FieldInputSliderDefinition]}
+        jsonSchema={{
+          type: 'array',
+          format: 'slider',
+          items: { type: 'number', minimum: 0, maximum: 10, multipleOf: 1 },
+        }}
+        defaultValue={value}
+      />,
+    );
+    fireEvent.keyDown(view.container.querySelector('[role="slider"]')!, {
+      key: 'ArrowRight',
+    });
+    const result = ref.current!.getValue();
+    cleanup();
+    return result;
+  };
+  const ordered = move([2, 8]);
+  expect(ordered).toEqual([3, 8]);
+  expect(move([8, 2])).toEqual(ordered);
 });
