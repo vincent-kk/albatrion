@@ -8,8 +8,8 @@ import {
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
-import { JSONPointerError } from '@/json/JSONPointer/utils/manipulator/utils/error';
 import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
+import { JSONPointerError } from '@/json/JSONPointer/utils/manipulator/utils/error';
 import type { JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../patchModel';
@@ -119,7 +119,8 @@ export const applySinglePatch = (
         { patch, index: patchIndex, path: patch.path, operation },
       );
     path = decodePatchFragment(path, patch, patchIndex);
-    if (path === '') return applyRootOperation(source, patch, patchIndex, cloned);
+    if (path === '')
+      return applyRootOperation(source, patch, patchIndex, cloned);
     segments = path.split('/');
   }
   // RFC 6902 4.4 and 4.5: move is "remove from, then add at path" and copy is "add a copy
@@ -153,7 +154,8 @@ export const applySinglePatch = (
       if (copied === undefined)
         assertCopySourcePresent(source, from, patch, patchIndex);
       else value = cloneLite(copied);
-    } else value = removeMoveSource(source, from, patch, patchIndex, cloned, path);
+    } else
+      value = removeMoveSource(source, from, patch, patchIndex, cloned, path);
   }
 
   let current: any = source;

@@ -10,7 +10,6 @@ it('round-2 react-utils 1: exposes the portal-or-null call result', () => {
   expectTypeOf<typeof Portal>().parameter(0).toEqualTypeOf<PropsWithChildren>();
 });
 
-
 it('round-2 react-utils 1: retains the memo component identity', () => {
   expect(isMemoComponent(Portal)).toBe(true);
 });

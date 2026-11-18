@@ -9,10 +9,10 @@ import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 import type { JSONRoot } from '@/json/type';
 
 import type { MovePatch } from '../../../patchModel';
-import { JSONPatchError } from './error';
 import { decodePatchFragment } from './decodePatchFragment';
-import { isCircularMoveReference } from './isCircularMoveReference';
+import { JSONPatchError } from './error';
 import { getArrayIndex } from './getArrayIndex';
+import { isCircularMoveReference } from './isCircularMoveReference';
 import { isMissingMember } from './isMissingMember';
 import { resolveFromParent } from './resolveFromParent';
 
@@ -50,7 +50,14 @@ export const removeMoveSource = (
   const segments = from.split(JSONPointer.Separator);
   if (segments[0] !== '') {
     if (from[0] === JSONPointer.Fragment)
-      return removeMoveSource(source, decodePatchFragment(from, patch, patchIndex), patch, patchIndex, cloned, path);
+      return removeMoveSource(
+        source,
+        decodePatchFragment(from, patch, patchIndex),
+        patch,
+        patchIndex,
+        cloned,
+        path,
+      );
     throw new JSONPatchError(
       'PATCH_PATH_INVALID',
       `Patch 'from' pointer '${from}' must start with '${JSONPointer.Separator}' or '${JSONPointer.Fragment}'`,
@@ -61,7 +68,13 @@ export const removeMoveSource = (
     throw new JSONPatchError(
       'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN',
       `Cannot move location '${patch.from}' to '${patch.path}' - target location is a descendant of the source location. This would create a circular reference.`,
-      { patch, patchIndex, operation: patch.op, from: patch.from, path: patch.path },
+      {
+        patch,
+        patchIndex,
+        operation: patch.op,
+        from: patch.from,
+        path: patch.path,
+      },
     );
   const last = segments.length - 1;
   if (last === 0) return source;

@@ -28,25 +28,41 @@ export const applyRootOperation = (
 ): unknown => {
   const operation = patch.op;
   let value: unknown;
-  if (operation === Operation.ADD || operation === Operation.REPLACE) value = patch.value;
+  if (operation === Operation.ADD || operation === Operation.REPLACE)
+    value = patch.value;
   else if (operation === Operation.MOVE || operation === Operation.COPY) {
     const from = patch.from;
     if (typeof from !== 'string')
-      throw new JSONPatchError('PATCH_PATH_INVALID', `Patch operation '${operation}' requires a string 'from' pointer`, { patch, index: patchIndex, operation });
+      throw new JSONPatchError(
+        'PATCH_PATH_INVALID',
+        `Patch operation '${operation}' requires a string 'from' pointer`,
+        { patch, index: patchIndex, operation },
+      );
     if (operation === Operation.COPY) {
       let copied: unknown;
-      try { copied = getValue(source, from); }
-      catch (error) {
-        if (error instanceof JSONPointerError && from[0] === '#') decodePatchFragment(from, patch, patchIndex);
+      try {
+        copied = getValue(source, from);
+      } catch (error) {
+        if (error instanceof JSONPointerError && from[0] === '#')
+          decodePatchFragment(from, patch, patchIndex);
         throw error;
       }
-      if (copied === undefined) assertCopySourcePresent(source, from, patch, patchIndex);
+      if (copied === undefined)
+        assertCopySourcePresent(source, from, patch, patchIndex);
       else value = cloneLite(copied);
-    } else value = removeMoveSource(source, from, patch, patchIndex, cloned, '');
+    } else
+      value = removeMoveSource(source, from, patch, patchIndex, cloned, '');
   }
-  if (operation === Operation.MOVE && cloned !== null && value !== null && typeof value === 'object' && !cloned.has(value)) {
+  if (
+    operation === Operation.MOVE &&
+    cloned !== null &&
+    value !== null &&
+    typeof value === 'object' &&
+    !cloned.has(value)
+  ) {
     const owned = isArray(value) ? value.slice() : { ...value };
-    cloned.add(owned); value = owned;
+    cloned.add(owned);
+    value = owned;
   }
   return handleRootPatch(source, patch, value, patchIndex);
 };
