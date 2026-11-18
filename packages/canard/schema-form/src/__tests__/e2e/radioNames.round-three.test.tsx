@@ -153,3 +153,39 @@ it('round-3: native radio names differ by complete field path and FormData keeps
     [shipping[0].name, 'cash'],
   ]);
 });
+
+it('round-3: built-in radios use the scoped id as their native name across Forms', () => {
+  const schema = { type: 'object', properties: { method } } as const;
+  const view = render(
+    <>
+      <Form
+        jsonSchema={schema}
+        defaultValue={{ method: 'card' }}
+        validationMode={ValidationMode.None}
+      />
+      <Form
+        jsonSchema={schema}
+        defaultValue={{ method: 'cash' }}
+        validationMode={ValidationMode.None}
+      />
+    </>,
+  );
+  const forms = Array.from(view.container.querySelectorAll('form'));
+  const [first, second] = forms.map((form) =>
+    Array.from(form.querySelectorAll<HTMLInputElement>('input[type="radio"]')),
+  );
+  for (const group of [first, second]) {
+    expect(group[0].name).toBe(group[0].id.slice(0, -2));
+    expect(group[1].name).toBe(group[0].name);
+  }
+  expect(first[0].name).not.toBe(second[0].name);
+  expect([...new FormData(forms[0]).entries()]).toEqual([
+    [first[0].name, 'card'],
+  ]);
+  expect([...new FormData(forms[1]).entries()]).toEqual([
+    [second[0].name, 'cash'],
+  ]);
+  fireEvent.click(second[0]);
+  expect(first.map((radio) => radio.checked)).toEqual([true, false]);
+  expect(second.map((radio) => radio.checked)).toEqual([true, false]);
+});
