@@ -1,6 +1,7 @@
 import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
 import type Ajv from 'ajv';
 
+import { compileWithPointers } from './utils/compileWithPointers';
 import { collectSchemaResources } from './utils/schemaPath/collectSchemaResources';
 import { createChildSchemaPathTest } from './utils/schemaPath/createChildSchemaPathTest';
 import { createNotRequiredKeyLookup } from './utils/schemaPath/createNotRequiredKeyLookup';
@@ -20,7 +21,7 @@ export const createValidatorFactory =
   (ajv: Ajv.Ajv, key?: string) =>
   (jsonSchema: JSONSchema): ValidateFunction => {
     const transient = key ? undefined : { ...JSON.parse(JSON.stringify(jsonSchema)), $async: true };
-    const validate = key ? ajv.getSchema(key) : transient && ajv.compile(transient);
+    const validate = compileWithPointers(ajv, transient ?? jsonSchema, key);
     if (transient) ajv.removeSchema(transient);
     if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
     const compiled: object = transient ?? jsonSchema;
