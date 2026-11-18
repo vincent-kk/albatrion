@@ -103,11 +103,11 @@ it('keeps a limit window that wraps past local midnight', () => {
       }}
     />,
   );
-  const limits = received.props.at(-1)!.props.disabledTime!(
-    dayjs(),
-    'start',
-    {},
-  );
+  const disabledTime = received.props.at(-1)!.props.disabledTime!;
+  const limits = disabledTime(dayjs(), 'start', {});
+  const repeated = disabledTime(dayjs(), 'end', {});
+  expect(repeated.disabledHours?.()).toEqual(limits.disabledHours?.());
+  expect(repeated.disabledMinutes?.(2)).toEqual(limits.disabledMinutes?.(2));
   expect(limits.disabledHours?.()).toEqual([
     3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
   ]);

@@ -33,6 +33,8 @@ type DisabledTimeType<T> = Parameter<
   (typeof DatePicker<T>)['RangePicker']
 >['disabledTime'];
 
+type TimeLimits = ReturnType<NonNullable<DisabledTimeType<Dayjs>>>;
+
 const MINUTES_PER_DAY = 24 * 60;
 const HOURS = Array.from({ length: 24 }, (_, hour) => hour);
 const MINUTES = Array.from({ length: 60 }, (_, minute) => minute);
@@ -102,20 +104,25 @@ const FieldInputTimeRange = ({
   );
 
   const disabledTime = useMemo<DisabledTimeType<Dayjs>>(() => {
-    const start = toLocalMinute(minimum);
-    const end = toLocalMinute(maximum);
-    if (start === undefined && end === undefined) return undefined;
-    const isDisabled = (hour: number, minute: number) =>
-      isOutsideWindow(hour * 60 + minute, start, end);
-    const limits = {
-      disabledHours: () =>
-        HOURS.filter((hour) =>
-          MINUTES.every((minute) => isDisabled(hour, minute)),
-        ),
-      disabledMinutes: (hour: number) =>
-        MINUTES.filter((minute) => isDisabled(hour, minute)),
+    if (!minimum && !maximum) return undefined;
+    let limits: TimeLimits | undefined;
+    // Limits are parsed when the panel first asks, so mounting parses nothing.
+    return () => {
+      if (limits) return limits;
+      const start = toLocalMinute(minimum);
+      const end = toLocalMinute(maximum);
+      const isDisabled = (hour: number, minute: number) =>
+        isOutsideWindow(hour * 60 + minute, start, end);
+      limits = {
+        disabledHours: () =>
+          HOURS.filter((hour) =>
+            MINUTES.every((minute) => isDisabled(hour, minute)),
+          ),
+        disabledMinutes: (hour: number) =>
+          MINUTES.filter((minute) => isDisabled(hour, minute)),
+      };
+      return limits;
     };
-    return () => limits;
   }, [minimum, maximum]);
 
   const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
