@@ -56,7 +56,7 @@ Applies when choosing between this package's hooks, wiring its Portal system, or
 - **`@winglet/react-utils/portal` exports exactly one value: `Portal`.** `PortalContextProvider` and `withPortal` are not public values, so `Portal.with(Component)` is the only supported setup — any answer importing the provider directly does not compile. Setup and `<Portal.Anchor />` placement are always answered together; neither works alone.
 - **With several anchors in one provider scope, the LAST one to mount wins** — every anchor writes to the same shared ref, so each mount overwrites the previous. One anchor per scope is the only predictable arrangement.
 - **A `style` prop on `Portal.Anchor` replaces `display: contents` outright** rather than merging with it, silently turning the anchor into a layout-participating block.
-- **`useDebounce` defaults to `immediate: true`** — it fires on the leading edge, and its options are frozen at first render.
+- **`useDebounce` defaults to `immediate: true`** — it uses leading and trailing edges for a burst, and its options are frozen at first render.
 - **`useWindowSize()` returns `{ width: 0, height: 0 }` on the first render**, including every server render. Branch on it and the SSR and client markup diverge.
 - **Pick the error-boundary HOC by `forwardRef` usage**, not by preference: `withErrorBoundaryForwardRef` exists because `withErrorBoundary` drops the ref contract.
 

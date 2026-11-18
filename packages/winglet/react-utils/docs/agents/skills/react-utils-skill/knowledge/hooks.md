@@ -41,7 +41,7 @@ In StrictMode (development) React double-renders and may invoke the factory twic
 | Problem                                                               | Hook                                                               |
 | --------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | Value read inside a timer, interval, or long-lived effect is stale    | `useReference(value)` → a ref updated every render                 |
-| Callback identity must never change, but must call the latest handler | `useHandle(fn)`                                                    |
+| Callback identity must never change, but must call the latest committed handler | `useHandle(fn)`                                                    |
 | Flat object prop defeats `React.memo`                                 | `useRestProperties(props)` — shallow comparison                    |
 | Nested object prop defeats `React.memo`                               | `useSnapshot(obj, omit?)` — deep comparison, optional key omission |
 
@@ -49,9 +49,9 @@ In StrictMode (development) React double-renders and may invoke the factory twic
 
 **`useSnapshot`'s `omit` set is captured on the first render and never re-read.** A dynamically computed omit list silently keeps using its initial value for the component's whole life, so keys omitted later still take part in the comparison. Pass a constant.
 
-**`useReference` writes to its ref during render**, not from an effect, so the current value is readable immediately — including by code that runs before the commit. That is what makes it safe inside a callback created in the same render.
+**`useReference` writes to its ref during render**, not from an effect, so the current value is readable immediately — including by code that runs before the commit. It tracks the latest attempted render, so a discarded render can change it. Use `useHandle` when a callback must follow the committed UI.
 
-**`useHandle` never throws on a missing handler.** With no handler, the returned function still exists and returns `null` at runtime while typed as the handler's return type. A missing handler therefore surfaces as an unexpected `null` somewhere downstream instead of an error at the call site.
+**`useHandle` never throws on a missing handler.** With no handler, the returned function still exists and returns `null` and its optional-handler overload includes `null` in the result type. A missing handler therefore surfaces as an unexpected `null` somewhere downstream instead of an error at the call site.
 
 ```tsx
 const onSelect = useHandle(props.onSelect); // stable identity for the component's lifetime
@@ -62,10 +62,10 @@ const onSelect = useHandle(props.onSelect); // stable identity for the component
 
 Six thin wrappers over `useEffect` / `useLayoutEffect` with an empty dependency array: `useOnMount`, `useOnMountLayout`, `useOnUnmount`, `useOnUnmountLayout`, plus the conditional pair `useEffectUntil` and `useLayoutEffectUntil`. The `Layout` variants run before paint — they block it, so use them only when the DOM must settle before the browser draws.
 
-**The unmount pair runs the latest handler.** `useOnUnmount(fn)` keeps `fn` in a ref updated every render, so the handler from the last render before unmount is the one that runs, and state read inside it is current. No `useReference` is needed:
+**The unmount pair runs the latest committed handler.** `useOnUnmount(fn)` publishes its reference during commit, so a suspended, throwing or abandoned render cannot replace the cleanup. React 18 and 19 publish before layout effects; React 16.14 and 17 use the parent layout effect, so a child layout effect may read the previous commit. No `useReference` is needed:
 
 ```tsx
-useOnUnmount(() => save(count)); // saves the value from the last render, not from mount
+useOnUnmount(() => save(count)); // saves the last committed value
 ```
 
 **`useEffectUntil` stops permanently.** The effect returns a boolean; the first `true` sets an internal flag and no later dependency change ever runs it again — remounting the component is the only reset. It also does **not support cleanup**: the return value is consumed as the stop signal, so a returned function is never treated as a teardown and never runs. Anything needing cleanup belongs in a plain `useEffect`. `useLayoutEffectUntil` is the same contract before paint.
@@ -82,10 +82,10 @@ useEffectUntil(() => {
 
 ## Timing and environment
 
-**`useDebounce(callback, deps, ms, options)` is leading-edge by default** — `immediate` defaults to `true`, firing the callback immediately when idle and suppressing the trailing call. Pass `{ immediate: false }` for the trailing-edge behavior most debounce implementations default to. The options are read into a ref on the first render only, so changing them later has no effect. It returns `{ isIdle, cancel }`.
+**`useDebounce(callback, deps, ms, options)` uses leading and trailing edges by default** — `immediate` defaults to `true`, firing the callback immediately when idle and then running a trailing call if further dependency changes occur within the window. A single isolated call does not run twice. Pass `{ immediate: false }` for the trailing-edge behavior most debounce implementations default to. The options are read into a ref on the first render only, so changing them later has no effect. It returns `{ isIdle, cancel }`.
 
 `useTimeout(callback, ms)` returns `{ isIdle, schedule, cancel }`; `schedule()` clears any pending timer first, making it a reschedule.
 
 **`useWindowSize()` returns `{ width: 0, height: 0 }` on the first render** — the listener and the first measurement both happen in an effect. Every server render sees `{ 0, 0 }`, so branching on it directly produces hydration mismatches; gate on mount, or accept one corrective render.
 
-`useVersion(callback?)` returns `[version, update]`, where `update` has a permanent identity and increments the counter after invoking the latest `callback`. Feed `version` to a child's `key` to force a remount, or to a dependency array to invalidate.
+`useVersion(callback?)` returns `[version, update]`, where `update` has a permanent identity and increments the counter after invoking the latest committed `callback`. Feed `version` to a child's `key` to force a remount, or to a dependency array to invalidate.
