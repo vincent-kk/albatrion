@@ -6,8 +6,8 @@ import { FormErrorCode, UnhandledError } from '@/schema-form/errors';
 
 import type { SchemaFormPlugin } from '../type';
 import { PluginManager } from './PluginManager';
-import { getPluginRegistry } from './getPluginRegistry';
 import { formatRegisterPluginError } from './formatRegisterPluginError';
+import { getPluginRegistry } from './getPluginRegistry';
 
 /** Registration fingerprints share the same realm ownership as plugin state. */
 const registry = getPluginRegistry();
