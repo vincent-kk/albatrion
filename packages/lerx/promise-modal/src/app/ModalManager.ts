@@ -393,12 +393,15 @@ export class ModalManager {
    */
   private static installKeyboardListener(): void {
     if (ModalManager.__state__.keydown) return;
-    let escape: { event: KeyboardEvent; settlements?: number } | undefined;
+    let escape: { event: KeyboardEvent; settlements?: number; order: number; candidate?: ModalNode } | undefined;
     ModalManager.__state__.keydownCapture = (event) => {
       if (event.key === 'Escape')
-        escape = { event, settlements: ModalManager.__state__.settlements };
+        escape = { event, settlements: ModalManager.__state__.settlements,
+          order: ModalManager.__state__.order,
+          candidate: ModalManager.visibleNodes().find((node) => node.closeOnEscape || node.dimmed) };
     };
     ModalManager.__state__.keydown = (event) => {
+      const snapshot = escape?.event === event ? escape : undefined;
       const settledDuringPress =
         escape?.event === event &&
         escape.settlements !== ModalManager.__state__.settlements;
@@ -412,14 +415,11 @@ export class ModalManager {
       )
         return;
       if (event.key === 'Escape') {
-        if (settledDuringPress) return;
-        for (const node of ModalManager.visibleNodes()) {
-          if (node.closeOnEscape) {
-            event.preventDefault();
-            closeModal(node);
-            break;
-          }
-          if (node.dimmed) break;
+        if (settledDuringPress || (snapshot && snapshot.order !== ModalManager.__state__.order)) return;
+        const candidate = snapshot?.candidate;
+        if (candidate?.alive && candidate.visible && !candidate.settled && candidate.closeOnEscape) {
+          event.preventDefault();
+          closeModal(candidate);
         }
       } else if (event.key === 'Tab') {
         const top = ModalManager.visibleNodes()[0];
