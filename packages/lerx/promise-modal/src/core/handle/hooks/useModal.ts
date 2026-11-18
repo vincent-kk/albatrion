@@ -79,6 +79,7 @@ export const useModal = (configuration?: OverridableHandleProps) => {
   useIsomorphicLayoutEffect(
     () => () => {
       const results = modalResultsRef.current;
+      if (!results.length) return;
       modalResultsRef.current = [];
       queueMicrotask(() => {
         for (const result of results) {
