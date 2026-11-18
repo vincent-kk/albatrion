@@ -4,7 +4,7 @@
 
 - RFC 6902 연산 6종을 순서대로 적용하고, 실패를 구조화된 `JSONPatchError`로 보고한다.
 - 예약 멤버 이름(`__proto__`, `constructor`, `prototype`)을 불투명한 문자열로 취급해 own 데이터 속성으로 읽고 쓴다. 어떤 패치 입력·옵션 조합에서도 반환 문서의 프로토타입은 교체되지 않고 `Object.prototype` 등 상속 객체는 변경되지 않는다.
-- immutable 기본값에서 소스는 변경되지 않으며, 변경 경로만 copy-on-write로 분리된다.
+- immutable 기본값에서 소스는 변경되지 않으며, 변경 경로만 copy-on-write로 분리된다. 루트로 이동한 객체·배열도 얕은 복제와 소유 기록을 거쳐, 후속 연산이 원본 하위 트리를 수정하지 않습니다.
 
 ## API Contracts
 

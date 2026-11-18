@@ -145,8 +145,14 @@ export const applySinglePatch = (
       value = removeMoveSource(source, patch.from, patch, patchIndex, cloned);
   }
 
-  if (patch.path === '' || patch.path === JSONPointer.Fragment)
+  if (patch.path === '' || patch.path === JSONPointer.Fragment) {
+    if (patch.op === Operation.MOVE && cloned !== null && value !== null && typeof value === 'object' && !cloned.has(value)) {
+      const owned = isArray(value) ? value.slice() : { ...value };
+      cloned.add(owned);
+      value = owned;
+    }
     return handleRootPatch(source, patch, value, patchIndex);
+  }
 
   const segments = patch.path.split('/');
 
