@@ -165,7 +165,7 @@ describe('round-2 schema-form 2: dependency occurrence lifecycle', () => {
     const kids = handle.current!.findNode('/kids/0/kids')!;
     if (!isArrayNode(kids)) throw new Error('Expected array');
     await act(() => kids.insert(0, { name: 'inserted' }));
-    await act(() => kids.move(2, 0));
+    await act(() => kids.insert(0, kids.remove(2)));
     await act(() => kids.remove(1));
     await act(() =>
       handle.current!.findNode('/kids/0/kids/0/name')!.setValue('changed'),

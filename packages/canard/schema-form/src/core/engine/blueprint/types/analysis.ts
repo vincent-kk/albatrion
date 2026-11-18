@@ -50,6 +50,8 @@ export interface AnalysisContext {
   isStaticFirstLoad: boolean;
   /** Monotonic evidence that construction hit a template still being built. */
   hasTemplateRecursion: boolean;
+  /** A template is bound at more than its first data path. */
+  hasTemplateAliases?: boolean;
   /** Monotonic feature evidence collected together with authored declarations. */
   capabilities: { -readonly [Key in keyof Blueprint['capabilities']]: boolean };
   schema: BlueprintSchema;

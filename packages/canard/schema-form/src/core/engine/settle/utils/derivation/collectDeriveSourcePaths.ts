@@ -6,6 +6,7 @@ import {
 import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
+import { getAliasedDependencyIndex } from '../dependencies/getAliasedDependencyIndex';
 import { getDependencyIndex } from '../dependencies/getDependencyIndex';
 
 /**
@@ -17,11 +18,14 @@ export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): ReadonlySet<string> => {
   const paths = new Set<string>();
+  const aliases = context.root.runtime.blueprint.capabilities.hasAliasedDependencies ? getAliasedDependencyIndex(context) : undefined;
   for (const owner of context.contextOwners ?? []) paths.add(owner);
   const dependencies = getDependencyIndex(context.root.runtime.blueprint);
   for (const changed of context.changedSource) {
     for (const owner of dependencies.affectedOwners(changed, context.root))
       paths.add(owner);
+    if (aliases)
+      for (const owner of aliases.affectedOwners(changed)) paths.add(owner);
     let path = changed;
     while (true) {
       paths.add(path);
@@ -38,9 +42,16 @@ export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
   if (context.pendingExits.size) {
     const exits = new Set<Self>(context.pendingExits.values());
     for (const node of exits)
-      if (!node.parent || !exits.has(node.parent))
-        for (const owner of dependencies.affectedOwners(node.path, context.root))
+      if (!node.parent || !exits.has(node.parent)) {
+        for (const owner of dependencies.affectedOwners(
+          node.path,
+          context.root,
+        ))
           paths.add(owner);
+        if (aliases)
+          for (const owner of aliases.affectedOwners(node.path))
+            paths.add(owner);
+      }
   }
   for (const [node, ids] of context.selectedDeclarationIds) {
     const previous = node.runtime.committedDeclarationIds?.get(

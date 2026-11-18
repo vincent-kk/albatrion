@@ -15,6 +15,7 @@ import { FieldNodeWriteKind } from '../../../types/value';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import type { SettlementContext } from '../../types/settlement';
+import { getAliasedDependencyIndex } from '../dependencies/getAliasedDependencyIndex';
 import { commitSlotChanges } from '../slots/commitSlotChanges';
 import { collectNonJsonPaths } from './collectNonJsonPaths';
 import { commitDeriveRules } from './commitDeriveRules';
@@ -37,6 +38,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const runtime = context.root.runtime;
+  if (runtime.blueprint.capabilities.hasAliasedDependencies) getAliasedDependencyIndex(context);
   const development = process.env.NODE_ENV !== 'production';
   if (runtime.blueprint.capabilities.hasDerive) commitDeriveRules(context);
   if (runtime.blueprint.capabilities.hasExpressions)
