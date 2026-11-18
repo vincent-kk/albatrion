@@ -58,3 +58,30 @@ it('clears the current enum label when a form value returns to undefined', async
       .filter((option) => option.getAttribute('aria-selected') === 'true'),
   ).toHaveLength(0);
 });
+
+it('renders an empty multiple select for a null array value and commits an array', async () => {
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      fieldInputDefinitions={[FieldInputStringEnumDefinition]}
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          tags: {
+            type: ['array', 'null'],
+            items: { type: 'string', enum: ['KR', 'US'] },
+          },
+        },
+      }}
+      defaultValue={{ tags: null }}
+    />,
+  );
+  expect(view.container.querySelector('.ant-select-multiple')).not.toBeNull();
+  expect(view.container.querySelector('.ant-select-selection-item')).toBeNull();
+  fireEvent.mouseDown(screen.getByRole('combobox'));
+  await act(async () => {
+    fireEvent.click(screen.getByTitle('KR'));
+  });
+  expect(ref.current!.getValue()).toEqual({ tags: ['KR'] });
+});
