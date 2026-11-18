@@ -1,3 +1,5 @@
+import { calculateLargeCombination } from './combination/utils/calculateLargeCombination';
+
 /**
  * Calculates the number of combinations (n choose r) using efficient iterative method.
  *
@@ -71,14 +73,5 @@ export const combination = (n: number, r: number): number => {
     }
     return Math.round(result);
   }
-  for (let i = 0; i < r; i++) {
-    const product = result * (n - i);
-    if (product > Number.MAX_SAFE_INTEGER) {
-      let exact = BigInt(result);
-      for (; i < r; i++) exact = exact * BigInt(n - i) / BigInt(i + 1);
-      return Number(exact);
-    }
-    result = product / (i + 1);
-  }
-  return result;
+  return calculateLargeCombination(n, r);
 };
