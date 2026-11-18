@@ -8,7 +8,21 @@ import { type CssSource, readCssCode } from './readCssCode';
  */
 export const getCssEscapeEnd = (source: CssSource, start: number): number => {
   let cursor = start + 1;
-  for (let count = 0; count < 6 && cursor < source.length; count++) {
+  const first = readCssCode(source, cursor);
+  if (
+    !(
+      (first >= 48 && first <= 57) ||
+      (first >= 65 && first <= 70) ||
+      (first >= 97 && first <= 102)
+    )
+  ) {
+    if (cursor < source.length) cursor++;
+    return first === 13 && readCssCode(source, cursor) === 10
+      ? cursor + 1
+      : cursor;
+  }
+  cursor++;
+  for (let count = 1; count < 6 && cursor < source.length; count++) {
     const code = readCssCode(source, cursor);
     if (
       !(
@@ -21,11 +35,7 @@ export const getCssEscapeEnd = (source: CssSource, start: number): number => {
     cursor++;
   }
   const code = readCssCode(source, cursor);
-  if (
-    cursor === start + 1 ||
-    code === 32 ||
-    (code >= 9 && code <= 13 && code !== 11)
-  ) {
+  if (code === 32 || (code >= 9 && code <= 13 && code !== 11)) {
     if (cursor < source.length) cursor++;
     if (code === 13 && readCssCode(source, cursor) === 10) cursor++;
   }
