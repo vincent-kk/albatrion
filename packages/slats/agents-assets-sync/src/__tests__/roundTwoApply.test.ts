@@ -6,6 +6,7 @@ import {
   mkdtempSync,
   readdirSync,
   rmSync,
+  symlinkSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -83,7 +84,7 @@ describe('r2-periphery agents-assets-sync probes (temp dirs only)', () => {
     rmSync(outerRoot, { recursive: true, force: true });
   });
 
-  it('a copy that fails with EACCES does not exit 0 and report the file as created', () => {
+  it('(round-2 agents-assets-sync 1) a copy that fails with EACCES does not exit 0 and report the file as created', () => {
     writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
     expect(run('--agent=claude', ...BASE).status).toBe(0);
     writeAt(join(assetRoot, 'skills/pp/new.md'), '# new\n');
@@ -110,7 +111,7 @@ describe('r2-periphery agents-assets-sync probes (temp dirs only)', () => {
     });
   });
 
-  it('an orphan whose unlink fails with EACCES is not reported as deleted with exit 0', () => {
+  it('(round-2 agents-assets-sync 1) an orphan whose unlink fails with EACCES is not reported as deleted with exit 0', () => {
     writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
     writeAt(join(assetRoot, 'skills/pp/old.md'), '# old\n');
     expect(run('--agent=claude', ...BASE).status).toBe(0);
@@ -130,7 +131,7 @@ describe('r2-periphery agents-assets-sync probes (temp dirs only)', () => {
   });
 
   it.skipIf(!FS.caseInsensitive)(
-    'a case-only rename between versions keeps the renamed file after --force',
+    '(round-2 agents-assets-sync 2) a case-only rename between versions keeps the renamed file after --force',
     () => {
       writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
       writeAt(join(assetRoot, 'skills/pp/README.md'), '# readme\n');
@@ -155,7 +156,7 @@ describe('r2-periphery agents-assets-sync probes (temp dirs only)', () => {
   );
 
   it.skipIf(!FS.normInsensitive)(
-    'an NFD -> NFC file-name change between versions keeps the file after --force',
+    '(round-2 agents-assets-sync 2) an NFD -> NFC file-name change between versions keeps the file after --force',
     () => {
       const nfd = 'café.md';
       const nfc = 'café.md';
@@ -178,7 +179,7 @@ describe('r2-periphery agents-assets-sync probes (temp dirs only)', () => {
     },
   );
 
-  it('a blocked multi-agent run exits with the same code in plain and --json', () => {
+  it('(round-2 agents-assets-sync 3) a blocked multi-agent run exits with the same code in plain and --json', () => {
     writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
     writeAt(join(assetRoot, 'rules/pp-rule.md'), '# rule\n');
     expect(run('--agent=claude,codex', ...BASE).status).toBe(0);
@@ -192,8 +193,25 @@ describe('r2-periphery agents-assets-sync probes (temp dirs only)', () => {
     expect(plain.status).toBe(2);
   });
 
+  it('(round-2 agents-assets-sync 3) prioritizes execution errors over blocked units in either order and output', () => {
+    writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
+    expect(run('--agent=claude,codex', ...BASE).status).toBe(0);
+    const outside = join(outerRoot, 'outside');
+    mkdirSync(outside);
+    const claude = join(projectRoot, '.claude/skills/pp');
+    rmSync(claude, { recursive: true });
+    symlinkSync(outside, claude, 'dir');
+    writeAt(join(projectRoot, '.agents/skills/pp/SKILL.md'), '# edited\n');
+    for (const agents of ['claude,codex', 'codex,claude']) {
+      const plain = run(`--agent=${agents}`, ...BASE);
+      const json = run(`--agent=${agents}`, ...BASE, '--json');
+      expect(json.status).toBe(plain.status);
+      expect(plain.status).toBe(1);
+    }
+  });
+
   it.each([PACKAGE, '@r2-periphery'])(
-    'resolves BOM and ordinary metadata equivalently via %s',
+    '(round-2 agents-assets-sync 5) resolves BOM and ordinary metadata equivalently via %s',
     (target) => {
       writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
       const ordinary = run(
