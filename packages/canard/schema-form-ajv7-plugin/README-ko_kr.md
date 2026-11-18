@@ -16,7 +16,7 @@
 
 ## 안내사항
 
-⚠️ 이 플러그인은 AJV 7.x를 사용하며, 구버전 JSON Schema 명세(Draft-07 이하)와 호환됩니다.
+⚠️ 이 플러그인은 AJV 7.x를 사용합니다. 기본 인스턴스는 Draft-07을 검증하고 Draft 2019-09는 AJV 2019 인스턴스를 bind하여 사용합니다.
 
 📌 최신 JSON Schema 기능(Draft 2019-09, Draft 2020-12)이 필요한 경우 `@canard/schema-form-ajv8-plugin` 사용을 고려해주세요.
 
@@ -171,9 +171,9 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 **JSON Schema 지원:**
 
-- Draft-06
-- Draft-07
-- Draft 2019-09 (부분 지원)
+- 기본 인스턴스: Draft-07.
+- bind한 AJV 2019 인스턴스: Draft 2019-09.
+- Draft-06: 호환 인스턴스에 해당 메타 스키마를 등록해야 합니다. Draft-04 지원은 제공하지 않습니다.
 
 ---
 
@@ -215,3 +215,25 @@ import { plugin } from '@canard/schema-form-ajv8-plugin';
 ## 연락처
 
 프로젝트와 관련된 문의나 제안은 [GitHub 저장소](https://github.com/vincent-kk/albatrion)에 이슈를 생성해 주세요.
+
+### Enabling a declared Draft-06 schema
+
+기본 인스턴스에는 Draft-06 메타 스키마가 없습니다. 스키마를 컴파일하기 전에 호환되는 인스턴스에 등록합니다.
+
+```typescript
+import Ajv from 'ajv';
+import draft06 from 'ajv/dist/refs/json-schema-draft-06.json';
+import { createValidator } from '@canard/schema-form-ajv7-plugin';
+
+const ajv = new Ajv({ allErrors: true, strict: false, validateFormats: false });
+ajv.addMetaSchema(draft06);
+const validator = createValidator(ajv);
+const validate = validator.compile({
+  $schema: 'http://json-schema.org/draft-06/schema#',
+  type: 'number',
+  exclusiveMaximum: 5,
+});
+await validate(5); // Reports exclusiveMaximum.
+```
+
+bind한 인스턴스에 추가한 format과 keyword는 가드와 격리된 형제 인스턴스를 포함한 이후 컴파일에 반영됩니다. 이미 컴파일한 검증 함수는 기존 규칙을 유지하며, 규칙 추가가 자동 재컴파일을 일으키지 않습니다.

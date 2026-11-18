@@ -16,7 +16,7 @@
 
 ## Notice
 
-⚠️ This plugin uses AJV 7.x which is compatible with older JSON Schema specifications (Draft-07 and earlier).
+⚠️ This plugin uses AJV 7.x. The default instance validates Draft-07; bind an AJV 2019 instance for Draft 2019-09.
 
 📌 If you need support for newer JSON Schema features (Draft 2019-09, Draft 2020-12), consider using `@canard/schema-form-ajv8-plugin` instead.
 
@@ -178,8 +178,9 @@ Please use a transpiler like Babel to transform the code for your target environ
 
 **JSON Schema Support:**
 
-- Draft-06
-- Draft-07
+- Draft-07 with the default instance.
+- Draft 2019-09 with a bound AJV 2019 instance.
+- Draft-06 requires registering its meta-schema on a compatible bound instance. Draft-04 is not supplied.
 - Draft 2019-09 (partial support)
 
 ---
@@ -222,3 +223,25 @@ This repository is licensed under the MIT License. Please refer to the [`LICENSE
 ## Contact
 
 For inquiries or suggestions related to the project, please create an issue on the [GitHub repository](https://github.com/vincent-kk/albatrion).
+
+### Enabling a declared Draft-06 schema
+
+The default instance does not register the Draft-06 meta-schema. Bind a compatible instance before compiling the schema:
+
+```typescript
+import Ajv from 'ajv';
+import draft06 from 'ajv/dist/refs/json-schema-draft-06.json';
+import { createValidator } from '@canard/schema-form-ajv7-plugin';
+
+const ajv = new Ajv({ allErrors: true, strict: false, validateFormats: false });
+ajv.addMetaSchema(draft06);
+const validator = createValidator(ajv);
+const validate = validator.compile({
+  $schema: 'http://json-schema.org/draft-06/schema#',
+  type: 'number',
+  exclusiveMaximum: 5,
+});
+await validate(5); // Reports exclusiveMaximum.
+```
+
+Formats and keywords added to the bound instance are available to later compilations, including guards and isolated sibling instances. Already compiled validators keep their compiled rules; adding a rule does not recompile them.
