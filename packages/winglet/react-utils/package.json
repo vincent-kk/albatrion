@@ -114,8 +114,8 @@
     "typescript": "^5.7.2"
   },
   "peerDependencies": {
-    "react": ">=16 <20",
-    "react-dom": ">=16 <20"
+    "react": ">=16.14 <20",
+    "react-dom": ">=16.14 <20"
   },
   "agents": {
     "assetPath": "docs/agents"

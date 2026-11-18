@@ -55,7 +55,7 @@ yarn add @winglet/react-utils
 
 ```bash
 npm install react react-dom
-# React 16, 17, 18, 19 모두 지원
+# React와 React DOM >=16.14 <20 지원
 ```
 
 ---
