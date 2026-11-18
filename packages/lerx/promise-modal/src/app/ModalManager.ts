@@ -166,7 +166,7 @@ export class ModalManager {
         : null;
     const anchor = ModalManager.anchor({ root });
     if (isMoved) ModalManager.destroyStyleSheet();
-    ModalManager.applyStyleSheet();
+    ModalManager.applyStyleSheet(root);
     ModalManager.installKeyboardListener();
     ModalManager.updateAccessibility(true);
     if (focused instanceof HTMLElement) focused.focus();
@@ -527,12 +527,17 @@ export class ModalManager {
   static defineStyleSheet(styleId: string, css: string): void {
     ModalManager.__state__.styleSheetDefinition.set(styleId, compressCss(css));
   }
-  /** Creates a style manager only at browser initialization. */
-  static applyStyleSheet(): void {
+  /**
+   * Creates a style manager only at browser initialization.
+   * @param root - Known anchor parent; the body needs no shadow-tree lookup.
+   */
+  static applyStyleSheet(
+    root = ModalManager.__state__.anchor?.parentElement,
+  ): void {
     if (!ModalManager.__state__.styleManager) {
       const scope = ModalManager.__state__.scope;
-      const tree = ModalManager.__state__.anchor?.getRootNode();
-      const config = { shadowRoot: isShadowRoot(tree) ? tree : undefined };
+      const tree = root === document.body ? undefined : root?.getRootNode();
+      const config = isShadowRoot(tree) ? { shadowRoot: tree } : undefined;
       ModalManager.__state__.styleManager = styleManagerFactory(scope, config);
       ModalManager.__state__.destroyStyleManager = () => destroyScope(scope);
       ModalManager.__state__.appliedStyleSheetDefinition = undefined;
