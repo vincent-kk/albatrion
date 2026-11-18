@@ -152,6 +152,8 @@ Hiding only the Provider with Activity or a re-suspended Suspense boundary relea
 
 `alive` means retained in the store, `visible` means displayed, and `settled` means the first result or error is final. Route hiding preserves pending results; only pending nodes can reappear. Abort and caller cleanup cancel even hidden requests. A manual closed node may remain alive for exit animation but cannot show again. `useDestroyAfter` starts only after settlement.
 
+Known limit with mixed compatible copies: nodes created by a copy without settlement visibility tracking retain the earlier manual exit rule. Update all copies to apply hidden-settlement suppression consistently.
+
 The default pathname hook uses Navigation API events when available, otherwise polls only with alive nodes, including hidden requests and exit frames. Default requests use pathname at opening time. Supply a router hook returning `{ pathname }` to track your router; the following example uses context so both the page and modal content can change the same route.
 
 ```tsx
