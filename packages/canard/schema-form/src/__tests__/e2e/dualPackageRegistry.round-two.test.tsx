@@ -52,7 +52,7 @@ it('round-2 schema-form 7: incompatible registry versions remain isolated', asyn
   if (inject('reactMajor') === '18')
     context.skip('Built bundles use the installed React 19.');
   const file = resolve(packageRoot, packageJson.exports['.'].node.import);
-  const source = await readFile(file, 'utf8');
+  const source = await readFile(resolve(packageRoot, packageJson.exports['.'].node.require), 'utf8');
   const key = '@canard/schema-form/plugin-registry/0.16';
   const otherSource = source
     .split(key)
@@ -65,10 +65,10 @@ it('round-2 schema-form 7: incompatible registry versions remain isolated', asyn
       resolve(directory, 'node_modules'),
       'dir',
     );
-    const otherFile = resolve(directory, 'other.mjs');
+    const otherFile = resolve(directory, 'other.cjs');
     await writeFile(otherFile, otherSource);
     const original = await import(pathToFileURL(file).href);
-    const other = await import(pathToFileURL(otherFile).href);
+    const other = nodeRequire(otherFile);
     original.registerPlugin(plugin);
     other.registerPlugin(null);
     render(<original.Form jsonSchema={schema} />);

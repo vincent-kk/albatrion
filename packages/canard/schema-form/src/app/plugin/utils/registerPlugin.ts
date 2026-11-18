@@ -1,5 +1,4 @@
 import { isPlainObject } from '@winglet/common-utils/filter';
-import { createFingerprintFactory } from '@winglet/common-utils/object';
 
 import type { Nullable } from '@aileron/declare';
 
@@ -7,11 +6,11 @@ import { FormErrorCode, UnhandledError } from '@/schema-form/errors';
 
 import type { SchemaFormPlugin } from '../type';
 import { PluginManager } from './PluginManager';
+import { getPluginRegistry } from './getPluginRegistry';
 import { formatRegisterPluginError } from './formatRegisterPluginError';
 
-const RegisteredPlugin = new Set<string>();
-/** Identity scope shared by plugin registrations; mutable content is recomputed. */
-const getPluginKey = createFingerprintFactory();
+/** Registration fingerprints share the same realm ownership as plugin state. */
+const registry = getPluginRegistry();
 
 /**
  * Registers a schema form plugin to extend or customize form functionality globally.
@@ -200,12 +199,11 @@ const getPluginKey = createFingerprintFactory();
 export const registerPlugin = (plugin: Nullable<SchemaFormPlugin>) => {
   if (plugin === null) {
     PluginManager.reset();
-    RegisteredPlugin.clear();
     return;
   }
   if (!isPlainObject(plugin)) return;
-  const hash = getPluginKey(plugin);
-  if (RegisteredPlugin.has(hash)) return;
+  const hash = registry.getPluginKey(plugin);
+  if (registry.registeredPlugins.has(hash)) return;
   try {
     const { fieldInputDefinitions, validator, formatError, ...renderKit } =
       plugin;
@@ -224,5 +222,5 @@ export const registerPlugin = (plugin: Nullable<SchemaFormPlugin>) => {
       },
     );
   }
-  RegisteredPlugin.add(hash);
+  registry.registeredPlugins.add(hash);
 };

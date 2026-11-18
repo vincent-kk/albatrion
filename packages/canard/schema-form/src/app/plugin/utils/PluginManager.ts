@@ -1,113 +1,77 @@
-import type { ComponentType } from 'react';
-
 import { remainOnlyReactComponent } from '@winglet/react-utils/object';
-
 import type { Optional } from '@aileron/declare';
-
-import {
-  ErrorMessageRenderer,
-  FieldRenderer,
-  LabelRenderer,
-} from '@/schema-form/components/FallbackComponents';
-import { builtinFieldInputDefinitions } from '@/schema-form/fieldInputs';
 import { formatValidationError } from '@/schema-form/helpers/error';
-import {
-  type NormalizedFieldInputDefinition,
-  normalizeFieldInputDefinitions,
-} from '@/schema-form/helpers/fieldInputDefinition';
-import type {
-  ErrorMessageRendererProps,
-  FieldInputDefinition,
-  FieldRendererProps,
-  FormatError,
-  InputRendererProps,
-  LabelRendererProps,
-} from '@/schema-form/types';
-
+import { normalizeFieldInputDefinitions } from '@/schema-form/helpers/fieldInputDefinition';
+import type { FieldInputDefinition, FormatError } from '@/schema-form/types';
 import type { ValidatorPlugin } from '../type';
+import { getPluginRegistry } from './getPluginRegistry';
 
-interface RenderKit {
-  FieldRenderer: ComponentType<FieldRendererProps>;
-  LabelRenderer: ComponentType<LabelRendererProps>;
-  InputRenderer?: ComponentType<InputRendererProps>;
-  ErrorMessageRenderer: ComponentType<ErrorMessageRendererProps>;
-}
-
-const defaultRenderKit = {
-  FieldRenderer: FieldRenderer,
-  LabelRenderer: LabelRenderer,
-  ErrorMessageRenderer: ErrorMessageRenderer,
-} as const;
-
-const defaultFieldInputDefinitions = normalizeFieldInputDefinitions(
-  builtinFieldInputDefinitions,
-);
+/** Module initialization binds compatible package copies to their realm registry. */
+const registry = getPluginRegistry();
+/** Mutable render surface accepted by the registration merge. */
+type RenderKit = typeof registry.renderKit;
 
 export class PluginManager {
-  private static __renderKit__: RenderKit = defaultRenderKit;
 
   static get FieldRenderer() {
-    return PluginManager.__renderKit__.FieldRenderer;
+    return registry.renderKit.FieldRenderer;
   }
   static get LabelRenderer() {
-    return PluginManager.__renderKit__.LabelRenderer;
+    return registry.renderKit.LabelRenderer;
   }
   static get InputRenderer() {
-    return PluginManager.__renderKit__.InputRenderer;
+    return registry.renderKit.InputRenderer;
   }
   static get ErrorMessageRenderer() {
-    return PluginManager.__renderKit__.ErrorMessageRenderer;
+    return registry.renderKit.ErrorMessageRenderer;
   }
 
   static appendRenderKit(renderKit: Optional<Partial<RenderKit>>) {
     if (!renderKit) return;
-    PluginManager.__renderKit__ = {
-      ...PluginManager.__renderKit__,
+    registry.renderKit = {
+      ...registry.renderKit,
       ...remainOnlyReactComponent(renderKit),
     };
   }
 
-  private static __fieldInputDefinitions__: NormalizedFieldInputDefinition[] =
-    defaultFieldInputDefinitions;
 
   static get fieldInputDefinitions() {
-    return PluginManager.__fieldInputDefinitions__;
+    return registry.fieldInputDefinitions;
   }
 
   static appendFieldInputDefinitions(
     fieldInputDefinitions: Optional<FieldInputDefinition[]>,
   ) {
     if (!fieldInputDefinitions) return;
-    PluginManager.__fieldInputDefinitions__ = [
+    registry.fieldInputDefinitions = [
       ...normalizeFieldInputDefinitions(fieldInputDefinitions),
-      ...PluginManager.__fieldInputDefinitions__,
+      ...registry.fieldInputDefinitions,
     ];
   }
 
-  private static __validator__: Optional<ValidatorPlugin>;
 
-  private static __formatError__: FormatError = formatValidationError;
 
   static get validator() {
-    return PluginManager.__validator__;
+    return registry.validator;
   }
   static get formatError() {
-    return PluginManager.__formatError__;
+    return registry.formatError;
   }
 
   static appendValidator(validator: Optional<ValidatorPlugin>) {
     if (!validator) return;
-    PluginManager.__validator__ = validator;
+    registry.validator = validator;
   }
   static appendFormatError(formatError: Optional<FormatError>) {
     if (!formatError) return;
-    PluginManager.__formatError__ = formatError;
+    registry.formatError = formatError;
   }
 
   static reset() {
-    PluginManager.__renderKit__ = defaultRenderKit;
-    PluginManager.__fieldInputDefinitions__ = defaultFieldInputDefinitions;
-    PluginManager.__validator__ = undefined;
-    PluginManager.__formatError__ = formatValidationError;
+    registry.renderKit = registry.defaultRenderKit;
+    registry.fieldInputDefinitions = registry.defaultFieldInputDefinitions;
+    registry.validator = undefined;
+    registry.formatError = formatValidationError;
+    registry.registeredPlugins.clear();
   }
 }
