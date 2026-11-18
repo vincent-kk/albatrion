@@ -12,7 +12,6 @@ import { captureChainError } from './captureChainError';
 import { composeBatchValue } from './composeBatchValue';
 import { collectMarkedMergeOrigins } from './utils/collectMarkedMergeOrigins';
 import { restoreBatchOutput } from './utils/restoreBatchOutput';
-import { sealBatchValuePayloads } from './utils/sealBatchValuePayloads';
 
 /**
  * Commit the final marked value of each batch target before delivery.
@@ -131,11 +130,7 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
   } finally {
     if (runtime.batchHasArrayOperation && !runtime.batchDepth) {
       runtime.batchHasArrayOperation = undefined;
-      try {
-        restoreBatchOutput(root, runtime.chainInitialOutputValue);
-      } finally {
-        sealBatchValuePayloads(root);
-      }
+      restoreBatchOutput(root, runtime.chainInitialOutputValue);
     }
     if (runtime.inputRelays !== undefined) runtime.inputRelays = undefined;
   }

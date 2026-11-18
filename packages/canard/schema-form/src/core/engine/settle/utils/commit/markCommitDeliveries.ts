@@ -28,10 +28,9 @@ import { FieldNodeWriteKind } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
 import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import { commitGlobalState } from './commitGlobalState';
-import { collectBatchValuePayload } from './utils/collectBatchValuePayload';
 import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
-import { getInputCommitTracking } from './utils/getInputCommitTracking';
 import { getRequiredChildren } from './utils/getRequiredChildren';
+import { getInputCommitTracking } from './utils/getInputCommitTracking';
 import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
 import { isExternalBranchValueChange } from './utils/isExternalBranchValueChange';
 import { isSameDeliveryValue } from './utils/isSameDeliveryValue';
@@ -52,9 +51,10 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
   const previousTransitions = runtime.revisionTransitions;
   try {
     const isLoad = context.kind === FieldNodeWriteKind.Load;
-    const inputTracking = isLoad
-      ? undefined
-      : getInputCommitTracking(context, !!runtime.inputRelays?.length);
+    const inputTracking =
+      isLoad
+        ? undefined
+        : getInputCommitTracking(context, !!runtime.inputRelays?.length);
     const refreshTargets = runtime.refreshTargets;
     const loadScope = isLoad ? context.loadScope : undefined;
     const automaticNodes = new Set<Self>();
@@ -262,48 +262,35 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
           else {
             const pendingValue =
               pendingPayload?.[FieldNodeEventType.UpdateValue];
-            if (runtime.batchHasArrayOperation && runtime.batchDepth) {
-              const source =
-                automaticNodes.has(node) || context.filledNodes.has(node)
-                  ? FieldNodeWriteKind.Automatic
-                  : readSettlementSource(context, node.path);
-              mark(
-                node,
-                FieldNodeEventType.UpdateValue,
-                collectBatchValuePayload(node, pendingValue),
-                { source },
-              );
-            } else {
-              const oldValue =
-                pendingValue !== null && typeof pendingValue === 'object'
-                  ? Reflect.get(pendingValue, 'previous')
-                  : node.behavior.strategy === 'branch'
-                    ? {
-                        value: node.deliveryPreviousValue,
-                        outputValue: node.deliveryPreviousOutputValue,
-                      }
-                    : node.deliveryPreviousValue;
-              const current =
-                node.behavior.strategy === 'branch'
+            const oldValue =
+              pendingValue !== null && typeof pendingValue === 'object'
+                ? Reflect.get(pendingValue, 'previous')
+                : node.behavior.strategy === 'branch'
                   ? {
-                      value: node.storedValue,
-                      outputValue: node.storedOutputValue,
+                      value: node.deliveryPreviousValue,
+                      outputValue: node.deliveryPreviousOutputValue,
                     }
-                  : node.storedValue;
-              const payload = { previous: oldValue, current };
-              const source =
-                automaticNodes.has(node) || context.filledNodes.has(node)
-                  ? FieldNodeWriteKind.Automatic
-                  : readSettlementSource(context, node.path);
-              mark(
-                node,
-                FieldNodeEventType.UpdateValue,
-                process.env.NODE_ENV !== 'production'
-                  ? Object.freeze(payload)
-                  : payload,
-                { source },
-              );
-            }
+                  : node.deliveryPreviousValue;
+            const current =
+              node.behavior.strategy === 'branch'
+                ? {
+                    value: node.storedValue,
+                    outputValue: node.storedOutputValue,
+                  }
+                : node.storedValue;
+            const payload = { previous: oldValue, current };
+            const source =
+              automaticNodes.has(node) || context.filledNodes.has(node)
+                ? FieldNodeWriteKind.Automatic
+                : readSettlementSource(context, node.path);
+            mark(
+              node,
+              FieldNodeEventType.UpdateValue,
+              process.env.NODE_ENV !== 'production'
+                ? Object.freeze(payload)
+                : payload,
+              { source },
+            );
           }
         }
         if (
@@ -383,42 +370,23 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       } else if (context.changedNodes.has(node)) {
         if (silent) mark(node, FieldNodeEventType.UpdateValue);
         else {
-          if (runtime.batchHasArrayOperation && runtime.batchDepth) {
-            const source =
-              automaticNodes.has(node) || context.filledNodes.has(node)
-                ? FieldNodeWriteKind.Automatic
-                : readSettlementSource(context, node.path);
-            mark(
-              node,
-              FieldNodeEventType.UpdateValue,
-              collectBatchValuePayload(
-                node,
-                pendingPayload?.[FieldNodeEventType.UpdateValue],
-              ),
-              { source },
-            );
-          } else {
-            const current =
-              node.behavior.strategy === 'branch'
-                ? {
-                    value: node.storedValue,
-                    outputValue: node.storedOutputValue,
-                  }
-                : node.storedValue;
-            const payload = { previous: undefined, current };
-            const source =
-              automaticNodes.has(node) || context.filledNodes.has(node)
-                ? FieldNodeWriteKind.Automatic
-                : readSettlementSource(context, node.path);
-            mark(
-              node,
-              FieldNodeEventType.UpdateValue,
-              process.env.NODE_ENV !== 'production'
-                ? Object.freeze(payload)
-                : payload,
-              { source },
-            );
-          }
+          const current =
+            node.behavior.strategy === 'branch'
+              ? { value: node.storedValue, outputValue: node.storedOutputValue }
+              : node.storedValue;
+          const payload = { previous: undefined, current };
+          const source =
+            automaticNodes.has(node) || context.filledNodes.has(node)
+              ? FieldNodeWriteKind.Automatic
+              : readSettlementSource(context, node.path);
+          mark(
+            node,
+            FieldNodeEventType.UpdateValue,
+            process.env.NODE_ENV !== 'production'
+              ? Object.freeze(payload)
+              : payload,
+            { source },
+          );
         }
       }
       if (

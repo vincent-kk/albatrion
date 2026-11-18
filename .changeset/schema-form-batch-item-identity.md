@@ -29,5 +29,3 @@ list.batch(() => {
 Errors and interaction flags follow surviving item nodes. Writes through removed item references remain ignored. Intermediate automatic defaults and injections can still differ when a batch skips intermediate scalar settlements.
 
 Batching array verbs no longer makes them cheaper than issuing them one by one. Each array verb settles immediately and the outer batch compares the final output with its initial output. A batch also keeps the first previous value for a subscriber registered between verbs; without observers, that bookkeeping can cost more than separate calls. Scalar-only batches keep their existing deferred path.
-
-Structural batches can allocate more than separate array calls, with some garbage collection work appearing in later updates.
