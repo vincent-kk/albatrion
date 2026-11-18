@@ -1,3 +1,5 @@
+import { round } from '@winglet/common-utils/math';
+
 /**
  * Compute a slider stop for one standard navigation key.
  * @param key - Keyboard event key.
@@ -8,18 +10,46 @@
  * @param stops - Optional sorted marked stops, which restrict the library slider.
  * @returns The next clamped value, or undefined for an unrelated key.
  */
-export const getKeyboardValue = (key: string, current: number, min: number, max: number, step: number, stops: readonly number[]): number | undefined => {
-  if (key === 'Home') return min;
-  if (key === 'End') return max;
-  const direction = key === 'ArrowRight' || key === 'ArrowUp' || key === 'PageUp' ? 1 : key === 'ArrowLeft' || key === 'ArrowDown' || key === 'PageDown' ? -1 : 0;
+export const getKeyboardValue = (
+  key: string,
+  current: number,
+  min: number,
+  max: number,
+  step: number,
+  stops: readonly number[],
+): number | undefined => {
+  if (key === 'Home')
+    return stops.find((value) => value >= min && value <= max) ?? min;
+  if (key === 'End') {
+    for (let index = stops.length - 1; index >= 0; index--)
+      if (stops[index] <= max && stops[index] >= min) return stops[index];
+    return max;
+  }
+  const direction =
+    key === 'ArrowRight' || key === 'ArrowUp' || key === 'PageUp'
+      ? 1
+      : key === 'ArrowLeft' || key === 'ArrowDown' || key === 'PageDown'
+        ? -1
+        : 0;
   if (!direction) return undefined;
   if (stops.length) {
-    if (direction > 0) return stops.find(value => value > current && value <= max) ?? current;
+    if (direction > 0)
+      return stops.find((value) => value > current && value <= max) ?? current;
     for (let index = stops.length - 1; index >= 0; index--)
       if (stops[index] < current && stops[index] >= min) return stops[index];
     return current;
   }
   const delta = step * direction * (key.startsWith('Page') ? 10 : 1);
-  const precision = Math.min(15, Math.max(0, -Math.floor(Math.log10(step))) + 2);
-  return Math.max(min, Math.min(max, Number((current + delta).toFixed(precision))));
+  const precision = Math.max(decimalPlaces(current), decimalPlaces(step));
+  return Math.max(min, Math.min(max, round(current + delta, precision)));
+};
+
+/**
+ * Count meaningful decimal places, including exponent notation.
+ * @param value - Finite slider value or step.
+ * @returns Decimal precision needed to preserve the value's written digits.
+ */
+const decimalPlaces = (value: number): number => {
+  const [digits, exponent = '0'] = value.toString().split('e');
+  return Math.max(0, (digits.split('.')[1]?.length ?? 0) - Number(exponent));
 };
