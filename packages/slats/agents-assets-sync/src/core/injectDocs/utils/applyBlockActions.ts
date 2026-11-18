@@ -1,5 +1,7 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+
+import { replaceDocument } from './replaceDocument.js';
 
 import type { Action } from '../../buildPlan/index.js';
 import { removeBlock, upsertBlock } from '../../markerBlock/index.js';
@@ -41,6 +43,5 @@ export async function applyBlockActions(
     content = upsertBlock(content, blockId, body);
   }
 
-  await mkdir(dirname(fileAbs), { recursive: true });
-  await writeFile(fileAbs, Buffer.from(content, 'latin1'));
+  await replaceDocument(fileAbs, Buffer.from(content, 'latin1'));
 }
