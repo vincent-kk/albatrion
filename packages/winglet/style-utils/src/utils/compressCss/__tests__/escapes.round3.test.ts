@@ -57,5 +57,6 @@ it('round-3 style-utils 4: a bad string does not change a later real string', ()
     const later = '.b { content: "a  b"; } .c {color: red;}';
     const result = compressCss('.a {content: "bad' + newline + '}' + later);
     expect(result.slice(result.indexOf('.b'))).toBe(compressCss(later));
+    expect(result).toContain(newline);
   }
 });
