@@ -7,6 +7,8 @@
 - `afterExecute`는 시작 통지 또는 원본 함수의 성공·실패와 무관하게 실행되며, 호출 종료 시 진행 중 호출 수를 줄입니다.
 - 구독자는 `handler()` 각 호출마다 정확히 두 번(시작·완료) 통지받으며, 동일 리스너를 중복 구독해도 통지 횟수는 늘지 않는다.
 
+구독자가 던져도 모든 구독자에게 순서대로 알립니다. 시작 통지의 첫 예외는 핸들러 거부로 전파하고, 추가 시작 오류와 완료 통지 오류는 reportError 또는 별도 throw 태스크로 호스트에 보고합니다. 완료 구독자 오류는 원본의 성공·실패 결과를 바꾸지 않습니다.
+
 ## API Contracts
 
 - `getTrackableHandler(origin, options?)` → 상태·구독·`pending`이 결합된 핸들러. `options`: `preventConcurrent`(기본 `true`), `initialState`, `beforeExecute`, `afterExecute`.

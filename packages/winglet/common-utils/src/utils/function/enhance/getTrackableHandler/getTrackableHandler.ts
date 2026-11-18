@@ -1,3 +1,5 @@
+import { reportHostError } from '@/common-utils/utils/errorReporting/reportHostError';
+
 import type { Dictionary, Fn } from '@aileron/declare';
 
 import type {
@@ -371,9 +373,18 @@ export function getTrackableHandler<
   /** Set while a lifecycle hook runs, so its updates fold into the publish that follows it. */
   let hookRunning = false;
 
-  const publish = () => {
+  const publish = (completion = false) => {
     if (hookRunning) return;
-    for (const listener of listeners) listener();
+    let failures: unknown[] | undefined;
+    for (const listener of listeners) {
+      try { listener(); }
+      catch (error) { (failures ??= []).push(error); }
+    }
+    if (failures !== undefined) {
+      for (let index = completion ? 0 : 1; index < failures.length; index++)
+        reportHostError(failures[index]);
+      if (!completion) throw failures[0];
+    }
   };
 
   /**
@@ -442,7 +453,7 @@ export function getTrackableHandler<
       } finally {
         hookRunning = false;
         pending = --pendingCallCount > 0;
-        publish(); // Notify subscribers of completion
+        publish(true);
       }
     }
   };
