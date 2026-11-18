@@ -290,7 +290,11 @@ describe('r2-periphery agents-assets-sync probes (temp dirs only)', () => {
     (target) => {
       writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
       writeAt(join(packageRoot, 'index.js'), 'export {};\n');
-      const metadata = { name: PACKAGE, version: '1.0.0', exports: { '.': './index.js' } };
+      const metadata = {
+        name: PACKAGE,
+        version: '1.0.0',
+        exports: { '.': './index.js' },
+      };
       writeAt(join(packageRoot, 'package.json'), JSON.stringify(metadata));
       const ordinary = run(
         '--package',

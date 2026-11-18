@@ -234,7 +234,9 @@ function tryResolveFrom(name: string, baseFilename: string): string | null {
     const candidate = resolvePath(dir, 'package.json');
     if (existsSync(candidate)) {
       try {
-        const pkg = JSON.parse(readFileSync(candidate, 'utf-8')) as {
+        const pkg = JSON.parse(
+          readFileSync(candidate, 'utf-8').replace(/^\uFEFF/, ''),
+        ) as {
           name?: unknown;
         };
         if (pkg.name === name) return candidate;
