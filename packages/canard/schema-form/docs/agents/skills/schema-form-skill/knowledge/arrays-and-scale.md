@@ -74,11 +74,12 @@ Each `push()` delivers its own events, so a loop of N pushes notifies subscriber
 for (let i = 0; i < 100; i++) arrayNode.push(createItem(i));
 
 // ✅ notifies once per affected node
-formRef.current?.setValue((prev) => ({
-  ...prev,
-  items: Array.from({ length: 100 }, (_, i) => createItem(i)),
-}));
+formRef.current?.findNode('/items')?.setValue(
+  Array.from({ length: 100 }, (_, i) => createItem(i)),
+);
 ```
+
+A parent Overwrite drops retained values for inactive branches that are omitted from the replacement. Writing the specific array node, as above, or using SetValueOption.Merge preserves unmentioned retained branch values. An updater receives the same projected value as getValue(); spreading it does not expose or retain hidden branch sources.
 
 Inside `batch`, value writes are marked and settle only when the outermost batch ends. Form `reset()` and `node.resetSubtree()` are exceptions: they settle their loads immediately even inside a batch. Reads of `value` and `children` still see the last committed values and shape. Array methods compute their synchronous results from earlier queued writes; that does not make node getters current. Never use a shrinking `children.length` or `value.length` as a loop condition inside the batch: it does not shrink there and can loop forever.
 
