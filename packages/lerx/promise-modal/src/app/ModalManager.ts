@@ -537,7 +537,8 @@ export class ModalManager {
       const tree = root === document.body ? undefined : root?.getRootNode();
       const config = isShadowRoot(tree) ? { shadowRoot: tree } : undefined;
       ModalManager.__state__.styleManager = styleManagerFactory(scope, config);
-      ModalManager.__state__.destroyStyleManager = () => destroyScope(scope);
+      ModalManager.__state__.destroyStyleManager = () =>
+        destroyScope(scope, config);
       ModalManager.__state__.appliedStyleSheetDefinition = undefined;
     }
     const applied = ModalManager.__state__.appliedStyleSheetDefinition;
