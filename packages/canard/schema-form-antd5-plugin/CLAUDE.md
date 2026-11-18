@@ -36,6 +36,8 @@ Components are selected automatically from the `type`, `format`, `inputType`, an
 
 Every picker (date, month, time and the three ranges) and every uncontrolled selection widget (radio group, checkbox group, select, slider) receives `disabled={disabled || readOnly}`. These widgets keep their own selection state: Ant Design's readOnly only blocks text entry and Select, Radio, Checkbox and Slider have none, so the widget would show a selection the core has already rejected. Lock updates must reach the widget.
 
+Time and time-range parsing (`dayjs(value, 'HH:mm:00Z')`) relies on the `customParseFormat` plugin that importing antd's pickers registers on dayjs at module load, so keep the picker imports in those inputs; without them dayjs ignores the format argument and these values parse as invalid dates.
+
 Enum UI identities encode the raw JSON scalar, while labels and aliases use its display string. Initial selection and change payloads use the same identity mapping so null and the string "null" remain distinct.
 
 ## Verification tables
