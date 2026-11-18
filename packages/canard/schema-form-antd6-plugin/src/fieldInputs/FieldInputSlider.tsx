@@ -60,7 +60,12 @@ const FieldInputSlider = ({
   }, [handleChange, jsonSchema, lazy]);
 
   return (
-    <div ref={markFocusTarget} role="group" aria-invalid={misfit || undefined}>
+    <div
+      ref={markFocusTarget}
+      role="group"
+      aria-labelledby={labelledBy}
+      aria-invalid={misfit || undefined}
+    >
       <Slider
         ariaLabelledByForHandle={labelledBy}
         disabled={disabled || readOnly}
