@@ -129,7 +129,7 @@ const rows: [string, JSONSchema, unknown][] = [
   ],
 
   ['month', { type: 'string', format: 'month' }, '2025-01'],
-  ['time', { type: 'string', format: 'time' }, '12:30:00'],
+  ['time', { type: 'string', format: 'time' }, '12:30:00Z'],
 
   [
     'date range',
@@ -162,7 +162,7 @@ const rows: [string, JSONSchema, unknown][] = [
       minItems: 2,
       maxItems: 2,
     },
-    ['12:30:00', '13:30:00'],
+    ['12:30:00Z', '13:30:00Z'],
   ],
 ];
 const props = {
