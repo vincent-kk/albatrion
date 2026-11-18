@@ -195,7 +195,7 @@ The surface is `.pending`, `.state`, and `.subscribe(listener) => unsubscribe`. 
 
 ## Degenerate returns
 
-Nothing here throws; each returns a value that a caller can easily mistake for data.
+The calls in this table return sentinel values that callers can mistake for data. This table does not define a library-wide invalid-input policy.
 
 | Call                                               | Result                                                 |
 | -------------------------------------------------- | ------------------------------------------------------ |
@@ -210,6 +210,10 @@ Nothing here throws; each returns a value that a caller can easily mistake for d
 
 `convertMsFromDuration` accepts one integer and one unit from `ms`, `s`, `m`, `h`, with surrounding whitespace tolerated. A decimal, an uppercase unit, a spelled-out unit, or two units in one string all yield `0`.
 
+## Input failures
+
+Validate untrusted numeric input or catch the documented errors from `factorial`, `fibonacci`, `combination`, `permutation`, `digitSum`, `toBase`, and `fromBase`. Their integer, sign, digit and base constraints differ; sentinel returns from other helpers do not extend to these functions. `Murmur3` rejects unsupported input types; `stringifyGraph` and `parseGraph` reject unsupported or malformed graph data; `createFingerprintFactory` rejects invalid configuration. Their declarations and JSDoc define each accepted domain.
+
 ## Figures a signature does not show
 
 Taken from the implementations' own benchmark notes:
@@ -218,6 +222,6 @@ Taken from the implementations' own benchmark notes:
 - `equals` is about 30% faster than lodash `isEqual`, and about twice as fast as `stableEquals`.
 - `differenceLite` and `intersectionLite` are `O(n × m)` and win below roughly 100 elements, where allocating a `Set` costs more than it saves.
 - `orderedMerge` switches strategy on combined input length: a linear scan under 20 elements, a `Set` at or above it.
-- `factorial` and `fibonacci` memoize into module-level `Map`s that live for the process and are never evicted. They are the only exports that throw on invalid input — a non-integer or negative argument.
+- `factorial` and `fibonacci` memoize successful values into module-level `Map`s that live for the process and are never evicted. Invalid arguments throw; a failure is not cached.
 - `polynomialHash` derives from a 32-bit value, so entropy stops at about 7 base-36 characters no matter what length is requested.
 - `Murmur3` is non-cryptographic. `Murmur3.hash(value, seed?)` is the one-shot form; an instance chains `.hash(…)` calls and reads out with `.result()`, accepting `string`, `ArrayBuffer`, or `Uint8Array`.

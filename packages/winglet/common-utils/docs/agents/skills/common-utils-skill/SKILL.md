@@ -11,7 +11,7 @@ Applies when the consuming project imports from `@winglet/common-utils` or one o
 
 - **One function, one module, re-exported by a category barrel.** `@winglet/common-utils/array` and the root barrel resolve to the same implementation; sub-paths exist for tree-shaking, not for behavior.
 - **`Lite` is a suffix, not a concept.** It marks three unrelated things across the library — a small-array algorithm swap, a reduced type-coverage clone, and a scalar-arity overload — and in the first case the equality semantics change too.
-- **Degenerate return over throw.** Bad input yields `0`, `[array]`, `Infinity`, `NaN`, or `undefined` rather than an error. `factorial` and `fibonacci` are the only exports that throw on invalid input.
+- **Invalid-input behavior is per function.** Some utilities return `0`, `[array]`, `Infinity`, `NaN`, or `undefined`; others reject invalid numeric arguments, unsupported data, or configuration by throwing. Check the failure contract in the declarations and the input-failure guidance in `knowledge/semantics.md` before passing user input.
 - **Circular-reference safety is per function, not per library.** `clone` is safe and `cloneLite` overflows the stack; `stableEquals` is safe and `equals` overflows. Each pair sits side by side in the same barrel.
 - **Scheduler bindings resolve once, at module load.** `scheduleMacrotask` and its siblings pick an implementation off `globalThis` when the module is first imported, so globals patched afterwards — fake timers, for instance — are not intercepted.
 
