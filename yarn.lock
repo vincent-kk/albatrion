@@ -2107,7 +2107,8 @@ __metadata:
     typescript: "npm:^5.7.2"
   peerDependencies:
     "@canard/schema-form": "workspace:^"
-    dayjs: ">=1"
+    antd-mobile: ^5.0.0
+    dayjs: ^1.0.0
     react: ">=18 <20"
     react-dom: ">=18 <20"
   languageName: unknown
@@ -2135,8 +2136,8 @@ __metadata:
     typescript: "npm:^5.7.2"
   peerDependencies:
     "@canard/schema-form": "workspace:^"
-    antd: ">=5.10.0"
-    dayjs: ">=1"
+    antd: ^5.10.0
+    dayjs: ^1.0.0
     react: ">=18 <20"
     react-dom: ">=18 <20"
   languageName: unknown
@@ -2164,8 +2165,8 @@ __metadata:
     typescript: "npm:^5.7.2"
   peerDependencies:
     "@canard/schema-form": "workspace:^"
-    antd: ">=6.0.0"
-    dayjs: ">=1"
+    antd: ^6.0.0
+    dayjs: ^1.0.0
     react: ">=18 <20"
     react-dom: ">=18 <20"
   languageName: unknown
@@ -2196,12 +2197,12 @@ __metadata:
     typescript: "npm:^5.7.2"
   peerDependencies:
     "@canard/schema-form": "workspace:^"
-    "@emotion/react": ">=11.0.0"
-    "@emotion/styled": ">=11.0.0"
-    "@mui/icons-material": ">=7.0.0"
-    "@mui/material": ">=7.0.0"
-    "@mui/x-date-pickers": ">=8.0.0"
-    dayjs: ">=1"
+    "@emotion/react": ^11.0.0
+    "@emotion/styled": ^11.0.0
+    "@mui/icons-material": ^7.0.0
+    "@mui/material": ^7.0.0
+    "@mui/x-date-pickers": ^8.0.0
+    dayjs: ^1.0.0
     react: ">=18 <20"
     react-dom: ">=18 <20"
   languageName: unknown
