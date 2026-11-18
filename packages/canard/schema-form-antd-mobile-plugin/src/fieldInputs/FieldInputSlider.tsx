@@ -64,16 +64,18 @@ const FieldInputSlider = ({
     [onChange, range],
   );
 
+  const constraints = range && jsonSchema.items && isNumberSchema(jsonSchema.items) ? jsonSchema.items : jsonSchema;
+
   const { min, max, step, ...changeHandler } = useMemo(() => {
     return {
-      min: jsonSchema.minimum,
-      max: jsonSchema.maximum,
-      step: jsonSchema.multipleOf,
+      min: constraints.minimum ?? jsonSchema.minimum,
+      max: constraints.maximum ?? jsonSchema.maximum,
+      step: constraints.multipleOf ?? jsonSchema.multipleOf,
       ...(lazy === false
         ? { onChange: handleChange }
         : { onAfterChange: handleChange }),
     } as const;
-  }, [handleChange, jsonSchema, lazy]);
+  }, [handleChange, jsonSchema, constraints, lazy]);
 
   return (
     <div role="group" aria-invalid={misfit || undefined}>
