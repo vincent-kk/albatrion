@@ -129,7 +129,7 @@ const rows: [string, JSONSchema, unknown][] = [
   ],
 
   ['month', { type: 'string', format: 'month' }, '2025-01'],
-  ['time', { type: 'string', format: 'time' }, '12:30:00Z'],
+  ['time', { type: 'string', format: 'time' }, '12:30:00'],
 ];
 const props = {
   fieldInputDefinitions: plugin.fieldInputDefinitions,
@@ -189,7 +189,7 @@ const expectedText: Record<string, string> = {
   'radio hint without enum': 'Field',
   'nonbinary switch hint': 'Field one',
   month: 'Field 2025 - 01',
-  time: 'Field 09 : 30 PM',
+  time: 'Field 12 : 30 PM',
 };
 it('preserves the pre-id schema table while keeping every address and association unique (round-3 id review 4)', () => {
   const seen = new Set<number>();

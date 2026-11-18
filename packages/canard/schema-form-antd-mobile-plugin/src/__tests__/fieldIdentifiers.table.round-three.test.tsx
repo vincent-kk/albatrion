@@ -33,6 +33,7 @@ const rows: [string, JSONSchema, unknown][] = [
   ],
   ['number', { type: 'number' }, 3],
   ['integer', { type: 'integer' }, 3],
+  ['time fallback', { type: 'string', format: 'time' }, '12:30:00'],
   ['boolean', { type: 'boolean' }, false],
   [
     'boolean switch',
@@ -164,6 +165,7 @@ const expectedText: Record<string, string> = {
   textarea: 'Field hello',
   number: 'Field',
   integer: 'Field',
+  'time fallback': 'Field',
   boolean: 'Field',
   'boolean switch': 'Field',
   'string switch': 'Field yes',
