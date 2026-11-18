@@ -11,10 +11,12 @@ import type {
 
 const FieldInputBoolean = ({
   id,
+  name,
   disabled,
   value,
   onChange,
   misfit,
+  'aria-labelledby': labelledBy,
 }: FieldInputProps<boolean | null>) => {
   const [indeterminate, checked] = useMemo(
     () => [value !== undefined && typeof value !== 'boolean', value ?? false],
@@ -22,7 +24,12 @@ const FieldInputBoolean = ({
   );
   const handleChange = useHandle(onChange);
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div
+      role="group"
+      aria-labelledby={labelledBy}
+      aria-label={labelledBy ? undefined : name}
+      aria-invalid={misfit || undefined}
+    >
       <Checkbox
         id={id}
         disabled={disabled}

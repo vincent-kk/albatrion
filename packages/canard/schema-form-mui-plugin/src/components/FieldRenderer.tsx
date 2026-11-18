@@ -45,7 +45,7 @@ export const FieldRenderer = ({
       isCheckboxGroupInput({ type: node.type, inputType, jsonSchema });
     return (
       <Box
-        component="fieldset"
+        component={ownsTitle ? 'div' : 'fieldset'}
         aria-labelledby={ownsTitle ? undefined : labelId}
         sx={{
           marginBottom: 1,

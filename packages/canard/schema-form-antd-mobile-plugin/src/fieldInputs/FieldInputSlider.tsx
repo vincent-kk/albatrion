@@ -13,7 +13,6 @@ import type {
 } from '@canard/schema-form';
 
 import { isSliderInput } from '../utils/inputs/isSliderInput';
-
 import { SliderKeyboardControl } from './components/SliderKeyboardControl';
 
 /** A numeric array schema, rendered as a range slider. */
@@ -102,7 +101,12 @@ const FieldInputSlider = ({
   };
 
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div
+      role="group"
+      aria-labelledby={labelledBy}
+      aria-label={labelledBy ? undefined : name}
+      aria-invalid={misfit || undefined}
+    >
       <SliderKeyboardControl
         id={id}
         labelledBy={labelledBy}

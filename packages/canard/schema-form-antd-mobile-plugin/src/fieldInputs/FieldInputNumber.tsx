@@ -35,6 +35,7 @@ const FieldInputNumber = ({
   formatter,
   parser,
   misfit,
+  'aria-labelledby': labelledBy,
 }: FieldInputNumberProps) => {
   const bindControls = useControlIdentifiers(id, name, 'input');
   const handleChange = useHandle((input: number | null) => {
@@ -44,7 +45,13 @@ const FieldInputNumber = ({
     else onChange(input);
   });
   return (
-    <div ref={bindControls} role="group" aria-invalid={misfit || undefined}>
+    <div
+      ref={bindControls}
+      role="group"
+      aria-labelledby={labelledBy}
+      aria-label={labelledBy ? undefined : name}
+      aria-invalid={misfit || undefined}
+    >
       <Stepper
         inputReadOnly={readOnly}
         disabled={disabled}

@@ -25,6 +25,7 @@ const FieldInputTextarea = ({
   onChange,
   placeholder,
   misfit,
+  'aria-labelledby': labelledBy,
 }: FieldInputPropsWithSchema<string, TextareaSchema>) => {
   const handleChange = useHandle((text: string) =>
     onChange(text === '' ? undefined : text),
@@ -37,7 +38,12 @@ const FieldInputTextarea = ({
     [jsonSchema],
   );
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div
+      role="group"
+      aria-labelledby={labelledBy}
+      aria-label={labelledBy ? undefined : name}
+      aria-invalid={misfit || undefined}
+    >
       <TextArea
         id={id}
         name={name}
