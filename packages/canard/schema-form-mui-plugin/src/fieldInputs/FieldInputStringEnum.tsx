@@ -11,7 +11,6 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
-
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type StringEnumJSONSchema = StringSchema;

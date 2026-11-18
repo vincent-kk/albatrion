@@ -1,9 +1,4 @@
-import {
-  type ChangeEvent,
-  type ReactNode,
-  useMemo,
-  useState,
-} from 'react';
+import { type ChangeEvent, type ReactNode, useMemo, useState } from 'react';
 
 import type { SelectChangeEvent } from '@mui/material';
 import { Box, InputLabel, MenuItem, Select, TextField } from '@mui/material';
@@ -80,11 +75,22 @@ const FieldInputUri = ({
     return rawProtocols.map(formatProtocol);
   }, [protocolsProp]);
 
-  const parsed = useMemo(() => typeof value === 'string' ? parseUri(value) : undefined, [value]);
-  const [lastProtocol, setLastProtocol] = useState(parsed?.protocol ?? normalizedProtocols[0] ?? '');
+  const parsed = useMemo(
+    () => (typeof value === 'string' ? parseUri(value) : undefined),
+    [value],
+  );
+  const [lastProtocol, setLastProtocol] = useState(
+    parsed?.protocol ?? normalizedProtocols[0] ?? '',
+  );
   const protocol = parsed?.protocol ?? lastProtocol;
   const uri = parsed?.path ?? '';
-  const protocolOptions = useMemo(() => normalizedProtocols.includes(protocol) ? normalizedProtocols : [protocol, ...normalizedProtocols], [normalizedProtocols, protocol]);
+  const protocolOptions = useMemo(
+    () =>
+      normalizedProtocols.includes(protocol)
+        ? normalizedProtocols
+        : [protocol, ...normalizedProtocols],
+    [normalizedProtocols, protocol],
+  );
 
   const handleProtocolChange = useHandle((event: SelectChangeEvent<string>) => {
     const newProtocol = event.target.value;
@@ -98,7 +104,7 @@ const FieldInputUri = ({
   const handleUriChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const newUri = event.target.value;
     setLastProtocol(protocol);
-      const newValue = newUri ? `${protocol}${newUri}` : undefined;
+    const newValue = newUri ? `${protocol}${newUri}` : undefined;
     onChange(newValue);
   });
 

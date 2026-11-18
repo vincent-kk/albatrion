@@ -11,7 +11,6 @@ import type {
 } from '@canard/schema-form';
 
 import { SwitchKeyboardControl } from './components/SwitchKeyboardControl';
-
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type StringSwitchSchema = StringSchema & {

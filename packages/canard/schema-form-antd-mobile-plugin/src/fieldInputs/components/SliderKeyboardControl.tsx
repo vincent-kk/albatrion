@@ -1,4 +1,5 @@
-import { useEffect, useRef, type KeyboardEvent, type ReactNode } from 'react';
+import { type KeyboardEvent, type ReactNode, useEffect, useRef } from 'react';
+
 import { getKeyboardValue } from '../utils/slider/getKeyboardValue';
 
 /** Keyboard adapter for library thumbs that expose ARIA but no native keyboard input. */
@@ -24,27 +25,53 @@ interface SliderKeyboardControlProps {
  * @param props - Slider child, current value and numeric navigation constraints.
  * @returns An event boundary that marks and operates each existing thumb.
  */
-export const SliderKeyboardControl = ({children,value,min,max,step,stops,disabled,onChange}: SliderKeyboardControlProps) => {
-  const ref=useRef<HTMLDivElement>(null);
-  useEffect(()=>{
-    for(const thumb of ref.current?.querySelectorAll<HTMLElement>('[role="slider"]') ?? []) {
-      thumb.tabIndex=disabled ? -1 : 0;
-      if(disabled) thumb.removeAttribute('data-focus-target');
-      else thumb.setAttribute('data-focus-target','');
+export const SliderKeyboardControl = ({
+  children,
+  value,
+  min,
+  max,
+  step,
+  stops,
+  disabled,
+  onChange,
+}: SliderKeyboardControlProps) => {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    for (const thumb of ref.current?.querySelectorAll<HTMLElement>(
+      '[role="slider"]',
+    ) ?? []) {
+      thumb.tabIndex = disabled ? -1 : 0;
+      if (disabled) thumb.removeAttribute('data-focus-target');
+      else thumb.setAttribute('data-focus-target', '');
     }
-  },[disabled]);
-  const handleKeyDown=(event:KeyboardEvent<HTMLDivElement>)=>{
-    if(disabled) return;
-    const index=Array.from(ref.current?.querySelectorAll('[role="slider"]') ?? []).findIndex(thumb=>thumb===event.target);
-    if(index<0) return;
-    const range=Array.isArray(value);
-    const current=range ? value[index] : value;
-    const lower=range && index===1 ? value[0] : min;
-    const upper=range && index===0 ? value[1] : max;
-    const next=getKeyboardValue(event.key,current,lower,upper,step,stops);
-    if(next===undefined) return;
+  }, [disabled]);
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    const index = Array.from(
+      ref.current?.querySelectorAll('[role="slider"]') ?? [],
+    ).findIndex((thumb) => thumb === event.target);
+    if (index < 0) return;
+    const range = Array.isArray(value);
+    const current = range ? value[index] : value;
+    const lower = range && index === 1 ? value[0] : min;
+    const upper = range && index === 0 ? value[1] : max;
+    const next = getKeyboardValue(
+      event.key,
+      current,
+      lower,
+      upper,
+      step,
+      stops,
+    );
+    if (next === undefined) return;
     event.preventDefault();
-    onChange(range ? index===0 ? [next,value[1]] : [value[0],next] : next);
+    onChange(
+      range ? (index === 0 ? [next, value[1]] : [value[0], next]) : next,
+    );
   };
-  return <div ref={ref} style={{display:'contents'}} onKeyDown={handleKeyDown}>{children}</div>;
+  return (
+    <div ref={ref} style={{ display: 'contents' }} onKeyDown={handleKeyDown}>
+      {children}
+    </div>
+  );
 };

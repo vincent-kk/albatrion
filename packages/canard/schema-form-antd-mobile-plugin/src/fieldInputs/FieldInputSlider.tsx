@@ -67,13 +67,27 @@ const FieldInputSlider = ({
     [onChange, range],
   );
 
-  const constraints = range && jsonSchema.items && isNumberSchema(jsonSchema.items) ? jsonSchema.items : jsonSchema;
+  const constraints =
+    range && jsonSchema.items && isNumberSchema(jsonSchema.items)
+      ? jsonSchema.items
+      : jsonSchema;
 
   const min = constraints.minimum ?? jsonSchema.minimum ?? 0;
   const max = constraints.maximum ?? jsonSchema.maximum ?? 100;
   const step = constraints.multipleOf ?? jsonSchema.multipleOf ?? 1;
-  const [draft, setDraft] = useState<number | [number, number]>(initialValue ?? (range ? [min, min] : min));
-  const stops = useMemo(() => marks ? Object.keys(marks).map(Number).filter(Number.isFinite).sort((a,b)=>a-b) : [], [marks]);
+  const [draft, setDraft] = useState<number | [number, number]>(
+    initialValue ?? (range ? [min, min] : min),
+  );
+  const stops = useMemo(
+    () =>
+      marks
+        ? Object.keys(marks)
+            .map(Number)
+            .filter(Number.isFinite)
+            .sort((a, b) => a - b)
+        : [],
+    [marks],
+  );
   const handleDraftChange = (value: number | [number, number]) => {
     setDraft(value);
     if (lazy === false) handleChange(value);
@@ -85,20 +99,28 @@ const FieldInputSlider = ({
 
   return (
     <div role="group" aria-invalid={misfit || undefined}>
-      <SliderKeyboardControl value={draft} min={min} max={max} step={step} stops={stops} disabled={!!(disabled || readOnly)} onChange={handleKeyboardChange}>
-      <Slider
-        disabled={disabled || readOnly}
+      <SliderKeyboardControl
+        value={draft}
         min={min}
         max={max}
         step={step}
-        range={range}
-        marks={marks}
-        defaultValue={initialValue}
-        value={draft}
-        aria-label={name}
-        onChange={handleDraftChange}
-        onAfterChange={lazy === false ? undefined : handleChange}
-      />
+        stops={stops}
+        disabled={!!(disabled || readOnly)}
+        onChange={handleKeyboardChange}
+      >
+        <Slider
+          disabled={disabled || readOnly}
+          min={min}
+          max={max}
+          step={step}
+          range={range}
+          marks={marks}
+          defaultValue={initialValue}
+          value={draft}
+          aria-label={name}
+          onChange={handleDraftChange}
+          onAfterChange={lazy === false ? undefined : handleChange}
+        />
       </SliderKeyboardControl>
     </div>
   );

@@ -1,5 +1,5 @@
-import type Ajv from 'ajv';
 import type { JSONSchema } from '@canard/schema-form';
+import type Ajv from 'ajv';
 
 /**
  * Compile exact AJV6 JSON Pointer locations, whose dynamic keys need no guessing.
@@ -8,7 +8,11 @@ import type { JSONSchema } from '@canard/schema-form';
  * @param key - Optional plugin-owned registration key.
  * @returns The compiled validator, or undefined for an unknown registration.
  */
-export const compileWithPointers = (ajv: Ajv.Ajv, schema: JSONSchema, key?: string): Ajv.ValidateFunction | undefined => {
+export const compileWithPointers = (
+  ajv: Ajv.Ajv,
+  schema: JSONSchema,
+  key?: string,
+): Ajv.ValidateFunction | undefined => {
   const options = ajv._opts;
   const jsonPointers = options.jsonPointers;
   options.jsonPointers = true;
