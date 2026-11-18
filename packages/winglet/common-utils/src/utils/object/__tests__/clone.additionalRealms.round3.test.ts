@@ -54,8 +54,21 @@ it('round-3 common-utils 5: slotless Error tags preserve ordinary objects withou
     const local: Record<PropertyKey, unknown> = runInThisContext(expression);
     const foreign: Record<PropertyKey, unknown> = runInNewContext(expression);
     const copy = clone(foreign);
-    expect(copy.count).toBe(clone(local).count);
-    expect(Reflect.ownKeys(copy)).toEqual(Reflect.ownKeys(clone(local)));
-    expect(copy).not.toBe(foreign);
+    const counterpart = clone(local);
+    expect({ count: copy.count, keys: Reflect.ownKeys(copy).map(String), same: copy === foreign }).toEqual({ count: counterpart.count, keys: Reflect.ownKeys(counterpart).map(String), same: false });
   }
+});
+
+it('round-3 common-utils 5: naming an ordinary Error AggregateError does not change its constructor arguments', () => {
+  const script = `(()=>{const calls=[];class NamedError extends Error { constructor(message){super(message);calls.push(typeof message);} } const value=new NamedError('example');value.name='AggregateError';return {value,read:v=>[v.name,v.message,calls.slice(1)]};})()`;
+  const local: Fixture = runInThisContext(script);
+  const foreign: Fixture = runInNewContext(script);
+  expect(foreign.read(clone(foreign.value))).toEqual(local.read(clone(local.value)));
+});
+
+it('round-3 common-utils 5: an AggregateError custom name retains the same constructor-created message property', () => {
+  const script = `({value:Object.assign(new AggregateError([new Error('nested')],'example'),{name:'Custom'}),read:v=>[v.message,v.name,v.errors[0].message,Object.getOwnPropertyDescriptor(v,'message').enumerable]})`;
+  const local: Fixture = runInThisContext(script);
+  const foreign: Fixture = runInNewContext(script);
+  expect(foreign.read(clone(foreign.value))).toEqual(local.read(clone(local.value)));
 });
