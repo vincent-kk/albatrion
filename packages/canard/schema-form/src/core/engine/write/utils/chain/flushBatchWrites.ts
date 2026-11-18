@@ -1,3 +1,4 @@
+import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { Optional } from '@aileron/declare';
@@ -62,7 +63,8 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
       source = allMatch2 ? FieldNodeWriteKind.Automatic : undefined;
     }
 
-    const origins = writes.flatMap(
+    let origins = mapArray(
+      writes,
       (
         write,
       ): {
@@ -70,18 +72,11 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
         source: FieldNodeWriteKind;
         keys?: readonly string[];
         fields?: readonly string[];
-      }[] => {
+      } => {
         const partial =
           (write.option & WriteOption.Merge) === WriteOption.Merge &&
           !(write.option & WriteOption.Replace);
-        if (partial && write.source !== FieldNodeWriteKind.Automatic)
-          return collectMarkedMergeOrigins(
-            write.node,
-            write.value,
-            write.source ?? FieldNodeWriteKind.CallerPartial,
-          );
-        return [
-          {
+        return {
             path: write.node.path,
             source:
               write.source ??
@@ -102,10 +97,17 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
                     return sibling ? [sibling.path] : [];
                   })
                 : undefined,
-          },
-        ];
+        };
       },
     );
+    if (writes.length > 1 && option & WriteOption.Merge)
+      origins = writes.flatMap((write, index) =>
+        write.option & WriteOption.Merge && !(write.option & WriteOption.Replace) &&
+        write.source !== FieldNodeWriteKind.Automatic
+          ? collectMarkedMergeOrigins(write.node, write.value,
+              write.source ?? FieldNodeWriteKind.CallerPartial)
+          : [origins[index]],
+      );
     writeFieldNode(
       target,
       value,
