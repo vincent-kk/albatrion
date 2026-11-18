@@ -73,8 +73,9 @@ it('nullable range slider with a null value starts empty and commits a two-numbe
   const props = received.props.at(-1)!;
   expect(props.range).toBe(true);
   expect(props.defaultValue).toBeUndefined();
+  expect(props.onAfterChange).toBeTypeOf('function');
   act(() => {
-    (props.onAfterChange as (value: [number, number]) => void)([10, 20]);
+    props.onAfterChange?.([10, 20]);
   });
   expect(ref.current!.getValue()).toEqual([10, 20]);
 });
