@@ -1,8 +1,6 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { Slider } from 'antd';
-
-import { useOnMountLayout } from '@winglet/react-utils/hook';
 
 import type {
   FieldInputDefinition,
@@ -19,6 +17,17 @@ interface FieldInputSliderProps
   lazy?: boolean;
 }
 
+/**
+ * Marks the slider handle as the element `focus(path)` moves focus to.
+ * Slider passes no props to its handle, so the marker is set on the DOM once the group mounts.
+ * @param group - The group element around the Slider, or `null` when it unmounts.
+ */
+const markFocusTarget = (group: HTMLDivElement | null) => {
+  group
+    ?.querySelector('[role="slider"]')
+    ?.setAttribute('data-focus-target', '');
+};
+
 const FieldInputSlider = ({
   path,
   jsonSchema,
@@ -29,14 +38,6 @@ const FieldInputSlider = ({
   lazy,
   misfit,
 }: FieldInputSliderProps) => {
-  const groupRef = useRef<HTMLDivElement>(null);
-  // Slider passes no props to its handle, so the marker that lets `focus(path)` reach it is set on the DOM.
-  useOnMountLayout(() => {
-    groupRef.current
-      ?.querySelector('[role="slider"]')
-      ?.setAttribute('data-focus-target', '');
-  });
-
   const handleChange = useCallback(
     (value: number | null) => {
       if (value === null) onChange(undefined);
@@ -57,7 +58,7 @@ const FieldInputSlider = ({
   }, [handleChange, jsonSchema, lazy]);
 
   return (
-    <div ref={groupRef} role="group" aria-invalid={misfit || undefined}>
+    <div ref={markFocusTarget} role="group" aria-invalid={misfit || undefined}>
       <Slider
         id={path}
         disabled={disabled || readOnly}
