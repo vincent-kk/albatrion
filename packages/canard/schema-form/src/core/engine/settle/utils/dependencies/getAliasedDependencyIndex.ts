@@ -38,8 +38,12 @@ class AliasedDependencyIndex {
   private readonly owners = new Map<string, Occurrence>();
   private readonly paths = new PathStoreIndex();
   private readonly contextNodes = new Set<Occurrence>();
-  /** One cached query bounds retained addresses independently of write count. */
+  /** Two cached queries bound retained addresses independently of write count. */
   private affectedPath?: string;
+  /** Prior query avoids re-traversing alternating source and derived addresses. */
+  private previousAffectedPath?: string;
+  /** Prior query result shares the same topology invalidation. */
+  private previousAffectedResult?: readonly string[];
   /** Owners from the last query, invalidated by every topology update. */
   private affectedResult?: readonly string[];
   private readonly dependencies = new Map<number, string[]>();
@@ -93,12 +97,16 @@ class AliasedDependencyIndex {
   affectedOwners(path: string): readonly string[] {
     if (this.affectedPath === path && this.affectedResult)
       return this.affectedResult;
+    if (this.previousAffectedPath === path && this.previousAffectedResult)
+      return this.previousAffectedResult;
     const owners = new Set<string>();
     for (const key of this.paths.intersecting(path)) {
       const node = this.owners.get(key);
       if (node && !node.isDetached && !node.isDisposed) owners.add(node.path);
     }
     const result = [...owners];
+    this.previousAffectedPath = this.affectedPath;
+    this.previousAffectedResult = this.affectedResult;
     this.affectedPath = path;
     this.affectedResult = result;
     return result;
@@ -131,6 +139,9 @@ class AliasedDependencyIndex {
     )
       return;
     this.affectedPath = undefined;
+    this.previousAffectedPath = undefined;
+    this.affectedResult = undefined;
+    this.previousAffectedResult = undefined;
     if (previous) {
       for (const child of this.children.get(node) ?? [])
         if (child.isDetached || child.isDisposed) this.remove(child);
@@ -225,6 +236,9 @@ class AliasedDependencyIndex {
     const registration = this.byNode.get(node);
     if (!registration) return;
     this.affectedPath = undefined;
+    this.previousAffectedPath = undefined;
+    this.affectedResult = undefined;
+    this.previousAffectedResult = undefined;
     for (const key of registration.keys) {
       this.paths.delete(key);
       this.owners.delete(key);
