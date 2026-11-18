@@ -308,7 +308,7 @@ class AliasedDependencyIndex {
 }
 
 /** An index cannot keep its owning runtime alive. */
-const indexes = new WeakMap<object, AliasedDependencyIndex>();
+const indexes = new WeakMap<object, AliasedDependencyIndex | null>();
 
 /**
  * Read and synchronize only a blueprint that proves reused dependency templates.
@@ -324,12 +324,16 @@ export const getAliasedDependencyIndex = <Self extends FieldNodeRecord<Self>>(
   if (!index) {
     const capabilities = runtime.blueprint.capabilities;
     if (
+      index !== null &&
       !runtime.commitNumber &&
       !capabilities.hasDerive &&
       !capabilities.hasState &&
       !capabilities.hasWatch
-    )
+    ) {
+      indexes.set(runtime, null);
       return undefined;
+    }
+    if (index === null && !runtime.commitNumber) return undefined;
     index = new AliasedDependencyIndex(runtime.blueprint);
     indexes.set(runtime, index);
   }
