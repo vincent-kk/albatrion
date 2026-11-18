@@ -17,7 +17,12 @@ export const findStringEnd = (buffer: Uint8Array, start: number): number => {
     const byte = buffer[index];
     if (byte === quote) return index + 1;
     if (byte === 10 || byte === 13 || byte === 12) return index;
-    if (byte === BACKSLASH && buffer[index + 1] === 13 && buffer[index + 2] === 10) index += 3;
+    if (
+      byte === BACKSLASH &&
+      buffer[index + 1] === 13 &&
+      buffer[index + 2] === 10
+    )
+      index += 3;
     else index += byte === BACKSLASH ? 2 : 1;
   }
   return length;

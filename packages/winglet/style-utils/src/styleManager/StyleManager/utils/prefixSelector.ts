@@ -16,6 +16,9 @@ export const prefixSelector = (selector: string, prefix: string): string => {
   if (!selector) return selector;
   const first = selector.charCodeAt(0);
   if (first !== 58 && first !== 47) return prefix + selector;
-  const meaningful = first === 47 ? selector.replace(LEADING_COMMENTS, '') : selector;
-  return !meaningful || GLOBAL_SELECTOR.test(meaningful) ? selector : prefix + selector;
+  const meaningful =
+    first === 47 ? selector.replace(LEADING_COMMENTS, '') : selector;
+  return !meaningful || GLOBAL_SELECTOR.test(meaningful)
+    ? selector
+    : prefix + selector;
 };

@@ -39,7 +39,8 @@ export const prefixSelectorList = (
       const comma = css.indexOf(',', partStart);
       if (comma === -1 || comma >= end)
         return (
-          result + prefixSelector(trimSelector(css.slice(partStart, end)), prefix)
+          result +
+          prefixSelector(trimSelector(css.slice(partStart, end)), prefix)
         );
       result +=
         prefixSelector(trimSelector(css.slice(partStart, comma)), prefix) + ',';
@@ -70,5 +71,7 @@ export const prefixSelectorList = (
       if (next > index) index = next - 1;
     }
   }
-  return result + prefixSelector(trimSelector(css.slice(partStart, end)), prefix);
+  return (
+    result + prefixSelector(trimSelector(css.slice(partStart, end)), prefix)
+  );
 };

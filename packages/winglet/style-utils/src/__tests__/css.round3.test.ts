@@ -24,7 +24,9 @@ const rulesOf = (css: string): string[] => {
 
 const declarationValues = (css: string, prop: string): string[] => {
   const values: string[] = [];
-  postcss.parse(css).walkDecls(prop, (decl) => { values.push(decl.value); });
+  postcss.parse(css).walkDecls(prop, (decl) => {
+    values.push(decl.value);
+  });
   return values;
 };
 
@@ -95,7 +97,9 @@ describe('styleManagerFactory: a statement at-rule that ends one injected style'
     add('layers', '@layer reset, base;');
     add('button', '.btn { color: red; }');
     flush();
-    expect(rulesOf(injected('r3stmtok'))).toEqual(['.r3stmtok .btn{color:red}']);
+    expect(rulesOf(injected('r3stmtok'))).toEqual([
+      '.r3stmtok .btn{color:red}',
+    ]);
   });
 
   it('each snippet parses on its own, so the one-shot reading has the rule', () => {
@@ -111,7 +115,11 @@ describe('styleManagerFactory: a statement at-rule that ends one injected style'
     const root = postcss.parse(injected('r3stmt'));
     const layer = root.first;
     if (layer?.type !== 'atrule') throw new Error('Expected a layer statement');
-    expect({ type: layer.type, params: layer.params, nodes: layer.nodes }).toEqual({
+    expect({
+      type: layer.type,
+      params: layer.params,
+      nodes: layer.nodes,
+    }).toEqual({
       type: 'atrule',
       params: 'reset,base',
       nodes: undefined,
@@ -120,7 +128,9 @@ describe('styleManagerFactory: a statement at-rule that ends one injected style'
   });
 
   it('in a shadow root, an @layer statement without its semicolon does not swallow the next style', () => {
-    const shadowRoot = document.createElement('div').attachShadow({ mode: 'open' });
+    const shadowRoot = document
+      .createElement('div')
+      .attachShadow({ mode: 'open' });
     const add = styleManagerFactory('r3stmtshadow', { shadowRoot });
     add('layers', '@layer reset, base');
     add('button', '.btn { color: red; }');
@@ -137,7 +147,9 @@ describe('styleManagerFactory: a statement at-rule that ends one injected style'
     add('font', `@import url("https://example.com/font.css")`);
     add('button', '.btn { color: red; }');
     flush();
-    expect(rulesOf(injected('r3import'))).toEqual(['.r3import .btn{color:red}']);
+    expect(rulesOf(injected('r3import'))).toEqual([
+      '.r3import .btn{color:red}',
+    ]);
   });
 });
 
@@ -160,7 +172,9 @@ describe('styleManagerFactory: spelling variants of :root', () => {
     const add = scoped('r3rootcomment');
     add('vars', ':root /* light theme */ { --bg: #fff; }');
     flush();
-    expect(rulesOf(injected('r3rootcomment'))[0]).not.toMatch(/^\.r3rootcomment /);
+    expect(rulesOf(injected('r3rootcomment'))[0]).not.toMatch(
+      /^\.r3rootcomment /,
+    );
   });
 });
 
@@ -217,16 +231,31 @@ describe('compressCss: a comment that separates two tokens', () => {
 });
 
 it('round-3 style-utils 2: separate style identifiers match one sheet with statement boundaries', () => {
-  for (const statement of ['@layer reset, base', '@import url("x.css")', '@namespace svg url(http://x)']) {
+  for (const statement of [
+    '@layer reset, base',
+    '@import url("x.css")',
+    '@namespace svg url(http://x)',
+  ]) {
     for (const shadow of [false, true]) {
-      const shadowRoot = shadow ? document.createElement('div').attachShadow({mode: 'open'}) : undefined;
-      const config = shadowRoot ? {shadowRoot} : undefined;
+      const shadowRoot = shadow
+        ? document.createElement('div').attachShadow({ mode: 'open' })
+        : undefined;
+      const config = shadowRoot ? { shadowRoot } : undefined;
       const add = styleManagerFactory('r3composition', config);
-      add('first', statement); add('second', '.a { color: red; }'); flush();
-      const read = () => shadowRoot ? shadowRoot.querySelector('style')?.textContent ?? '' : injected('r3composition');
+      add('first', statement);
+      add('second', '.a { color: red; }');
+      flush();
+      const read = () =>
+        shadowRoot
+          ? (shadowRoot.querySelector('style')?.textContent ?? '')
+          : injected('r3composition');
       const separate = rulesOf(read());
       destroyScope('r3composition', config);
-      styleManagerFactory('r3composition', config)('whole', statement + '; .a { color: red; }'); flush();
+      styleManagerFactory('r3composition', config)(
+        'whole',
+        statement + '; .a { color: red; }',
+      );
+      flush();
       expect(separate).toEqual(rulesOf(read()));
       destroyScope('r3composition', config);
     }

@@ -93,8 +93,12 @@ export const compressCss = (css: string): string => {
         inComment = false;
         cursor += 2;
         const nextByte = buffer[cursor];
-        if (lastByte > SPACE && nextByte > SPACE &&
-          !isTokenBoundary(lastByte) && !isTokenBoundary(nextByte)) {
+        if (
+          lastByte > SPACE &&
+          nextByte > SPACE &&
+          !isTokenBoundary(lastByte) &&
+          !isTokenBoundary(nextByte)
+        ) {
           output[outputIndex++] = SLASH;
           output[outputIndex++] = ASTERISK;
           output[outputIndex++] = ASTERISK;
@@ -133,7 +137,13 @@ export const compressCss = (css: string): string => {
       output[outputIndex++] = byte;
       while (++cursor < length) {
         const stringByte = buffer[cursor];
-        if (stringByte === LF || stringByte === CR || stringByte === 12) break;
+        if (stringByte <= CR && stringByte >= LF && stringByte !== 11) {
+          output[outputIndex++] = stringByte;
+          if (stringByte === CR && buffer[cursor + 1] === LF)
+            output[outputIndex++] = buffer[++cursor];
+          cursor++;
+          break;
+        }
         output[outputIndex++] = stringByte;
         if (stringByte === byte) {
           cursor++;
@@ -255,7 +265,12 @@ export const compressCss = (css: string): string => {
 
   while (outputIndex > 0 && output[outputIndex - 1] === SPACE) {
     let backslashes = 0;
-    for (let index = outputIndex - 2; index >= 0 && output[index] === BACKSLASH; index--) backslashes++;
+    for (
+      let index = outputIndex - 2;
+      index >= 0 && output[index] === BACKSLASH;
+      index--
+    )
+      backslashes++;
     if (backslashes % 2 !== 0) break;
     outputIndex--;
   }
@@ -265,4 +280,9 @@ export const compressCss = (css: string): string => {
 
 /** Tells whether punctuation already separates adjacent CSS tokens. */
 const isTokenBoundary = (byte: number): boolean =>
-  byte === LBRACE || byte === RBRACE || byte === COLON || byte === SEMICOLON || byte === COMMA || byte === R_PAREN;
+  byte === LBRACE ||
+  byte === RBRACE ||
+  byte === COLON ||
+  byte === SEMICOLON ||
+  byte === COMMA ||
+  byte === R_PAREN;

@@ -13,11 +13,18 @@ export const terminateStatement = (css: string): string => {
   for (let index = 0; index < css.length; index++) {
     const code = css.charCodeAt(index);
     const next = skipOpaqueToken(css, index);
-    if (next > index) { index = next - 1; continue; }
+    if (next > index) {
+      index = next - 1;
+      continue;
+    }
     if (depth === 0 && statement === -1 && code > 32) statement = index;
     if (code === 123) depth++;
-    else if (code === 125) { depth--; if (depth === 0) statement = -1; }
-    else if (code === 59 && depth === 0) statement = -1;
+    else if (code === 125) {
+      depth--;
+      if (depth === 0) statement = -1;
+    } else if (code === 59 && depth === 0) statement = -1;
   }
-  return depth === 0 && statement !== -1 && css.charCodeAt(statement) === 64 ? css + ';' : css;
+  return depth === 0 && statement !== -1 && css.charCodeAt(statement) === 64
+    ? css + ';'
+    : css;
 };

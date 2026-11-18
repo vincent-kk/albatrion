@@ -284,7 +284,9 @@ export class StyleManager {
   private __scopeCSS__(css: string): string {
     // If it's Shadow DOM, no need to scope
     if (this.__isShadowDOM__) return terminateStatement(css);
-    return terminateStatement(new RuleScoper(css, '.' + this.__scope__).scopeSheet());
+    return terminateStatement(
+      new RuleScoper(css, '.' + this.__scope__).scopeSheet(),
+    );
   }
 
   private __flush__(): void {

@@ -36,7 +36,8 @@ const findQuoteEnd = (css: string, open: number, quote: number): number => {
     if (code === 10 || code === 13 || code === 12) return index;
     if (code === BACKSLASH) {
       index++;
-      if (css.charCodeAt(index) === 13 && css.charCodeAt(index + 1) === 10) index++;
+      if (css.charCodeAt(index) === 13 && css.charCodeAt(index + 1) === 10)
+        index++;
     }
   }
   return css.length;
