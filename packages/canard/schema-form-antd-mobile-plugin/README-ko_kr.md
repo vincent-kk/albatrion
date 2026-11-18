@@ -177,19 +177,16 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 ---
 
-## 연락처
-
-프로젝트와 관련된 문의나 제안은 이슈를 생성해 주세요.
-
 ## Form 범위의 컨트롤 식별자
 
-**호환성 변경:** 요소 id는 각 Form 범위로 구분됩니다. `path`는 JSON Pointer로 유지하며 DOM id로 사용하지 않습니다. 사용자 입력은 전달받은 `FieldInputProps.id`를 실제 컨트롤에 적용하고 단일 컨트롤의 레이블은 같은 값으로 `htmlFor`를 연결합니다. 사용자 `FieldRenderer`는 그룹 제목이나 legend에 `labelId`를 적용하고 그룹의 `aria-labelledby`로 연결합니다. 선택지마다 고유한 id를 사용합니다. 라디오의 native name은 scoped input id이며 나머지 입력은 말단 이름을 유지합니다.
+요소 id는 각 Form 범위로 구분됩니다. `path`는 JSON Pointer로 유지하며 DOM id로 사용하지 않습니다. 사용자 입력은 전달받은 `FieldInputProps.id`를 실제 컨트롤에 적용하고 단일 컨트롤의 레이블은 같은 값으로 `htmlFor`를 연결합니다. 사용자 `FieldRenderer`는 그룹 제목이나 legend에 `labelId`를 적용하고 그룹의 `aria-labelledby`로 연결합니다. 선택지마다 고유한 id를 사용합니다. 라디오의 native name은 scoped input id이며 나머지 입력은 말단 이름을 유지합니다.
 
 ```tsx
-// Before
-const Input = ({ path, name }: FieldInputProps<string>) => <input id={path} name={name} />;
-// After
 const Input = ({ id, name }: FieldInputProps<string>) => <input id={id} name={name} />;
 ```
 
-`document.getElementById('/email')` 대신 해당 Form 안에서 `formElement.querySelector('[data-path="/email"] input')`처럼 조회하거나 컨트롤이 받은 id로 레이블을 연결하십시오. 라디오의 native 제출 키는 바뀌지만 Form API가 반환하는 값의 스키마 형태는 유지합니다.
+해당 Form 안에서 `formElement.querySelector('[data-path="/email"] input')`처럼 조회하거나 컨트롤이 받은 id로 레이블을 연결합니다. Form API가 반환하는 값은 스키마 형태를 유지합니다.
+
+## 연락처
+
+프로젝트와 관련된 문의나 제안은 이슈를 생성해 주세요.
