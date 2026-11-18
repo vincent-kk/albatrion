@@ -11,6 +11,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { getOwnLabel } from './utils/enum/getOwnLabel';
+
 type StringSwitchSchema = StringSchema & {
   enum?: [string | null, string | null];
 };
@@ -48,8 +50,8 @@ const FieldInputStringSwitch = ({
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
     const labels = context.switchLabels || alias || {};
     return [
-      labels['' + checked] || checked,
-      labels['' + unchecked] || unchecked,
+      getOwnLabel(labels, '' + checked) || checked,
+      getOwnLabel(labels, '' + unchecked) || unchecked,
     ];
   }, [checked, unchecked, context, alias]);
 

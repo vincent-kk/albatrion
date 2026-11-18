@@ -13,6 +13,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { getOwnLabel } from './utils/enum/getOwnLabel';
+
 type StringJSONSchema = StringSchema<{
   alias?: { [label: string]: ReactNode };
 }>;
@@ -52,7 +54,7 @@ const FieldInputRadioGroup = ({
           return {
             value,
             rawValue,
-            label: labels['' + rawValue] || '' + rawValue,
+            label: getOwnLabel(labels, '' + rawValue) || '' + rawValue,
           };
         })
       : [];
