@@ -34,8 +34,7 @@ interface FieldInputRadioGroupProps
 }
 
 const FieldInputRadioGroup = ({
-  path,
-  name,
+  id,
   jsonSchema,
   disabled,
   readOnly,
@@ -45,20 +44,25 @@ const FieldInputRadioGroup = ({
   size,
   alias,
   misfit,
+  'aria-labelledby': labelledBy,
 }: FieldInputRadioGroupProps) => {
   const options = useMemo(() => {
     const labels = context.radioLabels || alias || {};
     return jsonSchema.enum
-      ? map(jsonSchema.enum, (rawValue: string | number | null) => {
-          const value = JSON.stringify(rawValue);
-          return {
-            value,
-            rawValue,
-            label: getOwnLabel(labels, '' + rawValue) || '' + rawValue,
-          };
-        })
+      ? map(
+          jsonSchema.enum,
+          (rawValue: string | number | null, index: number) => {
+            const value = JSON.stringify(rawValue);
+            return {
+              id: `${id}-${index}`,
+              value,
+              rawValue,
+              label: getOwnLabel(labels, '' + rawValue) || '' + rawValue,
+            };
+          },
+        )
       : [];
-  }, [context, jsonSchema, alias]);
+  }, [context, jsonSchema, alias, id]);
   const initialValue = useMemo(
     () => options.find((option) => option.rawValue === defaultValue)?.value,
     [defaultValue, options],
@@ -72,14 +76,15 @@ const FieldInputRadioGroup = ({
   });
   return (
     <Radio.Group
-      id={path}
-      name={name}
+      id={id}
+      aria-labelledby={labelledBy}
+      aria-invalid={misfit || undefined}
+      name={id}
       disabled={disabled || readOnly}
       defaultValue={initialValue}
       options={options}
       onChange={handleChange}
       size={size || context?.size}
-      aria-invalid={misfit || undefined}
     />
   );
 };

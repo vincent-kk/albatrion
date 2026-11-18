@@ -28,7 +28,7 @@ afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
 });
-const input = () => document.querySelector<HTMLInputElement>('input#\\/link')!;
+const input = () => document.querySelector<HTMLInputElement>('input[id$=":/link"]')!;
 const choose = (label: string) => {
   fireEvent.mouseDown(
     document.querySelector('.ant-select-selector') ??

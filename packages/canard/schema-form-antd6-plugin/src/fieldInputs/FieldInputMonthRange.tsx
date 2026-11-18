@@ -43,7 +43,7 @@ interface FieldInputMonthRangeProps
 }
 
 const FieldInputMonthRange = ({
-  path,
+  id,
   name,
   readOnly,
   disabled,
@@ -85,7 +85,7 @@ const FieldInputMonthRange = ({
 
   return (
     <DatePicker.RangePicker
-      id={path}
+      id={id}
       name={name}
       picker="month"
       disabled={disabled || readOnly}
