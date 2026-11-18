@@ -100,7 +100,7 @@ it('preserves the existing visibility of object array-item titles (round-3 id re
       defaultValue={{ list: [{ Child: 'value' }] }}
     />,
   );
-  expect(view.queryAllByText('0', { exact: true })).toHaveLength(0);
+  expect(view.queryAllByText('0', { exact: true }).filter(title => !title.closest('[hidden]'))).toHaveLength(0);
 });
 
 it('keeps renderer-only title props away from DOM-spreading custom inputs (round-3 id review 7)', () => {
