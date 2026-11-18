@@ -64,6 +64,8 @@ export interface ModalManagerState {
   styleManager?: ReturnType<typeof styleManagerFactory>;
   /** Captures the creating copy so any compatible owner can release its stylesheet. */
   destroyStyleManager?: Fn;
+  /** The tree receiving the current scope; changing it rebuilds the stylesheet. */
+  styleRoot?: Node;
   /** Canonical CSS definitions survive detach for later initialization. */
   styleSheetDefinition: Map<string, string>;
   /** Alive nodes remain independent of the provider render tree. */
