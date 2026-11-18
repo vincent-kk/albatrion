@@ -86,6 +86,11 @@ This plugin provides the following Ant Design components:
 - **Applied when**: `type` is `"string"` and `format` or `inputType` is `"uri"`
 - **Additional features**: Protocol selection dropdown, default protocol list support (http, https, ftp, mailto, tel), custom protocol list via `presentation.FieldInputProps.protocols`; a value whose scheme is not in the list keeps that scheme, which the dropdown adds as an extra option
 
+#### URI scheme preservation
+
+URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid scheme prefix is preserved with its original case and delimiter (`:` or `://`), including unlisted schemes, `localhost:3000`, and `a:b`. Values without a scheme keep no scheme. Mounting, external writes, reset, and Activity visibility changes never rewrite stored values, including stored scheme-only strings. While the address is non-empty, changing either displayed part preserves the other. Clearing the address or choosing only a scheme with an empty address publishes `undefined`; the chosen scheme stays local so typing resumes with that choice. External writes and reset display the stored scheme, or retain the last user choice when the value is undefined. Bare configured `http`, `https`, and `ftp` use `://`; other bare schemes use `:`. An explicitly configured delimiter is preserved.
+
+
 ### **[`FieldInputMonth.tsx`](./src/fieldInputs/FieldInputMonth.tsx)**
 
 - **Role**: DatePicker for month selection (month mode)
@@ -152,7 +157,7 @@ This plugin provides the following Ant Design components:
 
 - **Role**: Text area for multiline text input
 - **Applied when**: `type` is `"string"` and `format` or `inputType` is `"textarea"`
-- **Additional features**: Support for automatic resizing via `minRows`, `maxRows`
+- **Additional features**: Automatic resizing uses the schema-level extensions `minRows` and `maxRows`, alongside `type` and `format`; these two settings are not read from `presentation.FieldInputProps`
 
 ### **[`FieldInputString.tsx`](./src/fieldInputs/FieldInputString.tsx)**
 
@@ -191,7 +196,7 @@ const jsonSchema = {
 };
 ```
 
-Input settings belong in `presentation.FieldInputProps`, which is forwarded to the input. Custom `options` keys are accepted without errors or warnings, but these built-in inputs do not read their settings from that group.
+Input settings other than textarea row limits belong in `presentation.FieldInputProps`, which is forwarded to the input. Custom `options` keys are accepted without errors or warnings, but these built-in inputs do not read their settings from that group.
 
 ## Component Priority
 
@@ -234,7 +239,3 @@ This repository is licensed under the MIT License. Please refer to the [`LICENSE
 ## Contact
 
 For inquiries or suggestions related to the project, please create an issue.
-
-### URI scheme preservation
-
-URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid scheme prefix is preserved with its original case and delimiter (`:` or `://`), including unlisted schemes, `localhost:3000`, and `a:b`. Values without a scheme keep no scheme. Mounting, external writes, reset, and Activity visibility changes never rewrite stored values; changing either displayed part preserves the other. Bare configured `http`, `https`, and `ftp` use `://`; other bare schemes use `:`. An explicitly configured delimiter is preserved.
