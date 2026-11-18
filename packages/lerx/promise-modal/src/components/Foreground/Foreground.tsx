@@ -45,10 +45,11 @@ export const ForegroundFrame = ({
     <div
       ref={setFrameElement}
       tabIndex={-1}
+      hidden={!modal.visible && !modal.settled}
       className={cxLite(
         foreground,
         modal.visible && active,
-        (modal.manualDestroy ? modal.alive : modal.visible) && visible,
+        (modal.visible || (modal.manualDestroy && modal.settled && modal.alive)) && visible,
       )}
     >
       <Foreground
