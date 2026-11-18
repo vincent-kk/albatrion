@@ -42,7 +42,7 @@ const getPointer = (
   root: Dictionary | any[],
   target: unknown,
 ): string | null => {
-  const stack: [current: Dictionary | any[], path: string][] = [[root, '']];
+  const stack: [current: Dictionary | any[], path: string | null][] = [[root, null]];
   // Identity against `target` is tested before a node is queued, so a node already
   // queued once can be skipped: cycles terminate and shared subtrees are walked once
   const visited = new WeakSet<object>([root]);
@@ -53,7 +53,7 @@ const getPointer = (
         for (let i = 0, l = currentNode.length; i < l; i++) {
           const value = currentNode[i];
           const segments = escapeSegment('' + i);
-          const path = currentPath ? `${currentPath}/${segments}` : segments;
+          const path = currentPath !== null ? `${currentPath}/${segments}` : segments;
           if (value === target) return path;
           if (isObject(value) && !visited.has(value)) {
             visited.add(value);
@@ -65,7 +65,7 @@ const getPointer = (
           if (!hasOwnProperty(currentNode, key)) continue;
           const value = currentNode[key];
           const segments = escapeSegment(key);
-          const path = currentPath ? `${currentPath}/${segments}` : segments;
+          const path = currentPath !== null ? `${currentPath}/${segments}` : segments;
           if (value === target) return path;
           if (isObject(value) && !visited.has(value)) {
             visited.add(value);
