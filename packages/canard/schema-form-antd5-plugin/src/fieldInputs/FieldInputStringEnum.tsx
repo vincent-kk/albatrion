@@ -15,6 +15,7 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { filterEnumOption } from './utils/enum/filterEnumOption';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type ArrayJSONSchema = ArraySchema & {
@@ -103,6 +104,7 @@ const FieldInputStringEnum = ({
     <Select
       id={path}
       mode={mode}
+      filterOption={filterEnumOption}
       placeholder={placeholder}
       disabled={disabled || readOnly}
       defaultValue={initialValue}
