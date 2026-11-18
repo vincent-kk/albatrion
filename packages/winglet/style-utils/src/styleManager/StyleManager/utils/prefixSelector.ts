@@ -6,5 +6,16 @@
  * built once per stylesheet so each selector costs a single concatenation
  * @returns `prefix + selector`, or the selector unchanged when it is exactly `:root` or `:host`.
  */
-export const prefixSelector = (selector: string, prefix: string): string =>
-  selector === ':root' || selector === ':host' ? selector : prefix + selector;
+/** ASCII-insensitive pseudo names with only trailing whitespace or comments. */
+const GLOBAL_SELECTOR = /^:(?:root|host)(?:\s|\/\*[\s\S]*?\*\/)*$/i;
+
+/** Leading comments do not supply a selector list member. */
+const LEADING_COMMENTS = /^(?:\s*\/\*[\s\S]*?\*\/)*\s*/;
+
+export const prefixSelector = (selector: string, prefix: string): string => {
+  if (!selector) return selector;
+  const first = selector.charCodeAt(0);
+  if (first !== 58 && first !== 47) return prefix + selector;
+  const meaningful = first === 47 ? selector.replace(LEADING_COMMENTS, '') : selector;
+  return !meaningful || GLOBAL_SELECTOR.test(meaningful) ? selector : prefix + selector;
+};
