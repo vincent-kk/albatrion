@@ -37,7 +37,7 @@ it('(round-2 promise-modal 7) the CommonJS copy counts modals that the ESM copy 
   }
   render(
     <>
-      <esm.ModalProvider />
+      <esm.ModalProvider options={{ duration: 0 }} />
       <Counter />
     </>,
   );
@@ -85,14 +85,14 @@ it("(round-2 promise-modal 7) content from the CommonJS copy can read its own co
 
   render(
     <Boundary>
-      <esm.ModalProvider />
+      <esm.ModalProvider options={{ duration: 0 }} />
     </Boundary>,
   );
   let baseline!: Promise<void>;
   act(() => { baseline = esm.alert({ title: 'Same copy', content: FeatureContent }); });
   const baselineText = screen.getByText(/feature duration/).textContent;
   fireEvent.click(screen.getByText('Confirm'));
-  await baseline;
+  await act(async () => { await baseline; await new Promise((resolve) => setTimeout(resolve, 10)); });
   featureApi = cjs;
   let result!: Promise<void>;
   act(() => {

@@ -1,3 +1,4 @@
+import type { ConfigurationContextProps } from '@/promise-modal/types/context';
 import {
   type CSSProperties,
   type ComponentType,
@@ -33,7 +34,6 @@ import type { ModalOptions } from '@/promise-modal/types/option';
 
 import {
   ConfigurationContext,
-  type ConfigurationContextProps,
 } from './ConfigurationContext';
 
 const DEFAULT_OPTIONS = {

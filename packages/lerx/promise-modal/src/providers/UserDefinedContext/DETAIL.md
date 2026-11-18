@@ -4,6 +4,8 @@
 
 부트스트랩에서 받은 사용자 정의 context 데이터를 모달 표시 컴포넌트에 제공합니다.
 
+- 동일 구조 버전의 모듈 사본은 기존 전역 레지스트리에 세 Context 정체성을 함께 보관하여 어느 사본의 훅도 현재 Provider 값을 읽는다. 새 Provider나 공개 표면은 추가하지 않는다.
+
 ## API Contracts
 
 - context 값은 공통 Context와 useUserDefinedContext 훅을 통해 읽으며, 입력이 없으면 빈 객체를 제공합니다.

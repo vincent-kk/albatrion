@@ -3,6 +3,7 @@ import type { styleManagerFactory } from '@winglet/style-utils/style-manager';
 import type { Fn } from '@aileron/declare';
 
 import type { ModalNode } from '@/promise-modal/core/node';
+import type { ModalContexts } from '@/promise-modal/types/context';
 import type { Modal } from '@/promise-modal/types/modal';
 
 /** Queued requests retain both Promise channels while no portal is attached. */
@@ -25,6 +26,8 @@ export interface BootstrapOwner {
 export interface ModalManagerState {
   /** Increment whenever another copy cannot use this state shape. */
   version: number;
+  /** Optional for copies that predate shared React context identities. */
+  contexts?: ModalContexts;
   /** Rendered wrappers provide focus boundaries without imposing frame semantics. */
   frames: Map<number, HTMLElement>;
   /** Registration captures the opener until the request first settles. */

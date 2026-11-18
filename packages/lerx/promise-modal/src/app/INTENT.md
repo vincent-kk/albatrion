@@ -6,6 +6,8 @@ ModalManager 싱글톤 클래스를 통해 모달의 전역 상태, DOM 앵커�
 
 ## Conventions
 
+- Context를 소유한 Provider는 내부 app 진입점으로 호환 레지스트리를 읽으며 패키지 공개 API에는 노출하지 않습니다.
+
 - 저장소 구독·기본 경로 훅을 소유하고 core/node만 읽어 요청 handle과의 순환을 막습니다.
 
 - static 인터페이스는 동일한 구조 버전의 모듈 사본이 전역 객체 하나를 공유하도록 연결
