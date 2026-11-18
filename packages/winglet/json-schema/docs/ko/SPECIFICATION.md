@@ -114,6 +114,9 @@ console.assert(schema.properties.name.$ref === 'types.json#/$defs/Text');
 import {
   JSONSchemaScannerAsync,
   createReferenceResolverAsync,
+
+로더가 거부한 요청은 오류를 전파하며 캐시에서 제거합니다. 다음 명시적 resolve가 다시 시도하고, 성공·미발견·진행 중 요청은 공유합니다. 한 resolve 안에서는 자동 재시도하지 않습니다.
+
 } from '@winglet/json-schema';
 import type { UnknownSchema } from '@winglet/json-schema';
 
