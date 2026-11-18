@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Text } from 'ink';
+import { Box, Text, useInput } from 'ink';
 import type React from 'react';
 import SelectInput from 'ink-select-input';
 
@@ -21,6 +21,10 @@ export function ConfirmForce({
   warnings,
   onAnswer,
 }: ConfirmForceProps): React.ReactElement {
+  useInput((input, key) => {
+    if (input.toLowerCase() === 'y') onAnswer(true);
+    else if (input.toLowerCase() === 'n' || key.escape) onAnswer(false);
+  });
   const [expanded, setExpanded] = useState(false);
   const showAll =
     expanded || warnings.length <= limits.maxWarningsBeforeCollapse;

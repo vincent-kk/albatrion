@@ -14,15 +14,15 @@ function hintsFor(kind: Phase['kind']): string {
     case 'scope-select':
       return '↑↓:select · enter:confirm · ctrl-c:cancel';
     case 'diff-review':
-      return 'enter:apply · a:accept all warn · esc:cancel';
+      return 'ctrl-c:cancel';
     case 'force-confirm':
       return 'y:accept · n:cancel';
     case 'applying':
       return 'ctrl-c:abort';
     case 'summary':
-      return 'enter:exit';
+      return 'ctrl-c:exit';
     case 'error':
-      return 'enter:exit';
+      return 'ctrl-c:exit';
     default:
       return 'ctrl-c:cancel';
   }

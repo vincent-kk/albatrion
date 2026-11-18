@@ -24,6 +24,7 @@
   - `useExitApp` 을 `summary` 와 `error` 국면에서 각각 활성화한다. 이 훅이 `useApp().exit()` 을 호출하고 코드를 `onExit` 으로 넘긴다
 - `renderInjectApp(input)`:
   - `ink.render(<InjectApp {...input} onExit={captureCode}/>, { exitOnCtrlC: true })`
+  - 명시한 완료 코드 없이 Ctrl-C로 끝나면 취소 코드 2를 반환합니다.
   - `waitUntilExit()` 를 기다린 뒤 잡아 둔 종료 코드를 돌려준다
   - `finally` 에서 unmount 하여 터미널을 복구한다
   - 초기 국면을 만들지 않는다 — 그것은 `InjectApp` 의 몫이다
