@@ -3,16 +3,16 @@ import { getCssEscapeEnd } from './getCssEscapeEnd';
 import { isCssNameBoundary } from './isCssNameBoundary';
 import { type CssSource, readCssCode } from './readCssCode';
 
-/** ASCII escape starts that can decode a letter in the URL token name. */
-const urlEscapeStart = new Uint8Array(128);
+/** ASCII starts requiring hex, URL-name, or CRLF token recognition. */
+const extendedEscapeStart = new Uint8Array(128);
 for (const code of [
-  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 65, 66, 67, 68, 69, 70, 97, 98, 99,
-  100, 101, 102, 85, 117, 82, 114, 76, 108,
+  13, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 65, 66, 67, 68, 69, 70, 97, 98,
+  99, 100, 101, 102, 85, 117, 82, 114, 76, 108,
 ])
-  urlEscapeStart[code] = 1;
+  extendedEscapeStart[code] = 1;
 
-/** Shared readonly lookup for escape starts requiring URL or hex token recognition. */
-export const URL_ESCAPE_START: Readonly<Uint8Array> = urlEscapeStart;
+/** Shared readonly lookup for escape starts requiring complete token recognition. */
+export const EXTENDED_ESCAPE_START: Readonly<Uint8Array> = extendedEscapeStart;
 
 /**
  * Recognize an escaped spelling of the URL token only on the scanner's existing escape path.
@@ -21,7 +21,7 @@ export const URL_ESCAPE_START: Readonly<Uint8Array> = urlEscapeStart;
  * @returns End of an unquoted URL token, or the original escape position when it is another token.
  */
 export const getEscapedUrlEnd = (source: CssSource, escape: number): number => {
-  if (!URL_ESCAPE_START[readCssCode(source, escape + 1)]) return escape;
+  if (!EXTENDED_ESCAPE_START[readCssCode(source, escape + 1)]) return escape;
   let start = escape;
   for (let count = 0; count < 2 && start > 0; count++) {
     const code = readCssCode(source, start - 1) | 32;

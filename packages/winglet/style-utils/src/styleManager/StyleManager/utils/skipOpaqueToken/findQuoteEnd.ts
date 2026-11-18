@@ -1,5 +1,5 @@
 import { getCssEscapeEnd } from '../../../../utils/cssTokens/getCssEscapeEnd';
-import { URL_ESCAPE_START } from '../../../../utils/cssTokens/getEscapedUrlEnd';
+import { EXTENDED_ESCAPE_START } from '../../../../utils/cssTokens/getEscapedUrlEnd';
 import { BACKSLASH } from '../../constants/charCode';
 
 /**
@@ -20,7 +20,7 @@ export const findQuoteEnd = (
     if (code === 10 || code === 13 || code === 12) return index;
     if (code === BACKSLASH) {
       const following = css.charCodeAt(index + 1);
-      if (!URL_ESCAPE_START[following] && following !== 13) index++;
+      if (!EXTENDED_ESCAPE_START[following]) index++;
       else index = getCssEscapeEnd(css, index) - 1;
     }
   }

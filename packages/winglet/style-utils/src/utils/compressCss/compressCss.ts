@@ -1,6 +1,6 @@
 import { getCssEscapeEnd } from '../cssTokens/getCssEscapeEnd';
 import {
-  URL_ESCAPE_START,
+  EXTENDED_ESCAPE_START,
   getEscapedUrlEnd,
 } from '../cssTokens/getEscapedUrlEnd';
 import {
@@ -144,7 +144,7 @@ export const compressCss = (css: string): string => {
       continue;
     }
     if (byte === BACKSLASH) {
-      if (!URL_ESCAPE_START[buffer[cursor + 1]] && buffer[cursor + 1] !== CR) {
+      if (!EXTENDED_ESCAPE_START[buffer[cursor + 1]]) {
         output[outputIndex++] = byte;
         if (++cursor < length) output[outputIndex++] = buffer[cursor++];
         lastByte = 0;
@@ -180,7 +180,7 @@ export const compressCss = (css: string): string => {
         }
         if (stringByte === BACKSLASH && cursor + 1 < length) {
           if (
-            !URL_ESCAPE_START[buffer[cursor + 1]] &&
+            !EXTENDED_ESCAPE_START[buffer[cursor + 1]] &&
             buffer[cursor + 1] !== CR
           )
             output[outputIndex++] = buffer[++cursor];
