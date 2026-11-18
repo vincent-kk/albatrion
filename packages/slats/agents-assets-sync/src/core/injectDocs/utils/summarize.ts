@@ -27,6 +27,7 @@ export function summarize(
     exitCode,
   };
   for (const action of plan.actions) {
+    if (action.sourceHashReconciled) report.warnings.push({ relPath: action.relPath, reason: 'source-hash-reconciled' });
     if (failedActions.includes(action)) {
       report.warnings.push({ relPath: action.relPath, reason: 'failed' });
       continue;

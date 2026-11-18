@@ -22,6 +22,8 @@ export interface Action {
   /** Manifest path. For an orphan it is reconstructed from what was found. */
   readonly relPath: string;
   readonly target: ActionTarget;
+  /** Source bytes superseded a stale manifest entry for this action. */
+  readonly sourceHashReconciled?: boolean;
 }
 
 export interface InjectPlan {
@@ -31,6 +33,8 @@ export interface InjectPlan {
 }
 
 export interface PlanInput {
+  /** Present for built manifests whose selected entries must match current source bytes. */
+  readonly assetRoot?: string;
   readonly sourceHashes: Record<string, Sha256Hex>;
   /** From `resolveDestinations`. A path absent here is left untouched. */
   readonly destinations: ReadonlyMap<string, Destination>;

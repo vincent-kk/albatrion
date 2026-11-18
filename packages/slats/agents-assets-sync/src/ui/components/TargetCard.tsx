@@ -97,6 +97,9 @@ export function TargetCard({
           </Text>
         ) : null}
       </Box>
+      {plan?.actions.filter((action) => action.sourceHashReconciled).map((action) => (
+        <Text key={action.relPath} color={colors.warn}>source-hash-reconciled: {action.relPath}</Text>
+      ))}
       {expanded && plan ? (
         <Box marginLeft={2}>
           <PlanTable plan={plan} />
