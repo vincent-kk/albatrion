@@ -97,6 +97,7 @@ const FieldInputUri = ({
   const ProtocolDropdown = useMemo(() => {
     return (
       <Select
+        aria-label="Protocol"
         id={`${id}-protocol`}
         value={protocol}
         onChange={handleProtocolChange}

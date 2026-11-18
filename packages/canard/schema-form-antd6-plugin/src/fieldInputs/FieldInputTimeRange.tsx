@@ -91,6 +91,7 @@ const FieldInputTimeRange = ({
   minimum,
   maximum,
   misfit,
+  'aria-labelledby': labelledBy,
 }: FieldInputTimeRangeProps) => {
   const initialValue = useMemo<RangeValueType<Dayjs>>(
     () =>
@@ -134,7 +135,8 @@ const FieldInputTimeRange = ({
 
   return (
     <DatePicker.RangePicker
-      id={id}
+      id={{ start: id, end: `${id}-end` }}
+      aria-labelledby={labelledBy}
       name={name}
       disabled={disabled || readOnly}
       format={DATE_FORMAT}

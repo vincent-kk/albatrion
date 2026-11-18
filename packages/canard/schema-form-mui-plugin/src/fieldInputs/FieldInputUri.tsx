@@ -115,6 +115,7 @@ const FieldInputUri = ({
       </InputLabel>
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
         <Select
+          inputProps={{ 'aria-label': 'Protocol' }}
           id={`${id}-protocol`}
           value={protocol}
           onChange={handleProtocolChange}

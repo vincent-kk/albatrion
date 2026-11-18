@@ -54,6 +54,7 @@ const FieldInputDateRange = ({
   minimum,
   maximum,
   misfit,
+  'aria-labelledby': labelledBy,
 }: FieldInputDateRangeProps) => {
   const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
     if (!range) return onChange(undefined);
@@ -86,7 +87,8 @@ const FieldInputDateRange = ({
 
   return (
     <DatePicker.RangePicker
-      id={id}
+      id={{ start: id, end: `${id}-end` }}
+      aria-labelledby={labelledBy}
       name={name}
       picker="date"
       disabled={disabled || readOnly}
