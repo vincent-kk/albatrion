@@ -48,7 +48,7 @@ export const Portal = Object.assign(BasePortal, {
   /**
    * Higher-Order Component that enhances components with Portal functionality.
    *
-   * Creates an isolated portal context that manages registration, rendering, and lifecycle
+   * Creates an isolated portal context that supplies the DOM anchor
    * of all portal content within the wrapped component and its descendants.
    *
    * **For comprehensive documentation and examples, see:** {@link withPortal}

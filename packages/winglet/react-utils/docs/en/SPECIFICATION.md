@@ -656,6 +656,8 @@ return (
 
 ## Portal System
 
+Portal renders a native React portal from its source position into `Portal.Anchor`. Context reads and click bubbling follow the source React ancestors, through `Portal.with` and beyond. A provider wrapping only the source is visible inside its content. To isolate clicks, stop propagation in the portal content; to share provider values throughout the scope, place the provider above `Portal.with`. Activity hide/show preserves subtree state. Before an anchor attaches, including server rendering and the first hydration render, content is absent; attaching or replacing the anchor updates the destination.
+
 Renders content at a different DOM location while preserving React component hierarchy (context, event bubbling).
 
 ### Setup
@@ -693,7 +695,7 @@ const App = Portal.with(() => {
 
 #### `Portal`
 
-Renders its children at the `Portal.Anchor` location. Renders `null` at its own position.
+Renders its children at the `Portal.Anchor` location. Returns `createPortal` once an anchor is available.
 
 ```tsx
 <Portal>
