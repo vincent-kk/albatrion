@@ -15,6 +15,7 @@ import type { BlueprintGate, PropertyDeclaration } from '../../../types/node';
 import { readAllowedTypes } from '../../../utils/allowedTypes/readAllowedTypes';
 import { readSchemaObject } from '../../../utils/analyze/readSchemaObject';
 import { createBlueprintGate } from '../gates/createBlueprintGate';
+import { getResourceIndex } from '../references/resources/getResourceIndex';
 import { resolveReference } from '../references/resolveReference';
 import { collectSchemaCapabilities } from './collectSchemaCapabilities';
 import { readDiscriminatorBranches } from './readDiscriminatorBranches';
@@ -54,6 +55,7 @@ export const collectDeclarations = (
 ): PropertyDeclaration[] => {
   if (visiting.includes(input.schemaPath)) return result;
   const schema = readSchemaObject(input.schema);
+  if (input.schemaPath !== "#" && typeof schema.$id === "string") getResourceIndex(context);
   validateControlGroups(
     context,
     input.schema,

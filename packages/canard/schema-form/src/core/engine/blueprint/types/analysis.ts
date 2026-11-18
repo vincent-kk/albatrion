@@ -40,8 +40,21 @@ export interface SchemaInput {
   fragment?: MutableFragment;
   isFragment?: boolean;
 }
+/** One embedded schema resource, addressed by its resolved identifier. */
+export interface SchemaResource {
+  schema: BlueprintSchema;
+  schemaPath: string;
+  uri: string;
+}
+/** Resource identities and lexical scopes, allocated only for embedded identifiers. */
+export interface SchemaResourceIndex {
+  resources: Map<string, SchemaResource>;
+  scopes: Map<string, SchemaResource>;
+}
 /** State owned by one invocation, never process-global or reused across roots. */
 export interface AnalysisContext {
+  /** Local authored resources, absent from ordinary root-pointer documents. */
+  resourceIndex?: SchemaResourceIndex;
   /** Monotonic declaration evidence requiring child-target validation; never published. */
   hasChildTargets: boolean;
   /** Authored inactiveValue presence; absent graphs skip resolver metadata preparation. */

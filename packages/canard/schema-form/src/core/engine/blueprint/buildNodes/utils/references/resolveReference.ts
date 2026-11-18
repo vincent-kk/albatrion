@@ -3,19 +3,20 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import {
   joinPointerWithPrefixOf,
   parseStandardPointer,
-  stripFragment,
 } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
 import type { AnalysisContext } from '../../../types/analysis';
 import type { BlueprintSchema } from '../../../types/schema';
 import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintError';
+import { getResourceIndex } from './resources/getResourceIndex';
+import { resolveResourceReference } from './resources/resolveResourceReference';
 import { isBlueprintSchema } from './isBlueprintSchema';
 
 /**
  * Resolve a local authored reference without expanding its target.
  * @param context - Root-local analysis state
- * @param reference - Root-relative URI fragment reference
+ * @param reference - URI reference relative to the enclosing resource
  * @param schemaPath - Referring location used for errors
  * @returns Target schema and canonical authored JSON Pointer
  */
@@ -24,19 +25,11 @@ export const resolveReference = (
   reference: string,
   schemaPath: string,
 ): { schema: BlueprintSchema; schemaPath: string } => {
-  if (stripFragment(reference) === reference)
-    return throwBlueprintError(
-      FormErrorCode.UnknownJsonSchema,
-      schemaPath,
-      {
-        reference,
-        guidance: 'References must resolve within the authored root.',
-      },
-      context.options,
-    );
   let pointer: string;
   let schema: unknown;
   try {
+    if (context.resourceIndex || !reference.startsWith('#'))
+      return resolveResourceReference(context, reference, schemaPath);
     const names = parseStandardPointer(reference);
     pointer = joinPointerWithPrefixOf(reference, names);
     schema = context.schema;
@@ -48,6 +41,8 @@ export const resolveReference = (
       schema = hasOwnProperty(schema, name)
         ? Reflect.get(schema, name)
         : undefined;
+      if (schema && typeof schema === 'object' && typeof Reflect.get(schema, '$id') === 'string')
+        getResourceIndex(context);
     }
   } catch (cause) {
     return throwBlueprintError(
