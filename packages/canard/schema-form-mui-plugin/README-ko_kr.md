@@ -70,6 +70,11 @@ registerPlugin(plugin);
 - **적용 조건**: `type`이 `"string"`이고 `format` 또는 `inputType`이 `"uri"`인 경우
 - **추가 사항**: 프로토콜 선택 드롭다운, 기본 프로토콜 목록 지원 (http, https), `presentation.FieldInputProps.protocols`로 커스텀 프로토콜 목록 설정, mailto/tel 등 단일 콜론 형태 프로토콜 지원. 목록에 없는 스킴을 가진 값은 그 스킴을 유지하며, 드롭다운에 해당 스킴이 추가 선택지로 나타납니다
 
+#### URI scheme preservation
+
+URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 스킴과 `localhost:3000`, `a:b`도 원래 대소문자와 구분자(`:` 또는 `://`)를 보존합니다. 스킴이 없는 값은 스킴을 덧붙이지 않습니다. 마운트·외부 쓰기·reset·Activity 숨김과 표시는 스킴만 있는 문자열을 포함한 저장 값을 고쳐 쓰지 않습니다. 주소가 있을 때 경로와 스킴 중 하나를 편집해도 나머지는 유지합니다. 주소를 지우거나 빈 주소에서 스킴만 고르면 `undefined`를 기록하고 선택한 스킴은 입력 상태로 보존하여 다음 문자를 그 스킴에 이어 붙입니다. 외부 쓰기와 reset은 저장 값의 스킴을 표시하며 값이 `undefined`이면 마지막 사용자 선택을 유지합니다. 구분자를 생략한 설정은 `http`·`https`·`ftp`에 `://`, 다른 스킴에 `:`를 사용하고 명시한 구분자는 그대로 유지합니다.
+
+
 ### **[`FieldInputMonth.tsx`](./src/fieldInputs/FieldInputMonth.tsx)**
 
 - **역할**: 월 선택을 위한 DatePicker (월 모드)

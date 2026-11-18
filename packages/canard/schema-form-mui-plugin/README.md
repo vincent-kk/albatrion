@@ -70,6 +70,11 @@ This plugin provides the following Material-UI components:
 - **Applied when**: `type` is `"string"` and `format` or `inputType` is `"uri"`
 - **Additional features**: Protocol selection dropdown, default protocol list support (http, https), custom protocol list via `presentation.FieldInputProps.protocols`, support for single-colon protocols like mailto/tel; a value whose scheme is not in the list keeps that scheme, which the dropdown adds as an extra option
 
+#### URI scheme preservation
+
+URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid scheme prefix is preserved with its original case and delimiter (`:` or `://`), including unlisted schemes, `localhost:3000`, and `a:b`. Values without a scheme keep no scheme. Mounting, external writes, reset, and Activity visibility changes never rewrite stored values, including stored scheme-only strings. While the address is non-empty, changing either displayed part preserves the other. Clearing the address or choosing only a scheme with an empty address publishes `undefined`; the chosen scheme stays local so typing resumes with that choice. External writes and reset display the stored scheme, or retain the last user choice when the value is undefined. Bare configured `http`, `https`, and `ftp` use `://`; other bare schemes use `:`. An explicitly configured delimiter is preserved.
+
+
 ### **[`FieldInputMonth.tsx`](./src/fieldInputs/FieldInputMonth.tsx)**
 
 - **Role**: DatePicker for month selection (month mode)
@@ -206,7 +211,3 @@ This repository is licensed under the MIT License. Please refer to the [`LICENSE
 ## Contact
 
 For inquiries or suggestions related to the project, please create an issue.
-
-### URI scheme preservation
-
-URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid scheme prefix is preserved with its original case and delimiter (`:` or `://`), including unlisted schemes, `localhost:3000`, and `a:b`. Values without a scheme keep no scheme. Mounting, external writes, reset, and Activity visibility changes never rewrite stored values; changing either displayed part preserves the other. Bare configured `http`, `https`, and `ftp` use `://`; other bare schemes use `:`. An explicitly configured delimiter is preserved.
