@@ -2,13 +2,22 @@ import { useEffect } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import { type AgentType, type Scope, isValidAgent, isValidScope } from '../../core/index.js';
+import {
+  type AgentType,
+  type Scope,
+  isValidAgent,
+  isValidScope,
+} from '../../core/index.js';
 import type { ConsumerPackage } from '../../types/index.js';
 import type { InjectEvent } from '../types/index.js';
 
 interface UseResolveStepOptions {
   readonly targets: readonly ConsumerPackage[];
-  readonly flags: { readonly agent?: string[]; readonly scope?: string; readonly asset?: string[] };
+  readonly flags: {
+    readonly agent?: string[];
+    readonly scope?: string;
+    readonly asset?: string[];
+  };
   readonly dispatch: Fn<[event: InjectEvent]>;
   readonly onResolved: Fn<[agents: readonly AgentType[], scope: Scope]>;
 }
@@ -28,11 +37,19 @@ export function useResolveStep({
 }: UseResolveStepOptions): void {
   useEffect(() => {
     const invalidAgent = flags.agent?.find((value) => !isValidAgent(value));
-    const invalidAsset = flags.asset?.find((value) => !['skills', 'rules', 'commands'].includes(value));
-    const invalidScope = flags.scope !== undefined && !isValidScope(flags.scope);
+    const invalidAsset = flags.asset?.find(
+      (value) => !['skills', 'rules', 'commands'].includes(value),
+    );
+    const invalidScope =
+      flags.scope !== undefined && !isValidScope(flags.scope);
     if (invalidAgent || invalidAsset || invalidScope) {
-      dispatch({ type: 'fail', exitCode: 2, error: new Error(
-        `Invalid flag: ${invalidAgent ?? invalidAsset ?? flags.scope}`) });
+      dispatch({
+        type: 'fail',
+        exitCode: 2,
+        error: new Error(
+          `Invalid flag: ${invalidAgent ?? invalidAsset ?? flags.scope}`,
+        ),
+      });
       return;
     }
     const preselected = (flags.agent ?? []).filter(isValidAgent);

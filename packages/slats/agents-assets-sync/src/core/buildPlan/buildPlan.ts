@@ -37,13 +37,20 @@ export async function buildPlan(input: PlanInput): Promise<InjectPlan> {
   for (const [relPath, srcHash] of Object.entries(sourceHashes)) {
     const destination = destinations.get(relPath);
     if (!destination) continue;
-    const actualHash = input.assetRoot && destination.kind !== 'unsupported'
-      ? await hashFile(join(input.assetRoot, relPath)) : srcHash;
+    const actualHash =
+      input.assetRoot && destination.kind !== 'unsupported'
+        ? await hashFile(join(input.assetRoot, relPath))
+        : srcHash;
     if (actualHash === null) throw new Error(`Source file missing: ${relPath}`);
     const sourceHashReconciled = actualHash !== srcHash;
     const kind = await classify(destination, actualHash, readDocument);
     if (kind === 'warn-diverged') requiresForce = true;
-    actions.push({ kind, relPath, target: destination, ...(sourceHashReconciled ? { sourceHashReconciled } : {}) });
+    actions.push({
+      kind,
+      relPath,
+      target: destination,
+      ...(sourceHashReconciled ? { sourceHashReconciled } : {}),
+    });
   }
 
   const known = new Set(Object.keys(sourceHashes));

@@ -158,7 +158,9 @@ async function runUnit(
     const force = flags.force ?? false;
     const plan = await buildPlan({
       sourceHashes: manifest.files,
-              ...(target.hashSource === 'manifest' ? { assetRoot: target.assetRoot } : {}),
+      ...(target.hashSource === 'manifest'
+        ? { assetRoot: target.assetRoot }
+        : {}),
       destinations,
       orphanScans,
       force,
@@ -197,7 +199,10 @@ async function runUnit(
       ...base,
       requiresForce: plan.requiresForce,
       actions: plan.actions,
-      report: summarize(plan, failedActions.length ? 1 : 0, failedActions, [...fileActions, ...[...blockGroups.values()].flat()]),
+      report: summarize(plan, failedActions.length ? 1 : 0, failedActions, [
+        ...fileActions,
+        ...[...blockGroups.values()].flat(),
+      ]),
       ...(failedActions.length
         ? {
             error: `Failed to apply: ${failedActions.map((action) => action.relPath).join(', ')}`,

@@ -81,12 +81,18 @@ export async function applyAllPlans({
       dispatch({ type: 'apply-progress', done, current: fileAbs });
     }
     reports.push(
-      summarize(tp.plan, failedActions.length ? 1 : 0, failedActions, [...fileActions, ...[...blockGroups.values()].flat()]),
+      summarize(tp.plan, failedActions.length ? 1 : 0, failedActions, [
+        ...fileActions,
+        ...[...blockGroups.values()].flat(),
+      ]),
     );
   }
 
   const exitCode: 0 | 1 | 2 = reports.some((r) => r.exitCode === 1)
-    ? 1 : reports.some((r) => r.exitCode === 2) ? 2 : 0;
+    ? 1
+    : reports.some((r) => r.exitCode === 2)
+      ? 2
+      : 0;
   dispatch({ type: 'done', reports, exitCode, dryRun: false });
   return { reports, exitCode };
 }

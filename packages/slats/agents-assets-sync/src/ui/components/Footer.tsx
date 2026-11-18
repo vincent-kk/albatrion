@@ -1,5 +1,5 @@
-import type React from 'react';
 import { Box, Text } from 'ink';
+import type React from 'react';
 
 import { colors } from '../theme/colors.js';
 import type { Phase } from '../types/index.js';
@@ -28,10 +28,7 @@ function hintsFor(kind: Phase['kind']): string {
   }
 }
 
-export function Footer({
-  phase,
-  version,
-}: FooterProps): React.ReactElement {
+export function Footer({ phase, version }: FooterProps): React.ReactElement {
   return (
     <Box marginTop={1}>
       <Text color={colors.muted} dimColor>

@@ -83,7 +83,9 @@ export function usePlanStep({
             });
             const plan = await buildPlan({
               sourceHashes: manifest.files,
-              ...(target.hashSource === 'manifest' ? { assetRoot: target.assetRoot } : {}),
+              ...(target.hashSource === 'manifest'
+                ? { assetRoot: target.assetRoot }
+                : {}),
               destinations,
               orphanScans,
               force,
@@ -123,9 +125,12 @@ export function usePlanStep({
               step: { packageName: target.name, agent, status: 'done' },
             });
           } catch (error) {
-            results.push({ target, agentTarget: resolveAgentTarget(agent, scope, originCwd),
+            results.push({
+              target,
+              agentTarget: resolveAgentTarget(agent, scope, originCwd),
               plan: { actions: [], requiresForce: false },
-              error: error instanceof Error ? error.message : String(error) });
+              error: error instanceof Error ? error.message : String(error),
+            });
             dispatch({
               type: 'plan-step',
               step: {

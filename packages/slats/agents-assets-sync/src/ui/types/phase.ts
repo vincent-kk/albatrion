@@ -60,4 +60,8 @@ export type Phase =
       readonly scope: Scope;
       readonly dryRun: boolean;
     }
-  | { readonly kind: 'error'; readonly error: Error; readonly exitCode?: 1 | 2 };
+  | {
+      readonly kind: 'error';
+      readonly error: Error;
+      readonly exitCode?: 1 | 2;
+    };

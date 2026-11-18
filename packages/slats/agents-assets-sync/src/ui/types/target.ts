@@ -1,5 +1,5 @@
-import type { ConsumerPackage } from '../../types/index.js';
 import type { AgentTarget, AgentType, InjectPlan } from '../../core/index.js';
+import type { ConsumerPackage } from '../../types/index.js';
 
 export interface PlanStepState {
   readonly packageName: string;

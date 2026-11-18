@@ -1,7 +1,7 @@
-import { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
-import type React from 'react';
 import SelectInput from 'ink-select-input';
+import { useState } from 'react';
+import type React from 'react';
 
 import type { Fn } from '@aileron/declare';
 

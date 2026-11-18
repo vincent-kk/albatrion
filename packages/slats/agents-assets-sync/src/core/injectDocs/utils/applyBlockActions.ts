@@ -1,10 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import { replaceDocument } from './replaceDocument.js';
-
 import type { Action } from '../../buildPlan/index.js';
 import { removeBlock, upsertBlock } from '../../markerBlock/index.js';
+import { replaceDocument } from './replaceDocument.js';
 
 /**
  * Apply every block action for one shared document in a single
@@ -34,7 +33,9 @@ export async function applyBlockActions(
   for (const action of actions) {
     if (action.target.kind !== 'block') continue;
     // Latin-1 is a reversible byte view, including invalid UTF-8 in user prose.
-    const blockId = Buffer.from(action.target.blockId, 'utf8').toString('latin1');
+    const blockId = Buffer.from(action.target.blockId, 'utf8').toString(
+      'latin1',
+    );
     if (action.kind === 'delete') {
       content = removeBlock(content, blockId);
       continue;
