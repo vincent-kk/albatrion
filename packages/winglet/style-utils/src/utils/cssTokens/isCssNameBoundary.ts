@@ -1,4 +1,3 @@
-import { getCssEscapeEnd } from './getCssEscapeEnd';
 import { type CssSource, readCssCode } from './readCssCode';
 
 /** Distinguish a real token boundary from whitespace or punctuation consumed by an earlier escape. */
@@ -16,16 +15,34 @@ export const isCssNameBoundary = (
     ((previous | 32) >= 97 && (previous | 32) <= 122)
   )
     return false;
-  for (let index = start - 2; index >= 0 && index >= start - 9; index--)
-    if (readCssCode(source, index) === 92) {
-      let slashes = 1;
-      while (
-        index - slashes >= 0 &&
-        readCssCode(source, index - slashes) === 92
+  let boundary = start - 1;
+  if (previous === 10 && readCssCode(source, boundary - 1) === 13) boundary--;
+  let cursor = boundary - 1;
+  if (readCssCode(source, cursor) === 92)
+    return !isUnescapedBackslash(source, cursor);
+  if (previous === 32 || (previous >= 9 && previous <= 13 && previous !== 11)) {
+    let count = 0;
+    while (count < 6 && cursor >= 0) {
+      const code = readCssCode(source, cursor);
+      if (
+        !(
+          (code >= 48 && code <= 57) ||
+          ((code | 32) >= 97 && (code | 32) <= 102)
+        )
       )
-        slashes++;
-      if (slashes % 2 && getCssEscapeEnd(source, index) >= start) return false;
-      break;
+        break;
+      cursor--;
+      count++;
     }
+    if (count && readCssCode(source, cursor) === 92)
+      return !isUnescapedBackslash(source, cursor);
+  }
   return true;
+};
+
+/** An odd contiguous run ends with a live CSS escape rather than an escaped backslash. */
+const isUnescapedBackslash = (source: CssSource, end: number): boolean => {
+  let count = 0;
+  while (end >= 0 && readCssCode(source, end--) === 92) count++;
+  return count % 2 !== 0;
 };
