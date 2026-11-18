@@ -36,6 +36,7 @@ interface FieldInputStringCheckboxProps
 }
 
 const FieldInputStringCheckbox = ({
+  id,
   name,
   jsonSchema,
   disabled,
@@ -45,20 +46,22 @@ const FieldInputStringCheckbox = ({
   context,
   alias,
   misfit,
+  'aria-labelledby': labelledBy,
 }: FieldInputStringCheckboxProps) => {
   const options = useMemo(() => {
     const labels = context.checkboxLabels || alias || {};
     return jsonSchema.items?.enum
-      ? map(jsonSchema.items.enum, (rawValue: string | null) => {
+      ? map(jsonSchema.items.enum, (rawValue: string | null, index: number) => {
           const value = JSON.stringify(rawValue);
           return {
+            id: `${id}-${index}`,
             value,
             rawValue,
             label: getOwnLabel(labels, '' + rawValue) || '' + rawValue,
           };
         })
       : [];
-  }, [context, jsonSchema, alias]);
+  }, [context, jsonSchema, alias, id]);
 
   const handleChange = useHandle((value: string[]) => {
     const convertedValues = value
@@ -75,7 +78,12 @@ const FieldInputStringCheckbox = ({
   }, [defaultValue]);
 
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div
+      id={id}
+      role="group"
+      aria-labelledby={labelledBy}
+      aria-invalid={misfit || undefined}
+    >
       <Checkbox.Group
         name={name}
         style={{ display: 'flex' }}

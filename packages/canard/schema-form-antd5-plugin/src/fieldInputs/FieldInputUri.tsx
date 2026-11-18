@@ -38,7 +38,7 @@ interface FieldInputUriProps
 }
 
 const FieldInputUri = ({
-  path,
+  id,
   name,
   readOnly,
   disabled,
@@ -97,6 +97,7 @@ const FieldInputUri = ({
   const ProtocolDropdown = useMemo(() => {
     return (
       <Select
+        id={`${id}-protocol`}
         value={protocol}
         onChange={handleProtocolChange}
         disabled={disabled || readOnly}
@@ -108,14 +109,14 @@ const FieldInputUri = ({
         ))}
       </Select>
     );
-  }, [protocol, protocolOptions, disabled, readOnly, handleProtocolChange]);
+  }, [id, protocol, protocolOptions, disabled, readOnly, handleProtocolChange]);
 
   return (
     <Space.Compact block size={size || context?.size}>
       {ProtocolDropdown}
       <Input
         ref={inputRef}
-        id={path}
+        id={id}
         name={name}
         readOnly={readOnly}
         disabled={disabled}

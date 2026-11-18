@@ -17,19 +17,8 @@ interface FieldInputSliderProps
   lazy?: boolean;
 }
 
-/**
- * Marks the slider handle as the element `focus(path)` moves focus to.
- * Slider passes no props to its handle, so the marker is set on the DOM once the group mounts.
- * @param group - The group element around the Slider, or `null` when it unmounts.
- */
-const markFocusTarget = (group: HTMLDivElement | null) => {
-  group
-    ?.querySelector('[role="slider"]')
-    ?.setAttribute('data-focus-target', '');
-};
-
 const FieldInputSlider = ({
-  path,
+  id,
   jsonSchema,
   disabled,
   readOnly,
@@ -37,7 +26,20 @@ const FieldInputSlider = ({
   onChange,
   lazy,
   misfit,
+  'aria-labelledby': labelledBy,
 }: FieldInputSliderProps) => {
+  // The library exposes its real handle only through the mounted DOM.
+  const markFocusTarget = useCallback(
+    (group: HTMLDivElement | null) => {
+      const handle = group?.querySelector<HTMLElement>('[role="slider"]');
+      if (handle) {
+        handle.id = id;
+        handle.setAttribute('data-focus-target', '');
+        if (labelledBy) handle.setAttribute('aria-labelledby', labelledBy);
+      }
+    },
+    [id, labelledBy],
+  );
   const handleChange = useCallback(
     (value: number | null) => {
       if (value === null) onChange(undefined);
@@ -60,7 +62,6 @@ const FieldInputSlider = ({
   return (
     <div ref={markFocusTarget} role="group" aria-invalid={misfit || undefined}>
       <Slider
-        id={path}
         disabled={disabled || readOnly}
         min={min}
         max={max}

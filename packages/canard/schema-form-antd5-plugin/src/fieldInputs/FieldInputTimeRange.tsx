@@ -80,7 +80,7 @@ interface FieldInputTimeRangeProps
 }
 
 const FieldInputTimeRange = ({
-  path,
+  id,
   name,
   readOnly,
   disabled,
@@ -134,7 +134,7 @@ const FieldInputTimeRange = ({
 
   return (
     <DatePicker.RangePicker
-      id={path}
+      id={id}
       name={name}
       disabled={disabled || readOnly}
       format={DATE_FORMAT}

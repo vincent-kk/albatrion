@@ -35,7 +35,7 @@ it('reads protocols from presentation.FieldInputProps', async () => {
   );
   expect(screen.getByText('ftp://')).toBeTruthy();
   expect(screen.queryByText('http://')).toBeNull();
-  await userEvent.type(view.container.querySelector('input#\\/link')!, 'a');
+  await userEvent.type(view.container.querySelector('input[id$=":/link"]')!, 'a');
   expect(onChange).toHaveBeenLastCalledWith({ link: 'ftp://a' });
 });
 
@@ -79,7 +79,7 @@ it('editing a URI whose scheme is not in the protocol list keeps its scheme', as
     />,
   );
   expect(screen.getByText('wss://')).toBeTruthy();
-  await userEvent.type(view.container.querySelector('input#\\/link')!, '2');
+  await userEvent.type(view.container.querySelector('input[id$=":/link"]')!, '2');
   expect(onChange).toHaveBeenLastCalledWith({
     link: 'wss://example.com/socket2',
   });

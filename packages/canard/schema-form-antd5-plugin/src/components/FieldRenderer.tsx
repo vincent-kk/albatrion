@@ -19,25 +19,42 @@ export const FieldRenderer = ({
   node,
   depth,
   name,
+  labelId,
+  jsonSchema,
   Input,
   Label,
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps) => {
+  const presentation =
+    typeof jsonSchema === 'object' && jsonSchema !== null
+      ? jsonSchema.presentation
+      : undefined;
+  const inputType =
+    typeof presentation === 'object' &&
+    presentation !== null &&
+    'inputType' in presentation
+      ? presentation.inputType
+      : undefined;
+  const grouped =
+    inputType === 'radio' ||
+    inputType === 'radiogroup' ||
+    inputType === 'checkbox';
   if (depth === 0) return <Input />;
 
   if (node.strategy === 'branch') {
     return (
       <fieldset
+        aria-labelledby={labelId}
         style={{
           marginBottom: 5,
           marginLeft: 5 * depth,
         }}
       >
-        <legend>
+        <legend id={labelId}>
           <Typography.Text style={TITLE_STYLE}>{name}</Typography.Text>
         </legend>
-        <Input />
+        <Input aria-labelledby={labelId} />
       </fieldset>
     );
   } else {
@@ -50,9 +67,15 @@ export const FieldRenderer = ({
       >
         <Flex gap={10} align="center">
           {node.parentNode && isArraySchema(node.parentNode) === false && (
-            <Label />
+            <Label {...(grouped ? { htmlFor: undefined } : {})} />
           )}
-          <Input />
+          <Input
+            aria-labelledby={
+              node.parentNode && !isArraySchema(node.parentNode)
+                ? labelId
+                : undefined
+            }
+          />
         </Flex>
         <ErrorMessage style={EMPTY_OBJECT}>{errorMessage}</ErrorMessage>
       </div>
