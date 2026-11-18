@@ -15,6 +15,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { getOwnLabel } from './utils/enum/getOwnLabel';
+
 type ArrayJSONSchema = ArraySchema & {
   items: StringSchema;
 };
@@ -53,7 +55,7 @@ const FieldInputStringEnum = ({
     return schema.enum
       ? map(schema.enum, (rawValue) => {
           const value = JSON.stringify(rawValue);
-          return { value, rawValue, label: alias?.['' + rawValue] || '' + rawValue };
+          return { value, rawValue, label: getOwnLabel(alias, '' + rawValue) || '' + rawValue };
         })
       : [];
   }, [alias, schema]);
