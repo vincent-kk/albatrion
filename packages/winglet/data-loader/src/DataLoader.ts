@@ -58,9 +58,11 @@ import {
  * });
  *
  * // Load individual users - automatically batched
- * const user1 = await userLoader.load('user-1');
- * const user2 = await userLoader.load('user-2');
- * const user3 = await userLoader.load('user-3');
+ * const [user1, user2, user3] = await Promise.all([
+ *   userLoader.load('user-1'),
+ *   userLoader.load('user-2'),
+ *   userLoader.load('user-3'),
+ * ]);
  * // Results in ONE database query: SELECT * FROM users WHERE id IN ('user-1', 'user-2', 'user-3')
  * ```
  *
