@@ -19,6 +19,9 @@ describe('ajv6 dataPath of dynamic property names', () => {
     ['a\\\\b'],
     ["O'Brien"],
     ['plain'],
+    [''],
+    ['a/b~c'],
+    ["a']['b"],
   ])('additionalProperties issue for key %j points at that key', async (key) => {
     const result = await validate(
       { type: 'object', additionalProperties: { type: 'string', minLength: 30 } },
