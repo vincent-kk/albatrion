@@ -72,11 +72,7 @@ export const fromBase = (value: string, base: number): number => {
     throw new Error('Base must be an integer between 2 and 36');
 
   const isNegative = value[0] === '-';
-  let cleanValue = value;
-  if (isNegative) {
-    if (value.length === 1) throw new Error('Value must be a non-empty string');
-    cleanValue = value.slice(1);
-  }
+  const cleanValue = isNegative ? value.slice(1) : value;
   const upperValue = cleanValue.toUpperCase();
 
   let result = 0;
@@ -86,5 +82,9 @@ export const fromBase = (value: string, base: number): number => {
       throw new Error(`Invalid digit '${upperValue[i]}' for base ${base}`);
     result = result * base + digit;
   }
-  return isNegative ? -result : result;
+  if (isNegative) {
+    if (cleanValue.length === 0) throw new Error('Value must be a non-empty string');
+    return -result;
+  }
+  return result;
 };
