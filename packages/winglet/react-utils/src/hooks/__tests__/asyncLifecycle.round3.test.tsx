@@ -1,39 +1,10 @@
-import {
-  Activity,
-  type ReactNode,
-  StrictMode,
-  Suspense,
-  startTransition,
-  useState,
-} from 'react';
-
-import { act, fireEvent, render } from '@testing-library/react';
-import { createPortal } from 'react-dom';
+import { Suspense, startTransition, useState } from 'react';
+import { act, render } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-
-
-
-const Counter = ({ label }: { label: string }) => {
-  const [count, setCount] = useState(0);
-  return (
-    <button data-testid={label} onClick={() => setCount(count + 1)}>
-      {count}
-    </button>
-  );
-};
-
-const clickTwice = (element: Element | null) => {
-  if (!element) throw new Error('missing element');
-  fireEvent.click(element);
-  fireEvent.click(element);
-};
-
-afterEach(() => {
-  document.body.innerHTML = '';
-});
-
 import { useHandle } from '../useHandle';
 import { useTimeout } from '../useTimeout';
+
+afterEach(() => { document.body.innerHTML = ''; });
 
 describe('r3 react-utils: useTimeout after unmount (JSDoc: "Auto-cleanup: Prevents memory leaks on unmount")', () => {
   it('schedule() called after unmount does not run the callback', async () => {

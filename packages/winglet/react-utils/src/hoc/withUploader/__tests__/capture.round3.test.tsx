@@ -1,38 +1,9 @@
-import {
-  Activity,
-  type ReactNode,
-  StrictMode,
-  Suspense,
-  startTransition,
-  useState,
-} from 'react';
-
-import { act, fireEvent, render } from '@testing-library/react';
-import { createPortal } from 'react-dom';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-
-
-
-const Counter = ({ label }: { label: string }) => {
-  const [count, setCount] = useState(0);
-  return (
-    <button data-testid={label} onClick={() => setCount(count + 1)}>
-      {count}
-    </button>
-  );
-};
-
-const clickTwice = (element: Element | null) => {
-  if (!element) throw new Error('missing element');
-  fireEvent.click(element);
-  fireEvent.click(element);
-};
-
-afterEach(() => {
-  document.body.innerHTML = '';
-});
-
+import type { ReactNode } from 'react';
+import { fireEvent, render } from '@testing-library/react';
+import { afterEach, describe, expect, it } from 'vitest';
 import { withUploader } from '../withUploader';
+
+afterEach(() => { document.body.innerHTML = ''; });
 
 describe('r3 react-utils: withUploader click containment (DETAIL: only the original click reaches ancestor handlers)', () => {
   const Button = ({

@@ -8,7 +8,7 @@ import {
 
 import { act, fireEvent, render } from '@testing-library/react';
 import { createPortal } from 'react-dom';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 
 
