@@ -205,7 +205,7 @@ scripts/
 
 ## Boundaries
 
-- `src/core/**` never imports from `src/ui/`, `src/commands/`, or `src/utils/logger.ts` (applyAction has a single `logger.warn` for rare unlink failures, the only exception).
+- `src/core/**` never imports from `src/ui/`, `src/commands/`, or `src/utils/logger.ts`.
 - `src/ui/**` never calls into `src/commands/**`; it's loaded via dynamic import from `renderOrFallback` only.
 - `src/ui/` is **not** exposed as a package subpath — internal only.
 - Nothing writes into a shared `AGENTS.md` outside this tool's own markers.

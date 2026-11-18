@@ -8,7 +8,7 @@ import type { Action } from '../../core/index.js';
 import { applyAllPlans } from '../hooks/useApplyStep.js';
 
 it.each(['file', 'block'] as const)(
-  'reports %s failures without claiming creation',
+  '(round-2 agents-assets-sync 1) reports %s failures without claiming creation',
   async (kind) => {
     const root = mkdtempSync(join(tmpdir(), 'apply-failures-'));
     try {
