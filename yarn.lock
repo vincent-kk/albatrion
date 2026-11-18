@@ -10491,8 +10491,8 @@ __metadata:
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
   peerDependencies:
-    react: ">=16 <20"
-    react-dom: ">=16 <20"
+    react: ">=16.14 <20"
+    react-dom: ">=16.14 <20"
   languageName: unknown
   linkType: soft
 
