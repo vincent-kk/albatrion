@@ -82,13 +82,13 @@ registerPlugin(plugin);
 - **적용 조건**:
   - `type`이 `"number"` 또는 `"integer"`이고 `format`이 `"slider"`인 경우
   - 또는 `type`이 `"array"`이고 `items.type`이 `"number"` 또는 `"integer"`이며 `format`이 `"slider"`인 경우 (범위 슬라이더)
-- **추가 사항**: `presentation.FieldInputProps.lazy`(`false`이면 움직일 때마다 값 반영), `marks`(마크 표시). 슬라이더 형태는 스키마 타입이 정합니다. 배열 스키마는 숫자 두 개의 배열만 기록하는 범위 슬라이더를, 숫자 스키마는 숫자만 기록하는 단일 핸들 슬라이더를 받으며, `presentation.FieldInputProps.range`는 무시됩니다
+- **추가 사항**: `presentation.FieldInputProps.lazy`(`false`이면 움직일 때마다 값 반영), `marks`(선택 가능한 값을 마크 위치로 제한). 범위 슬라이더의 숫자 제한과 `multipleOf`는 `items`에 둡니다. 슬라이더 형태는 스키마 타입이 정합니다. 배열 스키마는 숫자 두 개의 배열만 기록하는 범위 슬라이더를, 숫자 스키마는 숫자만 기록하는 단일 핸들 슬라이더를 받으며, `presentation.FieldInputProps.range`는 무시됩니다
 
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 
 - **역할**: 멀티라인 텍스트 입력을 위한 텍스트 영역
 - **적용 조건**: `type`이 `"string"`이고 `format` 또는 `inputType`이 `"textarea"`인 경우
-- **추가 사항**: `minRows`, `maxRows`를 통한 자동 크기 조절 지원
+- **추가 사항**: `type`·`format` 옆의 스키마 확장 `minRows`와 `maxRows`로 자동 크기를 조절합니다. 이 두 설정은 `presentation.FieldInputProps`에서 읽지 않습니다
 
 ### **[`FieldInputString.tsx`](./src/fieldInputs/FieldInputString.tsx)**
 
@@ -120,7 +120,7 @@ boolean 및 string 스위치 입력은 클릭하면 포커스를 받고 자연�
 
 ## 입력 설정
 
-위의 `lazy`, `marks` 같은 입력별 설정은 `presentation.FieldInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
+위의 `lazy`, `marks` 같은 textarea 행 제한 이외의 입력별 설정은 `presentation.FieldInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
 
 ```ts
 const jsonSchema = {
@@ -130,7 +130,7 @@ const jsonSchema = {
       type: 'number',
       format: 'slider',
       presentation: {
-        FieldInputProps: { lazy: false, marks: { 0: '0', 100: '100' } },
+        FieldInputProps: { lazy: false },
       },
     },
   },

@@ -82,13 +82,13 @@ This plugin provides the following Ant Design Mobile components:
 - **Applied when**:
   - `type` is `"number"` or `"integer"` and `format` is `"slider"`
   - or `type` is `"array"`, `items.type` is `"number"` or `"integer"`, and `format` is `"slider"` (range slider)
-- **Additional features**: `presentation.FieldInputProps.lazy` (`false` publishes on every move) and `marks` (mark display). The schema type decides the shape: an array schema gets a range slider that only writes a two-number array, and a number schema gets a single thumb that only writes a number. `presentation.FieldInputProps.range` is ignored
+- **Additional features**: `presentation.FieldInputProps.lazy` (`false` publishes on every move) and `marks` (restricts selectable values to the marked stops). For range sliders, put numeric bounds and `multipleOf` on `items`. The schema type decides the shape: an array schema gets a range slider that only writes a two-number array, and a number schema gets a single thumb that only writes a number. `presentation.FieldInputProps.range` is ignored
 
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 
 - **Role**: Text area for multiline text input
 - **Applied when**: `type` is `"string"` and `format` or `inputType` is `"textarea"`
-- **Additional features**: Support for automatic resizing via `minRows`, `maxRows`
+- **Additional features**: Automatic resizing uses the schema-level extensions `minRows` and `maxRows`, alongside `type` and `format`; these two settings are not read from `presentation.FieldInputProps`
 
 ### **[`FieldInputString.tsx`](./src/fieldInputs/FieldInputString.tsx)**
 
@@ -130,14 +130,14 @@ const jsonSchema = {
       type: 'number',
       format: 'slider',
       presentation: {
-        FieldInputProps: { lazy: false, marks: { 0: '0', 100: '100' } },
+        FieldInputProps: { lazy: false },
       },
     },
   },
 };
 ```
 
-Input settings belong in `presentation.FieldInputProps`, which is forwarded to the input. Custom `options` keys are accepted without errors or warnings, but these built-in inputs do not read their settings from that group.
+Input settings other than textarea row limits belong in `presentation.FieldInputProps`, which is forwarded to the input. Custom `options` keys are accepted without errors or warnings, but these built-in inputs do not read their settings from that group.
 
 ## Component Priority
 
