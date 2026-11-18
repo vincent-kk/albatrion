@@ -4,7 +4,6 @@ import { Checkbox } from 'antd';
 
 import { map } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
-import { isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
@@ -14,6 +13,7 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type StringJSONSchema = StringSchema<{
@@ -98,12 +98,5 @@ const FieldInputStringCheckbox = ({
 
 export const FieldInputStringCheckboxDefinition = {
   Component: FieldInputStringCheckbox,
-  test: ({ type, inputType, jsonSchema }) => {
-    return (
-      type === 'array' &&
-      inputType === 'checkbox' &&
-      isStringSchema(jsonSchema.items) &&
-      !!jsonSchema.items.enum?.length
-    );
-  },
+  test: isCheckboxGroupInput,
 } satisfies FieldInputDefinition;

@@ -10,6 +10,8 @@ import type {
   FieldInputPropsWithSchema,
 } from '@canard/schema-form';
 
+import { isBooleanSwitchInput } from '../utils/inputs/isBooleanSwitchInput';
+
 import { SwitchKeyboardControl } from './components/SwitchKeyboardControl';
 
 interface FieldInputBooleanSwitchProps
@@ -64,5 +66,5 @@ const FieldInputBooleanSwitch = ({
 export const FieldInputBooleanSwitchDefinition = {
   Component: FieldInputBooleanSwitch,
   controlled: true,
-  test: ({ type, inputType }) => type === 'boolean' && inputType === 'switch',
+  test: isBooleanSwitchInput,
 } satisfies FieldInputDefinition;

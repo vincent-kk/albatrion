@@ -12,6 +12,8 @@ import type {
   NumberSchema,
 } from '@canard/schema-form';
 
+import { isSliderInput } from '../utils/inputs/isSliderInput';
+
 import { SliderKeyboardControl } from './components/SliderKeyboardControl';
 
 /** A numeric array schema, rendered as a range slider. */
@@ -132,13 +134,5 @@ const FieldInputSlider = ({
 
 export const FieldInputSliderDefinition = {
   Component: FieldInputSlider,
-  test: ({ schemaType: type, jsonSchema, format }) => {
-    return (
-      ((type === 'number' || type === 'integer') && format === 'slider') ||
-      (type === 'array' &&
-        jsonSchema.items &&
-        isNumberSchema(jsonSchema.items) &&
-        format === 'slider')
-    );
-  },
+  test: isSliderInput,
 } satisfies FieldInputDefinition;
