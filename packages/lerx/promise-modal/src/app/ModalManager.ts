@@ -249,11 +249,19 @@ export class ModalManager {
     );
     const remaining = pending.filter((node) => node.dimmed);
     if (
-      pending.some((node) =>
-        ModalManager.__state__.frames
-          .get(node.id)
-          ?.contains(document.activeElement),
-      )
+      pending.some((node) => {
+        const frame = ModalManager.__state__.frames.get(node.id);
+        const active = document.activeElement;
+        return (
+          frame &&
+          (frame.contains(active) ||
+            (active?.shadowRoot &&
+              containsComposedElement(
+                frame,
+                ModalManager.innermostFocus(active),
+              )))
+        );
+      })
     )
       return;
     if (
