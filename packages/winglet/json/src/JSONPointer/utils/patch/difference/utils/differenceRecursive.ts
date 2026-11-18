@@ -29,6 +29,7 @@ export const differenceRecursive = (
   const sourceKeys = Object.keys(source);
   for (let i = 0, l = sourceKeys.length; i < l; i++) {
     const key = sourceKeys[i];
+    const reserved = key === '__proto__' || key === 'constructor' || key === 'prototype';
     const sourceValue = source[key];
     if (hasOwnProperty(target, key)) {
       const targetValue = target[key];
@@ -38,15 +39,22 @@ export const differenceRecursive = (
       )
         continue;
       if (targetValue === undefined) {
-        setDataProperty(patch ??= {}, key, null);
+        if (reserved) setDataProperty(patch ??= {}, key, null);
+        else (patch ??= {})[key] = null;
         hasRemoved = true;
       } else if (isPlainObject(sourceValue) && isPlainObject(targetValue)) {
         const child = differenceRecursive(sourceValue, targetValue, depth + 1);
-        if (child !== undefined) setDataProperty(patch ??= {}, key, child);
-      } else if (!equals(sourceValue, targetValue))
-        setDataProperty(patch ??= {}, key, cloneLite(targetValue));
+        if (child !== undefined) {
+          if (reserved) setDataProperty(patch ??= {}, key, child);
+          else (patch ??= {})[key] = child;
+        }
+      } else if (!equals(sourceValue, targetValue)) {
+        if (reserved) setDataProperty(patch ??= {}, key, cloneLite(targetValue));
+        else (patch ??= {})[key] = cloneLite(targetValue);
+      }
     } else {
-      setDataProperty(patch ??= {}, key, null);
+      if (reserved) setDataProperty(patch ??= {}, key, null);
+      else (patch ??= {})[key] = null;
       hasRemoved = true;
     }
   }
@@ -57,7 +65,8 @@ export const differenceRecursive = (
     const key = targetKeys[i];
     const targetValue = target[key];
     if (hasOwnProperty(source, key) || targetValue === undefined) continue;
-    setDataProperty(patch ??= {}, key, cloneLite(targetValue));
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') setDataProperty(patch ??= {}, key, cloneLite(targetValue));
+    else (patch ??= {})[key] = cloneLite(targetValue);
   }
   return patch;
 };
