@@ -1,8 +1,8 @@
 import { Box, Text } from 'ink';
 import type React from 'react';
 
-import type { ConsumerPackage } from '../../types/index.js';
 import type { Action, AgentType, InjectPlan } from '../../core/index.js';
+import type { ConsumerPackage } from '../../types/index.js';
 import { colors } from '../theme/colors.js';
 import { icons } from '../theme/icons.js';
 import { PlanTable } from './PlanTable.js';
@@ -97,9 +97,13 @@ export function TargetCard({
           </Text>
         ) : null}
       </Box>
-      {plan?.actions.filter((action) => action.sourceHashReconciled).map((action) => (
-        <Text key={action.relPath} color={colors.warn}>source-hash-reconciled: {action.relPath}</Text>
-      ))}
+      {plan?.actions
+        .filter((action) => action.sourceHashReconciled)
+        .map((action) => (
+          <Text key={action.relPath} color={colors.warn}>
+            source-hash-reconciled: {action.relPath}
+          </Text>
+        ))}
       {expanded && plan ? (
         <Box marginLeft={2}>
           <PlanTable plan={plan} />

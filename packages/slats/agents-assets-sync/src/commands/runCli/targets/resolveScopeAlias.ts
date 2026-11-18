@@ -28,7 +28,13 @@ export async function resolveScopeAlias(
   let cur = resolvePath(rootCwd);
   while (true) {
     const scopeDir = join(cur, 'node_modules', `@${scope}`);
-    await collectScopeDir(scopeDir, expectedPrefix, rootCwd, matched, skipReasons);
+    await collectScopeDir(
+      scopeDir,
+      expectedPrefix,
+      rootCwd,
+      matched,
+      skipReasons,
+    );
 
     const parent = dirname(cur);
     if (parent === cur) break;
@@ -39,7 +45,13 @@ export async function resolveScopeAlias(
   const installRoots = projectRoot ? await findInstallRoots(projectRoot) : [];
   for (const installRoot of installRoots) {
     const scopeDir = join(installRoot, 'node_modules', `@${scope}`);
-    await collectScopeDir(scopeDir, expectedPrefix, installRoot, matched, skipReasons);
+    await collectScopeDir(
+      scopeDir,
+      expectedPrefix,
+      installRoot,
+      matched,
+      skipReasons,
+    );
   }
 
   if (matched.size === 0) {

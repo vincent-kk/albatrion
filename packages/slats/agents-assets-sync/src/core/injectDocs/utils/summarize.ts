@@ -27,7 +27,11 @@ export function summarize(
     exitCode,
   };
   for (const action of plan.actions) {
-    if (action.sourceHashReconciled) report.warnings.push({ relPath: action.relPath, reason: 'source-hash-reconciled' });
+    if (action.sourceHashReconciled)
+      report.warnings.push({
+        relPath: action.relPath,
+        reason: 'source-hash-reconciled',
+      });
     if (failedActions.includes(action)) {
       report.warnings.push({ relPath: action.relPath, reason: 'failed' });
       continue;
@@ -39,9 +43,9 @@ export function summarize(
       report.skipped.push(action.relPath);
     else if (action.kind === 'warn-diverged') {
       if (appliedActions.includes(action)) report.updated.push(action.relPath);
-      else report.warnings.push({ relPath: action.relPath, reason: 'diverged' });
-    }
-    else if (action.kind === 'warn-orphan')
+      else
+        report.warnings.push({ relPath: action.relPath, reason: 'diverged' });
+    } else if (action.kind === 'warn-orphan')
       report.warnings.push({ relPath: action.relPath, reason: 'orphan' });
     else if (action.kind === 'delete') report.deleted.push(action.relPath);
   }

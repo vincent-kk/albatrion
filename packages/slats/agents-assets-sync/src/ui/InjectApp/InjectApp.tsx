@@ -176,11 +176,16 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
               expanded={false}
             />
           ))}
-          {phase.plans.filter((tp) => tp.error).map((tp) => (
-            <Text key={`${tp.target.name}:${tp.agentTarget.agent}`} color={colors.danger}>
-              {tp.target.name}: {tp.error}
-            </Text>
-          ))}
+          {phase.plans
+            .filter((tp) => tp.error)
+            .map((tp) => (
+              <Text
+                key={`${tp.target.name}:${tp.agentTarget.agent}`}
+                color={colors.danger}
+              >
+                {tp.target.name}: {tp.error}
+              </Text>
+            ))}
           <Summary
             reports={phase.reports}
             exitCode={phase.exitCode}

@@ -35,8 +35,6 @@ export function useInjectSession({
   } | null>(null);
   const pipelineStarted = useRef(false);
 
-  // The CLI layer already rejected unknown values, so anything unrecognised
-  // here can only be an empty flag — which means every kind.
   const assetKinds = useMemo(() => {
     const requested = (flags.asset ?? []).filter((value): value is AssetKind =>
       ALL_KINDS.some((kind) => kind === value),

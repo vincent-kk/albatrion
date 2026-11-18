@@ -155,7 +155,11 @@ export function phaseReducer(phase: Phase, event: InjectEvent): Phase {
       };
     }
     case 'fail': {
-      return { kind: 'error', error: event.error, ...(event.exitCode ? { exitCode: event.exitCode } : {}) };
+      return {
+        kind: 'error',
+        error: event.error,
+        ...(event.exitCode ? { exitCode: event.exitCode } : {}),
+      };
     }
     default: {
       const _exhaustive: never = event;

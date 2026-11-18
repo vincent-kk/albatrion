@@ -122,7 +122,9 @@ async function renderOneUnit(
   const force = flags.force ?? false;
   const plan = await buildPlan({
     sourceHashes: manifest.files,
-              ...(target.hashSource === 'manifest' ? { assetRoot: target.assetRoot } : {}),
+    ...(target.hashSource === 'manifest'
+      ? { assetRoot: target.assetRoot }
+      : {}),
     destinations,
     orphanScans,
     force,
@@ -183,7 +185,8 @@ async function renderOneUnit(
 
 function printPlan(plan: InjectPlan, agentTarget: AgentTarget): void {
   for (const action of plan.actions) {
-    if (action.sourceHashReconciled) logger.warn(`source-hash-reconciled: ${action.relPath}`);
+    if (action.sourceHashReconciled)
+      logger.warn(`source-hash-reconciled: ${action.relPath}`);
     const label = describe(action.relPath, action.target, agentTarget);
     if (action.kind === 'copy') logger.file('create', label);
     else if (action.kind === 'skip-uptodate')
