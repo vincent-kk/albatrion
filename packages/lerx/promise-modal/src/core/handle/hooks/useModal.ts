@@ -78,14 +78,15 @@ export const useModal = (configuration?: OverridableHandleProps) => {
   );
 
   useIsomorphicLayoutEffect(() => () => {
-    for (const result of modalResultsRef.current) {
-      const modalNode = result.modalNode;
-      if (modalNode) closeModal(modalNode);
-      // Still queued before the provider mounted: cancel the prerender entry so
-      // it does not orphan a queued modal and a forever-pending promise.
-      else result.cancel();
-    }
+    const results = modalResultsRef.current;
     modalResultsRef.current = [];
+    queueMicrotask(() => {
+      for (const result of results) {
+        const modalNode = result.modalNode;
+        if (modalNode) closeModal(modalNode);
+        else result.cancel();
+      }
+    });
   }, []);
 
   return {
