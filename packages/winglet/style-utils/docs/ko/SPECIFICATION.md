@@ -203,10 +203,10 @@ const cleanup = addStyle('title', '.title { font-size: 20px; }');
 cleanup();
 ```
 
-#### `destroyScope(scopeId): void`
+#### `destroyScope(scopeId, config?): void`
 
 ```typescript
-function destroyScope(scopeId: string): void;
+function destroyScope(scopeId: string, config?: { shadowRoot?: ShadowRoot }): void;
 ```
 
 `scopeId`에 등록된 document-root `StyleManager`를 해체합니다.
@@ -217,7 +217,7 @@ function destroyScope(scopeId: string): void;
 4. 캐시된 스타일을 초기화합니다.
 5. 레지스트리 항목을 삭제합니다.
 
-Shadow root 키로 관리되는 인스턴스는 `ShadowRoot` 단위로 존재하며 `destroyScope`로 직접 대상으로 삼지 않습니다. 개별 스타일 정리 함수를 호출하거나 shadow root의 가비지 컬렉션에 맡깁니다.
+`destroyScope(scopeId, { shadowRoot })`는 해당 루트의 스코프를 해제합니다. config를 생략하면 문서 스코프를 정리합니다. ShadowRoot별 약한 레지스트리는 참조가 없는 호스트의 수거를 막지 않습니다.
 
 ```typescript
 destroyScope('header'); // 전체 정리

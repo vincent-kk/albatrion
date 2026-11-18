@@ -203,10 +203,10 @@ const cleanup = addStyle('title', '.title { font-size: 20px; }');
 cleanup();
 ```
 
-#### `destroyScope(scopeId): void`
+#### `destroyScope(scopeId, config?): void`
 
 ```typescript
-function destroyScope(scopeId: string): void;
+function destroyScope(scopeId: string, config?: { shadowRoot?: ShadowRoot }): void;
 ```
 
 Tears down the document-root `StyleManager` registered under `scopeId`:
@@ -217,7 +217,7 @@ Tears down the document-root `StyleManager` registered under `scopeId`:
 4. Clears cached styles.
 5. Removes the registry entry.
 
-Shadow-root-keyed managers live per-`ShadowRoot` and are not directly targeted by `destroyScope`; rely on per-style cleanup or shadow-root garbage collection.
+`destroyScope(scopeId, { shadowRoot })` releases the scope in that root. Omitting config targets the document. Shadow managers use a per-root weak registry, so an unreachable host can also be collected.
 
 ```typescript
 destroyScope('header'); // full teardown

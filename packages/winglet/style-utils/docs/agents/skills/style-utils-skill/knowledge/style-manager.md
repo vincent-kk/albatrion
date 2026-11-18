@@ -118,7 +118,7 @@ Never reuse a document-mode factory for a shadow root, or one host's factory for
 
 ## Instance keying
 
-The registry key is the `scopeId` for document roots, and `` `${scopeId}:shadow:${uniqueShadowRootId}` `` for shadow roots, where the id is generated once per `ShadowRoot` and stashed on it under a private `Symbol`. Consequences:
+Document managers use a `Map` keyed by `scopeId`. Shadow managers use a `WeakMap` keyed by `ShadowRoot`, whose values are maps keyed by `scopeId`. The registry does not retain an otherwise unreachable host or root. Consequences:
 
 - Two `styleManagerFactory('x')` calls return factories over the **same** manager. Adding through either is visible to the other, and one `destroyScope('x')` removes both sets of styles.
 - The document manager for `'x'` and each shadow manager for `'x'` are **fully separate instances** with separate stylesheets. They share nothing but the name.
@@ -161,11 +161,11 @@ Two behaviors follow from the same `Map`:
 | --------- | ----------------------------------- | --------------------------------------- |
 | One style | the function returned by `addStyle` | that `styleId` in that manager          |
 | One scope | `destroyScope(scopeId)`             | the document-mode manager for `scopeId` |
-| One root  | host element garbage-collected      | that shadow root's manager              |
+| One root  | `destroyScope(scopeId, { shadowRoot })` | that root's scope manager |
 
 `destroyScope` cancels the pending frame, detaches the sheet or removes the `<style>` element, clears the map, and deletes the registry entry. Removing styles one by one is not equivalent: once the last style is gone the flush writes an empty string, so the stylesheet stays attached to the root — empty, but still counted in `adoptedStyleSheets`. Only `destroyScope` detaches it.
 
-Two limits are worth stating plainly. **It cannot reach shadow instances** — it looks the manager up without shadow context, so it only ever resolves the document-mode key; per-host managers are released by their cleanup functions or with the host itself. And **destroying an unknown scope is a no-op that still allocates**: the lookup creates an instance before destroying it, so a redundant `destroyScope` is harmless but pointless.
+`destroyScope(scopeId, { shadowRoot })` cancels and detaches the matching shadow scope; omitting the config targets the document scope. An unknown scope is a no-op. Discard old factories and cleanup functions after destroying their manager, and construct a fresh factory before injecting again.
 
 For components rendered many times that each need their own rules, derive the scope per instance rather than sharing one:
 

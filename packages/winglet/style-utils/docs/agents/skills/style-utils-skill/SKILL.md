@@ -29,7 +29,7 @@ Apply this skill when working with `cx`, `cxLite`, `compressCss`, `styleManagerF
 | Need deduplication or sorting?                               | Neither — clean the inputs upstream                                                        |
 | Styles for a custom element with a shadow root?              | `styleManagerFactory(id, { shadowRoot })` — never a document-mode factory                  |
 | Styles for ordinary DOM?                                     | `styleManagerFactory(id)` **plus** `classList.add(id)` on a container                      |
-| Tearing down one rule / a whole view / a shadow host?        | cleanup fn returned by `addStyle` / `destroyScope(id)` / host GC                           |
+| Tearing down one rule / a whole view / a shadow host?        | cleanup fn returned by `addStyle` / `destroyScope(id)` / `destroyScope(id, { shadowRoot })`                           |
 | Minifying build output?                                      | Not this library — use cssnano or lightningcss; `compressCss` is a runtime whitespace pass |
 
 ## Invariants & Gotchas
@@ -41,7 +41,7 @@ Apply this skill when working with `cx`, `cxLite`, `compressCss`, `styleManagerF
 - **A brace inside an unquoted `url(…)` breaks scoping.** `url(a{b.png)` miscounts the block and drops that rule and every rule after it. Quote the URL (`url("a{b.png")`); braces inside quoted strings are safe.
 - **Adding whitespace-only CSS is ignored, not a removal.** `addStyle('x', '')` leaves the previous `x` in place. Call the cleanup function to remove a style.
 - **A flush is one frame away.** Reading `document.styleSheets` or computed style synchronously after `addStyle` sees the pre-flush state. Tests must advance a frame.
-- **`destroyScope` cannot reach shadow-root managers.** It resolves the document-mode key only. Shadow instances are released by per-style cleanups or by the host being collected.
+- **`destroyScope(scopeId, { shadowRoot })` releases that root's scope.** Omitting the config targets the document. Per-style cleanups remove individual styles; the weak registry also permits host collection.
 - **`@keyframes` and `@font-face` names are global.** Nothing namespaces them per scope; collisions across scopes are silent. Prefix the names yourself.
 
 ## Common Prescriptions
@@ -63,7 +63,7 @@ Symptom-indexed dispatch. The mechanism behind each one lives in the knowledge f
 | Theme flash on first paint                                    | Inject before first paint; the first flush lands a frame late                               |
 | Test passes alone, fails inside the suite                     | `afterEach(() => destroyScope(id))` for every scope the test created                        |
 | `ReferenceError: requestAnimationFrame` in tests              | Polyfill `requestAnimationFrame` **and** `cancelAnimationFrame` — teardown calls the second |
-| `destroyScope` left a shadow host's styles behind             | Expected; use the per-style cleanups or drop the host                                       |
+| `destroyScope` left a shadow host's styles behind             | Pass the same `{ shadowRoot }` used by the factory                                       |
 | Empty stylesheet still attached after removing every style    | Expected; only `destroyScope` detaches it                                                   |
 | `cxLite` output contains `[object Object]` or `a,b`           | Switch to `cx`                                                                              |
 | Duplicate class tokens in the output                          | Neither helper dedupes; clean the inputs                                                    |
