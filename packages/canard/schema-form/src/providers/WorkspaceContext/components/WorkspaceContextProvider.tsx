@@ -1,10 +1,9 @@
 import { type PropsWithChildren, useId, useMemo } from 'react';
 
-import { useSnapshot } from '@winglet/react-utils/hook';
-
 import type { FormProps } from '@/schema-form/components/Form';
 
 import { useExternalFormContext } from '../../ExternalFormContext';
+import { useContextSnapshot } from '../../hooks/contextSnapshot/useContextSnapshot';
 import type { AttachedFilesStore } from '../utils/AttachedFilesStore';
 import { WorkspaceContext } from './WorkspaceContext';
 
@@ -22,7 +21,7 @@ export const WorkspaceContextProvider = ({
 }: PropsWithChildren<UserDefinedContextProviderProps>) => {
   const external = useExternalFormContext();
   const formId = useId();
-  const context = useSnapshot(inputContext);
+  const context = useContextSnapshot(inputContext);
   const contextValue = useMemo(
     () => ({
       attachedFilesMap,

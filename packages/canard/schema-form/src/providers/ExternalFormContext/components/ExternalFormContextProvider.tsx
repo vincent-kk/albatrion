@@ -1,7 +1,5 @@
 import { type ComponentType, type PropsWithChildren, useMemo } from 'react';
 
-import { useSnapshot } from '@winglet/react-utils/hook';
-
 import type { Dictionary } from '@aileron/declare';
 
 import type { ValidationMode } from '@/schema-form/core';
@@ -17,6 +15,7 @@ import type {
   ValidatorFactory,
 } from '@/schema-form/types';
 
+import { useContextSnapshot } from '../../hooks/contextSnapshot/useContextSnapshot';
 import { ExternalFormContext } from './ExternalFormContext';
 import { ExternalInputContext } from './ExternalInputContext';
 
@@ -204,7 +203,7 @@ export const ExternalFormContextProvider = ({
         : undefined,
     [fieldInputDefinitions],
   );
-  const context = useSnapshot(inputContext);
+  const context = useContextSnapshot(inputContext);
   const externalInputContext = useMemo(
     () => ({ fromExternalFieldInputDefinitions, InputRenderer }),
     [fromExternalFieldInputDefinitions, InputRenderer],

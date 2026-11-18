@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+사용자 context의 snapshot 비교는 이 경계가 소유합니다. plain 객체·배열·지원 built-in은 내용을 비교하되 URL·URLSearchParams·불투명 class 인스턴스는 참조를 비교합니다. private 상태는 열거할 수 없으므로 새 인스턴스를 새 입력으로 보고 같은 인스턴스의 제자리 변경은 감지하지 않습니다. 전역 equals의 의미는 바꾸지 않습니다.
+
 조립 순서는 [FormCore](../components/Form/components/FormCore/DETAIL.md)가 소유합니다. 각 Context는 설정 전달과 자기 수명만 담당하며 노드 로드·준비·reset·검증 예약·콜백 전달을 상위 providers 계약으로 복제하지 않습니다. 해당 계약은 [RootNodeContext](RootNodeContext/DETAIL.md)에 둡니다.
 
 - 라이프사이클 소비자는 FieldLifecycleContext의 진입점을 직접 사용합니다. 상위 providers가 같은 이름을 재노출하지 않아 소유 경계를 우회하는 별도 주소를 만들지 않습니다.
