@@ -1,11 +1,10 @@
+import { isCssNameBoundary } from '../../cssTokens/isCssNameBoundary';
 import {
   BACKSLASH,
   DOUBLE_QUOTE,
-  HYPHEN,
   R_PAREN,
   SINGLE_QUOTE,
   SPACE,
-  UNDERSCORE,
 } from '../constants/asciiByte';
 
 /**
@@ -27,7 +26,7 @@ export const findUnquotedUrlEnd = (
     (buffer[open - 1] | 32) !== 108 ||
     (buffer[open - 2] | 32) !== 114 ||
     (buffer[open - 3] | 32) !== 117 ||
-    (open > 3 && isIdentifierByte(buffer[open - 4]))
+    !isCssNameBoundary(buffer, open - 3)
   )
     return open;
   const length = buffer.length;
@@ -41,12 +40,3 @@ export const findUnquotedUrlEnd = (
   }
   return length;
 };
-
-/** Tells whether a byte can continue a CSS identifier; every byte of a non-ASCII character can. */
-const isIdentifierByte = (byte: number): boolean =>
-  byte >= 0x80 ||
-  byte === HYPHEN ||
-  byte === UNDERSCORE ||
-  byte === BACKSLASH ||
-  (byte >= 48 && byte <= 57) ||
-  ((byte | 32) >= 97 && (byte | 32) <= 122);

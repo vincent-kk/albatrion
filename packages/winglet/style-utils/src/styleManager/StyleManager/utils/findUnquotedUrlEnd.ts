@@ -1,10 +1,9 @@
+import { isCssNameBoundary } from '../../../utils/cssTokens/isCssNameBoundary';
 import {
   BACKSLASH,
   DOUBLE_QUOTE,
-  HYPHEN,
   R_PAREN,
   SINGLE_QUOTE,
-  UNDERSCORE,
   WHITESPACE_MAX,
 } from '../constants/charCode';
 
@@ -24,7 +23,7 @@ export const findUnquotedUrlEnd = (css: string, open: number): number => {
     (css.charCodeAt(open - 3) | 32) !== 117 ||
     (css.charCodeAt(open - 2) | 32) !== 114 ||
     (css.charCodeAt(open - 1) | 32) !== 108 ||
-    (open > 3 && isIdentifierCode(css.charCodeAt(open - 4)))
+    !isCssNameBoundary(css, open - 3)
   )
     return open;
   const length = css.length;
@@ -39,12 +38,3 @@ export const findUnquotedUrlEnd = (css: string, open: number): number => {
   }
   return length;
 };
-
-/** Tells whether a code unit can continue a CSS identifier, so `url` after it is not a function name. */
-const isIdentifierCode = (code: number): boolean =>
-  code >= 0x80 ||
-  code === HYPHEN ||
-  code === UNDERSCORE ||
-  code === BACKSLASH ||
-  (code >= 48 && code <= 57) ||
-  ((code | 32) >= 97 && (code | 32) <= 122);

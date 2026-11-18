@@ -1,3 +1,5 @@
+import { getCssEscapeEnd } from '../cssTokens/getCssEscapeEnd';
+import { getEscapedUrlEnd } from '../cssTokens/getEscapedUrlEnd';
 import {
   ASTERISK,
   BACKSLASH,
@@ -139,8 +141,9 @@ export const compressCss = (css: string): string => {
       continue;
     }
     if (byte === BACKSLASH) {
-      output[outputIndex++] = buffer[cursor++];
-      if (cursor < length) output[outputIndex++] = buffer[cursor++];
+      const urlEnd = getEscapedUrlEnd(buffer, cursor);
+      const end = urlEnd === cursor ? getCssEscapeEnd(buffer, cursor) : urlEnd;
+      while (cursor < end) output[outputIndex++] = buffer[cursor++];
       lastByte = 0;
       continue;
     }
@@ -167,9 +170,8 @@ export const compressCss = (css: string): string => {
           break;
         }
         if (stringByte === BACKSLASH && cursor + 1 < length) {
-          output[outputIndex++] = buffer[++cursor];
-          if (buffer[cursor] === CR && buffer[cursor + 1] === LF)
-            output[outputIndex++] = buffer[++cursor];
+          const end = getCssEscapeEnd(buffer, cursor);
+          while (cursor + 1 < end) output[outputIndex++] = buffer[++cursor];
         } else if (stringByte <= CR) {
           if (stringByte === CR && buffer[cursor + 1] === LF)
             output[outputIndex++] = buffer[++cursor];

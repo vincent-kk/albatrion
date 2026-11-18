@@ -1,3 +1,4 @@
+import { getCssEscapeEnd } from '../../cssTokens/getCssEscapeEnd';
 import { BACKSLASH } from '../constants/asciiByte';
 
 /**
@@ -6,7 +7,7 @@ import { BACKSLASH } from '../constants/asciiByte';
  * @param buffer - UTF-8 bytes of the stylesheet
  * @param start - Index of the opening quote byte
  * @returns Index just past the closing quote, or `buffer.length` when the
- * string is unterminated. A backslash escapes the byte after it, so `"a\"b"`
+ * string is unterminated. A CSS escape includes any hex terminator, so `"a\"b"`
  * ends at its last quote.
  */
 export const findStringEnd = (buffer: Uint8Array, start: number): number => {
@@ -17,13 +18,7 @@ export const findStringEnd = (buffer: Uint8Array, start: number): number => {
     const byte = buffer[index];
     if (byte === quote) return index + 1;
     if (byte === 10 || byte === 13 || byte === 12) return index;
-    if (
-      byte === BACKSLASH &&
-      buffer[index + 1] === 13 &&
-      buffer[index + 2] === 10
-    )
-      index += 3;
-    else index += byte === BACKSLASH ? 2 : 1;
+    index = byte === BACKSLASH ? getCssEscapeEnd(buffer, index) : index + 1;
   }
   return length;
 };

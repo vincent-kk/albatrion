@@ -1,3 +1,5 @@
+import { getCssEscapeEnd } from '../../../utils/cssTokens/getCssEscapeEnd';
+import { getEscapedUrlEnd } from '../../../utils/cssTokens/getEscapedUrlEnd';
 import {
   ASTERISK,
   BACKSLASH,
@@ -19,7 +21,10 @@ import { findUnquotedUrlEnd } from './findUnquotedUrlEnd';
  */
 export const skipOpaqueToken = (css: string, index: number): number => {
   const code = css.charCodeAt(index);
-  if (code === BACKSLASH) return index + 2;
+  if (code === BACKSLASH) {
+    const end = getEscapedUrlEnd(css, index);
+    return end === index ? getCssEscapeEnd(css, index) : end;
+  }
   if (code === DOUBLE_QUOTE || code === SINGLE_QUOTE)
     return findQuoteEnd(css, index, code);
   if (code === SLASH && css.charCodeAt(index + 1) === ASTERISK) {
@@ -35,9 +40,7 @@ const findQuoteEnd = (css: string, open: number, quote: number): number => {
     if (code === quote) return index + 1;
     if (code === 10 || code === 13 || code === 12) return index;
     if (code === BACKSLASH) {
-      index++;
-      if (css.charCodeAt(index) === 13 && css.charCodeAt(index + 1) === 10)
-        index++;
+      index = getCssEscapeEnd(css, index) - 1;
     }
   }
   return css.length;

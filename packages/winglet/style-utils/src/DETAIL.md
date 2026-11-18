@@ -8,6 +8,9 @@
 
 ## API Contracts
 
+압축과 스코핑이 공유하는 CSS 이스케이프 토큰의 읽기는 이 공통 소유자의 내부 organ에 둡니다. UTF-8 바이트와 문자열에서 같은 경계를 사용해야 개행 종결자의 해석이 두 구현에서 갈라지지 않으며, 공개 루트에는 이 헬퍼를 노출하지 않습니다.
+
+
 workspace의 source 조건은 개발 빌드의 입력입니다. 배포 파일에는 src가 없으므로 publishConfig.exports는 source 조건을 제외한 동일한 런타임·선언 경계를 기록합니다. 공개 진입점과 types·import·require 대상의 일치를 유지하여 개발 입력이 배포 해석을 가로채지 않게 합니다.
 
 - `index.ts`는 세 그룹의 심볼을 각각 소유 자식 모듈에서 named export로 가져와 그대로 다시 export한다 — 자체 함수·클래스 선언은 없다.

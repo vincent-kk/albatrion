@@ -1,3 +1,5 @@
+import { isGlobalSelector } from './isGlobalSelector';
+
 /**
  * Prefixes one selector with the scope.
  *
@@ -18,7 +20,10 @@ export const prefixSelector = (selector: string, prefix: string): string => {
   if (first !== 58 && first !== 47) return prefix + selector;
   const meaningful =
     first === 47 ? selector.replace(LEADING_COMMENTS, '') : selector;
-  return !meaningful || GLOBAL_SELECTOR.test(meaningful)
+  return !meaningful ||
+    GLOBAL_SELECTOR.test(meaningful) ||
+    ((meaningful.includes('\\') || meaningful.startsWith(':/*')) &&
+      isGlobalSelector(meaningful))
     ? selector
     : prefix + selector;
 };
