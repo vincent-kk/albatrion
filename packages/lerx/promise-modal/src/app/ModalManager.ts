@@ -16,6 +16,7 @@ import { getModalManagerState } from './helpers/getModalManagerState/getModalMan
 import { containsComposedElement } from './utils/containsComposedElement';
 import { getTabbableElements } from './utils/getTabbableElements';
 import { hasControlAhead } from './utils/hasControlAhead';
+import { hasInertAncestor } from './utils/hasInertAncestor';
 import { isShadowRoot } from './utils/isShadowRoot';
 
 /** Owns global DOM effects and the external modal store; styles are lazy for SSR. */
@@ -264,18 +265,15 @@ export class ModalManager {
       })
     )
       return;
+    const isInert = !!target?.isConnected && hasInertAncestor(target);
     if (
       target?.isConnected &&
-      !target.closest('[inert]') &&
+      !isInert &&
       'focus' in target &&
       typeof target.focus === 'function'
     )
       target.focus();
-    else if (
-      target &&
-      (!target.isConnected || target.closest('[inert]')) &&
-      remaining[0]
-    )
+    else if (target && (!target.isConnected || isInert) && remaining[0])
       ModalManager.focusFrame(remaining[0].id);
   }
   /**
