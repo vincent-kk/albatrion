@@ -25,6 +25,7 @@ export { createValidatorFactory };
  */
 const defaultSettings: Options = {
   allErrors: true,
+  strict: false,
   strictSchema: false,
   validateFormats: false,
   allowUnionTypes: true,

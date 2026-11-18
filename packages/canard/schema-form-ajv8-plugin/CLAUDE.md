@@ -24,7 +24,7 @@ yarn storybook         # Storybook development server
 
 ## Key Details
 
-- Default options: `allErrors: true`, `strictSchema: false`, `validateFormats: false`, `allowUnionTypes: true`.
+- Default options: `strict: false`, `allErrors: true`, `strictSchema: false`, `validateFormats: false`, `allowUnionTypes: true`.
 - **Registration and call order**: `compileGuard(copy, pointer)` and `release(copy)` accept the engine-owned copy whether or not `compile(copy)` has run. Only guards that need the root location (for example a `$ref` into root definitions) register the root, on the guard instance; `compile` registers a copy of a root with `$id` on the selected validation instance (a separate sibling when its `$id` conflicts) and compiles a root without `$id` as a transient copy, and full validation can be compiled later. Pass the same copy object to `compile`, every `compileGuard`, and `release`. Releasing an unregistered root is a no-op.
 - **Guard meta-schema**: the guard instance uses `allErrors: false` and `validateSchema: false`; AJV's root meta-schema check runs only in the whole-schema compile, so a root meta-schema violation outside the condition fails no guard, and a meta-only violation inside the condition schema is evaluated by the generated code; custom keyword meta-schema checks, strict options and code-generation checks still apply to guards (VALIDATE-033, ERROR-041).
 - `bind(instance)` immediately refuses enabled `coerceTypes`, `useDefaults`, or `removeAdditional`; a refused instance never replaces the current binding.
