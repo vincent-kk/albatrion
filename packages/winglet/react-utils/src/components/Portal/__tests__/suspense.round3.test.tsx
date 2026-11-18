@@ -1,7 +1,4 @@
-import {
-  Suspense,
-  useState,
-} from 'react';
+import { Suspense, useState } from 'react';
 
 import { act, fireEvent, render } from '@testing-library/react';
 import { createPortal } from 'react-dom';
@@ -99,4 +96,3 @@ describe('r3 react-utils: Portal anchor inside a re-suspending Suspense boundary
     expect(host.querySelector('button')?.textContent).toBe('2');
   });
 });
-

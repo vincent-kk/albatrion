@@ -1,4 +1,4 @@
-import { type HTMLAttributes, memo, useCallback, useRef } from 'react';
+import { type HTMLAttributes, memo, useRef } from 'react';
 
 import { usePortalAnchor } from './context/usePortalContext';
 import { useAnchorLifecycle } from './utils/useAnchorLifecycle';
@@ -122,25 +122,33 @@ import { useAnchorLifecycle } from './utils/useAnchorLifecycle';
 export const Anchor = memo(
   (props: Omit<HTMLAttributes<HTMLDivElement>, 'children'>) => {
     const setPortalAnchor = usePortalAnchor();
-    const anchorRef = useRef<HTMLDivElement | null>(null);
-    const attachAnchor = useCallback(
-      (element: HTMLDivElement | null) => {
-        if (element === null) return;
-        anchorRef.current = element;
-        setPortalAnchor(element);
-      },
-      [setPortalAnchor],
-    );
+    type Connection = {
+      element: HTMLDivElement | null;
+      attach: (element: HTMLDivElement | null) => void;
+    };
+    const connection = useRef<Connection | null>(null);
+    if (connection.current === null) {
+      const state: Connection = {
+        element: null,
+        attach: (element) => {
+          if (element === null) return;
+          state.element = element;
+          setPortalAnchor(element);
+        },
+      };
+      connection.current = state;
+    }
+    const state = connection.current;
     useAnchorLifecycle(
       () => () => {
-        const retired = anchorRef.current;
+        const retired = state.element;
         queueMicrotask(() =>
           setPortalAnchor((current) => (current === retired ? null : current)),
         );
       },
       [setPortalAnchor],
     );
-    return <div role="none" style={style} {...props} ref={attachAnchor} />;
+    return <div role="none" style={style} {...props} ref={state.attach} />;
   },
 );
 

@@ -11,7 +11,7 @@ import { isFunction } from '@winglet/common-utils/filter';
 
 import type { Fn } from '@aileron/declare';
 
-import { useHandle } from '../../hooks/useHandle';
+import { useCommittedReference } from '../../hooks/utils/useCommittedReference';
 import { openFilePicker } from './utils/openFilePicker';
 
 interface BaseProps {
@@ -116,19 +116,24 @@ export const withUploader = <Props extends BaseProps>(
       const inputRef = useRef<HTMLInputElement>(null);
       const accept = useMemo(() => acceptFormat?.join(','), [acceptFormat]);
 
-      const handleFileChange = useHandle(
-        ({ target }: ChangeEvent<HTMLInputElement>) => {
-          const file = target?.files?.[0];
-          if (file) onChange?.(file);
-          target.value = '';
-        },
+      const callbacks = { onClick, onChange };
+      const callbacksRef = useCommittedReference(useRef(callbacks), callbacks);
+      const { handleFileChange, handleClick } = useMemo(
+        () => ({
+          handleFileChange: ({ target }: ChangeEvent<HTMLInputElement>) => {
+            const file = target?.files?.[0];
+            if (file) callbacksRef.current.onChange?.(file);
+            target.value = '';
+          },
+          handleClick: (e: MouseEvent) => {
+            const onClick = callbacksRef.current.onClick;
+            if (isFunction(onClick)) onClick(e);
+            const input = inputRef.current;
+            if (input) openFilePicker(input);
+          },
+        }),
+        [callbacksRef],
       );
-
-      const handleClick = useHandle((e: MouseEvent) => {
-        if (isFunction(onClick)) onClick(e);
-        const input = inputRef.current;
-        if (input) openFilePicker(input);
-      });
 
       return (
         <Fragment>
