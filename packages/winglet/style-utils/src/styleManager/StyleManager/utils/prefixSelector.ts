@@ -24,14 +24,14 @@ export const prefixSelector = (selector: string, prefix: string): string => {
   const initial = meaningful.charCodeAt(1);
   if (initial !== 92 && initial !== 47) {
     const lower = initial | 32;
+    if (lower !== 104 && lower !== 114) return prefix + selector;
     const second = meaningful.charCodeAt(2);
-    const third = meaningful.charCodeAt(3);
-    const startsGlobalName = lower === 104 || lower === 114;
-    const continuesGlobalName =
-      second === 92 ||
-      ((second | 32) === 111 &&
-        (third === 92 || (third | 32) === (lower === 104 ? 115 : 111)));
-    if (!startsGlobalName || !continuesGlobalName) return prefix + selector;
+    if (second !== 92) {
+      if ((second | 32) !== 111) return prefix + selector;
+      const third = meaningful.charCodeAt(3);
+      if (third !== 92 && (third | 32) !== (lower === 104 ? 115 : 111))
+        return prefix + selector;
+    }
   }
   return GLOBAL_SELECTOR.test(meaningful) ||
     ((meaningful.includes('\\') || meaningful.startsWith(':/*')) &&
