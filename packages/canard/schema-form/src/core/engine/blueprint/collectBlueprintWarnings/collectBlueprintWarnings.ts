@@ -15,6 +15,7 @@ import { readSchemaObject } from '../utils/analyze/readSchemaObject';
 import { collectInactiveValueWarnings } from './utils/collectInactiveValueWarnings';
 import { collectInlineTerminalWarnings } from './utils/collectInlineTerminalWarnings';
 import { endsWithBranchIndex } from './utils/endsWithBranchIndex';
+import { getUnionBranchFragmentIds } from './utils/getUnionBranchFragmentIds';
 
 /** Dependency keywords the form ignores on any declaration. */
 const IGNORED_DEPENDENCY_KEYWORDS = ['dependentSchemas', 'dependencies'];
@@ -33,9 +34,6 @@ const ALL_OF_IGNORED_KEYWORDS = [
 /** Keyword whose branch index ends an `allOf` branch schema path. */
 const ALL_OF_KEYWORDS = ['allOf'];
 
-/** Keywords whose branch index ends a `oneOf` or `anyOf` branch schema path. */
-const UNION_KEYWORDS = ['oneOf', 'anyOf'];
-
 /**
  * Collect advisory records only when a consumer explicitly requests diagnostics.
  * @param blueprint - Completed immutable graph retaining original declarations
@@ -47,6 +45,7 @@ export const collectBlueprintWarnings = (
   collect: BlueprintOptions['collect'],
 ): void => {
   if (!collect) return;
+  const unionBranches = getUnionBranchFragmentIds(blueprint);
   const seen = new Set<string>();
   const emit = (diagnostic: BlueprintDiagnostic): void => {
     const key = `${diagnostic.code}:${diagnostic.schemaPath}:${diagnostic.details.keyword ?? ''}`;
@@ -127,7 +126,7 @@ export const collectBlueprintWarnings = (
           schema.controls?.disabled !== undefined)
       )
         warning(FormWarningCode.LockOnNonTerminalObject);
-      if (endsWithBranchIndex(declaration.schemaPath, UNION_KEYWORDS)) {
+      if (unionBranches.has(declaration.fragmentId)) {
         if (schema.if !== undefined && schema.else !== false)
           warning(FormWarningCode.IfWithoutElseFalse);
         if (
