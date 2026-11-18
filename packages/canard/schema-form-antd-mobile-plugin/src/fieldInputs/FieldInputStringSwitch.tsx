@@ -10,6 +10,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { isStringSwitchInput } from '../utils/inputs/isStringSwitchInput';
+
 import { SwitchKeyboardControl } from './components/SwitchKeyboardControl';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
@@ -81,8 +83,5 @@ const FieldInputStringSwitch = ({
 export const FieldInputStringSwitchDefinition = {
   Component: FieldInputStringSwitch,
   controlled: true,
-  test: ({ type, inputType, jsonSchema }) =>
-    type === 'string' &&
-    inputType === 'switch' &&
-    jsonSchema.enum?.length === 2,
+  test: isStringSwitchInput,
 } satisfies FieldInputDefinition;

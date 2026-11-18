@@ -13,6 +13,7 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { isRadioGroupInput } from '../utils/inputs/isRadioGroupInput';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type StringJSONSchema = StringSchema<{
@@ -95,11 +96,5 @@ const FieldInputRadioGroup = ({
 
 export const FieldInputRadioGroupDefinition = {
   Component: FieldInputRadioGroup,
-  test: ({ schemaType: type, inputType, jsonSchema }) => {
-    return (
-      (type === 'string' || type === 'number' || type === 'integer') &&
-      (inputType === 'radio' || inputType === 'radiogroup') &&
-      !!jsonSchema.enum?.length
-    );
-  },
+  test: isRadioGroupInput,
 } satisfies FieldInputDefinition;

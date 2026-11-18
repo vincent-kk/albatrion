@@ -7,6 +7,9 @@ import { isArraySchema } from '@winglet/json-schema/filter';
 
 import type { FieldRendererProps } from '@canard/schema-form';
 
+import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
+import { isRadioGroupInput } from '../utils/inputs/isRadioGroupInput';
+
 /** Legends use the same wrapping as registered labels. */
 const TITLE_STYLE: CSSProperties = { wordBreak: 'unset' };
 
@@ -36,10 +39,22 @@ export const FieldRenderer = ({
     'inputType' in presentation
       ? presentation.inputType
       : undefined;
+  const hint =
+    typeof jsonSchema === 'object' && jsonSchema !== null
+      ? {
+          type: node.type,
+          schemaType: node.schemaType,
+          inputType: typeof inputType === 'string' ? inputType : undefined,
+          format:
+            'format' in jsonSchema && typeof jsonSchema.format === 'string'
+              ? jsonSchema.format
+              : undefined,
+          jsonSchema,
+        }
+      : undefined;
   const grouped =
-    inputType === 'radio' ||
-    inputType === 'radiogroup' ||
-    inputType === 'checkbox';
+    hint !== undefined &&
+    (isRadioGroupInput(hint) || isCheckboxGroupInput(hint));
   if (depth === 0) return <Input />;
 
   if (node.strategy === 'branch') {
