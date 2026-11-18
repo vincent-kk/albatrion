@@ -17,17 +17,24 @@ describe('round-3 root ownership', () => {
       const object = freeze({ item: { count: 1 } });
       const array = freeze([{ count: 1 }]);
       const source = freeze({ object, array });
-      expect(applyPatch(source, [
-        { op, path: '', value: object },
-        { op: 'replace', path: '/item/count', value: 2 },
-        { op: 'add', path: '/extra', value: true },
-      ])).toEqual({ item: { count: 2 }, extra: true });
-      expect(applyPatch(source, [
-        { op, path: '', value: array },
-        { op: 'replace', path: '/0/count', value: 2 },
-        { op: 'add', path: '/-', value: { count: 3 } },
-      ])).toEqual([{ count: 2 }, { count: 3 }]);
-      expect(source).toEqual({ object: { item: { count: 1 } }, array: [{ count: 1 }] });
+      expect(
+        applyPatch(source, [
+          { op, path: '', value: object },
+          { op: 'replace', path: '/item/count', value: 2 },
+          { op: 'add', path: '/extra', value: true },
+        ]),
+      ).toEqual({ item: { count: 2 }, extra: true });
+      expect(
+        applyPatch(source, [
+          { op, path: '', value: array },
+          { op: 'replace', path: '/0/count', value: 2 },
+          { op: 'add', path: '/-', value: { count: 3 } },
+        ]),
+      ).toEqual([{ count: 2 }, { count: 3 }]);
+      expect(source).toEqual({
+        object: { item: { count: 1 } },
+        array: [{ count: 1 }],
+      });
     }
   });
 
@@ -38,7 +45,9 @@ describe('round-3 root ownership', () => {
       { op: 'remove', path: '/a' },
     ];
     expect(applyPatch({}, patches)).toEqual(applyPatch({}, patches));
-    expect(() => applyPatch({}, [...patches, { op: 'remove', path: '/missing' }])).toThrow();
+    expect(() =>
+      applyPatch({}, [...patches, { op: 'remove', path: '/missing' }]),
+    ).toThrow();
     expect(value).toEqual({ a: 1, b: { count: 1 } });
   });
 
@@ -65,10 +74,12 @@ describe('round-3 root ownership', () => {
     const child = freeze({ count: 1 });
     const source = freeze({ child });
     for (const op of ['copy', 'move'] as const) {
-      expect(applyPatch(source, [
-        { op, from: '/child', path: '' },
-        { op: 'replace', path: '/count', value: 2 },
-      ])).toEqual({ count: 2 });
+      expect(
+        applyPatch(source, [
+          { op, from: '/child', path: '' },
+          { op: 'replace', path: '/count', value: 2 },
+        ]),
+      ).toEqual({ count: 2 });
     }
     expect(source.child.count).toBe(1);
   });
@@ -77,41 +88,96 @@ describe('round-3 root ownership', () => {
     for (const immutable of [true, false]) {
       for (const op of ['add', 'replace'] as const) {
         const value = { count: 1 };
-        expect(applyPatch({}, [{ op, path: '', value }, { op: 'replace', path: '/count', value: 2 }], { immutable })).toEqual({ count: 2 });
+        expect(
+          applyPatch(
+            {},
+            [
+              { op, path: '', value },
+              { op: 'replace', path: '/count', value: 2 },
+            ],
+            { immutable },
+          ),
+        ).toEqual({ count: 2 });
         expect(value.count).toBe(immutable ? 1 : 2);
       }
       for (const op of ['copy', 'move'] as const) {
         const source = { child: { count: 1 } };
-        expect(applyPatch(source, [{ op, from: '/child', path: '' }, { op: 'replace', path: '/count', value: 2 }], { immutable })).toEqual({ count: 2 });
+        expect(
+          applyPatch(
+            source,
+            [
+              { op, from: '/child', path: '' },
+              { op: 'replace', path: '/count', value: 2 },
+            ],
+            { immutable },
+          ),
+        ).toEqual({ count: 2 });
       }
     }
   });
   it('deep writes and reserved pointer spellings retain caller ownership', () => {
-    for (const op of ['add','replace'] as const) {
-      const value = freeze({a:{b:{c:1}},['__proto__']:{x:1}});
-      for (const path of ['/__proto__/x','#/__proto__/x']) {
-        expect(applyPatch({},[
-          {op,path:'',value},
-          {op:'replace',path:'/a/b/c',value:2},
-          {op:'move',from:'/a/b/c',path:'/d'},
-          {op:'replace',path,value:9},
-        ])).toEqual({a:{b:{}},d:2,['__proto__']:{x:9}});
+    for (const op of ['add', 'replace'] as const) {
+      const value = freeze({ a: { b: { c: 1 } }, ['__proto__']: { x: 1 } });
+      for (const path of ['/__proto__/x', '#/__proto__/x']) {
+        expect(
+          applyPatch({}, [
+            { op, path: '', value },
+            { op: 'replace', path: '/a/b/c', value: 2 },
+            { op: 'move', from: '/a/b/c', path: '/d' },
+            { op: 'replace', path, value: 9 },
+          ]),
+        ).toEqual({ a: { b: {} }, d: 2, ['__proto__']: { x: 9 } });
       }
-      expect(value).toEqual({a:{b:{c:1}},['__proto__']:{x:1}});
+      expect(value).toEqual({ a: { b: { c: 1 } }, ['__proto__']: { x: 1 } });
     }
   });
 
   it('primitive replacement roots retain the same root-only behavior in both modes', () => {
-    for (const immutable of [true,false]) {
-      for (const value of [1,'value',true,null]) {
-        for (const op of ['add','replace'] as const) {
-          expect(applyPatch({},[{op,path:'',value},{op:'test',path:'',value}],{immutable})).toBe(value);
-          expect(applyPatch({},[{op,path:'',value},{op:'remove',path:''}],{immutable})).toBe(null);
-          expect(applyPatch({},[{op,path:'',value},{op:'move',from:'',path:''}],{immutable})).toBe(value);
-          expect(()=>applyPatch({},[{op,path:'',value},{op:'copy',from:'',path:''}],{immutable})).toThrow();
+    for (const immutable of [true, false]) {
+      for (const value of [1, 'value', true, null]) {
+        for (const op of ['add', 'replace'] as const) {
+          expect(
+            applyPatch(
+              {},
+              [
+                { op, path: '', value },
+                { op: 'test', path: '', value },
+              ],
+              { immutable },
+            ),
+          ).toBe(value);
+          expect(
+            applyPatch(
+              {},
+              [
+                { op, path: '', value },
+                { op: 'remove', path: '' },
+              ],
+              { immutable },
+            ),
+          ).toBe(null);
+          expect(
+            applyPatch(
+              {},
+              [
+                { op, path: '', value },
+                { op: 'move', from: '', path: '' },
+              ],
+              { immutable },
+            ),
+          ).toBe(value);
+          expect(
+            applyPatch(
+              {},
+              [
+                { op, path: '', value },
+                { op: 'copy', from: '', path: '' },
+              ],
+              { immutable },
+            ),
+          ).toBe(value);
         }
       }
     }
   });
-
 });
