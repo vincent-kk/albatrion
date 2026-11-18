@@ -289,7 +289,7 @@ export const RootNodeContextProvider = ({
   const lastErrors = useRef(props.errors);
   useLayoutEffect(() => {
     const root = store.load.root;
-    if (root && lastErrors.current !== props.errors)
+    if (root && !isSameSchema(lastErrors.current, props.errors))
       applyFormErrors(root, props.errors, lastErrors.current);
     lastErrors.current = props.errors;
   }, [load, props.errors, store]);
