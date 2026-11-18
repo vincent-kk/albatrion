@@ -19,7 +19,14 @@ export const useInitialize = (
 ) => {
   const [, update] = useVersion();
   const identity = useRef({});
-  const lifetime = useRef<{ generation: number; observer?: MutationObserver }>({
+  const lifetime = useRef<{
+    generation: number;
+    observer?: MutationObserver;
+    pending?: {
+      anchor: HTMLElement | null;
+      marker: Element | null | undefined;
+    };
+  }>({
     generation: 0,
   });
   const anchorRef = useRef<HTMLElement | null>(null);
@@ -32,6 +39,12 @@ export const useInitialize = (
       lifetime.current.observer = undefined;
       effectiveRoot.current = element;
       ModalManager.attach(identity.current, element, (anchor) => {
+        if (!anchor) {
+          const pending = lifetime.current.pending;
+          if (pending) pending.anchor = pending.marker = null;
+          lifetime.current.pending = undefined;
+          lifetime.current.generation++;
+        }
         if (anchorRef.current === anchor) return;
         anchorRef.current = anchor;
         update();
@@ -39,12 +52,17 @@ export const useInitialize = (
     },
   );
   const handleReset = useRef(() => {
-    const anchor = anchorRef.current;
-    const marker = anchor?.firstElementChild;
+    const pending = {
+      anchor: anchorRef.current,
+      marker: anchorRef.current?.firstElementChild,
+    };
+    lifetime.current.pending = pending;
     const generation = ++lifetime.current.generation;
     ModalManager.suspend(identity.current);
     queueMicrotask(() => {
       if (generation !== lifetime.current.generation) return;
+      lifetime.current.pending = undefined;
+      const { anchor, marker } = pending;
       if (!anchor || !marker || marker.parentNode !== anchor) {
         ModalManager.detach(identity.current);
         return;
