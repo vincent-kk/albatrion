@@ -52,7 +52,9 @@ export const applyRootOperation = (
       value = removeMoveSource(source, from, patch, patchIndex, cloned, '');
   }
   if (
-    operation === Operation.MOVE &&
+    (operation === Operation.MOVE ||
+      operation === Operation.ADD ||
+      operation === Operation.REPLACE) &&
     cloned !== null &&
     value !== null &&
     typeof value === 'object' &&
