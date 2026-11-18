@@ -266,6 +266,10 @@ it('preserves the pre-id schema table while keeping every address and associatio
         name + ': label association',
       ).toBe(true);
     }
+    for (const group of view.container.querySelectorAll<HTMLElement>('[role="group"], [role="radiogroup"], fieldset:not([aria-hidden="true"])')) {
+      if (group.closest('[aria-hidden="true"]')) continue;
+      expect(computeAccessibleName(group), name + ': every group has one name').not.toBe('');
+    }
     for (const group of view.container.querySelectorAll<HTMLElement>(
       '[aria-labelledby]',
     )) {
