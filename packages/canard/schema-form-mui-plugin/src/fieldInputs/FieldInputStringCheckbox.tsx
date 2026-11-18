@@ -15,6 +15,8 @@ import type {
 
 import type { MuiContext } from '../type';
 
+import { getOwnLabel } from './utils/enum/getOwnLabel';
+
 type StringCheckboxJSONSchema = ArraySchema & {
   type: 'array';
   items: StringSchema;
@@ -62,7 +64,7 @@ const FieldInputStringCheckbox = ({
       return {
         value,
         rawValue,
-        label: alias?.['' + rawValue] || '' + rawValue,
+        label: getOwnLabel(alias, '' + rawValue) || '' + rawValue,
       };
     });
   }, [jsonSchema, alias]);

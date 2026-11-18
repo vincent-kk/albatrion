@@ -12,6 +12,8 @@ import type {
 
 import type { MuiContext } from '../type';
 
+import { getOwnLabel } from './utils/enum/getOwnLabel';
+
 type StringEnumJSONSchema = StringSchema;
 
 interface FieldInputStringEnumProps
@@ -75,7 +77,7 @@ const FieldInputStringEnum = ({
         return {
           value,
           rawValue,
-          label: alias?.['' + rawValue] || '' + rawValue,
+          label: getOwnLabel(alias, '' + rawValue) || '' + rawValue,
         };
       }) || [],
     [jsonSchema, alias],
