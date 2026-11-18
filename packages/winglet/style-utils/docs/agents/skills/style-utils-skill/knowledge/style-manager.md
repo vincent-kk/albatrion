@@ -44,7 +44,7 @@ function applyTheme(vars: string) {
 }
 ```
 
-"Exactly" is literal. `:root.dark { … }` and `:host([disabled]) { … }` are not bare, so they take the prefix and come out as `.scope :root.dark` and `.scope :host([disabled])` — both meaningless in document mode. In a selector list each selector is judged alone: `:root, .a { … }` becomes `:root,.scope .a{…}`.
+Bare pseudo-class names are ASCII case-insensitive; leading and trailing comments do not change the exception. Compound selectors still receive a prefix. `:root.dark { … }` and `:host([disabled]) { … }` are not bare, so they take the prefix and come out as `.scope :root.dark` and `.scope :host([disabled])` — both meaningless in document mode. In a selector list each selector is judged alone: `:root, .a { … }` becomes `:root,.scope .a{…}`.
 
 ## How the rewriter walks rules
 
@@ -61,7 +61,7 @@ At-rules are handled by kind:
 | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
 | `@media`, `@supports`, `@container`, `@layer`, `@scope`, `@document`, `@starting-style` (vendor-prefixed forms included) | Header kept, inner rules scoped recursively            |
 | Other block at-rules: `@keyframes`, `@font-face`, `@page`, …                                                             | Whole block copied unchanged, so `from`/`to` stay bare |
-| Statements ending in `;`: `@import`, `@charset`, `@layer a, b;`                                                          | Copied unchanged, also when no style rule follows      |
+| Statements ending in `;`: `@import`, `@charset`, `@layer a, b;`                                                          | Copied with a final semicolon, including an EOF statement without one      |
 
 ```typescript
 addStyle(

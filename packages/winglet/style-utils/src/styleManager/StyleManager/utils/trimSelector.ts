@@ -5,7 +5,7 @@
  */
 export const trimSelector = (selector: string): string => {
   const trimmed = selector.trim();
-  if (!trimmed.endsWith('\\')) return trimmed;
+  if (trimmed.charCodeAt(trimmed.length - 1) !== 92) return trimmed;
   let backslashes = 0;
   for (
     let index = trimmed.length - 1;

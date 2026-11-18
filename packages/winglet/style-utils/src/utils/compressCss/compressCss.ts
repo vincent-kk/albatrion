@@ -23,6 +23,27 @@ import { findUnquotedUrlEnd } from './utils/findUnquotedUrlEnd';
 import { isDeclarationColon } from './utils/isDeclarationColon';
 import { isInsideParens } from './utils/isInsideParens';
 
+/** String bytes that can close, escape, or terminate a CSS string token. */
+const STRING_CONTROL = new Uint8Array(128);
+for (const byte of [LF, CR, 12, DOUBLE_QUOTE, SINGLE_QUOTE, BACKSLASH])
+  STRING_CONTROL[byte] = 1;
+
+/** Bytes whose compression behavior depends on surrounding CSS tokens. */
+const CSS_CONTROL = new Uint8Array(128);
+for (const byte of [
+  TAB,
+  LF,
+  CR,
+  SPACE,
+  DOUBLE_QUOTE,
+  SINGLE_QUOTE,
+  L_PAREN,
+  SLASH,
+  SEMICOLON,
+  BACKSLASH,
+])
+  CSS_CONTROL[byte] = 1;
+
 /**
  * Compresses CSS by removing unnecessary whitespace, comments, and redundant semicolons.
  * Uses byte-level processing for optimal performance while preserving CSS functionality.
@@ -111,14 +132,16 @@ export const compressCss = (css: string): string => {
       continue;
     }
 
-    // Backslashes consume their following byte; the other branches are at most SEMICOLON.
-    if (byte > SEMICOLON) {
+    if (!CSS_CONTROL[byte]) {
       output[outputIndex++] = byte;
-      if (byte === BACKSLASH && cursor + 1 < length) {
-        output[outputIndex++] = buffer[++cursor];
-        lastByte = 0;
-      } else lastByte = byte;
+      lastByte = byte;
       cursor++;
+      continue;
+    }
+    if (byte === BACKSLASH) {
+      output[outputIndex++] = buffer[cursor++];
+      if (cursor < length) output[outputIndex++] = buffer[cursor++];
+      lastByte = 0;
       continue;
     }
 
@@ -137,14 +160,8 @@ export const compressCss = (css: string): string => {
       output[outputIndex++] = byte;
       while (++cursor < length) {
         const stringByte = buffer[cursor];
-        if (stringByte <= CR && stringByte >= LF && stringByte !== 11) {
-          output[outputIndex++] = stringByte;
-          if (stringByte === CR && buffer[cursor + 1] === LF)
-            output[outputIndex++] = buffer[++cursor];
-          cursor++;
-          break;
-        }
         output[outputIndex++] = stringByte;
+        if (!STRING_CONTROL[stringByte]) continue;
         if (stringByte === byte) {
           cursor++;
           break;
@@ -153,6 +170,11 @@ export const compressCss = (css: string): string => {
           output[outputIndex++] = buffer[++cursor];
           if (buffer[cursor] === CR && buffer[cursor + 1] === LF)
             output[outputIndex++] = buffer[++cursor];
+        } else if (stringByte <= CR) {
+          if (stringByte === CR && buffer[cursor + 1] === LF)
+            output[outputIndex++] = buffer[++cursor];
+          cursor++;
+          break;
         }
       }
       lastByte = output[outputIndex - 1];

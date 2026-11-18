@@ -22,7 +22,7 @@ Shared behavior worth knowing:
 
 ## `compressCss`
 
-A single-pass byte walk over the UTF-8 encoding of the input. It collapses whitespace runs, strips `/* … */` comments, and drops semicolons made redundant by a following `}`. It performs **no semantic optimization** — duplicate declarations, empty rules, and long hex colors all survive untouched:
+A single-pass byte walk over the UTF-8 encoding of the input. It collapses whitespace runs, strips comment contents, retaining `/**/` where adjacent CSS tokens need a boundary, and drops semicolons made redundant by a following `}`. It performs **no semantic optimization** — duplicate declarations, empty rules, and long hex colors all survive untouched:
 
 ```typescript
 compressCss('.a { color: red; color: blue; }'); // '.a{color:red;color:blue}'
