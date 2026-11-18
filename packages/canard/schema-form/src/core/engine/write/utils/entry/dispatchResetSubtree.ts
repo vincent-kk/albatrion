@@ -8,6 +8,7 @@ import { WriteOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
+import { flushBatchWrites } from '../chain/flushBatchWrites';
 import { refuseInactiveResolverWrite } from '../report/refuseInactiveResolverWrite';
 
 /**
@@ -34,6 +35,16 @@ export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
     );
   (runtime.validationTargets ??= new Set()).add(node);
   try {
+    if (
+      runtime.batchWrites?.some((write) =>
+        isDescendantPath(node.path, write.node.path),
+      )
+    )
+      flushBatchWrites(node.rootNode);
+    if (node.isDetached) {
+      refuseInactiveResolverWrite(node);
+      return;
+    }
     resetFieldNodeSubtree(node, option);
   } catch (error) {
     captureChainError(runtime, error);
