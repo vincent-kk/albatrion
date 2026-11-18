@@ -10,7 +10,7 @@
 
 ## API Contracts
 
-- `StyleManager.get(scopeId: string, config?: StyleManagerConfig): StyleManager` — Shadow DOM 대상은 `shadowRoot`별로 부여되는 내부 식별자와 scopeId를 조합한 키로 별도 인스턴스를 만든다.
+- `StyleManager.get(scopeId: string, config?: StyleManagerConfig): StyleManager` — 문서는 scopeId별 Map을 사용하고, Shadow DOM은 ShadowRoot를 키로 하는 WeakMap 안의 scopeId별 Map을 사용한다. 레지스트리는 분리된 ShadowRoot와 호스트의 수거를 막지 않는다.
 - DOM 반영은 `CSSStyleSheet.prototype.replaceSync`와 `adoptedStyleSheets`를 모두 지원하는 환경에서는 그 경로를 쓰고, 아니면 scope 클래스가 붙은 `<style>` 엘리먼트에 `textContent`를 대입하는 방식으로 폴백한다. `replaceSync` 호출이 실패하면 예외를 던지지 않고 `console.warn`으로 기록한다.
 - CSS 스코핑은 텍스트를 앞에서부터 한 번 훑으며 규칙마다 프렐류드(선택자 또는 at-rule 조건)와 블록을 찾는다.
   - 중괄호·세미콜론·쉼표는 문자열(`"…"`, `'…'`), 주석(`/* … */`), 백슬래시 이스케이프 밖에 있을 때만 구조로 센다 — 안쪽 문자를 세면 `content: "{"` 하나가 시트의 나머지를 지우거나 다음 규칙을 블록 안으로 끌어들인다. 따옴표 없는 `url(…)`(대소문자 무관) 안의 `/*`는 주석을 열지 않고, 그 안의 `;`는 문장형 at-rule을 끝내지 않는다 — `url(http://x.com/a/*b)`가 주석으로 읽히면 뒤따르는 규칙이 사라지고, `@import url(http://x.com/a;b.css);`가 URL 안에서 끊기면 스코프가 URL에 들어가고 다음 규칙이 스코프를 잃는다. `url(`은 바로 앞이 식별자 문자(영문자·숫자·`-`·`_`·백슬래시·비ASCII)가 아닐 때만 URL로 본다 — `myurl(` 같은 다른 함수의 인자를 불투명하게 다루면 그 안의 주석과 괄호를 잘못 읽는다.
@@ -51,6 +51,7 @@
 - `destroy()` 이후 같은 scopeId로 `get`을 호출하면 이전과 다른 새 인스턴스를 반환한다.
 - `destroy()` 이후 문서(또는 shadowRoot)의 `adoptedStyleSheets`/`<style>` 흔적이 모두 제거된다.
 - Shadow DOM 대상에서도 동일하게 정리된다.
+- 외부 참조가 없는 분리된 ShadowRoot와 호스트는 명시적 destroy 없이도 수거된다.
 
 ## Last Updated
 
