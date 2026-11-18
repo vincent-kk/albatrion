@@ -297,3 +297,81 @@ it('round-2 schema-form 3: Activity catches a missed external revision for a who
   view.rerender(tree('visible'));
   expect(view.container.querySelector('input')!.value).toBe('["b"]');
 });
+
+
+it('round-2 schema-form 3: refresh starts a fresh child-ownership lifetime', async () => {
+  const Parent = ({ defaultValue, ChildFields }: FieldInputProps<string[]>) => {
+    const [value] = useState(defaultValue);
+    const [visible, setVisible] = useState(false);
+    return <section>
+      <output data-testid="owned-value">{JSON.stringify(value)}</output>
+      <button type="button" onClick={() => setVisible((value) => !value)}>toggle children</button>
+      {visible && ChildFields.map((Child) => <Child key={Child.key} />)}
+    </section>;
+  };
+  const Replacement = (props: FieldInputProps<string[]>) => <Parent {...props} />;
+  const run = async (refresh: boolean) => {
+    const ref = createRef<FormHandle>();
+    const tree = (replacement = false) => <Form ref={ref} jsonSchema={schema}
+      defaultValue={{ list: ['old'] }} validationMode={ValidationMode.None}
+      fieldInputMap={{ '/list': replacement ? Replacement : Parent }} />;
+    const view = render(tree());
+    fireEvent.click(view.getByText('toggle children'));
+    fireEvent.click(view.getByText('toggle children'));
+    if (refresh) act(() => ref.current!.refresh());
+    else view.rerender(tree(true));
+    await act(() => ref.current!.setValue({ list: ['external'] }));
+    const result = view.getByTestId('owned-value').textContent;
+    view.unmount();
+    return result;
+  };
+  expect(await run(true)).toEqual(await run(false));
+});
+
+
+it('round-2 schema-form 3: own array batches preserve the same inputs as separate writes', async () => {
+  const run = async (batched: boolean) => {
+    const actions = new Map<string, (value: string[]) => void>();
+    const Whole = ({ defaultValue, onChange, path }: FieldInputProps<string[]>) => {
+      const [value, setValue] = useState(defaultValue);
+      actions.set(path, (next) => { setValue(next); onChange(next); });
+      return <section data-testid={path}>{JSON.stringify(value)}</section>;
+    };
+    const ref = createRef<FormHandle>();
+    const view = render(<Form ref={ref} validationMode={ValidationMode.None}
+      jsonSchema={{ type: 'object', properties: {
+        a: { type: 'array', items: { type: 'string' } },
+        b: { type: 'array', items: { type: 'string' } },
+      } }} defaultValue={{ a: ['a'], b: ['b'] }}
+      fieldInputMap={{ '/a': Whole, '/b': Whole }} />);
+    const before = [view.getByTestId('/a'), view.getByTestId('/b')];
+    const first = actions.get('/a');
+    const second = actions.get('/b');
+    if (!first || !second) throw new Error('Expected both bound inputs');
+    if (batched) act(() => ref.current!.node!.batch(() => { first(['x']); second(['y']); }));
+    else { act(() => first(['x'])); act(() => second(['y'])); }
+    const result = [view.getByTestId('/a') === before[0], view.getByTestId('/b') === before[1]];
+    view.unmount();
+    return result;
+  };
+  expect(await run(true)).toEqual(await run(false));
+});
+
+
+it('round-2 schema-form 3: root array own writes keep the current input', () => {
+  let write: ((value: string[]) => void) | undefined;
+  const Whole = ({ defaultValue, onChange }: FieldInputProps<string[]>) => {
+    const [value, setValue] = useState(defaultValue);
+    write = (next) => { setValue(next); onChange(next); };
+    return <section data-testid="root-array-own">{JSON.stringify(value)}</section>;
+  };
+  const view = render(<Form jsonSchema={{ type: 'array', items: { type: 'string' } }}
+    defaultValue={['old']} validationMode={ValidationMode.None}
+    fieldInputDefinitions={[{ test: { type: 'array' }, Component: Whole }]} />);
+  const before = view.getByTestId('root-array-own');
+  const change = write;
+  if (!change) throw new Error('Expected a root array input');
+  act(() => change(['edited']));
+  expect(view.getByTestId('root-array-own')).toBe(before);
+  expect(before.textContent).toBe('["edited"]');
+});
