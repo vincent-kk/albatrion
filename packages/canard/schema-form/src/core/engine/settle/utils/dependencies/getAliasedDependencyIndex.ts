@@ -66,14 +66,16 @@ class AliasedDependencyIndex {
   synchronize<Self extends FieldNodeRecord<Self>>(
     context: SettlementContext<Self>,
   ): void {
-    const seen = new Set<Occurrence>();
-    if (!this.isInitialized) {
-      this.registerSubtree(context.root, seen);
-      this.isInitialized = true;
+    if (!this.isInitialized || context.enteredNodes.size || context.pathChanges.length) {
+      const seen = new Set<Occurrence>();
+      if (!this.isInitialized) {
+        this.registerSubtree(context.root, seen);
+        this.isInitialized = true;
+      }
+      for (const node of context.enteredNodes) this.registerSubtree(node, seen);
+      for (const change of context.pathChanges)
+        this.registerSubtree(change.node, seen);
     }
-    for (const node of context.enteredNodes) this.registerSubtree(node, seen);
-    for (const change of context.pathChanges)
-      this.registerSubtree(change.node, seen);
     for (const node of context.changedNodes) this.register(node);
     for (const node of context.exitedNodes)
       if (node.isDetached || node.isDisposed) this.remove(node);
