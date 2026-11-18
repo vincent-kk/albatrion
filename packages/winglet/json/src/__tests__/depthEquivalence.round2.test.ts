@@ -46,3 +46,18 @@ describe('round-2 json 7: deep traversal preserves shallow policies', () => {
     expect(leafOf(mergePatch(nest(source, 300), patch))).toEqual(mergePatch(source, difference(source, target)));
   });
 });
+
+
+describe('round-2 json 7: serialization traversal order', () => {
+  it('reads sibling values in the same order around toJSON at any depth', () => {
+    const observe = (depth: number) => {
+      const log: string[] = [];
+      const date = new Date(0);
+      date.toJSON = () => { log.push('serialize'); return '0'; };
+      const source = { get first() { log.push('first'); return date; }, get second() { log.push('second'); return 1; } };
+      compare(nest(source, depth), nest({ first: new Date(1), second: 2 }, depth));
+      return log;
+    };
+    expect(observe(300)).toEqual(observe(0));
+  });
+});
