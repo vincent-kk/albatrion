@@ -45,6 +45,8 @@ merge가 조상의 안전한 속성 프리미티브를 읽고 부모가 merge를
 - 복제된 `__proto__` 값은 원본과 참조를 공유하지 않는다.
 - 기존 clone 스위트가 전량 통과하고, 일반 키 경로 bench에 유의미한 회귀가 없다.
 
+다른 realm의 내장 객체도 슬롯이 있는 새 값으로 복제합니다. Date·RegExp·Map·Set·ArrayBuffer·SharedArrayBuffer·DataView·Error와 AggregateError의 슬롯을 보존하고, 컬렉션의 순환 참조는 복제 캐시로 연결합니다. 슬롯이 없는 위조 태그는 일반 객체 복제를 유지합니다. Map·Set·Date·RegExp의 추가 own 속성은 로컬 realm과 마찬가지로 복제 범위가 아닙니다. Blob·File 생성자가 새 객체에 만든 호스트 내부 symbol은 원본에서 덮어쓰지 않으므로 바이트 읽기가 유지됩니다. vm에는 Web API 생성자가 없으므로 Blob·File의 vm 검증은 호스트 생성자를 전달한 하위 클래스로 수행합니다.
+
 ### clone-fidelity — clone 내장 상태와 상속 속성 정합
 
 - 상속 setter를 가리는 own 데이터 속성은 setter를 실행하지 않고 같은 값의 own 데이터 속성으로 복제된다.

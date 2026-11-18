@@ -9,6 +9,7 @@ import { isSharedArrayBuffer } from '@/common-utils/utils/filter/isSharedArrayBu
 import { isTypedArray } from '@/common-utils/utils/filter/isTypedArray';
 
 import { getSymbols } from './getSymbols';
+import { copyForeignBuiltin } from './utils/clone/copyForeignBuiltin';
 import { getPrototypeProfile } from './utils/clone/getPrototypeProfile';
 import { replicateBox } from './utils/clone/replicateBox';
 
@@ -232,18 +233,17 @@ export const clone = <Type>(target: Type, maxDepth?: number): Type =>
  * @param cache - Map to track already cloned objects (for circular reference handling)
  * @returns Cloned value
  */
-const replicate = <Type>(
-  value: Type,
+const replicate = (
+  value: any,
   limit: number | undefined,
   depth: number,
   cache: Map<object, any>,
-): Type => {
-  if (limit !== undefined && depth >= limit) return value as Type;
+): any => {
+  if (limit !== undefined && depth >= limit) return value;
 
-  if (isPrimitiveType(value)) return value as Type;
+  if (isPrimitiveType(value)) return value;
 
-  // @ts-expect-error: After passing `isPrimitiveType`, value must be an object.
-  if (cache.has(value)) return cache.get(value) as Type;
+  if (cache.has(value)) return cache.get(value);
 
   depth = depth + 1;
 
@@ -260,20 +260,20 @@ const replicate = <Type>(
       // @ts-expect-error: The `groups` property is only available in the result of a RegExp match.
       result.groups = replicate(value.groups, limit, depth, cache);
     }
-    return result as Type;
+    return result;
   }
 
   if (value instanceof Date) {
     const result = new Date(value.getTime());
     cache.set(value, result);
-    return result as Type;
+    return result;
   }
 
   if (value instanceof RegExp) {
     const result = new RegExp(value.source, value.flags);
     result.lastIndex = value.lastIndex;
     cache.set(value, result);
-    return result as Type;
+    return result;
   }
 
   if (value instanceof Map) {
@@ -284,14 +284,14 @@ const replicate = <Type>(
         replicate(entry[0], limit, depth, cache),
         replicate(entry[1], limit, depth, cache),
       );
-    return result as Type;
+    return result;
   }
 
   if (value instanceof Set) {
     const result = new Set();
     cache.set(value, result);
     for (const key of value) result.add(replicate(key, limit, depth, cache));
-    return result as Type;
+    return result;
   }
 
   if (isBuffer(value)) {
@@ -299,19 +299,19 @@ const replicate = <Type>(
     // same memory; the Uint8Array implementation copies while species keeps the Buffer type
     const result = Uint8Array.prototype.slice.call(value);
     cache.set(value, result);
-    return result as Type;
+    return result;
   }
 
-  if (isTypedArray(value)) {
+  if (isTypedArray(value) && typeof value.slice === 'function') {
     const result = value.slice();
     cache.set(value, result);
-    return result as Type;
+    return result;
   }
 
   if (isArrayBuffer(value) || isSharedArrayBuffer(value)) {
     const result = value.slice();
     cache.set(value, result);
-    return result as Type;
+    return result;
   }
 
   if (value instanceof DataView) {
@@ -322,7 +322,7 @@ const replicate = <Type>(
     );
     cache.set(value, result);
     replicateProperties(result, value, limit, depth, cache);
-    return result as Type;
+    return result;
   }
 
   if (typeof File !== 'undefined' && value instanceof File) {
@@ -331,15 +331,21 @@ const replicate = <Type>(
       lastModified: value.lastModified,
     });
     cache.set(value, result);
-    replicateProperties(result, value, limit, depth, cache);
-    return result as Type;
+    replicateProperties(
+      result, value, limit, depth, cache, undefined,
+      getSymbols(value).filter((symbol) => !hasOwnProperty(result, symbol)),
+    );
+    return result;
   }
 
   if (isBlob(value)) {
     const result = new Blob([value], { type: value.type });
     cache.set(value, result);
-    replicateProperties(result, value, limit, depth, cache);
-    return result as Type;
+    replicateProperties(
+      result, value, limit, depth, cache, undefined,
+      getSymbols(value).filter((symbol) => !hasOwnProperty(result, symbol)),
+    );
+    return result;
   }
 
   if (value instanceof Error) {
@@ -368,11 +374,32 @@ const replicate = <Type>(
       // @ts-expect-error: The `cause` property is only available in ECMAScript 2022 (ES2022)
       result.cause = replicate(value.cause, limit, depth, cache);
     replicateProperties(result, value, limit, depth, cache);
-    return result as Type;
+    return result;
   }
 
-  if (typeof value === 'object' && isCloneable(value)) {
+  if (typeof value === 'object' && value !== null) {
     const prototype = getPrototypeOf(value);
+    const foreign = prototype === Object.prototype || prototype === null
+      ? undefined
+      : copyForeignBuiltin(value);
+    if (foreign !== undefined) {
+      cache.set(value, foreign);
+      if (foreign instanceof Map) {
+        for (const [key, item] of Map.prototype.entries.call(value))
+          foreign.set(replicate(key, limit, depth, cache), replicate(item, limit, depth, cache));
+      } else if (foreign instanceof Set) {
+        for (const item of Set.prototype.values.call(value))
+          foreign.add(replicate(item, limit, depth, cache));
+      } else if (Object.prototype.toString.call(foreign) === '[object Error]') {
+        for (const key of ['cause', 'errors'])
+          if (hasOwnProperty(value, key))
+            defineProperty(foreign, key, { value: replicate(value[key], limit, depth, cache), writable: true, configurable: true });
+        replicateProperties(foreign, value, limit, depth, cache);
+      } else if (foreign instanceof DataView)
+        replicateProperties(foreign, value, limit, depth, cache);
+      return foreign;
+    }
+    if (!isCloneable(value)) return value;
     const profile = getPrototypeProfile(prototype);
     // Boxed primitives keep their value in an internal slot that Object.create lacks
     const box = profile.boxed ? replicateBox(value!, prototype) : null;
@@ -387,7 +414,7 @@ const replicate = <Type>(
       cache,
       box === null ? profile.intercepted : undefined,
     );
-    return result as Type;
+    return result;
   }
 
   return value;
@@ -404,6 +431,7 @@ const replicate = <Type>(
  * @param intercepted - For a target just created from its prototype, the inherited keys
  *   besides `__proto__` that would intercept assignment (`null` when there are none);
  *   `undefined` when `target` may already carry own properties
+ * @param symbolKeys - Optional source symbols, excluding constructor-owned host internals
  */
 const replicateProperties = (
   target: Record<PropertyKey, any>,
@@ -412,6 +440,7 @@ const replicateProperties = (
   depth: number,
   cache: Map<object, any>,
   intercepted?: ReadonlySet<PropertyKey> | null,
+  symbolKeys?: readonly symbol[],
 ): void => {
   const keys = Object.keys(source);
   for (let i = 0, l = keys.length; i < l; i++) {
@@ -421,7 +450,7 @@ const replicateProperties = (
     else
       replicateProperty(target, source, key, limit, depth, cache, intercepted);
   }
-  const symbols = getSymbols(source);
+  const symbols = symbolKeys ?? getSymbols(source);
   for (let i = 0, l = symbols.length; i < l; i++) {
     const symbol = symbols[i];
     if (intercepted === null)
