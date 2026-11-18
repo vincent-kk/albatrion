@@ -191,3 +191,46 @@ it('(round-2 promise-modal 3) falls back from an inert opener across light and s
   expect(light).toBe(true);
   expect(shadow).toBe(light);
 });
+
+it('(round-2 promise-modal 1, 6) releases styles after an open modal host is removed in either tree', async () => {
+  async function removeHost(shadowed: boolean) {
+    const host = document.createElement('div');
+    const page = document.createElement('main');
+    document.body.append(host, page);
+    const tree = shadowed ? host.attachShadow({ mode: 'open' }) : host;
+    const mount = document.createElement('div');
+    tree.append(mount);
+    const overflow = document.body.style.overflow;
+    const view = render(<ModalProvider root={mount} />);
+    let result!: Promise<boolean>;
+    act(() => {
+      result = confirm({ title: 'Detached host' });
+    });
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    const target = tree instanceof ShadowRoot ? tree : document;
+    const styles = () =>
+      target.querySelectorAll('style').length +
+      (target.adoptedStyleSheets?.length ?? 0);
+    expect(styles()).toBeGreaterThan(0);
+    host.remove();
+    expect(() => view.unmount()).not.toThrow();
+    await expect(result).resolves.toBe(false);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    return {
+      styles: styles(),
+      modal: tree.querySelector('[role="dialog"]') !== null,
+      inert: page.hasAttribute('inert'),
+      overflow: document.body.style.overflow === overflow,
+    };
+  }
+  const light = await removeHost(false);
+  reset();
+  const shadow = await removeHost(true);
+  expect(light).toEqual({
+    styles: 0,
+    modal: false,
+    inert: false,
+    overflow: true,
+  });
+  expect(shadow).toEqual(light);
+});
