@@ -24,6 +24,10 @@ export abstract class AbstractNode<T, B> {
   version = 0;
   /** Whether the request already has a result or error. */
   private __settled__ = false;
+  /** Visibility captured by the first settlement, independent of later route changes. */
+  private __isVisibleAtSettlement__ = false;
+  /** Whether the first result or error happened while the modal was shown. */
+  get isVisibleAtSettlement() { return this.__isVisibleAtSettlement__; }
   /** Reports whether a result or rendering error is final. */
   get settled() {
     return this.__settled__;
@@ -118,6 +122,7 @@ export abstract class AbstractNode<T, B> {
   /** Commits the first result and publishes the settled transition. */
   protected onResolve(result: T | undefined | null) {
     if (this.__settled__) return;
+    this.__isVisibleAtSettlement__ = this.__visible__;
     this.__settled__ = true;
     this.__handleResolve__?.(result);
     this.publish();
@@ -126,6 +131,7 @@ export abstract class AbstractNode<T, B> {
   /** Rejects an uncompleted request with its rendering error. */
   onReject(error: unknown) {
     if (this.__settled__) return;
+    this.__isVisibleAtSettlement__ = this.__visible__;
     this.__settled__ = true;
     this.__handleReject__?.(error);
     this.publish();
