@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from 'react';
+import type { PropsWithChildren, ReactPortal } from 'react';
 
 import { Anchor } from './Anchor';
 import { Portal as BasePortal } from './Portal';
@@ -39,12 +39,14 @@ export type { Anchor, BasePortal, withPortal };
  *
  * ### Design Philosophy
  *
- * This dual-export approach provides both convenience and flexibility:
- * - Use `Portal.*` for quick prototyping and compact code
- * - Use individual imports when you need detailed documentation or tree-shaking
- * - All approaches provide identical functionality and type safety
+ * The compound Portal is the public value export. Use Portal.with and Portal.Anchor
+ * at runtime; the individual implementation names are exported only as type references.
  */
-export const Portal = Object.assign(BasePortal, {
+export const Portal: {
+  (props: PropsWithChildren): ReactPortal | null;
+  with: typeof withPortal;
+  Anchor: typeof Anchor;
+} = Object.assign(BasePortal, {
   /**
    * Higher-Order Component that enhances components with Portal functionality.
    *
@@ -71,8 +73,4 @@ export const Portal = Object.assign(BasePortal, {
    * @returns Div element that serves as portal mounting point
    */
   Anchor,
-}) as {
-  (props: PropsWithChildren): null;
-  with: typeof withPortal;
-  Anchor: typeof Anchor;
-};
+});

@@ -4,6 +4,8 @@
 
 Breaking: `Portal` now follows its source React ancestors for context and event bubbling, matching native React portals and preserving subtree state across Activity hide/show.
 
+`Portal` now declares its call result as `ReactPortal | null`, rather than `null` alone, matching content rendered after the anchor attaches. Consumers assigning the result to `null` must accept the portal result as well.
+
 Before, a provider wrapping only the Portal source was ignored inside its content:
 
 ```tsx

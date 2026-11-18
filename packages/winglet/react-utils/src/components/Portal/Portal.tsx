@@ -1,4 +1,4 @@
-import { type PropsWithChildren, memo } from 'react';
+import type { PropsWithChildren, ReactPortal } from 'react';
 
 import { createPortal } from 'react-dom';
 
@@ -9,7 +9,7 @@ import { usePortalContext } from './context/usePortalContext';
  * @param children - Content placed at Portal.Anchor once its DOM node attaches
  * @returns A React portal, or null while no anchor is mounted, including server rendering
  */
-export const Portal = memo(({ children }: PropsWithChildren) => {
+export const Portal = ({ children }: PropsWithChildren): ReactPortal | null => {
   const { anchor } = usePortalContext();
   return anchor ? createPortal(children, anchor) : null;
-});
+};
