@@ -1,5 +1,8 @@
 import { getCssEscapeEnd } from '../../../utils/cssTokens/getCssEscapeEnd';
-import { getEscapedUrlEnd } from '../../../utils/cssTokens/getEscapedUrlEnd';
+import {
+  URL_ESCAPE_START,
+  getEscapedUrlEnd,
+} from '../../../utils/cssTokens/getEscapedUrlEnd';
 import {
   ASTERISK,
   BACKSLASH,
@@ -9,6 +12,7 @@ import {
   SLASH,
 } from '../constants/charCode';
 import { findUnquotedUrlEnd } from './findUnquotedUrlEnd';
+import { findQuoteEnd } from './skipOpaqueToken/findQuoteEnd';
 
 /**
  * Skips a token whose characters are never CSS structure: a quoted string, a
@@ -22,6 +26,9 @@ import { findUnquotedUrlEnd } from './findUnquotedUrlEnd';
 export const skipOpaqueToken = (css: string, index: number): number => {
   const code = css.charCodeAt(index);
   if (code === BACKSLASH) {
+    const following = css.charCodeAt(index + 1);
+    if (!URL_ESCAPE_START[following] && following !== 13)
+      return Math.min(index + 2, css.length);
     const end = getEscapedUrlEnd(css, index);
     return end === index ? getCssEscapeEnd(css, index) : end;
   }
@@ -32,16 +39,4 @@ export const skipOpaqueToken = (css: string, index: number): number => {
     return end === -1 ? css.length : end + 2;
   }
   return code === L_PAREN ? findUnquotedUrlEnd(css, index) : index;
-};
-
-const findQuoteEnd = (css: string, open: number, quote: number): number => {
-  for (let index = open + 1, length = css.length; index < length; index++) {
-    const code = css.charCodeAt(index);
-    if (code === quote) return index + 1;
-    if (code === 10 || code === 13 || code === 12) return index;
-    if (code === BACKSLASH) {
-      index = getCssEscapeEnd(css, index) - 1;
-    }
-  }
-  return css.length;
 };

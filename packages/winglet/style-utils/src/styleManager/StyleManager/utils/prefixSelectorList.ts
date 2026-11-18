@@ -1,17 +1,23 @@
 import {
   BACKSLASH,
   COMMA,
+  DOUBLE_QUOTE,
   L_PAREN,
   R_PAREN,
+  SINGLE_QUOTE,
   SLASH,
 } from '../constants/charCode';
 import { prefixSelector } from './prefixSelector';
-import { prefixLiteralSelector } from './prefixSelectorList/prefixLiteralSelector';
 import { skipOpaqueToken } from './skipOpaqueToken';
 import { trimSelector } from './trimSelector';
 
 /** Characters that may hide a comma from the list structure. */
 const NESTING_CHARACTER = /[("'\\/]/;
+
+/** Only these remaining characters can open an opaque selector token. */
+const OPAQUE_CHARACTER = new Uint8Array(128);
+for (const code of [DOUBLE_QUOTE, SINGLE_QUOTE, SLASH, BACKSLASH])
+  OPAQUE_CHARACTER[code] = 1;
 
 /**
  * Prefixes every selector of the selector list `css[start, end)` with the scope class.
@@ -35,22 +41,18 @@ export const prefixSelectorList = (
   let result = '';
   let partStart = start;
   // Tested on the list alone: a search of the whole text could run to its end per list.
-  const list = css.slice(start, end);
-  if (!NESTING_CHARACTER.test(list)) {
+  if (!NESTING_CHARACTER.test(css.slice(start, end))) {
     for (;;) {
       const comma = css.indexOf(',', partStart);
       if (comma === -1 || comma >= end)
         return (
-          result +
-          prefixLiteralSelector(css.slice(partStart, end).trim(), prefix)
+          result + prefixSelector(css.slice(partStart, end).trim(), prefix)
         );
       result +=
-        prefixLiteralSelector(css.slice(partStart, comma).trim(), prefix) + ',';
+        prefixSelector(css.slice(partStart, comma).trim(), prefix) + ',';
       partStart = comma + 1;
     }
   }
-  const hasEscapes = list.includes('\\');
-  const literal = !hasEscapes && !list.includes('/');
   let depth = 0;
   for (let index = start; index < end; index++) {
     const code = css.charCodeAt(index);
@@ -58,12 +60,8 @@ export const prefixSelectorList = (
     if (code > SLASH && code !== BACKSLASH) continue;
     if (code === COMMA) {
       if (depth !== 0) continue;
-      const part = css.slice(partStart, index);
-      const selector = hasEscapes ? trimSelector(part) : part.trim();
       result +=
-        (literal
-          ? prefixLiteralSelector(selector, prefix)
-          : prefixSelector(selector, prefix)) + ',';
+        prefixSelector(trimSelector(css.slice(partStart, index)), prefix) + ',';
       partStart = index + 1;
     } else if (code === L_PAREN) {
       // Only `url(` can make a parenthesis opaque, and it ends in `l`.
@@ -74,17 +72,12 @@ export const prefixSelectorList = (
       if (next > index) index = next - 1;
       else depth++;
     } else if (code === R_PAREN) depth--;
-    else {
+    else if (OPAQUE_CHARACTER[code]) {
       const next = skipOpaqueToken(css, index);
       if (next > index) index = next - 1;
     }
   }
-  const part = css.slice(partStart, end);
-  const selector = hasEscapes ? trimSelector(part) : part.trim();
   return (
-    result +
-    (literal
-      ? prefixLiteralSelector(selector, prefix)
-      : prefixSelector(selector, prefix))
+    result + prefixSelector(trimSelector(css.slice(partStart, end)), prefix)
   );
 };
