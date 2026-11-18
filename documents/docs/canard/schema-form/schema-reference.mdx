@@ -267,3 +267,5 @@ Mobile sliders accept `range`, `marks`, and `lazy` in that same prop group. `laz
 UI bounds guide interaction; schema validation remains responsible for accepting or rejecting the final value.
 
 Input props are payload, not frame configuration. Follow the [position-specific unwrapped rules](./api-reference#input-frames) and [field error hook](./api-reference#field-errors) when an input needs feedback.
+
+Custom inputs apply their supplied `id` to the focusable control; group renderers use `labelId` for their title and radio options use that scoped `id` as the native name. See [control identifiers and author responsibility](./api-reference#control-identifiers-and-author-responsibility) for the executable single-control and group examples.

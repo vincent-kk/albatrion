@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+배열 연산이 포함된 배치의 마지막 정착 뒤에만 최종 방출 값을 시작 값과 깊이 비교합니다. 내용이 같으면 살아 있는 노드의 방출 참조를 시작 값으로 복원하여 onChange를 생략합니다. 항목 신원·상태·오류·배열 배치는 이미 순차 연산대로 적용한 결과를 유지합니다. 일반 스칼라 배치는 이 비교나 복원 순회를 실행하지 않습니다.
+
 - 상태 확정·배달 후보와 payload 생성은 [settle](../settle/DETAIL.md), 판정의 최신성·라우팅은 [validation](../validation/DETAIL.md), 실제 예약 시점은 [validationScheduling](../validationScheduling/DETAIL.md)이 소유합니다. write는 이 결과를 연결하며 자체 비교·검증 엔진을 만들지 않습니다.
 - 오류 분류·공개 코드·기록 형은 [errors](../../../errors/DETAIL.md)에 둡니다. 이 문서는 발생을 모으고 전달하는 책임만 정합니다.
 - 캐럿·IME·Refresh/Remount의 입력 수명은 [FieldInputBridge](../../../components/FieldProxy/components/FieldInputBridge/DETAIL.md), 늦은 구독의 catch-up과 제출은 [hooks](../../../hooks/DETAIL.md), 트리 선택·재생성·첫 로드 보고는 [RootNodeContext](../../../providers/RootNodeContext/DETAIL.md)를 따릅니다. 동기 배달을 지연해 해당 계층의 수명 문제를 숨기지 않습니다.

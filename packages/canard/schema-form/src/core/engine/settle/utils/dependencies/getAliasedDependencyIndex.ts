@@ -212,9 +212,20 @@ class AliasedDependencyIndex {
               watch(target, dependency);
         }
       }
-    for (const entry of node.blueprintNode.childEntries)
+    for (const entry of node.blueprintNode.childEntries) {
+      if (
+        node.path === node.blueprintNode.path &&
+        entry.node.path === appendSegment(node.path, entry.name)
+      )
+        continue;
       for (const declaration of entry.declarations)
         for (const gate of declaration.gates) {
+          if (
+            node.blueprintNode.declarations.some((owner) =>
+              owner.gates.includes(gate),
+            )
+          )
+            continue;
           const expression = getGateExpression(this.blueprint, gate.schemaPath);
           if (!expression) continue;
           const childHost =
@@ -234,6 +245,7 @@ class AliasedDependencyIndex {
           for (const dependency of expression.dependencies)
             watch(host, dependency, appendSegment(node.path, entry.name));
         }
+    }
     const keys: string[] = [];
     for (const [path, owners] of paths)
       for (const owner of owners) {

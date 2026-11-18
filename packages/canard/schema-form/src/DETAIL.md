@@ -20,6 +20,8 @@ GOAL-023·086. 검증 의미를 직접 구현해 속도를 얻지 않습니다. 
 
 ## API Contracts
 
+기본 ESM과 Node ESM은 하나의 번들 그래프에서 출력합니다. Node 출력의 개발 플래그 치환을 되돌리면 기본 ESM의 바이트와 같아야 하므로 독립 그래프 순회 순서에 결과를 맡기지 않습니다. CommonJS의 strict 선언과 개발 플래그 배치는 유지합니다.
+
 LANDING-067·087·205. 패키지는 단일 공개 진입점에서 이름으로 계약을 조합합니다. [core](core/DETAIL.md)의 호스트 바인딩 통로는 내부 계약이며 제품 공개 이름을 자동으로 넓히지 않습니다. options·controls·presentation의 의미 변경도 공개 계약 변경입니다. 작성자가 스키마를, 호출자가 Form·명령을, 사용자가 입력을 제공한다는 구분으로 값 변경의 책임을 판단합니다(GOAL-085).
 
 주소의 빈 이름·예약 이름 의미는 [jsonPointer](helpers/jsonPointer/DETAIL.md)가 소유합니다. Form 경로 매핑·노드 탐색·검증 라우팅이 각각 다른 주소 언어를 만들지 않습니다. 공개 값 채널과 노드 수명은 [surface](core/surface/DETAIL.md), Form의 읽기·제출은 [Form](components/Form/DETAIL.md)의 계약으로 연결합니다.

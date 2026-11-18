@@ -24,12 +24,13 @@ Use `ErrorVisibility.AfterTouch` for feedback after blur, or `ErrorVisibility.Af
 A custom input publishes edits through `onChange` and renders messages behind `errorVisible`; this input also sets Touched on blur so a test can assert immediately (when Form records Touched itself is described in [interaction state](interaction-state.md)):
 
 ```tsx
-function NameInput({ value, onChange, node }: FieldInputProps<string>) {
+function NameInput({ id, value, onChange, node }: FieldInputProps<string>) {
   const { errors, errorVisible } = useFieldErrors(node);
 
   return (
     <>
       <input
+        id={id}
         aria-label="Name"
         value={value ?? ''}
         onChange={(event) => onChange(event.target.value || undefined)}
@@ -187,3 +188,5 @@ const ErrorAwareInput = ({
 Import useFieldErrors and FieldInputProps from `@canard/schema-form` and supply ErrorAwareInput through the usual input selection. Unlike printing raw errors, this preserves the configured formatting.
 
 Limits: During a transition or hydration, React can pause a component’s render while error display becomes permitted. The hook can then lag by one committed render and catches up after that commit. A formatter reading sibling values, module state or time that it does not subscribe to can differ until the next update of the node properties it observes; prefer its arguments. The field computes its own message with the same formatter, so a formatter that throws for a field replaces the whole field with the fallback, and replacing formatError or a part renderer retries it. Only a throw raised solely by an input’s own useFieldErrors call is caught by that input’s boundary, which replacing formatError does not retry.
+
+Custom inputs and plugin renderers follow [control identifiers and author responsibility](field-input.md#control-identifiers-and-author-responsibility): use the supplied id on a focusable control, labelId for a group title, and the scoped id as a native radio group name. path stays the data pointer.

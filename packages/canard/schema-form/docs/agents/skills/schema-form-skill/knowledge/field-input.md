@@ -43,6 +43,7 @@ For string-valued settings, the mapped `SettingsInput` renders branch children a
 const SettingsInput = (props: FieldInputProps) =>
   isTerminalNode(props.node) ? (
     <input
+      id={props.id}
       aria-label={props.path}
       defaultValue={String(props.defaultValue ?? '')}
       onChange={(event) => props.onChange(event.target.value)}
@@ -212,3 +213,50 @@ const ErrorFrame = ({ node, children }: InputRendererProps) => {
 ```
 
 This renderer requests errors with the [field error hook](validation-ux.md#read-one-fields-errors); the same hook works in label and error renderers. Parts that do not request it stay presentation-only. For standalone label/error roots, read [layout surfaces](imperative-and-layout.md#layout-surfaces).
+
+## Control identifiers and author responsibility
+
+The package connects Form.Label and bound label parts to the supplied Form-scoped input id. FieldRenderer receives the matching labelId for group titles, and built-in inputs connect their controls or option labels. Label and ARIA associations are document-wide even when native form owners differ.
+
+A single-control custom input must put its received id on its focusable control. The package cannot choose an element inside an arbitrary custom component for you. Keep path for data lookup; never use path as a DOM id. No automatic missing-target warning is emitted. This minimal controlled input uses FieldInputProps from @canard/schema-form:
+
+```tsx
+const TextControl = ({ id, value, onChange }: FieldInputProps<string>) => (
+  <input
+    id={id}
+    value={value ?? ''}
+    onChange={(event) => onChange(event.target.value)}
+  />
+);
+```
+
+For a composite group, a FieldRenderer connects its title with labelId and aria-labelledby. Each option has its own id and label. Native radio names use the supplied scoped id, including the full field path; they do not use the leaf name. Register the control with controlled: true when it consumes value as in these examples. Both prop types below are exported by @canard/schema-form:
+
+```tsx
+const ChoiceGroup = ({ labelId, Input }: FieldRendererProps) => (
+  <fieldset aria-labelledby={labelId}>
+    <legend id={labelId}>Choice</legend>
+    <Input />
+  </fieldset>
+);
+
+const ChoiceControl = ({ id, value, onChange }: FieldInputProps<string>) => (
+  <>
+    {['One', 'Two'].map((choice, index) => {
+      const optionId = id + '-' + index;
+      return (
+        <label key={choice} htmlFor={optionId}>
+          <input
+            id={optionId}
+            name={id}
+            type="radio"
+            checked={value === choice}
+            onChange={() => onChange(choice)}
+          />
+          {choice}
+        </label>
+      );
+    })}
+  </>
+);
+```

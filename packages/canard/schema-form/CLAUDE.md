@@ -167,7 +167,7 @@ Identity → Tree Structure → Value Management → Computed Properties → Sta
 
 ## Build Output
 
-Runtime bundles are `dist/index.mjs`, `dist/index.node.mjs`, and `dist/index.cjs`; declarations remain in `dist/index.d.ts`. The `node` export condition selects `index.node.mjs` for imports and `index.cjs` for require. Both Node outputs read `NODE_ENV` once at load and retain that decision after later environment changes. The default ESM keeps call-site comparisons. All runtime outputs intentionally remain unminified so consumer bundlers perform final minification.
+Default and Node ESM outputs share one input graph; the Node flag is applied at output time so reversing it recovers the default output byte-for-byte. Runtime bundles are `dist/index.mjs`, `dist/index.node.mjs`, and `dist/index.cjs`; declarations remain in `dist/index.d.ts`. The `node` export condition selects `index.node.mjs` for imports and `index.cjs` for require. Both Node outputs read `NODE_ENV` once at load and retain that decision after later environment changes. The default ESM keeps call-site comparisons. All runtime outputs intentionally remain unminified so consumer bundlers perform final minification.
 
 ## Declaration compatibility check
 

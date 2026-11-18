@@ -22,6 +22,13 @@ export default async () => {
     sourcemap: false,
     minify: false,
   });
+  const esm = await bundleBuildOptions({
+    entry: mainEntry.source,
+    format: 'esm',
+    outFile: mainEntry.import,
+    sourcemap: false,
+    minify: false,
+  });
   const node = await bundleBuildOptions({
     entry: mainEntry.source,
     format: 'esm',
@@ -31,23 +38,20 @@ export default async () => {
   });
 
   return [
-
-    await bundleBuildOptions({
-      entry: mainEntry.source,
-      format: 'esm',
-      outFile: mainEntry.import,
-      sourcemap: false,
-      minify: false,
-    }),
+    {
+      ...esm,
+      output: [
+        esm.output,
+        {
+          ...node.output,
+          plugins: [developmentFlag(true)],
+        },
+      ],
+    },
     {
       ...cjs,
       plugins: [...cjs.plugins, developmentFlag()],
       output: { ...cjs.output, intro: DEVELOPMENT_FLAG_LINE },
-    },
-    {
-      ...node,
-      plugins: [...node.plugins, developmentFlag()],
-      output: { ...node.output, banner: DEVELOPMENT_FLAG_LINE },
     },
   ];
 };

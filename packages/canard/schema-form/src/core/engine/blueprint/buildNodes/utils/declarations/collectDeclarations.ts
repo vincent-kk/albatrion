@@ -55,7 +55,7 @@ export const collectDeclarations = (
 ): PropertyDeclaration[] => {
   if (visiting.includes(input.schemaPath)) return result;
   const schema = readSchemaObject(input.schema);
-  if (input.schemaPath !== '#' && typeof schema.$id === 'string')
+  if (typeof schema.$id === 'string' && input.schema !== context.schema)
     getResourceIndex(context);
   validateControlGroups(
     context,

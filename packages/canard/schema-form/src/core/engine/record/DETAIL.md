@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+batchHasArrayOperation은 배열 연산이 있는 배치에서만 true로 기록하고 가장 바깥 배치의 정착 뒤 비웁니다. 값 사본이나 노드별 기록을 보유하지 않으며 write가 최종 방출 참조 복원의 필요성만 판정합니다. 열린 사슬의 루트 인계에서는 이 표식도 함께 이전합니다.
+
 레코드·행·런타임은 자기 형 `Self`로 부모·자식·생성 결과를 연결하며 공개 클래스에 역의존하지 않습니다. 실제 칸과 호출형은 [레코드 선언](types/record.ts)과 [행 선언](types/behavior.ts)이 정본입니다.
 
 종류별 계산은 [behaviors](../behaviors/DETAIL.md), 원본의 선택·복원·커밋은 [settle](../settle/DETAIL.md), 사건 배달과 진입은 [write](../write/DETAIL.md), 공개 수명은 [surface](../../surface/DETAIL.md)가 소유합니다. 이 모듈은 그 구현을 실행하지 않습니다.

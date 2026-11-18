@@ -24,7 +24,7 @@ import type {
 import type { ValidatorPlugin } from '../type';
 
 /** Renderer implementations shared by compatible package copies in one realm. */
-interface RenderKit {
+export interface RenderKit {
   FieldRenderer: ComponentType<FieldRendererProps>;
   LabelRenderer: ComponentType<LabelRendererProps>;
   InputRenderer?: ComponentType<InputRendererProps>;

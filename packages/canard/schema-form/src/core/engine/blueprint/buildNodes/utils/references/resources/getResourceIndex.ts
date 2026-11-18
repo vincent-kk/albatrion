@@ -11,6 +11,7 @@ import type {
   SchemaResourceIndex,
 } from '../../../../types/analysis';
 import { isBlueprintSchema } from '../isBlueprintSchema';
+import { resolveResourceIdentifier } from './resolveResourceIdentifier';
 
 /**
  * Index authored schema resources through vocabulary-defined schema positions only.
@@ -42,12 +43,16 @@ export const getResourceIndex = (
     if (typeof schema === 'boolean' || ancestors.has(schema)) continue;
     let resource = entry.resource;
     if (typeof schema.$id === 'string') {
-      const identifier = new URL(schema.$id, resource.uri);
-      if (identifier.hash)
-        throw new Error(
-          'A schema resource identifier cannot contain a non-empty fragment.',
-        );
-      resource = { schema, schemaPath, uri: identifier.href.replace(/#$/, '') };
+      resource = {
+        schema,
+        schemaPath,
+        uri: resolveResourceIdentifier(
+          schema.$id,
+          resource.uri,
+          schemaPath,
+          context,
+        ),
+      };
     }
     resources.set(resource.uri, resource);
     scopes.set(schemaPath, resource);

@@ -3,6 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import {
   joinPointerWithPrefixOf,
   parseStandardPointer,
+  rebasePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { AnalysisContext } from '../../../../types/analysis';
@@ -43,5 +44,8 @@ export const resolveResourceReference = (
   if (!isBlueprintSchema(schema))
     throw new Error('The reference must identify a schema.');
   const pointer = joinPointerWithPrefixOf(fragment, names);
-  return { schema, schemaPath: resource.schemaPath + pointer.slice(1) };
+  return {
+    schema,
+    schemaPath: rebasePointer(pointer, '#', resource.schemaPath),
+  };
 };

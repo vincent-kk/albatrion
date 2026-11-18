@@ -271,6 +271,8 @@ export interface FieldNodeRuntime<Self>
   isFeedbackLimitReported?: boolean;
   /** Number of active nested batch callbacks. */
   batchDepth?: number;
+  /** Final output reconciliation is eligible only after a batched array verb. */
+  batchHasArrayOperation?: true;
   /** Last relayed input output value per node, consumed by the first synchronous settlement. */
   inputRelays?: FieldNodeInputRelay<Self>[];
   /** Number of active nested `visitSubtree` walks on this tree. */

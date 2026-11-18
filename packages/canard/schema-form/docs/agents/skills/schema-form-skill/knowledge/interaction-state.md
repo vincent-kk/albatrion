@@ -12,9 +12,10 @@ FieldInput's `onChange` is the user-input path and marks Edited.
 Form records Touched one frame after blur by itself; an input that also sets it on blur, as below, only makes it immediate:
 
 ```tsx
-function EditableName({ value, onChange, node }: FieldInputProps<string>) {
+function EditableName({ id, value, onChange, node }: FieldInputProps<string>) {
   return (
     <input
+        id={id}
       aria-label="Editable name"
       value={value ?? ''}
       onChange={(event) => onChange(event.target.value)}
@@ -135,3 +136,5 @@ Test a programmatic edit: output becomes divergent while Edited stays false.
 Then edit back through the input: divergence becomes false while Edited remains true.
 Clear state and verify the value remains; reset and verify the loaded output, cleared interaction flags and false divergence together.
 Replace default/schema props without resetting and verify that the tree and baseline remain until reset.
+
+Custom inputs and plugin renderers follow [control identifiers and author responsibility](field-input.md#control-identifiers-and-author-responsibility): use the supplied id on a focusable control, labelId for a group title, and the scoped id as a native radio group name. path stays the data pointer.

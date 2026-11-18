@@ -121,14 +121,15 @@ The Antd5, Antd6, Antd Mobile and MUI plugins register label and error parts wit
 Unscoped registrations share one versioned registry across compatible package copies in the same realm. Independently bundled applications can opt into isolation with a stable string or symbol:
 
 ```tsx
-import { Form, FormProvider, registerPlugin } from '@canard/schema-form';
-
 const applicationScope = Symbol('application');
 registerPlugin(myPlugin, { scope: applicationScope });
-
-<FormProvider pluginScope={applicationScope}>
-  <Form jsonSchema={schema} />
-</FormProvider>;
+const application = (
+  <FormProvider pluginScope={applicationScope}>
+    <Form jsonSchema={schema} />
+  </FormProvider>
+);
 ```
 
 Use the same token for every compatible copy belonging to that application. Different scopes and the unscoped registry never inherit each other's registrations. `registerPlugin(null, { scope: applicationScope })` resets only that scope, including its deduplication record. Without an option, `registerPlugin(null)` still resets the realm-shared defaults. Register before rendering: registration is not reactive, and scoped registries live for the lifetime of the realm.
+
+Custom inputs and plugin renderers follow [control identifiers and author responsibility](field-input.md#control-identifiers-and-author-responsibility): use the supplied id on a focusable control, labelId for a group title, and the scoped id as a native radio group name. path stays the data pointer.

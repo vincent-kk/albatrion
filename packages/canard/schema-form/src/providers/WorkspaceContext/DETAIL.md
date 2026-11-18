@@ -8,6 +8,8 @@
 
 ## API Contracts
 
+라벨의 htmlFor·id와 aria 연결은 native form owner와 무관하게 문서 전체에서 해석합니다. 서로 다른 Form이 각자 native form 요소를 가지더라도 같은 id를 재사용하면 연결 대상이 충돌하므로 모든 Form에 고유 scope를 적용합니다. 포털의 입력은 자기 wrapper 밖에서 같은 native form owner를 공유하거나 owner가 없을 수도 있으므로 native form 경계만으로 id·radio name 충돌을 해결하지 않습니다.
+
 폼별 DOM 식별 범위는 Form마다 한 번의 useId로 생성하며 context에 보유합니다. 서버와 클라이언트는 같은 트리·identifierPrefix를 사용하고 독립 React root의 prefix는 호스트가 구별합니다. 범위는 데이터 경로와 분리하여 같은 경로의 여러 Form이 레이블·선택 그룹을 공유하지 않게 합니다.
 
 외부 기본 context에 Form context를 덮고 원래 딕셔너리는 수정하지 않습니다. [context 비교 계약](../DETAIL.md)에 따른 안정화로 동등한 값의 참조 교체가 불필요한 Context 전파를 만들지 않게 합니다.

@@ -3,6 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import {
   joinPointerWithPrefixOf,
   parseStandardPointer,
+  stripFragment,
 } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
@@ -28,7 +29,7 @@ export const resolveReference = (
   let pointer: string;
   let schema: unknown;
   try {
-    if (context.resourceIndex || !reference.startsWith('#'))
+    if (context.resourceIndex || stripFragment(reference) === reference)
       return resolveResourceReference(context, reference, schemaPath);
     const names = parseStandardPointer(reference);
     pointer = joinPointerWithPrefixOf(reference, names);

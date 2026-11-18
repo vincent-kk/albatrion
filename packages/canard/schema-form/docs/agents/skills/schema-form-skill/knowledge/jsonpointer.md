@@ -37,3 +37,5 @@ rootNode.find('/tilde~0here');
 - Expressions cannot use `*`; `fieldInputMap` cannot use `..`/`.`/`@` (see the SKILL.md matrix).
 
 For Form.Label's htmlFor/id addresses and standalone error placement, follow [standalone part roots](imperative-and-layout.md#standalone-part-roots).
+
+Use the supplied id for a custom focusable control and native radio names, and FieldRenderer.labelId for group titles; [the identifier contract](field-input.md#control-identifiers-and-author-responsibility) keeps these separate from the data path.

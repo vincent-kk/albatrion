@@ -15,6 +15,7 @@ export const markBatchArrayOperation = <Self extends FieldNodeRecord<Self>>(
   operation: ArrayOperation,
 ): unknown => {
   const root = node.rootNode;
+  root.runtime.batchHasArrayOperation = true;
   if (root.runtime.batchWrites?.length) flushBatchWrites(root);
   if (refuseDetachedWrite(node)) return undefined;
   return arrangeFieldNodeItems(node, operation);

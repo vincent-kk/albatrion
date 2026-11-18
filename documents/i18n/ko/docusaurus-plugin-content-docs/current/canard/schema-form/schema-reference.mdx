@@ -267,3 +267,5 @@ antd-mobile slider는 숫자 format `slider`로 선택합니다. 일반 배열 �
 UI 한도는 입력 조작을 안내하며 최종 값의 허용 여부는 스키마 검증이 판정합니다.
 
 입력 속성은 페이로드이며 틀 설정이 아닙니다. 입력에 오류 피드백이 필요하면 [위치별 unwrapped 규칙](./api-reference#input-frames)과 [필드 오류 훅](./api-reference#field-errors)을 따르십시오.
+
+사용자 입력은 받은 `id`를 포커스 가능한 컨트롤에 적용하고, 그룹 렌더러는 제목에 `labelId`를 사용하며 radio 선택지는 범위 `id`를 native name으로 사용합니다. 실행되는 단일 입력·그룹 예제는 [입력 식별자와 작성자의 책임](./api-reference#control-identifiers-and-author-responsibility)을 참고하십시오.

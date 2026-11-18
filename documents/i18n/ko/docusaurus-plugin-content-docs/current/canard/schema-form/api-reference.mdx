@@ -288,3 +288,50 @@ SSR은 모든 입력을 렌더링하고 하이드레이션은 이를 그대로 �
 명시적인 배열 스키마는 [`@winglet/json-schema`의 튜플 추론 계약](../../winglet/json-schema/index.mdx#tuple-inference)을 따르며, 유한한 리터럴 `prefixItems`의 선택적 위치와 `items`의 나머지 항목 규칙을 적용합니다. `Form`과 `FormHandle`의 기본 `Value` 타입에 이 추론 튜플이 적용됩니다. 이는 `any[]`보다 좁으므로 자유로운 위치나 초과 항목에 의존하는 코드에는 컴파일 오류가 날 수 있습니다.
 
 정확한 소비자 형상은 `Form<Schema, Value>`, `FormHandle<Schema, Value>` 양쪽의 두 번째 제네릭으로 지정하십시오. 특히 구체적 defaultValue가 handle과 다르게 required 키를 추론할 때 필요합니다. `InferFieldNode`는 정적 근거가 있으면 노드 형을 추론하며 동적 참조·게이트에서는 전체 노드 유니온이 남을 수 있습니다.
+
+## 입력 식별자와 작성자의 책임 {#control-identifiers-and-author-responsibility}
+
+패키지는 Form.Label과 바인딩된 라벨 부품을 Form 범위의 입력 id에 연결합니다. FieldRenderer는 그룹 제목용 labelId를 받고, 기본 입력은 실제 컨트롤이나 선택지 라벨을 연결합니다. 라벨과 ARIA 연결은 native form owner가 달라도 문서 전체에서 해석합니다.
+
+단일 컨트롤 사용자 입력은 받은 id를 포커스 가능한 컨트롤에 적용해야 합니다. 패키지는 임의의 사용자 컴포넌트 안에서 그 요소를 대신 고를 수 없습니다. path는 데이터 조회에 사용하고 DOM id로 쓰지 않습니다. 연결 대상의 누락을 자동으로 경고하지 않습니다. 다음 최소 제어 입력은 @canard/schema-form의 FieldInputProps를 사용합니다:
+
+```tsx
+const TextControl = ({ id, value, onChange }: FieldInputProps<string>) => (
+  <input
+    id={id}
+    value={value ?? ''}
+    onChange={(event) => onChange(event.target.value)}
+  />
+);
+```
+
+복합 그룹은 FieldRenderer가 labelId와 aria-labelledby로 제목을 연결합니다. 각 선택지는 고유한 id와 라벨을 갖습니다. native radio name은 전체 필드 경로를 포함한 범위 id를 사용합니다. 이 예제처럼 value로 제어하는 입력은 controlled: true로 등록합니다. 다음 두 props 타입은 @canard/schema-form에서 제공합니다:
+
+```tsx
+const ChoiceGroup = ({ labelId, Input }: FieldRendererProps) => (
+  <fieldset aria-labelledby={labelId}>
+    <legend id={labelId}>Choice</legend>
+    <Input />
+  </fieldset>
+);
+
+const ChoiceControl = ({ id, value, onChange }: FieldInputProps<string>) => (
+  <>
+    {['One', 'Two'].map((choice, index) => {
+      const optionId = id + '-' + index;
+      return (
+        <label key={choice} htmlFor={optionId}>
+          <input
+            id={optionId}
+            name={id}
+            type="radio"
+            checked={value === choice}
+            onChange={() => onChange(choice)}
+          />
+          {choice}
+        </label>
+      );
+    })}
+  </>
+);
+```
