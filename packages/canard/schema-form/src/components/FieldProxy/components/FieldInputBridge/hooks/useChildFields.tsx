@@ -81,6 +81,11 @@ export const useChildFields = (
   }>(() => ({
     fields: new WeakMap<FieldNode, ChildField>(),
     nextKey: 0,
+    node: undefined,
+    input: undefined,
+    frame: undefined,
+    isControlled: undefined,
+    externalValueRevision: undefined,
   }));
 
   const ChildFields = useMemo(() => {

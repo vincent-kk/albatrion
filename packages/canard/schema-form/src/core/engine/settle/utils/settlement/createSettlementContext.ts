@@ -41,6 +41,8 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
     previousContext: runtime.context,
     target: node,
     kind,
+    source: undefined,
+    writeOrigins: undefined,
     option,
     hasGates:
       !blueprint.capabilities.isBranchless && getTransitionCap(blueprint) > 1,
