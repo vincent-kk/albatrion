@@ -40,13 +40,13 @@ export const useInitialize = (
     const anchor = anchorRef.current;
     const marker = anchor?.firstElementChild;
     const generation = ++lifetime.current.generation;
+    ModalManager.suspend(identity.current);
     queueMicrotask(() => {
       if (generation !== lifetime.current.generation) return;
       if (!anchor || !marker || marker.parentNode !== anchor) {
         ModalManager.detach(identity.current);
         return;
       }
-      ModalManager.suspend(identity.current);
       const observer = new MutationObserver(() => {
         if (marker.parentNode === anchor) return;
         observer.disconnect();

@@ -125,9 +125,9 @@ export class ModalManager {
     ModalManager.flushPrerender();
     return ModalManager.__state__.anchor;
   }
-  /** Whether an anchor exists for the current owner. */
+  /** Whether the current anchor is attached to a root. */
   static get anchored() {
-    return ModalManager.__state__.anchor !== null;
+    return ModalManager.__state__.anchor?.parentElement != null;
   }
   /** Registers an owner or waiter and notifies only the active bootstrap. */
   static attach(
@@ -149,6 +149,11 @@ export class ModalManager {
       ModalManager.__state__.owner &&
       ModalManager.__state__.owner !== identity
     ) {
+      if (ModalManager.__state__.anchor && !ModalManager.__state__.anchor.parentElement &&
+          ModalManager.__state__.anchor.childNodes.length === 0) {
+        ModalManager.detach(ModalManager.__state__.owner);
+        return;
+      }
       if (
         !ModalManager.__state__.warned.has(identity) &&
         process.env.NODE_ENV !== 'production'
