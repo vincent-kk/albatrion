@@ -81,7 +81,7 @@ export async function applyAllPlans({
       dispatch({ type: 'apply-progress', done, current: fileAbs });
     }
     reports.push(
-      summarize(tp.plan, failedActions.length ? 1 : 0, failedActions),
+      summarize(tp.plan, failedActions.length ? 1 : 0, failedActions, [...fileActions, ...[...blockGroups.values()].flat()]),
     );
   }
 
