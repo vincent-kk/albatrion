@@ -109,7 +109,6 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 - `--dry-run` 은 `--force` 를 요구하는 계획에서도 실패 이벤트 없이 진행을 허락한다.
 - 검증: `__tests__/forceConfirm.test.tsx`, `__tests__/confirmForceLabel.test.tsx`.
 
-
 ## Last Updated
 
 TTY 선택 기본값, 진행률 또는 UI 전이 계약이 바뀌면 갱신합니다.

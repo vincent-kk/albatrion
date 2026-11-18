@@ -86,7 +86,8 @@ export async function renderPlain(
         exitCode = 1;
       }
 
-      if (exitCode === 1 || (exitCode === 2 && resultCode === 0)) resultCode = exitCode;
+      if (exitCode === 1 || (exitCode === 2 && resultCode === 0))
+        resultCode = exitCode;
     }
   }
 
@@ -156,7 +157,9 @@ async function renderOneUnit(
   const results = await asyncPool(COPY_CONCURRENCY, fileActions, (action) =>
     applyAction(action, target.assetRoot),
   );
-  const failedActions: Action[] = fileActions.filter((_, index) => results[index].status === 'rejected');
+  const failedActions: Action[] = fileActions.filter(
+    (_, index) => results[index].status === 'rejected',
+  );
   for (const [fileAbs, group] of blockGroups) {
     try {
       await applyBlockActions(fileAbs, group, target.assetRoot);
@@ -165,8 +168,13 @@ async function renderOneUnit(
     }
   }
 
-  for (const action of failedActions) logger.error(`Failed to apply: ${action.relPath}`);
-  const report: InjectReport = summarize(plan, failedActions.length ? 1 : 0, failedActions);
+  for (const action of failedActions)
+    logger.error(`Failed to apply: ${action.relPath}`);
+  const report: InjectReport = summarize(
+    plan,
+    failedActions.length ? 1 : 0,
+    failedActions,
+  );
   return report.exitCode;
 }
 

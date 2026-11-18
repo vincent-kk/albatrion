@@ -54,12 +54,18 @@ export async function applyAllPlans({
       tp.plan.actions,
       force,
     );
-    const results = await asyncPool(CONCURRENCY, fileActions, async (action) => {
-      await applyAction(action, tp.target.assetRoot);
-      done += 1;
-      dispatch({ type: 'apply-progress', done, current: action.relPath });
-    });
-    const failedActions: Action[] = fileActions.filter((_, index) => results[index].status === 'rejected');
+    const results = await asyncPool(
+      CONCURRENCY,
+      fileActions,
+      async (action) => {
+        await applyAction(action, tp.target.assetRoot);
+        done += 1;
+        dispatch({ type: 'apply-progress', done, current: action.relPath });
+      },
+    );
+    const failedActions: Action[] = fileActions.filter(
+      (_, index) => results[index].status === 'rejected',
+    );
     for (const [fileAbs, group] of blockGroups) {
       try {
         await applyBlockActions(fileAbs, group, tp.target.assetRoot);
@@ -69,7 +75,9 @@ export async function applyAllPlans({
       done += group.length;
       dispatch({ type: 'apply-progress', done, current: fileAbs });
     }
-    reports.push(summarize(tp.plan, failedActions.length ? 1 : 0, failedActions));
+    reports.push(
+      summarize(tp.plan, failedActions.length ? 1 : 0, failedActions),
+    );
   }
 
   const hasFailure = reports.some((r) => r.exitCode !== 0);

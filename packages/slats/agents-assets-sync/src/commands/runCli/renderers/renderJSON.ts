@@ -108,7 +108,12 @@ export async function renderJSON(
       );
       units.push(unit);
       if (unit.error) exitCode = 1;
-      else if (exitCode === 0 && unit.requiresForce && !flags.force && !flags.dryRun)
+      else if (
+        exitCode === 0 &&
+        unit.requiresForce &&
+        !flags.force &&
+        !flags.dryRun
+      )
         exitCode = 2;
     }
   }
@@ -176,7 +181,9 @@ async function runUnit(
     const results = await asyncPool(COPY_CONCURRENCY, fileActions, (action) =>
       applyAction(action, target.assetRoot),
     );
-    const failedActions: Action[] = fileActions.filter((_, index) => results[index].status === 'rejected');
+    const failedActions: Action[] = fileActions.filter(
+      (_, index) => results[index].status === 'rejected',
+    );
     for (const [fileAbs, group] of blockGroups) {
       try {
         await applyBlockActions(fileAbs, group, target.assetRoot);
@@ -190,7 +197,11 @@ async function runUnit(
       requiresForce: plan.requiresForce,
       actions: plan.actions,
       report: summarize(plan, failedActions.length ? 1 : 0, failedActions),
-      ...(failedActions.length ? { error: `Failed to apply: ${failedActions.map((action) => action.relPath).join(', ')}` } : {}),
+      ...(failedActions.length
+        ? {
+            error: `Failed to apply: ${failedActions.map((action) => action.relPath).join(', ')}`,
+          }
+        : {}),
     };
   } catch (error) {
     return {

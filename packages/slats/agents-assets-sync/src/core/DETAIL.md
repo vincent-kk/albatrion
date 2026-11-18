@@ -92,7 +92,6 @@
 - 같은 항목에 `--force`를 지정하고 액션을 나누어 적용하면 목적지는 원본 내용을 다시 가진다.
 - `core/injectDocs/__tests__/applyActions.test.ts`에서 검증한다.
 
-
 ## Last Updated
 
 에이전트 대상, 계획 또는 적용 책임의 경계가 바뀌면 갱신합니다.
