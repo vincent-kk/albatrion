@@ -36,9 +36,11 @@ const handleStringPointer = (pointer: string) => {
       { pointer },
     );
   if (pointer.indexOf('~') === -1) return parts;
+  const compiled = new Array<string>(parts.length);
+  compiled[0] = parts[0];
   for (let index = 1; index < parts.length; index++)
-    parts[index] = unescapePath(parts[index]);
-  return parts;
+    compiled[index] = unescapePath(parts[index]);
+  return compiled;
 };
 
 const handleArrayPointer = (segments: (string | number)[]) => {
