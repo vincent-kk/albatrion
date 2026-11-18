@@ -1,5 +1,8 @@
 import { getCssEscapeEnd } from '../cssTokens/getCssEscapeEnd';
-import { getEscapedUrlEnd } from '../cssTokens/getEscapedUrlEnd';
+import {
+  URL_ESCAPE_START,
+  getEscapedUrlEnd,
+} from '../cssTokens/getEscapedUrlEnd';
 import {
   ASTERISK,
   BACKSLASH,
@@ -141,6 +144,12 @@ export const compressCss = (css: string): string => {
       continue;
     }
     if (byte === BACKSLASH) {
+      if (!URL_ESCAPE_START[buffer[cursor + 1]] && buffer[cursor + 1] !== CR) {
+        output[outputIndex++] = byte;
+        if (++cursor < length) output[outputIndex++] = buffer[cursor++];
+        lastByte = 0;
+        continue;
+      }
       const urlEnd = getEscapedUrlEnd(buffer, cursor);
       const end = urlEnd === cursor ? getCssEscapeEnd(buffer, cursor) : urlEnd;
       while (cursor < end) output[outputIndex++] = buffer[cursor++];
@@ -170,8 +179,15 @@ export const compressCss = (css: string): string => {
           break;
         }
         if (stringByte === BACKSLASH && cursor + 1 < length) {
-          const end = getCssEscapeEnd(buffer, cursor);
-          while (cursor + 1 < end) output[outputIndex++] = buffer[++cursor];
+          if (
+            !URL_ESCAPE_START[buffer[cursor + 1]] &&
+            buffer[cursor + 1] !== CR
+          )
+            output[outputIndex++] = buffer[++cursor];
+          else {
+            const end = getCssEscapeEnd(buffer, cursor);
+            while (cursor + 1 < end) output[outputIndex++] = buffer[++cursor];
+          }
         } else if (stringByte <= CR) {
           if (stringByte === CR && buffer[cursor + 1] === LF)
             output[outputIndex++] = buffer[++cursor];

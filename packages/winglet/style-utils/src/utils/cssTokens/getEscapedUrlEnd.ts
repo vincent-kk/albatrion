@@ -4,12 +4,15 @@ import { isCssNameBoundary } from './isCssNameBoundary';
 import { type CssSource, readCssCode } from './readCssCode';
 
 /** ASCII escape starts that can decode a letter in the URL token name. */
-const URL_ESCAPE_START = new Uint8Array(128);
+const urlEscapeStart = new Uint8Array(128);
 for (const code of [
   48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 65, 66, 67, 68, 69, 70, 97, 98, 99,
   100, 101, 102, 85, 117, 82, 114, 76, 108,
 ])
-  URL_ESCAPE_START[code] = 1;
+  urlEscapeStart[code] = 1;
+
+/** Shared readonly lookup for escape starts requiring URL or hex token recognition. */
+export const URL_ESCAPE_START: Readonly<Uint8Array> = urlEscapeStart;
 
 /**
  * Recognize an escaped spelling of the URL token only on the scanner's existing escape path.
