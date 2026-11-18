@@ -11,9 +11,10 @@ import type { FormLabelProps } from './types/props';
  * Renders an accessible label for form fields.
  *
  * Uses children when supplied, otherwise the field name (key or index),
- * associated with its input through `htmlFor={path}`. Its `id="label:${path}"`
+ * associated with its input through the uniquely resolved field path. Its `id="label:${path}"`
  * also lets options groups reference the title through `aria-labelledby`.
- * Both attributes are built from `path` as given, so pass the absolute path.
+ * A query resolving to one node uses that node's path for both attributes.
+ * Multiple matches retain the supplied path; no match renders nothing.
  * The registered LabelRenderer owns the label root; no outer label is added.
  *
  * @example
