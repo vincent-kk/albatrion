@@ -21,7 +21,7 @@ export async function applyBlockActions(
   actions: readonly Action[],
   assetRoot: string,
 ): Promise<void> {
-  let content = await readFile(fileAbs, 'utf-8').then(
+  let content = await readFile(fileAbs, 'latin1').then(
     (text) => text,
     (error: NodeJS.ErrnoException) => {
       if (error?.code === 'ENOENT') return '';
@@ -31,15 +31,16 @@ export async function applyBlockActions(
 
   for (const action of actions) {
     if (action.target.kind !== 'block') continue;
-    const { blockId } = action.target;
+    // Latin-1 is a reversible byte view, including invalid UTF-8 in user prose.
+    const blockId = Buffer.from(action.target.blockId, 'utf8').toString('latin1');
     if (action.kind === 'delete') {
       content = removeBlock(content, blockId);
       continue;
     }
-    const body = await readFile(join(assetRoot, action.relPath), 'utf-8');
+    const body = await readFile(join(assetRoot, action.relPath), 'latin1');
     content = upsertBlock(content, blockId, body);
   }
 
   await mkdir(dirname(fileAbs), { recursive: true });
-  await writeFile(fileAbs, content, 'utf-8');
+  await writeFile(fileAbs, Buffer.from(content, 'latin1'));
 }
