@@ -357,6 +357,9 @@ export function getTrackableHandler<
   /** Whether the function is currently executing */
   let pending = false;
 
+  /** Number of calls whose completion cleanup has not run. */
+  let pendingCallCount = 0;
+
   /** Current state (initialized as a copy of initialState) */
   let state = (initialState ? { ...initialState } : {}) as State;
 
@@ -423,10 +426,11 @@ export function getTrackableHandler<
     } finally {
       hookRunning = false;
     }
+    pendingCallCount++;
     pending = true;
-    publish(); // Notify subscribers of pending state change
 
     try {
+      publish();
       // Execute original function and return its result
       return await origin(...args);
     } finally {
@@ -437,7 +441,7 @@ export function getTrackableHandler<
         afterExecute?.(args, stateManager);
       } finally {
         hookRunning = false;
-        pending = false;
+        pending = --pendingCallCount > 0;
         publish(); // Notify subscribers of completion
       }
     }
