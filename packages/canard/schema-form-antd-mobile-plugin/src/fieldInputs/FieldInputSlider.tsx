@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { Slider, type SliderProps } from 'antd-mobile';
 
@@ -11,6 +11,8 @@ import type {
   FieldInputPropsWithSchema,
   NumberSchema,
 } from '@canard/schema-form';
+
+import { SliderKeyboardControl } from './components/SliderKeyboardControl';
 
 /** A numeric array schema, rendered as a range slider. */
 type NumberArraySchema = ArraySchema & { items: NumberSchema };
@@ -34,6 +36,7 @@ interface FieldInputSliderProps
 
 const FieldInputSlider = ({
   jsonSchema,
+  name,
   type,
   readOnly,
   disabled,
@@ -66,19 +69,23 @@ const FieldInputSlider = ({
 
   const constraints = range && jsonSchema.items && isNumberSchema(jsonSchema.items) ? jsonSchema.items : jsonSchema;
 
-  const { min, max, step, ...changeHandler } = useMemo(() => {
-    return {
-      min: constraints.minimum ?? jsonSchema.minimum,
-      max: constraints.maximum ?? jsonSchema.maximum,
-      step: constraints.multipleOf ?? jsonSchema.multipleOf,
-      ...(lazy === false
-        ? { onChange: handleChange }
-        : { onAfterChange: handleChange }),
-    } as const;
-  }, [handleChange, jsonSchema, constraints, lazy]);
+  const min = constraints.minimum ?? jsonSchema.minimum ?? 0;
+  const max = constraints.maximum ?? jsonSchema.maximum ?? 100;
+  const step = constraints.multipleOf ?? jsonSchema.multipleOf ?? 1;
+  const [draft, setDraft] = useState<number | [number, number]>(initialValue ?? (range ? [min, min] : min));
+  const stops = useMemo(() => marks ? Object.keys(marks).map(Number).filter(Number.isFinite).sort((a,b)=>a-b) : [], [marks]);
+  const handleDraftChange = (value: number | [number, number]) => {
+    setDraft(value);
+    if (lazy === false) handleChange(value);
+  };
+  const handleKeyboardChange = (value: number | [number, number]) => {
+    setDraft(value);
+    handleChange(value);
+  };
 
   return (
     <div role="group" aria-invalid={misfit || undefined}>
+      <SliderKeyboardControl value={draft} min={min} max={max} step={step} stops={stops} disabled={!!(disabled || readOnly)} onChange={handleKeyboardChange}>
       <Slider
         disabled={disabled || readOnly}
         min={min}
@@ -87,8 +94,12 @@ const FieldInputSlider = ({
         range={range}
         marks={marks}
         defaultValue={initialValue}
-        {...changeHandler}
+        value={draft}
+        aria-label={name}
+        onChange={handleDraftChange}
+        onAfterChange={lazy === false ? undefined : handleChange}
       />
+      </SliderKeyboardControl>
     </div>
   );
 };
