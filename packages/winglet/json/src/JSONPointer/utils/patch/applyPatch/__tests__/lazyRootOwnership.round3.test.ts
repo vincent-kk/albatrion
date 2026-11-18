@@ -104,4 +104,24 @@ describe('round-3 json 1: lazy root ownership', () => {
       expect(applyPatch({}, [{ op, path: '', value: first }, { op: 'remove', path: '' }])).toBe(null);
     }
   });
+
+  it('read-only root tests and self-moves preserve nested sharing semantics', () => {
+    const value = freeze({ child: { count: 1 } });
+    for (const op of ['add', 'replace', 'move'] as const) {
+      const source = freeze({ donor: value, target: null });
+      const root: Parameters<typeof applyPatch>[1][number] = op === 'move'
+        ? { op, from: '/donor', path: '' }
+        : { op, path: '', value };
+      const nested = { ...root, path: '/target' };
+      const expected = applyPatch<{ target: typeof value }>(source, [
+        nested,
+        { op: 'test', path: '/target', value },
+        { op: 'move', from: '/target', path: '/target' },
+      ]).target;
+      expect(applyPatch(source, [root, { op: 'test', path: '', value }, { op: 'move', from: '', path: '' }])).toBe(expected);
+      const copied = applyPatch<{ child: { count: number } }>(source, [root, { op: 'copy', from: '', path: '' }]);
+      expect(copied).toEqual(expected);
+      expect(copied.child).not.toBe(value.child);
+    }
+  });
 });
