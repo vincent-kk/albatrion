@@ -92,16 +92,32 @@ describe('round-2 json 8: encoded leading separator', () => {
   });
 });
 
-
 describe('round-2 json 8: COPY fragment errors', () => {
-  it.each(['/out', ''])('reports malformed from fragments for target %s', (path) => {
-    expect(() => applyPatch({ a: 1 }, [{ op: 'copy', from: '#/%', path }])).toThrowError(
-      expect.objectContaining({ specific: 'PATCH_PATH_INVALID' }),
-    );
-  });
+  it.each(['/out', ''])(
+    'reports malformed from fragments for target %s',
+    (path) => {
+      expect(() =>
+        applyPatch({ a: 1 }, [{ op: 'copy', from: '#/%', path }]),
+      ).toThrowError(
+        expect.objectContaining({ specific: 'PATCH_PATH_INVALID' }),
+      );
+    },
+  );
   it('preserves a source getter error after a valid fragment is parsed', () => {
     const error = new Error('source getter');
-    const source = { get a() { throw error; } };
-    expect(() => applyPatch(source, [{ op: 'copy', from: '#/a', path: '/out' }], { immutable: false })).toThrow(error);
+    const source = {
+      get a() {
+        throw error;
+      },
+    };
+    let thrown: unknown;
+    try {
+      applyPatch(source, [{ op: 'copy', from: '#/a', path: '/out' }], {
+        immutable: false,
+      });
+    } catch (cause) {
+      thrown = cause;
+    }
+    expect(thrown).toBe(error);
   });
 });
