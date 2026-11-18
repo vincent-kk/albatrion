@@ -2,7 +2,6 @@ import {
   type ChangeEvent,
   type ReactNode,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 
@@ -17,10 +16,9 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import type { MuiContext } from '../type';
 import { formatProtocol } from './utils/uri/formatProtocol';
 import { parseUri } from './utils/uri/parseUri';
-
-import type { MuiContext } from '../type';
 
 type UriJSONSchema = StringSchema & { format?: 'uri' };
 
@@ -35,14 +33,13 @@ interface FieldInputUriProps
 
 const DEFAULT_PROTOCOLS = ['http', 'https'];
 
-
 const FieldInputUri = ({
   path,
   name,
   required,
   readOnly,
   disabled,
-  defaultValue,
+  value,
   onChange,
   context,
   label: labelProp,
@@ -78,52 +75,30 @@ const FieldInputUri = ({
     hideLabel,
   ]);
 
-
   const normalizedProtocols = useMemo(() => {
     const rawProtocols = protocolsProp || DEFAULT_PROTOCOLS;
     return rawProtocols.map(formatProtocol);
   }, [protocolsProp]);
 
-
-  const textFieldRef = useRef<HTMLInputElement>(null);
-
-
-
-  const { initialProtocol, initialUri, protocolOptions } = useMemo(() => {
-    if (typeof defaultValue !== 'string') {
-      return {
-        initialProtocol: normalizedProtocols[0] ?? '',
-        initialUri: '',
-        protocolOptions: normalizedProtocols,
-      };
-    }
-
-    const parsed = parseUri(defaultValue);
-    return {
-      initialProtocol: parsed.protocol,
-      initialUri: parsed.path,
-      protocolOptions: normalizedProtocols.includes(parsed.protocol)
-        ? normalizedProtocols
-        : [parsed.protocol, ...normalizedProtocols],
-    };
-  }, [defaultValue, normalizedProtocols]);
-
-
-  // The core remounts uncontrolled inputs for external writes and resets.
-  const [protocol, setProtocol] = useState<string>(initialProtocol);
+  const parsed = useMemo(() => typeof value === 'string' ? parseUri(value) : undefined, [value]);
+  const [lastProtocol, setLastProtocol] = useState(parsed?.protocol ?? normalizedProtocols[0] ?? '');
+  const protocol = parsed?.protocol ?? lastProtocol;
+  const uri = parsed?.path ?? '';
+  const protocolOptions = useMemo(() => normalizedProtocols.includes(protocol) ? normalizedProtocols : [protocol, ...normalizedProtocols], [normalizedProtocols, protocol]);
 
   const handleProtocolChange = useHandle((event: SelectChangeEvent<string>) => {
     const newProtocol = event.target.value;
-    setProtocol(newProtocol);
+    setLastProtocol(newProtocol);
 
-    const currentUri = textFieldRef.current?.value || '';
-    const newValue = `${newProtocol}${currentUri}` || undefined;
+    const currentUri = uri;
+    const newValue = currentUri ? `${newProtocol}${currentUri}` : undefined;
     onChange(newValue);
   });
 
   const handleUriChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const newUri = event.target.value;
-    const newValue = `${protocol}${newUri}` || undefined;
+    setLastProtocol(protocol);
+      const newValue = newUri ? `${protocol}${newUri}` : undefined;
     onChange(newValue);
   });
 
@@ -147,14 +122,13 @@ const FieldInputUri = ({
           ))}
         </Select>
         <TextField
-          inputRef={textFieldRef}
           id={path}
           name={name}
           variant={variant}
           fullWidth={fullWidth}
           size={size}
           placeholder={placeholder}
-          defaultValue={initialUri}
+          value={uri}
           onChange={handleUriChange}
           disabled={disabled}
           error={misfit}
@@ -171,6 +145,7 @@ const FieldInputUri = ({
 
 export const FieldInputUriDefinition = {
   Component: FieldInputUri,
+  controlled: true,
   test: ({ type, format, inputType }) =>
     type === 'string' && (format === 'uri' || inputType === 'uri'),
 } satisfies FieldInputDefinition;
