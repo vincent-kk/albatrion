@@ -20,6 +20,8 @@
 
 - 이름의 대소문자·Unicode 정규화만 다른 후보는 목적지와 dev/ino가 같은지 확인한다. 파일시스템이 동일 파일로 해석하는 이름은 고아가 아니며 삭제하지 않는다. 구분하는 볼륨의 서로 다른 파일은 고아로 유지한다.
 
+- 이름 후보는 대문자·소문자 변환과 NFD 정규화가 더 이상 바뀌지 않는 표기로 한 번 색인한다. 단순 소문자화로 놓치는 sigma·sharp S·long S도 파일시스템의 실제 dev/ino 비교로 보호하며, 고아마다 전체 매니페스트를 다시 정규화하지 않는다.
+
 ## API Contracts
 
 - `buildPlan(input: PlanInput): Promise<InjectPlan>`
