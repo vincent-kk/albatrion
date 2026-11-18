@@ -255,6 +255,10 @@ export const equals = <Left, Right>(
   right: Right,
   omit?: Set<PropertyKey> | readonly PropertyKey[],
 ): boolean => {
+  const leftValue: unknown = left;
+  const rightValue: unknown = right;
+  if (leftValue === rightValue || (leftValue !== leftValue && rightValue !== rightValue)) return true;
+  if (leftValue === null || rightValue === null || typeof leftValue !== 'object' || typeof rightValue !== 'object') return false;
   const omits = omit ? (omit instanceof Set ? omit : new Set(omit)) : null;
   return equalsRecursive(left, right, omits);
 };
