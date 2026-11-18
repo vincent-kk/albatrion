@@ -29,7 +29,8 @@ interface FieldInputStringSwitchProps
 }
 
 const FieldInputStringSwitch = ({
-  path,
+  id,
+  name,
   jsonSchema,
   disabled,
   value,
@@ -37,6 +38,7 @@ const FieldInputStringSwitch = ({
   context,
   alias,
   misfit,
+  'aria-labelledby': labelledBy,
 }: FieldInputStringSwitchProps) => {
   const [checked, unchecked] = useMemo(() => {
     const [checked, unchecked] = jsonSchema.enum || [];
@@ -59,12 +61,13 @@ const FieldInputStringSwitch = ({
   });
 
   return (
-    <SwitchKeyboardControl disabled={disabled}>
+    <SwitchKeyboardControl id={id} name={name} disabled={disabled}>
       <Switch
+        aria-labelledby={labelledBy}
         data-focus-target
         tabIndex={disabled ? undefined : 0}
         aria-invalid={misfit || undefined}
-        key={path}
+        key={id}
         disabled={disabled}
         checked={value === checked}
         checkedText={checkedLabel}

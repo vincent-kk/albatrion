@@ -35,6 +35,7 @@ interface FieldInputSliderProps
 }
 
 const FieldInputSlider = ({
+  id,
   jsonSchema,
   name,
   type,
@@ -45,6 +46,7 @@ const FieldInputSlider = ({
   marks,
   lazy,
   misfit,
+  'aria-labelledby': labelledBy,
 }: FieldInputSliderProps) => {
   const range = type === 'array';
   const initialValue = range
@@ -100,6 +102,8 @@ const FieldInputSlider = ({
   return (
     <div role="group" aria-invalid={misfit || undefined}>
       <SliderKeyboardControl
+        id={id}
+        labelledBy={labelledBy}
         value={draft}
         min={min}
         max={max}
