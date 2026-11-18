@@ -3,23 +3,26 @@ import { Box } from '@mui/material';
 import type { FieldRendererProps } from '@canard/schema-form';
 
 /**
- * Keep MUI group layout label-free and retain its helper root.
+ * Connect group titles through the core label address while retaining the helper root.
  * @param props - Bound field parts, node strategy and indentation depth.
  * @returns The existing group structure composed with registered parts.
  */
 export const FieldRenderer = ({
   node,
+  name,
+  labelId,
   depth,
   Input,
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps) => {
-  if (depth === 0) return <Input />;
+  if (depth === 0) return <Input labelId={labelId} />;
 
   if (node.strategy === 'branch') {
     return (
       <Box
         component="fieldset"
+        aria-labelledby={labelId}
         sx={{
           marginBottom: 1,
           marginLeft: depth * 2,
@@ -29,7 +32,10 @@ export const FieldRenderer = ({
           padding: 1,
         }}
       >
-        <Input />
+        <Box component="legend" id={labelId}>
+          {name}
+        </Box>
+        <Input labelId={labelId} />
       </Box>
     );
   } else {
@@ -40,7 +46,7 @@ export const FieldRenderer = ({
           marginLeft: depth * 2,
         }}
       >
-        <Input />
+        <Input labelId={labelId} />
         <ErrorMessage>{errorMessage}</ErrorMessage>
       </Box>
     );

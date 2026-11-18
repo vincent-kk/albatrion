@@ -28,7 +28,7 @@ interface FieldInputTimeProps
 }
 
 const FieldInputTime = ({
-  path,
+  id,
   name,
   jsonSchema,
   required,
@@ -76,8 +76,6 @@ const FieldInputTime = ({
   const timeValue = useMemo(() => {
     if (typeof defaultValue !== 'string' || !defaultValue) return null;
 
-
-
     const today = dayjs().format('YYYY-MM-DD');
     return dayjs(`${today}T${defaultValue}`);
   }, [defaultValue]);
@@ -102,7 +100,7 @@ const FieldInputTime = ({
         ampm={ampm}
         slotProps={{
           textField: {
-            id: path,
+            id,
             name,
             required,
             size,

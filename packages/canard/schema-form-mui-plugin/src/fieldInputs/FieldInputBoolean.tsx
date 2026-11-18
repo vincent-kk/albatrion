@@ -19,7 +19,7 @@ interface FieldInputBooleanProps
 }
 
 const FieldInputBoolean = ({
-  path,
+  id,
   name,
   required,
   disabled,
@@ -49,16 +49,15 @@ const FieldInputBoolean = ({
     },
   );
 
-
   return (
     <FormControlLabel
       label={label}
-      htmlFor={path}
+      htmlFor={id}
       required={required}
       disabled={disabled || readOnly}
       control={
         <Checkbox
-          id={path}
+          id={id}
           name={name}
           disabled={disabled || readOnly}
           indeterminate={indeterminate}

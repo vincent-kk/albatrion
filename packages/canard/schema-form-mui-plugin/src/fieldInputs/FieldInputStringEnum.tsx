@@ -28,7 +28,7 @@ interface FieldInputStringEnumProps
 }
 
 const FieldInputStringEnum = ({
-  path,
+  id,
   name,
   jsonSchema,
   required,
@@ -90,7 +90,7 @@ const FieldInputStringEnum = ({
     onChange(rawValue);
   });
 
-  const labelId = useMemo(() => `label-${path}`, [path]);
+  const labelId = useMemo(() => `input-label:${id}`, [id]);
 
   const initialValue = useMemo(() => {
     if (defaultValue === null) return JSON.stringify(null);
@@ -100,9 +100,11 @@ const FieldInputStringEnum = ({
 
   return (
     <FormControl fullWidth={fullWidth} variant={variant} error={misfit}>
-      <InputLabel id={labelId}>{label}</InputLabel>
+      <InputLabel id={labelId} htmlFor={id}>
+        {label}
+      </InputLabel>
       <Select
-        id={path}
+        id={id}
         name={name}
         labelId={labelId}
         label={label}

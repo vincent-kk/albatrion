@@ -30,7 +30,7 @@ interface FieldInputStringSwitchProps
 }
 
 const FieldInputStringSwitch = ({
-  path,
+  id,
   name,
   jsonSchema,
   required,
@@ -74,7 +74,7 @@ const FieldInputStringSwitch = ({
   return (
     <FormControlLabel
       label={label}
-      htmlFor={path}
+      htmlFor={id}
       required={required}
       disabled={disabled}
       labelPlacement="start"
@@ -86,7 +86,7 @@ const FieldInputStringSwitch = ({
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
           <Typography>{offLabel}</Typography>
           <Switch
-            id={path}
+            id={id}
             name={name}
             checked={value === onValue}
             onChange={handleChange}

@@ -14,7 +14,7 @@ yarn storybook         # Storybook dev (port 6006)
 ## Architecture
 
 The plugin exports a `SchemaFormPlugin` object:
-- `FieldRenderer` composes bound input and error parts without a group label; `LabelRenderer` serves standalone labels.
+- `FieldRenderer` composes bound input and error parts with scoped group titles; `LabelRenderer` serves standalone labels.
 - `ErrorMessageRenderer` owns the error root. The plugin registers `LabelRenderer` and `ErrorMessageRenderer`, with no pass-through input frame.
 - `fieldInputDefinitions` — 15 input component definitions (in priority order)
 
@@ -37,3 +37,7 @@ Date, month and time pickers receive both disabled and readOnly from the form bi
 Radio group, checkbox group, boolean checkbox and slider receive `disabled={disabled || readOnly}`. They keep their own selection state and MUI gives them no read-only mode, so without it a read-only form displays a choice the core has already rejected.
 
 Enum UI identities encode the raw JSON scalar, while labels and aliases use its display string. Initial selection and change payloads use the same identity mapping so null and the string "null" remain distinct.
+
+## Control identifiers
+
+Use `FieldInputProps.id` on the real focusable control; `path` remains a JSON Pointer for data access. Single-control labels target that same id. A group renderer uses `FieldRendererProps.labelId` for its title or legend and connects the group with `aria-labelledby`; options have their own ids. Native radio names use the scoped id, while other input names retain their leaf meaning. The core supplies these addresses; do not build an element id from path.
