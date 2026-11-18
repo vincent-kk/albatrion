@@ -1,3 +1,5 @@
+import { reportHostError } from '@/common-utils/utils/errorReporting/reportHostError';
+
 import type { Fn } from '@aileron/declare';
 
 import { MessageChannelScheduler } from './MessageChannelScheduler';
@@ -35,7 +37,7 @@ let globalScheduler: MessageChannelScheduler | null = null;
  */
 const ensureGlobalScheduler = (): MessageChannelScheduler => {
   if (globalScheduler?.destroyed === false) return globalScheduler;
-  globalScheduler = MessageChannelScheduler.getInstance();
+  globalScheduler = MessageChannelScheduler.getInstance({ onTaskError: reportHostError });
   return globalScheduler;
 };
 

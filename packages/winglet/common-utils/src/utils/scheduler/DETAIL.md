@@ -8,6 +8,8 @@
 - `scheduleNextTick(task)`은 마이크로태스크 이후 실행되지만, Node와 브라우저에서 매크로태스크(`setTimeout`)와의 상대 순서가 다르다 — Node에서는 `setTimeout(0)`보다 먼저, 브라우저 폴백에서는 이후 실행될 수 있다.
 - `scheduleCancelableMacrotask`/`scheduleCancelableMacrotaskSafe`는 스케줄과 동시에 취소 함수를 반환하고, 취소 후에는 콜백이 호출되지 않는다.
 
+브라우저 MessageChannel 폴백을 쓰는 전역 wrapper의 콜백 예외는 호스트 reportError 또는 별도 throw 태스크로 보고하여 네이티브 타이머처럼 관찰 가능하게 합니다. 클래스를 직접 생성하여 onTaskError를 지정하지 않은 경우의 오류 전달 정책은 바꾸지 않습니다.
+
 ## API Contracts
 
 - `scheduleMicrotask: Fn<[task: Fn]>` — `globalThis.queueMicrotask`가 있으면 그것을 바인딩하고, 없으면 `Promise.resolve().then(task)`로 대체한다. 모듈 로드 시 1회 감지.
