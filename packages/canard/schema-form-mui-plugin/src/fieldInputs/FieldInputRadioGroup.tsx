@@ -43,7 +43,6 @@ type FieldInputRadioGroupProps = {
 
 const FieldInputRadioGroup = ({
   id,
-
   node,
   jsonSchema,
   required,

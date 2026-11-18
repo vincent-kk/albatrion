@@ -43,7 +43,6 @@ interface FieldInputStringCheckboxProps
 
 const FieldInputStringCheckbox = ({
   id,
-
   name,
   jsonSchema,
   required,
