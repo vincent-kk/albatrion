@@ -45,5 +45,5 @@ export type InjectEvent =
       readonly exitCode: 0 | 1 | 2;
       readonly dryRun: boolean;
     }
-  | { readonly type: 'fail'; readonly error: Error }
+  | { readonly type: 'fail'; readonly error: Error; readonly exitCode?: 1 | 2 }
   | { readonly type: 'focus-target'; readonly index: number };

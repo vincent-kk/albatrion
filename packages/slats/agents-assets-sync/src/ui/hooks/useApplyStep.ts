@@ -43,13 +43,18 @@ export async function applyAllPlans({
   dispatch({ type: 'apply-start', total });
 
   if (dryRun) {
-    const reports = plans.map((tp) => summarize(tp.plan, 0));
-    dispatch({ type: 'done', reports, exitCode: 0, dryRun: true });
-    return { reports, exitCode: 0 };
+    const reports = plans.map((tp) => summarize(tp.plan, tp.error ? 1 : 0));
+    const exitCode = plans.some((tp) => tp.error) ? 1 : 0;
+    dispatch({ type: 'done', reports, exitCode, dryRun: true });
+    return { reports, exitCode };
   }
 
   const reports: InjectReport[] = [];
   for (const tp of plans) {
+    if (tp.error || (tp.plan.requiresForce && !force)) {
+      reports.push(summarize(tp.plan, tp.error ? 1 : 2));
+      continue;
+    }
     const { fileActions, blockGroups } = partitionActions(
       tp.plan.actions,
       force,
@@ -80,8 +85,8 @@ export async function applyAllPlans({
     );
   }
 
-  const hasFailure = reports.some((r) => r.exitCode !== 0);
-  const exitCode: 0 | 1 | 2 = hasFailure ? 1 : 0;
+  const exitCode: 0 | 1 | 2 = reports.some((r) => r.exitCode === 1)
+    ? 1 : reports.some((r) => r.exitCode === 2) ? 2 : 0;
   dispatch({ type: 'done', reports, exitCode, dryRun: false });
   return { reports, exitCode };
 }
