@@ -17,53 +17,15 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { formatProtocol } from './utils/uri/formatProtocol';
+import { parseUri } from './utils/uri/parseUri';
+
 type StringJSONSchema = StringSchema & {
   format?: 'uri';
 };
 
 const DEFAULT_PROTOCOLS = ['http', 'https', 'ftp', 'mailto', 'tel'];
 
-
-const normalizeProtocol = (protocol: string): string => {
-  return protocol.replace(/:\/\/$/, '').replace(/:$/, '');
-};
-
-
-const getProtocolSeparator = (protocol: string): string => {
-  const normalizedProtocol = normalizeProtocol(protocol);
-
-  return ['mailto', 'tel'].includes(normalizedProtocol) ? ':' : '://';
-};
-
-
-const formatProtocolDisplay = (protocol: string): string => {
-  const normalizedProtocol = normalizeProtocol(protocol);
-  const separator = getProtocolSeparator(normalizedProtocol);
-  return `${normalizedProtocol}${separator}`;
-};
-
-
-const parseUri = (uri: string) => {
-
-  const singleColonMatch = uri.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):(.*)$/);
-  if (singleColonMatch && ['mailto', 'tel'].includes(singleColonMatch[1])) {
-    return {
-      protocol: singleColonMatch[1],
-      path: singleColonMatch[2],
-    };
-  }
-
-
-  const doubleColonMatch = uri.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):\/\/(.*)$/);
-  if (doubleColonMatch) {
-    return {
-      protocol: doubleColonMatch[1],
-      path: doubleColonMatch[2],
-    };
-  }
-
-  return null;
-};
 
 interface FieldInputUriProps
   extends FieldInputPropsWithSchema<
@@ -92,32 +54,22 @@ const FieldInputUri = ({
 
   const normalizedProtocols = useMemo(() => {
     const rawProtocols = protocols || DEFAULT_PROTOCOLS;
-    return rawProtocols.map(normalizeProtocol);
+    return rawProtocols.map(formatProtocol);
   }, [protocols]);
 
 
   const inputRef = useRef<any>(null);
 
   const { initialProtocol, initialUri } = useMemo(() => {
-    if (typeof defaultValue !== 'string' || !defaultValue) {
+    if (typeof defaultValue !== 'string') {
       return {
-        initialProtocol: normalizedProtocols[0],
+        initialProtocol: normalizedProtocols[0] ?? '',
         initialUri: '',
       };
     }
 
     const parsed = parseUri(defaultValue);
-    if (parsed) {
-      return {
-        initialProtocol: normalizeProtocol(parsed.protocol),
-        initialUri: parsed.path,
-      };
-    }
-
-    return {
-      initialProtocol: normalizedProtocols[0],
-      initialUri: defaultValue,
-    };
+    return { initialProtocol: parsed.protocol, initialUri: parsed.path };
   }, [defaultValue, normalizedProtocols]);
 
   // Only the protocol is stateful; the URI input remains uncontrolled.
@@ -129,10 +81,7 @@ const FieldInputUri = ({
       setProtocol(value);
 
       const currentUri = inputRef.current?.input?.value || '';
-      const separator = getProtocolSeparator(value);
-      const newValue = currentUri
-        ? `${value}${separator}${currentUri}`
-        : undefined;
+      const newValue = `${value}${currentUri}` || undefined;
       onChange(newValue);
     },
     [onChange],
@@ -141,8 +90,7 @@ const FieldInputUri = ({
   const handleUriChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       const newUri = event.target.value;
-      const separator = getProtocolSeparator(protocol);
-      const newValue = newUri ? `${protocol}${separator}${newUri}` : undefined;
+      const newValue = `${protocol}${newUri}` || undefined;
       onChange(newValue);
     },
     [protocol, onChange],
@@ -161,7 +109,7 @@ const FieldInputUri = ({
       >
         {map(protocolOptions, (prot) => (
           <Select.Option key={prot} value={prot}>
-            {formatProtocolDisplay(prot)}
+            {prot || 'No scheme'}
           </Select.Option>
         ))}
       </Select>
