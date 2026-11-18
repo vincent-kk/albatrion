@@ -17,16 +17,16 @@ function failure(run: () => unknown): string | undefined {
   } catch (error) {
     return error instanceof Error ? error.message : String(error);
   }
+  return undefined;
 }
 /** Await one explicit lookup, retaining its rejection diagnostics. */
-async function asyncFailure(
-  run: () => PromiseLike<unknown>,
-): Promise<string | undefined> {
+async function asyncFailure(run: () => unknown): Promise<string | undefined> {
   try {
     await run();
   } catch (error) {
     return error instanceof Error ? error.message : String(error);
   }
+  return undefined;
 }
 
 it('round-3 json-schema 1: retries direct, lookup-miss and rejected-document aliases like a fresh store', () => {
