@@ -125,6 +125,7 @@ it('preserves the pre-id schema table while keeping every address and associatio
     expect(computeAccessibleName(group), name + ': named group/control').not.toBe('');
   }
   for (const control of view.container.querySelectorAll<HTMLElement>('input:not([type="hidden"]):not([aria-hidden="true"]), textarea:not([aria-hidden="true"]), [role="switch"], [role="slider"], [role="combobox"]')) {
+    expect(control.id, name + ': control address').not.toBe('');
     const path = control.closest('[data-path]')?.getAttribute('data-path') ?? '';
     if (!/\/\d+$/.test(path)) expect(computeAccessibleName(control), name + ': reachable control').not.toBe('');
   }
