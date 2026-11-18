@@ -28,7 +28,7 @@ interface FieldInputDateProps
 }
 
 const FieldInputDate = ({
-  path,
+  id,
   name,
   disabled,
   readOnly,
@@ -61,7 +61,7 @@ const FieldInputDate = ({
 
   return (
     <DatePicker
-      id={path}
+      id={id}
       name={name}
       disabled={disabled || readOnly}
       disabledDate={disabledDate}

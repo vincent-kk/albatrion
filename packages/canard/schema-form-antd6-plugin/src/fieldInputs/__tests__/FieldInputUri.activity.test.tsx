@@ -81,7 +81,7 @@ describe('URI protocol across an Activity hide and show (antd6)', () => {
         link: 'https://example.com',
       });
 
-      const input = document.querySelector<HTMLInputElement>('input#\\/link')!;
+      const input = document.querySelector<HTMLInputElement>('input[id$=":/link"]')!;
       fireEvent.change(input, { target: { value: 'example.com/x' } });
       const value = formRef.current?.getValue();
       cleanup();
@@ -127,7 +127,7 @@ describe('URI protocol across an Activity hide and show (antd6)', () => {
       </Host>,
     );
     chooseProtocol('https://');
-    const input = document.querySelector<HTMLInputElement>('input#\\/link')!;
+    const input = document.querySelector<HTMLInputElement>('input[id$=":/link"]')!;
     fireEvent.change(input, { target: { value: 'example.com/x' } });
     expect(formRef.current?.getValue()).toEqual({
       link: 'https://example.com/x',

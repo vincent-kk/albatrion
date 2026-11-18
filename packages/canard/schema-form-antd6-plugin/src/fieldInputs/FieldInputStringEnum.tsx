@@ -33,7 +33,7 @@ interface FieldInputStringEnumProps
 }
 
 const FieldInputStringEnum = ({
-  path,
+  id,
   jsonSchema,
   disabled,
   readOnly,
@@ -105,7 +105,7 @@ const FieldInputStringEnum = ({
 
   return (
     <Select
-      id={path}
+      id={id}
       mode={mode}
       filterOption={filterEnumOption}
       placeholder={placeholder}

@@ -25,7 +25,7 @@ interface FieldInputStringProps
 }
 
 const FieldInputString = ({
-  path,
+  id,
   name,
   jsonSchema,
   readOnly,
@@ -52,7 +52,7 @@ const FieldInputString = ({
   });
   return (
     <TextInput
-      id={path}
+      id={id}
       name={name}
       readOnly={readOnly}
       disabled={disabled}

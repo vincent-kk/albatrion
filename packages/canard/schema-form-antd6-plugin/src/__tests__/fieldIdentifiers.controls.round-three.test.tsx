@@ -110,7 +110,7 @@ it.each<[string, JSONSchema, string | number | boolean | string[]]>([
     const addresses = Array.from(fields, (field) =>
       Array.from(
         field.querySelectorAll<HTMLElement>(
-          'input:not([type="hidden"]):not([aria-hidden="true"]), textarea, [role="switch"], [role="slider"], [role="combobox"]',
+          'input:not([type="hidden"]):not([aria-hidden="true"]), textarea:not([aria-hidden="true"]), [role="switch"], [role="slider"], [role="combobox"]',
         ),
         (control) => control.id,
       ),
