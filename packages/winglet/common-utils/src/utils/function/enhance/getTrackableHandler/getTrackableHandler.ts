@@ -374,7 +374,6 @@ export function getTrackableHandler<
   let hookRunning = false;
 
   const publish = (completion = false) => {
-    if (hookRunning) return;
     let failures: unknown[] | undefined;
     for (const listener of listeners) {
       try { listener(); }
@@ -398,7 +397,7 @@ export function getTrackableHandler<
   ) => {
     const update = typeof updater === 'function' ? updater(state) : updater;
     state = { ...state, ...update };
-    publish();
+    if (!hookRunning) publish();
   };
 
   /**
@@ -420,7 +419,7 @@ export function getTrackableHandler<
    * @returns Result of the original function execution, or undefined if execution was prevented
    * @internal
    */
-  const handler = async (...args: Args): Promise<Result | undefined> => {
+  const handler = beforeExecute || afterExecute ? async (...args: Args): Promise<Result | undefined> => {
     // Check for concurrent execution prevention (based on pending status)
     if (preventConcurrent && pending) return undefined;
 
@@ -455,6 +454,17 @@ export function getTrackableHandler<
         pending = --pendingCallCount > 0;
         publish(true);
       }
+    }
+  } : async (...args: Args): Promise<Result | undefined> => {
+    if (preventConcurrent && pending) return undefined;
+    pendingCallCount++;
+    pending = true;
+    try {
+      publish();
+      return await origin(...args);
+    } finally {
+      pending = --pendingCallCount > 0;
+      publish(true);
     }
   };
 
@@ -506,3 +516,4 @@ export function getTrackableHandler<
 
   return handler as TrackableHandlerFunction<Args, Result, State>;
 }
+
