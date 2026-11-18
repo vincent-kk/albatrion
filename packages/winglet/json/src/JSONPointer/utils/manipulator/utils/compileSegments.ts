@@ -21,7 +21,11 @@ const handleStringPointer = (pointer: string) => {
     try {
       pointer = '#' + decodeURIComponent(pointer.slice(1));
     } catch {
-      throw new JSONPointerError('INVALID_POINTER_TYPE', 'JSON pointer fragment contains an invalid percent escape.', { pointer });
+      throw new JSONPointerError(
+        'INVALID_POINTER_TYPE',
+        'JSON pointer fragment contains an invalid percent escape.',
+        { pointer },
+      );
     }
   }
   const parts = pointer.split(JSONPointer.Separator);
@@ -32,7 +36,8 @@ const handleStringPointer = (pointer: string) => {
       { pointer },
     );
   if (pointer.indexOf('~') === -1) return parts;
-  for (let index = 1; index < parts.length; index++) parts[index] = unescapePath(parts[index]);
+  for (let index = 1; index < parts.length; index++)
+    parts[index] = unescapePath(parts[index]);
   return parts;
 };
 

@@ -10,5 +10,7 @@ import { PortalContext } from './PortalContext';
 export const PortalContextProvider = ({ children }: PropsWithChildren) => {
   const [anchor, setPortalAnchor] = useState<HTMLDivElement | null>(null);
   const value = useMemo(() => ({ anchor, setPortalAnchor }), [anchor]);
-  return <PortalContext.Provider value={value}>{children}</PortalContext.Provider>;
+  return (
+    <PortalContext.Provider value={value}>{children}</PortalContext.Provider>
+  );
 };

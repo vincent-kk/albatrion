@@ -61,7 +61,10 @@ import { RuleScoper } from './utils/RuleScoper';
  */
 export class StyleManager {
   private static __SHEETS__ = new Map<string, StyleManager>();
-  private static __SHADOW_SHEETS__ = new WeakMap<ShadowRoot, Map<string, StyleManager>>();
+  private static __SHADOW_SHEETS__ = new WeakMap<
+    ShadowRoot,
+    Map<string, StyleManager>
+  >();
   private __processedStyles__ = new Map<string, string>();
   private __element__: HTMLStyleElement | null = null;
   private __sheet__: CSSStyleSheet | null = null;
@@ -70,7 +73,6 @@ export class StyleManager {
   private __scope__: string;
   private __root__: StyleRoot;
   private __isShadowDOM__: boolean;
-
 
   private constructor(
     private scopeId: string,
@@ -83,7 +85,6 @@ export class StyleManager {
     // Pre-calculate the shadow DOM status
     this.__root__ = config?.shadowRoot || document;
     this.__isShadowDOM__ = !!config?.shadowRoot;
-
   }
 
   /**

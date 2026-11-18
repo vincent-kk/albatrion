@@ -36,8 +36,18 @@ describe('difference round-trip', () => {
     );
     const patch = difference(source, target) as Record<string, unknown>;
 
-    expect(patch).toEqual({ safe: 2, ['__proto__']: { x: 9 }, constructor: { y: 9 }, prototype: { z: 9 } });
-    expect(Object.keys(patch)).toEqual(['safe', '__proto__', 'constructor', 'prototype']);
+    expect(patch).toEqual({
+      safe: 2,
+      ['__proto__']: { x: 9 },
+      constructor: { y: 9 },
+      prototype: { z: 9 },
+    });
+    expect(Object.keys(patch)).toEqual([
+      'safe',
+      '__proto__',
+      'constructor',
+      'prototype',
+    ]);
     expect(Object.getPrototypeOf(patch)).toBe(Object.prototype);
   });
 });

@@ -257,8 +257,18 @@ export const equals = <Left, Right>(
 ): boolean => {
   const leftValue: unknown = left;
   const rightValue: unknown = right;
-  if (leftValue === rightValue || (leftValue !== leftValue && rightValue !== rightValue)) return true;
-  if (leftValue === null || rightValue === null || typeof leftValue !== 'object' || typeof rightValue !== 'object') return false;
+  if (
+    leftValue === rightValue ||
+    (leftValue !== leftValue && rightValue !== rightValue)
+  )
+    return true;
+  if (
+    leftValue === null ||
+    rightValue === null ||
+    typeof leftValue !== 'object' ||
+    typeof rightValue !== 'object'
+  )
+    return false;
   const omits = omit ? (omit instanceof Set ? omit : new Set(omit)) : null;
   return equalsRecursive(left, right, omits);
 };

@@ -1,8 +1,8 @@
 import {
   type ChangeEvent,
   type ComponentType,
-  type MouseEvent as ReactMouseEvent,
   Fragment,
+  type MouseEvent as ReactMouseEvent,
   memo,
   useMemo,
   useRef,

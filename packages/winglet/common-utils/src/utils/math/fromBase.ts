@@ -83,7 +83,8 @@ export const fromBase = (value: string, base: number): number => {
     result = result * base + digit;
   }
   if (isNegative) {
-    if (cleanValue.length === 0) throw new Error('Value must be a non-empty string');
+    if (cleanValue.length === 0)
+      throw new Error('Value must be a non-empty string');
     return -result;
   }
   return result;

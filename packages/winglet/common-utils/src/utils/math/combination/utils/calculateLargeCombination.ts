@@ -11,7 +11,7 @@ export const calculateLargeCombination = (n: number, r: number): number => {
     const product = (result / ((i + 1) / divisor)) * ((n - i) / divisor);
     if (product > Number.MAX_SAFE_INTEGER) {
       let exact = BigInt(result);
-      for (; i < r; i++) exact = exact * BigInt(n - i) / BigInt(i + 1);
+      for (; i < r; i++) exact = (exact * BigInt(n - i)) / BigInt(i + 1);
       return Number(exact);
     }
     result = product;
@@ -21,6 +21,10 @@ export const calculateLargeCombination = (n: number, r: number): number => {
 
 /** Returns the positive common divisor used to cancel one binomial step. */
 const greatestCommonDivisor = (left: number, right: number): number => {
-  while (right) { const remainder = left % right; left = right; right = remainder; }
+  while (right) {
+    const remainder = left % right;
+    left = right;
+    right = remainder;
+  }
   return left;
 };
