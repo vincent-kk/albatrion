@@ -1,3 +1,4 @@
+import { renderToString } from 'react-dom/server';
 import { Activity, type ReactNode, createRef, useState } from 'react';
 
 import {
@@ -56,16 +57,21 @@ it.each([
   ['ftp://host/a', 'ftp://', 'host/a'],
   ['mailto:user@example.com', 'mailto:', 'user@example.com'],
   ['tel:+1234', 'tel:', '+1234'],
-  ['urn:isbn:123', 'urn:', 'isbn:123'],
+  ['urn:isbn:0451450523', 'urn:', 'isbn:0451450523'],
   ['data:text/plain,hello', 'data:', 'text/plain,hello'],
   ['sms:+1234', 'sms:', '+1234'],
-  ['geo:37,-122', 'geo:', '37,-122'],
+  ['geo:37.78,-122.4', 'geo:', '37.78,-122.4'],
   ['wss://host/a', 'wss://', 'host/a'],
   ['HTTP://host/a', 'HTTP://', 'host/a'],
   ['MaIlTo:user@example.com', 'MaIlTo:', 'user@example.com'],
   ['git+ssh://host/a', 'git+ssh://', 'host/a'],
   ['my-scheme:part', 'my-scheme:', 'part'],
   ['my.scheme:part', 'my.scheme:', 'part'],
+  ['example.com:8080/p', 'example.com:', '8080/p'],
+  ['123:456', '', '123:456'],
+  [':abc', '', ':abc'],
+  ['foo/bar:baz', '', 'foo/bar:baz'],
+  ['data:text/plain;base64,SGVsbG8=', 'data:', 'text/plain;base64,SGVsbG8='],
   ['host/a', '', 'host/a'],
   ['', '', ''],
   ['localhost:3000', 'localhost:', '3000'],
@@ -77,6 +83,11 @@ it.each([
 ])(
   'round-trips %j through mount, external write, reset, Activity and edits',
   async (value, scheme, path) => {
+    const markup = renderToString(<Form fieldInputDefinitions={[FieldInputUriDefinition]} jsonSchema={{type:'object',properties:{link:{type:'string',format:'uri',options:{omitEmpty:false},presentation:{FieldInputProps:{protocols:['http','https']}}}}}} defaultValue={{link:value}} />);
+    const server = document.createElement('div'); server.innerHTML=markup;
+    const serverPrefix = server.querySelector('.ant-select')?.textContent ?? server.querySelector('[role="combobox"]')?.textContent;
+    expect(serverPrefix).toBe(scheme || 'No scheme');
+    expect(server.querySelector<HTMLInputElement>('input#\\/link')?.value).toBe(path);
     const ref = createRef<FormHandle>();
     render(
       <Host>
@@ -89,6 +100,7 @@ it.each([
               link: {
                 type: 'string',
                 format: 'uri',
+ options: { omitEmpty: false },
                 presentation: {
                   FieldInputProps: { protocols: ['http', 'https'] },
                 },
@@ -134,32 +146,3 @@ it.each([
     });
   },
 );
-
-it.each([
-  ['sms', 'sms:'],
-  ['HTTP', 'HTTP://'],
-  ['ftp', 'ftp://'],
-  ['custom://', 'custom://'],
-  ['http:', 'http:'],
-  ['Custom:', 'Custom:'],
-])('joins a configured protocol %j with %j', (configured, expected) => {
-  const ref = createRef<FormHandle>();
-  render(
-    <Form
-      ref={ref}
-      fieldInputDefinitions={[FieldInputUriDefinition]}
-      jsonSchema={{
-        type: 'object',
-        properties: {
-          link: {
-            type: 'string',
-            format: 'uri',
-            presentation: { FieldInputProps: { protocols: [configured] } },
-          },
-        },
-      }}
-    />,
-  );
-  fireEvent.change(input(), { target: { value: 'part' } });
-  expect(ref.current!.getValue()).toEqual({ link: expected + 'part' });
-});
