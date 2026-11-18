@@ -13,6 +13,8 @@
 - `maxBatchSize`는 한 배치가 가질 수 있는 최대 키 개수를 제한하며, 초과분은 다음 배치로 넘어가 `batchLoader`가 여러 번 호출된다. 기본값과 같은 `Infinity`는 제한 없음을 뜻하고, 그 외에는 양의 정수만 허용합니다. NaN·소수·1 미만 값이나 숫자가 아니면 `DataLoaderError`를 던집니다.
 - `batchLoader`가 동기적으로 예외를 던지거나, `Promise`가 아닌 값을 반환하거나, 배열이 아닌 값으로 resolve되거나, 키 개수와 다른 길이의 배열로 resolve되면, 그 배치에 걸린 모든 키가 `DataLoaderError`로 reject되고 해당 키들의 캐시 항목도 제거된다.
 
+커스텀 batchScheduler는 로더를 receiver로 전달하지 않는 일반 함수 호출로 실행합니다. bare 브라우저 전역 스케줄러를 전달해도 Web IDL receiver 검사를 통과해야 합니다.
+
 ## API Contracts
 
 workspace의 source 조건은 개발 빌드의 입력입니다. 배포 파일에는 src가 없으므로 publishConfig.exports는 source 조건을 제외한 동일한 런타임·선언 경계를 기록합니다. 공개 진입점과 types·import·require 대상의 일치를 유지하여 개발 입력이 배포 해석을 가로채지 않게 합니다.

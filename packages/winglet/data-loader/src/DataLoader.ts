@@ -267,7 +267,8 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
    */
   private __scheduleBatch__(batch: Batch<Key, Value>): void {
     this.__currentBatch__ = batch;
-    this.__batchScheduler__(() => {
+    const schedule = this.__batchScheduler__;
+    schedule(() => {
       this.__dispatchBatch__(batch);
     });
   }
