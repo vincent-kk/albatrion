@@ -107,14 +107,15 @@ export const applySinglePatch = (
   patchIndex: number,
   cloned: WeakSet<object> | null,
 ): any => {
-  const path = patch.path.charCodeAt(0) === 35 ? decodePatchFragment(patch.path, patch, patchIndex) : patch.path;
+  const operation = patch.op;
+  const path = patch.path[0] === '#' ? decodePatchFragment(patch.path, patch, patchIndex) : patch.path;
   // RFC 6902 4.4 and 4.5: move is "remove from, then add at path" and copy is "add a copy
   // at path", so both resolve their value first and then share the add handlers. The value
   // is read before the target path is walked, so the walk sees the document after removal
   let value: unknown;
-  if (patch.op === Operation.ADD || patch.op === Operation.REPLACE)
+  if (operation === Operation.ADD || operation === Operation.REPLACE)
     value = patch.value;
-  else if (patch.op === Operation.MOVE || patch.op === Operation.COPY) {
+  else if (operation === Operation.MOVE || operation === Operation.COPY) {
     // Judged by operation rather than key presence: `move` and `copy` require a `from`
     // pointer, and a missing or non-string one must surface as a patch error rather than
     // as a TypeError thrown from somewhere deeper
@@ -122,11 +123,11 @@ export const applySinglePatch = (
     if (typeof from !== 'string')
       throw new JSONPatchError(
         'PATCH_PATH_INVALID',
-        `Patch operation '${patch.op}' requires a string 'from' pointer`,
-        { patch, index: patchIndex, operation: patch.op },
+        `Patch operation '${operation}' requires a string 'from' pointer`,
+        { patch, index: patchIndex, operation: operation },
       );
-    if (from.charCodeAt(0) === 35) from = decodePatchFragment(from, patch, patchIndex);
-    if (patch.op === Operation.COPY) {
+    if (from[0] === '#') from = decodePatchFragment(from, patch, patchIndex);
+    if (operation === Operation.COPY) {
       const copied = getValue(source, from);
       // RFC 6902 4.5: the from location must exist. Only an undefined read can name a
       // missing location, so only that read pays for the second walk
@@ -140,7 +141,7 @@ export const applySinglePatch = (
         {
           patch,
           patchIndex,
-          operation: patch.op,
+          operation: operation,
           from: patch.from,
           path: patch.path,
         },
@@ -149,8 +150,8 @@ export const applySinglePatch = (
       value = removeMoveSource(source, from, patch, patchIndex, cloned);
   }
 
-  if (path === '' || path === JSONPointer.Fragment) {
-    if (patch.op === Operation.MOVE && cloned !== null && value !== null && typeof value === 'object' && !cloned.has(value)) {
+  if (path === '') {
+    if (operation === Operation.MOVE && cloned !== null && value !== null && typeof value === 'object' && !cloned.has(value)) {
       const owned = isArray(value) ? value.slice() : { ...value };
       cloned.add(owned);
       value = owned;
@@ -167,7 +168,7 @@ export const applySinglePatch = (
     throw new JSONPatchError(
       'PATCH_PATH_INVALID',
       `Patch path '${patch.path}' must start with '${JSONPointer.Separator}' or '${JSONPointer.Fragment}'`,
-      { patch, index: patchIndex, path: patch.path, operation: patch.op },
+      { patch, index: patchIndex, path: patch.path, operation: operation },
     );
   let current: any = source;
   let cursor = 1;
@@ -192,14 +193,14 @@ export const applySinglePatch = (
       } else {
         throw new JSONPatchError(
           'PATCH_TARGET_NOT_OBJECT',
-          `Cannot apply ${patch.op} operation to non-object value. Target path points to: ${typeof current}`,
+          `Cannot apply ${operation} operation to non-object value. Target path points to: ${typeof current}`,
           {
             patch,
             patchIndex: patchIndex,
             targetValue: current,
             targetType: typeof current,
             path: patch.path,
-            operation: patch.op,
+            operation: operation,
           },
         );
       }
@@ -236,7 +237,7 @@ export const applySinglePatch = (
           intermediateType: current === null ? 'null' : typeof current,
           failedAtPath: segments.slice(0, cursor + 1).join('/'),
           remainingPath: segments.slice(cursor + 1).join('/'),
-          operation: patch.op,
+          operation: operation,
         },
       );
     }
@@ -249,7 +250,7 @@ export const applySinglePatch = (
     {
       patch,
       patchIndex: patchIndex,
-      operation: patch.op,
+      operation: operation,
       processedSegments: cursor,
       totalSegments: segmentsLength,
     },

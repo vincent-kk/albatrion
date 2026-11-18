@@ -31,7 +31,9 @@ const handleStringPointer = (pointer: string) => {
       `JSON pointer must start with ${JSONPointer.Fragment} or ${JSONPointer.Separator}.`,
       { pointer },
     );
-  return handleArrayPointer(parts);
+  if (pointer.indexOf('~') === -1) return parts;
+  for (let index = 1; index < parts.length; index++) parts[index] = unescapePath(parts[index]);
+  return parts;
 };
 
 const handleArrayPointer = (segments: (string | number)[]) => {
