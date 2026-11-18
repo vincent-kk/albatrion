@@ -16,7 +16,16 @@ it('keeps each keyboard-operated range thumb within its neighbours',()=>{
  fireEvent.keyDown(thumbs[1],{key:'Home'});expect(ref.current!.getValue()).toEqual([8,8]);
 });
 it.each(['disabled','readOnly'])('does not change a %s slider with the keyboard',lock=>{
- const ref=createRef<FormHandle>();const view=render(<Form ref={ref} fieldInputDefinitions={[FieldInputSliderDefinition]} jsonSchema={{type:'number',format:'slider',minimum:0,maximum:10,[lock]:true}} defaultValue={5}/>);
+ const ref=createRef<FormHandle>();const view=render(<Form ref={ref} fieldInputDefinitions={[FieldInputSliderDefinition]} jsonSchema={{type:'number',format:'slider',minimum:0,maximum:10,...(lock==='disabled'?{controls:{disabled:true}}:{readOnly:true})}} defaultValue={5}/>);
  fireEvent.keyDown(view.container.querySelector('[role="slider"]')!,{key:'ArrowRight'});
  expect(ref.current!.getValue()).toBe(5);
+});
+
+it.each([['Home',20],['End',80],['ArrowRight',80],['ArrowLeft',20]])('keeps %s on the marked stops',(key,expected)=>{
+ const ref=createRef<FormHandle>();const view=render(<Form ref={ref} fieldInputDefinitions={[FieldInputSliderDefinition]} jsonSchema={{type:'number',format:'slider',minimum:0,maximum:100,presentation:{FieldInputProps:{marks:{20:'Low',80:'High'}}}}} defaultValue={20}/>);
+ fireEvent.keyDown(view.container.querySelector('[role="slider"]')!,{key});expect(ref.current!.getValue()).toBe(expected);
+});
+it('preserves the precision of decimal keyboard steps',()=>{
+ const ref=createRef<FormHandle>();const view=render(<Form ref={ref} fieldInputDefinitions={[FieldInputSliderDefinition]} jsonSchema={{type:'number',format:'slider',minimum:0,maximum:1,multipleOf:0.123456789}} defaultValue={0.123456789}/>);
+ fireEvent.keyDown(view.container.querySelector('[role="slider"]')!,{key:'ArrowRight'});expect(ref.current!.getValue()).toBe(0.246913578);
 });
