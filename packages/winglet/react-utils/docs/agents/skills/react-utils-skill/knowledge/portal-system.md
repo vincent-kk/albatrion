@@ -15,7 +15,7 @@ Portal.with(Component)
 
 Ownership is inverted relative to `createPortal`: `<Portal>` renders `null` at its own position and registers its children under a generated id; the **provider** is what renders them, into whatever DOM node the shared anchor ref currently points at. Where content lands is a property of the provider scope, never of the `<Portal>` call site. Unmounting a `<Portal>` unregisters its entry, so no manual cleanup exists or is needed.
 
-The provider only renders portal content while `anchorRef.current` is non-null, and a ref assignment does not itself trigger a render. The first registration's state update is what re-renders the provider after the anchor has attached — which is why content appears one commit after mount rather than immediately.
+The anchor callback updates provider state, so attaching or replacing an anchor triggers rendering at the current destination. Server rendering has no attached anchor and therefore emits no portal content.
 
 ## Only `Portal` is exported
 
@@ -45,7 +45,7 @@ import { Portal } from '@winglet/react-utils/portal';
 
 **Scopes nest without interfering.** Each `Portal.with` installs its own provider, registry, and anchor ref; an inner scope's `<Portal>` reaches the inner anchor and never the outer one.
 
-**Content remounts on re-registration.** The registration effect depends on `children`, so a parent re-render producing a fresh element re-registers under a new id — and the new id becomes a new React key, remounting the portalled subtree and discarding its internal state. Memoize the children, or lift state that must survive above the `<Portal>`.
+**Content updates preserve state.** Each mounted Portal has one stable registration id. A fresh children element replaces that entry under the same React key, so unrelated parent updates do not remount the subtree. Changing its component type or key still follows normal React reconciliation.
 
 Server-side rendering: `createPortal` is client-only, so guard accordingly.
 
