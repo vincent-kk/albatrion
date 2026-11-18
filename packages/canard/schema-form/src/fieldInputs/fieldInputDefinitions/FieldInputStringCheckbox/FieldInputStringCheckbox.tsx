@@ -12,7 +12,7 @@ import type { CheckboxLabelsContext, StringCheckboxJSONSchema } from './type';
 
 /** Render a checkbox per enum choice of a string-array node. */
 export const FieldInputStringCheckbox = ({
-  path,
+  id: fieldId,
   name,
   jsonSchema,
   readOnly,
@@ -68,11 +68,11 @@ export const FieldInputStringCheckbox = ({
   return (
     <div
       role="group"
-      aria-labelledby={'label:' + path}
+      aria-labelledby={'label:' + fieldId}
       aria-invalid={misfit || undefined}
     >
       {map(checkboxOptions, ({ value, rawValue, label }, index) => {
-        const id = path + '-' + index;
+        const id = fieldId + '-' + index;
         return (
           <label key={value} htmlFor={id} style={style} className={className}>
             <input

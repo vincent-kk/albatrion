@@ -9,13 +9,11 @@ export const LabelPartRenderer = ({
   className,
   children,
   htmlFor,
-  id,
+  labelId,
 }: FieldRendererProps) => {
   const resolvedPath =
-    typeof htmlFor === 'string' &&
-    htmlFor !== node.path &&
-    node.rootNode.findNodes(htmlFor).length === 1
-      ? node.path
+    typeof htmlFor === 'string' && node.rootNode.findNodes(htmlFor).length === 1
+      ? labelId.slice('label:'.length)
       : htmlFor;
   return (
     <Label
@@ -24,7 +22,7 @@ export const LabelPartRenderer = ({
       className={className}
       children={children}
       htmlFor={resolvedPath}
-      id={resolvedPath === htmlFor ? id : 'label:' + resolvedPath}
+      id={htmlFor === undefined ? undefined : labelId}
     />
   );
 };

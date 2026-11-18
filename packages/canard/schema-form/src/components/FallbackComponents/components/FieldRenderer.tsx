@@ -14,7 +14,7 @@ const LABEL_GAP_STYLE: CSSProperties = { marginRight: 5 };
 export const FieldRenderer = ({
   node,
   depth,
-  path,
+  labelId,
   Label,
   ErrorMessage,
   Input,
@@ -34,7 +34,7 @@ export const FieldRenderer = ({
         }}
         className={className}
       >
-        <legend id={'label:' + path}>{node.name}</legend>
+        <legend id={labelId}>{node.name}</legend>
         <div>
           {errorMessage != null && (
             <ErrorMessage style={LABEL_NOTE_STYLE}>{errorMessage}</ErrorMessage>

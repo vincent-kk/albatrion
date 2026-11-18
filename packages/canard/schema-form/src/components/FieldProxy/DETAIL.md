@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+Label의 htmlFor는 Form scope와 현재 node.path를 결합한 입력 id이며 제목 id는 label: 접두를 붙입니다. FieldRenderer에는 같은 제목의 labelId를 전달하여 기본 legend가 별도의 주소 규칙을 만들지 않게 합니다. 배열 이동에도 현재 주소를 다시 조합하고 부품의 DOM 수명은 유지합니다.
+
 오류 문구 선택·표시와 보류 버전·노드 추적 마스크는 FieldRendererContext의 공유 계산을 사용합니다. 프록시는 별도 오류 훅을 구독하지 않고 문구를 기존 렌더 경계 안에서 계산하여 포맷 실패의 격리를 유지합니다. 경계 타입과 실패한 경계의 복구 조건은 [getRendererBoundary](./utils/getRendererBoundary/DETAIL.md)가 소유합니다.
 
 Label과 ErrorMessage는 각각 자기 렌더러·node·jsonSchema·required에 고정된 memo 부품입니다. 두 정체성은 독립적이며 오류·표시·formatError·context 또는 경로 변경으로 교체하지 않습니다. 전달된 props를 기본값 뒤에 펼치되 node는 바꿀 수 없습니다. Label의 undefined children만 필드 키나 배열 인덱스인 name으로 대체하고 null은 비웁니다. 같은 required를 그룹에도 전달합니다. 렌더러·스키마·필수 여부 변경은 해당 부품만 새로 만듭니다.

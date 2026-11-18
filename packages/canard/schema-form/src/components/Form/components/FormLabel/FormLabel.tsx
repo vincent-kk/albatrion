@@ -11,9 +11,9 @@ import type { FormLabelProps } from './types/props';
  * Renders an accessible label for form fields.
  *
  * Uses children when supplied, otherwise the field name (key or index),
- * associated with its input through the uniquely resolved field path. Its `id="label:${path}"`
+ * associated with its input through the Form-scoped id of the resolved field. Its title id
  * also lets options groups reference the title through `aria-labelledby`.
- * A query resolving to one node uses that node's path for both attributes.
+ * A query resolving to one node uses that node's scoped id for both attributes.
  * Multiple matches retain the supplied path; no match renders nothing.
  * The registered LabelRenderer owns the label root; no outer label is added.
  *
@@ -62,7 +62,6 @@ export const FormLabel = memo(
       className,
       children,
       htmlFor: path,
-      id: path === undefined ? undefined : 'label:' + path,
     });
     return (
       <FieldProxy

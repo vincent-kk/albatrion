@@ -53,6 +53,8 @@ export interface FieldInputProps<
   misfit: Node['isMisfit'];
   /** Name of field node assigned to FieldInput Component */
   name: Node['name'];
+  /** DOM id scoped to this Form; use this for the input element, not path. */
+  id: string;
   /** Path of field node assigned to FieldInput Component */
   path: Node['path'];
   /** Whether this field accepts null as a valid value (derived from schema type array including 'null') */
@@ -123,6 +125,8 @@ export interface UnknownFieldInputProps {
   required: boolean;
   node: any;
   name: string;
+  /** DOM id scoped to this Form, distinct from the data path. */
+  id: string;
   path: string;
   type: FieldNodeType;
   schemaType: FieldNode['schemaType'];

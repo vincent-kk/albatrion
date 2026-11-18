@@ -23,10 +23,10 @@ handle은 단일·다중 첨부를 `Map<string, File[]>`로 정규화합니다. 
 import { useRef } from 'react';
 import { Form, type FieldInputProps, type FormHandle } from '@canard/schema-form';
 
-function FilesInput({ path, onFileAttach, onChange, readOnly, disabled }: FieldInputProps<string[]>) {
+function FilesInput({ id, onFileAttach, onChange, readOnly, disabled }: FieldInputProps<string[]>) {
   return (
     <input
-      id={path}
+      id={id}
       type="file"
       multiple
       disabled={readOnly || disabled}

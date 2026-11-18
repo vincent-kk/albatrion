@@ -23,10 +23,10 @@ The handle normalizes single and multiple uploads to `Map<string, File[]>`. Appe
 import { useRef } from 'react';
 import { Form, type FieldInputProps, type FormHandle } from '@canard/schema-form';
 
-function FilesInput({ path, onFileAttach, onChange, readOnly, disabled }: FieldInputProps<string[]>) {
+function FilesInput({ id, onFileAttach, onChange, readOnly, disabled }: FieldInputProps<string[]>) {
   return (
     <input
-      id={path}
+      id={id}
       type="file"
       multiple
       disabled={readOnly || disabled}

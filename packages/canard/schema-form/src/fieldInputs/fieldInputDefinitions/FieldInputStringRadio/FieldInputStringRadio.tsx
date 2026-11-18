@@ -14,7 +14,7 @@ import type { RadioLabelsContext } from './type';
 
 /** Render a radio group for a string enum node. */
 export const FieldInputStringRadio = ({
-  path,
+  id: fieldId,
   name,
   jsonSchema,
   readOnly,
@@ -55,11 +55,11 @@ export const FieldInputStringRadio = ({
   return (
     <span
       role="group"
-      aria-labelledby={'label:' + path}
+      aria-labelledby={'label:' + fieldId}
       aria-invalid={misfit || undefined}
     >
       {map(radioOptions, ({ value, rawValue, label }, index) => {
-        const id = path + '-' + index;
+        const id = fieldId + '-' + index;
         return (
           <label key={value} htmlFor={id} style={style} className={className}>
             <input

@@ -10,6 +10,8 @@
 
 ## API Contracts
 
+실제 입력의 id는 Form scope와 현재 node.path를 결합하여 전달하며 path 자체는 JSON Pointer를 유지합니다. radio·radiogroup 입력의 name만 같은 scoped id를 사용하여 한 Form의 동명 말단도 서로 다른 native group이 됩니다. 다른 입력과 Frame의 name은 기존 노드 이름을 유지합니다.
+
 전체 값을 편집하는 비제어 가지는 외부 UpdateValue의 내부 리비전으로 새 defaultValue를 잡아 다시 마운트합니다. controlled 입력은 같은 DOM에서 새 value prop을 받습니다. 입력 자체 쓰기와 내용이 같은 동기 배열 중계는 이 리비전을 올리지 않으며, 외부 자식 쓰기·자동 자식 쓰기·숨김 중 쓰기도 놓치지 않습니다. 값이 같은 외부 쓰기는 스칼라와 같이 Refresh를 만들지 않으며 입력이 거절한 초안의 복원에는 reset을 사용합니다.
 
 선택된 입력 아래에서 자식 프록시가 처음 렌더된 사실은 선택된 입력 컴포넌트와 Frame type을 기준으로 유지하는 sticky 소유 기록입니다. Activity cleanup은 이 기록을 지우지 않아 재표시의 layout 연결 전에도 부모가 외부 값 변경으로 교체되지 않습니다. 선택된 입력 컴포넌트나 Frame type이 바뀌면 소유 기록도 새로 시작합니다. 같은 컴포넌트 함수 안의 내부 컨테이너 교체로 입력만 다시 마운트되면 이전 소유 기록은 남습니다. 따라서 자식을 그리던 입력이 이 교체와 함께 전체 배열을 편집하는 입력으로 바뀌면 외부 쓰기로 defaultValue가 갱신되지 않을 수 있습니다. 이 전환에는 입력 컴포넌트나 Frame type을 바꾸거나 묶인 입력의 key를 바꾸어 브리지까지 새로 마운트합니다.

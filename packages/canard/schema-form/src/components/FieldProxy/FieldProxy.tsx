@@ -71,6 +71,7 @@ export const FieldProxy = ({
     errorVisibility,
   } = useFieldRendererContext();
 
+  const { context, formId } = useWorkspaceContext();
   const jsonSchema = node?.jsonSchema;
   const presentation = (jsonSchema as JSONSchema | undefined)?.presentation;
   const required = resolveRequired(
@@ -79,8 +80,8 @@ export const FieldProxy = ({
     node?.isRequired ?? false,
   );
   const Label = useMemo(
-    () => createLabelPart(LabelRenderer, node, required, jsonSchema),
-    [LabelRenderer, node, jsonSchema, required],
+    () => createLabelPart(LabelRenderer, node, required, jsonSchema, formId),
+    [LabelRenderer, node, jsonSchema, required, formId],
   );
   const ErrorMessage = useMemo(
     () =>
@@ -106,7 +107,6 @@ export const FieldProxy = ({
     return [RendererWithErrorMessage, getRendererBoundary(Component)] as const;
   }, [Component, refreshRef]);
   const Wrapper = useConstant(InputWrapper || Fragment);
-  const { context } = useWorkspaceContext();
   const [, update] = useVersion();
   const version = useFieldNodeTracker(node, FieldNodeEventType.RequestRemount);
 
@@ -139,6 +139,7 @@ export const FieldProxy = ({
             jsonSchema={node.jsonSchema}
             isRoot={node.isRoot}
             depth={node.depth}
+            labelId={'label:' + formId + ':' + node.path}
             path={node.path}
             name={node.name}
             value={node.value}

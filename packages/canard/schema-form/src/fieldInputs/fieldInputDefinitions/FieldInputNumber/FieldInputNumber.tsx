@@ -8,7 +8,7 @@ import type { FieldInputProps } from '@/schema-form/types';
 
 /** Render a number input whose empty field writes undefined and whose bad input stays a draft. */
 export const FieldInputNumber = ({
-  path,
+  id: fieldId,
   name,
   jsonSchema,
   readOnly,
@@ -30,7 +30,7 @@ export const FieldInputNumber = ({
   return (
     <input
       type="number"
-      id={path}
+      id={fieldId}
       name={name}
       step={jsonSchema.multipleOf}
       readOnly={readOnly}

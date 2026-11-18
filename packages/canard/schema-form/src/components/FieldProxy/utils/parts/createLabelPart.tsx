@@ -22,6 +22,7 @@ export const createLabelPart = (
   node: FieldNode | null | undefined,
   required: boolean,
   jsonSchema: FieldNode['jsonSchema'] | undefined,
+  formId: string,
 ): ComponentType<Partial<LabelRendererProps>> => {
   if (!node) return NULL_FUNCTION;
   const isFallback = Renderer === FallbackLabelRenderer;
@@ -36,8 +37,8 @@ export const createLabelPart = (
       name,
       jsonSchema: jsonSchema!,
       required,
-      htmlFor: path,
-      id: 'label:' + path,
+      htmlFor: formId + ':' + path,
+      id: 'label:' + formId + ':' + path,
       ...props,
       children: children === undefined ? name : children,
       node,

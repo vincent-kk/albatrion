@@ -166,7 +166,7 @@ Only the component calling the hook opts into this field's value, state, error, 
 ```tsx
 const ErrorAwareInput = ({
   node,
-  path,
+  id,
   defaultValue,
   onChange,
 }: FieldInputProps) => {
@@ -174,7 +174,7 @@ const ErrorAwareInput = ({
   return (
     <>
       <input
-        id={path}
+        id={id}
         defaultValue={defaultValue}
         onChange={(event) => onChange(event.target.value)}
       />

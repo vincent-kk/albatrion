@@ -204,9 +204,9 @@ object·nullable-object 호스트에 `controls.discriminator`를 비어 있지 �
 
 ## 사용자 입력 접근성 {#accessibility}
 
-단일 사용자 입력에는 `id={path}`를 두어 label과 연결하십시오. 그룹 입력은 `aria-labelledby`로 `label:${path}`를 참조합니다. 내장 checkbox·radio 선택지는 `${path}-${index}` id와 같은 `htmlFor`를 사용하며 이름 있는 `role="group"` 컨테이너에 놓입니다. DOM 선택자도 이 구조에 맞추십시오.
+단일 사용자 입력에는 새 `id` prop으로 `id={id}`를 두어 label과 연결하십시오. path는 데이터 경로입니다. 그룹 입력은 `aria-labelledby`로 `label:${id}`를 참조합니다. 내장 checkbox·radio 선택지는 `${id}-${index}` id와 같은 `htmlFor`를 사용하며 이름 있는 `role="group"` 컨테이너에 놓입니다. DOM 선택자도 이 구조에 맞추십시오.
 
-루트·배열 항목·label 없는 조합에서 `label:${path}`가 없으면 사용자 렌더러가 접근 가능한 그룹 이름을 제공해야 합니다. `Form.Label`은 전달된 path로 id와 htmlFor를 만들므로 연결에는 실제 입력의 절대 경로를 사용하십시오.
+루트·배열 항목·label 없는 조합에서 `label:${id}`가 없으면 사용자 렌더러가 접근 가능한 그룹 이름을 제공해야 합니다. `Form.Label`은 해석된 노드 경로와 Form 범위로 id와 htmlFor를 만듭니다. 노드를 선택할 때는 실제 입력의 절대 경로를 사용하십시오.
 
 내장 enum select는 undefined를 목록 맨 앞의 선택된 빈 비활성 선택지로 표시하고 enum 밖 값도 별도의 비활성 선택지로 표시합니다. 첫 enum 값을 자동 선택하지 않습니다.
 

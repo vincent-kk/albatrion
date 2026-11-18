@@ -7,7 +7,7 @@ import { isRenderableDateInputValue } from './utils/isRenderableDateInputValue';
 
 /** Render a native date, month, week, time or datetime-local input, falling back to text for an unrenderable default. */
 export const FieldInputDateFormat = ({
-  path,
+  id: fieldId,
   name,
   jsonSchema,
   readOnly,
@@ -33,7 +33,7 @@ export const FieldInputDateFormat = ({
   return (
     <input
       type={type}
-      id={path}
+      id={fieldId}
       name={name}
       readOnly={readOnly}
       disabled={disabled}

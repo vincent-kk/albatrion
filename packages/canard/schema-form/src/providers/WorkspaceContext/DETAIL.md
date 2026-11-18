@@ -8,6 +8,8 @@
 
 ## API Contracts
 
+폼별 DOM 식별 범위는 Form마다 한 번의 useId로 생성하며 context에 보유합니다. 서버와 클라이언트는 같은 트리·identifierPrefix를 사용하고 독립 React root의 prefix는 호스트가 구별합니다. 범위는 데이터 경로와 분리하여 같은 경로의 여러 Form이 레이블·선택 그룹을 공유하지 않게 합니다.
+
 외부 기본 context에 Form context를 덮고 원래 딕셔너리는 수정하지 않습니다. 내용 기준 안정화로 동등한 값의 참조 교체가 불필요한 Context 전파를 만들지 않게 합니다.
 
 ## Acceptance Criteria

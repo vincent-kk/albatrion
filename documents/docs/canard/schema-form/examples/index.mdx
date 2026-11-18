@@ -67,11 +67,11 @@ Forward input drafts through onChange and honor resolved controls. Use a fieldIn
 import { Form, type FieldInputProps } from '@canard/schema-form';
 
 function TextInput({
-  path, value, onChange, readOnly, disabled, placeholder, className,
+  id, value, onChange, readOnly, disabled, placeholder, className,
 }: FieldInputProps<string>) {
   return (
     <textarea
-      id={path}
+      id={id}
       value={value ?? ''}
       readOnly={readOnly}
       disabled={disabled}

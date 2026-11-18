@@ -6,7 +6,7 @@ import type { FieldInputProps } from '@/schema-form/types';
 
 /** Render the common string input; binding wrappers may supply native draft handlers. */
 export const FieldInputString = ({
-  path,
+  id: fieldId,
   name,
   readOnly,
   disabled,
@@ -32,7 +32,7 @@ export const FieldInputString = ({
   return (
     <input
       type={type}
-      id={path}
+      id={fieldId}
       name={name}
       readOnly={readOnly}
       disabled={disabled}

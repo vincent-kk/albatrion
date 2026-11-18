@@ -204,9 +204,9 @@ This is an optimization for fields recalculated often and for widgets that are e
 
 ## Custom-input accessibility {#accessibility}
 
-Use `id={path}` on a single custom input so its label can target it. Group inputs reference `label:${path}` with `aria-labelledby`. Built-in checkbox/radio choices use `${path}-${index}` and matching `htmlFor` inside a named `role="group"` container. Update DOM selectors accordingly.
+Use the new `id` prop as `id={id}` on a single custom input so its label can target it; path remains the data pointer. Group inputs reference `label:${id}` with `aria-labelledby`. Built-in checkbox/radio choices use `${id}-${index}` and matching `htmlFor` inside a named `role="group"` container. Update DOM selectors accordingly.
 
-At a root, array item, or unlabeled composition where `label:${path}` is absent, the custom renderer must supply an accessible group name. `Form.Label` derives its id and htmlFor from the supplied path, so use the actual absolute input path for that association.
+At a root, array item, or unlabeled composition where `label:${id}` is absent, the custom renderer must supply an accessible group name. `Form.Label` derives its id and htmlFor from the resolved node path and Form scope; use the actual absolute input path to select that node.
 
 The built-in enum select represents undefined as a selected, disabled empty option first in the list; an out-of-enum value gets its own disabled option. It does not silently choose the first enum item.
 

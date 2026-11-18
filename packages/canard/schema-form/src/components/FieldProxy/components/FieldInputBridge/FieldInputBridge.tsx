@@ -1,10 +1,7 @@
 import { memo, useCallback, useRef } from 'react';
 
 import { isArray } from '@winglet/common-utils/filter';
-import {
-  useMemorize,
-  useOnUnmount,
-} from '@winglet/react-utils/hook';
+import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
 
 import type { Nullable, Optional } from '@aileron/declare';
 
@@ -73,13 +70,12 @@ export const FieldInputBridge = memo(
     const mountedChildren = useRef(0);
     const [terminalChildren, commitTerminalChildren] =
       useTerminalChildren(node);
-    const [ChildFields, hydrationCommitRef, virtualizationManager, childValueRevision] =
-      useChildFields(
-        node,
-        NodeProxy,
-        mountedChildren,
-        terminalChildren,
-      );
+    const [
+      ChildFields,
+      hydrationCommitRef,
+      virtualizationManager,
+      childValueRevision,
+    ] = useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
     if (
       node.strategy === 'branch' &&
       (childValueRevision.node !== node ||
@@ -93,7 +89,7 @@ export const FieldInputBridge = memo(
       childValueRevision.isControlled = controlled === true;
       childValueRevision.externalValueRevision = undefined;
     }
-    const { attachedFilesMap, context } = useWorkspaceContext();
+    const { attachedFilesMap, context, formId } = useWorkspaceContext();
     const attachmentOwner = useRef<{ container: Nullable<HTMLDivElement> }>({
       container: null,
     });
@@ -144,7 +140,15 @@ export const FieldInputBridge = memo(
               controlled,
               childValueRevision.externalValueRevision,
             )),
-      [node, generation, isLive, selection, controlled, childValueRevision, mountedChildren],
+      [
+        node,
+        generation,
+        isLive,
+        selection,
+        controlled,
+        childValueRevision,
+        mountedChildren,
+      ],
     );
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
       (value, option = SetValueOption.Overwrite) => {
@@ -258,7 +262,13 @@ export const FieldInputBridge = memo(
           type={node.type}
           schemaType={node.schemaType}
           misfit={node.isMisfit}
-          name={node.name}
+          id={formId + ':' + node.path}
+          name={
+            presentation?.inputType === 'radio' ||
+            presentation?.inputType === 'radiogroup'
+              ? formId + ':' + node.path
+              : node.name
+          }
           path={node.path}
           nullable={node.isNullable}
           watchValues={node.watchValues}
