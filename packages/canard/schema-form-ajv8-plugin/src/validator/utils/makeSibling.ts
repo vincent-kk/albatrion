@@ -17,7 +17,11 @@ export const makeSibling = (
   validateSchema: Options['validateSchema'] = baseAjv.opts.validateSchema,
 ): Ajv => {
   const Constructor = baseAjv.constructor as new (options: Options) => Ajv;
-  const sibling = new Constructor({ ...baseAjv.opts, allErrors, validateSchema });
+  const sibling = new Constructor({
+    ...baseAjv.opts,
+    allErrors,
+    validateSchema,
+  });
   // Schema caches are isolated; future compiles read the bound instance's live rules.
   Object.defineProperties(sibling, {
     formats: { value: baseAjv.formats },

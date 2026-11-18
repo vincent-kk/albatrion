@@ -12,7 +12,6 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
-
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type RadioGroupStringJSONSchema = StringSchema & {
@@ -66,7 +65,10 @@ const FieldInputRadioGroup = ({
       return {
         value,
         rawValue,
-        label: radioLabels?.[index] || getOwnLabel(alias, '' + rawValue) || '' + rawValue,
+        label:
+          radioLabels?.[index] ||
+          getOwnLabel(alias, '' + rawValue) ||
+          '' + rawValue,
       };
     });
   }, [jsonSchema, alias]);

@@ -14,7 +14,6 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
-
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type StringCheckboxJSONSchema = ArraySchema & {
@@ -88,7 +87,13 @@ const FieldInputStringCheckbox = ({
     }
 
     setValue(newValues);
-    onChange(newValues.map((token) => options.find((option) => option.value === token)?.rawValue).filter((rawValue) => rawValue !== undefined));
+    onChange(
+      newValues
+        .map(
+          (token) => options.find((option) => option.value === token)?.rawValue,
+        )
+        .filter((rawValue) => rawValue !== undefined),
+    );
   });
 
   return (

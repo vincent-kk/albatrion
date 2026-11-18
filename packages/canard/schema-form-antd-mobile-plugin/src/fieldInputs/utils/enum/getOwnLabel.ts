@@ -4,5 +4,10 @@
  * @param key - Display spelling of the enum value.
  * @returns An own label, or undefined so the input uses its normal fallback.
  */
-export const getOwnLabel = <T>(labels: Record<string, T> | undefined, key: string): T | undefined =>
-  labels && Object.prototype.hasOwnProperty.call(labels, key) ? labels[key] : undefined;
+export const getOwnLabel = <T>(
+  labels: Record<string, T> | undefined,
+  key: string,
+): T | undefined =>
+  labels && Object.prototype.hasOwnProperty.call(labels, key)
+    ? labels[key]
+    : undefined;

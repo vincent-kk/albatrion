@@ -1,9 +1,4 @@
-import {
-  type ChangeEvent,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
+import { type ChangeEvent, useCallback, useMemo, useState } from 'react';
 
 import { Input, Select, Space } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
@@ -54,11 +49,22 @@ const FieldInputUri = ({
     return rawProtocols.map(formatProtocol);
   }, [protocols]);
 
-  const parsed = useMemo(() => typeof value === 'string' ? parseUri(value) : undefined, [value]);
-  const [lastProtocol, setLastProtocol] = useState(parsed?.protocol ?? normalizedProtocols[0] ?? '');
+  const parsed = useMemo(
+    () => (typeof value === 'string' ? parseUri(value) : undefined),
+    [value],
+  );
+  const [lastProtocol, setLastProtocol] = useState(
+    parsed?.protocol ?? normalizedProtocols[0] ?? '',
+  );
   const protocol = parsed?.protocol ?? lastProtocol;
   const uri = parsed?.path ?? '';
-  const protocolOptions = useMemo(() => normalizedProtocols.includes(protocol) ? normalizedProtocols : [protocol, ...normalizedProtocols], [normalizedProtocols, protocol]);
+  const protocolOptions = useMemo(
+    () =>
+      normalizedProtocols.includes(protocol)
+        ? normalizedProtocols
+        : [protocol, ...normalizedProtocols],
+    [normalizedProtocols, protocol],
+  );
 
   const handleProtocolChange = useCallback(
     (value: string) => {
@@ -95,13 +101,7 @@ const FieldInputUri = ({
         ))}
       </Select>
     );
-  }, [
-    protocol,
-    protocolOptions,
-    disabled,
-    readOnly,
-    handleProtocolChange,
-  ]);
+  }, [protocol, protocolOptions, disabled, readOnly, handleProtocolChange]);
 
   return (
     <Space.Compact block size={size || context?.size}>

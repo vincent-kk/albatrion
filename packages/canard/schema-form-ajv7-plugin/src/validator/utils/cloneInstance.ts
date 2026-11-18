@@ -1,5 +1,6 @@
-import type { AjvInstance as Ajv } from '../types/AjvInstance';
 import type { Options } from 'ajv';
+
+import type { AjvInstance as Ajv } from '../types/AjvInstance';
 
 /** Registration keys belong to this plugin and must not enter a sibling. */
 export const PLUGIN_KEY_PREFIX = 'urn:canard:schema-form:ajv7:';
@@ -17,7 +18,11 @@ export const cloneInstance = (
   validateSchema: Options['validateSchema'] = instance.opts.validateSchema,
 ): Ajv => {
   const Constructor = instance.constructor as new (options?: Options) => Ajv;
-  const clone = new Constructor({ ...instance.opts, allErrors, validateSchema });
+  const clone = new Constructor({
+    ...instance.opts,
+    allErrors,
+    validateSchema,
+  });
   // Schema caches are isolated; future compiles read the bound instance's live rules.
   Object.defineProperties(clone, {
     formats: { value: instance.formats },

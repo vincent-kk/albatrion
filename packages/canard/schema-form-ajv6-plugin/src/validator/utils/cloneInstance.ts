@@ -16,7 +16,11 @@ export const cloneInstance = (
   validateSchema: Ajv.Options['validateSchema'] = instance._opts.validateSchema,
 ): Ajv.Ajv => {
   const Constructor = instance.constructor;
-  const clone = new Constructor({ ...instance._opts, allErrors, validateSchema });
+  const clone = new Constructor({
+    ...instance._opts,
+    allErrors,
+    validateSchema,
+  });
   // Schema caches are isolated; future compiles read the bound instance's live rules.
   Object.defineProperties(clone, {
     _formats: { value: instance._formats },

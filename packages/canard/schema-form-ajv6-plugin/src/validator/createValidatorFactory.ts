@@ -20,22 +20,49 @@ import { transformDataPath } from './utils/transformDataPath';
 export const createValidatorFactory =
   (ajv: Ajv.Ajv, key?: string) =>
   (jsonSchema: JSONSchema): ValidateFunction => {
-    const transient = key ? undefined : { ...JSON.parse(JSON.stringify(jsonSchema)), $async: true };
+    const transient = key
+      ? undefined
+      : { ...JSON.parse(JSON.stringify(jsonSchema)), $async: true };
     const validate = compileWithPointers(ajv, transient ?? jsonSchema, key);
     if (transient) ajv.removeSchema(transient);
-    if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
+    if (!validate)
+      throw new Error(`Registered Ajv schema was not found: ${key}`);
     const compiled: object = transient ?? jsonSchema;
-    const resources = collectSchemaResources(compiled, ajv._opts.schemaId === 'id' || ajv._opts.schemaId === 'auto');
+    const resources = collectSchemaResources(
+      compiled,
+      ajv._opts.schemaId === 'id' || ajv._opts.schemaId === 'auto',
+    );
     // Without resources every path is `#/` or unmatched, so the uncached classifier does no extra work.
-    const isChildPath = resources.length ? createChildSchemaPathTest(resources) : isChildSchemaPath;
+    const isChildPath = resources.length
+      ? createChildSchemaPathTest(resources)
+      : isChildSchemaPath;
     const notRequiredKeyOf = createNotRequiredKeyLookup(compiled, resources);
     return async (data) => {
       try {
         const valid = await validate(data);
-        return valid ? null : transformDataPath(validate.errors ?? [], isChildPath, notRequiredKeyOf);
+        return valid
+          ? null
+          : transformDataPath(
+              validate.errors ?? [],
+              isChildPath,
+              notRequiredKeyOf,
+            );
       } catch (thrown) {
-        if (thrown !== null && typeof thrown === 'object' && 'ajv' in thrown && thrown.ajv === true && 'validation' in thrown && thrown.validation === true && 'errors' in thrown && Array.isArray(thrown.errors))
-          return transformDataPath(thrown.errors, isChildPath, notRequiredKeyOf);
+        if (
+          thrown !== null &&
+          typeof thrown === 'object' &&
+          'ajv' in thrown &&
+          thrown.ajv === true &&
+          'validation' in thrown &&
+          thrown.validation === true &&
+          'errors' in thrown &&
+          Array.isArray(thrown.errors)
+        )
+          return transformDataPath(
+            thrown.errors,
+            isChildPath,
+            notRequiredKeyOf,
+          );
         throw thrown;
       }
     };

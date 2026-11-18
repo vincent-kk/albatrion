@@ -56,7 +56,11 @@ const FieldInputStringEnum = ({
     return schema.enum
       ? map(schema.enum, (rawValue) => {
           const value = JSON.stringify(rawValue);
-          return { value, rawValue, label: getOwnLabel(alias, '' + rawValue) || '' + rawValue };
+          return {
+            value,
+            rawValue,
+            label: getOwnLabel(alias, '' + rawValue) || '' + rawValue,
+          };
         })
       : [];
   }, [alias, schema]);
