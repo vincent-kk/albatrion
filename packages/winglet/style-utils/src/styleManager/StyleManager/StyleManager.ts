@@ -1,6 +1,6 @@
 import { compressCss } from '@/style-utils/utils/compressCss/compressCss';
 
-import { type StyleManagerConfig, type StyleRoot, getUniqueId } from './type';
+import { type StyleManagerConfig, type StyleRoot } from './type';
 import { RuleScoper } from './utils/RuleScoper';
 
 /**
@@ -61,7 +61,7 @@ import { RuleScoper } from './utils/RuleScoper';
  */
 export class StyleManager {
   private static __SHEETS__ = new Map<string, StyleManager>();
-  private static __SHADOW_ID_KEY__ = Symbol('__styleManagerId__');
+  private static __SHADOW_SHEETS__ = new WeakMap<ShadowRoot, Map<string, StyleManager>>();
   private __processedStyles__ = new Map<string, string>();
   private __element__: HTMLStyleElement | null = null;
   private __sheet__: CSSStyleSheet | null = null;
@@ -70,11 +70,11 @@ export class StyleManager {
   private __scope__: string;
   private __root__: StyleRoot;
   private __isShadowDOM__: boolean;
-  private __instanceKey__: string;
+
 
   private constructor(
     private scopeId: string,
-    instanceKey: string,
+    private __registry__: Map<string, StyleManager>,
     config?: StyleManagerConfig,
   ) {
     // Pre-calculate the scope prefix
@@ -84,8 +84,6 @@ export class StyleManager {
     this.__root__ = config?.shadowRoot || document;
     this.__isShadowDOM__ = !!config?.shadowRoot;
 
-    // Preserve the key passed by get() so the instance matches its registry entry.
-    this.__instanceKey__ = instanceKey;
   }
 
   /**
@@ -114,19 +112,23 @@ export class StyleManager {
     scopeId: string,
     config?: StyleManagerConfig,
   ): StyleManager {
-    // Optimize the unique key creation logic for Shadow DOM
-    let instanceKey: string;
     if (config?.shadowRoot) {
-      // Use Symbol for more secure property access
-      const shadowRoot = config.shadowRoot as any;
-      if (!shadowRoot[this.__SHADOW_ID_KEY__])
-        shadowRoot[this.__SHADOW_ID_KEY__] = getUniqueId();
-      instanceKey = `${scopeId}:shadow:${shadowRoot[this.__SHADOW_ID_KEY__]}`;
-    } else instanceKey = scopeId;
-    let manager = this.__SHEETS__.get(instanceKey);
+      let registry = this.__SHADOW_SHEETS__.get(config.shadowRoot);
+      if (!registry) {
+        registry = new Map<string, StyleManager>();
+        this.__SHADOW_SHEETS__.set(config.shadowRoot, registry);
+      }
+      let manager = registry.get(scopeId);
+      if (!manager) {
+        manager = new StyleManager(scopeId, registry, config);
+        registry.set(scopeId, manager);
+      }
+      return manager;
+    }
+    let manager = this.__SHEETS__.get(scopeId);
     if (!manager) {
-      manager = new StyleManager(scopeId, instanceKey, config);
-      this.__SHEETS__.set(instanceKey, manager);
+      manager = new StyleManager(scopeId, this.__SHEETS__);
+      this.__SHEETS__.set(scopeId, manager);
     }
     return manager;
   }
@@ -267,8 +269,7 @@ export class StyleManager {
     this.__processedStyles__.clear();
     this.__dirty__ = false;
 
-    // 5. Remove from global registry - use instanceKey
-    StyleManager.__SHEETS__.delete(this.__instanceKey__);
+    this.__registry__.delete(this.scopeId);
   }
 
   private __scheduleDOMUpdate__(): void {

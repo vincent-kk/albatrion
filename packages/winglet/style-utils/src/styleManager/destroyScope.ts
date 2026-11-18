@@ -1,4 +1,4 @@
-import { StyleManager } from './StyleManager';
+import { StyleManager, type StyleManagerConfig } from './StyleManager';
 
 /**
  * Destroys a specific style scope and removes all associated styles from the DOM.
@@ -11,6 +11,8 @@ import { StyleManager } from './StyleManager';
  * - Removing the scope instance from the StyleManager registry
  *
  * @param scopeId - The unique identifier of the scope to destroy
+ * @param config - The ShadowRoot target; omitted for the document scope
+ * @returns Nothing after releasing the target scope
  *
  * @example
  * ```typescript
@@ -22,5 +24,5 @@ import { StyleManager } from './StyleManager';
  * destroyScope('my-scope');
  * ```
  */
-export const destroyScope = (scopeId: string): void =>
-  StyleManager.get(scopeId).destroy();
+export const destroyScope = (scopeId: string, config?: StyleManagerConfig): void =>
+  (config === undefined ? StyleManager.get(scopeId) : StyleManager.get(scopeId, config)).destroy();
