@@ -10,7 +10,7 @@
 - `load`, `prime`, `clear`는 `cacheKeyFn`이 돌려준 캐시 키를 참·거짓으로 거르지 않고 그대로 쓴다. `0`이나 `''` 같은 falsy 캐시 키도 다른 키와 똑같이 읽고 쓰며, 그렇지 않으면 `prime`한 값을 `load`가 무시하고 중복 요청도 합쳐지지 않는다.
 - `clear(key)`/`clearAll()`은 캐시만 무효화한다 — 이후 `load`가 `batchLoader`를 다시 호출하게 만든다.
 - `prime(key, value)`는 해당 키가 아직 캐시에 없을 때만 값(또는 `Promise`, `Error`)을 채운다 — 기존 캐시를 덮어쓰지 않는다.
-- `maxBatchSize`는 한 배치가 가질 수 있는 최대 키 개수를 제한하며, 초과분은 다음 배치로 넘어가 `batchLoader`가 여러 번 호출된다. 1 미만이거나 숫자가 아니면 `DataLoaderError`를 던진다.
+- `maxBatchSize`는 한 배치가 가질 수 있는 최대 키 개수를 제한하며, 초과분은 다음 배치로 넘어가 `batchLoader`가 여러 번 호출된다. 기본값과 같은 `Infinity`는 제한 없음을 뜻하고, 그 외에는 양의 정수만 허용합니다. NaN·소수·1 미만 값이나 숫자가 아니면 `DataLoaderError`를 던집니다.
 - `batchLoader`가 동기적으로 예외를 던지거나, `Promise`가 아닌 값을 반환하거나, 배열이 아닌 값으로 resolve되거나, 키 개수와 다른 길이의 배열로 resolve되면, 그 배치에 걸린 모든 키가 `DataLoaderError`로 reject되고 해당 키들의 캐시 항목도 제거된다.
 
 ## API Contracts
@@ -43,7 +43,7 @@
 - `batchLoader`가 함수가 아니면 생성자가 즉시 던진다.
 - `load(undefined)`/`load(null)`은 던지고 `load(0)`은 던지지 않는다.
 - `loadMany`에 배열이 아닌 인자를 주면 던진다.
-- `get`/`set`/`delete`/`clear`를 전부 구현하지 않은 커스텀 캐시, 1 미만이거나 숫자가 아닌 `maxBatchSize`, 함수가 아닌 `cacheKeyFn`·`batchScheduler`는 모두 생성 시점에 던진다.
+- `get`/`set`/`delete`/`clear`를 전부 구현하지 않은 커스텀 캐시, Infinity도 양의 정수도 아닌 `maxBatchSize`, 함수가 아닌 `cacheKeyFn`·`batchScheduler`는 모두 생성 시점에 던진다.
 
 ### batch-loader-contract-errors — batchLoader 응답 계약 위반 처리
 
