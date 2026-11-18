@@ -117,6 +117,7 @@ export const useTimeout = (
   callback: Fn,
   timeout: number = 0,
 ): UseTimeoutReturn => {
+  const mountedRef = useRef(true);
   const idleRef = useRef<boolean>(true);
   const timerIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const callbackRef = useCommittedReference(callback);
@@ -124,6 +125,7 @@ export const useTimeout = (
   const isIdle = useCallback(() => idleRef.current, []);
 
   const schedule = useCallback(() => {
+    if (!mountedRef.current) return;
     idleRef.current = false;
     if (timerIdRef.current !== null) clearTimeout(timerIdRef.current);
     timerIdRef.current = setTimeout(() => {
@@ -141,7 +143,13 @@ export const useTimeout = (
     }
   }, []);
 
-  useEffect(() => cancel, [cancel]);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      cancel();
+    };
+  }, [cancel]);
 
   return {
     isIdle,
