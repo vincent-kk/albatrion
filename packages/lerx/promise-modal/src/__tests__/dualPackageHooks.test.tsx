@@ -60,7 +60,7 @@ it("(round-2 promise-modal 7) content from the CommonJS copy can read its own co
   };
   window.addEventListener('error', onError);
 
-  let featureApi = esm;
+  let featureApi: Pick<typeof cjs, 'useModalDuration'> = esm;
   function FeatureContent() {
     const { duration } = featureApi.useModalDuration();
     return <span>feature duration {String(duration)}</span>;
