@@ -28,7 +28,7 @@ React의 터미널·원자 판정과 app 소유 청사진 캐시는 생성 인�
 
 ### REACT-007 — 준비된 load의 수명
 
-첫 commit 전 load는 변경·상태·진단 콜백을 버리고 오류 기록만 보관합니다. 초기 외부 오류는 추측성 루트의 마운트 직후 콜백 없이 적용하여 서버 HTML과 첫 클라이언트 렌더가 같은 오류를 읽습니다. 확정 commit은 루트 구독과 isPrepared 표시 뒤 기록을 flush하고 현재 외부 오류를 한 번 보고하며 로드 검증을 연결합니다. 초기 오류 적용만을 위한 추가 렌더·값 콜백·검증 콜백은 만들지 않습니다. StrictMode 재연결은 이미 준비된 load를 다시 flush하거나 예약하지 않습니다. 준비된 현행 load는 effect 연결 여부와 무관하게 engine chain 끝에서 콜백과 기록을 전달합니다. 교체된 load는 reset 사슬 뒤 은퇴하며 소비자 기록을 다시 배달하지 않습니다.
+첫 commit 전 load는 변경·상태·진단 콜백을 버리고 오류 기록만 보관합니다. 초기 외부 오류는 추측성 루트의 마운트 직후 콜백 없이 적용하여 서버 HTML과 첫 클라이언트 렌더가 같은 오류를 읽습니다. 확정 commit은 루트 구독과 isPrepared 표시 뒤 기록을 flush하고 현재 외부 오류를 load 사슬 안에서 한 번 보고하며 로드 검증을 연결합니다. 초기 오류 적용만을 위한 추가 렌더·값 콜백·검증 콜백은 만들지 않습니다. StrictMode 재연결은 이미 준비된 load를 다시 flush하거나 예약하지 않습니다. 준비된 현행 load는 effect 연결 여부와 무관하게 engine chain 끝에서 콜백과 기록을 전달합니다. 교체된 load는 reset 사슬 뒤 은퇴하며 소비자 기록을 다시 배달하지 않습니다.
 
 React는 숨김과 실제 unmount를 같은 cleanup으로 표현하므로 루트 구독은 cleanup에서 끊지 않습니다. retained handle·노드의 쓰기·reset·rebuild·validate·submit과 예약 슬롯은 unmount 뒤에도 전달할 수 있습니다. cleanup은 검증 캐시 retain만 해제하며 그 뒤 만든 새 루트는 retain하지 않아 축출 후 재컴파일할 수 있습니다.
 

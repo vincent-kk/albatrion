@@ -21,6 +21,7 @@ import { PluginManager } from '@/schema-form/app/plugin';
 import type { FormProps } from '@/schema-form/components/Form';
 import {
   ValidationMode,
+  batchFieldNodeLoad,
   releaseValidationRoot,
   retainValidationRoot,
   setContext,
@@ -276,7 +277,8 @@ export const RootNodeContextProvider = ({
         load.isPrepared = true;
         flushRootLoad(load);
         if (root) {
-          if (root.globalErrors.length) reportRootLoadValidation(load, store);
+          if (root.globalErrors.length)
+            batchFieldNodeLoad(root, () => reportRootLoadValidation(load, store));
           scheduleLoadValidation(load, store);
         }
       } else load.isPrepared = true;
