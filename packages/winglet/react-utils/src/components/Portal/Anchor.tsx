@@ -1,6 +1,7 @@
-import { type HTMLAttributes, memo } from 'react';
+import { type HTMLAttributes, memo, useCallback, useRef } from 'react';
 
 import { usePortalAnchor } from './context/usePortalContext';
+import { useAnchorLifecycle } from './utils/useAnchorLifecycle';
 
 /**
  * Defines the exact DOM location where Portal content will be rendered.
@@ -121,7 +122,25 @@ import { usePortalAnchor } from './context/usePortalContext';
 export const Anchor = memo(
   (props: Omit<HTMLAttributes<HTMLDivElement>, 'children'>) => {
     const setPortalAnchor = usePortalAnchor();
-    return <div role="none" style={style} {...props} ref={setPortalAnchor} />;
+    const anchorRef = useRef<HTMLDivElement | null>(null);
+    const attachAnchor = useCallback(
+      (element: HTMLDivElement | null) => {
+        if (element === null) return;
+        anchorRef.current = element;
+        setPortalAnchor(element);
+      },
+      [setPortalAnchor],
+    );
+    useAnchorLifecycle(
+      () => () => {
+        const retired = anchorRef.current;
+        queueMicrotask(() =>
+          setPortalAnchor((current) => (current === retired ? null : current)),
+        );
+      },
+      [setPortalAnchor],
+    );
+    return <div role="none" style={style} {...props} ref={attachAnchor} />;
   },
 );
 

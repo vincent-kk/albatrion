@@ -13,7 +13,7 @@
 - `Portal`은 memo 컴포넌트의 메타데이터와 렌더 생략 동작을 유지하며, 내부 어댑터 선언이 렌더 함수의 반환 타입을 보존한다.
 - `Portal`의 공개 호출 반환 타입은 `ReactPortal | null`이며 `null`로만 선언하지 않는다.
 - `Portal` — 앵커가 있으면 해당 DOM에 children을 넣는 createPortal 결과를 반환하고, 없으면 null을 반환한다. 서버와 첫 hydration 렌더에는 앵커가 없고 내용은 ref 연결 후 나타난다.
-- `Portal.Anchor` — 마운트되는 DOM 엘리먼트를 콜백 ref로 컨텍스트에 보고해 포털 렌더 위치로 지정한다. 표준 div 속성을 전달받으며, 기본 `style`은 `{ display: 'contents' }`이고 `props.style`이 있으면 병합이 아니라 대체된다.
+- `Portal.Anchor` — 마운트되는 DOM 엘리먼트를 콜백 ref로 컨텍스트에 보고해 포털 렌더 위치로 지정한다. Activity·Suspense의 임시 ref 해제는 목적지를 지우지 않는다. 실제 삭제 시 React 18·19의 insertion effect 정리에서 마이크로태스크를 예약하여 해당 노드가 여전히 목적지일 때만 해제한다. React 16.14·17은 숨김과 실제 삭제를 구분하기 위해 passive effect 정리를 사용한다. 표준 div 속성을 전달받으며, 기본 `style`은 `{ display: 'contents' }`이고 `props.style`이 있으면 병합이 아니라 대체된다.
 - `Portal.with` — 컴포넌트를 포털 컨텍스트 프로바이더로 감싸 독립된 앵커 범위를 만든다. 반환 컴포넌트는 메모이즈된다.
 
 ## Acceptance Criteria
