@@ -69,7 +69,14 @@ export class ModalManager {
         const restore =
           node.settled && ModalManager.__state__.focusTargets.has(node.id);
         const target = ModalManager.__state__.focusTargets.get(node.id);
-        if (restore) ModalManager.__state__.focusTargets.delete(node.id);
+        if (restore) {
+          const frame = ModalManager.__state__.frames.get(node.id);
+          if (frame && target)
+            for (const [peerId, opener] of ModalManager.__state__.focusTargets)
+              if (peerId !== node.id && opener && containsComposedElement(frame, opener))
+                ModalManager.__state__.focusTargets.set(peerId, target);
+          ModalManager.__state__.focusTargets.delete(node.id);
+        }
         if (restore && node.visible)
           ModalManager.__state__.settlements =
             (ModalManager.__state__.settlements ?? 0) + 1;
