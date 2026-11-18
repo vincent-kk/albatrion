@@ -62,6 +62,8 @@ export interface ModalManagerState {
   hash: string;
   /** The scope manager exists only between browser attach and detach. */
   styleManager?: ReturnType<typeof styleManagerFactory>;
+  /** Captures the creating copy so any compatible owner can release its stylesheet. */
+  destroyStyleManager?: Fn;
   /** Canonical CSS definitions survive detach for later initialization. */
   styleSheetDefinition: Map<string, string>;
   /** Alive nodes remain independent of the provider render tree. */

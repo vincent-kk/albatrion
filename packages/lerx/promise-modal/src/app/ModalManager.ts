@@ -499,16 +499,20 @@ export class ModalManager {
   }
   /** Creates a style manager only at browser initialization. */
   static applyStyleSheet(): void {
-    ModalManager.__state__.styleManager ??= styleManagerFactory(
-      ModalManager.__state__.scope,
-    );
+    if (!ModalManager.__state__.styleManager) {
+      const scope = ModalManager.__state__.scope;
+      ModalManager.__state__.styleManager = styleManagerFactory(scope);
+      ModalManager.__state__.destroyStyleManager = () => destroyScope(scope);
+    }
     for (const [styleId, css] of ModalManager.__state__.styleSheetDefinition)
       ModalManager.__state__.styleManager(styleId, css, true);
   }
   /** Discards the captured scope manager so a later attach can rebuild styles. */
   private static destroyStyleSheet(): void {
     if (!ModalManager.__state__.styleManager) return;
-    destroyScope(ModalManager.__state__.scope);
+    if (ModalManager.__state__.destroyStyleManager) ModalManager.__state__.destroyStyleManager();
+    else destroyScope(ModalManager.__state__.scope);
+    ModalManager.__state__.destroyStyleManager = undefined;
     ModalManager.__state__.styleManager = undefined;
   }
   /** Computes class names in browser and server environments alike. */
