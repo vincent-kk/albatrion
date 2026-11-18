@@ -96,6 +96,37 @@ export const collectDeclarations = (
       }),
     );
   }
+  if (typeof schema.$ref === 'string') {
+    const references = new Set(visiting);
+    references.add(input.schemaPath);
+    let reference = schema.$ref;
+    let location = input.schemaPath;
+    while (true) {
+      const target = resolveReference(context, reference, location);
+      if (references.has(target.schemaPath)) break;
+      references.add(target.schemaPath);
+      const targetSchema = readSchemaObject(target.schema);
+      const schemaPath = appendSegment(
+        appendSegment(target.schemaPath, 'controls'),
+        'active',
+      );
+      if (
+        targetSchema.controls?.active !== undefined &&
+        !gates.some((gate) => gate.schemaPath === schemaPath)
+      )
+        gates.push(
+          createBlueprintGate({
+            kind: 'active',
+            schemaPath,
+            hostPath: path,
+            condition: targetSchema.controls.active,
+          }),
+        );
+      if (typeof targetSchema.$ref !== 'string') break;
+      reference = targetSchema.$ref;
+      location = target.schemaPath;
+    }
+  }
   const fragment: MutableFragment = {
     id: context.fragments.length,
     hostPath: path,
