@@ -1,8 +1,9 @@
 import { Box } from '@mui/material';
 
-import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
-
 import type { FieldRendererProps } from '@canard/schema-form';
+
+import { FieldLabelContext } from '../utils/context/FieldLabelContext';
+import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 
 /**
  * Connect group titles through the core label address while retaining the helper root.
@@ -19,12 +20,29 @@ export const FieldRenderer = ({
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps) => {
-  if (depth === 0) return <Input labelId={labelId} />;
+  if (depth === 0)
+    return (
+      <FieldLabelContext.Provider value={labelId}>
+        <Input />
+      </FieldLabelContext.Provider>
+    );
 
   if (node.strategy === 'branch') {
-    const presentation = typeof jsonSchema === 'object' && jsonSchema !== null ? jsonSchema.presentation : undefined;
-    const inputType = typeof presentation === 'object' && presentation !== null && 'inputType' in presentation && typeof presentation.inputType === 'string' ? presentation.inputType : undefined;
-    const ownsTitle = typeof jsonSchema === 'object' && jsonSchema !== null && isCheckboxGroupInput({type: node.type, inputType, jsonSchema});
+    const presentation =
+      typeof jsonSchema === 'object' && jsonSchema !== null
+        ? jsonSchema.presentation
+        : undefined;
+    const inputType =
+      typeof presentation === 'object' &&
+      presentation !== null &&
+      'inputType' in presentation &&
+      typeof presentation.inputType === 'string'
+        ? presentation.inputType
+        : undefined;
+    const ownsTitle =
+      typeof jsonSchema === 'object' &&
+      jsonSchema !== null &&
+      isCheckboxGroupInput({ type: node.type, inputType, jsonSchema });
     return (
       <Box
         component="fieldset"
@@ -38,8 +56,14 @@ export const FieldRenderer = ({
           padding: 1,
         }}
       >
-        {!ownsTitle && <span hidden id={labelId}>{name}</span>}
-        <Input labelId={labelId} />
+        {!ownsTitle && (
+          <span hidden id={labelId}>
+            {name}
+          </span>
+        )}
+        <FieldLabelContext.Provider value={labelId}>
+          <Input />
+        </FieldLabelContext.Provider>
       </Box>
     );
   } else {
@@ -50,7 +74,9 @@ export const FieldRenderer = ({
           marginLeft: depth * 2,
         }}
       >
-        <Input labelId={labelId} />
+        <FieldLabelContext.Provider value={labelId}>
+          <Input />
+        </FieldLabelContext.Provider>
         <ErrorMessage>{errorMessage}</ErrorMessage>
       </Box>
     );
