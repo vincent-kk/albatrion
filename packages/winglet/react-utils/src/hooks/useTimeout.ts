@@ -120,7 +120,7 @@ export const useTimeout = (
   const mountedRef = useRef(true);
   const idleRef = useRef<boolean>(true);
   const timerIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const callbackRef = useCommittedReference(callback);
+  const callbackRef = useCommittedReference(useRef(callback), callback);
 
   const isIdle = useCallback(() => idleRef.current, []);
 

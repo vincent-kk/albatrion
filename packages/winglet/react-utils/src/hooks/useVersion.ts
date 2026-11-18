@@ -257,7 +257,7 @@ import { useCommittedReference } from './utils/useCommittedReference';
  */
 export const useVersion = (callback?: Fn) => {
   const [version, update] = useReducer(increment, 0);
-  const callbackRef = useCommittedReference(callback);
+  const callbackRef = useCommittedReference(useRef(callback), callback);
   const updateRef = useRef(() => {
     callbackRef.current?.();
     update();

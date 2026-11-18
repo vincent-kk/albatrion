@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useRef } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
@@ -74,12 +74,17 @@ export function useHandle<P extends Array<any>, R>(
 export function useHandle<P extends Array<any>, R>(
   handler?: Fn<P, R>,
 ): Fn<P, R | null> {
-  const handlerRef = useCommittedReference(handler);
-  return useCallback(
-    (...args: P) => {
-      const latest = handlerRef.current;
-      return typeof latest === 'function' ? latest(...args) : null;
-    },
-    [handlerRef],
-  );
+  type HandlerReference = { current: typeof handler; handle: Fn<P, R | null> };
+  const holder = useRef<HandlerReference | null>(null);
+  if (holder.current === null) {
+    const reference: HandlerReference = {
+      current: handler,
+      handle: (...args: P) => {
+        const latest = reference.current;
+        return typeof latest === 'function' ? latest(...args) : null;
+      },
+    };
+    holder.current = reference;
+  }
+  return useCommittedReference(holder.current, handler).handle;
 }

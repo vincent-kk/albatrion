@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
@@ -55,6 +55,6 @@ import { useCommittedReference } from './utils/useCommittedReference';
  * @see useOnUnmountLayout - Runs the same cleanup synchronously, before the browser paints
  */
 export const useOnUnmount = (handler: Fn) => {
-  const handlerRef = useCommittedReference(handler);
+  const handlerRef = useCommittedReference(useRef(handler), handler);
   useEffect(() => () => handlerRef.current(), [handlerRef]);
 };

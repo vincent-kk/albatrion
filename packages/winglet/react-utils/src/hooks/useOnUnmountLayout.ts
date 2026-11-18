@@ -1,4 +1,4 @@
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
@@ -56,6 +56,6 @@ import { useCommittedReference } from './utils/useCommittedReference';
  * @see useOnUnmount - The non-blocking variant, correct for most cleanup
  */
 export const useOnUnmountLayout = (handler: Fn) => {
-  const handlerRef = useCommittedReference(handler);
+  const handlerRef = useCommittedReference(useRef(handler), handler);
   useLayoutEffect(() => () => handlerRef.current(), [handlerRef]);
 };
