@@ -105,7 +105,7 @@ The legacy explicit form `npx -p @slats/agents-assets-sync inject-agents-setting
 
 **Exit codes**: `0` success / up-to-date / dry-run, `1` runtime error, `2` user / configuration error (missing `--package`, missing `--scope` in non-TTY, unresolvable package, missing `agents.assetPath` with no `--asset-path`, an `--asset-path` that is absolute or names no directory inside the package, or an asset root that resolves outside its package).
 
-For `--scope=project` the target `.claude` directory is resolved by walking up from `process.cwd()` to the nearest existing `.claude` ancestor; the CLI logs `(auto-located)` when this happens.
+For `--scope=project`, use the root-marker precedence described under Agent destinations. The CLI logs `(auto-located)` when the resolved root is above the working directory.
 
 ## Consumer Integration (2 steps)
 
@@ -189,11 +189,9 @@ Every file under the asset root is hashed and tracked in `dist/agents-hashes.jso
 ```ts
 import {
   computeNamespacePrefixes,
-  injectDocs,
-  isInteractive,
   isValidScope,
   readHashManifest,
-  resolveScope,
+  resolveProjectRoot,
   runCli,
 } from '@slats/agents-assets-sync';
 ```
