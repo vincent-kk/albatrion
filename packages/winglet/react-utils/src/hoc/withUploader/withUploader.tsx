@@ -1,6 +1,7 @@
 import {
   type ChangeEvent,
   type ComponentType,
+  type MouseEvent as ReactMouseEvent,
   Fragment,
   memo,
   useMemo,
@@ -135,6 +136,7 @@ export const withUploader = <Props extends BaseProps>(
             accept={accept}
             style={{ display: 'none' }}
             onChange={handleFileChange}
+            onClick={stopInputClick}
             ref={inputRef}
           />
           <Component {...(props as Props)} onClick={handleClick} />
@@ -142,3 +144,8 @@ export const withUploader = <Props extends BaseProps>(
       );
     },
   );
+
+/** Stops the hidden input activation from duplicating the user click upstream. */
+const stopInputClick = (event: ReactMouseEvent<HTMLInputElement>): void => {
+  event.stopPropagation();
+};
