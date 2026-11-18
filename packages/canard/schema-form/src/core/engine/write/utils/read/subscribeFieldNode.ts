@@ -26,8 +26,7 @@ export const subscribeFieldNode = <Self extends FieldNodeRecord<Self>>(
   listeners.set(node, subscriptions);
   runtime.listeners = listeners;
   return () => {
-    subscriptions.delete(listener);
-    if (!subscriptions.size && listeners.get(node) === subscriptions)
+    if (subscriptions.delete(listener) && !subscriptions.size)
       listeners.delete(node);
   };
 };

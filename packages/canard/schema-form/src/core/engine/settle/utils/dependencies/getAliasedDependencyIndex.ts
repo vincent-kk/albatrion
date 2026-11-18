@@ -322,6 +322,14 @@ export const getAliasedDependencyIndex = <Self extends FieldNodeRecord<Self>>(
   if (!runtime.blueprint.capabilities.hasAliasedDependencies) return undefined;
   let index = indexes.get(runtime);
   if (!index) {
+    const capabilities = runtime.blueprint.capabilities;
+    if (
+      !runtime.commitNumber &&
+      !capabilities.hasDerive &&
+      !capabilities.hasState &&
+      !capabilities.hasWatch
+    )
+      return undefined;
     index = new AliasedDependencyIndex(runtime.blueprint);
     indexes.set(runtime, index);
   }

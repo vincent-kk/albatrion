@@ -27,23 +27,24 @@ export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
   }
   if (!enterFieldNodeChain(node)) return;
   const runtime = node.rootNode.runtime;
-  if (runtime.batchWrites)
-    runtime.batchWrites = filterArray(
-      runtime.batchWrites,
-      (write) =>
-        write.node !== node && !isDescendantPath(write.node.path, node.path),
-    );
   (runtime.validationTargets ??= new Set()).add(node);
   try {
-    if (
-      runtime.batchWrites?.some((write) =>
-        isDescendantPath(node.path, write.node.path),
+    if (runtime.batchWrites) {
+      runtime.batchWrites = filterArray(
+        runtime.batchWrites,
+        (write) =>
+          write.node !== node && !isDescendantPath(write.node.path, node.path),
+      );
+      if (
+        runtime.batchWrites.some((write) =>
+          isDescendantPath(node.path, write.node.path),
+        )
       )
-    )
-      flushBatchWrites(node.rootNode);
-    if (node.isDetached) {
-      refuseInactiveResolverWrite(node);
-      return;
+        flushBatchWrites(node.rootNode);
+      if (node.isDetached) {
+        refuseInactiveResolverWrite(node);
+        return;
+      }
     }
     resetFieldNodeSubtree(node, option);
   } catch (error) {
