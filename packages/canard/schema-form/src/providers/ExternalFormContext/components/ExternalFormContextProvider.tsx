@@ -2,6 +2,7 @@ import { type ComponentType, type PropsWithChildren, useMemo } from 'react';
 
 import type { Dictionary } from '@aileron/declare';
 
+import { PluginManager, getScopedPluginManager } from '@/schema-form/app/plugin';
 import type { ValidationMode } from '@/schema-form/core';
 import { normalizeFieldInputDefinitions } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
@@ -20,6 +21,8 @@ import { ExternalFormContext } from './ExternalFormContext';
 import { ExternalInputContext } from './ExternalInputContext';
 
 export interface ExternalFormContextProviderProps {
+  /** Stable application registry token; omitted keeps the realm-shared defaults. */
+  pluginScope?: string | symbol;
   /** List of FieldInputDefinition declared externally */
   fieldInputDefinitions?: FieldInputDefinition[];
   /** FieldRenderer component declared externally */
@@ -184,6 +187,7 @@ export interface ExternalFormContextProviderProps {
  * - This provider is ideal for section-specific or feature-specific configuration
  */
 export const ExternalFormContextProvider = ({
+  pluginScope,
   fieldInputDefinitions,
   FieldRenderer,
   LabelRenderer,
@@ -196,6 +200,7 @@ export const ExternalFormContextProvider = ({
   validatorFactory,
   children,
 }: PropsWithChildren<ExternalFormContextProviderProps>) => {
+  const pluginManager = pluginScope === undefined ? PluginManager : getScopedPluginManager(pluginScope);
   const fromExternalFieldInputDefinitions = useMemo(
     () =>
       fieldInputDefinitions
@@ -205,11 +210,12 @@ export const ExternalFormContextProvider = ({
   );
   const context = useContextSnapshot(inputContext);
   const externalInputContext = useMemo(
-    () => ({ fromExternalFieldInputDefinitions, InputRenderer }),
-    [fromExternalFieldInputDefinitions, InputRenderer],
+    () => ({ fromExternalFieldInputDefinitions, InputRenderer, pluginManager }),
+    [fromExternalFieldInputDefinitions, InputRenderer, pluginManager],
   );
   const value = useMemo(
     () => ({
+      pluginManager,
       fromExternalFieldInputDefinitions,
       FieldRenderer,
       LabelRenderer,
@@ -222,6 +228,7 @@ export const ExternalFormContextProvider = ({
       context,
     }),
     [
+      pluginManager,
       fromExternalFieldInputDefinitions,
       FieldRenderer,
       LabelRenderer,

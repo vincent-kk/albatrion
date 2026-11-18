@@ -17,7 +17,6 @@ import {
 import type { Fn, Optional } from '@aileron/declare';
 
 import { blueprintCacheDomain } from '@/schema-form/app/cache';
-import { PluginManager } from '@/schema-form/app/plugin';
 import type { FormProps } from '@/schema-form/components/Form';
 import {
   ValidationMode,
@@ -77,7 +76,7 @@ export const RootNodeContextProvider = ({
     validator:
       props.validatorFactory ??
       external.validatorFactory ??
-      PluginManager.validator,
+      external.pluginManager.validator,
     validationMode:
       props.validationMode ??
       external.validationMode ??

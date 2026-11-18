@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+FormProvider의 pluginScope는 string 또는 symbol로 선택한 독립 등록소를 사용합니다. registerPlugin(plugin, { scope })의 같은 토큰과 호환 버전만 공유하며, 생략하면 기존 realm 전역 등록소를 그대로 사용합니다. scope 등록소와 기본 등록소는 입력·렌더러·검증기·포맷터·중복 기록·reset을 공유하지 않습니다. 각 애플리케이션은 안정된 토큰을 공급하고 설정 뒤 폼을 렌더합니다. 등록은 반응형 구독을 만들지 않으며 scope의 등록소는 realm 수명 동안 유지합니다. 선택은 기존 외부 설정 Context로 전달하여 필드별 구독을 추가하지 않습니다.
+
 ### REACT-003 — 렌더 독립 생성 경계
 
 React의 터미널·원자 판정과 app 소유 청사진 캐시는 생성 인자로 전달합니다. 초기 생성과 재생성은 같은 판정을 사용하여 같은 스키마의 형상이 경로마다 달라지지 않게 합니다. core는 React 표식이나 app 전역을 알 필요가 없습니다. 판정과 캐시 identity의 정의는 [schemaIdentity](../../helpers/schemaIdentity/DETAIL.md)와 [cache](../../app/cache/DETAIL.md)가 소유합니다.

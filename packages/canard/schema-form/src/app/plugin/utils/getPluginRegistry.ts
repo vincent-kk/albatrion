@@ -45,18 +45,26 @@ interface PluginRegistry {
 
 /** Pre-1.0 minor releases may change the registry ABI and therefore use distinct keys. */
 const REGISTRY_KEY = Symbol.for('@canard/schema-form/plugin-registry/0.16');
+/** Scopes use the same ABI version as the default registry. */
+const SCOPES_KEY = Symbol.for('@canard/schema-form/plugin-scopes/0.16');
 
 /** Optional symbol ownership adds no claim about an uninitialized realm. */
 const registryGlobal: typeof globalThis & {
   [REGISTRY_KEY]?: PluginRegistry;
+  [SCOPES_KEY]?: Map<string | symbol, PluginRegistry>;
 } = globalThis;
 
 /**
  * Initialize the registry through module loading, shared only by this compatible realm.
  * @returns Existing state, or defaults normalized once for this registry version.
  */
-export const getPluginRegistry = (): PluginRegistry => {
-  if (registryGlobal[REGISTRY_KEY]) return registryGlobal[REGISTRY_KEY];
+export const getPluginRegistry = (scope?: string | symbol): PluginRegistry => {
+  if (scope === undefined) {
+    if (registryGlobal[REGISTRY_KEY]) return registryGlobal[REGISTRY_KEY];
+  } else {
+    const existing = registryGlobal[SCOPES_KEY]?.get(scope);
+    if (existing) return existing;
+  }
   const defaultRenderKit = {
     FieldRenderer,
     LabelRenderer,
@@ -65,7 +73,7 @@ export const getPluginRegistry = (): PluginRegistry => {
   const defaultFieldInputDefinitions = normalizeFieldInputDefinitions(
     builtinFieldInputDefinitions,
   );
-  return (registryGlobal[REGISTRY_KEY] = {
+  const registry: PluginRegistry = {
     renderKit: defaultRenderKit,
     fieldInputDefinitions: defaultFieldInputDefinitions,
     formatError: formatValidationError,
@@ -73,5 +81,8 @@ export const getPluginRegistry = (): PluginRegistry => {
     defaultFieldInputDefinitions,
     registeredPlugins: new Set(),
     getPluginKey: createFingerprintFactory(),
-  });
+  };
+  if (scope === undefined) registryGlobal[REGISTRY_KEY] = registry;
+  else (registryGlobal[SCOPES_KEY] ??= new Map()).set(scope, registry);
+  return registry;
 };

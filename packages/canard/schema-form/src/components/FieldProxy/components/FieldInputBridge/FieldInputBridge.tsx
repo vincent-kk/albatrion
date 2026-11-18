@@ -5,7 +5,6 @@ import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
 
 import type { Nullable, Optional } from '@aileron/declare';
 
-import { PluginManager } from '@/schema-form/app/plugin';
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
 import { FieldNodeState } from '@/schema-form/core';
 import {
@@ -54,11 +53,11 @@ export const FieldInputBridge = memo(
     const selected = useFieldInput(node, PreferredFieldInput !== null);
     const FieldInput = PreferredFieldInput || (selected && selected.Component);
     const formInputRenderer = useInputRendererContext();
-    const { InputRenderer: externalInputRenderer } = useExternalInputContext();
+    const { InputRenderer: externalInputRenderer, pluginManager } = useExternalInputContext();
     const InputRenderer =
       formInputRenderer ||
       externalInputRenderer ||
-      PluginManager.InputRenderer ||
+      pluginManager.InputRenderer ||
       null;
     const Frame = FieldInput && !unwrapped ? InputRenderer : null;
     const presentation = (node.jsonSchema as JSONSchema).presentation;

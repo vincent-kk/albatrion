@@ -7,6 +7,7 @@ import { FormErrorCode, UnhandledError } from '@/schema-form/errors';
 import type { SchemaFormPlugin } from '../type';
 import { PluginManager } from './PluginManager';
 import { formatRegisterPluginError } from './formatRegisterPluginError';
+import { getScopedPluginManager } from './getScopedPluginManager';
 import { getPluginRegistry } from './getPluginRegistry';
 
 /** Registration fingerprints share the same realm ownership as plugin state. */
@@ -20,6 +21,7 @@ const { getPluginKey, registeredPlugins } = getPluginRegistry();
  * to prevent duplicate registrations.
  *
  * @param plugin - Plugin configuration object or null to reset all plugins to defaults
+ * @param options - Optional application scope, paired with FormProvider.pluginScope.
  * @throws {UnhandledError} When plugin registration fails
  *
  * @example
@@ -196,22 +198,30 @@ const { getPluginKey, registeredPlugins } = getPluginRegistry();
  * - Use `null` parameter to reset ALL plugins to system defaults
  * - After reset, previously registered plugins need to be re-registered
  */
-export const registerPlugin = (plugin: Nullable<SchemaFormPlugin>) => {
+export const registerPlugin = (
+  plugin: Nullable<SchemaFormPlugin>,
+  options?: { scope: string | symbol },
+) => {
+  const scope = options?.scope;
+  const manager = scope === undefined ? PluginManager : getScopedPluginManager(scope);
   if (plugin === null) {
-    PluginManager.reset();
+    manager.reset();
     return;
   }
   if (!isPlainObject(plugin)) return;
-  const hash = getPluginKey(plugin);
-  if (registeredPlugins.has(hash)) return;
+  const registry = scope === undefined ? undefined : getPluginRegistry(scope);
+  const fingerprint = registry?.getPluginKey ?? getPluginKey;
+  const registered = registry?.registeredPlugins ?? registeredPlugins;
+  const hash = fingerprint(plugin);
+  if (registered.has(hash)) return;
   try {
     const { fieldInputDefinitions, validator, formatError, ...renderKit } =
       plugin;
     // Normalization is the only step that throws; running it first leaves a failed plugin unapplied.
-    PluginManager.appendFieldInputDefinitions(fieldInputDefinitions);
-    PluginManager.appendRenderKit(renderKit);
-    PluginManager.appendValidator(validator);
-    PluginManager.appendFormatError(formatError);
+    manager.appendFieldInputDefinitions(fieldInputDefinitions);
+    manager.appendRenderKit(renderKit);
+    manager.appendValidator(validator);
+    manager.appendFormatError(formatError);
   } catch (error) {
     throw new UnhandledError(
       FormErrorCode.RegisterPlugin,
@@ -222,5 +232,5 @@ export const registerPlugin = (plugin: Nullable<SchemaFormPlugin>) => {
       },
     );
   }
-  registeredPlugins.add(hash);
+  registered.add(hash);
 };

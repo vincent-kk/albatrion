@@ -4,7 +4,6 @@ import { isReactComponent } from '@winglet/react-utils/filter';
 
 import type { Nullable } from '@aileron/declare';
 
-import { PluginManager } from '@/schema-form/app/plugin';
 import type { FieldNode } from '@/schema-form/core';
 import {
   type NormalizedFieldInputDefinition,
@@ -28,7 +27,7 @@ export const useFieldInput = (
 > => {
   const { fromFieldInputMap, fromFieldInputDefinitions } =
     useFieldInputsContext();
-  const { fromExternalFieldInputDefinitions } = useExternalInputContext();
+  const { fromExternalFieldInputDefinitions, pluginManager } = useExternalInputContext();
   const schema = node.jsonSchema as JSONSchema;
   const path = node.path;
   const misfit = node.isMisfit;
@@ -59,7 +58,7 @@ export const useFieldInput = (
       fromFieldInputMap,
       fromFieldInputDefinitions,
       fromExternalFieldInputDefinitions,
-      PluginManager.fieldInputDefinitions,
+      pluginManager.fieldInputDefinitions,
     ])
       for (const definition of definitions ?? [])
         if (definition.test(hint)) return definition;
@@ -76,5 +75,6 @@ export const useFieldInput = (
     fromFieldInputMap,
     fromFieldInputDefinitions,
     fromExternalFieldInputDefinitions,
+    pluginManager,
   ]);
 };
