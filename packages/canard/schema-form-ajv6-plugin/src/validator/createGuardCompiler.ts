@@ -30,7 +30,6 @@ export const createGuardCompiler = (
   directGuardCompile: boolean,
   finalizer: FinalizationRegistry<SchemaRootRegistration>,
 ): Fn<[value: unknown], boolean> => {
-  const fragment = pointer.startsWith('#') ? pointer : `#${pointer}`;
   const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : '';
   const located = resolveGuardSchema(root, pointer);
   if (located === undefined)
@@ -51,6 +50,10 @@ export const createGuardCompiler = (
     if (!registration.directGuards.includes(schema))
       registration.directGuards.push(schema);
   }
+  const fragment =
+    direct || pointer.startsWith('#')
+      ? pointer
+      : `#${pointer.includes('%') ? pointer.replace(/%/g, '%25') : pointer}`;
   const guard = direct
     ? (registration.guard ??= cloneInstance(instance, false, false))
     : registerSchemaGuard(root, instance, registration);
