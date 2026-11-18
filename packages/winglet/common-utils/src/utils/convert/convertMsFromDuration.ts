@@ -279,7 +279,8 @@ import { HOUR, MINUTE, SECOND } from '@/common-utils/constant';
  * }
  * ```
  */
-export const convertMsFromDuration = (duration: string) => {
+export const convertMsFromDuration = (duration: string | null | undefined) => {
+  if (duration == null) return 0;
   if (!DURATION_REGEX) DURATION_REGEX = /^\s*(\d+)\s*(ms|s|m|h)\s*$/;
   const [, durationString, unit] = duration.match(DURATION_REGEX) || [];
   if (!durationString || !unit) return 0;
