@@ -2,7 +2,8 @@ import { afterEach, expect, it } from 'vitest';
 
 import { ModalManager } from '../ModalManager';
 
-const flush = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+const flush = () =>
+  new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 afterEach(() => ModalManager.reset());
 
 it('(round-2 promise-modal 1) preserves style definitions across unchanged attaches, replacements, additions and detach', async () => {
@@ -16,7 +17,10 @@ it('(round-2 promise-modal 1) preserves style definitions across unchanged attac
   await flush();
   expect(document.head.textContent).toBe(initial);
   ModalManager.defineStyleSheet('cache-primary', '.cache-primary{color:blue}');
-  ModalManager.defineStyleSheet('cache-secondary', '.cache-secondary{color:green}');
+  ModalManager.defineStyleSheet(
+    'cache-secondary',
+    '.cache-secondary{color:green}',
+  );
   ModalManager.attach(owner, document.body, () => {});
   await flush();
   const updated = document.head.textContent;

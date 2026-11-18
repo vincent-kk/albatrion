@@ -535,9 +535,18 @@ export class ModalManager {
       const config = { shadowRoot: isShadowRoot(tree) ? tree : undefined };
       ModalManager.__state__.styleManager = styleManagerFactory(scope, config);
       ModalManager.__state__.destroyStyleManager = () => destroyScope(scope);
+      ModalManager.__state__.appliedStyleSheetDefinition = undefined;
     }
+    const applied = ModalManager.__state__.appliedStyleSheetDefinition;
     for (const [styleId, css] of ModalManager.__state__.styleSheetDefinition)
-      ModalManager.__state__.styleManager(styleId, css, true);
+      if (!applied || applied.get(styleId) !== css) {
+        ModalManager.__state__.styleManager(styleId, css, true);
+        applied?.set(styleId, css);
+      }
+    if (!applied)
+      ModalManager.__state__.appliedStyleSheetDefinition = new Map(
+        ModalManager.__state__.styleSheetDefinition,
+      );
   }
   /** Discards the captured scope manager so a later attach can rebuild styles. */
   private static destroyStyleSheet(): void {
@@ -547,6 +556,7 @@ export class ModalManager {
     else destroyScope(ModalManager.__state__.scope);
     ModalManager.__state__.destroyStyleManager = undefined;
     ModalManager.__state__.styleManager = undefined;
+    ModalManager.__state__.appliedStyleSheetDefinition = undefined;
   }
   /** Computes class names in browser and server environments alike. */
   static getHashedClassNames(styleId: string): string {
