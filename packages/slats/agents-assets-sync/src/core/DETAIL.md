@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- `core/**`는 순수하고 상태 없는 기본 연산의 모음이다. 드문 파일 연결 해제 실패를 위한 `injectDocs/utils/applyAction.ts` 안의 `logger.warn` 한 곳을 제외하고 이 트리의 어떤 함수도 `process.stdout`/`process.stderr`에 쓰지 않는다.
+- `core/**`는 순수하고 상태 없는 기본 연산의 모음이다. 이 트리의 어떤 함수도 `process.stdout`/`process.stderr`에 쓰지 않는다.
 - 스코프 해석은 결정적이다. `resolveProjectRoot`는 `cwd`와 `homedir`만 읽는다. `user`는 홈 디렉터리를 반환하고 `project`는 `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git` 중 하나를 가진 가장 가까운 조상을 반환하며 없으면 `cwd`를 사용한다. `cwd`보다 위에서 찾으면 `autoLocated`를 보고한다. 앵커의 존재로 판단하며 `AGENTS.md`는 파일이고 워크트리 안의 `.git`도 파일이다.
 - 선택된 모든 에이전트는 프로젝트 루트 하나를 사용하므로 여러 에이전트를 지정한 실행이 두 프로젝트에 걸칠 수 없다.
 - `resolveAgentTarget`은 `(agent, scope)`를 자산 위치로 매핑한다. claude는 모든 종류의 루트를 `<projectRoot>/.claude` 아래에 둔다. codex와 agents는 skills를 스킬 디렉터리 디렉터리에 두고 rules를 `AGENTS.md`에 병합하며 `commands`는 지원하지 않는다고 보고한다. `project` 스코프에서는 같다(`<projectRoot>/.agents/skills`와 `<projectRoot>/AGENTS.md`). `user` 스코프에서만 codex는 `~/.codex`, agents는 `~/.agents`를 사용한다.
@@ -17,6 +17,8 @@
 - `readHashManifest`는 `schemaVersion !== 1`을 명시적 오류로 거부한다.
 - 대상의 원본 해시는 저장된 빌드 출력 디렉터리의 `agents-hashes.json` 또는 실행 시 해시를 계산한 자산 디렉터리 중 하나에서 오며 `resolveHashManifest`가 `hashSource`로 선택한다. 선택은 명령 분배기의 책임이다. `--asset-path`는 항상 디렉터리를 사용하며, 선언된 자산 경로는 빌드된 매니페스트가 없을 때 디렉터리를 사용한다.
 - 고아 항목 탐색은 호출자가 제공한 탐색만 실행한다. 블록 탐색은 지정된 패키지 소유의 블록만 고려하므로 다른 패키지나 도구의 블록을 삭제 대상으로 제안하지 않는다.
+
+- 파일 풀의 거부와 블록 적용 실패는 종료 코드 1로 보고한다. 실패한 작업은 생성·삭제 목록에서 제외하고 failed 경고에 기록하여 부분 성공을 실패로 위장하지 않는다.
 
 ## API Contracts
 
@@ -46,7 +48,7 @@
 - `partitionActions(actions, force): { fileActions: Action[]; blockGroups: Map<string, Action[]> }`
 - `applyAction(action: Action, assetRoot: string): Promise<void>`
 - `applyBlockActions(fileAbs: string, actions, assetRoot: string): Promise<void>`
-- `summarize(plan: InjectPlan, exitCode: 0 | 1 | 2): InjectReport`
+- `summarize(plan: InjectPlan, exitCode: 0 | 1 | 2, failedActions?: readonly Action[]): InjectReport`
 - `hashContent(buffer: Buffer | string): Sha256Hex`
 - `hashFile(absPath: string): Promise<Sha256Hex | null>`
 - `hashEquals(a: Sha256Hex | null, b: Sha256Hex | null): boolean`

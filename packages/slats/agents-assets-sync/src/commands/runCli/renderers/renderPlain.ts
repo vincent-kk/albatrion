@@ -1,4 +1,5 @@
 import {
+  type Action,
   type ActionTarget,
   type AgentTarget,
   type AgentType,
@@ -156,14 +157,20 @@ async function renderOneUnit(
   }
 
   const { fileActions, blockGroups } = partitionActions(plan.actions, force);
-  await asyncPool(COPY_CONCURRENCY, fileActions, (action) =>
+  const results = await asyncPool(COPY_CONCURRENCY, fileActions, (action) =>
     applyAction(action, target.assetRoot),
   );
-  // Serialised on purpose: one document, one read-modify-write.
-  for (const [fileAbs, group] of blockGroups)
-    await applyBlockActions(fileAbs, group, target.assetRoot);
+  const failedActions: Action[] = fileActions.filter((_, index) => results[index].status === 'rejected');
+  for (const [fileAbs, group] of blockGroups) {
+    try {
+      await applyBlockActions(fileAbs, group, target.assetRoot);
+    } catch {
+      failedActions.push(...group);
+    }
+  }
 
-  const report: InjectReport = summarize(plan, 0);
+  for (const action of failedActions) logger.error(`Failed to apply: ${action.relPath}`);
+  const report: InjectReport = summarize(plan, failedActions.length ? 1 : 0, failedActions);
   return report.exitCode;
 }
 

@@ -7,12 +7,14 @@
 - 블록을 문서별로 묶는 이유는 여러 블록이 보통 하나의 `AGENTS.md` 를 공유하고, 동시 기록자가 각자 읽은 판본을 저장하면 마지막 하나의 변경만 남기 때문이다.
 - 아무것도 바꾸지 않는 판정은 버려진다. `copy` 와 `delete` 는 항상 실행 가능하고, `warn-diverged` 는 force 가 주어졌을 때에만 실행 가능하다. CLI 의 "`--force` 는 덮어쓴다" 는 약속이 지켜지는 지점이 바로 여기다.
 - `applyAction` 은 `file` 목적지만 다룬다. 블록 목적지가 들어오면 실패하지 않고 아무것도 하지 않는다 — 계획 전체를 풀에 먹이는 호출자가 실수로 문서를 망가뜨릴 수 없게 한다.
-- `applyAction` 은 `copy` 와 `warn-diverged` 에서 상위 디렉터리를 만들고 소스를 복사한다. `delete` 에서 `ENOENT` 는 조용히 넘어가고, 그 외 실패만 `logger.warn` 으로 알린다. 이 한 줄이 `core/**` 전체에서 유일한 출력이다.
+- `applyAction` 은 `copy` 와 `warn-diverged` 에서 상위 디렉터리를 만들고 소스를 복사한다. `delete` 에서 `ENOENT` 는 조용히 넘어가고, 그 외 실패는 호출자에게 전파한다.
 - `applyBlockActions` 는 하나의 공유 문서를 한 번의 read-modify-write 로 처리한다. 문서가 없으면 빈 내용에서 시작하고, 상위 디렉터리를 만들어 쓴다.
 - 이 도구의 블록 바깥 내용은 바이트 단위로 살아남는다. 문서는 다른 도구와 사용자의 땅이기도 하다.
 - `summarize` 는 순수하다. 계획이 이미 모든 판정을 담고 있으므로 파일시스템도 환경변수도 읽지 않는다.
 - `skip-uptodate` 와 `skip-unsupported` 는 함께 `skipped` 로 집계되고, `warn-diverged` 와 `warn-orphan` 은 사유(`'diverged'` / `'orphan'`)를 단 `warnings` 로 집계된다.
 - `exitCode` 는 호출자가 정해 넘기며 `InjectReport` 를 통해 전파된다.
+
+- 파일 풀의 거부와 블록 적용 실패는 종료 코드 1로 보고한다. 실패한 작업은 생성·삭제 목록에서 제외하고 failed 경고에 기록하여 부분 성공을 실패로 위장하지 않는다.
 
 ## API Contracts
 
@@ -21,7 +23,7 @@
 - `applyAction(action: Action, assetRoot: string): Promise<void>`
   - `file` 이외의 목적지에서는 무동작
 - `applyBlockActions(fileAbs: string, actions: readonly Action[], assetRoot: string): Promise<void>`
-- `summarize(plan: InjectPlan, exitCode: 0 | 1 | 2): InjectReport`
+- `summarize(plan: InjectPlan, exitCode: 0 | 1 | 2, failedActions?: readonly Action[]): InjectReport`
 
 ## Exported Types
 

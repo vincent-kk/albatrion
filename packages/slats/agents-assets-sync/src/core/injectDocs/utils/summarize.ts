@@ -1,4 +1,4 @@
-import type { InjectPlan } from '../../buildPlan/index.js';
+import type { Action, InjectPlan } from '../../buildPlan/index.js';
 import type { InjectReport } from '../type.js';
 
 /**
@@ -9,9 +9,10 @@ import type { InjectReport } from '../type.js';
  *
  * @param plan - the plan whose actions were applied, or previewed
  * @param exitCode - code the caller decided on for this target
+ * @param failedActions - attempted actions that failed and must not count as applied
  * @returns per-category path lists plus the exit code
  */
-export function summarize(plan: InjectPlan, exitCode: 0 | 1 | 2): InjectReport {
+export function summarize(plan: InjectPlan, exitCode: 0 | 1 | 2, failedActions: readonly Action[] = []): InjectReport {
   const report: InjectReport = {
     created: [],
     updated: [],
@@ -21,6 +22,10 @@ export function summarize(plan: InjectPlan, exitCode: 0 | 1 | 2): InjectReport {
     exitCode,
   };
   for (const action of plan.actions) {
+    if (failedActions.includes(action)) {
+      report.warnings.push({ relPath: action.relPath, reason: 'failed' });
+      continue;
+    }
     if (action.kind === 'copy') report.created.push(action.relPath);
     else if (action.kind === 'skip-uptodate')
       report.skipped.push(action.relPath);

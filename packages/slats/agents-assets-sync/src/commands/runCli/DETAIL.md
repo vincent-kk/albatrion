@@ -36,6 +36,8 @@
 - 렌더러가 0이 아닌 코드를 돌려주면 그 코드로 프로세스가 종료된다.
 - soft skip 은 진단이자 값이다. 경고는 사람이 읽는 전사를 위해 남기고, 같은 문자열을 수집해 `--json` 이 stderr 를 긁지 않고도 빈 실행을 설명하게 한다.
 
+- 적용 실패는 종료 코드 1이며 JSON 보고서는 실패 항목을 생성·삭제 목록에서 제외하고 failed 경고를 담는다.
+
 ## API Contracts
 
 - `runCli(argv: readonly string[] = process.argv): Promise<void>`
