@@ -4,6 +4,8 @@ import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
 
 import { setDataProperty } from './setDataProperty';
+import { replicateDeep } from './cloneLite/utils/replicateDeep';
+import { replicateShallow } from './cloneLite/utils/replicateShallow';
 
 /**
  * Creates a lightweight deep clone of simple data structures with maximum performance.
@@ -142,13 +144,13 @@ import { setDataProperty } from './setDataProperty';
  * - **Built-in Objects**: Date, RegExp, Map, Set, Error (returned as-is)
  * - **Binary Data**: TypedArrays, ArrayBuffer, Blob, File (returned as-is)
  * - **Special Objects**: DOM nodes, class instances, functions (returned as-is)
- * - **Circular References**: Will cause stack overflow
+ * - **Circular References**: Unsupported; cloning does not terminate
  * - **Symbol Properties**: Not copied
  *
  * **Performance Characteristics:**
  * - **Speed**: ~5-10x faster than `clone` for simple structures
  * - **Memory**: Minimal overhead, no caching or tracking
- * - **Algorithm**: Direct recursive copying without checks
+ * - **Algorithm**: Recursive copying with an explicit-frame fallback after 256 levels
  * - **Time Complexity**: O(n) where n is total properties/elements
  * - **Space Complexity**: O(d) where d is maximum depth
  *
@@ -169,7 +171,7 @@ import { setDataProperty } from './setDataProperty';
  * - Need for symbol property preservation
  *
  * **Implementation Details:**
- * - **No Circular Detection**: Direct recursion without Map-based tracking
+ * - **No Circular Detection**: No Map-based tracking
  * - **Type Checking**: Only `isArray` and `isPlainObject` checks
  * - **Property Copying**: Simple for-in loop for objects, indexed loop for arrays
  * - **Sparse Array Support**: Preserves array holes via `in` operator check
@@ -187,7 +189,7 @@ import { setDataProperty } from './setDataProperty';
  * - vs structuredClone: ~3x faster but less type support
  *
  * **Safety Considerations:**
- * - **Stack Overflow Risk**: Deep nesting (>10000 levels) or circular refs
+ * - **Cycles**: Reject cyclic input before cloning; use `clone` for supported cyclic structures
  * - **Type Loss**: Complex types become plain objects or are skipped
  * - **Unsupported Prototypes**: Class instances are returned as-is
  * - **Reference Sharing**: Unsupported types share references with original
@@ -204,7 +206,9 @@ import { setDataProperty } from './setDataProperty';
  * ```
  */
 export const cloneLite = <Type>(target: Type, maxDepth?: number): Type =>
-  replicate(target, maxDepth, 0);
+  maxDepth === 1
+    ? replicateShallow(target)
+    : replicate(target, maxDepth, 0, maxDepth !== undefined && maxDepth < 256 ? maxDepth : 256);
 
 /**
  * Recursively clones a value using minimal type checking for maximum performance.
@@ -217,8 +221,12 @@ const replicate = <Type>(
   value: Type,
   limit: number | undefined,
   depth: number,
+  checkpoint: number,
 ): Type => {
-  if (limit !== undefined && depth >= limit) return value as Type;
+  if (depth >= checkpoint) {
+    if (limit !== undefined && depth >= limit) return value;
+    return replicateDeep(value, limit, depth);
+  }
   depth = depth + 1;
 
   if (isArray(value)) {
@@ -226,7 +234,7 @@ const replicate = <Type>(
     const result = new Array(length);
     if (length > 0)
       for (let i = 0, v = value[0]; i < length; i++, v = value[i])
-        if (i in value) result[i] = replicate(v, limit, depth);
+        if (i in value) result[i] = replicate(v, limit, depth, checkpoint);
     return result as Type;
   }
 
@@ -238,7 +246,7 @@ const replicate = <Type>(
     const length = keys.length;
     if (length > 0)
       for (let i = 0, k = keys[0]; i < length; i++, k = keys[i]) {
-        const cloned = replicate(value[k], limit, depth);
+        const cloned = replicate(value[k], limit, depth, checkpoint);
         // Plain assignment of an own '__proto__' key would swap the clone's
         // prototype instead of defining data — route it through the primitive
         if (k === '__proto__') setDataProperty(result, k, cloned);
