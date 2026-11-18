@@ -38,6 +38,10 @@ class AliasedDependencyIndex {
   private readonly owners = new Map<string, Occurrence>();
   private readonly paths = new PathStoreIndex();
   private readonly contextNodes = new Set<Occurrence>();
+  /** One cached query bounds retained addresses independently of write count. */
+  private affectedPath?: string;
+  /** Owners from the last query, invalidated by every topology update. */
+  private affectedResult?: readonly string[];
   private readonly dependencies = new Map<number, string[]>();
   private readonly rules: ReturnType<typeof getDeriveRuleTable>;
   private nextKey = 0;
@@ -79,12 +83,17 @@ class AliasedDependencyIndex {
 
   /** Return live owners whose reads intersect a changed subtree in either direction. */
   affectedOwners(path: string): readonly string[] {
+    if (this.affectedPath === path && this.affectedResult)
+      return this.affectedResult;
     const owners = new Set<string>();
     for (const key of this.paths.intersecting(path)) {
       const node = this.owners.get(key);
       if (node && !node.isDetached && !node.isDisposed) owners.add(node.path);
     }
-    return [...owners];
+    const result = [...owners];
+    this.affectedPath = path;
+    this.affectedResult = result;
+    return result;
   }
 
   /** Return concrete live aliases affected by a context replacement. */
@@ -113,6 +122,7 @@ class AliasedDependencyIndex {
       previous.parent === node.parent
     )
       return;
+    this.affectedPath = undefined;
     if (previous) {
       for (const key of previous.keys) {
         this.paths.delete(key);
@@ -134,30 +144,31 @@ class AliasedDependencyIndex {
       if (wildcard !== -1) path = joinPointer(segments.slice(0, wildcard));
       if (paths.indexOf(path) === -1) paths.push(path);
     };
-    for (const declaration of node.blueprintNode.declarations) {
-      const host = this.bindHost(node, declaration.path);
-      for (const dependency of this.dependencies.get(declaration.id) ?? [])
-        watch(host, dependency);
-      for (const gate of declaration.gates) {
-        const expression = getGateExpression(this.blueprint, gate.schemaPath);
-        if (expression)
-          for (const dependency of expression.dependencies)
-            watch(this.bindHost(node, gate.hostPath), dependency);
+    if (node.path !== node.blueprintNode.path)
+      for (const declaration of node.blueprintNode.declarations) {
+        const host = this.bindHost(node, declaration.path);
+        for (const dependency of this.dependencies.get(declaration.id) ?? [])
+          watch(host, dependency);
+        for (const gate of declaration.gates) {
+          const expression = getGateExpression(this.blueprint, gate.schemaPath);
+          if (expression)
+            for (const dependency of expression.dependencies)
+              watch(this.bindHost(node, gate.hostPath), dependency);
+        }
+        for (const rule of this.rules.byDeclaration.get(declaration.id) ?? []) {
+          if (rule.kind !== 'derived') continue;
+          const targets = rule.isItemTarget
+            ? (node.children ?? []).map((child) => child.path)
+            : [
+                rule.targetName === undefined
+                  ? host
+                  : appendSegment(host, rule.targetName),
+              ];
+          for (const target of targets)
+            for (const dependency of rule.watchDependencies)
+              watch(target, dependency);
+        }
       }
-      for (const rule of this.rules.byDeclaration.get(declaration.id) ?? []) {
-        if (rule.kind !== 'derived') continue;
-        const targets = rule.isItemTarget
-          ? (node.children ?? []).map((child) => child.path)
-          : [
-              rule.targetName === undefined
-                ? host
-                : appendSegment(host, rule.targetName),
-            ];
-        for (const target of targets)
-          for (const dependency of rule.watchDependencies)
-            watch(target, dependency);
-      }
-    }
     const keys: string[] = [];
     for (const path of paths) {
       const key = String(this.nextKey++);
@@ -180,6 +191,7 @@ class AliasedDependencyIndex {
 
   /** Preserve relative host offsets, including a declaration on a template ancestor. */
   private bindHost(node: Occurrence, authored: string): string {
+    if (authored === node.blueprintNode.path) return node.path;
     const origin = parsePointerSegments(node.blueprintNode.path);
     const target = parsePointerSegments(authored);
     const actual = parsePointerSegments(node.path);
@@ -202,6 +214,7 @@ class AliasedDependencyIndex {
     this.children.delete(node);
     const registration = this.byNode.get(node);
     if (!registration) return;
+    this.affectedPath = undefined;
     for (const key of registration.keys) {
       this.paths.delete(key);
       this.owners.delete(key);
