@@ -2,6 +2,7 @@ import { compressCss } from '@/style-utils/utils/compressCss/compressCss';
 
 import { type StyleManagerConfig, type StyleRoot } from './type';
 import { RuleScoper } from './utils/RuleScoper';
+import { terminateStatement } from './utils/terminateStatement';
 
 /**
  * A scoped CSS management system that provides efficient style injection and cleanup.
@@ -282,7 +283,7 @@ export class StyleManager {
 
   private __scopeCSS__(css: string): string {
     // If it's Shadow DOM, no need to scope
-    if (this.__isShadowDOM__) return css;
+    if (this.__isShadowDOM__) return terminateStatement(css);
     return new RuleScoper(css, '.' + this.__scope__).scopeSheet();
   }
 
