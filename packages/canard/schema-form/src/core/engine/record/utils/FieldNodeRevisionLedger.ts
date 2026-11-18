@@ -5,6 +5,8 @@ import { EMPTY_REVISION_LEDGER } from '../constants/emptyRevisionLedger';
 
 /** Known event bits occupy consecutive slots rather than sparse numeric elements. */
 const KNOWN_BITS = (FieldNodeEventType.UpdateDiagnostics << 1) - 1;
+/** Constructor-only bits include the private input counter without widening public reads. */
+const COMMITTED_BITS = KNOWN_BITS | INPUT_VALUE_REVISION;
 /** Number of known event bits, one counter slot per bit. */
 const KNOWN_BIT_COUNT = 32 - Math.clz32(KNOWN_BITS);
 
@@ -31,15 +33,13 @@ export class FieldNodeRevisionLedger {
               { length: KNOWN_BIT_COUNT },
               (_, index) => previous[1 << index],
             );
-    let remaining = mask & KNOWN_BITS;
+    let remaining = mask & COMMITTED_BITS;
     while (remaining) {
       const bit = remaining & -remaining;
       const index = 31 - Math.clz32(bit);
       counts[index] = (counts[index] ?? 0) + 1;
       remaining &= remaining - 1;
     }
-    if (mask & INPUT_VALUE_REVISION)
-      counts[KNOWN_BIT_COUNT] = (counts[KNOWN_BIT_COUNT] ?? 0) + 1;
     this.counts = counts;
   }
 
@@ -61,7 +61,7 @@ export class FieldNodeRevisionLedger {
 
   /** Internal own-input count, excluded from public revision sums. */
   get [INPUT_VALUE_REVISION]() {
-    return this.counts[KNOWN_BIT_COUNT];
+    return this.counts[31 - Math.clz32(INPUT_VALUE_REVISION)];
   }
 
   /** Initialization counter. */
