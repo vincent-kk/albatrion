@@ -40,6 +40,8 @@
 
 - 여러 단위의 종료 코드는 출력 방식과 순서에 관계없이 실행 오류 1, force 차단 2, 성공 0 순으로 집계한다.
 
+- Node가 허용하는 UTF-8 BOM은 명시한 패키지와 스코프 별칭의 메타데이터 해석에서 동일하게 허용한다.
+
 ## API Contracts
 
 - `runCli(argv: readonly string[] = process.argv): Promise<void>`

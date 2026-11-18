@@ -90,7 +90,7 @@ async function collectScopeDir(
     let parsed: { name?: unknown };
     try {
       const raw = await readFile(pkgJSONPath, 'utf-8');
-      parsed = JSON.parse(raw) as { name?: unknown };
+      parsed = JSON.parse(raw.replace(/^\uFEFF/, '')) as { name?: unknown };
     } catch {
       continue;
     }
