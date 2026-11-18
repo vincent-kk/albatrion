@@ -28,7 +28,7 @@ export const makeSibling = (
     RULES: { value: baseAjv.RULES },
   });
   for (const [key, env] of Object.entries(baseAjv.schemas))
-    if (env && !key.startsWith(PLUGIN_KEY_PREFIX) && !sibling.schemas[key])
+    if (env && !key.startsWith(PLUGIN_KEY_PREFIX) && !Object.prototype.hasOwnProperty.call(sibling.schemas, key))
       sibling.addSchema(env.schema, key);
   return sibling;
 };
