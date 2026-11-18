@@ -1,4 +1,3 @@
-import type { ConfigurationContextProps } from '@/promise-modal/types/context';
 import {
   type CSSProperties,
   type ComponentType,
@@ -30,11 +29,10 @@ import type {
   ForegroundComponent,
   WrapperComponentProps,
 } from '@/promise-modal/types/base';
+import type { ConfigurationContextProps } from '@/promise-modal/types/context';
 import type { ModalOptions } from '@/promise-modal/types/option';
 
-import {
-  ConfigurationContext,
-} from './ConfigurationContext';
+import { ConfigurationContext } from './ConfigurationContext';
 
 const DEFAULT_OPTIONS = {
   zIndex: DEFAULT_Z_INDEX,
