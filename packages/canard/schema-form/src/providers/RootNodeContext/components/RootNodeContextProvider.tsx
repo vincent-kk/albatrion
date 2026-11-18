@@ -277,7 +277,9 @@ export const RootNodeContextProvider = ({
         flushRootLoad(load);
         if (root) {
           if (root.globalErrors.length)
-            batchFieldNodeLoad(root, () => reportRootLoadValidation(load, store));
+            batchFieldNodeLoad(root, () =>
+              reportRootLoadValidation(load, store),
+            );
           scheduleLoadValidation(load, store);
         }
       } else load.isPrepared = true;

@@ -1,9 +1,9 @@
-import { sameValueZero } from '../../../utils/compute/sameValueZero';
 import type { Fn } from '@aileron/declare';
 
 import { FormErrorCode } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
+import { sameValueZero } from '../../../utils/compute/sameValueZero';
 import { createValidationCadence } from '../../../validationScheduling';
 import type { ValidationIssue } from '../../types/issue';
 import { isFieldNodeValidationCurrent } from '../read/isFieldNodeValidationCurrent';
@@ -69,8 +69,11 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
           settleFieldNodeValidation(node, stamp);
           return;
         }
-        if ((runtime.commitNumber ?? 0) !== commit &&
-          (!sameValueZero(root.storedOutputValue, validatedValue) || runtime.context !== validatedContext)) {
+        if (
+          (runtime.commitNumber ?? 0) !== commit &&
+          (!sameValueZero(root.storedOutputValue, validatedValue) ||
+            runtime.context !== validatedContext)
+        ) {
           for (const target of targets)
             (runtime.validationPendingTargets ??= new Set()).add(target);
           runtime.validationCadence?.request();

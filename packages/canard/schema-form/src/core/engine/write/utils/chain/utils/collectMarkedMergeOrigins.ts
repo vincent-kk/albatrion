@@ -4,7 +4,7 @@ import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintNode } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
-import { FieldNodeWriteKind } from '../../../../types/value';
+import type { FieldNodeWriteKind } from '../../../../types/value';
 
 /** One actual replacement or partial branch scope of a marked Merge. */
 interface MergeOrigin {

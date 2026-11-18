@@ -74,9 +74,9 @@ Each `push()` delivers its own events, so a loop of N pushes notifies subscriber
 for (let i = 0; i < 100; i++) arrayNode.push(createItem(i));
 
 // ✅ notifies once per affected node
-formRef.current?.findNode('/items')?.setValue(
-  Array.from({ length: 100 }, (_, i) => createItem(i)),
-);
+formRef.current
+  ?.findNode('/items')
+  ?.setValue(Array.from({ length: 100 }, (_, i) => createItem(i)));
 ```
 
 A parent Overwrite drops retained values for inactive branches that are omitted from the replacement. Writing the specific array node, as above, or using SetValueOption.Merge preserves unmentioned retained branch values. An updater receives the same projected value as getValue(); spreading it does not expose or retain hidden branch sources.
@@ -88,8 +88,7 @@ Compute the number of removals from the committed shape before entering the batc
 ```typescript
 const removeCount = Math.max(0, arrayNode.children!.length - 1);
 arrayNode.batch(() => {
-  for (let remaining = removeCount; remaining > 0; remaining--)
-    arrayNode.pop();
+  for (let remaining = removeCount; remaining > 0; remaining--) arrayNode.pop();
 });
 ```
 

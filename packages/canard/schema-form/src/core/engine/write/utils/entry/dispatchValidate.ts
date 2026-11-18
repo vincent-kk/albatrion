@@ -1,4 +1,3 @@
-import { sameValueZero } from '../../../utils/compute/sameValueZero';
 import type { Nullable } from '@aileron/declare';
 
 import {
@@ -8,6 +7,7 @@ import {
 } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
+import { sameValueZero } from '../../../utils/compute/sameValueZero';
 import type { ValidationIssue } from '../../../validation';
 import {
   isFieldNodeValidationCurrent,
@@ -50,8 +50,8 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
     node === node.rootNode ? { stamp, targets: new Set([node]) } : undefined;
   if (running) runtime.activeValidationRun = running;
   let commit = runtime.commitNumber ?? 0;
-    const validatedValue = root.storedOutputValue;
-    const validatedContext = runtime.context;
+  const validatedValue = root.storedOutputValue;
+  const validatedContext = runtime.context;
   const loadStamp = runtime.validationLoadStamp;
   const epoch = runtime.validationEpoch;
   let result: Nullable<readonly ValidationIssue[]>;
@@ -111,8 +111,11 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
     if (node === node.rootNode) settleFieldNodeValidation(node, stamp);
     return [];
   }
-  if ((runtime.commitNumber ?? 0) !== commit &&
-          (!sameValueZero(root.storedOutputValue, validatedValue) || runtime.context !== validatedContext)) {
+  if (
+    (runtime.commitNumber ?? 0) !== commit &&
+    (!sameValueZero(root.storedOutputValue, validatedValue) ||
+      runtime.context !== validatedContext)
+  ) {
     if (node === node.rootNode) {
       if (
         (runtime.validationMode ?? ValidationMode.None) &
@@ -124,7 +127,7 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
     return result;
   }
   commit = runtime.commitNumber ?? 0;
-        const issues = retainEqualValidationIssues(node, result);
+  const issues = retainEqualValidationIssues(node, result);
   routeValidationIssues([node], issues);
   runtime.validationResult = { commit, issues };
   if (node === node.rootNode) {

@@ -40,7 +40,7 @@ AuthoredSchema의 options는 알려진 옵션 형에 소비자 Options 제네릭
 
 경로 키 저장소는 native Map·Set 의미를 유지하며 항목 수 K와 깊이 D에 따른 O(KD) 접두 참조·색인 비용으로 국소 조회를 지원합니다. 인스턴스 adoption이나 메서드 패치를 하지 않습니다. 기능 부재가 정적으로 증명된 경우만 공유 읽기 전용 빈 Map·Set을 사용합니다. 공유 동결 빈 배열은 identity sentinel을 제외하고 공용 EMPTY_ARRAY를 사용하여 변화 없는 읽기에 할당을 더하지 않습니다.
 
-객체 합성과 extras 복사가 공유하는 안전한 키 쓰기는 이 경계에 두고 __proto__를 own property로 보존합니다. union fold를 포함하는 종류 정체성도 공통 보조로 계산하여 자식별 충돌 판정이 달라지지 않게 합니다. 별도 노드 고정 칸이나 영구 토큰 캐시를 더하지 않습니다.
+객체 합성과 extras 복사가 공유하는 안전한 키 쓰기는 이 경계에 두고 **proto**를 own property로 보존합니다. union fold를 포함하는 종류 정체성도 공통 보조로 계산하여 자식별 충돌 판정이 달라지지 않게 합니다. 별도 노드 고정 칸이나 영구 토큰 캐시를 더하지 않습니다.
 
 ### schema-keyword-positions — 스키마 위치의 단일 어휘
 

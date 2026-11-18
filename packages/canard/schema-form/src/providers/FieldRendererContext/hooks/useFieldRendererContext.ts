@@ -1,6 +1,5 @@
 import { useContext } from 'react';
 
-
 import { useExternalFormContext } from '../../ExternalFormContext';
 import { FieldRendererContext } from '../components/FieldRendererContext';
 
@@ -20,7 +19,8 @@ export const useFieldRendererContext = () => {
       context.ErrorMessageRenderer ||
       external.ErrorMessageRenderer ||
       external.pluginManager.ErrorMessageRenderer,
-    FieldRenderer: context.FieldRenderer || external.pluginManager.FieldRenderer,
+    FieldRenderer:
+      context.FieldRenderer || external.pluginManager.FieldRenderer,
     formatError: context.formatError || external.pluginManager.formatError,
     checkErrorVisibility: context.checkErrorVisibility,
     errorVisibility: context.errorVisibility,

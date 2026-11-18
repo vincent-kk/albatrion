@@ -15,8 +15,8 @@ import type { BlueprintGate, PropertyDeclaration } from '../../../types/node';
 import { readAllowedTypes } from '../../../utils/allowedTypes/readAllowedTypes';
 import { readSchemaObject } from '../../../utils/analyze/readSchemaObject';
 import { createBlueprintGate } from '../gates/createBlueprintGate';
-import { getResourceIndex } from '../references/resources/getResourceIndex';
 import { resolveReference } from '../references/resolveReference';
+import { getResourceIndex } from '../references/resources/getResourceIndex';
 import { collectSchemaCapabilities } from './collectSchemaCapabilities';
 import { readDiscriminatorBranches } from './readDiscriminatorBranches';
 import { validateControlGroups } from './validateControlGroups';
@@ -55,7 +55,8 @@ export const collectDeclarations = (
 ): PropertyDeclaration[] => {
   if (visiting.includes(input.schemaPath)) return result;
   const schema = readSchemaObject(input.schema);
-  if (input.schemaPath !== "#" && typeof schema.$id === "string") getResourceIndex(context);
+  if (input.schemaPath !== '#' && typeof schema.$id === 'string')
+    getResourceIndex(context);
   validateControlGroups(
     context,
     input.schema,
@@ -110,7 +111,8 @@ export const collectDeclarations = (
         target.schemaPath === input.schemaPath ||
         visiting.includes(target.schemaPath) ||
         references?.has(target.schemaPath)
-      ) break;
+      )
+        break;
       const targetSchema = readSchemaObject(target.schema);
       if (targetSchema.controls?.active !== undefined) {
         const schemaPath = appendSegment(
@@ -201,7 +203,9 @@ export const collectDeclarations = (
     return result;
   const stack = [...visiting, input.schemaPath];
   if (typeof schema.$ref === 'string') {
-    const target = referenceTarget ?? resolveReference(context, schema.$ref, input.schemaPath);
+    const target =
+      referenceTarget ??
+      resolveReference(context, schema.$ref, input.schemaPath);
     collectDeclarations(
       context,
       {

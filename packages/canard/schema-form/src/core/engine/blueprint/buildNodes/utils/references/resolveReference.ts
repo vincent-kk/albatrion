@@ -9,9 +9,9 @@ import { FormErrorCode } from '../../../../../../errors';
 import type { AnalysisContext } from '../../../types/analysis';
 import type { BlueprintSchema } from '../../../types/schema';
 import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintError';
+import { isBlueprintSchema } from './isBlueprintSchema';
 import { getResourceIndex } from './resources/getResourceIndex';
 import { resolveResourceReference } from './resources/resolveResourceReference';
-import { isBlueprintSchema } from './isBlueprintSchema';
 
 /**
  * Resolve a local authored reference without expanding its target.
@@ -41,7 +41,11 @@ export const resolveReference = (
       schema = hasOwnProperty(schema, name)
         ? Reflect.get(schema, name)
         : undefined;
-      if (schema && typeof schema === 'object' && typeof Reflect.get(schema, '$id') === 'string')
+      if (
+        schema &&
+        typeof schema === 'object' &&
+        typeof Reflect.get(schema, '$id') === 'string'
+      )
         getResourceIndex(context);
     }
   } catch (cause) {

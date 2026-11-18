@@ -7,8 +7,8 @@ import { FormErrorCode, UnhandledError } from '@/schema-form/errors';
 import type { SchemaFormPlugin } from '../type';
 import { PluginManager } from './PluginManager';
 import { formatRegisterPluginError } from './formatRegisterPluginError';
-import { getScopedPluginManager } from './getScopedPluginManager';
 import { getPluginRegistry } from './getPluginRegistry';
+import { getScopedPluginManager } from './getScopedPluginManager';
 
 /** Registration fingerprints share the same realm ownership as plugin state. */
 const { getPluginKey, registeredPlugins } = getPluginRegistry();
@@ -203,7 +203,8 @@ export const registerPlugin = (
   options?: { scope: string | symbol },
 ) => {
   const scope = options?.scope;
-  const manager = scope === undefined ? PluginManager : getScopedPluginManager(scope);
+  const manager =
+    scope === undefined ? PluginManager : getScopedPluginManager(scope);
   if (plugin === null) {
     manager.reset();
     return;

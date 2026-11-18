@@ -2,8 +2,8 @@ import { type ComponentType, createContext } from 'react';
 
 import type { Dictionary } from '@aileron/declare';
 
-import type { ValidationMode } from '@/schema-form/core';
 import { PluginManager } from '@/schema-form/app/plugin';
+import type { ValidationMode } from '@/schema-form/core';
 import type { NormalizedFieldInputDefinition } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
   ErrorMessageRendererProps,
@@ -40,6 +40,6 @@ export interface ExternalFormContext {
   validatorFactory?: ValidatorFactory;
 }
 
-export const ExternalFormContext = createContext<ExternalFormContext>(
-  { pluginManager: PluginManager },
-);
+export const ExternalFormContext = createContext<ExternalFormContext>({
+  pluginManager: PluginManager,
+});

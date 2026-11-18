@@ -2,7 +2,10 @@ import { type ComponentType, type PropsWithChildren, useMemo } from 'react';
 
 import type { Dictionary } from '@aileron/declare';
 
-import { PluginManager, getScopedPluginManager } from '@/schema-form/app/plugin';
+import {
+  PluginManager,
+  getScopedPluginManager,
+} from '@/schema-form/app/plugin';
 import type { ValidationMode } from '@/schema-form/core';
 import { normalizeFieldInputDefinitions } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
@@ -200,7 +203,10 @@ export const ExternalFormContextProvider = ({
   validatorFactory,
   children,
 }: PropsWithChildren<ExternalFormContextProviderProps>) => {
-  const pluginManager = pluginScope === undefined ? PluginManager : getScopedPluginManager(pluginScope);
+  const pluginManager =
+    pluginScope === undefined
+      ? PluginManager
+      : getScopedPluginManager(pluginScope);
   const fromExternalFieldInputDefinitions = useMemo(
     () =>
       fieldInputDefinitions

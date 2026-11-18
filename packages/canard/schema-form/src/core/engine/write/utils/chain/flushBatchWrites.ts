@@ -77,35 +77,39 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
           (write.option & WriteOption.Merge) === WriteOption.Merge &&
           !(write.option & WriteOption.Replace);
         return {
-            path: write.node.path,
-            source:
-              write.source ??
-              (partial
-                ? FieldNodeWriteKind.CallerPartial
-                : FieldNodeWriteKind.CallerReplace),
-            keys:
-              partial &&
-              write.value !== null &&
-              typeof write.value === 'object' &&
-              !isArray(write.value)
-                ? Object.keys(write.value)
-                : undefined,
-            fields:
-              !partial && write.node.behavior.type === 'virtual'
-                ? (write.node.blueprintNode.fields ?? []).flatMap((field) => {
-                    const sibling = write.node.parent?.childrenByName?.[field];
-                    return sibling ? [sibling.path] : [];
-                  })
-                : undefined,
+          path: write.node.path,
+          source:
+            write.source ??
+            (partial
+              ? FieldNodeWriteKind.CallerPartial
+              : FieldNodeWriteKind.CallerReplace),
+          keys:
+            partial &&
+            write.value !== null &&
+            typeof write.value === 'object' &&
+            !isArray(write.value)
+              ? Object.keys(write.value)
+              : undefined,
+          fields:
+            !partial && write.node.behavior.type === 'virtual'
+              ? (write.node.blueprintNode.fields ?? []).flatMap((field) => {
+                  const sibling = write.node.parent?.childrenByName?.[field];
+                  return sibling ? [sibling.path] : [];
+                })
+              : undefined,
         };
       },
     );
     if (writes.length > 1 && option & WriteOption.Merge)
       origins = writes.flatMap((write, index) =>
-        write.option & WriteOption.Merge && !(write.option & WriteOption.Replace) &&
+        write.option & WriteOption.Merge &&
+        !(write.option & WriteOption.Replace) &&
         write.source !== FieldNodeWriteKind.Automatic
-          ? collectMarkedMergeOrigins(write.node, write.value,
-              write.source ?? FieldNodeWriteKind.CallerPartial)
+          ? collectMarkedMergeOrigins(
+              write.node,
+              write.value,
+              write.source ?? FieldNodeWriteKind.CallerPartial,
+            )
           : [origins[index]],
       );
     writeFieldNode(

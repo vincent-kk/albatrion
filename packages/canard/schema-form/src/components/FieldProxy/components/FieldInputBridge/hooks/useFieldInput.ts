@@ -27,7 +27,8 @@ export const useFieldInput = (
 > => {
   const { fromFieldInputMap, fromFieldInputDefinitions } =
     useFieldInputsContext();
-  const { fromExternalFieldInputDefinitions, pluginManager } = useExternalInputContext();
+  const { fromExternalFieldInputDefinitions, pluginManager } =
+    useExternalInputContext();
   const schema = node.jsonSchema as JSONSchema;
   const path = node.path;
   const misfit = node.isMisfit;

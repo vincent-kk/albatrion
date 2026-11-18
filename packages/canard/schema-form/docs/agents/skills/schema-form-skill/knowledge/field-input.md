@@ -27,11 +27,11 @@ fieldInputMap: {
 }
 ```
 
-| Key | Meaning |
-| --- | --- |
-| Starts with `^` | `RegExp.test` against the escaped node path; add `$` to anchor the end. |
+| Key                                                                                | Meaning                                                                             |
+| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Starts with `^`                                                                    | `RegExp.test` against the escaped node path; add `$` to anchor the end.             |
 | Starts with `/` or `#/`, contains a segment exactly `*`, and does not end with `/` | Each `*` consumes one segment (array index or object key); other segments are text. |
-| Otherwise | Exact text after canonicalizing absolute pointers; relative text matches no node. |
+| Otherwise                                                                          | Exact text after canonicalizing absolute pointers; relative text matches no node.   |
 
 Names use path escaping: `/` → `~1`, `~` → `~0`, a name exactly `*` → `%2A`. `%` has no special meaning in a key: `'/rate(%)'` selects the property `rate(%)`; only a name exactly `*` uses `%2A` for the star. `''` and `'#'` are the root; `'/'` is an empty-name child. `**`, parentheses and brackets are literal in non-pattern keys; there is no recursive wildcard or warning.
 

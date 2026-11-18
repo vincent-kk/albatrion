@@ -2,7 +2,10 @@ import { createPluginManager } from './createPluginManager';
 import { getPluginRegistry } from './getPluginRegistry';
 
 /** Managers are module-local views over the realm's versioned scoped registries. */
-const managers = new Map<string | symbol, ReturnType<typeof createPluginManager>>();
+const managers = new Map<
+  string | symbol,
+  ReturnType<typeof createPluginManager>
+>();
 
 /**
  * Resolve the application-selected registry without repeating setup for its forms.

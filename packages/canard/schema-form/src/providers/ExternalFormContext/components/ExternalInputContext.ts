@@ -15,5 +15,6 @@ export interface ExternalInputContext {
 }
 
 /** Definition and frame changes are isolated from formatter and other provider updates. */
-export const ExternalInputContext =
-  createContext<ExternalInputContext>({ pluginManager: PluginManager });
+export const ExternalInputContext = createContext<ExternalInputContext>({
+  pluginManager: PluginManager,
+});

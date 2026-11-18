@@ -115,3 +115,20 @@ const PartError = ({
 ```
 
 The Antd5, Antd6, Antd Mobile and MUI plugins register label and error parts without an input frame. Required marks are decorative (`aria-hidden`); Antd Mobile puts a shown error inside a span root.
+
+## Independent applications on one page
+
+Unscoped registrations share one versioned registry across compatible package copies in the same realm. Independently bundled applications can opt into isolation with a stable string or symbol:
+
+```tsx
+import { Form, FormProvider, registerPlugin } from '@canard/schema-form';
+
+const applicationScope = Symbol('application');
+registerPlugin(myPlugin, { scope: applicationScope });
+
+<FormProvider pluginScope={applicationScope}>
+  <Form jsonSchema={schema} />
+</FormProvider>;
+```
+
+Use the same token for every compatible copy belonging to that application. Different scopes and the unscoped registry never inherit each other's registrations. `registerPlugin(null, { scope: applicationScope })` resets only that scope, including its deduplication record. Without an option, `registerPlugin(null)` still resets the realm-shared defaults. Register before rendering: registration is not reactive, and scoped registries live for the lifetime of the realm.

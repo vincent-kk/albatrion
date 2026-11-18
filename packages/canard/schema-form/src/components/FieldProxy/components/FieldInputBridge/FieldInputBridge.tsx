@@ -53,7 +53,8 @@ export const FieldInputBridge = memo(
     const selected = useFieldInput(node, PreferredFieldInput !== null);
     const FieldInput = PreferredFieldInput || (selected && selected.Component);
     const formInputRenderer = useInputRendererContext();
-    const { InputRenderer: externalInputRenderer, pluginManager } = useExternalInputContext();
+    const { InputRenderer: externalInputRenderer, pluginManager } =
+      useExternalInputContext();
     const InputRenderer =
       formInputRenderer ||
       externalInputRenderer ||
