@@ -379,8 +379,9 @@ export class ModalManager {
    * @param locked - Whether any visible pending dimmed modal requests a lock.
    */
   private static updateScrollLock(locked: boolean): void {
-    const style = document.body.style;
     const previous = ModalManager.__state__.scrollStyle;
+    if (!locked && !previous) return;
+    const style = document.body.style;
     if (locked && !previous) {
       ModalManager.__state__.scrollStyle = {
         overflow: style.getPropertyValue('overflow'),
