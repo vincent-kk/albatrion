@@ -60,3 +60,29 @@ describe('round-2 json 8: malformed fragment failures', () => {
     );
   });
 });
+
+
+describe('round-2 json 8: encoded leading separator', () => {
+  it('uses a percent-encoded first slash like its plain pointer for patch paths', () => {
+    const source = { a: 1, out: 0 };
+    expect(applyPatch(source, [{ op: 'replace', path: '#%2Fa', value: 2 }])).toEqual(
+      applyPatch(source, [{ op: 'replace', path: '/a', value: 2 }]),
+    );
+    expect(applyPatch(source, [{ op: 'move', from: '#%2Fa', path: '/out' }])).toEqual(
+      applyPatch(source, [{ op: 'move', from: '/a', path: '/out' }]),
+    );
+  });
+  it('keeps a mutable source intact when a mixed-form move is rejected', () => {
+    const source = { a: { child: 1 } };
+    expect(() => applyPatch(source, [{ op: 'move', from: '#%2Fa', path: '/a/child' }], { immutable: false })).toThrowError(
+      expect.objectContaining({ specific: 'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN' }),
+    );
+    expect(source).toEqual({ a: { child: 1 } });
+  });
+  it('copies an existing undefined fragment member like its plain pointer', () => {
+    const source = { a: undefined };
+    expect(applyPatch(source, [{ op: 'copy', from: '#%2Fa', path: '/out' }])).toEqual(
+      applyPatch(source, [{ op: 'copy', from: '/a', path: '/out' }]),
+    );
+  });
+});
