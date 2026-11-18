@@ -17,6 +17,9 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { formatProtocol } from './utils/uri/formatProtocol';
+import { parseUri } from './utils/uri/parseUri';
+
 import type { MuiContext } from '../type';
 
 type UriJSONSchema = StringSchema & { format?: 'uri' };
@@ -32,47 +35,6 @@ interface FieldInputUriProps
 
 const DEFAULT_PROTOCOLS = ['http', 'https'];
 
-
-const normalizeProtocol = (protocol: string): string => {
-  return protocol.replace(/:\/\/$/, '').replace(/:$/, '');
-};
-
-
-const getProtocolSeparator = (protocol: string): string => {
-  const normalizedProtocol = normalizeProtocol(protocol);
-
-  return ['mailto', 'tel'].includes(normalizedProtocol) ? ':' : '://';
-};
-
-
-const formatProtocolDisplay = (protocol: string): string => {
-  const normalizedProtocol = normalizeProtocol(protocol);
-  const separator = getProtocolSeparator(normalizedProtocol);
-  return `${normalizedProtocol}${separator}`;
-};
-
-
-const parseUri = (uri: string) => {
-
-  const singleColonMatch = uri.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):(.*)$/);
-  if (singleColonMatch && ['mailto', 'tel'].includes(singleColonMatch[1])) {
-    return {
-      protocol: singleColonMatch[1],
-      path: singleColonMatch[2],
-    };
-  }
-
-
-  const doubleColonMatch = uri.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):\/\/(.*)$/);
-  if (doubleColonMatch) {
-    return {
-      protocol: doubleColonMatch[1],
-      path: doubleColonMatch[2],
-    };
-  }
-
-  return null;
-};
 
 const FieldInputUri = ({
   path,
@@ -119,7 +81,7 @@ const FieldInputUri = ({
 
   const normalizedProtocols = useMemo(() => {
     const rawProtocols = protocolsProp || DEFAULT_PROTOCOLS;
-    return rawProtocols.map(normalizeProtocol);
+    return rawProtocols.map(formatProtocol);
   }, [protocolsProp]);
 
 
@@ -128,31 +90,21 @@ const FieldInputUri = ({
 
 
   const { initialProtocol, initialUri, protocolOptions } = useMemo(() => {
-    if (typeof defaultValue !== 'string' || !defaultValue) {
+    if (typeof defaultValue !== 'string') {
       return {
-        initialProtocol: normalizedProtocols[0],
+        initialProtocol: normalizedProtocols[0] ?? '',
         initialUri: '',
         protocolOptions: normalizedProtocols,
       };
     }
 
     const parsed = parseUri(defaultValue);
-    if (parsed) {
-      // A stored scheme outside `protocols` stays selectable, so editing the path keeps it.
-      const detectedProtocol = normalizeProtocol(parsed.protocol);
-      return {
-        initialProtocol: detectedProtocol,
-        initialUri: parsed.path,
-        protocolOptions: normalizedProtocols.includes(detectedProtocol)
-          ? normalizedProtocols
-          : [detectedProtocol, ...normalizedProtocols],
-      };
-    }
-
     return {
-      initialProtocol: normalizedProtocols[0],
-      initialUri: defaultValue,
-      protocolOptions: normalizedProtocols,
+      initialProtocol: parsed.protocol,
+      initialUri: parsed.path,
+      protocolOptions: normalizedProtocols.includes(parsed.protocol)
+        ? normalizedProtocols
+        : [parsed.protocol, ...normalizedProtocols],
     };
   }, [defaultValue, normalizedProtocols]);
 
@@ -165,17 +117,13 @@ const FieldInputUri = ({
     setProtocol(newProtocol);
 
     const currentUri = textFieldRef.current?.value || '';
-    const separator = getProtocolSeparator(newProtocol);
-    const newValue = currentUri
-      ? `${newProtocol}${separator}${currentUri}`
-      : undefined;
+    const newValue = `${newProtocol}${currentUri}` || undefined;
     onChange(newValue);
   });
 
   const handleUriChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const newUri = event.target.value;
-    const separator = getProtocolSeparator(protocol);
-    const newValue = newUri ? `${protocol}${separator}${newUri}` : undefined;
+    const newValue = `${protocol}${newUri}` || undefined;
     onChange(newValue);
   });
 
@@ -194,7 +142,7 @@ const FieldInputUri = ({
         >
           {protocolOptions.map((prot) => (
             <MenuItem key={prot} value={prot}>
-              {formatProtocolDisplay(prot)}
+              {prot || 'No scheme'}
             </MenuItem>
           ))}
         </Select>
