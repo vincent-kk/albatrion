@@ -76,6 +76,50 @@
       "require": "./dist/JSONPointer/utils/patch/index.cjs"
     }
   },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./path": {
+        "types": "./dist/JSONPath/index.d.ts",
+        "import": "./dist/JSONPath/index.mjs",
+        "require": "./dist/JSONPath/index.cjs"
+      },
+      "./path-common": {
+        "types": "./dist/JSONPath/utils/common.d.ts",
+        "import": "./dist/JSONPath/utils/common.mjs",
+        "require": "./dist/JSONPath/utils/common.cjs"
+      },
+      "./pointer": {
+        "types": "./dist/JSONPointer/index.d.ts",
+        "import": "./dist/JSONPointer/index.mjs",
+        "require": "./dist/JSONPointer/index.cjs"
+      },
+      "./pointer-common": {
+        "types": "./dist/JSONPointer/utils/common.d.ts",
+        "import": "./dist/JSONPointer/utils/common.mjs",
+        "require": "./dist/JSONPointer/utils/common.cjs"
+      },
+      "./pointer-escape": {
+        "types": "./dist/JSONPointer/utils/escape/index.d.ts",
+        "import": "./dist/JSONPointer/utils/escape/index.mjs",
+        "require": "./dist/JSONPointer/utils/escape/index.cjs"
+      },
+      "./pointer-manipulator": {
+        "types": "./dist/JSONPointer/utils/manipulator/index.d.ts",
+        "import": "./dist/JSONPointer/utils/manipulator/index.mjs",
+        "require": "./dist/JSONPointer/utils/manipulator/index.cjs"
+      },
+      "./pointer-patch": {
+        "types": "./dist/JSONPointer/utils/patch/index.d.ts",
+        "import": "./dist/JSONPointer/utils/patch/index.mjs",
+        "require": "./dist/JSONPointer/utils/patch/index.cjs"
+      }
+    }
+  },
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",

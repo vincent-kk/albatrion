@@ -8,6 +8,8 @@
 
 ## API Contracts
 
+workspace의 source 조건은 개발 빌드의 입력입니다. 배포 파일에는 src가 없으므로 publishConfig.exports는 source 조건을 제외한 동일한 런타임·선언 경계를 기록합니다. 공개 진입점과 types·import·require 대상의 일치를 유지하여 개발 입력이 배포 해석을 가로채지 않게 합니다.
+
 - `index.ts`는 세 그룹의 심볼을 각각 소유 자식 모듈에서 named export로 가져와 그대로 다시 export한다 — 자체 함수·클래스 선언은 없다.
 - 각 심볼의 시그니처와 동작 계약은 그 심볼을 소유하는 자식 fractal의 DETAIL이 정의한다.
 

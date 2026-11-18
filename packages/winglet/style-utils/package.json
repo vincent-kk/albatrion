@@ -46,6 +46,25 @@
       "require": "./dist/utils/index.cjs"
     }
   },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./style-manager": {
+        "types": "./dist/styleManager/index.d.ts",
+        "import": "./dist/styleManager/index.mjs",
+        "require": "./dist/styleManager/index.cjs"
+      },
+      "./util": {
+        "types": "./dist/utils/index.d.ts",
+        "import": "./dist/utils/index.mjs",
+        "require": "./dist/utils/index.cjs"
+      }
+    }
+  },
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",

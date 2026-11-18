@@ -9,6 +9,8 @@
 
 ## API Contracts
 
+workspace의 source 조건은 개발 빌드의 입력입니다. 배포 파일에는 src가 없으므로 publishConfig.exports는 source 조건을 제외한 동일한 런타임·선언 경계를 기록합니다. 공개 진입점과 types·import·require 대상의 일치를 유지하여 개발 입력이 배포 해석을 가로채지 않게 합니다.
+
 - `resolveReference(schema)`: 내장 해소기로 주소와 사본을 준비하고 동기 스캐너를 한 번 실행하는 헬퍼다. 정의·순환·동적 범위·안전하지 않은 이동의 참조는 보존한다.
 - `filters`가 재수출하는 함수들은 각각 `schema is <Type>Schema` 형태의 타입가드다.
 - 스키마 노드 타입과 값 추론 타입도 이름 그대로 재수출한다.
