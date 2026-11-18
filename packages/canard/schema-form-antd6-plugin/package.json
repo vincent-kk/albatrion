@@ -80,8 +80,8 @@
   },
   "peerDependencies": {
     "@canard/schema-form": "workspace:^",
-    "antd": ">=6.0.0",
-    "dayjs": ">=1",
+    "antd": "^6.0.0",
+    "dayjs": "^1.0.0",
     "react": ">=18 <20",
     "react-dom": ">=18 <20"
   }
