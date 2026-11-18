@@ -176,7 +176,7 @@ const defaultSettings: Ajv.Options = {
   allErrors: true, // 첫 번째 오류뿐만 아니라 모든 검증 오류 수집
   verbose: true, // 오류에 스키마 및 데이터 정보 포함
   strict: false, // 더 나은 호환성을 위한 strict 모드 비활성화
-  validateFormats: true, // 포맷 검증 활성화 (AJV 8.x 기본값)
+  validateFormats: false, // Enable only after registering formats
 };
 ```
 
@@ -199,7 +199,7 @@ const defaultSettings: Ajv.Options = {
 
 - **Draft 2020-12**: 향상된 조건부 로직이 포함된 최신 명세
 - **Draft 2019-09**: 현대적인 스키마 구성 및 검증 기능
-- **하위 호환성**: Draft-07, Draft-06, Draft-04에 대한 완전한 지원
+- **방언 선택**: 기본 진입점은 Draft-07, `/2019`는 Draft 2019-09와 Draft-07, `/2020`은 Draft 2020-12를 검증합니다. 이전 방언을 선언한 스키마는 기본 설정으로 지원하지 않습니다
 - **고급 키워드**: `unevaluatedProperties`, `unevaluatedItems` 등 지원
 
 ---
@@ -225,11 +225,10 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 **JSON Schema 지원:**
 
-- Draft 2020-12 ✅
-- Draft 2019-09 ✅
-- Draft-07 ✅
-- Draft-06 ✅
-- Draft-04 ✅
+- 기본 진입점: Draft-07.
+- `/2019` 진입점: Draft 2019-09와 Draft-07.
+- `/2020` 진입점: Draft 2020-12. 같은 인스턴스에서 이전 방언과 섞을 수 없습니다.
+- Draft-06: 아래의 기본 AJV 8 생성자처럼 호환되는 인스턴스에 메타 스키마를 등록해야 합니다. Draft-04 지원은 제공하지 않습니다.
 
 ---
 
@@ -249,14 +248,16 @@ yarn add @canard/schema-form-ajv8-plugin
 import { registerPlugin } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 
 // 주의: AJV 8.x는 다른 기본 동작을 가집니다
 // AJV 설정을 조정해야 할 수 있습니다
 const customAjv = new Ajv({
   strict: false, // 호환성 문제가 있는 경우 strict 모드 비활성화
-  validateFormats: true, // AJV 8.x에서 포맷 검증은 기본적으로 활성화됨
+  validateFormats: true, // Check formats registered by ajv-formats
 });
 
+addFormats(customAjv);
 plugin.validator.bind(customAjv);
 registerPlugin(plugin);
 ```
@@ -314,3 +315,27 @@ registerPlugin(plugin);
 ## 연락처
 
 프로젝트와 관련된 문의나 제안은 [GitHub 저장소](https://github.com/vincent-kk/albatrion)에 이슈를 생성해 주세요.
+
+마이그레이션 예제를 사용하려면 애플리케이션에 `ajv-formats`를 설치합니다. AJV 8은 해당 포맷 정의를 포함하지 않습니다.
+
+### Enabling a declared Draft-06 schema
+
+기본 인스턴스에는 Draft-06 메타 스키마가 없습니다. 스키마를 컴파일하기 전에 호환되는 인스턴스에 등록합니다.
+
+```typescript
+import Ajv from 'ajv';
+import draft06 from 'ajv/dist/refs/json-schema-draft-06.json';
+import { createValidator } from '@canard/schema-form-ajv8-plugin';
+
+const ajv = new Ajv({ allErrors: true, strict: false, validateFormats: false });
+ajv.addMetaSchema(draft06);
+const validator = createValidator(ajv);
+const validate = validator.compile({
+  $schema: 'http://json-schema.org/draft-06/schema#',
+  type: 'number',
+  exclusiveMaximum: 5,
+});
+await validate(5); // Reports exclusiveMaximum.
+```
+
+bind한 인스턴스에 추가한 format과 keyword는 가드와 격리된 형제 인스턴스를 포함한 이후 컴파일에 반영됩니다. 이미 컴파일한 검증 함수는 기존 규칙을 유지하며, 규칙 추가가 자동 재컴파일을 일으키지 않습니다.
