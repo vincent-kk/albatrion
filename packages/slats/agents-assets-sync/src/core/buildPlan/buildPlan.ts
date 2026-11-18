@@ -13,6 +13,7 @@ import { isNoisePath } from '../utils/isNoisePath.js';
 import { toPosix } from '../utils/toPosix.js';
 import { walkFiles } from '../utils/walkFiles.js';
 import type { Action, ActionKind, InjectPlan, PlanInput } from './type.js';
+import { indexManagedAliases } from './utils/indexManagedAliases.js';
 import { isManagedAlias } from './utils/isManagedAlias.js';
 import { createDocumentReader } from './utils/readDocument.js';
 
@@ -42,12 +43,13 @@ export async function buildPlan(input: PlanInput): Promise<InjectPlan> {
   }
 
   const known = new Set(Object.keys(sourceHashes));
+  const aliases = indexManagedAliases(destinations);
   for (const scan of orphanScans) {
     for await (const orphan of findOrphans(
       scan,
       known,
       readDocument,
-      destinations,
+      aliases,
     )) {
       // Deleting is as user-visible as overwriting: under --force the flag is
       // what makes renderers confirm and list the deletion.
@@ -91,17 +93,14 @@ async function* findOrphans(
   scan: OrphanScan,
   known: ReadonlySet<string>,
   readDocument: AsyncFn<[fileAbs: string], string | null>,
-  destinations: ReadonlyMap<string, Destination>,
+  aliases: ReadonlyMap<string, readonly string[]>,
 ): AsyncGenerator<{ relPath: string; target: Destination }> {
   if (scan.kind === 'directory') {
     for await (const abs of walkFiles(scan.scanRoot)) {
       const scanRelPath = toPosix(relative(scan.scanRoot, abs));
       if (isNoisePath(scanRelPath)) continue;
       const relPath = scan.relPathPrefix + scanRelPath;
-      if (
-        known.has(relPath) ||
-        (await isManagedAlias(relPath, abs, destinations))
-      )
+      if (known.has(relPath) || (await isManagedAlias(relPath, abs, aliases)))
         continue;
       yield { relPath, target: { kind: 'file', dstAbs: abs } };
     }
