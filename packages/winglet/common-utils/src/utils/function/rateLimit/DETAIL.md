@@ -8,6 +8,8 @@
 - 두 함수 모두 `execute`(즉시 실행)·`clear`(예정 실행 취소)·`dispose`(취소와 리스너 해제) 제어 메서드를 노출한다.
 - 공유 엔진은 원래 함수를 호출하기 전에 저장한 인자를 비운다. 그래서 원래 함수 안에서 wrapper를 다시 부른 호출은 새 인자와 타이머로 남아 다음 실행에 반영되고, 원래 함수가 예외를 던져도 같은 인자로 다시 실행되지 않는다.
 
+호스트 타이머 한도인 2^31−1ms를 넘는 창도 전체 시간을 기다리도록 구간으로 나눕니다. Infinity는 trailing 실행 없이 기다리며 clear·dispose·abort로 예약을 취소할 수 있습니다.
+
 ## API Contracts
 
 - `debounce<F>(fn, ms, { signal, leading = false, trailing = true })` → `DebouncedFn<F>`. `execute`는 대기 중인 타이머를 취소하고 마지막 인자로 즉시 실행한다.

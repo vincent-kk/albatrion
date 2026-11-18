@@ -285,8 +285,10 @@ export interface DelayOptions {
  * - **Garbage Collection**: Event listeners auto-removed; Promises GC'd after resolution
  * - **Background Tab Behavior**: Chrome/Safari throttle to 1000ms max in inactive tabs
  */
-export const delay = (ms = 0, options?: DelayOptions): Promise<void> =>
-  new Promise((resolve, reject) => {
+export const delay = (ms = 0, options?: DelayOptions): Promise<void> => {
+  if (ms > 0x7fffffff)
+    return delay(0x7fffffff, options).then(() => delay(ms - 0x7fffffff, options));
+  return new Promise((resolve, reject) => {
     const signal = options?.signal;
 
     // Fast path: if already aborted, reject immediately without creating timer
@@ -312,3 +314,4 @@ export const delay = (ms = 0, options?: DelayOptions): Promise<void> =>
       resolve();
     }, ms);
   });
+};

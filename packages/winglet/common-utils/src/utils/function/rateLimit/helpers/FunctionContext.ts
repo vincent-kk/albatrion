@@ -164,13 +164,30 @@ export class FunctionContext<F extends Fn<any[]>> {
    */
   public schedule(execute?: boolean) {
     if (this.__timer__ !== null) clearTimeout(this.__timer__);
-    const timer = setTimeout(() => {
+    const run = () => {
       this.__timer__ = null;
       // Not clear(): a call made from inside the function may already have scheduled again
       if (execute) this.execute();
       else this.__clearContext__();
-    }, this.__delay__);
-    this.__timer__ = timer;
+    };
+    this.__timer__ = this.__delay__ > 0x7fffffff
+      ? this.__scheduleLong__(this.__delay__, run)
+      : setTimeout(run, this.__delay__);
+  }
+
+  /**
+   * Schedules a duration above the host timer limit in cancellable segments.
+   * @param remainingMs - Remaining duration, greater than 2^31 - 1 milliseconds
+   * @param done - Callback to run only after every finite segment completes
+   * @returns The first timer handle, also stored anew for every following segment
+   */
+  private __scheduleLong__(remainingMs: number, done: () => void): ReturnType<typeof setTimeout> {
+    return setTimeout(() => {
+      remainingMs -= 0x7fffffff;
+      this.__timer__ = remainingMs > 0x7fffffff
+        ? this.__scheduleLong__(remainingMs, done)
+        : setTimeout(done, remainingMs);
+    }, 0x7fffffff);
   }
 
   /**

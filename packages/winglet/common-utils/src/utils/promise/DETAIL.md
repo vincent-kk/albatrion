@@ -8,6 +8,8 @@
 - `waitAndExecute(fn?, ms?)`은 지연 이후에 `fn`을 호출한다; `waitAndReturn(fn?, ms?)`은 `fn`을 즉시 호출하고 결과 전달만 지연한다. 둘 다 `fn`이 `undefined`면 `undefined`로 resolve한다.
 - `waitAndExecute`/`waitAndReturn`은 `AbortSignal` 옵션을 받지 않는다.
 
+유한 지연이 호스트 타이머의 2^31−1ms 한도를 넘으면 그 한도 이하의 구간으로 나누어 전체 시간을 기다립니다. Infinity는 취소될 때까지 대기합니다. 각 구간의 타이머와 abort 리스너를 정리하여 긴 대기가 즉시 끝나는 타이머 오버플로를 막습니다.
+
 ## API Contracts
 
 - `delay(ms = 0, options?: DelayOptions): Promise<void>` — `options.signal`이 호출 전 이미 aborted면 `AbortError('SIGNAL_RECEIVED_BEFORE_RUN', ...)`로 즉시 거부(타이머 미생성); 대기 중 abort되면 `AbortError('SIGNAL_RECEIVED', ...)`로 거부.
