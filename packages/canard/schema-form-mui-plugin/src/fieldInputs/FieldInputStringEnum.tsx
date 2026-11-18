@@ -96,7 +96,7 @@ const FieldInputStringEnum = ({
   const initialValue = useMemo(() => {
     if (defaultValue === null) return JSON.stringify(null);
     if (typeof defaultValue === 'string') return JSON.stringify(defaultValue);
-    return undefined;
+    return '';
   }, [defaultValue]);
 
   return (
