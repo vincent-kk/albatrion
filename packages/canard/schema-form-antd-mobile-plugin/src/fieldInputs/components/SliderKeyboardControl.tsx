@@ -6,6 +6,9 @@ import { getKeyboardValue } from '../utils/slider/getKeyboardValue';
 interface SliderKeyboardControlProps {
   /** Library slider whose thumb nodes remain stable during value changes. */
   children: ReactNode;
+  /** Core input address and the title address supplied by the renderer. */
+  id: string;
+  labelledBy?: string;
   /** Current draft value, updated on pointer moves as well as keyboard input. */
   value: number | [number, number];
   /** Inclusive bounds and step from the numeric schema. */
@@ -27,6 +30,8 @@ interface SliderKeyboardControlProps {
  */
 export const SliderKeyboardControl = ({
   children,
+  id,
+  labelledBy,
   value,
   min,
   max,
@@ -37,14 +42,16 @@ export const SliderKeyboardControl = ({
 }: SliderKeyboardControlProps) => {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    for (const thumb of ref.current?.querySelectorAll<HTMLElement>(
-      '[role="slider"]',
-    ) ?? []) {
+    const thumbs =
+      ref.current?.querySelectorAll<HTMLElement>('[role="slider"]') ?? [];
+    for (const [index, thumb] of Array.from(thumbs).entries()) {
+      thumb.id = index === 0 ? id : `${id}-${index}`;
+      if (labelledBy) thumb.setAttribute('aria-labelledby', labelledBy);
       thumb.tabIndex = disabled ? -1 : 0;
       if (disabled) thumb.removeAttribute('data-focus-target');
       else thumb.setAttribute('data-focus-target', '');
     }
-  }, [disabled]);
+  }, [disabled, id, labelledBy]);
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (disabled) return;
     const index = Array.from(

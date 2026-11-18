@@ -15,6 +15,7 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { useControlIdentifiers } from './utils/controls/useControlIdentifiers';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type ArrayJSONSchema = ArraySchema & {
@@ -31,6 +32,8 @@ interface FieldInputStringCheckboxProps
 }
 
 const FieldInputStringCheckbox = ({
+  id,
+  name,
   jsonSchema,
   readOnly,
   disabled,
@@ -39,7 +42,9 @@ const FieldInputStringCheckbox = ({
   context,
   alias,
   misfit,
+  'aria-labelledby': labelledBy,
 }: FieldInputStringCheckboxProps) => {
+  const bindControls = useControlIdentifiers(id, name, 'input', true);
   const options = useMemo(() => {
     const labels = context.checkboxLabels || alias || {};
     return jsonSchema.items?.enum
@@ -71,6 +76,9 @@ const FieldInputStringCheckbox = ({
 
   return (
     <div
+      ref={bindControls}
+      id={id}
+      aria-labelledby={labelledBy}
       role="group"
       aria-invalid={misfit || undefined}
       style={{ display: 'flex', flexDirection: 'row', gap: 8 }}
@@ -80,9 +88,10 @@ const FieldInputStringCheckbox = ({
         defaultValue={initialValue}
         onChange={handleChange}
       >
-        {map(options, (option) => (
+        {map(options, (option, index) => (
           <Checkbox
             key={option.value}
+            id={`${id}-${index}`}
             value={option.value}
             style={{
               '--icon-size': '24px',

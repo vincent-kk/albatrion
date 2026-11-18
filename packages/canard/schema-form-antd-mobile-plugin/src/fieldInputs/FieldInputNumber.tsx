@@ -8,6 +8,8 @@ import type {
   NumberSchema,
 } from '@canard/schema-form';
 
+import { useControlIdentifiers } from './utils/controls/useControlIdentifiers';
+
 type SingleStepperProps = StepperProps extends { stringMode: false }
   ? StepperProps
   : never;
@@ -22,6 +24,8 @@ interface FieldInputNumberProps
 const parseDraft = (text: string) => (text.trim() === '' ? NaN : Number(text));
 
 const FieldInputNumber = ({
+  id,
+  name,
   jsonSchema,
   schemaType,
   readOnly,
@@ -32,6 +36,7 @@ const FieldInputNumber = ({
   parser,
   misfit,
 }: FieldInputNumberProps) => {
+  const bindControls = useControlIdentifiers(id, name, 'input');
   const handleChange = useHandle((input: number | null) => {
     if (input === null) onChange(undefined);
     else if (Number.isNaN(input)) return;
@@ -39,7 +44,7 @@ const FieldInputNumber = ({
     else onChange(input);
   });
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div ref={bindControls} role="group" aria-invalid={misfit || undefined}>
       <Stepper
         inputReadOnly={readOnly}
         disabled={disabled}

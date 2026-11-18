@@ -13,7 +13,7 @@ type StringJSONSchema = StringSchema & {
 };
 
 const FieldInputString = ({
-  path,
+  id,
   name,
   jsonSchema,
   readOnly,
@@ -30,7 +30,7 @@ const FieldInputString = ({
   return (
     <div role="group" aria-invalid={misfit || undefined}>
       <Input
-        id={path}
+        id={id}
         name={name}
         type={type}
         readOnly={readOnly}

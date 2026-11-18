@@ -16,7 +16,7 @@ type TextareaSchema = StringSchema & {
 };
 
 const FieldInputTextarea = ({
-  path,
+  id,
   name,
   jsonSchema,
   readOnly,
@@ -39,7 +39,7 @@ const FieldInputTextarea = ({
   return (
     <div role="group" aria-invalid={misfit || undefined}>
       <TextArea
-        id={path}
+        id={id}
         name={name}
         disabled={disabled}
         readOnly={readOnly}

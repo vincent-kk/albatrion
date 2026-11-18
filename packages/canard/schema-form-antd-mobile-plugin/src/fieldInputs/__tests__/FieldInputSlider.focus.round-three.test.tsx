@@ -94,7 +94,7 @@ describe('slider label association (antd-mobile)', () => {
     expect({ namedByField, ariaLabel, labelFor: label?.htmlFor }).toEqual({
       namedByField: true,
       ariaLabel: 'level',
-      labelFor: '/level',
+      labelFor: expect.stringMatching(/^.+:\/level$/),
     });
   });
 });

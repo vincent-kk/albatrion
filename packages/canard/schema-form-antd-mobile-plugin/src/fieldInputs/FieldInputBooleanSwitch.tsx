@@ -27,13 +27,15 @@ interface FieldInputBooleanSwitchProps
 }
 
 const FieldInputBooleanSwitch = ({
-  path,
+  id,
+  name,
   disabled,
   value,
   onChange,
   context,
   alias,
   misfit,
+  'aria-labelledby': labelledBy,
 }: FieldInputBooleanSwitchProps) => {
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
     const labels = context?.checkboxLabels || alias || {};
@@ -43,12 +45,13 @@ const FieldInputBooleanSwitch = ({
   const handleChange = useHandle(onChange);
 
   return (
-    <SwitchKeyboardControl disabled={disabled}>
+    <SwitchKeyboardControl id={id} name={name} disabled={disabled}>
       <Switch
+        aria-labelledby={labelledBy}
         data-focus-target
         tabIndex={disabled ? undefined : 0}
         aria-invalid={misfit || undefined}
-        key={path}
+        key={id}
         disabled={disabled}
         checked={value === true}
         checkedText={checkedLabel}

@@ -12,6 +12,7 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { useControlIdentifiers } from './utils/controls/useControlIdentifiers';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 interface FieldInputRadioGroupProps
@@ -28,6 +29,7 @@ interface FieldInputRadioGroupProps
 }
 
 const FieldInputRadioGroup = ({
+  id,
   jsonSchema,
   readOnly,
   disabled,
@@ -37,7 +39,9 @@ const FieldInputRadioGroup = ({
   alias,
   style,
   misfit,
+  'aria-labelledby': labelledBy,
 }: FieldInputRadioGroupProps) => {
+  const bindControls = useControlIdentifiers(id, id, 'input', true);
   const options = useMemo(() => {
     const labels = context.radioLabels || alias || {};
     return jsonSchema.enum
@@ -65,6 +69,9 @@ const FieldInputRadioGroup = ({
 
   return (
     <div
+      ref={bindControls}
+      id={id}
+      aria-labelledby={labelledBy}
       role="radiogroup"
       aria-invalid={misfit || undefined}
       style={{ display: 'flex', flexDirection: 'row', gap: 8, ...style }}
@@ -74,9 +81,10 @@ const FieldInputRadioGroup = ({
         defaultValue={initialValue}
         onChange={handleChange}
       >
-        {map(options, (option) => (
+        {map(options, (option, index) => (
           <Radio
             key={option.value}
+            id={`${id}-${index}`}
             value={option.value}
             style={{
               '--icon-size': '24px',

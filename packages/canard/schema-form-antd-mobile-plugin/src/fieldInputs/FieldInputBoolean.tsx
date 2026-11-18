@@ -10,24 +10,21 @@ import type {
 } from '@canard/schema-form';
 
 const FieldInputBoolean = ({
-  path,
+  id,
   disabled,
   value,
   onChange,
   misfit,
 }: FieldInputProps<boolean | null>) => {
   const [indeterminate, checked] = useMemo(
-    () => [
-      value !== undefined && typeof value !== 'boolean',
-      value ?? false,
-    ],
+    () => [value !== undefined && typeof value !== 'boolean', value ?? false],
     [value],
   );
   const handleChange = useHandle(onChange);
   return (
     <div role="group" aria-invalid={misfit || undefined}>
       <Checkbox
-        id={path}
+        id={id}
         disabled={disabled}
         indeterminate={indeterminate}
         checked={checked}
