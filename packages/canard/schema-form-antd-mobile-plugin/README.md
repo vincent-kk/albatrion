@@ -187,6 +187,8 @@ const Input = ({ id, name }: FieldInputProps<string>) => <input id={id} name={na
 
 Scope selectors to the intended Form, such as `formElement.querySelector('[data-path="/email"] input')`, or connect labels using the control's supplied id. Form API values retain the schema shape.
 
+Known server-rendering limit: Stepper native input ids/names, Switch DOM ids, radio native names, and Slider thumb ids and `aria-labelledby` complete at hydration because the library exposes no prop for those native attributes. Radio option ids and Switch `aria-labelledby` are present in server HTML. Native names remain bound after option and library state updates.
+
 ## Contact
 
 For inquiries or suggestions related to the project, please create an issue.
