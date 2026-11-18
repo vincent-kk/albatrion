@@ -173,6 +173,16 @@ export class ModalManager {
     if (focused instanceof HTMLElement) focused.focus();
     notify(anchor);
   }
+  /** Releases display participation while React retains the owner's portal subtree. */
+  static suspend(identity: object): void {
+    if (ModalManager.__state__.owner !== identity) return;
+    ModalManager.__state__.openHandler = ModalManager.__state__.defaultOpenHandler;
+    ModalManager.removeKeyboardListener();
+    ModalManager.releasePageEffects();
+    ModalManager.__state__.focused.clear();
+    ModalManager.__state__.anchor?.remove();
+    ModalManager.destroyStyleSheet();
+  }
   /** Detaches only this bootstrap; defers cancellation to preserve same-commit remounts. */
   static detach(identity: object): void {
     const bootstrap = ModalManager.__state__.bootstraps.get(identity);
