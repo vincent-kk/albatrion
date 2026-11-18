@@ -1,7 +1,6 @@
 import {
   type ChangeEvent,
   type ReactNode,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -126,8 +125,6 @@ const FieldInputUri = ({
 
   const textFieldRef = useRef<HTMLInputElement>(null);
 
-  // Only the protocol is stateful; the URI input remains uncontrolled.
-  const [protocol, setProtocol] = useState<string>(normalizedProtocols[0]);
 
 
   const { initialProtocol, initialUri, protocolOptions } = useMemo(() => {
@@ -160,9 +157,8 @@ const FieldInputUri = ({
   }, [defaultValue, normalizedProtocols]);
 
 
-  useEffect(() => {
-    setProtocol(initialProtocol);
-  }, [initialProtocol]);
+  // The core remounts uncontrolled inputs for external writes and resets.
+  const [protocol, setProtocol] = useState<string>(initialProtocol);
 
   const handleProtocolChange = useHandle((event: SelectChangeEvent<string>) => {
     const newProtocol = event.target.value;
