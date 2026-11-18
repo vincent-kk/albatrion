@@ -17,12 +17,12 @@ type CompareFrame = {
   /** Escaped pointer to this node. */
   path: string;
 };
-/** Operations emitted after all work preceding them has completed. */
-type EmitFrame = {
+/** One suspended stage in the shallow comparator's original traversal order. */
+type StepFrame = {
   /** Work discriminator. */
-  kind: 'emit';
-  /** Bounded group of operations at one path. */
-  operations: Patch[];
+  kind: 'step';
+  /** Executes one key or the final removal/addition stage. */
+  run: () => void;
 };
 
 /**
@@ -37,11 +37,11 @@ type EmitFrame = {
  * @returns Nothing; appends operations to patches
  */
 export const compareDeep = (source: JSONRoot, target: JSONRoot, patches: Patch[], path: string, strict: boolean, immutable: boolean, serialize: (value: unknown) => unknown): void => {
-  const pending: Array<CompareFrame | EmitFrame> = [{ kind: 'compare', source, target, path }];
+  const pending: Array<CompareFrame | StepFrame> = [{ kind: 'compare', source, target, path }];
   while (pending.length) {
     const frame = pending.pop()!;
-    if (frame.kind === 'emit') {
-      for (const operation of frame.operations) patches.push(operation);
+    if (frame.kind === 'step') {
+      frame.run();
       continue;
     }
     const { source, target, path } = frame;
@@ -63,45 +63,42 @@ export const compareDeep = (source: JSONRoot, target: JSONRoot, patches: Patch[]
       continue;
     }
     let hasRemoved = false;
-    const work: Array<CompareFrame | EmitFrame> = [];
-    const removals: EmitFrame[] = [];
-    for (const key of sourceKeys) {
+    const work: StepFrame[] = [];
+    const removals: Patch[][] = [];
+    for (const key of sourceKeys) work.push({ kind: 'step', run: () => {
       const sourceValue: unknown = getDataProperty(source, key);
       const targetPath = path + '/' + escapeSegment(key);
       if (hasOwnProperty(target, key)) {
         const targetValue: unknown = getDataProperty(target, key);
-        if (sourceValue === targetValue || (sourceValue !== sourceValue && targetValue !== targetValue)) continue;
+        if (sourceValue === targetValue || (sourceValue !== sourceValue && targetValue !== targetValue)) return;
         if (targetValue === undefined && sourceValue !== undefined && !targetIsArray) {
-          const operations: Patch[] = [];
-          if (strict) operations.push({ op: Operation.TEST, path: targetPath, value: processValue(sourceValue, immutable) });
-          operations.push({ op: Operation.REMOVE, path: targetPath });
-          work.push({ kind: 'emit', operations });
+          if (strict) patches.push({ op: Operation.TEST, path: targetPath, value: processValue(sourceValue, immutable) });
+          patches.push({ op: Operation.REMOVE, path: targetPath });
           hasRemoved = true;
         } else if ((isObject(sourceValue) && isObject(targetValue)) || (isArray(sourceValue) && isArray(targetValue))) {
-          work.push({ kind: 'compare', source: sourceValue, target: targetValue, path: targetPath });
+          pending.push({ kind: 'compare', source: sourceValue, target: targetValue, path: targetPath });
         } else {
-          const operations: Patch[] = [];
-          if (strict) operations.push({ op: Operation.TEST, path: targetPath, value: processValue(sourceValue, immutable) });
-          operations.push({ op: Operation.REPLACE, path: targetPath, value: processValue(targetValue, immutable) });
-          work.push({ kind: 'emit', operations });
+          if (strict) patches.push({ op: Operation.TEST, path: targetPath, value: processValue(sourceValue, immutable) });
+          patches.push({ op: Operation.REPLACE, path: targetPath, value: processValue(targetValue, immutable) });
         }
       } else {
         const operations: Patch[] = [];
         if (strict) operations.push({ op: Operation.TEST, path: targetPath, value: processValue(sourceValue, immutable) });
         operations.push({ op: Operation.REMOVE, path: targetPath });
-        if (sourceIsArray) removals.push({ kind: 'emit', operations });
-        else work.push({ kind: 'emit', operations });
+        if (sourceIsArray) removals.push(operations);
+        else for (const operation of operations) patches.push(operation);
         hasRemoved = true;
       }
-    }
-    for (let index = removals.length - 1; index >= 0; index--) work.push(removals[index]);
-    if (hasRemoved || targetKeys.length !== sourceKeys.length) {
+    } });
+    work.push({ kind: 'step', run: () => {
+      for (let index = removals.length - 1; index >= 0; index--) for (const operation of removals[index]) patches.push(operation);
+      if (!hasRemoved && targetKeys.length === sourceKeys.length) return;
       for (const key of targetKeys) {
         const value = getDataProperty(target, key);
         if (hasOwnProperty(source, key) || value === undefined) continue;
-        work.push({ kind: 'emit', operations: [{ op: Operation.ADD, path: path + '/' + escapeSegment(key), value: processValue(value, immutable) }] });
+        patches.push({ op: Operation.ADD, path: path + '/' + escapeSegment(key), value: processValue(value, immutable) });
       }
-    }
+    } });
     for (let index = work.length - 1; index >= 0; index--) pending.push(work[index]);
   }
 };
