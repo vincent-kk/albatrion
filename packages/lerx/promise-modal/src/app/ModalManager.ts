@@ -15,8 +15,8 @@ import type { Modal } from '@/promise-modal/types/modal';
 import { getModalManagerState } from './helpers/getModalManagerState/getModalManagerState';
 import { containsComposedElement } from './utils/containsComposedElement';
 import { getTabbableElements } from './utils/getTabbableElements';
-import { isShadowRoot } from './utils/isShadowRoot';
 import { hasControlAhead } from './utils/hasControlAhead';
+import { isShadowRoot } from './utils/isShadowRoot';
 
 /** Owns global DOM effects and the external modal store; styles are lazy for SSR. */
 export class ModalManager {
@@ -56,7 +56,10 @@ export class ModalManager {
     node.order = ++ModalManager.__state__.order;
     ModalManager.__state__.nodes.set(node.id, node);
     if (typeof document !== 'undefined')
-      ModalManager.__state__.focusTargets.set(node.id, ModalManager.innermostFocus(document.activeElement));
+      ModalManager.__state__.focusTargets.set(
+        node.id,
+        ModalManager.innermostFocus(document.activeElement),
+      );
     ModalManager.__state__.ids = [...ModalManager.__state__.nodes.keys()];
     ModalManager.__state__.registrationVersion++;
     ModalManager.__state__.nodeCleanups.set(
@@ -151,13 +154,18 @@ export class ModalManager {
     ModalManager.__state__.owner = identity;
     ModalManager.__state__.generation++;
     const previous = ModalManager.__state__.anchor;
+    const isMoved = previous?.parentElement !== root;
     const focused =
       previous &&
-      previous.parentElement !== root &&
-      containsComposedElement(previous, ModalManager.innermostFocus(document.activeElement))
+      isMoved &&
+      containsComposedElement(
+        previous,
+        ModalManager.innermostFocus(document.activeElement),
+      )
         ? ModalManager.innermostFocus(document.activeElement)
         : null;
     const anchor = ModalManager.anchor({ root });
+    if (isMoved) ModalManager.destroyStyleSheet();
     ModalManager.applyStyleSheet();
     ModalManager.installKeyboardListener();
     ModalManager.updateAccessibility(true);
@@ -213,7 +221,15 @@ export class ModalManager {
    */
   private static focusFrame(id: number): void {
     const frame = ModalManager.__state__.frames.get(id);
-    if (!frame?.isConnected || frame.contains(document.activeElement) || containsComposedElement(frame, ModalManager.innermostFocus(document.activeElement))) return;
+    if (
+      !frame?.isConnected ||
+      frame.contains(document.activeElement) ||
+      containsComposedElement(
+        frame,
+        ModalManager.innermostFocus(document.activeElement),
+      )
+    )
+      return;
     (getTabbableElements(frame)[0] ?? frame).focus();
   }
   /**
@@ -306,7 +322,9 @@ export class ModalManager {
           sibling.setAttribute('inert', '');
           ModalManager.__state__.inertElements.push(sibling);
         }
-      branch = parent ?? ('host' in tree && tree.host instanceof HTMLElement ? tree.host : null);
+      branch =
+        parent ??
+        ('host' in tree && tree.host instanceof HTMLElement ? tree.host : null);
     }
   }
   /**
@@ -414,7 +432,7 @@ export class ModalManager {
     const current = ModalManager.innermostFocus(active);
     if (
       !current ||
-      !frame.contains(active) && !containsComposedElement(frame, current) ||
+      (!frame.contains(active) && !containsComposedElement(frame, current)) ||
       current === frame ||
       current === (event.shiftKey ? first : last) ||
       (!controls.some((control) => control === current) &&
@@ -503,14 +521,11 @@ export class ModalManager {
   }
   /** Creates a style manager only at browser initialization. */
   static applyStyleSheet(): void {
-    const tree = ModalManager.__state__.anchor?.getRootNode();
-    if (ModalManager.__state__.styleRoot !== tree) ModalManager.destroyStyleSheet();
     if (!ModalManager.__state__.styleManager) {
       const scope = ModalManager.__state__.scope;
-      ModalManager.__state__.styleRoot = tree;
-      ModalManager.__state__.styleManager = styleManagerFactory(scope, {
-        shadowRoot: isShadowRoot(tree) ? tree : undefined,
-      });
+      const tree = ModalManager.__state__.anchor?.getRootNode();
+      const config = { shadowRoot: isShadowRoot(tree) ? tree : undefined };
+      ModalManager.__state__.styleManager = styleManagerFactory(scope, config);
       ModalManager.__state__.destroyStyleManager = () => destroyScope(scope);
     }
     for (const [styleId, css] of ModalManager.__state__.styleSheetDefinition)
@@ -519,11 +534,11 @@ export class ModalManager {
   /** Discards the captured scope manager so a later attach can rebuild styles. */
   private static destroyStyleSheet(): void {
     if (!ModalManager.__state__.styleManager) return;
-    if (ModalManager.__state__.destroyStyleManager) ModalManager.__state__.destroyStyleManager();
+    if (ModalManager.__state__.destroyStyleManager)
+      ModalManager.__state__.destroyStyleManager();
     else destroyScope(ModalManager.__state__.scope);
     ModalManager.__state__.destroyStyleManager = undefined;
     ModalManager.__state__.styleManager = undefined;
-    ModalManager.__state__.styleRoot = undefined;
   }
   /** Computes class names in browser and server environments alike. */
   static getHashedClassNames(styleId: string): string {
