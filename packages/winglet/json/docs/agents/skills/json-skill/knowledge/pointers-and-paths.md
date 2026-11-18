@@ -12,7 +12,9 @@ getValue(null, '/foo'); // throws: INVALID_INPUT
 getValue({}, 'no-slash'); // throws: INVALID_POINTER_TYPE
 ```
 
-An empty pointer (`''` or `[]`) returns the whole document. A pointer may also be passed pre-split as a token array, in which case the tokens are unescaped for you.
+An empty pointer (`''` or `[]`) returns the whole document. Array pointers retain the prefix convention: a first `''` or `'#'` marks the root and is not a literal key. Address top-level keys with those names using `['', '']` and `['', '#']`, or the strings `/` and `/#`. String tokens are unescaped for you.
+
+URI fragments such as `#/a%20b` decode percent escapes once before JSON Pointer unescaping; a plain `/a%20b` keeps the percent text as key data. Malformed fragment escapes throw `INVALID_POINTER_TYPE`.
 
 ## setValue mutates, builds, and refuses in silence
 
@@ -20,13 +22,13 @@ An empty pointer (`''` or `[]`) returns the whole document. A pointer may also b
 
 - **Auto-vivification.** Missing intermediate nodes are created. The next segment decides the shape: an array index or `-` creates an array, anything else creates an object.
 - **`preserveNull: true` (default) stops traversal at a `null`.** The write is abandoned and the document comes back untouched — no error. Pass `preserveNull: false` to replace the `null` and continue.
-- **A forbidden key aborts the write silently.** A segment of `__proto__`, `constructor`, or `prototype` returns the document unchanged, with no error and no option to disable it.
+- **Reserved names remain own data.** `__proto__`, `constructor`, and `prototype` are ordinary member names. Missing intermediate containers are created as own data, and writing them never changes the object prototype.
 
 ```typescript
 setValue({}, '/a/b/c', 42); // { a: { b: { c: 42 } } }
 setValue({ items: [1, 2] }, '/items/-', 3); // { items: [1, 2, 3] }
 setValue({ profile: null }, '/profile/name', 'A'); // { profile: null } — abandoned
-setValue({ x: 1 }, '/__proto__/pwn', true); // { x: 1 } — abandoned
+setValue({ x: 1 }, '/__proto__/pwn', true); // own '__proto__' data contains { pwn: true }; prototype unchanged
 ```
 
 Two further edges: `overwrite: false` skips the write when the key already exists (existing-but-`undefined` still counts as existing), and passing `undefined` as the value **deletes** the key rather than assigning it.
@@ -69,7 +71,7 @@ compilePointer(''); // []
 ```typescript
 const doc = { a: { b: [1, 2, { c: 'x' }] } };
 getJSONPointer(doc, doc.a.b[2]); // '/a/b/2'
-getJSONPointer(doc, doc); // '/'
+getJSONPointer(doc, doc); // ''
 getJSONPointer(doc, {}); // null — not found
 
 const escaped = { 'a/b': { v: 1 } };
@@ -115,4 +117,4 @@ Use `getJSONPointer` when you have the object, and reserve the `convert*` pair f
 
 ## Constants
 
-`JSONPointer` is `{ Root: '', Fragment: '#', Separator: '/' }`; `JSONPath` is `{ Root: '$', Current: '@', Child: '.', Filter: '#' }`. Note that `JSONPointer.Root` is the empty string while `getJSONPointer` returns `'/'` for the root — they are not the same value.
+`JSONPointer` is `{ Root: '', Fragment: '#', Separator: '/' }`; `JSONPath` is `{ Root: '$', Current: '@', Child: '.', Filter: '#' }`. `getJSONPointer` also returns the empty string for the root; `/` addresses a member named with the empty string.

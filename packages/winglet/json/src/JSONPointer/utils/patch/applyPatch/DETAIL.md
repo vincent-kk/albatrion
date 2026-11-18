@@ -8,6 +8,9 @@
 
 ## API Contracts
 
+- URI fragment의 percent escape는 path와 from 모두 위치 해석 전에 한 번 해제합니다. 해제한 경로로 이동의 진접두사를 판정하므로 서로 다른 표기가 하위 이동 금지를 우회하지 않습니다. 잘못된 escape는 기존 `PATCH_PATH_INVALID` 오류로 실패합니다.
+
+
 - `applyPatch(source, patches, options?)`:
   - `options.strict`: 값을 읽지 않는 `@deprecated` 옵션이다. 기존 호출의 타입 호환을 위해 타입에만 남아 있다.
   - `test`는 모든 모드에서 대상 값과 `value`를 깊은 비교하고, 불일치는 `PATCH_TEST_FAILED`로 패치 전체를 중단한다(RFC 6902 §4.6, §5). 비교를 끌 수 있으면 낙관적 동시성 제어 같은 방어 조건이 조용히 통과하고 뒤따르는 연산이 실행된다.

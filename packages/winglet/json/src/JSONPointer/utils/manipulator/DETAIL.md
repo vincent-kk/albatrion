@@ -8,6 +8,10 @@
 
 ## API Contracts
 
+- URI fragment 문자열은 percent escape를 한 번 해제한 뒤 RFC 6901 토큰을 해석합니다. 일반 `/` 포인터의 percent 문자는 그대로 키 데이터입니다. 잘못된 fragment escape는 `INVALID_POINTER_TYPE`으로 실패합니다.
+- 배열 포인터는 현재 prefix 형식을 유지합니다. 첫 `''` 또는 `'#'`는 루트 표시이며 실제 키가 아닙니다. 그 이름의 최상위 키는 각각 `['', '']`, `['', '#']` 또는 문자열 `/`, `/#`로 표현합니다.
+
+
 - 세그먼트 순회의 읽기·쓰기·삭제는 `@winglet/common-utils`의 데이터 속성 프리미티브(`getDataProperty`/`setDataProperty`/`deleteDataProperty`)를 경유한다. 예약 멤버 세그먼트도 일반 키와 동일하게 경로로 순회·기록된다 — 건너뛰지도, 예외를 던지지도 않는다.
 - 예약 멤버 세그먼트의 중간 경로 자동 생성도 own 데이터 속성으로 이루어진다(`/__proto__/x` 쓰기는 own `__proto__` 데이터 컨테이너를 만든다).
 - 배열 컨텍스트의 `-` 세그먼트는 append로 해석된다(RFC 6901 §4). 자동 생성 판단보다 먼저 해석되므로 배열에 문자 그대로의 `-` 키가 생기지 않는다.
