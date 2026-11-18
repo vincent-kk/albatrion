@@ -1,4 +1,4 @@
-import { memo, useCallback } from 'react';
+import { Suspense, memo, useCallback } from 'react';
 
 import { ErrorBoundary } from '@winglet/react-utils/hoc';
 
@@ -31,6 +31,7 @@ export const Presenter = memo(({ modalId }: PresenterProps) => {
   if (!modal) return null;
   return (
     <ErrorBoundary fallback={null} onError={handleError}>
+      <Suspense fallback={null}>
       <div
         className={presenter}
         style={{ zIndex: options.zIndex + modal.order }}
@@ -38,6 +39,7 @@ export const Presenter = memo(({ modalId }: PresenterProps) => {
         <Background modalId={modalId} onChangeOrder={handleChangeOrder} />
         <Foreground modalId={modalId} onChangeOrder={handleChangeOrder} />
       </div>
+      </Suspense>
     </ErrorBoundary>
   );
 });
