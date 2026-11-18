@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 
-import { Input, Select } from 'antd';
+import { Input, Select, Space } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
 import { map } from '@winglet/common-utils/array';
@@ -124,13 +124,14 @@ const FieldInputUri = ({
   ]);
 
   return (
+    <Space.Compact block size={size || context?.size}>
+      {ProtocolDropdown}
     <Input
       ref={inputRef}
       id={path}
       name={name}
       readOnly={readOnly}
       disabled={disabled}
-      addonBefore={ProtocolDropdown}
       placeholder={placeholder}
       defaultValue={initialUri}
       onChange={handleUriChange}
@@ -138,6 +139,7 @@ const FieldInputUri = ({
       status={misfit ? 'error' : undefined}
       aria-invalid={misfit || undefined}
     />
+    </Space.Compact>
   );
 };
 
