@@ -1,8 +1,10 @@
 ---
-"@winglet/common-utils": patch
+"@winglet/common-utils": major
 ---
 
-Await promises and thenables returned by `getTrackableHandler` lifecycle hooks. An async `beforeExecute` now finishes before the original function starts instead of running in parallel; a rejection prevents the operation. An async `afterExecute` finishes before pending is cleared, and its rejection reaches the handler after cleanup. Synchronous hooks retain their same-tick execution.
+Breaking change: `getTrackableHandler` starts the original function only after an asynchronous `beforeExecute` fulfills, and a hook rejection now rejects the call.
+
+Previously, `beforeExecute` could still be running when the original function started, and its rejection did not block execution. Promises and thenables returned by lifecycle hooks are now awaited. An async `afterExecute` finishes before pending is cleared, and its rejection reaches the handler after cleanup. Synchronous hooks retain their same-tick execution.
 
 Before:
 
