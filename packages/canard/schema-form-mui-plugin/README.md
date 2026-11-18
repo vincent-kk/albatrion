@@ -206,3 +206,7 @@ This repository is licensed under the MIT License. Please refer to the [`LICENSE
 ## Contact
 
 For inquiries or suggestions related to the project, please create an issue.
+
+### URI scheme preservation
+
+URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid scheme prefix is preserved with its original case and delimiter (`:` or `://`), including unlisted schemes, `localhost:3000`, and `a:b`. Values without a scheme keep no scheme. Mounting, external writes, reset, and Activity visibility changes never rewrite stored values; changing either displayed part preserves the other. Bare configured `http`, `https`, and `ftp` use `://`; other bare schemes use `:`. An explicitly configured delimiter is preserved.
