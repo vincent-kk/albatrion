@@ -6,6 +6,8 @@
 - `Murmur3.hash(data, seed?)` 정적 메서드는 `new Murmur3(data, seed).result()`와 동일한 값을 반환하는 원샷 편의 메서드다.
 - `polynomialHash(target, length?)`는 Java `String.hashCode()`와 동일한 31 기반 다항식 해시를 계산해 지정한 길이의 base36 문자열로 반환하며, 같은 입력·길이에는 항상 같은 값을 낸다.
 
+문자열은 UTF-16 코드 단위를 겹치는 8비트 위치에서 OR로 결합합니다. 완성 블록·꼬리·후속 호출에 같은 연산을 적용해 호출 분할이 결과를 바꾸지 않게 합니다. 바이트 입력의 해석은 바뀌지 않습니다.
+
 ## API Contracts
 
 - `new Murmur3(data?, seed = 0)` / `.hash(input)` / `.reset(seed = 0)` / `.result()`: `hash`는 인스턴스를 반환해 체이닝 가능하고, `input`이 문자열·`ArrayBuffer`·`Uint8Array`가 아니면 `TypeError`를 던진다. `reset`은 `seed`가 `number`가 아니면 `TypeError`를 던진다.
