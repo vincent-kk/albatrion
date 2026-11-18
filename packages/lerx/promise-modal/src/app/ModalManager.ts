@@ -336,11 +336,12 @@ export class ModalManager {
     if (!root) return;
     let branch = ModalManager.__state__.anchor;
     while (branch && branch !== document.body) {
-      const tree = branch.parentNode;
+      const slot = branch.assignedSlot;
+      const tree = slot ?? branch.parentNode;
       if (!tree) break;
-      const parent = branch.parentElement;
+      const parent = slot ?? branch.parentElement;
       if (!parent && !('host' in tree)) break;
-      for (const sibling of (parent ?? tree).children)
+      for (const sibling of slot ? slot.assignedElements() : (parent ?? tree).children)
         if (sibling !== branch && !sibling.hasAttribute('inert')) {
           sibling.setAttribute('inert', '');
           ModalManager.__state__.inertElements.push(sibling);
