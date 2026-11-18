@@ -1,20 +1,14 @@
 import { isPlainObject } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { cloneLite, equals } from '@winglet/common-utils/object';
+import { cloneLite, equals, setDataProperty } from '@winglet/common-utils/object';
 
-import {
-  CONSTRUCTOR_KEY,
-  PROTOTYPE_ASSESS_KEY,
-  PROTOTYPE_KEY,
-} from '@/json/JSONPointer/constants/prototypeKey';
 import type { JSONObject } from '@/json/type';
 
 /**
  * Builds the merge patch for two corresponding plain-object nodes.
  *
- * Prototype-polluting keys (`__proto__`, `constructor`, `prototype`) are skipped on both
- * sides; a skip also disables the equal-key-count early exit, whose reasoning assumes
- * every source key was actually compared.
+ * Reserved names are compared as own data and written through the shared safe-property
+ * primitive, so applying the resulting patch reconstructs these members as well.
  *
  * @param source - The source node to compare
  * @param target - The target node to compare
@@ -28,20 +22,9 @@ export const differenceRecursive = (
 ): JSONObject | undefined => {
   let patch: JSONObject | undefined = undefined;
   let hasRemoved = false;
-  let hasForbidden = false;
   const sourceKeys = Object.keys(source);
   for (let i = 0, l = sourceKeys.length; i < l; i++) {
     const key = sourceKeys[i];
-    // Skipped, not just sanitized: assigning '__proto__' on the patch literal would
-    // swap its prototype instead of defining a key
-    if (
-      key === PROTOTYPE_KEY ||
-      key === CONSTRUCTOR_KEY ||
-      key === PROTOTYPE_ASSESS_KEY
-    ) {
-      hasForbidden = true;
-      continue;
-    }
     const sourceValue = source[key];
     if (hasOwnProperty(target, key)) {
       const targetValue = target[key];
@@ -51,32 +34,26 @@ export const differenceRecursive = (
       )
         continue;
       if (targetValue === undefined) {
-        (patch ??= {})[key] = null;
+        setDataProperty(patch ??= {}, key, null);
         hasRemoved = true;
       } else if (isPlainObject(sourceValue) && isPlainObject(targetValue)) {
         const child = differenceRecursive(sourceValue, targetValue);
-        if (child !== undefined) (patch ??= {})[key] = child;
+        if (child !== undefined) setDataProperty(patch ??= {}, key, child);
       } else if (!equals(sourceValue, targetValue))
-        (patch ??= {})[key] = cloneLite(targetValue);
+        setDataProperty(patch ??= {}, key, cloneLite(targetValue));
     } else {
-      (patch ??= {})[key] = null;
+      setDataProperty(patch ??= {}, key, null);
       hasRemoved = true;
     }
   }
   const targetKeys = Object.keys(target);
-  if (!hasRemoved && !hasForbidden && targetKeys.length === sourceKeys.length)
+  if (!hasRemoved && targetKeys.length === sourceKeys.length)
     return patch;
   for (let i = 0, l = targetKeys.length; i < l; i++) {
     const key = targetKeys[i];
-    if (
-      key === PROTOTYPE_KEY ||
-      key === CONSTRUCTOR_KEY ||
-      key === PROTOTYPE_ASSESS_KEY
-    )
-      continue;
     const targetValue = target[key];
     if (hasOwnProperty(source, key) || targetValue === undefined) continue;
-    (patch ??= {})[key] = cloneLite(targetValue);
+    setDataProperty(patch ??= {}, key, cloneLite(targetValue));
   }
   return patch;
 };
