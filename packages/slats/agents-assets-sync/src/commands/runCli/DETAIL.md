@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 스코프 열거에서 읽거나 파싱하지 못한 package.json은 경로와 사유를 출력하고 JSON errors에도 보존합니다. 읽을 수 있는 다른 멤버는 계속 처리합니다.
+
 - `runCli(argv)` 는 유일한 CLI 진입점이며, argv 에서 `--package <name...>` 을 읽는다. 미리 해석된 메타데이터는 받지 않는다.
 - `--package` 는 세 가지 모양을 받는다:
   - `@<scope>` — 그 npm scope 아래 설치된 패키지를 열거
