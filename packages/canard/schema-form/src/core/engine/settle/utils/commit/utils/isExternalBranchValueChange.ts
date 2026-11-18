@@ -1,3 +1,5 @@
+import { equals as isEqualRelayArray } from '@winglet/common-utils/object';
+
 import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../../record';
@@ -17,7 +19,7 @@ export const isExternalBranchValueChange = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): boolean => {
   const relays = node.runtime.inputRelays;
-  if (relays && isRelayedInput(relays, node.path)) return false;
+  if (relays && isRelayedInput(relays, node.path, isEqualRelayArray)) return false;
   for (const automatic of context.automaticLog)
     if (
       automatic.node === node ||

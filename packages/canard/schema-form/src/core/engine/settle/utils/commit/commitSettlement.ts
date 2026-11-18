@@ -1,4 +1,5 @@
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+import { equals as isEqualRelayArray } from '@winglet/common-utils/object';
 
 import type { Fn, Optional } from '@aileron/declare';
 
@@ -91,7 +92,11 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
       continue;
     if (readSettlementSource(context, path, true) === FieldNodeWriteKind.Input)
       continue;
-    if (relays !== undefined && isRelayedInput(relays, path)) continue;
+    if (
+      relays !== undefined &&
+      isRelayedInput(relays, path, isEqualRelayArray)
+    )
+      continue;
     refreshTargets.add(path);
   }
   runtime.refreshTargets = refreshTargets;
