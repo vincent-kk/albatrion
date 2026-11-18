@@ -54,21 +54,15 @@ export const prefixSelectorList = (
     }
   }
   let depth = 0;
-  let needsEscapedTrim = false;
   for (let index = start; index < end; index++) {
     const code = css.charCodeAt(index);
     // Every character with a branch below is a slash or lower, or a backslash.
     if (code > SLASH && code !== BACKSLASH) continue;
     if (code === COMMA) {
       if (depth !== 0) continue;
-      const part = css.slice(partStart, index);
       result +=
-        prefixSelector(
-          needsEscapedTrim ? trimSelector(part) : part.trim(),
-          prefix,
-        ) + ',';
+        prefixSelector(trimSelector(css.slice(partStart, index)), prefix) + ',';
       partStart = index + 1;
-      needsEscapedTrim = false;
     } else if (code === L_PAREN) {
       // Only `url(` can make a parenthesis opaque, and it ends in `l`.
       const next =
@@ -79,18 +73,11 @@ export const prefixSelectorList = (
       else depth++;
     } else if (code === R_PAREN) depth--;
     else if (OPAQUE_CHARACTER[code]) {
-      if (code === BACKSLASH) {
-        const following = css.charCodeAt(index + 1);
-        // Native trim can remove escaped whitespace; visible ASCII needs no repair.
-        if (following <= 32 || following >= 128) needsEscapedTrim = true;
-      }
       const next = skipOpaqueToken(css, index);
       if (next > index) index = next - 1;
     }
   }
-  const part = css.slice(partStart, end);
   return (
-    result +
-    prefixSelector(needsEscapedTrim ? trimSelector(part) : part.trim(), prefix)
+    result + prefixSelector(trimSelector(css.slice(partStart, end)), prefix)
   );
 };

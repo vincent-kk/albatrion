@@ -1,8 +1,6 @@
 import { getCssEscapeEnd } from '../../../utils/cssTokens/getCssEscapeEnd';
-import {
-  EXTENDED_ESCAPE_START,
-  getEscapedUrlEnd,
-} from '../../../utils/cssTokens/getEscapedUrlEnd';
+import { getEscapedUrlEnd } from '../../../utils/cssTokens/getEscapedUrlEnd';
+import { mayExtendCssEscape } from '../../../utils/cssTokens/mayExtendCssEscape';
 import {
   ASTERISK,
   BACKSLASH,
@@ -27,8 +25,7 @@ export const skipOpaqueToken = (css: string, index: number): number => {
   const code = css.charCodeAt(index);
   if (code === BACKSLASH) {
     const following = css.charCodeAt(index + 1);
-    if (!EXTENDED_ESCAPE_START[following])
-      return Math.min(index + 2, css.length);
+    if (!mayExtendCssEscape(following)) return Math.min(index + 2, css.length);
     const end = getEscapedUrlEnd(css, index);
     return end === index ? getCssEscapeEnd(css, index) : end;
   }
