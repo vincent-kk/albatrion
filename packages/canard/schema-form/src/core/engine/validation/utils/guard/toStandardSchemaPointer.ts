@@ -9,5 +9,12 @@ export const toStandardSchemaPointer = (schemaPath: string): string =>
   stripFragment(schemaPath).replace(
     /\/(%2A|%2E%2E|%2E|%40)(?=\/|$)/g,
     (_, token: string) =>
-      '/' + (token === '%2A' ? '*' : token === '%40' ? '@' : token === '%2E' ? '.' : '..'),
+      '/' +
+      (token === '%2A'
+        ? '*'
+        : token === '%40'
+          ? '@'
+          : token === '%2E'
+            ? '.'
+            : '..'),
   );

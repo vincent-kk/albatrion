@@ -70,7 +70,8 @@ export const createRootLoad = (
       mountFieldNode(load.root, undefined, undefined, {
         deferValidation: true,
       });
-      if (props.errors?.length) applyFormErrors(load.root, props.errors, undefined, 'load');
+      if (props.errors?.length)
+        applyFormErrors(load.root, props.errors, undefined, 'load');
     }
   } catch (error) {
     load.error = error;

@@ -57,7 +57,11 @@ const registryGlobal: typeof globalThis & {
  */
 export const getPluginRegistry = (): PluginRegistry => {
   if (registryGlobal[REGISTRY_KEY]) return registryGlobal[REGISTRY_KEY];
-  const defaultRenderKit = { FieldRenderer, LabelRenderer, ErrorMessageRenderer };
+  const defaultRenderKit = {
+    FieldRenderer,
+    LabelRenderer,
+    ErrorMessageRenderer,
+  };
   const defaultFieldInputDefinitions = normalizeFieldInputDefinitions(
     builtinFieldInputDefinitions,
   );
