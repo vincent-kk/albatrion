@@ -152,6 +152,15 @@ export function fieldNodeFactory(
   validator?: Validator,
 ): RuntimeNodeSurface {
   const runtime: FieldNodeRuntime<RuntimeFieldNode> = {
+    hostBudgetCaps: undefined,
+    committedDeclarationIds: undefined,
+    committedDeclarationKeys: undefined,
+    deriveTargetIds: undefined,
+    committedRuleValues: undefined,
+    committedRuleKeysBySource: undefined,
+    committedRuleKeysByTarget: undefined,
+    isRevisionObserved: undefined,
+    inputRelays: undefined,
     ...runtimeSeed,
     misfitPaths: runtimeSeed.misfitPaths ?? new PathKeyedSet(),
     globalStateCounts: new Map(),
