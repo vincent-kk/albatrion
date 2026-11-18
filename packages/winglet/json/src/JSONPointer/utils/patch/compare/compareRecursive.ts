@@ -90,9 +90,9 @@ export const compareRecursive = <
   // Early type mismatch detection - handle at current level
   if (sourceIsArray !== targetIsArray) {
     if (strict) {
-      patches.push({ op: Operation.TEST, path, value: source });
+      patches.push({ op: Operation.TEST, path, value: processValue(source, immutable) });
     }
-    patches.push({ op: Operation.REPLACE, path, value: target });
+    patches.push({ op: Operation.REPLACE, path, value: processValue(target, immutable) });
     return; // Early exit - no further processing needed
   }
 

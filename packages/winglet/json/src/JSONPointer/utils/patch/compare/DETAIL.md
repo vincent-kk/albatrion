@@ -33,7 +33,7 @@
 
 ### immutable-values — immutable 옵션의 참조 처리
 
-- `immutable: true`(기본)에서 패치 값의 객체·배열은 `target`과 다른 참조를 갖는다.
+- `immutable: true`(기본)에서 패치 값의 객체·배열은 `target`과 다른 참조를 갖는다. 객체와 배열 사이의 전체 교체도 같은 규칙을 따르고 strict TEST 값은 source와 분리됩니다.
 - `immutable: false`에서는 `target`의 원본 참조가 패치 값으로 그대로 쓰인다.
 - 두 모드 모두 연산(`op`)·경로(`path`)는 동일하다 — 차이는 참조뿐이다.
 
