@@ -4,7 +4,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { Fn, Optional } from '@aileron/declare';
 
 import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
-import { EXTERNAL_VALUE_REVISION } from '@/schema-form/constants/externalValueRevision';
+import { INPUT_VALUE_REVISION } from '@/schema-form/constants/externalValueRevision';
 import {
   JSONPointer as $,
   isDescendantPath,
@@ -49,6 +49,22 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
   runtime.deliveries ??= new Set();
   const previousTransitions = runtime.revisionTransitions;
   try {
+    const origins = context.writeOrigins;
+    const hasInputBatch =
+      origins !== undefined &&
+      origins.length > 1 &&
+      origins.some((origin) => origin.source === FieldNodeWriteKind.Input);
+    const inputPath =
+      origins?.length === 1
+        ? origins[0].source === FieldNodeWriteKind.Input
+          ? origins[0].path
+          : undefined
+        : !origins?.length &&
+            (context.source ?? context.kind) === FieldNodeWriteKind.Input
+          ? context.target.path
+          : undefined;
+    const hasRelay = !!runtime.inputRelays?.length;
+    const tracksInput = inputPath !== undefined || hasInputBatch || hasRelay;
     const refreshTargets = runtime.refreshTargets;
     const loadScope =
       context.kind === FieldNodeWriteKind.Load ? context.loadScope : undefined;
@@ -245,12 +261,13 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
             ))
         ) {
           if (
+            tracksInput &&
             node.behavior.strategy === 'branch' &&
             context.kind !== FieldNodeWriteKind.Load &&
-            !refreshTargets?.has(node.path) &&
-            isExternalBranchValueChange(context, node)
+            (hasInputBatch || hasRelay || node.path === inputPath) &&
+            !isExternalBranchValueChange(context, node)
           )
-            node.pendingRevisionMask |= EXTERNAL_VALUE_REVISION;
+            node.pendingRevisionMask |= INPUT_VALUE_REVISION;
           if (silent) mark(node, FieldNodeEventType.UpdateValue);
           else {
             const pendingValue =

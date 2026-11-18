@@ -1,7 +1,10 @@
+import { EXTERNAL_VALUE_REVISION } from '@/schema-form/constants/externalValueRevision';
+
 import {
   EMPTY_REVISION_LEDGER,
   FieldNodeEventType,
   FieldNodeRevisionLedger,
+  readFieldNodeInputRevision,
 } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 
@@ -18,8 +21,16 @@ export const readFieldNodeRevision = <Self extends FieldNodeRecord<Self>>(
   node.runtime.isRevisionObserved = true;
   const ledger = node.revisionLedger;
   if (ledger === EMPTY_REVISION_LEDGER) return 0;
-  if (ledger instanceof FieldNodeRevisionLedger) return ledger.read(mask);
   let revision = 0;
+  if (mask & EXTERNAL_VALUE_REVISION) {
+    mask &= ~EXTERNAL_VALUE_REVISION;
+    if (node.behavior.strategy === 'branch')
+      revision =
+        (ledger[FieldNodeEventType.UpdateValue] ?? 0) -
+        readFieldNodeInputRevision(ledger);
+  }
+  if (ledger instanceof FieldNodeRevisionLedger)
+    return revision + ledger.read(mask);
   for (let bit = 1; bit <= FieldNodeEventType.UpdateDiagnostics; bit *= 2)
     if (mask & bit) revision += ledger[bit] ?? 0;
   return revision;

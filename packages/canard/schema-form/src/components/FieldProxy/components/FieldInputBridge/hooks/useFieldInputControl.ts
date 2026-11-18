@@ -68,7 +68,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
   controlled?: Optional<boolean>,
   childValueRevision?: ChildInputOwnership,
 ) => {
-  const refreshRevision = readFieldInputGeneration(
+  let refreshRevision = readFieldInputGeneration(
     node,
     controlled,
     childValueRevision?.externalValueRevision,
@@ -131,6 +131,14 @@ export const useFieldInputControl = <Node extends FieldNode>(
         : BIT_MASK_NONE)
     );
   }, [node, refreshDeferral, controlled, childValueRevision]);
+  if (
+    refreshDeferral.current === BIT_MASK_NONE &&
+    generation.current !== refreshRevision &&
+    childValueRevision?.externalValueRevision !== undefined
+  ) {
+    childValueRevision.externalValueRevision = undefined;
+    refreshRevision = readFieldInputGeneration(node, controlled);
+  }
   useSyncExternalStore(subscribe, getRevision, getRevision);
   if (refreshDeferral.current === BIT_MASK_NONE)
     generation.current = refreshRevision;

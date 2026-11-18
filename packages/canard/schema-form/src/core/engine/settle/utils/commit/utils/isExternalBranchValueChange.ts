@@ -29,12 +29,15 @@ export const isExternalBranchValueChange = <Self extends FieldNodeRecord<Self>>(
       if (changed !== node.path && !isDescendantPath(changed, node.path))
         continue;
       const source = readSettlementSource(context, changed, true);
-      if (
-        source !== undefined &&
-        (source !== FieldNodeWriteKind.Input || changed !== node.path)
-      )
-        return true;
+      if (source !== undefined) {
+        if (source !== FieldNodeWriteKind.Input || changed !== node.path)
+          return true;
+      }
     }
+  if (context.writeOrigins?.length)
+    return (
+      readSettlementSource(context, node.path, true) !== FieldNodeWriteKind.Input
+    );
   return (
     node !== context.target ||
     readSettlementSource(context, node.path) !== FieldNodeWriteKind.Input
