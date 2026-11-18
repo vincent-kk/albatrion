@@ -46,7 +46,7 @@ export const FieldRenderer = ({
         aria-labelledby={labelId}
         style={{ border: 0, margin: 0, padding: 0 }}
       >
-        <legend id={labelId}>{name}</legend>
+        <span hidden id={labelId}>{name}</span>
         <Space direction="vertical" block>
           <Input aria-labelledby={labelId} />
         </Space>

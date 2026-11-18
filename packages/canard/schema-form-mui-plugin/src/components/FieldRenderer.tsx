@@ -1,5 +1,7 @@
 import { Box } from '@mui/material';
 
+import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
+
 import type { FieldRendererProps } from '@canard/schema-form';
 
 /**
@@ -11,6 +13,7 @@ export const FieldRenderer = ({
   node,
   name,
   labelId,
+  jsonSchema,
   depth,
   Input,
   ErrorMessage,
@@ -19,10 +22,13 @@ export const FieldRenderer = ({
   if (depth === 0) return <Input labelId={labelId} />;
 
   if (node.strategy === 'branch') {
+    const presentation = typeof jsonSchema === 'object' && jsonSchema !== null ? jsonSchema.presentation : undefined;
+    const inputType = typeof presentation === 'object' && presentation !== null && 'inputType' in presentation && typeof presentation.inputType === 'string' ? presentation.inputType : undefined;
+    const ownsTitle = typeof jsonSchema === 'object' && jsonSchema !== null && isCheckboxGroupInput({type: node.type, inputType, jsonSchema});
     return (
       <Box
         component="fieldset"
-        aria-labelledby={labelId}
+        aria-labelledby={ownsTitle ? undefined : labelId}
         sx={{
           marginBottom: 1,
           marginLeft: depth * 2,
@@ -32,9 +38,7 @@ export const FieldRenderer = ({
           padding: 1,
         }}
       >
-        <Box component="legend" id={labelId}>
-          {name}
-        </Box>
+        {!ownsTitle && <span hidden id={labelId}>{name}</span>}
         <Input labelId={labelId} />
       </Box>
     );
