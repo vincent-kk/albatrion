@@ -69,6 +69,8 @@ export interface ModalManagerState {
   destroyStyleManager?: Fn;
   /** Canonical CSS definitions survive detach for later initialization. */
   styleSheetDefinition: Map<string, string>;
+  /** Last applied definitions avoid re-scoping identical CSS on an unchanged attach. */
+  appliedStyleSheetDefinition?: Map<string, string>;
   /** Alive nodes remain independent of the provider render tree. */
   nodes: Map<number, ModalNode>;
   /** Each registered node has one store-owned subscription. */
