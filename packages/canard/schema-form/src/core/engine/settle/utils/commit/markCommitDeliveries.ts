@@ -4,6 +4,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { Fn, Optional } from '@aileron/declare';
 
 import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
+import { EXTERNAL_VALUE_REVISION } from '@/schema-form/constants/externalValueRevision';
 import {
   JSONPointer as $,
   isDescendantPath,
@@ -30,6 +31,7 @@ import { commitGlobalState } from './commitGlobalState';
 import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
 import { getRequiredChildren } from './utils/getRequiredChildren';
 import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
+import { isExternalBranchValueChange } from './utils/isExternalBranchValueChange';
 import { isSameDeliveryValue } from './utils/isSameDeliveryValue';
 import { readSettlementSource } from './utils/readSettlementSource';
 
@@ -242,6 +244,13 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
               node.storedOutputValue,
             ))
         ) {
+          if (
+            node.behavior.strategy === 'branch' &&
+            context.kind !== FieldNodeWriteKind.Load &&
+            !refreshTargets?.has(node.path) &&
+            isExternalBranchValueChange(context, node)
+          )
+            node.pendingRevisionMask |= EXTERNAL_VALUE_REVISION;
           if (silent) mark(node, FieldNodeEventType.UpdateValue);
           else {
             const pendingValue =

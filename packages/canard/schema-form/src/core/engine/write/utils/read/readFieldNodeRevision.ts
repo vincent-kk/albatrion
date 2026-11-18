@@ -13,7 +13,7 @@ import type { FieldNodeRecord } from '../../../record';
  */
 export const readFieldNodeRevision = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  mask = Number.MAX_SAFE_INTEGER,
+  mask = (FieldNodeEventType.UpdateDiagnostics << 1) - 1,
 ): number => {
   node.runtime.isRevisionObserved = true;
   const ledger = node.revisionLedger;

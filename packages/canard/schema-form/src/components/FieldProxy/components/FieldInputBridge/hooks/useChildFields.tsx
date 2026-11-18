@@ -15,11 +15,13 @@ import { useLazyConstant, useReference } from '@winglet/react-utils/hook';
 
 import { DeferredFieldProxy } from '@/schema-form/components/FieldProxy/components/DeferredFieldProxy';
 import type { FieldProxyProps } from '@/schema-form/components/FieldProxy/type';
+import { EXTERNAL_VALUE_REVISION } from '@/schema-form/constants/externalValueRevision';
 import { type FieldNode, isTerminalNode } from '@/schema-form/core';
 import type { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 import { useVirtualizationContext } from '@/schema-form/providers';
 import type { ChildFieldProps } from '@/schema-form/types';
 
+import type { ChildInputOwnership } from '../type';
 import type { AdditionalChildNodeProperties, ChildField } from '../type';
 
 /** The form manager is fixed for this hook's lifetime; no notifications are needed. */
@@ -34,6 +36,7 @@ const getNoManager = () => null;
  * @param NodeProxy - FieldProxy
  * @param mountedChildren - Count of committed child proxies, kept by each child's layout effect
  * @param terminalChildren - List from `useTerminalChildren`, returned as is for terminal nodes and empty branches
+ * @param childValueRevision - Optional input ownership cell that pins the external revision on first child render.
  * @returns Child fields and an optional ref that the input's existing layout
  *          effect marks true before passive snapshot consistency checks,
  *          plus the form manager used to record the slot's real input commit
@@ -54,6 +57,7 @@ export const useChildFields = (
   NodeProxy: ComponentType<FieldProxyProps>,
   mountedChildren: RefObject<number>,
   terminalChildren: ChildField[],
+  childValueRevision?: ChildInputOwnership,
 ): readonly [
   ChildField[],
   RefObject<boolean> | undefined,
@@ -75,8 +79,10 @@ export const useChildFields = (
   const cache = useLazyConstant(() => ({
     fields: new WeakMap<FieldNode, ChildField>(),
     nextKey: 0,
+    ownership: childValueRevision,
   }));
 
+  cache.ownership = childValueRevision;
   const ChildFields = useMemo(() => {
     if (isTerminalNode(node) || children === null) return terminalChildren;
     const manager = snapshot ?? (hydratedRef.current ? formManager : null);
@@ -103,6 +109,13 @@ export const useChildFields = (
             onFileAttach,
             ...restProps
           }: ChildFieldProps) => {
+            if (
+              cache.ownership &&
+              cache.ownership.externalValueRevision === undefined
+            )
+              cache.ownership.externalValueRevision = branch.revision(
+                EXTERNAL_VALUE_REVISION,
+              );
             useLayoutEffect(() => {
               mountedChildren.current++;
               return () => {

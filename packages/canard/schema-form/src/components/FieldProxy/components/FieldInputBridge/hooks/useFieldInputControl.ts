@@ -14,8 +14,10 @@ import {
   BIT_FLAG_01,
   BIT_MASK_NONE,
 } from '@/schema-form/constants/bitmask';
+import { EXTERNAL_VALUE_REVISION } from '@/schema-form/constants/externalValueRevision';
 import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
 
+import type { ChildInputOwnership } from '../type';
 import { REACTIVE_RERENDERING_EVENTS } from '../type';
 import { readFieldInputGeneration } from '../utils/readFieldInputGeneration';
 
@@ -57,14 +59,20 @@ const MOUNTED_CHILDREN = BIT_FLAG_01;
  * @param node - The FieldNode instance to subscribe to for events
  * @param mountedChildren - Count of committed child proxies owned by the input
  * @param controlled - Combined declaration; only `true` stops Refresh from replacing the input
+ * @param childValueRevision - Sticky external revision owned by the selected raw input.
  * @returns Container ref, input key, composition handlers, stable re-render dispatch and composition cleanup
  */
 export const useFieldInputControl = <Node extends FieldNode>(
   node: Node,
   mountedChildren: RefObject<number>,
   controlled?: Optional<boolean>,
+  childValueRevision?: ChildInputOwnership,
 ) => {
-  const refreshRevision = readFieldInputGeneration(node, controlled);
+  const refreshRevision = readFieldInputGeneration(
+    node,
+    controlled,
+    childValueRevision?.externalValueRevision,
+  );
   const generation = useRef(refreshRevision);
 
   const [, update] = useVersion();
@@ -85,7 +93,12 @@ export const useFieldInputControl = <Node extends FieldNode>(
             type &
             (FieldNodeEventType.UpdateError | FieldNodeEventType.UpdateState)
           ) ||
-            generation.current === readFieldInputGeneration(node, controlled))
+            generation.current ===
+              readFieldInputGeneration(
+                node,
+                controlled,
+                childValueRevision?.externalValueRevision,
+              ))
         )
           return;
         refreshDeferral.current =
@@ -96,7 +109,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
       onStoreChange();
       return unsubscribe;
     },
-    [node, mountedChildren, refreshDeferral, controlled],
+    [node, mountedChildren, refreshDeferral, controlled, childValueRevision],
   );
   const getRevision = useCallback(() => {
     // revision(mask) sums per-bit delivery counts, so each undeferred read equals
@@ -106,12 +119,18 @@ export const useFieldInputControl = <Node extends FieldNode>(
         node.revision(INPUT_TRACKING_EVENTS_WITHOUT_REFRESH) +
         generation.current
       );
-    return node.revision(
-      controlled === true
-        ? INPUT_TRACKING_EVENTS_WITHOUT_REFRESH
-        : INPUT_TRACKING_EVENTS,
+    return (
+      node.revision(
+        controlled === true
+          ? INPUT_TRACKING_EVENTS_WITHOUT_REFRESH
+          : INPUT_TRACKING_EVENTS,
+      ) +
+      (controlled !== true && node.strategy === 'branch'
+        ? (childValueRevision?.externalValueRevision ??
+          node.revision(EXTERNAL_VALUE_REVISION))
+        : BIT_MASK_NONE)
     );
-  }, [node, refreshDeferral, controlled]);
+  }, [node, refreshDeferral, controlled, childValueRevision]);
   useSyncExternalStore(subscribe, getRevision, getRevision);
   if (refreshDeferral.current === BIT_MASK_NONE)
     generation.current = refreshRevision;
@@ -122,10 +141,22 @@ export const useFieldInputControl = <Node extends FieldNode>(
     refreshDeferral.current &= CLEAR_COMPOSING_MASK;
     if (
       mountedChildren.current === 0 &&
-      generation.current !== readFieldInputGeneration(node, controlled)
+      generation.current !==
+        readFieldInputGeneration(
+          node,
+          controlled,
+          childValueRevision?.externalValueRevision,
+        )
     )
       update();
-  }, [mountedChildren, node, update, refreshDeferral, controlled]);
+  }, [
+    mountedChildren,
+    node,
+    update,
+    refreshDeferral,
+    controlled,
+    childValueRevision,
+  ]);
   return [
     ref,
     generation.current,
