@@ -188,7 +188,7 @@ Use transpilers like Babel to convert the code to match your target environment.
 - **[`isEmptyArray`](./src/utils/filter/isEmptyArray.ts)**: Function to check if an array is empty
 - **[`isEmptyObject`](./src/utils/filter/isEmptyObject.ts)**: Function to check if an object is empty
 - **[`isEmptyPlainObject`](./src/utils/filter/isEmptyPlainObject.ts)**: Function to check if a plain object is empty
-- **[`isEmpty`](./src/utils/filter/isEmpty.ts)**: Function to comprehensively check if a value is empty (null, undefined, empty string, empty array, empty object, etc.)
+- **[`isEmpty`](./src/utils/filter/isEmpty.ts)**: Checks empty values. Map and Set sizes are recognized only for instances from the current realm; foreign collections are checked by own enumerable keys.
 - **[`isError`](./src/utils/filter/isError.ts)**: Function to check if a value is an Error object
 - **[`isFile`](./src/utils/filter/isFile.ts)**: Function to check if a value is a File object
 - **[`isFunction`](./src/utils/filter/isFunction.ts)**: Function to check if a value is a function

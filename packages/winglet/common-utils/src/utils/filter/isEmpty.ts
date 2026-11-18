@@ -437,9 +437,8 @@ export const isEmpty = (value: unknown): boolean => {
   const type = typeof value;
   if (type === 'function') return false;
   if (type !== 'object') return isFalsy(value);
-  // Map and Set keep their contents in internal slots that own keys cannot see, so a
-  // key walk reports a populated collection as empty. Tag-based like the rest of this
-  // directory, so a collection from another realm is recognised too
+  // Collection size is recognized only for local-realm Map and Set instances.
+  // Foreign collections fall through to the own enumerable key check.
   if (isMap(value) || isSet(value)) return value.size === 0;
   for (const key in value) if (hasOwnProperty(value, key)) return false;
   return true;

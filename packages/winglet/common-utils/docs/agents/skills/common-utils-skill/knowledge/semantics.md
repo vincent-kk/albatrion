@@ -189,7 +189,7 @@ The surface is `.pending`, `.state`, and `.subscribe(listener) => unsubscribe`. 
 | `isObject`          | `true` for arrays, `Date`, `Map`; `false` for functions and `null`                                                                                                     |
 | `isPlainObject`     | only `{}`, `new Object()`, and `Object.create(null)`                                                                                                                   |
 | `isPrimitiveObject` | reads as the opposite of what it does: it is `Object(value) === value`, so it is `true` for **any** object, including functions and arrays, and `false` for primitives |
-| `isEmpty`           | falsy primitives (`0`, `''`, `false`, `NaN`, `0n`) are empty; functions never are; objects are empty when they have no own enumerable key                              |
+| `isEmpty`           | falsy primitives (`0`, `''`, `false`, `NaN`, `0n`) are empty; functions never are; local-realm Map/Set use size; other objects, including foreign collections, use own enumerable keys                              |
 | `isNil`             | loose `== null`, so it covers both `null` and `undefined`                                                                                                              |
 | `isCloneable`       | a whitelist of type tags, not a question put to `clone`. `Blob` and `File` are excluded even though `clone` has a dedicated branch for them                            |
 
