@@ -1,3 +1,4 @@
+import { sameValueZero } from '../../../utils/compute/sameValueZero';
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 
@@ -15,7 +16,7 @@ export const prepareFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
       (runtime.validationMode ?? ValidationMode.None) & ValidationMode.OnChange
     ) ||
     runtime.isValidationUnavailable ||
-    (runtime.chainInitialOutputValue === node.rootNode.storedOutputValue &&
+    (sameValueZero(runtime.chainInitialOutputValue, node.rootNode.storedOutputValue) &&
       !runtime.validationTargets?.size)
   )
     return false;

@@ -1,3 +1,4 @@
+import { sameValueZero } from '../../../utils/compute/sameValueZero';
 import type { Fn } from '@aileron/declare';
 
 import { FormErrorCode } from '../../../../../errors';
@@ -56,7 +57,9 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
     const stamp = runtime.validationStamp ?? 0;
     const running = { stamp, targets };
     runtime.activeValidationRun = running;
-    const commit = runtime.commitNumber ?? 0;
+    let commit = runtime.commitNumber ?? 0;
+    const validatedValue = root.storedOutputValue;
+    const validatedContext = runtime.context;
     void runFieldNodeValidation(node)
       .then((result) => {
         if (runtime.activeValidationRun === running)
@@ -66,12 +69,14 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
           settleFieldNodeValidation(node, stamp);
           return;
         }
-        if ((runtime.commitNumber ?? 0) !== commit) {
+        if ((runtime.commitNumber ?? 0) !== commit &&
+          (!sameValueZero(root.storedOutputValue, validatedValue) || runtime.context !== validatedContext)) {
           for (const target of targets)
             (runtime.validationPendingTargets ??= new Set()).add(target);
           runtime.validationCadence?.request();
           return;
         }
+        commit = runtime.commitNumber ?? 0;
         const issues = retainEqualValidationIssues(node, result);
         routeValidationIssues(targets, issues);
         runtime.validationResult = { commit, issues };

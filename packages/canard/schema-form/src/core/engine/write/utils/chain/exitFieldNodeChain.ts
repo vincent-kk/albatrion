@@ -1,3 +1,4 @@
+import { sameValueZero } from '../../../utils/compute/sameValueZero';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { SchemaFormError } from '../../../../../errors';
@@ -123,7 +124,7 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
       }
       guardRecords.clear();
     }
-    const changed = runtime.chainInitialOutputValue !== root.storedOutputValue;
+    const changed = !sameValueZero(runtime.chainInitialOutputValue, root.storedOutputValue);
     const requests = runtime.validationTargets;
     if (prepareFieldNodeValidation(root)) {
       if (changed && !requests?.has(root)) requestFieldNodeValidationWave(root);

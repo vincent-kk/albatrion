@@ -32,7 +32,7 @@
 
 ### dispatch-onchange — EVENT-026·EVENT-031·EVENT-032·EVENT-033: 최종 방출만 알립니다
 
-`onChange`는 마지막 파동 뒤 최종 `outputValue`로 최외곽 진입당 한 번 호출하며 디바운스하지 않습니다. `outputValue` 참조가 유지되면 이 콜백과 일반 변경 검증 요청을 생략합니다. 로드는 판정을 비우므로 OnChange 모드에서 `outputValue`가 같아도 검증을 요구할 수 있지만, 그 예외로 콜백을 만들지는 않습니다. 콜백 안의 쓰기는 깊이 0의 새 진입이며 오류 수집은 바깥 사슬로 돌아갑니다.
+`onChange`는 마지막 파동 뒤 최종 `outputValue`로 최외곽 진입당 한 번 호출하며 디바운스하지 않습니다. `outputValue`가 원시 SameValueZero로 같거나 객체 참조를 유지하면 이 콜백과 일반 변경 검증 요청을 생략합니다. 로드는 판정을 비우므로 OnChange 모드에서 `outputValue`가 같아도 검증을 요구할 수 있지만, 그 예외로 콜백을 만들지는 않습니다. 콜백 안의 쓰기는 깊이 0의 새 진입이며 오류 수집은 바깥 사슬로 돌아갑니다.
 
 ### dispatch-waves — EVENT-005·EVENT-007·EVENT-009·EVENT-011: 파동의 관측을 고정합니다
 
