@@ -28,7 +28,7 @@ export async function resolveScopeAlias(
   let cur = resolvePath(rootCwd);
   while (true) {
     const scopeDir = join(cur, 'node_modules', `@${scope}`);
-    await collectScopeDir(scopeDir, expectedPrefix, rootCwd, matched);
+    await collectScopeDir(scopeDir, expectedPrefix, rootCwd, matched, skipReasons);
 
     const parent = dirname(cur);
     if (parent === cur) break;
@@ -39,7 +39,7 @@ export async function resolveScopeAlias(
   const installRoots = projectRoot ? await findInstallRoots(projectRoot) : [];
   for (const installRoot of installRoots) {
     const scopeDir = join(installRoot, 'node_modules', `@${scope}`);
-    await collectScopeDir(scopeDir, expectedPrefix, installRoot, matched);
+    await collectScopeDir(scopeDir, expectedPrefix, installRoot, matched, skipReasons);
   }
 
   if (matched.size === 0) {
@@ -75,6 +75,7 @@ async function collectScopeDir(
   expectedPrefix: string,
   resolveFrom: string,
   matched: Map<string, string>,
+  skipReasons?: string[],
 ): Promise<void> {
   let entries: string[];
   try {
@@ -91,7 +92,12 @@ async function collectScopeDir(
     try {
       const raw = await readFile(pkgJSONPath, 'utf-8');
       parsed = JSON.parse(raw.replace(/^\uFEFF/, '')) as { name?: unknown };
-    } catch {
+    } catch (error) {
+      const message = `Skipping ${pkgJSONPath}: ${error instanceof Error ? error.message : String(error)}`;
+      if (!skipReasons?.includes(message)) {
+        skipReasons?.push(message);
+        logger.warn(message);
+      }
       continue;
     }
     if (
