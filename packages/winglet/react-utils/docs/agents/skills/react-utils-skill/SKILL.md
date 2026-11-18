@@ -82,4 +82,4 @@ import { renderComponent } from '@winglet/react-utils/render';
 import { useHandle } from '@winglet/react-utils';           // barrel — everything above
 ```
 
-Peer dependencies: React and React DOM `>=16 <20`. Ships ESM (`.mjs`) and CJS (`.cjs`) with declarations.
+Peer dependencies: React and React DOM `>=16.14 <20`. Ships ESM (`.mjs`) and CJS (`.cjs`) with declarations.
