@@ -1,6 +1,3 @@
-/** Low-five-bit positions of ASCII digits. */
-const DIGIT_MASK = 0x03ff0000;
-
 /** Upper- and lowercase hex letters and URL-name letters share these positions. */
 const LETTER_MASK = 0x0024107e;
 
@@ -10,7 +7,6 @@ const LETTER_MASK = 0x0024107e;
  * @returns Exact eligibility for ASCII; non-ASCII false positives use the full token reader
  */
 export const mayExtendCssEscape = (code: number): boolean => {
-  if (code < 32) return code === 13;
-  const mask = code < 64 ? DIGIT_MASK : LETTER_MASK;
-  return (mask & (1 << code)) !== 0;
+  if (code >= 64) return (LETTER_MASK & (1 << code)) !== 0;
+  return code === 13 || (code >= 48 && code <= 57);
 };
