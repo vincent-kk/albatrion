@@ -1,3 +1,5 @@
+import type { AbortSignalValue } from '@/common-utils/types/abortSignal';
+
 import { AbortError } from '@/common-utils/errors/AbortError';
 
 /**
@@ -37,7 +39,7 @@ export interface DelayOptions {
    * - For older browsers, use polyfill: `npm install abortcontroller-polyfill`
    * - Node.js: Available since v14.17.0, v12.22.0
    */
-  signal?: AbortSignal;
+  signal?: AbortSignalValue;
 }
 
 /**

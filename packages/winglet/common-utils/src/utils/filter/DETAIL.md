@@ -15,6 +15,7 @@
 - `isPlainObject(value)`: 프로토타입이 `null`이거나 `Object.prototype`이거나 그 조부모가 `null`이며, 내부 타입 태그가 `[object Object]`인 경우만 true다 — 커스텀 `Symbol.toStringTag`를 가진 객체는 제외된다.
 - `isArrayIndex(value)`: 문자열의 모든 문자가 숫자 문자 코드인지만 검사한다 — 선행 0과 `uint32` 상한을 넘는 문자열도 true이며, 부호·소수점·지수 표기·전각 숫자·공백은 모두 false다.
 - `isCloneable(value)`: 내부 타입 태그가 화이트리스트(Object/Array/Date/RegExp/Map/Set/TypedArray류/ArrayBuffer/DataView/Boolean/Number/String/Symbol/Arguments)에 속할 때만 true다 — 함수·WeakMap·WeakSet은 false다.
+- `isBlob`·`isFile`의 선언은 소비자에게 해당 전역 선언이 있을 때 그 타입으로 좁히며, 전역 타입이 없는 환경에도 bare Blob·File 타입을 요구하지 않습니다. 런타임 생성자 가드는 바꾸지 않습니다.
 - `isBuffer`의 타입 좁힘은 Node 전역 선언이 있으면 해당 Buffer 타입이고, 브라우저 전용 선언에서는 Uint8Array입니다. Node 타입 패키지 없이도 선언을 읽을 수 있어야 브라우저 소비자의 타입 검사가 가능합니다.
 - `isBuffer`/`isBlob`/`isFile`/`isSharedArrayBuffer`: 대상 전역 생성자를 모듈 스코프에서 한 번 캡처해 두고 `undefined` 가드를 거친 뒤 `instanceof`로 판별한다. `isFile`은 추가로 `isBlob` 결과를 재사용한다.
 - `isFalsy`/`isTruthy`: `!value`/`!!value` 그대로이며, boxed primitive(`new Boolean(false)` 등)는 객체이므로 truthy로 취급된다.

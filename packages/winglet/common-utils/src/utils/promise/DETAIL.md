@@ -10,6 +10,8 @@
 
 유한 지연이 호스트 타이머의 2^31−1ms 한도를 넘으면 그 한도 이하의 구간으로 나누어 전체 시간을 기다립니다. Infinity는 취소될 때까지 대기합니다. 각 구간의 타이머와 abort 리스너를 정리하여 긴 대기가 즉시 끝나는 타이머 오버플로를 막습니다.
 
+signal 옵션의 선언은 소비자 환경에 AbortSignal 전역 타입이 있으면 그것을 사용하고, 없으면 이 프리미티브가 실제로 쓰는 abort 구독 구조를 제공합니다. DOM 타입 설치를 전제로 삼지 않습니다.
+
 ## API Contracts
 
 - `delay(ms = 0, options?: DelayOptions): Promise<void>` — `options.signal`이 호출 전 이미 aborted면 `AbortError('SIGNAL_RECEIVED_BEFORE_RUN', ...)`로 즉시 거부(타이머 미생성); 대기 중 abort되면 `AbortError('SIGNAL_RECEIVED', ...)`로 거부.

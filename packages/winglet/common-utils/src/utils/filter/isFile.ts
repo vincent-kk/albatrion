@@ -1,3 +1,6 @@
+/** Native File type when its global declaration is available to the consumer. */
+type FileValue = typeof globalThis extends { File: { prototype: infer Value } } ? Value : never;
+
 import { isBlob } from './isBlob';
 
 const File = globalThis.File;
@@ -352,7 +355,7 @@ const File = globalThis.File;
  * - Use `isArrayBuffer()` for binary buffer detection
  * - Use File API methods for file content access
  */
-export const isFile = (value: unknown): value is File =>
+export const isFile = (value: unknown): value is FileValue =>
   // Check if the File constructor exists, isBlob result is true, and
   // verify if the value is an instance of File.
   File !== undefined && isBlob(value) && value instanceof File;
