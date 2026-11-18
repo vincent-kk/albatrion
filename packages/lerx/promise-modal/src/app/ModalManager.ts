@@ -73,7 +73,11 @@ export class ModalManager {
           const frame = ModalManager.__state__.frames.get(node.id);
           if (frame && target)
             for (const [peerId, opener] of ModalManager.__state__.focusTargets)
-              if (peerId !== node.id && opener && containsComposedElement(frame, opener))
+              if (
+                peerId !== node.id &&
+                opener &&
+                containsComposedElement(frame, opener)
+              )
                 ModalManager.__state__.focusTargets.set(peerId, target);
           ModalManager.__state__.focusTargets.delete(node.id);
         }
@@ -149,8 +153,11 @@ export class ModalManager {
       ModalManager.__state__.owner &&
       ModalManager.__state__.owner !== identity
     ) {
-      if (ModalManager.__state__.anchor && !ModalManager.__state__.anchor.parentElement &&
-          ModalManager.__state__.anchor.childNodes.length === 0) {
+      if (
+        ModalManager.__state__.anchor &&
+        !ModalManager.__state__.anchor.parentElement &&
+        ModalManager.__state__.anchor.childNodes.length === 0
+      ) {
         ModalManager.detach(ModalManager.__state__.owner);
         return;
       }
@@ -188,7 +195,8 @@ export class ModalManager {
   /** Releases display participation while React retains the owner's portal subtree. */
   static suspend(identity: object): void {
     if (ModalManager.__state__.owner !== identity) return;
-    ModalManager.__state__.openHandler = ModalManager.__state__.defaultOpenHandler;
+    ModalManager.__state__.openHandler =
+      ModalManager.__state__.defaultOpenHandler;
     ModalManager.removeKeyboardListener();
     ModalManager.releasePageEffects();
     ModalManager.__state__.focused.clear();
@@ -346,7 +354,9 @@ export class ModalManager {
       if (!tree) break;
       const parent = slot ?? branch.parentElement;
       if (!parent && !('host' in tree)) break;
-      for (const sibling of slot ? slot.assignedElements() : (parent ?? tree).children)
+      for (const sibling of slot
+        ? slot.assignedElements()
+        : (parent ?? tree).children)
         if (sibling !== branch && !sibling.hasAttribute('inert')) {
           sibling.setAttribute('inert', '');
           ModalManager.__state__.inertElements.push(sibling);
@@ -406,12 +416,24 @@ export class ModalManager {
    */
   private static installKeyboardListener(): void {
     if (ModalManager.__state__.keydown) return;
-    let escape: { event: KeyboardEvent; settlements?: number; order: number; candidate?: ModalNode } | undefined;
+    let escape:
+      | {
+          event: KeyboardEvent;
+          settlements?: number;
+          order: number;
+          candidate?: ModalNode;
+        }
+      | undefined;
     ModalManager.__state__.keydownCapture = (event) => {
       if (event.key === 'Escape')
-        escape = { event, settlements: ModalManager.__state__.settlements,
+        escape = {
+          event,
+          settlements: ModalManager.__state__.settlements,
           order: ModalManager.__state__.order,
-          candidate: ModalManager.visibleNodes().find((node) => node.closeOnEscape || node.dimmed) };
+          candidate: ModalManager.visibleNodes().find(
+            (node) => node.closeOnEscape || node.dimmed,
+          ),
+        };
     };
     ModalManager.__state__.keydown = (event) => {
       const snapshot = escape?.event === event ? escape : undefined;
@@ -428,9 +450,18 @@ export class ModalManager {
       )
         return;
       if (event.key === 'Escape') {
-        if (settledDuringPress || (snapshot && snapshot.order !== ModalManager.__state__.order)) return;
+        if (
+          settledDuringPress ||
+          (snapshot && snapshot.order !== ModalManager.__state__.order)
+        )
+          return;
         const candidate = snapshot?.candidate;
-        if (candidate?.alive && candidate.visible && !candidate.settled && candidate.closeOnEscape) {
+        if (
+          candidate?.alive &&
+          candidate.visible &&
+          !candidate.settled &&
+          candidate.closeOnEscape
+        ) {
           event.preventDefault();
           closeModal(candidate);
         }

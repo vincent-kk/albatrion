@@ -41,7 +41,10 @@ export const BackgroundFrame = ({
         background,
         modal.visible && (modal.closeOnBackdropClick || modal.dimmed) && active,
         (modal.visible ||
-          (modal.manualDestroy && modal.settled && modal.isVisibleAtSettlement && modal.alive)) &&
+          (modal.manualDestroy &&
+            modal.settled &&
+            modal.isVisibleAtSettlement &&
+            modal.alive)) &&
           visible,
       )}
       onClick={handleClose}

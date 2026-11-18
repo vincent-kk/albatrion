@@ -255,3 +255,6 @@ export function toast(message: ReactNode) {
 React 18과 19는 같은 공개 계약을 제공합니다. 두 런타임 번들은 use client로 시작하며 DOM 없는 가져오기와 서버 렌더를 layout effect 경고 없이 지원합니다. 서버 렌더는 포털을 만들지 않고 모달을 0으로 세며 브라우저 모달 함수를 호출하면 안 됩니다.
 
 호환되는 내부 상태 버전은 JavaScript 영역 하나에서 요청·스타일 식별자·소유권·키보드·페이지 효과를 공유합니다. 호환되지 않는 버전은 격리하고 개발 환경에서 경고합니다. 다른 창·영역은 공유하지 않습니다. root 예제는 iframe 문서가 아닌 현재 문서의 요소를 대상으로 합니다. CommonJS TypeScript 전용 .d.cts 선언은 제공하지 않습니다.
+
+
+Activity나 Suspense 재중단으로 Provider만 숨기면 키보드·포커스·페이지 효과를 해제하고 숨긴 트리 바깥 호출자의 요청을 대기 상태로 보존합니다. 다시 표시하면 같은 모달과 prompt 값이 돌아옵니다. 함께 숨겨진 useModal 호출자는 자신의 요청을 취소하며, 실제 Provider 제거는 기존 취소·인계 규칙을 따릅니다. Provider 숨김 때 취소하려면 명시적으로 중단하거나 Provider를 언마운트합니다.

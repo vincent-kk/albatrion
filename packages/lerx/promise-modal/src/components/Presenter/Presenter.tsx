@@ -32,13 +32,13 @@ export const Presenter = memo(({ modalId }: PresenterProps) => {
   return (
     <ErrorBoundary fallback={null} onError={handleError}>
       <Suspense fallback={null}>
-      <div
-        className={presenter}
-        style={{ zIndex: options.zIndex + modal.order }}
-      >
-        <Background modalId={modalId} onChangeOrder={handleChangeOrder} />
-        <Foreground modalId={modalId} onChangeOrder={handleChangeOrder} />
-      </div>
+        <div
+          className={presenter}
+          style={{ zIndex: options.zIndex + modal.order }}
+        >
+          <Background modalId={modalId} onChangeOrder={handleChangeOrder} />
+          <Foreground modalId={modalId} onChangeOrder={handleChangeOrder} />
+        </div>
       </Suspense>
     </ErrorBoundary>
   );
