@@ -40,7 +40,7 @@
 ### task-error-isolation — 태스크 오류 격리
 
 - 한 태스크가 던진 오류는 `onTaskError(error, taskId)`로 전달되고, 해당 태스크의 `taskId`와 짝지어진다.
-- 오류를 던진 태스크가 있어도 같은 배치의 앞뒤 태스크는 정상 실행된다.
+- 오류를 던진 태스크가 있어도 같은 배치의 앞뒤 태스크는 정상 실행된다. onTaskError 자체가 던지는 경우도 해당 태스크는 완료 처리되고 나머지 배치와 후속 예약은 계속된다. 핸들러의 예외는 호스트 reportError 또는 별도로 예약한 throw로 보고한다.
 
 ### global-handler-delegation — 전역 핸들러 함수 위임
 

@@ -1,3 +1,5 @@
+import { reportHostError } from '@/common-utils/utils/errorReporting/reportHostError';
+
 import type { Fn } from '@aileron/declare';
 
 import { scheduleMicrotask } from '@/common-utils/utils/scheduler/scheduleMicrotask';
@@ -319,9 +321,13 @@ export class MessageChannelScheduler {
   private __handleTaskError__(error: unknown, taskId: number): void {
     const errorHandler = this.__options__.onTaskError;
     if (!errorHandler) return;
-    errorHandler(
-      error instanceof Error ? error : new Error(String(error)),
-      taskId,
-    );
+    try {
+      errorHandler(
+        error instanceof Error ? error : new Error(String(error)),
+        taskId,
+      );
+    } catch (handlerError) {
+      reportHostError(handlerError);
+    }
   }
 }
