@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import { useOnUnmount } from '@winglet/react-utils/hook';
+import { useIsomorphicLayoutEffect } from '@/promise-modal/hooks/useIsomorphicLayoutEffect';
 
 import type { Fn } from '@aileron/declare';
 
@@ -77,7 +77,7 @@ export const useModal = (configuration?: OverridableHandleProps) => {
     },
   );
 
-  useOnUnmount(() => {
+  useIsomorphicLayoutEffect(() => () => {
     for (const result of modalResultsRef.current) {
       const modalNode = result.modalNode;
       if (modalNode) closeModal(modalNode);
@@ -86,7 +86,7 @@ export const useModal = (configuration?: OverridableHandleProps) => {
       else result.cancel();
     }
     modalResultsRef.current = [];
-  });
+  }, []);
 
   return {
     alert: alertRef.current,
