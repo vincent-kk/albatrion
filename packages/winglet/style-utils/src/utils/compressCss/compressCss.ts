@@ -98,10 +98,13 @@ export const compressCss = (css: string): string => {
       continue;
     }
 
-    // Every byte with its own branch below is at most SEMICOLON, so one compare skips them all.
+    // Backslashes consume their following byte; the other branches are at most SEMICOLON.
     if (byte > SEMICOLON) {
       output[outputIndex++] = byte;
-      lastByte = byte;
+      if (byte === BACKSLASH && cursor + 1 < length) {
+        output[outputIndex++] = buffer[++cursor];
+        lastByte = 0;
+      } else lastByte = byte;
       cursor++;
       continue;
     }
@@ -237,7 +240,12 @@ export const compressCss = (css: string): string => {
     cursor++;
   }
 
-  while (outputIndex > 0 && output[outputIndex - 1] === SPACE) outputIndex--;
+  while (outputIndex > 0 && output[outputIndex - 1] === SPACE) {
+    let backslashes = 0;
+    for (let index = outputIndex - 2; index >= 0 && output[index] === BACKSLASH; index--) backslashes++;
+    if (backslashes % 2 !== 0) break;
+    outputIndex--;
+  }
 
   return decoder.decode(output.subarray(0, outputIndex));
 };

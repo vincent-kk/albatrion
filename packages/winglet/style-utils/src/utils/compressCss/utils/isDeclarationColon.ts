@@ -1,5 +1,6 @@
 import {
   ASTERISK,
+  BACKSLASH,
   DOUBLE_QUOTE,
   LBRACE,
   RBRACE,
@@ -29,7 +30,8 @@ export const isDeclarationColon = (
     const byte = buffer[index];
     if (byte === SEMICOLON || byte === RBRACE) return true;
     if (byte === LBRACE) return false;
-    if (byte === DOUBLE_QUOTE || byte === SINGLE_QUOTE)
+    if (byte === BACKSLASH) index += 2;
+    else if (byte === DOUBLE_QUOTE || byte === SINGLE_QUOTE)
       index = findStringEnd(buffer, index);
     else if (byte === SLASH && buffer[index + 1] === ASTERISK) {
       index += 2;

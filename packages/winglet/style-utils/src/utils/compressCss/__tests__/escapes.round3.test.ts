@@ -14,7 +14,7 @@ it('round-3 style-utils 1: escape spellings preserve the neighbouring string and
     'a\\\nb', 'a\\\r\nb', 'a\\\rb', 'a\\\fb', 'a  b/*x*/;{},'];
   for (const selector of selectors) for (const quote of ["'", '"']) {
     for (const value of values) {
-      const safeValue = value.replaceAll(quote, '\\' + quote);
+      const safeValue = value.split(quote).join('\\' + quote);
       const tail = `::after { content: ${quote}${safeValue}${quote}; } .b { color: red; }`;
       expect(compressCss(selector + tail).replace(selector, '.control')).toBe(compressCss('.control' + tail));
     }

@@ -5,7 +5,7 @@ import { RuleScoper } from '../utils/RuleScoper';
 it('round-3 style-utils 5: root and host spellings receive the same scope treatment', () => {
   const scope = (selector: string) => new RuleScoper(selector + '{x:y}', '.s').scopeSheet();
   for (const name of ['root', 'host']) for (const selector of [':' + name.toUpperCase(), ':' + name + '/**/', '/**/:' + name, ':' + name + ' /*x*/']) {
-    expect(scope(selector).replaceAll(/\/\*.*?\*\//g, '').replaceAll(/\s/g, '').toLowerCase()).toBe(scope(':' + name));
+    expect(scope(selector).replace(/\/\*.*?\*\//g, '').replace(/\s/g, '').toLowerCase()).toBe(scope(':' + name));
   }
   expect(scope(':root .child')).toBe('.s :root .child{x:y}');
 });

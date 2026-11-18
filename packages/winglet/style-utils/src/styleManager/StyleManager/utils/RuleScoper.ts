@@ -12,6 +12,7 @@ import { findUnquotedUrlEnd } from './findUnquotedUrlEnd';
 import { prefixSelector } from './prefixSelector';
 import { prefixSelectorList } from './prefixSelectorList';
 import { skipOpaqueToken } from './skipOpaqueToken';
+import { trimSelector } from './trimSelector';
 
 /**
  * At-rules whose block holds style rules, which are scoped recursively.
@@ -234,7 +235,7 @@ export class RuleScoper {
       last < NON_ASCII_MIN
     )
       return this.__prefix__ + css.slice(cursor, close + 1);
-    const selector = css.slice(cursor, open).trim();
+    const selector = trimSelector(css.slice(cursor, open));
     return selector
       ? prefixSelector(selector, this.__prefix__) + css.slice(open, close + 1)
       : '';

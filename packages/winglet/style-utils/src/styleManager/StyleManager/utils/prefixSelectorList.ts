@@ -7,6 +7,7 @@ import {
 } from '../constants/charCode';
 import { prefixSelector } from './prefixSelector';
 import { skipOpaqueToken } from './skipOpaqueToken';
+import { trimSelector } from './trimSelector';
 
 /** Characters that may hide a comma from the list structure. */
 const NESTING_CHARACTER = /[("'\\/]/;
@@ -38,10 +39,10 @@ export const prefixSelectorList = (
       const comma = css.indexOf(',', partStart);
       if (comma === -1 || comma >= end)
         return (
-          result + prefixSelector(css.slice(partStart, end).trim(), prefix)
+          result + prefixSelector(trimSelector(css.slice(partStart, end)), prefix)
         );
       result +=
-        prefixSelector(css.slice(partStart, comma).trim(), prefix) + ',';
+        prefixSelector(trimSelector(css.slice(partStart, comma)), prefix) + ',';
       partStart = comma + 1;
     }
   }
@@ -53,7 +54,7 @@ export const prefixSelectorList = (
     if (code === COMMA) {
       if (depth !== 0) continue;
       result +=
-        prefixSelector(css.slice(partStart, index).trim(), prefix) + ',';
+        prefixSelector(trimSelector(css.slice(partStart, index)), prefix) + ',';
       partStart = index + 1;
     } else if (code === L_PAREN) {
       // Only `url(` can make a parenthesis opaque, and it ends in `l`.
@@ -69,5 +70,5 @@ export const prefixSelectorList = (
       if (next > index) index = next - 1;
     }
   }
-  return result + prefixSelector(css.slice(partStart, end).trim(), prefix);
+  return result + prefixSelector(trimSelector(css.slice(partStart, end)), prefix);
 };
