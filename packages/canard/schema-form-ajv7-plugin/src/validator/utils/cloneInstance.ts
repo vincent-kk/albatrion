@@ -29,7 +29,7 @@ export const cloneInstance = (
     RULES: { value: instance.RULES },
   });
   for (const [key, env] of Object.entries(instance.schemas))
-    if (env && !key.startsWith(PLUGIN_KEY_PREFIX) && !clone.schemas[key])
+    if (env && !key.startsWith(PLUGIN_KEY_PREFIX) && !Object.prototype.hasOwnProperty.call(clone.schemas, key))
       clone.addSchema(env.schema, key);
   return clone;
 };
