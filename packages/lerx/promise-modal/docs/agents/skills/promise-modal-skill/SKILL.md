@@ -9,7 +9,7 @@ Use this skill when opening or customizing `@lerx/promise-modal` modals. Read th
 
 ## Lifecycle decisions
 
-A Promise belongs to a modal request rather than its calling React component. Static `alert`, `confirm`, and `prompt` calls may outlive that component. Use `useModal` when unmounting the caller should cancel its pending requests; completed requests leave its tracking list immediately, including rejected requests.
+A Promise belongs to a modal request rather than its calling React component. Static `alert`, `confirm`, and `prompt` calls may outlive that component. Hiding the caller with React `Activity` cancels its pending `useModal` requests exactly like an unmount, because React runs effect cleanup on hide. Use `useModal` when unmounting the caller should cancel its pending requests; completed requests leave its tracking list immediately, including rejected requests.
 
 Keep three states separate:
 

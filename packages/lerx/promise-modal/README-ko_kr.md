@@ -231,7 +231,7 @@ export function ManualApp() {
 
 ## 컴포넌트 소유권과 옵션
 
-호출 컴포넌트 언마운트 시 미확정 요청을 취소하려면 `useModal`을 사용합니다. 확정된 요청은 즉시 추적 목록에서 빠집니다. 정적 호출은 호출자보다 오래 유지될 수 있지만 Provider 소유권을 따릅니다. `useModal(config)`는 마운트 시점 기본값을 보관하므로 바뀌는 값은 호출별로 전달합니다.
+React `Activity`로 호출자를 숨겨도 React가 effect 정리를 실행하므로 미확정 `useModal` 요청은 언마운트와 동일하게 취소됩니다. 호출 컴포넌트 언마운트 시 미확정 요청을 취소하려면 `useModal`을 사용합니다. 확정된 요청은 즉시 추적 목록에서 빠집니다. 정적 호출은 호출자보다 오래 유지될 수 있지만 Provider 소유권을 따릅니다. `useModal(config)`는 마운트 시점 기본값을 보관하므로 바뀌는 값은 호출별로 전달합니다.
 
 ```tsx
 import { type OverridableHandleProps, useModal } from '@lerx/promise-modal';

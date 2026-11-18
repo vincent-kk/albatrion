@@ -231,7 +231,7 @@ export function ManualApp() {
 
 ## Component ownership and options
 
-Use `useModal` when unmounting the caller should cancel its pending requests; settled requests leave its tracking list immediately. Static calls can outlive their caller but still follow Provider ownership. `useModal(config)` captures mount-time defaults, so pass changing values per call.
+Hiding the caller with React `Activity` cancels its pending `useModal` requests exactly like an unmount, because React runs effect cleanup on hide. Use `useModal` when unmounting the caller should cancel its pending requests; settled requests leave its tracking list immediately. Static calls can outlive their caller but still follow Provider ownership. `useModal(config)` captures mount-time defaults, so pass changing values per call.
 
 ```tsx
 import { type OverridableHandleProps, useModal } from '@lerx/promise-modal';
