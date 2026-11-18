@@ -15,6 +15,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { getOwnLabel } from './utils/enum/getOwnLabel';
+
 type ArrayJSONSchema = ArraySchema & {
   items: StringSchema;
 };
@@ -46,7 +48,7 @@ const FieldInputStringCheckbox = ({
           return {
             value,
             rawValue,
-            label: labels['' + rawValue] || '' + rawValue,
+            label: getOwnLabel(labels, '' + rawValue) || '' + rawValue,
           };
         })
       : [];
