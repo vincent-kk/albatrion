@@ -63,7 +63,8 @@ export const createGuardCompiler = (
     guard.opts.dynamicRef && registration.hasDynamicKeywords
       ? collectGuardDynamicAnchors(root, registration.key, pointer, guard)
       : {};
-  const validate = guard.compile({ $ref: `${registration.key}#${pointer}` });
+  const fragment = pointer.includes('%') ? pointer.replace(/%/g, '%25') : pointer;
+  const validate = guard.compile({ $ref: `${registration.key}#${fragment}` });
   if (Object.keys(dynamicAnchors).length === 0)
     return (value) => !!validate(value);
   return (value) =>
