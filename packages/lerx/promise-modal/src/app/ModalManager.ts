@@ -153,22 +153,7 @@ export class ModalManager {
       ModalManager.__state__.owner &&
       ModalManager.__state__.owner !== identity
     ) {
-      if (
-        ModalManager.__state__.anchor &&
-        !ModalManager.__state__.anchor.parentElement &&
-        ModalManager.__state__.anchor.childNodes.length === 0
-      ) {
-        ModalManager.detach(ModalManager.__state__.owner);
-        return;
-      }
-      if (
-        !ModalManager.__state__.warned.has(identity) &&
-        process.env.NODE_ENV !== 'production'
-      )
-        console.warn(
-          '[promise-modal] Another provider owns the portal; this provider waits until its owner unmounts.',
-        );
-      ModalManager.__state__.warned.add(identity);
+      ModalManager.waitForOwner(identity, ModalManager.__state__.owner);
       return;
     }
     ModalManager.__state__.owner = identity;
@@ -191,6 +176,29 @@ export class ModalManager {
     ModalManager.updateAccessibility(true);
     if (focused instanceof HTMLElement) focused.focus();
     notify(anchor);
+  }
+  /**
+   * Defers an already registered bootstrap to the active owner or its successor.
+   * @param identity - Waiting bootstrap whose duplicate-owner warning is deduplicated.
+   * @param owner - Active bootstrap observed by the calling ownership branch.
+   */
+  private static waitForOwner(identity: object, owner: object): void {
+    if (
+      ModalManager.__state__.anchor &&
+      !ModalManager.__state__.anchor.parentElement &&
+      ModalManager.__state__.anchor.childNodes.length === 0
+    ) {
+      ModalManager.detach(owner);
+      return;
+    }
+    if (
+      !ModalManager.__state__.warned.has(identity) &&
+      process.env.NODE_ENV !== 'production'
+    )
+      console.warn(
+        '[promise-modal] Another provider owns the portal; this provider waits until its owner unmounts.',
+      );
+    ModalManager.__state__.warned.add(identity);
   }
   /** Releases display participation while React retains the owner's portal subtree. */
   static suspend(identity: object): void {
