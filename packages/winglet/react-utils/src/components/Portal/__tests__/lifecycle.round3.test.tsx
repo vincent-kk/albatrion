@@ -104,12 +104,14 @@ describe('r3 react-utils: Portal anchor inside a re-suspending Suspense boundary
         </Portal>
         <Suspense fallback={<span data-testid="fallback">loading</span>}>
           <Gate route={route} />
+          <Counter label="inlineSuspense" />
           <Portal.Anchor />
         </Suspense>
       </div>
     ));
     const view = render(<Page route="home" />);
     clickTwice(view.getByTestId('modal'));
+    clickTwice(view.getByTestId('inlineSuspense'));
     let release: () => void = () => undefined;
     pending = new Promise<void>((resolve) => {
       release = resolve;
@@ -125,7 +127,7 @@ describe('r3 react-utils: Portal anchor inside a re-suspending Suspense boundary
     expect({
       duringSuspense,
       modal: view.queryByTestId('modal')?.textContent ?? null,
-    }).toEqual({ duringSuspense: true, modal: '2' });
+    }).toEqual({ duringSuspense: true, modal: view.queryByTestId('inlineSuspense')?.textContent });
   });
 
   it('control: raw createPortal to a persistent host keeps state across the same suspension', async () => {

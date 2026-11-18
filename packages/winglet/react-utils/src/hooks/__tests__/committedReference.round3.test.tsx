@@ -4,6 +4,8 @@ import { expect, it, vi } from 'vitest';
 import { useHandle } from '../useHandle';
 import { useOnUnmount } from '../useOnUnmount';
 import { useOnUnmountLayout } from '../useOnUnmountLayout';
+import { useTimeout } from '../useTimeout';
+import { useVersion } from '../useVersion';
 
 it('round-3 react-utils 2: a suspended and abandoned render is equivalent to a render never attempted', async () => {
   for (const strict of [false, true]) {
@@ -96,4 +98,28 @@ it('round-3 react-utils 2: a throwing render and its retry do not replace the co
     expect(handle()).toBe(view.container.textContent);
     view.unmount();
   } finally {errors.mockRestore();}
+});
+
+it.each(['timeout', 'version'])('round-3 react-utils 2 sibling: %s callbacks match the visible committed render', async (kind) => {
+  vi.useFakeTimers();
+  try {
+    const seen: string[] = [];
+    let setValue = (_value: string) => {};
+    let invoke = () => {};
+    const pending = new Promise<void>(() => {});
+    const Probe = () => {
+      const [value, set] = useState('committed'); setValue = set;
+      const timeout = useTimeout(() => seen.push(value), 10);
+      const [, update] = useVersion(() => seen.push(value));
+      invoke = kind === 'timeout' ? timeout.schedule : update;
+      if (value === 'discarded') throw pending;
+      return <span>{value}</span>;
+    };
+    const view = render(<Suspense fallback="loading"><Probe /></Suspense>);
+    await act(async () => { startTransition(() => setValue('discarded')); });
+    const shown = view.container.textContent;
+    act(() => { invoke(); if (kind === 'timeout') vi.advanceTimersByTime(20); });
+    expect(seen).toEqual([shown]);
+    view.unmount();
+  } finally { vi.useRealTimers(); }
 });
