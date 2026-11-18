@@ -4,13 +4,12 @@ import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSO
 import { isArrayNode } from '@/schema-form/core/surface';
 import { FieldNode } from '@/schema-form/core/surface/runtime/FieldNode';
 
-import { FieldNodeWriteKind, WriteOption } from '../../types/value';
-import { getAliasedDependencyIndex } from '../utils/dependencies/getAliasedDependencyIndex';
-import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
-import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
-import { createSettlementContext } from '../utils/settlement/createSettlementContext';
-import { restoreArrayStructure } from '../utils/transition/restoreArrayStructure';
-
+import { FieldNodeWriteKind, WriteOption } from '../engine/types/value';
+import { getAliasedDependencyIndex } from '../engine/settle/utils/dependencies/getAliasedDependencyIndex';
+import { getSettlementScratch } from '../engine/settle/utils/scratch/getSettlementScratch';
+import { releaseSettlementScratch } from '../engine/settle/utils/scratch/releaseSettlementScratch';
+import { createSettlementContext } from '../engine/settle/utils/settlement/createSettlementContext';
+import { restoreArrayStructure } from '../engine/settle/utils/transition/restoreArrayStructure';
 
 /** Recover the concrete test runtime only after its class identity is verified. */
 const internalNode = (node: unknown): FieldNode => {
