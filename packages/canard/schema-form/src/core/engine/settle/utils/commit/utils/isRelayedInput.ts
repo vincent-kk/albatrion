@@ -13,7 +13,8 @@ export const isRelayedInput = <Self extends FieldNodeRecord<Self>>(
   relays: Readonly<NonNullable<FieldNodeRuntime<Self>['inputRelays']>>,
   path: string,
 ): boolean => {
-  for (const relay of relays)
+  for (let index = 0; index < relays.length; index++) {
+    const relay = relays[index];
     if (
       relay.path === path &&
       relay.node.path === path &&
@@ -25,5 +26,6 @@ export const isRelayedInput = <Self extends FieldNodeRecord<Self>>(
           equals(relay.node.storedValue, relay.value)))
     )
       return true;
+  }
   return false;
 };
