@@ -261,3 +261,8 @@ The exception is a failure upstream of the renderer — an unresolvable
 ## License
 
 MIT — see [LICENSE](./LICENSE).
+
+## Known limits
+
+File orphan scans cover only skill namespaces present in the current manifest. Removed whole skills and Claude rule or command files remain installed, even with `--force`, because these files do not record which package owns them. Remove those retired files manually after checking their ownership. Codex and agents rules carry package-owned marker blocks, so retired blocks can be identified and removed with `--force`; this differs from Claude file cleanup.
+
