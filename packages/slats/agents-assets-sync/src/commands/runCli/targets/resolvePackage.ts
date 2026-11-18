@@ -57,7 +57,7 @@ export async function resolvePackage(
 
   const packageRoot = dirname(pkgJSONPath);
   const raw = await readFile(pkgJSONPath, 'utf-8');
-  const pkg = JSON.parse(raw) as {
+  const pkg = JSON.parse(raw.replace(/^\uFEFF/, '')) as {
     name?: unknown;
     version?: unknown;
     agents?: { assetPath?: unknown };
