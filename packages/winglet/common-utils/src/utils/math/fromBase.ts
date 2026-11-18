@@ -66,7 +66,7 @@ import { BASE_36_DIGITS } from './constant';
  * Space complexity is O(1) excluding input string.
  */
 export const fromBase = (value: string, base: number): number => {
-  if (typeof value !== 'string' || value.length === 0)
+  if (typeof value !== 'string' || (value.length === 0 || value === '-'))
     throw new Error('Value must be a non-empty string');
   if (!Number.isInteger(base) || base < 2 || base > 36)
     throw new Error('Base must be an integer between 2 and 36');
