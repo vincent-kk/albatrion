@@ -42,7 +42,11 @@ export const buildNodes = (
     context.isStaticFirstLoad = false;
     context.hasTemplateRecursion = true;
   }
-  if (cached) return cached;
+  if (cached) {
+    if (cached.some((node) => node.path !== path))
+      context.hasTemplateAliases = true;
+    return cached;
+  }
   const declarations: PropertyDeclaration[] = [];
   for (let index = 0; index < inputs.length; index++) {
     const start = declarations.length;
