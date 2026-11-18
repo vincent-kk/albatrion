@@ -120,3 +120,22 @@ it('(round-2 promise-modal 1) moves styles with the same provider between light 
   expect(styles(document)).toBe(initialCount);
   expect(styles(shadow)).toBe(0);
 });
+
+it('(round-2 promise-modal 1, 3) preserves the top peer focus when a lower modal settles in either tree', () => {
+  function retainsPeer(shadowed: boolean) {
+    const host = document.createElement('div'); document.body.append(host);
+    const tree = shadowed ? host.attachShadow({ mode: 'open' }) : host;
+    const mount = document.createElement('div'); tree.append(mount);
+    render(<ModalProvider root={mount} />);
+    act(() => { void confirm({ title: 'Base' }); });
+    act(() => { void confirm({ title: 'Lower' }); });
+    const lowerId = ModalManager.ids[1];
+    act(() => { void confirm({ title: 'Top' }); });
+    const before = tree instanceof ShadowRoot ? tree.activeElement : document.activeElement;
+    act(() => ModalManager.node(lowerId)?.onClose());
+    return (tree instanceof ShadowRoot ? tree.activeElement : document.activeElement) === before;
+  }
+  const light = retainsPeer(false); reset();
+  const shadow = retainsPeer(true);
+  expect(light).toBe(true); expect(shadow).toBe(light);
+});
