@@ -73,3 +73,14 @@ describe('round-2 json 7: cloneLite deep-path equivalence', () => {
     );
   });
 });
+
+
+it('round-2 common-utils: the maxDepth 3 example shares connection', () => {
+  const source = { config: { database: { connection: { pool: { settings: { max: 100 } } } } } };
+  const result = cloneLite(source, 3);
+  expect(result).not.toBe(source);
+  expect(result.config).not.toBe(source.config);
+  expect(result.config.database).not.toBe(source.config.database);
+  expect(result.config.database.connection).toBe(source.config.database.connection);
+  expect(result.config.database.connection.pool).toBe(source.config.database.connection.pool);
+});
