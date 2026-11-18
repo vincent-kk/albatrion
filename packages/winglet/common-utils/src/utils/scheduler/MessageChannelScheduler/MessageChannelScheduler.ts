@@ -312,7 +312,7 @@ export class MessageChannelScheduler {
   }
 
   /**
-   * Handles task execution errors using configured error handler.
+   * Handles task errors through the consumer handler, or the host when no handler is configured.
    * Ensures errors are properly wrapped and reported without breaking execution.
    * @param error - Error that occurred during task execution
    * @param taskId - ID of the task that failed
@@ -320,7 +320,7 @@ export class MessageChannelScheduler {
    */
   private __handleTaskError__(error: unknown, taskId: number): void {
     const errorHandler = this.__options__.onTaskError;
-    if (!errorHandler) return;
+    if (!errorHandler) return reportHostError(error);
     try {
       errorHandler(
         error instanceof Error ? error : new Error(String(error)),

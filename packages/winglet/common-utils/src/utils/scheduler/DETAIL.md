@@ -12,6 +12,9 @@
 
 ## API Contracts
 
+브라우저 래퍼는 공유 MessageChannelScheduler의 오류 소유권을 따릅니다. 최초 옵션에 onTaskError가 있으면 그 처리기가 직접·래퍼 태스크 오류를 모두 받고, 없으면 호스트에 보고합니다. import 순서와 무관하며 공유 배치·제한·취소·파괴와 최초 옵션 정책은 유지합니다.
+
+
 - `scheduleMicrotask: Fn<[task: Fn]>` — `globalThis.queueMicrotask`가 있으면 그것을 바인딩하고, 없으면 `Promise.resolve().then(task)`로 대체한다. 모듈 로드 시 1회 감지.
 - `scheduleMacrotask: Fn<[callback: Fn], number>`, `cancelMacrotask: Fn<[id: number]>` — `globalThis.setImmediate`와 `globalThis.clearImmediate`가 둘 다 있으면 그 둘을 바인딩하고, 하나라도 없으면 `MessageChannelScheduler`의 `setImmediate`/`clearImmediate`(핸들러 경유)로 대체한다.
 - `scheduleMacrotaskSafe: Fn<[callback: Fn], number>`, `cancelMacrotaskSafe: Fn<[id: number]>` — 위와 같은 두 심볼 동시 검사 조건이지만, 대체 경로는 `MessageChannelScheduler`가 아니라 `globalThis.setTimeout`/`clearTimeout`이다.
