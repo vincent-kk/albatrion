@@ -4,6 +4,8 @@
 
 모달 옵션·애니메이션 지속시간·배경 설정을 Context로 전달합니다.
 
+- 동일 구조 버전의 모듈 사본은 기존 전역 레지스트리에 세 Context 정체성을 함께 보관하여 어느 사본의 훅도 현재 Provider 값을 읽는다. 새 Provider나 공개 표면은 추가하지 않는다.
+
 ## API Contracts
 
 - trapFocus와 lockScroll의 기본값은 true입니다. closeOnEscape는 Provider의 boolean 또는 undefined를 그대로 전달하며 기본값을 미리 넣지 않아 모달별 배경 클릭 설정을 존중합니다.
