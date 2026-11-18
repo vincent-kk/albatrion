@@ -11,7 +11,7 @@ import { FieldInputSliderDefinition } from '../FieldInputSlider';
 
 type SliderProps = ComponentProps<typeof MobileSlider>;
 
-const received = vi.hoisted(() => ({ props: [] as SliderProps[] }));
+const received = vi.hoisted((): { props: SliderProps[] } => ({ props: [] }));
 
 vi.mock('antd-mobile', async (importOriginal) => ({
   ...(await importOriginal<typeof import('antd-mobile')>()),
@@ -26,14 +26,13 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
-const publish = (value: number | [number, number]) =>
+const publish = (value: number | [number, number]) => {
+  const { onAfterChange } = received.props.at(-1)!;
+  expect(onAfterChange).toBeTypeOf('function');
   act(() => {
-    (
-      received.props.at(-1)!.onAfterChange as (
-        value: number | [number, number],
-      ) => void
-    )(value);
+    onAfterChange?.(value);
   });
+};
 
 it('renders a range slider with the array default for a numeric array schema', () => {
   render(

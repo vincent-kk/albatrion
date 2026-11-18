@@ -15,7 +15,7 @@ import { FieldInputStringCheckboxDefinition } from '../FieldInputStringCheckbox'
 
 type SliderProps = ComponentProps<typeof MobileSlider>;
 
-const received = vi.hoisted(() => ({ props: [] as SliderProps[] }));
+const received = vi.hoisted((): { props: SliderProps[] } => ({ props: [] }));
 
 vi.mock('antd-mobile', async (importOriginal) => ({
   ...(await importOriginal<typeof import('antd-mobile')>()),
