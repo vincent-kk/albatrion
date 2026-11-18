@@ -66,6 +66,10 @@ class AliasedDependencyIndex {
   synchronize<Self extends FieldNodeRecord<Self>>(
     context: SettlementContext<Self>,
   ): void {
+    if (
+      this.isInitialized && !context.enteredNodes.size && !context.pathChanges.length &&
+      !context.exitedNodes.size && !context.perishedNodes.size && !context.arrayStructureLog.length
+    ) return;
     if (!this.isInitialized || context.enteredNodes.size || context.pathChanges.length) {
       const seen = new Set<Occurrence>();
       if (!this.isInitialized) {
@@ -76,6 +80,8 @@ class AliasedDependencyIndex {
       for (const change of context.pathChanges)
         this.registerSubtree(change.node, seen);
     }
+    for (const entry of context.arrayStructureLog)
+      if (entry.isRestored) this.register(entry.host);
     for (const node of context.changedNodes) this.register(node);
     for (const node of context.exitedNodes)
       if (node.isDetached || node.isDisposed) this.remove(node);
@@ -126,6 +132,8 @@ class AliasedDependencyIndex {
       return;
     this.affectedPath = undefined;
     if (previous) {
+      for (const child of this.children.get(node) ?? [])
+        if (child.isDetached || child.isDisposed) this.remove(child);
       for (const key of previous.keys) {
         this.paths.delete(key);
         this.owners.delete(key);
