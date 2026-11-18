@@ -1,3 +1,5 @@
+import { normalizeForeignBytes } from './utils/murmur3/normalizeForeignBytes';
+
 /**
  * [Murmur3](https://en.wikipedia.org/wiki/MurmurHash) - A fast 32-bit hash algorithm optimized for browser environments
  * Implementation based on the MurmurHash3 algorithm by Austin Appleby
@@ -110,10 +112,13 @@ export class Murmur3 {
       return this.__processBytes__(new Uint8Array(input));
     } else if (input instanceof Uint8Array) {
       return this.__processBytes__(input);
-    } else
+    } else {
+      const bytes = normalizeForeignBytes(input);
+      if (bytes !== null) return this.__processBytes__(bytes);
       throw new TypeError(
         "Murmur3.hash: 'input' must be a string, ArrayBuffer, or Uint8Array",
       );
+    }
   }
 
   /**

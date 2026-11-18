@@ -6,6 +6,8 @@
 - `Murmur3.hash(data, seed?)` 정적 메서드는 `new Murmur3(data, seed).result()`와 동일한 값을 반환하는 원샷 편의 메서드다.
 - `polynomialHash(target, length?)`는 Java `String.hashCode()`와 동일한 31 기반 다항식 해시를 계산해 지정한 길이의 base36 문자열로 반환하며, 같은 입력·길이에는 항상 같은 값을 낸다.
 
+다른 realm의 ArrayBuffer와 Uint8Array도 같은 바이트열로 해싱합니다. 생성자·정적 메서드·증분 메서드의 입력 판정이 동일하므로 realm이 결과나 허용 여부를 바꾸지 않습니다.
+
 문자열은 UTF-16 코드 단위를 겹치는 8비트 위치에서 OR로 결합합니다. 완성 블록·꼬리·후속 호출에 같은 연산을 적용해 호출 분할이 결과를 바꾸지 않게 합니다. 바이트 입력의 해석은 바뀌지 않습니다.
 
 ## API Contracts
