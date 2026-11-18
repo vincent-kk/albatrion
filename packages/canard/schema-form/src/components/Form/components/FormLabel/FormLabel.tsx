@@ -37,13 +37,17 @@ import type { FormLabelProps } from './types/props';
  * @example
  * Custom label layout:
  * ```tsx
+ * <Form jsonSchema={{ type: 'object', properties: {
+ *   password: { type: 'string', format: 'password' },
+ * } }}>
  * <div className="form-field">
  *   <div className="label-row">
  *     <Form.Label path="/password" />
  *     <span className="hint">Min 8 characters</span>
  *   </div>
- *   <Form.Input path="/password" type="password" />
+ *   <Form.Input path="/password" />
  * </div>
+ * </Form>
  * ```
  *
  * @example
