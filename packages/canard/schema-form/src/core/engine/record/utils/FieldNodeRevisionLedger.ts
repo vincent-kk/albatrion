@@ -1,16 +1,10 @@
-import { EXTERNAL_VALUE_REVISION } from '@/schema-form/constants/externalValueRevision';
-
 import { FieldNodeEventType } from '../constants/FieldNodeEventType';
 import { EMPTY_REVISION_LEDGER } from '../constants/emptyRevisionLedger';
 
-/** Public event bits and the internal external-value bit use compact counter slots. */
-const KNOWN_BITS =
-  ((FieldNodeEventType.UpdateDiagnostics << 1) - 1) | EXTERNAL_VALUE_REVISION;
-/** Plain legacy records contain only the 17 public event counters. */
-const KNOWN_BIT_COUNT = 17;
-
-/** Non-enumerated storage for the internal binding revision. */
-const EXTERNAL_REVISION_COUNT = Symbol();
+/** Known event bits occupy consecutive slots rather than sparse numeric elements. */
+const KNOWN_BITS = (FieldNodeEventType.UpdateDiagnostics << 1) - 1;
+/** Number of known event bits, one counter slot per bit. */
+const KNOWN_BIT_COUNT = 32 - Math.clz32(KNOWN_BITS);
 
 /** Immutable per-bit counters with compatibility accessors for direct bit reads. */
 export class FieldNodeRevisionLedger {
@@ -18,8 +12,6 @@ export class FieldNodeRevisionLedger {
   readonly [bit: number]: number;
   /** A copy belongs exclusively to this ledger; old readers keep their counters. */
   private readonly counts: readonly number[];
-  /** Internal counter stays outside the public event-counter storage. */
-  private readonly [EXTERNAL_REVISION_COUNT]: number;
 
   /**
    * Copy the previous counters and raise each marked known bit once.
@@ -37,12 +29,7 @@ export class FieldNodeRevisionLedger {
               { length: KNOWN_BIT_COUNT },
               (_, index) => previous[1 << index],
             );
-    this[EXTERNAL_REVISION_COUNT] =
-      (previous instanceof FieldNodeRevisionLedger
-        ? previous[EXTERNAL_REVISION_COUNT]
-        : 0) +
-      (mask & EXTERNAL_VALUE_REVISION ? 1 : 0);
-    let remaining = mask & (KNOWN_BITS & ~EXTERNAL_VALUE_REVISION);
+    let remaining = mask & KNOWN_BITS;
     while (remaining) {
       const bit = remaining & -remaining;
       const index = 31 - Math.clz32(bit);
@@ -58,19 +45,14 @@ export class FieldNodeRevisionLedger {
    * @returns Sum with unknown bits ignored
    */
   read(mask: number): number {
-    let revision = mask & EXTERNAL_VALUE_REVISION ? this[EXTERNAL_REVISION_COUNT] : 0;
-    let remaining = mask & (KNOWN_BITS & ~EXTERNAL_VALUE_REVISION);
+    let revision = 0;
+    let remaining = mask & KNOWN_BITS;
     while (remaining) {
       const bit = remaining & -remaining;
       revision += this.counts[31 - Math.clz32(bit)] ?? 0;
       remaining &= remaining - 1;
     }
     return revision;
-  }
-
-  /** External branch value counter, independent of delivered public event bits. */
-  get [EXTERNAL_VALUE_REVISION]() {
-    return this[EXTERNAL_REVISION_COUNT];
   }
 
   /** Initialization counter. */

@@ -1,5 +1,5 @@
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
-import { FieldNodeRevisionLedger } from '../../../record';
+import { createFieldNodeRevisionLedger } from '../../../record';
 import type { FieldNodeDelivery, FieldNodeRecord } from '../../../record';
 import { settleFieldNodeValidation } from '../../../validation';
 import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalErrorsToRoot';
@@ -108,7 +108,7 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
           if (!isQueuedNode<Self>(candidate, runtime)) continue;
           const node = candidate;
           pending.push([node, delivery]);
-          node.revisionLedger = new FieldNodeRevisionLedger(
+          node.revisionLedger = createFieldNodeRevisionLedger(
             node.revisionLedger,
             delivery.type,
           );

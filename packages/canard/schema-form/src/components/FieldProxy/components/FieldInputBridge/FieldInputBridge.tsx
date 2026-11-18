@@ -2,7 +2,6 @@ import { memo, useCallback, useRef } from 'react';
 
 import { isArray } from '@winglet/common-utils/filter';
 import {
-  useLazyConstant,
   useMemorize,
   useOnUnmount,
 } from '@winglet/react-utils/hook';
@@ -35,7 +34,7 @@ import { useFieldInput } from './hooks/useFieldInput';
 import { useFieldInputControl } from './hooks/useFieldInputControl';
 import { useFieldLifecycle } from './hooks/useFieldLifecycle';
 import { useTerminalChildren } from './hooks/useTerminalChildren';
-import type { ChildInputOwnership, FieldInputBridgeProps } from './type';
+import type { FieldInputBridgeProps } from './type';
 import { readFieldInputGeneration } from './utils/readFieldInputGeneration';
 import { resolveControlled } from './utils/resolveControlled';
 
@@ -71,30 +70,26 @@ export const FieldInputBridge = memo(
       PreferredFieldInput ? undefined : selected?.controlled,
       presentation?.controlled,
     );
-    const mountedChildren = useLazyConstant<ChildInputOwnership>(() => ({
-      current: 0,
-    }));
-    const childValueRevision = mountedChildren;
-    if (
-      mountedChildren.input !== FieldInput ||
-      mountedChildren.frame !== Frame ||
-      mountedChildren.isControlled !== (controlled === true)
-    ) {
-      mountedChildren.input = FieldInput;
-      mountedChildren.frame = Frame;
-      mountedChildren.isControlled = controlled === true;
-      mountedChildren.externalValueRevision = undefined;
-    }
+    const mountedChildren = useRef(0);
     const [terminalChildren, commitTerminalChildren] =
       useTerminalChildren(node);
-    const [ChildFields, hydrationCommitRef, virtualizationManager] =
+    const [ChildFields, hydrationCommitRef, virtualizationManager, childValueRevision] =
       useChildFields(
         node,
         NodeProxy,
         mountedChildren,
         terminalChildren,
-        childValueRevision,
       );
+    if (
+      childValueRevision.input !== FieldInput ||
+      childValueRevision.frame !== Frame ||
+      childValueRevision.isControlled !== (controlled === true)
+    ) {
+      childValueRevision.input = FieldInput;
+      childValueRevision.frame = Frame;
+      childValueRevision.isControlled = controlled === true;
+      childValueRevision.externalValueRevision = undefined;
+    }
     const { attachedFilesMap, context } = useWorkspaceContext();
     const attachmentOwner = useRef<{ container: Nullable<HTMLDivElement> }>({
       container: null,
