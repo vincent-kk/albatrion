@@ -26,12 +26,12 @@ describe('round-2 json 8: fragment and plain pointer equivalence', () => {
 
 describe('round-2 json 8: malformed fragment failures', () => {
   it.each(['#/%', '#/%E0%A4%A'])('reports structured errors for %s', pointer => {
-    expect(() => getValue({}, pointer)).toThrow();
-    expect(() => setValue({}, pointer, 1)).toThrow();
-    expect(() => applyPatch({}, [{ op: 'add', path: pointer, value: 1 }])).toThrow();
+    expect(() => getValue({}, pointer)).toThrowError(expect.objectContaining({ code: 'INVALID_POINTER_TYPE' }));
+    expect(() => setValue({}, pointer, 1)).toThrowError(expect.objectContaining({ code: 'INVALID_POINTER_TYPE' }));
+    expect(() => applyPatch({}, [{ op: 'add', path: pointer, value: 1 }])).toThrowError(expect.objectContaining({ code: 'PATCH_PATH_INVALID' }));
   });
   it('rejects moves into the same decoded descendant across pointer forms', () => {
     const doc = { 'a b': { child: 1 } };
-    expect(() => applyPatch(doc, [{ op: 'move', from: '#/a%20b', path: '/a b/child' }])).toThrow();
+    expect(() => applyPatch(doc, [{ op: 'move', from: '#/a%20b', path: '/a b/child' }])).toThrowError(expect.objectContaining({ code: 'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN' }));
   });
 });
