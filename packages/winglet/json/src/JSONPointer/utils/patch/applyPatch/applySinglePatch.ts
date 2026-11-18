@@ -9,7 +9,6 @@ import {
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
-import { JSONPointerError } from '@/json/JSONPointer/utils/manipulator/utils/error';
 import type { JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../patchModel';
@@ -145,8 +144,7 @@ export const applySinglePatch = (
       try {
         copied = getValue(source, from);
       } catch (error) {
-        if (error instanceof JSONPointerError && from[0] === '#')
-          decodePatchFragment(from, patch, patchIndex);
+        if (from[0] === '#') decodePatchFragment(from, patch, patchIndex);
         throw error;
       }
       // RFC 6902 4.5: the from location must exist. Only an undefined read can name a

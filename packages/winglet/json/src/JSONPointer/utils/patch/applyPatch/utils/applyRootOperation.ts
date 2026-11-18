@@ -1,8 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { cloneLite } from '@winglet/common-utils/object';
 
-import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
-import { JSONPointerError } from '@/json/JSONPointer/utils/manipulator/utils/error';
+import { getValue } from '@/json/JSONPointer/utils/manipulator';
 import type { JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../../patchModel';
@@ -43,8 +42,7 @@ export const applyRootOperation = (
       try {
         copied = getValue(source, from);
       } catch (error) {
-        if (error instanceof JSONPointerError && from[0] === '#')
-          decodePatchFragment(from, patch, patchIndex);
+        if (from[0] === '#') decodePatchFragment(from, patch, patchIndex);
         throw error;
       }
       if (copied === undefined)
