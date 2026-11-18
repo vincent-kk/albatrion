@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+재사용·재귀 템플릿의 의존 표시는 active만 있는 경우도 포함합니다. 발생별 재예약은 게이트 평가 위치의 등록과 별개이므로 active의 정적 의존을 생략하면 두 번째 이후 호스트의 변경을 놓칩니다.
+
 분석은 주입된 터미널·원자 판정 함수를 보유하여 구성과 후속 병합이 같은 해석을 사용하게 합니다. 호출자가 제공하는 캐시의 사용 수명은 [app/cache](../../../app/cache/DETAIL.md)에, 경고 조사 범위는 [collectBlueprintWarnings](collectBlueprintWarnings/DETAIL.md)에 둡니다. 분석을 재사용해도 새 진단 소비자가 경고를 잃어서는 안 됩니다.
 
 ## Acceptance Criteria

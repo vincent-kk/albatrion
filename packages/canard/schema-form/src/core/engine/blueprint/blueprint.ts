@@ -120,10 +120,7 @@ export const blueprint = (
   Object.defineProperty(context.capabilities, 'hasAliasedDependencies', {
     value:
       context.hasTemplateAliases === true &&
-      context.capabilities.hasDependencies &&
-      (context.capabilities.hasDerive ||
-        context.capabilities.hasState ||
-        context.capabilities.hasWatch),
+      context.capabilities.hasDependencies,
   });
   const result: Blueprint = {
     capabilities: context.capabilities,

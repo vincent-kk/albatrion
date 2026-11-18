@@ -5,12 +5,14 @@ import type { Optional } from '@aileron/declare';
 import {
   JSONPointer as $,
   PointerOperator,
+  appendSegment,
   readPointerSegment,
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint } from '../../../blueprint';
 import { getDeriveRuleTable } from '../../../derive';
 import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
+import { getGateExpression } from '../gates/getGateExpression';
 
 /**
  * Find declaration paths whose expressions or gates read the tree context token.
@@ -72,6 +74,25 @@ export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
       }
       if (dependsOnContext && owners.indexOf(declaration.path) === -1) {
         owners.push(declaration.path);
+      }
+    }
+    for (const entry of node.childEntries) {
+      const owner = appendSegment(node.path, entry.name);
+      if (owners.indexOf(owner) !== -1) continue;
+      for (const declaration of entry.declarations) {
+        for (const gate of declaration.gates) {
+          const expression = getGateExpression(blueprint, gate.schemaPath);
+          if (
+            expression?.dependencies.some(
+              (dependency) =>
+                readPointerSegment(dependency, 0) === PointerOperator.Context,
+            )
+          ) {
+            owners.push(owner);
+            break;
+          }
+        }
+        if (owners.indexOf(owner) !== -1) break;
       }
     }
   }

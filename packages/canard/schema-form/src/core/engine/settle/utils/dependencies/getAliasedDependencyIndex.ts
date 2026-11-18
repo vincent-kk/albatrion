@@ -12,6 +12,7 @@ import type { FieldNodeRecord } from '../../../record';
 import { PathStoreIndex } from '../../../utils/pathIndex/utils/PathStoreIndex';
 import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
 import type { SettlementContext } from '../../types/settlement';
+import { bindGateHostPath } from '../gates/bindGateHostPath';
 import { getGateExpression } from '../gates/getGateExpression';
 
 /** Identity and topology needed by occurrence indexing, independent of surface classes. */
@@ -35,9 +36,12 @@ interface Registration {
 class AliasedDependencyIndex {
   private readonly byNode = new Map<Occurrence, Registration>();
   private readonly children = new Map<Occurrence, Set<Occurrence>>();
-  private readonly owners = new Map<string, Occurrence>();
+  private readonly owners = new Map<
+    string,
+    { node: Occurrence; path: string }
+  >();
   private readonly paths = new PathStoreIndex();
-  private readonly contextNodes = new Set<Occurrence>();
+  private readonly contextNodes = new Map<Occurrence, Set<string>>();
   /** Two cached queries bound retained addresses independently of write count. */
   private affectedPath?: string;
   /** Prior query avoids re-traversing alternating source and derived addresses. */
@@ -71,10 +75,19 @@ class AliasedDependencyIndex {
     context: SettlementContext<Self>,
   ): void {
     if (
-      this.isInitialized && !context.enteredNodes.size && !context.pathChanges.length &&
-      !context.exitedNodes.size && !context.perishedNodes.size && !context.arrayStructureLog.length
-    ) return;
-    if (!this.isInitialized || context.enteredNodes.size || context.pathChanges.length) {
+      this.isInitialized &&
+      !context.enteredNodes.size &&
+      !context.pathChanges.length &&
+      !context.exitedNodes.size &&
+      !context.perishedNodes.size &&
+      !context.arrayStructureLog.length
+    )
+      return;
+    if (
+      !this.isInitialized ||
+      context.enteredNodes.size ||
+      context.pathChanges.length
+    ) {
       const seen = new Set<Occurrence>();
       if (!this.isInitialized) {
         this.registerSubtree(context.root, seen);
@@ -101,8 +114,9 @@ class AliasedDependencyIndex {
       return this.previousAffectedResult;
     const owners = new Set<string>();
     for (const key of this.paths.intersecting(path)) {
-      const node = this.owners.get(key);
-      if (node && !node.isDetached && !node.isDisposed) owners.add(node.path);
+      const owner = this.owners.get(key);
+      if (owner && !owner.node.isDetached && !owner.node.isDisposed)
+        owners.add(owner.path);
     }
     const result = [...owners];
     this.previousAffectedPath = this.affectedPath;
@@ -115,8 +129,8 @@ class AliasedDependencyIndex {
   /** Return concrete live aliases affected by a context replacement. */
   contextOwners(): readonly string[] {
     return [...this.contextNodes]
-      .filter((node) => !node.isDetached && !node.isDisposed)
-      .map((node) => node.path);
+      .filter(([node]) => !node.isDetached && !node.isDisposed)
+      .flatMap(([, paths]) => [...paths]);
   }
 
   /** Visit only newly admitted or moved subtrees, sharing overlap evidence within a phase. */
@@ -153,17 +167,25 @@ class AliasedDependencyIndex {
         this.children.get(previous.parent)?.delete(node);
     }
     this.contextNodes.delete(node);
-    const paths: string[] = [];
-    const watch = (host: string, dependency: string): void => {
+    const paths = new Map<string, Set<string>>();
+    const watch = (
+      host: string,
+      dependency: string,
+      owner = node.path,
+    ): void => {
       let path = resolveDependencyPath(host, dependency);
       if (readPointerSegment(path, 0) === PointerOperator.Context) {
-        this.contextNodes.add(node);
+        let owners = this.contextNodes.get(node);
+        if (!owners) this.contextNodes.set(node, (owners = new Set()));
+        owners.add(owner);
         return;
       }
       const segments = parsePointerSegments(path);
       const wildcard = segments.indexOf(PointerOperator.Wildcard);
       if (wildcard !== -1) path = joinPointer(segments.slice(0, wildcard));
-      if (paths.indexOf(path) === -1) paths.push(path);
+      let owners = paths.get(path);
+      if (!owners) paths.set(path, (owners = new Set()));
+      owners.add(owner);
     };
     if (node.path !== node.blueprintNode.path)
       for (const declaration of node.blueprintNode.declarations) {
@@ -190,13 +212,36 @@ class AliasedDependencyIndex {
               watch(target, dependency);
         }
       }
+    for (const entry of node.blueprintNode.childEntries)
+      for (const declaration of entry.declarations)
+        for (const gate of declaration.gates) {
+          const expression = getGateExpression(this.blueprint, gate.schemaPath);
+          if (!expression) continue;
+          const childHost =
+            gate.schemaPath ===
+            appendSegment(
+              appendSegment(declaration.schemaPath, 'controls'),
+              'active',
+            )
+              ? appendSegment(node.path, entry.name)
+              : undefined;
+          const host = bindGateHostPath(
+            gate,
+            node.blueprintNode.path,
+            node.path,
+            childHost,
+          );
+          for (const dependency of expression.dependencies)
+            watch(host, dependency, appendSegment(node.path, entry.name));
+        }
     const keys: string[] = [];
-    for (const path of paths) {
-      const key = String(this.nextKey++);
-      keys.push(key);
-      this.owners.set(key, node);
-      this.paths.add(key, [path]);
-    }
+    for (const [path, owners] of paths)
+      for (const owner of owners) {
+        const key = String(this.nextKey++);
+        keys.push(key);
+        this.owners.set(key, { node, path: owner });
+        this.paths.add(key, [path]);
+      }
     this.byNode.set(node, {
       path: node.path,
       children: node.children,
