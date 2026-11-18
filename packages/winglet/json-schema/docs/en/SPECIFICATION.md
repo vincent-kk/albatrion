@@ -114,6 +114,9 @@ Await `JSONSchemaScannerAsync.scan()` before using synchronous getValue. Its cal
 import {
   JSONSchemaScannerAsync,
   createReferenceResolverAsync,
+
+Rejected loader requests are evicted after their error reaches the caller. A later explicit resolve retries; fulfilled, missing and in-flight requests remain shared. No automatic retry occurs within one resolve.
+
 } from '@winglet/json-schema';
 import type { UnknownSchema } from '@winglet/json-schema';
 
