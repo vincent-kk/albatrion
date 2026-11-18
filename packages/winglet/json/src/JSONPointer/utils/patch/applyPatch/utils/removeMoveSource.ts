@@ -8,8 +8,10 @@ import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 import type { JSONRoot } from '@/json/type';
 
-import type { Patch } from '../../../patchModel';
+import type { MovePatch } from '../../../patchModel';
 import { JSONPatchError } from './error';
+import { decodePatchFragment } from './decodePatchFragment';
+import { isCircularMoveReference } from './isCircularMoveReference';
 import { getArrayIndex } from './getArrayIndex';
 import { isMissingMember } from './isMissingMember';
 import { resolveFromParent } from './resolveFromParent';
@@ -29,6 +31,7 @@ import { resolveFromParent } from './resolveFromParent';
  * @param patch - The MOVE operation, attached to error details
  * @param patchIndex - Position of the operation in the patch list, attached to error details
  * @param cloned - Containers already owned by the immutable result, or null in mutating mode
+ * @param path - Already decoded target pointer checked before removing the source
  * @returns The removed value
  * @throws {JSONPatchError} `PATCH_PATH_INVALID` when `from` does not start with `/` or `#`,
  *         `PATCH_PATH_INVALID_INTERMEDIATE` when a container on the way is missing,
@@ -39,16 +42,26 @@ import { resolveFromParent } from './resolveFromParent';
 export const removeMoveSource = (
   source: JSONRoot,
   from: string,
-  patch: Patch,
+  patch: MovePatch,
   patchIndex: number,
   cloned: WeakSet<object> | null,
+  path: string,
 ): unknown => {
   const segments = from.split(JSONPointer.Separator);
-  if (segments[0] !== '' && segments[0] !== JSONPointer.Fragment)
+  if (segments[0] !== '') {
+    if (from[0] === JSONPointer.Fragment)
+      return removeMoveSource(source, decodePatchFragment(from, patch, patchIndex), patch, patchIndex, cloned, path);
     throw new JSONPatchError(
       'PATCH_PATH_INVALID',
       `Patch 'from' pointer '${from}' must start with '${JSONPointer.Separator}' or '${JSONPointer.Fragment}'`,
       { patch, index: patchIndex, from, operation: patch.op },
+    );
+  }
+  if (isCircularMoveReference(from, path))
+    throw new JSONPatchError(
+      'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN',
+      `Cannot move location '${patch.from}' to '${patch.path}' - target location is a descendant of the source location. This would create a circular reference.`,
+      { patch, patchIndex, operation: patch.op, from: patch.from, path: patch.path },
     );
   const last = segments.length - 1;
   if (last === 0) return source;
