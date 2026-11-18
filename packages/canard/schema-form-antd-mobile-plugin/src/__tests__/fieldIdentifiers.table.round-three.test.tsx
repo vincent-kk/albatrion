@@ -106,6 +106,11 @@ const rows: [string, JSONSchema, unknown][] = [
     false,
   ],
   [
+    'boolean radio hint',
+    { type: 'boolean', presentation: { inputType: 'radio' } },
+    false,
+  ],
+  [
     'radio hint without enum',
     { type: 'string', presentation: { inputType: 'radio' } },
     'value',
@@ -152,11 +157,7 @@ const visibleText = (root: HTMLElement) => {
     }
     if (visible) parts.push(node.textContent ?? '');
   }
-  return parts
-    .join(' ')
-    .replace(/_r_[^ ]*?:\/Field/g, 'Field')
-    .replace(/\s+/g, ' ')
-    .trim();
+  return parts.join(' ').replace(/\s+/g, ' ').trim();
 };
 const expectedText: Record<string, string> = {
   text: 'Field',
@@ -175,6 +176,7 @@ const expectedText: Record<string, string> = {
   'object array item': 'Child - +',
   'hidden object': 'Child',
   'boolean checkbox hint': 'Field',
+  'boolean radio hint': 'Field',
   'radio hint without enum': 'Field',
   'nonbinary switch hint': 'Field',
 };
