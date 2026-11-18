@@ -40,7 +40,7 @@ export const applyRootOperation = (
     if (operation === Operation.COPY) {
       let copied: unknown;
       try {
-        copied = getValue(source, from);
+        copied = from === '' || from === '#' ? source : getValue(source, from);
       } catch (error) {
         if (from[0] === '#') decodePatchFragment(from, patch, patchIndex);
         throw error;
