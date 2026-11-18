@@ -4,8 +4,6 @@
 
 Promise는 최초 확인·취소 또는 렌더 오류로 한 번만 확정됩니다. 렌더 오류는 거부로 전달되며 일반 취소는 종류별 취소 값으로 완료됩니다.
 
-- 동일 구조 버전의 모듈 사본은 기존 전역 레지스트리에 세 Context 정체성을 함께 보관하여 어느 사본의 훅도 현재 Provider 값을 읽는다. 새 Provider나 공개 표면은 추가하지 않는다.
-
 ## API Contracts
 
 환경별 effect와 animation만 루트 hooks organ에 남깁니다. 요청 수명은 handle, 저장소 구독·기본 경로는 app, Context별 전환·파괴 시점은 ModalManagerContext가 소유하여 공용 organ이 하위 프랙탈로 되돌아가지 않게 합니다. 패키지 공개 이름과 타입은 그대로 유지합니다.

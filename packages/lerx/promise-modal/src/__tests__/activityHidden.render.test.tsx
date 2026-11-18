@@ -28,7 +28,7 @@ function App({ mode }: { mode: 'visible' | 'hidden' }) {
   );
 }
 
-it('(round-2 promise-modal 5) cancels a useModal request when the caller is hidden by Activity without unmounting', async () => {
+it.skipIf(!Activity)('(round-2 promise-modal 5; React 19 Activity required) cancels a useModal request when the caller is hidden by Activity without unmounting', async () => {
   const view = render(<App mode="visible" />);
   let result: boolean | undefined;
   act(() => {

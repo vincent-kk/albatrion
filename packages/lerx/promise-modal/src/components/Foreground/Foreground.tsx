@@ -49,7 +49,9 @@ export const ForegroundFrame = ({
       className={cxLite(
         foreground,
         modal.visible && active,
-        (modal.visible || (modal.manualDestroy && modal.settled && modal.alive)) && visible,
+        (modal.visible ||
+          (modal.manualDestroy && modal.settled && modal.alive)) &&
+          visible,
       )}
     >
       <Foreground

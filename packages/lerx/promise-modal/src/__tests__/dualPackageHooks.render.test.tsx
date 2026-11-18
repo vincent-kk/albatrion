@@ -1,5 +1,3 @@
-import { createRequire } from 'node:module';
-
 import * as React from 'react';
 
 import {
@@ -11,7 +9,7 @@ import {
 } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
-const require = createRequire(import.meta.url);
+import { loadCommonJS } from './dualPackageHooks/helpers/loadCommonJS';
 
 afterEach(() => {
   cleanup();
@@ -19,7 +17,7 @@ afterEach(() => {
 
 it('(round-2 promise-modal 7) packed ESM and CJS builds resolve to distinct copies that share one runtime', async () => {
   const esm = await import('@lerx/promise-modal');
-  const cjs: typeof import('@lerx/promise-modal') = require('@lerx/promise-modal');
+  const cjs: typeof import('@lerx/promise-modal') = await loadCommonJS();
   expect(esm.alert).not.toBe(cjs.alert);
   expect(Object.keys(esm).sort()).toEqual(
     Object.keys(cjs)
@@ -30,7 +28,7 @@ it('(round-2 promise-modal 7) packed ESM and CJS builds resolve to distinct copi
 
 it('(round-2 promise-modal 7) the CommonJS copy counts modals that the ESM copy opened under the ESM provider', async () => {
   const esm = await import('@lerx/promise-modal');
-  const cjs: typeof import('@lerx/promise-modal') = require('@lerx/promise-modal');
+  const cjs: typeof import('@lerx/promise-modal') = await loadCommonJS();
   function Counter() {
     const count = cjs.useActiveModalCount();
     return <span>count {count}</span>;
@@ -52,7 +50,7 @@ it('(round-2 promise-modal 7) the CommonJS copy counts modals that the ESM copy 
 
 it("(round-2 promise-modal 7) content from the CommonJS copy can read its own copy's modal hooks under the ESM provider", async () => {
   const esm = await import('@lerx/promise-modal');
-  const cjs: typeof import('@lerx/promise-modal') = require('@lerx/promise-modal');
+  const cjs: typeof import('@lerx/promise-modal') = await loadCommonJS();
   const errors: unknown[] = [];
   const onError = (event: ErrorEvent) => {
     errors.push(event.error);
@@ -76,7 +74,14 @@ it("(round-2 promise-modal 7) content from the CommonJS copy can read its own co
     }
     render() {
       return this.state.error ? (
-        <span>boundary: {String((this.state.error as Error).message)}</span>
+        <span>
+          boundary:{' '}
+          {String(
+            this.state.error instanceof Error
+              ? this.state.error.message
+              : this.state.error,
+          )}
+        </span>
       ) : (
         this.props.children
       );
@@ -89,10 +94,15 @@ it("(round-2 promise-modal 7) content from the CommonJS copy can read its own co
     </Boundary>,
   );
   let baseline!: Promise<void>;
-  act(() => { baseline = esm.alert({ title: 'Same copy', content: FeatureContent }); });
+  act(() => {
+    baseline = esm.alert({ title: 'Same copy', content: FeatureContent });
+  });
   const baselineText = screen.getByText(/feature duration/).textContent;
   fireEvent.click(screen.getByText('Confirm'));
-  await act(async () => { await baseline; await new Promise((resolve) => setTimeout(resolve, 10)); });
+  await act(async () => {
+    await baseline;
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  });
   featureApi = cjs;
   let result!: Promise<void>;
   act(() => {
@@ -102,7 +112,9 @@ it("(round-2 promise-modal 7) content from the CommonJS copy can read its own co
   window.removeEventListener('error', onError);
   const boundary = screen.queryByText(/boundary:/);
   expect(boundary?.textContent ?? null).toBeNull();
-  expect(screen.queryByText(/feature duration/)?.textContent).toBe(baselineText);
+  expect(screen.queryByText(/feature duration/)?.textContent).toBe(
+    baselineText,
+  );
   fireEvent.click(screen.getByText('Confirm'));
   await expect(result).resolves.toBeUndefined();
 });
