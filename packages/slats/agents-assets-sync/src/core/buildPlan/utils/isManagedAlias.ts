@@ -16,12 +16,22 @@ export async function isManagedAlias(
 ): Promise<boolean> {
   const folded = relPath.normalize('NFD').toLowerCase();
   for (const [known, destination] of destinations) {
-    if (destination.kind !== 'file' || known.normalize('NFD').toLowerCase() !== folded) continue;
+    if (
+      destination.kind !== 'file' ||
+      known.normalize('NFD').toLowerCase() !== folded
+    )
+      continue;
     try {
-      const [found, managed] = await Promise.all([stat(abs), stat(destination.dstAbs)]);
+      const [found, managed] = await Promise.all([
+        stat(abs),
+        stat(destination.dstAbs),
+      ]);
       if (found.dev === managed.dev && found.ino === managed.ino) return true;
     } catch (error) {
-      if (!(error instanceof Error && 'code' in error && error.code === 'ENOENT')) throw error;
+      if (
+        !(error instanceof Error && 'code' in error && error.code === 'ENOENT')
+      )
+        throw error;
     }
   }
   return false;

@@ -43,7 +43,12 @@ export async function buildPlan(input: PlanInput): Promise<InjectPlan> {
 
   const known = new Set(Object.keys(sourceHashes));
   for (const scan of orphanScans) {
-    for await (const orphan of findOrphans(scan, known, readDocument, destinations)) {
+    for await (const orphan of findOrphans(
+      scan,
+      known,
+      readDocument,
+      destinations,
+    )) {
       // Deleting is as user-visible as overwriting: under --force the flag is
       // what makes renderers confirm and list the deletion.
       requiresForce = true;
@@ -93,7 +98,11 @@ async function* findOrphans(
       const scanRelPath = toPosix(relative(scan.scanRoot, abs));
       if (isNoisePath(scanRelPath)) continue;
       const relPath = scan.relPathPrefix + scanRelPath;
-      if (known.has(relPath) || await isManagedAlias(relPath, abs, destinations)) continue;
+      if (
+        known.has(relPath) ||
+        (await isManagedAlias(relPath, abs, destinations))
+      )
+        continue;
       yield { relPath, target: { kind: 'file', dstAbs: abs } };
     }
     return;

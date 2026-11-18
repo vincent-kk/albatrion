@@ -12,7 +12,11 @@ import type { InjectReport } from '../type.js';
  * @param failedActions - attempted actions that failed and must not count as applied
  * @returns per-category path lists plus the exit code
  */
-export function summarize(plan: InjectPlan, exitCode: 0 | 1 | 2, failedActions: readonly Action[] = []): InjectReport {
+export function summarize(
+  plan: InjectPlan,
+  exitCode: 0 | 1 | 2,
+  failedActions: readonly Action[] = [],
+): InjectReport {
   const report: InjectReport = {
     created: [],
     updated: [],

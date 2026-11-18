@@ -15,10 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 // Runs the built bin against temp directories only (never ~/.claude or the repo).
-const PACKAGE_ROOT = resolve(
-  dirname(fileURLToPath(import.meta.url)),
-  '../..',
-);
+const PACKAGE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const BIN_PATH = join(PACKAGE_ROOT, 'bin/inject-agents-settings.mjs');
 const PACKAGE = '@r2-periphery/probe';
 
@@ -139,7 +136,9 @@ describe('r2-periphery agents-assets-sync probes (temp dirs only)', () => {
       writeAt(join(assetRoot, 'skills/pp/README.md'), '# readme\n');
       expect(run('--agent=claude', ...BASE).status).toBe(0);
       const baseline = run('--agent=claude', ...BASE, '--force', '--yes');
-      const beforeNames = readdirSync(join(projectRoot, '.claude/skills/pp')).map((name) => name.normalize('NFC').toLowerCase()).sort();
+      const beforeNames = readdirSync(join(projectRoot, '.claude/skills/pp'))
+        .map((name) => name.normalize('NFC').toLowerCase())
+        .sort();
       // v2 renames README.md -> Readme.md (case only), same bytes.
       rmSync(join(assetRoot, 'skills/pp/README.md'));
       writeAt(join(assetRoot, 'skills/pp/Readme.md'), '# readme\n');
@@ -149,7 +148,9 @@ describe('r2-periphery agents-assets-sync probes (temp dirs only)', () => {
       const names = readdirSync(join(projectRoot, '.claude/skills/pp')).sort();
       expect(plain.status).toBe(baseline.status);
       expect(forced.status).toBe(baseline.status);
-      expect(names.map((name) => name.normalize('NFC').toLowerCase()).sort()).toEqual(beforeNames);
+      expect(
+        names.map((name) => name.normalize('NFC').toLowerCase()).sort(),
+      ).toEqual(beforeNames);
     },
   );
 
@@ -162,14 +163,18 @@ describe('r2-periphery agents-assets-sync probes (temp dirs only)', () => {
       writeAt(join(assetRoot, 'skills/pp', nfd), '# cafe\n');
       expect(run('--agent=claude', ...BASE).status).toBe(0);
       const baseline = run('--agent=claude', ...BASE, '--force', '--yes');
-      const beforeNames = readdirSync(join(projectRoot, '.claude/skills/pp')).map((name) => name.normalize('NFC')).sort();
+      const beforeNames = readdirSync(join(projectRoot, '.claude/skills/pp'))
+        .map((name) => name.normalize('NFC'))
+        .sort();
       rmSync(join(assetRoot, 'skills/pp', nfd));
       writeAt(join(assetRoot, 'skills/pp', nfc), '# cafe\n');
       setVersion('2.0.0');
       const forced = run('--agent=claude', ...BASE, '--force', '--yes');
       const names = readdirSync(join(projectRoot, '.claude/skills/pp'));
       expect(forced.status).toBe(baseline.status);
-      expect(names.map((name) => name.normalize('NFC')).sort()).toEqual(beforeNames);
+      expect(names.map((name) => name.normalize('NFC')).sort()).toEqual(
+        beforeNames,
+      );
     },
   );
 
@@ -187,12 +192,32 @@ describe('r2-periphery agents-assets-sync probes (temp dirs only)', () => {
     expect(plain.status).toBe(2);
   });
 
-  it.each([PACKAGE, '@r2-periphery'])('resolves BOM and ordinary metadata equivalently via %s', (target) => {
-    writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
-    const ordinary = run('--package', target, '--agent=claude', ...BASE, '--dry-run', '--json');
-    writeAt(join(packageRoot, 'package.json'), '\uFEFF' + JSON.stringify({ name: PACKAGE, version: '1.0.0' }));
-    const bom = run('--package', target, '--agent=claude', ...BASE, '--dry-run', '--json');
-    expect(bom.status).toBe(ordinary.status);
-    expect(JSON.parse(bom.stdout)).toEqual(JSON.parse(ordinary.stdout));
-  });
+  it.each([PACKAGE, '@r2-periphery'])(
+    'resolves BOM and ordinary metadata equivalently via %s',
+    (target) => {
+      writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
+      const ordinary = run(
+        '--package',
+        target,
+        '--agent=claude',
+        ...BASE,
+        '--dry-run',
+        '--json',
+      );
+      writeAt(
+        join(packageRoot, 'package.json'),
+        '\uFEFF' + JSON.stringify({ name: PACKAGE, version: '1.0.0' }),
+      );
+      const bom = run(
+        '--package',
+        target,
+        '--agent=claude',
+        ...BASE,
+        '--dry-run',
+        '--json',
+      );
+      expect(bom.status).toBe(ordinary.status);
+      expect(JSON.parse(bom.stdout)).toEqual(JSON.parse(ordinary.stdout));
+    },
+  );
 });

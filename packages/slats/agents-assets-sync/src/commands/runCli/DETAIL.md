@@ -163,7 +163,6 @@
 - 렌더러에 닿기 전에 실패하면 stdout 은 비고 진단은 stderr 로만 나간다.
 - 검증: `src/__tests__/json.test.ts`.
 
-
 ## Last Updated
 
 대상 해석, 입력 거부 또는 렌더러 이전 실패 계약이 바뀌면 갱신합니다.
