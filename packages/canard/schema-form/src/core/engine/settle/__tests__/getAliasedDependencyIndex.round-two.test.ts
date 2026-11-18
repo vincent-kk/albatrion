@@ -2,20 +2,14 @@ import { expect, it } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import { isArrayNode } from '@/schema-form/core/surface';
-import { FieldNode } from '@/schema-form/core/surface/runtime/FieldNode';
+import { readFieldNodeRuntime } from '@/schema-form/__tests__/helpers/readFieldNodeRuntime';
 
-import { FieldNodeWriteKind, WriteOption } from '../engine/types/value';
-import { getAliasedDependencyIndex } from '../engine/settle/utils/dependencies/getAliasedDependencyIndex';
-import { getSettlementScratch } from '../engine/settle/utils/scratch/getSettlementScratch';
-import { releaseSettlementScratch } from '../engine/settle/utils/scratch/releaseSettlementScratch';
-import { createSettlementContext } from '../engine/settle/utils/settlement/createSettlementContext';
-import { restoreArrayStructure } from '../engine/settle/utils/transition/restoreArrayStructure';
-
-/** Recover the concrete test runtime only after its class identity is verified. */
-const internalNode = (node: unknown): FieldNode => {
-  if (!(node instanceof FieldNode)) throw new Error('Expected engine node');
-  return node;
-};
+import { FieldNodeWriteKind, WriteOption } from '../../types/value';
+import { getAliasedDependencyIndex } from '../utils/dependencies/getAliasedDependencyIndex';
+import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
+import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
+import { createSettlementContext } from '../utils/settlement/createSettlementContext';
+import { restoreArrayStructure } from '../utils/transition/restoreArrayStructure';
 
 it('round-2 schema-form 2: rolled-back array admission retains the original occurrence set', () => {
   const rootSurface = nodeFromJSONSchema({
@@ -32,10 +26,16 @@ it('round-2 schema-form 2: rolled-back array admission retains the original occu
     },
     defaultValue: { first: { a: 'first' }, list: [{ a: 'existing' }] },
   });
-  const root = internalNode(rootSurface);
+  const runtime = readFieldNodeRuntime(rootSurface);
+  let root: typeof runtime.chainRoot;
+  rootSurface.batch(() => {
+    root = runtime.chainRoot;
+  });
+  if (!root) throw new Error('Expected active root record');
   const listSurface = rootSurface.find('/list');
   if (!isArrayNode(listSurface)) throw new Error('Expected array');
-  const list = internalNode(listSurface);
+  const list = root.childrenByName?.list;
+  if (!list) throw new Error('Expected array record');
   const previousItems = [...(list.children ?? [])];
   const previousItemCount = list.itemCount ?? 0;
   const previousExtras = list.extras;
