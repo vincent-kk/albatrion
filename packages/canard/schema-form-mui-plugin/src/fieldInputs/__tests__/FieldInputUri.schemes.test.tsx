@@ -38,7 +38,7 @@ const Host = ({ children }: { children: ReactNode }) => {
 const selectedProtocol = () =>
   document.querySelector('.ant-select')?.textContent ??
   screen.getByRole('combobox').textContent;
-const input = () => document.querySelector<HTMLInputElement>('input#\\/link')!;
+const input = () => document.querySelector<HTMLInputElement>('input[id$=":/link"]')!;
 const choose = (label: string) => {
   fireEvent.mouseDown(
     document.querySelector('.ant-select-selector') ??
@@ -108,7 +108,7 @@ it.each([
       server.querySelector('.ant-select')?.textContent ??
       server.querySelector('[role="combobox"]')?.textContent;
     expect(serverPrefix).toBe(scheme || 'No scheme');
-    expect(server.querySelector<HTMLInputElement>('input#\\/link')?.value).toBe(
+    expect(server.querySelector<HTMLInputElement>('input[id$=":/link"]')?.value).toBe(
       path,
     );
     const ref = createRef<FormHandle>();

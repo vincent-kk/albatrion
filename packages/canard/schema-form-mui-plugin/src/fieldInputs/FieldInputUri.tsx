@@ -29,7 +29,7 @@ interface FieldInputUriProps
 const DEFAULT_PROTOCOLS = ['http', 'https'];
 
 const FieldInputUri = ({
-  path,
+  id,
   name,
   required,
   readOnly,
@@ -110,11 +110,12 @@ const FieldInputUri = ({
 
   return (
     <Box>
-      <InputLabel htmlFor={path} required={required}>
+      <InputLabel htmlFor={id} required={required}>
         {label}
       </InputLabel>
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
         <Select
+          id={`${id}-protocol`}
           value={protocol}
           onChange={handleProtocolChange}
           disabled={disabled || readOnly}
@@ -128,7 +129,7 @@ const FieldInputUri = ({
           ))}
         </Select>
         <TextField
-          id={path}
+          id={id}
           name={name}
           variant={variant}
           fullWidth={fullWidth}

@@ -49,7 +49,7 @@ interface FieldInputDateProps
 }
 
 const FieldInputDate = ({
-  path,
+  id,
   name,
   required,
   disabled,
@@ -129,7 +129,7 @@ const FieldInputDate = ({
         shouldDisableDate={disableDate}
         slotProps={{
           textField: {
-            id: path,
+            id,
             name,
             required,
             size,
