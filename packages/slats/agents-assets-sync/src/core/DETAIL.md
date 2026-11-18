@@ -3,7 +3,7 @@
 ## Requirements
 
 - `core/**`는 순수하고 상태 없는 기본 연산의 모음이다. 이 트리의 어떤 함수도 `process.stdout`/`process.stderr`에 쓰지 않는다.
-- 스코프 해석은 결정적이다. `resolveProjectRoot`는 `cwd`와 `homedir`만 읽는다. `user`는 홈 디렉터리를 반환하고 `project`는 `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git` 중 하나를 가진 가장 가까운 조상을 반환하며 없으면 `cwd`를 사용한다. `cwd`보다 위에서 찾으면 `autoLocated`를 보고한다. 앵커의 존재로 판단하며 `AGENTS.md`는 파일이고 워크트리 안의 `.git`도 파일이다.
+- 스코프 해석은 결정적이다. 프로젝트 루트의 마커 우선순위와 홈 경계는 소유 모듈인 `scope/DETAIL.md`가 정하며, 모든 에이전트는 그 결과를 공유한다. 상위 workspace의 루트 마커가 가까운 에이전트 앵커에 가려지지 않게 하는 계약이다.
 - 선택된 모든 에이전트는 프로젝트 루트 하나를 사용하므로 여러 에이전트를 지정한 실행이 두 프로젝트에 걸칠 수 없다.
 - `resolveAgentTarget`은 `(agent, scope)`를 자산 위치로 매핑한다. claude는 모든 종류의 루트를 `<projectRoot>/.claude` 아래에 둔다. codex와 agents는 skills를 스킬 디렉터리 디렉터리에 두고 rules를 `AGENTS.md`에 병합하며 `commands`는 지원하지 않는다고 보고한다. `project` 스코프에서는 같다(`<projectRoot>/.agents/skills`와 `<projectRoot>/AGENTS.md`). `user` 스코프에서만 codex는 `~/.codex`, agents는 `~/.agents`를 사용한다.
 - `resolveDestinations`는 종류가 미지이거나 필터에서 제외된 매니페스트 경로를 생략한다. 이 부재로 종류를 필터한 실행이 요청 범위 밖 항목을 보고하거나 삭제하지 못하게 한다.
