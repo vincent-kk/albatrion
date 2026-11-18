@@ -19,7 +19,7 @@ const FieldInputBoolean = ({
   const [indeterminate, checked] = useMemo(
     () => [
       value !== undefined && typeof value !== 'boolean',
-      value ?? undefined,
+      value ?? false,
     ],
     [value],
   );
