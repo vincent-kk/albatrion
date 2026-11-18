@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useContext, useMemo, useState } from 'react';
 
 import {
   Checkbox,
@@ -19,6 +19,7 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { FieldLabelContext } from '../utils/context/FieldLabelContext';
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
@@ -42,7 +43,7 @@ interface FieldInputStringCheckboxProps
 
 const FieldInputStringCheckbox = ({
   id,
-  labelId = `input-label:${id}`,
+
   name,
   jsonSchema,
   required,
@@ -58,6 +59,7 @@ const FieldInputStringCheckbox = ({
   hideLabel,
   misfit,
 }: FieldInputStringCheckboxProps) => {
+  const labelId = useContext(FieldLabelContext) ?? `input-label:${id}`;
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
     return [labelProp || name, sizeProp || context.size];

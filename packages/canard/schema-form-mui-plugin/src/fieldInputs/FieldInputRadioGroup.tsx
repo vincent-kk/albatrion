@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo } from 'react';
+import { type ReactNode, useContext, useMemo } from 'react';
 
 import {
   FormControl,
@@ -18,6 +18,7 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { FieldLabelContext } from '../utils/context/FieldLabelContext';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type RadioGroupStringJSONSchema = StringSchema & {
@@ -42,7 +43,7 @@ type FieldInputRadioGroupProps = {
 
 const FieldInputRadioGroup = ({
   id,
-  labelId = `input-label:${id}`,
+
   node,
   jsonSchema,
   required,
@@ -58,6 +59,7 @@ const FieldInputRadioGroup = ({
   hideLabel,
   misfit,
 }: FieldInputRadioGroupProps) => {
+  const labelId = useContext(FieldLabelContext) ?? `input-label:${id}`;
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
     return [labelProp || node.name, sizeProp || context.size];

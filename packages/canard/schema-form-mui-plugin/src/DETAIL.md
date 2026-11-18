@@ -24,6 +24,8 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 분리하고 원래 대소문자�
 
 입력의 DOM 식별자는 코어가 전달하는 Form 범위의 `id`를 사용하며 `path`는 데이터 포인터로 유지합니다. 단일 입력의 레이블은 실제 입력의 id와 연결하고, 복합 선택과 분기의 제목은 FieldRenderer가 받는 `labelId`와 `aria-labelledby`로 연결합니다. 각 선택지는 고유한 id를 가지며 라디오의 native name은 scoped id입니다.
 
+렌더러의 labelId는 내부 제목 context로 그룹 입력에만 전달하며 사용자 정의 입력의 DOM props에 추가하지 않습니다.
+
 선택 그룹의 제목은 해당 입력이 한 번만 소유하며 렌더러가 같은 식별자나 보이는 제목을 덧붙이지 않습니다. 일반 분기의 접근성 제목은 숨겨진 요소로 연결하여 배열 항목과 hideLabel의 기존 표시를 유지합니다.
 
 ## Acceptance Criteria
