@@ -1,17 +1,33 @@
+import { getTypeTag } from '@/common-utils/libs/getTypeTag';
 import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isArrayBuffer } from '@/common-utils/utils/filter/isArrayBuffer';
 import { isBlob } from '@/common-utils/utils/filter/isBlob';
 import { isBuffer } from '@/common-utils/utils/filter/isBuffer';
-import { isCloneable } from '@/common-utils/utils/filter/isCloneable';
+import { CLONEABLE_TAGS } from '@/common-utils/utils/filter/isCloneable';
 import { isPrimitiveType } from '@/common-utils/utils/filter/isPrimitiveType';
 import { isSharedArrayBuffer } from '@/common-utils/utils/filter/isSharedArrayBuffer';
 import { isTypedArray } from '@/common-utils/utils/filter/isTypedArray';
 
 import { getSymbols } from './getSymbols';
-import { copyForeignBuiltin } from './utils/clone/copyForeignBuiltin';
+import { copyForeignBuiltin } from './utils/clone/copyForeignBuiltin/copyForeignBuiltin';
 import { getPrototypeProfile } from './utils/clone/getPrototypeProfile';
 import { replicateBox } from './utils/clone/replicateBox';
+
+/** Clone-specific shell dispatch extends the shared predicate without widening its public contract. */
+const CLONE_PROFILE: Record<string, boolean | undefined> = Object.create(null);
+for (const tag of CLONEABLE_TAGS) CLONE_PROFILE[tag] = false;
+for (const tag of [
+  '[object Date]',
+  '[object Map]',
+  '[object Set]',
+  '[object RegExp]',
+  '[object ArrayBuffer]',
+  '[object SharedArrayBuffer]',
+  '[object DataView]',
+  '[object Error]',
+])
+  CLONE_PROFILE[tag] = true;
 
 /**
  * Creates a deep clone of any value with comprehensive type support and circular reference handling.
@@ -332,7 +348,12 @@ const replicate = (
     });
     cache.set(value, result);
     replicateProperties(
-      result, value, limit, depth, cache, undefined,
+      result,
+      value,
+      limit,
+      depth,
+      cache,
+      undefined,
       getSymbols(value).filter((symbol) => !hasOwnProperty(result, symbol)),
     );
     return result;
@@ -342,7 +363,12 @@ const replicate = (
     const result = new Blob([value], { type: value.type });
     cache.set(value, result);
     replicateProperties(
-      result, value, limit, depth, cache, undefined,
+      result,
+      value,
+      limit,
+      depth,
+      cache,
+      undefined,
       getSymbols(value).filter((symbol) => !hasOwnProperty(result, symbol)),
     );
     return result;
@@ -378,33 +404,39 @@ const replicate = (
   }
 
   if (typeof value === 'object' && value !== null) {
+    const tag = getTypeTag(value);
+    const builtin = CLONE_PROFILE[tag];
+    if (builtin === undefined) return value;
     const prototype = getPrototypeOf(value);
-    const foreign = prototype === Object.prototype || prototype === null
-      ? undefined
-      : copyForeignBuiltin(value);
+    const foreign = builtin ? copyForeignBuiltin(value, tag) : undefined;
     if (foreign !== undefined) {
       cache.set(value, foreign);
       if (foreign instanceof Map) {
         for (const [key, item] of Map.prototype.entries.call(value))
-          foreign.set(replicate(key, limit, depth, cache), replicate(item, limit, depth, cache));
+          foreign.set(
+            replicate(key, limit, depth, cache),
+            replicate(item, limit, depth, cache),
+          );
       } else if (foreign instanceof Set) {
         for (const item of Set.prototype.values.call(value))
           foreign.add(replicate(item, limit, depth, cache));
       } else if (Object.prototype.toString.call(foreign) === '[object Error]') {
         for (const key of ['cause', 'errors'])
           if (hasOwnProperty(value, key))
-            defineProperty(foreign, key, { value: replicate(value[key], limit, depth, cache), writable: true, configurable: true });
+            defineProperty(foreign, key, {
+              value: replicate(value[key], limit, depth, cache),
+              writable: true,
+              configurable: true,
+            });
         replicateProperties(foreign, value, limit, depth, cache);
       } else if (foreign instanceof DataView)
         replicateProperties(foreign, value, limit, depth, cache);
       return foreign;
     }
-    if (!isCloneable(value)) return value;
     const profile = getPrototypeProfile(prototype);
     // Boxed primitives keep their value in an internal slot that Object.create lacks
     const box = profile.boxed ? replicateBox(value!, prototype) : null;
     const result = box ?? Object.create(prototype);
-    // `isCloneable` will not allow a nullish object to be passed.
     cache.set(value!, result);
     replicateProperties(
       result,

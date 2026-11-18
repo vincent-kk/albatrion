@@ -45,7 +45,7 @@ merge가 조상의 안전한 속성 프리미티브를 읽고 부모가 merge를
 - 복제된 `__proto__` 값은 원본과 참조를 공유하지 않는다.
 - 기존 clone 스위트가 전량 통과하고, 일반 키 경로 bench에 유의미한 회귀가 없다.
 
-다른 realm의 내장 객체도 슬롯이 있는 새 값으로 복제합니다. Date·RegExp·Map·Set·ArrayBuffer·SharedArrayBuffer·DataView·Error와 AggregateError의 슬롯을 보존하고, 컬렉션의 순환 참조는 복제 캐시로 연결합니다. 슬롯이 없는 위조 태그는 일반 객체 복제를 유지합니다. Map·Set·Date·RegExp의 추가 own 속성은 로컬 realm과 마찬가지로 복제 범위가 아닙니다. Blob·File 생성자가 새 객체에 만든 호스트 내부 symbol은 원본에서 덮어쓰지 않으므로 바이트 읽기가 유지됩니다. vm에는 Web API 생성자가 없으므로 Blob·File의 vm 검증은 호스트 생성자를 전달한 하위 클래스로 수행합니다.
+다른 realm의 내장 객체도 슬롯이 있는 새 값으로 복제합니다. Date·RegExp·Map·Set·ArrayBuffer·SharedArrayBuffer·DataView·Error와 AggregateError의 슬롯을 보존하고, 컬렉션의 순환 참조는 복제 캐시로 연결합니다. 슬롯이 없는 위조 태그는 일반 객체 복제를 유지합니다. Error 태그도 생성자를 호출하기 전에 네이티브 Error 생성자를 잇는 프로토타입 계보를 확인하므로 태그만 지정한 평범한 객체나 클래스의 생성자를 실행하지 않습니다. 명시적인 Error 태그를 가진 실제 Error 하위 형은 계보와 생성자 의미를 유지합니다. 변경 가능한 name 속성으로 AggregateError를 판정하지 않으며, 원래 프로토타입 계보에 맞는 생성자 인자를 전달합니다. 슬롯 없는 Error 태그 객체는 isCloneable의 지원 태그가 아니어도 이 복제 함수 안에서 평범한 객체로 복제합니다. Map·Set·Date·RegExp의 추가 own 속성은 로컬 realm과 마찬가지로 복제 범위가 아닙니다. Blob·File 생성자가 새 객체에 만든 호스트 내부 symbol은 원본에서 덮어쓰지 않으므로 바이트 읽기가 유지됩니다. vm에는 Web API 생성자가 없으므로 Blob·File의 vm 검증은 호스트 생성자를 전달한 하위 클래스로 수행합니다.
 
 ### clone-fidelity — clone 내장 상태와 상속 속성 정합
 
