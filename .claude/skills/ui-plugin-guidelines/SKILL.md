@@ -5,6 +5,10 @@ description: "Expert at verifying compatibility between a UI library and an @can
 
 # UI Plugin Guidelines Skill
 
+## Control identifier contract
+
+The core supplies `FieldInputProps.id` scoped to each Form. Put it on the actual focusable control and use it for a single-control label's `htmlFor`; `path` remains the JSON Pointer for data access. A group renderer uses `FieldRendererProps.labelId` on its title or legend and `aria-labelledby` on the group. If the input draws that title itself, the renderer forwards `labelId` through `<Input labelId={labelId} />`; do not draw a second title with the same id. Give each option a distinct id derived from the supplied input id. Radio inputs use the scoped id as their native `name`; other inputs retain their leaf names. Labels and ARIA references are document-wide, including across separate Forms.
+
 ## Role
 You are an expert at verifying compatibility between a UI library and an @canard/schema-form plugin, and at designing the project structure.
 
@@ -200,12 +204,12 @@ const formatError: FormatError = (error, node, context) => {
 
 ```typescript
 <TextField
-  id={path}                          // ✅ Unique ID
+  id={id}                          // ✅ Unique ID
   name={name}                        // ✅ name attribute
   required={required}                // ✅ required
   aria-required={required}           // ✅ ARIA required
   aria-invalid={hasError}            // ✅ ARIA invalid
-  aria-describedby={`${path}-error`} // ✅ Error association
+  aria-describedby={`${id}-error`} // ✅ Error association
 />
 ```
 
@@ -242,7 +246,7 @@ const formatError: FormatError = (error, node, context) => {
 
 ```typescript
 // ✅ Correct
-<Input id={path} name={name} />
+<Input id={id} name={name} />
 
 // ❌ Do not use
 <Form.Item label="Name">
@@ -255,8 +259,8 @@ const formatError: FormatError = (error, node, context) => {
 **FormControl wrapping**:
 ```typescript
 <FormControl isRequired={required} isInvalid={hasError}>
-  <FormLabel htmlFor={path}>{label}</FormLabel>
-  <Input id={path} name={name} />
+  <FormLabel htmlFor={id}>{label}</FormLabel>
+  <Input id={id} name={name} />
   {hasError && <FormErrorMessage>{errorMessage}</FormErrorMessage>}
 </FormControl>
 ```
@@ -363,7 +367,7 @@ MUI DatePicker uses TextField internally. With AdapterDayjs, pass Dayjs values a
   }}
   slotProps={{
     textField: {
-      id: path,
+      id: id,
       name: name,
       required: required,
       disabled: disabled,
@@ -426,13 +430,13 @@ const FieldRenderer = ({ depth, Input }: FieldRendererProps) => {
 **TextField**:
 ```typescript
 <TextField
-  id={path}                          // ✅ Unique ID (WCAG 4.1.1)
+  id={id}                          // ✅ Unique ID (WCAG 4.1.1)
   name={name}                        // ✅ name attribute
   label={label}                      // ✅ Label (WCAG 1.3.1)
   required={required}                // ✅ required (WCAG 3.3.2)
   error={hasError}                   // ✅ error state
   helperText={errorMessage}          // ✅ Error message (WCAG 3.3.1)
-  aria-describedby={`${path}-helper`} // ✅ Helper text association
+  aria-describedby={`${id}-helper`} // ✅ Helper text association
 />
 ```
 
@@ -441,7 +445,7 @@ const FieldRenderer = ({ depth, Input }: FieldRendererProps) => {
 <FormControlLabel
   control={
     <Checkbox
-      id={path}
+      id={id}
       name={name}
       checked={value ?? false}
       required={required}
@@ -568,7 +572,7 @@ Do **not use** Ant Design's Form.Item. @canard/schema-form manages form layout a
 
 // ✅ Correct approach (use the component only)
 <Input
-  id={path}
+  id={id}
   name={name}
   defaultValue={defaultValue}
   onChange={(e) => onChange(e.target.value)}
@@ -610,10 +614,10 @@ import dayjs, { type Dayjs } from 'dayjs';
 import type { FieldInputProps } from '@canard/schema-form';
 import { DatePicker } from 'antd';
 
-function FieldInputDate({ path, name, readOnly, disabled, defaultValue, onChange }: FieldInputProps<string>) {
+function FieldInputDate({ id, name, readOnly, disabled, defaultValue, onChange }: FieldInputProps<string>) {
   return (
     <DatePicker
-      id={path}
+      id={id}
       name={name}
       disabled={disabled || readOnly}
       defaultValue={defaultValue ? dayjs(defaultValue) : null}
@@ -705,11 +709,11 @@ Ant Design v5 handles most accessibility attributes automatically, but some must
 **Input**:
 ```typescript
 <Input
-  id={path}                    // ✅ Unique ID
+  id={id}                    // ✅ Unique ID
   name={name}                  // ✅ name attribute
   aria-required={required}     // ⚠️ Manual addition required
   aria-invalid={hasError}      // ⚠️ Manual addition required
-  aria-describedby={hasError ? `${path}-error` : undefined}  // ⚠️ Manual
+  aria-describedby={hasError ? `${id}-error` : undefined}  // ⚠️ Manual
   status={hasError ? 'error' : undefined}
 />
 ```
@@ -717,7 +721,7 @@ Ant Design v5 handles most accessibility attributes automatically, but some must
 **Checkbox**:
 ```typescript
 <Checkbox
-  id={path}
+  id={id}
   name={name}
   checked={value ?? false}
   aria-required={required}     // ⚠️ Manual addition required
@@ -729,7 +733,7 @@ Ant Design v5 handles most accessibility attributes automatically, but some must
 **Select**:
 ```typescript
 <Select
-  id={path}
+  id={id}
   defaultValue={defaultValue}
   onChange={onChange}
   aria-required={required}     // ⚠️ Manual addition required
@@ -871,7 +875,7 @@ import {
 import { useFieldErrors, type FieldInputProps } from '@canard/schema-form';
 
 function FieldInputString(props: FieldInputProps<string>) {
-  const { node, path, name, jsonSchema, required, value, onChange } = props;
+  const { node, id, name, jsonSchema, required, value, onChange } = props;
 
   const label = jsonSchema.title || name;
   const { errorMessage } = useFieldErrors(node);
@@ -879,9 +883,9 @@ function FieldInputString(props: FieldInputProps<string>) {
 
   return (
     <FormControl isRequired={required} isInvalid={hasError}>
-      <FormLabel htmlFor={path}>{label}</FormLabel>
+      <FormLabel htmlFor={id}>{label}</FormLabel>
       <Input
-        id={path}
+        id={id}
         name={name}
         value={value ?? ''}
         onChange={(e) => onChange(e.target.value === '' ? undefined : e.target.value)}
@@ -916,7 +920,7 @@ import { NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepp
   min={jsonSchema.minimum}
   max={jsonSchema.maximum}
 >
-  <NumberInputField id={path} name={name} />
+  <NumberInputField id={id} name={name} />
   <NumberInputStepper>
     <NumberIncrementStepper />
     <NumberDecrementStepper />

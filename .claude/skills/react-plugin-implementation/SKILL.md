@@ -5,6 +5,10 @@ description: "Expert on React-based @canard/schema-form plugin implementation pa
 
 # React Plugin Implementation Skill
 
+## Control identifier contract
+
+The core supplies `FieldInputProps.id` scoped to each Form. Put it on the actual focusable control and use it for a single-control label's `htmlFor`; `path` remains the JSON Pointer for data access. A group renderer uses `FieldRendererProps.labelId` on its title or legend and `aria-labelledby` on the group. If the input draws that title itself, the renderer forwards `labelId` through `<Input labelId={labelId} />`; do not draw a second title with the same id. Give each option a distinct id derived from the supplied input id. Radio inputs use the scoped id as their native `name`; other inputs retain their leaf names. Labels and ARIA references are document-wide, including across separate Forms.
+
 ## Role
 
 You are an expert on React-based @canard/schema-form plugin implementation patterns.
@@ -63,7 +67,7 @@ interface FieldInputTextProps
 }
 
 const FieldInputText = ({
-  node, path, name, required, disabled, readOnly, defaultValue, onChange,
+  node, id, name, required, disabled, readOnly, defaultValue, onChange,
   context, size: sizeProp, placeholder,
 }: FieldInputTextProps) => {
   const { errorMessage } = useFieldErrors(node);
@@ -74,7 +78,7 @@ const FieldInputText = ({
 
   return (
     <TextField
-      id={path}
+      id={id}
       name={name}
       required={required}
       disabled={disabled || readOnly}
@@ -222,7 +226,7 @@ const FieldInputDate = ({
         onChange={handleChange}
         slotProps={{
           textField: {
-            id: props.path,
+            id: props.id,
             name: props.name,
             required: props.required,
             disabled: props.disabled,
@@ -311,7 +315,7 @@ const FieldInputString = ({
   // Schema/Node info
   jsonSchema,
   node,
-  path,
+  id,
   name,
 
   // State
@@ -356,7 +360,7 @@ const FieldInputString = ({
   // 7️⃣ Render the uncontrolled component
   return (
     <TextField
-      id={path}
+      id={id}
       name={name}
       label={label}
       required={required}
@@ -479,7 +483,7 @@ interface FieldInputDateProps
 const FieldInputDate = ({
   jsonSchema,
   node,
-  path,
+  id,
   name,
   required,
   disabled,
@@ -549,7 +553,7 @@ const FieldInputDate = ({
         disabled={disabled || readOnly}
         slotProps={{
           textField: {
-            id: path,
+            id: id,
             name: name,
             required: required,
             size: size,
@@ -631,13 +635,15 @@ interface FieldInputStringEnumProps
   extends FieldInputPropsWithSchema<string, StringSchema, MuiContext>,
           MuiContext {
   alias?: Record<string, string>;
+  labelId: string;
 }
 
 const FieldInputStringEnum = ({
   jsonSchema,
   alias,
   node,
-  path,
+  id,
+  labelId,
   name,
   required,
   disabled,
@@ -666,28 +672,29 @@ const FieldInputStringEnum = ({
   const [size, label] = useMemo(() => {
     return [
       sizeProp ?? context.size ?? 'medium',
-      jsonSchema.title ?? name,
+      jsonSchema.title ?? node.name,
     ];
-  }, [sizeProp, context.size, jsonSchema.title, name]);
+  }, [sizeProp, context.size, jsonSchema.title, node.name]);
 
   const { errorMessage } = useFieldErrors(node);
   const hasError = errorMessage != null;
 
   // 3️⃣ Render the RadioGroup
   return (
-    <FormControl error={hasError} required={required} disabled={disabled || readOnly} size={size}>
-      <FormLabel id={`label-${path}`}>{label}</FormLabel>
+    <FormControl component="fieldset" aria-labelledby={labelId} error={hasError} required={required} disabled={disabled || readOnly} size={size}>
+      <FormLabel component="legend" id={labelId}>{label}</FormLabel>
       <RadioGroup
-        aria-labelledby={`label-${path}`}
-        name={name}
+        aria-labelledby={labelId}
+        name={id}
         defaultValue={defaultValue ?? ''}
         onChange={handleChange}
       >
         {enumValues.map((value, index) => (
           <FormControlLabel
             key={value}
+            htmlFor={`${id}-${index}`}
             value={value}
-            control={<Radio />}
+            control={<Radio id={`${id}-${index}`} />}
             label={enumLabels[value] ?? value}
           />
         ))}
@@ -725,7 +732,7 @@ const FieldInputStringEnumSelect = ({
   jsonSchema,
   alias,
   node,
-  path,
+  id,
   name,
   required,
   disabled,
@@ -762,10 +769,10 @@ const FieldInputStringEnumSelect = ({
 
   return (
     <FormControl error={hasError} required={required} disabled={disabled || readOnly} size={size} fullWidth>
-      <InputLabel id={`label-${path}`}>{label}</InputLabel>
+      <InputLabel id={`label-${id}`}>{label}</InputLabel>
       <Select
-        labelId={`label-${path}`}
-        id={path}
+        labelId={`label-${id}`}
+        id={id}
         name={name}
         label={label}
         defaultValue={defaultValue ?? ''}

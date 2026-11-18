@@ -29,7 +29,7 @@ const FieldInputString = ({
     <TextField
       defaultValue={defaultValue}  // ✅ Uncontrolled
       onChange={handleChange}
-      id={props.path} name={props.name}
+      id={props.id} name={props.name}
       disabled={props.disabled || props.readOnly}
       required={props.required}
     />
@@ -65,7 +65,7 @@ const FieldInputEmail = ({
       onChange={handleChange}
       error={!isValid && (value?.length ?? 0) > 0}
       helperText={!isValid ? 'Invalid email' : ''}
-      id={props.path} name={props.name}
+      id={props.id} name={props.name}
       disabled={props.disabled || props.readOnly}
       required={props.required}
     />
@@ -199,7 +199,7 @@ const FieldInputDate = ({
         onChange={handleChange}
         slotProps={{
           textField: {
-            id: props.path, name: props.name,
+            id: props.id, name: props.name,
             required: props.required,
             disabled: props.disabled,
           },
@@ -225,7 +225,7 @@ const FieldInputDate = ({ ...props }: FieldInputDateProps) => {
           if (date === null) props.onChange(undefined);
           else if (date.isValid()) props.onChange(date.format('YYYY-MM-DD'));
         }}
-        slotProps={{ textField: { id: props.path, name: props.name, required: props.required } }}
+        slotProps={{ textField: { id: props.id, name: props.name, required: props.required } }}
       />
     </LocalizationProvider>
   );
@@ -248,7 +248,7 @@ When a UI library component uses a nested props structure:
 
 ```typescript
 const FieldInputDate = ({
-  path,
+  id,
   name,
   required,
   disabled,
@@ -265,7 +265,7 @@ const FieldInputDate = ({
       }}
       slotProps={{
         textField: {
-          id: path,
+          id: id,
           name,
           required,
           disabled,
@@ -285,7 +285,7 @@ const FieldInputDate = ({
 ```typescript
 import { Upload, Button as UploadButton } from 'antd';
 const FieldInputUpload = ({
-  path,
+  id,
   name,
   onChange,
   onFileAttach,
@@ -293,7 +293,7 @@ const FieldInputUpload = ({
 }: FieldInputUploadProps) => {
   return (
     <Upload
-      id={path}
+      id={id}
       name={name}
       maxCount={1}
       customRequest={({ file, onSuccess }) => {
@@ -330,7 +330,7 @@ const FieldInputStringEnum = ({
     <Select
       defaultValue={defaultValue ?? ''}
       onChange={handleChange}
-      id={props.path} name={props.name}
+      id={props.id} name={props.name}
       disabled={props.disabled || props.readOnly}
       required={props.required}
     >
@@ -362,7 +362,7 @@ const FieldInputString = ({
       onChange={(event) => onChange(event.target.value === '' ? undefined : event.target.value)}
       error={hasError}
       helperText={errorMessage}
-      id={props.path} name={props.name}
+      id={props.id} name={props.name}
       disabled={props.disabled || props.readOnly}
       required={props.required}
     />
@@ -394,7 +394,7 @@ const FieldInputBoolean = ({
   }, [hideLabel, labelProp, jsonSchema, name]);
   return (
     <FormControlLabel
-      control={<Checkbox id={props.path} name={name} checked={value ?? false} disabled={props.disabled || props.readOnly} onChange={(event) => onChange(event.target.checked)} />}
+      control={<Checkbox id={props.id} name={name} checked={value ?? false} disabled={props.disabled || props.readOnly} onChange={(event) => onChange(event.target.checked)} />}
       label={label}
     />
   );
@@ -408,7 +408,7 @@ import { useFieldErrors } from '@canard/schema-form';
 
 const FieldInputString = ({
   node,
-  path,
+  id,
   name,
   required,
   defaultValue,
@@ -417,12 +417,12 @@ const FieldInputString = ({
 }: FieldInputStringProps) => {
   const { errorMessage } = useFieldErrors(node);
   const hasError = errorMessage != null;
-  const describedBy = hasError ? `${path}-error` : undefined;
+  const describedBy = hasError ? `${id}-error` : undefined;
 
   return (
     <>
       <TextField
-        id={path}
+        id={id}
         name={name}
         required={required}
         aria-invalid={hasError}
@@ -433,7 +433,7 @@ const FieldInputString = ({
         disabled={props.disabled || props.readOnly}
       />
       {hasError && (
-        <FormHelperText id={`${path}-error`} error>
+        <FormHelperText id={`${id}-error`} error>
           {errorMessage}
         </FormHelperText>
       )}
