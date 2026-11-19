@@ -307,7 +307,7 @@ When you run `/create-canard-plugin <UI_LIBRARY_NAME>`, Claude will:
   - Verify context delivery
   - Verify event handling
 
-Use the core-supplied `FieldInputProps.id` on the actual control and the same value for a single-control label's `htmlFor`. Keep `path` for data lookup. Group titles use `FieldRendererProps.labelId` and `aria-labelledby`, each option has its own id, and native radio names use the scoped input id; other inputs keep their leaf names.
+Inputs receive `inputId`, `labelId`, and `getInputId(key)` from the core; renderers receive `inputId` and `labelId`. Put `inputId` on the primary control and use it for a single-control label's `htmlFor`. A group references the field title through `labelId` and `aria-labelledby`; exactly one component draws that title. An input-owned label uses `getInputId(key)`, never `labelId`. Every additional element uses `getInputId(key)` with a required, distinct key. Native radio groups use `inputId` as their `name`; other inputs keep their leaf names, and `path` remains the data pointer. Ids are opaque and document-wide: never concatenate onto, decode, or parse them, including across separate Forms.
 
 ## Shared value and presentation contracts
 
@@ -333,10 +333,10 @@ interface ChakraContext {
 }
 
 const FieldInputString = ({
-  id, name, value, onChange, context, required, disabled, readOnly,
+  inputId, name, value, onChange, context, required, disabled, readOnly,
 }: FieldInputProps<string, ChakraContext>) => (
   <Input
-    id={id}
+    id={inputId}
     name={name}
     value={value ?? ''}
     onChange={(event) => onChange(event.target.value === '' ? undefined : event.target.value)}

@@ -18,7 +18,7 @@ description: "Expert at verifying compatibility between a UI library and an @can
 
 ## Control identifier contract
 
-The core supplies `FieldInputProps.id` scoped to each Form. Put it on the actual focusable control and use it for a single-control label's `htmlFor`; `path` remains the JSON Pointer for data access. A group renderer uses `FieldRendererProps.labelId` on its title or legend and `aria-labelledby` on the group. If the input draws that title itself, the renderer forwards `labelId` through `<Input labelId={labelId} />`; do not draw a second title with the same id. Give each option a distinct id derived from the supplied input id. Radio inputs use the scoped id as their native `name`; other inputs retain their leaf names. Labels and ARIA references are document-wide, including across separate Forms.
+Inputs receive `inputId`, `labelId`, and `getInputId(key)` from the core; renderers receive `inputId` and `labelId`. Put `inputId` on the primary control and use it for a single-control label's `htmlFor`. A group references the field title through `labelId` and `aria-labelledby`; exactly one component draws that title. An input-owned label uses `getInputId(key)`, never `labelId`. Every additional element uses `getInputId(key)` with a required, distinct key. Native radio groups use `inputId` as their `name`; other inputs keep their leaf names, and `path` remains the data pointer. Ids are opaque and document-wide: never concatenate onto, decode, or parse them, including across separate Forms.
 
 ## Role
 You are an expert at verifying compatibility between a UI library and an @canard/schema-form plugin, and at designing the project structure.
@@ -223,12 +223,12 @@ const formatError: FormatError = (error, node, context) => {
 
 ```typescript
 <TextField
-  id={id}                          // ✅ Unique ID
+  id={inputId}                          // ✅ Unique ID
   name={name}                        // ✅ name attribute
   required={required}                // ✅ required
   aria-required={required}           // ✅ ARIA required
   aria-invalid={hasError}            // ✅ ARIA invalid
-  aria-describedby={`${id}-error`} // ✅ Error association
+  aria-describedby={getInputId('error')} // ✅ Error association
 />
 ```
 
@@ -247,7 +247,7 @@ const formatError: FormatError = (error, node, context) => {
 ```typescript
 <DatePicker
   slotProps={{
-    textField: { id, name, required, disabled },
+    textField: { id: inputId, name, required, disabled },
   }}
 />
 ```
@@ -265,7 +265,7 @@ const formatError: FormatError = (error, node, context) => {
 
 ```typescript
 // ✅ Correct
-<Input id={id} name={name} />
+<Input id={inputId} name={name} />
 
 // ❌ Do not use
 <Form.Item label="Name">
@@ -278,9 +278,9 @@ const formatError: FormatError = (error, node, context) => {
 **FormControl wrapping**:
 ```typescript
 <FormControl isRequired={required} isInvalid={hasError}>
-  <FormLabel htmlFor={id}>{label}</FormLabel>
-  <Input id={id} name={name} />
-  {hasError && <FormErrorMessage>{errorMessage}</FormErrorMessage>}
+  <FormLabel id={getInputId('label')} htmlFor={inputId}>{label}</FormLabel>
+  <Input id={inputId} name={name} />
+  {hasError && <FormErrorMessage id={getInputId('error')}>{errorMessage}</FormErrorMessage>}
 </FormControl>
 ```
 
@@ -386,7 +386,7 @@ MUI DatePicker uses TextField internally. With AdapterDayjs, pass Dayjs values a
   }}
   slotProps={{
     textField: {
-      id: id,
+      id: inputId,
       name: name,
       required: required,
       disabled: disabled,
@@ -449,13 +449,13 @@ const FieldRenderer = ({ depth, Input }: FieldRendererProps) => {
 **TextField**:
 ```typescript
 <TextField
-  id={id}                          // ✅ Unique ID (WCAG 4.1.1)
+  id={inputId}                          // ✅ Unique ID (WCAG 4.1.1)
   name={name}                        // ✅ name attribute
   label={label}                      // ✅ Label (WCAG 1.3.1)
   required={required}                // ✅ required (WCAG 3.3.2)
   error={hasError}                   // ✅ error state
   helperText={errorMessage}          // ✅ Error message (WCAG 3.3.1)
-  aria-describedby={`${id}-helper`} // ✅ Helper text association
+  aria-describedby={getInputId('helper')} // ✅ Helper text association
 />
 ```
 
@@ -464,7 +464,7 @@ const FieldRenderer = ({ depth, Input }: FieldRendererProps) => {
 <FormControlLabel
   control={
     <Checkbox
-      id={id}
+      id={inputId}
       name={name}
       checked={value ?? false}
       required={required}
@@ -591,7 +591,7 @@ Do **not use** Ant Design's Form.Item. @canard/schema-form manages form layout a
 
 // ✅ Correct approach (use the component only)
 <Input
-  id={id}
+  id={inputId}
   name={name}
   defaultValue={defaultValue}
   onChange={(e) => onChange(e.target.value)}
@@ -633,10 +633,10 @@ import dayjs, { type Dayjs } from 'dayjs';
 import type { FieldInputProps } from '@canard/schema-form';
 import { DatePicker } from 'antd';
 
-function FieldInputDate({ id, name, readOnly, disabled, defaultValue, onChange }: FieldInputProps<string>) {
+function FieldInputDate({ inputId, name, readOnly, disabled, defaultValue, onChange }: FieldInputProps<string>) {
   return (
     <DatePicker
-      id={id}
+      id={inputId}
       name={name}
       disabled={disabled || readOnly}
       defaultValue={defaultValue ? dayjs(defaultValue) : null}
@@ -728,11 +728,11 @@ Ant Design v5 handles most accessibility attributes automatically, but some must
 **Input**:
 ```typescript
 <Input
-  id={id}                    // ✅ Unique ID
+  id={inputId}                    // ✅ Unique ID
   name={name}                  // ✅ name attribute
   aria-required={required}     // ⚠️ Manual addition required
   aria-invalid={hasError}      // ⚠️ Manual addition required
-  aria-describedby={hasError ? `${id}-error` : undefined}  // ⚠️ Manual
+  aria-describedby={hasError ? getInputId('error') : undefined}  // ⚠️ Manual
   status={hasError ? 'error' : undefined}
 />
 ```
@@ -740,7 +740,7 @@ Ant Design v5 handles most accessibility attributes automatically, but some must
 **Checkbox**:
 ```typescript
 <Checkbox
-  id={id}
+  id={inputId}
   name={name}
   checked={value ?? false}
   aria-required={required}     // ⚠️ Manual addition required
@@ -752,7 +752,7 @@ Ant Design v5 handles most accessibility attributes automatically, but some must
 **Select**:
 ```typescript
 <Select
-  id={id}
+  id={inputId}
   defaultValue={defaultValue}
   onChange={onChange}
   aria-required={required}     // ⚠️ Manual addition required
@@ -894,7 +894,7 @@ import {
 import { useFieldErrors, type FieldInputProps } from '@canard/schema-form';
 
 function FieldInputString(props: FieldInputProps<string>) {
-  const { node, id, name, jsonSchema, required, value, onChange } = props;
+  const { node, inputId, getInputId, name, jsonSchema, required, value, onChange } = props;
 
   const label = jsonSchema.title || name;
   const { errorMessage } = useFieldErrors(node);
@@ -902,14 +902,14 @@ function FieldInputString(props: FieldInputProps<string>) {
 
   return (
     <FormControl isRequired={required} isInvalid={hasError}>
-      <FormLabel htmlFor={id}>{label}</FormLabel>
+      <FormLabel id={getInputId('label')} htmlFor={inputId}>{label}</FormLabel>
       <Input
-        id={id}
+        id={inputId}
         name={name}
         value={value ?? ''}
         onChange={(e) => onChange(e.target.value === '' ? undefined : e.target.value)}
       />
-      {hasError && <FormErrorMessage>{errorMessage}</FormErrorMessage>}
+      {hasError && <FormErrorMessage id={getInputId('error')}>{errorMessage}</FormErrorMessage>}
       {jsonSchema.description && (
         <FormHelperText>{jsonSchema.description}</FormHelperText>
       )}
@@ -939,7 +939,7 @@ import { NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepp
   min={jsonSchema.minimum}
   max={jsonSchema.maximum}
 >
-  <NumberInputField id={id} name={name} />
+  <NumberInputField id={inputId} name={name} />
   <NumberInputStepper>
     <NumberIncrementStepper />
     <NumberDecrementStepper />
