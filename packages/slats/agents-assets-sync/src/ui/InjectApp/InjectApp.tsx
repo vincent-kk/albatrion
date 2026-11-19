@@ -27,7 +27,13 @@ export function InjectApp(props: InjectAppProps): React.ReactElement {
   const { targets, flags, originCwd, onExit } = props;
   const [phase, dispatch] = usePhase({ kind: 'resolving', targets });
 
-  useInjectSession({ targets, flags, originCwd, dispatch });
+  useInjectSession({
+    targets,
+    flags,
+    originCwd,
+    dispatch,
+    result: props.result,
+  });
 
   const handleExit = useCallback(
     (code: 0 | 1 | 2) => {
@@ -82,8 +88,8 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
         <Box flexDirection="column">
           <Spinner label="building plans…" />
           <Box flexDirection="column" marginLeft={2} marginTop={1}>
-            {[...phase.progress.values()].map((step) => (
-              <Box key={`${step.agent}:${step.packageName}`}>
+            {[...phase.progress.entries()].map(([key, step]) => (
+              <Box key={key}>
                 <Text
                   color={
                     step.status === 'done'
@@ -158,7 +164,7 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
               <TargetCard
                 key={tp.key}
                 agent={tp.agentTarget.agent}
-              target={tp.target}
+                target={tp.target}
                 plan={tp.plan}
                 expanded={false}
               />
@@ -182,10 +188,7 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
           {phase.plans
             .filter((tp) => tp.error)
             .map((tp) => (
-              <Text
-                key={`${tp.target.name}:${tp.agentTarget.agent}`}
-                color={colors.danger}
-              >
+              <Text key={tp.key} color={colors.danger}>
                 {tp.target.name}: {tp.error}
               </Text>
             ))}

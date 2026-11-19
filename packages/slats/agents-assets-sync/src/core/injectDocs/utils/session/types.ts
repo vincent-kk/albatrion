@@ -1,12 +1,18 @@
 import type { ConsumerPackage, DefaultFlags } from '../../../../types/index.js';
-import type { AgentTarget, AgentType, AssetKind } from '../../../agentTarget/index.js';
-import type { Scope } from '../../../scope/index.js';
+import type {
+  AgentTarget,
+  AgentType,
+  AssetKind,
+} from '../../../agentTarget/index.js';
 import type { InjectPlan } from '../../../buildPlan/index.js';
+import type { Scope } from '../../../scope/index.js';
 import type { InjectReport } from '../../type.js';
 
 /** One stable unit of a run, shared by every output view. */
 export interface RunUnit {
   readonly key: string;
+  /** Earlier unit that owns this same destination; this alias has no actions. */
+  readonly aliasOf?: string;
   readonly target: ConsumerPackage;
   readonly agentTarget: AgentTarget;
   readonly plan: InjectPlan;
@@ -37,3 +43,6 @@ export interface RunInput {
   readonly confirm?: (units: readonly RunUnit[]) => Promise<boolean>;
   readonly onPlan?: (units: readonly RunUnit[], values: ValidatedFlags) => void;
 }
+
+/** Legacy prepared input can omit its identity; core supplies it once. */
+export type PreparedUnit = Omit<RunUnit, 'key'> & { readonly key?: string };

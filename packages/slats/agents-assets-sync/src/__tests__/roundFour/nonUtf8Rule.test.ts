@@ -1,10 +1,3 @@
-// r4-agents-assets-sync, angle RG1 on round 3 item 1: the fix made the apply
-// path a byte view (latin1), but the plan-time reader
-// (core/buildPlan/utils/readDocument.ts) still decodes AGENTS.md as UTF-8.
-// A rule source that is not valid UTF-8 is written byte for byte, then read
-// back with U+FFFD and judged diverged on every later run. src/DETAIL.md:96-97
-// promises idempotent repeated runs and that a run after --force settles.
-// Public API: `runCli`.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -23,7 +16,6 @@ afterEach(() => {
 });
 
 const SOURCES: readonly (readonly [label: string, body: Buffer])[] = [
-  // "# Café rules\n- Écrire en français.\n" saved in Windows-1252.
   [
     'Windows-1252',
     Buffer.concat([
@@ -36,7 +28,6 @@ const SOURCES: readonly (readonly [label: string, body: Buffer])[] = [
       Buffer.from('ais.\n'),
     ]),
   ],
-  // "# 규칙\n" saved in CP949 (Korean Windows ANSI).
   [
     'CP949',
     Buffer.concat([

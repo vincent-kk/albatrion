@@ -1,7 +1,3 @@
-// r4-agents-assets-sync, angle RG1 on round 3 item 7: the fix limited the
-// dot-name refusal to skill *directories* (core/DETAIL.md:10,
-// core/agentTarget/DETAIL.md:14), yet a placeholder file directly under
-// `skills/` is still refused, which aborts the whole unit. Public API: `runCli`.
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 

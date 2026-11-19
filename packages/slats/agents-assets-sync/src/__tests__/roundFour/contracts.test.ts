@@ -22,9 +22,10 @@ const requireFromHere = createRequire(__filename);
 
 /** Named imports of the first fenced block that imports the package entry. */
 const importedNames = (markdown: string) => {
-  const block = /import\s*\{([^}]*)\}\s*from\s*'@slats\/agents-assets-sync';/.exec(
-    markdown,
-  );
+  const block =
+    /import\s*\{([^}]*)\}\s*from\s*'@slats\/agents-assets-sync';/.exec(
+      markdown,
+    );
   if (!block) throw new Error('no programmatic API import found');
   return block[1]
     .split(',')
@@ -34,7 +35,9 @@ const importedNames = (markdown: string) => {
 
 describe('r4-contracts agents-assets-sync documented imports', () => {
   it('control: every name in the English README Programmatic API import is exported', () => {
-    const names = importedNames(readFileSync(join(packageDir, 'README.md'), 'utf8'));
+    const names = importedNames(
+      readFileSync(join(packageDir, 'README.md'), 'utf8'),
+    );
     expect(names.filter((name) => !(name in entry))).toEqual([]);
   });
 
@@ -67,20 +70,25 @@ describe('r4-contracts site guidance for --scope=project', () => {
   });
 
   it('--scope=project prioritizes the root marker over a nearer agent directory', () => {
-    const outer = realpathSync(mkdtempSync(join(tmpdir(), 'r4-contracts-scope-')));
+    const outer = realpathSync(
+      mkdtempSync(join(tmpdir(), 'r4-contracts-scope-')),
+    );
     mkdirSync(join(outer, '.git'));
     const member = join(outer, 'apps', 'web');
     mkdirSync(join(member, '.claude'), { recursive: true });
-    // A workspace member that already owns .claude, inside a repository root.
     const { projectRoot } = resolveProjectRoot('project', member);
     expect(projectRoot).toBe(outer);
   });
 
   it('control: without a root marker the nearest existing .claude is chosen', () => {
-    const outer = realpathSync(mkdtempSync(join(tmpdir(), 'r4-contracts-scope-')));
+    const outer = realpathSync(
+      mkdtempSync(join(tmpdir(), 'r4-contracts-scope-')),
+    );
     const member = join(outer, 'apps', 'web');
     mkdirSync(join(member, '.claude'), { recursive: true });
-    expect(resolveProjectRoot('project', join(member)).projectRoot).toBe(member);
+    expect(resolveProjectRoot('project', join(member)).projectRoot).toBe(
+      member,
+    );
   });
 });
 
@@ -127,13 +135,21 @@ describe('r4-contracts CommonJS consumer of an ESM-only export map', () => {
       ['-e', "require('@slats/agents-assets-sync')"],
       { cwd: root, encoding: 'utf8' },
     );
-    const typeScript = consumerDiagnostics.length === 0 ? 'accepted' : 'rejected';
+    const typeScript =
+      consumerDiagnostics.length === 0 ? 'accepted' : 'rejected';
     const node =
       runtime.status === 0
         ? 'accepted'
         : `rejected ${/ERR_[A-Z_]+/.exec(runtime.stderr)?.[0] ?? ''}`;
-    expect({ typeScript, node }).toEqual({ typeScript: 'accepted', node: 'rejected ERR_PACKAGE_PATH_NOT_EXPORTED' });
-    expect(readFileSync(join(packageDir, 'README.md'), 'utf8')).toContain('ESM-only');
-    expect(readFileSync(join(packageDir, 'README-ko_kr.md'), 'utf8')).toContain('ESM 전용');
+    expect({ typeScript, node }).toEqual({
+      typeScript: 'accepted',
+      node: 'rejected ERR_PACKAGE_PATH_NOT_EXPORTED',
+    });
+    expect(readFileSync(join(packageDir, 'README.md'), 'utf8')).toContain(
+      'ESM-only',
+    );
+    expect(readFileSync(join(packageDir, 'README-ko_kr.md'), 'utf8')).toContain(
+      'ESM 전용',
+    );
   });
 });

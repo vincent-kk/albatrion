@@ -23,10 +23,18 @@ export async function replaceDocument(
 ): Promise<void> {
   const destination = await realpath(fileAbs).catch(
     (error: NodeJS.ErrnoException) => {
-      if (error.code === 'ENOENT') return lstat(fileAbs).then(entry => {
-        if (entry.isSymbolicLink()) throw new Error(`Dangling document link: ${fileAbs}`);
-        return fileAbs;
-      }, (failure: NodeJS.ErrnoException) => { if (failure.code === 'ENOENT') return fileAbs; throw failure; });
+      if (error.code === 'ENOENT')
+        return lstat(fileAbs).then(
+          (entry) => {
+            if (entry.isSymbolicLink())
+              throw new Error(`Dangling document link: ${fileAbs}`);
+            return fileAbs;
+          },
+          (failure: NodeJS.ErrnoException) => {
+            if (failure.code === 'ENOENT') return fileAbs;
+            throw failure;
+          },
+        );
       throw error;
     },
   );
@@ -38,7 +46,8 @@ export async function replaceDocument(
       throw error;
     },
   );
-  if (mode !== undefined && (mode & 0o222) === 0) throw new Error(`Document is read-only: ${fileAbs}`);
+  if (mode !== undefined && (mode & 0o222) === 0)
+    throw new Error(`Document is read-only: ${fileAbs}`);
   const temporary = await mkdtemp(
     join(dirname(destination), '.agents-assets-sync-'),
   );

@@ -1,26 +1,19 @@
-// r4-agents-assets-sync, angles EQ10 and EQ9, and the round 2 open lead
-// (bug-bounty/round-2/slats-agents-assets-sync.md:80): two packages of one
-// scope alias that ship files under the same `skills/<name>/` namespace.
-// The terminal path plans every unit before applying any, while the plain and
-// --json paths plan and apply one unit at a time. src/DETAIL.md:5 keeps the
-// exit code independent of the output mode; src/DETAIL.md:96 says the run
-// after --force settles.
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { render } from 'ink-testing-library';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { renderJSON } from '../../commands/runCli/renderers/renderJSON.js';
-import { renderPlain } from '../../commands/runCli/renderers/renderPlain.js';
-import type { ConsumerPackage, DefaultFlags } from '../../types/index.js';
-import { InjectApp } from '../../ui/InjectApp/InjectApp.js';
 import {
   consumerOf,
   installPackage,
   makeRoot,
   removeRoot,
 } from '../../__tests__/roundThree/fixture.js';
+import { renderJSON } from '../../commands/runCli/renderers/renderJSON.js';
+import { renderPlain } from '../../commands/runCli/renderers/renderPlain.js';
+import type { ConsumerPackage, DefaultFlags } from '../../types/index.js';
+import { InjectApp } from '../../ui/InjectApp/InjectApp.js';
 
 const roots: string[] = [];
 afterEach(() => {

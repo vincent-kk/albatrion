@@ -1,8 +1,3 @@
-// r4-agents-assets-sync, angle BS4: block markers in lexical contexts the
-// scanner does not tell apart. README.md:60 promises that everything outside
-// the tool's own blocks — other tools' blocks and hand-written prose — is
-// carried through byte for byte, and src/DETAIL.md:97 that a repeated run is
-// idempotent. Public API: `runCli` in-process (non-TTY, so the plain renderer).
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -24,8 +19,6 @@ afterEach(() => {
 const RULE = 'rules/schema-form-rule.md';
 const RULE_BODY = '# schema-form rule\n\nAlways use the real rule.\n';
 
-// The marker example from packages/slats/agents-assets-sync/README.md:54-58,
-// quoted verbatim inside a fenced code block of the user's own AGENTS.md.
 const FENCED_README_EXAMPLE = [
   '# Team agent notes',
   '',
@@ -82,9 +75,7 @@ describe('marker text inside a fenced code block is user prose', () => {
     expect({
       code,
       proseKept: after.startsWith(FENCED_README_EXAMPLE),
-      // The rule must land outside the user's fence, after the closing ```.
-      ruleAfterFence:
-        after.lastIndexOf(RULE_BODY) > after.lastIndexOf('```'),
+      ruleAfterFence: after.lastIndexOf(RULE_BODY) > after.lastIndexOf('```'),
     }).toEqual({ code: 0, proseKept: true, ruleAfterFence: true });
   });
 
@@ -121,8 +112,6 @@ describe('duplicated blocks', () => {
     ].join(eol);
 
   it('an upgrade with --force leaves no stale copy of a duplicated block behind', async () => {
-    // A CRLF AGENTS.md as the pre-fix tool (round 1 item 4) left it: the
-    // original CRLF block plus the LF copy it appended on the next run.
     const prose = `# Notes\r\n\r\n${block(OLD, '\r\n')}`;
     const root = setup(`${prose}${block(OLD, '\n')}`, '2.0.0', NEW);
     const forced = await runCliCode(args(root, '--force', '--yes'));
@@ -150,4 +139,3 @@ describe('duplicated blocks', () => {
     }).toEqual({ rerun: 0, staleRuleLeft: false });
   });
 });
-

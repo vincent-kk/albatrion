@@ -20,7 +20,7 @@ yarn dev:ui --tour   # cycle through all Ink phases with fixture data
 - `.` (main barrel, ESM-only)
   - `runCli(argv: string[]): Promise<void>` — dispatcher entry. Parses `--package <name...>` from argv (variadic: repeat or comma-separate). Each value is a scope alias (`@<scope>`), a scoped package (`@<scope>/<name>`), or an unscoped package (`<name>`).
   - Core primitives re-exported: `readHashManifest`, `computeNamespacePrefixes`, `resolveProjectRoot`, `resolveAgentTarget`, `resolveDestinations`, `formatBlockId`, `parseBlocks`, `isValidScope`, `isValidAgent`, `MARKER_PREFIX`, `PROJECT_ANCHORS`, `PROJECT_ROOT_MARKERS`, `HASH_MANIFEST_FILENAME`
-  - No `injectDocs` orchestrator — both renderers (Ink `ui/` and plain `renderPlain`) compose primitives directly.
+  - The internal core computes one run-wide plan and result; output views do not compose execution primitives.
 - `./buildHashes` — `buildHashes(options?)` produces `<packageRoot>/dist/agents-hashes.json`.
 - `./package.json` — the manifest itself. The dispatcher reads every target's `{ name, version, agents.assetPath }` through `createRequire(...).resolve()`, and an ESM-only package exposes nothing to `createRequire` unless it exports this subpath — so gating it would make this engine the one package its own CLI cannot inject.
 
@@ -97,12 +97,7 @@ The shape mirrors the `FILID:` / `SEIRI:` markers such files already carry. Cont
 
 ## Render Paths
 
-The core prepares one run-wide plan, merges managed skill namespaces, and executes it once. Plain, JSON and terminal views display that model; input screens only supply missing arguments and confirmation responses. General orchestrator objects and per-renderer planning or writes are forbidden because they make output mode affect behavior.
-
-
-- **TTY + no `--json`**: `renderOrFallback` dynamic-imports `src/ui/index.js` and calls `renderInjectApp(input)`. The Ink app composes `core/**` primitives through `useInjectSession` + per-step hooks (`useResolveStep`, `usePlanStep`, `useForceConfirmStep`, `useApplyStep`).
-- **Non-TTY or `--json`**: `renderOrFallback` calls `renderPlain(targets, flags, originCwd)` which composes the same `core/**` primitives with picocolors text output.
-- Both paths share the same primitives; no `injectDocs(opts)` orchestrator in between.
+The core validates completed arguments, prepares all units before writing, merges shared namespaces, and applies the plan once. The plain and JSON compatibility entry functions delegate to that core and display its result. The terminal session supplies missing arguments and confirmation answers to the same function. Input views never plan, validate independently, or write. General orchestrator objects and per-renderer primitive pipelines are forbidden because they make output format affect behavior.
 
 ## Consumer Integration Pattern
 

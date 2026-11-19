@@ -11,7 +11,6 @@
 // The caller owns all package metadata. This function does not read
 // package.json — consumers parse their own manifest and pass a ready-made
 // set of values so the library stays free of field-shape assumptions.
-
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
@@ -56,7 +55,8 @@ export async function buildHashes(opts) {
   }
   const assetRoot = resolve(packageRoot, assetPath);
   const entry = await stat(assetRoot);
-  if (!entry.isDirectory()) throw new Error(`Asset root is not a directory: ${assetRoot}`);
+  if (!entry.isDirectory())
+    throw new Error(`Asset root is not a directory: ${assetRoot}`);
   const files = {};
   for await (const abs of walk(assetRoot)) {
     const rel = toPosix(relative(assetRoot, abs));
