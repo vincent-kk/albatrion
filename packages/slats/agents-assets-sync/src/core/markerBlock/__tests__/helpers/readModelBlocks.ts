@@ -1,4 +1,8 @@
-/** Read generated Markdown using the contract's line/event states, without production parsing. */
+/** Read generated Markdown using the contract's independent line/event states.
+ * @param document Generated Markdown with supported closed fence/comment contexts.
+ * @returns Owned identifiers and their unchanged body bytes in document order.
+ * @throws When a generated marker, block, fence or comment boundary is ambiguous.
+ */
 export function readModelBlocks(
   document: string,
 ): { blockId: string; body: string }[] {

@@ -37,7 +37,8 @@ export async function computeHashManifest(
     const snapshot = await readSourceSnapshot(abs, sourceSnapshots);
     if (!snapshot) throw new Error(`Source file missing: ${abs}`);
     files[relPath] = snapshot.rawHash;
-    if (relPath.startsWith('rules/')) ruleBodyHashes[relPath] = snapshot.bodyHash;
+    if (relPath.startsWith('rules/'))
+      ruleBodyHashes[relPath] = snapshot.bodyHash;
   }
   return {
     schemaVersion: 1,

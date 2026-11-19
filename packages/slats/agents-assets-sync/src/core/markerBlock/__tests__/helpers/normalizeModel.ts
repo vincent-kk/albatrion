@@ -1,4 +1,8 @@
-/** Execute the contract as a character machine, preserving every non-boundary byte. */
+/** Execute the contract as a character machine, preserving non-boundary bytes.
+ * @param input Text or a reversible Latin-1 view of generated source bytes.
+ * @param stripHeader Whether the single file-header BOM participates in normalization.
+ * @returns The contract's LF reading, with every other character preserved.
+ */
 export function normalizeModel(input: string, stripHeader = true): string {
   const characters = Array.from(input);
   if (stripHeader) {

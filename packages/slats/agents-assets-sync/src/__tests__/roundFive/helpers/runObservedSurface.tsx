@@ -10,7 +10,12 @@ import { runCli } from '../../../index.js';
 import { InjectApp } from '../../../ui/InjectApp/InjectApp.js';
 import * as ui from '../../../ui/index.js';
 
-/** Observe the public CLI and real renderer without silencing or replacing its result. */
+/** Observe the public CLI and real renderer without replacing its result.
+ * @param mode Actual renderer selected through CLI output and TTY inputs.
+ * @param root Temporary project used for scope and package discovery.
+ * @param args Complete scenario options except the shared surface options.
+ * @returns Exit code and final model with the temporary root normalized.
+ */
 export async function runObservedSurface(
   mode: 'plain' | 'json' | 'ink',
   root: string,

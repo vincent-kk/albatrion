@@ -89,10 +89,20 @@ export async function prepareUnits(
       try {
         if ('error' in manifest) throw manifest.error;
         const prefixes = computeNamespacePrefixes(manifest.value);
-        base.namespaceRoots = await Promise.all(Object.entries(agentTarget.directoryRoots).flatMap(([kind, root]) => {
-          if (!root) return [];
-          return kind === 'skills' ? prefixes.map((prefix) => join(root, prefix.slice('skills/'.length))) : [root];
-        }).map((root) => resolveCanonicalPath(root, physicalPaths).catch(() => root)));
+        base.namespaceRoots = await Promise.all(
+          Object.entries(agentTarget.directoryRoots)
+            .flatMap(([kind, root]) => {
+              if (!root) return [];
+              return kind === 'skills'
+                ? prefixes.map((prefix) =>
+                    join(root, prefix.slice('skills/'.length)),
+                  )
+                : [root];
+            })
+            .map((root) =>
+              resolveCanonicalPath(root, physicalPaths).catch(() => root),
+            ),
+        );
         const { destinations, orphanScans } = resolveDestinations({
           agentTarget,
           packageName: target.name,
