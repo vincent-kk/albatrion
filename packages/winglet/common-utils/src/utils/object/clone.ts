@@ -10,6 +10,7 @@ import { isSharedArrayBuffer } from '@/common-utils/utils/filter/isSharedArrayBu
 import { isTypedArray } from '@/common-utils/utils/filter/isTypedArray';
 
 import { getSymbols } from './getSymbols';
+import { constructBuiltin } from './utils/clone/constructBuiltin';
 import { copyForeignBuiltin } from './utils/clone/copyForeignBuiltin/copyForeignBuiltin';
 import { getPrototypeProfile } from './utils/clone/getPrototypeProfile';
 import { replicateBox } from './utils/clone/replicateBox';
@@ -264,7 +265,8 @@ const replicate = (
   depth = depth + 1;
 
   if (isArray(value)) {
-    const result = new Array(value.length);
+    const prototype = getPrototypeOf(value);
+    const result = prototype === Array.prototype ? new Array(value.length) : constructBuiltin(Array, [value.length], prototype);
     cache.set(value, result);
     for (let i = 0, l = value.length; i < l; i++)
       if (i in value) result[i] = replicate(value[i], limit, depth, cache);
@@ -280,23 +282,26 @@ const replicate = (
   }
 
   if (value instanceof Date) {
-    const result = new Date(value.getTime());
+    const prototype = getPrototypeOf(value);
+    const result = prototype === Date.prototype ? new Date(value.getTime()) : constructBuiltin(Date, [Date.prototype.getTime.call(value)], prototype);
     cache.set(value, result);
     return result;
   }
 
   if (value instanceof RegExp) {
-    const result = new RegExp(value.source, value.flags);
+    const prototype = getPrototypeOf(value);
+    const result = prototype === RegExp.prototype ? new RegExp(value.source, value.flags) : constructBuiltin(RegExp, [Object.getOwnPropertyDescriptor(RegExp.prototype, 'source')!.get!.call(value), value.flags], prototype);
     result.lastIndex = value.lastIndex;
     cache.set(value, result);
     return result;
   }
 
   if (value instanceof Map) {
-    const result = new Map();
+    const prototype = getPrototypeOf(value);
+    const result = prototype === Map.prototype ? new Map() : constructBuiltin(Map, [], prototype);
     cache.set(value, result);
     for (const entry of value)
-      result.set(
+      Map.prototype.set.call(result,
         replicate(entry[0], limit, depth, cache),
         replicate(entry[1], limit, depth, cache),
       );
@@ -304,9 +309,10 @@ const replicate = (
   }
 
   if (value instanceof Set) {
-    const result = new Set();
+    const prototype = getPrototypeOf(value);
+    const result = prototype === Set.prototype ? new Set() : constructBuiltin(Set, [], prototype);
     cache.set(value, result);
-    for (const key of value) result.add(replicate(key, limit, depth, cache));
+    for (const key of value) Set.prototype.add.call(result, replicate(key, limit, depth, cache));
     return result;
   }
 
@@ -411,15 +417,15 @@ const replicate = (
     const foreign = builtin ? copyForeignBuiltin(value, tag) : undefined;
     if (foreign !== undefined) {
       cache.set(value, foreign);
-      if (foreign instanceof Map) {
+      if (tag === '[object Map]') {
         for (const [key, item] of Map.prototype.entries.call(value))
-          foreign.set(
+          Map.prototype.set.call(foreign,
             replicate(key, limit, depth, cache),
             replicate(item, limit, depth, cache),
           );
-      } else if (foreign instanceof Set) {
+      } else if (tag === '[object Set]') {
         for (const item of Set.prototype.values.call(value))
-          foreign.add(replicate(item, limit, depth, cache));
+          Set.prototype.add.call(foreign, replicate(item, limit, depth, cache));
       } else if (Object.prototype.toString.call(foreign) === '[object Error]') {
         for (const key of ['cause', 'errors'])
           if (hasOwnProperty(value, key))

@@ -1,3 +1,4 @@
+import { constructBuiltin } from '../constructBuiltin';
 import { copyForeignError } from './utils/copyForeignError';
 
 /**
@@ -14,19 +15,19 @@ export const copyForeignBuiltin = (
   try {
     switch (tag) {
       case '[object Date]':
-        return new Date(Date.prototype.getTime.call(value));
+        return constructBuiltin(Date, [Date.prototype.getTime.call(value)], Object.getPrototypeOf(value));
       case '[object Map]':
         Map.prototype.has.call(value, undefined);
-        return new Map();
+        return constructBuiltin(Map, [], Object.getPrototypeOf(value));
       case '[object Set]':
         Set.prototype.has.call(value, undefined);
-        return new Set();
+        return constructBuiltin(Set, [], Object.getPrototypeOf(value));
       case '[object RegExp]': {
         const source = Object.getOwnPropertyDescriptor(
           RegExp.prototype,
           'source',
         )!.get!.call(value);
-        const copy = new RegExp(source, Reflect.get(value, 'flags'));
+        const copy = constructBuiltin(RegExp, [source, Reflect.get(value, 'flags')], Object.getPrototypeOf(value));
         copy.lastIndex = Reflect.get(value, 'lastIndex');
         return copy;
       }
