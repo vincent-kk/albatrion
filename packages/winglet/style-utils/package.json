@@ -120,6 +120,8 @@
     "build:verify:types": "node ../../aileron/script/build/verifyDeclarations.mjs"
   },
   "devDependencies": {
+    "@csstools/css-parser-algorithms": "3.0.5",
+    "@csstools/css-tokenizer": "3.0.4",
     "@slats/agents-assets-sync": "workspace:^",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
