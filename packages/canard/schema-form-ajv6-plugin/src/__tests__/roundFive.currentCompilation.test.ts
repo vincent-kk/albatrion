@@ -14,6 +14,28 @@ const compilerFor = (source: InstanceType<typeof Ajv>, entry: typeof entries[num
 };
 afterEach(() => plugin.validator.configure({ directGuardCompile: true }));
 
+it.each(entries)('current compilation: %s keeps a dollar-data keyword snapshot after replacement', async entry => {
+  const source = new Ajv({ allErrors: true, $data: true, logger: false });
+  source.addKeyword('snapshotLimit', {
+    type: 'string', $data: true,
+    metaSchema: { type: 'number' },
+    validate: (limit: number, value: string) => value.length >= limit,
+  });
+  const compile = compilerFor(source, entry);
+  const root: JSONSchema = { type: 'object', properties: { name: { type: 'string', snapshotLimit: { $data: '1/limit' } } } };
+  const data = { limit: 3, name: 'xx' };
+  const old = compile(root);
+  const oldVerdict = await old(data);
+  expect(oldVerdict).not.toBeNull();
+  source.removeKeyword('snapshotLimit');
+  source.addKeyword('snapshotLimit', { type: 'string', $data: true, validate: () => true });
+  expect(await compile(root)(data)).toEqual(await compile({ ...root })(data));
+  expect(await compile(root)(data)).toBeNull();
+  expect(await old(data)).toEqual(oldVerdict);
+  source.removeKeyword('snapshotLimit');
+  expect(await old(data)).toEqual(oldVerdict);
+});
+
 it.each(entries)('current compilation: %s rechecks changed imports for the same root', async entry => {
   const source = new Ajv({ allErrors: true, strict: false, logger: false });
   const id = 'https://current-model.invalid/import';
