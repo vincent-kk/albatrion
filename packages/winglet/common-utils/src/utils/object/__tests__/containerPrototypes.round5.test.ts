@@ -12,6 +12,7 @@ it('copying a container keeps absent-member lookups equivalent at root and neste
   for (const prototype of [Object.prototype, null]) for (const copy of copies) for (const nested of [false, true]) {
     const input: Record<string, unknown> = Object.assign(Object.create(prototype), { b: 2, a: 1 });
     const result = nested ? copy({ child: input }).child : copy(input);
+    if (typeof result !== 'object' || result === null) throw new Error('Expected a copied container');
     expect(Object.getPrototypeOf(result), `${copy.name}/${nested}`).toBe(Object.getPrototypeOf(input));
     expect(Reflect.get(result, 'constructor')).toBe(Reflect.get(input, 'constructor'));
   }
