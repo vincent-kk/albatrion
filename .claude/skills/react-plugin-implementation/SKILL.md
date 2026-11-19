@@ -7,12 +7,12 @@ description: "Expert on React-based @canard/schema-form plugin implementation pa
 
 ## Shared value and presentation contracts
 
-- A string switch stores `enum[0]` when checked and `enum[1]` when unchecked. `switchLabels` is a tuple in the same enum order.
+- A string switch stores `enum[0]` when checked and `enum[1]` when unchecked. All four plugins accept a `presentation.FieldInputProps.alias` map keyed by the stored enum value; `context.switchLabels` overrides the whole alias map. Schema `switchLabels` tuples are MUI-only and apply only when neither map is supplied. A missing key in the selected map falls back to the enum value.
 - A boolean switch accepts `presentation.FieldInputProps.alias` with `checked` and `unchecked` ReactNode labels. Choose the label map from `context.checkboxLabels`, then `alias`, then no state labels. Show the current state without replacing the field's accessible name; absent state labels preserve the existing output.
 - A control changes only the stored data the user acts on. Keep known enum selections visible alongside unknown stored members, and preserve the original JSON value and order of untouched members. A toggle of another option preserves them; explicitly removing a tag or clearing the control removes the selected data.
 - Render array and object validation messages at both root and nested positions. Do not add empty root error markup when no message exists.
 - With `multipleOf`, slider stops lie on its zero-based grid inside the inclusive bounds. Integer sliders use the integer intersection; number sliders without `multipleOf` retain authored bounds. Disable a range with no selectable value. Range sliders apply item constraints to both ends, and marked stops obey the same constraints.
-- An unset slider exposes no current value to assistive technology and stores nothing until the user acts. A first committed selection of the minimum must store it even when the library skips its ordinary change callback. Preserve read-only and disabled behavior.
+- An unset slider exposes no current value to assistive technology and stores nothing until the user acts. A first committed selection of the minimum must store it even when the library skips its ordinary change callback. Preserve read-only and disabled behavior. Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores on commit (key up, pointer up, or the library change-complete event); `false` stores on every move.
 - Range pickers publish only a committed selection with both ends chosen, or clear. Browsing a panel, hovering, changing the viewed month or time, and choosing just one end never write form data.
 - Verify these contracts with equivalence tables across sibling plugins and input kinds, including stored values outside the enum, root and nested errors, and unset and populated numeric controls.
 
