@@ -3,6 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../patchModel';
+import { copyObject } from './utils/copyObject';
 import { applySinglePatch } from './applySinglePatch';
 import type { ApplyPatchOptions } from './type';
 
@@ -39,6 +40,7 @@ import type { ApplyPatchOptions } from './type';
  *          return a root patch value itself. Mutable mode can modify the original source.
  *
  * @remarks
+ * Container copies retain ordinary or null prototypes at every written depth.
  * Immutable mode structurally shares containers with the source and patch values. A final
  * root add or replace returns its value itself, just as a nested add installs that value
  * itself. If an object has several paths, only a path written by a patch is detached.
@@ -99,7 +101,7 @@ export const applyPatch = <Result extends JSONRoot = any>(
   const cloned = immutable ? new WeakSet<object>() : null;
   let result: any = source;
   if (cloned !== null && source !== null && typeof source === 'object') {
-    result = isArray(source) ? source.slice() : { ...source };
+    result = isArray(source) ? source.slice() : copyObject(source);
     cloned.add(result);
   }
   let rootUnowned = false;
@@ -115,7 +117,7 @@ export const applyPatch = <Result extends JSONRoot = any>(
         patch.path === '' &&
         (patch.op !== Operation.MOVE || patch.from === '' || patch.from === '#');
       if (!readsOrReplacesRoot) {
-        result = isArray(result) ? result.slice() : { ...result };
+        result = isArray(result) ? result.slice() : copyObject(result);
         cloned.add(result);
         rootUnowned = false;
       }

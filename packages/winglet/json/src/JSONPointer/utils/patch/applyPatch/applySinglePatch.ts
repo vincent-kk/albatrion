@@ -14,6 +14,7 @@ import type { JSONRoot } from '@/json/type';
 import { Operation, type Patch } from '../../patchModel';
 import { applyRootOperation } from './utils/applyRootOperation';
 import { assertCopySourcePresent } from './utils/assertCopySourcePresent';
+import { copyObject } from './utils/copyObject';
 import { decodePatchFragment } from './utils/decodePatchFragment';
 import { JSONPatchError } from './utils/error';
 import { getArrayIndex } from './utils/getArrayIndex';
@@ -205,7 +206,7 @@ export const applySinglePatch = (
       typeof next === 'object' &&
       !cloned.has(next)
     ) {
-      next = isArray(next) ? next.slice() : { ...next };
+      next = isArray(next) ? next.slice() : copyObject(next);
       cloned.add(next);
       if (reserved) setDataProperty(current, segment as string, next);
       else current[segment] = next;
