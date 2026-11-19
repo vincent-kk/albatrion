@@ -214,16 +214,17 @@ export const registerPlugin = (
   const fingerprint = registry?.getPluginKey ?? getPluginKey;
   const registered = registry?.registeredPlugins ?? registeredPlugins;
   try {
+    const candidate = plugin;
     const configuration = isPlainObject(plugin)
       ? plugin
       : {
-          FieldRenderer: plugin.FieldRenderer,
-          LabelRenderer: plugin.LabelRenderer,
-          InputRenderer: plugin.InputRenderer,
-          ErrorMessageRenderer: plugin.ErrorMessageRenderer,
-          fieldInputDefinitions: plugin.fieldInputDefinitions,
-          validator: plugin.validator,
-          formatError: plugin.formatError,
+          FieldRenderer: candidate.FieldRenderer,
+          LabelRenderer: candidate.LabelRenderer,
+          InputRenderer: candidate.InputRenderer,
+          ErrorMessageRenderer: candidate.ErrorMessageRenderer,
+          fieldInputDefinitions: candidate.fieldInputDefinitions,
+          validator: candidate.validator,
+          formatError: candidate.formatError,
         };
     const hash = fingerprint(configuration);
     if (registered.has(hash)) return;
