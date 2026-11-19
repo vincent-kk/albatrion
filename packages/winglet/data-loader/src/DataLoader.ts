@@ -572,8 +572,13 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
         { keys },
       );
     const loadPromises = new Array(keys.length);
-    for (let i = 0, l = keys.length; i < l; i++)
-      loadPromises[i] = this.load(keys[i]).catch((error) => error);
+    for (let i = 0, l = keys.length; i < l; i++) {
+      try {
+        loadPromises[i] = this.load(keys[i]).catch((error) => error);
+      } catch (error) {
+        loadPromises[i] = error;
+      }
+    }
     return Promise.all(loadPromises);
   }
 
