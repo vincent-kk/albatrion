@@ -7,6 +7,7 @@ import type { RunResult } from '../../../core/index.js';
 import { InjectApp } from '../../../ui/InjectApp/InjectApp.js';
 import * as ui from '../../../ui/index.js';
 import { runCli } from '../runCli.js';
+import * as conversion from '../targets/toConsumerPackages.js';
 import * as views from '../renderers/renderOrFallback.js';
 const roots: string[] = [];
 async function run(args: readonly string[]): Promise<number> {
@@ -20,7 +21,7 @@ it.each([
   'package-required', 'invalid-package', 'unknown-option', 'option-value-required',
   'invalid-agent', 'invalid-scope', 'invalid-asset', 'absolute-asset-path',
   'unresolved-package', 'missing-asset-directory', 'escaping-asset-directory',
-  'missing-hash-source', 'empty-scope', 'corrupt-scope',
+  'missing-hash-source', 'empty-scope', 'corrupt-scope', 'preflight-io',
 ])('%s carries equivalent final failure records in every output mode', async (kind) => {
   const outcomes = [];
   for (const mode of ['plain', 'json', 'ink'] as const) {
@@ -41,6 +42,7 @@ it.each([
     if (kind === 'escaping-asset-directory') args.push('--asset-path=../../../outside');
     if (kind === 'empty-scope') args[0] = '--package=@missing';
     if (kind === 'corrupt-scope') args[0] = '--package=@broken';
+    if (kind === 'preflight-io') vi.spyOn(conversion, 'toConsumerPackages').mockRejectedValue(Object.assign(new Error('injected metadata IO failure'), { path: join(root, 'package.json') }));
     let stdout = ''; let stderr = ''; let frame = ''; let report: RunResult | undefined;
     vi.spyOn(process.stdout, 'write').mockImplementation((chunk) => { stdout += String(chunk); return true; });
     vi.spyOn(process.stderr, 'write').mockImplementation((chunk) => { stderr += String(chunk); return true; });
@@ -54,7 +56,8 @@ it.each([
     }));
     try {
       const code = await run([...args, `--root=${root}`, ...(mode === 'json' ? ['--json'] : []), ...(mode === 'plain' ? ['--no-interactive'] : [])]);
-      expect(code).toBe(2); expect(report?.failures?.length).toBeGreaterThan(0);
+      expect(code).toBe(kind === 'preflight-io' ? 1 : 2);
+      if (kind === 'preflight-io') expect(report?.failures?.[0].path).toBe(join(root, 'package.json')); expect(report?.failures?.length).toBeGreaterThan(0);
       const transcript = mode === 'ink' ? frame : mode === 'json' ? JSON.parse(stdout).failures.map((failure: { path: string; reason: string }) => `${failure.path} ${failure.reason}`).join('\n') : stdout + stderr;
       for (const failure of report?.failures ?? []) {
         expect(transcript.replace(/\s+/g, ''), `${kind}:${mode}`).toContain(failure.path.replace(/\s+/g, ''));
