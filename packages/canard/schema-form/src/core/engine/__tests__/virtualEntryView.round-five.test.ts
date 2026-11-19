@@ -107,4 +107,48 @@ it('virtual inactive projections keep frozen references until a constituent chan
   const first = group.inactiveValues;
   expect(Object.isFrozen(first)).toBe(true);
   expect(group.inactiveValues).toBe(first);
+  root.setValue({ ...root.value, b: 'b1' });
+  expect(group.inactiveValues).toEqual([{ path: '/b', value: 'b1' }]);
+  expect(group.inactiveValues).not.toBe(first);
+  expect(first).toEqual([{ path: '/b', value: 'b0' }]);
+  root.find('/on')!.setValue(true);
+  expect(group.inactiveValues).toEqual([]);
+});
+
+it('virtual getter projections use declaration names with escaped physical addresses', () => {
+  const root = nodeFromJSONSchema({
+    jsonSchema: {
+      type: 'object',
+      properties: {
+        'slash/name': { type: 'string' },
+        'tilde~name': { type: 'string' },
+        '': { type: 'string' },
+        constructor: { type: 'string' },
+      },
+      options: {
+        virtual: {
+          group: { fields: ['slash/name', 'tilde~name', '', 'constructor'] },
+        },
+      },
+    },
+    defaultValue: {
+      'slash/name': 'slash',
+      'tilde~name': 'tilde',
+      '': 'empty',
+      constructor: 'own',
+    },
+    validationMode: ValidationMode.None,
+  });
+  const paths = ['/slash~1name', '/tilde~0name', '/', '/constructor'];
+  const group = root.find('/group')!;
+  expect(group.defaultValue).toEqual(
+    paths.map((path) => root.find(path)!.defaultValue),
+  );
+  expect(group.isDivergent).toBe(
+    paths.some((path) => root.find(path)!.isDivergent),
+  );
+  root.find('/slash~1name')!.setValue('changed');
+  expect(group.isDivergent).toBe(
+    paths.some((path) => root.find(path)!.isDivergent),
+  );
 });
