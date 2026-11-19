@@ -76,7 +76,7 @@ export function fixDtsExtensions(dir, { declarationFormat = 'all' } = {}) {
         visit(source);
         let fixCount = 0;
         let fixed = content;
-        // Descending insertions preserve the original syntax positions and quote escapes.
+        // Descending edits preserve the original syntax positions.
         for (const specifier of specifiers.sort((left, right) => right.position - left.position)) {
           const importPath = specifier.text;
           if (!RELATIVE_PATH_RE.test(importPath) || /\.(?:json|css)$/.test(importPath)) continue;
