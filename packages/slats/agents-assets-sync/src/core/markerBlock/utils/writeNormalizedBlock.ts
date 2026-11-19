@@ -9,7 +9,12 @@ import { endMarker, startMarker } from './markerLine.js';
  * @returns Complete replacement preserving bytes outside managed blocks.
  * @throws When any source or destination boundary is ambiguous.
  */
-export function writeNormalizedBlock(content: string, blockId: string, body: string, context: { document?: string; source?: string } = {}): string {
+export function writeNormalizedBlock(
+  content: string,
+  blockId: string,
+  body: string,
+  context: { document?: string; source?: string } = {},
+): string {
   const blocks = assertManagedMarkdown(content, context.document ?? 'document');
   assertManagedMarkdown(body, context.source ?? 'rule source');
   const rendered = `${startMarker(blockId)}\n${body}${

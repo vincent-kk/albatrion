@@ -9,7 +9,11 @@ import {
   resolveAgentTarget,
   resolveDestinations,
 } from '../../../../agentTarget/index.js';
-import { type RuleSource, buildPlan, collectFileWrites } from '../../../../buildPlan/index.js';
+import {
+  type RuleSource,
+  buildPlan,
+  collectFileWrites,
+} from '../../../../buildPlan/index.js';
 import {
   computeNamespacePrefixes,
   resolveHashManifest,

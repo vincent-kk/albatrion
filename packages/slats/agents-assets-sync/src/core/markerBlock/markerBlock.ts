@@ -1,7 +1,7 @@
 import { type Sha256Hex, hashContent, hashEquals } from '../hash/index.js';
 import { normalizeRuleSource } from '../utils/normalizeRuleSource.js';
-import { writeNormalizedBlock } from './utils/writeNormalizedBlock.js';
 import { scanBlocks } from './utils/scanBlocks.js';
+import { writeNormalizedBlock } from './utils/writeNormalizedBlock.js';
 
 /** One block this tool owns inside a shared `AGENTS.md`. */
 export interface ParsedBlock {
@@ -77,7 +77,12 @@ export function upsertBlock(
   body: string,
   context: { document?: string; source?: string } = {},
 ): string {
-  return writeNormalizedBlock(content, blockId, normalizeRuleSource(body), context);
+  return writeNormalizedBlock(
+    content,
+    blockId,
+    normalizeRuleSource(body),
+    context,
+  );
 }
 
 /**

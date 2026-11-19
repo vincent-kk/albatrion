@@ -44,7 +44,9 @@ export async function applyBlockActions(
     }
     const body =
       ruleSources?.get(join(assetRoot, action.relPath))?.body ??
-      normalizeRuleSource(await readFile(join(assetRoot, action.relPath), 'latin1'));
+      normalizeRuleSource(
+        await readFile(join(assetRoot, action.relPath), 'latin1'),
+      );
     content = writeNormalizedBlock(content, blockId, body, {
       document: fileAbs,
       source: join(assetRoot, action.relPath),

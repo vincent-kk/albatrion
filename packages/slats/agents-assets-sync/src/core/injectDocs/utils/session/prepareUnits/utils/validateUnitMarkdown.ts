@@ -52,7 +52,7 @@ export async function validateUnitMarkdown(
           assertManagedMarkdown(
             key.startsWith('document:')
               ? content
-              : sourceBody ?? normalizeRuleSource(content),
+              : (sourceBody ?? normalizeRuleSource(content)),
             file,
           );
         },

@@ -75,8 +75,7 @@ function setup(failure: Failure) {
     targets,
     breakB() {
       if (failure === 'unclosed-fence-rule') {
-        // A new release of @probe/b ships a rule whose fence is not closed:
-        // the 1.0.0 Markdown boundary check refuses that whole unit.
+        // An unclosed source fence refuses the participant before any write.
         const body = '# rule\n\n```ts\nconst x = 1;\n';
         installPackage(root, {
           name: '@probe/b',

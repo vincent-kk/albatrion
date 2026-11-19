@@ -24,10 +24,14 @@ it('the project row of the scope picker describes the root the CLI actually pick
   const app = render(<ScopePicker onSelect={() => {}} />);
   const frame = app.lastFrame() ?? '';
   app.unmount();
-  const projectRow = frame.split('\n').find((line) => line.includes('project')) ?? '';
+  const projectRow =
+    frame.split('\n').find((line) => line.includes('project')) ?? '';
 
   expect({
     pickedIsRepositoryRoot: picked.endsWith(root.split('/').pop() ?? ''),
     hintPromisesNearestClaude: /nearest ancestor \.claude/.test(projectRow),
-  }).toEqual({ pickedIsRepositoryRoot: true, hintPromisesNearestClaude: false });
+  }).toEqual({
+    pickedIsRepositoryRoot: true,
+    hintPromisesNearestClaude: false,
+  });
 });
