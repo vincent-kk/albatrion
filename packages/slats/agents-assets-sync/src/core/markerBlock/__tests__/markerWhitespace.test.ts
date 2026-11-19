@@ -21,12 +21,24 @@ it('accepts trailing horizontal whitespace and refuses indentation across 3000 m
     const other = `pkg:rules/other-${sequence}.md`;
     expect(() =>
       parseBlocks(
-        start + eol + `<!-- AGENTS-ASSETS-SYNC:START:${other} -->` + eol + end,
+        start +
+          eol +
+          `<!-- AGENTS-ASSETS-SYNC:START:${other} -->` +
+          eol +
+          end +
+          eol +
+          `<!-- AGENTS-ASSETS-SYNC:END:${other} -->`,
       ),
     ).toThrow(/:2:/);
     expect(() =>
       parseBlocks(
-        start + eol + `<!-- AGENTS-ASSETS-SYNC:END:${other} -->` + eol + end,
+        start +
+          eol +
+          `<!-- AGENTS-ASSETS-SYNC:END:${other} -->` +
+          eol +
+          `<!-- AGENTS-ASSETS-SYNC:START:${other} -->` +
+          eol +
+          end,
       ),
     ).toThrow(/:2:/);
   }
