@@ -23,6 +23,7 @@ import { timeout } from './timeout';
  * @throws {TimeoutError} When function execution exceeds the specified timeout
  * @throws {AbortError} When canceled via AbortSignal
  * @throws {Error} Any error thrown by the original function
+ * @throws {TypeError} Before starting fn when the host has no AbortController implementation
  *
  * @example
  * Basic API call with timeout:
@@ -423,6 +424,8 @@ export const withTimeout = <T>(
     return Promise.reject(
       new AbortError('SIGNAL_RECEIVED_BEFORE_RUN', 'Aborted before run'),
     );
+  if (typeof AbortController !== 'function')
+    throw new TypeError('withTimeout requires an AbortController implementation');
   // A synchronous throw must leave no abort listener attached to the caller's signal.
   const pending = fn();
   const controller = new AbortController();

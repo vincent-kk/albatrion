@@ -5,6 +5,7 @@
 - `delay(ms?, { signal? })`는 지정한 ms 이후 resolve하는 Promise를 반환하고, `AbortSignal`로 취소하면 `AbortError`로 거부한다 — 호출 시점에 이미 abort된 signal은 타이머를 생성하지 않고 즉시 거부한다.
 - `timeout(ms?, { signal? })`은 정상 경로에서 항상 `TimeoutError`로 거부한다; 취소되면 `delay`가 던진 `AbortError`를 그대로 전파한다. 정상 resolve하는 경로는 없다.
 - `withTimeout(fn, ms, { signal? })`은 `fn()`과 `timeout(ms)`를 경주시켜 먼저 정착하는 쪽을 채택하고, 진 쪽의 타이머를 정리한다. `fn`이 동기적으로 throw하면 그 예외는 Promise 거부가 아니라 `withTimeout` 호출 자체의 동기 예외로 전파된다. 호출 시점에 외부 `signal`이 이미 abort됐으면 `ms`를 기다리지 않고 즉시 `AbortError`로 거부한다.
+- `withTimeout`은 중단된 외부 signal을 먼저 처리한 뒤 전역 AbortController 지원을 확인합니다. 지원이 없으면 원본 함수를 시작하지 않고 동기 TypeError를 던집니다. 이 API에는 AbortController 또는 호환 polyfill이 필요하며, 내부 controller 생성과 외부 리스너 등록은 원본 함수의 동기 호출 뒤에 유지합니다.
 - `waitAndExecute(fn?, ms?)`은 지연 이후에 `fn`을 호출한다; `waitAndReturn(fn?, ms?)`은 `fn`을 즉시 호출하고 결과 전달만 지연한다. 둘 다 `fn`이 `undefined`면 `undefined`로 resolve한다.
 - `waitAndExecute`/`waitAndReturn`은 `AbortSignal` 옵션을 받지 않는다.
 

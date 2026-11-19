@@ -341,6 +341,8 @@ withTimeout<T>(fn: () => Promise<T>, ms: number, options?: { signal?: AbortSigna
 
 Races `fn()` against a timeout. Throws `TimeoutError` on timeout.
 
+Requires a global `AbortController` implementation or compatible polyfill. If absent, throws `TypeError` synchronously before calling `fn`; an already-aborted external signal still rejects with `AbortError` without starting it.
+
 #### waitAndExecute
 
 ```typescript

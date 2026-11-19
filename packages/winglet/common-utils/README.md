@@ -106,6 +106,8 @@ This package is written using ECMAScript 2020 (ES2020) syntax.
 - Node.js 14.0.0 or higher
 - Modern browsers (with ES2020 support)
 
+`withTimeout` requires a global `AbortController` implementation. Provide a compatible polyfill on hosts without it; this helper throws before starting the wrapped operation when the capability is absent.
+
 **For Legacy Environment Support:**
 Use transpilers like Babel to convert the code to match your target environment.
 
