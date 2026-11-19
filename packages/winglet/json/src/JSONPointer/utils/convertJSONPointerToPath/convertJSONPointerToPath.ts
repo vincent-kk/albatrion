@@ -9,7 +9,7 @@ import { isArrayIndex } from '@winglet/common-utils/filter';
  * @remarks
  * Empty tokens keep their dot separators; for example `//x` becomes `..x`.
  * Conversion is lossy: root `''` and `/`; numeric `/0` and bracket `/[0]`;
- * append `/-` and bracket `/[]`; dot `/x/a.b` and bracket-containing `/x[a.b]`;
+ * append `/-` and bracket `/[]`; dot `/a.b/c.d` and bracket-containing `/a.b][c.d`;
  * and numeric paths `/0` and `//0` can each collide. Keep the JSON Pointer as
  * the lossless address. `getJSONPath` uses different spellings for numeric object
  * keys, hyphens and dot-containing names; compare only their shared spelling domain.
