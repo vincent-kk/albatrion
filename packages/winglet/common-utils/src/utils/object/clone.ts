@@ -278,8 +278,14 @@ const replicate = (
       );
     const result = new Array(value.length);
     cache.set(value, result);
-    for (let i = 0, l = value.length; i < l; i++)
-      if (i in value) result[i] = replicate(value[i], limit, depth, cache);
+    for (let i = 0, l = value.length; i < l; i++) {
+      if (i in value) {
+        const item = value[i];
+        result[i] = isPrimitiveType(item)
+          ? item
+          : replicate(item, limit, depth, cache);
+      }
+    }
     // @ts-expect-error: The `index` property is only available in the result of a RegExp match.
     if ('index' in value) result.index = value.index;
     // @ts-expect-error: The `input` property is only available in the result of a RegExp match.
@@ -537,17 +543,23 @@ const replicateProperties = (
   const keys = Object.keys(source);
   for (let i = 0, l = keys.length; i < l; i++) {
     const key = keys[i];
-    if (intercepted === null && key !== '__proto__')
-      target[key] = replicate(source[key], limit, depth, cache);
-    else
+    if (intercepted === null && key !== '__proto__') {
+      const item = source[key];
+      target[key] = isPrimitiveType(item)
+        ? item
+        : replicate(item, limit, depth, cache);
+    } else
       replicateProperty(target, source, key, limit, depth, cache, intercepted);
   }
   const symbols = symbolKeys ?? getSymbols(source);
   for (let i = 0, l = symbols.length; i < l; i++) {
     const symbol = symbols[i];
-    if (intercepted === null)
-      target[symbol] = replicate(source[symbol], limit, depth, cache);
-    else
+    if (intercepted === null) {
+      const item = source[symbol];
+      target[symbol] = isPrimitiveType(item)
+        ? item
+        : replicate(item, limit, depth, cache);
+    } else
       replicateProperty(
         target,
         source,
