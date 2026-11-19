@@ -1,5 +1,6 @@
 import { pointerCompilations } from '../pointerCompilerCache';
 import type { SchemaRootRegistration } from '../registerSchemaRoot';
+import { releaseSeededPointerCompilation } from '../releaseSeededPointerCompilation';
 
 /**
  * Release private path-profile resources with the corresponding source registration.
@@ -11,6 +12,7 @@ export const disposePointerCompilation = (
 ): void => {
   const copy = registration.validationCopy;
   if (!copy) return;
+  if (releaseSeededPointerCompilation(copy)) return;
   const compiled = pointerCompilations.get(copy);
   if (!compiled) return;
   if (typeof compiled.schema === 'object')

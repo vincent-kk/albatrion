@@ -11,5 +11,12 @@ export const pointerCompilations = new WeakMap<
     compiler: Ajv.Ajv;
     /** Actual schema, including an asynchronous wrapper when compilation requires it. */
     schema: object | boolean;
+    /** Private shell reuses resolution metadata while keeping its generated program independent. */
+    seeded?: {
+      key: string;
+      id: string;
+      cacheKey: string;
+      environment: unknown;
+    };
   }
 >();

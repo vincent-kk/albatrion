@@ -4,6 +4,7 @@ import type Ajv from 'ajv';
 import { pointerCompilerOf } from './compileWithPointers/pointerCompilerOf';
 import { compileWithSchemaFallback } from './compileWithSchemaFallback';
 import { pointerCompilations } from './pointerCompilerCache';
+import { releaseSeededPointerCompilation } from './releaseSeededPointerCompilation';
 import { readRegisteredSchema } from './schemaRegistry/readRegisteredSchema';
 
 /**
@@ -30,11 +31,20 @@ export const compileWithPointers = (
       ajv.removeSchema(transient);
     }
   }
+  const seeded = key ? pointerCompilations.get(schema) : undefined;
+  if (key && !forceAsync && seeded?.seeded?.key === key)
+    return compileWithSchemaFallback(compiler, ajv, () =>
+      compiler.getSchema(key),
+    );
   const registered = key ? readRegisteredSchema(ajv, key) : schema;
   if (registered === undefined) return undefined;
   if (forceAsync) {
     const previous = pointerCompilations.get(schema);
-    if (previous && typeof previous.schema === 'object')
+    if (
+      previous &&
+      !releaseSeededPointerCompilation(schema) &&
+      typeof previous.schema === 'object'
+    )
       compiler.removeSchema(previous.schema);
   }
   const snapshot =

@@ -1,5 +1,6 @@
 import type { Dictionary } from '@aileron/declare';
 
+import { seedPointerCompilation } from './compileWithPointers/seedPointerCompilation';
 import type { SchemaRootRegistration } from './registerSchemaRoot';
 
 /**
@@ -53,4 +54,5 @@ export const registerValidationRoot = (
     isCacheOwned: !schemas.some(([, value]) => value === environment),
   };
   registration.validationRegistered = true;
+  seedPointerCompilation(registration);
 };

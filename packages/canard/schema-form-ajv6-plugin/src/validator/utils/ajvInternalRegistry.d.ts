@@ -9,6 +9,8 @@ import type { Dictionary } from '@aileron/declare';
  */
 declare module 'ajv' {
   interface Options {
+    /** Native default meta-schema address selected when schemas omit $schema. */
+    defaultMeta?: string;
     /** AJV's derived property-path flag, reset when a private profile overrides errorDataPath. */
     _errorDataPathProperty?: boolean;
   }
@@ -32,7 +34,10 @@ declare module 'ajv' {
      * @param throwOrLogError - Report an invalid schema using the configured validation policy.
      * @returns The native schema-validity result.
      */
-    validateSchema(schema: object | boolean, throwOrLogError?: boolean): boolean;
+    validateSchema(
+      schema: object | boolean,
+      throwOrLogError?: boolean,
+    ): boolean;
     readonly constructor: new (options?: Options) => Ajv;
     /** Native compilation profile selected while compiling a meta-schema. */
     _metaOpts: Options;
@@ -43,12 +48,24 @@ declare module 'ajv' {
       >;
       readonly keywords: Readonly<Dictionary<boolean>>;
     };
+    /** Private cache operations used without reserializing a resolved registered schema. */
+    readonly _cache: {
+      get(key: unknown): unknown;
+      put(key: unknown, value: unknown): void;
+      del(key: unknown): void;
+    };
     readonly _schemas: Dictionary<
-      {
-        readonly schema: object | boolean;
-        /** Native flag separating meta-schema programs from application data schemas. */
-        readonly meta?: boolean;
-      } | undefined
+      | {
+          readonly schema: object | boolean;
+          /** Normalized resource id and local references already resolved by native registration. */
+          readonly id?: string;
+          readonly localRefs?: Readonly<Dictionary<object | boolean>>;
+          /** Native serialization key retained by the registration. */
+          readonly cacheKey?: unknown;
+          /** Native flag separating meta-schema programs from application data schemas. */
+          readonly meta?: boolean;
+        }
+      | undefined
     >;
     /** Resolved references by URI: compiled schema objects or string aliases; restored in place after a failed validation registration. */
     readonly _refs: Dictionary<unknown>;
