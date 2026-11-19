@@ -12,7 +12,7 @@ it.each(['legacy', 'null', null, { legacy: 'data' }, ['legacy']])('multi select 
   fireEvent.mouseDown(screen.getByRole('combobox'));
   act(() => fireEvent.click(screen.getByTitle('news')));
   expect(ref.current!.getValue()).toEqual([unknown, 'sports', 'news']);
-  act(() => fireEvent.click(screen.getByTitle('sports')));
+  act(() => fireEvent.click(document.querySelector('.ant-select-item-option[title="sports"]')!));
   expect(ref.current!.getValue()).toEqual([unknown, 'news']);
   const removes = container.querySelectorAll('.ant-select-selection-item-remove');
   expect(removes).toHaveLength(2);
