@@ -1,9 +1,9 @@
 import { lstat, unlink } from 'node:fs/promises';
 import { join } from 'node:path';
 
+import type { Action } from '../../buildPlan/index.js';
 import { readSourceSnapshot } from '../../hash/index.js';
 import type { SourceSnapshot } from '../../types/sourceSnapshot.js';
-import type { Action } from '../../buildPlan/index.js';
 import { replaceDocument } from './replaceDocument.js';
 
 /**
@@ -28,7 +28,7 @@ export async function applyAction(
 
   if (action.kind === 'copy' || action.kind === 'warn-diverged') {
     const source = join(assetRoot, action.relPath);
-    const checked = snapshot ?? await readSourceSnapshot(source);
+    const checked = snapshot ?? (await readSourceSnapshot(source));
     if (!checked) throw new Error(`Source file missing: ${source}`);
     await replaceDocument(dstAbs, checked.bytes, checked.mode);
     return;

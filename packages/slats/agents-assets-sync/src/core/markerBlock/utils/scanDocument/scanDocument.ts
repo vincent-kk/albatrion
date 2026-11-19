@@ -12,7 +12,9 @@ export function scanDocument(
   isFragment = false,
 ): MarkdownScan {
   const blocks: LocatedBlock[] = [];
-  const marker = new RegExp(`^<!-- ${MARKER_PREFIX}:(START|END):(.+?) -->[ \t]*$`);
+  const marker = new RegExp(
+    `^<!-- ${MARKER_PREFIX}:(START|END):(.+?) -->[ \t]*$`,
+  );
   let offset = isFragment
     ? 0
     : content.charCodeAt(0) === 0xfeff

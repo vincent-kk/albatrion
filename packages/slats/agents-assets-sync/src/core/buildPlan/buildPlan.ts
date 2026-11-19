@@ -3,7 +3,12 @@ import { join, relative } from 'node:path';
 import type { AsyncFn } from '@aileron/declare';
 
 import type { Destination, OrphanScan } from '../agentTarget/index.js';
-import { type Sha256Hex, hashEquals, hashFile, readSourceSnapshot } from '../hash/index.js';
+import {
+  type Sha256Hex,
+  hashEquals,
+  hashFile,
+  readSourceSnapshot,
+} from '../hash/index.js';
 import { blockBodyMatches, parseBlocks } from '../markerBlock/index.js';
 import { isNoisePath } from '../utils/isNoisePath.js';
 import { toPosix } from '../utils/toPosix.js';

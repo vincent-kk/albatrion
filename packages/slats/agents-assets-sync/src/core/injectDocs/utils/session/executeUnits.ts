@@ -53,7 +53,8 @@ export async function executeUnits(
       applyAction(
         action,
         unit.target.assetRoot,
-        sourceSnapshots?.get(join(unit.target.assetRoot, action.relPath)) ?? undefined,
+        sourceSnapshots?.get(join(unit.target.assetRoot, action.relPath)) ??
+          undefined,
       ),
     );
     const failures: Action[] = fileActions.filter(
