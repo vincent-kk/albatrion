@@ -1,6 +1,7 @@
 import type { JSONSchema, ValidatorFactory } from '@canard/schema-form';
 import type { AjvInstance as Ajv } from './types/AjvInstance';
 
+import { compileWithSchemaFallback } from './utils/compileWithSchemaFallback';
 import { createGuardCompiler } from './createGuardCompiler';
 import { createValidatorFactory } from './createValidatorFactory';
 import { assertBindableInstance } from './utils/assertBindableInstance';
@@ -52,10 +53,10 @@ export const createValidator = (
         pool,
       );
       registerValidationRoot(registered);
-      const validate = createValidatorFactory(
+      const validate = compileWithSchemaFallback(registered.validation, ajv, () => createValidatorFactory(
         registered.validation,
         registered.validationCopy ? registered.key : undefined,
-      )(jsonSchema);
+      )(jsonSchema));
       return async (value: unknown) => validate(value);
     },
     compileGuard: (root: JSONSchema, pointer: string) => {

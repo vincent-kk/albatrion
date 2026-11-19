@@ -3,6 +3,7 @@ import AjvModule, { type Options } from 'ajv';
 
 import type { AjvInstance as Ajv } from './types/AjvInstance';
 
+import { compileWithSchemaFallback } from './utils/compileWithSchemaFallback';
 import { createValidatorFactory } from './createValidatorFactory';
 import { createGuardCompiler } from './createGuardCompiler';
 import { assertBindableInstance } from './utils/assertBindableInstance';
@@ -95,9 +96,9 @@ export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
     if (!ajvInstance) ajvInstance = new AjvConstructor(defaultSettings);
     const registered = registerSchemaRoot(jsonSchema, ajvInstance, roots, active, finalizer, getPool(ajvInstance));
     registerValidationRoot(registered);
-    const validate = createValidatorFactory(
+    const validate = compileWithSchemaFallback(registered.validation, ajvInstance, () => createValidatorFactory(
       registered.validation, registered.validationCopy ? registered.key : undefined,
-    )(jsonSchema);
+    )(jsonSchema));
     return async (value: unknown) => validate(value);
   },
   compileGuard: (root, pointer) => {
