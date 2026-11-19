@@ -3,25 +3,30 @@ import type { Ajv } from 'ajv';
 
 import type { SchemaRootRegistration } from './registerSchemaRoot';
 
-/** `$id` registrations placed on each base instance by every registry that uses it. */
-const registrationsByInstance = new WeakMap<
-  Ajv,
-  WeakRef<SchemaRootRegistration>[]
->();
+/** One instance's weak ownership list and registration sequence, shared across evaluated copies. */
+type InstanceIdRegistrations = WeakRef<SchemaRootRegistration>[] & {
+  /** Monotonic registration sequence within the shared AJV instance. */
+  nextKey: number;
+};
+
+/** Module evaluation shares one realm WeakMap through Symbol.for; its keys are bound AJV instances. */
+const REGISTRATIONS_KEY = Symbol.for('@canard/schema-form-ajv8-plugin/registrations/v1');
+
+/** Realm metadata keeps application instances unmodified and weakly held. */
+const realm: typeof globalThis & { [REGISTRATIONS_KEY]?: WeakMap<Ajv, InstanceIdRegistrations> } = globalThis;
+/** Cache the realm lookup once per evaluated copy, outside compilation paths. */
+const registrationsByInstance = realm[REGISTRATIONS_KEY] ?? new WeakMap<Ajv, InstanceIdRegistrations>();
+if (!realm[REGISTRATIONS_KEY]) Object.defineProperty(realm, REGISTRATIONS_KEY, { value: registrationsByInstance });
 
 /**
- * Return the live list of `$id` registrations held on one base instance, so registries
- * that share an instance (several per-instance validators, or one beside `bind`) see each
- * other's ids when deciding whether a root needs a sibling instance.
- * @param instance - Base AJV instance the registrations were added to
- * @returns The mutable list for that instance; callers push on registration and prune on release
+ * Read ownership metadata shared by every compatible plugin copy using this AJV instance.
+ * @param instance - Bound application instance; metadata does not alter its options or schemas.
+ * @returns The instance's mutable weak ownership list and registration counter.
  */
-export const instanceIdRegistrationsOf = (
-  instance: Ajv,
-): WeakRef<SchemaRootRegistration>[] => {
+export const instanceIdRegistrationsOf = (instance: Ajv): InstanceIdRegistrations => {
   let list = registrationsByInstance.get(instance);
   if (!list) {
-    list = [];
+    list = Object.assign([], { nextKey: 0 });
     registrationsByInstance.set(instance, list);
   }
   return list;

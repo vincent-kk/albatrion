@@ -51,9 +51,6 @@ export interface SchemaRootRegistry {
   compilerCount: number;
 }
 
-/** Monotonic keys stay unique across every registry that shares one instance. */
-let nextSchemaRootKey = 0;
-
 /** Records a copy once for each bound instance and authored root identity; `registerValidationRoot` registers it with AJV. */
 export const registerSchemaRoot = (
   registry: SchemaRootRegistry,
@@ -73,7 +70,8 @@ export const registerSchemaRoot = (
   if (ids.length)
     for (let index = registry.active.length - 1; index >= 0; index--)
       if (!registry.active[index].deref()) registry.active.splice(index, 1);
-  const shared = ids.length ? instanceIdRegistrationsOf(baseAjv) : [];
+  const allRegistrations = instanceIdRegistrationsOf(baseAjv);
+  const shared: WeakRef<SchemaRootRegistration>[] = ids.length ? allRegistrations : [];
   for (let index = shared.length - 1; index >= 0; index--)
     if (!shared[index].deref()) shared.splice(index, 1);
   const conflict = ids.some((id) => registry.active.some((ref) => {
@@ -92,7 +90,7 @@ export const registerSchemaRoot = (
   const validationAjv = conflict ? makeSibling(baseAjv, !!baseAjv.opts.allErrors)
     : ids.length ? baseAjv : registry.compilerCurrent ?? baseAjv;
   if (!ids.length) registry.compilerCount++;
-  const key = `${PLUGIN_KEY_PREFIX}root/${++nextSchemaRootKey}`;
+  const key = `${PLUGIN_KEY_PREFIX}root/${++allRegistrations.nextKey}`;
   const validationCopy: JSONSchema | undefined = ids.length
     ? JSON.parse(JSON.stringify(root)) : undefined;
   const registration: SchemaRootRegistration = {
