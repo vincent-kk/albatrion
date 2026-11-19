@@ -26,7 +26,9 @@ const unwrap = (value: Link, depth = 20_000): unknown => {
 it('deep clones keep null prototypes, reserved data keys, shared values and array holes', () => {
   const symbol = Symbol('metadata');
   const shared = { marker: 7 };
-  const leaf = Object.assign(Object.create(null), { first: shared, second: shared, rows: [1, , undefined] });
+  const rows = [1, undefined, undefined];
+  delete rows[1];
+  const leaf = Object.assign(Object.create(null), { first: shared, second: shared, rows });
   Object.defineProperty(leaf, '__proto__', { value: shared, enumerable: true });
   leaf[symbol] = shared;
   const result = unwrap(clone(wrap(leaf)));
@@ -35,9 +37,9 @@ it('deep clones keep null prototypes, reserved data keys, shared values and arra
   expect(Reflect.get(result, 'first')).toBe(Reflect.get(result, 'second'));
   expect(Reflect.get(result, symbol)).toBe(Reflect.get(result, '__proto__'));
   expect(Reflect.get(result, 'first')).not.toBe(shared);
-  const rows: unknown = Reflect.get(result, 'rows');
-  if (!Array.isArray(rows)) throw new Error('missing cloned rows');
-  expect(rows.length).toBe(3); expect(1 in rows).toBe(false); expect(2 in rows).toBe(true);
+  const clonedRows: unknown = Reflect.get(result, 'rows');
+  if (!Array.isArray(clonedRows)) throw new Error('missing cloned rows');
+  expect(clonedRows.length).toBe(3); expect(1 in clonedRows).toBe(false); expect(2 in clonedRows).toBe(true);
 });
 
 it('depth bounds retain root-relative sharing across the work-frame boundary', () => {
@@ -58,8 +60,10 @@ it('stable comparison preserves hidden and symbol keys, omit sets and sparse-arr
   const left = { [symbol]: 1, volatile: 1 }, right = { [symbol]: 2, volatile: 2 };
   expect(stableEquals(wrap(left), wrap(right))).toBe(false);
   expect(stableEquals(wrap(left), wrap(right), [symbol, 'volatile'])).toBe(true);
-  expect(stableEquals(wrap([1, , 3]), wrap([1, undefined, 3]))).toBe(false);
-  expect(stableEquals(wrap([1, , 3]), wrap([1, , 3]))).toBe(true);
+  const sparse = [1, undefined, 3];
+  delete sparse[1];
+  expect(stableEquals(wrap(sparse), wrap([1, undefined, 3]))).toBe(false);
+  expect(stableEquals(wrap(sparse), wrap(sparse.slice()))).toBe(true);
   Object.defineProperty(left, 'hidden', { value: 1 }); Object.defineProperty(right, 'hidden', { value: 2 });
   expect(stableEquals(wrap(left), wrap(right), [symbol, 'volatile'])).toBe(false);
 });
