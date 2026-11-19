@@ -69,7 +69,7 @@ compressCss('.scope :hover { color: red; }'); // '.scope :hover{color:red}'
 compressCss('.a { color : red; }'); // '.a{color:red}'
 ```
 
-Inside parentheses the spaces around `+` stay, because `calc()` requires them; outside parentheses `+` is the sibling combinator and loses them. A space before `:` stays unless the colon belongs to a declaration, because `.scope :hover` (a hovered descendant) and `.scope:hover` (the element itself) are different selectors. The colon test looks ahead for `;` or `}` before the next `{`; when it cannot tell, it keeps the space.
+Existing whitespace around `+` and `-` stays in declaration values and at-rule preludes, inside or outside parentheses: a custom property can later be substituted into `calc()`. Selector combinators may lose surrounding whitespace only when the selector context proves that meaning stays the same; An+B boundaries in `:nth-child()` stay intact. Descendant spaces around attribute selectors or after selector functions remain significant. A colon loses separator whitespace only in declaration context; `.scope :hover` and `.scope:hover` remain different selectors, and `.a: hover` is not repaired into `.a:hover`. Custom-property token spacing, including a whitespace-only value, is preserved for substitution. Comment removal retains an empty comment whenever it would merge or split tokens, including CDO/CDC and attribute-match boundaries.
 
 ## Related
 
