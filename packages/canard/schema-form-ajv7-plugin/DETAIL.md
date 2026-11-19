@@ -73,7 +73,7 @@ private 생성자에는 schemas·keywords·formats·cache bootstrap 옵션을 �
 - 공개 타입의 root는 JSON schema 객체입니다. boolean root는 compile·compileGuard·factory에서 명확한 TypeError로 거부합니다. 객체 root 안에서 포인터가 선택하는 boolean 조건은 계속 지원합니다.
 - bind와 createValidator, createValidatorFactory는 coerceTypes·useDefaults·removeAdditional가 켜진 인스턴스를 거부합니다. bind 이후 이 옵션을 켜도 다음 실제 컴파일에서 같은 거부로 처리합니다. 안전한 상태에서 이미 반환한 함수는 스냅숏입니다.
 - loadSchema는 호출하지 않습니다. 공개 컴파일은 동기적인 스키마 해석과 비동기 값 검증을 제공하며 외부 문서는 먼저 애플리케이션에 등록해야 합니다. 빠진 문서는 참조 오류로 거부합니다.
-- 생성자는 옵션 객체 하나로 private 인스턴스를 만들 수 있어야 합니다. 비표준 필수 인자를 요구하거나 격리 옵션을 무시하는 하위 클래스는 원인을 담은 명확한 격리 컴파일러 생성 오류로 거부합니다. 다른 기본 생성자로 조용히 대체하지 않습니다.
+- 생성자는 옵션 객체 하나로 private 인스턴스를 만들 수 있어야 합니다. 비표준 필수 인자를 요구하거나 격리 옵션을 무시하는 하위 클래스는 원인을 담은 명확한 격리 컴파일러 생성 오류로 거부합니다. 옵션 객체·native cache·compilation 목록·code scope는 애플리케이션과 독립이어야 하며 같은 mutable 객체를 반환하면 private compile 전에 같은 격리 생성 오류로 거부합니다. 다른 기본 생성자로 조용히 대체하지 않습니다.
 - AJV6 serialize:false와 addUsedSchema:false는 애플리케이션 레지스트리의 실제 현재 상태를 기준으로 읽습니다. 존재하지 않는 등록을 schema 내용만으로 추정하지 않습니다. private identity 캐시와 등록 정책은 애플리케이션 cache·serializer를 호출하거나 변경하지 않습니다.
 - 폼 root의 제자리 변경은 다음 compile·compileGuard에서 반영하며 이전 반환 validator·guard는 스냅숏입니다. 애플리케이션에 등록한 raw schema 및 keyword·format 정의와 옵션 안의 중첩 객체의 제자리 변경은 지원하지 않습니다. 이 애플리케이션 상태는 공개 add/remove 또는 값·객체 교체로 변경해야 합니다.
 - FinalizationRegistry가 없으면 자동 해제를 보장하지 않습니다. WeakRef도 없으면 명시적 release만 수명 관리로 보장합니다. 이 호스트에서도 살아 있는 주소의 충돌 격리와 64루트 풀 한도는 유지합니다.
