@@ -45,7 +45,7 @@ for (const tag of [
  * @template Type - Type of the value to clone
  * @param target - The value to create a deep clone of
  * @param maxDepth - Optional maximum depth to clone (objects beyond this depth are returned as references)
- * @returns A new deep clone with identical structure and values
+ * @returns A deep clone of supported state and copied properties, subject to the known limits below
  *
  * @example
  * Primitive and basic object cloning:
@@ -197,6 +197,10 @@ for (const tag of [
  * - **Type-Specific Cloning**: Specialized handlers for Date, RegExp, Map, Set, TypedArrays
  *
  * **Known Limits:**
+ * - Map, Set, Date, RegExp and Array subclasses retain built-in state and prototypes,
+ *   but additional own properties and constructor-set fields are not copied. Their
+ *   constructors do not run, so private fields are not initialized and methods that
+ *   require those fields can throw. Normalize to native built-ins when that state is required.
  * - Deep ordinary object and array graphs, including cycles, use work frames rather
  *   than the call stack. User getters, constructors, proxies and paths made only
  *   of non-plain built-ins remain subject to their own call-stack limits.
