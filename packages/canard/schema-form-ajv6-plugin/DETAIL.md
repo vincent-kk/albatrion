@@ -42,7 +42,7 @@ bind는 첫 컴파일 전에 한 번 호출합니다. 컴파일 후 재바인딩
 
 폼 연산을 끼운 애플리케이션과 애플리케이션 연산만 실행한 쌍둥이 인스턴스는 자기 호출의 반환·예외 종류와 메시지·ajv.errors, 레지스트리 키와 순서·캐시·fragment·코드 scope 크기가 같습니다. private 컴파일러 입력과 error 변환 closure, 직접 가드, scope와 cache에는 호출자 root나 그 자식 객체를 넣지 않습니다. JSON 스냅숏만 저장하고 원본을 강하게 도달하는 경로가 없음을 루트·어댑터의 실제 수거로 확인합니다.
 
-AJV가 호출 때마다 초기화하는 keyword validate·validateSchema 함수의 errors는 임시 scratch 상태로 이 불변식에서 제외합니다. 같은 keyword metaSchema를 private 쪽에서 재컴파일하지 않습니다. 이미 등록된 validateSchema 함수를 그대로 사용하므로 그 metaSchema가 참조한 애플리케이션 문서가 이후 제거돼도 등록된 keyword의 의미를 보존합니다. RULES는 native 컴파일이 구조를 변경하지 않는 부분만 공유합니다. AJV6의 생성 함수는 format 사전을 참조하므로 format 사전은 컴파일러 생성 때 얕게 복사하여 이전 함수의 의미를 보존합니다. 새 컴파일이 사용하는 format이 복사본과 다르면 컴파일러를 회전합니다. 함수 errors와 사용자 callback의 외부 closure 부수효과는 격리하지 않습니다. 
+AJV가 호출 때마다 초기화하는 keyword validate·validateSchema 함수의 errors는 임시 scratch 상태로 이 불변식에서 제외합니다. 같은 keyword metaSchema를 private 쪽에서 재컴파일하지 않습니다. 이미 등록된 validateSchema 함수를 그대로 사용하므로 그 metaSchema가 참조한 애플리케이션 문서가 이후 제거돼도 등록된 keyword의 의미를 보존합니다. AJV6의 $data 생성 함수는 RULES.custom 사전을 참조하므로 RULES 배열·그룹·이름 사전도 컴파일러 생성 때 얕게 복사합니다. 새 루트가 요구하는 규칙이 복사본과 다르면 컴파일러를 회전하며 이전 함수는 제거·교체 전 정의를 계속 사용합니다. keyword 정의 객체와 validateSchema 함수는 재사용하며 재컴파일하지 않습니다. AJV6의 생성 함수는 format 사전을 참조하므로 format 사전은 컴파일러 생성 때 얕게 복사하여 이전 함수의 의미를 보존합니다. 새 컴파일이 사용하는 format이 복사본과 다르면 컴파일러를 회전합니다. 함수 errors와 사용자 callback의 외부 closure 부수효과는 격리하지 않습니다. 
 
 ### I2 — 현재 프로필·별칭·충돌
 
