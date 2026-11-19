@@ -233,3 +233,7 @@ For string switches, use the schema-level `switchLabels: [checkedLabel, unchecke
 ### Unset slider values
 
 An unset slider exposes no current value to assistive technology and stores nothing until the user acts.
+
+### Slider constraints
+
+With `multipleOf`, selectable values are multiples of that number within the inclusive bounds. Integer sliders select only integer multiples. Without `multipleOf`, number sliders retain their authored bounds. A range with no selectable value is disabled and stores nothing.

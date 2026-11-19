@@ -80,10 +80,17 @@ const FieldInputSlider = ({
     return [labelProp || name, sizeProp || context.size];
   }, [context, labelProp, name, sizeProp, hideLabel]);
 
-  const { min, max, step } = getSliderBounds(
-    jsonSchema.minimum,
-    jsonSchema.maximum,
-    jsonSchema.multipleOf,
+  const { min, max, step, empty } = useMemo(
+    () =>
+      getSliderBounds(
+        jsonSchema.minimum,
+        jsonSchema.maximum,
+        jsonSchema.multipleOf,
+        Array.isArray(jsonSchema.type)
+          ? jsonSchema.type.includes('integer')
+          : jsonSchema.type === 'integer',
+      ),
+    [jsonSchema],
   );
   const isLazy = lazy ?? false;
 
@@ -91,6 +98,7 @@ const FieldInputSlider = ({
   const [isUnset, setIsUnset] = useState(typeof defaultValue !== 'number');
 
   const handleChange = useHandle((_, newValue: number | number[]) => {
+    if (empty) return;
     if (isUnset) setIsUnset(false);
     if (!isLazy) {
       onChange(Array.isArray(newValue) ? newValue[0] : newValue);
@@ -98,6 +106,7 @@ const FieldInputSlider = ({
   });
 
   const handleChangeCommitted = useHandle((_, newValue: number | number[]) => {
+    if (empty) return;
     const value = Array.isArray(newValue) ? newValue[0] : newValue;
     // MUI skips onChange for an unchanged value, so Home or a release on the minimum arrives only here.
     if (isUnset) {
@@ -129,7 +138,7 @@ const FieldInputSlider = ({
         step={step}
         onChange={handleChange}
         onChangeCommitted={handleChangeCommitted}
-        disabled={disabled || readOnly}
+        disabled={disabled || readOnly || empty}
         size={size}
         marks={showMarks}
         slotProps={{
