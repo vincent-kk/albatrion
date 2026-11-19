@@ -24,7 +24,7 @@ interface FieldInputNumberProps
 const parseDraft = (text: string) => (text.trim() === '' ? NaN : Number(text));
 
 const FieldInputNumber = ({
-  id,
+  inputId,
   name,
   jsonSchema,
   schemaType,
@@ -37,7 +37,7 @@ const FieldInputNumber = ({
   misfit,
   'aria-labelledby': labelledBy,
 }: FieldInputNumberProps) => {
-  const bindControls = useControlIdentifiers(id, name, 'input');
+  const bindControls = useControlIdentifiers(inputId, name, 'input');
   const handleChange = useHandle((input: number | null) => {
     if (input === null) onChange(undefined);
     else if (Number.isNaN(input)) return;

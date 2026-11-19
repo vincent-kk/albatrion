@@ -179,14 +179,17 @@ This repository is licensed under the MIT License. Please refer to the [`LICENSE
 
 ## Scoped control identifiers
 
-Element ids are scoped to each Form. `path` remains the JSON Pointer and is never the DOM id. Custom inputs use the supplied `FieldInputProps.id`, and single-control labels use the same value for `htmlFor`. A custom `FieldRenderer` uses `labelId` on a group title or legend and `aria-labelledby` on the group; each option has its own id. `FieldInputProps.name` is always the leaf name. Radio groups use `id` as the native `name` of their radios.
+Element ids are scoped to each Form and unique across Forms and contain no whitespace. Treat their spelling as opaque: never append to, decode, or parse an id. `path` remains the JSON Pointer used for form data. Custom inputs put `inputId` on their primary control and use `getInputId(key)` for additional elements; the key is required, and numeric and string keys with the same spelling identify the same element. Use a distinct key for each option, range endpoint, thumb, protocol selector, or input-owned label. A field title uses `labelId`, referenced through `aria-labelledby`. Custom renderers receive `inputId` and `labelId` for the same field. Single-control labels target `inputId`. `name` retains the leaf name; native radio names use `inputId` so fields and Forms remain independent.
 
 ```tsx
-const Input = ({ id, name }: FieldInputProps<string>) => <input id={id} name={name} />;
+const Input = ({ inputId, name }: FieldInputProps<string>) => (
+  <input id={inputId} name={name} />
+);
 ```
 
-Scope selectors to the intended Form, such as `formElement.querySelector('[data-path="/email"] input')`, or connect labels using the control's supplied id. Form API values retain the schema shape.
+For a composite custom input, consume `labelId` and `getInputId` explicitly rather than spreading them into DOM props. A getter is stable until the field scope or path changes. Never derive ids from the leaf name or from `path`.
 
+Scope selectors to the intended Form, such as `formElement.querySelector('[data-path="/email"] input')`, or connect labels using the control's supplied id. Form API values retain the schema shape.
 Known server-rendering limit: Stepper native input ids/names, Switch DOM ids, radio native names, and Slider thumb ids and `aria-labelledby` complete at hydration because the library exposes no prop for those native attributes. Radio option ids and Switch `aria-labelledby` are present in server HTML. Native names remain bound after option and library state updates.
 
 ## Contact

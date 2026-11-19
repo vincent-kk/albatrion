@@ -1,5 +1,7 @@
 import { type KeyboardEvent, type ReactNode, useEffect, useRef } from 'react';
 
+import type { FieldInputProps } from '@canard/schema-form';
+
 import { getKeyboardValue } from '../utils/slider/getKeyboardValue';
 
 /** Keyboard adapter for library thumbs that expose ARIA but no native keyboard input. */
@@ -7,7 +9,9 @@ interface SliderKeyboardControlProps {
   /** Library slider whose thumb nodes remain stable during value changes. */
   children: ReactNode;
   /** Core input address and the title address supplied by the renderer. */
-  id: string;
+  inputId: string;
+  /** Core resolver for additional range thumbs. */
+  getInputId: FieldInputProps['getInputId'];
   labelledBy?: string;
   /** Current draft value, updated on pointer moves as well as keyboard input. */
   value: number | [number, number];
@@ -32,7 +36,8 @@ interface SliderKeyboardControlProps {
  */
 export const SliderKeyboardControl = ({
   children,
-  id,
+  inputId,
+  getInputId,
   labelledBy,
   value,
   unset,
@@ -48,13 +53,13 @@ export const SliderKeyboardControl = ({
     const thumbs =
       ref.current?.querySelectorAll<HTMLElement>('[role="slider"]') ?? [];
     for (const [index, thumb] of Array.from(thumbs).entries()) {
-      thumb.id = index === 0 ? id : `${id}-${index}`;
+      thumb.id = index === 0 ? inputId : getInputId(index);
       if (labelledBy) thumb.setAttribute('aria-labelledby', labelledBy);
       thumb.tabIndex = disabled ? -1 : 0;
       if (disabled) thumb.removeAttribute('data-focus-target');
       else thumb.setAttribute('data-focus-target', '');
     }
-  }, [disabled, id, labelledBy]);
+  }, [disabled, inputId, getInputId, labelledBy]);
   useEffect(() => {
     const thumbs =
       ref.current?.querySelectorAll<HTMLElement>('[role="slider"]') ?? [];

@@ -32,12 +32,12 @@ it('names builtin radio options through the mobile field title', () => {
     />,
   );
   expect(screen.getByRole('group').getAttribute('aria-labelledby')).toMatch(
-    /^label:.+:\/Size$/,
+    /^.+:\/Size~label$/,
   );
   const group = screen.getByRole('group', { name: 'Size' });
-  expect(group.getAttribute('aria-labelledby')).toMatch(/^label:.+:\/Size$/);
+  expect(group.getAttribute('aria-labelledby')).toMatch(/^.+:\/Size~label$/);
   const label = screen.getByText('Size').closest('label')!;
-  expect(label.id).toMatch(/^label:.+:\/Size$/);
+  expect(label.id).toMatch(/^.+:\/Size~label$/);
   expect(label.getAttribute('for')).toBeNull();
 });
 
@@ -64,8 +64,8 @@ it('forwards standalone label content, addresses and root styling without nestin
   const label = view.getByText('Caption').closest('label')!;
   expect(label).not.toBeNull();
   expect(view.container.querySelectorAll('label')).toHaveLength(1);
-  expect(label.id).toMatch(/^label:.+:\/Text$/);
-  expect(label.htmlFor).toMatch(/^.+:\/Text$/);
+  expect(label.id).toMatch(/^.+:\/Text~label$/);
+  expect(label.htmlFor).toMatch(/^.+:\/Text~input$/);
   expect(label.classList.contains('caption')).toBe(true);
   expect(label.style.color).toBe('rgb(1, 2, 3)');
   expect(label.querySelector('[aria-hidden="true"]')?.textContent).toContain(
@@ -111,7 +111,7 @@ it('registers the label and error parts without an input frame', () => {
     </Form>,
   );
   expect(view.getByText('Caption').closest('label')?.id).toMatch(
-    /^label:.+:\/Text$/,
+    /^.+:\/Text~label$/,
   );
   expect(view.getByText('Issue')).toBeTruthy();
 });
@@ -127,8 +127,8 @@ it('omits a separate label for direct array items', () => {
       ErrorMessageRenderer={ErrorMessageRenderer}
     />,
   );
-  expect(view.container.querySelector('label[for$=":/0"]')).toBeNull();
-  expect(view.container.querySelector('input[id$=":/0"]')).not.toBeNull();
+  expect(view.container.querySelector('label[for$=":/0~input"]')).toBeNull();
+  expect(view.container.querySelector('input[id$=":/0~input"]')).not.toBeNull();
 });
 
 it.each([null, undefined, false, true, ''])(

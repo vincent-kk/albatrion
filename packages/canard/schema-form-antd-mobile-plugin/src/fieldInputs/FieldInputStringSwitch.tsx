@@ -11,7 +11,6 @@ import type {
 } from '@canard/schema-form';
 
 import { isStringSwitchInput } from '../utils/inputs/isStringSwitchInput';
-
 import { SwitchKeyboardControl } from './components/SwitchKeyboardControl';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
@@ -31,7 +30,7 @@ interface FieldInputStringSwitchProps
 }
 
 const FieldInputStringSwitch = ({
-  id,
+  inputId,
   name,
   jsonSchema,
   disabled,
@@ -63,13 +62,13 @@ const FieldInputStringSwitch = ({
   });
 
   return (
-    <SwitchKeyboardControl id={id} name={name} disabled={disabled}>
+    <SwitchKeyboardControl id={inputId} name={name} disabled={disabled}>
       <Switch
         aria-labelledby={labelledBy}
         data-focus-target
         tabIndex={disabled ? undefined : 0}
         aria-invalid={misfit || undefined}
-        key={id}
+        key={inputId}
         disabled={disabled}
         checked={value === checked}
         checkedText={checkedLabel}

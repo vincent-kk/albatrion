@@ -10,7 +10,7 @@ import type {
 } from '@canard/schema-form';
 
 const FieldInputBoolean = ({
-  id,
+  inputId,
   name,
   disabled,
   value,
@@ -31,7 +31,7 @@ const FieldInputBoolean = ({
       aria-invalid={misfit || undefined}
     >
       <Checkbox
-        id={id}
+        id={inputId}
         disabled={disabled}
         indeterminate={indeterminate}
         checked={checked}

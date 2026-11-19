@@ -33,7 +33,8 @@ interface FieldInputStringCheckboxProps
 }
 
 const FieldInputStringCheckbox = ({
-  id,
+  inputId,
+  getInputId,
   name,
   jsonSchema,
   readOnly,
@@ -45,7 +46,12 @@ const FieldInputStringCheckbox = ({
   misfit,
   'aria-labelledby': labelledBy,
 }: FieldInputStringCheckboxProps) => {
-  const bindControls = useControlIdentifiers(id, name, 'input', true);
+  const bindControls = useControlIdentifiers(
+    inputId,
+    name,
+    'input',
+    getInputId,
+  );
   const options = useMemo(() => {
     const labels = context.checkboxLabels || alias || {};
     return jsonSchema.items?.enum
@@ -75,7 +81,7 @@ const FieldInputStringCheckbox = ({
   return (
     <div
       ref={bindControls}
-      id={id}
+      id={inputId}
       aria-labelledby={labelledBy}
       role="group"
       aria-invalid={misfit || undefined}
@@ -89,7 +95,7 @@ const FieldInputStringCheckbox = ({
         {map(options, (option, index) => (
           <Checkbox
             key={option.value}
-            id={`${id}-${index}`}
+            id={getInputId(index)}
             value={option.value}
             style={{
               '--icon-size': '24px',

@@ -13,7 +13,7 @@ type StringJSONSchema = StringSchema & {
 };
 
 const FieldInputString = ({
-  id,
+  inputId,
   name,
   jsonSchema,
   readOnly,
@@ -36,7 +36,7 @@ const FieldInputString = ({
       aria-invalid={misfit || undefined}
     >
       <Input
-        id={id}
+        id={inputId}
         name={name}
         type={type}
         readOnly={readOnly}

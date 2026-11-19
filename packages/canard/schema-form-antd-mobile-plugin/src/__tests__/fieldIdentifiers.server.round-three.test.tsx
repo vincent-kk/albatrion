@@ -44,7 +44,7 @@ it('pins mobile server identifiers and the supported hydration boundary (round-3
   );
   expect(radios).toHaveLength(2);
   for (const radio of radios) {
-    expect(radio.id).toContain(':/Radio-');
+    expect(radio.id).toContain(':/Radio~input.');
     expect(radio.name).toBe('');
   }
   const slider = server.querySelector<HTMLElement>('[role="slider"]')!;

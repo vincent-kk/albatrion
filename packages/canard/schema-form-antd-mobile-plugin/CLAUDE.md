@@ -14,6 +14,7 @@ yarn storybook         # Storybook dev (port 6006)
 ## Architecture
 
 The plugin exports a `SchemaFormPlugin` object:
+
 - `FieldRenderer` composes bound input and error parts; `LabelRenderer` owns the label root.
 - `ErrorMessageRenderer` owns the error root. The plugin registers `LabelRenderer` and `ErrorMessageRenderer`, with no pass-through input frame.
 - `fieldInputDefinitions` — 10 mobile input component definitions (in priority order)
@@ -22,18 +23,18 @@ The plugin exports a `SchemaFormPlugin` object:
 
 ## Schema → Component Mapping
 
-| Condition | Component |
-|------|---------|
-| `type: boolean`, `inputType: switch` | Switch |
-| `type: string`, `inputType: checkbox` | Checkbox Group |
-| `type: string`, `inputType: switch` | String Switch |
-| `type: string/integer`, `inputType: radiogroup` | Radio Group |
-| `type: array` | Dynamic List |
-| `format: slider` | Slider |
-| `format: textarea` | Textarea |
-| `format: password` | Password Input |
-| `type: number/integer` | Stepper |
-| `type: boolean` | Checkbox |
+| Condition                                       | Component      |
+| ----------------------------------------------- | -------------- |
+| `type: boolean`, `inputType: switch`            | Switch         |
+| `type: string`, `inputType: checkbox`           | Checkbox Group |
+| `type: string`, `inputType: switch`             | String Switch  |
+| `type: string/integer`, `inputType: radiogroup` | Radio Group    |
+| `type: array`                                   | Dynamic List   |
+| `format: slider`                                | Slider         |
+| `format: textarea`                              | Textarea       |
+| `format: password`                              | Password Input |
+| `type: number/integer`                          | Stepper        |
+| `type: boolean`                                 | Checkbox       |
 
 ## Peer Dependencies
 
@@ -49,4 +50,4 @@ Keep local parameter tables as static array literals at the Vitest each call so 
 
 ## Control identifiers
 
-Use `FieldInputProps.id` on the real focusable control; `path` remains a JSON Pointer for data access. Single-control labels target that same id. A group renderer uses `FieldRendererProps.labelId` for its title or legend and connects the group with `aria-labelledby`; options have their own ids. Native radio names use the scoped id, while other input names retain their leaf meaning. The core supplies these addresses; do not build an element id from path.
+Use `FieldInputProps.inputId` on the primary focusable control and `getInputId(key)` for additional elements; the key is required. Use `labelId` for the field title and `aria-labelledby` references. Input-owned labels use a keyed address. Treat every id as opaque: never concatenate or parse it. `path` remains a JSON Pointer, and `name` remains the leaf name except native radio groups use `inputId`. Renderers receive the same `inputId` and `labelId`; no plugin context or builder reconstructs them.

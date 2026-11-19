@@ -37,7 +37,8 @@ interface FieldInputSliderProps
 }
 
 const FieldInputSlider = ({
-  id,
+  inputId,
+  getInputId,
   jsonSchema,
   name,
   type,
@@ -143,7 +144,8 @@ const FieldInputSlider = ({
       aria-invalid={misfit || undefined}
     >
       <SliderKeyboardControl
-        id={id}
+        inputId={inputId}
+        getInputId={getInputId}
         labelledBy={labelledBy}
         value={draft}
         unset={isUnset}

@@ -30,7 +30,8 @@ interface FieldInputRadioGroupProps
 }
 
 const FieldInputRadioGroup = ({
-  id,
+  inputId,
+  getInputId,
   jsonSchema,
   readOnly,
   disabled,
@@ -56,7 +57,13 @@ const FieldInputRadioGroup = ({
       : [];
   }, [context, jsonSchema, alias]);
 
-  const bindControls = useControlIdentifiers(id, id, 'input', true, options);
+  const bindControls = useControlIdentifiers(
+    inputId,
+    inputId,
+    'input',
+    getInputId,
+    options,
+  );
   const initialValue = useMemo(
     () => options.find((option) => option.rawValue === defaultValue)?.value,
     [defaultValue, options],
@@ -71,7 +78,7 @@ const FieldInputRadioGroup = ({
   return (
     <div
       ref={bindControls}
-      id={id}
+      id={inputId}
       aria-labelledby={labelledBy}
       role="radiogroup"
       aria-invalid={misfit || undefined}
@@ -85,7 +92,7 @@ const FieldInputRadioGroup = ({
         {map(options, (option, index) => (
           <Radio
             key={option.value}
-            id={`${id}-${index}`}
+            id={getInputId(index)}
             value={option.value}
             style={{
               '--icon-size': '24px',

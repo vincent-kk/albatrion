@@ -11,7 +11,6 @@ import type {
 } from '@canard/schema-form';
 
 import { isBooleanSwitchInput } from '../utils/inputs/isBooleanSwitchInput';
-
 import { SwitchKeyboardControl } from './components/SwitchKeyboardControl';
 
 interface FieldInputBooleanSwitchProps
@@ -29,7 +28,7 @@ interface FieldInputBooleanSwitchProps
 }
 
 const FieldInputBooleanSwitch = ({
-  id,
+  inputId,
   name,
   disabled,
   value,
@@ -47,13 +46,13 @@ const FieldInputBooleanSwitch = ({
   const handleChange = useHandle(onChange);
 
   return (
-    <SwitchKeyboardControl id={id} name={name} disabled={disabled}>
+    <SwitchKeyboardControl id={inputId} name={name} disabled={disabled}>
       <Switch
         aria-labelledby={labelledBy}
         data-focus-target
         tabIndex={disabled ? undefined : 0}
         aria-invalid={misfit || undefined}
-        key={id}
+        key={inputId}
         disabled={disabled}
         checked={value === true}
         checkedText={checkedLabel}

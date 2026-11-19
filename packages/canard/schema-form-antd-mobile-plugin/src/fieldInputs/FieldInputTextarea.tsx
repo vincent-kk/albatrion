@@ -16,7 +16,7 @@ type TextareaSchema = StringSchema & {
 };
 
 const FieldInputTextarea = ({
-  id,
+  inputId,
   name,
   jsonSchema,
   readOnly,
@@ -45,7 +45,7 @@ const FieldInputTextarea = ({
       aria-invalid={misfit || undefined}
     >
       <TextArea
-        id={id}
+        id={inputId}
         name={name}
         disabled={disabled}
         readOnly={readOnly}

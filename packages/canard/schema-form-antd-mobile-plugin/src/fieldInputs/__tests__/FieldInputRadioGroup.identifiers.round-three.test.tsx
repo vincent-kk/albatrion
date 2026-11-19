@@ -37,7 +37,7 @@ it('names newly rendered radio options while the field id stays unchanged (round
       view.container.querySelectorAll<HTMLInputElement>('input'),
       (input) => input.name,
     ),
-  ).toEqual([props.id, props.id]);
+  ).toEqual([props.inputId, props.inputId]);
   fireEvent.click(view.container.querySelectorAll('input')[1]);
   await waitFor(() =>
     expect(
@@ -45,7 +45,7 @@ it('names newly rendered radio options while the field id stays unchanged (round
         view.container.querySelectorAll<HTMLInputElement>('input'),
         (input) => input.name,
       ),
-    ).toEqual([props.id, props.id]),
+    ).toEqual([props.inputId, props.inputId]),
   );
   view.rerender(
     <Component
@@ -56,8 +56,8 @@ it('names newly rendered radio options while the field id stays unchanged (round
   const inputs = view.container.querySelectorAll<HTMLInputElement>('input');
   expect(inputs).toHaveLength(3);
   expect(Array.from(inputs, (input) => input.name)).toEqual([
-    props.id,
-    props.id,
-    props.id,
+    props.inputId,
+    props.inputId,
+    props.inputId,
   ]);
 });

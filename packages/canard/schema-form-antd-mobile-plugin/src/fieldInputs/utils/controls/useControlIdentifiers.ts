@@ -1,19 +1,21 @@
 import { useCallback, useLayoutEffect, useRef } from 'react';
 
+import type { FieldInputProps } from '@canard/schema-form';
+
 /**
  * Bind identifiers where the library exposes no native-control attribute props.
- * @param id - Form-scoped input address supplied by the core.
+ * @param inputId - Form-scoped input address supplied by the core.
  * @param name - Scoped radio name or the unchanged leaf name for other controls.
  * @param selector - Selector for the library's real focusable controls inside the boundary.
- * @param multiple - Give options indexed addresses instead of the single input address.
+ * @param getInputId - Core resolver for indexed option addresses; absent for a single control.
  * @param revision - Rebind after an actual option-list change.
  * @returns A mount ref; native name removals and replaced controls are repaired at the DOM boundary.
  */
 export const useControlIdentifiers = (
-  id: string,
+  inputId: string,
   name: string,
   selector: string,
-  multiple = false,
+  getInputId?: FieldInputProps['getInputId'],
   revision?: unknown,
 ) => {
   const currentRoot = useRef<HTMLElement | null>(null);
@@ -23,12 +25,12 @@ export const useControlIdentifiers = (
       for (const [index, control] of Array.from(
         root?.querySelectorAll<HTMLElement>(selector) ?? [],
       ).entries()) {
-        control.id = multiple ? `${id}-${index}` : id;
+        control.id = getInputId ? getInputId(index) : inputId;
         if (control.getAttribute('name') !== name)
           control.setAttribute('name', name);
       }
     },
-    [id, name, selector, multiple],
+    [inputId, name, selector, getInputId],
   );
   useLayoutEffect(() => {
     bind(currentRoot.current);
