@@ -63,7 +63,9 @@ export async function runInjection(input: RunInput): Promise<RunResult> {
     !flags.dryRun &&
     units.some((unit) => unit.plan.requiresForce);
   const cancelled = Boolean(
-    needsConfirmation && input.confirm && !(await input.confirm(units)),
+    needsConfirmation &&
+      input.confirm &&
+      !(await input.confirm(units.filter((unit) => !unit.refused))),
   );
   return executeUnits(units, flags, errors, cancelled, input.diagnostics);
 }

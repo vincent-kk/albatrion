@@ -12,6 +12,8 @@ interface TargetCardProps {
   /** Which agent this card's plan belongs to; one package can have several. */
   readonly agent?: AgentType;
   readonly plan?: InjectPlan;
+  /** Refused actions are evidence, never proposed work. */
+  readonly diagnosticOnly?: boolean;
   readonly expanded?: boolean;
   readonly highlighted?: boolean;
 }
@@ -48,6 +50,7 @@ export function TargetCard({
   plan,
   expanded = true,
   highlighted = false,
+  diagnosticOnly = false,
 }: TargetCardProps): React.ReactElement {
   const counts = plan ? countActions(plan.actions) : null;
 
@@ -104,7 +107,19 @@ export function TargetCard({
             source-hash-reconciled: {action.relPath}
           </Text>
         ))}
-      {expanded && plan ? (
+      {diagnosticOnly ? (
+        <Text color={colors.warn}>
+          diagnostic plan only: refused unit; no actions will run
+        </Text>
+      ) : null}
+      {diagnosticOnly
+        ? plan?.actions.map((action, index) => (
+            <Text key={`diagnostic:${index}`} color={colors.muted}>
+              [diagnostic] {action.kind} {action.relPath}
+            </Text>
+          ))
+        : null}
+      {expanded && plan && !diagnosticOnly ? (
         <Box marginLeft={2}>
           <PlanTable plan={plan} />
         </Box>

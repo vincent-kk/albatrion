@@ -12,12 +12,14 @@
 - 확인 목록은 `warn-diverged` 와 `warn-orphan` 뿐 아니라 `--force` 가 고아 항목을 바꾼 `delete` 도 `warn-orphan` 경고로 담는다. 그렇지 않으면 `--force` 실행에서 지워질 파일이 대화상자에 나타나지 않는다.
 - 진행률은 액션이 끝날 때마다 `apply-progress` 이벤트로 보고된다. 파일은 한 건씩, 블록 그룹은 그룹 크기만큼 `done` 이 증가한다.
 - `--dry-run` 은 force 확인과 적용을 건너뛰고 `summarize(plan, 0)` 로 바로 summary 에 들어가며 종료 코드 0을 낸다. `--force` 를 요구하는 계획도 실패로 끝내지 않는다. 쓰지 않는 실행은 확인할 것도 막을 것도 없기 때문이다.
-- 종료 코드: `0` 성공/최신/dry-run, `1` 런타임 오류, `2` 사용자 취소 또는 설정 누락.
+- 종료 판정은 최상위 src/DETAIL.md의 단일 종료 코드 표를 따릅니다.
 - 계획 중 던져진 오류는 실패한 단위를 최종 결과에도 보존하고 종료 코드 1로 표면화합니다. 실행 오류 1이 차단 2보다 우선하며, 차단된 단위가 있어도 다른 단위는 적용합니다. agent·asset·scope의 유효하지 않은 명시 값은 쓰기 전에 2로 거부합니다.
 
 - 파일·블록 적용 실패는 보고서의 failed 경고와 종료 코드 1로 전달한다. 성공한 작업만 생성·삭제 목록에 남기고 다른 작업은 계속한다.
 
 ## API Contracts
+
+- 거부된 계획은 diagnostic 표시를 붙여 진단 증거로만 보여 주며 force 확인 목록과 실행 예정 작업에서 제외합니다.
 
 - `renderInjectApp(input: RenderInput): Promise<number>`
   - `RenderInput` — `{ targets: readonly ConsumerPackage[]; flags: DefaultFlags; originCwd: string }`

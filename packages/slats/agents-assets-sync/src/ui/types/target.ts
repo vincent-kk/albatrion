@@ -11,6 +11,8 @@ export interface PlanStepState {
 
 /** One plan is one (package, agent) pair — a package can target several. */
 export interface TargetPlan {
+  /** Core verdict that makes retained actions diagnostic-only. */
+  readonly refused?: RunUnit['refused'];
   readonly notices?: RunUnit['notices'];
   /** Core-supplied identity for terminal rendering. */
   readonly key?: string;

@@ -147,8 +147,14 @@ it('preserves failed-owner bytes against a reference model in 2000 seeded real r
       for (const unit of result.units.filter((unit) => unit.refused)) {
         expect(unit.plan.requiresForce, label).toBe(false);
         for (const action of unit.plan.actions) {
-          expect(fileCalls.mock.calls.some(([called]) => called === action), label).toBe(false);
-          expect(blockCalls.mock.calls.some(([, called]) => called.includes(action)), label).toBe(false);
+          expect(
+            fileCalls.mock.calls.some(([called]) => called === action),
+            label,
+          ).toBe(false);
+          expect(
+            blockCalls.mock.calls.some(([, called]) => called.includes(action)),
+            label,
+          ).toBe(false);
         }
       }
       for (let index = 0; index < destinations.length; index++) {
