@@ -70,7 +70,9 @@ export async function replaceDocument(
         if (
           !(error instanceof Error) ||
           !('code' in error) ||
-          (error.code !== 'EPERM' && error.code !== 'EACCES')
+          !['EPERM', 'EACCES', 'ENOSYS', 'ENOTSUP', 'EOPNOTSUPP'].includes(
+            String(error.code),
+          )
         )
           throw error;
         await writeFile(destination, content);
