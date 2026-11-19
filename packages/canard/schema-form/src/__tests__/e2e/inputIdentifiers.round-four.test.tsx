@@ -1,7 +1,7 @@
 import { createRef } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
-import { Form, type FieldInputProps, type FormHandle, ValidationMode, isArrayNode } from '../../index';
+import { Form, type FieldInputProps, type FormHandle, ValidationMode, isArrayNode, useFieldErrors } from '../../index';
 
 afterEach(cleanup);
 
@@ -47,5 +47,28 @@ it('updates keyed identity on array moves without replacing the surviving contro
   expect(after.getInputId).not.toBe(before.getInputId);
   expect(after.getInputId(0)).not.toBe(before.getInputId(0));
   expect(document.getElementById(after.inputId)).toBe(control);
+  view.unmount();
+});
+
+it('retains keyed identity through a published validation error', async () => {
+  const seen: { getInputId: FieldInputProps['getInputId']; errorCount: number }[] = [];
+  const Input = (props: FieldInputProps) => {
+    const { errors } = useFieldErrors(props.node);
+    seen.push({ getInputId: props.getInputId, errorCount: errors.length });
+    return <input id={props.inputId} value={props.value ?? ''} onChange={event => props.onChange(event.target.value)} />;
+  };
+  const handle = createRef<FormHandle>();
+  const view = render(<Form ref={handle} jsonSchema={{ type: 'string' }} defaultValue="okay" validationMode={ValidationMode.OnRequest}
+    validatorFactory={{ compileGuard: () => () => true, compile: () => value => value === 'bad' ? [{ dataPath: '', message: 'invalid' }] : [] }}
+    fieldInputDefinitions={[{ test: { type: 'string' }, Component: Input, controlled: true }]} />);
+  const before = seen[seen.length - 1];
+  expect(typeof before.getInputId).toBe('function');
+  await act(async () => {
+    handle.current!.node!.setValue('bad');
+    await handle.current!.validate();
+  });
+  expect(handle.current!.getErrors()).toHaveLength(1);
+  expect(seen[seen.length - 1].errorCount).toBe(1);
+  expect(seen[seen.length - 1].getInputId).toBe(before.getInputId);
   view.unmount();
 });
