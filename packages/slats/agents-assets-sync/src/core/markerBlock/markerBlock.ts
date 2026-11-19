@@ -1,4 +1,5 @@
 import { type Sha256Hex, hashContent, hashEquals } from '../hash/index.js';
+import { assertManagedMarkdown } from './utils/assertManagedMarkdown.js';
 import { endMarker, startMarker } from './utils/markerLine.js';
 import { scanBlocks } from './utils/scanBlocks.js';
 
@@ -66,19 +67,22 @@ export function findBlockBody(content: string, blockId: string): string | null {
  * @param content - full `AGENTS.md` content, possibly empty
  * @param blockId - identifier from `formatBlockId`
  * @param body - source file bytes to place between the markers
+ * @param context - optional file names for Markdown boundary diagnostics
  * @returns the updated document
+ * @throws When source or document boundaries prevent safe insertion.
  */
 export function upsertBlock(
   content: string,
   blockId: string,
   body: string,
+  context: { document?: string; source?: string } = {},
 ): string {
+  const blocks = assertManagedMarkdown(content, context.document ?? 'document');
+  assertManagedMarkdown(body, context.source ?? 'rule source');
   const rendered = `${startMarker(blockId)}\n${body}${
     body.endsWith('\n') ? '' : '\n'
   }${endMarker(blockId)}\n`;
-  const found = scanBlocks(content).filter(
-    (block) => block.blockId === blockId,
-  );
+  const found = blocks.filter((block) => block.blockId === blockId);
   if (found.length) {
     let next = content;
     for (let index = found.length - 1; index >= 0; index--) {

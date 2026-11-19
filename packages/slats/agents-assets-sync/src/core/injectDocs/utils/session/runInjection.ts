@@ -1,6 +1,6 @@
 import type { DefaultFlags } from '../../../../types/index.js';
 import { executeUnits } from './executeUnits.js';
-import { prepareUnits } from './prepareUnits.js';
+import { prepareUnits } from './prepareUnits/prepareUnits.js';
 import type { RunInput, RunResult } from './types.js';
 import { validateFlags } from './validateFlags.js';
 

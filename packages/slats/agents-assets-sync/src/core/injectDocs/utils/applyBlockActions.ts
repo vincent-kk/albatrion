@@ -41,7 +41,10 @@ export async function applyBlockActions(
       continue;
     }
     const body = await readFile(join(assetRoot, action.relPath), 'latin1');
-    content = upsertBlock(content, blockId, body);
+    content = upsertBlock(content, blockId, body, {
+      document: fileAbs,
+      source: join(assetRoot, action.relPath),
+    });
   }
 
   await replaceDocument(fileAbs, Buffer.from(content, 'latin1'));

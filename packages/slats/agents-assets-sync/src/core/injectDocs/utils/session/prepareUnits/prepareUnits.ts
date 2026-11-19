@@ -1,18 +1,22 @@
-import type { ConsumerPackage, DefaultFlags } from '../../../../types/index.js';
+import type {
+  ConsumerPackage,
+  DefaultFlags,
+} from '../../../../../types/index.js';
 import {
   type ResolvedLocations,
   assertDestinationRootsContained,
   assertWriteTargetsContained,
   resolveAgentTarget,
   resolveDestinations,
-} from '../../../agentTarget/index.js';
-import { buildPlan, collectFileWrites } from '../../../buildPlan/index.js';
+} from '../../../../agentTarget/index.js';
+import { buildPlan, collectFileWrites } from '../../../../buildPlan/index.js';
 import {
   computeNamespacePrefixes,
   resolveHashManifest,
-} from '../../../hashManifest/index.js';
-import { mergePlans } from './mergePlans.js';
-import type { RunUnit, ValidatedFlags } from './types.js';
+} from '../../../../hashManifest/index.js';
+import { mergePlans } from '../mergePlans.js';
+import type { RunUnit, ValidatedFlags } from '../types.js';
+import { validateUnitMarkdown } from './utils/validateUnitMarkdown.js';
 
 /** Read all inputs and prepare all units before any destination is written.
  * @param targets Deduplicated packages.
@@ -30,6 +34,7 @@ export async function prepareUnits(
   const units: RunUnit[] = [];
   const resolved: ResolvedLocations = new Map();
   const destinationsSeen = new Map<string, RunUnit>();
+  const markdown = new Map<string, Promise<void>>();
   const generatedAt = new Date().toISOString();
   for (const target of targets) {
     const manifest = await resolveHashManifest(target, generatedAt).then(
@@ -81,6 +86,7 @@ export async function prepareUnits(
           orphanScans,
           force: Boolean(flags.force),
         });
+        await validateUnitMarkdown(plan, target.assetRoot, markdown);
         await assertWriteTargetsContained({
           agentTarget,
           dstPaths: collectFileWrites(plan),
