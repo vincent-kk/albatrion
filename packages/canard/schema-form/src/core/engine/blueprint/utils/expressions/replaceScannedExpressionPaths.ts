@@ -7,10 +7,12 @@ const VALUE_END = /[\w$)\]}]/;
 /** Whitespace keeps the previous token's value state. */
 const WHITESPACE = /\s/;
 
-/** Identifier characters are consumed together so keywords do not become values character by character. */
-const IDENTIFIER_START = /[a-zA-Z_$]/;
-/** The remaining ASCII identifier characters cannot terminate a keyword token early. */
-const IDENTIFIER_PART = /[\w$]/;
+/** ASCII identifier flags: 1 permits continuation and 2 permits a first character. */
+const IDENTIFIER_FLAGS = Uint8Array.from({ length: 128 }, (_, code) =>
+  code === 36 || code === 95 || (code >= 65 && code <= 90) || (code >= 97 && code <= 122)
+    ? 3
+    : code >= 48 && code <= 57 ? 1 : 0,
+);
 /** Keywords that leave the following token in an operand or statement position. */
 const REGEXP_PREFIX_KEYWORD =
   /^(?:return|throw|typeof|case|in|of|void|delete|await|yield|else|do)$/;
@@ -84,11 +86,10 @@ export const replaceScannedExpressionPaths = (
       }
       if (braces.length && char === '}') braces[braces.length - 1]--;
       if (!WHITESPACE.test(char)) {
-        if (IDENTIFIER_START.test(char)) {
+        if (IDENTIFIER_FLAGS[expression.charCodeAt(index)] & 2) {
           const start = index;
           while (
-            index + 1 < expression.length &&
-            IDENTIFIER_PART.test(expression[index + 1])
+            IDENTIFIER_FLAGS[expression.charCodeAt(index + 1)] & 1
           )
             index++;
           isAfterValue = !REGEXP_PREFIX_KEYWORD.test(
