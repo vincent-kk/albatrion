@@ -9,7 +9,12 @@ import { hasUnclosedComment } from './utils/hasUnclosedComment.js';
 export function scanDocument(content: string): MarkdownScan {
   const blocks: LocatedBlock[] = [];
   const marker = new RegExp(`^<!-- ${MARKER_PREFIX}:(START|END):(.+?) -->$`);
-  let offset = 0;
+  let offset =
+    content.charCodeAt(0) === 0xfeff
+      ? 1
+      : content.startsWith('\xEF\xBB\xBF')
+        ? 3
+        : 0;
   let lineNumber = 0;
   let fence = '';
   let fenceLine = 0;
