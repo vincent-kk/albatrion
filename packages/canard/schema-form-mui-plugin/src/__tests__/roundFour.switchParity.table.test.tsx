@@ -103,3 +103,34 @@ it.each([
     }
   },
 );
+
+it.each([
+  { source: 'alias', alias: { on: 'Alias on', off: 'Alias off' }, context: {}, prefix: 'Alias' },
+  { source: 'context before alias', alias: { on: 'Alias on', off: 'Alias off' }, context: { switchLabels: { on: 'Context on', off: 'Context off' } }, prefix: 'Context' },
+  { source: 'empty context masks alias', alias: { on: 'Alias on', off: 'Alias off' }, context: { switchLabels: {} }, prefix: '' },
+])('string switch map follows $source in either state', ({ alias, context, prefix }) => {
+  for (const stored of ['on', 'off']) {
+    const ref = createRef<FormHandle>();
+    const view = render(<Form ref={ref} jsonSchema={{ type: 'object', properties: { mode: { type: 'string', enum: ['on', 'off'], presentation: { inputType: 'switch', FieldInputProps: { alias } } } } }} defaultValue={{mode: stored}} context={context} fieldInputDefinitions={plugin.fieldInputDefinitions} FieldRenderer={plugin.FieldRenderer} LabelRenderer={plugin.LabelRenderer} />);
+    expect(view.container.textContent).toContain(prefix ? prefix + ' ' + stored : stored);
+    if (prefix !== 'Alias') expect(view.container.textContent).not.toContain('Alias');
+    const control=screen.getByRole('switch');
+    const checked=control instanceof HTMLInputElement ? control.checked : control.getAttribute('aria-checked')==='true';
+    expect(checked).toBe(stored==='on');
+    fireEvent.click(control);
+    expect(ref.current!.getValue()).toEqual({mode: stored==='on'?'off':'on'});
+    view.unmount();
+  }
+});
+
+it.each([
+  { source: 'tuple', alias: undefined, context: {}, on: 'Tuple on', off: 'Tuple off' },
+  { source: 'alias before tuple', alias: {on:'Alias on',off:'Alias off'}, context: {}, on: 'Alias on', off: 'Alias off' },
+  { source: 'context before alias and tuple', alias: {on:'Alias on',off:'Alias off'}, context: {switchLabels:{on:'Context on',off:'Context off'}}, on: 'Context on', off: 'Context off' },
+  { source: 'partial map uses raw value, not tuple', alias: {on:'Alias on'}, context: {}, on: 'Alias on', off: 'off' },
+])('keeps MUI tuple compatibility with $source', ({alias,context,on,off}) => {
+  const view=render(<Form jsonSchema={{type:'string',enum:['on','off'],switchLabels:['Tuple on','Tuple off'],presentation:{inputType:'switch',FieldInputProps:{alias}}}} defaultValue="on" context={context} fieldInputDefinitions={plugin.fieldInputDefinitions} />);
+  expect(view.container.textContent).toContain(on);
+  expect(view.container.textContent).toContain(off);
+  if(alias || 'switchLabels' in context) expect(view.container.textContent).not.toContain('Tuple');
+});
