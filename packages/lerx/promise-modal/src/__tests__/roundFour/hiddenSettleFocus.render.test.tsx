@@ -36,9 +36,7 @@ function RoutedApp() {
         <button>Save</button>
       </header>
       <ModalProvider usePathname={useAppPathname} options={{ duration: 0 }}>
-        <main>
-          {pathname === '/other' && <input aria-label="Search" />}
-        </main>
+        <main>{pathname === '/other' && <input aria-label="Search" />}</main>
       </ModalProvider>
     </Route.Provider>
   );
@@ -63,7 +61,10 @@ it('keeps focus in the page input when a request hidden by route is aborted', as
   act(() => controller.abort());
   await act(async () => {});
   expect(result).toBe(false);
-  expect(document.activeElement?.getAttribute('aria-label') ?? document.activeElement?.textContent).toBe('Search');
+  expect(
+    document.activeElement?.getAttribute('aria-label') ??
+      document.activeElement?.textContent,
+  ).toBe('Search');
 });
 
 function Visibility({
@@ -110,7 +111,10 @@ for (const kind of ['activity', 'suspense'] as const)
       search.focus();
       act(() => controller.abort());
       await act(async () => {});
-      expect(document.activeElement?.getAttribute('aria-label') ?? document.activeElement?.textContent).toBe('Search');
+      expect(
+        document.activeElement?.getAttribute('aria-label') ??
+          document.activeElement?.textContent,
+      ).toBe('Search');
     },
   );
 
@@ -135,7 +139,10 @@ it('keeps focus in the page input when a request of a detached (root={null}) Pro
   search.focus();
   act(() => controller.abort());
   await act(async () => {});
-  expect(document.activeElement?.getAttribute('aria-label') ?? document.activeElement?.textContent).toBe('Search');
+  expect(
+    document.activeElement?.getAttribute('aria-label') ??
+      document.activeElement?.textContent,
+  ).toBe('Search');
 });
 
 it('control: returns focus to the opener when a displayed request is aborted', async () => {
