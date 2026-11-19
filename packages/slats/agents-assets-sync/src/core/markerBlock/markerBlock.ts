@@ -1,8 +1,5 @@
 import { type Sha256Hex, hashContent, hashEquals } from '../hash/index.js';
-import {
-  endMarker,
-  startMarker,
-} from './utils/markerLine.js';
+import { endMarker, startMarker } from './utils/markerLine.js';
 import { scanBlocks } from './utils/scanBlocks.js';
 
 /** One block this tool owns inside a shared `AGENTS.md`. */
@@ -35,9 +32,15 @@ export function formatBlockId(packageName: string, relPath: string): string {
  * @returns parsed blocks; empty when the document holds none
  */
 export function parseBlocks(content: string): ParsedBlock[] {
-  return scanBlocks(content).map(block => {
+  return scanBlocks(content).map((block) => {
     const separator = block.blockId.indexOf(':');
-    return { blockId: block.blockId, packageName: separator === -1 ? block.blockId : block.blockId.slice(0, separator), relPath: separator === -1 ? '' : block.blockId.slice(separator + 1), body: block.body };
+    return {
+      blockId: block.blockId,
+      packageName:
+        separator === -1 ? block.blockId : block.blockId.slice(0, separator),
+      relPath: separator === -1 ? '' : block.blockId.slice(separator + 1),
+      body: block.body,
+    };
   });
 }
 
@@ -73,12 +76,17 @@ export function upsertBlock(
   const rendered = `${startMarker(blockId)}\n${body}${
     body.endsWith('\n') ? '' : '\n'
   }${endMarker(blockId)}\n`;
-  const found = scanBlocks(content).filter(block => block.blockId === blockId);
+  const found = scanBlocks(content).filter(
+    (block) => block.blockId === blockId,
+  );
   if (found.length) {
     let next = content;
     for (let index = found.length - 1; index >= 0; index--) {
       const block = found[index];
-      next = next.slice(0, block.start) + (index === 0 ? rendered : '') + next.slice(block.end);
+      next =
+        next.slice(0, block.start) +
+        (index === 0 ? rendered : '') +
+        next.slice(block.end);
     }
     return next;
   }
@@ -113,23 +121,35 @@ export function removeBlock(content: string, blockId: string): string {
  * @param expected - the manifest's SHA-256 for the source file
  * @returns `true` when the body matches the manifest
  */
-export function blockBodyMatches(body: string, expected: Sha256Hex, encoding: BufferEncoding = 'utf8'): boolean {
-  if (hashEquals(hashContent(Buffer.from(body, encoding)), expected)) return true;
+export function blockBodyMatches(
+  body: string,
+  expected: Sha256Hex,
+  encoding: BufferEncoding = 'utf8',
+): boolean {
+  if (hashEquals(hashContent(Buffer.from(body, encoding)), expected))
+    return true;
   if (
     body.endsWith('\n') &&
     hashEquals(hashContent(Buffer.from(body.slice(0, -1), encoding)), expected)
   )
     return true;
-  return body.indexOf('\r') !== -1 && lfReadingMatches(body, expected, encoding);
+  return (
+    body.indexOf('\r') !== -1 && lfReadingMatches(body, expected, encoding)
+  );
 }
 
 // The same two readings after a `core.autocrlf` checkout's CRLF endings are
 // turned back into LF. Reached only for a body holding a carriage return.
-function lfReadingMatches(body: string, expected: Sha256Hex, encoding: BufferEncoding): boolean {
+function lfReadingMatches(
+  body: string,
+  expected: Sha256Hex,
+  encoding: BufferEncoding,
+): boolean {
   const lf = body.replace(/\r\n/g, '\n');
   if (hashEquals(hashContent(Buffer.from(lf, encoding)), expected)) return true;
   return (
-    lf.endsWith('\n') && hashEquals(hashContent(Buffer.from(lf.slice(0, -1), encoding)), expected)
+    lf.endsWith('\n') &&
+    hashEquals(hashContent(Buffer.from(lf.slice(0, -1), encoding)), expected)
   );
 }
 
@@ -139,5 +159,5 @@ function locateBlock(
   content: string,
   blockId: string,
 ): { start: number; end: number; body: string } | null {
-  return scanBlocks(content).find(block => block.blockId === blockId) ?? null;
+  return scanBlocks(content).find((block) => block.blockId === blockId) ?? null;
 }

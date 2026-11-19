@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 코드 fence는 backtick·tilde 3개 이상과 들여쓰기 3칸까지를 인식하며 같은 문자로 더 길거나 같은 종료 fence만 닫습니다. fence 내부의 START와 END는 모두 본문이므로 실제 블록을 열거나 닫지 않습니다.
+
 - 코드 fence 안의 마커 예제는 사용자 본문입니다. 모든 탐색과 갱신은 fence 밖의 같은 블록 집합을 사용하고 중복 ID를 갱신할 때 낡은 사본을 남기지 않습니다.
 
 - 이 fractal 은 문자열만 변환한다. 파일시스템을 읽거나 쓰지 않는다.
@@ -15,7 +17,6 @@
 - marker 줄과 본문의 줄바꿈은 LF 와 CRLF 를 모두 인식한다. `core.autocrlf=true` 체크아웃은 `AGENTS.md` 전체를 CRLF 로 바꾸는데, 그 블록을 못 알아보면 다음 실행이 같은 id 의 블록을 하나 더 덧붙이고 옛 사본은 갱신도 고아 삭제도 되지 않는다. 쓰는 블록은 언제나 LF 다.
 - `blockBodyMatches` 는 앞의 두 읽기가 맞지 않고 본문에 캐리지 리턴이 있을 때만 CRLF 를 LF 로 바꾼 본문으로 같은 두 읽기를 한 번 더 시험한다. LF 본문의 경로는 `\r` 검색 한 번 외에는 CRLF 지원 전과 같다. 줄바꿈만 바뀐 블록은 내용이 바뀐 것이 아니므로 `--force` 를 요구하지 않는다. CRLF 로 된 원본은 첫 비교에서 그대로 맞는다.
 - 블록 탐색은 캡처된 id 를 비교해서 한다. id 로 정규식을 만들지 않는다 — 패키지 이름은 정규식 메타문자를 담는다.
-- `createBlockPattern` 은 호출마다 새 정규식을 돌려준다. 전역 정규식은 `lastIndex` 를 이월하므로 공유하면 일치를 건너뛴다.
 - `parseBlocks` 는 이 도구가 쓴 블록만, 문서 순서대로 읽는다.
 
 ## API Contracts
@@ -32,7 +33,6 @@
 `utils/markerLine.ts` 의 단위다. `index.ts` 가 수출하지 않으므로 공개 계약이 아니며, 소비자는 `markerBlock.ts` 하나다.
 
 - `startMarker(blockId: string): string` / `endMarker(blockId: string): string`
-- `createBlockPattern(content: string): RegExp` — 캡처 `1` = blockId, `2` = body. `content` 에 캐리지 리턴이 없으면 LF 전용 패턴을, 있으면 marker 뒤의 `\n` 과 `\r\n` 을 모두 받는 패턴을 돌려준다. LF 문서는 `\r` 검색 한 번 외에 더 하는 일이 없다.
 
 ## Exported Types
 
