@@ -16,6 +16,7 @@ import { fileURLToPath } from 'node:url';
 import { BUILD_PLATFORM } from './utils/buildPlatform.mjs';
 import { createClearDir } from './utils/createClearDir.mjs';
 import { createCopyDeclarations } from './utils/createCopyDeclarations.mjs';
+import { createReactJsxRuntimeBridge } from './utils/createReactJsxRuntimeBridge.mjs';
 import {
   TRANSFORM_TARGET,
   getCodegenOptions,
@@ -36,6 +37,7 @@ export const getLibBuildOptions = (callerUrl) => ({
    *   sourcemap?: boolean;
    *   external?: (id: string) => boolean;
    *   tsconfig?: string;
+   *   reactPeerRange?: string;
    * }) => Promise<import('rolldown').RolldownOptions>}
    */
   libBuildOptions: createLibBuildOptions(callerUrl),
@@ -56,6 +58,7 @@ const createLibBuildOptions = (callerUrl) => async (options) => {
     sourcemap = false,
     external,
     tsconfig,
+    reactPeerRange,
   } = options;
 
   const callerDir = dirname(fileURLToPath(callerUrl));
@@ -73,6 +76,9 @@ const createLibBuildOptions = (callerUrl) => async (options) => {
     // have no `dist/**/constant.mjs` counterpart. One file in, one file out.
     optimization: { inlineConst: false },
     plugins: [
+      ...(format === 'esm' && reactPeerRange !== undefined
+        ? [createReactJsxRuntimeBridge(reactPeerRange)]
+        : []),
       createCopyDeclarations({
         sourceDir: resolve(packagesRoot, 'aileron/common'),
         targetDir: resolve(callerDir, outDir, '@aileron/declare'),
