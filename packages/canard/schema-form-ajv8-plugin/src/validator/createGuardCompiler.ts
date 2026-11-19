@@ -19,7 +19,7 @@ import { resolveGuardSchema } from './utils/resolveGuardSchema';
  * Compiles a synchronous guard at a location in its registered root.
  * @param ajv - The active AJV instance supplying the guard's dialect and extensions.
  * @param registry - Root registrations shared with full validation.
- * @param root - The authored root that contains the guard.
+ * @param callerRoot - The authored root whose detached snapshot contains the guard.
  * @param pointer - An unfragmented JSON Pointer to the guard schema.
  * @param directGuardCompile - Compile self-contained guards directly when enabled.
  * @returns A boolean predicate evaluated without changing its input.
