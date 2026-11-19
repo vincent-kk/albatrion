@@ -30,6 +30,18 @@ const FieldInputSlider = ({
   misfit,
   'aria-labelledby': labelledBy,
 }: FieldInputSliderProps) => {
+  const { min, max, step, empty } = useMemo(
+    () =>
+      getSliderBounds(
+        jsonSchema.minimum,
+        jsonSchema.maximum,
+        jsonSchema.multipleOf,
+        Array.isArray(jsonSchema.type)
+          ? jsonSchema.type.includes('integer')
+          : jsonSchema.type === 'integer',
+      ),
+    [jsonSchema],
+  );
   const [isUnset, setIsUnset] = useState(typeof defaultValue !== 'number');
   const currentValue = useRef(
     typeof defaultValue === 'number' ? defaultValue : undefined,
@@ -58,7 +70,7 @@ const FieldInputSlider = ({
   );
   const handleChange = useCallback(
     (value: number | null) => {
-      if (disabled || readOnly) return;
+      if (disabled || readOnly || empty) return;
       if (value === null) {
         currentValue.current = undefined;
         setIsUnset(true);
@@ -69,24 +81,16 @@ const FieldInputSlider = ({
         onChange(value);
       }
     },
-    [onChange, disabled, readOnly],
+    [onChange, disabled, readOnly, empty],
   );
 
-  const { min, max, step, ...changeHandler } = useMemo(() => {
-    return {
-      ...getSliderBounds(
-        jsonSchema.minimum,
-        jsonSchema.maximum,
-        jsonSchema.multipleOf,
-      ),
-      ...(lazy === false
-        ? {
-            onChange: handleChange,
-            ...(isUnset ? { onChangeComplete: handleChange } : {}),
-          }
-        : { onChangeComplete: handleChange }),
-    } as const;
-  }, [handleChange, jsonSchema, lazy, isUnset]);
+  const changeHandler =
+    lazy === false
+      ? {
+          onChange: handleChange,
+          ...(isUnset ? { onChangeComplete: handleChange } : {}),
+        }
+      : { onChangeComplete: handleChange };
 
   return (
     <div
@@ -113,7 +117,7 @@ const FieldInputSlider = ({
         onBlur={(event) => {
           if (isUnset) event.currentTarget.style.opacity = '0';
         }}
-        disabled={disabled || readOnly}
+        disabled={disabled || readOnly || empty}
         min={min}
         max={max}
         step={step}

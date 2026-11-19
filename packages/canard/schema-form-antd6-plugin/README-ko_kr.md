@@ -295,3 +295,7 @@ A boolean switch accepts `presentation.FieldInputProps.alias` with optional `che
 ### Unset slider values
 
 An unset slider exposes no current value to assistive technology and stores nothing until the user acts.
+
+### Slider constraints
+
+With `multipleOf`, selectable values are multiples of that number within the inclusive bounds. Integer sliders select only integer multiples. Without `multipleOf`, number sliders retain their authored bounds. A range with no selectable value is disabled and stores nothing.
