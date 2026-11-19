@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { Slider, type SliderProps } from 'antd-mobile';
 
@@ -69,33 +69,19 @@ const FieldInputSlider = ({
   const integer = Array.isArray(constraints.type)
     ? constraints.type.includes('integer')
     : constraints.type === 'integer';
-  const { min, max, step, empty } = useMemo(
+  const bounds = useMemo(
     () =>
       getSliderBounds(
         constraints.minimum ?? jsonSchema.minimum,
         constraints.maximum ?? jsonSchema.maximum,
         multipleOf,
         integer,
+        constraints.exclusiveMinimum ?? jsonSchema.exclusiveMinimum,
+        constraints.exclusiveMaximum ?? jsonSchema.exclusiveMaximum,
       ),
     [constraints, jsonSchema, multipleOf, integer],
   );
-  const [isUnset, setIsUnset] = useState(initialValue === undefined);
-  const handleChange = useCallback(
-    (value: number | [number, number] | null) => {
-      if (empty) return;
-      setIsUnset(false);
-      if (value === null) onChange(undefined);
-      else if (range) {
-        if (isArray(value) && !value.some(Number.isNaN)) onChange(value);
-      } else if (typeof value === 'number' && !Number.isNaN(value))
-        onChange(value);
-    },
-    [onChange, range, empty],
-  );
-
-  const [draft, setDraft] = useState<number | [number, number]>(
-    initialValue ?? (range ? [min, min] : min),
-  );
+  const { min, max, step, empty } = bounds;
   const validMarks = useMemo(
     () =>
       marks &&
@@ -107,12 +93,22 @@ const FieldInputSlider = ({
             value >= min &&
             value <= max &&
             (!integer || Number.isInteger(value)) &&
-            (multipleOf === undefined ||
-              Math.abs(value / step - Math.round(value / step)) < 1e-9)
+            (multipleOf === undefined || bounds.snap(value) === value)
           );
         }),
       ),
-    [marks, min, max, step, integer, multipleOf],
+    [marks, min, max, integer, multipleOf, bounds],
+  );
+  const libraryMarks = useMemo(
+    () =>
+      validMarks &&
+      Object.fromEntries(
+        Object.entries(validMarks).map(([key, label]) => [
+          bounds.toLibrary(Number(key)),
+          label,
+        ]),
+      ),
+    [validMarks, bounds],
   );
   const stops = useMemo(
     () =>
@@ -123,8 +119,56 @@ const FieldInputSlider = ({
         : [],
     [validMarks],
   );
-  const handleDraftChange = (value: number | [number, number]) => {
+  const normalizeValue = useCallback(
+    (value: number) => (stops.includes(value) ? value : bounds.snap(value)),
+    [stops, bounds],
+  );
+  const initialOffGrid = useMemo(
+    () =>
+      Array.isArray(initialValue)
+        ? initialValue.some((value) => normalizeValue(value) !== value)
+        : typeof initialValue === 'number' &&
+          normalizeValue(initialValue) !== initialValue,
+    [initialValue, normalizeValue],
+  );
+  const navigationValue = useRef<number | [number, number] | undefined>(
+    Array.isArray(initialValue)
+      ? [Math.min(...initialValue), Math.max(...initialValue)]
+      : initialValue,
+  );
+  const [isUnset, setIsUnset] = useState(initialValue === undefined);
+  const [draft, setDraft] = useState<number | [number, number]>(() =>
+    Array.isArray(initialValue)
+      ? [
+          normalizeValue(Math.min(...initialValue)),
+          normalizeValue(Math.max(...initialValue)),
+        ]
+      : typeof initialValue === 'number'
+        ? normalizeValue(initialValue)
+        : range
+          ? [min, min]
+          : min,
+  );
+  const handleChange = useCallback(
+    (value: number | [number, number] | null) => {
+      if (empty) return;
+      setIsUnset(false);
+      if (value === null) onChange(undefined);
+      else if (range) {
+        if (isArray(value) && !value.some(Number.isNaN))
+          onChange([normalizeValue(value[0]), normalizeValue(value[1])]);
+      } else if (typeof value === 'number' && !Number.isNaN(value))
+        onChange(normalizeValue(value));
+    },
+    [onChange, range, empty, normalizeValue],
+  );
+
+  const handleDraftChange = (candidate: number | [number, number]) => {
     if (empty) return;
+    const value: number | [number, number] = Array.isArray(candidate)
+      ? [normalizeValue(candidate[0]), normalizeValue(candidate[1])]
+      : normalizeValue(candidate);
+    navigationValue.current = value;
     setIsUnset(false);
     setDraft(value);
     if (lazy === false) handleChange(value);
@@ -142,27 +186,63 @@ const FieldInputSlider = ({
         getInputId={getInputId}
         labelledBy={labelledBy}
         value={draft}
+        navigationValue={navigationValue.current ?? draft}
         unset={isUnset}
         min={min}
         max={max}
         step={step}
         stops={stops}
+        navigate={bounds.keyboard}
         disabled={!!(disabled || readOnly || empty)}
         onChange={handleDraftChange}
         onChangeCommitted={lazy === false ? undefined : handleChange}
       >
         <Slider
           disabled={disabled || readOnly || empty}
-          min={min}
-          max={max}
-          step={step}
+          min={bounds.libraryMin}
+          max={bounds.libraryMax}
+          step={bounds.libraryStep}
           range={range}
-          marks={validMarks}
+          marks={libraryMarks}
           defaultValue={initialValue}
-          value={draft}
+          value={
+            Array.isArray(draft)
+              ? [bounds.toLibrary(draft[0]), bounds.toLibrary(draft[1])]
+              : bounds.toLibrary(draft)
+          }
           aria-label={name}
-          onChange={handleDraftChange}
-          onAfterChange={lazy === false && !isUnset ? undefined : handleChange}
+          onChange={(value) => {
+            if (value === null) {
+              handleChange(null);
+              return;
+            }
+            if (typeof value === 'number' && !Number.isFinite(value)) return;
+            handleDraftChange(
+              Array.isArray(value)
+                ? [bounds.fromLibrary(value[0]), bounds.fromLibrary(value[1])]
+                : bounds.fromLibrary(value),
+            );
+          }}
+          onAfterChange={
+            lazy === false && !isUnset && !initialOffGrid
+              ? undefined
+              : (value) => {
+                  if (value === null) {
+                    handleChange(null);
+                    return;
+                  }
+                  if (typeof value === 'number' && !Number.isFinite(value))
+                    return;
+                  handleChange(
+                    Array.isArray(value)
+                      ? [
+                          bounds.fromLibrary(value[0]),
+                          bounds.fromLibrary(value[1]),
+                        ]
+                      : bounds.fromLibrary(value),
+                  );
+                }
+          }
         />
       </SliderKeyboardControl>
     </div>

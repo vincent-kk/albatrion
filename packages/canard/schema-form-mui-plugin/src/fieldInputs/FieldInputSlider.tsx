@@ -1,14 +1,6 @@
-import {
-  type ReactNode,
-  type SyntheticEvent,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { Box, Slider, Typography, sliderClasses } from '@mui/material';
-
-import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   FieldInputDefinition,
@@ -18,6 +10,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { getSliderBounds } from './utils/slider/getSliderBounds';
+import { useSliderControl } from './utils/slider/useSliderControl';
 
 type SliderJSONSchema = NumberSchema & {
   minimum?: number;
@@ -87,7 +80,7 @@ const FieldInputSlider = ({
     return [labelProp || name, sizeProp || context.size];
   }, [context, labelProp, name, sizeProp, hideLabel]);
 
-  const { min, max, step, empty } = useMemo(
+  const bounds = useMemo(
     () =>
       getSliderBounds(
         jsonSchema.minimum,
@@ -96,52 +89,35 @@ const FieldInputSlider = ({
         Array.isArray(jsonSchema.type)
           ? jsonSchema.type.includes('integer')
           : jsonSchema.type === 'integer',
+        jsonSchema.exclusiveMinimum,
+        jsonSchema.exclusiveMaximum,
       ),
     [jsonSchema],
   );
-  const isLazy = lazy !== false;
-  const keyboardCommit = useRef<number | undefined>(undefined);
-
-  // An external value change remounts this input, so a reset to undefined starts unset again.
-  const [isUnset, setIsUnset] = useState(typeof defaultValue !== 'number');
-
-  const handleChange = useHandle((_, newValue: number | number[]) => {
-    if (empty) return;
-    if (!isLazy) {
-      if (isUnset) setIsUnset(false);
-      onChange(Array.isArray(newValue) ? newValue[0] : newValue);
-    }
-  });
-
-  const handleChangeCommitted = useHandle(
-    (event: Event | SyntheticEvent, newValue: number | number[]) => {
-      if (empty) return;
-      const value = Array.isArray(newValue) ? newValue[0] : newValue;
-      if (isLazy && event.type === 'keydown') {
-        keyboardCommit.current = value;
-        return;
-      }
-      keyboardCommit.current = undefined;
-      // MUI skips onChange for an unchanged value, so Home or a release on the minimum arrives only here.
-      if (isUnset) {
-        setIsUnset(false);
-        onChange(value);
-      } else if (isLazy) {
-        onChange(value);
-      }
-    },
+  const { min, max, empty } = bounds;
+  const {
+    unset: isUnset,
+    needsCommit,
+    draft,
+    change,
+    complete,
+    keyDown,
+    keyUp,
+  } = useSliderControl(
+    bounds,
+    defaultValue,
+    lazy,
+    disabled || readOnly,
+    onChange,
   );
-
-  const handleKeyUp = useHandle(() => {
-    const value = keyboardCommit.current;
-    keyboardCommit.current = undefined;
-    if (value === undefined || disabled || readOnly || empty) return;
-    setIsUnset(false);
-    onChange(value);
-  });
-
+  const handleChange = (_event: Event, value: number | number[]) =>
+    change(Array.isArray(value) ? value[0] : value);
+  const handleChangeCommitted = (_event: unknown, value: number | number[]) => {
+    if (lazy !== false || needsCommit)
+      complete(Array.isArray(value) ? value[0] : value);
+  };
   return (
-    <Box sx={{ px: 2 }}>
+    <Box sx={{ px: 2 }} onKeyDownCapture={keyDown} onKeyUpCapture={keyUp}>
       {label && (
         <Typography
           variant="body2"
@@ -155,10 +131,12 @@ const FieldInputSlider = ({
       )}
       <Slider
         name={name}
-        defaultValue={typeof defaultValue === 'number' ? defaultValue : min}
-        min={min}
-        max={max}
-        step={step}
+        value={bounds.toLibrary(draft)}
+        min={bounds.libraryMin}
+        max={bounds.libraryMax}
+        step={bounds.libraryStep}
+        valueLabelFormat={bounds.fromLibrary}
+        getAriaValueText={(value) => String(bounds.fromLibrary(value))}
         onChange={handleChange}
         onChangeCommitted={handleChangeCommitted}
         disabled={disabled || readOnly || empty}
@@ -169,7 +147,8 @@ const FieldInputSlider = ({
             ? {
                 id: inputId,
                 'aria-labelledby': fieldTitleId,
-                onKeyUp: handleKeyUp,
+                'aria-valuemin': min,
+                'aria-valuemax': max,
 
                 'aria-invalid': misfit || undefined,
                 'aria-valuenow': undefined,
@@ -178,8 +157,11 @@ const FieldInputSlider = ({
             : {
                 id: inputId,
                 'aria-labelledby': fieldTitleId,
-                onKeyUp: handleKeyUp,
+                'aria-valuemin': min,
+                'aria-valuemax': max,
                 'aria-invalid': misfit || undefined,
+                'aria-valuenow': draft,
+                'aria-valuetext': undefined,
               },
         }}
         valueLabelDisplay={isUnset ? 'off' : 'auto'}
