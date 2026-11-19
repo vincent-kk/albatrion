@@ -2,10 +2,10 @@ import type { ValidatorPlugin } from '@canard/schema-form';
 import type Ajv from 'ajv';
 
 import { createGuardCompiler } from './createGuardCompiler';
-import { createValidatorFactory } from './createValidatorFactory';
 import { assertBindableInstance } from './utils/assertBindableInstance';
 import { createDefaultInstance } from './utils/createDefaultInstance';
 import { createFinalizer } from './utils/createFinalizer';
+import { createSchemaValidator } from './utils/createSchemaValidator';
 import { disposeSchemaRoot } from './utils/disposeSchemaRoot';
 import {
   type SchemaRootRegistration,
@@ -71,10 +71,11 @@ export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
       finalizer,
     );
     registerValidationRoot(registered);
-    const validate = createValidatorFactory(
+    const validate = createSchemaValidator(
       registered.validation,
+      registered.validationCopy ?? jsonSchema,
       registered.validationCopy ? registered.key : undefined,
-    )(registered.validationCopy ?? jsonSchema);
+    );
     return async (value: unknown) => validate(value);
   },
   compileGuard: (root, pointer) => {

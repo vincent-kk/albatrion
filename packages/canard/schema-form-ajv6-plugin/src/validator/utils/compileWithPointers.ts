@@ -24,9 +24,11 @@ export const compileWithPointers = (
   if (compiler === ajv) {
     if (key && !forceAsync) return ajv.getSchema(key);
     const transient = key ? { $async: true, $ref: key } : schema;
-    const validate = ajv.compile(transient);
-    ajv.removeSchema(transient);
-    return validate;
+    try {
+      return ajv.compile(transient);
+    } finally {
+      ajv.removeSchema(transient);
+    }
   }
   const registered = key ? readRegisteredSchema(ajv, key) : schema;
   if (registered === undefined) return undefined;
