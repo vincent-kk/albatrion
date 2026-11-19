@@ -12,6 +12,7 @@ import { isTypedArray } from '@/common-utils/utils/filter/isTypedArray';
 import { getSymbols } from './getSymbols';
 import { cloneArraySubclass } from './utils/clone/cloneArraySubclass';
 import { cloneBuiltinSubclass } from './utils/clone/cloneBuiltinSubclass';
+import { copyErrorEnumerability } from './utils/clone/copyErrorEnumerability';
 import { copyForeignBuiltin } from './utils/clone/copyForeignBuiltin/copyForeignBuiltin';
 import { getPrototypeProfile } from './utils/clone/getPrototypeProfile';
 import { replicateBox } from './utils/clone/replicateBox';
@@ -455,9 +456,9 @@ const replicate = (
         ? new (value.constructor as ErrorConstructor)([], value.message)
         : new (value.constructor as ErrorConstructor)(value.message);
     cache.set(value, result);
-    if (aggregate !== null)
+    if (hasOwnProperty(value, 'errors'))
       defineProperty(result, 'errors', {
-        value: replicate(aggregate.errors, limit, depth, cache),
+        value: replicate(Reflect.get(value, 'errors'), limit, depth, cache),
         writable: true,
         enumerable: false,
         configurable: true,
@@ -473,6 +474,7 @@ const replicate = (
         configurable: true,
       });
     replicateProperties(result, value, limit, depth, cache);
+    copyErrorEnumerability(result, value);
     return result;
   }
 
@@ -503,6 +505,7 @@ const replicate = (
               configurable: true,
             });
         replicateProperties(foreign, value, limit, depth, cache);
+        copyErrorEnumerability(foreign, value);
       } else if (foreign instanceof DataView)
         replicateProperties(foreign, value, limit, depth, cache);
       return foreign;
