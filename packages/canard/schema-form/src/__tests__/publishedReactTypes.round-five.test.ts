@@ -1,3 +1,4 @@
+// Packaging verification reads the built declaration graph with an emulated early React 18 JSX runtime.
 import { cpSync, mkdirSync, mkdtempSync, symlinkSync, writeFileSync } from 'node:fs';
 import * as ts from 'typescript';
 import { tmpdir } from 'node:os';

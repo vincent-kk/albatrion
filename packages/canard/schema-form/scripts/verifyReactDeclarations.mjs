@@ -1,3 +1,4 @@
+// Loaded by build:verify:types; this package script checks the emitted declaration graph.
 import {
   cpSync,
   mkdirSync,
