@@ -1,6 +1,8 @@
 import { expect, it } from 'vitest';
 
 import { parseBlocks, upsertBlock } from '../markerBlock.js';
+import { normalizeModel } from './helpers/normalizeModel.js';
+import { readModelBlocks } from './helpers/readModelBlocks.js';
 
 it('matches the block-list reference model for 4000 seeded documents', () => {
   let seed = 0x5a17;
@@ -38,9 +40,7 @@ it('matches the block-list reference model for 4000 seeded documents', () => {
         '\xB0\xA1',
         `${fence}md${eol}code${eol}${fence}${random(2) ? eol : ''}`,
       ][random(8)];
-    const body = source
-      .replace(/^(?:\uFEFF|\xEF\xBB\xBF)/, '')
-      .replace(/\r\n?/g, '\n');
+    const body = normalizeModel(source);
     const count = random(5);
     const blocks = Array.from({ length: count }, (_, index) => ({
       blockId: index && random(2) ? `${id}-${index}` : id,
@@ -59,6 +59,7 @@ it('matches the block-list reference model for 4000 seeded documents', () => {
       parseBlocks(written).map(({ blockId, body }) => ({ blockId, body })),
       label,
     ).toEqual(blocks);
+    expect(readModelBlocks(written), label).toEqual(blocks);
     const applied = upsertBlock(written, id, source);
     expect(upsertBlock(applied, id, source), label).toBe(applied);
     const replacement = {
@@ -74,6 +75,7 @@ it('matches the block-list reference model for 4000 seeded documents', () => {
       parseBlocks(applied).map(({ blockId, body }) => ({ blockId, body })),
       label,
     ).toEqual(expected);
+    expect(readModelBlocks(applied), label).toEqual(expected);
     expect(applied.startsWith(prefix), label).toBe(true);
   }
 });
@@ -89,8 +91,8 @@ it('refuses every generated ambiguous boundary rather than returning partial kno
     `${start}\n<!--\n${end}`,
     `${start}\n${end.replace('END:', 'END')}`,
     `${start}\n~~~\n${end}\n~~~`,
-    `${start} `,
-    `${end} `,
+    `${start} x`,
+    `${end} x`,
     '<!-- AGENTS-ASSETS-SYNC:BAD -->',
     '    ```\ncode\n    ```',
     '\t~~~\ncode\n\t~~~',

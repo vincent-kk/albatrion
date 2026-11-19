@@ -10,7 +10,8 @@ import {
   removeRoot,
   writeAt,
 } from '../../../__tests__/roundThree/fixture.js';
-import { findBlockBody } from '../../markerBlock/index.js';
+import { normalizeModel } from '../../markerBlock/__tests__/helpers/normalizeModel.js';
+import { readModelBlocks } from '../../markerBlock/__tests__/helpers/readModelBlocks.js';
 import { runInjection } from '../utils/session/runInjection.js';
 
 /** Seeded source model: file headers and embedded fragments have separate contexts. */
@@ -50,7 +51,7 @@ it('uses one checked snapshot across source contexts and agent orders (seed 0x51
       const text =
         '\uFEFF'.repeat(marks) + bodies[kind] + (next(2) ? '\n' : '');
       const original = Buffer.from(text.replace(/\n/g, eol));
-      const normalized = text.replace(/^\uFEFF/, '');
+      const normalized = normalizeModel(text);
       const rawSafe = kind === 0 || kind === 2 || kind === 5 || marks <= 1;
       const blockSafe = rawSafe && kind !== 4;
       const mutate = Boolean(next(2));
@@ -88,10 +89,9 @@ it('uses one checked snapshot across source contexts and agent orders (seed 0x51
       if (existsSync(file)) expect(readFileSync(file)).toEqual(original);
       if (agents.some((agent) => agent !== 'claude') && blockSafe)
         expect(
-          findBlockBody(
-            readFileSync(document, 'latin1'),
-            '@probe/a:rules/a.md',
-          ),
+          readModelBlocks(readFileSync(document, 'latin1')).find(
+            (block) => block.blockId === '@probe/a:rules/a.md',
+          )?.body,
         ).toBe(
           Buffer.from(
             normalized + (normalized.endsWith('\n') ? '' : '\n'),

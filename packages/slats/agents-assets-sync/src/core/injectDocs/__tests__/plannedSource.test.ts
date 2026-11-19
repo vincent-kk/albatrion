@@ -1,10 +1,20 @@
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+
 import { afterEach, expect, it } from 'vitest';
-import { consumerOf, installPackage, makeRoot, removeRoot } from '../../../__tests__/roundThree/fixture.js';
+
+import {
+  consumerOf,
+  installPackage,
+  makeRoot,
+  removeRoot,
+} from '../../../__tests__/roundThree/fixture.js';
 import { runInjection } from '../utils/session/runInjection.js';
+
 const roots: string[] = [];
-afterEach(() => { for (const root of roots.splice(0)) removeRoot(root); });
+afterEach(() => {
+  for (const root of roots.splice(0)) removeRoot(root);
+});
 it('writes the planned skill bytes when the source changes before apply', async () => {
   const root = makeRoot('skill-snapshot');
   roots.push(root);
@@ -46,4 +56,3 @@ it('copies a snapshotted rule after the source file disappears', async () => {
   expect(existsSync(join(root, '.claude/rules/a.md'))).toBe(true);
   expect(readFileSync(join(root, '.claude/rules/a.md'))).toEqual(original);
 });
-

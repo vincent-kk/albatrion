@@ -1,10 +1,21 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+
 import { afterEach, expect, it } from 'vitest';
-import { consumerOf, installPackage, makeRoot, removeRoot, writeAt } from '../../../__tests__/roundThree/fixture.js';
+
+import {
+  consumerOf,
+  installPackage,
+  makeRoot,
+  removeRoot,
+  writeAt,
+} from '../../../__tests__/roundThree/fixture.js';
 import { runInjection } from '../utils/session/runInjection.js';
+
 const roots: string[] = [];
-afterEach(() => { for (const root of roots.splice(0)) removeRoot(root); });
+afterEach(() => {
+  for (const root of roots.splice(0)) removeRoot(root);
+});
 it('deletes a disjoint orphan when only a known-prefix participant fails', async () => {
   const root = makeRoot('disjoint-prefix');
   roots.push(root);
@@ -39,4 +50,3 @@ it('deletes a disjoint orphan when only a known-prefix participant fails', async
   );
   expect(existsSync(orphan), JSON.stringify(result.notices)).toBe(false);
 });
-
