@@ -227,7 +227,14 @@ export async function runCli(
         [err.message],
         2,
         argv.includes('--dry-run'),
-        argv.slice(2).join(' '),
+        err instanceof CommanderError
+          ? (/--[\w-]+/.exec(err.message)?.[0] ?? 'argv')
+          : argv
+              .slice(2)
+              .filter(
+                (value) => value !== '--json' && value !== '--no-interactive',
+              )
+              .join(' '),
         diagnostics.length ? diagnostics : undefined,
       );
       await renderOrFallback(
@@ -257,7 +264,9 @@ export async function runCli(
           [msg],
           1,
           argv.includes('--dry-run'),
-          argv.slice(2).join(' '),
+          err instanceof Error && 'path' in err && typeof err.path === 'string'
+            ? err.path
+            : 'request',
           diagnostics.length ? diagnostics : undefined,
         ),
       );

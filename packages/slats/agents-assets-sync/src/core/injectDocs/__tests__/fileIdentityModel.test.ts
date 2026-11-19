@@ -70,7 +70,8 @@ it('matches an entry/identity reference model for 3000 seeded file operations', 
           expect(readFileSync(actual, 'utf8'), label).toBe('old');
       } else if (deletion) {
         expect(() => lstatSync(target), label).toThrow(/ENOENT/);
-        if (original && kind !== 'regular') expect(readFileSync(actual, 'utf8'), label).toBe('old');
+        if (original && kind !== 'regular')
+          expect(readFileSync(actual, 'utf8'), label).toBe('old');
       } else {
         expect(readFileSync(target, 'utf8'), label).toBe('new');
         if (original) {
