@@ -15,6 +15,7 @@ import { transformDataPath } from './utils/transformDataPath';
 /**
  * Creates an asynchronous validator for an isolated schema root.
  * @param ajv - The active AJV instance whose options and extensions define validation.
+ * @param key - Optional application schema address resolved through current raw registrations.
  * @param registry - Registrations shared with guard compilation and release.
  * @returns A compiler that preserves the authored schema and normalizes failures.
  */
