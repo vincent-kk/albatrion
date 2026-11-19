@@ -49,7 +49,7 @@ import { isDeclarationColon } from './utils/isDeclarationColon';
  */
 export const compressCss = (css: string): string => {
   if (!css.length) return '';
-  if (!/["'\\(]|\/\*/.test(css)) return compressFlatCss(css);
+  if (!/["'\\([]|\/\*/.test(css)) return compressFlatCss(css);
   let output = '', index = 0, previousCode = 0, segmentStart = 0;
   let hasOutput = false;
   let previousKind = CssTokenKind.Delimiter;
