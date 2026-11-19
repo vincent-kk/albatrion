@@ -390,10 +390,27 @@ it('keeps equal leaf-name select display and menu addresses local to their field
       },
     },
   };
+  const captured = new Map<string, FieldInputProps>();
+  const definitions = plugin.fieldInputDefinitions.map((definition) => {
+    const Component = definition.Component;
+    const Capture = (inputProps: FieldInputProps) => {
+      captured.set(inputProps.inputId, inputProps);
+      return <Component {...inputProps} />;
+    };
+    return { ...definition, Component: Capture };
+  });
   const view = render(
     <>
-      <Form {...props} jsonSchema={jsonSchema} />
-      <Form {...props} jsonSchema={jsonSchema} />
+      <Form
+        {...props}
+        fieldInputDefinitions={definitions}
+        jsonSchema={jsonSchema}
+      />
+      <Form
+        {...props}
+        fieldInputDefinitions={definitions}
+        jsonSchema={jsonSchema}
+      />
     </>,
   );
   const controls = view.getAllByRole('combobox');
@@ -401,8 +418,15 @@ it('keeps equal leaf-name select display and menu addresses local to their field
   expect(new Set(controls.map((control) => control.id)).size).toBe(4);
   const menuIds: string[] = [];
   for (const control of controls) {
+    const input = Array.from(captured.values()).find(
+      (inputProps) => inputProps.getInputId('display') === control.id,
+    );
+    expect(input).toBeDefined();
     fireEvent.mouseDown(control);
     const menu = view.getByRole('listbox');
+    expect(
+      document.getElementById(input!.getInputId('menu'))?.contains(menu),
+    ).toBe(true);
     expect(menu.id).not.toBe('');
     menuIds.push(menu.id);
     fireEvent.keyDown(menu, { key: 'Escape' });
