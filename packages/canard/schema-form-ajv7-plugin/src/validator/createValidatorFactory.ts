@@ -1,4 +1,5 @@
 import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
+import type { ErrorObject } from 'ajv';
 import type { AjvInstance as Ajv } from './types/AjvInstance';
 
 import { transformErrors } from './utils/transformErrors';
@@ -7,9 +8,20 @@ import { transformErrors } from './utils/transformErrors';
 export const createValidatorFactory =
   (ajv: Ajv, key?: string) =>
   (jsonSchema: JSONSchema): ValidateFunction => {
-    const transient: JSONSchema | undefined = key
+    let transient: JSONSchema | undefined = key
       ? undefined : JSON.parse(JSON.stringify(jsonSchema));
-    const validate = key ? ajv.getSchema(key) : transient && ajv.compile(transient);
+    let validate: ReturnType<Ajv['compile']> | undefined;
+    let isAsyncReference = false;
+    try {
+      validate = key ? ajv.getSchema(key) : transient && ajv.compile(transient);
+    } catch (error) {
+      if (!(error instanceof Error) || error.message !== 'async keyword in sync schema') throw error;
+      if (transient) ajv.removeSchema(transient);
+      transient = key ? { $async: true, $ref: key } : { ...transient, $async: true };
+      validate = ajv.compile(transient);
+      isAsyncReference = key !== undefined;
+    }
+    const rootPrefix = isAsyncReference ? `${key}/` : '';
     if (transient) ajv.removeSchema(transient);
     if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
     const notRequiredKeys = new Map<string, string | null>();
@@ -21,8 +33,21 @@ export const createValidatorFactory =
         await result;
         return null;
       } catch (thrown) {
-        if (thrown instanceof Error && 'errors' in thrown && Array.isArray(thrown.errors))
-          return transformErrors(thrown.errors, jsonSchema, notRequiredKeys);
+        if (thrown instanceof Error && 'errors' in thrown && Array.isArray(thrown.errors)) {
+          const errors = isAsyncReference
+            ? thrown.errors.map((error: ErrorObject) => ({
+                ...error,
+                schemaPath: error.schemaPath.startsWith(rootPrefix)
+                  ? `#/${error.schemaPath.slice(rootPrefix.length)}`
+                  : error.schemaPath,
+              }))
+            : thrown.errors;
+          const issues = transformErrors(errors, jsonSchema, notRequiredKeys);
+          if (isAsyncReference)
+            for (let index = 0; index < issues.length; index++)
+              issues[index].source = thrown.errors[index];
+          return issues;
+        }
         throw thrown;
       }
     };
