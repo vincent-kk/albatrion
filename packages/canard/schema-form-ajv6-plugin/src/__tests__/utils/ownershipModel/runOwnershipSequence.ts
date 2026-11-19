@@ -1,3 +1,4 @@
+import { runPoolNamespaceSequence } from './runPoolNamespaceSequence';
 import { runGuardBaseSequence } from './runGuardBaseSequence';
 import type { JSONSchema, ValidatorFactory } from '@canard/schema-form';
 import { expect } from 'vitest';
@@ -80,6 +81,9 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
   const guardBase = await runGuardBaseSequence(app, twin, profile, seed);
   roots.push(...guardBase.references);
   functions.push(...guardBase.functions);
+  const namespaces = await runPoolNamespaceSequence(app, twin, profile, seed);
+  roots.push(...namespaces.references);
+  functions.push(...namespaces.functions);
   const mutations = await runRootMutationSequence(app, twin, profile, seed);
   roots.push(...mutations.references);
   functions.push(...mutations.functions);
