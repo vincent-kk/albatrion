@@ -39,7 +39,7 @@ const FieldInputStringSwitch = ({
   context,
   alias,
   misfit,
-  'aria-labelledby': labelledBy,
+  labelId: labelledBy,
 }: FieldInputStringSwitchProps) => {
   const [checked, unchecked] = useMemo(() => {
     const [checked, unchecked] = jsonSchema.enum || [];

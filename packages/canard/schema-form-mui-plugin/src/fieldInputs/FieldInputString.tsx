@@ -29,6 +29,7 @@ interface FieldInputStringProps
 
 const FieldInputString = ({
   inputId,
+  labelId: fieldTitleId,
   name,
   jsonSchema,
   required,
@@ -97,6 +98,7 @@ const FieldInputString = ({
       onChange={handleChange}
       size={size}
       slotProps={{
+        htmlInput: { 'aria-labelledby': fieldTitleId },
         input: {
           readOnly,
         },

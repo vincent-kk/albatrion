@@ -65,6 +65,7 @@ const UNSET_SLIDER_SX = {
 
 const FieldInputSlider = ({
   inputId,
+  labelId: fieldTitleId,
   name,
   jsonSchema,
   required,
@@ -167,6 +168,7 @@ const FieldInputSlider = ({
           input: isUnset
             ? {
                 id: inputId,
+                'aria-labelledby': fieldTitleId,
                 onKeyUp: handleKeyUp,
 
                 'aria-invalid': misfit || undefined,
@@ -175,6 +177,7 @@ const FieldInputSlider = ({
               }
             : {
                 id: inputId,
+                'aria-labelledby': fieldTitleId,
                 onKeyUp: handleKeyUp,
                 'aria-invalid': misfit || undefined,
               },

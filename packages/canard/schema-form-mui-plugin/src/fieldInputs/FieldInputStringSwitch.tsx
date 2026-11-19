@@ -34,6 +34,7 @@ interface FieldInputStringSwitchProps
 
 const FieldInputStringSwitch = ({
   inputId,
+  labelId: fieldTitleId,
   name,
   jsonSchema,
   required,
@@ -100,7 +101,11 @@ const FieldInputStringSwitch = ({
             disabled={disabled}
             size={switchSize}
             slotProps={{
-              input: { role: 'switch', 'aria-invalid': misfit || undefined },
+              input: {
+                'aria-labelledby': fieldTitleId,
+                role: 'switch',
+                'aria-invalid': misfit || undefined,
+              },
             }}
           />
           <Typography>{onLabel}</Typography>

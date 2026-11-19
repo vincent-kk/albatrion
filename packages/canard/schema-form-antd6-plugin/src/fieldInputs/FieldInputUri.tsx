@@ -39,6 +39,7 @@ interface FieldInputUriProps
 
 const FieldInputUri = ({
   inputId,
+  labelId,
   getInputId,
   name,
   readOnly,
@@ -121,10 +122,16 @@ const FieldInputUri = ({
   ]);
 
   return (
-    <Space.Compact block size={size || context?.size}>
+    <Space.Compact
+      role="group"
+      aria-labelledby={labelId}
+      block
+      size={size || context?.size}
+    >
       {ProtocolDropdown}
       <Input
         ref={inputRef}
+        aria-labelledby={labelId}
         id={inputId}
         name={name}
         readOnly={readOnly}

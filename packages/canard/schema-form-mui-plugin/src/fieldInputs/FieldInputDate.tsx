@@ -50,6 +50,7 @@ interface FieldInputDateProps
 
 const FieldInputDate = ({
   inputId,
+  labelId: fieldTitleId,
   name,
   required,
   disabled,
@@ -130,6 +131,12 @@ const FieldInputDate = ({
         slotProps={{
           textField: {
             id: inputId,
+            InputProps: {
+              'aria-labelledby': fieldTitleId,
+              slotProps: {
+                input: { role: 'group', 'aria-labelledby': fieldTitleId },
+              },
+            },
             name,
             required,
             size,

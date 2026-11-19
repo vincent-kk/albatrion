@@ -29,6 +29,8 @@ interface FieldInputBooleanSwitchProps
 
 const FieldInputBooleanSwitch = ({
   inputId,
+  node,
+  labelId: fieldTitleId,
   name,
   required,
   disabled,
@@ -80,7 +82,11 @@ const FieldInputBooleanSwitch = ({
           disabled={disabled}
           size={size}
           slotProps={{
-            input: { role: 'switch', 'aria-invalid': misfit || undefined },
+            input: {
+              'aria-labelledby': node.parentNode ? fieldTitleId : undefined,
+              role: 'switch',
+              'aria-invalid': misfit || undefined,
+            },
           }}
         />
       }

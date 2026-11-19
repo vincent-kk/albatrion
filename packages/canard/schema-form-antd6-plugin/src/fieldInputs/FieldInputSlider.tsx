@@ -34,7 +34,7 @@ const FieldInputSlider = ({
   onChange,
   lazy,
   misfit,
-  'aria-labelledby': labelledBy,
+  labelId: labelledBy,
 }: FieldInputSliderProps) => {
   const { min, max, step, empty } = useMemo(
     () =>

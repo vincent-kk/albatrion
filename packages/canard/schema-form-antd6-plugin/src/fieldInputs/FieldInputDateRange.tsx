@@ -55,7 +55,7 @@ const FieldInputDateRange = ({
   minimum,
   maximum,
   misfit,
-  'aria-labelledby': labelledBy,
+  labelId: labelledBy,
 }: FieldInputDateRangeProps) => {
   const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
     if (!range) return onChange(undefined);

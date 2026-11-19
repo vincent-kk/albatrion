@@ -29,6 +29,7 @@ interface FieldInputTimeProps
 
 const FieldInputTime = ({
   inputId,
+  labelId: fieldTitleId,
   name,
   jsonSchema,
   required,
@@ -101,6 +102,12 @@ const FieldInputTime = ({
         slotProps={{
           textField: {
             id: inputId,
+            InputProps: {
+              'aria-labelledby': fieldTitleId,
+              slotProps: {
+                input: { role: 'group', 'aria-labelledby': fieldTitleId },
+              },
+            },
             name,
             required,
             size,

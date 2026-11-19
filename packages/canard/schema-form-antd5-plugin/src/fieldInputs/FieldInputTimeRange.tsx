@@ -94,7 +94,7 @@ const FieldInputTimeRange = ({
   minimum,
   maximum,
   misfit,
-  'aria-labelledby': labelledBy,
+  labelId: labelledBy,
 }: FieldInputTimeRangeProps) => {
   const initialValue = useMemo<RangeValueType<Dayjs>>(
     () =>

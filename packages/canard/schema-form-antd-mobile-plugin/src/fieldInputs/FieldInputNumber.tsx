@@ -35,7 +35,7 @@ const FieldInputNumber = ({
   formatter,
   parser,
   misfit,
-  'aria-labelledby': labelledBy,
+  labelId: labelledBy,
 }: FieldInputNumberProps) => {
   const bindControls = useControlIdentifiers(inputId, name, 'input');
   const handleChange = useHandle((input: number | null) => {

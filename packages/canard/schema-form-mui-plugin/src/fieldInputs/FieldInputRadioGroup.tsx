@@ -99,6 +99,7 @@ const FieldInputRadioGroup = ({
   return (
     <FormControl
       component="fieldset"
+      aria-labelledby={labelId}
       required={required}
       disabled={disabled || readOnly}
       style={{
@@ -111,12 +112,16 @@ const FieldInputRadioGroup = ({
         margin: 0,
       }}
     >
-      <FormLabel component="legend" id={labelId}>
+      <FormLabel
+        component="legend"
+        id={getInputId('legend')}
+        hidden={!!node?.parentNode}
+      >
         {label}
       </FormLabel>
       <RadioGroup
         id={inputId}
-        aria-labelledby={label ? labelId : undefined}
+        aria-labelledby={labelId}
         name={inputId}
         defaultValue={initialValue}
         onChange={handleChange}

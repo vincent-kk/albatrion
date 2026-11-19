@@ -36,7 +36,7 @@ const FieldInputBooleanSwitch = ({
   context,
   alias,
   misfit,
-  'aria-labelledby': labelledBy,
+  labelId: labelledBy,
 }: FieldInputBooleanSwitchProps) => {
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
     const labels = context?.checkboxLabels || alias || {};

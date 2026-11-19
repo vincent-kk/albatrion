@@ -189,6 +189,8 @@ const Input = ({ inputId, name }: FieldInputProps<string>) => (
 );
 ```
 
+입력은 `labelId`를 직접 읽으므로 플러그인 레이아웃, `Form.Label`과 `Form.Input`, bound `Label`을 쓰는 사용자 렌더러에서도 같은 필드 제목이 컨트롤 또는 그룹의 이름입니다. 범위 양끝은 각각 제목에 연결합니다. 보조 컨트롤은 제목 있는 필드 그룹 안에서 자기 이름을 유지합니다. 입력 자체 legend는 `getInputId('legend')`를 사용합니다. 필드 제목은 접근성 트리에 한 번만 노출하며 중복 제목 노드는 `hidden`으로 트리에서 제외합니다.
+
 복합 사용자 정의 입력은 `labelId`와 `getInputId`를 명시적으로 소비하고 DOM props에 펼치지 않습니다. getter의 참조는 필드 범위나 경로가 바뀔 때까지 유지됩니다. 말단 이름이나 `path`로 ID를 만들지 않습니다.
 
 해당 Form 안에서 `formElement.querySelector('[data-path="/email"] input')`처럼 조회하거나 컨트롤이 받은 id로 레이블을 연결합니다. Form API가 반환하는 값은 스키마 형태를 유지합니다.

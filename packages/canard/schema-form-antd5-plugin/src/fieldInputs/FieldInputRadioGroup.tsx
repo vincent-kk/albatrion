@@ -46,7 +46,7 @@ const FieldInputRadioGroup = ({
   size,
   alias,
   misfit,
-  'aria-labelledby': labelledBy,
+  labelId: labelledBy,
 }: FieldInputRadioGroupProps) => {
   const options = useMemo(() => {
     const labels = context.radioLabels || alias || {};

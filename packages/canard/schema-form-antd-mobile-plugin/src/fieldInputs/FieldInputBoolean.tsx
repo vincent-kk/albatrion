@@ -16,7 +16,7 @@ const FieldInputBoolean = ({
   value,
   onChange,
   misfit,
-  'aria-labelledby': labelledBy,
+  labelId: labelledBy,
 }: FieldInputProps<boolean | null>) => {
   const [indeterminate, checked] = useMemo(
     () => [value !== undefined && typeof value !== 'boolean', value ?? false],

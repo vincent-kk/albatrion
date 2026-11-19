@@ -74,7 +74,7 @@ export const FieldRenderer = ({
         aria-labelledby={labelId}
         style={{ border: 0, margin: 0, padding: 0 }}
       >
-        <span hidden id={labelId}>
+        <span hidden={!(hint && isCheckboxGroupInput(hint))} id={labelId}>
           {name}
         </span>
         <Space direction="vertical" block>
@@ -93,6 +93,11 @@ export const FieldRenderer = ({
         <div>
           {node.parentNode && isArraySchema(node.parentNode) === false && (
             <Label {...(grouped ? { htmlFor: undefined } : {})} />
+          )}
+          {node.parentNode && isArraySchema(node.parentNode) && (
+            <span hidden id={labelId}>
+              {name}
+            </span>
           )}
           <Input
             aria-labelledby={

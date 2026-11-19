@@ -48,7 +48,7 @@ const FieldInputStringCheckbox = ({
   context,
   alias,
   misfit,
-  'aria-labelledby': labelledBy,
+  labelId: labelledBy,
 }: FieldInputStringCheckboxProps) => {
   const options = useMemo(() => {
     const labels = context.checkboxLabels || alias || {};

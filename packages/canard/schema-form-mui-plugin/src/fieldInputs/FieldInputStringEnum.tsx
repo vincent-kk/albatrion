@@ -29,6 +29,7 @@ interface FieldInputStringEnumProps
 
 const FieldInputStringEnum = ({
   inputId,
+  labelId: fieldTitleId,
   getInputId,
   name,
   jsonSchema,
@@ -94,22 +95,26 @@ const FieldInputStringEnum = ({
   const labelId = getInputId('label');
 
   const initialValue = useMemo(
-    () => options.find((option) => option.rawValue === defaultValue)?.value ?? '',
+    () =>
+      options.find((option) => option.rawValue === defaultValue)?.value ?? '',
     [defaultValue, options],
   );
 
   return (
     <FormControl fullWidth={fullWidth} variant={variant} error={misfit}>
-      <InputLabel id={labelId} htmlFor={getInputId('display')}>
+      <InputLabel id={labelId} htmlFor={inputId}>
         {label}
       </InputLabel>
       <Select
         id={inputId}
         inputProps={{ id: inputId }}
-        SelectDisplayProps={{ id: getInputId('display') }}
+        SelectDisplayProps={{
+          id: getInputId('display'),
+          'aria-labelledby': fieldTitleId,
+        }}
         MenuProps={{ id: getInputId('menu') }}
         name={name}
-        labelId={labelId}
+        labelId={fieldTitleId}
         label={label}
         required={required}
         readOnly={readOnly}

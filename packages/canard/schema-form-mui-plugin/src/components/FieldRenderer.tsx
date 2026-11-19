@@ -19,9 +19,34 @@ export const FieldRenderer = ({
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps) => {
+  const presentation =
+    typeof jsonSchema === 'object' && jsonSchema !== null
+      ? jsonSchema.presentation
+      : undefined;
+  const inputType =
+    typeof presentation === 'object' &&
+    presentation !== null &&
+    'inputType' in presentation &&
+    typeof presentation.inputType === 'string'
+      ? presentation.inputType
+      : undefined;
+  const ownsTitle =
+    typeof jsonSchema === 'object' &&
+    jsonSchema !== null &&
+    isCheckboxGroupInput({ type: node.type, inputType, jsonSchema });
+  const isChoiceGroup =
+    ownsTitle ||
+    ((inputType === 'radio' || inputType === 'radiogroup') &&
+      typeof jsonSchema === 'object' &&
+      jsonSchema !== null &&
+      Array.isArray(jsonSchema.enum) &&
+      jsonSchema.enum.length > 0);
   if (depth === 0)
     return (
       <>
+        <span hidden={!isChoiceGroup} id={labelId}>
+          {name}
+        </span>
         <Input />
         {errorMessage !== null &&
           errorMessage !== undefined &&
@@ -32,21 +57,6 @@ export const FieldRenderer = ({
     );
 
   if (node.strategy === 'branch') {
-    const presentation =
-      typeof jsonSchema === 'object' && jsonSchema !== null
-        ? jsonSchema.presentation
-        : undefined;
-    const inputType =
-      typeof presentation === 'object' &&
-      presentation !== null &&
-      'inputType' in presentation &&
-      typeof presentation.inputType === 'string'
-        ? presentation.inputType
-        : undefined;
-    const ownsTitle =
-      typeof jsonSchema === 'object' &&
-      jsonSchema !== null &&
-      isCheckboxGroupInput({ type: node.type, inputType, jsonSchema });
     return (
       <Box
         component={ownsTitle ? 'div' : 'fieldset'}
@@ -60,11 +70,9 @@ export const FieldRenderer = ({
           padding: 1,
         }}
       >
-        {!ownsTitle && (
-          <span hidden id={labelId}>
-            {name}
-          </span>
-        )}
+        <span hidden={!isChoiceGroup} id={labelId}>
+          {name}
+        </span>
         <Input />
         <ErrorMessage>{errorMessage}</ErrorMessage>
       </Box>
@@ -77,6 +85,9 @@ export const FieldRenderer = ({
           marginLeft: depth * 2,
         }}
       >
+        <span hidden={!isChoiceGroup} id={labelId}>
+          {name}
+        </span>
         <Input />
         <ErrorMessage>{errorMessage}</ErrorMessage>
       </Box>

@@ -22,7 +22,7 @@ const FieldInputString = ({
   onChange,
   placeholder,
   misfit,
-  'aria-labelledby': labelledBy,
+  labelId: labelledBy,
 }: FieldInputPropsWithSchema<string | null, StringJSONSchema>) => {
   const type = jsonSchema.format === 'password' ? 'password' : 'text';
   const handleChange = useHandle((text: string) =>

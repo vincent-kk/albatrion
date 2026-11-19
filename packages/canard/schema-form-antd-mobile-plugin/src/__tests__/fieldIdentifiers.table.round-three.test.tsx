@@ -171,7 +171,7 @@ const expectedText: Record<string, string> = {
   'string switch': 'Field yes',
   radio: 'Field one two',
   radiogroup: 'Field one two',
-  'checkbox group': 'one two',
+  'checkbox group': 'Field one two',
   slider: 'Field',
   array: '- +',
   object: 'Child',

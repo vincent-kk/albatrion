@@ -43,6 +43,7 @@ interface FieldInputStringCheckboxProps
 
 const FieldInputStringCheckbox = ({
   inputId,
+  node,
   labelId,
   getInputId,
   name,
@@ -103,7 +104,7 @@ const FieldInputStringCheckbox = ({
       component="fieldset"
       role="group"
       id={inputId}
-      aria-labelledby={label ? labelId : undefined}
+      aria-labelledby={labelId}
       aria-invalid={misfit || undefined}
       required={required}
       disabled={disabled || readOnly}
@@ -117,7 +118,11 @@ const FieldInputStringCheckbox = ({
         margin: 0,
       }}
     >
-      <FormLabel component="legend" id={labelId}>
+      <FormLabel
+        component="legend"
+        id={getInputId('legend')}
+        hidden={!!node?.parentNode}
+      >
         {label}
       </FormLabel>
       <FormGroup row={row}>

@@ -34,6 +34,7 @@ interface FieldInputNumberProps
 const FieldInputNumber = ({
   schemaType: type,
   inputId,
+  labelId: fieldTitleId,
   name,
   jsonSchema,
   required,
@@ -130,6 +131,7 @@ const FieldInputNumber = ({
         input: {
           readOnly,
           inputProps: {
+            'aria-labelledby': fieldTitleId,
             min: jsonSchema.minimum,
             max: jsonSchema.maximum,
             step: jsonSchema.multipleOf || (type === 'integer' ? 1 : 'any'),

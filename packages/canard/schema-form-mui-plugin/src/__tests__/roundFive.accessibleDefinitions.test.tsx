@@ -1,4 +1,4 @@
-import { cleanup, render } from '@testing-library/react';
+import { cleanup, isInaccessible, render } from '@testing-library/react';
 import { computeAccessibleName } from 'dom-accessibility-api';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
@@ -16,6 +16,7 @@ type Classification = {
   selector: string;
 };
 type InputCase = {
+  choiceGroup?: boolean;
   schema: JSONSchema;
   primary: string;
   controls: Classification[];
@@ -50,6 +51,7 @@ const fields: Record<string, InputCase> = {
     controls: single,
   },
   FieldInputStringCheckbox: {
+    choiceGroup: true,
     schema: {
       type: 'array',
       items: { type: 'string', enum: ['one', 'two'] },
@@ -59,6 +61,7 @@ const fields: Record<string, InputCase> = {
     controls: group,
   },
   FieldInputRadioGroup: {
+    choiceGroup: true,
     schema: {
       type: 'string',
       enum: ['one', 'two'],
@@ -145,11 +148,12 @@ const fields: Record<string, InputCase> = {
   FieldInputSlider: {
     schema: {
       type: 'number',
+      format: 'slider',
       minimum: 0,
       maximum: 10,
       presentation: { inputType: 'slider' },
     },
-    primary: '[role="slider"]',
+    primary: '[role="slider"],input[type="range"]',
     controls: single,
   },
   FieldInputTextarea: {
@@ -241,7 +245,7 @@ it.each(['plugin', 'standalone', 'custom', 'hideLabel'] as const)(
       if (!selected) report('fixture did not select the definition');
       const primary = [
         ...view.container.querySelectorAll<HTMLElement>(entry.primary),
-      ];
+      ].filter((element) => !element.closest('[aria-hidden="true"]'));
       if (!primary.length) report('no primary control or composite');
       for (const element of primary)
         if (computeAccessibleName(element) !== 'field')
@@ -256,7 +260,8 @@ it.each(['plugin', 'standalone', 'custom', 'hideLabel'] as const)(
         (element) =>
           element.tabIndex >= 0 &&
           !element.hasAttribute('disabled') &&
-          !element.hidden,
+          !element.hidden &&
+          !element.closest('[aria-hidden="true"]'),
       );
       for (const control of focusable) {
         const classification = entry.controls.find((rule) =>
@@ -294,6 +299,22 @@ it.each(['plugin', 'standalone', 'custom', 'hideLabel'] as const)(
           if (!linked)
             report(`auxiliary ${name} has no named group or field description`);
         }
+      }
+      if (entry.choiceGroup) {
+        const titles = [
+          ...view.container.querySelectorAll<HTMLElement>('*'),
+        ].filter(
+          (element) =>
+            element.textContent === 'field' &&
+            ![...element.children].some(
+              (child) => child.textContent === 'field',
+            ) &&
+            !isInaccessible(element),
+        );
+        if (titles.length !== 1)
+          report(
+            `group exposes ${titles.length} field titles to the accessibility tree`,
+          );
       }
       const ids = [...view.container.querySelectorAll('[id]')].map(
         (element) => element.id,

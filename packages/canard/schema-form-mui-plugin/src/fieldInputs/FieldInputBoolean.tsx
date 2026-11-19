@@ -20,6 +20,7 @@ interface FieldInputBooleanProps
 
 const FieldInputBoolean = ({
   inputId,
+  labelId: fieldTitleId,
   name,
   required,
   disabled,
@@ -60,7 +61,12 @@ const FieldInputBoolean = ({
           checked={value === true}
           onChange={handleChange}
           size={size}
-          slotProps={{ input: { 'aria-invalid': misfit || undefined } }}
+          slotProps={{
+            input: {
+              'aria-labelledby': fieldTitleId,
+              'aria-invalid': misfit || undefined,
+            },
+          }}
         />
       }
     />

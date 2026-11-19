@@ -32,7 +32,7 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 분리하고 원래 대소문자�
 
 입력은 기본 컨트롤에 코어의 `inputId`를 사용하고 추가 요소는 `getInputId(key)`로 식별합니다. 필드 제목은 코어의 `labelId`를 사용하며 입력 자체 레이블은 keyed 주소를 사용합니다. `path`는 데이터 포인터이고 native 라디오 name은 `inputId`입니다. 모든 식별자는 불투명한 값이므로 덧붙이거나 파싱하지 않습니다. 렌더러와 입력은 같은 코어 주소를 받으므로 별도 제목 context로 재구성하지 않습니다. MUI Select의 표시 요소와 메뉴도 말단 이름 대신 keyed 주소를 사용하여 같은 말단 이름과 여러 Form을 구별합니다.
 
-선택 그룹의 제목은 해당 입력이 한 번만 소유하며 렌더러가 같은 식별자나 보이는 제목을 덧붙이지 않습니다. 일반 분기의 접근성 제목은 숨겨진 요소로 연결하여 배열 항목과 hideLabel의 기존 표시를 유지합니다.
+코어의 labelId는 renderer와 bound Label이 소유하고 입력 자체 legend는 getInputId('legend')를 사용합니다. 모든 입력은 labelId를 직접 읽어 주 컨트롤 또는 복합 그룹의 이름을 필드 제목으로 연결합니다. Form.Label과 Form.Input, bound Label을 렌더하는 사용자 renderer, hideLabel도 같은 이름을 유지합니다. 범위 양끝은 각각 제목과 연결하며 선택지·날짜 세부 입력·URI Protocol 같은 보조 컨트롤은 자기 이름을 유지하고 제목 있는 그룹 또는 description으로 소속을 연결합니다. 입력 정의에서 파생한 표는 primary·range-end·auxiliary 분류와 고유 id·존재하는 참조 대상을 요구합니다. 선택 그룹 제목은 접근성 트리에 한 번만 노출하며 입력 내부의 중복 legend는 hidden으로 제외합니다.
 
 분기 입력은 배열·객체 자체의 검증 오류를 표시하며, 루트와 중첩 위치가 같은 오류를 보여 줍니다. 루트 오류가 없으면 기존 입력 DOM만 유지합니다.
 

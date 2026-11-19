@@ -30,6 +30,7 @@ const DEFAULT_PROTOCOLS = ['http', 'https'];
 
 const FieldInputUri = ({
   inputId,
+  labelId: fieldTitleId,
   getInputId,
   name,
   required,
@@ -110,7 +111,7 @@ const FieldInputUri = ({
   });
 
   return (
-    <Box>
+    <Box role="group" aria-labelledby={fieldTitleId}>
       <InputLabel htmlFor={inputId} required={required}>
         {label}
       </InputLabel>
@@ -143,6 +144,7 @@ const FieldInputUri = ({
           disabled={disabled}
           error={misfit}
           slotProps={{
+            htmlInput: { 'aria-labelledby': fieldTitleId },
             input: {
               readOnly,
             },

@@ -49,7 +49,7 @@ const FieldInputSlider = ({
   marks,
   lazy,
   misfit,
-  'aria-labelledby': labelledBy,
+  labelId: labelledBy,
 }: FieldInputSliderProps) => {
   const range = type === 'array';
   const initialValue = range

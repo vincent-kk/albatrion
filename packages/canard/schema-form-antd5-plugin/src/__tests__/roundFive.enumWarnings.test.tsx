@@ -1,12 +1,6 @@
 import { createRef } from 'react';
 
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  within,
-} from '@testing-library/react';
+import { cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@canard/schema-form';
@@ -54,4 +48,3 @@ it.each([
     });
   },
 );
-

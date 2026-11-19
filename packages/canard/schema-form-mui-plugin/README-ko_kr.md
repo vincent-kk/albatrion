@@ -12,13 +12,13 @@
 
 `@canard/schema-form-mui-plugin`은 Material-UI (MUI) 컴포넌트를 제공하는 `@canard/schema-form`용 플러그인입니다.
 
-FieldRenderer는 그룹 라벨 없이 묶인 Input과 ErrorMessage 부품을 조립하며, 단독 라벨은 LabelRenderer를 사용합니다. LabelRenderer와 ErrorMessageRenderer는 각 루트 요소를 소유하며 LabelRenderer와 ErrorMessageRenderer로 등록됩니다. 플러그인은 입력 틀을 등록하지 않습니다.
+FieldRenderer는 Input과 ErrorMessage 부품을 조립하고 공유 필드 제목의 참조 대상을 제공하며, 단독 라벨은 LabelRenderer를 사용합니다. LabelRenderer와 ErrorMessageRenderer는 각 루트 요소를 소유하며 LabelRenderer와 ErrorMessageRenderer로 등록됩니다. 플러그인은 입력 틀을 등록하지 않습니다.
 
 ---
 
 ## 안내사항
 
-⚠️ 이 플러그인은 Ant Design Mobile 환경에서 `@canard/schema-form`을 사용할 때 자주 필요한 핵심 컴포넌트들을 미리 구현해 놓은 것입니다.
+⚠️ 이 플러그인은 Material-UI 환경에서 `@canard/schema-form`을 사용할 때 자주 필요한 핵심 컴포넌트들을 미리 구현해 놓은 것입니다.
 
 📌 플러그인의 목적은 개발 편의성을 높이는 것이므로, 모든 가능한 컴포넌트를 포함하지는 않습니다.
 
@@ -218,6 +218,8 @@ const Input = ({ inputId, name }: FieldInputProps<string>) => (
   <input id={inputId} name={name} />
 );
 ```
+
+입력은 `labelId`를 직접 읽으므로 플러그인 레이아웃, `Form.Label`과 `Form.Input`, bound `Label`을 쓰는 사용자 렌더러에서도 같은 필드 제목이 컨트롤 또는 그룹의 이름입니다. 범위 양끝은 각각 제목에 연결합니다. 보조 컨트롤은 제목 있는 필드 그룹 안에서 자기 이름을 유지합니다. 입력 자체 legend는 `getInputId('legend')`를 사용합니다. 필드 제목은 접근성 트리에 한 번만 노출하며 중복 제목 노드는 `hidden`으로 트리에서 제외합니다.
 
 복합 사용자 정의 입력은 `labelId`와 `getInputId`를 명시적으로 소비하고 DOM props에 펼치지 않습니다. getter의 참조는 필드 범위나 경로가 바뀔 때까지 유지됩니다. 말단 이름이나 `path`로 ID를 만들지 않습니다.
 

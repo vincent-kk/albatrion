@@ -18,7 +18,7 @@ FieldRenderer composes the bound Input and ErrorMessage parts without a group la
 
 ## Notice
 
-⚠️ This plugin provides pre-implemented core components commonly needed when using `@canard/schema-form` in Ant Design Mobile environments.
+⚠️ This plugin provides pre-implemented core components commonly needed when using `@canard/schema-form` in Material-UI environments.
 
 📌 As the plugin's purpose is to enhance development convenience, it does not include every possible component.
 
@@ -218,6 +218,8 @@ const Input = ({ inputId, name }: FieldInputProps<string>) => (
   <input id={inputId} name={name} />
 );
 ```
+
+Inputs read `labelId` directly, so the same field title names the control or group in the plugin layout, `Form.Label` with `Form.Input`, and a custom renderer with its bound `Label`. Both range endpoints reference the title. Auxiliary controls keep their own names within a named field group. Input-owned legends use `getInputId('legend')`; a bound field title is exposed once, and any duplicate title node uses `hidden` so it is outside the accessibility tree.
 
 For a composite custom input, consume `labelId` and `getInputId` explicitly rather than spreading them into DOM props. A getter is stable until the field scope or path changes. Never derive ids from the leaf name or from `path`.
 

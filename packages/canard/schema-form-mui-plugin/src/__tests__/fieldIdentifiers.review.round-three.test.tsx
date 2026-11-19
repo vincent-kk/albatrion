@@ -1,4 +1,4 @@
-import { cleanup, render } from '@testing-library/react';
+import { cleanup, isInaccessible, render } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import { Form, type JSONSchema } from '@canard/schema-form';
@@ -52,7 +52,11 @@ it('owns an array checkbox title exactly once (round-3 id review 1)', () => {
       (element) => element.id === titleId,
     ),
   ).toHaveLength(1);
-  expect(view.getAllByText('Field', { exact: true })).toHaveLength(1);
+  expect(
+    view
+      .getAllByText('Field', { exact: true })
+      .filter((element) => !isInaccessible(element)),
+  ).toHaveLength(1);
 });
 
 it.each<[string, JSONSchema]>([
