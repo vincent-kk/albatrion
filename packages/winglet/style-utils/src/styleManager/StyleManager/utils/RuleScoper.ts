@@ -1,3 +1,6 @@
+import { findCssStructure } from '../../../utils/cssTokens/findCssStructure';
+import { getCssFlatPreludeEnd } from '../../../utils/cssTokens/getCssFlatPreludeEnd';
+import { getCssFlatBlockEnd } from '../../../utils/cssTokens/getCssFlatBlockEnd';
 import {
   ASTERISK,
   AT_SIGN,
@@ -8,7 +11,6 @@ import {
   SLASH,
   WHITESPACE_MAX,
 } from '../constants/charCode';
-import { findUnquotedUrlEnd } from './findUnquotedUrlEnd';
 import { prefixSelector } from './prefixSelector';
 import { prefixSelectorList } from './prefixSelectorList';
 import { skipOpaqueToken } from './skipOpaqueToken';
@@ -21,24 +23,12 @@ import { trimSelector } from './trimSelector';
 const GROUPING_AT_RULE =
   /^@(?:-[a-z]+-)?(?:media|supports|container|layer|scope|document|starting-style)(?![\w-])/i;
 
-/** The last `url(` of a text, in any case: CSS function names are case-insensitive. */
-const LAST_URL_OPEN = /url\((?![\s\S]*url\()/i;
-
-/** Start of a quoted string, a comment or a backslash escape; `lastIndex` sets where the search starts. */
-const OPAQUE_START = /["'\\]|\/\*/g;
-
 /**
  * Prefixes every style rule of one stylesheet with a scope selector, in one forward pass.
  *
- * Structural characters (`{`, `}`, `;`, `,`) and the starts of opaque tokens
- * (quotes, `/*`, backslashes) are located with native `indexOf` searches
- * whose results are cached until the cursor passes them. When an opaque token
- * comes before the next structural character, only that token is skipped and
- * the search resumes, so braces, semicolons and commas inside strings, comments,
- * escapes never count as structure. Inside an unquoted `url(…)` a `/*` opens no
- * comment and a `;` ends no statement; the URL is looked for only when one of
- * those two is found. The caches stay valid because every query moves forward.
- * Known limit: a brace inside an unquoted `url(…)` still counts as structure.
+ * The shared position model recognizes opaque tokens and bracketed components.
+ * Flat preludes and blocks use conservative native span probes, while nested
+ * rules use the same model's structural delimiter traversal.
  *
  * @example
  * new RuleScoper('.a, .b { x: y } @media (x) { .c {} }', '.s').scopeSheet();
@@ -50,11 +40,7 @@ export class RuleScoper {
   private readonly __prefix__: string;
   /** Where the last `__scopeRuleList__` call stopped: past its `}`, or `-1` at an unterminated end. */
   private __end__ = 0;
-  private __open__ = -1;
-  private __close__ = -1;
-  private __semicolon__ = -1;
   private __comma__ = -1;
-  private __opaque__ = -1;
 
   /**
    * @param css - Stylesheet text to scope
@@ -158,46 +144,15 @@ export class RuleScoper {
     }
   }
 
-  /**
-   * Finds the `{` of a style rule whose prelude holds no `}` and no opaque token,
-   * refreshing the `{`, `}` and opaque caches from `cursor`.
-   *
-   * @returns The index of that `{`, or `-1` when the prelude needs `__findStructure__`.
-   */
+  /** Return a safe flat prelude boundary, or -1 for detailed token traversal. */
   private __findFlatPreludeEnd__(cursor: number): number {
-    const css = this.__css__;
-    let open = this.__open__;
-    if (open < cursor) {
-      open = css.indexOf('{', cursor);
-      this.__open__ = open = open === -1 ? css.length : open;
-    }
-    let close = this.__close__;
-    if (close < cursor) {
-      close = css.indexOf('}', cursor);
-      this.__close__ = close = close === -1 ? css.length : close;
-    }
-    const opaque =
-      this.__opaque__ >= cursor
-        ? this.__opaque__
-        : this.__findOpaqueStart__(cursor);
-    return open < close && open < opaque ? open : -1;
+    return getCssFlatPreludeEnd(this.__css__, cursor);
   }
 
-  /**
-   * Finds the `}` that closes the style block opening at `open`. The `}` and opaque
-   * caches already point past `open`, so a block with no `{` and no opaque token
-   * before its first `}` ends there; any other block is walked by depth.
-   *
-   * @returns The index of the closing `}`, or `-1` when the block never closes.
-   */
+  /** Return the block end, using a flat span before lexical nesting traversal. */
   private __findStyleBlockEnd__(open: number): number {
-    const css = this.__css__;
-    let nextOpen = css.indexOf('{', open + 1);
-    this.__open__ = nextOpen = nextOpen === -1 ? css.length : nextOpen;
-    const close = this.__close__;
-    return close < nextOpen && close < this.__opaque__
-      ? close
-      : this.__findBlockEnd__(open);
+    const close = getCssFlatBlockEnd(this.__css__, open);
+    return close === -1 ? this.__findBlockEnd__(open) : close;
   }
 
   /**
@@ -249,97 +204,14 @@ export class RuleScoper {
     for (;;) {
       const token = this.__findStructure__(position, false);
       if (token >= length) return -1;
-      if (token === this.__open__) depth++;
+      if (this.__css__.charCodeAt(token) === 123) depth++;
       else if (depth-- === 0) return token;
       position = token + 1;
     }
   }
 
-  /**
-   * Finds the first `{` or `}` (or `;` when `isStatementEnd`) at or after `from`
-   * outside every opaque token, or the text length when there is none.
-   */
+  /** Find the next delimiter through the shared lexical position model. */
   private __findStructure__(from: number, isStatementEnd: boolean): number {
-    const css = this.__css__;
-    const length = css.length;
-    for (;;) {
-      const segmentStart = from;
-      let open = this.__open__;
-      if (open < from) {
-        open = css.indexOf('{', from);
-        this.__open__ = open = open === -1 ? length : open;
-      }
-      let close = this.__close__;
-      if (close < from) {
-        close = css.indexOf('}', from);
-        this.__close__ = close = close === -1 ? length : close;
-      }
-      let stop = open < close ? open : close;
-      if (isStatementEnd) {
-        let semicolon = this.__semicolon__;
-        if (semicolon < from) {
-          semicolon = css.indexOf(';', from);
-          this.__semicolon__ = semicolon =
-            semicolon === -1 ? length : semicolon;
-        }
-        if (semicolon < stop) stop = semicolon;
-      }
-      const opaque =
-        this.__opaque__ >= from
-          ? this.__opaque__
-          : this.__findOpaqueStart__(from);
-      if (opaque >= stop) {
-        if (!isStatementEnd || stop !== this.__semicolon__) return stop;
-        const urlEnd = findEnclosingUrlEnd(css, segmentStart, stop);
-        if (urlEnd === -1) return stop;
-        from = urlEnd;
-        continue;
-      }
-      from =
-        css.charCodeAt(opaque) === SLASH
-          ? skipCommentOrUrl(css, segmentStart, opaque)
-          : skipOpaqueToken(css, opaque);
-    }
-  }
-
-  /**
-   * Refreshes the cached start of the first quote, comment or backslash escape at
-   * or after `from`, and returns it. One regular-expression search costs one call
-   * however many kinds of token it looks for; four `indexOf` searches cost four.
-   */
-  private __findOpaqueStart__(from: number): number {
-    OPAQUE_START.lastIndex = from;
-    const match = OPAQUE_START.exec(this.__css__);
-    return (this.__opaque__ =
-      match === null ? this.__css__.length : match.index);
+    return findCssStructure(this.__css__, from, isStatementEnd);
   }
 }
-
-/**
- * Finds the end of an unquoted `url(…)` that began in the plain segment
- * `css[segmentStart, index)` and still runs past `index`, or `-1` when there is none.
- * The character at `index` then belongs to the URL, not to the CSS structure.
- */
-const findEnclosingUrlEnd = (
-  css: string,
-  segmentStart: number,
-  index: number,
-): number => {
-  const url = css.slice(segmentStart, index).search(LAST_URL_OPEN);
-  const urlEnd =
-    url === -1 ? -1 : findUnquotedUrlEnd(css, segmentStart + url + 3);
-  return urlEnd > index ? urlEnd : -1;
-};
-
-/**
- * Skips the comment that opens at `comment`, or the whole unquoted `url(…)` that
- * encloses it, since a `/*` inside a URL opens no comment.
- */
-const skipCommentOrUrl = (
-  css: string,
-  segmentStart: number,
-  comment: number,
-): number => {
-  const urlEnd = findEnclosingUrlEnd(css, segmentStart, comment);
-  return urlEnd === -1 ? skipOpaqueToken(css, comment) : urlEnd;
-};

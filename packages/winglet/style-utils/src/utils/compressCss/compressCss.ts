@@ -1,55 +1,13 @@
-import { getCssEscapeEnd } from '../cssTokens/getCssEscapeEnd';
-import { getEscapedUrlEnd } from '../cssTokens/getEscapedUrlEnd';
-import { mayExtendCssEscape } from '../cssTokens/mayExtendCssEscape';
-import {
-  ASTERISK,
-  BACKSLASH,
-  COLON,
-  COMMA,
-  CR,
-  DOUBLE_QUOTE,
-  GT,
-  LBRACE,
-  LF,
-  L_PAREN,
-  PLUS,
-  RBRACE,
-  R_PAREN,
-  SEMICOLON,
-  SINGLE_QUOTE,
-  SLASH,
-  SPACE,
-  TAB,
-  TILDE,
-} from './constants/asciiByte';
-import { findUnquotedUrlEnd } from './utils/findUnquotedUrlEnd';
+import { CssTokenKind } from '../cssTokens/CssTokenKind';
+import { getCssSignificantIndex } from '../cssTokens/getCssSignificantIndex';
+import { readCssToken } from '../cssTokens/readCssToken';
+import { canDropCssComment } from './utils/canDropCssComment';
+import { compressFlatCss } from './utils/compressFlatCss';
 import { isDeclarationColon } from './utils/isDeclarationColon';
-import { isInsideParens } from './utils/isInsideParens';
-
-/** String bytes that can close, escape, or terminate a CSS string token. */
-const STRING_CONTROL = new Uint8Array(128);
-for (const byte of [LF, CR, 12, DOUBLE_QUOTE, SINGLE_QUOTE, BACKSLASH])
-  STRING_CONTROL[byte] = 1;
-
-/** Bytes whose compression behavior depends on surrounding CSS tokens. */
-const CSS_CONTROL = new Uint8Array(128);
-for (const byte of [
-  TAB,
-  LF,
-  CR,
-  SPACE,
-  DOUBLE_QUOTE,
-  SINGLE_QUOTE,
-  L_PAREN,
-  SLASH,
-  SEMICOLON,
-  BACKSLASH,
-])
-  CSS_CONTROL[byte] = 1;
 
 /**
  * Compresses CSS by removing unnecessary whitespace, comments, and redundant semicolons.
- * Uses byte-level processing for optimal performance while preserving CSS functionality.
+ * Uses shared lexical positions without allocating token objects.
  * Prioritizes speed over perfect compression - some trailing spaces may remain.
  *
  * @param css - The CSS string to compress
@@ -90,237 +48,64 @@ for (const byte of [
  *```
  */
 export const compressCss = (css: string): string => {
-  if (css.length === 0) return '';
-
-  const encoder = new TextEncoder();
-  const decoder = new TextDecoder();
-
-  const buffer = encoder.encode(css);
-  const length = buffer.length;
-  const output = new Uint8Array(length);
-
-  let outputIndex = 0;
-  let cursor = 0;
-  let inComment = false;
-  let lastByte = 0;
-  let byte: number;
-
-  while (cursor < length) {
-    byte = buffer[cursor];
-
-    if (inComment) {
-      if (
-        byte === ASTERISK &&
-        cursor + 1 < length &&
-        buffer[cursor + 1] === SLASH
-      ) {
-        inComment = false;
-        cursor += 2;
-        const nextByte = buffer[cursor];
-        if (
-          lastByte > SPACE &&
-          nextByte > SPACE &&
-          !isTokenBoundary(lastByte) &&
-          !isTokenBoundary(nextByte)
-        ) {
-          output[outputIndex++] = SLASH;
-          output[outputIndex++] = ASTERISK;
-          output[outputIndex++] = ASTERISK;
-          output[outputIndex++] = SLASH;
-          lastByte = SLASH;
-        }
+  if (!css.length) return '';
+  if (!/["'\\(]|\/\*/.test(css)) return compressFlatCss(css);
+  let output = '', index = 0, previousCode = 0, segmentStart = 0;
+  let hasOutput = false;
+  let previousKind = CssTokenKind.Delimiter;
+  let parentheses = 0, brackets = 0;
+  while (index < css.length) {
+    const token = readCssToken(css, index), kind = token % 16;
+    const end = Math.floor(token / 16), code = css.charCodeAt(index);
+    if (kind === CssTokenKind.Comment || kind === CssTokenKind.OpenComment) {
+      output += css.slice(segmentStart, index);
+      segmentStart = end;
+      if (hasOutput && end < css.length) {
+        const next = readCssToken(css, end);
+        if (!canDropCssComment(previousKind, previousCode, next % 16, css.charCodeAt(end))) output += '/**/';
+      }
+      index = end;
+      continue;
+    }
+    if (kind === CssTokenKind.Whitespace) {
+      output += css.slice(segmentStart, index);
+      segmentStart = end;
+      if (previousKind === CssTokenKind.Delimiter && previousCode === 92 && (code === 10 || code === 13 || code === 12)) {
+        output += code === 13 && css.charCodeAt(index + 1) === 10 ? '\r\n' : css[index];
+        previousCode = 32;
+        previousKind = CssTokenKind.Whitespace;
+        index = end;
         continue;
       }
-      cursor++;
+      if (hasOutput && end < css.length) {
+        const nextCode = css.charCodeAt(end);
+        const after = previousCode === 123 || previousCode === 125 || previousCode === 59 || previousCode === 58 || previousCode === 44 || previousCode === 62 || previousCode === 126 || previousCode === 40;
+        const before = nextCode === 123 || nextCode === 125 || nextCode === 59 || nextCode === 44 || nextCode === 62 || nextCode === 126 || nextCode === 41;
+        let keep = !after && !before;
+        if (previousCode === 43 || nextCode === 43) keep = parentheses > 0;
+        if (parentheses > 0 && (previousCode === 45 || nextCode === 45)) keep = true;
+        if (keep && nextCode === 58) keep = !isDeclarationColon(css, end);
+        if (keep) { output += ' '; previousCode = 32; previousKind = CssTokenKind.Whitespace; }
+      }
+      index = end;
       continue;
     }
-
-    if (!CSS_CONTROL[byte]) {
-      output[outputIndex++] = byte;
-      lastByte = byte;
-      cursor++;
-      continue;
-    }
-    if (byte === BACKSLASH) {
-      if (!mayExtendCssEscape(buffer[cursor + 1])) {
-        output[outputIndex++] = byte;
-        if (++cursor < length) output[outputIndex++] = buffer[cursor++];
-        lastByte = 0;
-        continue;
-      }
-      const urlEnd = getEscapedUrlEnd(buffer, cursor);
-      const end = urlEnd === cursor ? getCssEscapeEnd(buffer, cursor) : urlEnd;
-      while (cursor < end) output[outputIndex++] = buffer[cursor++];
-      lastByte = 0;
-      continue;
-    }
-
-    if (
-      byte === SLASH &&
-      cursor + 1 < length &&
-      buffer[cursor + 1] === ASTERISK
-    ) {
-      inComment = true;
-      cursor += 2;
-      continue;
-    }
-
-    // Copied byte by byte: a subarray and set() per string costs more than the copy.
-    if (byte === DOUBLE_QUOTE || byte === SINGLE_QUOTE) {
-      output[outputIndex++] = byte;
-      while (++cursor < length) {
-        const stringByte = buffer[cursor];
-        output[outputIndex++] = stringByte;
-        if (!STRING_CONTROL[stringByte]) continue;
-        if (stringByte === byte) {
-          cursor++;
-          break;
-        }
-        if (stringByte === BACKSLASH && cursor + 1 < length) {
-          if (
-            !mayExtendCssEscape(buffer[cursor + 1]) &&
-            buffer[cursor + 1] !== CR
-          )
-            output[outputIndex++] = buffer[++cursor];
-          else {
-            const end = getCssEscapeEnd(buffer, cursor);
-            while (cursor + 1 < end) output[outputIndex++] = buffer[++cursor];
-          }
-        } else if (stringByte <= CR) {
-          if (stringByte === CR && buffer[cursor + 1] === LF)
-            output[outputIndex++] = buffer[++cursor];
-          cursor++;
-          break;
-        }
-      }
-      lastByte = output[outputIndex - 1];
-      continue;
-    }
-
-    if (byte === L_PAREN) {
-      const urlEnd = findUnquotedUrlEnd(buffer, cursor);
-      if (urlEnd !== cursor) {
-        while (cursor < urlEnd) output[outputIndex++] = buffer[cursor++];
-        lastByte = output[outputIndex - 1];
-        continue;
+    if (kind === CssTokenKind.Function) parentheses++;
+    if (kind === CssTokenKind.Delimiter) {
+      if (code === 40) parentheses++;
+      else if (code === 41) parentheses = Math.max(0, parentheses - 1);
+      else if (code === 91) brackets++;
+      else if (code === 93) brackets = Math.max(0, brackets - 1);
+      if (code === 59 && parentheses === 0 && brackets === 0) {
+        const head = getCssSignificantIndex(css, end);
+        if (css.charCodeAt(head) === 125 || css.charCodeAt(head) === 59) { output += css.slice(segmentStart, index); segmentStart = end; index = end; continue; }
       }
     }
-
-    if (byte === SPACE || byte === TAB || byte === LF || byte === CR) {
-      while (++cursor < length) {
-        const nextByte = buffer[cursor];
-        if (
-          nextByte !== SPACE &&
-          nextByte !== TAB &&
-          nextByte !== LF &&
-          nextByte !== CR
-        )
-          break;
-      }
-      if (outputIndex > 0 && cursor < length) {
-        const prevByte = lastByte;
-        const nextByte = buffer[cursor];
-        const noSpaceAfter =
-          prevByte === LBRACE ||
-          prevByte === RBRACE ||
-          prevByte === SEMICOLON ||
-          prevByte === COLON ||
-          prevByte === COMMA ||
-          prevByte === GT ||
-          prevByte === TILDE ||
-          prevByte === L_PAREN;
-
-        const noSpaceBefore =
-          nextByte === LBRACE ||
-          nextByte === RBRACE ||
-          nextByte === SEMICOLON ||
-          nextByte === COMMA ||
-          nextByte === GT ||
-          nextByte === TILDE ||
-          nextByte === R_PAREN;
-
-        const needsSpaceForFunction =
-          nextByte === L_PAREN &&
-          ((prevByte >= 65 && prevByte <= 90) ||
-            (prevByte >= 97 && prevByte <= 122));
-
-        let needsSpace = !noSpaceAfter && !noSpaceBefore;
-        if (needsSpace && (prevByte === PLUS || nextByte === PLUS))
-          needsSpace = isInsideParens(output, outputIndex);
-        else if (needsSpace && nextByte === COLON)
-          needsSpace = !isDeclarationColon(buffer, cursor);
-
-        if (needsSpace || needsSpaceForFunction) {
-          output[outputIndex++] = SPACE;
-          lastByte = SPACE;
-        }
-      }
-      continue;
-    }
-
-    if (byte === SEMICOLON) {
-      let index = cursor + 1;
-      while (index < length && buffer[index] === SEMICOLON) index++;
-      let head = index;
-      let foundNonWhitespace = false;
-      while (head < length && !foundNonWhitespace) {
-        while (
-          head < length &&
-          (buffer[head] === SPACE ||
-            buffer[head] === TAB ||
-            buffer[head] === LF ||
-            buffer[head] === CR)
-        )
-          head++;
-        if (
-          head < length - 1 &&
-          buffer[head] === SLASH &&
-          buffer[head + 1] === ASTERISK
-        ) {
-          head += 2;
-          while (head < length - 1) {
-            if (buffer[head] === ASTERISK && buffer[head + 1] === SLASH) {
-              head += 2;
-              break;
-            }
-            head++;
-          }
-        } else foundNonWhitespace = true;
-      }
-      if (head < length && buffer[head] === RBRACE) {
-        cursor = index;
-        continue;
-      }
-      output[outputIndex++] = SEMICOLON;
-      lastByte = SEMICOLON;
-      cursor = index;
-      continue;
-    }
-    output[outputIndex++] = byte;
-    lastByte = byte;
-    cursor++;
+    hasOutput = true;
+    previousCode = kind === CssTokenKind.Delimiter || kind === CssTokenKind.Function ? css.charCodeAt(end - 1) : 0;
+    previousKind = kind;
+    index = end;
   }
-
-  while (outputIndex > 0 && output[outputIndex - 1] === SPACE) {
-    let backslashes = 0;
-    for (
-      let index = outputIndex - 2;
-      index >= 0 && output[index] === BACKSLASH;
-      index--
-    )
-      backslashes++;
-    if (backslashes % 2 !== 0) break;
-    outputIndex--;
-  }
-
-  return decoder.decode(output.subarray(0, outputIndex));
+  output += css.slice(segmentStart, index);
+  return previousKind === CssTokenKind.Whitespace ? output.slice(0, -1) : output;
 };
-
-/** Tells whether punctuation already separates adjacent CSS tokens. */
-const isTokenBoundary = (byte: number): boolean =>
-  byte === LBRACE ||
-  byte === RBRACE ||
-  byte === COLON ||
-  byte === SEMICOLON ||
-  byte === COMMA ||
-  byte === R_PAREN;

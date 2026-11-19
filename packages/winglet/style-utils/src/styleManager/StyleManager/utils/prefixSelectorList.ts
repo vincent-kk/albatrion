@@ -3,7 +3,6 @@ import {
   COMMA,
   DOUBLE_QUOTE,
   L_PAREN,
-  R_PAREN,
   SINGLE_QUOTE,
   SLASH,
 } from '../constants/charCode';
@@ -12,11 +11,11 @@ import { skipOpaqueToken } from './skipOpaqueToken';
 import { trimSelector } from './trimSelector';
 
 /** Characters that may hide a comma from the list structure. */
-const NESTING_CHARACTER = /[("'\\/]/;
+const NESTING_CHARACTER = /[[("'\\/]/;
 
 /** Only these remaining characters can open an opaque selector token. */
 const OPAQUE_CHARACTER = new Uint8Array(128);
-for (const code of [DOUBLE_QUOTE, SINGLE_QUOTE, SLASH, BACKSLASH])
+for (const code of [DOUBLE_QUOTE, SINGLE_QUOTE, SLASH, BACKSLASH, L_PAREN, 91])
   OPAQUE_CHARACTER[code] = 1;
 
 /**
@@ -53,26 +52,15 @@ export const prefixSelectorList = (
       partStart = comma + 1;
     }
   }
-  let depth = 0;
   for (let index = start; index < end; index++) {
     const code = css.charCodeAt(index);
-    // Every character with a branch below is a slash or lower, or a backslash.
-    if (code > SLASH && code !== BACKSLASH) continue;
+    // The shared component reader also handles square brackets above the ASCII fast range.
+    if (code > SLASH && code !== BACKSLASH && code !== 91) continue;
     if (code === COMMA) {
-      if (depth !== 0) continue;
       result +=
         prefixSelector(trimSelector(css.slice(partStart, index)), prefix) + ',';
       partStart = index + 1;
-    } else if (code === L_PAREN) {
-      // Only `url(` can make a parenthesis opaque, and it ends in `l`.
-      const next =
-        (css.charCodeAt(index - 1) | 32) === 108
-          ? skipOpaqueToken(css, index)
-          : index;
-      if (next > index) index = next - 1;
-      else depth++;
-    } else if (code === R_PAREN) depth--;
-    else if (OPAQUE_CHARACTER[code]) {
+    } else if (OPAQUE_CHARACTER[code]) {
       const next = skipOpaqueToken(css, index);
       if (next > index) index = next - 1;
     }
