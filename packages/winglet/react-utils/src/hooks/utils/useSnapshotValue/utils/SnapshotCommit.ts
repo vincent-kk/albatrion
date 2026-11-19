@@ -1,7 +1,7 @@
 import type { RefObject } from 'react';
 
 /** Snapshot and comparison data belong to one committed render. */
-type SnapshotRecord<Input> = { value: Input; compared: Input; omit: Set<keyof Input> | undefined | null };
+type SnapshotRecord<Input> = { value: Input; omit: Set<keyof Input> | undefined | null };
 
 /** Owns one publication target so the shared commit helper publishes snapshot and metadata together. */
 export class SnapshotCommit<Input> {
@@ -12,7 +12,7 @@ export class SnapshotCommit<Input> {
   /** Initialize the owned comparison frame without publishing outside the mounting render. */
   constructor(reference: RefObject<Input>, input: Input) {
     this.__reference__ = reference;
-    this.__current__ = { value: input, compared: input, omit: null };
+    this.__current__ = { value: input, omit: null };
   }
 
   /** Last committed comparison and snapshot. */

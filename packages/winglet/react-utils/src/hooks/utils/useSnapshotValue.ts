@@ -1,4 +1,4 @@
-import { useRef, type RefObject } from 'react';
+import { useMemo, useRef, type RefObject } from 'react';
 import { equals } from '@winglet/common-utils/object';
 import { SnapshotCommit } from './useSnapshotValue/utils/SnapshotCommit';
 import { useCommittedReference } from './useCommittedReference';
@@ -14,13 +14,16 @@ export function useSnapshotValue<Input extends object | undefined>(reference: Re
   const holder = useRef<SnapshotCommit<Input> | null>(null);
   if (holder.current === null) holder.current = new SnapshotCommit(reference, input);
   const comparison = holder.current;
-  const previous = comparison.current;
-  let next = previous, value = reference.current;
-  if (input !== previous.compared) {
+  const next = useMemo(() => {
+    const previous = comparison.current;
+    const current = reference.current;
+    if (input === current) return previous;
     const keys = previous.omit === null ? (omit === undefined || omit instanceof Set ? omit : new Set(omit)) : previous.omit;
-    if (!equals(value, input, keys)) value = input;
-    next = { value, compared: input, omit: keys };
-  }
+    const value = equals(current, input, keys) ? current : input;
+    return value === previous.value && keys === previous.omit ? previous : { value, omit: keys };
+    // Omitted keys are captured by the first committed comparison.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [input, reference, comparison]);
   useCommittedReference(comparison, next);
-  return value;
+  return next.value;
 }
