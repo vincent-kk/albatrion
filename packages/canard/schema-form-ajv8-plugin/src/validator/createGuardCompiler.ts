@@ -91,7 +91,7 @@ export const createGuardCompiler = (
       instancePath: '',
       parentData: {},
       parentDataProperty: '',
-      rootData: value as Dictionary<unknown>,
+      rootData: value,
       dynamicAnchors: { ...dynamicAnchors },
     });
 };
