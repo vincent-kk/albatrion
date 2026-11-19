@@ -146,6 +146,21 @@ it('virtual operations follow the reference model in sequential and batched hist
         expect(root.find('/group')!.value, `seed=${seed} tuple`).toEqual(
           expectedTuple,
         );
+        expect(
+          Object.fromEntries(
+            root.inactiveValues.map(({ path, value }) => [path, value]),
+          ),
+          `seed=${seed} step=${step} retained`,
+        ).toEqual(
+          Object.fromEntries(
+            names.flatMap((name, slot) =>
+              !active[slot] && stored[slot] !== undefined
+                ? [[`/${name}`, stored[slot]]]
+                : [],
+            ),
+          ),
+        );
+
         expect(root.find('/group')!.isDivergent).toBe(
           expectedTuple.some((value, index) => value !== initialOutput[index]),
         );
