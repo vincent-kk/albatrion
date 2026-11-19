@@ -3,6 +3,16 @@ import { expect, it } from 'vitest';
 
 import { pointerCompilerOf } from '../pointerCompilerOf';
 
+it('preserves native nullable validation when compiler metadata is reused', () => {
+  const source = new Ajv({ nullable: true });
+  const schema = { type: 'number', nullable: true };
+  const compiler = pointerCompilerOf(source);
+  expect([compiler.compile(schema)(null), source.compile(schema)(null)]).toEqual([
+    true, true,
+  ]);
+  expect(compiler._opts.nullable).toBe(true);
+});
+
 it.each([true, false, undefined])(
   'retains a custom constructor nullable profile %s while reusing its private compiler',
   (nullable) => {
