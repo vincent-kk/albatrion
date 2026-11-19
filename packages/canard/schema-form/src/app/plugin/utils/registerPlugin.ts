@@ -209,20 +209,32 @@ export const registerPlugin = (
     manager.reset();
     return;
   }
-  if (!isPlainObject(plugin)) return;
+  if (plugin === undefined) return;
   const registry = scope === undefined ? undefined : getPluginRegistry(scope);
   const fingerprint = registry?.getPluginKey ?? getPluginKey;
   const registered = registry?.registeredPlugins ?? registeredPlugins;
-  const hash = fingerprint(plugin);
-  if (registered.has(hash)) return;
   try {
+    const configuration = isPlainObject(plugin)
+      ? plugin
+      : {
+          FieldRenderer: plugin.FieldRenderer,
+          LabelRenderer: plugin.LabelRenderer,
+          InputRenderer: plugin.InputRenderer,
+          ErrorMessageRenderer: plugin.ErrorMessageRenderer,
+          fieldInputDefinitions: plugin.fieldInputDefinitions,
+          validator: plugin.validator,
+          formatError: plugin.formatError,
+        };
+    const hash = fingerprint(configuration);
+    if (registered.has(hash)) return;
     const { fieldInputDefinitions, validator, formatError, ...renderKit } =
-      plugin;
+      configuration;
     // Normalization is the only step that throws; running it first leaves a failed plugin unapplied.
     manager.appendFieldInputDefinitions(fieldInputDefinitions);
     manager.appendRenderKit(renderKit);
     manager.appendValidator(validator);
     manager.appendFormatError(formatError);
+    registered.add(hash);
   } catch (error) {
     throw new UnhandledError(
       FormErrorCode.RegisterPlugin,
@@ -233,5 +245,4 @@ export const registerPlugin = (
       },
     );
   }
-  registered.add(hash);
 };
