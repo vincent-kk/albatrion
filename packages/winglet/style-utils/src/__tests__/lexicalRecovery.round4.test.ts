@@ -11,12 +11,12 @@ it.each([12, 24, 48])(
       resolve(__dirname, '../utils/cssTokens/getCssComponentEnd.ts'),
     ).href;
     const closure = pathToFileURL(
-      resolve(__dirname, '../utils/cssTokens/closeCssFragment.ts'),
+      resolve(__dirname, '../utils/cssTokens/processCssSheet/processCssSheet.ts'),
     ).href;
     const compressor = pathToFileURL(
       resolve(__dirname, '../utils/compressCss/compressCss.ts'),
     ).href;
-    const script = `import {getCssComponentEnd} from ${JSON.stringify(component)}; import {closeCssFragment} from ${JSON.stringify(closure)}; import {compressCss} from ${JSON.stringify(compressor)}; const css=${JSON.stringify(css)}; getCssComponentEnd(css,0); closeCssFragment(css); compressCss(css);`;
+    const script = `import {getCssComponentEnd} from ${JSON.stringify(component)}; import {processCssSheet} from ${JSON.stringify(closure)}; import {compressCss} from ${JSON.stringify(compressor)}; const css=${JSON.stringify(css)}; getCssComponentEnd(css,0); processCssSheet(css,false,'shadow'); compressCss(css);`;
     const result = spawnSync(
       process.execPath,
       ['--single-threaded', '--import', 'tsx', '--input-type=module', '--eval', script],
