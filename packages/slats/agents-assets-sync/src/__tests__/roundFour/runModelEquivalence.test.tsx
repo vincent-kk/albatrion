@@ -11,7 +11,8 @@ import {
   removeRoot,
   writeAt,
 } from '../roundThree/fixture.js';
-import { runSurface as surface, written } from './helpers/runSurface.js';
+import { readWrittenFiles as written } from './helpers/readWrittenFiles.js';
+import { runSurface as surface } from './helpers/runSurface.js';
 
 const roots: string[] = [];
 afterEach(() => {
