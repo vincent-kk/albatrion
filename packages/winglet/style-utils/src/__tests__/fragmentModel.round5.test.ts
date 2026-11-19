@@ -1,4 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest';
+import { compressCss } from '../index';
 import { createStyleHarness } from './helpers/createStyleHarness';
 import { createRandom } from './helpers/cssSyntax/createRandom';
 import { readStylesheet } from './helpers/cssSyntax/readStylesheet';
@@ -17,11 +18,12 @@ it.each([[false, false], [false, true], [true, false], [true, true]])('compares 
   const seed = 0x1d3f105, random = createRandom(seed);
   const cache = new Map<string, string[]>();
   const isolated = (css: string) => {
+    const normalized = css.charCodeAt(0) === 0xfeff ? css.slice(1) : css;
+    if (shadow) return readStylesheet(skipCompression ? normalized : compressCss(normalized));
     let rules = cache.get(css);
     if (!rules) {
       const harness = createStyleHarness(shadow, 'r5isolated');
       try {
-        const normalized = css.charCodeAt(0) === 0xfeff ? css.slice(1) : css;
         harness.add('only', normalized, skipCompression);
         rules = readStylesheet(harness.flush()).map(rule => rule.split('ident-token:r5isolated').join('ident-token:r5target'));
         cache.set(css, rules);
@@ -59,6 +61,18 @@ it('uses stylesheet CDO/CDC and per-fragment BOM semantics before document selec
       harness.add('first', css);
       harness.add('next', '.b{color:blue}');
       expect(readStylesheet(harness.flush()), css).toEqual(readStylesheet('.r5target .a{color:red}.r5target .b{color:blue}'));
+    } finally { harness.destroy(); }
+  }
+});
+
+it('distinguishes stylesheet CDC markers from hyphenated identifier tokens', () => {
+  for (const shadow of [false, true]) {
+    const harness = createStyleHarness(shadow);
+    try {
+      harness.add('first', '--x{color:red}');
+      harness.add('next', '.b{color:blue}');
+      const prefix = shadow ? '' : '.r5target ';
+      expect(readStylesheet(harness.flush())).toEqual(readStylesheet(prefix + '--x{color:red}' + prefix + '.b{color:blue}'));
     } finally { harness.destroy(); }
   }
 });
