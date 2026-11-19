@@ -29,7 +29,10 @@ export const findNodes = <Self extends FieldNodeRecord<Self>>(
     if (token === PointerOperator.Context) return [];
     for (const cursor of cursors) {
       if (token === PointerOperator.Current) {
-        if (seen ? !seen.has(cursor) : next.indexOf(cursor) === -1) {
+        if (
+          next.length === 0 ||
+          (seen ? !seen.has(cursor) : next.indexOf(cursor) === -1)
+        ) {
           next.push(cursor);
           if (seen) seen.add(cursor);
           else if (next.length === INDEX_THRESHOLD) seen = new Set(next);
@@ -39,7 +42,8 @@ export const findNodes = <Self extends FieldNodeRecord<Self>>(
         if (
           parent !== null &&
           (!cursor.isDetached || parent.isDetached) &&
-          (seen ? !seen.has(parent) : next.indexOf(parent) === -1)
+          (next.length === 0 ||
+            (seen ? !seen.has(parent) : next.indexOf(parent) === -1))
         ) {
           next.push(parent);
           if (seen) seen.add(parent);
@@ -48,7 +52,10 @@ export const findNodes = <Self extends FieldNodeRecord<Self>>(
       } else if (cursor.childrenByName !== null) {
         if (token === PointerOperator.Wildcard) {
           for (const child of Object.values(cursor.childrenByName))
-            if (seen ? !seen.has(child) : next.indexOf(child) === -1) {
+            if (
+              next.length === 0 ||
+              (seen ? !seen.has(child) : next.indexOf(child) === -1)
+            ) {
               next.push(child);
               if (seen) seen.add(child);
               else if (next.length === INDEX_THRESHOLD) seen = new Set(next);
@@ -60,7 +67,8 @@ export const findNodes = <Self extends FieldNodeRecord<Self>>(
             const child = cursor.childrenByName[name];
             if (
               child !== undefined &&
-              (seen ? !seen.has(child) : next.indexOf(child) === -1)
+              (next.length === 0 ||
+                (seen ? !seen.has(child) : next.indexOf(child) === -1))
             ) {
               next.push(child);
               if (seen) seen.add(child);
