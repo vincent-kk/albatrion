@@ -272,7 +272,7 @@ export const sortObjectKeys = <Dict extends Dictionary>(
   const ignoreUndefinedKey = options?.ignoreUndefinedKey === true;
   const ignoreUndefinedValue = options?.ignoreUndefinedValue === true;
 
-  const result: Dictionary = {};
+  const result: Dictionary = Object.getPrototypeOf(object) === null ? Object.create(null) : {};
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
     if (
       hasOwnProperty(object, k) === false ||

@@ -11,6 +11,7 @@
 - `shallowClone`과 `removeUndefined`는 prototype-free dictionary의 null 프로토타입을 유지하여 없는 키가 상속된 멤버로 바뀌지 않게 합니다.
 
 - `removeUndefined`와 `sortObjectKeys`도 예약 키를 자기 데이터 속성으로 복사하고 중첩 결과의 프로토타입을 바꾸지 않습니다.
+- `sortObjectKeys`가 만드는 사전은 입력이 null 프로토타입이면 같은 null 프로토타입을 사용합니다. 순서만 바꾸는 작업이 없는 키의 상속 조회를 새로 만들지 않습니다.
 
 ## API Contracts
 
