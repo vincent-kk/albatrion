@@ -25,3 +25,7 @@ it('preserves ambiguous nested selector preludes and opaque at-rule blocks', () 
   for (const css of ['.a{p :hover{color:red}}', '.a{p: hover{color:red}}', '@\\6d edia (x){.a: hover{color:red}}', '@unknown{.a: hover{color:red}}'])
     expect(readStylesheet(compressCss(css)), css).toEqual(readStylesheet(css));
 });
+
+it('preserves empty declaration query values in supports conditions', () => {
+  expect(compressCss('@supports (--x: ){.b{color:red}}')).toContain('(--x: )');
+});
