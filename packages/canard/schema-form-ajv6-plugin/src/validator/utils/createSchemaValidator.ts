@@ -49,6 +49,7 @@ export const createSchemaValidator = (
   }
   const rootPrefix = isAsyncReference ? `${key}/` : '';
   if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
+  const ValidationError = Reflect.get(ajv.constructor, 'ValidationError');
   const compiled: object = transient ?? jsonSchema;
   const legacyId = ajv._opts.schemaId === 'id' || ajv._opts.schemaId === 'auto';
   let issueContext: ReturnType<typeof createSchemaPathContext> | undefined;
@@ -69,10 +70,8 @@ export const createSchemaValidator = (
       if (
         thrown !== null &&
         typeof thrown === 'object' &&
-        'ajv' in thrown &&
-        thrown.ajv === true &&
-        'validation' in thrown &&
-        thrown.validation === true &&
+        typeof ValidationError === 'function' &&
+        thrown instanceof ValidationError &&
         'errors' in thrown &&
         Array.isArray(thrown.errors)
       ) {

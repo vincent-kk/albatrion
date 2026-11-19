@@ -32,6 +32,7 @@ export const createValidatorFactory =
     if (transient) ajv.removeSchema(transient);
     if (!validate)
       throw new Error(`Registered Ajv schema was not found: ${key}`);
+    const ValidationError = Reflect.get(ajv.constructor, 'ValidationError');
     const notRequiredKeys = new Map<string, string | null>();
     return async (data) => {
       try {
@@ -48,7 +49,10 @@ export const createValidatorFactory =
         return null;
       } catch (thrown) {
         if (
-          thrown instanceof Error &&
+          thrown !== null &&
+          typeof thrown === 'object' &&
+          typeof ValidationError === 'function' &&
+          thrown instanceof ValidationError &&
           'errors' in thrown &&
           Array.isArray(thrown.errors)
         ) {

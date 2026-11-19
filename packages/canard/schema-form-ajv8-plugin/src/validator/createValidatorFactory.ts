@@ -38,6 +38,7 @@ export const createValidatorFactory = (
     const toAuthoredPath = registration.validationCopy
       ? createRootPathRewriter(`${registration.key}/`)
       : undefined;
+    const ValidationError = Reflect.get(ajv.constructor, 'ValidationError');
     // AJV reports the same schema paths on every run of this validator, so each not.required lookup walks the root once.
     const notRequiredKeys = new Map<string, string | undefined>();
     return async (data) => {
@@ -46,7 +47,10 @@ export const createValidatorFactory = (
         return null;
       } catch (thrown: unknown) {
         if (
-          thrown instanceof Error &&
+          thrown !== null &&
+          typeof thrown === 'object' &&
+          typeof ValidationError === 'function' &&
+          thrown instanceof ValidationError &&
           'errors' in thrown &&
           Array.isArray(thrown.errors)
         )
