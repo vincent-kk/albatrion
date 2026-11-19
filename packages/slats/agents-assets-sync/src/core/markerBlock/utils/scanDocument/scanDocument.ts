@@ -15,6 +15,7 @@ export function scanDocument(content: string): MarkdownScan {
       : content.startsWith('\xEF\xBB\xBF')
         ? 3
         : 0;
+  const endings = /\r\n?|\n/g;
   let lineNumber = 0;
   let fence = '';
   let fenceLine = 0;
@@ -22,15 +23,14 @@ export function scanDocument(content: string): MarkdownScan {
   let listIndent = 0;
   let blank = false;
   let pending:
-    | { blockId: string; start: number; bodyStart: number }
+    | { blockId: string; start: number; bodyStart: number; line: number }
     | undefined;
   while (offset < content.length) {
     lineNumber++;
-    const end = content.indexOf('\n', offset);
-    const next = end === -1 ? content.length : end + 1;
-    const line = content
-      .slice(offset, end === -1 ? content.length : end)
-      .replace(/\r$/, '');
+    endings.lastIndex = offset;
+    const ending = endings.exec(content);
+    const next = ending ? ending.index + ending[0].length : content.length;
+    const line = content.slice(offset, ending?.index ?? content.length);
     const delimiter = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
     if (fence) {
       if (
@@ -96,9 +96,30 @@ export function scanDocument(content: string): MarkdownScan {
         blank = !line.trim();
         const match = marker.exec(line);
         if (match || /^ {0,3}<!--/.test(line)) listIndent = 0;
-        if (match?.[1] === 'START' && !pending)
-          pending = { blockId: match[2], start: offset, bodyStart: next };
-        else if (match?.[1] === 'END' && pending?.blockId === match[2]) {
+        if (match?.[1] === 'START') {
+          if (pending)
+            return {
+              blocks: [],
+              issue: {
+                line: lineNumber,
+                message: `Nested START marker inside ${pending.blockId}. Close the current block first.`,
+              },
+            };
+          pending = {
+            blockId: match[2],
+            start: offset,
+            bodyStart: next,
+            line: lineNumber,
+          };
+        } else if (match?.[1] === 'END') {
+          if (pending?.blockId !== match[2])
+            return {
+              blocks: [],
+              issue: {
+                line: lineNumber,
+                message: `Unmatched END marker: ${match[2]}. Restore its matching START.`,
+              },
+            };
           blocks.push({
             blockId: pending.blockId,
             body: content.slice(pending.bodyStart, offset),
@@ -106,6 +127,15 @@ export function scanDocument(content: string): MarkdownScan {
             end: next,
           });
           pending = undefined;
+        } else if (line.trimStart().startsWith(`<!-- ${MARKER_PREFIX}`)) {
+          return {
+            blocks: [],
+            issue: {
+              line: lineNumber,
+              message:
+                'Malformed managed marker. Restore a complete START or END marker line.',
+            },
+          };
         } else if (
           !match &&
           /^ {0,3}<!--/.test(line) &&
@@ -132,6 +162,14 @@ export function scanDocument(content: string): MarkdownScan {
         line: commentLine,
         message:
           'Unclosed HTML comment. Close the comment with --> before adding managed blocks.',
+      },
+    };
+  if (pending)
+    return {
+      blocks: [],
+      issue: {
+        line: pending.line,
+        message: `Unmatched START marker: ${pending.blockId}. Restore its matching END.`,
       },
     };
   return { blocks };

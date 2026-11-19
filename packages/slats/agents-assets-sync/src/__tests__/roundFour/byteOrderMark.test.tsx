@@ -74,7 +74,17 @@ it.each([
         expect(after.subarray(0, 3)).toEqual(Buffer.from('\uFEFF'));
         if (kind === 'closed')
           expect(after.subarray(0, document.length)).toEqual(document);
-        expect(after.includes(source)).toBe(true);
+        expect(
+          after.includes(
+            Buffer.from(
+              source
+                .toString('latin1')
+                .replace(/^\xEF\xBB\xBF/, '')
+                .replace(/\r\n/g, '\n'),
+              'latin1',
+            ),
+          ),
+        ).toBe(true);
         const second = await runSurface(mode, root, targets, flags);
         expect(second.code).toBe(0);
         expect(

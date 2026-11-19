@@ -2,6 +2,8 @@ import { readFile } from 'node:fs/promises';
 
 import type { AsyncFn } from '@aileron/declare';
 
+import { assertManagedMarkdown } from '../../markerBlock/index.js';
+
 /**
  * Read a shared document once per plan, remembering absent files.
  *
@@ -20,7 +22,10 @@ export function createDocumentReader(): AsyncFn<
     const hit = cache.get(fileAbs);
     if (hit) return hit;
     const pending = readFile(fileAbs, 'latin1').then(
-      (content) => content,
+      (content) => {
+        assertManagedMarkdown(content, fileAbs);
+        return content;
+      },
       (error: NodeJS.ErrnoException) => {
         if (error?.code === 'ENOENT') return null;
         throw error;

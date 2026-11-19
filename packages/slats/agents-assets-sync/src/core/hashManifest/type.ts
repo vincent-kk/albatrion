@@ -29,6 +29,8 @@ export interface HashManifest {
   assetRoot: string;
   /** Manifest path → source hash. */
   files: Record<string, Sha256Hex>;
+  /** Optional normalized rule-body hashes, for source-less installed-block checks. */
+  ruleBodyHashes?: Record<string, Sha256Hex>;
   /** Reserved; always empty in schema v1. */
   previousVersions: Record<string, never>;
 }

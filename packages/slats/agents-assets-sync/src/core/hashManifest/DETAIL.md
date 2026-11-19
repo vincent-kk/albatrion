@@ -81,7 +81,6 @@
 - 이 술어는 출처를 정하지 않고 종료 코드도 정하지 않는다. `'manifest'` 를 받은 타깃이 그 파일 없이 도착했다는 것은 호출자가 다른 출처도 찾지 못했다는 뜻이며, 진단은 그렇게 읽혀야 한다.
 - 검증: `__tests__/needsBuiltManifest.spec.ts` (`filid:contract AC-MANIFEST-GATE`).
 
-
 ## Last Updated
 
 해시 원본 선택과 매니페스트·디렉터리 계산 계약이 바뀌면 갱신합니다.

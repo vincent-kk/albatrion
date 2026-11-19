@@ -1,7 +1,12 @@
 // Byte-identical to the list in `scripts/buildHashes.mjs`, which must stay pure
 // Node ESM for rolldown and so cannot import this one;
 // `hashManifest/__tests__/computeHashManifest.spec.ts` pins both to one output.
-const NOISE = [/(^|\/)\.omc(\/|$)/, /(^|\/)\.DS_Store$/, /\.log$/];
+const NOISE = [
+  /(^|\/)\.omc(\/|$)/,
+  /(^|\/)\.DS_Store$/,
+  /\.log$/,
+  /(^|\/)\.agents-assets-sync-[^/]*(\/|$)/,
+];
 
 /**
  * Decide whether a path is tool or OS noise that is never shipped as an asset.

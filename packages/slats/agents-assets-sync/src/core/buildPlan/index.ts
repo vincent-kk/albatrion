@@ -6,4 +6,5 @@ export type {
   ActionTarget,
   InjectPlan,
   PlanInput,
+  RuleSource,
 } from './type.js';

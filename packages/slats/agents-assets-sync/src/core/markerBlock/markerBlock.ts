@@ -1,6 +1,6 @@
 import { type Sha256Hex, hashContent, hashEquals } from '../hash/index.js';
-import { assertManagedMarkdown } from './utils/assertManagedMarkdown.js';
-import { endMarker, startMarker } from './utils/markerLine.js';
+import { normalizeRuleSource } from '../utils/normalizeRuleSource.js';
+import { writeNormalizedBlock } from './utils/writeNormalizedBlock.js';
 import { scanBlocks } from './utils/scanBlocks.js';
 
 /** One block this tool owns inside a shared `AGENTS.md`. */
@@ -77,26 +77,7 @@ export function upsertBlock(
   body: string,
   context: { document?: string; source?: string } = {},
 ): string {
-  const blocks = assertManagedMarkdown(content, context.document ?? 'document');
-  assertManagedMarkdown(body, context.source ?? 'rule source');
-  const rendered = `${startMarker(blockId)}\n${body}${
-    body.endsWith('\n') ? '' : '\n'
-  }${endMarker(blockId)}\n`;
-  const found = blocks.filter((block) => block.blockId === blockId);
-  if (found.length) {
-    let next = content;
-    for (let index = found.length - 1; index >= 0; index--) {
-      const block = found[index];
-      next =
-        next.slice(0, block.start) +
-        (index === 0 ? rendered : '') +
-        next.slice(block.end);
-    }
-    return next;
-  }
-  const base =
-    content.length > 0 && !content.endsWith('\n') ? `${content}\n` : content;
-  return base + rendered;
+  return writeNormalizedBlock(content, blockId, normalizeRuleSource(body), context);
 }
 
 /**
@@ -150,7 +131,7 @@ function lfReadingMatches(
   expected: Sha256Hex,
   encoding: BufferEncoding,
 ): boolean {
-  const lf = body.replace(/\r\n/g, '\n');
+  const lf = body.replace(/\r\n?/g, '\n');
   if (hashEquals(hashContent(Buffer.from(lf, encoding)), expected)) return true;
   return (
     lf.endsWith('\n') &&

@@ -1,4 +1,4 @@
-import { scanDocument } from './scanDocument/scanDocument.js';
+import { assertManagedMarkdown } from './assertManagedMarkdown.js';
 import type { LocatedBlock } from './scanDocument/types.js';
 
 /** Read managed markers outside supported code and HTML comment contexts.
@@ -6,5 +6,5 @@ import type { LocatedBlock } from './scanDocument/types.js';
  * @returns Managed blocks in document order, including duplicate identifiers.
  */
 export function scanBlocks(content: string): LocatedBlock[] {
-  return scanDocument(content).blocks;
+  return assertManagedMarkdown(content, 'document');
 }

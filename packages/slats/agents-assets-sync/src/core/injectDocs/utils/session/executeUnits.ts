@@ -5,7 +5,8 @@ import { applyAction } from '../applyAction.js';
 import { applyBlockActions } from '../applyBlockActions.js';
 import { partitionActions } from '../partitionActions.js';
 import { summarize } from '../summarize.js';
-import type { PreparedUnit, RunResult, RunUnit } from './types.js';
+import type { PreparedUnit, RunFailure, RunResult, RunUnit } from './types.js';
+import { createRunDiagnostics } from './utils/createRunDiagnostics.js';
 
 /** Apply prepared units once, then return the complete result model.
  * @param units Read-only plans.
@@ -19,11 +20,13 @@ export async function executeUnits(
   flags: DefaultFlags,
   errors: readonly string[],
   cancelled = false,
+  diagnostics?: readonly RunFailure[],
 ): Promise<RunResult> {
   const results: RunUnit[] = [];
   for (const prepared of units) {
+    const { ruleSources, ...metadata } = prepared;
     const unit: RunUnit = {
-      ...prepared,
+      ...metadata,
       key:
         prepared.key ?? `${prepared.agentTarget.agent}:${prepared.target.name}`,
     };
@@ -50,18 +53,53 @@ export async function executeUnits(
     const failures: Action[] = fileActions.filter(
       (_, index) => settled[index].status === 'rejected',
     );
+    const diagnostics: RunFailure[] = fileActions.flatMap((action, index) => {
+      const result = settled[index];
+      return result.status === 'rejected'
+        ? [
+            {
+              unitKey: unit.key,
+              path:
+                action.target.kind === 'file'
+                  ? action.target.dstAbs
+                  : action.relPath,
+              stage: 'apply',
+              reason: String(result.reason),
+            },
+          ]
+        : [];
+    });
     for (const [path, actions] of blockGroups) {
       try {
-        await applyBlockActions(path, actions, unit.target.assetRoot);
-      } catch {
+        await applyBlockActions(
+          path,
+          actions,
+          unit.target.assetRoot,
+          ruleSources,
+        );
+      } catch (error) {
         failures.push(...actions);
+        diagnostics.push(
+          ...actions.map((action) => ({
+            unitKey: unit.key,
+            path,
+            stage: 'apply' as const,
+            reason: `${action.relPath}: ${error instanceof Error ? error.message : String(error)}`,
+          })),
+        );
       }
     }
     results.push({
       ...unit,
+      failures: diagnostics,
       ...(failures.length
         ? {
-            error: `Failed to apply: ${failures.map((action) => action.relPath).join(', ')}`,
+            error: diagnostics
+              .map(
+                (failure) =>
+                  `${failure.path} [${failure.stage}]: ${failure.reason}`,
+              )
+              .join('\n'),
           }
         : {}),
       report: summarize(unit.plan, failures.length ? 1 : 0, failures, [
@@ -75,5 +113,15 @@ export async function executeUnits(
     : cancelled || results.some((unit) => unit.report?.exitCode === 2)
       ? 2
       : 0;
-  return { units: results, errors, dryRun: Boolean(flags.dryRun), exitCode };
+  return {
+    units: results,
+    errors,
+    failures: [
+      ...(diagnostics ?? createRunDiagnostics(errors, 'request')),
+      ...results.flatMap((unit) => unit.failures ?? []),
+    ],
+    notices: results.flatMap((unit) => unit.notices ?? []),
+    dryRun: Boolean(flags.dryRun),
+    exitCode,
+  };
 }

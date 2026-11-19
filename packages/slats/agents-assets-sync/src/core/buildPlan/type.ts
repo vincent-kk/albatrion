@@ -18,6 +18,8 @@ export type ActionKind =
 export type ActionTarget = Destination;
 
 export interface Action {
+  /** Physical destination identity; spelling remains in target for diagnostics. */
+  readonly destinationKey?: string;
   readonly kind: ActionKind;
   /** Manifest path. For an orphan it is reconstructed from what was found. */
   readonly relPath: string;
@@ -34,10 +36,22 @@ export interface InjectPlan {
   readonly requiresForce: boolean;
 }
 
+/** One byte snapshot shared across every selected agent in a run. */
+export interface RuleSource {
+  /** Normalized Latin-1 byte view used by validation, comparison and writing. */
+  readonly body: string;
+  /** Hash of the unchanged source bytes. */
+  readonly rawHash: Sha256Hex;
+}
+
 export interface PlanInput {
   /** Present for built manifests whose selected entries must match current source bytes. */
   readonly assetRoot?: string;
   readonly sourceHashes: Record<string, Sha256Hex>;
+  /** Normalized body hashes stored alongside raw manifest hashes. */
+  readonly ruleBodyHashes?: Readonly<Record<string, Sha256Hex>>;
+  /** Run-owned source snapshots normalized once before all checks and writes. */
+  readonly ruleSources?: Map<string, RuleSource | null>;
   /** From `resolveDestinations`. A path absent here is left untouched. */
   readonly destinations: ReadonlyMap<string, Destination>;
   readonly orphanScans: readonly OrphanScan[];
