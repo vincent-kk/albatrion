@@ -5,6 +5,7 @@
 - `new DataLoader(batchLoader, options?)`는 `batchLoader`가 함수가 아니면 생성 시점에 `DataLoaderError`를 던진다.
 - `load(key)`는 `key`가 nil(`null`/`undefined`)이면 `DataLoaderError`를 던지고, `0`처럼 falsy이지만 nil이 아닌 키는 정상 처리한다. 같은 스케줄러 사이클 안의 여러 `load` 호출은 하나의 배치로 묶여 `batchLoader`를 1회만 호출한다.
 - `batchScheduler`는 새 배치에 첫 요청(키 또는 캐시 적중)과 그 캐시 기록이 들어간 뒤에 호출된다. 그래서 `(fn) => fn()` 같은 동기 스케줄러도 매 `load`를 그 요청 하나짜리 배치로 즉시 보낸다. 빈 배치를 먼저 스케줄하면 동기 스케줄러가 그 배치를 비어 있는 채로 끝내 버려, 뒤에 들어온 키가 영원히 처리되지 않는다. `cacheKeyFn`이나 커스텀 캐시가 예외를 던져 첫 요청이 들어가지 못한 새 배치는 현재 배치로 등록하지 않는다.
+- 키별 load의 동기 예외도 loadMany에서 해당 위치의 오류 결과로 수집합니다. 다른 키는 끝까지 처리하며 keys 인자 자체의 형식 오류는 계속 동기적으로 던집니다.
 - `loadMany(keys)`는 `keys`가 array-like가 아니면 `DataLoaderError`를 던지고, 그렇지 않으면 각 키를 `load`로 위임한 뒤 실패한 키는 값 대신 `Error`로 채워 반환한다.
 - 캐시는 기본적으로 `Map`이며, 같은 키의 중복 `load`는 캐시된 Promise를 재사용해 `batchLoader`를 다시 호출하지 않는다. `cache: false`로 캐시를 끌 수 있고, 커스텀 캐시는 `get`/`set`/`delete`/`clear`를 모두 구현해야 한다.
 - `load`, `prime`, `clear`는 `cacheKeyFn`이 돌려준 캐시 키를 참·거짓으로 거르지 않고 그대로 쓴다. `0`이나 `''` 같은 falsy 캐시 키도 다른 키와 똑같이 읽고 쓰며, 그렇지 않으면 `prime`한 값을 `load`가 무시하고 중복 요청도 합쳐지지 않는다.
