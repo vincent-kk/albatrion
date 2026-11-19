@@ -28,8 +28,12 @@ afterEach(() => {
 });
 
 function browserFocusFixup() {
-  const active = document.activeElement as HTMLElement | null;
-  if (active && active !== document.body && active.closest('[style*="none"]'))
+  const active = document.activeElement;
+  if (
+    active instanceof HTMLElement &&
+    active !== document.body &&
+    active.closest('[style*="none"]')
+  )
     active.blur();
 }
 
