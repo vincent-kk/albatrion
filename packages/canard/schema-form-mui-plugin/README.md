@@ -195,7 +195,7 @@ Please use a transpiler like Babel to transform the code for your target environ
 
 **Dependency requirements:**
 
-- React 18.0.0 or later (below 19.0.0)
+- React 18.0.0 or later (below 20.0.0)
 - @mui/material 7.0.0 or later
 - @mui/x-date-pickers 8.0.0 or later (for date/time related components)
 - @emotion/react, @emotion/styled (MUI styling engine)

@@ -195,7 +195,7 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 **의존성 요구사항:**
 
-- React 18.0.0 이상 (19.0.0 미만)
+- React 18.0.0 이상 (20.0.0 미만)
 - @mui/material 7.0.0 이상
 - @mui/x-date-pickers 8.0.0 이상 (날짜/시간 관련 컴포넌트 사용 시)
 - @emotion/react, @emotion/styled (MUI 스타일링 엔진)
