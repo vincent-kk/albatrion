@@ -1,5 +1,4 @@
-import { existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
-import { join } from 'node:path';
+import { realpathSync } from 'node:fs';
 
 import { render } from 'ink-testing-library';
 import { expect, vi } from 'vitest';
@@ -12,27 +11,7 @@ import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
 import { InjectApp } from '../../../ui/InjectApp/InjectApp.js';
 import * as ui from '../../../ui/index.js';
 import { runCliCode } from '../../roundThree/fixture.js';
-
-/** Records only destination bytes, independently of the reported plan. */
-export function written(root: string): Record<string, string> {
-  const files: Record<string, string> = {};
-  const visit = (relative: string) => {
-    if (!existsSync(join(root, relative))) return;
-    for (const entry of readdirSync(join(root, relative), {
-      withFileTypes: true,
-    })) {
-      const path = `${relative}/${entry.name}`;
-      if (entry.isDirectory()) visit(path);
-      else if (entry.isFile())
-        files[path] = readFileSync(join(root, path)).toString('hex');
-    }
-  };
-  visit('.claude');
-  visit('.agents');
-  if (existsSync(join(root, 'AGENTS.md')))
-    files['AGENTS.md'] = readFileSync(join(root, 'AGENTS.md')).toString('hex');
-  return files;
-}
+import { readWrittenFiles } from './readWrittenFiles.js';
 
 /** Run a real surface, observing the core result without changing it. */
 export async function runSurface(
@@ -142,5 +121,5 @@ export async function runSurface(
     .join('<root>')
     .split(root)
     .join('<root>');
-  return { code, model: JSON.parse(normalized), files: written(root) };
+  return { code, model: JSON.parse(normalized), files: readWrittenFiles(root) };
 }

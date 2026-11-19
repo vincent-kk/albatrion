@@ -12,7 +12,8 @@ import {
   sha256,
   writeAt,
 } from '../roundThree/fixture.js';
-import { runSurface, written } from './helpers/runSurface.js';
+import { readWrittenFiles as written } from './helpers/readWrittenFiles.js';
+import { runSurface } from './helpers/runSurface.js';
 
 const faults = vi.hoisted(() => ({ kind: '' }));
 vi.mock('../../core/injectDocs/utils/applyAction.js', async (load) => {
