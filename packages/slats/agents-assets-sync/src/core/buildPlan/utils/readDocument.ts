@@ -19,7 +19,7 @@ export function createDocumentReader(): AsyncFn<
   return (fileAbs) => {
     const hit = cache.get(fileAbs);
     if (hit) return hit;
-    const pending = readFile(fileAbs, 'utf-8').then(
+    const pending = readFile(fileAbs, 'latin1').then(
       (content) => content,
       (error: NodeJS.ErrnoException) => {
         if (error?.code === 'ENOENT') return null;

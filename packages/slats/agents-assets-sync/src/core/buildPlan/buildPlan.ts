@@ -6,7 +6,6 @@ import type { Destination, OrphanScan } from '../agentTarget/index.js';
 import { type Sha256Hex, hashEquals, hashFile } from '../hash/index.js';
 import {
   blockBodyMatches,
-  findBlockBody,
   parseBlocks,
 } from '../markerBlock/index.js';
 import { isNoisePath } from '../utils/isNoisePath.js';
@@ -91,9 +90,10 @@ async function classify(
   }
   const content = await readDocument(destination.fileAbs);
   if (content === null) return 'copy';
-  const body = findBlockBody(content, destination.blockId);
-  if (body === null) return 'copy';
-  return blockBodyMatches(body, srcHash) ? 'skip-uptodate' : 'warn-diverged';
+  const blockId = Buffer.from(destination.blockId, 'utf8').toString('latin1');
+  const blocks = parseBlocks(content).filter(block => block.blockId === blockId);
+  if (!blocks.length) return 'copy';
+  return blocks.every(block => blockBodyMatches(block.body, srcHash, 'latin1')) ? 'skip-uptodate' : 'warn-diverged';
 }
 
 // Yield content this package installed earlier but no longer ships. Noise the
@@ -121,10 +121,11 @@ async function* findOrphans(
   if (content === null) return;
   for (const block of parseBlocks(content)) {
     if (block.packageName !== scan.ownerPackage) continue;
-    if (known.has(block.relPath)) continue;
+    const relPath = Buffer.from(block.relPath, 'latin1').toString('utf8');
+    if (known.has(relPath)) continue;
     yield {
-      relPath: block.relPath,
-      target: { kind: 'block', fileAbs: scan.fileAbs, blockId: block.blockId },
+      relPath,
+      target: { kind: 'block', fileAbs: scan.fileAbs, blockId: Buffer.from(block.blockId, 'latin1').toString('utf8') },
     };
   }
 }
