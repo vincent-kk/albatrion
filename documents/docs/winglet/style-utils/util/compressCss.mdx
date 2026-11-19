@@ -9,7 +9,7 @@ import WingletPlayground from '@site/src/components/WingletPlayground';
 # compressCss
 
 Compresses CSS by removing unnecessary whitespace, comments, and redundant semicolons.
-Uses byte-level processing for optimal performance while preserving CSS functionality.
+Uses shared lexical positions without allocating token objects.
 Prioritizes speed over perfect compression - some trailing spaces may remain.
 
 ## Import

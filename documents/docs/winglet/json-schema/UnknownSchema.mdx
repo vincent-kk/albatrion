@@ -20,7 +20,7 @@ import type { UnknownSchema } from '@winglet/json-schema';
 
 ```typescript
 export type UnknownSchema = {
-    type?: string | readonly string[];
+    type?: string | readonly string[] | undefined;
     [key: string]: any;
 }
 ```
