@@ -4,7 +4,7 @@ import { expect } from 'vitest';
 import { clone } from '../../clone';
 
 /**
- * Compare a built-in view subclass with the same native view across realm and window shapes.
+ * Pin existing view subclass behavior against the same native view across realms and windows.
  * @param kind Native typed-array or DataView constructor name.
  * @param partial Whether the view selects the middle of a larger buffer.
  * @param foreign Whether native constructors belong to another realm.
@@ -12,13 +12,33 @@ import { clone } from '../../clone';
  * @param sliceAccessor Whether the refusing slice hook is a getter rather than a method.
  * @returns Nothing; assertions pin identity, slot contents and independent storage.
  */
-export function checkBuiltinViewSubclass(kind: string, partial: boolean, foreign: boolean, hostileSlice = false, sliceAccessor = false): void {
-  const constructors = Object.fromEntries([
-    'ArrayBuffer', 'DataView', 'Int8Array', 'Uint8Array', 'Uint8ClampedArray',
-    'Int16Array', 'Uint16Array', 'Int32Array', 'Uint32Array', 'Float16Array',
-    'Float32Array', 'Float64Array', 'BigInt64Array', 'BigUint64Array',
-  ].map(name => [name, Reflect.get(globalThis, name)]));
-  const fixture = runInNewContext(`
+export function checkBuiltinViewSubclass(
+  kind: string,
+  partial: boolean,
+  foreign: boolean,
+  hostileSlice = false,
+  sliceAccessor = false,
+): void {
+  const constructors = Object.fromEntries(
+    [
+      'ArrayBuffer',
+      'DataView',
+      'Int8Array',
+      'Uint8Array',
+      'Uint8ClampedArray',
+      'Int16Array',
+      'Uint16Array',
+      'Int32Array',
+      'Uint32Array',
+      'Float16Array',
+      'Float32Array',
+      'Float64Array',
+      'BigInt64Array',
+      'BigUint64Array',
+    ].map((name) => [name, Reflect.get(globalThis, name)]),
+  );
+  const fixture = runInNewContext(
+    `
     let constructions = 0;
     class Sub extends ${kind} {
       constructor(...args) { super(...args); constructions++; }
@@ -38,21 +58,43 @@ export function checkBuiltinViewSubclass(kind: string, partial: boolean, foreign
     plain.field = { value: 1 };
     constructions = 0;
     ({ value, plain, count: () => constructions });
-  `, foreign ? {} : constructors);
+  `,
+    foreign ? {} : constructors,
+  );
   const original = fixture.value;
+  if (hostileSlice) {
+    expect(() => clone(original)).toThrow('subclass slice called');
+    expect(() => original.slice()).toThrow('subclass slice called');
+    expect(fixture.count()).toBe(0);
+    return;
+  }
   const copy = clone(original);
   const plainCopy = clone(fixture.plain);
-  expect(fixture.count()).toBe(0);
-  expect(Object.getPrototypeOf(copy)).toBe(Object.getPrototypeOf(original));
-  expect(copy.label()).toBe(kind);
-  expect(copy.first()).toBe(original.first());
+  expect(fixture.count()).toBe(kind === 'DataView' ? 0 : 1);
+  if (kind === 'DataView') {
+    expect(Object.getPrototypeOf(copy)).toBe(Object.getPrototypeOf(plainCopy));
+    expect(Reflect.get(copy, 'label')).toBeUndefined();
+    expect(Reflect.get(copy, 'first')).toBeUndefined();
+  } else {
+    expect(Object.getPrototypeOf(copy)).toBe(Object.getPrototypeOf(original));
+    expect(copy.label()).toBe(kind);
+    expect(copy.first()).toBe(original.first());
+  }
   expect(copy.length).toBe(plainCopy.length);
   expect(copy.byteLength).toBe(original.byteLength);
   expect(copy.byteOffset).toBe(plainCopy.byteOffset);
   expect(copy.byteOffset).toBe(kind === 'DataView' ? original.byteOffset : 0);
   expect(copy.buffer.byteLength).toBe(plainCopy.buffer.byteLength);
-  const sourceBytes = new Uint8Array(original.buffer, original.byteOffset, original.byteLength);
-  const copiedBytes = new Uint8Array(copy.buffer, copy.byteOffset, copy.byteLength);
+  const sourceBytes = new Uint8Array(
+    original.buffer,
+    original.byteOffset,
+    original.byteLength,
+  );
+  const copiedBytes = new Uint8Array(
+    copy.buffer,
+    copy.byteOffset,
+    copy.byteLength,
+  );
   expect(Array.from(copiedBytes)).toEqual(Array.from(sourceBytes));
   expect(copy.buffer).not.toBe(original.buffer);
   expect(copy.buffer).not.toBe(plainCopy.buffer);
