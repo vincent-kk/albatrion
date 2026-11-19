@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { ValidationMode } from '@/schema-form';
+import { ValidationMode } from '../types/state';
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 
 it('virtual storage follows the reference model over 3000 seeded sequences', () => {
@@ -9,7 +9,7 @@ it('virtual storage follows the reference model over 3000 seeded sequences', () 
       randomState = (Math.imul(randomState, 1664525) + 1013904223) >>> 0;
       return randomState % limit;
     };
-    const count = 1 + random(5);
+    const count = random(6);
     const names = Array.from({ length: count }, (_, index) => `f${index}`);
     const active = names.map(() => random(2) === 1);
     const initial = names.map((_, index) => random(2) ? `load${index}` : undefined);
@@ -27,8 +27,8 @@ it('virtual storage follows the reference model over 3000 seeded sequences', () 
     if (!group) throw new Error('group missing');
     for (let step = 0; step < 12; step++) {
       const operation = random(7);
-      const index = random(count);
-      if (operation === 0) {
+      const index = count ? random(count) : 0;
+      if (operation === 0 && count) {
         active[index] = !active[index];
         root.find(`/on${index}`)?.setValue(active[index]);
       } else if (operation === 1) {
@@ -46,7 +46,7 @@ it('virtual storage follows the reference model over 3000 seeded sequences', () 
       } else if (operation === 4) {
         const wrong = Array.from({ length: count + (random(2) ? 1 : -1) }, () => 'invalid');
         expect(() => group.setValue(wrong), `seed=${seed} invalid`).toThrow();
-      } else if (operation === 5) {
+      } else if (operation === 5 && count) {
         const old = root.find(`/${names[index]}`);
         active[index] = false;
         root.find(`/on${index}`)?.setValue(false);
