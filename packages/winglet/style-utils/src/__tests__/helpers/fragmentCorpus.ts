@@ -1,5 +1,8 @@
+import { historicalFragmentInputs } from './historicalFragmentInputs';
+
 /** Fixed lexical and rule-position inputs cover the fragment contracts across all five rounds. */
 export const fragmentCorpus = [
+  ...historicalFragmentInputs,
   '.a{color:red}', '.a { color: red; };', '.a{color:red}}', ';', '}', ';;}}',
   '@layer theme{@layer light,dark;} .card{color:red}',
   '@layer theme{@layer light,dark} .card{color:red}',
