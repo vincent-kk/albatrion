@@ -1,9 +1,9 @@
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
 import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
-import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
 import { getDependencyIndex } from '../dependencies/getDependencyIndex';
 import { getLoadValue } from './getLoadValue';
+import { readLoadProperty } from './readLoadProperty';
 
 /**
  * Compare the form output at one occurrence's path with its last root load output.
@@ -15,16 +15,21 @@ export const readFieldNodeIsDivergent = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   const baseline = node.runtime.loadBaseline;
   if (!baseline || node.isDetached) return false;
-  if (node.behavior.type === 'virtual')
-    return (
-      resolveStorageTargets(node)?.some(
-        (target) =>
-          !sameValue(
-            getLoadValue(node.rootNode.storedOutputValue, target.path),
-            getLoadValue(baseline.value, target.path),
-          ),
-      ) ?? false
+  if (node.behavior.type === 'virtual') {
+    if (!node.parent) return false;
+    const current = getLoadValue(
+      node.rootNode.storedOutputValue,
+      node.parent.path,
     );
+    const base = getLoadValue(baseline.value, node.parent.path);
+    return (node.blueprintNode.fields ?? []).some(
+      (name) =>
+        !sameValue(
+          readLoadProperty(current, name),
+          readLoadProperty(base, name),
+        ),
+    );
+  }
   let segments = node.divergenceSegments;
   if (!segments || !Object.is(node.path, node.divergencePath)) {
     segments = node.runtime.blueprint.capabilities.isBranchless
