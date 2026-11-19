@@ -23,7 +23,7 @@ interface FieldInputNumberProps
 }
 
 const FieldInputNumber = ({
-  id,
+  inputId,
   name,
   jsonSchema,
   schemaType,
@@ -63,7 +63,7 @@ const FieldInputNumber = ({
   return (
     <InputNumber
       key={generation}
-      id={id}
+      id={inputId}
       name={name}
       readOnly={readOnly}
       disabled={disabled}

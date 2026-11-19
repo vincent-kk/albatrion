@@ -38,7 +38,8 @@ interface FieldInputUriProps
 }
 
 const FieldInputUri = ({
-  id,
+  inputId,
+  getInputId,
   name,
   readOnly,
   disabled,
@@ -98,7 +99,7 @@ const FieldInputUri = ({
     return (
       <Select
         aria-label="Protocol"
-        id={`${id}-protocol`}
+        id={getInputId('protocol')}
         value={protocol}
         onChange={handleProtocolChange}
         disabled={disabled || readOnly}
@@ -110,14 +111,21 @@ const FieldInputUri = ({
         ))}
       </Select>
     );
-  }, [id, protocol, protocolOptions, disabled, readOnly, handleProtocolChange]);
+  }, [
+    getInputId,
+    protocol,
+    protocolOptions,
+    disabled,
+    readOnly,
+    handleProtocolChange,
+  ]);
 
   return (
     <Space.Compact block size={size || context?.size}>
       {ProtocolDropdown}
       <Input
         ref={inputRef}
-        id={id}
+        id={inputId}
         name={name}
         readOnly={readOnly}
         disabled={disabled}

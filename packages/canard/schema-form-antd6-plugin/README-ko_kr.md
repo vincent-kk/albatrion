@@ -111,7 +111,6 @@ import 구문을 수정해 주세요:
 
 URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 스킴과 `localhost:3000`, `a:b`도 원래 대소문자와 구분자(`:` 또는 `://`)를 보존합니다. 스킴이 없는 값은 스킴을 덧붙이지 않습니다. 마운트·외부 쓰기·reset·Activity 숨김과 표시는 스킴만 있는 문자열을 포함한 저장 값을 고쳐 쓰지 않습니다. 주소가 있을 때 경로와 스킴 중 하나를 편집해도 나머지는 유지합니다. 주소를 지우거나 빈 주소에서 스킴만 고르면 `undefined`를 기록하고 선택한 스킴은 입력 상태로 보존하여 다음 문자를 그 스킴에 이어 붙입니다. 외부 쓰기와 reset은 저장 값의 스킴을 표시하며 값이 `undefined`이면 마지막 사용자 선택을 유지합니다. 구분자를 생략한 설정은 `http`·`https`·`ftp`에 `://`, 다른 스킴에 `:`를 사용하고 명시한 구분자는 그대로 유지합니다.
 
-
 ### **[`FieldInputMonth.tsx`](./src/fieldInputs/FieldInputMonth.tsx)**
 
 - **역할**: 월 선택을 위한 DatePicker (월 모드)
@@ -272,14 +271,17 @@ Ant Design v6의 변경 사항에 대한 자세한 내용은 [공식 마이그�
 
 ## Form 범위의 컨트롤 식별자
 
-요소 id는 각 Form 범위로 구분됩니다. `path`는 JSON Pointer로 유지하며 DOM id로 사용하지 않습니다. 사용자 입력은 전달받은 `FieldInputProps.id`를 실제 컨트롤에 적용하고 단일 컨트롤의 레이블은 같은 값으로 `htmlFor`를 연결합니다. 사용자 `FieldRenderer`는 그룹 제목이나 legend에 `labelId`를 적용하고 그룹의 `aria-labelledby`로 연결합니다. 선택지마다 고유한 id를 사용합니다. `FieldInputProps.name`은 항상 말단 이름입니다. 라디오 그룹은 각 라디오의 native `name`에 `id`를 사용합니다.
+요소 ID는 필드와 Form 사이에서 고유하며 공백을 포함하지 않습니다. ID의 표기는 불투명한 값으로 취급하고 문자열을 덧붙이거나 디코딩·파싱하지 않습니다. `path`는 폼 데이터에 사용하는 JSON Pointer입니다. 사용자 정의 입력은 기본 컨트롤에 `inputId`를 지정하고 추가 요소에는 `getInputId(key)`를 사용합니다. 키는 필수이며 표기가 같은 숫자 키와 문자열 키는 같은 요소를 가리킵니다. 선택지·범위 끝점·thumb·프로토콜 선택기·입력 자체 레이블은 서로 다른 키를 사용합니다. 필드 제목에는 `labelId`를 지정하고 `aria-labelledby`로 연결합니다. 사용자 정의 렌더러도 같은 필드의 `inputId`와 `labelId`를 받습니다. 단일 입력의 레이블은 `inputId`를 가리킵니다. `name`은 말단 이름을 유지하며 라디오의 native name은 `inputId`를 사용하여 필드와 Form을 구별합니다.
 
 ```tsx
-const Input = ({ id, name }: FieldInputProps<string>) => <input id={id} name={name} />;
+const Input = ({ inputId, name }: FieldInputProps<string>) => (
+  <input id={inputId} name={name} />
+);
 ```
 
-해당 Form 안에서 `formElement.querySelector('[data-path="/email"] input')`처럼 조회하거나 컨트롤이 받은 id로 레이블을 연결합니다. Form API가 반환하는 값은 스키마 형태를 유지합니다.
+복합 사용자 정의 입력은 `labelId`와 `getInputId`를 명시적으로 소비하고 DOM props에 펼치지 않습니다. getter의 참조는 필드 범위나 경로가 바뀔 때까지 유지됩니다. 말단 이름이나 `path`로 ID를 만들지 않습니다.
 
+해당 Form 안에서 `formElement.querySelector('[data-path="/email"] input')`처럼 조회하거나 컨트롤이 받은 id로 레이블을 연결합니다. Form API가 반환하는 값은 스키마 형태를 유지합니다.
 서버 렌더링 한계: Slider handle의 접근성 제목은 `ariaLabelledByForHandle`로 서버 HTML에도 연결하며 실제 포커스 handle의 id 연결은 hydration에서 완성됩니다. 라이브러리 Slider의 `id` prop은 바깥 root에 적용되며 handle을 식별하지 않습니다.
 
 ## 연락처

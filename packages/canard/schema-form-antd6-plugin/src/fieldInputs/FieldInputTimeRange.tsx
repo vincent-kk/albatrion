@@ -82,7 +82,8 @@ interface FieldInputTimeRangeProps
 }
 
 const FieldInputTimeRange = ({
-  id,
+  inputId,
+  getInputId,
   name,
   readOnly,
   disabled,
@@ -134,7 +135,7 @@ const FieldInputTimeRange = ({
 
   return (
     <DatePicker.RangePicker
-      id={{ start: id, end: `${id}-end` }}
+      id={{ start: inputId, end: getInputId('end') }}
       aria-labelledby={labelledBy}
       name={name}
       disabled={disabled || readOnly}

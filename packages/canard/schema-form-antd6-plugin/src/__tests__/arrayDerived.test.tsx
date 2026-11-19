@@ -33,7 +33,7 @@ it('derived array writes match a fresh mount of the source (round-2 antd6-plugin
   );
   await act(async () => {
     fireEvent.change(
-      mounted.container.querySelector('input[id$=":/source"]')!,
+      mounted.container.querySelector('input[id$=":/source~input"]')!,
       { target: { value: 'b' } },
     );
   });

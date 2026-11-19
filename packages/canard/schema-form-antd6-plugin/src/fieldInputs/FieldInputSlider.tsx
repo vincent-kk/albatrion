@@ -20,7 +20,7 @@ interface FieldInputSliderProps
 }
 
 const FieldInputSlider = ({
-  id,
+  inputId,
   jsonSchema,
   disabled,
   readOnly,
@@ -52,7 +52,7 @@ const FieldInputSlider = ({
     (group: HTMLDivElement | null) => {
       const handle = group?.querySelector<HTMLElement>('[role="slider"]');
       if (handle) {
-        handle.id = id;
+        handle.id = inputId;
         handle.setAttribute('data-focus-target', '');
         if (labelledBy) handle.setAttribute('aria-labelledby', labelledBy);
         if (isUnset) {
@@ -66,7 +66,7 @@ const FieldInputSlider = ({
         }
       }
     },
-    [id, labelledBy, isUnset],
+    [inputId, labelledBy, isUnset],
   );
   const handleChange = useCallback(
     (value: number | null) => {
