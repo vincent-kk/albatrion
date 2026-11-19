@@ -1,7 +1,10 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { assertVirtualWriteShape, writeFieldNode } from '../../../settle';
 import { FieldNodeWriteKind, WriteOption } from '../../../types/value';
+import { sameValue } from '../../../utils/compute/sameValue';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
@@ -42,15 +45,22 @@ export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
       typeof input === 'function'
         ? input(marking ? readBatchValue(node) : node.storedValue)
         : input;
+    let virtualFields: readonly string[] | undefined;
+    if (node.behavior.type === 'virtual') {
+      assertVirtualWriteShape(node, value);
+      if (sameValue(value, marking ? readBatchValue(node) : node.storedValue))
+        return;
+      virtualFields = (node.blueprintNode.fields ?? []).filter(
+        (name, index) =>
+          !!node.parent?.childrenByName?.[name] ||
+          (isArray(value) && value[index] !== undefined),
+      );
+    }
     if (marking) {
-      if (node.behavior.type === 'virtual')
-        assertVirtualWriteShape(node, value);
-      (node.rootNode.runtime.batchWrites ??= []).push({
-        node,
-        value,
-        option,
-        source,
-      });
+      const writes = (node.rootNode.runtime.batchWrites ??= []);
+      if (virtualFields)
+        writes.push({ node, value, option, source, virtualFields });
+      else writes.push({ node, value, option, source });
     } else {
       const merge =
         (option & WriteOption.Merge) === WriteOption.Merge &&
@@ -63,6 +73,9 @@ export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
           : FieldNodeWriteKind.CallerReplace,
         option,
         source,
+        undefined,
+        undefined,
+        virtualFields,
       );
     }
   } catch (error) {

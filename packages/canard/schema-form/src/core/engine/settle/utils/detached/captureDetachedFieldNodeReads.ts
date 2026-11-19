@@ -5,6 +5,7 @@ import { readFieldNodeErrors } from '../../../validation';
 import type { WatchValuesSnapshot } from '../controls/readFieldNodeWatchValues';
 import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import { readFieldNodeDefaultValue } from '../loadValues/readFieldNodeDefaultValue';
+import { readFieldNodeInactiveValues } from './readFieldNodeInactiveValues';
 
 /**
  * Retain the last committed reads before an exiting node's live path is cleared.
@@ -29,7 +30,15 @@ export const captureDetachedFieldNodeReads = <
     errors: readFieldNodeErrors(node),
     isMisfit: runtime.misfitPaths.has(node.path),
     misfits: runtime.misfitsMemo?.get(node.path)?.paths ?? EMPTY_ARRAY,
-    defaultValue: load ? load.value : readFieldNodeDefaultValue(node),
+    defaultValue:
+      node.behavior.type === 'virtual'
+        ? readFieldNodeDefaultValue(node)
+        : load
+          ? load.value
+          : readFieldNodeDefaultValue(node),
+    ...(node.behavior.type === 'virtual'
+      ? { inactiveValues: readFieldNodeInactiveValues(node) }
+      : undefined),
     isVisible: node.isVisible,
     isReadOnly: node.isReadOnly,
     isDisabled: node.isDisabled,

@@ -3,6 +3,8 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Optional } from '@aileron/declare';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import { find } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import { writeFieldNode } from '../../../settle';
@@ -50,6 +52,9 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
             : FieldNodeWriteKind.CallerReplace,
           write.option,
           write.source,
+          undefined,
+          undefined,
+          write.virtualFields,
         );
       }
       return;
@@ -119,8 +124,11 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
           fields:
             !partial && write.node.behavior.type === 'virtual'
               ? (write.node.blueprintNode.fields ?? []).flatMap((field) => {
-                  const sibling = write.node.parent?.childrenByName?.[field];
-                  return sibling ? [sibling.path] : [];
+                  return write.node.parent &&
+                    (!write.virtualFields ||
+                      write.virtualFields.includes(field))
+                    ? [appendSegment(write.node.parent.path, field)]
+                    : [];
                 })
               : undefined,
         };
@@ -149,6 +157,8 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
       option,
       source,
       origins,
+      undefined,
+      writes.length === 1 ? writes[0].virtualFields : undefined,
     );
   } catch (error) {
     captureChainError(runtime, error);
