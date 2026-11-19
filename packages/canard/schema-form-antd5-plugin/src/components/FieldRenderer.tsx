@@ -70,6 +70,7 @@ export const FieldRenderer = ({
           <Typography.Text style={TITLE_STYLE}>{name}</Typography.Text>
         </legend>
         <Input aria-labelledby={labelId} />
+        <ErrorMessage style={EMPTY_OBJECT}>{errorMessage}</ErrorMessage>
       </fieldset>
     );
   } else {
