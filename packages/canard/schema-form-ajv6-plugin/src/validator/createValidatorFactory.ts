@@ -39,14 +39,17 @@ export const createValidatorFactory =
     const notRequiredKeyOf = createNotRequiredKeyLookup(compiled, resources);
     return async (data) => {
       try {
-        const valid = await validate(data);
-        return valid
-          ? null
-          : transformDataPath(
-              validate.errors ?? [],
-              isChildPath,
-              notRequiredKeyOf,
-            );
+        const result = validate(data);
+        if (typeof result === 'boolean')
+          return result
+            ? null
+            : transformDataPath(
+                validate.errors ?? [],
+                isChildPath,
+                notRequiredKeyOf,
+              );
+        await result;
+        return null;
       } catch (thrown) {
         if (
           thrown !== null &&
