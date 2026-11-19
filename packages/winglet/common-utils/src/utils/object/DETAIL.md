@@ -8,6 +8,8 @@
 - `clone`과 `cloneLite`는 own `__proto__` 키를 가진 입력의 클론에서 그 키를 열거 가능한 own 데이터 속성으로 보존하고, 클론의 프로토타입은 입력의 프로토타입과 동일하다.
 - 재귀 병합은 merge 자식 모듈이 소유합니다. 부모는 공개 병합 API를 재수출하고 안전한 속성 프리미티브를 제공하며, 병합의 세부 계약은 자식 DETAIL을 따릅니다.
 
+- `shallowClone`과 `removeUndefined`는 prototype-free dictionary의 null 프로토타입을 유지하여 없는 키가 상속된 멤버로 바뀌지 않게 합니다.
+
 - `removeUndefined`와 `sortObjectKeys`도 예약 키를 자기 데이터 속성으로 복사하고 중첩 결과의 프로토타입을 바꾸지 않습니다.
 
 ## API Contracts
