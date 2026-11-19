@@ -64,13 +64,10 @@ export const mergePatchDeep = (
         },
       });
     } else {
-      const current = reserved
-        ? getDataProperty(frame.source, key)
-        : frame.source[key];
-      const merged =
-        value === undefined ? (current === undefined ? {} : current) : value;
-      if (reserved) setDataProperty(frame.source, key, merged);
-      else frame.source[key] = merged;
+      if (value !== undefined) {
+        if (reserved) setDataProperty(frame.source, key, value);
+        else frame.source[key] = value;
+      }
     }
   }
   return source;
