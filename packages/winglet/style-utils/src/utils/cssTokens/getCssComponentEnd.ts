@@ -1,13 +1,17 @@
 import { CssTokenKind } from './CssTokenKind';
-import { readCssToken } from './readCssToken';
 import { type CssSource, readCssCode } from './readCssCode';
+import { readCssToken } from './readCssToken';
 
-/** Sticky span probes exclude every character that could change nested lexical context. */
-const SIMPLE_PAREN = /[^()[\]{}"'\\/]*\)/y;
-/** Flat bracket contents share the same conservative exclusion set. */
-const SIMPLE_BRACKET = /[^()[\]{}"'\\/]*\]/y;
-/** Flat nested braces require no individual token reads. */
-const SIMPLE_BRACE = /[^()[\]{}"'\\/]*\}/y;
+/** Escape-free string spans cannot change the surrounding component nesting. */
+const STRING = String.raw`(?:"[^"\\\n\r\f]*(?:"|\r\n|[\n\r\f])|'[^'\\\n\r\f]*(?:'|\r\n|[\n\r\f]))`;
+/** All alternatives have disjoint first code units; nested and escaped forms use token traversal. */
+const CONTENT = String.raw`(?:[^()[\]{}"'\\/]|${STRING})*`;
+/** Flat parenthesized positions. */
+const SIMPLE_PAREN = new RegExp(CONTENT + String.raw`\)`, 'y');
+/** Flat bracketed positions. */
+const SIMPLE_BRACKET = new RegExp(CONTENT + String.raw`\]`, 'y');
+/** Flat brace positions. */
+const SIMPLE_BRACE = new RegExp(CONTENT + String.raw`\}`, 'y');
 
 /**
  * Skip a bracketed component through shared lexical positions and matching delimiters.
@@ -19,16 +23,28 @@ export function getCssComponentEnd(source: CssSource, open: number): number {
   const opening = readCssCode(source, open);
   const close = opening === 40 ? 41 : opening === 91 ? 93 : 125;
   if (typeof source === 'string') {
-    const probe = opening === 40 ? SIMPLE_PAREN : opening === 91 ? SIMPLE_BRACKET : SIMPLE_BRACE;
+    const probe =
+      opening === 40
+        ? SIMPLE_PAREN
+        : opening === 91
+          ? SIMPLE_BRACKET
+          : SIMPLE_BRACE;
     probe.lastIndex = open + 1;
     if (probe.test(source)) return probe.lastIndex;
   }
   let index = open + 1;
   while (index < source.length) {
-    const token = readCssToken(source, index), kind = token % 16;
-    const end = Math.floor(token / 16), code = readCssCode(source, index);
-    if (kind === CssTokenKind.Function) index = getCssComponentEnd(source, end - 1);
-    else if (kind === CssTokenKind.Delimiter && (code === 40 || code === 91 || code === 123)) index = getCssComponentEnd(source, index);
+    const token = readCssToken(source, index),
+      kind = token % 16;
+    const end = Math.floor(token / 16),
+      code = readCssCode(source, index);
+    if (kind === CssTokenKind.Function)
+      index = getCssComponentEnd(source, end - 1);
+    else if (
+      kind === CssTokenKind.Delimiter &&
+      (code === 40 || code === 91 || code === 123)
+    )
+      index = getCssComponentEnd(source, index);
     else if (kind === CssTokenKind.Delimiter && code === close) return end;
     else index = end;
   }
