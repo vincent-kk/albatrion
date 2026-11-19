@@ -22,6 +22,7 @@ export const cloneInstance = (
   const Constructor = instance.constructor;
   const clone = new Constructor({
     ...instance._opts,
+    cache: undefined,
     allErrors,
     validateSchema,
     ...errorPathOptions,
