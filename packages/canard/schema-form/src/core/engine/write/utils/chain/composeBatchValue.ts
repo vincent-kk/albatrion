@@ -5,6 +5,7 @@ import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
 import type { FieldNodeRecord } from '../../../record';
 import type { WriteOption } from '../../../types/value';
 import { isNamedPointerSegments } from '../../../utils/paths/isNamedPointerSegments';
+import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
 import { replaceAtPath } from './utils/replaceAtPath';
 
 /**
@@ -24,11 +25,8 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
     const names = parsePointerSegments(write.node.path);
     if (!isNamedPointerSegments(names))
       throw new TypeError('Expected a named node path');
-    const fields =
-      write.node.behavior.type === 'virtual'
-        ? (write.node.blueprintNode.fields ?? [])
-        : undefined;
-    if (fields === undefined) {
+    const targets = resolveStorageTargets(write.node);
+    if (targets === undefined) {
       value = replaceAtPath(
         value,
         names,
@@ -40,14 +38,15 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
     }
     const values = isArray(write.value) ? write.value : undefined;
     const parentNames = names.slice(0, -1);
-    for (let index = 0; index < fields.length; index++) {
-      if (!write.node.parent?.childrenByName?.[fields[index]]) continue;
+    for (let index = 0; index < targets.length; index++) {
+      const target = targets[index];
+      if (!target.node) continue;
       value = replaceAtPath(
         value,
-        [...parentNames, fields[index]],
+        [...parentNames, target.name],
         values?.[index],
         write.option,
-        write.node.parent?.childrenByName?.[fields[index]],
+        target.node,
       );
     }
   }

@@ -7,6 +7,7 @@ import {
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
+import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
 
 /**
  * Index requested identities and strict ancestor paths for one routing pass.
@@ -17,10 +18,17 @@ export const createValidationScope = <Self extends FieldNodeRecord<Self>>(
   targets: readonly Self[],
 ): Fn<[node: Self], boolean> => {
   const only = targets.length === 1 ? targets[0] : undefined;
-  if (only)
+  if (only && resolveStorageTargets(only) === undefined)
     return (node) => node === only || isDescendantPath(node.path, only.path);
-  const identities = new Set(targets);
-  const targetPaths = new Set(targets.map((target) => target.path));
+  const scopes: Self[] = [];
+  for (const target of targets) {
+    scopes.push(target);
+    const storage = resolveStorageTargets(target);
+    if (storage)
+      for (const field of storage) if (field.node) scopes.push(field.node);
+  }
+  const identities = new Set(scopes);
+  const targetPaths = new Set(scopes.map((target) => target.path));
   return (node) => {
     if (identities.has(node)) return true;
     let path = node.path;

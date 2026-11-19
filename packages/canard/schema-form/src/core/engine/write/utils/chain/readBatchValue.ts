@@ -4,6 +4,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { Nullable } from '@aileron/declare';
 
 import type { FieldNodeRecord } from '../../../record';
+import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
 import { composeBatchValue } from './composeBatchValue';
 
 /**
@@ -16,10 +17,10 @@ export const readBatchValue = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): unknown => {
   const root = node.rootNode;
-  const virtual = node.behavior.type === 'virtual' ? node : undefined;
+  const targets = resolveStorageTargets(node);
   const names: string[] = [];
   for (
-    let cursor: Nullable<Self> = virtual ? node.parent : node;
+    let cursor: Nullable<Self> = targets ? node.parent : node;
     cursor && cursor !== root;
     cursor = cursor.parent
   )
@@ -30,10 +31,12 @@ export const readBatchValue = <Self extends FieldNodeRecord<Self>>(
       value !== null && typeof value === 'object' && hasOwnProperty(value, name)
         ? Reflect.get(value, name)
         : undefined;
-  if (!virtual) return value;
-  return mapArray(virtual.blueprintNode.fields ?? [], (field) =>
-    value !== null && typeof value === 'object' && hasOwnProperty(value, field)
-      ? Reflect.get(value, field)
+  if (!targets) return value;
+  return mapArray(targets, (target) =>
+    value !== null &&
+    typeof value === 'object' &&
+    hasOwnProperty(value, target.name)
+      ? Reflect.get(value, target.name)
       : undefined,
   );
 };

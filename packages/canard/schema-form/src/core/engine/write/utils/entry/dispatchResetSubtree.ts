@@ -1,10 +1,9 @@
-import { filter as filterArray } from '@winglet/common-utils/array';
-
 import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { resetFieldNodeSubtree } from '../../../settle';
 import { WriteOption } from '../../../types/value';
+import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
@@ -30,17 +29,36 @@ export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
   (runtime.validationTargets ??= new Set()).add(node);
   try {
     if (runtime.batchWrites) {
-      runtime.batchWrites = filterArray(
-        runtime.batchWrites,
-        (write) =>
-          write.node !== node && !isDescendantPath(write.node.path, node.path),
-      );
-      if (
-        runtime.batchWrites.some((write) =>
-          isDescendantPath(node.path, write.node.path),
-        )
-      )
-        flushBatchWrites(node.rootNode);
+      const scope = resolveStorageTargets(node);
+      const scopePaths = scope ? scope.map((field) => field.path) : [node.path];
+      const remaining: typeof runtime.batchWrites = [];
+      let shouldFlush = false;
+      for (const write of runtime.batchWrites) {
+        const storage = resolveStorageTargets(write.node);
+        const paths = storage
+          ? storage.map((field) => field.path)
+          : [write.node.path];
+        let isContained = true;
+        let hasOverlap = false;
+        for (const path of paths) {
+          const inside = scopePaths.some(
+            (scopePath) =>
+              path === scopePath || isDescendantPath(path, scopePath),
+          );
+          if (!inside) isContained = false;
+          if (
+            inside ||
+            scopePaths.some((scopePath) => isDescendantPath(scopePath, path))
+          )
+            hasOverlap = true;
+        }
+        if (!isContained) {
+          remaining.push(write);
+          if (hasOverlap) shouldFlush = true;
+        }
+      }
+      runtime.batchWrites = remaining;
+      if (shouldFlush) flushBatchWrites(node.rootNode);
       if (node.isDetached) {
         refuseInactiveResolverWrite(node);
         return;

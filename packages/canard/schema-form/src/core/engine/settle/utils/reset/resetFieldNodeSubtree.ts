@@ -1,8 +1,8 @@
 import type { FieldNodeRecord } from '../../../record';
 import type { WriteOption } from '../../../types/value';
 import { FieldNodeWriteKind } from '../../../types/value';
+import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
 import { getLoadValue } from '../loadValues/getLoadValue';
-import { setLoadValue } from '../loadValues/setLoadValue';
 import { writeFieldNode } from '../write/writeFieldNode';
 import { clearSubtreeState } from './clearSubtreeState';
 
@@ -17,12 +17,11 @@ export const resetFieldNodeSubtree = <Self extends FieldNodeRecord<Self>>(
   option: WriteOption,
 ): void => {
   if (node.isDetached) return;
-  const value = getLoadValue(node.runtime.loadSnapshot, node.path);
-  node.runtime.loadSnapshot = setLoadValue(
-    node.runtime.loadSnapshot,
-    node.path,
-    value,
-  );
+  const targets = resolveStorageTargets(node);
+  const snapshot = node.runtime.loadSnapshot;
+  const value = targets
+    ? targets.map((target) => getLoadValue(snapshot, target.path))
+    : getLoadValue(snapshot, node.path);
   clearSubtreeState(node);
   writeFieldNode(node, value, FieldNodeWriteKind.Load, option);
 };
