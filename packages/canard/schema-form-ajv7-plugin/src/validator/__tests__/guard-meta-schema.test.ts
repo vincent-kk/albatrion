@@ -2,13 +2,16 @@ import type { JSONSchema } from '@canard/schema-form';
 import Ajv from 'ajv';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import * as sibling from '../utils/cloneInstance';
+import * as privateCompiler from '../utils/privateCompiler/createNativeCompiler';
+import { ajvValidatorPlugin } from '../validatorPlugin';
 import { pluginRegistrations } from './utils/pluginRegistrations';
 import { unrelatedViolation } from './utils/unrelatedViolation';
-import { ajvValidatorPlugin } from '../validatorPlugin';
 
 /** Valid `if` condition shared by the roots below: `kind` must equal `'a'`. */
-const condition: JSONSchema = { properties: { kind: { const: 'a' } }, required: ['kind'] };
+const condition: JSONSchema = {
+  properties: { kind: { const: 'a' } },
+  required: ['kind'],
+};
 /** AJV's root meta-schema rejection, reported by message or by the offending keyword. */
 const META_VIOLATION = /multipleOf|schema is invalid/;
 
@@ -48,13 +51,25 @@ describe('IR-10 guard meta-schema', () => {
       const root = unrelatedViolation(variant, 't1', condition);
       const guard = attempt(() => ajvValidatorPlugin.compileGuard(root, '/if'));
       expect.soft(guard.error, `T1 ${variant}: guard compiles`).toBeUndefined();
-      expect.soft(verdict(guard, { kind: 'a' }), `T1 ${variant}: matching value`).toBe(true);
-      expect.soft(verdict(guard, { kind: 'b' }), `T1 ${variant}: other value`).toBe(false);
-      expect.soft(() => ajvValidatorPlugin.compile(root), `T1 ${variant}: compile throws`).toThrow();
+      expect
+        .soft(verdict(guard, { kind: 'a' }), `T1 ${variant}: matching value`)
+        .toBe(true);
+      expect
+        .soft(verdict(guard, { kind: 'b' }), `T1 ${variant}: other value`)
+        .toBe(false);
+      expect
+        .soft(
+          () => ajvValidatorPlugin.compile(root),
+          `T1 ${variant}: compile throws`,
+        )
+        .toThrow();
       ajvValidatorPlugin.release(root);
       ajvValidatorPlugin.bind?.(new Ajv({ strict: false }));
       expect
-        .soft(() => ajvValidatorPlugin.compile(root), `T1 ${variant}: compile on a fresh instance`)
+        .soft(
+          () => ajvValidatorPlugin.compile(root),
+          `T1 ${variant}: compile on a fresh instance`,
+        )
         .toThrow(META_VIOLATION);
       ajvValidatorPlugin.release(root);
     }
@@ -64,18 +79,29 @@ describe('IR-10 guard meta-schema', () => {
     ajvValidatorPlugin.bind?.(new Ajv({ strict: false }));
     ajvValidatorPlugin.configure({ directGuardCompile: false });
     const pointerRoot = unrelatedViolation('no-id', 't2', condition);
-    const pointerGuard = attempt(() => ajvValidatorPlugin.compileGuard(pointerRoot, '/if'));
+    const pointerGuard = attempt(() =>
+      ajvValidatorPlugin.compileGuard(pointerRoot, '/if'),
+    );
     ajvValidatorPlugin.configure({ directGuardCompile: true });
     const referenceRoot: JSONSchema = {
       ...unrelatedViolation('no-id', 't2', condition),
       definitions: { isA: condition },
       if: { $ref: '#/definitions/isA' },
     };
-    const referenceGuard = attempt(() => ajvValidatorPlugin.compileGuard(referenceRoot, '/if'));
-    for (const [label, guard] of [['directGuardCompile false', pointerGuard], ['$ref', referenceGuard]] as const) {
+    const referenceGuard = attempt(() =>
+      ajvValidatorPlugin.compileGuard(referenceRoot, '/if'),
+    );
+    for (const [label, guard] of [
+      ['directGuardCompile false', pointerGuard],
+      ['$ref', referenceGuard],
+    ] as const) {
       expect.soft(guard.error, `T2 ${label}: guard compiles`).toBeUndefined();
-      expect.soft(verdict(guard, { kind: 'a' }), `T2 ${label}: matching value`).toBe(true);
-      expect.soft(verdict(guard, { kind: 'b' }), `T2 ${label}: other value`).toBe(false);
+      expect
+        .soft(verdict(guard, { kind: 'a' }), `T2 ${label}: matching value`)
+        .toBe(true);
+      expect
+        .soft(verdict(guard, { kind: 'b' }), `T2 ${label}: other value`)
+        .toBe(false);
     }
     ajvValidatorPlugin.release(pointerRoot);
     ajvValidatorPlugin.release(referenceRoot);
@@ -87,23 +113,46 @@ describe('IR-10 guard meta-schema', () => {
     const addSchema = vi.spyOn(Ajv.prototype, 'addSchema');
     const plain: JSONSchema = { type: 'object', if: condition };
     ajvValidatorPlugin.compileGuard(plain, '/if');
-    expect.soft(pluginRegistrations(addSchema), 'T3 self-contained guard, no $id').toHaveLength(0);
-    const identified: JSONSchema = { $id: 'https://example.test/ir10-t3', type: 'object', if: condition };
+    expect
+      .soft(pluginRegistrations(addSchema), 'T3 self-contained guard, no $id')
+      .toHaveLength(0);
+    const identified: JSONSchema = {
+      $id: 'https://example.test/ir10-t3',
+      type: 'object',
+      if: condition,
+    };
     ajvValidatorPlugin.compileGuard(identified, '/if');
-    expect.soft(pluginRegistrations(addSchema), 'T3 self-contained guard, root $id').toHaveLength(0);
+    expect
+      .soft(pluginRegistrations(addSchema), 'T3 self-contained guard, root $id')
+      .toHaveLength(0);
     addSchema.mockClear();
     ajvValidatorPlugin.compile(identified);
-    expect.soft(pluginRegistrations(addSchema), 'T3 compile of a $id root').toEqual([instance]);
+    expect
+      .soft(pluginRegistrations(addSchema), 'T3 validation compiles privately')
+      .toEqual([]);
+    expect
+      .soft(
+        instance.getSchema(identified.$id!),
+        'T3 application remains untouched',
+      )
+      .toBeUndefined();
     addSchema.mockClear();
     ajvValidatorPlugin.compile(plain);
-    expect.soft(pluginRegistrations(addSchema), 'T3 compile of a root without $id').toHaveLength(0);
+    expect
+      .soft(pluginRegistrations(addSchema), 'T3 compile of a root without $id')
+      .toHaveLength(0);
     addSchema.mockClear();
-    const reference: JSONSchema = { type: 'object', definitions: { isA: condition }, if: { $ref: '#/definitions/isA' } };
+    const reference: JSONSchema = {
+      type: 'object',
+      definitions: { isA: condition },
+      if: { $ref: '#/definitions/isA' },
+    };
     ajvValidatorPlugin.compileGuard(reference, '/if');
     const registrations = pluginRegistrations(addSchema);
     expect.soft(registrations, 'T3 $ref guard').toHaveLength(1);
     expect.soft(registrations[0], 'T3 $ref guard instance').not.toBe(instance);
-    for (const root of [plain, identified, reference]) ajvValidatorPlugin.release(root);
+    for (const root of [plain, identified, reference])
+      ajvValidatorPlugin.release(root);
   });
 
   it('keeps one guard instance and one registration from a direct to two root-pointer guards', () => {
@@ -111,7 +160,7 @@ describe('IR-10 guard meta-schema', () => {
     ajvValidatorPlugin.bind?.(instance);
     const addSchema = vi.spyOn(Ajv.prototype, 'addSchema');
     const removeSchema = vi.spyOn(Ajv.prototype, 'removeSchema');
-    const cloneInstance = vi.spyOn(sibling, 'cloneInstance');
+    const cloneInstance = vi.spyOn(privateCompiler, 'createNativeCompiler');
     const root: JSONSchema = {
       type: 'object',
       definitions: { isX: { required: ['x'] }, isY: { required: ['y'] } },
@@ -120,50 +169,82 @@ describe('IR-10 guard meta-schema', () => {
       else: { if: { $ref: '#/definitions/isY' } },
     };
     const direct = ajvValidatorPlugin.compileGuard(root, '/if');
-    expect.soft(pluginRegistrations(addSchema), 'T6 after the direct guard').toHaveLength(0);
+    expect
+      .soft(pluginRegistrations(addSchema), 'T6 after the direct guard')
+      .toHaveLength(0);
     ajvValidatorPlugin.compileGuard(root, '/then/if');
-    expect.soft(pluginRegistrations(addSchema), 'T6 after the first root-pointer guard').toHaveLength(1);
+    expect
+      .soft(
+        pluginRegistrations(addSchema),
+        'T6 after the first root-pointer guard',
+      )
+      .toHaveLength(1);
     ajvValidatorPlugin.compileGuard(root, '/else/if');
-    expect.soft(pluginRegistrations(addSchema), 'T6 after the second root-pointer guard').toHaveLength(1);
+    expect
+      .soft(
+        pluginRegistrations(addSchema),
+        'T6 after the second root-pointer guard',
+      )
+      .toHaveLength(1);
     expect.soft(cloneInstance, 'T6 guard instances').toHaveBeenCalledTimes(1);
-    expect.soft(direct({ kind: 'a' }), 'T6 direct guard, matching value').toBe(true);
-    expect.soft(direct({ kind: 'b' }), 'T6 direct guard, other value').toBe(false);
+    expect
+      .soft(direct({ kind: 'a' }), 'T6 direct guard, matching value')
+      .toBe(true);
+    expect
+      .soft(direct({ kind: 'b' }), 'T6 direct guard, other value')
+      .toBe(false);
     ajvValidatorPlugin.release(root);
     const removedKeys = removeSchema.mock.calls.filter(
       ([key], index) =>
-        typeof key === 'string' && key.startsWith(sibling.PLUGIN_KEY_PREFIX) && removeSchema.mock.contexts[index] !== instance,
+        typeof key === 'string' &&
+        key.startsWith(sibling.PLUGIN_KEY_PREFIX) &&
+        removeSchema.mock.contexts[index] !== instance,
     );
-    expect.soft(removedKeys.length, 'T6 release removes the guard registration').toBeGreaterThan(0);
+    expect
+      .soft(removedKeys.length, 'T6 release removes the guard registration')
+      .toBeGreaterThan(0);
   });
 
   it('evaluates meta-only violations inside the condition with the generated code', () => {
     ajvValidatorPlugin.bind?.(new Ajv({ strict: false }));
     const root: JSONSchema = {
       type: 'object',
-      if: { properties: { kind: { type: 'string', minLength: 1.5 } }, required: ['kind', 'kind'] },
+      if: {
+        properties: { kind: { type: 'string', minLength: 1.5 } },
+        required: ['kind', 'kind'],
+      },
     };
     const guard = attempt(() => ajvValidatorPlugin.compileGuard(root, '/if'));
     expect.soft(guard.error, 'T7 guard compiles').toBeUndefined();
     expect.soft(verdict(guard, { kind: 'ab' }), 'T7 two characters').toBe(true);
     expect.soft(verdict(guard, { kind: 'a' }), 'T7 one character').toBe(false);
-    expect.soft(() => ajvValidatorPlugin.compile(root), 'T7 compile throws').toThrow(META_VIOLATION);
+    expect
+      .soft(() => ajvValidatorPlugin.compile(root), 'T7 compile throws')
+      .toThrow(META_VIOLATION);
     ajvValidatorPlugin.release(root);
   });
 
   it('rolls back a failed validation registration', async () => {
     const instance = new Ajv({ strict: false });
     ajvValidatorPlugin.bind?.(instance);
-    const kept: JSONSchema = { $id: 'https://example.test/ir10-b', type: 'string' };
-    ajvValidatorPlugin.compile(kept);
+    const kept: JSONSchema = {
+      $id: 'https://example.test/ir10-b',
+      type: 'string',
+    };
+    const keptValidator = ajvValidatorPlugin.compile(kept);
     const invalid: JSONSchema = {
       $id: 'https://example.test/ir10-a',
       type: 'object',
       properties: { count: { type: 'number', multipleOf: 0 } },
     };
     const first = attempt(() => ajvValidatorPlugin.compile(invalid));
-    expect.soft(String(first.error), 'T8 first compile').toMatch(META_VIOLATION);
+    expect
+      .soft(String(first.error), 'T8 first compile')
+      .toMatch(META_VIOLATION);
     const retry = attempt(() => ajvValidatorPlugin.compile(invalid));
-    expect.soft(String(retry.error), 'T8 retry fails for the same reason').toMatch(META_VIOLATION);
+    expect
+      .soft(String(retry.error), 'T8 retry fails for the same reason')
+      .toMatch(META_VIOLATION);
     ajvValidatorPlugin.release(invalid);
     const valid: JSONSchema = {
       $id: 'https://example.test/ir10-a',
@@ -171,12 +252,36 @@ describe('IR-10 guard meta-schema', () => {
       properties: { count: { type: 'number' } },
     };
     const replacement = attempt(() => ajvValidatorPlugin.compile(valid));
-    expect.soft(replacement.error, 'T8 same $id after release compiles').toBeUndefined();
-    expect.soft(Array.isArray(await replacement.value?.({ count: 'x' })), 'T8 same $id rejects').toBe(true);
-    expect.soft(await replacement.value?.({ count: 1 }), 'T8 same $id accepts').toBeNull();
-    expect.soft(instance.getSchema('https://example.test/ir10-b'), 'T8 earlier root kept').toBeDefined();
-    const reference = attempt(() => instance.compile({ $ref: 'https://example.test/ir10-b' }));
-    expect.soft(reference.value?.('x'), 'T8 earlier root referenced').toBe(true);
+    expect
+      .soft(replacement.error, 'T8 same $id after release compiles')
+      .toBeUndefined();
+    expect
+      .soft(
+        Array.isArray(await replacement.value?.({ count: 'x' })),
+        'T8 same $id rejects',
+      )
+      .toBe(true);
+    expect
+      .soft(await replacement.value?.({ count: 1 }), 'T8 same $id accepts')
+      .toBeNull();
+    expect
+      .soft(
+        instance.getSchema('https://example.test/ir10-b'),
+        'T8 application has no form registration',
+      )
+      .toBeUndefined();
+    expect
+      .soft(await keptValidator('x'), 'T8 earlier private root kept')
+      .toBeNull();
+    const reference = attempt(() =>
+      instance.compile({ $ref: 'https://example.test/ir10-b' }),
+    );
+    expect
+      .soft(
+        reference.error,
+        'T8 application cannot reference a private form root',
+      )
+      .toBeDefined();
     ajvValidatorPlugin.release(valid);
     ajvValidatorPlugin.release(kept);
   });
@@ -185,39 +290,89 @@ describe('IR-10 guard meta-schema', () => {
     const instance = new Ajv({ strict: false });
     ajvValidatorPlugin.bind?.(instance);
     instance.addSchema({ $id: 'https://example.test/ir10-x', type: 'string' });
-    const clash: JSONSchema = { $id: 'https://example.test/ir10-x', type: 'number' };
-    expect.soft(() => ajvValidatorPlugin.compile(clash), 'T9 same $id as a consumer schema').toThrow(/already exists/);
-    expect.soft(instance.getSchema('https://example.test/ir10-x')?.('abc'), 'T9 consumer schema kept').toBe(true);
-    const reference = attempt(() => instance.compile({ $ref: 'https://example.test/ir10-x' }));
-    expect.soft(reference.value?.('abc'), 'T9 consumer schema referenced').toBe(true);
+    const clash: JSONSchema = {
+      $id: 'https://example.test/ir10-x',
+      type: 'number',
+    };
+    expect
+      .soft(
+        () => ajvValidatorPlugin.compile(clash),
+        'T9 same $id as a consumer schema',
+      )
+      .toThrow(/already exists/);
+    expect
+      .soft(
+        instance.getSchema('https://example.test/ir10-x')?.('abc'),
+        'T9 consumer schema kept',
+      )
+      .toBe(true);
+    const reference = attempt(() =>
+      instance.compile({ $ref: 'https://example.test/ir10-x' }),
+    );
+    expect
+      .soft(reference.value?.('abc'), 'T9 consumer schema referenced')
+      .toBe(true);
 
-    instance.refs['https://example.test/ir10-alias'] = 'https://example.test/ir10-x#/$defs/a';
+    instance.refs['https://example.test/ir10-alias'] =
+      'https://example.test/ir10-x#/$defs/a';
     const aliased: JSONSchema = {
       $id: 'https://example.test/ir10-d',
       $defs: { a: { $id: 'https://example.test/ir10-alias', type: 'string' } },
       properties: { count: { type: 'number', multipleOf: 0 } },
     };
-    expect.soft(() => ajvValidatorPlugin.compile(aliased), 'T9 nested $id root').toThrow(META_VIOLATION);
-    expect.soft(instance.refs['https://example.test/ir10-alias'], 'T9 consumer alias kept').toBe(
-      'https://example.test/ir10-x#/$defs/a',
-    );
+    expect
+      .soft(() => ajvValidatorPlugin.compile(aliased), 'T9 nested $id root')
+      .toThrow(META_VIOLATION);
+    expect
+      .soft(
+        instance.refs['https://example.test/ir10-alias'],
+        'T9 consumer alias kept',
+      )
+      .toBe('https://example.test/ir10-x#/$defs/a');
 
     instance.addMetaSchema({
       $id: 'https://example.test/ir10-meta',
       $schema: 'http://json-schema.org/draft-07/schema#',
       type: 'object',
     });
-    instance.addSchema({ $id: 'https://example.test/ir10-s', $schema: 'https://example.test/ir10-meta', type: 'string' });
-    const metaClash: JSONSchema = { $id: 'https://example.test/ir10-meta', type: 'number' };
-    expect.soft(() => ajvValidatorPlugin.compile(metaClash), 'T9 same $id as a consumer meta-schema').toThrow(
-      /already exists/,
-    );
+    instance.addSchema({
+      $id: 'https://example.test/ir10-s',
+      $schema: 'https://example.test/ir10-meta',
+      type: 'string',
+    });
+    const metaClash: JSONSchema = {
+      $id: 'https://example.test/ir10-meta',
+      type: 'number',
+    };
+    expect
+      .soft(
+        () => ajvValidatorPlugin.compile(metaClash),
+        'T9 same $id as a consumer meta-schema',
+      )
+      .toThrow(/already exists/);
     const order = Object.keys(instance.schemas);
-    expect.soft(
-      order.indexOf('https://example.test/ir10-meta') < order.indexOf('https://example.test/ir10-s'),
-      'T9 meta-schema stays ahead of its user',
-    ).toBe(true);
-    expect.soft(attempt(() => sibling.cloneInstance(instance, false)).error, 'T9 sibling construction').toBeUndefined();
-    for (const root of [clash, aliased, metaClash]) ajvValidatorPlugin.release(root);
+    expect
+      .soft(
+        order.indexOf('https://example.test/ir10-meta') <
+          order.indexOf('https://example.test/ir10-s'),
+        'T9 meta-schema stays ahead of its user',
+      )
+      .toBe(true);
+    expect
+      .soft(
+        attempt(
+          () =>
+            privateCompiler.createNativeCompiler(
+              instance,
+              'guard',
+              false,
+              false,
+            ).instance,
+        ).error,
+        'T9 sibling construction',
+      )
+      .toBeUndefined();
+    for (const root of [clash, aliased, metaClash])
+      ajvValidatorPlugin.release(root);
   });
 });

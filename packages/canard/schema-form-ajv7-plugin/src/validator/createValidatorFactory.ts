@@ -1,40 +1,48 @@
 import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
-import type { ErrorObject } from 'ajv';
 
 import type { AjvInstance as Ajv } from './types/AjvInstance';
+import { assertBindableInstance } from './utils/assertBindableInstance';
+import { createSchemaRootRegistry } from './utils/createSchemaRootRegistry';
+import { selectRootCompiler } from './utils/privateCompiler/selectRootCompiler';
+import { validatePrivateSchema } from './utils/privateCompiler/validatePrivateSchema';
+import {
+  type SchemaRootRegistry,
+  registerSchemaRoot,
+} from './utils/registerSchemaRoot';
 import { transformErrors } from './utils/transformErrors';
 
-/** Create promise-returning validation from a root registered with Ajv 7. */
-export const createValidatorFactory =
-  (ajv: Ajv, key?: string) =>
-  (jsonSchema: JSONSchema): ValidateFunction => {
-    let transient: JSONSchema | undefined = key
-      ? undefined
-      : JSON.parse(JSON.stringify(jsonSchema));
-    let validate: ReturnType<Ajv['compile']> | undefined;
-    let isAsyncReference = false;
+/**
+ * Creates an asynchronous validator for an isolated schema root.
+ * @param ajv - The active AJV instance whose options and extensions define validation.
+ * @param registry - Registrations shared with guard compilation and release.
+ * @returns A compiler that preserves the authored schema and normalizes failures.
+ */
+export const createValidatorFactory = (
+  ajv: Ajv,
+  key?: string,
+  registry?: SchemaRootRegistry,
+) => {
+  if (!registry) assertBindableInstance(ajv);
+  const roots = registry ?? createSchemaRootRegistry();
+  return (jsonSchema: JSONSchema): ValidateFunction => {
+    const registration = registerSchemaRoot(roots, ajv, jsonSchema);
+    if (registration.validate) return registration.validate;
+    const copy = key ? { $ref: key } : registration.copy;
+    const compiler = selectRootCompiler(registration, copy, 'validation');
+    let validate: ReturnType<Ajv['compile']>;
     try {
-      validate = key ? ajv.getSchema(key) : transient && ajv.compile(transient);
+      registration.validationMeta = validatePrivateSchema(ajv, copy);
+      if (compiler.asynchronous) copy.$async = true;
+      validate = compiler.instance.compile(copy);
     } catch (error) {
-      if (
-        !(error instanceof Error) ||
-        error.message !== 'async keyword in sync schema'
-      )
-        throw error;
-      if (transient) ajv.removeSchema(transient);
-      transient = key
-        ? { $async: true, $ref: key }
-        : { ...transient, $async: true };
-      validate = ajv.compile(transient);
-      isAsyncReference = key !== undefined;
+      compiler.retired = true;
+      throw error;
     }
-    const rootPrefix = isAsyncReference ? `${key}/` : '';
-    if (transient) ajv.removeSchema(transient);
-    if (!validate)
-      throw new Error(`Registered Ajv schema was not found: ${key}`);
+    const compiledRoot = registration.copy;
     const ValidationError = Reflect.get(ajv.constructor, 'ValidationError');
+    // AJV reports the same schema paths on every run of this validator, so each not.required lookup walks the root once.
     const notRequiredKeys = new Map<string, string | null>();
-    return async (data) => {
+    const normalized: ValidateFunction = async (data) => {
       try {
         const result = validate(data);
         if (typeof result === 'boolean')
@@ -42,12 +50,12 @@ export const createValidatorFactory =
             ? null
             : transformErrors(
                 validate.errors ?? [],
-                jsonSchema,
+                compiledRoot,
                 notRequiredKeys,
               );
         await result;
         return null;
-      } catch (thrown) {
+      } catch (thrown: unknown) {
         if (
           thrown !== null &&
           typeof thrown === 'object' &&
@@ -55,22 +63,12 @@ export const createValidatorFactory =
           thrown instanceof ValidationError &&
           'errors' in thrown &&
           Array.isArray(thrown.errors)
-        ) {
-          const errors = isAsyncReference
-            ? thrown.errors.map((error: ErrorObject) => ({
-                ...error,
-                schemaPath: error.schemaPath.startsWith(rootPrefix)
-                  ? `#/${error.schemaPath.slice(rootPrefix.length)}`
-                  : error.schemaPath,
-              }))
-            : thrown.errors;
-          const issues = transformErrors(errors, jsonSchema, notRequiredKeys);
-          if (isAsyncReference)
-            for (let index = 0; index < issues.length; index++)
-              issues[index].source = thrown.errors[index];
-          return issues;
-        }
+        )
+          return transformErrors(thrown.errors, compiledRoot, notRequiredKeys);
         throw thrown;
       }
     };
+    registration.validate = normalized;
+    return normalized;
   };
+};
