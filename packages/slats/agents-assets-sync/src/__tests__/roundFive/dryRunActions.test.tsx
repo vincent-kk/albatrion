@@ -11,38 +11,42 @@ import {
 } from '../roundThree/fixture.js';
 import { runObservedSurface } from './helpers/runObservedSurface.js';
 
-it.each(['plain', 'json', 'ink'] as const)(
-  'shows dry-run copy paths and divergence reasons in the final %s output',
-  async (mode) => {
-    for (const diverged of [false, true]) {
-      const root = makeRoot('dry-run-actions');
-      const destination = join(root, '.claude/skills/alpha/a.md');
-      try {
-        installPackage(root, {
-          name: '@probe/a',
-          assets: { 'skills/alpha/a.md': 'planned\n' },
-          manifest: true,
-        });
-        if (diverged) writeAt(destination, 'edited\n');
-        const result = await runObservedSurface(mode, root, [
-          '--package=@probe/a',
-          '--dry-run',
-        ]);
-        expect(result.code).toBe(0);
-        expect(result.observedActions).toEqual([
-          {
-            path: 'skills/alpha/a.md',
-            reason: diverged
-              ? 'local differs from source (user edit or version change)'
-              : '',
-          },
-        ]);
-        expect(existsSync(destination)).toBe(diverged);
-        if (diverged)
-          expect(readFileSync(destination, 'utf8')).toBe('edited\n');
-      } finally {
-        removeRoot(root);
-      }
+it.each([
+  { mode: 'plain', diverged: false },
+  { mode: 'plain', diverged: true },
+  { mode: 'json', diverged: false },
+  { mode: 'json', diverged: true },
+  { mode: 'ink', diverged: false },
+  { mode: 'ink', diverged: true },
+] as const)(
+  'shows dry-run paths and reasons in final $mode output (diverged=$diverged)',
+  async ({ mode, diverged }) => {
+    const root = makeRoot('dry-run-actions');
+    const destination = join(root, '.claude/skills/alpha/a.md');
+    try {
+      installPackage(root, {
+        name: '@probe/a',
+        assets: { 'skills/alpha/a.md': 'planned\n' },
+        manifest: true,
+      });
+      if (diverged) writeAt(destination, 'edited\n');
+      const result = await runObservedSurface(mode, root, [
+        '--package=@probe/a',
+        '--dry-run',
+      ]);
+      expect(result.code).toBe(0);
+      expect(result.observedActions).toEqual([
+        {
+          path: 'skills/alpha/a.md',
+          reason: diverged
+            ? 'local differs from source (user edit or version change)'
+            : '',
+        },
+      ]);
+      expect(existsSync(destination)).toBe(diverged);
+      if (diverged) expect(readFileSync(destination, 'utf8')).toBe('edited\n');
+    } finally {
+      removeRoot(root);
     }
   },
 );
