@@ -1,7 +1,6 @@
-import { sep } from 'node:path';
-
 import type { Action } from '../../../buildPlan/index.js';
 import type { RunFailure, RunUnit } from './types.js';
+import { protectsDestination } from './utils/protectsDestination.js';
 
 /** Merge ownership from every participant before deciding any destructive action.
  * @param units Prepared units, retaining failed participants.
@@ -31,9 +30,6 @@ export function mergePlans(
       unit.error ||
       unit.plan.actions.some((action) => conflicts.has(destinationKey(action))),
   );
-  const failedRoots = (discoveryFailures.length ? units : failedUnits).flatMap(
-    (unit) => unit.namespaceRoots ?? Object.values(unit.agentTarget.directoryRoots).filter((root): root is string => root !== null),
-  );
   const owners = new Map<string, string>();
   return units.map((unit) => {
     const notices: RunFailure[] = [];
@@ -47,14 +43,7 @@ export function mergePlans(
         if (action.target.kind === 'file' && managed.has(key)) return false;
         const uncertain =
           discoveryFailures.length > 0 ||
-          (action.target.kind === 'file' &&
-            failedRoots.some(
-              (root) =>
-                key === root ||
-                key.startsWith(root + sep) ||
-                (action.target.kind === 'file' &&
-                  action.target.dstAbs.startsWith(root + sep)),
-            ));
+          failedUnits.some((peer) => protectsDestination(peer, action));
         if (!uncertain) return true;
         const path =
           action.target.kind === 'file'
@@ -62,7 +51,9 @@ export function mergePlans(
             : action.target.kind === 'block'
               ? action.target.fileAbs
               : action.relPath;
-        for (const peer of action.target.kind === 'file' ? failedUnits : [])
+        for (const peer of failedUnits.filter((peer) =>
+          protectsDestination(peer, action),
+        ))
           notices.push({
             unitKey: peer.key,
             path,
