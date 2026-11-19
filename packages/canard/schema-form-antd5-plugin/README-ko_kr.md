@@ -257,3 +257,7 @@ const Input = ({ id, name }: FieldInputProps<string>) => <input id={id} name={na
 For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the unchecked (off) value.
 
 A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
+
+### Unset slider values
+
+An unset slider exposes no current value to assistive technology and stores nothing until the user acts.
