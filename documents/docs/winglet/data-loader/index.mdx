@@ -45,12 +45,12 @@ const loader = new DataLoader<Key, Value>(batchLoader, options?);
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `batch` | `boolean` | `true` | Enable request batching |
+| `disableBatch` | `true` | omitted | Disable request batching |
 | `maxBatchSize` | `number` | `Infinity` | Max keys per batch |
-| `cache` | `boolean` | `true` | Enable promise caching |
+| `cache` | `MapLike \| false` | `new Map()` | Custom promise cache, or `false` to disable caching |
 | `cacheKeyFn` | `(key) => CacheKey` | identity | Map key to cache key |
-| `cacheMap` | `MapLike` | `new Map()` | Custom cache implementation |
-| `scheduler` | `(fn) => void` | `process.nextTick` | Controls batching timing |
+| `batchScheduler` | `(task) => void` | `scheduleNextTick` | Controls batching timing |
+| `name` | `string` | `null` | Optional loader label |
 
 ## Usage Examples
 
@@ -131,11 +131,11 @@ const loader = new DataLoader<Key, Value>(batchLoadFn, options?);
 ### Options
 | Option | Type | Default |
 |---|---|---|
-| `batch` | `boolean` | `true` |
+| `disableBatch` | `true` | omitted |
 | `maxBatchSize` | `number` | `Infinity` |
-| `cache` | `boolean` | `true` |
+| `cache` | `MapLike \| false` | `new Map()` |
 | `cacheKeyFn` | `(key) => CacheKey` | identity |
-| `cacheMap` | `MapLike` | `new Map()` |
-| `scheduler` | `(fn) => void` | `process.nextTick` |
+| `batchScheduler` | `(task) => void` | `scheduleNextTick` |
+| `name` | `string` | `null` |
 
 </ForAI>
