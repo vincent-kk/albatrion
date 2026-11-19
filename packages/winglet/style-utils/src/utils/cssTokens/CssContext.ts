@@ -14,4 +14,6 @@ export const enum CssContext {
   Value,
   /** A function prelude whose inner grammar is not interpreted by the compressor. */
   OpaquePrelude,
+  /** Attribute-selector content, distinct from selector combinators. */
+  Attribute,
 }

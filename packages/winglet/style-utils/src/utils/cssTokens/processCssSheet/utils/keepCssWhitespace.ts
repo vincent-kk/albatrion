@@ -18,6 +18,7 @@ export const keepCssWhitespace = (css: string, context: CssContext, components: 
     if (context === CssContext.RuleList) return false;
     if (context === CssContext.DeclarationList) return next === 47 && previous !== 123 && previous !== 125 && previous !== 59;
     if (context === CssContext.DeclarationName) return next !== 58;
+    if (context === CssContext.Attribute) return true;
     if (context === CssContext.Selector) {
       if (previous === 44 || next === 44 || previous === 62 || next === 62 || previous === 126 || next === 126) return false;
       if (components === 0 && (previous === 43 || next === 43 || next === 123)) return false;
