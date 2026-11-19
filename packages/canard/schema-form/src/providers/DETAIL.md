@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+지원하는 내용 비교는 객체 쌍의 재방문을 기록하여 plain 객체·배열·Map의 순환에서도 종료합니다. 공유 참조의 모양 자체를 차이로 보지 않고 순환을 펼친 트리의 값 비교와 같은 결과를 냅니다. 방문 기록은 한 비교 동안만 보유하고 작은 그래프는 배열, 큰 그래프는 재사용 색인으로 비교하여 반복 탐색의 제곱 증가를 피합니다.
+
 사용자 context의 snapshot 비교는 이 경계가 소유합니다. plain 객체·배열·지원 built-in은 내용을 비교하되 URL·URLSearchParams·불투명 class 인스턴스는 참조를 비교합니다. private 상태는 열거할 수 없으므로 새 인스턴스를 새 입력으로 보고 같은 인스턴스의 제자리 변경은 감지하지 않습니다. 전역 equals의 의미는 바꾸지 않습니다.
 
 조립 순서는 [FormCore](../components/Form/components/FormCore/DETAIL.md)가 소유합니다. 각 Context는 설정 전달과 자기 수명만 담당하며 노드 로드·준비·reset·검증 예약·콜백 전달을 상위 providers 계약으로 복제하지 않습니다. 해당 계약은 [RootNodeContext](RootNodeContext/DETAIL.md)에 둡니다.

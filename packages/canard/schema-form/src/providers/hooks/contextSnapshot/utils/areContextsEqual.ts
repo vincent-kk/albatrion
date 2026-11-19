@@ -26,6 +26,8 @@ const hasComparableSlots = (value: object, tag: string): boolean =>
 export const areContextsEqual = (left: unknown, right: unknown): boolean => {
   if (left === right || (left !== left && right !== right)) return true;
   const pending: unknown[] = [left, right];
+  const pairs: object[] = [];
+  let pairIndex: Map<object, Set<object>> | undefined;
   while (pending.length) {
     right = pending.pop();
     left = pending.pop();
@@ -37,6 +39,31 @@ export const areContextsEqual = (left: unknown, right: unknown): boolean => {
       typeof right !== 'object'
     )
       return false;
+    if (pairIndex) {
+      const rights = pairIndex.get(left);
+      if (rights?.has(right)) continue;
+      if (rights) rights.add(right);
+      else pairIndex.set(left, new Set([right]));
+    } else {
+      let isVisited = false;
+      for (let index = pairs.length - 2; index >= 0; index -= 2)
+        if (pairs[index] === left && pairs[index + 1] === right) {
+          isVisited = true;
+          break;
+        }
+      if (isVisited) continue;
+      pairs.push(left, right);
+      if (pairs.length === 64) {
+        pairIndex = new Map();
+        for (let index = 0; index < pairs.length; index += 2) {
+          const a = pairs[index];
+          const b = pairs[index + 1];
+          const rights = pairIndex.get(a);
+          if (rights) rights.add(b);
+          else pairIndex.set(a, new Set([b]));
+        }
+      }
+    }
     if (Array.isArray(left) || Array.isArray(right)) {
       if (
         !Array.isArray(left) ||
