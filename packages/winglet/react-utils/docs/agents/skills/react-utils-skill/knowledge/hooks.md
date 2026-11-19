@@ -45,7 +45,7 @@ In StrictMode (development) React double-renders and may invoke the factory twic
 | Flat object prop defeats `React.memo`                                 | `useRestProperties(props)` — shallow comparison                    |
 | Nested object prop defeats `React.memo`                               | `useSnapshot(obj, omit?)` — deep comparison, optional key omission |
 
-`useSnapshotReference` is `useSnapshot` before the `.current` read — take it only when you need the ref object itself rather than its value.
+`useSnapshotReference` exposes the last committed snapshot through `.current` for imperative callbacks. During an update render, `.current` still holds the previous commit. Use `useSnapshot` for values read during render.
 
 **`useSnapshot`'s `omit` set is captured on the first render and never re-read.** A dynamically computed omit list silently keeps using its initial value for the component's whole life, so keys omitted later still take part in the comparison. Pass a constant.
 
