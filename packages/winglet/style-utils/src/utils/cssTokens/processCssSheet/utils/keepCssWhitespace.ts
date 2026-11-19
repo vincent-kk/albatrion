@@ -9,7 +9,7 @@ import { hasCssCdcBoundary } from '../../hasCssCdcBoundary';
  * @param valueEmpty Whether a declaration has no significant value token
  * @param custom Whether the declaration name is a custom property
  * @param previous Previous emitted punctuation or zero for a name/opaque token
- * @param next First code unit after whitespace
+ * @param next Next boundary code unit, or -1 at EOF
  * @param previousEnd Original end of the previous emitted token
  * @returns Whether one whitespace code unit remains
  */
@@ -27,13 +27,13 @@ export const keepCssWhitespace = (css: string, context: CssContext, components: 
     }
     if (context === CssContext.OpaquePrelude) return true;
     if (context === CssContext.AtPrelude) {
-      if (previous === 58 && next === 41) return true;
+      if (previous === 58 && (next === 41 || next === -1)) return true;
       if (previous === 44 || next === 44) return false;
       if (components === 0 && (next === 123 || next === 59)) return false;
       if (components > 0 && (previous === 40 || next === 41 || previous === 58 || next === 58)) return false;
       return true;
     }
-    if (valueEmpty) return next === 59 || next === 125;
+    if (valueEmpty) return next === 59 || next === 125 || next === -1;
     if (previous === 59 || next === 59) return false;
     if (components === 0 && (next === 59 || next === 125)) return false;
     if (!custom && (previous === 44 || next === 44 || previous === 40 || next === 41)) return false;
