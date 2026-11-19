@@ -3,7 +3,7 @@ import { join, relative } from 'node:path';
 import type { AsyncFn } from '@aileron/declare';
 
 import type { Destination, OrphanScan } from '../agentTarget/index.js';
-import { type Sha256Hex, hashEquals, hashFile } from '../hash/index.js';
+import { type Sha256Hex, hashEquals, hashFile, readSourceSnapshot } from '../hash/index.js';
 import { blockBodyMatches, parseBlocks } from '../markerBlock/index.js';
 import { isNoisePath } from '../utils/isNoisePath.js';
 import { toPosix } from '../utils/toPosix.js';
@@ -12,7 +12,6 @@ import type { Action, ActionKind, InjectPlan, PlanInput } from './type.js';
 import { indexManagedAliases } from './utils/indexManagedAliases.js';
 import { isManagedAlias } from './utils/isManagedAlias.js';
 import { createDocumentReader } from './utils/readDocument.js';
-import { readRuleSource } from './utils/readRuleSource.js';
 
 /**
  * Compare every manifest entry against what is already installed and produce
@@ -35,12 +34,10 @@ export async function buildPlan(input: PlanInput): Promise<InjectPlan> {
     const destination = destinations.get(relPath);
     if (!destination) continue;
     const source =
-      input.assetRoot &&
-      relPath.startsWith('rules/') &&
-      destination.kind !== 'unsupported'
-        ? await readRuleSource(
+      input.assetRoot && destination.kind !== 'unsupported'
+        ? await readSourceSnapshot(
             join(input.assetRoot, relPath),
-            input.ruleSources,
+            input.sourceSnapshots,
           )
         : undefined;
     const sourceHash =

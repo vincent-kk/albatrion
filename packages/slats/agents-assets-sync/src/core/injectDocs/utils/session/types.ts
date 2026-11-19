@@ -6,7 +6,7 @@ import type {
 } from '../../../agentTarget/index.js';
 import type { InjectPlan } from '../../../buildPlan/index.js';
 import type { Scope } from '../../../scope/index.js';
-import type { RuleSource } from '../../../types/ruleSource.js';
+import type { SourceSnapshot } from '../../../types/sourceSnapshot.js';
 import type { InjectReport } from '../../type.js';
 
 /** One failure or protective notice shared by every display. */
@@ -38,7 +38,7 @@ export interface RunUnit {
   /** Physical roots whose ownership may be incomplete if this participant fails. */
   readonly namespaceRoots?: readonly string[];
   /** Preparation-only cache; execution omits it from the final report. */
-  readonly ruleSources?: ReadonlyMap<string, RuleSource | null>;
+  readonly sourceSnapshots?: ReadonlyMap<string, SourceSnapshot | null>;
 }
 /** Complete execution result; views never derive its exit code. */
 export interface RunResult {

@@ -26,7 +26,7 @@ export async function executeUnits(
 ): Promise<RunResult> {
   const results: RunUnit[] = [];
   for (const prepared of units) {
-    const { ruleSources, ...metadata } = prepared;
+    const { sourceSnapshots, ...metadata } = prepared;
     const unit: RunUnit = {
       ...metadata,
       key:
@@ -53,7 +53,7 @@ export async function executeUnits(
       applyAction(
         action,
         unit.target.assetRoot,
-        ruleSources?.get(join(unit.target.assetRoot, action.relPath))?.bytes,
+        sourceSnapshots?.get(join(unit.target.assetRoot, action.relPath)) ?? undefined,
       ),
     );
     const failures: Action[] = fileActions.filter(
@@ -81,7 +81,7 @@ export async function executeUnits(
           path,
           actions,
           unit.target.assetRoot,
-          ruleSources,
+          sourceSnapshots,
         );
       } catch (error) {
         failures.push(...actions);

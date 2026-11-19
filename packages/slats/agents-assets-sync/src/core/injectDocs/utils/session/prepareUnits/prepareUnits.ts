@@ -14,7 +14,7 @@ import {
   computeNamespacePrefixes,
   resolveHashManifest,
 } from '../../../../hashManifest/index.js';
-import type { RuleSource } from '../../../../types/ruleSource.js';
+import type { SourceSnapshot } from '../../../../types/sourceSnapshot.js';
 import { mergePlans } from '../mergePlans.js';
 import type { RunUnit, ValidatedFlags } from '../types.js';
 import { describePreparationFailure } from './utils/describePreparationFailure.js';
@@ -41,12 +41,12 @@ export async function prepareUnits(
   const markdown = new Map<string, Promise<void>>();
   const physicalPaths = new Map<string, Promise<string>>();
   const generatedAt = new Date().toISOString();
-  const ruleSources = new Map<string, RuleSource | null>();
+  const sourceSnapshots = new Map<string, SourceSnapshot | null>();
   for (const target of targets) {
     const manifest = await resolveHashManifest(
       target,
       generatedAt,
-      ruleSources,
+      sourceSnapshots,
     ).then(
       (value) => ({ value }),
       (error: unknown) => ({ error }),
@@ -102,7 +102,7 @@ export async function prepareUnits(
         const plan = await buildPlan({
           sourceHashes: manifest.value.files,
           ruleBodyHashes: manifest.value.ruleBodyHashes,
-          ruleSources,
+          sourceSnapshots,
           assetRoot: target.assetRoot,
           destinations,
           orphanScans,
@@ -112,7 +112,7 @@ export async function prepareUnits(
           plan,
           target.assetRoot,
           markdown,
-          ruleSources,
+          sourceSnapshots,
         );
         await assertWriteTargetsContained({
           agentTarget,
@@ -132,7 +132,7 @@ export async function prepareUnits(
               : action,
           ),
         );
-        const unit = { ...base, ruleSources, plan: { ...plan, actions } };
+        const unit = { ...base, sourceSnapshots, plan: { ...plan, actions } };
         destinationsSeen.set(locationKey, unit);
         units.push(unit);
       } catch (error) {

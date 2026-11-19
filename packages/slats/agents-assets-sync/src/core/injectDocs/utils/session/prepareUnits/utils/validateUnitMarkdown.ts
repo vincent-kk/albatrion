@@ -6,20 +6,20 @@ import {
   assertManagedMarkdown,
   assertRuleSource,
 } from '../../../../../markerBlock/index.js';
-import type { RuleSource } from '../../../../../types/ruleSource.js';
+import type { SourceSnapshot } from '../../../../../types/sourceSnapshot.js';
 
 /** Validate every rule and block document before any action in its unit runs.
  * @param plan Prepared actions, including skipped sources and orphan blocks.
  * @param assetRoot Package-owned source directory.
  * @param cache Run-owned validation cache keyed by source and context.
- * @param ruleSources Checked raw bytes and normalized bodies shared by all agents.
+ * @param sourceSnapshots Checked raw bytes and normalized bodies shared by all agents.
  * @throws With the exact file, opening line and repair for unsafe Markdown.
  */
 export async function validateUnitMarkdown(
   plan: InjectPlan,
   assetRoot: string,
   cache: Map<string, Promise<void>>,
-  ruleSources: ReadonlyMap<string, RuleSource | null>,
+  sourceSnapshots: ReadonlyMap<string, SourceSnapshot | null>,
 ): Promise<void> {
   const files = new Map<
     string,
@@ -50,7 +50,7 @@ export async function validateUnitMarkdown(
     if (!check) {
       check = (async () => {
         if (context !== 'document') {
-          const source = ruleSources.get(file);
+          const source = sourceSnapshots.get(file);
           if (!source) {
             if (optional) return;
             throw new Error(`Source file missing: ${file}`);

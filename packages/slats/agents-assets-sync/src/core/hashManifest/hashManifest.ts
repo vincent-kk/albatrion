@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import type { RuleSource } from '../types/ruleSource.js';
+import type { SourceSnapshot } from '../types/sourceSnapshot.js';
 import type { HashManifest, HashManifestSource } from './type.js';
 import { computeHashManifest } from './utils/computeHashManifest.js';
 
@@ -39,7 +39,7 @@ export function needsBuiltManifest(target: {
  * @param generatedAt - ISO timestamp stamped onto a computed manifest. Passed
  *   in rather than read here so the same inputs always give the same answer;
  *   the caller owns the clock
- * @param ruleSources - optional checked snapshots shared across selected agents
+ * @param sourceSnapshots - optional checked snapshots shared across selected agents
  * @returns the manifest
  * @throws when `hashSource` is `manifest` and the file is absent, unreadable,
  *   or declares an unsupported `schemaVersion`
@@ -47,11 +47,11 @@ export function needsBuiltManifest(target: {
 export async function resolveHashManifest(
   source: HashManifestSource,
   generatedAt: string,
-  ruleSources?: Map<string, RuleSource | null>,
+  sourceSnapshots?: Map<string, SourceSnapshot | null>,
 ): Promise<HashManifest> {
   if (source.hashSource === 'manifest')
     return readHashManifest(source.packageRoot);
-  return computeHashManifest(source, generatedAt, ruleSources);
+  return computeHashManifest(source, generatedAt, sourceSnapshots);
 }
 
 export async function readHashManifest(
