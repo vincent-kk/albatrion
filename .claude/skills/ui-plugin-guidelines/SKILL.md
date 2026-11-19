@@ -5,6 +5,17 @@ description: "Expert at verifying compatibility between a UI library and an @can
 
 # UI Plugin Guidelines Skill
 
+## Shared value and presentation contracts
+
+- A string switch stores `enum[0]` when checked and `enum[1]` when unchecked. `switchLabels` is a tuple in the same enum order.
+- A boolean switch accepts `presentation.FieldInputProps.alias` with `checked` and `unchecked` ReactNode labels. Choose the label map from `context.checkboxLabels`, then `alias`, then no state labels. Show the current state without replacing the field's accessible name; absent state labels preserve the existing output.
+- A control changes only the stored data the user acts on. Keep known enum selections visible alongside unknown stored members, and preserve the original JSON value and order of untouched members. A toggle of another option preserves them; explicitly removing a tag or clearing the control removes the selected data.
+- Render array and object validation messages at both root and nested positions. Do not add empty root error markup when no message exists.
+- With `multipleOf`, slider stops lie on its zero-based grid inside the inclusive bounds. Integer sliders use the integer intersection; number sliders without `multipleOf` retain authored bounds. Disable a range with no selectable value. Range sliders apply item constraints to both ends, and marked stops obey the same constraints.
+- An unset slider exposes no current value to assistive technology and stores nothing until the user acts. A first committed selection of the minimum must store it even when the library skips its ordinary change callback. Preserve read-only and disabled behavior.
+- Range pickers publish only a committed selection with both ends chosen, or clear. Browsing a panel, hovering, changing the viewed month or time, and choosing just one end never write form data.
+- Verify these contracts with equivalence tables across sibling plugins and input kinds, including stored values outside the enum, root and nested errors, and unset and populated numeric controls.
+
 ## Control identifier contract
 
 The core supplies `FieldInputProps.id` scoped to each Form. Put it on the actual focusable control and use it for a single-control label's `htmlFor`; `path` remains the JSON Pointer for data access. A group renderer uses `FieldRendererProps.labelId` on its title or legend and `aria-labelledby` on the group. If the input draws that title itself, the renderer forwards `labelId` through `<Input labelId={labelId} />`; do not draw a second title with the same id. Give each option a distinct id derived from the supplied input id. Radio inputs use the scoped id as their native `name`; other inputs retain their leaf names. Labels and ARIA references are document-wide, including across separate Forms.
@@ -112,12 +123,20 @@ const FieldRenderer = ({
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps) => {
-  if (depth === 0) return <Input />;
+  if (depth === 0) return (
+    <>
+      <Input />
+      {errorMessage != null && errorMessage !== false && (
+        <ErrorMessage>{errorMessage}</ErrorMessage>
+      )}
+    </>
+  );
 
   if (node.strategy === 'branch') {
     return (
       <Box sx={{ pl: depth * 2, border: '1px solid', borderColor: 'divider' }}>
         <fieldset><legend>{name}</legend><Input /></fieldset>
+        <ErrorMessage>{errorMessage}</ErrorMessage>
       </Box>
     );
   }
