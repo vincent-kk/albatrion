@@ -5,6 +5,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { ValidationMode, isArrayNode } from '@/schema-form/core';
+import { getFieldPartId } from '@/schema-form/helpers/fieldId/getFieldPartId';
 import {
   type ErrorMessageRendererProps,
   ErrorVisibility,
@@ -75,7 +76,7 @@ it('binds label defaults without implicitly passing errors or context', () => {
     jsonSchema: node.jsonSchema,
     required: false,
     htmlFor: expect.stringMatching(/^.+:\/a$/),
-    id: expect.stringMatching(/^label:.+:\/a$/),
+    id: getFieldPartId(props.htmlFor!, 'label'),
     children: node.name,
   });
   expect(props.required).toBe(
@@ -256,16 +257,30 @@ it('updates a memo-cached label address after array reordering', () => {
       FieldRenderer={Group}
     />,
   );
-  expect(view.container.querySelector('label[for$=":/1/name"]')?.id).toMatch(
-    /^label:.+:\/1\/name$/,
+  expect(
+    view.container.querySelector<HTMLLabelElement>('label[for$=":/1/name"]')
+      ?.id,
+  ).toBe(
+    getFieldPartId(
+      view.container.querySelector<HTMLLabelElement>('label[for$=":/1/name"]')
+        ?.htmlFor ?? '',
+      'label',
+    ),
   );
   act(() => {
     const node = ref.current!.node;
     if (!node || !isArrayNode(node)) throw new Error('missing array');
     node.remove(0);
   });
-  expect(view.container.querySelector('label[for$=":/0/name"]')?.id).toMatch(
-    /^label:.+:\/0\/name$/,
+  expect(
+    view.container.querySelector<HTMLLabelElement>('label[for$=":/0/name"]')
+      ?.id,
+  ).toBe(
+    getFieldPartId(
+      view.container.querySelector<HTMLLabelElement>('label[for$=":/0/name"]')
+        ?.htmlFor ?? '',
+      'label',
+    ),
   );
   expect(view.container.querySelector('label[for$=":/1/name"]')).toBeNull();
   expect(
@@ -319,7 +334,9 @@ it.each([false, true])(
         'input:is([id="/0/name"], [id$=":/0/name"]):not(label):not(legend)',
       )?.id,
     );
-    expect(shifted?.id).toMatch(/^label:.+:\/0\/name$/);
+    expect(shifted?.id).toBe(
+      getFieldPartId(shifted?.getAttribute('for') ?? '', 'label'),
+    );
     expect(view.container.querySelector('label[for$=":/1/name"]')).toBeNull();
     expect(
       view.container.querySelector<HTMLInputElement>(

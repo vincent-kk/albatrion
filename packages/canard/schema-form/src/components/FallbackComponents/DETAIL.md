@@ -12,7 +12,7 @@ branch legend는 FieldRendererProps.labelId를 사용하고 입력·라벨은 �
 
 기본 LabelRenderer·ErrorMessageRenderer는 훅·Context·부수 효과 없이 props만으로 요소를 반환합니다. 묶인 부품이 이 두 참조만 직접 호출해 컴포넌트 층 하나를 생략하므로 React 렌더 밖의 함수 호출도 유효해야 합니다. 사용자·플러그인 렌더러에는 이 직접 호출 계약을 적용하지 않습니다.
 
-입력 동작과 오류 문구는 전달받은 props에 맡깁니다. 제목 연결은 [FormLabel](../Form/components/FormLabel/DETAIL.md)의 path·label: 규약을 따르며 branch의 legend도 같은 제목 id를 제공합니다. 입력 종류를 추측하여 별도 id 체계를 만들지 않습니다.
+입력 동작과 오류 문구는 전달받은 props에 맡깁니다. 제목 연결은 [FormLabel](../Form/components/FormLabel/DETAIL.md)의 경로·불투명 labelId 규약을 따르며 branch의 legend도 같은 제목 id를 제공합니다. 입력 종류를 추측하여 별도 id 체계를 만들지 않습니다.
 
 ## Acceptance Criteria
 

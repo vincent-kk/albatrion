@@ -5,6 +5,7 @@ import { useHandle } from '@winglet/react-utils/hook';
 
 import type { Nullable } from '@aileron/declare';
 
+import { getFieldPartId } from '@/schema-form/helpers/fieldId/getFieldPartId';
 import type {
   FieldInputPropsWithSchema,
   StringSchema,
@@ -54,11 +55,11 @@ export const FieldInputStringRadio = ({
   return (
     <span
       role="group"
-      aria-labelledby={'label:' + fieldId}
+      aria-labelledby={getFieldPartId(fieldId, 'label')}
       aria-invalid={misfit || undefined}
     >
       {map(radioOptions, ({ value, rawValue, label }, index) => {
-        const id = fieldId + '-' + index;
+        const id = getFieldPartId(fieldId, 'option:' + index);
         return (
           <label key={value} htmlFor={id} style={style} className={className}>
             <input

@@ -67,10 +67,10 @@ it.each(['ordinary-', 'app~2:', 'app with spaces~2:'])(
       const input = document.createElement('input'),
         label = document.createElement('label'),
         description = document.createElement('span');
-      input.id = derived[0];
-      label.id = derived[1];
+      input.id = getFieldPartId(fields[0], 'probe-control');
+      label.id = getFieldPartId(fields[0], 'probe-label');
       label.htmlFor = input.id;
-      description.id = derived[2];
+      description.id = getFieldPartId(fields[0], 'probe-description');
       input.setAttribute('aria-labelledby', label.id);
       input.setAttribute('aria-describedby', description.id);
       host.append(input, label, description);

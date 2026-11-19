@@ -15,6 +15,7 @@ import {
   type InputRendererProps,
   type LabelRendererProps,
   ValidationMode,
+  getFieldPartId,
   useFieldErrors,
 } from '@/schema-form';
 
@@ -146,7 +147,7 @@ it('assembles registered label and error roots with the field name and explicit 
   expect(label.textContent).toBe('name *');
   expect(label.htmlFor).toBe(view.container.querySelector('input')!.id);
   expect(label.htmlFor).toMatch(/:\/name$/);
-  expect(label.id).toBe('label:' + label.htmlFor);
+  expect(label.id).toBe(getFieldPartId(label.htmlFor, 'label'));
   expect(label.querySelector('span')?.getAttribute('aria-hidden')).toBe('true');
   expect(view.container.querySelector('em')?.style.color).toBe('crimson');
   expect(view.getByText('Check name')).toBeTruthy();

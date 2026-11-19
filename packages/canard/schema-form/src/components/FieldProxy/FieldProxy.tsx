@@ -10,6 +10,7 @@ import {
 
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
 import { FieldNodeEventType } from '@/schema-form/core';
+import { getFieldPartId } from '@/schema-form/helpers/fieldId/getFieldPartId';
 import { useFieldNode } from '@/schema-form/hooks';
 import { useFieldNodeTracker } from '@/schema-form/hooks';
 import {
@@ -139,7 +140,7 @@ export const FieldProxy = ({
             jsonSchema={node.jsonSchema}
             isRoot={node.isRoot}
             depth={node.depth}
-            labelId={'label:' + formId + ':' + node.path}
+            labelId={getFieldPartId(formId + ':' + node.path, 'label')}
             path={node.path}
             name={node.name}
             value={node.value}

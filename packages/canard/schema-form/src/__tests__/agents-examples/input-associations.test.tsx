@@ -6,6 +6,7 @@ import {
   type FieldRendererProps,
   Form,
   ValidationMode,
+  getFieldPartId,
 } from '../../index';
 
 const TextControl = ({ id, value, onChange }: FieldInputProps<string>) => (
@@ -26,7 +27,7 @@ const ChoiceGroup = ({ labelId, Input }: FieldRendererProps) => (
 const ChoiceControl = ({ id, value, onChange }: FieldInputProps<string>) => (
   <>
     {['One', 'Two'].map((choice, index) => {
-      const optionId = id + '-' + index;
+      const optionId = getFieldPartId(id, 'option:' + index);
       return (
         <label key={choice} htmlFor={optionId}>
           <input

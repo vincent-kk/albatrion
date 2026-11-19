@@ -126,3 +126,4 @@ export {
 } from './providers';
 
 export { useFieldErrors } from './hooks';
+export { getFieldPartId } from './helpers/fieldId/getFieldPartId';

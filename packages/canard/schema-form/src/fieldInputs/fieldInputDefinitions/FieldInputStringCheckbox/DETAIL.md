@@ -7,8 +7,8 @@
 ## API Contracts
 
 - 공통 무효 표시와 값 보존 정책은 [상위 계약](../../DETAIL.md)에 둡니다.
-- 선택지 id는 Form scope를 포함한 id와 색인으로 만들고 label의 htmlFor와 일치시킵니다. 값에 공백이 올 수 있으므로 값 자체를 id로 사용하지 않습니다. 이 규약은 radio도 공유합니다.
-- 선택지 묶음은 `role="group"`과 필드 제목의 `label:${id}`를 가리키는 `aria-labelledby`를 사용합니다. 개별 선택지 라벨과 묶음의 필드 이름을 혼동하지 않게 합니다.
+- 선택지 id는 getFieldPartId(id, option:색인 역할)로 만들고 label의 htmlFor와 일치시킵니다. 값에 공백이 올 수 있으므로 값 자체를 id로 사용하지 않습니다. 이 규약은 radio도 공유합니다.
+- 선택지 묶음은 `role="group"`과 getFieldPartId(id, label 역할)의 불투명한 제목 id를 가리키는 `aria-labelledby`를 사용합니다. 개별 선택지 라벨과 묶음의 필드 이름을 혼동하지 않게 합니다.
 
 ## Acceptance Criteria
 

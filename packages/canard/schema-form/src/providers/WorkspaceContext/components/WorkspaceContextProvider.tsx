@@ -20,7 +20,7 @@ export const WorkspaceContextProvider = ({
   children,
 }: PropsWithChildren<UserDefinedContextProviderProps>) => {
   const external = useExternalFormContext();
-  const formId = useId();
+  const formId = useId().replace(/~/g, '~0');
   const context = useContextSnapshot(inputContext);
   const contextValue = useMemo(
     () => ({

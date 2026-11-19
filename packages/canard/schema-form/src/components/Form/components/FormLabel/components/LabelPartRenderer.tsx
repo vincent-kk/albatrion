@@ -1,3 +1,4 @@
+import { useWorkspaceContext } from '@/schema-form/providers/WorkspaceContext';
 import type { FieldRendererProps } from '@/schema-form/types';
 
 /** Forward only the standalone label's explicit override channel and its own context. */
@@ -11,9 +12,10 @@ export const LabelPartRenderer = ({
   htmlFor,
   labelId,
 }: FieldRendererProps) => {
+  const { formId } = useWorkspaceContext();
   const resolvedPath =
     typeof htmlFor === 'string' && node.rootNode.findNodes(htmlFor).length === 1
-      ? labelId.slice('label:'.length)
+      ? formId + ':' + node.path
       : htmlFor;
   return (
     <Label

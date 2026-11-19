@@ -3,6 +3,7 @@ import { afterEach, expect, it } from 'vitest';
 
 import { Form } from '../components/Form';
 import { ValidationMode } from '../core';
+import { getFieldPartId } from '../helpers/fieldId/getFieldPartId';
 
 afterEach(cleanup);
 
@@ -95,18 +96,13 @@ it.each(['checkbox', 'radio'])(
       </Form>,
     );
     const label = screen.getByText('Size').closest('label')!;
-    expect(label.getAttribute('for')).toBe(
-      screen
-        .getByRole('group', { name: 'Size' })
-        .getAttribute('aria-labelledby')
-        ?.slice('label:'.length),
-    );
-    expect(label.id).toMatch(/^label:.+:\/Size$/);
+    expect(label.htmlFor).toMatch(/:\/Size$/);
+    expect(label.id).toBe(getFieldPartId(label.htmlFor, 'label'));
     expect(
       screen
         .getByRole('group', { name: 'Size' })
         .getAttribute('aria-labelledby'),
-    ).toMatch(/^label:.+:\/Size$/);
+    ).toBe(label.id);
   },
 );
 
@@ -127,8 +123,8 @@ it('keeps Form.Label associated with a plain string input', () => {
     input.id,
   );
   expect(input.id).toMatch(/^.+:\/Text$/);
-  expect(screen.getByText('Text').closest('label')!.id).toMatch(
-    /^label:.+:\/Text$/,
+  expect(screen.getByText('Text').closest('label')!.id).toBe(
+    getFieldPartId(input.id, 'label'),
   );
 });
 
@@ -155,7 +151,7 @@ it('keeps Form.Label associated with a date-format input despite the radio hint'
   const label = screen.getByText('When').closest('label')!;
   expect(input.type).toBe('date');
   expect(label.getAttribute('for')).toBe(input.id);
-  expect(label.id).toMatch(/^label:.+:\/When$/);
+  expect(label.id).toBe(getFieldPartId(input.id, 'label'));
 });
 
 it('omits for and id when the Form.Label path prop is undefined', () => {
@@ -233,14 +229,9 @@ it('names a root group with the label prefix when path is empty', () => {
     </Form>,
   );
   const label = screen.getByText('Size').closest('label')!;
-  expect(label.getAttribute('for')).toBe(
-    screen
-      .getByRole('group', { name: 'Size' })
-      .getAttribute('aria-labelledby')
-      ?.slice('label:'.length),
-  );
-  expect(label.id).toBe('label:' + label.htmlFor);
+  expect(label.htmlFor).toMatch(/:$/);
+  expect(label.id).toBe(getFieldPartId(label.htmlFor, 'label'));
   expect(
     screen.getByRole('group', { name: 'Size' }).getAttribute('aria-labelledby'),
-  ).toMatch(/^label:.+:$/);
+  ).toBe(label.id);
 });

@@ -20,6 +20,8 @@ GOAL-023·086. 검증 의미를 직접 구현해 속도를 얻지 않습니다. 
 
 ## API Contracts
 
+getFieldPartId(id, part)는 입력 id에서 선택지·제목·범위 끝·프로토콜·설명·오류의 불투명한 DOM id를 파생하는 공개 순수 함수입니다. scope의 tilde와 포인터 이름의 tilde가 이스케이프되므로 필드 id에 ~2는 없습니다. helper는 base의 tilde·공백과 part의 tilde·slash·colon·공백을 가역 치환하고 두 값 사이에만 ~2를 넣습니다. 따라서 입력 id와 파생 id는 분리되며, 구분자의 유일한 위치와 가역 치환이 서로 다른 (id, part)를 구별합니다. labelId도 같은 파생 규칙을 따르므로 소비자는 prop을 읽거나 helper를 사용하며 문자열 접두·접미 조립이나 slicing을 하지 않습니다. 파생 id에는 공백이 없고 CSS 선택자는 CSS.escape로 이스케이프합니다.
+
 기본 ESM과 Node ESM은 하나의 번들 그래프에서 출력합니다. Node 출력의 개발 플래그 치환을 되돌리면 기본 ESM의 바이트와 같아야 하므로 독립 그래프 순회 순서에 결과를 맡기지 않습니다. CommonJS의 strict 선언과 개발 플래그 배치는 유지합니다.
 
 LANDING-067·087·205. 패키지는 단일 공개 진입점에서 이름으로 계약을 조합합니다. [core](core/DETAIL.md)의 호스트 바인딩 통로는 내부 계약이며 제품 공개 이름을 자동으로 넓히지 않습니다. options·controls·presentation의 의미 변경도 공개 계약 변경입니다. 작성자가 스키마를, 호출자가 Form·명령을, 사용자가 입력을 제공한다는 구분으로 값 변경의 책임을 판단합니다(GOAL-085).

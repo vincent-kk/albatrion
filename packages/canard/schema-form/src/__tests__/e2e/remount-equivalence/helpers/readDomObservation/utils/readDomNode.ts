@@ -24,8 +24,7 @@ export function readDomNode(node: Node, ids: readonly string[]): unknown {
           ids.reduce(
             (normalized, id, index) =>
               token === id ||
-              token.startsWith(id + ':') ||
-              token.startsWith('label:' + id + ':')
+              token.startsWith(id + ':')
                 ? normalized.replace(id, `react-id-${index}`)
                 : normalized,
             token,
