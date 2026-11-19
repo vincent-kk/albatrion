@@ -45,7 +45,8 @@ export const resolveReference = (
       if (
         schema &&
         typeof schema === 'object' &&
-        typeof Reflect.get(schema, '$id') === 'string'
+        (typeof Reflect.get(schema, '$id') === 'string' ||
+          typeof Reflect.get(schema, 'id') === 'string')
       )
         getResourceIndex(context);
     }
