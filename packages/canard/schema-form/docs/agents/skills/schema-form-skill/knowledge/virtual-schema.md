@@ -38,7 +38,11 @@ For a group over `a` and `b`, this field-name pairing keeps an inactive `b` in i
 
 ```typescript
 const fields = ['a', 'b'];
-const slots = fields.map((name, index) => ({ name, value: Array.isArray(group.value) ? group.value[index] : undefined, node: group.children?.find(child => child.name === name) }));
+const slots = fields.map((name, index) => ({
+  name,
+  value: Array.isArray(group.value) ? group.value[index] : undefined,
+  node: group.children?.find((child) => child.name === name),
+}));
 ```
 
 - From outside: `formRef.current?.findNode('/period')`, narrowed with the exported `isVirtualNode()` guard.

@@ -32,7 +32,7 @@ NODE-016·045. 의존은 청사진·레코드·순수 동작과 탐색·검증·
 
 errors는 그룹에 직접 지정한 외부 오류와 해당 노드에 배정된 판정만 읽습니다. 실제 constituent 오류를 그룹이나 다른 활성 칸으로 옮기지 않습니다. setExternalErrors·clearExternalErrors는 그룹 자체의 명령형 오류를 교체·삭제하고 globalErrors에 반영하며 constituent에 복제하지 않습니다. validate는 fields 저장 주소 범위의 판정을 갱신합니다. 비활성·부재 constituent issue도 globalErrors에 남아 유효성에 참여하지만 그룹·활성 형제 errors에 배정하지 않습니다.
 
-setState·state는 그룹 자신의 상호작용을, setSubtreeState·clearSubtreeState는 그룹과 현재 활성 constituent 하위 트리를 바꿉니다. 비활성 원본은 건드리지 않습니다. globalState·globalErrors는 폼 전체 목록이며 subscribe·revision·request는 그 노드의 배달·명령 의미를 유지합니다. onInactive는 해당 그룹 발생의 정상 keep gate exit에 등록되며 constituent의 resolver로 복제되지 않습니다. 배열 동사는 가상 그룹에 사용할 수 없어 종류 오류를 내며 실제 배열 constituent를 찾아 호출합니다. detached 읽기는 마지막 커밋을 보존하고 쓰기·reset·상태·오류 명령은 기존 detached 계약을 따릅니다.
+setState·state는 그룹 자신의 상호작용을, setSubtreeState·clearSubtreeState는 그룹과 현재 활성 constituent 하위 트리를 바꿉니다. 비활성 원본은 건드리지 않습니다. globalState·globalErrors는 폼 전체 목록이며 subscribe·revision·request는 그 노드의 배달·명령 의미를 유지합니다. onInactive는 해당 그룹 발생의 정상 keep gate exit에 등록되며 constituent의 resolver로 복제되지 않습니다. 배열 동사는 가상 그룹에 사용할 수 없어 종류 오류를 내며 실제 배열 constituent를 찾아 호출합니다. detached defaultValue·inactiveValues는 이탈 직전 투영을 보존하고 isDivergent는 일반 detached 계약처럼 false입니다. 쓰기·reset·상태·오류 명령은 기존 detached 계약을 따릅니다.
 
 #### 선언·반응형 규칙과 토폴로지
 
