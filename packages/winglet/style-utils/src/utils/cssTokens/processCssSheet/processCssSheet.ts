@@ -89,6 +89,7 @@ export const processCssSheet = (input: string, compressed: boolean, mode: 'none'
           const close = kind === CssTokenKind.Function || code === 40 ? 41 : 93;
           const frame = (context << CssFrame.ContextShift) | close;
           (stack ??= []).push(frame); components++;
+          if (code === 91 && context === CssContext.Selector) context = CssContext.Attribute;
           if (kind === CssTokenKind.Function && context === CssContext.AtPrelude) context = hasCssName(css, index, end - 1, 'selector') ? CssContext.Selector : CssContext.OpaquePrelude;
         } else if (code === 123) {
           const selector: boolean = components === 0 && context === CssContext.Value && !custom;
