@@ -19,7 +19,7 @@ export async function runSurface(
   root: string,
   targets: ConsumerPackage[],
   flags: DefaultFlags,
-  choices = false,
+  choices: boolean | 'decline' = false,
   packageArgs?: string[],
   onOutput?: (output: {
     stdout: string;
@@ -131,7 +131,7 @@ export async function runSurface(
           )
             app.stdin.write('\r');
           else if (frame.includes('overwrite') && frame.includes('Yes,'))
-            app.stdin.write('y');
+            app.stdin.write(choices === 'decline' ? 'n' : 'y');
         };
         const interval = setInterval(answer, 20);
         setTimeout(() => clearInterval(interval), 450);
@@ -146,5 +146,6 @@ export async function runSurface(
     .split(root)
     .join('<root>');
   onOutput?.({ stdout, stderr, frame });
-  return { code, model: JSON.parse(normalized), files: readWrittenFiles(root) };
+  const parsedModel: RunResult = JSON.parse(normalized);
+  return { code, model: parsedModel, files: readWrittenFiles(root) };
 }
