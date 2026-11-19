@@ -24,7 +24,7 @@ it('virtual projections follow 3000 generated branch, retention and batch histor
       input[`on${index}`] = active[index];
       if (initial[index] !== undefined) input[names[index]] = initial[index];
     }
-    const root = nodeFromJSONSchema({ jsonSchema: { type: 'object', properties, allOf: branches, options: { virtual: { group: { fields: names }, reversed: { fields: [...names].reverse() } } } }, defaultValue: input, validationMode: ValidationMode.None });
+    const root = nodeFromJSONSchema({ jsonSchema: { type: 'object', properties, ...(seed % 2 ? { oneOf: branches } : { allOf: branches }), options: { virtual: { group: { fields: names }, reversed: { fields: [...names].reverse() } } } }, defaultValue: input, validationMode: ValidationMode.None });
     const stored = initial.map((value, index) => active[index] ? value ?? defaults[index] : value);
     const outside = root.find('/outside')!;
     outside.setState({ touched: true });
@@ -39,12 +39,12 @@ it('virtual projections follow 3000 generated branch, retention and batch histor
         }
       }
     };
-    const toggle = (index: number) => {
+    const toggle = (index: number, isExplicit = false) => {
       active[index] = !active[index];
       if (active[index]) stored[index] ??= defaults[index];
       else if (policies[index] === 1) stored[index] = undefined;
-      else if (policies[index] === 2) stored[index] = `inactive${index}`;
-      else if (policies[index] === 3) stored[index] = `resolver${index}`;
+      else if (!isExplicit && policies[index] === 2) stored[index] = `inactive${index}`;
+      else if (!isExplicit && policies[index] === 3) stored[index] = `resolver${index}`;
     };
     for (let step = 0; step < 12; step++) {
       bind();
@@ -57,7 +57,7 @@ it('virtual projections follow 3000 generated branch, retention and batch histor
         if (operation === 2) root.batch(() => { root.find(`/on${index}`)!.setValue(!active[index]); group.setValue(reversed ? [...tuple].reverse() : tuple); });
         else group.setValue(reversed ? [...tuple].reverse() : tuple);
         for (let slot = 0; slot < count; slot++) if (beforeActive[slot] || tuple[slot] !== undefined) stored[slot] = tuple[slot];
-        if (operation === 2) toggle(index);
+        if (operation === 2) toggle(index, beforeActive[index] || tuple[index] !== undefined);
       } else if (operation === 3) {
         group.resetSubtree(); for (let slot = 0; slot < count; slot++) stored[slot] = active[slot] ? initial[slot] ?? defaults[slot] : initial[slot];
       } else if (operation === 4) {
