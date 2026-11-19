@@ -313,7 +313,7 @@ it.each([
   },
 );
 
-it('StringCheckbox with an uncoercible element renders both checkboxes unchecked and keeps the node value without throwing', () => {
+it('StringCheckbox with an uncoercible element shows the known checkbox selection and keeps the node value without throwing', () => {
   const ref = createRef<FormHandle>();
   const bad = ['a', { toString: 'oops' }];
   const { container } = render(

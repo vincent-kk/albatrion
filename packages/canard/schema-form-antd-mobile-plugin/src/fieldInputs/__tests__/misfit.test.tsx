@@ -188,7 +188,7 @@ it.each([
     ['a'],
   ],
 ] as MisfitCase[])(
-  '%s renders both checkboxes unchecked and keeps the node value without throwing',
+  '%s shows the known checkbox selection and keeps the node value without throwing',
   (_, definition, jsonSchema, bad) => {
     const ref = createRef<FormHandle>();
     const { container } = render(

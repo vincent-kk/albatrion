@@ -271,7 +271,7 @@ it.each([
     ['a'],
   ],
 ] as MisfitCase[])(
-  '%s keeps the input and node value without marking the array parent',
+  '%s shows stored selections and keeps the node value without marking the array parent',
   (_, definition, jsonSchema, bad, good) => {
     const ref = createRef<FormHandle>();
     const { container } = render(
@@ -289,9 +289,10 @@ it.each([
     act(() => ref.current!.setValue(bad as never));
     expect(control()).not.toBeNull();
     expect(ref.current!.getValue()).toEqual(bad);
-    expect(
-      container.querySelector('input:checked, .ant-select-selection-item'),
-    ).toBeNull();
+    if (definition === FieldInputStringCheckboxDefinition)
+      expect(Array.from(container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]'), input => input.checked)).toEqual([true, false]);
+    else
+      expect(Array.from(container.querySelectorAll('.ant-select-selection-item'), tag => tag.textContent)).toEqual(['a', '{"toString":"oops"}']);
     expect(container.querySelector('[aria-invalid="true"]')).toBeNull();
     if (definition === FieldInputStringEnumDefinition)
       expect(container.querySelector('[class*="-status-error"]')).toBeNull();
