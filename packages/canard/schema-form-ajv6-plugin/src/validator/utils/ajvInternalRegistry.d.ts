@@ -8,6 +8,10 @@ import type { Dictionary } from '@aileron/declare';
  * validation registration restores `_refs` and `_schemas` in place.
  */
 declare module 'ajv' {
+  interface Options {
+    /** AJV's derived property-path flag, reset when a private profile overrides errorDataPath. */
+    _errorDataPathProperty?: boolean;
+  }
   interface CompilationContext {
     /** Generated expression for the current instance path. */
     errorPath: string;
@@ -28,7 +32,7 @@ declare module 'ajv' {
       readonly custom: Readonly<Dictionary<{ readonly definition: KeywordDefinition }>>;
       readonly keywords: Readonly<Dictionary<boolean>>;
     };
-    readonly _schemas: Dictionary<{ readonly schema: object } | undefined>;
+    readonly _schemas: Dictionary<{ readonly schema: object | boolean } | undefined>;
     /** Resolved references by URI: compiled schema objects or string aliases; restored in place after a failed validation registration. */
     readonly _refs: Dictionary<unknown>;
   }

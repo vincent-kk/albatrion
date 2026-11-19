@@ -29,13 +29,10 @@ export const createValidatorFactory =
       validate = compileWithPointers(ajv, transient ?? jsonSchema, key);
     } catch (error) {
       if (!key || !(error instanceof Error) || error.message !== 'async keyword in sync schema') throw error;
-      const wrapper: JSONSchema = { $async: true, $ref: key };
-      validate = compileWithPointers(ajv, wrapper);
-      ajv.removeSchema(wrapper);
+      validate = compileWithPointers(ajv, jsonSchema, key, true);
       isAsyncReference = true;
     }
     const rootPrefix = isAsyncReference ? `${key}/` : '';
-    if (transient) ajv.removeSchema(transient);
     if (!validate)
       throw new Error(`Registered Ajv schema was not found: ${key}`);
     const compiled: object = transient ?? jsonSchema;

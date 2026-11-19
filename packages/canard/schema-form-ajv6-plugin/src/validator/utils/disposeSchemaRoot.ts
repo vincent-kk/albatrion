@@ -1,7 +1,10 @@
 import type { SchemaRootRegistration } from './registerSchemaRoot';
 
+import { disposePointerCompilation } from './disposeSchemaRoot/disposePointerCompilation';
+
 /** Remove Ajv's strong references when a root is released or collected. */
 export const disposeSchemaRoot = (registration: SchemaRootRegistration): void => {
+  disposePointerCompilation(registration);
   const ownership = registration.validationOwnership;
   if (ownership) {
     const ajv = registration.validation;
