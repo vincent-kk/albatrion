@@ -114,7 +114,7 @@ export class MessageChannelScheduler {
   /** Map of pending tasks keyed by unique task ID */
   private readonly __pendingTasks__ = new Map<number, Fn>();
   /** Incrementing counter for generating unique task IDs */
-  private __taskIdCounter__ = 0;
+  private static __taskIdCounter__ = 0;
   /** Whether scheduler is currently idle (no pending batch flush) */
   private __idle__ = true;
 
@@ -181,7 +181,7 @@ export class MessageChannelScheduler {
         );
     }
 
-    const taskId = ++this.__taskIdCounter__;
+    const taskId = ++MessageChannelScheduler.__taskIdCounter__;
     this.__pendingTasks__.set(taskId, callback);
     this.__requestFlush__();
 
