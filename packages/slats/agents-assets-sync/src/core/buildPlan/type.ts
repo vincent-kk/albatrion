@@ -1,6 +1,6 @@
 import type { Destination, OrphanScan } from '../agentTarget/index.js';
 import type { Sha256Hex } from '../hash/index.js';
-import type { RuleSource } from '../types/ruleSource.js';
+import type { SourceSnapshot } from '../types/sourceSnapshot.js';
 
 /** What the plan decided to do about one manifest entry. */
 export type ActionKind =
@@ -44,7 +44,7 @@ export interface PlanInput {
   /** Normalized body hashes stored alongside raw manifest hashes. */
   readonly ruleBodyHashes?: Readonly<Record<string, Sha256Hex>>;
   /** Run-owned source snapshots normalized once before all checks and writes. */
-  readonly ruleSources?: Map<string, RuleSource | null>;
+  readonly sourceSnapshots?: Map<string, SourceSnapshot | null>;
   /** From `resolveDestinations`. A path absent here is left untouched. */
   readonly destinations: ReadonlyMap<string, Destination>;
   readonly orphanScans: readonly OrphanScan[];

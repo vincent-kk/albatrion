@@ -1,6 +1,8 @@
-import { lstat, readFile, stat, unlink } from 'node:fs/promises';
+import { lstat, unlink } from 'node:fs/promises';
 import { join } from 'node:path';
 
+import { readSourceSnapshot } from '../../hash/index.js';
+import type { SourceSnapshot } from '../../types/sourceSnapshot.js';
 import type { Action } from '../../buildPlan/index.js';
 import { replaceDocument } from './replaceDocument.js';
 
@@ -14,23 +16,21 @@ import { replaceDocument } from './replaceDocument.js';
  *
  * @param action - a single action, expected to carry a `file` target
  * @param assetRoot - consumer asset tree the source file is read from
- * @param checkedBytes - run-owned bytes already hashed and validated, when available
+ * @param snapshot - plan-time bytes and mode; omitted only by the standalone adapter
  */
 export async function applyAction(
   action: Action,
   assetRoot: string,
-  checkedBytes?: Buffer,
+  snapshot?: SourceSnapshot,
 ): Promise<void> {
   if (action.target.kind !== 'file') return;
   const { dstAbs } = action.target;
 
   if (action.kind === 'copy' || action.kind === 'warn-diverged') {
     const source = join(assetRoot, action.relPath);
-    await replaceDocument(
-      dstAbs,
-      checkedBytes ?? (await readFile(source)),
-      (await stat(source)).mode,
-    );
+    const checked = snapshot ?? await readSourceSnapshot(source);
+    if (!checked) throw new Error(`Source file missing: ${source}`);
+    await replaceDocument(dstAbs, checked.bytes, checked.mode);
     return;
   }
   if (action.kind === 'delete') {

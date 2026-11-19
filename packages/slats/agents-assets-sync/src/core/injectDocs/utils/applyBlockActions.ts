@@ -3,7 +3,7 @@ import { join } from 'node:path';
 
 import type { Action } from '../../buildPlan/index.js';
 import { removeBlock, writeNormalizedBlock } from '../../markerBlock/index.js';
-import type { RuleSource } from '../../types/ruleSource.js';
+import type { SourceSnapshot } from '../../types/sourceSnapshot.js';
 import { normalizeRuleSource } from '../../utils/normalizeRuleSource.js';
 import { replaceDocument } from './replaceDocument.js';
 
@@ -23,7 +23,7 @@ export async function applyBlockActions(
   fileAbs: string,
   actions: readonly Action[],
   assetRoot: string,
-  ruleSources?: ReadonlyMap<string, RuleSource | null>,
+  sourceSnapshots?: ReadonlyMap<string, SourceSnapshot | null>,
 ): Promise<void> {
   let content = await readFile(fileAbs, 'latin1').then(
     (text) => text,
@@ -44,7 +44,7 @@ export async function applyBlockActions(
       continue;
     }
     const body =
-      ruleSources?.get(join(assetRoot, action.relPath))?.body ??
+      sourceSnapshots?.get(join(assetRoot, action.relPath))?.body ??
       normalizeRuleSource(
         await readFile(join(assetRoot, action.relPath), 'latin1'),
       );
