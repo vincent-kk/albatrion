@@ -70,6 +70,8 @@ private 생성자에는 schemas·keywords·formats·cache bootstrap 옵션을 �
 
 레지스트리 조회는 own key만 사용하고 문자열 별칭의 모든 중간 키와 최종 문서를 추적합니다. compound 문서는 raw schema로만 수입합니다. 애플리케이션이 embedded 주소만 제거한 경우도 별칭 기록의 변화로 감지합니다. 순환 별칭은 방문 주소로 종료하며 해석할 수 없는 참조 오류를 반환합니다. 순환 $ref는 네이티브 AJV가 지원하는 재귀 스키마 의미를 유지합니다.
 
+참조는 컴파일 시점에 애플리케이션이 해당 키나 id로 해석하는 raw 문서에 연결합니다. 등록 키 A가 자체 id I인 이전 문서를 유지하고 I가 새 문서로 교체되면, A만 참조하는 루트와 I만 참조하는 루트는 각각의 문서를 사용합니다. 서로 다른 문서가 같은 정규화 id를 요구하면 풀을 분리합니다. 한 루트가 두 문서를 함께 요구하는 경우는 지원하지 않으며 해당 id와 두 참조 키를 명시한 오류로 거부합니다. 키별 네이티브 환경을 재구성하여 이 한계를 우회하지 않습니다.
+
 주소는 해당 네이티브 AJV의 URI resolver로 부모 자원에 대해 상대 id를 해석하고 끝의 # 또는 #/를 제거한 값입니다. root·embedded id, 지원 방언의 $anchor·$dynamicAnchor와 레지스트리의 임의 등록 키·별칭을 모두 대조합니다. 애플리케이션 root뿐 아니라 embedded 주소나 anchor가 폼 root 주소와 겹쳐도 같은 충돌 규칙을 적용합니다.
 
 현재 애플리케이션 레지스트리나 별칭에 폼 root 주소가 있으면 내용과 관계없이 중복 id 오류로 거부합니다. 폼 embedded 자원의 주소는 같은 raw 내용일 때만 허용하고 다르면 모호한 참조 오류로 거부합니다. 제거된 주소는 충돌하지 않습니다.
@@ -107,7 +109,7 @@ private 생성자에는 schemas·keywords·formats·cache bootstrap 옵션을 �
 
 ### ownership-observation — 애플리케이션 관찰 동등성과 현재 상태
 
-- I1은 애플리케이션 연산만 받는 쌍둥이 인스턴스와 비교합니다. I2는 그 단계의 쌍둥이 옵션·현재 규칙·format·메타·raw schema로 만든 새 인스턴스와 충돌 규칙으로 비교하며 쌍둥이의 오래된 A.validate 캐시를 oracle로 쓰지 않습니다.
+- I1은 애플리케이션 연산만 받는 쌍둥이 인스턴스와 비교합니다. I2는 폼이 사용하는 각 참조를 쌍둥이의 현재 레지스트리에서 컴파일 없이 해석한 뒤 필요한 raw 문서만 독립 검증기에 넣어 비교합니다. 전체 raw 문서를 다시 등록하거나 쌍둥이의 오래된 A.validate 캐시를 oracle로 쓰지 않습니다. 별칭 키를 유지한 id 교체 뒤 키·id·양쪽 참조를 모두 생성하며 양쪽이 한 루트에서 충돌하는 명시적 한계도 비교합니다.
 - 수천 개의 seed 시퀀스는 세 root id·두 embedded id·상대 주소·anchor·내용 동등/변경, application add/compile/validate/get/remove와 규칙·format·meta 변경, 여러 어댑터·사본, 첫/반복/실패 후 compile, 선행·후속 가드, 반복 release와 64루트 회전을 교차합니다.
 - 버전·방언과 allErrors·strict·validateFormats·bootstrap schemas 및 AJV6 경로·legacy id·serialize·addUsedSchema 옵션을 교차하며 GC 전후와 기능이 없는 호스트의 명시적 한계를 고정합니다.
 - root와 직접 가드·반환 함수의 weak collection을 검사하며 모든 실패에 seed·연산 위치를 남깁니다. 1–5라운드 고정 입력을 포함합니다.
