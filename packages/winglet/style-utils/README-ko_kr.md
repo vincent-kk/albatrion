@@ -188,16 +188,16 @@ console.log(
 );
 ```
 
-### 스코프 CSS를 위한 StyleManager 사용하기
+### 스코프 CSS를 위한 styleManagerFactory 사용하기
 
 ```typescript
-import { StyleManager } from '@winglet/style-utils';
+import { destroyScope, styleManagerFactory } from '@winglet/style-utils';
 
-// 스코프 스타일 매니저 가져오기
-const manager = StyleManager.get('my-component');
+// Create a style manager for a specific component scope
+const addStyle = styleManagerFactory('my-component');
 
-// 컴포넌트별 스타일 추가
-manager.add(
+// Add component-specific styles and get cleanup function
+const removeButtonStyles = addStyle(
   'button-styles',
   `
   .btn {
@@ -220,17 +220,17 @@ manager.add(
 `,
 );
 
-// CSS가 자동으로 다음과 같이 스코핑됩니다:
-// [data-scope="my-component"] .btn { ... }
-// [data-scope="my-component"] .btn:hover { ... }
-// [data-scope="my-component"] .btn:disabled { ... }
+// The CSS will be automatically scoped as:
+// .my-component .btn { ... }
+// .my-component .btn:hover { ... }
+// .my-component .btn:disabled { ... }
 
-// HTML 요소에 스코프 적용
+// Apply the scope to your HTML element
 const componentElement = document.getElementById('my-component');
-componentElement.dataset.scope = 'my-component';
+componentElement.className += ' my-component';
 
-// 동적으로 더 많은 스타일 추가
-manager.add(
+// Add more styles dynamically
+const removeLayoutStyles = addStyle(
   'layout-styles',
   `
   .container {
@@ -240,29 +240,32 @@ manager.add(
 `,
 );
 
-// 특정 스타일 제거
-manager.remove('layout-styles');
+// Remove specific styles
+removeLayoutStyles();
+// or
+removeButtonStyles();
 
-// 컴포넌트가 언마운트될 때 모든 것 정리
-manager.destroy();
+// Clean up everything when component unmounts
+destroyScope('my-component');
 ```
 
-### Shadow DOM과 함께 StyleManager 사용하기
+### Shadow DOM과 함께 styleManagerFactory 사용하기
 
 ```typescript
-import { StyleManager } from '@winglet/style-utils';
+import { destroyScope, styleManagerFactory } from '@winglet/style-utils';
 
-// Shadow DOM을 가진 커스텀 엘리먼트 생성
+// Create a custom element with Shadow DOM
 class MyCustomElement extends HTMLElement {
   private shadowRoot: ShadowRoot;
-  private styleManager: StyleManager;
+  private addStyle: (styleId: string, css: string) => () => void;
+  private cleanupFunctions: Array<() => void> = [];
 
   constructor() {
     super();
     this.shadowRoot = this.attachShadow({ mode: 'open' });
 
-    // 이 shadow root를 위한 StyleManager 생성
-    this.styleManager = StyleManager.get('custom-element', {
+    // Create a style manager for this shadow root
+    this.addStyle = styleManagerFactory('custom-element', {
       shadowRoot: this.shadowRoot,
     });
 
@@ -271,7 +274,7 @@ class MyCustomElement extends HTMLElement {
   }
 
   private setupStyles() {
-    this.styleManager.add(
+    const removeHostStyles = this.addStyle(
       'host-styles',
       `
       :host {
@@ -281,7 +284,7 @@ class MyCustomElement extends HTMLElement {
     `,
     );
 
-    this.styleManager.add(
+    const removeComponentStyles = this.addStyle(
       'component-styles',
       `
       .header {
@@ -295,12 +298,15 @@ class MyCustomElement extends HTMLElement {
       }
     `,
     );
+
+    // Store cleanup functions for later use
+    this.cleanupFunctions.push(removeHostStyles, removeComponentStyles);
   }
 
   private render() {
     this.shadowRoot.innerHTML = `
       <div class="header">
-        <h2>커스텀 엘리먼트</h2>
+        <h2>Custom Element</h2>
       </div>
       <div class="content">
         <slot></slot>
@@ -309,8 +315,8 @@ class MyCustomElement extends HTMLElement {
   }
 
   disconnectedCallback() {
-    // 엘리먼트가 제거될 때 스타일 정리
-    this.styleManager.destroy();
+    // Clean up styles when element is removed
+    destroyScope('custom-element', { shadowRoot: this.shadowRoot });
   }
 }
 
@@ -320,13 +326,14 @@ customElements.define('my-custom-element', MyCustomElement);
 ### 동적 테마 관리
 
 ```typescript
-import { StyleManager } from '@winglet/style-utils';
+import { destroyScope, styleManagerFactory } from '@winglet/style-utils';
 
 class ThemeManager {
-  private styleManager: StyleManager;
+  private addStyle: (styleId: string, css: string) => () => void;
+  private customStyles = new Map<string, () => void>();
 
   constructor() {
-    this.styleManager = StyleManager.get('theme');
+    this.addStyle = styleManagerFactory('theme');
   }
 
   applyTheme(theme: 'light' | 'dark') {
@@ -343,7 +350,11 @@ class ThemeManager {
             primary: '#0d6efd',
           };
 
-    this.styleManager.add(
+    // Remove previous theme if exists
+    this.customStyles.get('theme-colors')?.();
+
+    // Add new theme
+    const removeTheme = this.addStyle(
       'theme-colors',
       `
       :root {
@@ -359,22 +370,37 @@ class ThemeManager {
       }
     `,
     );
+
+    this.customStyles.set('theme-colors', removeTheme);
   }
 
   addCustomStyles(id: string, css: string) {
-    this.styleManager.add(id, css);
+    // Remove existing style if present
+    this.customStyles.get(id)?.();
+
+    const removeStyle = this.addStyle(id, css);
+    this.customStyles.set(id, removeStyle);
   }
 
   removeCustomStyles(id: string) {
-    this.styleManager.remove(id);
+    const removeStyle = this.customStyles.get(id);
+    if (removeStyle) {
+      removeStyle();
+      this.customStyles.delete(id);
+    }
+  }
+
+  destroy() {
+    destroyScope('theme');
+    this.customStyles.clear();
   }
 }
 
-// 사용법
+// Usage
 const themeManager = new ThemeManager();
 themeManager.applyTheme('dark');
 
-// body 요소에 스코프 클래스 추가
+// Add scope class to body element
 document.body.className += ' theme';
 ```
 
