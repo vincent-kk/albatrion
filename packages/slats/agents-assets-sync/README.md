@@ -267,3 +267,7 @@ MIT — see [LICENSE](./LICENSE).
 - A user-scope AGENTS.md symlink is followed only when its target exists. A dangling link is refused with an error and preserved, so the tool cannot silently replace a dotfiles link.
 
 File orphan scans cover only skill namespaces present in the current manifest. Removed whole skills and Claude rule or command files remain installed, even with `--force`, because these files do not record which package owns them. Remove those retired files manually after checking their ownership. Codex and agents rules carry package-owned marker blocks, so retired blocks can be identified and removed with `--force`; this differs from Claude file cleanup.
+
+### Markdown boundaries for rules
+
+Rule sources must have closed fenced code blocks and HTML comments. A managed block cannot be placed after an unclosed fence or comment in `AGENTS.md`. The error identifies the file and opening line and asks you to close it; the entire affected unit is left unchanged while other units proceed. Close the source or document fence, then rerun normally. Source bytes are never canonicalized. Top-level backtick and tilde fences with up to three spaces of indentation are supported, including a longer closing fence. Fences inside blockquotes or list items, and fence syntax with tabs or four or more indentation spaces, are refused with a line-specific diagnostic; move these fences to the top level. Markers inside HTML comments are examples, not managed blocks.
