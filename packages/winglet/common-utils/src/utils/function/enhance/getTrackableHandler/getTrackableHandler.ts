@@ -2,6 +2,7 @@ import { reportHostError } from '@/common-utils/utils/errorReporting/reportHostE
 
 import type { Dictionary, Fn } from '@aileron/declare';
 
+import { HookStateManager } from './utils/HookStateManager';
 import { isThenable } from './utils/isThenable';
 
 import type {
@@ -517,34 +518,36 @@ export function getTrackableHandler<
       return runOrigin();
     };
   } else {
+    const stateOwner: StateManager<State> = {
+      get state(): State { return state; },
+      update: updater => {
+        const next = typeof updater === 'function' ? updater(state) : updater;
+        state = { ...state, ...next };
+      },
+    };
     handler = async (...args: Args): Promise<Result | undefined> => {
       pendingCallCount++;
       pending = true;
-      hookRunning = true;
+      const stateManager = new HookStateManager(stateOwner, publish);
       try {
         const returned = beforeExecute?.(args, stateManager);
-        if (returned != null && isThenable(returned)) {
-          awaitingHookCount++;
-          try { await returned; } finally { awaitingHookCount--; }
-        }
+        if (returned != null && isThenable(returned)) await returned;
       } catch (error) {
+        stateManager.isHookRunning = false;
         pending = --pendingCallCount > 0;
         publish(true);
         throw error;
-      } finally { hookRunning = false; }
+      } finally { stateManager.isHookRunning = false; }
       try {
         publish();
         return await origin(...args);
       } finally {
-        hookRunning = true;
+        stateManager.isHookRunning = true;
         try {
           const returned = afterExecute?.(args, stateManager);
-          if (returned != null && isThenable(returned)) {
-            awaitingHookCount++;
-            try { await returned; } finally { awaitingHookCount--; }
-          }
+          if (returned != null && isThenable(returned)) await returned;
         } finally {
-          hookRunning = false;
+          stateManager.isHookRunning = false;
           pending = --pendingCallCount > 0;
           publish(true);
         }
