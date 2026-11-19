@@ -57,23 +57,23 @@ describe('r4-contracts site guidance for --scope=project', () => {
     'lerx/promise-modal',
   ].map((page) => join(repositoryRoot, 'documents/docs', page, 'index.mdx'));
 
-  it('the site pages promise the nearest existing .claude walking up from cwd', () => {
+  it('the site pages describe root-marker priority', () => {
     const claims = pages.filter((page) =>
       readFileSync(page, 'utf8').includes(
-        '# Into the nearest existing .claude, walking up from cwd',
+        '# Into the project root: nearest ancestor with .git, workspace manifest or lockfile; else the nearest agent directory',
       ),
     );
     expect(claims).toHaveLength(7);
   });
 
-  it('--scope=project lands in the nearest existing .claude, as the seven site pages state', () => {
+  it('--scope=project prioritizes the root marker over a nearer agent directory', () => {
     const outer = realpathSync(mkdtempSync(join(tmpdir(), 'r4-contracts-scope-')));
     mkdirSync(join(outer, '.git'));
     const member = join(outer, 'apps', 'web');
     mkdirSync(join(member, '.claude'), { recursive: true });
     // A workspace member that already owns .claude, inside a repository root.
     const { projectRoot } = resolveProjectRoot('project', member);
-    expect(projectRoot).toBe(member);
+    expect(projectRoot).toBe(outer);
   });
 
   it('control: without a root marker the nearest existing .claude is chosen', () => {
@@ -107,7 +107,7 @@ describe('r4-contracts CommonJS consumer of an ESM-only export map', () => {
     return { root, file };
   };
 
-  it('TypeScript (module nodenext) and Node agree on whether require() of the package works', () => {
+  it('documents the nodenext limitation while keeping require explicitly unavailable', () => {
     const ts = requireFromHere('typescript') as typeof import('typescript');
     const { root, file } = makeConsumer();
     const program = ts.createProgram([file], {
@@ -132,6 +132,8 @@ describe('r4-contracts CommonJS consumer of an ESM-only export map', () => {
       runtime.status === 0
         ? 'accepted'
         : `rejected ${/ERR_[A-Z_]+/.exec(runtime.stderr)?.[0] ?? ''}`;
-    expect({ typeScript, node }).toEqual({ typeScript: node, node });
+    expect({ typeScript, node }).toEqual({ typeScript: 'accepted', node: 'rejected ERR_PACKAGE_PATH_NOT_EXPORTED' });
+    expect(readFileSync(join(packageDir, 'README.md'), 'utf8')).toContain('ESM-only');
+    expect(readFileSync(join(packageDir, 'README-ko_kr.md'), 'utf8')).toContain('ESM 전용');
   });
 });

@@ -87,7 +87,7 @@ Inject those assets with `@slats/agents-assets-sync` (bin: `inject-agents-settin
 # Into ~/.claude (user-level)
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/data-loader --agent=claude --scope=user
 
-# Into the nearest existing .claude, walking up from cwd
+# Into the project root: nearest ancestor with .git, workspace manifest or lockfile; else the nearest agent directory
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/data-loader --agent=claude --scope=project
 
 # The same assets into Codex locations (skills into .agents/, rules into AGENTS.md)
