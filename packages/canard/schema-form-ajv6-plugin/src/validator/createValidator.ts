@@ -1,16 +1,10 @@
 import type { JSONSchema, ValidatorFactory } from '@canard/schema-form';
-import type Ajv from 'ajv';
+import type { Ajv } from 'ajv';
 
 import { createGuardCompiler } from './createGuardCompiler';
+import { createValidatorFactory } from './createValidatorFactory';
 import { assertBindableInstance } from './utils/assertBindableInstance';
-import { createFinalizer } from './utils/createFinalizer';
-import { createSchemaValidator } from './utils/createSchemaValidator';
-import { disposeSchemaRoot } from './utils/disposeSchemaRoot';
-import {
-  type SchemaRootRegistration,
-  registerSchemaRoot,
-} from './utils/registerSchemaRoot';
-import { registerValidationRoot } from './utils/registerValidationRoot';
+import { createSchemaRootRegistry } from './utils/createSchemaRootRegistry';
 import { releaseSchemaRoot } from './utils/releaseSchemaRoot';
 
 /** Per-object selections of a validator built from one AJV instance. */
@@ -20,65 +14,29 @@ export interface InstanceValidatorOptions {
 }
 
 /**
- * Build a validator object for one AJV 6 instance, for a Form's `validatorFactory`.
+ * Build a validator object for one AJV instance, for a Form's `validatorFactory`.
  * The instance is refused like `bind` when it would modify values (LANDING-192),
- * and the object owns its own root registrations, so `release` and garbage
- * collection never touch the plugin's process-wide binding.
+ * and the object owns its own root registry, so `release` and garbage collection
+ * never touch the entry point's process-wide registrations.
  * @param ajv - Instance supplying keywords and formats; must not coerce, default or remove
+ * @param dialect - Dialect URI of the entry point that constructs the object
  * @param options - Per-object selections; omitted fields take their defaults
- * @returns An object satisfying the core validator contract, independent of `plugin.validator`
+ * @returns An object satisfying the core validator contract, bound to this instance
  * @throws ValidatorBindRefusedError when `coerceTypes`, `useDefaults` or `removeAdditional` is enabled
  */
 export const createValidator = (
-  ajv: Ajv.Ajv,
+  ajv: Ajv,
   options: InstanceValidatorOptions = {},
 ): ValidatorFactory => {
   assertBindableInstance(ajv);
+  const roots = createSchemaRootRegistry();
   const directGuardCompile = options.directGuardCompile ?? true;
-  const roots = new WeakMap<object, SchemaRootRegistration>();
-  const active: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[] = [];
-  const finalizer = createFinalizer(disposeSchemaRoot);
   return {
-    compile: (jsonSchema: JSONSchema) => {
-      const serialization: { value?: string; hasResources?: boolean } = {};
-      const registered = registerSchemaRoot(
-        jsonSchema,
-        ajv,
-        roots,
-        active,
-        finalizer,
-        serialization,
-      );
-      registerValidationRoot(registered);
-      const validate = createSchemaValidator(
-        registered.validation,
-        registered.validationCopy ?? jsonSchema,
-        registered.validationCopy ? registered.key : undefined,
-        false,
-        serialization.value,
-        serialization.hasResources ?? true,
-      );
-      return async (value: unknown) => validate(value);
-    },
-    compileGuard: (root: JSONSchema, pointer: string) => {
-      const registered = registerSchemaRoot(
-        root,
-        ajv,
-        roots,
-        active,
-        finalizer,
-      );
-      return createGuardCompiler(
-        ajv,
-        registered,
-        pointer,
-        root,
-        directGuardCompile,
-        finalizer,
-      );
-    },
-    release: (root: JSONSchema) =>
-      releaseSchemaRoot(root, roots, active, finalizer),
+    compile: (jsonSchema: JSONSchema) =>
+      createValidatorFactory(ajv, undefined, roots)(jsonSchema),
+    compileGuard: (root: JSONSchema, pointer: string) =>
+      createGuardCompiler(ajv, roots, root, pointer, directGuardCompile),
+    release: (root: JSONSchema) => releaseSchemaRoot(roots, root),
     dialect: 'http://json-schema.org/draft-07/schema#',
   } satisfies ValidatorFactory;
 };

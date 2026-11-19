@@ -1,45 +1,52 @@
 /// <reference lib="es2021.weakref" preserve="true" />
-import type Ajv from 'ajv';
+import type { Ajv } from 'ajv';
 
+import { createFinalizer } from './createFinalizer';
+import { disposeSchemaRoot } from './disposeSchemaRoot';
+import type { PrivateCompiler } from './privateCompiler/types';
 import type { SchemaRootRegistration } from './registerSchemaRoot';
 
-/** One instance's weak ownership list and registration sequence, shared across evaluated copies. */
-type InstanceIdRegistrations = {
-  /** Plain array retains the native array shape used by local ownership lists. */
+/** Realm-shared ownership; a pool contains at most 64 detached root attempts. */
+export interface InstanceIdRegistrations {
   readonly active: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[];
-  /** Monotonic registration sequence within the shared AJV instance. */
+  readonly finalizer: FinalizationRegistry<SchemaRootRegistration> | undefined;
   nextKey: number;
-};
-
-/** Module evaluation shares one realm WeakMap through Symbol.for; its keys are bound AJV instances. */
+  readonly pool: {
+    count: number;
+    validation?: PrivateCompiler;
+    guard?: PrivateCompiler;
+  };
+  meta?: PrivateCompiler;
+}
+/** Module evaluation shares metadata through a versioned realm symbol. */
 const REGISTRATIONS_KEY = Symbol.for(
-  '@canard/schema-form-ajv6-plugin/registrations/v1',
+  '@canard/schema-form-ajv6-plugin/registrations/v2',
 );
-
-/** Realm metadata keeps application instances unmodified and weakly held. */
+/** Weak keys never change or retain the application instance. */
 const realm: typeof globalThis & {
-  [REGISTRATIONS_KEY]?: WeakMap<Ajv.Ajv, InstanceIdRegistrations>;
+  [REGISTRATIONS_KEY]?: WeakMap<Ajv, InstanceIdRegistrations>;
 } = globalThis;
-/** Cache the realm lookup once per evaluated copy, outside compilation paths. */
+/** Shared ledger map is looked up once per evaluated copy. */
 const registrationsByInstance =
-  realm[REGISTRATIONS_KEY] ?? new WeakMap<Ajv.Ajv, InstanceIdRegistrations>();
+  realm[REGISTRATIONS_KEY] ?? new WeakMap<Ajv, InstanceIdRegistrations>();
 if (!realm[REGISTRATIONS_KEY])
   Object.defineProperty(realm, REGISTRATIONS_KEY, {
     value: registrationsByInstance,
   });
 
-/**
- * Read ownership metadata shared by every compatible plugin copy using this AJV instance.
- * @param instance - Bound application instance; metadata does not alter its options or schemas.
- * @returns The instance's mutable weak ownership list and registration counter.
- */
+/** Read the exact application's ledger without altering application state. */
 export const instanceIdRegistrationsOf = (
-  instance: Ajv.Ajv,
+  instance: Ajv,
 ): InstanceIdRegistrations => {
-  let list = registrationsByInstance.get(instance);
-  if (!list) {
-    list = { active: [], nextKey: 0 };
-    registrationsByInstance.set(instance, list);
+  let ledger = registrationsByInstance.get(instance);
+  if (!ledger) {
+    ledger = {
+      active: [],
+      finalizer: createFinalizer(disposeSchemaRoot),
+      nextKey: 0,
+      pool: { count: 0 },
+    };
+    registrationsByInstance.set(instance, ledger);
   }
-  return list;
+  return ledger;
 };

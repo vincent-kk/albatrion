@@ -20,8 +20,16 @@ it('directGuardCompile uses the copy subschema identity and release frees it', (
   const predicate = ajvValidatorPlugin.compileGuard(copy, '/if');
   expect(predicate('ok')).toBe(true);
   expect(predicate(1)).toBe(false);
-  const index = compile.mock.calls.findIndex(([schema]) => schema === copy.if);
+  const index = compile.mock.calls.findIndex(
+    ([schema]) =>
+      typeof schema === 'object' &&
+      schema !== null &&
+      Reflect.get(schema, 'type') === 'string',
+  );
   expect(index).toBeGreaterThanOrEqual(0);
+  const detached = compile.mock.calls[index][0];
+  expect(detached).toEqual(copy.if);
+  expect(detached).not.toBe(copy.if);
   expect(
     compile.mock.calls.some(
       ([schema]) =>
@@ -36,10 +44,8 @@ it('directGuardCompile uses the copy subschema identity and release frees it', (
     throw new Error('Missing guard instance');
   expect(guard).toMatchObject({ _opts: { allErrors: false } });
   ajvValidatorPlugin.release(copy);
-  expect(remove).toHaveBeenCalledWith(copy.if);
-  expect(
-    Reflect.get(Reflect.get(guard, '_cache'), '_cache'),
-  ).not.toHaveProperty(JSON.stringify(copy.if));
+  expect(remove).toHaveBeenCalledWith(detached);
+  expect(Reflect.get(guard, '_cache').get(detached)).toBeUndefined();
 });
 
 it.each([true, false])(
@@ -137,9 +143,15 @@ it('uses the root-pointer path for contextual guards and when configured off', (
     ajvValidatorPlugin.configure({ directGuardCompile: enabled });
     compile.mockClear();
     ajvValidatorPlugin.compileGuard(copy, '/if');
-    expect(compile.mock.calls.some(([candidate]) => candidate === schema)).toBe(
-      false,
-    );
+    expect(
+      compile.mock.calls.some(
+        ([candidate]) =>
+          candidate !== null &&
+          typeof candidate === 'object' &&
+          !('$ref' in candidate) &&
+          JSON.stringify(candidate) === JSON.stringify(schema),
+      ),
+    ).toBe(false);
     expect(
       compile.mock.calls.some(
         ([candidate]) =>
@@ -258,9 +270,15 @@ it.each([undefined, '$id', 'id', 'auto'] as const)(
     Object.assign(copy, { if: schema });
     const compile = vi.spyOn(Ajv.prototype, 'compile');
     ajvValidatorPlugin.compileGuard(copy, '/if');
-    expect(compile.mock.calls.some(([candidate]) => candidate === schema)).toBe(
-      schemaId === undefined || schemaId === '$id',
-    );
+    expect(
+      compile.mock.calls.some(
+        ([candidate]) =>
+          candidate !== null &&
+          typeof candidate === 'object' &&
+          !('$ref' in candidate) &&
+          JSON.stringify(candidate) === JSON.stringify(schema),
+      ),
+    ).toBe(schemaId === undefined || schemaId === '$id');
     ajvValidatorPlugin.release(copy);
   },
 );

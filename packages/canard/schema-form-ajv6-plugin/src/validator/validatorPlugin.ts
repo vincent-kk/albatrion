@@ -1,23 +1,21 @@
 import type { ValidatorPlugin } from '@canard/schema-form';
-import type Ajv from 'ajv';
+import type { Ajv, Options } from 'ajv';
 
 import { createGuardCompiler } from './createGuardCompiler';
+import { createValidatorFactory } from './createValidatorFactory';
 import { assertBindableInstance } from './utils/assertBindableInstance';
 import { createDefaultInstance } from './utils/createDefaultInstance';
-import { createFinalizer } from './utils/createFinalizer';
-import { createSchemaValidator } from './utils/createSchemaValidator';
-import { disposeSchemaRoot } from './utils/disposeSchemaRoot';
-import {
-  type SchemaRootRegistration,
-  registerSchemaRoot,
-} from './utils/registerSchemaRoot';
-import { registerValidationRoot } from './utils/registerValidationRoot';
+import { createSchemaRootRegistry } from './utils/createSchemaRootRegistry';
 import { releaseSchemaRoot } from './utils/releaseSchemaRoot';
 
 /**
- * AJV6 defaults preserve the plugin's Draft-07 and format behavior.
+ * Default AJV6 settings optimized for schema-form validation.
+ *
+ * - allErrors: true - Collect all validation errors, not just the first one
+ * - strict: false - Disable strict mode for better compatibility with existing schemas
+ * - validateFormats: false - Disable format validation for better performance
  */
-const defaultSettings: Ajv.Options = {
+const defaultSettings: Options = {
   allErrors: true,
   multipleOfPrecision: 9,
   nullable: true,
@@ -26,7 +24,7 @@ const defaultSettings: Ajv.Options = {
 };
 
 /** The consumer binding is process-wide, as required by ValidatorPlugin.bind. */
-let ajvInstance: Ajv.Ajv | null = null;
+let ajvInstance: Ajv | null = null;
 /** Process-wide optimization selection; existing predicates retain their behavior. */
 let directGuardCompile = true;
 
@@ -40,14 +38,26 @@ type ConfigurableValidatorPlugin = ValidatorPlugin & {
    */
   configure(options: { directGuardCompile?: boolean }): void;
 };
-/** Root registrations belong to the current binding. */
-let roots = new WeakMap<object, SchemaRootRegistration>();
-/** Live registrations expose overlapping IDs to the registration boundary. */
-let active: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[] = [];
-const finalizer = createFinalizer(disposeSchemaRoot);
+/** Root selections reset on binding; native resources remain in their instance ledger. */
+let roots = createSchemaRootRegistry();
 
 /**
- * Ajv 6 validation and synchronous guards for schema-form.
+ * AJV6 validator plugin for schema-form.
+ *
+ * This plugin provides JSON Schema validation using AJV version 7.x.
+ * AJV6 uses JSONPointer format for error instancePaths by default,
+ * which provides better consistency with the schema-form library.
+ *
+ * @example
+ * ```typescript
+ * import { registerPlugin } from '@canard/schema-form';
+ * import { plugin } from '@canard/schema-form-ajv6-plugin';
+ * import Ajv from 'ajv';
+ *
+ * // Use a custom AJV instance: bind it before registering
+ * plugin.validator.bind(new Ajv({ allErrors: false }));
+ * registerPlugin(plugin);
+ * ```
  */
 export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
   Required<Pick<ValidatorPlugin, 'bind' | 'compileGuard' | 'release'>> = {
@@ -55,52 +65,25 @@ export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
   configure: (options) => {
     directGuardCompile = options.directGuardCompile ?? directGuardCompile;
   },
-  bind: (instance: Ajv.Ajv) => {
+  bind: (instance: Ajv) => {
     assertBindableInstance(instance);
     ajvInstance = instance;
-    roots = new WeakMap();
-    active = [];
+    roots = createSchemaRootRegistry();
   },
   compile: (jsonSchema) => {
     if (!ajvInstance) ajvInstance = createDefaultInstance(defaultSettings);
-    const serialization: { value?: string; hasResources?: boolean } = {};
-    const registered = registerSchemaRoot(
-      jsonSchema,
-      ajvInstance,
-      roots,
-      active,
-      finalizer,
-      serialization,
-    );
-    registerValidationRoot(registered);
-    const validate = createSchemaValidator(
-      registered.validation,
-      registered.validationCopy ?? jsonSchema,
-      registered.validationCopy ? registered.key : undefined,
-      false,
-      serialization.value,
-        serialization.hasResources ?? true,
-    );
-    return async (value: unknown) => validate(value);
+    return createValidatorFactory(ajvInstance, undefined, roots)(jsonSchema);
   },
   compileGuard: (root, pointer) => {
     if (!ajvInstance) ajvInstance = createDefaultInstance(defaultSettings);
-    const registered = registerSchemaRoot(
-      root,
-      ajvInstance,
-      roots,
-      active,
-      finalizer,
-    );
     return createGuardCompiler(
       ajvInstance,
-      registered,
-      pointer,
+      roots,
       root,
+      pointer,
       directGuardCompile,
-      finalizer,
     );
   },
-  release: (root) => releaseSchemaRoot(root, roots, active, finalizer),
+  release: (root) => releaseSchemaRoot(roots, root),
   dialect: 'http://json-schema.org/draft-07/schema#',
 } satisfies ConfigurableValidatorPlugin;

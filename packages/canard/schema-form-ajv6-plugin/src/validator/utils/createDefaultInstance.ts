@@ -1,7 +1,6 @@
 import Ajv from 'ajv';
 
 import { createMultipleOfCode } from './createDefaultInstance/createMultipleOfCode';
-import { pointerCompilers } from './pointerCompilerCache';
 
 /**
  * Create the plugin's own AJV profile without changing application-supplied instances.
@@ -14,7 +13,6 @@ export const createDefaultInstance = (options: Ajv.Options): Ajv.Ajv => {
     jsonPointers: true,
     errorDataPath: 'object',
   });
-  pointerCompilers.set(instance, instance);
   instance.removeKeyword('multipleOf');
   instance.addKeyword('multipleOf', {
     type: 'number',

@@ -1,111 +1,99 @@
 /// <reference lib="es2021.weakref" preserve="true" />
-import type Ajv from 'ajv';
+import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
+import type { Ajv } from 'ajv';
 
-import { PLUGIN_KEY_PREFIX, cloneInstance } from './cloneInstance';
 import { createWeakReference } from './createWeakReference';
+import { disposeSchemaRoot } from './disposeSchemaRoot';
 import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
+import { isPrivateCompilerCurrent } from './privateCompiler/isPrivateCompilerCurrent';
+import type { PrivateCompiler } from './privateCompiler/types';
 
-/** Ajv instances and key retained for one authored root identity. */
+/** Detached state whose lifetime follows a caller root held only as a WeakMap key. */
 export interface SchemaRootRegistration {
-  /** Direct schemas are owned and released with this root's guard instance. */
-  readonly directGuards: (object | boolean)[];
-  /** Self-containment is computed once per object in this bound profile. */
-  readonly guardChecks: WeakMap<object, boolean>;
-  /** Base instance this root was registered against; `$id` conflicts are tracked per base. */
-  readonly base: Ajv.Ajv;
-  readonly validation: Ajv.Ajv;
-  guard?: Ajv.Ajv;
+  readonly baseAjv: Ajv;
+  readonly copy: JSONSchema;
+  readonly serialized: string;
   readonly key: string;
-  readonly rootId: string;
   readonly ids: readonly string[];
-  readonly validationCopy?: object;
-  /** Whether `validationCopy` is registered on `validation`; set only by a successful `registerValidationRoot`. */
-  validationRegistered: boolean;
-  /** Exact registry values added by this registration; replaced application entries survive release. */
-  validationOwnership?: {
-    /** Schema environment originally registered under the plugin key. */
-    readonly environment: unknown;
-    /** Reference entries absent before this registration. */
-    readonly refs: readonly (readonly [string, unknown])[];
-    /** Whether the environment was absent from the application's schema registry. */
-    readonly isCacheOwned: boolean;
-  };
-  guardCopy?: object;
+  readonly hasDynamicKeywords: boolean;
+  readonly guardChecks: WeakMap<object, boolean>;
+  readonly guards: Map<
+    string,
+    { compiler: PrivateCompiler; validate: (value: unknown) => boolean }
+  >;
+  readonly guardSchemas: {
+    compiler: PrivateCompiler;
+    schema: object | boolean;
+  }[];
+  validationMeta?: PrivateCompiler;
+  validation?: PrivateCompiler;
+  guard?: PrivateCompiler;
+  validate?: ValidateFunction;
+  released: boolean;
 }
-
-/**
- * Record one root while leaving guard and validation compilation lazy.
- * @param root - Authored root identity whose registered copies remain independent.
- * @param instance - Bound native AJV profile.
- * @param roots - Per-adapter weak root registry.
- * @param active - Live roots used for id conflict detection.
- * @param finalizer - Optional native collection cleanup.
- * @param serialization - Optional output for this invocation snapshot; unchanged on registry hits.
- * @returns The existing registration or a new independently owned root registration.
- */
+/** Adapter-local root identity selection; native resources belong to the instance ledger. */
+export interface SchemaRootRegistry {
+  readonly entries: WeakMap<JSONSchema, SchemaRootRegistration[]>;
+}
+/** Register one detached snapshot, pruning dead weak registrations before reserving state. */
 export const registerSchemaRoot = (
-  root: object,
-  instance: Ajv.Ajv,
-  roots: WeakMap<object, SchemaRootRegistration>,
-  active: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[],
-  finalizer: FinalizationRegistry<SchemaRootRegistration> | undefined,
-  serialization?: { value?: string; hasResources?: boolean },
+  registry: SchemaRootRegistry,
+  baseAjv: Ajv,
+  root: JSONSchema,
 ): SchemaRootRegistration => {
-  const previous = roots.get(root);
-  if (previous) return previous;
+  if (!root || typeof root !== 'object' || Array.isArray(root))
+    throw new TypeError('A form schema root must be a JSON schema object');
+  const registrations = registry.entries.get(root) ?? [];
+  const existing = registrations.find((entry) => entry.baseAjv === baseAjv);
   const ids: string[] = [];
+  let hasDynamicKeywords = false;
   const serialized = JSON.stringify(root, (name, value: unknown) => {
-    if (name === '$id' && typeof value === 'string') ids.push(value);
+    if ((name === '$id' || name === 'id') && typeof value === 'string')
+      ids.push(value);
+    if (
+      [
+        '$dynamicAnchor',
+        '$recursiveAnchor',
+        '$dynamicRef',
+        '$recursiveRef',
+      ].includes(name)
+    )
+      hasDynamicKeywords = true;
     return value;
   });
-  if (serialization) {
-    serialization.value = serialized;
-    serialization.hasResources = ids.length !== 0;
+  if (
+    existing?.serialized === serialized &&
+    (!existing.validation || isPrivateCompilerCurrent(existing.validation)) &&
+    (!existing.guard || isPrivateCompilerCurrent(existing.guard)) &&
+    (!existing.validationMeta ||
+      isPrivateCompilerCurrent(existing.validationMeta))
+  )
+    return existing;
+  const ledger = instanceIdRegistrationsOf(baseAjv);
+  if (existing) {
+    ledger.finalizer?.unregister(existing);
+    disposeSchemaRoot(existing);
+    registrations.splice(registrations.indexOf(existing), 1);
   }
-  if (ids.length)
-    for (let index = active.length - 1; index >= 0; index--)
-      if (!active[index].deref()) active.splice(index, 1);
-  const allRegistrations = instanceIdRegistrationsOf(instance);
-  const shared: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[] = ids.length
-    ? allRegistrations.active
-    : [];
-  for (let index = shared.length - 1; index >= 0; index--)
-    if (!shared[index].deref()) shared.splice(index, 1);
-  const conflict = ids.some(
-    (id) =>
-      active.some((ref) => ref.deref()?.ids.includes(id)) ||
-      shared.some((ref) => ref.deref()?.ids.includes(id)),
-  );
-  const validation = conflict
-    ? cloneInstance(
-        instance,
-        !!instance._opts.allErrors,
-        instance._opts.validateSchema,
-        { jsonPointers: true, errorDataPath: 'object' },
-      )
-    : instance;
-  const key = `${PLUGIN_KEY_PREFIX}${++allRegistrations.nextKey}`;
-  const validationCopy: object | undefined = ids.length
-    ? JSON.parse(serialized)
-    : undefined;
-  const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : key;
+  for (let index = ledger.active.length - 1; index >= 0; index--) {
+    const entry = ledger.active[index].deref();
+    if (!entry || entry.released) ledger.active.splice(index, 1);
+  }
   const registration: SchemaRootRegistration = {
-    base: instance,
-    validation,
-    key,
-    rootId,
+    baseAjv,
+    copy: JSON.parse(serialized),
+    serialized,
+    key: `https://canard.invalid/ajv6/root/${++ledger.nextKey}`,
     ids,
-    validationCopy,
-    validationRegistered: false,
-    directGuards: [],
+    hasDynamicKeywords,
     guardChecks: new WeakMap(),
+    guards: new Map(),
+    guardSchemas: [],
+    released: false,
   };
-  roots.set(root, registration);
-  finalizer?.register(root, registration, registration);
-  if (ids.length) {
-    const ref = createWeakReference(registration);
-    active.push(ref);
-    shared.push(ref);
-  }
+  registrations.push(registration);
+  registry.entries.set(root, registrations);
+  ledger.finalizer?.register(root, registration, registration);
+  ledger.active.push(createWeakReference(registration));
   return registration;
 };

@@ -3,9 +3,7 @@ import 'ajv';
 import type { Dictionary } from '@aileron/declare';
 
 /**
- * Types only the Ajv 6.12 internals this plugin reads. R2 requires siblings to
- * see schemas consumers added to a bound instance before compilation; a failed
- * validation registration restores `_refs` and `_schemas` in place.
+ * Types the read-only application registries and plugin-owned compilers of Ajv 6.12.
  */
 declare module 'ajv' {
   interface Options {
@@ -27,7 +25,12 @@ declare module 'ajv' {
      * @param key - Optional application address for the schema.
      * @returns This instance for chaining.
      */
-    addSchema(schema: object | boolean, key?: string): Ajv;
+    addMetaSchema(schema: object, key?: string, skipValidation?: boolean): Ajv;
+    addSchema(
+      schema: object | boolean,
+      key?: string,
+      skipValidation?: boolean,
+    ): Ajv;
     /**
      * Validate a schema with AJV6's supported throw-or-log mode.
      * @param schema - Object or boolean schema accepted by the native runtime.
@@ -42,11 +45,16 @@ declare module 'ajv' {
     /** Native compilation profile selected while compiling a meta-schema. */
     _metaOpts: Options;
     readonly _formats: Readonly<Dictionary<Parameters<Ajv['addFormat']>[1]>>;
-    readonly RULES: {
+    readonly RULES: readonly {
+      readonly type?: string;
+      readonly rules: readonly object[];
+    }[] & {
       readonly custom: Readonly<
         Dictionary<{ readonly definition: KeywordDefinition }>
       >;
       readonly keywords: Readonly<Dictionary<boolean>>;
+      readonly all: Readonly<Dictionary<unknown>>;
+      readonly types: Readonly<Dictionary<unknown>>;
     };
     /** Private cache operations used without reserializing a resolved registered schema. */
     readonly _cache: {
@@ -67,7 +75,7 @@ declare module 'ajv' {
         }
       | undefined
     >;
-    /** Resolved references by URI: compiled schema objects or string aliases; restored in place after a failed validation registration. */
+    /** Current native URI entries, read without compiling or changing the application instance. */
     readonly _refs: Dictionary<unknown>;
   }
 }

@@ -65,7 +65,8 @@
     "version:patch": "yarn version patch"
   },
   "dependencies": {
-    "ajv": "^6.0.0"
+    "ajv": "^6.0.0",
+    "uri-js": "4.4.1"
   },
   "peerDependencies": {
     "@canard/schema-form": "workspace:^"
