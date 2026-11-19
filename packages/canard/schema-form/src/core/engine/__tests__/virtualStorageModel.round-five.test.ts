@@ -43,6 +43,7 @@ it('virtual operations follow the reference model in sequential and batched hist
           properties,
           options: {
             virtual: {
+              reversed: { fields: [...names].reverse() },
               group: {
                 fields: names,
                 controls: { active: '../groupOn === true' },
@@ -61,11 +62,12 @@ it('virtual operations follow the reference model in sequential and batched hist
       });
     const roots = [create(), create()];
     for (let step = 0; step < 12; step++) {
-      const operation = (step + random(15)) % 15,
+      const operation = (step + random(16)) % 16,
         index = count ? random(count) : 0;
       const tuple = names.map((_, slot) =>
         random(2) ? `write${step}:${slot}` : undefined,
       );
+      const overlapping = names.map((_, slot) => `overlap${step}:${slot}`);
       const wrong = Array.from(
         { length: count + (count === 0 || random(2) ? 1 : -1) },
         () => 'invalid',
@@ -107,6 +109,9 @@ it('virtual operations follow the reference model in sequential and batched hist
           else if (operation === 13) {
             expect(group.defaultValue).toEqual(initial);
             expect(group.inactiveValues).toEqual(root.inactiveValues);
+          } else if (operation === 15) {
+            group.setValue(tuple);
+            root.find('/reversed')!.setValue([...overlapping].reverse());
           } else expect(group.outputValue).toBeUndefined();
         };
         if (mode)
@@ -127,6 +132,8 @@ it('virtual operations follow the reference model in sequential and batched hist
             stored[slot] = tuple[slot];
       } else if (operation === 2) stored.splice(0, stored.length, ...initial);
       else if (operation === 5 && count) active[index] = false;
+      else if (operation === 15)
+        stored.splice(0, stored.length, ...overlapping);
       const expected: Record<string, unknown> = {
         outside: true,
         groupOn: true,
@@ -146,6 +153,10 @@ it('virtual operations follow the reference model in sequential and batched hist
         expect(root.find('/group')!.value, `seed=${seed} tuple`).toEqual(
           expectedTuple,
         );
+        expect(
+          root.find('/reversed')!.value,
+          `seed=${seed} reversed tuple`,
+        ).toEqual([...expectedTuple].reverse());
         expect(
           Object.fromEntries(
             root.inactiveValues.map(({ path, value }) => [path, value]),
