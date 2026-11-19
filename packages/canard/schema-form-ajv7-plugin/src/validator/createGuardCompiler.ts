@@ -31,7 +31,7 @@ export const createGuardCompiler = (
   pointer: string,
   root: object,
   directGuardCompile: boolean,
-  finalizer: FinalizationRegistry<SchemaRootRegistration>,
+  finalizer: FinalizationRegistry<SchemaRootRegistration> | undefined,
 ): Fn<[value: unknown], boolean> => {
   const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : '';
   const located = resolveGuardSchema(root, pointer);
@@ -45,7 +45,7 @@ export const createGuardCompiler = (
   if (direct) {
     // A direct root would retain itself through the finalizer's held value.
     // Its ID-free, dedicated guard is collected with the weak root registration.
-    if (schema === root) finalizer.unregister(registration);
+    if (schema === root) finalizer?.unregister(registration);
     if (!registration.directGuards.includes(schema))
       registration.directGuards.push(schema);
   }

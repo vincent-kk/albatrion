@@ -6,12 +6,12 @@ import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
 export const releaseSchemaRoot = (
   root: object,
   roots: WeakMap<object, SchemaRootRegistration>,
-  active: WeakRef<SchemaRootRegistration>[],
-  finalizer: FinalizationRegistry<SchemaRootRegistration>,
+  active: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[],
+  finalizer: FinalizationRegistry<SchemaRootRegistration> | undefined,
 ): void => {
   const registration = roots.get(root);
   if (!registration) return;
-  finalizer.unregister(registration);
+  finalizer?.unregister(registration);
   disposeSchemaRoot(registration);
   roots.delete(root);
   if (registration.ids.length) {

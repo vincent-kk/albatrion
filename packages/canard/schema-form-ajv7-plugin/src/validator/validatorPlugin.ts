@@ -1,3 +1,4 @@
+import { createFinalizer } from './utils/createFinalizer';
 import type { ValidatorPlugin } from '@canard/schema-form';
 import AjvModule, { type Options } from 'ajv';
 
@@ -51,8 +52,8 @@ type ConfigurableValidatorPlugin = ValidatorPlugin & {
 /** Root registrations belong to the current binding. */
 let roots = new WeakMap<object, SchemaRootRegistration>();
 /** Live registrations expose overlapping IDs to the registration boundary. */
-let active: WeakRef<SchemaRootRegistration>[] = [];
-const finalizer = new FinalizationRegistry<SchemaRootRegistration>(disposeSchemaRoot);
+let active: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[] = [];
+const finalizer = createFinalizer(disposeSchemaRoot);
 let pool: SchemaCompilerPool | null = null;
 
 /** Share one compiler for up to 64 ID-free roots, then retire its Ajv code scope. */
