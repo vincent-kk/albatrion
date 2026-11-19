@@ -3,6 +3,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { makeRoot, removeRoot, runCliCode } from '../roundThree/fixture.js';
 import { installPackage, writeAt } from '../roundThree/fixture.js';
 import { join } from 'node:path';
+import { realpathSync } from 'node:fs';
 
 /** Preflight success and failure still own exactly one machine-readable document. */
 const roots: string[] = [];
@@ -43,5 +44,5 @@ it('names the declared asset root and gate stage when no hash source is availabl
   vi.spyOn(process.stdout, 'write').mockImplementation((chunk) => { stdout += String(chunk); return true; });
   expect(await runCliCode(['--package=@probe/gate', '--agent=claude', '--scope=project', '--json', `--root=${root}`])).toBe(2);
   const report: { failures: { path: string; stage: string }[] } = JSON.parse(stdout);
-  expect(report.failures).toEqual([expect.objectContaining({ path: join(packageRoot, 'docs/agents'), stage: 'gate' })]);
+  expect(report.failures).toEqual([expect.objectContaining({ path: join(realpathSync(packageRoot), 'docs/agents'), stage: 'gate' })]);
 });
