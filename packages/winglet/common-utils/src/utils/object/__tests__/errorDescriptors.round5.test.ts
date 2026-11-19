@@ -15,7 +15,7 @@ describe.each([false, true])('Error descriptors, foreign=%s', foreign => {
     }
     const result = clone(error);
     expect(Object.keys(result).sort()).toEqual(Object.keys(error).sort());
-    expect(Object.getOwnPropertyDescriptor(result, symbol)?.enumerable).toBe(enumerable);
+    expect(Object.getOwnPropertyDescriptor(result, symbol)?.enumerable).toBe(enumerable ? true : undefined);
     for (const key of Reflect.ownKeys(result)) {
       const before = Object.getOwnPropertyDescriptor(error, key);
       const after = Object.getOwnPropertyDescriptor(result, key);
