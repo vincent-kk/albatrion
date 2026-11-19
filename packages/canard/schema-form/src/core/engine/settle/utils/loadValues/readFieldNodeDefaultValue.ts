@@ -1,8 +1,8 @@
 import type { FieldNodeRecord } from '../../../record';
 import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
-import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
 import { getDependencyIndex } from '../dependencies/getDependencyIndex';
 import { getLoadValue } from './getLoadValue';
+import { readLoadProperty } from './readLoadProperty';
 
 /**
  * Read a node's original load source without observing later caller writes.
@@ -14,10 +14,13 @@ export const readFieldNodeDefaultValue = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   if (node.isDetached)
     return node.runtime.detachedReads?.get(node)?.defaultValue;
-  if (node.behavior.type === 'virtual')
-    return resolveStorageTargets(node)?.map((target) =>
-      getLoadValue(node.runtime.loadSnapshot, target.path),
+  if (node.behavior.type === 'virtual') {
+    if (!node.parent) return [];
+    const host = getLoadValue(node.runtime.loadSnapshot, node.parent.path);
+    return (node.blueprintNode.fields ?? []).map((name) =>
+      readLoadProperty(host, name),
     );
+  }
   return getLoadValue(
     node.runtime.loadSnapshot,
     node.path,

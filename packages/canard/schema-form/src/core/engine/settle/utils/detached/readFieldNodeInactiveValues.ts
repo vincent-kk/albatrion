@@ -10,14 +10,19 @@ import { materializeInactiveSlotValues } from '../slots/materializeInactiveSlotV
 export const readFieldNodeInactiveValues = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): readonly { path: string; value: unknown }[] => {
+  if (node.inactiveValuesCache && !node.isInactiveValuesDirty)
+    return node.inactiveValuesCache;
   if (node.isDetached)
     return (
       node.runtime.detachedReads?.get(node)?.inactiveValues ??
       materializeInactiveSlotValues(node)
     );
-  const targets = resolveStorageTargets(node);
-  if (!targets || !node.parent) return materializeInactiveSlotValues(node);
+  if (node.behavior.type !== 'virtual' || !node.parent)
+    return materializeInactiveSlotValues(node);
+  node.isInactiveValuesDirty = true;
   const values = materializeInactiveSlotValues(node.parent);
+  if (!values.length) return (node.inactiveValuesCache = EMPTY_ARRAY);
+  const targets = resolveStorageTargets(node) ?? EMPTY_ARRAY;
   const includes = (value: { path: string }): boolean =>
     targets.some(
       (target) =>
