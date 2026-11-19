@@ -25,6 +25,7 @@ export const usePathname = () => {
     const handleChange = () => setPathname(window.location.pathname);
     const navigation = (window as { navigation?: EventTarget }).navigation;
     if (navigation) {
+      handleChange();
       navigation.addEventListener('currententrychange', handleChange);
       window.addEventListener('popstate', handleChange);
       return () => {
