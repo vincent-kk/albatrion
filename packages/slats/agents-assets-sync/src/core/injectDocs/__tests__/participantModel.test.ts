@@ -13,6 +13,7 @@ it('matches a complete-knowledge deletion model for 4000 seeded participant sets
     const failed = (seed >>> 16) % (count + 1);
     const force = !!(seed & 1);
     const agent = (['claude', 'codex', 'agents'] as const)[(seed >>> 4) % 3];
+    const block = sequence % 7 === 0 && agent !== 'claude';
     const agentTarget = resolveAgentTarget(
       agent,
       'project',
@@ -42,8 +43,16 @@ it('matches a complete-knowledge deletion model for 4000 seeded participant sets
             : [
                 {
                   kind: force ? 'delete' : 'warn-orphan',
-                  relPath: 'skills/shared/installed.md',
-                  target: { kind: 'file', dstAbs: destination },
+                  relPath: block
+                    ? 'rules/retired.md'
+                    : 'skills/shared/installed.md',
+                  target: block
+                    ? {
+                        kind: 'block',
+                        fileAbs: '/tmp/participant-model/AGENTS.md',
+                        blockId: `pkg-${index}:rules/retired.md`,
+                      }
+                    : { kind: 'file', dstAbs: destination },
                 },
               ],
       },
@@ -59,7 +68,7 @@ it('matches a complete-knowledge deletion model for 4000 seeded participant sets
         (action) => action.kind === 'delete' || action.kind === 'warn-orphan',
       );
     const reference =
-      failed < count || discoverFailure
+      (failed < count && !block) || discoverFailure
         ? []
         : units.flatMap((unit) => unit.plan.actions);
     expect(actual, `seed=${initialSeed}, sequence=${sequence}`).toEqual(
