@@ -71,7 +71,7 @@ function validate() {
 
     for (const subPath of subPaths) {
       const bareKey = subPath.replace(/^\.\//, '');
-      const exportTypes = pkg.exports[subPath]?.types;
+      const exportTypes = pkg.exports[subPath]?.import?.types ?? pkg.exports[subPath]?.types;
 
       if (!exportTypes) {
         console.warn(`⚠️  ${pkgName}: export "${subPath}" has no "types" condition`);

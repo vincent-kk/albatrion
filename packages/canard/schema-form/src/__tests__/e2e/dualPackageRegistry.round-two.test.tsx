@@ -28,12 +28,12 @@ it('round-2 schema-form 7: a plugin registered through the Node ESM entry reache
     );
   // Node resolves `import` to the node.import target and `require` to the require target.
   const esm = await import(
-    pathToFileURL(resolve(packageRoot, packageJson.exports['.'].node.import))
+    pathToFileURL(resolve(packageRoot, packageJson.exports['.'].node.import.default))
       .href
   );
   const cjs = nodeRequire('@canard/schema-form');
   expect(nodeRequire.resolve('@canard/schema-form')).toBe(
-    resolve(packageRoot, packageJson.exports['.'].node.require),
+    resolve(packageRoot, packageJson.exports['.'].node.require.default),
   );
   expect(esm.Form).not.toBe(cjs.Form);
   reset.push(
@@ -51,8 +51,8 @@ it('round-2 schema-form 7: a plugin registered through the Node ESM entry reache
 it('round-2 schema-form 7: incompatible registry versions remain isolated', async (context) => {
   if (inject('reactMajor') === '18')
     context.skip('Built bundles use the installed React 19.');
-  const file = resolve(packageRoot, packageJson.exports['.'].node.import);
-  const source = await readFile(resolve(packageRoot, packageJson.exports['.'].node.require), 'utf8');
+  const file = resolve(packageRoot, packageJson.exports['.'].node.import.default);
+  const source = await readFile(resolve(packageRoot, packageJson.exports['.'].node.require.default), 'utf8');
   const key = '@canard/schema-form/plugin-registry/0.16';
   const otherSource = source
     .split(key)

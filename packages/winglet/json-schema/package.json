@@ -25,62 +25,112 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
       "source": "./src/index.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     },
     "./scanner": {
-      "types": "./dist/utils/JSONSchemaScanner/sync/index.d.ts",
       "source": "./src/utils/JSONSchemaScanner/sync/index.ts",
-      "import": "./dist/utils/JSONSchemaScanner/sync/index.mjs",
-      "require": "./dist/utils/JSONSchemaScanner/sync/index.cjs"
+      "import": {
+        "types": "./dist/utils/JSONSchemaScanner/sync/index.d.ts",
+        "default": "./dist/utils/JSONSchemaScanner/sync/index.mjs"
+      },
+      "require": {
+        "types": "./dist/utils/JSONSchemaScanner/sync/index.d.cts",
+        "default": "./dist/utils/JSONSchemaScanner/sync/index.cjs"
+      }
     },
     "./async-scanner": {
-      "types": "./dist/utils/JSONSchemaScanner/async/index.d.ts",
       "source": "./src/utils/JSONSchemaScanner/async/index.ts",
-      "import": "./dist/utils/JSONSchemaScanner/async/index.mjs",
-      "require": "./dist/utils/JSONSchemaScanner/async/index.cjs"
+      "import": {
+        "types": "./dist/utils/JSONSchemaScanner/async/index.d.ts",
+        "default": "./dist/utils/JSONSchemaScanner/async/index.mjs"
+      },
+      "require": {
+        "types": "./dist/utils/JSONSchemaScanner/async/index.d.cts",
+        "default": "./dist/utils/JSONSchemaScanner/async/index.cjs"
+      }
     },
     "./filter": {
-      "types": "./dist/filters/index.d.ts",
       "source": "./src/filters/index.ts",
-      "import": "./dist/filters/index.mjs",
-      "require": "./dist/filters/index.cjs"
+      "import": {
+        "types": "./dist/filters/index.d.ts",
+        "default": "./dist/filters/index.mjs"
+      },
+      "require": {
+        "types": "./dist/filters/index.d.cts",
+        "default": "./dist/filters/index.cjs"
+      }
     },
     "./keyword": {
-      "types": "./dist/keyword/index.d.ts",
       "source": "./src/keyword/index.ts",
-      "import": "./dist/keyword/index.mjs",
-      "require": "./dist/keyword/index.cjs"
+      "import": {
+        "types": "./dist/keyword/index.d.ts",
+        "default": "./dist/keyword/index.mjs"
+      },
+      "require": {
+        "types": "./dist/keyword/index.d.cts",
+        "default": "./dist/keyword/index.cjs"
+      }
     }
   },
   "publishConfig": {
     "exports": {
       ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.cjs"
+        "import": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.mjs"
+        },
+        "require": {
+          "types": "./dist/index.d.cts",
+          "default": "./dist/index.cjs"
+        }
       },
       "./scanner": {
-        "types": "./dist/utils/JSONSchemaScanner/sync/index.d.ts",
-        "import": "./dist/utils/JSONSchemaScanner/sync/index.mjs",
-        "require": "./dist/utils/JSONSchemaScanner/sync/index.cjs"
+        "import": {
+          "types": "./dist/utils/JSONSchemaScanner/sync/index.d.ts",
+          "default": "./dist/utils/JSONSchemaScanner/sync/index.mjs"
+        },
+        "require": {
+          "types": "./dist/utils/JSONSchemaScanner/sync/index.d.cts",
+          "default": "./dist/utils/JSONSchemaScanner/sync/index.cjs"
+        }
       },
       "./async-scanner": {
-        "types": "./dist/utils/JSONSchemaScanner/async/index.d.ts",
-        "import": "./dist/utils/JSONSchemaScanner/async/index.mjs",
-        "require": "./dist/utils/JSONSchemaScanner/async/index.cjs"
+        "import": {
+          "types": "./dist/utils/JSONSchemaScanner/async/index.d.ts",
+          "default": "./dist/utils/JSONSchemaScanner/async/index.mjs"
+        },
+        "require": {
+          "types": "./dist/utils/JSONSchemaScanner/async/index.d.cts",
+          "default": "./dist/utils/JSONSchemaScanner/async/index.cjs"
+        }
       },
       "./filter": {
-        "types": "./dist/filters/index.d.ts",
-        "import": "./dist/filters/index.mjs",
-        "require": "./dist/filters/index.cjs"
+        "import": {
+          "types": "./dist/filters/index.d.ts",
+          "default": "./dist/filters/index.mjs"
+        },
+        "require": {
+          "types": "./dist/filters/index.d.cts",
+          "default": "./dist/filters/index.cjs"
+        }
       },
       "./keyword": {
-        "types": "./dist/keyword/index.d.ts",
-        "import": "./dist/keyword/index.mjs",
-        "require": "./dist/keyword/index.cjs"
+        "import": {
+          "types": "./dist/keyword/index.d.ts",
+          "default": "./dist/keyword/index.mjs"
+        },
+        "require": {
+          "types": "./dist/keyword/index.d.cts",
+          "default": "./dist/keyword/index.cjs"
+        }
       }
     }
   },
@@ -105,7 +155,8 @@
     "typecheck": "tsc --noEmit --composite false --rootDir . -p tsconfig.json",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
-    "version:patch": "yarn version patch"
+    "version:patch": "yarn version patch",
+    "build:verify:types": "node ../../aileron/script/build/verifyDeclarations.mjs"
   },
   "dependencies": {
     "@winglet/common-utils": "workspace:^",

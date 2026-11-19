@@ -1,7 +1,7 @@
 /**
- * Unified build script for TypeScript declaration files (.d.ts).
+ * Unified declaration build; workspace manifests opt into a parallel .d.cts graph.
  *
- * Runs: tsc → tsc-alias → fixDtsExtensions (for nodenext compatibility)
+ * Runs: tsc → tsc-alias → ESM extension repair → optional CommonJS declaration graph
  *
  * Usage:
  *   node buildTypes.mjs [--tsconfig <path>] [--outDir <dir>]
@@ -12,7 +12,9 @@
  */
 
 import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 
+import { emitCommonJsDeclarations } from './utils/emitCommonJsDeclarations.mjs';
 import { fixDtsExtensions } from './utils/fixDtsExtensions.mjs';
 
 const args = process.argv.slice(2);
@@ -39,3 +41,7 @@ if (filesProcessed > 0) {
     `Fixed ${importsFixed} imports in ${filesProcessed} .d.ts files.`,
   );
 }
+
+const manifest = JSON.parse(readFileSync('package.json', 'utf8'));
+const commonJsCount = emitCommonJsDeclarations(outDir, manifest);
+if (commonJsCount) console.log(`Emitted ${commonJsCount} CommonJS declarations.`);

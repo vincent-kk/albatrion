@@ -31,18 +31,28 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
       "source": "./src/index.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "publishConfig": {
     "exports": {
       ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.cjs"
+        "import": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.mjs"
+        },
+        "require": {
+          "types": "./dist/index.d.cts",
+          "default": "./dist/index.cjs"
+        }
       }
     }
   },
@@ -67,7 +77,8 @@
     "typecheck": "tsc --noEmit --composite false --rootDir . -p tsconfig.json",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
-    "version:patch": "yarn version patch"
+    "version:patch": "yarn version patch",
+    "build:verify:types": "node ../../aileron/script/build/verifyDeclarations.mjs"
   },
   "dependencies": {
     "@winglet/common-utils": "workspace:^"
