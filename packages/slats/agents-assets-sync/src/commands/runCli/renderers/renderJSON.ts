@@ -4,7 +4,6 @@ import {
   runInjection,
 } from '../../../core/index.js';
 import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
-import { logger } from '../../../utils/logger.js';
 import { VERSION } from '../../../utils/version.js';
 
 /** Compatibility driver; core computes the same result used by other modes.
@@ -36,7 +35,7 @@ export async function renderJSON(
  * @param result Complete core result, including validation errors.
  */
 export function displayJSON(result: RunResult): void {
-  for (const error of result.errors) logger.error(error);
+  for (const error of result.errors) process.stderr.write(`error ${error}\n`);
   const document = {
     schemaVersion: 1,
     tool: 'agents-assets-sync',
