@@ -1,6 +1,7 @@
 import { type PropsWithChildren, useId, useMemo } from 'react';
 
 import type { FormProps } from '@/schema-form/components/Form';
+import { formatSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { useExternalFormContext } from '../../ExternalFormContext';
 import { useContextSnapshot } from '../../hooks/contextSnapshot/useContextSnapshot';
@@ -20,7 +21,7 @@ export const WorkspaceContextProvider = ({
   children,
 }: PropsWithChildren<UserDefinedContextProviderProps>) => {
   const external = useExternalFormContext();
-  const formId = useId().replace(/~/g, '~0');
+  const formId = formatSegment(useId());
   const context = useContextSnapshot(inputContext);
   const contextValue = useMemo(
     () => ({

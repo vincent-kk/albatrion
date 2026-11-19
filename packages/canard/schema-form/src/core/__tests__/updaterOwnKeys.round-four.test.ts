@@ -2,7 +2,7 @@ import { expect, it } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 
-import { writeFieldNodeInput } from '../../../surface/utils/binding/writeFieldNodeInput';
+import { writeFieldNodeInput } from '../surface/utils/binding/writeFieldNodeInput';
 
 it.each(['constructor', 'toString', 'valueOf', 'hasOwnProperty', '__proto__'])(
   'batch and input updaters see only own data for %s',

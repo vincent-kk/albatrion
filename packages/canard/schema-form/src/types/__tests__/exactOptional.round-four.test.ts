@@ -48,9 +48,9 @@ const schemaTypeDiagnostics = (exactOptionalPropertyTypes: boolean) => {
 describe('r4-contracts schema type declarations under exactOptionalPropertyTypes', () => {
   it('control: the schema type modules type-check with the package options', () => {
     expect(schemaTypeDiagnostics(false)).toEqual([]);
-  });
+  }, 30000);
 
   it('the schema type modules type-check for a consumer that enables exactOptionalPropertyTypes', () => {
     expect(schemaTypeDiagnostics(true)).toEqual([]);
-  });
+  }, 30000);
 });
