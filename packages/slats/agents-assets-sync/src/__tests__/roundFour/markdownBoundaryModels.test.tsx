@@ -94,7 +94,23 @@ it.each([
         force: true,
         interactive: true,
       };
-      const first = await runSurface(mode, root, targets, flags);
+      let transcript = '';
+      const first = await runSurface(
+        mode,
+        root,
+        targets,
+        flags,
+        false,
+        undefined,
+        (output) => {
+          transcript =
+            mode === 'ink'
+              ? output.frame
+              : mode === 'json'
+                ? JSON.stringify(JSON.parse(output.stdout))
+                : output.stdout + output.stderr;
+        },
+      );
       expect(first.files[`${destination}/skills/good/SKILL.md`]).toBeDefined();
       if (scenario.line) {
         expect(first.code).toBe(1);
@@ -103,6 +119,10 @@ it.each([
           `${filename}:${scenario.line}:`,
         );
         expect(first.model.units[0].error).toMatch(/close|top level/i);
+        expect(transcript.replace(/\s+/g, '')).toContain(
+          `${filename}:${scenario.line}:`,
+        );
+        expect(transcript.replace(/\s+/g, '')).toMatch(/close|toplevel/i);
         expect(
           first.files[`${destination}/skills/bad/SKILL.md`],
         ).toBeUndefined();
