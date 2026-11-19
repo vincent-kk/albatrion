@@ -8,6 +8,8 @@ import type {
   NumberSchema,
 } from '@canard/schema-form';
 
+import { getSliderBounds } from './utils/slider/getSliderBounds';
+
 interface FieldInputSliderProps
   extends FieldInputPropsWithSchema<number | null, NumberSchema> {
   /**
@@ -50,9 +52,7 @@ const FieldInputSlider = ({
 
   const { min, max, step, ...changeHandler } = useMemo(() => {
     return {
-      min: jsonSchema.minimum,
-      max: jsonSchema.maximum,
-      step: jsonSchema.multipleOf,
+      ...getSliderBounds(jsonSchema.minimum, jsonSchema.maximum, jsonSchema.multipleOf),
       ...(lazy === false
         ? { onChange: handleChange }
         : { onChangeComplete: handleChange }),
