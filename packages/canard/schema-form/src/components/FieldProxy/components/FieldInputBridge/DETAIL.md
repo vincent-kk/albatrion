@@ -12,7 +12,7 @@
 
 FormProvider의 pluginScope는 string 또는 symbol로 선택한 독립 등록소를 사용합니다. registerPlugin(plugin, { scope })의 같은 토큰과 호환 버전만 공유하며, 생략하면 기존 realm 전역 등록소를 그대로 사용합니다. scope 등록소와 기본 등록소는 입력·렌더러·검증기·포맷터·중복 기록·reset을 공유하지 않습니다. 각 애플리케이션은 안정된 토큰을 공급하고 설정 뒤 폼을 렌더합니다. 등록은 반응형 구독을 만들지 않으며 scope의 등록소는 realm 수명 동안 유지합니다. 선택은 기존 외부 설정 Context로 전달하여 필드별 구독을 추가하지 않습니다.
 
-실제 입력의 id는 Form scope와 현재 node.path를 결합하여 전달하며 path 자체는 JSON Pointer를 유지합니다. 입력과 Frame의 name은 선택된 입력이나 presentation.inputType과 무관하게 항상 노드의 말단 이름을 전달합니다. 라디오 입력은 전달된 id를 각 선택지의 native name으로 사용하여 한 Form의 동명 말단과 서로 다른 Form의 그룹을 구별합니다. 입력 선택 힌트만으로 name의 의미를 바꾸면 일반 문자열 폴백과 사용자 입력의 라벨에 scoped 주소가 노출되므로 바인딩은 native 라디오 그룹 이름을 대신 결정하지 않습니다.
+입력은 공통 resolver가 생성한 식별자를 받으며 path 자체는 JSON Pointer를 유지합니다. getInputId의 참조는 Form scope와 현재 node.path가 같을 때 유지하여 값·오류 갱신이 추가 컨트롤의 식별자 수명을 바꾸지 않게 합니다. 입력과 Frame의 name은 선택된 입력이나 presentation.inputType과 무관하게 항상 노드의 말단 이름을 전달합니다. 라디오 입력은 전달된 inputId를 각 선택지의 native name으로 사용하여 한 Form의 동명 말단과 서로 다른 Form의 그룹을 구별합니다. 입력 선택 힌트만으로 name의 의미를 바꾸면 일반 문자열 폴백과 사용자 입력의 라벨에 scoped 주소가 노출되므로 바인딩은 native 라디오 그룹 이름을 대신 결정하지 않습니다.
 
 전체 값을 편집하는 비제어 가지는 외부 UpdateValue의 내부 리비전으로 새 defaultValue를 잡아 다시 마운트합니다. controlled 입력은 같은 DOM에서 새 value prop을 받습니다. 입력 자체 쓰기와 내용이 같은 동기 배열 중계는 이 리비전을 올리지 않으며, 외부 자식 쓰기·자동 자식 쓰기·숨김 중 쓰기도 놓치지 않습니다. 값이 같은 외부 쓰기는 스칼라와 같이 Refresh를 만들지 않으며 입력이 거절한 초안의 복원에는 reset을 사용합니다.
 

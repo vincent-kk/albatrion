@@ -12,10 +12,11 @@ const UNSAFE_CHARACTER = /[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u0000-\u0020\u007F-\u
  * Resolve the opaque identifiers of one field; no caller constructs a related id.
  * @param formId - Already pointer-escaped React Form scope.
  * @param path - Canonical JSON Pointer of the current field.
+ * @param keyed - False skips the unused callback allocation for title-only consumers.
  * @returns Primary control, title and keyed control identifiers; keys compare as strings.
  */
 export function resolveFieldIdentifiers(formId: string, path: string, keyed: false): { inputId: string; labelId: string };
-/** Resolve identifiers including the stable keyed-control callback. */
+/** Resolve identifiers including a callback bound to this field address. */
 export function resolveFieldIdentifiers(formId: string, path: string, keyed?: true): { inputId: string; labelId: string; getInputId: (key: string | number) => string };
 /** One construction site serves both title consumers and input bindings. */
 export function resolveFieldIdentifiers(formId: string, path: string, keyed = true) {
@@ -31,7 +32,11 @@ export function resolveFieldIdentifiers(formId: string, path: string, keyed = tr
   };
 }
 
-/** Encode unsafe code units while preserving paired Unicode characters. */
+/**
+ * Encode HTML-unsafe code units without interpreting the identifier's contents.
+ * @param value - Any identifier text, including controls and lone surrogates.
+ * @returns Safe text with valid surrogate pairs preserved; the input is unchanged.
+ */
 const escapeCharacters = (value: string): string =>
   UNSAFE_TEST.test(value) ? value.replace(UNSAFE_CHARACTER, character => character.length === 2
     ? character
