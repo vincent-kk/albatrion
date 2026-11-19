@@ -8,6 +8,12 @@ import type { Dictionary } from '@aileron/declare';
  * validation registration restores `_refs` and `_schemas` in place.
  */
 declare module 'ajv' {
+  interface CompilationContext {
+    /** Generated expression for the current instance path. */
+    errorPath: string;
+    /** Authored schema pointer of the current compilation position. */
+    errSchemaPath: string;
+  }
   interface Ajv {
     /**
      * Register object or boolean schemas accepted by the Ajv 6 runtime.

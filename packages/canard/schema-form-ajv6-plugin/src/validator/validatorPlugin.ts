@@ -1,6 +1,8 @@
 import { createFinalizer } from './utils/createFinalizer';
 import type { ValidatorPlugin } from '@canard/schema-form';
-import Ajv from 'ajv';
+import type Ajv from 'ajv';
+
+import { createDefaultInstance } from './utils/createDefaultInstance';
 
 import { createGuardCompiler } from './createGuardCompiler';
 import { createValidatorFactory } from './createValidatorFactory';
@@ -58,7 +60,7 @@ export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
     active = [];
   },
   compile: (jsonSchema) => {
-    if (!ajvInstance) ajvInstance = new Ajv(defaultSettings);
+    if (!ajvInstance) ajvInstance = createDefaultInstance(defaultSettings);
     const registered = registerSchemaRoot(jsonSchema, ajvInstance, roots, active, finalizer);
     registerValidationRoot(registered);
     const validate = createValidatorFactory(
@@ -67,7 +69,7 @@ export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
     return async (value: unknown) => validate(value);
   },
   compileGuard: (root, pointer) => {
-    if (!ajvInstance) ajvInstance = new Ajv(defaultSettings);
+    if (!ajvInstance) ajvInstance = createDefaultInstance(defaultSettings);
     const registered = registerSchemaRoot(root, ajvInstance, roots, active, finalizer);
     return createGuardCompiler(ajvInstance, registered, pointer, root, directGuardCompile, finalizer);
   },
