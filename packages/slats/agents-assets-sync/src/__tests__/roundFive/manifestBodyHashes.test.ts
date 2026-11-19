@@ -11,6 +11,7 @@ afterEach(() => { for (const root of roots.splice(0)) removeRoot(root); });
 
 it.each([
   Buffer.from('hello'),
+  Buffer.from('edge\r\r\nend'),
   Buffer.from(''),
   Buffer.from('\uFEFF~~~\r\nhello\r\n~~~\r\n'),
   Buffer.from([0xef, 0xbb, 0xbf, 0x7e, 0x7e, 0x7e, 0x0d, 0x0a, 0xb0, 0xa1, 0x0d, 0x0a, 0x7e, 0x7e, 0x7e]),
