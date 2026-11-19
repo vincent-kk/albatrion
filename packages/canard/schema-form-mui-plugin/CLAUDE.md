@@ -14,6 +14,7 @@ yarn storybook         # Storybook dev (port 6006)
 ## Architecture
 
 The plugin exports a `SchemaFormPlugin` object:
+
 - `FieldRenderer` composes bound input and error parts with scoped group titles; `LabelRenderer` serves standalone labels.
 - `ErrorMessageRenderer` owns the error root. The plugin registers `LabelRenderer` and `ErrorMessageRenderer`, with no pass-through input frame.
 - `fieldInputDefinitions` — 15 input component definitions (in priority order)
@@ -40,4 +41,4 @@ Enum UI identities encode the raw JSON scalar, while labels and aliases use its 
 
 ## Control identifiers
 
-Use `FieldInputProps.id` on the real focusable control; `path` remains a JSON Pointer for data access. Single-control labels target that same id. A group renderer uses `FieldRendererProps.labelId` for its title or legend and connects the group with `aria-labelledby`; options have their own ids. Native radio names use the scoped id, while other input names retain their leaf meaning. The core supplies these addresses; do not build an element id from path.
+Use `FieldInputProps.inputId` on the primary focusable control and `getInputId(key)` for additional elements; the key is required. Use `labelId` for the field title and `aria-labelledby` references. Input-owned labels use a keyed address. Treat every id as opaque: never concatenate or parse it. `path` remains a JSON Pointer, and `name` remains the leaf name except native radio groups use `inputId`. Renderers receive the same `inputId` and `labelId`; no plugin context or builder reconstructs them.

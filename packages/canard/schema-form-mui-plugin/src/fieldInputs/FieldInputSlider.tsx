@@ -58,7 +58,7 @@ const UNSET_SLIDER_SX = {
 };
 
 const FieldInputSlider = ({
-  id,
+  inputId,
   name,
   jsonSchema,
   required,
@@ -123,7 +123,7 @@ const FieldInputSlider = ({
         <Typography
           variant="body2"
           component="label"
-          htmlFor={id}
+          htmlFor={inputId}
           sx={{ mb: 1, display: 'block' }}
         >
           {label}
@@ -144,12 +144,12 @@ const FieldInputSlider = ({
         slotProps={{
           input: isUnset
             ? {
-                id,
+                id: inputId,
                 'aria-invalid': misfit || undefined,
                 'aria-valuenow': undefined,
                 'aria-valuetext': unsetValueText,
               }
-            : { id, 'aria-invalid': misfit || undefined },
+            : { id: inputId, 'aria-invalid': misfit || undefined },
         }}
         valueLabelDisplay={isUnset ? 'off' : 'auto'}
         sx={isUnset ? UNSET_SLIDER_SX : SLIDER_SX}

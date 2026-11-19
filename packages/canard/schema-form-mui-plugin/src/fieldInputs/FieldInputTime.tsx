@@ -28,7 +28,7 @@ interface FieldInputTimeProps
 }
 
 const FieldInputTime = ({
-  id,
+  inputId,
   name,
   jsonSchema,
   required,
@@ -100,7 +100,7 @@ const FieldInputTime = ({
         ampm={ampm}
         slotProps={{
           textField: {
-            id,
+            id: inputId,
             name,
             required,
             size,

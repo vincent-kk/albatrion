@@ -2,7 +2,6 @@ import { Box } from '@mui/material';
 
 import type { FieldRendererProps } from '@canard/schema-form';
 
-import { FieldLabelContext } from '../utils/context/FieldLabelContext';
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 
 /**
@@ -22,14 +21,14 @@ export const FieldRenderer = ({
 }: FieldRendererProps) => {
   if (depth === 0)
     return (
-      <FieldLabelContext.Provider value={labelId}>
+      <>
         <Input />
         {errorMessage !== null &&
           errorMessage !== undefined &&
           typeof errorMessage !== 'boolean' && (
             <ErrorMessage>{errorMessage}</ErrorMessage>
           )}
-      </FieldLabelContext.Provider>
+      </>
     );
 
   if (node.strategy === 'branch') {
@@ -66,9 +65,7 @@ export const FieldRenderer = ({
             {name}
           </span>
         )}
-        <FieldLabelContext.Provider value={labelId}>
-          <Input />
-        </FieldLabelContext.Provider>
+        <Input />
         <ErrorMessage>{errorMessage}</ErrorMessage>
       </Box>
     );
@@ -80,9 +77,7 @@ export const FieldRenderer = ({
           marginLeft: depth * 2,
         }}
       >
-        <FieldLabelContext.Provider value={labelId}>
-          <Input />
-        </FieldLabelContext.Provider>
+        <Input />
         <ErrorMessage>{errorMessage}</ErrorMessage>
       </Box>
     );

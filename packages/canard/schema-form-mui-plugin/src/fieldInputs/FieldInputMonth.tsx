@@ -49,7 +49,7 @@ interface FieldInputMonthProps
 }
 
 const FieldInputMonth = ({
-  id,
+  inputId,
   name,
   required,
   disabled,
@@ -125,7 +125,7 @@ const FieldInputMonth = ({
         format="YYYY-MM"
         slotProps={{
           textField: {
-            id,
+            id: inputId,
             name,
             required,
             size,

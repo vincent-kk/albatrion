@@ -1,4 +1,4 @@
-import { type ReactNode, useContext, useMemo, useState } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 
 import {
   Checkbox,
@@ -19,7 +19,6 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
-import { FieldLabelContext } from '../utils/context/FieldLabelContext';
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 import { mergeEnumSelection } from './utils/enum/mergeEnumSelection';
@@ -43,7 +42,9 @@ interface FieldInputStringCheckboxProps
 }
 
 const FieldInputStringCheckbox = ({
-  id,
+  inputId,
+  labelId,
+  getInputId,
   name,
   jsonSchema,
   required,
@@ -59,7 +60,6 @@ const FieldInputStringCheckbox = ({
   hideLabel,
   misfit,
 }: FieldInputStringCheckboxProps) => {
-  const labelId = useContext(FieldLabelContext) ?? `input-label:${id}`;
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
     return [labelProp || name, sizeProp || context.size];
@@ -102,7 +102,7 @@ const FieldInputStringCheckbox = ({
     <FormControl
       component="fieldset"
       role="group"
-      id={id}
+      id={inputId}
       aria-labelledby={label ? labelId : undefined}
       aria-invalid={misfit || undefined}
       required={required}
@@ -126,11 +126,11 @@ const FieldInputStringCheckbox = ({
           return (
             <FormControlLabel
               key={option.value}
-              htmlFor={`${id}-${index}`}
+              htmlFor={getInputId(index)}
               disabled={disabled || readOnly}
               control={
                 <Checkbox
-                  id={`${id}-${index}`}
+                  id={getInputId(index)}
                   name={`${name}[]`}
                   checked={isChecked}
                   onChange={() => handleToggle(option.value)}

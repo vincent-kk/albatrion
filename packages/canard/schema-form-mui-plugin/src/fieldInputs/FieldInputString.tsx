@@ -28,7 +28,7 @@ interface FieldInputStringProps
 }
 
 const FieldInputString = ({
-  id,
+  inputId,
   name,
   jsonSchema,
   required,
@@ -83,7 +83,7 @@ const FieldInputString = ({
 
   return (
     <TextField
-      id={id}
+      id={inputId}
       name={name}
       type={isPassword ? 'password' : 'text'}
       variant={variant}

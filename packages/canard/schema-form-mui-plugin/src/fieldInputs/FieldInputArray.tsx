@@ -22,7 +22,7 @@ const Remove = (props: ButtonProps) => (
 );
 
 const FieldInputArray = ({
-  id,
+  inputId,
   jsonSchema,
   node,
   readOnly,
@@ -45,7 +45,7 @@ const FieldInputArray = ({
   });
 
   return (
-    <div id={id} style={style}>
+    <div id={inputId} style={style}>
       {ChildFields &&
         map(ChildFields, (ChildField, i) => {
           const key = ChildField.key;

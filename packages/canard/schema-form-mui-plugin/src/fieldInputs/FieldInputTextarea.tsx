@@ -32,7 +32,7 @@ interface FieldInputTextareaProps
 }
 
 const FieldInputTextarea = ({
-  id,
+  inputId,
   name,
   jsonSchema,
   required,
@@ -85,7 +85,7 @@ const FieldInputTextarea = ({
 
   return (
     <TextField
-      id={id}
+      id={inputId}
       name={name}
       multiline
       variant={variant}

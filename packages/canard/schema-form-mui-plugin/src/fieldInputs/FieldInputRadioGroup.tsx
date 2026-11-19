@@ -1,4 +1,4 @@
-import { type ReactNode, useContext, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import {
   FormControl,
@@ -18,7 +18,6 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
-import { FieldLabelContext } from '../utils/context/FieldLabelContext';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type RadioGroupStringJSONSchema = StringSchema & {
@@ -42,7 +41,9 @@ type FieldInputRadioGroupProps = {
   >;
 
 const FieldInputRadioGroup = ({
-  id,
+  inputId,
+  labelId,
+  getInputId,
   node,
   jsonSchema,
   required,
@@ -58,7 +59,6 @@ const FieldInputRadioGroup = ({
   hideLabel,
   misfit,
 }: FieldInputRadioGroupProps) => {
-  const labelId = useContext(FieldLabelContext) ?? `input-label:${id}`;
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
     return [labelProp || node.name, sizeProp || context.size];
@@ -115,9 +115,9 @@ const FieldInputRadioGroup = ({
         {label}
       </FormLabel>
       <RadioGroup
-        id={id}
+        id={inputId}
         aria-labelledby={label ? labelId : undefined}
-        name={id}
+        name={inputId}
         defaultValue={initialValue}
         onChange={handleChange}
         row={row}
@@ -125,13 +125,13 @@ const FieldInputRadioGroup = ({
         {options.map((option, index) => (
           <FormControlLabel
             key={option.value}
-            htmlFor={`${id}-${index}`}
+            htmlFor={getInputId(index)}
             value={option.value}
             disabled={disabled || readOnly}
             control={
               <Radio
                 size={size}
-                id={`${id}-${index}`}
+                id={getInputId(index)}
                 slotProps={{
                   input: { 'aria-invalid': misfit || undefined },
                 }}

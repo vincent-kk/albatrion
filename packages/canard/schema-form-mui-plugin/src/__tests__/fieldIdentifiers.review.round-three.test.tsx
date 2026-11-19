@@ -100,17 +100,25 @@ it('preserves the existing visibility of object array-item titles (round-3 id re
       defaultValue={{ list: [{ Child: 'value' }] }}
     />,
   );
-  expect(view.queryAllByText('0', { exact: true }).filter(title => !title.closest('[hidden]'))).toHaveLength(0);
+  expect(
+    view
+      .queryAllByText('0', { exact: true })
+      .filter((title) => !title.closest('[hidden]')),
+  ).toHaveLength(0);
 });
 
-it('keeps renderer-only title props away from DOM-spreading custom inputs (round-3 id review 7)', () => {
+it('consumes core identifier props before spreading custom DOM props (round-3 id review 7)', () => {
   const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
   const Custom = ({
-    id,
+    inputId,
+    labelId,
+    getInputId,
     ...rest
   }: import('@canard/schema-form').FieldInputProps<string>) => (
     <input
-      id={id}
+      id={inputId}
+      aria-labelledby={labelId}
+      data-option-id={getInputId(0)}
       {...Object.fromEntries(
         Object.entries(rest).filter(([key]) => key === 'labelId'),
       )}

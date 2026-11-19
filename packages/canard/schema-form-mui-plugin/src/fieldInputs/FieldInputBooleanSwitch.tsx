@@ -28,7 +28,7 @@ interface FieldInputBooleanSwitchProps
 }
 
 const FieldInputBooleanSwitch = ({
-  id,
+  inputId,
   name,
   required,
   disabled,
@@ -67,13 +67,13 @@ const FieldInputBooleanSwitch = ({
           </>
         )
       }
-      htmlFor={id}
+      htmlFor={inputId}
       required={required}
       disabled={disabled}
       labelPlacement="start"
       control={
         <Switch
-          id={id}
+          id={inputId}
           name={name}
           checked={value === true}
           onChange={handleChange}

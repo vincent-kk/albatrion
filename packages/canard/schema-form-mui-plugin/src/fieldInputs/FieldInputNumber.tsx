@@ -33,7 +33,7 @@ interface FieldInputNumberProps
 
 const FieldInputNumber = ({
   schemaType: type,
-  id,
+  inputId,
   name,
   jsonSchema,
   required,
@@ -108,7 +108,7 @@ const FieldInputNumber = ({
 
   return (
     <TextField
-      id={id}
+      id={inputId}
       name={name}
       type="number"
       variant={variant}
