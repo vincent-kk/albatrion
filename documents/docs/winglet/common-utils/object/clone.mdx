@@ -210,6 +210,14 @@ console.log(cloned.b.c); // 999`}
 - **Type-Specific Cloning**: Specialized handlers for Date, RegExp, Map, Set, TypedArrays
 
 **Known Limits:**
+- Typed-array subclasses with default slice/species run their constructor once and retain their
+  prototype. DataView subclasses do not run their constructor, but return native DataView
+  copies without the subclass prototype; both preserve the selected data and independent
+  storage. Normalize to an intrinsic view before cloning, then restore the prototype
+  explicitly when constructor-free subclass copies are needed.
+- Error subclasses run their constructors once under the recorded initialization policy;
+  ArrayBuffer subclasses run theirs through slice species. Normalize to native Error or
+  copy bytes into a native ArrayBuffer first when subclass execution is unwanted.
 - What `clone` learns about a prototype chain (which inherited setters, getters and read-only
   properties intercept assignment, and whether it is a boxed-primitive chain) is cached per
   prototype at its first clone and never invalidated. A setter, getter or read-only property
