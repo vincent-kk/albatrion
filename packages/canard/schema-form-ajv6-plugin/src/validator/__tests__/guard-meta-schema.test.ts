@@ -197,7 +197,7 @@ describe('IR-10 guard meta-schema', () => {
     const removedKeys = removeSchema.mock.calls.filter(
       ([key], index) =>
         typeof key === 'string' &&
-        key.startsWith(sibling.PLUGIN_KEY_PREFIX) &&
+        key.startsWith('https://canard.invalid/ajv6/') &&
         removeSchema.mock.contexts[index] !== instance,
     );
     expect
