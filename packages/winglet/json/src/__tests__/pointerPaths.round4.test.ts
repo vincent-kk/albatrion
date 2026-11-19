@@ -28,7 +28,7 @@ describe('round-4 pointer token spelling table', () => {
     ['root and empty key', '', '/'],
     ['numeric and bracket token', '/0', '/[0]'],
     ['append and bracket token', '/-', '/[]'],
-    ['dot token and bracket-containing name', '/x/a.b', '/x[a.b]'],
+    ['dot token and bracket-containing name', '/a.b/c.d', '/a.b][c.d'],
     ['empty token before numeric token', '/0', '//0'],
   ])('documented lossy limit: %s', (_name, left, right) => {
     expect(left).not.toBe(right);
