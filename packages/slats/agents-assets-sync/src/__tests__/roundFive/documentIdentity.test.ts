@@ -1,13 +1,8 @@
-import {
-  chownSync,
-  linkSync,
-  readFileSync,
-  statSync,
-  writeFileSync,
-} from 'node:fs';
+import { linkSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { chown } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import { afterEach, expect, it } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
 
 import {
   installPackage,
@@ -15,10 +10,17 @@ import {
   removeRoot,
   runCliCode,
 } from '../../__tests__/roundThree/fixture.js';
+import { setAlternateGroup } from './helpers/setAlternateGroup.js';
+
+vi.mock('node:fs/promises', async (original) => {
+  const actual = await original<typeof import('node:fs/promises')>();
+  return { ...actual, chown: vi.fn(actual.chown) };
+});
 
 const roots: string[] = [];
 afterEach(() => {
   for (const root of roots.splice(0)) removeRoot(root);
+  vi.mocked(chown).mockReset();
 });
 
 function setup() {
@@ -57,18 +59,19 @@ it('a hard-linked AGENTS.md (CLAUDE.md as a second name) still shares one file a
 });
 
 it('a block write keeps the group of AGENTS.md', async () => {
-  const { root, agents, args } = setup();
-  const directoryGroup = statSync(root).gid;
-  // Any group the current user belongs to that differs from the directory's.
-  const candidates = [20, 12, 80, 61];
-  const group = candidates.find((gid) => gid !== directoryGroup);
-  if (group === undefined) throw new Error('no second group');
-  chownSync(agents, process.getuid?.() ?? -1, group);
-  const before = statSync(agents).gid;
+  const { agents, args } = setup();
+  const group = setAlternateGroup(agents, process.getgroups?.() ?? []);
+  const before = statSync(agents);
+  if (group === undefined)
+    vi.mocked(chown).mockRejectedValueOnce(
+      Object.assign(new Error('ownership denied'), { code: 'EPERM' }),
+    );
   const code = await runCliCode(args);
-  expect({ code, before, after: statSync(agents).gid }).toEqual({
-    code: 0,
-    before: group,
-    after: group,
-  });
+  const after = statSync(agents);
+  expect({ code, group: after.gid }).toEqual({ code: 0, group: before.gid });
+  expect(readFileSync(agents, 'utf8')).toContain(
+    'AGENTS-ASSETS-SYNC:START:@probe/kit:rules/r.md',
+  );
+  expect(chown).toHaveBeenCalledOnce();
+  if (group === undefined) expect(after.ino).toBe(before.ino);
 });
