@@ -2,11 +2,14 @@ import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
 import type Ajv from 'ajv';
 
 import { compileWithPointers } from './compileWithPointers';
-import { collectSchemaResources } from './schemaPath/collectSchemaResources';
+import { type SchemaResource, collectSchemaResources } from './schemaPath/collectSchemaResources';
 import { createChildSchemaPathTest } from './schemaPath/createChildSchemaPathTest';
 import { createNotRequiredKeyLookup } from './schemaPath/createNotRequiredKeyLookup';
 import { isChildSchemaPath } from './schemaPath/isChildSchemaPath';
 import { transformDataPath } from './transformDataPath';
+
+/** Empty resource metadata when this same invocation found no identifier. */
+const NO_RESOURCES: readonly SchemaResource[] = [];
 
 /**
  * Compile one independent promise-returning validator with an authored native execution mode.
@@ -15,6 +18,7 @@ import { transformDataPath } from './transformDataPath';
  * @param key - Optional registered root address.
  * @param forceAsync - Force native async compilation for the public low-level factory contract.
  * @param serialized - Snapshot from this same registration call; absent for previously registered roots.
+ * @param hasResources - Whether this invocation may contain identifiers; cached or legacy-id roots retain a full walk.
  * @returns A promise-returning validator capturing each invocation's own errors.
  */
 export const createSchemaValidator = (
@@ -23,6 +27,7 @@ export const createSchemaValidator = (
   key?: string,
   forceAsync = false,
   serialized?: string,
+  hasResources = true,
 ): ValidateFunction => {
   let transient: JSONSchema | undefined = key
     ? undefined
@@ -51,10 +56,10 @@ export const createSchemaValidator = (
   const rootPrefix = isAsyncReference ? `${key}/` : '';
   if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
   const compiled: object = transient ?? jsonSchema;
-  const resources = collectSchemaResources(
-    compiled,
-    ajv._opts.schemaId === 'id' || ajv._opts.schemaId === 'auto',
-  );
+  const legacyId = ajv._opts.schemaId === 'id' || ajv._opts.schemaId === 'auto';
+  const resources = hasResources || legacyId
+    ? collectSchemaResources(compiled, legacyId)
+    : NO_RESOURCES;
   // Without resources every path is `#/` or unmatched, so the uncached classifier does no extra work.
   const isChildPath = resources.length
     ? createChildSchemaPathTest(resources)

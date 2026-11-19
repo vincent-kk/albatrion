@@ -63,7 +63,7 @@ export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
   },
   compile: (jsonSchema) => {
     if (!ajvInstance) ajvInstance = createDefaultInstance(defaultSettings);
-    const serialization: { value?: string } = {};
+    const serialization: { value?: string; hasResources?: boolean } = {};
     const registered = registerSchemaRoot(
       jsonSchema,
       ajvInstance,
@@ -79,6 +79,7 @@ export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
       registered.validationCopy ? registered.key : undefined,
       false,
       serialization.value,
+        serialization.hasResources ?? true,
     );
     return async (value: unknown) => validate(value);
   },

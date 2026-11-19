@@ -49,7 +49,7 @@ export const registerSchemaRoot = (
   roots: WeakMap<object, SchemaRootRegistration>,
   active: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[],
   finalizer: FinalizationRegistry<SchemaRootRegistration> | undefined,
-  serialization?: { value?: string },
+  serialization?: { value?: string; hasResources?: boolean },
 ): SchemaRootRegistration => {
   const previous = roots.get(root);
   if (previous) return previous;
@@ -58,7 +58,10 @@ export const registerSchemaRoot = (
     if (name === '$id' && typeof value === 'string') ids.push(value);
     return value;
   });
-  if (serialization) serialization.value = serialized;
+  if (serialization) {
+    serialization.value = serialized;
+    serialization.hasResources = ids.length !== 0;
+  }
   if (ids.length)
     for (let index = active.length - 1; index >= 0; index--)
       if (!active[index].deref()) active.splice(index, 1);
