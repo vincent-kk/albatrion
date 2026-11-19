@@ -25,8 +25,8 @@ it('virtual operations follow the reference model in sequential and batched hist
     const properties: Record<
       string,
       { type: 'string'; controls: { active: string } } | { type: 'boolean' }
-    > = { outside: { type: 'boolean' } };
-    const input: Record<string, unknown> = { outside: true };
+    > = { outside: { type: 'boolean' }, groupOn: { type: 'boolean' } };
+    const input: Record<string, unknown> = { outside: true, groupOn: true };
     for (let index = 0; index < count; index++) {
       properties[`on${index}`] = { type: 'boolean' };
       properties[names[index]] = {
@@ -41,7 +41,14 @@ it('virtual operations follow the reference model in sequential and batched hist
         jsonSchema: {
           type: 'object',
           properties,
-          options: { virtual: { group: { fields: names } } },
+          options: {
+            virtual: {
+              group: {
+                fields: names,
+                controls: { active: '../groupOn === true' },
+              },
+            },
+          },
         },
         defaultValue: input,
         validationMode: ValidationMode.OnRequest,
@@ -120,7 +127,10 @@ it('virtual operations follow the reference model in sequential and batched hist
             stored[slot] = tuple[slot];
       } else if (operation === 2) stored.splice(0, stored.length, ...initial);
       else if (operation === 5 && count) active[index] = false;
-      const expected: Record<string, unknown> = { outside: true };
+      const expected: Record<string, unknown> = {
+        outside: true,
+        groupOn: true,
+      };
       for (let slot = 0; slot < count; slot++) {
         expected[`on${slot}`] = active[slot];
         if (active[slot] && stored[slot] !== undefined)
@@ -154,6 +164,27 @@ it('virtual operations follow the reference model in sequential and batched hist
         errors: roots[0].globalErrors,
         state: roots[0].globalState,
       });
+    }
+    for (const root of roots) {
+      const group = root.find('/group')!;
+      const retained = group.inactiveValues;
+      expect(group.defaultValue, `seed=${seed} live defaults`).toEqual(initial);
+      root.find('/groupOn')!.setValue(false);
+      expect(group.defaultValue, `seed=${seed} detached defaults`).toEqual(
+        initial,
+      );
+      expect(group.inactiveValues, `seed=${seed} detached retained`).toBe(
+        retained,
+      );
+      expect(group.isDivergent, `seed=${seed} detached divergence`).toBe(false);
+      for (let slot = 0; slot < count; slot++)
+        root.setValue({ ...root.value, [names[slot]]: `after-detach:${slot}` });
+      root.find('/groupOn')!.setValue(true);
+      expect(root.find('/group')).not.toBe(group);
+      expect(root.find('/group')!.defaultValue).toEqual(initial);
+      expect(group.defaultValue).toEqual(initial);
+      expect(group.inactiveValues).toBe(retained);
+      expect(group.isDivergent).toBe(false);
     }
   }
 }, 120_000);

@@ -184,9 +184,18 @@ describe('behavior rows', () => {
   });
 
   it('assembles virtual sibling values but emits no virtual field', () => {
-    const node = makeRecord(virtualBehavior, undefined);
+    const node = makeRecord(
+      virtualBehavior,
+      undefined,
+      {},
+      {
+        ...OBJECT_TEMPLATE,
+        fields: ['first', 'second'],
+      },
+    );
     const first = { value: 1 };
     const second = { value: 'two' };
+    node.childrenByName = { first, second };
     const tuple = virtualBehavior.assemble(node, [first, second]);
     expect(tuple).toEqual([1, 'two']);
     node.storedValue = tuple;

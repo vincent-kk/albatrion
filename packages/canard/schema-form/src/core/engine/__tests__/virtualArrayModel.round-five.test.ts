@@ -2,7 +2,7 @@ import { expect, it } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 
-import { isArrayNode } from '../../surface/utils/guards';
+import { isArrayNode } from '../../surface';
 import { ValidationMode } from '../types/state';
 
 it('virtual item groups follow 1000 generated array mutation histories', () => {
