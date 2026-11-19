@@ -6,5 +6,5 @@ afterEach(cleanup);
 it('preserves the exact switch composition when state labels are absent', () => {
   const { container } = render(<Form jsonSchema={{ type: 'boolean', presentation: { inputType: 'switch' } }} defaultValue={false} fieldInputDefinitions={[FieldInputBooleanSwitchDefinition]} />);
   const control = screen.getByRole('switch');
-  expect(container.querySelector('label')!.outerHTML.replaceAll(control.id, 'field')).toMatchSnapshot();
+  expect(container.querySelector('label')!.outerHTML.split(control.id).join('field')).toMatchSnapshot();
 });

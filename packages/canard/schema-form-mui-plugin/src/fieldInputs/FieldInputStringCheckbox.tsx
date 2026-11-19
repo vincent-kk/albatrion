@@ -22,6 +22,7 @@ import type { MuiContext } from '../type';
 import { FieldLabelContext } from '../utils/context/FieldLabelContext';
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
+import { mergeEnumSelection } from './utils/enum/mergeEnumSelection';
 
 type StringCheckboxJSONSchema = ArraySchema & {
   type: 'array';
@@ -77,8 +78,7 @@ const FieldInputStringCheckbox = ({
   }, [jsonSchema, alias]);
 
   const [value, setValue] = useState<string[]>(() =>
-    isArray(defaultValue) &&
-    defaultValue.every((v) => v === null || typeof v === 'string')
+    isArray(defaultValue)
       ? defaultValue.map((v) => JSON.stringify(v))
       : [],
   );
@@ -95,13 +95,7 @@ const FieldInputStringCheckbox = ({
     }
 
     setValue(newValues);
-    onChange(
-      newValues
-        .map(
-          (token) => options.find((option) => option.value === token)?.rawValue,
-        )
-        .filter((rawValue) => rawValue !== undefined),
-    );
+    onChange(previous => mergeEnumSelection(isArray(previous) ? previous : [], newValues, options));
   });
 
   return (
