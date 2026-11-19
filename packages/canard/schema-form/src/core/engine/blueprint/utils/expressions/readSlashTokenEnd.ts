@@ -33,11 +33,17 @@ export const readSlashTokenEnd = (
   if (isAfterValue) return -1;
   let close = index + 1;
   let isInClass = false;
+  let hasRegexSyntax = false;
   for (; close < expression.length; close++) {
     const char = expression[close];
     if (char === '\n') return -1;
-    if (char === '\\') close++;
-    else if (char === '[') isInClass = true;
+    if (char === '\\') {
+      hasRegexSyntax = true;
+      close++;
+    } else if (char === '[') {
+      hasRegexSyntax = true;
+      isInClass = true;
+    }
     else if (char === ']') isInClass = false;
     else if (char === '/' && !isInClass) break;
   }
@@ -50,13 +56,13 @@ export const readSlashTokenEnd = (
     after++;
   if (after < expression.length && OPERAND_START.test(expression[after]))
     return -1;
-  // A path wins unless it stops exactly at the closing slash or the body escapes a character.
+  // Character classes and escapes make the body a regex; other absolute spellings keep path priority.
   JSON_POINTER_PATH_STICKY_REGEX.lastIndex = index;
   const path = JSON_POINTER_PATH_STICKY_REGEX.exec(expression);
   if (
     path === null ||
     index + path[0].length === close ||
-    expression.slice(index, close).includes('\\')
+    hasRegexSyntax
   )
     return end;
   return -1;
