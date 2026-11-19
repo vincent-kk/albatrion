@@ -1,6 +1,7 @@
 import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import * as ts from 'typescript';
 
 /**
@@ -10,7 +11,7 @@ import * as ts from 'typescript';
  * @returns Formatted compiler diagnostics, cleaning the isolated consumer afterward.
  */
 export function checkSchemaConsumer(source: string, options: ts.CompilerOptions): string[] {
-  const repository = resolve(__dirname, '../../../../../..');
+  const repository = resolve(dirname(fileURLToPath(import.meta.url)), '../../../../../..');
   const root = mkdtempSync(join(tmpdir(), 'schema-consumer-'));
   try {
     writeFileSync(join(root, 'package.json'), '{"type":"module"}');

@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { checkSchemaConsumer } from './helpers/checkSchemaConsumer';
+import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
+import { checkSchemaConsumer } from '../helpers/checkSchemaConsumer';
 
 const consumer = `
 import type { UnknownSchema, RefSchema, NumberSchema, StringSchema, BooleanSchema, ArraySchema, ObjectSchema, NullSchema, BasicSchema, InferJSONSchema } from '@winglet/json-schema';
@@ -20,7 +21,7 @@ void [unknown, string, number, boolean, array, object, nil, basic, inferred];
 describe('strict public schema declarations', () => {
   for (const exactOptionalPropertyTypes of [false, true]) {
     it(`exactOptionalPropertyTypes=${exactOptionalPropertyTypes}`, () => {
-      expect(checkSchemaConsumer(consumer, { exactOptionalPropertyTypes })).toEqual([]);
+      assert.deepEqual(checkSchemaConsumer(consumer, { exactOptionalPropertyTypes }), []);
     });
   }
 });
