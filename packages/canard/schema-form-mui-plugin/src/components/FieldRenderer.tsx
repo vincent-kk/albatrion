@@ -24,6 +24,11 @@ export const FieldRenderer = ({
     return (
       <FieldLabelContext.Provider value={labelId}>
         <Input />
+        {errorMessage !== null &&
+          errorMessage !== undefined &&
+          typeof errorMessage !== 'boolean' && (
+            <ErrorMessage>{errorMessage}</ErrorMessage>
+          )}
       </FieldLabelContext.Provider>
     );
 
