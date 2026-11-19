@@ -1,7 +1,8 @@
-import { copyFile, mkdir, unlink } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { lstat, readFile, stat, unlink } from 'node:fs/promises';
+import { join } from 'node:path';
 
 import type { Action } from '../../buildPlan/index.js';
+import { replaceDocument } from './replaceDocument.js';
 
 /**
  * Apply one file-targeted action.
@@ -22,12 +23,23 @@ export async function applyAction(
   const { dstAbs } = action.target;
 
   if (action.kind === 'copy' || action.kind === 'warn-diverged') {
-    await mkdir(dirname(dstAbs), { recursive: true });
-    await copyFile(join(assetRoot, action.relPath), dstAbs);
+    const source = join(assetRoot, action.relPath);
+    await replaceDocument(
+      dstAbs,
+      await readFile(source),
+      (await stat(source)).mode,
+    );
     return;
   }
-  if (action.kind === 'delete')
+  if (action.kind === 'delete') {
+    const entry = await lstat(dstAbs).catch((error: NodeJS.ErrnoException) => {
+      if (error.code === 'ENOENT') return undefined;
+      throw error;
+    });
+    if (entry && !entry.isSymbolicLink() && (entry.mode & 0o222) === 0)
+      throw new Error(`File is read-only: ${dstAbs}`);
     await unlink(dstAbs).catch((error) => {
       if (error?.code !== 'ENOENT') throw error;
     });
+  }
 }
