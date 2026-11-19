@@ -403,8 +403,12 @@ const replicate = (
     if (hasOwnProperty(value, 'name')) result.name = value.name;
     result.stack = value.stack;
     if ('cause' in value)
-      // @ts-expect-error: The `cause` property is only available in ECMAScript 2022 (ES2022)
-      result.cause = replicate(value.cause, limit, depth, cache);
+      defineProperty(result, 'cause', {
+        value: replicate(Reflect.get(value, 'cause'), limit, depth, cache),
+        writable: true,
+        enumerable: Object.getOwnPropertyDescriptor(value, 'cause')?.enumerable ?? false,
+        configurable: true,
+      });
     replicateProperties(result, value, limit, depth, cache);
     return result;
   }
