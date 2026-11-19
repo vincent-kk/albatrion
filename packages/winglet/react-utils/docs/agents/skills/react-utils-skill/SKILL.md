@@ -82,4 +82,4 @@ import { renderComponent } from '@winglet/react-utils/render';
 import { useHandle } from '@winglet/react-utils';           // barrel — everything above
 ```
 
-Peer dependencies: React and React DOM `>=16.14 <20`. Ships ESM (`.mjs`) and CJS (`.cjs`) with declarations.
+Peer dependencies: React and React DOM `>=16.14 <20`. Ships ESM (`.mjs`) and CJS (`.cjs`) with declarations. The ESM build imports `react/jsx-runtime`, which React 18 and later export. With React 16.14 or 17, use the CommonJS build or a bundler alias for `react/jsx-runtime`; strict ESM resolution is unsupported for those versions.

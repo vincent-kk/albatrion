@@ -25,7 +25,7 @@ before(() => {
 after(() => rmSync(scratch, { recursive: true, force: true }));
 
 for (const version of ['16.14.0', '17.0.2', '18.3.1', '19.2.6']) {
-  test(`packed ESM, CommonJS and webpack resolve with an emulated React ${version} manifest`, async () => {
+  test(`packed consumers pin the ESM limit and bundler aliases for emulated React ${version}`, async () => {
     const root = join(scratch, version);
     const modules = join(root, 'node_modules');
     const packed = join(modules, '@winglet/react-utils');
@@ -46,10 +46,10 @@ for (const version of ['16.14.0', '17.0.2', '18.3.1', '19.2.6']) {
     }
     symlinkSync(join(repository, 'packages/winglet/common-utils'), join(modules, '@winglet/common-utils'), 'dir');
     const addresses = Object.keys(manifest.exports).map(key => '@winglet/react-utils' + (key === '.' ? '' : key.slice(1)));
-    const script = `import assert from 'node:assert/strict'; import {createRequire} from 'node:module'; const require=createRequire(import.meta.url); for(const address of ${JSON.stringify(addresses)}) { await import(address); require(address); } await assert.rejects(import('@winglet/react-utils/dist/_runtime/react-jsx-runtime.cjs'), {code:'ERR_PACKAGE_PATH_NOT_EXPORTED'});`;
+    const script = `import assert from 'node:assert/strict'; import {createRequire} from 'node:module'; const require=createRequire(import.meta.url); const addresses=${JSON.stringify(addresses)}; for(const address of addresses) require(address); if(${Number(version.split('.')[0]) < 18}) { await assert.rejects(import('@winglet/react-utils'), error => error.code === 'ERR_MODULE_NOT_FOUND' && error.message.includes('react/jsx-runtime')); } else { for(const address of addresses) await import(address); } await assert.rejects(import('@winglet/react-utils/dist/_runtime/react-jsx-runtime.cjs'), {code:'ERR_PACKAGE_PATH_NOT_EXPORTED'});`;
     const node = spawnSync(process.execPath, ['--input-type=module', '--eval', script], { cwd: root, encoding: 'utf8' });
     assert.equal(node.status, 0, node.stderr);
-    assert.ok(existsSync(join(packed, 'dist/_runtime/react-jsx-runtime.cjs')), 'package files include the private runtime bridge');
+    assert.ok(!existsSync(join(packed, 'dist/_runtime/react-jsx-runtime.cjs')), 'the package retains the unbridged runtime graph');
     writeFileSync(join(root, 'entry.js'), "import {withErrorBoundary} from '@winglet/react-utils/hoc'; console.log(typeof withErrorBoundary);\n");
     await new Promise((resolve, reject) => {
       const compiler = webpack({ context: root, mode: 'development', devtool: false, entry: './entry.js', output: { path: join(root, 'out'), filename: 'bundle.js' }, resolve: { modules: [modules] }, infrastructureLogging: { level: 'none' } });

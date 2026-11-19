@@ -70,6 +70,8 @@ package.json의 exports 설정을 기반으로 합니다:
 - Node.js 14.0.0 이상
 - 모던 브라우저 (ES2020 지원)
 
+ESM 빌드는 React 18 이상이 export하는 `react/jsx-runtime`을 가져옵니다. React 16.14 또는 17에서는 CommonJS 빌드를 사용하거나 `react/jsx-runtime`에 대한 번들러 alias를 설정합니다. 해당 React 버전의 strict ESM 해석은 지원하지 않습니다.
+
 **레거시 환경 지원이 필요한 경우:**
 Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환해주세요.
 
