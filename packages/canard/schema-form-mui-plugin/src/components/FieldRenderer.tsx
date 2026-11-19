@@ -64,6 +64,7 @@ export const FieldRenderer = ({
         <FieldLabelContext.Provider value={labelId}>
           <Input />
         </FieldLabelContext.Provider>
+        <ErrorMessage>{errorMessage}</ErrorMessage>
       </Box>
     );
   } else {
