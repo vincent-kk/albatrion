@@ -1,5 +1,6 @@
 import {
   chmodSync,
+  existsSync,
   lstatSync,
   mkdirSync,
   readFileSync,
@@ -23,9 +24,8 @@ const savedHome = process.env.HOME;
 afterEach(() => {
   process.env.HOME = savedHome;
   for (const root of roots.splice(0)) {
-    try {
+    if (existsSync(join(root, 'AGENTS.md')))
       chmodSync(join(root, 'AGENTS.md'), 0o644);
-    } catch {}
     removeRoot(root);
   }
 });
@@ -68,13 +68,9 @@ describe('user scope: a dotfiles link', () => {
       '--no-interactive',
     ]);
     const isLink = lstatSync(join(home, '.codex/AGENTS.md')).isSymbolicLink();
-    let dotfilesHasBlock = false;
-    try {
-      dotfilesHasBlock = readFileSync(
-        join(dotfiles, 'AGENTS.md'),
-        'utf8',
-      ).includes('# rule');
-    } catch {}
+    const target = join(dotfiles, 'AGENTS.md');
+    const dotfilesHasBlock =
+      existsSync(target) && readFileSync(target, 'utf8').includes('# rule');
     expect({ code, isLink, dotfilesHasBlock }).toEqual({
       code: 1,
       isLink: true,
