@@ -128,5 +128,5 @@ it('spreads an own __proto__ update as data without changing aggregate prototype
   const prototype = Object.getPrototypeOf(handler.state);
   manager?.update(JSON.parse('{"__proto__":{"marker":true}}'));
   expect(Object.getPrototypeOf(handler.state)).toBe(prototype);
-  expect(Object.hasOwn(handler.state, '__proto__')).toBe(true);
+  expect(Object.getOwnPropertyDescriptor(handler.state, '__proto__')).toBeDefined();
 });

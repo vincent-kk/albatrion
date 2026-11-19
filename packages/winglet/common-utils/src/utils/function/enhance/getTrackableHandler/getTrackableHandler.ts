@@ -2,7 +2,7 @@ import { reportHostError } from '@/common-utils/utils/errorReporting/reportHostE
 
 import type { Dictionary, Fn } from '@aileron/declare';
 
-import { HookStateManager } from './utils/HookStateManager';
+import { getHookStateManager } from './utils/getHookStateManager';
 import { isThenable } from './utils/isThenable';
 
 import type {
@@ -361,6 +361,7 @@ export function getTrackableHandler<
 
   /** Whether the function is currently executing */
   let pending = false;
+  let getPending = () => pending;
 
   /** Number of calls whose completion cleanup has not run. */
   let pendingCallCount = 0;
@@ -373,10 +374,6 @@ export function getTrackableHandler<
    * Called whenever state changes or execution status changes.
    * @internal
    */
-  /** Set while a lifecycle hook runs, so its updates fold into the publish that follows it. */
-  let hookRunning = false;
-  let awaitingHookCount = 0;
-
   const publish = (completion = false) => {
     let failures: unknown[] | undefined;
     for (const listener of listeners) {
@@ -391,7 +388,7 @@ export function getTrackableHandler<
   };
 
   /**
-   * Updates the state and sends notifications to subscribers.
+   * Updates shared state; call-owned managers decide when to publish.
    * Supports both partial state objects and updater functions.
    * @param updater - Partial state to merge or function that receives previous state and returns partial state
    * @internal
@@ -401,7 +398,6 @@ export function getTrackableHandler<
   ) => {
     const update = typeof updater === 'function' ? updater(state) : updater;
     state = { ...state, ...update };
-    if (!hookRunning && awaitingHookCount === 0) publish();
   };
 
   /**
@@ -409,7 +405,7 @@ export function getTrackableHandler<
    * Provides read-only access to current state and update functionality.
    * @internal
    */
-  const stateManager: StateManager<State> = {
+  const stateOwner: StateManager<State> = {
     get state(): State {
       return state;
     },
@@ -437,52 +433,40 @@ export function getTrackableHandler<
         publish(true);
       }
     };
-  } else if (preventConcurrent) {
+  } else {
+    const HookStateManager = getHookStateManager(stateOwner, publish);
+    if (preventConcurrent) {
     // Guarded continuations own one argument tuple until completion.
     let callArgs: Args | undefined;
-    let result: Result | undefined;
-    let failure: unknown;
-    let isFailed = false;
-    const deliver = (): Result | undefined => {
-      const value = result;
-      const error = failure;
-      const failed = isFailed;
+    getPending = () => callArgs !== undefined;
+    let callStateManager: InstanceType<typeof HookStateManager>;
+    const deliver = (value?: Result, error?: unknown, failed = false): Result | undefined => {
       callArgs = undefined;
-      result = undefined;
-      failure = undefined;
-      isFailed = false;
-      hookRunning = false;
-      pending = --pendingCallCount > 0;
+      callStateManager.isHookRunning = false;
       publish(true);
       if (failed) throw error;
       return value;
     };
     const rejectAfter = (error: unknown): Result | undefined => {
-      failure = error;
-      isFailed = true;
-      return deliver();
+      return deliver(undefined, error, true);
     };
-    const complete = (): Result | undefined | Promise<Result | undefined> => {
-      hookRunning = true;
+    const complete = (value?: Result, error?: unknown, failed = false): Result | undefined | Promise<Result | undefined> => {
+      callStateManager.isHookRunning = true;
       try {
-        const returned = afterExecute?.(callArgs!, stateManager);
+        const returned = afterExecute?.(callArgs!, callStateManager);
         if (returned != null && isThenable(returned))
-          return Promise.resolve(returned).then(deliver, rejectAfter);
-      } catch (error) { return rejectAfter(error); }
-      return deliver();
+          return Promise.resolve(returned).then(() => deliver(value, error, failed), rejectAfter);
+      } catch (afterError) { return rejectAfter(afterError); }
+      return deliver(value, error, failed);
     };
     const resolveOrigin = (value: Result): Result | undefined | Promise<Result | undefined> => {
-      result = value;
-      isFailed = false;
-      return complete();
+      return complete(value);
     };
     const rejectOrigin = (error: unknown): Result | undefined | Promise<Result | undefined> => {
-      failure = error;
-      isFailed = true;
-      return complete();
+      return complete(undefined, error, true);
     };
     const runOrigin = (): Promise<Result | undefined> => {
-      hookRunning = false;
+      callStateManager.isHookRunning = false;
       try {
         publish();
         return origin(...callArgs!).then(resolveOrigin, rejectOrigin);
@@ -493,42 +477,31 @@ export function getTrackableHandler<
     };
     const rejectBefore = (error: unknown): never => {
       callArgs = undefined;
-      hookRunning = false;
-      pending = --pendingCallCount > 0;
+      callStateManager.isHookRunning = false;
       publish(true);
       throw error;
     };
     handler = (...args: Args): Promise<Result | undefined> => {
-      if (pending) return Promise.resolve(undefined);
+      if (callArgs !== undefined) return Promise.resolve(undefined);
       callArgs = args;
-      pendingCallCount++;
-      pending = true;
-      hookRunning = true;
+      callStateManager = new HookStateManager();
       try {
-        const returned = beforeExecute?.(args, stateManager);
+        const returned = beforeExecute?.(args, callStateManager);
         if (returned != null && isThenable(returned))
           return Promise.resolve(returned).then(runOrigin, rejectBefore);
       } catch (error) {
         callArgs = undefined;
-        hookRunning = false;
-        pending = --pendingCallCount > 0;
+        callStateManager.isHookRunning = false;
         publish(true);
         return Promise.reject(error);
       }
       return runOrigin();
     };
   } else {
-    const stateOwner: StateManager<State> = {
-      get state(): State { return state; },
-      update: updater => {
-        const next = typeof updater === 'function' ? updater(state) : updater;
-        state = { ...state, ...next };
-      },
-    };
     handler = async (...args: Args): Promise<Result | undefined> => {
       pendingCallCount++;
       pending = true;
-      const stateManager = new HookStateManager(stateOwner, publish);
+      const stateManager = new HookStateManager();
       try {
         const returned = beforeExecute?.(args, stateManager);
         if (returned != null && isThenable(returned)) await returned;
@@ -553,6 +526,7 @@ export function getTrackableHandler<
         }
       }
     };
+  }
   }
 
   // Add subscribe method (non-enumerable to avoid iteration)
@@ -580,7 +554,7 @@ export function getTrackableHandler<
      * @returns {boolean} True if function is currently running, false otherwise
      */
     get() {
-      return pending;
+      return getPending();
     },
     configurable: false,
     enumerable: false,
