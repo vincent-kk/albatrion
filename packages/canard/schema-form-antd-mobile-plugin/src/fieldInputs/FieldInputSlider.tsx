@@ -60,9 +60,28 @@ const FieldInputSlider = ({
     : typeof defaultValue === 'number'
       ? defaultValue
       : undefined;
+  const constraints =
+    range && jsonSchema.items && isNumberSchema(jsonSchema.items)
+      ? jsonSchema.items
+      : jsonSchema;
+  const multipleOf = constraints.multipleOf ?? jsonSchema.multipleOf;
+  const integer = Array.isArray(constraints.type)
+    ? constraints.type.includes('integer')
+    : constraints.type === 'integer';
+  const { min, max, step, empty } = useMemo(
+    () =>
+      getSliderBounds(
+        constraints.minimum ?? jsonSchema.minimum,
+        constraints.maximum ?? jsonSchema.maximum,
+        multipleOf,
+        integer,
+      ),
+    [constraints, jsonSchema, multipleOf, integer],
+  );
   const [isUnset, setIsUnset] = useState(initialValue === undefined);
   const handleChange = useCallback(
     (value: number | [number, number] | null) => {
+      if (empty) return;
       setIsUnset(false);
       if (value === null) onChange(undefined);
       else if (range) {
@@ -70,38 +89,47 @@ const FieldInputSlider = ({
       } else if (typeof value === 'number' && !Number.isNaN(value))
         onChange(value);
     },
-    [onChange, range],
+    [onChange, range, empty],
   );
 
-  const constraints =
-    range && jsonSchema.items && isNumberSchema(jsonSchema.items)
-      ? jsonSchema.items
-      : jsonSchema;
-
-  const { min, max, step } = getSliderBounds(
-    constraints.minimum ?? jsonSchema.minimum,
-    constraints.maximum ?? jsonSchema.maximum,
-    constraints.multipleOf ?? jsonSchema.multipleOf,
-  );
   const [draft, setDraft] = useState<number | [number, number]>(
     initialValue ?? (range ? [min, min] : min),
   );
+  const validMarks = useMemo(
+    () =>
+      marks &&
+      Object.fromEntries(
+        Object.entries(marks).filter(([key]) => {
+          const value = Number(key);
+          return (
+            Number.isFinite(value) &&
+            value >= min &&
+            value <= max &&
+            (!integer || Number.isInteger(value)) &&
+            (multipleOf === undefined ||
+              Math.abs(value / step - Math.round(value / step)) < 1e-9)
+          );
+        }),
+      ),
+    [marks, min, max, step, integer, multipleOf],
+  );
   const stops = useMemo(
     () =>
-      marks
-        ? Object.keys(marks)
+      validMarks
+        ? Object.keys(validMarks)
             .map(Number)
-            .filter(Number.isFinite)
             .sort((a, b) => a - b)
         : [],
-    [marks],
+    [validMarks],
   );
   const handleDraftChange = (value: number | [number, number]) => {
+    if (empty) return;
     setIsUnset(false);
     setDraft(value);
     if (lazy === false) handleChange(value);
   };
   const handleKeyboardChange = (value: number | [number, number]) => {
+    if (empty) return;
     setIsUnset(false);
     setDraft(value);
     handleChange(value);
@@ -123,16 +151,16 @@ const FieldInputSlider = ({
         max={max}
         step={step}
         stops={stops}
-        disabled={!!(disabled || readOnly)}
+        disabled={!!(disabled || readOnly || empty)}
         onChange={handleKeyboardChange}
       >
         <Slider
-          disabled={disabled || readOnly}
+          disabled={disabled || readOnly || empty}
           min={min}
           max={max}
           step={step}
           range={range}
-          marks={marks}
+          marks={validMarks}
           defaultValue={initialValue}
           value={draft}
           aria-label={name}
