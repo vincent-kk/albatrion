@@ -9,9 +9,10 @@ import { clone } from '../../clone';
  * @param partial Whether the view selects the middle of a larger buffer.
  * @param foreign Whether native constructors belong to another realm.
  * @param hostileSlice Whether subclass slice and species hooks refuse invocation.
+ * @param sliceAccessor Whether the refusing slice hook is a getter rather than a method.
  * @returns Nothing; assertions pin identity, slot contents and independent storage.
  */
-export function checkBuiltinViewSubclass(kind: string, partial: boolean, foreign: boolean, hostileSlice = false): void {
+export function checkBuiltinViewSubclass(kind: string, partial: boolean, foreign: boolean, hostileSlice = false, sliceAccessor = false): void {
   const constructors = Object.fromEntries([
     'ArrayBuffer', 'DataView', 'Int8Array', 'Uint8Array', 'Uint8ClampedArray',
     'Int16Array', 'Uint16Array', 'Int32Array', 'Uint32Array', 'Float16Array',
@@ -23,7 +24,7 @@ export function checkBuiltinViewSubclass(kind: string, partial: boolean, foreign
       constructor(...args) { super(...args); constructions++; }
       label() { return '${kind}'; }
       first() { return ${kind === 'DataView' ? 'this.getUint8(0)' : 'this[0]'}; }
-      ${hostileSlice ? 'slice() { throw new Error("subclass slice called"); } static get [Symbol.species]() { throw new Error("subclass species read"); }' : ''}
+      ${hostileSlice ? `${sliceAccessor ? 'get slice()' : 'slice()'} { throw new Error("subclass slice called"); } static get [Symbol.species]() { throw new Error("subclass species read"); }` : ''}
     }
     const width = ${kind === 'DataView' ? '1' : kind + '.BYTES_PER_ELEMENT'};
     const buffer = new ArrayBuffer(width * 9);
