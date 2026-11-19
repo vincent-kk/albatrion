@@ -28,12 +28,13 @@ it('preserves the input container prototype across write modes, depths and rebui
         const target = dictionary(nullPrototype);
         const source = nested ? { child: target } : target;
         const result = mergePatch(source, nested ? { child: { value: 2 } } : { value: 2 }, immutable);
-        expect(Object.getPrototypeOf(nested ? result.child : result)).toBe(Object.getPrototypeOf(target));
+        if (result === null || typeof result !== 'object') throw new Error('missing merged container');
+        expect(Object.getPrototypeOf(nested ? Reflect.get(result, 'child') : result)).toBe(Object.getPrototypeOf(target));
       }
       const target = dictionary(nullPrototype);
       const source = nested ? { child: target } : target;
       const result = setValue(source, nested ? '/child/value' : '/value', 2);
-      expect(Object.getPrototypeOf(nested ? result.child : result)).toBe(Object.getPrototypeOf(target));
+      expect(Object.getPrototypeOf(nested ? Reflect.get(result, 'child') : result)).toBe(Object.getPrototypeOf(target));
     }
   }
 });
