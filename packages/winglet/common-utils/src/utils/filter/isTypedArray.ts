@@ -1,7 +1,7 @@
 /** Native typed-array tag getter returns undefined for DataView across realms. */
-const getTypedArrayName = Object.getOwnPropertyDescriptor(
+const getTypedArrayName = Function.prototype.call.bind(Object.getOwnPropertyDescriptor(
   Object.getPrototypeOf(Uint8Array.prototype), Symbol.toStringTag,
-)!.get!;
+)!.get!);
 
 /**
  * Determines whether a value is a TypedArray with enhanced type safety.
@@ -90,7 +90,7 @@ const getTypedArrayName = Object.getOwnPropertyDescriptor(
  */
 export const isTypedArray = <T extends TypedArray>(
   value: unknown,
-): value is T => ArrayBuffer.isView(value) && getTypedArrayName.call(value) !== undefined;
+): value is T => ArrayBuffer.isView(value) && getTypedArrayName(value) !== undefined;
 
 /**
  * Union type representing all TypedArray types.
