@@ -29,6 +29,31 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
     if (!writes.length) return;
     let option = WriteOption.None;
     for (const write of writes) option |= write.option;
+    if (
+      option & WriteOption.EnableAutomaticWrites &&
+      !(option & WriteOption.DisableAutomaticWrites) &&
+      runtime.disableAutomaticWrites === true &&
+      writes.length > 1 &&
+      writes.some(
+        (write) => !(write.option & WriteOption.EnableAutomaticWrites),
+      )
+    ) {
+      for (const write of writes) {
+        const partial =
+          !!(write.option & WriteOption.Merge) &&
+          !(write.option & WriteOption.Replace);
+        writeFieldNode(
+          write.node,
+          write.value,
+          partial
+            ? FieldNodeWriteKind.CallerPartial
+            : FieldNodeWriteKind.CallerReplace,
+          write.option,
+          write.source,
+        );
+      }
+      return;
+    }
     const target = writes.length === 1 ? find(root, writes[0].node.path) : root;
     if (!target) return;
     const value =
