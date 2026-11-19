@@ -35,10 +35,27 @@ export const collectMarkedMergeOrigins = <Self extends FieldNodeRecord<Self>>(
   if (template.kind === 'virtual') {
     const values = isArray(value) ? value : undefined;
     return (resolveStorageTargets(node) ?? []).flatMap((target, index) => {
-      if (virtualFields ? !virtualFields.includes(target.name) : !target.node && values?.[index] === undefined) return [];
+      if (
+        virtualFields
+          ? !virtualFields.includes(target.name)
+          : !target.node && values?.[index] === undefined
+      )
+        return [];
       const owner = target.node ?? node.parent;
-      const childTemplate = target.node?.blueprintNode ?? node.parent?.blueprintNode.childEntries.find(entry => entry.name === target.name)?.node;
-      return owner && childTemplate ? collectMarkedMergeOrigins(owner, values?.[index], source, target.path, childTemplate) : [];
+      const childTemplate =
+        target.node?.blueprintNode ??
+        node.parent?.blueprintNode.childEntries.find(
+          (entry) => entry.name === target.name,
+        )?.node;
+      return owner && childTemplate
+        ? collectMarkedMergeOrigins(
+            owner,
+            values?.[index],
+            source,
+            target.path,
+            childTemplate,
+          )
+        : [];
     });
   }
   if (
