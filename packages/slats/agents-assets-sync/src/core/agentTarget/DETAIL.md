@@ -11,7 +11,7 @@
 - `description` 은 이 target 이 쓰는 곳을 한 줄로 말한다. `autoLocated` 인 경우 `auto-located` 표식이 포함된다.
 - `resolveDestinations` 는 매니페스트 경로를 목적지로 사상한다. 선행 세그먼트가 알려진 kind 가 아니거나 호출자가 거른 kind 면 결과에서 **빠진다**. 이 부재가 kind 필터 실행이 아무것도 보고하거나 삭제하지 않게 막는 기제다.
 - `rules` kind 이면서 `rulesMergeFile` 이 있으면 목적지는 `block` 이고 blockId 는 `formatBlockId(packageName, relPath)` 다.
-- 첫 세그먼트가 `.` 으로 시작하는 skill 디렉터리는 `Error` 로 거부한다. 그 네임스페이스는 agent 자신의 예약 공간이다 (Codex 는 built-in 을 스킬 디렉터리 아래의 `.system` 구획 에 둔다).
+- skills 바로 아래의 placeholder 파일은 설치를 막지 않습니다. 첫 세그먼트가 `.` 으로 시작하고 하위 파일을 가진 skill 디렉터리는 `Error` 로 거부한다. 그 네임스페이스는 agent 자신의 예약 공간이다 (Codex 는 built-in 을 스킬 디렉터리 아래의 `.system` 구획 에 둔다).
 - kind 뒤의 경로나 스킬 네임스페이스 접두사에 `..` 세그먼트가 하나라도 있으면 (`/` 와 `\` 어느 구분자든) `Error` 로 거부한다. 매니페스트 키는 배포된 `agents-hashes.json` 이나 공개 API 호출자에게서 오는 신뢰할 수 없는 입력이고, `join` 이 그런 세그먼트를 정규화하면 목적지가 kind 루트 밖이 되어 쓰기나 `--force` 삭제가 사용자의 다른 파일에 닿기 때문이다. 이름에 점이 들어 있을 뿐인 세그먼트(`a..b`)는 허용한다.
 - kind 는 첫 `/` 세그먼트에서 읽으므로 `/` 가 없는 역슬래시 키나 `C:/…` 같은 드라이브 문자 키는 목적지를 얻지 못하고 오류도 내지 않는다. 목적지를 얻은 키를 Windows 의 `path.win32.join` 이 루트 밖으로 해석하는지는 검증하지 않은 한계다. 경로 모듈을 주입할 수 없고 이 저장소의 CI 는 Windows 에서 돌지 않기 때문이다.
 - `project` scope 에서는 요청한 kind 의 목적지 루트(kind 디렉터리와 `AGENTS.md` 병합 파일)와 각 스킬 네임스페이스 디렉터리를 심볼릭 링크를 따라 해석한 위치가 `realpath(projectRoot)` 안에 있어야 한다. 아니면 그 경로를 명시한 `Error` 로 거부한다. 저장소는 심볼릭 링크를 커밋할 수 있으므로, 받아 온 프로젝트의 `.claude/skills -> /다른/곳` 같은 링크가 복사와 `--force` 삭제를 프로젝트 밖으로 보내기 때문이다. 해석에 실패하는 끊긴 링크도 거부한다. 아직 없는 경로는 가장 가까운 기존 조상의 해석 위치로 판단한다.
