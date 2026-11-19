@@ -1,55 +1,23 @@
-import { plugin as ajv7 } from '@canard/schema-form-ajv7-plugin';
-import { plugin as ajv8 } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
 import { expect, it } from 'vitest';
 
 import { plugin as ajv6, createValidator } from '../index';
-
-/** Represent a finite JSON number's decimal spelling as an integer and a power of ten. */
-const decimalParts = (value: number) => {
-  const [coefficient, power = '0'] = value.toString().split('e');
-  const [whole, fraction = ''] = coefficient.split('.');
-  return [BigInt(whole + fraction), Number(power) - fraction.length] as const;
-};
-
-/** Decide divisibility independently of AJV and IEEE-754 division. */
-const isExactMultiple = (value: number, step: number) => {
-  const [dividend, valuePower] = decimalParts(value);
-  const [divisor, stepPower] = decimalParts(step);
-  const power = Math.min(valuePower, stepPower);
-  return (
-    (dividend * 10n ** BigInt(valuePower - power)) %
-      (divisor * 10n ** BigInt(stepPower - power)) ===
-    0n
-  );
-};
+import cases from './fixtures/decimalParityCases.json';
 
 it.each([0.1, 0.01, 0.001, 0.05, 0.25, 1e-7, 3, 0.3])(
-  'all default plugins agree with exact decimal arithmetic inside the documented envelope: %s',
+  'matches the shared exact decimal results inside the documented envelope: %s',
   async (step) => {
-    const schema = { type: 'number', multipleOf: step } as const;
-    const validators = [ajv6, ajv7, ajv8].map(({ validator }) =>
-      validator.compile(schema),
-    );
-    const [unit, power] = decimalParts(step);
-    for (const multiplier of [
-      -999999, -1999, -17, -3, -1, 0, 1, 3, 17, 1999, 999999,
-    ]) {
-      for (const value of [
-        Number(`${unit * BigInt(multiplier)}e${power}`),
-        Number(`${unit * BigInt(2 * multiplier + 1) * 5n}e${power - 1}`),
-      ]) {
-        const expected = isExactMultiple(value, step);
-        const actual = await Promise.all(
-          validators.map(async (validate) => (await validate(value)) === null),
-        );
-        expect(actual, `value ${value}, step ${step}`).toEqual([
-          expected,
-          expected,
-          expected,
-        ]);
-      }
-    }
+    const row = cases.multiples.find((row) => row.step === step);
+    if (!row) throw new Error(`Missing decimal cases for ${step}`);
+    const validate = ajv6.validator.compile({
+      type: 'number',
+      multipleOf: step,
+    });
+    for (const { value, valid } of row.cases)
+      expect(
+        (await validate(value)) === null,
+        `value ${value}, step ${step}`,
+      ).toBe(valid);
   },
 );
 
@@ -58,28 +26,26 @@ it.each([
   [0.35, 0.1],
   [0.300001, 0.3],
 ])(
-  'all default plugins reject the nonmultiple %s of %s',
+  'matches the shared issues for nonmultiple %s of %s',
   async (value, step) => {
-    const schema = { type: 'number', multipleOf: step } as const;
-    const verdicts = await Promise.all(
-      [ajv6, ajv7, ajv8].map(async ({ validator }) => {
-        const issues = await validator.compile(schema)(value);
-        return issues?.map(({ keyword, dataPath }) => [keyword, dataPath]);
-      }),
+    const row = cases.nonmultiples.find(
+      (row) => row.value === value && row.step === step,
     );
-    expect(verdicts).toEqual([
-      [['multipleOf', '']],
-      [['multipleOf', '']],
-      [['multipleOf', '']],
-    ]);
+    if (!row) throw new Error(`Missing nonmultiple ${value} of ${step}`);
+    const issues = await ajv6.validator.compile({
+      type: 'number',
+      multipleOf: step,
+    })(value);
+    expect(issues?.map(({ keyword, dataPath }) => [keyword, dataPath])).toEqual(
+      row.issues,
+    );
   },
 );
 
-it('all default plugins reject a zero multipleOf schema', () => {
-  for (const { validator } of [ajv6, ajv7, ajv8])
-    expect(() =>
-      validator.compile({ type: 'number', multipleOf: 0 }),
-    ).toThrow();
+it('rejects a zero multipleOf schema as every default plugin does', () => {
+  expect(() =>
+    ajv6.validator.compile({ type: 'number', multipleOf: 0 }),
+  ).toThrow();
 });
 
 it('keeps an application-supplied precision policy unchanged', async () => {

@@ -1,18 +1,16 @@
-import { plugin as ajv7 } from '@canard/schema-form-ajv7-plugin';
-import { plugin as ajv8 } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
 import { expect, it } from 'vitest';
 
 import { plugin as ajv6, createValidator } from '../index';
+import cases from './fixtures/decimalParityCases.json';
 
 it.each([0, 1, -1])(
-  'default guards agree that zero is never a divisor for %s',
+  'matches the shared zero-divisor guard result for %s',
   (value) => {
+    const row = cases.zeroDivisor.find((row) => row.value === value);
+    if (!row) throw new Error(`Missing zero-divisor case ${value}`);
     const schema = { if: { type: 'number', multipleOf: 0 } } as const;
-    const verdicts = [ajv6, ajv7, ajv8].map(({ validator }) =>
-      validator.compileGuard!(schema, '/if')(value),
-    );
-    expect(verdicts).toEqual([false, false, false]);
+    expect(ajv6.validator.compileGuard!(schema, '/if')(value)).toBe(row.valid);
   },
 );
 

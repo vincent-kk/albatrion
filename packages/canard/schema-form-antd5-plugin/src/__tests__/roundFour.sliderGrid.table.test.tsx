@@ -15,7 +15,7 @@ import {
   type JSONSchema,
   registerPlugin,
 } from '@canard/schema-form';
-import { plugin as validator } from '@canard/schema-form-ajv8-plugin';
+import { constraintValidator as validator } from './fixtures/constraintValidator';
 
 import { plugin } from '../index';
 
