@@ -58,6 +58,14 @@ it.each([
     body: '- item\n\n  ```md\n  example\n  ```\n',
     line: 3,
   },
+  {
+    kind: 'source-inline-code-comment',
+    body: 'Use `<!--` to open a comment.\n',
+  },
+  {
+    kind: 'document-inline-code-comment',
+    document: '# user\nUse `<!--` to open a comment.\n',
+  },
   { kind: 'html-comment-marker', document: `# user\n<!-- example\n${start}\n` },
   { kind: 'source-comment-open', body: 'intro\n<!-- example\n', line: 2 },
 ])(
