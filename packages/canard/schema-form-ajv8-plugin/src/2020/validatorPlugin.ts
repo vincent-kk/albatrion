@@ -30,6 +30,7 @@ export { createValidatorFactory };
  */
 const defaultSettings: Options = {
   allErrors: true,
+  multipleOfPrecision: 9,
   strict: false,
   strictSchema: false,
   validateFormats: false,
