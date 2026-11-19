@@ -11,13 +11,13 @@ import {
 } from '../hash/index.js';
 import { blockBodyMatches, parseBlocks } from '../markerBlock/index.js';
 import { isNoisePath } from '../utils/isNoisePath.js';
-import { readRuleSource } from './utils/readRuleSource.js';
 import { toPosix } from '../utils/toPosix.js';
 import { walkFiles } from '../utils/walkFiles.js';
 import type { Action, ActionKind, InjectPlan, PlanInput } from './type.js';
 import { indexManagedAliases } from './utils/indexManagedAliases.js';
 import { isManagedAlias } from './utils/isManagedAlias.js';
 import { createDocumentReader } from './utils/readDocument.js';
+import { readRuleSource } from './utils/readRuleSource.js';
 
 /**
  * Compare every manifest entry against what is already installed and produce
@@ -39,14 +39,19 @@ export async function buildPlan(input: PlanInput): Promise<InjectPlan> {
   for (const [relPath, srcHash] of Object.entries(sourceHashes)) {
     const destination = destinations.get(relPath);
     if (!destination) continue;
-    const source = input.assetRoot && destination.kind === 'block'
-      ? await readRuleSource(join(input.assetRoot, relPath), input.ruleSources)
-      : undefined;
-    const sourceHash = source !== undefined
-      ? source?.rawHash ?? null
-      : input.assetRoot && destination.kind !== 'unsupported'
-        ? await hashFile(join(input.assetRoot, relPath))
-        : srcHash;
+    const source =
+      input.assetRoot && destination.kind === 'block'
+        ? await readRuleSource(
+            join(input.assetRoot, relPath),
+            input.ruleSources,
+          )
+        : undefined;
+    const sourceHash =
+      source !== undefined
+        ? (source?.rawHash ?? null)
+        : input.assetRoot && destination.kind !== 'unsupported'
+          ? await hashFile(join(input.assetRoot, relPath))
+          : srcHash;
     const actualHash =
       sourceHash ?? (destination.kind === 'block' ? srcHash : null);
     if (actualHash === null) throw new Error(`Source file missing: ${relPath}`);

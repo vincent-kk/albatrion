@@ -68,10 +68,7 @@ it('a user who comments out one package rule (an HTML comment opened inside its 
 
 it('a START marker whose END line was deleted does not make every later run append another copy of other rules', async () => {
   const { args, agents } = setup();
-  writeAt(
-    agents,
-    `# Team\n\n${START_A}\n# rule a\n\n## Our notes\n`,
-  );
+  writeAt(agents, `# Team\n\n${START_A}\n# rule a\n\n## Our notes\n`);
   const before = readFileSync(agents);
   const codes = [
     await runCliCode(args('@probe/b')),

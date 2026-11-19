@@ -1,5 +1,11 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -10,7 +16,8 @@ import { PACKAGE_ROOT } from '../../__tests__/roundThree/fixture.js';
 const BIN = join(PACKAGE_ROOT, 'scripts/agents-build-hashes.mjs');
 const dirs: string[] = [];
 afterEach(() => {
-  for (const dir of dirs.splice(0)) rmSync(dir, { recursive: true, force: true });
+  for (const dir of dirs.splice(0))
+    rmSync(dir, { recursive: true, force: true });
 });
 
 function consumer(pkg: Record<string, unknown>, assetDir?: string): string {
@@ -41,7 +48,11 @@ it.each([
 ])(
   'agents-build-hashes silently no-ops for an opted-out package (%s), as the packaged knowledge states',
   (_label, extra) => {
-    const dir = consumer({ name: '@probe/opted-out', version: '1.0.0', ...extra });
+    const dir = consumer({
+      name: '@probe/opted-out',
+      version: '1.0.0',
+      ...extra,
+    });
     const { status, stderr } = build(dir);
     expect({ status, stderr }).toEqual({ status: 0, stderr: '' });
   },

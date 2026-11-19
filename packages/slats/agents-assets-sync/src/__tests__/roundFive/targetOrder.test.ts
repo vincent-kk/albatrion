@@ -52,8 +52,14 @@ async function scenario(packageArgs: string[], agents: string) {
 }
 
 it('control: --package=a,b and --package=b,a give the same exits, files and blocks', async () => {
-  const forward = await scenario(['--package=@probe/a,@probe/b'], 'claude,codex,agents');
-  const backward = await scenario(['--package=@probe/b,@probe/a'], 'agents,codex,claude');
+  const forward = await scenario(
+    ['--package=@probe/a,@probe/b'],
+    'claude,codex,agents',
+  );
+  const backward = await scenario(
+    ['--package=@probe/b,@probe/a'],
+    'agents,codex,claude',
+  );
   expect(backward).toEqual(forward);
   expect(forward.codes).toEqual([0, 2, 0, 0]);
 });
