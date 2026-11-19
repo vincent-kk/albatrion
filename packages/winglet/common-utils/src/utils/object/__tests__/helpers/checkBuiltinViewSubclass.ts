@@ -33,6 +33,8 @@ export function checkBuiltinViewSubclass(kind: string, partial: boolean, foreign
     const length = ${partial ? '3' : '9'};
     const value = new Sub(buffer, offset, length);
     const plain = new ${kind}(buffer, offset, length);
+    value.field = { value: 1 };
+    plain.field = { value: 1 };
     constructions = 0;
     ({ value, plain, count: () => constructions });
   `, foreign ? {} : constructors);
@@ -53,6 +55,10 @@ export function checkBuiltinViewSubclass(kind: string, partial: boolean, foreign
   expect(Array.from(copiedBytes)).toEqual(Array.from(sourceBytes));
   expect(copy.buffer).not.toBe(original.buffer);
   expect(copy.buffer).not.toBe(plainCopy.buffer);
+  if (kind === 'DataView') {
+    expect(copy.field).toEqual(original.field);
+    expect(copy.field).not.toBe(original.field);
+  } else expect(copy.field).toBeUndefined();
   const first = sourceBytes[0];
   copiedBytes[0] ^= 255;
   expect(sourceBytes[0]).toBe(first);
