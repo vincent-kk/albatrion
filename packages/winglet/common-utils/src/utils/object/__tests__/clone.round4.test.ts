@@ -117,4 +117,3 @@ describe('clone keeps the prototype chain of built-in subclasses', () => {
     );
   });
 });
-
