@@ -23,10 +23,10 @@ handle은 단일·다중 첨부를 `Map<string, File[]>`로 정규화합니다. 
 import { useRef } from 'react';
 import { Form, type FieldInputProps, type FormHandle } from '@canard/schema-form';
 
-function FilesInput({ id, onFileAttach, onChange, readOnly, disabled }: FieldInputProps<string[]>) {
+function FilesInput({ inputId, onFileAttach, onChange, readOnly, disabled }: FieldInputProps<string[]>) {
   return (
     <input
-      id={id}
+      id={inputId}
       type="file"
       multiple
       disabled={readOnly || disabled}
@@ -76,4 +76,4 @@ export function MediaUpload() {
 
 대용량 파일의 진행률·취소·분할 전송은 애플리케이션 업로드 흐름에서 처리하십시오.
 
-사용자 입력은 받은 `id`를 포커스 가능한 컨트롤에 적용하고, 그룹 렌더러는 제목에 `labelId`를 사용하며 radio 선택지는 범위 `id`를 native name으로 사용합니다. 실행되는 단일 입력·그룹 예제는 [입력 식별자와 작성자의 책임](./../api-reference#control-identifiers-and-author-responsibility)을 참고하십시오.
+사용자 입력은 받은 `inputId`를 포커스 가능한 컨트롤에 적용하고, 그룹 렌더러는 제목에 `labelId`를 사용하며 radio 선택지는 범위 `inputId`를 native name으로 사용합니다. 실행되는 단일 입력·그룹 예제는 [입력 식별자와 작성자의 책임](./../api-reference#control-identifiers-and-author-responsibility)을 참고하십시오.

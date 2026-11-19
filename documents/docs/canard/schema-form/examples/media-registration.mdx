@@ -23,10 +23,10 @@ The handle normalizes single and multiple uploads to `Map<string, File[]>`. Appe
 import { useRef } from 'react';
 import { Form, type FieldInputProps, type FormHandle } from '@canard/schema-form';
 
-function FilesInput({ id, onFileAttach, onChange, readOnly, disabled }: FieldInputProps<string[]>) {
+function FilesInput({ inputId, onFileAttach, onChange, readOnly, disabled }: FieldInputProps<string[]>) {
   return (
     <input
-      id={id}
+      id={inputId}
       type="file"
       multiple
       disabled={readOnly || disabled}
@@ -76,4 +76,4 @@ export function MediaUpload() {
 
 Upload progress, cancellation, and chunking for large files belong to the application's upload flow.
 
-Custom inputs apply their supplied `id` to the focusable control; group renderers use `labelId` for their title and radio options use that scoped `id` as the native name. See [control identifiers and author responsibility](./../api-reference#control-identifiers-and-author-responsibility) for the executable single-control and group examples.
+Custom inputs apply their supplied `inputId` to the focusable control; group renderers use `labelId` for their title and radio options use that scoped `inputId` as the native name. See [control identifiers and author responsibility](./../api-reference#control-identifiers-and-author-responsibility) for the executable single-control and group examples.

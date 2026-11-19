@@ -293,7 +293,7 @@ Use the second generic on both `Form<Schema, Value>` and `FormHandle<Schema, Val
 
 The package connects Form.Label and bound label parts to the supplied Form-scoped input id. FieldRenderer receives the matching labelId for group titles, and built-in inputs connect their controls or option labels. Label and ARIA associations are document-wide even when native form owners differ.
 
-A single-control custom input must put its received id on its focusable control. The package cannot choose an element inside an arbitrary custom component for you. Keep path for data lookup; never use path as a DOM id. No automatic missing-target warning is emitted. This minimal controlled input uses FieldInputProps from @canard/schema-form:
+A single-control custom input must put its received `inputId` on its focusable control. The package cannot choose an element inside an arbitrary custom component for you. Keep path for data lookup; never use path as a DOM id. No automatic missing-target warning is emitted. This minimal controlled input uses FieldInputProps from @canard/schema-form:
 
 ```tsx
 const TextControl = ({ inputId, value, onChange }: FieldInputProps<string>) => (
