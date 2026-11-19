@@ -31,14 +31,25 @@ export async function runFocusCase(
   }
   function Caller() {
     const modal = useModal();
-    open = () => { void modal.confirm({ content: <Content />, signal: controller.signal }); };
+    open = () => {
+      void modal.confirm({ content: <Content />, signal: controller.signal });
+    };
     return null;
   }
   const app = () => (
     <>
-      <main><button>opener</button><input aria-label="outside" /></main>
+      <main>
+        <button>opener</button>
+        <input aria-label="outside" />
+      </main>
       {caller && <Caller />}
-      {React.Activity ? <React.Activity mode={activityHidden ? 'hidden' : 'visible'}><ModalProvider options={{ duration: 0 }} /></React.Activity> : <ModalProvider options={{ duration: 0 }} />}
+      {React.Activity ? (
+        <React.Activity mode={activityHidden ? 'hidden' : 'visible'}>
+          <ModalProvider options={{ duration: 0 }} />
+        </React.Activity>
+      ) : (
+        <ModalProvider options={{ duration: 0 }} />
+      )}
     </>
   );
   const view = render(app());
@@ -57,7 +68,8 @@ export async function runFocusCase(
   const inside = view.queryByLabelText('inside');
   if (focus === 'outside') outside.focus();
   else if (focus === 'inside' && inside && state === 'shown') inside.focus();
-  else if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+  else if (document.activeElement instanceof HTMLElement)
+    document.activeElement.blur();
   const before = document.activeElement;
   const isolated = !!opener.closest('[inert]');
   await act(async () => {
@@ -68,7 +80,11 @@ export async function runFocusCase(
       view.rerender(app());
     }
   });
-  const outcome = { restored: document.activeElement === opener, preserved: document.activeElement === before, isolated };
+  const outcome = {
+    restored: document.activeElement === opener,
+    preserved: document.activeElement === before,
+    isolated,
+  };
   view.unmount();
   await act(async () => {});
   ModalManager.reset();
