@@ -10,6 +10,8 @@ fragment-root 접두사는 constants 구획의 단일 `FragmentPrefix` 상수로
 
 ## API Contracts
 
+절대 경로의 현재·부모 연산자도 상대 경로와 같은 정규화 규칙을 따릅니다. 탐색에서 같은 노드인 두 철자가 의존 색인·watch·injectTo에서 다른 저장 주소가 되지 않습니다. 점 세그먼트가 없는 절대 주소는 기존 문자열을 재사용합니다.
+
 `joinPointerWithPrefixOf`는 참고 주소의 선행 fragment 여부를 보존하여 디코드된 마디를 조립합니다. fragment 판정과 접두 조립도 이 fractal이 소유하며 소비자는 원문 `#`를 직접 비교하거나 결합하지 않습니다.
 
 `readFormattedNameSegment`는 정본으로 조립된 주소에서 이름 마디의 원래 encoded 표기를 반환합니다. 정확한 unescaped `*`, `..`, `.`, `@`는 undefined로 거부하고 퍼센트 리터럴·tilde 표기·중간 hash·빈 이름·보통 퍼센트 마디는 그대로 보존합니다. 디코드하거나 다시 형식화하지 않으며 이미 정본인 이름을 보유하는 색인의 추가 문자열 생성을 피합니다.
