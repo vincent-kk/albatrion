@@ -27,6 +27,7 @@ const AjvConstructor = resolveAjvConstructor(AjvModule);
  */
 const defaultSettings: Options = {
   allErrors: true,
+  multipleOfPrecision: 9,
   strict: false,
   validateFormats: false,
 };

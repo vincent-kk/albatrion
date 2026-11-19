@@ -131,6 +131,7 @@ AJV 전체 검증이 명세와 다른 다음 경우에는 가드가 명세를 �
 ```typescript
 const defaultSettings: Ajv.Options = {
   allErrors: true, // 첫 번째 오류뿐만 아니라 모든 검증 오류 수집
+  multipleOfPrecision: 9,
   strict: false, // 기존 스키마와의 호환성을 위해 strict 모드 비활성화
   validateFormats: false, // 성능 향상을 위해 포맷 검증 비활성화
 };
@@ -237,3 +238,7 @@ await validate(5); // Reports exclusiveMaximum.
 ```
 
 bind한 인스턴스에 추가한 format과 keyword는 가드와 격리된 형제 인스턴스를 포함한 이후 컴파일에 반영됩니다. 이미 컴파일한 검증 함수는 기존 규칙을 유지하며, 규칙 추가가 자동 재컴파일을 일으키지 않습니다.
+
+## 소수 배수
+
+플러그인이 만드는 인스턴스는 `multipleOfPrecision: 9`를 사용합니다. 이진 나눗셈 오차가 있어도 `multipleOf: 0.01`의 `19.99` 같은 정확한 소수 배수를 허용하며, 정확한 배수를 보장하는 범위는 `Math.abs(value / multipleOf) <= 1e6`입니다. AJV는 정수와의 차이가 `1e-9` 이내인 몫을 배수로 취급하므로 극히 가까운 비배수도 허용할 수 있고, 이 범위 밖의 정확한 배수는 보장하지 않습니다. `0.01`의 `19.995`, `0.1`의 `0.35`, `0.3`의 `0.300001`은 계속 거부합니다. `multipleOf`가 0인 스키마는 유효하지 않습니다. 다른 정밀도 정책이 필요하면 직접 만든 AJV 인스턴스를 `createValidator` 또는 `plugin.validator.bind`에 전달하십시오. 전달한 인스턴스의 옵션은 유지합니다.
