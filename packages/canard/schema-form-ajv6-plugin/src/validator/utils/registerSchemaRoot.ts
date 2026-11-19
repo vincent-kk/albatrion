@@ -33,9 +33,6 @@ export interface SchemaRootRegistration {
   guardCopy?: object;
 }
 
-/** Monotonic key counter prevents collisions with Ajv registrations across binds. */
-let nextSchemaRootKey = 0;
-
 /** Record one copy, leaving its guard instance, its validation registration and the ID-free validation cache empty. */
 export const registerSchemaRoot = (
   root: object,
@@ -54,14 +51,15 @@ export const registerSchemaRoot = (
   if (ids.length)
     for (let index = active.length - 1; index >= 0; index--)
       if (!active[index].deref()) active.splice(index, 1);
-  const shared = ids.length ? instanceIdRegistrationsOf(instance) : [];
+  const allRegistrations = instanceIdRegistrationsOf(instance);
+  const shared: WeakRef<SchemaRootRegistration>[] = ids.length ? allRegistrations : [];
   for (let index = shared.length - 1; index >= 0; index--)
     if (!shared[index].deref()) shared.splice(index, 1);
   const conflict = ids.some((id) =>
     active.some((ref) => ref.deref()?.ids.includes(id)) ||
     shared.some((ref) => ref.deref()?.ids.includes(id)));
   const validation = conflict ? cloneInstance(instance, !!instance._opts.allErrors) : instance;
-  const key = `${PLUGIN_KEY_PREFIX}${++nextSchemaRootKey}`;
+  const key = `${PLUGIN_KEY_PREFIX}${++allRegistrations.nextKey}`;
   const validationCopy: object | undefined = ids.length
     ? JSON.parse(JSON.stringify(root)) : undefined;
   const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : key;
