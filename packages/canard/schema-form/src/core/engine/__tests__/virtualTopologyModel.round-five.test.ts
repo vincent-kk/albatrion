@@ -23,6 +23,8 @@ it('virtual projections follow 3000 generated branch, retention and batch histor
     );
     const policies = names.map(() => next(4));
     const branches: AuthoredSchema[] = [];
+    const conditionalNames: string[] = [];
+    const useIf = seed % 3 === 0;
     const properties: Record<string, AuthoredSchema> = {
       outside: { type: 'string' },
     };
@@ -38,12 +40,23 @@ it('virtual projections follow 3000 generated branch, retention and batch histor
           visible: next(2) === 0 ? false : true,
         },
       };
-      if (next(2))
-        branches.push({
-          controls: { active: `./on${index} === true` },
-          properties: { [names[index]]: field },
-        });
-      else
+      if (next(2)) {
+        conditionalNames.push(`on${index}`);
+        branches.push(
+          useIf
+            ? {
+                if: {
+                  properties: { [`on${index}`]: { const: true } },
+                  required: [`on${index}`],
+                },
+                then: { properties: { [names[index]]: field } },
+              }
+            : {
+                controls: { active: `./on${index} === true` },
+                properties: { [names[index]]: field },
+              },
+        );
+      } else
         properties[names[index]] = {
           ...field,
           controls: { ...field.controls, active: `../on${index} === true` },
@@ -55,7 +68,7 @@ it('virtual projections follow 3000 generated branch, retention and batch histor
       jsonSchema: {
         type: 'object',
         properties,
-        ...(seed % 2 ? { oneOf: branches } : { allOf: branches }),
+        ...(seed % 2 && !useIf ? { oneOf: branches } : { allOf: branches }),
         options: {
           virtual: {
             group: { fields: names },
@@ -65,6 +78,20 @@ it('virtual projections follow 3000 generated branch, retention and batch histor
       },
       defaultValue: input,
       validationMode: ValidationMode.None,
+      ...(useIf
+        ? {
+            validator: {
+              compile: () => () => null,
+              compileGuard: (_schema: unknown, pointer: string) => {
+                const name = conditionalNames[Number(pointer.split('/')[2])];
+                return (value: unknown) =>
+                  value !== null &&
+                  typeof value === 'object' &&
+                  Reflect.get(value, name) === true;
+              },
+            },
+          }
+        : {}),
     });
     const stored = initial.map((value, index) =>
       active[index] ? (value ?? defaults[index]) : value,
