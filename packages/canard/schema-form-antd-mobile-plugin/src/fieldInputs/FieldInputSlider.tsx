@@ -18,6 +18,8 @@ import { SliderKeyboardControl } from './components/SliderKeyboardControl';
 /** A numeric array schema, rendered as a range slider. */
 type NumberArraySchema = ArraySchema & { items: NumberSchema };
 
+import { getSliderBounds } from './utils/slider/getSliderBounds';
+
 interface FieldInputSliderProps
   extends FieldInputPropsWithSchema<
     number | [number, number],
@@ -75,9 +77,11 @@ const FieldInputSlider = ({
       ? jsonSchema.items
       : jsonSchema;
 
-  const min = constraints.minimum ?? jsonSchema.minimum ?? 0;
-  const max = constraints.maximum ?? jsonSchema.maximum ?? 100;
-  const step = constraints.multipleOf ?? jsonSchema.multipleOf ?? 1;
+  const { min, max, step } = getSliderBounds(
+    constraints.minimum ?? jsonSchema.minimum,
+    constraints.maximum ?? jsonSchema.maximum,
+    constraints.multipleOf ?? jsonSchema.multipleOf,
+  );
   const [draft, setDraft] = useState<number | [number, number]>(
     initialValue ?? (range ? [min, min] : min),
   );
