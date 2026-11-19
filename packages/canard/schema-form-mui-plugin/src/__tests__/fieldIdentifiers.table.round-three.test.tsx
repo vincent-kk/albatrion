@@ -376,17 +376,20 @@ it.each<[string, JSONSchema]>([
   },
 );
 
-it('keeps equal leaf-name select display and menu addresses local to their fields', async () => {
+it.each<[string, JSONSchema, string, string]>([
+  ['select', { type: 'string', enum: ['one', 'two'] }, 'display', 'menu'],
+  ['URI protocol', { type: 'string', format: 'uri' }, 'protocol', 'protocol-menu'],
+])('keeps equal leaf-name %s display and menu addresses local to their fields', async (_kind, choiceSchema, displayKey, menuKey) => {
   const jsonSchema: JSONSchema = {
     type: 'object',
     properties: {
       left: {
         type: 'object',
-        properties: { choice: { type: 'string', enum: ['one', 'two'] } },
+        properties: { choice: choiceSchema },
       },
       right: {
         type: 'object',
-        properties: { choice: { type: 'string', enum: ['one', 'two'] } },
+        properties: { choice: choiceSchema },
       },
     },
   };
@@ -419,13 +422,14 @@ it('keeps equal leaf-name select display and menu addresses local to their field
   const menuIds: string[] = [];
   for (const control of controls) {
     const input = Array.from(captured.values()).find(
-      (inputProps) => inputProps.getInputId('display') === control.id,
+      (inputProps) => inputProps.getInputId(displayKey) === control.id,
     );
     expect(input).toBeDefined();
+    expect(document.getElementById(input!.inputId)).not.toBeNull();
     fireEvent.mouseDown(control);
     const menu = view.getByRole('listbox');
     expect(
-      document.getElementById(input!.getInputId('menu'))?.contains(menu),
+      document.getElementById(input!.getInputId(menuKey))?.contains(menu),
     ).toBe(true);
     expect(menu.id).not.toBe('');
     menuIds.push(menu.id);
