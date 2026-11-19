@@ -14,6 +14,8 @@ import { runObservedSurface } from './helpers/runObservedSurface.js';
 it('crosses real surfaces with lifecycle outcomes, failure stages, dry-run and force (seed 0x5face)', async () => {
   const cases = [
     'success',
+    'long-plan',
+    'orphan',
     'nothing',
     'blocked',
     'discover',
@@ -38,6 +40,14 @@ it('crosses real surfaces with lifecycle outcomes, failure stages, dry-run and f
               name: '@probe/a',
               assets: {
                 'skills/alpha/a.md': 'planned\n',
+                ...(kind === 'long-plan'
+                  ? Object.fromEntries(
+                      Array.from({ length: 45 }, (_, index) => [
+                        `skills/alpha/${index}.md`,
+                        'planned\n',
+                      ]),
+                    )
+                  : {}),
                 ...(kind === 'markdown' ? { 'rules/bad.md': '~~~\nopen' } : {}),
               },
               manifest: true,
@@ -59,6 +69,8 @@ it('crosses real surfaces with lifecycle outcomes, failure stages, dry-run and f
                 join(root, '.claude/skills/alpha/a.md'),
                 kind === 'nothing' ? 'planned\n' : 'edited\n',
               );
+            if (kind === 'orphan')
+              writeAt(join(root, '.claude/skills/alpha/retired.md'), 'old\n');
             if (kind === 'read-only')
               chmodSync(join(root, '.claude/skills/alpha/a.md'), 0o444);
             if (kind === 'source')
@@ -92,7 +104,9 @@ it('crosses real surfaces with lifecycle outcomes, failure stages, dry-run and f
                       'reserved',
                     ].includes(kind)
                   ? 1
-                  : kind === 'blocked' || kind === 'read-only'
+                  : kind === 'blocked' ||
+                      kind === 'read-only' ||
+                      kind === 'orphan'
                     ? dryRun
                       ? 0
                       : !force
