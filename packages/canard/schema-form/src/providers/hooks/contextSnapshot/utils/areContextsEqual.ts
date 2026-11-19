@@ -79,7 +79,9 @@ export const areContextsEqual = (left: unknown, right: unknown): boolean => {
     if (
       (prototype === Object.prototype &&
         Object.getPrototypeOf(right) === Object.prototype) ||
-      (prototype !== Map.prototype && isPlainObject(left) && isPlainObject(right))
+      (prototype !== Map.prototype &&
+        isPlainObject(left) &&
+        isPlainObject(right))
     ) {
       const keys = Object.keys(left);
       if (keys.length !== Object.keys(right).length) return false;
@@ -102,14 +104,39 @@ export const areContextsEqual = (left: unknown, right: unknown): boolean => {
       }
       continue;
     }
-    if (tag === '[object Error]') {
-      if (
-        Reflect.get(left, 'name') !== Reflect.get(right, 'name') ||
-        Reflect.get(left, 'message') !== Reflect.get(right, 'message')
-      )
-        return false;
+    if (
+      tag === '[object Error]' ||
+      tag === '[object ArrayBuffer]' ||
+      tag === '[object Number]' ||
+      tag === '[object String]' ||
+      tag === '[object Boolean]' ||
+      ArrayBuffer.isView(left)
+    ) {
       const keys = Object.keys(left);
       if (keys.length !== Object.keys(right).length) return false;
+      if (tag === '[object Error]') {
+        if (
+          Reflect.get(left, 'name') !== Reflect.get(right, 'name') ||
+          Reflect.get(left, 'message') !== Reflect.get(right, 'message')
+        )
+          return false;
+      } else if (tag === '[object Number]') {
+        const a = Number.prototype.valueOf.call(left),
+          b = Number.prototype.valueOf.call(right);
+        if (a !== b && (a === a || b === b)) return false;
+      } else if (tag === '[object String]') {
+        if (
+          String.prototype.valueOf.call(left) !==
+          String.prototype.valueOf.call(right)
+        )
+          return false;
+      } else if (tag === '[object Boolean]') {
+        if (
+          Boolean.prototype.valueOf.call(left) !==
+          Boolean.prototype.valueOf.call(right)
+        )
+          return false;
+      } else if (!equals(left, right, keys)) return false;
       for (const key of keys) {
         if (!Object.prototype.hasOwnProperty.call(right, key)) return false;
         pending.push(Reflect.get(left, key), Reflect.get(right, key));
