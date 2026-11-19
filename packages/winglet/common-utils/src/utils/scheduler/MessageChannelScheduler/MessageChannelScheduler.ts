@@ -7,6 +7,9 @@ import { scheduleMicrotask } from '@/common-utils/utils/scheduler/scheduleMicrot
 import { MessageChannelSchedulerError } from './error';
 import type { SchedulerOptions } from './type';
 
+/** Monotonic task identity shared across this module's scheduler lifetimes. */
+let taskIdCounter = 0;
+
 /**
  * High-performance task scheduler using MessageChannel for macro task execution.
  *
@@ -113,8 +116,6 @@ export class MessageChannelScheduler {
 
   /** Map of pending tasks keyed by unique task ID */
   private readonly __pendingTasks__ = new Map<number, Fn>();
-  /** Incrementing counter for generating unique task IDs */
-  private static __taskIdCounter__ = 0;
   /** Whether scheduler is currently idle (no pending batch flush) */
   private __idle__ = true;
 
@@ -181,7 +182,7 @@ export class MessageChannelScheduler {
         );
     }
 
-    const taskId = ++MessageChannelScheduler.__taskIdCounter__;
+    const taskId = ++taskIdCounter;
     this.__pendingTasks__.set(taskId, callback);
     this.__requestFlush__();
 
