@@ -293,7 +293,7 @@ SSR은 모든 입력을 렌더링하고 하이드레이션은 이를 그대로 �
 
 패키지는 Form.Label과 바인딩된 라벨 부품을 Form 범위의 입력 id에 연결합니다. FieldRenderer는 그룹 제목용 labelId를 받고, 기본 입력은 실제 컨트롤이나 선택지 라벨을 연결합니다. 라벨과 ARIA 연결은 native form owner가 달라도 문서 전체에서 해석합니다.
 
-단일 컨트롤 사용자 입력은 받은 id를 포커스 가능한 컨트롤에 적용해야 합니다. 패키지는 임의의 사용자 컴포넌트 안에서 그 요소를 대신 고를 수 없습니다. path는 데이터 조회에 사용하고 DOM id로 쓰지 않습니다. 연결 대상의 누락을 자동으로 경고하지 않습니다. 다음 최소 제어 입력은 @canard/schema-form의 FieldInputProps를 사용합니다:
+단일 컨트롤 사용자 입력은 받은 `inputId`를 포커스 가능한 컨트롤에 적용해야 합니다. 패키지는 임의의 사용자 컴포넌트 안에서 그 요소를 대신 고를 수 없습니다. path는 데이터 조회에 사용하고 DOM id로 쓰지 않습니다. 연결 대상의 누락을 자동으로 경고하지 않습니다. 다음 최소 제어 입력은 @canard/schema-form의 FieldInputProps를 사용합니다:
 
 ```tsx
 const TextControl = ({ inputId, value, onChange }: FieldInputProps<string>) => (
