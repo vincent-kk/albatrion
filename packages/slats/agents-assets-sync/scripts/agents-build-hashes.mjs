@@ -7,7 +7,7 @@
 // `scripts/build-hashes.mjs` that calls `buildHashes` directly with their
 // own parsed values.
 //
-// Convention: `pkg.agents?.assetPath` with a fallback of `'agents'`.
+// Only a non-empty string `pkg.agents?.assetPath` opts in; otherwise this is a no-op.
 // This convention is purely consumer-side — the library itself enforces
 // nothing about package.json shape.
 import { readFile } from 'node:fs/promises';
