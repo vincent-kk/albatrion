@@ -48,9 +48,6 @@ export interface SchemaCompilerPool {
   count: number;
 }
 
-/** Monotonic keys avoid collisions with registrations retained across binds. */
-let nextSchemaRootKey = 0;
-
 /** Record one copy, leaving its guard instance, its validation registration and the ID-free validation cache empty. */
 export const registerSchemaRoot = (
   root: object,
@@ -72,7 +69,8 @@ export const registerSchemaRoot = (
   if (ids.length)
     for (let index = active.length - 1; index >= 0; index--)
       if (!active[index].deref()) active.splice(index, 1);
-  const shared = ids.length ? instanceIdRegistrationsOf(instance) : [];
+  const allRegistrations = instanceIdRegistrationsOf(instance);
+  const shared: WeakRef<SchemaRootRegistration>[] = ids.length ? allRegistrations : [];
   for (let index = shared.length - 1; index >= 0; index--)
     if (!shared[index].deref()) shared.splice(index, 1);
   const conflict = ids.some((id) =>
@@ -85,7 +83,7 @@ export const registerSchemaRoot = (
   const validation = conflict ? cloneInstance(instance, !!instance.opts.allErrors)
     : ids.length ? instance : pool.current;
   if (!ids.length) pool.count++;
-  const key = `${PLUGIN_KEY_PREFIX}${++nextSchemaRootKey}`;
+  const key = `${PLUGIN_KEY_PREFIX}${++allRegistrations.nextKey}`;
   const validationCopy: object | undefined = ids.length
     ? JSON.parse(JSON.stringify(root)) : undefined;
   const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : key;
