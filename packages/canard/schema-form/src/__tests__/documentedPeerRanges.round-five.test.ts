@@ -1,7 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { subset } from 'semver';
 import { join, resolve } from 'node:path';
-
 import { describe, expect, it } from 'vitest';
 
 const repositoryRoot = resolve(__dirname, '../../../../..');
@@ -9,7 +7,10 @@ const PLUGINS = ['antd5', 'antd6', 'antd-mobile', 'mui'] as const;
 const manifestOf = (plugin: string) =>
   JSON.parse(
     readFileSync(
-      join(repositoryRoot, `packages/canard/schema-form-${plugin}-plugin/package.json`),
+      join(
+        repositoryRoot,
+        `packages/canard/schema-form-${plugin}-plugin/package.json`,
+      ),
       'utf8',
     ),
   ) as { peerDependencies: Record<string, string> };
@@ -22,8 +23,10 @@ const sitePages = (plugin: string) => [
 const installedRanges = (text: string) => {
   const found: Array<[name: string, range: string]> = [];
   for (const command of text.matchAll(/yarn add ((?:[^\n]*\\\n)*[^\n]*)/g))
-    for (const token of command[1].replace(/\\\n/g, ' ').split(/\s+/)) {
-      const match = /^(@?[^@\s]+)@(.+)$/.exec(token);
+    for (const token of command[1]
+      .replace(/\\\n/g, ' ')
+      .match(/"[^"]+"|[^\s]+/g) ?? []) {
+      const match = /^(@?[^@\s]+)@(.+)$/.exec(token.replace(/^"|"$/g, ''));
       if (match) found.push([match[1], match[2]]);
     }
   return found;
@@ -37,7 +40,7 @@ describe('r5-release documented UI peer ranges', () => {
       for (const page of sitePages(plugin)) {
         const text = readFileSync(join(repositoryRoot, page), 'utf8');
         for (const [name, range] of installedRanges(text))
-          if (peers[name] && !subset(range, peers[name]))
+          if (peers[name] && range !== peers[name])
             outside.push(`${plugin}: ${name}@${range} (peer ${peers[name]})`);
       }
     }
@@ -74,11 +77,12 @@ describe('r5-release documented UI peer ranges', () => {
       (plugin) => manifestOf(plugin).peerDependencies['@canard/schema-form'],
     );
     expect(ajvPeers.every(Boolean)).toBe(true);
-    expect(table).not.toMatch(/AJV 6 \/ 7 \/ 8 plugins \|[^\n]*no core peer declaration/);
+    expect(table).not.toMatch(
+      /AJV 6 \/ 7 \/ 8 plugins \|[^\n]*no core peer declaration/,
+    );
   });
 
   it('control: an in-range command passes the subset check', () => {
-    expect(subset('^5.27.0', manifestOf('antd5').peerDependencies.antd)).toBe(true);
     expect(installedRanges('yarn add a@1 \\\n  @b/c@>=2')).toEqual([
       ['a', '1'],
       ['@b/c', '>=2'],
