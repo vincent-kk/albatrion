@@ -10,6 +10,7 @@ import { isSharedArrayBuffer } from '@/common-utils/utils/filter/isSharedArrayBu
 import { isTypedArray } from '@/common-utils/utils/filter/isTypedArray';
 
 import { getSymbols } from './getSymbols';
+import { cloneArraySubclass } from './utils/clone/cloneArraySubclass';
 import { constructBuiltin } from './utils/clone/constructBuiltin';
 import { copyForeignBuiltin } from './utils/clone/copyForeignBuiltin/copyForeignBuiltin';
 import { getPrototypeProfile } from './utils/clone/getPrototypeProfile';
@@ -260,14 +261,22 @@ const replicate = (
 
   if (isPrimitiveType(value)) return value;
 
-  const cached = cache.get(value);
-  if (cached !== undefined) return cached;
+  if (cache.has(value)) return cache.get(value);
 
   depth = depth + 1;
 
   if (isArray(value)) {
     const prototype = getPrototypeOf(value);
-    const result = prototype === Array.prototype ? new Array(value.length) : constructBuiltin(Array, [value.length], prototype);
+    if (prototype !== Array.prototype)
+      return cloneArraySubclass(
+        value,
+        prototype,
+        limit,
+        depth,
+        cache,
+        replicate,
+      );
+    const result = new Array(value.length);
     cache.set(value, result);
     for (let i = 0, l = value.length; i < l; i++)
       if (i in value) result[i] = replicate(value[i], limit, depth, cache);
@@ -284,14 +293,39 @@ const replicate = (
 
   if (value instanceof Date) {
     const prototype = getPrototypeOf(value);
-    const result = prototype === Date.prototype ? new Date(value.getTime()) : constructBuiltin(Date, [Date.prototype.getTime.call(value)], prototype);
+    if (prototype !== Date.prototype) {
+      const result = constructBuiltin(
+        Date,
+        [Date.prototype.getTime.call(value)],
+        prototype,
+      );
+      cache.set(value, result);
+      return result;
+    }
+    const result = new Date(value.getTime());
     cache.set(value, result);
     return result;
   }
 
   if (value instanceof RegExp) {
     const prototype = getPrototypeOf(value);
-    const result = prototype === RegExp.prototype ? new RegExp(value.source, value.flags) : constructBuiltin(RegExp, [Object.getOwnPropertyDescriptor(RegExp.prototype, 'source')!.get!.call(value), value.flags], prototype);
+    if (prototype !== RegExp.prototype) {
+      const result = constructBuiltin(
+        RegExp,
+        [
+          Object.getOwnPropertyDescriptor(
+            RegExp.prototype,
+            'source',
+          )!.get!.call(value),
+          value.flags,
+        ],
+        prototype,
+      );
+      result.lastIndex = value.lastIndex;
+      cache.set(value, result);
+      return result;
+    }
+    const result = new RegExp(value.source, value.flags);
     result.lastIndex = value.lastIndex;
     cache.set(value, result);
     return result;
@@ -303,13 +337,20 @@ const replicate = (
       const result = new Map();
       cache.set(value, result);
       for (const entry of value)
-        result.set(replicate(entry[0], limit, depth, cache), replicate(entry[1], limit, depth, cache));
+        result.set(
+          replicate(entry[0], limit, depth, cache),
+          replicate(entry[1], limit, depth, cache),
+        );
       return result;
     }
     const result = constructBuiltin(Map, [], prototype);
     cache.set(value, result);
     for (const entry of value)
-      Map.prototype.set.call(result, replicate(entry[0], limit, depth, cache), replicate(entry[1], limit, depth, cache));
+      Map.prototype.set.call(
+        result,
+        replicate(entry[0], limit, depth, cache),
+        replicate(entry[1], limit, depth, cache),
+      );
     return result;
   }
 
@@ -323,7 +364,8 @@ const replicate = (
     }
     const result = constructBuiltin(Set, [], prototype);
     cache.set(value, result);
-    for (const key of value) Set.prototype.add.call(result, replicate(key, limit, depth, cache));
+    for (const key of value)
+      Set.prototype.add.call(result, replicate(key, limit, depth, cache));
     return result;
   }
 
@@ -417,7 +459,8 @@ const replicate = (
       defineProperty(result, 'cause', {
         value: replicate(Reflect.get(value, 'cause'), limit, depth, cache),
         writable: true,
-        enumerable: Object.getOwnPropertyDescriptor(value, 'cause')?.enumerable ?? false,
+        enumerable:
+          Object.getOwnPropertyDescriptor(value, 'cause')?.enumerable ?? false,
         configurable: true,
       });
     replicateProperties(result, value, limit, depth, cache);
@@ -434,7 +477,8 @@ const replicate = (
       cache.set(value, foreign);
       if (tag === '[object Map]') {
         for (const [key, item] of Map.prototype.entries.call(value))
-          Map.prototype.set.call(foreign,
+          Map.prototype.set.call(
+            foreign,
             replicate(key, limit, depth, cache),
             replicate(item, limit, depth, cache),
           );
