@@ -233,6 +233,21 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     [binding, captureValidationLifetime, focusNode, reporter, revealErrors],
   );
   const handleSubmit = useMemo(() => getTrackableHandler(submit), [submit]);
+  const handleNativeReset = useCallback(
+    (event: SyntheticEvent<HTMLFormElement>) => {
+      if (event.target !== event.currentTarget) return;
+      const nativeEvent = event.nativeEvent;
+      queueMicrotask(() => {
+        if (nativeEvent.defaultPrevented || !mounted.current) return;
+        try {
+          binding.current.reset();
+        } catch (error) {
+          reportFailureToHost(error);
+        }
+      });
+    },
+    [binding],
+  );
   const handleNativeSubmit = useCallback(
     async (event: SyntheticEvent) => {
       if (event.target !== event.currentTarget) return;
@@ -325,6 +340,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
                         : null
                     }
                     onSubmit={handleNativeSubmit}
+                    onReset={handleNativeReset}
                   >
                     {children}
                   </FormRootProxy>

@@ -13,11 +13,18 @@ interface FormRootProxyProps {
   /** Owned by FormRoot for pending focus guards; null while virtualization is inactive or unsupported. */
   formRef: Ref<HTMLFormElement>;
   onSubmit: Fn<[SubmitEvent<HTMLFormElement>]>;
+  /** Runs the form-owned load after the browser restores native controls. */
+  onReset: Fn<[React.SyntheticEvent<HTMLFormElement>]>;
 }
 
 export const FormRootProxy = memo(
-  ({ formRef, onSubmit, children }: PropsWithChildren<FormRootProxyProps>) => (
-    <form ref={formRef} onSubmit={onSubmit}>
+  ({
+    formRef,
+    onSubmit,
+    onReset,
+    children,
+  }: PropsWithChildren<FormRootProxyProps>) => (
+    <form ref={formRef} onSubmit={onSubmit} onReset={onReset}>
       {children || <FieldProxy />}
     </form>
   ),

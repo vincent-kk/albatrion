@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+취소되지 않은 자기 form의 네이티브 reset은 FormHandle.reset()과 같은 로드·onChange·오류 공개 수명을 한 번 실행합니다. reset 이벤트 뒤 같은 작업의 microtask에서 로드하여 브라우저의 기본 reset이 비관리 입력과 사용자 입력 내부의 네이티브 요소도 먼저 복원하게 합니다. portal 안 다른 form의 reset과 취소된 기본 동작은 이 폼을 로드하지 않습니다.
+
 라벨·오류 등록 props는 [공개 부품 계약](../../../../types/DETAIL.md)을 따릅니다. 그룹과 입력 슬롯의 계약은 유지하며 여기서 부품의 실행이나 루트를 중복 소유하지 않습니다.
 
 Provider 조립은 외부 설정을 안쪽 소비자가 읽는 고정 의존 순서입니다. 노드·입력 상태를 이 계층에 복제하지 않습니다. 핸들은 현재 binding을 읽고, 값 읽기·제출은 `outputValue`, 쓰기는 전달받은 원본 값을 사용합니다. 비연결 루트의 조회·제출은 무해한 빈 결과로 끝나며 제출 callback을 호출하지 않습니다. nullish 노드의 구독은 [hooks 계약](../../../../hooks/DETAIL.md)을 따릅니다.
