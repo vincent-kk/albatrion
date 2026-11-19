@@ -40,7 +40,7 @@ import { withErrorBoundary, withUploader } from '@winglet/react-utils/hoc';
 // 커스텀 훅
 import { useMemorize, useOnMount } from '@winglet/react-utils/hook';
 // 객체 유틸리티
-import { extractProps, mergeRefs } from '@winglet/react-utils/object';
+import { remainOnlyReactComponent } from '@winglet/react-utils/object';
 // Portal 컴포넌트
 import { Portal } from '@winglet/react-utils/portal';
 // 렌더링 유틸리티
@@ -56,7 +56,7 @@ package.json의 exports 설정을 기반으로 합니다:
 - `@winglet/react-utils/hoc` - 고차 컴포넌트 (withErrorBoundary, withUploader)
 - `@winglet/react-utils/portal` - Portal 컴포넌트 및 유틸리티 (Portal 컴포넌트)
 - `@winglet/react-utils/filter` - React 컴포넌트 타입 검사 유틸리티 (isReactComponent, isReactElement 등)
-- `@winglet/react-utils/object` - React 전용 객체 유틸리티 (extractProps, mergeRefs)
+- `@winglet/react-utils/object` - React 전용 객체 유틸리티 (remainOnlyReactComponent)
 - `@winglet/react-utils/render` - 컴포넌트 렌더링 유틸리티 (renderComponent)
 
 ---
