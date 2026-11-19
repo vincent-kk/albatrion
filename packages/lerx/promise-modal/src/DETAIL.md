@@ -49,6 +49,8 @@ Promise는 최초 확인·취소 또는 렌더 오류로 한 번만 확정됩니
 
 ### presentation-customization — 사용자 UI와 상태 구독
 
+- 포커스 동등성 표의 inside 행은 실제 내부 control에 포커스를 둔 뒤 숨김·중단을 일으킵니다. 최초 content 중단에는 control이 없으므로 inside 세 행은 그 사유를 표 데이터에 기록한 unavailable 행이며 body와 outside는 실행합니다.
+
 - 사용자 프레임과 Provider 밖 구독은 현재 노드 상태를 반영합니다.
 
 ### consumer-examples — 공개 계약을 사용하는 예제

@@ -24,11 +24,7 @@ const rows = [
 it.each(rows)(
   'resuspended $settlement / $focus follows the displayed ownership rule',
   async ({ settlement, focus }) => {
-    const shown = await runFocusCase(
-      'shown',
-      settlement,
-      focus === 'inside' ? 'body' : focus,
-    );
+    const shown = await runFocusCase('shown', settlement, focus);
     const result = await runFocusCase('resuspended', settlement, focus);
     expect(result).toEqual(shown);
   },

@@ -67,7 +67,8 @@ it('re-suspends after focus was inside and still returns focus to the opener', a
   act(() => fireEvent.click(inside));
   expect(view.getByText('suspend').closest('[style*="none"]')).not.toBeNull();
   const active = document.activeElement;
-  if (active instanceof HTMLElement && active.closest('[style*="none"]')) active.blur();
+  if (active instanceof HTMLElement && active.closest('[style*="none"]'))
+    active.blur();
   await act(async () => controller.abort());
   expect(document.activeElement).toBe(opener);
   view.unmount();
