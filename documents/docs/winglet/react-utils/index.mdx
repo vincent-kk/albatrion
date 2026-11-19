@@ -11,13 +11,13 @@ import ForAI from '@site/src/components/ForAI';
 
 React utility library providing custom hooks, higher-order components (HOCs),
 a Portal system, and helper functions.
-Supports React 16–19, with full TypeScript types and tree-shakeable sub-path exports.
+Supports React 16.14–19, with full TypeScript types and tree-shakeable sub-path exports.
 
 ## Installation
 
 ```bash
 yarn add @winglet/react-utils
-# peer deps: react >=16 <20, react-dom >=16 <20
+# peer deps: react >=16.14 <20, react-dom >=16.14 <20
 ```
 
 ## Sub-path Exports
@@ -38,11 +38,11 @@ yarn add @winglet/react-utils
 
 | Hook | Description |
 |---|---|
-| `useConstant(factory)` | Memoizes a value on first render only |
+| `useConstant(value)` | Retains the supplied value, including a function value |
 | `useHandle(fn)` | Stable callback that always calls the latest function |
-| `useMemorize(deps, factory)` | Enhanced memoization with intuitive API |
+| `useMemorize(input, dependencies)` | Enhanced memoization with intuitive API |
 | `useSnapshot(value)` | Returns a stable snapshot of a value |
-| `useDebounce(value, delay)` | Debounced value |
+| `useDebounce(callback, dependencies, ms)` | Schedules a callback; returns `{ isIdle, cancel }` |
 | `useWindowSize()` | Tracks browser window dimensions |
 | `useEffectUntil(effect, condition)` | Runs effect until condition is true |
 | `useOnMount(fn)` | Runs callback once on mount |
@@ -50,42 +50,45 @@ yarn add @winglet/react-utils
 
 ### HOCs (`/hoc`)
 
-- `withErrorBoundary(Component, options)` — wraps with error boundary
-- `withErrorBoundaryForwardRef(Component, options)` — with ref forwarding
-- `withUploader(Component, options)` — file upload handling
+- `withErrorBoundary(Component, fallback)` — wraps with error boundary
+- `withErrorBoundaryForwardRef(Component, fallback)` — with ref forwarding
+- `withUploader(Component)` — file upload handling
 
 ### Portal (`/portal`)
 
 - `Portal` — renders children at a designated anchor in the DOM
 - `Portal.Anchor` — declares where portal content mounts
-- `withPortal(Component)` — HOC providing portal context
+- `Portal.with(Component)` — HOC providing portal context
 
 ## Usage Examples
 
 ```tsx
-import { useConstant, useHandle, useWindowSize } from '@winglet/react-utils/hook';
+import { useLazyConstant, useHandle, useWindowSize } from '@winglet/react-utils/hook';
+
+class ExpensiveManager {}
 
 function MyComponent({ onSave }: { onSave: () => void }) {
-  const manager = useConstant(() => new ExpensiveManager());
+  const manager = useLazyConstant(() => new ExpensiveManager());
   const handleSave = useHandle(onSave); // stable ref
   const { width, height } = useWindowSize();
 
-  return <div>{width}x{height}</div>;
+  return <button onClick={handleSave} data-ready={!!manager}>{width}x{height}</button>;
 }
 ```
 
 ```tsx
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
-import { Portal, withPortal } from '@winglet/react-utils/portal';
+import { Portal } from '@winglet/react-utils/portal';
 
-const SafeWidget = withErrorBoundary(Widget, {
-  fallback: <p>Something went wrong.</p>,
-});
+const Widget = () => <p>Widget</p>;
+const Modal = () => <p>Modal</p>;
 
-const App = withPortal(() => (
+const SafeWidget = withErrorBoundary(Widget, <p>Something went wrong.</p>);
+
+const App = Portal.with(() => (
   <>
-    <Portal.Anchor name="modal" />
-    <Portal name="modal"><Modal /></Portal>
+    <Portal.Anchor />
+    <Portal><Modal /></Portal>
   </>
 ));
 ```
@@ -127,6 +130,7 @@ The CLI resolves `@winglet/react-utils/package.json` via `createRequire`, reads 
         withErrorBoundaryForwardRef
         withUploader
 ./hook → useConstant
+         useLazyConstant
          useDebounce
          useEffectUntil
          useLayoutEffectUntil
