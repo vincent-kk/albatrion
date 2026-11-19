@@ -151,6 +151,20 @@ it('virtual projections follow 3000 generated branch, retention and batch histor
       expect(root.value, `seed=${seed} step=${step} op=${operation}`).toEqual(
         expected,
       );
+      expect(
+        Object.fromEntries(
+          root.inactiveValues.map(({ path, value }) => [path, value]),
+        ),
+        `seed=${seed} step=${step} retained`,
+      ).toEqual(
+        Object.fromEntries(
+          names.flatMap((name, slot) =>
+            !active[slot] && stored[slot] !== undefined
+              ? [[`/${name}`, stored[slot]]]
+              : [],
+          ),
+        ),
+      );
       const tuple = stored.map((value, slot) =>
         active[slot] ? value : undefined,
       );
