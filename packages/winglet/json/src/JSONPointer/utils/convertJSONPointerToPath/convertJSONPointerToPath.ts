@@ -6,6 +6,14 @@ import { isArrayIndex } from '@winglet/common-utils/filter';
  * @param jsonPointer - JSON Pointer string to convert (e.g., "/data/users/0/name")
  * @returns AJV dataPath format string (e.g., ".data.users[0].name")
  *
+ * @remarks
+ * Empty tokens keep their dot separators; for example `//x` becomes `..x`.
+ * Conversion is lossy: root `''` and `/`; numeric `/0` and bracket `/[0]`;
+ * append `/-` and bracket `/[]`; dot `/x/a.b` and bracket-containing `/x[a.b]`;
+ * and numeric paths `/0` and `//0` can each collide. Keep the JSON Pointer as
+ * the lossless address. `getJSONPath` uses different spellings for numeric object
+ * keys, hyphens and dot-containing names; compare only their shared spelling domain.
+ *
  * @example
  * ```ts
  * convertJSONPointerToPath('/data/users/0/name') // '.data.users[0].name'
@@ -37,12 +45,9 @@ export const convertJSONPointerToPath = (jsonPointer: string): string => {
     const character = jsonPointer[index];
     // Handle segment separator '/'
     if (character === JSON_POINTER_SEPARATOR) {
-      // Add current segment if exists
-      if (index > start) {
-        const segment = jsonPointer.slice(start, index);
-        result += formatSegment(segment, isFirstSegment);
-        isFirstSegment = false;
-      }
+      const segment = jsonPointer.slice(start, index);
+      result += formatSegment(segment, isFirstSegment);
+      isFirstSegment = false;
       start = index + 1; // Move start past the separator
       index++;
     }
@@ -50,11 +55,8 @@ export const convertJSONPointerToPath = (jsonPointer: string): string => {
     else index++;
   }
 
-  // Add any remaining segment
-  if (start < length) {
-    const segment = jsonPointer.slice(start);
-    result += formatSegment(segment, isFirstSegment);
-  }
+  const segment = jsonPointer.slice(start);
+  result += formatSegment(segment, isFirstSegment);
 
   return result;
 };
