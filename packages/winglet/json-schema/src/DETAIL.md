@@ -50,6 +50,8 @@ workspace의 source 조건은 개발 빌드의 입력입니다. 배포 파일에
 
 참조 체인과 인라인 노드에는 유한 상한이 있으며, 식별자를 바꾸는 mutate는 거절합니다. 새 하위 트리의 식별자를 다시 등록하지 않습니다.
 
+스키마 선언의 선택적 키워드는 명시적인 `undefined`도 받는다. 따라서 `RefSchema`와 각 구체 스키마가 `UnknownSchema` 제약 아래 함께 사용되며 `exactOptionalPropertyTypes`의 설정에 따라 허용 범위가 달라지지 않는다. 필수 `type` 판별자는 그대로 필수이며 값 범위도 유지한다.
+
 ## Acceptance Criteria
 
 스캐너 순회·참조 해석의 수용 기준은 [스캐너 계약](utils/JSONSchemaScanner/DETAIL.md)이 소유합니다.
