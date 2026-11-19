@@ -1,4 +1,6 @@
-import { useSnapshotReference } from './useSnapshotReference';
+import { useRef } from 'react';
+
+import { useSnapshotValue } from './utils/useSnapshotValue';
 
 /**
  * Creates a stable object reference that only changes when the object's contents actually change through deep comparison.
@@ -184,6 +186,6 @@ export const useSnapshot = <Input extends object | undefined>(
   input: Input,
   omit?: Set<keyof Input> | Array<keyof Input>,
 ) => {
-  const snapshotRef = useSnapshotReference(input, omit);
-  return snapshotRef.current;
+  const snapshotRef = useRef(input);
+  return useSnapshotValue(snapshotRef, input, omit);
 };

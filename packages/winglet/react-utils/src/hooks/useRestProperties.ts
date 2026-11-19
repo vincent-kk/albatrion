@@ -2,6 +2,8 @@ import { useRef } from 'react';
 
 import type { Dictionary } from '@aileron/declare';
 
+import { useCommittedReference } from './utils/useCommittedReference';
+
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 /**
@@ -44,11 +46,8 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
  * };
  * ```
  *
- * @remarks The repeat gate is a `useRef`, never a `useMemo`: a memo's dependency record
- *          lives on the committed fiber, so a render React discards would leave its write
- *          to the retained reference behind while the deps that justified it roll back,
- *          and no later render carrying that same input could ever re-examine it. Refs
- *          roll back with nothing, so gate and write always move together.
+ * @remarks Comparison caches publish only at commit. A suspended or abandoned
+ * render cannot replace the previous object seen by later committed renders.
  *
  * @typeParam T - The type of the properties object (must extend Dictionary)
  * @param props - The properties object to stabilize via shallow comparison
@@ -57,38 +56,23 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
  * @see useSnapshot - Deep comparison for nested objects, at a higher comparison cost
  */
 export const useRestProperties = <T extends Dictionary>(props: T): T => {
-  const previousRef = useRef<T>(props);
-  const previousKeysRef = useRef<string[] | null>(null);
-  const comparedRef = useRef<T | null>(null);
-
-  const previous = previousRef.current;
-  if (!props || props === previous) return props;
-  if (props === comparedRef.current) return previous;
-  comparedRef.current = props;
-
-  const keys = Object.keys(props);
-  const previousKeys =
-    previousKeysRef.current ?? (previous ? Object.keys(previous) : []);
-
-  if (keys.length !== previousKeys.length) {
-    previousRef.current = props;
-    previousKeysRef.current = keys;
-    return props;
-  }
-
-  for (let index = 0, length = keys.length; index < length; index++) {
-    const key = keys[index];
-    const value = props[key];
-    if (
-      value !== previous[key] ||
-      (value === undefined && !hasOwnProperty(previous, key))
-    ) {
-      previousRef.current = props;
-      previousKeysRef.current = keys;
-      return props;
+  const holder = useRef<{ value: T; compared: T | null; keys: string[] | null }>({ value: props, compared: null, keys: null });
+  const previous = holder.current;
+  let next = previous;
+  let value = props;
+  if (props && props !== previous.value) {
+    value = previous.value;
+    if (props !== previous.compared) {
+      const keys = Object.keys(props);
+      const previousKeys = previous.keys ?? (previous.value ? Object.keys(previous.value) : []);
+      if (keys.length !== previousKeys.length) value = props;
+      else for (let index = 0; index < keys.length; index++) {
+        const key = keys[index];
+        if (props[key] !== previous.value[key] || (props[key] === undefined && !hasOwnProperty(previous.value, key))) { value = props; break; }
+      }
+      next = { value, compared: props, keys: value === props ? keys : previousKeys };
     }
   }
-
-  previousKeysRef.current = previousKeys;
-  return previous;
+  useCommittedReference(holder, next);
+  return value;
 };
