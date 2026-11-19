@@ -21,19 +21,41 @@ export async function runSurface(
   flags: DefaultFlags,
   choices = false,
   packageArgs?: string[],
+  onOutput?: (output: {
+    stdout: string;
+    stderr: string;
+    frame: string;
+  }) => void,
 ) {
+  let stdout = '';
+  let stderr = '';
+  let frame = '';
+  const recordOut = (chunk: string | Uint8Array) => {
+    stdout += String(chunk);
+    return true;
+  };
+  const recordError = (chunk: string | Uint8Array) => {
+    stderr += String(chunk);
+    return true;
+  };
   const original = core.runInjection;
   let model: RunResult | undefined;
   vi.spyOn(core, 'runInjection').mockImplementation(async (input) => {
     model = await original(input);
     return model;
   });
-  vi.spyOn(console, 'log').mockImplementation(() => {});
-  vi.spyOn(console, 'warn').mockImplementation(() => {});
-  vi.spyOn(console, 'error').mockImplementation(() => {});
+  vi.spyOn(console, 'log').mockImplementation((...values) => {
+    recordOut(values.join(' ') + '\n');
+  });
+  vi.spyOn(console, 'warn').mockImplementation((...values) => {
+    recordError(values.join(' ') + '\n');
+  });
+  vi.spyOn(console, 'error').mockImplementation((...values) => {
+    recordError(values.join(' ') + '\n');
+  });
   let code: number;
   if (packageArgs) {
-    vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+    vi.spyOn(process.stdout, 'write').mockImplementation(recordOut);
     const tty = Object.getOwnPropertyDescriptor(process.stdout, 'isTTY');
     Object.defineProperty(process.stdout, 'isTTY', {
       value: mode === 'ink',
@@ -47,6 +69,7 @@ export async function runSurface(
               {...input}
               onExit={(value) => {
                 clearTimeout(timer);
+                frame = app.lastFrame() ?? '';
                 app.unmount();
                 resolve(value);
               }}
@@ -73,8 +96,8 @@ export async function runSurface(
       else Reflect.deleteProperty(process.stdout, 'isTTY');
     }
   } else if (mode !== 'ink') {
-    vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
-    vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+    vi.spyOn(process.stdout, 'write').mockImplementation(recordOut);
+    vi.spyOn(process.stderr, 'write').mockImplementation(recordError);
     code = await (mode === 'plain' ? renderPlain : renderJSON)(
       targets,
       flags,
@@ -89,6 +112,7 @@ export async function runSurface(
           originCwd={root}
           onExit={(value) => {
             clearTimeout(timer);
+            frame = app.lastFrame() ?? '';
             app.unmount();
             resolve(value);
           }}
@@ -121,5 +145,6 @@ export async function runSurface(
     .join('<root>')
     .split(root)
     .join('<root>');
+  onOutput?.({ stdout, stderr, frame });
   return { code, model: JSON.parse(normalized), files: readWrittenFiles(root) };
 }
