@@ -63,7 +63,13 @@ export const createGuardCompiler = (
   const guard = compiler.instance;
   if (!Object.prototype.hasOwnProperty.call(guard.schemas, registration.key)) {
     const guardCopy: JSONSchema = JSON.parse(JSON.stringify(root));
+    if (!rootId) {
+      // AJV8 derives an unnamed schema's base from its first registration key.
+      guard.removeSchema('');
+      guard.addSchema(guardCopy, undefined, false, false);
+    }
     guard.addSchema(guardCopy, registration.key, false, false);
+    if (!rootId) guard.removeSchema('');
     registration.guardSchemas.push({ compiler, schema: guardCopy });
   }
   // Anchor locations compile before the guard so AJV generates the table lookup for its dynamic references.
