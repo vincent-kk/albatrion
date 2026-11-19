@@ -47,6 +47,7 @@ export async function buildPlan(input: PlanInput): Promise<InjectPlan> {
     actions.push({
       kind,
       relPath,
+      sourceHash: actualHash,
       target: destination,
       ...(sourceHashReconciled ? { sourceHashReconciled } : {}),
     });

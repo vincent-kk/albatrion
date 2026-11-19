@@ -80,7 +80,7 @@ describe.each([
   it('exits with the same code on the plain, --json and terminal paths', async () => {
     const root = makeRoot('r4-noflags');
     roots.push(root);
-    const flags: DefaultFlags = { ...overrides, agent: [...overrides.agent], ...("asset" in overrides ? { asset: [...overrides.asset] } : {}), interactive: true };
+    const flags: DefaultFlags = { agent: [...overrides.agent], scope: overrides.scope, asset: "asset" in overrides ? [...overrides.asset] : undefined, interactive: true };
     quiet();
     const plain = await codeOf(() => renderPlain([], flags, root));
     const json = await codeOf(() => renderJSON([], flags, root));
