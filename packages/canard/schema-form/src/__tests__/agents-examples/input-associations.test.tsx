@@ -6,12 +6,11 @@ import {
   type FieldRendererProps,
   Form,
   ValidationMode,
-  getFieldPartId,
 } from '../../index';
 
-const TextControl = ({ id, value, onChange }: FieldInputProps<string>) => (
+const TextControl = ({ inputId, value, onChange }: FieldInputProps<string>) => (
   <input
-    id={id}
+    id={inputId}
     value={value ?? ''}
     onChange={(event) => onChange(event.target.value)}
   />
@@ -24,15 +23,15 @@ const ChoiceGroup = ({ labelId, Input }: FieldRendererProps) => (
   </fieldset>
 );
 
-const ChoiceControl = ({ id, value, onChange }: FieldInputProps<string>) => (
+const ChoiceControl = ({ inputId, getInputId, value, onChange }: FieldInputProps<string>) => (
   <>
     {['One', 'Two'].map((choice, index) => {
-      const optionId = getFieldPartId(id, 'option:' + index);
+      const optionId = getInputId(index);
       return (
         <label key={choice} htmlFor={optionId}>
           <input
             id={optionId}
-            name={id}
+            name={inputId}
             type="radio"
             checked={value === choice}
             onChange={() => onChange(choice)}

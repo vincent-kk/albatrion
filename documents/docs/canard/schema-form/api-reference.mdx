@@ -100,7 +100,7 @@ The node prop is required in both FieldInputProps and FieldRendererProps.
 
 Register LabelRenderer (`LabelRendererProps`), ErrorMessageRenderer (`ErrorMessageRendererProps`) and an optional InputRenderer (`InputRendererProps`) on Form, FormProvider or a plugin. Each owns its root; there is no default input frame. Keep component references stable: a new renderer reference replaces its UI. Use stable object props such as style so memoized parts can skip re-rendering when their props are unchanged.
 
-FieldRenderer receives bound Label, Input and ErrorMessage. `<Label />` defaults to the field's name (key or index), not its schema title. Undefined Label children use that name; null leaves it empty. ErrorMessage has no default message: use `<ErrorMessage>{errorMessage}</ErrorMessage>`. Explicit props override defaults even when undefined, except Label children; node cannot be replaced. Extra props reach the registered renderer. Bound Label defaults htmlFor to the Form-scoped input id and its opaque title id to `getFieldPartId(id, "label")`. A custom input uses its `id` prop as its element id; `path` remains the data lookup pointer. FieldRenderer receives `labelId` for the same title. Every input receives the leaf name (key or array index) in its `name` prop, regardless of presentation.inputType or the selected input definition. The radio input itself uses `id` as its native group name, changing radio FormData keys; other native input names and FormHandle value keys stay unchanged. Independent server-rendered React roots use distinct, matching identifierPrefix values on the server and client. Label and ErrorMessage receive context only when their caller passes it. The default group and bundled plugin groups pass no context to the parts; Form.Label and Form.ErrorMessage pass the form context. A renderer that reads context must tolerate its absence.
+FieldRenderer receives bound Label, Input and ErrorMessage. `<Label />` defaults to the field's name (key or index), not its schema title. Undefined Label children use that name; null leaves it empty. ErrorMessage has no default message: use `<ErrorMessage>{errorMessage}</ErrorMessage>`. Explicit props override defaults even when undefined, except Label children; node cannot be replaced. Extra props reach the registered renderer. Bound Label defaults htmlFor to the Form-scoped input id and its opaque title id to `labelId`. A custom input uses its `inputId` prop as its element id; `path` remains the data lookup pointer. FieldRenderer receives `labelId` for the same title. Every input receives the leaf name (key or array index) in its `name` prop, regardless of presentation.inputType or the selected input definition. The radio input itself uses `inputId` as its native group name, changing radio FormData keys; other native input names and FormHandle value keys stay unchanged. Independent server-rendered React roots use distinct, matching identifierPrefix values on the server and client. Label and ErrorMessage receive context only when their caller passes it. The default group and bundled plugin groups pass no context to the parts; Form.Label and Form.ErrorMessage pass the form context. A renderer that reads context must tolerate its absence.
 
 Form.Label accepts children and Form.ErrorMessage uses the field's formatted message. Neither adds an outer label or span: the registered renderer owns that element and its htmlFor/id/style/className. Standalone Form.ErrorMessage still renders its root when empty. Form.Label without a path omits htmlFor/id; use an absolute path for its label association.
 
@@ -296,16 +296,16 @@ The package connects Form.Label and bound label parts to the supplied Form-scope
 A single-control custom input must put its received id on its focusable control. The package cannot choose an element inside an arbitrary custom component for you. Keep path for data lookup; never use path as a DOM id. No automatic missing-target warning is emitted. This minimal controlled input uses FieldInputProps from @canard/schema-form:
 
 ```tsx
-const TextControl = ({ id, value, onChange }: FieldInputProps<string>) => (
+const TextControl = ({ inputId, value, onChange }: FieldInputProps<string>) => (
   <input
-    id={id}
+    id={inputId}
     value={value ?? ''}
     onChange={(event) => onChange(event.target.value)}
   />
 );
 ```
 
-For a composite group, a FieldRenderer connects its title with labelId and aria-labelledby. Each option has its own id and label. The name prop remains the leaf name for every input. A radio group sets each option's native name to the supplied id, including the Form scope and full field path, as this example does. Register the control with controlled: true when it consumes value as in these examples. Import both prop types and getFieldPartId from @canard/schema-form. Derived ids are opaque: read labelId from props or use getFieldPartId; never concatenate suffixes or slice a prefix. Use stable parts label, option:0 (with the option index), range-start, range-end, protocol, description and error. The helper produces space-free HTML/ARIA identifiers; CSS selectors still require CSS.escape:
+Composite inputs receive `inputId`, `labelId` and `getInputId(key: string | number)`. Use `inputId` on the primary control and as the native radio group name, `labelId` for `aria-labelledby`, and `getInputId(index)` for options. Keys are required and compare as strings. Renderers receive the two strings only. All identifiers are opaque and whitespace-free; never parse or concatenate them. Use CSS.escape for selectors. `path` remains the data pointer.
 
 ```tsx
 const ChoiceGroup = ({ labelId, Input }: FieldRendererProps) => (
@@ -315,15 +315,15 @@ const ChoiceGroup = ({ labelId, Input }: FieldRendererProps) => (
   </fieldset>
 );
 
-const ChoiceControl = ({ id, value, onChange }: FieldInputProps<string>) => (
+const ChoiceControl = ({ inputId, getInputId, value, onChange }: FieldInputProps<string>) => (
   <>
     {['One', 'Two'].map((choice, index) => {
-      const optionId = getFieldPartId(id, 'option:' + index);
+      const optionId = getInputId(index);
       return (
         <label key={choice} htmlFor={optionId}>
           <input
             id={optionId}
-            name={id}
+            name={inputId}
             type="radio"
             checked={value === choice}
             onChange={() => onChange(choice)}

@@ -4,7 +4,7 @@ import { NULL_FUNCTION } from '@winglet/common-utils/constant';
 
 import { LabelRenderer as FallbackLabelRenderer } from '@/schema-form/components/FallbackComponents';
 import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
-import { getFieldPartId } from '@/schema-form/helpers/fieldId/getFieldPartId';
+import { resolveFieldIdentifiers } from '@/schema-form/helpers/fieldId/resolveFieldIdentifiers';
 import { useFieldNodeTracker } from '@/schema-form/hooks';
 import type { LabelRendererProps } from '@/schema-form/types';
 
@@ -33,13 +33,14 @@ export const createLabelPart = (
   }: Partial<LabelRendererProps>) {
     const path = node.path;
     const name = node.name;
+    const { inputId, labelId } = resolveFieldIdentifiers(formId, path, false);
     const rendererProps: LabelRendererProps = {
       path,
       name,
       jsonSchema: jsonSchema!,
       required,
-      htmlFor: formId + ':' + path,
-      id: getFieldPartId(formId + ':' + path, 'label'),
+      htmlFor: inputId,
+      id: labelId,
       ...props,
       children: children === undefined ? name : children,
       node,

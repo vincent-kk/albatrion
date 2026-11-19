@@ -149,7 +149,7 @@ describe.each([false, true])(
       ).not.toBeNull();
       expect(
         form.container.querySelector(
-          'input:is([id="/1/target"], [id$=":/1/target"]):not(label):not(legend)',
+          'input:is([id="/1/target"], [id$=":/1/target~input"]):not(label):not(legend)',
         ),
       ).toBeNull();
       act(() => ref.current!.focus('/1/target'));

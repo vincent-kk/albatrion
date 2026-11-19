@@ -117,7 +117,7 @@ describe.each([false, true])('focus lifetime strict=%s', (strictMode) => {
     const view = render(<Parent />, { reactStrictMode: strictMode });
     await act(async () => {});
     const target = view.container.querySelector(
-      `input:is([id="${focusTarget}"], [id$=":${focusTarget}"]):not(label):not(legend)`,
+      `input:is([id="${focusTarget}"], [id$=":${focusTarget}~input"]):not(label):not(legend)`,
     );
     expect(target).not.toBeNull();
     expect(document.activeElement).toBe(target);
@@ -159,7 +159,7 @@ describe.each([false, true])('focus lifetime strict=%s', (strictMode) => {
     const view = render(<Parent />, { reactStrictMode: strictMode });
     await act(async () => {});
     const enabled = view.container.querySelector(
-      'input:is([id="/target"], [id$=":/target"]):not(label):not(legend):not(:disabled)',
+      'input:is([id="/target"], [id$=":/target~input"]):not(label):not(legend):not(:disabled)',
     );
     expect(enabled).not.toBeNull();
     expect(document.activeElement).toBe(enabled);
@@ -216,7 +216,7 @@ it('releases a no-gate fallback before an omitted target mounts later', async ()
   expect(remove).toHaveBeenCalledWith('focusin', listeners[0][1], true);
   view.rerender(tree(true));
   const input = view.container.querySelector(
-    `input:is([id="${focusTarget}"], [id$=":${focusTarget}"]):not(label):not(legend)`,
+    `input:is([id="${focusTarget}"], [id$=":${focusTarget}~input"]):not(label):not(legend)`,
   );
   expect(input).not.toBeNull();
   expect(

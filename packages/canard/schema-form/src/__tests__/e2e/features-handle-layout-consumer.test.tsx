@@ -147,7 +147,7 @@ describe('features — handle-layout consumer-only', () => {
       const copies = () =>
         Array.from(
           form.container.querySelectorAll<HTMLInputElement>(
-            `input:is([id="${layoutPlan.repeated}"], [id$=":${layoutPlan.repeated}"]):not(label):not(legend)`,
+            `input:is([id="${layoutPlan.repeated}"], [id$=":${layoutPlan.repeated}~input"]):not(label):not(legend)`,
           ),
         );
       await form.user.type(copies()[0], layoutPlan.typed);
@@ -157,7 +157,7 @@ describe('features — handle-layout consumer-only', () => {
         omitted: layoutPlan.omitted.map((path) =>
           Boolean(
             form.container.querySelector(
-              `:is([id="${path}"], [id$=":${path}"]):not(label):not(legend)`,
+              `:is([id="${path}"], [id$=":${path}~input"]):not(label):not(legend)`,
             ),
           ),
         ),

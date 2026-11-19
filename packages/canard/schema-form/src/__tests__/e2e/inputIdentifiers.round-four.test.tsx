@@ -1,7 +1,7 @@
 import { createRef } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
-import { Form, type FieldInputProps, type FormHandle, ValidationMode } from '../../index';
+import { Form, type FieldInputProps, type FormHandle, ValidationMode, isArrayNode } from '../../index';
 
 afterEach(cleanup);
 
@@ -19,6 +19,7 @@ it('supplies opaque input and title ids from one lineage with stable keyed resol
   for (const props of snapshots.values()) {
     expect(typeof props.inputId).toBe('string');
     expect(props.id).toBeUndefined();
+    // eslint-disable-next-line no-control-regex -- Assert the HTML-unsafe code-unit boundary.
     expect(props.inputId).not.toMatch(/[\u0000-\u0020\u007f-\u009f\ud800]/);
     expect(document.getElementById(props.labelId)?.getAttribute('for')).toBe(props.inputId);
     expect(props.getInputId(1)).toBe(props.getInputId('1'));
@@ -27,6 +28,24 @@ it('supplies opaque input and title ids from one lineage with stable keyed resol
     expect(ids).not.toContain(props.inputId + '-label');
   }
   const before = snapshots.get('/plan')!;
-  await act(async () => { handle.current!.setValue('/plan', 'next'); });
+  await act(async () => { handle.current!.findNode('/plan')!.setValue('next'); });
   expect(snapshots.get('/plan')!.getInputId).toBe(before.getInputId);
+});
+
+it('updates keyed identity on array moves without replacing the surviving control', async () => {
+  const seen = new Map<object, FieldInputProps>();
+  const Input = (props: FieldInputProps) => { seen.set(props.node, props); return <input id={props.inputId} />; };
+  const handle = createRef<FormHandle>();
+  const view = render(<Form ref={handle} validationMode={ValidationMode.None} jsonSchema={{ type: 'array', items: { type: 'string' } }} defaultValue={['a']} fieldInputDefinitions={[{ test: { type: 'string' }, Component: Input, controlled: true }]} />);
+  const before = [...seen.values()][0];
+  const control = document.getElementById(before.inputId);
+  const list = handle.current!.findNode('');
+  if (!isArrayNode(list)) throw new Error('Expected array');
+  await act(async () => { list.insert(0, 'new'); });
+  const after = seen.get(before.node)!;
+  expect(after.path).toBe('/1');
+  expect(after.getInputId).not.toBe(before.getInputId);
+  expect(after.getInputId(0)).not.toBe(before.getInputId(0));
+  expect(document.getElementById(after.inputId)).toBe(control);
+  view.unmount();
 });

@@ -159,10 +159,10 @@ it('112C-01 EVENT-039 keeps all boundaries mounted while Refresh re-keys only it
     />,
   );
   const initial = view.container.querySelector(
-    ':is([id="/bad"], [id$=":/bad"]):not(label):not(legend)',
+    ':is([id="/bad"], [id$=":/bad~input"]):not(label):not(legend)',
   ) as HTMLInputElement;
   const peer = view.container.querySelector(
-    ':is([id="/good"], [id$=":/good"]):not(label):not(legend)',
+    ':is([id="/good"], [id$=":/good~input"]):not(label):not(legend)',
   )!;
   const boundaries = boundariesOf(initial);
   expect(boundaries.length).toBeGreaterThanOrEqual(3);
@@ -170,7 +170,7 @@ it('112C-01 EVENT-039 keeps all boundaries mounted while Refresh re-keys only it
   initial.setSelectionRange(1, 3);
   act(() => ref.current!.refresh('/bad'));
   const refreshed = view.container.querySelector(
-    ':is([id="/bad"], [id$=":/bad"]):not(label):not(legend)',
+    ':is([id="/bad"], [id$=":/bad~input"]):not(label):not(legend)',
   ) as HTMLInputElement;
   expect(refreshed).not.toBe(initial);
   expect(refreshed.value).toBe('committed');
@@ -178,7 +178,7 @@ it('112C-01 EVENT-039 keeps all boundaries mounted while Refresh re-keys only it
   expect(boundariesOf(refreshed)).toEqual(boundaries);
   expect(
     view.container.querySelector(
-      ':is([id="/good"], [id$=":/good"]):not(label):not(legend)',
+      ':is([id="/good"], [id$=":/good~input"]):not(label):not(legend)',
     ),
   ).toBe(peer);
   expect(mounts).toEqual({ '/bad': 2, '/good': 1 });

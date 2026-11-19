@@ -460,7 +460,7 @@ describe('virtualization across server rendering and client hydration', () => {
       ).not.toBeNull();
       expect(
         container.querySelector(
-          ':is([id="/items/0"], [id$=":/items/0"]):not(label):not(legend)',
+          ':is([id="/items/0"], [id$=":/items/0~input"]):not(label):not(legend)',
         ),
       ).toBeNull();
       expect(recoverableErrors).toEqual([]);

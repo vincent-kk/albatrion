@@ -15,10 +15,10 @@ it('keeps one construction site for each identifier lineage', () => {
   for (const file of sourceFiles(root)) {
     const source = readFileSync(file, 'utf8');
     for (const line of source.split('\n')) {
-      if (/(?:formId|scope)\s*\+\s*['"]:['"]|['"]:['"]\s*\+\s*(?:node\.)?path|\$\{(?:formId|scope)\}:/.test(line)) base.push(relative(root, file));
-      if (/['"]~2['"]/.test(line)) derived.push(relative(root, file));
+      if (/(?:formId|scope)\s*\+\s*['"]:['"]|\$\{(?:formId|scope)\}:/.test(line)) base.push(relative(root, file));
+      if (/['"]~(?:input|label)['"]/.test(line)) derived.push(relative(root, file));
     }
   }
-  expect(base).toEqual(['helpers/fieldId/getFieldId.ts']);
-  expect(derived).toEqual(['helpers/fieldId/getFieldPartId.ts']);
+  expect(base).toEqual(['helpers/fieldId/resolveFieldIdentifiers.ts']);
+  expect(new Set(derived)).toEqual(new Set(['helpers/fieldId/resolveFieldIdentifiers.ts']));
 });

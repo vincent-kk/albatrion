@@ -1,3 +1,4 @@
+import { expectedFieldPartId } from '@/schema-form/__tests__/fixtures/expectedFieldPartId';
 import { createRef } from 'react';
 
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
@@ -7,7 +8,6 @@ import {
   Form,
   type FormHandle,
   ValidationMode,
-  getFieldPartId,
 } from '../../index';
 
 afterEach(cleanup);
@@ -180,7 +180,7 @@ it('round-3: built-in radios use the scoped id as their native name across Forms
     Array.from(form.querySelectorAll<HTMLInputElement>('input[type="radio"]')),
   );
   for (const group of [first, second]) {
-    expect(group[0].id).toBe(getFieldPartId(group[0].name, 'option:0'));
+    expect(group[0].id).toBe(expectedFieldPartId(group[0].name, 'option:0'));
     expect(group[1].name).toBe(group[0].name);
   }
   expect(first[0].name).not.toBe(second[0].name);

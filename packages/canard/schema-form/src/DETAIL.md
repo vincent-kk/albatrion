@@ -20,7 +20,7 @@ GOAL-023·086. 검증 의미를 직접 구현해 속도를 얻지 않습니다. 
 
 ## API Contracts
 
-getFieldPartId(id, part)는 입력 id에서 선택지·제목·범위 끝·프로토콜·설명·오류의 불투명한 DOM id를 파생하는 공개 순수 함수입니다. scope의 tilde와 포인터 이름의 tilde가 이스케이프되므로 필드 id에 ~2는 없습니다. helper는 base의 tilde·공백과 part의 tilde·slash·colon·공백을 가역 치환하고 두 값 사이에만 ~2를 넣습니다. 따라서 입력 id와 파생 id는 분리되며, 구분자의 유일한 위치와 가역 치환이 서로 다른 (id, part)를 구별합니다. labelId도 같은 파생 규칙을 따르므로 소비자는 prop을 읽거나 helper를 사용하며 문자열 접두·접미 조립이나 slicing을 하지 않습니다. 파생 id에는 공백이 없고 CSS 선택자는 CSS.escape로 이스케이프합니다.
+입력은 inputId·labelId와 필드에 묶인 getInputId(key)를 받으며 렌더러는 두 id 문자열만 받습니다. 모든 식별자는 하나의 내부 resolver가 Form scope와 현재 경로에서 생성합니다. 키는 문자열로 비교하며 기본 입력과 추가 요소의 이름 공간을 분리합니다. 식별자는 고유하고 공백이 없는 불투명 값입니다. 소비자는 파싱·접미 조립을 하지 않으며 CSS 선택자에는 CSS.escape를 사용합니다. 공개 builder나 key 상수를 제공하지 않아 입력의 구현 세부를 공개 계약으로 고정하지 않습니다.
 
 기본 ESM과 Node ESM은 하나의 번들 그래프에서 출력합니다. Node 출력의 개발 플래그 치환을 되돌리면 기본 ESM의 바이트와 같아야 하므로 독립 그래프 순회 순서에 결과를 맡기지 않습니다. CommonJS의 strict 선언과 개발 플래그 배치는 유지합니다.
 

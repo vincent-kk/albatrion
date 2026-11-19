@@ -8,7 +8,7 @@ import type { FieldInputProps } from '@/schema-form/types';
 
 /** Render a boolean node as a checkbox; a non-boolean value shows as indeterminate. */
 export const FieldInputBoolean = ({
-  id: fieldId,
+  inputId: fieldId,
   name,
   readOnly,
   disabled,

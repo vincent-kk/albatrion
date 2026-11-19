@@ -205,7 +205,7 @@ const runStep = async (
   else if (step.act === 'type')
     await userEvent.type(
       container.querySelector<HTMLInputElement>(
-        `input:is([id="${step.path}"], [id$=":${step.path}"]):not(label):not(legend)`,
+        `input:is([id="${step.path}"], [id$=":${step.path}~input"]):not(label):not(legend)`,
       )!,
       step.text,
     );
@@ -301,7 +301,7 @@ const runStep = async (
       expect(
         Boolean(
           container.querySelector(
-            `input:is([id="${path}"], [id$=":${path}"]):not(label):not(legend)`,
+            `input:is([id="${path}"], [id$=":${path}~input"]):not(label):not(legend)`,
           ),
         ),
         `${label} ${path}`,

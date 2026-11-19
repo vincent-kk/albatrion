@@ -100,7 +100,7 @@ FieldInputProps와 FieldRendererProps의 node 속성은 모두 필수입니다.
 
 Form·FormProvider·플러그인에 LabelRenderer(`LabelRendererProps`), ErrorMessageRenderer(`ErrorMessageRendererProps`), 선택적인 InputRenderer(`InputRendererProps`)를 등록합니다. 각 렌더러가 루트를 소유하며 기본 입력 틀은 없습니다. 컴포넌트 참조를 안정적으로 유지하십시오. 새 렌더러 참조는 해당 UI를 교체합니다. style 같은 객체 속성도 재사용해야 메모된 부품이 속성이 같을 때 다시 렌더링을 건너뛸 수 있습니다.
 
-FieldRenderer는 묶인 Label·Input·ErrorMessage를 받습니다. `<Label />`의 기본 내용은 스키마 title이 아닌 필드 name(키 또는 인덱스)입니다. children이 undefined여도 name을 쓰고 null이면 비웁니다. ErrorMessage에는 기본 문구가 없으므로 `<ErrorMessage>{errorMessage}</ErrorMessage>`로 전달합니다. 명시한 속성은 undefined여도 기본값을 덮지만 Label children은 예외이며 node는 바꿀 수 없습니다. 추가 속성은 등록 렌더러에 전달됩니다. 묶인 Label의 기본 htmlFor는 Form 범위를 포함한 입력 id이며 제목 id는 `getFieldPartId(id, "label")`로 만드는 불투명한 값입니다. 사용자 입력은 `id` prop을 요소 id로 사용하고 데이터 조회용 `path`와 구별합니다. FieldRenderer의 `labelId`는 같은 제목을 가리킵니다. 모든 입력은 presentation.inputType이나 선택된 입력 정의와 무관하게 name prop으로 말단 이름(키 또는 배열 인덱스)을 받습니다. 라디오 입력 자체가 id를 native group name으로 사용하므로 라디오의 FormData key가 바뀌며 다른 native 입력의 name과 FormHandle 값의 키는 유지됩니다. 독립적인 서버 렌더 React root는 서로 다른 identifierPrefix를 서버와 클라이언트에 일치시켜야 합니다. Label·ErrorMessage는 호출자가 넘긴 경우에만 context를 받습니다. 기본 그룹과 번들 플러그인 그룹은 부품에 context를 넘기지 않지만 Form.Label과 Form.ErrorMessage는 폼 context를 넘깁니다. context를 읽는 렌더러는 그 값이 없어도 동작해야 합니다.
+FieldRenderer는 묶인 Label·Input·ErrorMessage를 받습니다. `<Label />`의 기본 내용은 스키마 title이 아닌 필드 name(키 또는 인덱스)입니다. children이 undefined여도 name을 쓰고 null이면 비웁니다. ErrorMessage에는 기본 문구가 없으므로 `<ErrorMessage>{errorMessage}</ErrorMessage>`로 전달합니다. 명시한 속성은 undefined여도 기본값을 덮지만 Label children은 예외이며 node는 바꿀 수 없습니다. 추가 속성은 등록 렌더러에 전달됩니다. 묶인 Label의 기본 htmlFor는 Form 범위를 포함한 입력 id이며 제목 id는 `labelId`로 만드는 불투명한 값입니다. 사용자 입력은 `inputId` prop을 요소 id로 사용하고 데이터 조회용 `path`와 구별합니다. FieldRenderer의 `labelId`는 같은 제목을 가리킵니다. 모든 입력은 presentation.inputType이나 선택된 입력 정의와 무관하게 name prop으로 말단 이름(키 또는 배열 인덱스)을 받습니다. 라디오 입력 자체가 id를 native group name으로 사용하므로 라디오의 FormData key가 바뀌며 다른 native 입력의 name과 FormHandle 값의 키는 유지됩니다. 독립적인 서버 렌더 React root는 서로 다른 identifierPrefix를 서버와 클라이언트에 일치시켜야 합니다. Label·ErrorMessage는 호출자가 넘긴 경우에만 context를 받습니다. 기본 그룹과 번들 플러그인 그룹은 부품에 context를 넘기지 않지만 Form.Label과 Form.ErrorMessage는 폼 context를 넘깁니다. context를 읽는 렌더러는 그 값이 없어도 동작해야 합니다.
 
 Form.Label은 children을 받고 Form.ErrorMessage는 해당 필드의 포맷된 문구를 사용합니다. 둘은 바깥 label·span을 더하지 않습니다. 등록 렌더러가 그 요소와 htmlFor/id/style/className을 소유합니다. 단독 Form.ErrorMessage는 문구가 없어도 루트를 그립니다. Form.Label에 path가 없으면 htmlFor/id를 생략하며 입력 연결에는 절대 경로를 사용하십시오.
 
@@ -296,16 +296,16 @@ SSR은 모든 입력을 렌더링하고 하이드레이션은 이를 그대로 �
 단일 컨트롤 사용자 입력은 받은 id를 포커스 가능한 컨트롤에 적용해야 합니다. 패키지는 임의의 사용자 컴포넌트 안에서 그 요소를 대신 고를 수 없습니다. path는 데이터 조회에 사용하고 DOM id로 쓰지 않습니다. 연결 대상의 누락을 자동으로 경고하지 않습니다. 다음 최소 제어 입력은 @canard/schema-form의 FieldInputProps를 사용합니다:
 
 ```tsx
-const TextControl = ({ id, value, onChange }: FieldInputProps<string>) => (
+const TextControl = ({ inputId, value, onChange }: FieldInputProps<string>) => (
   <input
-    id={id}
+    id={inputId}
     value={value ?? ''}
     onChange={(event) => onChange(event.target.value)}
   />
 );
 ```
 
-복합 그룹은 FieldRenderer가 labelId와 aria-labelledby로 제목을 연결합니다. 각 선택지는 고유한 id와 라벨을 갖습니다. 모든 입력의 name prop은 말단 이름을 유지합니다. 라디오 그룹은 이 예제처럼 Form scope와 전체 필드 경로를 포함한 id를 각 선택지의 native name에 지정합니다. 이 예제처럼 value로 제어하는 입력은 controlled: true로 등록합니다. props 타입과 getFieldPartId는 @canard/schema-form에서 가져옵니다. labelId와 모든 파생 id는 불투명한 값이므로 props에서 읽거나 getFieldPartId로 만들며 접미사를 직접 붙이거나 접두사를 잘라내지 않습니다. 부품 이름은 label, option:0(선택지 인덱스), range-start, range-end, protocol, description, error를 사용합니다. 도우미는 공백 없는 id와 htmlFor·ARIA 참조를 만들고 물결표·슬래시·콜론·선택지 모양 접미사를 가진 필드와도 구별합니다. CSS 선택자에는 scoped id와 마찬가지로 CSS.escape가 필요합니다:
+복합 입력은 `inputId`, `labelId`, `getInputId(key: string | number)`를 받습니다. 기본 조작 요소와 라디오 native name에는 `inputId`, `aria-labelledby`에는 `labelId`, 선택지에는 `getInputId(index)`를 사용합니다. 키는 필수이며 문자열로 비교합니다. 렌더러는 두 문자열만 받습니다. 모든 식별자는 공백 없는 불투명 값이므로 파싱하거나 접미사를 붙이지 않습니다. 선택자에는 CSS.escape를 사용하고 `path`는 데이터 포인터로 유지합니다.
 
 ```tsx
 const ChoiceGroup = ({ labelId, Input }: FieldRendererProps) => (
@@ -315,15 +315,15 @@ const ChoiceGroup = ({ labelId, Input }: FieldRendererProps) => (
   </fieldset>
 );
 
-const ChoiceControl = ({ id, value, onChange }: FieldInputProps<string>) => (
+const ChoiceControl = ({ inputId, getInputId, value, onChange }: FieldInputProps<string>) => (
   <>
     {['One', 'Two'].map((choice, index) => {
-      const optionId = getFieldPartId(id, 'option:' + index);
+      const optionId = getInputId(index);
       return (
         <label key={choice} htmlFor={optionId}>
           <input
             id={optionId}
-            name={id}
+            name={inputId}
             type="radio"
             checked={value === choice}
             onChange={() => onChange(choice)}

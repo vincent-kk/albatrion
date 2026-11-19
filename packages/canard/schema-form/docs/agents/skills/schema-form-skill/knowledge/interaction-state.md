@@ -12,10 +12,10 @@ FieldInput's `onChange` is the user-input path and marks Edited.
 Form records Touched one frame after blur by itself; an input that also sets it on blur, as below, only makes it immediate:
 
 ```tsx
-function EditableName({ id, value, onChange, node }: FieldInputProps<string>) {
+function EditableName({ inputId, value, onChange, node }: FieldInputProps<string>) {
   return (
     <input
-        id={id}
+        id={inputId}
       aria-label="Editable name"
       value={value ?? ''}
       onChange={(event) => onChange(event.target.value)}

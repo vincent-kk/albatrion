@@ -1,3 +1,4 @@
+import { expectedFieldPartId } from '@/schema-form/__tests__/fixtures/expectedFieldPartId';
 import { createRef } from 'react';
 
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
@@ -15,7 +16,6 @@ import {
   type InputRendererProps,
   type LabelRendererProps,
   ValidationMode,
-  getFieldPartId,
   useFieldErrors,
 } from '@/schema-form';
 
@@ -146,8 +146,8 @@ it('assembles registered label and error roots with the field name and explicit 
   const label = view.container.querySelector('label')!;
   expect(label.textContent).toBe('name *');
   expect(label.htmlFor).toBe(view.container.querySelector('input')!.id);
-  expect(label.htmlFor).toMatch(/:\/name$/);
-  expect(label.id).toBe(getFieldPartId(label.htmlFor, 'label'));
+  expect(label.htmlFor).toMatch(/:\/name~input$/);
+  expect(label.id).toBe(expectedFieldPartId(label.htmlFor, 'label'));
   expect(label.querySelector('span')?.getAttribute('aria-hidden')).toBe('true');
   expect(view.container.querySelector('em')?.style.color).toBe('crimson');
   expect(view.getByText('Check name')).toBeTruthy();

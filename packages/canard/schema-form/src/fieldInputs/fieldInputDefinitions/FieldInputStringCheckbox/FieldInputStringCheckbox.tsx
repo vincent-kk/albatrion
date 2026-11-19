@@ -6,14 +6,14 @@ import { useHandle } from '@winglet/react-utils/hook';
 
 import type { Nullable } from '@aileron/declare';
 
-import { getFieldPartId } from '@/schema-form/helpers/fieldId/getFieldPartId';
 import type { FieldInputPropsWithSchema } from '@/schema-form/types';
 
 import type { CheckboxLabelsContext, StringCheckboxJSONSchema } from './type';
 
 /** Render a checkbox per enum choice of a string-array node. */
 export const FieldInputStringCheckbox = ({
-  id: fieldId,
+  labelId,
+  getInputId,
   name,
   jsonSchema,
   readOnly,
@@ -69,11 +69,11 @@ export const FieldInputStringCheckbox = ({
   return (
     <div
       role="group"
-      aria-labelledby={getFieldPartId(fieldId, 'label')}
+      aria-labelledby={labelId}
       aria-invalid={misfit || undefined}
     >
       {map(checkboxOptions, ({ value, rawValue, label }, index) => {
-        const id = getFieldPartId(fieldId, 'option:' + index);
+        const id = getInputId(index);
         return (
           <label key={value} htmlFor={id} style={style} className={className}>
             <input

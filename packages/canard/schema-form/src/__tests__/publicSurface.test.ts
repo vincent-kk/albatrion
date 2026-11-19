@@ -70,7 +70,7 @@ function describeExport(
   return `${exported.getName()}\t${kind}\t${typeText}`;
 }
 
-it('preserves the 102-name package public surface', () => {
+it('preserves the 101-name package public surface', () => {
   const entryPath = join(packageRoot, 'src/index.ts');
   const program = ts.createProgram([entryPath], readCompilerOptions());
   const checker = program.getTypeChecker();
@@ -82,7 +82,7 @@ it('preserves the 102-name package public surface', () => {
     .getExportsOfModule(module)
     .map((symbol) => describeExport(symbol, checker, entry))
     .sort();
-  expect(lines).toHaveLength(102);
+  expect(lines).toHaveLength(101);
   expect(lines.join('\n')).toMatchSnapshot();
 }, 60000);
 
@@ -119,7 +119,7 @@ it('round-3 identifier additions have the approved public string types', () => {
   const entry = program.getSourceFile(entryPath)!;
   const module = checker.getSymbolAtLocation(entry)!;
   const additions = [
-    ['FieldInputProps', 'id'],
+    ['FieldInputProps', 'inputId'],
     ['FieldRendererProps', 'labelId'],
   ].map(([name, member]) => {
     let symbol = checker

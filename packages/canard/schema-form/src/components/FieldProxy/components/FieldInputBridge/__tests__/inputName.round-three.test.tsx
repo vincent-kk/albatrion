@@ -8,10 +8,10 @@ import type { FieldInputProps } from '@/schema-form/types';
 afterEach(cleanup);
 
 /** A consumer input that uses the leaf name as its fallback label. */
-const NamedInput = ({ id, name }: FieldInputProps) => (
-  <label htmlFor={id}>
+const NamedInput = ({ inputId, name }: FieldInputProps) => (
+  <label htmlFor={inputId}>
     <span data-testid="input-label">{name}</span>
-    <input id={id} name={name} />
+    <input id={inputId} name={name} />
   </label>
 );
 

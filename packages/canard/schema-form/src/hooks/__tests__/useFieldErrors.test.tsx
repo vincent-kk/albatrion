@@ -117,7 +117,7 @@ it.each(['input', 'frame', 'label', 'error'] as const)(
     );
     fireEvent.change(
       view.container.querySelector(
-        'input:is([id="/a"], [id$=":/a"]):not(label):not(legend)',
+        'input:is([id="/a"], [id$=":/a~input"]):not(label):not(legend)',
       )!,
       {
         target: { value: 'edited' },
@@ -133,7 +133,7 @@ it.each(['input', 'frame', 'label', 'error'] as const)(
     act(() => ref.current!.findNode('/show')!.setValue(false));
     expect(
       view.container.querySelector(
-        'input:is([id="/a"], [id$=":/a"]):not(label):not(legend)',
+        'input:is([id="/a"], [id$=":/a~input"]):not(label):not(legend)',
       ),
     ).toBeNull();
     act(() => ref.current!.findNode('/show')!.setValue(true));
@@ -338,9 +338,9 @@ it('isolates a formatter thrown from the input hook from a healthy sibling', () 
   shouldThrow = true;
   act(() => replace());
   expect(view.queryByLabelText('a')).toBeNull();
-  expect(view.container.querySelector('label[for$=":/a"]')).not.toBeNull();
+  expect(view.container.querySelector('label[for$=":/a~input"]')).not.toBeNull();
   view.rerender(<Form {...props} formatError={(error) => error.message} />);
   expect(view.queryByLabelText('a')).toBeNull();
   expect(view.getByLabelText('b')).toBe(sibling);
-  expect(view.container.querySelector('label[for$=":/a"]')).not.toBeNull();
+  expect(view.container.querySelector('label[for$=":/a~input"]')).not.toBeNull();
 });

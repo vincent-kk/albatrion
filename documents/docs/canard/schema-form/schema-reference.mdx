@@ -204,7 +204,7 @@ This is an optimization for fields recalculated often and for widgets that are e
 
 ## Custom-input accessibility {#accessibility}
 
-Use the `id` prop as `id={id}` on a single custom input so its label can target it; path remains the data pointer. Group inputs reference `getFieldPartId(id, "label")` with `aria-labelledby`. Built-in checkbox/radio choices use `getFieldPartId(id, "option:" + index)` and matching `htmlFor` inside a named `role="group"` container. Read derived ids from props or construct them with getFieldPartId from @canard/schema-form; their spelling is opaque. Use CSS.escape in DOM selectors.
+Composite inputs receive `inputId`, `labelId` and `getInputId(key: string | number)`. Use `inputId` on the primary control and as the native radio group name, `labelId` for `aria-labelledby`, and `getInputId(index)` for options. Keys are required and compare as strings. Renderers receive the two strings only. All identifiers are opaque and whitespace-free; never parse or concatenate them. Use CSS.escape for selectors. `path` remains the data pointer.
 
 At a root, array item, or unlabeled composition where the supplied `labelId` is absent, the custom renderer must supply an accessible group name. `Form.Label` derives its id and htmlFor from the resolved node path and Form scope; use the actual absolute input path to select that node.
 
@@ -268,4 +268,4 @@ UI bounds guide interaction; schema validation remains responsible for accepting
 
 Input props are payload, not frame configuration. Follow the [position-specific unwrapped rules](./api-reference#input-frames) and [field error hook](./api-reference#field-errors) when an input needs feedback.
 
-Custom inputs apply their supplied `id` to the focusable control; group renderers use `labelId` for their title and radio options use that scoped `id` as the native name. See [control identifiers and author responsibility](./api-reference#control-identifiers-and-author-responsibility) for the executable single-control and group examples.
+Custom inputs apply their supplied `inputId` to the focusable control; group renderers use `labelId` for their title and radio options use that scoped `inputId` as the native name. See [control identifiers and author responsibility](./api-reference#control-identifiers-and-author-responsibility) for the executable single-control and group examples.

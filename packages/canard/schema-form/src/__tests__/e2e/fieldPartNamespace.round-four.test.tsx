@@ -2,7 +2,7 @@ import { act } from '@testing-library/react';
 import { createRoot } from 'react-dom/client';
 import { expect, it } from 'vitest';
 
-import { Form, ValidationMode, getFieldPartId } from '../../index';
+import { Form, ValidationMode, type FieldInputProps } from '../../index';
 
 it.each(['ordinary-', 'app~2:', 'app with spaces~2:'])(
   'field and derived ids are injective with identifierPrefix %s',
@@ -33,6 +33,8 @@ it.each(['ordinary-', 'app~2:', 'app with spaces~2:'])(
       '/',
       'a b',
     ];
+    const captured: FieldInputProps[] = [];
+    const Input = (props: FieldInputProps) => { captured.push(props); return <input id={props.inputId} />; };
     const host = document.createElement('div');
     document.body.append(host);
     const root = createRoot(host, { identifierPrefix });
@@ -40,6 +42,7 @@ it.each(['ordinary-', 'app~2:', 'app with spaces~2:'])(
       await act(async () => {
         root.render(
           <Form
+            fieldInputDefinitions={[{ test: { type: 'string' }, Component: Input }]}
             jsonSchema={{
               type: 'object',
               properties: Object.fromEntries(
@@ -55,22 +58,23 @@ it.each(['ordinary-', 'app~2:', 'app with spaces~2:'])(
         (input) => input.id,
       );
       expect(fields).toHaveLength(keys.length);
-      expect(fields.every((id) => !id.includes('~2'))).toBe(true);
-      const derived = fields.flatMap((id) =>
-        parts.map((part) => getFieldPartId(id, part)),
+      expect(fields.every((id) => id.endsWith('~input'))).toBe(true);
+      const derived = captured.flatMap((props) =>
+        parts.map((part) => props.getInputId(part)),
       );
       expect(new Set(derived).size).toBe(derived.length);
       expect(derived.some((id) => fields.includes(id))).toBe(false);
       expect(
-        derived.every((id) => id.split('~2').length === 2 && !/\s/.test(id)),
+        // eslint-disable-next-line no-control-regex -- Assert the HTML-unsafe code-unit boundary.
+        derived.every((id) => !/[\u0000-\u0020]/.test(id)),
       ).toBe(true);
       const input = document.createElement('input'),
         label = document.createElement('label'),
         description = document.createElement('span');
-      input.id = getFieldPartId(fields[0], 'probe-control');
-      label.id = getFieldPartId(fields[0], 'probe-label');
+      input.id = captured[0].getInputId( 'probe-control');
+      label.id = captured[0].getInputId( 'probe-label');
       label.htmlFor = input.id;
-      description.id = getFieldPartId(fields[0], 'probe-description');
+      description.id = captured[0].getInputId( 'probe-description');
       input.setAttribute('aria-labelledby', label.id);
       input.setAttribute('aria-describedby', description.id);
       host.append(input, label, description);

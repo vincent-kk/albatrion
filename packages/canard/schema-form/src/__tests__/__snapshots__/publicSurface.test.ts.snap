@@ -25,7 +25,7 @@ exports[`SURFACE-063 adds rebuild with the reset option contract to FormHandle 1
 ]
 `;
 
-exports[`preserves the 102-name package public surface 1`] = `
+exports[`preserves the 101-name package public surface 1`] = `
 "ArrayNode	type	ArrayNode<Item>
 ArraySchema	type	RolledArraySchema<Options>
 BooleanNode	type	BooleanNode
@@ -106,7 +106,6 @@ VirtualizationBackfill	value+type	typeof VirtualizationBackfill
 VirtualizationOptions	type	VirtualizationOptions
 VirtualizationPlaceholderProps	type	VirtualizationPlaceholderProps
 VirtualizationRootMargin	type	VirtualizationRootMargin
-getFieldPartId	value	(id: string, part: string) => string
 isArrayNode	value	(node: FieldNode | Nullish) => node is ArrayNode
 isBooleanNode	value	(node: FieldNode | Nullish) => node is BooleanNode
 isBranchNode	value	(node: FieldNode | Nullish) => node is BranchNode
@@ -132,7 +131,7 @@ useFormSubmit	value	<Schema extends JSONSchema, Value extends AllowedValue = Inf
 
 exports[`round-3 identifier additions have the approved public string types 1`] = `
 [
-  "FieldInputProps.id: string",
+  "FieldInputProps.inputId: string",
   "FieldRendererProps.labelId: string",
 ]
 `;

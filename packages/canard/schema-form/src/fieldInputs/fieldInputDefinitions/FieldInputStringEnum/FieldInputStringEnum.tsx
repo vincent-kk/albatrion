@@ -15,7 +15,7 @@ import type { EnumLabelsContext } from './type';
 
 /** Render a select for a string enum node. */
 export const FieldInputStringEnum = ({
-  id: fieldId,
+  inputId: fieldId,
   name,
   jsonSchema,
   defaultValue,

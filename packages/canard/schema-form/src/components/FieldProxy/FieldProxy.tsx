@@ -10,7 +10,7 @@ import {
 
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
 import { FieldNodeEventType } from '@/schema-form/core';
-import { getFieldPartId } from '@/schema-form/helpers/fieldId/getFieldPartId';
+import { resolveFieldIdentifiers } from '@/schema-form/helpers/fieldId/resolveFieldIdentifiers';
 import { useFieldNode } from '@/schema-form/hooks';
 import { useFieldNodeTracker } from '@/schema-form/hooks';
 import {
@@ -73,6 +73,7 @@ export const FieldProxy = ({
   } = useFieldRendererContext();
 
   const { context, formId } = useWorkspaceContext();
+  const identifiers = node ? resolveFieldIdentifiers(formId, node.path, false) : null;
   const jsonSchema = node?.jsonSchema;
   const presentation = (jsonSchema as JSONSchema | undefined)?.presentation;
   const required = resolveRequired(
@@ -140,7 +141,8 @@ export const FieldProxy = ({
             jsonSchema={node.jsonSchema}
             isRoot={node.isRoot}
             depth={node.depth}
-            labelId={getFieldPartId(formId + ':' + node.path, 'label')}
+            inputId={identifiers!.inputId}
+            labelId={identifiers!.labelId}
             path={node.path}
             name={node.name}
             value={node.value}

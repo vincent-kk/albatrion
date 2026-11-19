@@ -24,13 +24,13 @@ Use `ErrorVisibility.AfterTouch` for feedback after blur, or `ErrorVisibility.Af
 A custom input publishes edits through `onChange` and renders messages behind `errorVisible`; this input also sets Touched on blur so a test can assert immediately (when Form records Touched itself is described in [interaction state](interaction-state.md)):
 
 ```tsx
-function NameInput({ id, value, onChange, node }: FieldInputProps<string>) {
+function NameInput({ inputId, value, onChange, node }: FieldInputProps<string>) {
   const { errors, errorVisible } = useFieldErrors(node);
 
   return (
     <>
       <input
-        id={id}
+        id={inputId}
         aria-label="Name"
         value={value ?? ''}
         onChange={(event) => onChange(event.target.value || undefined)}
@@ -175,7 +175,7 @@ const ErrorAwareInput = ({
   return (
     <>
       <input
-        id={id}
+        id={inputId}
         defaultValue={defaultValue}
         onChange={(event) => onChange(event.target.value)}
       />

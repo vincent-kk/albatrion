@@ -1,4 +1,5 @@
-import { memo, useCallback, useRef } from 'react';
+import { resolveFieldIdentifiers } from '@/schema-form/helpers/fieldId/resolveFieldIdentifiers';
+import { memo, useCallback, useMemo, useRef } from 'react';
 
 import { isArray } from '@winglet/common-utils/filter';
 import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
@@ -90,6 +91,10 @@ export const FieldInputBridge = memo(
       childValueRevision.externalValueRevision = undefined;
     }
     const { attachedFilesMap, context, formId } = useWorkspaceContext();
+    const identifiers = useMemo(
+      () => resolveFieldIdentifiers(formId, node.path),
+      [formId, node.path],
+    );
     const attachmentOwner = useRef<{ container: Nullable<HTMLDivElement> }>({
       container: null,
     });
@@ -262,7 +267,7 @@ export const FieldInputBridge = memo(
           type={node.type}
           schemaType={node.schemaType}
           misfit={node.isMisfit}
-          id={formId + ':' + node.path}
+          {...identifiers}
           name={node.name}
           path={node.path}
           nullable={node.isNullable}

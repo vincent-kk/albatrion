@@ -170,12 +170,12 @@ const renderWithProvider = async (
     value: (path) =>
       (
         container.querySelector(
-          `input:is([id="${path}"], [id$=":${path}"])`,
+          `input:is([id="${path}"], [id$=":${path}~input"])`,
         ) as HTMLInputElement | null
       )?.value ?? '',
     field: (path) =>
       container.querySelector(
-        `input:is([id="${path}"], [id$=":${path}"])`,
+        `input:is([id="${path}"], [id$=":${path}~input"])`,
       ) as HTMLInputElement | null,
     query: (selector) => container.querySelector(selector),
     getValue: () => ref.current?.getValue(),
@@ -210,7 +210,7 @@ const renderSwappable = async (
       JSON.parse(
         (
           utils.container.querySelector(
-            `input:is([id="${path}"], [id$=":${path}"])`,
+            `input:is([id="${path}"], [id$=":${path}~input"])`,
           ) as HTMLElement | null
         )?.getAttribute('data-context') ?? 'null',
       ),

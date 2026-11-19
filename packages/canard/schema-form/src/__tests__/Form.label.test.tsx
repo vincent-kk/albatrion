@@ -3,7 +3,7 @@ import { afterEach, expect, it } from 'vitest';
 
 import { Form } from '../components/Form';
 import { ValidationMode } from '../core';
-import { getFieldPartId } from '../helpers/fieldId/getFieldPartId';
+import { expectedFieldPartId } from '@/schema-form/__tests__/fixtures/expectedFieldPartId';
 
 afterEach(cleanup);
 
@@ -96,8 +96,8 @@ it.each(['checkbox', 'radio'])(
       </Form>,
     );
     const label = screen.getByText('Size').closest('label')!;
-    expect(label.htmlFor).toMatch(/:\/Size$/);
-    expect(label.id).toBe(getFieldPartId(label.htmlFor, 'label'));
+    expect(label.htmlFor).toMatch(/:\/Size~input$/);
+    expect(label.id).toBe(expectedFieldPartId(label.htmlFor, 'label'));
     expect(
       screen
         .getByRole('group', { name: 'Size' })
@@ -122,9 +122,9 @@ it('keeps Form.Label associated with a plain string input', () => {
   expect(screen.getByText('Text').closest('label')!.getAttribute('for')).toBe(
     input.id,
   );
-  expect(input.id).toMatch(/^.+:\/Text$/);
+  expect(input.id).toMatch(/^.+:\/Text~input$/);
   expect(screen.getByText('Text').closest('label')!.id).toBe(
-    getFieldPartId(input.id, 'label'),
+    expectedFieldPartId(input.id, 'label'),
   );
 });
 
@@ -151,7 +151,7 @@ it('keeps Form.Label associated with a date-format input despite the radio hint'
   const label = screen.getByText('When').closest('label')!;
   expect(input.type).toBe('date');
   expect(label.getAttribute('for')).toBe(input.id);
-  expect(label.id).toBe(getFieldPartId(input.id, 'label'));
+  expect(label.id).toBe(expectedFieldPartId(input.id, 'label'));
 });
 
 it('omits for and id when the Form.Label path prop is undefined', () => {
@@ -201,8 +201,8 @@ it('avoids title id collisions with sibling input paths in Form.Label compositio
   expect(ids.filter((id, index) => ids.indexOf(id) !== index)).toEqual([]);
   const inputs = screen.getAllByRole<HTMLInputElement>('textbox');
   expect(inputs.map((input) => input.id)).toEqual([
-    expect.stringMatching(/^.+:\/button$/),
-    expect.stringMatching(/^.+:\/button-label$/),
+    expect.stringMatching(/^.+:\/button~input$/),
+    expect.stringMatching(/^.+:\/button-label~input$/),
   ]);
   expect(screen.getByText('button').closest('label')!.control).toBe(inputs[0]);
   expect(screen.getByText('button-label').closest('label')!.control).toBe(
@@ -229,8 +229,8 @@ it('names a root group with the label prefix when path is empty', () => {
     </Form>,
   );
   const label = screen.getByText('Size').closest('label')!;
-  expect(label.htmlFor).toMatch(/:$/);
-  expect(label.id).toBe(getFieldPartId(label.htmlFor, 'label'));
+  expect(label.htmlFor).toMatch(/:~input$/);
+  expect(label.id).toBe(expectedFieldPartId(label.htmlFor, 'label'));
   expect(
     screen.getByRole('group', { name: 'Size' }).getAttribute('aria-labelledby'),
   ).toBe(label.id);

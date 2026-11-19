@@ -62,7 +62,7 @@ describe('LANDING-087 reveal identity across array reindexing', () => {
       );
     });
     const revealedInput = form.container.querySelector(
-      'input:is([id="/items/11"], [id$=":/items/11"]):not(label):not(legend)',
+      'input:is([id="/items/11"], [id$=":/items/11~input"]):not(label):not(legend)',
     );
     expect(revealedInput).not.toBeNull();
     expect(form.value('/items/11')).toBe('v11');
@@ -75,7 +75,7 @@ describe('LANDING-087 reveal identity across array reindexing', () => {
     expect(form.value('/items/10')).toBe('v11');
     expect(
       form.container.querySelector(
-        'input:is([id="/items/10"], [id$=":/items/10"]):not(label):not(legend)',
+        'input:is([id="/items/10"], [id$=":/items/10~input"]):not(label):not(legend)',
       ),
     ).toBe(revealedInput);
     expect(

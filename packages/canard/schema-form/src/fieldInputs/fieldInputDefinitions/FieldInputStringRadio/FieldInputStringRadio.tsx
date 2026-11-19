@@ -5,7 +5,6 @@ import { useHandle } from '@winglet/react-utils/hook';
 
 import type { Nullable } from '@aileron/declare';
 
-import { getFieldPartId } from '@/schema-form/helpers/fieldId/getFieldPartId';
 import type {
   FieldInputPropsWithSchema,
   StringSchema,
@@ -15,7 +14,9 @@ import type { RadioLabelsContext } from './type';
 
 /** Render a radio group for a string enum node. */
 export const FieldInputStringRadio = ({
-  id: fieldId,
+  inputId: fieldId,
+  labelId,
+  getInputId,
   jsonSchema,
   readOnly,
   disabled,
@@ -67,11 +68,11 @@ export const FieldInputStringRadio = ({
     <span
       ref={group}
       role="group"
-      aria-labelledby={getFieldPartId(fieldId, 'label')}
+      aria-labelledby={labelId}
       aria-invalid={misfit || undefined}
     >
       {map(radioOptions, ({ value, rawValue, label }, index) => {
-        const id = getFieldPartId(fieldId, 'option:' + index);
+        const id = getInputId(index);
         return (
           <label key={value} htmlFor={id} style={style} className={className}>
             <input
