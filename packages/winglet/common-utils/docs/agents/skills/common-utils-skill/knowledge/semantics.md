@@ -137,6 +137,8 @@ synchronous code
 - The id returned by `scheduleMacrotask` is typed `number`, but in Node it is really the `Immediate` object `setImmediate` returns. Pass it back to `cancelMacrotask` and never do arithmetic on it.
 - `scheduleCancelableMacrotask` returns a cancel function instead of an id, and guards with its own flag, so cancelling after the task has been dequeued is still safe.
 
+Native Node `setImmediate` may run a microtask checkpoint between callbacks, so a task's microtask may run before the next queued task. The browser fallback batches synchronously queued tasks without a checkpoint between them; `scheduleCancelableMacrotask` follows the same host-specific order.
+
 `MessageChannelScheduler` backs browser macrotasks: tasks queued synchronously are batched, a microtask posts the batch through the channel, all of it runs in one macrotask, and a throwing task is isolated from the rest of its batch. `getInstance()` is a singleton whose options apply only on the first call. A consumer `onTaskError` owns errors of both direct and wrapper-scheduled tasks; without one, errors reach the host through `reportError` or a separate native timer throw. In a browser that reaches `window.onerror` or the unhandled error path; in Node it reaches the uncaught-exception path and may terminate the process. Reporting never schedules through the same scheduler; `destroyGlobalScheduler()` exists for test teardown.
 
 ## Rate limiting

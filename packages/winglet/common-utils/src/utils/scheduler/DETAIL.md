@@ -10,6 +10,8 @@
 
 브라우저 MessageChannel 폴백을 쓰는 전역 wrapper의 콜백 예외는 호스트 reportError 또는 별도 throw 태스크로 보고하여 네이티브 타이머처럼 관찰 가능하게 합니다. 클래스를 직접 생성하여 onTaskError를 지정하지 않은 경우의 오류 전달 정책은 바꾸지 않습니다.
 
+네이티브 setImmediate는 태스크 사이에 microtask checkpoint를 둘 수 있으므로 앞 태스크가 예약한 마이크로태스크가 다음 태스크보다 먼저 실행될 수 있습니다. 브라우저 MessageChannel 폴백의 동기 배치는 한 메시지 안에서 실행되어 이 순서가 다릅니다. scheduleCancelableMacrotask도 해당 호스트의 순서를 따릅니다.
+
 ## API Contracts
 
 브라우저 래퍼는 공유 MessageChannelScheduler의 오류 소유권을 따릅니다. 최초 옵션에 onTaskError가 있으면 그 처리기가 직접·래퍼 태스크 오류를 모두 받고, 없으면 호스트에 보고합니다. import 순서와 무관하며 공유 배치·제한·취소·파괴와 최초 옵션 정책은 유지합니다.

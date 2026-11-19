@@ -418,6 +418,8 @@ scheduleNextTick(task: () => void): void
 
 #### scheduleMacrotask / cancelMacrotask / scheduleCancelableMacrotask
 
+Node의 네이티브 `setImmediate`는 콜백 사이에 마이크로태스크를 실행할 수 있습니다. 브라우저 폴백은 동기 예약 태스크를 한 배치로 실행하므로 중첩 마이크로태스크가 그 배치의 다음 태스크보다 늦게 실행될 수 있습니다. 취소 래퍼도 호스트의 순서를 따릅니다.
+
 ```typescript
 scheduleMacrotask(callback: () => void): number
 cancelMacrotask(id: number): void
