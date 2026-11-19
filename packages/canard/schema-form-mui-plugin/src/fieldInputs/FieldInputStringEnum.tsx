@@ -109,6 +109,7 @@ const FieldInputStringEnum = ({
       </InputLabel>
       <Select
         id={inputId}
+        inputProps={{ id: inputId }}
         SelectDisplayProps={{ id: getInputId('display') }}
         MenuProps={{ id: getInputId('menu') }}
         name={name}

@@ -118,6 +118,7 @@ const FieldInputUri = ({
         <Select
           inputProps={{ 'aria-label': 'Protocol' }}
           id={getInputId('protocol')}
+          MenuProps={{ id: getInputId('protocol-menu') }}
           value={protocol}
           onChange={handleProtocolChange}
           disabled={disabled || readOnly}
