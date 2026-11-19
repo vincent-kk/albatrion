@@ -2,6 +2,7 @@ import type { DefaultFlags } from '../../../../types/index.js';
 import { executeUnits } from './executeUnits.js';
 import { prepareUnits } from './prepareUnits/prepareUnits.js';
 import type { RunInput, RunResult } from './types.js';
+import { createRunDiagnostics } from './utils/createRunDiagnostics.js';
 import { validateFlags } from './validateFlags.js';
 
 /** Complete arguments, prepare once, execute once; independent of the output mode.
@@ -15,6 +16,11 @@ export async function runInjection(input: RunInput): Promise<RunResult> {
     return {
       units: [],
       errors: [...(input.notices ?? []), ...initial.errors],
+      failures: createRunDiagnostics(
+        [...(input.notices ?? []), ...initial.errors],
+        input.originCwd,
+      ),
+      notices: [],
       exitCode: 2,
       dryRun: Boolean(flags.dryRun),
     };
@@ -28,6 +34,11 @@ export async function runInjection(input: RunInput): Promise<RunResult> {
     return {
       units: [],
       errors: [...errors, ...parsed.errors],
+      failures: createRunDiagnostics(
+        [...errors, ...parsed.errors],
+        input.originCwd,
+      ),
+      notices: [],
       exitCode: 2,
       dryRun: Boolean(flags.dryRun),
     };
@@ -35,7 +46,16 @@ export async function runInjection(input: RunInput): Promise<RunResult> {
     (target, index, all) =>
       all.findIndex((candidate) => candidate.name === target.name) === index,
   );
-  const units = await prepareUnits(targets, parsed, flags, input.originCwd);
+  const units = await prepareUnits(
+    targets,
+    parsed,
+    flags,
+    input.originCwd,
+    input.diagnostics?.map((failure) => failure.reason) ??
+      (input.notices ?? []).filter(
+        (reason) => !reason.includes('does not ship agent assets'),
+      ),
+  );
   input.onPlan?.(units, parsed);
   const needsConfirmation =
     flags.force &&
@@ -45,5 +65,5 @@ export async function runInjection(input: RunInput): Promise<RunResult> {
   const cancelled = Boolean(
     needsConfirmation && input.confirm && !(await input.confirm(units)),
   );
-  return executeUnits(units, flags, errors, cancelled);
+  return executeUnits(units, flags, errors, cancelled, input.diagnostics);
 }

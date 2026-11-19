@@ -3,9 +3,15 @@ import { join, relative } from 'node:path';
 import type { AsyncFn } from '@aileron/declare';
 
 import type { Destination, OrphanScan } from '../agentTarget/index.js';
-import { type Sha256Hex, hashEquals, hashFile } from '../hash/index.js';
+import {
+  type Sha256Hex,
+  hashContent,
+  hashEquals,
+  hashFile,
+} from '../hash/index.js';
 import { blockBodyMatches, parseBlocks } from '../markerBlock/index.js';
 import { isNoisePath } from '../utils/isNoisePath.js';
+import { readRuleSource } from './utils/readRuleSource.js';
 import { toPosix } from '../utils/toPosix.js';
 import { walkFiles } from '../utils/walkFiles.js';
 import type { Action, ActionKind, InjectPlan, PlanInput } from './type.js';
@@ -33,13 +39,25 @@ export async function buildPlan(input: PlanInput): Promise<InjectPlan> {
   for (const [relPath, srcHash] of Object.entries(sourceHashes)) {
     const destination = destinations.get(relPath);
     if (!destination) continue;
-    const actualHash =
-      input.assetRoot && destination.kind !== 'unsupported'
+    const source = input.assetRoot && destination.kind === 'block'
+      ? await readRuleSource(join(input.assetRoot, relPath), input.ruleSources)
+      : undefined;
+    const sourceHash = source !== undefined
+      ? source?.rawHash ?? null
+      : input.assetRoot && destination.kind !== 'unsupported'
         ? await hashFile(join(input.assetRoot, relPath))
         : srcHash;
+    const actualHash =
+      sourceHash ?? (destination.kind === 'block' ? srcHash : null);
     if (actualHash === null) throw new Error(`Source file missing: ${relPath}`);
     const sourceHashReconciled = actualHash !== srcHash;
-    const kind = await classify(destination, actualHash, readDocument);
+    const comparisonHash =
+      source !== null && source !== undefined
+        ? hashContent(Buffer.from(source.body, 'latin1'))
+        : (input.ruleBodyHashes?.[relPath] ?? actualHash);
+    const kind = await classify(destination, comparisonHash, readDocument);
+    if (sourceHash === null && kind !== 'skip-uptodate')
+      throw new Error(`Source file missing: ${relPath}`);
     if (kind === 'warn-diverged') requiresForce = true;
     actions.push({
       kind,
@@ -121,7 +139,13 @@ async function* findOrphans(
     }
     return;
   }
-  const content = await readDocument(scan.fileAbs);
+  let content: string | null;
+  try {
+    content = await readDocument(scan.fileAbs);
+  } catch (error) {
+    if (![...known].some((path) => path.startsWith('rules/'))) return;
+    throw error;
+  }
   if (content === null) return;
   for (const block of parseBlocks(content)) {
     if (block.packageName !== scan.ownerPackage) continue;

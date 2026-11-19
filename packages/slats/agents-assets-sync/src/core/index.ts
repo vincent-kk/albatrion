@@ -19,6 +19,7 @@ export {
   validateFlags,
   type RunUnit,
   type RunResult,
+  type RunFailure,
   applyAction,
   applyBlockActions,
   partitionActions,

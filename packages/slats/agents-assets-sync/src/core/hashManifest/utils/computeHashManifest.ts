@@ -3,6 +3,7 @@ import { relative } from 'node:path';
 
 import { type Sha256Hex, hashContent } from '../../hash/index.js';
 import { isNoisePath } from '../../utils/isNoisePath.js';
+import { normalizeRuleSource } from '../../utils/normalizeRuleSource.js';
 import { toPosix } from '../../utils/toPosix.js';
 import { walkFiles } from '../../utils/walkFiles.js';
 import type { HashManifest, HashManifestSource } from '../type.js';
@@ -28,10 +29,16 @@ export async function computeHashManifest(
   generatedAt: string,
 ): Promise<HashManifest> {
   const files: Record<string, Sha256Hex> = {};
+  const ruleBodyHashes: Record<string, Sha256Hex> = {};
   for await (const abs of walkFiles(source.assetRoot)) {
     const relPath = toPosix(relative(source.assetRoot, abs));
     if (isNoisePath(relPath)) continue;
-    files[relPath] = hashContent(await readFile(abs));
+    const bytes = await readFile(abs);
+    files[relPath] = hashContent(bytes);
+    if (relPath.startsWith('rules/'))
+      ruleBodyHashes[relPath] = hashContent(
+        Buffer.from(normalizeRuleSource(bytes.toString('latin1')), 'latin1'),
+      );
   }
   return {
     schemaVersion: 1,
@@ -40,6 +47,7 @@ export async function computeHashManifest(
     algorithm: 'sha256',
     assetRoot: source.assetPath,
     files: sortManifestFiles(files),
+    ruleBodyHashes: sortManifestFiles(ruleBodyHashes),
     previousVersions: {},
   };
 }

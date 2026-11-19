@@ -1,8 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import type { Action } from '../../buildPlan/index.js';
-import { removeBlock, upsertBlock } from '../../markerBlock/index.js';
+import type { Action, RuleSource } from '../../buildPlan/index.js';
+import { removeBlock, writeNormalizedBlock } from '../../markerBlock/index.js';
+import { normalizeRuleSource } from '../../utils/normalizeRuleSource.js';
 import { replaceDocument } from './replaceDocument.js';
 
 /**
@@ -21,6 +22,7 @@ export async function applyBlockActions(
   fileAbs: string,
   actions: readonly Action[],
   assetRoot: string,
+  ruleSources?: ReadonlyMap<string, RuleSource | null>,
 ): Promise<void> {
   let content = await readFile(fileAbs, 'latin1').then(
     (text) => text,
@@ -40,8 +42,10 @@ export async function applyBlockActions(
       content = removeBlock(content, blockId);
       continue;
     }
-    const body = await readFile(join(assetRoot, action.relPath), 'latin1');
-    content = upsertBlock(content, blockId, body, {
+    const body =
+      ruleSources?.get(join(assetRoot, action.relPath))?.body ??
+      normalizeRuleSource(await readFile(join(assetRoot, action.relPath), 'latin1'));
+    content = writeNormalizedBlock(content, blockId, body, {
       document: fileAbs,
       source: join(assetRoot, action.relPath),
     });
