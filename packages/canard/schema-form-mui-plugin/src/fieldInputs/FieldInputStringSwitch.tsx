@@ -11,6 +11,7 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type StringSwitchJSONSchema = StringSchema & {
   enum: [string | null, string | null];
@@ -27,6 +28,8 @@ interface FieldInputStringSwitchProps
     >,
     MuiContext {
   label?: ReactNode;
+  /** State labels keyed by stored enum value; context.switchLabels takes priority. */
+  alias?: { [value: string]: ReactNode };
 }
 
 const FieldInputStringSwitch = ({
@@ -42,6 +45,7 @@ const FieldInputStringSwitch = ({
   size: sizeProp = 'medium',
   hideLabel,
   misfit,
+  alias,
 }: FieldInputStringSwitchProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
@@ -50,10 +54,13 @@ const FieldInputStringSwitch = ({
 
   const { offValue, onValue, offLabel, onLabel } = useMemo(() => {
     const [first, second] = jsonSchema.enum;
-    const [firstLabel, secondLabel] = jsonSchema.switchLabels || [
-      first,
-      second,
-    ];
+    const labels = context.switchLabels || alias;
+    const [firstLabel, secondLabel] = labels
+      ? [
+          getOwnLabel(labels, String(first)) || first,
+          getOwnLabel(labels, String(second)) || second,
+        ]
+      : jsonSchema.switchLabels || [first, second];
 
     return {
       offValue: second,
@@ -61,7 +68,7 @@ const FieldInputStringSwitch = ({
       offLabel: secondLabel,
       onLabel: firstLabel,
     };
-  }, [jsonSchema.enum, jsonSchema.switchLabels]);
+  }, [jsonSchema.enum, jsonSchema.switchLabels, context.switchLabels, alias]);
 
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {

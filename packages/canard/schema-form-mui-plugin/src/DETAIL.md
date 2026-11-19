@@ -14,7 +14,7 @@ multipleOf가 있는 슬라이더는 0의 배수 격자를 사용하며 최솟�
 
 슬라이더는 폼 값이 없을 때 최솟값을 값처럼 보여 주지 않습니다. 첫 사용자 변경 전까지 thumb와 값 라벨을 숨기고 `aria-valuenow`를 생략하며 `aria-valuetext`로 값이 없음을 알리되(기본 `Not set`, `presentation.FieldInputProps.unsetValueText`로 변경), 키보드로 포커스된 thumb는 보이고 포인터·키보드 조작은 그대로 받습니다. 미설정 상태에서는 확정된 값(`onChangeCommitted`)도 저장합니다. MUI는 값이 최솟값 그대로면 `onChange`를 건너뛰므로 Home 키나 최솟값에서 놓은 포인터가 폼을 비워 둔 채 thumb만 최솟값에 남기기 때문입니다. 사용자 조작 없이 폼에 값을 써 넣지 않으며, 외부에서 값이 `undefined`로 바뀌면 재마운트로 다시 미설정 상태가 됩니다.
 
-문자열 스위치는 enum[0]을 켜짐 값, enum[1]을 꺼짐 값으로 사용합니다. switchLabels 튜플은 같은 enum 순서의 표시 문자열입니다. 불리언 스위치의 상태 레이블은 context.checkboxLabels, presentation.FieldInputProps.alias 순서로 선택하며 레이블이 없으면 기존 DOM을 유지합니다. 현재 상태 레이블은 기존 필드 레이블 안에서 보조 표시하고 접근성 이름을 바꾸지 않습니다.
+문자열 스위치는 enum[0]을 켜짐 값, enum[1]을 꺼짐 값으로 사용합니다. 문자열 상태 레이블은 context.switchLabels, presentation.FieldInputProps.alias, 스키마 switchLabels 튜플 순서로 선택합니다. context와 alias는 저장 enum 값의 문자열을 키로 하는 맵이며 선택한 맵에 키가 없으면 enum 값을 표시합니다. 맵을 주지 않으면 MUI 전용 튜플을 같은 enum 순서로 표시합니다. 불리언 스위치의 상태 레이블은 context.checkboxLabels, presentation.FieldInputProps.alias 순서로 선택하며 레이블이 없으면 기존 DOM을 유지합니다. 현재 상태 레이블은 기존 필드 레이블 안에서 보조 표시하고 접근성 이름을 바꾸지 않습니다.
 
 불리언 체크박스의 체크·혼합 상태는 현재 폼 값을 표시합니다.
 
