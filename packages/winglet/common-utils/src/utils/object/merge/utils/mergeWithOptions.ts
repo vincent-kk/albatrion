@@ -28,9 +28,11 @@ export function mergeWithOptions<
   const result: Record<PropertyKey, any> = options.immutable
     ? Array.isArray(target)
       ? target.slice()
-      : Object.getPrototypeOf(target) === null
-        ? Object.assign(Object.create(null), target)
-        : { ...target }
+      : isLocalObjectInstance(target)
+        ? { ...target }
+        : Object.getPrototypeOf(target) === null
+          ? Object.assign(Object.create(null), target)
+          : { ...target }
     : target;
   for (const key of Object.keys(source)) {
     const sourceValue = getDataProperty(source, key);
@@ -56,3 +58,6 @@ export function mergeWithOptions<
   }
   return result as Target & Source;
 }
+
+/** Return a boolean local-realm prototype-chain check without narrowing the copy domain. */
+const isLocalObjectInstance = (value: object): boolean => value instanceof Object;
