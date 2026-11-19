@@ -50,3 +50,15 @@ it('deletes a disjoint orphan when only a known-prefix participant fails', async
   );
   expect(existsSync(orphan), JSON.stringify(result.notices)).toBe(false);
 });
+
+it('names only failed participants that can own the protected namespace', async () => {
+  const root = makeRoot('prefix-notice'); roots.push(root);
+  const targets = [
+    consumerOf(installPackage(root, { name: '@probe/good', assets: { 'skills/alpha/good.md': 'good' }, manifest: true }), '@probe/good', 'manifest'),
+    ...['alpha', 'gamma'].map((namespace) => consumerOf(installPackage(root, { name: `@probe/${namespace}`, assets: { [`skills/${namespace}/owned.md`]: 'owned', 'rules/bad.md': '~~~\nopen' }, manifest: true }), `@probe/${namespace}`, 'manifest')),
+  ];
+  const orphan = join(root, '.claude/skills/alpha/old.md'); writeAt(orphan, 'keep');
+  const result = await runInjection({ targets, flags: { agent: ['claude'], scope: 'project', force: true, yes: true }, originCwd: root });
+  expect(existsSync(orphan)).toBe(true);
+  expect(result.notices?.filter((notice) => notice.path === orphan).map((notice) => notice.unitKey)).toEqual(['claude:@probe/alpha']);
+});
