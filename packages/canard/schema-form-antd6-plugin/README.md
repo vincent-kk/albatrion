@@ -173,6 +173,8 @@ URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid schem
 - **Applied when**: `type` is `"number"` or `"integer"` and `inputType` is `"slider"`
 - **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties; `presentation.FieldInputProps.lazy: false` publishes on every move instead of on release
 
+Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores the value on commit (key up, pointer up, or the library change-complete event); `false` stores on every move.
+
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 
 - **Role**: Text area for multiline text input

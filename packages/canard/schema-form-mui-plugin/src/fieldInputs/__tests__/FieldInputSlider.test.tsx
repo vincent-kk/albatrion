@@ -75,7 +75,7 @@ it('stores a committed value equal to the minimum when the slider is unset', asy
   expect(ref.current!.getValue()).toBe(10);
 });
 
-it('control: a commit does not write again when the slider holds a value and lazy is omitted', async () => {
+it('control: a commit does not write again when the slider holds a value and lazy is false', async () => {
   const ref = createRef<FormHandle>();
   render(
     <Form
@@ -84,7 +84,7 @@ it('control: a commit does not write again when the slider holds a value and laz
       jsonSchema={{
         type: 'number',
         default: 0,
-        presentation: { inputType: 'slider' },
+        presentation: { inputType: 'slider', FieldInputProps: { lazy: false } },
       }}
     />,
   );
@@ -95,7 +95,7 @@ it('control: a commit does not write again when the slider holds a value and laz
   expect(ref.current!.getValue()).toBe(0);
 });
 
-it('publishes on every move when lazy is omitted', async () => {
+it('publishes on every move when lazy is false', async () => {
   const ref = createRef<FormHandle>();
   render(
     <Form
@@ -104,7 +104,7 @@ it('publishes on every move when lazy is omitted', async () => {
       jsonSchema={{
         type: 'number',
         default: 0,
-        presentation: { inputType: 'slider' },
+        presentation: { inputType: 'slider', FieldInputProps: { lazy: false } },
       }}
     />,
   );

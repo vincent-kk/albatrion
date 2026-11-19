@@ -1,4 +1,10 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import {
+  type KeyboardEvent,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { Slider } from 'antd';
 
@@ -92,22 +98,25 @@ const FieldInputSlider = ({
         }
       : { onChangeComplete: handleChange };
 
+  const handleUnsetKey = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (
+      typeof currentValue.current === 'number' ||
+      !(event.target instanceof HTMLElement) ||
+      event.target.getAttribute('role') !== 'slider'
+    )
+      return;
+    if (event.key === 'Home') handleChange(min);
+    else if (event.key === 'End') handleChange(max);
+  };
+
   return (
     <div
       ref={markFocusTarget}
       role="group"
       aria-labelledby={labelledBy}
       aria-invalid={misfit || undefined}
-      onKeyDown={(event) => {
-        if (
-          typeof currentValue.current === 'number' ||
-          !(event.target instanceof HTMLElement) ||
-          event.target.getAttribute('role') !== 'slider'
-        )
-          return;
-        if (event.key === 'Home') handleChange(min);
-        else if (event.key === 'End') handleChange(max);
-      }}
+      onKeyDown={lazy === false ? handleUnsetKey : undefined}
+      onKeyUp={lazy === false ? undefined : handleUnsetKey}
     >
       <Slider
         ariaLabelledByForHandle={labelledBy}

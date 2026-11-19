@@ -44,6 +44,7 @@ it('an unset slider hides its thumb until it holds a value', () => {
   const { thumb, thumbOpacity } = renderSlider();
   expect(thumbOpacity()).toBe('0');
   fireEvent.keyDown(thumb(), { key: 'End' });
+  fireEvent.keyUp(thumb(), { key: 'End' });
   expect(thumbOpacity()).not.toBe('0');
 });
 
@@ -52,6 +53,7 @@ it('control: an unset slider stays keyboard operable and its first change sets t
   act(() => thumb().focus());
   expect(document.activeElement).toBe(thumb());
   fireEvent.keyDown(thumb(), { key: 'End' });
+  fireEvent.keyUp(thumb(), { key: 'End' });
   expect(ref.current!.getValue()).toBe(20);
   expect(thumb().getAttribute('aria-valuenow')).toBe('20');
 });
@@ -65,6 +67,7 @@ it('control: a slider with a value displays it', () => {
 it('Home on an unset slider stores the minimum', () => {
   const { ref, thumb } = renderSlider();
   fireEvent.keyDown(thumb(), { key: 'Home' });
+  fireEvent.keyUp(thumb(), { key: 'Home' });
   expect(ref.current!.getValue()).toBe(10);
   expect(thumb().getAttribute('aria-valuenow')).toBe('10');
 });
@@ -73,6 +76,7 @@ it('an unset slider announces that it has no value instead of the minimum', () =
   const { thumb } = renderSlider();
   expect(thumb().getAttribute('aria-valuetext')).toBe('Not set');
   fireEvent.keyDown(thumb(), { key: 'End' });
+  fireEvent.keyUp(thumb(), { key: 'End' });
   expect(thumb().getAttribute('aria-valuetext')).toBeNull();
 });
 

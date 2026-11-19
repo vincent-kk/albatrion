@@ -25,8 +25,10 @@ interface SliderKeyboardControlProps {
   stops: readonly number[];
   /** Whether focus and changes are blocked. */
   disabled: boolean;
-  /** Commit keyboard input through the same conversion as pointer input. */
+  /** Update the keyboard draft through the same conversion as pointer moves. */
   onChange: (value: number | [number, number]) => void;
+  /** Publish the final keyboard draft when its key is released. */
+  onChangeCommitted?: (value: number | [number, number]) => void;
 }
 
 /**
@@ -47,8 +49,12 @@ export const SliderKeyboardControl = ({
   stops,
   disabled,
   onChange,
+  onChangeCommitted,
 }: SliderKeyboardControlProps) => {
   const ref = useRef<HTMLDivElement>(null);
+  const keyboardCommit = useRef<number | [number, number] | undefined>(
+    undefined,
+  );
   useEffect(() => {
     const thumbs =
       ref.current?.querySelectorAll<HTMLElement>('[role="slider"]') ?? [];
@@ -98,15 +104,27 @@ export const SliderKeyboardControl = ({
     );
     if (next === undefined) return;
     event.preventDefault();
-    onChange(
-      range ? (index === 0 ? [next, value[1]] : [value[0], next]) : next,
-    );
+    event.stopPropagation();
+    const draft: number | [number, number] = range
+      ? index === 0
+        ? [next, value[1]]
+        : [value[0], next]
+      : next;
+    keyboardCommit.current = draft;
+    onChange(draft);
   };
   return (
     <div
       ref={ref}
       style={{ display: 'contents' }}
-      onKeyDown={handleKeyDown}
+      onKeyDownCapture={handleKeyDown}
+      onKeyUpCapture={(event) => {
+        const draft = keyboardCommit.current;
+        keyboardCommit.current = undefined;
+        if (draft === undefined) return;
+        event.stopPropagation();
+        if (!disabled) onChangeCommitted?.(draft);
+      }}
       onFocusCapture={(event) => {
         if (unset && event.target instanceof HTMLElement)
           event.target.style.opacity = '1';

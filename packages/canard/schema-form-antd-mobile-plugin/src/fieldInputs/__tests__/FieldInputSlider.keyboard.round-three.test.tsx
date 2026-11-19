@@ -34,6 +34,7 @@ it.each([
     />,
   );
   fireEvent.keyDown(view.container.querySelector('[role="slider"]')!, { key });
+  fireEvent.keyUp(view.container.querySelector('[role="slider"]')!, { key });
   expect(ref.current!.getValue()).toBe(expected);
 });
 it('keeps each keyboard-operated range thumb within its neighbours', () => {
@@ -52,8 +53,10 @@ it('keeps each keyboard-operated range thumb within its neighbours', () => {
   );
   const thumbs = view.container.querySelectorAll('[role="slider"]');
   fireEvent.keyDown(thumbs[0], { key: 'End' });
+  fireEvent.keyUp(thumbs[0], { key: 'End' });
   expect(ref.current!.getValue()).toEqual([8, 8]);
   fireEvent.keyDown(thumbs[1], { key: 'Home' });
+  fireEvent.keyUp(thumbs[1], { key: 'Home' });
   expect(ref.current!.getValue()).toEqual([8, 8]);
 });
 it.each(['disabled', 'readOnly'])(
@@ -77,6 +80,9 @@ it.each(['disabled', 'readOnly'])(
       />,
     );
     fireEvent.keyDown(view.container.querySelector('[role="slider"]')!, {
+      key: 'ArrowRight',
+    });
+    fireEvent.keyUp(view.container.querySelector('[role="slider"]')!, {
       key: 'ArrowRight',
     });
     expect(ref.current!.getValue()).toBe(5);
@@ -105,6 +111,7 @@ it.each([
     />,
   );
   fireEvent.keyDown(view.container.querySelector('[role="slider"]')!, { key });
+  fireEvent.keyUp(view.container.querySelector('[role="slider"]')!, { key });
   expect(ref.current!.getValue()).toBe(expected);
 });
 it('preserves the precision of decimal keyboard steps', () => {
@@ -126,6 +133,9 @@ it('preserves the precision of decimal keyboard steps', () => {
   fireEvent.keyDown(view.container.querySelector('[role="slider"]')!, {
     key: 'ArrowRight',
   });
+  fireEvent.keyUp(view.container.querySelector('[role="slider"]')!, {
+    key: 'ArrowRight',
+  });
   expect(ref.current!.getValue()).toBe(0.246913578);
 });
 
@@ -145,6 +155,9 @@ it('keyboard navigation agrees for equivalent sorted and unsorted range displays
       />,
     );
     fireEvent.keyDown(view.container.querySelector('[role="slider"]')!, {
+      key: 'ArrowRight',
+    });
+    fireEvent.keyUp(view.container.querySelector('[role="slider"]')!, {
       key: 'ArrowRight',
     });
     const result = ref.current!.getValue();

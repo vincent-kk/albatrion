@@ -37,6 +37,7 @@ it('reads marks and lazy from presentation.FieldInputProps and lets the schema d
   render(
     <Form
       fieldInputDefinitions={[FieldInputSliderDefinition]}
+      defaultValue={{ level: 50 }}
       jsonSchema={{
         type: 'object',
         properties: {

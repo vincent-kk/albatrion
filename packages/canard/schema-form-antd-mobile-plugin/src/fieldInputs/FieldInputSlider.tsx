@@ -129,12 +129,6 @@ const FieldInputSlider = ({
     setDraft(value);
     if (lazy === false) handleChange(value);
   };
-  const handleKeyboardChange = (value: number | [number, number]) => {
-    if (empty) return;
-    setIsUnset(false);
-    setDraft(value);
-    handleChange(value);
-  };
 
   return (
     <div
@@ -154,7 +148,8 @@ const FieldInputSlider = ({
         step={step}
         stops={stops}
         disabled={!!(disabled || readOnly || empty)}
-        onChange={handleKeyboardChange}
+        onChange={handleDraftChange}
+        onChangeCommitted={lazy === false ? undefined : handleChange}
       >
         <Slider
           disabled={disabled || readOnly || empty}
@@ -167,7 +162,7 @@ const FieldInputSlider = ({
           value={draft}
           aria-label={name}
           onChange={handleDraftChange}
-          onAfterChange={lazy === false ? undefined : handleChange}
+          onAfterChange={lazy === false && !isUnset ? undefined : handleChange}
         />
       </SliderKeyboardControl>
     </div>

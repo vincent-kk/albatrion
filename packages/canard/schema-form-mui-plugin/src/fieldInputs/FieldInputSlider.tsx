@@ -1,4 +1,10 @@
-import { type ReactNode, useMemo, useState } from 'react';
+import {
+  type ReactNode,
+  type SyntheticEvent,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { Box, Slider, Typography, sliderClasses } from '@mui/material';
 
@@ -30,7 +36,7 @@ interface FieldInputSliderProps
   showMarks?: boolean;
   hideLabel?: boolean;
   /**
-   * Publish only when dragging ends if true, otherwise on every move.
+   * Publish on commit when omitted or true; false publishes on every move.
    * From `presentation.FieldInputProps.lazy`.
    */
   lazy?: boolean;
@@ -92,29 +98,45 @@ const FieldInputSlider = ({
       ),
     [jsonSchema],
   );
-  const isLazy = lazy ?? false;
+  const isLazy = lazy !== false;
+  const keyboardCommit = useRef<number | undefined>(undefined);
 
   // An external value change remounts this input, so a reset to undefined starts unset again.
   const [isUnset, setIsUnset] = useState(typeof defaultValue !== 'number');
 
   const handleChange = useHandle((_, newValue: number | number[]) => {
     if (empty) return;
-    if (isUnset) setIsUnset(false);
     if (!isLazy) {
+      if (isUnset) setIsUnset(false);
       onChange(Array.isArray(newValue) ? newValue[0] : newValue);
     }
   });
 
-  const handleChangeCommitted = useHandle((_, newValue: number | number[]) => {
-    if (empty) return;
-    const value = Array.isArray(newValue) ? newValue[0] : newValue;
-    // MUI skips onChange for an unchanged value, so Home or a release on the minimum arrives only here.
-    if (isUnset) {
-      setIsUnset(false);
-      onChange(value);
-    } else if (isLazy) {
-      onChange(value);
-    }
+  const handleChangeCommitted = useHandle(
+    (event: Event | SyntheticEvent, newValue: number | number[]) => {
+      if (empty) return;
+      const value = Array.isArray(newValue) ? newValue[0] : newValue;
+      if (isLazy && event.type === 'keydown') {
+        keyboardCommit.current = value;
+        return;
+      }
+      keyboardCommit.current = undefined;
+      // MUI skips onChange for an unchanged value, so Home or a release on the minimum arrives only here.
+      if (isUnset) {
+        setIsUnset(false);
+        onChange(value);
+      } else if (isLazy) {
+        onChange(value);
+      }
+    },
+  );
+
+  const handleKeyUp = useHandle(() => {
+    const value = keyboardCommit.current;
+    keyboardCommit.current = undefined;
+    if (value === undefined || disabled || readOnly || empty) return;
+    setIsUnset(false);
+    onChange(value);
   });
 
   return (
@@ -145,11 +167,17 @@ const FieldInputSlider = ({
           input: isUnset
             ? {
                 id: inputId,
+                onKeyUp: handleKeyUp,
+
                 'aria-invalid': misfit || undefined,
                 'aria-valuenow': undefined,
                 'aria-valuetext': unsetValueText,
               }
-            : { id: inputId, 'aria-invalid': misfit || undefined },
+            : {
+                id: inputId,
+                onKeyUp: handleKeyUp,
+                'aria-invalid': misfit || undefined,
+              },
         }}
         valueLabelDisplay={isUnset ? 'off' : 'auto'}
         sx={isUnset ? UNSET_SLIDER_SX : SLIDER_SX}

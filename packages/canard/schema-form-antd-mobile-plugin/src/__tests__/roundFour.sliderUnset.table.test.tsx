@@ -56,6 +56,7 @@ it.each([
     fireEvent.blur(thumbs[0]);
     expect(thumbs[0].style.opacity).toBe('0');
     fireEvent.keyDown(thumbs[0], { key: 'Home' });
+    fireEvent.keyUp(thumbs[0], { key: 'Home' });
     const result = ref.current!.getValue();
     expect(result).toEqual(count === 2 ? [10, 10] : 10);
     const announced = screen
