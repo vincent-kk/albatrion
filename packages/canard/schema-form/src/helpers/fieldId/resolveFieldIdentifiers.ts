@@ -1,4 +1,4 @@
-import { escapeSegment } from '@winglet/json/pointer-escape';
+import { escapeSegment } from '@/schema-form/helpers/jsonPointer';
 
 /** Fast detection leaves ordinary identifiers untouched. */
 // eslint-disable-next-line no-control-regex -- Encode HTML-unsafe code units deliberately.
