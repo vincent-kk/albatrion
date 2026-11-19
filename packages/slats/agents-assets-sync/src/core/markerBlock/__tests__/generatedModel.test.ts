@@ -11,11 +11,15 @@ it('matches the block-list reference model for 4000 seeded documents', () => {
   for (let sequence = 0; sequence < 4000; sequence++) {
     const initialSeed = seed;
     const eol = ['\r\n', '\n', '\r'][random(3)];
-    const fence = (random(2) ? '`' : '~').repeat(3 + random(8));
+    const fence = (random(2) ? '`' : '~').repeat(
+      3 + random(sequence % 100 ? 48 : 4096),
+    );
+    const indent = ' '.repeat(random(4));
+    const close = fence + fence[0].repeat(random(4));
     const id = 'pkg:rules/a.md';
     const start = `<!-- AGENTS-ASSETS-SYNC:START:${id} -->`;
     const end = `<!-- AGENTS-ASSETS-SYNC:END:${id} -->`;
-    const example = `${fence}md${eol}${start}${eol}${end}${eol}${fence}${eol}`;
+    const example = `${indent}${fence}md${eol}${start}${eol}${end}${eol}${indent}${close}${eol}`;
     const comment = `<!--${eol}${start}${eol}<!--${eol}${end}${eol}`;
     const prefix =
       ['', '\uFEFF', '\xEF\xBB\xBF'][random(3)] +
