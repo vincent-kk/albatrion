@@ -5,6 +5,7 @@ import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import type { BlueprintNode } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
 import type { FieldNodeWriteKind } from '../../../../types/value';
+import { resolveStorageTargets } from '../../../../utils/paths/resolveStorageTargets';
 
 /** One actual replacement or partial branch scope of a marked Merge. */
 interface MergeOrigin {
@@ -20,6 +21,7 @@ interface MergeOrigin {
  * @param source - Binding origin preserved on every expanded path.
  * @param path - Actual occurrence address for this recursive step.
  * @param template - Boundary determining branch-object merge semantics.
+ * @param virtualFields - Constituent names admitted when a postponed virtual call entered
  * @returns Call-ordered partial branch markers and actual replacement leaves.
  */
 export const collectMarkedMergeOrigins = <Self extends FieldNodeRecord<Self>>(
@@ -28,7 +30,17 @@ export const collectMarkedMergeOrigins = <Self extends FieldNodeRecord<Self>>(
   source: FieldNodeWriteKind,
   path = node.path,
   template: BlueprintNode = node.blueprintNode,
+  virtualFields?: readonly string[],
 ): MergeOrigin[] => {
+  if (template.kind === 'virtual') {
+    const values = isArray(value) ? value : undefined;
+    return (resolveStorageTargets(node) ?? []).flatMap((target, index) => {
+      if (virtualFields ? !virtualFields.includes(target.name) : !target.node && values?.[index] === undefined) return [];
+      const owner = target.node ?? node.parent;
+      const childTemplate = target.node?.blueprintNode ?? node.parent?.blueprintNode.childEntries.find(entry => entry.name === target.name)?.node;
+      return owner && childTemplate ? collectMarkedMergeOrigins(owner, values?.[index], source, target.path, childTemplate) : [];
+    });
+  }
   if (
     template.kind !== 'object' ||
     template.strategy !== 'branch' ||
