@@ -15,11 +15,15 @@ import type { RunUnit, ValidatedFlags } from './types.js';
 export async function prepareUnits(targets: readonly ConsumerPackage[], values: ValidatedFlags, flags: DefaultFlags, cwd: string): Promise<RunUnit[]> {
   const units: RunUnit[] = [];
   const resolved: ResolvedLocations = new Map();
+  const destinationsSeen = new Set<string>();
   const generatedAt = new Date().toISOString();
   for (const target of targets) {
     const manifest = await resolveHashManifest(target, generatedAt).then(value => ({ value }), error => ({ error: String(error) }));
     for (const agent of values.agents) {
       const agentTarget = resolveAgentTarget(agent, values.scope, cwd);
+      const locationKey = JSON.stringify([target.name, agentTarget.scope, agentTarget.directoryRoots, agentTarget.rulesMergeFile, agentTarget.unsupported]);
+      if (destinationsSeen.has(locationKey)) continue;
+      destinationsSeen.add(locationKey);
       const base = { key: `${agent}:${target.name}`, target, agentTarget };
       try {
         if ('error' in manifest) throw new Error(manifest.error);

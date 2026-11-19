@@ -24,6 +24,8 @@ export interface Action {
   readonly target: ActionTarget;
   /** Source bytes superseded a stale manifest entry for this action. */
   readonly sourceHashReconciled?: boolean;
+  /** Actual source bytes used to detect conflicting run-wide destinations. */
+  readonly sourceHash?: Sha256Hex;
 }
 
 export interface InjectPlan {
