@@ -1,9 +1,21 @@
 import { describe, expect, it } from 'vitest';
 
-import { ValidationMode } from '@/schema-form';
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
+import type { InferValueType } from '@/schema-form/types';
 
-const build = <Schema extends Parameters<typeof nodeFromJSONSchema>[0]['jsonSchema']>(jsonSchema: Schema, defaultValue: unknown) => ({ root: nodeFromJSONSchema({ jsonSchema, defaultValue, validationMode: ValidationMode.None }) });
+import type { AuthoredSchema } from '../types/jsonSchema';
+import { ValidationMode } from '../types/state';
+
+const build = <Schema extends AuthoredSchema>(
+  jsonSchema: Schema,
+  defaultValue: InferValueType<Schema>,
+) => ({
+  root: nodeFromJSONSchema({
+    jsonSchema,
+    defaultValue,
+    validationMode: ValidationMode.None,
+  }),
+});
 
 describe('virtual group reset with a gated-off constituent', () => {
   /** `booking` holds the gate source outside its scope, the two constituents and a virtual group over them. */
@@ -25,13 +37,13 @@ describe('virtual group reset with a gated-off constituent', () => {
 
   const run = (scope: '/booking' | '/booking/period') => {
     const { root } = build(schema, load());
-    root.find('/booking/start').setValue('s1');
-    root.find('/booking/end').setValue('e1');
-    root.find('/on').setValue(false);
-    root.find(scope).resetSubtree();
-    const whileOff = { ...root.value.booking };
-    root.find('/on').setValue(true);
-    return { whileOff, afterOn: { ...root.value.booking } };
+    root.find('/booking/start')!.setValue('s1');
+    root.find('/booking/end')!.setValue('e1');
+    root.find('/on')!.setValue(false);
+    root.find(scope)!.resetSubtree();
+    const whileOff = root.value?.booking;
+    root.find('/on')!.setValue(true);
+    return { whileOff, afterOn: root.value?.booking };
   };
 
   it('control: resetting the owning object restores the gated-off end to its loaded value', () => {
@@ -64,10 +76,10 @@ describe('virtual tuple positions follow `fields` when a constituent is gated of
 
   it('the tuple keeps the city at position 2, the position of city in fields', () => {
     const { root } = build(schema, load());
-    const address = root.find('/address');
+    const address = root.find('/address')!;
     expect({
       value: address.value,
-      children: address.children.map((child) => child.path),
+      children: address.children?.map((child) => child.path),
     }).toEqual({
       value: ['KR', undefined, 'Seoul'],
       children: ['/country', '/city'],
@@ -76,7 +88,7 @@ describe('virtual tuple positions follow `fields` when a constituent is gated of
 
   it('writing the group its own value back leaves the stored fields unchanged', () => {
     const { root } = build(schema, load());
-    const address = root.find('/address');
+    const address = root.find('/address')!;
     const before = root.value;
     address.setValue(address.value);
     expect(root.value).toEqual(before);
@@ -85,7 +97,7 @@ describe('virtual tuple positions follow `fields` when a constituent is gated of
   it('an identity updater on the group gives the same value outside a batch as inside one', () => {
     const run = (batched: boolean) => {
       const { root } = build(schema, load());
-      const address = root.find('/address');
+      const address = root.find('/address')!;
       const write = () => address.setValue((previous: unknown) => previous);
       if (batched) root.batch(write);
       else write();
@@ -99,15 +111,17 @@ describe('virtual tuple positions follow `fields` when a constituent is gated of
 
   it('a widget that edits position 0 (country) as the documented tuple keeps the city', () => {
     const { root } = build(schema, load());
-    const address = root.find('/address');
-    const [, state, city] = address.value;
+    const address = root.find('/address')!;
+    const tuple = address.value;
+    if (!Array.isArray(tuple)) throw new Error('virtual tuple expected');
+    const [, state, city] = tuple;
     address.setValue(['JP', state, city]);
     expect(root.value).toEqual({ country: 'JP', city: 'Seoul' });
   });
 
   it('control: with every constituent active the tuple and the write-back agree', () => {
     const { root } = build(schema, { country: 'US', state: 'CA', city: 'LA' });
-    const address = root.find('/address');
+    const address = root.find('/address')!;
     const before = root.value;
     address.setValue(address.value);
     expect([address.value, root.value]).toEqual([['US', 'CA', 'LA'], before]);
