@@ -444,8 +444,16 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
       const cachedPromise = cacheMap.get(cacheKey);
       if (cachedPromise) promise = enqueueCacheHit(batch, cachedPromise);
       else {
+        const keyIndex = batch.keys.length;
         promise = enqueueKey(batch, key);
-        cacheMap.set(cacheKey, promise);
+        try {
+          cacheMap.set(cacheKey, promise);
+        } catch (error) {
+          batch.keys.splice(keyIndex, 1);
+          batch.promises.splice(keyIndex, 1);
+          cacheMap.delete(cacheKey);
+          throw error;
+        }
       }
     }
     if (openBatch === null) {
