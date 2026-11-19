@@ -28,6 +28,8 @@ export interface RunUnit {
   readonly target: ConsumerPackage;
   readonly agentTarget: AgentTarget;
   readonly plan: InjectPlan;
+  /** Planned actions are diagnostic evidence and cannot execute. */
+  readonly refused?: boolean;
   readonly error?: string;
   readonly report?: InjectReport;
   readonly failures?: readonly RunFailure[];

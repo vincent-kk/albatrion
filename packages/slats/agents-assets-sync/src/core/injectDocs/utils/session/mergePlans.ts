@@ -46,7 +46,8 @@ export function mergePlans(
       conflicts.has(destinationKey(action)),
     );
     const actions = unit.plan.actions.filter((action) => {
-      if (action.target.kind !== 'file') return true;
+      if (unit.error || conflicting || action.target.kind !== 'file')
+        return true;
       const key = destinationKey(action);
       if (isOrphan(action)) {
         if (managed.has(key)) return false;
@@ -92,6 +93,7 @@ export function mergePlans(
         : undefined;
     return {
       ...unit,
+      refused: Boolean(unit.error || conflicting),
       ...(alias ? { aliasOf: owners.get(destinationKey(alias)) } : {}),
       notices,
       ...(reason && conflicting
@@ -112,9 +114,12 @@ export function mergePlans(
         : {}),
       plan: {
         actions,
-        requiresForce: actions.some(
-          (action) => action.kind === 'warn-diverged' || isOrphan(action),
-        ),
+        requiresForce:
+          !unit.error &&
+          !conflicting &&
+          actions.some(
+            (action) => action.kind === 'warn-diverged' || isOrphan(action),
+          ),
       },
     };
   });

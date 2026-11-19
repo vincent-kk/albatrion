@@ -132,6 +132,7 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
               agent={tp.agentTarget.agent}
               target={tp.target}
               plan={tp.plan}
+              diagnosticOnly={tp.refused}
               expanded
               highlighted={idx === phase.focusedIndex}
             />
@@ -168,6 +169,7 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
                 agent={tp.agentTarget.agent}
                 target={tp.target}
                 plan={tp.plan}
+                diagnosticOnly={tp.refused}
                 expanded={false}
               />
             ))}
@@ -184,6 +186,7 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
               agent={tp.agentTarget.agent}
               target={tp.target}
               plan={tp.plan}
+              diagnosticOnly={tp.refused}
               expanded={false}
             />
           ))}

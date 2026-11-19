@@ -50,14 +50,18 @@ export function displayPlain(result: RunResult, force: boolean): void {
     logger.info(
       `${unit.target.name}@${unit.target.version} → ${unit.agentTarget.description}`,
     );
-    printPlan(unit.plan, unit.agentTarget);
+    if (unit.refused) {
+      logger.warn('diagnostic plan only: refused unit; no actions will run');
+      for (const action of unit.plan.actions)
+        logger.warn(`[diagnostic] ${action.kind} ${action.relPath}`);
+    } else printPlan(unit.plan, unit.agentTarget);
     if (unit.error && !unit.failures?.length)
       logger.error(`${unit.target.name}: ${unit.error}`);
     if (unit.report?.exitCode === 2)
       logger.error(
         'Re-run with --force to proceed, or inspect with --dry-run.',
       );
-    if (force) emitForceList(unit.plan);
+    if (force && !unit.refused) emitForceList(unit.plan);
     for (const path of unit.report?.updated ?? []) logger.file('update', path);
   }
   if (result.dryRun)
