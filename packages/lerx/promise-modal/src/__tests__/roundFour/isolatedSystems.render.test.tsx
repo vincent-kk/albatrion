@@ -34,7 +34,7 @@ afterEach(() => {
 
 async function loadIncompatibleCopy() {
   vi.spyOn(console, 'warn').mockImplementation(() => {});
-  const registry = globalThis as unknown as Registry;
+  const registry: Registry = globalThis;
   const shared = registry[registryKey];
   registry[registryKey] = { version: 99 };
   restoreRegistry = () => {
@@ -54,97 +54,53 @@ function anchors() {
   );
 }
 
-it('keeps the newest dialog of an independent copy interactive while a dialog of this copy is open', async () => {
+it('refuses an incompatible Provider without making the existing modal or page inert permanently', async () => {
   const other = await loadIncompatibleCopy();
-  render(
-    <>
-      <main>page</main>
-      <ModalProvider />
-      <other.ModalProvider />
-    </>,
-  );
-  expect(anchors()).toHaveLength(2);
-  act(() => {
-    void confirm({ title: 'This copy' });
-  });
-  act(() => {
-    void other.alert({ title: 'Other copy' });
-  });
-  const [mine, theirs] = anchors();
-  expect({
-    pageInert: !!document.querySelector('main')?.closest('[inert]'),
-    otherCopyDialogInert: theirs.hasAttribute('inert'),
-    thisCopyDialogInert: mine.hasAttribute('inert'),
-  }).toEqual({
-    pageInert: true,
-    otherCopyDialogInert: false,
-    thisCopyDialogInert: true,
-  });
-});
-
-it('releases the body scroll lock after dialogs of two independent copies close in opening order', async () => {
-  const other = await loadIncompatibleCopy();
-  render(
-    <>
-      <main>page</main>
-      <ModalProvider options={{ duration: 0 }} />
-      <other.ModalProvider options={{ duration: 0 }} />
-    </>,
-  );
+  render(<><main>page</main><ModalProvider /><other.ModalProvider /></>);
+  expect(anchors()).toHaveLength(1);
   const mine = new AbortController();
   const theirs = new AbortController();
-  act(() => {
-    void confirm({ title: 'This copy', signal: mine.signal });
-  });
-  act(() => {
-    void other.confirm({ title: 'Other copy', signal: theirs.signal });
-  });
-  expect(document.body.style.overflow).toBe('hidden');
-  act(() => mine.abort());
-  const whileOtherOpen = document.body.style.overflow;
-  act(() => theirs.abort());
+  act(() => { void confirm({ title: 'This copy', signal: mine.signal }); });
+  let rejected: Promise<void>;
   await act(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    rejected = expect(other.alert({ title: 'Other copy', signal: theirs.signal })).rejects.toThrow(/incompatible state version/i);
+    theirs.abort();
+    await rejected;
   });
-  expect({
-    whileOtherOpen,
-    afterBothClosed: document.body.style.overflow,
-    liveNodes: ModalManager.ids.length + other.Manager.ids.length,
-  }).toEqual({ whileOtherOpen: 'hidden', afterBothClosed: '', liveNodes: 0 });
+  expect(anchors()[0].hasAttribute('inert')).toBe(false);
+  act(() => mine.abort());
+  expect(document.body.style.overflow).toBe('');
+  expect(document.querySelector('main')?.hasAttribute('inert')).toBe(false);
 });
 
-/** README "Custom components" frame: the dialog is named by `title-${id}`. */
-function Frame({ id, children }: React.PropsWithChildren<ModalFrameProps>) {
-  return (
-    <section
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby={`title-${id}`}
-      style={{ background: 'white', padding: 24 }}
-    >
-      <h2 id={`title-${id}`}>Review changes</h2>
-      {children}
-    </section>
-  );
-}
-
-it('gives the README frame title ids that stay unique when two independent copies each open a dialog', async () => {
+it('rejects queued requests when an incompatible Provider mounts, without acquiring page resources', async () => {
   const other = await loadIncompatibleCopy();
-  render(
-    <>
-      <ModalProvider ForegroundComponent={Frame} />
-      <other.ModalProvider ForegroundComponent={Frame} />
-    </>,
-  );
-  act(() => {
-    void confirm({ title: 'This copy' });
+  const controller = new AbortController();
+  const request = other.confirm({ title: 'Queued', signal: controller.signal });
+  const rejection = expect(request).rejects.toThrow(/incompatible state version/i);
+  render(<other.ModalProvider />);
+  controller.abort();
+  await act(async () => { await rejection; });
+  expect(anchors()).toHaveLength(0);
+  expect(document.body.style.overflow).toBe('');
+  expect(other.Manager.ids).toHaveLength(0);
+});
+
+it('keeps compatible dialog labels unique while refusing an incompatible copy', async () => {
+  const other = await loadIncompatibleCopy();
+  function Frame({ id, children }: React.PropsWithChildren<ModalFrameProps>) {
+    return <section role="dialog" aria-labelledby={`title-${id}`}><h2 id={`title-${id}`}>Review</h2>{children}</section>;
+  }
+  render(<><ModalProvider ForegroundComponent={Frame} /><other.ModalProvider ForegroundComponent={Frame} /></>);
+  act(() => { void confirm({ title: 'First' }); void confirm({ title: 'Second' }); });
+  const controller = new AbortController();
+  await act(async () => {
+    const rejected = expect(other.confirm({ signal: controller.signal })).rejects.toThrow(/incompatible state version/i);
+    controller.abort();
+    await rejected;
   });
-  act(() => {
-    void other.confirm({ title: 'Other copy' });
-  });
-  const labels = [...document.querySelectorAll('[role="dialog"]')].map(
-    (dialog) => dialog.getAttribute('aria-labelledby'),
-  );
+  const labels = [...document.querySelectorAll('[role="dialog"]')].map(dialog => dialog.getAttribute('aria-labelledby'));
+  expect(labels).toHaveLength(2);
   expect(new Set(labels).size).toBe(labels.length);
 });
 
