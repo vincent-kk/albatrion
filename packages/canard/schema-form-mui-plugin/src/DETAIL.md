@@ -36,6 +36,18 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 분리하고 원래 대소문자�
 
 분기 입력은 배열·객체 자체의 검증 오류를 표시하며, 루트와 중첩 위치가 같은 오류를 보여 줍니다. 루트 오류가 없으면 기존 입력 DOM만 유지합니다.
 
+### 슬라이더의 경계·격자·저장
+
+모든 pointer·keyboard 저장은 필드 자신의 inclusive·exclusive 경계, multipleOf와 정수 타입을 만족합니다. 렌더링만으로 저장 값을 바꾸지 않으며 유효한 조작 값이 없는 격자는 아무 값도 저장하지 않습니다. 양쪽에 inclusive·exclusive가 함께 있으면 더 엄격한 경계가 이깁니다. 한쪽에 둘 다 없을 때만 기본 경계 0·100을 사용합니다.
+
+multipleOf가 있으면 0을 anchor로 하는 정확한 십진 배수 격자를 사용합니다. 정수 타입은 그 격자와 정수의 교집합입니다. 첫 허용 값과 마지막 허용 값이 track 경계이며 Home·End가 이 값을 저장합니다.
+
+multipleOf가 없는 number는 하한을 anchor로 기본 step 1을 적용합니다. inclusive 하한·상한은 원래 값 그대로 유지하며 Home·End가 저장합니다. exclusive 하한은 anchor 자체를 제외하여 Home이 한 step 뒤에서 시작합니다. exclusive 상한에서는 anchor에서 step으로 도달하는 값 중 상한보다 작은 마지막 값을 End가 저장합니다. integer는 경계 안의 정수만 선택합니다.
+
+Arrow·PageUp·PageDown·Shift+Arrow는 저장 값이 미설정·격자 밖·경계 밖인 경우도 같은 격자 안으로 이동합니다. Page와 Shift는 열 step입니다. 십진 지수 표기의 작은 step도 십진 정수 연산으로 처리합니다. lazy 생략은 commit에서, false는 이동에서 저장하며 같은 완료 조작의 결과는 같습니다. 모바일 범위는 양끝에 같은 규칙을 적용합니다.
+
+Number.MAX_SAFE_INTEGER에 이르는 track의 pointer 정밀도는 라이브러리의 부동소수점 좌표 한계이며 보장 범위 밖입니다.
+
 ## Acceptance Criteria
 
 ### mui-binding — 폼 상태 전달
@@ -53,6 +65,11 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 분리하고 원래 대소문자�
 - **Consumers**: `**/packages/canard/schema-form-mui-plugin/src/fieldInputs/FieldInputBoolean.tsx`, `**/packages/canard/schema-form-mui-plugin/src/fieldInputs/FieldInputBooleanSwitch.tsx`, `**/packages/canard/schema-form-mui-plugin/src/fieldInputs/FieldInputDate.tsx`, `**/packages/canard/schema-form-mui-plugin/src/fieldInputs/FieldInputMonth.tsx`, `**/packages/canard/schema-form-mui-plugin/src/fieldInputs/FieldInputNumber.tsx`, `**/packages/canard/schema-form-mui-plugin/src/fieldInputs/FieldInputRadioGroup.tsx`, `**/packages/canard/schema-form-mui-plugin/src/fieldInputs/FieldInputSlider.tsx`, `**/packages/canard/schema-form-mui-plugin/src/fieldInputs/FieldInputString.tsx`, `**/packages/canard/schema-form-mui-plugin/src/fieldInputs/FieldInputStringCheckbox.tsx`, `**/packages/canard/schema-form-mui-plugin/src/fieldInputs/FieldInputStringEnum.tsx`, `**/packages/canard/schema-form-mui-plugin/src/fieldInputs/FieldInputStringSwitch.tsx`, `**/packages/canard/schema-form-mui-plugin/src/fieldInputs/FieldInputTextarea.tsx`, `**/packages/canard/schema-form-mui-plugin/src/fieldInputs/FieldInputTime.tsx`, `**/packages/canard/schema-form-mui-plugin/src/fieldInputs/FieldInputUri.tsx`
 - **Direct import**: `allowed`
 - **Reason**: 입력 부품은 조상이 소유한 MuiContext를 타입 전용으로 읽습니다. 저장소 Module Contract Principle 4의 위로 열린 참조이며, 자기 부품을 재수출하는 부모 진입점을 읽으면 실제 배럴 순환을 만듭니다. Fractal 단위 그래프의 왕복은 구현 파일 간 순환을 뜻하지 않습니다.
+
+### slider-values — 모든 조작의 유효 값
+
+- 독립 십진 참조 모델에서 경계 조합·multipleOf·타입·시작 값·키와 pointer·lazy를 교차하여 저장 값과 schema 유효성을 비교합니다.
+- 미설정 표시·렌더 시 값 보존·commit 시점 및 기존 소수 경계 동작을 유지합니다.
 
 ## Last Updated
 

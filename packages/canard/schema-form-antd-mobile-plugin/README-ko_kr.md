@@ -217,3 +217,5 @@ With `multipleOf`, selectable values are multiples of that number within the inc
 Marked stops outside the bounds or incompatible with the numeric constraints are ignored. Range sliders apply the constraints of `items` to both ends.
 
 `antd-mobile`은 5.2.0 이상을 지원합니다. 해당 버전의 `Stepper`는 `allowEmpty`로 빈 숫자 필드를 지원하며 5.0·5.1은 필요한 null 값을 허용하지 않습니다.
+
+슬라이더는 inclusive·exclusive 경계를 함께 적용합니다. `multipleOf`가 있으면 정확한 십진 배수를, 정수 필드는 이 격자와 정수의 교집합을 사용합니다. `multipleOf`가 없으면 하한이 기본 step의 anchor이며 inclusive 경계를 그대로 선택할 수 있습니다. exclusive 경계는 제외하며 경계 안의 step 값이 없으면 어떤 조작도 저장하지 않습니다. `Home`·`End`는 처음·마지막 허용 값을, Page·Shift+Arrow는 열 step을 선택합니다. 격자 밖 값도 렌더링만으로 변경하지 않습니다. `Number.MAX_SAFE_INTEGER`까지의 track에서 pointer 정밀도는 지원 범위 밖입니다.

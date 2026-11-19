@@ -275,3 +275,5 @@ An unset slider exposes no current value to assistive technology and stores noth
 With `multipleOf`, selectable values are multiples of that number within the inclusive bounds. Integer sliders select only integer multiples. Without `multipleOf`, number sliders retain their authored bounds. A range with no selectable value is disabled and stores nothing.
 
 슬라이더 commit은 Ant Design peer 범위 전체에서 지원합니다. 5.10·5.11에서는 `onAfterChange`, 5.12 이상에서는 `onChangeComplete`를 사용합니다. `lazy`를 생략하면 조작을 끝낼 때 저장하고 `lazy: false`는 이동 중에 저장합니다.
+
+슬라이더는 inclusive·exclusive 경계를 함께 적용합니다. `multipleOf`가 있으면 정확한 십진 배수를, 정수 필드는 이 격자와 정수의 교집합을 사용합니다. `multipleOf`가 없으면 하한이 기본 step의 anchor이며 inclusive 경계를 그대로 선택할 수 있습니다. exclusive 경계는 제외하며 경계 안의 step 값이 없으면 어떤 조작도 저장하지 않습니다. `Home`·`End`는 처음·마지막 허용 값을, Page·Shift+Arrow는 열 step을 선택합니다. 격자 밖 값도 렌더링만으로 변경하지 않습니다. `Number.MAX_SAFE_INTEGER`까지의 track에서 pointer 정밀도는 지원 범위 밖입니다.

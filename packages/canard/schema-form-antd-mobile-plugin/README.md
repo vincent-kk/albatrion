@@ -217,3 +217,5 @@ With `multipleOf`, selectable values are multiples of that number within the inc
 Marked stops outside the bounds or incompatible with the numeric constraints are ignored. Range sliders apply the constraints of `items` to both ends.
 
 The minimum supported `antd-mobile` version is 5.2.0. Its `Stepper` supports empty numeric fields through `allowEmpty`; releases 5.0 and 5.1 do not accept the required null value.
+
+Sliders honor inclusive and exclusive bounds together. With `multipleOf`, stops are decimal-exact multiples; integer fields use their intersection with integers. Without `multipleOf`, the default step is anchored at the lower bound and inclusive endpoints remain selectable. Exclusive endpoints are excluded; if no step lies inside the bounds, interactions store nothing. `Home` and `End` choose the first and last permitted values; Page and Shift+Arrow move ten steps. Rendering preserves the stored value, including an off-grid value. Pointer precision across a track reaching `Number.MAX_SAFE_INTEGER` is outside the supported precision range.
