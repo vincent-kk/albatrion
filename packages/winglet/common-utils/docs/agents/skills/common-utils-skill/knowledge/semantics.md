@@ -8,7 +8,7 @@ Organized by decision, not by module. Every claim here was read off `src/**` at 
 
 |                                             | `equals(left, right, omit?)`                                                   | `stableEquals(left, right, omit?)`                                                                                              |
 | ------------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| Circular references                         | **stack overflow**                                                             | safe (visited pairs tracked in a `Map`)                                                                                         |
+| Circular references                         | **unsupported; can fail to terminate**                                                             | safe (visited pairs tracked in a `Map`)                                                                                         |
 | `Date`, `RegExp`, `Map`, `Set`              | compared by state alone                                                        | same                                                                                                                            |
 | `ArrayBuffer`, `DataView`, boxed primitives | compared by bytes or primitive value, then by own enumerable keys              | compared by bytes or primitive value, then by all own keys (non-enumerable and symbol keys included); `DataView` by bytes alone |
 | `Error`                                     | unequal when `name` or `message` differs, then compared by own enumerable keys | same, plus own non-enumerable keys such as `stack`, so errors created at different places are unequal                           |
@@ -31,7 +31,7 @@ equals(previous, next, ['updatedAt', 'requestId']);
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | ----------------------------- |
 | Handles             | primitives, plain objects, arrays, `Date`, `RegExp`, `Map`, `Set`, `Error`, ArrayBuffer family, `File`/`Blob`, symbol properties, custom prototypes | arrays and plain objects only      | arrays and plain objects only |
 | Everything else     | type-specific handling                                                                                                                              | **returned by reference**          | returned as-is                |
-| Circular references | safe (Map-tracked, structure preserved)                                                                                                             | **stack overflow**                 | not applicable                |
+| Circular references | safe (Map-tracked, structure preserved)                                                                                                             | **unsupported; can fail to terminate**                 | not applicable                |
 | Prototype chain     | preserved                                                                                                                                           | dropped — result is a plain object | preserved via spread          |
 
 The `cloneLite` trap is not that it fails on a `Date`; it is that it _succeeds_ and hands back the very same `Date`, so a later mutation reaches the original. Both `clone` and `cloneLite` accept a depth bound, and both return nodes at or beyond that depth by reference — a bounded clone shares state by design.
@@ -91,9 +91,9 @@ await waitAndReturn(fn, 500); // call fn now, resolve after 500 ms — a minimum
 
 | Safe                                                                                          | Unsafe — recursion, so a cycle overflows the stack | Unsafe — iterative, so a cycle spins forever |
 | --------------------------------------------------------------------------------------------- | -------------------------------------------------- | -------------------------------------------- |
-| `clone`, `stableEquals`, `stringifyGraph`, `createSortedFingerprint`, `createSafeFingerprint` | `cloneLite`, `equals`, `merge`, `removeUndefined`  | `hasUndefined`                               |
+| `clone`, `stableEquals`, `stringifyGraph`, `createSortedFingerprint`, `createSafeFingerprint` | `merge`, `removeUndefined`  | `cloneLite`, `equals`, `hasUndefined`                               |
 
-The safe implementations track visited objects in a `Map`/`WeakMap`; the rest have no guard at all. The two iterative ones are the worse failure: they consume memory in a loop instead of failing fast. When input can come from user data or a graph structure, this table picks the function.
+The safe implementations track visited objects in a `Map`/`WeakMap`; the rest have no guard at all. `equals` and `cloneLite` use explicit work stacks after 256 recursive levels without tracking cycles; cyclic input can fail to terminate and consume memory instead of failing fast. Use `stableEquals` and `clone` when cycles are possible. When input can come from user data or a graph structure, this table picks the function.
 
 ## Mutation and identity contracts
 
