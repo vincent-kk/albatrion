@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { DataLoader } from '../index';
 
 describe('round-4 failed cache writes do not enter batches', () => {
-  for (const open of [false, true])
+  for (const useMany of [false, true])
+   for (const open of [false, true])
     for (const writesBeforeThrow of [false, true])
       for (const batchFailure of [false, true])
-        it(`open=${open}, partial write=${writesBeforeThrow}, batch failure=${batchFailure}`, async () => {
+        it(`loadMany=${useMany}, open=${open}, partial write=${writesBeforeThrow}, batch failure=${batchFailure}`, async () => {
           const store = new Map<string, Promise<string>>();
           const calls: string[][] = [];
           const ghostErrors: unknown[] = [];
@@ -30,7 +31,10 @@ describe('round-4 failed cache writes do not enter batches', () => {
             },
           });
           const first = open ? loader.load('good').catch(() => 'backend') : Promise.resolve('unused');
-          expect(() => loader.load('failed')).toThrow('cache write');
+          if (useMany) {
+            const values = await loader.loadMany(['failed']);
+            expect(values[0]).toMatchObject({ message: 'cache write' });
+          } else expect(() => loader.load('failed')).toThrow('cache write');
           await first;
           await new Promise<void>(resolve => setTimeout(resolve, 0));
           expect(calls).toEqual(open ? [['good']] : []);
