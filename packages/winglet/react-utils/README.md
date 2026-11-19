@@ -70,6 +70,8 @@ This package is written using ECMAScript 2020 (ES2020) syntax.
 - Node.js 14.0.0 or higher
 - Modern browsers (with ES2020 support)
 
+The ESM build imports `react/jsx-runtime`, which React 18 and later export. With React 16.14 or 17, use the CommonJS build or configure a bundler alias for `react/jsx-runtime`; strict ESM resolution is not supported for those React versions.
+
 **For Legacy Environment Support:**
 Use transpilers like Babel to convert the code to match your target environment.
 

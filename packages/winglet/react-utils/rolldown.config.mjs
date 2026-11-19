@@ -15,7 +15,6 @@ export default async () => {
   return [
     await libBuildOptions({
       format: 'esm',
-      reactPeerRange: packageJSON.peerDependencies.react,
       extension: 'mjs',
       entrypoints,
       outDir: 'dist',
