@@ -32,12 +32,7 @@ export function mergePlans(
       unit.plan.actions.some((action) => conflicts.has(destinationKey(action))),
   );
   const failedRoots = (discoveryFailures.length ? units : failedUnits).flatMap(
-    (unit) => [
-      ...(unit.namespaceRoots ?? []),
-      ...Object.values(unit.agentTarget.directoryRoots).filter(
-        (root): root is string => root !== null,
-      ),
-    ],
+    (unit) => unit.namespaceRoots ?? Object.values(unit.agentTarget.directoryRoots).filter((root): root is string => root !== null),
   );
   const owners = new Map<string, string>();
   return units.map((unit) => {
