@@ -120,6 +120,7 @@ When no custom AJV instance is provided, the plugin uses these default settings:
 ```typescript
 const defaultSettings: Ajv.Options = {
   allErrors: true, // Collect all validation errors, not just the first one
+  multipleOfPrecision: 9,
   nullable: true, // Enable `nullable` keyword (= `type:[{type}, 'null']`)
   verbose: true, // Include schema and data information in errors
   format: false, // Disable format validation (can be enabled if needed)
@@ -225,3 +226,7 @@ await validate(5); // Reports exclusiveMaximum.
 ```
 
 Formats and keywords added to the bound instance are available to later compilations, including guards and isolated sibling instances. Already compiled validators keep their compiled rules; adding a rule does not recompile them.
+
+## Decimal multiples
+
+Instances created by the plugin use `multipleOfPrecision: 9`. This accepts exact decimal multiples such as `19.99` for `multipleOf: 0.01` despite binary division error, with a guaranteed exact-multiple range of `Math.abs(value / multipleOf) <= 1e6`. AJV treats a quotient within `1e-9` of an integer as a multiple: extremely close nonmultiples can also pass, and exact multiples outside that range are not guaranteed. Values such as `19.995` for `0.01`, `0.35` for `0.1`, and `0.300001` for `0.3` remain invalid. A zero `multipleOf` is an invalid schema. Pass your own AJV instance to `createValidator` or `plugin.validator.bind` to choose a different precision policy; its options are preserved.

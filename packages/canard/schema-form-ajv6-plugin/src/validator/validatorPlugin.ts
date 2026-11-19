@@ -14,6 +14,7 @@ import { releaseSchemaRoot } from './utils/releaseSchemaRoot';
  */
 const defaultSettings: Ajv.Options = {
   allErrors: true,
+  multipleOfPrecision: 9,
   nullable: true,
   verbose: true,
   format: false,
