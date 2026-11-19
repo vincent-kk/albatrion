@@ -37,7 +37,7 @@ import { chunk, intersection, unique } from '@winglet/common-utils/array';
 // 콘솔 유틸리티
 import { printError } from '@winglet/common-utils/console';
 // 상수
-import { TIME_UNITS, TYPE_TAGS } from '@winglet/common-utils/constant';
+import { SECOND, ARRAY_TAG } from '@winglet/common-utils/constant';
 // 변환 유틸리티
 import { convertMsFromDuration } from '@winglet/common-utils/convert';
 // 에러 클래스
@@ -342,10 +342,10 @@ async function fetchWithTimeout(url: string) {
 ### 배열 유틸리티 사용하기
 
 ```typescript
-import { array } from '@winglet/common-utils';
+import { chunk } from '@winglet/common-utils/array';
 
 // 예제 코드:
-const chunks = array.chunk([1, 2, 3, 4, 5, 6], 2);
+const chunks = chunk([1, 2, 3, 4, 5, 6], 2);
 console.log(chunks); // [[1, 2], [3, 4], [5, 6]]
 ```
 
