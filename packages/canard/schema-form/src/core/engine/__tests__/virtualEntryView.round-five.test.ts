@@ -48,3 +48,8 @@ it('field names pair compressed children with uncompressed tuple slots', () => {
   const slots = fields.map((name, index) => ({ name, value: Array.isArray(group.value) ? group.value[index] : undefined, node: group.children?.find(child => child.name === name) }));
   expect(slots.map(slot => [slot.name, slot.value, slot.node?.path])).toEqual([['a', 'a0', '/a'], ['b', undefined, undefined]]);
 });
+
+it('virtual inactive projections keep frozen references until a constituent changes', () => {
+  const root=load();root.find('/on')!.setValue(false);const group=root.find('/group')!;
+  const first=group.inactiveValues;expect(Object.isFrozen(first)).toBe(true);expect(group.inactiveValues).toBe(first);
+});

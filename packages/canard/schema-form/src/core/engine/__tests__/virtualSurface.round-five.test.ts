@@ -9,7 +9,8 @@ it.each([null, {}, ['short'], ['too', 'many', 'slots']])('invalid virtual input 
 });
 it('undefined and sparse slots clear an active invisible constituent',()=>{
   const root=nodeFromJSONSchema({jsonSchema:{type:'object',properties:{a:{type:'string',controls:{visible:false}},b:{type:'string'}},options:{virtual:{group:{fields:['a','b']}}}},defaultValue:{a:'a',b:'b'},validationMode:ValidationMode.None});
-  root.find('/group')!.setValue([,'tail']);expect(root.value).toEqual({b:'tail'});root.find('/group')!.setValue(undefined);expect(root.value).toEqual({});
+  const sparse = new Array<string | undefined>(2); sparse[1] = 'tail';
+  root.find('/group')!.setValue(sparse);expect(root.value).toEqual({b:'tail'});root.find('/group')!.setValue(undefined);expect(root.value).toEqual({});
 });
 it.each([false,true])('virtual object Merge preserves the ordinary partial-write contract (batch=%s)', batch=>{
   const root=nodeFromJSONSchema({jsonSchema:{type:'object',properties:{on:{type:'boolean'},outside:{type:'string'},obj:{type:'object',properties:{a:{type:'string'},b:{type:'string',controls:{active:'../../on === true'}}}}},options:{virtual:{group:{fields:['obj']}}}},defaultValue:{on:true,outside:'outside',obj:{a:'a',b:'b'}},validationMode:ValidationMode.None});
