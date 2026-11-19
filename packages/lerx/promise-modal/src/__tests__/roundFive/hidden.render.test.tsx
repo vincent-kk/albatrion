@@ -9,7 +9,7 @@ const rows = ['abort', 'resolve', 'cleanup'].flatMap((settlement) => ['inside', 
 it.each(rows)('hidden $settlement / $focus follows the displayed ownership rule', async ({settlement, focus}) => {
   if (settlement !== 'abort' && settlement !== 'resolve' && settlement !== 'cleanup') throw new Error('Unknown settlement');
   if (focus !== 'inside' && focus !== 'body' && focus !== 'outside') throw new Error('Unknown focus');
-  const shown = await runFocusCase('shown', settlement, focus === 'inside' ? 'body' : focus);
+  expect((await runFocusCase('shown', settlement, focus === 'inside' ? 'body' : focus)).isolated).toBe(true);
   const result = await runFocusCase('hidden', settlement, focus);
   expect(result.isolated).toBe(false);
   expect(result.restored).toBe(false);

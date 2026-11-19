@@ -54,7 +54,7 @@ export class ModalManager {
   /** Tracks a node until destruction, including changes to hidden nodes. */
   static register(node: ModalNode): void {
     if (ModalManager.__state__.nodes.has(node.id)) return;
-    node.setDisplayReader?.(ModalManager.isDisplayed);
+    node.setDisplayReader?.(ModalManager.isFrameDisplayed);
     node.order = ++ModalManager.__state__.order;
     ModalManager.__state__.nodes.set(node.id, node);
     if (typeof document !== 'undefined')
@@ -73,7 +73,6 @@ export class ModalManager {
           restore &&
           node.dimmed &&
           node.visible &&
-          node.isVisibleAtSettlement !== false &&
           ModalManager.isDisplayed() &&
           ModalManager.ownsFocus(node.id);
         const target = ModalManager.__state__.focusTargets.get(node.id);
@@ -240,7 +239,7 @@ export class ModalManager {
         ? ModalManager.visibleNodes().find(
             (node) =>
               node.dimmed &&
-              ModalManager.isDisplayed(node.id) &&
+              ModalManager.isDisplayed() &&
               ModalManager.ownsFocus(node.id),
           )
         : undefined;
@@ -292,11 +291,15 @@ export class ModalManager {
     ModalManager.updateAccessibility(true);
   }
   /** Reads actual Provider attachment at the instant a request settles. */
-  private static isDisplayed(id?: number): boolean {
-    return (
-      !!ModalManager.__state__.anchor?.isConnected &&
-      (id === undefined || !!ModalManager.__state__.frames.get(id)?.isConnected)
-    );
+  private static isDisplayed(): boolean {
+    return !!ModalManager.__state__.anchor?.isConnected;
+  }
+  /** Reads committed frame attachment for the existing exit-animation contract.
+   * @param id Request whose frame may be hidden by Suspense.
+   * @returns Whether that request has committed connected content.
+   */
+  private static isFrameDisplayed(id: number): boolean {
+    return ModalManager.isDisplayed() && !!ModalManager.__state__.frames.get(id)?.isConnected;
   }
   /** Snapshot focus ownership before settling clears participation.
    * @param id Request whose visible interval may own focus.
@@ -390,8 +393,8 @@ export class ModalManager {
    */
   private static updateAccessibility(moveFocus = false): void {
     if (typeof document === 'undefined') return;
-    const root = ModalManager.__state__.anchor?.isConnected
-      ? ModalManager.__state__.anchor.parentElement
+    const root = ModalManager.isDisplayed()
+      ? ModalManager.__state__.anchor?.parentElement ?? null
       : null;
     const nodes = root
       ? ModalManager.visibleNodes().filter((node) => node.dimmed)
