@@ -252,6 +252,8 @@ For a composite custom input, consume `labelId` and `getInputId` explicitly rath
 Scope selectors to the intended Form, such as `formElement.querySelector('[data-path="/email"] input')`, or connect labels using the control's supplied id. Form API values retain the schema shape.
 Known server-rendering limit: Slider handles receive their accessible title in server HTML through `ariaLabelledByForHandle`, while their focusable handle id completes at hydration. The library Slider `id` prop targets its outer root and does not identify the handle.
 
+Ant Design 5 Select can set `aria-controls` to its internally suffixed `_list` id before the popup mounts; the reference resolves when the popup opens.
+
 ## Contact
 
 For inquiries or suggestions related to the project, please create an issue.

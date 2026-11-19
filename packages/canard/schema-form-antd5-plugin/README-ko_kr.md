@@ -252,6 +252,8 @@ const Input = ({ inputId, name }: FieldInputProps<string>) => (
 해당 Form 안에서 `formElement.querySelector('[data-path="/email"] input')`처럼 조회하거나 컨트롤이 받은 id로 레이블을 연결합니다. Form API가 반환하는 값은 스키마 형태를 유지합니다.
 서버 렌더링 한계: Slider handle의 접근성 제목은 `ariaLabelledByForHandle`로 서버 HTML에도 연결하며 실제 포커스 handle의 id 연결은 hydration에서 완성됩니다. 라이브러리 Slider의 `id` prop은 바깥 root에 적용되며 handle을 식별하지 않습니다.
 
+Ant Design 5 Select는 팝업이 마운트되기 전에 내부 접미사 `_list`가 붙은 id를 `aria-controls`로 가리킬 수 있으며, 팝업이 열리면 그 대상이 존재합니다.
+
 ## 연락처
 
 프로젝트와 관련된 문의나 제안은 이슈를 생성해 주세요.
