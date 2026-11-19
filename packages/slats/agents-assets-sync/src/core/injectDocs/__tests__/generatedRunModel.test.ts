@@ -31,7 +31,6 @@ it('preserves failed-owner bytes against a reference model in 2000 seeded real r
       0,
       1 + random(3),
     );
-    const mode = ['plain', 'json', 'ink'][random(3)];
     const stage = (
       [
         'discover',
@@ -123,8 +122,6 @@ it('preserves failed-owner bytes against a reference model in 2000 seeded real r
           force,
           dryRun,
           yes,
-          json: mode === 'json',
-          interactive: mode === 'ink',
         },
         originCwd: root,
         notices,
@@ -142,8 +139,64 @@ it('preserves failed-owner bytes against a reference model in 2000 seeded real r
                 ? 1
                 : 2
             : 1;
-      const label = `seed=${initialSeed}, sequence=${sequence}, stage=${stage}, mode=${mode}, force=${force}, dryRun=${dryRun}, yes=${yes}`;
+      const label = `seed=${initialSeed}, sequence=${sequence}, stage=${stage}, force=${force}, dryRun=${dryRun}, yes=${yes}`;
       expect(result.exitCode, label).toBe(referenceCode);
+      if (stage === 'discover' || stage === 'gate')
+        expect(
+          result.failures?.some(
+            (failure) =>
+              failure.stage === stage && failure.reason === notices[0],
+          ),
+          label,
+        ).toBe(true);
+      else if (stage === 'manifest')
+        expect(
+          result.failures?.some(
+            (failure) =>
+              failure.stage === 'prepare' &&
+              /JSON|property/.test(failure.reason),
+          ),
+          label,
+        ).toBe(true);
+      else if (stage === 'source')
+        expect(
+          result.failures?.some(
+            (failure) =>
+              failure.stage === 'prepare' &&
+              failure.reason.includes(`Source file missing: ${relative}`),
+          ),
+          label,
+        ).toBe(true);
+      else if (stage === 'markdown')
+        expect(
+          result.failures?.some(
+            (failure) =>
+              failure.stage === 'prepare' &&
+              failure.reason.includes(
+                'rules/bad.md:1: Unclosed fenced code block',
+              ),
+          ),
+          label,
+        ).toBe(true);
+      else if (stage === 'merge' && count > 1)
+        expect(
+          result.failures?.some(
+            (failure) =>
+              failure.stage === 'merge' &&
+              failure.reason.startsWith('Conflicting source contents:'),
+          ),
+          label,
+        ).toBe(true);
+      else if (stage === 'apply' && force && !dryRun)
+        expect(
+          result.failures?.some(
+            (failure) =>
+              failure.stage === 'apply' &&
+              failure.reason.includes('read-only:') &&
+              destinations.some((path) => failure.reason.includes(path)),
+          ),
+          label,
+        ).toBe(true);
       for (const unit of result.units.filter((unit) => unit.refused)) {
         expect(unit.plan.requiresForce, label).toBe(false);
         for (const action of unit.plan.actions) {

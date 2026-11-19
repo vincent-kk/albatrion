@@ -1,11 +1,9 @@
 import { expect, it } from 'vitest';
 
 import { hashContent } from '../../hash/index.js';
-import {
-  blockBodyMatches,
-  findBlockBody,
-  upsertBlock,
-} from '../markerBlock.js';
+import { blockBodyMatches, upsertBlock } from '../markerBlock.js';
+import { normalizeModel } from './helpers/normalizeModel.js';
+import { readModelBlocks } from './helpers/readModelBlocks.js';
 
 it('matches the canonical writer-body model for 5000 seeded source and target pairs', () => {
   let seed = 0x5c0a7;
@@ -27,22 +25,19 @@ it('matches the canonical writer-body model for 5000 seeded source and target pa
         '~~~\r\ncode\r\n~~~',
         '\xEF\xBB\xBFplain',
       ][random(8)];
-    const normalized = source
-      .replace(/^(?:\uFEFF|\xEF\xBB\xBF)/, '')
-      .replace(/\r\n?/g, '\n');
+    const normalized = normalizeModel(source);
     const canonical = normalized.endsWith('\n')
       ? normalized
       : normalized + '\n';
     const label = `seed=${initialSeed}, sequence=${sequence}`;
-    const written = findBlockBody(
+    const written = readModelBlocks(
       upsertBlock('', 'pkg:rules/a.md', source),
-      'pkg:rules/a.md',
-    );
+    )[0]?.body;
     expect(written, label).toBe(canonical);
     const body = [canonical, canonical + '\n', '', 'edited\n'][
       random(4)
     ].replace(/\n/g, ['\n', '\r\n', '\r'][random(3)]);
-    const expected = body.replace(/\r\n?/g, '\n') === canonical;
+    const expected = normalizeModel(body, false) === canonical;
     expect(
       blockBodyMatches(
         body,
