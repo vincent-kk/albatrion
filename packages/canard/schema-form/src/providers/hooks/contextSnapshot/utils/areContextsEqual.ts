@@ -102,6 +102,20 @@ export const areContextsEqual = (left: unknown, right: unknown): boolean => {
       }
       continue;
     }
+    if (tag === '[object Error]') {
+      if (
+        Reflect.get(left, 'name') !== Reflect.get(right, 'name') ||
+        Reflect.get(left, 'message') !== Reflect.get(right, 'message')
+      )
+        return false;
+      const keys = Object.keys(left);
+      if (keys.length !== Object.keys(right).length) return false;
+      for (const key of keys) {
+        if (!Object.prototype.hasOwnProperty.call(right, key)) return false;
+        pending.push(Reflect.get(left, key), Reflect.get(right, key));
+      }
+      continue;
+    }
     if (!hasComparableSlots(left, tag) || !equals(left, right)) return false;
   }
   return true;
