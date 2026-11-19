@@ -101,7 +101,12 @@ export function scanDocument(content: string): MarkdownScan {
             end: next,
           });
           pending = undefined;
-        } else if (!match && hasUnclosedComment(line)) commentLine = lineNumber;
+        } else if (
+          !match &&
+          /^ {0,3}<!--/.test(line) &&
+          hasUnclosedComment(line)
+        )
+          commentLine = lineNumber;
       }
     }
     offset = next;
