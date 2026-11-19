@@ -1,3 +1,4 @@
+import { hasCssCdcBoundary } from '../cssTokens/hasCssCdcBoundary';
 import { CssTokenKind } from '../cssTokens/CssTokenKind';
 import { getCssSignificantIndex } from '../cssTokens/getCssSignificantIndex';
 import { readCssToken } from '../cssTokens/readCssToken';
@@ -53,7 +54,7 @@ export const compressCss = (css: string): string => {
   let output = '', index = 0, previousCode = 0, segmentStart = 0;
   let hasOutput = false;
   let previousKind = CssTokenKind.Delimiter;
-  let parentheses = 0, brackets = 0;
+  let parentheses = 0, brackets = 0, previousEnd = 0;
   while (index < css.length) {
     const token = readCssToken(css, index), kind = token % 16;
     const end = Math.floor(token / 16), code = css.charCodeAt(index);
@@ -81,7 +82,7 @@ export const compressCss = (css: string): string => {
         const nextCode = css.charCodeAt(end);
         const after = previousCode === 123 || previousCode === 125 || previousCode === 59 || previousCode === 58 || previousCode === 44 || previousCode === 62 || previousCode === 126 || previousCode === 40;
         const before = nextCode === 123 || nextCode === 125 || nextCode === 59 || nextCode === 44 || nextCode === 62 || nextCode === 126 || nextCode === 41;
-        let keep = !after && !before;
+        let keep = (!after && !before) || hasCssCdcBoundary(css, previousEnd, nextCode);
         if (previousCode === 43 || nextCode === 43) keep = parentheses > 0;
         if (parentheses > 0 && (previousCode === 45 || nextCode === 45)) keep = true;
         if (keep && nextCode === 58) keep = !isDeclarationColon(css, end);
@@ -102,6 +103,7 @@ export const compressCss = (css: string): string => {
       }
     }
     hasOutput = true;
+    previousEnd = end;
     previousCode = kind === CssTokenKind.Delimiter || kind === CssTokenKind.Function ? css.charCodeAt(end - 1) : 0;
     previousKind = kind;
     index = end;
