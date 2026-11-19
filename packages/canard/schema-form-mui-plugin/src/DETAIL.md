@@ -10,6 +10,8 @@ MUI 입력은 schema-form이 해석한 값과 상태를 표시합니다. 플러�
 
 날짜·월 피커의 범위 제한은 `presentation.FieldInputProps.minimum`과 `maximum`에서 읽습니다. 코어는 문자열 스키마의 `minimum`/`maximum`을 입력에 넘기지 않으므로 스키마에서 읽으면 제한이 사라집니다. 제한값은 `YYYY-MM-DD`와 `YYYY-MM`으로 엄격하게 파싱하고 유효할 때만 피커에 넘깁니다. dayjs의 관대한 파싱은 `2024-02-31`을 `2024-03-02`로 넘겨 다른 날짜를 제한으로 만들기 때문입니다. 파싱은 제한값이 바뀔 때 한 번만 하며, 그리는 날짜마다 하지 않습니다.
 
+슬라이더의 간격은 0의 배수 격자를 사용하며 최솟값 이상인 첫 배수와 최댓값 이하인 마지막 배수 사이에서 이동합니다.
+
 슬라이더는 폼 값이 없을 때 최솟값을 값처럼 보여 주지 않습니다. 첫 사용자 변경 전까지 thumb와 값 라벨을 숨기고 `aria-valuenow`를 생략하며 `aria-valuetext`로 값이 없음을 알리되(기본 `Not set`, `presentation.FieldInputProps.unsetValueText`로 변경), 키보드로 포커스된 thumb는 보이고 포인터·키보드 조작은 그대로 받습니다. 미설정 상태에서는 확정된 값(`onChangeCommitted`)도 저장합니다. MUI는 값이 최솟값 그대로면 `onChange`를 건너뛰므로 Home 키나 최솟값에서 놓은 포인터가 폼을 비워 둔 채 thumb만 최솟값에 남기기 때문입니다. 사용자 조작 없이 폼에 값을 써 넣지 않으며, 외부에서 값이 `undefined`로 바뀌면 재마운트로 다시 미설정 상태가 됩니다.
 
 enum 선택 identity는 원래 JSON 스칼라를 인코딩하므로 null과 문자열 null을 합치지 않습니다.

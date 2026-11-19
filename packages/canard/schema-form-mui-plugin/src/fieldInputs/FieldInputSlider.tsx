@@ -18,6 +18,8 @@ type SliderJSONSchema = NumberSchema & {
   multipleOf?: number;
 };
 
+import { getSliderBounds } from './utils/slider/getSliderBounds';
+
 interface FieldInputSliderProps
   extends FieldInputPropsWithSchema<
       number | null,
@@ -79,9 +81,7 @@ const FieldInputSlider = ({
     return [labelProp || name, sizeProp || context.size];
   }, [context, labelProp, name, sizeProp, hideLabel]);
 
-  const min = jsonSchema.minimum ?? 0;
-  const max = jsonSchema.maximum ?? 100;
-  const step = jsonSchema.multipleOf ?? 1;
+  const { min, max, step } = getSliderBounds(jsonSchema.minimum, jsonSchema.maximum, jsonSchema.multipleOf);
   const isLazy = lazy ?? false;
 
   // An external value change remounts this input, so a reset to undefined starts unset again.
