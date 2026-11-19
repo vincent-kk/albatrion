@@ -1,240 +1,35 @@
-import {
-  type Action,
-  type AgentType,
-  type AssetKind,
-  type InjectReport,
-  type ResolvedLocations,
-  type Scope,
-  applyAction,
-  applyBlockActions,
-  assertDestinationRootsContained,
-  assertWriteTargetsContained,
-  buildPlan,
-  collectFileWrites,
-  computeNamespacePrefixes,
-  partitionActions,
-  resolveAgentTarget,
-  resolveDestinations,
-  resolveHashManifest,
-  summarize,
-} from '../../../core/index.js';
+import { runInjection, type RunResult } from '../../../core/index.js';
 import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
-import { asyncPool } from '../../../utils/asyncPool.js';
 import { VERSION } from '../../../utils/version.js';
-import { parseAgentFlag } from '../flags/resolveAgentFlag.js';
-import { parseAssetFlag } from '../flags/resolveAssetFlag.js';
-import { parseScopeFlag } from '../flags/resolveScopeFlag.js';
 
-const COPY_CONCURRENCY = 8;
-
-/** One `(package, agent)` pair's outcome. */
-interface JSONUnit {
-  readonly package: { readonly name: string; readonly version: string };
-  readonly agent: AgentType;
-  readonly scope: Scope;
-  readonly projectRoot: string;
-  /** Human-readable summary of where this unit writes. */
-  readonly destination: string;
-  readonly requiresForce: boolean;
-  readonly actions: readonly Action[];
-  readonly report: InjectReport | null;
-  /** Present when this unit could not be planned or applied. */
-  readonly error?: string;
-}
-
-/** The whole document `--json` writes to stdout. */
-interface JSONDocument {
-  readonly schemaVersion: 1;
-  readonly tool: 'agents-assets-sync';
-  readonly version: string;
-  readonly dryRun: boolean;
-  readonly exitCode: 0 | 1 | 2;
-  readonly errors: readonly string[];
-  readonly units: readonly JSONUnit[];
-}
-
-/**
- * Machine-readable renderer for `--json`.
- *
- * Writes exactly one JSON document to stdout and nothing else — diagnostics
- * are diverted to stderr by the caller, because a single stray line would
- * make the stream unparseable. A failure is part of the document rather than
- * a reason to skip it, so a reader always has something to parse.
- *
- * @param targets - resolved consumer packages
- * @param flags - parsed CLI flags
- * @param originCwd - directory project-scope resolution starts from
- * @param notices - messages from before the renderer, such as the reason each
- *   target was skipped; they explain an empty `units` without failing the run
- * @returns the process exit code
+/** Compatibility driver; core computes the same result used by other modes.
+ * @param targets Resolved packages.
+ * @param flags Completed arguments.
+ * @param originCwd Scope origin.
+ * @param notices Pre-render diagnostics.
+ * @returns Core exit code.
  */
-export async function renderJSON(
-  targets: readonly ConsumerPackage[],
-  flags: DefaultFlags,
-  originCwd: string,
-  notices: readonly string[] = [],
-): Promise<number> {
-  const dryRun = Boolean(flags.dryRun);
-  const generatedAt = new Date().toISOString();
-  // Destination directories repeat across units; resolve each once per run.
-  const resolved: ResolvedLocations = new Map();
-  const scope = parseScopeFlag(flags.scope);
-  const agents = parseAgentFlag(flags.agent ?? [], false);
-  const assets = parseAssetFlag(flags.asset ?? []);
-
-  const errors = [
-    ...notices,
-    ...('error' in scope ? scope.error : []),
-    ...('error' in agents ? agents.error : []),
-    ...('error' in assets ? assets.error : []),
-  ];
-  if ('error' in scope || 'error' in agents || 'error' in assets)
-    return emit(dryRun, 2, errors, []);
-
-  const units: JSONUnit[] = [];
-  let exitCode: 0 | 1 | 2 = 0;
-
-  for (const target of targets) {
-    for (const agent of agents.agents) {
-      const unit = await runUnit(
-        target,
-        agent,
-        scope.scope,
-        assets.kinds,
-        flags,
-        originCwd,
-        generatedAt,
-        resolved,
-      );
-      units.push(unit);
-      if (unit.error) exitCode = 1;
-      else if (
-        exitCode === 0 &&
-        unit.requiresForce &&
-        !flags.force &&
-        !flags.dryRun
-      )
-        exitCode = 2;
-    }
-  }
-
-  return emit(dryRun, exitCode, errors, units);
+export async function renderJSON(targets: readonly ConsumerPackage[], flags: DefaultFlags, originCwd: string, notices: readonly string[] = []): Promise<number> {
+  const result = await runInjection({ targets, flags, originCwd, notices });
+  displayJSON(result);
+  return result.exitCode;
 }
 
-async function runUnit(
-  target: ConsumerPackage,
-  agent: AgentType,
-  scope: Scope,
-  assetKinds: ReadonlySet<AssetKind>,
-  flags: DefaultFlags,
-  originCwd: string,
-  generatedAt: string,
-  resolved: ResolvedLocations,
-): Promise<JSONUnit> {
-  const agentTarget = resolveAgentTarget(agent, scope, originCwd);
-  const base = {
-    package: { name: target.name, version: target.version },
-    agent,
-    scope,
-    projectRoot: agentTarget.projectRoot,
-    destination: agentTarget.description,
-  } as const;
-
-  try {
-    const manifest = await resolveHashManifest(target, generatedAt);
-    const { destinations, orphanScans } = resolveDestinations({
-      agentTarget,
-      packageName: target.name,
-      relPaths: Object.keys(manifest.files),
-      namespacePrefixes: computeNamespacePrefixes(manifest),
-      assetKinds,
-    });
-    await assertDestinationRootsContained({
-      agentTarget,
-      assetKinds,
-      orphanScans,
-      resolved,
-    });
-    const force = flags.force ?? false;
-    const plan = await buildPlan({
-      sourceHashes: manifest.files,
-      ...(target.hashSource === 'manifest'
-        ? { assetRoot: target.assetRoot }
-        : {}),
-      destinations,
-      orphanScans,
-      force,
-    });
-    await assertWriteTargetsContained({
-      agentTarget,
-      dstPaths: collectFileWrites(plan),
-      resolved,
-    });
-
-    const blocked = plan.requiresForce && !force;
-    if (blocked || flags.dryRun)
-      return {
-        ...base,
-        requiresForce: plan.requiresForce,
-        actions: plan.actions,
-        report: summarize(plan, flags.dryRun ? 0 : 2),
-      };
-
-    const { fileActions, blockGroups } = partitionActions(plan.actions, force);
-    const results = await asyncPool(COPY_CONCURRENCY, fileActions, (action) =>
-      applyAction(action, target.assetRoot),
-    );
-    const failedActions: Action[] = fileActions.filter(
-      (_, index) => results[index].status === 'rejected',
-    );
-    for (const [fileAbs, group] of blockGroups) {
-      try {
-        await applyBlockActions(fileAbs, group, target.assetRoot);
-      } catch {
-        failedActions.push(...group);
-      }
-    }
-
-    return {
-      ...base,
-      requiresForce: plan.requiresForce,
-      actions: plan.actions,
-      report: summarize(plan, failedActions.length ? 1 : 0, failedActions, [
-        ...fileActions,
-        ...[...blockGroups.values()].flat(),
-      ]),
-      ...(failedActions.length
-        ? {
-            error: `Failed to apply: ${failedActions.map((action) => action.relPath).join(', ')}`,
-          }
-        : {}),
-    };
-  } catch (error) {
-    return {
-      ...base,
-      requiresForce: false,
-      actions: [],
-      report: null,
-      error: error instanceof Error ? error.message : String(error),
-    };
-  }
-}
-
-function emit(
-  dryRun: boolean,
-  exitCode: 0 | 1 | 2,
-  errors: readonly string[],
-  units: readonly JSONUnit[],
-): number {
-  const document: JSONDocument = {
-    schemaVersion: 1,
-    tool: 'agents-assets-sync',
-    version: VERSION,
-    dryRun,
-    exitCode,
-    errors,
-    units,
+/** Serialize a completed result; never reads or writes destination files.
+ * @param result Complete core result, including validation errors.
+ */
+export function displayJSON(result: RunResult): void {
+  const document = {
+    schemaVersion: 1, tool: 'agents-assets-sync', version: VERSION,
+    dryRun: result.dryRun, exitCode: result.exitCode, errors: result.errors,
+    units: result.units.map(unit => ({
+      key: unit.key,
+      package: { name: unit.target.name, version: unit.target.version },
+      agent: unit.agentTarget.agent, scope: unit.agentTarget.scope,
+      projectRoot: unit.agentTarget.projectRoot, destination: unit.agentTarget.description,
+      requiresForce: unit.plan.requiresForce, actions: unit.plan.actions,
+      report: unit.report ?? null, ...(unit.error ? { error: unit.error } : {}),
+    })),
   };
   process.stdout.write(`${JSON.stringify(document, null, 2)}\n`);
-  return exitCode;
 }

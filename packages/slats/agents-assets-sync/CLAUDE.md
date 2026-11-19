@@ -97,6 +97,9 @@ The shape mirrors the `FILID:` / `SEIRI:` markers such files already carry. Cont
 
 ## Render Paths
 
+The core prepares one run-wide plan, merges managed skill namespaces, and executes it once. Plain, JSON and terminal views display that model; input screens only supply missing arguments and confirmation responses. General orchestrator objects and per-renderer planning or writes are forbidden because they make output mode affect behavior.
+
+
 - **TTY + no `--json`**: `renderOrFallback` dynamic-imports `src/ui/index.js` and calls `renderInjectApp(input)`. The Ink app composes `core/**` primitives through `useInjectSession` + per-step hooks (`useResolveStep`, `usePlanStep`, `useForceConfirmStep`, `useApplyStep`).
 - **Non-TTY or `--json`**: `renderOrFallback` calls `renderPlain(targets, flags, originCwd)` which composes the same `core/**` primitives with picocolors text output.
 - Both paths share the same primitives; no `injectDocs(opts)` orchestrator in between.

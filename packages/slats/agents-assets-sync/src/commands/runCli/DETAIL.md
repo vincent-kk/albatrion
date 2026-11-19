@@ -2,6 +2,11 @@
 
 ## Requirements
 
+- 계획과 결과는 core가 한 번 계산하며 일반·JSON·터미널은 그 모델을 표시합니다. 입력 화면은 누락된 인자와 확인 응답만 전달하고 같은 코어 실행 경로를 사용합니다.
+- 각 단위의 key는 agent와 package를 결합한 코어 식별자입니다. 공유 스킬 네임스페이스의 관리 경로는 실행 전체에서 합쳐 다른 참여 패키지 파일을 고아로 삭제하지 않습니다.
+- 일반 목적 orchestrator 객체와 렌더러별 기본 연산 조립은 금지합니다. 출력 방식에 따른 판정 차이를 막기 위해 작은 준비 함수·순수 계획 병합·결과 모델·단일 적용기만 사용합니다.
+
+
 - 스코프 열거에서 읽거나 파싱하지 못한 package.json은 경로와 사유를 출력하고 JSON errors에도 보존합니다. 읽을 수 있는 다른 멤버는 계속 처리합니다.
 
 - `runCli(argv)` 는 유일한 CLI 진입점이며, argv 에서 `--package <name...>` 을 읽는다. 미리 해석된 메타데이터는 받지 않는다.
@@ -13,7 +18,6 @@
 - 플래그: `--package <name...>`, `--agent <type...>`, `--scope <user|project>`, `--asset <kind...>`, `--asset-path <path>`, `--dry-run`, `--force`, `--yes`, `--no-interactive`, `--root <path>`, `--json`.
 - `--asset-path` 은 단일 값이며 `--asset` 과 별개다. commander 는 long option 을 완전 일치로 매칭하고 가변 수집은 `-` 로 시작하는 다음 토큰에서 멈추므로, `--asset skills --asset-path agents` 도 서로를 삼키지 않는다.
 - `--asset-path` 의 모양 검증은 파일시스템 IO 이전에 action 에서 한다 — 빈 값, 절대 경로, `~` 로 시작하는 값은 2로 종료한다. 경로가 packageRoot 안에 있는지와 실제로 디렉터리인지는 타깃마다 다르므로 `resolvePackage` 가 판정한다.
-- `--asset-path` 오류는 `--json` 이어도 action 에서 종료한다. `--package` 누락과 같은 계층이라 stdout 은 비고 진단은 stderr 로만 나간다.
 - `--package` 값이 하나도 없으면 2로 종료한다. 해석된 패키지가 0개면 경고만 남기고 0으로 끝난다 — 아무 일도 하지 않은 것은 실패가 아니다. 다만 `--json` 은 그 경우에도 렌더러까지 진행해 `units: []` 인 문서를 낸다. 문서가 없으면 소비자가 "성공했지만 대상이 없음" 과 파싱 실패를 구분할 수 없기 때문이다.
 - `renderOrFallback` 은 target 해석 이후 실행당 정확히 한 번 호출되며 렌더러 분기를 소유한다. 분기 순서: `--json` → `renderJSON`; 비TTY 이거나 `flags.interactive === false` → `renderPlain`; 나머지 → `ui/` 동적 import. 패키지가 ESM 전용이므로 `await import()` 로 충분하다.
 - `renderOrFallback` 의 `env.isTTY` 는 테스트를 위해 주입 가능하며, 생략 시 `process.stdout.isTTY` 를 쓴다.

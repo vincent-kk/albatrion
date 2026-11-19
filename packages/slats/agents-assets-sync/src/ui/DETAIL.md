@@ -2,21 +2,21 @@
 
 ## Requirements
 
+- 계획과 결과는 core가 한 번 계산하며 일반·JSON·터미널은 그 모델을 표시합니다. 입력 화면은 누락된 인자와 확인 응답만 전달하고 같은 코어 실행 경로를 사용합니다.
+- 각 단위의 key는 agent와 package를 결합한 코어 식별자입니다. 공유 스킬 네임스페이스의 관리 경로는 실행 전체에서 합쳐 다른 참여 패키지 파일을 고아로 삭제하지 않습니다.
+- 일반 목적 orchestrator 객체와 렌더러별 기본 연산 조립은 금지합니다. 출력 방식에 따른 판정 차이를 막기 위해 작은 준비 함수·순수 계획 병합·결과 모델·단일 적용기만 사용합니다.
+
+
 스코프 선택의 기본값은 주로 수행하는 프로젝트 주입에 맞추고 목록 순서는 유지합니다. 기본값 조정이 익숙한 행 위치까지 바꾸어 선택 실수를 만들지 않게 하기 위한 기준입니다.
 
 - TTY 전용 계층이다. 호출자(`renderOrFallback`)가 이 모듈을 동적 import 하기 전에 TTY 이고 프롬프트가 허용됨을 보장한다 — `--json` 도 아니고 `--no-interactive` 도 아닌 실행에서만 여기 도달한다.
-- `renderInjectApp(input)` 은 `core/**` 프리미티브를 직접 조합해 Ink 가상 DOM 을 구동한다. `process.stdout` / `process.stderr` 에 직접 쓰지 않는다.
-- 파이프라인은 훅으로 나뉜다. `useInjectSession` 이 전이를 구동하고, `useResolveStep` → `usePlanStep` → `useForceConfirmStep` → `useApplyStep` 이 각 단계를 맡는다.
 - agent 가 `--agent` 로 주어지지 않으면 Ink `AgentPicker` 로 대화식 선택한다. scope 도 마찬가지로 `--scope` 가 없으면 `ScopePicker` 를 연다. 주어졌으면 그 값을 쓴다.
 - `ScopePicker` 는 `project` 를 고른 채로 열린다. 목록은 `user` 를 먼저 그리되 커서만 `project` 에 놓이므로, 흔한 쪽은 enter 한 번이고 `user` 는 화살표 한 번이 든다. 이 기본값은 이 picker 만의 것이다 — 비대화식 경로는 `--scope` 없이 여전히 종료 코드 2 다.
-- 계획은 target 마다 순차적으로 세운다. 각 `(agent, package)` 쌍에 대해 `resolveAgentTarget` → `resolveHashManifest` → `computeNamespacePrefixes` → `resolveDestinations` → `buildPlan` 순서로 조합한다.
 - 해시를 댈 수 없는 target 은 여기 도달하지 않는다. dispatcher 가 렌더러를 고르기 전에 걸러내므로(`commands/runCli/DETAIL.md` 의 `AC-RUNCLI-GATE-VERDICT`), 이 계층은 그 판정을 내리지도 재현하지도 않는다. 직접 구동하는 검사가 없는 계층이 판정에 참여하면 그 판정만 조용히 어긋난다.
 - force 확인은 `ConfirmForce` 로 표면화되며, 그 아래의 promise 다리가 사용자 응답이나 취소에서 resolve 된다. 취소는 종료 코드 2다.
 - 확인 목록은 `warn-diverged` 와 `warn-orphan` 뿐 아니라 `--force` 가 고아 항목을 바꾼 `delete` 도 `warn-orphan` 경고로 담는다. 그렇지 않으면 `--force` 실행에서 지워질 파일이 대화상자에 나타나지 않는다.
-- 적용은 계획별로 `partitionActions` 로 갈라, 파일 작업은 `asyncPool(8, …)` 로 돌리고 블록 작업은 문서 단위로 하나씩 적용한다.
 - 진행률은 액션이 끝날 때마다 `apply-progress` 이벤트로 보고된다. 파일은 한 건씩, 블록 그룹은 그룹 크기만큼 `done` 이 증가한다.
 - `--dry-run` 은 force 확인과 적용을 건너뛰고 `summarize(plan, 0)` 로 바로 summary 에 들어가며 종료 코드 0을 낸다. `--force` 를 요구하는 계획도 실패로 끝내지 않는다. 쓰지 않는 실행은 확인할 것도 막을 것도 없기 때문이다.
-- summary 는 target 마다 `summarize(plan, exitCode)` 로 그려진다.
 - 종료 코드: `0` 성공/최신/dry-run, `1` 런타임 오류, `2` 사용자 취소 또는 설정 누락.
 - 계획 중 던져진 오류는 실패한 단위를 최종 결과에도 보존하고 종료 코드 1로 표면화합니다. 실행 오류 1이 차단 2보다 우선하며, 차단된 단위가 있어도 다른 단위는 적용합니다. agent·asset·scope의 유효하지 않은 명시 값은 쓰기 전에 2로 거부합니다.
 
@@ -37,7 +37,6 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
   - 알 수 없는 이벤트는 무시하고 현재 국면 객체를 그대로 돌려준다.
   - 소비자는 `hooks/usePhase.ts` 하나다.
 
-## Composed core primitives
 
 - `resolveHashManifest`, `computeNamespacePrefixes` — 소스 해시와 네임스페이스
 - `resolveAgentTarget`, `resolveDestinations` — 목적지 해석

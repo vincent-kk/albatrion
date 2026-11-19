@@ -2,9 +2,13 @@
 
 ## Purpose
 
-Agent asset injection의 적용(apply)과 집계(summarize) 프리미티브. 계획은 `buildPlan/` 이 이미 세웠고, 여기서는 그것을 실행하고 보고서로 접는다. Ink(`ui/`)와 plain(`renderPlain`) 렌더러가 함께 소비하며, orchestrator 는 두지 않는다 — 파이프라인은 호출자가 직접 조립한다.
 
 ## Conventions
+
+- 계획과 결과는 core가 한 번 계산하며 일반·JSON·터미널은 그 모델을 표시합니다. 입력 화면은 누락된 인자와 확인 응답만 전달하고 같은 코어 실행 경로를 사용합니다.
+- 각 단위의 key는 agent와 package를 결합한 코어 식별자입니다. 공유 스킬 네임스페이스의 관리 경로는 실행 전체에서 합쳐 다른 참여 패키지 파일을 고아로 삭제하지 않습니다.
+- 일반 목적 orchestrator 객체와 렌더러별 기본 연산 조립은 금지합니다. 출력 방식에 따른 판정 차이를 막기 위해 작은 준비 함수·순수 계획 병합·결과 모델·단일 적용기만 사용합니다.
+
 
 - 파일 작업과 블록 작업은 갈라서 다룬다. 파일은 풀로 병렬 처리해도 되지만, 한 `AGENTS.md` 를 여러 writer 가 동시에 쓰면 각자 읽은 판본을 저장해 마지막 하나만 남기 때문이다. 이 순차화는 한 실행 안에서만 유효하다 — 잠금이 아니므로 동시에 도는 두 프로세스는 여전히 서로의 블록을 잃는다.
 - `warn-diverged` 의 실행 가능 여부는 `partitionActions` 가 결정한다. CLI 의 "`--force` 는 덮어쓴다" 는 약속이 지켜지는 유일한 지점이다.
@@ -24,7 +28,6 @@ Agent asset injection의 적용(apply)과 집계(summarize) 프리미티브. 계
 ### Ask first
 
 - `Action.kind` 추가 — 호출자들을 함께 고쳐야 한다
-- orchestrator 함수 재도입; 지금은 두 렌더러가 프리미티브를 조립한다
 
 ### Never do
 

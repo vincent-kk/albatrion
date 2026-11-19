@@ -10,13 +10,17 @@ TTY 실행에서 사용하는 React·Ink UI를 소유합니다. renderInjectApp�
 
 ## Conventions
 
+- 계획과 결과는 core가 한 번 계산하며 일반·JSON·터미널은 그 모델을 표시합니다. 입력 화면은 누락된 인자와 확인 응답만 전달하고 같은 코어 실행 경로를 사용합니다.
+- 각 단위의 key는 agent와 package를 결합한 코어 식별자입니다. 공유 스킬 네임스페이스의 관리 경로는 실행 전체에서 합쳐 다른 참여 패키지 파일을 고아로 삭제하지 않습니다.
+- 일반 목적 orchestrator 객체와 렌더러별 기본 연산 조립은 금지합니다. 출력 방식에 따른 판정 차이를 막기 위해 작은 준비 함수·순수 계획 병합·결과 모델·단일 적용기만 사용합니다.
+
+
 - 파이프라인 단계마다 훅 하나(`useResolveStep`, `usePlanStep`, `useForceConfirmStep`, `useApplyStep`)를 두고 `useInjectSession`으로 구동합니다. 진행 상황은 타이머가 아니라 완료된 액션마다 보고합니다.
 
 ## Boundaries
 
 ### Always do
 
-- `core/**`의 기본 연산(`resolveHashManifest`, `computeNamespacePrefixes`, `resolveAgentTarget`, `resolveDestinations`, `buildPlan`, `partitionActions`, `applyAction`, `applyBlockActions`, `summarize`)과 `asyncPool`을 직접 조합해 파이프라인을 구동합니다.
 - 최종 종료 코드를 `useExitApp`으로 전달하여 `renderInjectApp`이 `number`로 이행되게 합니다.
 
 ### Ask first

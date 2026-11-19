@@ -10,6 +10,8 @@ export interface PlanStepState {
 
 /** One plan is one (package, agent) pair — a package can target several. */
 export interface TargetPlan {
+  /** Core-supplied identity for terminal rendering. */
+  readonly key?: string;
   readonly target: ConsumerPackage;
   readonly agentTarget: AgentTarget;
   readonly plan: InjectPlan;

@@ -14,6 +14,10 @@ export {
   type HashManifestSource,
 } from './hashManifest/index.js';
 export {
+  runInjection,
+  validateFlags,
+  type RunUnit,
+  type RunResult,
   applyAction,
   applyBlockActions,
   partitionActions,
