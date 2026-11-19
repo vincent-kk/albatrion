@@ -9,7 +9,7 @@ Move a nested example to the top level before running the command again. Before:
 ````md
 - Example:
   ```ts
-  run();
+  const value = 1;
   ```
 ````
 
@@ -19,7 +19,7 @@ After:
 - Example:
 
 ```ts
-run();
+const value = 1;
 ```
 ````
 
