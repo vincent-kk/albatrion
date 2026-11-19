@@ -24,11 +24,12 @@ export function resolveFieldIdentifiers(formId: string, path: string, keyed = tr
   const inputId = base + '~input';
   const labelId = base + '~label';
   if (!keyed) return { inputId, labelId };
+  const keyedPrefix = inputId + '.';
   return {
     inputId,
     labelId,
     getInputId: (key: string | number): string =>
-      inputId + '.' + escapeCharacters(escapeSegment(String(key))),
+      keyedPrefix + (typeof key === 'number' ? key : escapeCharacters(escapeSegment(String(key)))),
   };
 }
 
