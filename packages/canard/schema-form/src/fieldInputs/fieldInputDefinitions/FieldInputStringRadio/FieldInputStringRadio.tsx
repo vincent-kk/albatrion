@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ChangeEvent, useLayoutEffect, useMemo, useRef } from 'react';
 
 import { map } from '@winglet/common-utils/array';
@@ -32,7 +33,7 @@ export const FieldInputStringRadio = ({
   Nullable<string>,
   StringSchema,
   RadioLabelsContext
->) => {
+>): ReactElement => {
   const radioOptions = useMemo(
     () =>
       jsonSchema.enum
@@ -75,7 +76,7 @@ export const FieldInputStringRadio = ({
       aria-labelledby={labelId}
       aria-invalid={misfit || undefined}
     >
-      {map(radioOptions, ({ value, rawValue, label }, index) => {
+      {map(radioOptions, ({ value, rawValue, label }, index): ReactElement => {
         const id = getInputId(index);
         return (
           <label key={value} htmlFor={id} style={style} className={className}>

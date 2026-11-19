@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ComponentType, type ReactNode, memo } from 'react';
 
 import { useConstant, useReference } from '@winglet/react-utils/hook';
@@ -97,7 +98,7 @@ export const FormField = memo(
     FieldRenderer,
     Wrapper,
     ...restProps
-  }: FormFieldProps<AllowedValue>) => {
+  }: FormFieldProps<AllowedValue>): ReactElement => {
     const overridePropsRef = useReference(restProps);
     const constant = useConstant({
       FieldInput: FieldInput as ComponentType<FieldInputProps>,

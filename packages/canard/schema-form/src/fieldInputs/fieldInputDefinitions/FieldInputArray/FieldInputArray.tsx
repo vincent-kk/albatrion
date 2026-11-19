@@ -1,3 +1,5 @@
+import type { ReactElement } from 'react';
+
 import type { FieldInputProps } from '@/schema-form/types';
 
 import { ArrayItems } from './components/ArrayItems';
@@ -11,7 +13,7 @@ export const FieldInputArray = ({
   ChildFields,
   style,
   onChange,
-}: FieldInputProps<any[]>) => (
+}: FieldInputProps<any[]>): ReactElement => (
   <ArrayItems
     node={node}
     jsonSchema={jsonSchema}

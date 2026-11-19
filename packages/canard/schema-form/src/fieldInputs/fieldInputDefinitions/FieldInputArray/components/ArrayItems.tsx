@@ -49,7 +49,7 @@ export const ArrayItems = memo(function ArrayItems({
   | 'ChildFields'
   | 'style'
   | 'onChange'
-> & { childCount: number }) {
+> & { childCount: number }): ReactElement {
   const handleClick = useCallback(() => {
     node.push();
   }, [node]);

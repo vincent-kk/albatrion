@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ChangeEvent, useMemo } from 'react';
 
 import { map } from '@winglet/common-utils/array';
@@ -29,7 +30,7 @@ export const FieldInputStringCheckbox = ({
   Nullable<string>[],
   StringCheckboxJSONSchema,
   CheckboxLabelsContext
->) => {
+>): ReactElement => {
   const checkboxOptions = useMemo(
     () =>
       jsonSchema.items?.enum
@@ -72,24 +73,27 @@ export const FieldInputStringCheckbox = ({
       aria-labelledby={labelId}
       aria-invalid={misfit || undefined}
     >
-      {map(checkboxOptions, ({ value, rawValue, label }, index) => {
-        const id = getInputId(index);
-        return (
-          <label key={value} htmlFor={id} style={style} className={className}>
-            <input
-              type="checkbox"
-              id={id}
-              name={name}
-              readOnly={readOnly}
-              disabled={disabled}
-              value={value}
-              defaultChecked={selected.includes(rawValue)}
-              onChange={handleChange}
-            />
-            {label}
-          </label>
-        );
-      })}
+      {map(
+        checkboxOptions,
+        ({ value, rawValue, label }, index): ReactElement => {
+          const id = getInputId(index);
+          return (
+            <label key={value} htmlFor={id} style={style} className={className}>
+              <input
+                type="checkbox"
+                id={id}
+                name={name}
+                readOnly={readOnly}
+                disabled={disabled}
+                value={value}
+                defaultChecked={selected.includes(rawValue)}
+                onChange={handleChange}
+              />
+              {label}
+            </label>
+          );
+        },
+      )}
     </div>
   );
 };

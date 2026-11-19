@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import {
   type PropsWithChildren,
   useLayoutEffect,
@@ -25,7 +26,7 @@ export const FieldInputsContextProvider = ({
   fieldInputDefinitions,
   fieldInputMap,
   children,
-}: PropsWithChildren<FieldInputsContextProviderProps>) => {
+}: PropsWithChildren<FieldInputsContextProviderProps>): ReactElement => {
   const fromFieldInputDefinitions = useMemo(
     () => normalizeFieldInputDefinitions(fieldInputDefinitions),
     [fieldInputDefinitions],

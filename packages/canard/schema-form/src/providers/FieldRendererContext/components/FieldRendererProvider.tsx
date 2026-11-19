@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type PropsWithChildren, useMemo } from 'react';
 
 import { isFunction } from '@winglet/common-utils/filter';
@@ -37,7 +38,7 @@ export const FieldRendererContextProvider = ({
   formatError,
   errorVisibility: inputErrorVisibility,
   children,
-}: PropsWithChildren<FieldRendererContextProviderProps>) => {
+}: PropsWithChildren<FieldRendererContextProviderProps>): ReactElement => {
   const {
     FieldRenderer: ExternalFieldRenderer,
     formatError: externalFormatError,

@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import type { CSSProperties } from 'react';
 
 import { isArraySchema } from '@winglet/json-schema/filter';
@@ -21,7 +22,7 @@ export const FieldRenderer = ({
   errorMessage,
   style,
   className,
-}: FieldRendererProps) => {
+}: FieldRendererProps): ReactElement => {
   if (depth === 0) return <Input />;
 
   if (node.strategy === 'branch') {

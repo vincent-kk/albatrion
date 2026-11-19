@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ChangeEvent, useLayoutEffect, useRef } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
@@ -17,7 +18,7 @@ export const FieldInputBoolean = ({
   onChange,
   style,
   className,
-}: FieldInputProps<Nullable<boolean>>) => {
+}: FieldInputProps<Nullable<boolean>>): ReactElement => {
   const ref = useRef<HTMLInputElement>(null);
   useLayoutEffect(() => {
     if (ref.current) ref.current.indeterminate = typeof value !== 'boolean';

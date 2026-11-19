@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ComponentType, memo, useInsertionEffect } from 'react';
 
 import { useMemorize } from '@winglet/react-utils/hook';
@@ -33,7 +34,7 @@ export const withFieldInputErrorBoundary = (
     inputGeneration,
     inputSelection,
     ...props
-  }: FieldInputBindingProps) {
+  }: FieldInputBindingProps): ReactElement {
     const defaultValue = useMemorize(
       () => props.node.value,
       [props.node, inputGeneration],

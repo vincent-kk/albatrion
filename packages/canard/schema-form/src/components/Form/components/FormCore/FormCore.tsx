@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ForwardedRef, type ReactNode, forwardRef, memo } from 'react';
 
 import { withErrorBoundaryForwardRef } from '@winglet/react-utils/hoc';
@@ -25,11 +26,13 @@ const ErrorBoundedFormRoot = withErrorBoundaryForwardRef(
 
 /** Render a schema-driven form with an instance reporter and current-root imperative handle. */
 export const FormCore = memo(
-  forwardRef<FormHandle, FormProps>((props, ref) => (
-    <FormErrorContextProvider onError={props.onError}>
-      <ErrorBoundedFormRoot {...props} ref={ref} />
-    </FormErrorContextProvider>
-  )),
+  forwardRef<FormHandle, FormProps>(
+    (props, ref): ReactElement => (
+      <FormErrorContextProvider onError={props.onError}>
+        <ErrorBoundedFormRoot {...props} ref={ref} />
+      </FormErrorContextProvider>
+    ),
+  ),
 ) as <
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,

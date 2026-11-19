@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ChangeEvent, useState } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
@@ -20,7 +21,7 @@ export const FieldInputDateFormat = ({
   className,
   minimum,
   maximum,
-}: FieldInputDateFormatProps) => {
+}: FieldInputDateFormatProps): ReactElement => {
   const [type] = useState(() =>
     isRenderableDateInputValue(jsonSchema.format, defaultValue)
       ? jsonSchema.format

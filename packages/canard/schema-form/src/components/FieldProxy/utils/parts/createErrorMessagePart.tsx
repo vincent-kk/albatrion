@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ComponentType, memo } from 'react';
 
 import { NULL_FUNCTION } from '@winglet/common-utils/constant';
@@ -27,7 +28,7 @@ export const createErrorMessagePart = (
   const isFallback = Renderer === FallbackErrorMessageRenderer;
   const render = function ErrorMessage(
     props: Partial<ErrorMessageRendererProps>,
-  ) {
+  ): ReactElement {
     const rendererProps: ErrorMessageRendererProps = {
       path: node.path,
       name: node.name,
@@ -44,7 +45,9 @@ export const createErrorMessagePart = (
   };
   return memo(
     hasArrayAncestor(node)
-      ? function ErrorMessage(props: Partial<ErrorMessageRendererProps>) {
+      ? function ErrorMessage(
+          props: Partial<ErrorMessageRendererProps>,
+        ): ReactElement {
           useFieldNodeTracker(node, FieldNodeEventType.UpdatePath);
           return render(props);
         }

@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 import { useLazyConstant } from '@winglet/react-utils/hook';
@@ -36,7 +37,7 @@ export const DeferredFieldProxy = ({
   preparedRevision,
   NodeProxy,
   ...proxyProps
-}: DeferredFieldProxyProps) => {
+}: DeferredFieldProxyProps): ReactElement | null => {
   const node = proxyProps.node;
   const [revealed, setRevealed] = useState(
     () =>

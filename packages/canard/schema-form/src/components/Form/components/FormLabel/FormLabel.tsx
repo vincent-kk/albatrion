@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { memo } from 'react';
 
 import { useReference } from '@winglet/react-utils/hook';
@@ -60,7 +61,7 @@ import type { FormLabelProps } from './types/props';
  * ```
  */
 export const FormLabel = memo(
-  ({ path, style, className, children }: FormLabelProps) => {
+  ({ path, style, className, children }: FormLabelProps): ReactElement => {
     const overridePropsRef = useReference({
       style,
       className,

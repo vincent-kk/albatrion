@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type PropsWithChildren, useId, useMemo } from 'react';
 
 import type { FormProps } from '@/schema-form/components/Form';
@@ -19,7 +20,7 @@ export const WorkspaceContextProvider = ({
   attachedFilesMap,
   context: inputContext,
   children,
-}: PropsWithChildren<UserDefinedContextProviderProps>) => {
+}: PropsWithChildren<UserDefinedContextProviderProps>): ReactElement => {
   const external = useExternalFormContext();
   const formId = formatSegment(useId());
   const context = useContextSnapshot(inputContext);

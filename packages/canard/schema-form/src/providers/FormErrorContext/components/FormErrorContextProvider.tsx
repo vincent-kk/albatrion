@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type PropsWithChildren, useInsertionEffect, useState } from 'react';
 
 import type { Fn } from '@aileron/declare';
@@ -13,7 +14,7 @@ export const FormErrorContextProvider = ({
   children,
 }: PropsWithChildren<{
   onError?: Fn<[record: FormErrorRecord]>;
-}>) => {
+}>): ReactElement => {
   const [reporter] = useState(() => {
     const service = createFormErrorService();
     service.onError = onError;

@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import {
   type ComponentType,
   type PropsWithChildren,
@@ -204,7 +205,7 @@ export const ExternalFormContextProvider = ({
   context: inputContext,
   validatorFactory,
   children,
-}: PropsWithChildren<ExternalFormContextProviderProps>) => {
+}: PropsWithChildren<ExternalFormContextProviderProps>): ReactElement => {
   const parent = useContext(ExternalFormContext);
   const pluginManager =
     pluginScope === undefined
