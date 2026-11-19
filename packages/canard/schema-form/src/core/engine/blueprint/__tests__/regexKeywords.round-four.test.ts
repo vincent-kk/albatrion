@@ -32,3 +32,32 @@ it.each([
     });
   },
 );
+
+
+it.each([
+  '/[a/b c]/',
+  '/[a b]/',
+  '/[a/b]/',
+  '/[/]/',
+  '/[^/]/',
+  '/[a\\]b/]/',
+  '/[^a b]/',
+  '/[ab]tail/',
+  '/head[a/b]tail/',
+  '/[a/b]{1,2}/',
+])('keeps character class literal %s equivalent to an opaque literal', (literal) => {
+  const paths: string[] = [];
+  const actual = replaceExpressionPaths(
+    '{ return ' + literal + '.test(../code); }',
+    (path) => { paths.push(path); return 'VALUE'; },
+  );
+  expect({ actual, paths }).toEqual({
+    actual: '{ return ' + literal + '.test(VALUE); }',
+    paths: ['../code'],
+  });
+});
+
+it('keeps a standalone class literal and rewrites only division operand paths', () => {
+  expect(replaceExpressionPaths('{ return /[a/b]/; }', () => 'VALUE')).toBe('{ return /[a/b]/; }');
+  expect(replaceExpressionPaths('a / [b][0] + ../code', () => 'VALUE')).toBe('a / [b][0] + VALUE');
+});
