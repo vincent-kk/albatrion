@@ -231,6 +231,8 @@ The function passed as the first argument to the `DataLoader` constructor.
 4. The value at index `i` must correspond to the key at index `i`.
 5. Use `Error` instances (not thrown exceptions) to represent per-key failures.
 
+Per-key `Error` results remain cached until `clear(key)` or `clearAll()`. Let batch-wide failures reject the batch promise so those cache entries are cleared automatically.
+
 Violating rules 3 or 4 causes all keys in the affected batch to be rejected with a `DataLoaderError`.
 
 ---
