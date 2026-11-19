@@ -4,6 +4,7 @@ import type { ValidateFunction } from 'ajv';
 
 import type { Dictionary, Fn } from '@aileron/declare';
 
+import { compileWithSchemaFallback } from './utils/compileWithSchemaFallback';
 import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
 import { collectGuardDynamicAnchors } from './utils/dynamicScope/collectGuardDynamicAnchors';
 import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
@@ -64,7 +65,7 @@ export const createGuardCompiler = (
       ? collectGuardDynamicAnchors(root, registration.key, pointer, guard)
       : {};
   const fragment = pointer.includes('%') ? pointer.replace(/%/g, '%25') : pointer;
-  const validate = guard.compile({ $ref: `${registration.key}#${fragment}` });
+  const validate = compileWithSchemaFallback(guard, ajv, () => guard.compile({ $ref: `${registration.key}#${fragment}` }));
   if (Object.keys(dynamicAnchors).length === 0)
     return (value) => !!validate(value);
   return (value) =>

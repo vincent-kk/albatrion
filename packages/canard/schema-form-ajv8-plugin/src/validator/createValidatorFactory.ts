@@ -1,6 +1,7 @@
 import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
 import type { Ajv } from 'ajv';
 
+import { compileWithSchemaFallback } from './utils/compileWithSchemaFallback';
 import { registerSchemaRoot, type SchemaRootRegistry } from './utils/registerSchemaRoot';
 import { createRootPathRewriter } from './utils/createRootPathRewriter';
 import { createSchemaRootRegistry } from './utils/createSchemaRootRegistry';
@@ -21,7 +22,7 @@ export const createValidatorFactory = (ajv: Ajv, registry?: SchemaRootRegistry) 
     const transient = registration.validationCopy
       ? { $async: true, $ref: registration.key }
       : { ...JSON.parse(JSON.stringify(jsonSchema)), $async: true };
-    const validate = registration.validationAjv.compile(transient);
+    const validate = compileWithSchemaFallback(registration.validationAjv, ajv, () => registration.validationAjv.compile(transient));
     registration.validationAjv.removeSchema(transient);
     // AJV reports paths of an inlined `$ref` under the reference string, so the root's key stands in for `#`.
     const toAuthoredPath = registration.validationCopy ? createRootPathRewriter(`${registration.key}/`) : undefined;
