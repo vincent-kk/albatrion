@@ -102,6 +102,7 @@ const result = applyPatch(source, patches);
 
 ## Notes
 
+Container copies retain ordinary or null prototypes at every written depth.
 Immutable mode structurally shares containers with the source and patch values. A final
 root add or replace returns its value itself, just as a nested add installs that value
 itself. If an object has several paths, only a path written by a patch is detached.

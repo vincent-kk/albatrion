@@ -36,7 +36,7 @@ const clone: <Type>(target: Type, maxDepth?: number) => Type
 
 ## Returns
 
-A new deep clone with identical structure and values
+A deep clone of supported state and copied properties, subject to the known limits below
 
 ## Examples
 
@@ -210,6 +210,13 @@ console.log(cloned.b.c); // 999`}
 - **Type-Specific Cloning**: Specialized handlers for Date, RegExp, Map, Set, TypedArrays
 
 **Known Limits:**
+- Map, Set, Date, RegExp and Array subclasses retain built-in state and prototypes,
+  but additional own properties and constructor-set fields are not copied. Their
+  constructors do not run, so private fields are not initialized and methods that
+  require those fields can throw. Normalize to native built-ins when that state is required.
+- Deep ordinary object and array graphs, including cycles, use work frames rather
+  than the call stack. User getters, constructors, proxies and paths made only
+  of non-plain built-ins remain subject to their own call-stack limits.
 - Typed-array subclasses with default slice/species run their constructor once and retain their
   prototype. DataView subclasses do not run their constructor, but return native DataView
   copies without the subclass prototype; both preserve the selected data and independent
