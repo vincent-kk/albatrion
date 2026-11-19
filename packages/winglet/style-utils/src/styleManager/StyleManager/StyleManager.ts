@@ -67,6 +67,8 @@ export class StyleManager {
     Map<string, StyleManager>
   >();
   private __processedStyles__ = new Map<string, string>();
+  /** Bounded batch-only EOF closure cache, discarded when styles are removed. */
+  private __terminatedStyles__: Map<string, string> | undefined;
   private __element__: HTMLStyleElement | null = null;
   private __sheet__: CSSStyleSheet | null = null;
   private __dirty__ = false;
@@ -203,7 +205,10 @@ export class StyleManager {
    * ```
    */
   public remove(id: string): void {
-    if (this.__processedStyles__.delete(id)) this.__scheduleDOMUpdate__();
+    if (this.__processedStyles__.delete(id)) {
+      this.__terminatedStyles__?.clear();
+      this.__scheduleDOMUpdate__();
+    }
   }
 
   /**
@@ -269,6 +274,7 @@ export class StyleManager {
 
     // 4. Clean up internal state
     this.__processedStyles__.clear();
+    this.__terminatedStyles__?.clear();
     this.__dirty__ = false;
 
     this.__registry__.delete(this.scopeId);
@@ -298,8 +304,24 @@ export class StyleManager {
     const styleCount = this.__processedStyles__.size;
     const styles = new Array(styleCount);
     let index = 0;
-    for (const css of this.__processedStyles__.values())
-      styles[index++] = styleCount > 1 ? terminateStatement(css) : css;
+    if (styleCount === 1) {
+      for (const css of this.__processedStyles__.values())
+        styles[index++] = css;
+    } else {
+      const terminated = (this.__terminatedStyles__ ??= new Map<
+        string,
+        string
+      >());
+      if (terminated.size > styleCount * 2) terminated.clear();
+      for (const css of this.__processedStyles__.values()) {
+        let closed = terminated.get(css);
+        if (closed === undefined) {
+          closed = terminateStatement(css);
+          terminated.set(css, closed);
+        }
+        styles[index++] = closed;
+      }
+    }
     const result = styles.join('\n');
     this.__applyCSS__(result);
   }
