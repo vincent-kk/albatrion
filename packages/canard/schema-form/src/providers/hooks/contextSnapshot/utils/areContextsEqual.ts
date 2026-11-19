@@ -75,10 +75,11 @@ export const areContextsEqual = (left: unknown, right: unknown): boolean => {
         if (left[i] !== right[i]) pending.push(left[i], right[i]);
       continue;
     }
+    const prototype = Object.getPrototypeOf(left);
     if (
-      (Object.getPrototypeOf(left) === Object.prototype &&
+      (prototype === Object.prototype &&
         Object.getPrototypeOf(right) === Object.prototype) ||
-      (isPlainObject(left) && isPlainObject(right))
+      (prototype !== Map.prototype && isPlainObject(left) && isPlainObject(right))
     ) {
       const keys = Object.keys(left);
       if (keys.length !== Object.keys(right).length) return false;
