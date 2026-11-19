@@ -102,7 +102,7 @@ export function removeBlock(content: string, blockId: string): string {
  * Decide whether a block's body still carries the manifest's content.
  *
  * `upsertBlock` appends a newline when the source file lacks one, so a body
- * read back may hold one byte the source did not. Both readings are checked,
+ * read back may hold one byte the source did not. Only that added byte is optional,
  * which keeps the verdict identical to the file-copy path's hash comparison.
  * A body whose line endings a `core.autocrlf` checkout turned into CRLF is
  * checked again with LF endings, since only the line endings changed.
@@ -117,10 +117,12 @@ export function blockBodyMatches(
   expected: Sha256Hex,
   encoding: BufferEncoding = 'utf8',
 ): boolean {
+  if (!body.endsWith('\n') && !body.endsWith('\r')) return false;
   if (hashEquals(hashContent(Buffer.from(body, encoding)), expected))
     return true;
   if (
     body.endsWith('\n') &&
+    !body.endsWith('\n\n') &&
     hashEquals(hashContent(Buffer.from(body.slice(0, -1), encoding)), expected)
   )
     return true;
@@ -140,6 +142,7 @@ function lfReadingMatches(
   if (hashEquals(hashContent(Buffer.from(lf, encoding)), expected)) return true;
   return (
     lf.endsWith('\n') &&
+    !lf.endsWith('\n\n') &&
     hashEquals(hashContent(Buffer.from(lf.slice(0, -1), encoding)), expected)
   );
 }
