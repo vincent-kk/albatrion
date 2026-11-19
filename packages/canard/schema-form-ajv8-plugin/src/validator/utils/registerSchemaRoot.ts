@@ -23,10 +23,17 @@ export interface SchemaRootRegistration {
   guardAjv?: Ajv;
   readonly validationCopy?: JSONSchema;
   guardCopy?: JSONSchema;
-  /** `refs` entries the validation registration added; empty until `registerValidationRoot` succeeds. */
-  validationRefs: readonly string[];
   /** Whether `validationCopy` is registered on `validationAjv`; set only by a successful `registerValidationRoot`. */
   validationRegistered: boolean;
+  /** Exact registry values added by this registration; replaced application entries survive release. */
+  validationOwnership?: {
+    /** Schema environment originally registered under the plugin key. */
+    readonly environment: unknown;
+    /** Reference entries absent before this registration. */
+    readonly refs: readonly (readonly [string, unknown])[];
+    /** Whether the environment was absent from the application's schema registry. */
+    readonly isCacheOwned: boolean;
+  };
   guardRefs?: readonly string[];
   readonly key: string;
   readonly ids: readonly string[];
@@ -89,7 +96,7 @@ export const registerSchemaRoot = (
   const validationCopy: JSONSchema | undefined = ids.length
     ? JSON.parse(JSON.stringify(root)) : undefined;
   const registration: SchemaRootRegistration = {
-    baseAjv, validationAjv, validationCopy, validationRefs: [], validationRegistered: false, key, ids,
+    baseAjv, validationAjv, validationCopy, validationRegistered: false, key, ids,
     directGuards: [], guardChecks: new WeakMap(), hasDynamicKeywords,
   };
   registrations.push(registration);

@@ -2,10 +2,15 @@ import type { SchemaRootRegistration } from './registerSchemaRoot';
 
 /** Remove Ajv's strong references when a root is released or collected. */
 export const disposeSchemaRoot = (registration: SchemaRootRegistration): void => {
-  if (registration.validationRegistered && registration.validationCopy) {
-    registration.validationAjv.removeSchema(registration.key);
-    registration.validationAjv.removeSchema(registration.validationCopy);
-    for (const ref of registration.validationRefs) registration.validationAjv.removeSchema(ref);
+  const ownership = registration.validationOwnership;
+  if (ownership) {
+    const ajv = registration.validationAjv;
+    if (ajv.schemas[registration.key] === ownership.environment) {
+      if (ownership.isCacheOwned) ajv.removeSchema(registration.key);
+      else delete ajv.schemas[registration.key];
+    }
+    for (const [key, value] of ownership.refs)
+      if (ajv.refs[key] === value) delete ajv.refs[key];
   }
   if (registration.guardAjv) {
     registration.guardAjv.removeSchema(registration.key);

@@ -22,7 +22,7 @@ const restoreInPlace = <T>(target: Dictionary<T>, snapshot: [string, T][]): void
  * so consumer schemas, string aliases and the order siblings copy survive, the copy's cache
  * entry is removed, and a later call validates the copy again.
  * @param registration - Root registration; a root without `$id` has no `validationCopy` and is skipped
- * @returns Nothing; on success fills `validationRefs` and sets `validationRegistered`
+ * @returns Nothing; on success records owned registry entries and sets `validationRegistered`
  * @throws The error of AJV's `addSchema`, after the rollback
  */
 export const registerValidationRoot = (registration: SchemaRootRegistration): void => {
@@ -39,7 +39,11 @@ export const registerValidationRoot = (registration: SchemaRootRegistration): vo
     restoreInPlace(ajv.schemas, schemas);
     throw error;
   }
-  const before = new Set(refs.map(([ref]) => ref));
-  registration.validationRefs = Object.keys(ajv.refs).filter((ref) => !before.has(ref));
+  const environment = ajv.schemas[registration.key];
+  registration.validationOwnership = {
+    environment,
+    refs: Object.entries(ajv.refs).filter(([key]) => !refs.some(([previous]) => previous === key)),
+    isCacheOwned: !schemas.some(([, value]) => value === environment),
+  };
   registration.validationRegistered = true;
 };
