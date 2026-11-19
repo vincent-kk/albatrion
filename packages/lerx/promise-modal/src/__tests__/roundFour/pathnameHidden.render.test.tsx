@@ -12,7 +12,7 @@ import { ModalManager } from '@/promise-modal/app';
  * Angle EQ5: the default pathname hook, Activity / Suspense hide of the Provider,
  * and a navigation that happens while the Provider is hidden.
  */
-const Activity = (React as { Activity?: React.ComponentType<any> }).Activity;
+const Activity = React.Activity;
 const Suspender = lazy(() => new Promise<{ default: () => null }>(() => {}));
 
 function Visibility({
@@ -31,9 +31,13 @@ function Visibility({
 }
 
 let navigation: EventTarget | undefined;
+let navigationDescriptor: PropertyDescriptor | undefined;
 function installNavigationApi() {
   navigation = new EventTarget();
-  (window as { navigation?: EventTarget }).navigation = navigation;
+  Object.defineProperty(window, 'navigation', {
+    configurable: true,
+    value: navigation,
+  });
 }
 function navigate(path: string) {
   window.history.pushState(null, '', path);
@@ -41,12 +45,15 @@ function navigate(path: string) {
 }
 
 beforeEach(() => {
+  navigationDescriptor = Object.getOwnPropertyDescriptor(window, 'navigation');
   window.history.replaceState(null, '', '/a');
 });
 afterEach(() => {
   cleanup();
   ModalManager.reset();
-  delete (window as { navigation?: EventTarget }).navigation;
+  if (navigationDescriptor)
+    Object.defineProperty(window, 'navigation', navigationDescriptor);
+  else Reflect.deleteProperty(window, 'navigation');
   navigation = undefined;
   window.history.replaceState(null, '', '/');
   vi.restoreAllMocks();

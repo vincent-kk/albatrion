@@ -116,7 +116,7 @@ describe('r4-contracts CommonJS consumer of an ESM-only export map', () => {
   };
 
   it('documents the nodenext limitation while keeping require explicitly unavailable', () => {
-    const ts = requireFromHere('typescript') as typeof import('typescript');
+    const ts: typeof import('typescript') = requireFromHere('typescript');
     const { root, file } = makeConsumer();
     const program = ts.createProgram([file], {
       module: ts.ModuleKind.NodeNext,

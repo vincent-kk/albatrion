@@ -14,7 +14,7 @@ import { ModalManager } from '@/promise-modal/app';
  * abort while the user works elsewhere on the page. SPECIFICATION.md:137 says only
  * `alive && visible && dimmed && !settled` modals participate in focus.
  */
-const Activity = (React as { Activity?: React.ComponentType<any> }).Activity;
+const Activity = React.Activity;
 const Suspender = lazy(() => new Promise<{ default: () => null }>(() => {}));
 
 afterEach(() => {

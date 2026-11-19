@@ -21,7 +21,7 @@ import { visible as foregroundVisible } from '@/promise-modal/components/Foregro
  * Angle RG1 (round 3 items 2 and 5): a manualDestroy request that settles while
  * its Provider is hidden, by the documented hidden-caller cancellation or by abort.
  */
-const Activity = (React as { Activity?: React.ComponentType<any> }).Activity;
+const Activity = React.Activity;
 const Suspender = lazy(() => new Promise<{ default: () => null }>(() => {}));
 function Visibility({
   hidden,
