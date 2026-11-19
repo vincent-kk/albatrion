@@ -9,7 +9,7 @@ export const generateFragment = (random: () => number): string => {
     const positions = [statement + css + rule, css + statement + rule, css + rule + statement];
     css = (random() < 0.5 ? '@media (min-width:1px){' : '@layer group{') + positions[Math.floor(random() * positions.length)] + '}';
   }
-  switch (Math.floor(random() * 9)) {
+  switch (Math.floor(random() * 10)) {
     case 0: return css.slice(0, Math.floor(random() * css.length));
     case 1: return css + '/* unfinished';
     case 2: return css + '.tail{content:"unfinished' + (random() < 0.5 ? '\\' : '');
@@ -18,6 +18,7 @@ export const generateFragment = (random: () => number): string => {
     case 5: return '};;' + css + ';}';
     case 6: return '<!--' + css + '-->';
     case 7: return '\uFEFF' + css;
+    case 8: return css + '.tail{background:url(unclosed' + (random() < 0.5 ? '\\' : '');
     default: return css;
   }
 };
