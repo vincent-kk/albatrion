@@ -15,8 +15,11 @@ export const createValidatorFactory =
     const notRequiredKeys = new Map<string, string | null>();
     return async (data) => {
       try {
-        const valid = await validate(data);
-        return valid ? null : transformErrors(validate.errors ?? [], jsonSchema, notRequiredKeys);
+        const result = validate(data);
+        if (typeof result === 'boolean')
+          return result ? null : transformErrors(validate.errors ?? [], jsonSchema, notRequiredKeys);
+        await result;
+        return null;
       } catch (thrown) {
         if (thrown instanceof Error && 'errors' in thrown && Array.isArray(thrown.errors))
           return transformErrors(thrown.errors, jsonSchema, notRequiredKeys);
