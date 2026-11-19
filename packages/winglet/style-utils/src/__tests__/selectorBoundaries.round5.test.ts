@@ -10,3 +10,10 @@ it('distinguishes descendant empty-namespace selectors from namespace prefixes a
     expect(compressCss(input), input).toContain(selector);
   }
 });
+
+it('retains attribute-operator trivia independently of selector combinator rules', () => {
+  for (const operator of ['~=', '|=', '^=', '$=', '*=', '=']) {
+    const input = `[ a ${operator} "b" ]{color:red}`;
+    expect(readStylesheet(compressCss(input)), input).toEqual(readStylesheet(input));
+  }
+});
