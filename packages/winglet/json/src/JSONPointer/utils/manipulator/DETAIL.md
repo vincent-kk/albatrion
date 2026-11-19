@@ -6,6 +6,8 @@
 - `setValue`는 포인터 경로를 따라 값을 설정하며, 필요한 중간 컨테이너를 자동 생성한다. 예약 멤버 세그먼트는 own 데이터 속성으로 기록되며 대상의 프로토타입은 변하지 않는다.
 - 어떤 경로에서도 `Object.prototype`을 포함한 상속 객체는 변경되지 않는다.
 
+숫자·문자열·불리언 같은 원시 중간값 아래의 쓰기가 실패하면 JSONPointerError의 INVALID_INPUT으로 보고합니다. 사용자 객체의 getter·setter가 던진 예외는 원시 중간값 실패로 바꾸지 않습니다.
+
 ## API Contracts
 
 - URI fragment 문자열은 percent escape를 한 번 해제한 뒤 RFC 6901 토큰을 해석합니다. 일반 `/` 포인터의 percent 문자는 그대로 키 데이터입니다. 잘못된 fragment escape는 `INVALID_POINTER_TYPE`으로 실패합니다.
