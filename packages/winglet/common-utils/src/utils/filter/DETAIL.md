@@ -6,7 +6,7 @@
 - 대상 전역(`Blob`/`Buffer`/`File`/`SharedArrayBuffer`)이 없는 실행 환경에서도 관련 판별자는 예외 없이 `false`를 반환한다.
 - own-속성 기반 판별(`isEmpty`/`isEmptyObject`/`isEmptyPlainObject`)은 `Object.prototype`에 나중에 추가된 속성의 영향을 받지 않는다.
 
-`isTypedArray`는 realm과 무관하게 typed array의 내장 length 슬롯을 확인하며 DataView는 제외합니다. 인스턴스의 사용자 정의 태그나 프로퍼티를 타입 증거로 삼지 않습니다.
+`isTypedArray`는 realm과 무관하게 typed array의 내장 타입 슬롯을 확인하며 DataView는 제외합니다. 인스턴스의 사용자 정의 태그나 프로퍼티를 타입 증거로 삼지 않습니다.
 
 ## API Contracts
 
