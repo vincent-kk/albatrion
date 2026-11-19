@@ -21,21 +21,32 @@ export const cloneInstance = (
 ): Ajv.Ajv => {
   const Constructor = instance.constructor;
   const reuseNullable = compilerOptions?.meta === false && Constructor === Ajv;
-  const clone = new Constructor({
+  const { meta, ...pathOptions } = compilerOptions ?? {};
+  const options: Ajv.Options = {
     ...instance._opts,
     cache: undefined,
     allErrors,
     validateSchema,
-    ...compilerOptions,
-    ...(reuseNullable ? { nullable: false } : {}),
+    ...pathOptions,
     ...(compilerOptions?.errorDataPath === 'object'
       ? { _errorDataPathProperty: false }
       : {}),
-  });
+  };
+  const { nullable, ...otherOptions } = options;
+  const metaOption = meta === undefined ? {} : { meta };
+  const clone = new Constructor(reuseNullable
+    ? { nullable: nullable === true ? false : nullable, ...otherOptions, ...metaOption }
+    : { ...options, ...metaOption });
   if (reuseNullable) {
-    // The live source RULES supply the nullable keyword's compiled meta-schema.
-    clone._opts.nullable = instance._opts.nullable;
-    clone._metaOpts.nullable = instance._opts.nullable;
+    // Constructor-only flags do not enter the live data compilation profile.
+    options.loopRequired = clone._opts.loopRequired;
+    options.serialize = clone._opts.serialize;
+    clone._opts = options;
+    const metaOptions = { ...options };
+    delete metaOptions.removeAdditional;
+    delete metaOptions.useDefaults;
+    delete metaOptions.coerceTypes;
+    clone._metaOpts = metaOptions;
   }
   if (
     (pointerCompilers.get(instance) === instance && !compilerOptions) ||

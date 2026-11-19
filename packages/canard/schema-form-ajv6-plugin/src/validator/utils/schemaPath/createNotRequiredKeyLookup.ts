@@ -12,8 +12,8 @@ import { localizeSchemaPath } from './localizeSchemaPath';
  *   is decoded in that order.
  * @returns The subschema, or undefined when the path matches no resource or names no schema.
  */
-const schemaAt = (root: object, resources: readonly SchemaResource[], schemaPath: string): unknown => {
-  const local = schemaPath.startsWith('#/') ? { schema: root, pointer: schemaPath } : localizeSchemaPath(schemaPath, resources);
+const schemaAt = (root: object, resources: readonly SchemaResource[] | (() => readonly SchemaResource[]), schemaPath: string): unknown => {
+  const local = schemaPath.startsWith('#/') ? { schema: root, pointer: schemaPath } : localizeSchemaPath(schemaPath, typeof resources === 'function' ? resources() : resources);
   if (!local) return undefined;
   let target: unknown = local.schema;
   for (const part of local.pointer.slice(2).split('/')) {
@@ -30,19 +30,20 @@ const schemaAt = (root: object, resources: readonly SchemaResource[], schemaPath
  * resolved once and reused.
  * @param root - The schema object AJV compiled, never the caller's object, so a later mutation by
  *   the caller cannot name a key the validator did not enforce.
- * @param resources - Resources of `root`, longest id first (see `collectSchemaResources`).
+ * @param resources - Resources or their lazy supplier, evaluated only for nonlocal schema paths.
  * @returns A function from a `not` issue's schema path to the one name its `required` lists, or
  *   undefined when the schema requires no single string name.
  */
-export const createNotRequiredKeyLookup = (root: object, resources: readonly SchemaResource[]) => {
-  const keys = new Map<string, string | null>();
+export const createNotRequiredKeyLookup = (root: object, resources: readonly SchemaResource[] | (() => readonly SchemaResource[])) => {
+  let keys: Map<string, string | null> | undefined;
   return (schemaPath: string): string | undefined => {
-    let key = keys.get(schemaPath);
+    const cache = keys ??= new Map<string, string | null>();
+    let key = cache.get(schemaPath);
     if (key === undefined) {
       const schema = schemaAt(root, resources, schemaPath);
       const required = typeof schema === 'object' && schema !== null ? (schema as Dictionary<unknown>).required : null;
       key = Array.isArray(required) && required.length === 1 && typeof required[0] === 'string' ? required[0] : null;
-      keys.set(schemaPath, key);
+      cache.set(schemaPath, key);
     }
     return key ?? undefined;
   };

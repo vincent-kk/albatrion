@@ -10,12 +10,17 @@ import type { ErrorObject } from 'ajv';
  *   a root without resources, which is the default, or `createChildSchemaPathTest` for one with them.
  * @param notRequiredKeyOf - Lookup from a `not` issue's schema path to the single name its schema
  *   requires (see `createNotRequiredKeyLookup`); without it `not` issues carry no rejected key.
+ * @param getContext - Lazy metadata for special schema-dependent paths, unused by ordinary errors.
  * @returns One issue per AJV6 issue, in order, with a JSON Pointer data path.
  */
 export const transformDataPath = (
   errors: ErrorObject[],
   isChildPath: (schemaPath: string) => boolean = isChildSchemaPath,
   notRequiredKeyOf?: (schemaPath: string) => string | undefined,
+  getContext?: () => {
+    isChildPath: (schemaPath: string) => boolean;
+    notRequiredKeyOf: (schemaPath: string) => string | undefined;
+  },
 ): ValidationIssue[] => {
   const result = new Array<ValidationIssue>(errors.length);
   for (let i = 0, l = errors.length; i < l; i++) {
@@ -31,7 +36,8 @@ export const transformDataPath = (
       if (typeof missingProperty === 'string')
         convertedDataPath += `/${missingProperty.replace(/~/g, '~0').replace(/\//g, '~1')}`;
     }
-    if (ajvError.keyword === 'false schema' && convertedDataPath && isChildPath(ajvError.schemaPath)) {
+    if (ajvError.keyword === 'false schema' && convertedDataPath &&
+      (getContext?.().isChildPath ?? isChildPath)(ajvError.schemaPath)) {
       const lastSlash = convertedDataPath.lastIndexOf('/');
       rejectedKey = convertedDataPath.slice(lastSlash + 1)
         .replace(/~1/g, '/').replace(/~0/g, '~');
@@ -45,8 +51,8 @@ export const transformDataPath = (
       rejectedKey = String(ajvError.params.propertyName);
     if (typeof ajvError.propertyName === 'string')
       rejectedKey = ajvError.propertyName;
-    if (ajvError.keyword === 'not' && notRequiredKeyOf)
-      rejectedKey = notRequiredKeyOf(ajvError.schemaPath) ?? rejectedKey;
+    if (ajvError.keyword === 'not')
+      rejectedKey = (notRequiredKeyOf ?? getContext?.().notRequiredKeyOf)?.(ajvError.schemaPath) ?? rejectedKey;
     const issue: ValidationIssue = {
       dataPath: convertedDataPath,
       schemaPath: ajvError.schemaPath,

@@ -2,14 +2,8 @@ import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
 import type Ajv from 'ajv';
 
 import { compileWithPointers } from './compileWithPointers';
-import { type SchemaResource, collectSchemaResources } from './schemaPath/collectSchemaResources';
-import { createChildSchemaPathTest } from './schemaPath/createChildSchemaPathTest';
-import { createNotRequiredKeyLookup } from './schemaPath/createNotRequiredKeyLookup';
-import { isChildSchemaPath } from './schemaPath/isChildSchemaPath';
+import { createSchemaPathContext } from './createSchemaValidator/createSchemaPathContext';
 import { transformDataPath } from './transformDataPath';
-
-/** Empty resource metadata when this same invocation found no identifier. */
-const NO_RESOURCES: readonly SchemaResource[] = [];
 
 /**
  * Compile one independent promise-returning validator with an authored native execution mode.
@@ -57,10 +51,8 @@ export const createSchemaValidator = (
   if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
   const compiled: object = transient ?? jsonSchema;
   const legacyId = ajv._opts.schemaId === 'id' || ajv._opts.schemaId === 'auto';
-  let issueContext: {
-    isChildPath: Parameters<typeof transformDataPath>[1];
-    notRequiredKeyOf: ReturnType<typeof createNotRequiredKeyLookup>;
-  } | undefined;
+  let issueContext: ReturnType<typeof createSchemaPathContext> | undefined;
+  const getIssueContext = () => issueContext ??= createSchemaPathContext(compiled, legacyId, hasResources);
   return async (data) => {
     let errors: Ajv.ErrorObject[];
     let originalErrors: Ajv.ErrorObject[] | undefined;
@@ -95,18 +87,7 @@ export const createSchemaValidator = (
           : thrown.errors;
       } else throw thrown;
     }
-    if (!issueContext) {
-      const resources = hasResources || legacyId
-        ? collectSchemaResources(compiled, legacyId)
-        : NO_RESOURCES;
-      issueContext = {
-        isChildPath: resources.length
-          ? createChildSchemaPathTest(resources)
-          : isChildSchemaPath,
-        notRequiredKeyOf: createNotRequiredKeyLookup(compiled, resources),
-      };
-    }
-    const issues = transformDataPath(errors, issueContext.isChildPath, issueContext.notRequiredKeyOf);
+    const issues = transformDataPath(errors, undefined, undefined, getIssueContext);
     if (isAsyncReference && originalErrors)
       for (let index = 0; index < issues.length; index++)
         issues[index].source = originalErrors[index];
