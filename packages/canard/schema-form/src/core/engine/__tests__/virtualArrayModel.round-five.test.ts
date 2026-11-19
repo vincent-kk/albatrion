@@ -10,7 +10,7 @@ it('virtual item groups follow 1000 generated array mutation histories', () => {
     let random = seed;
     const next = (limit: number) => {
       random = (Math.imul(random, 1664525) + 1013904223) >>> 0;
-      return random % limit;
+      return (random >>> 8) % limit;
     };
     const root = nodeFromJSONSchema({
       jsonSchema: {
