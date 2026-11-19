@@ -14,7 +14,9 @@ const section = (file: string, heading: string) => {
 
 it('control: the English invariants describe one run-wide plan for all targets', () => {
   const english = section('README.md', '## Architectural Invariants');
-  expect(english).toContain('All targets in one invocation share a run-wide plan');
+  expect(english).toContain(
+    'All targets in one invocation share a run-wide plan',
+  );
 });
 
 it('the Korean invariants no longer promise one consumer per invocation', () => {

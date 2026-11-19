@@ -85,11 +85,11 @@ A target is resolved from cwd first, then from every directory under the project
 
 ## AGENTS.md Marker Blocks
 
-One rule file becomes one block, so a block's body hash equals the manifest hash for that file and the copy/skip/diverged verdict matches the file path exactly.
+One rule file becomes one block. Validation, writing and body comparison use the same BOM-free, LF-normalized bytes; other source bytes retain their encoding. The manifest keeps raw file hashes and optional ruleBodyHashes for this comparison.
 
 ```
 <!-- AGENTS-ASSETS-SYNC:START:@canard/schema-form:rules/schema-form-rule.md -->
-…source bytes, verbatim…
+…normalized rule bytes…
 <!-- AGENTS-ASSETS-SYNC:END:@canard/schema-form:rules/schema-form-rule.md -->
 ```
 

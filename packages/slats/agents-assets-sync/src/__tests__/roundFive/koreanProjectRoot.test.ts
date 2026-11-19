@@ -1,4 +1,10 @@
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
@@ -9,7 +15,8 @@ import { resolveProjectRoot } from '../../index.js';
 const packageRoot = resolve(__dirname, '../../..');
 const roots: string[] = [];
 afterEach(() => {
-  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
+  for (const root of roots.splice(0))
+    rmSync(root, { recursive: true, force: true });
 });
 
 /** The README line that defines `projectRoot` under "Agent destinations". */
@@ -26,12 +33,13 @@ describe('README-ko_kr.md Agent destinations sentence', () => {
     const member = join(root, 'apps/web');
     mkdirSync(join(member, '.claude'), { recursive: true });
     expect(resolveProjectRoot('project', member).projectRoot).toBe(root);
-    expect(projectRootLine('README.md')).toContain('A marker outranks a nearer agent directory');
+    expect(projectRootLine('README.md')).toContain(
+      'A marker outranks a nearer agent directory',
+    );
   });
 
   it('the Korean sentence describes the root-marker precedence the code applies', () => {
     const korean = projectRootLine('README-ko_kr.md') ?? '';
-    // Current text: "the nearest ancestor owning any of .claude, AGENTS.md, .agents, .codex, .git".
     expect(korean).toMatch(/lockfile|pnpm-workspace|root marker|우선/);
   });
 });
