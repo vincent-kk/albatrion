@@ -33,7 +33,7 @@ it('ownership limits: loadSchema stays unused and a failed same-copy compile rem
   expect(adapter.compile(root)).toBe(first);
 });
 
-it('ownership limits: enabling a mutating option later refuses new compilation but keeps a cached snapshot', async () => {
+it('ownership limits: enabling a mutating option later refuses every later compile while an earlier function keeps its snapshot', async () => {
   const instance = new Ajv({ allErrors: true });
   const adapter = createValidator(instance);
   const root = {
@@ -41,7 +41,7 @@ it('ownership limits: enabling a mutating option later refuses new compilation b
   } satisfies import('@canard/schema-form').JSONSchema;
   const validate = adapter.compile(root);
   Reflect.set(instance.opts, 'coerceTypes', true);
-  expect(adapter.compile(root)).toBe(validate);
+  expect(() => adapter.compile(root)).toThrow(/coerceTypes/);
   expect(() => adapter.compile({ ...root })).toThrow(/coerceTypes/);
   expect(await validate(2)).not.toBeNull();
 });
