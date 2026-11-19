@@ -101,7 +101,7 @@ export const applyPatch = <Result extends JSONRoot = any>(
   const cloned = immutable ? new WeakSet<object>() : null;
   let result: any = source;
   if (cloned !== null && source !== null && typeof source === 'object') {
-    result = isArray(source) ? source.slice() : copyObject(source);
+    result = isArray(source) ? source.slice() : source instanceof Object ? { ...source } : copyObject(source);
     cloned.add(result);
   }
   let rootUnowned = false;
@@ -117,7 +117,7 @@ export const applyPatch = <Result extends JSONRoot = any>(
         patch.path === '' &&
         (patch.op !== Operation.MOVE || patch.from === '' || patch.from === '#');
       if (!readsOrReplacesRoot) {
-        result = isArray(result) ? result.slice() : copyObject(result);
+        result = isArray(result) ? result.slice() : result instanceof Object ? { ...result } : copyObject(result);
         cloned.add(result);
         rootUnowned = false;
       }

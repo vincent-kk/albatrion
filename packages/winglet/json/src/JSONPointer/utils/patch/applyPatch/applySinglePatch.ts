@@ -206,7 +206,7 @@ export const applySinglePatch = (
       typeof next === 'object' &&
       !cloned.has(next)
     ) {
-      next = isArray(next) ? next.slice() : copyObject(next);
+      next = isArray(next) ? next.slice() : next instanceof Object ? { ...next } : copyObject(next);
       cloned.add(next);
       if (reserved) setDataProperty(current, segment as string, next);
       else current[segment] = next;
