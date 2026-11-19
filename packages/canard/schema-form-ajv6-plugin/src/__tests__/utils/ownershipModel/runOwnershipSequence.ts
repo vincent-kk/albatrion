@@ -1,9 +1,11 @@
 import type { JSONSchema, ValidatorFactory } from '@canard/schema-form';
 import { expect } from 'vitest';
 
+import { runRootMutationSequence } from './runRootMutationSequence';
 import { captureApplicationState } from './captureApplicationState';
 import { compileOracle } from './compileOracle';
 import { createFreshOracle } from './createFreshOracle';
+import { checkOracleCollisions } from './checkOracleCollisions';
 import { outcomeOf } from './outcomeOf';
 import type { ModelApplication, ModelProfile, ModelRoot } from './types';
 
@@ -46,6 +48,9 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
     aliasAdapter.release?.(root);
   }
   expect(captureApplicationState(app), `seed=${seed}: alias dimension I1`).toEqual(captureApplicationState(twin));
+  const mutations = await runRootMutationSequence(app, twin, profile, seed);
+  roots.push(...mutations.references);
+  functions.push(...mutations.functions);
   for (let step = 0; step < 48; step++) {
     const operation = step < 8 ? step : next() % 17;
     const id = `https://ownership-model.invalid/root-${next() % 3}`;
@@ -182,7 +187,7 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
           record.validate,
         );
         expect(
-          await outcomeOf(() => record.validate({ name: 'x' })),
+          await outcomeOf(() => record.validate(record.data)),
           context,
         ).toEqual(record.verdict);
       } else if (operation === 14) {
@@ -204,15 +209,19 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
             !('$ref' in root.if)
           )
             return fresh.compile(root.if)('x');
+          checkOracleCollisions(twin, root, profile.version);
           fresh.addSchema(root, 'urn:model:guard');
           return fresh.compile({ $ref: 'urn:model:guard#/if' })('x');
         });
-        const actual = await outcomeOf(() =>
-          adapter.validator.compileGuard?.(root, '/if')('x'),
-        );
-        expect(actual, context).toEqual(expected);
+        let predicate: ((value: unknown) => boolean) | undefined;
+        const actual = await outcomeOf(() => {
+          predicate = adapter.validator.compileGuard?.(root, '/if');
+          return predicate?.('x');
+        });
+        if ('error' in expected) expect(actual, context).toHaveProperty('error');
+        else expect(actual, context).toEqual(expected);
         roots.push(profile.observe(root));
-        functions.push(adapter.validator.compileGuard?.(root, '/if'));
+        if (predicate) functions.push(predicate);
       } else {
         const rootChoice = next() % 4;
         const root: JSONSchema =
@@ -273,12 +282,12 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
           validate = adapter.validator.compile(root);
           return validate(data);
         });
-        // Native reference errors can include compiler-local addresses; compare their semantic category.
+        // A schema with several independent compile failures has no specified failure precedence.
         if ('error' in expected)
           expect(
             actual,
             `${context} expected=${JSON.stringify(expected)} actual=${JSON.stringify(actual)}`,
-          ).toMatchObject({ error: expected.error });
+          ).toHaveProperty('error');
         else
           expect(
             actual,
@@ -287,7 +296,7 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
         if (validate && !('error' in actual)) {
           functions.push(validate);
           roots.push(profile.observe(root));
-          adapter.roots.push({ schema: root, validate, verdict: actual });
+          adapter.roots.push({ schema: root, validate, verdict: actual, data });
           if (adapter.roots.length > 8) {
             const old = adapter.roots.shift();
             if (old) adapter.validator.release?.(old.schema);

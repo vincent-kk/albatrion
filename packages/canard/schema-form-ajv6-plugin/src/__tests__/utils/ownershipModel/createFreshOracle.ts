@@ -1,4 +1,5 @@
 import type { ModelApplication, ModelProfile } from './types';
+import { collectOracleIds } from './collectOracleIds';
 import { readOracleResource } from './readOracleResource';
 
 /** Rebuild requested raw references and current meta documents, never reusing compiled environments. */
@@ -58,43 +59,53 @@ export const createFreshOracle = <T extends ModelApplication>(
       else fresh.addSchema(schema, key);
     }
   const imported = new Set<unknown>();
+  const usedAliases = new Map<string, string>();
   const claimed = new Map<string, { schema: unknown; key: string }>();
-  const importReferences = (schema: unknown, base = '') => {
+  const importReferences = (schema: unknown, base = '', localIds?: Set<string>) => {
     if (!schema || typeof schema !== 'object') return;
-    if (Array.isArray(schema)) { for (const child of schema) importReferences(child, base); return; }
+    if (Array.isArray(schema)) { for (const child of schema) importReferences(child, base, localIds); return; }
     const nativeOptions = Reflect.get(source, '_opts');
     const legacyId = profile.version === 6 && nativeOptions && typeof nativeOptions === 'object' && Reflect.get(nativeOptions, 'schemaId') === 'id';
-    const ownId = Reflect.get(schema, legacyId ? 'id' : '$id');
+    const idKey = legacyId ? 'id' : '$id';
+    localIds ??= collectOracleIds(schema, base, idKey);
+    const ownId = Reflect.get(schema, idKey);
     const current = typeof ownId === 'string' ? new URL(ownId, base || 'https://oracle.invalid/').href : base;
     const ref = Reflect.get(schema, '$ref');
     if (typeof ref === 'string' && ref[0] !== '#') {
       const address = new URL(ref, current || 'https://oracle.invalid/').href;
+      if (!localIds.has(address.split('#')[0])) {
       const resource = readOracleResource(source, address);
+      if (!resource) {
+        const Missing = Reflect.get(source.constructor, 'MissingRefError');
+        if (typeof Missing === 'function') {
+          const nativeOptions = Reflect.get(source, 'opts');
+          throw Reflect.construct(Missing, profile.version === 8 ? [nativeOptions && typeof nativeOptions === 'object' ? Reflect.get(nativeOptions, 'uriResolver') : undefined, current, ref] : [current, ref]);
+        }
+        throw new Error(`Cannot resolve current application reference ${address}`);
+      }
+      for (const [key, value] of resource.aliases) usedAliases.set(key, value);
       if (resource && !imported.has(resource.schema)) {
-        const id = resource.schema && typeof resource.schema === 'object' ? Reflect.get(resource.schema, '$id') ?? Reflect.get(resource.schema, 'id') : undefined;
-        if (typeof id === 'string') {
-          const normalized = new URL(id, resource.key).href.replace(/#\/?$/, '');
+        const declarations = new Map<string, unknown>();
+        collectOracleIds(resource.schema, resource.key, idKey, undefined, declarations);
+        for (const [normalized, schema] of declarations) {
           const previous = claimed.get(normalized);
-          if (previous && previous.schema !== resource.schema) throw new Error(`Conflicting application schema id "${normalized}" through keys "${previous.key}" and "${address}"`);
-          claimed.set(normalized, { schema: resource.schema, key: address });
+          if (previous && JSON.stringify(previous.schema) !== JSON.stringify(schema)) throw new Error(`Conflicting application schema id "${normalized}" through keys "${previous.key}" and "${address}"`);
+          claimed.set(normalized, { schema, key: address });
         }
         imported.add(resource.schema);
         const copy = JSON.parse(JSON.stringify(resource.schema));
         fresh.addSchema(copy, resource.key);
         importReferences(resource.schema, resource.key);
       }
+      }
     }
-    for (const [name, child] of Object.entries(schema)) if (!['const', 'enum', 'default'].includes(name)) importReferences(child, current);
+    for (const [name, child] of Object.entries(schema)) if (!['const', 'enum', 'default'].includes(name)) importReferences(child, current, localIds);
   };
   importReferences(root);
   const targetRefs = Reflect.get(fresh, '_refs') ?? Reflect.get(fresh, 'refs');
   if (!targetRefs || typeof targetRefs !== 'object')
     throw new TypeError('Oracle reference registry is missing');
-  for (const key of Object.keys(targetRefs))
-    if (!Object.prototype.hasOwnProperty.call(refs, key))
-      Reflect.deleteProperty(targetRefs, key);
-  for (const [key, entry] of Object.entries(refs))
-    if (typeof entry === 'string') Reflect.set(targetRefs, key, entry);
+  for (const [key, entry] of usedAliases) Reflect.set(targetRefs, key, entry);
   const sourceOptions =
     Reflect.get(source, '_opts') ?? Reflect.get(source, 'opts');
   const options = Reflect.get(fresh, '_opts') ?? Reflect.get(fresh, 'opts');

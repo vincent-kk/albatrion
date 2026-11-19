@@ -24,5 +24,6 @@ export interface ModelProfile<T extends ModelApplication> {
 export interface ModelRoot {
   schema: JSONSchema;
   verdict: unknown;
+  data: unknown;
   validate: ReturnType<ValidatorFactory['compile']>;
 }

@@ -1,5 +1,6 @@
 import type { JSONSchema } from '@canard/schema-form';
 
+import { checkOracleCollisions } from './checkOracleCollisions';
 import { createFreshOracle } from './createFreshOracle';
 import { outcomeOf } from './outcomeOf';
 import { readOracleResource } from './readOracleResource';
@@ -13,6 +14,7 @@ export const compileOracle = async <T extends ModelApplication>(
   data: unknown,
 ) =>
   outcomeOf(async () => {
+    checkOracleCollisions(source, root, profile.version);
     const fresh = createFreshOracle(source, profile, root);
     const rootId =
       typeof root.$id === 'string' ? root.$id : Reflect.get(root, 'id');
