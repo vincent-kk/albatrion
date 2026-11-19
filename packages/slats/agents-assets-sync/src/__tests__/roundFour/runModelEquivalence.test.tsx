@@ -10,11 +10,13 @@ import * as core from '../../core/index.js';
 import type { RunResult } from '../../core/index.js';
 import type { ConsumerPackage, DefaultFlags } from '../../types/index.js';
 import { InjectApp } from '../../ui/InjectApp/InjectApp.js';
+import * as ui from '../../ui/index.js';
 import {
   consumerOf,
   installPackage,
   makeRoot,
   removeRoot,
+  runCliCode,
   writeAt,
 } from '../roundThree/fixture.js';
 
@@ -52,6 +54,7 @@ async function surface(
   targets: ConsumerPackage[],
   flags: DefaultFlags,
   choices = false,
+  packageArgs?: string[],
 ) {
   const original = core.runInjection;
   let model: RunResult | undefined;
@@ -63,7 +66,47 @@ async function surface(
   vi.spyOn(console, 'warn').mockImplementation(() => {});
   vi.spyOn(console, 'error').mockImplementation(() => {});
   let code: number;
-  if (mode !== 'ink') {
+  if (packageArgs) {
+    vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+    const tty = Object.getOwnPropertyDescriptor(process.stdout, 'isTTY');
+    Object.defineProperty(process.stdout, 'isTTY', {
+      value: mode === 'ink',
+      configurable: true,
+    });
+    vi.spyOn(ui, 'renderInjectApp').mockImplementation(
+      (input) =>
+        new Promise<number>((resolve, reject) => {
+          const app = render(
+            <InjectApp
+              {...input}
+              onExit={(value) => {
+                clearTimeout(timer);
+                app.unmount();
+                resolve(value);
+              }}
+            />,
+          );
+          const timer = setTimeout(() => {
+            app.unmount();
+            reject(new Error('terminal timeout'));
+          }, 4000);
+        }),
+    );
+    try {
+      code = await runCliCode([
+        ...packageArgs,
+        '--agent=claude',
+        '--scope=project',
+        '--yes',
+        `--root=${root}`,
+        ...(mode === 'json' ? ['--json'] : []),
+        ...(mode === 'plain' ? ['--no-interactive'] : []),
+      ]);
+    } finally {
+      if (tty) Object.defineProperty(process.stdout, 'isTTY', tty);
+      else Reflect.deleteProperty(process.stdout, 'isTTY');
+    }
+  } else if (mode !== 'ink') {
     vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
     vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
     code = await (mode === 'plain' ? renderPlain : renderJSON)(
@@ -125,7 +168,16 @@ async function compare(
   for (const mode of ['plain', 'json', 'ink'] as const) {
     const root = makeRoot('r4-model');
     roots.push(root);
-    const names = kind === 'shared' || kind === 'conflict' ? ['a', 'b'] : ['a'];
+    const names = [
+      'shared',
+      'conflict',
+      'later-single',
+      'comma',
+      'repeated',
+      'scope-alias',
+    ].includes(kind)
+      ? ['a', 'b']
+      : ['a'];
     const targets = names.map((name) =>
       consumerOf(
         installPackage(root, {
@@ -156,11 +208,43 @@ async function compare(
       mode === 'ink' && interactive
         ? { ...flags, agent: undefined, scope: undefined, yes: false }
         : flags;
-    const selected = kind === 'empty' ? [] : targets;
-    const first = await surface(mode, root, selected, inputFlags, interactive);
-    const second = await surface(mode, root, selected, inputFlags, interactive);
+    if (kind === 'later-single') await surface(mode, root, targets, flags);
+    const selected =
+      kind === 'empty'
+        ? []
+        : kind === 'later-single'
+          ? targets.slice(0, 1)
+          : targets;
+    const packageArgs =
+      kind === 'comma'
+        ? ['--package=@probe/a,@probe/b']
+        : kind === 'repeated'
+          ? ['--package=@probe/a', '--package=@probe/b']
+          : kind === 'scope-alias'
+            ? ['--package=@probe']
+            : undefined;
+    const first = await surface(
+      mode,
+      root,
+      selected,
+      inputFlags,
+      interactive,
+      packageArgs,
+    );
+    const second = await surface(
+      mode,
+      root,
+      selected,
+      inputFlags,
+      interactive,
+      packageArgs,
+    );
     outcomes.push({ first, second });
-    if (kind === 'conflict') {
+    if (kind === 'later-single') {
+      expect(first.code).toBe(0);
+      expect(first.files['.claude/skills/shared/a.md']).toBeDefined();
+      expect(first.files['.claude/skills/shared/b.md']).toBeUndefined();
+    } else if (kind === 'conflict') {
       expect(first.code).toBe(1);
       expect(Object.keys(first.files)).toEqual([]);
     } else if (kind === 'overlap') {
@@ -194,6 +278,10 @@ it.each([
   ['shared', { agent: ['claude', 'claude'] }],
   ['shared', { agent: ['claude', 'codex'] }],
   ['shared', { force: true }],
+  ['later-single', { force: true }],
+  ['comma', {}],
+  ['repeated', {}],
+  ['scope-alias', {}],
   ['diverged', { force: true }],
   ['diverged', {}],
   ['diverged', { dryRun: true }],
