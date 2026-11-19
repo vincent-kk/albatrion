@@ -1,4 +1,5 @@
 import { map as mapArray } from '@winglet/common-utils/array';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Nullable } from '@aileron/declare';
 
@@ -26,12 +27,12 @@ export const readBatchValue = <Self extends FieldNodeRecord<Self>>(
   let value = composeBatchValue(root, root.runtime.batchWrites ?? []);
   for (const name of names)
     value =
-      value !== null && typeof value === 'object'
+      value !== null && typeof value === 'object' && hasOwnProperty(value, name)
         ? Reflect.get(value, name)
         : undefined;
   if (!virtual) return value;
   return mapArray(virtual.blueprintNode.fields ?? [], (field) =>
-    value !== null && typeof value === 'object'
+    value !== null && typeof value === 'object' && hasOwnProperty(value, field)
       ? Reflect.get(value, field)
       : undefined,
   );
