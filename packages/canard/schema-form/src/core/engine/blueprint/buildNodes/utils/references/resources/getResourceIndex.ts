@@ -29,25 +29,42 @@ export const getResourceIndex = (
   };
   const resources = new Map<string, SchemaResource>();
   const scopes = new Map<string, SchemaResource>();
-  const stack = [
+  const stack: {
+    schema: typeof context.schema;
+    schemaPath: string;
+    resource: SchemaResource;
+    ancestors: Set<object>;
+    dialect: string | undefined;
+  }[] = [
     {
       schema: context.schema,
       schemaPath: '#',
       resource: root,
       ancestors: new Set<object>(),
+      dialect: undefined,
     },
   ];
   while (stack.length) {
     const entry = stack.pop()!;
     const { schema, schemaPath, ancestors } = entry;
     if (typeof schema === 'boolean' || ancestors.has(schema)) continue;
+    const dialect =
+      typeof schema.$schema === 'string' ? schema.$schema : entry.dialect;
+    const identifier = dialect?.includes('draft-04') ? schema.id : schema.$id;
+    const isModern =
+      dialect?.includes('2019-09') || dialect?.includes('2020-12');
     let resource = entry.resource;
-    if (typeof schema.$id === 'string') {
+    if (
+      typeof identifier === 'string' &&
+      identifier !== '' &&
+      identifier !== '#' &&
+      (isModern || identifier[0] !== '#')
+    ) {
       resource = {
         schema,
         schemaPath,
         uri: resolveResourceIdentifier(
-          schema.$id,
+          identifier,
           resource.uri,
           schemaPath,
           context,
@@ -64,6 +81,7 @@ export const getResourceIndex = (
           schemaPath: path,
           resource,
           ancestors: lineage,
+          dialect,
         });
     };
     for (const keyword of SCHEMA_SINGLE_KEYWORDS) {
