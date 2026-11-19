@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { Fragment, memo, useMemo } from 'react';
 
 import { NULL_FUNCTION } from '@winglet/common-utils/constant';
@@ -43,7 +44,7 @@ export const FieldProxy = ({
   FieldInput,
   FieldRenderer: InputFieldRenderer,
   Wrapper: InputWrapper,
-}: FieldProxyProps) => {
+}: FieldProxyProps): ReactElement | null => {
   const node = useFieldNode(inputNode || inputPath);
   const refresh = useFieldNodeTracker(node, FIELD_ERROR_TRACKING_EVENTS);
   const refreshRef = useReference(refresh);
@@ -73,7 +74,9 @@ export const FieldProxy = ({
   } = useFieldRendererContext();
 
   const { context, formId } = useWorkspaceContext();
-  const identifiers = node ? resolveFieldIdentifiers(formId, node.path, false) : null;
+  const identifiers = node
+    ? resolveFieldIdentifiers(formId, node.path, false)
+    : null;
   const jsonSchema = node?.jsonSchema;
   const presentation = (jsonSchema as JSONSchema | undefined)?.presentation;
   const required = resolveRequired(
@@ -97,7 +100,7 @@ export const FieldProxy = ({
     /** Compute the message below the owning boundary without leaking extra props to the renderer. */
     function RendererWithErrorMessage(
       props: Omit<FieldRendererProps, 'errorMessage'>,
-    ) {
+    ): ReactElement {
       const { node, context, formatError } = props;
       const errorMessage = useMemo(() => {
         return selectFieldErrorMessage(node, context, formatError);

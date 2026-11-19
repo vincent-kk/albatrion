@@ -1,4 +1,4 @@
-import { resolveFieldIdentifiers } from '@/schema-form/helpers/fieldId/resolveFieldIdentifiers';
+import type { ReactElement } from 'react';
 import { memo, useCallback, useMemo, useRef } from 'react';
 
 import { isArray } from '@winglet/common-utils/filter';
@@ -15,6 +15,7 @@ import {
   relayFieldNodeInput,
   writeFieldNodeInput,
 } from '@/schema-form/core';
+import { resolveFieldIdentifiers } from '@/schema-form/helpers/fieldId/resolveFieldIdentifiers';
 import {
   useInputControlContext,
   useWorkspaceContext,
@@ -50,7 +51,7 @@ export const FieldInputBridge = memo(
     overrideProps,
     PreferredFieldInput,
     NodeProxy,
-  }: FieldInputBridgeProps) => {
+  }: FieldInputBridgeProps): ReactElement | null => {
     const selected = useFieldInput(node, PreferredFieldInput !== null);
     const FieldInput = PreferredFieldInput || (selected && selected.Component);
     const formInputRenderer = useInputRendererContext();

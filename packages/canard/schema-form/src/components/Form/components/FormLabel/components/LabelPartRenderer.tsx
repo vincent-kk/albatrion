@@ -1,3 +1,5 @@
+import type { ReactElement } from 'react';
+
 import type { FieldRendererProps } from '@/schema-form/types';
 
 /** Forward only the standalone label's explicit override channel and its own context. */
@@ -11,7 +13,7 @@ export const LabelPartRenderer = ({
   htmlFor,
   labelId,
   inputId,
-}: FieldRendererProps) => {
+}: FieldRendererProps): ReactElement => {
   const resolvedPath =
     typeof htmlFor === 'string' && node.rootNode.findNodes(htmlFor).length === 1
       ? inputId

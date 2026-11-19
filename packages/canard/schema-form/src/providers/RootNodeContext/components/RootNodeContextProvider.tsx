@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import {
   type PropsWithChildren,
   type RefObject,
@@ -62,7 +63,7 @@ export const RootNodeContextProvider = ({
     onReset: Fn;
     errorVisibilityError?: SchemaFormError;
   }
->) => {
+>): ReactElement => {
   const external = useExternalFormContext();
   const { context, attachedFilesMap } = useWorkspaceContext();
   const reporter = useFormErrorContext();

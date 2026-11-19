@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ChangeEvent } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
@@ -20,7 +21,7 @@ export const FieldInputNumber = ({
   placeholder,
   style,
   className,
-}: FieldInputProps<Nullable<number>>) => {
+}: FieldInputProps<Nullable<number>>): ReactElement => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.validity.badInput) return;
     onChange(

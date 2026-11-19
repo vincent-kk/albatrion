@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import type { CSSProperties } from 'react';
 
 import type { LabelRendererProps } from '@/schema-form/types';
@@ -13,7 +14,7 @@ export const LabelRenderer = ({
   required,
   style,
   className,
-}: LabelRendererProps) => (
+}: LabelRendererProps): ReactElement<LabelRendererProps> => (
   <label htmlFor={htmlFor} id={id} style={style} className={className}>
     {required ? (
       <>

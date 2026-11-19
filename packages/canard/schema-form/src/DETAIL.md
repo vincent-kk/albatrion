@@ -36,7 +36,7 @@ TEST-001·006·012·013·085. 다른 검증 구현과의 차등 확인은 같은
 
 ### REACT-017 — 지원하는 렌더 수명을 실제로 검증합니다
 
-React 18·19에서 공유 렌더 시험을 실행합니다. 버전 전용 제외에는 이유를 두며 StrictMode·서버 렌더·하이드레이션·구독 재연결의 관측을 포함합니다. jsdom의 이벤트 모사가 실제 브라우저 IME 취소·캐럿·자동완성을 모두 증명하지는 않습니다. 입력 수명과 가상화의 한계는 [FieldInputBridge](components/FieldProxy/components/FieldInputBridge/DETAIL.md)와 [virtualization](helpers/virtualization/DETAIL.md)이 소유합니다.
+React 18·19에서 공유 렌더 시험을 실행합니다. 배포 선언의 컴포넌트 결과는 ReactElement와 null로 표현하여 지원 React 버전의 초기 타입 릴리스에도 없는 jsx-runtime.JSX 이름을 요구하지 않습니다. 버전 전용 제외에는 이유를 두며 StrictMode·서버 렌더·하이드레이션·구독 재연결의 관측을 포함합니다. jsdom의 이벤트 모사가 실제 브라우저 IME 취소·캐럿·자동완성을 모두 증명하지는 않습니다. 입력 수명과 가상화의 한계는 [FieldInputBridge](components/FieldProxy/components/FieldInputBridge/DETAIL.md)와 [virtualization](helpers/virtualization/DETAIL.md)이 소유합니다.
 
 TEST-021. 렌더 하니스의 추가 비동기 대기 생략은 미정착 엔진을 뜻하지 않습니다. reset의 동기 로드와 React 커밋 재대조를 구별하고 onError와 호스트 싱크를 각각 관찰합니다. nullable이 아닌 기본 글·수 입력의 clear는 DOM 비우기를 거쳐 undefined 전달을 확인하며 다른 위젯·배치 clear는 핸들 계약을 사용합니다.
 

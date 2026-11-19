@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import {
   type ComponentType,
   type MemoExoticComponent,
@@ -75,10 +76,12 @@ export const useChildFields = (
     getSnapshot,
     getNoManager,
   );
-  const cache = useLazyConstant<ChildInputOwnership & {
-    fields: WeakMap<FieldNode, ChildField>;
-    nextKey: number;
-  }>(() => ({
+  const cache = useLazyConstant<
+    ChildInputOwnership & {
+      fields: WeakMap<FieldNode, ChildField>;
+      nextKey: number;
+    }
+  >(() => ({
     fields: new WeakMap<FieldNode, ChildField>(),
     nextKey: 0,
     node: undefined,
@@ -113,10 +116,8 @@ export const useChildFields = (
             onChange,
             onFileAttach,
             ...restProps
-          }: ChildFieldProps) => {
-            if (
-              cache.externalValueRevision === undefined
-            )
+          }: ChildFieldProps): ReactElement => {
+            if (cache.externalValueRevision === undefined)
               cache.externalValueRevision = branch.revision(
                 EXTERNAL_VALUE_REVISION,
               );

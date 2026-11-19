@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ChangeEvent, type ComponentPropsWithRef, useMemo } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
@@ -20,7 +21,7 @@ export const FieldInputString = ({
   inputProps,
 }: FieldInputProps & {
   inputProps?: ComponentPropsWithRef<'input'>;
-}) => {
+}): ReactElement => {
   const type = useMemo(() => {
     if (jsonSchema?.format === 'password') return 'password';
     else if (jsonSchema?.format === 'email') return 'email';

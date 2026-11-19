@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import {
   type ForwardedRef,
   type RefObject,
@@ -52,7 +53,10 @@ import { submitForm } from '../utils/submitForm';
 import { FormRootProxy } from './FormRootProxy';
 
 /** Compose the fixed provider hierarchy and expose the current binding through the handle. */
-export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
+export const FormRoot = (
+  props: FormProps,
+  ref: ForwardedRef<FormHandle>,
+): ReactElement => {
   const formRef = useRef<HTMLFormElement>(null);
   const binding = useLazyConstant<RefObject<RootBinding>>(() => ({
     current: { reset: NOOP_FUNCTION, rebuild: NOOP_FUNCTION },

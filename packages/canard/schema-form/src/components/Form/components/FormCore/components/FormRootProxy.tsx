@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import {
   type PropsWithChildren,
   type Ref,
@@ -23,7 +24,7 @@ export const FormRootProxy = memo(
     onSubmit,
     onReset,
     children,
-  }: PropsWithChildren<FormRootProxyProps>) => (
+  }: PropsWithChildren<FormRootProxyProps>): ReactElement => (
     <form ref={formRef} onSubmit={onSubmit} onReset={onReset}>
       {children || <FieldProxy />}
     </form>

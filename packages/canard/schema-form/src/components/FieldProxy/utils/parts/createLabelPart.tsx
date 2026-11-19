@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ComponentType, memo } from 'react';
 
 import { NULL_FUNCTION } from '@winglet/common-utils/constant';
@@ -30,7 +31,7 @@ export const createLabelPart = (
   const render = function Label({
     children,
     ...props
-  }: Partial<LabelRendererProps>) {
+  }: Partial<LabelRendererProps>): ReactElement {
     const path = node.path;
     const name = node.name;
     const { inputId, labelId } = resolveFieldIdentifiers(formId, path, false);
@@ -53,7 +54,7 @@ export const createLabelPart = (
   };
   return memo(
     hasArrayAncestor(node)
-      ? function Label(props: Partial<LabelRendererProps>) {
+      ? function Label(props: Partial<LabelRendererProps>): ReactElement {
           useFieldNodeTracker(node, FieldNodeEventType.UpdatePath);
           return render(props);
         }

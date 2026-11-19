@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ComponentType, type ReactNode, memo } from 'react';
 
 import { useConstant, useReference } from '@winglet/react-utils/hook';
@@ -12,9 +13,11 @@ import type {
 import type { FormInputProps } from './types/props';
 
 /** Render the bound input with its selected frame. */
-const FramedInput = ({ Input }: FieldRendererProps) => <Input />;
+const FramedInput = ({ Input }: FieldRendererProps): ReactElement => <Input />;
 /** Render the bound input without a frame. */
-const UnwrappedInput = ({ Input }: FieldRendererProps) => <Input unwrapped />;
+const UnwrappedInput = ({ Input }: FieldRendererProps): ReactElement => (
+  <Input unwrapped />
+);
 
 /**
  * Renders form input fields with automatic type detection from schema.
@@ -91,7 +94,7 @@ export const FormInput = memo(
     unwrapped,
     FieldInput: InputFieldInput,
     ...restProps
-  }: FormInputProps<AllowedValue>) => {
+  }: FormInputProps<AllowedValue>): ReactElement => {
     const overridePropsRef = useReference(restProps);
     const FieldInput = useConstant(
       InputFieldInput as ComponentType<FieldInputProps>,

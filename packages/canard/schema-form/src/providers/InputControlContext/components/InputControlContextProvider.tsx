@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import {
   type PropsWithChildren,
   useInsertionEffect,
@@ -18,7 +19,7 @@ export const InputControlContextProvider = ({
   readOnly,
   disabled,
   children,
-}: PropsWithChildren<InputControlContextProviderProps>) => {
+}: PropsWithChildren<InputControlContextProviderProps>): ReactElement => {
   const isLocked = !!(readOnly || disabled);
   const committedLockRef = useRef(isLocked);
   // Publish before child layout setup without leaking uncommitted render values.

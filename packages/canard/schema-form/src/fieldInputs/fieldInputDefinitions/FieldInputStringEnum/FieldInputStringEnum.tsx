@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ChangeEvent, useMemo } from 'react';
 
 import { map } from '@winglet/common-utils/array';
@@ -31,7 +32,7 @@ export const FieldInputStringEnum = ({
   Nullable<string>,
   StringSchema,
   EnumLabelsContext
->) => {
+>): ReactElement => {
   const enumOptions = useMemo(
     () =>
       jsonSchema.enum
@@ -94,11 +95,14 @@ export const FieldInputStringEnum = ({
           {outOfDomainValue}
         </option>
       )}
-      {map(enumOptions, ({ value, label }) => (
-        <option key={value} value={value}>
-          {label}
-        </option>
-      ))}
+      {map(
+        enumOptions,
+        ({ value, label }): ReactElement => (
+          <option key={value} value={value}>
+            {label}
+          </option>
+        ),
+      )}
     </select>
   );
 };
