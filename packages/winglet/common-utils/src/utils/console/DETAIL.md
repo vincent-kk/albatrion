@@ -11,14 +11,14 @@
 - `printError(title, message, options?)` → 기본 제목색 `#ff0000`, 기본 본문색 `#ff6b6b`, 기본 이모지 `⚠️`.
 - `printWarning(title, message, options?)` → 기본 제목색 `#f59e0b`, 기본 본문색 `#d97706`, 기본 이모지 `⚠️`.
 - `PrintConsoleOptions`(`type.ts`)는 `info`/`emoji`/`titleColor`/`messageColor`/`details`를 모두 선택 필드로 정의하며 두 함수가 공유한다.
-- 인자 순서는 고정이다: 서식 문자열 → `info` 색상 → 제목 색상 → 메시지 줄 수만큼의 본문 색상 → (있다면) `details`.
+- 서식 문자열에는 제어하는 %c와 %s만 둡니다. info·이모지·제목·본문은 %s의 데이터 인자로 넘겨 사용자 텍스트의 퍼센트가 서식 지시자로 소비되지 않게 합니다. 색상과 대응 텍스트 인자는 같은 순서로 쌍을 이루며 details는 마지막 인자입니다.
 
 ## Acceptance Criteria
 
 ### default-styling — 기본 스타일 출력
 
 - 옵션 없이 호출하면 각 함수 고유의 기본 이모지·제목색·본문색으로 `console.error`/`console.warn`을 1회 호출한다.
-- 서식 문자열에 제목과 모든 메시지 줄이 포함된다.
+- 렌더된 콘솔 출력에 제목과 모든 메시지 줄이 그대로 포함됩니다.
 - 빈 메시지 배열로 호출해도 예외 없이 제목만 담아 호출한다.
 
 ### custom-options — 사용자 옵션 반영
