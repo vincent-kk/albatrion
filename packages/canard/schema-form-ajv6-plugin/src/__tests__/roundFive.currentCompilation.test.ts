@@ -28,7 +28,7 @@ it.each(entries)('current compilation: %s keeps a dollar-data keyword snapshot a
   const oldVerdict = await old(data);
   expect(oldVerdict).not.toBeNull();
   source.removeKeyword('snapshotLimit');
-  source.addKeyword('snapshotLimit', { type: 'string', $data: true, validate: () => true });
+  source.addKeyword('snapshotLimit', { type: 'string', $data: true, metaSchema: { type: 'number' }, validate: () => true });
   expect(await compile(root)(data)).toEqual(await compile({ ...root })(data));
   expect(await compile(root)(data)).toBeNull();
   expect(await old(data)).toEqual(oldVerdict);
