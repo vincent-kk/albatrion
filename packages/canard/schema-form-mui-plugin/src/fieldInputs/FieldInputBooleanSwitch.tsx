@@ -23,6 +23,8 @@ interface FieldInputBooleanSwitchProps
     MuiContext {
   label?: ReactNode;
   hideLabel?: boolean;
+  /** State labels; context.checkboxLabels takes priority. */
+  alias?: { checked?: ReactNode; unchecked?: ReactNode };
 }
 
 const FieldInputBooleanSwitch = ({
@@ -36,6 +38,7 @@ const FieldInputBooleanSwitch = ({
   label: labelProp,
   size: sizeProp = 'medium',
   hideLabel,
+  alias,
   misfit,
 }: FieldInputBooleanSwitchProps) => {
   const handleChange = useHandle(
@@ -49,9 +52,12 @@ const FieldInputBooleanSwitch = ({
     return [labelProp || name, sizeProp || context.size];
   }, [context, labelProp, name, sizeProp, hideLabel]);
 
+  const labels = context.checkboxLabels || alias;
+  const stateLabel = value === true ? labels?.checked : labels?.unchecked;
+
   return (
     <FormControlLabel
-      label={label}
+      label={stateLabel === undefined ? label : <>{label}<span aria-hidden="true"> {stateLabel}</span></>}
       htmlFor={id}
       required={required}
       disabled={disabled}
