@@ -1,4 +1,6 @@
 import {
+  chmod,
+  lstat,
   mkdir,
   mkdtemp,
   realpath,
@@ -21,7 +23,10 @@ export async function replaceDocument(
 ): Promise<void> {
   const destination = await realpath(fileAbs).catch(
     (error: NodeJS.ErrnoException) => {
-      if (error.code === 'ENOENT') return fileAbs;
+      if (error.code === 'ENOENT') return lstat(fileAbs).then(entry => {
+        if (entry.isSymbolicLink()) throw new Error(`Dangling document link: ${fileAbs}`);
+        return fileAbs;
+      }, (failure: NodeJS.ErrnoException) => { if (failure.code === 'ENOENT') return fileAbs; throw failure; });
       throw error;
     },
   );
@@ -33,12 +38,14 @@ export async function replaceDocument(
       throw error;
     },
   );
+  if (mode !== undefined && (mode & 0o222) === 0) throw new Error(`Document is read-only: ${fileAbs}`);
   const temporary = await mkdtemp(
     join(dirname(destination), '.agents-assets-sync-'),
   );
   try {
     const path = join(temporary, 'document');
     await writeFile(path, content, { mode });
+    if (mode !== undefined) await chmod(path, mode & 0o7777);
     await rename(path, destination);
   } finally {
     await rm(temporary, { recursive: true, force: true });

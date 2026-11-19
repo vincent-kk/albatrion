@@ -58,7 +58,7 @@ const projectArgs = (root: string, agent = 'codex', ...extra: string[]) => [
 ];
 
 describe('user scope: a dotfiles link', () => {
-  it('a ~/.codex/AGENTS.md link whose dotfiles target does not exist yet stays a link, and the block lands in the dotfiles file', async () => {
+  it('a ~/.codex/AGENTS.md link whose dotfiles target does not exist yet is refused without replacing the link or creating a target', async () => {
     const root = setup();
     const home = join(root, 'home');
     const dotfiles = join(root, 'dotfiles/codex');
@@ -84,9 +84,9 @@ describe('user scope: a dotfiles link', () => {
       // still absent
     }
     expect({ code, isLink, dotfilesHasBlock }).toEqual({
-      code: 0,
+      code: 1,
       isLink: true,
-      dotfilesHasBlock: true,
+      dotfilesHasBlock: false,
     });
   });
 
