@@ -1,3 +1,4 @@
+import { createFinalizer } from './createFinalizer';
 import { disposeSchemaRoot } from './disposeSchemaRoot';
 import type { SchemaRootRegistry } from './registerSchemaRoot';
 
@@ -5,6 +6,6 @@ import type { SchemaRootRegistry } from './registerSchemaRoot';
 export const createSchemaRootRegistry = (): SchemaRootRegistry => ({
   entries: new WeakMap(),
   active: [],
-  finalizer: new FinalizationRegistry(disposeSchemaRoot),
+  finalizer: createFinalizer(disposeSchemaRoot),
   compilerCount: 0,
 });

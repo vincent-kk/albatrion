@@ -48,7 +48,7 @@ export const createGuardCompiler = (
   ) {
     // A direct root would retain itself through the finalizer's held value.
     // Its ID-free, dedicated guard is collected with the weak root registration.
-    if (schema === root) registry.finalizer.unregister(registration);
+    if (schema === root) registry.finalizer?.unregister(registration);
     if (!registration.directGuards.includes(schema))
       registration.directGuards.push(schema);
     registration.guardAjv ??= makeSibling(ajv, false, false);

@@ -9,7 +9,7 @@ export const releaseSchemaRoot = (registry: SchemaRootRegistry, root: JSONSchema
   const registrations = registry.entries.get(root);
   if (!registrations) return;
   for (const registration of registrations) {
-    registry.finalizer.unregister(registration);
+    registry.finalizer?.unregister(registration);
     disposeSchemaRoot(registration);
     if (registration.ids.length) {
       const shared = instanceIdRegistrationsOf(registration.baseAjv);

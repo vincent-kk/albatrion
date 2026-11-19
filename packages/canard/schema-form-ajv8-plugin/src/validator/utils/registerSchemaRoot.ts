@@ -1,5 +1,6 @@
-/// <reference lib="es2021.weakref" />
+/// <reference lib="es2021.weakref" preserve="true" />
 
+import { createWeakReference } from './createWeakReference';
 import type { JSONSchema } from '@canard/schema-form';
 import type { Ajv } from 'ajv';
 
@@ -44,8 +45,8 @@ export interface SchemaRootRegistration {
 /** Mutable registration ownership retained by one plugin entry point. */
 export interface SchemaRootRegistry {
   readonly entries: WeakMap<JSONSchema, SchemaRootRegistration[]>;
-  readonly active: WeakRef<SchemaRootRegistration>[];
-  readonly finalizer: FinalizationRegistry<SchemaRootRegistration>;
+  readonly active: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[];
+  readonly finalizer: FinalizationRegistry<SchemaRootRegistration> | undefined;
   compilerBase?: Ajv;
   compilerCurrent?: Ajv;
   compilerCount: number;
@@ -71,7 +72,7 @@ export const registerSchemaRoot = (
     for (let index = registry.active.length - 1; index >= 0; index--)
       if (!registry.active[index].deref()) registry.active.splice(index, 1);
   const allRegistrations = instanceIdRegistrationsOf(baseAjv);
-  const shared: WeakRef<SchemaRootRegistration>[] = ids.length ? allRegistrations : [];
+  const shared: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[] = ids.length ? allRegistrations : [];
   for (let index = shared.length - 1; index >= 0; index--)
     if (!shared[index].deref()) shared.splice(index, 1);
   const conflict = ids.some((id) => registry.active.some((ref) => {
@@ -99,9 +100,9 @@ export const registerSchemaRoot = (
   };
   registrations.push(registration);
   registry.entries.set(root, registrations);
-  registry.finalizer.register(root, registration, registration);
+  registry.finalizer?.register(root, registration, registration);
   if (ids.length) {
-    const ref = new WeakRef(registration);
+    const ref = createWeakReference(registration);
     registry.active.push(ref);
     shared.push(ref);
   }
