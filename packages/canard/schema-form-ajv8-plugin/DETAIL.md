@@ -82,6 +82,8 @@ private 생성자에는 schemas·keywords·formats·cache bootstrap 옵션을 �
 
 폼 연산이 애플리케이션에 추가하는 등록·캐시·생성 코드는 0개입니다. 풀과 finalizer는 어댑터보다 오래 사는 인스턴스 원장이 소유하며 원장은 루트나 어댑터를 강하게 보유하지 않습니다. 등록은 detached snapshot·컴파일러·함수만 보유합니다. 명시적 해제와 풀 회전은 GC를 기다리지 않으며 죽은 weak 목록은 후속 등록에서 정리합니다. 코어의 어댑터별 recent 8개 정책과 어댑터별 옵션은 유지합니다.
 
+이름이 있는 루트도 같은 프로필의 64회 풀을 사용합니다. 컴파일러는 폼이 선언한 정규화 주소별 등록 번호를 예약하며, 다른 등록의 같은 주소 또는 수입 주소와 겹치면 새 컴파일러로 격리합니다. 해제와 실패 뒤에도 그 컴파일러의 주소 예약을 되돌리지 않아 native 별칭이나 생성 코드가 남아 있어도 다음 등록의 결과가 GC에 의존하지 않습니다. 주소를 선언하지 않는 루트의 동일 직렬화 사실은 현재 fingerprint가 같을 때만 한 건 캐시하며, 캐시에는 문자열·정의 identity만 있고 schema 객체는 없습니다. 새 루트의 native compile은 그대로 실행합니다.
+
 ### 지원 범위와 명시적 거부
 
 - 공개 타입의 root는 JSON schema 객체입니다. boolean root는 compile·compileGuard·factory에서 명확한 TypeError로 거부합니다. 객체 root 안에서 포인터가 선택하는 boolean 조건은 계속 지원합니다.
