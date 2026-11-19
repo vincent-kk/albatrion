@@ -41,10 +41,10 @@ import { withUploader } from '@winglet/react-utils';
 ## Signature
 
 ```typescript
-const withUploader: <Props extends BaseProps>(Component: ComponentType<Props>) => NamedExoticComponent<Omit<Props, "onChange" | "acceptFormat"> & {
+const withUploader: <Props extends BaseProps>(Component: ComponentType<Props>) => MemoExoticComponent<(props: Omit<Props, "onChange" | "acceptFormat"> & {
     acceptFormat?: string[];
     onChange?: (file: File) => void;
-}>
+}) => ReactElement>
 ```
 
 ## Parameters
