@@ -1,9 +1,7 @@
 import { CssTokenKind } from './CssTokenKind';
+import { CSS_POSITION_CLASS } from './cssPositionClass';
 import { getCssEscapeEnd } from './getCssEscapeEnd';
 import { type CssSource, readCssCode } from './readCssCode';
-
-/** Only these code units can terminate or escape a CSS string. */
-const STRING_CONTROL = /["'\\\n\r\f]/g;
 
 /**
  * Consume a quoted string or its bad-string recovery boundary.
@@ -15,16 +13,19 @@ export function getCssStringToken(source: CssSource, start: number): number {
   const quote = readCssCode(source, start);
   let index = start + 1;
   if (typeof source === 'string') {
-    STRING_CONTROL.lastIndex = index;
-    while (STRING_CONTROL.test(source)) {
-      index = STRING_CONTROL.lastIndex - 1;
-      const code = source.charCodeAt(index);
+    while (index < source.length) {
+      let code = source.charCodeAt(index);
+      while (code >= 128 || (CSS_POSITION_CLASS[code] & 16) === 0) {
+        if (++index >= source.length)
+          return source.length * 16 + CssTokenKind.OpenString;
+        code = source.charCodeAt(index);
+      }
       if (code === quote) return (index + 1) * 16 + CssTokenKind.String;
       if (code === 10 || code === 13 || code === 12) {
         if (code === 13 && source.charCodeAt(index + 1) === 10) index++;
         return (index + 1) * 16 + CssTokenKind.BadString;
       }
-      STRING_CONTROL.lastIndex = code === 92 ? getCssEscapeEnd(source, index) : index + 1;
+      index = code === 92 ? getCssEscapeEnd(source, index) : index + 1;
     }
     return source.length * 16 + CssTokenKind.OpenString;
   }
