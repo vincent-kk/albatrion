@@ -8,18 +8,18 @@ it.each([12, 24, 48])(
   (size) => {
     const css = '(' + String.fromCharCode(34, 92).repeat(size);
     const component = pathToFileURL(
-      resolve(__dirname, '../../dist/utils/cssTokens/getCssComponentEnd.mjs'),
+      resolve(__dirname, '../utils/cssTokens/getCssComponentEnd.ts'),
     ).href;
     const closure = pathToFileURL(
-      resolve(__dirname, '../../dist/utils/cssTokens/closeCssFragment.mjs'),
+      resolve(__dirname, '../utils/cssTokens/closeCssFragment.ts'),
     ).href;
     const compressor = pathToFileURL(
-      resolve(__dirname, '../../dist/utils/compressCss/compressCss.mjs'),
+      resolve(__dirname, '../utils/compressCss/compressCss.ts'),
     ).href;
     const script = `import {getCssComponentEnd} from ${JSON.stringify(component)}; import {closeCssFragment} from ${JSON.stringify(closure)}; import {compressCss} from ${JSON.stringify(compressor)}; const css=${JSON.stringify(css)}; getCssComponentEnd(css,0); closeCssFragment(css); compressCss(css);`;
     const result = spawnSync(
       process.execPath,
-      ['--single-threaded', '--input-type=module', '--eval', script],
+      ['--single-threaded', '--import', 'tsx', '--input-type=module', '--eval', script],
       { timeout: 3000 },
     );
     expect(
