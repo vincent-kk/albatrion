@@ -83,7 +83,7 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
           <Spinner label="building plans…" />
           <Box flexDirection="column" marginLeft={2} marginTop={1}>
             {[...phase.progress.values()].map((step) => (
-              <Box key={step.packageName}>
+              <Box key={`${step.agent}:${step.packageName}`}>
                 <Text
                   color={
                     step.status === 'done'
@@ -120,7 +120,8 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
         <Box flexDirection="column">
           {phase.plans.map((tp, idx) => (
             <TargetCard
-              key={tp.target.name}
+              key={tp.key}
+              agent={tp.agentTarget.agent}
               target={tp.target}
               plan={tp.plan}
               expanded
@@ -155,8 +156,9 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
           <Box flexDirection="column" marginLeft={2} marginTop={1}>
             {phase.plans.map((tp) => (
               <TargetCard
-                key={tp.target.name}
-                target={tp.target}
+                key={tp.key}
+                agent={tp.agentTarget.agent}
+              target={tp.target}
                 plan={tp.plan}
                 expanded={false}
               />
@@ -170,7 +172,8 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
         <Box flexDirection="column">
           {phase.plans.map((tp) => (
             <TargetCard
-              key={tp.target.name}
+              key={tp.key}
+              agent={tp.agentTarget.agent}
               target={tp.target}
               plan={tp.plan}
               expanded={false}

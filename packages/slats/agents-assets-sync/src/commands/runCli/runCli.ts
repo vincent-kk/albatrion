@@ -1,10 +1,13 @@
-import { basename, resolve as resolvePath } from 'node:path';
+import { basename, isAbsolute, resolve as resolvePath } from 'node:path';
 
 import { Command } from 'commander';
 
 import type { DefaultFlags } from '../../types/index.js';
 import { divertLogsToStderr, logger } from '../../utils/logger.js';
 import { VERSION } from '../../utils/version.js';
+import { validateFlags } from '../../core/index.js';
+import { displayJSON } from './renderers/renderJSON.js';
+import { classifyTarget } from './targets/classifyTarget.js';
 import { resolveAssetPathFlag } from './flags/resolveAssetPathFlag.js';
 import { renderOrFallback } from './renderers/renderOrFallback.js';
 import { resolveTargets } from './targets/resolveTargets.js';
@@ -92,10 +95,18 @@ export async function runCli(
       // on — including the exits below — has to go to stderr instead.
       if (flags.json) divertLogsToStderr();
       const targets = flags.package ?? [];
-      if (targets.length === 0) {
-        logger.error(
-          'missing required flag: --package <name> (e.g. --package=@canard/schema-form or --package=@canard)',
-        );
+      const errors: string[] = [];
+      if (targets.length === 0) errors.push('missing required flag: --package <name>');
+      for (const target of targets) {
+        const classified = classifyTarget(target);
+        if (classified.kind === 'invalid') errors.push(classified.reason);
+      }
+      if (flags.assetPath !== undefined && (!flags.assetPath.trim() || isAbsolute(flags.assetPath.trim()) || flags.assetPath.trim().startsWith('~'))) errors.push(`Invalid --asset-path: ${flags.assetPath}`);
+      const checked = validateFlags(flags, true);
+      if ('errors' in checked) errors.push(...checked.errors);
+      if (errors.length) {
+        if (flags.json) displayJSON({ units: [], errors, exitCode: 2, dryRun: Boolean(flags.dryRun) });
+        else errors.forEach(error => logger.error(error));
         process.exit(2);
       }
       const assetPath = resolveAssetPathFlag(flags.assetPath);
@@ -112,7 +123,7 @@ export async function runCli(
         // Resolving nothing is a run that did nothing, not a failure — but a
         // `--json` reader cannot tell that from a crash unless it still gets a
         // document, so only the transcript path stops here.
-        if (!flags.json) return;
+        // Empty runs still pass through core validation and formatting.
       }
       const consumerPackages = await toConsumerPackages(resolved);
       // A target that can supply no hashes fails the way a package with no
