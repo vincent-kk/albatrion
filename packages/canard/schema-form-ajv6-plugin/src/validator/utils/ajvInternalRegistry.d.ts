@@ -26,6 +26,13 @@ declare module 'ajv' {
      * @returns This instance for chaining.
      */
     addSchema(schema: object | boolean, key?: string): Ajv;
+    /**
+     * Validate a schema with AJV6's supported throw-or-log mode.
+     * @param schema - Object or boolean schema accepted by the native runtime.
+     * @param throwOrLogError - Report an invalid schema using the configured validation policy.
+     * @returns The native schema-validity result.
+     */
+    validateSchema(schema: object | boolean, throwOrLogError?: boolean): boolean;
     readonly constructor: new (options?: Options) => Ajv;
     readonly _formats: Readonly<Dictionary<Parameters<Ajv['addFormat']>[1]>>;
     readonly RULES: {
