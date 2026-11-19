@@ -47,6 +47,13 @@ export interface PrivateCompiler {
   >;
   /** Detached schema copies indexed by their raw application document. */
   readonly copies: Map<object | boolean, object | boolean>;
+  /** Form resource reservations retained until this compiler is retired, including released attempts. */
+  formOwners?: Map<string, string>;
+  /** Last resource-free root facts, containing no caller or detached schema objects. */
+  factsCache?: {
+    readonly serialized: string;
+    readonly facts: SchemaDependencies;
+  };
   /** Whether the requested schema graph needs asynchronous native compilation. */
   asynchronous: boolean;
   /** Prevents a stale or failed environment from compiling new roots. */

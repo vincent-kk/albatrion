@@ -27,32 +27,62 @@ export const runPoolNamespaceSequence = async <T extends ModelApplication>(
   for (let index = 0; index < 4; index++) {
     const address = seed & 1 ? id : `${id}/${index}`;
     const root: JSONSchema = {
-      $id: address, ...(profile.version === 6 ? { id: address } : {}),
-      type: 'object', properties: { value: { type: 'string', minLength: 1 + index } },
+      $id: address,
+      ...(profile.version === 6 ? { id: address } : {}),
+      type: 'object',
+      properties: { value: { type: 'string', minLength: 1 + index } },
     };
     const expected = await compileOracle(twin, profile, root, { value: 'xx' });
     const validate = adapter.compile(root);
     const context = `seed=${seed} namespace index=${index}`;
-    expect(await outcomeOf(() => validate({ value: 'xx' })), context).toEqual(expected);
+    expect(await outcomeOf(() => validate({ value: 'xx' })), context).toEqual(
+      expected,
+    );
     const guard = adapter.compileGuard?.(root, '/properties/value');
     expect(guard?.('xx'), context).toBe(index < 2);
     if (seed & 2) adapter.release?.(root);
-    expect(await outcomeOf(() => validate({ value: 'xx' })), context).toEqual(expected);
+    expect(await outcomeOf(() => validate({ value: 'xx' })), context).toEqual(
+      expected,
+    );
     references.push(profile.observe(root));
     functions.push(validate, guard);
   }
-  const imported = { $id: id, ...(profile.version === 6 ? { id } : {}), type: 'string', minLength: 4 };
+  const imported = {
+    $id: id,
+    ...(profile.version === 6 ? { id } : {}),
+    type: 'string',
+    minLength: 4,
+  };
   for (const instance of [app, twin]) instance.addSchema({ ...imported });
-  const linked: JSONSchema = { type: 'object', properties: { value: { $ref: id } } };
+  const linked: JSONSchema = {
+    type: 'object',
+    properties: { value: { $ref: id } },
+  };
   const validate = adapter.compile(linked);
-  expect(await validate({ value: 'xx' }), `seed=${seed} imported after form`).not.toBeNull();
+  expect(
+    await validate({ value: 'xx' }),
+    `seed=${seed} imported after form`,
+  ).not.toBeNull();
   for (const instance of [app, twin]) instance.removeSchema(id);
-  const next: JSONSchema = { $id: id, ...(profile.version === 6 ? { id } : {}), type: 'string', minLength: 1 };
+  const next: JSONSchema = {
+    $id: id,
+    ...(profile.version === 6 ? { id } : {}),
+    type: 'string',
+    minLength: 1,
+  };
   const current = adapter.compile(next);
-  expect(await current('xx'), `seed=${seed} form after removed import`).toBeNull();
-  expect(await validate({ value: 'xx' }), `seed=${seed} prior import snapshot`).not.toBeNull();
+  expect(
+    await current('xx'),
+    `seed=${seed} form after removed import`,
+  ).toBeNull();
+  expect(
+    await validate({ value: 'xx' }),
+    `seed=${seed} prior import snapshot`,
+  ).not.toBeNull();
   references.push(profile.observe(linked), profile.observe(next));
   functions.push(validate, current);
-  expect(captureApplicationState(app), `seed=${seed} namespace I1`).toEqual(captureApplicationState(twin));
+  expect(captureApplicationState(app), `seed=${seed} namespace I1`).toEqual(
+    captureApplicationState(twin),
+  );
   return { references, functions };
 };

@@ -4,7 +4,7 @@ import { preparePrivateCompiler } from './preparePrivateCompiler';
 import type { PrivateCompiler } from './types';
 
 /**
- * Select a bounded pooled compiler; named roots use separate namespaces regardless of collection.
+ * Select a bounded pooled compiler with conflict-isolated named resource reservations.
  * @param registration - Detached root state whose previous compiler may be reused.
  * @param schema - Current root or selected guard schema to compile.
  * @param kind - Separate validation or guard namespace to select.
@@ -18,18 +18,21 @@ export const selectRootCompiler = (
   const source = registration.baseAjv;
   const ledger = instanceIdRegistrationsOf(source);
   const allErrors = kind === 'validation' && !!source._opts.allErrors;
-  const previous =
-    registration[kind] ??
-    (registration.ids.length ? undefined : ledger.pool[kind]);
+  const previous = registration[kind] ?? ledger.pool[kind];
   const compiler = preparePrivateCompiler(
     source,
     previous,
     schema,
     kind,
     allErrors,
+    '',
+    registration.key,
+    kind === 'validation' && schema === registration.copy
+      ? registration.serialized
+      : undefined,
   );
   registration[kind] = compiler;
   ledger.pool.count = compiler.count;
-  if (!registration.ids.length) ledger.pool[kind] = compiler;
+  ledger.pool[kind] = compiler;
   return compiler;
 };

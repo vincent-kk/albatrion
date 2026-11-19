@@ -1,14 +1,14 @@
-import { runPoolNamespaceSequence } from './runPoolNamespaceSequence';
-import { runGuardBaseSequence } from './runGuardBaseSequence';
 import type { JSONSchema, ValidatorFactory } from '@canard/schema-form';
 import { expect } from 'vitest';
 
-import { runRootMutationSequence } from './runRootMutationSequence';
 import { captureApplicationState } from './captureApplicationState';
+import { checkOracleCollisions } from './checkOracleCollisions';
 import { compileOracle } from './compileOracle';
 import { createFreshOracle } from './createFreshOracle';
-import { checkOracleCollisions } from './checkOracleCollisions';
 import { outcomeOf } from './outcomeOf';
+import { runGuardBaseSequence } from './runGuardBaseSequence';
+import { runPoolNamespaceSequence } from './runPoolNamespaceSequence';
+import { runRootMutationSequence } from './runRootMutationSequence';
 import type { ModelApplication, ModelProfile, ModelRoot } from './types';
 
 /** Drive the real adapter and an independent fresh-compiler oracle with one deterministic sequence. */
@@ -31,25 +31,53 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
   const aliasKey = 'https://ownership-model.invalid/alias-key';
   for (const instance of [app, twin]) {
     const nativeOptions = Reflect.get(instance, '_opts');
-    const idKey = profile.version === 6 && nativeOptions && typeof nativeOptions === 'object' && Reflect.get(nativeOptions, 'schemaId') === 'id' ? 'id' : '$id';
+    const idKey =
+      profile.version === 6 &&
+      nativeOptions &&
+      typeof nativeOptions === 'object' &&
+      Reflect.get(nativeOptions, 'schemaId') === 'id'
+        ? 'id'
+        : '$id';
     instance.addSchema({ [idKey]: aliasId, type: 'number' }, aliasKey);
     instance.removeSchema(aliasId);
     instance.addSchema({ [idKey]: aliasId, type: 'string' });
   }
   const aliasAdapter = profile.adapter(app);
   for (const reference of [0, 1, 2]) {
-    const root: JSONSchema = reference === 0 ? { $ref: aliasKey } : reference === 1 ? { $ref: aliasId } : { allOf: [{ $ref: aliasKey }, { $ref: aliasId }] };
-    const expected = await compileOracle(twin, profile, root, seed % 2 ? 3 : 'x');
-    const actual = await outcomeOf(() => aliasAdapter.compile(root)(seed % 2 ? 3 : 'x'));
-    expect(actual, `seed=${seed}: retained alias dimension ${reference}`).toEqual(expected);
+    const root: JSONSchema =
+      reference === 0
+        ? { $ref: aliasKey }
+        : reference === 1
+          ? { $ref: aliasId }
+          : { allOf: [{ $ref: aliasKey }, { $ref: aliasId }] };
+    const expected = await compileOracle(
+      twin,
+      profile,
+      root,
+      seed % 2 ? 3 : 'x',
+    );
+    const actual = await outcomeOf(() =>
+      aliasAdapter.compile(root)(seed % 2 ? 3 : 'x'),
+    );
+    expect(
+      actual,
+      `seed=${seed}: retained alias dimension ${reference}`,
+    ).toEqual(expected);
     if (reference === 2) {
-      expect(actual, `seed=${seed}: explicit alias conflict`).toMatchObject({ error: 'Error' });
-      if ('message' in actual) for (const key of [aliasId, aliasKey]) expect(actual.message).toContain(key);
+      expect(actual, `seed=${seed}: explicit alias conflict`).toMatchObject({
+        error: 'Error',
+      });
+      if ('message' in actual)
+        for (const key of [aliasId, aliasKey])
+          expect(actual.message).toContain(key);
     }
     roots.push(profile.observe(root));
     aliasAdapter.release?.(root);
   }
-  expect(captureApplicationState(app), `seed=${seed}: alias dimension I1`).toEqual(captureApplicationState(twin));
+  expect(
+    captureApplicationState(app),
+    `seed=${seed}: alias dimension I1`,
+  ).toEqual(captureApplicationState(twin));
   const guardBase = await runGuardBaseSequence(app, twin, profile, seed);
   roots.push(...guardBase.references);
   functions.push(...guardBase.functions);
@@ -191,12 +219,26 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
         }
       } else if (operation === 10 && adapter.roots.length) {
         const record = adapter.roots[next() % adapter.roots.length];
-        expect(await outcomeOf(() => record.validate(record.data)), context).toEqual(record.verdict);
-        const expected = await compileOracle(twin, profile, record.schema, record.data);
-        const actual = await outcomeOf(() => adapter.validator.compile(record.schema)(record.data));
-        if ('error' in expected) expect(actual, context).toHaveProperty('error');
+        expect(
+          await outcomeOf(() => record.validate(record.data)),
+          context,
+        ).toEqual(record.verdict);
+        const expected = await compileOracle(
+          twin,
+          profile,
+          record.schema,
+          record.data,
+        );
+        const actual = await outcomeOf(() =>
+          adapter.validator.compile(record.schema)(record.data),
+        );
+        if ('error' in expected)
+          expect(actual, context).toHaveProperty('error');
         else expect(actual, context).toEqual(expected);
-        expect(await outcomeOf(() => record.validate(record.data)), context).toEqual(record.verdict);
+        expect(
+          await outcomeOf(() => record.validate(record.data)),
+          context,
+        ).toEqual(record.verdict);
       } else if (operation === 14) {
         const root: JSONSchema = {
           $id: id,
@@ -225,7 +267,8 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
           predicate = adapter.validator.compileGuard?.(root, '/if');
           return predicate?.('x');
         });
-        if ('error' in expected) expect(actual, context).toHaveProperty('error');
+        if ('error' in expected)
+          expect(actual, context).toHaveProperty('error');
         else expect(actual, context).toEqual(expected);
         roots.push(profile.observe(root));
         if (predicate) functions.push(predicate);
@@ -279,7 +322,12 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
           twin.removeSchema(retryId);
           const failed = await outcomeOf(() => adapter.validator.compile(root));
           expect('error' in failed, context).toBe(true);
-          const retry = { $id: retryId, ...(profile.version === 6 ? { id: retryId } : {}), type: 'string', minLength: 3 };
+          const retry = {
+            $id: retryId,
+            ...(profile.version === 6 ? { id: retryId } : {}),
+            type: 'string',
+            minLength: 3,
+          };
           app.addSchema({ ...retry });
           twin.addSchema({ ...retry });
         }

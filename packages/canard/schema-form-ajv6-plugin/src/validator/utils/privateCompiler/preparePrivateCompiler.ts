@@ -8,6 +8,7 @@ import { collectSchemaDependencies } from './collectSchemaDependencies';
 import { createNativeCompiler } from './createNativeCompiler';
 import { hasNativeDefinitions } from './hasNativeDefinitions';
 import { importApplicationGraph } from './importApplicationGraph';
+import { isFormNamespaceCompatible } from './isFormNamespaceCompatible';
 import { isPrivateCompilerCurrent } from './isPrivateCompilerCurrent';
 import { recordDependencies } from './recordDependencies';
 import type { PrivateCompiler } from './types';
@@ -20,6 +21,8 @@ import type { PrivateCompiler } from './types';
  * @param kind - Independent validation, guard or meta namespace.
  * @param allErrors - Native error collection policy required by the selected namespace.
  * @param key - Base address for relative schema resources and references.
+ * @param owner - Detached registration key reserving form resource addresses in this compiler.
+ * @param serialized - Current root serialization, eligible for schema-free facts reuse only at the empty base.
  * @returns A current compatible environment with requested imports; failed imports retire it.
  */
 export const preparePrivateCompiler = (
@@ -29,9 +32,19 @@ export const preparePrivateCompiler = (
   kind: PrivateCompiler['kind'],
   allErrors: boolean,
   key = '',
+  owner = key,
+  serialized?: string,
 ): PrivateCompiler => {
   assertBindableInstance(source);
-  const facts = collectSchemaDependencies(source, root, key);
+  const current = previous && isPrivateCompilerCurrent(previous);
+  const cached =
+    current &&
+    !key &&
+    serialized !== undefined &&
+    previous.factsCache?.serialized === serialized
+      ? previous.factsCache.facts
+      : undefined;
+  const facts = cached ?? collectSchemaDependencies(source, root, key);
   const observations =
     kind !== 'meta' && facts.resources.length
       ? checkRootCollisions(source, facts.resources)
@@ -48,7 +61,8 @@ export const preparePrivateCompiler = (
     [...(graph?.formats ?? facts.formats)].every(
       ([name, definition]) => previous.instance._formats[name] === definition,
     ) &&
-    isPrivateCompilerCurrent(previous) &&
+    current &&
+    isFormNamespaceCompatible(previous, facts, graph, owner) &&
     (!graph ||
       [...graph.claims].every(
         ([id, claim]) =>
@@ -62,6 +76,15 @@ export const preparePrivateCompiler = (
   if (observations)
     for (const [name, entry] of observations) compiler.entries.set(name, entry);
   if (kind !== 'meta') compiler.count++;
+  if (facts.resources.length) {
+    compiler.formOwners ??= new Map();
+    for (const resource of facts.resources)
+      compiler.formOwners.set(resource.address, owner);
+  }
+  compiler.factsCache =
+    !key && serialized !== undefined && !facts.resources.length
+      ? { serialized, facts }
+      : undefined;
   recordDependencies(compiler, facts);
   try {
     if (graph) importApplicationGraph(compiler, graph);

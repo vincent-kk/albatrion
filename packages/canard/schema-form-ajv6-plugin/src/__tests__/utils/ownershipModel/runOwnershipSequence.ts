@@ -1,5 +1,3 @@
-import { runPoolNamespaceSequence } from './runPoolNamespaceSequence';
-import { runGuardBaseSequence } from './runGuardBaseSequence';
 import type { JSONSchema, ValidatorFactory } from '@canard/schema-form';
 import { expect } from 'vitest';
 
@@ -8,6 +6,8 @@ import { checkOracleCollisions } from './checkOracleCollisions';
 import { compileOracle } from './compileOracle';
 import { createFreshOracle } from './createFreshOracle';
 import { outcomeOf } from './outcomeOf';
+import { runGuardBaseSequence } from './runGuardBaseSequence';
+import { runPoolNamespaceSequence } from './runPoolNamespaceSequence';
 import { runRootMutationSequence } from './runRootMutationSequence';
 import type { ModelApplication, ModelProfile, ModelRoot } from './types';
 
