@@ -1,7 +1,8 @@
 import {
   type ChangeEvent,
   type ComponentType,
-  type NamedExoticComponent,
+  type MemoExoticComponent,
+  type ReactElement,
   type MouseEvent,
   Fragment,
   memo,
@@ -113,10 +114,10 @@ interface UploaderProps {
  */
 export const withUploader = <Props extends BaseProps>(
   Component: ComponentType<Props>,
-): NamedExoticComponent<Omit<Props, 'onChange' | 'acceptFormat'> & {
+): MemoExoticComponent<(props: Omit<Props, 'onChange' | 'acceptFormat'> & {
   acceptFormat?: string[];
   onChange?: (file: File) => void;
-}> =>
+}) => ReactElement> =>
   memo(
     ({ onClick, onChange, acceptFormat, ...props }: Omit<Props, keyof UploaderProps> & UploaderProps & BaseProps) => {
       const inputRef = useRef<HTMLInputElement>(null);
