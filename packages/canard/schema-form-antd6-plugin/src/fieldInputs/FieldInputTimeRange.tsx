@@ -144,7 +144,6 @@ const FieldInputTimeRange = ({
       disabledTime={disabledTime}
       defaultValue={initialValue}
       onChange={handleChange}
-      onPanelChange={handleChange}
       size={size || context?.size}
       status={misfit ? 'error' : undefined}
       aria-invalid={misfit || undefined}
