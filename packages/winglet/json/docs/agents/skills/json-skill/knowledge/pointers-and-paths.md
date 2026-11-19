@@ -105,7 +105,7 @@ const jsonPath = getJSONPath(doc, doc.users[1]); // '$.users[1]'
 getValue(doc, convertJSONPathToPointer(jsonPath)); // undefined — pointer was '/$/users/1'
 ```
 
-What `convertJSONPathToPointer` really is, is one half of an inverse pair with `convertJSONPointerToPath`, over the leading-dot data path form — the shape a schema library or form library tends to use, not JSONPath proper. Neither half touches `$` or RFC 6901 escapes, and both pass already-converted input through unchanged, so a double call is safe:
+The two converters are inverses over their canonical leading-dot data-path domain. Empty tokens, including consecutive and trailing tokens, keep their separators. Existing lossy spellings remain: root `''` versus `/`, `/0` versus `/[0]`, `/-` versus `/[]`, names with dots or brackets, and an empty token before a numeric or append token. Neither converter interprets RFC 6901 escapes or a JSONPath root token. Keep a JSON Pointer when the address must preserve these distinctions. Both pass already-converted input through unchanged:
 
 ```typescript
 convertJSONPointerToPath('/users/0/name'); // '.users[0].name'  — numeric segments bracketed
