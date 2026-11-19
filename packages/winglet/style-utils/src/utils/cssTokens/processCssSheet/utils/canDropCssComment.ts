@@ -1,4 +1,4 @@
-import { CssTokenKind } from '../../cssTokens/CssTokenKind';
+import { CssTokenKind } from '../../CssTokenKind';
 
 /**
  * Keep comment boundaries whenever adjacent lexical tokens could coalesce.
