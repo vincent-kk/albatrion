@@ -16,7 +16,7 @@ and safe callback updates without recreating timers.
 - **Manual Control**: Explicitly schedule, reschedule, or cancel timeouts
 - **State Tracking**: Check if a timeout is pending with `isIdle()`
 - **Safe Updates**: Callback updates don't affect running timers
-- **Auto-cleanup**: Cancels on unmount; retained schedule callbacks do no work after cleanup
+- **Auto-cleanup**: Cancels on unmount; retained schedule callbacks do no work after unmount
 - **Reschedule Support**: Calling schedule() resets existing timers
 ### Use Cases
 - **Delayed Actions**: Show notifications, hide tooltips, or auto-save

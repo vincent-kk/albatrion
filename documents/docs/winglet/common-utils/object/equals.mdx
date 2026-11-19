@@ -208,21 +208,14 @@ console.log(obj1 === obj2); // false (different references)`}
 - Maximum reliability over performance
 ```
 
-**Error Cases and Stack Overflow:**
+**Cyclic Inputs:**
+Cyclic input is unsupported and can fail to terminate after the explicit-frame fallback.
+Use `stableEquals` for comparison and `clone` for copying when cycles are possible.
 ```typescript
-// ⚠️ DANGER: Circular references cause stack overflow
-const circular1: any = { name: 'obj1' };
-const circular2: any = { name: 'obj2' };
-circular1.ref = circular2;
-circular2.ref = circular1;
-
-// This will crash:
-// equals(circular1, circular2); // RangeError: Maximum call stack size exceeded
-
-// Safe alternatives:
-// 1. Use stableEquals() instead
-// 2. Remove circular references before comparison
-// 3. Implement circular reference detection
+const circular: { name: string; self?: unknown } = { name: 'node' };
+circular.self = circular;
+const copy = clone(circular);
+stableEquals(circular, copy); // true
 ```
 
 **TypeScript Usage Patterns:**

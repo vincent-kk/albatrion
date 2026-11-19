@@ -188,7 +188,8 @@ scheduleMacrotask(() => {
 
 executionOrder.push('sync-2');
 
-// Final order: ['sync-1', 'sync-2', 'microtask-1', 'macrotask-1', 'macrotask-2', 'nested-microtask', 'nested-macrotask']
+// Browser fallback order: ['sync-1', 'sync-2', 'microtask-1', 'macrotask-1', 'macrotask-2', 'nested-microtask', 'nested-macrotask']
+// Node has a microtask checkpoint between callbacks: nested-microtask precedes macrotask-2.
 ```
 
 ## Playground
