@@ -10,7 +10,7 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { test } from 'vitest';
+import { test } from 'node:test';
 
 import { assertFreshBuild, loadScanners, packageRoot } from '../_lib.mjs';
 import { compareBuilds } from '../compare/compareBuilds.mjs';

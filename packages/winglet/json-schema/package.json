@@ -156,7 +156,7 @@
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
     "version:patch": "yarn version patch",
-    "build:verify:types": "node ../../aileron/script/build/verifyDeclarations.mjs && node --import tsx --test src/__tests__/packaging/*.packaging.ts"
+    "build:verify:types": "node ../../aileron/script/build/verifyDeclarations.mjs && node --import tsx --test src/__tests__/packaging/*.packaging.ts benchmark/__tests__/*.packaging.mjs"
   },
   "dependencies": {
     "@winglet/common-utils": "workspace:^",
