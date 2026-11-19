@@ -76,3 +76,108 @@ it('matches a complete-knowledge deletion model for 4000 seeded participant sets
     );
   }
 });
+
+it('matches independent pairwise source-conflict ownership for 2000 participant sets (seed 0xc0111de)', () => {
+  let seed = 0xc0111de;
+  const observed = new Set<string>();
+  for (let sequence = 0; sequence < 2000; sequence++) {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    const initialSeed = seed;
+    const force = !!(seed & 1);
+    const agent = (['claude', 'codex', 'agents'] as const)[sequence % 3];
+    const agentTarget = resolveAgentTarget(
+      agent,
+      'project',
+      '/tmp/participant-conflicts',
+    );
+    const count = 2 + (sequence % 3);
+    const units: RunUnit[] = Array.from({ length: count }, (_, index) => ({
+      key: `${agent}:pkg-${index}`,
+      target: {
+        name: `pkg-${index}`,
+        version: '1',
+        packageRoot: `/tmp/pkg-${index}`,
+        assetRoot: `/tmp/pkg-${index}/docs`,
+        assetPath: 'docs',
+        hashesPresent: true,
+        hashSource: 'manifest',
+      },
+      agentTarget,
+      plan: {
+        requiresForce: !force,
+        actions: [
+          {
+            kind: force ? 'copy' : 'warn-diverged',
+            relPath: `skills/pkg-${index}/source.md`,
+            sourceHash: (seed >>> (index + 3)) & 1 ? 'source-a' : 'source-b',
+            target: {
+              kind: 'file',
+              dstAbs: `${agentTarget.directoryRoots.skills}/${index === count - 1 && sequence % 2 ? 'separate' : 'shared'}.md`,
+            },
+          },
+        ],
+      },
+    }));
+    if (sequence % 2) units.reverse();
+    // The reference compares every pair, then elects the first agreeing owner.
+    const conflict = units.map((unit) =>
+      units.some(
+        (peer) =>
+          unit.plan.actions[0].target.kind === 'file' &&
+          peer.plan.actions[0].target.kind === 'file' &&
+          unit.plan.actions[0].target.dstAbs ===
+            peer.plan.actions[0].target.dstAbs &&
+          unit.plan.actions[0].sourceHash !== peer.plan.actions[0].sourceHash,
+      ),
+    );
+    const result = mergePlans(units);
+    for (let index = 0; index < units.length; index++) {
+      const unit = units[index];
+      const action = unit.plan.actions[0];
+      const destination =
+        action.target.kind === 'file' ? action.target.dstAbs : '';
+      const priorOwner = units
+        .slice(0, index)
+        .findIndex(
+          (peer, prior) =>
+            !conflict[prior] &&
+            peer.plan.actions.some(
+              (value) =>
+                value.target.kind === 'file' &&
+                value.target.dstAbs === destination,
+            ),
+        );
+      const actual = result[index];
+      const label = `seed=${initialSeed}, sequence=${sequence}, index=${index}, force=${force}`;
+      observed.add(
+        conflict[index] ? 'conflict' : priorOwner >= 0 ? 'alias' : 'owner',
+      );
+      expect(actual.refused, label).toBe(conflict[index]);
+      expect(actual.plan.requiresForce, label).toBe(
+        !conflict[index] && priorOwner < 0 && !force,
+      );
+      expect(actual.plan.actions, label).toEqual(
+        conflict[index] || priorOwner < 0 ? unit.plan.actions : [],
+      );
+      if (conflict[index]) {
+        expect(actual.failures, label).toEqual([
+          {
+            unitKey: unit.key,
+            path: destination,
+            stage: 'merge',
+            reason: `Conflicting source contents: ${action.relPath}`,
+          },
+        ]);
+        expect(actual.error, label).toBe(
+          `Conflicting source contents: ${action.relPath}`,
+        );
+      } else {
+        expect(actual.error, label).toBeUndefined();
+        expect(actual.aliasOf, label).toBe(
+          priorOwner >= 0 ? units[priorOwner].key : undefined,
+        );
+      }
+    }
+  }
+  expect([...observed].sort()).toEqual(['alias', 'conflict', 'owner']);
+});
