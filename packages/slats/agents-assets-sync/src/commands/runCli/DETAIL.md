@@ -46,6 +46,8 @@
 
 ## API Contracts
 
+- 거부된 유닛의 계획은 diagnosticOnly 표시로만 보여 주며 적용 예정 또는 force 확인 목록으로 표시하지 않습니다.
+
 - `runCli(argv: readonly string[] = process.argv): Promise<void>`
 - `DefaultFlags`
   - `package?: string[]` (가변; 값 0개 → exit 2)
