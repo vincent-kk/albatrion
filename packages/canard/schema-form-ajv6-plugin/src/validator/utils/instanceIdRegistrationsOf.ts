@@ -1,10 +1,10 @@
-/// <reference lib="es2021.weakref" />
+/// <reference lib="es2021.weakref" preserve="true" />
 import type Ajv from 'ajv';
 
 import type { SchemaRootRegistration } from './registerSchemaRoot';
 
 /** One instance's weak ownership list and registration sequence, shared across evaluated copies. */
-type InstanceIdRegistrations = WeakRef<SchemaRootRegistration>[] & {
+type InstanceIdRegistrations = Pick<WeakRef<SchemaRootRegistration>, 'deref'>[] & {
   /** Monotonic registration sequence within the shared AJV instance. */
   nextKey: number;
 };

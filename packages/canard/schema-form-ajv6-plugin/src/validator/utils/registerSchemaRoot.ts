@@ -1,5 +1,6 @@
-/// <reference lib="es2021.weakref" />
+/// <reference lib="es2021.weakref" preserve="true" />
 
+import { createWeakReference } from './createWeakReference';
 import type Ajv from 'ajv';
 
 import { cloneInstance, PLUGIN_KEY_PREFIX } from './cloneInstance';
@@ -38,8 +39,8 @@ export const registerSchemaRoot = (
   root: object,
   instance: Ajv.Ajv,
   roots: WeakMap<object, SchemaRootRegistration>,
-  active: WeakRef<SchemaRootRegistration>[],
-  finalizer: FinalizationRegistry<SchemaRootRegistration>,
+  active: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[],
+  finalizer: FinalizationRegistry<SchemaRootRegistration> | undefined,
 ): SchemaRootRegistration => {
   const previous = roots.get(root);
   if (previous) return previous;
@@ -52,7 +53,7 @@ export const registerSchemaRoot = (
     for (let index = active.length - 1; index >= 0; index--)
       if (!active[index].deref()) active.splice(index, 1);
   const allRegistrations = instanceIdRegistrationsOf(instance);
-  const shared: WeakRef<SchemaRootRegistration>[] = ids.length ? allRegistrations : [];
+  const shared: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[] = ids.length ? allRegistrations : [];
   for (let index = shared.length - 1; index >= 0; index--)
     if (!shared[index].deref()) shared.splice(index, 1);
   const conflict = ids.some((id) =>
@@ -68,9 +69,9 @@ export const registerSchemaRoot = (
     directGuards: [], guardChecks: new WeakMap(),
   };
   roots.set(root, registration);
-  finalizer.register(root, registration, registration);
+  finalizer?.register(root, registration, registration);
   if (ids.length) {
-    const ref = new WeakRef(registration);
+    const ref = createWeakReference(registration);
     active.push(ref);
     shared.push(ref);
   }

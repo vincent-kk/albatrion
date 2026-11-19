@@ -230,3 +230,5 @@ Formats and keywords added to the bound instance are available to later compilat
 ## Decimal multiples
 
 Instances created by the plugin use `multipleOfPrecision: 9`. This accepts exact decimal multiples such as `19.99` for `multipleOf: 0.01` despite binary division error, with a guaranteed exact-multiple range of `Math.abs(value / multipleOf) <= 1e6`. AJV treats a quotient within `1e-9` of an integer as a multiple: extremely close nonmultiples can also pass, and exact multiples outside that range are not guaranteed. Values such as `19.995` for `0.01`, `0.35` for `0.1`, and `0.300001` for `0.3` remain invalid. A zero `multipleOf` is an invalid schema. Pass your own AJV instance to `createValidator` or `plugin.validator.bind` to choose a different precision policy; its options are preserved.
+
+When `WeakRef` or `FinalizationRegistry` is unavailable, including Safari 14.0, import, validation, guards, and explicit release remain supported. Call `release(root)` when a root is no longer used: automatic cleanup after garbage collection is unavailable on these hosts.

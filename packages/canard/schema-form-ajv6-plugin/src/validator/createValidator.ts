@@ -1,3 +1,4 @@
+import { createFinalizer } from './utils/createFinalizer';
 import type { JSONSchema, ValidatorFactory } from '@canard/schema-form';
 import type Ajv from 'ajv';
 
@@ -35,10 +36,8 @@ export const createValidator = (
   assertBindableInstance(ajv);
   const directGuardCompile = options.directGuardCompile ?? true;
   const roots = new WeakMap<object, SchemaRootRegistration>();
-  const active: WeakRef<SchemaRootRegistration>[] = [];
-  const finalizer = new FinalizationRegistry<SchemaRootRegistration>(
-    disposeSchemaRoot,
-  );
+  const active: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[] = [];
+  const finalizer = createFinalizer(disposeSchemaRoot);
   return {
     compile: (jsonSchema: JSONSchema) => {
       const registered = registerSchemaRoot(
