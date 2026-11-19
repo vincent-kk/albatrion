@@ -22,6 +22,12 @@ afterEach(() => {
 
 it.each([
   { kind: 'source-open', body: 'intro\n```md\nexample\n', line: 2 },
+  {
+    kind: 'source-open-claude',
+    body: 'intro\n```md\nexample\n',
+    line: 2,
+    agent: 'claude',
+  },
   { kind: 'document-open', document: '# user\n```md\nexample\n', line: 2 },
   {
     kind: 'longer-close',
@@ -29,6 +35,22 @@ it.each([
   },
   { kind: 'tilde', body: `intro\n~~~md\n${start}\n${end}\n~~~~\n` },
   { kind: 'indented', body: `intro\n   ~~~md\n${start}\n${end}\n   ~~~\n` },
+  {
+    kind: 'document-list-top-level',
+    document: '- user item\n',
+    body: '   ~~~md\nexample\n   ~~~\n',
+  },
+  {
+    kind: 'four-spaces',
+    body: 'intro\n    ```md\n    example\n    ```\n',
+    line: 2,
+  },
+  { kind: 'tab-indented', body: 'intro\n\t```md\n\texample\n\t```\n', line: 2 },
+  {
+    kind: 'document-comment-open',
+    document: '# user\n<!-- example\n',
+    line: 2,
+  },
   { kind: 'blockquote', body: 'intro\n> ```md\n> example\n> ```\n', line: 2 },
   { kind: 'list', body: 'intro\n- ```md\n  example\n  ```\n', line: 2 },
   {
@@ -63,30 +85,35 @@ it.each([
         consumerOf(badRoot, '@probe/bad', 'directory'),
         consumerOf(goodRoot, '@probe/good', 'directory'),
       ];
+      const agent = scenario.agent ?? 'codex';
+      const destination = agent === 'claude' ? '.claude' : '.agents';
       const flags = {
-        agent: ['codex'],
+        agent: [agent],
         scope: 'project',
         yes: true,
         force: true,
         interactive: true,
       };
       const first = await runSurface(mode, root, targets, flags);
-      expect(first.files['.agents/skills/good/SKILL.md']).toBeDefined();
+      expect(first.files[`${destination}/skills/good/SKILL.md`]).toBeDefined();
       if (scenario.line) {
         expect(first.code).toBe(1);
-        const filename =
-          scenario.kind === 'document-open' ? 'AGENTS.md' : 'rules/a.md';
+        const filename = scenario.document ? 'AGENTS.md' : 'rules/a.md';
         expect(first.model.units[0].error).toContain(
           `${filename}:${scenario.line}:`,
         );
         expect(first.model.units[0].error).toMatch(/close|top level/i);
-        expect(first.files['.agents/skills/bad/SKILL.md']).toBeUndefined();
+        expect(
+          first.files[`${destination}/skills/bad/SKILL.md`],
+        ).toBeUndefined();
         expect(first.files['AGENTS.md'] ?? '').toBe(
           Buffer.from(document).toString('hex'),
         );
         if (scenario.kind === 'document-open')
           writeAt(join(root, 'AGENTS.md'), document + '```\n');
-        else if (scenario.kind === 'source-open')
+        else if (scenario.kind === 'document-comment-open')
+          writeAt(join(root, 'AGENTS.md'), document + '-->\n');
+        else if (scenario.kind.startsWith('source-open'))
           writeAt(
             join(badRoot, 'docs/agents/rules/a.md'),
             scenario.body + '```\n',
