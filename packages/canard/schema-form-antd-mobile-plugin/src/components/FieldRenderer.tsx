@@ -56,7 +56,17 @@ export const FieldRenderer = ({
       isBooleanSwitchInput(hint) ||
       isStringSwitchInput(hint) ||
       isSliderInput(hint));
-  if (depth === 0) return <Input />;
+  if (depth === 0)
+    return (
+      <>
+        <Input />
+        {errorMessage !== null &&
+          errorMessage !== undefined &&
+          typeof errorMessage !== 'boolean' && (
+            <ErrorMessage>{errorMessage}</ErrorMessage>
+          )}
+      </>
+    );
 
   if (node.strategy === 'branch') {
     return (
