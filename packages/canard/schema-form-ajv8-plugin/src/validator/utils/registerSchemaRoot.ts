@@ -77,7 +77,7 @@ export const registerSchemaRoot = (
       if (!registry.active[index].deref()) registry.active.splice(index, 1);
   const allRegistrations = instanceIdRegistrationsOf(baseAjv);
   const shared: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[] = ids.length
-    ? allRegistrations
+    ? allRegistrations.active
     : [];
   for (let index = shared.length - 1; index >= 0; index--)
     if (!shared[index].deref()) shared.splice(index, 1);

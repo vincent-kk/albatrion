@@ -15,7 +15,7 @@ export const releaseSchemaRoot = (
     registry.finalizer?.unregister(registration);
     disposeSchemaRoot(registration);
     if (registration.ids.length) {
-      const shared = instanceIdRegistrationsOf(registration.baseAjv);
+      const shared = instanceIdRegistrationsOf(registration.baseAjv).active;
       for (let index = shared.length - 1; index >= 0; index--) {
         const entry = shared[index].deref();
         if (!entry || entry === registration) shared.splice(index, 1);

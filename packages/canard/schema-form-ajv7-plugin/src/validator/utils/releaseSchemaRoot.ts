@@ -15,7 +15,7 @@ export const releaseSchemaRoot = (
   disposeSchemaRoot(registration);
   roots.delete(root);
   if (registration.ids.length) {
-    const shared = instanceIdRegistrationsOf(registration.base);
+    const shared = instanceIdRegistrationsOf(registration.base).active;
     for (let index = shared.length - 1; index >= 0; index--) {
       const entry = shared[index].deref();
       if (!entry || entry === registration) shared.splice(index, 1);

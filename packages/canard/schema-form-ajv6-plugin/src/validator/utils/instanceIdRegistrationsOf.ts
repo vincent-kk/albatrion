@@ -4,10 +4,9 @@ import type Ajv from 'ajv';
 import type { SchemaRootRegistration } from './registerSchemaRoot';
 
 /** One instance's weak ownership list and registration sequence, shared across evaluated copies. */
-type InstanceIdRegistrations = Pick<
-  WeakRef<SchemaRootRegistration>,
-  'deref'
->[] & {
+type InstanceIdRegistrations = {
+  /** Plain array retains the native array shape used by local ownership lists. */
+  readonly active: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[];
   /** Monotonic registration sequence within the shared AJV instance. */
   nextKey: number;
 };
@@ -39,7 +38,7 @@ export const instanceIdRegistrationsOf = (
 ): InstanceIdRegistrations => {
   let list = registrationsByInstance.get(instance);
   if (!list) {
-    list = Object.assign([], { nextKey: 0 });
+    list = { active: [], nextKey: 0 };
     registrationsByInstance.set(instance, list);
   }
   return list;
