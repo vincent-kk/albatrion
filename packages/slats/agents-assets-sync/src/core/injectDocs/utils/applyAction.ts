@@ -14,10 +14,12 @@ import { replaceDocument } from './replaceDocument.js';
  *
  * @param action - a single action, expected to carry a `file` target
  * @param assetRoot - consumer asset tree the source file is read from
+ * @param checkedBytes - run-owned bytes already hashed and validated, when available
  */
 export async function applyAction(
   action: Action,
   assetRoot: string,
+  checkedBytes?: Buffer,
 ): Promise<void> {
   if (action.target.kind !== 'file') return;
   const { dstAbs } = action.target;
@@ -26,7 +28,7 @@ export async function applyAction(
     const source = join(assetRoot, action.relPath);
     await replaceDocument(
       dstAbs,
-      await readFile(source),
+      checkedBytes ?? (await readFile(source)),
       (await stat(source)).mode,
     );
     return;

@@ -4,8 +4,9 @@ import type {
   AgentType,
   AssetKind,
 } from '../../../agentTarget/index.js';
-import type { InjectPlan, RuleSource } from '../../../buildPlan/index.js';
+import type { InjectPlan } from '../../../buildPlan/index.js';
 import type { Scope } from '../../../scope/index.js';
+import type { RuleSource } from '../../../types/ruleSource.js';
 import type { InjectReport } from '../../type.js';
 
 /** One failure or protective notice shared by every display. */

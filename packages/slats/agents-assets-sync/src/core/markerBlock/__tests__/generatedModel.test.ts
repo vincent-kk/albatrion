@@ -61,12 +61,19 @@ it('matches the block-list reference model for 4000 seeded documents', () => {
     ).toEqual(blocks);
     const applied = upsertBlock(written, id, source);
     expect(upsertBlock(applied, id, source), label).toBe(applied);
+    const replacement = {
+      blockId: id,
+      body: body.endsWith('\n') ? body : body + '\n',
+    };
+    const first = blocks.findIndex((block) => block.blockId === id);
+    const expected = blocks.flatMap((block, index) =>
+      block.blockId !== id ? [block] : index === first ? [replacement] : [],
+    );
+    if (first < 0) expected.push(replacement);
     expect(
-      parseBlocks(applied)
-        .filter((block) => block.blockId === id)
-        .map((block) => block.body),
+      parseBlocks(applied).map(({ blockId, body }) => ({ blockId, body })),
       label,
-    ).toEqual([body.endsWith('\n') ? body : body + '\n']);
+    ).toEqual(expected);
     expect(applied.startsWith(prefix), label).toBe(true);
   }
 });

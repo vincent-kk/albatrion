@@ -1,5 +1,6 @@
 import type { Destination, OrphanScan } from '../agentTarget/index.js';
 import type { Sha256Hex } from '../hash/index.js';
+import type { RuleSource } from '../types/ruleSource.js';
 
 /** What the plan decided to do about one manifest entry. */
 export type ActionKind =
@@ -34,14 +35,6 @@ export interface InjectPlan {
   readonly actions: readonly Action[];
   /** True when applying would overwrite or drop content the user may own. */
   readonly requiresForce: boolean;
-}
-
-/** One byte snapshot shared across every selected agent in a run. */
-export interface RuleSource {
-  /** Normalized Latin-1 byte view used by validation, comparison and writing. */
-  readonly body: string;
-  /** Hash of the unchanged source bytes. */
-  readonly rawHash: Sha256Hex;
 }
 
 export interface PlanInput {

@@ -1,8 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import type { Action, RuleSource } from '../../buildPlan/index.js';
+import type { Action } from '../../buildPlan/index.js';
 import { removeBlock, writeNormalizedBlock } from '../../markerBlock/index.js';
+import type { RuleSource } from '../../types/ruleSource.js';
 import { normalizeRuleSource } from '../../utils/normalizeRuleSource.js';
 import { replaceDocument } from './replaceDocument.js';
 

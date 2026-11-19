@@ -1,4 +1,5 @@
 import { assertManagedMarkdown } from './assertManagedMarkdown.js';
+import { assertRuleSource } from './assertRuleSource.js';
 import { endMarker, startMarker } from './markerLine.js';
 
 /** Write the already normalized source snapshot shared by planning and validation.
@@ -16,7 +17,7 @@ export function writeNormalizedBlock(
   context: { document?: string; source?: string } = {},
 ): string {
   const blocks = assertManagedMarkdown(content, context.document ?? 'document');
-  assertManagedMarkdown(body, context.source ?? 'rule source');
+  assertRuleSource(body, context.source ?? 'rule source');
   const rendered = `${startMarker(blockId)}\n${body}${
     body.endsWith('\n') ? '' : '\n'
   }${endMarker(blockId)}\n`;

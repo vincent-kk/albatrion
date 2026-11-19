@@ -3,12 +3,7 @@ import { join, relative } from 'node:path';
 import type { AsyncFn } from '@aileron/declare';
 
 import type { Destination, OrphanScan } from '../agentTarget/index.js';
-import {
-  type Sha256Hex,
-  hashContent,
-  hashEquals,
-  hashFile,
-} from '../hash/index.js';
+import { type Sha256Hex, hashEquals, hashFile } from '../hash/index.js';
 import { blockBodyMatches, parseBlocks } from '../markerBlock/index.js';
 import { isNoisePath } from '../utils/isNoisePath.js';
 import { toPosix } from '../utils/toPosix.js';
@@ -40,7 +35,9 @@ export async function buildPlan(input: PlanInput): Promise<InjectPlan> {
     const destination = destinations.get(relPath);
     if (!destination) continue;
     const source =
-      input.assetRoot && destination.kind === 'block'
+      input.assetRoot &&
+      relPath.startsWith('rules/') &&
+      destination.kind !== 'unsupported'
         ? await readRuleSource(
             join(input.assetRoot, relPath),
             input.ruleSources,
@@ -57,9 +54,11 @@ export async function buildPlan(input: PlanInput): Promise<InjectPlan> {
     if (actualHash === null) throw new Error(`Source file missing: ${relPath}`);
     const sourceHashReconciled = actualHash !== srcHash;
     const comparisonHash =
-      source !== null && source !== undefined
-        ? hashContent(Buffer.from(source.body, 'latin1'))
-        : (input.ruleBodyHashes?.[relPath] ?? actualHash);
+      destination.kind === 'block'
+        ? source !== null && source !== undefined
+          ? source.bodyHash
+          : (input.ruleBodyHashes?.[relPath] ?? actualHash)
+        : actualHash;
     const kind = await classify(destination, comparisonHash, readDocument);
     if (sourceHash === null && kind !== 'skip-uptodate')
       throw new Error(`Source file missing: ${relPath}`);

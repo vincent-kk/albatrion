@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises';
 
 import { hashContent } from '../../hash/index.js';
+import type { RuleSource } from '../../types/ruleSource.js';
 import { normalizeRuleSource } from '../../utils/normalizeRuleSource.js';
-import type { RuleSource } from '../type.js';
 
 /** Snapshot and normalize a rule exactly once for every selected agent.
  * @param path Absolute source file.
@@ -19,11 +19,15 @@ export async function readRuleSource(
     if (error.code === 'ENOENT') return null;
     throw error;
   });
+  const body =
+    bytes === null ? '' : normalizeRuleSource(bytes.toString('latin1'));
   const source =
     bytes === null
       ? null
       : {
-          body: normalizeRuleSource(bytes.toString('latin1')),
+          bytes,
+          body,
+          bodyHash: hashContent(Buffer.from(body, 'latin1')),
           rawHash: hashContent(bytes),
         };
   cache?.set(path, source);
