@@ -176,7 +176,7 @@ controlled 선언이 없는 자식에는 다음 한계가 있습니다.
 
 `FieldNodeState.Edited`는 사용자 입력을 기록하며 프로그램·자동 쓰기에는 설정하지 않습니다. 기본 입력 blur는 다음 애니메이션 프레임에 Touched를 기록하고 사용자 입력은 플래그를 명시적으로 쓸 수 있습니다. `isEdited`, `isTouched`는 해당 플래그입니다. `node.state`·`setState`는 사용자 플래그도 받고 Form reset·clearState는 사용자 플래그도 지웁니다. `globalState`는 true 또는 부재인 집계 플래그를 방출합니다. 일괄 변경에는 하위 트리 상태·error 메서드를 사용하십시오.
 
-array 노드의 `push(value?)`, `insert(index, value?)`는 길이를, `pop()`·`remove(index)`는 제거한 값을, `update(index, value)`는 갱신한 값을, `clear()`는 void를 반환합니다. insert는 0부터 length까지 정수 index를 받고 잘못된 index에서는 원래 길이를 반환합니다. minItems·maxItems는 강제하지 않습니다. batch에서는 앞선 mark를 반영해 호출 위치에서 계산하고 전체 배열 정착 때 항목 동일성을 위치로 이어갑니다. 배열 연산 전에 `isArrayNode`로 확인하십시오.
+array 노드의 `push(value?)`, `insert(index, value?)`는 길이를, `pop()`·`remove(index)`는 제거한 값을, `update(index, value)`는 갱신한 값을, `clear()`는 void를 반환합니다. insert는 0부터 length까지 정수 index를 받고 잘못된 index에서는 원래 길이를 반환합니다. minItems·maxItems는 강제하지 않습니다. batch에서는 배열 연산 전에 앞선 값 표시를 정착합니다. 각 연산은 동기로 반환하고 순차 호출과 같은 살아 있는 항목 노드를 유지하며 통지는 최외곽 batch 경계에서 합칩니다. 배열 연산 전에 `isArrayNode`로 확인하십시오.
 
 공개 가드는 unknown을 받는 isFieldNode와 FieldNode·null·undefined를 받는 isArrayNode·isBooleanNode·isBranchNode·isNumberNode·isObjectNode·isStringNode·isTerminalNode·isUnionNode·isVirtualNode입니다. 이 아홉 종류·`strategy` 가드는 null·undefined에 false를 반환합니다.
 

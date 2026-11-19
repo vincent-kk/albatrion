@@ -96,7 +96,7 @@ String expressions use form paths and context; see [path expressions](./api-refe
 
 An `inactiveValue` resolver receives the previous committed value, `dataPath`, `schemaPath`, current/parent/root schemas and values, and form context. Returning `undefined` preserves the original retained source. It runs only for a normal retained gate exit with automatic writes enabled, not load, reset, failure, budget overflow, a throwing gate, or an instance that only entered transiently during that settlement.
 
-Caller JSON wins when the write causing exit explicitly covers that path; neither `onInactive` nor the resolver runs there. A whole ancestor write covers omitted descendants, while Merge covers supplied keys only. Multi-write batch merges are shallow. Explicit coverage is the union of all caller writes; later partial/empty merges or automatic writes do not erase earlier whole coverage.
+Caller JSON wins when the write causing exit explicitly covers that path; neither `onInactive` nor the resolver runs there. A whole ancestor write covers omitted descendants, while Merge covers supplied keys only. Multi-write batch Merge recursively merges declared branch objects, retaining omitted keys; terminal values and arrays are replaced. Explicit coverage is the union of all caller writes; later partial/empty merges or automatic writes do not erase earlier whole coverage.
 
 After an array move, a resolver reads the preceding committed value and address but retains its result at the current address. Policy precedence is node, parent fields, then fragment; descendant results overwrite their own paths in an ancestor result. Retained results preserve undeclared keys and wrong-kind values under the usual inactive-JSON rules, and reentry consumes the overlay.
 
