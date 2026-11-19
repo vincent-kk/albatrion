@@ -338,7 +338,7 @@ import type {
  * **Performance Considerations:**
  * - Subscribers are notified synchronously on state changes
  * - State updates create new objects (immutable pattern)
- * - Concurrent prevention uses simple boolean flag (minimal overhead)
+ * - Concurrent admission is checked before running hooks or origin
  * - Subscribe/unsubscribe operations are O(1) using Set
  */
 export function getTrackableHandler<
