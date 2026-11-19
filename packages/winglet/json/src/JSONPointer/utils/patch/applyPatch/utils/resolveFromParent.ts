@@ -57,7 +57,7 @@ export const resolveFromParent = (
         },
       );
     if (cloned !== null && !cloned.has(next)) {
-      next = isArray(next) ? next.slice() : copyObject(next);
+      next = isArray(next) ? next.slice() : next instanceof Object ? { ...next } : copyObject(next);
       cloned.add(next);
       if (index === -1) setDataProperty(parent, segment, next);
       else parent[index] = next;
