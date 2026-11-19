@@ -70,3 +70,23 @@ test('bundle path conditions keep precisely the same options as string paths', a
   assert.equal(nested.output.file, original.output.file);
   assert.deepEqual({ ...nested, plugins: [] }, { ...original, plugins: [] });
 });
+
+
+test('CJS handles ESM and declaration extensions but keeps asset paths', (context) => {
+  const root = fixture(context, {
+    'consumer.d.cts': "export * from './value.mjs';\nexport * from './value.d.mts';\nimport './data.json';\nimport './style.css';",
+    'value.d.cts': 'export {};', 'data.json.d.cts': 'export {};', 'style.css.d.cts': 'export {};',
+  });
+  fixDtsExtensions(root);
+  assert.equal(readFileSync(join(root, 'consumer.d.cts'), 'utf8'), "export * from './value.cjs';\nexport * from './value.cjs';\nimport './data.json';\nimport './style.css';");
+});
+
+test('published declaration branches reject source conditions, branch drift and incorrect ordering', async () => {
+  const { validatePublishedDeclarations } = await import('../utils/validatePublishedDeclarations.mjs');
+  const entry = { import: { types: './index.d.ts', default: './index.mjs' }, require: { types: './index.d.cts', default: './index.cjs' } };
+  const manifest = { name: 'fixture', exports: { '.': entry }, publishConfig: { exports: { '.': entry } } };
+  assert.doesNotThrow(() => validatePublishedDeclarations(manifest));
+  assert.throws(() => validatePublishedDeclarations({ ...manifest, publishConfig: { exports: { '.': { source: './src/index.ts', ...entry } } } }), /source/);
+  assert.throws(() => validatePublishedDeclarations({ ...manifest, publishConfig: { exports: { '.': { ...entry, require: { types: './wrong.d.cts' } } } } }), /differ/);
+  assert.throws(() => validatePublishedDeclarations({ ...manifest, publishConfig: { exports: { '.': { ...entry, import: { default: './index.mjs', types: './index.d.ts' } } } } }), /types first/);
+});

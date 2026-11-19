@@ -32,6 +32,7 @@ for (const path of ['winglet/common-utils', 'canard/schema-form', 'canard/schema
         const local = resolve(packageDir, 'node_modules', dependency);
         symlinkSync(existsSync(local) ? local : join(repository, 'node_modules', dependency), target, 'dir');
       }
+      symlinkSync(join(repository, 'node_modules/@types'), join(scratch, 'node_modules/@types'), 'dir');
       const published = JSON.parse(readFileSync(join(installed, 'package.json'), 'utf8'));
       const source = Object.keys(published.exports).map((key, index) => `export * as entry${index} from '${manifest.name}${key === '.' ? '' : key.slice(1)}';`).join('\n');
       for (const extension of ['mts', 'cts']) {
