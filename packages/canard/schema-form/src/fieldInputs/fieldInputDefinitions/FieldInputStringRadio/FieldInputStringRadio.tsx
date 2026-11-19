@@ -63,7 +63,11 @@ export const FieldInputStringRadio = ({
       input.checked = radioOptions[index].rawValue === committedValue;
     });
   });
-  useLayoutEffect(restoreSelection, [fieldId, restoreSelection]);
+  const mounted = useRef(false);
+  useLayoutEffect(() => {
+    if (mounted.current) restoreSelection();
+    else mounted.current = true;
+  }, [fieldId, restoreSelection]);
   return (
     <span
       ref={group}
