@@ -1,8 +1,3 @@
-// r4-agents-assets-sync, angles RG1 and FP4 on round 3 item 4: the AGENTS.md
-// rewrite became a temporary file plus rename
-// (core/injectDocs/utils/replaceDocument.ts). These probes compare what the
-// rename-based rewrite keeps with what the in-place write it replaced kept.
-// Public API: `runCli` in-process.
 import {
   chmodSync,
   lstatSync,
@@ -30,9 +25,7 @@ afterEach(() => {
   for (const root of roots.splice(0)) {
     try {
       chmodSync(join(root, 'AGENTS.md'), 0o644);
-    } catch {
-      // absent
-    }
+    } catch {}
     removeRoot(root);
   }
 });
@@ -77,12 +70,11 @@ describe('user scope: a dotfiles link', () => {
     const isLink = lstatSync(join(home, '.codex/AGENTS.md')).isSymbolicLink();
     let dotfilesHasBlock = false;
     try {
-      dotfilesHasBlock = readFileSync(join(dotfiles, 'AGENTS.md'), 'utf8').includes(
-        '# rule',
-      );
-    } catch {
-      // still absent
-    }
+      dotfilesHasBlock = readFileSync(
+        join(dotfiles, 'AGENTS.md'),
+        'utf8',
+      ).includes('# rule');
+    } catch {}
     expect({ code, isLink, dotfilesHasBlock }).toEqual({
       code: 1,
       isLink: true,
@@ -134,7 +126,6 @@ describe('permission bits', () => {
     chmodSync(join(root, 'AGENTS.md'), 0o444);
     const codex = await runCliCode(projectArgs(root));
     const codexAfter = readFileSync(join(root, 'AGENTS.md'), 'utf8');
-    // The claude counterpart: a diverged rule file made read-only, with --force.
     writeAt(join(root, '.claude/rules/r.md'), '# local\n');
     chmodSync(join(root, '.claude/rules/r.md'), 0o444);
     const claude = await runCliCode(
@@ -147,6 +138,11 @@ describe('permission bits', () => {
       codexRewrote: codexAfter.includes('# rule'),
       claude,
       claudeRewrote: claudeAfter === '# rule\n',
-    }).toEqual({ codex: 1, codexRewrote: false, claude: 1, claudeRewrote: false });
+    }).toEqual({
+      codex: 1,
+      codexRewrote: false,
+      claude: 1,
+      claudeRewrote: false,
+    });
   });
 });

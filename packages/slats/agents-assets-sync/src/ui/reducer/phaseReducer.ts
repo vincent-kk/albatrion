@@ -138,11 +138,15 @@ export function phaseReducer(phase: Phase, event: InjectEvent): Phase {
     }
     case 'done': {
       const scope =
-        phase.kind === 'applying' || phase.kind === 'diff-review'
+        phase.kind === 'applying' ||
+        phase.kind === 'diff-review' ||
+        phase.kind === 'force-confirm'
           ? phase.scope
           : 'user';
       const plans =
-        phase.kind === 'applying' || phase.kind === 'diff-review'
+        phase.kind === 'applying' ||
+        phase.kind === 'diff-review' ||
+        phase.kind === 'force-confirm'
           ? phase.plans
           : [];
       return {

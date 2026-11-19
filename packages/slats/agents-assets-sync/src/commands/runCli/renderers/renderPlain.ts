@@ -1,4 +1,10 @@
-import { runInjection, type RunResult, type InjectPlan, type AgentTarget, type ActionTarget } from '../../../core/index.js';
+import {
+  type ActionTarget,
+  type AgentTarget,
+  type InjectPlan,
+  type RunResult,
+  runInjection,
+} from '../../../core/index.js';
 import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
 import { logger } from '../../../utils/logger.js';
 
@@ -8,7 +14,11 @@ import { logger } from '../../../utils/logger.js';
  * @param originCwd Scope origin.
  * @returns Core exit code after displaying its result.
  */
-export async function renderPlain(targets: readonly ConsumerPackage[], flags: DefaultFlags, originCwd: string): Promise<number> {
+export async function renderPlain(
+  targets: readonly ConsumerPackage[],
+  flags: DefaultFlags,
+  originCwd: string,
+): Promise<number> {
   const result = await runInjection({ targets, flags, originCwd });
   displayPlain(result, Boolean(flags.force));
   return result.exitCode;
@@ -21,15 +31,23 @@ export async function renderPlain(targets: readonly ConsumerPackage[], flags: De
 export function displayPlain(result: RunResult, force: boolean): void {
   for (const error of result.errors) logger.error(error);
   for (const unit of result.units) {
-    logger.heading(`${unit.target.name}@${unit.target.version} · ${unit.agentTarget.agent}`);
-    logger.info(`${unit.target.name}@${unit.target.version} → ${unit.agentTarget.description}`);
+    logger.heading(
+      `${unit.target.name}@${unit.target.version} · ${unit.agentTarget.agent}`,
+    );
+    logger.info(
+      `${unit.target.name}@${unit.target.version} → ${unit.agentTarget.description}`,
+    );
     printPlan(unit.plan, unit.agentTarget);
     if (unit.error) logger.error(`${unit.target.name}: ${unit.error}`);
-    if (unit.report?.exitCode === 2) logger.error('Re-run with --force to proceed, or inspect with --dry-run.');
+    if (unit.report?.exitCode === 2)
+      logger.error(
+        'Re-run with --force to proceed, or inspect with --dry-run.',
+      );
     if (force) emitForceList(unit.plan);
     for (const path of unit.report?.updated ?? []) logger.file('update', path);
   }
-  if (result.dryRun) logger.warn('[DRY RUN] No files will be created, overwritten, or deleted.');
+  if (result.dryRun)
+    logger.warn('[DRY RUN] No files will be created, overwritten, or deleted.');
 }
 
 function printPlan(plan: InjectPlan, agentTarget: AgentTarget): void {

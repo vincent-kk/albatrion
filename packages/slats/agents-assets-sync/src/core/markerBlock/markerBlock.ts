@@ -119,6 +119,7 @@ export function removeBlock(content: string, blockId: string): string {
  *
  * @param body - body returned by `parseBlocks` or `findBlockBody`
  * @param expected - the manifest's SHA-256 for the source file
+ * @param encoding - UTF-8 text by default, or Latin-1 for a reversible byte view
  * @returns `true` when the body matches the manifest
  */
 export function blockBodyMatches(

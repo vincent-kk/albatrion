@@ -1,15 +1,14 @@
 import { basename, isAbsolute, resolve as resolvePath } from 'node:path';
 
-import { Command } from 'commander';
+import { Command, CommanderError } from 'commander';
 
+import { validateFlags } from '../../core/index.js';
 import type { DefaultFlags } from '../../types/index.js';
 import { divertLogsToStderr, logger } from '../../utils/logger.js';
 import { VERSION } from '../../utils/version.js';
-import { validateFlags } from '../../core/index.js';
-import { displayJSON } from './renderers/renderJSON.js';
-import { classifyTarget } from './targets/classifyTarget.js';
 import { resolveAssetPathFlag } from './flags/resolveAssetPathFlag.js';
 import { renderOrFallback } from './renderers/renderOrFallback.js';
+import { classifyTarget } from './targets/classifyTarget.js';
 import { resolveTargets } from './targets/resolveTargets.js';
 import { selectInjectableTargets } from './targets/selectInjectableTargets.js';
 import { toConsumerPackages } from './targets/toConsumerPackages.js';
@@ -44,6 +43,7 @@ export async function runCli(
   argv: readonly string[] = process.argv,
 ): Promise<void> {
   const cmd = new Command();
+  cmd.exitOverride();
 
   cmd
     .name(deriveProgramName(argv))
@@ -96,18 +96,37 @@ export async function runCli(
       if (flags.json) divertLogsToStderr();
       const targets = flags.package ?? [];
       const errors: string[] = [];
-      if (targets.length === 0) errors.push('missing required flag: --package <name>');
+      if (targets.length === 0)
+        errors.push('missing required flag: --package <name>');
       for (const target of targets) {
         const classified = classifyTarget(target);
         if (classified.kind === 'invalid') errors.push(classified.reason);
       }
-      if (flags.assetPath !== undefined && (!flags.assetPath.trim() || isAbsolute(flags.assetPath.trim()) || flags.assetPath.trim().startsWith('~'))) errors.push(`Invalid --asset-path: ${flags.assetPath}`);
+      if (
+        flags.assetPath !== undefined &&
+        (!flags.assetPath.trim() ||
+          isAbsolute(flags.assetPath.trim()) ||
+          flags.assetPath.trim().startsWith('~'))
+      )
+        errors.push(`Invalid --asset-path: ${flags.assetPath}`);
       const checked = validateFlags(flags, true);
       if ('errors' in checked) errors.push(...checked.errors);
       if (errors.length) {
-        if (flags.json) displayJSON({ units: [], errors, exitCode: 2, dryRun: Boolean(flags.dryRun) });
-        else errors.forEach(error => logger.error(error));
-        process.exit(2);
+        const result = {
+          units: [],
+          errors,
+          exitCode: 2,
+          dryRun: Boolean(flags.dryRun),
+        } as const;
+        await renderOrFallback(
+          [],
+          flags,
+          resolvePath(flags.root ?? process.cwd()),
+          [],
+          {},
+          result,
+        );
+        process.exit(result.exitCode);
       }
       const assetPath = resolveAssetPathFlag(flags.assetPath);
       const originCwd = resolvePath(flags.root ?? process.cwd());
@@ -145,6 +164,27 @@ export async function runCli(
   try {
     await cmd.parseAsync([...argv]);
   } catch (err) {
+    if (err instanceof CommanderError) {
+      if (err.exitCode === 0) return;
+      const result = {
+        units: [],
+        errors: [err.message],
+        exitCode: 2,
+        dryRun: argv.includes('--dry-run'),
+      } as const;
+      await renderOrFallback(
+        [],
+        {
+          json: argv.includes('--json'),
+          interactive: !argv.includes('--no-interactive'),
+        },
+        process.cwd(),
+        [],
+        {},
+        result,
+      );
+      process.exit(2);
+    }
     const msg = err instanceof Error ? err.message : String(err);
     logger.error(msg);
     process.exit(1);

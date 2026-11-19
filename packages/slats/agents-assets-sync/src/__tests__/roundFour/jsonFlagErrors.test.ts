@@ -1,8 +1,3 @@
-// r4-agents-assets-sync, angle EQ9 (--json on every exit path). README.md:251-257:
-// "A flag error becomes `errors` with `exitCode: 2` and empty `units`, so a
-// reader always has a document to parse. The exception is a failure upstream
-// of the renderer — an unresolvable `--package` — where stdout stays empty."
-// Public API: `runCli` in-process with stdout captured.
 import { afterEach, expect, it, vi } from 'vitest';
 
 import {

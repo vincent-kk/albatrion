@@ -1,22 +1,14 @@
-// r4-agents-assets-sync, angle EQ9 (terminal output): one package with two
-// agents gives two (package, agent) plans. src/DETAIL.md:11 says two agents
-// make one plan per pair, and TargetCard's own `agent` prop exists because
-// "one package can have several". The terminal keys every list row by package
-// name alone and never passes the agent, so React reports duplicate keys (the
-// CLI loads React's development build unless NODE_ENV is set) and the two
-// cards cannot be told apart. Internal fixture: `InjectApp` rendered with
-// ink-testing-library, the component `renderInjectApp` mounts.
 import { render } from 'ink-testing-library';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import type { DefaultFlags } from '../../types/index.js';
-import { InjectApp } from '../../ui/InjectApp/InjectApp.js';
 import {
   consumerOf,
   installPackage,
   makeRoot,
   removeRoot,
 } from '../../__tests__/roundThree/fixture.js';
+import type { DefaultFlags } from '../../types/index.js';
+import { InjectApp } from '../../ui/InjectApp/InjectApp.js';
 
 const roots: string[] = [];
 afterEach(() => {
@@ -76,9 +68,6 @@ it('a terminal run with --agent=claude,codex raises no duplicate-key error and l
   }).toEqual({ code: 0, duplicateKeyErrors: 0, cardsNameEachAgent: true });
 });
 
-// resolveAgentFlag.ts JSDoc: "`--agent claude,codex` and `--agent claude
-// --agent claude --agent codex` behave alike" — the plain and --json paths
-// drop the repeated agent; the terminal path plans it twice.
 it('a terminal run with --agent=claude,claude plans one unit, as the plain and --json paths do', async () => {
   const root = makeRoot('r4-ink-dup-agent');
   roots.push(root);

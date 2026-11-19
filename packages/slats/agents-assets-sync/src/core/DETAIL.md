@@ -2,12 +2,7 @@
 
 ## Requirements
 
-- 계획과 결과는 core가 한 번 계산하며 일반·JSON·터미널은 그 모델을 표시합니다. 입력 화면은 누락된 인자와 확인 응답만 전달하고 같은 코어 실행 경로를 사용합니다.
-- 각 단위의 key는 agent와 package를 결합한 코어 식별자입니다. 공유 스킬 네임스페이스의 관리 경로는 실행 전체에서 합쳐 다른 참여 패키지 파일을 고아로 삭제하지 않습니다.
-- 일반 목적 orchestrator 객체와 렌더러별 기본 연산 조립은 금지합니다. 출력 방식에 따른 판정 차이를 막기 위해 작은 준비 함수·순수 계획 병합·결과 모델·단일 적용기만 사용합니다.
-
-
-- `core/**`는 순수하고 상태 없는 기본 연산의 모음이다. 이 트리의 어떤 함수도 `process.stdout`/`process.stderr`에 쓰지 않는다.
+- core는 출력 채널에 쓰지 않습니다. 파일시스템 읽기·쓰기는 명명된 준비 함수와 단일 적용기에 모으며 계획 병합과 검증은 순수 함수입니다.
 - 스코프 해석은 결정적이다. 프로젝트 루트의 마커 우선순위와 홈 경계는 소유 모듈인 `scope/DETAIL.md`가 정하며, 모든 에이전트는 그 결과를 공유한다. 상위 workspace의 루트 마커가 가까운 에이전트 앵커에 가려지지 않게 하는 계약이다.
 - 선택된 모든 에이전트는 프로젝트 루트 하나를 사용하므로 여러 에이전트를 지정한 실행이 두 프로젝트에 걸칠 수 없다.
 - `resolveAgentTarget`은 `(agent, scope)`를 자산 위치로 매핑한다. claude는 모든 종류의 루트를 `<projectRoot>/.claude` 아래에 둔다. codex와 agents는 skills를 스킬 디렉터리 디렉터리에 두고 rules를 `AGENTS.md`에 병합하며 `commands`는 지원하지 않는다고 보고한다. `project` 스코프에서는 같다(`<projectRoot>/.agents/skills`와 `<projectRoot>/AGENTS.md`). `user` 스코프에서만 codex는 `~/.codex`, agents는 `~/.agents`를 사용한다.

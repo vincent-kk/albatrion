@@ -1,9 +1,3 @@
-// r4-agents-assets-sync, angles FP4 and RG1: the documented build step
-// `agents-build-hashes` against a declared asset directory that is absent.
-// src/DETAIL.md:23-24 refuse exactly that state at run time ("no source
-// hashes"), because hashing an absent directory succeeds with an empty
-// manifest. The build tool writes that empty manifest and exits 0, after
-// which the injector treats the package as up to date.
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -30,7 +24,6 @@ function setup(): { root: string; packageRoot: string } {
   const root = makeRoot('r4-empty-manifest');
   roots.push(root);
   const packageRoot = join(root, 'node_modules/@probe/kit');
-  // `docs/agent` is a typo for the real `docs/agents` directory.
   writeAt(
     join(packageRoot, 'package.json'),
     JSON.stringify({

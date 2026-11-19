@@ -1,14 +1,6 @@
 import type { Fn } from '@aileron/declare';
 
-import {
-  type Action,
-  type InjectReport,
-  applyAction,
-  applyBlockActions,
-  partitionActions,
-  summarize,
-} from '../../core/index.js';
-import { asyncPool } from '../../utils/asyncPool.js';
+import { type InjectReport, executeUnits } from '../../core/index.js';
 import type { InjectEvent, TargetPlan } from '../types/index.js';
 
 interface ApplyStepInput {
@@ -18,81 +10,20 @@ interface ApplyStepInput {
   readonly dispatch: Fn<[event: InjectEvent]>;
 }
 
-const CONCURRENCY = 8;
-
-/**
- * Execute every plan, then report.
- *
- * File copies run through a pool; block writes are applied one document at a
- * time, because concurrent writers to a shared `AGENTS.md` would each persist
- * their own read of it and only the last would survive.
- *
- * @returns the reports and the exit code the app should resolve with
+/** Compatibility apply transport; all writes and exit decisions stay in core.
+ * @param input Prepared plans and display transport.
+ * @returns Core reports and exit status.
  */
 export async function applyAllPlans({
   plans,
   dryRun,
   force,
   dispatch,
-}: ApplyStepInput): Promise<{
-  reports: InjectReport[];
-  exitCode: 0 | 1 | 2;
-}> {
-  const total = plans.reduce((acc, tp) => acc + tp.plan.actions.length, 0);
-  let done = 0;
-  dispatch({ type: 'apply-start', total });
-
-  if (dryRun) {
-    const reports = plans.map((tp) => summarize(tp.plan, tp.error ? 1 : 0));
-    const exitCode = plans.some((tp) => tp.error) ? 1 : 0;
-    dispatch({ type: 'done', reports, exitCode, dryRun: true });
-    return { reports, exitCode };
-  }
-
-  const reports: InjectReport[] = [];
-  for (const tp of plans) {
-    if (tp.error || (tp.plan.requiresForce && !force)) {
-      reports.push(summarize(tp.plan, tp.error ? 1 : 2));
-      continue;
-    }
-    const { fileActions, blockGroups } = partitionActions(
-      tp.plan.actions,
-      force,
-    );
-    const results = await asyncPool(
-      CONCURRENCY,
-      fileActions,
-      async (action) => {
-        await applyAction(action, tp.target.assetRoot);
-        done += 1;
-        dispatch({ type: 'apply-progress', done, current: action.relPath });
-      },
-    );
-    const failedActions: Action[] = fileActions.filter(
-      (_, index) => results[index].status === 'rejected',
-    );
-    for (const [fileAbs, group] of blockGroups) {
-      try {
-        await applyBlockActions(fileAbs, group, tp.target.assetRoot);
-      } catch {
-        failedActions.push(...group);
-      }
-      done += group.length;
-      dispatch({ type: 'apply-progress', done, current: fileAbs });
-    }
-    reports.push(
-      summarize(tp.plan, failedActions.length ? 1 : 0, failedActions, [
-        ...fileActions,
-        ...[...blockGroups.values()].flat(),
-      ]),
-    );
-  }
-
-  const exitCode: 0 | 1 | 2 = reports.some((r) => r.exitCode === 1)
-    ? 1
-    : reports.some((r) => r.exitCode === 2)
-      ? 2
-      : 0;
-  dispatch({ type: 'done', reports, exitCode, dryRun: false });
-  return { reports, exitCode };
+}: ApplyStepInput): Promise<{ reports: InjectReport[]; exitCode: 0 | 1 | 2 }> {
+  const result = await executeUnits(plans, { dryRun, force }, []);
+  const reports = result.units.flatMap((unit) =>
+    unit.report ? [unit.report] : [],
+  );
+  dispatch({ type: 'done', reports, exitCode: result.exitCode, dryRun });
+  return { reports, exitCode: result.exitCode };
 }

@@ -4,10 +4,7 @@ import type { AsyncFn } from '@aileron/declare';
 
 import type { Destination, OrphanScan } from '../agentTarget/index.js';
 import { type Sha256Hex, hashEquals, hashFile } from '../hash/index.js';
-import {
-  blockBodyMatches,
-  parseBlocks,
-} from '../markerBlock/index.js';
+import { blockBodyMatches, parseBlocks } from '../markerBlock/index.js';
 import { isNoisePath } from '../utils/isNoisePath.js';
 import { toPosix } from '../utils/toPosix.js';
 import { walkFiles } from '../utils/walkFiles.js';
@@ -47,7 +44,7 @@ export async function buildPlan(input: PlanInput): Promise<InjectPlan> {
     actions.push({
       kind,
       relPath,
-      sourceHash: actualHash,
+      ...(destination.kind === 'file' ? { sourceHash: actualHash } : {}),
       target: destination,
       ...(sourceHashReconciled ? { sourceHashReconciled } : {}),
     });
@@ -92,9 +89,15 @@ async function classify(
   const content = await readDocument(destination.fileAbs);
   if (content === null) return 'copy';
   const blockId = Buffer.from(destination.blockId, 'utf8').toString('latin1');
-  const blocks = parseBlocks(content).filter(block => block.blockId === blockId);
+  const blocks = parseBlocks(content).filter(
+    (block) => block.blockId === blockId,
+  );
   if (!blocks.length) return 'copy';
-  return blocks.every(block => blockBodyMatches(block.body, srcHash, 'latin1')) ? 'skip-uptodate' : 'warn-diverged';
+  return blocks.every((block) =>
+    blockBodyMatches(block.body, srcHash, 'latin1'),
+  )
+    ? 'skip-uptodate'
+    : 'warn-diverged';
 }
 
 // Yield content this package installed earlier but no longer ships. Noise the
@@ -126,7 +129,11 @@ async function* findOrphans(
     if (known.has(relPath)) continue;
     yield {
       relPath,
-      target: { kind: 'block', fileAbs: scan.fileAbs, blockId: Buffer.from(block.blockId, 'latin1').toString('utf8') },
+      target: {
+        kind: 'block',
+        fileAbs: scan.fileAbs,
+        blockId: Buffer.from(block.blockId, 'latin1').toString('utf8'),
+      },
     };
   }
 }
