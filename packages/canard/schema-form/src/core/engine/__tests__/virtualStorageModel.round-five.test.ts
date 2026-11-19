@@ -15,6 +15,7 @@ it('virtual operations follow the reference model in sequential and batched hist
     const count = random(6),
       names = Array.from({ length: count }, (_, index) => `f${index}`);
     const active = names.map(() => random(2) === 1);
+    const initialActive = active.slice();
     const initial = names.map((_, index) =>
       random(2) ? `load${index}` : undefined,
     );
@@ -62,7 +63,7 @@ it('virtual operations follow the reference model in sequential and batched hist
       });
     const roots = [create(), create()];
     for (let step = 0; step < 12; step++) {
-      const operation = (step + random(16)) % 16,
+      const operation = (step + random(18)) % 18,
         index = count ? random(count) : 0;
       const tuple = names.map((_, slot) =>
         random(2) ? `write${step}:${slot}` : undefined,
@@ -112,7 +113,9 @@ it('virtual operations follow the reference model in sequential and batched hist
           } else if (operation === 15) {
             group.setValue(tuple);
             root.find('/reversed')!.setValue([...overlapping].reverse());
-          } else expect(group.outputValue).toBeUndefined();
+          } else if (operation === 16) group.setValue(undefined);
+          else if (operation === 17) root.resetSubtree();
+          else expect(group.outputValue).toBeUndefined();
         };
         if (mode)
           root.batch(() => {
@@ -134,6 +137,13 @@ it('virtual operations follow the reference model in sequential and batched hist
       else if (operation === 5 && count) active[index] = false;
       else if (operation === 15)
         stored.splice(0, stored.length, ...overlapping);
+      else if (operation === 16) {
+        for (let slot = 0; slot < count; slot++)
+          if (active[slot]) stored[slot] = undefined;
+      } else if (operation === 17) {
+        stored.splice(0, stored.length, ...initial);
+        active.splice(0, active.length, ...initialActive);
+      }
       const expected: Record<string, unknown> = {
         outside: true,
         groupOn: true,
