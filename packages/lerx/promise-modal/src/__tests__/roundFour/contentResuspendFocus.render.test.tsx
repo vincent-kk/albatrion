@@ -68,7 +68,9 @@ it('returns focus into a dialog whose content re-suspended and then revealed aga
   const next = screen.getByText('Next page');
   next.focus();
   act(() => fireEvent.click(next));
-  expect(screen.getByText('Next page').closest('[style*="none"]')).not.toBeNull();
+  expect(
+    screen.getByText('Next page').closest('[style*="none"]'),
+  ).not.toBeNull();
   browserFocusFixup();
   expect(document.activeElement).toBe(document.body);
   await act(async () => {

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 
 import { act, cleanup, render } from '@testing-library/react';
+import * as ReactDOM from 'react-dom';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import {
@@ -56,14 +56,24 @@ function anchors() {
 
 it('refuses an incompatible Provider without making the existing modal or page inert permanently', async () => {
   const other = await loadIncompatibleCopy();
-  render(<><main>page</main><ModalProvider /><other.ModalProvider /></>);
+  render(
+    <>
+      <main>page</main>
+      <ModalProvider />
+      <other.ModalProvider />
+    </>,
+  );
   expect(anchors()).toHaveLength(1);
   const mine = new AbortController();
   const theirs = new AbortController();
-  act(() => { void confirm({ title: 'This copy', signal: mine.signal }); });
+  act(() => {
+    void confirm({ title: 'This copy', signal: mine.signal });
+  });
   let rejected: Promise<void>;
   await act(async () => {
-    rejected = expect(other.alert({ title: 'Other copy', signal: theirs.signal })).rejects.toThrow(/incompatible state version/i);
+    rejected = expect(
+      other.alert({ title: 'Other copy', signal: theirs.signal }),
+    ).rejects.toThrow(/incompatible state version/i);
     theirs.abort();
     await rejected;
   });
@@ -77,10 +87,14 @@ it('rejects queued requests when an incompatible Provider mounts, without acquir
   const other = await loadIncompatibleCopy();
   const controller = new AbortController();
   const request = other.confirm({ title: 'Queued', signal: controller.signal });
-  const rejection = expect(request).rejects.toThrow(/incompatible state version/i);
+  const rejection = expect(request).rejects.toThrow(
+    /incompatible state version/i,
+  );
   render(<other.ModalProvider />);
   controller.abort();
-  await act(async () => { await rejection; });
+  await act(async () => {
+    await rejection;
+  });
   expect(anchors()).toHaveLength(0);
   expect(document.body.style.overflow).toBe('');
   expect(other.Manager.ids).toHaveLength(0);
@@ -89,17 +103,34 @@ it('rejects queued requests when an incompatible Provider mounts, without acquir
 it('keeps compatible dialog labels unique while refusing an incompatible copy', async () => {
   const other = await loadIncompatibleCopy();
   function Frame({ id, children }: React.PropsWithChildren<ModalFrameProps>) {
-    return <section role="dialog" aria-labelledby={`title-${id}`}><h2 id={`title-${id}`}>Review</h2>{children}</section>;
+    return (
+      <section role="dialog" aria-labelledby={`title-${id}`}>
+        <h2 id={`title-${id}`}>Review</h2>
+        {children}
+      </section>
+    );
   }
-  render(<><ModalProvider ForegroundComponent={Frame} /><other.ModalProvider ForegroundComponent={Frame} /></>);
-  act(() => { void confirm({ title: 'First' }); void confirm({ title: 'Second' }); });
+  render(
+    <>
+      <ModalProvider ForegroundComponent={Frame} />
+      <other.ModalProvider ForegroundComponent={Frame} />
+    </>,
+  );
+  act(() => {
+    void confirm({ title: 'First' });
+    void confirm({ title: 'Second' });
+  });
   const controller = new AbortController();
   await act(async () => {
-    const rejected = expect(other.confirm({ signal: controller.signal })).rejects.toThrow(/incompatible state version/i);
+    const rejected = expect(
+      other.confirm({ signal: controller.signal }),
+    ).rejects.toThrow(/incompatible state version/i);
     controller.abort();
     await rejected;
   });
-  const labels = [...document.querySelectorAll('[role="dialog"]')].map(dialog => dialog.getAttribute('aria-labelledby'));
+  const labels = [...document.querySelectorAll('[role="dialog"]')].map(
+    (dialog) => dialog.getAttribute('aria-labelledby'),
+  );
   expect(labels).toHaveLength(2);
   expect(new Set(labels).size).toBe(labels.length);
 });

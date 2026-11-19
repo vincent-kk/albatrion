@@ -130,7 +130,8 @@ async function scenario(
   expect(result).toBe(false);
   await act(async () => view.rerender(app(false)));
   return {
-    displayedOnShow: wrapper.isConnected && wrapper.classList.contains(foregroundVisible),
+    displayedOnShow:
+      wrapper.isConnected && wrapper.classList.contains(foregroundVisible),
     opacityOnShow: screen.queryByTestId('animated')?.style.opacity,
   };
 }
@@ -141,7 +142,6 @@ for (const kind of ['activity', 'suspense'] as const)
       `does not display a manualDestroy request settled by ${how} while its Provider was hidden (${kind})`,
       async () => {
         const outcome = await scenario(kind, how);
-        // README:354, "A settled modal never reappears, including in manual destruction mode."
         expect(outcome).toEqual({
           displayedOnShow: false,
           opacityOnShow: outcome.opacityOnShow,

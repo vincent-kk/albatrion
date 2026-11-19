@@ -259,4 +259,3 @@ Catch opening and render failures at the requesting call. A presenter failure re
 React 18 and 19 share the same public contract. Both runtime bundles start with use client; DOM-free import and server rendering remain supported without layout-effect warnings. Server rendering creates no portal, counts zero modals, and must not call browser modal functions.
 
 Compatible internal state versions share a system within one JavaScript realm, including requests, style identity, ownership, keyboard, and page effects. Incompatible versions remain isolated; the incompatible copy refuses Provider initialization and rejects opening requests instead of installing page effects. Use one compatible version per document. This prevents independent inert and scroll snapshots from leaving the page locked. The incompatible copy warns in development. Other windows/realms are not shared: root examples target elements in the current document, not an iframe document.
-

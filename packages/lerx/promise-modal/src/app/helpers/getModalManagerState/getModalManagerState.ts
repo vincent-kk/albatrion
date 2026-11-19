@@ -25,9 +25,9 @@ export function getModalManagerState(): ModalManagerState {
   else {
     state.isIsolated = true;
     if (process.env.NODE_ENV !== 'production')
-    console.warn(
-      `[promise-modal] Incompatible global state version ${existing?.version}; expected ${STATE_VERSION}. This incompatible package copy cannot initialize a modal Provider.`,
-    );
+      console.warn(
+        `[promise-modal] Incompatible global state version ${existing?.version}; expected ${STATE_VERSION}. This incompatible package copy cannot initialize a modal Provider.`,
+      );
   }
   return (localState = state);
 }

@@ -69,7 +69,12 @@ export class ModalManager {
       node.subscribe(() => {
         const restore =
           node.settled && ModalManager.__state__.focusTargets.has(node.id);
-        const shouldRestore = restore && node.dimmed && node.visible && ModalManager.isDisplayed() && ModalManager.ownsFocus(node.id);
+        const shouldRestore =
+          restore &&
+          node.dimmed &&
+          node.visible &&
+          ModalManager.isDisplayed() &&
+          ModalManager.ownsFocus(node.id);
         const target = ModalManager.__state__.focusTargets.get(node.id);
         if (restore) {
           const frame = ModalManager.__state__.frames.get(node.id);
@@ -143,7 +148,9 @@ export class ModalManager {
   ): void {
     if (ModalManager.__state__.isIsolated) {
       ModalManager.__state__.bootstraps.set(identity, { root, notify });
-      const error = new Error('[promise-modal] Incompatible state version; use one compatible version per document.');
+      const error = new Error(
+        '[promise-modal] Incompatible state version; use one compatible version per document.',
+      );
       const queued = ModalManager.__state__.prerenderList;
       ModalManager.__state__.prerenderList = [];
       for (const entry of queued) entry.modal.handleReject?.(error);
@@ -227,14 +234,22 @@ export class ModalManager {
     const bootstrap = ModalManager.__state__.bootstraps.get(identity);
     ModalManager.__state__.bootstraps.delete(identity);
     if (ModalManager.__state__.owner !== identity) return;
-    const returning = ModalManager.__state__.focused.size && ModalManager.isDisplayed()
-      ? ModalManager.visibleNodes().find(node => node.dimmed && ModalManager.ownsFocus(node.id)) : undefined;
+    const returning =
+      ModalManager.__state__.focused.size && ModalManager.isDisplayed()
+        ? ModalManager.visibleNodes().find(
+            (node) => node.dimmed && ModalManager.ownsFocus(node.id),
+          )
+        : undefined;
     ModalManager.__state__.owner = null;
     ModalManager.__state__.openHandler =
       ModalManager.__state__.defaultOpenHandler;
     ModalManager.removeKeyboardListener();
     ModalManager.releasePageEffects();
-    if (returning) ModalManager.restoreFocus(returning.id, ModalManager.__state__.focusTargets.get(returning.id));
+    if (returning)
+      ModalManager.restoreFocus(
+        returning.id,
+        ModalManager.__state__.focusTargets.get(returning.id),
+      );
     ModalManager.__state__.focused.clear();
     ModalManager.__state__.anchor?.remove();
     ModalManager.__state__.anchor = null;
@@ -258,11 +273,18 @@ export class ModalManager {
    * @param element - Mounted outer wrapper, or null to release its reference.
    */
   static setFrameElement(id: number, element: HTMLElement | null): void {
-    if (element) ModalManager.__state__.frames.set(id, element);
-    else {
-      ModalManager.__state__.frames.delete(id);
-      ModalManager.__state__.focused.delete(id);
-    }
+    if (element) {
+      if (
+        !ModalManager.__state__.frames.has(id) &&
+        ModalManager.__state__.focused.has(id) &&
+        !containsComposedElement(
+          element,
+          ModalManager.innermostFocus(document.activeElement),
+        )
+      )
+        ModalManager.__state__.focused.delete(id);
+      ModalManager.__state__.frames.set(id, element);
+    } else ModalManager.__state__.frames.delete(id);
     ModalManager.updateAccessibility(true);
   }
   /** Reads actual Provider attachment at the instant a request settles. */
@@ -277,8 +299,15 @@ export class ModalManager {
     if (typeof document === 'undefined') return false;
     const active = ModalManager.innermostFocus(document.activeElement);
     const frame = ModalManager.__state__.frames.get(id);
-    return active === document.body || !!(frame && containsComposedElement(frame, active)) ||
-      !!(active && ModalManager.__state__.focused.has(id) && !hasInertAncestor(active));
+    return (
+      active === document.body ||
+      !!(frame && containsComposedElement(frame, active)) ||
+      !!(
+        active &&
+        ModalManager.__state__.focused.has(id) &&
+        !hasInertAncestor(active)
+      )
+    );
   }
   /** Reads pending visible nodes in descending visual order. */
   private static visibleNodes(): ModalNode[] {
@@ -698,8 +727,13 @@ export class ModalManager {
   }
   /** Opens through the current handler or queues until one is installed. */
   static open(modal: Modal): ModalNode | undefined {
-    if (ModalManager.__state__.isIsolated && ModalManager.__state__.bootstraps.size)
-      throw new Error('[promise-modal] Incompatible state version; use one compatible version per document.');
+    if (
+      ModalManager.__state__.isIsolated &&
+      ModalManager.__state__.bootstraps.size
+    )
+      throw new Error(
+        '[promise-modal] Incompatible state version; use one compatible version per document.',
+      );
     return ModalManager.__state__.anchor?.parentElement
       ? ModalManager.__state__.openHandler(modal)
       : ModalManager.__state__.defaultOpenHandler(modal);
