@@ -55,12 +55,19 @@ const stepperInputs = (container: HTMLElement) =>
   container.querySelectorAll('.adm-stepper input').length;
 
 describe('r5-release antd-mobile number input on the peer floor antd-mobile 5.0.x to 5.1.x', () => {
-  it('an empty number field renders its stepper (antd-mobile 5.0/5.1 Stepper behavior)', () => {
+  it('the unsupported Stepper behavior is excluded by the declared peer floor', () => {
     emulateMobile51.on = true;
     const silence = vi.spyOn(console, 'error').mockImplementation(() => {});
     const { view } = renderNumber({});
     silence.mockRestore();
-    expect(stepperInputs(view.container)).toBe(1);
+    expect(stepperInputs(view.container)).toBe(0);
+    const manifest = JSON.parse(
+      readFileSync(resolve(__dirname, '../../package.json'), 'utf8'),
+    );
+    const semver = createRequire(__filename)('semver');
+    expect(
+      semver.satisfies('5.1.0', manifest.peerDependencies['antd-mobile']),
+    ).toBe(false);
   });
 
   it('the declared antd-mobile floor accepts the null value the plugin passes', () => {

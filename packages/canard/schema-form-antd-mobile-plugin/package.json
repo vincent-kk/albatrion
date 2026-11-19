@@ -69,7 +69,7 @@
     "@winglet/common-utils": "workspace:^",
     "@winglet/json-schema": "workspace:^",
     "@winglet/react-utils": "workspace:^",
-    "antd-mobile": "^5.0.0",
+    "antd-mobile": "^5.2.0",
     "dayjs": "^1.0.0"
   },
   "devDependencies": {
@@ -86,7 +86,7 @@
   },
   "peerDependencies": {
     "@canard/schema-form": "workspace:^",
-    "antd-mobile": "^5.0.0",
+    "antd-mobile": "^5.2.0",
     "dayjs": "^1.0.0",
     "react": ">=18 <20",
     "react-dom": ">=18 <20"

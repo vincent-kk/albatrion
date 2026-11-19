@@ -10,6 +10,8 @@
 
 같은 규칙은 플러그인 FieldRenderer, Form.Label과 Form.Input, bound Label을 렌더하는 사용자 renderer, hideLabel에서 유지합니다. 범위 양끝은 각각 필드 제목에 연결합니다. 선택지·날짜 세부 입력·URI Protocol 같은 보조 컨트롤은 자기 이름을 유지하고 제목 있는 그룹 또는 description으로 소속을 연결합니다. 이름 없는 컨트롤과 라이브러리의 기본 이름만 가진 컨트롤, 중복 id, 존재하지 않는 aria-labelledby·for 대상은 허용하지 않습니다. 선택 그룹의 제목은 접근성 트리에 한 번만 노출하며 중복 제목은 hidden으로 제외합니다.
 
+숫자 Stepper의 빈 값은 allowEmpty를 지원하는 antd-mobile 5.2.0 이상에서 제공합니다. null을 렌더하지 못하는 이전 버전은 지원 범위 밖입니다.
+
 ## Acceptance Criteria
 
 ### control-names — 레이아웃과 무관한 입력 이름

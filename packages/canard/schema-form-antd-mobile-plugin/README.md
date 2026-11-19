@@ -215,3 +215,5 @@ An unset slider exposes no current value to assistive technology and stores noth
 With `multipleOf`, selectable values are multiples of that number within the inclusive bounds. Integer sliders select only integer multiples. Without `multipleOf`, number sliders retain their authored bounds. A range with no selectable value is disabled and stores nothing.
 
 Marked stops outside the bounds or incompatible with the numeric constraints are ignored. Range sliders apply the constraints of `items` to both ends.
+
+The minimum supported `antd-mobile` version is 5.2.0. Its `Stepper` supports empty numeric fields through `allowEmpty`; releases 5.0 and 5.1 do not accept the required null value.
