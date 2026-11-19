@@ -1,4 +1,4 @@
-import type Ajv from 'ajv';
+import Ajv from 'ajv';
 
 import { pointerCompilers } from './pointerCompilerCache';
 
@@ -20,16 +20,23 @@ export const cloneInstance = (
   compilerOptions?: Pick<Ajv.Options, 'jsonPointers' | 'errorDataPath' | 'meta'>,
 ): Ajv.Ajv => {
   const Constructor = instance.constructor;
+  const reuseNullable = compilerOptions?.meta === false && Constructor === Ajv;
   const clone = new Constructor({
     ...instance._opts,
     cache: undefined,
     allErrors,
     validateSchema,
     ...compilerOptions,
+    ...(reuseNullable ? { nullable: false } : {}),
     ...(compilerOptions?.errorDataPath === 'object'
       ? { _errorDataPathProperty: false }
       : {}),
   });
+  if (reuseNullable) {
+    // The live source RULES supply the nullable keyword's compiled meta-schema.
+    clone._opts.nullable = instance._opts.nullable;
+    clone._metaOpts.nullable = instance._opts.nullable;
+  }
   if (
     (pointerCompilers.get(instance) === instance && !compilerOptions) ||
     (compilerOptions?.jsonPointers === true &&

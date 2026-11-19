@@ -34,6 +34,8 @@ declare module 'ajv' {
      */
     validateSchema(schema: object | boolean, throwOrLogError?: boolean): boolean;
     readonly constructor: new (options?: Options) => Ajv;
+    /** Native compilation profile selected while compiling a meta-schema. */
+    readonly _metaOpts: Options;
     readonly _formats: Readonly<Dictionary<Parameters<Ajv['addFormat']>[1]>>;
     readonly RULES: {
       readonly custom: Readonly<
