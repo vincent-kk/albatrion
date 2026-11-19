@@ -8,12 +8,13 @@ const SEED = 0x5b0a7;
 
 it('matches call-owned publication for thousands of seeded lifecycle event sequences', async () => {
   let random = SEED;
-  const modes: HookMode[] = ['none', 'sync', 'async'];
-  const kinds: ModelEvent['kind'][] = ['before', 'origin', 'throw', 'after', 'update', 'subscribe', 'unsubscribe'];
+  const modes: HookMode[] = ['none', 'sync', 'async', 'reject', 'throw', 'thenable', 'never'];
+  const kinds: ModelEvent['kind'][] = ['before', 'origin', 'throw', 'after', 'update', 'equal', 'empty', 'updateThrow', 'subscribe', 'unsubscribe'];
   for (const before of modes) for (const after of modes) for (const guarded of [true, false]) {
-    for (let sequence = 0; sequence < 180; sequence++) {
-      const model = new TrackableModel(guarded, before, after);
-      const subject = new TrackableSubject(guarded, before, after);
+    for (let sequence = 0; sequence < 36; sequence++) {
+      const origin = (['async', 'reject', 'throw', 'never'] satisfies import('./helpers/TrackableModel').OriginMode[])[sequence % 4];
+      const model = new TrackableModel(guarded, before, after, origin, sequence % 2 === 0);
+      const subject = new TrackableSubject(guarded, before, after, origin, sequence % 2 === 0);
       const events: ModelEvent[] = [{ kind: 'subscribe', id: 0 }];
       let nextId = 0;
       for (let step = 0; step < 36; step++) {
@@ -26,7 +27,7 @@ it('matches call-owned publication for thousands of seeded lifecycle event seque
         const event = events[index];
         model.apply(event);
         await subject.apply(event);
-        const diagnostic = JSON.stringify({ seed: SEED, before, after, guarded, sequence, events: events.slice(0, index + 1) });
+        const diagnostic = JSON.stringify({ seed: SEED, before, after, origin, guarded, sequence, events: events.slice(0, index + 1) });
         expect(subject.notifications, diagnostic).toEqual(model.notifications);
         expect(subject.counts, diagnostic).toEqual(model.counts);
         expect(subject.handler.pending, diagnostic).toBe(model.pending);

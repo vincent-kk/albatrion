@@ -1,16 +1,18 @@
 /** Hook return modes exercised by the state-machine property. */
-export type HookMode = 'none' | 'sync' | 'async';
+export type HookMode = 'none' | 'sync' | 'async' | 'reject' | 'throw' | 'thenable' | 'never';
+/** Supported origin completion kinds; synchronous non-Promise returns are outside the API. */
+export type OriginMode = 'async' | 'reject' | 'throw' | 'never';
 /** Call-local phases; finished managers remain usable. */
 type Phase = 'before' | 'origin' | 'after' | 'finished';
 /** Observable commands; IDs identify calls or subscriptions, never array positions. */
-export type ModelEvent = { kind: 'call' | 'before' | 'origin' | 'throw' | 'after' | 'update' | 'subscribe' | 'unsubscribe'; id: number };
+export type ModelEvent = { kind: 'call' | 'before' | 'origin' | 'throw' | 'after' | 'update' | 'equal' | 'empty' | 'updateThrow' | 'subscribe' | 'unsubscribe'; id: number };
 
 /** Executable contract independent of Promise continuation structure. */
 export class TrackableModel {
   /** Current aggregate state. */
-  value = 0;
+  value: number | undefined;
   /** Published snapshots in listener invocation order. */
-  notifications: Array<[number, boolean, number]> = [];
+  notifications: Array<[number | undefined, boolean, number]> = [];
   /** Hook and origin invocation counts. */
   counts = { before: 0, origin: 0, after: 0 };
   /** Persistent call phases, including managers saved after completion. */
@@ -21,7 +23,7 @@ export class TrackableModel {
   listeners = new Set<number>();
 
   /** Construct a model with the same admission and hook modes as the subject. */
-  constructor(readonly guarded: boolean, readonly before: HookMode, readonly after: HookMode) {}
+  constructor(readonly guarded: boolean, readonly before: HookMode, readonly after: HookMode, readonly origin: OriginMode = 'async', initialState = true) { this.value = initialState ? 0 : undefined; }
 
   /** Whether at least one admitted call has not finished. */
   get pending(): boolean { return [...this.phases.values()].some(phase => phase !== 'finished'); }
@@ -36,10 +38,18 @@ export class TrackableModel {
     this.phases.set(id, 'origin');
     this.publish();
     this.counts.origin++;
+    if (this.origin === 'throw') this.completeOrigin(id);
   }
 
   /** Finish cleanup before delivering completion. */
   finish(id: number): void { this.phases.set(id, 'finished'); this.publish(); }
+
+  /** Enter after, preserving before-failure short circuit and hook counts. */
+  completeOrigin(id: number): void {
+    this.phases.set(id, 'after');
+    if (this.after !== 'none') { this.counts.after++; this.managers.add(id); }
+    if (this.after === 'none' || this.after === 'sync' || this.after === 'throw') this.finish(id);
+  }
 
   /** Apply one external event, ignoring settlements that cannot occur in the current phase. */
   apply(event: ModelEvent): void {
@@ -47,9 +57,10 @@ export class TrackableModel {
     const phase = this.phases.get(id);
     if (kind === 'subscribe') { this.listeners.add(id); return; }
     if (kind === 'unsubscribe') { this.listeners.delete(id); return; }
-    if (kind === 'update') {
+    if (kind === 'update' || kind === 'equal' || kind === 'empty' || kind === 'updateThrow') {
       if (!this.managers.has(id)) return;
-      this.value++;
+      if (kind === 'updateThrow') return;
+      if (kind === 'update') this.value = (this.value ?? 0) + 1;
       if (phase === 'origin' || phase === 'finished') this.publish();
       return;
     }
@@ -57,12 +68,14 @@ export class TrackableModel {
       if (this.guarded && this.pending) return;
       this.phases.set(id, 'before');
       if (this.before !== 'none') { this.counts.before++; this.managers.add(id); }
-      if (this.before !== 'async') this.startOrigin(id);
-    } else if (kind === 'before' && phase === 'before') this.startOrigin(id);
+      if (this.before === 'throw') this.finish(id);
+      else if (this.before === 'none' || this.before === 'sync') this.startOrigin(id);
+    } else if (kind === 'before' && phase === 'before' && this.before !== 'never') {
+      if (this.before === 'reject') this.finish(id);
+      else this.startOrigin(id);
+    }
     else if ((kind === 'origin' || kind === 'throw') && phase === 'origin') {
-      this.phases.set(id, 'after');
-      if (this.after !== 'none') { this.counts.after++; this.managers.add(id); }
-      if (this.after !== 'async') this.finish(id);
-    } else if (kind === 'after' && phase === 'after') this.finish(id);
+      if (this.origin !== 'never') this.completeOrigin(id);
+    } else if (kind === 'after' && phase === 'after' && this.after !== 'never') this.finish(id);
   }
 }

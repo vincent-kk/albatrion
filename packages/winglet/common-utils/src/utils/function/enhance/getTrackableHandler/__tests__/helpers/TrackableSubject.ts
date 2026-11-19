@@ -1,6 +1,6 @@
 import { getTrackableHandler } from '../../getTrackableHandler';
 import type { StateManager } from '../../type';
-import type { HookMode, ModelEvent } from './TrackableModel';
+import type { HookMode, ModelEvent, OriginMode } from './TrackableModel';
 
 /** Explicitly controlled thenable endpoint for one lifecycle stage. */
 class Settlement {
@@ -15,7 +15,7 @@ class Settlement {
 /** Real handler adapter; deliberately has no notification suppression logic. */
 export class TrackableSubject {
   /** Call-owned state managers, retained after completion. */
-  managers = new Map<number, StateManager<{ value: number }>>();
+  managers = new Map<number, StateManager<{ value?: number }>>();
   /** Pending before hooks. */
   beforeSettlements = new Map<number, Settlement>();
   /** Pending origins. */
@@ -27,37 +27,39 @@ export class TrackableSubject {
   /** Subscription identity and corresponding removers. */
   subscriptions = new Map<number, { listener: () => void; remove: () => void }>();
   /** Published snapshots in actual listener invocation order. */
-  notifications: Array<[number, boolean, number]> = [];
+  notifications: Array<[number | undefined, boolean, number]> = [];
   /** Promise results are consumed immediately, including failed origins. */
   promises: Array<Promise<unknown>> = [];
   /** Public subject under test. */
   readonly handler;
 
   /** Construct the real public handler with controlled hooks and origin. */
-  constructor(guarded: boolean, before: HookMode, after: HookMode) {
-    this.handler = getTrackableHandler(async (id: number) => {
+  constructor(guarded: boolean, readonly before: HookMode, readonly after: HookMode, readonly origin: OriginMode = 'async', initialState = true) {
+    this.handler = getTrackableHandler<[number], number, { value?: number }>((id: number): Promise<number> => {
       this.counts.origin++;
+      if (origin === 'throw') throw new Error('origin failure');
       const settlement = new Settlement();
       this.originSettlements.set(id, settlement);
-      await settlement.promise;
-      return id;
+      return settlement.promise.then(() => id);
     }, {
-      initialState: { value: 0 }, preventConcurrent: guarded,
+      initialState: initialState ? { value: 0 } : undefined, preventConcurrent: guarded,
       beforeExecute: before === 'none' ? undefined : ([id], manager) => {
         this.counts.before++;
         this.managers.set(id, manager);
-        if (before !== 'async') return;
+        if (before === 'throw') throw new Error('before failure');
+        if (before === 'sync') return;
         const settlement = new Settlement();
         this.beforeSettlements.set(id, settlement);
-        return settlement.promise;
+        return before === 'thenable' ? { then: (resolve: () => void, reject: (error: Error) => void) => settlement.promise.then(resolve, reject) } : settlement.promise;
       },
       afterExecute: after === 'none' ? undefined : ([id], manager) => {
         this.counts.after++;
         this.managers.set(id, manager);
-        if (after !== 'async') return;
+        if (after === 'throw') throw new Error('after failure');
+        if (after === 'sync') return;
         const settlement = new Settlement();
         this.afterSettlements.set(id, settlement);
-        return settlement.promise;
+        return after === 'thenable' ? { then: (resolve: () => void, reject: (error: Error) => void) => settlement.promise.then(resolve, reject) } : settlement.promise;
       },
     });
   }
@@ -66,11 +68,24 @@ export class TrackableSubject {
   async apply(event: ModelEvent): Promise<void> {
     const { kind, id } = event;
     if (kind === 'call') this.promises.push(this.handler(id).catch(() => undefined));
-    else if (kind === 'before') this.beforeSettlements.get(id)?.resolve();
-    else if (kind === 'origin') this.originSettlements.get(id)?.resolve();
-    else if (kind === 'throw') this.originSettlements.get(id)?.reject(new Error('origin failure'));
-    else if (kind === 'after') this.afterSettlements.get(id)?.resolve();
-    else if (kind === 'update') this.managers.get(id)?.update(state => ({ value: state.value + 1 }));
+    else if (kind === 'before' && this.before !== 'never') {
+      if (this.before === 'reject') this.beforeSettlements.get(id)?.reject(new Error('before failure'));
+      else this.beforeSettlements.get(id)?.resolve();
+    } else if (kind === 'origin' && this.origin !== 'never') {
+      if (this.origin === 'reject') this.originSettlements.get(id)?.reject(new Error('origin failure'));
+      else this.originSettlements.get(id)?.resolve();
+    } else if (kind === 'throw' && this.origin !== 'never') this.originSettlements.get(id)?.reject(new Error('origin failure'));
+    else if (kind === 'after' && this.after !== 'never') {
+      if (this.after === 'reject') this.afterSettlements.get(id)?.reject(new Error('after failure'));
+      else this.afterSettlements.get(id)?.resolve();
+    }
+    else if (kind === 'update') this.managers.get(id)?.update(state => ({ value: (state.value ?? 0) + 1 }));
+    else if (kind === 'equal') this.managers.get(id)?.update(state => state);
+    else if (kind === 'empty') this.managers.get(id)?.update({});
+    else if (kind === 'updateThrow') {
+      try { this.managers.get(id)?.update(() => { throw new Error('updater'); }); }
+      catch (error) { if (!(error instanceof Error) || error.message !== 'updater') throw error; }
+    }
     else if (kind === 'subscribe') {
       let subscription = this.subscriptions.get(id);
       if (!subscription) {
