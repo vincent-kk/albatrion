@@ -221,3 +221,11 @@ Scope selectors to the intended Form, such as `formElement.querySelector('[data-
 ## Contact
 
 For inquiries or suggestions related to the project, please create an issue.
+
+### Switch values and state labels
+
+For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the unchecked (off) value.
+
+A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
+
+For string switches, use the schema-level `switchLabels: [checkedLabel, uncheckedLabel]` tuple for custom state labels.

@@ -56,10 +56,10 @@ const FieldInputStringSwitch = ({
     ];
 
     return {
-      offValue: first,
-      onValue: second,
-      offLabel: firstLabel,
-      onLabel: secondLabel,
+      offValue: second,
+      onValue: first,
+      offLabel: secondLabel,
+      onLabel: firstLabel,
     };
   }, [jsonSchema.enum, jsonSchema.switchLabels]);
 

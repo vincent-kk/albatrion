@@ -251,3 +251,9 @@ const Input = ({ id, name }: FieldInputProps<string>) => <input id={id} name={na
 ## 연락처
 
 프로젝트와 관련된 문의나 제안은 이슈를 생성해 주세요.
+
+### Switch values and state labels
+
+For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the unchecked (off) value.
+
+A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
