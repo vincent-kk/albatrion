@@ -36,10 +36,10 @@ function hasExtension(importPath) {
 
 /**
  * @param {string} dir - Directory containing declarations to process
- * @param {{commonJsOnly?: boolean}} options - Restricts rewriting to the parallel graph when requested.
+ * @param {{declarationFormat?: "all" | "esm" | "commonjs"}} options - Selects the declaration graph to repair.
  * @returns {{ filesProcessed: number, importsFixed: number }}
  */
-export function fixDtsExtensions(dir, { commonJsOnly = false } = {}) {
+export function fixDtsExtensions(dir, { declarationFormat = 'all' } = {}) {
   let filesProcessed = 0;
   let importsFixed = 0;
 
@@ -55,7 +55,7 @@ export function fixDtsExtensions(dir, { commonJsOnly = false } = {}) {
       const fullPath = join(currentDir, entry.name);
       if (entry.isDirectory()) {
         walk(fullPath);
-      } else if (entry.name.endsWith('.d.cts') || (!commonJsOnly && (entry.name.endsWith('.d.ts') || entry.name.endsWith('.d.mts')))) {
+      } else if ((declarationFormat !== 'esm' && entry.name.endsWith('.d.cts')) || (declarationFormat !== 'commonjs' && (entry.name.endsWith('.d.ts') || entry.name.endsWith('.d.mts')))) {
         const content = readFileSync(fullPath, 'utf-8');
         const source = ts.createSourceFile(fullPath, content, ts.ScriptTarget.Latest);
         const specifiers = source.referencedFiles.map((reference) => ({
