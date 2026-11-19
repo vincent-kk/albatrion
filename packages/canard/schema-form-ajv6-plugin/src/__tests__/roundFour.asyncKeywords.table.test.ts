@@ -24,7 +24,7 @@ it.each([
       type: 'object',
       properties: {
         name: { type: 'string', availableName: true },
-        forbidden: false,
+        forbidden: { type: 'string' },
       },
       not: { required: ['blocked'] },
       ...(identified

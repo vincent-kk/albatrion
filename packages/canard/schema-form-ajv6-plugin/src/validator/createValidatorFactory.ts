@@ -23,7 +23,18 @@ export const createValidatorFactory =
     const transient = key
       ? undefined
       : { ...JSON.parse(JSON.stringify(jsonSchema)), $async: true };
-    const validate = compileWithPointers(ajv, transient ?? jsonSchema, key);
+    let validate: Ajv.ValidateFunction | undefined;
+    let isAsyncReference = false;
+    try {
+      validate = compileWithPointers(ajv, transient ?? jsonSchema, key);
+    } catch (error) {
+      if (!key || !(error instanceof Error) || error.message !== 'async keyword in sync schema') throw error;
+      const wrapper: JSONSchema = { $async: true, $ref: key };
+      validate = compileWithPointers(ajv, wrapper);
+      ajv.removeSchema(wrapper);
+      isAsyncReference = true;
+    }
+    const rootPrefix = isAsyncReference ? `${key}/` : '';
     if (transient) ajv.removeSchema(transient);
     if (!validate)
       throw new Error(`Registered Ajv schema was not found: ${key}`);
@@ -60,12 +71,21 @@ export const createValidatorFactory =
           thrown.validation === true &&
           'errors' in thrown &&
           Array.isArray(thrown.errors)
-        )
-          return transformDataPath(
-            thrown.errors,
-            isChildPath,
-            notRequiredKeyOf,
-          );
+        ) {
+          const errors = isAsyncReference
+            ? thrown.errors.map((error: Ajv.ErrorObject) => ({
+                ...error,
+                schemaPath: error.schemaPath.startsWith(rootPrefix)
+                  ? `#/${error.schemaPath.slice(rootPrefix.length)}`
+                  : error.schemaPath,
+              }))
+            : thrown.errors;
+          const issues = transformDataPath(errors, isChildPath, notRequiredKeyOf);
+          if (isAsyncReference)
+            for (let index = 0; index < issues.length; index++)
+              issues[index].source = thrown.errors[index];
+          return issues;
+        }
         throw thrown;
       }
     };
