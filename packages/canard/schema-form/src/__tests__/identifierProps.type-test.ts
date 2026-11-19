@@ -1,4 +1,5 @@
-import type { FieldInputProps, ChildFieldProps, OverridableFieldInputProps } from '../index';
+import type { FieldInputProps, ChildFieldProps } from '../index';
+import type { OverridableFieldInputProps } from '../types/field/fieldInput';
 
 /** Compile-time proof of binding ownership and required keyed identity. */
 const checkIdentifierProps = (props: FieldInputProps) => {
