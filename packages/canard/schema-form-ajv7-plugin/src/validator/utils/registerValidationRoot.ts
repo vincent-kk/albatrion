@@ -39,5 +39,11 @@ export const registerValidationRoot = (registration: SchemaRootRegistration): vo
     restoreInPlace(ajv.schemas, schemas);
     throw error;
   }
+  const environment = ajv.schemas[registration.key];
+  registration.validationOwnership = {
+    environment,
+    refs: Object.entries(ajv.refs).filter(([key]) => !refs.some(([previous]) => previous === key)),
+    isCacheOwned: !schemas.some(([, value]) => value === environment),
+  };
   registration.validationRegistered = true;
 };

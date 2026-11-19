@@ -29,6 +29,15 @@ export interface SchemaRootRegistration {
   readonly validationCopy?: object;
   /** Whether `validationCopy` is registered on `validation`; set only by a successful `registerValidationRoot`. */
   validationRegistered: boolean;
+  /** Exact registry values added by this registration; replaced application entries survive release. */
+  validationOwnership?: {
+    /** Schema environment originally registered under the plugin key. */
+    readonly environment: unknown;
+    /** Reference entries absent before this registration. */
+    readonly refs: readonly (readonly [string, unknown])[];
+    /** Whether the environment was absent from the application's schema registry. */
+    readonly isCacheOwned: boolean;
+  };
   guardCopy?: object;
 }
 
