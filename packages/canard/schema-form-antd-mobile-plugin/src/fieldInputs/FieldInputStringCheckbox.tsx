@@ -17,6 +17,7 @@ import type {
 import { useControlIdentifiers } from './utils/controls/useControlIdentifiers';
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
+import { mergeEnumSelection } from './utils/enum/mergeEnumSelection';
 
 type ArrayJSONSchema = ArraySchema & {
   items: StringSchema;
@@ -60,18 +61,13 @@ const FieldInputStringCheckbox = ({
   }, [context, jsonSchema, alias]);
 
   const initialValue = useMemo(() => {
-    return isArray(defaultValue) &&
-      defaultValue.every((v) => v === null || typeof v === 'string')
+    return isArray(defaultValue)
       ? map(defaultValue, (v) => JSON.stringify(v))
       : undefined;
   }, [defaultValue]);
 
   const handleChange = useHandle((value: CheckboxValue[]) => {
-    const convertedValues = map(value, (v) => {
-      const option = options.find((opt) => opt.value === v.toString());
-      return option ? option.rawValue : v.toString();
-    });
-    onChange(convertedValues);
+    onChange(previous => mergeEnumSelection(isArray(previous) ? previous : [], value, options));
   });
 
   return (
