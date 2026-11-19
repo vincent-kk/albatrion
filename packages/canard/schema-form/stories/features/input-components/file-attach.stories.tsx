@@ -63,14 +63,14 @@ export const AttachUnmountAndReset: Story = {
         );
         await userEvent.upload(
           canvasElement.querySelector<HTMLInputElement>(
-            `input:is([id="${stage.path}"], [id$=":${stage.path}"]):not(label):not(legend)`,
+            `input:is([id="${stage.path}"], [id$=":${stage.path}~input"]):not(label):not(legend)`,
           )!,
           files,
         );
       } else if (stage.act === 'hideGallery')
         await userEvent.click(
           canvasElement.querySelector<HTMLInputElement>(
-            'input:is([id="/showGallery"], [id$=":/showGallery"]):not(label):not(legend)',
+            'input:is([id="/showGallery"], [id$=":/showGallery~input"]):not(label):not(legend)',
           )!,
         );
       else handle.reset();

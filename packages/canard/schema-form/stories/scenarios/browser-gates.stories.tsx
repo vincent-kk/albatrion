@@ -46,7 +46,7 @@ export const ImeComposition: Story = {
     const session = cdp();
     for (const path of ['/plain', '/formatter', '/refresh']) {
       const input = canvasElement.querySelector<HTMLInputElement>(
-        `input:is([id="${path}"], [id$=":${path}"]):not(label):not(legend)`,
+        `input:is([id="${path}"], [id$=":${path}~input"]):not(label):not(legend)`,
       )!;
       await browserPage.elementLocator(input).click();
       let composing = false;
@@ -102,7 +102,7 @@ export const ImeComposition: Story = {
               await expect(ends).toBe(0);
               await expect(
                 canvasElement.querySelector(
-                  `input:is([id="${path}"], [id$=":${path}"]):not(label):not(legend)`,
+                  `input:is([id="${path}"], [id$=":${path}~input"]):not(label):not(legend)`,
                 ),
               ).toBe(input);
               await expect(setterCalls).toBe(0);
@@ -179,13 +179,13 @@ export const InputRemountJudgment: Story = {
     const rootContainer = canvasElement.querySelector('[data-container=""]');
     const branch = canvasElement.querySelector('[data-container="/branch"]');
     const terminal = canvasElement.querySelector(
-      'input:is([id="/terminal"], [id$=":/terminal"]):not(label):not(legend)',
+      'input:is([id="/terminal"], [id$=":/terminal~input"]):not(label):not(legend)',
     );
     const whole = canvasElement.querySelector(
-      'input:is([id="/whole"], [id$=":/whole"]):not(label):not(legend)',
+      'input:is([id="/whole"], [id$=":/whole~input"]):not(label):not(legend)',
     );
     const collapsed = canvasElement.querySelector(
-      'input:is([id="/collapsed"], [id$=":/collapsed"]):not(label):not(legend)',
+      'input:is([id="/collapsed"], [id$=":/collapsed~input"]):not(label):not(legend)',
     );
     const empty = canvasElement.querySelector('[data-container="/empty"]');
     const deferred = canvasElement.querySelector<HTMLElement>(
@@ -204,12 +204,12 @@ export const InputRemountJudgment: Story = {
     await waitFor(() =>
       expect(
         canvasElement.querySelector(
-          `input:is([id="${virtualPath}"], [id$=":${virtualPath}"]):not(label):not(legend)`,
+          `input:is([id="${virtualPath}"], [id$=":${virtualPath}~input"]):not(label):not(legend)`,
         ),
       ).not.toBeNull(),
     );
     const virtualInput = canvasElement.querySelector(
-      `input:is([id="${virtualPath}"], [id$=":${virtualPath}"]):not(label):not(legend)`,
+      `input:is([id="${virtualPath}"], [id$=":${virtualPath}~input"]):not(label):not(legend)`,
     );
     const before = { ...observations.mounts };
     handle.reset();
@@ -222,17 +222,17 @@ export const InputRemountJudgment: Story = {
     ).toBe(branch);
     await expect(
       canvasElement.querySelector(
-        'input:is([id="/terminal"], [id$=":/terminal"]):not(label):not(legend)',
+        'input:is([id="/terminal"], [id$=":/terminal~input"]):not(label):not(legend)',
       ),
     ).not.toBe(terminal);
     await expect(
       canvasElement.querySelector(
-        'input:is([id="/whole"], [id$=":/whole"]):not(label):not(legend)',
+        'input:is([id="/whole"], [id$=":/whole~input"]):not(label):not(legend)',
       ),
     ).not.toBe(whole);
     await expect(
       canvasElement.querySelector(
-        'input:is([id="/collapsed"], [id$=":/collapsed"]):not(label):not(legend)',
+        'input:is([id="/collapsed"], [id$=":/collapsed~input"]):not(label):not(legend)',
       ),
     ).not.toBe(collapsed);
     await expect(
@@ -240,7 +240,7 @@ export const InputRemountJudgment: Story = {
     ).not.toBe(empty);
     await expect(
       canvasElement.querySelector(
-        `input:is([id="${virtualPath}"], [id$=":${virtualPath}"]):not(label):not(legend)`,
+        `input:is([id="${virtualPath}"], [id$=":${virtualPath}~input"]):not(label):not(legend)`,
       ),
     ).not.toBe(virtualInput);
     await expect(observations.mounts['']).toBe(before['']);

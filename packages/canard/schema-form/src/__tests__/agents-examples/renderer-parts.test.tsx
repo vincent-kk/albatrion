@@ -108,7 +108,7 @@ const ErrorFrame = ({ node, children }: InputRendererProps) => {
  */
 const ErrorAwareInput = ({
   node,
-  id,
+  inputId,
   defaultValue,
   onChange,
 }: FieldInputProps) => {
@@ -116,7 +116,7 @@ const ErrorAwareInput = ({
   return (
     <>
       <input
-        id={id}
+        id={inputId}
         defaultValue={defaultValue}
         onChange={(event) => onChange(event.target.value)}
       />
@@ -295,9 +295,9 @@ it('frames the root, object, array and leaf inputs without marking root aggregat
 it('renders an input without observation only when its props change', () => {
   const ref = createRef<FormHandle>();
   let renders = 0;
-  const Input = ({ id, defaultValue }: FieldInputProps) => {
+  const Input = ({ inputId, defaultValue }: FieldInputProps) => {
     renders++;
-    return <input id={id} defaultValue={defaultValue} />;
+    return <input id={inputId} defaultValue={defaultValue} />;
   };
   render(
     <Form

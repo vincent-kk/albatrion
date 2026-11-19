@@ -86,7 +86,7 @@ export const EnterSubmit: Story = {
     enterSubmit.mockClear();
     await playScenario(args.scenario, canvasElement);
     const email = canvasElement.querySelector<HTMLInputElement>(
-      'input:is([id="/email"], [id$=":/email"]):not(label):not(legend)',
+      'input:is([id="/email"], [id$=":/email~input"]):not(label):not(legend)',
     )!;
     await userEvent.clear(email);
     await userEvent.type(email, `${submitOutcomes.validEmail}{Enter}`);
@@ -119,7 +119,7 @@ export const EnterRejected: Story = {
     try {
       await playScenario(args.scenario, canvasElement);
       const email = canvasElement.querySelector<HTMLInputElement>(
-        'input:is([id="/email"], [id$=":/email"]):not(label):not(legend)',
+        'input:is([id="/email"], [id$=":/email~input"]):not(label):not(legend)',
       )!;
       expect(readShownMessage(canvasElement, '/email')).toBe('');
       await userEvent.type(email, '{Enter}');

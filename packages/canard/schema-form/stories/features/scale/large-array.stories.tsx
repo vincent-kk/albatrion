@@ -54,7 +54,7 @@ export const EditAtBothEnds: Story = {
       () =>
         Boolean(
           canvasElement.querySelector(
-            `input:is([id="${lastPath}"], [id$=":${lastPath}"]):not(label):not(legend)`,
+            `input:is([id="${lastPath}"], [id$=":${lastPath}~input"]):not(label):not(legend)`,
           ),
         ),
       true,
@@ -62,7 +62,7 @@ export const EditAtBothEnds: Story = {
     );
     await userEvent.type(
       canvasElement.querySelector<HTMLInputElement>(
-        `input:is([id="${lastPath}"], [id$=":${lastPath}"]):not(label):not(legend)`,
+        `input:is([id="${lastPath}"], [id$=":${lastPath}~input"]):not(label):not(legend)`,
       )!,
       largeArrayTyped,
     );

@@ -186,7 +186,7 @@ export function getHandleActions(
           async run(handle, root) {
             handle.focus('/title');
             const input = root.querySelector<HTMLInputElement>(
-              'input:is([id="/title"], [id$=":/title"]):not(label):not(legend)',
+              'input:is([id="/title"], [id$=":/title~input"]):not(label):not(legend)',
             )!;
             await untilReadout(
               () => input.ownerDocument.activeElement === input,
@@ -205,7 +205,7 @@ export function getHandleActions(
           async run(handle, root) {
             handle.select('/title');
             const input = root.querySelector<HTMLInputElement>(
-              'input:is([id="/title"], [id$=":/title"]):not(label):not(legend)',
+              'input:is([id="/title"], [id$=":/title~input"]):not(label):not(legend)',
             )!;
             await untilReadout(
               () =>
@@ -239,19 +239,19 @@ export function getHandleActions(
           args: ['/title'],
           async run(handle, root) {
             const before = root.querySelector(
-              'input:is([id="/title"], [id$=":/title"]):not(label):not(legend)',
+              'input:is([id="/title"], [id$=":/title~input"]):not(label):not(legend)',
             );
             handle.remount('/title');
             await untilReadout(
               () =>
                 root.querySelector(
-                  'input:is([id="/title"], [id$=":/title"]):not(label):not(legend)',
+                  'input:is([id="/title"], [id$=":/title~input"]):not(label):not(legend)',
                 ) !== before,
             );
             return {
               replaced:
                 root.querySelector(
-                  'input:is([id="/title"], [id$=":/title"]):not(label):not(legend)',
+                  'input:is([id="/title"], [id$=":/title~input"]):not(label):not(legend)',
                 ) !== before,
               value: handle.getValue(),
             };

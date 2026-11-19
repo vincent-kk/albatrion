@@ -32,7 +32,7 @@ export const Case: Story = createCompositeStory(
       const session = cdp();
       let heldAtSwitch: unknown;
       const input = canvasElement.querySelector<HTMLInputElement>(
-        'input:is([id="/text"], [id$=":/text"]):not(label):not(legend)',
+        'input:is([id="/text"], [id$=":/text~input"]):not(label):not(legend)',
       )!;
       await page.elementLocator(input).click();
       try {
@@ -51,7 +51,7 @@ export const Case: Story = createCompositeStory(
           () =>
             Boolean(
               canvasElement.querySelector(
-                'input:is([id="/text"], [id$=":/text"]):not(label):not(legend)',
+                'input:is([id="/text"], [id$=":/text~input"]):not(label):not(legend)',
               ),
             ),
           false,

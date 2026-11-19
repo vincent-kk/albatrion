@@ -59,7 +59,7 @@ const policyStory = (policy: ErrorVisibilityName): Story => {
       await expectEventually(shown, item.atLoad, 'message on load');
       await userEvent.type(
         canvasElement.querySelector<HTMLInputElement>(
-          'input:is([id="/code"], [id$=":/code"]):not(label):not(legend)',
+          'input:is([id="/code"], [id$=":/code~input"]):not(label):not(legend)',
         )!,
         'd',
       );

@@ -66,7 +66,7 @@ export function createStoryScenarioAdapter(
                 ),
               ).find(
                 (item) =>
-                  item.id === step.path || item.id.endsWith(':' + step.path),
+                  item.closest('[data-path]')?.getAttribute('data-path') === step.path || item.id === step.path,
               )
             : undefined;
         if (field && !field.disabled && !(field as HTMLInputElement).readOnly) {

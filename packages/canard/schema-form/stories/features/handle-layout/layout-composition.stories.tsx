@@ -80,7 +80,7 @@ export const PathLayout: Story = {
     const copies = () =>
       Array.from(
         canvasElement.querySelectorAll<HTMLInputElement>(
-          `input:is([id="${layoutPlan.repeated}"], [id$=":${layoutPlan.repeated}"]):not(label):not(legend)`,
+          `input:is([id="${layoutPlan.repeated}"], [id$=":${layoutPlan.repeated}~input"]):not(label):not(legend)`,
         ),
       );
     await userEvent.type(copies()[0], layoutPlan.typed);
@@ -90,7 +90,7 @@ export const PathLayout: Story = {
         omitted: layoutPlan.omitted.map((path) =>
           Boolean(
             canvasElement.querySelector(
-              `:is([id="${path}"], [id$=":${path}"]):not(label):not(legend)`,
+              `:is([id="${path}"], [id$=":${path}~input"]):not(label):not(legend)`,
             ),
           ),
         ),

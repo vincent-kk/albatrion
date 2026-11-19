@@ -23,7 +23,7 @@ export const Case: Story = createCompositeStory(
       const before = submitted.length;
       await userEvent.type(
         canvasElement.querySelector<HTMLInputElement>(
-          'input:is([id="/ref"], [id$=":/ref"]):not(label):not(legend)',
+          'input:is([id="/ref"], [id$=":/ref~input"]):not(label):not(legend)',
         )!,
         '{Enter}',
       );

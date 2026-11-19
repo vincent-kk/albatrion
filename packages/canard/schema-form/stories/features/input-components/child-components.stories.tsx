@@ -54,13 +54,13 @@ export const CardWithChildErrors: Story = {
     await playScenario(args.scenario, canvasElement);
     const card = () =>
       canvasElement.querySelector<HTMLElement>(
-        ':is([id="/address"], [id$=":/address"]):not(label):not(legend)[data-card-fields]',
+        ':is([id="/address"], [id$=":/address~input"]):not(label):not(legend)[data-card-fields]',
       )!;
     for (const [index, stage] of childComponentStages.entries()) {
       if (stage.act === 'edit') {
         await userEvent.type(
           canvasElement.querySelector<HTMLInputElement>(
-            `input:is([id="${stage.path}"], [id$=":${stage.path}"]):not(label):not(legend)`,
+            `input:is([id="${stage.path}"], [id$=":${stage.path}~input"]):not(label):not(legend)`,
           )!,
           stage.text!,
         );
@@ -108,7 +108,7 @@ export const OpenObjectAsTerminal: Story = {
     for (const [index, stage] of mapEntryStages.entries()) {
       await userEvent.type(
         canvasElement.querySelector<HTMLInputElement>(
-          'input:is([id="/labels"], [id$=":/labels"]):not(label):not(legend)',
+          'input:is([id="/labels"], [id$=":/labels~input"]):not(label):not(legend)',
         )!,
         stage.entry,
       );

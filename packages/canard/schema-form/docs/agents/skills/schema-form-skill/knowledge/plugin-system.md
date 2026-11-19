@@ -95,7 +95,7 @@ const PartLabel = ({
   style,
   className,
 }: LabelRendererProps) => (
-  <label htmlFor={htmlFor} id={inputId} style={style} className={className}>
+  <label htmlFor={htmlFor} id={id} style={style} className={className}>
     {children}
     {required && <span aria-hidden="true"> *</span>}
   </label>

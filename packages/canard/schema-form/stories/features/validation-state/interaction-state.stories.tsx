@@ -49,7 +49,7 @@ export const EditedTouchedAndNotifications: Story = {
     await playScenario(args.scenario, canvasElement);
     const handle = await probe.handle(canvasElement);
     const title = canvasElement.querySelector<HTMLInputElement>(
-      'input:is([id="/title"], [id$=":/title"]):not(label):not(legend)',
+      'input:is([id="/title"], [id$=":/title~input"]):not(label):not(legend)',
     )!;
     for (const stage of interactionStateStages) {
       const before = onStateChange.mock.calls.length;

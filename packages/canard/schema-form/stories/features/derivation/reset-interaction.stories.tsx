@@ -46,10 +46,10 @@ export const ClearEdgeResetsState: Story = {
     await playScenario(args.scenario, canvasElement);
     const handle = await probe.handle(canvasElement);
     const name = canvasElement.querySelector<HTMLInputElement>(
-      'input:is([id="/name"], [id$=":/name"]):not(label):not(legend)',
+      'input:is([id="/name"], [id$=":/name~input"]):not(label):not(legend)',
     )!;
     const clear = canvasElement.querySelector<HTMLInputElement>(
-      'input:is([id="/clear"], [id$=":/clear"]):not(label):not(legend)',
+      'input:is([id="/clear"], [id$=":/clear~input"]):not(label):not(legend)',
     )!;
     for (const [index, stage] of resetInteractionStages.entries()) {
       if (stage.act === 'editName') {

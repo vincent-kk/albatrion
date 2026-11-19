@@ -8,10 +8,10 @@ import type { FieldInputProps, FormHandle } from '../../index';
 
 const first = Symbol('first');
 const second = 'round-three-second';
-const InputA = ({ id }: FieldInputProps) => <input id={id} data-scope="a" />;
-const InputB = ({ id }: FieldInputProps) => <input id={id} data-scope="b" />;
-const InputGlobal = ({ id }: FieldInputProps) => (
-  <input id={id} data-scope="global" />
+const InputA = ({ inputId }: FieldInputProps) => <input id={inputId} data-scope="a" />;
+const InputB = ({ inputId }: FieldInputProps) => <input id={inputId} data-scope="b" />;
+const InputGlobal = ({ inputId }: FieldInputProps) => (
+  <input id={inputId} data-scope="global" />
 );
 const schema = { type: 'string' } as const;
 const definition = (Component: typeof InputA) => ({

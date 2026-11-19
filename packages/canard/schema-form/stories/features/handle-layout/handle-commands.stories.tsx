@@ -45,7 +45,7 @@ export const FocusSelectRefresh: Story = {
     const handle = await probe.handle(canvasElement);
     const inputAt = (path: string) =>
       canvasElement.querySelector<HTMLInputElement>(
-        `input:is([id="${path}"], [id$=":${path}"]):not(label):not(legend)`,
+        `input:is([id="${path}"], [id$=":${path}~input"]):not(label):not(legend)`,
       );
     for (const [index, stage] of handleCommandStages.entries()) {
       const before = inputAt(stage.path);

@@ -340,7 +340,7 @@ function ConditionalExample({ schema, presets = [] }: ConditionalExampleProps) {
  */
 const findField = (root: HTMLElement, path: string): HTMLElement | null =>
   root.querySelector<HTMLElement>(
-    `:is([id="${path}"], [id$=":${path}"]):not(label):not(legend)`,
+    `:is([id="${path}"], [id$=":${path}~input"]):not(label):not(legend)`,
   );
 
 /**
@@ -506,7 +506,7 @@ export const AllOfMultipleIfThen: Story = {
     await expect(hasField(canvasElement, '/insurance')).toBe(false);
     await expect(hasField(canvasElement, '/expressDelivery')).toBe(false);
     await expect(
-      canvasElement.querySelector('label[for$=":/phone"]'),
+      canvasElement.querySelector('label[for$=":/phone~input"]'),
     ).toHaveTextContent('*');
 
     await userEvent.click(

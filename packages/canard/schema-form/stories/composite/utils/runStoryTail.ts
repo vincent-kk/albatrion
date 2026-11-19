@@ -36,7 +36,7 @@ export const runStoryTail = async (
   const node = (path: string) => handle.findNode(path);
   const input = (path: string) =>
     canvasElement.querySelector<HTMLInputElement>(
-      `input:is([id="${path}"], [id$=":${path}"]):not(label):not(legend)`,
+      `input:is([id="${path}"], [id$=":${path}~input"]):not(label):not(legend)`,
     );
   for (const [index, step] of tail.entries()) {
     const label = `tail ${index} ${step.act}`;

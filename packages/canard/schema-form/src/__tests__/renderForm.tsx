@@ -60,7 +60,7 @@ const buildInstrumentedDefinitions = (
     const [ordinal] = useState(() => bump(props.path));
     return (
       <input
-        id={props.id}
+        id={props.inputId}
         data-mount={ordinal}
         defaultValue={props.value?.toString() ?? ''}
         onChange={(e) => props.onChange?.(e.target.value)}
@@ -71,7 +71,7 @@ const buildInstrumentedDefinitions = (
     const [ordinal] = useState(() => bump(props.path));
     return (
       <input
-        id={props.id}
+        id={props.inputId}
         type="number"
         data-mount={ordinal}
         defaultValue={
@@ -88,7 +88,7 @@ const buildInstrumentedDefinitions = (
     const [ordinal] = useState(() => bump(props.path));
     return (
       <input
-        id={props.id}
+        id={props.inputId}
         type="checkbox"
         data-mount={ordinal}
         defaultChecked={props.value ?? undefined}
@@ -220,7 +220,7 @@ const byId = (
     container.querySelectorAll<HTMLInputElement | HTMLSelectElement>(
       'input[id], select[id], textarea[id]',
     ),
-  ).find((element) => element.id === path || element.id.endsWith(':' + path)) ??
+  ).find((element) => element.closest('[data-path]')?.getAttribute('data-path') === path || element.id === path) ??
   null;
 
 const byPath = (container: HTMLElement, path: string): HTMLElement | null =>

@@ -56,7 +56,7 @@ export const Case: Story = createCompositeStory('composite.cx06-plugin-form', {
     );
     await userEvent.upload(
       canvasElement.querySelector<HTMLInputElement>(
-        'input:is([id="/attachment"], [id$=":/attachment"]):not(label):not(legend)',
+        'input:is([id="/attachment"], [id$=":/attachment~input"]):not(label):not(legend)',
       )!,
       files,
     );

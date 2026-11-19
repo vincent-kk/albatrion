@@ -17,7 +17,7 @@ const ColorInput = () => <input aria-label="Theme color" />;
 const SettingsInput = (props: FieldInputProps) =>
   isTerminalNode(props.node) ? (
     <input
-      id={props.id}
+      id={props.inputId}
       aria-label={props.path}
       defaultValue={String(props.defaultValue ?? '')}
       onChange={(event) => props.onChange(event.target.value)}

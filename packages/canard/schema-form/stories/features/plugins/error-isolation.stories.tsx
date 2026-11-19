@@ -45,13 +45,13 @@ export const ThrowingInputFallsBackAlone: Story = {
     await playScenario(args.scenario, canvasElement);
     expect(
       canvasElement.querySelector(
-        'input:is([id="/broken"], [id$=":/broken"]):not(label):not(legend)',
+        'input:is([id="/broken"], [id$=":/broken~input"]):not(label):not(legend)',
       ),
       'the throwing input is replaced by the fallback',
     ).toBeNull();
     expect(
       canvasElement.querySelector<HTMLInputElement>(
-        'input:is([id="/sibling"], [id$=":/sibling"]):not(label):not(legend)',
+        'input:is([id="/sibling"], [id$=":/sibling~input"]):not(label):not(legend)',
       )?.value,
       'the sibling input still edits',
     ).toBe('typed');

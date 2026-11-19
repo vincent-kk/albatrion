@@ -429,7 +429,7 @@ export const AttachedFiles: Story = {
   },
   async play({ canvasElement }) {
     const input = canvasElement.querySelector<HTMLInputElement>(
-      'input[type="file"]:is([id="/gallery"], [id$=":/gallery"]):not(label):not(legend)',
+      'input[type="file"]:is([id="/gallery"], [id$=":/gallery~input"]):not(label):not(legend)',
     )!;
     await userEvent.upload(input, [
       new File(['a'], 'a.png', { type: 'image/png' }),

@@ -46,7 +46,7 @@ export const TrimAfterBlurOnly: Story = {
     const handle = await probe.handle(canvasElement);
     for (const [index, stage] of trimStages.entries()) {
       const field = canvasElement.querySelector<HTMLInputElement>(
-        `input:is([id="${stage.path}"], [id$=":${stage.path}"]):not(label):not(legend)`,
+        `input:is([id="${stage.path}"], [id$=":${stage.path}~input"]):not(label):not(legend)`,
       )!;
       if (stage.act === 'type') await userEvent.type(field, stage.text!);
       else await userEvent.tab();

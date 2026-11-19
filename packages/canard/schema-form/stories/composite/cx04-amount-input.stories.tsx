@@ -31,7 +31,7 @@ export const Case: Story = createCompositeStory('composite.cx04-amount-input', {
   formProps: { fieldInputMap: { '/price': FormattedAmountInput } },
   async after({ canvasElement, handle, submitted }) {
     const price = canvasElement.querySelector<HTMLInputElement>(
-      'input:is([id="/price"], [id$=":/price"]):not(label):not(legend)',
+      'input:is([id="/price"], [id$=":/price~input"]):not(label):not(legend)',
     )!;
     await userEvent.type(price, amountInputPlan.typed);
     await expectEventually(
@@ -40,7 +40,7 @@ export const Case: Story = createCompositeStory('composite.cx04-amount-input', {
       'formatter input',
     );
     const count = canvasElement.querySelector<HTMLInputElement>(
-      'input:is([id="/count"], [id$=":/count"]):not(label):not(legend)',
+      'input:is([id="/count"], [id$=":/count~input"]):not(label):not(legend)',
     )!;
     await userEvent.type(count, amountInputPlan.validDigit);
     const { cdp } = await browserContext();
@@ -56,7 +56,7 @@ export const Case: Story = createCompositeStory('composite.cx04-amount-input', {
     const before = submitted.length;
     await userEvent.type(
       canvasElement.querySelector<HTMLInputElement>(
-        'input:is([id="/memo"], [id$=":/memo"]):not(label):not(legend)',
+        'input:is([id="/memo"], [id$=":/memo~input"]):not(label):not(legend)',
       )!,
       '{Enter}',
     );

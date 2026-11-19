@@ -43,7 +43,7 @@ export const PresentationAndStates: Story = {
     for (const [path, expected] of Object.entries(propsFlowAttributes)) {
       const read = () => {
         const input = canvasElement.querySelector<HTMLInputElement>(
-          `input:is([id="${path}"], [id$=":${path}"]):not(label):not(legend)`,
+          `input:is([id="${path}"], [id$=":${path}~input"]):not(label):not(legend)`,
         )!;
         return Object.fromEntries(
           Object.keys(expected).map((key) => [

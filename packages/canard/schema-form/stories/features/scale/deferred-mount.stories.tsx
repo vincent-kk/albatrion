@@ -54,7 +54,7 @@ export const RevealOnViewAndFocus: Story = {
       await expectEventually(
         () => {
           const input = canvasElement.querySelector(
-            `input:is([id="${stage.path}"], [id$=":${stage.path}"]):not(label):not(legend)`,
+            `input:is([id="${stage.path}"], [id$=":${stage.path}~input"]):not(label):not(legend)`,
           );
           return {
             mounted: Boolean(input),
