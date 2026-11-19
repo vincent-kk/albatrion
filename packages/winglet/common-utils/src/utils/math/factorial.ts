@@ -1,4 +1,8 @@
-const cache = new Map<number, number>();
+/** Canonical ascending products retained for repeat calls. */
+const cache = new Map<number, number>([[1, 1]]);
+
+/** Largest canonical product already stored in the cache. */
+let highestCachedInput = 1;
 
 /**
  * Calculates the factorial of a non-negative integer with intelligent caching.
@@ -60,14 +64,12 @@ export const factorial = (n: number): number => {
     throw new Error('Factorial is only defined for non-negative integers');
   if (n === 0 || n === 1) return 1;
   if (cache.has(n)) return cache.get(n)!;
-  let result = n;
-  for (let i = n - 1; i >= 2; i--) {
-    if (cache.has(i)) {
-      result *= cache.get(i)!;
-      break;
-    }
+  if (n > 170) return Infinity;
+  let result = cache.get(highestCachedInput)!;
+  for (let i = highestCachedInput + 1; i <= n; i++) {
     result *= i;
+    cache.set(i, result);
   }
-  cache.set(n, result);
+  highestCachedInput = n;
   return result;
 };
