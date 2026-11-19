@@ -90,3 +90,11 @@ test('published declaration branches reject source conditions, branch drift and 
   assert.throws(() => validatePublishedDeclarations({ ...manifest, publishConfig: { exports: { '.': { ...entry, require: { types: './wrong.d.cts' } } } } }), /differ/);
   assert.throws(() => validatePublishedDeclarations({ ...manifest, publishConfig: { exports: { '.': { ...entry, import: { default: './index.mjs', types: './index.d.ts' } } } } }), /types first/);
 });
+
+
+test('the canonical repair step ignores stale CJS companions that emission will replace', (context) => {
+  const root = fixture(context, { 'index.d.ts': "export * from './value';", 'value.d.ts': 'export {};', 'stale.d.cts': "export * from './value';", 'value.d.cts': 'export {};' });
+  fixDtsExtensions(root, { declarationFormat: 'esm' });
+  assert.equal(readFileSync(join(root, 'index.d.ts'), 'utf8'), "export * from './value.js';");
+  assert.equal(readFileSync(join(root, 'stale.d.cts'), 'utf8'), "export * from './value';");
+});
