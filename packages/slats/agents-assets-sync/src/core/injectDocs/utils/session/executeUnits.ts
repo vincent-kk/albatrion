@@ -1,3 +1,5 @@
+import { join } from 'node:path';
+
 import type { DefaultFlags } from '../../../../types/index.js';
 import { asyncPool } from '../../../../utils/asyncPool.js';
 import type { Action } from '../../../buildPlan/index.js';
@@ -48,7 +50,11 @@ export async function executeUnits(
       Boolean(flags.force),
     );
     const settled = await asyncPool(8, fileActions, (action) =>
-      applyAction(action, unit.target.assetRoot),
+      applyAction(
+        action,
+        unit.target.assetRoot,
+        ruleSources?.get(join(unit.target.assetRoot, action.relPath))?.bytes,
+      ),
     );
     const failures: Action[] = fileActions.filter(
       (_, index) => settled[index].status === 'rejected',

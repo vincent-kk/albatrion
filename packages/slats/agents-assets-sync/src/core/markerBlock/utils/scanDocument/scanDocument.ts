@@ -4,13 +4,18 @@ import { hasUnclosedComment } from './utils/hasUnclosedComment.js';
 
 /** Scan supported Markdown contexts once, preserving original byte offsets.
  * @param content Document text or a reversible Latin-1 byte view.
+ * @param isFragment Whether the text is embedded and has no file-header BOM.
  * @returns Blocks and the first boundary that prevents insertion.
  */
-export function scanDocument(content: string): MarkdownScan {
+export function scanDocument(
+  content: string,
+  isFragment = false,
+): MarkdownScan {
   const blocks: LocatedBlock[] = [];
   const marker = new RegExp(`^<!-- ${MARKER_PREFIX}:(START|END):(.+?) -->$`);
-  let offset =
-    content.charCodeAt(0) === 0xfeff
+  let offset = isFragment
+    ? 0
+    : content.charCodeAt(0) === 0xfeff
       ? 1
       : content.startsWith('\xEF\xBB\xBF')
         ? 3

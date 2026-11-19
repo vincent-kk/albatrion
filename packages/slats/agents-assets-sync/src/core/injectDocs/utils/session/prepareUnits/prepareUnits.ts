@@ -9,15 +9,12 @@ import {
   resolveAgentTarget,
   resolveDestinations,
 } from '../../../../agentTarget/index.js';
-import {
-  type RuleSource,
-  buildPlan,
-  collectFileWrites,
-} from '../../../../buildPlan/index.js';
+import { buildPlan, collectFileWrites } from '../../../../buildPlan/index.js';
 import {
   computeNamespacePrefixes,
   resolveHashManifest,
 } from '../../../../hashManifest/index.js';
+import type { RuleSource } from '../../../../types/ruleSource.js';
 import { mergePlans } from '../mergePlans.js';
 import type { RunUnit, ValidatedFlags } from '../types.js';
 import { describePreparationFailure } from './utils/describePreparationFailure.js';
@@ -44,9 +41,13 @@ export async function prepareUnits(
   const markdown = new Map<string, Promise<void>>();
   const physicalPaths = new Map<string, Promise<string>>();
   const generatedAt = new Date().toISOString();
+  const ruleSources = new Map<string, RuleSource | null>();
   for (const target of targets) {
-    const ruleSources = new Map<string, RuleSource | null>();
-    const manifest = await resolveHashManifest(target, generatedAt).then(
+    const manifest = await resolveHashManifest(
+      target,
+      generatedAt,
+      ruleSources,
+    ).then(
       (value) => ({ value }),
       (error: unknown) => ({ error }),
     );
