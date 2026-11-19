@@ -518,7 +518,11 @@ const addShadowStyle = styleManagerFactory('shadow-scope', {
 });
 ```
 
-#### `destroyScope(scopeId: string): void`
+#### `destroyScope(scopeId: string, config?: StyleManagerConfig): void`
+
+스코프를 파괴한 뒤에는 기존 주입 함수와 정리 함수를 버립니다. 다시 주입하려면 새 팩토리를 만듭니다. 파괴된 주입 함수를 재사용하면 레지스트리 밖에 스타일이 남을 수 있습니다.
+
+Shadow DOM 스코프를 해제하려면 `styleManagerFactory`에 전달한 것과 같은 `{ shadowRoot }`를 전달합니다. 이 옵션이 없으면 문서 스코프만 해제합니다. 레지스트리는 분리된 shadow 호스트의 수거를 막지 않습니다.
 
 특정 스타일 스코프를 파괴하고 DOM에서 모든 관련 스타일을 제거합니다.
 
