@@ -15,7 +15,7 @@
 - 플래그: `--package <name...>`, `--agent <type...>`, `--scope <user|project>`, `--asset <kind...>`, `--asset-path <path>`, `--dry-run`, `--force`, `--yes`, `--no-interactive`, `--root <path>`, `--json`.
 - `--asset-path` 은 단일 값이며 `--asset` 과 별개다. commander 는 long option 을 완전 일치로 매칭하고 가변 수집은 `-` 로 시작하는 다음 토큰에서 멈추므로, `--asset skills --asset-path agents` 도 서로를 삼키지 않는다.
 - `--asset-path` 의 모양 검증은 파일시스템 IO 이전에 action 에서 한다 — 빈 값, 절대 경로, `~` 로 시작하는 값은 2로 종료한다. 경로가 packageRoot 안에 있는지와 실제로 디렉터리인지는 타깃마다 다르므로 `resolvePackage` 가 판정한다.
-- `--package` 값이 하나도 없으면 2로 종료한다. 해석된 패키지가 0개면 경고만 남기고 0으로 끝난다 — 아무 일도 하지 않은 것은 실패가 아니다. 다만 `--json` 은 그 경우에도 렌더러까지 진행해 `units: []` 인 문서를 낸다. 문서가 없으면 소비자가 "성공했지만 대상이 없음" 과 파싱 실패를 구분할 수 없기 때문이다.
+- 발견·gate·빈 대상 실행의 종료 판정은 최상위 src/DETAIL.md의 종료 표를 따릅니다.
 - `renderOrFallback` 은 target 해석 이후 실행당 정확히 한 번 호출되며 렌더러 분기를 소유한다. 분기 순서: `--json` → `renderJSON`; 비TTY 이거나 `flags.interactive === false` → `renderPlain`; 나머지 → `ui/` 동적 import. 패키지가 ESM 전용이므로 `await import()` 로 충분하다.
 - `renderOrFallback` 의 `env.isTTY` 는 테스트를 위해 주입 가능하며, 생략 시 `process.stdout.isTTY` 를 쓴다.
 - `--json` 이 켜지면 액션 진입 즉시 `divertLogsToStderr()` 가 호출된다. 이후의 모든 진단은 — 종료 경로의 것까지 — stderr 로 간다. stdout 은 JSON 문서만의 것이다.

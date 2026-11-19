@@ -41,7 +41,7 @@
 - discover는 명시된 패키지 또는 스코프 별칭에서 발견한 디렉터리마다 참여자 기록을 남깁니다. agents.assetPath를 선언하지 않은 정상 패키지는 opt-out이며 소유 후보가 아닙니다. 읽거나 파싱할 수 없는 package.json, 해석 실패와 gate 실패는 opt-out으로 바꾸지 않습니다. 이름·manifest를 알 수 없는 실패자는 선택된 모든 agent 목적지의 모든 네임스페이스를 보호합니다. 이 보호는 prepare 전부터 적용합니다.
 - 네임스페이스 키는 해석한 목적지 루트·asset kind·스킬 접두사입니다. 명확한 실패자의 소유 접두사를 알 수 있으면 그 접두사만 보호하며, 알 수 없으면 해당 루트 전체를 보호합니다. 보호된 delete 또는 warn-orphan은 적용 액션에서 빠지고 참여자·경로·이유를 가진 notice가 됩니다. force 확인과 deleted·created·updated 집계에는 나타나지 않으며 notice 자체는 종료 코드를 높이지 않습니다.
 - 최종 RunResult는 units, errors, failures, notices, exitCode, dryRun을 담습니다. 실패는 unitKey(단위를 아직 모르면 요청 식별자), path(실제 목적지 또는 원본의 절대 경로, 발견 전이면 요청 문자열), stage(discover, gate, prepare, merge, apply), reason입니다. notice도 같은 경로·단계·이유를 가지며 실패와 별도로 집계합니다. units의 report는 성공한 액션만 집계하고 실패한 경로는 모든 출력의 마지막 화면에서 같은 이유와 함께 읽을 수 있습니다.
-- 복사·삭제와 문서 쓰기는 쓰기 비트 없는 기존 대상과 dangling link를 거부합니다. 유효한 사용자 링크는 실제 대상을 사용하고 링크를 유지합니다. 프로젝트 링크의 외부 탈출은 계획 단계에서 거부합니다. 파일 삭제는 링크가 아니라 실제 파일에 대한 같은 사전 검사를 적용합니다. 하드 링크와 owner·group의 원자 교체 조건은 Requirements의 규칙을 따릅니다.
+- 복사·삭제와 문서 쓰기는 쓰기 비트 없는 기존 대상과 dangling link를 거부합니다. 유효한 사용자 링크는 실제 대상을 사용하고 링크를 유지합니다. 프로젝트 링크의 외부 탈출은 계획 단계에서 거부합니다. 고아 삭제는 디렉터리 항목 자체를 unlink하며 링크를 따라가지 않습니다. 명시적으로 계획된 dangling orphan link도 그 항목만 제거하며 ENOENT는 무시합니다. 일반 고아 탐색이 내놓지 않는 링크는 그대로 둡니다. 파일 덮어쓰기도 문서와 동일하게 단일 링크·owner·group·mode 복원 가능 시 원자 교체하고, 그렇지 않으면 inode를 보존하는 in-place 쓰기를 사용합니다. 하드 링크와 owner·group의 원자 교체 조건은 Requirements의 규칙을 따릅니다.
 - 두 프로세스의 동시 쓰기는 잠그지 않으므로 마지막 쓰기가 남습니다. 원자 쓰기 임시 디렉터리는 목적지 옆의 고유한 .agents-assets-sync- 접두사이며 고아 검색에서 제외합니다. in-place 경로의 중간 실패는 부분 바이트를 남길 수 있으나 실패 경로와 이유를 보고하고 다음 작업은 계속합니다.
 - 생성 검증은 참여자 1~3개와 agent 1~3개(codex+agents 별칭 포함), 공유·분리 namespace, 같은·다른 hash 충돌, discover·prepare·merge·apply 실패, force·dry-run·yes 및 세 출력 모드를 조합합니다. 목적지는 없음·0444·0640·하드 링크·유효/끊어진 user/project 링크·case 별칭·파일 사이 실패를 포함합니다.
 - 생성 검증은 여러 참여자와 공유 네임스페이스, 각 준비 단계 실패, force 양쪽 값, 모든 출력 모드를 비교합니다. 실패한 참여자가 소유할 수 있는 파일은 어떤 생성 실행에서도 삭제되지 않습니다.
@@ -53,6 +53,10 @@
 - `applyBlockActions(fileAbs: string, actions: readonly Action[], assetRoot: string): Promise<void>`
 - `summarize(plan: InjectPlan, exitCode: 0 | 1 | 2, failedActions?: readonly Action[], appliedActions?: readonly Action[]): InjectReport`
   - 실제 적용한 액션을 전달하면 실패 항목을 제외한 강제 덮어쓰기를 updated로 집계합니다. 생략하면 미리보기 의미를 유지합니다.
+
+### 최종 결과의 JSON 사상
+
+RunResult는 모듈 내부 실행 계약이며 패키지의 새 공개 API가 아닙니다. JSON의 units, errors, failures, notices, exitCode, dryRun은 같은 이름의 최종 결과 필드에 대응합니다. units는 key·aliasOf·package·agent·scope·projectRoot·destination·requiresForce·actions·report와 단위 오류를 표시하며 package는 target의 name/version, destination은 agentTarget.description입니다. failures와 notices의 unitKey·path·stage·reason은 그대로 직렬화합니다. schemaVersion·tool·version은 출력 문서의 고정 메타데이터입니다. 일반·터미널도 동일한 진단 레코드를 표시하며 렌더러가 실패를 새로 분류하지 않습니다.
 
 ## Exported Types
 
