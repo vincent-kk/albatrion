@@ -2,6 +2,7 @@ import { expect, it } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 
+import type { AuthoredSchema } from '../types/jsonSchema';
 import { ValidationMode } from '../types/state';
 
 const schema = {
@@ -116,21 +117,23 @@ it('virtual inactive projections keep frozen references until a constituent chan
 });
 
 it('virtual getter projections use declaration names with escaped physical addresses', () => {
-  const root = nodeFromJSONSchema({
-    jsonSchema: {
-      type: 'object',
-      properties: {
-        'slash/name': { type: 'string' },
-        'tilde~name': { type: 'string' },
-        '': { type: 'string' },
-        constructor: { type: 'string' },
-      },
-      options: {
-        virtual: {
-          group: { fields: ['slash/name', 'tilde~name', '', 'constructor'] },
-        },
+  const textField: { type: 'string' } = { type: 'string' };
+  const jsonSchema: AuthoredSchema = {
+    type: 'object',
+    properties: {
+      'slash/name': { type: 'string' },
+      'tilde~name': { type: 'string' },
+      '': { type: 'string' },
+      constructor: textField,
+    },
+    options: {
+      virtual: {
+        group: { fields: ['slash/name', 'tilde~name', '', 'constructor'] },
       },
     },
+  };
+  const root = nodeFromJSONSchema({
+    jsonSchema,
     defaultValue: {
       'slash/name': 'slash',
       'tilde~name': 'tilde',
