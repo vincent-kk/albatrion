@@ -340,13 +340,8 @@ const resolvers = {
 
 ```typescript
 const userLoader = new DataLoader(async (userIds: ReadonlyArray<string>) => {
-  try {
-    const users = await fetchUsersWithRetry(userIds);
-    return users;
-  } catch (error) {
-    // If entire batch fails, return same error for each key
-    return userIds.map(() => error);
-  }
+  // A batch-wide rejection is removed from the cache, allowing the next load to retry.
+  return fetchUsersWithRetry(userIds);
 });
 
 // When only specific users fail
@@ -368,6 +363,8 @@ const userLoaderPartialFailure = new DataLoader(
   },
 );
 ```
+
+Batch-wide rejections are cleared automatically. Per-key `Error` results remain cached until `clear(key)` (or `clearAll()`); call `userLoaderPartialFailure.clear(key)` before retrying a failed key.
 
 ---
 

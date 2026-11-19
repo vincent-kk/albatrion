@@ -231,6 +231,8 @@ type BatchLoader<Key, Value> = (
 4. 인덱스 `i`의 값은 인덱스 `i`의 키에 대응해야 합니다.
 5. 키별 실패는 throw하는 예외가 아닌 `Error` 인스턴스로 표현하세요.
 
+키별 `Error` 결과는 `clear(key)` 또는 `clearAll()`을 호출할 때까지 캐시에 남습니다. 배치 전체가 실패하면 배치 Promise를 거부하여 해당 캐시 항목이 자동으로 제거되게 합니다.
+
 규칙 3 또는 4를 위반하면 해당 배치의 모든 키가 `DataLoaderError`로 거부됩니다.
 
 ---
