@@ -2,7 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Optional } from '@aileron/declare';
 
-import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+import { appendSegment, isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord, UnionSpec } from '../../../record';
 import { FieldNodeWriteKind } from '../../../types/value';
@@ -10,6 +10,7 @@ import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../types/settlement';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { pruneInactiveSources } from '../slots/pruneInactiveSources';
+import { writeSlotPath } from '../slots/writeSlotPath';
 import { arrayExtras } from './arrayExtras';
 import { assertVirtualWriteShape } from './assertVirtualWriteShape';
 import { hasDistributedChildInput } from './hasDistributedChildInput';
@@ -89,7 +90,20 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     const values = isArray(value) ? value : undefined;
     for (let index = 0; index < fields.length; index++) {
       const sibling = node.parent?.childrenByName?.[fields[index]];
-      if (!sibling) continue;
+      if (!sibling) {
+        const parent = node.parent;
+        const entry = parent?.blueprintNode.childEntries.find(
+          (entry) => entry.name === fields[index],
+        );
+        if (parent && entry && (values?.[index] !== undefined || context.kind === FieldNodeWriteKind.Load)) {
+          const path = appendSegment(parent.path, fields[index]);
+          if (context.kind === FieldNodeWriteKind.Load)
+            pruneInactiveSources(parent.runtime, path, undefined, context);
+          writeSlotPath(context.root, path, entry.node, values?.[index], !isMerge, context, context.isAutomatic);
+          context.dirtyPaths.add(parent.path);
+        }
+        continue;
+      }
       if (
         !context.isAutomatic &&
         context.kind !== FieldNodeWriteKind.Load &&
