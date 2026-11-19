@@ -1,5 +1,7 @@
 import type { Ajv } from 'ajv';
 
+import { readRegisteredSchema } from './schemaRegistry/readRegisteredSchema';
+
 /**
  * Resolve a missing external schema from the application without replacing an isolated compiler.
  * @param compiler - Instance whose caches remain local to the form or compiler pool.
@@ -18,13 +20,19 @@ export const compileWithSchemaFallback = <T>(
     try {
       return compile();
     } catch (error) {
-      if (compiler === source || !error || typeof error !== 'object' ||
-          !('missingSchema' in error) || typeof error.missingSchema !== 'string' ||
-          recovered?.includes(error.missingSchema)) throw error;
-      const external = source.getSchema(error.missingSchema);
-      if (!external || external.schema === undefined) throw error;
+      if (
+        compiler === source ||
+        !error ||
+        typeof error !== 'object' ||
+        !('missingSchema' in error) ||
+        typeof error.missingSchema !== 'string' ||
+        recovered?.includes(error.missingSchema)
+      )
+        throw error;
+      const external = readRegisteredSchema(source, error.missingSchema);
+      if (external === undefined) throw error;
       (recovered ??= []).push(error.missingSchema);
-      compiler.addSchema(external.schema, error.missingSchema);
+      compiler.addSchema(external, error.missingSchema);
     }
   }
 };

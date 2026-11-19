@@ -2,7 +2,7 @@ import type { JSONSchema } from '@canard/schema-form';
 import type Ajv from 'ajv';
 
 import { pointerCompilerOf } from './compileWithPointers/pointerCompilerOf';
-import { readRegisteredSchema } from './compileWithPointers/readRegisteredSchema';
+import { readRegisteredSchema } from './schemaRegistry/readRegisteredSchema';
 import { compileWithSchemaFallback } from './compileWithSchemaFallback';
 import { pointerCompilations } from './pointerCompilerCache';
 

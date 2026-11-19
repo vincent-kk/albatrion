@@ -63,13 +63,25 @@ it('resolves a late schema from a root guard clone like a newly created guard cl
  */
 const lateAsyncVerdict = async (earlierRoots: number) => {
   const instance = new Ajv({ allErrors: true });
-  const definition = { async: true, validate: (_schema: boolean, value: string) => Promise.resolve(value !== 'taken') };
+  const definition = {
+    async: true,
+    validate: (_schema: boolean, value: string) =>
+      Promise.resolve(value !== 'taken'),
+  };
   instance.addKeyword('availableName', definition);
   const validator = createValidator(instance);
-  for (let index = 0; index < earlierRoots; index++) validator.compile({ type: 'string', title: String(index) });
+  for (let index = 0; index < earlierRoots; index++)
+    validator.compile({ type: 'string', title: String(index) });
   const id = 'https://round-four.invalid/late-async';
-  instance.addSchema({ $id: id, type: 'string', availableName: true }, 'late-async-alias');
-  const schema: JSONSchema = { $async: true, type: 'object', properties: { name: { $ref: id } } };
+  instance.addSchema(
+    { $id: id, type: 'string', availableName: true },
+    'late-async-alias',
+  );
+  const schema: JSONSchema = {
+    $async: true,
+    type: 'object',
+    properties: { name: { $ref: id } },
+  };
   const issues = await validator.compile(schema)({ name: 'taken' });
   return issues?.map(({ keyword, dataPath }) => [keyword, dataPath]);
 };
@@ -80,15 +92,24 @@ it('late asynchronous definitions agree with definitions present before any comp
   expect(await lateAsyncVerdict(65)).toEqual(expected);
 });
 
-it.each([true, false])('late boolean schema %s agrees with a fresh compiler', async (definition) => {
-  const instance = new Ajv({ allErrors: true });
-  const validator = createValidator(instance);
-  for (let index = 0; index < 65; index++) validator.compile({ type: 'string', title: String(index) });
-  const id = 'https://round-four.invalid/late-boolean';
-  instance.addSchema(definition, id);
-  const schema: JSONSchema = { type: 'object', properties: { name: { $ref: id } } };
-  const expected = await createValidator(instance).compile(schema)({ name: 'x' });
-  const actual = await validator.compile({ ...schema })({ name: 'x' });
-  expect(actual).toEqual(expected);
-  expect(actual === null).toBe(definition);
-});
+it.each([true, false])(
+  'late boolean schema %s agrees with a fresh compiler',
+  async (definition) => {
+    const instance = new Ajv({ allErrors: true });
+    const validator = createValidator(instance);
+    for (let index = 0; index < 65; index++)
+      validator.compile({ type: 'string', title: String(index) });
+    const id = 'https://round-four.invalid/late-boolean';
+    instance.addSchema(definition, id);
+    const schema: JSONSchema = {
+      type: 'object',
+      properties: { name: { $ref: id } },
+    };
+    const expected = await createValidator(instance).compile(schema)({
+      name: 'x',
+    });
+    const actual = await validator.compile({ ...schema })({ name: 'x' });
+    expect(actual).toEqual(expected);
+    expect(actual === null).toBe(definition);
+  },
+);
