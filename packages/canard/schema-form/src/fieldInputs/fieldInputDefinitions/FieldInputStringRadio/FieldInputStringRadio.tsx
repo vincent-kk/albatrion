@@ -1,4 +1,4 @@
-import { type ChangeEvent, useMemo } from 'react';
+import { type ChangeEvent, useLayoutEffect, useMemo, useRef } from 'react';
 
 import { map } from '@winglet/common-utils/array';
 import { useHandle } from '@winglet/react-utils/hook';
@@ -21,6 +21,7 @@ export const FieldInputStringRadio = ({
   disabled,
   misfit,
   defaultValue,
+  value: committedValue,
   onChange,
   context,
   alias,
@@ -52,8 +53,19 @@ export const FieldInputStringRadio = ({
     if (rawValue === undefined) return;
     onChange(rawValue);
   });
+  const group = useRef<HTMLSpanElement>(null);
+  const restoreSelection = useHandle(() => {
+    const inputs = group.current?.querySelectorAll<HTMLInputElement>(
+      'input[type="radio"]',
+    );
+    inputs?.forEach((input, index) => {
+      input.checked = radioOptions[index].rawValue === committedValue;
+    });
+  });
+  useLayoutEffect(restoreSelection, [fieldId, restoreSelection]);
   return (
     <span
+      ref={group}
       role="group"
       aria-labelledby={getFieldPartId(fieldId, 'label')}
       aria-invalid={misfit || undefined}
