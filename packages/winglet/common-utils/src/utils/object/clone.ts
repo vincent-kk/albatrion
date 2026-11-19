@@ -299,19 +299,29 @@ const replicate = (
 
   if (value instanceof Map) {
     const prototype = getPrototypeOf(value);
-    const result = prototype === Map.prototype ? new Map() : constructBuiltin(Map, [], prototype);
+    if (prototype === Map.prototype) {
+      const result = new Map();
+      cache.set(value, result);
+      for (const entry of value)
+        result.set(replicate(entry[0], limit, depth, cache), replicate(entry[1], limit, depth, cache));
+      return result;
+    }
+    const result = constructBuiltin(Map, [], prototype);
     cache.set(value, result);
     for (const entry of value)
-      Map.prototype.set.call(result,
-        replicate(entry[0], limit, depth, cache),
-        replicate(entry[1], limit, depth, cache),
-      );
+      Map.prototype.set.call(result, replicate(entry[0], limit, depth, cache), replicate(entry[1], limit, depth, cache));
     return result;
   }
 
   if (value instanceof Set) {
     const prototype = getPrototypeOf(value);
-    const result = prototype === Set.prototype ? new Set() : constructBuiltin(Set, [], prototype);
+    if (prototype === Set.prototype) {
+      const result = new Set();
+      cache.set(value, result);
+      for (const key of value) result.add(replicate(key, limit, depth, cache));
+      return result;
+    }
+    const result = constructBuiltin(Set, [], prototype);
     cache.set(value, result);
     for (const key of value) Set.prototype.add.call(result, replicate(key, limit, depth, cache));
     return result;
