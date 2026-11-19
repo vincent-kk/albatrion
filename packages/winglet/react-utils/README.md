@@ -40,7 +40,7 @@ import { withErrorBoundary, withUploader } from '@winglet/react-utils/hoc';
 // Custom hooks
 import { useMemorize, useOnMount } from '@winglet/react-utils/hook';
 // Object utilities
-import { extractProps, mergeRefs } from '@winglet/react-utils/object';
+import { remainOnlyReactComponent } from '@winglet/react-utils/object';
 // Portal components
 import { Portal } from '@winglet/react-utils/portal';
 // Render utilities
@@ -56,7 +56,7 @@ Based on the package.json exports configuration:
 - `@winglet/react-utils/hoc` - Higher-order components (withErrorBoundary, withUploader)
 - `@winglet/react-utils/portal` - Portal component and utilities (Portal component)
 - `@winglet/react-utils/filter` - React component type checking utilities (isReactComponent, isReactElement, etc.)
-- `@winglet/react-utils/object` - React-specific object utilities (extractProps, mergeRefs)
+- `@winglet/react-utils/object` - React-specific object utilities (remainOnlyReactComponent)
 - `@winglet/react-utils/render` - Component rendering utilities (renderComponent)
 
 ---
