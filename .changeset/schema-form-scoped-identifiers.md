@@ -27,3 +27,5 @@ React 18 and 19 server rendering and hydration preserve the same scope. Applicat
 Labels and ARIA references resolve identifiers across the document, regardless of which native form owns an input. Separate native form elements therefore cannot prevent identifier collisions. Inputs rendered through portals may also share a native form owner or have none, so every Form uses the same unique identifier rule.
 
 Composite inputs receive `getInputId(key: string | number)` for additional controls, and `labelId` for the renderer-owned title. Replace `id + "-" + index` with `getInputId(index)`. Keys compare as strings. The removed `id` prop has an `id?: never` type guard; the id getters and strings cannot be overridden through child props. Do not parse ids or concatenate library-part suffixes yourself.
+
+Child and presentation overrides also reject the removed `id` prop, even when their extension index signatures accept other custom keys.

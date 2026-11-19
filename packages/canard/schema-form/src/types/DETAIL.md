@@ -6,7 +6,7 @@
 
 ## API Contracts
 
-FieldInputProps와 UnknownFieldInputProps의 inputId는 실제 DOM 식별자이며 path와 다릅니다. FieldRendererProps의 labelId는 연결할 제목의 DOM id입니다. 모든 입력의 name prop은 presentation 힌트와 무관하게 노드의 말단 이름입니다. 라디오 입력은 name prop 대신 inputId prop을 선택지의 native name으로 사용하므로 FormData의 key와 JSON 폼 값의 key를 혼동하지 않습니다.
+FieldInputProps와 UnknownFieldInputProps의 inputId는 실제 DOM 식별자이며 path와 다릅니다. FieldRendererProps의 labelId는 연결할 제목의 DOM id입니다. 입력·자식 입력·표현 덮어쓰기의 이전 id 키는 optional never로 금지하여 열린 색인 서명이 바인딩 식별자를 다시 허용하지 않게 합니다. 모든 입력의 name prop은 presentation 힌트와 무관하게 노드의 말단 이름입니다. 라디오 입력은 name prop 대신 inputId prop을 선택지의 native name으로 사용하므로 FormData의 key와 JSON 폼 값의 key를 혼동하지 않습니다.
 
 실제 입력·알 수 없는 입력·자식 입력·덮어쓰기 props의 errors와 errorVisible은 optional never로 선언하여 목록 접근과 값 전달을 막습니다. 단순 진리값 검사는 TypeScript가 허용하므로 오류 정보 소비자는 useFieldErrors로 옮겨야 합니다. 묶인 Input만 직접 unwrapped를 해석하고 ChildFieldProps에는 그 키를 선언하지 않습니다.
 

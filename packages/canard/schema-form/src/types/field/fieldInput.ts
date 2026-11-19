@@ -167,6 +167,8 @@ export type InferFieldInputProps<Value> = Value extends AllowedValue
   : UnknownFieldInputProps;
 
 export type ChildFieldProps<Value extends AllowedValue = any> = {
+  /** @deprecated Use inputId. */
+  id?: never;
   /** Identifiers belong to the binding and cannot be overridden. */
   inputId?: never;
   /** Title identity belongs to the binding. */
@@ -194,6 +196,8 @@ export type ChildFieldProps<Value extends AllowedValue = any> = {
 
 /** Presentation overrides cannot replace the binding-owned callback channels. */
 export type OverridableFieldInputProps = {
+  /** @deprecated Use inputId. */
+  id?: never;
   /** Identifiers belong to the binding and cannot be overridden. */
   inputId?: never;
   /** Title identity belongs to the binding. */
