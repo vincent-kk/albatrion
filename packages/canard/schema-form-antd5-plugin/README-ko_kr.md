@@ -273,3 +273,5 @@ An unset slider exposes no current value to assistive technology and stores noth
 ### Slider constraints
 
 With `multipleOf`, selectable values are multiples of that number within the inclusive bounds. Integer sliders select only integer multiples. Without `multipleOf`, number sliders retain their authored bounds. A range with no selectable value is disabled and stores nothing.
+
+슬라이더 commit은 Ant Design peer 범위 전체에서 지원합니다. 5.10·5.11에서는 `onAfterChange`, 5.12 이상에서는 `onChangeComplete`를 사용합니다. `lazy`를 생략하면 조작을 끝낼 때 저장하고 `lazy: false`는 이동 중에 저장합니다.

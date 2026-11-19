@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 
-import { Slider } from 'antd';
+import { Slider, version } from 'antd';
 
 import type {
   FieldInputDefinition,
@@ -90,13 +90,17 @@ const FieldInputSlider = ({
     [onChange, disabled, readOnly, empty],
   );
 
+  const committedChange =
+    version.startsWith('5.10.') || version.startsWith('5.11.')
+      ? { onAfterChange: handleChange }
+      : { onChangeComplete: handleChange };
   const changeHandler =
     lazy === false
       ? {
           onChange: handleChange,
-          ...(isUnset ? { onChangeComplete: handleChange } : {}),
+          ...(isUnset ? committedChange : {}),
         }
-      : { onChangeComplete: handleChange };
+      : committedChange;
 
   const handleUnsetKey = (event: KeyboardEvent<HTMLDivElement>) => {
     if (

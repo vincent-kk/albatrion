@@ -16,7 +16,13 @@ vi.mock('antd', async (importOriginal) => {
     const { onChangeComplete: _unknownBefore512, ...known } = props;
     return <RealSlider {...known} />;
   };
-  return { ...actual, Slider };
+  return {
+    ...actual,
+    Slider,
+    get version() {
+      return emulateAntd510.on ? '5.10.0' : actual.version;
+    },
+  };
 });
 
 beforeEach(() => {
