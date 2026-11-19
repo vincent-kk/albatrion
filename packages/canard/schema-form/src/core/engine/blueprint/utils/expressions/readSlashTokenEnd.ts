@@ -43,8 +43,7 @@ export const readSlashTokenEnd = (
     } else if (char === '[') {
       hasRegexSyntax = true;
       isInClass = true;
-    }
-    else if (char === ']') isInClass = false;
+    } else if (char === ']') isInClass = false;
     else if (char === '/' && !isInClass) break;
   }
   if (close >= expression.length) return -1;
@@ -57,12 +56,12 @@ export const readSlashTokenEnd = (
   if (after < expression.length && OPERAND_START.test(expression[after]))
     return -1;
   // Character classes and escapes make the body a regex; other absolute spellings keep path priority.
+  if (hasRegexSyntax) return end;
   JSON_POINTER_PATH_STICKY_REGEX.lastIndex = index;
   const path = JSON_POINTER_PATH_STICKY_REGEX.exec(expression);
   if (
     path === null ||
-    index + path[0].length === close ||
-    hasRegexSyntax
+    index + path[0].length === close
   )
     return end;
   return -1;
