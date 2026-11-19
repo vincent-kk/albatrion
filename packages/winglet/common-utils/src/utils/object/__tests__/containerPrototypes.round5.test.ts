@@ -6,6 +6,7 @@ import { removeUndefined } from '../removeUndefined';
 import { shallowClone } from '../shallowClone';
 import { sortObjectKeys } from '../sortObjectKeys';
 import { transformKeys } from '../transformKeys';
+import { transformValues } from '../transformValues';
 
 it('copying a container keeps absent-member lookups equivalent at root and nested positions', () => {
   const copies = [clone, cloneLite, shallowClone, removeUndefined, (value: Record<string, unknown>) => sortObjectKeys(value, ['a', 'b'])];
@@ -18,11 +19,17 @@ it('copying a container keeps absent-member lookups equivalent at root and neste
   }
 });
 
-it('key transformation deliberately creates a dictionary independently of input prototype', () => {
-  const ordinary = { a: 1 };
-  const dictionary = Object.assign(Object.create(null), ordinary);
-  const first = transformKeys(ordinary, (_value, key) => key);
-  const second = transformKeys(dictionary, (_value, key) => key);
-  expect(Object.getPrototypeOf(first)).toBe(Object.getPrototypeOf(second));
-  expect(Object.getPrototypeOf(first)).toBe(null);
+it('transformations deliberately create dictionaries at either application depth', () => {
+  const transforms = [
+    (value: Record<string, unknown>) => transformKeys(value, (_value, key) => key),
+    (value: Record<string, unknown>) => transformValues(value, value => value),
+  ];
+  for (const transform of transforms) for (const nested of [false, true]) {
+    const ordinary = { a: 1 };
+    const dictionary = Object.assign(Object.create(null), ordinary);
+    const first = nested ? { child: transform(ordinary) }.child : transform(ordinary);
+    const second = nested ? { child: transform(dictionary) }.child : transform(dictionary);
+    expect(Object.getPrototypeOf(first)).toBe(Object.getPrototypeOf(second));
+    expect(Object.getPrototypeOf(first)).toBe(null);
+  }
 });
