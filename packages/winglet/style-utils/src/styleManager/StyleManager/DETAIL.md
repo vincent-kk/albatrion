@@ -10,6 +10,8 @@
 
 여러 식별자의 CSS를 합칠 때 각 조각의 EOF를 CSS Syntax 규칙대로 먼저 닫습니다. 열린 주석·문자열·url·괄호·대괄호·블록과 끝나지 않은 at-rule 프렐류드를 다음 식별자에 넘기지 않습니다. 문자열의 끝 이스케이프는 줄 연속으로, url의 끝 이스케이프는 replacement 문자로 원래 EOF 의미를 보존합니다. 경계의 문자만 보고 조기 반환하지 않으므로 주석·문자열 안의 마지막 닫는 중괄호는 구조로 오해하지 않습니다.
 
+배치 반영은 닫은 조각을 인스턴스 내부의 제한된 캐시로 재사용합니다. 변경되지 않은 식별자는 토큰을 반복해서 읽지 않으며, 캐시는 현재 스타일 수의 두 배를 넘으면 비워 메모리 증가를 제한합니다. 제거와 전체 정리는 캐시도 비웁니다.
+
 ## API Contracts
 
 - `StyleManager.get(scopeId: string, config?: StyleManagerConfig): StyleManager` — 문서는 scopeId별 Map을 사용하고, Shadow DOM은 ShadowRoot를 키로 하는 WeakMap 안의 scopeId별 Map을 사용한다. 레지스트리는 분리된 ShadowRoot와 호스트의 수거를 막지 않는다.
