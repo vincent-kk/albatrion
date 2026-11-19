@@ -2,12 +2,19 @@ import { realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import { render } from 'ink-testing-library';
 import { afterEach, expect, it, vi } from 'vitest';
-import { installPackage, makeRoot, removeRoot, runCliCode, writeAt } from '../../../__tests__/roundThree/fixture.js';
+import { installPackage, makeRoot, removeRoot, writeAt } from '../../../__tests__/roundThree/fixture.js';
 import type { RunResult } from '../../../core/index.js';
 import { InjectApp } from '../../../ui/InjectApp/InjectApp.js';
 import * as ui from '../../../ui/index.js';
+import { runCli } from '../runCli.js';
 import * as views from '../renderers/renderOrFallback.js';
 const roots: string[] = [];
+async function run(args: readonly string[]): Promise<number> {
+  let code = 0; const signal = new Error('captured exit');
+  const exit = vi.spyOn(process, 'exit').mockImplementation((value) => { code = Number(value ?? 0); throw signal; });
+  try { await runCli(['node', 'inject-agents-settings', ...args]); } catch (error) { if (error !== signal) throw error; } finally { exit.mockRestore(); }
+  return code;
+}
 afterEach(() => { for (const root of roots.splice(0)) removeRoot(root); vi.restoreAllMocks(); });
 it.each([
   'package-required', 'invalid-package', 'unknown-option', 'option-value-required',
@@ -46,12 +53,12 @@ it.each([
       const timer = setTimeout(() => { app.unmount(); reject(new Error('terminal timeout')); }, 4000);
     }));
     try {
-      const code = await runCliCode([...args, `--root=${root}`, ...(mode === 'json' ? ['--json'] : []), ...(mode === 'plain' ? ['--no-interactive'] : [])]);
+      const code = await run([...args, `--root=${root}`, ...(mode === 'json' ? ['--json'] : []), ...(mode === 'plain' ? ['--no-interactive'] : [])]);
       expect(code).toBe(2); expect(report?.failures?.length).toBeGreaterThan(0);
       const transcript = mode === 'ink' ? frame : mode === 'json' ? JSON.parse(stdout).failures.map((failure: { path: string; reason: string }) => `${failure.path} ${failure.reason}`).join('\n') : stdout + stderr;
       for (const failure of report?.failures ?? []) {
-        expect(transcript.replace(/\s+/g, '')).toContain(failure.path.replace(/\s+/g, ''));
-        expect(transcript.replace(/\s+/g, '')).toContain(failure.reason.replace(/\s+/g, ''));
+        expect(transcript.replace(/\s+/g, ''), `${kind}:${mode}`).toContain(failure.path.replace(/\s+/g, ''));
+        expect(transcript.replace(/\s+/g, ''), `${kind}:${mode}`).toContain(failure.reason.replace(/\s+/g, ''));
       }
       outcomes.push({ code, report: JSON.parse(JSON.stringify(report).split(realpathSync(root)).join('<root>').split(root).join('<root>')) });
     } finally { if (tty) Object.defineProperty(process.stdout, 'isTTY', tty); else Reflect.deleteProperty(process.stdout, 'isTTY'); vi.restoreAllMocks(); }
