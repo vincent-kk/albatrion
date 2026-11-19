@@ -187,7 +187,7 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
               target={tp.target}
               plan={tp.plan}
               diagnosticOnly={tp.refused}
-              expanded={false}
+              expanded
             />
           ))}
           {phase.plans
