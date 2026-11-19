@@ -1,4 +1,4 @@
-import { cleanup, render } from '@testing-library/react';
+import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import { computeAccessibleName } from 'dom-accessibility-api';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
@@ -278,3 +278,69 @@ it('preserves the pre-id schema table while keeping every address and associatio
     plugin.fieldInputDefinitions.length,
   );
 }, 30000);
+
+it.each<[string, JSONSchema]>([
+  ['radio', { type: 'string', enum: ['one', 'two'], presentation: { inputType: 'radio' } }],
+  ['radiogroup', { type: 'string', enum: ['one', 'two'], presentation: { inputType: 'radiogroup' } }],
+  ['checkbox group', { type: 'array', items: { type: 'string', enum: ['one', 'two'] }, presentation: { inputType: 'checkbox' } }],
+  ['text', { type: 'string' }],
+  ['enum select', { type: 'string', enum: ['one', 'two'] }],
+  ['slider', { type: 'number', format: 'slider', presentation: { inputType: 'slider' } }],
+])('keeps %s addresses equivalent beside sibling named like a derived id and in two Forms', (_kind, fieldSchema) => {
+  const schema: JSONSchema = {
+    type: 'object',
+    properties: {
+      plan: fieldSchema,
+      'plan-0': { type: 'string' },
+      'plan-1': { type: 'string' },
+      name: { type: 'string' },
+      'name-label': { type: 'string' },
+      'first name': { type: 'string' },
+    },
+  };
+  const view = render(<><Form {...props} jsonSchema={schema} /><Form {...props} jsonSchema={schema} /></>);
+  const identified = Array.from(document.querySelectorAll<HTMLElement>('[id]')).filter(element => element.id);
+  expect(new Set(identified.map(element => element.id)).size).toBe(identified.length);
+  for (const element of identified) expect(element.id).not.toMatch(/[\u0000-\u0020\u007f-\u009f]/);
+  for (const element of view.container.querySelectorAll<HTMLElement>('[aria-labelledby]')) {
+    for (const id of element.getAttribute('aria-labelledby')!.split(/\s+/).filter(Boolean)) {
+      expect(identified.filter(candidate => candidate.id === id)).toHaveLength(1);
+    }
+    expect(computeAccessibleName(element)).not.toBe('');
+  }
+  for (const label of view.container.querySelectorAll<HTMLLabelElement>('label[for]')) {
+    expect(identified.filter(element => element.id === label.htmlFor)).toHaveLength(1);
+  }
+  const fields = view.container.querySelectorAll('[data-path="/plan"]');
+  expect(fields).toHaveLength(2);
+  for (const field of fields) {
+    for (const control of field.querySelectorAll<HTMLElement>('input:not([type="hidden"]):not([aria-hidden="true"]), [role="slider"], [role="combobox"]')) {
+      expect(control.id).not.toBe('');
+      expect(computeAccessibleName(control)).not.toBe('');
+    }
+  }
+});
+
+it('keeps equal leaf-name select display and menu addresses local to their fields', async () => {
+  const jsonSchema: JSONSchema = {
+    type: 'object',
+    properties: {
+      left: { type: 'object', properties: { choice: { type: 'string', enum: ['one', 'two'] } } },
+      right: { type: 'object', properties: { choice: { type: 'string', enum: ['one', 'two'] } } },
+    },
+  };
+  const view = render(<><Form {...props} jsonSchema={jsonSchema} /><Form {...props} jsonSchema={jsonSchema} /></>);
+  const controls = view.getAllByRole('combobox');
+  expect(controls).toHaveLength(4);
+  expect(new Set(controls.map(control => control.id)).size).toBe(4);
+  const menuIds: string[] = [];
+  for (const control of controls) {
+    fireEvent.mouseDown(control);
+    const menu = view.getByRole('listbox');
+    expect(menu.id).not.toBe('');
+    menuIds.push(menu.id);
+    fireEvent.keyDown(menu, { key: 'Escape' });
+    await waitFor(() => expect(view.queryByRole('listbox')).toBeNull());
+  }
+  expect(new Set(menuIds).size).toBe(4);
+});
