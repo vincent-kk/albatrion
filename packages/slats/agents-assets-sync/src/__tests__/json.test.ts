@@ -187,7 +187,10 @@ describe.skipIf(blocker !== null)(
         '--scope=project',
       ]);
       expect(result.status).toBe(2);
-      expect(result.stdout).toBe('');
+      expect(JSON.parse(result.stdout)).toMatchObject({
+        exitCode: 2,
+        units: [],
+      });
       expect(result.stderr).toContain('@does/not-exist');
     });
   },

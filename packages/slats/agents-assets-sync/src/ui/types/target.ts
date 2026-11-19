@@ -1,3 +1,4 @@
+import type { RunUnit } from '../../core/index.js';
 import type { AgentTarget, AgentType, InjectPlan } from '../../core/index.js';
 import type { ConsumerPackage } from '../../types/index.js';
 
@@ -10,6 +11,7 @@ export interface PlanStepState {
 
 /** One plan is one (package, agent) pair — a package can target several. */
 export interface TargetPlan {
+  readonly notices?: RunUnit['notices'];
   /** Core-supplied identity for terminal rendering. */
   readonly key?: string;
   readonly target: ConsumerPackage;

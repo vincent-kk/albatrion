@@ -4,9 +4,10 @@ import { createRequire } from 'node:module';
 import { dirname, resolve as resolvePath, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { findMarkerRoot } from '../../../core/index.js';
+import { type RunFailure, findMarkerRoot } from '../../../core/index.js';
 import { logger } from '../../../utils/logger.js';
 import { findInstallRoots } from './findInstallRoots.js';
+import { rejectTarget } from './rejectTarget.js';
 
 export interface ResolvedMetadata {
   packageRoot: string;
@@ -18,6 +19,10 @@ export interface ResolvedMetadata {
 }
 
 export interface ResolvePackageOptions {
+  /** Preserve source-stage records in the run owner's collector. */
+  diagnostics?: RunFailure[];
+  /** Transfer strict failures to the dispatcher before rendering. */
+  onFailure?: (reason: string) => never;
   /**
    * When `true`, a package whose asset root cannot be established is warned
    * and the function returns `null` instead of calling `process.exit`. The
@@ -49,10 +54,13 @@ export async function resolvePackage(
 ): Promise<ResolvedMetadata | null> {
   const pkgJSONPath = await resolvePackageJSONPath(name, originCwd);
   if (!pkgJSONPath) {
-    logger.error(
+    rejectTarget(
       `cannot resolve package "${name}". Install it in the current project or pass the correct name.`,
+      options.onFailure,
+      options.diagnostics,
+      name,
+      name,
     );
-    process.exit(2);
   }
 
   const packageRoot = dirname(pkgJSONPath);
@@ -68,10 +76,17 @@ export async function resolvePackage(
       return skip(
         options,
         `"${name}" package.json is missing a string "name" or "version" — skipping.`,
+        pkgJSONPath,
+        name,
       );
     }
-    logger.error(`${pkgJSONPath} must define string "name" and "version".`);
-    process.exit(2);
+    rejectTarget(
+      `${pkgJSONPath} must define string "name" and "version".`,
+      options.onFailure,
+      options.diagnostics,
+      pkgJSONPath,
+      name,
+    );
   }
 
   const override = options.assetPathOverride;
@@ -89,10 +104,13 @@ export async function resolvePackage(
         `"${name}" is missing "agents.assetPath" — skipping (the package does not ship agent assets).`,
       );
     }
-    logger.error(
+    rejectTarget(
       `"${name}" is missing "agents.assetPath" in its package.json — the package does not ship agent assets.`,
+      options.onFailure,
+      options.diagnostics,
+      pkgJSONPath,
+      name,
     );
-    process.exit(2);
   }
 
   const source = override !== undefined ? 'flag' : 'package';
@@ -112,10 +130,20 @@ export async function resolvePackage(
         ? `resolves outside ${packageRoot}`
         : `is not a directory inside ${packageRoot}`;
     if (options.skipMissingAsset) {
-      return skip(options, `"${name}": ${label} ${detail} — skipping.`);
+      return skip(
+        options,
+        `"${name}": ${label} ${detail} — skipping.`,
+        resolvePath(packageRoot, assetPath),
+        name,
+      );
     }
-    logger.error(`"${name}": ${label} ${detail}.`);
-    process.exit(2);
+    rejectTarget(
+      `"${name}": ${label} ${detail}.`,
+      options.onFailure,
+      options.diagnostics,
+      resolvePath(packageRoot, assetPath),
+      name,
+    );
   }
 
   return {
@@ -130,9 +158,16 @@ export async function resolvePackage(
 // A soft skip is both a diagnostic and a value: the warning keeps the plain
 // transcript readable, and the collected reason lets `--json` explain an empty
 // run without its reader scraping stderr.
-function skip(options: ResolvePackageOptions, reason: string): null {
+function skip(
+  options: ResolvePackageOptions,
+  reason: string,
+  path?: string,
+  unitKey = path,
+): null {
   logger.warn(reason);
   options.skipReasons?.push(reason);
+  if (path && unitKey)
+    options.diagnostics?.push({ unitKey, path, stage: 'discover', reason });
   return null;
 }
 

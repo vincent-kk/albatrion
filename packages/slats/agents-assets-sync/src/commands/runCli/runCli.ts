@@ -2,7 +2,7 @@ import { basename, isAbsolute, resolve as resolvePath } from 'node:path';
 
 import { Command, CommanderError } from 'commander';
 
-import { validateFlags } from '../../core/index.js';
+import { type RunFailure, validateFlags } from '../../core/index.js';
 import type { DefaultFlags } from '../../types/index.js';
 import { divertLogsToStderr, logger } from '../../utils/logger.js';
 import { VERSION } from '../../utils/version.js';
@@ -12,6 +12,7 @@ import { classifyTarget } from './targets/classifyTarget.js';
 import { resolveTargets } from './targets/resolveTargets.js';
 import { selectInjectableTargets } from './targets/selectInjectableTargets.js';
 import { toConsumerPackages } from './targets/toConsumerPackages.js';
+import { createFailureResult } from './utils/createFailureResult.js';
 
 const FALLBACK_PROGRAM_NAME = 'inject-agents-settings';
 
@@ -44,6 +45,14 @@ export async function runCli(
 ): Promise<void> {
   const cmd = new Command();
   cmd.exitOverride();
+  if (argv.includes('--json'))
+    cmd.configureOutput({
+      writeOut: (text) => {
+        process.stderr.write(text);
+      },
+    });
+  let exitCode = 0;
+  const diagnostics: RunFailure[] = [];
 
   cmd
     .name(deriveProgramName(argv))
@@ -112,12 +121,12 @@ export async function runCli(
       const checked = validateFlags(flags, true);
       if ('errors' in checked) errors.push(...checked.errors);
       if (errors.length) {
-        const result = {
-          units: [],
+        const result = createFailureResult(
           errors,
-          exitCode: 2,
-          dryRun: Boolean(flags.dryRun),
-        } as const;
+          2,
+          Boolean(flags.dryRun),
+          targets.join(','),
+        );
         await renderOrFallback(
           [],
           flags,
@@ -126,7 +135,8 @@ export async function runCli(
           {},
           result,
         );
-        process.exit(result.exitCode);
+        exitCode = result.exitCode;
+        return;
       }
       const assetPath = resolveAssetPathFlag(flags.assetPath);
       const originCwd = resolvePath(flags.root ?? process.cwd());
@@ -134,6 +144,10 @@ export async function runCli(
         targets,
         originCwd,
         assetPath,
+        (reason) => {
+          throw Object.assign(new Error(reason), { exitCode: 2 });
+        },
+        diagnostics,
       );
       if (resolved.length === 0) {
         logger.warn(
@@ -149,29 +163,73 @@ export async function runCli(
       // `agents.assetPath` does: fatal when the run named one package, a
       // reported skip in a batch. Deciding it here rather than inside each
       // renderer is what keeps the verdict from depending on `--json`.
-      const injectable = selectInjectableTargets(consumerPackages, skipped);
-      if (strict && injectable.length < consumerPackages.length)
-        process.exit(2);
-      const exitCode = await renderOrFallback(
+      const injectable = selectInjectableTargets(
+        consumerPackages,
+        skipped,
+        diagnostics,
+      );
+      if (strict && injectable.length < consumerPackages.length) {
+        await renderOrFallback(
+          [],
+          flags,
+          originCwd,
+          [],
+          {},
+          createFailureResult(
+            skipped,
+            2,
+            Boolean(flags.dryRun),
+            targets.join(','),
+            diagnostics,
+          ),
+        );
+        exitCode = 2;
+        return;
+      }
+      exitCode = await renderOrFallback(
         injectable,
         flags,
         originCwd,
         skipped,
+        {},
+        undefined,
+        diagnostics,
       );
-      if (exitCode !== 0) process.exit(exitCode);
     });
 
   try {
     await cmd.parseAsync([...argv]);
   } catch (err) {
-    if (err instanceof CommanderError) {
-      if (err.exitCode === 0) return;
-      const result = {
-        units: [],
-        errors: [err.message],
-        exitCode: 2,
-        dryRun: argv.includes('--dry-run'),
-      } as const;
+    if (
+      err instanceof CommanderError ||
+      (err instanceof Error && 'exitCode' in err && err.exitCode === 2)
+    ) {
+      if (err instanceof CommanderError && err.exitCode === 0) {
+        if (argv.includes('--json'))
+          await renderOrFallback(
+            [],
+            { json: true },
+            process.cwd(),
+            [],
+            {},
+            {
+              units: [],
+              errors: [],
+              failures: [],
+              notices: [],
+              exitCode: 0,
+              dryRun: argv.includes('--dry-run'),
+            },
+          );
+        return;
+      }
+      const result = createFailureResult(
+        [err.message],
+        2,
+        argv.includes('--dry-run'),
+        argv.slice(2).join(' '),
+        diagnostics.length ? diagnostics : undefined,
+      );
       await renderOrFallback(
         [],
         {
@@ -183,12 +241,30 @@ export async function runCli(
         {},
         result,
       );
-      process.exit(2);
+      exitCode = 2;
+    } else {
+      const msg = err instanceof Error ? err.message : String(err);
+      await renderOrFallback(
+        [],
+        {
+          json: argv.includes('--json'),
+          interactive: !argv.includes('--no-interactive'),
+        },
+        process.cwd(),
+        [],
+        {},
+        createFailureResult(
+          [msg],
+          1,
+          argv.includes('--dry-run'),
+          argv.slice(2).join(' '),
+          diagnostics.length ? diagnostics : undefined,
+        ),
+      );
+      exitCode = 1;
     }
-    const msg = err instanceof Error ? err.message : String(err);
-    logger.error(msg);
-    process.exit(1);
   }
+  if (exitCode !== 0) process.exit(exitCode);
 }
 
 // Shared collector for every variadic flag: appends and comma-splits, so

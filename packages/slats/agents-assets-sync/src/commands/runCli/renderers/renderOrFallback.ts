@@ -1,4 +1,4 @@
-import type { RunResult } from '../../../core/index.js';
+import type { RunFailure, RunResult } from '../../../core/index.js';
 import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
 import { displayJSON, renderJSON } from './renderJSON.js';
 import { displayPlain, renderPlain } from './renderPlain.js';
@@ -30,6 +30,7 @@ export async function renderOrFallback(
   notices: readonly string[] = [],
   env: RenderEnv = {},
   result?: RunResult,
+  diagnostics?: readonly RunFailure[],
 ): Promise<number> {
   const isTTY = env.isTTY ?? Boolean(process.stdout.isTTY);
   if (flags.json) {
@@ -37,15 +38,22 @@ export async function renderOrFallback(
       displayJSON(result);
       return result.exitCode;
     }
-    return renderJSON(targets, flags, originCwd, notices);
+    return renderJSON(targets, flags, originCwd, notices, diagnostics);
   }
   if (!isTTY || flags.interactive === false) {
     if (result) {
       displayPlain(result, Boolean(flags.force));
       return result.exitCode;
     }
-    return renderPlain(targets, flags, originCwd);
+    return renderPlain(targets, flags, originCwd, notices, diagnostics);
   }
   const ui = await import('../../../ui/index.js');
-  return ui.renderInjectApp({ targets, flags, originCwd, result });
+  return ui.renderInjectApp({
+    targets,
+    flags,
+    originCwd,
+    result,
+    notices,
+    diagnostics,
+  });
 }

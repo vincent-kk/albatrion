@@ -2,9 +2,10 @@ import { existsSync } from 'node:fs';
 import { readFile, readdir } from 'node:fs/promises';
 import { dirname, join, resolve as resolvePath } from 'node:path';
 
-import { findMarkerRoot } from '../../../core/index.js';
+import { type RunFailure, findMarkerRoot } from '../../../core/index.js';
 import { logger } from '../../../utils/logger.js';
 import { findInstallRoots } from './findInstallRoots.js';
+import { rejectTarget } from './rejectTarget.js';
 import { type ResolvedMetadata, resolvePackage } from './resolvePackage.js';
 
 // `runCli/targets/resolveScopeAlias.ts` is the SOLE file in this package
@@ -20,6 +21,8 @@ export async function resolveScopeAlias(
   rootCwd: string,
   assetPathOverride?: string,
   skipReasons?: string[],
+  onFailure?: (reason: string) => never,
+  diagnostics?: RunFailure[],
 ): Promise<ResolvedMetadata[]> {
   const expectedPrefix = `@${scope}/`;
   // Package name → the directory `resolvePackage` must resolve it from.
@@ -34,6 +37,7 @@ export async function resolveScopeAlias(
       rootCwd,
       matched,
       skipReasons,
+      diagnostics,
     );
 
     const parent = dirname(cur);
@@ -51,14 +55,18 @@ export async function resolveScopeAlias(
       installRoot,
       matched,
       skipReasons,
+      diagnostics,
     );
   }
 
   if (matched.size === 0) {
-    logger.error(
+    rejectTarget(
       `scope alias "@${scope}" matched no installed packages in any "node_modules/@${scope}/" walking up from ${rootCwd} or installed under its project root.`,
+      onFailure,
+      diagnostics,
+      rootCwd,
+      `@${scope}`,
     );
-    process.exit(2);
   }
 
   // With an override every enumerated package gets the same asset path, so
@@ -68,7 +76,13 @@ export async function resolveScopeAlias(
   for (const [name, resolveFrom] of matched) {
     const meta = await resolvePackage(
       name,
-      { skipMissingAsset: true, assetPathOverride, skipReasons },
+      {
+        skipMissingAsset: true,
+        assetPathOverride,
+        skipReasons,
+        onFailure,
+        diagnostics,
+      },
       resolveFrom,
     );
     if (meta) resolved.push(meta);
@@ -88,6 +102,7 @@ async function collectScopeDir(
   resolveFrom: string,
   matched: Map<string, string>,
   skipReasons?: string[],
+  diagnostics?: RunFailure[],
 ): Promise<void> {
   let entries: string[];
   try {
@@ -108,6 +123,12 @@ async function collectScopeDir(
       const message = `Skipping ${pkgJSONPath}: ${error instanceof Error ? error.message : String(error)}`;
       if (!skipReasons?.includes(message)) {
         skipReasons?.push(message);
+        diagnostics?.push({
+          unitKey: expectedPrefix + entry,
+          path: pkgJSONPath,
+          stage: 'discover',
+          reason: message,
+        });
         logger.warn(message);
       }
       continue;
