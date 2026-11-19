@@ -11,6 +11,8 @@ interface SliderKeyboardControlProps {
   labelledBy?: string;
   /** Current draft value, updated on pointer moves as well as keyboard input. */
   value: number | [number, number];
+  /** Hide the library placeholder value until the user selects a value. */
+  unset: boolean;
   /** Inclusive bounds and step from the numeric schema. */
   min: number;
   max: number;
@@ -33,6 +35,7 @@ export const SliderKeyboardControl = ({
   id,
   labelledBy,
   value,
+  unset,
   min,
   max,
   step,
@@ -52,6 +55,20 @@ export const SliderKeyboardControl = ({
       else thumb.setAttribute('data-focus-target', '');
     }
   }, [disabled, id, labelledBy]);
+  useEffect(() => {
+    const thumbs = ref.current?.querySelectorAll<HTMLElement>('[role="slider"]') ?? [];
+    for (const [index, thumb] of Array.from(thumbs).entries()) {
+      if (unset) {
+        thumb.removeAttribute('aria-valuenow');
+        thumb.setAttribute('aria-valuetext', 'Not set');
+        thumb.style.opacity = thumb === document.activeElement ? '1' : '0';
+      } else {
+        thumb.setAttribute('aria-valuenow', String(Array.isArray(value) ? value[index] : value));
+        thumb.removeAttribute('aria-valuetext');
+        thumb.style.opacity = '';
+      }
+    }
+  }, [unset, value]);
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (disabled) return;
     const index = Array.from(
@@ -77,7 +94,10 @@ export const SliderKeyboardControl = ({
     );
   };
   return (
-    <div ref={ref} style={{ display: 'contents' }} onKeyDown={handleKeyDown}>
+    <div ref={ref} style={{ display: 'contents' }} onKeyDown={handleKeyDown}
+      onFocusCapture={event => { if (unset && event.target instanceof HTMLElement) event.target.style.opacity = '1'; }}
+      onBlurCapture={event => { if (unset && event.target instanceof HTMLElement) event.target.style.opacity = '0'; }}
+    >
       {children}
     </div>
   );

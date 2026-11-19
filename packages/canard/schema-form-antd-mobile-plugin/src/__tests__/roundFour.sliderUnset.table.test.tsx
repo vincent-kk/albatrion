@@ -13,9 +13,14 @@ it.each([
   const { unmount } = render(<Form ref={ref} jsonSchema={field} fieldInputDefinitions={plugin.fieldInputDefinitions} />);
   const thumbs = screen.getAllByRole('slider');
   expect(thumbs).toHaveLength(count);
-  expect(ref.current!.getValue()).toBeUndefined();
+  expect(ref.current!.getValue()).toEqual(count === 2 ? [] : undefined);
   expect(thumbs.map(thumb => thumb.getAttribute('aria-valuenow'))).toEqual(Array(count).fill(null));
   expect(thumbs.every(thumb => thumb.getAttribute('aria-valuetext') === 'Not set')).toBe(true);
+  expect(thumbs.every(thumb => thumb.style.opacity === '0')).toBe(true);
+  fireEvent.focus(thumbs[0]);
+  expect(thumbs[0].style.opacity).toBe('1');
+  fireEvent.blur(thumbs[0]);
+  expect(thumbs[0].style.opacity).toBe('0');
   fireEvent.keyDown(thumbs[0], { key: 'Home' });
   const result = ref.current!.getValue();
   expect(result).toEqual(count === 2 ? [10, 10] : 10);

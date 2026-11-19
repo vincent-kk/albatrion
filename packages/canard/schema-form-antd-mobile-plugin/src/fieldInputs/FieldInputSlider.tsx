@@ -61,8 +61,10 @@ const FieldInputSlider = ({
     : typeof defaultValue === 'number'
       ? defaultValue
       : undefined;
+  const [isUnset, setIsUnset] = useState(initialValue === undefined);
   const handleChange = useCallback(
     (value: number | [number, number] | null) => {
+      setIsUnset(false);
       if (value === null) onChange(undefined);
       else if (range) {
         if (isArray(value) && !value.some(Number.isNaN)) onChange(value);
@@ -96,10 +98,12 @@ const FieldInputSlider = ({
     [marks],
   );
   const handleDraftChange = (value: number | [number, number]) => {
+    setIsUnset(false);
     setDraft(value);
     if (lazy === false) handleChange(value);
   };
   const handleKeyboardChange = (value: number | [number, number]) => {
+    setIsUnset(false);
     setDraft(value);
     handleChange(value);
   };
@@ -115,6 +119,7 @@ const FieldInputSlider = ({
         id={id}
         labelledBy={labelledBy}
         value={draft}
+        unset={isUnset}
         min={min}
         max={max}
         step={step}
