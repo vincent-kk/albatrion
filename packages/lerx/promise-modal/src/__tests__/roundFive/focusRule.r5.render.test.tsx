@@ -80,7 +80,9 @@ describe('a displayed request whose content re-suspended, then aborted', () => {
       act(() => fireEvent.click(next));
       browserFocusFixup();
       expect(document.activeElement).toBe(document.body);
-      pageInertWhileLoading = !!document.querySelector('main')?.closest('[inert]');
+      pageInertWhileLoading = !!document
+        .querySelector('main')
+        ?.closest('[inert]');
     }
     await act(async () => controller.abort());
     const outcome = {
@@ -134,9 +136,10 @@ describe('reconnected requests', () => {
     opener.focus();
     let resolved: boolean | undefined;
     act(() => {
-      void confirm({ title: 'Keep?', content: <input aria-label="Note" /> }).then(
-        (value) => (resolved = value),
-      );
+      void confirm({
+        title: 'Keep?',
+        content: <input aria-label="Note" />,
+      }).then((value) => (resolved = value));
     });
     const note = screen.getByLabelText('Note');
     note.focus();
@@ -145,7 +148,10 @@ describe('reconnected requests', () => {
     await act(async () => {
       fireEvent.keyDown(document, { key: 'Escape' });
     });
-    expect({ resolved, focusOnOpener: document.activeElement === opener }).toEqual({
+    expect({
+      resolved,
+      focusOnOpener: document.activeElement === opener,
+    }).toEqual({
       resolved: false,
       focusOnOpener: true,
     });
@@ -160,7 +166,10 @@ describe('reconnected requests', () => {
             <button>Open</button>
           </main>
           <section ref={setTarget} />
-          <ModalProvider root={attached ? target : null} options={{ duration: 0 }} />
+          <ModalProvider
+            root={attached ? target : null}
+            options={{ duration: 0 }}
+          />
         </>
       );
     }
@@ -169,14 +178,16 @@ describe('reconnected requests', () => {
     opener.focus();
     let resolved: boolean | undefined;
     act(() => {
-      void confirm({ title: 'Keep?', content: <input aria-label="Note" /> }).then(
-        (value) => (resolved = value),
-      );
+      void confirm({
+        title: 'Keep?',
+        content: <input aria-label="Note" />,
+      }).then((value) => (resolved = value));
     });
     screen.getByLabelText('Note').focus();
     await act(async () => view.rerender(<App attached={false} />));
     await act(async () => view.rerender(<App attached />));
-    const insideAfterReattach = !!document.activeElement?.closest('[role="dialog"]');
+    const insideAfterReattach =
+      !!document.activeElement?.closest('[role="dialog"]');
     await act(async () => {
       fireEvent.keyDown(document, { key: 'Escape' });
     });
@@ -184,6 +195,10 @@ describe('reconnected requests', () => {
       insideAfterReattach,
       resolved,
       focusOnOpener: document.activeElement === opener,
-    }).toEqual({ insideAfterReattach: true, resolved: false, focusOnOpener: true });
+    }).toEqual({
+      insideAfterReattach: true,
+      resolved: false,
+      focusOnOpener: true,
+    });
   });
 });

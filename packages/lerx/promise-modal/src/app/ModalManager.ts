@@ -299,7 +299,10 @@ export class ModalManager {
    * @returns Whether that request has committed connected content.
    */
   private static isFrameDisplayed(id: number): boolean {
-    return ModalManager.isDisplayed() && !!ModalManager.__state__.frames.get(id)?.isConnected;
+    return (
+      ModalManager.isDisplayed() &&
+      !!ModalManager.__state__.frames.get(id)?.isConnected
+    );
   }
   /** Snapshot focus ownership before settling clears participation.
    * @param id Request whose visible interval may own focus.
@@ -394,7 +397,7 @@ export class ModalManager {
   private static updateAccessibility(moveFocus = false): void {
     if (typeof document === 'undefined') return;
     const root = ModalManager.isDisplayed()
-      ? ModalManager.__state__.anchor?.parentElement ?? null
+      ? (ModalManager.__state__.anchor?.parentElement ?? null)
       : null;
     const nodes = root
       ? ModalManager.visibleNodes().filter((node) => node.dimmed)
