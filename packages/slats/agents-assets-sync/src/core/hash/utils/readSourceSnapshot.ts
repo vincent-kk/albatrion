@@ -17,7 +17,7 @@ export async function readSourceSnapshot(
   if (cache?.has(path)) return cache.get(path) ?? null;
   const handle = await open(path, 'r').catch((error: NodeJS.ErrnoException) => {
     if (error.code === 'ENOENT') return null;
-    throw error;
+    throw sourceFailure(error, path);
   });
   if (!handle) {
     cache?.set(path, null);
@@ -38,7 +38,23 @@ export async function readSourceSnapshot(
     };
     cache?.set(path, source);
     return source;
+  } catch (error) {
+    throw sourceFailure(error, path);
   } finally {
-    await handle.close();
+    await handle.close().catch((error: unknown) => {
+      throw sourceFailure(error, path);
+    });
   }
+}
+
+/** Attach the requested source path without discarding native error details.
+ * @param error IO failure from a source operation.
+ * @param path Absolute source path owned by the snapshot request.
+ * @returns The original Error, or a wrapped non-Error, carrying its source path.
+ */
+function sourceFailure(error: unknown, path: string) {
+  return Object.assign(
+    error instanceof Error ? error : new Error(String(error)),
+    { path },
+  );
 }
