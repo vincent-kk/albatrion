@@ -2831,7 +2831,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@csstools/css-parser-algorithms@npm:^3.0.4, @csstools/css-parser-algorithms@npm:^3.0.5":
+"@csstools/css-parser-algorithms@npm:3.0.5, @csstools/css-parser-algorithms@npm:^3.0.4, @csstools/css-parser-algorithms@npm:^3.0.5":
   version: 3.0.5
   resolution: "@csstools/css-parser-algorithms@npm:3.0.5"
   peerDependencies:
@@ -2840,7 +2840,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@csstools/css-tokenizer@npm:^3.0.3, @csstools/css-tokenizer@npm:^3.0.4":
+"@csstools/css-tokenizer@npm:3.0.4, @csstools/css-tokenizer@npm:^3.0.3, @csstools/css-tokenizer@npm:^3.0.4":
   version: 3.0.4
   resolution: "@csstools/css-tokenizer@npm:3.0.4"
   checksum: 10c0/3b589f8e9942075a642213b389bab75a2d50d05d203727fcdac6827648a5572674caff07907eff3f9a2389d86a4ee47308fafe4f8588f4a77b7167c588d2559f
@@ -10513,6 +10513,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@winglet/style-utils@workspace:packages/winglet/style-utils"
   dependencies:
+    "@csstools/css-parser-algorithms": "npm:3.0.5"
+    "@csstools/css-tokenizer": "npm:3.0.4"
     "@slats/agents-assets-sync": "workspace:^"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
