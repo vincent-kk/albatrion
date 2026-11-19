@@ -1,11 +1,13 @@
-import { type ComponentType, type PropsWithChildren, useMemo } from 'react';
+import {
+  type ComponentType,
+  type PropsWithChildren,
+  useContext,
+  useMemo,
+} from 'react';
 
 import type { Dictionary } from '@aileron/declare';
 
-import {
-  PluginManager,
-  getScopedPluginManager,
-} from '@/schema-form/app/plugin';
+import { getScopedPluginManager } from '@/schema-form/app/plugin';
 import type { ValidationMode } from '@/schema-form/core';
 import { normalizeFieldInputDefinitions } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
@@ -24,7 +26,7 @@ import { ExternalFormContext } from './ExternalFormContext';
 import { ExternalInputContext } from './ExternalInputContext';
 
 export interface ExternalFormContextProviderProps {
-  /** Stable application registry token; omitted keeps the realm-shared defaults. */
+  /** Stable application registry token; omitted inherits the enclosing provider, or realm defaults at the root. */
   pluginScope?: string | symbol;
   /** List of FieldInputDefinition declared externally */
   fieldInputDefinitions?: FieldInputDefinition[];
@@ -203,9 +205,10 @@ export const ExternalFormContextProvider = ({
   validatorFactory,
   children,
 }: PropsWithChildren<ExternalFormContextProviderProps>) => {
+  const parent = useContext(ExternalFormContext);
   const pluginManager =
     pluginScope === undefined
-      ? PluginManager
+      ? parent.pluginManager
       : getScopedPluginManager(pluginScope);
   const fromExternalFieldInputDefinitions = useMemo(
     () =>
