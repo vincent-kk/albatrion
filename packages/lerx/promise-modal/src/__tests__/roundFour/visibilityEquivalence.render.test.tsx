@@ -72,12 +72,16 @@ async function scenario(mode: string, action: string, hide: boolean) {
     });
   });
   const node = ModalManager.node(ModalManager.ids[0]);
-  if (action === 'resuspend') {
+  if (action === 'resuspend' || action === 'content-settle-hidden') {
     if (hide) {
       await act(async () => setContentHidden(true));
       if (document.activeElement instanceof HTMLElement)
         document.activeElement.blur();
+      if (action === 'content-settle-hidden') await act(async () => controller.abort());
       await act(async () => setContentHidden(false));
+    } else if (action === 'content-settle-hidden') {
+      act(() => node?.onHide());
+      await act(async () => controller.abort());
     }
   } else {
     if (hide) await act(async () => view.rerender(app(true)));
@@ -117,6 +121,8 @@ it.for([
   ['suspense', 'reveal'],
   ['activity', 'resuspend'],
   ['suspense', 'resuspend'],
+  ['activity', 'content-settle-hidden'],
+  ['suspense', 'content-settle-hidden'],
   ['activity', 'settle-hidden'],
   ['suspense', 'settle-hidden'],
   ['activity', 'navigate-hidden'],
