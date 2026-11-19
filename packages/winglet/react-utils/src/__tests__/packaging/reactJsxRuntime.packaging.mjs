@@ -52,7 +52,7 @@ for (const version of ['16.14.0', '17.0.2', '18.3.1', '19.2.6']) {
     assert.ok(!existsSync(join(packed, 'dist/_runtime/react-jsx-runtime.cjs')), 'the package retains the unbridged runtime graph');
     writeFileSync(join(root, 'entry.js'), "import {withErrorBoundary} from '@winglet/react-utils/hoc'; console.log(typeof withErrorBoundary);\n");
     await new Promise((resolve, reject) => {
-      const compiler = webpack({ context: root, mode: 'development', devtool: false, entry: './entry.js', output: { path: join(root, 'out'), filename: 'bundle.js' }, resolve: { modules: [modules] }, infrastructureLogging: { level: 'none' } });
+      const compiler = webpack({ context: root, mode: 'development', devtool: false, entry: './entry.js', output: { path: join(root, 'out'), filename: 'bundle.js' }, resolve: { modules: [modules], alias: Number(version.split('.')[0]) < 18 ? { 'react/jsx-runtime$': join(modules, 'react/jsx-runtime.js') } : {} }, infrastructureLogging: { level: 'none' } });
       compiler.run((error, stats) => compiler.close(closeError => {
         if (error || closeError) { reject(error || closeError); return; }
         if (!stats) { reject(new Error('missing webpack stats')); return; }
