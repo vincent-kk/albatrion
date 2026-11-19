@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
+import { useCommitEffect } from './utils/useCommitEffect';
 import { useCommittedReference } from './utils/useCommittedReference';
 
 type UseTimeoutReturn = {
@@ -18,7 +19,7 @@ type TimeoutState = {
   idle: boolean;
   /** Current host timer, or null after cancellation or completion. */
   timer: ReturnType<typeof setTimeout> | null;
-  /** Whether the hook's effects are active. */
+  /** Whether this hook instance is mounted. */
   mounted: boolean;
   /** Stable timer cancellation control. */
   cancel: Fn;
@@ -37,7 +38,7 @@ type TimeoutState = {
  * - **Manual Control**: Explicitly schedule, reschedule, or cancel timeouts
  * - **State Tracking**: Check if a timeout is pending with `isIdle()`
  * - **Safe Updates**: Callback updates don't affect running timers
- * - **Auto-cleanup**: Cancels on unmount; retained schedule callbacks do no work after cleanup
+ * - **Auto-cleanup**: Cancels on unmount; retained schedule callbacks do no work after unmount
  * - **Reschedule Support**: Calling schedule() resets existing timers
  *
  * ### Use Cases
@@ -163,13 +164,13 @@ export const useTimeout = (
     }, timeout);
   }, [timeout, state]);
 
-  useEffect(() => {
+  useCommitEffect(() => {
     state.mounted = true;
     return () => {
       state.mounted = false;
-      state.cancel();
     };
   }, [state]);
+  useEffect(() => state.cancel, [state]);
 
   return { isIdle: state.isIdle, schedule, cancel: state.cancel };
 };
