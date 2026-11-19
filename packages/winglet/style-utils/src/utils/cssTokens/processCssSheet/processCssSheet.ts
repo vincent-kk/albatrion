@@ -4,6 +4,8 @@ import { CssTokenKind } from '../CssTokenKind';
 import { getCssBlockContext } from '../getCssBlockContext';
 import { getCssEofSuffix } from '../getCssEofSuffix';
 import { getCssSignificantIndex } from '../getCssSignificantIndex';
+import { getSimpleDeclarationEnd } from '../getSimpleDeclarationEnd';
+import { getSimpleRuleEnd } from '../getSimpleRuleEnd';
 import { hasCssName } from '../hasCssName';
 import { readCssSheetToken } from '../readCssSheetToken';
 import { canDropCssComment } from './utils/canDropCssComment';
@@ -19,6 +21,7 @@ import { keepCssWhitespace } from './utils/keepCssWhitespace';
 export const processCssSheet = (input: string, compressed: boolean, mode: 'none' | 'shadow' | 'document'): string => {
   const css = mode !== 'none' && input.charCodeAt(0) === 0xfeff ? input.slice(1) : input;
   if (!css) return '';
+  const batchDeclarations = css.length >= 256;
   let context: number = CssContext.RuleList, components = 0, valueEmpty = true, custom = false;
   let safeEnd = 0, atParent: CssContext = CssContext.RuleList, atStart = 0;
   let declarationStart = 0, declarationOutput = 0;
@@ -26,8 +29,17 @@ export const processCssSheet = (input: string, compressed: boolean, mode: 'none'
   let output = '', index = 0, segmentStart = 0, previousCode = 0, previousEnd = 0;
   let previousKind = CssTokenKind.Delimiter, hasOutput = false, lastKind = previousKind, lastStart = 0;
   while (index < css.length) {
-    const token = readCssSheetToken(css, index), kind = token % 16, end = Math.floor(token / 16), code = css.charCodeAt(index);
-    lastKind = kind; lastStart = index;
+    const ruleEnd = batchDeclarations && context === CssContext.RuleList && components === 0 ? getSimpleRuleEnd(css, index) : 0;
+    if (ruleEnd) {
+      index = ruleEnd; previousCode = 125; previousKind = CssTokenKind.Delimiter;
+      previousEnd = ruleEnd; hasOutput = true; lastKind = previousKind; lastStart = ruleEnd - 1;
+      if (!stack?.length) safeEnd = output.length + ruleEnd - segmentStart;
+      continue;
+    }
+    const firstCode = css.charCodeAt(index);
+    const declarationEnd = batchDeclarations && context === CssContext.DeclarationList && components === 0 ? getSimpleDeclarationEnd(css, index) : 0;
+    const token = declarationEnd ? declarationEnd * 16 : readCssSheetToken(css, index), kind = token % 16, end = Math.floor(token / 16), code = declarationEnd ? css.charCodeAt(end - 1) : firstCode;
+    lastKind = kind; lastStart = declarationEnd ? end - 1 : index;
     if (kind === CssTokenKind.Comment || kind === CssTokenKind.OpenComment) {
       if (compressed) {
         output += css.slice(segmentStart, index); segmentStart = end;
@@ -62,13 +74,13 @@ export const processCssSheet = (input: string, compressed: boolean, mode: 'none'
         if (kind === CssTokenKind.AtKeyword) atStart = index;
       } else if (context === CssContext.DeclarationList) {
         declarationStart = index; declarationOutput = output.length + index - segmentStart;
-        custom = (code === 45 && css.charCodeAt(index + 1) === 45) || ((code === 92 || css.charCodeAt(index + 1) === 92) && hasCssName(css, index, end, '--', false));
+        custom = (firstCode === 45 && css.charCodeAt(index + 1) === 45) || ((firstCode === 92 || css.charCodeAt(index + 1) === 92) && hasCssName(css, index, end, '--', false));
         context = kind === CssTokenKind.AtKeyword ? CssContext.AtPrelude : CssContext.DeclarationName;
         atParent = CssContext.DeclarationList;
         if (kind === CssTokenKind.AtKeyword) atStart = index;
       }
       if (context === CssContext.Value) valueEmpty = false;
-      if (kind === CssTokenKind.Function || (kind === CssTokenKind.Delimiter && end - index === 1)) {
+      if (kind === CssTokenKind.Function || (kind === CssTokenKind.Delimiter && (end - index === 1 || declarationEnd !== 0))) {
         if (kind === CssTokenKind.Function || code === 40 || code === 91) {
           const close = kind === CssTokenKind.Function || code === 40 ? 41 : 93;
           const frame = (context << CssFrame.ContextShift) | close;
@@ -102,7 +114,11 @@ export const processCssSheet = (input: string, compressed: boolean, mode: 'none'
     }
     if (compressed && removableSemicolon) {
       const next = css.charCodeAt(getCssSignificantIndex(css, end));
-      if (next === 125 || next === 59) { output += css.slice(segmentStart, index); segmentStart = end; index = end; continue; }
+      if (next === 125 || next === 59) {
+        output += css.slice(segmentStart, declarationEnd ? end - 1 : index); segmentStart = end;
+        if (declarationEnd) { previousCode = 0; previousKind = CssTokenKind.Name; previousEnd = end - 1; hasOutput = true; }
+        index = end; continue;
+      }
     }
     hasOutput = true;
     previousCode = kind === CssTokenKind.Delimiter || kind === CssTokenKind.Function ? css.charCodeAt(end - 1) : 0;
