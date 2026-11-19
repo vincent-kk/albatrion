@@ -1,3 +1,4 @@
+import { getCssFlatRule } from '../../../utils/cssTokens/getCssFlatSpanEnd';
 import { findCssStructure } from '../../../utils/cssTokens/findCssStructure';
 import { getCssFlatPreludeEnd } from '../../../utils/cssTokens/getCssFlatPreludeEnd';
 import { getCssFlatBlockEnd } from '../../../utils/cssTokens/getCssFlatBlockEnd';
@@ -93,6 +94,15 @@ export class RuleScoper {
         continue;
       }
       const isAtRule = first === AT_SIGN;
+      if (!isAtRule) {
+        const flat = getCssFlatRule(css, cursor);
+        if (flat >= 0) {
+          const stride = length + 1, open = flat % stride, close = Math.floor(flat / stride);
+          result += this.__scopeStyleRule__(cursor, open, close);
+          cursor = close + 1;
+          continue;
+        }
+      }
       let stop = isAtRule ? -1 : this.__findFlatPreludeEnd__(cursor);
       if (stop === -1) {
         stop = this.__findStructure__(cursor, isAtRule);
