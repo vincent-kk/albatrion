@@ -44,7 +44,7 @@ it('virtual storage follows the reference model over 3000 seeded sequences', () 
         group.setValue(group.value);
         expect(root.value, `seed=${seed} step=${step} identity`).toEqual(before);
       } else if (operation === 4) {
-        const wrong = Array.from({ length: count + (random(2) ? 1 : -1) }, () => 'invalid');
+        const wrong = Array.from({ length: count + (count === 0 || random(2) ? 1 : -1) }, () => 'invalid');
         expect(() => group.setValue(wrong), `seed=${seed} invalid`).toThrow();
       } else if (operation === 5 && count) {
         const old = root.find(`/${names[index]}`);
