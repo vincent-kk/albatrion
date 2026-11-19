@@ -77,6 +77,9 @@ it('virtual operations follow the reference model in sequential and batched hist
       for (let mode = 0; mode < roots.length; mode++) {
         const root = roots[mode],
           group = root.find('/group')!;
+        const outside = root.find('/outside')!;
+        const outsideState = outside.state,
+          outsideErrors = outside.errors;
         const detached =
           operation === 5 && count ? root.find(`/${names[index]}`) : null;
         if (operation === 5 && count) root.find(`/on${index}`)?.setValue(false);
@@ -127,6 +130,17 @@ it('virtual operations follow the reference model in sequential and batched hist
           run();
         }
         await pending;
+        if (operation !== 17) {
+          expect(root.find('/outside'), `seed=${seed} outside identity`).toBe(
+            outside,
+          );
+          expect(outside.state, `seed=${seed} outside state`).toEqual(
+            outsideState,
+          );
+          expect(outside.errors, `seed=${seed} outside errors`).toEqual(
+            outsideErrors,
+          );
+        }
       }
       if (operation === 0 && count) active[index] = nextActive;
       else if (operation === 1 || operation === 7) {
@@ -156,6 +170,9 @@ it('virtual operations follow the reference model in sequential and batched hist
       const expectedTuple = stored.map((value, slot) =>
         active[slot] ? value : undefined,
       );
+      const childPaths = names.flatMap((name, slot) =>
+        active[slot] ? [`/${name}`] : [],
+      );
       for (const root of roots) {
         expect(root.value, `seed=${seed} step=${step} op=${operation}`).toEqual(
           expected,
@@ -167,6 +184,14 @@ it('virtual operations follow the reference model in sequential and batched hist
           root.find('/reversed')!.value,
           `seed=${seed} reversed tuple`,
         ).toEqual([...expectedTuple].reverse());
+        expect(
+          root.find('/group')!.children?.map((child) => child.path) ?? [],
+          `seed=${seed} child paths`,
+        ).toEqual(childPaths);
+        expect(
+          root.find('/reversed')!.children?.map((child) => child.path) ?? [],
+          `seed=${seed} reversed child paths`,
+        ).toEqual([...childPaths].reverse());
         expect(
           Object.fromEntries(
             root.inactiveValues.map(({ path, value }) => [path, value]),

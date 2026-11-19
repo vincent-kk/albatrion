@@ -198,6 +198,13 @@ it('virtual projections follow 3000 generated branch, retention and batch histor
       expect(group.value, `seed=${seed} step=${step} tuple`).toEqual(
         reversed ? tuple.reverse() : tuple,
       );
+      const childPaths = names.flatMap((name, slot) =>
+        active[slot] ? [`/${name}`] : [],
+      );
+      expect(
+        group.children?.map((child) => child.path) ?? [],
+        `seed=${seed} step=${step} children`,
+      ).toEqual(reversed ? childPaths.reverse() : childPaths);
       expect(root.find('/outside')).toBe(outside);
       expect(outside.state).toBe(outsideState);
       expect(outside.errors).toBe(outsideErrors);
