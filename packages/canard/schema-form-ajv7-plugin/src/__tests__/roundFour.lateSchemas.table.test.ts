@@ -56,3 +56,39 @@ it('resolves a late schema from a root guard clone like a newly created guard cl
   expect(later('AB')).toBe(true);
   expect(later('ab')).toBe(false);
 });
+
+/**
+ * @param earlierRoots - Compiles before the application registers an asynchronous definition.
+ * @returns The asynchronous keyword issues from a later form using that definition.
+ */
+const lateAsyncVerdict = async (earlierRoots: number) => {
+  const instance = new Ajv({ allErrors: true, strict: false });
+  const definition = { async: true, validate: (_schema: boolean, value: string) => Promise.resolve(value !== 'taken') };
+  instance.addKeyword({ keyword: 'availableName', ...definition });
+  const validator = createValidator(instance);
+  for (let index = 0; index < earlierRoots; index++) validator.compile({ type: 'string', title: String(index) });
+  const id = 'https://round-four.invalid/late-async';
+  instance.addSchema({ $id: id, type: 'string', availableName: true }, 'late-async-alias');
+  const schema: JSONSchema = { $async: true, type: 'object', properties: { name: { $ref: id } } };
+  const issues = await validator.compile(schema)({ name: 'taken' });
+  return issues?.map(({ keyword, dataPath }) => [keyword, dataPath]);
+};
+
+it('late asynchronous definitions agree with definitions present before any compiler was created', async () => {
+  const expected = await lateAsyncVerdict(0);
+  expect(expected).toEqual([['availableName', '/name']]);
+  expect(await lateAsyncVerdict(65)).toEqual(expected);
+});
+
+it.each([true, false])('late boolean schema %s agrees with a fresh compiler', async (definition) => {
+  const instance = new Ajv({ allErrors: true, strict: false });
+  const validator = createValidator(instance);
+  for (let index = 0; index < 65; index++) validator.compile({ type: 'string', title: String(index) });
+  const id = 'https://round-four.invalid/late-boolean';
+  instance.addSchema(definition, id);
+  const schema: JSONSchema = { type: 'object', properties: { name: { $ref: id } } };
+  const expected = await createValidator(instance).compile(schema)({ name: 'x' });
+  const actual = await validator.compile({ ...schema })({ name: 'x' });
+  expect(actual).toEqual(expected);
+  expect(actual === null).toBe(definition);
+});
