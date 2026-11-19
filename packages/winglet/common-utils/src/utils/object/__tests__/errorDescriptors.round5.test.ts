@@ -9,10 +9,13 @@ describe.each([false, true])('Error descriptors, foreign=%s', foreign => {
     [true, false, false], [true, false, true], [true, true, false], [true, true, true],
   ])('keeps enumerability with enumerable=%s writable=%s configurable=%s', (enumerable, writable, configurable) => {
     const error: Error = foreign ? runInNewContext('new Error("failed")') : new Error('failed');
-    for (const key of ['cause', 'errors', 'message', 'stack', 'name', 'detail']) {
+    const symbol = Symbol('detail');
+    for (const key of [symbol, 'cause', 'errors', 'message', 'stack', 'name', 'detail']) {
       Object.defineProperty(error, key, { value: key === 'name' ? 'Error' : { marker: key }, enumerable, writable, configurable });
     }
     const result = clone(error);
+    expect(Object.keys(result).sort()).toEqual(Object.keys(error).sort());
+    expect(Object.getOwnPropertyDescriptor(result, symbol)?.enumerable).toBe(enumerable);
     for (const key of Reflect.ownKeys(result)) {
       const before = Object.getOwnPropertyDescriptor(error, key);
       const after = Object.getOwnPropertyDescriptor(result, key);
