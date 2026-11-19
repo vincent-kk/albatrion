@@ -15,23 +15,23 @@ export const readFieldNodeIsDivergent = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   const baseline = node.runtime.loadBaseline;
   if (!baseline || node.isDetached) return false;
-  if (node.behavior.type === 'virtual') {
-    if (!node.parent) return false;
-    const current = getLoadValue(
-      node.rootNode.storedOutputValue,
-      node.parent.path,
-    );
-    const base = getLoadValue(baseline.value, node.parent.path);
-    return (node.blueprintNode.fields ?? []).some(
-      (name) =>
-        !sameValue(
-          readLoadProperty(current, name),
-          readLoadProperty(base, name),
-        ),
-    );
-  }
   let segments = node.divergenceSegments;
   if (!segments || !Object.is(node.path, node.divergencePath)) {
+    if (node.behavior.type === 'virtual') {
+      if (!node.parent) return false;
+      const current = getLoadValue(
+        node.rootNode.storedOutputValue,
+        node.parent.path,
+      );
+      const base = getLoadValue(baseline.value, node.parent.path);
+      return (node.blueprintNode.fields ?? []).some(
+        (name) =>
+          !sameValue(
+            readLoadProperty(current, name),
+            readLoadProperty(base, name),
+          ),
+      );
+    }
     segments = node.runtime.blueprint.capabilities.isBranchless
       ? getCachedPointerSegments(node.runtime, node.path)
       : getDependencyIndex(node.runtime.blueprint).pathSegments(
