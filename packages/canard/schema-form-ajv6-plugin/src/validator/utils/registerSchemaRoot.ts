@@ -33,21 +33,32 @@ export interface SchemaRootRegistration {
   guardCopy?: object;
 }
 
-/** Record one copy, leaving its guard instance, its validation registration and the ID-free validation cache empty. */
+/**
+ * Record one root while leaving guard and validation compilation lazy.
+ * @param root - Authored root identity whose registered copies remain independent.
+ * @param instance - Bound native AJV profile.
+ * @param roots - Per-adapter weak root registry.
+ * @param active - Live roots used for id conflict detection.
+ * @param finalizer - Optional native collection cleanup.
+ * @param serialization - Optional output for this invocation snapshot; unchanged on registry hits.
+ * @returns The existing registration or a new independently owned root registration.
+ */
 export const registerSchemaRoot = (
   root: object,
   instance: Ajv.Ajv,
   roots: WeakMap<object, SchemaRootRegistration>,
   active: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[],
   finalizer: FinalizationRegistry<SchemaRootRegistration> | undefined,
+  serialization?: { value?: string },
 ): SchemaRootRegistration => {
   const previous = roots.get(root);
   if (previous) return previous;
   const ids: string[] = [];
-  JSON.stringify(root, (name, value: unknown) => {
+  const serialized = JSON.stringify(root, (name, value: unknown) => {
     if (name === '$id' && typeof value === 'string') ids.push(value);
     return value;
   });
+  if (serialization) serialization.value = serialized;
   if (ids.length)
     for (let index = active.length - 1; index >= 0; index--)
       if (!active[index].deref()) active.splice(index, 1);
@@ -72,7 +83,7 @@ export const registerSchemaRoot = (
     : instance;
   const key = `${PLUGIN_KEY_PREFIX}${++allRegistrations.nextKey}`;
   const validationCopy: object | undefined = ids.length
-    ? JSON.parse(JSON.stringify(root))
+    ? JSON.parse(serialized)
     : undefined;
   const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : key;
   const registration: SchemaRootRegistration = {

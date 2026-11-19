@@ -40,18 +40,22 @@ export const createValidator = (
   const finalizer = createFinalizer(disposeSchemaRoot);
   return {
     compile: (jsonSchema: JSONSchema) => {
+      const serialization: { value?: string } = {};
       const registered = registerSchemaRoot(
         jsonSchema,
         ajv,
         roots,
         active,
         finalizer,
+        serialization,
       );
       registerValidationRoot(registered);
       const validate = createSchemaValidator(
         registered.validation,
         registered.validationCopy ?? jsonSchema,
         registered.validationCopy ? registered.key : undefined,
+        false,
+        serialization.value,
       );
       return async (value: unknown) => validate(value);
     },

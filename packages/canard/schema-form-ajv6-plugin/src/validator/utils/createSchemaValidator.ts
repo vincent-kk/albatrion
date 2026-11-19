@@ -14,6 +14,7 @@ import { transformDataPath } from './transformDataPath';
  * @param jsonSchema - Snapshot used for compilation and issue classification.
  * @param key - Optional registered root address.
  * @param forceAsync - Force native async compilation for the public low-level factory contract.
+ * @param serialized - Snapshot from this same registration call; absent for previously registered roots.
  * @returns A promise-returning validator capturing each invocation's own errors.
  */
 export const createSchemaValidator = (
@@ -21,11 +22,12 @@ export const createSchemaValidator = (
   jsonSchema: JSONSchema,
   key?: string,
   forceAsync = false,
+  serialized?: string,
 ): ValidateFunction => {
   let transient: JSONSchema | undefined = key
     ? undefined
     : {
-        ...JSON.parse(JSON.stringify(jsonSchema)),
+        ...JSON.parse(serialized ?? JSON.stringify(jsonSchema)),
         ...(forceAsync ? { $async: true } : {}),
       };
   let validate: Ajv.ValidateFunction | undefined;

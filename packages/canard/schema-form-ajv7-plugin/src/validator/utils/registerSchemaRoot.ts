@@ -65,7 +65,7 @@ export const registerSchemaRoot = (
   if (previous) return previous;
   const ids: string[] = [];
   let hasDynamicKeywords = false;
-  JSON.stringify(root, (name, value: unknown) => {
+  const serialized = JSON.stringify(root, (name, value: unknown) => {
     if (name === '$id' && typeof value === 'string') ids.push(value);
     if (DYNAMIC_KEYWORDS.has(name)) hasDynamicKeywords = true;
     return value;
@@ -96,7 +96,7 @@ export const registerSchemaRoot = (
   if (!ids.length) pool.count++;
   const key = `${PLUGIN_KEY_PREFIX}${++allRegistrations.nextKey}`;
   const validationCopy: object | undefined = ids.length
-    ? JSON.parse(JSON.stringify(root))
+    ? JSON.parse(serialized)
     : undefined;
   const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : key;
   const registration: SchemaRootRegistration = {
