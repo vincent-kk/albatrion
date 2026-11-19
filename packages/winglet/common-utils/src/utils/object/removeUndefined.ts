@@ -304,7 +304,7 @@ export function removeUndefined(input: unknown): unknown {
     return result;
   }
   if (isPlainObject(input)) {
-    const result: Record<string, unknown> = {};
+    const result: Record<string, unknown> = Object.getPrototypeOf(input) === null ? Object.create(null) : {};
     const keys = Object.keys(input);
     for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
       const value = removeUndefined(input[k]);
