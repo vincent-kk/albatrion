@@ -12,15 +12,37 @@ NODE-016·045. 의존은 청사진·레코드·순수 동작과 탐색·검증·
 
 ### virtual-storage-model — 가상 튜플과 저장 주소의 상태 모형
 
-그룹의 상태는 선언 순서의 필드 이름 목록, 각 이름의 현재 노드 유무, 보유 원본, 로드 스냅숏입니다. 노드는 활성, 조건 비활성, 현재 스키마 분기에서 부재인 상태를 가지며 보유 원본 유무는 별도입니다. 가상 이름은 저장 키가 아닙니다.
+가상 그룹은 데이터·원본·스냅숏을 소유하지 않습니다. 모형은 `(fields, host.child(name)?.storedValue, host.retainedSlotOrOverlay(name), root.loadSnapshotAt(storagePath))`의 투영입니다. 각 constituent는 활성(visible: false 포함), 조건 비활성, 현재 oneOf·if 분기 부재 중 하나이며 보유 원본 유무와 별개입니다. 그룹 자체의 활성 상태도 별개입니다.
 
-읽기는 선언 개수와 같은 길이의 튜플을 만듭니다. 활성 노드는 편집 값을 제공하고 비활성·부재 노드는 보유 원본 유무와 관계없이 자기 칸에 undefined를 제공합니다. 뒤 칸은 이동하지 않습니다. 현재 값을 그대로 쓰는 연산은 보유 원본까지 바꾸지 않는 무동작입니다. children은 현재 존재하는 노드의 선언 순서 투영이며 튜플의 인덱스로 사용하지 않습니다.
+#### 읽기와 쓰기
 
-setValue는 정확한 길이의 튜플만 받으며 짧거나 긴 입력은 변경 전에 거부합니다. 각 칸은 선언 이름의 저장 주소로 분배하며 비활성 칸의 명시적인 값도 그 주소에 보유합니다. 보이지 않는 undefined 칸은 기존 보유 원본을 지우지 않습니다. reset과 resetSubtree 및 저장 주소 동사와 검증 오류 배정은 같은 주소 해석을 사용하며 활성 노드의 압축 위치를 쓰지 않습니다.
+- value는 fields 길이의 튜플입니다. 활성 칸은 storedValue, 비활성·부재 칸은 undefined이며 순서를 압축하지 않습니다. children은 활성 constituent의 선언 순서 투영이므로 field 이름으로 칸과 연결합니다.
+- setValue는 undefined 또는 정확한 길이의 배열을 받습니다. undefined는 모든 칸에 undefined를 준 것과 같고, sparse 배열의 빈 칸도 undefined입니다. null·비배열·짧거나 긴 배열은 INVALID_VIRTUAL_NODE_VALUES로 변경 전에 거부합니다. 배치의 거부는 앞선 표시를 취소하지 않습니다(EVENT-017).
+- 각 칸은 **호출 진입 시점** constituent 상태로 분류합니다. undefined는 활성 칸을 비우고 비활성·부재 칸에서는 무시합니다. 같은 호출에서 gate가 켜져도 분류를 다시 하지 않습니다. 비활성·부재 칸의 non-undefined는 일반 비활성 선언 쓰기처럼 overlay에 보유하며 gate exit의 unset 정책과 별개입니다. 명시적으로 보유 값을 지우려면 살아 있는 호스트의 해당 이름에 undefined를 씁니다.
+- Overwrite는 각 constituent의 전체 교체, Merge는 branch 객체 칸의 재귀 병합이며 그 밖의 칸은 일반 Merge 계약을 따릅니다. 튜플 자체의 길이를 Merge로 바꾸지는 않습니다.
+- 같음은 VALUE-021(SameValueZero·배열·plain 객체 내용, 불투명 값 참조)입니다. 유효한 튜플이 직전 유효 뷰와 같으면 원본·overlay·스냅숏·상태·오류·배달·재검증을 바꾸지 않습니다. 배치의 유효 뷰는 직전 committed storedValue에 앞선 표시를 얹은 값이며 공개 value는 committed 값입니다. 그러므로 앞선 표시와 다른 오래된 group.value를 다시 쓰면 그 표시는 덮일 수 있습니다. updater는 EVENT-061의 유효 뷰를 한 번 받습니다. 배치 중 gate 표시만으로 미정착 활성 상태를 새로 계산하지 않습니다.
 
-살아 있는 가상 그룹의 resetSubtree는 비활성 구성원까지 각자의 저장 주소에서 로드 스냅숏을 읽어 초기화하므로 재활성화 때 로드 값이 보입니다. 떼어진 구성원 자체 참조의 resetSubtree는 비활성 원본을 바꾸지 않는 무동작입니다.
+#### 초기화와 주소 범위
 
-사건은 활성 조건·분기 변경, 튜플 읽기·전체 쓰기·길이 오류, reset·resetSubtree, 저장 주소 동사와 검증입니다. 각 사건 뒤 튜플 길이·순서, 비활성 원본 수명 및 그룹 밖 저장 필드 보존을 확인합니다. 활성 변경은 같은 주소에 새 노드 수명을 만들며 옛 참조를 다시 연결하지 않습니다. 자동 주입 등 그룹 밖을 대상으로 명시한 사용자 규칙의 효과는 이 격리 보장의 예외이며 일반 정착 계약을 따릅니다.
+살아 있는 가상 그룹의 resetSubtree는 비활성·분기 부재 constituent까지 각 저장 주소에서 로드 스냅숏을 읽어 초기화합니다. 스냅숏이 생략한 값은 보유 원본을 지우며 재활성화의 새 수명에서 SETTLE-005의 default를 채웁니다. 떼어진 constituent 자체 참조 또는 떼어진 가상 그룹의 resetSubtree는 무동작입니다. FormHandle.reset과 native form reset은 같은 폼 로드 수명으로 실제 저장 주소를 재로드하며 가상 이름을 데이터 키로 쓰지 않습니다.
+
+저장 주소 동사는 닫힌 목록 `value`, `setValue`, `resetSubtree`, `defaultValue`, `isDivergent`, `inactiveValues`, `validate`입니다. defaultValue는 constituent별 스냅숏 튜플(비활성 칸 포함), isDivergent는 constituent 저장 출력과 로드 기준의 차이 중 하나라도 있으면 true, inactiveValues는 constituent 범위의 보유 값 목록입니다. outputValue는 항상 undefined이며 실제 제출 값은 부모의 outputValue입니다.
+
+#### 나머지 노드 표면과 오류
+
+errors는 그룹에 직접 지정한 외부 오류와 해당 노드에 배정된 판정만 읽습니다. 실제 constituent 오류를 그룹이나 다른 활성 칸으로 옮기지 않습니다. setExternalErrors·clearExternalErrors는 그룹 자체의 명령형 오류를 교체·삭제하고 globalErrors에 반영하며 constituent에 복제하지 않습니다. validate는 fields 저장 주소 범위의 판정을 갱신합니다. 비활성·부재 constituent issue도 globalErrors에 남아 유효성에 참여하지만 그룹·활성 형제 errors에 배정하지 않습니다.
+
+setState·state는 그룹 자신의 상호작용을, setSubtreeState·clearSubtreeState는 그룹과 현재 활성 constituent 하위 트리를 바꿉니다. 비활성 원본은 건드리지 않습니다. globalState·globalErrors는 폼 전체 목록이며 subscribe·revision·request는 그 노드의 배달·명령 의미를 유지합니다. onInactive는 해당 그룹 발생의 정상 keep gate exit에 등록되며 constituent의 resolver로 복제되지 않습니다. 배열 동사는 가상 그룹에 사용할 수 없어 종류 오류를 내며 실제 배열 constituent를 찾아 호출합니다. detached 읽기는 마지막 커밋을 보존하고 쓰기·reset·상태·오류 명령은 기존 detached 계약을 따릅니다.
+
+#### 선언·반응형 규칙과 토폴로지
+
+virtual entry의 controls.active·visible·readOnly·disabled 및 일반 제어 선언은 일반 gate·상태 규칙을 따릅니다. controls.default·derived·injectTo가 가상 그룹에 쓰면 튜플을 constituent 주소로 분배하고 그룹 source를 만들지 않습니다. 다른 필드의 식·watch·injectTo가 가상 경로를 읽으면 출력 트리에 그 키가 없어 undefined입니다. 반응형 규칙이 그룹 밖을 명시적으로 바꾸는 경우는 저장 격리의 예외입니다.
+
+fields는 직계 실제 프로퍼티 이름만 허용합니다. 중복은 VIRTUAL_FIELDS_NOT_VALID, 다른 가상 그룹을 이름으로 참조하는 중첩 그룹은 VIRTUAL_FIELDS_NOT_IN_PROPERTIES로 생성 단계에 거부합니다. 빈 fields는 빈 튜플·빈 자식·빈 저장 범위로 허용합니다. 두 그룹이 constituent를 공유하면 마지막 실제 주소 쓰기가 이기며 reset도 겹친 실제 주소에만 적용하고 배달 순서는 일반 문서 순서입니다. 배열 item 안의 그룹은 item 신원·이동 주소·로드 스냅숏 정렬을 따르며 remove·clear 뒤 옛 그룹 쓰기는 무동작입니다. 부모 JSON 입력에 가상 이름을 넣으면 선언된 가상 키이므로 extras나 constituent 쓰기로 해석하지 않고 무시합니다.
+
+#### 사건 뒤의 불변식
+
+모든 사건 뒤 tuple 길이·이름 대응·활성 children 투영을 확인합니다. 그룹 밖 필드의 storedValue·보유 원본·노드 신원·상호작용·오류는 해당 constituent와 교차하는 선언된 반응형 규칙의 의존 폐쇄 밖에서 보존됩니다. 같은 유효 튜플 쓰기는 전체 모형 상태를 보존합니다. 그룹 reset 후 각 constituent를 활성화한 결과는 같은 constituents에 대한 부모 reset 후 활성화 결과와 같습니다. 순환 입력의 구조 동등성은 VALUE-021의 기존 비보장 범위이며 이 계약이 추가 보장하지 않습니다.
 
 정착 사슬과 검증 snapshot의 얕은 입력 판정은 객체 참조와 원시 SameValueZero를 사용합니다. NaN의 자기 불일치를 새 입력으로 오인하면 무변경 쓰기가 콜백·검증을 되먹이므로 깊은 값 비교와 구별한 공유 판정을 사용합니다.
 

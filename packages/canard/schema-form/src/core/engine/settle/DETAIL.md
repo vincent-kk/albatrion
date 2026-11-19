@@ -144,6 +144,8 @@ misfit 경로 집합이 바뀌면 잎 하나의 변경이어도 전체 misfit �
 
 Merge는 branch 객체와 평범한 객체 입력이 만나는 자리에서만 키를 합치고, 배열·null·undefined·원시 값·terminal 대상은 그 자리를 통째로 교체합니다. 입력이 명시한 undefined는 없음이며 extras에도 같은 규칙을 적용합니다. 비활성 선언도 받은 범위에 따라 분배하되 아직 없는 노드를 만들거나 그 규칙을 실행하지 않습니다.
 
+VirtualNode.setValue는 WRITE-079·VALUE-031·WRITE-094의 명시 undefined·동일 출력 교체 규칙에 대한 예외입니다. 호출 진입 시 활성인 constituent(visible: false 포함)는 undefined로 비우지만 비활성·분기 부재 constituent의 undefined 칸은 보유 원본을 유지합니다. non-undefined는 해당 저장 주소에 보유하며, 이를 지우려면 살아 있는 호스트의 경로 JSON 쓰기에 undefined를 명시합니다. 배치의 유효 뷰·동일 튜플 무동작·초기화의 모형은 [engine 가상 계약](../DETAIL.md#virtual-storage-model--가상-튜플과-저장-주소의-상태-모형)을 따릅니다.
+
 여러 출처 배치는 각 원래 쓰기의 교체 범위만 지우며 합성한 루트 값 전체를 교체 범위로 보지 않습니다. 그렇지 않으면 무관한 형제의 보유 원본이 사라집니다. 구조 동사와 통째 쓰기의 동등성도 이동 후보의 보유 원본이 새 선택에 영향을 주지 않는 조건에서만 성립합니다.
 
 ### VALUE-031 — 비활성 원본의 수명과 왕복의 한계
