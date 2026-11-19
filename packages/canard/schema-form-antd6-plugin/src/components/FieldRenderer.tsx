@@ -55,7 +55,17 @@ export const FieldRenderer = ({
   const grouped =
     hint !== undefined &&
     (isRadioGroupInput(hint) || isCheckboxGroupInput(hint));
-  if (depth === 0) return <Input />;
+  if (depth === 0)
+    return (
+      <>
+        <Input />
+        {errorMessage !== null &&
+          errorMessage !== undefined &&
+          typeof errorMessage !== 'boolean' && (
+            <ErrorMessage style={EMPTY_OBJECT}>{errorMessage}</ErrorMessage>
+          )}
+      </>
+    );
 
   if (node.strategy === 'branch') {
     return (
