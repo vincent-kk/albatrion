@@ -43,7 +43,8 @@ interface FieldInputDateRangeProps
 }
 
 const FieldInputDateRange = ({
-  id,
+  inputId,
+  getInputId,
   name,
   readOnly,
   disabled,
@@ -87,7 +88,7 @@ const FieldInputDateRange = ({
 
   return (
     <DatePicker.RangePicker
-      id={{ start: id, end: `${id}-end` }}
+      id={{ start: inputId, end: getInputId('end') }}
       aria-labelledby={labelledBy}
       name={name}
       picker="date"

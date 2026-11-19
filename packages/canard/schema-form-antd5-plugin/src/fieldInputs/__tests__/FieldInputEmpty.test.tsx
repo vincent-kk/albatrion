@@ -43,7 +43,7 @@ it.each([
     );
     const input = container.querySelector<
       HTMLInputElement | HTMLTextAreaElement
-    >('input[id$=":/text"], textarea[id$=":/text"]')!;
+    >('input[id$=":/text~input"], textarea[id$=":/text~input"]')!;
     await userEvent.type(input, 'example.com');
     expect(ref.current!.getValue()).toEqual({
       text: format === 'uri' ? 'http://example.com' : 'example.com',
@@ -83,7 +83,7 @@ it.each([false, true])(
       container.querySelector('.ant-select-selection-item')!.textContent,
     ).toBe('ftp://');
     const input = container.querySelector<HTMLInputElement>(
-      'input[id$=":/text"], textarea[id$=":/text"]',
+      'input[id$=":/text~input"], textarea[id$=":/text~input"]',
     )!;
     await userEvent.type(input, 'example.com');
     expect(ref.current!.getValue()).toEqual({ text: 'ftp://example.com' });

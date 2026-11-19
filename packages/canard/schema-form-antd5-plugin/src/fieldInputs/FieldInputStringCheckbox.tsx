@@ -37,7 +37,8 @@ interface FieldInputStringCheckboxProps
 }
 
 const FieldInputStringCheckbox = ({
-  id,
+  inputId,
+  getInputId,
   name,
   jsonSchema,
   disabled,
@@ -55,14 +56,14 @@ const FieldInputStringCheckbox = ({
       ? map(jsonSchema.items.enum, (rawValue: string | null, index: number) => {
           const value = JSON.stringify(rawValue);
           return {
-            id: `${id}-${index}`,
+            id: getInputId(index),
             value,
             rawValue,
             label: getOwnLabel(labels, '' + rawValue) || '' + rawValue,
           };
         })
       : [];
-  }, [context, jsonSchema, alias, id]);
+  }, [context, jsonSchema, alias, getInputId]);
 
   const handleChange = useHandle((value: string[]) => {
     onChange((previous) =>
@@ -78,7 +79,7 @@ const FieldInputStringCheckbox = ({
 
   return (
     <div
-      id={id}
+      id={inputId}
       role="group"
       aria-labelledby={labelledBy}
       aria-invalid={misfit || undefined}

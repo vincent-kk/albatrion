@@ -21,7 +21,7 @@ interface FieldInputTimeProps
 }
 
 const FieldInputTime = ({
-  id,
+  inputId,
   name,
   disabled,
   readOnly,
@@ -40,7 +40,7 @@ const FieldInputTime = ({
   );
   return (
     <TimePicker
-      id={id}
+      id={inputId}
       name={name}
       disabled={disabled || readOnly}
       format={'HH:mm'}
