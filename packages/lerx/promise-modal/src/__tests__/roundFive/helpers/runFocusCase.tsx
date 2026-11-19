@@ -59,17 +59,29 @@ export async function runFocusCase(
   act(() => open());
   const node = ModalManager.node(ModalManager.ids[0]);
   if (!node) throw new Error('Request was not registered');
+  const inside = view.queryByLabelText('inside');
+  if (state === 'first-suspended' && focus === 'inside')
+    throw new Error('No inside control exists before the first suspension');
+  if (focus === 'inside' && inside) inside.focus();
+  const focusedInsideBeforeTransition =
+    focus === 'inside' && !!inside && document.activeElement === inside;
   if (state === 'resuspended') act(() => suspend());
   if (state === 'hidden') act(() => node.onHide());
   if (state === 'activity') {
     activityHidden = true;
     await act(async () => view.rerender(app()));
   }
-  const inside = view.queryByLabelText('inside');
   if (focus === 'outside') outside.focus();
-  else if (focus === 'inside' && inside && state === 'shown') inside.focus();
-  else if (document.activeElement instanceof HTMLElement)
+  else if (focus === 'body' && document.activeElement instanceof HTMLElement)
     document.activeElement.blur();
+  const active = document.activeElement;
+  if (
+    state !== 'shown' &&
+    focus === 'inside' &&
+    active instanceof HTMLElement &&
+    inside?.contains(active)
+  )
+    active.blur();
   const before = document.activeElement;
   const isolated = !!opener.closest('[inert]');
   await act(async () => {
@@ -81,7 +93,8 @@ export async function runFocusCase(
     }
   });
   const outcome = {
-    restored: document.activeElement === opener,
+    restored: document.activeElement === opener && before !== opener,
+    focusedInsideBeforeTransition,
     preserved: document.activeElement === before,
     isolated,
   };
