@@ -16,3 +16,16 @@ for (const path of ['winglet/common-utils', 'canard/schema-form', 'canard/schema
     }
   });
 }
+
+
+test('the ESM-only asset-sync package publishes every public address without a source condition', () => {
+  const manifest = JSON.parse(readFileSync(new URL('../../../../slats/agents-assets-sync/package.json', import.meta.url), 'utf8'));
+  assert.equal(manifest.exports['.'].source, './src/index.ts');
+  const published = Object.fromEntries(Object.entries(manifest.exports).map(([key, entry]) =>
+    [key, typeof entry === 'string' ? entry : Object.fromEntries(Object.entries(entry).filter(([condition]) => condition !== 'source'))],
+  ));
+  assert.deepEqual(manifest.publishConfig?.exports, published);
+  assert.equal(manifest.exports['.'].require, undefined);
+  assert.deepEqual(Object.keys(published), ['.', './buildHashes', './package.json']);
+  assert.deepEqual(Object.keys(manifest.bin), ['agents-assets-sync', 'agents-build-hashes', 'inject-agents-settings']);
+});
