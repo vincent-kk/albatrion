@@ -7,7 +7,8 @@
  *
  * TypeScript syntax selects imports/exports, import types and import-equals,
  * leaving ordinary comments and string literal types intact. Module targets
- * receive .js/.mjs; reference path directives receive .d.ts/.d.mts.
+ * receive .js/.mjs in the ESM graph and .cjs in the CommonJS graph; reference
+ * paths retain the matching declaration extension.
  *
  * Usage:
  *   import { fixDtsExtensions } from './utils/fixDtsExtensions.mjs';
@@ -34,10 +35,11 @@ function hasExtension(importPath) {
 }
 
 /**
- * @param {string} dir - Directory containing .d.ts files to process
+ * @param {string} dir - Directory containing declarations to process
+ * @param {{commonJsOnly?: boolean}} options - Restricts rewriting to the parallel graph when requested.
  * @returns {{ filesProcessed: number, importsFixed: number }}
  */
-export function fixDtsExtensions(dir) {
+export function fixDtsExtensions(dir, { commonJsOnly = false } = {}) {
   let filesProcessed = 0;
   let importsFixed = 0;
 
@@ -53,11 +55,11 @@ export function fixDtsExtensions(dir) {
       const fullPath = join(currentDir, entry.name);
       if (entry.isDirectory()) {
         walk(fullPath);
-      } else if (entry.name.endsWith('.d.ts') || entry.name.endsWith('.d.mts')) {
+      } else if (entry.name.endsWith('.d.cts') || (!commonJsOnly && (entry.name.endsWith('.d.ts') || entry.name.endsWith('.d.mts')))) {
         const content = readFileSync(fullPath, 'utf-8');
         const source = ts.createSourceFile(fullPath, content, ts.ScriptTarget.Latest);
         const specifiers = source.referencedFiles.map((reference) => ({
-          text: reference.fileName, position: reference.end, declaration: true,
+          text: reference.fileName, start: reference.pos, position: reference.end, declaration: true,
         }));
         /** Visit only module-bearing syntax; string contents are never reparsed. */
         const visit = (node) => {
@@ -67,7 +69,7 @@ export function fixDtsExtensions(dir) {
             : ts.isImportEqualsDeclaration(node) && ts.isExternalModuleReference(node.moduleReference)
               ? node.moduleReference.expression : undefined;
           if (specifier && ts.isStringLiteral(specifier)) specifiers.push({
-            text: specifier.text, position: specifier.end - 1, declaration: false,
+            text: specifier.text, start: specifier.getStart(source) + 1, position: specifier.end - 1, declaration: false,
           });
           ts.forEachChild(node, visit);
         };
@@ -77,7 +79,23 @@ export function fixDtsExtensions(dir) {
         // Descending insertions preserve the original syntax positions and quote escapes.
         for (const specifier of specifiers.sort((left, right) => right.position - left.position)) {
           const importPath = specifier.text;
-          if (!RELATIVE_PATH_RE.test(importPath) || hasExtension(importPath)) continue;
+          if (!RELATIVE_PATH_RE.test(importPath) || /\.(?:json|css)$/.test(importPath)) continue;
+          if (entry.name.endsWith('.d.cts')) {
+            const stem = importPath.replace(/(?:\.d)?\.(?:[cm]?[jt]sx?)$/, '');
+            const base = join(dirname(fullPath), stem);
+            const directoryOnly = stem.endsWith('/') || /(?:^|\/)\.\.?$/.test(stem);
+            const extension = specifier.declaration ? '.d.cts' : '.cjs';
+            const target = !directoryOnly && existsSync(base + '.d.cts')
+              ? stem + extension
+              : existsSync(join(base, 'index.d.cts'))
+                ? `${stem}${stem.endsWith('/') ? '' : '/'}index${extension}` : undefined;
+            if (target && target !== importPath) {
+              fixed = fixed.slice(0, specifier.start) + target + fixed.slice(specifier.position);
+              fixCount++;
+            }
+            continue;
+          }
+          if (hasExtension(importPath)) continue;
           const base = join(dirname(fullPath), importPath);
           const trailingSlash = importPath.endsWith('/');
           const directoryOnly = trailingSlash || /(?:^|\/)\.\.?$/.test(importPath);

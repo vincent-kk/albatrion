@@ -44,7 +44,7 @@ test('explicitly reports blocked null exports without importing them', () => {
   assert.match(result.output, /1 exports/);
 });
 
-test('rejects nested-only types conditions with the affected export named', () => {
+test('rejects incomplete nested type branches with the affected export named', () => {
   const result = verify({ '.': { types: './index.d.ts' }, './nested': { import: { types: './nested.d.mts', default: './nested.mjs' } } }, { 'index.d.ts': 'export type Value = string;' });
   assert.notEqual(result.status, 0, result.output);
   assert.match(result.output, /nested.*top-level types/);
@@ -75,4 +75,11 @@ test('does not report success when only the CJS declaration branch is broken', (
   const result = verify({ '.': { import: { types: './index.d.mts' }, require: { types: './missing.d.cts' } } }, { 'index.d.mts': 'export type Value = string;' });
   assert.notEqual(result.status, 0, result.output);
   assert.match(result.output, /cts/);
+});
+
+
+test('keeps string runtime addresses whose declarations resolve beside the JavaScript file', () => {
+  const result = verify('./index.js', { 'index.js': 'exports.value = 1;', 'index.d.ts': 'export declare const value: number;' });
+  assert.equal(result.status, 0, result.output);
+  assert.match(result.output, /DECLARATIONS_OK/);
 });

@@ -28,40 +28,70 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
       "source": "./src/index.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     },
     "./style-manager": {
-      "types": "./dist/styleManager/index.d.ts",
       "source": "./src/styleManager/index.ts",
-      "import": "./dist/styleManager/index.mjs",
-      "require": "./dist/styleManager/index.cjs"
+      "import": {
+        "types": "./dist/styleManager/index.d.ts",
+        "default": "./dist/styleManager/index.mjs"
+      },
+      "require": {
+        "types": "./dist/styleManager/index.d.cts",
+        "default": "./dist/styleManager/index.cjs"
+      }
     },
     "./util": {
-      "types": "./dist/utils/index.d.ts",
       "source": "./src/utils/index.ts",
-      "import": "./dist/utils/index.mjs",
-      "require": "./dist/utils/index.cjs"
+      "import": {
+        "types": "./dist/utils/index.d.ts",
+        "default": "./dist/utils/index.mjs"
+      },
+      "require": {
+        "types": "./dist/utils/index.d.cts",
+        "default": "./dist/utils/index.cjs"
+      }
     }
   },
   "publishConfig": {
     "exports": {
       ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.cjs"
+        "import": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.mjs"
+        },
+        "require": {
+          "types": "./dist/index.d.cts",
+          "default": "./dist/index.cjs"
+        }
       },
       "./style-manager": {
-        "types": "./dist/styleManager/index.d.ts",
-        "import": "./dist/styleManager/index.mjs",
-        "require": "./dist/styleManager/index.cjs"
+        "import": {
+          "types": "./dist/styleManager/index.d.ts",
+          "default": "./dist/styleManager/index.mjs"
+        },
+        "require": {
+          "types": "./dist/styleManager/index.d.cts",
+          "default": "./dist/styleManager/index.cjs"
+        }
       },
       "./util": {
-        "types": "./dist/utils/index.d.ts",
-        "import": "./dist/utils/index.mjs",
-        "require": "./dist/utils/index.cjs"
+        "import": {
+          "types": "./dist/utils/index.d.ts",
+          "default": "./dist/utils/index.mjs"
+        },
+        "require": {
+          "types": "./dist/utils/index.d.cts",
+          "default": "./dist/utils/index.cjs"
+        }
       }
     }
   },
@@ -86,7 +116,8 @@
     "typecheck": "tsc --noEmit --composite false --rootDir . -p tsconfig.json",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
-    "version:patch": "yarn version patch"
+    "version:patch": "yarn version patch",
+    "build:verify:types": "node ../../aileron/script/build/verifyDeclarations.mjs"
   },
   "devDependencies": {
     "@slats/agents-assets-sync": "workspace:^",

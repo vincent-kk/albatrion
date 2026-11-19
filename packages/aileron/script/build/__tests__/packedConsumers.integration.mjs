@@ -34,6 +34,13 @@ for (const path of ['winglet/common-utils', 'canard/schema-form', 'canard/schema
       }
       symlinkSync(join(repository, 'node_modules/@types'), join(scratch, 'node_modules/@types'), 'dir');
       const published = JSON.parse(readFileSync(join(installed, 'package.json'), 'utf8'));
+      const addresses = Object.keys(published.exports).map((key) => manifest.name + (key === '.' ? '' : key.slice(1)));
+      const resolution = spawnSync(process.execPath, ['--conditions=source', '--input-type=module', '-e',
+        `import { accessSync } from 'node:fs'; import { fileURLToPath } from 'node:url'; import { createRequire } from 'node:module';
+        const require = createRequire(import.meta.url);
+        for (const address of ${JSON.stringify(addresses)}) { accessSync(fileURLToPath(import.meta.resolve(address))); accessSync(require.resolve(address)); }`,
+      ], { cwd: scratch, encoding: 'utf8' });
+      assert.equal(resolution.status, 0, resolution.stderr);
       const source = Object.keys(published.exports).map((key, index) => `export * as entry${index} from '${manifest.name}${key === '.' ? '' : key.slice(1)}';`).join('\n');
       for (const extension of ['mts', 'cts']) {
         const consumer = join(scratch, `consumer.${extension}`);

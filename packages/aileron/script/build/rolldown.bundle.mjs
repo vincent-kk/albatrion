@@ -30,7 +30,7 @@ export const getBundleBuildOptions = (callerUrl) => ({
    *   entry?: string;
    *   entrypoints?: string[];
    *   format: 'esm' | 'cjs' | 'umd' | 'iife';
-   *   outFile?: string;
+   *   outFile?: string | { types?: string; default: string };
    *   outDir?: string;
    *   name?: string;
    *   sourcemap?: boolean;
@@ -53,7 +53,7 @@ const createBundleBuildOptions = (callerUrl) => async (options) => {
     entry,
     entrypoints,
     format,
-    outFile,
+    outFile: outputTarget,
     outDir,
     name,
     sourcemap = false,
@@ -61,6 +61,9 @@ const createBundleBuildOptions = (callerUrl) => async (options) => {
     external,
     tsconfig,
   } = options;
+
+  const outFile = typeof outputTarget === 'object' && outputTarget !== null
+    ? outputTarget.default : outputTarget;
 
   const callerDir = dirname(fileURLToPath(callerUrl));
   const packagesRoot = resolve(callerDir, '../../');
