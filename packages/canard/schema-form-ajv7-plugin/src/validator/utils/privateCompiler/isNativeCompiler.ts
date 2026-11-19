@@ -21,6 +21,11 @@ export const isNativeCompiler = (value: unknown, source: Ajv): value is Ajv => {
     Reflect.get(value.opts, 'meta') !== false
   )
     return false;
+  for (const key of ['_cache', '_compilations', 'scope', '_opts', 'opts']) {
+    const owned = Reflect.get(source, key);
+    if (owned && typeof owned === 'object' && Reflect.get(value, key) === owned)
+      return false;
+  }
   return (
     'schemas' in value &&
     value.schemas !== source.schemas &&
