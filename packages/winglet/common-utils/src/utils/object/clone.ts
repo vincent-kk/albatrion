@@ -11,7 +11,7 @@ import { isTypedArray } from '@/common-utils/utils/filter/isTypedArray';
 
 import { getSymbols } from './getSymbols';
 import { cloneArraySubclass } from './utils/clone/cloneArraySubclass';
-import { constructBuiltin } from './utils/clone/constructBuiltin';
+import { cloneBuiltinSubclass } from './utils/clone/cloneBuiltinSubclass';
 import { copyForeignBuiltin } from './utils/clone/copyForeignBuiltin/copyForeignBuiltin';
 import { getPrototypeProfile } from './utils/clone/getPrototypeProfile';
 import { replicateBox } from './utils/clone/replicateBox';
@@ -293,15 +293,15 @@ const replicate = (
 
   if (value instanceof Date) {
     const prototype = getPrototypeOf(value);
-    if (prototype !== Date.prototype) {
-      const result = constructBuiltin(
-        Date,
-        [Date.prototype.getTime.call(value)],
+    if (prototype !== Date.prototype)
+      return cloneBuiltinSubclass(
+        value,
         prototype,
+        limit,
+        depth,
+        cache,
+        replicate,
       );
-      cache.set(value, result);
-      return result;
-    }
     const result = new Date(value.getTime());
     cache.set(value, result);
     return result;
@@ -309,22 +309,15 @@ const replicate = (
 
   if (value instanceof RegExp) {
     const prototype = getPrototypeOf(value);
-    if (prototype !== RegExp.prototype) {
-      const result = constructBuiltin(
-        RegExp,
-        [
-          Object.getOwnPropertyDescriptor(
-            RegExp.prototype,
-            'source',
-          )!.get!.call(value),
-          value.flags,
-        ],
+    if (prototype !== RegExp.prototype)
+      return cloneBuiltinSubclass(
+        value,
         prototype,
+        limit,
+        depth,
+        cache,
+        replicate,
       );
-      result.lastIndex = value.lastIndex;
-      cache.set(value, result);
-      return result;
-    }
     const result = new RegExp(value.source, value.flags);
     result.lastIndex = value.lastIndex;
     cache.set(value, result);
@@ -343,15 +336,14 @@ const replicate = (
         );
       return result;
     }
-    const result = constructBuiltin(Map, [], prototype);
-    cache.set(value, result);
-    for (const entry of value)
-      Map.prototype.set.call(
-        result,
-        replicate(entry[0], limit, depth, cache),
-        replicate(entry[1], limit, depth, cache),
-      );
-    return result;
+    return cloneBuiltinSubclass(
+      value,
+      prototype,
+      limit,
+      depth,
+      cache,
+      replicate,
+    );
   }
 
   if (value instanceof Set) {
@@ -362,11 +354,14 @@ const replicate = (
       for (const key of value) result.add(replicate(key, limit, depth, cache));
       return result;
     }
-    const result = constructBuiltin(Set, [], prototype);
-    cache.set(value, result);
-    for (const key of value)
-      Set.prototype.add.call(result, replicate(key, limit, depth, cache));
-    return result;
+    return cloneBuiltinSubclass(
+      value,
+      prototype,
+      limit,
+      depth,
+      cache,
+      replicate,
+    );
   }
 
   if (isBuffer(value)) {
