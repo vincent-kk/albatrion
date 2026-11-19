@@ -27,6 +27,6 @@ export function emitCommonJsDeclarations(directory, manifest) {
     writeFileSync(join(directory, name.replace(/\.d\.(?:ts|mts)$/, '.d.cts')),
       readFileSync(join(directory, name)));
   }
-  fixDtsExtensions(directory, { commonJsOnly: true });
+  fixDtsExtensions(directory, { declarationFormat: 'commonjs' });
   return declarations.length;
 }

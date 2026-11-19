@@ -35,7 +35,7 @@ const execOptions = { stdio: 'inherit' };
 execSync(`tsc -p ${tsconfig}`, execOptions);
 execSync(`tsc-alias -p ${tsconfig}`, execOptions);
 
-const { filesProcessed, importsFixed } = fixDtsExtensions(outDir);
+const { filesProcessed, importsFixed } = fixDtsExtensions(outDir, { declarationFormat: 'esm' });
 if (filesProcessed > 0) {
   console.log(
     `Fixed ${importsFixed} imports in ${filesProcessed} .d.ts files.`,
