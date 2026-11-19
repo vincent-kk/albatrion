@@ -8,6 +8,7 @@ import { CLONEABLE_TAGS } from '@/common-utils/utils/filter/isCloneable';
 import { isPrimitiveType } from '@/common-utils/utils/filter/isPrimitiveType';
 import { isSharedArrayBuffer } from '@/common-utils/utils/filter/isSharedArrayBuffer';
 import { isTypedArray } from '@/common-utils/utils/filter/isTypedArray';
+import { isPlainObject } from '@/common-utils/utils/filter';
 
 import { getSymbols } from './getSymbols';
 import { cloneArraySubclass } from './utils/clone/cloneArraySubclass';
@@ -16,6 +17,7 @@ import { copyErrorEnumerability } from './utils/clone/copyErrorEnumerability';
 import { copyForeignBuiltin } from './utils/clone/copyForeignBuiltin/copyForeignBuiltin';
 import { getPrototypeProfile } from './utils/clone/getPrototypeProfile';
 import { replicateBox } from './utils/clone/replicateBox';
+import { replicateDeep } from './utils/clone/replicateDeep';
 
 /** Clone-specific shell dispatch extends the shared predicate without widening its public contract. */
 const CLONE_PROFILE: Record<string, boolean | undefined> = Object.create(null);
@@ -195,6 +197,9 @@ for (const tag of [
  * - **Type-Specific Cloning**: Specialized handlers for Date, RegExp, Map, Set, TypedArrays
  *
  * **Known Limits:**
+ * - Deep ordinary object and array graphs, including cycles, use work frames rather
+ *   than the call stack. User getters, constructors, proxies and paths made only
+ *   of non-plain built-ins remain subject to their own call-stack limits.
  * - Typed-array subclasses with default slice/species run their constructor once and retain their
  *   prototype. DataView subclasses do not run their constructor, but return native DataView
  *   copies without the subclass prototype; both preserve the selected data and independent
@@ -271,6 +276,9 @@ const replicate = (
   if (isPrimitiveType(value)) return value;
 
   if (cache.has(value)) return cache.get(value);
+
+  if (depth >= 256 && ((isArray(value) && getPrototypeOf(value) === Array.prototype) || isPlainObject(value)))
+    return replicateDeep(value, limit, depth, cache, replicate);
 
   depth = depth + 1;
 

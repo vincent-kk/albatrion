@@ -20,6 +20,8 @@ Organized by decision, not by module. Every claim here was read off `src/**` at 
 
 Both treat `NaN` as equal to `NaN`. Reach for `equals` by default; switch to `stableEquals` the moment the data can carry a cycle, symbol keys or sparse-array holes.
 
+`clone` and `stableEquals` use work frames for deep ordinary-object and array graphs, including cycles. This guarantee does not cover user getters, proxies, constructors, or paths made entirely of other built-ins. A clone depth bound still counts from the original root and leaves boundary values shared.
+
 ```typescript
 // Ignore volatile keys at every nesting level, not just the top one.
 equals(previous, next, ['updatedAt', 'requestId']);

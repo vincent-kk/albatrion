@@ -4,6 +4,7 @@ import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 
 import { countRetainedKeys } from './countRetainedKeys';
 import { equalsBuiltin } from './equalsBuiltin';
+import { stableEqualsDeep } from './stableEquals/stableEqualsDeep';
 
 /**
  * Sentinel used to bypass internal-state tag checks for current-realm
@@ -24,7 +25,8 @@ const OBJECT_PROTOTYPE = Object.prototype;
  * - **Advanced Type Support**: Proper comparison for Date, RegExp, TypedArrays, ArrayBuffers
  * - **Sparse Array Handling**: Correctly distinguishes sparse arrays from dense ones
  * - **Symbol Property Support**: Compares symbol-keyed properties using Reflect.ownKeys
- * - **Memory Safety**: No risk of stack overflow with deeply nested circular structures
+ * - **Depth Safety**: Plain-object and array graphs, including cycles, use work frames.
+ *   User getters, proxies and paths made only of other built-ins retain their own stack limits.
  * - **Performance**: ~2x slower than `equals` but handles much more complex scenarios
  *
  * **When to Use stableEquals vs equals:**
@@ -326,8 +328,10 @@ const stableEqualsRecursive = (
   right: unknown,
   visited: Map<object, Set<object>>,
   omits: Set<PropertyKey> | null,
+  depth = 0,
 ): boolean => {
   if (left === right || (left !== left && right !== right)) return true;
+  if (depth >= 256) return stableEqualsDeep(left, right, visited, omits, stableEqualsRecursive);
 
   if (
     left === null ||
@@ -363,6 +367,7 @@ const stableEqualsRecursive = (
           new Uint8Array(right),
           visited,
           omits,
+          depth + 1,
         );
     }
 
@@ -373,7 +378,7 @@ const stableEqualsRecursive = (
       const rightHasIndex = i in right;
       if (leftHasIndex !== rightHasIndex) return false;
       if (leftHasIndex)
-        if (stableEqualsRecursive(left[i], right[i], visited, omits) === false)
+        if (stableEqualsRecursive(left[i], right[i], visited, omits, depth + 1) === false)
           return false;
     }
     return true;
@@ -411,7 +416,7 @@ const stableEqualsRecursive = (
     // built-ins carry their state where own keys cannot reach it
     if (tag !== OBJECT_TAG) {
       const byState = equalsBuiltin(left, right, tag, (leftValue, rightValue) =>
-        stableEqualsRecursive(leftValue, rightValue, visited, omits),
+        stableEqualsRecursive(leftValue, rightValue, visited, omits, depth + 1),
       );
       if (byState !== undefined) return byState;
     }
@@ -436,6 +441,7 @@ const stableEqualsRecursive = (
         right[k as keyof typeof right],
         visited,
         omits,
+        depth + 1,
       ) === false
     )
       return false;
