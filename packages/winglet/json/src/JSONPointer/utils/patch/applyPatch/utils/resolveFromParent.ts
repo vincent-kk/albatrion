@@ -8,6 +8,7 @@ import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 import type { JSONRoot } from '@/json/type';
 
 import type { Patch } from '../../../patchModel';
+import { copyObject } from './copyObject';
 import { JSONPatchError } from './error';
 import { getArrayIndex } from './getArrayIndex';
 
@@ -56,7 +57,7 @@ export const resolveFromParent = (
         },
       );
     if (cloned !== null && !cloned.has(next)) {
-      next = isArray(next) ? next.slice() : { ...next };
+      next = isArray(next) ? next.slice() : copyObject(next);
       cloned.add(next);
       if (index === -1) setDataProperty(parent, segment, next);
       else parent[index] = next;
