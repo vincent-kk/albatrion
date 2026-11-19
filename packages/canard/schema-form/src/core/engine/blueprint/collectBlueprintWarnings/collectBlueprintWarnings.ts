@@ -14,8 +14,7 @@ import type {
 import { readSchemaObject } from '../utils/analyze/readSchemaObject';
 import { collectInactiveValueWarnings } from './utils/collectInactiveValueWarnings';
 import { collectInlineTerminalWarnings } from './utils/collectInlineTerminalWarnings';
-import { endsWithBranchIndex } from './utils/endsWithBranchIndex';
-import { getUnionBranchFragmentIds } from './utils/getUnionBranchFragmentIds';
+import { getWarningBranchFragmentIds } from './utils/getWarningBranchFragmentIds';
 
 /** Dependency keywords the form ignores on any declaration. */
 const IGNORED_DEPENDENCY_KEYWORDS = ['dependentSchemas', 'dependencies'];
@@ -31,9 +30,6 @@ const ALL_OF_IGNORED_KEYWORDS = [
   'contains',
 ];
 
-/** Keyword whose branch index ends an `allOf` branch schema path. */
-const ALL_OF_KEYWORDS = ['allOf'];
-
 /**
  * Collect advisory records only when a consumer explicitly requests diagnostics.
  * @param blueprint - Completed immutable graph retaining original declarations
@@ -45,7 +41,7 @@ export const collectBlueprintWarnings = (
   collect: BlueprintOptions['collect'],
 ): void => {
   if (!collect) return;
-  const unionBranches = getUnionBranchFragmentIds(blueprint);
+  const branches = getWarningBranchFragmentIds(blueprint);
   const seen = new Set<string>();
   const emit = (diagnostic: BlueprintDiagnostic): void => {
     const key = `${diagnostic.code}:${diagnostic.schemaPath}:${diagnostic.details.keyword ?? ''}`;
@@ -112,7 +108,7 @@ export const collectBlueprintWarnings = (
           warning(FormWarningCode.DependentSchemasIgnoredForForm, {
             keyword,
           });
-      if (endsWithBranchIndex(declaration.schemaPath, ALL_OF_KEYWORDS))
+      if (branches.allOf.has(declaration.fragmentId))
         for (const keyword of ALL_OF_IGNORED_KEYWORDS)
           if (schema[keyword] !== undefined)
             warning(FormWarningCode.AllOfKeywordIgnoredForForm, {
@@ -126,7 +122,7 @@ export const collectBlueprintWarnings = (
           schema.controls?.disabled !== undefined)
       )
         warning(FormWarningCode.LockOnNonTerminalObject);
-      if (unionBranches.has(declaration.fragmentId)) {
+      if (branches.union.has(declaration.fragmentId)) {
         if (schema.if !== undefined && schema.else !== false)
           warning(FormWarningCode.IfWithoutElseFalse);
         if (
