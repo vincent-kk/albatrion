@@ -93,14 +93,10 @@ const FieldInputStringEnum = ({
 
   const labelId = getInputId('label');
 
-  const initialValue = useMemo(() => {
-    if (defaultValue === null)
-      return options.some((option) => option.rawValue === null)
-        ? JSON.stringify(null)
-        : '';
-    if (typeof defaultValue === 'string') return JSON.stringify(defaultValue);
-    return '';
-  }, [defaultValue, options]);
+  const initialValue = useMemo(
+    () => options.find((option) => option.rawValue === defaultValue)?.value ?? '',
+    [defaultValue, options],
+  );
 
   return (
     <FormControl fullWidth={fullWidth} variant={variant} error={misfit}>
