@@ -143,6 +143,9 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
               write.node,
               write.value,
               write.source ?? FieldNodeWriteKind.CallerPartial,
+              write.node.path,
+              write.node.blueprintNode,
+              write.virtualFields,
             )
           : [origins[index]],
       );
