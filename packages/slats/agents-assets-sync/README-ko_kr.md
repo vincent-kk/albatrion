@@ -237,16 +237,14 @@ asset 루트 하위의 모든 파일은 해시되어 `dist/agents-hashes.json` �
 ```ts
 import {
   computeNamespacePrefixes,
-  injectDocs,
-  isInteractive,
   isValidScope,
   readHashManifest,
-  resolveScope,
+  resolveProjectRoot,
   runCli,
 } from '@slats/agents-assets-sync';
 ```
 
-전체 export 범위는 `src/index.ts` 와 `src/DETAIL.md` 를 참조하세요.
+공개 내보내기는 `src/index.ts`와 `src/DETAIL.md`를 참고합니다.
 
 ## 추가 문서
 
@@ -258,5 +256,9 @@ import {
 MIT — [LICENSE](./LICENSE) 참조.
 
 ## 알려진 한계
+
+- 프로그래매틱 API는 ESM 전용입니다. ESM `import` 또는 CommonJS의 동적 `import()`를 사용합니다. `require()`는 export되지 않습니다. TypeScript `nodenext`는 CommonJS 정적 import를 허용할 수 있지만 Node는 거부하므로 타입 검사 통과가 CommonJS 호환성을 보장하지 않습니다.
+- 공유 스킬 네임스페이스는 한 실행의 모든 패키지를 합쳐 계획합니다. `--force`에서는 해당 패키지를 함께 지정합니다. 영속 파일 소유 기록이 없어 이후 단일 패키지 실행은 같은 네임스페이스의 다른 패키지 파일을 고아와 구분하지 못합니다. 같은 목적지에 서로 다른 내용이 있으면 해당 단위를 오류로 보고하며 그 파일을 쓰지 않습니다.
+- 사용자 스코프 AGENTS.md 심볼릭 링크는 대상이 존재할 때만 따라갑니다. 끊긴 링크는 오류로 거부하고 보존하여 dotfiles 링크가 일반 파일로 바뀌지 않게 합니다.
 
 파일 고아 탐색은 현재 매니페스트에 있는 스킬 이름공간만 검사합니다. 전체가 빠진 스킬과 Claude 규칙·명령 파일은 소유 패키지를 기록하지 않으므로 `--force`로도 남습니다. 소유권을 확인한 뒤 사용하지 않는 파일을 직접 제거하십시오. Codex와 agents 규칙은 패키지 소유 마커 블록을 가지므로 `--force`로 빠진 블록을 식별하고 제거할 수 있으며, Claude 파일 정리와 다릅니다.

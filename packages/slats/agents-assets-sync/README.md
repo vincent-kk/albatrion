@@ -174,15 +174,15 @@ Every file under the asset root is hashed and tracked in `dist/agents-hashes.jso
   - **hash differs** → warn + require `--force` (user edit vs. source update is indistinguishable by design)
   - **file is outside the manifest but under a managed prefix (`skills/<name>/`)** → orphan; requires `--force` to delete
 
-- `--force` on TTY opens an interactive confirm via `@inquirer/prompts.confirm`, listing up to 3 diverged/orphan paths.
+- `--force` on TTY opens an interactive confirm via Ink, listing diverged/orphan paths.
 - `--force` on non-TTY prints the diverged and orphan paths it will overwrite or delete to stderr and proceeds. A run whose only change is deleting orphans is confirmed and listed the same way.
 - At `--scope=project`, a destination that a symlink resolves outside the project is refused, naming the path; nothing is written or deleted there. This covers the destination roots (`.claude/skills`, `.claude/rules`, `.claude/commands`, `.agents/skills`, `AGENTS.md`), each skill directory, and every directory or file below them that the run writes. A link that stays inside the project is followed, and `--force` never deletes through a link. A repository can commit symlinks, so a cloned project could otherwise redirect writes and `--force` deletions anywhere. `--scope=user` follows such links on purpose: linking `~/.claude` to a dotfiles repository is a deliberate setup.
 
 ## Architectural Invariants
 
 - `src/core/**` never reads `package.json` or walks the filesystem. Only the `bin/` layer (and `src/commands/runCli/targets/resolvePackage.ts`, invoked from that dispatcher) is allowed to resolve a single explicitly-named target via `createRequire().resolve('${name}/package.json')`. Cross-package discovery (`--all`, workspace scan) is not supported.
-- Prompts go through `@inquirer/prompts` only. No ink, no React.
-- The engine assumes one consumer per invocation. That is the stable contract — extensions require explicit re-architecture.
+- Input screens supply choices to the same core plan and executor used by plain and JSON output.
+- All targets in one invocation share a run-wide plan and namespace merge.
 
 ## Programmatic API
 
@@ -261,5 +261,9 @@ The exception is a failure upstream of the renderer — an unresolvable
 MIT — see [LICENSE](./LICENSE).
 
 ## Known limits
+
+- The programmatic API is ESM-only. Use ESM `import` or dynamic `import()` from CommonJS; `require()` is not exported. TypeScript `nodenext` may accept a CommonJS static import even though Node rejects it, so successful type-checking does not establish CommonJS compatibility.
+- Shared skill namespaces are merged across all packages in one run. Invoke those packages together when using `--force`: no persistent file ownership ledger is kept, so a later single-package run cannot distinguish another package's files from orphans under its managed namespace. Conflicting contents at one destination fail the affected units without writing that file.
+- A user-scope AGENTS.md symlink is followed only when its target exists. A dangling link is refused with an error and preserved, so the tool cannot silently replace a dotfiles link.
 
 File orphan scans cover only skill namespaces present in the current manifest. Removed whole skills and Claude rule or command files remain installed, even with `--force`, because these files do not record which package owns them. Remove those retired files manually after checking their ownership. Codex and agents rules carry package-owned marker blocks, so retired blocks can be identified and removed with `--force`; this differs from Claude file cleanup.
