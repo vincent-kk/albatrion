@@ -9,7 +9,7 @@ it('preserves Syntax trees and token boundaries for 5000 seeded valid sheets on 
   const seed = 0xc55105, random = createRandom(seed);
   for (let trial = 0; trial < 5000; trial++) {
     const sheet = generateValidSheet(random);
-    for (const css of [sheet, sheet + '/* general-path */']) {
+    for (const css of [sheet, sheet + '/* general-path */', sheet + '.round5{color:red;margin:0 2px;--x:1px + 2px}'.repeat(8)]) {
       const output = compressCss(css);
       const label = `seed=${seed}, trial=${trial}, css=${JSON.stringify(css)}, output=${JSON.stringify(output)}`;
       expect(readSignificantTokens(output), label).toEqual(readSignificantTokens(css));
