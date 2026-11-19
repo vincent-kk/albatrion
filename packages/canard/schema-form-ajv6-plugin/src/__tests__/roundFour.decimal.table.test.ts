@@ -1,8 +1,8 @@
 import Ajv from 'ajv';
 import { expect, it } from 'vitest';
 
-import { plugin as ajv7 } from '../../../schema-form-ajv7-plugin/src/index';
-import { plugin as ajv8 } from '../../../schema-form-ajv8-plugin/src/default/index';
+import { plugin as ajv7 } from '@canard/schema-form-ajv7-plugin';
+import { plugin as ajv8 } from '@canard/schema-form-ajv8-plugin';
 import { plugin as ajv6, createValidator } from '../index';
 
 /** Represent a finite JSON number's decimal spelling as an integer and a power of ten. */
