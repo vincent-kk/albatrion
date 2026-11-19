@@ -2,6 +2,7 @@ import type { JSONSchema } from '@canard/schema-form';
 
 import { createFreshOracle } from './createFreshOracle';
 import { outcomeOf } from './outcomeOf';
+import { readOracleResource } from './readOracleResource';
 import type { ModelApplication, ModelProfile } from './types';
 
 /** Recompile the current raw application graph and apply the explicit root-collision rule. */
@@ -12,11 +13,12 @@ export const compileOracle = async <T extends ModelApplication>(
   data: unknown,
 ) =>
   outcomeOf(async () => {
-    const fresh = createFreshOracle(source, profile);
+    const fresh = createFreshOracle(source, profile, root);
     const rootId =
       typeof root.$id === 'string' ? root.$id : Reflect.get(root, 'id');
     if (typeof rootId === 'string') {
-      const existing = fresh.getSchema(rootId);
+      const resource = readOracleResource(source, rootId);
+      const existing = resource ? { schema: resource.target } : undefined;
       if (
         existing &&
         (profile.version !== 6 ||
