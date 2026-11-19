@@ -61,19 +61,23 @@ export const createFreshOracle = <T extends ModelApplication>(
   const imported = new Set<unknown>();
   const usedAliases = new Map<string, string>();
   const claimed = new Map<string, { schema: unknown; key: string }>();
-  const importReferences = (schema: unknown, base = '', localIds?: Set<string>) => {
+  const importReferences = (schema: unknown, base = '', localIds?: Set<string>, importedDocument = false, documentId = '') => {
     if (!schema || typeof schema !== 'object') return;
-    if (Array.isArray(schema)) { for (const child of schema) importReferences(child, base, localIds); return; }
+    if (Array.isArray(schema)) { for (const child of schema) importReferences(child, base, localIds, importedDocument, documentId); return; }
     const nativeOptions = Reflect.get(source, '_opts');
     const legacyId = profile.version === 6 && nativeOptions && typeof nativeOptions === 'object' && Reflect.get(nativeOptions, 'schemaId') === 'id';
     const idKey = legacyId ? 'id' : '$id';
-    localIds ??= collectOracleIds(schema, base, idKey);
+    if (!localIds) {
+      localIds = collectOracleIds(schema, base, idKey);
+      const own = Reflect.get(schema, idKey);
+      if (typeof own === 'string') documentId = new URL(own, base || 'https://oracle.invalid/').href.replace(/#\/?$/, '');
+    }
     const ownId = Reflect.get(schema, idKey);
     const current = typeof ownId === 'string' ? new URL(ownId, base || 'https://oracle.invalid/').href : base;
     const ref = Reflect.get(schema, '$ref');
     if (typeof ref === 'string' && ref[0] !== '#') {
       const address = new URL(ref, current || 'https://oracle.invalid/').href;
-      if (!localIds.has(address.split('#')[0])) {
+      if (!(importedDocument ? documentId === address.split('#')[0] : localIds.has(address.split('#')[0]))) {
       const resource = readOracleResource(source, address);
       if (!resource) {
         const Missing = Reflect.get(source.constructor, 'MissingRefError');
@@ -95,11 +99,11 @@ export const createFreshOracle = <T extends ModelApplication>(
         imported.add(resource.schema);
         const copy = JSON.parse(JSON.stringify(resource.schema));
         fresh.addSchema(copy, resource.key);
-        importReferences(resource.schema, resource.key);
+        importReferences(resource.schema, resource.key, undefined, true);
       }
       }
     }
-    for (const [name, child] of Object.entries(schema)) if (!['const', 'enum', 'default'].includes(name)) importReferences(child, current, localIds);
+    for (const [name, child] of Object.entries(schema)) if (!['const', 'enum', 'default'].includes(name)) importReferences(child, current, localIds, importedDocument, documentId);
   };
   importReferences(root);
   const targetRefs = Reflect.get(fresh, '_refs') ?? Reflect.get(fresh, 'refs');

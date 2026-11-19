@@ -183,13 +183,12 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
         }
       } else if (operation === 10 && adapter.roots.length) {
         const record = adapter.roots[next() % adapter.roots.length];
-        expect(adapter.validator.compile(record.schema), context).toBe(
-          record.validate,
-        );
-        expect(
-          await outcomeOf(() => record.validate(record.data)),
-          context,
-        ).toEqual(record.verdict);
+        expect(await outcomeOf(() => record.validate(record.data)), context).toEqual(record.verdict);
+        const expected = await compileOracle(twin, profile, record.schema, record.data);
+        const actual = await outcomeOf(() => adapter.validator.compile(record.schema)(record.data));
+        if ('error' in expected) expect(actual, context).toHaveProperty('error');
+        else expect(actual, context).toEqual(expected);
+        expect(await outcomeOf(() => record.validate(record.data)), context).toEqual(record.verdict);
       } else if (operation === 14) {
         const root: JSONSchema = {
           $id: id,
@@ -272,7 +271,7 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
           twin.removeSchema(retryId);
           const failed = await outcomeOf(() => adapter.validator.compile(root));
           expect('error' in failed, context).toBe(true);
-          const retry = { $id: retryId, type: 'string', minLength: 3 };
+          const retry = { $id: retryId, ...(profile.version === 6 ? { id: retryId } : {}), type: 'string', minLength: 3 };
           app.addSchema({ ...retry });
           twin.addSchema({ ...retry });
         }
