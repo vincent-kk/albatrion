@@ -16,7 +16,10 @@ export const checkGuardRootCollection = (
   pointer = '',
   anchored = false,
 ): string => {
-  const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
+  const packageRoot = resolve(
+    dirname(fileURLToPath(import.meta.url)),
+    '../../../..',
+  );
   const worktreeRoot = resolve(packageRoot, '../../..');
   const script = `
     const fs = require('node:fs');
@@ -37,7 +40,6 @@ export const checkGuardRootCollection = (
     const source = path.join(packageRoot, 'src/validator');
     const { createGuardCompiler } = require(path.join(source, 'createGuardCompiler.ts'));
     const { registerSchemaRoot } = require(path.join(source, 'utils/registerSchemaRoot.ts'));
-    const { registerSchemaGuard } = require(path.join(source, 'utils/registerSchemaGuard.ts'));
     const { disposeSchemaRoot } = require(path.join(source, 'utils/disposeSchemaRoot.ts'));
     const finalizer = new FinalizationRegistry(disposeSchemaRoot);
     const roots = new WeakMap();
@@ -54,6 +56,7 @@ export const checkGuardRootCollection = (
       const reference = new WeakRef(root);
       if (version === 8) createGuardCompiler(instance, registry, root, pointer, direct === 'true');
       else {
+        const { registerSchemaGuard } = require(path.join(source, 'utils/registerSchemaGuard.ts'));
         const registration = registerSchemaRoot(root, instance, roots, active, finalizer, pool);
         registerSchemaGuard(root, instance, registration);
         createGuardCompiler(registration, pointer, root, direct === 'true', finalizer);
@@ -73,7 +76,18 @@ export const checkGuardRootCollection = (
       throw new Error('Original guard root remains retained');
     })().catch((error) => { console.error(error.message); process.exitCode = 1; });
   `;
-  return execFileSync(process.execPath, [
-    '--expose-gc', '-e', script, packageRoot, String(directGuardCompile), dialect, pointer, String(anchored),
-  ], { cwd: worktreeRoot, encoding: 'utf8' }).trim();
+  return execFileSync(
+    process.execPath,
+    [
+      '--expose-gc',
+      '-e',
+      script,
+      packageRoot,
+      String(directGuardCompile),
+      dialect,
+      pointer,
+      String(anchored),
+    ],
+    { cwd: worktreeRoot, encoding: 'utf8' },
+  ).trim();
 };

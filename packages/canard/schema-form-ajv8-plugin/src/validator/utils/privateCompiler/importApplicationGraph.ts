@@ -1,0 +1,41 @@
+import { recordDependencies } from './recordDependencies';
+import type { ApplicationGraph, PrivateCompiler } from './types';
+
+/**
+ * Copy requested raw documents into a private compiler, preserving current public aliases only.
+ * @param compiler - Plugin-owned destination; the application instance is never written.
+ * @param graph - Current raw references and aliases already checked for conflicting ids.
+ * @returns No value; registers detached copies and records current aliases on the private instance.
+ */
+export const importApplicationGraph = (
+  compiler: PrivateCompiler,
+  graph: ApplicationGraph,
+): void => {
+  for (const [key, entry] of graph.observations)
+    compiler.entries.set(key, entry);
+  for (const [id, claim] of graph.claims) compiler.claims.set(id, claim);
+  for (const resource of graph.resources.values()) {
+    if (compiler.imported.has(resource.key)) continue;
+    let copy = compiler.copies.get(resource.document);
+    if (copy === undefined) {
+      copy = JSON.parse(JSON.stringify(resource.document));
+      if (copy === undefined)
+        throw new TypeError('Application schema must be JSON');
+      compiler.copies.set(resource.document, copy);
+    }
+    const facts = graph.documents.get(resource.document);
+    if (!facts) throw new Error('Application dependency facts are missing');
+    recordDependencies(compiler, facts);
+    if (facts.asynchronous && typeof copy === 'object' && !resource.meta)
+      Reflect.set(copy, '$async', true);
+    if (resource.meta && typeof copy === 'object')
+      compiler.instance.addMetaSchema(copy, resource.key, false);
+    else compiler.instance.addSchema(copy, resource.key, false, false);
+    compiler.imported.add(resource.key);
+  }
+  if (compiler.kind === 'meta') compiler.count = compiler.imported.size;
+  for (const [key, observed] of graph.observations) {
+    if (typeof observed.ref === 'string')
+      compiler.instance.refs[key] = observed.ref;
+  }
+};

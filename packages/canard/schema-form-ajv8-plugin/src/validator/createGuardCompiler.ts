@@ -5,11 +5,10 @@ import type { ValidateFunction } from 'ajv';
 import type { Dictionary, Fn } from '@aileron/declare';
 
 import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
-import { compileWithSchemaFallback } from './utils/compileWithSchemaFallback';
 import { collectGuardDynamicAnchors } from './utils/dynamicScope/collectGuardDynamicAnchors';
 import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
-import { makeSibling } from './utils/makeSibling';
-import { registerSchemaGuard } from './utils/registerSchemaGuard';
+import { isPrivateCompilerCurrent } from './utils/privateCompiler/isPrivateCompilerCurrent';
+import { selectRootCompiler } from './utils/privateCompiler/selectRootCompiler';
 import {
   type SchemaRootRegistry,
   registerSchemaRoot,
@@ -31,11 +30,16 @@ import { resolveGuardSchema } from './utils/resolveGuardSchema';
 export const createGuardCompiler = (
   ajv: Ajv,
   registry: SchemaRootRegistry,
-  root: JSONSchema,
+  callerRoot: JSONSchema,
   pointer: string,
   directGuardCompile: boolean,
 ): Fn<[value: unknown], boolean> => {
-  const registration = registerSchemaRoot(registry, ajv, root);
+  const registration = registerSchemaRoot(registry, ajv, callerRoot);
+  const root = registration.copy;
+  const cacheKey = `${directGuardCompile}:${pointer}`;
+  const cached = registration.guards.get(cacheKey);
+  if (cached && isPrivateCompilerCurrent(cached.compiler))
+    return cached.validate;
   const rootId = typeof root.$id === 'string' ? root.$id : '';
   const located = resolveGuardSchema(root, pointer);
   if (located === undefined)
@@ -46,18 +50,22 @@ export const createGuardCompiler = (
     !Object.prototype.hasOwnProperty.call(root, '$schema') &&
     isSelfContainedGuard(schema, registration.guardChecks)
   ) {
-    // A direct root would retain itself through the finalizer's held value.
-    // Its ID-free, dedicated guard is collected with the weak root registration.
-    if (schema === root) registry.finalizer?.unregister(registration);
-    if (!registration.directGuards.includes(schema))
-      registration.directGuards.push(schema);
-    registration.guardAjv ??= makeSibling(ajv, false, false);
-    const validate = registration.guardAjv.compile(schema);
+    const compiler = selectRootCompiler(registration, schema, 'guard');
+    const validate = compiler.instance.compile(schema);
+    registration.guardSchemas.push({ compiler, schema });
     if ('$async' in validate && validate.$async === true)
       throw new Error('async schema in sync schema');
-    return (value) => !!validate(value);
+    const predicate = (value: unknown) => !!validate(value);
+    registration.guards.set(cacheKey, { compiler, validate: predicate });
+    return predicate;
   }
-  const guard = registerSchemaGuard(ajv, root, registration);
+  const compiler = selectRootCompiler(registration, root, 'guard');
+  const guard = compiler.instance;
+  if (!Object.prototype.hasOwnProperty.call(guard.schemas, registration.key)) {
+    const guardCopy: JSONSchema = JSON.parse(JSON.stringify(root));
+    guard.addSchema(guardCopy, registration.key, false, false);
+    registration.guardSchemas.push({ compiler, schema: guardCopy });
+  }
   // Anchor locations compile before the guard so AJV generates the table lookup for its dynamic references.
   // A draft-07 instance leaves dynamic keywords unknown and ignored, so only a dynamic-vocabulary instance collects.
   const dynamicAnchors: Dictionary<ValidateFunction> =
@@ -67,9 +75,9 @@ export const createGuardCompiler = (
   const fragment = pointer.includes('%')
     ? pointer.replace(/%/g, '%25')
     : pointer;
-  const validate = compileWithSchemaFallback(guard, ajv, () =>
-    guard.compile({ $ref: `${registration.key}#${fragment}` }),
-  );
+  const validate = guard.compile({ $ref: `${registration.key}#${fragment}` });
+  if ('$async' in validate && validate.$async)
+    throw new Error('async schema in sync schema');
   if (Object.keys(dynamicAnchors).length === 0)
     return (value) => !!validate(value);
   return (value) =>

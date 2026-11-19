@@ -4,7 +4,7 @@ import { disposeSchemaRoot } from './disposeSchemaRoot';
 import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
 import type { SchemaRootRegistry } from './registerSchemaRoot';
 
-/** Remove one copy's registrations across every binding of this entry point. */
+/** Synchronously release this adapter's roots without changing any application registry. */
 export const releaseSchemaRoot = (
   registry: SchemaRootRegistry,
   root: JSONSchema,
@@ -12,20 +12,13 @@ export const releaseSchemaRoot = (
   const registrations = registry.entries.get(root);
   if (!registrations) return;
   for (const registration of registrations) {
-    registry.finalizer?.unregister(registration);
+    const ledger = instanceIdRegistrationsOf(registration.baseAjv);
+    ledger.finalizer?.unregister(registration);
     disposeSchemaRoot(registration);
-    if (registration.ids.length) {
-      const shared = instanceIdRegistrationsOf(registration.baseAjv).active;
-      for (let index = shared.length - 1; index >= 0; index--) {
-        const entry = shared[index].deref();
-        if (!entry || entry === registration) shared.splice(index, 1);
-      }
+    for (let index = ledger.active.length - 1; index >= 0; index--) {
+      const entry = ledger.active[index].deref();
+      if (!entry || entry === registration) ledger.active.splice(index, 1);
     }
   }
   registry.entries.delete(root);
-  for (let index = registry.active.length - 1; index >= 0; index--) {
-    const entry = registry.active[index].deref();
-    if (!entry || registrations.includes(entry))
-      registry.active.splice(index, 1);
-  }
 };
