@@ -15,6 +15,7 @@ import type {
 
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
+import { mergeEnumSelection } from './utils/enum/mergeEnumSelection';
 
 type StringJSONSchema = StringSchema<{
   alias?: { [label: string]: ReactNode };
@@ -64,15 +65,11 @@ const FieldInputStringCheckbox = ({
   }, [context, jsonSchema, alias, id]);
 
   const handleChange = useHandle((value: string[]) => {
-    const convertedValues = value
-      .map((v) => options.find((opt) => opt.value === v)?.rawValue)
-      .filter((v) => v !== undefined);
-    onChange(convertedValues);
+    onChange(previous => mergeEnumSelection(isArray(previous) ? previous : [], value, options));
   });
 
   const initialValue = useMemo(() => {
-    return isArray(defaultValue) &&
-      defaultValue.every((value) => value === null || typeof value === 'string')
+    return isArray(defaultValue)
       ? defaultValue.map((value) => JSON.stringify(value))
       : undefined;
   }, [defaultValue]);
