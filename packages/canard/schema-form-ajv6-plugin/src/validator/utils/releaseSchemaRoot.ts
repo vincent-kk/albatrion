@@ -1,6 +1,6 @@
-import type { SchemaRootRegistration } from './registerSchemaRoot';
 import { disposeSchemaRoot } from './disposeSchemaRoot';
 import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
+import type { SchemaRootRegistration } from './registerSchemaRoot';
 
 /** Remove one registration and its compiled functions from owned Ajv instances. */
 export const releaseSchemaRoot = (

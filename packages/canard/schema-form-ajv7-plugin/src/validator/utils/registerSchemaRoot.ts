@@ -1,16 +1,19 @@
 /// <reference lib="es2021.weakref" preserve="true" />
-
-import { createWeakReference } from './createWeakReference';
 import type { AjvInstance as Ajv } from '../types/AjvInstance';
-
-import { cloneInstance, PLUGIN_KEY_PREFIX } from './cloneInstance';
+import { PLUGIN_KEY_PREFIX, cloneInstance } from './cloneInstance';
+import { createWeakReference } from './createWeakReference';
 import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
 
 /** Provisional cap: Ajv's code scope keeps functions after removeSchema. */
 const MAX_TRANSIENT_ROOTS = 64;
 
 /** Dynamic-scope keywords; a root naming none of them as a key needs no guard anchor table. */
-const DYNAMIC_KEYWORDS: ReadonlySet<string> = new Set(['$dynamicAnchor', '$recursiveAnchor', '$dynamicRef', '$recursiveRef']);
+const DYNAMIC_KEYWORDS: ReadonlySet<string> = new Set([
+  '$dynamicAnchor',
+  '$recursiveAnchor',
+  '$dynamicRef',
+  '$recursiveRef',
+]);
 
 /** Ajv instances and registration key retained for one root identity. */
 export interface SchemaRootRegistration {
@@ -71,26 +74,42 @@ export const registerSchemaRoot = (
     for (let index = active.length - 1; index >= 0; index--)
       if (!active[index].deref()) active.splice(index, 1);
   const allRegistrations = instanceIdRegistrationsOf(instance);
-  const shared: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[] = ids.length ? allRegistrations : [];
+  const shared: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[] = ids.length
+    ? allRegistrations
+    : [];
   for (let index = shared.length - 1; index >= 0; index--)
     if (!shared[index].deref()) shared.splice(index, 1);
-  const conflict = ids.some((id) =>
-    active.some((ref) => ref.deref()?.ids.includes(id)) ||
-    shared.some((ref) => ref.deref()?.ids.includes(id)));
+  const conflict = ids.some(
+    (id) =>
+      active.some((ref) => ref.deref()?.ids.includes(id)) ||
+      shared.some((ref) => ref.deref()?.ids.includes(id)),
+  );
   if (!ids.length && pool.count === MAX_TRANSIENT_ROOTS) {
     pool.current = cloneInstance(pool.base, !!pool.base.opts.allErrors);
     pool.count = 0;
   }
-  const validation = conflict ? cloneInstance(instance, !!instance.opts.allErrors)
-    : ids.length ? instance : pool.current;
+  const validation = conflict
+    ? cloneInstance(instance, !!instance.opts.allErrors)
+    : ids.length
+      ? instance
+      : pool.current;
   if (!ids.length) pool.count++;
   const key = `${PLUGIN_KEY_PREFIX}${++allRegistrations.nextKey}`;
   const validationCopy: object | undefined = ids.length
-    ? JSON.parse(JSON.stringify(root)) : undefined;
+    ? JSON.parse(JSON.stringify(root))
+    : undefined;
   const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : key;
   const registration: SchemaRootRegistration = {
-    base: instance, validation, key, rootId, ids, validationCopy, validationRegistered: false,
-    directGuards: [], guardChecks: new WeakMap(), hasDynamicKeywords,
+    base: instance,
+    validation,
+    key,
+    rootId,
+    ids,
+    validationCopy,
+    validationRegistered: false,
+    directGuards: [],
+    guardChecks: new WeakMap(),
+    hasDynamicKeywords,
   };
   roots.set(root, registration);
   finalizer?.register(root, registration, registration);

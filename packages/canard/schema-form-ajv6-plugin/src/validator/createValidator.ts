@@ -1,10 +1,10 @@
-import { createFinalizer } from './utils/createFinalizer';
 import type { JSONSchema, ValidatorFactory } from '@canard/schema-form';
 import type Ajv from 'ajv';
 
 import { createGuardCompiler } from './createGuardCompiler';
 import { createValidatorFactory } from './createValidatorFactory';
 import { assertBindableInstance } from './utils/assertBindableInstance';
+import { createFinalizer } from './utils/createFinalizer';
 import { disposeSchemaRoot } from './utils/disposeSchemaRoot';
 import {
   type SchemaRootRegistration,

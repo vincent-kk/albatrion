@@ -9,7 +9,10 @@ import type { SchemaRootRegistration } from './registerSchemaRoot';
  * @param snapshot - `Object.entries(target)` taken before the failed call
  * @returns Nothing; deletes every own key of `target` and re-inserts the snapshot's entries in order
  */
-const restoreInPlace = <T>(target: Dictionary<T>, snapshot: [string, T][]): void => {
+const restoreInPlace = <T>(
+  target: Dictionary<T>,
+  snapshot: [string, T][],
+): void => {
   for (const key of Object.keys(target)) delete target[key];
   for (const [key, value] of snapshot) target[key] = value;
 };
@@ -25,7 +28,9 @@ const restoreInPlace = <T>(target: Dictionary<T>, snapshot: [string, T][]): void
  * @returns Nothing; on success sets `validationRegistered`
  * @throws The error of AJV's `addSchema`, after the rollback
  */
-export const registerValidationRoot = (registration: SchemaRootRegistration): void => {
+export const registerValidationRoot = (
+  registration: SchemaRootRegistration,
+): void => {
   const { validation: ajv, validationCopy: copy } = registration;
   if (!copy || registration.validationRegistered) return;
   const refs = Object.entries(ajv.refs);
@@ -42,7 +47,9 @@ export const registerValidationRoot = (registration: SchemaRootRegistration): vo
   const environment = ajv.schemas[registration.key];
   registration.validationOwnership = {
     environment,
-    refs: Object.entries(ajv.refs).filter(([key]) => !refs.some(([previous]) => previous === key)),
+    refs: Object.entries(ajv.refs).filter(
+      ([key]) => !refs.some(([previous]) => previous === key),
+    ),
     isCacheOwned: !schemas.some(([, value]) => value === environment),
   };
   registration.validationRegistered = true;

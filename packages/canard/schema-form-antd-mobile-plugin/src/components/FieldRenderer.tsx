@@ -69,9 +69,11 @@ export const FieldRenderer = ({
         </span>
         <Space direction="vertical" block>
           <Input aria-labelledby={labelId} />
-          {errorMessage !== null && errorMessage !== undefined && typeof errorMessage !== 'boolean' && (
-            <ErrorMessage>{errorMessage}</ErrorMessage>
-          )}
+          {errorMessage !== null &&
+            errorMessage !== undefined &&
+            typeof errorMessage !== 'boolean' && (
+              <ErrorMessage>{errorMessage}</ErrorMessage>
+            )}
         </Space>
       </fieldset>
     );

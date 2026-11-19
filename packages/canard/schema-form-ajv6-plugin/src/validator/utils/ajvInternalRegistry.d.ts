@@ -29,10 +29,14 @@ declare module 'ajv' {
     readonly constructor: new (options?: Options) => Ajv;
     readonly _formats: Readonly<Dictionary<Parameters<Ajv['addFormat']>[1]>>;
     readonly RULES: {
-      readonly custom: Readonly<Dictionary<{ readonly definition: KeywordDefinition }>>;
+      readonly custom: Readonly<
+        Dictionary<{ readonly definition: KeywordDefinition }>
+      >;
       readonly keywords: Readonly<Dictionary<boolean>>;
     };
-    readonly _schemas: Dictionary<{ readonly schema: object | boolean } | undefined>;
+    readonly _schemas: Dictionary<
+      { readonly schema: object | boolean } | undefined
+    >;
     /** Resolved references by URI: compiled schema objects or string aliases; restored in place after a failed validation registration. */
     readonly _refs: Dictionary<unknown>;
   }

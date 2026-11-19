@@ -2,9 +2,12 @@ import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
 import type { Ajv } from 'ajv';
 
 import { compileWithSchemaFallback } from './utils/compileWithSchemaFallback';
-import { registerSchemaRoot, type SchemaRootRegistry } from './utils/registerSchemaRoot';
 import { createRootPathRewriter } from './utils/createRootPathRewriter';
 import { createSchemaRootRegistry } from './utils/createSchemaRootRegistry';
+import {
+  type SchemaRootRegistry,
+  registerSchemaRoot,
+} from './utils/registerSchemaRoot';
 import { registerValidationRoot } from './utils/registerValidationRoot';
 import { transformErrors } from './utils/transformErrors';
 
@@ -14,7 +17,10 @@ import { transformErrors } from './utils/transformErrors';
  * @param registry - Registrations shared with guard compilation and release.
  * @returns A compiler that preserves the authored schema and normalizes failures.
  */
-export const createValidatorFactory = (ajv: Ajv, registry?: SchemaRootRegistry) => {
+export const createValidatorFactory = (
+  ajv: Ajv,
+  registry?: SchemaRootRegistry,
+) => {
   const roots = registry ?? createSchemaRootRegistry();
   return (jsonSchema: JSONSchema): ValidateFunction => {
     const registration = registerSchemaRoot(roots, ajv, jsonSchema);
@@ -22,10 +28,16 @@ export const createValidatorFactory = (ajv: Ajv, registry?: SchemaRootRegistry) 
     const transient = registration.validationCopy
       ? { $async: true, $ref: registration.key }
       : { ...JSON.parse(JSON.stringify(jsonSchema)), $async: true };
-    const validate = compileWithSchemaFallback(registration.validationAjv, ajv, () => registration.validationAjv.compile(transient));
+    const validate = compileWithSchemaFallback(
+      registration.validationAjv,
+      ajv,
+      () => registration.validationAjv.compile(transient),
+    );
     registration.validationAjv.removeSchema(transient);
     // AJV reports paths of an inlined `$ref` under the reference string, so the root's key stands in for `#`.
-    const toAuthoredPath = registration.validationCopy ? createRootPathRewriter(`${registration.key}/`) : undefined;
+    const toAuthoredPath = registration.validationCopy
+      ? createRootPathRewriter(`${registration.key}/`)
+      : undefined;
     // AJV reports the same schema paths on every run of this validator, so each not.required lookup walks the root once.
     const notRequiredKeys = new Map<string, string | undefined>();
     return async (data) => {
@@ -33,8 +45,17 @@ export const createValidatorFactory = (ajv: Ajv, registry?: SchemaRootRegistry) 
         await validate(data);
         return null;
       } catch (thrown: unknown) {
-        if (thrown instanceof Error && 'errors' in thrown && Array.isArray(thrown.errors))
-          return transformErrors(thrown.errors, jsonSchema, toAuthoredPath, notRequiredKeys);
+        if (
+          thrown instanceof Error &&
+          'errors' in thrown &&
+          Array.isArray(thrown.errors)
+        )
+          return transformErrors(
+            thrown.errors,
+            jsonSchema,
+            toAuthoredPath,
+            notRequiredKeys,
+          );
         throw thrown;
       }
     };

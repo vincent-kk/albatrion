@@ -11,14 +11,13 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { getSliderBounds } from './utils/slider/getSliderBounds';
 
 type SliderJSONSchema = NumberSchema & {
   minimum?: number;
   maximum?: number;
   multipleOf?: number;
 };
-
-import { getSliderBounds } from './utils/slider/getSliderBounds';
 
 interface FieldInputSliderProps
   extends FieldInputPropsWithSchema<
@@ -81,7 +80,11 @@ const FieldInputSlider = ({
     return [labelProp || name, sizeProp || context.size];
   }, [context, labelProp, name, sizeProp, hideLabel]);
 
-  const { min, max, step } = getSliderBounds(jsonSchema.minimum, jsonSchema.maximum, jsonSchema.multipleOf);
+  const { min, max, step } = getSliderBounds(
+    jsonSchema.minimum,
+    jsonSchema.maximum,
+    jsonSchema.multipleOf,
+  );
   const isLazy = lazy ?? false;
 
   // An external value change remounts this input, so a reset to undefined starts unset again.

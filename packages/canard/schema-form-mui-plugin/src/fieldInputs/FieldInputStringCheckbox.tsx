@@ -78,9 +78,7 @@ const FieldInputStringCheckbox = ({
   }, [jsonSchema, alias]);
 
   const [value, setValue] = useState<string[]>(() =>
-    isArray(defaultValue)
-      ? defaultValue.map((v) => JSON.stringify(v))
-      : [],
+    isArray(defaultValue) ? defaultValue.map((v) => JSON.stringify(v)) : [],
   );
 
   const handleToggle = useHandle((optionValue: string) => {
@@ -95,7 +93,9 @@ const FieldInputStringCheckbox = ({
     }
 
     setValue(newValues);
-    onChange(previous => mergeEnumSelection(isArray(previous) ? previous : [], newValues, options));
+    onChange((previous) =>
+      mergeEnumSelection(isArray(previous) ? previous : [], newValues, options),
+    );
   });
 
   return (

@@ -1,8 +1,7 @@
 import Ajv from 'ajv';
 
-import { pointerCompilers } from './pointerCompilerCache';
-
 import { createMultipleOfCode } from './createDefaultInstance/createMultipleOfCode';
+import { pointerCompilers } from './pointerCompilerCache';
 
 /**
  * Create the plugin's own AJV profile without changing application-supplied instances.
@@ -10,7 +9,11 @@ import { createMultipleOfCode } from './createDefaultInstance/createMultipleOfCo
  * @returns A validator with native-shaped multipleOf errors and zero-divisor rejection.
  */
 export const createDefaultInstance = (options: Ajv.Options): Ajv.Ajv => {
-  const instance = new Ajv({ ...options, jsonPointers: true, errorDataPath: 'object' });
+  const instance = new Ajv({
+    ...options,
+    jsonPointers: true,
+    errorDataPath: 'object',
+  });
   pointerCompilers.set(instance, instance);
   instance.removeKeyword('multipleOf');
   instance.addKeyword('multipleOf', {

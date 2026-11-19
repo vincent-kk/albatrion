@@ -1,15 +1,17 @@
-import { createFinalizer } from './utils/createFinalizer';
 import type { ValidatorPlugin } from '@canard/schema-form';
 import type Ajv from 'ajv';
-
-import { createDefaultInstance } from './utils/createDefaultInstance';
 
 import { createGuardCompiler } from './createGuardCompiler';
 import { createValidatorFactory } from './createValidatorFactory';
 import { assertBindableInstance } from './utils/assertBindableInstance';
-import { registerSchemaRoot, type SchemaRootRegistration } from './utils/registerSchemaRoot';
-import { registerValidationRoot } from './utils/registerValidationRoot';
+import { createDefaultInstance } from './utils/createDefaultInstance';
+import { createFinalizer } from './utils/createFinalizer';
 import { disposeSchemaRoot } from './utils/disposeSchemaRoot';
+import {
+  type SchemaRootRegistration,
+  registerSchemaRoot,
+} from './utils/registerSchemaRoot';
+import { registerValidationRoot } from './utils/registerValidationRoot';
 import { releaseSchemaRoot } from './utils/releaseSchemaRoot';
 
 /**
@@ -61,17 +63,37 @@ export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
   },
   compile: (jsonSchema) => {
     if (!ajvInstance) ajvInstance = createDefaultInstance(defaultSettings);
-    const registered = registerSchemaRoot(jsonSchema, ajvInstance, roots, active, finalizer);
+    const registered = registerSchemaRoot(
+      jsonSchema,
+      ajvInstance,
+      roots,
+      active,
+      finalizer,
+    );
     registerValidationRoot(registered);
     const validate = createValidatorFactory(
-      registered.validation, registered.validationCopy ? registered.key : undefined,
+      registered.validation,
+      registered.validationCopy ? registered.key : undefined,
     )(registered.validationCopy ?? jsonSchema);
     return async (value: unknown) => validate(value);
   },
   compileGuard: (root, pointer) => {
     if (!ajvInstance) ajvInstance = createDefaultInstance(defaultSettings);
-    const registered = registerSchemaRoot(root, ajvInstance, roots, active, finalizer);
-    return createGuardCompiler(ajvInstance, registered, pointer, root, directGuardCompile, finalizer);
+    const registered = registerSchemaRoot(
+      root,
+      ajvInstance,
+      roots,
+      active,
+      finalizer,
+    );
+    return createGuardCompiler(
+      ajvInstance,
+      registered,
+      pointer,
+      root,
+      directGuardCompile,
+      finalizer,
+    );
   },
   release: (root) => releaseSchemaRoot(root, roots, active, finalizer),
   dialect: 'http://json-schema.org/draft-07/schema#',

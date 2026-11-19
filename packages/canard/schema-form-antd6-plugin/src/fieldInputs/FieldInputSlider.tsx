@@ -52,7 +52,11 @@ const FieldInputSlider = ({
 
   const { min, max, step, ...changeHandler } = useMemo(() => {
     return {
-      ...getSliderBounds(jsonSchema.minimum, jsonSchema.maximum, jsonSchema.multipleOf),
+      ...getSliderBounds(
+        jsonSchema.minimum,
+        jsonSchema.maximum,
+        jsonSchema.multipleOf,
+      ),
       ...(lazy === false
         ? { onChange: handleChange }
         : { onChangeComplete: handleChange }),

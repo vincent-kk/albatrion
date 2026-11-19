@@ -2,9 +2,9 @@ import type { JSONSchema } from '@canard/schema-form';
 import type Ajv from 'ajv';
 
 import { pointerCompilerOf } from './compileWithPointers/pointerCompilerOf';
-import { readRegisteredSchema } from './schemaRegistry/readRegisteredSchema';
 import { compileWithSchemaFallback } from './compileWithSchemaFallback';
 import { pointerCompilations } from './pointerCompilerCache';
+import { readRegisteredSchema } from './schemaRegistry/readRegisteredSchema';
 
 /**
  * Compile in an independent path profile without changing application options or cached functions.

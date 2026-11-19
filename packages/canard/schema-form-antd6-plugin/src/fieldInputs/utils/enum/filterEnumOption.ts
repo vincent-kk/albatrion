@@ -11,10 +11,12 @@ export const filterEnumOption = (
   const text = query.normalize('NFC').toLowerCase();
   return (
     String(option?.children ?? '')
-      .normalize('NFC').toLowerCase()
+      .normalize('NFC')
+      .toLowerCase()
       .includes(text) ||
     String(option?.value ?? '')
-      .normalize('NFC').toLowerCase()
+      .normalize('NFC')
+      .toLowerCase()
       .includes(text)
   );
 };

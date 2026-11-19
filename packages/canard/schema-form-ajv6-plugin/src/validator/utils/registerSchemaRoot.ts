@@ -1,9 +1,8 @@
 /// <reference lib="es2021.weakref" preserve="true" />
-
-import { createWeakReference } from './createWeakReference';
 import type Ajv from 'ajv';
 
-import { cloneInstance, PLUGIN_KEY_PREFIX } from './cloneInstance';
+import { PLUGIN_KEY_PREFIX, cloneInstance } from './cloneInstance';
+import { createWeakReference } from './createWeakReference';
 import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
 
 /** Ajv instances and key retained for one authored root identity. */
@@ -53,20 +52,39 @@ export const registerSchemaRoot = (
     for (let index = active.length - 1; index >= 0; index--)
       if (!active[index].deref()) active.splice(index, 1);
   const allRegistrations = instanceIdRegistrationsOf(instance);
-  const shared: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[] = ids.length ? allRegistrations : [];
+  const shared: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[] = ids.length
+    ? allRegistrations
+    : [];
   for (let index = shared.length - 1; index >= 0; index--)
     if (!shared[index].deref()) shared.splice(index, 1);
-  const conflict = ids.some((id) =>
-    active.some((ref) => ref.deref()?.ids.includes(id)) ||
-    shared.some((ref) => ref.deref()?.ids.includes(id)));
-  const validation = conflict ? cloneInstance(instance, !!instance._opts.allErrors, instance._opts.validateSchema, { jsonPointers: true, errorDataPath: 'object' }) : instance;
+  const conflict = ids.some(
+    (id) =>
+      active.some((ref) => ref.deref()?.ids.includes(id)) ||
+      shared.some((ref) => ref.deref()?.ids.includes(id)),
+  );
+  const validation = conflict
+    ? cloneInstance(
+        instance,
+        !!instance._opts.allErrors,
+        instance._opts.validateSchema,
+        { jsonPointers: true, errorDataPath: 'object' },
+      )
+    : instance;
   const key = `${PLUGIN_KEY_PREFIX}${++allRegistrations.nextKey}`;
   const validationCopy: object | undefined = ids.length
-    ? JSON.parse(JSON.stringify(root)) : undefined;
+    ? JSON.parse(JSON.stringify(root))
+    : undefined;
   const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : key;
   const registration: SchemaRootRegistration = {
-    base: instance, validation, key, rootId, ids, validationCopy, validationRegistered: false,
-    directGuards: [], guardChecks: new WeakMap(),
+    base: instance,
+    validation,
+    key,
+    rootId,
+    ids,
+    validationCopy,
+    validationRegistered: false,
+    directGuards: [],
+    guardChecks: new WeakMap(),
   };
   roots.set(root, registration);
   finalizer?.register(root, registration, registration);

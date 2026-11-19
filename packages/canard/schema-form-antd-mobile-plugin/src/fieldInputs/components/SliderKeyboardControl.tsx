@@ -56,14 +56,18 @@ export const SliderKeyboardControl = ({
     }
   }, [disabled, id, labelledBy]);
   useEffect(() => {
-    const thumbs = ref.current?.querySelectorAll<HTMLElement>('[role="slider"]') ?? [];
+    const thumbs =
+      ref.current?.querySelectorAll<HTMLElement>('[role="slider"]') ?? [];
     for (const [index, thumb] of Array.from(thumbs).entries()) {
       if (unset) {
         thumb.removeAttribute('aria-valuenow');
         thumb.setAttribute('aria-valuetext', 'Not set');
         thumb.style.opacity = thumb === document.activeElement ? '1' : '0';
       } else {
-        thumb.setAttribute('aria-valuenow', String(Array.isArray(value) ? value[index] : value));
+        thumb.setAttribute(
+          'aria-valuenow',
+          String(Array.isArray(value) ? value[index] : value),
+        );
         thumb.removeAttribute('aria-valuetext');
         thumb.style.opacity = '';
       }
@@ -94,9 +98,18 @@ export const SliderKeyboardControl = ({
     );
   };
   return (
-    <div ref={ref} style={{ display: 'contents' }} onKeyDown={handleKeyDown}
-      onFocusCapture={event => { if (unset && event.target instanceof HTMLElement) event.target.style.opacity = '1'; }}
-      onBlurCapture={event => { if (unset && event.target instanceof HTMLElement) event.target.style.opacity = '0'; }}
+    <div
+      ref={ref}
+      style={{ display: 'contents' }}
+      onKeyDown={handleKeyDown}
+      onFocusCapture={(event) => {
+        if (unset && event.target instanceof HTMLElement)
+          event.target.style.opacity = '1';
+      }}
+      onBlurCapture={(event) => {
+        if (unset && event.target instanceof HTMLElement)
+          event.target.style.opacity = '0';
+      }}
     >
       {children}
     </div>

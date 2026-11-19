@@ -57,7 +57,16 @@ const FieldInputBooleanSwitch = ({
 
   return (
     <FormControlLabel
-      label={stateLabel === undefined ? label : <>{label}<span aria-hidden="true"> {stateLabel}</span></>}
+      label={
+        stateLabel === undefined ? (
+          label
+        ) : (
+          <>
+            {label}
+            <span aria-hidden="true"> {stateLabel}</span>
+          </>
+        )
+      }
       htmlFor={id}
       required={required}
       disabled={disabled}

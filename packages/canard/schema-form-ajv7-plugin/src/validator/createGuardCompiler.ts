@@ -1,9 +1,9 @@
 import type { Dictionary, Fn } from '@aileron/declare';
 
 import type { AjvInstance as Ajv } from './types/AjvInstance';
-import { compileWithSchemaFallback } from './utils/compileWithSchemaFallback';
 import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
 import { cloneInstance } from './utils/cloneInstance';
+import { compileWithSchemaFallback } from './utils/compileWithSchemaFallback';
 import { collectGuardDynamicAnchors } from './utils/dynamicScope/collectGuardDynamicAnchors';
 import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
 import { registerSchemaGuard } from './utils/registerSchemaGuard';
@@ -64,7 +64,9 @@ export const createGuardCompiler = (
       : collectGuardDynamicAnchors(root, registration.rootId, fragment, guard);
   const validate = direct
     ? guard.compile(schema)
-    : compileWithSchemaFallback(guard, instance, () => guard.compile({ $ref: `${registration.rootId}${fragment}` }));
+    : compileWithSchemaFallback(guard, instance, () =>
+        guard.compile({ $ref: `${registration.rootId}${fragment}` }),
+      );
   if (direct && '$async' in validate && validate.$async === true)
     throw new Error('async schema in sync schema');
   return (value) => {

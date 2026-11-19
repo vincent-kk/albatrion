@@ -98,10 +98,7 @@ const FieldInputTimeRange = ({
   const initialValue = useMemo<RangeValueType<Dayjs>>(
     () =>
       isArray(defaultValue) && defaultValue.length === 2
-        ? [
-            parseTime(defaultValue[0]),
-            parseTime(defaultValue[1]),
-          ]
+        ? [parseTime(defaultValue[0]), parseTime(defaultValue[1])]
         : undefined,
     [defaultValue],
   );

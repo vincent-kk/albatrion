@@ -65,7 +65,9 @@ const FieldInputStringCheckbox = ({
   }, [context, jsonSchema, alias, id]);
 
   const handleChange = useHandle((value: string[]) => {
-    onChange(previous => mergeEnumSelection(isArray(previous) ? previous : [], value, options));
+    onChange((previous) =>
+      mergeEnumSelection(isArray(previous) ? previous : [], value, options),
+    );
   });
 
   const initialValue = useMemo(() => {

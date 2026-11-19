@@ -14,11 +14,10 @@ import type {
 
 import { isSliderInput } from '../utils/inputs/isSliderInput';
 import { SliderKeyboardControl } from './components/SliderKeyboardControl';
+import { getSliderBounds } from './utils/slider/getSliderBounds';
 
 /** A numeric array schema, rendered as a range slider. */
 type NumberArraySchema = ArraySchema & { items: NumberSchema };
-
-import { getSliderBounds } from './utils/slider/getSliderBounds';
 
 interface FieldInputSliderProps
   extends FieldInputPropsWithSchema<

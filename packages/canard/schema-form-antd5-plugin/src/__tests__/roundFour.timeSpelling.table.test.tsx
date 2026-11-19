@@ -49,16 +49,17 @@ describe.each(['UTC', 'Asia/Seoul'])('time zone %s', (zone) => {
     expect(shown(field, variant)).toEqual(shown(field, canonical));
   });
 
-  it.each([
-    ['09:00:00z', '09:00:00Z'],
-  ])('time-range start %s shows the same time as %s', (variant, canonical) => {
-    const field: JSONSchema = {
-      type: 'array',
-      format: 'time-range',
-      items: { type: 'string' },
-    };
-    expect(shown(field, [variant, '18:00:00Z'])).toEqual(
-      shown(field, [canonical, '18:00:00Z']),
-    );
-  });
+  it.each([['09:00:00z', '09:00:00Z']])(
+    'time-range start %s shows the same time as %s',
+    (variant, canonical) => {
+      const field: JSONSchema = {
+        type: 'array',
+        format: 'time-range',
+        items: { type: 'string' },
+      };
+      expect(shown(field, [variant, '18:00:00Z'])).toEqual(
+        shown(field, [canonical, '18:00:00Z']),
+      );
+    },
+  );
 });

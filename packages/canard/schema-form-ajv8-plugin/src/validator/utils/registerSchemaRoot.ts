@@ -1,17 +1,21 @@
 /// <reference lib="es2021.weakref" preserve="true" />
-
-import { createWeakReference } from './createWeakReference';
 import type { JSONSchema } from '@canard/schema-form';
 import type { Ajv } from 'ajv';
 
+import { createWeakReference } from './createWeakReference';
 import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
-import { makeSibling, PLUGIN_KEY_PREFIX } from './makeSibling';
+import { PLUGIN_KEY_PREFIX, makeSibling } from './makeSibling';
 
 /** Provisional cap: Ajv's code scope keeps functions after removeSchema. */
 const MAX_TRANSIENT_ROOTS = 64;
 
 /** Dynamic-scope keywords; a root naming none of them as a key needs no guard anchor table. */
-const DYNAMIC_KEYWORDS: ReadonlySet<string> = new Set(['$dynamicAnchor', '$recursiveAnchor', '$dynamicRef', '$recursiveRef']);
+const DYNAMIC_KEYWORDS: ReadonlySet<string> = new Set([
+  '$dynamicAnchor',
+  '$recursiveAnchor',
+  '$dynamicRef',
+  '$recursiveRef',
+]);
 
 /** One root's validation and optional guard registrations. */
 export interface SchemaRootRegistration {
@@ -72,13 +76,18 @@ export const registerSchemaRoot = (
     for (let index = registry.active.length - 1; index >= 0; index--)
       if (!registry.active[index].deref()) registry.active.splice(index, 1);
   const allRegistrations = instanceIdRegistrationsOf(baseAjv);
-  const shared: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[] = ids.length ? allRegistrations : [];
+  const shared: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[] = ids.length
+    ? allRegistrations
+    : [];
   for (let index = shared.length - 1; index >= 0; index--)
     if (!shared[index].deref()) shared.splice(index, 1);
-  const conflict = ids.some((id) => registry.active.some((ref) => {
-    const entry = ref.deref();
-    return entry?.baseAjv === baseAjv && entry.ids.includes(id);
-  }) || shared.some((ref) => ref.deref()?.ids.includes(id)));
+  const conflict = ids.some(
+    (id) =>
+      registry.active.some((ref) => {
+        const entry = ref.deref();
+        return entry?.baseAjv === baseAjv && entry.ids.includes(id);
+      }) || shared.some((ref) => ref.deref()?.ids.includes(id)),
+  );
   if (!ids.length && registry.compilerBase !== baseAjv) {
     registry.compilerBase = baseAjv;
     registry.compilerCurrent = baseAjv;
@@ -88,15 +97,26 @@ export const registerSchemaRoot = (
     registry.compilerCurrent = makeSibling(baseAjv, !!baseAjv.opts.allErrors);
     registry.compilerCount = 0;
   }
-  const validationAjv = conflict ? makeSibling(baseAjv, !!baseAjv.opts.allErrors)
-    : ids.length ? baseAjv : registry.compilerCurrent ?? baseAjv;
+  const validationAjv = conflict
+    ? makeSibling(baseAjv, !!baseAjv.opts.allErrors)
+    : ids.length
+      ? baseAjv
+      : (registry.compilerCurrent ?? baseAjv);
   if (!ids.length) registry.compilerCount++;
   const key = `${PLUGIN_KEY_PREFIX}root/${++allRegistrations.nextKey}`;
   const validationCopy: JSONSchema | undefined = ids.length
-    ? JSON.parse(JSON.stringify(root)) : undefined;
+    ? JSON.parse(JSON.stringify(root))
+    : undefined;
   const registration: SchemaRootRegistration = {
-    baseAjv, validationAjv, validationCopy, validationRegistered: false, key, ids,
-    directGuards: [], guardChecks: new WeakMap(), hasDynamicKeywords,
+    baseAjv,
+    validationAjv,
+    validationCopy,
+    validationRegistered: false,
+    key,
+    ids,
+    directGuards: [],
+    guardChecks: new WeakMap(),
+    hasDynamicKeywords,
   };
   registrations.push(registration);
   registry.entries.set(root, registrations);

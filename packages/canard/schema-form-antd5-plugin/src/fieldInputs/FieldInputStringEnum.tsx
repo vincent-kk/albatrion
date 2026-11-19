@@ -88,7 +88,9 @@ const FieldInputStringEnum = ({
 
   const handleChange = useHandle((value: string | string[]) => {
     if (Array.isArray(value)) {
-      return onChange(previous => decodeEnumSelection(isArray(previous) ? previous : [], value, options));
+      return onChange((previous) =>
+        decodeEnumSelection(isArray(previous) ? previous : [], value, options),
+      );
     } else {
       const rawValue = options.find(
         (option) => option.value === value,

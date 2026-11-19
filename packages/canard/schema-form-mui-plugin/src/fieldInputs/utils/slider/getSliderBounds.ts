@@ -9,12 +9,21 @@ import { round } from '@winglet/common-utils/math';
  */
 export const getSliderBounds = (minimum = 0, maximum = 100, step = 1) => {
   const [digits, exponent = '0'] = step.toString().split('e');
-  const precision = Math.max(0, (digits.split('.')[1]?.length ?? 0) - Number(exponent));
+  const precision = Math.max(
+    0,
+    (digits.split('.')[1]?.length ?? 0) - Number(exponent),
+  );
   const lower = minimum / step;
   const upper = maximum / step;
   return {
-    min: round(Math.ceil(lower - Math.abs(lower) * Number.EPSILON) * step, precision),
-    max: round(Math.floor(upper + Math.abs(upper) * Number.EPSILON) * step, precision),
+    min: round(
+      Math.ceil(lower - Math.abs(lower) * Number.EPSILON) * step,
+      precision,
+    ),
+    max: round(
+      Math.floor(upper + Math.abs(upper) * Number.EPSILON) * step,
+      precision,
+    ),
     step,
   };
 };

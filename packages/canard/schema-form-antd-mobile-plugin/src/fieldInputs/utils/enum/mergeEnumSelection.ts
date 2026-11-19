@@ -10,9 +10,15 @@ export const mergeEnumSelection = <T>(
   selectedTokens: readonly (string | number)[],
   options: readonly { value: string; rawValue: T }[],
 ): T[] => {
-  const selected = options.filter(option => selectedTokens.includes(option.value)).map(option => option.rawValue);
+  const selected = options
+    .filter((option) => selectedTokens.includes(option.value))
+    .map((option) => option.rawValue);
   return [
-    ...previous.filter(value => !options.some(option => option.rawValue === value) || selected.includes(value)),
-    ...selected.filter(value => !previous.includes(value)),
+    ...previous.filter(
+      (value) =>
+        !options.some((option) => option.rawValue === value) ||
+        selected.includes(value),
+    ),
+    ...selected.filter((value) => !previous.includes(value)),
   ];
 };

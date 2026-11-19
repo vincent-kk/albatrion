@@ -25,16 +25,27 @@ export const cloneInstance = (
     allErrors,
     validateSchema,
     ...errorPathOptions,
-    ...(errorPathOptions?.errorDataPath === 'object' ? { _errorDataPathProperty: false } : {}),
+    ...(errorPathOptions?.errorDataPath === 'object'
+      ? { _errorDataPathProperty: false }
+      : {}),
   });
-  if ((pointerCompilers.get(instance) === instance && !errorPathOptions) || (errorPathOptions?.jsonPointers === true && errorPathOptions.errorDataPath === 'object')) pointerCompilers.set(clone, clone);
+  if (
+    (pointerCompilers.get(instance) === instance && !errorPathOptions) ||
+    (errorPathOptions?.jsonPointers === true &&
+      errorPathOptions.errorDataPath === 'object')
+  )
+    pointerCompilers.set(clone, clone);
   // Schema caches are isolated; future compiles read the bound instance's live rules.
   Object.defineProperties(clone, {
     _formats: { value: instance._formats },
     RULES: { value: instance.RULES },
   });
   for (const [key, env] of Object.entries(instance._schemas))
-    if (env && !key.startsWith(PLUGIN_KEY_PREFIX) && !Object.prototype.hasOwnProperty.call(clone._schemas, key))
+    if (
+      env &&
+      !key.startsWith(PLUGIN_KEY_PREFIX) &&
+      !Object.prototype.hasOwnProperty.call(clone._schemas, key)
+    )
       clone.addSchema(env.schema, key);
   return clone;
 };

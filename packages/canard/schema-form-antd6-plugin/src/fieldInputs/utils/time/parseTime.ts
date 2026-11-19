@@ -6,4 +6,7 @@ import dayjs from 'dayjs';
  * @returns A dayjs value with the same local-time conversion as an uppercase offset.
  */
 export const parseTime = (value: string | null | undefined) =>
-  dayjs(typeof value === 'string' ? value.replace(/z$/, 'Z') : value, 'HH:mm:00Z');
+  dayjs(
+    typeof value === 'string' ? value.replace(/z$/, 'Z') : value,
+    'HH:mm:00Z',
+  );

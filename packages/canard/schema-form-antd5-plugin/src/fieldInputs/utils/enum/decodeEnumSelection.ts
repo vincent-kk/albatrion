@@ -5,13 +5,19 @@
  * @param options - Tokens and original values for known enum choices.
  * @returns Selected JSON values in the library's order, preserving untouched identities.
  */
-export const decodeEnumSelection = <T>(previous: readonly T[], tokens: readonly string[], options: readonly { value: string; rawValue: T }[]): T[] => {
+export const decodeEnumSelection = <T>(
+  previous: readonly T[],
+  tokens: readonly string[],
+  options: readonly { value: string; rawValue: T }[],
+): T[] => {
   const result: T[] = [];
   for (const token of tokens) {
-    const option = options.find(option => option.value === token);
+    const option = options.find((option) => option.value === token);
     if (option) result.push(option.rawValue);
     else {
-      const index = previous.findIndex(value => JSON.stringify(value) === token);
+      const index = previous.findIndex(
+        (value) => JSON.stringify(value) === token,
+      );
       if (index >= 0) result.push(previous[index]);
     }
   }

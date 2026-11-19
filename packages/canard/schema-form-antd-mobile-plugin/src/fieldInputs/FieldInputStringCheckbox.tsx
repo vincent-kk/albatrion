@@ -14,8 +14,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-import { useControlIdentifiers } from './utils/controls/useControlIdentifiers';
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
+import { useControlIdentifiers } from './utils/controls/useControlIdentifiers';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 import { mergeEnumSelection } from './utils/enum/mergeEnumSelection';
 
@@ -67,7 +67,9 @@ const FieldInputStringCheckbox = ({
   }, [defaultValue]);
 
   const handleChange = useHandle((value: CheckboxValue[]) => {
-    onChange(previous => mergeEnumSelection(isArray(previous) ? previous : [], value, options));
+    onChange((previous) =>
+      mergeEnumSelection(isArray(previous) ? previous : [], value, options),
+    );
   });
 
   return (

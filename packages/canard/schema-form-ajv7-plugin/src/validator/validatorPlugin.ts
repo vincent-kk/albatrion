@@ -1,16 +1,19 @@
-import { createFinalizer } from './utils/createFinalizer';
 import type { ValidatorPlugin } from '@canard/schema-form';
 import AjvModule, { type Options } from 'ajv';
 
-import type { AjvInstance as Ajv } from './types/AjvInstance';
-
-import { compileWithSchemaFallback } from './utils/compileWithSchemaFallback';
-import { createValidatorFactory } from './createValidatorFactory';
 import { createGuardCompiler } from './createGuardCompiler';
+import { createValidatorFactory } from './createValidatorFactory';
+import type { AjvInstance as Ajv } from './types/AjvInstance';
 import { assertBindableInstance } from './utils/assertBindableInstance';
-import { registerSchemaRoot, type SchemaCompilerPool, type SchemaRootRegistration } from './utils/registerSchemaRoot';
-import { registerValidationRoot } from './utils/registerValidationRoot';
+import { compileWithSchemaFallback } from './utils/compileWithSchemaFallback';
+import { createFinalizer } from './utils/createFinalizer';
 import { disposeSchemaRoot } from './utils/disposeSchemaRoot';
+import {
+  type SchemaCompilerPool,
+  type SchemaRootRegistration,
+  registerSchemaRoot,
+} from './utils/registerSchemaRoot';
+import { registerValidationRoot } from './utils/registerValidationRoot';
 import { releaseSchemaRoot } from './utils/releaseSchemaRoot';
 import { resolveAjvConstructor } from './utils/resolveAjvConstructor';
 
@@ -58,7 +61,8 @@ let pool: SchemaCompilerPool | null = null;
 
 /** Share one compiler for up to 64 ID-free roots, then retire its Ajv code scope. */
 const getPool = (instance: Ajv): SchemaCompilerPool => {
-  if (!pool || pool.base !== instance) pool = { base: instance, current: instance, count: 0 };
+  if (!pool || pool.base !== instance)
+    pool = { base: instance, current: instance, count: 0 };
   return pool;
 };
 
@@ -95,17 +99,44 @@ export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
   },
   compile: (jsonSchema) => {
     if (!ajvInstance) ajvInstance = new AjvConstructor(defaultSettings);
-    const registered = registerSchemaRoot(jsonSchema, ajvInstance, roots, active, finalizer, getPool(ajvInstance));
+    const registered = registerSchemaRoot(
+      jsonSchema,
+      ajvInstance,
+      roots,
+      active,
+      finalizer,
+      getPool(ajvInstance),
+    );
     registerValidationRoot(registered);
-    const validate = compileWithSchemaFallback(registered.validation, ajvInstance, () => createValidatorFactory(
-      registered.validation, registered.validationCopy ? registered.key : undefined,
-    )(jsonSchema));
+    const validate = compileWithSchemaFallback(
+      registered.validation,
+      ajvInstance,
+      () =>
+        createValidatorFactory(
+          registered.validation,
+          registered.validationCopy ? registered.key : undefined,
+        )(jsonSchema),
+    );
     return async (value: unknown) => validate(value);
   },
   compileGuard: (root, pointer) => {
     if (!ajvInstance) ajvInstance = new AjvConstructor(defaultSettings);
-    const registered = registerSchemaRoot(root, ajvInstance, roots, active, finalizer, getPool(ajvInstance));
-    return createGuardCompiler(ajvInstance, registered, pointer, root, directGuardCompile, finalizer);
+    const registered = registerSchemaRoot(
+      root,
+      ajvInstance,
+      roots,
+      active,
+      finalizer,
+      getPool(ajvInstance),
+    );
+    return createGuardCompiler(
+      ajvInstance,
+      registered,
+      pointer,
+      root,
+      directGuardCompile,
+      finalizer,
+    );
   },
   release: (root) => releaseSchemaRoot(root, roots, active, finalizer),
   dialect: 'http://json-schema.org/draft-07/schema#',
