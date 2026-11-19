@@ -1,47 +1,25 @@
-import {
-  ASTERISK,
-  BACKSLASH,
-  DOUBLE_QUOTE,
-  LBRACE,
-  RBRACE,
-  SEMICOLON,
-  SINGLE_QUOTE,
-  SLASH,
-} from '../constants/asciiByte';
-import { findStringEnd } from './findStringEnd';
+import { CssTokenKind } from '../../cssTokens/CssTokenKind';
+import { getCssComponentEnd } from '../../cssTokens/getCssComponentEnd';
+import { readCssToken } from '../../cssTokens/readCssToken';
+import { type CssSource, readCssCode } from '../../cssTokens/readCssCode';
 
 /**
- * Tells whether a colon separates a property from its value, as opposed to
- * starting a pseudo-class or pseudo-element in a selector.
- *
- * @param buffer - UTF-8 bytes of the stylesheet
- * @param colon - Index of the colon byte
- * @returns `true` when a `;` or `}` follows before any `{`, skipping quoted
- * strings and comments. A `{` first, or neither, returns `false`: the colon may
- * belong to a selector, where the whitespace before it is a descendant combinator.
+ * Distinguish declaration punctuation from a descendant pseudo selector.
+ * @param source Stylesheet code units or bytes.
+ * @param colon Colon whose following component values determine its role.
+ * @returns Whether a declaration terminator occurs before a rule block opener.
  */
-export const isDeclarationColon = (
-  buffer: Uint8Array,
-  colon: number,
-): boolean => {
-  const length = buffer.length;
+export function isDeclarationColon(source: CssSource, colon: number): boolean {
   let index = colon + 1;
-  while (index < length) {
-    const byte = buffer[index];
-    if (byte === SEMICOLON || byte === RBRACE) return true;
-    if (byte === LBRACE) return false;
-    if (byte === BACKSLASH) index += 2;
-    else if (byte === DOUBLE_QUOTE || byte === SINGLE_QUOTE)
-      index = findStringEnd(buffer, index);
-    else if (byte === SLASH && buffer[index + 1] === ASTERISK) {
-      index += 2;
-      while (
-        index < length &&
-        !(buffer[index] === ASTERISK && buffer[index + 1] === SLASH)
-      )
-        index++;
-      index += 2;
-    } else index++;
+  while (index < source.length) {
+    const token = readCssToken(source, index), kind = token % 16;
+    const end = Math.floor(token / 16), code = readCssCode(source, index);
+    if (kind === CssTokenKind.Function) index = getCssComponentEnd(source, end - 1);
+    else if (kind === CssTokenKind.Delimiter) {
+      if (code === 59 || code === 125) return true;
+      if (code === 123) return false;
+      index = code === 40 || code === 91 ? getCssComponentEnd(source, index) : end;
+    } else index = end;
   }
   return false;
-};
+}

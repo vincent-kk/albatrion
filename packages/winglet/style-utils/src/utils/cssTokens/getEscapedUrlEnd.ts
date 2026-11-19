@@ -1,3 +1,4 @@
+import { getCssUrlToken } from './getCssUrlToken';
 import { getCssEscapeCode } from './getCssEscapeCode';
 import { getCssEscapeEnd } from './getCssEscapeEnd';
 import { isCssNameBoundary } from './isCssNameBoundary';
@@ -26,6 +27,7 @@ export const getEscapedUrlEnd = (source: CssSource, escape: number): number => {
     cursor = escaped ? getCssEscapeEnd(source, cursor) : cursor + 1;
   }
   if (readCssCode(source, cursor++) !== 40) return escape;
+  const open = cursor - 1;
   while (cursor < source.length) {
     const code = readCssCode(source, cursor);
     if (code !== 32 && !(code >= 9 && code <= 13 && code !== 11)) break;
@@ -33,10 +35,5 @@ export const getEscapedUrlEnd = (source: CssSource, escape: number): number => {
   }
   if (readCssCode(source, cursor) === 34 || readCssCode(source, cursor) === 39)
     return escape;
-  while (cursor < source.length) {
-    const code = readCssCode(source, cursor);
-    if (code === 41) return cursor + 1;
-    cursor = code === 92 ? getCssEscapeEnd(source, cursor) : cursor + 1;
-  }
-  return source.length;
+  return Math.floor(getCssUrlToken(source, open) / 16);
 };

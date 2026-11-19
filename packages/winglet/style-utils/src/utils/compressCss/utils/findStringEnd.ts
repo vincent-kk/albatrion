@@ -1,24 +1,13 @@
-import { getCssEscapeEnd } from '../../cssTokens/getCssEscapeEnd';
-import { BACKSLASH } from '../constants/asciiByte';
+import { CssTokenKind } from '../../cssTokens/CssTokenKind';
+import { getCssStringToken } from '../../cssTokens/getCssStringToken';
 
 /**
- * Finds where a quoted CSS string ends.
- *
- * @param buffer - UTF-8 bytes of the stylesheet
- * @param start - Index of the opening quote byte
- * @returns Index just past the closing quote, or `buffer.length` when the
- * string is unterminated. A CSS escape includes any hex terminator, so `"a\"b"`
- * ends at its last quote.
+ * Read the shared string position with the legacy bad-string newline boundary.
+ * @param buffer Stylesheet bytes.
+ * @param start Opening quote.
+ * @returns Position past a closing quote or before the recovering newline, or EOF.
  */
 export const findStringEnd = (buffer: Uint8Array, start: number): number => {
-  const quote = buffer[start];
-  const length = buffer.length;
-  let index = start + 1;
-  while (index < length) {
-    const byte = buffer[index];
-    if (byte === quote) return index + 1;
-    if (byte === 10 || byte === 13 || byte === 12) return index;
-    index = byte === BACKSLASH ? getCssEscapeEnd(buffer, index) : index + 1;
-  }
-  return length;
+  const token = getCssStringToken(buffer, start), end = Math.floor(token / 16);
+  return token % 16 === CssTokenKind.BadString ? end - (buffer[end - 2] === 13 && buffer[end - 1] === 10 ? 2 : 1) : end;
 };
