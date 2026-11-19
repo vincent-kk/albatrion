@@ -26,7 +26,7 @@ type SchedulerFunctions<Id = any> = {
  * Automatically detects platform capabilities and selects the most appropriate macrotask scheduling
  * API. Prioritizes Node.js native `setImmediate` for true macrotask semantics, falling back to
  * custom MessageChannelScheduler-based `setImmediate` implementation that provides superior
- * performance compared to `setTimeout`. Ensures consistent cross-platform behavior while
+ * performance compared to `setTimeout`. Uses the native host scheduling order while
  * leveraging the most efficient scheduling mechanism available.
  *
  * @returns Object containing platform-optimized macrotask scheduling and cancellation functions
@@ -245,7 +245,8 @@ const scheduler = getScheduleMacrotask() as SchedulerFunctions<number>;
  *
  * executionOrder.push('sync-2');
  *
- * // Final order: ['sync-1', 'sync-2', 'microtask-1', 'macrotask-1', 'macrotask-2', 'nested-microtask', 'nested-macrotask']
+ * // Browser fallback order: ['sync-1', 'sync-2', 'microtask-1', 'macrotask-1', 'macrotask-2', 'nested-microtask', 'nested-macrotask']
+ * // Node has a microtask checkpoint between callbacks: nested-microtask precedes macrotask-2.
  * ```
  *
  * @remarks

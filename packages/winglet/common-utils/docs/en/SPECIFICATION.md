@@ -379,6 +379,8 @@ Next event loop tick. Uses `process.nextTick` in Node.js, `setImmediate` or `set
 
 #### scheduleMacrotask / cancelMacrotask / scheduleCancelableMacrotask
 
+Node may run microtasks between native `setImmediate` callbacks. The browser fallback runs synchronously queued tasks in one batch, so nested microtasks can run after later tasks in that batch. Cancellation wrappers retain the same host-specific order.
+
 ```typescript
 scheduleMacrotask(callback: () => void): number
 cancelMacrotask(id: number): void
