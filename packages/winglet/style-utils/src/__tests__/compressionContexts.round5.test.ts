@@ -20,3 +20,8 @@ it('preserves custom-property value trivia for escaped property names', () => {
 it('preserves empty custom values in otherwise opaque at-rule functions', () => {
   expect(compressCss('@container style(--x: ){.b{color:red}}')).toContain('style(--x: )');
 });
+
+it('preserves ambiguous nested selector preludes and opaque at-rule blocks', () => {
+  for (const css of ['.a{p :hover{color:red}}', '.a{p: hover{color:red}}', '@\\6d edia (x){.a: hover{color:red}}', '@unknown{.a: hover{color:red}}'])
+    expect(readStylesheet(compressCss(css)), css).toEqual(readStylesheet(css));
+});
