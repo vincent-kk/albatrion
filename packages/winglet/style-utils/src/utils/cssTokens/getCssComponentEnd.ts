@@ -1,9 +1,10 @@
+import { getCssTextComponentEnd } from './getCssTextComponentEnd';
 import { CssTokenKind } from './CssTokenKind';
 import { type CssSource, readCssCode } from './readCssCode';
 import { readCssToken } from './readCssToken';
 
 /** Escape-free string spans cannot change the surrounding component nesting. */
-const STRING = String.raw`(?:"[^"\\\n\r\f]*(?:"|\r\n|[\n\r\f])|'[^'\\\n\r\f]*(?:'|\r\n|[\n\r\f]))`;
+const STRING = String.raw`(?:"[^"\\\n\r\f]*(?:"|\r\n|\r(?!\n)|[\n\f])|'[^'\\\n\r\f]*(?:'|\r\n|\r(?!\n)|[\n\f]))`;
 /** All alternatives have disjoint first code units; nested and escaped forms use token traversal. */
 const CONTENT = String.raw`(?:[^()[\]{}"'\\/]|${STRING})*`;
 /** Flat parenthesized positions. */
@@ -31,6 +32,7 @@ export function getCssComponentEnd(source: CssSource, open: number): number {
           : SIMPLE_BRACE;
     probe.lastIndex = open + 1;
     if (probe.test(source)) return probe.lastIndex;
+    return getCssTextComponentEnd(source, open);
   }
   let index = open + 1;
   while (index < source.length) {
