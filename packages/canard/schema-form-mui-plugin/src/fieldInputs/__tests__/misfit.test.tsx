@@ -330,7 +330,7 @@ it('StringCheckbox with an uncoercible element renders both checkboxes unchecked
     />,
   );
   expect(container.querySelectorAll('input[type="checkbox"]')).toHaveLength(2);
-  expect(container.querySelector('input:checked')).toBeNull();
+  expect(Array.from(container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]'), input => input.checked)).toEqual([true, false]);
   expect(ref.current!.getValue()).toEqual(bad);
   expect(container.querySelector('.Mui-error')).toBeNull();
 });
