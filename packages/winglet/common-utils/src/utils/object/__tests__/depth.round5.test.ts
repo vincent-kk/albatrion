@@ -55,4 +55,3 @@ describe('deep acyclic and cyclic chains through sibling functions (EQ11)', () =
     expect(outcome(() => clone(chain(depth, true)))).toBe('returned');
   });
 });
-
