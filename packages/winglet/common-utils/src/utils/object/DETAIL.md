@@ -94,6 +94,13 @@ merge가 조상의 안전한 속성 프리미티브를 읽고 부모가 merge를
 - **Direct import**: `allowed`
 - **Reason**: object 진입점은 merge를 재수출하므로 merge 재귀 구현이 그 진입점을 가져오면 순환 의존이 생깁니다. 측정 로더도 같은 함수 참조를 주입해야 하므로 직접 읽습니다.
 
+## Known Limits
+
+- Error 하위 클래스는 기록된 Error 생성자 정책에 따라 생성자 본문을 한 번 실행합니다. 원래 생성자의 초기화 의미와 AggregateError의 인자 규칙을 유지하기 위한 선택입니다. 생성자 실행을 피해야 하는 호출자는 필요한 message·name·stack·cause 데이터를 기본 Error에 명시적으로 옮긴 뒤 복제합니다.
+- ArrayBuffer 하위 클래스는 기본 slice·species를 통해 생성자 본문을 한 번 실행합니다. 이를 피하려면 기본 Uint8Array 뷰의 slice로 바이트를 기본 ArrayBuffer에 복사한 뒤 복제합니다.
+- TypedArray 하위 클래스는 기본 slice·species에서 생성자 본문을 한 번 실행하며 프로토타입과 선택된 바이트를 보존합니다. 결과의 byteOffset은 0입니다. 정확한 프로토타입 확인은 일반 뷰 복제마다 집합 방식에서 약 15ns를 더하고, 조회 한 번과 상수 비교만 사용하는 방식도 성능 허용 범위를 넘으므로 희소한 하위 클래스의 생성자 미실행 보장을 추가하지 않습니다. 생성자·slice·species 실행을 피하려면 해당 기본 TypedArray의 뷰를 명시적으로 만든 뒤 복제하고, 필요할 때 결과의 프로토타입을 원래 프로토타입으로 복원합니다.
+- DataView 하위 클래스의 생성자는 실행하지 않지만 복제 결과는 기본 DataView이므로 하위 프로토타입과 상속 메서드를 보존하지 않습니다. DataView에는 slice·species 경로가 없습니다. 전체 버퍼의 독립 복사와 원래 byteOffset·byteLength는 유지합니다. 하위 프로토타입이 필요하면 기본 DataView 뷰를 복제한 뒤 결과에 원래 프로토타입을 명시적으로 복원합니다. 두 뷰 계열은 위의 생성자 미실행·프로토타입 보존 계약에 포함하지 않습니다.
+
 ## Last Updated
 
 객체 연산과 예약 멤버의 own 데이터 계약이 바뀌면 갱신합니다.
