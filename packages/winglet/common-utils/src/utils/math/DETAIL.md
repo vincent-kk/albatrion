@@ -30,9 +30,10 @@
 
 ### combinatorics-and-base-conversion — 조합론·진법 변환
 
+- `factorial`은 작은 인자부터 오름차순으로 같은 곱셈 순서를 사용하여 캐시 이력과 무관한 결과를 반환합니다.
 - `factorial`/`fibonacci`는 모듈 스코프 `Map` 캐시를 두어 동일 인자를 다시 호출해도 같은 값을 반환한다.
 - `combination(n, r)`은 약분한 중간 곱이 안전 정수 범위를 넘기는 최초 단계부터 BigInt 누산으로 전환해, 최종 정답이 안전 정수이면 정확한 값을 반환합니다. 작은 입력은 number 연산만 사용합니다. 대칭성(`C(n,r) = C(n,n-r)`)으로 반복 횟수를 줄이고, `r > n`이면 `0`을, 음수·비정수 인자면 예외를 던진다.
-- `fromBase`/`toBase`는 base 2~36을 지원하고 대소문자를 구분하지 않으며, 잘못된 자릿수·범위를 벗어난 base·빈 문자열(부호만 있는 입력 포함)에 각각 다른 메시지로 예외를 던진다.
+- `fromBase`/`toBase`는 base 2~36의 ASCII 숫자·영문자를 지원하고 ASCII 대소문자를 구분하지 않으며, 잘못된 자릿수·범위를 벗어난 base·빈 문자열(부호만 있는 입력 포함)에 각각 다른 메시지로 예외를 던진다.
 - `digitSum`은 음수를 절대값으로 취급하고 비정수 입력에 예외를 던진다.
 
 ### precision-sensitive-pair-functions — gcd·lcm의 정밀도 처리
