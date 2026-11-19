@@ -1,5 +1,6 @@
 import { type ComponentValue, isCommentNode, isFunctionNode, isSimpleBlockNode, isTokenNode, isWhitespaceNode } from '@csstools/css-parser-algorithms';
 import { tokenKey } from './tokenKey';
+import { isEmptyValueWhitespace } from './isEmptyValueWhitespace';
 
 /** Serialize the Syntax tree, normalizing only redundant semicolons and selector-list combinator trivia. */
 export const serializeComponents = (values: ComponentValue[], selector = false): string => {
@@ -8,6 +9,10 @@ export const serializeComponents = (values: ComponentValue[], selector = false):
   for (let index = 0; index < meaningful.length; index++) {
     const value = meaningful[index];
     if (isWhitespaceNode(value)) {
+      if (isEmptyValueWhitespace(meaningful, index)) {
+        if (parts[parts.length - 1] !== 'empty-value-space') parts.push('empty-value-space');
+        continue;
+      }
       const previous = meaningful[index - 1], next = meaningful[index + 1];
       const combinator = (node: ComponentValue | undefined) => node && isTokenNode(node) && (node.value[0] === 'comma-token' || (node.value[0] === 'delim-token' && ['>', '~', '+'].includes(node.value[4].value)));
       if (selector && (combinator(previous) || combinator(next))) continue;
