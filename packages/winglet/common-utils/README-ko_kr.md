@@ -181,7 +181,7 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 - **[`isEmptyArray`](./src/utils/filter/isEmptyArray.ts)**: 배열이 비어있는지 확인하는 함수
 - **[`isEmptyObject`](./src/utils/filter/isEmptyObject.ts)**: 객체가 비어있는지 확인하는 함수
 - **[`isEmptyPlainObject`](./src/utils/filter/isEmptyPlainObject.ts)**: 일반 객체가 비어있는지 확인하는 함수
-- **[`isEmpty`](./src/utils/filter/isEmpty.ts)**: 값이 비어있는지 포괄적으로 확인하는 함수 (null, undefined, 빈 문자열, 빈 배열, 빈 객체 등)
+- **[`isEmpty`](./src/utils/filter/isEmpty.ts)**: 값이 비어있는지 확인하는 함수 (null, undefined, 빈 문자열, 빈 배열, 빈 객체 등). 다른 realm의 Map과 Set은 size 대신 열거 가능한 자기 속성으로 판정하므로 값이 있어도 비어 있다고 판정될 수 있습니다.
 - **[`isError`](./src/utils/filter/isError.ts)**: 값이 Error 객체인지 확인하는 함수
 - **[`isFile`](./src/utils/filter/isFile.ts)**: 값이 File 객체인지 확인하는 함수
 - **[`isFunction`](./src/utils/filter/isFunction.ts)**: 값이 함수인지 확인하는 함수
