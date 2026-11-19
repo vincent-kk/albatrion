@@ -361,6 +361,8 @@ withTimeout<T>(fn: () => Promise<T>, ms: number, options?: { signal?: AbortSigna
 
 비동기 함수에 타임아웃을 추가합니다. `Promise.race`를 사용합니다. 시간 초과 시 `TimeoutError`를 throw합니다.
 
+전역 `AbortController` 구현이나 호환 polyfill이 필요합니다. 없으면 `fn`을 호출하기 전에 동기 `TypeError`를 던집니다. 외부 signal이 이미 중단되었으면 원본을 시작하지 않고 기존처럼 `AbortError`로 거부합니다.
+
 ```typescript
 try {
   const data = await withTimeout(() => fetchData(), 5000);
