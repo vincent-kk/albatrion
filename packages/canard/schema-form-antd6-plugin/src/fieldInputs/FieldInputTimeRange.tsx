@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { DatePicker } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
-import dayjs, { type Dayjs } from 'dayjs';
+import type { Dayjs } from 'dayjs';
 
 import { isArray } from '@winglet/common-utils/filter';
 import { isStringSchema } from '@winglet/json-schema/filter';
@@ -16,6 +16,8 @@ import type {
 } from '@canard/schema-form';
 
 import type { Parameter } from '@aileron/declare';
+
+import { parseTime } from './utils/time/parseTime';
 
 const DATE_FORMAT = 'HH:mm:00Z';
 
@@ -46,7 +48,7 @@ const MINUTES = Array.from({ length: 60 }, (_, minute) => minute);
  */
 const toLocalMinute = (limit: string | undefined) => {
   if (!limit) return undefined;
-  const time = dayjs(limit, DATE_FORMAT);
+  const time = parseTime(limit);
   return time.isValid() ? time.hour() * 60 + time.minute() : undefined;
 };
 
@@ -97,8 +99,8 @@ const FieldInputTimeRange = ({
     () =>
       isArray(defaultValue) && defaultValue.length === 2
         ? [
-            dayjs(defaultValue[0], DATE_FORMAT),
-            dayjs(defaultValue[1], DATE_FORMAT),
+            parseTime(defaultValue[0]),
+            parseTime(defaultValue[1]),
           ]
         : undefined,
     [defaultValue],
