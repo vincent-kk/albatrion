@@ -54,7 +54,7 @@ export class ModalManager {
   /** Tracks a node until destruction, including changes to hidden nodes. */
   static register(node: ModalNode): void {
     if (ModalManager.__state__.nodes.has(node.id)) return;
-    node.displayReader = ModalManager.isDisplayed;
+    node.setDisplayReader?.(ModalManager.isDisplayed);
     node.order = ++ModalManager.__state__.order;
     ModalManager.__state__.nodes.set(node.id, node);
     if (typeof document !== 'undefined')
@@ -73,6 +73,7 @@ export class ModalManager {
           restore &&
           node.dimmed &&
           node.visible &&
+          node.isVisibleAtSettlement !== false &&
           ModalManager.isDisplayed() &&
           ModalManager.ownsFocus(node.id);
         const target = ModalManager.__state__.focusTargets.get(node.id);
@@ -237,7 +238,10 @@ export class ModalManager {
     const returning =
       ModalManager.__state__.focused.size && ModalManager.isDisplayed()
         ? ModalManager.visibleNodes().find(
-            (node) => node.dimmed && ModalManager.ownsFocus(node.id),
+            (node) =>
+              node.dimmed &&
+              ModalManager.isDisplayed(node.id) &&
+              ModalManager.ownsFocus(node.id),
           )
         : undefined;
     ModalManager.__state__.owner = null;
@@ -288,8 +292,11 @@ export class ModalManager {
     ModalManager.updateAccessibility(true);
   }
   /** Reads actual Provider attachment at the instant a request settles. */
-  private static isDisplayed(): boolean {
-    return !!ModalManager.__state__.anchor?.isConnected;
+  private static isDisplayed(id?: number): boolean {
+    return (
+      !!ModalManager.__state__.anchor?.isConnected &&
+      (id === undefined || !!ModalManager.__state__.frames.get(id)?.isConnected)
+    );
   }
   /** Snapshot focus ownership before settling clears participation.
    * @param id Request whose visible interval may own focus.

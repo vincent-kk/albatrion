@@ -77,7 +77,8 @@ async function scenario(mode: string, action: string, hide: boolean) {
       await act(async () => setContentHidden(true));
       if (document.activeElement instanceof HTMLElement)
         document.activeElement.blur();
-      if (action === 'content-settle-hidden') await act(async () => controller.abort());
+      if (action === 'content-settle-hidden')
+        await act(async () => controller.abort());
       await act(async () => setContentHidden(false));
     } else if (action === 'content-settle-hidden') {
       act(() => node?.onHide());
