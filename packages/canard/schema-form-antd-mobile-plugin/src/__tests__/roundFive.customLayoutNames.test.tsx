@@ -1,0 +1,174 @@
+import { cleanup, render } from '@testing-library/react';
+import { computeAccessibleName } from 'dom-accessibility-api';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import {
+  type FieldRendererProps,
+  Form,
+  type JSONSchema,
+} from '@canard/schema-form';
+
+import { plugin } from '../index';
+
+beforeEach(() =>
+  vi.stubGlobal(
+    'ResizeObserver',
+    class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    },
+  ),
+);
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
+
+const schema: JSONSchema = {
+  type: 'object',
+  properties: {
+    plan: {
+      type: 'string',
+      enum: ['free', 'pro'],
+      presentation: { inputType: 'radio' },
+    },
+    tags: {
+      type: 'array',
+      items: { type: 'string', enum: ['a', 'b'] },
+      presentation: { inputType: 'checkbox' },
+    },
+    level: {
+      type: 'number',
+      minimum: 0,
+      maximum: 10,
+      format: 'slider',
+    },
+  },
+};
+
+const pluginProps = {
+  fieldInputDefinitions: plugin.fieldInputDefinitions,
+  FieldRenderer: plugin.FieldRenderer,
+  LabelRenderer: plugin.LabelRenderer,
+  ErrorMessageRenderer: plugin.ErrorMessageRenderer,
+};
+
+/** Accessible names of the group ancestors of the first element matching selector. */
+const groupNames = (container: HTMLElement, selector: string) => {
+  const first = container.querySelector(selector);
+  if (!first) throw new Error('no element for ' + selector);
+  const names: string[] = [];
+  for (
+    let element = first.parentElement;
+    element && element !== container;
+    element = element.parentElement
+  ) {
+    const role =
+      element.getAttribute('role') ??
+      (element.tagName === 'FIELDSET' ? 'group' : null);
+    if (role === 'radiogroup' || role === 'group')
+      names.push(computeAccessibleName(element));
+  }
+  return names.filter(Boolean);
+};
+
+const duplicateIds = (container: HTMLElement) => {
+  const ids = Array.from(container.querySelectorAll('[id]'), (e) => e.id);
+  return ids.filter((id, index) => ids.indexOf(id) !== index);
+};
+
+const CustomGroup = ({ Label, Input }: FieldRendererProps) => (
+  <div>
+    <Label />
+    <Input />
+  </div>
+);
+
+describe('antd-mobile: grouped inputs take the title that Form.Label renders', () => {
+  it('control: the plugin FieldRenderer names the radio group "plan"', () => {
+    const { container } = render(<Form jsonSchema={schema} {...pluginProps} />);
+    expect(groupNames(container, 'input[type="radio"]')).toContain('plan');
+  });
+
+  it('Form.Label + Form.Input: the radio group is named "plan"', () => {
+    const { container } = render(
+      <Form jsonSchema={schema} {...pluginProps}>
+        <Form.Label path="/plan" />
+        <Form.Input path="/plan" />
+      </Form>,
+    );
+    expect(duplicateIds(container)).toEqual([]);
+    expect(groupNames(container, 'input[type="radio"]')).toContain('plan');
+  });
+
+  it('Form.Label + Form.Input: the checkbox group is named "tags"', () => {
+    const { container } = render(
+      <Form jsonSchema={schema} {...pluginProps}>
+        <Form.Label path="/tags" />
+        <Form.Input path="/tags" />
+      </Form>,
+    );
+    expect(groupNames(container, 'input[type="checkbox"]')).toContain('tags');
+  });
+
+  it('control: the plugin FieldRenderer names the slider handle "level"', () => {
+    const { container } = render(
+      <Form jsonSchema={schema} defaultValue={{ level: 5 }} {...pluginProps} />,
+    );
+    const handle = container.querySelector('[role="slider"]')!;
+    expect(computeAccessibleName(handle)).toBe('level');
+  });
+
+  it('Form.Label + Form.Input: the slider handle is named "level"', () => {
+    const { container } = render(
+      <Form jsonSchema={schema} defaultValue={{ level: 5 }} {...pluginProps}>
+        <Form.Label path="/level" />
+        <Form.Input path="/level" />
+      </Form>,
+    );
+    const handle = container.querySelector('[role="slider"]')!;
+    expect(computeAccessibleName(handle)).toBe('level');
+  });
+
+  it('custom FieldRenderer with the bound Label: the radio group is named "plan"', () => {
+    const { container } = render(
+      <Form jsonSchema={schema} {...pluginProps} FieldRenderer={CustomGroup} />,
+    );
+    expect(groupNames(container, 'input[type="radio"]')).toContain('plan');
+  });
+
+  it.each([
+    ['plugin FieldRenderer', false],
+    ['Form.Label + Form.Input', true],
+  ])('%s: the boolean switch is named "agree"', (_layout, custom) => {
+    const switchSchema: JSONSchema = {
+      type: 'object',
+      properties: {
+        agree: { type: 'boolean', presentation: { inputType: 'switch' } },
+      },
+    };
+    const { container } = render(
+      custom ? (
+        <Form jsonSchema={switchSchema} {...pluginProps}>
+          <Form.Label path="/agree" />
+          <Form.Input path="/agree" />
+        </Form>
+      ) : (
+        <Form jsonSchema={switchSchema} {...pluginProps} />
+      ),
+    );
+    const control = container.querySelector('[role="switch"]')!;
+    expect(computeAccessibleName(control)).toContain('agree');
+  });
+
+  it('control: the core built-in radio in the same layout is named "plan"', () => {
+    const { container } = render(
+      <Form jsonSchema={schema}>
+        <Form.Label path="/plan" />
+        <Form.Input path="/plan" />
+      </Form>,
+    );
+    expect(groupNames(container, 'input[type="radio"]')).toContain('plan');
+  });
+});
