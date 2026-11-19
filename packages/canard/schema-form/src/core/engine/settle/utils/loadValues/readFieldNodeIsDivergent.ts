@@ -1,6 +1,7 @@
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
 import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
+import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
 import { getDependencyIndex } from '../dependencies/getDependencyIndex';
 import { getLoadValue } from './getLoadValue';
 
@@ -14,6 +15,16 @@ export const readFieldNodeIsDivergent = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   const baseline = node.runtime.loadBaseline;
   if (!baseline || node.isDetached) return false;
+  if (node.behavior.type === 'virtual')
+    return (
+      resolveStorageTargets(node)?.some(
+        (target) =>
+          !sameValue(
+            getLoadValue(node.rootNode.storedOutputValue, target.path),
+            getLoadValue(baseline.value, target.path),
+          ),
+      ) ?? false
+    );
   let segments = node.divergenceSegments;
   if (!segments || !Object.is(node.path, node.divergencePath)) {
     segments = node.runtime.blueprint.capabilities.isBranchless

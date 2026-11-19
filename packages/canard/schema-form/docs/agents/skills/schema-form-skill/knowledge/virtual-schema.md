@@ -34,6 +34,13 @@ Declare the real names, such as `startDate` and `endDate`, in the object's `requ
 ## Node Access
 
 - Match tuple slots by the declared field name. `node.children` contains only active constituents, so its index is not the tuple index. Inactive or absent constituents contribute `undefined` to their own tuple slot.
+For a group over `a` and `b`, this field-name pairing keeps an inactive `b` in its tuple slot:
+
+```typescript
+const fields = ['a', 'b'];
+const slots = fields.map((name, index) => ({ name, value: Array.isArray(group.value) ? group.value[index] : undefined, node: group.children?.find(child => child.name === name) }));
+```
+
 - From outside: `formRef.current?.findNode('/period')`, narrowed with the exported `isVirtualNode()` guard.
 
 The virtual FieldInput's node and subtree visitors remain required, as do array operations on its constituents and virtualization `Placeholder` / `estimateHeight` callbacks. Their live-update contract follows [arrays and scale](./arrays-and-scale.md#render-level-virtualization-built-in). Narrow missing lookups before using them. The observation hooks' null/undefined support does not make those inputs optional, and a null JSON value, `NullNode`, or nullable schema does not mean the node reference is absent.

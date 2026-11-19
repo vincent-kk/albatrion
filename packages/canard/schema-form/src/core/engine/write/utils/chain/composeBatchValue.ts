@@ -18,7 +18,12 @@ import { replaceAtPath } from './utils/replaceAtPath';
  */
 export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
   root: Self,
-  writes: readonly { node: Self; value: unknown; option: WriteOption }[],
+  writes: readonly {
+    node: Self;
+    value: unknown;
+    option: WriteOption;
+    virtualFields?: readonly string[];
+  }[],
 ): unknown => {
   let value = root.storedValue;
   for (const write of writes) {
@@ -40,7 +45,12 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
     const parentNames = names.slice(0, -1);
     for (let index = 0; index < targets.length; index++) {
       const target = targets[index];
-      if (!target.node) continue;
+      if (
+        write.virtualFields
+          ? !write.virtualFields.includes(target.name)
+          : !target.node && values?.[index] === undefined
+      )
+        continue;
       value = replaceAtPath(
         value,
         [...parentNames, target.name],

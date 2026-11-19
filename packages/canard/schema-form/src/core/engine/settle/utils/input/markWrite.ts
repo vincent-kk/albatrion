@@ -2,7 +2,10 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Optional } from '@aileron/declare';
 
-import { appendSegment, isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+import {
+  appendSegment,
+  isDescendantPath,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord, UnionSpec } from '../../../record';
 import { FieldNodeWriteKind } from '../../../types/value';
@@ -89,17 +92,36 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     const fields = node.blueprintNode.fields ?? [];
     const values = isArray(value) ? value : undefined;
     for (let index = 0; index < fields.length; index++) {
+      if (
+        node === context.target &&
+        context.virtualWriteFields &&
+        !context.virtualWriteFields.includes(fields[index])
+      )
+        continue;
       const sibling = node.parent?.childrenByName?.[fields[index]];
       if (!sibling) {
         const parent = node.parent;
         const entry = parent?.blueprintNode.childEntries.find(
           (entry) => entry.name === fields[index],
         );
-        if (parent && entry && (values?.[index] !== undefined || context.kind === FieldNodeWriteKind.Load)) {
+        if (
+          parent &&
+          entry &&
+          (values?.[index] !== undefined ||
+            context.kind === FieldNodeWriteKind.Load)
+        ) {
           const path = appendSegment(parent.path, fields[index]);
           if (context.kind === FieldNodeWriteKind.Load)
             pruneInactiveSources(parent.runtime, path, undefined, context);
-          writeSlotPath(context.root, path, entry.node, values?.[index], !isMerge, context, context.isAutomatic);
+          writeSlotPath(
+            context.root,
+            path,
+            entry.node,
+            values?.[index],
+            !isMerge,
+            context,
+            context.isAutomatic,
+          );
           context.dirtyPaths.add(parent.path);
         }
         continue;

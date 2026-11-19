@@ -227,6 +227,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   replacementPaths?: readonly string[];
   /** Real sibling paths replaced by a caller write through a virtual node. */
   virtualReplacementPaths?: string[];
+  /** Target virtual slots admitted at public call entry, independent of later gate changes. */
+  virtualWriteFields?: readonly string[];
   /** Nodes newly present after calculation or reset by this load. */
   enteredNodes: Set<Self>;
   /** Reused pending occurrences whose sources must remain visible to fills. */

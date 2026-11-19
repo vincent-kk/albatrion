@@ -285,6 +285,8 @@ export interface FieldNodeRuntime<Self>
     value: unknown;
     option: WriteOption;
     source?: FieldNodeWriteKind.Input | FieldNodeWriteKind.Automatic;
+    /** Physical field names admitted by a virtual call before later marks settle. */
+    virtualFields?: readonly string[];
   }[];
   /** Load defers validation until the binding's slot. */
   shouldDeferLoadValidation?: boolean;
