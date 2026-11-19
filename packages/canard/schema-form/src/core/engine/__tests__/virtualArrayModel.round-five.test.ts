@@ -35,6 +35,11 @@ it('virtual item groups follow 1000 generated array mutation histories', () => {
       validationMode: ValidationMode.None,
       errorReporter: { hasConsumer: () => true, report: () => {} },
     });
+    const outside = root.find('/outside')!;
+    outside.setState({ touched: true });
+    outside.setExternalErrors([{ dataPath: '/outside', keyword: 'outside' }]);
+    const outsideState = outside.state,
+      outsideErrors = outside.errors;
     const rows = root.find('/rows');
     if (!isArrayNode(rows)) throw new Error('rows expected');
     const model: {
@@ -88,11 +93,24 @@ it('virtual item groups follow 1000 generated array mutation histories', () => {
         outside: 'outside',
         ...(model.length ? { rows: expected } : {}),
       });
-      for (let slot = 0; slot < model.length; slot++)
+      expect(root.find('/outside')).toBe(outside);
+      expect(outside.state).toEqual(outsideState);
+      expect(outside.errors).toEqual(outsideErrors);
+      for (let slot = 0; slot < model.length; slot++) {
+        expect(
+          root
+            .find(`/rows/${slot}/group`)!
+            .children?.map((child) => child.path) ?? [],
+          `seed=${seed} slot=${slot} children`,
+        ).toEqual([
+          `/rows/${slot}/a`,
+          ...(model[slot].on ? [`/rows/${slot}/b`] : []),
+        ]);
         expect(
           root.find(`/rows/${slot}/group`)!.value,
           `seed=${seed} slot=${slot}`,
         ).toEqual([model[slot].a, model[slot].on ? model[slot].b : undefined]);
+      }
     }
   }
 }, 120_000);
