@@ -4,7 +4,7 @@ import { createStyleHarness } from './helpers/createStyleHarness';
 import { createRandom } from './helpers/cssSyntax/createRandom';
 import { readStylesheet } from './helpers/cssSyntax/readStylesheet';
 import { fragmentCorpus } from './helpers/fragmentCorpus';
-import { generateValidSheet } from './helpers/generateValidSheet';
+import { generateFragment } from './helpers/generateFragment';
 
 /** Preserve the host surface after the constructable-sheet recording fixture. */
 const originalAdopted = Object.getOwnPropertyDescriptor(document, 'adoptedStyleSheets');
@@ -32,7 +32,7 @@ it.each([[false, false], [false, true], [true, false], [true, true]])('compares 
     return rules;
   };
   for (let trial = 0; trial < 768; trial++) {
-    const actions = Array.from({ length: 8 }, (_, index) => ({ id: 'id' + Math.floor(random() * 4), remove: index > 1 && random() < 0.25, css: trial < fragmentCorpus.length ? fragmentCorpus[(trial + index) % fragmentCorpus.length] : random() < 0.6 ? fragmentCorpus[Math.floor(random() * fragmentCorpus.length)] : generateValidSheet(random) }));
+    const actions = Array.from({ length: 8 }, (_, index) => ({ id: 'id' + Math.floor(random() * 4), remove: index > 1 && random() < 0.25, css: trial < fragmentCorpus.length ? fragmentCorpus[(trial + index) % fragmentCorpus.length] : random() < 0.6 ? fragmentCorpus[Math.floor(random() * fragmentCorpus.length)] : generateFragment(random) }));
     for (const action of actions) if (!action.remove && action.css.trim()) isolated(action.css);
     const model = new Map<string, string[]>(), cleanups = new Map<string, () => void>();
     const harness = createStyleHarness(shadow);

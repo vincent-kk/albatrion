@@ -17,6 +17,8 @@ export const generateValidSheet = (random: () => number): string => {
     case 4: return '@keyframes k{from{opacity:0}to{opacity:1}}' + rule;
     case 6: return '@supports selector(.a: hover){' + rule + '}';
     case 8: return '@supports (--x: ){' + rule + '}';
+    case 9: return '@layer group{' + rule + '@layer ending;}';
+    case 10: return '@media (min-width:1px){@layer beginning;' + rule + '@layer middle;' + rule + '@layer ending;}';
     case 7: return '@container style(--x: ){' + rule + '}';
     case 5: return '@font-face{font-family:"F";src:url(f.woff2)}' + rule;
     default: return rule;
