@@ -42,7 +42,11 @@ declare module 'ajv' {
       readonly keywords: Readonly<Dictionary<boolean>>;
     };
     readonly _schemas: Dictionary<
-      { readonly schema: object | boolean } | undefined
+      {
+        readonly schema: object | boolean;
+        /** Native flag separating meta-schema programs from application data schemas. */
+        readonly meta?: boolean;
+      } | undefined
     >;
     /** Resolved references by URI: compiled schema objects or string aliases; restored in place after a failed validation registration. */
     readonly _refs: Dictionary<unknown>;

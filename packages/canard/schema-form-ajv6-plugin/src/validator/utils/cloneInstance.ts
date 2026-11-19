@@ -10,14 +10,14 @@ export const PLUGIN_KEY_PREFIX = 'urn:canard:schema-form:ajv6:';
  * @param instance - Bound instance whose options, formats, keywords and consumer schemas are copied
  * @param allErrors - Error collection of the clone
  * @param validateSchema - Schema validation of the clone; defaults to the bound instance's setting
- * @param errorPathOptions - Private validation profiles normalize paths without changing the source instance.
+ * @param compilerOptions - Private data profiles normalize paths and can leave meta-schema validation to the source.
  * @returns A new instance of the bound instance's class
  */
 export const cloneInstance = (
   instance: Ajv.Ajv,
   allErrors: boolean,
   validateSchema: Ajv.Options['validateSchema'] = instance._opts.validateSchema,
-  errorPathOptions?: Pick<Ajv.Options, 'jsonPointers' | 'errorDataPath'>,
+  compilerOptions?: Pick<Ajv.Options, 'jsonPointers' | 'errorDataPath' | 'meta'>,
 ): Ajv.Ajv => {
   const Constructor = instance.constructor;
   const clone = new Constructor({
@@ -25,15 +25,15 @@ export const cloneInstance = (
     cache: undefined,
     allErrors,
     validateSchema,
-    ...errorPathOptions,
-    ...(errorPathOptions?.errorDataPath === 'object'
+    ...compilerOptions,
+    ...(compilerOptions?.errorDataPath === 'object'
       ? { _errorDataPathProperty: false }
       : {}),
   });
   if (
-    (pointerCompilers.get(instance) === instance && !errorPathOptions) ||
-    (errorPathOptions?.jsonPointers === true &&
-      errorPathOptions.errorDataPath === 'object')
+    (pointerCompilers.get(instance) === instance && !compilerOptions) ||
+    (compilerOptions?.jsonPointers === true &&
+      compilerOptions.errorDataPath === 'object')
   )
     pointerCompilers.set(clone, clone);
   // Schema caches are isolated; future compiles read the bound instance's live rules.
@@ -44,6 +44,7 @@ export const cloneInstance = (
   for (const [key, env] of Object.entries(instance._schemas))
     if (
       env &&
+      !(compilerOptions?.meta === false && env.meta) &&
       !key.startsWith(PLUGIN_KEY_PREFIX) &&
       !Object.prototype.hasOwnProperty.call(clone._schemas, key)
     )

@@ -57,27 +57,22 @@ export const createSchemaValidator = (
   if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
   const compiled: object = transient ?? jsonSchema;
   const legacyId = ajv._opts.schemaId === 'id' || ajv._opts.schemaId === 'auto';
-  const resources = hasResources || legacyId
-    ? collectSchemaResources(compiled, legacyId)
-    : NO_RESOURCES;
-  // Without resources every path is `#/` or unmatched, so the uncached classifier does no extra work.
-  const isChildPath = resources.length
-    ? createChildSchemaPathTest(resources)
-    : isChildSchemaPath;
-  const notRequiredKeyOf = createNotRequiredKeyLookup(compiled, resources);
+  let issueContext: {
+    isChildPath: Parameters<typeof transformDataPath>[1];
+    notRequiredKeyOf: ReturnType<typeof createNotRequiredKeyLookup>;
+  } | undefined;
   return async (data) => {
+    let errors: Ajv.ErrorObject[];
+    let originalErrors: Ajv.ErrorObject[] | undefined;
     try {
       const result = validate(data);
-      if (typeof result === 'boolean')
-        return result
-          ? null
-          : transformDataPath(
-              validate.errors ?? [],
-              isChildPath,
-              notRequiredKeyOf,
-            );
-      await result;
-      return null;
+      if (typeof result === 'boolean') {
+        if (result) return null;
+        errors = validate.errors ?? [];
+      } else {
+        await result;
+        return null;
+      }
     } catch (thrown) {
       if (
         thrown !== null &&
@@ -89,7 +84,8 @@ export const createSchemaValidator = (
         'errors' in thrown &&
         Array.isArray(thrown.errors)
       ) {
-        const errors = isAsyncReference
+        originalErrors = thrown.errors;
+        errors = isAsyncReference
           ? thrown.errors.map((error: Ajv.ErrorObject) => ({
               ...error,
               schemaPath: error.schemaPath.startsWith(rootPrefix)
@@ -97,13 +93,23 @@ export const createSchemaValidator = (
                 : error.schemaPath,
             }))
           : thrown.errors;
-        const issues = transformDataPath(errors, isChildPath, notRequiredKeyOf);
-        if (isAsyncReference)
-          for (let index = 0; index < issues.length; index++)
-            issues[index].source = thrown.errors[index];
-        return issues;
-      }
-      throw thrown;
+      } else throw thrown;
     }
+    if (!issueContext) {
+      const resources = hasResources || legacyId
+        ? collectSchemaResources(compiled, legacyId)
+        : NO_RESOURCES;
+      issueContext = {
+        isChildPath: resources.length
+          ? createChildSchemaPathTest(resources)
+          : isChildSchemaPath,
+        notRequiredKeyOf: createNotRequiredKeyLookup(compiled, resources),
+      };
+    }
+    const issues = transformDataPath(errors, issueContext.isChildPath, issueContext.notRequiredKeyOf);
+    if (isAsyncReference && originalErrors)
+      for (let index = 0; index < issues.length; index++)
+        issues[index].source = originalErrors[index];
+    return issues;
   };
 };

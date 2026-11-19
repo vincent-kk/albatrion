@@ -41,17 +41,14 @@ export const compileWithPointers = (
     forceAsync && typeof registered === 'object'
       ? { ...registered, $async: true }
       : registered;
-  const validateSchema = compiler._opts.validateSchema;
   if (!key && ajv._opts.validateSchema !== false)
     ajv.validateSchema(schema, true);
-  compiler._opts.validateSchema = false;
   if (key) pointerCompilations.set(schema, { compiler, schema: snapshot });
   try {
     return compileWithSchemaFallback(compiler, ajv, () =>
       ajv.compile.call(compiler, snapshot),
     );
   } finally {
-    compiler._opts.validateSchema = validateSchema;
     if (!key && typeof snapshot === 'object') compiler.removeSchema(snapshot);
   }
 };
