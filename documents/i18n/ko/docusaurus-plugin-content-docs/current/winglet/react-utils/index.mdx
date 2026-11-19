@@ -10,13 +10,13 @@ import ForAI from '@site/src/components/ForAI';
 <PackageHeader name="@winglet/react-utils" />
 
 커스텀 훅, 고차 컴포넌트(HOC), 포털 시스템, 헬퍼 함수를 제공하는 React 유틸리티 라이브러리입니다.
-React 16~19를 지원하며, 완전한 TypeScript 타입과 트리 쉐이킹 가능한 서브패스 익스포트를 제공합니다.
+React 16.14~19를 지원하며, 완전한 TypeScript 타입과 트리 쉐이킹 가능한 서브패스 익스포트를 제공합니다.
 
 ## 설치 {#installation}
 
 ```bash
 yarn add @winglet/react-utils
-# peer deps: react >=16 <20, react-dom >=16 <20
+# peer deps: react >=16.14 <20, react-dom >=16.14 <20
 ```
 
 ## 서브패스 내보내기 {#sub-path-exports}
@@ -37,11 +37,11 @@ yarn add @winglet/react-utils
 
 | 훅 | 설명 |
 |---|---|
-| `useConstant(factory)` | 첫 렌더링에서만 값을 메모이제이션합니다. |
+| `useConstant(value)` | 전달한 값을 보관하며 함수도 호출하지 않고 값으로 보관합니다. |
 | `useHandle(fn)` | 항상 최신 함수를 호출하는 안정적인 콜백 |
-| `useMemorize(deps, factory)` | 직관적인 API를 제공하는 향상된 메모이제이션 |
+| `useMemorize(input, dependencies)` | 직관적인 API를 제공하는 향상된 메모이제이션 |
 | `useSnapshot(value)` | 값의 안정적인 스냅샷을 반환합니다. |
-| `useDebounce(value, delay)` | 디바운스된 값 |
+| `useDebounce(callback, dependencies, ms)` | 콜백을 예약하고 `{ isIdle, cancel }`을 반환합니다. |
 | `useWindowSize()` | 브라우저 창 크기를 추적합니다. |
 | `useEffectUntil(effect, condition)` | 조건이 `true`가 될 때까지 이펙트를 실행합니다. |
 | `useOnMount(fn)` | 마운트 시 콜백을 한 번 실행합니다. |
@@ -49,42 +49,45 @@ yarn add @winglet/react-utils
 
 ### 고차 컴포넌트 (`/hoc`) {#hocs-hoc}
 
-- `withErrorBoundary(Component, options)`는 오류 경계로 감쌉니다.
-- `withErrorBoundaryForwardRef(Component, options)`는 ref 전달을 지원합니다.
-- `withUploader(Component, options)`는 파일 업로드를 처리합니다.
+- `withErrorBoundary(Component, fallback)`는 오류 경계로 감쌉니다.
+- `withErrorBoundaryForwardRef(Component, fallback)`는 ref 전달을 지원합니다.
+- `withUploader(Component)`는 파일 업로드를 처리합니다.
 
 ### Portal (`/portal`) {#portal-portal}
 
 - `Portal`은 DOM의 지정된 앵커에 `children`을 렌더링합니다.
 - `Portal.Anchor`는 포털 콘텐츠를 마운트할 위치를 선언합니다.
-- `withPortal(Component)`는 포털 컨텍스트를 제공하는 고차 컴포넌트입니다.
+- `Portal.with(Component)`는 포털 컨텍스트를 제공하는 고차 컴포넌트입니다.
 
 ## 사용 예제 {#usage-examples}
 
 ```tsx
-import { useConstant, useHandle, useWindowSize } from '@winglet/react-utils/hook';
+import { useLazyConstant, useHandle, useWindowSize } from '@winglet/react-utils/hook';
+
+class ExpensiveManager {}
 
 function MyComponent({ onSave }: { onSave: () => void }) {
-  const manager = useConstant(() => new ExpensiveManager());
+  const manager = useLazyConstant(() => new ExpensiveManager());
   const handleSave = useHandle(onSave); // stable ref
   const { width, height } = useWindowSize();
 
-  return <div>{width}x{height}</div>;
+  return <button onClick={handleSave} data-ready={!!manager}>{width}x{height}</button>;
 }
 ```
 
 ```tsx
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
-import { Portal, withPortal } from '@winglet/react-utils/portal';
+import { Portal } from '@winglet/react-utils/portal';
 
-const SafeWidget = withErrorBoundary(Widget, {
-  fallback: <p>Something went wrong.</p>,
-});
+const Widget = () => <p>Widget</p>;
+const Modal = () => <p>Modal</p>;
 
-const App = withPortal(() => (
+const SafeWidget = withErrorBoundary(Widget, <p>Something went wrong.</p>);
+
+const App = Portal.with(() => (
   <>
-    <Portal.Anchor name="modal" />
-    <Portal name="modal"><Modal /></Portal>
+    <Portal.Anchor />
+    <Portal><Modal /></Portal>
   </>
 ));
 ```
@@ -126,6 +129,7 @@ CLI는 `createRequire`로 패키지 매니페스트를 찾고 `agents.assetPath`
         withErrorBoundaryForwardRef
         withUploader
 ./hook → useConstant
+         useLazyConstant
          useDebounce
          useEffectUntil
          useLayoutEffectUntil
