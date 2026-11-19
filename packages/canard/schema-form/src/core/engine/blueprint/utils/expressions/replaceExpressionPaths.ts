@@ -1,8 +1,8 @@
 import { JSON_POINTER_PATH_REGEX } from './regex';
 import { replaceScannedExpressionPaths } from './replaceScannedExpressionPaths';
 
-/** A quote, a comment opener, or a slash where a value is expected. */
-const NON_CODE_HINT = /["'`]|\/[/*]|(?:^|[^\w$)\]}.#@\s])\s*\//;
+/** Literal syntax, a comment opener, or a slash where a value is expected. */
+const NON_CODE_HINT = /["'`\\[\^]|\/[/*]|(?:^|[^\w$)\]}.#@\s])\s*\//;
 
 /**
  * Replace each JSON Pointer path in code, never inside strings, comments or regular expression literals.
