@@ -34,9 +34,11 @@ equals(previous, next, ['updatedAt', 'requestId']);
 | Handles             | primitives, plain objects, arrays, `Date`, `RegExp`, `Map`, `Set`, `Error`, ArrayBuffer family, `File`/`Blob`, symbol properties, custom prototypes | arrays and plain objects only      | arrays and plain objects only |
 | Everything else     | type-specific handling                                                                                                                              | **returned by reference**          | returned as-is                |
 | Circular references | safe (Map-tracked, structure preserved)                                                                                                             | **unsupported; can fail to terminate**                 | not applicable                |
-| Prototype chain     | preserved                                                                                                                                           | dropped — result is a plain object | preserved via spread          |
+| Prototype chain     | preserved within the built-in subclass limits below                                                                                                 | ordinary/null dictionary prototypes retained; arrays use plain Array | ordinary/null dictionary prototypes retained; arrays use plain Array |
 
 The `cloneLite` trap is not that it fails on a `Date`; it is that it _succeeds_ and hands back the very same `Date`, so a later mutation reaches the original. Both `clone` and `cloneLite` accept a depth bound, and both return nodes at or beyond that depth by reference — a bounded clone shares state by design.
+
+`clone` retains the built-in state and prototypes of Map, Set, Date, RegExp and Array subclasses without running their constructors, but does not copy additional own properties or constructor-set fields. Private fields are not initialized, so subclass methods that require them can fail. Typed-array subclasses use slice/species and run their constructor; DataView subclasses become native DataView copies without their subclass prototype. Error and ArrayBuffer subclasses run their constructors under their respective Error and slice/species policies. Use native built-in values when constructor-owned subclass state is required.
 
 An own `__proto__` key (as `JSON.parse` produces) is cloned by `cloneLite` as an own data property: every own key survives and the clone keeps the input's prototype — the write goes through `setDataProperty`, never the `__proto__` setter.
 
