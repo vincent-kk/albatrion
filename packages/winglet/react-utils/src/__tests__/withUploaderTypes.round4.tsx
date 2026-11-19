@@ -30,10 +30,12 @@ export const UploadButton = withUploader(Button);
 export const UploadCard = withUploader(Card);
 export const UploadZone = withUploader(Zone);
 
-export const usage = (
+const usage = (
   <>
     <UploadButton onChange={(file: File) => file.name}>Upload</UploadButton>
     <UploadCard onChange={(file: File) => file.name}>Card</UploadCard>
     <UploadZone onChange={(file: File) => file.name}>Zone</UploadZone>
   </>
 );
+
+void usage;

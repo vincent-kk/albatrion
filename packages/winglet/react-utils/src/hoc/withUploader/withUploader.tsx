@@ -1,6 +1,8 @@
 import {
   type ChangeEvent,
   type ComponentType,
+  type NamedExoticComponent,
+  type MouseEvent,
   Fragment,
   memo,
   useMemo,
@@ -15,7 +17,8 @@ import { useCommittedReference } from '../../hooks/utils/useCommittedReference';
 import { openFilePicker } from './utils/openFilePicker';
 
 interface BaseProps {
-  onClick?: Fn<[e?: MouseEvent]>;
+  /** React handlers and wrappers forwarding their native click are accepted. */
+  onClick?(event?: MouseEvent | globalThis.MouseEvent): void;
 }
 
 interface UploaderProps {
@@ -110,9 +113,12 @@ interface UploaderProps {
  */
 export const withUploader = <Props extends BaseProps>(
   Component: ComponentType<Props>,
-) =>
+): NamedExoticComponent<Omit<Props, 'onChange' | 'acceptFormat'> & {
+  acceptFormat?: string[];
+  onChange?: (file: File) => void;
+}> =>
   memo(
-    ({ onClick, onChange, acceptFormat, ...props }: Props & UploaderProps) => {
+    ({ onClick, onChange, acceptFormat, ...props }: Omit<Props, keyof UploaderProps> & UploaderProps & BaseProps) => {
       const inputRef = useRef<HTMLInputElement>(null);
       const accept = useMemo(() => acceptFormat?.join(','), [acceptFormat]);
 
@@ -132,7 +138,7 @@ export const withUploader = <Props extends BaseProps>(
             if (file) callbacksRef.current.onChange?.(file);
             target.value = '';
           },
-          handleClick: (e: MouseEvent) => {
+          handleClick: (e?: MouseEvent | globalThis.MouseEvent) => {
             const onClick = callbacksRef.current.onClick;
             if (isFunction(onClick)) onClick(e);
             const input = inputRef.current;

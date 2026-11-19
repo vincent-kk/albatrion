@@ -14,6 +14,7 @@
 - `withUploader(Component)` → `Component`의 props에 `acceptFormat?: string[]`과 `onChange?: (file: File) => void`를 더한 컴포넌트를 반환한다.
   - `acceptFormat`은 쉼표로 결합되어 숨겨진 input의 `accept` 속성에 전달된다.
   - 파일이 선택되면 `onChange`가 선택된 `File` 객체와 함께 호출된다. 파일이 없으면 호출되지 않는다.
+  - `onClick`은 일반 React 클릭 핸들러와 네이티브 클릭을 전달하는 래퍼를 받는다. `onChange`와 `acceptFormat`은 업로더가 소유하며 원본 컴포넌트의 같은 이름 props를 대체한다.
   - `onClick`이 함수이면 파일 다이얼로그를 열기 전에 먼저 호출된다.
 
 ## Acceptance Criteria
