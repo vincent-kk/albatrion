@@ -56,9 +56,10 @@ export const processCssSheet = (input: string, compressed: boolean, mode: 'none'
         if (previousKind === CssTokenKind.Delimiter && previousCode === 92 && (code === 10 || code === 13 || code === 12)) {
           output += code === 13 && css.charCodeAt(index + 1) === 10 ? '\r\n' : css[index];
           previousCode = 32; previousKind = CssTokenKind.Whitespace;
-        } else if (hasOutput && end < css.length) {
-          const next = css.charCodeAt(end);
-          const significant = next === 47 && ((context === CssContext.Value && valueEmpty) || (context === CssContext.AtPrelude && previousCode === 58)) ? css.charCodeAt(getCssSignificantIndex(css, end)) : next;
+        } else if (hasOutput && (end < css.length || (context === CssContext.Value && valueEmpty) || (previousCode === 58 && (context === CssContext.AtPrelude || context === CssContext.OpaquePrelude)))) {
+          const next = end < css.length ? css.charCodeAt(end) : -1;
+          const significantIndex = next === 47 && ((context === CssContext.Value && valueEmpty) || (context === CssContext.AtPrelude && previousCode === 58)) ? getCssSignificantIndex(css, end) : end;
+          const significant = significantIndex < css.length ? css.charCodeAt(significantIndex) : -1;
           if (keepCssWhitespace(css, context, components, valueEmpty, custom, previousCode, significant, previousEnd)) {
             if (previousKind !== CssTokenKind.Whitespace) output += ' ';
             previousCode = 32; previousKind = CssTokenKind.Whitespace;
