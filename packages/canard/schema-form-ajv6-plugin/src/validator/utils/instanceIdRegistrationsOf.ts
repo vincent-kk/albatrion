@@ -8,7 +8,10 @@ import type { SchemaRootRegistration } from './registerSchemaRoot';
 
 /** Realm-shared ownership; a pool contains at most 64 detached root attempts. */
 export interface InstanceIdRegistrations {
+  /** Unordered weak slots whose cleanup never changes application registry order. */
   readonly active: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[];
+  /** Next cleanup slot; an absent cursor starts at the first weak slot. */
+  cursor?: number;
   readonly finalizer: FinalizationRegistry<SchemaRootRegistration> | undefined;
   nextKey: number;
   readonly pool: {
@@ -42,6 +45,7 @@ export const instanceIdRegistrationsOf = (
   if (!ledger) {
     ledger = {
       active: [],
+      cursor: 0,
       finalizer: createFinalizer(disposeSchemaRoot),
       nextKey: 0,
       pool: { count: 0 },

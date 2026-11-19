@@ -7,6 +7,7 @@ import { disposeSchemaRoot } from './disposeSchemaRoot';
 import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
 import { isPrivateCompilerCurrent } from './privateCompiler/isPrivateCompilerCurrent';
 import type { PrivateCompiler } from './privateCompiler/types';
+import { pruneRootRegistrations } from './pruneRootRegistrations';
 
 /** Detached state whose lifetime follows a caller root held only as a WeakMap key. */
 export interface SchemaRootRegistration {
@@ -75,10 +76,7 @@ export const registerSchemaRoot = (
     disposeSchemaRoot(existing);
     registrations.splice(registrations.indexOf(existing), 1);
   }
-  for (let index = ledger.active.length - 1; index >= 0; index--) {
-    const entry = ledger.active[index].deref();
-    if (!entry || entry.released) ledger.active.splice(index, 1);
-  }
+  pruneRootRegistrations(ledger);
   const registration: SchemaRootRegistration = {
     baseAjv,
     copy: JSON.parse(serialized),
