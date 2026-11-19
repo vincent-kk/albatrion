@@ -207,7 +207,8 @@
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
     "version:patch": "yarn version patch",
-    "build:verify:types": "node ../../aileron/script/build/verifyDeclarations.mjs"
+    "test:packaging": "node --test src/__tests__/packaging/reactJsxRuntime.packaging.mjs",
+    "build:verify:types": "node ../../aileron/script/build/verifyDeclarations.mjs && yarn test:packaging"
   },
   "dependencies": {
     "@winglet/common-utils": "workspace:^"
