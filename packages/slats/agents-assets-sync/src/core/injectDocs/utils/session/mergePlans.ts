@@ -46,38 +46,44 @@ export function mergePlans(
       conflicts.has(destinationKey(action)),
     );
     const actions = unit.plan.actions.filter((action) => {
-      if (unit.error || conflicting || action.target.kind !== 'file')
-        return true;
+      if (unit.error || conflicting) return true;
       const key = destinationKey(action);
       if (isOrphan(action)) {
-        if (managed.has(key)) return false;
-        if (
-          !failedRoots.some(
-            (root) =>
-              key === root ||
-              key.startsWith(root + sep) ||
-              (action.target.kind === 'file' &&
-                action.target.dstAbs.startsWith(root + sep)),
-          )
-        )
-          return true;
-        for (const peer of failedUnits)
+        if (action.target.kind === 'file' && managed.has(key)) return false;
+        const uncertain =
+          discoveryFailures.length > 0 ||
+          (action.target.kind === 'file' &&
+            failedRoots.some(
+              (root) =>
+                key === root ||
+                key.startsWith(root + sep) ||
+                (action.target.kind === 'file' &&
+                  action.target.dstAbs.startsWith(root + sep)),
+            ));
+        if (!uncertain) return true;
+        const path =
+          action.target.kind === 'file'
+            ? action.target.dstAbs
+            : action.target.kind === 'block'
+              ? action.target.fileAbs
+              : action.relPath;
+        for (const peer of action.target.kind === 'file' ? failedUnits : [])
           notices.push({
             unitKey: peer.key,
-            path: action.target.dstAbs,
+            path,
             stage: peer.error ? 'prepare' : 'merge',
             reason: `Deletion suppressed for ${peer.target.name}: ${peer.error ?? 'conflicting source contents'}`,
           });
         for (const reason of discoveryFailures)
           notices.push({
             unitKey: 'discovery',
-            path: action.target.dstAbs,
+            path,
             stage: 'discover',
             reason: `Deletion suppressed: ${reason}`,
           });
         return false;
       }
-      if (unit.error || conflicting || !action.sourceHash) return true;
+      if (action.target.kind !== 'file' || !action.sourceHash) return true;
       if (owners.has(key)) return false;
       owners.set(key, unit.key);
       return true;
