@@ -23,24 +23,26 @@ try {
       '',
     ),
   );
-  if (typeof pkg.name !== 'string' || typeof pkg.version !== 'string') {
-    throw new Error(
-      `${packageRoot}/package.json must define "name" and "version".`,
+  if (
+    typeof pkg.agents?.assetPath === 'string' &&
+    pkg.agents.assetPath.length > 0
+  ) {
+    if (typeof pkg.name !== 'string' || typeof pkg.version !== 'string') {
+      throw new Error(
+        `${packageRoot}/package.json must define "name" and "version".`,
+      );
+    }
+    const assetPath = pkg.agents.assetPath;
+    const { outPath, fileCount } = await buildHashes({
+      packageRoot,
+      packageName: pkg.name,
+      packageVersion: pkg.version,
+      assetPath,
+    });
+    console.log(
+      `✓ agents-hashes.json written: ${fileCount} file(s) → ${outPath}`,
     );
   }
-  const assetPath =
-    typeof pkg.agents?.assetPath === 'string' && pkg.agents.assetPath.length > 0
-      ? pkg.agents.assetPath
-      : 'agents';
-  const { outPath, fileCount } = await buildHashes({
-    packageRoot,
-    packageName: pkg.name,
-    packageVersion: pkg.version,
-    assetPath,
-  });
-  console.log(
-    `✓ agents-hashes.json written: ${fileCount} file(s) → ${outPath}`,
-  );
 } catch (err) {
   console.error('❌ buildHashes failed:', err?.message ?? err);
   process.exit(1);
