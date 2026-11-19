@@ -14,8 +14,18 @@ import type { ManagedEntity } from '@/promise-modal/types/modal';
 type AbstractNodeProps<T, B> = BaseModal<T, B> & ManagedEntity;
 
 export abstract class AbstractNode<T, B> {
-  /** Runtime-owned display query; absent on nodes used without a manager. */
-  displayReader?: Fn<[], boolean>;
+  /** Display metadata stays outside instance data and follows node lifetime. */
+  private static readonly __displayReaders__ = new WeakMap<
+    object,
+    Fn<[id: number], boolean>
+  >();
+
+  /** Register the runtime display query without changing instance data shape.
+   * @param reader Reads actual committed display participation for this node id.
+   */
+  setDisplayReader(reader: Fn<[id: number], boolean>): void {
+    AbstractNode.__displayReaders__.set(this, reader);
+  }
   readonly id: number;
   readonly group?: string;
   /** Styling variant preserved independently of modal kind. */
@@ -127,7 +137,8 @@ export abstract class AbstractNode<T, B> {
   protected onResolve(result: T | undefined | null) {
     if (this.__settled__) return;
     this.__isVisibleAtSettlement__ =
-      this.__visible__ && (this.displayReader?.() ?? true);
+      this.__visible__ &&
+      (AbstractNode.__displayReaders__.get(this)?.(this.id) ?? true);
     this.__settled__ = true;
     this.__handleResolve__?.(result);
     this.publish();
@@ -137,7 +148,8 @@ export abstract class AbstractNode<T, B> {
   onReject(error: unknown) {
     if (this.__settled__) return;
     this.__isVisibleAtSettlement__ =
-      this.__visible__ && (this.displayReader?.() ?? true);
+      this.__visible__ &&
+      (AbstractNode.__displayReaders__.get(this)?.(this.id) ?? true);
     this.__settled__ = true;
     this.__handleReject__?.(error);
     this.publish();
