@@ -74,3 +74,10 @@ it('discovery uncertainty suppresses deletion as a notice without force confirma
   ]);
   expect(result[0].error).toBeUndefined();
 });
+
+it('unknown discovery ownership protects orphan blocks as well as directory entries', () => {
+  const first = unit('first', 'a');
+  const result = mergePlans([{ ...first, plan: { requiresForce: true, actions: [{ kind: 'delete', relPath: 'rules/retired.md', target: { kind: 'block', fileAbs: '/tmp/merge-model/AGENTS.md', blockId: 'first:rules/retired.md' } }] } }], ['unknown participant: broken package.json']);
+  expect(result[0].plan).toEqual({ actions: [], requiresForce: false });
+  expect(result[0].notices).toEqual([expect.objectContaining({ path: '/tmp/merge-model/AGENTS.md', reason: expect.stringContaining('unknown participant') })]);
+});
