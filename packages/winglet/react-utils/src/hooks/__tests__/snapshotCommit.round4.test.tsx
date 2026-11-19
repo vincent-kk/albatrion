@@ -117,4 +117,3 @@ describe('render-time snapshot writes and abandoned renders (sibling of round-3 
     expect(await runRestScenario(true)).toEqual(await runRestScenario(false));
   });
 });
-

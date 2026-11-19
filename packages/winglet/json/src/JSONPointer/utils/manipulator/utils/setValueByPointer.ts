@@ -54,7 +54,7 @@ export const setValueByPointer = <Input extends Dictionary | Array<any>>(
       if (isLastSegment) break;
       cursor = reserved ? getDataProperty(cursor, segment) : cursor[segment];
     }
-  
+
     if (input === undefined) deleteDataProperty(cursor, segment);
     else if (hasOwnProperty(cursor, segment)) {
       if (overwrite) {
@@ -63,7 +63,7 @@ export const setValueByPointer = <Input extends Dictionary | Array<any>>(
       }
     } else if (reserved) setDataProperty(cursor, segment, input);
     else cursor[segment] = input;
-  
+
     return value;
   } catch (error) {
     if (cursor !== null && typeof cursor !== 'object' && typeof cursor !== 'function')
