@@ -34,6 +34,8 @@ export async function executeUnits(
         report: summarize(
           unit.plan,
           unit.error ? 1 : blocked || cancelled ? 2 : 0,
+          [],
+          flags.dryRun && !unit.error ? undefined : [],
         ),
       });
       continue;
