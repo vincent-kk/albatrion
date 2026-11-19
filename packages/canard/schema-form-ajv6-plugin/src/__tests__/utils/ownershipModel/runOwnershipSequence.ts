@@ -23,6 +23,29 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
   const roots: WeakRef<object>[] = [];
   const functions: unknown[] = [];
   let ruleMode = 0;
+  const aliasId = 'https://ownership-model.invalid/alias-id';
+  const aliasKey = 'https://ownership-model.invalid/alias-key';
+  for (const instance of [app, twin]) {
+    const nativeOptions = Reflect.get(instance, '_opts');
+    const idKey = profile.version === 6 && nativeOptions && typeof nativeOptions === 'object' && Reflect.get(nativeOptions, 'schemaId') === 'id' ? 'id' : '$id';
+    instance.addSchema({ [idKey]: aliasId, type: 'number' }, aliasKey);
+    instance.removeSchema(aliasId);
+    instance.addSchema({ [idKey]: aliasId, type: 'string' });
+  }
+  const aliasAdapter = profile.adapter(app);
+  for (const reference of [0, 1, 2]) {
+    const root: JSONSchema = reference === 0 ? { $ref: aliasKey } : reference === 1 ? { $ref: aliasId } : { allOf: [{ $ref: aliasKey }, { $ref: aliasId }] };
+    const expected = await compileOracle(twin, profile, root, seed % 2 ? 3 : 'x');
+    const actual = await outcomeOf(() => aliasAdapter.compile(root)(seed % 2 ? 3 : 'x'));
+    expect(actual, `seed=${seed}: retained alias dimension ${reference}`).toEqual(expected);
+    if (reference === 2) {
+      expect(actual, `seed=${seed}: explicit alias conflict`).toMatchObject({ error: 'Error' });
+      if ('message' in actual) for (const key of [aliasId, aliasKey]) expect(actual.message).toContain(key);
+    }
+    roots.push(profile.observe(root));
+    aliasAdapter.release?.(root);
+  }
+  expect(captureApplicationState(app), `seed=${seed}: alias dimension I1`).toEqual(captureApplicationState(twin));
   for (let step = 0; step < 48; step++) {
     const operation = step < 8 ? step : next() % 17;
     const id = `https://ownership-model.invalid/root-${next() % 3}`;
@@ -173,7 +196,7 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
               : { $ref: '#/definitions/condition' },
         };
         const expected = await outcomeOf(() => {
-          const fresh = createFreshOracle(twin, profile);
+          const fresh = createFreshOracle(twin, profile, root);
           if (
             profile.direct &&
             root.if &&
