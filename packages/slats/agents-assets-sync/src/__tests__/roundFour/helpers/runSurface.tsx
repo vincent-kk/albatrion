@@ -1,0 +1,146 @@
+import { existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
+import { join } from 'node:path';
+
+import { render } from 'ink-testing-library';
+import { expect, vi } from 'vitest';
+
+import { renderJSON } from '../../../commands/runCli/renderers/renderJSON.js';
+import { renderPlain } from '../../../commands/runCli/renderers/renderPlain.js';
+import * as core from '../../../core/index.js';
+import type { RunResult } from '../../../core/index.js';
+import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
+import { InjectApp } from '../../../ui/InjectApp/InjectApp.js';
+import * as ui from '../../../ui/index.js';
+import { runCliCode } from '../../roundThree/fixture.js';
+
+/** Records only destination bytes, independently of the reported plan. */
+export function written(root: string): Record<string, string> {
+  const files: Record<string, string> = {};
+  const visit = (relative: string) => {
+    if (!existsSync(join(root, relative))) return;
+    for (const entry of readdirSync(join(root, relative), {
+      withFileTypes: true,
+    })) {
+      const path = `${relative}/${entry.name}`;
+      if (entry.isDirectory()) visit(path);
+      else if (entry.isFile())
+        files[path] = readFileSync(join(root, path)).toString('hex');
+    }
+  };
+  visit('.claude');
+  visit('.agents');
+  if (existsSync(join(root, 'AGENTS.md')))
+    files['AGENTS.md'] = readFileSync(join(root, 'AGENTS.md')).toString('hex');
+  return files;
+}
+
+/** Run a real surface, observing the core result without changing it. */
+export async function runSurface(
+  mode: 'plain' | 'json' | 'ink',
+  root: string,
+  targets: ConsumerPackage[],
+  flags: DefaultFlags,
+  choices = false,
+  packageArgs?: string[],
+) {
+  const original = core.runInjection;
+  let model: RunResult | undefined;
+  vi.spyOn(core, 'runInjection').mockImplementation(async (input) => {
+    model = await original(input);
+    return model;
+  });
+  vi.spyOn(console, 'log').mockImplementation(() => {});
+  vi.spyOn(console, 'warn').mockImplementation(() => {});
+  vi.spyOn(console, 'error').mockImplementation(() => {});
+  let code: number;
+  if (packageArgs) {
+    vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+    const tty = Object.getOwnPropertyDescriptor(process.stdout, 'isTTY');
+    Object.defineProperty(process.stdout, 'isTTY', {
+      value: mode === 'ink',
+      configurable: true,
+    });
+    vi.spyOn(ui, 'renderInjectApp').mockImplementation(
+      (input) =>
+        new Promise<number>((resolve, reject) => {
+          const app = render(
+            <InjectApp
+              {...input}
+              onExit={(value) => {
+                clearTimeout(timer);
+                app.unmount();
+                resolve(value);
+              }}
+            />,
+          );
+          const timer = setTimeout(() => {
+            app.unmount();
+            reject(new Error('terminal timeout'));
+          }, 4000);
+        }),
+    );
+    try {
+      code = await runCliCode([
+        ...packageArgs,
+        '--agent=claude',
+        '--scope=project',
+        '--yes',
+        `--root=${root}`,
+        ...(mode === 'json' ? ['--json'] : []),
+        ...(mode === 'plain' ? ['--no-interactive'] : []),
+      ]);
+    } finally {
+      if (tty) Object.defineProperty(process.stdout, 'isTTY', tty);
+      else Reflect.deleteProperty(process.stdout, 'isTTY');
+    }
+  } else if (mode !== 'ink') {
+    vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+    vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+    code = await (mode === 'plain' ? renderPlain : renderJSON)(
+      targets,
+      flags,
+      root,
+    );
+  } else {
+    code = await new Promise<number>((resolve, reject) => {
+      const app = render(
+        <InjectApp
+          targets={targets}
+          flags={flags}
+          originCwd={root}
+          onExit={(value) => {
+            clearTimeout(timer);
+            app.unmount();
+            resolve(value);
+          }}
+        />,
+      );
+      const timer = setTimeout(() => {
+        app.unmount();
+        reject(new Error('terminal timeout'));
+      }, 4000);
+      if (choices) {
+        const answer = () => {
+          const frame = app.lastFrame() ?? '';
+          if (
+            frame.includes('Select the target agent') ||
+            frame.includes('Select the target scope')
+          )
+            app.stdin.write('\r');
+          else if (frame.includes('overwrite') && frame.includes('Yes,'))
+            app.stdin.write('y');
+        };
+        const interval = setInterval(answer, 20);
+        setTimeout(() => clearInterval(interval), 450);
+      }
+    });
+  }
+  vi.restoreAllMocks();
+  expect(model).toBeDefined();
+  const normalized = JSON.stringify(model)
+    .split(realpathSync(root))
+    .join('<root>')
+    .split(root)
+    .join('<root>');
+  return { code, model: JSON.parse(normalized), files: written(root) };
+}
