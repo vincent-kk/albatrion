@@ -1,4 +1,8 @@
-import { type RunResult, runInjection } from '../../../core/index.js';
+import {
+  type RunFailure,
+  type RunResult,
+  runInjection,
+} from '../../../core/index.js';
 import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
 import { VERSION } from '../../../utils/version.js';
 
@@ -14,8 +18,15 @@ export async function renderJSON(
   flags: DefaultFlags,
   originCwd: string,
   notices: readonly string[] = [],
+  diagnostics?: readonly RunFailure[],
 ): Promise<number> {
-  const result = await runInjection({ targets, flags, originCwd, notices });
+  const result = await runInjection({
+    targets,
+    flags,
+    originCwd,
+    notices,
+    diagnostics,
+  });
   displayJSON(result);
   return result.exitCode;
 }
@@ -31,6 +42,8 @@ export function displayJSON(result: RunResult): void {
     dryRun: result.dryRun,
     exitCode: result.exitCode,
     errors: result.errors,
+    failures: result.failures ?? [],
+    notices: result.notices ?? [],
     units: result.units.map((unit) => ({
       key: unit.key,
       ...(unit.aliasOf ? { aliasOf: unit.aliasOf } : {}),

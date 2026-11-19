@@ -1,3 +1,4 @@
+import type { RunFailure } from '../../../core/index.js';
 import { logger } from '../../../utils/logger.js';
 import { classifyTarget } from './classifyTarget.js';
 import { type ResolvedMetadata, resolvePackage } from './resolvePackage.js';
@@ -31,6 +32,8 @@ export async function resolveTargets(
   targets: readonly string[],
   rootCwd: string,
   assetPathOverride?: string,
+  onFailure?: (reason: string) => never,
+  diagnostics?: RunFailure[],
 ): Promise<{
   resolved: ResolvedMetadata[];
   skipped: string[];
@@ -60,6 +63,8 @@ export async function resolveTargets(
         rootCwd,
         assetPathOverride,
         skipped,
+        onFailure,
+        diagnostics,
       );
     } else {
       // A single named package is the whole run, so its failure is the run's.
@@ -71,6 +76,8 @@ export async function resolveTargets(
           skipMissingAsset: !isSingleTarget,
           assetPathOverride,
           skipReasons: skipped,
+          onFailure,
+          diagnostics,
         },
         rootCwd,
       );

@@ -152,7 +152,8 @@ export function phaseReducer(phase: Phase, event: InjectEvent): Phase {
       return {
         kind: 'summary',
         reports: event.reports,
-        plans,
+        ...(event.result ? { result: event.result } : {}),
+        plans: event.plans ?? plans,
         exitCode: event.exitCode,
         scope,
         dryRun: event.dryRun,

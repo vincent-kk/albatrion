@@ -2,6 +2,7 @@ import {
   type ActionTarget,
   type AgentTarget,
   type InjectPlan,
+  type RunFailure,
   type RunResult,
   runInjection,
 } from '../../../core/index.js';
@@ -18,8 +19,16 @@ export async function renderPlain(
   targets: readonly ConsumerPackage[],
   flags: DefaultFlags,
   originCwd: string,
+  notices: readonly string[] = [],
+  diagnostics?: readonly RunFailure[],
 ): Promise<number> {
-  const result = await runInjection({ targets, flags, originCwd });
+  const result = await runInjection({
+    targets,
+    flags,
+    originCwd,
+    notices,
+    diagnostics,
+  });
   displayPlain(result, Boolean(flags.force));
   return result.exitCode;
 }
@@ -30,6 +39,10 @@ export async function renderPlain(
  */
 export function displayPlain(result: RunResult, force: boolean): void {
   for (const error of result.errors) logger.error(error);
+  for (const failure of result.failures ?? [])
+    logger.error(`${failure.path} [${failure.stage}]: ${failure.reason}`);
+  for (const notice of result.notices ?? [])
+    logger.warn(`${notice.path} [${notice.stage}]: ${notice.reason}`);
   for (const unit of result.units) {
     logger.heading(
       `${unit.target.name}@${unit.target.version} · ${unit.agentTarget.agent}`,
@@ -38,7 +51,8 @@ export function displayPlain(result: RunResult, force: boolean): void {
       `${unit.target.name}@${unit.target.version} → ${unit.agentTarget.description}`,
     );
     printPlan(unit.plan, unit.agentTarget);
-    if (unit.error) logger.error(`${unit.target.name}: ${unit.error}`);
+    if (unit.error && !unit.failures?.length)
+      logger.error(`${unit.target.name}: ${unit.error}`);
     if (unit.report?.exitCode === 2)
       logger.error(
         'Re-run with --force to proceed, or inspect with --dry-run.',

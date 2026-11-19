@@ -33,6 +33,8 @@ export function InjectApp(props: InjectAppProps): React.ReactElement {
     originCwd,
     dispatch,
     result: props.result,
+    notices: props.notices,
+    diagnostics: props.diagnostics,
   });
 
   const handleExit = useCallback(
@@ -186,12 +188,27 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
             />
           ))}
           {phase.plans
-            .filter((tp) => tp.error)
+            .filter((tp) => tp.error && !phase.result?.failures?.length)
             .map((tp) => (
               <Text key={tp.key} color={colors.danger}>
                 {tp.target.name}: {tp.error}
               </Text>
             ))}
+          {(phase.result?.failures ?? []).map((failure, index) => (
+            <Text key={`failure:${index}`} color={colors.danger}>
+              {failure.path} [{failure.stage}]: {failure.reason}
+            </Text>
+          ))}
+          {(phase.result?.notices ?? []).map((notice, index) => (
+            <Text key={`notice:${index}`} color={colors.warn}>
+              {notice.path} [{notice.stage}]: {notice.reason}
+            </Text>
+          ))}
+          {(phase.result?.errors ?? []).map((reason, index) => (
+            <Text key={`preflight:${index}`} color={colors.warn}>
+              {reason}
+            </Text>
+          ))}
           <Summary
             reports={phase.reports}
             exitCode={phase.exitCode}

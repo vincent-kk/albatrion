@@ -30,7 +30,11 @@ async function jsonRun(args: readonly string[]) {
   } catch {
     document = null;
   }
-  return { code, parses: document !== null, exitCode: document?.exitCode ?? null };
+  return {
+    code,
+    parses: document !== null,
+    exitCode: document?.exitCode ?? null,
+  };
 }
 
 function setup() {
@@ -46,8 +50,14 @@ function setup() {
 }
 
 it.each([
-  ['an --asset-path that names no directory in the package', '--asset-path=agentz'],
-  ['an --asset-path that resolves outside the package', '--asset-path=../../../outside-agents'],
+  [
+    'an --asset-path that names no directory in the package',
+    '--asset-path=agentz',
+  ],
+  [
+    'an --asset-path that resolves outside the package',
+    '--asset-path=../../../outside-agents',
+  ],
 ])(
   '%s (a flag error) yields a JSON document with exitCode 2',
   async (_label, flag) => {
@@ -94,7 +104,7 @@ it.each([
   },
 );
 
-it('control: an unresolvable --package leaves stdout empty, as README states', async () => {
+it('an unresolvable --package yields the same JSON configuration result', async () => {
   const { root } = setup();
   const result = await jsonRun([
     '--package=@probe/absent',
@@ -102,5 +112,5 @@ it('control: an unresolvable --package leaves stdout empty, as README states', a
     '--scope=project',
     `--root=${root}`,
   ]);
-  expect(result).toEqual({ code: 2, parses: false, exitCode: null });
+  expect(result).toEqual({ code: 2, parses: true, exitCode: 2 });
 });

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import type { RunResult } from '../../core/index.js';
+import type { RunFailure, RunResult } from '../../core/index.js';
 import { type AgentType, type Scope, runInjection } from '../../core/index.js';
 import type { ConsumerPackage, DefaultFlags } from '../../types/index.js';
 import type { InjectEvent } from '../types/index.js';
@@ -16,12 +16,16 @@ export function useInjectSession({
   originCwd,
   dispatch,
   result: supplied,
+  notices,
+  diagnostics,
 }: {
   readonly targets: readonly ConsumerPackage[];
   readonly flags: DefaultFlags;
   readonly originCwd: string;
   readonly dispatch: Fn<[event: InjectEvent]>;
   readonly result?: RunResult;
+  readonly diagnostics?: readonly RunFailure[];
+  readonly notices?: readonly string[];
 }): void {
   const started = useRef(false);
   useEffect(() => {
@@ -33,6 +37,8 @@ export function useInjectSession({
           targets,
           flags,
           originCwd,
+          notices,
+          diagnostics,
           selectAgents: () =>
             new Promise<readonly AgentType[]>((resolve) =>
               dispatch({ type: 'agent-needed', pending: resolve }),
@@ -92,12 +98,23 @@ export function useInjectSession({
         )
           dispatch({
             type: 'fail',
-            error: new Error(result.errors.join('\n')),
+            error: new Error(
+              result.failures?.length
+                ? result.failures
+                    .map(
+                      (failure) =>
+                        `${failure.path} [${failure.stage}]: ${failure.reason}`,
+                    )
+                    .join('\n')
+                : result.errors.join('\n'),
+            ),
             exitCode: result.exitCode,
           });
         else
           dispatch({
             type: 'done',
+            result,
+            plans: result.units,
             reports: result.units.flatMap((unit) =>
               unit.report ? [unit.report] : [],
             ),
@@ -111,5 +128,5 @@ export function useInjectSession({
           error: error instanceof Error ? error : new Error(String(error)),
         }),
       );
-  }, [targets, flags, originCwd, dispatch, supplied]);
+  }, [targets, flags, originCwd, dispatch, supplied, notices, diagnostics]);
 }

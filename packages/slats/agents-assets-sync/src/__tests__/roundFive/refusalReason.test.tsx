@@ -134,12 +134,12 @@ it.each([
 );
 
 it.each(['plain', 'json'] as const)(
-  'control: %s reports only the generic failure for the read-only document',
+  '%s retains the rule path together with the refusal reason',
   async (mode) => {
     const { code, output } = await capture(mode, 'read-only');
     expect({
       code,
-      generic: output.includes('Failed to apply: rules/r.md'),
+      generic: output.includes('rules/r.md') && /read.only/i.test(output),
     }).toEqual({ code: 1, generic: true });
   },
 );
