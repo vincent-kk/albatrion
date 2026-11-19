@@ -10,7 +10,7 @@ it('virtual operations follow the reference model in sequential and batched hist
     let randomState = seed;
     const random = (limit: number) => {
       randomState = (Math.imul(randomState, 1664525) + 1013904223) >>> 0;
-      return randomState % limit;
+      return (randomState >>> 8) % limit;
     };
     const count = random(6),
       names = Array.from({ length: count }, (_, index) => `f${index}`);

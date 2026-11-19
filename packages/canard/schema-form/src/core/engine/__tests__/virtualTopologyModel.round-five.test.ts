@@ -10,7 +10,7 @@ it('virtual projections follow 3000 generated branch, retention and batch histor
     let state = seed ^ 0x7f4a7c15;
     const next = (limit: number) => {
       state = (Math.imul(state, 1103515245) + 12345) >>> 0;
-      return state % limit;
+      return (state >>> 8) % limit;
     };
     const count = 1 + next(5);
     const names = Array.from({ length: count }, (_, index) => `f${index}`);
@@ -107,6 +107,9 @@ it('virtual projections follow 3000 generated branch, retention and batch histor
           next(2) ? `edit${step}:${slot}` : undefined,
         );
         const beforeActive = active.slice();
+        const unchanged = tuple.every(
+          (value, slot) => value === (active[slot] ? stored[slot] : undefined),
+        );
         if (operation === 2)
           root.batch(() => {
             root.find(`/on${index}`)!.setValue(!active[index]);
@@ -114,10 +117,13 @@ it('virtual projections follow 3000 generated branch, retention and batch histor
           });
         else group.setValue(reversed ? [...tuple].reverse() : tuple);
         for (let slot = 0; slot < count; slot++)
-          if (beforeActive[slot] || tuple[slot] !== undefined)
+          if (!unchanged && (beforeActive[slot] || tuple[slot] !== undefined))
             stored[slot] = tuple[slot];
         if (operation === 2)
-          toggle(index, beforeActive[index] || tuple[index] !== undefined);
+          toggle(
+            index,
+            !unchanged && (beforeActive[index] || tuple[index] !== undefined),
+          );
       } else if (operation === 3) {
         group.resetSubtree();
         for (let slot = 0; slot < count; slot++)
