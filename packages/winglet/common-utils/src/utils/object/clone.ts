@@ -260,7 +260,8 @@ const replicate = (
 
   if (isPrimitiveType(value)) return value;
 
-  if (cache.has(value)) return cache.get(value);
+  const cached = cache.get(value);
+  if (cached !== undefined) return cached;
 
   depth = depth + 1;
 
