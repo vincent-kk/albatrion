@@ -1,7 +1,7 @@
 import { chmodSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { expect, it } from 'vitest';
+import { expect, it, vi } from 'vitest';
 
 import {
   consumerOf,
@@ -10,15 +10,21 @@ import {
   removeRoot,
   writeAt,
 } from '../../../__tests__/roundThree/fixture.js';
+import * as files from '../utils/applyAction.js';
+import * as blocks from '../utils/applyBlockActions.js';
 import { runInjection } from '../utils/session/runInjection.js';
 
 it('preserves failed-owner bytes against a reference model in 2000 seeded real runs', async () => {
+  const fileCalls = vi.spyOn(files, 'applyAction');
+  const blockCalls = vi.spyOn(blocks, 'applyBlockActions');
   let seed = 0x5b0a17;
   const random = (limit: number) => {
     seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
     return (seed >>> 8) % limit;
   };
   for (let sequence = 0; sequence < 2000; sequence++) {
+    fileCalls.mockClear();
+    blockCalls.mockClear();
     const initialSeed = seed;
     const count = 1 + random(3);
     const agents = (['claude', 'codex', 'agents'] as const).slice(
@@ -138,6 +144,13 @@ it('preserves failed-owner bytes against a reference model in 2000 seeded real r
             : 1;
       const label = `seed=${initialSeed}, sequence=${sequence}, stage=${stage}, mode=${mode}, force=${force}, dryRun=${dryRun}, yes=${yes}`;
       expect(result.exitCode, label).toBe(referenceCode);
+      for (const unit of result.units.filter((unit) => unit.refused)) {
+        expect(unit.plan.requiresForce, label).toBe(false);
+        for (const action of unit.plan.actions) {
+          expect(fileCalls.mock.calls.some(([called]) => called === action), label).toBe(false);
+          expect(blockCalls.mock.calls.some(([, called]) => called.includes(action)), label).toBe(false);
+        }
+      }
       for (let index = 0; index < destinations.length; index++) {
         expect(readFileSync(destinations[index]), label).toEqual(before[index]);
         if (stage === 'apply') chmodSync(destinations[index], 0o644);
@@ -146,4 +159,5 @@ it('preserves failed-owner bytes against a reference model in 2000 seeded real r
       removeRoot(root);
     }
   }
+  vi.restoreAllMocks();
 }, 120000);
