@@ -14,6 +14,8 @@ import type { ManagedEntity } from '@/promise-modal/types/modal';
 type AbstractNodeProps<T, B> = BaseModal<T, B> & ManagedEntity;
 
 export abstract class AbstractNode<T, B> {
+  /** Runtime-owned display query; absent on nodes used without a manager. */
+  displayReader?: Fn<[], boolean>;
   readonly id: number;
   readonly group?: string;
   /** Styling variant preserved independently of modal kind. */
@@ -124,7 +126,7 @@ export abstract class AbstractNode<T, B> {
   /** Commits the first result and publishes the settled transition. */
   protected onResolve(result: T | undefined | null) {
     if (this.__settled__) return;
-    this.__isVisibleAtSettlement__ = this.__visible__;
+    this.__isVisibleAtSettlement__ = this.__visible__ && (this.displayReader?.() ?? true);
     this.__settled__ = true;
     this.__handleResolve__?.(result);
     this.publish();
@@ -133,7 +135,7 @@ export abstract class AbstractNode<T, B> {
   /** Rejects an uncompleted request with its rendering error. */
   onReject(error: unknown) {
     if (this.__settled__) return;
-    this.__isVisibleAtSettlement__ = this.__visible__;
+    this.__isVisibleAtSettlement__ = this.__visible__ && (this.displayReader?.() ?? true);
     this.__settled__ = true;
     this.__handleReject__?.(error);
     this.publish();

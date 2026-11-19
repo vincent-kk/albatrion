@@ -26,6 +26,8 @@ export interface BootstrapOwner {
 export interface ModalManagerState {
   /** Increment whenever another copy cannot use this state shape. */
   version: number;
+  /** Private fallback refuses DOM ownership when another state version exists. */
+  isIsolated?: boolean;
   /** Optional for copies that predate shared React context identities. */
   contexts?: ModalContexts<ModalNode, ModalActions>;
   /** Rendered wrappers provide focus boundaries without imposing frame semantics. */
