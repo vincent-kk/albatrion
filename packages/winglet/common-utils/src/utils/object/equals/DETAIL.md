@@ -16,7 +16,7 @@
 
 `equals(left, right, omit?)`는 동일 참조와 양쪽 NaN을 같게 본다. 배열 길이와 인덱스 값을 비교하므로 hole과 명시적 undefined는 구분하지 않는다. 일반 객체는 own enumerable 문자열 키를 재귀 비교하고, 선택적 제외 키는 배열 또는 Set으로 받는다. 일반 객체·배열의 깊은 비순환 입력은 명시적 작업 스택으로 비교해 호출 스택 한도에 묶이지 않습니다. 순환 입력은 지원하지 않는다.
 
-`stableEquals(left, right, omit?)`는 방문한 객체 쌍을 기록해 순환을 종료한다. 배열에서는 각 인덱스의 존재 여부도 비교하고, 객체에서는 `Reflect.ownKeys`로 얻는 문자열·심볼 키를 검사한다. 선택적 제외 키는 읽기 전용 배열로 받는다. 매우 깊은 비순환 입력은 여전히 재귀 호출 스택의 한도를 따른다.
+`stableEquals(left, right, omit?)`는 방문한 객체 쌍을 기록해 순환을 종료합니다. 배열에서는 각 인덱스의 존재 여부도 비교하고, 객체에서는 `Reflect.ownKeys`로 얻는 문자열·심볼 키를 검사합니다. 선택적 제외 키는 읽기 전용 배열로 받습니다. 일반 객체·배열 그래프는 순환을 포함해 깊은 입력에서도 명시적 프레임으로 비교합니다. 사용자 getter·Proxy와 내장 객체만으로 이어지는 깊은 경로의 호출 스택은 이 보장 밖입니다.
 
 두 비교 정책은 Date의 시각, RegExp의 패턴과 플래그, Set의 구성원, Map의 키와 값, ArrayBuffer와 DataView가 가리키는 바이트, 박싱된 Number·String·Boolean의 원시값을 각각 검사한다. Set 구성원과 Map 키는 SameValueZero 기준으로 찾으므로 객체 키·구성원은 참조 동일성이 필요하고, Map 값은 선택한 정책으로 재귀 비교한다. Number 박스는 양쪽 NaN을 같게 본다. ArrayBuffer·DataView·박싱된 원시값은 바이트나 원시값이 다르면 다르다고 판정하고, 같으면 선택한 정책의 own 키 비교를 이어 간다. 그래서 같은 상태라도 own 속성(박스 하위 클래스의 필드 포함)이 다르면 다르다. Error도 `name`과 `message`가 다르면 다르다고 판정하고, 같으면 키 비교를 이어 간다. Date·RegExp·Map·Set은 상태 비교 결과로 판정을 끝내며 own 속성을 보지 않는다. 안정 비교는 DataView와 typed array를 자체 view 경로에서 바이트로만 비교하므로 그 own 속성을 보지 않는다. `stack`, `cause`, `AggregateError`의 `errors`처럼 열거되지 않는 나머지 상태는 일반 비교가 관찰하지 않는다. 일반 비교의 typed array는 인덱스 값으로 비교하므로 `0`과 `-0`을 같게 보고, 안정 비교는 typed array의 바이트를 비교한다. 이 내장 상태 검사는 프로토타입이 `Object.prototype`이 아닌 피연산자에서만 실행되므로 일반 객체와 배열의 비교 비용을 늘리지 않는다.
 
