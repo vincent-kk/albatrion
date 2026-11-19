@@ -7,6 +7,9 @@ type Phase = 'before' | 'origin' | 'after' | 'finished';
 /** Observable commands; IDs identify calls or subscriptions, never array positions. */
 export type ModelEvent = { kind: 'call' | 'before' | 'origin' | 'throw' | 'after' | 'update' | 'equal' | 'empty' | 'updateThrow' | 'subscribe' | 'unsubscribe'; id: number };
 
+/** One-shot user callback behavior; nested update failures are caught by that callback. */
+export type CallbackPlan = { site: 'before' | 'origin' | 'after' | 'publish'; id: number; events: ModelEvent[]; throws?: boolean };
+
 /** Executable contract independent of Promise continuation structure. */
 export class TrackableModel {
   /** Current aggregate state. */
@@ -22,23 +25,43 @@ export class TrackableModel {
   /** Active subscriptions, matching native Set identity semantics. */
   listeners = new Set<number>();
 
+  /** Callback plans already executed, preventing unbounded user recursion. */
+  callbacksRun = new Set<number>();
+
   /** Construct a model with the same admission and hook modes as the subject. */
-  constructor(readonly guarded: boolean, readonly before: HookMode, readonly after: HookMode, readonly origin: OriginMode = 'async', initialState = true) { this.value = initialState ? 0 : undefined; }
+  constructor(readonly guarded: boolean, readonly before: HookMode, readonly after: HookMode, readonly origin: OriginMode = 'async', initialState = true, readonly callbacks: readonly CallbackPlan[] = []) { this.value = initialState ? 0 : undefined; }
 
   /** Whether at least one admitted call has not finished. */
   get pending(): boolean { return [...this.phases.values()].some(phase => phase !== 'finished'); }
 
   /** Deliver the current aggregate snapshot to every active subscription. */
-  publish(): void {
-    for (const listener of this.listeners) this.notifications.push([this.value, this.pending, listener]);
+  publish(): boolean {
+    let failed = false;
+    for (const listener of this.listeners) {
+      this.notifications.push([this.value, this.pending, listener]);
+      failed = this.runCallbacks('publish', listener) || failed;
+    }
+    return failed;
+  }
+
+  /** Execute bounded user actions independently of the real handler adapter. */
+  runCallbacks(site: CallbackPlan['site'], id: number): boolean {
+    let failed = false;
+    this.callbacks.forEach((plan, index) => {
+      if (plan.site !== site || plan.id !== id || this.callbacksRun.has(index)) return;
+      this.callbacksRun.add(index);
+      for (const event of plan.events) this.apply(event);
+      failed = Boolean(plan.throws) || failed;
+    });
+    return failed;
   }
 
   /** Enter origin only after the before hook succeeds. */
   startOrigin(id: number): void {
     this.phases.set(id, 'origin');
-    this.publish();
+    if (this.publish()) { this.completeOrigin(id); return; }
     this.counts.origin++;
-    if (this.origin === 'throw') this.completeOrigin(id);
+    if (this.runCallbacks('origin', id) || this.origin === 'throw') this.completeOrigin(id);
   }
 
   /** Finish cleanup before delivering completion. */
@@ -48,7 +71,8 @@ export class TrackableModel {
   completeOrigin(id: number): void {
     this.phases.set(id, 'after');
     if (this.after !== 'none') { this.counts.after++; this.managers.add(id); }
-    if (this.after === 'none' || this.after === 'sync' || this.after === 'throw') this.finish(id);
+    const callbackFailed = this.after !== 'none' && this.runCallbacks('after', id);
+    if (callbackFailed || this.after === 'none' || this.after === 'sync' || this.after === 'throw') this.finish(id);
   }
 
   /** Apply one external event, ignoring settlements that cannot occur in the current phase. */
@@ -68,7 +92,8 @@ export class TrackableModel {
       if (this.guarded && this.pending) return;
       this.phases.set(id, 'before');
       if (this.before !== 'none') { this.counts.before++; this.managers.add(id); }
-      if (this.before === 'throw') this.finish(id);
+      const callbackFailed = this.before !== 'none' && this.runCallbacks('before', id);
+      if (callbackFailed || this.before === 'throw') this.finish(id);
       else if (this.before === 'none' || this.before === 'sync') this.startOrigin(id);
     } else if (kind === 'before' && phase === 'before' && this.before !== 'never') {
       if (this.before === 'reject') this.finish(id);

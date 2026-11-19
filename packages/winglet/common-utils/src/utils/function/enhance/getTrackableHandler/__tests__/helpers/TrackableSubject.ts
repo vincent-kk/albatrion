@@ -1,6 +1,6 @@
 import { getTrackableHandler } from '../../getTrackableHandler';
 import type { StateManager } from '../../type';
-import type { HookMode, ModelEvent, OriginMode } from './TrackableModel';
+import type { CallbackPlan, HookMode, ModelEvent, OriginMode } from './TrackableModel';
 
 /** Explicitly controlled thenable endpoint for one lifecycle stage. */
 class Settlement {
@@ -33,10 +33,14 @@ export class TrackableSubject {
   /** Public subject under test. */
   readonly handler;
 
+  /** One-shot callback indices already entered. */
+  callbacksRun = new Set<number>();
+
   /** Construct the real public handler with controlled hooks and origin. */
-  constructor(guarded: boolean, readonly before: HookMode, readonly after: HookMode, readonly origin: OriginMode = 'async', initialState = true) {
+  constructor(guarded: boolean, readonly before: HookMode, readonly after: HookMode, readonly origin: OriginMode = 'async', initialState = true, readonly callbacks: readonly CallbackPlan[] = []) {
     this.handler = getTrackableHandler<[number], number, { value?: number }>((id: number): Promise<number> => {
       this.counts.origin++;
+      this.runCallbacks('origin', id);
       if (origin === 'throw') throw new Error('origin failure');
       const settlement = new Settlement();
       this.originSettlements.set(id, settlement);
@@ -46,6 +50,7 @@ export class TrackableSubject {
       beforeExecute: before === 'none' ? undefined : ([id], manager) => {
         this.counts.before++;
         this.managers.set(id, manager);
+        this.runCallbacks('before', id);
         if (before === 'throw') throw new Error('before failure');
         if (before === 'sync') return;
         const settlement = new Settlement();
@@ -55,6 +60,7 @@ export class TrackableSubject {
       afterExecute: after === 'none' ? undefined : ([id], manager) => {
         this.counts.after++;
         this.managers.set(id, manager);
+        this.runCallbacks('after', id);
         if (after === 'throw') throw new Error('after failure');
         if (after === 'sync') return;
         const settlement = new Settlement();
@@ -64,8 +70,18 @@ export class TrackableSubject {
     });
   }
 
-  /** Drive one command and let native Promise continuations quiesce. */
-  async apply(event: ModelEvent): Promise<void> {
+  /** Execute user actions synchronously, as hooks and listeners do. */
+  runCallbacks(site: CallbackPlan['site'], id: number): void {
+    this.callbacks.forEach((plan, index) => {
+      if (plan.site !== site || plan.id !== id || this.callbacksRun.has(index)) return;
+      this.callbacksRun.add(index);
+      for (const event of plan.events) { try { this.dispatch(event); } catch { /* The generated user callback catches nested update failures. */ } }
+      if (plan.throws) throw new Error('callback');
+    });
+  }
+
+  /** Invoke one synchronous command without draining continuations. */
+  dispatch(event: ModelEvent): void {
     const { kind, id } = event;
     if (kind === 'call') this.promises.push(this.handler(id).catch(() => undefined));
     else if (kind === 'before' && this.before !== 'never') {
@@ -89,11 +105,19 @@ export class TrackableSubject {
     else if (kind === 'subscribe') {
       let subscription = this.subscriptions.get(id);
       if (!subscription) {
-        const listener = () => this.notifications.push([this.handler.state.value, this.handler.pending, id]);
+        const listener = () => {
+          this.notifications.push([this.handler.state.value, this.handler.pending, id]);
+          this.runCallbacks('publish', id);
+        };
         subscription = { listener, remove: this.handler.subscribe(listener) };
         this.subscriptions.set(id, subscription);
       } else subscription.remove = this.handler.subscribe(subscription.listener);
     } else if (kind === 'unsubscribe') this.subscriptions.get(id)?.remove();
+  }
+
+  /** Drive one command and let native Promise continuations quiesce. */
+  async apply(event: ModelEvent): Promise<void> {
+    try { this.dispatch(event); } catch { /* External callers catch synchronous update failures. */ }
     for (let tick = 0; tick < 12; tick++) await Promise.resolve();
   }
 }
