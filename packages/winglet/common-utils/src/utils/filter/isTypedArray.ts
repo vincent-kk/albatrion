@@ -1,3 +1,8 @@
+/** Native typed-array length getter also rejects DataView across realms. */
+const getTypedArrayLength = Object.getOwnPropertyDescriptor(
+  Object.getPrototypeOf(Uint8Array.prototype), 'length',
+)!.get!;
+
 /**
  * Determines whether a value is a TypedArray with enhanced type safety.
  *
@@ -85,7 +90,7 @@
  */
 export const isTypedArray = <T extends TypedArray>(
   value: unknown,
-): value is T => ArrayBuffer.isView(value) && !(value instanceof DataView);
+): value is T => ArrayBuffer.isView(value) && getTypedArrayLength.call(value) !== undefined;
 
 /**
  * Union type representing all TypedArray types.
