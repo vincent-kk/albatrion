@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import type { ComponentProps, ReactElement } from 'react';
 
 import type { ErrorMessageRendererProps } from '@/schema-form/types';
 
@@ -7,7 +7,7 @@ export const ErrorMessageRenderer = ({
   children,
   style,
   className,
-}: ErrorMessageRendererProps): ReactElement<ErrorMessageRendererProps> => (
+}: ErrorMessageRendererProps): ReactElement<ComponentProps<'em'>> => (
   <em style={style} className={className}>
     {children}
   </em>
