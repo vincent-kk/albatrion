@@ -2,6 +2,7 @@ import type Ajv from 'ajv';
 
 import type { Fn } from '@aileron/declare';
 
+import { compileWithSchemaFallback } from './utils/compileWithSchemaFallback';
 import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
 import { cloneInstance } from './utils/cloneInstance';
 import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
@@ -57,9 +58,9 @@ export const createGuardCompiler = (
   const guard = direct
     ? (registration.guard ??= cloneInstance(instance, false, false))
     : registerSchemaGuard(root, instance, registration);
-  const validate = guard.compile(
-    direct ? schema : { $ref: `${registration.rootId}${fragment}` },
-  );
+  const validate = direct
+    ? guard.compile(schema)
+    : compileWithSchemaFallback(guard, instance, () => guard.compile({ $ref: `${registration.rootId}${fragment}` }));
   if (direct && '$async' in validate && validate.$async === true)
     throw new Error('async schema in sync schema');
   return (value) => {

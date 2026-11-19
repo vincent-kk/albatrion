@@ -9,6 +9,13 @@ import type { Dictionary } from '@aileron/declare';
  */
 declare module 'ajv' {
   interface Ajv {
+    /**
+     * Register object or boolean schemas accepted by the Ajv 6 runtime.
+     * @param schema - JSON Schema or schema collection to register.
+     * @param key - Optional application address for the schema.
+     * @returns This instance for chaining.
+     */
+    addSchema(schema: object | boolean, key?: string): Ajv;
     readonly constructor: new (options?: Options) => Ajv;
     readonly _formats: Readonly<Dictionary<Parameters<Ajv['addFormat']>[1]>>;
     readonly RULES: {
