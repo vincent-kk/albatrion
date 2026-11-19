@@ -8,6 +8,7 @@ import { dirname, join } from 'node:path';
 import { after, before, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import webpack from 'webpack';
+import { createServer } from 'vite';
 
 /** Emulated manifest shapes use the installed implementation; no React installation is fetched. */
 const repository = fileURLToPath(new URL('../../../../../..', import.meta.url));
@@ -60,5 +61,15 @@ for (const version of ['16.14.0', '17.0.2', '18.3.1', '19.2.6']) {
         resolve();
       }));
     });
+    const alias = join(root, 'aliased-jsx-runtime.mjs');
+    writeFileSync(alias, 'export const jsx = () => ({ aliasedRuntime: true }); export const jsxs = jsx; export const Fragment = Symbol.for(\"react.fragment\");');
+    const entry = join(root, 'alias-entry.mjs');
+    writeFileSync(entry, 'export {withErrorBoundary} from \"@winglet/react-utils/hoc\";');
+    const server = await createServer({ root, configFile: false, resolve: { alias: [{ find: 'react/jsx-runtime', replacement: alias }] }, ssr: { noExternal: ['@winglet/react-utils'] }, server: { middlewareMode: true }, appType: 'custom' });
+    try {
+      const module = await server.ssrLoadModule(entry);
+      const Wrapped = module.withErrorBoundary(() => null);
+      assert.equal(Wrapped({}).aliasedRuntime, true, 'the published ESM graph honors the application JSX runtime alias');
+    } finally { await server.close(); }
   });
 }
