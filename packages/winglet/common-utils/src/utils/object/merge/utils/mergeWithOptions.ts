@@ -28,7 +28,9 @@ export function mergeWithOptions<
   const result: Record<PropertyKey, any> = options.immutable
     ? Array.isArray(target)
       ? target.slice()
-      : { ...target }
+      : Object.getPrototypeOf(target) === null
+        ? Object.assign(Object.create(null), target)
+        : { ...target }
     : target;
   for (const key of Object.keys(source)) {
     const sourceValue = getDataProperty(source, key);
