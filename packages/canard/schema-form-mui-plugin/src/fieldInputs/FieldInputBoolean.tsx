@@ -24,7 +24,7 @@ const FieldInputBoolean = ({
   required,
   disabled,
   readOnly,
-  defaultValue,
+  value,
   onChange,
   context,
   label: labelProp,
@@ -37,11 +37,7 @@ const FieldInputBoolean = ({
     return [labelProp || name, sizeProp || context.size];
   }, [context, labelProp, name, sizeProp, hideLabel]);
 
-  const [indeterminate, defaultChecked] = useMemo(() => {
-    const isIndeterminate =
-      defaultValue !== undefined && typeof defaultValue !== 'boolean';
-    return [isIndeterminate, !!defaultValue];
-  }, [defaultValue]);
+  const indeterminate = value !== undefined && typeof value !== 'boolean';
 
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,7 +57,7 @@ const FieldInputBoolean = ({
           name={name}
           disabled={disabled || readOnly}
           indeterminate={indeterminate}
-          defaultChecked={defaultChecked}
+          checked={value === true}
           onChange={handleChange}
           size={size}
           slotProps={{ input: { 'aria-invalid': misfit || undefined } }}
@@ -73,5 +69,6 @@ const FieldInputBoolean = ({
 
 export const FieldInputBooleanDefinition = {
   Component: FieldInputBoolean,
+  controlled: true,
   test: ({ type }) => type === 'boolean',
 } satisfies FieldInputDefinition;
