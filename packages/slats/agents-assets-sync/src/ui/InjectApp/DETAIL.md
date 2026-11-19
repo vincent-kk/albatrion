@@ -21,6 +21,7 @@
   - `usePhase({ kind: 'resolving', targets })` 로 reducer 를 묶는다. 초기 국면은 `resolving` 이며 `booting` 이 아니다
   - `useInjectSession({ targets, flags, originCwd, dispatch })` 로 전이를 구동
   - `<Banner/>`, `<StepTracker/>`, 국면별 본문, `<Footer/>` 를 그리고, `error` 국면에서는 본문이 `<ErrorPanel/>` 로 대체된다
+  - summary는 최종 결과의 계획을 펼쳐 모든 액션 경로와 경고 사유를 생략 없이 표시합니다. dry-run과 force 차단도 같은 최종 표시를 사용합니다.
   - `useExitApp` 을 `summary` 와 `error` 국면에서 각각 활성화한다. 이 훅이 `useApp().exit()` 을 호출하고 코드를 `onExit` 으로 넘긴다
 - `renderInjectApp(input)`:
   - `ink.render(<InjectApp {...input} onExit={captureCode}/>, { exitOnCtrlC: true })`
@@ -59,7 +60,6 @@ entry point 표면 밖의 내부 단위다. 바꿔도 공개 계약 변경이 �
 - 직접 검증하는 파일이 없다.
 
 국면 전이 자체의 승인 그룹(`AC-PHASE-*`)은 `ui/DETAIL.md` 로 옮겼다 — reducer 가 `ui/reducer/` 로 이동했기 때문이다.
-
 
 ## Last Updated
 

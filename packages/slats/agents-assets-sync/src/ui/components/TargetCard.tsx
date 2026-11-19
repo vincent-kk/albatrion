@@ -121,7 +121,7 @@ export function TargetCard({
         : null}
       {expanded && plan && !diagnosticOnly ? (
         <Box marginLeft={2}>
-          <PlanTable plan={plan} />
+          <PlanTable plan={plan} maxRows={Infinity} />
         </Box>
       ) : null}
     </Box>
