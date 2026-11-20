@@ -46,6 +46,9 @@ const RULE_ORDER: Readonly<Record<string, number>> = {
   '/template': 3,
 };
 
+/** Rules of calls whose argument is computed from a read of the target at call time. */
+const READING_RULES: readonly string[] = ['updater', 'identity', 'changing', 'same'];
+
 const overlaps = (left: string, right: string) =>
   left === right ||
   left.startsWith(`${right}/`) ||
@@ -135,7 +138,7 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
       return object;
     };
     const draw = (label: string): Call => {
-      const operation = random(grouped ? 20 : 17);
+      const operation = random(grouped ? 27 : 21);
       const call = (
         description: string,
         run: (root: Root) => void,
@@ -214,8 +217,11 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
       if (operation === 8 || operation === 9) {
         const path = operation === 8 ? '/yOn' : '/zOn';
         const value = random(2) === 1;
-        return call(`set ${path} ${value}`, (root) =>
-          root.find(path)!.setValue(value),
+        // A gate write changes the shape at the addresses it gates, so it counts as a write there.
+        return call(
+          `set ${path} ${value}`,
+          (root) => root.find(path)!.setValue(value),
+          operation === 8 ? ['/object/y', '/mirror/y'] : ['/object/nested/q'],
         );
       }
       if (operation === 10 || operation === 11) {
@@ -265,7 +271,29 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
           (root) => root.find('/w')!.setValue(`${label}w`),
           ['/w'],
         );
-      if (operation === 17) {
+      if (operation === 17 || operation === 18 || operation === 19) {
+        const verb = operation === 17 ? 'insert' : operation === 18 ? 'clear' : 'pop';
+        return call(
+          `${verb} /object/list`,
+          (root) => {
+            const list = root.find('/object/list');
+            if (!isArrayNode(list)) return;
+            if (verb === 'insert') list.insert(0, `${label}inserted`);
+            else if (verb === 'clear') list.clear();
+            else list.pop();
+          },
+          ['/object/list'],
+        );
+      }
+      if (operation === 20) {
+        const value = { object: randomObject(label, true), other: true };
+        return call(
+          `merge / ${JSON.stringify(value)}`,
+          (root) => root.setValue(value, WriteOption.Merge),
+          ['/object', '/other'],
+        );
+      }
+      if (operation === 21) {
         const value = [
           random(4) ? randomObject(label, true) : undefined,
           `${label}g`,
@@ -276,7 +304,7 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
           ['/object', '/w'],
         );
       }
-      if (operation === 18) {
+      if (operation === 22) {
         const same = random(2) === 1;
         return call(
           same ? 'same tuple /group' : 'identity updater /group',
@@ -288,6 +316,38 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
           ['/object', '/w'],
         );
       }
+      if (operation === 23) {
+        const value = [randomObject(label, true), `${label}m`];
+        return call(
+          `merge /group ${JSON.stringify(value)}`,
+          (root) => root.find('/group')!.setValue(value, WriteOption.Merge),
+          ['/object', '/w'],
+        );
+      }
+      if (operation === 24)
+        return call(
+          'reset /group',
+          (root) => root.find('/group')!.resetSubtree(),
+          ['/object', '/w'],
+        );
+      if (operation === 25)
+        return call(
+          `changing updater /group x=${label}u`,
+          (root) =>
+            root.find('/group')!.setValue((previous: unknown) => {
+              const [object, w] = Array.isArray(previous) ? previous : [];
+              return [
+                {
+                  ...(object !== null && typeof object === 'object'
+                    ? object
+                    : {}),
+                  x: `${label}u`,
+                },
+                w,
+              ];
+            }),
+          ['/object', '/w'],
+        );
       const value = [randomObject(label, true), `${label}i`];
       return call(
         `sourceG ${JSON.stringify(value)}`,
@@ -317,6 +377,7 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
     const sequential = create(),
       batched = create();
     const history: string[] = [];
+    let listChanged = false;
     for (let step = 0; step < 10; step++) {
       const calls: Call[] = [];
       const length = 2 + random(3);
@@ -338,12 +399,32 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
                   earlier.triggers.some((target) =>
                     call.triggers.some((path) => overlaps(path, target)),
                   )),
-            ))
+            )) ||
+          // An updater and a same-tuple write read the batch's unprojected view (write DETAIL EVENT-061),
+          // so the sequence they equal has no earlier overlapping mark in the batch.
+          (READING_RULES.includes(call.rule) &&
+            calls.some((earlier) =>
+              earlier.writes.some((path) =>
+                call.writes.some((target) => overlaps(path, target)),
+              ),
+            )) ||
+          // The reset source of an array follows every intermediate length (arrangeFieldNodeItems
+          // DETAIL WRITE-095), which a batch skips, so a reset is compared only while the list is unchanged.
+          (call.rule === 'reset' &&
+            (listChanged ||
+              calls.some((earlier) =>
+                earlier.writes.some((path) => overlaps(path, '/object/list')),
+              )))
         )
           continue;
         calls.push(call);
       }
       history.push(calls.map((call) => call.label).join(' ; '));
+      listChanged ||= calls.some((call) =>
+        [...call.writes, ...call.triggers].some((path) =>
+          overlaps(path, "/object/list"),
+        ),
+      );
       for (const call of calls) call.run(sequential);
       batched.batch(() => {
         for (const call of calls) call.run(batched);
