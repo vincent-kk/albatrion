@@ -2,7 +2,7 @@
 
 ## Purpose
 
-scopeId(및 선택적 `shadowRoot`)별 싱글톤 인스턴스로 CSS 선택자 스코핑, `requestAnimationFrame` 배치 DOM 반영, `adoptedStyleSheets`/`<style>` 폴백 적용, 전체 정리(`destroy`)를 소유한다. CSS 압축은 소유하지 않고 `compressCss`에 위임한다.
+scopeId(및 선택적 `shadowRoot`)별 싱글톤 인스턴스로 CSS 선택자 스코핑, `requestAnimationFrame` 배치 DOM 반영, `adoptedStyleSheets`/`<style>` 폴백 적용, 전체 정리(`destroy`)를 소유한다. CSS 압축의 문법은 소유하지 않고 패키지 루트의 공유 위치 처리기를 사용합니다.
 
 ## Conventions
 

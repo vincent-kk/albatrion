@@ -4,6 +4,8 @@
 
 - `StyleManager.get(scopeId, config?)`는 scopeId(및 Shadow DOM인 경우 `shadowRoot` 인스턴스)별로 유일한 인스턴스를 반환하는 정적 싱글톤 팩토리다.
 - `add(id, css, compressed?)`는 빈 입력과 공백만 있는 입력을 무시하고 기존 식별자 값을 유지합니다. 그 외에는 `compressed`가 아니면 압축하고 문서 모드에서 스코핑한 뒤, 이전에 저장된 동일 id의 처리 결과와 다를 때만 DOM 갱신을 예약합니다. Shadow DOM은 스코핑을 생략합니다.
+
+add는 대상 모드를 한 번 선택하며 ShadowRoot 경로에서는 문서 선택자 스코핑 메서드를 호출하지 않습니다. 공유 위치 처리기의 EOF·압축 의미는 두 모드에 그대로 적용합니다.
 - `remove(id)`는 저장된 스타일을 제거하고, 실제로 제거되었을 때만 DOM 갱신을 예약한다.
 - DOM 갱신은 `requestAnimationFrame` 콜백 하나로 배치된다 — 같은 프레임 안의 여러 `add`/`remove` 호출은 DOM에 한 번만 반영된다.
 - `destroy()`는 예약된 애니메이션 프레임을 취소하고, 적용된 시트 또는 엘리먼트를 제거하고, 내부 캐시를 비우고, 인스턴스를 레지스트리에서 제거한다.
