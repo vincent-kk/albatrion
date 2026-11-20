@@ -4,9 +4,22 @@ import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSO
 
 import { ValidationMode } from '../types/state';
 import { WriteOption } from '../types/value';
+import { createSeedSampler } from './fixtures/createSeedSampler';
 
-it('virtual operations follow the reference model in sequential and batched histories for 3000 seeds', async () => {
-  for (let seed = 1; seed <= 3000; seed++) {
+/*
+ * Seeds: 1 to 3000 locally and in the pre-release tier. The pr tier runs 600 stratified seeds: the
+ * first 50 of each of 12 classes, constituent count 0 to 5 times the initial gate of the object
+ * constituent's y, and the test fails unless all 22 operations run.
+ */
+const SEED_CLASSES = [0, 1, 2, 3, 4, 5].flatMap((count) =>
+  [false, true].map((yOn) => `${count}:${yOn}`),
+);
+
+const sampler = createSeedSampler(3000, SEED_CLASSES, 50);
+
+it(`virtual operations follow the reference model in sequential and batched histories for ${sampler.label}`, async () => {
+  const reached = new Set<number>();
+  for (let seed = 1; sampler.has(seed); seed++) {
     let randomState = seed;
     const random = (limit: number) => {
       randomState = (Math.imul(randomState, 1664525) + 1013904223) >>> 0;
@@ -27,6 +40,7 @@ it('virtual operations follow the reference model in sequential and batched hist
     const initialObject: object =
       random(2) === 1 ? { x: 'x0', y: 'y0' } : { x: 'x0' };
     const initialYOn = random(2) === 1;
+    if (!sampler.accept(`${count}:${initialYOn}`)) continue;
     let yOn = initialYOn;
     let groupOn = true;
     let source: string | undefined;
@@ -115,6 +129,7 @@ it('virtual operations follow the reference model in sequential and batched hist
       const groupOperation =
         drawn !== 0 && drawn !== 5 && drawn !== 17 && drawn < 18;
       const operation = !groupOn && groupOperation ? 19 : drawn;
+      reached.add(operation);
       const objectSlot = random(3) ? undefined : { x: `object${step}` };
       const slots = names.map((_, slot) =>
         random(2) ? `write${step}:${slot}` : undefined,
@@ -367,4 +382,6 @@ it('virtual operations follow the reference model in sequential and batched hist
       expect(group.isDivergent).toBe(false);
     }
   }
+  expect(sampler.shortfall()).toEqual([]);
+  expect(reached.size).toBe(22);
 }, 300_000);
