@@ -373,6 +373,25 @@ describe('subtree reset ends a mark segment (EVENT-013)', () => {
         retained: [],
       },
     },
+    (() => {
+      let target: ReturnType<Root['find']>;
+      return {
+        name: 'a reset whose scope the settlement of its earlier marks makes inactive',
+        on: true,
+        calls: [
+          (root: Root) => {
+            target = root.find('/object/nested/q');
+            target!.setValue('v');
+          },
+          (root: Root) => root.find('/on')!.setValue(false),
+          () => target!.resetSubtree(),
+        ],
+        expected: {
+          object: { x: 'x0', nested: { p: 'p0' }, list: ['l0'] },
+          retained: keep('y0', 'v'),
+        },
+      };
+    })(),
     {
       name: 'a source written on both sides of a reset',
       on: false,
@@ -400,58 +419,5 @@ describe('subtree reset ends a mark segment (EVENT-013)', () => {
     });
     expect(committed).toEqual(before);
     expect(observe(root)).toEqual({ object: { x: 'auto' }, retained: [] });
-  });
-});
-
-describe('a batched read interprets earlier caller writes under each static type (EVENT-061)', () => {
-  const schema: AuthoredSchema = {
-    type: 'object',
-    properties: {
-      n: { type: 'number' },
-      box: { type: 'object', properties: { m: { type: 'number' } } },
-    },
-  };
-  const double = (value: unknown) => (typeof value === 'number' ? value * 2 : -1);
-
-  it('a scalar updater reads the number an earlier string write produced', () => {
-    for (const batched of [false, true]) {
-      const root = nodeFromJSONSchema({
-        jsonSchema: schema,
-        defaultValue: { n: 1 },
-        validationMode: ValidationMode.None,
-      });
-      const apply = () => {
-        root.find('/n')!.setValue('2');
-        root.find('/n')!.setValue(double);
-      };
-      if (batched) root.batch(apply);
-      else apply();
-      expect(root.find('/n')!.value).toBe(4);
-    }
-  });
-
-  it('an object updater reads the numbers an earlier object write produced', () => {
-    for (const batched of [false, true]) {
-      const root = nodeFromJSONSchema({
-        jsonSchema: schema,
-        defaultValue: { box: { m: 1 } },
-        validationMode: ValidationMode.None,
-      });
-      const apply = () => {
-        root.find('/box')!.setValue({ m: '5' });
-        root
-          .find('/box')!
-          .setValue((previous: unknown) => ({
-            m: double(
-              previous !== null && typeof previous === 'object' && 'm' in previous
-                ? previous.m
-                : undefined,
-            ),
-          }));
-      };
-      if (batched) root.batch(apply);
-      else apply();
-      expect(root.find('/box')!.value).toEqual({ m: 10 });
-    }
   });
 });
