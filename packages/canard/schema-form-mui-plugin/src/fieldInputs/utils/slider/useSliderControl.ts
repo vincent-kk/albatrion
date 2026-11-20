@@ -20,7 +20,7 @@ export const useSliderControl = (
 ) => {
   const [unset, setUnset] = useState(typeof initial !== 'number');
   const [draft, setDraft] = useState(() =>
-    bounds.snap(typeof initial === 'number' ? initial : bounds.min),
+    bounds.initialValue(typeof initial === 'number' ? initial : bounds.min),
   );
   const current = useRef(typeof initial === 'number' ? initial : bounds.min);
   const stored = useRef(initial);

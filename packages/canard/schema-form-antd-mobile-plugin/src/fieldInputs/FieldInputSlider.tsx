@@ -140,11 +140,11 @@ const FieldInputSlider = ({
   const [draft, setDraft] = useState<number | [number, number]>(() =>
     Array.isArray(initialValue)
       ? [
-          normalizeValue(Math.min(...initialValue)),
-          normalizeValue(Math.max(...initialValue)),
+          bounds.initialValue(Math.min(...initialValue)),
+          bounds.initialValue(Math.max(...initialValue)),
         ]
       : typeof initialValue === 'number'
-        ? normalizeValue(initialValue)
+        ? bounds.initialValue(initialValue)
         : range
           ? [min, min]
           : min,
