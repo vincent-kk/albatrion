@@ -24,7 +24,7 @@ NODE-016·045. 의존은 청사진·레코드·순수 동작과 탐색·검증·
 
 #### 초기화와 주소 범위
 
-살아 있는 가상 그룹의 resetSubtree는 비활성·분기 부재 constituent까지 각 저장 주소에서 로드 스냅숏을 읽어 초기화합니다. 스냅숏이 생략한 값은 보유 원본을 지우며 재활성화의 새 수명에서 SETTLE-005의 default를 채웁니다. 떼어진 constituent 자체 참조 또는 떼어진 가상 그룹의 resetSubtree는 무동작입니다. FormHandle.reset과 native form reset은 같은 폼 로드 수명으로 실제 저장 주소를 재로드하며 가상 이름을 데이터 키로 쓰지 않습니다.
+살아 있는 가상 그룹의 resetSubtree는 비활성·분기 부재 constituent까지 각 저장 주소에서 로드 스냅숏을 읽어 초기화합니다. 스냅숏이 생략한 값은 보유 원본을 지우며 재활성화의 새 수명에서 SETTLE-005의 default를 채웁니다. 살아 있는 constituent는 그 노드의 resetSubtree처럼 자기 주소 범위의 보유 원본을 먼저 지우므로, 그 안의 조건 비활성 자손이 보유한 값도 스냅숏이 생략하면 지워집니다. 그룹 reset 결과는 각 constituent를 자기 노드에서 reset한 결과와 같습니다. 떼어진 constituent 자체 참조 또는 떼어진 가상 그룹의 resetSubtree는 무동작입니다. FormHandle.reset과 native form reset은 같은 폼 로드 수명으로 실제 저장 주소를 재로드하며 가상 이름을 데이터 키로 쓰지 않습니다.
 
 저장 주소 동사는 닫힌 목록 `value`, `setValue`, `resetSubtree`, `defaultValue`, `isDivergent`, `inactiveValues`, `validate`입니다. defaultValue는 constituent별 스냅숏 튜플(비활성 칸 포함), isDivergent는 constituent 저장 출력과 로드 기준의 차이 중 하나라도 있으면 true, inactiveValues는 constituent 범위의 보유 값 목록입니다. outputValue는 항상 undefined이며 실제 제출 값은 부모의 outputValue입니다.
 
@@ -36,13 +36,13 @@ setState·state는 그룹 자신의 상호작용을, setSubtreeState·clearSubtr
 
 #### 선언·반응형 규칙과 토폴로지
 
-virtual entry의 controls.active·visible·readOnly·disabled 및 일반 제어 선언은 일반 gate·상태 규칙을 따릅니다. controls.default·derived·injectTo가 가상 그룹에 쓰면 튜플을 constituent 주소로 분배하고 그룹 source를 만들지 않습니다. 다른 필드의 식·watch·injectTo가 가상 경로를 읽으면 출력 트리에 그 키가 없어 undefined입니다. 반응형 규칙이 그룹 밖을 명시적으로 바꾸는 경우는 저장 격리의 예외입니다.
+virtual entry의 controls.active·visible·readOnly·disabled 및 일반 제어 선언은 일반 gate·상태 규칙을 따릅니다. controls.default·derived·injectTo가 가상 그룹에 쓰면 튜플을 setValue의 칸 분류와 같이 constituent 주소로 분배하고 그룹 주소에는 source·slot을 만들지 않습니다. 분류는 그 쓰기 시점의 constituent 상태를 따릅니다. 활성 칸은 교체하며 undefined로 비우고, 비활성·부재 칸의 non-undefined는 그 constituent 칸에 보유하며 undefined는 무시합니다. 그룹 자체가 비활성이어도 그룹 노드 없이 같은 constituent 주소로 분배합니다. 그러므로 정의된 칸의 결과는 같은 값을 constituent 주소에 직접 쓴 결과와 같습니다. 다른 필드의 식·watch·injectTo가 가상 경로를 읽으면 출력 트리에 그 키가 없어 undefined입니다. 반응형 규칙이 그룹 밖을 명시적으로 바꾸는 경우는 저장 격리의 예외입니다.
 
 fields는 직계 실제 프로퍼티 이름만 허용합니다. 중복은 VIRTUAL_FIELDS_NOT_VALID, 다른 가상 그룹을 이름으로 참조하는 중첩 그룹은 VIRTUAL_FIELDS_NOT_IN_PROPERTIES로 생성 단계에 거부합니다. 빈 fields는 빈 튜플·빈 자식·빈 저장 범위로 허용합니다. 두 그룹이 constituent를 공유하면 마지막 실제 주소 쓰기가 이기며 reset도 겹친 실제 주소에만 적용하고 배달 순서는 일반 문서 순서입니다. 배열 item 안의 그룹은 item 신원·이동 주소·로드 스냅숏 정렬을 따르며 remove·clear 뒤 옛 그룹 쓰기는 무동작입니다. 부모 JSON 입력에 가상 이름을 넣으면 선언된 가상 키이므로 extras나 constituent 쓰기로 해석하지 않고 무시합니다.
 
 #### 사건 뒤의 불변식
 
-모든 사건 뒤 tuple 길이·이름 대응·활성 children 투영을 확인합니다. 그룹 밖 필드의 storedValue·보유 원본·노드 신원·상호작용·오류는 해당 constituent와 교차하는 선언된 반응형 규칙의 의존 폐쇄 밖에서 보존됩니다. 같은 유효 튜플 쓰기는 전체 모형 상태를 보존합니다. 그룹 reset 후 각 constituent를 활성화한 결과는 같은 constituents에 대한 부모 reset 후 활성화 결과와 같습니다. 순환 입력의 구조 동등성은 VALUE-021의 기존 비보장 범위이며 이 계약이 추가 보장하지 않습니다.
+모든 사건 뒤 tuple 길이·이름 대응·활성 children 투영을 확인합니다. 그룹 밖 필드의 storedValue·보유 원본·노드 신원·상호작용·오류는 해당 constituent와 교차하는 선언된 반응형 규칙의 의존 폐쇄 밖에서 보존됩니다. 같은 유효 튜플 쓰기는 전체 모형 상태를 보존합니다. 그룹 reset 후 각 constituent를 활성화한 결과는 같은 constituents에 대한 부모 reset 후 활성화 결과 및 각 constituent 자체 reset 후 활성화 결과와 같습니다. 그룹에 대한 선언적 쓰기는 그룹의 활성 여부와 무관하게 같은 칸 분류의 setValue 분배와 같습니다. 순환 입력의 구조 동등성은 VALUE-021의 기존 비보장 범위이며 이 계약이 추가 보장하지 않습니다.
 
 정착 사슬과 검증 snapshot의 얕은 입력 판정은 객체 참조와 원시 SameValueZero를 사용합니다. NaN의 자기 불일치를 새 입력으로 오인하면 무변경 쓰기가 콜백·검증을 되먹이므로 깊은 값 비교와 구별한 공유 판정을 사용합니다.
 
