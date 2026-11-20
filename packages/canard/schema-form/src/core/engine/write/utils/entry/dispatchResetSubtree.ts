@@ -9,7 +9,7 @@ import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { flushBatchWrites } from '../chain/flushBatchWrites';
 import { refuseInactiveResolverWrite } from '../report/refuseInactiveResolverWrite';
-import { isMarkOverridden } from './utils/isMarkOverridden';
+import { subtractLaterMarks } from './utils/subtractLaterMarks';
 
 /**
  * Reload one subtree immediately, including when a batch is open: marks inside the scope are
@@ -56,23 +56,21 @@ export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
       runtime.batchWrites = remaining.map((mark) => mark.write);
       if (remaining.length) flushBatchWrites(node.rootNode);
       if (node.isDetached) {
-        // The refused reset discards nothing: in-scope marks a later mark did not replace stay as
-        // the first caller marks of the next segment.
-        const kept = marks.filter(
-          (mark, index) =>
-            mark.isContained &&
-            !marks.some(
-              (later, laterIndex) =>
-                laterIndex > index &&
-                !later.isContained &&
-                isMarkOverridden(mark, later),
+        // The refused reset discards nothing: what later marks did not overwrite of the in-scope
+        // marks stays as the first caller marks of the next segment.
+        const kept = marks.flatMap((mark, index) => {
+          if (!mark.isContained) return [];
+          const write = subtractLaterMarks(
+            mark.write.node,
+            mark,
+            marks.filter(
+              (later, laterIndex) => laterIndex > index && !later.isContained,
             ),
-        );
+          );
+          return write ? [write] : [];
+        });
         if (kept.length)
-          runtime.batchWrites = [
-            ...kept.map((mark) => mark.write),
-            ...(runtime.batchWrites ?? []),
-          ];
+          runtime.batchWrites = [...kept, ...(runtime.batchWrites ?? [])];
         refuseInactiveResolverWrite(node);
         return;
       }
