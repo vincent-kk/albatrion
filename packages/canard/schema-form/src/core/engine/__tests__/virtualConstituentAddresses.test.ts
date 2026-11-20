@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 
+import { isArrayNode } from '../../surface';
 import type { AuthoredSchema } from '../types/jsonSchema';
 import { ValidationMode } from '../types/state';
 
@@ -150,5 +151,73 @@ describe('a declarative write to a virtual group distributes like the constituen
       a: 's1_a',
       b: 's1_b',
     });
+  });
+});
+
+describe('a virtual group lifetime leaves the state counts of its constituents alone', () => {
+  /** The same fields with and without a group over them; the group must not change any count. */
+  const schema = (grouped: boolean): AuthoredSchema => ({
+    type: 'object',
+    properties: {
+      groupOn: { type: 'boolean' },
+      aOn: { type: 'boolean' },
+      a: { type: 'string', controls: { active: '../aOn === true' } },
+      b: { type: 'string' },
+      list: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: { c: { type: 'string' }, d: { type: 'string' } },
+          ...(grouped && {
+            options: { virtual: { pair: { fields: ['c', 'd'] } } },
+          }),
+        },
+      },
+    },
+    ...(grouped && {
+      options: {
+        virtual: {
+          group: {
+            fields: ['a', 'b'],
+            controls: { active: '../groupOn === true' },
+          },
+        },
+      },
+    }),
+  });
+
+  /** Run one history and record the form-wide state after each step. */
+  const observe = (grouped: boolean, steps: readonly string[]) => {
+    const root = create(schema(grouped), {
+      groupOn: true,
+      aOn: true,
+      list: [{ c: 'c0' }, { c: 'c1' }],
+    });
+    return steps.map((step) => {
+      const [verb, path] = step.split(' ');
+      try {
+        if (verb === 'touch') root.find(path)!.setState({ touched: true });
+        else if (verb === 'clear') root.find(path)!.clearSubtreeState();
+        else if (verb === 'on') root.find(path)!.setValue(true);
+        else if (verb === 'off') root.find(path)!.setValue(false);
+        else if (verb === 'remove') {
+          const list = root.find('/list');
+          if (isArrayNode(list)) list.remove(Number(path));
+        }
+        return root.globalState;
+      } catch (error) {
+        return String(error);
+      }
+    });
+  };
+
+  it.each([
+    [['touch /a', 'off /groupOn', 'clear /a', 'on /groupOn']],
+    [['touch /b', 'off /groupOn', 'on /groupOn', 'off /groupOn', 'clear /b']],
+    [['touch /a', 'off /aOn', 'on /aOn', 'touch /a', 'clear /a']],
+    [['touch /list/0/c', 'remove 0', 'touch /list/0/c', 'clear /list/0/c']],
+    [['touch /list/1/d', 'remove 0', 'clear /list/0/d']],
+  ])('%j', (steps) => {
+    expect(observe(true, steps)).toEqual(observe(false, steps));
   });
 });
