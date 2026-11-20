@@ -70,4 +70,17 @@ export const runOwnershipFixedSequences = async <T extends ModelApplication>(
   await check({ $ref: K }, 'x');
   for (const instance of [app, twin]) instance.removeSchema(K);
   await check({ $ref: K }, 'x');
+
+  // Keep the same root and omit formats so their fingerprint cannot mask stale rules.
+  const keywordOnly: JSONSchema = { type: 'string', modelRule: true };
+  for (const instance of [app, twin]) profile.installRule(instance, 1);
+  const oldKeywordValidator = adapter.compile(keywordOnly);
+  const keywordBefore = await check(keywordOnly, 'x');
+  for (const instance of [app, twin]) profile.installRule(instance, 3);
+  await check(keywordOnly, 'x');
+  expect(adapter.compile(keywordOnly)).not.toBe(oldKeywordValidator);
+  expect(await outcomeOf(() => oldKeywordValidator('x'))).toEqual(
+    keywordBefore,
+  );
+  profile.onKeywordReplacement?.();
 };
