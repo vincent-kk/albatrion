@@ -24,6 +24,11 @@ export function readModelBlocks(
   let fenceCharacter = '';
   let fenceLength = 0;
   let comment = false;
+  let reopened = false;
+  const reopensAfter = (tail: string) => {
+    const open = tail.lastIndexOf('<!--');
+    return open >= 0 && !tail.includes('-->', open + 4);
+  };
   for (let number = 0; number < lines.length; number++) {
     const { text, ending } = lines[number];
     let line = text;
@@ -50,11 +55,17 @@ export function readModelBlocks(
       )
         fenceCharacter = '';
     } else if (comment) {
+      if (
+        reopened &&
+        ((spaces <= 3 && width >= 3) ||
+          line.trimStart().startsWith('<!-- AGENTS-ASSETS-SYNC'))
+      )
+        throw new Error(`reopened:${number + 1}`);
       const close = line.indexOf('-->');
-      if (close >= 0)
-        comment =
-          line.slice(close + 3).includes('<!--') &&
-          !line.slice(close + 3).includes('-->');
+      if (close >= 0) {
+        comment = reopensAfter(line.slice(close + 3));
+        reopened = comment;
+      }
     } else if (spaces <= 3 && width >= 3) {
       fenceCharacter = rest[0];
       fenceLength = width;
@@ -82,8 +93,11 @@ export function readModelBlocks(
       }
       if (line.trimStart().startsWith('<!-- AGENTS-ASSETS-SYNC'))
         throw new Error(`marker:${number + 1}`);
-      if (spaces <= 3 && rest.startsWith('<!--') && !rest.includes('-->'))
-        comment = true;
+      if (spaces <= 3 && rest.startsWith('<!--')) {
+        const close = rest.indexOf('-->', 4);
+        reopened = close >= 0 && reopensAfter(rest.slice(close + 3));
+        comment = close < 0 || reopened;
+      }
     }
     if (pending) pending.body += text + ending;
   }
