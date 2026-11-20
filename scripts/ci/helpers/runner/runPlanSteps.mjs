@@ -8,7 +8,8 @@ import { performance } from "node:perf_hooks";
  * @returns {object} Exit code and results, including commands skipped after failure.
  */
 export function runPlanSteps(shards, { root, env, dryRun, log, tier = "pr" }) {
-  if (tier !== "pr" && tier !== "pre-release") throw new Error(`Invalid check tier: ${tier}`);
+  if (tier !== "pr" && tier !== "pre-release")
+    throw new Error(`Invalid check tier: ${tier}`);
   const commandEnv = { ...env };
   if (tier === "pr") commandEnv.SCHEMA_FORM_TEST_PROFILE = "pr";
   else delete commandEnv.SCHEMA_FORM_TEST_PROFILE;
