@@ -345,3 +345,29 @@ it.each([undefined, false])(
     expect(thumb.getAttribute('aria-valuenow')).toBe('1.4');
   },
 );
+
+it.each([undefined, false])(
+  'round-5 narrow interval model reaches the inclusive upper stop (lazy=%s)',
+  (lazy) => {
+    const ref = createRef<FormHandle>();
+    const view = render(
+      <Form
+        ref={ref}
+        jsonSchema={{
+          type: 'number',
+          exclusiveMinimum: 0.1,
+          maximum: 0.2,
+          format: 'slider',
+          presentation: { inputType: 'slider', FieldInputProps: { lazy } },
+        }}
+        fieldInputDefinitions={[FieldInputSliderDefinition]}
+      />,
+    );
+    const thumb = view.getByRole('slider');
+    fireEvent.keyDown(thumb, { key: 'End', keyCode: 35 });
+    if (lazy === undefined) expect(ref.current?.getValue()).toBeUndefined();
+    fireEvent.keyUp(thumb, { key: 'End', keyCode: 35 });
+    expect(ref.current?.getValue()).toBe(0.2);
+    expect(view.getByRole('slider').getAttribute('aria-valuenow')).toBe('0.2');
+  },
+);
