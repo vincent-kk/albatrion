@@ -14,6 +14,8 @@ import { replaceAtPath } from './utils/replaceAtPath';
  * virtual key and a later field write wins over an earlier virtual one (R2).
  * @param root - Common root of every marked occurrence
  * @param writes - Call-order inputs, already resolved from updaters
+ * @param base - Committed root value the marks overlay; a reader passes it with a target's own
+ * committed value placed at the target address
  * @returns Candidate root input for one settlement
  */
 export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
@@ -24,8 +26,9 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
     option: WriteOption;
     virtualFields?: readonly string[];
   }[],
+  base: unknown = root.storedValue,
 ): unknown => {
-  let value = root.storedValue;
+  let value = base;
   for (const write of writes) {
     const names = parsePointerSegments(write.node.path);
     if (!isNamedPointerSegments(names))
