@@ -118,3 +118,96 @@ it('refuses every generated ambiguous boundary rather than returning partial kno
     ).toThrow(/:\d+:/);
   }
 });
+
+it('matches the reference model on comments reopened after --> for 3000 seeded documents', () => {
+  const id = 'pkg:rules/a.md';
+  const start = `<!-- AGENTS-ASSETS-SYNC:START:${id} -->`;
+  const end = `<!-- AGENTS-ASSETS-SYNC:END:${id} -->`;
+  const outcome = (read: () => { blockId: string; body: string }[]) => {
+    try {
+      return read().map(({ blockId, body }) => ({ blockId, body }));
+    } catch (error) {
+      const message = String(error);
+      if (/incomplete boundary|Unclosed|Unmatched START/.test(message))
+        return 'refused at end of file';
+      const line = /(?:document|reopened|unmatched|nested|marker):(\d+)/.exec(
+        message,
+      );
+      return `refused at line ${line?.[1]}${/reopened/.test(message) ? ' (reopened)' : ''}`;
+    }
+  };
+  const fixed = [
+    `<!-- ok --> \`<!-- inline\`\n\n${start}\nhello\n${end}\n`,
+    `<!-- \`-->\` still unclosed\n\n${start}\nhello\n${end}\n`,
+    `<!-- ok --> foo <!-- not a comment\n\n${start}\nhello\n${end}\n`,
+    `${start}\n<!-- c --> <!-- x\n${end}\nuser prose\n${end}\n`,
+  ];
+  let seed = 0x7e0c;
+  const random = (size: number) => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return (seed >>> 8) % size;
+  };
+  for (let sequence = 0; sequence < 3000 + fixed.length; sequence++) {
+    const initialSeed = seed;
+    let document = fixed[sequence - 3000];
+    if (!document) {
+      const eol = ['\n', '\r\n', '\r'][random(3)];
+      const opener = [
+        '<!-- a --> <!-- x',
+        '<!-- a --> `<!-- x`',
+        `<!--${eol}x --> <!-- y`,
+        '<!-- a --> b <!-- c --> <!-- d',
+        '<!-- a --> b',
+        '<!-- `-->` b',
+      ][random(6)];
+      const span = Array.from(
+        { length: random(3) },
+        () =>
+          [
+            'prose',
+            start,
+            end,
+            '<!-- AGENTS-ASSETS-SYNC:BAD -->',
+            `${' '.repeat(random(4))}\`\`\``,
+            '~~~~',
+            '<!-- inner',
+          ][random(7)],
+      );
+      const closer = ['-->', 'z --> tail', `-->${random(2) ? ' <!-- e' : ''}`][
+        random(3)
+      ];
+      const inside = random(2);
+      document = [
+        '# user',
+        ...(inside ? [start] : []),
+        opener,
+        ...span,
+        closer,
+        ...(inside ? [end] : [start, 'body', end]),
+        '',
+      ].join(eol);
+    }
+    const label = `seed=${initialSeed}, sequence=${sequence}`;
+    const expected = outcome(() => readModelBlocks(document));
+    expect(outcome(() => parseBlocks(document)), label).toEqual(expected);
+    if (typeof expected !== 'string')
+      expect(
+        parseBlocks(upsertBlock(document, id, 'new\n')).map(
+          ({ blockId, body }) => ({ blockId, body }),
+        ),
+        label,
+      ).toEqual(
+        expected.some((block) => block.blockId === id)
+          ? expected
+              .filter(
+                (block, index) =>
+                  block.blockId !== id ||
+                  index === expected.findIndex((first) => first.blockId === id),
+              )
+              .map((block) =>
+                block.blockId === id ? { blockId: id, body: 'new\n' } : block,
+              )
+          : [...expected, { blockId: id, body: 'new\n' }],
+      );
+  }
+});
