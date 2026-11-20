@@ -304,3 +304,52 @@ it(
     expect(observe(true)).toEqual(observe(false));
   },
 );
+
+it.each([
+  ['names the leaving constituent', ['injected', 'b1']],
+  ['omits the leaving constituent', [undefined, 'b1']],
+])(
+  'a declarative group write that %s in the settlement its gate closes equals the write after the exit',
+  (_, tuple) => {
+    const observe = (batched: boolean) => {
+      const root = create(
+        {
+          type: 'object',
+          properties: {
+            aOn: { type: 'boolean' },
+            a: { type: 'string', controls: { active: '/aOn === true' } },
+            b: { type: 'string' },
+            source: {
+              type: 'string',
+              controls: {
+                injectTo: (value: unknown) => {
+                  const decoded: unknown =
+                    typeof value === 'string' ? JSON.parse(value) : undefined;
+                  return Array.isArray(decoded)
+                    ? { '../group': decoded.map((slot) => slot ?? undefined) }
+                    : {};
+                },
+              },
+            },
+          },
+          options: { virtual: { group: { fields: ['a', 'b'] } } },
+        },
+        { aOn: true, a: 'a0', b: 'b0' },
+      );
+      const write = () => {
+        root.find('/aOn')!.setValue(false);
+        root.find('/source')!.setValue(JSON.stringify(tuple));
+      };
+      if (batched) root.batch(write);
+      else write();
+      return {
+        value: root.value,
+        retained: root.inactiveValues.map(({ path, value }) => ({
+          path,
+          value,
+        })),
+      };
+    };
+    expect(observe(true)).toEqual(observe(false));
+  },
+);
