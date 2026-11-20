@@ -137,6 +137,51 @@ describe('a declarative write to a virtual group distributes like the constituen
     },
   );
 
+  it.each(['../wrap/group', 'constituents'] as const)(
+    'retains a write to a group whose own owner is inactive (%s)',
+    (target) => {
+      const root = create(
+        {
+          type: 'object',
+          properties: {
+            wrapOn: { type: 'boolean' },
+            src: {
+              type: 'string',
+              controls: {
+                injectTo: (value: unknown) =>
+                  typeof value !== 'string'
+                    ? {}
+                    : target === 'constituents'
+                      ? { '../wrap/a': value + '_a', '../wrap/b': value + '_b' }
+                      : { [target]: [value + '_a', value + '_b'] },
+              },
+            },
+            wrap: {
+              type: 'object',
+              controls: { active: '../wrapOn === true' },
+              properties: { a: { type: 'string' }, b: { type: 'string' } },
+              options: { virtual: { group: { fields: ['a', 'b'] } } },
+            },
+          },
+        },
+        { wrapOn: false },
+      );
+      root.find('/src')!.setValue('s1');
+      const retained = root.inactiveValues.map(({ path, value }) => ({
+        path,
+        value,
+      }));
+      root.find('/wrapOn')!.setValue(true);
+      expect({ retained, opened: root.value }).toEqual({
+        retained: [
+          { path: '/wrap/a', value: 's1_a' },
+          { path: '/wrap/b', value: 's1_b' },
+        ],
+        opened: { wrapOn: true, src: 's1', wrap: { a: 's1_a', b: 's1_b' } },
+      });
+    },
+  );
+
   it('creates no source at the group address of an inactive group', () => {
     const root = create(schema('group injectTo'), {
       bOn: true,
