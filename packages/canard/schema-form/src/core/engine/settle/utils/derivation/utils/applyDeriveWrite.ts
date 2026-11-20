@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { JSONPointer, resolvePointer } from '@/schema-form/helpers/jsonPointer';
+
 import type { DeriveRoundDecision } from '../../../../derive';
 import type { FieldNodeRecord } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
@@ -37,7 +39,7 @@ export const applyDeriveWrite = <Self extends FieldNodeRecord<Self>>(
   }
   const host = write.target ? write.target.parent : write.host;
   const hostPath =
-    host?.path ?? write.targetPath.slice(0, write.targetPath.lastIndexOf('/'));
+    host?.path ?? resolvePointer(write.targetPath, JSONPointer.Parent);
   const entries = host?.blueprintNode.childEntries ?? write.siblings ?? [];
   const values = isArray(write.value) ? write.value : [];
   const fields = template.fields ?? [];
