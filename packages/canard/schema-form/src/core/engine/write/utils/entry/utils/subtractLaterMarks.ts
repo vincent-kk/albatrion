@@ -35,7 +35,7 @@ export const subtractLaterMarks = <
   laters: readonly LaterMark[],
 ): Optional<Write> => {
   const targets = resolveStorageTargets(node);
-  const isVirtual = earlier.paths.length > 1 || targets !== undefined;
+  const { isVirtual } = earlier;
   const live = earlier.paths.map(() => true);
   const values: unknown[] = isVirtual
     ? earlier.paths.map((_, index) =>

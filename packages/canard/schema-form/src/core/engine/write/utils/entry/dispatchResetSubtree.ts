@@ -42,6 +42,7 @@ export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
         return {
           write,
           paths,
+          isVirtual: storage !== undefined,
           option: write.option,
           value: write.value,
           isContained: paths.every((path) =>
