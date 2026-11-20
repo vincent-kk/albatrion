@@ -12,6 +12,7 @@ import { FieldNodeWriteKind } from '../../../types/value';
 import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../types/settlement';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
+import { prepareSourcePruner } from '../slots/prepareSourcePruner';
 import { pruneInactiveSources } from '../slots/pruneInactiveSources';
 import { writeSlotPath } from '../slots/writeSlotPath';
 import { arrayExtras } from './arrayExtras';
@@ -126,11 +127,14 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
         }
         continue;
       }
-      if (
-        !context.isAutomatic &&
-        context.kind !== FieldNodeWriteKind.Load &&
-        !isMerge
-      ) {
+      if (context.kind === FieldNodeWriteKind.Load)
+        prepareSourcePruner(sibling)(
+          sibling.runtime,
+          sibling.path,
+          undefined,
+          context,
+        );
+      else if (!context.isAutomatic && !isMerge) {
         (context.virtualReplacementPaths ??= []).push(sibling.path);
         pruneInactiveSources(sibling.runtime, sibling.path, undefined, context);
       }
