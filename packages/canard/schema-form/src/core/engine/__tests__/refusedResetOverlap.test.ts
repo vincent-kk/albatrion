@@ -65,3 +65,73 @@ it('one Merge of the same final caller value leaves the same retained sources', 
     ),
   ).toEqual(EXPECTED);
 });
+
+it('a refused reset keeps earlier values when the later Merge omits their container', () => {
+  expect(
+    retained((root) =>
+      root.batch(() => {
+        const o = root.find('/o')!;
+        o.setValue({ x: 'earlyX', y: 'earlyY' });
+        root.setValue({ on: false }, WriteOption.Merge);
+        o.resetSubtree();
+      }),
+    ),
+  ).toEqual({ '/o/x': 'earlyX', '/o/y': 'earlyY' });
+});
+
+it.each([
+  ['batch', 1],
+  ['nested batch', 1],
+  ['batch', 2],
+  ['nested batch', 2],
+] as const)(
+  'a refused reset in %s reads the keys in a later virtual Merge with %i constituent(s)',
+  (mode, constituentCount) => {
+    const jsonSchema: AuthoredSchema = {
+      type: 'object',
+      options: {
+        virtual: {
+          group: { fields: constituentCount === 1 ? ['o'] : ['o', 'peer'] },
+        },
+      },
+      properties: {
+        on: { type: 'boolean' },
+        peer: { type: 'string' },
+        o: {
+          type: 'object',
+          properties: {
+            n: {
+              type: 'object',
+              controls: { active: '/on === true' },
+              properties: { x: { type: 'string' }, y: { type: 'string' } },
+            },
+          },
+        },
+      },
+    };
+    const root = nodeFromJSONSchema({
+      jsonSchema,
+      defaultValue: { on: true, peer: 'peer0', o: { n: { x: 'x0', y: 'y0' } } },
+      validationMode: ValidationMode.None,
+    });
+    const write = () => {
+      const n = root.find('/o/n')!;
+      const o = { n: { x: 'lateX' } };
+      n.setValue({ x: 'earlyX', y: 'earlyY' });
+      root
+        .find('/group')!
+        .setValue(
+          constituentCount === 1 ? [o] : [o, 'latePeer'],
+          WriteOption.Merge,
+        );
+      root.find('/on')!.setValue(false);
+      n.resetSubtree();
+    };
+    root.batch(mode === 'batch' ? write : () => root.batch(write));
+    expect(
+      Object.fromEntries(
+        root.inactiveValues.map(({ path, value }) => [path, value]),
+      ),
+    ).toEqual({ '/o/n/x': 'lateX', '/o/n/y': 'earlyY' });
+  },
+);
