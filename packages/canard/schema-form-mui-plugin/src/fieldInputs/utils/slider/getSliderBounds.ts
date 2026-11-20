@@ -101,6 +101,10 @@ export const getSliderBounds = (
     step,
     empty,
     snap,
+    initialValue: (value: number) =>
+      multipleOf === undefined && !integer && value >= min && value <= max
+        ? value
+        : snap(value),
     keyboard,
     fromLibrary,
     toLibrary,
