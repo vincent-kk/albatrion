@@ -267,8 +267,7 @@ describe('a virtual group lifetime leaves the state counts of its constituents a
   });
 });
 
-// Open item: after the object constituent is cleared, a batched same-tuple group write drops the
-// retained value of its gated descendant, while the sequential write keeps every source.
+// Known limit (engine DETAIL virtual invariants): a batched same-tuple write drops a cleared constituent's retained descendant.
 it.fails(
   'keeps every source on a batched same-tuple write after a constituent was cleared',
   () => {
