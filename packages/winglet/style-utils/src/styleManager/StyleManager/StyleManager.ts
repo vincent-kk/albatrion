@@ -172,8 +172,9 @@ export class StyleManager {
     const previousProcessedCSS = this.__processedStyles__.get(id);
 
     // Pre-process the scoped CSS for this specific ID
-    const preparedCSS = processCssSheet(css, !compressed, this.__isShadowDOM__ ? 'shadow' : 'document');
-    const compressedCSS = this.__scopeCSS__(preparedCSS);
+    const shadow = this.__isShadowDOM__;
+    const preparedCSS = processCssSheet(css, !compressed, shadow ? 'shadow' : 'document');
+    const compressedCSS = shadow ? preparedCSS : this.__scopeCSS__(preparedCSS);
 
     // Only mark as dirty if processed CSS actually changed
     if (previousProcessedCSS !== compressedCSS) {
@@ -282,9 +283,8 @@ export class StyleManager {
     }
   }
 
+  /** Prefix document rules with this manager's scope. */
   private __scopeCSS__(css: string): string {
-    // If it's Shadow DOM, no need to scope
-    if (this.__isShadowDOM__) return css;
     return new RuleScoper(css, '.' + this.__scope__).scopeSheet();
   }
 
