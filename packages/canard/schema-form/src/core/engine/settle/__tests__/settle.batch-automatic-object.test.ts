@@ -44,8 +44,7 @@ const observe = (written: object, yOn: boolean, batched: boolean) => {
   return root.value;
 };
 
-// Open item: inside a multi-write batch the replacement scope is the union of the caller paths,
-// so an automatic object write outside it is applied partially and keeps descendants it omits.
+// Known limit (settle DETAIL WRITE-079): a batched automatic object write outside the caller paths applies partially.
 it.fails.each([
   [{ x: 'o' }, true],
   [{ x: 'o', y: 'p' }, false],
