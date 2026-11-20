@@ -372,3 +372,36 @@ it.each([undefined, false])(
     expect(thumb.getAttribute('aria-valuenow')).toBe('0.2');
   },
 );
+
+it.each([undefined, false])(
+  'round-5 modifier release model waits for the movement key (lazy=%s)',
+  (lazy) => {
+    const ref = createRef<FormHandle>();
+    const view = render(
+      <Form
+        ref={ref}
+        defaultValue={5}
+        jsonSchema={{
+          type: 'number',
+          minimum: 0,
+          maximum: 10,
+          format: 'slider',
+          presentation: { inputType: 'slider', FieldInputProps: { lazy } },
+        }}
+        fieldInputDefinitions={[FieldInputSliderDefinition]}
+      />,
+    );
+    const thumb = view.getByRole('slider');
+    fireEvent.keyDown(thumb, {
+      key: 'ArrowRight',
+      keyCode: 39,
+      shiftKey: true,
+    });
+    const beforeCommit = lazy === false ? 10 : 5;
+    expect(ref.current?.getValue()).toBe(beforeCommit);
+    fireEvent.keyUp(thumb, { key: 'Shift', keyCode: 16 });
+    expect(ref.current?.getValue()).toBe(beforeCommit);
+    fireEvent.keyUp(thumb, { key: 'ArrowRight', keyCode: 39 });
+    expect(ref.current?.getValue()).toBe(10);
+  },
+);
