@@ -60,6 +60,8 @@ export interface PrivateCompiler {
   };
   /** Whether the requested schema graph needs asynchronous native compilation. */
   asynchronous: boolean;
+  /** Extension names observed when a macro can produce runtime-dependent schema syntax. */
+  macroProfile?: { readonly rules: string[]; readonly formats: string[] };
   /** Prevents a stale or failed environment from compiling new roots. */
   retired: boolean;
   /** Registration attempts charged to this bounded environment. */
@@ -95,6 +97,8 @@ export interface SchemaDependencies {
   /** Used format names and their application definition identities. */
   readonly formats: Map<string, unknown>;
   /** Whether the requested schema graph needs asynchronous native compilation. */
+  /** Whether native code generation can introduce a macro expansion. */
+  hasMacro: boolean;
   asynchronous: boolean;
 }
 
@@ -114,5 +118,7 @@ export interface ApplicationGraph {
   /** Visited occupied and absent entries used to detect application changes. */
   readonly observations: Map<string, ApplicationEntry>;
   /** Whether the requested schema graph needs asynchronous native compilation. */
+  /** Whether an imported document or the form has a reachable macro. */
+  hasMacro: boolean;
   asynchronous: boolean;
 }

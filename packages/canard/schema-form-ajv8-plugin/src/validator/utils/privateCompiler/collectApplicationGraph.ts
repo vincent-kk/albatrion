@@ -24,11 +24,12 @@ export const collectApplicationGraph = (
     claims: new Map(),
     observations: new Map(),
     asynchronous: false,
+    hasMacro: false,
   };
   visitApplicationDocument(
     source,
     graph,
-    new Set(),
+    new Map(),
     root,
     key,
     false,

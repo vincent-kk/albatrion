@@ -3,6 +3,7 @@ import type { Ajv } from 'ajv';
 
 import { assertBindableInstance } from './utils/assertBindableInstance';
 import { createSchemaRootRegistry } from './utils/createSchemaRootRegistry';
+import { compileMacroSchema } from './utils/privateCompiler/compileMacroSchema';
 import { selectRootCompiler } from './utils/privateCompiler/selectRootCompiler';
 import { validatePrivateSchema } from './utils/privateCompiler/validatePrivateSchema';
 import {
@@ -32,7 +33,9 @@ export const createValidatorFactory = (
     try {
       registration.validationMeta = validatePrivateSchema(ajv, copy);
       if (compiler.asynchronous) copy.$async = true;
-      validate = compiler.instance.compile(copy);
+      validate = compiler.macroProfile
+        ? compileMacroSchema(compiler, () => compiler.instance.compile(copy))
+        : compiler.instance.compile(copy);
     } catch (error) {
       compiler.retired = true;
       throw error;
