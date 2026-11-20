@@ -64,7 +64,9 @@ export function ConfirmForce({
       </Box>
       <Box flexDirection="column" marginLeft={2} marginTop={1}>
         {shown.map((warning) => (
-          <Box key={`${warning.packageName}:${warning.relPath}`}>
+          <Box
+            key={`${warning.packageName}:${warning.agent}:${warning.relPath}`}
+          >
             <Text
               color={
                 warning.kind === 'warn-diverged' ? colors.warn : colors.accent
