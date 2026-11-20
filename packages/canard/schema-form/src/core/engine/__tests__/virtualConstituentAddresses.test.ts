@@ -267,8 +267,7 @@ describe('a virtual group lifetime leaves the state counts of its constituents a
   });
 });
 
-// Known limit (engine DETAIL virtual invariants): a batched same-tuple write drops a cleared constituent's retained descendant.
-it.fails(
+it(
   'keeps every source on a batched same-tuple write after a constituent was cleared',
   () => {
     const observe = (batched: boolean) => {

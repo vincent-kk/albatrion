@@ -30,7 +30,6 @@ it('virtual operations follow the reference model in sequential and batched hist
     let yOn = initialYOn;
     let groupOn = true;
     let source: string | undefined;
-    let objectCleared = false;
     const fields = [...names, 'object'];
     const encodeTuple = (step: number, tuple: unknown) =>
       `${step}|${JSON.stringify(Array.isArray(tuple) ? tuple.map((value) => value ?? null) : tuple)}`;
@@ -115,24 +114,17 @@ it('virtual operations follow the reference model in sequential and batched hist
         index = count ? random(count) : 0;
       const groupOperation =
         drawn !== 0 && drawn !== 5 && drawn !== 17 && drawn < 18;
-      // A batched same-tuple write drops the retained y of a cleared object constituent, an open item
-      // pinned in virtualConstituentAddresses.test.ts; the history reads instead of writing there.
-      const operation =
-        !groupOn && groupOperation
-          ? 19
-          : (drawn === 3 || drawn === 6) && objectCleared && !yOn
-            ? 13
-            : drawn;
+      const operation = !groupOn && groupOperation ? 19 : drawn;
       const objectSlot = random(3) ? undefined : { x: `object${step}` };
       const slots = names.map((_, slot) =>
         random(2) ? `write${step}:${slot}` : undefined,
       );
-      // An injected tuple writes a defined object, which a direct injectTo can also carry. It names y
-      // exactly when y is active, where batched and sequential automatic object writes agree.
+      // An injected tuple writes a defined object, which a direct injectTo can also carry; it names
+      // the gated y or omits it whether y is active or not.
       const tuple: unknown[] = [
         ...slots,
         operation === 19
-          ? yOn
+          ? random(2)
             ? { x: `injected${step}`, y: `injected${step}` }
             : { x: `injected${step}` }
           : objectSlot,
@@ -235,20 +227,6 @@ it('virtual operations follow the reference model in sequential and batched hist
       else if (operation === 17) direct.resetSubtree();
       else if (operation === 20) direct.find('/object/y')?.setValue(`y${step}`);
       else if (operation === 21) direct.find('/yOn')!.setValue(!yOn);
-      if (
-        ((operation === 1 || operation === 7) && objectSlot === undefined) ||
-        operation === 15 ||
-        operation === 16
-      )
-        objectCleared = true;
-      else if (
-        operation === 1 ||
-        operation === 2 ||
-        operation === 7 ||
-        operation === 17 ||
-        operation === 19
-      )
-        objectCleared = false;
       if (operation === 17) {
         yOn = initialYOn;
         groupOn = true;
