@@ -1,5 +1,5 @@
 import {
-  type PropsWithChildren,
+  type PropsWithChildren, type ReactElement,
   memo,
   useLayoutEffect,
   useMemo,
@@ -30,7 +30,7 @@ export const ModalManagerContextProvider = memo(
   ({
     usePathname,
     children,
-  }: PropsWithChildren<ModalManagerContextProviderProps>) => {
+  }: PropsWithChildren<ModalManagerContextProviderProps>): ReactElement => {
     const { pathname } = usePathname();
     const initiator = useRef(pathname);
 

@@ -1,4 +1,4 @@
-import { type HTMLAttributes, memo, useRef } from 'react';
+import { type HTMLAttributes, type ReactElement, memo, useRef } from 'react';
 
 import { usePortalAnchor } from './context/usePortalContext';
 import { useAnchorLifecycle } from './utils/useAnchorLifecycle';
@@ -120,7 +120,7 @@ import { useAnchorLifecycle } from './utils/useAnchorLifecycle';
  * @returns A div element that serves as the mounting point for Portal content. The div reports itself to the portal context through a callback ref, so replacing this anchor moves the content with it
  */
 export const Anchor = memo(
-  (props: Omit<HTMLAttributes<HTMLDivElement>, 'children'>) => {
+  (props: Omit<HTMLAttributes<HTMLDivElement>, 'children'>): ReactElement => {
     const setPortalAnchor = usePortalAnchor();
     type Connection = {
       element: HTMLDivElement | null;

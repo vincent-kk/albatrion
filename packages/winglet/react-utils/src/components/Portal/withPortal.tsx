@@ -1,4 +1,4 @@
-import { type ComponentType, memo } from 'react';
+import { type ComponentType, type ReactElement, memo } from 'react';
 
 import { PortalContextProvider } from './context/PortalContextProvider';
 
@@ -124,7 +124,7 @@ import { PortalContextProvider } from './context/PortalContextProvider';
 export const withPortal = <Type extends object>(
   Component: ComponentType<Type>,
 ) => {
-  return memo((props: Type) => (
+  return memo((props: Type): ReactElement => (
     <PortalContextProvider>
       <Component {...props} />
     </PortalContextProvider>

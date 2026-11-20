@@ -1,7 +1,7 @@
 import {
   type CSSProperties,
   type ComponentType,
-  type PropsWithChildren,
+  type PropsWithChildren, type ReactElement,
   memo,
   useMemo,
 } from 'react';
@@ -66,7 +66,7 @@ export const ConfigurationContextProvider = memo(
     FooterComponent,
     options: inputOptions,
     children,
-  }: PropsWithChildren<ConfigurationContextProviderProps>) => {
+  }: PropsWithChildren<ConfigurationContextProviderProps>): ReactElement => {
     const constant = useMemorize(() => ({
       BackgroundComponent,
       ForegroundComponent: ForegroundComponent || FallbackForegroundFrame,
