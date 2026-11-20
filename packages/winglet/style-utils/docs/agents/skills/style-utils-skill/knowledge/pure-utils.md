@@ -55,7 +55,7 @@ When a comment is the last thing before `}`, the whitespace collapser emits a se
 compressCss('.a {\n  color: red; /* note */\n}'); // '.a{color:red }'
 ```
 
-The artifact is locked by `src/utils/compressCss/__tests__/compress.test.ts:160`, whose input happens to end its block with a comment. Both that test and the `compressCss` JSDoc frame the space as a media-query quirk, and the JSDoc goes further — it ships an example asserting that `@media (max-width: 768px) { .container { padding: 0 16px; } }` returns `…{padding:0 16px }}`. It does not; without the trailing comment that input compresses cleanly. Since that JSDoc travels into `dist/*.d.ts`, an agent reading the declarations will carry the wrong rule. The trigger is a comment at the end of a block, in any context. Browsers parse the extra space correctly, so treat it as cosmetic; a `replace(/\s+\}/g, '}')` post-pass removes it at the cost of a second walk.
+The artifact is locked by `src/utils/compressCss/__tests__/compress.test.ts:160`, whose input happens to end its block with a comment. Both that test and the `compressCss` JSDoc frame the space as a media-query quirk, and the JSDoc goes further — it ships an example asserting that `@media (max-width: 768px) { .container { padding: 0 16px; } }` returns `…{padding:0 16px }}`. It does not; without the trailing comment that input compresses cleanly. Since that JSDoc travels into `dist/*.d.ts`, an agent reading the declarations will carry the wrong rule. The trigger is a comment at the end of a block, in any context. In this nonempty declaration example the space is cosmetic. Do not strip whitespace before `}` indiscriminately: a whitespace-only custom property value must remain nonempty.
 
 ### Whitespace that carries meaning is kept
 
@@ -70,6 +70,8 @@ compressCss('.a { color : red; }'); // '.a{color:red}'
 ```
 
 Existing whitespace around `+` and `-` stays in declaration values and at-rule preludes, inside or outside parentheses: a custom property can later be substituted into `calc()`. Selector combinators may lose surrounding whitespace only when the selector context proves that meaning stays the same; An+B boundaries in `:nth-child()` stay intact. Descendant spaces around attribute selectors or after selector functions remain significant. A colon loses separator whitespace only in declaration context; `.scope :hover` and `.scope:hover` remain different selectors, and `.a: hover` is not repaired into `.a:hover`. Custom-property token spacing, including a whitespace-only value, is preserved for substitution. Comment removal retains an empty comment whenever it would merge or split tokens, including CDO/CDC and attribute-match boundaries.
+
+Attribute contents use an opaque component context, so whitespace around `~=` or another attribute operator is not treated as selector-combinator trivia. Empty-namespace descendants such as `foo |div` and spaced column combinators retain their boundaries. A whitespace-only custom property or declaration-query value remains significant before trailing comments and at EOF; whitespace before a comment can also remain when a value follows, avoiding repeated scans of a comment gap.
 
 ## Related
 
