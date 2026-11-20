@@ -31,7 +31,8 @@ export const applyDeriveWrite = <Self extends FieldNodeRecord<Self>>(
   if (template.kind !== 'virtual') {
     if (write.target && isLiveOccurrence(write.target, context))
       markWrite(write.target, write.value, context);
-    else placeDeclarativeValue(context, write.targetPath, template, write.value);
+    else
+      placeDeclarativeValue(context, write.targetPath, template, write.value);
     return;
   }
   const host = write.target ? write.target.parent : write.host;

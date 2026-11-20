@@ -18,10 +18,25 @@ import { WriteOption } from '../types/value';
 
 type Root = ReturnType<typeof nodeFromJSONSchema>;
 type Policy = 'default' | 'unsetOnInactive' | 'inactiveValue';
-type Dimension = 'gateRule' | 'callerThenRule' | 'exitCancelled' | 'layered' | 'resetDetached';
+type Dimension =
+  | 'gateRule'
+  | 'callerThenRule'
+  | 'exitCancelled'
+  | 'layered'
+  | 'resetDetached';
 
-const POLICIES: readonly Policy[] = ['default', 'unsetOnInactive', 'inactiveValue'];
-const DIMENSIONS: readonly Dimension[] = ['gateRule', 'callerThenRule', 'exitCancelled', 'layered', 'resetDetached'];
+const POLICIES: readonly Policy[] = [
+  'default',
+  'unsetOnInactive',
+  'inactiveValue',
+];
+const DIMENSIONS: readonly Dimension[] = [
+  'gateRule',
+  'callerThenRule',
+  'exitCancelled',
+  'layered',
+  'resetDetached',
+];
 
 const rule = (target: string, value: (source: string) => unknown) => ({
   type: 'string' as const,
@@ -82,13 +97,19 @@ const exit = (policy: Policy, value: string | undefined): Expected =>
         ? {}
         : { retained: value };
 
-const model = (dimension: Dimension, policy: Policy, named: string | undefined, caller: string): Expected => {
+const model = (
+  dimension: Dimension,
+  policy: Policy,
+  named: string | undefined,
+  caller: string,
+): Expected => {
   if (dimension === 'gateRule') return exit(policy, named ?? 'y0');
   if (dimension === 'callerThenRule') return { retained: named ?? caller };
   if (dimension === 'exitCancelled') return { live: named ?? 'y0' };
   // The lower winner omits the live y it makes leave; that exit keeps y's committed value, as the
   // lower winner's own single call does, so the policy applies to y0.
-  if (dimension === 'layered') return named !== undefined ? { retained: named } : exit(policy, 'y0');
+  if (dimension === 'layered')
+    return named !== undefined ? { retained: named } : exit(policy, 'y0');
   return { retained: caller };
 };
 
@@ -120,7 +141,10 @@ it('places each declarative value where the routing model says for 3000 seeds', 
       defaultValue: { object: { on, x: 'x0', y: 'y0' } },
       validationMode: ValidationMode.None,
     });
-    const merges: Record<Exclude<Dimension, 'resetDetached'>, Record<string, unknown>> = {
+    const merges: Record<
+      Exclude<Dimension, 'resetDetached'>,
+      Record<string, unknown>
+    > = {
       gateRule: { src: source, close: 'c' },
       callerThenRule: { object: { y: caller }, src: source },
       exitCancelled: { object: { on: false }, src: source, reopen: 'r' },
@@ -139,8 +163,9 @@ it('places each declarative value where the routing model says for 3000 seeds', 
         for (const [key, value] of Object.entries(merges[dimension]))
           root.setValue({ [key]: value }, WriteOption.Merge);
       });
-    expect(observe(root), `seed=${seed} ${dimension} ${policy} merge=${isMerge} named=${named}`).toEqual(
-      model(dimension, policy, named, caller),
-    );
+    expect(
+      observe(root),
+      `seed=${seed} ${dimension} ${policy} merge=${isMerge} named=${named}`,
+    ).toEqual(model(dimension, policy, named, caller));
   }
 }, 120_000);
