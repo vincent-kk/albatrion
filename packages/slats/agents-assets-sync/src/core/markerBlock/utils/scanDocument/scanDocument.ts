@@ -27,6 +27,7 @@ export function scanDocument(
   let fence = '';
   let fenceLine = 0;
   let commentLine = 0;
+  let reopened = false;
   let listIndent = 0;
   let blank = false;
   let pending:
@@ -48,11 +49,23 @@ export function scanDocument(
       )
         fence = '';
     } else if (commentLine) {
+      // CommonMark ends the HTML block at the reopening line; HTML does not.
+      if (
+        reopened &&
+        (delimiter || line.trimStart().startsWith(`<!-- ${MARKER_PREFIX}`))
+      )
+        return {
+          blocks: [],
+          issue: {
+            line: lineNumber,
+            message: `HTML comment reopened after --> on line ${commentLine} is read differently by Markdown and HTML. Close it on that line before managed markers or fences.`,
+          },
+        };
       const close = line.indexOf('-->');
-      if (close >= 0)
-        commentLine = hasUnclosedComment(line.slice(close + 3))
-          ? lineNumber
-          : 0;
+      if (close >= 0) {
+        reopened = hasUnclosedComment(line.slice(close + 3));
+        commentLine = reopened ? lineNumber : 0;
+      }
     } else {
       const container =
         /^(?:(?: {0,3}>[ \t]*)|(?: {0,3}(?:[-+*]|\d+[.)])[ \t]+))+(.*)$/.exec(
@@ -147,8 +160,10 @@ export function scanDocument(
           !match &&
           /^ {0,3}<!--/.test(line) &&
           hasUnclosedComment(line)
-        )
+        ) {
           commentLine = lineNumber;
+          reopened = line.includes('-->', line.indexOf('<!--') + 4);
+        }
       }
     }
     offset = next;
