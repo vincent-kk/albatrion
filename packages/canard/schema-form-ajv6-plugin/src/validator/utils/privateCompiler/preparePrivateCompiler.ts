@@ -12,6 +12,7 @@ import { isFormNamespaceCompatible } from './isFormNamespaceCompatible';
 import { isPrivateCompilerCurrent } from './isPrivateCompilerCurrent';
 import { observeIdentity } from './observeIdentity';
 import { recordDependencies } from './recordDependencies';
+import { recordMacroProfile } from './recordMacroProfile';
 import type { PrivateCompiler } from './types';
 
 /**
@@ -53,7 +54,10 @@ export const preparePrivateCompiler = (
   const graph = facts.references.length
     ? collectApplicationGraph(source, root, key, facts)
     : undefined;
+  const hasMacro = graph?.hasMacro ?? facts.hasMacro;
   const compatible =
+    !hasMacro &&
+    !previous?.macroProfile &&
     previous &&
     previous.kind === kind &&
     previous.allErrors === allErrors &&
@@ -77,7 +81,10 @@ export const preparePrivateCompiler = (
   const compiler = compatible
     ? previous
     : createNativeCompiler(source, kind, allErrors, false);
-  compiler.asynchronous = graph?.asynchronous ?? facts.asynchronous;
+  compiler.asynchronous =
+    (graph?.asynchronous ?? facts.asynchronous) ||
+    (kind === 'validation' && hasMacro);
+  if (hasMacro) recordMacroProfile(compiler);
   if (observations)
     for (const [name, entry] of observations) compiler.entries.set(name, entry);
   if (kind !== 'meta') compiler.count++;

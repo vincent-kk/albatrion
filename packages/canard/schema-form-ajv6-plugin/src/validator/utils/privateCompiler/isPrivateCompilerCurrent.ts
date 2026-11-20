@@ -34,6 +34,18 @@ export const isPrivateCompilerCurrent = (
     )
       return false;
   }
+  const macro = compiler.macroProfile;
+  if (macro) {
+    const rules = Object.keys(source.RULES.keywords);
+    const formats = Object.keys(source._formats);
+    if (
+      rules.length !== macro.rules.length ||
+      formats.length !== macro.formats.length ||
+      rules.some((name, index) => name !== macro.rules[index]) ||
+      formats.some((name, index) => name !== macro.formats[index])
+    )
+      return false;
+  }
   for (const [name, value] of compiler.rules)
     if (observeIdentity(identities, readKeyword(source, name)) !== value)
       return false;
