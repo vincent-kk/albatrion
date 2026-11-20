@@ -8,11 +8,14 @@ import type { SettlementContext } from '../../../types/settlement';
 import { markWrite } from '../../input/markWrite';
 import { writeAbsentConstituent } from '../../slots/writeAbsentConstituent';
 import { writeInactiveSource } from '../../slots/writeInactiveSource';
+import { findDepartingChild } from '../../transition/findDepartingChild';
+import { recordDepartingWrite } from '../../transition/recordDepartingWrite';
 
 /**
  * Apply one selected automatic replacement to live or latent source.
  * A virtual group target, live or latent, distributes its tuple to the constituents' own
- * addresses: a live constituent is written, an absent one retains a defined value in its slot.
+ * addresses: a live constituent is written, an absent one retains a defined value in its slot, and
+ * a constituent leaving in this settlement takes a defined value as the same write after its exit.
  * @param write - Winner from derive's pure decision
  * @param context - Reversible settlement work list
  * @returns Nothing; marking and latent distribution are recorded for rollback
@@ -45,7 +48,12 @@ export const applyDeriveWrite = <Self extends FieldNodeRecord<Self>>(
   const fields = template.fields ?? [];
   for (let index = 0; index < fields.length; index++) {
     const sibling = host?.childrenByName?.[fields[index]];
+    const departing =
+      !sibling && host && values[index] !== undefined
+        ? findDepartingChild(host, fields[index], context)
+        : undefined;
     if (sibling) markWrite(sibling, values[index], context);
+    else if (departing) recordDepartingWrite(departing, values[index], context);
     else {
       const entry = entries.find((entry) => entry.name === fields[index]);
       if (entry)

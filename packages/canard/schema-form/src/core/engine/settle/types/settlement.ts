@@ -136,6 +136,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   previousOutputValue: unknown;
   /** Successful exit results, retained only for this settlement and applied after source capture. */
   inactiveValueOverrides?: Map<Self, unknown>;
+  /** Defined declarative values named for children leaving in this settlement, applied after their exit policy. */
+  departingWrites?: Map<Self, unknown>;
   /** First pre-move address per moved node, built once by an exit resolver. */
   inactivePathOrigins?: Map<Self, string>;
   /** Binding context from the preceding committed shape. */
