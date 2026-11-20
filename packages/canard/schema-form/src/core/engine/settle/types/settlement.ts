@@ -287,6 +287,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
     previousSource: unknown;
     previousExtras: unknown;
     previousDistributed?: Distribution;
+    /** The entry only rewrote the node's distribution for an inactive descendant; the node itself was not written. */
+    isDistributionOnly?: boolean;
   }[];
   /** Reversible array shape changes made by automatic writes. */
   arrayStructureLog: {

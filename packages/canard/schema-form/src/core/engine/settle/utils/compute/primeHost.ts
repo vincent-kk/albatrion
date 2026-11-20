@@ -9,6 +9,7 @@ import { mergeEffectiveSchema } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { captureFieldNodeChange } from '../../../record';
 import { FieldNodeWriteKind } from '../../../types/value';
+import { applyRevivedDepartingWrites } from '../transition/applyRevivedDepartingWrites';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
@@ -150,6 +151,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     }
     if (pending && child === pending) {
       context.revivedNodes.add(child);
+      applyRevivedDepartingWrites(child, context);
     }
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     if (!priorChild && !pending) {
