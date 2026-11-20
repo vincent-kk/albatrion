@@ -15,7 +15,12 @@ export const importApplicationGraph = (
   for (const [key, entry] of graph.observations)
     compiler.entries.set(key, entry);
   for (const resource of graph.resources.values()) {
-    if (compiler.imported.has(resource.key)) continue;
+    const imported = compiler.imported.has(resource.key);
+    if (imported && resource.target === resource.document) continue;
+    const facts = graph.documents.get(resource.document);
+    if (!facts) throw new Error('Application dependency facts are missing');
+    recordDependencies(compiler, facts);
+    if (imported) continue;
     let copy =
       typeof resource.document === 'boolean'
         ? resource.document
@@ -27,9 +32,6 @@ export const importApplicationGraph = (
       if (typeof resource.document === 'object')
         compiler.copies.set(resource.document, copy);
     }
-    const facts = graph.documents.get(resource.document);
-    if (!facts) throw new Error('Application dependency facts are missing');
-    recordDependencies(compiler, facts);
     if (
       (facts.asynchronous ||
         (compiler.kind === 'validation' &&
