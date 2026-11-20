@@ -47,6 +47,7 @@ const FieldInputSlider = ({
     defaultValue,
     lazy,
     disabled || readOnly,
+    readOnly,
     onChange,
   );
   const { min, max, empty } = bounds;
