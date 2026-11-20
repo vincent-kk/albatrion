@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactElement } from 'react';
 
 import { Flex, Typography } from 'antd';
 
@@ -28,7 +28,7 @@ export const FieldRenderer = ({
   Label,
   ErrorMessage,
   errorMessage,
-}: FieldRendererProps) => {
+}: FieldRendererProps): ReactElement => {
   const presentation =
     typeof jsonSchema === 'object' && jsonSchema !== null
       ? jsonSchema.presentation
