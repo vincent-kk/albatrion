@@ -7,6 +7,7 @@ import { compileOracle } from './compileOracle';
 import { createFreshOracle } from './createFreshOracle';
 import { outcomeOf } from './outcomeOf';
 import { runGuardBaseSequence } from './runGuardBaseSequence';
+import { runOptionKeySequence } from './runOptionKeySequence';
 import { runPoolNamespaceSequence } from './runPoolNamespaceSequence';
 import { runRootMutationSequence } from './runRootMutationSequence';
 import { runSharedIdentitySequence } from './runSharedIdentitySequence';
@@ -199,12 +200,24 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
         profile.addMeta(instance, JSON.parse(JSON.stringify(meta)), meta.$id);
       }
     } else if (operation === 13) {
-      const allErrors = !!(next() % 2);
-      for (const instance of [app, twin]) {
-        const options =
-          Reflect.get(instance, '_opts') ?? Reflect.get(instance, 'opts');
-        if (options && typeof options === 'object')
-          Reflect.set(options, 'allErrors', allErrors);
+      if (next() % 2) {
+        const result = await runOptionKeySequence(
+          app,
+          twin,
+          profile,
+          next(),
+          context,
+        );
+        roots.push(...result.references);
+        functions.push(...result.functions);
+      } else {
+        const allErrors = !!(next() % 2);
+        for (const instance of [app, twin]) {
+          const options =
+            Reflect.get(instance, '_opts') ?? Reflect.get(instance, 'opts');
+          if (options && typeof options === 'object')
+            Reflect.set(options, 'allErrors', allErrors);
+        }
       }
     } else if (operation === 6 || !adapters.length) {
       if (adapters.length === 4) adapters.shift();
