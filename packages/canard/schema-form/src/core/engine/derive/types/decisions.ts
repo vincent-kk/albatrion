@@ -59,7 +59,7 @@ export interface DeriveWrite<Self> {
 
 /** Pure decision for one complete-tree derivation round. */
 export interface DeriveRoundDecision<Self> {
-  /** At most one winning write for each target in this round. */
+  /** At most one winning write for each target in this round, in ascending rank order. */
   readonly writes: readonly DeriveWrite<Self>[];
   /** Development-only decisions, absent in production. */
   readonly trace: readonly DeriveTraceEntry[];
