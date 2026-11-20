@@ -50,6 +50,7 @@ interface FieldInputDateProps
 
 const FieldInputDate = ({
   inputId,
+  getInputId,
   labelId: fieldTitleId,
   name,
   required,
@@ -130,11 +131,11 @@ const FieldInputDate = ({
         shouldDisableDate={disableDate}
         slotProps={{
           textField: {
-            id: inputId,
+            id: getInputId('native'),
             InputProps: {
               'aria-labelledby': fieldTitleId,
               slotProps: {
-                input: { role: 'group', 'aria-labelledby': fieldTitleId },
+                input: { id: inputId, role: 'group', 'aria-labelledby': fieldTitleId },
               },
             },
             name,

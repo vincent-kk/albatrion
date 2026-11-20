@@ -29,6 +29,7 @@ interface FieldInputTimeProps
 
 const FieldInputTime = ({
   inputId,
+  getInputId,
   labelId: fieldTitleId,
   name,
   jsonSchema,
@@ -101,11 +102,11 @@ const FieldInputTime = ({
         ampm={ampm}
         slotProps={{
           textField: {
-            id: inputId,
+            id: getInputId('native'),
             InputProps: {
               'aria-labelledby': fieldTitleId,
               slotProps: {
-                input: { role: 'group', 'aria-labelledby': fieldTitleId },
+                input: { id: inputId, role: 'group', 'aria-labelledby': fieldTitleId },
               },
             },
             name,
