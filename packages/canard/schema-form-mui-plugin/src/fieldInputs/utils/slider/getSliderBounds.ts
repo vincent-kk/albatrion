@@ -110,7 +110,7 @@ export const getSliderBounds = (
     step,
     empty,
     snap,
-    initialValue: (value: number) =>
+    getReadOnlyValue: (value: number) =>
       multipleOf === undefined && !integer && value >= min && value <= max
         ? value
         : snap(value),

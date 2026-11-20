@@ -8,6 +8,7 @@ import type { getSliderBounds } from './getSliderBounds';
  * @param initial - Stored starting value; rendering preserves it in the form.
  * @param lazy - False publishes movement; omitted or true publishes commits.
  * @param locked - Block pointer, keyboard and callback changes when true.
+ * @param readOnly - Preserve the stored value on a read-only mount.
  * @param onChange - Publish valid values, or undefined for an explicit clear.
  * @returns Draft state and event handlers that write only on user interaction.
  */
@@ -16,12 +17,14 @@ export const useSliderControl = (
   initial: number | null | undefined,
   lazy: boolean | undefined,
   locked: boolean | undefined,
+  readOnly: boolean | undefined,
   onChange: (value: number | undefined) => void,
 ) => {
   const [unset, setUnset] = useState(typeof initial !== 'number');
-  const [draft, setDraft] = useState(() =>
-    bounds.initialValue(typeof initial === 'number' ? initial : bounds.min),
-  );
+  const [draft, setDraft] = useState(() => {
+    const value = typeof initial === 'number' ? initial : bounds.min;
+    return readOnly ? bounds.getReadOnlyValue(value) : bounds.snap(value);
+  });
   const current = useRef(typeof initial === 'number' ? initial : bounds.min);
   const stored = useRef(initial);
   const pending = useRef<{ key: string; value: number } | undefined>(undefined);

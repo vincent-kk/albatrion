@@ -108,6 +108,7 @@ const FieldInputSlider = ({
     defaultValue,
     lazy,
     disabled || readOnly,
+    readOnly,
     onChange,
   );
   const handleChange = (_event: Event, value: number | number[]) =>

@@ -137,18 +137,19 @@ const FieldInputSlider = ({
       : initialValue,
   );
   const [isUnset, setIsUnset] = useState(initialValue === undefined);
-  const [draft, setDraft] = useState<number | [number, number]>(() =>
-    Array.isArray(initialValue)
-      ? [
-          bounds.initialValue(Math.min(...initialValue)),
-          bounds.initialValue(Math.max(...initialValue)),
-        ]
-      : typeof initialValue === 'number'
-        ? bounds.initialValue(initialValue)
-        : range
-          ? [min, min]
-          : min,
-  );
+  const [draft, setDraft] = useState<number | [number, number]>(() => {
+    const display = readOnly ? bounds.getReadOnlyValue : normalizeValue;
+    if (Array.isArray(initialValue))
+      return [
+        display(Math.min(...initialValue)),
+        display(Math.max(...initialValue)),
+      ];
+    return typeof initialValue === 'number'
+      ? display(initialValue)
+      : range
+        ? [min, min]
+        : min;
+  });
   const handleChange = useCallback(
     (value: number | [number, number] | null) => {
       if (empty) return;
