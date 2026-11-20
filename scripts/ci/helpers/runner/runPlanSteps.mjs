@@ -10,8 +10,8 @@ import { performance } from "node:perf_hooks";
 export function runPlanSteps(shards, { root, env, dryRun, log, tier = "pr" }) {
   if (tier !== "pr" && tier !== "pre-release") throw new Error(`Invalid check tier: ${tier}`);
   const commandEnv = { ...env };
-  if (tier === "pre-release") commandEnv.SCHEMA_FORM_EXTENDED_TESTS = "1";
-  else delete commandEnv.SCHEMA_FORM_EXTENDED_TESTS;
+  if (tier === "pr") commandEnv.SCHEMA_FORM_TEST_PROFILE = "pr";
+  else delete commandEnv.SCHEMA_FORM_TEST_PROFILE;
   const results = [];
   let exitCode = 0;
   for (const shard of shards) {
