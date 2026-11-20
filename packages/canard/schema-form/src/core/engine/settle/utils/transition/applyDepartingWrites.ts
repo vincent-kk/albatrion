@@ -8,16 +8,15 @@ import { writeSlotPath } from '../slots/writeSlotPath';
  * retained slots. Runs after the exit policy and the resolver results, so a named value wins over
  * both, while an address the write omitted keeps what the policy left (WRITE-079).
  * @param context - Settlement whose exits are final and whose derive did not exceed a budget
- * @returns Nothing; ancestors are written before their descendants, equal depths in rank order so the later write to one address wins
+ * @returns Nothing; records apply in the order they were made, which is the rank order of their
+ * winners, so a higher winner decides an address a lower one also named, whether it names an
+ * ancestor or a descendant of it
  */
 export const applyDepartingWrites = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   if (!context.departingWrites) return;
-  const writes = [...context.departingWrites].sort(
-    (left, right) => left.depth - right.depth,
-  );
-  for (const { node, suffix, template, value } of writes) {
+  for (const { node, suffix, template, value } of context.departingWrites) {
     if (!node.isDetached) continue;
     const path = getInactiveValuePath(node, context);
     if (path === undefined) continue;

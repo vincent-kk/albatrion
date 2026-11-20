@@ -23,6 +23,7 @@ const findLive = <Self extends FieldNodeRecord<Self>>(
  * Apply the declarative values recorded for a node whose exit this settlement cancels. The node
  * stays live, so no exit policy runs, and each value is the same write made to it after the
  * revival: a live address is marked, an inactive one below it is placed like any latent write.
+ * Records apply in the order they were made, the rank order of their winners (WRITE-079).
  * @param node - Pending occurrence the current compute selects again
  * @param context - Settlement holding the departing record
  * @returns Nothing; the node's records leave the departing record
@@ -34,9 +35,7 @@ export const applyRevivedDepartingWrites = <Self extends FieldNodeRecord<Self>>(
   const writes = context.departingWrites;
   if (!writes?.some((write) => write.node === node)) return;
   context.departingWrites = writes.filter((write) => write.node !== node);
-  const revived = writes
-    .filter((write) => write.node === node)
-    .sort((left, right) => left.depth - right.depth);
+  const revived = writes.filter((write) => write.node === node);
   const wasAutomatic = context.isAutomatic;
   context.isAutomatic = true;
   for (const { suffix, template, value } of revived) {
