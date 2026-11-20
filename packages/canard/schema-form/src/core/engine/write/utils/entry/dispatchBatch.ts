@@ -11,9 +11,9 @@ import { resolveFieldNodeChainRoot } from '../chain/resolveFieldNodeChainRoot';
 /**
  * Group synchronous caller writes into one outer delivery boundary.
  * Updaters run at their call site against prior marks; scalar reads retain the
- * committed value until those marks settle. Array verbs first settle prior marks
- * and immediately arrange live items, preserving surviving item identity.
- * Reads after an array verb see that arrangement. Deliveries, validation requests
+ * committed value until those marks settle. Array verbs and subtree resets first settle
+ * prior marks; array verbs then arrange live items, preserving surviving item identity, and
+ * resets load. Reads after either see that commit. Deliveries, validation requests
  * and onChange remain collected at the outer batch boundary, including on failure.
  * @param node - Any occurrence in the tree being batched
  * @param fn - Synchronous writes to mark, including nested batches
