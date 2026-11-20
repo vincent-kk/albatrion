@@ -106,7 +106,11 @@ const FieldInputTime = ({
             InputProps: {
               'aria-labelledby': fieldTitleId,
               slotProps: {
-                input: { id: inputId, role: 'group', 'aria-labelledby': fieldTitleId },
+                input: {
+                  id: inputId,
+                  role: 'group',
+                  'aria-labelledby': fieldTitleId,
+                },
               },
             },
             name,

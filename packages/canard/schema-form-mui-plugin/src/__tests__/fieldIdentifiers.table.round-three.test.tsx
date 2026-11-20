@@ -422,7 +422,10 @@ it.each<[string, JSONSchema, string, string]>([
   const menuIds: string[] = [];
   for (const control of controls) {
     const input = Array.from(captured.values()).find(
-      (inputProps) => inputProps.getInputId(displayKey) === control.id,
+      (inputProps) =>
+        (displayKey === 'display'
+          ? inputProps.inputId
+          : inputProps.getInputId(displayKey)) === control.id,
     );
     expect(input).toBeDefined();
     expect(document.getElementById(input!.inputId)).not.toBeNull();

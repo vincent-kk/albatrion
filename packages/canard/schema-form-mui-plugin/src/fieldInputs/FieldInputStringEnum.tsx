@@ -102,7 +102,7 @@ const FieldInputStringEnum = ({
 
   return (
     <FormControl fullWidth={fullWidth} variant={variant} error={misfit}>
-      <InputLabel id={labelId} htmlFor={inputId}>
+      <InputLabel id={labelId} htmlFor={getInputId('native')}>
         {label}
       </InputLabel>
       <Select
