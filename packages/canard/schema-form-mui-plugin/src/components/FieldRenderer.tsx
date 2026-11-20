@@ -1,3 +1,5 @@
+import type { ReactElement } from 'react';
+
 import { Box } from '@mui/material';
 
 import type { FieldRendererProps } from '@canard/schema-form';
@@ -18,7 +20,7 @@ export const FieldRenderer = ({
   Input,
   ErrorMessage,
   errorMessage,
-}: FieldRendererProps) => {
+}: FieldRendererProps): ReactElement => {
   const presentation =
     typeof jsonSchema === 'object' && jsonSchema !== null
       ? jsonSchema.presentation

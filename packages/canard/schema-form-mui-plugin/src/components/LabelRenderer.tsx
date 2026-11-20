@@ -1,3 +1,5 @@
+import type { ReactElement } from 'react';
+
 import { FormLabel as MuiFormLabel } from '@mui/material';
 
 import type { LabelRendererProps } from '@canard/schema-form';
@@ -14,7 +16,7 @@ export const LabelRenderer = ({
   required,
   style,
   className,
-}: LabelRendererProps) => (
+}: LabelRendererProps): ReactElement => (
   <MuiFormLabel
     htmlFor={htmlFor}
     id={id}
