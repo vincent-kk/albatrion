@@ -63,6 +63,7 @@ export const createGuardCompiler = (
   const guard = compiler.instance;
   if (!Object.prototype.hasOwnProperty.call(guard.schemas, registration.key)) {
     const guardCopy: JSONSchema = JSON.parse(JSON.stringify(root));
+    if (compiler.asynchronous) guardCopy.$async = true;
     guard.addSchema(guardCopy, registration.key, false, false);
     registration.guardSchemas.push({ compiler, schema: guardCopy });
   }
