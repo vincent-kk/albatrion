@@ -59,7 +59,8 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
     const loadScope = isLoad ? context.loadScope : undefined;
     const automaticNodes = new Set<Self>();
     for (let index = 0; index < context.automaticLog.length; index++)
-      automaticNodes.add(context.automaticLog[index].node);
+      if (!context.automaticLog[index].isDistributionOnly)
+        automaticNodes.add(context.automaticLog[index].node);
     const watchIndex = runtime.deliveryWatchIndex;
     const watchNodes = getFeatureNodeIndex(runtime.blueprint).watchNodes;
     let affectedPaths: Optional<Set<string>>;

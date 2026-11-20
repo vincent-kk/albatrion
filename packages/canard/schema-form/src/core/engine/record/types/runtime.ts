@@ -145,6 +145,8 @@ export interface SettlementScratch<Self> {
     previousSource: unknown;
     previousExtras: unknown;
     previousDistributed?: Distribution;
+    /** The entry only rewrote the node's distribution for an inactive descendant; the node itself was not written. */
+    isDistributionOnly?: boolean;
   }[];
   /** Ordered array shapes before reversible automatic writes. */
   arrayStructureLog: {

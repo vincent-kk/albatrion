@@ -22,8 +22,9 @@ export const isExternalBranchValueChange = <Self extends FieldNodeRecord<Self>>(
   if (relays && isRelayedInput(relays, node.path, isEqualRelayArray)) return false;
   for (const automatic of context.automaticLog)
     if (
-      automatic.node === node ||
-      isDescendantPath(automatic.node.path, node.path)
+      !automatic.isDistributionOnly &&
+      (automatic.node === node ||
+        isDescendantPath(automatic.node.path, node.path))
     )
       return true;
   if (context.writeOrigins?.length)

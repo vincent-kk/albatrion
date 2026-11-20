@@ -2,7 +2,10 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Optional } from '@aileron/declare';
 
-import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+import {
+  appendSegment,
+  isDescendantPath,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord, UnionSpec } from '../../../record';
 import { FieldNodeWriteKind } from '../../../types/value';
@@ -13,7 +16,7 @@ import { prepareSourcePruner } from '../slots/prepareSourcePruner';
 import { pruneInactiveSources } from '../slots/pruneInactiveSources';
 import { writeAbsentConstituent } from '../slots/writeAbsentConstituent';
 import { findDepartingChild } from '../transition/findDepartingChild';
-import { recordDepartingWrite } from '../transition/recordDepartingWrite';
+import { placeDeclarativeValue } from '../transition/placeDeclarativeValue';
 import { arrayExtras } from './arrayExtras';
 import { assertVirtualWriteShape } from './assertVirtualWriteShape';
 import { hasDistributedChildInput } from './hasDistributedChildInput';
@@ -109,7 +112,6 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
         if (parent && entry)
           writeAbsentConstituent(
             context,
-            parent,
             parent.path,
             entry,
             values?.[index],
@@ -250,16 +252,12 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     const childInput = Reflect.get(value, name);
     if (childInput === undefined || node.childrenByName[name]) continue;
     const departing = findDepartingChild(node, name, context);
-    if (!departing) continue;
-    recordDepartingWrite(
-      {
-        node: departing,
-        suffix: '',
-        depth: departing.depth,
-        template: departing.blueprintNode,
-        value: childInput,
-      },
-      context,
-    );
+    if (departing)
+      placeDeclarativeValue(
+        context,
+        appendSegment(node.path, name),
+        departing.blueprintNode,
+        childInput,
+      );
   }
 };
