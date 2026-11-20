@@ -1,9 +1,10 @@
-import type { ComponentProps } from 'react';
+import { type ComponentProps, createRef } from 'react';
 
+import { ThemeProvider, createTheme } from '@mui/material';
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
-import { Form, type NumberSchema } from '@canard/schema-form';
+import { Form, type FormHandle, type NumberSchema } from '@canard/schema-form';
 
 import { FieldInputSliderDefinition } from '../fieldInputs/FieldInputSlider';
 import { selectSliderCaseIndices } from './utils/selectSliderCaseIndices';
@@ -245,3 +246,73 @@ it('round-5 generated decimal model: every stored interaction value validates, f
   expect(actualSchemas).toEqual(expectedSchemas);
   expect(actualPairs).toEqual(expectedPairs);
 }, 900000);
+
+it.each(['ltr', 'rtl'] as const)(
+  'round-5 direction model (%s) preserves horizontal, vertical and endpoint keys',
+  (direction) => {
+    const theme = createTheme({ direction });
+    const view = render(<div />);
+    for (const [type, multipleOf, start] of [
+      ['number', undefined, 25],
+      ['integer', 2, 24],
+    ] as const) {
+      const reference = sliderReference({
+        type,
+        multipleOf,
+        minimum: 0,
+        maximum: 50,
+      });
+      for (const lazy of [undefined, false]) {
+        for (const [key, keyCode] of [
+          ['ArrowLeft', 37],
+          ['ArrowRight', 39],
+          ['ArrowUp', 38],
+          ['ArrowDown', 40],
+          ['Home', 36],
+          ['End', 35],
+          ['PageUp', 33],
+          ['PageDown', 34],
+        ] as const) {
+          for (const shiftKey of [false, true]) {
+            const ref = createRef<FormHandle>();
+            const form = (
+              <Form
+                key={key + shiftKey}
+                ref={ref}
+                jsonSchema={{
+                  type,
+                  minimum: 0,
+                  maximum: 50,
+                  multipleOf,
+                  format: 'slider',
+                  presentation: {
+                    inputType: 'slider',
+                    FieldInputProps: { lazy },
+                  },
+                }}
+                defaultValue={start}
+                fieldInputDefinitions={[FieldInputSliderDefinition]}
+              />
+            );
+            view.rerender(<ThemeProvider theme={theme}>{form}</ThemeProvider>);
+            const thumb = view.getByRole('slider');
+            const navigation = { key, keyCode, shiftKey };
+            fireEvent.keyDown(thumb, navigation);
+            if (lazy === undefined) expect(ref.current?.getValue()).toBe(start);
+            fireEvent.keyUp(thumb, navigation);
+            const directedKey =
+              direction === 'rtl' && key === 'ArrowLeft'
+                ? 'ArrowRight'
+                : direction === 'rtl' && key === 'ArrowRight'
+                  ? 'ArrowLeft'
+                  : key;
+            expect(
+              ref.current?.getValue(),
+              JSON.stringify({ type, multipleOf, lazy, key, shiftKey }),
+            ).toBe(reference.expected(start, directedKey, shiftKey));
+          }
+        }
+      }
+    }
+  },
+);
