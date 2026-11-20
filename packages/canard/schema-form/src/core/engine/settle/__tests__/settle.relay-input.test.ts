@@ -1,3 +1,4 @@
+import { equals } from '@winglet/common-utils/object';
 import { describe, expect, it } from 'vitest';
 
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
@@ -39,6 +40,28 @@ describe('committed relay eligibility', () => {
         expect(isRelayedInput(relays, '/1')).toBe(false);
       });
     });
+  });
+
+  it('keeps a virtual tuple relay only when the committed tuple has the same content', () => {
+    const { root, runtime } = createDispatchTree({
+      type: 'object',
+      properties: { a: { type: 'number' }, b: { type: 'string' } },
+      options: { virtual: { group: { fields: ['a', 'b'] } } },
+    });
+    dispatchMount(root, { a: 1, b: 'b0' });
+    const group = root.childrenByName!.group;
+    const relayAndSettle = (input: unknown) => {
+      let isRelayed: boolean | undefined;
+      dispatchRelayInput(group, input, OPTION, (value) => {
+        const relays = runtime.inputRelays!;
+        writeFieldNode(group, value, FieldNodeWriteKind.CallerReplace, OPTION);
+        isRelayed = isRelayedInput(relays, group.path, equals);
+      });
+      return isRelayed;
+    };
+    expect(relayAndSettle(['2', 'b1'])).toBe(false);
+    expect(group.storedValue).toEqual([2, 'b1']);
+    expect(relayAndSettle([3, 'b2'])).toBe(true);
   });
 
   it('rejects a detached occurrence with the same path and retained value', () => {
