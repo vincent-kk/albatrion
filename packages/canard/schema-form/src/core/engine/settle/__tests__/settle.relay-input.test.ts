@@ -1,5 +1,6 @@
-import { equals } from '@winglet/common-utils/object';
 import { describe, expect, it } from 'vitest';
+
+import { equals } from '@winglet/common-utils/object';
 
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
 import {

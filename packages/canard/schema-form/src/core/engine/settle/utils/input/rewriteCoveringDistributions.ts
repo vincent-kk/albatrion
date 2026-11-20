@@ -21,7 +21,11 @@ const replaceAt = (
     : isPlain(container)
       ? { ...container }
       : {};
-  Reflect.set(copy, names[index], replaceAt(Reflect.get(copy, names[index]), names, index + 1, value));
+  Reflect.set(
+    copy,
+    names[index],
+    replaceAt(Reflect.get(copy, names[index]), names, index + 1, value),
+  );
   return copy;
 };
 
@@ -35,7 +39,9 @@ const replaceAt = (
  * @param value - Defined declarative value written at the address
  * @returns Nothing; each replaced distribution is logged for derive rollback
  */
-export const rewriteCoveringDistributions = <Self extends FieldNodeRecord<Self>>(
+export const rewriteCoveringDistributions = <
+  Self extends FieldNodeRecord<Self>,
+>(
   context: SettlementContext<Self>,
   path: string,
   value: unknown,

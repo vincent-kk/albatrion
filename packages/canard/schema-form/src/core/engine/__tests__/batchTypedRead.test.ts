@@ -13,7 +13,8 @@ describe('a batched read interprets earlier caller writes under each static type
       box: { type: 'object', properties: { m: { type: 'number' } } },
     },
   };
-  const double = (value: unknown) => (typeof value === 'number' ? value * 2 : -1);
+  const double = (value: unknown) =>
+    typeof value === 'number' ? value * 2 : -1;
 
   it('a scalar updater reads the number an earlier string write produced', () => {
     for (const batched of [false, true]) {
@@ -41,15 +42,13 @@ describe('a batched read interprets earlier caller writes under each static type
       });
       const apply = () => {
         root.find('/box')!.setValue({ m: '5' });
-        root
-          .find('/box')!
-          .setValue((previous: unknown) => ({
-            m: double(
-              previous !== null && typeof previous === 'object' && 'm' in previous
-                ? previous.m
-                : undefined,
-            ),
-          }));
+        root.find('/box')!.setValue((previous: unknown) => ({
+          m: double(
+            previous !== null && typeof previous === 'object' && 'm' in previous
+              ? previous.m
+              : undefined,
+          ),
+        }));
       };
       if (batched) root.batch(apply);
       else apply();
