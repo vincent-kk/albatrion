@@ -29,17 +29,34 @@ it('seeded pruning preserves the independent live set with bounded work and boun
   });
   for (let seed = 0; seed < 2048; seed++) {
     let state = seed + 1;
-    const next = () => (state = (Math.imul(state, 1664525) + 1013904223) >>> 0);
+    const next = () => {
+      state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+      return state >>> 8;
+    };
     const ledger: { active: WeakSlot[]; cursor?: number } = { active: [] };
     const live = new Map<string, SchemaRootRegistration>();
     const weakAlive = new Set<string>();
     let reads = 0,
       peak = 0;
-    for (let step = 0; step < 64; step++) {
+    for (let pin = 0; pin < 4; pin++) {
+      const key = `pinned:${pin}`;
+      const entry = registration(source, key);
+      weakAlive.add(key);
+      live.set(key, entry);
+      ledger.active.push({
+        deref: () => {
+          reads++;
+          return weakAlive.has(key) ? entry : undefined;
+        },
+      });
+    }
+    for (let step = 0; step < 128; step++) {
       const drop = next() % 4;
-      const entries = [...live.values()];
+      const entries = [...live.values()].filter(
+        (entry) => !entry.key.startsWith('pinned:'),
+      );
       const target = entries[next() % entries.length];
-      if (target && (drop < 2 || live.size >= 32)) {
+      if (target && (drop < 2 || live.size >= 8)) {
         live.delete(target.key);
         if (drop % 2) target.released = true;
         else weakAlive.delete(target.key);
