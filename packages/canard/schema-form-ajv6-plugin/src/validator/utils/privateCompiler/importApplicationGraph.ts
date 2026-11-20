@@ -30,7 +30,13 @@ export const importApplicationGraph = (
     const facts = graph.documents.get(resource.document);
     if (!facts) throw new Error('Application dependency facts are missing');
     recordDependencies(compiler, facts);
-    if (facts.asynchronous && typeof copy === 'object' && !resource.meta)
+    if (
+      (facts.asynchronous ||
+        (compiler.kind === 'validation' &&
+          compiler.macroProfile !== undefined)) &&
+      typeof copy === 'object' &&
+      !resource.meta
+    )
       Reflect.set(copy, '$async', true);
     if (resource.meta && typeof copy === 'object')
       compiler.instance.addMetaSchema(copy, resource.key, true);

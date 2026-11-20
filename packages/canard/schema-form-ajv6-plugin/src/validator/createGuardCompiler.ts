@@ -5,6 +5,7 @@ import type { Fn } from '@aileron/declare';
 
 import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
 import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
+import { compileMacroSchema } from './utils/privateCompiler/compileMacroSchema';
 import { isPrivateCompilerCurrent } from './utils/privateCompiler/isPrivateCompilerCurrent';
 import { selectRootCompiler } from './utils/privateCompiler/selectRootCompiler';
 import {
@@ -53,7 +54,9 @@ export const createGuardCompiler = (
     )
   ) {
     const compiler = selectRootCompiler(registration, schema, 'guard');
-    const validate = compiler.instance.compile(schema);
+    const validate = compiler.macroProfile
+      ? compileMacroSchema(compiler, () => compiler.instance.compile(schema))
+      : compiler.instance.compile(schema);
     registration.guardSchemas.push({ compiler, schema });
     if ('$async' in validate && validate.$async === true)
       throw new Error('async schema in sync schema');
@@ -72,7 +75,10 @@ export const createGuardCompiler = (
   const fragment = pointer.includes('%')
     ? pointer.replace(/%/g, '%25')
     : pointer;
-  const validate = guard.compile({ $ref: `${registration.key}#${fragment}` });
+  const reference = { $ref: `${registration.key}#${fragment}` };
+  const validate = compiler.macroProfile
+    ? compileMacroSchema(compiler, () => guard.compile(reference))
+    : guard.compile(reference);
   if ('$async' in validate && validate.$async)
     throw new Error('async schema in sync schema');
   return (value) => {
