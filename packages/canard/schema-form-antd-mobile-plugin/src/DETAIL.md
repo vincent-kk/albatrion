@@ -35,6 +35,8 @@ Number.MAX_SAFE_INTEGER에 이르는 track의 pointer 정밀도는 라이브러�
 
 ### slider-values — 모든 조작의 유효 값
 
+일반 로컬 실행과 pre-release는 전체 교차 범위를 실행합니다. PR은 224개 스키마 조합과 타입·step·양끝 경계·다섯 시작 상태·모든 조작 분류의 쌍을 유지하며, 두 lazy 모드는 선택한 각 입력에서 같은 단언으로 비교합니다.
+
 - 독립 십진 참조 모델에서 경계 조합·multipleOf·타입·시작 값·키와 pointer·lazy를 교차하여 저장 값과 schema 유효성을 비교합니다.
 - 미설정 표시·렌더 시 값 보존·commit 시점 및 기존 소수 경계 동작을 유지합니다.
 

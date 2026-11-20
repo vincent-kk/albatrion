@@ -6,6 +6,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { Form, type NumberSchema } from '@canard/schema-form';
 
 import { FieldInputSliderDefinition } from '../fieldInputs/FieldInputSlider';
+import { selectSliderCaseIndices } from './utils/selectSliderCaseIndices';
 import { sliderReference } from './utils/sliderReference';
 
 const Input = FieldInputSliderDefinition.Component;
@@ -16,6 +17,7 @@ const Capture = (props: InputProps) => {
   return <Input {...props} />;
 };
 beforeEach(() => {
+  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
   vi.stubGlobal(
     'ResizeObserver',
     class {
@@ -39,6 +41,8 @@ beforeEach(() => {
 });
 afterEach(() => {
   cleanup();
+  vi.clearAllTimers();
+  vi.useRealTimers();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
@@ -59,7 +63,16 @@ it('round-5 generated decimal model: every stored interaction value validates, f
   if (!captured) throw new Error('The slider definition did not provide props');
   const base = captured;
   cleanup();
-  let sequence = 0;
+  let sequence = 0,
+    frameIndex = 0;
+  const selected = selectSliderCaseIndices(
+    [2, 7, 4, 4, 5, 17],
+    process.env.SCHEMA_FORM_TEST_PROFILE !== 'pr',
+  );
+  const expectedSchemas = new Set<string>(),
+    actualSchemas = new Set<string>();
+  const expectedPairs = new Set<string>(),
+    actualPairs = new Set<string>();
   const view = render(<div />);
   for (const type of ['number', 'integer'] satisfies ('number' | 'integer')[])
     for (const multipleOf of [undefined, 1, 3, 0.3, 0.1, 0.05, 1e-7]) {
@@ -84,13 +97,13 @@ it('round-5 generated decimal model: every stored interaction value validates, f
             ...(multipleOf === undefined ? {} : { multipleOf }),
           };
           const reference = sliderReference({ ...schema, type });
-          for (const start of [
+          for (const [startIndex, start] of [
             undefined,
             reference.min,
             decimal(reference.min + reference.step / 3),
             reference.min - 2 * reference.step,
             reference.max + 2 * reference.step,
-          ]) {
+          ].entries()) {
             for (const interaction of [
               'Home',
               'End',
@@ -110,12 +123,31 @@ it('round-5 generated decimal model: every stored interaction value validates, f
               'pointer90',
               'pointer100',
             ]) {
+              const tags = [
+                type,
+                String(multipleOf),
+                lower,
+                upper,
+                String(startIndex),
+                interaction,
+              ];
+              const schemaClass = JSON.stringify(tags.slice(0, 4));
+              expectedSchemas.add(schemaClass);
+              const pairs: string[] = [];
+              for (let left = 0; left < tags.length; left++)
+                for (let right = left + 1; right < tags.length; right++)
+                  pairs.push(`${left}:${tags[left]}/${right}:${tags[right]}`);
+              for (const pair of pairs) expectedPairs.add(pair);
+              const index = frameIndex++;
+              if (selected && !selected.has(index)) continue;
+              actualSchemas.add(schemaClass);
+              for (const pair of pairs) actualPairs.add(pair);
               const results: unknown[] = [];
               for (const lazy of [undefined, false]) {
                 if (sequence % 100 === 0) {
                   vi.clearAllMocks();
                   await act(async () => {
-                    await new Promise((resolve) => setTimeout(resolve, 0));
+                    await vi.advanceTimersByTimeAsync(0);
                   });
                 }
                 const writes: unknown[] = [];
@@ -201,4 +233,6 @@ it('round-5 generated decimal model: every stored interaction value validates, f
           }
         }
     }
+  expect(actualSchemas).toEqual(expectedSchemas);
+  expect(actualPairs).toEqual(expectedPairs);
 }, 900000);
