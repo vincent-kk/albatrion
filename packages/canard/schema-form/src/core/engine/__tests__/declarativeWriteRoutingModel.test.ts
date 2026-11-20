@@ -17,11 +17,14 @@ import { createSeedSampler } from './fixtures/createSeedSampler';
  * own barrier detaches, a lower winner naming a descendant and a higher winner naming the whole of
  * a leaving container (records apply in rank order), and a refused reset whose earlier whole mark a
  * later Merge covers in part (only the named key is replaced). Exit policies and one batch or one
- * root Merge write are drawn per seed. The last two dimensions observe /outer instead of /object/y.
+ * root Merge write are drawn per seed. The rank and reset-overlap dimensions observe /outer. The
+ * two repeated-exit dimensions observe a named write through a parent object and require either
+ * its retained value after the second exit or its live value after a second revival.
  *
- * Seeds: 1 to 3000 locally and in the pre-release tier. The pr tier runs 720 stratified seeds: the
- * first 20 of each of 36 classes, dimension times exit policy times batch or Merge (the two reset
- * dimensions have no Merge form, so each contributes 3 classes and the others 6 each).
+ * Seeds: 1 to 3000 locally and in the pre-release tier. The pr tier runs 1200 stratified seeds: the
+ * first 20 of each of 60 classes, dimension times exit policy times batch or Merge (each reset
+ * dimension contributes 3 classes without Merge; each repeated-exit dimension contributes 12,
+ * parent and virtual targets for each form and policy; the other dimensions contribute 6 each).
  */
 
 type Root = ReturnType<typeof nodeFromJSONSchema>;
@@ -30,6 +33,8 @@ type Dimension =
   | 'gateRule'
   | 'callerThenRule'
   | 'exitCancelled'
+  | 'exitRepeated'
+  | 'exitRepeatedAndCancelled'
   | 'layered'
   | 'resetDetached'
   | 'reverseRank'
@@ -44,6 +49,8 @@ const DIMENSIONS: readonly Dimension[] = [
   'gateRule',
   'callerThenRule',
   'exitCancelled',
+  'exitRepeated',
+  'exitRepeatedAndCancelled',
   'layered',
   'resetDetached',
   'reverseRank',
@@ -56,10 +63,20 @@ const RESET_DIMENSIONS: readonly Dimension[] = [
   'resetOverlap',
 ];
 
+/** Both repeated exits test placement through a composite declarative target. */
+const REPEATED_EXIT_DIMENSIONS: readonly Dimension[] = [
+  'exitRepeated',
+  'exitRepeatedAndCancelled',
+];
+
 const SEED_CLASSES = DIMENSIONS.flatMap((dimension) =>
   POLICIES.flatMap((policy) =>
-    (RESET_DIMENSIONS.includes(dimension) ? [false] : [false, true]).map(
-      (isMerge) => `${dimension}:${policy}:${isMerge}`,
+    (RESET_DIMENSIONS.includes(dimension) ? [false] : [false, true]).flatMap(
+      (isMerge) =>
+        (REPEATED_EXIT_DIMENSIONS.includes(dimension)
+          ? [false, true]
+          : [false]
+        ).map((isVirtual) => `${dimension}:${policy}:${isMerge}:${isVirtual}`),
     ),
   ),
 );
@@ -87,8 +104,11 @@ const policyControls = (policy: Policy) =>
  * carries `v:<value>` to name /outer/y in its whole value, or `none` to omit it; lowOuterY is
  * declared before it, so it is the lower winner.
  */
-const createSchema = (policy: Policy): AuthoredSchema => ({
+const createSchema = (policy: Policy, isVirtual: boolean): AuthoredSchema => ({
   type: 'object',
+  ...(isVirtual
+    ? { options: { virtual: { roundTripGroup: { fields: ['roundTrip'] } } } }
+    : {}),
   properties: {
     outerOn: { type: 'boolean' },
     lowOuterY: rule('../outer/y', () => 'low'),
@@ -128,6 +148,35 @@ const createSchema = (policy: Policy): AuthoredSchema => ({
         },
       },
     },
+    roundTripOn: { type: 'boolean' },
+    writeRoundTrip: isVirtual
+      ? rule('../roundTripGroup', (source) => [{ y: source }])
+      : rule('../roundTrip', (source) => ({ y: source })),
+    roundTrip: {
+      type: 'object',
+      controls: { active: '/roundTripOn === true' },
+      properties: { y: { type: 'string', controls: policyControls(policy) } },
+    },
+    reopenRoundTrip: rule('../roundTripOn', () => true),
+    closeRoundTripAgain: {
+      type: 'string',
+      controls: {
+        derived:
+          '/roundTrip/y === /writeRoundTrip && /roundTrip/y != null ? "closed" : /closeRoundTripAgain',
+        injectTo: (value: unknown) =>
+          value === 'closed' ? { '../roundTripOn': false } : {},
+      },
+    },
+    reopenRoundTripAgain: {
+      type: 'string',
+      controls: {
+        derived:
+          '/reopenTwice === true && /closeRoundTripAgain === "closed" && /roundTripOn === false ? "open" : /reopenRoundTripAgain',
+        injectTo: (value: unknown) =>
+          value === 'open' ? { '../roundTripOn': true } : {},
+      },
+    },
+    reopenTwice: { type: 'boolean' },
     close: rule('../object/on', () => false),
     reopen: rule('../object/on', () => true),
   },
@@ -141,6 +190,8 @@ type Expected = {
   readonly live?: string;
   readonly retained?: string;
   readonly outer?: Readonly<Record<string, string>>;
+  readonly closedAgain?: string;
+  readonly reopenedAgain?: string;
 };
 
 /** Exit of y from value `value` under `policy`, with nothing named for it afterwards. */
@@ -162,6 +213,12 @@ const model = (
   if (dimension === 'gateRule') return exit(policy, named ?? 'y0');
   if (dimension === 'callerThenRule') return { retained: named ?? caller };
   if (dimension === 'exitCancelled') return { live: named ?? 'y0' };
+  // The first exit is cancelled. The recorded name wins over the second exit's policy,
+  // or remains live if that exit is cancelled too.
+  if (dimension === 'exitRepeated')
+    return { retained: caller, closedAgain: 'closed', reopenedAgain: '' };
+  if (dimension === 'exitRepeatedAndCancelled')
+    return { live: caller, closedAgain: 'closed', reopenedAgain: 'open' };
   // The lower winner omits the live y it makes leave; that exit keeps y's committed value, as the
   // lower winner's own single call does, so the policy applies to y0.
   if (dimension === 'layered')
@@ -182,9 +239,12 @@ const model = (
   return { live: 'y0', outer: { '/outer/y': caller, '/outer/z': 'lateZ' } };
 };
 
-const observe = (root: Root): Expected => {
-  const live = root.find('/object/y');
-  const retained = root.inactiveValues.find(({ path }) => path === '/object/y');
+const observe = (root: Root, dimension: Dimension): Expected => {
+  const address = REPEATED_EXIT_DIMENSIONS.includes(dimension)
+    ? '/roundTrip/y'
+    : '/object/y';
+  const live = root.find(address);
+  const retained = root.inactiveValues.find(({ path }) => path === address);
   const outer = root.inactiveValues
     .filter(({ path }) => path.startsWith('/outer/'))
     .map(({ path, value }) => [path, String(value)]);
@@ -192,6 +252,14 @@ const observe = (root: Root): Expected => {
     ...(live ? { live: String(live.value) } : {}),
     ...(retained ? { retained: String(retained.value) } : {}),
     ...(outer.length ? { outer: Object.fromEntries(outer) } : {}),
+    ...(REPEATED_EXIT_DIMENSIONS.includes(dimension)
+      ? {
+          closedAgain: String(root.find('/closeRoundTripAgain')?.value ?? ''),
+          reopenedAgain: String(
+            root.find('/reopenRoundTripAgain')?.value ?? '',
+          ),
+        }
+      : {}),
   };
 };
 
@@ -205,17 +273,22 @@ it(`places each declarative value where the routing model says for ${sampler.lab
     const dimension = DIMENSIONS[random(DIMENSIONS.length)];
     const policy = POLICIES[random(POLICIES.length)];
     const isMerge = !RESET_DIMENSIONS.includes(dimension) && random(2) === 1;
-    if (!sampler.accept(`${dimension}:${policy}:${isMerge}`)) continue;
+    const isVirtual =
+      REPEATED_EXIT_DIMENSIONS.includes(dimension) && random(2) === 1;
+    if (!sampler.accept(`${dimension}:${policy}:${isMerge}:${isVirtual}`))
+      continue;
     const named = random(3) === 0 ? undefined : `v${seed}`;
     const caller = `c${seed}`;
     const source = named !== undefined ? `y:${named}` : `x:${seed}`;
     const on = dimension !== 'callerThenRule';
     const root = nodeFromJSONSchema({
-      jsonSchema: createSchema(policy),
+      jsonSchema: createSchema(policy, isVirtual),
       defaultValue: {
         object: { on, x: 'x0', y: 'y0' },
         outerOn: true,
         outer: { y: 'oy', z: 'oz' },
+        roundTripOn: true,
+        roundTrip: { y: 'initial' },
       },
       validationMode: ValidationMode.None,
     });
@@ -226,6 +299,17 @@ it(`places each declarative value where the routing model says for ${sampler.lab
       gateRule: { src: source, close: 'c' },
       callerThenRule: { object: { y: caller }, src: source },
       exitCancelled: { object: { on: false }, src: source, reopen: 'r' },
+      exitRepeated: {
+        roundTripOn: false,
+        writeRoundTrip: caller,
+        reopenRoundTrip: 'r',
+      },
+      exitRepeatedAndCancelled: {
+        roundTripOn: false,
+        writeRoundTrip: caller,
+        reopenRoundTrip: 'r',
+        reopenTwice: true,
+      },
       layered: { low: 'l', src: source },
       reverseRank: {
         outerOn: false,
@@ -257,8 +341,8 @@ it(`places each declarative value where the routing model says for ${sampler.lab
           root.setValue({ [key]: value }, WriteOption.Merge);
       });
     expect(
-      observe(root),
-      `seed=${seed} ${dimension} ${policy} merge=${isMerge} named=${named}`,
+      observe(root, dimension),
+      `seed=${seed} ${dimension} ${policy} merge=${isMerge} virtual=${isVirtual} named=${named}`,
     ).toEqual(model(dimension, policy, named, caller));
   }
   expect(sampler.shortfall()).toEqual([]);
