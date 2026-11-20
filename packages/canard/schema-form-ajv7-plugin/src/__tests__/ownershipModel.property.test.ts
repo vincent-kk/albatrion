@@ -10,6 +10,7 @@ import { selectOwnershipProfileIndices } from './utils/ownershipModel/selectOwne
 
 const ObserveWeakRef = WeakRef;
 const operationKinds = new Set<number>();
+let keywordReplacements = 0;
 let secondCopy: typeof import('../index');
 beforeAll(async () => {
   vi.resetModules();
@@ -19,6 +20,7 @@ afterAll(() => {
   expect([...operationKinds].sort((a, b) => a - b)).toEqual(
     Array.from({ length: 17 }, (_, index) => index),
   );
+  expect(keywordReplacements).toBeGreaterThan(0);
 });
 afterEach(() => vi.unstubAllGlobals());
 
@@ -37,6 +39,9 @@ it.each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])(
       const profile = {
         version: 7,
         onOperation: (operation: number) => operationKinds.add(operation),
+        onKeywordReplacement: () => {
+          keywordReplacements++;
+        },
         direct: index % 2 === 0,
         observe: (root: object) => new ObserveWeakRef(root),
         create: () =>

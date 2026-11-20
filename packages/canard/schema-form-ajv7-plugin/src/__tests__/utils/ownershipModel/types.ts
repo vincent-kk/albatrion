@@ -14,6 +14,8 @@ export interface ModelProfile<T extends ModelApplication> {
   version: number;
   /** Observe generated operation classes without changing the oracle or assertions. */
   onOperation?: (operation: number) => void;
+  /** Observe a successful same-root recompilation after a keyword-only replacement. */
+  onKeywordReplacement?: () => void;
   direct: boolean;
   observe: (root: object) => WeakRef<object>;
   create: () => T;
