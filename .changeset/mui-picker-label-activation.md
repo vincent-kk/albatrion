@@ -2,4 +2,4 @@
 '@canard/schema-form-mui-plugin': patch
 ---
 
-Focus the date, month, and time picker when its form label is clicked. The visible picker keeps its input ID and accessible name.
+Clicking the form label focuses an enabled date, month, or time picker, including a read-only picker. A disabled picker stays unfocused. The visible picker keeps its input ID and accessible name.

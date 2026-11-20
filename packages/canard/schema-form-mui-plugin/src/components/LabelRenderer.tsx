@@ -11,7 +11,12 @@ import type { LabelRendererProps } from '@canard/schema-form';
 const focusPickerGroup = (event: MouseEvent<HTMLLabelElement>) => {
   const label = event.currentTarget;
   const target = label.ownerDocument.getElementById(label.htmlFor);
-  if (target?.role === 'group' && target.tabIndex >= 0) target.focus();
+  if (
+    target?.role === 'group' &&
+    target.tabIndex >= 0 &&
+    target.getAttribute('aria-disabled') !== 'true'
+  )
+    target.focus();
 };
 
 /**

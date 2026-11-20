@@ -138,6 +138,7 @@ const FieldInputDate = ({
                 input: {
                   id: inputId,
                   role: 'group',
+                  'aria-disabled': disabled || undefined,
                   'aria-labelledby': fieldTitleId,
                 },
               },
