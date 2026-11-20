@@ -23,12 +23,26 @@ for (const tier of ["pr", "pre-release"])
       .map((w) => w.name)
       .sort();
     const shards = plan.shards.filter((s) => s.name.startsWith("plugins-"));
-    assert.deepEqual(shards.map(s => s.name), ["plugins-ajv", "plugins-antd", "plugins-ui"]);
-    assert.deepEqual(shards.flatMap(s => s.affected).sort(), plugins);
+    assert.deepEqual(
+      shards.map((s) => s.name),
+      ["plugins-ajv", "plugins-antd", "plugins-ui"],
+    );
+    assert.deepEqual(shards.flatMap((s) => s.affected).sort(), plugins);
     for (const shard of shards) assert.equal(shard.browser, false);
-    assert.deepEqual(shards[0].affected, plugins.filter(name => name.includes("-ajv")));
-    assert.deepEqual(shards[1].affected, plugins.filter(name => /-antd[56]-plugin$/.test(name)));
-    assert.deepEqual(shards[2].affected, plugins.filter(name => !name.includes("-ajv") && !/-antd[56]-plugin$/.test(name)));
+    assert.deepEqual(
+      shards[0].affected,
+      plugins.filter((name) => name.includes("-ajv")),
+    );
+    assert.deepEqual(
+      shards[1].affected,
+      plugins.filter((name) => /-antd[56]-plugin$/.test(name)),
+    );
+    assert.deepEqual(
+      shards[2].affected,
+      plugins.filter(
+        (name) => !name.includes("-ajv") && !/-antd[56]-plugin$/.test(name),
+      ),
+    );
     const main = plan.shards.find((s) => s.name === "main");
     assert.ok(main.affected.every((name) => !plugins.includes(name)));
     for (const plugin of plugins)
