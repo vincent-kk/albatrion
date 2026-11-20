@@ -3,6 +3,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import * as dependencies from '../collectSchemaDependencies';
 import { preparePrivateCompiler } from '../preparePrivateCompiler';
+import * as observations from '../recordDependencies';
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -83,4 +84,30 @@ it('equal serialization re-reads changed extension facts and retires the old env
   );
   expect(next).not.toBe(first);
   expect(next.asynchronous).toBe(true);
+});
+
+it('cached dependency observations are written once per compiler, including after pool rotation', () => {
+  const source = new Ajv({ meta: false, validateSchema: false, logger: false });
+  source.addFormat('memo-format', /^valid$/);
+  const record = vi.spyOn(observations, 'recordDependencies');
+  const serialized = JSON.stringify({ type: 'string', format: 'memo-format' });
+  let compiler: ReturnType<typeof preparePrivateCompiler> | undefined;
+  let first: ReturnType<typeof preparePrivateCompiler> | undefined;
+  for (let index = 0; index < 65; index++) {
+    compiler = preparePrivateCompiler(
+      source,
+      compiler,
+      JSON.parse(serialized),
+      'validation',
+      true,
+      '',
+      String(index),
+      serialized,
+    );
+    first ??= compiler;
+  }
+  expect(record).toHaveBeenCalledTimes(2);
+  expect(compiler).not.toBe(first);
+  expect(compiler?.rules.has('format')).toBe(true);
+  expect(compiler?.formats.has('memo-format')).toBe(true);
 });
