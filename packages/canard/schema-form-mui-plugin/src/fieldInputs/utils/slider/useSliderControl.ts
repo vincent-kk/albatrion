@@ -60,7 +60,21 @@ export const useSliderControl = (
   };
   const keyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (locked || bounds.empty) return;
-    const value = bounds.keyboard(event.key, current.current, event.shiftKey);
+    const { key, target } = event;
+    // MUI sets the resolved direction on the native range input.
+    const rtl =
+      target instanceof HTMLElement && target.style.direction === 'rtl';
+    const navigationKey =
+      rtl && key === 'ArrowLeft'
+        ? 'ArrowRight'
+        : rtl && key === 'ArrowRight'
+          ? 'ArrowLeft'
+          : key;
+    const value = bounds.keyboard(
+      navigationKey,
+      current.current,
+      event.shiftKey,
+    );
     if (value === undefined) return;
     event.preventDefault();
     event.stopPropagation();

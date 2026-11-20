@@ -60,7 +60,20 @@ export const useSliderControl = (
   };
   const keyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (locked || bounds.empty) return;
-    const value = bounds.keyboard(event.key, current.current, event.shiftKey);
+    const { key, target } = event;
+    // Ant Design positions RTL thumbs from the right edge, including with a custom CSS prefix.
+    const rtl = target instanceof HTMLElement && target.style.right !== '';
+    const navigationKey =
+      rtl && key === 'ArrowLeft'
+        ? 'ArrowRight'
+        : rtl && key === 'ArrowRight'
+          ? 'ArrowLeft'
+          : key;
+    const value = bounds.keyboard(
+      navigationKey,
+      current.current,
+      event.shiftKey,
+    );
     if (value === undefined) return;
     event.preventDefault();
     event.stopPropagation();
