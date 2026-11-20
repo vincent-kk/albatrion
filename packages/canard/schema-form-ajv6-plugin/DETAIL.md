@@ -58,7 +58,7 @@ private 생성자에는 schemas·keywords·formats·cache bootstrap 옵션을 �
 
 참조는 컴파일 시점에 애플리케이션이 해당 키나 id로 해석하는 raw 문서에 연결합니다. 등록 키 A가 자체 id I인 이전 문서를 유지하고 I가 새 문서로 교체되면, A만 참조하는 루트와 I만 참조하는 루트는 각각의 문서를 사용합니다. 서로 다른 문서가 같은 정규화 id를 요구하면 풀을 분리합니다. 한 루트가 두 문서를 함께 요구하는 경우는 지원하지 않으며 해당 id와 두 참조 키를 명시한 오류로 거부합니다. 키별 네이티브 환경을 재구성하여 이 한계를 우회하지 않습니다.
 
-AJV6는 네이티브와 같은 uri-js 4.4.1의 resolver를 직접 의존하여 사용합니다. 주소는 해당 네이티브 AJV의 URI resolver로 부모 자원에 대해 상대 id를 해석하고 끝의 # 또는 #/를 제거한 값입니다. root·embedded id, 지원 방언의 $anchor·$dynamicAnchor와 레지스트리의 임의 등록 키·별칭을 모두 대조합니다. 애플리케이션 root뿐 아니라 embedded 주소나 anchor가 폼 root 주소와 겹쳐도 같은 충돌 규칙을 적용합니다.
+AJV6는 네이티브와 같은 uri-js 4.4.1의 resolver를 직접 의존하여 사용합니다. 빈 base에서 이미 정규형인 제한된 ASCII http(s) 주소는 같은 결과를 재파싱 없이 반환합니다. 포트·인코딩·점 경로·조각·대문자 호스트 등 나머지 주소와 빈 base가 아닌 경우는 네이티브 resolver를 사용합니다. 주소는 해당 네이티브 AJV의 URI resolver로 부모 자원에 대해 상대 id를 해석하고 끝의 # 또는 #/를 제거한 값입니다. root·embedded id, 지원 방언의 $anchor·$dynamicAnchor와 레지스트리의 임의 등록 키·별칭을 모두 대조합니다. 애플리케이션 root뿐 아니라 embedded 주소나 anchor가 폼 root 주소와 겹쳐도 같은 충돌 규칙을 적용합니다.
 
 현재 애플리케이션 레지스트리나 별칭에 폼 자원의 주소가 있으면 같은 raw 내용일 때만 허용합니다. 다른 root 내용은 중복 id 오류, 다른 embedded 내용은 모호한 참조 오류로 거부합니다. 제거된 주소는 충돌하지 않습니다. schemaId:id·auto의 legacy id도 네이티브 주소 해석을 따릅니다.
 
