@@ -21,7 +21,13 @@ import { createSeedSampler } from './fixtures/createSeedSampler';
  * - an updater or same-tuple write after an overlapping mark of its segment (EVENT-061);
  * - a reset once any segment changed the list twice, or after a list mark its scope discards (WRITE-095);
  * - under an unsetOnInactive or inactiveValue exit policy, a second change of /yOn in the segment, whose
- *   intermediate exit the sequence applies the policy to and the batch never makes.
+ *   intermediate exit the sequence applies the policy to and the batch never makes;
+ * - under those policies, a caller write overlapping /object/y in the segment of a /yOn change. The
+ *   segment applies the exit policy once to its final caller state (settle DETAIL VALUE-043), while the
+ *   sequence settles the gate and the caller write separately, so three stated results differ from a
+ *   sequence: an ancestor whole write that omits y does not name it and inactiveValue still resolves
+ *   (pinned in ancestorWholeOverResolver.test.ts); a caller value for y wins over the resolver; and
+ *   unsetOnInactive removes y even after a caller value in the same segment.
  * Array structure verbs and resets end a segment (EVENT-013) and are never filtered otherwise.
  * Merge calls count their actual leaf addresses.
  *
