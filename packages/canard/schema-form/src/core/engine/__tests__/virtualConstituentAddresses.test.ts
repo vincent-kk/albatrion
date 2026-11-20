@@ -221,3 +221,43 @@ describe('a virtual group lifetime leaves the state counts of its constituents a
     expect(observe(true, steps)).toEqual(observe(false, steps));
   });
 });
+
+// Open item: after the object constituent is cleared, a batched same-tuple group write drops the
+// retained value of its gated descendant, while the sequential write keeps every source.
+it.fails(
+  'keeps every source on a batched same-tuple write after a constituent was cleared',
+  () => {
+    const observe = (batched: boolean) => {
+      const root = create(
+        {
+          type: 'object',
+          properties: {
+            yOn: { type: 'boolean' },
+            other: { type: 'boolean' },
+            object: {
+              type: 'object',
+              properties: {
+                x: { type: 'string' },
+                y: { type: 'string', controls: { active: '/yOn === true' } },
+              },
+            },
+          },
+          options: { virtual: { group: { fields: ['object'] } } },
+        },
+        { yOn: true, object: { x: 'x0' } },
+      );
+      const group = root.find('/group')!;
+      group.setValue([undefined]);
+      root.find('/object/y')!.setValue('y7');
+      root.find('/yOn')!.setValue(false);
+      const write = () => {
+        root.find('/other')!.setValue(true);
+        group.setValue(group.value);
+      };
+      if (batched) root.batch(write);
+      else write();
+      return root.inactiveValues.map(({ path, value }) => ({ path, value }));
+    };
+    expect(observe(true)).toEqual(observe(false));
+  },
+);
