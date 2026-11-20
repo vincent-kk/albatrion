@@ -77,6 +77,7 @@ export const createNativeCompiler = (
   ]);
   const ledger = instanceIdRegistrationsOf(source);
   const identities = (ledger.identities ??= new WeakMap());
+  const optionKeys = Object.keys(source.opts);
   const compiler: PrivateCompiler = {
     instance,
     source,
@@ -90,7 +91,8 @@ export const createNativeCompiler = (
         key,
         observeIdentity(identities, value),
       ]),
-    optionCount: Object.keys(source.opts).length,
+    optionCount: optionKeys.length,
+    optionKeys,
     entries: new Map(),
     rules: new Map(),
     formats: new Map(),

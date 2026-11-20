@@ -33,6 +33,8 @@ export interface PrivateCompiler {
   readonly kind: 'validation' | 'guard' | 'meta';
   /** Option key/value identities recorded when this environment is constructed. */
   readonly options: readonly (readonly [string, unknown])[];
+  /** Complete ordered own enumerable option names, including ignored bootstrap values. */
+  readonly optionKeys: readonly string[];
   /** Application option count used to detect additions and removals. */
   readonly optionCount: number;
   /** Only imported aliases, meta addresses and root collision keys observed by this compiler. */

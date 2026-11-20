@@ -13,7 +13,11 @@ export const isPrivateCompilerCurrent = (
 ): boolean => {
   if (compiler.retired) return false;
   const { source, identities } = compiler;
-  if (Object.keys(source._opts).length !== compiler.optionCount) return false;
+  const keys = Object.keys(source._opts);
+  if (keys.length !== compiler.optionCount || !compiler.optionKeys)
+    return false;
+  for (let index = 0; index < keys.length; index++)
+    if (keys[index] !== compiler.optionKeys[index]) return false;
   for (const [key, value] of compiler.options)
     if (
       !Object.is(
