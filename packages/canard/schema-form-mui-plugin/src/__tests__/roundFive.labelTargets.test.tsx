@@ -1,4 +1,4 @@
-import { cleanup, render } from '@testing-library/react';
+import { cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import { Form, type JSONSchema } from '@canard/schema-form';
@@ -39,5 +39,59 @@ it.each<[string, JSONSchema, string]>([
         name: 'field',
       }),
     ).toContain(target);
+  },
+);
+
+it.each<[string, JSONSchema, string]>([
+  ['enum', { type: 'string', enum: ['a', 'b'] }, 'a'],
+  ['date', { type: 'string', format: 'date' }, '2024-01-02'],
+  ['time', { type: 'string', format: 'time' }, '12:30:00Z'],
+  ['month', { type: 'string', format: 'month' }, '2024-01'],
+])(
+  'round-5 label activation focuses only the associated %s control',
+  (kind, field, value) => {
+    const view = render(
+      <>
+        {['first', 'second'].map((key) => (
+          <Form
+            key={key}
+            jsonSchema={{ type: 'object', properties: { field } }}
+            defaultValue={{ field: value }}
+            fieldInputDefinitions={plugin.fieldInputDefinitions}
+            LabelRenderer={plugin.LabelRenderer}
+          >
+            <Form.Label path="/field" />
+            <Form.Input path="/field" />
+          </Form>
+        ))}
+      </>,
+    );
+    const labels =
+      view.container.querySelectorAll<HTMLLabelElement>('label[for]');
+    const controls = view
+      .getAllByRole(kind === 'enum' ? 'combobox' : 'group', { name: 'field' })
+      .filter((control) =>
+        Array.from(labels).some((label) => label.htmlFor === control.id),
+      );
+    expect(controls).toHaveLength(2);
+    const ids = [...view.container.querySelectorAll('[id]')].map(
+      (element) => element.id,
+    );
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const element of view.container.querySelectorAll(
+      '[for], [aria-labelledby]',
+    )) {
+      for (const attribute of ['for', 'aria-labelledby'])
+        for (const id of element.getAttribute(attribute)?.split(/\s+/) ?? [])
+          expect(document.getElementById(id)).not.toBeNull();
+    }
+    for (const control of controls) {
+      const label = Array.from(labels).find(
+        (label) => label.htmlFor === control.id,
+      );
+      if (!label) throw new Error('Missing label for operated control');
+      fireEvent.click(label);
+      expect(control.contains(document.activeElement)).toBe(true);
+    }
   },
 );
