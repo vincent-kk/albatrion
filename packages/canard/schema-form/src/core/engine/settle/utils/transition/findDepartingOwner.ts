@@ -45,7 +45,7 @@ export const findDepartingOwner = <Self extends FieldNodeRecord<Self>>(
       if (typeof segment !== 'string') return undefined;
       suffix = appendSegment(suffix, segment);
     }
-    return { node, suffix, depth: node.depth + segments.length - index - 1 };
+    return { node, suffix };
   }
   return undefined;
 };
