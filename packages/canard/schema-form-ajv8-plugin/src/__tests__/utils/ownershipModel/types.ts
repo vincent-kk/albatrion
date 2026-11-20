@@ -19,6 +19,7 @@ export interface ModelProfile<T extends ModelApplication> {
   addMeta: (instance: T, schema: object, key: string) => void;
   installRule: (instance: T, mode: number) => void;
   adapter: (instance: T) => ValidatorFactory;
+  factory?: (instance: T) => ValidatorFactory['compile'];
 }
 /** Caller-owned roots and their expected immutable compiled result. */
 export interface ModelRoot {
