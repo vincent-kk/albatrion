@@ -9,6 +9,7 @@ import { outcomeOf } from './outcomeOf';
 import { runGuardBaseSequence } from './runGuardBaseSequence';
 import { runPoolNamespaceSequence } from './runPoolNamespaceSequence';
 import { runRootMutationSequence } from './runRootMutationSequence';
+import { runSharedIdentitySequence } from './runSharedIdentitySequence';
 import type { ModelApplication, ModelProfile, ModelRoot } from './types';
 
 /** Drive the real adapter and an independent fresh-compiler oracle with one deterministic sequence. */
@@ -26,6 +27,8 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
   const adapters: { validator: ValidatorFactory; roots: ModelRoot[] }[] = [];
   const roots: WeakRef<object>[] = [];
   const functions: unknown[] = [];
+  const shared = await runSharedIdentitySequence(app, twin, profile, seed);
+  functions.push(...shared.functions);
   let ruleMode = 0;
   const aliasId = 'https://ownership-model.invalid/alias-id';
   const aliasKey = 'https://ownership-model.invalid/alias-key';
@@ -397,5 +400,5 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
       `seed=${seed}: pool rotation leaves application unchanged`,
     ).toEqual(before);
   }
-  return { app, roots, functions };
+  return { app, twin, roots, functions, shared };
 };
