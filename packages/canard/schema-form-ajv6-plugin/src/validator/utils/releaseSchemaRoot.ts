@@ -3,6 +3,7 @@ import type { JSONSchema } from '@canard/schema-form';
 import { disposeSchemaRoot } from './disposeSchemaRoot';
 import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
 import type { SchemaRootRegistry } from './registerSchemaRoot';
+import { removeRootRegistration } from './removeRootRegistration';
 
 /** Synchronously release this adapter's roots without changing any application registry. */
 export const releaseSchemaRoot = (
@@ -15,10 +16,9 @@ export const releaseSchemaRoot = (
     const ledger = instanceIdRegistrationsOf(registration.baseAjv);
     ledger.finalizer?.unregister(registration);
     disposeSchemaRoot(registration);
-    for (let index = ledger.active.length - 1; index >= 0; index--) {
-      const entry = ledger.active[index].deref();
-      if (!entry || entry === registration) ledger.active.splice(index, 1);
-    }
+    const index = registration.slot;
+    if (index !== undefined && ledger.active[index]?.deref() === registration)
+      removeRootRegistration(ledger, index, registration);
   }
   registry.entries.delete(root);
 };

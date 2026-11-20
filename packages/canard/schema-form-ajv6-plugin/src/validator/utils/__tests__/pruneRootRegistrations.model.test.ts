@@ -3,8 +3,8 @@ import type { Ajv } from 'ajv';
 import { expect, it } from 'vitest';
 
 import { pruneRootRegistrations } from '../pruneRootRegistrations';
-import { removeRootRegistration } from '../removeRootRegistration';
 import type { SchemaRootRegistration } from '../registerSchemaRoot';
+import { removeRootRegistration } from '../removeRootRegistration';
 
 type WeakSlot = Pick<WeakRef<SchemaRootRegistration>, 'deref'>;
 
@@ -63,13 +63,25 @@ it('seeded pruning preserves the independent live set with bounded work and boun
         if (drop % 2) {
           target.released = true;
           const index = target.slot;
-          if (index === undefined) throw new Error(`seed=${seed} missing live slot`);
+          if (index === undefined)
+            throw new Error(`seed=${seed} missing live slot`);
           const before = reads;
           removeRootRegistration(ledger, index, target);
-          expect(reads - before, `seed=${seed} direct removal budget`).toBeLessThanOrEqual(1);
-          expect(target.slot, `seed=${seed} removed slot cleared`).toBeUndefined();
-          expect(ledger.active.some(reference => reference.deref() === target), `seed=${seed} immediate removal`).toBe(false);
-          expect(ledger.cursor, `seed=${seed} release cursor`).toBeLessThan(Math.max(1, ledger.active.length));
+          expect(
+            reads - before,
+            `seed=${seed} direct removal budget`,
+          ).toBeLessThanOrEqual(1);
+          expect(
+            target.slot,
+            `seed=${seed} removed slot cleared`,
+          ).toBeUndefined();
+          expect(
+            ledger.active.some((reference) => reference.deref() === target),
+            `seed=${seed} immediate removal`,
+          ).toBe(false);
+          expect(ledger.cursor, `seed=${seed} release cursor`).toBeLessThan(
+            Math.max(1, ledger.active.length),
+          );
         } else weakAlive.delete(target.key);
       }
       const context = `seed=${seed} step=${step}`;

@@ -15,6 +15,8 @@ export interface SchemaRootRegistration {
   readonly copy: JSONSchema;
   readonly serialized: string;
   readonly key: string;
+  /** Current weak-ledger slot; removed registrations have no slot ownership. */
+  slot?: number;
   readonly ids: readonly string[];
   readonly hasDynamicKeywords: boolean;
   readonly guardChecks: WeakMap<object, boolean>;
@@ -81,6 +83,7 @@ export const registerSchemaRoot = (
     copy: JSON.parse(serialized),
     serialized,
     key: `https://canard.invalid/ajv7/root/${++ledger.nextKey}`,
+    slot: ledger.active.length,
     ids,
     hasDynamicKeywords,
     guardChecks: new WeakMap(),
