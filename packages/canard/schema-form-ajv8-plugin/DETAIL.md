@@ -56,7 +56,9 @@
 
 폼 연산을 끼운 애플리케이션과 애플리케이션 연산만 실행한 쌍둥이 인스턴스는 자기 호출의 반환·예외 종류와 메시지·ajv.errors, 레지스트리 키와 순서·캐시·fragment·코드 scope 크기가 같습니다. private 컴파일러 입력과 error 변환 closure, 직접 가드, scope와 cache에는 호출자 root나 그 자식 객체를 넣지 않습니다. JSON 스냅숏만 저장하고 원본을 강하게 도달하는 경로가 없음을 루트·어댑터의 실제 수거로 확인합니다.
 
-AJV가 호출 때마다 초기화하는 keyword validate·validateSchema 함수의 errors는 임시 scratch 상태로 이 불변식에서 제외합니다. 같은 keyword metaSchema를 private 쪽에서 재컴파일하지 않습니다. 이미 등록된 validateSchema 함수를 그대로 사용하므로 그 metaSchema가 참조한 애플리케이션 문서가 이후 제거돼도 등록된 keyword의 의미를 보존합니다. RULES와 formats는 native 컴파일이 구조를 변경하지 않는 부분만 공유하며 함수 errors와 사용자 callback의 외부 closure 부수효과는 격리하지 않습니다.
+AJV가 호출 때마다 초기화하는 keyword validate·validateSchema 함수의 errors는 임시 scratch 상태로 이 불변식에서 제외합니다. 같은 keyword metaSchema를 private 쪽에서 재컴파일하지 않습니다. 이미 등록된 validateSchema 함수를 그대로 사용하므로 그 metaSchema가 참조한 애플리케이션 문서가 이후 제거돼도 등록된 keyword의 의미를 보존합니다. RULES와 formats는 native 컴파일이 구조를 변경하지 않는 부분만 공유하며 함수 errors와 사용자 callback의 외부 closure 부수효과는 격리하지 않습니다. 외부 코드가 소유한 수명, 예를 들어 keyword나 format callback이 원본을 캡처하는 경우는 플러그인이 단축하지 않습니다.
+
+공유 identity도 같은 분리 규칙을 따릅니다. 애플리케이션이 폼 root 자체나 자식 객체를 폼 컴파일 전후에 등록해도, 등록을 제거한 뒤 애플리케이션 단독 쌍둥이가 수거할 수 있는 원본을 플러그인의 등록·claim·관찰 기록이 강하게 보유하지 않습니다. 관찰 상태는 인스턴스 원장의 WeakMap이 원본 객체·함수에 부여한 불투명 identity와 원시값만 보유합니다. 현재 항목을 같은 WeakMap identity로 읽어 비교하므로 제거·교체 감지는 GC 시점과 무관하며 관찰하지 않은 애플리케이션 스키마는 순회하지 않습니다. 문서 사본의 키는 weak하고 claim의 문서·노드는 분리된 사본만 참조합니다. 호출자 root를 애플리케이션 문서로 공유하는 경우와 그 자식만 공유하는 경우, 애플리케이션 등록이 폼 컴파일보다 앞뒤인 경우를 생성 시퀀스와 실제 수거로 검증합니다.
 
 ### I2 — 현재 프로필·별칭·충돌
 
