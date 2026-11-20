@@ -18,7 +18,7 @@
 
 multipleOf가 있으면 0을 anchor로 하는 정확한 십진 배수 격자를 사용합니다. 정수 타입은 그 격자와 정수의 교집합입니다. 첫 허용 값과 마지막 허용 값이 track 경계이며 Home·End가 이 값을 저장합니다.
 
-multipleOf가 없는 number는 하한을 anchor로 기본 step 1을 적용합니다. inclusive 하한·상한은 원래 값 그대로 유지하며 Home·End가 저장합니다. exclusive 하한은 anchor 자체를 제외하여 Home이 한 step 뒤에서 시작합니다. exclusive 상한에서는 anchor에서 step으로 도달하는 값 중 상한보다 작은 마지막 값을 End가 저장합니다. integer는 경계 안의 정수만 선택합니다.
+multipleOf가 없는 number는 하한을 anchor로 기본 step 1을 적용합니다. inclusive 하한·상한은 원래 값 그대로 유지하며 Home·End가 저장합니다. exclusive 하한은 anchor 자체를 제외하여 Home이 한 step 뒤에서 시작합니다. 구간이 기본 step보다 좁으면 유효한 inclusive 상한을 유일한 stop으로 유지합니다. exclusive 상한에서는 anchor에서 step으로 도달하는 값 중 상한보다 작은 마지막 값을 End가 저장합니다. integer는 경계 안의 정수만 선택합니다.
 
 Arrow·PageUp·PageDown·Shift+Arrow는 저장 값이 미설정·격자 밖·경계 밖인 경우도 같은 격자 안으로 이동합니다. Page와 Shift는 열 step입니다. 십진 지수 표기의 작은 step도 십진 정수 연산으로 처리합니다. lazy 생략은 commit에서, false는 이동에서 저장하며 같은 완료 조작의 결과는 같습니다. 모바일 범위는 양끝에 같은 규칙을 적용합니다.
 

@@ -48,9 +48,18 @@ export const getSliderBounds = (
     multipleOf === undefined && !integer && !strictHigh
       ? high
       : decimalStop(valid ? anchor : 0, lastIndex, step);
+  const upperOnly =
+    multipleOf === undefined &&
+    !integer &&
+    strictLow &&
+    !strictHigh &&
+    high > low &&
+    first > high;
   const empty =
-    !valid || first > last || first > high || (strictHigh && first === high);
-  const min = empty ? low : first,
+    !valid ||
+    (!upperOnly &&
+      (first > last || first > high || (strictHigh && first === high)));
+  const min = empty ? low : upperOnly ? high : first,
     max = empty ? high : last;
   const clamp = (value: number) => Math.max(min, Math.min(max, value));
   const snap = (value: number) => {
@@ -106,10 +115,11 @@ export const getSliderBounds = (
         ? value
         : snap(value),
     keyboard,
-    fromLibrary,
-    toLibrary,
-    libraryMin: indexed ? 0 : min,
-    libraryMax: indexed ? toLibrary(max) : max,
-    libraryStep: indexed ? 1 : step,
+    // Use a track with width for a singleton; every coordinate resolves to its sole stop.
+    fromLibrary: upperOnly ? () => max : fromLibrary,
+    toLibrary: upperOnly ? () => 1 : toLibrary,
+    libraryMin: indexed || upperOnly ? 0 : min,
+    libraryMax: upperOnly ? 1 : indexed ? toLibrary(max) : max,
+    libraryStep: indexed || upperOnly ? 1 : step,
   };
 };
