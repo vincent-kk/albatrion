@@ -63,6 +63,7 @@ export const createGuardCompiler = (
   const guard = compiler.instance;
   if (!Object.prototype.hasOwnProperty.call(guard.schemas, registration.key)) {
     const guardCopy: JSONSchema = JSON.parse(JSON.stringify(root));
+    if (compiler.asynchronous) guardCopy.$async = true;
     if (!rootId) {
       // AJV8 derives an unnamed schema's base from its first registration key.
       guard.removeSchema('');
