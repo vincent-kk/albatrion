@@ -35,15 +35,13 @@ export const collectSchemaDependencies = (
   };
   const bases = new WeakMap<object, string>();
   let hidden: WeakSet<object> | undefined;
-  const schemaIdOf = (node: object): unknown => {
-    return;
+  const schemaIdOf = (node: object): unknown =>
     source._opts.schemaId === 'id'
       ? Reflect.get(node, 'id')
       : (Reflect.get(node, '$id') ??
         (source._opts.schemaId === 'auto'
           ? Reflect.get(node, 'id')
           : undefined));
-  };
   const visitAssertions = (node: object, base: string) => {
     if (Reflect.get(node, '$async') === true) result.asynchronous = true;
     for (const name of Object.keys(node)) {
