@@ -36,21 +36,38 @@ export const createValidatorFactory = (
     try {
       registration.validationMeta = validatePrivateSchema(ajv, copy);
       if (compiler.asynchronous) copy.$async = true;
-      validate = compiler.macroProfile
-        ? compileMacroSchema(compiler, () => compiler.instance.compile(copy))
-        : compiler.instance.compile(copy);
+      if (key) {
+        const registered = compiler.macroProfile
+          ? compileMacroSchema(compiler, () => compiler.instance.getSchema(key))
+          : compiler.instance.getSchema(key);
+        if (!registered)
+          throw new Error(`Registered Ajv schema was not found: ${key}`);
+        validate = registered;
+      } else
+        validate = compiler.macroProfile
+          ? compileMacroSchema(compiler, () => compiler.instance.compile(copy))
+          : compiler.instance.compile(copy);
     } catch (error) {
       compiler.retired = true;
       throw error;
     }
+    const schema = key ? validate.schema : copy;
+    const compiledRoot =
+      schema && typeof schema === 'object' ? schema : undefined;
     const ValidationError = Reflect.get(ajv.constructor, 'ValidationError');
     // AJV reports the same schema paths on every run of this validator, so each not.required lookup walks the root once.
     const legacyId =
       ajv._opts.schemaId === 'id' || ajv._opts.schemaId === 'auto';
-    const hasResources = registration.ids.length !== 0;
+    const hasResources = !!key || registration.ids.length !== 0;
     let issueContext: ReturnType<typeof createSchemaPathContext> | undefined;
-    const getIssueContext = () =>
-      (issueContext ??= createSchemaPathContext(copy, legacyId, hasResources));
+    const getIssueContext = compiledRoot
+      ? () =>
+          (issueContext ??= createSchemaPathContext(
+            compiledRoot,
+            legacyId,
+            hasResources,
+          ))
+      : undefined;
     const normalized: ValidateFunction = async (data) => {
       try {
         const result = validate(data);
