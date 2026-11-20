@@ -251,6 +251,15 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     if (childInput === undefined || node.childrenByName[name]) continue;
     const departing = findDepartingChild(node, name, context);
     if (!departing) continue;
-    recordDepartingWrite(departing, childInput, context);
+    recordDepartingWrite(
+      {
+        node: departing,
+        suffix: '',
+        depth: departing.depth,
+        template: departing.blueprintNode,
+        value: childInput,
+      },
+      context,
+    );
   }
 };
