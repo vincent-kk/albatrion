@@ -11,6 +11,8 @@ import { WriteOption } from '../../../../types/value';
 /** A batch mark reduced to the storage addresses it writes and how. */
 export type LaterMark = {
   readonly paths: readonly string[];
+  /** Whether the storage paths correspond to tuple slots, including a single slot. */
+  readonly isVirtual: boolean;
   readonly option: WriteOption;
   readonly value: unknown;
 };
@@ -41,12 +43,11 @@ export const readLaterCoverage = (
     const scope = later.paths[index];
     if (path !== scope && !isDescendantPath(path, scope)) continue;
     if (!isMerge) return { kind: 'covered' };
-    let current =
-      later.paths.length > 1
-        ? isArray(later.value)
-          ? later.value[index]
-          : undefined
-        : later.value;
+    let current = later.isVirtual
+      ? isArray(later.value)
+        ? later.value[index]
+        : undefined
+      : later.value;
     let isReached = true;
     for (const name of parsePointerSegments(path.slice(scope.length))) {
       if (current === null || typeof current !== 'object' || isArray(current))
