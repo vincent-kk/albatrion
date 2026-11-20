@@ -13,6 +13,8 @@ export type DepartingWrite<Self> = {
   readonly template: BlueprintNode;
   /** Defined value; records apply in the order they are made, which is rank order, so a later record wins where the two overlap. */
   readonly value: unknown;
+  /** Index of the first live declarative replacement that could supersede this revived write. */
+  revivedAt?: number;
 };
 
 /** The leaving occurrence and the address below it, before a write names a kind and a value. */

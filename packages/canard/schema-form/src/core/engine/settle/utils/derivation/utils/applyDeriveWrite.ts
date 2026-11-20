@@ -13,6 +13,16 @@ import { markWrite } from '../../input/markWrite';
 import { isLiveOccurrence } from '../../transition/isLiveOccurrence';
 import { placeDeclarativeValue } from '../../transition/placeDeclarativeValue';
 
+/** Record the coverage of a live declarative replacement before applying it. */
+const markLiveDeriveWrite = <Self extends FieldNodeRecord<Self>>(
+  node: Self,
+  value: unknown,
+  context: SettlementContext<Self>,
+): void => {
+  context.liveReplacementPathsAfterRevival?.push(node.path);
+  markWrite(node, value, context);
+};
+
 /**
  * Apply one selected automatic replacement. An address with a live node when the write is applied
  * is marked; any other address, including a target that left after an earlier winner's compute,
@@ -30,7 +40,7 @@ export const applyDeriveWrite = <Self extends FieldNodeRecord<Self>>(
   if (!template) return;
   if (template.kind !== 'virtual') {
     if (write.target && isLiveOccurrence(write.target, context))
-      markWrite(write.target, write.value, context);
+      markLiveDeriveWrite(write.target, write.value, context);
     else
       placeDeclarativeValue(context, write.targetPath, template, write.value);
     return;
@@ -44,7 +54,7 @@ export const applyDeriveWrite = <Self extends FieldNodeRecord<Self>>(
   for (let index = 0; index < fields.length; index++) {
     const sibling = host?.childrenByName?.[fields[index]];
     if (sibling && isLiveOccurrence(sibling, context)) {
-      markWrite(sibling, values[index], context);
+      markLiveDeriveWrite(sibling, values[index], context);
       continue;
     }
     const entry = entries.find((entry) => entry.name === fields[index]);

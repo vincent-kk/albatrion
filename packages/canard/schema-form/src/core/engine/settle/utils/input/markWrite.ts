@@ -7,7 +7,7 @@ import {
   isDescendantPath,
 } from '@/schema-form/helpers/jsonPointer';
 
-import type { FieldNodeRecord, UnionSpec } from '../../../record';
+import type { Distribution, FieldNodeRecord, UnionSpec } from '../../../record';
 import { FieldNodeWriteKind } from '../../../types/value';
 import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../types/settlement';
@@ -43,6 +43,7 @@ const UNINTERPRETED: unique symbol = Symbol('uninterpreted');
  * @param context - Work list recording source, shape, and automatic changes
  * @param spec - Static or narrowed type restriction used for interpretation
  * @param changedValue - A leaf's input already interpreted under the static spec and proven unequal to its source by the distribution's skip test; omitted, the input is interpreted and compared here
+ * @param isRevivedWrite - Whether a departing record names this write instead of supplying an appearance fill
  * @returns Nothing; only this node's own state channels are stored here
  */
 export const markWrite = <Self extends FieldNodeRecord<Self>>(
@@ -51,6 +52,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   spec: UnionSpec = staticSpec(node.schemaType, node.isNullable),
   changedValue: unknown = UNINTERPRETED,
+  isRevivedWrite = false,
 ): void => {
   if (context.writeEpoch !== undefined && context.isAutomatic)
     restoreWriteEpochPaths(context);
@@ -130,7 +132,14 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
         (context.virtualReplacementPaths ??= []).push(sibling.path);
         pruneInactiveSources(sibling.runtime, sibling.path, undefined, context);
       }
-      markWrite(sibling, values?.[index], context);
+      markWrite(
+        sibling,
+        values?.[index],
+        context,
+        undefined,
+        undefined,
+        isRevivedWrite,
+      );
     }
     return;
   }
@@ -201,11 +210,13 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     context.changedNodes.add(node);
     if (context.isAutomatic) context.hasAutomaticChanged = true;
   }
-  context.distributedInputs.set(node, {
+  const distribution: Distribution = {
     input: value,
     isWhole: whole,
     isAutomatic: context.isAutomatic,
-  });
+  };
+  if (isRevivedWrite) distribution.isRevivedWrite = true;
+  context.distributedInputs.set(node, distribution);
   if (context.writeEpoch !== undefined) node.writeEpoch = context.writeEpoch;
   else context.dirtyPaths.add(node.path);
   if (!sameShape) context.shapeDirtyPaths.add(node.path);
@@ -235,11 +246,18 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     }
     if (interpreted !== UNINTERPRETED && sameValue(child.source, interpreted))
       continue;
-    if (context.isAutomatic) {
+    if (context.isAutomatic && !isRevivedWrite) {
       context.writtenInputs.set(child, childInput);
       context.filledNodes.add(child);
     }
-    markWrite(child, childInput, context, childSpec, interpreted);
+    markWrite(
+      child,
+      childInput,
+      context,
+      childSpec,
+      interpreted,
+      isRevivedWrite,
+    );
   }
   if (
     !context.isAutomatic ||

@@ -2,6 +2,7 @@ import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { getInactiveValuePath } from '../inactive/getInactiveValuePath';
 import { writeSlotPath } from '../slots/writeSlotPath';
+import { getRevivedSlotValues } from './utils/getRevivedSlotValues';
 
 /**
  * Write the declarative values named for departed nodes and the addresses below them into their
@@ -16,10 +17,33 @@ export const applyDepartingWrites = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   if (!context.departingWrites) return;
-  for (const { node, suffix, template, value } of context.departingWrites) {
+  for (const {
+    node,
+    suffix,
+    template,
+    value,
+    revivedAt,
+  } of context.departingWrites) {
     if (!node.isDetached) continue;
     const path = getInactiveValuePath(node, context);
     if (path === undefined) continue;
-    writeSlotPath(context.root, path + suffix, template, value, true, context);
+    if (revivedAt === undefined) {
+      writeSlotPath(context.root, path + suffix, template, value, true, context);
+      continue;
+    }
+    const values = getRevivedSlotValues(
+      node.path,
+      { suffix, template, value },
+      context.liveReplacementPathsAfterRevival?.slice(revivedAt) ?? [],
+    );
+    for (const { suffix, template, value, isWhole } of values)
+      writeSlotPath(
+        context.root,
+        path + suffix,
+        template,
+        value,
+        isWhole,
+        context,
+      );
   }
 };

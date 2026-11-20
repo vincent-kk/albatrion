@@ -139,6 +139,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   inactiveValueOverrides?: Map<Self, unknown>;
   /** Defined declarative values named for addresses at or below nodes leaving in this settlement, in rank order, applied after their exit policy. */
   departingWrites?: DepartingWrite<Self>[];
+  /** Whole live replacements that may supersede previously revived records. */
+  liveReplacementPathsAfterRevival?: string[];
   /** First pre-move address per moved node, built once by an exit resolver. */
   inactivePathOrigins?: Map<Self, string>;
   /** Binding context from the preceding committed shape. */
