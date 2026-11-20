@@ -64,6 +64,7 @@ export const collectSchemaDependencies = (
     if (!assertion) return;
     if (Reflect.get(node, '$async') === true) result.asynchronous = true;
     for (const name of Object.keys(node)) {
+      if (result.rules.has(name)) continue;
       const definition = readKeyword(source, name);
       result.rules.set(name, observeIdentity(identities, definition));
       if (

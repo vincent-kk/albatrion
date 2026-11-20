@@ -68,22 +68,24 @@ export const walkSchemas = (
 ): void => {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return;
   visit(value, pointer, parent, assertion);
-  for (const [key, child] of Object.entries(value)) {
+  for (const key of Object.keys(value)) {
+    const child: unknown = Reflect.get(value, key);
+    if (!child || typeof child !== 'object' || DATA.has(key)) continue;
     const at = `${pointer}/${key.replace(/~/g, '~0').replace(/\//g, '~1')}`;
     if (Array.isArray(child)) {
       if (ARRAYS.has(key))
         for (let index = 0; index < child.length; index++)
           walkSchemas(child[index], visit, `${at}/${index}`, value, assertion);
-    } else if (MAPS.has(key) && child && typeof child === 'object') {
-      for (const [name, schema] of Object.entries(child))
+    } else if (MAPS.has(key)) {
+      for (const name of Object.keys(child))
         walkSchemas(
-          schema,
+          Reflect.get(child, name),
           visit,
           `${at}/${name.replace(/~/g, '~0').replace(/\//g, '~1')}`,
           value,
           assertion,
         );
-    } else if (!DATA.has(key))
+    } else
       walkSchemas(child, visit, at, value, assertion && VALUES.has(key));
   }
 };

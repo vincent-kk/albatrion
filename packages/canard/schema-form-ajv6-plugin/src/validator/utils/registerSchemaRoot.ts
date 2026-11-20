@@ -48,22 +48,7 @@ export const registerSchemaRoot = (
     throw new TypeError('A form schema root must be a JSON schema object');
   const registrations = registry.entries.get(root) ?? [];
   const existing = registrations.find((entry) => entry.baseAjv === baseAjv);
-  const ids: string[] = [];
-  let hasDynamicKeywords = false;
-  const serialized = JSON.stringify(root, (name, value: unknown) => {
-    if ((name === '$id' || name === 'id') && typeof value === 'string')
-      ids.push(value);
-    if (
-      [
-        '$dynamicAnchor',
-        '$recursiveAnchor',
-        '$dynamicRef',
-        '$recursiveRef',
-      ].includes(name)
-    )
-      hasDynamicKeywords = true;
-    return value;
-  });
+  const serialized = JSON.stringify(root);
   if (
     existing?.serialized === serialized &&
     (!existing.validation || isPrivateCompilerCurrent(existing.validation)) &&
@@ -79,9 +64,31 @@ export const registerSchemaRoot = (
     registrations.splice(registrations.indexOf(existing), 1);
   }
   pruneRootRegistrations(ledger);
+  const ids: string[] = [];
+  let hasDynamicKeywords = false;
+  const copy: JSONSchema =
+    serialized.includes('"$id":') ||
+    serialized.includes('"$dynamic') ||
+    serialized.includes('"$recursive') ||
+    serialized.includes('"id"')
+      ? JSON.parse(serialized, (name, value: unknown) => {
+          if ((name === '$id' || name === 'id') && typeof value === 'string')
+            ids.push(value);
+          if (
+            [
+              '$dynamicAnchor',
+              '$recursiveAnchor',
+              '$dynamicRef',
+              '$recursiveRef',
+            ].includes(name)
+          )
+            hasDynamicKeywords = true;
+          return value;
+        })
+      : JSON.parse(serialized);
   const registration: SchemaRootRegistration = {
     baseAjv,
-    copy: JSON.parse(serialized),
+    copy,
     serialized,
     key: `https://canard.invalid/ajv6/root/${++ledger.nextKey}`,
     slot: ledger.active.length,
