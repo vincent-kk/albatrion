@@ -62,8 +62,12 @@ for (const tier of ["pr", "pre-release"])
         workspace.name,
       );
     assert.deepEqual(
-      plan.shards.find((s) => s.name === "schema-form").affected,
-      ["@canard/schema-form"],
+      plan.shards
+        .filter(({ name }) => name.startsWith("schema-form"))
+        .map(({ affected }) => affected),
+      Array.from({ length: tier === "pr" ? 3 : 1 }, () => [
+        "@canard/schema-form",
+      ]),
     );
   });
 
@@ -87,5 +91,8 @@ for (const tier of ["pr", "pre-release"])
           .length,
         1,
       );
-    assert.equal(plan.shards[1].name, "schema-form");
+    assert.equal(
+      plan.shards[1].name,
+      tier === "pr" ? "schema-form-unit-1" : "schema-form",
+    );
   });

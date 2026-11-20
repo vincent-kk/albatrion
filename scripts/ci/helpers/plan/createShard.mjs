@@ -7,9 +7,17 @@ import { createBuildSteps } from "./createBuildSteps.mjs";
  * @param {string[]} changed Workspaces whose sources changed.
  * @param {object[]} workspaces Manifest scripts and build edges.
  * @param {string} tier Check policy, either pr or pre-release; other values throw.
+ * @param {string} [schemaFormUnitShard] Vitest file partition for a schema-form PR unit job. The PR render job omits it.
  * @returns {object} Named shard with browser requirement and serial steps.
  */
-export function createShard(name, affected, changed, workspaces, tier = "pr") {
+export function createShard(
+  name,
+  affected,
+  changed,
+  workspaces,
+  tier = "pr",
+  schemaFormUnitShard,
+) {
   if (tier !== "pr" && tier !== "pre-release")
     throw new Error(`Invalid check tier: ${tier}`);
   const selected = workspaces.filter((workspace) =>
@@ -39,7 +47,11 @@ export function createShard(name, affected, changed, workspaces, tier = "pr") {
   for (const workspace of selected.filter(
     (workspace) => workspace.scripts.test,
   )) {
-    if (workspace.name === "@canard/schema-form" && tier === "pr") {
+    if (
+      workspace.name === "@canard/schema-form" &&
+      tier === "pr" &&
+      schemaFormUnitShard
+    ) {
       steps.push({
         kind: "test",
         label: "Test schema-form unit",
@@ -50,8 +62,10 @@ export function createShard(name, affected, changed, workspaces, tier = "pr") {
           "--run",
           "--project",
           "unit",
+          `--shard=${schemaFormUnitShard}`,
         ],
       });
+    } else if (workspace.name === "@canard/schema-form" && tier === "pr") {
       steps.push({
         kind: "test",
         label: "Test schema-form input lifetime regressions on React19/React18",
