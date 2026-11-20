@@ -64,4 +64,28 @@ describe.each([
     ajv.addFormat('model-format', /^second$/);
     expect(await adapter.compile(root)({ name: 'second' })).toBeNull();
   });
+
+  it('observes rules at a new fragment in an already imported document', async () => {
+    const ajv = instance();
+    const id = 'https://app.invalid/reused-container.json';
+    const install = (accepted: string) =>
+      ajv.addKeyword('modelRule', {
+        validate: (_schema: boolean, value: string) => value === accepted,
+      });
+    install('one');
+    ajv.addSchema({
+      $id: id,
+      type: 'object',
+      components: { live: { type: 'string', modelRule: true } },
+    });
+    const adapter = adapterFor(ajv);
+    expect(await adapter.compile({ $ref: id })({})).toBeNull();
+    const root: JSONSchema = { $ref: `${id}#/components/live` };
+    const before = adapter.compile(root);
+    expect(await before('two')).toMatchObject([{ keyword: 'modelRule' }]);
+    ajv.removeKeyword('modelRule');
+    install('two');
+    expect(await adapter.compile(root)('two')).toBeNull();
+    expect(await before('two')).toMatchObject([{ keyword: 'modelRule' }]);
+  });
 });
