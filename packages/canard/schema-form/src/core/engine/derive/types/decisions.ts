@@ -35,6 +35,8 @@ export interface DeriveWrite<Self> {
   readonly targetPath: string;
   /** Static template for a latent target. */
   readonly template?: BlueprintNode;
+  /** Live owner of a latent target, through which a latent virtual group reaches its live constituents. */
+  readonly host?: Self;
   /** Sibling templates used when distributing a latent replacement. */
   readonly siblings?: readonly BlueprintChildEntry[];
   /** Document position of a latent target. */

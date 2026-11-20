@@ -15,7 +15,7 @@ import { getDeriveChildEntry } from '../rank/getDeriveChildEntry';
  * Resolve a dynamic path through declared templates and the current shape.
  * @param root - Live calculated root
  * @param path - Absolute target pointer, never the context token
- * @returns Declared target and optional live occurrence
+ * @returns Declared target, optional live occurrence, and the live owner of a latent target
  */
 export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
   root: Self,
@@ -25,6 +25,7 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
   if (segments[0] === PointerOperator.Context) return undefined;
   let template = root.blueprintNode;
   let live: Optional<Self> = root;
+  let host: Optional<Self>;
   let siblings = template.childEntries;
   const order: number[] = [];
   for (const name of segments) {
@@ -47,6 +48,7 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
       : getDeriveChildEntry(template, name);
     if (!found) return undefined;
     order.push(found.position);
+    host = live;
     const childrenByName: Nullable<Dictionary<Self>> =
       live?.childrenByName ?? null;
     live =
@@ -57,6 +59,7 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
   }
   return {
     target: live,
+    host: live ? undefined : host,
     template: live?.blueprintNode ?? template,
     siblings,
     order,
