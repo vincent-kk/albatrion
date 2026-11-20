@@ -17,11 +17,22 @@ it('bulk fixtures keep complete observations in off/table/verify with zero viola
   expect(tableBulk.some((fixture) => fixture.name.includes('oneOf-80'))).toBe(
     true,
   );
-  for (const fixture of [...bulkConsumeCases, ...tableBulk])
+  // The pr tier builds the nested history at depth 4 instead of 6 (bulkConsumeCases); every fixture
+  // still runs in every mode, and the quota below fails if a class of history goes missing.
+  const observed: string[] = [];
+  for (const fixture of [...bulkConsumeCases, ...tableBulk]) {
     await observeGateTableModes(
       fixture,
       bulkConsumeCases.slice(0, 2).includes(fixture),
     );
+    observed.push(fixture.name);
+  }
+  expect(
+    ['flat-2000', 'nested-d', 'recreated array child', 'oneOf-80'].filter(
+      (kind) => !observed.some((name) => name.includes(kind)),
+    ),
+  ).toEqual([]);
+  expect(observed).toHaveLength(bulkConsumeCases.length + tableBulk.length);
   expect(gateSelectionTable.violations).toBe(before);
 }, 300000);
 
