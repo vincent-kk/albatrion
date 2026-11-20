@@ -316,3 +316,32 @@ it.each(['ltr', 'rtl'] as const)(
     }
   },
 );
+
+it.each([undefined, false])(
+  'round-5 read-only model preserves a valid decimal display (lazy=%s)',
+  (lazy) => {
+    const ref = createRef<FormHandle>();
+    const view = render(
+      <Form
+        ref={ref}
+        readOnly
+        defaultValue={1.4}
+        jsonSchema={{
+          type: 'number',
+          minimum: 0,
+          maximum: 10,
+          format: 'slider',
+          presentation: { inputType: 'slider', FieldInputProps: { lazy } },
+        }}
+        fieldInputDefinitions={[FieldInputSliderDefinition]}
+      />,
+    );
+    const thumb = view.getByRole('slider');
+    expect(ref.current?.getValue()).toBe(1.4);
+    expect(thumb.getAttribute('aria-valuenow')).toBe('1.4');
+    fireEvent.keyDown(thumb, { key: 'End', keyCode: 35 });
+    fireEvent.keyUp(thumb, { key: 'End', keyCode: 35 });
+    expect(ref.current?.getValue()).toBe(1.4);
+    expect(thumb.getAttribute('aria-valuenow')).toBe('1.4');
+  },
+);
