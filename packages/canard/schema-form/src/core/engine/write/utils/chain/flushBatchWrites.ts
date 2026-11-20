@@ -59,12 +59,13 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
       }
       return;
     }
-    const target = writes.length === 1 ? find(root, writes[0].node.path) : root;
-    if (!target) return;
-    const value =
-      writes.length === 1 ? writes[0].value : composeBatchValue(root, writes);
+    // A lone mark kept past a refused reset can name a detached node; it then composes at the root.
+    const single =
+      writes.length === 1 ? find(root, writes[0].node.path) : undefined;
+    const target = single ?? root;
+    const value = single ? writes[0].value : composeBatchValue(root, writes);
     const merge =
-      writes.length === 1 &&
+      !!single &&
       (option & WriteOption.Merge) === WriteOption.Merge &&
       !(option & WriteOption.Replace);
     let allMatch = true;
@@ -161,7 +162,7 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
       source,
       origins,
       undefined,
-      writes.length === 1 ? writes[0].virtualFields : undefined,
+      single ? writes[0].virtualFields : undefined,
     );
   } catch (error) {
     captureChainError(runtime, error);

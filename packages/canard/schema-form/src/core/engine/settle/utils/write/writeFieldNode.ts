@@ -95,7 +95,10 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
           typeof input !== 'object' ||
           isArray(input) ||
           node.behavior.strategy !== 'branch'));
-  const batch = writeOrigins !== undefined && writeOrigins.length > 1;
+  // A batch composed at an ancestor of its only origin replaces that origin's scope, not the target.
+  const batch =
+    writeOrigins !== undefined &&
+    (writeOrigins.length > 1 || writeOrigins[0]?.path !== node.path);
   const context = createSettlementContext(
     node,
     kind,
