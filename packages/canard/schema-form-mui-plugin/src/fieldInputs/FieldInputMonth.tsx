@@ -134,6 +134,7 @@ const FieldInputMonth = ({
                 input: {
                   id: inputId,
                   role: 'group',
+                  'aria-disabled': disabled || undefined,
                   'aria-labelledby': fieldTitleId,
                 },
               },
