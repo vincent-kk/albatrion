@@ -19,11 +19,13 @@ import { createSeedSampler } from './fixtures/createSeedSampler';
  * later Merge covers in part (only the named key is replaced). Exit policies and one batch or one
  * root Merge write are drawn per seed. The rank and reset-overlap dimensions observe /outer. The
  * two repeated-exit dimensions observe a named write through a parent object and require either
- * its retained value after the second exit or its live value after a second revival.
+ * its retained value after the second exit or its live value after a second revival. A separate
+ * dimension writes the live composite and closes its gate in one rule, then observes the exit policy.
  *
- * Seeds: 1 to 3000 locally and in the pre-release tier. The pr tier runs 1200 stratified seeds: the
- * first 20 of each of 60 classes, dimension times exit policy times batch or Merge (each reset
- * dimension contributes 3 classes without Merge; each repeated-exit dimension contributes 12,
+ * Locally and in pre-release, seeds 1 to 3000 retain the earlier dimensions and seeds 3001 to 3360
+ * cover the live whole exit. The pr tier runs 1440 stratified seeds: the
+ * first 20 of each of 72 classes, dimension times exit policy times batch or Merge (each reset
+ * dimension contributes 3 classes without Merge; each composite-target dimension contributes 12,
  * parent and virtual targets for each form and policy; the other dimensions contribute 6 each).
  */
 
@@ -35,6 +37,7 @@ type Dimension =
   | 'exitCancelled'
   | 'exitRepeated'
   | 'exitRepeatedAndCancelled'
+  | 'liveWholeExit'
   | 'layered'
   | 'resetDetached'
   | 'reverseRank'
@@ -69,19 +72,29 @@ const REPEATED_EXIT_DIMENSIONS: readonly Dimension[] = [
   'exitRepeatedAndCancelled',
 ];
 
-const SEED_CLASSES = DIMENSIONS.flatMap((dimension) =>
-  POLICIES.flatMap((policy) =>
-    (RESET_DIMENSIONS.includes(dimension) ? [false] : [false, true]).flatMap(
-      (isMerge) =>
-        (REPEATED_EXIT_DIMENSIONS.includes(dimension)
-          ? [false, true]
-          : [false]
-        ).map((isVirtual) => `${dimension}:${policy}:${isMerge}:${isVirtual}`),
+/** Both composite addresses route to the same stored value. */
+const COMPOSITE_DIMENSIONS: readonly Dimension[] = [
+  ...REPEATED_EXIT_DIMENSIONS,
+  'liveWholeExit',
+];
+
+const SEED_CLASSES = [...DIMENSIONS, 'liveWholeExit' as const].flatMap(
+  (dimension) =>
+    POLICIES.flatMap((policy) =>
+      (RESET_DIMENSIONS.includes(dimension) ? [false] : [false, true]).flatMap(
+        (isMerge) =>
+          (COMPOSITE_DIMENSIONS.includes(dimension)
+            ? [false, true]
+            : [false]
+          ).map(
+            (isVirtual) => `${dimension}:${policy}:${isMerge}:${isVirtual}`,
+          ),
+      ),
     ),
-  ),
 );
 
-const sampler = createSeedSampler(3000, SEED_CLASSES, 20);
+const PRIMARY_SEED_COUNT = 3000;
+const sampler = createSeedSampler(PRIMARY_SEED_COUNT + 360, SEED_CLASSES, 20);
 
 const rule = (target: string, value: (source: string) => unknown) => ({
   type: 'string' as const,
@@ -177,6 +190,20 @@ const createSchema = (policy: Policy, isVirtual: boolean): AuthoredSchema => ({
       },
     },
     reopenTwice: { type: 'boolean' },
+    writeAndCloseRoundTrip: {
+      type: 'string',
+      controls: {
+        injectTo: (source: unknown) =>
+          typeof source === 'string' && source
+            ? {
+                '../roundTripOn': false,
+                ...(isVirtual
+                  ? { '../roundTripGroup': [{ y: source }] }
+                  : { '../roundTrip': { y: source } }),
+              }
+            : {},
+      },
+    },
     close: rule('../object/on', () => false),
     reopen: rule('../object/on', () => true),
   },
@@ -221,6 +248,7 @@ const model = (
     return { live: caller, closedAgain: 'closed', reopenedAgain: 'open' };
   // The lower winner omits the live y it makes leave; that exit keeps y's committed value, as the
   // lower winner's own single call does, so the policy applies to y0.
+  if (dimension === 'liveWholeExit') return exit(policy, caller);
   if (dimension === 'layered')
     return named !== undefined ? { retained: named } : exit(policy, 'y0');
   if (dimension === 'resetDetached') return { retained: caller };
@@ -240,7 +268,7 @@ const model = (
 };
 
 const observe = (root: Root, dimension: Dimension): Expected => {
-  const address = REPEATED_EXIT_DIMENSIONS.includes(dimension)
+  const address = COMPOSITE_DIMENSIONS.includes(dimension)
     ? '/roundTrip/y'
     : '/object/y';
   const live = root.find(address);
@@ -270,11 +298,14 @@ it(`places each declarative value where the routing model says for ${sampler.lab
       state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
       return (state >>> 8) % limit;
     };
-    const dimension = DIMENSIONS[random(DIMENSIONS.length)];
+    const dimension =
+      seed <= PRIMARY_SEED_COUNT
+        ? DIMENSIONS[random(DIMENSIONS.length)]
+        : 'liveWholeExit';
     const policy = POLICIES[random(POLICIES.length)];
     const isMerge = !RESET_DIMENSIONS.includes(dimension) && random(2) === 1;
     const isVirtual =
-      REPEATED_EXIT_DIMENSIONS.includes(dimension) && random(2) === 1;
+      COMPOSITE_DIMENSIONS.includes(dimension) && random(2) === 1;
     if (!sampler.accept(`${dimension}:${policy}:${isMerge}:${isVirtual}`))
       continue;
     const named = random(3) === 0 ? undefined : `v${seed}`;
@@ -310,6 +341,7 @@ it(`places each declarative value where the routing model says for ${sampler.lab
         reopenRoundTrip: 'r',
         reopenTwice: true,
       },
+      liveWholeExit: { writeAndCloseRoundTrip: caller },
       layered: { low: 'l', src: source },
       reverseRank: {
         outerOn: false,
