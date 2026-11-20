@@ -3,7 +3,7 @@ import { setFlagsFromString } from 'node:v8';
 import { runInNewContext } from 'node:vm';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { createValidator } from '../index';
+import { createValidator, createValidatorFactory } from '../index';
 import { runOwnershipFixedSequences } from './utils/ownershipModel/runOwnershipFixedSequences';
 import { runOwnershipSequence } from './utils/ownershipModel/runOwnershipSequence';
 
@@ -138,6 +138,8 @@ it.each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])(
                 : /./,
           );
         },
+        factory: (instance: Parameters<typeof createValidatorFactory>[0]) =>
+          createValidatorFactory(instance),
         adapter: (instance: Ajv.Ajv) =>
           (index % 2 ? secondCopy.createValidator : createValidator)(instance, {
             directGuardCompile: index % 2 === 0,
@@ -153,6 +155,19 @@ it.each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])(
           await new Promise((resolve) => setTimeout(resolve, 0));
           collect();
         }
+        const oracleCollected = result.shared.oracle.every(
+          (reference) => reference.deref() === undefined,
+        );
+        expect(
+          result.shared.actual.every(
+            (reference) => reference.deref() === undefined,
+          ),
+          `seed=${seed}: shared identity collection equals application-only control`,
+        ).toBe(oracleCollected);
+        expect(
+          result.twin,
+          `seed=${seed}: keep application-only owner alive`,
+        ).toBeTruthy();
         expect(
           result.roots.every((reference) => reference.deref() === undefined),
           `seed=${seed}: detached roots collected while returned functions remain live`,
