@@ -15,22 +15,35 @@ import type { ApplicationGraph, SchemaDependencies } from '../../types';
  * @param base - Registration key establishing the native URI resolution base.
  * @param importedDocument - Whether embedded aliases resolve through the current application registry.
  * @param knownFacts - Facts already collected for this exact document and base.
+ * @param selection - Incoming fragment address, allowing distinct targets in one raw document.
  * @returns No value; adds only reachable raw resources or throws a native reference/conflict error.
  */
 export const visitApplicationDocument = (
   source: Ajv,
   graph: ApplicationGraph,
-  visiting: Set<object | boolean>,
+  visiting: Map<object | boolean, Set<string>>,
   schema: object | boolean,
   base: string,
   importedDocument = false,
   knownFacts?: SchemaDependencies,
+  selection = '',
 ): void => {
-  if (visiting.has(schema)) return;
-  visiting.add(schema);
+  let selections = visiting.get(schema);
+  if (selections?.has(selection)) return;
+  if (selections) selections.add(selection);
+  else visiting.set(schema, new Set([selection]));
   const facts = knownFacts ?? collectSchemaDependencies(source, schema, base);
-  graph.documents.set(schema, facts);
+  const previousFacts = graph.documents.get(schema);
+  if (previousFacts) {
+    for (const [name, definition] of facts.rules)
+      previousFacts.rules.set(name, definition);
+    for (const [name, definition] of facts.formats)
+      previousFacts.formats.set(name, definition);
+    previousFacts.asynchronous ||= facts.asynchronous;
+    previousFacts.hasMacro ||= facts.hasMacro;
+  } else graph.documents.set(schema, facts);
   graph.asynchronous ||= facts.asynchronous;
+  graph.hasMacro ||= facts.hasMacro;
   for (const [name, definition] of facts.formats)
     graph.formats.set(name, definition);
   const local = new Set(facts.resources.map((resource) => resource.address));
@@ -55,6 +68,7 @@ export const visitApplicationDocument = (
       source,
       resource.document,
       resource.key,
+      reference.address.includes('#') ? reference.address : undefined,
     );
     for (const claim of imported.resources) {
       const previous = graph.claims.get(claim.address);
@@ -78,6 +92,7 @@ export const visitApplicationDocument = (
       resource.key,
       true,
       imported,
+      reference.address.includes('#') ? reference.address : '',
     );
   }
 };
