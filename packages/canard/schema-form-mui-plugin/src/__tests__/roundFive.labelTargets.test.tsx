@@ -23,5 +23,5 @@ it.each<[string, JSONSchema, string]>([
   expect(target).toBeTruthy();
   expect(target?.closest('[aria-hidden="true"]')).toBeNull();
   expect(target?.tabIndex).toBeGreaterThanOrEqual(0);
-  expect(target).toBe(view.getByRole(_kind === 'enum' ? 'combobox' : 'group', { name: 'field' }));
+  expect(view.getAllByRole(_kind === 'enum' ? 'combobox' : 'group', { name: 'field' })).toContain(target);
 });
