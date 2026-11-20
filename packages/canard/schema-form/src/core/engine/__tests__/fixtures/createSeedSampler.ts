@@ -1,8 +1,8 @@
 /**
  * Seed selection for a generated or model test.
  *
- * Locally and in the pre-release tier every seed from 1 to `total` runs. The pr tier's `test:pr`
- * script sets SCHEMA_FORM_TEST_TIER=pr, and then the sampler accepts, in seed order, only the first
+ * Locally and in the pre-release tier every seed from 1 to `total` runs. The pr runner sets
+ * SCHEMA_FORM_TEST_PROFILE=pr, so the sampler accepts, in seed order, only the first
  * `quota` seeds of each declared class, so every class is still drawn while the run stays bounded.
  * A test computes a seed's class from its first draws, asks `accept`, and skips the rest of a seed
  * the sampler refuses.
@@ -18,7 +18,7 @@ export const createSeedSampler = (
   classes: readonly string[],
   quota: number,
 ) => {
-  const isBounded = process.env.SCHEMA_FORM_TEST_TIER === 'pr';
+  const isBounded = process.env.SCHEMA_FORM_TEST_PROFILE === 'pr';
   const counts = new Map(classes.map((name) => [name, 0]));
   const required = isBounded ? quota : 1;
   return {

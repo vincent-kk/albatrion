@@ -23,11 +23,11 @@ const nested = (depth: number): { schema: BlueprintSchema; value: unknown } => {
 };
 
 /**
- * Depth of the nested bulk history: 6 (5461 nodes) locally and in the pre-release tier. The pr tier's
- * `test:pr` script sets SCHEMA_FORM_TEST_TIER=pr and builds depth 4 (341 nodes), which keeps the same
+ * Depth of the nested bulk history: 6 (5461 nodes) locally and in the pre-release tier. The pr runner
+ * sets SCHEMA_FORM_TEST_PROFILE=pr for depth 4 (341 nodes), which keeps the same
  * deep string-leaf shape and every observed mode at about a sixteenth of the cost.
  */
-const NESTED_DEPTH = process.env.SCHEMA_FORM_TEST_TIER === 'pr' ? 4 : 6;
+const NESTED_DEPTH = process.env.SCHEMA_FORM_TEST_PROFILE === 'pr' ? 4 : 6;
 
 const tree = nested(NESTED_DEPTH);
 
