@@ -76,11 +76,44 @@ describe('a higher own-path write to an inactive child of a lower whole object w
     expect(run('sequence')).toEqual(EXPECTED);
   });
 
-  it.fails('one batch keeps the higher value', () => {
+  it('one batch keeps the higher value', () => {
     expect(run('batch')).toEqual(EXPECTED);
   });
 
-  it.fails('one Merge write keeps the higher value', () => {
+  it('one Merge write keeps the higher value', () => {
     expect(run('merge')).toEqual(EXPECTED);
+  });
+});
+
+describe('a higher constituent winner overlaps a lower virtual group winner at the constituent address (WRITE-079)', () => {
+  it('restores the starting value the lower group winner replaced', () => {
+    const root = nodeFromJSONSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          group_src: {
+            type: 'string',
+            controls: {
+              injectTo: (value: unknown) =>
+                typeof value === 'string' ? { '../group': ['ga', 'gb'] } : {},
+            },
+          },
+          a: { type: 'string' },
+          b: { type: 'string' },
+          a_src: {
+            type: 'string',
+            controls: {
+              injectTo: (value: unknown) =>
+                typeof value === 'string' ? { '../a': 'a0' } : {},
+            },
+          },
+        },
+        options: { virtual: { group: { fields: ['a', 'b'] } } },
+      },
+      defaultValue: { a: 'a0', b: 'b0' },
+      validationMode: ValidationMode.None,
+    });
+    root.setValue({ group_src: 'g', a_src: 's' }, WriteOption.Merge);
+    expect(root.value).toMatchObject({ a: 'a0', b: 'gb' });
   });
 });
