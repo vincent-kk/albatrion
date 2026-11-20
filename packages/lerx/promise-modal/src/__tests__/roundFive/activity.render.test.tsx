@@ -23,6 +23,7 @@ const rows = [
   { settlement: 'cleanup', focus: 'body' },
   { settlement: 'cleanup', focus: 'outside' },
 ] as const;
+// React 18 does not provide Activity.
 it.skipIf(!React.Activity).each(rows)(
   'activity $settlement / $focus follows the displayed ownership rule',
   async ({ settlement, focus }) => {

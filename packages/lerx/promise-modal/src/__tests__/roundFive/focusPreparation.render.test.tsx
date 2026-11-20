@@ -19,6 +19,7 @@ it.each(['resuspended', 'hidden'] as const)(
     });
   },
 );
+// React 18 does not provide Activity.
 it.skipIf(!React.Activity)(
   'focuses a real inside control before Activity hides it',
   async () => {
