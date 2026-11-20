@@ -34,8 +34,14 @@ export function createCheckPlan(workspaces, files, reason = null, tier = "pr") {
     (name) =>
       name.startsWith("@canard/schema-form-") && name.endsWith("-plugin"),
   );
+  const shared = affected.filter((name) =>
+    ["@slats/agents-assets-sync", "@winglet/common-utils"].includes(name),
+  );
   const main = affected.filter(
-    (name) => name !== "@canard/schema-form" && !plugins.includes(name),
+    (name) =>
+      name !== "@canard/schema-form" &&
+      !plugins.includes(name) &&
+      !shared.includes(name),
   );
   if (main.length)
     shards.push(createShard("main", main, changed, workspaces, tier));
@@ -62,6 +68,8 @@ export function createCheckPlan(workspaces, files, reason = null, tier = "pr") {
   for (const [name, members] of pluginGroups)
     if (members.length)
       shards.push(createShard(name, members, changed, workspaces, tier));
+  if (shared.length)
+    shards.push(createShard("shared", shared, changed, workspaces, tier));
   return {
     tier,
     changed,

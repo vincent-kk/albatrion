@@ -71,10 +71,21 @@ for (const tier of ["pr", "pre-release"])
   test(`${tier} isolates shared utility tests from the remaining main budget`, () => {
     const plan = createCheckPlan(workspaces, ["package.json"], null, tier);
     const shared = ["@slats/agents-assets-sync", "@winglet/common-utils"];
-    assert.deepEqual(plan.shards.find((s) => s.name === "shared").affected, shared);
-    assert.ok(plan.shards.find((s) => s.name === "main").affected.every((name) => !shared.includes(name)));
+    assert.deepEqual(
+      plan.shards.find((s) => s.name === "shared").affected,
+      shared,
+    );
+    assert.ok(
+      plan.shards
+        .find((s) => s.name === "main")
+        .affected.every((name) => !shared.includes(name)),
+    );
     assert.equal(plan.shards.find((s) => s.name === "shared").browser, false);
     for (const name of shared)
-      assert.equal(plan.steps.filter((s) => s.kind === "test" && s.args[1] === name).length, 1);
+      assert.equal(
+        plan.steps.filter((s) => s.kind === "test" && s.args[1] === name)
+          .length,
+        1,
+      );
     assert.equal(plan.shards[1].name, "schema-form");
   });
