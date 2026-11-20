@@ -1,4 +1,5 @@
 import { isPlainObject } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { equals } from '@winglet/common-utils/object';
 
 /** Built-in internal-slot tags supported by the shared comparator. */
@@ -12,6 +13,9 @@ const COMPARABLE_TAGS: readonly string[] = [
   '[object Boolean]',
   '[object Error]',
 ];
+
+/** Own non-enumerable error state: the ES2022 `cause` and AggregateError `errors`. */
+const ERROR_SLOTS: readonly string[] = ['cause', 'errors'];
 
 /** Whether content comparison can inspect this built-in state. */
 const hasComparableSlots = (value: object, tag: string): boolean =>
@@ -120,6 +124,12 @@ export const areContextsEqual = (left: unknown, right: unknown): boolean => {
           Reflect.get(left, 'message') !== Reflect.get(right, 'message')
         )
           return false;
+        for (const slot of ERROR_SLOTS) {
+          const has = hasOwnProperty(left, slot);
+          if (has !== hasOwnProperty(right, slot)) return false;
+          if (has)
+            pending.push(Reflect.get(left, slot), Reflect.get(right, slot));
+        }
       } else if (tag === '[object Number]') {
         const a = Number.prototype.valueOf.call(left),
           b = Number.prototype.valueOf.call(right);
