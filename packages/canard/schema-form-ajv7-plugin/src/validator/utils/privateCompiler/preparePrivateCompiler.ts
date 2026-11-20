@@ -82,7 +82,7 @@ export const preparePrivateCompiler = (
     !key && serialized !== undefined && !facts.resources.length
       ? { serialized, facts }
       : undefined;
-  recordDependencies(compiler, facts);
+  if (!cached || compiler !== previous) recordDependencies(compiler, facts);
   try {
     if (graph) importApplicationGraph(compiler, graph);
   } catch (error) {
