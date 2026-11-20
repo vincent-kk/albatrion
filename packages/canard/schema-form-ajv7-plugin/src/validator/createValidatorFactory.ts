@@ -35,14 +35,24 @@ export const createValidatorFactory = (
     try {
       registration.validationMeta = validatePrivateSchema(ajv, copy);
       if (compiler.asynchronous) copy.$async = true;
-      validate = compiler.macroProfile
-        ? compileMacroSchema(compiler, () => compiler.instance.compile(copy))
-        : compiler.instance.compile(copy);
+      if (key) {
+        const registered = compiler.macroProfile
+          ? compileMacroSchema(compiler, () => compiler.instance.getSchema(key))
+          : compiler.instance.getSchema(key);
+        if (!registered)
+          throw new Error(`Registered Ajv schema was not found: ${key}`);
+        validate = registered;
+      } else
+        validate = compiler.macroProfile
+          ? compileMacroSchema(compiler, () => compiler.instance.compile(copy))
+          : compiler.instance.compile(copy);
     } catch (error) {
       compiler.retired = true;
       throw error;
     }
-    const compiledRoot = registration.copy;
+    const schema = key ? validate.schema : copy;
+    const compiledRoot =
+      schema && typeof schema === 'object' ? schema : undefined;
     const ValidationError = Reflect.get(ajv.constructor, 'ValidationError');
     // AJV reports the same schema paths on every run of this validator, so each not.required lookup walks the root once.
     const notRequiredKeys = new Map<string, string | null>();
