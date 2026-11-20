@@ -12,8 +12,6 @@ export const enum CssContext {
   DeclarationName,
   /** A declaration's component-value sequence. */
   Value,
-  /** A function prelude whose inner grammar is not interpreted by the compressor. */
+  /** A function prelude or attribute whose inner grammar is not interpreted by the compressor. */
   OpaquePrelude,
-  /** Attribute-selector content, distinct from selector combinators. */
-  Attribute,
 }
