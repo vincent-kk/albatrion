@@ -38,10 +38,19 @@ export const enterFieldNode = <Self extends FieldNodeRecord<Self>>(
     const value = write ? Reflect.get(distribution.input, name) : undefined;
     if (distribution.isAutomatic) {
       context.isAutomatic = true;
-      context.writtenInputs.set(child, value);
-      context.filledNodes.add(child);
+      if (!distribution.isRevivedWrite) {
+        context.writtenInputs.set(child, value);
+        context.filledNodes.add(child);
+      }
     }
-    markWrite(child, value, context);
+    markWrite(
+      child,
+      value,
+      context,
+      undefined,
+      undefined,
+      distribution.isRevivedWrite,
+    );
     if (distribution.isAutomatic) context.isAutomatic = false;
   } else if (child.behavior.strategy === 'terminal')
     markWrite(child, undefined, context);

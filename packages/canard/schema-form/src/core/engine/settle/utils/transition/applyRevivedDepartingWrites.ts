@@ -26,22 +26,35 @@ const findLive = <Self extends FieldNodeRecord<Self>>(
  * Records apply in the order they were made, the rank order of their winners (WRITE-079).
  * @param node - Pending occurrence the current compute selects again
  * @param context - Settlement holding the departing record
- * @returns Nothing; the node's records leave the departing record
+ * @returns Nothing; applied records remain available for another exit of the same occurrence
  */
 export const applyRevivedDepartingWrites = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): void => {
   const writes = context.departingWrites;
-  if (!writes?.some((write) => write.node === node)) return;
-  context.departingWrites = writes.filter((write) => write.node !== node);
-  const revived = writes.filter((write) => write.node === node);
+  if (!writes || context.exceededBudget) return;
+  const pending = writes.filter(
+    (write) => write.node === node && write.revivedAt === undefined,
+  );
+  if (!pending.length) return;
   const wasAutomatic = context.isAutomatic;
   context.isAutomatic = true;
-  for (const { suffix, template, value } of revived) {
-    const target = findLive(node, suffix);
-    if (target) markWrite(target, value, context);
-    else placeDeclarativeValue(context, node.path + suffix, template, value);
+  for (const write of pending) {
+    const target = findLive(node, write.suffix);
+    if (target) {
+      const replacements = (context.liveReplacementPathsAfterRevival ??= []);
+      write.revivedAt = replacements.push(target.path);
+      markWrite(target, write.value, context, undefined, undefined, true);
+    } else {
+      writes.splice(writes.indexOf(write), 1);
+      placeDeclarativeValue(
+        context,
+        node.path + write.suffix,
+        write.template,
+        write.value,
+      );
+    }
   }
   context.isAutomatic = wasAutomatic;
 };
