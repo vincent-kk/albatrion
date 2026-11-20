@@ -67,47 +67,28 @@ describe('a live virtual group reset resets each constituent at its own address'
 });
 
 describe('a declarative write to a virtual group distributes like the constituent writes', () => {
-  /** One schema where a rule writes either the group or each constituent by name. */
-  const schema = (
-    rule: 'inject' | 'derived',
-    target: 'group' | 'constituents',
-  ): AuthoredSchema => ({
+  type Writer = 'group injectTo' | 'group derived' | 'constituent injectTo';
+  /** One schema whose rule writes the group by injectTo or derived, or each constituent by injectTo. */
+  const schema = (writer: Writer): AuthoredSchema => ({
     type: 'object',
     properties: {
       bOn: { type: 'boolean' },
       groupOn: { type: 'boolean' },
       src: {
         type: 'string',
-        ...(rule === 'inject' && {
+        ...(writer !== 'group derived' && {
           controls: {
             injectTo: (value: unknown) =>
               typeof value !== 'string'
                 ? {}
-                : target === 'group'
+                : writer === 'group injectTo'
                   ? { '../group': [value + '_a', value + '_b'] }
                   : { '../a': value + '_a', '../b': value + '_b' },
           },
         }),
       },
-      a: {
-        type: 'string',
-        ...(rule === 'derived' &&
-          target === 'constituents' && {
-            controls: {
-              derived: '../src === undefined ? undefined : ../src + "_a"',
-            },
-          }),
-      },
-      b: {
-        type: 'string',
-        controls: {
-          active: '../bOn === true',
-          ...(rule === 'derived' &&
-            target === 'constituents' && {
-              derived: '../src === undefined ? undefined : ../src + "_b"',
-            }),
-        },
-      },
+      a: { type: 'string' },
+      b: { type: 'string', controls: { active: '../bOn === true' } },
     },
     options: {
       virtual: {
@@ -115,11 +96,10 @@ describe('a declarative write to a virtual group distributes like the constituen
           fields: ['a', 'b'],
           controls: {
             active: '../groupOn === true',
-            ...(rule === 'derived' &&
-              target === 'group' && {
-                derived:
-                  '../src === undefined ? [ undefined , undefined ] : [ ../src + "_a" , ../src + "_b" ]',
-              }),
+            ...(writer === 'group derived' && {
+              derived:
+                '../src === undefined ? [ undefined , undefined ] : [ ../src + "_a" , ../src + "_b" ]',
+            }),
           },
         },
       },
@@ -127,13 +107,8 @@ describe('a declarative write to a virtual group distributes like the constituen
   });
 
   /** Write the source while the gates hold, then open both gates. */
-  const observe = (
-    rule: 'inject' | 'derived',
-    target: 'group' | 'constituents',
-    bOn: boolean,
-    groupOn: boolean,
-  ) => {
-    const root = create(schema(rule, target), { bOn, groupOn });
+  const observe = (writer: Writer, bOn: boolean, groupOn: boolean) => {
+    const root = create(schema(writer), { bOn, groupOn });
     root.find('/src')!.setValue('s1');
     const retained = root.inactiveValues.map(({ path, value }) => ({
       path,
@@ -146,23 +121,23 @@ describe('a declarative write to a virtual group distributes like the constituen
   };
 
   it.each([
-    ['inject', true, true],
-    ['inject', false, true],
-    ['inject', true, false],
-    ['inject', false, false],
-    ['derived', true, true],
-    ['derived', false, true],
+    ['group injectTo', true, true],
+    ['group injectTo', false, true],
+    ['group injectTo', true, false],
+    ['group injectTo', false, false],
+    ['group derived', true, true],
+    ['group derived', false, true],
   ] as const)(
     '%s with b active %s and group active %s',
-    (rule, bOn, groupOn) => {
-      expect(observe(rule, 'group', bOn, groupOn)).toEqual(
-        observe(rule, 'constituents', bOn, groupOn),
+    (writer, bOn, groupOn) => {
+      expect(observe(writer, bOn, groupOn)).toEqual(
+        observe('constituent injectTo', bOn, groupOn),
       );
     },
   );
 
   it('creates no source at the group address of an inactive group', () => {
-    const root = create(schema('inject', 'group'), {
+    const root = create(schema('group injectTo'), {
       bOn: true,
       groupOn: false,
     });
