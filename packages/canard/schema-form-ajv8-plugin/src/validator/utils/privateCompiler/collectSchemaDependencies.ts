@@ -1,5 +1,7 @@
 import type { Ajv } from 'ajv';
 
+import { instanceIdRegistrationsOf } from '../instanceIdRegistrationsOf';
+import { observeIdentity } from './observeIdentity';
 import { readKeyword } from './readKeyword';
 import { resolveAddress } from './resolveAddress';
 import type { SchemaDependencies } from './types';
@@ -17,6 +19,8 @@ export const collectSchemaDependencies = (
   schema: object | boolean,
   registrationKey = '',
 ): SchemaDependencies => {
+  const ledger = instanceIdRegistrationsOf(source);
+  const identities = (ledger.identities ??= new WeakMap());
   const result: SchemaDependencies = {
     resources: [],
     references: [],
@@ -36,6 +40,7 @@ export const collectSchemaDependencies = (
         result.resources.push({
           address: base,
           schema: node,
+          pointer,
           root: pointer === '',
         });
     }
@@ -46,6 +51,7 @@ export const collectSchemaDependencies = (
         result.resources.push({
           address: resolveAddress(source, base, `#${anchor}`),
           schema: node,
+          pointer,
           root: false,
         });
     }
@@ -53,7 +59,7 @@ export const collectSchemaDependencies = (
     if (Reflect.get(node, '$async') === true) result.asynchronous = true;
     for (const name of Object.keys(node)) {
       const definition = readKeyword(source, name);
-      result.rules.set(name, definition);
+      result.rules.set(name, observeIdentity(identities, definition));
       if (
         definition &&
         typeof definition === 'object' &&
@@ -65,7 +71,7 @@ export const collectSchemaDependencies = (
     const format = Reflect.get(node, 'format');
     if (typeof format === 'string' && source.opts.validateFormats !== false) {
       const definition = source.formats[format];
-      result.formats.set(format, definition);
+      result.formats.set(format, observeIdentity(identities, definition));
       if (
         definition &&
         typeof definition === 'object' &&

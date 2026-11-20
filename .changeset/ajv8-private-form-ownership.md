@@ -21,3 +21,5 @@ ajv.addSchema(applicationSchema);
 const validate = validator.compile({ $ref: applicationSchema.$id });
 const native = ajv.getSchema(applicationSchema.$id);
 ```
+
+Application schemas shared with form roots or their descendants do not keep those caller objects alive after application removal. Observation records use weak identity tokens, and private resource claims retain detached snapshots.

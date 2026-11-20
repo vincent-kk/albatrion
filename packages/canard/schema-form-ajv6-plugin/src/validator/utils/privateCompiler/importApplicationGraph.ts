@@ -1,3 +1,4 @@
+import { readPointer } from './readPointer';
 import { recordDependencies } from './recordDependencies';
 import type { ApplicationGraph, PrivateCompiler } from './types';
 
@@ -13,15 +14,18 @@ export const importApplicationGraph = (
 ): void => {
   for (const [key, entry] of graph.observations)
     compiler.entries.set(key, entry);
-  for (const [id, claim] of graph.claims) compiler.claims.set(id, claim);
   for (const resource of graph.resources.values()) {
     if (compiler.imported.has(resource.key)) continue;
-    let copy = compiler.copies.get(resource.document);
+    let copy =
+      typeof resource.document === 'boolean'
+        ? resource.document
+        : compiler.copies.get(resource.document);
     if (copy === undefined) {
       copy = JSON.parse(JSON.stringify(resource.document));
       if (copy === undefined)
         throw new TypeError('Application schema must be JSON');
-      compiler.copies.set(resource.document, copy);
+      if (typeof resource.document === 'object')
+        compiler.copies.set(resource.document, copy);
     }
     const facts = graph.documents.get(resource.document);
     if (!facts) throw new Error('Application dependency facts are missing');
@@ -32,6 +36,19 @@ export const importApplicationGraph = (
       compiler.instance.addMetaSchema(copy, resource.key, true);
     else compiler.instance.addSchema(copy, resource.key, true);
     compiler.imported.add(resource.key);
+  }
+  for (const [id, claim] of graph.claims) {
+    const document =
+      typeof claim.document === 'boolean'
+        ? claim.document
+        : compiler.copies.get(claim.document);
+    const schema =
+      document === undefined
+        ? undefined
+        : readPointer(document, claim.pointer, false);
+    if (document === undefined || schema === undefined)
+      throw new Error('Detached application resource claim is missing');
+    compiler.claims.set(id, { document, key: claim.key, schema });
   }
   if (compiler.kind === 'meta') compiler.count = compiler.imported.size;
   for (const [key, observed] of graph.observations) {

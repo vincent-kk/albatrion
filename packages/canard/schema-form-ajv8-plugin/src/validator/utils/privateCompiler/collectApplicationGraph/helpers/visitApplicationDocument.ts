@@ -66,6 +66,7 @@ export const visitApplicationDocument = (
         document: resource.document,
         key: reference.address,
         schema: claim.schema,
+        pointer: claim.pointer,
       });
     }
     graph.resources.set(reference.address, resource);

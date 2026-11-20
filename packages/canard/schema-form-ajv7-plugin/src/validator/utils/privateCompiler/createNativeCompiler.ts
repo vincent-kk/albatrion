@@ -1,6 +1,8 @@
 import type { AjvInstance as Ajv } from '../../types/AjvInstance';
+import { instanceIdRegistrationsOf } from '../instanceIdRegistrationsOf';
 import { installPrivateResolver } from './installPrivateResolver';
 import { isNativeCompiler } from './isNativeCompiler';
+import { observeIdentity } from './observeIdentity';
 import type { PrivateCompiler } from './types';
 
 /**
@@ -59,7 +61,10 @@ export const createNativeCompiler = (
     formats: undefined,
     cache: undefined,
     serialize: undefined,
-    meta: source.opts.meta,
+    meta:
+      typeof source.opts.meta === 'object'
+        ? JSON.parse(JSON.stringify(source.opts.meta))
+        : source.opts.meta,
     allErrors,
     validateSchema,
   });
@@ -70,20 +75,28 @@ export const createNativeCompiler = (
     'cache',
     'serialize',
   ]);
+  const ledger = instanceIdRegistrationsOf(source);
+  const identities = (ledger.identities ??= new WeakMap());
   const compiler: PrivateCompiler = {
     instance,
     source,
+    identities,
     kind,
     allErrors,
     validateSchema,
-    options: Object.entries(source.opts).filter(([key]) => !omitted.has(key)),
+    options: Object.entries(source.opts)
+      .filter(([key]) => !omitted.has(key))
+      .map(([key, value]): readonly [string, unknown] => [
+        key,
+        observeIdentity(identities, value),
+      ]),
     optionCount: Object.keys(source.opts).length,
     entries: new Map(),
     rules: new Map(),
     formats: new Map(),
     imported: new Set(),
     claims: new Map(),
-    copies: new Map(),
+    copies: new WeakMap(),
     asynchronous: false,
     retired: false,
     count: 0,

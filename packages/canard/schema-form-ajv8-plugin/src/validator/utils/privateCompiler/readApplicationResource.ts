@@ -1,6 +1,8 @@
 import type { Ajv } from 'ajv';
 import { normalizeId } from 'ajv/dist/compile/resolve.js';
 
+import { instanceIdRegistrationsOf } from '../instanceIdRegistrationsOf';
+import { observeIdentity } from './observeIdentity';
 import { readApplicationEntry } from './readApplicationEntry';
 import { readPointer } from './readPointer';
 import type { ApplicationEntry, ApplicationResource } from './types';
@@ -17,6 +19,8 @@ export const readApplicationResource = (
   requested: string,
   observations = new Map<string, ApplicationEntry>(),
 ): ApplicationResource | undefined => {
+  const ledger = instanceIdRegistrationsOf(source);
+  const identities = (ledger.identities ??= new WeakMap());
   const visited = new Set<string>();
   let key = normalizeId(requested);
   let fragment: string | undefined;
@@ -24,7 +28,10 @@ export const readApplicationResource = (
     if (visited.has(key)) return undefined;
     visited.add(key);
     const entry = readApplicationEntry(source, key);
-    observations.set(key, entry);
+    observations.set(key, {
+      schema: observeIdentity(identities, entry.schema),
+      ref: observeIdentity(identities, entry.ref),
+    });
     let value = entry.schema ?? entry.ref;
     if (
       value &&

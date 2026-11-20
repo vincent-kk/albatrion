@@ -10,6 +10,7 @@ import { hasNativeDefinitions } from './hasNativeDefinitions';
 import { importApplicationGraph } from './importApplicationGraph';
 import { isFormNamespaceCompatible } from './isFormNamespaceCompatible';
 import { isPrivateCompilerCurrent } from './isPrivateCompilerCurrent';
+import { observeIdentity } from './observeIdentity';
 import { recordDependencies } from './recordDependencies';
 import type { PrivateCompiler } from './types';
 
@@ -59,7 +60,11 @@ export const preparePrivateCompiler = (
     previous.count < 64 &&
     hasNativeDefinitions(previous, facts, graph) &&
     [...(graph?.formats ?? facts.formats)].every(
-      ([name, definition]) => previous.instance._formats[name] === definition,
+      ([name, definition]) =>
+        observeIdentity(
+          previous.identities,
+          previous.instance._formats[name],
+        ) === definition,
     ) &&
     current &&
     isFormNamespaceCompatible(previous, facts, graph, owner) &&

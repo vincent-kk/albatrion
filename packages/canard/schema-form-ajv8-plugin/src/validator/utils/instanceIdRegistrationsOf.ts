@@ -12,6 +12,8 @@ export interface InstanceIdRegistrations {
   readonly active: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[];
   /** Next cleanup slot; an absent cursor starts at the first weak slot. */
   cursor?: number;
+  /** Opaque observation tokens have no strong path back to their weak application keys. */
+  identities?: WeakMap<object, object>;
   readonly finalizer: FinalizationRegistry<SchemaRootRegistration> | undefined;
   nextKey: number;
   readonly pool: {

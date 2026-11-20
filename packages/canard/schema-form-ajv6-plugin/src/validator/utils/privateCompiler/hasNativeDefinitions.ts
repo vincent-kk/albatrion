@@ -1,3 +1,4 @@
+import { observeIdentity } from './observeIdentity';
 import { readKeyword } from './readKeyword';
 import type {
   ApplicationGraph,
@@ -18,11 +19,23 @@ export const hasNativeDefinitions = (
   graph?: ApplicationGraph,
 ): boolean => {
   for (const [name, definition] of root.rules)
-    if (readKeyword(compiler.instance, name) !== definition) return false;
+    if (
+      observeIdentity(
+        compiler.identities,
+        readKeyword(compiler.instance, name),
+      ) !== definition
+    )
+      return false;
   if (graph)
     for (const facts of graph.documents.values()) {
       for (const [name, definition] of facts.rules)
-        if (readKeyword(compiler.instance, name) !== definition) return false;
+        if (
+          observeIdentity(
+            compiler.identities,
+            readKeyword(compiler.instance, name),
+          ) !== definition
+        )
+          return false;
     }
   return true;
 };

@@ -1,10 +1,10 @@
 import type { Ajv, Options } from 'ajv';
 
-/** Exact native entries observed while resolving an application address. */
+/** Native registry values while resolving; stored observations contain only opaque identities. */
 export interface ApplicationEntry {
-  /** Exact native schema entry or detached resource value selected in this record. */
+  /** Raw schema entry during resolution, or its opaque identity in stored observations. */
   readonly schema: unknown;
-  /** Exact native alias or compiled-reference entry observed for the key. */
+  /** Raw alias during resolution; stored object entries use opaque identities. */
   readonly ref: unknown;
 }
 /** A raw application document and the location selected by its address. */
@@ -26,6 +26,8 @@ export interface PrivateCompiler {
   readonly instance: Ajv;
   /** Read-only application instance supplying the live profile. */
   readonly source: Ajv;
+  /** Weak application identities shared by all compiler observations. */
+  readonly identities: WeakMap<object, object>;
   /** Namespace separating full validation, guards and meta validation. */
   readonly kind: 'validation' | 'guard' | 'meta';
   /** Option key/value identities recorded when this environment is constructed. */
@@ -40,13 +42,13 @@ export interface PrivateCompiler {
   readonly formats: Map<string, unknown>;
   /** Application registration keys already copied into this compiler. */
   readonly imported: Set<string>;
-  /** Normalized native resource ids and the raw documents that claim them. */
+  /** Normalized native resource ids and detached snapshots that claim them. */
   readonly claims: Map<
     string,
-    { document: object | boolean; key: string; schema: object }
+    { document: object | boolean; key: string; schema: object | boolean }
   >;
   /** Detached schema copies indexed by their raw application document. */
-  readonly copies: Map<object | boolean, object | boolean>;
+  readonly copies: WeakMap<object, object | boolean>;
   /** Form resource reservations retained until this compiler is retired, including released attempts. */
   formOwners?: Map<string, string>;
   /** Last resource-free root facts, containing no caller or detached schema objects. */
@@ -69,6 +71,8 @@ export interface PrivateCompiler {
 export interface SchemaResource {
   /** Normalized native resource address, including an anchor when present. */
   readonly address: string;
+  /** Plain RFC 6901 pointer locating this node in its detached document. */
+  readonly pointer: string;
   /** Exact native schema entry or detached resource value selected in this record. */
   readonly schema: object;
   /** Whether the resource declaration belongs to the authored document root. */
@@ -103,7 +107,7 @@ export interface ApplicationGraph {
   /** Normalized native resource ids and the raw documents that claim them. */
   readonly claims: Map<
     string,
-    { document: object | boolean; key: string; schema: object }
+    { document: object | boolean; key: string; schema: object; pointer: string }
   >;
   /** Visited occupied and absent entries used to detect application changes. */
   readonly observations: Map<string, ApplicationEntry>;
