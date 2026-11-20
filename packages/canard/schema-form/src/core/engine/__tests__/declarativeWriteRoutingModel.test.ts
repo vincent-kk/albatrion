@@ -13,12 +13,15 @@ import { createSeedSampler } from './fixtures/createSeedSampler';
  * of /object/y come from closed-form rules written from those contracts, never from a second run of
  * the product. Dimensions: a rule that writes the gate in the same round, a caller value for an
  * inactive address followed by a rule naming it, an exit a later rule of the settlement cancels, a
- * higher winner whose live target leaves after a lower overlapping winner's compute, and a reset its
- * own barrier detaches. Exit policies and one batch or one root Merge write are drawn per seed.
+ * higher winner whose live target leaves after a lower overlapping winner's compute, a reset its
+ * own barrier detaches, a lower winner naming a descendant and a higher winner naming the whole of
+ * a leaving container (records apply in rank order), and a refused reset whose earlier whole mark a
+ * later Merge covers in part (only the named key is replaced). Exit policies and one batch or one
+ * root Merge write are drawn per seed. The last two dimensions observe /outer instead of /object/y.
  *
- * Seeds: 1 to 3000 locally and in the pre-release tier. The pr tier runs 540 stratified seeds: the
- * first 20 of each of 27 classes, dimension times exit policy times batch or Merge (the reset
- * dimension has no Merge form, so it contributes 3 classes and the others 6 each).
+ * Seeds: 1 to 3000 locally and in the pre-release tier. The pr tier runs 720 stratified seeds: the
+ * first 20 of each of 36 classes, dimension times exit policy times batch or Merge (the two reset
+ * dimensions have no Merge form, so each contributes 3 classes and the others 6 each).
  */
 
 type Root = ReturnType<typeof nodeFromJSONSchema>;
@@ -28,7 +31,9 @@ type Dimension =
   | 'callerThenRule'
   | 'exitCancelled'
   | 'layered'
-  | 'resetDetached';
+  | 'resetDetached'
+  | 'reverseRank'
+  | 'resetOverlap';
 
 const POLICIES: readonly Policy[] = [
   'default',
@@ -41,11 +46,19 @@ const DIMENSIONS: readonly Dimension[] = [
   'exitCancelled',
   'layered',
   'resetDetached',
+  'reverseRank',
+  'resetOverlap',
+];
+
+/** Dimensions driven by calls with a subtree reset, which has no single Merge form. */
+const RESET_DIMENSIONS: readonly Dimension[] = [
+  'resetDetached',
+  'resetOverlap',
 ];
 
 const SEED_CLASSES = DIMENSIONS.flatMap((dimension) =>
   POLICIES.flatMap((policy) =>
-    (dimension === 'resetDetached' ? [false] : [false, true]).map(
+    (RESET_DIMENSIONS.includes(dimension) ? [false] : [false, true]).map(
       (isMerge) => `${dimension}:${policy}:${isMerge}`,
     ),
   ),
@@ -61,10 +74,35 @@ const rule = (target: string, value: (source: string) => unknown) => ({
   },
 });
 
-/** src carries `y:<value>` or `x:<value>`: the rule names y, or only its live sibling x. */
+/** Exit policy controls drawn for the gated leaf, without its gate. */
+const policyControls = (policy: Policy) =>
+  policy === 'unsetOnInactive'
+    ? { unsetOnInactive: true }
+    : policy === 'inactiveValue'
+      ? { inactiveValue: 'resolved' }
+      : {};
+
+/**
+ * src carries `y:<value>` or `x:<value>`: the rule names y, or only its live sibling x. highOuter
+ * carries `v:<value>` to name /outer/y in its whole value, or `none` to omit it; lowOuterY is
+ * declared before it, so it is the lower winner.
+ */
 const createSchema = (policy: Policy): AuthoredSchema => ({
   type: 'object',
   properties: {
+    outerOn: { type: 'boolean' },
+    lowOuterY: rule('../outer/y', () => 'low'),
+    outer: {
+      type: 'object',
+      controls: { active: '/outerOn === true' },
+      properties: {
+        y: { type: 'string', controls: policyControls(policy) },
+        z: { type: 'string' },
+      },
+    },
+    highOuter: rule('../outer', (source) =>
+      source.startsWith('v:') ? { y: source.slice(2), z: 'hz' } : { z: 'hz' },
+    ),
     low: rule('../object', () => ({ on: false, x: 'low' })),
     object: {
       type: 'object',
@@ -75,11 +113,7 @@ const createSchema = (policy: Policy): AuthoredSchema => ({
           type: 'string',
           controls: {
             active: '/object/on === true',
-            ...(policy === 'unsetOnInactive'
-              ? { unsetOnInactive: true }
-              : policy === 'inactiveValue'
-                ? { inactiveValue: 'resolved' }
-                : {}),
+            ...policyControls(policy),
           },
         },
       },
@@ -99,8 +133,15 @@ const createSchema = (policy: Policy): AuthoredSchema => ({
   },
 });
 
-/** The model's view of /object/y after the scenario: live value, or retained source, or neither. */
-type Expected = { readonly live?: string; readonly retained?: string };
+/**
+ * The model's view after the scenario: /object/y live or retained, and the retained sources under
+ * /outer when there are any.
+ */
+type Expected = {
+  readonly live?: string;
+  readonly retained?: string;
+  readonly outer?: Readonly<Record<string, string>>;
+};
 
 /** Exit of y from value `value` under `policy`, with nothing named for it afterwards. */
 const exit = (policy: Policy, value: string | undefined): Expected =>
@@ -125,15 +166,32 @@ const model = (
   // lower winner's own single call does, so the policy applies to y0.
   if (dimension === 'layered')
     return named !== undefined ? { retained: named } : exit(policy, 'y0');
-  return { retained: caller };
+  if (dimension === 'resetDetached') return { retained: caller };
+  // The exit policy of /outer/y runs first; the lower record then names y and the higher record
+  // replaces the whole /outer after it, so its value decides y and z under every policy.
+  if (dimension === 'reverseRank')
+    return {
+      live: 'y0',
+      outer:
+        named !== undefined
+          ? { '/outer/y': named, '/outer/z': 'hz' }
+          : { '/outer/z': 'hz' },
+    };
+  // The refused reset keeps the whole mark minus the key the later Merge names, written after the
+  // barrier's exit policy, so y keeps the caller value under every policy and z the later value.
+  return { live: 'y0', outer: { '/outer/y': caller, '/outer/z': 'lateZ' } };
 };
 
 const observe = (root: Root): Expected => {
   const live = root.find('/object/y');
   const retained = root.inactiveValues.find(({ path }) => path === '/object/y');
+  const outer = root.inactiveValues
+    .filter(({ path }) => path.startsWith('/outer/'))
+    .map(({ path, value }) => [path, String(value)]);
   return {
     ...(live ? { live: String(live.value) } : {}),
     ...(retained ? { retained: String(retained.value) } : {}),
+    ...(outer.length ? { outer: Object.fromEntries(outer) } : {}),
   };
 };
 
@@ -146,7 +204,7 @@ it(`places each declarative value where the routing model says for ${sampler.lab
     };
     const dimension = DIMENSIONS[random(DIMENSIONS.length)];
     const policy = POLICIES[random(POLICIES.length)];
-    const isMerge = dimension !== 'resetDetached' && random(2) === 1;
+    const isMerge = !RESET_DIMENSIONS.includes(dimension) && random(2) === 1;
     if (!sampler.accept(`${dimension}:${policy}:${isMerge}`)) continue;
     const named = random(3) === 0 ? undefined : `v${seed}`;
     const caller = `c${seed}`;
@@ -154,17 +212,26 @@ it(`places each declarative value where the routing model says for ${sampler.lab
     const on = dimension !== 'callerThenRule';
     const root = nodeFromJSONSchema({
       jsonSchema: createSchema(policy),
-      defaultValue: { object: { on, x: 'x0', y: 'y0' } },
+      defaultValue: {
+        object: { on, x: 'x0', y: 'y0' },
+        outerOn: true,
+        outer: { y: 'oy', z: 'oz' },
+      },
       validationMode: ValidationMode.None,
     });
     const merges: Record<
-      Exclude<Dimension, 'resetDetached'>,
+      Exclude<Dimension, 'resetDetached' | 'resetOverlap'>,
       Record<string, unknown>
     > = {
       gateRule: { src: source, close: 'c' },
       callerThenRule: { object: { y: caller }, src: source },
       exitCancelled: { object: { on: false }, src: source, reopen: 'r' },
       layered: { low: 'l', src: source },
+      reverseRank: {
+        outerOn: false,
+        lowOuterY: 'l',
+        highOuter: named !== undefined ? `v:${named}` : 'none',
+      },
     };
     if (dimension === 'resetDetached') {
       root.batch(() => {
@@ -172,6 +239,16 @@ it(`places each declarative value where the routing model says for ${sampler.lab
         y.setValue(caller);
         root.find('/object/on')!.setValue(false);
         y.resetSubtree();
+      });
+    } else if (dimension === 'resetOverlap') {
+      root.batch(() => {
+        const outer = root.find('/outer')!;
+        outer.setValue({ y: caller, z: 'earlyZ' });
+        root.setValue(
+          { outerOn: false, outer: { z: 'lateZ' } },
+          WriteOption.Merge,
+        );
+        outer.resetSubtree();
       });
     } else if (isMerge) root.setValue(merges[dimension], WriteOption.Merge);
     else
