@@ -12,6 +12,8 @@ import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { prepareSourcePruner } from '../slots/prepareSourcePruner';
 import { pruneInactiveSources } from '../slots/pruneInactiveSources';
 import { writeAbsentConstituent } from '../slots/writeAbsentConstituent';
+import { findDepartingChild } from '../transition/findDepartingChild';
+import { recordDepartingWrite } from '../transition/recordDepartingWrite';
 import { arrayExtras } from './arrayExtras';
 import { assertVirtualWriteShape } from './assertVirtualWriteShape';
 import { hasDistributedChildInput } from './hasDistributedChildInput';
@@ -28,7 +30,9 @@ const UNINTERPRETED: unique symbol = Symbol('uninterpreted');
 /**
  * Mark a terminal source or distribute an object host write by declared key.
  * An object host is written whole only inside the context's replacement scope; under a
- * multi-write batch that scope is the union of the written paths (191C-01).
+ * multi-write batch that scope is the union of the caller paths (191C-01). A declarative
+ * (automatic) write replaces its own target whole inside or outside a batch, and also writes a
+ * named value into a child leaving in this settlement, as the same write after the exit does.
  * In an admitted static write a host keeping its key set or item count stays out of
  * shape-dirty and its leaf children whose interpreted value equals their source are not marked (W1).
  * @param node - Caller target or descendant reached by a whole host write
@@ -163,7 +167,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
       whole = false;
       if (!isMerge) {
         const replacementPaths = context.replacementPaths;
-        if (replacementPaths === undefined) whole = true;
+        if (replacementPaths === undefined || context.isAutomatic) whole = true;
         else
           for (const path of replacementPaths)
             if (node.path === path || isDescendantPath(node.path, path)) {
@@ -234,5 +238,19 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
       context.filledNodes.add(child);
     }
     markWrite(child, childInput, context, childSpec, interpreted);
+  }
+  if (
+    !context.isAutomatic ||
+    context.pendingExits.size === 0 ||
+    node.behavior.type === 'array' ||
+    !isPlain(value)
+  )
+    return;
+  for (const name of Object.keys(value)) {
+    const childInput = Reflect.get(value, name);
+    if (childInput === undefined || node.childrenByName[name]) continue;
+    const departing = findDepartingChild(node, name, context);
+    if (!departing) continue;
+    recordDepartingWrite(departing, childInput, context);
   }
 };

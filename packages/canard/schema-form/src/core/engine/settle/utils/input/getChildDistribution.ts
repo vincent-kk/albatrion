@@ -8,6 +8,9 @@ import { isWithinReplacementPaths } from './isWithinReplacementPaths';
 
 /**
  * Read a child input without redistributing a restored candidate-owned array slot.
+ * A declarative (automatic) distribution replaces its own target whole, so it applies inside or
+ * outside a multi-write batch's caller replacement paths; the evidence lives in the distribution
+ * record, which a derive rollback restores with it.
  * @param host - Parent whose current write may own the child input
  * @param name - Unescaped declared child name or array position
  * @param context - Replacement scopes and host distributions for this settlement
@@ -20,13 +23,18 @@ export const getChildDistribution = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   path?: string,
 ): Optional<Distribution> => {
+  const distribution = context.distributedInputs.get(host);
   if (
-    context.replacementPaths !== undefined &&
-    !isWithinReplacementPaths(context, path ?? appendSegment(host.path, name))
+    distribution === undefined ||
+    (context.replacementPaths !== undefined &&
+      !distribution.isAutomatic &&
+      !isWithinReplacementPaths(
+        context,
+        path ?? appendSegment(host.path, name),
+      ))
   )
     return undefined;
-  const distribution = context.distributedInputs.get(host);
-  return (distribution?.retainedItemNames?.indexOf(name) ?? -1) !== -1
+  return (distribution.retainedItemNames?.indexOf(name) ?? -1) !== -1
     ? undefined
     : distribution;
 };
