@@ -132,6 +132,9 @@ const codeOf = (error: unknown) =>
     ? error.code
     : undefined;
 
+const messageOf = (error: unknown) =>
+  error instanceof Error ? error.message : undefined;
+
 type Case = {
   readonly name: string;
   readonly calls: readonly Call[];
@@ -203,6 +206,19 @@ describe('batch reactions beyond the generator', () => {
           (name) => read(sequence, name) !== expected[name],
         ),
       ).toBe(true);
+  });
+
+  it('a derive budget error in a batch names the batch root, with the code and rollback of the sequence (SETTLE-011)', () => {
+    const calls = [set('/other', true), set('/ping', 'x')];
+    const sequence = run(calls, false);
+    const batch = run(calls, true);
+    expect(codeOf(batch.error)).toBe(codeOf(sequence.error));
+    expect(messageOf(sequence.error)).toBe('Derive budget exceeded at /ping');
+    expect(messageOf(batch.error)).toBe(
+      `Derive budget exceeded at ${batch.root.path}`,
+    );
+    expect(batch.root.value).toEqual(sequence.root.value);
+    expect(read(batch.root, 'pong')).toBeUndefined();
   });
 
   it('a declarative write to a group inside an inactive owner keeps its tuple in the retained slots', () => {
