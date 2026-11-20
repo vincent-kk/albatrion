@@ -15,7 +15,11 @@ import { WriteOption } from '../types/value';
  * write; both must leave the retained sources the two calls leave in sequence.
  */
 
-type Shape = 'leaf' | 'leafUnderLiveParent' | 'leafUnderLeavingParent' | 'groupUnderLeavingParent';
+type Shape =
+  | 'leaf'
+  | 'leafUnderLiveParent'
+  | 'leafUnderLeavingParent'
+  | 'groupUnderLeavingParent';
 type Policy = 'default' | 'unsetOnInactive' | 'inactiveValue';
 
 const GATE = '/on === true';
@@ -114,13 +118,18 @@ const NAMED: Record<Shape, Record<string, unknown>> = {
   groupUnderLeavingParent: { '/o/a': 'new', '/o/b': 'newb' },
 };
 
-const run = (shape: Shape, policy: Policy, mode: 'sequence' | 'batch' | 'merge') => {
+const run = (
+  shape: Shape,
+  policy: Policy,
+  mode: 'sequence' | 'batch' | 'merge',
+) => {
   const root = nodeFromJSONSchema({
     jsonSchema: createSchema(shape, policy),
     defaultValue: DEFAULT_VALUES[shape],
     validationMode: ValidationMode.None,
   });
-  if (mode === 'merge') root.setValue({ on: false, src: 'new' }, WriteOption.Merge);
+  if (mode === 'merge')
+    root.setValue({ on: false, src: 'new' }, WriteOption.Merge);
   else {
     const calls = () => {
       root.find('/on')!.setValue(false);
@@ -135,7 +144,12 @@ const run = (shape: Shape, policy: Policy, mode: 'sequence' | 'batch' | 'merge')
 };
 
 const ROWS = (
-  ['leaf', 'leafUnderLiveParent', 'leafUnderLeavingParent', 'groupUnderLeavingParent'] as const
+  [
+    'leaf',
+    'leafUnderLiveParent',
+    'leafUnderLeavingParent',
+    'groupUnderLeavingParent',
+  ] as const
 ).flatMap((shape) =>
   (['default', 'unsetOnInactive', 'inactiveValue'] as const).map((policy) => ({
     shape,

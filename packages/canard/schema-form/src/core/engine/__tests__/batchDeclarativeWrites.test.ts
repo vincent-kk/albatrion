@@ -18,14 +18,19 @@ import { WriteOption } from '../types/value';
  * - a caller write, or a gate write that changes the gate, overlapping a target triggered earlier in the segment;
  * - a second trigger of the same rule in the segment, or an overlapping rule triggered against its rank;
  * - an updater or same-tuple write after an overlapping mark of its segment (EVENT-061);
- * - a reset once any segment changed the list twice, or after a list mark its scope discards (WRITE-095).
+ * - a reset once any segment changed the list twice, or after a list mark its scope discards (WRITE-095);
+ * - under an unsetOnInactive or inactiveValue exit policy, a second change of /yOn in the segment, whose
+ *   intermediate exit the sequence applies the policy to and the batch never makes.
  * Array structure verbs and resets end a segment (EVENT-013) and are never filtered otherwise.
  * Merge calls count their actual leaf addresses.
  *
+ * The exit policy of object.y and box is drawn per seed, and sourceL names leaving nodes by their own
+ * paths: a leaving leaf under a live parent, a leaf under the leaving box and the latent box.pair group.
+ *
  * Not reached here, covered elsewhere or by table tests: array item update, root and form reset,
  * rule chains, a repeated source and its per-segment firing, kind-rank competition on one target,
- * derive budget rollback, nested and single-call batches, an inactive or latent group, and state,
- * validation and event observation.
+ * derive budget rollback, nested and single-call batches, a caller write to an inactive or latent
+ * group, and state, validation and event observation.
  */
 
 type Root = ReturnType<typeof nodeFromJSONSchema>;
@@ -71,6 +76,32 @@ const decode = (target: string, value: unknown) => {
   };
 };
 
+/** sourceL names its targets by relative path: tuple slots carry null for undefined through JSON. */
+const decodeEntries = (value: unknown) => {
+  if (typeof value !== 'string') return {};
+  const decoded: unknown = JSON.parse(value.slice(value.indexOf('|') + 1));
+  if (decoded === null || typeof decoded !== 'object') return {};
+  return Object.fromEntries(
+    Object.entries(decoded).map(([target, slot]: [string, unknown]) => [
+      target,
+      Array.isArray(slot)
+        ? slot.map((item: unknown) => item ?? undefined)
+        : slot,
+    ]),
+  );
+};
+
+/** Exit policies of object.y and box, drawn per seed; inactiveValue resolves a fixed value. */
+const POLICIES = ['default', 'unsetOnInactive', 'inactiveValue'] as const;
+type Policy = (typeof POLICIES)[number];
+
+const exitPolicy = (policy: Policy, resolved: string | object) =>
+  policy === 'unsetOnInactive'
+    ? { unsetOnInactive: true }
+    : policy === 'inactiveValue'
+      ? { inactiveValue: resolved }
+      : {};
+
 /**
  * Application order of each rule inside one settlement (derive-rank): every rule here is an injectTo
  * except the derived mirror, which overlaps none of them, so the source's document position decides.
@@ -79,7 +110,8 @@ const RULE_ORDER: Readonly<Record<string, number>> = {
   sourceA: 0,
   sourceB: 1,
   sourceG: 2,
-  '/template': 3,
+  sourceL: 3,
+  '/template': 4,
 };
 
 /** Rules of calls whose argument is computed from a read of the target at call time. */
@@ -90,7 +122,7 @@ const overlaps = (left: string, right: string) =>
   left.startsWith(`${right}/`) ||
   right.startsWith(`${left}/`);
 
-const createSchema = (grouped: boolean): AuthoredSchema => ({
+const createSchema = (grouped: boolean, policy: Policy): AuthoredSchema => ({
   type: 'object',
   properties: {
     yOn: { type: 'boolean' },
@@ -101,7 +133,13 @@ const createSchema = (grouped: boolean): AuthoredSchema => ({
       type: 'object',
       properties: {
         x: { type: 'string' },
-        y: { type: 'string', controls: { active: '/yOn === true' } },
+        y: {
+          type: 'string',
+          controls: {
+            active: '/yOn === true',
+            ...exitPolicy(policy, 'resolved'),
+          },
+        },
         nested: {
           type: 'object',
           properties: {
@@ -111,6 +149,15 @@ const createSchema = (grouped: boolean): AuthoredSchema => ({
         },
         list: { type: 'array', items: { type: 'string' } },
       },
+    },
+    box: {
+      type: 'object',
+      controls: {
+        active: '/yOn === true',
+        ...exitPolicy(policy, { k: 'resolved', m: 'resolved' }),
+      },
+      properties: { k: { type: 'string' }, m: { type: 'string' } },
+      options: { virtual: { pair: { fields: ['k', 'm'] } } },
     },
     template: { type: 'object', options: { terminal: true } },
     mirror: {
@@ -138,6 +185,10 @@ const createSchema = (grouped: boolean): AuthoredSchema => ({
           grouped ? decode('../group', value) : {},
       },
     },
+    sourceL: {
+      type: 'string',
+      controls: { injectTo: decodeEntries },
+    },
   },
   ...(grouped
     ? { options: { virtual: { group: { fields: ['object', 'w'] } } } }
@@ -147,14 +198,21 @@ const createSchema = (grouped: boolean): AuthoredSchema => ({
 const readRetained = (root: Root) =>
   Object.fromEntries(root.inactiveValues.map(({ path, value }) => [path, value]));
 
-it('a batch of declarative and caller writes leaves the state of the same calls in sequence for 10000 seeds', () => {
-  for (let seed = 1; seed <= 10000; seed++) {
+/**
+ * Seeds per run: the complete range locally and in the pre-release tier; the pr tier's `test:pr`
+ * script sets SCHEMA_FORM_TEST_TIER=pr and runs a bounded prefix to stay inside its job time.
+ */
+const SEEDS = process.env.SCHEMA_FORM_TEST_TIER === 'pr' ? 7000 : 10000;
+
+it(`a batch of declarative and caller writes leaves the state of the same calls in sequence for ${SEEDS} seeds`, () => {
+  for (let seed = 1; seed <= SEEDS; seed++) {
     let randomState = seed;
     const random = (limit: number) => {
       randomState = (Math.imul(randomState, 1664525) + 1013904223) >>> 0;
       return (randomState >>> 8) % limit;
     };
     const grouped = random(2) === 1;
+    const policy = POLICIES[random(POLICIES.length)];
     const randomNested = (label: string) => {
       const nested: Record<string, string> = {};
       if (random(2)) nested.p = `${label}p`;
@@ -174,7 +232,7 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
       return object;
     };
     const draw = (label: string): Call => {
-      const operation = random(grouped ? 27 : 21);
+      const operation = random(grouped ? 29 : 23);
       const call = (
         description: string,
         run: (root: Root) => void,
@@ -187,6 +245,33 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
         triggers,
         rule: description.split(' ')[description.startsWith('set ') ? 1 : 0],
       });
+      if (operation >= (grouped ? 27 : 21)) {
+        const value: Record<string, unknown> = {};
+        const triggers: string[] = [];
+        const box = random(3);
+        // At least one target, so a second trigger in a segment is filtered like the other sources.
+        if (box === 0 || random(2)) {
+          value['../object/y'] = `${label}y`;
+          triggers.push('/object/y');
+        }
+        if (random(2)) {
+          value['../object/nested/q'] = `${label}q`;
+          triggers.push('/object/nested/q');
+        }
+        if (box === 1) {
+          value['../box/k'] = `${label}k`;
+          triggers.push('/box/k');
+        } else if (box === 2) {
+          value['../box/pair'] = [random(3) ? `${label}k` : undefined, `${label}m`];
+          triggers.push('/box/k', '/box/m');
+        }
+        return call(
+          `sourceL ${JSON.stringify(value)}`,
+          (root) => root.find('/sourceL')!.setValue(encode(label, value)),
+          [],
+          triggers,
+        );
+      }
       if (operation === 0) {
         const value = random(2) === 1;
         return call(`set /other ${value}`, (root) =>
@@ -262,7 +347,7 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
             gates[path] === value
               ? []
               : operation === 8
-                ? ['/object/y', '/mirror/y']
+                ? ['/object/y', '/mirror/y', '/box']
                 : ['/object/nested/q'],
           ),
           gate: [path, value],
@@ -410,11 +495,12 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
         nested: { p: 'p0', q: 'q0' },
         list: ['l0'],
       },
+      box: { k: 'k0', m: 'm0' },
       template: { x: 't0', y: 't0' },
     };
     const create = () =>
       nodeFromJSONSchema({
-        jsonSchema: createSchema(grouped),
+        jsonSchema: createSchema(grouped, policy),
         defaultValue,
         validationMode: ValidationMode.None,
       });
@@ -441,6 +527,42 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
           // scope, which hold the whole list here, so it is compared only while no segment has changed
           // the list twice and its own segment has not touched it.
           (isBarrier && call.rule === 'reset' && (listChanged || listTouches > 0)) ||
+          // A changed gate that changes again returns to its segment value: the sequence exits and
+          // re-enters through the exit policy, while the batch never leaves (settle DETAIL WRITE-079).
+          (policy !== 'default' &&
+            call.gate?.[0] === '/yOn' &&
+            call.writes.length > 0 &&
+            segment.some(
+              (earlier) =>
+                earlier.gate?.[0] === '/yOn' && earlier.writes.length > 0,
+            )) ||
+          // Known defect pinned in overlappingLatentWrites.test.ts: an earlier caller or declarative
+          // distribution at or above a latent address replays over a later own-path write to it.
+          // A gate write distributes no input, so it does not count here.
+          (call.rule === 'sourceL' &&
+            segment.some((earlier) =>
+              (earlier.gate ? [] : [...earlier.writes, ...earlier.triggers]).some((path) =>
+                call.triggers.some(
+                  (target) => path === target || target.startsWith(`${path}/`),
+                ),
+              ),
+            )) ||
+          // A caller write and the exit policy of an address it overlaps stay in separate segments: the
+          // sequence runs the policy between them and the batch once after them, and a caller value of
+          // the settlement takes precedence over the resolver (settle DETAIL WRITE-031, VALUE-043). The
+          // generator covers declarative writes to leaving nodes, not this caller interplay.
+          (policy !== 'default' &&
+            segment.some((earlier) => {
+              const [gate, other] = call.gate ? [call, earlier] : [earlier, call];
+              return (
+                gate.gate?.[0] === '/yOn' &&
+                gate.writes.length > 0 &&
+                !other.gate &&
+                other.writes.some((path) =>
+                  gate.writes.some((target) => overlaps(path, target)),
+                )
+              );
+            })) ||
           (!isBarrier &&
             // The order conditions of settle DETAIL WRITE-079 within one segment: a caller write
             // precedes the trigger of a declarative target it overlaps, each source is written once,
