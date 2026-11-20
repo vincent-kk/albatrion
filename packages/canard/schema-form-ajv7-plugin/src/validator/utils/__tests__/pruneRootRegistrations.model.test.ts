@@ -2,6 +2,7 @@ import Ajv from 'ajv';
 import { expect, it } from 'vitest';
 
 import { pruneRootRegistrations } from '../pruneRootRegistrations';
+import { removeRootRegistration } from '../removeRootRegistration';
 import type { SchemaRootRegistration } from '../registerSchemaRoot';
 
 type WeakSlot = Pick<WeakRef<SchemaRootRegistration>, 'deref'>;
@@ -36,6 +37,7 @@ it('seeded pruning preserves the independent live set with bounded work and boun
     for (let pin = 0; pin < 4; pin++) {
       const key = `pinned:${pin}`;
       const entry = registration(source, key);
+      entry.slot = ledger.active.length;
       weakAlive.add(key);
       live.set(key, entry);
       ledger.active.push({
@@ -53,8 +55,17 @@ it('seeded pruning preserves the independent live set with bounded work and boun
       const target = entries[next() % entries.length];
       if (target && (drop < 2 || live.size >= 8)) {
         live.delete(target.key);
-        if (drop % 2) target.released = true;
-        else weakAlive.delete(target.key);
+        if (drop % 2) {
+          target.released = true;
+          const index = target.slot;
+          if (index === undefined) throw new Error(`seed=${seed} missing live slot`);
+          const before = reads;
+          removeRootRegistration(ledger, index, target);
+          expect(reads - before, `seed=${seed} direct removal budget`).toBeLessThanOrEqual(1);
+          expect(target.slot, `seed=${seed} removed slot cleared`).toBeUndefined();
+          expect(ledger.active.some(reference => reference.deref() === target), `seed=${seed} immediate removal`).toBe(false);
+          expect(ledger.cursor, `seed=${seed} release cursor`).toBeLessThan(Math.max(1, ledger.active.length));
+        } else weakAlive.delete(target.key);
       }
       const context = `seed=${seed} step=${step}`;
       reads = 0;
@@ -65,12 +76,17 @@ it('seeded pruning preserves the independent live set with bounded work and boun
         return entry && !entry.released ? [entry.key] : [];
       });
       expect(new Set(retained), context).toEqual(new Set(live.keys()));
+      for (let index = 0; index < ledger.active.length; index++) {
+        const entry = ledger.active[index].deref();
+        if (entry) expect(entry.slot, `${context} index ownership`).toBe(index);
+      }
       expect(ledger.cursor, context).toBeGreaterThanOrEqual(0);
       expect(ledger.cursor, context).toBeLessThan(
         Math.max(1, ledger.active.length),
       );
       const key = `${seed}:${step}`;
       const entry = registration(source, key);
+      entry.slot = ledger.active.length;
       weakAlive.add(key);
       live.set(key, entry);
       ledger.active.push({
