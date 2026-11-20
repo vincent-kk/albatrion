@@ -30,7 +30,8 @@ export function createCheckPlan(workspaces, files, reason = null, tier = "pr") {
     "selectionDependencies",
   );
   const shards = [];
-  const main = affected.filter((name) => name !== "@canard/schema-form");
+  const plugins = affected.filter((name) => name.startsWith("@canard/schema-form-") && name.endsWith("-plugin"));
+  const main = affected.filter((name) => name !== "@canard/schema-form" && !plugins.includes(name));
   if (main.length)
     shards.push(createShard("main", main, changed, workspaces, tier));
   if (affected.includes("@canard/schema-form"))
@@ -43,6 +44,7 @@ export function createCheckPlan(workspaces, files, reason = null, tier = "pr") {
         tier,
       ),
     );
+  if (plugins.length) shards.push(createShard("plugins", plugins, changed, workspaces, tier));
   return {
     tier,
     changed,

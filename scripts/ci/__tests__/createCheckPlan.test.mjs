@@ -127,7 +127,7 @@ test("default pr tier runs schema-form unit and selected input lifetime regressi
   assert.equal(plan.browser, false);
   assert.deepEqual(
     plan.shards.map(({ name }) => name),
-    ["main", "schema-form"],
+    ["main", "schema-form", "plugins"],
   );
   const schema = plan.shards.find(({ name }) => name === "schema-form");
   assert.equal(schema.browser, false);
@@ -181,7 +181,7 @@ test("pre-release tier isolates complete schema-form suites and browser installa
   assert.equal(plan.browser, true);
   assert.deepEqual(
     plan.shards.map(({ name }) => name),
-    ["main", "schema-form"],
+    ["main", "schema-form", "plugins"],
   );
   const schema = plan.shards.find(({ name }) => name === "schema-form");
   assert.equal(schema.browser, true);
