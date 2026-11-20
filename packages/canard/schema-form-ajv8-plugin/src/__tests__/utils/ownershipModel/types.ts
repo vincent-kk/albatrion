@@ -12,6 +12,8 @@ export interface ModelApplication {
 /** Version-specific construction is separate from the reference algorithm. */
 export interface ModelProfile<T extends ModelApplication> {
   version: number;
+  /** Observe generated operation classes without changing the oracle or assertions. */
+  onOperation?: (operation: number) => void;
   direct: boolean;
   observe: (root: object) => WeakRef<object>;
   create: () => T;

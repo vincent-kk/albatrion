@@ -95,7 +95,7 @@ private 생성자에는 schemas·keywords·formats·cache bootstrap 옵션을 �
 ### ownership-observation — 애플리케이션 관찰 동등성과 현재 상태
 
 - I1은 애플리케이션 연산만 받는 쌍둥이 인스턴스와 비교합니다. I2는 폼이 사용하는 각 참조를 쌍둥이의 현재 레지스트리에서 컴파일 없이 해석한 뒤 필요한 raw 문서만 독립 검증기에 넣어 비교합니다. 전체 raw 문서를 다시 등록하거나 쌍둥이의 오래된 A.validate 캐시를 oracle로 쓰지 않습니다. 별칭 키를 유지한 id 교체 뒤 키·id·양쪽 참조를 모두 생성하며 양쪽이 한 루트에서 충돌하는 명시적 한계도 비교합니다.
-- 수천 개의 seed 시퀀스는 세 root id·두 embedded id·상대 주소·anchor·내용 동등/변경, application add/compile/validate/get/remove와 규칙·format·meta 변경, 여러 어댑터·사본, 첫/반복/실패 후 compile, 선행·후속 가드, 반복 release와 64루트 회전을 교차합니다.
+- PR은 생성자·호스트·bootstrap 옵션의 서로 다른 58개 프로필과 모든 연산·고정 시퀀스·수거 단언을 유지합니다. 일반 로컬 실행과 pre-release의 수천 개 seed 시퀀스는 세 root id·두 embedded id·상대 주소·anchor·내용 동등/변경, application add/compile/validate/get/remove와 규칙·format·meta 변경, 여러 어댑터·사본, 첫/반복/실패 후 compile, 선행·후속 가드, 반복 release와 64루트 회전을 교차합니다.
 - 버전·방언과 allErrors·strict·validateFormats·bootstrap schemas 및 AJV6 경로·legacy id·serialize·addUsedSchema 옵션을 교차하며 GC 전후와 기능이 없는 호스트의 명시적 한계를 고정합니다.
 - id 유무·전체 검증·가드별로 root를 제자리 변경하고 release 없이 재컴파일하여 이전 함수의 스냅숏과 새 내용 반영을 비교합니다.
 - root와 직접 가드·반환 함수의 weak collection을 검사하며 모든 실패에 seed·연산 위치를 남깁니다. 1–5라운드 고정 입력을 포함합니다.

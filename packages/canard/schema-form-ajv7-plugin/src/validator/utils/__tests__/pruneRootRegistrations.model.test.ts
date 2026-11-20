@@ -23,7 +23,8 @@ const registration = (source: Ajv, key: string): SchemaRootRegistration => ({
 
 it('seeded pruning preserves the independent live set with bounded work and bounded slot backlog', () => {
   const source = new Ajv({ meta: false, validateSchema: false, logger: false });
-  for (let seed = 0; seed < 2048; seed++) {
+  const seedCount = process.env.SCHEMA_FORM_TEST_PROFILE !== 'pr' ? 2048 : 16;
+  for (let seed = 0; seed < seedCount; seed++) {
     let state = seed + 1;
     const next = () => {
       state = (Math.imul(state, 1664525) + 1013904223) >>> 0;

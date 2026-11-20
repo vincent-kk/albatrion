@@ -93,6 +93,7 @@ export const runOwnershipSequence = async <T extends ModelApplication>(
   functions.push(...mutations.functions);
   for (let step = 0; step < 48; step++) {
     const operation = step < 8 ? step : next() % 17;
+    profile.onOperation?.(operation);
     const id = `https://ownership-model.invalid/root-${next() % 3}`;
     const embedded = `https://ownership-model.invalid/embedded-${next() % 2}`;
     const variant = next() % 2;

@@ -1,21 +1,34 @@
 import Ajv from 'ajv';
 import { setFlagsFromString } from 'node:v8';
 import { runInNewContext } from 'node:vm';
-import { afterEach, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, expect, it, vi } from 'vitest';
 
 import { createValidator, createValidatorFactory } from '../index';
 import { runOwnershipFixedSequences } from './utils/ownershipModel/runOwnershipFixedSequences';
 import { runOwnershipSequence } from './utils/ownershipModel/runOwnershipSequence';
+import { selectOwnershipProfileIndices } from './utils/ownershipModel/selectOwnershipProfileIndices';
 
 const ObserveWeakRef = WeakRef;
+const operationKinds = new Set<number>();
+let secondCopy: typeof import('../index');
+beforeAll(async () => {
+  vi.resetModules();
+  secondCopy = await import('../index');
+});
+afterAll(() => {
+  expect([...operationKinds].sort((a, b) => a - b)).toEqual(
+    Array.from({ length: 17 }, (_, index) => index),
+  );
+});
 afterEach(() => vi.unstubAllGlobals());
 
 it.each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])(
   'round-5 ownership model: seed batch %i',
   async (batch) => {
-    vi.resetModules();
-    const secondCopy = await import('../index');
-    for (let index = 0; index < 128; index++) {
+    for (const index of selectOwnershipProfileIndices(
+      batch,
+      process.env.SCHEMA_FORM_TEST_PROFILE !== 'pr',
+    )) {
       vi.unstubAllGlobals();
       if (index % 4 === 1 || index % 4 === 3)
         vi.stubGlobal('FinalizationRegistry', undefined);
@@ -23,6 +36,7 @@ it.each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])(
         vi.stubGlobal('WeakRef', undefined);
       const profile = {
         version: 6,
+        onOperation: (operation: number) => operationKinds.add(operation),
         direct: index % 2 === 0,
         observe: (root: object) => new ObserveWeakRef(root),
         create: () => {
@@ -152,7 +166,7 @@ it.each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])(
         setFlagsFromString('--expose_gc');
         const collect = runInNewContext('gc');
         for (let attempt = 0; attempt < 6; attempt++) {
-          await new Promise((resolve) => setTimeout(resolve, 0));
+          await new Promise<void>((resolve) => setImmediate(resolve));
           collect();
         }
         const oracleCollected = result.shared.oracle.every(

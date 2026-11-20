@@ -10,6 +10,7 @@ import { makeDocument } from './utils/applicationRootCollection/makeDocument';
 it('removed application resources do not keep a shared caller document or descendant alive', async () => {
   setFlagsFromString('--expose_gc');
   const collect = runInNewContext('gc');
+  const checks: (() => Promise<void>)[] = [];
   for (const after of [false, true])
     for (const child of [false, true])
       for (const entry of ['validation', 'factory', 'direct', 'context']) {
@@ -85,39 +86,44 @@ it('removed application resources do not keep a shared caller document or descen
                 : actual.guardInvalid,
           };
         })();
-        for (let attempt = 0; attempt < 8; attempt++) {
-          await new Promise((resolve) => setTimeout(resolve, 0));
-          collect();
-        }
-        const context = `after=${after} child=${child} entry=${entry}`;
-        expect(
-          state.oracleReferences.every(
-            (reference) => reference.deref() === undefined,
-          ),
-          `${context}: application-only collection control`,
-        ).toBe(true);
-        expect
-          .soft(
-            state.actualReferences.every(
+        checks.push(async () => {
+          expect(source).toBeTruthy();
+          expect(twin).toBeTruthy();
+          const context = `after=${after} child=${child} entry=${entry}`;
+          expect(
+            state.oracleReferences.every(
               (reference) => reference.deref() === undefined,
             ),
-            `${context}: detached form metadata`,
-          )
-          .toBe(true);
-        if (state.previous)
+            `${context}: application-only collection control`,
+          ).toBe(true);
+          expect
+            .soft(
+              state.actualReferences.every(
+                (reference) => reference.deref() === undefined,
+              ),
+              `${context}: detached form metadata`,
+            )
+            .toBe(true);
+          if (state.previous)
+            expect(
+              await state.previous(state.previousInput),
+              `${context}: earlier snapshot`,
+            ).toBeNull();
+          const valid = await state.validate(state.valid),
+            invalid = await state.validate(state.invalid);
           expect(
-            await state.previous(state.previousInput),
-            `${context}: earlier snapshot`,
-          ).toBeNull();
-        const valid = await state.validate(state.valid),
-          invalid = await state.validate(state.invalid);
-        expect(
-          valid === true || valid === null,
-          `${context}: old snapshot valid`,
-        ).toBe(true);
-        expect(
-          invalid === false || Array.isArray(invalid),
-          `${context}: old snapshot invalid`,
-        ).toBe(true);
+            valid === true || valid === null,
+            `${context}: old snapshot valid`,
+          ).toBe(true);
+          expect(
+            invalid === false || Array.isArray(invalid),
+            `${context}: old snapshot invalid`,
+          ).toBe(true);
+        });
       }
+  for (let attempt = 0; attempt < 8; attempt++) {
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    collect();
+  }
+  for (const check of checks) await check();
 }, 120000);
