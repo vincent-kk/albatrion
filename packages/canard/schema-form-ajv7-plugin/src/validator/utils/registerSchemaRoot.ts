@@ -66,24 +66,32 @@ export const registerSchemaRoot = (
   pruneRootRegistrations(ledger);
   const ids: string[] = [];
   let hasDynamicKeywords = false;
-  const copy: JSONSchema =
+  const copy: JSONSchema = JSON.parse(serialized);
+  if (
     serialized.includes('"$id":') ||
     serialized.includes('"$dynamic') ||
     serialized.includes('"$recursive')
-      ? JSON.parse(serialized, (name, value: unknown) => {
-          if (name === '$id' && typeof value === 'string') ids.push(value);
-          if (
-            [
-              '$dynamicAnchor',
-              '$recursiveAnchor',
-              '$dynamicRef',
-              '$recursiveRef',
-            ].includes(name)
-          )
-            hasDynamicKeywords = true;
-          return value;
-        })
-      : JSON.parse(serialized);
+  ) {
+    const pending: object[] = [copy];
+    while (pending.length) {
+      const node = pending.pop();
+      if (!node) continue;
+      for (const name of Object.keys(node)) {
+        const value: unknown = Reflect.get(node, name);
+        if (name === '$id' && typeof value === 'string') ids.push(value);
+        if (
+          [
+            '$dynamicAnchor',
+            '$recursiveAnchor',
+            '$dynamicRef',
+            '$recursiveRef',
+          ].includes(name)
+        )
+          hasDynamicKeywords = true;
+        if (value && typeof value === 'object') pending.push(value);
+      }
+    }
+  }
   const registration: SchemaRootRegistration = {
     baseAjv,
     copy,
