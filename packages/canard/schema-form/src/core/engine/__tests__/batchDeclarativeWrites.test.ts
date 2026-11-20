@@ -7,6 +7,27 @@ import type { AuthoredSchema } from '../types/jsonSchema';
 import { ValidationMode } from '../types/state';
 import { WriteOption } from '../types/value';
 
+/*
+ * Differential generator for settle DETAIL WRITE-079: random batches of caller and declarative
+ * writes run once in sequence and once inside one batch, and must leave the same value and retained
+ * sources. It is a bounded oracle: both runs share the product code, so the pinned cases in
+ * batchTwoLayerContract.test.ts carry explicit expected values.
+ *
+ * Filters (a drawn call is rejected, never reordered), each the condition under which no rule
+ * observes an intermediate state of a mark segment:
+ * - a caller write, or a gate write that changes the gate, overlapping a target triggered earlier in the segment;
+ * - a second trigger of the same rule in the segment, or an overlapping rule triggered against its rank;
+ * - an updater or same-tuple write after an overlapping mark of its segment (EVENT-061);
+ * - a reset once any segment changed the list twice, or after a list mark its scope discards (WRITE-095).
+ * Array structure verbs and resets end a segment (EVENT-013) and are never filtered otherwise.
+ * Merge calls count their actual leaf addresses.
+ *
+ * Not reached here, covered elsewhere or by table tests: array item update, root and form reset,
+ * rule chains, a repeated source and its per-segment firing, kind-rank competition on one target,
+ * derive budget rollback, nested and single-call batches, an inactive or latent group, and state,
+ * validation and event observation.
+ */
+
 type Root = ReturnType<typeof nodeFromJSONSchema>;
 
 /** One public call, replayed on the sequential root and inside one batch on the batched root. */
@@ -19,6 +40,21 @@ type Call = {
   readonly triggers: readonly string[];
   /** The written path, or the source name, that identifies the rule a trigger fires. */
   readonly rule: string;
+  /** A gate write and its value, which changes the gated shape only when it differs from the current gate. */
+  readonly gate?: readonly [path: string, value: boolean];
+};
+
+/** Calls that end a mark segment (write DETAIL EVENT-013): array structure verbs and subtree resets. */
+const BARRIER_RULES: readonly string[] = ['push', 'remove', 'insert', 'clear', 'pop', 'reset'];
+
+/** Leaf addresses a Merge writes: declared branch keys recurse, arrays and terminals are replaced whole. */
+const mergeLeaves = (base: string, value: unknown): string[] => {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return [base];
+  const names = Object.keys(value);
+  if (names.length === 0) return [base];
+  return names.flatMap((name) =>
+    name === 'nested' ? mergeLeaves(`${base}/${name}`, Reflect.get(value, name)) : [`${base}/${name}`],
+  );
 };
 
 /** A source string carries one declarative value: the call prefix keeps every write a change. */
@@ -111,8 +147,8 @@ const createSchema = (grouped: boolean): AuthoredSchema => ({
 const readRetained = (root: Root) =>
   Object.fromEntries(root.inactiveValues.map(({ path, value }) => [path, value]));
 
-it('a batch of declarative and caller writes leaves the state of the same calls in sequence for 2000 seeds', () => {
-  for (let seed = 1; seed <= 2000; seed++) {
+it('a batch of declarative and caller writes leaves the state of the same calls in sequence for 10000 seeds', () => {
+  for (let seed = 1; seed <= 10000; seed++) {
     let randomState = seed;
     const random = (limit: number) => {
       randomState = (Math.imul(randomState, 1664525) + 1013904223) >>> 0;
@@ -166,7 +202,7 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
             root
               .find('/object')!
               .setValue(value, merge ? WriteOption.Merge : WriteOption.Overwrite),
-          ['/object'],
+          merge ? mergeLeaves('/object', value) : ['/object'],
         );
       }
       if (operation === 3)
@@ -217,12 +253,20 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
       if (operation === 8 || operation === 9) {
         const path = operation === 8 ? '/yOn' : '/zOn';
         const value = random(2) === 1;
-        // A gate write changes the shape at the addresses it gates, so it counts as a write there.
-        return call(
-          `set ${path} ${value}`,
-          (root) => root.find(path)!.setValue(value),
-          operation === 8 ? ['/object/y', '/mirror/y'] : ['/object/nested/q'],
-        );
+        // A gate write that changes the gate changes the shape at the addresses it gates, so it
+        // counts as a write there; writing the current gate value changes nothing.
+        return {
+          ...call(
+            `set ${path} ${value}`,
+            (root) => root.find(path)!.setValue(value),
+            gates[path] === value
+              ? []
+              : operation === 8
+                ? ['/object/y', '/mirror/y']
+                : ['/object/nested/q'],
+          ),
+          gate: [path, value],
+        };
       }
       if (operation === 10 || operation === 11) {
         const value = randomObject(label, true);
@@ -290,7 +334,7 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
         return call(
           `merge / ${JSON.stringify(value)}`,
           (root) => root.setValue(value, WriteOption.Merge),
-          ['/object', '/other'],
+          [...mergeLeaves('/object', value.object), '/other'],
         );
       }
       if (operation === 21) {
@@ -321,7 +365,7 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
         return call(
           `merge /group ${JSON.stringify(value)}`,
           (root) => root.find('/group')!.setValue(value, WriteOption.Merge),
-          ['/object', '/w'],
+          [...mergeLeaves('/object', value[0]), '/w'],
         );
       }
       if (operation === 24)
@@ -378,53 +422,70 @@ it('a batch of declarative and caller writes leaves the state of the same calls 
       batched = create();
     const history: string[] = [];
     let listChanged = false;
+    const gates: Record<string, unknown> = {};
     for (let step = 0; step < 10; step++) {
+      gates['/yOn'] = sequential.find('/yOn')!.value;
+      gates['/zOn'] = sequential.find('/zOn')!.value;
       const calls: Call[] = [];
+      let segment: Call[] = [];
+      let listTouches = 0;
       const length = 2 + random(3);
       while (calls.length < length) {
         const call = draw(`s${step}c${calls.length}`);
-        // The three conditions of settle DETAIL WRITE-079 on the compared sequence: each rule fires once,
-        // a caller write precedes the trigger of a declarative target it overlaps, and overlapping rules
-        // fire in their application order.
-        const triggered = calls.flatMap((earlier) => earlier.triggers);
+        const isBarrier = BARRIER_RULES.includes(call.rule);
+        const triggered = segment.flatMap((earlier) => earlier.triggers);
         if (
-          call.writes.some((path) =>
-            triggered.some((target) => overlaps(path, target)),
-          ) ||
-          (call.triggers.length > 0 &&
-            calls.some(
-              (earlier) =>
-                earlier.rule === call.rule ||
-                (RULE_ORDER[earlier.rule] > RULE_ORDER[call.rule] &&
-                  earlier.triggers.some((target) =>
-                    call.triggers.some((path) => overlaps(path, target)),
-                  )),
-            )) ||
-          // An updater and a same-tuple write read the batch's unprojected view (write DETAIL EVENT-061),
-          // so the sequence they equal has no earlier overlapping mark in the batch.
-          (READING_RULES.includes(call.rule) &&
-            calls.some((earlier) =>
-              earlier.writes.some((path) =>
-                call.writes.some((target) => overlaps(path, target)),
-              ),
-            )) ||
-          // The reset source of an array follows every intermediate length (arrangeFieldNodeItems
-          // DETAIL WRITE-095), which a batch skips, so a reset is compared only while the list is unchanged.
-          (call.rule === 'reset' &&
-            (listChanged ||
-              calls.some((earlier) =>
-                earlier.writes.some((path) => overlaps(path, '/object/list')),
-              )))
+          // A barrier settles the segment before it runs, as the same call in sequence does. A reset
+          // reloads the array's load source, which follows every intermediate length a sequence passes
+          // through (arrangeFieldNodeItems DETAIL WRITE-095); a reset discards the marks inside its
+          // scope, which hold the whole list here, so it is compared only while no segment has changed
+          // the list twice and its own segment has not touched it.
+          (isBarrier && call.rule === 'reset' && (listChanged || listTouches > 0)) ||
+          (!isBarrier &&
+            // The order conditions of settle DETAIL WRITE-079 within one segment: a caller write
+            // precedes the trigger of a declarative target it overlaps, each source is written once,
+            // and overlapping rules fire in their application order.
+            (call.writes.some((path) =>
+              triggered.some((target) => overlaps(path, target)),
+            ) ||
+              (call.triggers.length > 0 &&
+                segment.some(
+                  (earlier) =>
+                    earlier.rule === call.rule ||
+                    (RULE_ORDER[earlier.rule] > RULE_ORDER[call.rule] &&
+                      earlier.triggers.some((target) =>
+                        call.triggers.some((path) => overlaps(path, target)),
+                      )),
+                )) ||
+              // An updater and a same-tuple write read the earlier calls' marks without the reactions
+              // a sequence settles between them (write DETAIL EVENT-061), so they follow no
+              // overlapping mark of their segment.
+              (READING_RULES.includes(call.rule) &&
+                segment.some((earlier) =>
+                  earlier.writes.some((path) =>
+                    call.writes.some((target) => overlaps(path, target)),
+                  ),
+                ))))
         )
           continue;
         calls.push(call);
+        if (call.gate) gates[call.gate[0]] = call.gate[1];
+        if (isBarrier) {
+          if (listTouches > 1) listChanged = true;
+          segment = [];
+          listTouches = 0;
+          continue;
+        }
+        segment.push(call);
+        if (
+          [...call.writes, ...call.triggers].some((path) =>
+            overlaps(path, '/object/list'),
+          )
+        )
+          listTouches++;
       }
+      if (listTouches > 1) listChanged = true;
       history.push(calls.map((call) => call.label).join(' ; '));
-      listChanged ||= calls.some((call) =>
-        [...call.writes, ...call.triggers].some((path) =>
-          overlaps(path, "/object/list"),
-        ),
-      );
       for (const call of calls) call.run(sequential);
       batched.batch(() => {
         for (const call of calls) call.run(batched);

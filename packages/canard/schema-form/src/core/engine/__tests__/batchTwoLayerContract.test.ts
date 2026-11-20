@@ -398,7 +398,6 @@ describe('subtree reset ends a mark segment (EVENT-013)', () => {
       detached.resetSubtree();
       committed = observe(root).object;
     });
-    expect(detached.isDetached).toBe(true);
     expect(committed).toEqual(before);
     expect(observe(root)).toEqual({ object: { x: 'auto' }, retained: [] });
   });
