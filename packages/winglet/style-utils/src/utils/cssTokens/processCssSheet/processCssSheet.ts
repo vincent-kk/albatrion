@@ -25,7 +25,7 @@ export const processCssSheet = (input: string, compressed: boolean, mode: 'none'
   let context: number = CssContext.RuleList, components = 0, valueEmpty = true, custom = false;
   let safeEnd = 0, atParent: CssContext = CssContext.RuleList, atStart = 0;
   let declarationStart = 0, declarationOutput = 0;
-  let rootFrame = 0;
+  let currentFrame = 0;
   let stack: number[] | undefined;
   let output = '', index = 0, segmentStart = 0, previousCode = 0, previousEnd = 0;
   let previousKind = CssTokenKind.Delimiter, hasOutput = false, lastKind = previousKind, lastStart = 0;
@@ -34,7 +34,7 @@ export const processCssSheet = (input: string, compressed: boolean, mode: 'none'
     if (ruleEnd) {
       index = ruleEnd; previousCode = 125; previousKind = CssTokenKind.Delimiter;
       previousEnd = ruleEnd; hasOutput = true; lastKind = previousKind; lastStart = ruleEnd - 1;
-      if (rootFrame === 0) safeEnd = output.length + ruleEnd - segmentStart;
+      if (currentFrame === 0) safeEnd = output.length + ruleEnd - segmentStart;
       continue;
     }
     const firstCode = css.charCodeAt(index);
@@ -69,7 +69,7 @@ export const processCssSheet = (input: string, compressed: boolean, mode: 'none'
     }
     const removableSemicolon = kind === CssTokenKind.Delimiter && code === 59 && components === 0 && context !== CssContext.AtPrelude && context !== CssContext.OpaquePrelude;
     const marker = kind === CssTokenKind.Delimiter && ((code === 60 && end - index === 4) || (code === 45 && end - index === 3 && css.startsWith('-->', index)));
-    if (marker && context === CssContext.RuleList && rootFrame === 0) {
+    if (marker && context === CssContext.RuleList && currentFrame === 0) {
       if (mode !== 'none') { output += css.slice(segmentStart, index); segmentStart = end; index = end; continue; }
     } else {
       if (context === CssContext.RuleList) {
@@ -88,8 +88,8 @@ export const processCssSheet = (input: string, compressed: boolean, mode: 'none'
         if (kind === CssTokenKind.Function || code === 40 || code === 91) {
           const close = kind === CssTokenKind.Function || code === 40 ? 41 : 93;
           const frame = (context << CssFrame.ContextShift) | close;
-          if (rootFrame === 0) rootFrame = frame;
-          else (stack ??= []).push(frame);
+          if (currentFrame !== 0) (stack ??= []).push(currentFrame);
+          currentFrame = frame;
           components++;
           if (code === 91 && context === CssContext.Selector) context = CssContext.OpaquePrelude;
           if (kind === CssTokenKind.Function && context === CssContext.AtPrelude) context = hasCssName(css, index, end - 1, 'selector') ? CssContext.Selector : CssContext.OpaquePrelude;
@@ -98,8 +98,8 @@ export const processCssSheet = (input: string, compressed: boolean, mode: 'none'
           const block: boolean = components === 0 && context !== CssContext.OpaquePrelude && (context !== CssContext.Value || selector);
           const parent: CssContext = selector ? CssContext.DeclarationList : block ? context === CssContext.Selector ? CssContext.RuleList : context === CssContext.AtPrelude ? atParent : CssContext.DeclarationList : context;
           const frame = (parent << CssFrame.ContextShift) | 125 | (block ? CssFrame.RuleBlock : 0);
-          if (rootFrame === 0) rootFrame = frame;
-          else (stack ??= []).push(frame);
+          if (currentFrame !== 0) (stack ??= []).push(currentFrame);
+          currentFrame = frame;
           if (!block) components++;
           else context = context === CssContext.AtPrelude ? getCssBlockContext(css, atStart, parent) : CssContext.DeclarationList;
           if (selector) {
@@ -107,10 +107,9 @@ export const processCssSheet = (input: string, compressed: boolean, mode: 'none'
             segmentStart = index;
           }
         } else if (code === 41 || code === 93 || code === 125) {
-          const top = stack?.[stack.length - 1] ?? rootFrame;
+          const top = currentFrame;
           if (top !== 0 && (top & CssFrame.CloseMask) === code) {
-            if (stack?.length) stack.pop();
-            else rootFrame = 0;
+            currentFrame = stack?.pop() ?? 0;
             context = top >> CssFrame.ContextShift;
             if (!(top & CssFrame.RuleBlock)) components--;
           }
@@ -133,16 +132,17 @@ export const processCssSheet = (input: string, compressed: boolean, mode: 'none'
     hasOutput = true;
     previousCode = kind === CssTokenKind.Delimiter || kind === CssTokenKind.Function ? css.charCodeAt(end - 1) : 0;
     previousKind = kind; previousEnd = end; index = end;
-    if (rootFrame === 0 && context === CssContext.RuleList) safeEnd = output.length + end - segmentStart;
+    if (currentFrame === 0 && context === CssContext.RuleList) safeEnd = output.length + end - segmentStart;
   }
   output += css.slice(segmentStart, index);
   if (mode === 'none') return output;
+  const rootFrame = stack?.[0] ?? currentFrame;
   const rootBlock = rootFrame !== 0 && (rootFrame & CssFrame.RuleBlock) !== 0;
   const rootContext = rootFrame !== 0 ? rootFrame >> CssFrame.ContextShift : context;
   if ((mode === 'document' && rootBlock) || (!rootBlock && rootContext !== CssContext.AtPrelude && (rootFrame !== 0 || context !== CssContext.RuleList))) return output.slice(0, safeEnd);
   let suffix = getCssEofSuffix(css, lastKind, lastStart, compressed);
+  if (currentFrame !== 0) suffix += String.fromCharCode(currentFrame & CssFrame.CloseMask);
   if (stack) for (let cursor = stack.length - 1; cursor >= 0; cursor--) suffix += String.fromCharCode(stack[cursor] & CssFrame.CloseMask);
-  if (rootFrame !== 0) suffix += String.fromCharCode(rootFrame & CssFrame.CloseMask);
   if (!rootBlock && rootContext === CssContext.AtPrelude) suffix += ';';
   return output + suffix;
 };
