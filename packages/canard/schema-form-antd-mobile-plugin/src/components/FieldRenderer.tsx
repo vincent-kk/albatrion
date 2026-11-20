@@ -1,3 +1,5 @@
+import type { ReactElement } from 'react';
+
 import { Space } from 'antd-mobile';
 
 import { isArraySchema } from '@winglet/json-schema/filter';
@@ -25,7 +27,7 @@ export const FieldRenderer = ({
   Label,
   ErrorMessage,
   errorMessage,
-}: FieldRendererProps) => {
+}: FieldRendererProps): ReactElement => {
   const presentation =
     typeof jsonSchema === 'object' && jsonSchema !== null
       ? jsonSchema.presentation
