@@ -33,7 +33,9 @@ export const commitGlobalState = <Self extends FieldNodeRecord<Self>>(
     const node = pending.pop();
     if (!node || departing.has(node)) continue;
     departing.add(node);
-    for (const child of node.children ?? []) pending.push(child);
+    // A virtual group's children project its host's constituents, which leave on their own.
+    for (const child of node.children ?? [])
+      if (child.parent === node) pending.push(child);
   }
   let loadNodes: Optional<Set<Self>>;
   if (
