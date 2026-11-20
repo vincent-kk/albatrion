@@ -4,9 +4,19 @@ import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSO
 
 import { isArrayNode } from '../../surface';
 import { ValidationMode } from '../types/state';
+import { createSeedSampler } from './fixtures/createSeedSampler';
 
-it('virtual item groups follow 1000 generated array mutation histories', () => {
-  for (let seed = 1; seed <= 1000; seed++) {
+/*
+ * Seeds: 1 to 1000 locally and in the pre-release tier. The schema is fixed, so a seed has one class
+ * and differs only by its history; the pr tier runs the first 300 seeds, and the test fails unless
+ * all 7 array operations run.
+ */
+const sampler = createSeedSampler(1000, ['history'], 300);
+
+it(`virtual item groups follow generated array mutation histories for ${sampler.label}`, () => {
+  const reached = new Set<number>();
+  for (let seed = 1; sampler.has(seed); seed++) {
+    if (!sampler.accept('history')) continue;
     let random = seed;
     const next = (limit: number) => {
       random = (Math.imul(random, 1664525) + 1013904223) >>> 0;
@@ -52,6 +62,7 @@ it('virtual item groups follow 1000 generated array mutation histories', () => {
     for (let step = 0; step < 16; step++) {
       const operation = next(7),
         index = model.length ? next(model.length) : 0;
+      reached.add(model.length ? operation : 0);
       if (operation === 0 || !model.length) {
         const item = { on: !!next(2), a: `a${step}`, b: `b${step}` };
         const at = next(model.length + 1);
@@ -113,4 +124,6 @@ it('virtual item groups follow 1000 generated array mutation histories', () => {
       }
     }
   }
+  expect(sampler.shortfall()).toEqual([]);
+  expect(reached.size).toBe(7);
 }, 120_000);

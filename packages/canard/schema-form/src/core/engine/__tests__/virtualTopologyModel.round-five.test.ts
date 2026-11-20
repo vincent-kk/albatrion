@@ -4,9 +4,24 @@ import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSO
 
 import type { AuthoredSchema } from '../types/jsonSchema';
 import { ValidationMode } from '../types/state';
+import { createSeedSampler } from './fixtures/createSeedSampler';
 
-it('virtual projections follow 3000 generated branch, retention and batch histories', () => {
-  for (let seed = 1; seed <= 3000; seed++) {
+/*
+ * Seeds: 1 to 3000 locally and in the pre-release tier. The pr tier runs 600 stratified seeds: the
+ * first 40 of each of 15 classes, constituent count 1 to 5 times the branch form (if, oneOf or
+ * allOf), and the test fails unless all 4 exit policies and all 8 operations run.
+ */
+const FORMS = ['if', 'oneOf', 'allOf'] as const;
+const SEED_CLASSES = [1, 2, 3, 4, 5].flatMap((count) =>
+  FORMS.map((form) => `${count}:${form}`),
+);
+
+const sampler = createSeedSampler(3000, SEED_CLASSES, 40);
+
+it(`virtual projections follow generated branch, retention and batch histories for ${sampler.label}`, () => {
+  const reachedPolicies = new Set<number>();
+  const reachedOperations = new Set<number>();
+  for (let seed = 1; sampler.has(seed); seed++) {
     let state = seed ^ 0x7f4a7c15;
     const next = (limit: number) => {
       state = (Math.imul(state, 1103515245) + 12345) >>> 0;
@@ -25,6 +40,11 @@ it('virtual projections follow 3000 generated branch, retention and batch histor
     const branches: AuthoredSchema[] = [];
     const conditionalNames: string[] = [];
     const useIf = seed % 3 === 0;
+    if (
+      !sampler.accept(`${count}:${useIf ? 'if' : seed % 2 ? 'oneOf' : 'allOf'}`)
+    )
+      continue;
+    for (const policy of policies) reachedPolicies.add(policy);
     const properties: Record<string, AuthoredSchema> = {
       outside: { type: 'string' },
     };
@@ -125,6 +145,7 @@ it('virtual projections follow 3000 generated branch, retention and batch histor
       const operation = next(8),
         index = next(count),
         reversed = !!next(2);
+      reachedOperations.add(operation);
       const group = root.find(reversed ? '/reversed' : '/group')!;
       if (operation === 0) {
         toggle(index);
@@ -210,4 +231,7 @@ it('virtual projections follow 3000 generated branch, retention and batch histor
       expect(outside.errors).toBe(outsideErrors);
     }
   }
+  expect(sampler.shortfall()).toEqual([]);
+  expect(reachedPolicies.size).toBe(4);
+  expect(reachedOperations.size).toBe(8);
 }, 120_000);

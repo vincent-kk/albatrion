@@ -6,6 +6,7 @@ import { isArrayNode } from '../../surface';
 import type { AuthoredSchema } from '../types/jsonSchema';
 import { ValidationMode } from '../types/state';
 import { WriteOption } from '../types/value';
+import { createSeedSampler } from './fixtures/createSeedSampler';
 
 /*
  * Differential generator for settle DETAIL WRITE-079: random batches of caller and declarative
@@ -27,6 +28,10 @@ import { WriteOption } from '../types/value';
  * The exit policy of object.y and box is drawn per seed, and sourceL names leaving nodes by their own
  * paths: a leaving leaf under a live parent, a leaf under the leaving box and the latent box.pair group.
  *
+ * Seeds: 1 to 10000 locally and in the pre-release tier. The pr tier runs 1500 stratified seeds: the
+ * first 250 of each of 6 classes, grouped or ungrouped virtual pair times the 3 exit policies, and
+ * the test fails unless every call kind of both schemas (29 grouped, 23 ungrouped) is run.
+ *
  * Not reached here, covered elsewhere or by table tests: array item update, root and form reset,
  * rule chains, a repeated source and its per-segment firing, kind-rank competition on one target,
  * derive budget rollback, nested and single-call batches, a caller write to an inactive or latent
@@ -47,18 +52,30 @@ type Call = {
   readonly rule: string;
   /** A gate write and its value, which changes the gated shape only when it differs from the current gate. */
   readonly gate?: readonly [path: string, value: boolean];
+  /** Index of the drawn call kind, counted to show the profile reaches every kind. */
+  readonly operation: number;
 };
 
 /** Calls that end a mark segment (write DETAIL EVENT-013): array structure verbs and subtree resets. */
-const BARRIER_RULES: readonly string[] = ['push', 'remove', 'insert', 'clear', 'pop', 'reset'];
+const BARRIER_RULES: readonly string[] = [
+  'push',
+  'remove',
+  'insert',
+  'clear',
+  'pop',
+  'reset',
+];
 
 /** Leaf addresses a Merge writes: declared branch keys recurse, arrays and terminals are replaced whole. */
 const mergeLeaves = (base: string, value: unknown): string[] => {
-  if (value === null || typeof value !== 'object' || Array.isArray(value)) return [base];
+  if (value === null || typeof value !== 'object' || Array.isArray(value))
+    return [base];
   const names = Object.keys(value);
   if (names.length === 0) return [base];
   return names.flatMap((name) =>
-    name === 'nested' ? mergeLeaves(`${base}/${name}`, Reflect.get(value, name)) : [`${base}/${name}`],
+    name === 'nested'
+      ? mergeLeaves(`${base}/${name}`, Reflect.get(value, name))
+      : [`${base}/${name}`],
   );
 };
 
@@ -115,7 +132,12 @@ const RULE_ORDER: Readonly<Record<string, number>> = {
 };
 
 /** Rules of calls whose argument is computed from a read of the target at call time. */
-const READING_RULES: readonly string[] = ['updater', 'identity', 'changing', 'same'];
+const READING_RULES: readonly string[] = [
+  'updater',
+  'identity',
+  'changing',
+  'same',
+];
 
 const overlaps = (left: string, right: string) =>
   left === right ||
@@ -196,16 +218,20 @@ const createSchema = (grouped: boolean, policy: Policy): AuthoredSchema => ({
 });
 
 const readRetained = (root: Root) =>
-  Object.fromEntries(root.inactiveValues.map(({ path, value }) => [path, value]));
+  Object.fromEntries(
+    root.inactiveValues.map(({ path, value }) => [path, value]),
+  );
 
-/**
- * Seeds per run: the complete range locally and in the pre-release tier; the pr tier's `test:pr`
- * script sets SCHEMA_FORM_TEST_TIER=pr and runs a bounded prefix to stay inside its job time.
- */
-const SEEDS = process.env.SCHEMA_FORM_TEST_TIER === 'pr' ? 7000 : 10000;
+/** Seed classes: grouped virtual pair or not, times the exit policy of object.y and box. */
+const SEED_CLASSES = [false, true].flatMap((grouped) =>
+  POLICIES.map((policy) => `${grouped}:${policy}`),
+);
 
-it(`a batch of declarative and caller writes leaves the state of the same calls in sequence for ${SEEDS} seeds`, () => {
-  for (let seed = 1; seed <= SEEDS; seed++) {
+const sampler = createSeedSampler(10000, SEED_CLASSES, 250);
+
+it(`a batch of declarative and caller writes leaves the state of the same calls in sequence for ${sampler.label}`, () => {
+  const reached = new Set<string>();
+  for (let seed = 1; sampler.has(seed); seed++) {
     let randomState = seed;
     const random = (limit: number) => {
       randomState = (Math.imul(randomState, 1664525) + 1013904223) >>> 0;
@@ -213,6 +239,7 @@ it(`a batch of declarative and caller writes leaves the state of the same calls 
     };
     const grouped = random(2) === 1;
     const policy = POLICIES[random(POLICIES.length)];
+    if (!sampler.accept(`${grouped}:${policy}`)) continue;
     const randomNested = (label: string) => {
       const nested: Record<string, string> = {};
       if (random(2)) nested.p = `${label}p`;
@@ -244,6 +271,7 @@ it(`a batch of declarative and caller writes leaves the state of the same calls 
         writes,
         triggers,
         rule: description.split(' ')[description.startsWith('set ') ? 1 : 0],
+        operation,
       });
       if (operation >= (grouped ? 27 : 21)) {
         const value: Record<string, unknown> = {};
@@ -262,7 +290,10 @@ it(`a batch of declarative and caller writes leaves the state of the same calls 
           value['../box/k'] = `${label}k`;
           triggers.push('/box/k');
         } else if (box === 2) {
-          value['../box/pair'] = [random(3) ? `${label}k` : undefined, `${label}m`];
+          value['../box/pair'] = [
+            random(3) ? `${label}k` : undefined,
+            `${label}m`,
+          ];
           triggers.push('/box/k', '/box/m');
         }
         return call(
@@ -286,7 +317,10 @@ it(`a batch of declarative and caller writes leaves the state of the same calls 
           (root) =>
             root
               .find('/object')!
-              .setValue(value, merge ? WriteOption.Merge : WriteOption.Overwrite),
+              .setValue(
+                value,
+                merge ? WriteOption.Merge : WriteOption.Overwrite,
+              ),
           merge ? mergeLeaves('/object', value) : ['/object'],
         );
       }
@@ -401,7 +435,8 @@ it(`a batch of declarative and caller writes leaves the state of the same calls 
           ['/w'],
         );
       if (operation === 17 || operation === 18 || operation === 19) {
-        const verb = operation === 17 ? 'insert' : operation === 18 ? 'clear' : 'pop';
+        const verb =
+          operation === 17 ? 'insert' : operation === 18 ? 'clear' : 'pop';
         return call(
           `${verb} /object/list`,
           (root) => {
@@ -526,7 +561,9 @@ it(`a batch of declarative and caller writes leaves the state of the same calls 
           // through (arrangeFieldNodeItems DETAIL WRITE-095); a reset discards the marks inside its
           // scope, which hold the whole list here, so it is compared only while no segment has changed
           // the list twice and its own segment has not touched it.
-          (isBarrier && call.rule === 'reset' && (listChanged || listTouches > 0)) ||
+          (isBarrier &&
+            call.rule === 'reset' &&
+            (listChanged || listTouches > 0)) ||
           // A changed gate that changes again returns to its segment value: the sequence exits and
           // re-enters through the exit policy, while the batch never leaves (settle DETAIL WRITE-079).
           (policy !== 'default' &&
@@ -542,7 +579,9 @@ it(`a batch of declarative and caller writes leaves the state of the same calls 
           // generator covers declarative writes to leaving nodes, not this caller interplay.
           (policy !== 'default' &&
             segment.some((earlier) => {
-              const [gate, other] = call.gate ? [call, earlier] : [earlier, call];
+              const [gate, other] = call.gate
+                ? [call, earlier]
+                : [earlier, call];
               return (
                 gate.gate?.[0] === '/yOn' &&
                 gate.writes.length > 0 &&
@@ -580,6 +619,7 @@ it(`a batch of declarative and caller writes leaves the state of the same calls 
         )
           continue;
         calls.push(call);
+        reached.add(`${grouped}:${call.operation}`);
         if (call.gate) gates[call.gate[0]] = call.gate[1];
         if (isBarrier) {
           if (listTouches > 1) listChanged = true;
@@ -606,4 +646,6 @@ it(`a batch of declarative and caller writes leaves the state of the same calls 
       expect(readRetained(batched), message).toEqual(readRetained(sequential));
     }
   }
+  expect(sampler.shortfall()).toEqual([]);
+  expect(reached.size).toBe(29 + 23);
 }, 300_000);

@@ -5,6 +5,7 @@ import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSO
 import type { AuthoredSchema } from '../types/jsonSchema';
 import { ValidationMode } from '../types/state';
 import { WriteOption } from '../types/value';
+import { createSeedSampler } from './fixtures/createSeedSampler';
 
 /*
  * Reference model for where a declarative value lands (settle DETAIL WRITE-079) and for a reset the
@@ -14,6 +15,10 @@ import { WriteOption } from '../types/value';
  * inactive address followed by a rule naming it, an exit a later rule of the settlement cancels, a
  * higher winner whose live target leaves after a lower overlapping winner's compute, and a reset its
  * own barrier detaches. Exit policies and one batch or one root Merge write are drawn per seed.
+ *
+ * Seeds: 1 to 3000 locally and in the pre-release tier. The pr tier runs 540 stratified seeds: the
+ * first 20 of each of 27 classes, dimension times exit policy times batch or Merge (the reset
+ * dimension has no Merge form, so it contributes 3 classes and the others 6 each).
  */
 
 type Root = ReturnType<typeof nodeFromJSONSchema>;
@@ -37,6 +42,16 @@ const DIMENSIONS: readonly Dimension[] = [
   'layered',
   'resetDetached',
 ];
+
+const SEED_CLASSES = DIMENSIONS.flatMap((dimension) =>
+  POLICIES.flatMap((policy) =>
+    (dimension === 'resetDetached' ? [false] : [false, true]).map(
+      (isMerge) => `${dimension}:${policy}:${isMerge}`,
+    ),
+  ),
+);
+
+const sampler = createSeedSampler(3000, SEED_CLASSES, 20);
 
 const rule = (target: string, value: (source: string) => unknown) => ({
   type: 'string' as const,
@@ -122,8 +137,8 @@ const observe = (root: Root): Expected => {
   };
 };
 
-it('places each declarative value where the routing model says for 3000 seeds', () => {
-  for (let seed = 1; seed <= 3000; seed++) {
+it(`places each declarative value where the routing model says for ${sampler.label}`, () => {
+  for (let seed = 1; sampler.has(seed); seed++) {
     let state = seed;
     const random = (limit: number) => {
       state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
@@ -132,6 +147,7 @@ it('places each declarative value where the routing model says for 3000 seeds', 
     const dimension = DIMENSIONS[random(DIMENSIONS.length)];
     const policy = POLICIES[random(POLICIES.length)];
     const isMerge = dimension !== 'resetDetached' && random(2) === 1;
+    if (!sampler.accept(`${dimension}:${policy}:${isMerge}`)) continue;
     const named = random(3) === 0 ? undefined : `v${seed}`;
     const caller = `c${seed}`;
     const source = named !== undefined ? `y:${named}` : `x:${seed}`;
@@ -168,4 +184,5 @@ it('places each declarative value where the routing model says for 3000 seeds', 
       `seed=${seed} ${dimension} ${policy} merge=${isMerge} named=${named}`,
     ).toEqual(model(dimension, policy, named, caller));
   }
+  expect(sampler.shortfall()).toEqual([]);
 }, 120_000);
