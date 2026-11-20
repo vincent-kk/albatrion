@@ -11,7 +11,8 @@ import { flushBatchWrites } from '../chain/flushBatchWrites';
 import { refuseInactiveResolverWrite } from '../report/refuseInactiveResolverWrite';
 
 /**
- * Reload one subtree immediately, including when a batch is open.
+ * Reload one subtree immediately, including when a batch is open: marks inside the scope are
+ * discarded and every other earlier mark settles first, so the load is the segment's last word.
  * @param node - Scope whose retained load source is restored
  * @param option - Automatic-write selection for this load
  * @returns Nothing; the outer entry delivers its committed bits
@@ -32,33 +33,21 @@ export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
       const scope = resolveStorageTargets(node);
       const scopePaths = scope ? scope.map((field) => field.path) : [node.path];
       const remaining: typeof runtime.batchWrites = [];
-      let shouldFlush = false;
       for (const write of runtime.batchWrites) {
         const storage = resolveStorageTargets(write.node);
         const paths = storage
           ? storage.map((field) => field.path)
           : [write.node.path];
-        let isContained = true;
-        let hasOverlap = false;
-        for (const path of paths) {
-          const inside = scopePaths.some(
+        const isContained = paths.every((path) =>
+          scopePaths.some(
             (scopePath) =>
               path === scopePath || isDescendantPath(path, scopePath),
-          );
-          if (!inside) isContained = false;
-          if (
-            inside ||
-            scopePaths.some((scopePath) => isDescendantPath(scopePath, path))
-          )
-            hasOverlap = true;
-        }
-        if (!isContained) {
-          remaining.push(write);
-          if (hasOverlap) shouldFlush = true;
-        }
+          ),
+        );
+        if (!isContained) remaining.push(write);
       }
       runtime.batchWrites = remaining;
-      if (shouldFlush) flushBatchWrites(node.rootNode);
+      if (remaining.length) flushBatchWrites(node.rootNode);
       if (node.isDetached) {
         refuseInactiveResolverWrite(node);
         return;
