@@ -1,8 +1,10 @@
 import type { JSONSchema } from '@canard/schema-form';
 import AjvModule from 'ajv';
 import { expect, it } from 'vitest';
+
 import { createValidator } from '../index';
 import { resolveAjvConstructor } from '../validator/utils/resolveAjvConstructor';
+
 const Ajv = resolveAjvConstructor(AjvModule);
 
 it.each(['keyword', 'format', 'late-format', 'async-ref', 'declared'])(
@@ -12,20 +14,42 @@ it.each(['keyword', 'format', 'late-format', 'async-ref', 'declared'])(
       const results: boolean[][] = [];
       for (const compileFirst of [false, true]) {
         const instance = new Ajv({ allErrors: true, strict: false });
-        instance.addKeyword({ keyword: 'asyncCheck', async: true, validate: async () => true });
+        instance.addKeyword({
+          keyword: 'asyncCheck',
+          async: true,
+          validate: async () => true,
+        });
         if (trigger !== 'late-format')
-          instance.addFormat('asyncFormat', { async: true, validate: async () => true });
+          instance.addFormat('asyncFormat', {
+            async: true,
+            validate: async () => true,
+          });
         const adapter = createValidator(instance, { directGuardCompile });
         if (trigger === 'late-format')
-          instance.addFormat('asyncFormat', { async: true, validate: async () => true });
-        const extension = trigger === 'keyword' || trigger === 'async-ref'
-          ? { asyncCheck: true } : { format: 'asyncFormat' };
+          instance.addFormat('asyncFormat', {
+            async: true,
+            validate: async () => true,
+          });
+        const extension =
+          trigger === 'keyword' || trigger === 'async-ref'
+            ? { asyncCheck: true }
+            : { format: 'asyncFormat' };
         const root: JSONSchema = {
           ...(trigger === 'declared' ? { $async: true } : {}),
           type: 'object',
-          definitions: { cond: { type: 'string', minLength: 2 }, asynchronous: { type: 'string', ...extension } },
-          properties: { u: trigger === 'async-ref' ? { $ref: '#/definitions/asynchronous' } : { type: 'string', ...extension } },
-          if: directGuardCompile ? { $ref: '#/definitions/cond' } : { type: 'string', minLength: 2 },
+          definitions: {
+            cond: { type: 'string', minLength: 2 },
+            asynchronous: { type: 'string', ...extension },
+          },
+          properties: {
+            u:
+              trigger === 'async-ref'
+                ? { $ref: '#/definitions/asynchronous' }
+                : { type: 'string', ...extension },
+          },
+          if: directGuardCompile
+            ? { $ref: '#/definitions/cond' }
+            : { type: 'string', minLength: 2 },
         };
         if (compileFirst) adapter.compile(root);
         const guard = adapter.compileGuard(root, '/if');
