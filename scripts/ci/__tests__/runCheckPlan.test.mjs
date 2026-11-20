@@ -105,3 +105,11 @@ test("only PR plans select bounded plugin ranges and pre-release clears inherite
     rmSync(scratch, { recursive: true, force: true });
   }
 });
+
+test("PR keeps a 10-minute budget with a 15-minute runaway stop and pre-release keeps 90 minutes", () => {
+  const workflow = readFileSync(
+    new URL("../../../.github/workflows/ci.yml", import.meta.url),
+    "utf8",
+  );
+  assert.match(workflow, /timeout-minutes:.*== 'pr' && 15 \|\| 90/);
+});
