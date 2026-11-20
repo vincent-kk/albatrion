@@ -536,17 +536,6 @@ it(`a batch of declarative and caller writes leaves the state of the same calls 
               (earlier) =>
                 earlier.gate?.[0] === '/yOn' && earlier.writes.length > 0,
             )) ||
-          // Known defect pinned in overlappingLatentWrites.test.ts: an earlier caller or declarative
-          // distribution at or above a latent address replays over a later own-path write to it.
-          // A gate write distributes no input, so it does not count here.
-          (call.rule === 'sourceL' &&
-            segment.some((earlier) =>
-              (earlier.gate ? [] : [...earlier.writes, ...earlier.triggers]).some((path) =>
-                call.triggers.some(
-                  (target) => path === target || target.startsWith(`${path}/`),
-                ),
-              ),
-            )) ||
           // A caller write and the exit policy of an address it overlaps stay in separate segments: the
           // sequence runs the policy between them and the batch once after them, and a caller value of
           // the settlement takes precedence over the resolver (settle DETAIL WRITE-031, VALUE-043). The
