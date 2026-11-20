@@ -58,11 +58,7 @@ export const processCssSheet = (input: string, compressed: boolean, mode: 'none'
           output += code === 13 && css.charCodeAt(index + 1) === 10 ? '\r\n' : css[index];
           previousCode = 32; previousKind = CssTokenKind.Whitespace;
         } else if (hasOutput && (end < css.length || (context === CssContext.Value && valueEmpty) || (previousCode === 58 && (context === CssContext.AtPrelude || context === CssContext.OpaquePrelude)))) {
-          let next = end < css.length ? css.charCodeAt(end) : -1;
-          if (next === 47 && ((context === CssContext.Value && valueEmpty) || (context === CssContext.AtPrelude && previousCode === 58))) {
-            const significantIndex = getCssSignificantIndex(css, end);
-            next = significantIndex < css.length ? css.charCodeAt(significantIndex) : -1;
-          }
+          const next = end < css.length ? css.charCodeAt(end) : -1;
           if (keepCssWhitespace(css, context, components, valueEmpty, custom, previousCode, next, previousEnd)) {
             if (previousKind !== CssTokenKind.Whitespace) output += ' ';
             previousCode = 32; previousKind = CssTokenKind.Whitespace;

@@ -26,13 +26,13 @@ export const keepCssWhitespace = (css: string, context: CssContext, components: 
     }
     if (context === CssContext.OpaquePrelude) return true;
     if (context === CssContext.AtPrelude) {
-      if (previous === 58 && (next === 41 || next === -1)) return true;
+      if (previous === 58 && (next === 41 || next === -1 || next === 47)) return true;
       if (previous === 44 || next === 44) return false;
       if (components === 0 && (next === 123 || next === 59)) return false;
       if (components > 0 && (previous === 40 || next === 41 || previous === 58 || next === 58)) return false;
       return true;
     }
-    if (valueEmpty) return next === 59 || next === 125 || next === -1;
+    if (valueEmpty) return next === 59 || next === 125 || next === -1 || next === 47;
     if (previous === 59 || next === 59) return false;
     if (components === 0 && (next === 59 || next === 125)) return false;
     if (!custom && (previous === 44 || next === 44 || previous === 40 || next === 41)) return false;
