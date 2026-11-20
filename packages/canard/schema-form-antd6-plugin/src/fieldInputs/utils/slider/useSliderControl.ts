@@ -24,7 +24,7 @@ export const useSliderControl = (
   );
   const current = useRef(typeof initial === 'number' ? initial : bounds.min);
   const stored = useRef(initial);
-  const pending = useRef<number | undefined>(undefined);
+  const pending = useRef<{ key: string; value: number } | undefined>(undefined);
   const commit = (value: number) => {
     if (locked || bounds.empty || !Number.isFinite(value)) return;
     const valid = bounds.snap(value);
@@ -79,16 +79,16 @@ export const useSliderControl = (
     event.stopPropagation();
     current.current = value;
     setDraft(value);
-    pending.current = value;
+    pending.current = { key, value };
     if (lazy === false) commit(value);
   };
   const keyUp = (event: KeyboardEvent<HTMLElement>) => {
-    const value = pending.current;
+    const movement = pending.current;
+    if (movement?.key !== event.key) return;
     pending.current = undefined;
-    if (value === undefined) return;
     event.preventDefault();
     event.stopPropagation();
-    if (lazy !== false) commit(value);
+    if (lazy !== false) commit(movement.value);
   };
   return {
     unset,
