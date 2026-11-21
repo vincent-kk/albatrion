@@ -170,7 +170,8 @@ export type InferFieldInputProps<Value> = Value extends AllowedValue
   ? FieldInputProps<Value>
   : UnknownFieldInputProps;
 
-export type ChildFieldProps<Value extends AllowedValue = any> = {
+/** Presentation options shared by child and configured field input overrides. */
+interface FieldInputPresentationOverrides {
   /** @deprecated Use inputId. */
   id?: never;
   /** Identifiers belong to the binding and cannot be overridden. */
@@ -179,6 +180,8 @@ export type ChildFieldProps<Value extends AllowedValue = any> = {
   labelId?: never;
   /** Keyed identities belong to the binding. */
   getInputId?: never;
+  /** The input binding supplies the ref. */
+  focusRef?: never;
   /** @deprecated Use useFieldErrors(node). */
   errors?: never;
   /** @deprecated Use useFieldErrors(node). */
@@ -186,46 +189,28 @@ export type ChildFieldProps<Value extends AllowedValue = any> = {
   required?: boolean;
   readOnly?: boolean;
   disabled?: boolean;
-  /** Defaults belong to the node, not to a child override. */
-  defaultValue?: never;
-  /** Current values are written through the binding callback. */
-  value?: never;
-  /** The input binding supplies the ref. */
-  focusRef?: never;
-  onChange?: SetStateFnWithOptions<Value>;
-  onFileAttach?: Fn<[file: Optional<File | File[]>]>;
-  FieldRenderer?: ComponentType<FieldRendererProps>;
   className?: string;
   style?: CSSProperties;
   [alt: string]: any;
-};
+}
+
+export type ChildFieldProps<Value extends AllowedValue = any> =
+  FieldInputPresentationOverrides & {
+    /** Defaults belong to the node. */
+    defaultValue?: never;
+    /** Current values are written through the binding callback. */
+    value?: never;
+    onChange?: SetStateFnWithOptions<Value>;
+    onFileAttach?: Fn<[file: Optional<File | File[]>]>;
+    FieldRenderer?: ComponentType<FieldRendererProps>;
+  };
 
 /** Presentation overrides cannot replace the binding-owned callback channels. */
-export type OverridableFieldInputProps = {
-  /** @deprecated Use inputId. */
-  id?: never;
-  /** Identifiers belong to the binding and cannot be overridden. */
-  inputId?: never;
-  /** Title identity belongs to the binding. */
-  labelId?: never;
-  /** Keyed identities belong to the binding. */
-  getInputId?: never;
-  /** @deprecated Use useFieldErrors(node). */
-  errors?: never;
-  /** @deprecated Use useFieldErrors(node). */
-  errorVisible?: never;
-  required?: boolean;
-  readOnly?: boolean;
-  disabled?: boolean;
-  className?: string;
-  style?: CSSProperties;
+export type OverridableFieldInputProps = FieldInputPresentationOverrides & {
   value?: never;
   defaultValue?: never;
   onChange?: never;
-  /** The input binding supplies the ref. */
-  focusRef?: never;
   onFileAttach?: never;
-  [alt: string]: any;
 };
 
 export type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
