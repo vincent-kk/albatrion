@@ -57,7 +57,7 @@ export const createGuardCompiler = (
   const validate = guard.compile(
     direct ? schema : { $ref: `${registration.rootId}${fragment}` },
   );
-  if ('$async' in validate && validate.$async === true)
+  if (direct && '$async' in validate && validate.$async === true)
     throw new Error('async schema in sync schema');
   return (value) => {
     const result = validate(value);

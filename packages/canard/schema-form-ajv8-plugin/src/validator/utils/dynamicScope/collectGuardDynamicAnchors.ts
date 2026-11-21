@@ -14,7 +14,7 @@ import { SCHEMA_DICTIONARY_KEYWORDS } from './schemaKeywords';
  * The chain resources are the root and every ancestor on the pointer path that opens a resource with its own
  * `$id`, outermost first. Each anchor name binds to its declaration in the outermost chain resource that declares
  * it (`$recursiveAnchor: true` only at a resource root, under `''`), outside the guard's own subtree; AJV's
- * truthiness check on the own-key table decides whether a name is taken.
+ * prototype names stay with native resolution.
  * @param root - The registered root copy in which the pointer locates a schema.
  * @param key - The reference under which `ajv` holds the root; locations resolve as `key#<pointer>`.
  * @param pointer - The guard's JSON Pointer, or a percent-encoded URI fragment prefixed with #.
@@ -61,6 +61,7 @@ export const collectGuardDynamicAnchors = (
         ? `Guard dynamic reference #${unbound[0]} is not bound: a JSON Pointer fragment is not an anchor name, so no declaration can bind it; use $ref for a location`
         : `Guard dynamic reference #${unbound[0]} is not bound: move the anchor to an ancestor of the reference (for example the root of the allOf element that contains it) or to a chain resource`,
     );
+  for (const name of Object.keys(anchors)) if (name in Object.prototype) delete anchors[name];
   return anchors;
 };
 

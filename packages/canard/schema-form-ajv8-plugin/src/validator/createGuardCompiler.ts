@@ -65,14 +65,15 @@ export const createGuardCompiler = (
       ? collectGuardDynamicAnchors(root, registration.key, fragment, guard)
       : {};
   const validate = guard.compile({ $ref: `${registration.key}${fragment}` });
-  if ('$async' in validate && validate.$async === true) throw new Error('async schema in sync schema');
   if (Object.keys(dynamicAnchors).length === 0)
     return (value) => !!validate(value);
   return (value) =>
-    !!validate(value, {
+    // AJV accepts primitive root data at runtime; its declaration narrows the context to objects.
+    !!Reflect.apply(validate, undefined, [value, {
       instancePath: '',
       parentData: {},
       parentDataProperty: '',
+      rootData: value,
       dynamicAnchors: { ...dynamicAnchors },
-    });
+    } satisfies Omit<NonNullable<Parameters<typeof validate>[1]>, 'rootData'> & { rootData: unknown }]);
 };
