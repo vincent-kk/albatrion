@@ -1,11 +1,11 @@
 import {
   JSONPointer,
-  appendSegment,
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { DeriveRoundDecision } from '../../../../derive';
 import type { FieldNodeRecord } from '../../../../record';
+import { resolveVirtualStorageTargets } from '../../../../utils/paths/resolveVirtualStorageTargets';
 
 /**
  * Read the storage addresses one automatic write replaces.
@@ -18,5 +18,5 @@ export const readWriteAddresses = <Self extends FieldNodeRecord<Self>>(
   const template = write.target ? write.target.blueprintNode : write.template;
   if (template?.kind !== 'virtual') return [write.targetPath];
   const host = resolvePointer(write.targetPath, JSONPointer.Parent);
-  return (template.fields ?? []).map((field) => appendSegment(host, field));
+  return resolveVirtualStorageTargets(host, template.fields).map(({ path }) => path);
 };
