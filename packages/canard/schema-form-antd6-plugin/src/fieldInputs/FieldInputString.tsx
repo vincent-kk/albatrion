@@ -36,6 +36,10 @@ const FieldInputString = ({
   placeholder,
   size,
   misfit,
+  labelId,
+  required,
+  className,
+  style,
 }: FieldInputStringProps) => {
   const TextInput = useMemo(() => {
     if (
@@ -52,6 +56,10 @@ const FieldInputString = ({
   });
   return (
     <TextInput
+      className={className}
+      style={style}
+      aria-labelledby={labelId}
+      aria-required={required || undefined}
       id={inputId}
       name={name}
       readOnly={readOnly}

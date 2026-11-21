@@ -59,6 +59,8 @@ const FieldInputRadioGroup = ({
   row = true,
   hideLabel,
   misfit,
+  className,
+  style,
 }: FieldInputRadioGroupProps) => {
   const [label, size] = getMuiFieldPresentation(
     labelProp,
@@ -94,7 +96,11 @@ const FieldInputRadioGroup = ({
   const captionId = label ? getInputId('legend') : undefined;
   const locked = disabled || readOnly;
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <Box
+      className={className}
+      style={style}
+      sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+    >
       {label && (
         <FormLabel component="span" id={captionId} required={required}>
           {label}

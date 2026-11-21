@@ -54,6 +54,8 @@ const FieldInputSlider = ({
   hideLabel,
   lazy,
   misfit,
+  className,
+  style,
 }: FieldInputSliderProps) => {
   const [label, size] = getMuiFieldPresentation(
     labelProp,
@@ -72,7 +74,7 @@ const FieldInputSlider = ({
   const captionId = label ? getInputId('legend') : undefined;
 
   return (
-    <Box sx={{ px: 2 }}>
+    <Box className={className} style={style} sx={{ px: 2 }}>
       {label && (
         <Typography
           variant="body2"

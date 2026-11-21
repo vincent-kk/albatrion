@@ -37,6 +37,11 @@ const FieldInputDate = ({
   minimum,
   maximum,
   misfit,
+  labelId,
+  required,
+  placeholder,
+  className,
+  style,
 }: FieldInputDateProps) => {
   const handleChange = useHandle((value: Dayjs | null) => {
     onChange(value ? value.format(DATA_FORMAT) : undefined);
@@ -53,6 +58,11 @@ const FieldInputDate = ({
 
   return (
     <DatePicker
+      className={className}
+      style={style}
+      aria-labelledby={labelId}
+      aria-required={required || undefined}
+      placeholder={placeholder}
       id={inputId}
       name={name}
       disabled={disabled || readOnly}

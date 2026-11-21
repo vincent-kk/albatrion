@@ -76,11 +76,11 @@ it.each([false, true])(
         onError={() => {}}
       />,
     );
-    await userEvent.click(container.querySelector('.ant-select-selector')!);
+    await userEvent.click(container.querySelector('.ant-select-content')!);
     await userEvent.click(screen.getByTitle('ftp://'));
     expect(ref.current!.getValue()).toEqual({ text: undefined });
     expect(
-      container.querySelector('.ant-select-selection-item')!.textContent,
+      container.querySelector('.ant-select-content-value')!.textContent,
     ).toBe('ftp://');
     const input = screen.getByRole<HTMLInputElement>('textbox');
     await userEvent.type(input, 'example.com');

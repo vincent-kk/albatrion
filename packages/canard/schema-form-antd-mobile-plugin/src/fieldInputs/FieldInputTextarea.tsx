@@ -27,6 +27,8 @@ const FieldInputTextarea = ({
   minRows,
   maxRows,
   misfit,
+  className,
+  style,
 }: FieldInputPropsWithSchema<string, TextareaSchema>) => {
   const handleChange = useHandle((text: string) =>
     onChange(text === '' ? undefined : text),
@@ -39,7 +41,12 @@ const FieldInputTextarea = ({
     [minRows, maxRows, jsonSchema.minRows, jsonSchema.maxRows],
   );
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div
+      className={className}
+      style={style}
+      role="group"
+      aria-invalid={misfit || undefined}
+    >
       <TextArea
         id={inputId}
         name={name}

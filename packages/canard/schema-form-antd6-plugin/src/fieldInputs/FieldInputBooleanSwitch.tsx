@@ -33,6 +33,7 @@ interface FieldInputBooleanSwitchProps
 const FieldInputBooleanSwitch = ({
   inputId,
   labelId,
+  name,
   disabled,
   readOnly,
   value,
@@ -41,6 +42,8 @@ const FieldInputBooleanSwitch = ({
   size,
   alias,
   misfit,
+  className,
+  style,
 }: FieldInputBooleanSwitchProps) => {
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
     const labels = context?.checkboxLabels || alias || {};
@@ -53,8 +56,11 @@ const FieldInputBooleanSwitch = ({
 
   return (
     <Switch
+      className={className}
+      style={style}
       aria-invalid={misfit || undefined}
       id={inputId}
+      {...{ name }}
       aria-labelledby={labelId}
       disabled={disabled || readOnly}
       checked={value === true}

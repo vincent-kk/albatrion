@@ -30,6 +30,7 @@ const FieldInputArray = ({
   disabled,
   ChildFields,
   style,
+  className,
 }: FieldInputProps<any[]>) => {
   const maxItems = minLite(
     typeof jsonSchema.maxItems === 'number' ? jsonSchema.maxItems : Infinity,
@@ -45,7 +46,13 @@ const FieldInputArray = ({
     node.remove(index);
   });
   return (
-    <div id={inputId} role="group" aria-labelledby={labelId} style={style}>
+    <div
+      className={className}
+      id={inputId}
+      role="group"
+      aria-labelledby={labelId}
+      style={style}
+    >
       {ChildFields &&
         map(ChildFields, (ChildField, i) => {
           const key = ChildField.key;

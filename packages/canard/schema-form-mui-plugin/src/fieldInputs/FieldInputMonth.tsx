@@ -49,6 +49,8 @@ const FieldInputMonth = ({
   misfit,
   minimum,
   maximum,
+  className,
+  style,
 }: FieldInputMonthProps) => {
   const [label, size, variant, fullWidth] = getMuiFieldPresentation(
     labelProp,
@@ -79,6 +81,8 @@ const FieldInputMonth = ({
         format="YYYY-MM"
         slotProps={{
           textField: {
+            className,
+            style,
             ...getPickerSlotProps(
               inputId,
               labelId,

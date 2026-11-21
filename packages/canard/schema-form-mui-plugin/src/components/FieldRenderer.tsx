@@ -15,6 +15,10 @@ export const FieldRenderer = ({
   Input,
   ErrorMessage,
   errorMessage,
+  readOnly,
+  disabled,
+  className,
+  style,
 }: FieldRendererProps): ReactElement => {
   const hasError =
     errorMessage != null &&
@@ -23,7 +27,12 @@ export const FieldRenderer = ({
   if (depth === 0)
     return (
       <>
-        <Input />
+        <Input
+          readOnly={readOnly}
+          disabled={disabled}
+          {...(className != null && { className })}
+          {...(style != null && { style })}
+        />
         {hasError && <ErrorMessage>{errorMessage}</ErrorMessage>}
       </>
     );
@@ -31,6 +40,8 @@ export const FieldRenderer = ({
   if (node.strategy === 'branch') {
     return (
       <Box
+        className={className}
+        style={style}
         component="fieldset"
         sx={{
           marginBottom: 1,
@@ -41,19 +52,21 @@ export const FieldRenderer = ({
           padding: 1,
         }}
       >
-        <Input />
+        <Input readOnly={readOnly} disabled={disabled} />
         {hasError && <ErrorMessage>{errorMessage}</ErrorMessage>}
       </Box>
     );
   } else {
     return (
       <Box
+        className={className}
+        style={style}
         sx={{
           marginBottom: 2,
           marginLeft: depth * 2,
         }}
       >
-        <Input />
+        <Input readOnly={readOnly} disabled={disabled} />
         <ErrorMessage>{errorMessage}</ErrorMessage>
       </Box>
     );

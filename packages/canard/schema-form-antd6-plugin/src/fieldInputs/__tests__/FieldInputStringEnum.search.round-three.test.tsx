@@ -14,9 +14,9 @@ const visibleOptions = () =>
 
 const search = (text: string) => {
   const input = document.querySelector<HTMLInputElement>(
-    '.ant-select-selection-search-input',
+    'input[role="combobox"]',
   )!;
-  fireEvent.mouseDown(document.querySelector('.ant-select-selector')!);
+  fireEvent.mouseDown(document.querySelector('.ant-select-content')!);
   act(() => {
     fireEvent.change(input, { target: { value: text } });
   });

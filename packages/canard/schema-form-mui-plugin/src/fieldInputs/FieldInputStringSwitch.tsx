@@ -49,6 +49,8 @@ const FieldInputStringSwitch = ({
   size: sizeProp,
   hideLabel,
   misfit,
+  className,
+  style,
 }: FieldInputStringSwitchProps) => {
   const [label, size] = getMuiFieldPresentation(
     labelProp,
@@ -79,6 +81,8 @@ const FieldInputStringSwitch = ({
 
   return (
     <FormControlLabel
+      className={className}
+      style={style}
       label={label && <span id={captionId}>{label}</span>}
       htmlFor={inputId}
       required={required}

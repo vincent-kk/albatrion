@@ -1,7 +1,7 @@
 import { createRef } from 'react';
 
 import { cleanup, fireEvent, render } from '@testing-library/react';
-import { afterEach, expect, it, vi } from 'vitest';
+import { afterEach, expect, it } from 'vitest';
 
 import { Form, type FormHandle } from '@canard/schema-form';
 
@@ -84,7 +84,9 @@ it('restores an empty display on blur when the browser holds unparsable text in 
   );
   const input = view.container.querySelector('input') as HTMLInputElement;
   Object.defineProperty(input, 'validity', { value: { badInput: true } });
-  const write = vi.spyOn(input, 'value', 'set');
+  fireEvent.change(input, { target: { value: '5' } });
+  expect(input.value).toBe('5');
   fireEvent.blur(input);
-  expect(write).toHaveBeenCalledWith('');
+  expect(ref.current!.getValue()).toBeUndefined();
+  expect(input.value).toBe('');
 });

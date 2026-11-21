@@ -42,6 +42,8 @@ const FieldInputStringCheckbox = ({
   context,
   alias,
   misfit,
+  className,
+  style,
 }: FieldInputStringCheckboxProps) => {
   const values = jsonSchema.items?.enum;
   const labels = context.checkboxLabels || alias;
@@ -77,11 +79,12 @@ const FieldInputStringCheckbox = ({
 
   return (
     <div
+      className={className}
       id={inputId}
       aria-labelledby={labelId}
       role="group"
       aria-invalid={misfit || undefined}
-      style={{ display: 'flex', flexDirection: 'row', gap: 8 }}
+      style={{ display: 'flex', flexDirection: 'row', gap: 8, ...style }}
     >
       <Checkbox.Group
         disabled={disabled || readOnly}

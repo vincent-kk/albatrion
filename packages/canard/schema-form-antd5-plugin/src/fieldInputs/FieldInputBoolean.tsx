@@ -18,6 +18,10 @@ const FieldInputBoolean = ({
   value,
   onChange,
   misfit,
+  labelId,
+  required,
+  className,
+  style,
 }: FieldInputProps<boolean | null>) => {
   const [indeterminate, checked] = useMemo(
     () => [
@@ -31,6 +35,10 @@ const FieldInputBoolean = ({
   });
   return (
     <Checkbox
+      className={className}
+      style={style}
+      aria-labelledby={labelId}
+      aria-required={required || undefined}
       aria-invalid={misfit || undefined}
       id={inputId}
       name={name}

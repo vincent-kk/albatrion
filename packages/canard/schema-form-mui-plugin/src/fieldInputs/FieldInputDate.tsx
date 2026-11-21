@@ -52,6 +52,8 @@ const FieldInputDate = ({
   misfit,
   minimum: minimumProp,
   maximum: maximumProp,
+  className,
+  style,
 }: FieldInputDateProps) => {
   const [label, size, variant, fullWidth] = getMuiFieldPresentation(
     labelProp,
@@ -89,6 +91,8 @@ const FieldInputDate = ({
         maxDate={maxDate}
         slotProps={{
           textField: {
+            className,
+            style,
             ...getPickerSlotProps(
               inputId,
               labelId,

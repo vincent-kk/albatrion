@@ -35,6 +35,8 @@ const FieldInputSlider = ({
   marks,
   lazy,
   misfit,
+  className,
+  style,
 }: FieldInputSliderProps) => {
   const range = isArraySchema(jsonSchema);
   const constraints = range ? jsonSchema.items : jsonSchema;
@@ -67,6 +69,8 @@ const FieldInputSlider = ({
 
   return (
     <div
+      className={className}
+      style={style}
       id={inputId}
       role="group"
       aria-labelledby={labelId}

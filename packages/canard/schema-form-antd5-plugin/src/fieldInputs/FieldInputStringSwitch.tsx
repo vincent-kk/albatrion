@@ -31,6 +31,7 @@ interface FieldInputStringSwitchProps
 const FieldInputStringSwitch = ({
   inputId,
   labelId,
+  name,
   jsonSchema,
   disabled,
   readOnly,
@@ -40,6 +41,8 @@ const FieldInputStringSwitch = ({
   size,
   alias,
   misfit,
+  className,
+  style,
 }: FieldInputStringSwitchProps) => {
   const [checked, unchecked] = useMemo(() => {
     const [checked, unchecked] = jsonSchema.enum || [];
@@ -63,8 +66,11 @@ const FieldInputStringSwitch = ({
 
   return (
     <Switch
+      className={className}
+      style={style}
       aria-invalid={misfit || undefined}
       id={inputId}
+      {...{ name }}
       aria-labelledby={labelId}
       disabled={disabled || readOnly}
       checked={value === checked}

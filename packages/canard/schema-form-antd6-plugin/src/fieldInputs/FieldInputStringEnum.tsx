@@ -33,6 +33,7 @@ interface FieldInputStringEnumProps
 const FieldInputStringEnum = ({
   inputId,
   labelId,
+  required,
   jsonSchema,
   disabled,
   readOnly,
@@ -43,6 +44,8 @@ const FieldInputStringEnum = ({
   placeholder,
   size,
   misfit,
+  className,
+  style,
 }: FieldInputStringEnumProps) => {
   const multiple = isArraySchema(jsonSchema);
   const schema = multiple ? jsonSchema.items : jsonSchema;
@@ -72,8 +75,10 @@ const FieldInputStringEnum = ({
 
   return (
     <Select
+      className={className}
       id={inputId}
       aria-labelledby={labelId}
+      aria-required={required || undefined}
       mode={multiple ? 'multiple' : undefined}
       options={options}
       showSearch={{ optionFilterProp: 'label' }}
@@ -81,7 +86,7 @@ const FieldInputStringEnum = ({
       disabled={disabled || readOnly}
       defaultValue={initialValue}
       onChange={handleChange}
-      style={{ width: '100%' }}
+      style={{ width: '100%', ...style }}
       size={size || context?.size}
       status={misfit ? 'error' : undefined}
       aria-invalid={misfit || undefined}

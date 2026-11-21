@@ -32,6 +32,7 @@ interface FieldInputUriProps
 const FieldInputUri = ({
   inputId,
   labelId,
+  required,
   getInputId,
   name,
   readOnly,
@@ -43,6 +44,8 @@ const FieldInputUri = ({
   size,
   protocols,
   misfit,
+  className,
+  style,
 }: FieldInputUriProps) => {
   const normalizedProtocols = useMemo(() => {
     const rawProtocols = protocols || DEFAULT_PROTOCOLS;
@@ -83,8 +86,11 @@ const FieldInputUri = ({
 
   return (
     <Input
+      className={className}
+      style={style}
       addonBefore={protocolDropdown}
       aria-labelledby={labelId}
+      aria-required={required || undefined}
       id={inputId}
       name={name}
       readOnly={readOnly}

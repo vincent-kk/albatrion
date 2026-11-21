@@ -18,6 +18,10 @@ export const FieldRenderer = ({
   Label,
   ErrorMessage,
   errorMessage,
+  readOnly,
+  disabled,
+  className,
+  style,
 }: FieldRendererProps): ReactElement => {
   const error =
     errorMessage != null &&
@@ -28,17 +32,22 @@ export const FieldRenderer = ({
   if (depth === 0)
     return (
       <>
-        <Input />
+        <Input
+          readOnly={readOnly}
+          disabled={disabled}
+          {...(className != null && { className })}
+          {...(style != null && { style })}
+        />
         {error}
       </>
     );
 
   const title = node.parentNode && !isArraySchema(node.parentNode) && <Label />;
   return (
-    <Space direction="vertical" block>
+    <Space direction="vertical" block className={className} style={style}>
       <div>
         {title}
-        <Input />
+        <Input readOnly={readOnly} disabled={disabled} />
       </div>
       {error}
     </Space>

@@ -33,6 +33,8 @@ const FieldInputNumber = ({
   formatter,
   parser,
   misfit,
+  className,
+  style,
 }: FieldInputNumberProps) => {
   const handleChange = useHandle((input: number | null) => {
     if (input === null) onChange(undefined);
@@ -42,6 +44,8 @@ const FieldInputNumber = ({
   });
   return (
     <div
+      className={className}
+      style={style}
       id={inputId}
       role="group"
       aria-labelledby={labelId}
