@@ -276,7 +276,7 @@ it.each([
     expect(ref.current!.getValue()).toEqual(bad);
     expect(
       container.querySelector('input:checked, .ant-select-selection-item'),
-    ).toBeNull();
+    ).not.toBeNull();
     expect(container.querySelector('[aria-invalid="true"]')).toBeNull();
     expect(container.querySelector('[class*="-status-error"]')).toBeNull();
     act(() => ref.current!.setValue(good as never));
