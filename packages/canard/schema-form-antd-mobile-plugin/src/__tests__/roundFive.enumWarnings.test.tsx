@@ -1,6 +1,12 @@
 import { createRef } from 'react';
 
-import { cleanup, render } from '@testing-library/react';
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@canard/schema-form';
@@ -46,5 +52,49 @@ it.each([
       outOfRange: [],
       value: stored === undefined ? {} : { topic: stored },
     });
+  },
+);
+
+it.each(['unknown', 'Alpha'] as const)(
+  'preserves the stored enum and displays a later write or reset (DETAIL, initial=%s)',
+  async (initial) => {
+    const ref = createRef<FormHandle>();
+    render(
+      <Form
+        ref={ref}
+        jsonSchema={{
+          type: 'object',
+          properties: {
+            choice: {
+              type: 'string',
+              enum: ['Alpha', 'Beta'],
+              title: 'Choice',
+            },
+          },
+        }}
+        defaultValue={{ choice: initial }}
+        fieldInputDefinitions={plugin.fieldInputDefinitions}
+        FieldRenderer={plugin.FieldRenderer}
+        LabelRenderer={plugin.LabelRenderer}
+      />,
+    );
+    const assertChoice = (value: string) => {
+      expect(ref.current!.getValue()).toEqual({ choice: value });
+      expect(screen.getByDisplayValue(value)).toBe(screen.getByRole('textbox'));
+    };
+    expect(ref.current!.getValue()).toEqual({ choice: initial });
+
+    if (initial === 'unknown') {
+      fireEvent.change(screen.getByRole('textbox'), {
+        target: { value: 'Alpha' },
+      });
+      assertChoice('Alpha');
+      return;
+    }
+    await act(async () => ref.current!.setValue({ choice: 'Beta' }));
+    assertChoice('Beta');
+
+    await act(async () => ref.current!.reset());
+    assertChoice('Alpha');
   },
 );
