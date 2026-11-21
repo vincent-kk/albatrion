@@ -25,7 +25,7 @@ yarn storybook         # Storybook development server
 ## Key Details
 
 - Default options: `allErrors: true`, `strictSchema: false`, `validateFormats: false`, `allowUnionTypes: true`.
-- **Registration and call order**: `compileGuard(copy, pointer)` and `release(copy)` accept the engine-owned copy whether or not `compile(copy)` has run. Only guards that need the root location (for example a `$ref` into root definitions) register the root, on the guard instance; `compile` registers a copy of a root with `$id` on the selected validation instance (a separate sibling when its `$id` conflicts) and compiles a root without `$id` as a transient copy, and full validation can be compiled later. Pass the same copy object to `compile`, every `compileGuard`, and `release`. Releasing an unregistered root is a no-op.
+- The package contract defines registration ownership and call order. The registration function uses a root-local guard compiler and a bounded private whole-validation compiler.
 - **Guard meta-schema**: the guard instance uses `allErrors: false` and `validateSchema: false`; AJV's root meta-schema check runs only in the whole-schema compile, so a root meta-schema violation outside the condition fails no guard, and a meta-only violation inside the condition schema is evaluated by the generated code; custom keyword meta-schema checks, strict options and code-generation checks still apply to guards (VALIDATE-033, ERROR-041).
 - `bind(instance)` immediately refuses enabled `coerceTypes`, `useDefaults`, or `removeAdditional`; a refused instance never replaces the current binding.
 - Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, the value of `FormErrorCode.ValidatorBindRefused`); core's `isUnhandledError` does not recognize it.
@@ -44,7 +44,7 @@ yarn storybook         # Storybook development server
 
 The [validator plugin contract](../schema-form/src/app/plugin/DETAIL.md) owns the shared obligations (VALIDATE-019, VALIDATE-033, VALIDATE-044, VALIDATE-046, VALIDATE-047, VALIDATE-050, VALIDATE-051, ERROR-201).
 
-AJV keeps `refs` and `schemas` on the instance. A failed `addSchema` must restore both registries in place, including their key order and consumer string aliases, and remove the rejected copy from AJV's cache. Removing only the plugin key can delete a consumer's same-id registration or leave a rejected copy reusable. Keep this rollback paired with `registerValidationRoot` and its failure tests. Sibling instances preserve the bound constructor, options, formats, keyword definitions, bare keywords and consumer schemas, while excluding plugin-owned registrations; otherwise isolating a duplicate id changes validation meaning.
+Restore the private native registry after temporarily registering a whole root. Aliases keep their native binding, including references whose targets are missing. Replaying them against a different resource would change application resolution.
 
 `allowUnionTypes: true` suppresses strict-type logging for union declarations without changing their verdict. Preserve it separately from value coercion and from the dynamic-scope limits documented above.
 
