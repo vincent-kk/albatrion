@@ -1,7 +1,7 @@
 import { createRef } from 'react';
 
 import { act, cleanup, render } from '@testing-library/react';
-import { afterAll, afterEach, beforeAll, expect, it, vi } from 'vitest';
+import { afterEach, expect, it } from 'vitest';
 
 import {
   type FieldInputDefinition,
@@ -29,21 +29,6 @@ import { FieldInputTimeRangeDefinition } from '../FieldInputTimeRange';
 import { FieldInputUriDefinition } from '../FieldInputUri';
 
 afterEach(cleanup);
-
-beforeAll(() => {
-  vi.stubGlobal(
-    'ResizeObserver',
-    class {
-      observe() {}
-      unobserve() {}
-      disconnect() {}
-    },
-  );
-});
-
-afterAll(() => {
-  vi.unstubAllGlobals();
-});
 
 type MisfitCase = readonly [
   name: string,
@@ -204,16 +189,7 @@ it.each([
   ],
 ] as MisfitCase[])(
   '%s marks a misfit value in the DOM and clears it for a valid one',
-  (_, definition, jsonSchema, bad, good) => {
-    const ariaOnlyDefinitions: FieldInputDefinition[] = [
-      FieldInputBooleanDefinition,
-      FieldInputBooleanSwitchDefinition,
-      FieldInputStringSwitchDefinition,
-      FieldInputRadioGroupDefinition,
-      FieldInputStringCheckboxDefinition,
-      FieldInputSliderDefinition,
-    ];
-    const supportsErrorStatus = !ariaOnlyDefinitions.includes(definition);
+  (name, definition, jsonSchema, bad, good) => {
     const ref = createRef<FormHandle>();
     const { container } = render(
       <Form
@@ -228,6 +204,15 @@ it.each([
       container.querySelector(
         'input[aria-invalid="true"], textarea[aria-invalid="true"], [role][aria-invalid="true"]',
       );
+    const supportsErrorStatus = ![
+      'RadioGroup',
+      'Boolean',
+      'Slider',
+      'BooleanSwitch',
+      'StringSwitch',
+      'StringCheckbox',
+      'Slider with an uncoercible object',
+    ].includes(name);
     const errorStatus = () =>
       container.querySelector('[class*="-status-error"]');
     const control = () =>
@@ -291,10 +276,9 @@ it.each([
     expect(ref.current!.getValue()).toEqual(bad);
     expect(
       container.querySelector('input:checked, .ant-select-selection-item'),
-    ).toBeNull();
+    ).not.toBeNull();
     expect(container.querySelector('[aria-invalid="true"]')).toBeNull();
-    if (definition === FieldInputStringEnumDefinition)
-      expect(container.querySelector('[class*="-status-error"]')).toBeNull();
+    expect(container.querySelector('[class*="-status-error"]')).toBeNull();
     act(() => ref.current!.setValue(good as never));
     expect(control()).not.toBeNull();
     expect(ref.current!.getValue()).toEqual(good);

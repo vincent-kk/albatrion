@@ -1,16 +1,8 @@
 import { createRef } from 'react';
 
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest';
+import { afterEach, expect, it } from 'vitest';
 
 import { Form, type FormHandle } from '@canard/schema-form';
 
@@ -20,77 +12,80 @@ import { FieldInputUriDefinition } from '../FieldInputUri';
 
 afterEach(cleanup);
 
-beforeAll(() => {
-  vi.stubGlobal(
-    'ResizeObserver',
-    class {
-      observe() {}
-      unobserve() {}
-      disconnect() {}
-    },
-  );
-});
-
-afterAll(() => vi.unstubAllGlobals());
-
-describe.each([
-  ['String', FieldInputStringDefinition, undefined, 'hello', 'hello'],
-  ['Textarea', FieldInputTextareaDefinition, 'textarea', 'hello', 'hello'],
-  ['Uri', FieldInputUriDefinition, 'uri', 'example.com', 'http://example.com'],
-] as const)('%s empty input', (_, definition, format, text, value) => {
-  it.each([false, true])(
-    'publishes undefined after typing and clearing (nullable: %s)',
-    async (nullable) => {
-      const ref = createRef<FormHandle>();
-      render(
-        <Form
-          ref={ref}
-          fieldInputDefinitions={[definition]}
-          jsonSchema={{
-            type: 'object',
-            properties: {
-              value: {
-                type: nullable ? ['string', 'null'] : 'string',
-                format,
-                options: { omitEmpty: false },
-              },
-            },
-          }}
-        />,
-      );
-      const input = screen.getByRole('textbox');
-      await userEvent.type(input, text);
-      expect(ref.current!.getValue()).toEqual({ value });
-      await userEvent.clear(input);
-      expect(ref.current!.getValue().value).toBeUndefined();
-    },
-  );
-});
-
-it.each([false, true])(
-  'keeps an empty URI undefined when only the protocol changes (nullable: %s)',
-  async (nullable) => {
+it.each([
+  ['String non-nullable', FieldInputStringDefinition, undefined, false],
+  ['String nullable', FieldInputStringDefinition, undefined, true],
+  ['Textarea non-nullable', FieldInputTextareaDefinition, 'textarea', false],
+  ['Textarea nullable', FieldInputTextareaDefinition, 'textarea', true],
+  ['Uri non-nullable', FieldInputUriDefinition, 'uri', false],
+  ['Uri nullable', FieldInputUriDefinition, 'uri', true],
+] as const)(
+  '%s publishes undefined after typing and clearing',
+  async (_, definition, format, nullable) => {
     const ref = createRef<FormHandle>();
     render(
+      <Form
+        ref={ref}
+        fieldInputDefinitions={[definition]}
+        jsonSchema={{
+          type: 'object',
+          options: { omitEmpty: false },
+          properties: {
+            text: {
+              type: nullable ? ['string', 'null'] : 'string',
+              format,
+              options: { omitEmpty: false },
+            },
+          },
+        }}
+        onError={() => {}}
+      />,
+    );
+    const input = screen.getByRole<HTMLInputElement | HTMLTextAreaElement>(
+      'textbox',
+    );
+    await userEvent.type(input, 'example.com');
+    expect(ref.current!.getValue()).toEqual({
+      text: format === 'uri' ? 'http://example.com' : 'example.com',
+    });
+    await userEvent.clear(input);
+    expect(ref.current!.getValue()).toEqual({ text: undefined });
+    expect(input.value).toBe('');
+  },
+);
+
+it.each([false, true])(
+  'keeps a protocol-only change local until an address is typed (nullable: %s)',
+  async (nullable) => {
+    const ref = createRef<FormHandle>();
+    const { container } = render(
       <Form
         ref={ref}
         fieldInputDefinitions={[FieldInputUriDefinition]}
         jsonSchema={{
           type: 'object',
+          options: { omitEmpty: false },
           properties: {
-            value: {
+            text: {
               type: nullable ? ['string', 'null'] : 'string',
               format: 'uri',
               options: { omitEmpty: false },
             },
           },
         }}
+        onError={() => {}}
       />,
     );
-    fireEvent.mouseDown(screen.getByRole('combobox'));
-    await userEvent.click(await screen.findByText('ftp://'));
-    expect(ref.current!.getValue().value).toBeUndefined();
-    await userEvent.type(screen.getByRole('textbox'), 'example.com');
-    expect(ref.current!.getValue()).toEqual({ value: 'ftp://example.com' });
+    await userEvent.click(container.querySelector('.ant-select-selector')!);
+    await userEvent.click(screen.getByTitle('ftp://'));
+    expect(ref.current!.getValue()).toEqual({ text: undefined });
+    expect(
+      container.querySelector('.ant-select-selection-item')!.textContent,
+    ).toBe('ftp://');
+    const input = screen.getByRole<HTMLInputElement>('textbox');
+    await userEvent.type(input, 'example.com');
+    expect(ref.current!.getValue()).toEqual({ text: 'ftp://example.com' });
+    await userEvent.clear(input);
+    expect(ref.current!.getValue()).toEqual({ text: undefined });
   },
 );

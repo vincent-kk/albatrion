@@ -35,7 +35,7 @@ it('reads protocols from presentation.FieldInputProps', async () => {
   );
   expect(screen.getByText('ftp://')).toBeTruthy();
   expect(screen.queryByText('http://')).toBeNull();
-  await userEvent.type(view.container.querySelector('input#\\/link')!, 'a');
+  await userEvent.type(view.container.querySelector('input:not([role])')!, 'a');
   expect(onChange).toHaveBeenLastCalledWith({ link: 'ftp://a' });
 });
 
@@ -63,4 +63,15 @@ it('accepts protocols under options without a schema error', () => {
   expect(screen.queryByRole('alert')).toBeNull();
   expect(screen.queryByText('ftp://')).toBeNull();
   expect(screen.getByText('http://')).toBeTruthy();
+});
+
+it('uses a compact layout for the URI protocol and address', () => {
+  const { container } = render(
+    <Form
+      fieldInputDefinitions={[FieldInputUriDefinition]}
+      jsonSchema={{ type: 'string', format: 'uri' }}
+    />,
+  );
+  const group = container.querySelector('.ant-space-compact-block');
+  expect(group?.querySelectorAll('input')).toHaveLength(2);
 });
