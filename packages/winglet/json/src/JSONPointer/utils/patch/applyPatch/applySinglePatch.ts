@@ -1,6 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
 import {
-  cloneLite,
   getDataProperty,
   isReservedName,
   setDataProperty,
@@ -8,19 +7,17 @@ import {
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
-import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
 import type { JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../patchModel';
 import { applyRootOperation } from './utils/applyRootOperation';
-import { assertCopySourcePresent } from './utils/assertCopySourcePresent';
 import { copyObject } from './utils/copyObject';
 import { decodePatchFragment } from './utils/decodePatchFragment';
 import { JSONPatchError } from './utils/error';
 import { getArrayIndex } from './utils/getArrayIndex';
 import { handleArray } from './utils/handleArray';
 import { handleObject } from './utils/handleObject';
-import { removeMoveSource } from './utils/removeMoveSource';
+import { readTransferValue } from './utils/readTransferValue';
 
 /**
  * Applies a single JSON Patch operation to a source object or array.
@@ -129,33 +126,8 @@ export const applySinglePatch = (
   let value: unknown;
   if (operation === Operation.ADD || operation === Operation.REPLACE)
     value = patch.value;
-  else if (operation === Operation.MOVE || operation === Operation.COPY) {
-    // Judged by operation rather than key presence: `move` and `copy` require a `from`
-    // pointer, and a missing or non-string one must surface as a patch error rather than
-    // as a TypeError thrown from somewhere deeper
-    const from = patch.from;
-    if (typeof from !== 'string')
-      throw new JSONPatchError(
-        'PATCH_PATH_INVALID',
-        `Patch operation '${operation}' requires a string 'from' pointer`,
-        { patch, index: patchIndex, operation: operation },
-      );
-    if (operation === Operation.COPY) {
-      let copied: unknown;
-      try {
-        copied = getValue(source, from);
-      } catch (error) {
-        if (from[0] === '#') decodePatchFragment(from, patch, patchIndex);
-        throw error;
-      }
-      // RFC 6902 4.5: the from location must exist. Only an undefined read can name a
-      // missing location, so only that read pays for the second walk
-      if (copied === undefined)
-        assertCopySourcePresent(source, from, patch, patchIndex);
-      else value = cloneLite(copied);
-    } else
-      value = removeMoveSource(source, from, patch, patchIndex, cloned, path);
-  }
+  else if (operation === Operation.MOVE || operation === Operation.COPY)
+    value = readTransferValue(source, patch, patchIndex, cloned, path);
 
   let current: any = source;
   let cursor = 1;
