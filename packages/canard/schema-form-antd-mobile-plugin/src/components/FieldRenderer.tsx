@@ -12,6 +12,7 @@ import { isRadioGroupInput } from '../utils/inputs/isRadioGroupInput';
 import { isSliderInput } from '../utils/inputs/isSliderInput';
 import { isStringSwitchInput } from '../utils/inputs/isStringSwitchInput';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
 
 /**
  * Assemble mobile parts without adding Space items for absent message children.
@@ -63,8 +64,10 @@ export const FieldRenderer = ({
       isBooleanSwitchInput(hint) ||
       isStringSwitchInput(hint) ||
       isSliderInput(hint));
+  const fallbackName = useFieldNameFallback(jsonSchema, name);
   const hiddenTitle = (
     <Label
+      children={fallbackName}
       style={{ display: 'none' }}
       {...(grouped || node.strategy === 'branch' ? { htmlFor: undefined } : {})}
     />
@@ -89,7 +92,7 @@ export const FieldRenderer = ({
         style={{ border: 0, margin: 0, padding: 0 }}
       >
         <span hidden={!(hint && isCheckboxGroupInput(hint))} id={labelId}>
-          {title}
+          {hint && isCheckboxGroupInput(hint) ? title : fallbackName}
         </span>
         <Space direction="vertical" block>
           <Input aria-labelledby={labelId} />

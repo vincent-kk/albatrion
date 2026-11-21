@@ -8,6 +8,7 @@ import type {
   NumberSchema,
 } from '@canard/schema-form';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
 import { getSliderBounds } from './utils/slider/getSliderBounds';
 import { useSliderControl } from './utils/slider/useSliderControl';
 
@@ -19,6 +20,7 @@ interface FieldInputSliderProps
 
 const FieldInputSlider = ({
   inputId,
+  name,
   jsonSchema,
   disabled,
   readOnly,
@@ -28,6 +30,7 @@ const FieldInputSlider = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputSliderProps) => {
+  const fieldName = useFieldNameFallback(jsonSchema, name);
   const bounds = useMemo(
     () =>
       getSliderBounds(
@@ -70,7 +73,6 @@ const FieldInputSlider = ({
       handle.setAttribute('data-focus-target', '');
       handle.setAttribute('aria-valuemin', String(min));
       handle.setAttribute('aria-valuemax', String(max));
-      if (labelledBy) handle.setAttribute('aria-labelledby', labelledBy);
       if (unset) {
         handle.removeAttribute('aria-valuenow');
         handle.setAttribute('aria-valuetext', 'Not set');
@@ -81,7 +83,7 @@ const FieldInputSlider = ({
         handle.style.opacity = '';
       }
     },
-    [inputId, labelledBy, unset, min, max, draft],
+    [inputId, unset, min, max, draft],
   );
   const committedChange =
     version.startsWith('5.10.') || version.startsWith('5.11.')
@@ -92,6 +94,7 @@ const FieldInputSlider = ({
       ref={markFocusTarget}
       role="group"
       aria-labelledby={labelledBy}
+      aria-label={fieldName}
       aria-invalid={misfit || undefined}
       onMouseDownCapture={beginPointer}
       onTouchStartCapture={beginPointer}
@@ -100,6 +103,7 @@ const FieldInputSlider = ({
     >
       <Slider
         ariaLabelledByForHandle={labelledBy}
+        ariaLabelForHandle={fieldName}
         onFocus={(event) => {
           if (unset) event.currentTarget.style.opacity = '1';
         }}

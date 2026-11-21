@@ -71,7 +71,12 @@ const FieldInputMonth = ({
   minimum,
   maximum,
 }: FieldInputMonthProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId);
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
       return [
@@ -135,12 +140,14 @@ const FieldInputMonth = ({
             id: getInputId('native'),
             InputProps: {
               'aria-labelledby': fieldTitleId,
+              'aria-label': fieldName,
               slotProps: {
                 input: {
                   id: inputId,
                   role: 'group',
                   'aria-disabled': disabled || undefined,
                   'aria-labelledby': fieldTitleId,
+                  'aria-label': fieldName,
                 },
               },
             },

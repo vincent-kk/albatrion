@@ -17,6 +17,7 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
 import { formatProtocol } from './utils/uri/formatProtocol';
 import { parseUri } from './utils/uri/parseUri';
 
@@ -39,6 +40,7 @@ interface FieldInputUriProps
 
 const FieldInputUri = ({
   inputId,
+  jsonSchema,
   labelId,
   getInputId,
   name,
@@ -52,6 +54,7 @@ const FieldInputUri = ({
   protocols,
   misfit,
 }: FieldInputUriProps) => {
+  const fieldName = useFieldNameFallback(jsonSchema, name);
   const normalizedProtocols = useMemo(() => {
     const rawProtocols = protocols || DEFAULT_PROTOCOLS;
     return rawProtocols.map(formatProtocol);
@@ -125,6 +128,7 @@ const FieldInputUri = ({
     <Space.Compact
       role="group"
       aria-labelledby={labelId}
+      aria-label={fieldName}
       block
       size={size || context?.size}
     >
@@ -132,6 +136,7 @@ const FieldInputUri = ({
       <Input
         ref={inputRef}
         aria-labelledby={labelId}
+        aria-label={fieldName}
         id={inputId}
         name={name}
         readOnly={readOnly}

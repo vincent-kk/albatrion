@@ -61,7 +61,12 @@ const FieldInputRadioGroup = ({
   hideLabel,
   misfit,
 }: FieldInputRadioGroupProps) => {
-  useFieldLabelAssociation(inputId, labelId);
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    labelId,
+    jsonSchema,
+    node.name,
+  );
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
     return [
@@ -106,6 +111,7 @@ const FieldInputRadioGroup = ({
     <FormControl
       component="fieldset"
       aria-labelledby={labelId}
+      aria-label={fieldName}
       required={required}
       disabled={disabled || readOnly}
       style={{
@@ -128,6 +134,7 @@ const FieldInputRadioGroup = ({
       <RadioGroup
         id={inputId}
         aria-labelledby={labelId}
+        aria-label={fieldName}
         name={inputId}
         defaultValue={initialValue}
         onChange={handleChange}

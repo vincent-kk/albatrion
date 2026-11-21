@@ -106,9 +106,13 @@ it.each([
         title,
         key: 'field',
       });
-      await waitFor(() =>
-        expect(view.getByRole('textbox', { name }), state.step).toBe(control),
-      );
+      if (state.external) {
+        await waitFor(() =>
+          expect(view.getByRole('textbox', { name }), state.step).toBe(control),
+        );
+      } else {
+        expect(view.getByRole('textbox', { name }), state.step).toBe(control);
+      }
       observed.add(state.step);
     }
     expect(observed).toEqual(

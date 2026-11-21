@@ -49,7 +49,12 @@ const FieldInputTime = ({
   hideLabel,
   misfit,
 }: FieldInputTimeProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId);
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const [label, size, variant, fullWidth, ampm] = useMemo(() => {
     if (hideLabel)
       return [
@@ -108,12 +113,14 @@ const FieldInputTime = ({
             id: getInputId('native'),
             InputProps: {
               'aria-labelledby': fieldTitleId,
+              'aria-label': fieldName,
               slotProps: {
                 input: {
                   id: inputId,
                   role: 'group',
                   'aria-disabled': disabled || undefined,
                   'aria-labelledby': fieldTitleId,
+                  'aria-label': fieldName,
                 },
               },
             },

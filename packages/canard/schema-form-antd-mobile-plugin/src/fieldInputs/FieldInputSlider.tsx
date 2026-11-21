@@ -13,6 +13,7 @@ import type {
 } from '@canard/schema-form';
 
 import { isSliderInput } from '../utils/inputs/isSliderInput';
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
 import { SliderKeyboardControl } from './components/SliderKeyboardControl';
 import { getSliderBounds } from './utils/slider/getSliderBounds';
 import { getSliderDisplayValue } from './utils/slider/getSliderDisplayValue';
@@ -52,6 +53,7 @@ const FieldInputSlider = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputSliderProps) => {
+  const fieldName = useFieldNameFallback(jsonSchema, name);
   const range = type === 'array';
   const initialValue = range
     ? isArray(defaultValue) &&
@@ -180,7 +182,7 @@ const FieldInputSlider = ({
       onMouseDownCapture={beginPointer}
       onTouchStartCapture={beginPointer}
       aria-labelledby={labelledBy}
-      aria-label={labelledBy ? undefined : name}
+      aria-label={fieldName}
       aria-invalid={misfit || undefined}
     >
       <SliderKeyboardControl
@@ -212,7 +214,7 @@ const FieldInputSlider = ({
               ? [bounds.toLibrary(displayed[0]), bounds.toLibrary(displayed[1])]
               : bounds.toLibrary(displayed)
           }
-          aria-label={name}
+          aria-label={fieldName}
           onChange={(value) => {
             if (pointer.current === 'canceled') return;
             if (value === null) {

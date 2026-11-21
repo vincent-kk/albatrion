@@ -11,6 +11,8 @@ import type {
   FieldInputProps,
 } from '@canard/schema-form';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+
 const Add = (props: ButtonProps) => (
   <Button color="primary" startIcon={<AddIcon />} {...props}>
     Add
@@ -25,6 +27,7 @@ const FieldInputArray = ({
   inputId,
   labelId: fieldTitleId,
   jsonSchema,
+  name,
   node,
   readOnly,
   disabled,
@@ -46,7 +49,13 @@ const FieldInputArray = ({
   });
 
   return (
-    <div id={inputId} role="group" aria-labelledby={fieldTitleId} style={style}>
+    <div
+      id={inputId}
+      role="group"
+      aria-labelledby={fieldTitleId}
+      aria-label={useFieldNameFallback(jsonSchema, name)}
+      style={style}
+    >
       {ChildFields &&
         map(ChildFields, (ChildField, i) => {
           const key = ChildField.key;

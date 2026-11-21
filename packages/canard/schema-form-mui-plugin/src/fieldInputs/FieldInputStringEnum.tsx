@@ -49,7 +49,12 @@ const FieldInputStringEnum = ({
   hideLabel,
   misfit,
 }: FieldInputStringEnumProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId);
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
       return [
@@ -115,6 +120,7 @@ const FieldInputStringEnum = ({
         SelectDisplayProps={{
           id: inputId,
           'aria-labelledby': fieldTitleId,
+          'aria-label': fieldName,
         }}
         MenuProps={{ id: getInputId('menu') }}
         name={name}

@@ -11,6 +11,7 @@ import type {
 } from '@canard/schema-form';
 
 import { isStringSwitchInput } from '../utils/inputs/isStringSwitchInput';
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
 import { SwitchKeyboardControl } from './components/SwitchKeyboardControl';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
@@ -41,6 +42,7 @@ const FieldInputStringSwitch = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputStringSwitchProps) => {
+  const fieldName = useFieldNameFallback(jsonSchema, name);
   const [checked, unchecked] = useMemo(() => {
     const [checked, unchecked] = jsonSchema.enum || [];
     return [
@@ -65,6 +67,7 @@ const FieldInputStringSwitch = ({
     <SwitchKeyboardControl id={inputId} name={name} disabled={disabled}>
       <Switch
         aria-labelledby={labelledBy}
+        aria-label={fieldName}
         data-focus-target
         tabIndex={disabled ? undefined : 0}
         aria-invalid={misfit || undefined}

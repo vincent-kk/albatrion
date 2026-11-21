@@ -50,7 +50,12 @@ const FieldInputStringSwitch = ({
   misfit,
   alias,
 }: FieldInputStringSwitchProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId);
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
     return [
@@ -109,6 +114,7 @@ const FieldInputStringSwitch = ({
             slotProps={{
               input: {
                 'aria-labelledby': fieldTitleId,
+                'aria-label': fieldName,
                 role: 'switch',
                 'aria-invalid': misfit || undefined,
               },

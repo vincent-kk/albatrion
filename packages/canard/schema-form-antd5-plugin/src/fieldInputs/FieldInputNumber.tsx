@@ -11,6 +11,9 @@ import type {
   NumberSchema,
 } from '@canard/schema-form';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useNativeFieldName } from '../utils/useNativeFieldName';
+
 interface FieldInputNumberProps
   extends FieldInputPropsWithSchema<
     number | null,
@@ -24,6 +27,7 @@ interface FieldInputNumberProps
 
 const FieldInputNumber = ({
   inputId,
+  labelId,
   name,
   jsonSchema,
   schemaType,
@@ -39,6 +43,11 @@ const FieldInputNumber = ({
   size,
   misfit,
 }: FieldInputNumberProps) => {
+  const naming = useNativeFieldName(
+    inputId,
+    labelId,
+    useFieldNameFallback(jsonSchema, name),
+  );
   const withheld = useRef(false);
   const [revision, setRevision] = useState(0);
   const handleChange = useHandle((input: number | null) => {
@@ -68,6 +77,7 @@ const FieldInputNumber = ({
     <InputNumber
       key={revision}
       id={inputId}
+      {...naming}
       name={name}
       readOnly={readOnly}
       disabled={disabled}

@@ -10,6 +10,7 @@ import type { FieldRendererProps } from '@canard/schema-form';
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 import { isRadioGroupInput } from '../utils/inputs/isRadioGroupInput';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
 
 /** Legends use the same wrapping as registered labels. */
 const TITLE_STYLE: CSSProperties = { wordBreak: 'unset' };
@@ -60,8 +61,10 @@ export const FieldRenderer = ({
   const grouped =
     hint !== undefined &&
     (isRadioGroupInput(hint) || isCheckboxGroupInput(hint));
+  const fallbackName = useFieldNameFallback(jsonSchema, name);
   const hiddenTitle = (
     <Label
+      children={fallbackName}
       style={{ display: 'none' }}
       {...(grouped || node.strategy === 'branch' ? { htmlFor: undefined } : {})}
     />

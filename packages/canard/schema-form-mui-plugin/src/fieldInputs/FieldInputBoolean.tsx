@@ -36,7 +36,12 @@ const FieldInputBoolean = ({
   hideLabel,
   misfit,
 }: FieldInputBooleanProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId);
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
     return [
@@ -71,6 +76,7 @@ const FieldInputBoolean = ({
           slotProps={{
             input: {
               'aria-labelledby': fieldTitleId,
+              'aria-label': fieldName,
               'aria-invalid': misfit || undefined,
             },
           }}

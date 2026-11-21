@@ -10,6 +10,7 @@ import type { FieldInputProps } from '@canard/schema-form';
 
 import { getKeyboardValue } from '../utils/slider/getKeyboardValue';
 import type { getSliderBounds } from '../utils/slider/getSliderBounds';
+import { bindSliderThumbs } from './SliderKeyboardControl/bindSliderThumbs';
 
 /** Keyboard adapter for library thumbs that expose ARIA but no native keyboard input. */
 interface SliderKeyboardControlProps {
@@ -72,17 +73,33 @@ export const SliderKeyboardControl = ({
     if (disabled) keyboardCommit.current = undefined;
   }, [disabled]);
   useEffect(() => {
-    const thumbs =
-      ref.current?.querySelectorAll<HTMLElement>('[role="slider"]') ?? [];
-    for (const [index, thumb] of Array.from(thumbs).entries()) {
-      thumb.id = index === 0 ? inputId : getInputId(index);
-      if (labelledBy) thumb.setAttribute('aria-labelledby', labelledBy);
-      thumb.setAttribute('aria-valuemin', String(min));
-      thumb.setAttribute('aria-valuemax', String(max));
-      thumb.tabIndex = disabled ? -1 : 0;
-      if (disabled) thumb.removeAttribute('data-focus-target');
-      else thumb.setAttribute('data-focus-target', '');
-    }
+    const boundary = ref.current;
+    if (!boundary) return;
+    const bind = () =>
+      bindSliderThumbs(boundary, {
+        inputId,
+        getInputId,
+        labelledBy,
+        min,
+        max,
+        disabled,
+      });
+    bind();
+    const observer = new MutationObserver((records) => {
+      if (
+        records.some(({ addedNodes }) =>
+          Array.from(addedNodes).some(
+            (node) =>
+              node instanceof Element &&
+              (node.matches('[role="slider"]') ||
+                !!node.querySelector('[role="slider"]')),
+          ),
+        )
+      )
+        bind();
+    });
+    observer.observe(boundary, { childList: true, subtree: true });
+    return () => observer.disconnect();
   }, [disabled, inputId, getInputId, labelledBy, min, max]);
   useEffect(() => {
     const thumbs =

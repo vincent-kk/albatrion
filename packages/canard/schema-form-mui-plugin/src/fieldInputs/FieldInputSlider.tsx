@@ -78,7 +78,12 @@ const FieldInputSlider = ({
   unsetValueText = DEFAULT_UNSET_VALUE_TEXT,
   misfit,
 }: FieldInputSliderProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId);
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
     return [
@@ -163,6 +168,7 @@ const FieldInputSlider = ({
             ? {
                 id: inputId,
                 'aria-labelledby': fieldTitleId,
+                'aria-label': fieldName,
                 'aria-valuemin': min,
                 'aria-valuemax': max,
 
@@ -173,6 +179,7 @@ const FieldInputSlider = ({
             : {
                 id: inputId,
                 'aria-labelledby': fieldTitleId,
+                'aria-label': fieldName,
                 'aria-valuemin': min,
                 'aria-valuemax': max,
                 'aria-invalid': misfit || undefined,

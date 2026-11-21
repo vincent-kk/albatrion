@@ -51,7 +51,12 @@ const FieldInputUri = ({
   hideLabel,
   misfit,
 }: FieldInputUriProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId);
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
       return [
@@ -116,7 +121,7 @@ const FieldInputUri = ({
   });
 
   return (
-    <Box role="group" aria-labelledby={fieldTitleId}>
+    <Box role="group" aria-labelledby={fieldTitleId} aria-label={fieldName}>
       <InputLabel htmlFor={inputId} required={required}>
         {label}
       </InputLabel>
@@ -149,7 +154,10 @@ const FieldInputUri = ({
           disabled={disabled}
           error={misfit}
           slotProps={{
-            htmlInput: { 'aria-labelledby': fieldTitleId },
+            htmlInput: {
+              'aria-labelledby': fieldTitleId,
+              'aria-label': fieldName,
+            },
             input: {
               readOnly,
             },

@@ -54,7 +54,12 @@ const FieldInputTextarea = ({
   hideLabel,
   misfit,
 }: FieldInputTextareaProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId);
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
       return [
@@ -106,7 +111,7 @@ const FieldInputTextarea = ({
       minRows={finalMinRows}
       maxRows={finalMaxRows}
       slotProps={{
-        htmlInput: { 'aria-labelledby': fieldTitleId },
+        htmlInput: { 'aria-labelledby': fieldTitleId, 'aria-label': fieldName },
         input: {
           readOnly,
         },

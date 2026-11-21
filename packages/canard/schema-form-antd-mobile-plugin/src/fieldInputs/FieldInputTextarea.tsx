@@ -10,6 +10,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useNativeFieldName } from '../utils/useNativeFieldName';
 import { useControlIdentifiers } from './utils/controls/useControlIdentifiers';
 
 type TextareaSchema = StringSchema & {
@@ -29,10 +31,15 @@ const FieldInputTextarea = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputPropsWithSchema<string, TextareaSchema>) => {
+  const fieldName = useFieldNameFallback(jsonSchema, name);
+  const naming = useNativeFieldName(inputId, labelledBy, fieldName);
   const bindControls = useControlIdentifiers(
     inputId,
     name,
     'textarea:not([aria-hidden="true"])',
+    undefined,
+    undefined,
+    naming,
   );
   const handleChange = useHandle((text: string) =>
     onChange(text === '' ? undefined : text),
@@ -49,7 +56,7 @@ const FieldInputTextarea = ({
       ref={bindControls}
       role="group"
       aria-labelledby={labelledBy}
-      aria-label={labelledBy ? undefined : name}
+      aria-label={fieldName}
       aria-invalid={misfit || undefined}
     >
       <TextArea

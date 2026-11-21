@@ -8,6 +8,10 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useNativeFieldName } from '../utils/useNativeFieldName';
+import { useControlIdentifiers } from './utils/controls/useControlIdentifiers';
+
 type StringJSONSchema = StringSchema & {
   format?: 'password';
 };
@@ -24,19 +28,31 @@ const FieldInputString = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputPropsWithSchema<string | null, StringJSONSchema>) => {
+  const fieldName = useFieldNameFallback(jsonSchema, name);
+  const naming = useNativeFieldName(inputId, labelledBy, fieldName);
+  const bindControls = useControlIdentifiers(
+    inputId,
+    name,
+    'input',
+    undefined,
+    undefined,
+    naming,
+  );
   const type = jsonSchema.format === 'password' ? 'password' : 'text';
   const handleChange = useHandle((text: string) =>
     onChange(text === '' ? undefined : text),
   );
   return (
     <div
+      ref={bindControls}
       role="group"
       aria-labelledby={labelledBy}
-      aria-label={labelledBy ? undefined : name}
+      aria-label={fieldName}
       aria-invalid={misfit || undefined}
     >
       <Input
         id={inputId}
+        aria-label={naming['aria-label']}
         name={name}
         type={type}
         readOnly={readOnly}

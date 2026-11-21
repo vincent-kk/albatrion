@@ -1,46 +1,43 @@
 import { applyFieldLabel } from './observeFieldLabels/applyFieldLabel';
 import { hasInputLabelChange } from './observeFieldLabels/hasInputLabelChange';
+import { observeInputLabels } from './observeFieldLabels/observeInputLabels';
 import { observeLabelAddress } from './observeFieldLabels/observeLabelAddress';
-import { readFieldLabelName } from './observeFieldLabels/readFieldLabelName';
+import { readCurrentFieldLabels } from './observeFieldLabels/readCurrentFieldLabels';
 
 /**
- * Keep the composed name current while a control references a core label address.
- * @param control - The real input at the core input address.
- * @param labelId - The address at which an external renderer may supply a label.
- * @returns Cleanup for the address subscription and the input-owned label observer.
+ * Resolve both connected elements from their addresses whenever either binding changes.
+ * @param document - The document containing the field binding.
+ * @param inputId - Core address that a replacement control may take over.
+ * @param labelId - Core address of a possibly absent external title.
+ * @param publish - Supply an input-owned caption through declarative control props.
+ * @returns Cleanup for both address subscriptions and the input-label observation.
  */
 export const observeFieldLabels = (
-  control: HTMLElement,
+  document: Document,
+  inputId: string,
   labelId: string,
-): (() => void) | undefined => {
-  const field = control.closest('[data-path]');
-  if (!field) return;
-  if (!control.getAttribute('aria-labelledby')?.split(/\s+/).includes(labelId))
-    return;
-
-  const document = control.ownerDocument;
+  publish: (name: string | undefined) => void,
+): (() => void) => {
   let restore: (() => void) | undefined;
-  const update = () => {
-    restore?.();
-    const external = document.getElementById(labelId);
-    const name = readFieldLabelName(field, control, external);
-    restore = name ? applyFieldLabel(external ?? control, name) : undefined;
-  };
-  const unsubscribe = observeLabelAddress(document, labelId, update);
+  let observedField: Element | null = null;
   const observer = new MutationObserver((records) => {
     if (hasInputLabelChange(records)) update();
   });
-  observer.observe(field, {
-    childList: true,
-    characterData: true,
-    subtree: true,
-    attributes: true,
-    attributeFilter: ['hidden', 'aria-hidden'],
-  });
+  const update = () => {
+    const source = readCurrentFieldLabels(document, inputId, labelId);
+    if (source.field !== observedField)
+      observedField = observeInputLabels(observer, source.field);
+    restore?.();
+    restore = applyFieldLabel(source.external, source.override);
+    publish(source.caption);
+  };
+  const unsubscribeInput = observeLabelAddress(document, inputId, update);
+  const unsubscribeLabel = observeLabelAddress(document, labelId, update);
   update();
   return () => {
     observer.disconnect();
-    unsubscribe();
+    unsubscribeInput();
+    unsubscribeLabel();
     restore?.();
   };
 };

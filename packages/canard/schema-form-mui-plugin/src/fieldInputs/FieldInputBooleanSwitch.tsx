@@ -46,7 +46,12 @@ const FieldInputBooleanSwitch = ({
   alias,
   misfit,
 }: FieldInputBooleanSwitchProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId);
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onChange(event.target.checked);
@@ -91,6 +96,7 @@ const FieldInputBooleanSwitch = ({
           slotProps={{
             input: {
               'aria-labelledby': node.parentNode ? fieldTitleId : undefined,
+              'aria-label': fieldName,
               role: 'switch',
               'aria-invalid': misfit || undefined,
             },

@@ -11,6 +11,8 @@ import type {
   FieldInputProps,
 } from '@canard/schema-form';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+
 const Add = (props: ButtonProps) => (
   <Button type="primary" icon={<PlusOutlined />} {...props}>
     Add
@@ -23,6 +25,7 @@ const Remove = (props: ButtonProps) => (
 
 const FieldInputArray = ({
   inputId,
+  name,
   labelId,
   jsonSchema,
   node,
@@ -31,6 +34,7 @@ const FieldInputArray = ({
   ChildFields,
   style,
 }: FieldInputProps<any[]>) => {
+  const fieldName = useFieldNameFallback(jsonSchema, name);
   const maxItems = minLite(
     typeof jsonSchema.maxItems === 'number' ? jsonSchema.maxItems : Infinity,
     !jsonSchema.items && isArray(jsonSchema.prefixItems)
@@ -45,7 +49,13 @@ const FieldInputArray = ({
     node.remove(index);
   });
   return (
-    <div id={inputId} role="group" aria-labelledby={labelId} style={style}>
+    <div
+      id={inputId}
+      role="group"
+      aria-labelledby={labelId}
+      aria-label={fieldName}
+      style={style}
+    >
       {ChildFields &&
         map(ChildFields, (ChildField, i) => {
           const key = ChildField.key;

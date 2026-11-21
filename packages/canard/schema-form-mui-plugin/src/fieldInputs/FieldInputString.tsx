@@ -48,7 +48,12 @@ const FieldInputString = ({
   hideLabel,
   misfit,
 }: FieldInputStringProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId);
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
       return [
@@ -102,7 +107,7 @@ const FieldInputString = ({
       onChange={handleChange}
       size={size}
       slotProps={{
-        htmlInput: { 'aria-labelledby': fieldTitleId },
+        htmlInput: { 'aria-labelledby': fieldTitleId, 'aria-label': fieldName },
         input: {
           readOnly,
         },

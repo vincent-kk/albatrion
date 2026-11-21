@@ -63,7 +63,12 @@ const FieldInputStringCheckbox = ({
   hideLabel,
   misfit,
 }: FieldInputStringCheckboxProps) => {
-  useFieldLabelAssociation(inputId, labelId);
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    labelId,
+    jsonSchema,
+    name,
+  );
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
     return [
@@ -111,6 +116,7 @@ const FieldInputStringCheckbox = ({
       role="group"
       id={inputId}
       aria-labelledby={labelId}
+      aria-label={fieldName}
       aria-invalid={misfit || undefined}
       required={required}
       disabled={disabled || readOnly}

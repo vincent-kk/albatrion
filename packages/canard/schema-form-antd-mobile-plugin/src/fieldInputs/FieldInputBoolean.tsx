@@ -9,8 +9,13 @@ import type {
   FieldInputProps,
 } from '@canard/schema-form';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useNativeFieldName } from '../utils/useNativeFieldName';
+import { useControlIdentifiers } from './utils/controls/useControlIdentifiers';
+
 const FieldInputBoolean = ({
   inputId,
+  jsonSchema,
   name,
   disabled,
   value,
@@ -18,6 +23,16 @@ const FieldInputBoolean = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputProps<boolean | null>) => {
+  const fieldName = useFieldNameFallback(jsonSchema, name);
+  const naming = useNativeFieldName(inputId, labelledBy, fieldName);
+  const bindControls = useControlIdentifiers(
+    inputId,
+    undefined,
+    'input[type="checkbox"]',
+    undefined,
+    undefined,
+    naming,
+  );
   const [indeterminate, checked] = useMemo(
     () => [value !== undefined && typeof value !== 'boolean', value ?? false],
     [value],
@@ -25,9 +40,10 @@ const FieldInputBoolean = ({
   const handleChange = useHandle(onChange);
   return (
     <div
+      ref={bindControls}
       role="group"
       aria-labelledby={labelledBy}
-      aria-label={labelledBy ? undefined : name}
+      aria-label={fieldName}
       aria-invalid={misfit || undefined}
     >
       <Checkbox

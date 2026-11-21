@@ -15,6 +15,7 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
 import { decodeEnumSelection } from './utils/enum/decodeEnumSelection';
 import { filterEnumOption } from './utils/enum/filterEnumOption';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
@@ -35,6 +36,7 @@ interface FieldInputStringEnumProps
 
 const FieldInputStringEnum = ({
   inputId,
+  name,
   labelId,
   jsonSchema,
   disabled,
@@ -47,6 +49,7 @@ const FieldInputStringEnum = ({
   size,
   misfit,
 }: FieldInputStringEnumProps) => {
+  const fieldName = useFieldNameFallback(jsonSchema, name);
   const [schema, alias, mode] = useMemo(() => {
     const labels = context.enumLabels || aliasProp;
     if (isArraySchema(jsonSchema))
@@ -105,6 +108,7 @@ const FieldInputStringEnum = ({
     <Select
       id={inputId}
       aria-labelledby={labelId}
+      aria-label={fieldName}
       mode={mode}
       filterOption={filterEnumOption}
       placeholder={placeholder}

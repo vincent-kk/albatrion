@@ -54,7 +54,12 @@ const FieldInputNumber = ({
   hideLabel,
   misfit,
 }: FieldInputNumberProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId);
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
       return [
@@ -136,6 +141,7 @@ const FieldInputNumber = ({
           readOnly,
           inputProps: {
             'aria-labelledby': fieldTitleId,
+            'aria-label': fieldName,
             min: jsonSchema.minimum,
             max: jsonSchema.maximum,
             step: jsonSchema.multipleOf || (type === 'integer' ? 1 : 'any'),

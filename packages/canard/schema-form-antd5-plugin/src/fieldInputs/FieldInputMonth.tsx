@@ -12,6 +12,9 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useNativeFieldName } from '../utils/useNativeFieldName';
+
 const DATA_FORMAT = 'YYYY-MM';
 
 interface FieldInputMonthProps
@@ -29,6 +32,8 @@ interface FieldInputMonthProps
 
 const FieldInputMonth = ({
   inputId,
+  labelId,
+  jsonSchema,
   name,
   disabled,
   readOnly,
@@ -40,6 +45,11 @@ const FieldInputMonth = ({
   maximum,
   misfit,
 }: FieldInputMonthProps) => {
+  const naming = useNativeFieldName(
+    inputId,
+    labelId,
+    useFieldNameFallback(jsonSchema, name),
+  );
   const handleChange = useHandle((value: Dayjs | null) => {
     onChange(value ? value.format(DATA_FORMAT) : undefined);
   });
@@ -62,6 +72,7 @@ const FieldInputMonth = ({
   return (
     <DatePicker
       id={inputId}
+      {...naming}
       name={name}
       picker="month"
       disabled={disabled || readOnly}
