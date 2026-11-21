@@ -3,7 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { WriteOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import { isNamedPointerSegments } from '../../../utils/paths/isNamedPointerSegments';
 import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
 import { replaceAtPath } from './utils/replaceAtPath';
@@ -60,6 +60,13 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
         values?.[index],
         write.option,
         target.node,
+        !target.node &&
+          write.option & WriteOption.Merge &&
+          !(write.option & WriteOption.Replace)
+          ? write.node.parent?.blueprintNode.childEntries.find(
+              (entry) => entry.name === target.name,
+            )?.node
+          : undefined,
       );
     }
   }

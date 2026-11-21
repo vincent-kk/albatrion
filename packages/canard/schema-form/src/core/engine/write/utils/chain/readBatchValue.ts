@@ -4,10 +4,10 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { Nullable } from '@aileron/declare';
 
 import type { FieldNodeRecord } from '../../../record';
-import { interpretFieldNodeInput } from '../../../settle';
 import { WriteOption } from '../../../types/value';
 import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
 import { composeBatchValue } from './composeBatchValue';
+import { readMarkedStoredValue } from './utils/readMarkedStoredValue';
 import { replaceAtPath } from './utils/replaceAtPath';
 
 /** Follow own properties only; a missing step or a primitive reads undefined. */
@@ -44,7 +44,15 @@ export const readBatchValue = <Self extends FieldNodeRecord<Self>>(
   let base = root.storedValue;
   if (!targets) {
     if (readOwnPath(base, names) !== node.storedValue)
-      base = replaceAtPath(base, names, node.storedValue, WriteOption.Overwrite);
+      base = replaceAtPath(
+        base,
+        names,
+        node.storedValue,
+        WriteOption.Overwrite,
+        node,
+        undefined,
+        true,
+      );
   } else {
     const host = readOwnPath(base, names);
     for (const target of targets)
@@ -57,21 +65,19 @@ export const readBatchValue = <Self extends FieldNodeRecord<Self>>(
           [...names, target.name],
           target.node.storedValue,
           WriteOption.Overwrite,
+          target.node,
+          undefined,
+          true,
         );
   }
   const value = readOwnPath(
     composeBatchValue(root, root.runtime.batchWrites ?? [], base),
     names,
   );
-  if (!targets) return interpretFieldNodeInput(node.blueprintNode, value, node);
-  const entries = node.parent?.blueprintNode.childEntries;
+  if (!targets) return readMarkedStoredValue(node, value);
   return mapArray(targets, (target) => {
+    if (!target.node) return undefined;
     const slot = readOwnPath(value, [target.name]);
-    const template =
-      target.node?.blueprintNode ??
-      entries?.find((entry) => entry.name === target.name)?.node;
-    return template
-      ? interpretFieldNodeInput(template, slot, target.node)
-      : slot;
+    return readMarkedStoredValue(target.node, slot);
   });
 };

@@ -29,7 +29,7 @@ it.each(['batch', 'nested batch', 'sequential'] as const)(
     );
     let seen: unknown;
     act(() => {
-      const root = ref.current!.node;
+      const root = ref.current!.node!;
       const o = ref.current!.findNode('/o')!;
       const n = ref.current!.findNode('/o/n')!;
       const calls = () => {
@@ -70,7 +70,7 @@ it.each(['identity updater', 'empty string'] as const)(
       />,
     );
     act(() =>
-      ref.current!.node.batch(() => {
+      ref.current!.node!.batch(() => {
         ref.current!.findNode('/other')!.setValue(true);
         const n = ref.current!.findNode('/o/n')!;
         if (operation === 'empty string') n.setValue('');
