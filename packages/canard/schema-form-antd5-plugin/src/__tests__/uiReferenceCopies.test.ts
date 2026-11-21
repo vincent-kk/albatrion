@@ -12,6 +12,7 @@ it('keeps the independent reference models identical across UI plugins', () => {
     'fieldNameReference.ts',
     'fieldLabelLifecycle.ts',
     'fieldLabelPresence.ts',
+    'fieldLabelSemantics.ts',
     ...helpers,
   ]) {
     const file = `src/__tests__/utils/${model}`;

@@ -1,0 +1,19 @@
+/** Current title and ownership scenarios for the independent name model. */
+export const fieldLabelSemantics = () => ({
+  labels: [
+    { kind: 'regular', caption: 'Outer' },
+    { kind: 'decorative only', caption: undefined },
+    { kind: 'hidden', caption: undefined },
+    { kind: 'aria hidden', caption: undefined },
+    { kind: 'hidden ancestor', caption: undefined },
+    { kind: 'CSS display', caption: 'Outer' },
+    { kind: 'CSS visibility', caption: 'Outer' },
+    { kind: 'CSS class', caption: 'Outer' },
+  ] as const,
+  ownership: [
+    { kind: 'authored before', caption: 'Before', outer: true },
+    { kind: 'authored after', caption: 'After', outer: false },
+    { kind: 'authored changed', caption: 'Changed', outer: true },
+    { kind: 'cleanup', caption: 'Changed', outer: false },
+  ] as const,
+});
