@@ -26,6 +26,7 @@ import { staticSpec } from './staticSpec';
 import { admitsSameValueWrite } from './utils/admitsSameValueWrite';
 import { keepsHostKeys } from './utils/keepsHostKeys';
 import { recordNamedArrayItems } from './utils/recordNamedArrayItems';
+import { recordNamedObjectSlots } from './utils/recordNamedObjectSlots';
 import { recordRetainedSource } from './utils/recordRetainedSource';
 import { restoreWriteEpochPaths } from './utils/restoreWriteEpochPaths';
 
@@ -229,6 +230,8 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   };
   if (writeOrigin !== undefined) distribution.writeOrigin = writeOrigin;
   context.distributedInputs.set(node, distribution);
+  if (context.isAutomatic && writeOrigin !== undefined && isPlain(value))
+    recordNamedObjectSlots(node, value, context);
   if (context.writeEpoch !== undefined) node.writeEpoch = context.writeEpoch;
   else context.dirtyPaths.add(node.path);
   if (!sameShape) context.shapeDirtyPaths.add(node.path);

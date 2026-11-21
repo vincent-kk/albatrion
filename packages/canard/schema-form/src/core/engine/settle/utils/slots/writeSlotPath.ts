@@ -11,6 +11,7 @@ import { getSlotPathEntry } from './getSlotPathEntry';
 import { getSlotPathNames } from './getSlotPathNames';
 import { getSlotSource } from './getSlotSource';
 import { markSlotChange } from './markSlotChange';
+import { recordRetainedSlotWrite } from './utils/recordRetainedSlotWrite';
 
 /** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
@@ -25,6 +26,7 @@ type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
  * @param context - Optional automatic-write rollback scope
  * @param isAutomatic - Whether projected child writes preserve wrong-kind ancestor source
  * @param preserveCandidates - Structural replay keeps other kinds at the same address
+ * @param selectsNamedSource - Whether this write owns the slot's retained source
  * @returns Whether a terminal descendant has a projected value
  */
 export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
@@ -36,6 +38,7 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
   context?: SettlementContext<Self>,
   isAutomatic = false,
   preserveCandidates = false,
+  selectsNamedSource?: boolean,
 ): boolean => {
   const names = getSlotPathNames(root.runtime, path);
   if (names === undefined) return false;
@@ -131,6 +134,8 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
     const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
       new Map());
     overlays.set(entry, patch(entry.node, instance, previous, depth + 1));
+    if (context && selectsNamedSource !== undefined)
+      recordRetainedSlotWrite(host, entry, context, selectsNamedSource);
     if (!preserveCandidates) {
       let entryIdentity: Optional<string>;
       for (const other of entries) {
@@ -146,6 +151,8 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
         markSlotChange(host, other, undefined, context);
         host.inactiveSlots?.delete(other);
         host.inactiveSlotOverlays?.delete(other);
+        if (context && selectsNamedSource !== undefined)
+          recordRetainedSlotWrite(host, other, context, selectsNamedSource);
       }
     }
     return wrote;

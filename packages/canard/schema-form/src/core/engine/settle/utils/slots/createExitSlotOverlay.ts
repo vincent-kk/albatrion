@@ -54,6 +54,14 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
         : undefined),
       ...previous,
     };
+  if (retained?.namedChildren?.size && !context?.exceededBudget)
+    previous = {
+      ...previous,
+      children: new Map([
+        ...(previous?.children ?? []),
+        ...retained.namedChildren,
+      ]),
+    };
   const supplied =
     context &&
     readExitInputOverlays(
@@ -161,10 +169,11 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
   }
   for (const [entry, prior] of node.inactiveSlotOverlays ?? []) {
     if (visited.indexOf(entry) !== -1) continue;
-    if (!clear && hasSlotOverlaySource(prior)) hasSource = true;
+    const supplied = previous?.children?.get(entry) ?? prior;
+    if (!clear && hasSlotOverlaySource(supplied)) hasSource = true;
     const overlay = clear
       ? { isWhole: true, source: undefined, extras: undefined }
-      : prior;
+      : supplied;
     if (overlay !== previous?.children?.get(entry)) {
       children ??= new Map(previous?.children);
       children.set(entry, overlay);

@@ -122,6 +122,8 @@ export interface RetainedSource {
   readonly distribution?: Distribution;
   /** Whether the most recent accepted write selects the boundary channels. */
   shouldUseBaseline: boolean;
+  /** Named input for child bindings that have not received a live occurrence. */
+  namedChildren?: Map<BlueprintChildEntry, InactiveSlotOverlay>;
 }
 
 /** Structure and input-only bindings of one automatically written array. */
@@ -308,6 +310,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   retainedSources?: Map<Self, RetainedSource>;
   /** Array structure decisions at the same owner lifetimes as retainedSources. */
   retainedArrays?: Map<Self, RetainedArraySources>;
+  /** Inactive bindings whose current writes own the retained source. */
+  namedSlotWrites?: Map<Self, Set<BlueprintChildEntry>>;
   /** Previous state for each automatic write, restored in reverse order. */
   automaticLog: {
     node: Self;

@@ -25,6 +25,8 @@ export const restoreSlotSources = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   for (const [host, bindings] of context.slotAutomaticLog ?? [])
     for (const [entry, previous] of bindings) {
+      if (scope !== undefined && context.namedSlotWrites?.get(host)?.has(entry))
+        continue;
       const path = appendSegment(host.path, entry.name);
       if (
         scope !== undefined &&
