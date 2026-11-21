@@ -26,7 +26,7 @@ type FieldInputDateProps = FieldInputPropsWithSchema<
   PickerPresentation;
 
 const FieldInputDate = ({
-  path,
+  inputId,
   name,
   disabled,
   readOnly,
@@ -53,7 +53,7 @@ const FieldInputDate = ({
 
   return (
     <DatePicker
-      id={path}
+      id={inputId}
       name={name}
       disabled={disabled || readOnly}
       disabledDate={disabledDate}

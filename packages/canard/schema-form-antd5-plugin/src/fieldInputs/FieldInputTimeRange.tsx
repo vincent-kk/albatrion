@@ -14,6 +14,7 @@ import type {
 
 import type { PickerPresentation } from './utils/picker/PickerPresentation';
 import { getPickerRangeValue } from './utils/picker/getPickerRangeValue';
+import { getRangePickerId } from './utils/picker/getRangePickerId';
 import { TIME_FORMAT, parsePickerValue } from './utils/picker/parsePickerValue';
 import { usePickerRangeChange } from './utils/picker/usePickerRangeChange';
 
@@ -32,7 +33,9 @@ type FieldInputTimeRangeProps = FieldInputPropsWithSchema<
   PickerPresentation;
 
 const FieldInputTimeRange = ({
-  path,
+  inputId,
+  labelId,
+  getInputId,
   name,
   readOnly,
   disabled,
@@ -75,7 +78,8 @@ const FieldInputTimeRange = ({
 
   return (
     <DatePicker.RangePicker
-      id={path}
+      id={getRangePickerId(inputId, getInputId)}
+      aria-labelledby={labelId}
       name={name}
       disabled={disabled || readOnly}
       format={TIME_FORMAT}

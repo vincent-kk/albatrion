@@ -15,6 +15,7 @@ import type {
 import type { PickerPresentation } from './utils/picker/PickerPresentation';
 import { getPickerDateLimits } from './utils/picker/getPickerDateLimits';
 import { getPickerRangeValue } from './utils/picker/getPickerRangeValue';
+import { getRangePickerId } from './utils/picker/getRangePickerId';
 import { usePickerRangeChange } from './utils/picker/usePickerRangeChange';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -31,7 +32,9 @@ type FieldInputDateRangeProps = FieldInputPropsWithSchema<
   PickerPresentation;
 
 const FieldInputDateRange = ({
-  path,
+  inputId,
+  labelId,
+  getInputId,
   name,
   readOnly,
   disabled,
@@ -56,7 +59,8 @@ const FieldInputDateRange = ({
 
   return (
     <DatePicker.RangePicker
-      id={path}
+      id={getRangePickerId(inputId, getInputId)}
+      aria-labelledby={labelId}
       name={name}
       picker="date"
       disabled={disabled || readOnly}

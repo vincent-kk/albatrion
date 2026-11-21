@@ -35,6 +35,9 @@ interface FieldInputStringCheckboxProps
 }
 
 const FieldInputStringCheckbox = ({
+  inputId,
+  labelId,
+  getInputId,
   name,
   jsonSchema,
   disabled,
@@ -48,8 +51,8 @@ const FieldInputStringCheckbox = ({
   const values = jsonSchema.items?.enum;
   const labels = context.checkboxLabels || alias;
   const options = useMemo(
-    () => getEnumOptions(values, labels),
-    [values, labels],
+    () => getEnumOptions(values, labels, getInputId),
+    [values, labels, getInputId],
   );
   const handleChange = useHandle((tokens: string[]) => {
     const selected = options
@@ -77,7 +80,12 @@ const FieldInputStringCheckbox = ({
   );
 
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div
+      id={inputId}
+      role="group"
+      aria-labelledby={labelId}
+      aria-invalid={misfit || undefined}
+    >
       <Checkbox.Group
         name={name}
         style={{ display: 'flex' }}
