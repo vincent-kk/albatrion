@@ -6,6 +6,7 @@ import {
   FieldLifecycleAction,
 } from '@/schema-form/helpers/fieldLifecycle';
 import type { FieldLifecycleRegistry } from '@/schema-form/helpers/fieldLifecycle/FieldLifecycleRegistry';
+import type { InputPositions } from '@/schema-form/helpers/focusTarget';
 import type { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 
 import type { FocusRequest } from './FocusRequest';
@@ -17,6 +18,7 @@ import { isInputMounted } from './isInputMounted';
  * @param form - Owning form whose document observes focus movement during reveal.
  * @param manager - Form-local virtualization coordinator, null for eager rendering.
  * @param lifecycle - Form-local action queues, null outside the lifecycle provider.
+ * @param inputPositions - Actual input positions owned by this form.
  * @param request - Already-owned request so synchronous reveal reentry can cancel it.
  * @returns Nothing; cancellation releases the reservation and document observers.
  */
@@ -25,10 +27,16 @@ export const focusFieldNode = (
   form: Nullable<HTMLFormElement>,
   manager: Nullable<VirtualizationManager>,
   lifecycle: Nullable<FieldLifecycleRegistry>,
+  inputPositions: InputPositions,
   request: FocusRequest,
 ): void => {
   if (!target || !target.isPresent) return;
-  if (!manager || !lifecycle || !form || isInputMounted(manager, target)) {
+  if (
+    !manager ||
+    !lifecycle ||
+    !form ||
+    isInputMounted(inputPositions, target)
+  ) {
     target.request(FieldNodeRequestType.Focus);
     return;
   }

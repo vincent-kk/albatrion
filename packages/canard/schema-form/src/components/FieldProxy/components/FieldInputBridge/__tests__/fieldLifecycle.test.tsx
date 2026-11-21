@@ -20,6 +20,8 @@ import { useFieldLifecycle } from '../hooks/useFieldLifecycle';
 
 /** Stable dependencies keep ordinary renders from becoming new Mount events. */
 const noop = () => {};
+/** Registry shared by this file's isolated layout-effect fixtures. */
+const inputPositions = new Map();
 /** A real input position exercising the hook without Form render scheduling. */
 const Position = ({
   node,
@@ -42,6 +44,7 @@ const Position = ({
     null,
     input ? registry : null,
     noop,
+    inputPositions,
   );
   return input ? (
     <div ref={position.ref}>
@@ -272,6 +275,7 @@ it('calls the composition cleanup and restores command subscriptions on effect r
       null,
       registry,
       noop,
+      inputPositions,
     );
     return (
       <div ref={position.ref}>

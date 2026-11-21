@@ -15,17 +15,20 @@ import { ErrorVisibility } from '@/schema-form/types';
 
 /**
  * Mount an uncontrolled leaf whose frame changes its container's ancestry on error.
- * @param virtualized - Enable the real manager's input registration.
- * @returns The view, live node, current input props and bridge-owned attachment map.
+ * @param virtualized - Enable the real form's gate manager.
+ * @returns The view, live node, current input props and form resources.
  */
 export const createRestructuringFrame = (virtualized = false) => {
   const ref = createRef<FormHandle>();
   let current!: FieldInputProps;
   let files!: ReturnType<typeof useWorkspaceContext>['attachedFilesMap'];
+  let inputPositions!: ReturnType<typeof useWorkspaceContext>['inputPositions'];
   let mounts = 0;
   const Input = (props: FieldInputProps) => {
     current = props;
-    files = useWorkspaceContext().attachedFilesMap;
+    const workspace = useWorkspaceContext();
+    files = workspace.attachedFilesMap;
+    inputPositions = workspace.inputPositions;
     useLayoutEffect(() => {
       mounts++;
     }, []);
@@ -75,6 +78,7 @@ export const createRestructuringFrame = (virtualized = false) => {
     props: () => current,
     mounts: () => mounts,
     files: () => files,
+    inputPositions: () => inputPositions,
     input: () => view.container.querySelector('input')!,
   };
 };

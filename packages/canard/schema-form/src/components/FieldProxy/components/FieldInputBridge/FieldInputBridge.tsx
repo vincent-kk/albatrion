@@ -91,7 +91,8 @@ export const FieldInputBridge = memo(
       childValueRevision.isControlled = controlled === true;
       childValueRevision.externalValueRevision = undefined;
     }
-    const { attachedFilesMap, context, formId } = useWorkspaceContext();
+    const { attachedFilesMap, context, formId, inputPositions } =
+      useWorkspaceContext();
     const identifiers = useMemo(
       () => resolveFieldIdentifiers(formId, node.path),
       [formId, node.path],
@@ -128,6 +129,7 @@ export const FieldInputBridge = memo(
       FieldInput ? virtualizationManager : null,
       FieldInput ? lifecycle : null,
       update,
+      inputPositions,
       attachedFilesMap,
     );
     // Each committed container and input selection owns its callback lifetime.
@@ -255,6 +257,7 @@ export const FieldInputBridge = memo(
           className={undefined}
           {...inputProps}
           {...overrideProps}
+          focusRef={position.focusRef}
           value={node.value}
           required={required}
           onChange={handleChange}

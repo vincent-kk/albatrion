@@ -6,7 +6,6 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { advanceValidationFrame } from '@/schema-form/__tests__/helpers/advanceValidationFrame';
 import { Form } from '@/schema-form/components/Form';
 import { FieldNodeState, ValidationMode } from '@/schema-form/core';
-import { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 import type { InputRendererProps } from '@/schema-form/types';
 
 import { createRestructuringFrame } from './helpers/createRestructuringFrame';
@@ -58,7 +57,7 @@ it('rejects value and file callbacks captured before the container replacement',
   expect(view.files().has('/field')).toBe(false);
 });
 
-it('moves virtualization registration and focus from the detached container', () => {
+it('moves input registration and focus from the detached container', () => {
   vi.stubGlobal(
     'IntersectionObserver',
     class {
@@ -67,17 +66,10 @@ it('moves virtualization registration and focus from the detached container', ()
       disconnect() {}
     },
   );
-  const attach = vi.spyOn(VirtualizationManager.prototype, 'attachInput');
-  const detach = vi.spyOn(VirtualizationManager.prototype, 'detachInput');
   const view = createRestructuringFrame(true);
   const previous = view.input().parentElement!;
-  expect(attach).toHaveBeenCalledWith(previous, view.node);
-  const manager =
-    attach.mock.contexts[
-      attach.mock.calls.findIndex(([element]) => element === previous)
-    ];
-  if (!(manager instanceof VirtualizationManager))
-    throw new Error('input registration must use the form manager');
+  const positions = view.inputPositions();
+  expect(positions.get(previous)?.node).toBe(view.node);
 
   act(() =>
     view.node.setExternalErrors([{ dataPath: '/field', message: 'bad' }]),
@@ -85,14 +77,12 @@ it('moves virtualization registration and focus from the detached container', ()
 
   const current = view.input().parentElement!;
   expect(previous.isConnected).toBe(false);
-  expect(detach).toHaveBeenCalledWith(previous);
-  expect(attach).toHaveBeenCalledWith(current, view.node);
-  expect(manager.inputsOf(view.node)).toEqual([current]);
+  expect(positions.has(previous)).toBe(false);
+  expect(positions.get(current)?.node).toBe(view.node);
   act(() => view.ref.current!.focus('/field'));
   expect(document.activeElement).toBe(view.input());
   view.unmount();
-  expect(detach).toHaveBeenCalledWith(current);
-  expect(manager.inputsOf(view.node)).toEqual([]);
+  expect(positions.has(current)).toBe(false);
 });
 
 it.each(['before', 'after'] as const)(

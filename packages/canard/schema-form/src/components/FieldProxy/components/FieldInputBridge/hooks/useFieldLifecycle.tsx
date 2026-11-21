@@ -14,6 +14,10 @@ import {
   FieldLifecycleAction,
 } from '@/schema-form/helpers/fieldLifecycle';
 import type { FieldLifecycleRegistry } from '@/schema-form/helpers/fieldLifecycle/FieldLifecycleRegistry';
+import type {
+  FocusAnchor,
+  InputPositions,
+} from '@/schema-form/helpers/focusTarget';
 import type { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 import type { AttachedFilesStore } from '@/schema-form/providers/WorkspaceContext';
 
@@ -30,6 +34,7 @@ import { runSlotAction } from '../utils/runSlotAction';
  * @param virtualizationManager - Form manager only when this position renders an input.
  * @param lifecycle - Form registry only when this position renders an input.
  * @param update - Stable bridge dispatch used after a committed container replacement.
+ * @param inputPositions - The form's registry of actual input locations.
  * @param attachedFiles - Form-owned records projected on committed path deliveries.
  * @returns Stable position with its callback ref, replacement epoch and optional Render detector.
  */
@@ -42,6 +47,7 @@ export const useFieldLifecycle = (
   virtualizationManager: Nullable<VirtualizationManager>,
   lifecycle: Nullable<FieldLifecycleRegistry>,
   update: Fn,
+  inputPositions: InputPositions,
   attachedFiles?: AttachedFilesStore,
 ) => {
   const position = useMemo(() => {
@@ -52,8 +58,8 @@ export const useFieldLifecycle = (
       container.current = element;
       if (!element || !isCommittedRef.current || element === registered) return;
       releaseComposition();
-      if (registered) virtualizationManager?.detachInput(registered);
-      virtualizationManager?.attachInput(element, node);
+      if (registered) inputPositions.delete(registered);
+      inputPositions.set(element, position);
       registered = element;
       position.epoch++;
       update();
@@ -64,7 +70,7 @@ export const useFieldLifecycle = (
       virtualizationManager?.markRevealed(node);
       const element = container.current;
       registered = element;
-      if (element) virtualizationManager?.attachInput(element, node);
+      if (element) inputPositions.set(element, position);
       const unsubscribe = node.subscribe(({ type }) => {
         if (type & FieldNodeEventType.UpdatePath) attachedFiles?.synchronize();
         let action = FieldLifecycleAction.None;
@@ -72,23 +78,13 @@ export const useFieldLifecycle = (
           action |= FieldLifecycleAction.Focus;
         if (type & FieldNodeEventType.RequestSelect)
           action |= FieldLifecycleAction.Select;
-        if (action) runSlotAction(container.current, action);
+        if (action) runSlotAction(container.current, action, position);
       });
-      if (!fired) {
-        fired = true;
-        if (lifecycle && element) {
-          if (lifecycle.pendingMask & FieldLifecycle.Mount)
-            runSlotAction(element, lifecycle.fire(node, FieldLifecycle.Mount));
-          if (lifecycle.pendingMask & FieldLifecycle.Render)
-            runSlotAction(element, lifecycle.fire(node, FieldLifecycle.Render));
-        }
-      }
-      isCommittedRef.current = true;
-      return () => {
+      const cleanup = () => {
         isCommittedRef.current = false;
         releaseComposition();
         unsubscribe();
-        if (registered) virtualizationManager?.detachInput(registered);
+        if (registered) inputPositions.delete(registered);
         if (
           registered &&
           lifecycle &&
@@ -97,8 +93,37 @@ export const useFieldLifecycle = (
           lifecycle.fire(node, FieldLifecycle.Unmount);
         registered = null;
       };
+      if (!fired) {
+        fired = true;
+        if (lifecycle?.pendingMask && element) {
+          try {
+            if (lifecycle.pendingMask & FieldLifecycle.Mount)
+              runSlotAction(
+                element,
+                lifecycle.fire(node, FieldLifecycle.Mount),
+                position,
+              );
+            if (lifecycle.pendingMask & FieldLifecycle.Render)
+              runSlotAction(
+                element,
+                lifecycle.fire(node, FieldLifecycle.Render),
+                position,
+              );
+          } catch (error) {
+            cleanup();
+            throw error;
+          }
+        }
+      }
+      isCommittedRef.current = true;
+      return cleanup;
     };
     const position = {
+      node,
+      focusTarget: null as FocusAnchor | null,
+      focusRef: (target: FocusAnchor | null) => {
+        position.focusTarget = target;
+      },
       isCommittedRef,
       effect,
       ref,
@@ -115,6 +140,7 @@ export const useFieldLifecycle = (
     virtualizationManager,
     lifecycle,
     update,
+    inputPositions,
     attachedFiles,
   ]);
   const { effect } = position;
@@ -127,6 +153,7 @@ export const useFieldLifecycle = (
       <FieldLifecycleRender
         node={node}
         container={container}
+        position={position}
         isCommittedRef={position.isCommittedRef}
         lifecycle={lifecycle}
       />

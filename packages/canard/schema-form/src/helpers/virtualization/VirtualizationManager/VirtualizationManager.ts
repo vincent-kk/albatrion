@@ -127,9 +127,6 @@ export class VirtualizationManager {
     | { element: Element; gate: DeferredGate; onSettled: Fn }
     | undefined;
 
-  /** Input containers keyed by position; only focus requests search by node. */
-  private readonly inputs = new Map<Element, FieldNode>();
-
   /** Nodes revealed at least once — survives ChildComponent cache rebuilds (e.g. array renumbering) */
   private readonly revealedNodes = new WeakSet<FieldNode>();
 
@@ -190,37 +187,6 @@ export class VirtualizationManager {
     if (!this.registry.delete(element)) return;
     this.observer?.unobserve(element);
     if (this.registry.size === 0) this.stopIdlePump();
-  }
-
-  /**
-   * Register a real input container; replacing the same position is idempotent.
-   * @param element - Mounted input position, distinct from its renderer wrapper.
-   * @param node - Field rendered by this input position.
-   * @returns Nothing; focus lookup can now find this position.
-   */
-  public attachInput(element: Element, node: FieldNode): void {
-    this.inputs.set(element, node);
-  }
-
-  /**
-   * Release the input position captured by its layout effect.
-   * @param element - Position whose input effect is being cleaned up.
-   * @returns Nothing; repeated removal is harmless.
-   */
-  public detachInput(element: Element): void {
-    this.inputs.delete(element);
-  }
-
-  /**
-   * Find this field's input containers only when focus is requested.
-   * @param node - Exact field identity; paths do not distinguish duplicate positions.
-   * @returns Matching containers in registration order, empty when none are mounted.
-   */
-  public inputsOf(node: FieldNode): Element[] {
-    const elements: Element[] = [];
-    for (const [element, input] of this.inputs)
-      if (input === node) elements.push(element);
-    return elements;
   }
 
   /** Whether the node has been revealed before (must stay eager on re-bake) */
