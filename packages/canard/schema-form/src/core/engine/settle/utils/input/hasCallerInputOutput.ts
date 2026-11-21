@@ -15,6 +15,7 @@ export const hasCallerInputOutput = <Self extends FieldNodeRecord<Self>>(
   live: Self | undefined,
   template: BlueprintNode | undefined = live?.blueprintNode,
 ): boolean => {
+  if (input === undefined) return false;
   if (live)
     return readStoredInput(live.blueprintNode, input, live, true) !== undefined;
   if (!template) return input !== undefined;

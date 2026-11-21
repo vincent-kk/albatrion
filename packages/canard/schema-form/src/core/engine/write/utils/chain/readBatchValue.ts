@@ -10,13 +10,24 @@ import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTarget
 import { composeBatchValue } from './composeBatchValue';
 import { replaceAtPath } from './utils/replaceAtPath';
 
-/** Follow own properties only; a missing step or a primitive reads undefined. */
-const readOwnPath = (value: unknown, names: readonly string[]): unknown => {
-  for (const name of names)
-    value =
-      value !== null && typeof value === 'object' && hasOwnProperty(value, name)
-        ? Reflect.get(value, name)
-        : undefined;
+/** An ancestor replacement can omit an address independently of its value. */
+const OMITTED_ADDRESS = Symbol('omitted batch address');
+
+/** Follow own properties, returning the fallback when an address is omitted. */
+const readOwnPath = (
+  value: unknown,
+  names: readonly string[],
+  omitted?: typeof OMITTED_ADDRESS,
+): unknown => {
+  for (const name of names) {
+    if (
+      value === null ||
+      typeof value !== 'object' ||
+      !hasOwnProperty(value, name)
+    )
+      return omitted;
+    value = Reflect.get(value, name);
+  }
   return value;
 };
 
@@ -73,11 +84,20 @@ export const readBatchValue = <Self extends FieldNodeRecord<Self>>(
           true,
         );
   }
-  const value = readOwnPath(composeBatchValue(root, writes, base), names);
-  if (!targets) return readStoredInput(node.blueprintNode, value, node);
+  const value = readOwnPath(
+    composeBatchValue(root, writes, base),
+    names,
+    OMITTED_ADDRESS,
+  );
+  if (!targets)
+    return value === OMITTED_ADDRESS
+      ? undefined
+      : readStoredInput(node.blueprintNode, value, node);
   return mapArray(targets, (target) => {
     if (!target.node) return undefined;
-    const slot = readOwnPath(value, [target.name]);
-    return readStoredInput(target.node.blueprintNode, slot, target.node);
+    const slot = readOwnPath(value, [target.name], OMITTED_ADDRESS);
+    return slot === OMITTED_ADDRESS
+      ? undefined
+      : readStoredInput(target.node.blueprintNode, slot, target.node);
   });
 };
