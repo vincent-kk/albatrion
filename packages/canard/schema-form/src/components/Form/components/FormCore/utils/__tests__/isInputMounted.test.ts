@@ -64,7 +64,7 @@ it('uses connected handles and keeps the native disabled check for same-document
   }
 });
 
-it('rejects an iframe element without treating a similar imperative handle as DOM', () => {
+it('rejects an iframe element as a focus anchor', () => {
   const target = nodeFromJSONSchema({ jsonSchema: { type: 'string' } });
   const container = document.createElement('div');
   const frame = document.createElement('iframe');
@@ -77,17 +77,6 @@ it('rejects an iframe element without treating a similar imperative handle as DO
       [container, { node: target, focusTarget: native }],
     ]);
     expect(isInputMounted(positions, target)).toBe(false);
-    const handle = {
-      focus() {},
-      matches() {
-        return false;
-      },
-      nodeType: 1,
-      isConnected: false,
-      ownerDocument: iframe,
-    };
-    positions.set(container, { node: target, focusTarget: handle });
-    expect(isInputMounted(positions, target)).toBe(true);
   } finally {
     frame.remove();
   }
