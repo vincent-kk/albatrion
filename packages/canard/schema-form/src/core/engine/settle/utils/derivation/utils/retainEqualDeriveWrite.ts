@@ -1,9 +1,8 @@
 import type { DeriveRoundDecision } from '../../../../derive';
 import type { FieldNodeRecord } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
-import { hasDistributedChildInput } from '../../input/hasDistributedChildInput';
 import { isLiveOccurrence } from '../../transition/isLiveOccurrence';
-import { supersedeRevivedSlotSource } from '../../transition/utils/supersedeRevivedSlotSource';
+import { selectNamedRetainedSources } from './retainedSources/selectNamedRetainedSources';
 
 /**
  * Select named channels of an accepted rule whose working output already matches.
@@ -24,30 +23,5 @@ export const retainEqualDeriveWrite = <Self extends FieldNodeRecord<Self>>(
     return;
   const order = (context.retainedWriteOrder =
     (context.retainedWriteOrder ?? 0) + 1);
-  const select = (node: Self, input: unknown): void => {
-    const retained = context.retainedSources?.get(node);
-    if (retained) {
-      if (retained.revivedSlotSource)
-        supersedeRevivedSlotSource(retained.revivedSlotSource);
-      if (retained.shouldUseBaseline) {
-        retained.shouldUseBaseline = false;
-        retained.writeOrder = order;
-        retained.writeOrigin = 'declarative';
-        context.filledNodes.delete(node);
-        context.writtenInputs.set(node, input);
-      }
-    }
-    for (const child of node.children ?? [])
-      if (
-        child.parent === node &&
-        child.behavior.type !== 'virtual' &&
-        hasDistributedChildInput(
-          input,
-          child.name,
-          node.behavior.type === 'array',
-        )
-      )
-        select(child, Reflect.get(input, child.name));
-  };
-  select(target, write.value);
+  selectNamedRetainedSources(target, write.value, context, order);
 };
