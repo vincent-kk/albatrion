@@ -17,14 +17,16 @@ import { dirname, join } from 'node:path';
  * @param fileAbs - Absolute destination, following an existing user-scope file link.
  * @param content - Complete replacement bytes.
  * @param initialMode - Source permission bits for a destination that does not exist.
+ * @param independent - Require an independent regular file for an ownership record.
  * @returns Resolves after writing; in-place fallback is not crash-atomic.
  */
 export async function replaceDocument(
   fileAbs: string,
   content: Buffer,
   initialMode?: number,
+  independent = false,
 ): Promise<void> {
-  const destination = await realpath(fileAbs).catch(
+  const destination = independent ? fileAbs : await realpath(fileAbs).catch(
     (error: NodeJS.ErrnoException) => {
       if (error.code === 'ENOENT')
         return lstat(fileAbs).then(
@@ -42,13 +44,15 @@ export async function replaceDocument(
     },
   );
   await mkdir(dirname(destination), { recursive: true });
-  const entry = await stat(destination).then(
+  const entry = await (independent ? lstat(destination) : stat(destination)).then(
     (entry) => entry,
     (error: NodeJS.ErrnoException) => {
       if (error.code === 'ENOENT') return undefined;
       throw error;
     },
   );
+  if (independent && entry && (!entry.isFile() || entry.nlink !== 1))
+    throw new Error(`Installed asset record is not an independent file: ${fileAbs}`);
   const mode = entry?.mode ?? initialMode;
   if (entry && (entry.mode & 0o222) === 0)
     throw new Error(`Document is read-only: ${fileAbs}`);
@@ -68,6 +72,7 @@ export async function replaceDocument(
         await chmod(path, entry.mode & 0o7777);
       } catch (error) {
         if (
+          independent ||
           !(error instanceof Error) ||
           !('code' in error) ||
           !['EPERM', 'EACCES', 'ENOSYS', 'ENOTSUP', 'EOPNOTSUPP'].includes(

@@ -20,11 +20,9 @@ import { mergePlans } from '../mergePlans.js';
 import type { RunUnit, ValidatedFlags } from '../types.js';
 import {
   type InstalledAssets,
-  RECORDED_CLAUDE_KINDS,
-  readInstalledAssets,
-} from '../utils/readInstalledAssets.js';
+  openInstalledAssets,
+} from '../utils/openInstalledAssets.js';
 import { describePreparationFailure } from './utils/describePreparationFailure.js';
-import { getInstalledOrphanScans } from './utils/getInstalledOrphanScans.js';
 import { getLinkedFileKey } from './utils/getLinkedFileKey.js';
 import { resolveCanonicalPath } from './utils/resolveCanonicalPath.js';
 import { validateUnitMarkdown } from './utils/validateUnitMarkdown.js';
@@ -51,7 +49,7 @@ export async function prepareUnits(
   const physicalPaths = new Map<string, Promise<string>>();
   const generatedAt = new Date().toISOString();
   const sourceSnapshots = new Map<string, SourceSnapshot | null>();
-  let installedAssets: Promise<InstalledAssets> | undefined;
+  const installedRecords = new Map<string, InstalledAssets>();
   for (const target of targets) {
     const manifest = await resolveHashManifest(
       target,
@@ -111,36 +109,38 @@ export async function prepareUnits(
               resolveCanonicalPath(root, physicalPaths).catch(() => root),
             ),
         );
-        const locations = {
+        const recordPath = agentTarget.installedAssetsFile;
+        let installed: InstalledAssets | undefined;
+        if (
+          values.assetKinds.has('skills') ||
+          (values.assetKinds.has('rules') && agentTarget.rulesMergeFile === null)
+        ) {
+          installed = installedRecords.get(recordPath);
+          if (installed === undefined) {
+            await assertProjectPathsContained({ agentTarget, dstPaths: [recordPath], resolved });
+            installed = await openInstalledAssets(recordPath);
+            installedRecords.set(recordPath, installed);
+          }
+        }
+        const { destinations, orphanScans } = resolveDestinations({
           agentTarget,
           packageName: target.name,
           relPaths: Object.keys(manifest.value.files),
+          previous: installed?.previousPaths(target.name),
           namespacePrefixes: prefixes,
           assetKinds: values.assetKinds,
-        };
-        const { destinations, orphanScans } = resolveDestinations(locations);
+        });
         await assertProjectPathsContained({
           agentTarget,
           assetKinds: values.assetKinds,
           orphanScans,
           resolved,
         });
-        const installed =
-          agent === 'claude' &&
-          RECORDED_CLAUDE_KINDS.some((kind) => values.assetKinds.has(kind))
-            ? await (installedAssets ??= readInstalledAssets(agentTarget, resolved))
-            : undefined;
-        if (installed) {
-          const earlier = getInstalledOrphanScans(installed, locations, orphanScans);
-          if (earlier.length) {
-            await assertProjectPathsContained({
-              agentTarget,
-              dstPaths: earlier.map((scan) => scan.dstAbs),
-              resolved,
-            });
-            orphanScans.push(...earlier);
-          }
-        }
+        const formerFiles = orphanScans.flatMap((scan) =>
+          scan.kind === 'installed-file' ? [scan.dstAbs] : [],
+        );
+        if (formerFiles.length)
+          await assertProjectPathsContained({ agentTarget, dstPaths: formerFiles, resolved });
         const plan = await buildPlan({
           sourceHashes: manifest.value.files,
           ruleBodyHashes: manifest.value.ruleBodyHashes,

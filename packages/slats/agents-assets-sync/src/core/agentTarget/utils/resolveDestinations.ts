@@ -20,6 +20,8 @@ interface ResolveDestinationsInput {
   readonly packageName: string;
   /** Manifest paths to place. */
   readonly relPaths: readonly string[];
+  /** Prior recorded paths owned only by the current package. */
+  readonly previous?: ReadonlyMap<string, string>;
   /** Managed skill namespaces, e.g. `['skills/foo/']`, from the hash manifest. */
   readonly namespacePrefixes: readonly string[];
   /** Kinds the caller asked for; anything else is left alone entirely. */
@@ -44,17 +46,31 @@ export function resolveDestinations(input: ResolveDestinationsInput): {
   destinations: Map<string, Destination>;
   orphanScans: OrphanScan[];
 } {
-  const { agentTarget, packageName, relPaths, namespacePrefixes, assetKinds } =
-    input;
+  const { agentTarget, packageName, relPaths, previous, namespacePrefixes, assetKinds } = input;
   const { directoryRoots, rulesMergeFile, unsupported } = agentTarget;
 
   const destinations = new Map<string, Destination>();
-  for (const relPath of relPaths) {
+  const orphanScans: OrphanScan[] = [];
+  const current = previous?.size ? new Set(relPaths) : undefined;
+  const paths = current && previous ? new Set([...current, ...previous.keys()]) : relPaths;
+  for (const relPath of paths) {
     const split = splitAssetKind(relPath);
     if (!split || !assetKinds.has(split.kind)) continue;
     const { kind, rest } = split;
+    const root = directoryRoots[kind];
     assertContained(relPath);
     assertNotReserved(kind, rest);
+    if (current && !current.has(relPath)) {
+      const installedHash = previous?.get(relPath);
+      if (
+        root !== null &&
+        kind !== 'commands' &&
+        installedHash &&
+        (kind !== 'skills' || !namespacePrefixes.some((prefix) => relPath.startsWith(prefix)))
+      )
+        orphanScans.push({ kind: 'installed-file', relPath, dstAbs: join(root, rest), installedHash });
+      continue;
+    }
 
     const reason = unsupported[kind];
     if (reason !== undefined) {
@@ -69,12 +85,10 @@ export function resolveDestinations(input: ResolveDestinationsInput): {
       });
       continue;
     }
-    const root = directoryRoots[kind];
     if (root !== null)
       destinations.set(relPath, { kind: 'file', dstAbs: join(root, rest) });
   }
 
-  const orphanScans: OrphanScan[] = [];
   const skillsRoot = directoryRoots.skills;
   if (assetKinds.has('skills') && skillsRoot !== null) {
     for (const prefix of namespacePrefixes) {

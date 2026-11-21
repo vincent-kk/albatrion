@@ -44,6 +44,8 @@ it('cleans only unchanged files owned by an earlier installation', async () => {
     'rules/current.md': '# current\n',
   });
   expect((await run()).exitCode).toBe(0);
+  expect(existsSync(join(projectRoot, '.claude/agents-assets-sync.json'))).toBe(true);
+  expect(existsSync(join(projectRoot, '.agents-assets-sync'))).toBe(false);
 
   const removed = ['rules/old.md', 'skills/gone/SKILL.md', 'rules/edited.md'];
   for (const relPath of removed) rmSync(join(assetRoot, relPath));
@@ -101,6 +103,9 @@ it('cleans a Codex skill when the package removes the whole namespace', async ()
   const retired = join(projectRoot, '.agents/skills/retired/SKILL.md');
   expect((await run({ agent })).exitCode).toBe(0);
   expect(existsSync(retired)).toBe(true);
+  const record = readFileSync(join(projectRoot, '.agents/agents-assets-sync.json'), 'utf8');
+  expect(record).toContain('skills/retired/SKILL.md');
+  expect(record).not.toContain('rules/current.md');
 
   rmSync(join(assetRoot, 'skills/retired'), { recursive: true });
   expect((await run({ agent })).exitCode).toBe(2);
@@ -111,6 +116,13 @@ it('cleans a Codex skill when the package removes the whole namespace', async ()
   expect(readFileSync(join(projectRoot, 'AGENTS.md'), 'utf8')).toContain(
     '# current rule',
   );
+});
+
+it('Codex installs rule blocks without creating an ownership record', async () => {
+  const { run } = prepare({ 'rules/owned.md': '# block\n' });
+  expect((await run({ agent: ['codex'], asset: ['rules'] })).exitCode).toBe(0);
+  expect(existsSync(join(projectRoot, '.agents/agents-assets-sync.json'))).toBe(false);
+  expect(readFileSync(join(projectRoot, 'AGENTS.md'), 'utf8')).toContain('# block');
 });
 
 it('retains a retired rule owned by another verified installation', async () => {
