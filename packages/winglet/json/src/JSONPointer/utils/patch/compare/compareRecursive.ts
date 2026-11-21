@@ -94,9 +94,6 @@ export const compareRecursive = <
     return;
   }
 
-  const sourceKeys = getKeys(source);
-  const targetKeys = getKeys(target);
-
   // Cache type checks for performance
   const sourceIsArray = isArray(source);
   const targetIsArray = isArray(target);
@@ -118,6 +115,8 @@ export const compareRecursive = <
     return; // Early exit - no further processing needed
   }
 
+  const sourceKeys = getKeys(source);
+  const targetKeys = getKeys(target);
   let hasRemoved = false;
   // Array removals are emitted last index first: applyPatch splices, so an ascending
   // order would make every later index point past the array it has already shrunk

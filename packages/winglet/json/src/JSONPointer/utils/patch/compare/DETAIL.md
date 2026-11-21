@@ -15,6 +15,7 @@
 - `compare(source, target, options?)`:
   - `options.strict`(기본 false): true면 REPLACE·REMOVE 연산 앞에 원래 값을 담은 TEST 연산을 추가한다. ADD 앞에는 TEST를 추가하지 않는다 — 추가 전 상태를 확인할 대상이 없다.
   - `options.immutable`(기본 true): 패치 값으로 들어가는 객체·배열을 클론한다. false면 `target`의 참조를 그대로 값으로 사용한다.
+  - 직렬화한 뒤 객체와 배열의 유형이 다르면 바로 교체합니다. 교체할 노드의 키는 순회하지 않습니다.
   - 동일 참조(`source === target`)는 빈 배열을 반환한다. `NaN`끼리는 참조가 달라도 동일로 취급된다.
   - 비배열 컨텍스트에서 기존 키 값이 `undefined`로 바뀌면 REMOVE로 처리된다. 배열 원소가 `undefined`로 바뀌는 것은 일반 값 변경(REPLACE)이다 — 배열은 원소의 위치이지 존재 여부가 아니기 때문이다.
   - `target`에만 있고 값이 `undefined`인 새 키는 ADD를 생성하지 않는다 — 추가해도 결과가 달라지지 않는다.
