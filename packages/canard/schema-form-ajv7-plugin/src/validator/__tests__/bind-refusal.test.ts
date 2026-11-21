@@ -32,4 +32,23 @@ describe('VALIDATE-050 TEST-077 bind refusal', () => {
     expect(typeof ajvValidatorPlugin.compileGuard).toBe('function');
     expect(typeof ajvValidatorPlugin.release).toBe('function');
   });
+
+  it('refuses defaults enabled after binding', async () => {
+    const instance = new Ajv();
+    ajvValidatorPlugin.bind?.(instance);
+    const root = {
+      type: 'object',
+      properties: { count: { type: 'number', default: 1 } },
+    } as const;
+    const input = {};
+    const validate = ajvValidatorPlugin.compile(root);
+    await expect(validate(input)).resolves.toBeNull();
+    expect(input).toEqual({});
+
+    instance.opts.useDefaults = true;
+    expect(() => ajvValidatorPlugin.compile(root)).toThrowError(expect.objectContaining({
+      code: FormErrorCode.ValidatorBindRefused,
+      details: { options: ['useDefaults'] },
+    }));
+  });
 });
