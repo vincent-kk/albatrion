@@ -1,5 +1,6 @@
 import { isArray, isObject } from '@winglet/common-utils/filter';
 import { getKeys, hasOwnProperty } from '@winglet/common-utils/lib';
+import { getDataProperty } from '@winglet/common-utils/object';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { escapeSegment } from '@/json/JSONPointer/utils/escape/escapeSegment';
@@ -125,7 +126,7 @@ export const compareRecursive = <
   // Process existing keys in source
   for (let i = 0, l = sourceKeys.length; i < l; i++) {
     const key = sourceKeys[i];
-    const sourceValue: unknown = source[key as keyof Source];
+    const sourceValue: unknown = getDataProperty(source, key);
 
     // Check if key exists in target (optimized)
     if (hasOwnProperty(target, key)) {
