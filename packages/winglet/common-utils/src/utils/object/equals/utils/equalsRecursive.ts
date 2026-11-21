@@ -11,6 +11,9 @@ import { equalsBuiltin } from './equalsBuiltin';
  */
 const OBJECT_PROTOTYPE = Object.prototype;
 
+/** Work-stack marker for the end of a comparison path. */
+const LEAVE_PAIR = Symbol();
+
 /**
  * Recursively compares the deep equality of two values.
  *
@@ -33,9 +36,14 @@ export const equalsRecursive = (
   )
     return false;
   const pending: unknown[] = [left, right];
+  const active = new WeakMap<object, Set<unknown>>();
   while (pending.length) {
     right = pending.pop();
     left = pending.pop();
+    if (right === LEAVE_PAIR && left instanceof Set) {
+      left.delete(pending.pop());
+      continue;
+    }
     if (left === right || (left !== left && right !== right)) continue;
     if (
       left === null ||
@@ -44,14 +52,20 @@ export const equalsRecursive = (
       typeof right !== 'object'
     )
       return false;
-    const leftIsArray = Array.isArray(left);
-    const rightIsArray = Array.isArray(right);
-    if (leftIsArray !== rightIsArray) return false;
-    if (Array.isArray(left) && Array.isArray(right)) {
-      if (left.length !== right.length) return false;
-      for (let i = left.length - 1; i >= 0; i--) {
-        const leftValue: unknown = left[i];
-        const rightValue: unknown = right[i];
+    const leftArray = Array.isArray(left) ? left : null;
+    const rightArray = Array.isArray(right) ? right : null;
+    if ((leftArray === null) !== (rightArray === null)) return false;
+    let rightValues = active.get(left);
+    if (!rightValues) active.set(left, (rightValues = new Set()));
+    if (rightValues.has(right))
+      throw new RangeError('equals input contains a repeated active comparison');
+    rightValues.add(right);
+    pending.push(right, rightValues, LEAVE_PAIR);
+    if (leftArray && rightArray) {
+      if (leftArray.length !== rightArray.length) return false;
+      for (let i = leftArray.length - 1; i >= 0; i--) {
+        const leftValue: unknown = leftArray[i];
+        const rightValue: unknown = rightArray[i];
         if (
           leftValue === rightValue ||
           (leftValue !== leftValue && rightValue !== rightValue)

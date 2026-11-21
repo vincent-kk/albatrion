@@ -12,14 +12,14 @@ Applies when the consuming project imports from `@winglet/common-utils` or one o
 - **One function, one module, re-exported by a category barrel.** `@winglet/common-utils/array` and the root barrel resolve to the same implementation; sub-paths exist for tree-shaking, not for behavior.
 - **`Lite` is a suffix, not a concept.** It marks three unrelated things across the library — a small-array algorithm swap, a reduced type-coverage clone, and a scalar-arity overload — and in the first case the equality semantics change too.
 - **Invalid-input behavior is per function.** Some utilities return `0`, `[array]`, `Infinity`, `NaN`, or `undefined`; others reject invalid numeric arguments, unsupported data, or configuration by throwing. Check the failure contract in the declarations and the input-failure guidance in `knowledge/semantics.md` before passing user input.
-- **Circular-reference safety is per function, not per library.** `clone` and `stableEquals` support cycles. `cloneLite` and `equals` do not support cyclic input and can fail to terminate. Each pair sits side by side in the same barrel.
+- **Circular-reference safety is per function, not per library.** `clone` and `stableEquals` support cycles. `cloneLite` without a finite depth limit and `equals` throw a RangeError when their traversal detects a cycle. Each pair sits side by side in the same barrel.
 - **Scheduler bindings resolve once, at module load.** `scheduleMacrotask` and its siblings pick an implementation off `globalThis` when the module is first imported, so globals patched afterwards — fake timers, for instance — are not intercepted.
 
 ## Decision Guide
 
 | Question                                                | Answer                                                                                      |
 | ------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Deep equality, data may be circular?                    | `stableEquals` — cyclic input to `equals` can fail to terminate                                               |
+| Deep equality, data may be circular?                    | `stableEquals` — `equals` throws on a repeated active comparison pair                                               |
 | Deep equality, plain data, hot path?                    | `equals`; its third argument is a key set to omit from every level                          |
 | Deep clone with `Date`/`Map`/`Set`/`RegExp`/TypedArray? | `clone`                                                                                     |
 | Deep clone of JSON-shaped data only?                    | `cloneLite` — anything else passes through **by reference**                                 |
