@@ -1,12 +1,6 @@
 import { type ReactNode, useMemo } from 'react';
 
-import {
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-} from '@mui/material';
+import { FormControlLabel, Radio, RadioGroup } from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -18,7 +12,6 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
-import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type RadioGroupStringJSONSchema = StringSchema & {
   radioLabels?: string[];
@@ -41,14 +34,11 @@ type FieldInputRadioGroupProps = {
   >;
 
 const FieldInputRadioGroup = ({
-  inputId,
-  labelId,
-  getInputId,
-  node,
+  path,
+  name,
   jsonSchema,
   required,
   disabled,
-  readOnly,
   defaultValue,
   onChange,
   context,
@@ -61,8 +51,8 @@ const FieldInputRadioGroup = ({
 }: FieldInputRadioGroupProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || node.name, sizeProp || context.size];
-  }, [context, labelProp, node.name, sizeProp, hideLabel]);
+    return [labelProp || name, sizeProp || context.size];
+  }, [context, labelProp, name, sizeProp, hideLabel]);
 
   const options = useMemo(() => {
     const enumValues = jsonSchema.enum || [];
@@ -73,10 +63,7 @@ const FieldInputRadioGroup = ({
       return {
         value,
         rawValue,
-        label:
-          radioLabels?.[index] ||
-          getOwnLabel(alias, '' + rawValue) ||
-          '' + rawValue,
+        label: radioLabels?.[index] || alias?.['' + rawValue] || '' + rawValue,
       };
     });
   }, [jsonSchema, alias]);
@@ -97,56 +84,45 @@ const FieldInputRadioGroup = ({
   );
 
   return (
-    <FormControl
-      component="fieldset"
-      aria-labelledby={labelId}
+    <FormControlLabel
+      label={label}
+      htmlFor={path}
       required={required}
-      disabled={disabled || readOnly}
+      disabled={disabled}
+      labelPlacement="start"
       style={{
         display: 'flex',
-        flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'start',
         gap: 8,
-        border: 0,
-        padding: 0,
-        margin: 0,
       }}
-    >
-      <FormLabel
-        component="legend"
-        id={getInputId('legend')}
-        hidden={!!node?.parentNode}
-      >
-        {label}
-      </FormLabel>
-      <RadioGroup
-        id={inputId}
-        aria-labelledby={labelId}
-        name={inputId}
-        defaultValue={initialValue}
-        onChange={handleChange}
-        row={row}
-      >
-        {options.map((option, index) => (
-          <FormControlLabel
-            key={option.value}
-            htmlFor={getInputId(index)}
-            value={option.value}
-            disabled={disabled || readOnly}
-            control={
-              <Radio
-                size={size}
-                id={getInputId(index)}
-                slotProps={{
-                  input: { 'aria-invalid': misfit || undefined },
-                }}
-              />
-            }
-            label={option.label}
-          />
-        ))}
-      </RadioGroup>
-    </FormControl>
+      control={
+        <RadioGroup
+          name={name}
+          defaultValue={initialValue}
+          onChange={handleChange}
+          row={row}
+        >
+          {options.map((option) => (
+            <FormControlLabel
+              key={option.value}
+              value={option.value}
+              disabled={disabled}
+              control={
+                <Radio
+                  size={size}
+                  id={`${path}-${option.value}`}
+                  slotProps={{
+                    input: { 'aria-invalid': misfit || undefined },
+                  }}
+                />
+              }
+              label={option.label}
+            />
+          ))}
+        </RadioGroup>
+      }
+    />
   );
 };
 

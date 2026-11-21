@@ -219,7 +219,7 @@ const Input = ({ inputId, name }: FieldInputProps<string>) => (
 );
 ```
 
-Inputs read `labelId` directly, so the same field title names the control or group in the plugin layout, `Form.Label` with `Form.Input`, and a custom renderer with its bound `Label`. Both range endpoints reference the title. Auxiliary controls keep their own names within a named field group. Input-owned legends use `getInputId('legend')`; a bound field title is exposed once, and any duplicate title node uses `hidden` so it is outside the accessibility tree.
+Field titles connect through the id and ARIA props supported by the UI library.
 
 For a composite custom input, consume `labelId` and `getInputId` explicitly rather than spreading them into DOM props. A getter is stable until the field scope or path changes. Never derive ids from the leaf name or from `path`.
 
@@ -237,12 +237,6 @@ A boolean switch accepts `presentation.FieldInputProps.alias` with optional `che
 
 For string switches, use the schema-level `switchLabels: [checkedLabel, uncheckedLabel]` tuple for custom state labels.
 
-### Unset slider values
+### Sliders
 
-An unset slider exposes no current value to assistive technology and stores nothing until the user acts.
-
-### Slider constraints
-
-With `multipleOf`, selectable values are multiples of that number within the inclusive bounds. Integer sliders select only integer multiples. Without `multipleOf`, number sliders retain their authored bounds. A range with no selectable value is disabled and stores nothing.
-
-Sliders honor inclusive and exclusive bounds together. With `multipleOf`, stops are decimal-exact multiples; integer fields use their intersection with integers. Without `multipleOf`, the default step is anchored at the lower bound and inclusive endpoints remain selectable. Exclusive endpoints are excluded; if no step lies inside the bounds, interactions store nothing. `Home` and `End` choose the first and last permitted values; Page and Shift+Arrow move ten steps. Rendering preserves the stored value, including an off-grid value. Pointer precision across a track reaching `Number.MAX_SAFE_INTEGER` is outside the supported precision range.
+The UI library determines the slider’s unset display, stops, and keyboard behavior.

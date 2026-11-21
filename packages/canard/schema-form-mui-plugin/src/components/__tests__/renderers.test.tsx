@@ -24,9 +24,7 @@ it('keeps the mui group free of a separate label', () => {
     />,
   );
   expect(view.container.querySelector('label')).toBeNull();
-  expect(
-    view.container.querySelector('input[id$=":/Text~input"]'),
-  ).not.toBeNull();
+  expect(view.container.querySelector('input[id="/Text"]')).not.toBeNull();
 });
 
 it('forwards standalone label content, addresses and root styling without nesting labels', () => {
@@ -52,8 +50,8 @@ it('forwards standalone label content, addresses and root styling without nestin
   const label = view.getByText('Caption').closest('label')!;
   expect(label).not.toBeNull();
   expect(view.container.querySelectorAll('label')).toHaveLength(1);
-  expect(label.id).toMatch(/^.+:\/Text~label$/);
-  expect(label.htmlFor).toMatch(/^.+:\/Text~input$/);
+  expect(label.id).toBe('label:/Text');
+  expect(label.htmlFor).toBe('/Text');
   expect(label.classList.contains('caption')).toBe(true);
   expect(label.style.color).toBe('rgb(1, 2, 3)');
   expect(label.querySelector('[aria-hidden="true"]')?.textContent).toContain(
@@ -98,9 +96,7 @@ it('registers the label and error parts without an input frame', () => {
       <Form.ErrorMessage path="/Text" />
     </Form>,
   );
-  expect(view.getByText('Caption').closest('label')?.id).toMatch(
-    /^.+:\/Text~label$/,
-  );
+  expect(view.getByText('Caption').closest('label')?.id).toBe('label:/Text');
   expect(view.getByText('Issue')).toBeTruthy();
 });
 
@@ -115,8 +111,8 @@ it('omits a separate label for direct array items', () => {
       ErrorMessageRenderer={ErrorMessageRenderer}
     />,
   );
-  expect(view.container.querySelector('label[for$=":/0~input"]')).toBeNull();
-  expect(view.container.querySelector('input[id$=":/0~input"]')).not.toBeNull();
+  expect(view.container.querySelector('label[for="/0"]')).toBeNull();
+  expect(view.container.querySelector('input[id="/0"]')).not.toBeNull();
 });
 
 it('retains the empty error root and its existing layout', () => {

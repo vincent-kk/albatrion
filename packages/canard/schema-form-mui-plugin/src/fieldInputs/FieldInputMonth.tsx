@@ -4,7 +4,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs, { type Dayjs } from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -16,23 +15,6 @@ import type {
 
 import type { MuiContext } from '../type';
 
-// customParseFormat enables the strict parse below; the import does not extend dayjs by itself.
-dayjs.extend(customParseFormat);
-
-const LIMIT_FORMAT = 'YYYY-MM';
-
-/**
- * Parses a `minimum` or `maximum` limit strictly, so an overflowing month is rejected instead of
- * rolled over (lenient dayjs reads `2024-13` as `2025-01`).
- * @param limit - Limit in `YYYY-MM` form; empty means no limit.
- * @returns The limit, or `undefined` when it is empty or not a valid `YYYY-MM` month.
- */
-const parseLimit = (limit: string | undefined): Dayjs | undefined => {
-  if (!limit) return undefined;
-  const date = dayjs(limit, LIMIT_FORMAT, true);
-  return date.isValid() ? date : undefined;
-};
-
 type MonthJSONSchema = StringSchema & {
   format: 'month';
 };
@@ -42,16 +24,10 @@ interface FieldInputMonthProps
     MuiContext {
   label?: ReactNode;
   hideLabel?: boolean;
-  /** Earliest selectable month (YYYY-MM), from `presentation.FieldInputProps.minimum`. */
-  minimum?: string;
-  /** Latest selectable month (YYYY-MM), from `presentation.FieldInputProps.maximum`. */
-  maximum?: string;
 }
 
 const FieldInputMonth = ({
-  inputId,
-  getInputId,
-  labelId: fieldTitleId,
+  path,
   name,
   required,
   disabled,
@@ -65,8 +41,6 @@ const FieldInputMonth = ({
   fullWidth: fullWidthProp,
   hideLabel,
   misfit,
-  minimum,
-  maximum,
 }: FieldInputMonthProps) => {
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
@@ -92,13 +66,6 @@ const FieldInputMonth = ({
     hideLabel,
   ]);
 
-  const { minDate, maxDate } = useMemo(() => {
-    return {
-      minDate: parseLimit(minimum),
-      maxDate: parseLimit(maximum),
-    };
-  }, [minimum, maximum]);
-
   const handleChange = useHandle((newValue: Dayjs | null) => {
     if (newValue === null) {
       onChange(undefined);
@@ -120,25 +87,12 @@ const FieldInputMonth = ({
         onChange={handleChange}
         disabled={disabled}
         readOnly={readOnly}
-        minDate={minDate}
-        maxDate={maxDate}
         views={['year', 'month']}
         openTo="month"
         format="YYYY-MM"
         slotProps={{
           textField: {
-            id: getInputId('native'),
-            InputProps: {
-              'aria-labelledby': fieldTitleId,
-              slotProps: {
-                input: {
-                  id: inputId,
-                  role: 'group',
-                  'aria-disabled': disabled || undefined,
-                  'aria-labelledby': fieldTitleId,
-                },
-              },
-            },
+            id: path,
             name,
             required,
             size,

@@ -1,6 +1,8 @@
 import { type ReactNode, useMemo } from 'react';
 
-import { Box, Slider, Typography, sliderClasses } from '@mui/material';
+import { Box, Slider, Typography } from '@mui/material';
+
+import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   FieldInputDefinition,
@@ -9,8 +11,6 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
-import { getSliderBounds } from './utils/slider/getSliderBounds';
-import { useSliderControl } from './utils/slider/useSliderControl';
 
 type SliderJSONSchema = NumberSchema & {
   minimum?: number;
@@ -29,41 +29,18 @@ interface FieldInputSliderProps
   showMarks?: boolean;
   hideLabel?: boolean;
   /**
-   * Publish on commit when omitted or true; false publishes on every move.
+   * Publish only when dragging ends if true, otherwise on every move.
    * From `presentation.FieldInputProps.lazy`.
    */
   lazy?: boolean;
-  /**
-   * Announced as `aria-valuetext` while the form holds no value, in place of the minimum the
-   * thumb rests on. From `presentation.FieldInputProps.unsetValueText`; defaults to `Not set`.
-   */
-  unsetValueText?: string;
 }
 
-const DEFAULT_UNSET_VALUE_TEXT = 'Not set';
-
-/** Slider styles while the form holds a value. */
-const SLIDER_SX = { mt: 1 };
-
-/**
- * Slider styles while the form holds no value: the thumb, which MUI places at the minimum,
- * stays hidden unless it has keyboard focus, so the minimum is not shown as a stored value.
- */
-const UNSET_SLIDER_SX = {
-  mt: 1,
-  [`& .${sliderClasses.thumb}:not(.${sliderClasses.focusVisible})`]: {
-    opacity: 0,
-  },
-};
-
 const FieldInputSlider = ({
-  inputId,
-  labelId: fieldTitleId,
+  path,
   name,
   jsonSchema,
   required,
   disabled,
-  readOnly,
   defaultValue,
   onChange,
   context,
@@ -72,7 +49,6 @@ const FieldInputSlider = ({
   showMarks = false,
   hideLabel,
   lazy,
-  unsetValueText = DEFAULT_UNSET_VALUE_TEXT,
   misfit,
 }: FieldInputSliderProps) => {
   const [label, size] = useMemo(() => {
@@ -80,50 +56,30 @@ const FieldInputSlider = ({
     return [labelProp || name, sizeProp || context.size];
   }, [context, labelProp, name, sizeProp, hideLabel]);
 
-  const bounds = useMemo(
-    () =>
-      getSliderBounds(
-        jsonSchema.minimum,
-        jsonSchema.maximum,
-        jsonSchema.multipleOf,
-        Array.isArray(jsonSchema.type)
-          ? jsonSchema.type.includes('integer')
-          : jsonSchema.type === 'integer',
-        jsonSchema.exclusiveMinimum,
-        jsonSchema.exclusiveMaximum,
-      ),
-    [jsonSchema],
-  );
-  const { min, max, empty } = bounds;
-  const {
-    unset: isUnset,
-    needsCommit,
-    draft,
-    change,
-    complete,
-    keyDown,
-    keyUp,
-  } = useSliderControl(
-    bounds,
-    defaultValue,
-    lazy,
-    disabled || readOnly,
-    readOnly,
-    onChange,
-  );
-  const handleChange = (_event: Event, value: number | number[]) =>
-    change(Array.isArray(value) ? value[0] : value);
-  const handleChangeCommitted = (_event: unknown, value: number | number[]) => {
-    if (lazy !== false || needsCommit)
-      complete(Array.isArray(value) ? value[0] : value);
-  };
+  const min = jsonSchema.minimum ?? 0;
+  const max = jsonSchema.maximum ?? 100;
+  const step = jsonSchema.multipleOf ?? 1;
+  const isLazy = lazy ?? false;
+
+  const handleChange = useHandle((_, newValue: number | number[]) => {
+    if (!isLazy) {
+      onChange(Array.isArray(newValue) ? newValue[0] : newValue);
+    }
+  });
+
+  const handleChangeCommitted = useHandle((_, newValue: number | number[]) => {
+    if (isLazy) {
+      onChange(Array.isArray(newValue) ? newValue[0] : newValue);
+    }
+  });
+
   return (
-    <Box sx={{ px: 2 }} onKeyDownCapture={keyDown} onKeyUpCapture={keyUp}>
+    <Box sx={{ px: 2 }}>
       {label && (
         <Typography
           variant="body2"
           component="label"
-          htmlFor={inputId}
+          htmlFor={path}
           sx={{ mb: 1, display: 'block' }}
         >
           {label}
@@ -131,42 +87,20 @@ const FieldInputSlider = ({
         </Typography>
       )}
       <Slider
+        id={path}
         name={name}
-        value={bounds.toLibrary(draft)}
-        min={bounds.libraryMin}
-        max={bounds.libraryMax}
-        step={bounds.libraryStep}
-        valueLabelFormat={bounds.fromLibrary}
-        getAriaValueText={(value) => String(bounds.fromLibrary(value))}
+        defaultValue={typeof defaultValue === 'number' ? defaultValue : min}
+        min={min}
+        max={max}
+        step={step}
         onChange={handleChange}
         onChangeCommitted={handleChangeCommitted}
-        disabled={disabled || readOnly || empty}
+        disabled={disabled}
         size={size}
         marks={showMarks}
-        slotProps={{
-          input: isUnset
-            ? {
-                id: inputId,
-                'aria-labelledby': fieldTitleId,
-                'aria-valuemin': min,
-                'aria-valuemax': max,
-
-                'aria-invalid': misfit || undefined,
-                'aria-valuenow': undefined,
-                'aria-valuetext': unsetValueText,
-              }
-            : {
-                id: inputId,
-                'aria-labelledby': fieldTitleId,
-                'aria-valuemin': min,
-                'aria-valuemax': max,
-                'aria-invalid': misfit || undefined,
-                'aria-valuenow': draft,
-                'aria-valuetext': undefined,
-              },
-        }}
-        valueLabelDisplay={isUnset ? 'off' : 'auto'}
-        sx={isUnset ? UNSET_SLIDER_SX : SLIDER_SX}
+        slotProps={{ input: { 'aria-invalid': misfit || undefined } }}
+        valueLabelDisplay="auto"
+        sx={{ mt: 1 }}
       />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
         <Typography variant="caption" color="text.secondary">

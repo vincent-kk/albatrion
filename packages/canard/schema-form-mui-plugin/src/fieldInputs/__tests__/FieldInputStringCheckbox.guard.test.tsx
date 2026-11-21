@@ -67,10 +67,6 @@ it.each([
         defaultValue,
         onChange: () => {},
         context: {},
-        inputId: 'fixture-control',
-        labelId: 'fixture-title',
-        getInputId: (key: string | number) =>
-          key === 0 ? 'fixture-first' : 'fixture-second',
       } as never),
     );
     expect(screen.getAllByRole('checkbox')).toHaveLength(2);

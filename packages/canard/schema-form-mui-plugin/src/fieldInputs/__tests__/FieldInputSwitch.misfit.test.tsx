@@ -68,7 +68,7 @@ it('gives no marker to a string outside the enum on a string switch, and follows
   expect(control().checked).toBe(false);
   expect(control().hasAttribute('aria-invalid')).toBe(false);
   act(() => ref.current!.setValue('on'));
-  expect(control().checked).toBe(false);
+  expect(control().checked).toBe(true);
   fireEvent.click(control());
   expect(ref.current!.getValue()).toBe('off');
 });

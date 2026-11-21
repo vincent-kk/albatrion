@@ -1,23 +1,8 @@
-import type { MouseEvent, ReactElement } from 'react';
+import type { ReactElement } from 'react';
 
 import { FormLabel as MuiFormLabel } from '@mui/material';
 
 import type { LabelRendererProps } from '@canard/schema-form';
-
-/**
- * Focus the picker section group addressed by a field label.
- * @param event - A click on the label whose group receives keyboard focus.
- */
-const focusPickerGroup = (event: MouseEvent<HTMLLabelElement>) => {
-  const label = event.currentTarget;
-  const target = label.ownerDocument.getElementById(label.htmlFor);
-  if (
-    target?.role === 'group' &&
-    target.tabIndex >= 0 &&
-    target.getAttribute('aria-disabled') !== 'true'
-  )
-    target.focus();
-};
 
 /**
  * Render the MUI label; its required prop owns the aria-hidden asterisk.
@@ -34,7 +19,6 @@ export const LabelRenderer = ({
 }: LabelRendererProps): ReactElement => (
   <MuiFormLabel
     htmlFor={htmlFor}
-    onClick={focusPickerGroup}
     id={id}
     required={required}
     style={style}
