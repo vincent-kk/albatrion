@@ -203,4 +203,4 @@ A boolean switch accepts `presentation.FieldInputProps.alias` with optional `che
 
 ### 슬라이더
 
-슬라이더의 미설정 표시, 정지점 및 키 입력은 UI 라이브러리가 처리합니다.
+Ant Design Mobile Slider의 손잡이는 Tab 또는 `formRef.current.focus(path)`로 초점을 받을 수 없습니다. 키를 눌러도 손잡이가 움직이거나 값이 저장되지 않습니다. 단일·범위 Slider는 스키마의 숫자 범위와 간격을 따르며 포인터로 값을 바꿀 수 있습니다. 키보드 조작을 유지하려면 키보드를 지원하는 Slider를 렌더하는 사용자 정의 `FieldInput`을 `fieldInputDefinitions`에 등록하고 코어의 값, 변경 핸들러, 잠금 상태를 전달하세요.

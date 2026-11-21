@@ -203,4 +203,4 @@ A boolean switch accepts `presentation.FieldInputProps.alias` with optional `che
 
 ### Sliders
 
-The UI library determines the slider’s unset display, stops, and keyboard behavior.
+Ant Design Mobile Slider thumbs are not reached by Tab or `formRef.current.focus(path)`. Keyboard input does not move the thumbs or commit a value. Pointer interaction still updates both single and range sliders, using the schema's numeric bounds and step. To keep keyboard interaction, register a custom `FieldInput` through `fieldInputDefinitions` with a keyboard-accessible slider and forward the core's value, change handler and lock state.
