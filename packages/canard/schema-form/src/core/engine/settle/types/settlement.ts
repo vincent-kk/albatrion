@@ -22,7 +22,7 @@ import type { FieldNodeWriteKind } from '../../types/value';
 import type { DependencyPresenceMemo } from '../utils/dependencies/trie/DependencyIndex';
 import type { GateOccurrence } from '../utils/gates/type';
 import type { DirtyPathSet } from '../utils/scratch/DirtyPathSet';
-import type { DepartingWrite } from './departingWrite';
+import type { DepartingWrite, RevivedSlotSource } from './departingWrite';
 import type { FixedFirstLoadPreparation } from './fixedFirstLoad';
 import type { GateHostView } from './gateHostView';
 import type { GateSelectionRound } from './gateSelectionRound';
@@ -162,8 +162,12 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   inactiveValueOverrides?: Map<Self, unknown>;
   /** Defined declarative values named for addresses at or below nodes leaving in this settlement, in rank order, applied after their exit policy. */
   departingWrites?: DepartingWrite<Self>[];
-  /** Whole live replacements that may supersede previously revived records. */
-  liveReplacementPathsAfterRevival?: string[];
+  /** Post-policy rights addressed by the exact active occurrence that received them. */
+  revivedSlotSources?: Map<Self, RevivedSlotSource<Self>>;
+  /** Current replay, whose own marks must leave its named channels eligible. */
+  replayingDepartingWrite?: DepartingWrite<Self>;
+  /** Live rule marking may supersede rights on the channels it reaches. */
+  isMarkingLiveRule?: boolean;
   /** First pre-move address per moved node, built once by an exit resolver. */
   inactivePathOrigins?: Map<Self, string>;
   /** Binding context from the preceding committed shape. */

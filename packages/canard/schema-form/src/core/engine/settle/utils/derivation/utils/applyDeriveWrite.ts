@@ -13,14 +13,20 @@ import { markWrite } from '../../input/markWrite';
 import { isLiveOccurrence } from '../../transition/isLiveOccurrence';
 import { placeDeclarativeValue } from '../../transition/placeDeclarativeValue';
 
-/** Record the coverage of a live declarative replacement before applying it. */
+/** Mark the whole input of an accepted live rule. */
 const markLiveDeriveWrite = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   value: unknown,
   context: SettlementContext<Self>,
 ): void => {
-  context.liveReplacementPathsAfterRevival?.push(node.path);
-  markWrite(node, value, context, undefined, undefined, 'declarative');
+  if (context.revivedSlotSources?.size) {
+    context.isMarkingLiveRule = true;
+    try {
+      markWrite(node, value, context, undefined, undefined, 'declarative');
+    } finally {
+      context.isMarkingLiveRule = false;
+    }
+  } else markWrite(node, value, context, undefined, undefined, 'declarative');
 };
 
 /**
