@@ -77,7 +77,24 @@ const valueReading: FieldInputDefinition[] = [
 
 ## Custom Input Contract
 
-- For a non-native focus target, add `data-focus-target` to the focusable element and provide its keyboard behavior. `focus(path)` chooses the first marked element, input, textarea, select or button in DOM order; the marker does not grant focusability. Mounted-target detection rejects `aria-disabled="true"` as well as native disabled controls.
+- Connect the optional `focusRef` prop to one control's React `ref`. It accepts a DOM element or a public component handle with a synchronous `focus()` method. Let the control provide its own keyboard behavior and disconnect an imperative handle when it cannot receive focus.
+- `focus(path)` calls the connected target once. Without one, it chooses the first in DOM order matching `[data-focus-target], input, textarea, select, button`. A fallback marker belongs on an already focusable element. Mounted-target detection checks native disabled controls and `aria-disabled="true"`.
+- Destructure `focusRef` before forwarding the remaining props to a control.
+
+```tsx
+type SearchControlProps = Pick<FieldInputProps, 'focusRef' | 'inputId'> & {
+  placeholder?: string;
+};
+
+function SearchControl({
+  focusRef,
+  inputId,
+  ...attributes
+}: SearchControlProps) {
+  return <input {...attributes} id={inputId} ref={focusRef} type="search" />;
+}
+```
+
 - Read either `value` or `defaultValue`, never both; mixing them gives React two competing value owners.
 - Call `onChange` with the right `SetValueOption` for objects (`Merge` vs `Overwrite`).
 - A custom input on a non-terminal object/array **must render `ChildFields`** — otherwise its children silently vanish:

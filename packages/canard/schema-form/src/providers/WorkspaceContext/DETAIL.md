@@ -12,7 +12,9 @@
 
 폼별 DOM 식별 범위는 Form마다 한 번의 useId로 생성하고 중앙 경로 어휘의 formatSegment로 tilde와 slash를 이스케이프하여 context에 보유합니다. 애플리케이션의 identifierPrefix에 ~2가 있어도 scope에 파생 식별자 구분자가 유입되지 않게 하는 가역 변환입니다. 서버와 클라이언트는 같은 트리와 `identifierPrefix`를 사용합니다. 독립적인 서버 렌더링 루트와 별도 `react-dom` 사본으로 같은 문서에 Form을 렌더링하는 루트는 호스트가 서로 다른 접두사를 지정합니다. 별도 번들 앱, 마이크로 프런트엔드, 위젯의 렌더러는 각각 `useId`를 같은 값에서 시작하므로 접두사가 충돌하면 한 앱의 라벨 클릭이 다른 앱의 입력에 작용할 수 있습니다. 범위는 데이터 경로와 분리하여 같은 경로의 여러 Form이 레이블·선택 그룹을 공유하지 않게 합니다.
 
-외부 기본 context에 Form context를 덮고 원래 딕셔너리는 수정하지 않습니다. [context 비교 계약](../DETAIL.md)에 따른 안정화로 동등한 값의 참조 교체가 불필요한 Context 전파를 만들지 않게 합니다.
+FormCore가 외부 기본 context를 공급하고 WorkspaceContext가 그 위에 Form context를 합칩니다. 입력이 생성되기 전에 context를 조립하며 원래 딕셔너리는 수정하지 않습니다. [context 비교 계약](../DETAIL.md)에 따른 안정화로 동등한 값의 참조 교체가 불필요한 Context 전파를 만들지 않게 합니다.
+
+폼이 소유한 실제 입력 위치 맵을 전달합니다. 입력이 커밋된 동안 컨테이너가 위치의 키이고, 같은 노드의 여러 표시 위치가 각자 앵커를 가질 수 있습니다. 등록과 해제는 입력의 layout 수명을 따릅니다.
 
 ## Acceptance Criteria
 

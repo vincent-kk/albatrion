@@ -8,6 +8,8 @@
 
 FieldInputProps와 UnknownFieldInputProps의 inputId는 실제 DOM 식별자이며 path와 다릅니다. FieldRendererProps의 labelId는 연결할 제목의 DOM id입니다. 입력·자식 입력·표현 덮어쓰기의 이전 id 키는 optional never로 금지하여 열린 색인 서명이 바인딩 식별자를 다시 허용하지 않게 합니다. 모든 입력의 name prop은 presentation 힌트와 무관하게 노드의 말단 이름입니다. 라디오 입력은 name prop 대신 inputId prop을 선택지의 native name으로 사용하므로 FormData의 key와 JSON 폼 값의 key를 혼동하지 않습니다.
 
+선택적 `focusRef`는 입력 위치에 공개 포커스 대상을 연결하는 바인딩 소유 prop입니다. 입력·자식 덮어쓰기와 스키마 표현의 열린 속성은 이를 설정하지 못합니다. 대상과 수명은 [FieldInputBridge](../components/FieldProxy/components/FieldInputBridge/DETAIL.md)의 계약을 따릅니다.
+
 실제 입력·알 수 없는 입력·자식 입력·덮어쓰기 props의 errors와 errorVisible은 optional never로 선언하여 목록 접근과 값 전달을 막습니다. 단순 진리값 검사는 TypeScript가 허용하므로 오류 정보 소비자는 useFieldErrors로 옮겨야 합니다. 묶인 Input만 직접 unwrapped를 해석하고 ChildFieldProps에는 그 키를 선언하지 않습니다.
 
 LabelRendererProps·ErrorMessageRendererProps·InputRendererProps는 node·주소·이름·스키마·표시 필수 여부를 공유하는 공개 부품 계약입니다. 공통 기반은 비공개이며 오류 정보는 기본 props가 아닙니다. 라벨·오류의 context도 자동 주입하지 않고 호출자가 필요할 때 명시합니다. 입력 틀은 children을 같은 커밋에 정확히 한 번 조건 없이 그립니다. 틀 루트와 children 사이의 요소·컴포넌트 경로 변경은 입력을 교체합니다. 교체된 입력은 현재 노드 값에서 시작하며 포커스와 진행 중인 조합을 잃습니다. FieldRendererProps의 Label·ErrorMessage는 이 계약의 partial props를 받는 묶인 컴포넌트입니다.
