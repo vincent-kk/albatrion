@@ -1,9 +1,10 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import {
+  JSONPointer,
   joinPointerWithPrefixOf,
   parseStandardPointer,
-  stripFragment,
+  rebasePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
@@ -12,7 +13,6 @@ import type { BlueprintSchema } from '../../../types/schema';
 import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintError';
 import { isBlueprintSchema } from './isBlueprintSchema';
 import { getResourceIndex } from './resources/getResourceIndex';
-import { resolveResourceReference } from './resources/resolveResourceReference';
 
 /**
  * Resolve a local authored reference without expanding its target.
@@ -27,22 +27,37 @@ export const resolveReference = (
   schemaPath: string,
 ): { schema: BlueprintSchema; schemaPath: string } => {
   let pointer: string;
-  let schema: unknown;
+  let schema: unknown = context.schema;
+  let resourcePath: string | undefined;
   try {
-    if (context.resourceIndex || stripFragment(reference) === reference)
-      return resolveResourceReference(context, reference, schemaPath);
-    const names = parseStandardPointer(reference);
-    pointer = joinPointerWithPrefixOf(reference, names);
-    schema = context.schema;
+    let fragment = reference;
+    if (context.resourceIndex || reference[0] !== JSONPointer.Fragment) {
+      const index = getResourceIndex(context);
+      const scope = index.scopes.get(schemaPath) ?? index.scopes.get('#');
+      if (!scope) throw new Error('The referring schema has no resource base.');
+      const uri = new URL(reference, scope.uri);
+      fragment = uri.hash || '#';
+      uri.hash = '';
+      const resource = index.resources.get(uri.href.replace(/#$/, ''));
+      if (!resource)
+        throw new Error('The resource is outside the authored document.');
+      schema = resource.schema;
+      resourcePath = resource.schemaPath;
+    }
+    const names = parseStandardPointer(fragment);
+    pointer = joinPointerWithPrefixOf(fragment, names);
     for (const name of names) {
-      if (schema === null || typeof schema !== 'object') {
+      if (
+        schema === null ||
+        typeof schema !== 'object' ||
+        !hasOwnProperty(schema, name)
+      ) {
         schema = undefined;
         break;
       }
-      schema = hasOwnProperty(schema, name)
-        ? Reflect.get(schema, name)
-        : undefined;
+      schema = Reflect.get(schema, name);
       if (
+        resourcePath === undefined &&
         schema &&
         typeof schema === 'object' &&
         (typeof Reflect.get(schema, '$id') === 'string' ||
@@ -50,6 +65,8 @@ export const resolveReference = (
       )
         getResourceIndex(context);
     }
+    if (resourcePath !== undefined)
+      pointer = rebasePointer(pointer, '#', resourcePath);
   } catch (cause) {
     return throwBlueprintError(
       FormErrorCode.UnknownJsonSchema,
@@ -66,7 +83,13 @@ export const resolveReference = (
     return throwBlueprintError(
       FormErrorCode.UnknownJsonSchema,
       schemaPath,
-      { reference, guidance: 'The reference must identify a schema.' },
+      resourcePath === undefined
+        ? { reference, guidance: 'The reference must identify a schema.' }
+        : {
+            reference,
+            cause: new Error('The reference must identify a schema.'),
+            guidance: 'The reference must be a valid local schema pointer.',
+          },
       context.options,
     );
   return { schema, schemaPath: pointer };
