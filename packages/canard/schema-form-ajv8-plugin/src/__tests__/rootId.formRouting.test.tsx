@@ -9,10 +9,11 @@ import {
   ValidationMode,
   useFieldErrors,
 } from '@canard/schema-form';
+import Ajv from 'ajv';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it } from 'vitest';
 
-import { plugin } from '../default';
+import { createValidator, plugin } from '../default';
 
 (
   globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
@@ -60,6 +61,7 @@ const notSchema = (id?: string) =>
 const renderAndValidate = async (
   jsonSchema: JSONSchema,
   defaultValue: ComponentProps<typeof Form>['defaultValue'],
+  validatorFactory: ComponentProps<typeof Form>['validatorFactory'] = plugin.validator,
 ) => {
   const container = document.body.appendChild(document.createElement('div'));
   const reactRoot = createRoot(container);
@@ -72,7 +74,7 @@ const renderAndValidate = async (
         defaultValue={defaultValue}
         validationMode={ValidationMode.OnRequest}
         errorVisibility={ErrorVisibility.Always}
-        validatorFactory={plugin.validator}
+        validatorFactory={validatorFactory}
       />,
     );
   });
@@ -107,3 +109,81 @@ describe('form routing of issues from a root with $id', () => {
     await unmount();
   });
 });
+
+const LEGACY = 'https://app.invalid/form-seam/legacy.json';
+
+it.each([
+  {
+    name: 'referenced not under a container',
+    schema: {
+      type: 'object',
+      components: { schemas: { Legacy: { $ref: LEGACY } } },
+      properties: {
+        home: {
+          type: 'object',
+          properties: { zip: { type: 'string' }, legacy: { type: 'number' } },
+          not: { $ref: '#/components/schemas/Legacy' },
+        },
+      },
+    },
+    value: { home: { zip: '1', legacy: 1 } },
+    field: '/home',
+    keywords: ['not'],
+  },
+  {
+    name: 'directly referenced not',
+    schema: {
+      type: 'object',
+      properties: {
+        home: {
+          type: 'object',
+          properties: { zip: { type: 'string' }, legacy: { type: 'number' } },
+          not: { $ref: LEGACY },
+        },
+      },
+    },
+    value: { home: { zip: '1', legacy: 1 } },
+    field: '/home',
+    keywords: ['not'],
+  },
+  {
+    name: 'asynchronous macro',
+    schema: {
+      type: 'object',
+      properties: { name: { type: 'string', available: true } },
+    },
+    value: { name: 'taken' },
+    field: '/name',
+    keywords: ['remoteOk', 'available'],
+  },
+] satisfies {
+  name: string;
+  schema: JSONSchema;
+  value: object;
+  field: string;
+  keywords: string[];
+}[])(
+  'routes issues by their validator path for $name (plugin DETAIL and VALIDATE-051)',
+  async ({ schema, value, field, keywords }) => {
+    const ajv = new Ajv({ allErrors: true, strict: false });
+    ajv.addSchema({ $id: LEGACY, required: ['legacy'] });
+    ajv.addKeyword({
+      keyword: 'remoteOk',
+      async: true,
+      validate: async (_schema: unknown, value: unknown) => value !== 'taken',
+    });
+    ajv.addKeyword({ keyword: 'available', macro: () => ({ remoteOk: true }) });
+    const { form, unmount } = await renderAndValidate(
+      schema,
+      value,
+      createValidator(ajv),
+    );
+    try {
+      expect(
+        form.findNode(field)?.errors.map((issue) => issue.keyword),
+      ).toEqual(keywords);
+    } finally {
+      await unmount();
+    }
+  },
+);
