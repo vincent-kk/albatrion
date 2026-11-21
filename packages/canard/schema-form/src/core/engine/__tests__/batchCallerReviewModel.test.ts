@@ -174,21 +174,31 @@ it('compares updater and undefined writes after retaining or publishing a descen
                   : target === '' || target === '/o'
                     ? {}
                     : '';
-            const writes: Write[] = [
-              ['', { o: { held: 'retained', a: 'prior' } }, WriteOption.Merge],
-              [
-                target,
-                identity
-                  ? (value: unknown) => value
-                  : kind === 'explicitUndefined'
-                    ? undefined
-                    : () => (kind === 'emptyUpdater' ? empty : undefined),
-              ],
-            ];
-            if (length >= 3) writes.splice(position, 0, OTHER);
-            if (length === 4)
-              writes.push(['', { o: { a: 'last' } }, WriteOption.Merge]);
             const run = (mode: 'sequential' | 'batch' | 'nested') => {
+              const seen: unknown[] = [];
+              const writes: Write[] = [
+                [
+                  '',
+                  { o: { held: 'retained', a: 'prior' } },
+                  WriteOption.Merge,
+                ],
+                [
+                  target,
+                  kind === 'explicitUndefined'
+                    ? undefined
+                    : (value: unknown) => {
+                        seen.push(value);
+                        return identity
+                          ? value
+                          : kind === 'emptyUpdater'
+                            ? empty
+                            : undefined;
+                      },
+                ],
+              ];
+              if (length >= 3) writes.splice(position, 0, OTHER);
+              if (length === 4)
+                writes.push(['', { o: { a: 'last' } }, WriteOption.Merge]);
               const root = nodeFromJSONSchema({
                 jsonSchema: {
                   type: 'object',
@@ -232,7 +242,7 @@ it('compares updater and undefined writes after retaining or publishing a descen
               };
               if (mode === 'sequential') calls();
               else root.batch(calls);
-              return { value: root.value, retained: root.inactiveValues };
+              return { seen, value: root.value, retained: root.inactiveValues };
             };
             const expected = run('sequential');
             for (const mode of ['batch', 'nested'] as const) {
@@ -264,7 +274,7 @@ it('compares both write orders and replacement boundaries for branch, terminal, 
     },
   ] as const;
   for (const reverse of [false, true])
-    for (const option of [WriteOption.Merge, WriteOption.Overwrite]) {
+    for (const option of [WriteOption.Merge, WriteOption.Overwrite] as const) {
       const run = (batched: boolean) => {
         const root = nodeFromJSONSchema({
           jsonSchema: {
