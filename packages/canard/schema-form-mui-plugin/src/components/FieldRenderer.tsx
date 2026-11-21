@@ -22,10 +22,6 @@ export const FieldRenderer = ({
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps): ReactElement => {
-  const title = useMemo(
-    () => resolveFieldLabel(jsonSchema, name),
-    [jsonSchema, name],
-  );
   const presentation =
     typeof jsonSchema === 'object' && jsonSchema !== null
       ? jsonSchema.presentation
@@ -49,6 +45,10 @@ export const FieldRenderer = ({
       Array.isArray(jsonSchema.enum) &&
       jsonSchema.enum.length > 0);
 
+  const title = useMemo(
+    () => resolveFieldLabel(jsonSchema, name, undefined, !isChoiceGroup),
+    [jsonSchema, name, isChoiceGroup],
+  );
   const titleElement = title ? (
     <span hidden={!isChoiceGroup} id={labelId}>
       {title}

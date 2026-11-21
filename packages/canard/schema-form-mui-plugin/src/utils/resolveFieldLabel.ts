@@ -17,12 +17,14 @@ const readLabel = (value: unknown): ReactNode => {
  * @param schema - Current field schema, including optional presentation labels.
  * @param name - Field key or array index used as a fallback.
  * @param label - Explicit label content for the current renderer or input.
+ * @param prefersInput - The plugin title is hidden and names an input with its own visible label.
  * @returns Content referenced by the field's accessible name.
  */
 export const resolveFieldLabel = (
   schema: FieldRendererProps['jsonSchema'],
   name: string,
   label?: ReactNode,
+  prefersInput = false,
 ): ReactNode => {
   const explicit = readLabel(label);
   if (explicit || explicit === 0) return explicit;
@@ -32,10 +34,15 @@ export const resolveFieldLabel = (
     : undefined;
   const renderer = presentation?.FieldRendererProps;
   const input = presentation?.FieldInputProps;
-  const authoredLabel = readLabel(
-    (isPlainObject(renderer) ? renderer.label : undefined) ??
-      (isPlainObject(input) ? input.label : undefined),
+  const rendererLabel = readLabel(
+    isPlainObject(renderer) ? renderer.label : undefined,
   );
+  const inputLabel = readLabel(
+    isPlainObject(input) && input.hideLabel !== true ? input.label : undefined,
+  );
+  const authoredLabel = prefersInput
+    ? (inputLabel ?? rendererLabel)
+    : (rendererLabel ?? inputLabel);
   if (authoredLabel || authoredLabel === 0) return authoredLabel;
   const title = typeof schema.title === 'string' ? readLabel(schema.title) : '';
   const ariaLabel = isPlainObject(schema.options)

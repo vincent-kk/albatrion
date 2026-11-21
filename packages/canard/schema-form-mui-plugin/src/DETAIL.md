@@ -40,7 +40,7 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 분리하고 원래 대소문자�
 
 코어의 `inputId`는 주 조작 요소에 두고, 추가 조작 요소와 입력 자체 레이블에는 `getInputId(key)`가 발급한 서로 다른 id를 둡니다. bound Label과 Form.Label이 소유하는 제목의 id는 `labelId`입니다. 레이블의 `for`는 연결 대상 주 조작 요소의 id를 가리키며, 복합 그룹에는 제목을 참조하는 `aria-labelledby`를 사용합니다. `aria-labelledby`의 각 id는 실제 이름을 제공하는 요소 한 개를 가리킵니다. 외부 레이블과 내부 레이블이 같은 제목을 표시하는 선택 그룹은 하나만 접근성 트리에 노출합니다. 같은 규칙은 플러그인 기본 renderer, Form.Label과 Form.Input, bound Label을 사용하는 renderer, hideLabel에서도 적용합니다.
 
-MUI Select의 조작 대상은 표시 combobox이고, date·month·time 피커의 조작 대상은 초점 가능한 section group입니다. 해당 요소는 div이므로 레이블 클릭은 MUI 또는 플러그인에서 전달합니다. 숨은 native input은 keyed id를 갖습니다.
+MUI Select의 조작 대상은 표시 combobox이고, date·month·time 피커의 조작 대상은 초점 가능한 section group입니다. 해당 요소는 div이므로 레이블 클릭은 MUI 또는 플러그인에서 전달합니다. 숨은 native input은 keyed id를 갖습니다. 외부 Form.Label과 입력 자체 레이블을 함께 그리면 실제 렌더된 레이블을 클라이언트에서 합칩니다. 두 레이블이 별도 React 경계에서 그려지므로 서버 HTML의 결합 전 이름은 외부 제목입니다.
 
 ### 슬라이더의 경계·격자·저장
 
