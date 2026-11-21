@@ -20,8 +20,14 @@ export const registerSchemaGuard = (
   if (registration.guardAjv && registration.guardCopy) return registration.guardAjv;
   const guardCopy: JSONSchema = JSON.parse(JSON.stringify(root));
   const guardAjv = registration.guardAjv ?? makeSibling(baseAjv, false, false);
+  if (!guardCopy.$id) {
+    // AJV uses the first registration key as the base of an unnamed schema.
+    guardAjv.removeSchema('');
+    guardAjv.addSchema(guardCopy);
+  }
   const refsBefore = Object.keys(guardAjv.refs);
   guardAjv.addSchema(guardCopy, registration.key);
+  if (!guardCopy.$id) guardAjv.removeSchema('');
   registration.guardAjv = guardAjv;
   registration.guardCopy = guardCopy;
   registration.guardRefs = Object.keys(guardAjv.refs).filter((ref) => !refsBefore.includes(ref));

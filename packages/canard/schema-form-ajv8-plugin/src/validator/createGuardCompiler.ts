@@ -36,7 +36,8 @@ export const createGuardCompiler = (
 ): Fn<[value: unknown], boolean> => {
   const registration = registerSchemaRoot(registry, ajv, root);
   const rootId = typeof root.$id === 'string' ? root.$id : '';
-  const located = resolveGuardSchema(root, pointer);
+  const fragment = pointer.startsWith('#') ? pointer.replace(/^#%2f/i, '#/') : `#${pointer.replace(/[^A-Za-z0-9_~./-]/gu, encodeURIComponent)}`;
+  const located = resolveGuardSchema(root, fragment);
   if (located === undefined)
     throw new GuardPointerNotSchemaError(rootId, pointer);
   const schema = directGuardCompile ? located : undefined;
@@ -61,9 +62,10 @@ export const createGuardCompiler = (
   // A draft-07 instance leaves dynamic keywords unknown and ignored, so only a dynamic-vocabulary instance collects.
   const dynamicAnchors: Dictionary<ValidateFunction> =
     guard.opts.dynamicRef && registration.hasDynamicKeywords
-      ? collectGuardDynamicAnchors(root, registration.key, pointer, guard)
+      ? collectGuardDynamicAnchors(root, registration.key, fragment, guard)
       : {};
-  const validate = guard.compile({ $ref: `${registration.key}#${pointer}` });
+  const validate = guard.compile({ $ref: `${registration.key}${fragment}` });
+  if ('$async' in validate && validate.$async === true) throw new Error('async schema in sync schema');
   if (Object.keys(dynamicAnchors).length === 0)
     return (value) => !!validate(value);
   return (value) =>
@@ -71,7 +73,6 @@ export const createGuardCompiler = (
       instancePath: '',
       parentData: {},
       parentDataProperty: '',
-      rootData: value as Dictionary<unknown>,
       dynamicAnchors: { ...dynamicAnchors },
     });
 };

@@ -32,9 +32,9 @@ export const createGuardCompiler = (
   directGuardCompile: boolean,
   finalizer: FinalizationRegistry<SchemaRootRegistration>,
 ): Fn<[value: unknown], boolean> => {
-  const fragment = pointer.startsWith('#') ? pointer : `#${pointer}`;
+  const fragment = pointer.startsWith('#') ? pointer.replace(/^#%2f/i, '#/') : `#${pointer.replace(/[^A-Za-z0-9_~./-]/gu, encodeURIComponent)}`;
   const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : '';
-  const located = resolveGuardSchema(root, pointer);
+  const located = resolveGuardSchema(root, fragment);
   if (located === undefined)
     throw new GuardPointerNotSchemaError(rootId, pointer);
   const schema = directGuardCompile ? located : undefined;
@@ -61,7 +61,7 @@ export const createGuardCompiler = (
   const validate = guard.compile(
     direct ? schema : { $ref: `${registration.rootId}${fragment}` },
   );
-  if (direct && '$async' in validate && validate.$async === true)
+  if ('$async' in validate && validate.$async === true)
     throw new Error('async schema in sync schema');
   return (value) => {
     const result = validate(value, {
