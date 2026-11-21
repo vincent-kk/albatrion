@@ -2,9 +2,8 @@ import { lstat, realpath, unlink } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { type Action, INSTALLED_HASH } from '../../buildPlan/index.js';
-import { hashEquals, readSourceSnapshot } from '../../hash/index.js';
+import { hashEquals, hashFile, readSourceSnapshot } from '../../hash/index.js';
 import type { SourceSnapshot } from '../../types/sourceSnapshot.js';
-import { hashInstalledFile } from '../../utils/hashInstalledFile.js';
 import { replaceDocument } from './replaceDocument.js';
 
 /**
@@ -46,7 +45,7 @@ export async function applyAction(
       entry &&
       hash &&
       ((await realpath(dstAbs)) !== action.destinationKey ||
-        !hashEquals(await hashInstalledFile(dstAbs), hash))
+        !hashEquals(await hashFile(dstAbs, true), hash))
     )
       throw new Error(`Installed file changed before orphan deletion: ${dstAbs}`);
     await unlink(dstAbs).catch((error) => {

@@ -10,6 +10,8 @@ const NO_COMMANDS =
 
 /** Vendor-neutral home used by the project layout, and by the `agents` agent. */
 const NEUTRAL_DIR = '.agents';
+/** Local ownership record kept beside the agent's asset directories. */
+const INSTALLED_ASSETS_FILE = 'agents-assets-sync.json';
 
 /**
  * Narrow an unknown value to a supported agent token.
@@ -47,6 +49,7 @@ export function resolveAgentTarget(
       agent,
       scope,
       projectRoot,
+      installedAssetsFile: join(root, INSTALLED_ASSETS_FILE),
       directoryRoots: {
         skills: join(root, 'skills'),
         rules: join(root, 'rules'),
@@ -61,18 +64,16 @@ export function resolveAgentTarget(
   // At `project` scope both agents share the `.agents` convention and the
   // repository's own AGENTS.md. They diverge only at `user` scope, where
   // codex reads its own home and `agents` reads the neutral one.
-  const home = join(projectRoot, agent === 'codex' ? '.codex' : NEUTRAL_DIR);
-  const skillsRoot =
-    scope === 'user'
-      ? join(home, 'skills')
-      : join(projectRoot, NEUTRAL_DIR, 'skills');
+  const root = join(projectRoot, scope === 'user' && agent === 'codex' ? '.codex' : NEUTRAL_DIR);
+  const skillsRoot = join(root, 'skills');
   const rulesMergeFile =
-    scope === 'user' ? join(home, 'AGENTS.md') : join(projectRoot, 'AGENTS.md');
+    join(scope === 'user' ? root : projectRoot, 'AGENTS.md');
 
   return {
     agent,
     scope,
     projectRoot,
+    installedAssetsFile: join(root, INSTALLED_ASSETS_FILE),
     directoryRoots: { skills: skillsRoot, rules: null, commands: null },
     rulesMergeFile,
     unsupported: { commands: NO_COMMANDS },

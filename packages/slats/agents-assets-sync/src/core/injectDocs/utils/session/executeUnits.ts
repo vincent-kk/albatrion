@@ -9,7 +9,6 @@ import { partitionActions } from '../partitionActions.js';
 import { summarize } from '../summarize.js';
 import type { PreparedUnit, RunFailure, RunResult, RunUnit } from './types.js';
 import { createRunDiagnostics } from './utils/createRunDiagnostics.js';
-import { recordInstalledAssets } from './utils/recordInstalledAssets.js';
 
 /** Apply prepared units once, then return the complete result model.
  * @param units Read-only plans.
@@ -99,7 +98,7 @@ export async function executeUnits(
     }
     if (installedAssets && failures.length === 0) {
       try {
-        await recordInstalledAssets(installedAssets, unit);
+        await installedAssets.record(unit);
       } catch (error) {
         diagnostics.push({
           unitKey: unit.key,

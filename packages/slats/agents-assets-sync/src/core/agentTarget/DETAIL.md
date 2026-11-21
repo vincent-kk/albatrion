@@ -7,6 +7,7 @@
 - `codex` 와 `agents` 는 rules 를 `AGENTS.md` 에 블록으로 병합하고, skills 를 스킬 디렉터리 디렉터리에 두며, commands 위치가 없다고 보고한다.
 - 두 agent 는 `project` scope 에서 완전히 동일하다 — `<projectRoot>/.agents/skills` 와 저장소 자신의 `<projectRoot>/AGENTS.md`. `user` scope 에서만 갈라져 codex 는 `~/.codex`, agents 는 중립적인 `~/.agents` 를 읽는다.
 - `agents` 는 제품이 아니라 vendor-neutral `.agents` 관례다. 자기 홈을 두는 대신 그 관례를 읽는 도구를 위해 존재한다.
+- 설치 기록은 에이전트 자산 루트 바로 아래 `agents-assets-sync.json`입니다. 프로젝트에서는 Claude는 `.claude`, Codex와 agents는 공유 `.agents`, 사용자 스코프에서는 각각 `.claude`, `.codex`, `.agents` 아래에 둡니다. 직접 복사하는 규칙 또는 스킬을 다루는 실행에서만 설치 기록 경로를 검사합니다. 프로젝트에서는 기존 목적지 포함 검사에 합류합니다.
 - `unsupported` 는 kind 별로 보고할 이유 문자열을 담는다. 조용한 누락이 아니라 명시된 사유로 표면화되어야 한다.
 - `description` 은 이 target 이 쓰는 곳을 한 줄로 말한다. `autoLocated` 인 경우 `auto-located` 표식이 포함된다.
 - `resolveDestinations` 는 매니페스트 경로를 목적지로 사상한다. 선행 세그먼트가 알려진 kind 가 아니거나 호출자가 거른 kind 면 결과에서 **빠진다**. 이 부재가 kind 필터 실행이 아무것도 보고하거나 삭제하지 않게 막는 기제다.
@@ -43,7 +44,7 @@
 
 - `AgentType = 'claude' | 'codex' | 'agents'`
 - `AssetKind = 'skills' | 'rules' | 'commands'`
-- `AgentTarget` — `{ agent, scope, projectRoot, directoryRoots, rulesMergeFile, unsupported, description }`
+- `AgentTarget`은 자산과 규칙 병합 파일의 위치에 더해 설치 기록의 절대 위치를 제공합니다.
 - `Destination` — `{ kind: 'file', dstAbs }` | `{ kind: 'block', fileAbs, blockId }` | `{ kind: 'unsupported', reason }`
 - `OrphanScan` — `{ kind: 'directory', scanRoot, relPathPrefix }` | `{ kind: 'block-file', fileAbs, ownerPackage }`
 

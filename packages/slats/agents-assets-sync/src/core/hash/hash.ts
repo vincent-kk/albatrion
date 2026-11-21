@@ -1,16 +1,18 @@
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 
+import { readRegularFile } from './utils/readRegularFile.js';
+
 export type Sha256Hex = string;
 
 export function hashContent(buffer: Buffer | string): Sha256Hex {
   return createHash('sha256').update(buffer).digest('hex');
 }
 
-export async function hashFile(absPath: string): Promise<Sha256Hex | null> {
+export async function hashFile(absPath: string, regularOnly = false): Promise<Sha256Hex | null> {
   try {
-    const buf = await readFile(absPath);
-    return hashContent(buf);
+    const buf = regularOnly ? await readRegularFile(absPath) : await readFile(absPath);
+    return buf === null ? null : hashContent(buf);
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') return null;
     throw err;

@@ -10,7 +10,6 @@ import {
   readSourceSnapshot,
 } from '../hash/index.js';
 import { blockBodyMatches, parseBlocks } from '../markerBlock/index.js';
-import { hashInstalledFile } from '../utils/hashInstalledFile.js';
 import { isNoisePath } from '../utils/isNoisePath.js';
 import { toPosix } from '../utils/toPosix.js';
 import { walkFiles } from '../utils/walkFiles.js';
@@ -139,7 +138,7 @@ async function* findOrphans(
     if (
       !known.has(relPath) &&
       !(await isManagedAlias(relPath, dstAbs, aliases)) &&
-      hashEquals(await hashInstalledFile(dstAbs), installedHash)
+      hashEquals(await hashFile(dstAbs, true), installedHash)
     )
       yield { relPath, target: { kind: 'file', dstAbs }, [INSTALLED_HASH]: installedHash };
     return;

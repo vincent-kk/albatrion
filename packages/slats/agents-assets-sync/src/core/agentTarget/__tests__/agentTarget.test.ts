@@ -41,6 +41,7 @@ describe('core/agentTarget — resolveAgentTarget', () => {
   it('claude(user) roots every kind under ~/.claude', () => {
     const t = resolveAgentTarget('claude', 'user', ROOT);
     const claudeRoot = join(homedir(), '.claude');
+    expect(t.installedAssetsFile).toBe(join(claudeRoot, 'agents-assets-sync.json'));
     expect(t.directoryRoots).toEqual({
       skills: join(claudeRoot, 'skills'),
       rules: join(claudeRoot, 'rules'),
@@ -60,6 +61,7 @@ describe('core/agentTarget — resolveAgentTarget', () => {
   it('codex(user) stays inside the Codex home', () => {
     const t = resolveAgentTarget('codex', 'user', ROOT);
     const codexHome = join(homedir(), '.codex');
+    expect(t.installedAssetsFile).toBe(join(codexHome, 'agents-assets-sync.json'));
     expect(t.directoryRoots.skills).toBe(join(codexHome, 'skills'));
     expect(t.directoryRoots.rules).toBeNull();
     expect(t.directoryRoots.commands).toBeNull();
@@ -70,6 +72,7 @@ describe('core/agentTarget — resolveAgentTarget', () => {
   it('agents(user) uses the vendor-neutral home instead', () => {
     const t = resolveAgentTarget('agents', 'user', ROOT);
     const agentsHome = join(homedir(), '.agents');
+    expect(t.installedAssetsFile).toBe(join(agentsHome, 'agents-assets-sync.json'));
     expect(t.directoryRoots.skills).toBe(join(agentsHome, 'skills'));
     expect(t.rulesMergeFile).toBe(join(agentsHome, 'AGENTS.md'));
     expect(t.unsupported.commands).toBeTruthy();
@@ -81,6 +84,7 @@ describe('core/agentTarget — resolveAgentTarget', () => {
     '%s(project) uses .agents/skills and the root AGENTS.md',
     (agent) => {
       const t = resolveAgentTarget(agent, 'project', ROOT);
+      expect(t.installedAssetsFile).toBe(join(ROOT, '.agents', 'agents-assets-sync.json'));
       expect(t.directoryRoots.skills).toBe(join(ROOT, '.agents', 'skills'));
       expect(t.rulesMergeFile).toBe(join(ROOT, 'AGENTS.md'));
     },

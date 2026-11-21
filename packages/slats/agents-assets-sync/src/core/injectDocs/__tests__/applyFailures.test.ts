@@ -46,6 +46,7 @@ it.each(['file', 'block'] as const)(
               agent: 'claude',
               scope: 'project',
               projectRoot: root,
+              installedAssetsFile: join(root, 'agents-assets-sync.json'),
               description: 'test',
               directoryRoots: { skills: root, rules: root, commands: root },
               rulesMergeFile: null,

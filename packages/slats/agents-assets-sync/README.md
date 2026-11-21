@@ -273,7 +273,7 @@ MIT — see [LICENSE](./LICENSE).
 - Overwrites preserve mode, owner, group and hard links. A single-link file uses atomic replacement when its identity can be restored; otherwise writing stays in place and is not crash-atomic. Read-only targets and dangling write links are refused.
 - A user-scope AGENTS.md symlink is followed only when its target exists. A dangling link is refused with an error and preserved, so the tool cannot silently replace a dotfiles link.
 
-Claude rules and skills removed from a later package version are eligible for the same force confirmation when a previous successful installation recorded their path and SHA-256 in the scope’s `.agents-assets-sync/claude.json`. The file must still match the recorded content, and a different recorded owner protects it. Unrecorded files require manual ownership verification. Codex and agents keep ownership evidence in each managed rule block.
+Removed skills and Claude rule files are eligible for the same force confirmation when a previous successful installation recorded their path and SHA-256 in `agents-assets-sync.json` beside the agent’s assets. The file must still match its recorded content, and another recorded owner protects it. Unrecorded files require manual ownership verification. Codex and agents keep rule ownership in each managed block.
 
 ### Markdown boundaries for rules
 
