@@ -13,7 +13,6 @@ import {
 } from '../constants/charCode';
 import { prefixSelector } from './prefixSelector';
 import { prefixSelectorList } from './prefixSelectorList';
-import { skipOpaqueToken } from './skipOpaqueToken';
 import { trimSelector } from './trimSelector';
 
 /**
@@ -95,7 +94,7 @@ export class RuleScoper {
         continue;
       }
       if (first === SLASH && css.charCodeAt(cursor + 1) === ASTERISK) {
-        cursor = skipOpaqueToken(css, cursor);
+        cursor = getCssOpaqueEnd(css, cursor);
         continue;
       }
       const isAtRule = first === AT_SIGN;

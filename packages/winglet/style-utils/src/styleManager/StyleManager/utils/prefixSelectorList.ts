@@ -1,3 +1,5 @@
+import { getCssOpaqueEnd } from '../../../utils/cssTokens/getCssOpaqueEnd';
+
 import {
   BACKSLASH,
   COMMA,
@@ -7,7 +9,6 @@ import {
   SLASH,
 } from '../constants/charCode';
 import { prefixSelector } from './prefixSelector';
-import { skipOpaqueToken } from './skipOpaqueToken';
 import { trimSelector } from './trimSelector';
 
 /** Characters that may hide a comma from the list structure. */
@@ -61,7 +62,7 @@ export const prefixSelectorList = (
         prefixSelector(trimSelector(css.slice(partStart, index)), prefix) + ',';
       partStart = index + 1;
     } else if (OPAQUE_CHARACTER[code]) {
-      const next = skipOpaqueToken(css, index);
+      const next = getCssOpaqueEnd(css, index);
       if (next > index) index = next - 1;
     }
   }

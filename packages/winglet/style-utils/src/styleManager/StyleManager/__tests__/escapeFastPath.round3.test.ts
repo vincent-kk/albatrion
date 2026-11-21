@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { getCssEscapeEnd } from '../../../utils/cssTokens/getCssEscapeEnd';
 import { getEscapedUrlEnd } from '../../../utils/cssTokens/getEscapedUrlEnd';
-import { skipOpaqueToken } from '../utils/skipOpaqueToken';
+import { getCssOpaqueEnd } from '../../../utils/cssTokens/getCssOpaqueEnd';
 
 describe('round-3 style-utils 1: escape fast-path equivalence', () => {
   it('matches the unconditional full token reader over every ASCII start', () => {
@@ -15,7 +15,7 @@ describe('round-3 style-utils 1: escape fast-path equivalence', () => {
           const urlEnd = getEscapedUrlEnd(css, index);
           const completeEnd =
             urlEnd === index ? getCssEscapeEnd(css, index) : urlEnd;
-          expect(skipOpaqueToken(css, index), JSON.stringify(css)).toBe(
+          expect(getCssOpaqueEnd(css, index), JSON.stringify(css)).toBe(
             completeEnd,
           );
         }
