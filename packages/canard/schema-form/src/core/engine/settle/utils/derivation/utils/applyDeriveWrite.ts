@@ -2,12 +2,12 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import {
   JSONPointer,
-  appendSegment,
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { DeriveRoundDecision } from '../../../../derive';
 import type { FieldNodeRecord } from '../../../../record';
+import { resolveVirtualStorageTargets } from '../../../../utils/paths/resolveVirtualStorageTargets';
 import type { SettlementContext } from '../../../types/settlement';
 import { markWrite } from '../../input/markWrite';
 import { isLiveOccurrence } from '../../transition/isLiveOccurrence';
@@ -56,20 +56,19 @@ export const applyDeriveWrite = <Self extends FieldNodeRecord<Self>>(
     host?.path ?? resolvePointer(write.targetPath, JSONPointer.Parent);
   const entries = host?.blueprintNode.childEntries ?? write.siblings ?? [];
   const values = isArray(write.value) ? write.value : [];
-  const fields = template.fields ?? [];
-  for (let index = 0; index < fields.length; index++) {
-    const sibling = host?.childrenByName?.[fields[index]];
+  const targets = resolveVirtualStorageTargets(
+    hostPath,
+    template.fields,
+    host?.childrenByName,
+  );
+  for (let index = 0; index < targets.length; index++) {
+    const { name, path, node: sibling } = targets[index];
     if (sibling && isLiveOccurrence(sibling, context)) {
       markLiveDeriveWrite(sibling, values[index], context);
       continue;
     }
-    const entry = entries.find((entry) => entry.name === fields[index]);
+    const entry = entries.find((entry) => entry.name === name);
     if (entry)
-      placeDeclarativeValue(
-        context,
-        appendSegment(hostPath, entry.name),
-        entry.node,
-        values[index],
-      );
+      placeDeclarativeValue(context, path, entry.node, values[index]);
   }
 };
