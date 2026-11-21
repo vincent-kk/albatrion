@@ -2,4 +2,4 @@
 "@canard/schema-form-antd-mobile-plugin": patch
 ---
 
-Clarify that textarea minRows and maxRows belong directly on the schema, rather than in presentation.FieldInputProps.
+Set textarea `minRows` and `maxRows` through `presentation.FieldInputProps`. Schema-level rows still supply defaults when the presentation leaves them unset.

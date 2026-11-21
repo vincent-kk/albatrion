@@ -15,6 +15,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { getEnumOptions } from './utils/enum/getEnumOptions';
+
 type ArrayJSONSchema = ArraySchema & {
   items: StringSchema;
 };
@@ -29,57 +31,67 @@ interface FieldInputStringCheckboxProps
 }
 
 const FieldInputStringCheckbox = ({
+  inputId,
+  labelId,
+  getInputId,
   jsonSchema,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
   alias,
   misfit,
 }: FieldInputStringCheckboxProps) => {
-  const options = useMemo(() => {
-    const labels = context.checkboxLabels || alias || {};
-    return jsonSchema.items?.enum
-      ? map(jsonSchema.items.enum, (rawValue: string | null) => {
-          const value = JSON.stringify(rawValue);
-          return {
-            value,
-            rawValue,
-            label: labels['' + rawValue] || '' + rawValue,
-          };
-        })
-      : [];
-  }, [context, jsonSchema, alias]);
+  const values = jsonSchema.items?.enum;
+  const labels = context.checkboxLabels || alias;
+  const options = useMemo(
+    () => getEnumOptions(values, labels, getInputId),
+    [values, labels, getInputId],
+  );
 
-  const initialValue = useMemo(() => {
-    return isArray(defaultValue) &&
-      defaultValue.every((v) => v === null || typeof v === 'string')
-      ? map(defaultValue, (v) => JSON.stringify(v))
-      : undefined;
-  }, [defaultValue]);
-
-  const handleChange = useHandle((value: CheckboxValue[]) => {
-    const convertedValues = map(value, (v) => {
-      const option = options.find((opt) => opt.value === v.toString());
-      return option ? option.rawValue : v.toString();
+  const initialValue = useMemo(
+    () =>
+      options
+        .filter(
+          ({ rawValue }) =>
+            isArray(defaultValue) && defaultValue.includes(rawValue),
+        )
+        .map(({ value }) => value),
+    [defaultValue, options],
+  );
+  const handleChange = useHandle((tokens: CheckboxValue[]) => {
+    const selected = options
+      .filter(({ value }) => tokens.includes(value))
+      .map(({ rawValue }) => rawValue);
+    onChange((previous) => {
+      const stored = isArray(previous) ? previous : [];
+      return [
+        ...stored.filter(
+          (value) => selected.includes(value) || !values?.includes(value),
+        ),
+        ...selected.filter((value) => !stored.includes(value)),
+      ];
     });
-    onChange(convertedValues);
   });
 
   return (
     <div
+      id={inputId}
+      aria-labelledby={labelId}
       role="group"
       aria-invalid={misfit || undefined}
       style={{ display: 'flex', flexDirection: 'row', gap: 8 }}
     >
       <Checkbox.Group
-        disabled={disabled}
+        disabled={disabled || readOnly}
         defaultValue={initialValue}
         onChange={handleChange}
       >
         {map(options, (option) => (
           <Checkbox
             key={option.value}
+            id={option.id}
             value={option.value}
             style={{
               '--icon-size': '24px',

@@ -1,20 +1,22 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 import { Slider, type SliderProps } from 'antd-mobile';
 
 import { isArray } from '@winglet/common-utils/filter';
-import { isNumberSchema } from '@winglet/json-schema/filter';
+import { isArraySchema, isNumberSchema } from '@winglet/json-schema/filter';
 
 import type {
+  ArraySchema,
   FieldInputDefinition,
   FieldInputPropsWithSchema,
   NumberSchema,
 } from '@canard/schema-form';
 
 interface FieldInputSliderProps
-  extends FieldInputPropsWithSchema<number | [number, number], NumberSchema> {
-  /** Two thumbs selecting a range, from `presentation.FieldInputProps.range`. */
-  range?: SliderProps['range'];
+  extends FieldInputPropsWithSchema<
+    number | [number, number],
+    NumberSchema | ArraySchema
+  > {
   /** Labeled stops on the track, from `presentation.FieldInputProps.marks`. */
   marks?: SliderProps['marks'];
   /** `false` publishes on every move; otherwise only when the drag ends. */
@@ -22,15 +24,22 @@ interface FieldInputSliderProps
 }
 
 const FieldInputSlider = ({
+  inputId,
+  labelId,
+  name,
   jsonSchema,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
-  range,
   marks,
   lazy,
   misfit,
 }: FieldInputSliderProps) => {
+  const range = isArraySchema(jsonSchema);
+  const constraints = range ? jsonSchema.items : jsonSchema;
+  const bounds =
+    constraints && isNumberSchema(constraints) ? constraints : undefined;
   const initialValue = range
     ? isArray(defaultValue) &&
       defaultValue.length === 2 &&
@@ -43,35 +52,36 @@ const FieldInputSlider = ({
   const handleChange = useCallback(
     (value: number | [number, number] | null) => {
       if (value === null) onChange(undefined);
-      else if (typeof value === 'number') {
-        if (!Number.isNaN(value)) onChange(value);
-      } else if (!value.some(Number.isNaN)) onChange(value);
+      else if (range) {
+        if (
+          isArray(value) &&
+          value.length === 2 &&
+          value.every(Number.isFinite)
+        )
+          onChange(value);
+      } else if (typeof value === 'number' && Number.isFinite(value))
+        onChange(value);
     },
-    [onChange],
+    [onChange, range],
   );
 
-  const { min, max, step, ...changeHandler } = useMemo(() => {
-    return {
-      min: jsonSchema.minimum,
-      max: jsonSchema.maximum,
-      step: jsonSchema.multipleOf,
-      ...(lazy === false
-        ? { onChange: handleChange }
-        : { onAfterChange: handleChange }),
-    } as const;
-  }, [handleChange, jsonSchema, lazy]);
-
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div
+      id={inputId}
+      role="group"
+      aria-labelledby={labelId}
+      aria-invalid={misfit || undefined}
+    >
       <Slider
-        disabled={disabled}
-        min={min}
-        max={max}
-        step={step}
+        disabled={disabled || readOnly}
+        aria-label={jsonSchema.title || name}
+        min={bounds?.minimum}
+        max={bounds?.maximum}
+        step={bounds?.multipleOf}
         range={range}
         marks={marks}
         defaultValue={initialValue}
-        {...changeHandler}
+        {...{ [lazy === false ? 'onChange' : 'onAfterChange']: handleChange }}
       />
     </div>
   );

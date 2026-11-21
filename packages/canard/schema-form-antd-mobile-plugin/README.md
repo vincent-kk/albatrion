@@ -90,7 +90,7 @@ Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores th
 
 - **Role**: Text area for multiline text input
 - **Applied when**: `type` is `"string"` and `format` or `inputType` is `"textarea"`
-- **Additional features**: Automatic resizing uses the schema-level extensions `minRows` and `maxRows`, alongside `type` and `format`; these two settings are not read from `presentation.FieldInputProps`
+- **Additional features**: Set `minRows` and `maxRows` in `presentation.FieldInputProps`. Schema-level extensions supply defaults.
 
 ### **[`FieldInputString.tsx`](./src/fieldInputs/FieldInputString.tsx)**
 
@@ -102,7 +102,7 @@ Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores th
 
 - **Role**: Stepper component for numeric input
 - **Applied when**: `type` is `"number"` or `"integer"` (fallback when other conditions don't match)
-- **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties
+- **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties. Custom Stepper `formatter` and `parser` require Ant Design Mobile 5.26 or later.
 
 ### **[`FieldInputBoolean.tsx`](./src/fieldInputs/FieldInputBoolean.tsx)**
 
@@ -112,11 +112,7 @@ Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores th
 
 ---
 
-## Switch keyboard access
-
-`formRef.current.focus(path)` reaches the switch’s `data-focus-target` element.
-
-Boolean and string switch inputs receive focus when clicked and participate in the natural Tab order. Space and Enter toggle the focused switch once per press through the same value mapping as a click; holding a key does not toggle repeatedly, and Space does not scroll the page. Disabled switches cannot receive focus by click or Tab and ignore activation keys.
+Ant Design Mobile supplies the native Switch interaction. Use a custom FieldInput when the form requires keyboard activation.
 
 ---
 
@@ -139,7 +135,7 @@ const jsonSchema = {
 };
 ```
 
-Input settings other than textarea row limits belong in `presentation.FieldInputProps`, which is forwarded to the input. Custom `options` keys are accepted without errors or warnings, but these built-in inputs do not read their settings from that group.
+Input settings belong in `presentation.FieldInputProps`, which is forwarded to the input. Custom `options` keys are accepted without errors or warnings, but these built-in inputs do not read their settings from that group.
 
 ## Component Priority
 
