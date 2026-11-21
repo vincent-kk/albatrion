@@ -5,6 +5,7 @@ import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import type { BlueprintNode } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
 import type { FieldNodeWriteKind } from '../../../../types/value';
+import { isVirtualWriteFieldAdmitted } from '../../../../utils/paths/isVirtualWriteFieldAdmitted';
 import { resolveStorageTargets } from '../../../../utils/paths/resolveStorageTargets';
 
 /** One actual replacement or partial branch scope of a marked Merge. */
@@ -36,9 +37,13 @@ export const collectMarkedMergeOrigins = <Self extends FieldNodeRecord<Self>>(
     const values = isArray(value) ? value : undefined;
     return (resolveStorageTargets(node) ?? []).flatMap((target, index) => {
       if (
-        virtualFields
-          ? !virtualFields.includes(target.name)
-          : !target.node && values?.[index] === undefined
+        !isVirtualWriteFieldAdmitted(
+          target.name,
+          index,
+          values,
+          !!target.node,
+          virtualFields,
+        )
       )
         return [];
       const owner = target.node ?? node.parent;
