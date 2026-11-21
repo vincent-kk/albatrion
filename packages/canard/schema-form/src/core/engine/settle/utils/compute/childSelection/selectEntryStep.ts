@@ -37,6 +37,7 @@ import { staticIds } from './staticIds';
 import type { PreparedDiscriminatorEntry } from './utils/prepareDiscriminatorEntrySelection';
 import type { PreparedStaticHost } from './utils/prepareStaticHost';
 import { readDiscriminatorEntrySelection } from './utils/readDiscriminatorEntrySelection';
+import { isOwnActiveGate } from '../../gates/isOwnActiveGate';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
 const NO_ACTIVE_IDS: readonly number[] = EMPTY_ARRAY;
@@ -173,11 +174,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
               gate,
               context,
               node,
-              gate.schemaPath ===
-                appendSegment(
-                  appendSegment(declaration.schemaPath, 'controls'),
-                  'active',
-                )
+              isOwnActiveGate(gate.schemaPath, declaration.schemaPath)
                 ? entry.name
                 : undefined,
             )
