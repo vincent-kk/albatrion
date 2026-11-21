@@ -118,32 +118,25 @@ export function blockBodyMatches(
   encoding: BufferEncoding = 'utf8',
 ): boolean {
   if (!body.endsWith('\n') && !body.endsWith('\r')) return false;
-  if (hashEquals(hashContent(Buffer.from(body, encoding)), expected))
-    return true;
-  if (
-    body.endsWith('\n') &&
-    !body.endsWith('\n\n') &&
-    hashEquals(hashContent(Buffer.from(body.slice(0, -1), encoding)), expected)
-  )
-    return true;
   return (
-    body.indexOf('\r') !== -1 && lfReadingMatches(body, expected, encoding)
+    readingMatches(body, expected, encoding) ||
+    (body.includes('\r') &&
+      readingMatches(body.replace(/\r\n?/g, '\n'), expected, encoding))
   );
 }
 
-// The same two readings after a `core.autocrlf` checkout's CRLF endings are
-// turned back into LF. Reached only for a body holding a carriage return.
-function lfReadingMatches(
+/** Checks the exact reading and the writer's optional trailing LF. */
+function readingMatches(
   body: string,
   expected: Sha256Hex,
   encoding: BufferEncoding,
 ): boolean {
-  const lf = body.replace(/\r\n?/g, '\n');
-  if (hashEquals(hashContent(Buffer.from(lf, encoding)), expected)) return true;
+  if (hashEquals(hashContent(Buffer.from(body, encoding)), expected))
+    return true;
   return (
-    lf.endsWith('\n') &&
-    !lf.endsWith('\n\n') &&
-    hashEquals(hashContent(Buffer.from(lf.slice(0, -1), encoding)), expected)
+    body.endsWith('\n') &&
+    !body.endsWith('\n\n') &&
+    hashEquals(hashContent(Buffer.from(body.slice(0, -1), encoding)), expected)
   );
 }
 
