@@ -3,6 +3,8 @@ import type { ErrorObject } from 'ajv';
 
 import type { Dictionary } from '@aileron/declare';
 
+import { isChildSchemaPath } from './isChildSchemaPath';
+
 /** Escape tilde before slash when a required-property name needs encoding. */
 const TILDE = /~/g;
 /** Escape slash after tilde when encoding a required-property name. */
@@ -25,7 +27,7 @@ export const transformErrors = (errors: ErrorObject[], root?: object): Validatio
     const ajvError = errors[i];
     let dataPath = transformDataPath(ajvError);
     let rejectedKey: string | undefined;
-    if (ajvError.keyword === 'false schema' && dataPath) {
+    if (ajvError.keyword === 'false schema' && dataPath && isChildSchemaPath(ajvError.schemaPath)) {
       const lastSlash = dataPath.lastIndexOf('/');
       rejectedKey = dataPath.slice(lastSlash + 1)
         .replace(/~1/g, '/').replace(/~0/g, '~');
@@ -43,8 +45,10 @@ export const transformErrors = (errors: ErrorObject[], root?: object): Validatio
       const segments = ajvError.schemaPath.slice(2).split('/');
       let target: unknown = root;
       for (const segment of segments) {
-        if (typeof target !== 'object' || target === null) break;
-        target = (target as Dictionary<unknown>)[segment.replace(/~1/g, '/').replace(/~0/g, '~')];
+        const token = segment.includes('%') ? decodeURIComponent(segment) : segment;
+        target = typeof target === 'object' && target !== null
+          ? (target as Dictionary<unknown>)[token.replace(/~1/g, '/').replace(/~0/g, '~')]
+          : undefined;
       }
       if (typeof target === 'object' && target !== null && 'required' in target &&
           Array.isArray(target.required) && target.required.length === 1 &&

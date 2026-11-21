@@ -13,13 +13,15 @@ export const createValidatorFactory =
     const validate = key ? ajv.getSchema(key) : transient && ajv.compile(transient);
     if (transient) ajv.removeSchema(transient);
     if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
+    const schema = typeof validate.schema === 'object' ? validate.schema : undefined;
+    const schemaId = ajv._opts.schemaId;
     return async (data) => {
       try {
         const valid = await validate(data);
-        return valid ? null : transformDataPath(validate.errors ?? [], jsonSchema);
+        return valid ? null : transformDataPath(validate.errors ?? [], schema, schemaId);
       } catch (thrown) {
         if (thrown instanceof Ajv.ValidationError)
-          return transformDataPath(thrown.errors, jsonSchema);
+          return transformDataPath(thrown.errors, schema, schemaId);
         throw thrown;
       }
     };
