@@ -14,6 +14,7 @@ import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPat
 import type { SettlementContext } from '../../types/settlement';
 import { bindGateHostPath } from '../gates/bindGateHostPath';
 import { getGateExpression } from '../gates/getGateExpression';
+import { isOwnActiveGate } from '../gates/isOwnActiveGate';
 
 /** Identity and topology needed by occurrence indexing, independent of surface classes. */
 interface Occurrence {
@@ -230,11 +231,7 @@ class AliasedDependencyIndex {
           const expression = getGateExpression(this.blueprint, gate.schemaPath);
           if (!expression) continue;
           const childHost =
-            gate.schemaPath ===
-            appendSegment(
-              appendSegment(declaration.schemaPath, 'controls'),
-              'active',
-            )
+            isOwnActiveGate(gate.schemaPath, declaration.schemaPath)
               ? appendSegment(node.path, entry.name)
               : undefined;
           const host = bindGateHostPath(

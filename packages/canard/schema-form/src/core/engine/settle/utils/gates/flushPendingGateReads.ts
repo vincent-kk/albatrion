@@ -16,6 +16,7 @@ import { flushPendingOutput } from '../output/flushPendingOutput';
 import { bindGateHostPath } from './bindGateHostPath';
 import { getGateExpression } from './getGateExpression';
 import { getGateRegistry } from './getGateRegistry';
+import { isOwnActiveGate } from './isOwnActiveGate';
 
 /** Finite gate occurrences relative to a subtree that is about to be changed. */
 interface GateReadPlan {
@@ -63,11 +64,7 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
             node,
             suffix,
             childSuffix:
-              gate.schemaPath ===
-              appendSegment(
-                appendSegment(node.schemaPath, 'controls'),
-                'active',
-              )
+              isOwnActiveGate(gate.schemaPath, node.schemaPath)
                 ? suffix
                 : undefined,
           });
@@ -80,11 +77,7 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
               node,
               suffix,
               childSuffix:
-                gate.schemaPath ===
-                appendSegment(
-                  appendSegment(declaration.schemaPath, 'controls'),
-                  'active',
-                )
+                isOwnActiveGate(gate.schemaPath, declaration.schemaPath)
                   ? childSuffix
                   : undefined,
             });
