@@ -22,6 +22,7 @@ import {
 } from '@/schema-form/core';
 import { FormErrorCode } from '@/schema-form/errors';
 import { FieldLifecycleRegistry } from '@/schema-form/helpers/fieldLifecycle/FieldLifecycleRegistry';
+import type { InputPosition } from '@/schema-form/helpers/focusTarget';
 import { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 import {
   FieldInputsContextProvider,
@@ -61,7 +62,6 @@ export const FormRoot = (
   const binding = useLazyConstant<RefObject<RootBinding>>(() => ({
     current: { reset: NOOP_FUNCTION, rebuild: NOOP_FUNCTION },
   }));
-  const attachedFilesMap = useLazyConstant(() => new AttachedFilesStore());
   const reporter = useFormErrorContext();
   const reportLifecycleError = useHandle((error: unknown, node: FieldNode) => {
     let message: string;
@@ -87,19 +87,22 @@ export const FormRoot = (
       }
     }
   });
-  const lifecycle = useLazyConstant(
-    () => new FieldLifecycleRegistry(reportLifecycleError),
-  );
-  const providerErrorVisibility = useExternalFormContext().errorVisibility;
+  const { attachedFilesMap, inputPositions, lifecycle, virtualization } =
+    useLazyConstant(() => ({
+      attachedFilesMap: new AttachedFilesStore(),
+      inputPositions: new Map<Element, InputPosition>(),
+      lifecycle: new FieldLifecycleRegistry(reportLifecycleError),
+      virtualization: {
+        manager: VirtualizationManager.create(props.virtualization),
+      },
+    }));
+  const { errorVisibility: providerErrorVisibility, context: externalContext } =
+    useExternalFormContext();
   const inputPolicy = props.errorVisibility ?? providerErrorVisibility;
   const resolvedPolicy = useMemo(
     () => resolveErrorVisibilityPolicy(inputPolicy),
     [inputPolicy],
   );
-  // FormRoot owns the stable manager shared by focus requests and input positions.
-  const virtualization = useLazyConstant(() => ({
-    manager: VirtualizationManager.create(props.virtualization),
-  }));
   useLayoutEffect(() => {
     virtualization.manager?.updateOptions(props.virtualization);
   }, [virtualization, props.virtualization]);
@@ -118,6 +121,7 @@ export const FormRoot = (
       formRef.current,
       virtualization.manager?.isEnabled ? virtualization.manager : null,
       lifecycle,
+      inputPositions,
       request,
     );
   });
@@ -311,6 +315,8 @@ export const FormRoot = (
   return (
     <WorkspaceContextProvider
       attachedFilesMap={attachedFilesMap}
+      inputPositions={inputPositions}
+      externalContext={externalContext}
       context={props.context}
     >
       <FieldInputsContextProvider

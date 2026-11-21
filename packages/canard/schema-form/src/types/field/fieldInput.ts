@@ -59,6 +59,8 @@ export interface FieldInputProps<
   labelId: string;
   /** Resolve a further control id; keys compare as strings and must be supplied. */
   getInputId: Fn<[key: string | number], string>;
+  /** Connects this input position's focus target using a React ref. */
+  focusRef?: (target: { focus(): void } | null) => void;
   /** @deprecated Use inputId. */
   id?: never;
   /** Path of field node assigned to FieldInput Component */
@@ -138,6 +140,8 @@ export interface UnknownFieldInputProps {
   labelId: string;
   /** Resolve a further control id; keys compare as strings and must be supplied. */
   getInputId: Fn<[key: string | number], string>;
+  /** Connects this input position's focus target using a React ref. */
+  focusRef?: FieldInputProps['focusRef'];
   /** @deprecated Use inputId. */
   id?: never;
   path: string;
@@ -186,6 +190,8 @@ export type ChildFieldProps<Value extends AllowedValue = any> = {
   defaultValue?: never;
   /** Current values are written through the binding callback. */
   value?: never;
+  /** The input binding supplies the ref. */
+  focusRef?: never;
   onChange?: SetStateFnWithOptions<Value>;
   onFileAttach?: Fn<[file: Optional<File | File[]>]>;
   FieldRenderer?: ComponentType<FieldRendererProps>;
@@ -216,6 +222,8 @@ export type OverridableFieldInputProps = {
   value?: never;
   defaultValue?: never;
   onChange?: never;
+  /** The input binding supplies the ref. */
+  focusRef?: never;
   onFileAttach?: never;
   [alt: string]: any;
 };

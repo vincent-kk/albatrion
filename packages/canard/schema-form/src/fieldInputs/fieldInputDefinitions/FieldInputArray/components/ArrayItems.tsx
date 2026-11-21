@@ -9,7 +9,8 @@ import {
 
 import type { Nullable } from '@aileron/declare';
 
-import { FOCUS_SELECTOR } from '@/schema-form/constants/focus';
+import { resolveFocusTarget } from '@/schema-form/helpers/focusTarget';
+import { useWorkspaceContext } from '@/schema-form/providers/WorkspaceContext';
 import type { FieldInputProps } from '@/schema-form/types';
 
 import { fillArraySlot } from '../utils/fillArraySlot';
@@ -64,6 +65,7 @@ export const ArrayItems = memo(function ArrayItems({
     [node],
   );
   const container = useRef<HTMLDivElement>(null);
+  const { inputPositions } = useWorkspaceContext();
   const focusRow = useRef<Nullable<number>>(null);
   /** Write a slot position as input, then let the commit that mounts its row take focus. */
   const handleSlotWrite = useCallback(
@@ -74,10 +76,23 @@ export const ArrayItems = memo(function ArrayItems({
     [node, onChange],
   );
   useLayoutEffect(() => {
-    if (focusRow.current === null || focusRow.current >= childCount) return;
-    const row = container.current?.children[focusRow.current];
+    const index = focusRow.current;
+    if (index === null || index >= childCount) return;
+    const row = container.current?.children[index];
     focusRow.current = null;
-    row?.querySelector<HTMLElement>(FOCUS_SELECTOR)?.focus();
+    if (!row) return;
+    const child = node.children?.[index];
+    for (const [element, position] of inputPositions) {
+      const { focusTarget } = position;
+      if (position.node !== child || !focusTarget || !row.contains(element))
+        continue;
+      const anchor = resolveFocusTarget(null, focusTarget, row.ownerDocument);
+      if (anchor) {
+        anchor.focus();
+        return;
+      }
+    }
+    resolveFocusTarget(row, null)?.focus();
   });
   const rows: ReactElement[] = [];
   for (let index = 0; ChildFields && index < ChildFields.length; index++) {
