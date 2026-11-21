@@ -49,4 +49,27 @@ describe('VALIDATE-050 bind refusal', () => {
     expect(await validate('ok')).toBeNull();
     expect(schema).toEqual(original);
   });
+
+  it.each([
+    ['Draft-07', Ajv, ajvValidatorPlugin],
+    ['Draft 2019-09', Ajv2019, plugin2019],
+    ['Draft 2020-12', Ajv2020, plugin2020],
+  ] as const)('refuses defaults enabled after binding in %s', async (_dialect, Constructor, plugin) => {
+    const instance = new Constructor();
+    plugin.bind(instance);
+    const root = {
+      type: 'object',
+      properties: { count: { type: 'number', default: 1 } },
+    } as const;
+    const input = {};
+    const validate = plugin.compile(root);
+    await expect(validate(input)).resolves.toBeNull();
+    expect(input).toEqual({});
+
+    instance.opts.useDefaults = true;
+    expect(() => plugin.compile(root)).toThrowError(expect.objectContaining({
+      code: FormErrorCode.ValidatorBindRefused,
+      details: { options: ['useDefaults'] },
+    }));
+  });
 });
