@@ -3,7 +3,6 @@ import { type ReactNode, useMemo } from 'react';
 import { Radio, type RadioChangeEvent } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
-import { map } from '@winglet/common-utils/array';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
@@ -12,6 +11,8 @@ import type {
   NumberSchema,
   StringSchema,
 } from '@canard/schema-form';
+
+import { getEnumOptions } from './utils/enum/getEnumOptions';
 
 type StringJSONSchema = StringSchema<{
   alias?: { [label: string]: ReactNode };
@@ -43,29 +44,19 @@ const FieldInputRadioGroup = ({
   alias,
   misfit,
 }: FieldInputRadioGroupProps) => {
-  const options = useMemo(() => {
-    const labels = context.radioLabels || alias || {};
-    return jsonSchema.enum
-      ? map(jsonSchema.enum, (rawValue: string | number | null) => {
-          const value = JSON.stringify(rawValue);
-          return {
-            value,
-            rawValue,
-            label: labels['' + rawValue] || '' + rawValue,
-          };
-        })
-      : [];
-  }, [context, jsonSchema, alias]);
+  const values: readonly (string | number | null)[] | undefined =
+    jsonSchema.enum;
+  const labels = context.radioLabels || alias;
+  const options = useMemo(
+    () => getEnumOptions(values, labels),
+    [values, labels],
+  );
   const initialValue = useMemo(
     () => options.find((option) => option.rawValue === defaultValue)?.value,
     [defaultValue, options],
   );
   const handleChange = useHandle((event: RadioChangeEvent) => {
-    const rawValue = options.find(
-      (option) => option.value === event.target.value,
-    )?.rawValue;
-    if (rawValue === undefined) return;
-    onChange(rawValue);
+    onChange(JSON.parse(event.target.value));
   });
   return (
     <div role="radiogroup" aria-invalid={misfit || undefined}>
