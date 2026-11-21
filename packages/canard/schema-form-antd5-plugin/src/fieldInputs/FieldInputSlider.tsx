@@ -21,6 +21,7 @@ const FieldInputSlider = ({
   path,
   jsonSchema,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   lazy,
@@ -49,7 +50,7 @@ const FieldInputSlider = ({
     <div role="group" aria-invalid={misfit || undefined}>
       <Slider
         id={path}
-        disabled={disabled}
+        disabled={disabled || readOnly}
         min={min}
         max={max}
         step={step}

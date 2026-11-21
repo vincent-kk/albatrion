@@ -14,6 +14,7 @@ const FieldInputBoolean = ({
   inputId,
   name,
   disabled,
+  readOnly,
   value,
   onChange,
   misfit,
@@ -33,7 +34,7 @@ const FieldInputBoolean = ({
       aria-invalid={misfit || undefined}
       id={inputId}
       name={name}
-      disabled={disabled}
+      disabled={disabled || readOnly}
       indeterminate={indeterminate}
       checked={checked}
       onChange={handleChange}
