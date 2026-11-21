@@ -1,9 +1,8 @@
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
-import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
-import { getDependencyIndex } from '../dependencies/getDependencyIndex';
 import { getLoadValue } from './getLoadValue';
 import { readLoadProperty } from './readLoadProperty';
+import { readLoadSegments } from './readLoadSegments';
 
 /**
  * Compare the form output at one occurrence's path with its last root load output.
@@ -32,12 +31,7 @@ export const readFieldNodeIsDivergent = <Self extends FieldNodeRecord<Self>>(
           ),
       );
     }
-    segments = node.runtime.blueprint.capabilities.isBranchless
-      ? getCachedPointerSegments(node.runtime, node.path)
-      : getDependencyIndex(node.runtime.blueprint).pathSegments(
-          node.path,
-          node.runtime,
-        );
+    segments = readLoadSegments(node);
     node.divergencePath = node.path;
     node.divergenceSegments = segments;
   }
