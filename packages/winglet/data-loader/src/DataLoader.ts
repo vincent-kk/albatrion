@@ -12,6 +12,7 @@ import {
   resolveCacheHits,
 } from './utils/dispatch';
 import { DataLoaderError } from './utils/error';
+import { isLoaderError } from './utils/isLoaderError';
 import {
   prepareBatchLoader,
   prepareBatchScheduler,
@@ -801,7 +802,7 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
       const cacheKey = this.__cacheKeyFn__(key);
       if (cacheMap.get(cacheKey) === undefined) {
         let promise: Promise<Value>;
-        if (value instanceof Error) {
+        if (isLoaderError(value)) {
           promise = Promise.reject(value);
           promise.catch(NOOP_FUNCTION);
         } else promise = Promise.resolve(value);
@@ -850,7 +851,7 @@ export class DataLoader<Key = string, Value = any, CacheKey = Key> {
         resolveCacheHits(batch);
         for (let i = 0, l = batch.promises.length; i < l; i++) {
           const value = values[i];
-          if (value instanceof Error) batch.promises[i].reject(value);
+          if (isLoaderError(value)) batch.promises[i].reject(value);
           else batch.promises[i].resolve(value);
         }
       })

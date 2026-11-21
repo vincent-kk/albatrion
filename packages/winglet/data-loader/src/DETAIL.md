@@ -10,6 +10,7 @@
 - 캐시는 기본적으로 `Map`이며, 같은 키의 중복 `load`는 캐시된 Promise를 재사용해 `batchLoader`를 다시 호출하지 않는다. `cache: false`로 캐시를 끌 수 있고, 커스텀 캐시는 `get`/`set`/`delete`/`clear`를 모두 구현해야 한다.
 - `load`, `prime`, `clear`는 `cacheKeyFn`이 돌려준 캐시 키를 참·거짓으로 거르지 않고 그대로 쓴다. `0`이나 `''` 같은 falsy 캐시 키도 다른 키와 똑같이 읽고 쓰며, 그렇지 않으면 `prime`한 값을 `load`가 무시하고 중복 요청도 합쳐지지 않는다.
 - `clear(key)`/`clearAll()`은 캐시만 무효화한다 — 이후 `load`가 `batchLoader`를 다시 호출하게 만든다.
+- realm이 다른 네이티브 Error도 배치 결과와 직접 prime하는 값에서 같은 키별 실패로 처리합니다. 그 오류 객체 자체로 reject하며 다른 키의 성공에는 영향을 주지 않습니다.
 - `prime(key, value)`는 해당 키가 아직 캐시에 없을 때만 값(또는 `Promise`, `Error`)을 채운다 — 기존 캐시를 덮어쓰지 않는다.
 - `maxBatchSize`는 한 배치가 가질 수 있는 최대 키 개수를 제한하며, 초과분은 다음 배치로 넘어가 `batchLoader`가 여러 번 호출된다. 기본값과 같은 `Infinity`는 제한 없음을 뜻하고, 그 외에는 양의 정수만 허용합니다. NaN·소수·1 미만 값이나 숫자가 아니면 `DataLoaderError`를 던집니다.
 - `batchLoader`가 동기적으로 예외를 던지거나, `Promise`가 아닌 값을 반환하거나, 배열이 아닌 값으로 resolve되거나, 키 개수와 다른 길이의 배열로 resolve되면, 그 배치에 걸린 모든 키가 `DataLoaderError`로 reject되고 해당 키들의 캐시 항목도 제거된다.
