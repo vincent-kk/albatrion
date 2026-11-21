@@ -1,11 +1,9 @@
 import type { ReactElement } from 'react';
 import { type ComponentType, type ReactNode, memo } from 'react';
 
-import { useConstant, useReference } from '@winglet/react-utils/hook';
-
-import { FieldProxy } from '@/schema-form/components/FieldProxy';
 import type { AllowedValue, FieldInputProps } from '@/schema-form/types';
 
+import { useLayoutFieldProxy } from '../../hooks/useLayoutFieldProxy';
 import type { FormRenderProps } from './types/props';
 
 /**
@@ -111,21 +109,11 @@ export const FormRender = memo(
     children,
     ...restProps
   }: FormRenderProps<AllowedValue>): ReactElement => {
-    const overridePropsRef = useReference(restProps);
-    const constant = useConstant({
+    return useLayoutFieldProxy(path, restProps, {
       FieldInput: FieldInput as ComponentType<FieldInputProps>,
       FieldRenderer: children,
       Wrapper,
     });
-    return (
-      <FieldProxy
-        path={path}
-        overridePropsRef={overridePropsRef}
-        FieldInput={constant.FieldInput}
-        FieldRenderer={constant.FieldRenderer}
-        Wrapper={constant.Wrapper}
-      />
-    );
   },
 ) as <Value extends AllowedValue = AllowedValue>(
   props: FormRenderProps<Value>,
