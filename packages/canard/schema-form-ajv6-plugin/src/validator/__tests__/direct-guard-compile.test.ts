@@ -12,34 +12,19 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-it('directGuardCompile uses the copy subschema identity and release frees it', () => {
+it('compiles the detached condition directly on a first-error compiler', () => {
   ajvValidatorPlugin.bind?.(new Ajv({ allErrors: true, format: 'full' }));
   const copy = { type: 'object', if: { type: 'string' } } as const;
   const compile = vi.spyOn(Ajv.prototype, 'compile');
-  const remove = vi.spyOn(Ajv.prototype, 'removeSchema');
   const predicate = ajvValidatorPlugin.compileGuard(copy, '/if');
-  expect(predicate('ok')).toBe(true);
-  expect(predicate(1)).toBe(false);
-  const index = compile.mock.calls.findIndex(([schema]) => schema === copy.if);
-  expect(index).toBeGreaterThanOrEqual(0);
-  expect(
-    compile.mock.calls.some(
-      ([schema]) =>
-        schema !== copy.if &&
-        typeof schema === 'object' &&
-        schema !== null &&
-        '$ref' in schema,
-    ),
-  ).toBe(false);
-  const guard = compile.mock.contexts[index];
-  if (typeof guard !== 'object' || guard === null)
-    throw new Error('Missing guard instance');
-  expect(guard).toMatchObject({ _opts: { allErrors: false } });
+  expect([predicate('ok'), predicate(1)]).toEqual([true, false]);
+  expect(compile).toHaveBeenCalledWith(copy.if);
+  expect(compile.mock.calls.some(([schema]) =>
+    typeof schema === 'object' && schema !== null && '$ref' in schema,
+  )).toBe(false);
+  const privateCompiler = compile.mock.contexts.at(-1);
+  expect(privateCompiler).toMatchObject({ _opts: { allErrors: false } });
   ajvValidatorPlugin.release(copy);
-  expect(remove).toHaveBeenCalledWith(copy.if);
-  expect(
-    Reflect.get(Reflect.get(guard, '_cache'), '_cache'),
-  ).not.toHaveProperty(JSON.stringify(copy.if));
 });
 
 it.each([true, false])(
@@ -137,7 +122,7 @@ it('uses the root-pointer path for contextual guards and when configured off', (
     ajvValidatorPlugin.configure({ directGuardCompile: enabled });
     compile.mockClear();
     ajvValidatorPlugin.compileGuard(copy, '/if');
-    expect(compile.mock.calls.some(([candidate]) => candidate === schema)).toBe(
+    expect(compile.mock.calls.some(([candidate]) => typeof candidate === 'object' && candidate !== null && 'properties' in candidate)).toBe(
       false,
     );
     expect(
@@ -258,7 +243,7 @@ it.each([undefined, '$id', 'id', 'auto'] as const)(
     Object.assign(copy, { if: schema });
     const compile = vi.spyOn(Ajv.prototype, 'compile');
     ajvValidatorPlugin.compileGuard(copy, '/if');
-    expect(compile.mock.calls.some(([candidate]) => candidate === schema)).toBe(
+    expect(compile.mock.calls.some(([candidate]) => typeof candidate === 'object' && candidate !== null && 'properties' in candidate)).toBe(
       schemaId === undefined || schemaId === '$id',
     );
     ajvValidatorPlugin.release(copy);

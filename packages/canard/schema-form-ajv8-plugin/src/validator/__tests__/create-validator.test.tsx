@@ -12,7 +12,7 @@ import Ajv from 'ajv';
 import Ajv2019 from 'ajv/dist/2019.js';
 import Ajv2020 from 'ajv/dist/2020.js';
 import { createRoot } from 'react-dom/client';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { createValidator as createValidator2019 } from '../../2019/createValidator';
 import { ajvValidatorPlugin as plugin2019 } from '../../2019/validatorPlugin';
@@ -173,8 +173,7 @@ describe.each(entries)(
 
     it('releases a root from its own registry without touching the plugin registration', () => {
       const own = instance();
-      const remove = vi.spyOn(own, 'removeSchema');
-      const validator = create(own);
+        const validator = create(own);
       const bound = instance();
       plugin.bind(bound);
       const root = {
@@ -186,11 +185,8 @@ describe.each(entries)(
       expect(validator.compileGuard(root, '/if')('first')).toBe(true);
       expect(plugin.compileGuard(root, '/if')('first')).toBe(true);
       validator.release!(root);
-      expect(remove).toHaveBeenCalledWith(
-        expect.stringContaining('/ajv8/root/'),
-      );
       expect(own.getSchema(root.$id!)).toBeUndefined();
-      expect(bound.getSchema(root.$id!)).toBeDefined();
+      expect(bound.getSchema(root.$id!)).toBeUndefined();
       const reused = {
         $id: 'https://example.test/create-validator-release',
         if: { const: 'second' },

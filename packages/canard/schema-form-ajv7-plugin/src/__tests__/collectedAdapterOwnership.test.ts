@@ -1,3 +1,5 @@
+/// <reference lib="es2021.weakref" />
+
 import type { JSONSchema } from '@canard/schema-form';
 import Ajv from 'ajv';
 import { setFlagsFromString } from 'node:v8';

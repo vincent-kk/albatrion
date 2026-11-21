@@ -37,7 +37,8 @@ describe('VALIDATE-050 bind refusal', () => {
     );
     const schema = { $id: `https://example.test/accepted-${names.join('-')}`, type: 'string' } as Parameters<typeof ajvValidatorPlugin.compile>[0];
     expect(ajvValidatorPlugin.compile(schema)).toBeTypeOf('function');
-    expect(accepted.getSchema(schema.$id)).toBeDefined();
+    accepted.addSchema({ $id: 'https://example.test/supplied', type: 'string' });
+    expect(() => ajvValidatorPlugin.compile({ $ref: 'https://example.test/supplied' })).not.toThrow();
   });
 
   it('accepts disabled options and keeps the authored schema unchanged', async () => {

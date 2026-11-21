@@ -1,10 +1,12 @@
+/// <reference lib="es2021.weakref" />
+
 import type { JSONSchema } from '@canard/schema-form';
 import Ajv from 'ajv';
 import { setFlagsFromString } from 'node:v8';
 import { runInNewContext } from 'node:vm';
 import { expect, it } from 'vitest';
 
-import { createValidator } from '../default/index';
+import { createValidator } from '../index';
 
 const addressId = 'https://round-five.invalid/address';
 const address = {
@@ -29,7 +31,7 @@ const root = (): JSONSchema => ({
 it('round-5 class 43: a form lifetime preserves application and later-form resolution', async () => {
   const results = [];
   for (const compileForm of [false, true]) {
-    const instance = new Ajv({ allErrors: true, strict: false });
+    const instance = new Ajv({ allErrors: true });
     instance.addSchema(application);
     instance.validate(application.$id, { shipTo: {} });
     const adapter = createValidator(instance);
@@ -58,13 +60,13 @@ it('round-5 class 43: a form lifetime preserves application and later-form resol
 it('round-5 class 44: discarded adapters release their roots and preserve the next visit', async () => {
   setFlagsFromString('--expose_gc');
   const collect = runInNewContext('gc');
-  const instance = new Ajv({ allErrors: true, strict: false });
+  const instance = new Ajv({ allErrors: true });
   const schema: JSONSchema = {
     $id: 'https://round-five.invalid/visit',
     type: 'string',
     minLength: 3,
   };
-  const before = Object.keys(instance.refs);
+  const before = Object.keys(instance._refs);
   const visit = async () => {
     const adapter = createValidator(instance);
     return {
@@ -79,12 +81,12 @@ it('round-5 class 44: discarded adapters release their roots and preserve the ne
   }
   await new Promise((resolve) => setTimeout(resolve, 20));
   expect(first.reference.deref()).toBeUndefined();
-  expect(Object.keys(instance.refs)).toEqual(before);
+  expect(Object.keys(instance._refs)).toEqual(before);
   expect((await visit()).verdict).toEqual(first.verdict);
 });
 
 it('keeps a form-only address out of a later form and the application registry', async () => {
-  const instance = new Ajv({ allErrors: true, strict: false, logger: false });
+  const instance = new Ajv({ allErrors: true, logger: false });
   const formId = 'https://example.test/form-only';
   const first = createValidator(instance);
   const validate = first.compile({ $id: formId, type: 'string' });
