@@ -112,7 +112,7 @@ misfit 경로 집합이 바뀌면 잎 하나의 변경이어도 전체 misfit �
 
 ### SETTLE-042 — 객체 키 순서와 참조 복원
 
-객체 `storedValue`·`storedOutputValue`는 첫 선언의 청사진 전순서에 따른 키 뒤에 extras의 ECMAScript own-key 순서를 둡니다. 같은 이름의 다른 후보가 선택되어도 첫 이름의 선언 위치를 잃지 않습니다. 정수 이름의 언어 차원 순서는 그대로입니다. 키 집합이 같을 때만 패치하고 바뀌면 다시 만들어, delete/reinsert 때문에 출력 순서가 이력에 의존하지 않게 합니다.
+객체 `storedValue`·`storedOutputValue`는 첫 선언의 청사진 전순서에 따른 키 뒤에 extras의 ECMAScript own-key 순서를 둡니다. 명시한 propertyOrder가 있으면 해당 키를 먼저 배치합니다. 커밋 이전의 배치 updater도 같은 순수 객체·배열 조립과 자식 투영을 사용하며, 정착의 레코드 및 형상 캐시는 갱신하지 않습니다. 같은 이름의 다른 후보가 선택되어도 첫 이름의 선언 위치를 잃지 않습니다. 정수 이름의 언어 차원 순서는 그대로입니다. 키 집합이 같을 때만 패치하고 바뀌면 다시 만들어, delete/reinsert 때문에 출력 순서가 이력에 의존하지 않게 합니다.
 
 내용이 같아진 출력은 조립 단계에서 직전 커밋 참조로 되살립니다. 커밋에서 뒤늦게 자식만 되살리면 부모가 다른 참조를 품게 됩니다. 공통 동등성 정의는 [engine의 계약](../DETAIL.md)을 따릅니다. 재계산 자식 참조가 실제 바뀌면 깊은 되살림 비교를 생략할 수 있으며, 같은 정착에서 자식 인스턴스가 교체되어 같은 내용의 새 참조를 내는 경우에는 부모 배달이 추가될 수 있다는 한계가 있습니다.
 
@@ -726,7 +726,7 @@ pending 읽기도 노드 존재와 그 노드의 undefined 출력 값을 구별�
 
 - **Consumers**: `entry-point`
 - **Direct import**: `not allowed`
-- **Reason**: assertVirtualWriteShape·interpretFieldNodeInput은 write의 배치 표시와 반환 슬롯 해석이 진입점으로 소비하며, 일반 쓰기와 함께 쓰는 정적 해석을 같은 organ에 둔다.
+- **Reason**: write는 진입점으로 튜플 입력 검증, 반응 없는 저장 값 조립과 조상 승격 판단을 소비합니다. 정적 해석과 보유 원본 분배는 같은 구획이 소유합니다.
 
 ### `utils/write/` — 일반 쓰기 유지
 

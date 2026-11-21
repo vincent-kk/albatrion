@@ -5,6 +5,7 @@ import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSO
 
 import { ValidationMode } from '../types/state';
 import { WriteOption } from '../types/value';
+import { hasSameOrderedKeys } from './fixtures/hasSameOrderedKeys';
 import { reviewCallerSchema } from './fixtures/reviewCallerSchema';
 import { reviewCallerWrites } from './fixtures/reviewCallerWrites';
 
@@ -41,7 +42,11 @@ it('matches sequential caller histories across write pairs, activity and ancesto
             if (
               IS_PR &&
               ![0, 8, 18, 19].includes(first) &&
-              ![0, 8, 18, 19].includes(second)
+              ![0, 8, 18, 19].includes(second) &&
+              !(
+                (first === 15 && second === 16) ||
+                (first === 16 && second === 15)
+              )
             )
               continue;
             for (const length of LENGTHS) {
@@ -116,6 +121,11 @@ it('matches sequential caller histories across write pairs, activity and ancesto
                   actual,
                   `${activity}/${ancestorName}/${arity}: operations ${first}, ${second}, length ${length}`,
                 ).toEqual(expected);
+              if (!hasSameOrderedKeys(actual, expected))
+                expect(
+                  hasSameOrderedKeys(actual, expected),
+                  `key order: ${activity}/${ancestorName}/${arity}: ${first},${second},${length}`,
+                ).toBe(true);
               reachedActivities.add(activity);
               reachedAncestors.add(ancestorName);
               reachedLengths.add(sequence.length);
@@ -147,8 +157,8 @@ it('matches sequential caller histories across write pairs, activity and ancesto
   );
   expect(reachedLengths).toEqual(new Set([2, 3, 4]));
   expect(reachedOperations.size).toBe(20);
-  expect(reachedOrders.size).toBe(IS_PR ? 144 : 400);
-  expect(histories).toBe(IS_PR ? 13_824 : 38_400);
+  expect(reachedOrders.size).toBe(IS_PR ? 146 : 400);
+  expect(histories).toBe(IS_PR ? 14_016 : 38_400);
 }, 300_000);
 
 it('compares updater and undefined writes after retaining or publishing a descendant', () => {
@@ -252,6 +262,11 @@ it('compares updater and undefined writes after retaining or publishing a descen
                   actual,
                   `${active}/${target}/${kind}/${length}/${position}/${mode}`,
                 ).toEqual(expected);
+              if (!hasSameOrderedKeys(actual, expected))
+                expect(
+                  hasSameOrderedKeys(actual, expected),
+                  `key order: ${active}/${target}/${kind}/${length}/${position}/${mode}`,
+                ).toBe(true);
             }
             histories++;
           }
