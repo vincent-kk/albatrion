@@ -106,6 +106,7 @@ export async function runSurface(
     );
   } else {
     code = await new Promise<number>((resolve, reject) => {
+      let interval: ReturnType<typeof setInterval> | undefined;
       const app = render(
         <InjectApp
           targets={targets}
@@ -113,6 +114,7 @@ export async function runSurface(
           originCwd={root}
           onExit={(value) => {
             clearTimeout(timer);
+            clearInterval(interval);
             frame = app.lastFrame() ?? '';
             app.unmount();
             resolve(value);
@@ -120,22 +122,27 @@ export async function runSurface(
         />,
       );
       const timer = setTimeout(() => {
+        clearInterval(interval);
         app.unmount();
         reject(new Error('terminal timeout'));
       }, 4000);
       if (choices) {
+        let answered = '';
         const answer = () => {
           const frame = app.lastFrame() ?? '';
+          if (frame === answered || !app.stdin.listenerCount('readable')) return;
           if (
             frame.includes('Select the target agent') ||
             frame.includes('Select the target scope')
-          )
+          ) {
+            answered = frame;
             app.stdin.write('\r');
-          else if (frame.includes('overwrite') && frame.includes('Yes,'))
+          } else if (frame.includes('overwrite') && frame.includes('Yes,')) {
+            answered = frame;
             app.stdin.write(choices === 'decline' ? 'n' : 'y');
+          }
         };
-        const interval = setInterval(answer, 20);
-        setTimeout(() => clearInterval(interval), 450);
+        interval = setInterval(answer, 20);
       }
     });
   }
