@@ -27,11 +27,17 @@ export const enterSlotClone = <Self extends FieldNodeRecord<Self>>(
   );
   if (!supplied && !distribution.isWhole) return;
   const value = supplied ? Reflect.get(distribution.input, name) : undefined;
+  const writeOrigin =
+    supplied || distribution.writeOrigin === 'revived'
+      ? distribution.writeOrigin
+      : undefined;
   if (distribution.isAutomatic) {
     context.isAutomatic = true;
-    context.writtenInputs.set(child, value);
-    context.filledNodes.add(child);
+    if (writeOrigin === undefined) {
+      context.writtenInputs.set(child, value);
+      context.filledNodes.add(child);
+    }
   }
-  markWrite(child, value, context);
+  markWrite(child, value, context, undefined, undefined, writeOrigin);
   if (distribution.isAutomatic) context.isAutomatic = false;
 };

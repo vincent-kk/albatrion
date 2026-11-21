@@ -12,6 +12,7 @@ import type {
   Distribution,
   FieldNodeRecord,
   InactiveSlotBaseline,
+  InactiveSlotOverlay,
   SettlementBudget,
   SettlementEntryApi,
   SettlementFailureCause,
@@ -109,6 +110,26 @@ export interface ArraySpliceProof<Self extends FieldNodeRecord<Self>> {
   pathChanges?: number;
   /** Cleared when a selection-time check fails; selection then uses the general path. */
   isValid: boolean;
+}
+
+/** Source channels captured at the first automatic write to a live binding. */
+export interface RetainedSource {
+  /** Source at the write boundary, including an absent value. */
+  readonly source: unknown;
+  /** Extras at the write boundary, including an absent value. */
+  readonly extras: unknown;
+  /** Host input still awaiting distribution at the write boundary. */
+  readonly distribution?: Distribution;
+  /** Whether the most recent accepted write selects the boundary channels. */
+  shouldUseBaseline: boolean;
+}
+
+/** Structure and input-only bindings of one automatically written array. */
+export interface RetainedArraySources {
+  /** Earliest index retired by shrinking this array in the settlement. */
+  retiredFrom: number;
+  /** Named inputs at positions without a live occurrence. */
+  namedItems?: ReadonlyMap<BlueprintChildEntry, InactiveSlotOverlay>;
 }
 
 /** One synchronous write's work list and deferred failures. */
@@ -283,6 +304,10 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   distributedInputs: Map<Self, Distribution>;
   /** Wrong-kind branch hosts eligible for conditional caller clearing. */
   wrongKindHosts: Set<Self>;
+  /** Write-boundary sources and exit decisions, keyed by their live binding lifetime. */
+  retainedSources?: Map<Self, RetainedSource>;
+  /** Array structure decisions at the same owner lifetimes as retainedSources. */
+  retainedArrays?: Map<Self, RetainedArraySources>;
   /** Previous state for each automatic write, restored in reverse order. */
   automaticLog: {
     node: Self;

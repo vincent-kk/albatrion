@@ -1,4 +1,3 @@
-import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { Optional } from '@aileron/declare';
@@ -11,6 +10,7 @@ import { getChildDistribution } from '../input/getChildDistribution';
 import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
 import { createSlotValueOverlay } from './createSlotValueOverlay';
 import { getSlotSource } from './getSlotSource';
+import { packArrayInputOverlay } from './utils/packArrayInputOverlay';
 
 /**
  * Preserve supplied children that departed before selection created their nodes.
@@ -31,20 +31,6 @@ export const captureAbsentSlotInputs = <Self extends FieldNodeRecord<Self>>(
     return undefined;
   let children: Optional<Map<BlueprintChildEntry, InactiveSlotOverlay>>;
   const array = node.behavior.type === 'array';
-  const packed = (overlay: InactiveSlotOverlay): InactiveSlotOverlay => ({
-    ...overlay,
-    isPackedArrayInput: true,
-    ...(overlay.children
-      ? {
-          children: new Map(
-            mapArray([...overlay.children], ([entry, child]) => [
-              entry,
-              packed(child),
-            ]),
-          ),
-        }
-      : undefined),
-  });
   for (const name of Object.keys(distribution.input ?? {})) {
     if (node.childrenByName?.[name]) continue;
     const current = getChildDistribution(node, name, context);
@@ -66,7 +52,7 @@ export const captureAbsentSlotInputs = <Self extends FieldNodeRecord<Self>>(
     children.set(
       entry,
       array && !node.blueprintNode.hasCandidateDescendants
-        ? packed(result.overlay)
+        ? packArrayInputOverlay(result.overlay)
         : result.overlay,
     );
   }

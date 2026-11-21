@@ -25,6 +25,8 @@ import { nextExtras } from './nextExtras';
 import { staticSpec } from './staticSpec';
 import { admitsSameValueWrite } from './utils/admitsSameValueWrite';
 import { keepsHostKeys } from './utils/keepsHostKeys';
+import { recordNamedArrayItems } from './utils/recordNamedArrayItems';
+import { recordRetainedSource } from './utils/recordRetainedSource';
 import { restoreWriteEpochPaths } from './utils/restoreWriteEpochPaths';
 
 /** Default of `changedValue`: the caller has not interpreted this node's input. */
@@ -74,13 +76,15 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   const isMerge =
     context.kind === FieldNodeWriteKind.CallerPartial && !context.isAutomatic;
   if (!context.isAutomatic) context.writtenInputs.set(node, input);
-  else
+  else {
+    recordRetainedSource(node, context, writeOrigin);
     context.automaticLog.push({
       node,
       previousSource: node.source,
       previousExtras: node.extras,
       previousDistributed: context.distributedInputs.get(node),
     });
+  }
   const known = changedValue !== UNINTERPRETED;
   const value = known ? changedValue : node.behavior.interpret(input, spec);
   if (node.behavior.strategy !== 'branch') {
@@ -161,6 +165,14 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
       context.arrayCounts.set(node, previousItemCount);
     node.itemCount = isArray(value) ? value.length : 0;
     countChanged = node.itemCount !== previousItemCount;
+    if (context.isAutomatic)
+      recordNamedArrayItems(
+        node,
+        value,
+        previousItemCount,
+        context,
+        writeOrigin,
+      );
     nextSource = isArray(value) ? undefined : value;
     extras = isArray(value) ? arrayExtras(node, value) : undefined;
     whole = true;
