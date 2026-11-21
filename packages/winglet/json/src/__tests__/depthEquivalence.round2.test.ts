@@ -89,6 +89,29 @@ describe('round-2 json 7: deep traversal preserves shallow policies', () => {
 });
 
 describe('round-2 json 7: serialization traversal order', () => {
+  it('reads a removed reserved member as own data at every depth', () => {
+    const compareAt = (depth: number) => {
+      const source = {
+        get first() {
+          Reflect.deleteProperty(this, 'constructor');
+          return 1;
+        },
+        ['constructor']: { value: 1 },
+      };
+      const prefix = '/k'.repeat(depth);
+      return compare(nest(source, depth), nest({ first: 1 }, depth), {
+        strict: true,
+        immutable: false,
+      }).map((patch) => ({ ...patch, path: patch.path.slice(prefix.length) }));
+    };
+    const deep = compareAt(300);
+    expect(deep).toEqual([
+      { op: 'test', path: '/constructor', value: null },
+      { op: 'remove', path: '/constructor' },
+    ]);
+    expect(compareAt(0)).toEqual(deep);
+  });
+
   it('reads a changed merge-patch member once at any depth', () => {
     for (const depth of [0, 300]) {
       let reads = 0;
