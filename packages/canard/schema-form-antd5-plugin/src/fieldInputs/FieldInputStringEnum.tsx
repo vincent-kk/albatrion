@@ -32,6 +32,7 @@ interface FieldInputStringEnumProps
 
 const FieldInputStringEnum = ({
   inputId,
+  labelId,
   jsonSchema,
   disabled,
   readOnly,
@@ -72,6 +73,7 @@ const FieldInputStringEnum = ({
   return (
     <Select
       id={inputId}
+      aria-labelledby={labelId}
       mode={multiple ? 'multiple' : undefined}
       options={options}
       optionFilterProp="label"

@@ -23,7 +23,8 @@ const received = vi.hoisted(() => ({
   range: undefined as RangePickerProps | undefined,
 }));
 
-vi.mock('antd', () => ({
+vi.mock('antd', async (importOriginal) => ({
+  version: (await importOriginal<typeof import('antd')>()).version,
   DatePicker: Object.assign(
     (props: DatePickerProps) => {
       received.date = props;
