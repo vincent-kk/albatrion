@@ -219,7 +219,7 @@ const Input = ({ inputId, name }: FieldInputProps<string>) => (
 );
 ```
 
-입력은 `labelId`를 직접 읽으므로 플러그인 레이아웃, `Form.Label`과 `Form.Input`, bound `Label`을 쓰는 사용자 렌더러에서도 같은 필드 제목이 컨트롤 또는 그룹의 이름입니다. 범위 양끝은 각각 제목에 연결합니다. 보조 컨트롤은 제목 있는 필드 그룹 안에서 자기 이름을 유지합니다. 입력 자체 legend는 `getInputId('legend')`를 사용합니다. 필드 제목은 접근성 트리에 한 번만 노출하며 중복 제목 노드는 `hidden`으로 트리에서 제외합니다.
+필드 제목의 연결은 UI 라이브러리가 지원하는 id와 ARIA 속성을 따릅니다.
 
 복합 사용자 정의 입력은 `labelId`와 `getInputId`를 명시적으로 소비하고 DOM props에 펼치지 않습니다. getter의 참조는 필드 범위나 경로가 바뀔 때까지 유지됩니다. 말단 이름이나 `path`로 ID를 만들지 않습니다.
 
@@ -237,12 +237,6 @@ A boolean switch accepts `presentation.FieldInputProps.alias` with optional `che
 
 For string switches, use the schema-level `switchLabels: [checkedLabel, uncheckedLabel]` tuple for custom state labels.
 
-### Unset slider values
+### 슬라이더
 
-An unset slider exposes no current value to assistive technology and stores nothing until the user acts.
-
-### Slider constraints
-
-With `multipleOf`, selectable values are multiples of that number within the inclusive bounds. Integer sliders select only integer multiples. Without `multipleOf`, number sliders retain their authored bounds. A range with no selectable value is disabled and stores nothing.
-
-슬라이더는 inclusive·exclusive 경계를 함께 적용합니다. `multipleOf`가 있으면 정확한 십진 배수를, 정수 필드는 이 격자와 정수의 교집합을 사용합니다. `multipleOf`가 없으면 하한이 기본 step의 anchor이며 inclusive 경계를 그대로 선택할 수 있습니다. exclusive 경계는 제외하며 경계 안의 step 값이 없으면 어떤 조작도 저장하지 않습니다. `Home`·`End`는 처음·마지막 허용 값을, Page·Shift+Arrow는 열 step을 선택합니다. 격자 밖 값도 렌더링만으로 변경하지 않습니다. `Number.MAX_SAFE_INTEGER`까지의 track에서 pointer 정밀도는 지원 범위 밖입니다.
+슬라이더의 미설정 표시, 정지점 및 키 입력은 UI 라이브러리가 처리합니다.

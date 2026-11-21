@@ -28,9 +28,7 @@ interface FieldInputTimeProps
 }
 
 const FieldInputTime = ({
-  inputId,
-  getInputId,
-  labelId: fieldTitleId,
+  path,
   name,
   jsonSchema,
   required,
@@ -78,6 +76,8 @@ const FieldInputTime = ({
   const timeValue = useMemo(() => {
     if (typeof defaultValue !== 'string' || !defaultValue) return null;
 
+
+
     const today = dayjs().format('YYYY-MM-DD');
     return dayjs(`${today}T${defaultValue}`);
   }, [defaultValue]);
@@ -102,18 +102,7 @@ const FieldInputTime = ({
         ampm={ampm}
         slotProps={{
           textField: {
-            id: getInputId('native'),
-            InputProps: {
-              'aria-labelledby': fieldTitleId,
-              slotProps: {
-                input: {
-                  id: inputId,
-                  role: 'group',
-                  'aria-disabled': disabled || undefined,
-                  'aria-labelledby': fieldTitleId,
-                },
-              },
-            },
+            id: path,
             name,
             required,
             size,

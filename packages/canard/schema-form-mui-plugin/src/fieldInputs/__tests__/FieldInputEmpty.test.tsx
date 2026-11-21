@@ -30,42 +30,42 @@ it.each([
     'String (non-nullable)',
     FieldInputStringDefinition,
     { type: 'string' },
-    'input[id$=":/field~input"]',
+    'input#\\/field',
     'abc',
   ],
   [
     'String (nullable)',
     FieldInputStringDefinition,
     { type: ['string', 'null'] },
-    'input[id$=":/field~input"]',
+    'input#\\/field',
     'abc',
   ],
   [
     'Textarea (non-nullable)',
     FieldInputTextareaDefinition,
     { type: 'string', format: 'textarea' },
-    'textarea[id$=":/field~input"]',
+    'textarea#\\/field',
     'abc',
   ],
   [
     'Textarea (nullable)',
     FieldInputTextareaDefinition,
     { type: ['string', 'null'], format: 'textarea' },
-    'textarea[id$=":/field~input"]',
+    'textarea#\\/field',
     'abc',
   ],
   [
     'Uri (non-nullable)',
     FieldInputUriDefinition,
     { type: 'string', format: 'uri' },
-    'input[id$=":/field~input"]',
+    'input#\\/field',
     'http://abc',
   ],
   [
     'Uri (nullable)',
     FieldInputUriDefinition,
     { type: ['string', 'null'], format: 'uri' },
-    'input[id$=":/field~input"]',
+    'input#\\/field',
     'http://abc',
   ],
 ] as EmptyCase[])(
@@ -121,7 +121,7 @@ it.each([
 
     expect(ref.current!.getValue()?.field).toBeUndefined();
 
-    const input = container.querySelector('input[id$=":/field~input"]')!;
+    const input = container.querySelector('input#\\/field')!;
     await userEvent.type(input, 'example.com');
     expect(ref.current!.getValue()?.field).toBe('https://example.com');
   },
