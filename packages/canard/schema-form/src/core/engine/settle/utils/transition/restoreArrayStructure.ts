@@ -1,4 +1,4 @@
-import type { Dictionary, Nullable } from '@aileron/declare';
+import type { Dictionary } from '@aileron/declare';
 
 import { visitFieldNodes } from '../../../navigation';
 import { captureFieldNodeChange } from '../../../record';
@@ -9,22 +9,18 @@ import { getGateRegistry } from '../gates/getGateRegistry';
 /**
  * Replay automatic array shapes backwards without rewinding identity keys.
  * @param context - Failed settlement with ordered structural changes
- * @param within - Optional detached fill subtree whose own writes are withdrawn
+ * @param onlyHost - Optional detached array whose final decision selects the boundary structure
  * @returns Nothing; each host again owns its earlier item occurrences
  */
 export const restoreArrayStructure = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
-  within?: Self,
+  onlyHost?: Self,
 ): void => {
   for (let index = context.arrayStructureLog.length - 1; index >= 0; index--) {
     const entry = context.arrayStructureLog[index];
     if (entry.isRestored) continue;
     const { host, previousItems, previousItemCount, previousExtras } = entry;
-    if (within) {
-      let ancestor: Nullable<Self> = host;
-      while (ancestor && ancestor !== within) ancestor = ancestor.parent;
-      if (!ancestor) continue;
-    }
+    if (onlyHost && host !== onlyHost) continue;
     const prior = new Set(previousItems);
     for (const item of host.children ?? [])
       if (!prior.has(item)) {

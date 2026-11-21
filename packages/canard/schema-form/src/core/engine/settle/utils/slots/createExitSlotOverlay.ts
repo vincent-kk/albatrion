@@ -11,6 +11,7 @@ import { expirePackedSlotMemos } from './expirePackedSlotMemos';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
 import { hasSlotOverlaySource } from './hasSlotOverlaySource';
 import { readSlotExitPolicy } from './readSlotExitPolicy';
+import { readExitInputOverlays } from './utils/readExitInputOverlays';
 
 /** Source-preservation result for one recursively resolved exit policy. */
 interface ExitSlotOverlay {
@@ -42,11 +43,30 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
   context?: SettlementContext<Self>,
   sourceContext = context,
 ): ExitSlotOverlay => {
-  const supplied = context ? captureAbsentSlotInputs(node, context) : undefined;
-  if (supplied?.children)
+  const retained = context?.retainedSources?.get(node);
+  if (retained?.shouldUseBaseline && !context?.exceededBudget)
+    previous = {
+      ...(retained.source !== node.source
+        ? { source: retained.source }
+        : undefined),
+      ...(retained.extras !== node.extras
+        ? { extras: retained.extras }
+        : undefined),
+      ...previous,
+    };
+  const supplied =
+    context &&
+    readExitInputOverlays(
+      node,
+      context.exceededBudget || retained?.shouldUseBaseline
+        ? undefined
+        : context.retainedArrays?.get(node),
+      captureAbsentSlotInputs(node, context)?.children,
+    );
+  if (supplied)
     previous = {
       ...previous,
-      children: new Map([...(previous?.children ?? []), ...supplied.children]),
+      children: new Map([...(previous?.children ?? []), ...supplied]),
     };
   const policy = readSlotExitPolicy(node, inherited);
   const clear = applyPolicy && policy;
