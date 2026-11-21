@@ -1,9 +1,9 @@
-import type { BlueprintNode } from '../../../../blueprint';
-import type { RevivedSlotSource } from '../../../types/departingWrite';
-import { isPlain } from '../../input/isPlain';
+import type { BlueprintNode } from '../../../blueprint';
+import type { CandidateInput } from '../../types/candidateInput';
+import { isPlain } from '../input/isPlain';
 
 /** One surviving post-policy placement with its authored whole boundary. */
-interface RevivedSlotWrite {
+interface PostPolicyWrite {
   /** Pointer relative to the original exit owner. */
   readonly suffix: string;
   /** Declaration resolving this candidate. */
@@ -19,10 +19,14 @@ interface RevivedSlotWrite {
  * @param right - Original payload after later writes selected their own channels
  * @returns Eligible writes; omitted keys never reapply over the exit policy
  */
-export function* readRevivedSlotWrites<Self>(
-  right: RevivedSlotSource<Self>,
-): Iterable<RevivedSlotWrite> {
+export function* readPostPolicyInputs(
+  right: CandidateInput,
+): Iterable<PostPolicyWrite> {
   const { suffix, template, value, children } = right;
+  if (!right.isApplied) {
+    yield { suffix, template, value, isWhole: true };
+    return;
+  }
   const object =
     template.kind === 'object' &&
     template.strategy === 'branch' &&
@@ -40,5 +44,5 @@ export function* readRevivedSlotWrites<Self>(
     if (Object.keys(extras).length)
       yield { suffix, template, value: extras, isWhole: false };
   }
-  for (const child of children ?? []) yield* readRevivedSlotWrites(child);
+  for (const child of children ?? []) yield* readPostPolicyInputs(child);
 }

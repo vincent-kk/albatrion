@@ -32,10 +32,11 @@ export const readAbsentSlotSource = <Self extends FieldNodeRecord<Self>>(
   candidates: readonly BlueprintChildEntry[],
   context: SettlementContext<Self>,
 ): unknown => {
-  const array = context.retainedSources?.get(host)?.array;
+  const retained = context.retainedSources?.get(host);
+  const array = retained?.array;
   if (array && !context.exceededBudget) {
     for (const entry of candidates) {
-      const overlay = array.namedItems?.get(entry);
+      const overlay = retained?.slots?.get(entry)?.namedInput;
       if (overlay) return readSlotSourceTree(entry.node, undefined, overlay);
     }
     if (index >= array.retiredFrom) return undefined;

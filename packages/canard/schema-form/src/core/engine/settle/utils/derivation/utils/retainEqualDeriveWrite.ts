@@ -17,7 +17,7 @@ export const retainEqualDeriveWrite = <Self extends FieldNodeRecord<Self>>(
   const target = write.target;
   if (
     !target ||
-    (!context.filledNodes.size && !context.hasRevivedSlotSources) ||
+    (!context.filledNodes.size && !context.hasRevivedSourceDecisions) ||
     !isLiveOccurrence(target, context)
   )
     return;

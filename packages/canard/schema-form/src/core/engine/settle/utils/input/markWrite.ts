@@ -14,9 +14,9 @@ import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { prepareSourcePruner } from '../slots/prepareSourcePruner';
 import { pruneInactiveSources } from '../slots/pruneInactiveSources';
 import { writeAbsentConstituent } from '../slots/writeAbsentConstituent';
+import { supersedeCandidateInput } from '../source/supersedeCandidateInput';
 import { findDepartingChild } from '../transition/findDepartingChild';
 import { placeDeclarativeValue } from '../transition/placeDeclarativeValue';
-import { supersedeRevivedSlotSource } from '../transition/utils/supersedeRevivedSlotSource';
 import { readWriteCoverage } from '../write/readWriteCoverage';
 import { arrayExtras } from './arrayExtras';
 import { assertVirtualWriteShape } from './assertVirtualWriteShape';
@@ -91,14 +91,10 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     if (!acceptsRetainedWrite(node, context, writeOrder)) return;
     recordRetainedSource(node, context, writeOrigin, writeOrder);
     if (writeOrigin !== undefined) context.writtenInputs.set(node, input);
-    if (context.isMarkingLiveRule || context.replayingDepartingWrite) {
-      const previousRight =
-        context.retainedSources?.get(node)?.revivedSlotSource;
-      if (
-        previousRight &&
-        previousRight.write !== context.replayingDepartingWrite
-      )
-        supersedeRevivedSlotSource(previousRight);
+    if (context.isMarkingLiveRule || context.replayingSourceOrder) {
+      const previousRight = context.retainedSources?.get(node)?.postPolicyInput;
+      if (previousRight && previousRight.order !== context.replayingSourceOrder)
+        supersedeCandidateInput(previousRight);
     }
   }
   const known = changedValue !== UNINTERPRETED;

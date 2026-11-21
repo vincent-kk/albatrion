@@ -149,7 +149,7 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
       if (
         !isLayered &&
         changed.length !== decision.writes.length &&
-        (context.filledNodes.size || context.hasRevivedSlotSources)
+        (context.filledNodes.size || context.hasRevivedSourceDecisions)
       )
         for (const write of decision.writes)
           if (isUnchanged(write)) retainEqualDeriveWrite(write, context);

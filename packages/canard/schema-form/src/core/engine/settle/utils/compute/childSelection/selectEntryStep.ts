@@ -27,7 +27,7 @@ import { cloneFromSlot } from '../../slots/cloneFromSlot';
 import { createFromSlotOverlay } from '../../slots/createFromSlotOverlay';
 import { enterSlotClone } from '../../slots/enterSlotClone';
 import { getSlotSource } from '../../slots/getSlotSource';
-import { applyRevivedDepartingWrites } from '../../transition/applyRevivedDepartingWrites';
+import { applyDepartingSource } from '../../source/applyDepartingSource';
 import { createChildNode } from '../createChildNode';
 import { enterFieldNode } from '../enterFieldNode';
 import { hasRecursiveExpansion } from '../hasRecursiveExpansion';
@@ -326,7 +326,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   }
   if (pending && child === pending) {
     context.revivedNodes.add(child);
-    applyRevivedDepartingWrites(child, context);
+    applyDepartingSource(context, child);
   }
   if (context.hasGates) getGateRegistry(child.runtime).register(child);
   let entryChanged = false;
