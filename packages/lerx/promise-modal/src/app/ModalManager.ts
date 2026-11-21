@@ -192,14 +192,13 @@ export class ModalManager {
     ModalManager.__state__.generation++;
     const previous = ModalManager.__state__.anchor;
     const isMoved = previous?.parentElement !== root;
-    const focused =
-      previous &&
-      isMoved &&
-      containsComposedElement(
-        previous,
-        ModalManager.innermostFocus(document.activeElement),
-      )
+    const active =
+      previous && isMoved
         ? ModalManager.innermostFocus(document.activeElement)
+        : null;
+    const focused =
+      previous && active && containsComposedElement(previous, active)
+        ? active
         : null;
     const anchor = ModalManager.anchor({ root });
     if (isMoved) ModalManager.destroyStyleSheet();
@@ -294,10 +293,7 @@ export class ModalManager {
       if (
         !ModalManager.__state__.frames.has(id) &&
         ModalManager.__state__.focused.has(id) &&
-        !containsComposedElement(
-          element,
-          ModalManager.innermostFocus(document.activeElement),
-        )
+        !ModalManager.frameContainsFocus(element, document.activeElement)
       )
         ModalManager.__state__.focused.delete(id);
       ModalManager.__state__.frames.set(id, element);
@@ -360,6 +356,17 @@ export class ModalManager {
       .filter((node) => node.alive && node.visible && !node.settled)
       .sort((left, right) => right.order - left.order);
   }
+  /** Check native containment before following focus into an open shadow tree. */
+  private static frameContainsFocus(
+    frame: HTMLElement,
+    active: Element | null,
+  ): boolean {
+    return (
+      frame.contains(active) ||
+      !!(active?.shadowRoot &&
+        containsComposedElement(frame, ModalManager.innermostFocus(active)))
+    );
+  }
   /**
    * Focuses a frame's first control, preserving an existing internal focus target.
    * @param id - Pending dimmed modal whose wrapper may already be registered.
@@ -368,11 +375,7 @@ export class ModalManager {
     const frame = ModalManager.__state__.frames.get(id);
     if (
       !frame?.isConnected ||
-      frame.contains(document.activeElement) ||
-      containsComposedElement(
-        frame,
-        ModalManager.innermostFocus(document.activeElement),
-      )
+      ModalManager.frameContainsFocus(frame, document.activeElement)
     )
       return;
     (getTabbableElements(frame)[0] ?? frame).focus();
@@ -393,19 +396,11 @@ export class ModalManager {
       (node) => node.id !== id,
     );
     const remaining = pending.filter((node) => node.dimmed);
+    const active = document.activeElement;
     if (
       pending.some((node) => {
         const frame = ModalManager.__state__.frames.get(node.id);
-        const active = document.activeElement;
-        return (
-          frame &&
-          (frame.contains(active) ||
-            (active?.shadowRoot &&
-              containsComposedElement(
-                frame,
-                ModalManager.innermostFocus(active),
-              )))
-        );
+        return frame && ModalManager.frameContainsFocus(frame, active);
       })
     )
       return;
