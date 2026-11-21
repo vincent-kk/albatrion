@@ -20,6 +20,7 @@ import type { SourceSnapshot } from '../../../../types/sourceSnapshot.js';
 import { mergePlans } from '../mergePlans.js';
 import type { RunUnit, ValidatedFlags } from '../types.js';
 import { describePreparationFailure } from './utils/describePreparationFailure.js';
+import { getLinkedFileKey } from './utils/getLinkedFileKey.js';
 import { resolveCanonicalPath } from './utils/resolveCanonicalPath.js';
 import { validateUnitMarkdown } from './utils/validateUnitMarkdown.js';
 
@@ -41,6 +42,7 @@ export async function prepareUnits(
   const resolved: ResolvedLocations = new Map();
   const destinationsSeen = new Map<string, RunUnit>();
   const markdown = new Map<string, Promise<void>>();
+  const linkedDestinations = new Map<string, string>();
   const physicalPaths = new Map<string, Promise<string>>();
   const generatedAt = new Date().toISOString();
   const sourceSnapshots = new Map<string, SourceSnapshot | null>();
@@ -137,17 +139,19 @@ export async function prepareUnits(
           resolved,
         });
         const actions = await Promise.all(
-          plan.actions.map(async (action) =>
-            action.target.kind === 'file'
-              ? {
-                  ...action,
-                  destinationKey: await resolveCanonicalPath(
-                    action.target.dstAbs,
-                    physicalPaths,
-                  ),
-                }
-              : action,
-          ),
+          plan.actions.map(async (action) => {
+            if (action.target.kind !== 'file') return action;
+            const destinationKey = await resolveCanonicalPath(
+              action.target.dstAbs,
+              physicalPaths,
+            );
+            if (action.sourceHash) {
+              const linkedKey = await getLinkedFileKey(destinationKey);
+              if (linkedKey !== undefined)
+                linkedDestinations.set(destinationKey, linkedKey);
+            }
+            return { ...action, destinationKey };
+          }),
         );
         const unit = { ...base, sourceSnapshots, plan: { ...plan, actions } };
         destinationsSeen.set(locationKey, unit);
@@ -170,5 +174,5 @@ export async function prepareUnits(
       }
     }
   }
-  return mergePlans(units, discoveryFailures);
+  return mergePlans(units, discoveryFailures, linkedDestinations);
 }
