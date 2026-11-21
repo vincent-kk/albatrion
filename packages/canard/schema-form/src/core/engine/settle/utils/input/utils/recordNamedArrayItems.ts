@@ -9,8 +9,11 @@ import type {
 } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
 import { createSlotValueOverlay } from '../../slots/createSlotValueOverlay';
+import { getSlotBinding } from '../../slots/getSlotBinding';
 import { getSlotSource } from '../../slots/getSlotSource';
+import { pruneArraySlotTail } from '../../slots/pruneArraySlotTail';
 import { packArrayInputOverlay } from '../../slots/utils/packArrayInputOverlay';
+import { supersedeRevivedSlotSource } from '../../transition/utils/supersedeRevivedSlotSource';
 import { selectRetiredArrayBaseline } from './selectRetiredArrayBaseline';
 
 /**
@@ -35,13 +38,24 @@ export const recordNamedArrayItems = <Self extends FieldNodeRecord<Self>>(
   if (host.itemCount < previousCount) {
     array.retiredFrom = Math.min(array.retiredFrom, host.itemCount);
     if (source.shouldUseBaseline) selectRetiredArrayBaseline(host, context);
+    if (
+      host.inactiveSlots?.size ||
+      host.inactiveSlotOverlays?.size ||
+      host.inactiveSlotChildren?.size
+    )
+      pruneArraySlotTail(host, context);
   }
   let items: Map<BlueprintChildEntry, InactiveSlotOverlay> | undefined;
   if (origin && isArray(input))
     for (let index = 0; index < input.length; index++) {
       if (index < previousCount && host.childrenByName?.['' + index]) continue;
-      const entry = getItemEntries(host.blueprintNode, index)[0];
-      if (!entry) continue;
+      const request = getItemEntries(host.blueprintNode, index)[0];
+      if (!request) continue;
+      const entry = getSlotBinding(host, request);
+      if (context.isMarkingLiveRule) {
+        const revived = source.revivedChildSources?.get(entry);
+        if (revived) supersedeRevivedSlotSource(revived, true);
+      }
       const prior =
         index < array.retiredFrom ? getSlotSource(host, entry) : undefined;
       if (

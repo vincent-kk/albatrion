@@ -25,6 +25,12 @@ export const readRetainedChildInputs = <Self extends FieldNodeRecord<Self>>(
   if (!context.exceededBudget) {
     for (const [entry, source] of retained?.slots ?? []) {
       if (
+        retained?.array &&
+        !retained.shouldUseBaseline &&
+        Number(entry.name) >= retained.array.retiredFrom
+      )
+        continue;
+      if (
         source.selectsNamedSource ||
         node.childrenByName?.[entry.name]?.blueprintNode === entry.node
       )

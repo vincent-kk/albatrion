@@ -130,6 +130,8 @@ export interface RetainedSource<Self> {
   writeOrigin?: Distribution['writeOrigin'];
   /** Final post-policy right attached to this actual live binding. */
   revivedSlotSource?: RevivedSlotSource<Self>;
+  /** Rights of named candidate bindings that were absent during revival. */
+  revivedChildSources?: Map<BlueprintChildEntry, RevivedSlotSource<Self>>;
   /** Structure captured before the first automatic array write. */
   array?: RetainedArraySources<Self>;
   /** Baseline and active retained decisions for this host's inactive bindings. */
