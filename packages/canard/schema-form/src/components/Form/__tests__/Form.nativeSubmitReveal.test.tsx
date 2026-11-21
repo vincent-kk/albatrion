@@ -44,6 +44,25 @@ it('ERROR-139 focuses a <select> when the first invalid field is an enum', async
   form.expectNothingReported();
 });
 
+it('ERROR-139 focuses the explicit input anchor for a schema error', async () => {
+  const Anchor = ({ focusRef }: FieldInputProps) => (
+    <>
+      <div aria-label="invalid field anchor" tabIndex={-1} ref={focusRef} />
+      <button type="submit">submit</button>
+    </>
+  );
+  const form = await mountNativeSubmitForm({
+    formProps: { fieldInputMap: { '/a': Anchor } },
+  });
+  await form.user.click(form.button());
+  await waitFor(() =>
+    expect(document.activeElement).toBe(
+      form.view.getByLabelText('invalid field anchor'),
+    ),
+  );
+  form.expectNothingReported();
+});
+
 it('ERROR-139 focuses /b when the root and /b both have errors', async () => {
   const form = await mountNativeSubmitForm({
     check: (value) => [
