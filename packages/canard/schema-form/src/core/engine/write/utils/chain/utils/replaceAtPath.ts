@@ -88,10 +88,7 @@ export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
     let childNode = node;
     while (childNode && childNode.depth > depth + 1)
       childNode = childNode.parent ?? undefined;
-    if (
-      isCommittedInput ||
-      !hasMarkedOutput(child, childNode, childNode?.blueprintNode ?? template)
-    )
+    if (isCommittedInput || !childNode || !hasMarkedOutput(child, childNode))
       Object.defineProperty(next, BATCH_HOST_SOURCE, {
         value: wrongSource,
         enumerable: true,
