@@ -35,8 +35,6 @@ export const readStoredInput = <Self extends FieldNodeRecord<Self>>(
   output = false,
   ancestors = new WeakSet<object>(),
 ): unknown => {
-  // An ancestor whole write can omit this target before reaction creates its empty container.
-  if (input === undefined) return undefined;
   template = live?.blueprintNode ?? template;
   const row = BEHAVIORS[template.kind]?.[template.strategy];
   if (!row) return input;
