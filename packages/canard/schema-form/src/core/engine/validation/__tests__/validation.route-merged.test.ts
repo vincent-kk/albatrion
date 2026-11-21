@@ -2,6 +2,7 @@ import { expect, it } from 'vitest';
 
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
 import { dispatchRemove } from '@/schema-form/core/engine/write';
 import {
   isDescendantPath,
@@ -148,7 +149,7 @@ const compareRoutes = (
       },
     },
     defaultValue: { group: { a: 'a', b: 'b' }, outside: 'outside' },
-    validationMode: 2,
+    validationMode: ValidationMode.OnRequest,
   });
   const group = root.childrenByName?.group;
   const a = group?.childrenByName?.a;
@@ -162,7 +163,7 @@ const compareRoutes = (
       items: { type: 'object', properties: { a: { type: 'string' } } },
     },
     defaultValue: [{ a: 'old' }],
-    validationMode: 2,
+    validationMode: ValidationMode.OnRequest,
   });
   const stale = (staleRoot.children ?? [])[0];
   if (!stale) throw new Error('Missing stale fixture');
@@ -257,7 +258,7 @@ it('uses a detached target path for strict descendants without selecting its liv
       items: { type: 'object', properties: { a: { type: 'string' } } },
     },
     defaultValue: [{ a: 'old' }, { a: 'live' }],
-    validationMode: 2,
+    validationMode: ValidationMode.OnRequest,
   });
   const retired = (root.children ?? [])[0];
   if (!retired) throw new Error('Missing retiring target');
@@ -296,7 +297,7 @@ it('filters an inactive union issue and preserves rejected-key host attribution 
       ],
     },
     defaultValue: { kind: 'x', value: 'a' },
-    validationMode: 2,
+    validationMode: ValidationMode.OnRequest,
   });
   const value = root.childrenByName?.value;
   if (!value) throw new Error('Missing union value');

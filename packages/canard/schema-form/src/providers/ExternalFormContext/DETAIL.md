@@ -6,11 +6,13 @@ FormProvider는 여러 폼의 기본 설정을 공급하며 인스턴스 선택�
 
 ## API Contracts
 
+FormProvider의 pluginScope는 string 또는 symbol로 선택한 독립 등록소를 사용합니다. registerPlugin(plugin, { scope })의 같은 토큰과 호환 버전만 공유하며, 생략하면 가장 가까운 바깥 Provider의 pluginManager를 상속하며 바깥 Provider가 없는 경우에만 realm 전역 등록소를 사용합니다. 설정 하나만 추가하는 중첩 Provider가 애플리케이션 격리를 해제하지 않게 합니다. scope 등록소와 기본 등록소는 입력·렌더러·검증기·포맷터·중복 기록·reset을 공유하지 않습니다. 각 애플리케이션은 안정된 토큰을 공급하고 설정 뒤 폼을 렌더합니다. 등록은 반응형 구독을 만들지 않으며 scope의 등록소는 realm 수명 동안 유지합니다. 선택은 기존 외부 설정 Context로 전달하여 필드별 구독을 추가하지 않습니다.
+
 라벨·오류 등록 자리는 node와 children 중심의 전용 부품 props를 받습니다. 입력 자리는 실제 입력을 children으로 감싸는 InputRendererProps를 받습니다. 등록 컴포넌트의 참조 교체가 해당 부품을 다시 마운트하므로 안정된 컴포넌트 참조를 공급합니다.
 
 정규화한 입력 정의와 그 Provider의 InputRenderer만 담은 별도 Context를 함께 제공합니다. 두 참조가 같으면 객체를 재사용하여 포맷터 같은 무관한 외부 설정 변경이 입력을 렌더하지 않게 합니다. 소비자는 자기 위치의 가장 가까운 Provider를 읽고 Provider가 없으면 두 설정이 undefined인 기존 기본 선택을 유지합니다.
 
-입력 정의·렌더러·포맷터는 불변 참조 교체로 전달하고 context는 내용 기준으로 안정화합니다. 정의 참조가 그대로일 때 무관한 설정 변경이 입력 재정규화를 일으키지 않게 합니다. 빈 기본 Context에 렌더러를 하드코딩하지 않아 [플러그인 폴백](../../app/plugin/DETAIL.md)을 유지합니다.
+입력 정의·렌더러·포맷터는 불변 참조 교체로 전달하고 context는 [상위 비교 계약](../DETAIL.md)에 따라 안정화합니다. 정의 참조가 그대로일 때 무관한 설정 변경이 입력 재정규화를 일으키지 않게 합니다. 빈 기본 Context에 렌더러를 하드코딩하지 않아 [플러그인 폴백](../../app/plugin/DETAIL.md)을 유지합니다.
 
 ## Acceptance Criteria
 

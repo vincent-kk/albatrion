@@ -11,13 +11,17 @@
 // The caller owns all package metadata. This function does not read
 // package.json — consumers parse their own manifest and pass a ready-made
 // set of values so the library stays free of field-shape assumptions.
-
 import { createHash } from 'node:crypto';
-import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 
 const MANIFEST_FILENAME = 'agents-hashes.json';
-const NOISE = [/(^|\/)\.omc(\/|$)/, /(^|\/)\.DS_Store$/, /\.log$/];
+const NOISE = [
+  /(^|\/)\.omc(\/|$)/,
+  /(^|\/)\.DS_Store$/,
+  /\.log$/,
+  /(^|\/)\.agents-assets-sync-[^/]*(\/|$)/,
+];
 
 const toPosix = (p) => (sep === '/' ? p : p.split(sep).join('/'));
 
@@ -55,12 +59,25 @@ export async function buildHashes(opts) {
     );
   }
   const assetRoot = resolve(packageRoot, assetPath);
+  const entry = await stat(assetRoot);
+  if (!entry.isDirectory())
+    throw new Error(`Asset root is not a directory: ${assetRoot}`);
   const files = {};
+  const ruleBodyHashes = {};
   for await (const abs of walk(assetRoot)) {
     const rel = toPosix(relative(assetRoot, abs));
     if (NOISE.some((re) => re.test(rel))) continue;
     const buf = await readFile(abs);
     files[rel] = createHash('sha256').update(buf).digest('hex');
+    if (rel.startsWith('rules/')) {
+      const body = buf
+        .toString('latin1')
+        .replace(/^\xEF\xBB\xBF/, '')
+        .replace(/\r\n?/g, '\n');
+      ruleBodyHashes[rel] = createHash('sha256')
+        .update(Buffer.from(body, 'latin1'))
+        .digest('hex');
+    }
   }
   const sorted = Object.fromEntries(
     Object.entries(files).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
@@ -72,6 +89,11 @@ export async function buildHashes(opts) {
     algorithm: 'sha256',
     assetRoot: assetPath,
     files: sorted,
+    ruleBodyHashes: Object.fromEntries(
+      Object.entries(ruleBodyHashes).sort(([a], [b]) =>
+        a < b ? -1 : a > b ? 1 : 0,
+      ),
+    ),
     previousVersions: {},
   };
   const distDir = resolve(packageRoot, 'dist');

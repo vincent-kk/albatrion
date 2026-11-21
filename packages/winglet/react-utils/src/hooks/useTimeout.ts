@@ -2,12 +2,29 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import { useReference } from './useReference';
+import { useCommitEffect } from './utils/useCommitEffect';
+import { useCommittedReference } from './utils/useCommittedReference';
 
 type UseTimeoutReturn = {
   isIdle: Fn<[], boolean>;
   schedule: Fn;
   cancel: Fn;
+};
+
+/** Mutable timer state and stable controls owned by a single hook instance. */
+type TimeoutState = {
+  /** Callback from the last committed render. */
+  current: Fn;
+  /** Whether no timer is pending. */
+  idle: boolean;
+  /** Current host timer, or null after cancellation or completion. */
+  timer: ReturnType<typeof setTimeout> | null;
+  /** Whether this hook instance is mounted. */
+  mounted: boolean;
+  /** Stable timer cancellation control. */
+  cancel: Fn;
+  /** Stable query for pending work. */
+  isIdle: Fn<[], boolean>;
 };
 
 /**
@@ -21,7 +38,7 @@ type UseTimeoutReturn = {
  * - **Manual Control**: Explicitly schedule, reschedule, or cancel timeouts
  * - **State Tracking**: Check if a timeout is pending with `isIdle()`
  * - **Safe Updates**: Callback updates don't affect running timers
- * - **Auto-cleanup**: Prevents memory leaks on unmount
+ * - **Auto-cleanup**: Cancels on unmount; retained schedule callbacks do no work after unmount
  * - **Reschedule Support**: Calling schedule() resets existing timers
  *
  * ### Use Cases
@@ -103,6 +120,9 @@ type UseTimeoutReturn = {
  * };
  * ```
  *
+ * @remarks Callback reads use the last committed render. React 18 and 19 publish
+ * before layout effects; older supported React peers publish in the parent layout effect.
+ *
  * @param callback - The function to execute after the timeout. Can be updated without affecting running timers
  * @param timeout - The delay in milliseconds before executing the callback (default: 0)
  * @returns {Object} Control object with three methods:
@@ -114,35 +134,43 @@ export const useTimeout = (
   callback: Fn,
   timeout: number = 0,
 ): UseTimeoutReturn => {
-  const idleRef = useRef<boolean>(true);
-  const timerIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const callbackRef = useReference(callback);
-
-  const isIdle = useCallback(() => idleRef.current, []);
-
+  const holder = useRef<TimeoutState | null>(null);
+  if (holder.current === null) {
+    const state: TimeoutState = {
+      current: callback,
+      idle: true,
+      timer: null,
+      mounted: true,
+      cancel: () => {
+        state.idle = true;
+        if (state.timer !== null) {
+          clearTimeout(state.timer);
+          state.timer = null;
+        }
+      },
+      isIdle: () => state.idle,
+    };
+    holder.current = state;
+  }
+  const state = useCommittedReference(holder.current, callback);
   const schedule = useCallback(() => {
-    idleRef.current = false;
-    if (timerIdRef.current !== null) clearTimeout(timerIdRef.current);
-    timerIdRef.current = setTimeout(() => {
-      idleRef.current = true;
-      timerIdRef.current = null;
-      callbackRef.current();
+    if (!state.mounted) return;
+    state.idle = false;
+    if (state.timer !== null) clearTimeout(state.timer);
+    state.timer = setTimeout(() => {
+      state.idle = true;
+      state.timer = null;
+      state.current();
     }, timeout);
-  }, [timeout, callbackRef]);
+  }, [timeout, state]);
 
-  const cancel = useCallback(() => {
-    idleRef.current = true;
-    if (timerIdRef.current !== null) {
-      clearTimeout(timerIdRef.current);
-      timerIdRef.current = null;
-    }
-  }, []);
+  useCommitEffect(() => {
+    state.mounted = true;
+    return () => {
+      state.mounted = false;
+    };
+  }, [state]);
+  useEffect(() => state.cancel, [state]);
 
-  useEffect(() => cancel, [cancel]);
-
-  return {
-    isIdle,
-    schedule,
-    cancel,
-  } as const;
+  return { isIdle: state.isIdle, schedule, cancel: state.cancel };
 };

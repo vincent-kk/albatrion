@@ -18,14 +18,18 @@ import {
 export const foldAllowedTypes = (
   types: Optional<keyof typeof TYPE_MASK | readonly (keyof typeof TYPE_MASK)[]>,
 ): number => {
-  const allowed = typeof types === 'string' ? [types] : (types ?? []);
+  if (types == null) return TYPE_MASK.null;
+  if (typeof types === 'string') return TYPE_MASK[types];
   let mask = BIT_MASK_NONE;
-  for (const type of allowed) if (type !== 'null') mask |= TYPE_MASK[type];
+  for (let index = 0, count = types.length; index < count; index++) {
+    const type = types[index];
+    if (type !== 'null') mask |= TYPE_MASK[type];
+  }
   return mask || TYPE_MASK.null;
 };
 
 /** Integer shares number's bit; null owns a bit only for a null-only node. */
-const TYPE_MASK = {
+export const TYPE_MASK = {
   string: BIT_FLAG_00,
   number: BIT_FLAG_01,
   integer: BIT_FLAG_01,

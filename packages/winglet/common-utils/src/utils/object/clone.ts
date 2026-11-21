@@ -1,15 +1,38 @@
+import { getTypeTag } from '@/common-utils/libs/getTypeTag';
 import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 import { isArray } from '@/common-utils/utils/filter/isArray';
 import { isArrayBuffer } from '@/common-utils/utils/filter/isArrayBuffer';
 import { isBlob } from '@/common-utils/utils/filter/isBlob';
 import { isBuffer } from '@/common-utils/utils/filter/isBuffer';
-import { isCloneable } from '@/common-utils/utils/filter/isCloneable';
+import { CLONEABLE_TAGS } from '@/common-utils/utils/filter/isCloneable';
 import { isPrimitiveType } from '@/common-utils/utils/filter/isPrimitiveType';
 import { isSharedArrayBuffer } from '@/common-utils/utils/filter/isSharedArrayBuffer';
 import { isTypedArray } from '@/common-utils/utils/filter/isTypedArray';
+import { isPlainObject } from '@/common-utils/utils/filter';
 
 import { getSymbols } from './getSymbols';
-import { setDataProperty } from './setDataProperty';
+import { cloneArraySubclass } from './utils/clone/cloneArraySubclass';
+import { cloneBuiltinSubclass } from './utils/clone/cloneBuiltinSubclass';
+import { copyErrorEnumerability } from './utils/clone/copyErrorEnumerability';
+import { copyForeignBuiltin } from './utils/clone/copyForeignBuiltin/copyForeignBuiltin';
+import { getPrototypeProfile } from './utils/clone/getPrototypeProfile';
+import { replicateBox } from './utils/clone/replicateBox';
+import { replicateDeep } from './utils/clone/replicateDeep';
+
+/** Clone-specific shell dispatch extends the shared predicate without widening its public contract. */
+const CLONE_PROFILE: Record<string, boolean | undefined> = Object.create(null);
+for (const tag of CLONEABLE_TAGS) CLONE_PROFILE[tag] = false;
+for (const tag of [
+  '[object Date]',
+  '[object Map]',
+  '[object Set]',
+  '[object RegExp]',
+  '[object ArrayBuffer]',
+  '[object SharedArrayBuffer]',
+  '[object DataView]',
+  '[object Error]',
+])
+  CLONE_PROFILE[tag] = true;
 
 /**
  * Creates a deep clone of any value with comprehensive type support and circular reference handling.
@@ -22,7 +45,7 @@ import { setDataProperty } from './setDataProperty';
  * @template Type - Type of the value to clone
  * @param target - The value to create a deep clone of
  * @param maxDepth - Optional maximum depth to clone (objects beyond this depth are returned as references)
- * @returns A new deep clone with identical structure and values
+ * @returns A deep clone of supported state and copied properties, subject to the known limits below
  *
  * @example
  * Primitive and basic object cloning:
@@ -154,7 +177,7 @@ import { setDataProperty } from './setDataProperty';
  * **Supported Types:**
  * - **Primitives**: string, number, boolean, null, undefined, symbol, bigint
  * - **Objects**: Plain objects, arrays, functions (as-is)
- * - **Built-ins**: Date, RegExp, Map, Set, Error
+ * - **Built-ins**: Date, RegExp, Map, Set, Error (including `AggregateError`), boxed Number, String and Boolean from any realm
  * - **Binary Data**: ArrayBuffer, SharedArrayBuffer, TypedArrays, DataView
  * - **Web APIs**: File, Blob (when available)
  * - **Custom Objects**: Objects with custom prototypes
@@ -172,6 +195,28 @@ import { setDataProperty } from './setDataProperty';
  * - **Descriptor Respect**: Checks `writable` property descriptors before assignment
  * - **Prototype Chain**: Uses `Object.create(Object.getPrototypeOf(value))` to maintain inheritance
  * - **Type-Specific Cloning**: Specialized handlers for Date, RegExp, Map, Set, TypedArrays
+ *
+ * **Known Limits:**
+ * - Map, Set, Date, RegExp and Array subclasses retain built-in state and prototypes,
+ *   but additional own properties and constructor-set fields are not copied. Their
+ *   constructors do not run, so private fields are not initialized and methods that
+ *   require those fields can throw. Normalize to native built-ins when that state is required.
+ * - Deep ordinary object and array graphs, including cycles, use work frames rather
+ *   than the call stack. User getters, constructors, proxies and paths made only
+ *   of non-plain built-ins remain subject to their own call-stack limits.
+ * - Typed-array subclasses with default slice/species run their constructor once and retain their
+ *   prototype. DataView subclasses do not run their constructor, but return native DataView
+ *   copies without the subclass prototype; both preserve the selected data and independent
+ *   storage. Normalize to an intrinsic view before cloning, then restore the prototype
+ *   explicitly when constructor-free subclass copies are needed.
+ * - Error subclasses run their constructors once under the recorded initialization policy;
+ *   ArrayBuffer subclasses run theirs through slice species. Normalize to native Error or
+ *   copy bytes into a native ArrayBuffer first when subclass execution is unwanted.
+ * - What `clone` learns about a prototype chain (which inherited setters, getters and read-only
+ *   properties intercept assignment, and whether it is a boxed-primitive chain) is cached per
+ *   prototype at its first clone and never invalidated. A setter, getter or read-only property
+ *   added to that chain later is not seen: later clones assign that key, so an added setter runs,
+ *   and an added getter-only or read-only property makes `clone` throw a `TypeError`.
  *
  * **Performance Considerations:**
  * - **Time Complexity**: O(n) where n is total number of properties/elements
@@ -224,26 +269,44 @@ export const clone = <Type>(target: Type, maxDepth?: number): Type =>
  * @param cache - Map to track already cloned objects (for circular reference handling)
  * @returns Cloned value
  */
-const replicate = <Type>(
-  value: Type,
+const replicate = (
+  value: any,
   limit: number | undefined,
   depth: number,
   cache: Map<object, any>,
-): Type => {
-  if (limit !== undefined && depth >= limit) return value as Type;
+): any => {
+  if (limit !== undefined && depth >= limit) return value;
 
-  if (isPrimitiveType(value)) return value as Type;
+  if (isPrimitiveType(value)) return value;
 
-  // @ts-expect-error: After passing `isPrimitiveType`, value must be an object.
-  if (cache.has(value)) return cache.get(value) as Type;
+  if (cache.has(value)) return cache.get(value);
+
+  if (depth >= 256 && ((isArray(value) && getPrototypeOf(value) === Array.prototype) || isPlainObject(value)))
+    return replicateDeep(value, limit, depth, cache, replicate);
 
   depth = depth + 1;
 
   if (isArray(value)) {
+    const prototype = getPrototypeOf(value);
+    if (prototype !== Array.prototype)
+      return cloneArraySubclass(
+        value,
+        prototype,
+        limit,
+        depth,
+        cache,
+        replicate,
+      );
     const result = new Array(value.length);
     cache.set(value, result);
-    for (let i = 0, l = value.length; i < l; i++)
-      if (i in value) result[i] = replicate(value[i], limit, depth, cache);
+    for (let i = 0, l = value.length; i < l; i++) {
+      if (i in value) {
+        const item = value[i];
+        result[i] = isPrimitiveType(item)
+          ? item
+          : replicate(item, limit, depth, cache);
+      }
+    }
     // @ts-expect-error: The `index` property is only available in the result of a RegExp match.
     if ('index' in value) result.index = value.index;
     // @ts-expect-error: The `input` property is only available in the result of a RegExp match.
@@ -252,38 +315,80 @@ const replicate = <Type>(
       // @ts-expect-error: The `groups` property is only available in the result of a RegExp match.
       result.groups = replicate(value.groups, limit, depth, cache);
     }
-    return result as Type;
+    return result;
   }
 
   if (value instanceof Date) {
+    const prototype = getPrototypeOf(value);
+    if (prototype !== Date.prototype)
+      return cloneBuiltinSubclass(
+        value,
+        prototype,
+        limit,
+        depth,
+        cache,
+        replicate,
+      );
     const result = new Date(value.getTime());
     cache.set(value, result);
-    return result as Type;
+    return result;
   }
 
   if (value instanceof RegExp) {
+    const prototype = getPrototypeOf(value);
+    if (prototype !== RegExp.prototype)
+      return cloneBuiltinSubclass(
+        value,
+        prototype,
+        limit,
+        depth,
+        cache,
+        replicate,
+      );
     const result = new RegExp(value.source, value.flags);
     result.lastIndex = value.lastIndex;
     cache.set(value, result);
-    return result as Type;
+    return result;
   }
 
   if (value instanceof Map) {
-    const result = new Map();
-    cache.set(value, result);
-    for (const entry of value)
-      result.set(
-        replicate(entry[0], limit, depth, cache),
-        replicate(entry[1], limit, depth, cache),
-      );
-    return result as Type;
+    const prototype = getPrototypeOf(value);
+    if (prototype === Map.prototype) {
+      const result = new Map();
+      cache.set(value, result);
+      for (const entry of value)
+        result.set(
+          replicate(entry[0], limit, depth, cache),
+          replicate(entry[1], limit, depth, cache),
+        );
+      return result;
+    }
+    return cloneBuiltinSubclass(
+      value,
+      prototype,
+      limit,
+      depth,
+      cache,
+      replicate,
+    );
   }
 
   if (value instanceof Set) {
-    const result = new Set();
-    cache.set(value, result);
-    for (const key of value) result.add(replicate(key, limit, depth, cache));
-    return result as Type;
+    const prototype = getPrototypeOf(value);
+    if (prototype === Set.prototype) {
+      const result = new Set();
+      cache.set(value, result);
+      for (const key of value) result.add(replicate(key, limit, depth, cache));
+      return result;
+    }
+    return cloneBuiltinSubclass(
+      value,
+      prototype,
+      limit,
+      depth,
+      cache,
+      replicate,
+    );
   }
 
   if (isBuffer(value)) {
@@ -291,19 +396,19 @@ const replicate = <Type>(
     // same memory; the Uint8Array implementation copies while species keeps the Buffer type
     const result = Uint8Array.prototype.slice.call(value);
     cache.set(value, result);
-    return result as Type;
+    return result;
   }
 
-  if (isTypedArray(value)) {
+  if (isTypedArray(value) && typeof value.slice === 'function') {
     const result = value.slice();
     cache.set(value, result);
-    return result as Type;
+    return result;
   }
 
   if (isArrayBuffer(value) || isSharedArrayBuffer(value)) {
     const result = value.slice();
     cache.set(value, result);
-    return result as Type;
+    return result;
   }
 
   if (value instanceof DataView) {
@@ -314,7 +419,7 @@ const replicate = <Type>(
     );
     cache.set(value, result);
     replicateProperties(result, value, limit, depth, cache);
-    return result as Type;
+    return result;
   }
 
   if (typeof File !== 'undefined' && value instanceof File) {
@@ -323,36 +428,114 @@ const replicate = <Type>(
       lastModified: value.lastModified,
     });
     cache.set(value, result);
-    replicateProperties(result, value, limit, depth, cache);
-    return result as Type;
+    replicateProperties(
+      result,
+      value,
+      limit,
+      depth,
+      cache,
+      undefined,
+      getSymbols(value).filter((symbol) => !hasOwnProperty(result, symbol)),
+    );
+    return result;
   }
 
   if (isBlob(value)) {
     const result = new Blob([value], { type: value.type });
     cache.set(value, result);
-    replicateProperties(result, value, limit, depth, cache);
-    return result as Type;
+    replicateProperties(
+      result,
+      value,
+      limit,
+      depth,
+      cache,
+      undefined,
+      getSymbols(value).filter((symbol) => !hasOwnProperty(result, symbol)),
+    );
+    return result;
   }
 
   if (value instanceof Error) {
     type ErrorConstructor = new (...args: any[]) => Error;
-    const result = new (value.constructor as ErrorConstructor)(value.message);
+    // AggregateError takes (errors, message); its errors are cloned below once cached
+    const aggregate =
+      AggregateErrorConstructor !== undefined &&
+      value instanceof AggregateErrorConstructor
+        ? value
+        : null;
+    const result =
+      aggregate !== null
+        ? new (value.constructor as ErrorConstructor)([], value.message)
+        : new (value.constructor as ErrorConstructor)(value.message);
     cache.set(value, result);
+    if (hasOwnProperty(value, 'errors'))
+      defineProperty(result, 'errors', {
+        value: replicate(Reflect.get(value, 'errors'), limit, depth, cache),
+        writable: true,
+        enumerable: false,
+        configurable: true,
+      });
     if (hasOwnProperty(value, 'name')) result.name = value.name;
     result.stack = value.stack;
     if ('cause' in value)
-      // @ts-expect-error: The `cause` property is only available in ECMAScript 2022 (ES2022)
-      result.cause = replicate(value.cause, limit, depth, cache);
+      defineProperty(result, 'cause', {
+        value: replicate(Reflect.get(value, 'cause'), limit, depth, cache),
+        writable: true,
+        enumerable:
+          Object.getOwnPropertyDescriptor(value, 'cause')?.enumerable ?? false,
+        configurable: true,
+      });
     replicateProperties(result, value, limit, depth, cache);
-    return result as Type;
+    copyErrorEnumerability(result, value);
+    return result;
   }
 
-  if (typeof value === 'object' && isCloneable(value)) {
-    const result = Object.create(getPrototypeOf(value));
-    // `isCloneable` will not allow a nullish object to be passed.
+  if (typeof value === 'object' && value !== null) {
+    const tag = getTypeTag(value);
+    const builtin = CLONE_PROFILE[tag];
+    if (builtin === undefined) return value;
+    const prototype = getPrototypeOf(value);
+    const foreign = builtin ? copyForeignBuiltin(value, tag) : undefined;
+    if (foreign !== undefined) {
+      cache.set(value, foreign);
+      if (tag === '[object Map]') {
+        for (const [key, item] of Map.prototype.entries.call(value))
+          Map.prototype.set.call(
+            foreign,
+            replicate(key, limit, depth, cache),
+            replicate(item, limit, depth, cache),
+          );
+      } else if (tag === '[object Set]') {
+        for (const item of Set.prototype.values.call(value))
+          Set.prototype.add.call(foreign, replicate(item, limit, depth, cache));
+      } else if (Object.prototype.toString.call(foreign) === '[object Error]') {
+        for (const key of ['cause', 'errors'])
+          if (hasOwnProperty(value, key))
+            defineProperty(foreign, key, {
+              value: replicate(value[key], limit, depth, cache),
+              writable: true,
+              configurable: true,
+            });
+        replicateProperties(foreign, value, limit, depth, cache);
+        copyErrorEnumerability(foreign, value);
+      } else if (foreign instanceof DataView)
+        replicateProperties(foreign, value, limit, depth, cache);
+      return foreign;
+    }
+    const profile = getPrototypeProfile(prototype);
+    // Boxed primitives keep their value in an internal slot that Object.create lacks
+    const box = profile.boxed ? replicateBox(value!, prototype) : null;
+    const result = box ?? Object.create(prototype);
     cache.set(value!, result);
-    replicateProperties(result, value!, limit, depth, cache);
-    return result as Type;
+    replicateProperties(
+      result,
+      value!,
+      limit,
+      depth,
+      cache,
+      box === null ? profile.intercepted : undefined,
+    );
+    return result;
   }
 
   return value;
@@ -363,7 +546,13 @@ const replicate = <Type>(
  *
  * @param target - Target object to copy properties to
  * @param source - Source object to copy properties from
+ * @param limit - Maximum clone depth, passed through to `replicate`
+ * @param depth - Current clone depth, passed through to `replicate`
  * @param cache - Map to track already cloned objects
+ * @param intercepted - For a target just created from its prototype, the inherited keys
+ *   besides `__proto__` that would intercept assignment (`null` when there are none);
+ *   `undefined` when `target` may already carry own properties
+ * @param symbolKeys - Optional source symbols, excluding constructor-owned host internals
  */
 const replicateProperties = (
   target: Record<PropertyKey, any>,
@@ -371,29 +560,101 @@ const replicateProperties = (
   limit: number | undefined,
   depth: number,
   cache: Map<object, any>,
+  intercepted?: ReadonlySet<PropertyKey> | null,
+  symbolKeys?: readonly symbol[],
 ): void => {
   const keys = Object.keys(source);
-  const length = keys.length;
-  if (length > 0)
-    for (let i = 0, k = keys[0]; i < length; i++, k = keys[i]) {
-      const descriptor = getOwnPropertyDescriptor(target, k);
-      if (descriptor == null || descriptor.writable) {
-        const cloned = replicate(source[k], limit, depth, cache);
-        // Plain assignment of an own '__proto__' key would swap the clone's
-        // prototype instead of copying the key, so only that key is defined.
-        if (k === '__proto__') setDataProperty(target, k, cloned);
-        else target[k] = cloned;
-      }
-    }
-  const symbols = getSymbols(source);
-  const symbolsLength = symbols.length;
-  if (symbolsLength > 0)
-    for (let i = 0, s = symbols[0]; i < symbolsLength; i++, s = symbols[i]) {
-      const descriptor = getOwnPropertyDescriptor(target, s);
-      if (descriptor == null || descriptor.writable)
-        target[s] = replicate(source[s], limit, depth, cache);
-    }
+  for (let i = 0, l = keys.length; i < l; i++) {
+    const key = keys[i];
+    if (intercepted === null && key !== '__proto__') {
+      const item = source[key];
+      target[key] = isPrimitiveType(item)
+        ? item
+        : replicate(item, limit, depth, cache);
+    } else
+      replicateProperty(target, source, key, limit, depth, cache, intercepted);
+  }
+  const symbols = symbolKeys ?? getSymbols(source);
+  for (let i = 0, l = symbols.length; i < l; i++) {
+    const symbol = symbols[i];
+    if (intercepted === null) {
+      const item = source[symbol];
+      target[symbol] = isPrimitiveType(item)
+        ? item
+        : replicate(item, limit, depth, cache);
+    } else
+      replicateProperty(
+        target,
+        source,
+        symbol,
+        limit,
+        depth,
+        cache,
+        intercepted,
+      );
+  }
 };
 
+/**
+ * Copies one own property of `source` onto `target` as an own data property.
+ *
+ * A key that nothing on `target`'s chain intercepts is assigned. An intercepted key is
+ * defined instead, because assignment would run an inherited setter (`__proto__`
+ * included) or fail on an inherited read-only property. An own key of `target` is
+ * overwritten only while it is writable.
+ *
+ * @param target - The clone receiving the property
+ * @param source - The original owning the property
+ * @param key - An own enumerable string key or own symbol of `source`
+ * @param limit - Maximum clone depth, passed through to `replicate`
+ * @param depth - Current clone depth, passed through to `replicate`
+ * @param cache - Originals mapped to their clones, passed through to `replicate`
+ * @param intercepted - As in `replicateProperties`; `undefined` checks `target` itself
+ */
+const replicateProperty = (
+  target: Record<PropertyKey, any>,
+  source: Record<PropertyKey, any>,
+  key: PropertyKey,
+  limit: number | undefined,
+  depth: number,
+  cache: Map<object, any>,
+  intercepted: ReadonlySet<PropertyKey> | null | undefined,
+): void => {
+  const intercepts =
+    intercepted === undefined
+      ? key in target
+      : key === '__proto__' || (intercepted !== null && intercepted.has(key));
+  if (!intercepts) {
+    target[key] = replicate(source[key], limit, depth, cache);
+    return;
+  }
+  const descriptor =
+    intercepted === undefined
+      ? getOwnPropertyDescriptor(target, key)
+      : undefined;
+  if (descriptor === undefined)
+    defineProperty(target, key, {
+      value: replicate(source[key], limit, depth, cache),
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    });
+  else if (descriptor.writable)
+    target[key] = replicate(source[key], limit, depth, cache);
+};
+
+/**
+ * `AggregateError` where the runtime provides it; the ES2020 type library this package
+ * compiles against does not declare it.
+ */
+const AggregateErrorConstructor:
+  | (new (
+      errors: Iterable<unknown>,
+      message?: string,
+    ) => Error & {
+      errors: unknown[];
+    })
+  | undefined = Reflect.get(globalThis, 'AggregateError');
 const getPrototypeOf = Object.getPrototypeOf;
+const defineProperty = Object.defineProperty;
 const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;

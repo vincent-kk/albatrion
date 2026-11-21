@@ -75,9 +75,10 @@ function UnsavedIndicator({ node }: { node: FieldNode }) {
 /** Custom inputs own the interaction boundary, including blur.
  * @param props - Controlled value and write callback supplied by Form.
  * @returns Input that publishes user edits and records touch. */
-function EditableName({ value, onChange, node }: FieldInputProps<string>) {
+function EditableName({ inputId, value, onChange, node }: FieldInputProps<string>) {
   return (
     <input
+        id={inputId}
       aria-label="Editable name"
       value={value ?? ''}
       onChange={(event) => onChange(event.target.value)}

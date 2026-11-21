@@ -1,5 +1,6 @@
-import type { ConsumerPackage } from '../../types/index.js';
+import type { RunUnit } from '../../core/index.js';
 import type { AgentTarget, AgentType, InjectPlan } from '../../core/index.js';
+import type { ConsumerPackage } from '../../types/index.js';
 
 export interface PlanStepState {
   readonly packageName: string;
@@ -10,9 +11,16 @@ export interface PlanStepState {
 
 /** One plan is one (package, agent) pair — a package can target several. */
 export interface TargetPlan {
+  /** Core verdict that makes retained actions diagnostic-only. */
+  readonly refused?: RunUnit['refused'];
+  readonly notices?: RunUnit['notices'];
+  /** Core-supplied identity for terminal rendering. */
+  readonly key?: string;
   readonly target: ConsumerPackage;
   readonly agentTarget: AgentTarget;
   readonly plan: InjectPlan;
+  /** Planning failure retained alongside successful units. */
+  readonly error?: string;
 }
 
 export interface Warning {

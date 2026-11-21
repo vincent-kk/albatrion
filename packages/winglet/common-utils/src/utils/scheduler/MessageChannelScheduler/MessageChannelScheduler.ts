@@ -1,9 +1,14 @@
+import { reportHostError } from '@/common-utils/utils/errorReporting/reportHostError';
+
 import type { Fn } from '@aileron/declare';
 
 import { scheduleMicrotask } from '@/common-utils/utils/scheduler/scheduleMicrotask';
 
 import { MessageChannelSchedulerError } from './error';
 import type { SchedulerOptions } from './type';
+
+/** Monotonic task identity shared across this module's scheduler lifetimes. */
+let taskIdCounter = 0;
 
 /**
  * High-performance task scheduler using MessageChannel for macro task execution.
@@ -111,8 +116,6 @@ export class MessageChannelScheduler {
 
   /** Map of pending tasks keyed by unique task ID */
   private readonly __pendingTasks__ = new Map<number, Fn>();
-  /** Incrementing counter for generating unique task IDs */
-  private __taskIdCounter__ = 0;
   /** Whether scheduler is currently idle (no pending batch flush) */
   private __idle__ = true;
 
@@ -170,7 +173,7 @@ export class MessageChannelScheduler {
       const maxTasksHandler = this.__options__.onMaxTasksExceeded;
       if (maxTasksHandler) {
         const shouldContinue = maxTasksHandler();
-        if (shouldContinue === false) return -1;
+        if (shouldContinue === false || this.__destroyed__) return -1;
       } else
         throw new MessageChannelSchedulerError(
           'MAX_TASKS_EXCEEDED',
@@ -179,7 +182,7 @@ export class MessageChannelScheduler {
         );
     }
 
-    const taskId = ++this.__taskIdCounter__;
+    const taskId = ++taskIdCounter;
     this.__pendingTasks__.set(taskId, callback);
     this.__requestFlush__();
 
@@ -310,7 +313,7 @@ export class MessageChannelScheduler {
   }
 
   /**
-   * Handles task execution errors using configured error handler.
+   * Handles task errors through the consumer handler, or the host when no handler is configured.
    * Ensures errors are properly wrapped and reported without breaking execution.
    * @param error - Error that occurred during task execution
    * @param taskId - ID of the task that failed
@@ -318,10 +321,14 @@ export class MessageChannelScheduler {
    */
   private __handleTaskError__(error: unknown, taskId: number): void {
     const errorHandler = this.__options__.onTaskError;
-    if (!errorHandler) return;
-    errorHandler(
-      error instanceof Error ? error : new Error(String(error)),
-      taskId,
-    );
+    if (!errorHandler) return reportHostError(error);
+    try {
+      errorHandler(
+        error instanceof Error ? error : new Error(String(error)),
+        taskId,
+      );
+    } catch (handlerError) {
+      reportHostError(handlerError);
+    }
   }
 }

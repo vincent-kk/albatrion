@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+findNodes는 각 단계에서 처음 만난 노드의 순서를 보존하며 같은 인스턴스를 한 번만 반환합니다. 빈 결과에 넣는 첫 대상은 소속 검색을 생략하여 한 노드만 찾는 일반 조회의 비용을 줄입니다. 결과 256개까지는 직접 배열 검색을 쓰고 그 크기에 도달하면 같은 단계의 반복 소속 검사에 Set을 재사용합니다. 작은 조회의 색인 할당을 피하면서 넓은 wildcard의 제곱 증가를 막습니다.
+
 문자열 경로의 정본은 [jsonPointer](../../../helpers/jsonPointer/DETAIL.md)입니다. 탐색은 파싱된 리터럴 이름과 심볼 연산자만 소비하며 같은 토큰을 다시 해석하지 않습니다. 공개 참조의 수명과 명령은 [surface](../../surface/DETAIL.md), 형상과 보유 원본의 구분은 [record](../record/DETAIL.md)가 소유합니다.
 
 ## Acceptance Criteria

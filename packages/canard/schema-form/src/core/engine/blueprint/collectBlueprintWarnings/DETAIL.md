@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+allOf·oneOf·anyOf 가지의 경고는 작성된 가지 조각에서 같은 호스트의 참조 대상 조각까지 연결하여 판정합니다. 참조 대상의 $defs 주소가 가지 suffix를 가지지 않아도 인라인과 같은 경고를 내며, 참조 사슬의 바깥 자식·다른 분기에는 경고 자격을 전파하지 않습니다.
+
 한 수집 안에서 code·schemaPath·details.keyword로 중복을 억제합니다. 캐시된 청사진의 늦은 수집과 수집기별 재생은 부모가 소유하며, 이 모듈의 내부 중복 집합을 폼 전체 경고 수명으로 확대하지 않습니다. 경고 위치는 이름을 보존하는 JSON Pointer 조립을 사용합니다.
 
 ## Acceptance Criteria

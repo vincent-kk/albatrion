@@ -117,6 +117,11 @@ export const blueprint = (
       Object.freeze(fragment.children);
       Object.freeze(fragment);
     }
+  Object.defineProperty(context.capabilities, 'hasAliasedDependencies', {
+    value:
+      context.hasTemplateAliases === true &&
+      context.capabilities.hasDependencies,
+  });
   const result: Blueprint = {
     capabilities: context.capabilities,
     isAtomic: options.isAtomic,

@@ -240,7 +240,6 @@ const observeContextSnapshots = async (make: (render: number) => object) => {
 it.each([
   ['a fresh Date with the same time', () => ({ at: new Date(1000) })],
   ['a fresh Map with the same entries', () => ({ map: new Map([['a', 1]]) })],
-  ['a fresh class instance with equal fields', () => ({ p: new Point(1, 2) })],
 ])(
   'Form compares context by content, so %s keeps the snapshot',
   async (_, make) => {
@@ -251,6 +250,7 @@ it.each([
 
 it.each([
   ['a fresh function', (n: number) => ({ fn: () => n })],
+  ['a fresh opaque instance with equal fields', () => ({ p: new Point(1, 2) })],
   ['a Date with another time', (n: number) => ({ at: new Date(1000 + n) })],
   ['a Map with other entries', (n: number) => ({ map: new Map([['a', n]]) })],
   [

@@ -165,7 +165,7 @@ describe('CONTROLS-077 fragment resetInteraction array targets', () => {
       expect(child.state).toMatchObject(CLEARED);
   });
 
-  it('FRAGMENT-050 resets a new item added in the same commit that selects the fragment', () => {
+  it('FRAGMENT-050 preserves an explicit interaction write after the new item edge settles', () => {
     /** Shared items retain interactions while only the new item takes an edge. */
     const { root, list, runtime } = createFragmentArrayTree('resetInteraction');
     root.find('/enabled')?.setValue(false);
@@ -180,7 +180,7 @@ describe('CONTROLS-077 fragment resetInteraction array targets', () => {
     expect(runtime.committedRuleValues?.size).toBe(4);
     for (const index of [0, 1, 2])
       expect(root.find('/list/' + index)?.state).toMatchObject(INTERACTION);
-    expect(root.find('/list/3')?.state).toMatchObject(CLEARED);
+    expect(root.find('/list/3')?.state).toMatchObject(INTERACTION);
     expect(
       runtime.settlementTrace?.rounds
         .flat()

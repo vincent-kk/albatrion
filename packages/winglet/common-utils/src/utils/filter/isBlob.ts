@@ -1,3 +1,6 @@
+/** Native Blob type when its global declaration is available to the consumer. */
+type BlobValue = typeof globalThis extends { Blob: { prototype: infer Value } } ? Value : never;
+
 const Blob = globalThis.Blob;
 
 /**
@@ -371,7 +374,7 @@ const Blob = globalThis.Blob;
  * - Use `isArrayBuffer()` for raw binary buffer detection
  * - Use `isTypedArray()` for typed binary array detection
  */
-export const isBlob = (value: unknown): value is Blob =>
+export const isBlob = (value: unknown): value is BlobValue =>
   // Check if the Blob constructor exists and
   // verify if the value is an instance of Blob.
   Blob !== undefined && value instanceof Blob;

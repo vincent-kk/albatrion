@@ -170,12 +170,12 @@ const renderWithProvider = async (
     value: (path) =>
       (
         container.querySelector(
-          `#${CSS.escape(path)}`,
+          `input:is([id="${path}"], [id$=":${path}~input"])`,
         ) as HTMLInputElement | null
       )?.value ?? '',
     field: (path) =>
       container.querySelector(
-        `#${CSS.escape(path)}`,
+        `input:is([id="${path}"], [id$=":${path}~input"])`,
       ) as HTMLInputElement | null,
     query: (selector) => container.querySelector(selector),
     getValue: () => ref.current?.getValue(),
@@ -210,7 +210,7 @@ const renderSwappable = async (
       JSON.parse(
         (
           utils.container.querySelector(
-            `#${CSS.escape(path)}`,
+            `input:is([id="${path}"], [id$=":${path}~input"])`,
           ) as HTMLElement | null
         )?.getAttribute('data-context') ?? 'null',
       ),
@@ -306,7 +306,10 @@ describe('context passed via Form context prop reaches FieldInput', () => {
 
     // DOM: the custom input received props.context verbatim.
     const contextText = form.field('/greeting')?.getAttribute('data-context');
-    expect(JSON.parse(contextText ?? 'null')).toEqual({ greeting: 'hello', count: 3 });
+    expect(JSON.parse(contextText ?? 'null')).toEqual({
+      greeting: 'hello',
+      count: 3,
+    });
     expect(form.value('/greeting')).toBe('hi');
     // Tree agrees on the underlying value.
     expect(form.node('/greeting')?.value).toBe('hi');

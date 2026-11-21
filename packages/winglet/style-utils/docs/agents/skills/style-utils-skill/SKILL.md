@@ -15,9 +15,9 @@ Apply this skill when working with `cx`, `cxLite`, `compressCss`, `styleManagerF
 
 **`add` writes to a Map; the DOM write is deferred.** Each `addStyle(id, css)` stores processed CSS under `id`, then schedules a single `requestAnimationFrame` flush. The flush concatenates _every_ style in the scope and replaces the entire sheet at once. Per-style work is paid at call time; DOM work is paid once per frame.
 
-**The scoper is a brace scanner, not a CSS parser.** It cuts at the first `}`, then prefixes whatever precedes the first `{`. Anything nested or comma-separated falls outside what that can represent, and it fails silently rather than throwing. This is where every sharp edge in the package lives — `knowledge/style-manager.md` enumerates them.
+**The scoper counts braces; it does not parse CSS.** It walks rules by brace depth, prefixes every selector of each style rule, scopes the rules inside grouping at-rules such as `@media`, and copies other at-rules unchanged. Braces, semicolons and commas inside quoted strings, comments and backslash escapes are skipped, and so are a `/*` and a statement-ending `;` inside an unquoted `url(…)`; only a brace inside an unquoted `url(…)` still counts, and malformed input fails silently rather than throwing. `knowledge/style-manager.md` lists the rules and the remaining edges.
 
-**It is for CSS you assemble at runtime.** The manager exists for styles whose text is not known until the code runs — themes, host-provided CSS, styles shipped inside a library that must not require a build step from its consumer. When the CSS is static and a bundler is already in the pipeline, CSS modules or a plain stylesheet do the same job with real parsing, real scoping, and no rAF gap. Reaching for this library for static styles buys the scoping bugs below and nothing else.
+**It is for CSS you assemble at runtime.** The manager exists for styles whose text is not known until the code runs — themes, host-provided CSS, styles shipped inside a library that must not require a build step from its consumer. When the CSS is static and a bundler is already in the pipeline, CSS modules or a plain stylesheet do the same job with real parsing, real scoping, and no rAF gap. Reaching for this library for static styles buys the scoping limits below and nothing else.
 
 ## Decision Guide
 
@@ -29,7 +29,7 @@ Apply this skill when working with `cx`, `cxLite`, `compressCss`, `styleManagerF
 | Need deduplication or sorting?                               | Neither — clean the inputs upstream                                                        |
 | Styles for a custom element with a shadow root?              | `styleManagerFactory(id, { shadowRoot })` — never a document-mode factory                  |
 | Styles for ordinary DOM?                                     | `styleManagerFactory(id)` **plus** `classList.add(id)` on a container                      |
-| Tearing down one rule / a whole view / a shadow host?        | cleanup fn returned by `addStyle` / `destroyScope(id)` / host GC                           |
+| Tearing down one rule / a whole view / a shadow host?        | cleanup fn returned by `addStyle` / `destroyScope(id)` / `destroyScope(id, { shadowRoot })`                           |
 | Minifying build output?                                      | Not this library — use cssnano or lightningcss; `compressCss` is a runtime whitespace pass |
 
 ## Invariants & Gotchas
@@ -37,11 +37,11 @@ Apply this skill when working with `cx`, `cxLite`, `compressCss`, `styleManagerF
 **The third argument of `addStyle` is inverted from how it reads.** The shipped declaration is `(styleId, cssString, compress?: boolean)`, but `true` means _"this CSS is already compressed — skip the internal pass"_, not _"please compress it"_. An agent reading the parameter name alone will infer the exact opposite of the truth and pass `true` on raw CSS, which then ships uncompressed. Treat the argument as `alreadyCompressed`.
 
 - **No type is exported from any entry point.** `ClassValue`, `ClassArray`, `ClassObject`, `StyleManagerConfig`, and `StyleRoot` are declared in source but never re-exported through the barrel or the sub-paths. `import type { ClassValue } from '@winglet/style-utils'` does not compile. Pass config objects inline (`{ shadowRoot }` is structurally typed) and declare local aliases if you need the union.
-- **`@`-rule blocks come out malformed in document mode.** The scoper drops the at-rule's closing brace, leaves its inner selectors unscoped, and lets every rule that follows fall inside the still-open block. Put media queries in their own `styleId`, or last. Details and workarounds: `knowledge/style-manager.md`.
-- **Only the first selector in a comma list is scoped.** `.a, .b { … }` becomes `.scope .a, .b { … }` — the second selector leaks globally. Split comma lists into separate rules.
+- **At-rules are scoped by kind.** Rules inside `@media`, `@supports`, `@container`, `@layer`, `@scope`, `@document` and `@starting-style` are prefixed like top-level rules; `@keyframes`, `@font-face`, `@page` and statement at-rules such as `@import` are copied unchanged. Details: `knowledge/style-manager.md`.
+- **A brace inside an unquoted `url(…)` breaks scoping.** `url(a{b.png)` miscounts the block and drops that rule and every rule after it. Quote the URL (`url("a{b.png")`); braces inside quoted strings are safe.
 - **Adding whitespace-only CSS is ignored, not a removal.** `addStyle('x', '')` leaves the previous `x` in place. Call the cleanup function to remove a style.
 - **A flush is one frame away.** Reading `document.styleSheets` or computed style synchronously after `addStyle` sees the pre-flush state. Tests must advance a frame.
-- **`destroyScope` cannot reach shadow-root managers.** It resolves the document-mode key only. Shadow instances are released by per-style cleanups or by the host being collected.
+- **`destroyScope(scopeId, { shadowRoot })` releases that root's scope.** Omitting the config targets the document. Per-style cleanups remove individual styles; the weak registry also permits host collection.
 - **`@keyframes` and `@font-face` names are global.** Nothing namespaces them per scope; collisions across scopes are silent. Prefix the names yourself.
 
 ## Common Prescriptions
@@ -55,17 +55,15 @@ Symptom-indexed dispatch. The mechanism behind each one lives in the knowledge f
 | A whole scope stopped updating, one `console.warn` in the log | `replaceSync` threw; the scope is frozen at its last good state                             |
 | A generated per-instance scope works sometimes, not always    | The id is unescaped — a digit-leading one is invalid and the browser drops every rule       |
 | CSS is present in the sheet but matches nothing               | Invalid selectors are dropped with no error — read back the injected text, not the input    |
-| Rules written after a media query stopped applying            | The at-rule left its block open and swallowed them — give the at-rule its own `styleId`     |
-| One selector of a comma list applies document-wide            | Split the list; only the first selector is scoped                                           |
-| `:host(...)` or `:root, .a` came out prefixed                 | Only the exactly-bare forms pass through                                                    |
+| Rules after a `content:` value scoped wrongly or dropped      | A `{` or `}` inside the string cut the rule — escape it as `\7b` / `\7d`                    |
+| `:host(...)` or `:root.dark` came out prefixed                | Only the exactly-bare forms pass through                                                    |
 | `@keyframes` or `@font-face` collide across scopes            | Namespace the names yourself                                                                |
-| Injected CSS truncated after a `content:` or `url()` value    | A `/*` inside the string literal opened a comment                                           |
 | Passing `true` shipped uncompressed CSS                       | The third argument means "already compressed"                                               |
 | `document.styleSheets` unchanged right after `addStyle`       | The flush is one frame away                                                                 |
 | Theme flash on first paint                                    | Inject before first paint; the first flush lands a frame late                               |
 | Test passes alone, fails inside the suite                     | `afterEach(() => destroyScope(id))` for every scope the test created                        |
 | `ReferenceError: requestAnimationFrame` in tests              | Polyfill `requestAnimationFrame` **and** `cancelAnimationFrame` — teardown calls the second |
-| `destroyScope` left a shadow host's styles behind             | Expected; use the per-style cleanups or drop the host                                       |
+| `destroyScope` left a shadow host's styles behind             | Pass the same `{ shadowRoot }` used by the factory                                       |
 | Empty stylesheet still attached after removing every style    | Expected; only `destroyScope` detaches it                                                   |
 | `cxLite` output contains `[object Object]` or `a,b`           | Switch to `cx`                                                                              |
 | Duplicate class tokens in the output                          | Neither helper dedupes; clean the inputs                                                    |
@@ -75,7 +73,7 @@ Symptom-indexed dispatch. The mechanism behind each one lives in the knowledge f
 
 | Topic                                                                                                                           | File                         |
 | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| `cx` / `cxLite` semantics and exact output, `compressCss` trade-offs and its two corruption cases                               | `knowledge/pure-utils.md`    |
+| `cx` / `cxLite` semantics and exact output, `compressCss` trade-offs and the whitespace it keeps                                | `knowledge/pure-utils.md`    |
 | Scope rewriting rules and their failure modes, singleton keying, rAF batching, Shadow DOM, cleanup, diagnostics, test isolation | `knowledge/style-manager.md` |
 
 ## API Truth

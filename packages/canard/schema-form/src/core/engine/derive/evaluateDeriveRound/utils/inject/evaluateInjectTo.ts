@@ -79,6 +79,7 @@ export const evaluateInjectTo = <Self extends FieldNodeRecord<Self>>(
     if (invalid) return { writes: [], failure: invalid };
     writes.push({
       target: resolved.target,
+      host: resolved.host,
       targetPath,
       template: resolved.template,
       siblings: resolved.siblings,

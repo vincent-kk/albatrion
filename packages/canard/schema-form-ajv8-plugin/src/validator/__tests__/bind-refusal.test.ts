@@ -12,9 +12,14 @@ describe('VALIDATE-050 bind refusal', () => {
   it.each([
     ['2019', () => plugin2019.bind(new Ajv2019({ useDefaults: true }))],
     ['2020', () => plugin2020.bind(new Ajv2020({ useDefaults: true }))],
-  ] as const)('refuses a modifying instance in the %s entry', (_entry, bind) => {
-    expect(bind).toThrowError(expect.objectContaining({ code: FormErrorCode.ValidatorBindRefused }));
-  });
+  ] as const)(
+    'refuses a modifying instance in the %s entry',
+    (_entry, bind) => {
+      expect(bind).toThrowError(
+        expect.objectContaining({ code: FormErrorCode.ValidatorBindRefused }),
+      );
+    },
+  );
 
   it.each([
     [{ coerceTypes: true }, ['coerceTypes']],
@@ -24,25 +29,39 @@ describe('VALIDATE-050 bind refusal', () => {
       { coerceTypes: true, useDefaults: true, removeAdditional: true },
       ['coerceTypes', 'useDefaults', 'removeAdditional'],
     ],
-  ] as const)('refuses modifying options without replacing the bound instance', (options, names) => {
-    const accepted = new Ajv({ strictSchema: false });
-    ajvValidatorPlugin.bind(accepted);
-    expect(() => ajvValidatorPlugin.bind(new Ajv(options))).toThrowError(
-      expect.objectContaining({
-        name: 'ValidatorBindRefusedError',
-        group: 'UNHANDLED_ERROR',
-        code: FormErrorCode.ValidatorBindRefused,
-        details: { options: names },
-      }),
-    );
-    const schema = { $id: `https://example.test/accepted-${names.join('-')}`, type: 'string' } as Parameters<typeof ajvValidatorPlugin.compile>[0];
-    expect(ajvValidatorPlugin.compile(schema)).toBeTypeOf('function');
-    expect(accepted.getSchema(schema.$id)).toBeDefined();
-  });
+  ] as const)(
+    'refuses modifying options without replacing the bound instance',
+    (options, names) => {
+      const accepted = new Ajv({ strictSchema: false });
+      ajvValidatorPlugin.bind(accepted);
+      expect(() => ajvValidatorPlugin.bind(new Ajv(options))).toThrowError(
+        expect.objectContaining({
+          name: 'ValidatorBindRefusedError',
+          group: 'UNHANDLED_ERROR',
+          code: FormErrorCode.ValidatorBindRefused,
+          details: { options: names },
+        }),
+      );
+      const schema = {
+        $id: `https://example.test/accepted-${names.join('-')}`,
+        type: 'string',
+      } as Parameters<typeof ajvValidatorPlugin.compile>[0];
+      expect(ajvValidatorPlugin.compile(schema)).toBeTypeOf('function');
+      expect(accepted.getSchema(schema.$id)).toBeUndefined();
+    },
+  );
 
   it('accepts disabled options and keeps the authored schema unchanged', async () => {
-    ajvValidatorPlugin.bind(new Ajv({ coerceTypes: false, useDefaults: false, removeAdditional: false }));
-    const schema = { type: ['string', 'number'] } as unknown as Parameters<typeof ajvValidatorPlugin.compile>[0];
+    ajvValidatorPlugin.bind(
+      new Ajv({
+        coerceTypes: false,
+        useDefaults: false,
+        removeAdditional: false,
+      }),
+    );
+    const schema = { type: ['string', 'number'] } as unknown as Parameters<
+      typeof ajvValidatorPlugin.compile
+    >[0];
     const original = structuredClone(schema);
     const validate = ajvValidatorPlugin.compile(schema);
     expect(await validate('ok')).toBeNull();

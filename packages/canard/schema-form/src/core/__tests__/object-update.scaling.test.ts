@@ -1,6 +1,7 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
+import { ValidationMode } from '@/schema-form/core/engine';
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -15,7 +16,7 @@ it('82C-01 patches one object leaf without enumerating its previous siblings', (
         ]),
       ),
     },
-    validationMode: 0,
+    validationMode: ValidationMode.None,
   });
   const previous = root.value;
   const keys = Object.keys;

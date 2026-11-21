@@ -51,8 +51,8 @@ afterEach(() => {
 });
 
 // The build-time script must stay pure Node ESM, so its walk and noise list
-// cannot be shared with `utils/computeHashManifest.ts`. These cases are what
-// keeps the two copies honest.
+// cannot be shared with `utils/computeHashManifest.ts` and
+// `core/utils/isNoisePath.ts`. These cases are what keeps the two copies honest.
 describe('computed vs built manifest', () => {
   async function built(): Promise<HashManifest> {
     await buildHashes({
@@ -70,7 +70,9 @@ describe('computed vs built manifest', () => {
 
   it('hashes the directory into the same files map the build writes', async () => {
     const computed = await resolveHashManifest(directorySource(), GENERATED_AT);
-    expect(computed.files).toEqual((await built()).files);
+    const manifest = await built();
+    expect(computed.files).toEqual(manifest.files);
+    expect(computed.ruleBodyHashes).toEqual(manifest.ruleBodyHashes);
   });
 
   it('drops the same noise from both paths', async () => {

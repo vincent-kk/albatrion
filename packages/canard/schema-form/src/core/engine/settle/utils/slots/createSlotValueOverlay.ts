@@ -7,6 +7,7 @@ import { BEHAVIORS, isOmittedEmpty } from '../../../behaviors';
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
+import { BATCH_HOST_SOURCE } from '../../../utils/batchHostSource';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { isPlain } from '../input/isPlain';
 import { nextExtras } from '../input/nextExtras';
@@ -139,7 +140,11 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
       ...(!isWhole ? previous : undefined),
       isWhole: isWhole || previous?.isWhole,
       source:
-        isWhole || (hasWritten && !isAutomatic) ? undefined : previousSource,
+        BATCH_HOST_SOURCE in input
+          ? Reflect.get(input, BATCH_HOST_SOURCE)
+          : isWhole || (hasWritten && !isAutomatic)
+            ? undefined
+            : previousSource,
       extras,
       children,
     },

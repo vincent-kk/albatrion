@@ -1,16 +1,17 @@
 import type { SchemaRootRegistration } from './registerSchemaRoot';
 
-/** Remove Ajv's strong references when a root is released or collected. */
-export const disposeSchemaRoot = (registration: SchemaRootRegistration): void => {
-  if (registration.validationRegistered && registration.validationCopy) {
-    registration.validation.removeSchema(registration.key);
-    registration.validation.removeSchema(registration.validationCopy);
+/** Release only private cache entries; returned functions keep their immutable snapshots. */
+export const disposeSchemaRoot = (
+  registration: SchemaRootRegistration,
+): void => {
+  if (registration.released) return;
+  registration.released = true;
+  registration.validation?.instance.removeSchema(registration.copy);
+  for (const { compiler, schema } of registration.guardSchemas) {
+    if (typeof schema === 'object') compiler.instance.removeSchema(schema);
+    compiler.instance.removeSchema(registration.key);
   }
-  if (registration.guard) {
-    registration.guard.removeSchema(registration.key);
-    if (registration.guardCopy) registration.guard.removeSchema(registration.guardCopy);
-    for (const schema of registration.directGuards)
-      if (typeof schema !== 'boolean') registration.guard.removeSchema(schema);
-    registration.directGuards.length = 0;
-  }
+  registration.guardSchemas.length = 0;
+  registration.validate = undefined;
+  registration.guards.clear();
 };

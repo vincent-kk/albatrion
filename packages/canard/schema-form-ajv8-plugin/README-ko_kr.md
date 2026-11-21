@@ -127,12 +127,14 @@ registerPlugin(plugin);
 - **목적**: 제공된 JSON Schema로부터 validator 함수를 생성합니다
 - **반환값**: 스키마에 대해 데이터를 검증할 수 있는 validator factory 함수
 - **기능**: 자동 오류 변환, 상세한 검증 메시지, 성능 최적화
+- **`schemaPath`**: 작성된 위치를 `#/…` 조각으로 제공하며, 루트가 `$id`를 선언해도 같습니다. 검증이 `$ref`로 들어가는 중첩 `$id` 자원 안의 오류는 참조 아래의 AJV 경로(예: `urn:item/not`)를 그대로 유지합니다.
+- **`rejectedKey`**: 키가 하나인 `not: { required: [key] }`는 `#/…` 경로의 스키마에서 키를 읽습니다. 이런 `not` 오류 중 중첩 `$id` 자원 안의 오류처럼 `schemaPath`가 `#/…` 조각이 아닌 오류는 `rejectedKey` 없이 값을 보관한 객체에 남습니다. `false` 스키마는 `properties`, `patternProperties`, `items`, `prefixItems` 아래처럼 자식 하나를 대표하는 위치에서만 그 자식의 키를 거부합니다. `then`, `allOf`, `$ref` 같은 제자리 키워드로 도달한 `false`는 값을 거부하며 그 `dataPath`에 남고, `items`처럼 이 키워드와 같은 이름을 가진 필드에서도 마찬가지입니다. `propertyNames` 실패가 만드는 모든 오류는 안쪽 키워드의 오류까지 문제가 된 키를 가집니다.
 
 #### **`compileGuard(root, pointer)`와 `release(root)`**
 
-- `compileGuard`는 엔진이 소유한 복사본 루트의 JSON Pointer에서 동기 불리언 가드를 컴파일합니다. `compile` 호출 여부와 관계없이 복사본을 받습니다. 자체 완결적인 가드는 루트를 등록하지 않고 그 부분 스키마를 컴파일하며, 루트 정의를 `$ref`로 참조하는 가드처럼 루트 위치가 필요한 가드만 가드용 인스턴스에 루트를 등록하고, `compile`은 `$id`가 있는 루트의 사본을 선택된 검증용 인스턴스(`$id`가 충돌하면 별도 형제)에 등록하고, `$id`가 없는 루트는 등록 없이 일회 사본을 컴파일합니다. 두 가드 모두 전체 스키마 컴파일 전에 사용할 수 있습니다. 가드는 AJV의 루트 메타 스키마 검사 없이(`validateSchema: false`) 컴파일되며 AJV의 루트 메타 스키마 검사는 전체 검증 컴파일에서만 돕니다. 그래서 조건과 무관한 곳의 루트 메타 스키마 위반은 어느 가드도 실패시키지 않고, 기본 검사 설정에서는 전체 검증이 `VALIDATOR_COMPILE_FAILED`로 보고합니다(`validateSchema: false`나 `'log'`로 바인딩한 인스턴스는 그 옵션대로 동작합니다). 사용자 정의 키워드의 메타 검사·엄격 옵션·코드 생성 검사는 가드 컴파일에도 남습니다.
+- `compileGuard`는 엔진이 소유한 복사본 루트의 JSON Pointer에서 동기 불리언 가드를 컴파일합니다. `compile` 호출 여부와 관계없이 복사본을 받습니다. 자체 완결적인 가드는 루트를 등록하지 않고 그 부분 스키마를 컴파일하며, 루트 정의를 `$ref`로 참조하는 가드처럼 루트 위치가 필요한 가드만 가드용 인스턴스에 루트를 등록하고, `compile`은 원본과 분리한 사본을 플러그인 소유의 검증 컴파일러에서 컴파일합니다. 애플리케이션별 풀은 새 루트 64개마다 회전하고 살아 있는 폼의 id가 겹치면 컴파일러를 격리합니다. 플러그인은 애플리케이션 인스턴스를 읽기 전용으로 사용합니다. 두 가드 모두 전체 스키마 컴파일 전에 사용할 수 있습니다. 가드는 AJV의 루트 메타 스키마 검사 없이(`validateSchema: false`) 컴파일되며 AJV의 루트 메타 스키마 검사는 전체 검증 컴파일에서만 돕니다. 그래서 조건과 무관한 곳의 루트 메타 스키마 위반은 어느 가드도 실패시키지 않고, 기본 검사 설정에서는 전체 검증이 `VALIDATOR_COMPILE_FAILED`로 보고합니다(`validateSchema: false`나 `'log'`로 바인딩한 인스턴스는 그 옵션대로 동작합니다). 사용자 정의 키워드의 메타 검사·엄격 옵션·코드 생성 검사는 가드 컴파일에도 남습니다.
 - `compile`, 모든 `compileGuard`, `release`에는 동일한 복사본 객체를 전달합니다. 전체 스키마 검증은 가드 컴파일 이후에 컴파일해도 됩니다.
-- `release`도 `compile` 호출 여부와 관계없이 같은 복사본을 받아 루트의 AJV 등록과 컴파일 결과를 제거합니다. 등록되지 않은 루트를 해제하면 아무 작업도 하지 않습니다.
+- `release`도 `compile` 호출 여부와 관계없이 같은 복사본을 받아 루트의 private 등록을 해제하며 이미 반환한 함수는 컴파일 시점의 의미를 유지합니다. 등록되지 않은 루트를 해제하면 아무 작업도 하지 않습니다.
 
 **가드의 동적 범위.** 루트 위치가 필요한 가드는 AJV의 동적 앵커 표를 먼저 채운 뒤에야 가드용 인스턴스에서 `{ $ref: <루트>#<포인터> }`를 컴파일합니다. AJV가 동적 참조의 표 조회 여부를 컴파일 때 정하기 때문입니다. 사슬 자원은 루트와, 포인터 경로 위에서 자기 `$id`로 새 자원을 여는 조상이며 바깥부터 셉니다. 각 앵커 이름은 그 이름을 선언한 가장 바깥 사슬 자원의 선언에 묶이며, 선언은 그 자원 어디에 있어도 됩니다. 문자열 `$dynamicAnchor`는 어디서나, `$recursiveAnchor: true`는 자원 루트에서만(이름 `''`) 셉니다. 탐색은 하위 스키마 키워드(`properties`, `items`, `allOf`, `$defs` 등)로만 내려가며, `const`, `enum`, `default`, `examples` 같은 데이터 키워드, 중첩 자원, 가드 자신의 서브트리 안으로는 들어가지 않습니다. 루트의 다른 단언은 가드에 영향을 주지 않습니다. 표 채우기와 아래 검사는 AJV의 동적 어휘를 켠 인스턴스(`opts.dynamicRef`, Ajv2019와 Ajv2020이 켭니다)에서, 그리고 어딘가에 `$dynamicAnchor`, `$dynamicRef`, `$recursiveAnchor`, `$recursiveRef` 키가 있는 루트에서만 돌며, 이 판단은 루트를 등록할 때 한 번만 합니다. draft-07 인스턴스에서는 이 키워드들이 알 수 없는 키워드라서 전체 검증과 가드 모두 무시합니다.
 
@@ -172,9 +174,10 @@ AJV 전체 검증이 명세와 다른 다음 경우에는 가드가 명세를 �
 ```typescript
 const defaultSettings: Ajv.Options = {
   allErrors: true, // 첫 번째 오류뿐만 아니라 모든 검증 오류 수집
+  multipleOfPrecision: 9,
   verbose: true, // 오류에 스키마 및 데이터 정보 포함
   strict: false, // 더 나은 호환성을 위한 strict 모드 비활성화
-  validateFormats: true, // 포맷 검증 활성화 (AJV 8.x 기본값)
+  validateFormats: false, // Enable only after registering formats
 };
 ```
 
@@ -197,7 +200,7 @@ const defaultSettings: Ajv.Options = {
 
 - **Draft 2020-12**: 향상된 조건부 로직이 포함된 최신 명세
 - **Draft 2019-09**: 현대적인 스키마 구성 및 검증 기능
-- **하위 호환성**: Draft-07, Draft-06, Draft-04에 대한 완전한 지원
+- **방언 선택**: 기본 진입점은 Draft-07, `/2019`는 Draft 2019-09와 Draft-07, `/2020`은 Draft 2020-12를 검증합니다. 이전 방언을 선언한 스키마는 기본 설정으로 지원하지 않습니다
 - **고급 키워드**: `unevaluatedProperties`, `unevaluatedItems` 등 지원
 
 ---
@@ -223,11 +226,10 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 **JSON Schema 지원:**
 
-- Draft 2020-12 ✅
-- Draft 2019-09 ✅
-- Draft-07 ✅
-- Draft-06 ✅
-- Draft-04 ✅
+- 기본 진입점: Draft-07.
+- `/2019` 진입점: Draft 2019-09와 Draft-07.
+- `/2020` 진입점: Draft 2020-12. 같은 인스턴스에서 이전 방언과 섞을 수 없습니다.
+- Draft-06: 아래의 기본 AJV 8 생성자처럼 호환되는 인스턴스에 메타 스키마를 등록해야 합니다. Draft-04 지원은 제공하지 않습니다.
 
 ---
 
@@ -247,14 +249,16 @@ yarn add @canard/schema-form-ajv8-plugin
 import { registerPlugin } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 
 // 주의: AJV 8.x는 다른 기본 동작을 가집니다
 // AJV 설정을 조정해야 할 수 있습니다
 const customAjv = new Ajv({
   strict: false, // 호환성 문제가 있는 경우 strict 모드 비활성화
-  validateFormats: true, // AJV 8.x에서 포맷 검증은 기본적으로 활성화됨
+  validateFormats: true, // Check formats registered by ajv-formats
 });
 
+addFormats(customAjv);
 plugin.validator.bind(customAjv);
 registerPlugin(plugin);
 ```
@@ -312,3 +316,39 @@ registerPlugin(plugin);
 ## 연락처
 
 프로젝트와 관련된 문의나 제안은 [GitHub 저장소](https://github.com/vincent-kk/albatrion)에 이슈를 생성해 주세요.
+
+마이그레이션 예제를 사용하려면 애플리케이션에 `ajv-formats`를 설치합니다. AJV 8은 해당 포맷 정의를 포함하지 않습니다.
+
+### Enabling a declared Draft-06 schema
+
+기본 인스턴스에는 Draft-06 메타 스키마가 없습니다. 스키마를 컴파일하기 전에 호환되는 인스턴스에 등록합니다.
+
+```typescript
+import Ajv from 'ajv';
+import draft06 from 'ajv/dist/refs/json-schema-draft-06.json';
+import { createValidator } from '@canard/schema-form-ajv8-plugin';
+
+const ajv = new Ajv({ allErrors: true, strict: false, validateFormats: false });
+ajv.addMetaSchema(draft06);
+const validator = createValidator(ajv);
+const validate = validator.compile({
+  $schema: 'http://json-schema.org/draft-06/schema#',
+  type: 'number',
+  exclusiveMaximum: 5,
+});
+await validate(5); // Reports exclusiveMaximum.
+```
+
+bind한 인스턴스에 추가한 format과 keyword는 가드와 격리된 형제 인스턴스를 포함한 이후 컴파일에 반영됩니다. 이미 컴파일한 검증 함수는 기존 규칙을 유지하며, 규칙 추가가 자동 재컴파일을 일으키지 않습니다.
+
+## 소수 배수
+
+플러그인이 만드는 인스턴스는 `multipleOfPrecision: 9`를 사용합니다. 이진 나눗셈 오차가 있어도 `multipleOf: 0.01`의 `19.99` 같은 정확한 소수 배수를 허용하며, 유한한 값과 `2.2250738585072014e-308`(가장 작은 정규 IEEE-754 수) 이상의 유한한 나눗수에서 정확한 배수를 보장하는 범위는 `Math.abs(value / multipleOf) <= 1e6`입니다. AJV는 정수와의 차이가 `1e-9` 이내인 몫을 배수로 취급하므로 극히 가까운 비배수도 허용할 수 있고, 이 범위 밖의 정확한 배수는 보장하지 않습니다. `0.01`의 `19.995`, `0.1`의 `0.35`, `0.3`의 `0.300001`은 계속 거부합니다. `multipleOf`가 0인 스키마는 유효하지 않습니다. 다른 정밀도 정책이 필요하면 직접 만든 AJV 인스턴스를 `createValidator` 또는 `plugin.validator.bind`에 전달하십시오. 전달한 인스턴스의 옵션은 유지합니다.
+
+Safari 14.0처럼 `WeakRef` 또는 `FinalizationRegistry`가 없는 호스트에서도 가져오기·검증·가드와 명시적 해제를 지원합니다. 이 호스트에서는 가비지 수거에 따른 자동 정리가 불가능하므로 사용이 끝난 루트는 `release(root)`로 해제하십시오.
+
+폼 루트는 플러그인 소유 컴파일러에만 존재합니다. 애플리케이션이 직접 해당 스키마를 등록하지 않으면 애플리케이션 인스턴스의 `ajv.getSchema(formRoot.$id)`는 폼 루트를 반환하지 않습니다. 애플리케이션의 `removeSchema`는 반환된 폼 검증기를 무효화하지 않습니다. 같은 루트 객체를 `release(root)` 전에 다시 컴파일하면 같은 함수를 반환합니다. 새 컴파일은 현재 옵션·키워드·포맷·메타 스키마와 참조한 raw schema를 읽고, 제거·교체된 수입이 있는 private 컴파일러를 폐기합니다. 기존 검증기와 가드는 스냅숏입니다. 키워드 검증 함수의 `.errors`는 AJV의 임시 상태로 초기화될 수 있으며 callback closure의 부수효과는 격리하지 않습니다.
+
+컴파일은 `loadSchema`를 호출하지 않으므로 외부 스키마를 애플리케이션 인스턴스에 먼저 등록합니다. 루트 인자는 스키마 객체이며 boolean 하위 스키마는 가드 대상으로 지원합니다. 값을 변경하는 AJV 옵션은 bind 이후에 켜도 거부합니다. 사용자 생성자는 옵션 객체를 받고 격리 옵션을 지켜야 합니다. 폼 루트의 제자리 변경은 다음 컴파일에 반영하며 이전 함수는 원래 스냅숏을 유지합니다. 애플리케이션에 등록한 raw 스키마·키워드 정의·중첩 옵션 객체의 제자리 변경은 지원하지 않으므로 교체하거나 다시 등록합니다.
+
+참조는 컴파일 시점의 애플리케이션 등록을 사용합니다. 유지된 등록 키와 교체된 스키마 ID가 같은 정규화 ID의 서로 다른 스키마를 가리키면 각각의 폼 루트는 격리된 환경에서 컴파일됩니다. 한 루트가 양쪽을 함께 참조하는 경우는 지원하지 않으며 ID와 두 키를 명시한 오류를 반환합니다.

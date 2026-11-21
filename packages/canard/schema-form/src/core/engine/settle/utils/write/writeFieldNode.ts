@@ -33,6 +33,7 @@ import { releaseWrongKindHosts } from './releaseWrongKindHosts';
  * @param source - Binding origin independent of merge and replacement semantics
  * @param writeOrigins - Call-ordered batch origins for delivery and Refresh
  * @param fixedFirstLoadPlan - Mount-only compiler proof supplied after freshness admission
+ * @param virtualFields - Physical slots admitted at the public virtual call boundary
  * @returns Nothing; live records carry the committed shape and values
  * @throws A deferred gate or shared declaration failure after commit
  */
@@ -44,6 +45,7 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
   source: FieldNodeWriteKind = kind,
   writeOrigins?: SettlementContext<Self>['writeOrigins'],
   fixedFirstLoadPlan?: Blueprint['fixedFirstLoadPlan'],
+  virtualFields?: readonly string[],
 ): void => {
   if (node.isDetached) return;
   const root = node.rootNode;
@@ -93,7 +95,10 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
           typeof input !== 'object' ||
           isArray(input) ||
           node.behavior.strategy !== 'branch'));
-  const batch = writeOrigins !== undefined && writeOrigins.length > 1;
+  // A batch composed at an ancestor of its only origin replaces that origin's scope, not the target.
+  const batch =
+    writeOrigins !== undefined &&
+    (writeOrigins.length > 1 || writeOrigins[0]?.path !== node.path);
   const context = createSettlementContext(
     node,
     kind,
@@ -104,6 +109,7 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
   if (kind === FieldNodeWriteKind.Load && fixedFirstLoadPlan)
     context.fixedFirstLoad = { plan: fixedFirstLoadPlan, hosts: new Map() };
   context.source = source;
+  if (virtualFields) context.virtualWriteFields = virtualFields;
   context.writeOrigins = writeOrigins;
   if (batch) context.replacementPaths = collectReplacementPaths(writeOrigins);
   if (!scalarWrite && replaces) prepareWriteEpoch(context);

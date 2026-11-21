@@ -55,7 +55,7 @@ yarn add @winglet/react-utils
 
 ```bash
 npm install react react-dom
-# React 16, 17, 18, or 19 are all supported
+# React >=16.14 <20 and React DOM >=16.14 <20 are supported
 ```
 
 ---
@@ -113,7 +113,7 @@ Use sub-path imports to reduce bundle size:
 | `@winglet/react-utils/hook`   | All 18 hooks                                                                                       |
 | `@winglet/react-utils/hoc`    | `withErrorBoundary`, `withErrorBoundaryForwardRef`, `withUploader`                                 |
 | `@winglet/react-utils/portal` | `Portal` compound object                                                                           |
-| `@winglet/react-utils/filter` | `isReactComponent`, `isReactElement`, `isClassComponent`, `isFunctionComponent`, `isMemoComponent` |
+| `@winglet/react-utils/filter` | `isReactComponent`, `isReactElement`, `isClassComponent`, `isFunctionComponent`, `isMemoComponent`, `isForwardRefComponent`, `isLazyComponent` |
 | `@winglet/react-utils/object` | `remainOnlyReactComponent`                                                                         |
 | `@winglet/react-utils/render` | `renderComponent`                                                                                  |
 
@@ -439,18 +439,13 @@ function useOnUnmount(handler: Fn): void;
 
 **Parameters**:
 
-- `handler` — Cleanup function. Captured at mount time (stale closure).
-
-**Important**: Use `useReference` to access current state values in the cleanup function.
+- `handler` — Cleanup function. The handler passed on the most recent render is the one that runs, so it reads that render's props and state. It runs only on unmount, never on re-renders.
 
 ```tsx
-// Access current state on unmount
-const formDataRef = useReference(formData);
-const isDirtyRef = useReference(isDirty);
-
+// Reads the current formData and isDirty, not the mount-time values
 useOnUnmount(() => {
-  if (isDirtyRef.current) {
-    localStorage.setItem('draft', JSON.stringify(formDataRef.current));
+  if (isDirty) {
+    localStorage.setItem('draft', JSON.stringify(formData));
   }
 });
 ```
@@ -459,7 +454,7 @@ useOnUnmount(() => {
 
 ### useOnUnmountLayout
 
-Synchronous cleanup on unmount via `useLayoutEffect`.
+Synchronous cleanup on unmount via `useLayoutEffect`. Like `useOnUnmount`, it runs the handler passed on the most recent render.
 
 ```typescript
 function useOnUnmountLayout(handler: Fn): void;
@@ -661,6 +656,8 @@ return (
 
 ## Portal System
 
+Portal renders a native React portal from its source position into `Portal.Anchor`. Context reads and click bubbling follow the source React ancestors, through `Portal.with` and beyond. A provider wrapping only the source is visible inside its content. To isolate clicks, stop propagation in the portal content; to share provider values throughout the scope, place the provider above `Portal.with`. Activity hide/show preserves subtree state. Before an anchor attaches, including server rendering and the first hydration render, content is absent; attaching or replacing the anchor updates the destination.
+
 Renders content at a different DOM location while preserving React component hierarchy (context, event bubbling).
 
 ### Setup
@@ -698,7 +695,7 @@ const App = Portal.with(() => {
 
 #### `Portal`
 
-Renders its children at the `Portal.Anchor` location. Renders `null` at its own position.
+Renders its children at the `Portal.Anchor` location. Returns `createPortal` once an anchor is available.
 
 ```tsx
 <Portal>
@@ -894,7 +891,7 @@ function isReactComponent<Props = any>(
 
 Returns `true` for function components, class components, and `React.memo` wrapped components.
 
-**Does not detect**: `React.forwardRef` components.
+Also detects `React.forwardRef` and `React.lazy` components. Use `isForwardRefComponent` and `isLazyComponent` to distinguish these types.
 
 ```tsx
 isReactComponent(() => <div />); // true
@@ -906,7 +903,7 @@ isReactComponent(
     }
   },
 ); // true
-isReactComponent(React.forwardRef((_, ref) => <div ref={ref} />)); // false
+isReactComponent(React.forwardRef((_, ref) => <div ref={ref} />)); // true
 isReactComponent(<div />); // false (element, not component)
 isReactComponent('string'); // false
 ```

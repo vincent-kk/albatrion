@@ -8,12 +8,14 @@ interface RequestForceConfirmInput {
   readonly force: boolean;
   /** `--yes`: approve without showing the dialog. */
   readonly autoApprove: boolean;
+  /** `--dry-run`: nothing is written, so there is nothing to gate. */
+  readonly dryRun: boolean;
   readonly dispatch: Fn<[event: InjectEvent]>;
 }
 
 /**
  * Gate the apply step behind `--force` and, unless `--yes` was passed, an
- * explicit confirmation.
+ * explicit confirmation. A dry run passes the gate, since it writes nothing.
  *
  * @returns `true` when applying may proceed
  */
@@ -22,19 +24,12 @@ export async function requestForceConfirm({
   warnings,
   force,
   autoApprove,
+  dryRun,
   dispatch,
 }: RequestForceConfirmInput): Promise<boolean> {
   const hasWarnings = plans.some((p) => p.plan.requiresForce);
-  if (!hasWarnings) return true;
-  if (!force) {
-    dispatch({
-      type: 'fail',
-      error: new Error(
-        'Re-run with --force to proceed, or inspect with --dry-run.',
-      ),
-    });
-    return false;
-  }
+  if (!hasWarnings || dryRun) return true;
+  if (!force) return true;
   // No dialog is shown, so no phase transition is needed: `applyAllPlans`
   // moves on from `diff-review` with its own `apply-start`.
   if (autoApprove) return true;

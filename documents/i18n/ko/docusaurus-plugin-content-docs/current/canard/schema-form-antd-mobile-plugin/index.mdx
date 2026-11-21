@@ -11,7 +11,7 @@ import LazyDemo from '@site/src/components/LazyDemo';
 <PackageHeader name="@canard/schema-form-antd-mobile-plugin" />
 
 `@canard/schema-form`을 위한 Ant Design Mobile UI 플러그인입니다.
-`antd-mobile ^5.0.0` 기반의 10개 터치 최적화 폼 입력 컴포넌트를 제공합니다.
+`antd-mobile ^5.2.0` 기반의 10개 터치 최적화 폼 입력 컴포넌트를 제공합니다.
 모바일 웹 애플리케이션을 위해 설계되었으며, 데스크탑 방식의 입력 대신 스위치와 슬라이더를 선호합니다.
 
 ## 컴포넌트 카탈로그
@@ -27,16 +27,16 @@ import LazyDemo from '@site/src/components/LazyDemo';
 ## 설치 {#installation}
 
 ```bash
-yarn add @canard/schema-form-antd-mobile-plugin antd-mobile@>=5.0.0
+yarn add @canard/schema-form-antd-mobile-plugin antd-mobile@^5.2.0
 ```
 
 ### 피어 의존성 {#peer-dependencies}
 
 ```bash
-yarn add dayjs@>=1 react@>=18 react-dom@>=18
+yarn add dayjs@^1.0.0 "react@>=18 <20" "react-dom@>=18 <20"
 ```
 
-참고: `antd-mobile`은 이 플러그인의 피어 의존성이 아닌 직접 의존성입니다.
+참고: `antd-mobile`은 이 플러그인의 직접 의존성이자 피어 의존성입니다.
 
 ## 빠른 설정 {#quick-setup}
 
@@ -135,7 +135,7 @@ import { plugin } from '@canard/schema-form-antd-mobile-plugin';
 ```
 
 ### 피어 의존성 {#peer-dependencies-1}
-`antd-mobile@>=5.0.0` (직접 의존성), `dayjs@>=1`, `react@>=18`
+`antd-mobile@^5.2.0` (직접·피어 의존성), `dayjs@^1.0.0`, `react@>=18 <20`
 
 ### 컴포넌트 매핑 (우선순위 높은 순) {#component-mapping-priority-order-high--low}
 | 컴포넌트 | 선택 조건 |

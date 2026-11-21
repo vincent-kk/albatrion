@@ -213,7 +213,7 @@ export type TrackableHandlerOptions<
   initialState?: State;
 
   /**
-   * Callback called before executing the original function.
+   * Callback called before executing the original function; a returned thenable is awaited.
    *
    * Mainly used for setting loading state, incrementing request count, etc.
    * If an exception occurs in this function, the original function will not be executed.
@@ -231,10 +231,10 @@ export type TrackableHandlerOptions<
    * }
    * ```
    */
-  beforeExecute?: Fn<[args: Args, stateManager: StateManager<State>]>;
+  beforeExecute?: Fn<[args: Args, stateManager: StateManager<State>], unknown>;
 
   /**
-   * Callback called after executing the original function.
+   * Callback called after executing the original function; cleanup waits for a returned thenable.
    *
    * Always executed regardless of success/failure of the original function.
    * Mainly used for clearing loading state, updating statistics, etc.
@@ -255,5 +255,5 @@ export type TrackableHandlerOptions<
    * }
    * ```
    */
-  afterExecute?: Fn<[args: Args, stateManager: StateManager<State>]>;
+  afterExecute?: Fn<[args: Args, stateManager: StateManager<State>], unknown>;
 };

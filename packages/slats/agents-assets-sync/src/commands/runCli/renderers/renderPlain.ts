@@ -1,148 +1,77 @@
 import {
   type ActionTarget,
   type AgentTarget,
-  type AgentType,
-  type AssetKind,
   type InjectPlan,
-  type InjectReport,
-  type Scope,
-  applyAction,
-  applyBlockActions,
-  buildPlan,
-  computeNamespacePrefixes,
-  partitionActions,
-  resolveAgentTarget,
-  resolveDestinations,
-  resolveHashManifest,
-  summarize,
+  type RunFailure,
+  type RunResult,
+  runInjection,
 } from '../../../core/index.js';
 import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
-import { asyncPool } from '../../../utils/asyncPool.js';
 import { logger } from '../../../utils/logger.js';
-import { resolveAgentFlag } from '../flags/resolveAgentFlag.js';
-import { resolveAssetFlag } from '../flags/resolveAssetFlag.js';
-import { resolveScopeFlag } from '../flags/resolveScopeFlag.js';
 
-const COPY_CONCURRENCY = 8;
-
-/**
- * Plain (picocolors) renderer for non-TTY, `--json` and `--no-interactive`
- * invocations.
- *
- * Composes the same `core/**` primitives the Ink pipeline uses. Nothing here
- * prompts, so every required choice must already have arrived as a flag:
- * `resolveScopeFlag` and `resolveAgentFlag` exit 2 when one is missing.
- *
- * Every target handed here can supply hashes — the dispatcher drops the ones
- * that cannot, and owns the verdict for them, so no renderer answers that
- * question on its own.
- *
- * @param targets - resolved consumer packages, all injectable
- * @param flags - parsed CLI flags
- * @param originCwd - directory project-scope resolution starts from
- * @returns the process exit code
+/** Compatibility driver for non-TTY callers; all decisions belong to core.
+ * @param targets Resolved packages.
+ * @param flags Completed arguments.
+ * @param originCwd Scope origin.
+ * @returns Core exit code after displaying its result.
  */
 export async function renderPlain(
   targets: readonly ConsumerPackage[],
   flags: DefaultFlags,
   originCwd: string,
+  notices: readonly string[] = [],
+  diagnostics?: readonly RunFailure[],
 ): Promise<number> {
-  if (targets.length === 0) return 0;
-  // One stamp for the whole run: a computed manifest records when the run
-  // looked, not when each unit happened to reach the hasher.
-  const generatedAt = new Date().toISOString();
-
-  const scope = resolveScopeFlag(flags.scope);
-  const agents = resolveAgentFlag(flags.agent ?? [], false);
-  const assetKinds = resolveAssetFlag(flags.asset ?? []);
-
-  const fatalOnError = targets.length * agents.length === 1;
-  let failureCount = 0;
-
-  for (const target of targets) {
-    for (const agent of agents) {
-      logger.heading(`${target.name}@${target.version} · ${agent}`);
-      let exitCode: number;
-      try {
-        exitCode = await renderOneUnit(
-          target,
-          agent,
-          scope,
-          assetKinds,
-          flags,
-          originCwd,
-          generatedAt,
-        );
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : String(err);
-        logger.error(`${target.name} (${agent}): ${msg}`);
-        exitCode = 1;
-      }
-
-      if (exitCode !== 0) {
-        if (fatalOnError) return exitCode;
-        failureCount += 1;
-      }
-    }
-  }
-
-  return failureCount > 0 ? 1 : 0;
+  const result = await runInjection({
+    targets,
+    flags,
+    originCwd,
+    notices,
+    diagnostics,
+  });
+  displayPlain(result, Boolean(flags.force));
+  return result.exitCode;
 }
 
-async function renderOneUnit(
-  target: ConsumerPackage,
-  agent: AgentType,
-  scope: Scope,
-  assetKinds: ReadonlySet<AssetKind>,
-  flags: DefaultFlags,
-  originCwd: string,
-  generatedAt: string,
-): Promise<number> {
-  const manifest = await resolveHashManifest(target, generatedAt);
-  const agentTarget = resolveAgentTarget(agent, scope, originCwd);
-  const { destinations, orphanScans } = resolveDestinations({
-    agentTarget,
-    packageName: target.name,
-    relPaths: Object.keys(manifest.files),
-    namespacePrefixes: computeNamespacePrefixes(manifest),
-    assetKinds,
-  });
-  const force = flags.force ?? false;
-  const plan = await buildPlan({
-    sourceHashes: manifest.files,
-    destinations,
-    orphanScans,
-    force,
-  });
-
-  logger.info(`${target.name}@${target.version} → ${agentTarget.description}`);
-  printPlan(plan, agentTarget);
-
-  if (plan.requiresForce && !force) {
-    logger.error('Re-run with --force to proceed, or inspect with --dry-run.');
-    return 2;
+/** Display a completed model without planning, writes, or exit decisions.
+ * @param result Core execution result.
+ * @param force Whether the transcript should list force operations.
+ */
+export function displayPlain(result: RunResult, force: boolean): void {
+  for (const error of result.errors) logger.error(error);
+  for (const failure of result.failures ?? [])
+    logger.error(`${failure.path} [${failure.stage}]: ${failure.reason}`);
+  for (const notice of result.notices ?? [])
+    logger.warn(`${notice.path} [${notice.stage}]: ${notice.reason}`);
+  for (const unit of result.units) {
+    logger.heading(
+      `${unit.target.name}@${unit.target.version} · ${unit.agentTarget.agent}`,
+    );
+    logger.info(
+      `${unit.target.name}@${unit.target.version} → ${unit.agentTarget.description}`,
+    );
+    if (unit.refused) {
+      logger.warn('diagnostic plan only: refused unit; no actions will run');
+      for (const action of unit.plan.actions)
+        logger.warn(`[diagnostic] ${action.kind} ${action.relPath}`);
+    } else printPlan(unit.plan, unit.agentTarget);
+    if (unit.error && !unit.failures?.length)
+      logger.error(`${unit.target.name}: ${unit.error}`);
+    if (unit.report?.exitCode === 2)
+      logger.error(
+        'Re-run with --force to proceed, or inspect with --dry-run.',
+      );
+    if (force && !unit.refused) emitForceList(unit.plan);
+    for (const path of unit.report?.updated ?? []) logger.file('update', path);
   }
-  if (force) emitForceList(plan);
-
-  if (flags.dryRun) {
+  if (result.dryRun)
     logger.warn('[DRY RUN] No files will be created, overwritten, or deleted.');
-    return 0;
-  }
-
-  const { fileActions, blockGroups } = partitionActions(plan.actions, force);
-  await asyncPool(COPY_CONCURRENCY, fileActions, (action) =>
-    applyAction(action, target.assetRoot),
-  );
-  // Serialised on purpose: one document, one read-modify-write.
-  for (const [fileAbs, group] of blockGroups)
-    await applyBlockActions(fileAbs, group, target.assetRoot);
-
-  const report: InjectReport = summarize(plan, 0);
-  return report.exitCode;
 }
 
 function printPlan(plan: InjectPlan, agentTarget: AgentTarget): void {
   for (const action of plan.actions) {
+    if (action.sourceHashReconciled)
+      logger.warn(`source-hash-reconciled: ${action.relPath}`);
     const label = describe(action.relPath, action.target, agentTarget);
     if (action.kind === 'copy') logger.file('create', label);
     else if (action.kind === 'skip-uptodate')
@@ -181,14 +110,15 @@ function describe(
   return `${document} ▸ ${relPath}`;
 }
 
+// Under --force an orphan is already planned as `delete`, so the list names
+// deletions as well as overwrites: either one removes what the user had.
 function emitForceList(plan: InjectPlan): void {
   const divergent = plan.actions.filter(
-    (action) =>
-      action.kind === 'warn-diverged' || action.kind === 'warn-orphan',
+    (action) => action.kind === 'warn-diverged' || action.kind === 'delete',
   );
   if (divergent.length === 0) return;
   process.stderr.write(
-    `[agents-assets-sync] --force overwriting ${divergent.length} entry(ies) in non-interactive mode:\n`,
+    `[agents-assets-sync] --force overwriting or deleting ${divergent.length} entry(ies) in non-interactive mode:\n`,
   );
   for (const action of divergent) process.stderr.write(`  ${action.relPath}\n`);
 }

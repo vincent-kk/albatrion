@@ -8,9 +8,9 @@
  */
 export type ApplyPatchOptions = {
   /**
-   * Enables strict validation: the `test` operation compares values with deep
-   * equality and fails the patch application on mismatch.
-   * @default false
+   * Has no effect. The `test` operation compares values with deep equality in
+   * every mode and fails the patch application on mismatch (RFC 6902 4.6).
+   * @deprecated The option is ignored; remove it from calls.
    */
   strict?: boolean;
   /**

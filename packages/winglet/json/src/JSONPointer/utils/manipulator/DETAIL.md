@@ -2,11 +2,17 @@
 
 ## Requirements
 
-- `getValue`는 포인터가 가리키는 위치의 값을 반환한다. 일반 키 읽기에는 필터가 없으므로 프로토타입 체인의 상속 속성도 반환될 수 있으나, 예약 멤버 세그먼트(`__proto__`, `constructor`, `prototype`)는 own 데이터 속성만 읽고 own이 아니면 `undefined`다.
+- `getValue`는 포인터가 가리키는 위치의 값을 반환하고, 위치가 없으면 예외 없이 `undefined`를 반환한다. 일반 키 읽기에는 필터가 없으므로 프로토타입 체인의 상속 속성도 반환될 수 있으나, 예약 멤버 세그먼트(`__proto__`, `constructor`, `prototype`)는 own 데이터 속성만 읽고 own이 아니면 `undefined`다.
 - `setValue`는 포인터 경로를 따라 값을 설정하며, 필요한 중간 컨테이너를 자동 생성한다. 예약 멤버 세그먼트는 own 데이터 속성으로 기록되며 대상의 프로토타입은 변하지 않는다.
 - 어떤 경로에서도 `Object.prototype`을 포함한 상속 객체는 변경되지 않는다.
 
+숫자·문자열·불리언 같은 원시 중간값 아래의 쓰기가 실패하면 JSONPointerError의 INVALID_INPUT으로 보고합니다. 사용자 객체의 getter·setter가 던진 예외는 원시 중간값 실패로 바꾸지 않습니다.
+
 ## API Contracts
+
+- URI fragment 문자열은 percent escape를 한 번 해제한 뒤 RFC 6901 토큰을 해석합니다. 일반 `/` 포인터의 percent 문자는 그대로 키 데이터입니다. 잘못된 fragment escape는 `INVALID_POINTER_TYPE`으로 실패합니다.
+- 배열 포인터는 현재 prefix 형식을 유지합니다. 첫 `''` 또는 `'#'`는 루트 표시이며 실제 키가 아닙니다. 그 이름의 최상위 키는 각각 `['', '']`, `['', '#']` 또는 문자열 `/`, `/#`로 표현합니다.
+
 
 - 세그먼트 순회의 읽기·쓰기·삭제는 `@winglet/common-utils`의 데이터 속성 프리미티브(`getDataProperty`/`setDataProperty`/`deleteDataProperty`)를 경유한다. 예약 멤버 세그먼트도 일반 키와 동일하게 경로로 순회·기록된다 — 건너뛰지도, 예외를 던지지도 않는다.
 - 예약 멤버 세그먼트의 중간 경로 자동 생성도 own 데이터 속성으로 이루어진다(`/__proto__/x` 쓰기는 own `__proto__` 데이터 컨테이너를 만든다).
@@ -15,6 +21,7 @@
 - preserveNull이 true면 중간 경로의 null을 컨테이너로 대체하지 않고 원본을 반환한다.
 - 설정 값이 undefined면 해당 키를 삭제한다(own 속성만 — `delete` 의미론).
 - 쓰기 경로의 키 존재 판정은 자기 소유 검사(hasOwnProperty)로 수행된다. 일반 키 읽기 경로에는 자기 소유 검사가 없다.
+- 읽기를 문서 멤버로 제한하지 않는 이유는 비용이다. 문서 밖에서 해석되는 기본 멤버는 함수이거나 배열의 `length`라서 마지막 세그먼트만 검사하면 되지만, 그 검사만으로도 깊은 경로와 배열 인덱스 읽기가 약 5% 느려졌다. 이 읽기 루프는 schema-form과 json-schema의 핫 패스라서 그 비용을 받아들이지 않았다. 그래서 `getValue({}, '/toString')`은 상속 함수를, `getValue({ a: [1] }, '/a/length')`는 `1`을 반환하며(RFC 6901 §4와 다르다), 공개 문서는 이 동작을 그대로 적는다. 이 동작에 기대는 호출자는 없으므로, 비용 없는 방법이 생기면 제한해도 된다.
 
 ## Acceptance Criteria
 
@@ -35,15 +42,9 @@
 
 ### `getValue.ts` — 단일 함수 직접 import 허용
 
-- **Consumers**: `packages/winglet/json/src/JSONPointer/utils/patch/applyPatch/utils/handleObject.ts`
+- **Consumers**: `packages/winglet/json/src/JSONPointer/utils/patch/applyPatch/applySinglePatch.ts`
 - **Direct import**: `allowed`
 - **Reason**: 배럴 경유 import는 이 fractal의 재수출 그래프 전체를 소비자 번들에 끌어들인다. 단일 함수만 필요한 내부 소비자는 개별 파일을 직접 import하는 것이 의도된 형태다. 같은 이유로 구현 파일은 fractal 루트의 flat 단일 함수 파일로 유지한다.
-
-### `setValue.ts` — 단일 함수 직접 import 허용
-
-- **Consumers**: `packages/winglet/json/src/JSONPointer/utils/patch/applyPatch/utils/handleObject.ts`
-- **Direct import**: `allowed`
-- **Reason**: `getValue.ts`와 동일 — 배럴 pull-in 회피가 목적이며, flat root peer 형태도 함께 의도된 것이다.
 
 ## Last Updated
 

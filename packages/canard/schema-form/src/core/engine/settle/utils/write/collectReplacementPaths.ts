@@ -6,8 +6,8 @@ import type { SettlementContext } from '../../types/settlement';
 
 /**
  * Collect the whole-replacement scopes of a multi-write batch (191C-01, 26C-10).
- * A caller write contributes its own path; a shallow Merge contributes the child path of
- * each received key; an automatic write contributes nothing, as it never replaces outside
+ * A caller write contributes its own path; partial scopes contribute their explicit keys.
+ * Deep merges carry partial branch scopes and replacement leaves; automatic writes never replace outside
  * a batch either.
  * @param writeOrigins - Call-ordered batch origins as flushBatchWrites recorded them
  * @returns Paths whose subtrees the batch replaces, in origin order, possibly repeated

@@ -1,54 +1,104 @@
 import { isArray } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { BlueprintNode } from '../../../../blueprint';
+import type { FieldNodeRecord } from '../../../../record';
+import { hasCallerInputOutput } from '../../../../settle';
 import { WriteOption } from '../../../../types/value';
-
-/** Select replacement or a shallow object merge for one marked target. */
-const markedValue = (
-  previous: unknown,
-  incoming: unknown,
-  option: WriteOption,
-): unknown =>
-  (option & WriteOption.Merge) === WriteOption.Merge &&
-  !(option & WriteOption.Replace) &&
-  previous !== null &&
-  incoming !== null &&
-  typeof previous === 'object' &&
-  typeof incoming === 'object' &&
-  !isArray(previous) &&
-  !isArray(incoming)
-    ? { ...previous, ...incoming }
-    : incoming;
+import { BATCH_HOST_SOURCE } from '../../../../utils/batchHostSource';
+import { writeObjectKey } from '../../../../utils/writeObjectKey';
+import { mergeMarkedValue } from './mergeMarkedValue';
 
 /**
  * Replace one marked path while retaining untouched committed references.
  * @param current - Candidate value at this level
- * @param names - Remaining unescaped child names
+ * @param names - Unescaped child names from the root to the target
  * @param incoming - New value for the target
  * @param option - Merge or replacement selection
+ * @param node - Target's selected occurrence
+ * @param template - Target's declaration when an occurrence is absent
+ * @param isCommittedInput - Whether this value is the target's baseline, not a caller write
+ * @param depth - Index of the next child address
  * @returns Candidate value with one path overlaid
  */
-export const replaceAtPath = (
+export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
   current: unknown,
   names: readonly string[],
   incoming: unknown,
   option: WriteOption,
+  node?: Self,
+  template?: BlueprintNode,
+  isCommittedInput = false,
+  depth = 0,
 ): unknown => {
-  if (!names.length) return markedValue(current, incoming, option);
-  const [name, ...rest] = names;
+  if (depth === names.length) {
+    if (
+      isCommittedInput &&
+      node?.behavior.type === 'object' &&
+      node.behavior.strategy === 'branch' &&
+      node.source !== undefined &&
+      incoming !== null &&
+      typeof incoming === 'object'
+    )
+      return { ...incoming, [BATCH_HOST_SOURCE]: node.source };
+    return option & WriteOption.Merge && !(option & WriteOption.Replace)
+      ? mergeMarkedValue(node, current, incoming, template)
+      : incoming;
+  }
+
+  const name = names[depth];
   if (isArray(current)) {
     const next = [...current];
-    next[Number(name)] = replaceAtPath(
-      next[Number(name)],
-      rest,
+    const index = Number(name);
+    next[index] = replaceAtPath(
+      next[index],
+      names,
       incoming,
       option,
+      node,
+      template,
+      isCommittedInput,
+      depth + 1,
     );
     return next;
   }
-  const next =
-    current !== null && typeof current === 'object' ? { ...current } : {};
-  return {
-    ...next,
-    [name]: replaceAtPath(Reflect.get(next, name), rest, incoming, option),
-  };
+
+  const isObject = current !== null && typeof current === 'object';
+  const previous =
+    isObject && hasOwnProperty(current, name)
+      ? Reflect.get(current, name)
+      : undefined;
+  const child = replaceAtPath(
+    previous,
+    names,
+    incoming,
+    option,
+    node,
+    template,
+    isCommittedInput,
+    depth + 1,
+  );
+  const next = isObject ? { ...current } : {};
+  writeObjectKey(next, name, child);
+
+  const wrongSource = isObject
+    ? Reflect.get(current, BATCH_HOST_SOURCE)
+    : current;
+  if (wrongSource !== undefined) {
+    let childNode = node;
+    while (childNode && childNode.depth > depth + 1)
+      childNode = childNode.parent ?? undefined;
+    if (
+      isCommittedInput ||
+      !childNode ||
+      !hasCallerInputOutput(child, childNode)
+    )
+      Object.defineProperty(next, BATCH_HOST_SOURCE, {
+        value: wrongSource,
+        enumerable: true,
+        configurable: true,
+      });
+    else Reflect.deleteProperty(next, BATCH_HOST_SOURCE);
+  }
+  return next;
 };

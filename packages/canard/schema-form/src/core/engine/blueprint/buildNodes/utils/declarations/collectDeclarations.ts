@@ -16,6 +16,7 @@ import { readAllowedTypes } from '../../../utils/allowedTypes/readAllowedTypes';
 import { readSchemaObject } from '../../../utils/analyze/readSchemaObject';
 import { createBlueprintGate } from '../gates/createBlueprintGate';
 import { resolveReference } from '../references/resolveReference';
+import { getResourceIndex } from '../references/resources/getResourceIndex';
 import { collectSchemaCapabilities } from './collectSchemaCapabilities';
 import { readDiscriminatorBranches } from './readDiscriminatorBranches';
 import { validateControlGroups } from './validateControlGroups';
@@ -54,6 +55,11 @@ export const collectDeclarations = (
 ): PropertyDeclaration[] => {
   if (visiting.includes(input.schemaPath)) return result;
   const schema = readSchemaObject(input.schema);
+  if (
+    input.schema !== context.schema &&
+    (typeof schema.$id === 'string' || typeof schema.id === 'string')
+  )
+    getResourceIndex(context);
   validateControlGroups(
     context,
     input.schema,
@@ -95,6 +101,42 @@ export const collectDeclarations = (
         condition: schema.controls.active,
       }),
     );
+  }
+  let referenceTarget: ReturnType<typeof resolveReference> | undefined;
+  if (typeof schema.$ref === 'string') {
+    let references: Set<string> | undefined;
+    let reference = schema.$ref;
+    let location = input.schemaPath;
+    while (true) {
+      const target = resolveReference(context, reference, location);
+      referenceTarget ??= target;
+      if (
+        target.schemaPath === input.schemaPath ||
+        visiting.includes(target.schemaPath) ||
+        references?.has(target.schemaPath)
+      )
+        break;
+      const targetSchema = readSchemaObject(target.schema);
+      if (targetSchema.controls?.active !== undefined) {
+        const schemaPath = appendSegment(
+          appendSegment(target.schemaPath, 'controls'),
+          'active',
+        );
+        if (!gates.some((gate) => gate.schemaPath === schemaPath))
+          gates.push(
+            createBlueprintGate({
+              kind: 'active',
+              schemaPath,
+              hostPath: path,
+              condition: targetSchema.controls.active,
+            }),
+          );
+      }
+      if (typeof targetSchema.$ref !== 'string') break;
+      (references ??= new Set()).add(target.schemaPath);
+      reference = targetSchema.$ref;
+      location = target.schemaPath;
+    }
   }
   const fragment: MutableFragment = {
     id: context.fragments.length,
@@ -164,7 +206,9 @@ export const collectDeclarations = (
     return result;
   const stack = [...visiting, input.schemaPath];
   if (typeof schema.$ref === 'string') {
-    const target = resolveReference(context, schema.$ref, input.schemaPath);
+    const target =
+      referenceTarget ??
+      resolveReference(context, schema.$ref, input.schemaPath);
     collectDeclarations(
       context,
       {

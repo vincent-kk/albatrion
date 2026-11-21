@@ -2,10 +2,15 @@ import type { CSSProperties, KeyboardEvent, ReactNode } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
+import { useControlIdentifiers } from '../utils/controls/useControlIdentifiers';
+
 /** Keyboard boundary for a Switch whose native props do not forward key handlers. */
 interface SwitchKeyboardControlProps {
   /** The library Switch retains its own click handling and value conversion. */
   children: ReactNode;
+  /** Core-supplied input address and the unchanged leaf name. */
+  id: string;
+  name: string;
   /** Whether activation keys leave the switch unchanged. */
   disabled?: boolean;
 }
@@ -21,8 +26,11 @@ const CONTENTS_STYLE: CSSProperties = { display: 'contents' };
  */
 export const SwitchKeyboardControl = ({
   children,
+  id,
+  name,
   disabled,
 }: SwitchKeyboardControlProps) => {
+  const bindControls = useControlIdentifiers(id, name, '[role="switch"]');
   const handleKeyDown = useHandle((event: KeyboardEvent<HTMLSpanElement>) => {
     if (disabled || (event.key !== ' ' && event.key !== 'Enter')) return;
     const target = event.target;
@@ -35,7 +43,7 @@ export const SwitchKeyboardControl = ({
     if (!event.repeat) target.click();
   });
   return (
-    <span style={CONTENTS_STYLE} onKeyDown={handleKeyDown}>
+    <span ref={bindControls} style={CONTENTS_STYLE} onKeyDown={handleKeyDown}>
       {children}
     </span>
   );

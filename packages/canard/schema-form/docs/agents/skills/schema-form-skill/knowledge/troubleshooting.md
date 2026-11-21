@@ -36,7 +36,7 @@ fieldInputMap: {
 
 **`controls.active` / `controls.visible` not reacting** — the most common cause is path syntax: `/toggle` is an absolute path from the root; a sibling is `../toggle`.
 
-**Expression over a collection never true** — a path followed by a property access must be parenthesized: `controls: { active: '(../items).length > 0' }`. Without the parentheses, `../items.length` is read as a property named `items.length`.
+**Expression over a collection never true** — a path followed by a property access must be parenthesized: `controls: { active: '(../items)?.length > 0' }`. Without the parentheses, `../items.length` is read as a property named `items.length`. Empty arrays with omitEmpty emit undefined, so optional chaining is required. If a throwing expression degrades the form, correct the expression and perform a form-level reset or load to recover; ordinary writes do not clear degraded status.
 
 **`derived` yields `NaN`/garbage on partial input** — guard operands: `'(../price ?? 0) * (../quantity ?? 1)'`.
 

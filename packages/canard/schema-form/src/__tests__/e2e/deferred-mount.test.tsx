@@ -174,7 +174,11 @@ it('TEST-021 deferred focus replays once under StrictMode', async () => {
   form = await renderForm(schema, { virtualization, strictMode: true });
   const focuses: string[] = [];
   form.container.addEventListener('focusin', (event) =>
-    focuses.push((event.target as HTMLElement).id),
+    focuses.push(
+      (event.target as HTMLElement)
+        .closest('[data-path]')
+        ?.getAttribute('data-path') ?? '',
+    ),
   );
   await act(async () => form.handle.focus('/f7'));
   await form.flush();

@@ -1,12 +1,11 @@
 import { useRef } from 'react';
 
-import { useOnUnmount } from '@winglet/react-utils/hook';
-
 import type { Fn } from '@aileron/declare';
 
 import type { ModalNode } from '@/promise-modal/core/node';
 import { closeModal } from '@/promise-modal/core/node';
 import { mergeDefined } from '@/promise-modal/helpers/mergeDefined';
+import { useIsomorphicLayoutEffect } from '@/promise-modal/hooks/useIsomorphicLayoutEffect';
 
 import type {
   AlertProps,
@@ -77,16 +76,21 @@ export const useModal = (configuration?: OverridableHandleProps) => {
     },
   );
 
-  useOnUnmount(() => {
-    for (const result of modalResultsRef.current) {
-      const modalNode = result.modalNode;
-      if (modalNode) closeModal(modalNode);
-      // Still queued before the provider mounted: cancel the prerender entry so
-      // it does not orphan a queued modal and a forever-pending promise.
-      else result.cancel();
-    }
-    modalResultsRef.current = [];
-  });
+  useIsomorphicLayoutEffect(
+    () => () => {
+      const results = modalResultsRef.current;
+      if (!results.length) return;
+      modalResultsRef.current = [];
+      queueMicrotask(() => {
+        for (const result of results) {
+          const modalNode = result.modalNode;
+          if (modalNode) closeModal(modalNode);
+          else result.cancel();
+        }
+      });
+    },
+    [],
+  );
 
   return {
     alert: alertRef.current,

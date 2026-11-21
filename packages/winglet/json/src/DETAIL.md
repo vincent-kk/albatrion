@@ -8,6 +8,8 @@
 
 ## API Contracts
 
+workspace의 source 조건은 개발 빌드의 입력입니다. 배포 파일에는 src가 없으므로 publishConfig.exports는 source 조건을 제외한 동일한 런타임·선언 경계를 기록합니다. 공개 진입점과 types·import·require 대상의 일치를 유지하여 개발 입력이 배포 해석을 가로채지 않게 합니다.
+
 - 이 fractal의 진입점이 재수출하는 각 심볼의 동작 계약은 그 심볼을 소유한 하위 fractal의 DETAIL.md(JSONPointer 또는 JSONPath)가 정의한다 — 이 문서는 재수출 관계만 정의하고 개별 심볼의 동작을 다시 규정하지 않는다.
 
 ## Acceptance Criteria

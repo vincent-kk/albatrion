@@ -82,13 +82,15 @@ registerPlugin(plugin);
 - **적용 조건**:
   - `type`이 `"number"` 또는 `"integer"`이고 `format`이 `"slider"`인 경우
   - 또는 `type`이 `"array"`이고 `items.type`이 `"number"` 또는 `"integer"`이며 `format`이 `"slider"`인 경우 (범위 슬라이더)
-- **추가 사항**: `presentation.FieldInputProps.lazy`(`false`이면 움직일 때마다 값 반영), `marks`(마크 표시), `range`(범위 슬라이더)
+- **추가 사항**: `presentation.FieldInputProps.lazy`(`false`이면 움직일 때마다 값 반영), `marks`(선택 가능한 값을 마크 위치로 제한). 범위 슬라이더의 숫자 제한과 `multipleOf`는 `items`에 둡니다. 슬라이더 형태는 스키마 타입이 정합니다. 배열 스키마는 숫자 두 개의 배열만 기록하는 범위 슬라이더를, 숫자 스키마는 숫자만 기록하는 단일 핸들 슬라이더를 받으며, `presentation.FieldInputProps.range`는 무시됩니다
+
+`presentation.FieldInputProps.lazy`를 생략하거나 `true`로 두면 확정 시점(키 놓기, 포인터 놓기 또는 라이브러리 변경 완료 이벤트)에 값을 저장하고, `false`이면 이동마다 저장합니다.
 
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 
 - **역할**: 멀티라인 텍스트 입력을 위한 텍스트 영역
 - **적용 조건**: `type`이 `"string"`이고 `format` 또는 `inputType`이 `"textarea"`인 경우
-- **추가 사항**: `minRows`, `maxRows`를 통한 자동 크기 조절 지원
+- **추가 사항**: `type`·`format` 옆의 스키마 확장 `minRows`와 `maxRows`로 자동 크기를 조절합니다. 이 두 설정은 `presentation.FieldInputProps`에서 읽지 않습니다
 
 ### **[`FieldInputString.tsx`](./src/fieldInputs/FieldInputString.tsx)**
 
@@ -106,7 +108,7 @@ registerPlugin(plugin);
 
 - **역할**: boolean 값을 체크박스로 표시
 - **적용 조건**: `type`이 `"boolean"`인 경우 (다른 조건에 해당하지 않는 fallback)
-- **추가 사항**: `undefined` 값에 대한 `indeterminate` 상태 지원
+- **추가 사항**: `null`과 불리언이 아닌 값은 `indeterminate` 상태로 표시되고, 값이 없는(`undefined`) 경우에는 체크되지 않은 상태로 표시됩니다
 
 ---
 
@@ -120,7 +122,7 @@ boolean 및 string 스위치 입력은 클릭하면 포커스를 받고 자연�
 
 ## 입력 설정
 
-위의 `lazy`, `marks`, `range` 같은 입력별 설정은 `presentation.FieldInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
+위의 `lazy`, `marks` 같은 textarea 행 제한 이외의 입력별 설정은 `presentation.FieldInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
 
 ```ts
 const jsonSchema = {
@@ -130,7 +132,7 @@ const jsonSchema = {
       type: 'number',
       format: 'slider',
       presentation: {
-        FieldInputProps: { lazy: false, marks: { 0: '0', 100: '100' } },
+        FieldInputProps: { lazy: false },
       },
     },
   },
@@ -151,7 +153,7 @@ const jsonSchema = {
 6. **Fallback**: 기본 fallback 컴포넌트
 
 같은 우선순위 내에서는 배열의 앞순서가 우선합니다. 현재 플러그인의 컴포넌트는 다음 순서로 정의되어 있습니다:
-`FieldInputBooleanSwitch` → `FieldInputStringCheckbox` → `FieldInputStringSwitch` → `FieldInputRadioGroup` → `FieldInputArray` → `FieldInputSlider` → `FieldInputTextarea` → `FieldInputString` → `FieldInputNumber` → `FieldInputBoolean`
+`FieldInputBooleanSwitch` → `FieldInputStringCheckbox` → `FieldInputStringSwitch` → `FieldInputRadioGroup` → `FieldInputSlider` → `FieldInputArray` → `FieldInputTextarea` → `FieldInputString` → `FieldInputNumber` → `FieldInputBoolean`
 
 ---
 
@@ -177,6 +179,43 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 ---
 
+## Form 범위의 컨트롤 식별자
+
+요소 ID는 필드와 Form 사이에서 고유하며 공백을 포함하지 않습니다. ID의 표기는 불투명한 값으로 취급하고 문자열을 덧붙이거나 디코딩·파싱하지 않습니다. `path`는 폼 데이터에 사용하는 JSON Pointer입니다. 사용자 정의 입력은 기본 컨트롤에 `inputId`를 지정하고 추가 요소에는 `getInputId(key)`를 사용합니다. 키는 필수이며 표기가 같은 숫자 키와 문자열 키는 같은 요소를 가리킵니다. 선택지·범위 끝점·thumb·프로토콜 선택기·입력 자체 레이블은 서로 다른 키를 사용합니다. 필드 제목에는 `labelId`를 지정하고 `aria-labelledby`로 연결합니다. 사용자 정의 렌더러도 같은 필드의 `inputId`와 `labelId`를 받습니다. 단일 입력의 레이블은 `inputId`를 가리킵니다. `name`은 말단 이름을 유지하며 라디오의 native name은 `inputId`를 사용하여 필드와 Form을 구별합니다.
+
+```tsx
+const Input = ({ inputId, name }: FieldInputProps<string>) => (
+  <input id={inputId} name={name} />
+);
+```
+
+입력은 `labelId`를 직접 읽으므로 플러그인 레이아웃, `Form.Label`과 `Form.Input`, bound `Label`을 쓰는 사용자 렌더러에서도 같은 필드 제목이 컨트롤 또는 그룹의 이름입니다. 범위 양끝은 각각 제목에 연결합니다. 보조 컨트롤은 제목 있는 필드 그룹 안에서 자기 이름을 유지합니다. 입력 자체 legend는 `getInputId('legend')`를 사용합니다. 필드 제목은 접근성 트리에 한 번만 노출하며 중복 제목 노드는 `hidden`으로 트리에서 제외합니다.
+
+복합 사용자 정의 입력은 `labelId`와 `getInputId`를 명시적으로 소비하고 DOM props에 펼치지 않습니다. getter의 참조는 필드 범위나 경로가 바뀔 때까지 유지됩니다. 말단 이름이나 `path`로 ID를 만들지 않습니다.
+
+해당 Form 안에서 `formElement.querySelector('[data-path="/email"] input')`처럼 조회하거나 컨트롤이 받은 id로 레이블을 연결합니다. Form API가 반환하는 값은 스키마 형태를 유지합니다.
+서버 렌더링 한계: 라이브러리가 해당 native 속성 prop을 제공하지 않으므로 Stepper 실제 입력의 id/name, Switch DOM id, 라디오 native name, Slider thumb의 id와 `aria-labelledby` 연결은 hydration에서 완성됩니다. 라디오 선택지 id와 Switch의 `aria-labelledby`는 서버 HTML에도 포함됩니다. 선택지와 라이브러리 내부 상태가 갱신되어도 native name 연결을 유지합니다.
+
 ## 연락처
 
 프로젝트와 관련된 문의나 제안은 이슈를 생성해 주세요.
+
+### Switch values and state labels
+
+For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the unchecked (off) value.
+
+A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
+
+### Unset slider values
+
+An unset slider exposes no current value to assistive technology and stores nothing until the user acts.
+
+### Slider constraints
+
+With `multipleOf`, selectable values are multiples of that number within the inclusive bounds. Integer sliders select only integer multiples. Without `multipleOf`, number sliders retain their authored bounds. A range with no selectable value is disabled and stores nothing.
+
+Marked stops outside the bounds or incompatible with the numeric constraints are ignored. Range sliders apply the constraints of `items` to both ends.
+
+`antd-mobile`은 5.2.0 이상을 지원합니다. 해당 버전의 `Stepper`는 `allowEmpty`로 빈 숫자 필드를 지원하며 5.0·5.1은 필요한 null 값을 허용하지 않습니다.
+
+슬라이더는 inclusive·exclusive 경계를 함께 적용합니다. `multipleOf`가 있으면 정확한 십진 배수를, 정수 필드는 이 격자와 정수의 교집합을 사용합니다. `multipleOf`가 없으면 하한이 기본 step의 anchor이며 inclusive 경계를 그대로 선택할 수 있습니다. exclusive 경계는 제외하며 경계 안의 step 값이 없으면 어떤 조작도 저장하지 않습니다. `Home`·`End`는 처음·마지막 허용 값을, Page·Shift+Arrow는 열 step을 선택합니다. 격자 밖 값도 렌더링만으로 변경하지 않습니다. `Number.MAX_SAFE_INTEGER`까지의 track에서 pointer 정밀도는 지원 범위 밖입니다.

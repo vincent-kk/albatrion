@@ -27,11 +27,11 @@ fieldInputMap: {
 }
 ```
 
-| Key | Meaning |
-| --- | --- |
-| Starts with `^` | `RegExp.test` against the escaped node path; add `$` to anchor the end. |
+| Key                                                                                | Meaning                                                                             |
+| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Starts with `^`                                                                    | `RegExp.test` against the escaped node path; add `$` to anchor the end.             |
 | Starts with `/` or `#/`, contains a segment exactly `*`, and does not end with `/` | Each `*` consumes one segment (array index or object key); other segments are text. |
-| Otherwise | Exact text after canonicalizing absolute pointers; relative text matches no node. |
+| Otherwise                                                                          | Exact text after canonicalizing absolute pointers; relative text matches no node.   |
 
 Names use path escaping: `/` → `~1`, `~` → `~0`, a name exactly `*` → `%2A`. `%` has no special meaning in a key: `'/rate(%)'` selects the property `rate(%)`; only a name exactly `*` uses `%2A` for the star. `''` and `'#'` are the root; `'/'` is an empty-name child. `**`, parentheses and brackets are literal in non-pattern keys; there is no recursive wildcard or warning.
 
@@ -43,6 +43,7 @@ For string-valued settings, the mapped `SettingsInput` renders branch children a
 const SettingsInput = (props: FieldInputProps) =>
   isTerminalNode(props.node) ? (
     <input
+      id={props.inputId}
       aria-label={props.path}
       defaultValue={String(props.defaultValue ?? '')}
       onChange={(event) => props.onChange(event.target.value)}
@@ -156,7 +157,7 @@ This recommendation avoids unnecessary renders/comparisons and unintended semant
 
 ## Bound parts and input frames
 
-A FieldRenderer assembles its supplied Label, Input and ErrorMessage. Label supplies htmlFor equal to the field path and id equal to `label:` followed by that path. A custom input uses its path as its element id to associate with the label. Label without children shows the field's name (key or array index), not the schema title; undefined children also use that name, while null empties it. ErrorMessage has no default content: pass errorMessage yourself. Explicit props override defaults even when undefined, except Label children; node always stays bound. Extra props reach the registered renderer. Label and ErrorMessage receive no context automatically: pass it explicitly when needed. The default group and bundled plugin groups pass no context to the parts; Form.Label and Form.ErrorMessage pass the form context. A renderer that reads context must tolerate its absence. Reuse style objects so part memoization can skip unchanged props:
+A FieldRenderer assembles its supplied Label, Input and ErrorMessage. Label supplies htmlFor equal to the input’s Form-scoped id and an opaque title id supplied as `labelId`, shared with the input’s `labelId` prop. A custom input uses its `inputId` prop as its element id; `path` remains the JSON Pointer for data lookup. Every input receives the leaf name (key or array index) in its `name` prop, regardless of presentation.inputType or the selected input definition. A radio input uses its `inputId` prop as the native group name instead of forwarding `name`, including in custom inputs. Native radio FormData keys therefore contain the Form scope and full field path, while FormHandle values retain their schema keys. Use distinct `identifierPrefix` values for independent server-rendered roots and for roots that use separate copies of `react-dom` to render Forms in the same document. This includes separately bundled applications, micro-frontends and widgets. Each renderer copy starts the client `useId` sequence at the same value, so a label click can act on another application’s input when the prefixes collide. Pass each server-rendered root’s prefix to both `renderToString` and `hydrateRoot`. Label without children shows the field's name (key or array index), not the schema title; undefined children also use that name, while null empties it. ErrorMessage has no default content: pass errorMessage yourself. Explicit props override defaults even when undefined, except Label children; node always stays bound. Extra props reach the registered renderer. Label and ErrorMessage receive no context automatically: pass it explicitly when needed. The default group and bundled plugin groups pass no context to the parts; Form.Label and Form.ErrorMessage pass the form context. A renderer that reads context must tolerate its absence. Reuse style objects so part memoization can skip unchanged props:
 
 ```tsx
 const NOTE_STYLE = { color: 'crimson' };
@@ -212,3 +213,50 @@ const ErrorFrame = ({ node, children }: InputRendererProps) => {
 ```
 
 This renderer requests errors with the [field error hook](validation-ux.md#read-one-fields-errors); the same hook works in label and error renderers. Parts that do not request it stay presentation-only. For standalone label/error roots, read [layout surfaces](imperative-and-layout.md#layout-surfaces).
+
+## Control identifiers and author responsibility
+
+The package connects Form.Label and bound label parts to the supplied Form-scoped input id. FieldRenderer receives the matching labelId for group titles, and built-in inputs connect their controls or option labels. Label and ARIA associations are document-wide even when native form owners differ.
+
+A single-control custom input must put its received inputId on its focusable control. The package cannot choose an element inside an arbitrary custom component for you. Keep path for data lookup; never use path as a DOM id. No automatic missing-target warning is emitted. This minimal controlled input uses FieldInputProps from @canard/schema-form:
+
+```tsx
+const TextControl = ({ inputId, value, onChange }: FieldInputProps<string>) => (
+  <input
+    id={inputId}
+    value={value ?? ''}
+    onChange={(event) => onChange(event.target.value)}
+  />
+);
+```
+
+For a composite group, FieldRenderer receives inputId and labelId. Use labelId for its title and aria-labelledby. Inputs receive those same strings and getInputId(key) for additional controls; a key is required, and numeric and string keys with the same spelling are equivalent. A radio group uses inputId as its native name and getInputId(index) for each option. Import the prop types from @canard/schema-form. These identifiers are unique, whitespace-free and opaque: never concatenate suffixes or parse them. Use CSS.escape for selectors. Register a value-driven input with controlled: true:
+
+```tsx
+const ChoiceGroup = ({ labelId, Input }: FieldRendererProps) => (
+  <fieldset aria-labelledby={labelId}>
+    <legend id={labelId}>Choice</legend>
+    <Input />
+  </fieldset>
+);
+
+const ChoiceControl = ({ inputId, getInputId, value, onChange }: FieldInputProps<string>) => (
+  <>
+    {['One', 'Two'].map((choice, index) => {
+      const optionId = getInputId(index);
+      return (
+        <label key={choice} htmlFor={optionId}>
+          <input
+            id={optionId}
+            name={inputId}
+            type="radio"
+            checked={value === choice}
+            onChange={() => onChange(choice)}
+          />
+          {choice}
+        </label>
+      );
+    })}
+  </>
+);
+```

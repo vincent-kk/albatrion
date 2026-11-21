@@ -25,13 +25,14 @@ it('shows a non-finite derived number as empty without changing its node value',
       />,
     );
     const source = view.container.querySelector<HTMLInputElement>(
-      'input[id="/source"]',
+      'input:is([id="/source"], [id$=":/source~input"]):not(label):not(legend)',
     )!;
     fireEvent.change(source, { target: { value: '' } });
     expect(Number.isNaN(ref.current!.getValue().twice)).toBe(true);
     expect(
-      view.container.querySelector<HTMLInputElement>('input[id="/twice"]')!
-        .value,
+      view.container.querySelector<HTMLInputElement>(
+        'input:is([id="/twice"], [id$=":/twice~input"]):not(label):not(legend)',
+      )!.value,
     ).toBe('');
     expect(
       consoleError.mock.calls.some((args) =>

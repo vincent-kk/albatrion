@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ChangeEvent, useState } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
@@ -7,7 +8,7 @@ import { isRenderableDateInputValue } from './utils/isRenderableDateInputValue';
 
 /** Render a native date, month, week, time or datetime-local input, falling back to text for an unrenderable default. */
 export const FieldInputDateFormat = ({
-  path,
+  inputId: fieldId,
   name,
   jsonSchema,
   readOnly,
@@ -20,7 +21,7 @@ export const FieldInputDateFormat = ({
   className,
   minimum,
   maximum,
-}: FieldInputDateFormatProps) => {
+}: FieldInputDateFormatProps): ReactElement => {
   const [type] = useState(() =>
     isRenderableDateInputValue(jsonSchema.format, defaultValue)
       ? jsonSchema.format
@@ -33,7 +34,7 @@ export const FieldInputDateFormat = ({
   return (
     <input
       type={type}
-      id={path}
+      id={fieldId}
       name={name}
       readOnly={readOnly}
       disabled={disabled}

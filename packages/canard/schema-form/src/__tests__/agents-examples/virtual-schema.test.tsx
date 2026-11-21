@@ -131,3 +131,35 @@ it('controls on a virtual group steer its visibility like any other field', asyn
   });
   expect(await screen.findByTestId('date-range')).toBeTruthy();
 });
+
+it('field names pair tuple slots with active children', async () => {
+  const ref = createRef<FormHandle>();
+  render(
+    <Form
+      ref={ref}
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'string', controls: { active: false } },
+        },
+        options: { virtual: { group: { fields: ['a', 'b'] } } },
+      }}
+      defaultValue={{ a: 'a0', b: 'b0' }}
+    />,
+  );
+  await act(async () => {});
+  const group = ref.current!.findNode('/group')!;
+  const fields = ['a', 'b'];
+  const slots = fields.map((name, index) => ({
+    name,
+    value: Array.isArray(group.value) ? group.value[index] : undefined,
+    node: group.children?.find((child) => child.name === name),
+  }));
+  expect(slots.map((slot) => [slot.name, slot.value, slot.node?.path])).toEqual(
+    [
+      ['a', 'a0', '/a'],
+      ['b', undefined, undefined],
+    ],
+  );
+});

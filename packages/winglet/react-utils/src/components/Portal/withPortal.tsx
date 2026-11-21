@@ -1,4 +1,4 @@
-import { type ComponentType, memo } from 'react';
+import { type ComponentType, type ReactElement, memo } from 'react';
 
 import { PortalContextProvider } from './context/PortalContextProvider';
 
@@ -7,7 +7,7 @@ import { PortalContextProvider } from './context/PortalContextProvider';
  *
  * This Higher-Order Component (HOC) wraps any React component with a PortalContextProvider,
  * enabling the use of Portal and Portal.Anchor components within the component tree. It creates
- * an isolated portal context that manages the registration, rendering, and lifecycle of all
+ * an isolated portal context that supplies the DOM anchor for all
  * portal content within the wrapped component and its descendants.
  *
  * ### Use Cases
@@ -18,7 +18,7 @@ import { PortalContextProvider } from './context/PortalContextProvider';
  *
  * ### Key Features
  * - Creates an isolated portal context scope for the wrapped component
- * - Manages multiple Portal instances with unique identification and lifecycle
+ * - Lets each Portal retain ownership of its subtree
  * - Provides automatic cleanup and memory management for portal content
  * - Maintains React component tree structure while enabling DOM location changes
  * - Memory-optimized with React.memo for performance
@@ -124,7 +124,7 @@ import { PortalContextProvider } from './context/PortalContextProvider';
 export const withPortal = <Type extends object>(
   Component: ComponentType<Type>,
 ) => {
-  return memo((props: Type) => (
+  return memo((props: Type): ReactElement => (
     <PortalContextProvider>
       <Component {...props} />
     </PortalContextProvider>

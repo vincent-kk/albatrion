@@ -231,7 +231,7 @@ export function ManualApp() {
 
 ## Component ownership and options
 
-Use `useModal` when unmounting the caller should cancel its pending requests; settled requests leave its tracking list immediately. Static calls can outlive their caller but still follow Provider ownership. `useModal(config)` captures mount-time defaults, so pass changing values per call.
+Hiding the caller with React `Activity` or Suspense cancels its pending `useModal` requests exactly like an unmount, because React runs effect cleanup on hide. Use `useModal` when unmounting the caller should cancel its pending requests; settled requests leave its tracking list immediately. Static calls can outlive their caller but still follow Provider ownership. `useModal(config)` captures mount-time defaults, so pass changing values per call.
 
 ```tsx
 import { type OverridableHandleProps, useModal } from '@lerx/promise-modal';
@@ -324,7 +324,7 @@ export function AnimatedApp() {
 
 ## Accessibility
 
-Escape walks visible pending modals from top to bottom and cancels the first whose effective `closeOnEscape` is true, preventing the event's default behavior. It skips non-accepting nondimmed modals and stops at a non-accepting dimmed modal without preventing the event. The resolution order is call Escape, call backdrop click, Provider Escape, then Provider backdrop click (default true). `useModal` defaults count as call data. Prevented and IME events are ignored. A dimmed modal with Escape disabled blocks Escape from reaching lower modals.
+Escape walks visible pending modals from top to bottom and cancels the first whose effective `closeOnEscape` is true, preventing the event's default behavior. Only a candidate present when the press begins may close; a modal opened during that press stays pending. Opening or reordering a modal during the press defers the default close. One press closes at most one modal: if a control inside a modal already settles a modal while handling the same press, no other modal closes. It skips non-accepting nondimmed modals and stops at a non-accepting dimmed modal without preventing the event. The resolution order is call Escape, call backdrop click, Provider Escape, then Provider backdrop click (default true). `useModal` defaults count as call data. Prevented and IME events are ignored. A dimmed modal with Escape disabled blocks Escape from reaching lower modals.
 
 Visible pending dimmed modals move focus inside, isolate the page, and by default trap Tab and lock body scrolling. `trapFocus: false` disables cycling, not initial focus or isolation; `lockScroll: false` disables scroll locking. Both options accept Provider and call overrides. Nondimmed modals do not take or restore focus, isolate the page, or lock scrolling. Custom foregrounds supply role, accessible name, and description; the library wrapper supplies focus behavior. The fallback frame supplies dialog role and aria-modal but still needs an accessible name from the application. See the [accessibility contract](./docs/en/SPECIFICATION.md#accessibility) for stacks, roots, and external portal limits.
 
@@ -353,6 +353,8 @@ export async function showBrokenContent() {
 
 Route navigation hides pending requests without settling them; returning restores them. Hidden modals still respond to abort and caller cleanup. A settled modal never reappears, including in manual destruction mode. One bootstrap owns the portal; extra Providers wait and warn once in development. When the owner unmounts, the first waiter takes over; with no waiter, open requests cancel after the current commit. Same-commit remounts and StrictMode checks preserve pending results and prompt input. Queued pre-mount requests remain queued.
 
+Hiding only the Provider with Activity or a re-suspended Suspense boundary releases its keyboard, focus and page effects while keeping requests from outside the hidden subtree pending. The same modal and prompt value return when the Provider is shown. A hidden useModal caller still cancels its own requests; actual Provider removal cancels or hands over as described above. To cancel on Provider hide, abort explicitly or unmount the Provider.
+
 ## Further reference
 
 See the [specification](./docs/en/SPECIFICATION.md) for all hooks, cancellation, routing, toasts, and public wrapper types. The published declarations are the source of truth for prop shapes; no node classes are public. The packaged [agent skill](./docs/agents/skills/promise-modal-skill/SKILL.md) explains integration decisions.
@@ -360,3 +362,4 @@ See the [specification](./docs/en/SPECIFICATION.md) for all hooks, cancellation,
 ## License
 
 MIT.
+

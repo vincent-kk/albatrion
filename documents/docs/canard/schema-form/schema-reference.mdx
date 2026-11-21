@@ -96,7 +96,7 @@ String expressions use form paths and context; see [path expressions](./api-refe
 
 An `inactiveValue` resolver receives the previous committed value, `dataPath`, `schemaPath`, current/parent/root schemas and values, and form context. Returning `undefined` preserves the original retained source. It runs only for a normal retained gate exit with automatic writes enabled, not load, reset, failure, budget overflow, a throwing gate, or an instance that only entered transiently during that settlement.
 
-Caller JSON wins when the write causing exit explicitly covers that path; neither `onInactive` nor the resolver runs there. A whole ancestor write covers omitted descendants, while Merge covers supplied keys only. Multi-write batch merges are shallow. Explicit coverage is the union of all caller writes; later partial/empty merges or automatic writes do not erase earlier whole coverage.
+Caller JSON wins when the write causing exit explicitly covers that path; neither `onInactive` nor the resolver runs there. A whole ancestor write covers omitted descendants, while Merge covers supplied keys only. Multi-write batch Merge recursively merges declared branch objects, retaining omitted keys; terminal values and arrays are replaced. Explicit coverage is the union of all caller writes; later partial/empty merges or automatic writes do not erase earlier whole coverage.
 
 After an array move, a resolver reads the preceding committed value and address but retains its result at the current address. Policy precedence is node, parent fields, then fragment; descendant results overwrite their own paths in an ancestor result. Retained results preserve undeclared keys and wrong-kind values under the usual inactive-JSON rules, and reentry consumes the overlay.
 
@@ -204,9 +204,9 @@ This is an optimization for fields recalculated often and for widgets that are e
 
 ## Custom-input accessibility {#accessibility}
 
-Use `id={path}` on a single custom input so its label can target it. Group inputs reference `label:${path}` with `aria-labelledby`. Built-in checkbox/radio choices use `${path}-${index}` and matching `htmlFor` inside a named `role="group"` container. Update DOM selectors accordingly.
+Composite inputs receive `inputId`, `labelId` and `getInputId(key: string | number)`. Use `inputId` on the primary control and as the native radio group name, `labelId` for `aria-labelledby`, and `getInputId(index)` for options. Keys are required and compare as strings. Renderers receive the two strings only. All identifiers are opaque and whitespace-free; never parse or concatenate them. Use CSS.escape for selectors. `path` remains the data pointer.
 
-At a root, array item, or unlabeled composition where `label:${path}` is absent, the custom renderer must supply an accessible group name. `Form.Label` derives its id and htmlFor from the supplied path, so use the actual absolute input path for that association.
+At a root, array item, or unlabeled composition where the supplied `labelId` is absent, the custom renderer must supply an accessible group name. `Form.Label` derives its id and htmlFor from the resolved node path and Form scope; use the actual absolute input path to select that node.
 
 The built-in enum select represents undefined as a selected, disabled empty option first in the list; an out-of-enum value gets its own disabled option. It does not silently choose the first enum item.
 
@@ -267,3 +267,5 @@ Mobile sliders accept `range`, `marks`, and `lazy` in that same prop group. `laz
 UI bounds guide interaction; schema validation remains responsible for accepting or rejecting the final value.
 
 Input props are payload, not frame configuration. Follow the [position-specific unwrapped rules](./api-reference#input-frames) and [field error hook](./api-reference#field-errors) when an input needs feedback.
+
+Custom inputs apply their supplied `inputId` to the focusable control; group renderers use `labelId` for their title and radio options use that scoped `inputId` as the native name. See [control identifiers and author responsibility](./api-reference#control-identifiers-and-author-responsibility) for the executable single-control and group examples.

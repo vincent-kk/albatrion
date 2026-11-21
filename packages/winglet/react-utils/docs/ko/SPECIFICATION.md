@@ -55,7 +55,7 @@ yarn add @winglet/react-utils
 
 ```bash
 npm install react react-dom
-# React 16, 17, 18, 19 모두 지원
+# React와 React DOM >=16.14 <20 지원
 ```
 
 ---
@@ -113,7 +113,7 @@ const SafeWidget = withErrorBoundary(Widget, <p>로드에 실패했습니다.</p
 | `@winglet/react-utils/hook`   | 18개 훅 전체                                                                                       |
 | `@winglet/react-utils/hoc`    | `withErrorBoundary`, `withErrorBoundaryForwardRef`, `withUploader`                                 |
 | `@winglet/react-utils/portal` | `Portal` 복합 객체                                                                                 |
-| `@winglet/react-utils/filter` | `isReactComponent`, `isReactElement`, `isClassComponent`, `isFunctionComponent`, `isMemoComponent` |
+| `@winglet/react-utils/filter` | `isReactComponent`, `isReactElement`, `isClassComponent`, `isFunctionComponent`, `isMemoComponent`, `isForwardRefComponent`, `isLazyComponent` |
 | `@winglet/react-utils/object` | `remainOnlyReactComponent`                                                                         |
 | `@winglet/react-utils/render` | `renderComponent`                                                                                  |
 
@@ -450,18 +450,13 @@ function useOnUnmount(handler: Fn): void;
 
 **매개변수**:
 
-- `handler` — 클린업 함수. 마운트 시점의 값을 캡처합니다 (오래된 클로저).
-
-**중요**: 클린업 함수 내에서 현재 state 값에 접근하려면 `useReference`를 사용하세요.
+- `handler` — 클린업 함수. 가장 최근 렌더에서 전달된 핸들러가 실행되므로, 그 렌더의 props와 state를 읽습니다. 리렌더 때는 실행되지 않고 언마운트 때만 실행됩니다.
 
 ```tsx
-// 언마운트 시 현재 state 접근
-const formDataRef = useReference(formData);
-const isDirtyRef = useReference(isDirty);
-
+// 마운트 시점의 값이 아니라 현재 formData와 isDirty를 읽습니다
 useOnUnmount(() => {
-  if (isDirtyRef.current) {
-    localStorage.setItem('draft', JSON.stringify(formDataRef.current));
+  if (isDirty) {
+    localStorage.setItem('draft', JSON.stringify(formData));
   }
 });
 ```
@@ -470,7 +465,7 @@ useOnUnmount(() => {
 
 ### useOnUnmountLayout
 
-`useLayoutEffect`를 통한 동기 언마운트 클린업.
+`useLayoutEffect`를 통한 동기 언마운트 클린업. `useOnUnmount`와 마찬가지로 가장 최근 렌더에서 전달된 핸들러를 실행합니다.
 
 ```typescript
 function useOnUnmountLayout(handler: Fn): void;
@@ -672,6 +667,8 @@ return (
 
 ## Portal 시스템
 
+Portal은 소스 위치에서 원시 React 포털을 반환하여 `Portal.Anchor`에 내용을 배치합니다. 컨텍스트 읽기와 클릭 버블링은 소스의 React 조상을 따라 `Portal.with`와 그 위까지 전달됩니다. 소스만 감싼 프로바이더도 포털 안에서 읽습니다. 클릭을 격리하려면 포털 내용에서 전파를 중단하고, 범위 전체에서 값을 공유하려면 프로바이더를 `Portal.with` 위에 두십시오. Activity 숨김·표시 사이에는 상태를 유지합니다. 서버와 첫 hydration 렌더를 포함하여 앵커가 연결되기 전에는 내용이 없으며, 앵커 연결·교체가 렌더 위치를 갱신합니다.
+
 React 컴포넌트 계층구조(컨텍스트, 이벤트 버블링)를 유지하면서 다른 DOM 위치에 콘텐츠를 렌더링합니다.
 
 ### 설정
@@ -709,7 +706,7 @@ const App = Portal.with(() => {
 
 #### `Portal`
 
-자식 요소를 `Portal.Anchor` 위치에 렌더링합니다. 자신의 위치에서는 `null`을 반환합니다.
+자식 요소를 `Portal.Anchor` 위치에 렌더링합니다. 앵커가 있으면 `createPortal` 결과를 반환합니다.
 
 ```tsx
 <Portal>
@@ -927,7 +924,7 @@ function isReactComponent<Props = any>(
 
 함수 컴포넌트, 클래스 컴포넌트, `React.memo` 래핑 컴포넌트에 대해 `true`를 반환합니다.
 
-**감지하지 않음**: `React.forwardRef` 컴포넌트.
+`React.forwardRef`와 `React.lazy` 컴포넌트도 감지합니다. 각각 `isForwardRefComponent`와 `isLazyComponent`로 구분합니다.
 
 ```tsx
 isReactComponent(() => <div />); // true
@@ -939,7 +936,7 @@ isReactComponent(
     }
   },
 ); // true
-isReactComponent(React.forwardRef((_, ref) => <div ref={ref} />)); // false
+isReactComponent(React.forwardRef((_, ref) => <div ref={ref} />)); // true
 isReactComponent(<div />); // false (엘리먼트, 컴포넌트 아님)
 ```
 

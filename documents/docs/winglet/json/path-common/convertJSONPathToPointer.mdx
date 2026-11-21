@@ -54,3 +54,9 @@ convertJSONPathToPointer('items[].id')         // '/items/-/id'
 convertJSONPathToPointer('[0].value')          // '/0/value'
 convertJSONPathToPointer('')                   // '/'`}
 />
+
+## Notes
+
+Consecutive and trailing property separators preserve empty tokens. The
+leading dot and the separator immediately after an array index are syntax, not tokens.
+This retains the existing data-path grammar and its documented lossy spellings.

@@ -1,3 +1,4 @@
+import type { JSONSchema } from '@canard/schema-form';
 import Ajv from 'ajv';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -155,17 +156,16 @@ describe('createValidatorFactory', () => {
     expect(errorKeywords).toContain('minimum');
   });
 
-  it('should set $async: true on compiled schema', async () => {
-    const compileSpy = vi.spyOn(ajv, 'compile');
+  it('should compile an isolated snapshot and return promise validation', async () => {
+    const compileSpy = vi.spyOn(Ajv.prototype, 'compile');
     const factory = createValidatorFactory(ajv);
-    const schema = { type: 'string' } as any;
-
-    factory(schema);
-
-    expect(compileSpy).toHaveBeenCalledWith({
-      ...schema,
-      $async: true,
-    });
+    const schema: JSONSchema = { type: 'string' };
+    const validate = factory(schema);
+    expect(compileSpy).toHaveBeenCalledWith(schema);
+    expect(compileSpy.mock.contexts.at(-1)).not.toBe(ajv);
+    expect(validate('x')).toBeInstanceOf(Promise);
+    expect(await validate('x')).toBeNull();
+    compileSpy.mockRestore();
   });
 
   it('should throw non-validation errors', async () => {
@@ -173,9 +173,11 @@ describe('createValidatorFactory', () => {
     const schema = { type: 'string' } as any;
 
     // ajv.compile이 throw하는 에러를 시뮬레이션
-    const mockCompile = vi.spyOn(ajv, 'compile').mockImplementation(() => {
-      throw new Error('Compilation error');
-    });
+    const mockCompile = vi
+      .spyOn(Ajv.prototype, 'compile')
+      .mockImplementation(() => {
+        throw new Error('Compilation error');
+      });
 
     await expect(() => factory(schema)).toThrow('Compilation error');
 
@@ -186,7 +188,14 @@ describe('createValidatorFactory', () => {
 describe('ajvValidatorPlugin', () => {
   beforeEach(() => {
     // 각 테스트 전에 ajvInstance를 리셋
-    ajvValidatorPlugin.bind!(new Ajv({ allErrors: true, nullable: true, verbose: true, format: false }));
+    ajvValidatorPlugin.bind!(
+      new Ajv({
+        allErrors: true,
+        nullable: true,
+        verbose: true,
+        format: false,
+      }),
+    );
   });
 
   it('should bind ajv instance correctly', () => {

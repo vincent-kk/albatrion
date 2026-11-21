@@ -72,7 +72,7 @@ describe('explicit asynchronous resource loading', () => {
         await async.resolve(ref, '$dynamicRef', async.root(schema)),
       ).toEqual(sync.resolve(ref, '$dynamicRef', sync.root(schema)));
   });
-  it('propagates user loader failures without automatic retries', async () => {
+  it('propagates each loader failure and retries only on the next explicit resolve', async () => {
     const schema = { $id: 'https://e.test/root' },
       load = vi.fn(async () => {
         throw new Error('load failed');
@@ -85,6 +85,6 @@ describe('explicit asynchronous resource loading', () => {
     await expect(r.resolve('missing', '$ref', context)).rejects.toThrow(
       'load failed',
     );
-    expect(load).toHaveBeenCalledTimes(1);
+    expect(load).toHaveBeenCalledTimes(2);
   });
 });

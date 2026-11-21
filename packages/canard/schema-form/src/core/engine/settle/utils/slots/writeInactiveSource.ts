@@ -13,6 +13,7 @@ import { writeSlotPath } from './writeSlotPath';
  * @param isWhole - Whether omitted descendants are replaced
  * @param _siblings - Retained caller declaration context
  * @param isAutomatic - Whether the input belongs to a reversible automatic write
+ * @param selectsNamedSource - Whether the distribution names a retained source
  * @returns Whether an interpreted terminal descendant can be emitted
  */
 export const writeInactiveSource = <Self extends FieldNodeRecord<Self>>(
@@ -24,6 +25,7 @@ export const writeInactiveSource = <Self extends FieldNodeRecord<Self>>(
   isWhole: boolean,
   _siblings: readonly BlueprintChildEntry[],
   isAutomatic = false,
+  selectsNamedSource?: boolean,
 ): boolean =>
   writeSlotPath(
     context.root,
@@ -33,4 +35,6 @@ export const writeInactiveSource = <Self extends FieldNodeRecord<Self>>(
     isWhole,
     context,
     isAutomatic,
+    false,
+    selectsNamedSource,
   );

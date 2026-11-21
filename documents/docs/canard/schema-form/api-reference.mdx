@@ -100,7 +100,7 @@ The node prop is required in both FieldInputProps and FieldRendererProps.
 
 Register LabelRenderer (`LabelRendererProps`), ErrorMessageRenderer (`ErrorMessageRendererProps`) and an optional InputRenderer (`InputRendererProps`) on Form, FormProvider or a plugin. Each owns its root; there is no default input frame. Keep component references stable: a new renderer reference replaces its UI. Use stable object props such as style so memoized parts can skip re-rendering when their props are unchanged.
 
-FieldRenderer receives bound Label, Input and ErrorMessage. `<Label />` defaults to the field's name (key or index), not its schema title. Undefined Label children use that name; null leaves it empty. ErrorMessage has no default message: use `<ErrorMessage>{errorMessage}</ErrorMessage>`. Explicit props override defaults even when undefined, except Label children; node cannot be replaced. Extra props reach the registered renderer. Bound Label defaults htmlFor to the field path and id to `label:` followed by that path; a custom input uses its path as its element id to associate with the label. Label and ErrorMessage receive context only when their caller passes it. The default group and bundled plugin groups pass no context to the parts; Form.Label and Form.ErrorMessage pass the form context. A renderer that reads context must tolerate its absence.
+FieldRenderer receives bound Label, Input and ErrorMessage. `<Label />` defaults to the field's name (key or index), not its schema title. Undefined Label children use that name; null leaves it empty. ErrorMessage has no default message: use `<ErrorMessage>{errorMessage}</ErrorMessage>`. Explicit props override defaults even when undefined, except Label children; node cannot be replaced. Extra props reach the registered renderer. Bound Label defaults htmlFor to the Form-scoped input id and its opaque title id to `labelId`. A custom input uses its `inputId` prop as its element id; `path` remains the data lookup pointer. FieldRenderer receives `labelId` for the same title. Every input receives the leaf name (key or array index) in its `name` prop, regardless of presentation.inputType or the selected input definition. The radio input itself uses `inputId` as its native group name, changing radio FormData keys; other native input names and FormHandle value keys stay unchanged. Give independent server-rendered roots distinct `identifierPrefix` values and match each root’s prefix on the server and client. Also give a distinct prefix to each root when separate copies of `react-dom` render Forms in the same document, as in separately bundled applications, micro-frontends and widgets. Each renderer copy starts the client `useId` sequence at the same value, so a label click can act on another application’s input when the prefixes collide. Label and ErrorMessage receive context only when their caller passes it. The default group and bundled plugin groups pass no context to the parts; Form.Label and Form.ErrorMessage pass the form context. A renderer that reads context must tolerate its absence.
 
 Form.Label accepts children and Form.ErrorMessage uses the field's formatted message. Neither adds an outer label or span: the registered renderer owns that element and its htmlFor/id/style/className. Standalone Form.ErrorMessage still renders its root when empty. Form.Label without a path omits htmlFor/id; use an absolute path for its label association.
 
@@ -176,7 +176,7 @@ The root's parentNode is null. A missing `find()` result is null; `findNodes()` 
 
 `FieldNodeState.Edited` records user input, not programmatic/automatic writes. Default input blur records Touched in the next animation frame; custom inputs can write flags explicitly. `isEdited` and `isTouched` read those flags. `node.state`/`setState` also accept user flags; Form reset and clearState remove user flags as well. `globalState` publishes true-or-absent aggregate flags. Use subtree state/error methods for bulk changes.
 
-Array nodes provide `push(value?)` and `insert(index, value?)` returning length; `pop()` / `remove(index)` returning the removed value, `update(index, value)` returning the updated value; and `clear()` returning void. Insert accepts integer indices from zero through length; invalid indices return the unchanged length. These operations do not enforce minItems/maxItems. In a batch they compute on prior marks at the call site; whole-array settlement carries item identity by position. Use `isArrayNode` before array operations.
+Array nodes provide `push(value?)` and `insert(index, value?)` returning length; `pop()` / `remove(index)` returning the removed value, `update(index, value)` returning the updated value; and `clear()` returning void. Insert accepts integer indices from zero through length; invalid indices return the unchanged length. These operations do not enforce minItems/maxItems. In a batch preceding value marks settle before an array operation. Each operation returns synchronously and preserves the same surviving item nodes as sequential calls; notifications are combined at the outer batch boundary. Use `isArrayNode` before array operations.
 
 Public guards include isFieldNode (unknown input) and isArrayNode, isBooleanNode, isBranchNode, isNumberNode, isObjectNode, isStringNode, isTerminalNode, isUnionNode, and isVirtualNode (FieldNode, null, or undefined input). These nine kind and strategy guards return false for null and undefined.
 
@@ -254,7 +254,7 @@ Read live node getters during render with useFieldNodeTracker instead of maintai
 
 An input without the hook re-renders only when its props change; an error-only or interaction-state-only change (Edited, Touched, an ErrorVisibility override) does not render it unless a deferred Refresh is applied at that moment. An input that reads errors or node.state during render uses useFieldErrors or useFieldNodeTracker. Choose one message owner to avoid displaying feedback both in the input and its group.
 
-During a transition or hydration, React can pause a component’s render while error display becomes permitted. The hook can then lag by one committed render and catches up after that commit. A formatter reading sibling values, module state or time that it does not subscribe to can differ until the next update of the node properties it observes; prefer its arguments. The field computes its own message with the same formatter, so a formatter that throws for a field replaces the whole field with the fallback, and replacing formatError or a part renderer retries it. Only a throw raised solely by an input’s own useFieldErrors call is caught by that input’s boundary, which replacing formatError does not retry.
+During a transition or hydration, React can pause a component’s render while error display becomes permitted. The hook can then lag by one committed render and catches up after that commit. A formatter reading sibling values, module state or time that it does not subscribe to can differ until the next update of the node properties it observes. Prefer its arguments. A throw while formatting the field’s own message replaces that field with its fallback. After a field fails, replacing `formatError` retries its render once. If that retry also fails, subsequent formatter changes keep the fallback and the form reports the failure once. Replacing a part renderer can retry the field again. When only an input’s own `useFieldErrors` call throws, its input boundary owns the fallback and formatter replacement leaves that input boundary in place.
 
 ## Virtualization {#virtualization}
 
@@ -288,3 +288,50 @@ Use `as const` to preserve schema literals; a widened type string can degrade in
 Explicit array schemas follow the [`@winglet/json-schema` tuple inference contract](../../winglet/json-schema/index.mdx#tuple-inference), including optional positions for finite literal `prefixItems` and the `items` rest rules. These tuples are the default `Value` type for `Form` and `FormHandle`. This narrows `any[]`, so code relying on unrestricted positions or extra items can encounter compile errors.
 
 Use the second generic on both `Form<Schema, Value>` and `FormHandle<Schema, Value>` for an exact consumer shape, especially when a concrete defaultValue would otherwise infer required keys differently from the handle. `InferFieldNode` infers a node type where static evidence allows it; dynamic references/gates can retain the full node union.
+
+## Control identifiers and author responsibility
+
+The package connects Form.Label and bound label parts to the supplied Form-scoped input id. FieldRenderer receives the matching labelId for group titles, and built-in inputs connect their controls or option labels. Label and ARIA associations are document-wide even when native form owners differ.
+
+A single-control custom input must put its received `inputId` on its focusable control. The package cannot choose an element inside an arbitrary custom component for you. Keep path for data lookup; never use path as a DOM id. No automatic missing-target warning is emitted. This minimal controlled input uses FieldInputProps from @canard/schema-form:
+
+```tsx
+const TextControl = ({ inputId, value, onChange }: FieldInputProps<string>) => (
+  <input
+    id={inputId}
+    value={value ?? ''}
+    onChange={(event) => onChange(event.target.value)}
+  />
+);
+```
+
+Composite inputs receive `inputId`, `labelId` and `getInputId(key: string | number)`. Use `inputId` on the primary control and as the native radio group name, `labelId` for `aria-labelledby`, and `getInputId(index)` for options. Keys are required and compare as strings. Renderers receive the two strings only. All identifiers are opaque and whitespace-free; never parse or concatenate them. Use CSS.escape for selectors. `path` remains the data pointer.
+
+```tsx
+const ChoiceGroup = ({ labelId, Input }: FieldRendererProps) => (
+  <fieldset aria-labelledby={labelId}>
+    <legend id={labelId}>Choice</legend>
+    <Input />
+  </fieldset>
+);
+
+const ChoiceControl = ({ inputId, getInputId, value, onChange }: FieldInputProps<string>) => (
+  <>
+    {['One', 'Two'].map((choice, index) => {
+      const optionId = getInputId(index);
+      return (
+        <label key={choice} htmlFor={optionId}>
+          <input
+            id={optionId}
+            name={inputId}
+            type="radio"
+            checked={value === choice}
+            onChange={() => onChange(choice)}
+          />
+          {choice}
+        </label>
+      );
+    })}
+  </>
+);
+```

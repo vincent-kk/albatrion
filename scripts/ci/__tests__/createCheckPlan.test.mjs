@@ -119,7 +119,7 @@ test("production-testbed uses its manifest name and only builds when affected", 
   );
 });
 
-test("default pr tier runs schema-form unit and selected input lifetime regressions without a browser", () => {
+test("default pr tier splits schema-form unit and input lifetime regressions across independent jobs", () => {
   const plan = createCheckPlan(workspaces, [
     "packages/canard/schema-form/src/index.ts",
   ]);
@@ -127,26 +127,53 @@ test("default pr tier runs schema-form unit and selected input lifetime regressi
   assert.equal(plan.browser, false);
   assert.deepEqual(
     plan.shards.map(({ name }) => name),
-    ["main", "schema-form"],
-  );
-  const schema = plan.shards.find(({ name }) => name === "schema-form");
-  assert.equal(schema.browser, false);
-  assert.equal(plan.shards[0].browser, false);
-  assert.deepEqual(
-    schema.steps.filter(({ kind }) => kind === "test"),
     [
-      {
-        kind: "test",
-        label: "Test schema-form unit",
-        args: [
+      "main",
+      "schema-form-unit-1",
+      "schema-form-unit-2",
+      "schema-form-render",
+      "plugins-ajv",
+      "plugins-antd",
+      "plugins-ui",
+    ],
+  );
+  const [firstUnit, secondUnit, render] = plan.shards.slice(1, 4);
+  const schemaShards = [firstUnit, secondUnit, render];
+  const schemaForm = "@canard/schema-form";
+  for (const shard of schemaShards) {
+    assert.equal(shard.browser, false);
+    assert.deepEqual(shard.affected, [schemaForm]);
+    assert.deepEqual(
+      shard.steps.filter(({ kind }) => kind === "build"),
+      createBuildSteps([schemaForm], workspaces),
+    );
+  }
+  assert.deepEqual(
+    schemaShards.flatMap(({ name, steps }) =>
+      steps.filter(({ kind }) => kind === "lint").map(() => name),
+    ),
+    ["schema-form-render"],
+  );
+  for (const [index, shard] of [firstUnit, secondUnit].entries()) {
+    const tests = shard.steps.filter(({ kind }) => kind === "test");
+    assert.deepEqual(
+      tests.map(({ args }) => args),
+      [
+        [
           "workspace",
-          "@canard/schema-form",
+          schemaForm,
           "test",
           "--run",
           "--project",
           "unit",
+          `--shard=${index + 1}/2`,
         ],
-      },
+      ],
+    );
+  }
+  assert.deepEqual(
+    render.steps.filter(({ kind }) => kind === "test"),
+    [
       {
         kind: "test",
         label: "Test schema-form input lifetime regressions on React19/React18",
@@ -181,7 +208,14 @@ test("pre-release tier isolates complete schema-form suites and browser installa
   assert.equal(plan.browser, true);
   assert.deepEqual(
     plan.shards.map(({ name }) => name),
-    ["main", "schema-form"],
+    [
+      "main",
+      "schema-form",
+      "plugins-ajv",
+      "plugins-antd",
+      "plugins-ui",
+      "shared",
+    ],
   );
   const schema = plan.shards.find(({ name }) => name === "schema-form");
   assert.equal(schema.browser, true);
@@ -241,7 +275,9 @@ test("pre-release preserves an explicit reason and other workspace checks", () =
   assert.deepEqual(preRelease.shards[0], pr.shards[0]);
   assert.deepEqual(
     preRelease.shards[1].steps.filter(({ kind }) => kind !== "test"),
-    pr.shards[1].steps.filter(({ kind }) => kind !== "test"),
+    pr.shards
+      .find(({ name }) => name === "schema-form-render")
+      .steps.filter(({ kind }) => kind !== "test"),
   );
 });
 

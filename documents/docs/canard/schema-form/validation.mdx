@@ -51,6 +51,8 @@ Inputs and presentation parts that need one field’s formatted feedback use [us
 
 `validatorFactory` is an object with `compile(root)` and synchronous `compileGuard(root, pointer)`; `release(root)` and `dialect` are optional. `compile` returns a function that returns ordered issues, null, or a promise of either. Throws indicate execution failure, not a validation verdict. `compileGuard` returns a synchronous boolean predicate and can run before whole-schema compilation.
 
+Validators must not write a different form value on every run: each changed output invalidates the in-flight verdict and requests another run, so validation never settles.
+
 The engine passes the same owned root copy to compile, compileGuard, and release. Preserve `$ref`, `$id`, and anchor context and never mutate the supplied schema or value. A nonboolean guard result, compile failure, or throw fails that gate; a whole-schema compile failure does not undo guards. Release runs when a cached root is evicted and must be idempotent even for a root never registered. If both dialects are known and `$schema` differs, the form reports `DialectMismatch`.
 
 Different live roots with the same `$id` must stay isolated; the engine does not rewrite IDs. A failure is classified as `duplicateSchemaId` only when it is an Error whose message contains `already exists` or `resolves to more than one schema`, and the same validator actually retains a different live root with that same string `$id`. After all competing consumers release that root, the next compile/validation access retries the cached failure once. Release does not itself trigger compilation, and other compile failures do not use this retry.

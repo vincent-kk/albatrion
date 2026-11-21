@@ -18,9 +18,11 @@ The application process follows these principles:
 - Each operation is validated before application
 - Reserved member names (__proto__, constructor, prototype) are handled as
 opaque own data — no patch input can modify the prototype chain
-- Immutable mode preserves the source with copy-on-write path cloning while unchanged
-subtrees remain structurally shared between the source and result
-- Strict mode enforces additional validation rules
+- Immutable mode never mutates the source or any patch value; containers not written
+remain structurally shared with both the source and patch values
+- Root add, replace and move install values by reference like nested operations;
+a later write obtains ownership only when it needs to change that container
+- A `test` operation compares values in every mode; a mismatch aborts the whole patch
 
 ## Import
 
@@ -45,7 +47,7 @@ const applyPatch: <Result extends JSONRoot = any>(source: JSONRoot, patches: Pat
 
 ## Returns
 
-A new object/array with all patches applied. If immutable is true, returns a new instance; otherwise, modifies and returns the original source.
+The patched document. Immutable mode preserves caller-owned graphs but can return a root patch value itself. Mutable mode can modify the original source.
 
 ## Examples
 
@@ -79,8 +81,8 @@ const result = applyPatch(sourceArray, patches);
 ### Example 3
 
 ```typescript
-// Using strict mode for additional validation
-const result = applyPatch(source, patches, { strict: true, immutable: false });
+// Mutating the source in place
+const result = applyPatch(source, patches, { immutable: false });
 ```
 
 ## Playground
@@ -100,8 +102,10 @@ const result = applyPatch(source, patches);
 
 ## Notes
 
-Immutable mode structurally shares unchanged subtrees. If the same object is referenced by
-multiple paths, only the path touched by a patch is detached from the source.
+Container copies retain ordinary or null prototypes at every written depth.
+Immutable mode structurally shares containers with the source and patch values. A final
+root add or replace returns its value itself, just as a nested add installs that value
+itself. If an object has several paths, only a path written by a patch is detached.
 
 Reserved member names (`__proto__`, `constructor`, `prototype`) addressed by a patch survive
 into the result as own data properties. Copy such a result with spread, `structuredClone`, or a

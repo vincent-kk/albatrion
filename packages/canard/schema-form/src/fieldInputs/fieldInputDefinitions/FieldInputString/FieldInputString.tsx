@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ChangeEvent, type ComponentPropsWithRef, useMemo } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
@@ -6,7 +7,7 @@ import type { FieldInputProps } from '@/schema-form/types';
 
 /** Render the common string input; binding wrappers may supply native draft handlers. */
 export const FieldInputString = ({
-  path,
+  inputId: fieldId,
   name,
   readOnly,
   disabled,
@@ -20,7 +21,7 @@ export const FieldInputString = ({
   inputProps,
 }: FieldInputProps & {
   inputProps?: ComponentPropsWithRef<'input'>;
-}) => {
+}): ReactElement => {
   const type = useMemo(() => {
     if (jsonSchema?.format === 'password') return 'password';
     else if (jsonSchema?.format === 'email') return 'email';
@@ -32,7 +33,7 @@ export const FieldInputString = ({
   return (
     <input
       type={type}
-      id={path}
+      id={fieldId}
       name={name}
       readOnly={readOnly}
       disabled={disabled}

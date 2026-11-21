@@ -33,7 +33,8 @@ interface FieldInputNumberProps
 
 const FieldInputNumber = ({
   schemaType: type,
-  path,
+  inputId,
+  labelId: fieldTitleId,
   name,
   jsonSchema,
   required,
@@ -108,7 +109,7 @@ const FieldInputNumber = ({
 
   return (
     <TextField
-      id={path}
+      id={inputId}
       name={name}
       type="number"
       variant={variant}
@@ -130,6 +131,7 @@ const FieldInputNumber = ({
         input: {
           readOnly,
           inputProps: {
+            'aria-labelledby': fieldTitleId,
             min: jsonSchema.minimum,
             max: jsonSchema.maximum,
             step: jsonSchema.multipleOf || (type === 'integer' ? 1 : 'any'),

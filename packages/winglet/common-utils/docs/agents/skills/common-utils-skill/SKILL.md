@@ -11,15 +11,15 @@ Applies when the consuming project imports from `@winglet/common-utils` or one o
 
 - **One function, one module, re-exported by a category barrel.** `@winglet/common-utils/array` and the root barrel resolve to the same implementation; sub-paths exist for tree-shaking, not for behavior.
 - **`Lite` is a suffix, not a concept.** It marks three unrelated things across the library — a small-array algorithm swap, a reduced type-coverage clone, and a scalar-arity overload — and in the first case the equality semantics change too.
-- **Degenerate return over throw.** Bad input yields `0`, `[array]`, `Infinity`, `NaN`, or `undefined` rather than an error. `factorial` and `fibonacci` are the only exports that throw on invalid input.
-- **Circular-reference safety is per function, not per library.** `clone` is safe and `cloneLite` overflows the stack; `stableEquals` is safe and `equals` overflows. Each pair sits side by side in the same barrel.
+- **Invalid-input behavior is per function.** Some utilities return `0`, `[array]`, `Infinity`, `NaN`, or `undefined`; others reject invalid numeric arguments, unsupported data, or configuration by throwing. Check the failure contract in the declarations and the input-failure guidance in `knowledge/semantics.md` before passing user input.
+- **Circular-reference safety is per function, not per library.** `clone` and `stableEquals` support cycles. `cloneLite` and `equals` do not support cyclic input and can fail to terminate. Each pair sits side by side in the same barrel.
 - **Scheduler bindings resolve once, at module load.** `scheduleMacrotask` and its siblings pick an implementation off `globalThis` when the module is first imported, so globals patched afterwards — fake timers, for instance — are not intercepted.
 
 ## Decision Guide
 
 | Question                                                | Answer                                                                                      |
 | ------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Deep equality, data may be circular?                    | `stableEquals` — `equals` overflows the stack                                               |
+| Deep equality, data may be circular?                    | `stableEquals` — cyclic input to `equals` can fail to terminate                                               |
 | Deep equality, plain data, hot path?                    | `equals`; its third argument is a key set to omit from every level                          |
 | Deep clone with `Date`/`Map`/`Set`/`RegExp`/TypedArray? | `clone`                                                                                     |
 | Deep clone of JSON-shaped data only?                    | `cloneLite` — anything else passes through **by reference**                                 |
@@ -36,7 +36,7 @@ Applies when the consuming project imports from `@winglet/common-utils` or one o
 - **`merge` mutates `target`, and merges arrays index-wise rather than by concatenation.** `merge({a:[1,2]},{a:[3]})` yields `{a:[3,2]}` — the target's surplus elements survive. Clone first when the caller owns `target`.
 - **`debounce` and `throttle` discard the wrapped function's return value** — both are declared to return `void`. `.execute()` clears the stored arguments, so calling it twice in a row runs the function once.
 - **An aborted `signal` permanently neuters a debounced or throttled function.** Every later call returns early; there is no way to re-arm it.
-- **`getTrackableHandler` blocks concurrent calls by default** (`preventConcurrent: true`), and the blocked call resolves `undefined` cast as `Result` — a silent type hole at the call site.
+- **`getTrackableHandler` blocks concurrent calls by default** (`preventConcurrent: true`), and a blocked call resolves `undefined`. The guard also covers lifecycle hooks and their asynchronous waits.
 - **`.pending`, `.state`, and `.subscribe` are non-enumerable**, so they disappear from `{...handler}` and `Object.keys`. A trackable handler has no `.execute()`, `.clear()`, or `onError` — those belong to `debounce`/`throttle`.
 - **`clone(target, maxDepth)` returns nodes at or beyond `maxDepth` by reference**, so a depth-bounded clone silently shares mutable state with its original.
 - Before trusting a remembered signature, check `knowledge/corrections.md` — the package README contains four errors that agents reproduce verbatim.

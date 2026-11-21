@@ -34,7 +34,13 @@ export const isIdenticalSchemaType = (
   const leftType = left.type,
     rightType = right.type;
   if (leftType === undefined || rightType === undefined) return false;
-  if (leftType === rightType) return true;
+  if (leftType === rightType)
+    return (
+      left.nullable === right.nullable ||
+      (left.nullable !== true && right.nullable !== true) ||
+      leftType === 'null' ||
+      (Array.isArray(leftType) && leftType.indexOf('null') !== -1)
+    );
 
   const isLeftArray = Array.isArray(leftType),
     isRightArray = Array.isArray(rightType);
@@ -59,7 +65,11 @@ export const isIdenticalSchemaType = (
 
   const array = isLeftArray ? leftType : rightType;
   const single = isLeftArray ? rightType : leftType;
-  if (array.length === 1) return array[0] === single;
+  if (array.length === 1)
+    return (
+      array[0] === single &&
+      (single === 'null' || isLeftNullable === isRightNullable)
+    );
   if (array.length === 2) {
     const nullIndex = array[0] === 'null' ? 0 : array[1] === 'null' ? 1 : null;
     if (nullIndex === null || !isRightNullable || !isLeftNullable) return false;

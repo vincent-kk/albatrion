@@ -54,3 +54,7 @@ This uses the core fallback inputs. Register a validator plugin below when you n
 - [Coding-agent assets](https://vincent-kk.github.io/albatrion/docs/canard/schema-form#agent-assets)
 
 For an existing application, follow the migration guide above. The packaged [consumer migration prompt](./docs/agents/skills/schema-form-skill/knowledge/migration-from-0x.md) walks a coding agent through application changes and verification.
+
+### TypeScript module resolution
+
+Use `moduleResolution: "bundler"`, `"node16"` or `"nodenext"` with the matching TypeScript module setting. Legacy `"node10"` resolution does not follow dependency subpath exports. It can locate this package's root declaration through `types` while leaving transitive imports unresolved, so root APIs such as `FormHandle.submit` can become `any`; `skipLibCheck: true` can hide the resolution error. Locating the root declaration alone does not guarantee a fully typed API.

@@ -67,11 +67,11 @@ export function ComposedForm() {
 import { Form, type FieldInputProps } from '@canard/schema-form';
 
 function TextInput({
-  path, value, onChange, readOnly, disabled, placeholder, className,
+  inputId, value, onChange, readOnly, disabled, placeholder, className,
 }: FieldInputProps<string>) {
   return (
     <textarea
-      id={path}
+      id={inputId}
       value={value ?? ''}
       readOnly={readOnly}
       disabled={disabled}
@@ -147,3 +147,5 @@ export function SubmitForm() {
 ```
 
 Antd5·Antd6·Antd Mobile·MUI 플러그인은 입력 틀 없이 라벨·오류 부품을 제공합니다. 필수 표시는 aria-hidden이며 Antd Mobile은 표시하는 오류를 span 루트로 감쌉니다. 사용자 부품 조립과 오류를 쓰는 틀은 [등록 부품](../api-reference#renderer-parts)과 [useFieldErrors](../api-reference#field-errors)를 참조하십시오.
+
+사용자 입력은 받은 `inputId`를 포커스 가능한 컨트롤에 적용하고, 그룹 렌더러는 제목에 `labelId`를 사용하며 radio 선택지는 범위 `inputId`를 native name으로 사용합니다. 실행되는 단일 입력·그룹 예제는 [입력 식별자와 작성자의 책임](./../api-reference#control-identifiers-and-author-responsibility)을 참고하십시오.

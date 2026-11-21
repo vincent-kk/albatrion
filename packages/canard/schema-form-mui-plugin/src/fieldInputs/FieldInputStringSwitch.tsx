@@ -11,6 +11,7 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type StringSwitchJSONSchema = StringSchema & {
   enum: [string | null, string | null];
@@ -27,10 +28,13 @@ interface FieldInputStringSwitchProps
     >,
     MuiContext {
   label?: ReactNode;
+  /** State labels keyed by stored enum value; context.switchLabels takes priority. */
+  alias?: { [value: string]: ReactNode };
 }
 
 const FieldInputStringSwitch = ({
-  path,
+  inputId,
+  labelId: fieldTitleId,
   name,
   jsonSchema,
   required,
@@ -42,6 +46,7 @@ const FieldInputStringSwitch = ({
   size: sizeProp = 'medium',
   hideLabel,
   misfit,
+  alias,
 }: FieldInputStringSwitchProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
@@ -50,18 +55,21 @@ const FieldInputStringSwitch = ({
 
   const { offValue, onValue, offLabel, onLabel } = useMemo(() => {
     const [first, second] = jsonSchema.enum;
-    const [firstLabel, secondLabel] = jsonSchema.switchLabels || [
-      first,
-      second,
-    ];
+    const labels = context.switchLabels || alias;
+    const [firstLabel, secondLabel] = labels
+      ? [
+          getOwnLabel(labels, String(first)) || first,
+          getOwnLabel(labels, String(second)) || second,
+        ]
+      : jsonSchema.switchLabels || [first, second];
 
     return {
-      offValue: first,
-      onValue: second,
-      offLabel: firstLabel,
-      onLabel: secondLabel,
+      offValue: second,
+      onValue: first,
+      offLabel: secondLabel,
+      onLabel: firstLabel,
     };
-  }, [jsonSchema.enum, jsonSchema.switchLabels]);
+  }, [jsonSchema.enum, jsonSchema.switchLabels, context.switchLabels, alias]);
 
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,7 +82,7 @@ const FieldInputStringSwitch = ({
   return (
     <FormControlLabel
       label={label}
-      htmlFor={path}
+      htmlFor={inputId}
       required={required}
       disabled={disabled}
       labelPlacement="start"
@@ -86,14 +94,18 @@ const FieldInputStringSwitch = ({
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
           <Typography>{offLabel}</Typography>
           <Switch
-            id={path}
+            id={inputId}
             name={name}
             checked={value === onValue}
             onChange={handleChange}
             disabled={disabled}
             size={switchSize}
             slotProps={{
-              input: { role: 'switch', 'aria-invalid': misfit || undefined },
+              input: {
+                'aria-labelledby': fieldTitleId,
+                role: 'switch',
+                'aria-invalid': misfit || undefined,
+              },
             }}
           />
           <Typography>{onLabel}</Typography>

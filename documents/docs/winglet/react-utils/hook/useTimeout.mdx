@@ -16,7 +16,7 @@ and safe callback updates without recreating timers.
 - **Manual Control**: Explicitly schedule, reschedule, or cancel timeouts
 - **State Tracking**: Check if a timeout is pending with `isIdle()`
 - **Safe Updates**: Callback updates don't affect running timers
-- **Auto-cleanup**: Prevents memory leaks on unmount
+- **Auto-cleanup**: Cancels on unmount; retained schedule callbacks do no work after unmount
 - **Reschedule Support**: Calling schedule() resets existing timers
 ### Use Cases
 - **Delayed Actions**: Show notifications, hide tooltips, or auto-save
@@ -197,3 +197,8 @@ const handleUserInput = () => {
   schedule(); // Reset 5-second timer
 };`}
 />
+
+## Notes
+
+Callback reads use the last committed render. React 18 and 19 publish
+before layout effects; older supported React peers publish in the parent layout effect.

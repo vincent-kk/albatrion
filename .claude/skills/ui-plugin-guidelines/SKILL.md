@@ -5,6 +5,28 @@ description: "Expert at verifying compatibility between a UI library and an @can
 
 # UI Plugin Guidelines Skill
 
+## Shared value and presentation contracts
+
+- A string switch stores `enum[0]` when checked and `enum[1]` when unchecked. All four plugins accept a `presentation.FieldInputProps.alias` map keyed by the stored enum value; `context.switchLabels` overrides the whole alias map. Schema `switchLabels` tuples are MUI-only and apply only when neither map is supplied. A missing key in the selected map falls back to the enum value.
+- A boolean switch accepts `presentation.FieldInputProps.alias` with `checked` and `unchecked` ReactNode labels. Choose the label map from `context.checkboxLabels`, then `alias`, then no state labels. Show the current state without replacing the field's accessible name; absent state labels preserve the existing output.
+- A control changes only the stored data the user acts on. Keep known enum selections visible alongside unknown stored members, and preserve the original JSON value and order of untouched members. A toggle of another option preserves them; explicitly removing a tag or clearing the control removes the selected data.
+- A select preserves an unknown stored enum value while displaying a library-safe empty selection; mounting it emits no out-of-range warning. Verify callback support over the entire declared peer range with a feature check or a proven minimum version.
+- Render array and object validation messages at both root and nested positions. Do not add empty root error markup when no message exists.
+- With `multipleOf`, slider stops are its zero-based multiples inside the strictest inclusive and exclusive bounds. Integer sliders use the integer intersection. Without `multipleOf`, number sliders step from the lower bound by the default step and retain inclusive endpoints exactly; an exclusive lower bound excludes that anchor, and an exclusive upper bound excludes its endpoint. An absent side defaults to 0 or 100 only when neither kind of bound exists on that side. Range sliders apply item constraints to both ends, and marked stops obey the same constraints.
+- Every slider interaction either stores a value that validates against its own schema or stores nothing. Home and End select the first and last valid stops; arrows, PageUp/PageDown, Shift+Arrow and pointer selection normalize off-grid or out-of-bounds starting values. Use decimal-exact arithmetic, including exponent-written steps. An empty interval stores nothing. Treat `maximum: Number.MAX_SAFE_INTEGER` as a documented precision limit.
+- Test slider bounds, step, integer/number type, unset/on-grid/off-grid/outside values, pointer and keyboard interactions, and omitted/false `lazy` against an independent decimal reference model. Keep the absent-step anchor explicit.
+- An unset slider exposes no current value to assistive technology and stores nothing until the user acts. A first committed selection of the minimum must store it even when the library skips its ordinary change callback. Preserve read-only and disabled behavior. Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores on commit (key up, pointer up, or the library change-complete event); `false` stores on every move.
+- Range pickers publish only a committed selection with both ends chosen, or clear. Browsing a panel, hovering, changing the viewed month or time, and choosing just one end never write form data.
+- Verify these contracts with equivalence tables across sibling plugins and input kinds, including stored values outside the enum, root and nested errors, and unset and populated numeric controls.
+
+## Control identifier contract
+
+Inputs receive `inputId`, `labelId`, and `getInputId(key)` from the core; renderers receive `inputId` and `labelId`. Each input applies its own identifiers and accessible naming from those props, including when rendered by `Form.Label` with `Form.Input`, by a custom renderer using the bound `Label`, or with `hideLabel`. Put `inputId` on the primary control and use it for a single-control label's `htmlFor`. Groups and composites reference the field title through `aria-labelledby={labelId}`. Each range end connects to that title. An input never renders an element with `id={labelId}`: its own legend uses `getInputId('legend')`. A renderer title node hidden for a group uses the `hidden` attribute or `display: none`, so assistive technology encounters the title once while `aria-labelledby` can still reference it.
+
+Primary controls, or their containing group/composite, have the field title as their accessible name. Auxiliary controls retain distinct names inside a named group or with a description connecting them to the field title; no focusable control is unnamed or named only by a library default. Each plugin derives a table from its own input definitions and classifies controls as primary, range end or auxiliary. An unclassified new input or control fails. Test every definition in the four layouts above: names, exactly one exposed group title, unique ids, and existing targets for every `aria-labelledby` and `for`. Package tests never import sibling plugins.
+
+Every additional element uses `getInputId(key)` with a required, distinct key. Native radio groups use `inputId` as their `name`; other inputs keep their leaf names, and `path` remains the data pointer. Ids are opaque and document-wide: never concatenate onto, decode, or parse them, including across separate Forms.
+
 ## Role
 You are an expert at verifying compatibility between a UI library and an @canard/schema-form plugin, and at designing the project structure.
 
@@ -103,17 +125,29 @@ const FieldRenderer = ({
   node,
   depth,
   name,
+  labelId,
   Input,
   Label,
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps) => {
-  if (depth === 0) return <Input />;
+  if (depth === 0) return (
+    <>
+      <Input />
+      {errorMessage != null && errorMessage !== false && (
+        <ErrorMessage>{errorMessage}</ErrorMessage>
+      )}
+    </>
+  );
 
   if (node.strategy === 'branch') {
     return (
       <Box sx={{ pl: depth * 2, border: '1px solid', borderColor: 'divider' }}>
-        <fieldset><legend>{name}</legend><Input /></fieldset>
+        <fieldset aria-labelledby={labelId}>
+          <legend id={labelId}>{name}</legend>
+          <Input />
+        </fieldset>
+        <ErrorMessage>{errorMessage}</ErrorMessage>
       </Box>
     );
   }
@@ -200,12 +234,12 @@ const formatError: FormatError = (error, node, context) => {
 
 ```typescript
 <TextField
-  id={path}                          // ✅ Unique ID
+  id={inputId}                          // ✅ Unique ID
   name={name}                        // ✅ name attribute
   required={required}                // ✅ required
   aria-required={required}           // ✅ ARIA required
   aria-invalid={hasError}            // ✅ ARIA invalid
-  aria-describedby={`${path}-error`} // ✅ Error association
+  aria-describedby={getInputId('error')} // ✅ Error association
 />
 ```
 
@@ -224,7 +258,7 @@ const formatError: FormatError = (error, node, context) => {
 ```typescript
 <DatePicker
   slotProps={{
-    textField: { id, name, required, disabled },
+    textField: { id: inputId, name, required, disabled },
   }}
 />
 ```
@@ -242,7 +276,7 @@ const formatError: FormatError = (error, node, context) => {
 
 ```typescript
 // ✅ Correct
-<Input id={path} name={name} />
+<Input id={inputId} name={name} />
 
 // ❌ Do not use
 <Form.Item label="Name">
@@ -255,9 +289,9 @@ const formatError: FormatError = (error, node, context) => {
 **FormControl wrapping**:
 ```typescript
 <FormControl isRequired={required} isInvalid={hasError}>
-  <FormLabel htmlFor={path}>{label}</FormLabel>
-  <Input id={path} name={name} />
-  {hasError && <FormErrorMessage>{errorMessage}</FormErrorMessage>}
+  <FormLabel id={getInputId('label')} htmlFor={inputId}>{label}</FormLabel>
+  <Input id={inputId} name={name} />
+  {hasError && <FormErrorMessage id={getInputId('error')}>{errorMessage}</FormErrorMessage>}
 </FormControl>
 ```
 
@@ -363,7 +397,7 @@ MUI DatePicker uses TextField internally. With AdapterDayjs, pass Dayjs values a
   }}
   slotProps={{
     textField: {
-      id: path,
+      id: inputId,
       name: name,
       required: required,
       disabled: disabled,
@@ -426,13 +460,13 @@ const FieldRenderer = ({ depth, Input }: FieldRendererProps) => {
 **TextField**:
 ```typescript
 <TextField
-  id={path}                          // ✅ Unique ID (WCAG 4.1.1)
+  id={inputId}                          // ✅ Unique ID (WCAG 4.1.1)
   name={name}                        // ✅ name attribute
   label={label}                      // ✅ Label (WCAG 1.3.1)
   required={required}                // ✅ required (WCAG 3.3.2)
   error={hasError}                   // ✅ error state
   helperText={errorMessage}          // ✅ Error message (WCAG 3.3.1)
-  aria-describedby={`${path}-helper`} // ✅ Helper text association
+  aria-describedby={getInputId('helper')} // ✅ Helper text association
 />
 ```
 
@@ -441,7 +475,7 @@ const FieldRenderer = ({ depth, Input }: FieldRendererProps) => {
 <FormControlLabel
   control={
     <Checkbox
-      id={path}
+      id={inputId}
       name={name}
       checked={value ?? false}
       required={required}
@@ -568,7 +602,7 @@ Do **not use** Ant Design's Form.Item. @canard/schema-form manages form layout a
 
 // ✅ Correct approach (use the component only)
 <Input
-  id={path}
+  id={inputId}
   name={name}
   defaultValue={defaultValue}
   onChange={(e) => onChange(e.target.value)}
@@ -610,10 +644,10 @@ import dayjs, { type Dayjs } from 'dayjs';
 import type { FieldInputProps } from '@canard/schema-form';
 import { DatePicker } from 'antd';
 
-function FieldInputDate({ path, name, readOnly, disabled, defaultValue, onChange }: FieldInputProps<string>) {
+function FieldInputDate({ inputId, name, readOnly, disabled, defaultValue, onChange }: FieldInputProps<string>) {
   return (
     <DatePicker
-      id={path}
+      id={inputId}
       name={name}
       disabled={disabled || readOnly}
       defaultValue={defaultValue ? dayjs(defaultValue) : null}
@@ -705,11 +739,11 @@ Ant Design v5 handles most accessibility attributes automatically, but some must
 **Input**:
 ```typescript
 <Input
-  id={path}                    // ✅ Unique ID
+  id={inputId}                    // ✅ Unique ID
   name={name}                  // ✅ name attribute
   aria-required={required}     // ⚠️ Manual addition required
   aria-invalid={hasError}      // ⚠️ Manual addition required
-  aria-describedby={hasError ? `${path}-error` : undefined}  // ⚠️ Manual
+  aria-describedby={hasError ? getInputId('error') : undefined}  // ⚠️ Manual
   status={hasError ? 'error' : undefined}
 />
 ```
@@ -717,7 +751,7 @@ Ant Design v5 handles most accessibility attributes automatically, but some must
 **Checkbox**:
 ```typescript
 <Checkbox
-  id={path}
+  id={inputId}
   name={name}
   checked={value ?? false}
   aria-required={required}     // ⚠️ Manual addition required
@@ -729,7 +763,7 @@ Ant Design v5 handles most accessibility attributes automatically, but some must
 **Select**:
 ```typescript
 <Select
-  id={path}
+  id={inputId}
   defaultValue={defaultValue}
   onChange={onChange}
   aria-required={required}     // ⚠️ Manual addition required
@@ -871,7 +905,7 @@ import {
 import { useFieldErrors, type FieldInputProps } from '@canard/schema-form';
 
 function FieldInputString(props: FieldInputProps<string>) {
-  const { node, path, name, jsonSchema, required, value, onChange } = props;
+  const { node, inputId, getInputId, name, jsonSchema, required, value, onChange } = props;
 
   const label = jsonSchema.title || name;
   const { errorMessage } = useFieldErrors(node);
@@ -879,14 +913,14 @@ function FieldInputString(props: FieldInputProps<string>) {
 
   return (
     <FormControl isRequired={required} isInvalid={hasError}>
-      <FormLabel htmlFor={path}>{label}</FormLabel>
+      <FormLabel id={getInputId('label')} htmlFor={inputId}>{label}</FormLabel>
       <Input
-        id={path}
+        id={inputId}
         name={name}
         value={value ?? ''}
         onChange={(e) => onChange(e.target.value === '' ? undefined : e.target.value)}
       />
-      {hasError && <FormErrorMessage>{errorMessage}</FormErrorMessage>}
+      {hasError && <FormErrorMessage id={getInputId('error')}>{errorMessage}</FormErrorMessage>}
       {jsonSchema.description && (
         <FormHelperText>{jsonSchema.description}</FormHelperText>
       )}
@@ -916,7 +950,7 @@ import { NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepp
   min={jsonSchema.minimum}
   max={jsonSchema.maximum}
 >
-  <NumberInputField id={path} name={name} />
+  <NumberInputField id={inputId} name={name} />
   <NumberInputStepper>
     <NumberIncrementStepper />
     <NumberDecrementStepper />

@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type PropsWithChildren, useEffect } from 'react';
 
 import { VirtualizationContext } from './VirtualizationContext';
@@ -12,7 +13,7 @@ interface VirtualizationContextProviderProps {
 export const VirtualizationContextProvider = ({
   value,
   children,
-}: PropsWithChildren<VirtualizationContextProviderProps>) => {
+}: PropsWithChildren<VirtualizationContextProviderProps>): ReactElement => {
   const manager = value.manager;
   useEffect(() => {
     if (manager === null) return;

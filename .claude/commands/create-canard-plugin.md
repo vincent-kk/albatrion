@@ -307,6 +307,26 @@ When you run `/create-canard-plugin <UI_LIBRARY_NAME>`, Claude will:
   - Verify context delivery
   - Verify event handling
 
+Inputs receive `inputId`, `labelId`, and `getInputId(key)` from the core; renderers receive `inputId` and `labelId`. Each input applies its own identifiers and accessible naming from those props, including when rendered by `Form.Label` with `Form.Input`, by a custom renderer using the bound `Label`, or with `hideLabel`. Put `inputId` on the primary control and use it for a single-control label's `htmlFor`. Groups and composites reference the field title through `aria-labelledby={labelId}`. Each range end connects to that title. An input never renders an element with `id={labelId}`: its own legend uses `getInputId('legend')`. A renderer title node hidden for a group uses the `hidden` attribute or `display: none`, so assistive technology encounters the title once while `aria-labelledby` can still reference it.
+
+Primary controls, or their containing group/composite, have the field title as their accessible name. Auxiliary controls retain distinct names inside a named group or with a description connecting them to the field title; no focusable control is unnamed or named only by a library default. Each plugin derives a table from its own input definitions and classifies controls as primary, range end or auxiliary. An unclassified new input or control fails. Test every definition in the four layouts above: names, exactly one exposed group title, unique ids, and existing targets for every `aria-labelledby` and `for`. Package tests never import sibling plugins.
+
+Every additional element uses `getInputId(key)` with a required, distinct key. Native radio groups use `inputId` as their `name`; other inputs keep their leaf names, and `path` remains the data pointer. Ids are opaque and document-wide: never concatenate onto, decode, or parse them, including across separate Forms.
+
+## Shared value and presentation contracts
+
+- A string switch stores `enum[0]` when checked and `enum[1]` when unchecked. All four plugins accept a `presentation.FieldInputProps.alias` map keyed by the stored enum value; `context.switchLabels` overrides the whole alias map. Schema `switchLabels` tuples are MUI-only and apply only when neither map is supplied. A missing key in the selected map falls back to the enum value.
+- A boolean switch accepts `presentation.FieldInputProps.alias` with `checked` and `unchecked` ReactNode labels. Choose the label map from `context.checkboxLabels`, then `alias`, then no state labels. Show the current state without replacing the field's accessible name; absent state labels preserve the existing output.
+- A control changes only the stored data the user acts on. Keep known enum selections visible alongside unknown stored members, and preserve the original JSON value and order of untouched members. A toggle of another option preserves them; explicitly removing a tag or clearing the control removes the selected data.
+- A select preserves an unknown stored enum value while displaying a library-safe empty selection; mounting it emits no out-of-range warning. Verify callback support over the entire declared peer range with a feature check or a proven minimum version.
+- Render array and object validation messages at both root and nested positions. Do not add empty root error markup when no message exists.
+- With `multipleOf`, slider stops are its zero-based multiples inside the strictest inclusive and exclusive bounds. Integer sliders use the integer intersection. Without `multipleOf`, number sliders step from the lower bound by the default step and retain inclusive endpoints exactly; an exclusive lower bound excludes that anchor, and an exclusive upper bound excludes its endpoint. An absent side defaults to 0 or 100 only when neither kind of bound exists on that side. Range sliders apply item constraints to both ends, and marked stops obey the same constraints.
+- Every slider interaction either stores a value that validates against its own schema or stores nothing. Home and End select the first and last valid stops; arrows, PageUp/PageDown, Shift+Arrow and pointer selection normalize off-grid or out-of-bounds starting values. Use decimal-exact arithmetic, including exponent-written steps. An empty interval stores nothing. Treat `maximum: Number.MAX_SAFE_INTEGER` as a documented precision limit.
+- Test slider bounds, step, integer/number type, unset/on-grid/off-grid/outside values, pointer and keyboard interactions, and omitted/false `lazy` against an independent decimal reference model. Keep the absent-step anchor explicit.
+- An unset slider exposes no current value to assistive technology and stores nothing until the user acts. A first committed selection of the minimum must store it even when the library skips its ordinary change callback. Preserve read-only and disabled behavior. Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores on commit (key up, pointer up, or the library change-complete event); `false` stores on every move.
+- Range pickers publish only a committed selection with both ends chosen, or clear. Browsing a panel, hovering, changing the viewed month or time, and choosing just one end never write form data.
+- Verify these contracts with equivalence tables across sibling plugins and input kinds, including stored values outside the enum, root and nested errors, and unset and populated numeric controls.
+
 **Example Template Output**:
 
 ```typescript
@@ -320,10 +340,10 @@ interface ChakraContext {
 }
 
 const FieldInputString = ({
-  path, name, value, onChange, context, required, disabled, readOnly,
+  inputId, name, value, onChange, context, required, disabled, readOnly,
 }: FieldInputProps<string, ChakraContext>) => (
   <Input
-    id={path}
+    id={inputId}
     name={name}
     value={value ?? ''}
     onChange={(event) => onChange(event.target.value === '' ? undefined : event.target.value)}

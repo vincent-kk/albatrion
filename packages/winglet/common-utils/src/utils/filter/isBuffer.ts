@@ -1,5 +1,12 @@
 const Buffer = globalThis.Buffer;
 
+/** Native Buffer shape when Node globals are available, otherwise its byte-array base. */
+type BufferValue = typeof globalThis extends {
+  Buffer: { isBuffer: (value: unknown) => value is infer Value };
+}
+  ? Value
+  : Uint8Array;
+
 /**
  * Determines whether a value is a Node.js Buffer with enhanced type safety.
  *
@@ -355,5 +362,5 @@ const Buffer = globalThis.Buffer;
  * - Use `isArrayBuffer()` for ArrayBuffer detection
  * - Use `isUint8Array()` for Uint8Array detection (Buffer extends Uint8Array)
  */
-export const isBuffer = (value: unknown): value is Buffer =>
+export const isBuffer = (value: unknown): value is BufferValue =>
   Buffer !== undefined && Buffer.isBuffer(value);

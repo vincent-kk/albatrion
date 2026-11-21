@@ -3,9 +3,12 @@
 ## Requirements
 
 - `debounce(fn, ms, options?)`는 마지막 호출 후 `ms`만큼 조용한 시간이 지나야 실행된다. 연속 호출은 매번 대기 시간을 재설정한다.
-- `throttle(fn, ms, options?)`는 한 시간 창(window)에 최대 한 번만 실행된다. `leading`이면 창이 시작될 때 즉시 실행되고, `trailing`이면 창이 끝날 때 그 사이 발생한 마지막 호출의 인자로 한 번 더 실행된다.
+- `throttle(fn, ms, options?)`는 타이머가 소유하는 시간 창(window)마다 leading 실행과 대기 인자의 trailing 실행을 제어한다. `leading`이면 창이 시작될 때 즉시 실행되고, `trailing`이면 창이 끝날 때 그 사이 발생한 마지막 호출의 인자로 한 번 더 실행된다.
 - 두 함수 모두 `signal`을 받아 예정된 실행을 취소할 수 있고, 이미 abort된 signal을 넘기면 이후 호출은 아무 효과가 없다.
 - 두 함수 모두 `execute`(즉시 실행)·`clear`(예정 실행 취소)·`dispose`(취소와 리스너 해제) 제어 메서드를 노출한다.
+- 공유 엔진은 원래 함수를 호출하기 전에 저장한 인자를 비운다. 그래서 원래 함수 안에서 wrapper를 다시 부른 호출은 새 인자와 타이머로 남아 다음 실행에 반영되고, 원래 함수가 예외를 던져도 같은 인자로 다시 실행되지 않는다.
+
+호스트 타이머 한도인 2^31−1ms를 넘는 창도 전체 시간을 기다리도록 구간으로 나눕니다. Infinity는 trailing 실행 없이 기다리며 clear·dispose·abort로 예약을 취소할 수 있습니다.
 
 ## API Contracts
 
@@ -21,13 +24,16 @@
 - delay 이내에 연속 호출되면 원본 함수는 마지막 호출 기준으로 한 번만 실행된다.
 - `leading: true, trailing: true`면 첫 호출은 즉시 실행되고, 이어지는 호출이 있으면 delay 이후 한 번 더 실행된다.
 - `clear()` 호출 이후에는 예정된 실행이 일어나지 않는다.
+- 원래 함수 안에서 다시 호출하면 그 호출은 사라지지 않고 delay 이후 실행된다(타이머 만료와 `execute()` 모두).
+- 예외를 던진 leading 실행은 trailing에서 같은 인자로 다시 실행되지 않는다.
 - signal이 abort되면(호출 도중이든 호출 이전이든) 실행되지 않는다.
 
 ### throttle-window — 쓰로틀 윈도우와 leading/trailing
 
 - 첫 호출은 즉시 실행되고(leading 기본값 `true`), 같은 창 안의 추가 호출은 실행되지 않는다.
 - 창이 끝날 때 그 사이 호출이 있었다면 마지막 인자로 한 번 더 실행되고(trailing), 없었다면 추가 실행되지 않는다.
-- 반복되는 창마다 leading·trailing 패턴이 동일하게 재현된다.
+- 반복되는 창마다 leading·trailing 패턴이 동일하게 재현된다. 타이머가 만료된 정확한 시점의 호출도 새 창을 예약한다.
+- `clear()` 이후의 호출은 새 창을 예약하여 새 wrapper와 같은 leading·trailing 패턴을 유지한다. 원본 함수가 재진입해도 예약을 먼저 등록하므로 동기 재귀가 이어지지 않는다.
 - abort된 signal이거나 실행 후 abort되면 이후 실행이 일어나지 않는다.
 
 ### ratelimit-dispose — dispose를 통한 리스너 해제

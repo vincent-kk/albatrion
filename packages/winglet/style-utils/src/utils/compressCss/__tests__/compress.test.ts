@@ -160,4 +160,61 @@ describe('compressCss', () => {
       '.container{width:100%;max-width:1200px;margin:0 auto}@media (max-width:768px){.container{padding:0 16px }}',
     );
   });
+
+  it('keeps the descendant combinator before a pseudo-class', () => {
+    // ".a :hover" (hovered descendant of .a) differs from ".a:hover" (hovered .a)
+    expect(compressCss('.a :hover{color:red}')).toBe('.a :hover{color:red}');
+  });
+
+  it('drops the space before a declaration colon but not before a selector colon', () => {
+    expect(
+      compressCss(
+        '.a { content : "{"; color : red } .b :is(.c) { x : y } :root{z:w}',
+      ),
+    ).toBe('.a{content:"{";color:red}.b :is(.c){x:y}:root{z:w}');
+  });
+
+  it('ignores comments when deciding whether a colon starts a declaration', () => {
+    expect(compressCss('.a :hover /* } */ { color: red }')).toMatch(
+      /^\.a :hover ?\{color:red\}$/,
+    );
+  });
+
+  it('copies an unquoted url() verbatim, comment markers included', () => {
+    expect(
+      compressCss(
+        '.a { background: url(http://x.com/a/*b) } .b { color: red }',
+      ),
+    ).toBe('.a{background:url(http://x.com/a/*b)}.b{color:red}');
+  });
+
+  it('strips comments inside a function whose name only ends in url', () => {
+    expect(compressCss('.a { b: myurl(x/* c */) }')).toBe('.a{b:myurl(x)}');
+  });
+
+  it('keeps the whitespace calc() requires around +', () => {
+    expect(compressCss('.a{width:calc(1px + 2px)}')).toBe(
+      '.a{width:calc(1px + 2px)}',
+    );
+  });
+
+  it('keeps + spacing only inside parentheses', () => {
+    expect(
+      compressCss(
+        '.x:is(.a) + .b, li:nth-child(2n + 1){width:calc((1px + 2px) * 2)}',
+      ),
+    ).toBe('.x:is(.a)+.b,li:nth-child(2n + 1){width:calc((1px + 2px) * 2)}');
+  });
+
+  it('does not treat comment markers inside a string as a comment', () => {
+    expect(compressCss('.a{content:"/*"}.b{color:red}')).toBe(
+      '.a{content:"/*"}.b{color:red}',
+    );
+  });
+
+  it('ends a string only at an unescaped matching quote', () => {
+    expect(compressCss(".a{content:'\\'/*  \"'}.b{color:red}")).toBe(
+      ".a{content:'\\'/*  \"'}.b{color:red}",
+    );
+  });
 });

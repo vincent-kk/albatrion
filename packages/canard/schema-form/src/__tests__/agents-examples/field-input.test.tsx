@@ -500,13 +500,20 @@ it('a hybrid parent preserves focus, same-batch sibling edits and evaluated chil
     />,
   );
   await waitFor(() => expect(ref.current).not.toBeNull());
-  const first =
-    view.container.querySelector<HTMLInputElement>('[id="/first"]')!;
-  const last = view.container.querySelector<HTMLInputElement>('[id="/last"]')!;
+  const first = view.container.querySelector<HTMLInputElement>(
+    ':is([id="/first"], [id$=":/first~input"]):not(label):not(legend)',
+  )!;
+  const last = view.container.querySelector<HTMLInputElement>(
+    ':is([id="/last"], [id$=":/last~input"]):not(label):not(legend)',
+  )!;
   first.focus();
   fireEvent.change(first, { target: { value: 'first' } });
   await act(async () => {});
-  expect(view.container.querySelector('[id="/first"]')).toBe(first);
+  expect(
+    view.container.querySelector(
+      ':is([id="/first"], [id$=":/first~input"]):not(label):not(legend)',
+    ),
+  ).toBe(first);
   expect(document.activeElement).toBe(first);
 
   await act(async () => {
@@ -516,8 +523,16 @@ it('a hybrid parent preserves focus, same-batch sibling edits and evaluated chil
     });
   });
   expect(ref.current!.getValue()).toEqual({ first: 'updated', last: 'last' });
-  expect(view.container.querySelector('[id="/first"]')).toBe(first);
-  expect(view.container.querySelector('[id="/last"]')).toBe(last);
+  expect(
+    view.container.querySelector(
+      ':is([id="/first"], [id$=":/first~input"]):not(label):not(legend)',
+    ),
+  ).toBe(first);
+  expect(
+    view.container.querySelector(
+      ':is([id="/last"], [id$=":/last~input"]):not(label):not(legend)',
+    ),
+  ).toBe(last);
   expect(document.activeElement).toBe(first);
 
   fireEvent.click(screen.getByRole('checkbox', { name: 'red' }));

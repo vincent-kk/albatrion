@@ -1,0 +1,101 @@
+import type { ValidatorPlugin } from '@canard/schema-form';
+import type Ajv from 'ajv';
+
+import { createGuardCompiler } from './createGuardCompiler';
+import { assertBindableInstance } from './utils/assertBindableInstance';
+import { createDefaultInstance } from './utils/createDefaultInstance';
+import { createFinalizer } from './utils/createFinalizer';
+import { createSchemaValidator } from './utils/createSchemaValidator';
+import { disposeSchemaRoot } from './utils/disposeSchemaRoot';
+import {
+  type SchemaRootRegistration,
+  registerSchemaRoot,
+} from './utils/registerSchemaRoot';
+import { registerValidationRoot } from './utils/registerValidationRoot';
+import { releaseSchemaRoot } from './utils/releaseSchemaRoot';
+
+/**
+ * AJV6 defaults preserve the plugin's Draft-07 and format behavior.
+ */
+const defaultSettings: Ajv.Options = {
+  allErrors: true,
+  multipleOfPrecision: 9,
+  nullable: true,
+  verbose: true,
+  format: false,
+};
+
+/** The consumer binding is process-wide, as required by ValidatorPlugin.bind. */
+let ajvInstance: Ajv.Ajv | null = null;
+/** Process-wide optimization selection; existing predicates retain their behavior. */
+let directGuardCompile = true;
+
+/** Plugin-specific configuration extends the core contract without changing it. */
+type ConfigurableValidatorPlugin = ValidatorPlugin & {
+  /**
+   * Select direct compilation of self-contained guards (default true).
+   * @param options - False uses root pointers for later compiles; omitted fields
+   * keep their value. Existing predicates and bound Ajv settings are unchanged.
+   * @returns Nothing; updates this entry point's process-wide selection.
+   */
+  configure(options: { directGuardCompile?: boolean }): void;
+};
+/** Root registrations belong to the current binding. */
+let roots = new WeakMap<object, SchemaRootRegistration>();
+/** Live registrations expose overlapping IDs to the registration boundary. */
+let active: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[] = [];
+const finalizer = createFinalizer(disposeSchemaRoot);
+
+/**
+ * Ajv 6 validation and synchronous guards for schema-form.
+ */
+export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
+  Required<Pick<ValidatorPlugin, 'bind' | 'compileGuard' | 'release'>> = {
+  /** Set direct compilation for later guards (default true); omitted options stay unchanged. */
+  configure: (options) => {
+    directGuardCompile = options.directGuardCompile ?? directGuardCompile;
+  },
+  bind: (instance: Ajv.Ajv) => {
+    assertBindableInstance(instance);
+    ajvInstance = instance;
+    roots = new WeakMap();
+    active = [];
+  },
+  compile: (jsonSchema) => {
+    if (!ajvInstance) ajvInstance = createDefaultInstance(defaultSettings);
+    const registered = registerSchemaRoot(
+      jsonSchema,
+      ajvInstance,
+      roots,
+      active,
+      finalizer,
+    );
+    registerValidationRoot(registered);
+    const validate = createSchemaValidator(
+      registered.validation,
+      registered.validationCopy ?? jsonSchema,
+      registered.validationCopy ? registered.key : undefined,
+    );
+    return async (value: unknown) => validate(value);
+  },
+  compileGuard: (root, pointer) => {
+    if (!ajvInstance) ajvInstance = createDefaultInstance(defaultSettings);
+    const registered = registerSchemaRoot(
+      root,
+      ajvInstance,
+      roots,
+      active,
+      finalizer,
+    );
+    return createGuardCompiler(
+      ajvInstance,
+      registered,
+      pointer,
+      root,
+      directGuardCompile,
+      finalizer,
+    );
+  },
+  release: (root) => releaseSchemaRoot(root, roots, active, finalizer),
+  dialect: 'http://json-schema.org/draft-07/schema#',
+} satisfies ConfigurableValidatorPlugin;

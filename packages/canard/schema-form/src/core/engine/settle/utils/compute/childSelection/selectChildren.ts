@@ -311,6 +311,9 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
         ? getItemEntries(node.blueprintNode, Number(entry.name))
         : node.blueprintNode.childEntries,
       distribution.isAutomatic,
+      distribution.isAutomatic
+        ? distribution.writeOrigin !== undefined
+        : undefined,
     );
   }
   const priorNames = frame.priorDynamicNames ?? Object.keys(prior);

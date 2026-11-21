@@ -53,7 +53,7 @@ console.assert(output.type === 'string');
 
 ## Document supply decision
 
-The package never fetches documents by itself. Use registered resources for documents already available and an explicit async load hook for other document URIs. Load receives an absolute URI without the fragment, and missing/pending results are cached per resolver. Supply a new resolver for changed sources. Waiting is sequential; preloading registered resources can avoid per-reference round trips. Network access, retry, authentication and cancellation remain in the caller's loader.
+The package never fetches documents by itself. Use registered resources for documents already available and an explicit async load hook for other document URIs. Load receives an absolute URI without the fragment. In-flight, fulfilled, and missing results stay shared per resolver. A rejected request is removed so the next explicit resolve calls load again; one resolve never retries automatically. Supply a new resolver for changed sources. Waiting is sequential; preloading registered resources can avoid per-reference round trips. Network access, retry, authentication and cancellation remain in the caller's loader.
 
 <!-- example: load -->
 

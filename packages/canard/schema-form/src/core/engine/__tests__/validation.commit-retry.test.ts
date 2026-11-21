@@ -76,7 +76,7 @@ it('IR-6 R-a an asynchronous initial explicit mount verdict requeues OnChange ev
   expect(runtime.validationResult?.commit).toBe(runtime.commitNumber);
   expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
 });
-it('IR-6 R-a equal-content setValue preserves the output value while a changed commit still owes a current verdict', async () => {
+it('IR-6 R-a equal-content setValue preserves the output and accepts the current verdict', async () => {
   const clock = createValidationFrameClock();
   const finishes: ((issues: readonly []) => void)[] = [];
   const { root, runtime } = createDispatchTree(
@@ -100,15 +100,10 @@ it('IR-6 R-a equal-content setValue preserves the output value while a changed c
   expect(runtime.commitNumber).toBeGreaterThan(commit);
   finishes[0]([]);
   await clock.task();
-  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(true);
-  clock.frame();
-  await clock.task();
-  clock.frame();
-  await clock.task();
-  expect(finishes).toHaveLength(2);
-  finishes[1]([]);
-  await clock.task();
   expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
+  clock.frame();
+  await clock.task();
+  expect(finishes).toHaveLength(1);
   expect(runtime.validationResult?.commit).toBe(runtime.commitNumber);
 });
 
@@ -155,3 +150,39 @@ it('IR-6 H commit-only retry preserves both root and subtree request targets', a
   ]);
   expect(runtime.isValidationPending).toBe(false);
 });
+
+it.each(['output', 'context'] as const)(
+  'IR-6 changed %s still discards an in-flight verdict and reruns',
+  async (change) => {
+    const clock = createValidationFrameClock();
+    const finishes: ((issues: readonly []) => void)[] = [];
+    const { root, runtime } = createDispatchTree(
+      { type: 'string' },
+      undefined,
+      {
+        compile: () => () =>
+          new Promise<readonly []>((resolve) => finishes.push(resolve)),
+        compileGuard: () => () => true,
+      },
+    );
+    dispatchMount(root, 'old', undefined, { deferValidation: true });
+    runtime.validationMode = ValidationMode.OnChange;
+    dispatchSetValue(root, 'new');
+    clock.frame();
+    await clock.task();
+    if (change === 'output') dispatchSetValue(root, 'newest');
+    else dispatchContextChange(root, { changed: true });
+    finishes[0]([]);
+    await clock.task();
+    expect(runtime.isValidationPending).toBe(true);
+    clock.frame();
+    await clock.task();
+    clock.frame();
+    await clock.task();
+    expect(finishes).toHaveLength(2);
+    finishes[1]([]);
+    await clock.task();
+    expect(runtime.isValidationPending).toBe(false);
+    expect(runtime.validationResult?.commit).toBe(runtime.commitNumber);
+  },
+);

@@ -3,7 +3,7 @@ import { createRef, useLayoutEffect } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, inject, it, vi } from 'vitest';
 
-import { useFieldErrors } from '@/schema-form';
+import { FieldNodeState, useFieldErrors } from '@/schema-form';
 import { ErrorVisibility } from '@/schema-form';
 import {
   type FieldInputProps,
@@ -33,9 +33,9 @@ it('IR-6 D React18 legacy release preserves a reentrant layout write history (Re
       if (!armed || !errorVisible) return;
       armed = false;
       writes++;
-      node.setState({ 4: false });
+      node.setState({ [FieldNodeState.ErrorVisibility]: false });
       node.setValue('abc');
-      node.setState({ 4: true });
+      node.setState({ [FieldNodeState.ErrorVisibility]: true });
     }, [node, errorVisible]);
     return <input value={String(node.value)} readOnly />;
   };
@@ -74,8 +74,8 @@ it('IR-6 D React18 legacy release preserves a reentrant layout write history (Re
   const clock = createValidationFrameClock();
   act(() => {
     ref.current!.setValue('ac');
-    ref.current!.node!.setState({ 4: false });
-    ref.current!.node!.setState({ 4: true });
+    ref.current!.node!.setState({ [FieldNodeState.ErrorVisibility]: false });
+    ref.current!.node!.setState({ [FieldNodeState.ErrorVisibility]: true });
   });
   expect(view.getByTestId('error').textContent).toBe('');
   armed = true;

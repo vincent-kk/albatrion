@@ -1,6 +1,7 @@
 import { Fragment, memo, useMemo, useRef, useState } from 'react';
 
 import { isFunction, isString } from '@winglet/common-utils/filter';
+import { isReactComponent } from '@winglet/react-utils/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 import { renderComponent } from '@winglet/react-utils/render';
 
@@ -96,12 +97,14 @@ export const PromptInner = memo(
             <ContentComponent context={userDefinedContext}>
               {content}
             </ContentComponent>
-          ) : (
+          ) : typeof content === 'function' || isReactComponent(content) ? (
             renderComponent(content, {
               onConfirm: handleConfirm,
               onCancel: handleClose,
               context: userDefinedContext,
             })
+          ) : (
+            content
           ))}
 
         {Input && (

@@ -2,16 +2,19 @@
 
 ## Requirements
 
-- `Portal`에 등록된 children은 Portal 자신의 트리 위치가 아니라, 같은 `Portal.with` 범위에서 마운트된 `Portal.Anchor`의 DOM 위치에 렌더된다.
-- Portal 인스턴스의 등록 id는 인스턴스 생애주기 동안 고정되어, children이 바뀌어도 서브트리가 리마운트되지 않고 갱신만 된다.
+- `Portal`의 children은 Portal 자신의 트리 위치가 아니라, 같은 `Portal.with` 범위에서 마운트된 `Portal.Anchor`의 DOM 위치에 렌더된다.
+- Portal은 자신의 React 위치에서 createPortal을 반환한다. children의 타입과 key가 같으면 갱신과 Activity 숨김·표시 사이에 상태를 유지한다.
+- 컨텍스트와 이벤트 버블링은 Portal 소스 위치의 React 조상을 따른다. Portal.with 아래에서 소스만 감싸는 프로바이더와 이벤트 핸들러도 적용된다.
 - 마운트된 Anchor가 교체되면 포털된 콘텐츠는 새 Anchor 위치로 따라가고, Portal이 언마운트되면 콘텐츠는 제거된다.
 - `Portal.with`로 감싼 컴포넌트는 원본 props 전달과 렌더 결과를 변형 없이 유지하며, 동일 props로 재렌더해도 결과가 유지된다.
 
 ## API Contracts
 
-- `Portal` — children을 등록하고 자신은 항상 `null`을 반환한다. 등록 id는 마운트 시 한 번 생성되어 고정되며, children이 바뀌면 같은 id로 재등록되고, 언마운트 시 해당 id를 해제한다.
-- `Portal.Anchor` — 마운트되는 DOM 엘리먼트를 콜백 ref로 컨텍스트에 보고해 포털 렌더 위치로 지정한다. 표준 div 속성을 전달받으며, 기본 `style`은 `{ display: 'contents' }`이고 `props.style`이 있으면 병합이 아니라 대체된다.
-- `Portal.with` — 컴포넌트를 포털 컨텍스트 프로바이더로 감싸 독립된 등록/해제 범위를 만든다. 반환 컴포넌트는 메모이즈된다.
+- `Portal`은 memo 컴포넌트의 메타데이터와 렌더 생략 동작을 유지하며, 내부 어댑터 선언이 렌더 함수의 반환 타입을 보존한다.
+- `Portal`의 공개 호출 반환 타입은 `ReactPortal | null`이며 `null`로만 선언하지 않는다.
+- `Portal` — 앵커가 있으면 해당 DOM에 children을 넣는 createPortal 결과를 반환하고, 없으면 null을 반환한다. 서버와 첫 hydration 렌더에는 앵커가 없고 내용은 ref 연결 후 나타난다.
+- `Portal.Anchor` — 마운트되는 DOM 엘리먼트를 콜백 ref로 컨텍스트에 보고해 포털 렌더 위치로 지정한다. Activity·Suspense의 임시 ref 해제는 목적지를 지우지 않는다. 실제 삭제 시 React 18·19의 insertion effect 정리에서 마이크로태스크를 예약하여 해당 노드가 여전히 목적지일 때만 해제한다. React 16.14·17은 숨김과 실제 삭제를 구분하기 위해 passive effect 정리를 사용한다. 표준 div 속성을 전달받으며, 기본 `style`은 `{ display: 'contents' }`이고 `props.style`이 있으면 병합이 아니라 대체된다.
+- `Portal.with` — 컴포넌트를 포털 컨텍스트 프로바이더로 감싸 독립된 앵커 범위를 만든다. 반환 컴포넌트는 메모이즈된다.
 
 ## Acceptance Criteria
 
@@ -23,7 +26,9 @@
 
 ### subtree-stability — 리렌더 시 서브트리 안정성
 
-- Portal을 감싼 부모가 리렌더되어도 등록 id가 유지되는 한 포털된 서브트리는 리마운트되지 않는다.
+- Portal을 감싼 부모가 리렌더되어도 children의 타입과 key가 유지되는 한 포털된 서브트리는 리마운트되지 않는다.
+- 소스 전용 프로바이더와 소스 조상 클릭 핸들러는 원시 createPortal과 같은 결과를 낸다.
+- 동일 앵커의 독립 포털은 최초 마운트 순서를 유지한다.
 - Portal의 children이 교체되면 포털된 콘텐츠는 새 값으로 갱신된다.
 
 ### with-portal-provider — compound export의 컨텍스트 제공

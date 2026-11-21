@@ -30,19 +30,65 @@ export function createCheckPlan(workspaces, files, reason = null, tier = "pr") {
     "selectionDependencies",
   );
   const shards = [];
-  const main = affected.filter((name) => name !== "@canard/schema-form");
+  const plugins = affected.filter(
+    (name) =>
+      name.startsWith("@canard/schema-form-") && name.endsWith("-plugin"),
+  );
+  const shared = affected.filter((name) =>
+    ["@slats/agents-assets-sync", "@winglet/common-utils"].includes(name),
+  );
+  const main = affected.filter(
+    (name) =>
+      name !== "@canard/schema-form" &&
+      !plugins.includes(name) &&
+      !shared.includes(name),
+  );
   if (main.length)
     shards.push(createShard("main", main, changed, workspaces, tier));
-  if (affected.includes("@canard/schema-form"))
-    shards.push(
-      createShard(
-        "schema-form",
-        ["@canard/schema-form"],
-        changed,
-        workspaces,
-        tier,
+  if (affected.includes("@canard/schema-form")) {
+    const schemaForm = ["@canard/schema-form"];
+    if (tier === "pr") {
+      // Run lint in the render job so neither unit job spends its time on lint.
+      for (const index of [1, 2])
+        shards.push(
+          createShard(
+            `schema-form-unit-${index}`,
+            schemaForm,
+            [],
+            workspaces,
+            tier,
+            `${index}/2`,
+          ),
+        );
+      shards.push(
+        createShard(
+          "schema-form-render",
+          schemaForm,
+          changed,
+          workspaces,
+          tier,
+        ),
+      );
+    } else
+      shards.push(
+        createShard("schema-form", schemaForm, changed, workspaces, tier),
+      );
+  }
+  const pluginGroups = [
+    ["plugins-ajv", plugins.filter((name) => name.includes("-ajv"))],
+    ["plugins-antd", plugins.filter((name) => /-antd[56]-plugin$/.test(name))],
+    [
+      "plugins-ui",
+      plugins.filter(
+        (name) => !name.includes("-ajv") && !/-antd[56]-plugin$/.test(name),
       ),
-    );
+    ],
+  ];
+  for (const [name, members] of pluginGroups)
+    if (members.length)
+      shards.push(createShard(name, members, changed, workspaces, tier));
+  if (shared.length)
+    shards.push(createShard("shared", shared, changed, workspaces, tier));
   return {
     tier,
     changed,

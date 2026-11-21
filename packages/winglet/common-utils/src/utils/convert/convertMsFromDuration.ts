@@ -74,8 +74,8 @@ import { HOUR, MINUTE, SECOND } from '@/common-utils/constant';
  * console.log(convertMsFromDuration('5 seconds')); // 0 (full word units not supported)
  *
  * // Special values
- * console.log(convertMsFromDuration(null as any)); // 0 (null input)
- * console.log(convertMsFromDuration(undefined as any)); // 0 (undefined input)
+ * console.log(convertMsFromDuration(null)); // 0 (null input)
+ * console.log(convertMsFromDuration(undefined)); // 0 (undefined input)
  * ```
  *
  * @example
@@ -279,7 +279,8 @@ import { HOUR, MINUTE, SECOND } from '@/common-utils/constant';
  * }
  * ```
  */
-export const convertMsFromDuration = (duration: string) => {
+export const convertMsFromDuration = (duration: string | null | undefined) => {
+  if (duration == null) return 0;
   if (!DURATION_REGEX) DURATION_REGEX = /^\s*(\d+)\s*(ms|s|m|h)\s*$/;
   const [, durationString, unit] = duration.match(DURATION_REGEX) || [];
   if (!durationString || !unit) return 0;

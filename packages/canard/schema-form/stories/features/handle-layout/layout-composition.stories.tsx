@@ -66,7 +66,13 @@ export const PathLayout: Story = {
     formProps: { errorVisibility: ErrorVisibility.Always },
     onHandle: probe.onHandle,
   },
-  parameters: { docs: { description: { story: formatScenarioDescription(scenario.description ?? '') } } },
+  parameters: {
+    docs: {
+      description: {
+        story: formatScenarioDescription(scenario.description ?? ''),
+      },
+    },
+  },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
@@ -74,7 +80,7 @@ export const PathLayout: Story = {
     const copies = () =>
       Array.from(
         canvasElement.querySelectorAll<HTMLInputElement>(
-          `input[id="${layoutPlan.repeated}"]`,
+          `input:is([id="${layoutPlan.repeated}"], [id$=":${layoutPlan.repeated}~input"]):not(label):not(legend)`,
         ),
       );
     await userEvent.type(copies()[0], layoutPlan.typed);
@@ -82,7 +88,11 @@ export const PathLayout: Story = {
       () => ({
         copies: copies().map((input) => input.value),
         omitted: layoutPlan.omitted.map((path) =>
-          Boolean(canvasElement.querySelector(`[id="${path}"]`)),
+          Boolean(
+            canvasElement.querySelector(
+              `:is([id="${path}"], [id$=":${path}~input"]):not(label):not(legend)`,
+            ),
+          ),
         ),
         rendered: canvasElement.querySelector(
           `[data-render="${layoutPlan.render}"]`,

@@ -3,6 +3,7 @@ import type { SettlementContext } from '../../types/settlement';
 import { getChildDistribution } from '../input/getChildDistribution';
 import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
 import { markWrite } from '../input/markWrite';
+import { acceptsRetainedWrite } from '../input/utils/acceptsRetainedWrite';
 import { replayMovedSource } from '../slots/replayMovedSource';
 
 /**
@@ -36,12 +37,28 @@ export const enterFieldNode = <Self extends FieldNodeRecord<Self>>(
     );
   else if (write || distribution?.isWhole) {
     const value = write ? Reflect.get(distribution.input, name) : undefined;
+    const writeOrigin =
+      write || distribution.writeOrigin === 'revived'
+        ? distribution.writeOrigin
+        : undefined;
     if (distribution.isAutomatic) {
+      if (!acceptsRetainedWrite(child, context, distribution.writeOrder))
+        return;
       context.isAutomatic = true;
-      context.writtenInputs.set(child, value);
-      context.filledNodes.add(child);
+      if (writeOrigin === undefined) {
+        context.writtenInputs.set(child, value);
+        context.filledNodes.add(child);
+      }
     }
-    markWrite(child, value, context);
+    markWrite(
+      child,
+      value,
+      context,
+      undefined,
+      undefined,
+      writeOrigin,
+      distribution.writeOrder,
+    );
     if (distribution.isAutomatic) context.isAutomatic = false;
   } else if (child.behavior.strategy === 'terminal')
     markWrite(child, undefined, context);

@@ -1,63 +1,85 @@
-import type Ajv from 'ajv';
+import type { JSONSchema } from '@canard/schema-form';
+import type { Ajv } from 'ajv';
 
 import type { Fn } from '@aileron/declare';
 
 import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
-import { cloneInstance } from './utils/cloneInstance';
 import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
-import { registerSchemaGuard } from './utils/registerSchemaGuard';
-import type { SchemaRootRegistration } from './utils/registerSchemaRoot';
+import { compileMacroSchema } from './utils/privateCompiler/compileMacroSchema';
+import { isPrivateCompilerCurrent } from './utils/privateCompiler/isPrivateCompilerCurrent';
+import { selectRootCompiler } from './utils/privateCompiler/selectRootCompiler';
+import {
+  type SchemaRootRegistry,
+  registerSchemaRoot,
+} from './utils/registerSchemaRoot';
 import { resolveGuardSchema } from './utils/resolveGuardSchema';
 
 /**
- * Compile a synchronous guard directly when context-free, otherwise in its root.
- * A direct guard registers no root; only a root-pointer guard registers the root copy on the
- * guard instance, which compiles without meta-schema validation.
- * @param instance - The bound instance whose profile the guard instance copies.
- * @param registration - The first-error guard instance and owner of compiled guards.
- * @param pointer - The guard's original JSON Pointer, optionally prefixed with #.
- * @param root - The engine copy containing the original subschema object.
- * @param directGuardCompile - Enable direct compilation of self-contained guards.
- * @param finalizer - Cleanup owner for roots whose resources cannot retain the root.
- * @returns An input-preserving predicate; asynchronous results are refused.
+ * Compiles a synchronous guard at a location in its registered root.
+ * @param ajv - The active AJV instance supplying the guard's dialect and extensions.
+ * @param registry - Root registrations shared with full validation.
+ * @param callerRoot - The authored root whose detached snapshot contains the guard.
+ * @param pointer - An unfragmented JSON Pointer to the guard schema.
+ * @param directGuardCompile - Compile self-contained guards directly when enabled.
+ * @returns A boolean predicate evaluated without changing its input.
  * @throws GuardPointerNotSchemaError when the pointer does not locate a schema
+ * @throws Error when the guard or a declaration selected as its dynamic anchor is asynchronous, or when the guard
+ * references a dynamic anchor inline that no chain resource and no ancestor of the reference inside the guard declares
  */
 export const createGuardCompiler = (
-  instance: Ajv.Ajv,
-  registration: SchemaRootRegistration,
+  ajv: Ajv,
+  registry: SchemaRootRegistry,
+  callerRoot: JSONSchema,
   pointer: string,
-  root: object,
   directGuardCompile: boolean,
-  finalizer: FinalizationRegistry<SchemaRootRegistration>,
 ): Fn<[value: unknown], boolean> => {
-  const fragment = pointer.startsWith('#') ? pointer : `#${pointer}`;
-  const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : '';
+  const registration = registerSchemaRoot(registry, ajv, callerRoot);
+  const root = registration.copy;
+  const cacheKey = `${directGuardCompile}:${pointer}`;
+  const cached = registration.guards.get(cacheKey);
+  if (cached && isPrivateCompilerCurrent(cached.compiler))
+    return cached.validate;
+  const rootId = typeof root.$id === 'string' ? root.$id : '';
   const located = resolveGuardSchema(root, pointer);
   if (located === undefined)
     throw new GuardPointerNotSchemaError(rootId, pointer);
   const schema = directGuardCompile ? located : undefined;
-  const direct =
+  if (
     schema !== undefined &&
     !Object.prototype.hasOwnProperty.call(root, '$schema') &&
     isSelfContainedGuard(
       schema,
       registration.guardChecks,
-      instance._opts.schemaId === 'id' || instance._opts.schemaId === 'auto',
-    );
-  if (direct) {
-    // A direct root would retain itself through the finalizer's held value.
-    // Its ID-free, dedicated guard is collected with the weak root registration.
-    if (schema === root) finalizer.unregister(registration);
-    if (!registration.directGuards.includes(schema))
-      registration.directGuards.push(schema);
+      ajv._opts.schemaId === 'id' || ajv._opts.schemaId === 'auto',
+    )
+  ) {
+    const compiler = selectRootCompiler(registration, schema, 'guard');
+    const validate = compiler.macroProfile
+      ? compileMacroSchema(compiler, () => compiler.instance.compile(schema))
+      : compiler.instance.compile(schema);
+    registration.guardSchemas.push({ compiler, schema });
+    if ('$async' in validate && validate.$async === true)
+      throw new Error('async schema in sync schema');
+    const predicate = (value: unknown) => !!validate(value);
+    registration.guards.set(cacheKey, { compiler, validate: predicate });
+    return predicate;
   }
-  const guard = direct
-    ? (registration.guard ??= cloneInstance(instance, false, false))
-    : registerSchemaGuard(root, instance, registration);
-  const validate = guard.compile(
-    direct ? schema : { $ref: `${registration.rootId}${fragment}` },
-  );
-  if (direct && '$async' in validate && validate.$async === true)
+  const compiler = selectRootCompiler(registration, root, 'guard');
+  const guard = compiler.instance;
+  if (!Object.prototype.hasOwnProperty.call(guard._schemas, registration.key)) {
+    const guardCopy: JSONSchema = JSON.parse(JSON.stringify(root));
+    if (compiler.asynchronous) guardCopy.$async = true;
+    guard.addSchema(guardCopy, registration.key, true);
+    registration.guardSchemas.push({ compiler, schema: guardCopy });
+  }
+  const fragment = pointer.includes('%')
+    ? pointer.replace(/%/g, '%25')
+    : pointer;
+  const reference = { $ref: `${registration.key}#${fragment}` };
+  const validate = compiler.macroProfile
+    ? compileMacroSchema(compiler, () => guard.compile(reference))
+    : guard.compile(reference);
+  if ('$async' in validate && validate.$async)
     throw new Error('async schema in sync schema');
   return (value) => {
     const result = validate(value);

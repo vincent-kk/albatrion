@@ -74,7 +74,10 @@ it('LANDING-149 inline virtual inputs remain branches with referenced children',
   expect(form.node('/group')?.strategy).toBe('branch');
   expect(isTerminalNode(form.node('/group')!)).toBe(false);
   expect(
-    form.container.querySelector('[data-virtual] input')?.getAttribute('id'),
+    form.container
+      .querySelector('[data-virtual] input')
+      ?.closest('[data-path]')
+      ?.getAttribute('data-path'),
   ).toBe('/name');
 });
 

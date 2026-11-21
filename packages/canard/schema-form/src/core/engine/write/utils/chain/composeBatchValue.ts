@@ -3,8 +3,9 @@ import { isArray } from '@winglet/common-utils/filter';
 import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { WriteOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import { isNamedPointerSegments } from '../../../utils/paths/isNamedPointerSegments';
+import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
 import { replaceAtPath } from './utils/replaceAtPath';
 
 /**
@@ -13,34 +14,59 @@ import { replaceAtPath } from './utils/replaceAtPath';
  * virtual key and a later field write wins over an earlier virtual one (R2).
  * @param root - Common root of every marked occurrence
  * @param writes - Call-order inputs, already resolved from updaters
+ * @param base - Committed root value the marks overlay; a reader passes it with a target's own
+ * committed value placed at the target address
  * @returns Candidate root input for one settlement
  */
 export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
   root: Self,
-  writes: readonly { node: Self; value: unknown; option: WriteOption }[],
+  writes: readonly {
+    node: Self;
+    value: unknown;
+    option: WriteOption;
+    virtualFields?: readonly string[];
+  }[],
+  base: unknown = root.storedValue,
 ): unknown => {
-  let value = root.storedValue;
+  let value = base;
   for (const write of writes) {
     const names = parsePointerSegments(write.node.path);
     if (!isNamedPointerSegments(names))
       throw new TypeError('Expected a named node path');
-    const fields =
-      write.node.behavior.type === 'virtual'
-        ? (write.node.blueprintNode.fields ?? [])
-        : undefined;
-    if (fields === undefined) {
-      value = replaceAtPath(value, names, write.value, write.option);
+    const targets = resolveStorageTargets(write.node);
+    if (targets === undefined) {
+      value = replaceAtPath(
+        value,
+        names,
+        write.value,
+        write.option,
+        write.node,
+      );
       continue;
     }
     const values = isArray(write.value) ? write.value : undefined;
     const parentNames = names.slice(0, -1);
-    for (let index = 0; index < fields.length; index++) {
-      if (!write.node.parent?.childrenByName?.[fields[index]]) continue;
+    for (let index = 0; index < targets.length; index++) {
+      const target = targets[index];
+      if (
+        write.virtualFields
+          ? !write.virtualFields.includes(target.name)
+          : !target.node && values?.[index] === undefined
+      )
+        continue;
       value = replaceAtPath(
         value,
-        [...parentNames, fields[index]],
+        [...parentNames, target.name],
         values?.[index],
         write.option,
+        target.node,
+        !target.node &&
+          write.option & WriteOption.Merge &&
+          !(write.option & WriteOption.Replace)
+          ? write.node.parent?.blueprintNode.childEntries.find(
+              (entry) => entry.name === target.name,
+            )?.node
+          : undefined,
       );
     }
   }

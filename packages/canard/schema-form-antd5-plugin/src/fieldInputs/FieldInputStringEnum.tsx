@@ -15,6 +15,10 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { decodeEnumSelection } from './utils/enum/decodeEnumSelection';
+import { filterEnumOption } from './utils/enum/filterEnumOption';
+import { getOwnLabel } from './utils/enum/getOwnLabel';
+
 type ArrayJSONSchema = ArraySchema & {
   items: StringSchema;
 };
@@ -30,9 +34,11 @@ interface FieldInputStringEnumProps
 }
 
 const FieldInputStringEnum = ({
-  path,
+  inputId,
+  labelId,
   jsonSchema,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -52,7 +58,11 @@ const FieldInputStringEnum = ({
     return schema.enum
       ? map(schema.enum, (rawValue) => {
           const value = JSON.stringify(rawValue);
-          return { value, rawValue, label: alias?.['' + rawValue] || '' + rawValue };
+          return {
+            value,
+            rawValue,
+            label: getOwnLabel(alias, '' + rawValue) || '' + rawValue,
+          };
         })
       : [];
   }, [alias, schema]);
@@ -69,22 +79,19 @@ const FieldInputStringEnum = ({
 
   const initialValue = useMemo(() => {
     if (isArray(defaultValue))
-      return defaultValue.every(
-        (value) => value === null || typeof value === 'string',
-      )
-        ? defaultValue.map((value) => JSON.stringify(value))
-        : undefined;
+      return defaultValue.map((value) => JSON.stringify(value));
+    // A null array value means no selection, not the null option.
+    if (mode === 'multiple') return undefined;
     return defaultValue === null || typeof defaultValue === 'string'
       ? JSON.stringify(defaultValue)
       : undefined;
-  }, [defaultValue]);
+  }, [defaultValue, mode]);
 
   const handleChange = useHandle((value: string | string[]) => {
     if (Array.isArray(value)) {
-      const rawValues = value
-        .map((v) => options.find((option) => option.value === v)?.rawValue)
-        .filter((v) => v !== undefined);
-      return onChange(rawValues);
+      return onChange((previous) =>
+        decodeEnumSelection(isArray(previous) ? previous : [], value, options),
+      );
     } else {
       const rawValue = options.find(
         (option) => option.value === value,
@@ -96,10 +103,12 @@ const FieldInputStringEnum = ({
 
   return (
     <Select
-      id={path}
+      id={inputId}
+      aria-labelledby={labelId}
       mode={mode}
+      filterOption={filterEnumOption}
       placeholder={placeholder}
-      disabled={disabled}
+      disabled={disabled || readOnly}
       defaultValue={initialValue}
       onChange={handleChange}
       style={{ width: '100%' }}

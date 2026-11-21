@@ -109,6 +109,10 @@ export interface Distribution {
   readonly isWhole: boolean;
   /** Whether this distribution was an automatic transition write. */
   readonly isAutomatic: boolean;
+  /** Provenance of an automatic input whose named children survive fill withdrawal. */
+  writeOrigin?: 'declarative' | 'revived';
+  /** Sequence of the supplying automatic write, reused by every re-read. */
+  writeOrder?: number;
   /** Restored array positions whose sources remain under candidate-specific latent keys. */
   readonly retainedItemNames?: readonly string[];
   /** Surviving-slot reconstruction whose stored candidates remain authoritative. */
@@ -139,21 +143,6 @@ export interface SettlementScratch<Self> {
   distributedInputs: Map<Self, Distribution>;
   /** Wrong-kind hosts considered for conditional caller clearing. */
   wrongKindHosts: Set<Self>;
-  /** Previous state of each reversible automatic node write. */
-  automaticLog: {
-    node: Self;
-    previousSource: unknown;
-    previousExtras: unknown;
-    previousDistributed?: Distribution;
-  }[];
-  /** Ordered array shapes before reversible automatic writes. */
-  arrayStructureLog: {
-    host: Self;
-    previousItems: Self[];
-    previousItemCount: number;
-    previousExtras: unknown;
-    isRestored?: boolean;
-  }[];
   /** First array length observed in this settlement for snapshot alignment. */
   arrayCounts: Map<Self, number>;
   /** Paths changed before settlement, retained for later UpdatePath delivery. */
@@ -271,6 +260,8 @@ export interface FieldNodeRuntime<Self>
   isFeedbackLimitReported?: boolean;
   /** Number of active nested batch callbacks. */
   batchDepth?: number;
+  /** Final output reconciliation is eligible only after a batched array verb. */
+  batchHasArrayOperation?: true;
   /** Last relayed input output value per node, consumed by the first synchronous settlement. */
   inputRelays?: FieldNodeInputRelay<Self>[];
   /** Number of active nested `visitSubtree` walks on this tree. */
@@ -283,6 +274,8 @@ export interface FieldNodeRuntime<Self>
     value: unknown;
     option: WriteOption;
     source?: FieldNodeWriteKind.Input | FieldNodeWriteKind.Automatic;
+    /** Physical field names admitted by a virtual call before later marks settle. */
+    virtualFields?: readonly string[];
   }[];
   /** Load defers validation until the binding's slot. */
   shouldDeferLoadValidation?: boolean;

@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ChangeEvent, useMemo } from 'react';
 
 import { map } from '@winglet/common-utils/array';
@@ -12,7 +13,8 @@ import type { CheckboxLabelsContext, StringCheckboxJSONSchema } from './type';
 
 /** Render a checkbox per enum choice of a string-array node. */
 export const FieldInputStringCheckbox = ({
-  path,
+  labelId,
+  getInputId,
   name,
   jsonSchema,
   readOnly,
@@ -28,7 +30,7 @@ export const FieldInputStringCheckbox = ({
   Nullable<string>[],
   StringCheckboxJSONSchema,
   CheckboxLabelsContext
->) => {
+>): ReactElement => {
   const checkboxOptions = useMemo(
     () =>
       jsonSchema.items?.enum
@@ -68,27 +70,30 @@ export const FieldInputStringCheckbox = ({
   return (
     <div
       role="group"
-      aria-labelledby={'label:' + path}
+      aria-labelledby={labelId}
       aria-invalid={misfit || undefined}
     >
-      {map(checkboxOptions, ({ value, rawValue, label }, index) => {
-        const id = path + '-' + index;
-        return (
-          <label key={value} htmlFor={id} style={style} className={className}>
-            <input
-              type="checkbox"
-              id={id}
-              name={name}
-              readOnly={readOnly}
-              disabled={disabled}
-              value={value}
-              defaultChecked={selected.includes(rawValue)}
-              onChange={handleChange}
-            />
-            {label}
-          </label>
-        );
-      })}
+      {map(
+        checkboxOptions,
+        ({ value, rawValue, label }, index): ReactElement => {
+          const id = getInputId(index);
+          return (
+            <label key={value} htmlFor={id} style={style} className={className}>
+              <input
+                type="checkbox"
+                id={id}
+                name={name}
+                readOnly={readOnly}
+                disabled={disabled}
+                value={value}
+                defaultChecked={selected.includes(rawValue)}
+                onChange={handleChange}
+              />
+              {label}
+            </label>
+          );
+        },
+      )}
     </div>
   );
 };

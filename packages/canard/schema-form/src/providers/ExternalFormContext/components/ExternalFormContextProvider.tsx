@@ -1,9 +1,14 @@
-import { type ComponentType, type PropsWithChildren, useMemo } from 'react';
-
-import { useSnapshot } from '@winglet/react-utils/hook';
+import type { ReactElement } from 'react';
+import {
+  type ComponentType,
+  type PropsWithChildren,
+  useContext,
+  useMemo,
+} from 'react';
 
 import type { Dictionary } from '@aileron/declare';
 
+import { getScopedPluginManager } from '@/schema-form/app/plugin';
 import type { ValidationMode } from '@/schema-form/core';
 import { normalizeFieldInputDefinitions } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
@@ -17,10 +22,13 @@ import type {
   ValidatorFactory,
 } from '@/schema-form/types';
 
+import { useContextSnapshot } from '../../hooks/contextSnapshot/useContextSnapshot';
 import { ExternalFormContext } from './ExternalFormContext';
 import { ExternalInputContext } from './ExternalInputContext';
 
 export interface ExternalFormContextProviderProps {
+  /** Stable application registry token; omitted inherits the enclosing provider, or realm defaults at the root. */
+  pluginScope?: string | symbol;
   /** List of FieldInputDefinition declared externally */
   fieldInputDefinitions?: FieldInputDefinition[];
   /** FieldRenderer component declared externally */
@@ -185,6 +193,7 @@ export interface ExternalFormContextProviderProps {
  * - This provider is ideal for section-specific or feature-specific configuration
  */
 export const ExternalFormContextProvider = ({
+  pluginScope,
   fieldInputDefinitions,
   FieldRenderer,
   LabelRenderer,
@@ -196,7 +205,12 @@ export const ExternalFormContextProvider = ({
   context: inputContext,
   validatorFactory,
   children,
-}: PropsWithChildren<ExternalFormContextProviderProps>) => {
+}: PropsWithChildren<ExternalFormContextProviderProps>): ReactElement => {
+  const parent = useContext(ExternalFormContext);
+  const pluginManager =
+    pluginScope === undefined
+      ? parent.pluginManager
+      : getScopedPluginManager(pluginScope);
   const fromExternalFieldInputDefinitions = useMemo(
     () =>
       fieldInputDefinitions
@@ -204,13 +218,14 @@ export const ExternalFormContextProvider = ({
         : undefined,
     [fieldInputDefinitions],
   );
-  const context = useSnapshot(inputContext);
+  const context = useContextSnapshot(inputContext);
   const externalInputContext = useMemo(
-    () => ({ fromExternalFieldInputDefinitions, InputRenderer }),
-    [fromExternalFieldInputDefinitions, InputRenderer],
+    () => ({ fromExternalFieldInputDefinitions, InputRenderer, pluginManager }),
+    [fromExternalFieldInputDefinitions, InputRenderer, pluginManager],
   );
   const value = useMemo(
     () => ({
+      pluginManager,
       fromExternalFieldInputDefinitions,
       FieldRenderer,
       LabelRenderer,
@@ -223,6 +238,7 @@ export const ExternalFormContextProvider = ({
       context,
     }),
     [
+      pluginManager,
       fromExternalFieldInputDefinitions,
       FieldRenderer,
       LabelRenderer,

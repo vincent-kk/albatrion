@@ -1,5 +1,6 @@
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
+import { sameValueZero } from '../../../utils/compute/sameValueZero';
 
 /** Record a forthcoming verdict before public callbacks; only a false-to-true hold owns the entry stamp.
  * @param node - Current chain root whose final request uses this same eligibility.
@@ -15,7 +16,10 @@ export const prepareFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
       (runtime.validationMode ?? ValidationMode.None) & ValidationMode.OnChange
     ) ||
     runtime.isValidationUnavailable ||
-    (runtime.chainInitialOutputValue === node.rootNode.storedOutputValue &&
+    (sameValueZero(
+      runtime.chainInitialOutputValue,
+      node.rootNode.storedOutputValue,
+    ) &&
       !runtime.validationTargets?.size)
   )
     return false;

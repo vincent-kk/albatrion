@@ -237,7 +237,8 @@ interface CompareOptions {
 
 ```typescript
 interface ApplyPatchOptions {
-  strict?: boolean; // Strict application mode (default: false)
+  /** @deprecated Ignored. `test` operations always compare values */
+  strict?: boolean;
   immutable?: boolean; // Immutable mode (default: true)
 }
 ```
@@ -286,10 +287,11 @@ const theme = getValue(data, '/users/0/preferences/theme');
 console.log(theme); // "dark"
 
 // Value setting
+const before = JSON.parse(JSON.stringify(data));
 const updated = setValue(data, '/settings/app/version', '1.1.0');
 
 // Change comparison
-const patches = compare(data, updated);
+const patches = compare(before, updated);
 console.log(patches);
 // [{ op: "replace", path: "/settings/app/version", value: "1.1.0" }]
 ```
@@ -309,7 +311,6 @@ const patches = [
 // reserved member names are written as own data, never through the chain
 const result = applyPatch(data, patches, {
   immutable: true, // Preserve original data
-  strict: true, // Strict validation
 });
 
 console.log(data); // Original data preserved
@@ -371,15 +372,15 @@ const withNewItem = setValue(data, '/items/-', 'date');
 ## Error Handling
 
 ```typescript
-import { JSONPointerError, getValue } from '@winglet/json';
+import { getValue } from '@winglet/json';
 
+const missing = getValue({}, '/nonexistent/path'); // undefined
 try {
-  const value = getValue({}, '/nonexistent/path');
+  getValue({}, 'invalid-pointer');
 } catch (error) {
-  if (error instanceof JSONPointerError) {
-    console.error('JSON Pointer Error:', error.message);
-    console.error('Error Code:', error.code);
-    console.error('Additional Details:', error.details);
+  if (error instanceof Error && error.name === 'JSONPointer') {
+    console.error(error.message);
+    if ('specific' in error) console.error(error.specific);
   }
 }
 ```
@@ -389,7 +390,6 @@ try {
 ## Performance Considerations
 
 - **Large Data**: Consider using `immutable: false` option when dealing with deeply nested objects or large arrays
-- **Frequent Changes**: Use `strict: false` to improve performance when applying many patches sequentially
 - **Memory Usage**: Immutable mode uses more memory but ensures safety
 
 ---

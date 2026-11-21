@@ -10,6 +10,7 @@ import {
   blueprint,
 } from '@/schema-form/core/engine/blueprint';
 import type { AuthoredSchema } from '@/schema-form/core/engine/types/jsonSchema';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
 
 // @ts-expect-error The existing generator corpus is JavaScript without declarations.
 import { corpus } from './fixtures/generatorSchemaCorpus.mjs';
@@ -87,13 +88,13 @@ describe('branchless and generic observable equivalence', () => {
       generic.enabled = false;
       const optimized = nodeFromJSONSchema({
         jsonSchema: fixture.workspace,
-        validationMode: 0,
+        validationMode: ValidationMode.None,
       });
       const before = captureBranchlessNodeTree(optimized);
       generic.enabled = true;
       const general = nodeFromJSONSchema({
         jsonSchema: fixture.workspace,
-        validationMode: 0,
+        validationMode: ValidationMode.None,
       });
       expect(captureBranchlessNodeTree(general), fixture.name).toEqual(before);
       for (const interaction of fixture.interactions) {

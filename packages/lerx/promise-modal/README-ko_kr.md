@@ -231,7 +231,7 @@ export function ManualApp() {
 
 ## 컴포넌트 소유권과 옵션
 
-호출 컴포넌트 언마운트 시 미확정 요청을 취소하려면 `useModal`을 사용합니다. 확정된 요청은 즉시 추적 목록에서 빠집니다. 정적 호출은 호출자보다 오래 유지될 수 있지만 Provider 소유권을 따릅니다. `useModal(config)`는 마운트 시점 기본값을 보관하므로 바뀌는 값은 호출별로 전달합니다.
+React `Activity`나 Suspense로 호출자를 숨겨도 React가 effect 정리를 실행하므로 미확정 `useModal` 요청은 언마운트와 동일하게 취소됩니다. 호출 컴포넌트 언마운트 시 미확정 요청을 취소하려면 `useModal`을 사용합니다. 확정된 요청은 즉시 추적 목록에서 빠집니다. 정적 호출은 호출자보다 오래 유지될 수 있지만 Provider 소유권을 따릅니다. `useModal(config)`는 마운트 시점 기본값을 보관하므로 바뀌는 값은 호출별로 전달합니다.
 
 ```tsx
 import { type OverridableHandleProps, useModal } from '@lerx/promise-modal';
@@ -324,7 +324,7 @@ export function AnimatedApp() {
 
 ## 접근성
 
-Escape는 보이는 미확정 모달을 위에서 아래로 살피며 유효 `closeOnEscape`가 true인 첫 모달만 취소하고 이벤트의 기본 동작을 방지합니다. Escape를 받지 않는 nondimmed 모달은 건너뛰고, Escape를 받지 않는 dimmed 모달에서는 기본 동작을 방지하지 않고 멈춥니다. 호출 Esc, 호출 배경 클릭, Provider Esc, Provider 배경 클릭(기본 true) 순으로 정하며 `useModal` 기본값도 호출 데이터입니다. 기본 방지 이벤트와 IME 이벤트는 무시합니다. Escape를 받지 않는 dimmed 모달은 Escape가 하위 모달에 도달하지 못하게 합니다.
+Escape는 보이는 미확정 모달을 위에서 아래로 살피며 유효 `closeOnEscape`가 true인 첫 모달만 취소하고 이벤트의 기본 동작을 방지합니다. 입력 시작 시점의 후보만 닫을 수 있고, 입력 중 모달을 열거나 순서를 바꾸면 기본 닫기를 다음 입력으로 미룹니다. 한 번 누를 때 최대 한 모달만 닫히므로, 모달 안의 컨트롤이 같은 키 입력을 처리하면서 이미 모달을 확정했으면 다른 모달은 닫지 않습니다. Escape를 받지 않는 nondimmed 모달은 건너뛰고, Escape를 받지 않는 dimmed 모달에서는 기본 동작을 방지하지 않고 멈춥니다. 호출 Esc, 호출 배경 클릭, Provider Esc, Provider 배경 클릭(기본 true) 순으로 정하며 `useModal` 기본값도 호출 데이터입니다. 기본 방지 이벤트와 IME 이벤트는 무시합니다. Escape를 받지 않는 dimmed 모달은 Escape가 하위 모달에 도달하지 못하게 합니다.
 
 보이는 미확정 dimmed 모달은 내부로 포커스를 옮기고 페이지를 격리하며 기본으로 Tab 가두기와 body 스크롤 잠금을 수행합니다. `trapFocus: false`는 순환만 끄고 최초 포커스 이동과 격리는 유지합니다. `lockScroll: false`는 스크롤 잠금을 끕니다. 둘 다 Provider와 호출별로 지정할 수 있습니다. dimmed false 모달은 포커스 이동·복원·격리·스크롤 잠금에 참여하지 않습니다. 사용자 전경은 역할·접근 가능한 이름·설명을 제공하고 라이브러리 래퍼가 포커스 동작을 제공합니다. 기본 프레임은 dialog 역할과 aria-modal을 제공하지만 접근 가능한 이름은 애플리케이션이 지정해야 합니다. 스택·root·외부 포털 제한은 [접근성 계약](./docs/ko/SPECIFICATION.md#접근성)을 확인하십시오.
 
@@ -353,6 +353,8 @@ export async function showBrokenContent() {
 
 경로 이동은 미확정 요청을 확정 없이 숨기며 복귀하면 다시 표시합니다. 숨겨진 모달도 중단과 호출자 정리로 취소됩니다. 확정된 모달은 수동 파괴 모드에서도 다시 나타나지 않습니다. 초기화 주체 하나만 포털을 소유하며 추가 Provider는 대기하고 개발 환경에서 한 번 경고합니다. 소유자가 언마운트되면 첫 대기자가 이어받고 대기자가 없으면 현재 커밋 뒤 열린 요청을 취소합니다. 같은 커밋 재마운트와 StrictMode 점검은 미확정 결과와 prompt 입력을 유지하며 마운트 전 대기 요청은 대기열에 남습니다.
 
+Activity나 Suspense 재중단으로 Provider만 숨기면 키보드·포커스·페이지 효과를 해제하고 숨긴 트리 바깥 호출자의 요청을 대기 상태로 보존합니다. 다시 표시하면 같은 모달과 prompt 값이 돌아옵니다. 함께 숨겨진 useModal 호출자는 자신의 요청을 취소하며, 실제 Provider 제거는 기존 취소·인계 규칙을 따릅니다. Provider 숨김 때 취소하려면 명시적으로 중단하거나 Provider를 언마운트합니다.
+
 ## 추가 참조
 
 모든 훅·취소·경로·토스트·공개 래퍼 타입은 [사양서](./docs/ko/SPECIFICATION.md)를 확인하십시오. props 구조의 기준은 배포 선언이며 노드 클래스는 공개하지 않습니다. [에이전트 스킬](./docs/agents/skills/promise-modal-skill/SKILL.md)은 통합 판단 기준을 설명합니다.
@@ -360,3 +362,4 @@ export async function showBrokenContent() {
 ## 라이선스
 
 MIT.
+

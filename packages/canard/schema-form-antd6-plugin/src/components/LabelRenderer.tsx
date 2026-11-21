@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactElement } from 'react';
 
 import { Typography } from 'antd';
 
@@ -21,7 +21,7 @@ export const LabelRenderer = ({
   required,
   style,
   className,
-}: LabelRendererProps) => (
+}: LabelRendererProps): ReactElement => (
   <label htmlFor={htmlFor} id={id} style={style} className={className}>
     <Typography.Text style={TITLE_STYLE}>{children}</Typography.Text>
     {required && (

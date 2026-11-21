@@ -1,3 +1,5 @@
+import type { AbortSignalValue } from '@/common-utils/types/abortSignal';
+
 /**
  * Configuration options for controlling function execution behavior in rate limiting utilities.
  *
@@ -81,7 +83,7 @@ export type ExecutionOptions = {
    * controller.abort();
    * ```
    */
-  signal?: AbortSignal;
+  signal?: AbortSignalValue;
 
   /**
    * Whether to execute the function immediately on the first call.

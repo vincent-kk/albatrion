@@ -11,6 +11,7 @@ import { getSlotPathEntry } from './getSlotPathEntry';
 import { getSlotPathNames } from './getSlotPathNames';
 import { getSlotSource } from './getSlotSource';
 import { markSlotChange } from './markSlotChange';
+import { recordRetainedSlotWrite } from './utils/recordRetainedSlotWrite';
 
 /** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
@@ -25,6 +26,7 @@ type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
  * @param context - Optional automatic-write rollback scope
  * @param isAutomatic - Whether projected child writes preserve wrong-kind ancestor source
  * @param preserveCandidates - Structural replay keeps other kinds at the same address
+ * @param selectsNamedSource - Whether this write owns the slot's retained source
  * @returns Whether a terminal descendant has a projected value
  */
 export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
@@ -36,6 +38,7 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
   context?: SettlementContext<Self>,
   isAutomatic = false,
   preserveCandidates = false,
+  selectsNamedSource?: boolean,
 ): boolean => {
   const names = getSlotPathNames(root.runtime, path);
   if (names === undefined) return false;
@@ -109,18 +112,21 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
         binding,
         patch(binding.node, prior.instance, prior.overlay, index + 1),
       );
-      for (const other of entries) {
-        if (
-          preserveCandidates ||
-          other.name !== name ||
-          getBlueprintNodeIdentity(other.node) ===
-            getBlueprintNodeIdentity(binding.node) ||
-          instance?.childrenByName?.[name]?.blueprintNode === other.node
-        )
-          continue;
-        const prior = getSlotSource(instance, other, previous);
-        if (prior.instance || prior.overlay)
-          children.set(other, { isWhole: true });
+      if (!preserveCandidates) {
+        let bindingIdentity: Optional<string>;
+        for (const other of entries) {
+          if (
+            other.name !== name ||
+            other.node === binding.node ||
+            instance?.childrenByName?.[name]?.blueprintNode === other.node ||
+            getBlueprintNodeIdentity(other.node) ===
+              (bindingIdentity ??= getBlueprintNodeIdentity(binding.node))
+          )
+            continue;
+          const prior = getSlotSource(instance, other, previous);
+          if (prior.instance || prior.overlay)
+            children.set(other, { isWhole: true });
+        }
       }
       return { ...previous, children };
     };
@@ -128,22 +134,26 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
     const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
       new Map());
     overlays.set(entry, patch(entry.node, instance, previous, depth + 1));
-    for (const other of entries) {
-      if (
-        preserveCandidates ||
-        other.name !== name ||
-        getBlueprintNodeIdentity(other.node) ===
-          getBlueprintNodeIdentity(entry.node)
-      )
-        continue;
-      if (
-        !host.inactiveSlots?.has(other) &&
-        !host.inactiveSlotOverlays?.has(other)
-      )
-        continue;
-      markSlotChange(host, other, undefined, context);
-      host.inactiveSlots?.delete(other);
-      host.inactiveSlotOverlays?.delete(other);
+    if (context && selectsNamedSource !== undefined)
+      recordRetainedSlotWrite(host, entry, context, selectsNamedSource);
+    if (!preserveCandidates) {
+      let entryIdentity: Optional<string>;
+      for (const other of entries) {
+        if (
+          other.name !== name ||
+          other.node === entry.node ||
+          (!host.inactiveSlots?.has(other) &&
+            !host.inactiveSlotOverlays?.has(other)) ||
+          getBlueprintNodeIdentity(other.node) ===
+            (entryIdentity ??= getBlueprintNodeIdentity(entry.node))
+        )
+          continue;
+        markSlotChange(host, other, undefined, context);
+        host.inactiveSlots?.delete(other);
+        host.inactiveSlotOverlays?.delete(other);
+        if (context && selectsNamedSource !== undefined)
+          recordRetainedSlotWrite(host, other, context, selectsNamedSource);
+      }
     }
     return wrote;
   }

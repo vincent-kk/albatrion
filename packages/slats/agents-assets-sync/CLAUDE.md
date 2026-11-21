@@ -20,7 +20,7 @@ yarn dev:ui --tour   # cycle through all Ink phases with fixture data
 - `.` (main barrel, ESM-only)
   - `runCli(argv: string[]): Promise<void>` — dispatcher entry. Parses `--package <name...>` from argv (variadic: repeat or comma-separate). Each value is a scope alias (`@<scope>`), a scoped package (`@<scope>/<name>`), or an unscoped package (`<name>`).
   - Core primitives re-exported: `readHashManifest`, `computeNamespacePrefixes`, `resolveProjectRoot`, `resolveAgentTarget`, `resolveDestinations`, `formatBlockId`, `parseBlocks`, `isValidScope`, `isValidAgent`, `MARKER_PREFIX`, `PROJECT_ANCHORS`, `PROJECT_ROOT_MARKERS`, `HASH_MANIFEST_FILENAME`
-  - No `injectDocs` orchestrator — both renderers (Ink `ui/` and plain `renderPlain`) compose primitives directly.
+  - The internal core computes one run-wide plan and result; output views do not compose execution primitives.
 - `./buildHashes` — `buildHashes(options?)` produces `<packageRoot>/dist/agents-hashes.json`.
 - `./package.json` — the manifest itself. The dispatcher reads every target's `{ name, version, agents.assetPath }` through `createRequire(...).resolve()`, and an ESM-only package exposes nothing to `createRequire` unless it exports this subpath — so gating it would make this engine the one package its own CLI cannot inject.
 
@@ -85,11 +85,11 @@ A target is resolved from cwd first, then from every directory under the project
 
 ## AGENTS.md Marker Blocks
 
-One rule file becomes one block, so a block's body hash equals the manifest hash for that file and the copy/skip/diverged verdict matches the file path exactly.
+One rule file becomes one block. Validation, writing and body comparison use the same BOM-free, LF-normalized bytes; other source bytes retain their encoding. The manifest keeps raw file hashes and optional ruleBodyHashes for this comparison.
 
 ```
 <!-- AGENTS-ASSETS-SYNC:START:@canard/schema-form:rules/schema-form-rule.md -->
-…source bytes, verbatim…
+…normalized rule bytes…
 <!-- AGENTS-ASSETS-SYNC:END:@canard/schema-form:rules/schema-form-rule.md -->
 ```
 
@@ -97,9 +97,7 @@ The shape mirrors the `FILID:` / `SEIRI:` markers such files already carry. Cont
 
 ## Render Paths
 
-- **TTY + no `--json`**: `renderOrFallback` dynamic-imports `src/ui/index.js` and calls `renderInjectApp(input)`. The Ink app composes `core/**` primitives through `useInjectSession` + per-step hooks (`useResolveStep`, `usePlanStep`, `useForceConfirmStep`, `useApplyStep`).
-- **Non-TTY or `--json`**: `renderOrFallback` calls `renderPlain(targets, flags, originCwd)` which composes the same `core/**` primitives with picocolors text output.
-- Both paths share the same primitives; no `injectDocs(opts)` orchestrator in between.
+The core validates completed arguments, prepares all units before writing, merges shared namespaces, and applies the plan once. The plain and JSON compatibility entry functions delegate to that core and display its result. The terminal session supplies missing arguments and confirmation answers to the same function. Input views never plan, validate independently, or write. General orchestrator objects and per-renderer primitive pipelines are forbidden because they make output format affect behavior.
 
 ## Consumer Integration Pattern
 
@@ -205,7 +203,7 @@ scripts/
 
 ## Boundaries
 
-- `src/core/**` never imports from `src/ui/`, `src/commands/`, or `src/utils/logger.ts` (applyAction has a single `logger.warn` for rare unlink failures, the only exception).
+- `src/core/**` never imports from `src/ui/`, `src/commands/`, or `src/utils/logger.ts`.
 - `src/ui/**` never calls into `src/commands/**`; it's loaded via dynamic import from `renderOrFallback` only.
 - `src/ui/` is **not** exposed as a package subpath — internal only.
 - Nothing writes into a shared `AGENTS.md` outside this tool's own markers.

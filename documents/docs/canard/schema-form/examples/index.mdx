@@ -67,11 +67,11 @@ Forward input drafts through onChange and honor resolved controls. Use a fieldIn
 import { Form, type FieldInputProps } from '@canard/schema-form';
 
 function TextInput({
-  path, value, onChange, readOnly, disabled, placeholder, className,
+  inputId, value, onChange, readOnly, disabled, placeholder, className,
 }: FieldInputProps<string>) {
   return (
     <textarea
-      id={path}
+      id={inputId}
       value={value ?? ''}
       readOnly={readOnly}
       disabled={disabled}
@@ -147,3 +147,5 @@ export function SubmitForm() {
 ```
 
 The Antd5, Antd6, Antd Mobile and MUI plugins supply label/error parts without an input frame. Required marks are aria-hidden; Antd Mobile wraps a shown error in a span root. For custom part assembly and an error-aware frame, follow [registered parts](../api-reference#renderer-parts) and [useFieldErrors](../api-reference#field-errors).
+
+Custom inputs apply their supplied `inputId` to the focusable control; group renderers use `labelId` for their title and radio options use that scoped `inputId` as the native name. See [control identifiers and author responsibility](./../api-reference#control-identifiers-and-author-responsibility) for the executable single-control and group examples.

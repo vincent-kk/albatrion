@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import {
   type ForwardedRef,
   type RefObject,
@@ -52,7 +53,10 @@ import { submitForm } from '../utils/submitForm';
 import { FormRootProxy } from './FormRootProxy';
 
 /** Compose the fixed provider hierarchy and expose the current binding through the handle. */
-export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
+export const FormRoot = (
+  props: FormProps,
+  ref: ForwardedRef<FormHandle>,
+): ReactElement => {
   const formRef = useRef<HTMLFormElement>(null);
   const binding = useLazyConstant<RefObject<RootBinding>>(() => ({
     current: { reset: NOOP_FUNCTION, rebuild: NOOP_FUNCTION },
@@ -233,8 +237,24 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     [binding, captureValidationLifetime, focusNode, reporter, revealErrors],
   );
   const handleSubmit = useMemo(() => getTrackableHandler(submit), [submit]);
+  const handleNativeReset = useCallback(
+    (event: SyntheticEvent<HTMLFormElement>) => {
+      if (event.target !== event.currentTarget) return;
+      const nativeEvent = event.nativeEvent;
+      queueMicrotask(() => {
+        if (nativeEvent.defaultPrevented || !mounted.current) return;
+        try {
+          binding.current.reset();
+        } catch (error) {
+          reportFailureToHost(error);
+        }
+      });
+    },
+    [binding],
+  );
   const handleNativeSubmit = useCallback(
     async (event: SyntheticEvent) => {
+      if (event.target !== event.currentTarget) return;
       event.preventDefault();
       const isCurrent = captureValidationLifetime();
       try {
@@ -324,6 +344,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
                         : null
                     }
                     onSubmit={handleNativeSubmit}
+                    onReset={handleNativeReset}
                   >
                     {children}
                   </FormRootProxy>

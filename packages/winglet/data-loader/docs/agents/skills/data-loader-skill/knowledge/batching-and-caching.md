@@ -62,8 +62,8 @@ const timedLoader = new DataLoader(batchLoad, {
   batchScheduler: (fn) => setTimeout(fn, 10),
 });
 
-// Immediate — dispatches within the current synchronous block, so only the
-// loads issued before this one are batched. Useful in tests; defeats batching.
+// Immediate — every load() dispatches its own one-key batch before it returns,
+// while repeated keys still resolve from the cache. Useful in tests; defeats batching.
 const syncLoader = new DataLoader(batchLoad, {
   batchScheduler: (fn) => fn(),
 });
@@ -167,8 +167,12 @@ const uncached1 = noCacheLoader.load('key');
 const uncached2 = noCacheLoader.load('key'); // both added to batch
 ```
 
+## Per-Key Errors Stay Cached
+
+An `Error` returned in a result-array slot is cached like a successful value. A later `load(key)` rejects with that error without fetching again. Clear a transient failure with `loader.clear(key)` before retrying, or disable caching with `cache: false`. Per-key isolation is suitable for durable missing-record errors; transient fetch failures need this explicit retry policy.
+
 ## Batch Failure Clears the Cache
 
 A dispatch fails when the loader throws, returns something without a `then`, returns a non-array, or returns an array of the wrong length. DataLoader then resolves the batch's pending cache-hit callbacks, and walks the batch keys in order — for each one **calling `clear(key)` and then rejecting that key's promise** with the error.
 
-The per-key order matters: the cache entry is gone before the rejection is delivered. Since rejection handlers run as microtasks, the whole loop finishes first, so a `.catch()` that immediately retries always sees a clean cache. A transient network failure cannot "stick" a rejected promise in the cache — the next `load()` of that key goes through a fresh batch.
+The per-key order matters: the cache entry is gone before the rejection is delivered. Since rejection handlers run as microtasks, the whole loop finishes first, so a `.catch()` that immediately retries always sees a clean cache. A batch-wide transient failure is cleared, so the next `load()` of that key goes through a fresh batch.

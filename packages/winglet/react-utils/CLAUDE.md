@@ -58,4 +58,4 @@ import { isReactComponent } from '@winglet/react-utils/filter';
 
 ## Peer Dependencies
 
-React 16-19, React DOM 16-19
+React >=16.14 <20, React DOM >=16.14 <20

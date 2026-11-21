@@ -1,5 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
 import { fieldNodeFactory, mountFieldNode } from '@/schema-form/core/surface';
 
 import { blueprint } from '../blueprint';
@@ -32,7 +33,7 @@ it.each([false, true])(
       const root = fieldNodeFactory(analysis, {
         diagnostics: { status: 'stable' },
         loadSnapshot: { source: 0, target: 0 },
-        validationMode: 0,
+        validationMode: ValidationMode.None,
       });
       mountFieldNode(root);
       return { root, analysis };

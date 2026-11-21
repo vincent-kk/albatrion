@@ -1,104 +1,113 @@
-/// <reference lib="es2021.weakref" />
-
-import type { JSONSchema } from '@canard/schema-form';
+/// <reference lib="es2021.weakref" preserve="true" />
+import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
 import type { Ajv } from 'ajv';
 
+import { createWeakReference } from './createWeakReference';
+import { disposeSchemaRoot } from './disposeSchemaRoot';
 import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
-import { makeSibling, PLUGIN_KEY_PREFIX } from './makeSibling';
+import { isPrivateCompilerCurrent } from './privateCompiler/isPrivateCompilerCurrent';
+import type { PrivateCompiler } from './privateCompiler/types';
+import { pruneRootRegistrations } from './pruneRootRegistrations';
 
-/** Provisional cap: Ajv's code scope keeps functions after removeSchema. */
-const MAX_TRANSIENT_ROOTS = 64;
-
-/** Dynamic-scope keywords; a root naming none of them as a key needs no guard anchor table. */
-const DYNAMIC_KEYWORDS: ReadonlySet<string> = new Set(['$dynamicAnchor', '$recursiveAnchor', '$dynamicRef', '$recursiveRef']);
-
-/** One root's validation and optional guard registrations. */
+/** Detached state whose lifetime follows a caller root held only as a WeakMap key. */
 export interface SchemaRootRegistration {
-  /** Direct schemas are owned and released with this root's guard instance. */
-  readonly directGuards: (object | boolean)[];
-  /** Self-containment is computed once per object in this bound profile. */
-  readonly guardChecks: WeakMap<object, boolean>;
   readonly baseAjv: Ajv;
-  readonly validationAjv: Ajv;
-  guardAjv?: Ajv;
-  readonly validationCopy?: JSONSchema;
-  guardCopy?: JSONSchema;
-  /** `refs` entries the validation registration added; empty until `registerValidationRoot` succeeds. */
-  validationRefs: readonly string[];
-  /** Whether `validationCopy` is registered on `validationAjv`; set only by a successful `registerValidationRoot`. */
-  validationRegistered: boolean;
-  guardRefs?: readonly string[];
+  readonly copy: JSONSchema;
+  readonly serialized: string;
   readonly key: string;
+  /** Current weak-ledger slot; removed registrations have no slot ownership. */
+  slot?: number;
   readonly ids: readonly string[];
-  /** Whether any key in the root is a dynamic-scope keyword (data included); when false, root-pointer guards skip the dynamic-anchor collection. */
   readonly hasDynamicKeywords: boolean;
+  readonly guardChecks: WeakMap<object, boolean>;
+  readonly guards: Map<
+    string,
+    { compiler: PrivateCompiler; validate: (value: unknown) => boolean }
+  >;
+  readonly guardSchemas: {
+    compiler: PrivateCompiler;
+    schema: object | boolean;
+  }[];
+  validationMeta?: PrivateCompiler;
+  validation?: PrivateCompiler;
+  guard?: PrivateCompiler;
+  validate?: ValidateFunction;
+  released: boolean;
 }
-
-/** Mutable registration ownership retained by one plugin entry point. */
+/** Adapter-local root identity selection; native resources belong to the instance ledger. */
 export interface SchemaRootRegistry {
   readonly entries: WeakMap<JSONSchema, SchemaRootRegistration[]>;
-  readonly active: WeakRef<SchemaRootRegistration>[];
-  readonly finalizer: FinalizationRegistry<SchemaRootRegistration>;
-  compilerBase?: Ajv;
-  compilerCurrent?: Ajv;
-  compilerCount: number;
 }
-
-/** Monotonic keys stay unique across every registry that shares one instance. */
-let nextSchemaRootKey = 0;
-
-/** Records a copy once for each bound instance and authored root identity; `registerValidationRoot` registers it with AJV. */
+/** Register one detached snapshot, pruning dead weak registrations before reserving state. */
 export const registerSchemaRoot = (
   registry: SchemaRootRegistry,
   baseAjv: Ajv,
   root: JSONSchema,
 ): SchemaRootRegistration => {
+  if (!root || typeof root !== 'object' || Array.isArray(root))
+    throw new TypeError('A form schema root must be a JSON schema object');
   const registrations = registry.entries.get(root) ?? [];
   const existing = registrations.find((entry) => entry.baseAjv === baseAjv);
-  if (existing) return existing;
+  const serialized = JSON.stringify(root);
+  if (
+    existing?.serialized === serialized &&
+    (!existing.validation || isPrivateCompilerCurrent(existing.validation)) &&
+    (!existing.guard || isPrivateCompilerCurrent(existing.guard)) &&
+    (!existing.validationMeta ||
+      isPrivateCompilerCurrent(existing.validationMeta))
+  )
+    return existing;
+  const ledger = instanceIdRegistrationsOf(baseAjv);
+  if (existing) {
+    ledger.finalizer?.unregister(existing);
+    disposeSchemaRoot(existing);
+    registrations.splice(registrations.indexOf(existing), 1);
+  }
+  pruneRootRegistrations(ledger);
   const ids: string[] = [];
   let hasDynamicKeywords = false;
-  JSON.stringify(root, (name, value: unknown) => {
-    if (name === '$id' && typeof value === 'string') ids.push(value);
-    if (DYNAMIC_KEYWORDS.has(name)) hasDynamicKeywords = true;
-    return value;
-  });
-  if (ids.length)
-    for (let index = registry.active.length - 1; index >= 0; index--)
-      if (!registry.active[index].deref()) registry.active.splice(index, 1);
-  const shared = ids.length ? instanceIdRegistrationsOf(baseAjv) : [];
-  for (let index = shared.length - 1; index >= 0; index--)
-    if (!shared[index].deref()) shared.splice(index, 1);
-  const conflict = ids.some((id) => registry.active.some((ref) => {
-    const entry = ref.deref();
-    return entry?.baseAjv === baseAjv && entry.ids.includes(id);
-  }) || shared.some((ref) => ref.deref()?.ids.includes(id)));
-  if (!ids.length && registry.compilerBase !== baseAjv) {
-    registry.compilerBase = baseAjv;
-    registry.compilerCurrent = baseAjv;
-    registry.compilerCount = 0;
+  const copy: JSONSchema = JSON.parse(serialized);
+  if (
+    serialized.includes('"$id":') ||
+    serialized.includes('"$dynamic') ||
+    serialized.includes('"$recursive')
+  ) {
+    const pending: object[] = [copy];
+    while (pending.length) {
+      const node = pending.pop();
+      if (!node) continue;
+      for (const name of Object.keys(node)) {
+        const value: unknown = Reflect.get(node, name);
+        if (name === '$id' && typeof value === 'string') ids.push(value);
+        if (
+          [
+            '$dynamicAnchor',
+            '$recursiveAnchor',
+            '$dynamicRef',
+            '$recursiveRef',
+          ].includes(name)
+        )
+          hasDynamicKeywords = true;
+        if (value && typeof value === 'object') pending.push(value);
+      }
+    }
   }
-  if (!ids.length && registry.compilerCount === MAX_TRANSIENT_ROOTS) {
-    registry.compilerCurrent = makeSibling(baseAjv, !!baseAjv.opts.allErrors);
-    registry.compilerCount = 0;
-  }
-  const validationAjv = conflict ? makeSibling(baseAjv, !!baseAjv.opts.allErrors)
-    : ids.length ? baseAjv : registry.compilerCurrent ?? baseAjv;
-  if (!ids.length) registry.compilerCount++;
-  const key = `${PLUGIN_KEY_PREFIX}root/${++nextSchemaRootKey}`;
-  const validationCopy: JSONSchema | undefined = ids.length
-    ? JSON.parse(JSON.stringify(root)) : undefined;
   const registration: SchemaRootRegistration = {
-    baseAjv, validationAjv, validationCopy, validationRefs: [], validationRegistered: false, key, ids,
-    directGuards: [], guardChecks: new WeakMap(), hasDynamicKeywords,
+    baseAjv,
+    copy,
+    serialized,
+    key: `https://canard.invalid/ajv8/root/${++ledger.nextKey}`,
+    slot: ledger.active.length,
+    ids,
+    hasDynamicKeywords,
+    guardChecks: new WeakMap(),
+    guards: new Map(),
+    guardSchemas: [],
+    released: false,
   };
   registrations.push(registration);
   registry.entries.set(root, registrations);
-  registry.finalizer.register(root, registration, registration);
-  if (ids.length) {
-    const ref = new WeakRef(registration);
-    registry.active.push(ref);
-    shared.push(ref);
-  }
+  ledger.finalizer?.register(root, registration, registration);
+  ledger.active.push(createWeakReference(registration));
   return registration;
 };

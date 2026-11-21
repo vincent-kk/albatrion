@@ -124,7 +124,7 @@ const deepStructure = {
 const partialClone = cloneLite(deepStructure, 3);
 console.log(partialClone.config !== deepStructure.config); // true (cloned)
 console.log(partialClone.config.database !== deepStructure.config.database); // true (cloned)
-console.log(partialClone.config.database.connection !== deepStructure.config.database.connection); // true (cloned)
+console.log(partialClone.config.database.connection === deepStructure.config.database.connection); // true (reference)
 console.log(partialClone.config.database.connection.pool === deepStructure.config.database.connection.pool); // true (reference)
 
 // Useful for creating shallow snapshots of deep structures
@@ -188,13 +188,13 @@ console.log(cloned.scores[0]); // 100`}
 - **Built-in Objects**: Date, RegExp, Map, Set, Error (returned as-is)
 - **Binary Data**: TypedArrays, ArrayBuffer, Blob, File (returned as-is)
 - **Special Objects**: DOM nodes, class instances, functions (returned as-is)
-- **Circular References**: Will cause stack overflow
+- **Circular References**: Unsupported; cloning does not terminate
 - **Symbol Properties**: Not copied
 
 **Performance Characteristics:**
 - **Speed**: ~5-10x faster than `clone` for simple structures
 - **Memory**: Minimal overhead, no caching or tracking
-- **Algorithm**: Direct recursive copying without checks
+- **Algorithm**: Recursive copying with an explicit-frame fallback after 256 levels
 - **Time Complexity**: O(n) where n is total properties/elements
 - **Space Complexity**: O(d) where d is maximum depth
 
@@ -215,7 +215,7 @@ console.log(cloned.scores[0]); // 100`}
 - Need for symbol property preservation
 
 **Implementation Details:**
-- **No Circular Detection**: Direct recursion without Map-based tracking
+- **No Circular Detection**: No Map-based tracking
 - **Type Checking**: Only `isArray` and `isPlainObject` checks
 - **Property Copying**: Simple for-in loop for objects, indexed loop for arrays
 - **Sparse Array Support**: Preserves array holes via `in` operator check
@@ -233,7 +233,7 @@ console.log(cloned.scores[0]); // 100`}
 - vs structuredClone: ~3x faster but less type support
 
 **Safety Considerations:**
-- **Stack Overflow Risk**: Deep nesting (>10000 levels) or circular refs
+- **Cycles**: Reject cyclic input before cloning; use `clone` for supported cyclic structures
 - **Type Loss**: Complex types become plain objects or are skipped
 - **Unsupported Prototypes**: Class instances are returned as-is
 - **Reference Sharing**: Unsupported types share references with original

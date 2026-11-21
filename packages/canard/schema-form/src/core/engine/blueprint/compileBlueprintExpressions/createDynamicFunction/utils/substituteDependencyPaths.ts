@@ -1,4 +1,4 @@
-import { JSON_POINTER_PATH_REGEX } from '../../../utils/expressions/regex';
+import { replaceExpressionPaths } from '../../../utils/expressions/replaceExpressionPaths';
 import type { PathManager } from '../../getPathManager';
 
 /** One semicolon at the end of an expression. */
@@ -14,10 +14,9 @@ export const substituteDependencyPaths = (
   pathManager: PathManager,
   expression: string,
 ): string =>
-  expression
-    .replace(JSON_POINTER_PATH_REGEX, (path) => {
-      pathManager.set(path);
-      return 'dependencies[' + pathManager.findIndex(path) + ']';
-    })
+  replaceExpressionPaths(expression, (path) => {
+    pathManager.set(path);
+    return 'dependencies[' + pathManager.findIndex(path) + ']';
+  })
     .trim()
     .replace(TRAILING_SEMICOLON, '');

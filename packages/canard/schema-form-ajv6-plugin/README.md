@@ -16,7 +16,7 @@
 
 ## Notice
 
-⚠️ This plugin uses AJV 6.x which is compatible with older JSON Schema specifications (Draft-07 and earlier).
+⚠️ This plugin uses AJV 6.x. The default instance validates Draft-07; older declared drafts require additional configuration as shown below.
 
 📌 If you need support for newer JSON Schema features (Draft 2019-09, Draft 2020-12), consider using `@canard/schema-form-ajv8-plugin` instead.
 
@@ -101,7 +101,7 @@ AJV6 defaults to `$id`; `schemaId: 'id'` or `'auto'` also treats draft-04 `id` a
 #### **`compileGuard(root, pointer)`**
 
 - **Purpose**: Compiles a synchronous boolean guard at a schema pointer in the engine-owned copy root, retaining its `$ref` context
-- **Call order**: Accepts that copy whether or not `compile` has run. A self-contained guard compiles its subschema without registering the root; only guards that need the root location, such as guards with `$ref` into root definitions, register the root on the guard instance. `compile` registers a copy of a root with `$id` on the selected validation instance (a separate sibling when its `$id` conflicts) and compiles a root without `$id` as a transient copy without registering it. Both kinds of guard work before whole-schema compilation.
+- **Call order**: Accepts that copy whether or not `compile` has run. A self-contained guard compiles its subschema without registering the root; only guards that need the root location, such as guards with `$ref` into root definitions, register the root on the guard instance. `compile` compiles a detached copy on a plugin-owned validation compiler. Its per-application compiler pool rotates after 64 new roots; overlapping live form ids use isolated compilers. The application instance is read-only to the plugin. Both kinds of guard work before whole-schema compilation.
 - **Identity**: Pass the same copy object to `compile`, every `compileGuard`, and `release`; whole-schema validation can be compiled later.
 - **Limits**: Asynchronous formats and keywords are unsupported
 - **Refusal**: `compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.
@@ -120,6 +120,7 @@ When no custom AJV instance is provided, the plugin uses these default settings:
 ```typescript
 const defaultSettings: Ajv.Options = {
   allErrors: true, // Collect all validation errors, not just the first one
+  multipleOfPrecision: 9,
   nullable: true, // Enable `nullable` keyword (= `type:[{type}, 'null']`)
   verbose: true, // Include schema and data information in errors
   format: false, // Disable format validation (can be enabled if needed)
@@ -159,9 +160,9 @@ Please use a transpiler like Babel to transform the code for your target environ
 
 **JSON Schema Support:**
 
-- Draft-04
-- Draft-06
-- Draft-07
+- Draft-07 with the default instance.
+- Draft-06 after registering its meta-schema on a bound instance.
+- Draft-04 is not configured by default; it additionally requires the Draft-04 meta-schema and an appropriate `schemaId` option on the bound AJV 6 instance.
 
 ---
 
@@ -203,3 +204,39 @@ This repository is licensed under the MIT License. Please refer to the [`LICENSE
 ## Contact
 
 For inquiries or suggestions related to the project, please create an issue on the [GitHub repository](https://github.com/vincent-kk/albatrion).
+
+### Enabling a declared Draft-06 schema
+
+The default instance does not register the Draft-06 meta-schema. Bind a compatible instance before compiling the schema:
+
+```typescript
+import Ajv from 'ajv';
+import draft06 from 'ajv/lib/refs/json-schema-draft-06.json';
+import { createValidator } from '@canard/schema-form-ajv6-plugin';
+
+const ajv = new Ajv({ allErrors: true, nullable: true, format: false });
+ajv.addMetaSchema(draft06);
+const validator = createValidator(ajv);
+const validate = validator.compile({
+  $schema: 'http://json-schema.org/draft-06/schema#',
+  type: 'number',
+  exclusiveMaximum: 5,
+});
+await validate(5); // Reports exclusiveMaximum.
+```
+
+Formats and keywords added to the bound instance are available to later compilations, including guards and isolated sibling instances. Already compiled validators keep their compiled rules; adding a rule does not recompile them.
+
+## Decimal multiples
+
+Instances created by the plugin use `multipleOfPrecision: 9`. This accepts exact decimal multiples such as `19.99` for `multipleOf: 0.01` despite binary division error, with a guaranteed exact-multiple range of `Math.abs(value / multipleOf) <= 1e6` for finite values and finite divisors at least `2.2250738585072014e-308` (the smallest normal IEEE-754 number). AJV treats a quotient within `1e-9` of an integer as a multiple: extremely close nonmultiples can also pass, and exact multiples outside that range are not guaranteed. Values such as `19.995` for `0.01`, `0.35` for `0.1`, and `0.300001` for `0.3` remain invalid. A zero `multipleOf` is an invalid schema. Pass your own AJV instance to `createValidator` or `plugin.validator.bind` to choose a different precision policy; its options are preserved.
+
+When `WeakRef` or `FinalizationRegistry` is unavailable, including Safari 14.0, import, validation, guards, and explicit release remain supported. Call `release(root)` when a root is no longer used: automatic cleanup after garbage collection is unavailable on these hosts.
+
+Form validation uses an independent JSON Pointer cache for application-provided AJV instances. Compiling a form neither changes the application's `jsonPointers` and `errorDataPath` options nor replaces its cached validator paths, regardless of which caller compiled a shared schema first.
+
+Form roots live only on plugin-owned compilers. Calling `ajv.getSchema(formRoot.$id)` on the application instance does not return a form root unless the application registered that schema itself. Application `removeSchema` calls do not invalidate returned form validators. Compilation reflects the current contents of the supplied root object, including in-place changes; an earlier function keeps its own snapshot. Identical serialized contents may reuse the previous function only while its observed application state and meta-schema remain current. New compilations read the current application options, keywords, formats, meta-schemas and referenced raw schemas; removed or replaced imports retire their private compiler. Already-returned validators and guards remain snapshots. Keyword validator functions may have their native `.errors` scratch state reset by AJV; the plugin does not isolate callback closure effects.
+
+Compilation does not call `loadSchema`: register external schemas on the application instance first. Root arguments must be schema objects; boolean subschemas remain valid guard targets. Mutating AJV options are refused, including when enabled after binding. Custom constructors must accept an options object and honor isolation options. Form-root changes take effect on the next compilation. In-place mutation of application-registered raw schemas, keyword definitions or nested option objects is unsupported; replace or re-register them instead.
+
+A reference uses the application registration at compilation time. If a retained registration key and a replaced schema ID refer to different schemas with the same normalized ID, separate form roots compile in isolated environments. A single root that references both is unsupported and throws an error naming the ID and both keys.

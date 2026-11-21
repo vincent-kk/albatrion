@@ -1,15 +1,18 @@
-import { basename, resolve as resolvePath } from 'node:path';
+import { basename, isAbsolute, resolve as resolvePath } from 'node:path';
 
-import { Command } from 'commander';
+import { Command, CommanderError } from 'commander';
 
+import { type RunFailure, validateFlags } from '../../core/index.js';
 import type { DefaultFlags } from '../../types/index.js';
 import { divertLogsToStderr, logger } from '../../utils/logger.js';
 import { VERSION } from '../../utils/version.js';
 import { resolveAssetPathFlag } from './flags/resolveAssetPathFlag.js';
 import { renderOrFallback } from './renderers/renderOrFallback.js';
+import { classifyTarget } from './targets/classifyTarget.js';
 import { resolveTargets } from './targets/resolveTargets.js';
 import { selectInjectableTargets } from './targets/selectInjectableTargets.js';
 import { toConsumerPackages } from './targets/toConsumerPackages.js';
+import { createFailureResult } from './utils/createFailureResult.js';
 
 const FALLBACK_PROGRAM_NAME = 'inject-agents-settings';
 
@@ -41,6 +44,15 @@ export async function runCli(
   argv: readonly string[] = process.argv,
 ): Promise<void> {
   const cmd = new Command();
+  cmd.exitOverride();
+  if (argv.includes('--json'))
+    cmd.configureOutput({
+      writeOut: (text) => {
+        process.stderr.write(text);
+      },
+    });
+  let exitCode = 0;
+  const diagnostics: RunFailure[] = [];
 
   cmd
     .name(deriveProgramName(argv))
@@ -92,11 +104,39 @@ export async function runCli(
       // on — including the exits below — has to go to stderr instead.
       if (flags.json) divertLogsToStderr();
       const targets = flags.package ?? [];
-      if (targets.length === 0) {
-        logger.error(
-          'missing required flag: --package <name> (e.g. --package=@canard/schema-form or --package=@canard)',
+      const errors: string[] = [];
+      if (targets.length === 0)
+        errors.push('missing required flag: --package <name>');
+      for (const target of targets) {
+        const classified = classifyTarget(target);
+        if (classified.kind === 'invalid') errors.push(classified.reason);
+      }
+      if (
+        flags.assetPath !== undefined &&
+        (!flags.assetPath.trim() ||
+          isAbsolute(flags.assetPath.trim()) ||
+          flags.assetPath.trim().startsWith('~'))
+      )
+        errors.push(`Invalid --asset-path: ${flags.assetPath}`);
+      const checked = validateFlags(flags, true);
+      if ('errors' in checked) errors.push(...checked.errors);
+      if (errors.length) {
+        const result = createFailureResult(
+          errors,
+          2,
+          Boolean(flags.dryRun),
+          targets.join(','),
         );
-        process.exit(2);
+        await renderOrFallback(
+          [],
+          flags,
+          resolvePath(flags.root ?? process.cwd()),
+          [],
+          {},
+          result,
+        );
+        exitCode = result.exitCode;
+        return;
       }
       const assetPath = resolveAssetPathFlag(flags.assetPath);
       const originCwd = resolvePath(flags.root ?? process.cwd());
@@ -104,6 +144,10 @@ export async function runCli(
         targets,
         originCwd,
         assetPath,
+        (reason) => {
+          throw Object.assign(new Error(reason), { exitCode: 2 });
+        },
+        diagnostics,
       );
       if (resolved.length === 0) {
         logger.warn(
@@ -112,32 +156,124 @@ export async function runCli(
         // Resolving nothing is a run that did nothing, not a failure — but a
         // `--json` reader cannot tell that from a crash unless it still gets a
         // document, so only the transcript path stops here.
-        if (!flags.json) return;
+        // Empty runs still pass through core validation and formatting.
       }
       const consumerPackages = await toConsumerPackages(resolved);
       // A target that can supply no hashes fails the way a package with no
       // `agents.assetPath` does: fatal when the run named one package, a
       // reported skip in a batch. Deciding it here rather than inside each
       // renderer is what keeps the verdict from depending on `--json`.
-      const injectable = selectInjectableTargets(consumerPackages, skipped);
-      if (strict && injectable.length < consumerPackages.length)
-        process.exit(2);
-      const exitCode = await renderOrFallback(
+      const injectable = selectInjectableTargets(
+        consumerPackages,
+        skipped,
+        diagnostics,
+      );
+      if (strict && injectable.length < consumerPackages.length) {
+        await renderOrFallback(
+          [],
+          flags,
+          originCwd,
+          [],
+          {},
+          createFailureResult(
+            skipped,
+            2,
+            Boolean(flags.dryRun),
+            targets.join(','),
+            diagnostics,
+          ),
+        );
+        exitCode = 2;
+        return;
+      }
+      exitCode = await renderOrFallback(
         injectable,
         flags,
         originCwd,
         skipped,
+        {},
+        undefined,
+        diagnostics,
       );
-      if (exitCode !== 0) process.exit(exitCode);
     });
 
   try {
     await cmd.parseAsync([...argv]);
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    logger.error(msg);
-    process.exit(1);
+    if (
+      err instanceof CommanderError ||
+      (err instanceof Error && 'exitCode' in err && err.exitCode === 2)
+    ) {
+      if (err instanceof CommanderError && err.exitCode === 0) {
+        if (argv.includes('--json'))
+          await renderOrFallback(
+            [],
+            { json: true },
+            process.cwd(),
+            [],
+            {},
+            {
+              units: [],
+              errors: [],
+              failures: [],
+              notices: [],
+              exitCode: 0,
+              dryRun: argv.includes('--dry-run'),
+            },
+          );
+        return;
+      }
+      const result = createFailureResult(
+        [err.message],
+        2,
+        argv.includes('--dry-run'),
+        err instanceof CommanderError
+          ? (/--[\w-]+/.exec(err.message)?.[0] ?? 'argv')
+          : argv
+              .slice(2)
+              .filter(
+                (value) => value !== '--json' && value !== '--no-interactive',
+              )
+              .join(' '),
+        diagnostics.length ? diagnostics : undefined,
+      );
+      await renderOrFallback(
+        [],
+        {
+          json: argv.includes('--json'),
+          interactive: !argv.includes('--no-interactive'),
+        },
+        process.cwd(),
+        [],
+        {},
+        result,
+      );
+      exitCode = 2;
+    } else {
+      const msg = err instanceof Error ? err.message : String(err);
+      await renderOrFallback(
+        [],
+        {
+          json: argv.includes('--json'),
+          interactive: !argv.includes('--no-interactive'),
+        },
+        process.cwd(),
+        [],
+        {},
+        createFailureResult(
+          [msg],
+          1,
+          argv.includes('--dry-run'),
+          err instanceof Error && 'path' in err && typeof err.path === 'string'
+            ? err.path
+            : 'request',
+          diagnostics.length ? diagnostics : undefined,
+        ),
+      );
+      exitCode = 1;
+    }
   }
+  if (exitCode !== 0) process.exit(exitCode);
 }
 
 // Shared collector for every variadic flag: appends and comma-splits, so

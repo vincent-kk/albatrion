@@ -29,6 +29,7 @@ import { markSlotChange } from '../../../utils/slots/markSlotChange';
 import { readSourceTree } from '../../../utils/slots/readSourceTree';
 import { rekeyArraySlotBindings } from '../../../utils/slots/rekeyArraySlotBindings';
 import { replayMovedSource } from '../../../utils/slots/replayMovedSource';
+import { queueValidationIssueMoves } from '../rekey/queueValidationIssueMoves';
 import type { ArrayPathMove } from '../rekey/rekeyArrayRuntimePaths';
 import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 import { applyArrayTail } from './applyArrayTail';
@@ -184,7 +185,8 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     );
   }
   rekeyArraySlotBindings(host, moves, context);
-  rekeyArrayRuntimePaths(host.runtime, host.path, moves);
+  const issueOwners = rekeyArrayRuntimePaths(host.runtime, host.path, moves);
+  if (issueOwners) queueValidationIssueMoves(host.rootNode, issueOwners);
   if (candidateMoves) {
     const arrayMoves: RekeyedArrayMoves<Self> = (context.rekeyedArrayMoves ??=
       new Map());

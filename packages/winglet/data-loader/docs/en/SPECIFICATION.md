@@ -83,7 +83,7 @@ Batching relies on the JavaScript event loop. When `load(key)` is called:
 
 1. The key is appended to the **current batch**.
 2. If no scheduler is pending, one is registered using the configured `batchScheduler` (default: `process.nextTick`).
-3. All `load()` calls that occur synchronously within the same tick are accumulated into the same batch.
+3. With an asynchronous scheduler, such as the default, all `load()` calls that occur synchronously within the same tick are accumulated into the same batch. A synchronous scheduler such as `(fn) => fn()` dispatches each batch as soon as it is registered, so every `load()` becomes its own one-key batch, while a repeated key still resolves from the cache.
 4. When the scheduler fires, `__dispatchBatch__` calls the `BatchLoader` with all accumulated keys.
 
 ```
@@ -231,6 +231,8 @@ The function passed as the first argument to the `DataLoader` constructor.
 4. The value at index `i` must correspond to the key at index `i`.
 5. Use `Error` instances (not thrown exceptions) to represent per-key failures.
 
+Per-key `Error` results remain cached until `clear(key)` or `clearAll()`. Let batch-wide failures reject the batch promise so those cache entries are cleared automatically.
+
 Violating rules 3 or 4 causes all keys in the affected batch to be rejected with a `DataLoaderError`.
 
 ---
@@ -376,7 +378,7 @@ class TtlMap<K, V> {
 }
 
 const cachedLoader = new DataLoader(batchLoad, {
-  cacheMap: new TtlMap(60_000), // 1-minute TTL
+  cache: new TtlMap(60_000), // 1-minute TTL
 });
 ```
 
@@ -406,7 +408,9 @@ const userLoader = new DataLoader(batchLoadUsers, { maxBatchSize: 100 });
 ### Custom Scheduler
 
 ```typescript
-// Immediate dispatch — useful in testing or latency-sensitive code
+// Immediate dispatch — every load() dispatches its own one-key batch before it
+// returns; repeated keys still resolve from the cache. Useful in testing or
+// latency-sensitive code; defeats batching.
 const testLoader = new DataLoader(batchLoad, {
   batchScheduler: (fn) => fn(),
 });

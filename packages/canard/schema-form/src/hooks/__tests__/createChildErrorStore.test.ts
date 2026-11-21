@@ -1,6 +1,7 @@
 import { expect, it } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
+import { ValidationMode } from '@/schema-form/core';
 
 import { createChildErrorStore } from '../fieldNode/utils/createChildErrorStore';
 
@@ -9,7 +10,7 @@ it('retains a delivered token across unchanged cold reads and reconnects', () =>
     jsonSchema: { type: 'array', items: { type: 'string' } },
     defaultValue: ['first'],
     deferMountValidation: true,
-    validationMode: 2,
+    validationMode: ValidationMode.OnRequest,
   });
   const store = createChildErrorStore(root, root.children);
   const close = store.subscribe(() => undefined);

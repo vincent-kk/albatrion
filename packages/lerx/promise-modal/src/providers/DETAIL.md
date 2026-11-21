@@ -4,6 +4,8 @@
 
 부모 진입점은 소비 훅을 제공하고 Provider 마운트는 자식 진입점에서 연결합니다.
 
+- Context 값은 각 Provider가 소유하며 모듈 사본 사이의 정체성과 수명은 app의 호환 레지스트리 계약을 따른다.
+
 ## API Contracts
 
 전환 시간과 확정 후 파괴 훅은 ModalManagerContext의 소비 훅으로 재노출합니다. 저장소 구독은 app에서 받아 fallback component와 Context 사이에 hook 집계 순환을 만들지 않습니다.

@@ -20,6 +20,10 @@ GOAL-023·086. 검증 의미를 직접 구현해 속도를 얻지 않습니다. 
 
 ## API Contracts
 
+입력은 inputId·labelId와 필드에 묶인 getInputId(key)를 받으며 렌더러는 두 id 문자열만 받습니다. 모든 식별자는 하나의 내부 resolver가 Form scope와 현재 경로에서 생성합니다. 키는 문자열로 비교하며 기본 입력과 추가 요소의 이름 공간을 분리합니다. 식별자는 고유하고 공백이 없는 불투명 값입니다. 소비자는 파싱·접미 조립을 하지 않으며 CSS 선택자에는 CSS.escape를 사용합니다. 공개 builder나 key 상수를 제공하지 않아 입력의 구현 세부를 공개 계약으로 고정하지 않습니다.
+
+기본 ESM과 Node ESM은 하나의 번들 그래프에서 출력합니다. Node 출력의 개발 플래그 치환을 되돌리면 기본 ESM의 바이트와 같아야 하므로 독립 그래프 순회 순서에 결과를 맡기지 않습니다. CommonJS의 strict 선언과 개발 플래그 배치는 유지합니다.
+
 LANDING-067·087·205. 패키지는 단일 공개 진입점에서 이름으로 계약을 조합합니다. [core](core/DETAIL.md)의 호스트 바인딩 통로는 내부 계약이며 제품 공개 이름을 자동으로 넓히지 않습니다. options·controls·presentation의 의미 변경도 공개 계약 변경입니다. 작성자가 스키마를, 호출자가 Form·명령을, 사용자가 입력을 제공한다는 구분으로 값 변경의 책임을 판단합니다(GOAL-085).
 
 주소의 빈 이름·예약 이름 의미는 [jsonPointer](helpers/jsonPointer/DETAIL.md)가 소유합니다. Form 경로 매핑·노드 탐색·검증 라우팅이 각각 다른 주소 언어를 만들지 않습니다. 공개 값 채널과 노드 수명은 [surface](core/surface/DETAIL.md), Form의 읽기·제출은 [Form](components/Form/DETAIL.md)의 계약으로 연결합니다.
@@ -32,7 +36,7 @@ TEST-001·006·012·013·085. 다른 검증 구현과의 차등 확인은 같은
 
 ### REACT-017 — 지원하는 렌더 수명을 실제로 검증합니다
 
-React 18·19에서 공유 렌더 시험을 실행합니다. 버전 전용 제외에는 이유를 두며 StrictMode·서버 렌더·하이드레이션·구독 재연결의 관측을 포함합니다. jsdom의 이벤트 모사가 실제 브라우저 IME 취소·캐럿·자동완성을 모두 증명하지는 않습니다. 입력 수명과 가상화의 한계는 [FieldInputBridge](components/FieldProxy/components/FieldInputBridge/DETAIL.md)와 [virtualization](helpers/virtualization/DETAIL.md)이 소유합니다.
+React 18·19에서 공유 렌더 시험을 실행합니다. 배포 선언의 컴포넌트 결과는 ReactElement와 null로 표현하여 지원 React 버전의 초기 타입 릴리스에도 없는 jsx-runtime.JSX 이름을 요구하지 않습니다. 버전 전용 제외에는 이유를 두며 StrictMode·서버 렌더·하이드레이션·구독 재연결의 관측을 포함합니다. jsdom의 이벤트 모사가 실제 브라우저 IME 취소·캐럿·자동완성을 모두 증명하지는 않습니다. 입력 수명과 가상화의 한계는 [FieldInputBridge](components/FieldProxy/components/FieldInputBridge/DETAIL.md)와 [virtualization](helpers/virtualization/DETAIL.md)이 소유합니다.
 
 TEST-021. 렌더 하니스의 추가 비동기 대기 생략은 미정착 엔진을 뜻하지 않습니다. reset의 동기 로드와 React 커밋 재대조를 구별하고 onError와 호스트 싱크를 각각 관찰합니다. nullable이 아닌 기본 글·수 입력의 clear는 DOM 비우기를 거쳐 undefined 전달을 확인하며 다른 위젯·배치 clear는 핸들 계약을 사용합니다.
 

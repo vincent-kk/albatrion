@@ -8,12 +8,18 @@ describe('VALIDATE-045 release', () => {
     const instance = new Ajv({ allErrors: true });
     const remove = vi.spyOn(instance, 'removeSchema');
     ajvValidatorPlugin.bind!(instance);
-    const first = { $id: 'https://example.test/release-a', type: 'string' } as const;
-    const second = { $id: 'https://example.test/release-b', type: 'number' } as const;
+    const first = {
+      $id: 'https://example.test/release-a',
+      type: 'string',
+    } as const;
+    const second = {
+      $id: 'https://example.test/release-b',
+      type: 'number',
+    } as const;
     ajvValidatorPlugin.compile(first);
     const other = ajvValidatorPlugin.compile(second);
     ajvValidatorPlugin.release!(first);
-    expect(remove).toHaveBeenCalled();
+    expect(remove).not.toHaveBeenCalled();
     expect((await other(4)) === null).toBe(true);
     expect(ajvValidatorPlugin.compileGuard(second, '')(4)).toBe(true);
   });
@@ -21,12 +27,14 @@ describe('VALIDATE-045 release', () => {
   it('allows a released root ID and inner ID to be registered again', async () => {
     ajvValidatorPlugin.bind!(new Ajv({ allErrors: true }));
     const first = {
-      $id: 'https://example.test/reuse.json', type: 'object',
+      $id: 'https://example.test/reuse.json',
+      type: 'object',
       definitions: { item: { $id: 'inner.json', type: 'string' } },
       properties: { value: { $ref: 'inner.json' } },
     } as const;
     const second = {
-      $id: 'https://example.test/reuse.json', type: 'object',
+      $id: 'https://example.test/reuse.json',
+      type: 'object',
       definitions: { item: { $id: 'inner.json', type: 'number' } },
       properties: { value: { $ref: 'inner.json' } },
     } as const;
@@ -41,11 +49,19 @@ describe('VALIDATE-045 release', () => {
     const add = vi.spyOn(instance, 'addSchema');
     const remove = vi.spyOn(instance, 'removeSchema');
     ajvValidatorPlugin.bind?.(instance);
-    const root = { $id: 'https://example.test/ajv6/guard-only', type: 'string' } as const;
+    const root = {
+      $id: 'https://example.test/ajv6/guard-only',
+      type: 'string',
+    } as const;
     expect(ajvValidatorPlugin.compileGuard(root, '')('ok')).toBe(true);
     ajvValidatorPlugin.release(root);
-    expect(add).not.toHaveBeenCalledWith(expect.anything(), expect.stringContaining('urn:canard:schema-form:ajv6:'));
-    expect(remove).not.toHaveBeenCalledWith(expect.stringContaining('urn:canard:schema-form:ajv6:'));
+    expect(add).not.toHaveBeenCalledWith(
+      expect.anything(),
+      expect.stringContaining('urn:canard:schema-form:ajv6:'),
+    );
+    expect(remove).not.toHaveBeenCalledWith(
+      expect.stringContaining('urn:canard:schema-form:ajv6:'),
+    );
     expect(instance.getSchema(root.$id)).toBeUndefined();
   });
 });

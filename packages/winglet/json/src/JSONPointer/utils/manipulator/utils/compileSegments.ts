@@ -17,6 +17,17 @@ export const compilePointer = (pointer: string | (string | number)[]) => {
 
 const handleStringPointer = (pointer: string) => {
   if (pointer.length === 0) return [];
+  if (pointer.charCodeAt(0) === 35 && pointer.indexOf('%') !== -1) {
+    try {
+      pointer = '#' + decodeURIComponent(pointer.slice(1));
+    } catch {
+      throw new JSONPointerError(
+        'INVALID_POINTER_TYPE',
+        'JSON pointer fragment contains an invalid percent escape.',
+        { pointer },
+      );
+    }
+  }
   const parts = pointer.split(JSONPointer.Separator);
   if (parts[0] !== '' && parts[0] !== JSONPointer.Fragment)
     throw new JSONPointerError(
@@ -24,7 +35,12 @@ const handleStringPointer = (pointer: string) => {
       `JSON pointer must start with ${JSONPointer.Fragment} or ${JSONPointer.Separator}.`,
       { pointer },
     );
-  return handleArrayPointer(parts);
+  if (pointer.indexOf('~') === -1) return parts;
+  const compiled = new Array<string>(parts.length);
+  compiled[0] = parts[0];
+  for (let index = 1; index < parts.length; index++)
+    compiled[index] = unescapePath(parts[index]);
+  return compiled;
 };
 
 const handleArrayPointer = (segments: (string | number)[]) => {

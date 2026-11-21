@@ -74,21 +74,21 @@ Each `push()` delivers its own events, so a loop of N pushes notifies subscriber
 for (let i = 0; i < 100; i++) arrayNode.push(createItem(i));
 
 // ✅ notifies once per affected node
-formRef.current?.setValue((prev) => ({
-  ...prev,
-  items: Array.from({ length: 100 }, (_, i) => createItem(i)),
-}));
+formRef.current
+  ?.findNode('/items')
+  ?.setValue(Array.from({ length: 100 }, (_, i) => createItem(i)));
 ```
 
-Inside `batch`, value writes are marked and settle only when the outermost batch ends. Form `reset()` and `node.resetSubtree()` are exceptions: they settle their loads immediately even inside a batch. Reads of `value` and `children` still see the last committed values and shape. Array methods compute their synchronous results from earlier queued writes; that does not make node getters current. Never use a shrinking `children.length` or `value.length` as a loop condition inside the batch: it does not shrink there and can loop forever.
+A parent Overwrite drops retained values for inactive branches that are omitted from the replacement. Writing the specific array node, as above, or using SetValueOption.Merge preserves unmentioned retained branch values. An updater receives the same projected value as getValue(); spreading it does not expose or retain hidden branch sources.
+
+Inside `batch`, scalar value writes are marked until the outermost batch ends. An array method first settles earlier marks and applies its arrangement immediately: reads of value and children after that method see the applied arrangement, and surviving item nodes keep their identity, errors and interaction state. Form reset and subtree reset also load immediately. Subscriptions, onChange and validation delivery stay collected until the outer batch closes. Nested batches and visitSubtree use the same rule. If a callback throws, applied arrangements and marked writes are retained and delivered; batch is not a rollback transaction. Automatic defaults and injections can still differ from separate sequential settlements when intermediate scalar states are skipped.
 
 Compute the number of removals from the committed shape before entering the batch, then use a bounded loop:
 
 ```typescript
 const removeCount = Math.max(0, arrayNode.children!.length - 1);
 arrayNode.batch(() => {
-  for (let remaining = removeCount; remaining > 0; remaining--)
-    arrayNode.pop();
+  for (let remaining = removeCount; remaining > 0; remaining--) arrayNode.pop();
 });
 ```
 
@@ -141,6 +141,7 @@ Contract — each point matters:
 - **Exact focus**: `FormHandle.focus(path)` and native invalid-submit focus open the target's render path through nested placeholders and virtual groups, then focus the target input in that reveal commit. An already mounted focusable input receives the ordinary request without opening another ancestor position; mounted duplicates keep ordinary last-position focus. A duplicate placeholder for the target itself can still reveal through its own request subscription.
 - **Pending focus**: a newer request, reset, confirmed unmount, or disappearing gate cancels the pending reservation. Focus moving to another element or leaving the focused element after the request, including a blur to the page body, moving away and back, or a child's autofocus, suppresses its focus action. Removing the starting element during reveal does not itself count as focus movement. StrictMode effect replay does not consume Mount twice.
 - **Limits**: no focus is promised inside terminal inputs, omitted layouts, hidden Activity, or an input suspended in the reveal commit. Hidden, disabled, or inert elements can ignore focus. Focus scrolling is not corrected when neighboring placeholder heights change. Commands sent to already mounted inputs or targets with no blocking gate can be delivered later to newly mounted positions and cannot be cancelled by a newer request.
+- **React 18 development SSR**: `renderToString` emits React's `useLayoutEffect does nothing on the server` warnings because field bindings use layout effects for client commit ordering. These development warnings do not change the server HTML; React 19 and production rendering do not emit them.
 - **SSR and hydration**: every field renders on the server and hydrates unchanged. Gating applies to branches and children added after hydration and requires `IntersectionObserver`. Browsers without it render eagerly with a development warning; the server does not warn.
 - Placeholders carry `[data-path]` and a `[data-deferred]` marker — style via CSS attribute selector or the `Placeholder` component (`{ node, height }`). Space reservation always belongs to `estimateHeight`; `Placeholder` only fills visuals.
 - Children prepared during hydration retain their eager path even when a custom branch input first renders them later (for example, collapsed tabs or accordions): only this hydration decision is baked at preparation. Outside hydration, a prepared deferred gate catches up to the latest option revision when it first mounts; an intervening threshold or eagerCount change can therefore make it mount directly as an input.

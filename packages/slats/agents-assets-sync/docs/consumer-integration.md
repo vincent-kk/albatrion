@@ -75,7 +75,7 @@ The engine is not shipped as a runtime dependency of any consumer, so end users 
 
 ### Scope resolution (project)
 
-For `--scope=project`, the target `.claude` directory is resolved by walking up from `process.cwd()` and reusing the first existing `.claude` directory found. Only if no ancestor owns a `.claude` does the CLI fall back to `process.cwd()/.claude`. The CLI logs `(auto-located)` when this happens.
+For `--scope=project`, the nearest root marker (`.git`, a supported lockfile or `pnpm-workspace.yaml`) wins over any nearer agent anchor. Only when no root marker exists does the nearest `.claude`, `AGENTS.md`, `.agents` or `.codex` anchor select the root; otherwise cwd is used. Markers at or above the home directory are ignored. The CLI logs `(auto-located)` when the selected root is above cwd.
 
 ```
 workspace/

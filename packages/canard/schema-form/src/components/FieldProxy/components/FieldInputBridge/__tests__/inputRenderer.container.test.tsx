@@ -5,6 +5,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { advanceValidationFrame } from '@/schema-form/__tests__/helpers/advanceValidationFrame';
 import { Form } from '@/schema-form/components/Form';
+import { FieldNodeState, ValidationMode } from '@/schema-form/core';
 import { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 import type { InputRendererProps } from '@/schema-form/types';
 
@@ -115,16 +116,16 @@ it.each(['before', 'after'] as const)(
 
 it('rejects a blur queued by the replaced container', async () => {
   const view = createRestructuringFrame();
-  act(() => view.node.setState({ 2: false }));
+  act(() => view.node.setState({ [FieldNodeState.Touched]: false }));
   fireEvent.blur(view.input());
   act(() =>
     view.node.setExternalErrors([{ dataPath: '/field', message: 'bad' }]),
   );
   await advanceValidationFrame();
-  expect(view.node.state[2]).toBe(false);
+  expect(view.node.state[FieldNodeState.Touched]).toBe(false);
   fireEvent.blur(view.input());
   await advanceValidationFrame();
-  expect(view.node.state[2]).toBe(true);
+  expect(view.node.state[FieldNodeState.Touched]).toBe(true);
 });
 
 it('does not treat StrictMode mount ref reattachment as a replacement', () => {
@@ -136,7 +137,7 @@ it('does not treat StrictMode mount ref reattachment as a replacement', () => {
       <Form
         jsonSchema={{ type: 'string' }}
         InputRenderer={frames}
-        validationMode={0}
+        validationMode={ValidationMode.None}
       />
     </StrictMode>,
   );

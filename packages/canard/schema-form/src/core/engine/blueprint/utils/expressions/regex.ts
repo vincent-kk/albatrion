@@ -108,3 +108,12 @@ export const JSON_POINTER_PATH_REGEX = new RegExp(
     `)`,
   'g',
 );
+
+/**
+ * The path pattern anchored at `lastIndex`, for scanners that test one position at a time.
+ * Read the match end from the match itself; a nested call may move `lastIndex`.
+ */
+export const JSON_POINTER_PATH_STICKY_REGEX = new RegExp(
+  JSON_POINTER_PATH_REGEX.source,
+  'y',
+);

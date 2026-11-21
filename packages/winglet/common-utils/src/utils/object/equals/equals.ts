@@ -137,7 +137,9 @@ import { equalsRecursive } from './utils/equalsRecursive';
  * - All primitive types (string, number, boolean, null, undefined, symbol, bigint)
  * - Plain objects and arrays (deeply nested)
  * - Functions (reference equality only)
- * - Built-in objects like Date, RegExp (compared by reference)
+ * - Date, RegExp, Map and Set (compared by state)
+ * - ArrayBuffer, DataView and boxed primitives (compared by state, then by own enumerable properties)
+ * - Error (compared by `name` and `message`, then by own enumerable properties)
  *
  * **Function Selection Guide:**
  * ```typescript
@@ -156,21 +158,14 @@ import { equalsRecursive } from './utils/equalsRecursive';
  * - Maximum reliability over performance
  * ```
  *
- * **Error Cases and Stack Overflow:**
+ * **Cyclic Inputs:**
+ * Cyclic input is unsupported and can fail to terminate after the explicit-frame fallback.
+ * Use `stableEquals` for comparison and `clone` for copying when cycles are possible.
  * ```typescript
- * // ⚠️ DANGER: Circular references cause stack overflow
- * const circular1: any = { name: 'obj1' };
- * const circular2: any = { name: 'obj2' };
- * circular1.ref = circular2;
- * circular2.ref = circular1;
- *
- * // This will crash:
- * // equals(circular1, circular2); // RangeError: Maximum call stack size exceeded
- *
- * // Safe alternatives:
- * // 1. Use stableEquals() instead
- * // 2. Remove circular references before comparison
- * // 3. Implement circular reference detection
+ * const circular: { name: string; self?: unknown } = { name: 'node' };
+ * circular.self = circular;
+ * const copy = clone(circular);
+ * stableEquals(circular, copy); // true
  * ```
  *
  * **TypeScript Usage Patterns:**
@@ -211,18 +206,19 @@ import { equalsRecursive } from './utils/equalsRecursive';
  * ```
  *
  * **Limitations:**
- * - **Does not handle circular references** (causes stack overflow)
+ * - **Does not handle circular references** (comparison does not terminate)
  * - Functions are compared by reference only, not by implementation
- * - Built-in objects (Date, RegExp, etc.) use reference equality
+ * - Set members and Map keys that are objects match by reference only
+ * - Typed arrays are compared by index value, so `0` and `-0` are equal
  * - Does not compare non-enumerable properties
  * - Symbol properties are not compared
  * - **Performance degrades** with very deep nesting (>50 levels)
  *
  * **Production Considerations:**
- * - **Memory**: Monitor stack usage with deeply nested objects
+ * - **Memory**: Pending comparisons use an explicit work stack
  * - **Performance**: Consider memoization for frequently compared objects
  * - **Error Handling**: Wrap in try-catch for user-provided data
- * - **Security**: Validate object depth to prevent stack overflow attacks
+ * - **Security**: Reject cyclic untrusted input before comparing it
  * - **Testing**: Verify behavior with your specific data structures
  *
  * **Browser/Runtime Compatibility:**
@@ -252,6 +248,20 @@ export const equals = <Left, Right>(
   right: Right,
   omit?: Set<PropertyKey> | readonly PropertyKey[],
 ): boolean => {
+  const leftValue: unknown = left;
+  const rightValue: unknown = right;
+  if (
+    leftValue === rightValue ||
+    (leftValue !== leftValue && rightValue !== rightValue)
+  )
+    return true;
+  if (
+    leftValue === null ||
+    rightValue === null ||
+    typeof leftValue !== 'object' ||
+    typeof rightValue !== 'object'
+  )
+    return false;
   const omits = omit ? (omit instanceof Set ? omit : new Set(omit)) : null;
   return equalsRecursive(left, right, omits);
 };

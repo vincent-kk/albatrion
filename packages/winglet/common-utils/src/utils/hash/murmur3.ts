@@ -1,3 +1,5 @@
+import { normalizeForeignBytes } from './utils/murmur3/normalizeForeignBytes';
+
 /**
  * [Murmur3](https://en.wikipedia.org/wiki/MurmurHash) - A fast 32-bit hash algorithm optimized for browser environments
  * Implementation based on the MurmurHash3 algorithm by Austin Appleby
@@ -110,10 +112,13 @@ export class Murmur3 {
       return this.__processBytes__(new Uint8Array(input));
     } else if (input instanceof Uint8Array) {
       return this.__processBytes__(input);
-    } else
+    } else {
+      const bytes = normalizeForeignBytes(input);
+      if (bytes !== null) return this.__processBytes__(bytes);
       throw new TypeError(
         "Murmur3.hash: 'input' must be a string, ArrayBuffer, or Uint8Array",
       );
+    }
   }
 
   /**
@@ -156,28 +161,28 @@ export class Murmur3 {
       // Use switch statement for branch optimization
       switch (this.__remainder__) {
         case 1:
-          k1 ^= (input.charCodeAt(index++) & MASK_16) << BYTE_POS_8;
+          k1 |= (input.charCodeAt(index++) & MASK_16) << BYTE_POS_8;
           if (available > 1) {
-            k1 ^= (input.charCodeAt(index++) & MASK_16) << BYTE_POS_16;
+            k1 |= (input.charCodeAt(index++) & MASK_16) << BYTE_POS_16;
             if (available > 2) {
               top = input.charCodeAt(index++);
-              k1 ^= (top & MASK_8) << BYTE_POS_24;
-              k1 ^= (top & MASK_8_SHIFT) >> BYTE_POS_8;
+              k1 |= (top & MASK_8) << BYTE_POS_24;
+              k1 |= (top & MASK_8_SHIFT) >> BYTE_POS_8;
             }
           }
           break;
         case 2:
-          k1 ^= (input.charCodeAt(index++) & MASK_16) << BYTE_POS_16;
+          k1 |= (input.charCodeAt(index++) & MASK_16) << BYTE_POS_16;
           if (available > 1) {
             top = input.charCodeAt(index++);
-            k1 ^= (top & MASK_8) << BYTE_POS_24;
-            k1 ^= (top & MASK_8_SHIFT) >> BYTE_POS_8;
+            k1 |= (top & MASK_8) << BYTE_POS_24;
+            k1 |= (top & MASK_8_SHIFT) >> BYTE_POS_8;
           }
           break;
         case 3:
           top = input.charCodeAt(index++);
-          k1 ^= (top & MASK_8) << BYTE_POS_24;
-          k1 ^= (top & MASK_8_SHIFT) >> BYTE_POS_8;
+          k1 |= (top & MASK_8) << BYTE_POS_24;
+          k1 |= (top & MASK_8_SHIFT) >> BYTE_POS_8;
           break;
       }
 
@@ -275,13 +280,13 @@ export class Murmur3 {
     if (this.__remainder__ > 0) {
       // Optimize conditional branches
       const startIdx = length - this.__remainder__;
-      k1 ^= input.charCodeAt(startIdx) & MASK_16;
+      k1 |= input.charCodeAt(startIdx) & MASK_16;
 
       if (this.__remainder__ > 1) {
-        k1 ^= (input.charCodeAt(startIdx + 1) & MASK_16) << BYTE_POS_8;
+        k1 |= (input.charCodeAt(startIdx + 1) & MASK_16) << BYTE_POS_8;
 
         if (this.__remainder__ > 2) {
-          k1 ^= (input.charCodeAt(startIdx + 2) & MASK_16) << BYTE_POS_16;
+          k1 |= (input.charCodeAt(startIdx + 2) & MASK_16) << BYTE_POS_16;
         }
       }
     }

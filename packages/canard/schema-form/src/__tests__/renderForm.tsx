@@ -60,7 +60,7 @@ const buildInstrumentedDefinitions = (
     const [ordinal] = useState(() => bump(props.path));
     return (
       <input
-        id={props.path}
+        id={props.inputId}
         data-mount={ordinal}
         defaultValue={props.value?.toString() ?? ''}
         onChange={(e) => props.onChange?.(e.target.value)}
@@ -71,7 +71,7 @@ const buildInstrumentedDefinitions = (
     const [ordinal] = useState(() => bump(props.path));
     return (
       <input
-        id={props.path}
+        id={props.inputId}
         type="number"
         data-mount={ordinal}
         defaultValue={
@@ -88,7 +88,7 @@ const buildInstrumentedDefinitions = (
     const [ordinal] = useState(() => bump(props.path));
     return (
       <input
-        id={props.path}
+        id={props.inputId}
         type="checkbox"
         data-mount={ordinal}
         defaultChecked={props.value ?? undefined}
@@ -158,7 +158,7 @@ export interface FormHarness {
   /** All node paths currently deferred as placeholders, in document order. */
   deferredPaths: () => string[];
 
-  // ---- DOM input values (terminal fields, by id={path}) ----
+  // ---- DOM input values (terminal fields, by scoped id) ----
   /** The input/select element rendered for `path`, or null. */
   field: (path: string) => HTMLInputElement | HTMLSelectElement | null;
   /** `.value` of the field (empty string if absent). */
@@ -220,7 +220,8 @@ const byId = (
     container.querySelectorAll<HTMLInputElement | HTMLSelectElement>(
       'input[id], select[id], textarea[id]',
     ),
-  ).find((element) => element.id === path) ?? null;
+  ).find((element) => element.closest('[data-path]')?.getAttribute('data-path') === path || element.id === path) ??
+  null;
 
 const byPath = (container: HTMLElement, path: string): HTMLElement | null =>
   container.querySelector(`[data-path="${path}"]`);

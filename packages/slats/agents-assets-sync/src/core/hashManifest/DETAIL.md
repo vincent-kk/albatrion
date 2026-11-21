@@ -2,6 +2,11 @@
 
 ## Requirements
 
+- 디렉터리에서 읽은 모든 자산 원본은 실행 소유 캐시에 원본 바이트·원본 해시·정규형 본문으로 보관합니다. 이미 읽은 경로는 같은 스냅샷을 재사용하며 계획·검증·적용이 이 바이트를 공유합니다.
+
+- agents-build-hashes와 런타임 계산은 files의 원본 바이트 해시와 별도로 rules/ 항목의 정규형 해시를 선택 필드 ruleBodyHashes에 기록합니다. 정규형은 markerBlock 계약의 BOM 제거·CRLF 및 단독 CR 변환이며 비UTF-8 바이트도 보존합니다. 이 표가 있는 manifest는 원본 디렉터리가 없어도 이미 설치된 블록이 최신인지 판정할 수 있습니다. 복사·덮어쓰기에 필요한 원본이 없으면 오류입니다.
+- ruleBodyHashes 없는 이전 manifest는 원본이 있으면 그 정규형을 계산합니다. 원본이 없으면 원본 해시로 결정할 수 있는 기존 LF/CRLF·후행 LF 동등성만 사용하며, 일치하지 않으면 정규형 해시를 추측하지 않고 원본 부재로 거부합니다. manifest를 다시 빌드하면 BOM·CRLF 원본의 source-less 판정에도 필요한 증거를 얻습니다.
+
 - 매니페스트의 출처는 둘이며 `resolveHashManifest` 가 `hashSource` 로 가른다. `'manifest'` 는 `readHashManifest`, `'directory'` 는 asset 디렉터리 런타임 해싱이다.
 - `readHashManifest` 는 `<packageRoot>/dist/agents-hashes.json` 을 읽는다. `hashSource: 'manifest'` 인 타깃에게 이 파일이 source 쪽 해시의 유일한 진실 공급원이다.
 - `hashSource: 'directory'` 는 asset 루트 자체가 진실인 타깃이다. 저장된 매니페스트는 읽지 않고 그 디렉터리를 그 자리에서 훑어 메모리 매니페스트를 만들며, 빌드 산출물이 필요 없다. 어느 타깃이 이 출처를 받는지는 호출자가 정한다 — `--asset-path` 로 지정된 경우(저장된 매니페스트가 다른 트리를 기술할 수 있으므로), 그리고 선언된 asset 디렉터리는 있는데 빌드가 돌지 않은 경우.
@@ -77,7 +82,6 @@
 - 호출자는 하나다 — dispatcher 가 렌더러를 고르기 전에 묻는다. 세 렌더러가 각자 묻던 때에는 술어는 하나였지만 그 답을 실행 판정으로 옮기는 규칙이 셋이었고, 그래서 같은 입력이 출력 형식에 따라 다른 exit code 를 냈다. 판정은 `commands/runCli/DETAIL.md` 의 `AC-RUNCLI-GATE-VERDICT` 가 소유한다.
 - 이 술어는 출처를 정하지 않고 종료 코드도 정하지 않는다. `'manifest'` 를 받은 타깃이 그 파일 없이 도착했다는 것은 호출자가 다른 출처도 찾지 못했다는 뜻이며, 진단은 그렇게 읽혀야 한다.
 - 검증: `__tests__/needsBuiltManifest.spec.ts` (`filid:contract AC-MANIFEST-GATE`).
-
 
 ## Last Updated
 

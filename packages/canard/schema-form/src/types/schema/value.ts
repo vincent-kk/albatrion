@@ -130,7 +130,7 @@ type LiteralValue<Schema> = Schema extends { const: infer Value }
 export type InferValueType<T> = T extends { type: 'virtual' }
   ? VirtualNodeValue
   : T extends { type: unknown }
-    ? T extends { type?: string | readonly string[] | string[] }
+    ? T extends { type: string | readonly string[] | string[] }
       ? BaseInferValueType<NormalizeType<T>>
       : BroadValue
     : T extends

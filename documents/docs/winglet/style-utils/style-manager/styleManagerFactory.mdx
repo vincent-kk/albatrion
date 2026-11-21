@@ -16,6 +16,8 @@ This factory function returns a curried function that allows you to:
 - Handle both modern CSSStyleSheet API and fallback style element injection
 The returned function adds CSS styles that are automatically scoped with `className=".${scopeId}"`,
 ensuring styles only apply to elements within that scope.
+Discard the injector and its cleanup functions after destroyScope; create a new
+factory before injecting into that scope again.
 
 ## Import
 
@@ -35,6 +37,7 @@ const styleManagerFactory: (scopeId: string, config?: StyleManagerConfig) => Fn<
 | Name | Type | Description |
 |------|------|-------------|
 | `scopeId` | `-` | The unique identifier for the style scope |
+| `config` | `-` | Optional ShadowRoot target, omitted for document styles |
 
 ## Returns
 

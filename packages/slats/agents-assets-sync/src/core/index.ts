@@ -14,6 +14,12 @@ export {
   type HashManifestSource,
 } from './hashManifest/index.js';
 export {
+  executeUnits,
+  runInjection,
+  validateFlags,
+  type RunUnit,
+  type RunResult,
+  type RunFailure,
   applyAction,
   applyBlockActions,
   partitionActions,
@@ -22,6 +28,7 @@ export {
 } from './injectDocs/index.js';
 export {
   buildPlan,
+  collectFileWrites,
   type Action,
   type ActionKind,
   type ActionTarget,
@@ -29,6 +36,8 @@ export {
   type PlanInput,
 } from './buildPlan/index.js';
 export {
+  assertDestinationRootsContained,
+  assertWriteTargetsContained,
   isValidAgent,
   resolveAgentTarget,
   resolveDestinations,
@@ -38,6 +47,7 @@ export {
   type AssetKind,
   type Destination,
   type OrphanScan,
+  type ResolvedLocations,
 } from './agentTarget/index.js';
 export {
   MARKER_PREFIX,

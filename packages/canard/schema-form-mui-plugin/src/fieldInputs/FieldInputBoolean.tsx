@@ -19,11 +19,13 @@ interface FieldInputBooleanProps
 }
 
 const FieldInputBoolean = ({
-  path,
+  inputId,
+  labelId: fieldTitleId,
   name,
   required,
   disabled,
-  defaultValue,
+  readOnly,
+  value,
   onChange,
   context,
   label: labelProp,
@@ -36,11 +38,7 @@ const FieldInputBoolean = ({
     return [labelProp || name, sizeProp || context.size];
   }, [context, labelProp, name, sizeProp, hideLabel]);
 
-  const [indeterminate, defaultChecked] = useMemo(() => {
-    const isIndeterminate =
-      defaultValue !== undefined && typeof defaultValue !== 'boolean';
-    return [isIndeterminate, !!defaultValue];
-  }, [defaultValue]);
+  const indeterminate = value !== undefined && typeof value !== 'boolean';
 
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,23 +46,27 @@ const FieldInputBoolean = ({
     },
   );
 
-
   return (
     <FormControlLabel
       label={label}
-      htmlFor={path}
+      htmlFor={inputId}
       required={required}
-      disabled={disabled}
+      disabled={disabled || readOnly}
       control={
         <Checkbox
-          id={path}
+          id={inputId}
           name={name}
-          disabled={disabled}
+          disabled={disabled || readOnly}
           indeterminate={indeterminate}
-          defaultChecked={defaultChecked}
+          checked={value === true}
           onChange={handleChange}
           size={size}
-          slotProps={{ input: { 'aria-invalid': misfit || undefined } }}
+          slotProps={{
+            input: {
+              'aria-labelledby': fieldTitleId,
+              'aria-invalid': misfit || undefined,
+            },
+          }}
         />
       }
     />
@@ -73,5 +75,6 @@ const FieldInputBoolean = ({
 
 export const FieldInputBooleanDefinition = {
   Component: FieldInputBoolean,
+  controlled: true,
   test: ({ type }) => type === 'boolean',
 } satisfies FieldInputDefinition;

@@ -5,7 +5,7 @@ import { afterEach, expect, it } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
-import { ValidationMode } from '@/schema-form/core';
+import { FieldNodeState, ValidationMode } from '@/schema-form/core';
 
 import { FieldRendererContextProvider } from '../components/FieldRendererProvider';
 import { useErrorVisibility } from '../hooks/useErrorVisibility';
@@ -59,7 +59,7 @@ it('IR-6 H same-commit transition reveal stays hidden before a child layout norm
     const [shown, setShown] = useState(false);
     reveal = () =>
       startTransition(() => {
-        node.setState({ 4: true });
+        node.setState({ [FieldNodeState.ErrorVisibility]: true });
         setShown(true);
       });
     return (

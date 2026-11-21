@@ -12,7 +12,7 @@ const TARGET_NAMESPACES = ['canard', 'lerx', 'winglet', 'slats'];
 interface PkgJSON {
   name: string;
   version: string;
-  exports?: Record<string, { types?: string } | string>;
+  exports?: Record<string, { types?: string; import?: { types?: string } } | string>;
 }
 
 /** Directories to scan; each defaults to this repository's own. */
@@ -42,7 +42,7 @@ export function discoverPackages(roots: RegistryRoots = {}): PackageEntry[] {
       const pkgJSON: PkgJSON = JSON.parse(fs.readFileSync(pkgJSONPath, 'utf-8'));
       const pkgRoot = path.join(packagesDir, ns, pkgDir);
 
-      // Find main .d.ts via exports["."].types or fallback to dist/index.d.ts
+      // Documentation uses the import declaration graph; CommonJS companions share its API.
       const mainDtsPath = resolveMainDts(pkgJSON, pkgRoot);
       if (!mainDtsPath || !fs.existsSync(mainDtsPath)) continue;
 
@@ -110,8 +110,9 @@ function resolveMainDts(pkgJSON: PkgJSON, pkgRoot: string): string {
   const exportsMap = pkgJSON.exports;
   if (exportsMap && exportsMap['.']) {
     const rootExport = exportsMap['.'];
-    if (typeof rootExport === 'object' && rootExport.types) {
-      return path.resolve(pkgRoot, rootExport.types);
+    if (typeof rootExport === 'object') {
+      const types = rootExport.import?.types ?? rootExport.types;
+      if (types) return path.resolve(pkgRoot, types);
     }
   }
   // Fallback
@@ -129,8 +130,9 @@ function resolveSubPaths(pkgJSON: PkgJSON, pkgRoot: string): SubPathEntry[] {
     // Skip root export and package.json
     if (exportKey === '.' || exportKey === './package.json') continue;
 
-    if (typeof exportValue === 'object' && exportValue.types) {
-      subPaths.push({ exportKey, dtsPath: path.resolve(pkgRoot, exportValue.types) });
+    if (typeof exportValue === 'object') {
+      const types = exportValue.import?.types ?? exportValue.types;
+      if (types) subPaths.push({ exportKey, dtsPath: path.resolve(pkgRoot, types) });
     }
   }
 

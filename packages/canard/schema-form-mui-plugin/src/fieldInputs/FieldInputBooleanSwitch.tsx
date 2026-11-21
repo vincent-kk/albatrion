@@ -23,10 +23,14 @@ interface FieldInputBooleanSwitchProps
     MuiContext {
   label?: ReactNode;
   hideLabel?: boolean;
+  /** State labels; context.checkboxLabels takes priority. */
+  alias?: { checked?: ReactNode; unchecked?: ReactNode };
 }
 
 const FieldInputBooleanSwitch = ({
-  path,
+  inputId,
+  node,
+  labelId: fieldTitleId,
   name,
   required,
   disabled,
@@ -36,6 +40,7 @@ const FieldInputBooleanSwitch = ({
   label: labelProp,
   size: sizeProp = 'medium',
   hideLabel,
+  alias,
   misfit,
 }: FieldInputBooleanSwitchProps) => {
   const handleChange = useHandle(
@@ -49,23 +54,39 @@ const FieldInputBooleanSwitch = ({
     return [labelProp || name, sizeProp || context.size];
   }, [context, labelProp, name, sizeProp, hideLabel]);
 
+  const labels = context.checkboxLabels || alias;
+  const stateLabel = value === true ? labels?.checked : labels?.unchecked;
+
   return (
     <FormControlLabel
-      label={label}
-      htmlFor={path}
+      label={
+        stateLabel === undefined ? (
+          label
+        ) : (
+          <>
+            {label}
+            <span aria-hidden="true"> {stateLabel}</span>
+          </>
+        )
+      }
+      htmlFor={inputId}
       required={required}
       disabled={disabled}
       labelPlacement="start"
       control={
         <Switch
-          id={path}
+          id={inputId}
           name={name}
           checked={value === true}
           onChange={handleChange}
           disabled={disabled}
           size={size}
           slotProps={{
-            input: { role: 'switch', 'aria-invalid': misfit || undefined },
+            input: {
+              'aria-labelledby': node.parentNode ? fieldTitleId : undefined,
+              role: 'switch',
+              'aria-invalid': misfit || undefined,
+            },
           }}
         />
       }

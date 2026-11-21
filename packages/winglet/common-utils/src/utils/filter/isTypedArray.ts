@@ -1,8 +1,13 @@
+/** Native typed-array tag getter returns undefined for DataView across realms. */
+const getTypedArrayName = Function.prototype.call.bind(Object.getOwnPropertyDescriptor(
+  Object.getPrototypeOf(Uint8Array.prototype), Symbol.toStringTag,
+)!.get!);
+
 /**
  * Determines whether a value is a TypedArray with enhanced type safety.
  *
- * Provides reliable TypedArray detection using ArrayBuffer.isView() combined
- * with DataView exclusion, identifying all TypedArray variants including
+ * Provides reliable TypedArray detection using the native typed-array tag getter
+ * with realm-independent DataView exclusion, identifying all TypedArray variants including
  * Uint8Array, Int32Array, Float64Array, and others used for binary data processing.
  *
  * @template T - Expected TypedArray type extending TypedArray
@@ -64,7 +69,7 @@
  * - BigInt64Array, BigUint64Array
  *
  * **Detection Method:**
- * - Uses `ArrayBuffer.isView()` to check for buffer views
+ * - Reads the native typed-array name slot directly
  * - Excludes DataView instances (which are also buffer views)
  * - More reliable than individual instanceof checks
  *
@@ -85,7 +90,7 @@
  */
 export const isTypedArray = <T extends TypedArray>(
   value: unknown,
-): value is T => ArrayBuffer.isView(value) && !(value instanceof DataView);
+): value is T => getTypedArrayName(value) !== undefined;
 
 /**
  * Union type representing all TypedArray types.

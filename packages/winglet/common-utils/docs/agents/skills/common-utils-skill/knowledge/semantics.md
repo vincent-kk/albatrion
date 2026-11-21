@@ -6,16 +6,21 @@ Organized by decision, not by module. Every claim here was read off `src/**` at 
 
 ### `equals` vs `stableEquals`
 
-|                              | `equals(left, right, omit?)`                           | `stableEquals(left, right)` |
-| ---------------------------- | ------------------------------------------------------ | --------------------------- |
-| Circular references          | **stack overflow**                                     | safe (WeakMap-tracked)      |
-| `Date`, `RegExp`, TypedArray | reference equality only                                | compared by value           |
-| Symbol properties            | not compared                                           | compared                    |
-| Non-enumerable properties    | not compared                                           | not compared                |
-| Omit keys                    | third argument, `Set` or array, applied at every level | not supported               |
-| Cost                         | the faster of the two                                  | roughly twice `equals`      |
+|                                             | `equals(left, right, omit?)`                                                   | `stableEquals(left, right, omit?)`                                                                                              |
+| ------------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| Circular references                         | **unsupported; can fail to terminate**                                                             | safe (visited pairs tracked in a `Map`)                                                                                         |
+| `Date`, `RegExp`, `Map`, `Set`              | compared by state alone                                                        | same                                                                                                                            |
+| `ArrayBuffer`, `DataView`, boxed primitives | compared by bytes or primitive value, then by own enumerable keys              | compared by bytes or primitive value, then by all own keys (non-enumerable and symbol keys included); `DataView` by bytes alone |
+| `Error`                                     | unequal when `name` or `message` differs, then compared by own enumerable keys | same, plus own non-enumerable keys such as `stack`, so errors created at different places are unequal                           |
+| TypedArray                                  | compared by index value (`0` equals `-0`)                                      | compared by bytes                                                                                                               |
+| Symbol properties                           | not compared                                                                   | compared                                                                                                                        |
+| Non-enumerable properties                   | not compared                                                                   | compared (all own keys from `Reflect.ownKeys`)                                                                                  |
+| Omit keys                                   | third argument, `Set` or array, applied at every level                         | third argument, array, applied at every level                                                                                   |
+| Cost                                        | the faster of the two                                                          | roughly twice `equals`                                                                                                          |
 
-Both treat `NaN` as equal to `NaN`. Reach for `equals` by default; switch to `stableEquals` the moment the data can carry a cycle or a built-in whose identity is not its value.
+Both treat `NaN` as equal to `NaN`. Reach for `equals` by default; switch to `stableEquals` the moment the data can carry a cycle, symbol keys or sparse-array holes.
+
+`clone` and `stableEquals` use work frames for deep ordinary-object and array graphs, including cycles. This guarantee does not cover user getters, proxies, constructors, or paths made entirely of other built-ins. A clone depth bound still counts from the original root and leaves boundary values shared.
 
 ```typescript
 // Ignore volatile keys at every nesting level, not just the top one.
@@ -28,10 +33,12 @@ equals(previous, next, ['updatedAt', 'requestId']);
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | ----------------------------- |
 | Handles             | primitives, plain objects, arrays, `Date`, `RegExp`, `Map`, `Set`, `Error`, ArrayBuffer family, `File`/`Blob`, symbol properties, custom prototypes | arrays and plain objects only      | arrays and plain objects only |
 | Everything else     | type-specific handling                                                                                                                              | **returned by reference**          | returned as-is                |
-| Circular references | safe (Map-tracked, structure preserved)                                                                                                             | **stack overflow**                 | not applicable                |
-| Prototype chain     | preserved                                                                                                                                           | dropped — result is a plain object | preserved via spread          |
+| Circular references | safe (Map-tracked, structure preserved)                                                                                                             | **unsupported; can fail to terminate**                 | not applicable                |
+| Prototype chain     | preserved within the built-in subclass limits below                                                                                                 | ordinary/null dictionary prototypes retained; arrays use plain Array | ordinary/null dictionary prototypes retained; arrays use plain Array |
 
 The `cloneLite` trap is not that it fails on a `Date`; it is that it _succeeds_ and hands back the very same `Date`, so a later mutation reaches the original. Both `clone` and `cloneLite` accept a depth bound, and both return nodes at or beyond that depth by reference — a bounded clone shares state by design.
+
+`clone` retains the built-in state and prototypes of Map, Set, Date, RegExp and Array subclasses without running their constructors, but does not copy additional own properties or constructor-set fields. Private fields are not initialized, so subclass methods that require them can fail. Typed-array subclasses use slice/species and run their constructor; DataView subclasses become native DataView copies without their subclass prototype. Error and ArrayBuffer subclasses run their constructors under their respective Error and slice/species policies. Use native built-in values when constructor-owned subclass state is required.
 
 An own `__proto__` key (as `JSON.parse` produces) is cloned by `cloneLite` as an own data property: every own key survives and the clone keeps the input's prototype — the write goes through `setDataProperty`, never the `__proto__` setter.
 
@@ -50,13 +57,13 @@ minLite(3, 1); //  1   — two scalar arguments
 
 ### Graph serialization and fingerprint keys
 
-| API | Output | Use for |
-| --- | --- | --- |
-| `JSON.stringify` | ordinary JSON | standard JSON data |
-| `stringifyGraph` / `parseGraph` | graph JSON with reference tokens | cycles, shared references, and supported extended built-ins |
-| `createFingerprint` | reverse root-key pairs with native JSON for nested values | fast shallow comparison keys |
-| `createSortedFingerprint` | sorted flattened paths with cycle markers | order-independent path keys |
-| `createSafeFingerprint` | typed structural key with opaque identities | cycle-safe structural comparison keys |
+| API                             | Output                                                    | Use for                                                     |
+| ------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------- |
+| `JSON.stringify`                | ordinary JSON                                             | standard JSON data                                          |
+| `stringifyGraph` / `parseGraph` | graph JSON with reference tokens                          | cycles, shared references, and supported extended built-ins |
+| `createFingerprint`             | reverse root-key pairs with native JSON for nested values | fast shallow comparison keys                                |
+| `createSortedFingerprint`       | sorted flattened paths with cycle markers                 | order-independent path keys                                 |
+| `createSafeFingerprint`         | typed structural key with opaque identities               | cycle-safe structural comparison keys                       |
 
 ### `countKey` vs `countObjectKey`
 
@@ -86,11 +93,11 @@ await waitAndReturn(fn, 500); // call fn now, resolve after 500 ms — a minimum
 
 ## Circular-reference safety matrix
 
-| Safe | Unsafe — recursion, so a cycle overflows the stack | Unsafe — iterative, so a cycle spins forever |
-| --- | --- | --- |
-| `clone`, `stableEquals`, `stringifyGraph`, `createSortedFingerprint`, `createSafeFingerprint` | `cloneLite`, `equals`, `merge`, `removeUndefined` | `hasUndefined` |
+| Safe                                                                                          | Unsafe — recursion, so a cycle overflows the stack | Unsafe — iterative, so a cycle spins forever |
+| --------------------------------------------------------------------------------------------- | -------------------------------------------------- | -------------------------------------------- |
+| `clone`, `stableEquals`, `stringifyGraph`, `createSortedFingerprint`, `createSafeFingerprint` | `merge`, `removeUndefined`  | `cloneLite`, `equals`, `hasUndefined`                               |
 
-The safe implementations track visited objects in a `Map`/`WeakMap`; the rest have no guard at all. The two iterative ones are the worse failure: they consume memory in a loop instead of failing fast. When input can come from user data or a graph structure, this table picks the function.
+The safe implementations track visited objects in a `Map`/`WeakMap`; the rest have no guard at all. `equals` and `cloneLite` use explicit work stacks after 256 recursive levels without tracking cycles; cyclic input can fail to terminate and consume memory instead of failing fast. Use `stableEquals` and `clone` when cycles are possible. When input can come from user data or a graph structure, this table picks the function.
 
 ## Mutation and identity contracts
 
@@ -134,7 +141,9 @@ synchronous code
 - The id returned by `scheduleMacrotask` is typed `number`, but in Node it is really the `Immediate` object `setImmediate` returns. Pass it back to `cancelMacrotask` and never do arithmetic on it.
 - `scheduleCancelableMacrotask` returns a cancel function instead of an id, and guards with its own flag, so cancelling after the task has been dequeued is still safe.
 
-`MessageChannelScheduler` backs browser macrotasks: tasks queued synchronously are batched, a microtask posts the batch through the channel, all of it runs in one macrotask, and a throwing task is isolated from the rest of its batch. `getInstance()` is a singleton whose options apply only on the first call; `destroyGlobalScheduler()` exists for test teardown.
+Native Node `setImmediate` may run a microtask checkpoint between callbacks, so a task's microtask may run before the next queued task. The browser fallback batches synchronously queued tasks without a checkpoint between them; `scheduleCancelableMacrotask` follows the same host-specific order.
+
+`MessageChannelScheduler` backs browser macrotasks: tasks queued synchronously are batched, a microtask posts the batch through the channel, all of it runs in one macrotask, and a throwing task is isolated from the rest of its batch. `getInstance()` is a singleton whose options apply only on the first call. A consumer `onTaskError` owns errors of both direct and wrapper-scheduled tasks; without one, errors reach the host through `reportError` or a separate native timer throw. In a browser that reaches `window.onerror` or the unhandled error path; in Node it reaches the uncaught-exception path and may terminate the process. Reporting never schedules through the same scheduler; `destroyGlobalScheduler()` exists for test teardown.
 
 ## Rate limiting
 
@@ -168,15 +177,17 @@ const handler = getTrackableHandler(origin, {
 
 Execution order, and where each guarantee comes from:
 
-1. When `preventConcurrent` is set and a call is in flight, the new call resolves `undefined` cast as `Result` — `origin` never runs, and nothing is notified.
-2. `beforeExecute` runs **before** `pending` flips, so it observes `pending === false`. If it throws, the returned promise rejects, `origin` is skipped, and **`afterExecute` does not run** — it sits inside a `try` that has not been entered yet.
-3. `pending` becomes `true`, subscribers are notified.
-4. `origin` runs; its errors propagate to the caller untouched.
-5. In `finally`: `afterExecute`, then `pending` becomes `false`, then subscribers are notified.
+1. When `preventConcurrent` is set and a call is in flight, the new call resolves `undefined`; `origin` never runs and nothing is notified.
+2. The call reserves `pending === true` before `beforeExecute`, so a synchronous re-entry or another call during an asynchronous hook is guarded. A returned promise or thenable is awaited; ordinary synchronous hook returns do not add a microtask. A before-hook throw or rejection rejects the handler, skips `origin` and `afterExecute`, removes this call from pending, and sends exactly one completion notification.
+3. Subscribers receive the start notification after `beforeExecute` settles, then `origin` runs.
+4. After the operation starts, `afterExecute` runs even when the start notification or `origin` fails. A returned promise or thenable is awaited before cleanup. Pending remains true while a hook never settles; with concurrent calls allowed, it remains true until the last call finishes.
+5. Cleanup updates pending and notifies completion before the returned promise settles. A manager folds its updates only while its own call is in the before or after phase, including time spent awaiting an asynchronous hook. A manager from a finished call publishes immediately even inside a later call's hook. Every successful update replaces the state object, including empty or equal-value updates; a throwing updater leaves state unchanged and propagates its error.
 
-Subscribers are notified at exactly those two transitions. `stateManager.update()` does not publish on its own — updates made inside the hooks become visible because a notification follows them. Each update replaces the state object, so `.state` is a new reference every time.
+A throwing subscriber cannot prevent other subscribers from being notified. The first start-notification error rejects the handler unless the after hook fails, in which case the after error wins without separately reporting the replaced first error. Additional start errors and completion errors go to `reportError` synchronously when available, otherwise to a separate native timer throw. Subscribers receive no arguments and read live state. Publication iterates a live Set: removing an unvisited listener skips it, adding one can visit it in the same publication, and reentrant updates can notify recursively. Later listeners read the latest state, rather than a snapshot captured at publication entry.
 
-The surface is `.pending`, `.state`, and `.subscribe(listener) => unsubscribe`. All three are non-enumerable and non-configurable: they survive property access but vanish from spreads and `Object.keys`. There is no `.loading`, no `.execute()`, no `.clear()`, and no `onError` option.
+Hooks receive `(args, stateManager)`, with the original argument tuple as one array. The origin is called without forwarding the handler's receiver and must return a Promise; synchronous throws are supported but synchronous non-Promise returns are outside its type contract. Omitted initial state starts as `{}`; provided state is shallow-copied. A stored manager remains usable after completion. There is no cancellation or validation of invalid state/updater types.
+
+The surface is `.pending`, `.state`, and `.subscribe(listener) => unsubscribe`. All three are non-enumerable and non-configurable: they survive property access but vanish from spreads and `Object.keys`. Only the state manager has `update`; the handler has no `.update`, `.loading`, `.execute()`, `.clear()`, or `onError` option.
 
 ## Predicates that surprise
 
@@ -186,13 +197,13 @@ The surface is `.pending`, `.state`, and `.subscribe(listener) => unsubscribe`. 
 | `isObject`          | `true` for arrays, `Date`, `Map`; `false` for functions and `null`                                                                                                     |
 | `isPlainObject`     | only `{}`, `new Object()`, and `Object.create(null)`                                                                                                                   |
 | `isPrimitiveObject` | reads as the opposite of what it does: it is `Object(value) === value`, so it is `true` for **any** object, including functions and arrays, and `false` for primitives |
-| `isEmpty`           | falsy primitives (`0`, `''`, `false`, `NaN`, `0n`) are empty; functions never are; objects are empty when they have no own enumerable key                              |
+| `isEmpty`           | falsy primitives (`0`, `''`, `false`, `NaN`, `0n`) are empty; functions never are; local-realm Map/Set use size; other objects, including foreign collections, use own enumerable keys                              |
 | `isNil`             | loose `== null`, so it covers both `null` and `undefined`                                                                                                              |
 | `isCloneable`       | a whitelist of type tags, not a question put to `clone`. `Blob` and `File` are excluded even though `clone` has a dedicated branch for them                            |
 
 ## Degenerate returns
 
-Nothing here throws; each returns a value that a caller can easily mistake for data.
+The calls in this table return sentinel values that callers can mistake for data. This table does not define a library-wide invalid-input policy.
 
 | Call                                               | Result                                                 |
 | -------------------------------------------------- | ------------------------------------------------------ |
@@ -207,6 +218,10 @@ Nothing here throws; each returns a value that a caller can easily mistake for d
 
 `convertMsFromDuration` accepts one integer and one unit from `ms`, `s`, `m`, `h`, with surrounding whitespace tolerated. A decimal, an uppercase unit, a spelled-out unit, or two units in one string all yield `0`.
 
+## Input failures
+
+Validate untrusted numeric input or catch the documented errors from `factorial`, `fibonacci`, `combination`, `permutation`, `digitSum`, `toBase`, and `fromBase`. Their integer, sign, digit and base constraints differ; sentinel returns from other helpers do not extend to these functions. `Murmur3` rejects unsupported input types; `stringifyGraph` and `parseGraph` reject unsupported or malformed graph data; `createFingerprintFactory` rejects invalid configuration. Their declarations and JSDoc define each accepted domain.
+
 ## Figures a signature does not show
 
 Taken from the implementations' own benchmark notes:
@@ -215,6 +230,6 @@ Taken from the implementations' own benchmark notes:
 - `equals` is about 30% faster than lodash `isEqual`, and about twice as fast as `stableEquals`.
 - `differenceLite` and `intersectionLite` are `O(n × m)` and win below roughly 100 elements, where allocating a `Set` costs more than it saves.
 - `orderedMerge` switches strategy on combined input length: a linear scan under 20 elements, a `Set` at or above it.
-- `factorial` and `fibonacci` memoize into module-level `Map`s that live for the process and are never evicted. They are the only exports that throw on invalid input — a non-integer or negative argument.
+- `factorial` and `fibonacci` memoize successful values into module-level `Map`s that live for the process and are never evicted. Invalid arguments throw; a failure is not cached.
 - `polynomialHash` derives from a 32-bit value, so entropy stops at about 7 base-36 characters no matter what length is requested.
 - `Murmur3` is non-cryptographic. `Murmur3.hash(value, seed?)` is the one-shot form; an instance chains `.hash(…)` calls and reads out with `.result()`, accepting `string`, `ArrayBuffer`, or `Uint8Array`.

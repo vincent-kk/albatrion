@@ -1,6 +1,11 @@
 import type { Fn } from '@aileron/declare';
 
-import type { AgentType, InjectReport, Scope } from '../../core/index.js';
+import type {
+  AgentType,
+  InjectReport,
+  RunResult,
+  Scope,
+} from '../../core/index.js';
 import type { ConsumerPackage } from '../../types/index.js';
 import type {
   ApplyProgress,
@@ -54,10 +59,15 @@ export type Phase =
     }
   | {
       readonly kind: 'summary';
+      readonly result?: RunResult;
       readonly reports: readonly InjectReport[];
       readonly plans: readonly TargetPlan[];
       readonly exitCode: 0 | 1 | 2;
       readonly scope: Scope;
       readonly dryRun: boolean;
     }
-  | { readonly kind: 'error'; readonly error: Error };
+  | {
+      readonly kind: 'error';
+      readonly error: Error;
+      readonly exitCode?: 1 | 2;
+    };

@@ -27,7 +27,15 @@ export function InjectApp(props: InjectAppProps): React.ReactElement {
   const { targets, flags, originCwd, onExit } = props;
   const [phase, dispatch] = usePhase({ kind: 'resolving', targets });
 
-  useInjectSession({ targets, flags, originCwd, dispatch });
+  useInjectSession({
+    targets,
+    flags,
+    originCwd,
+    dispatch,
+    result: props.result,
+    notices: props.notices,
+    diagnostics: props.diagnostics,
+  });
 
   const handleExit = useCallback(
     (code: 0 | 1 | 2) => {
@@ -45,7 +53,7 @@ export function InjectApp(props: InjectAppProps): React.ReactElement {
 
   useExitApp({
     enabled: phase.kind === 'error',
-    exitCode: 1,
+    exitCode: phase.kind === 'error' ? (phase.exitCode ?? 1) : 1,
     onExit: handleExit,
     delayMs: 100,
   });
@@ -82,8 +90,8 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
         <Box flexDirection="column">
           <Spinner label="building plans…" />
           <Box flexDirection="column" marginLeft={2} marginTop={1}>
-            {[...phase.progress.values()].map((step) => (
-              <Box key={step.packageName}>
+            {[...phase.progress.entries()].map(([key, step]) => (
+              <Box key={key}>
                 <Text
                   color={
                     step.status === 'done'
@@ -120,9 +128,11 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
         <Box flexDirection="column">
           {phase.plans.map((tp, idx) => (
             <TargetCard
-              key={tp.target.name}
+              key={tp.key}
+              agent={tp.agentTarget.agent}
               target={tp.target}
               plan={tp.plan}
+              diagnosticOnly={tp.refused}
               expanded
               highlighted={idx === phase.focusedIndex}
             />
@@ -155,9 +165,11 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
           <Box flexDirection="column" marginLeft={2} marginTop={1}>
             {phase.plans.map((tp) => (
               <TargetCard
-                key={tp.target.name}
+                key={tp.key}
+                agent={tp.agentTarget.agent}
                 target={tp.target}
                 plan={tp.plan}
+                diagnosticOnly={tp.refused}
                 expanded={false}
               />
             ))}
@@ -170,11 +182,35 @@ function renderPhaseBody(phase: Phase): React.ReactNode {
         <Box flexDirection="column">
           {phase.plans.map((tp) => (
             <TargetCard
-              key={tp.target.name}
+              key={tp.key}
+              agent={tp.agentTarget.agent}
               target={tp.target}
               plan={tp.plan}
-              expanded={false}
+              diagnosticOnly={tp.refused}
+              expanded
             />
+          ))}
+          {phase.plans
+            .filter((tp) => tp.error && !phase.result?.failures?.length)
+            .map((tp) => (
+              <Text key={tp.key} color={colors.danger}>
+                {tp.target.name}: {tp.error}
+              </Text>
+            ))}
+          {(phase.result?.failures ?? []).map((failure, index) => (
+            <Text key={`failure:${index}`} color={colors.danger}>
+              {failure.path} [{failure.stage}]: {failure.reason}
+            </Text>
+          ))}
+          {(phase.result?.notices ?? []).map((notice, index) => (
+            <Text key={`notice:${index}`} color={colors.warn}>
+              {notice.path} [{notice.stage}]: {notice.reason}
+            </Text>
+          ))}
+          {(phase.result?.errors ?? []).map((reason, index) => (
+            <Text key={`preflight:${index}`} color={colors.warn}>
+              {reason}
+            </Text>
           ))}
           <Summary
             reports={phase.reports}

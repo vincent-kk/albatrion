@@ -1,11 +1,11 @@
-import { memo, useCallback, useRef } from 'react';
+import type { ReactElement } from 'react';
+import { memo, useCallback, useMemo, useRef } from 'react';
 
 import { isArray } from '@winglet/common-utils/filter';
 import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
 
-import type { Optional } from '@aileron/declare';
+import type { Nullable, Optional } from '@aileron/declare';
 
-import { PluginManager } from '@/schema-form/app/plugin';
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
 import { FieldNodeState } from '@/schema-form/core';
 import {
@@ -15,6 +15,7 @@ import {
   relayFieldNodeInput,
   writeFieldNodeInput,
 } from '@/schema-form/core';
+import { resolveFieldIdentifiers } from '@/schema-form/helpers/fieldId/resolveFieldIdentifiers';
 import {
   useInputControlContext,
   useWorkspaceContext,
@@ -36,7 +37,7 @@ import { readFieldInputGeneration } from './utils/readFieldInputGeneration';
 import { resolveControlled } from './utils/resolveControlled';
 
 /** State patch that marks the field touched after blur. */
-const TOUCHED_STATE_PATCH = { [FieldNodeState.Touched]: true };
+const TOUCHED_STATE_PATCH = { [FieldNodeState.Touched]: true } as const;
 
 /** Bind one input draft to the live node without treating typing as a caller refresh. */
 export const FieldInputBridge = memo(
@@ -50,15 +51,16 @@ export const FieldInputBridge = memo(
     overrideProps,
     PreferredFieldInput,
     NodeProxy,
-  }: FieldInputBridgeProps) => {
+  }: FieldInputBridgeProps): ReactElement | null => {
     const selected = useFieldInput(node, PreferredFieldInput !== null);
     const FieldInput = PreferredFieldInput || (selected && selected.Component);
     const formInputRenderer = useInputRendererContext();
-    const { InputRenderer: externalInputRenderer } = useExternalInputContext();
+    const { InputRenderer: externalInputRenderer, pluginManager } =
+      useExternalInputContext();
     const InputRenderer =
       formInputRenderer ||
       externalInputRenderer ||
-      PluginManager.InputRenderer ||
+      pluginManager.InputRenderer ||
       null;
     const Frame = FieldInput && !unwrapped ? InputRenderer : null;
     const presentation = (node.jsonSchema as JSONSchema).presentation;
@@ -70,10 +72,33 @@ export const FieldInputBridge = memo(
     const mountedChildren = useRef(0);
     const [terminalChildren, commitTerminalChildren] =
       useTerminalChildren(node);
-    const [ChildFields, hydrationCommitRef, virtualizationManager] =
-      useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
-    const { attachedFilesMap, context } = useWorkspaceContext();
-    const attachmentOwner = useRef({});
+    const [
+      ChildFields,
+      hydrationCommitRef,
+      virtualizationManager,
+      childValueRevision,
+    ] = useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
+    if (
+      node.strategy === 'branch' &&
+      (childValueRevision.node !== node ||
+        childValueRevision.input !== FieldInput ||
+        childValueRevision.frame !== Frame ||
+        childValueRevision.isControlled !== (controlled === true))
+    ) {
+      childValueRevision.node = node;
+      childValueRevision.input = FieldInput;
+      childValueRevision.frame = Frame;
+      childValueRevision.isControlled = controlled === true;
+      childValueRevision.externalValueRevision = undefined;
+    }
+    const { attachedFilesMap, context, formId } = useWorkspaceContext();
+    const identifiers = useMemo(
+      () => resolveFieldIdentifiers(formId, node.path),
+      [formId, node.path],
+    );
+    const attachmentOwner = useRef<{ container: Nullable<HTMLDivElement> }>({
+      container: null,
+    });
     const {
       readOnly: rootReadOnly,
       disabled: rootDisabled,
@@ -87,7 +112,12 @@ export const FieldInputBridge = memo(
       handleCompositionEnd,
       update,
       releaseComposition,
-    ] = useFieldInputControl(node, mountedChildren, controlled);
+    ] = useFieldInputControl(
+      node,
+      mountedChildren,
+      controlled,
+      childValueRevision,
+    );
     const lifecycle = useFieldLifecycleContext();
     const position = useFieldLifecycle(
       node,
@@ -110,8 +140,21 @@ export const FieldInputBridge = memo(
         selection.active &&
         isLive() &&
         (mountedChildren.current > 0 ||
-          generation === readFieldInputGeneration(node, controlled)),
-      [node, generation, isLive, selection, controlled],
+          generation ===
+            readFieldInputGeneration(
+              node,
+              controlled,
+              childValueRevision.externalValueRevision,
+            )),
+      [
+        node,
+        generation,
+        isLive,
+        selection,
+        controlled,
+        childValueRevision,
+        mountedChildren,
+      ],
     );
     const handleChange = useCallback<SetStateFnWithOptions<any>>(
       (value, option = SetValueOption.Overwrite) => {
@@ -140,6 +183,7 @@ export const FieldInputBridge = memo(
         const onFileAttach =
           onFileAttachRef.current || overrideOnFileAttachRef?.current;
         if (onFileAttach) return onFileAttach(files);
+        attachmentOwner.current.container = ref.current;
         attachedFilesMap.attach(
           attachmentOwner.current,
           node,
@@ -153,6 +197,7 @@ export const FieldInputBridge = memo(
         onFileAttachRef,
         overrideOnFileAttachRef,
         attachedFilesMap,
+        ref,
       ],
     );
     const requestId =
@@ -166,19 +211,21 @@ export const FieldInputBridge = memo(
       if (!accepts()) return;
       const reset = readFieldNodeInteractionEpoch(node);
       finishFieldNodeInput(node);
-      if (node.state[2]) return;
+      if (node.state[FieldNodeState.Touched]) return;
       requestId.current = requestAnimationFrame(() => {
         if (
           selection.active &&
           isLive() &&
           reset === readFieldNodeInteractionEpoch(node) &&
-          !node.state[2]
+          !node.state[FieldNodeState.Touched]
         )
           node.setState(TOUCHED_STATE_PATCH);
       });
     }, [accepts, isLive, node, selection]);
     useOnUnmount(() => {
-      attachedFilesMap.detach(attachmentOwner.current);
+      // Activity hiding runs this cleanup with the DOM still connected; unmount has removed it.
+      if (!attachmentOwner.current.container?.isConnected)
+        attachedFilesMap.detach(attachmentOwner.current);
       if (requestId.current !== undefined)
         cancelAnimationFrame(requestId.current);
     });
@@ -221,6 +268,7 @@ export const FieldInputBridge = memo(
           type={node.type}
           schemaType={node.schemaType}
           misfit={node.isMisfit}
+          {...identifiers}
           name={node.name}
           path={node.path}
           nullable={node.isNullable}

@@ -2,6 +2,10 @@
 
 ## Requirements
 
+- Commander 구문 오류도 출력 모드에 맞게 종료 코드 2로 보고하며 JSON 요청은 빈 units와 오류 목록을 가진 문서를 출력합니다. 누락된 옵션 값과 알 수 없는 옵션도 인자 오류입니다.
+
+- 스코프 열거에서 읽거나 파싱하지 못한 package.json은 경로와 사유를 출력하고 JSON errors에도 보존합니다. 읽을 수 있는 다른 멤버는 계속 처리합니다.
+
 - `runCli(argv)` 는 유일한 CLI 진입점이며, argv 에서 `--package <name...>` 을 읽는다. 미리 해석된 메타데이터는 받지 않는다.
 - `--package` 는 세 가지 모양을 받는다:
   - `@<scope>` — 그 npm scope 아래 설치된 패키지를 열거
@@ -11,12 +15,11 @@
 - 플래그: `--package <name...>`, `--agent <type...>`, `--scope <user|project>`, `--asset <kind...>`, `--asset-path <path>`, `--dry-run`, `--force`, `--yes`, `--no-interactive`, `--root <path>`, `--json`.
 - `--asset-path` 은 단일 값이며 `--asset` 과 별개다. commander 는 long option 을 완전 일치로 매칭하고 가변 수집은 `-` 로 시작하는 다음 토큰에서 멈추므로, `--asset skills --asset-path agents` 도 서로를 삼키지 않는다.
 - `--asset-path` 의 모양 검증은 파일시스템 IO 이전에 action 에서 한다 — 빈 값, 절대 경로, `~` 로 시작하는 값은 2로 종료한다. 경로가 packageRoot 안에 있는지와 실제로 디렉터리인지는 타깃마다 다르므로 `resolvePackage` 가 판정한다.
-- `--asset-path` 오류는 `--json` 이어도 action 에서 종료한다. `--package` 누락과 같은 계층이라 stdout 은 비고 진단은 stderr 로만 나간다.
-- `--package` 값이 하나도 없으면 2로 종료한다. 해석된 패키지가 0개면 경고만 남기고 0으로 끝난다 — 아무 일도 하지 않은 것은 실패가 아니다. 다만 `--json` 은 그 경우에도 렌더러까지 진행해 `units: []` 인 문서를 낸다. 문서가 없으면 소비자가 "성공했지만 대상이 없음" 과 파싱 실패를 구분할 수 없기 때문이다.
+- 발견·gate·빈 대상 실행의 종료 판정은 최상위 src/DETAIL.md의 종료 표를 따릅니다.
 - `renderOrFallback` 은 target 해석 이후 실행당 정확히 한 번 호출되며 렌더러 분기를 소유한다. 분기 순서: `--json` → `renderJSON`; 비TTY 이거나 `flags.interactive === false` → `renderPlain`; 나머지 → `ui/` 동적 import. 패키지가 ESM 전용이므로 `await import()` 로 충분하다.
 - `renderOrFallback` 의 `env.isTTY` 는 테스트를 위해 주입 가능하며, 생략 시 `process.stdout.isTTY` 를 쓴다.
 - `--json` 이 켜지면 액션 진입 즉시 `divertLogsToStderr()` 가 호출된다. 이후의 모든 진단은 — 종료 경로의 것까지 — stderr 로 간다. stdout 은 JSON 문서만의 것이다.
-- 비대화형 경로의 필수 플래그 검증은 `resolveScopeFlag` / `resolveAgentFlag` / `resolveAssetFlag` 가 맡아 실패 시 2로 종료한다. `--json` 렌더러는 대신 `parse*Flag` 를 써서 실패를 값으로 받아 자기 문서에 담는다.
+- 모든 출력 경로는 코어의 같은 검증과 실행 함수를 사용하고, JSON 표시 함수는 오류도 값으로 받아 문서에 담습니다.
 - asset 누락 정책은 `--package` 가 지목한 대상의 개수로 갈린다. **중복을 제거한** 값이 정확히 하나이고 그 값이 패키지 이름이면 strict 다 — `agents.assetPath` 가 없으면 2로 종료한다. 서로 다른 값이 여럿이면 soft skip 이라 나머지 배치가 계속된다. 같은 패키지를 두 번 적는 것은 여전히 한 패키지를 지목한 것이므로 판정이 물러지지 않는다.
 - scope alias 는 언제나 soft skip 으로 열거된다. workspace 안의 어떤 패키지가 asset 을 선언하지 않는 것은 정상이기 때문이다.
 - `--asset-path` 가 있으면 `agents.assetPath` 부재 검사 자체를 건너뛴다. 실패는 위와 **같은** strict / soft skip 분기를 탄다. 새 정책을 만들지 않는다.
@@ -30,13 +33,20 @@
 - scope 열거는 `<cwd>/node_modules/@<scope>/*` 를 파일시스템 루트까지 거슬러 올라가며 훑는다. 디렉터리 이름은 선언된 패키지 이름과 다를 수 있으므로 권위는 `package.json` 의 `name` 필드에 있고, 중첩 설치는 nearest-wins 로 중복 제거된다. 조상 다음에는 프로젝트의 install root 마다 같은 방식으로 훑고, 이름이 발견된 디렉터리를 그 이름의 해석 기준으로 `resolvePackage` 에 넘긴다.
 - install root 는 marker root(`core/scope` 의 `findMarkerRoot` — 홈 디렉터리보다 아래에서 root marker 를 가진 가장 가까운 조상) 아래에서 `node_modules` 를 **소유한** 디렉터리다. pnpm 은 의존성을 선언한 workspace 멤버에만 설치하고 workspace 루트로는 아무것도 hoist 하지 않으므로, 루트에서 실행된 해석은 멤버를 기준으로 삼아야 닿는다. `targets/findInstallRoots.ts` 는 소유 여부만 보며 `node_modules` 와 dot 디렉터리 안으로 내려가지 않는다 — 열거는 여전히 `resolveScopeAlias.ts` 만의 몫이다. marker root 가 없으면 걷지 않는다: agent anchor 는 홈 디렉터리의 `.claude` 일 수 있고, 홈의 marker 를 따라 걸으면 무관한 캐시의 `node_modules` 에서 타깃이 해석된다.
 - scope 열거는 `targets/resolveScopeAlias.ts` 안에만 있다. `runCli/**` 의 다른 어떤 파일도 형제 `package.json` 을 읽지 않는다.
-- `utils/` 는 없다. 부속은 파이프라인 단계별 organ 셋으로 나뉜다 — `targets/`(argv → `ConsumerPackage[]`, 파일시스템·모듈해석), `flags/`(CLI 값 하나 검증, 순수), `renderers/`(상호 배타적인 출력 경로 셋). 간선은 `runCli.ts` → `targets/`, `runCli.ts` → `renderers/`, `runCli.ts` → `flags/`, 그리고 `renderers/` → `flags/` 넷뿐이다. `targets/` 는 나머지 둘 중 어느 것도 import 하지 않으며, 이행 체인이 아니라 `runCli.ts` 를 정점으로 하는 한 방향 그래프다.
 - 해석된 target 은 렌더링 전에 `packageName` 으로 중복 제거된다.
 - commander 의 program name 은 런타임에 `argv[1]` 의 basename 에서 파생된다. `npx @slats/agents-assets-sync` 와 설치된 `inject-agents-settings` 가 각각 자기 이름으로 도움말과 오류를 낸다.
-- 렌더러가 0이 아닌 코드를 돌려주면 그 코드로 프로세스가 종료된다.
+- 코어 결과가 0이 아닌 코드를 담으면 표시 뒤 그 코드로 프로세스가 종료됩니다.
 - soft skip 은 진단이자 값이다. 경고는 사람이 읽는 전사를 위해 남기고, 같은 문자열을 수집해 `--json` 이 stderr 를 긁지 않고도 빈 실행을 설명하게 한다.
 
+- 적용 실패는 종료 코드 1이며 JSON 보고서는 실패 항목을 생성·삭제 목록에서 제외하고 failed 경고를 담는다.
+
+- 여러 단위의 종료 코드는 출력 방식과 순서에 관계없이 실행 오류 1, force 차단 2, 성공 0 순으로 집계한다.
+
+- Node가 허용하는 UTF-8 BOM은 명시한 패키지와 스코프 별칭, package.json 서브패스가 막혀 main 진입점에서 찾는 메타데이터 해석에서 동일하게 허용한다.
+
 ## API Contracts
+
+- 거부된 유닛의 계획은 diagnosticOnly 표시로만 보여 주며 적용 예정 또는 force 확인 목록으로 표시하지 않습니다.
 
 - `runCli(argv: readonly string[] = process.argv): Promise<void>`
 - `DefaultFlags`
@@ -135,7 +145,7 @@
 ### AC-RUNCLI-GATE-VERDICT — 게이트 판정은 실행의 것이지 렌더러의 것이 아니다
 
 - 해시를 댈 수 없는 타깃은 렌더러 분기 이전에 걸러지므로, 세 렌더러 중 어느 것도 그런 타깃을 계획하거나 그에 대해 판정하지 않는다.
-- 패키지 이름 하나만 지목한 실행에서 그 하나가 걸리면 2로 종료한다. `--json` 이든 아니든 같다 — `--json` 은 렌더러 이전 실패의 관례대로 stdout 이 비고 진단은 stderr 로 간다.
+- 패키지 이름 하나만 지목한 실행에서 그 하나가 걸리면 2로 종료한다. 종료 판정은 최상위 `src/DETAIL.md`의 표를 따르며 `--json`은 이 실패도 문서 하나로 보고합니다.
 - 서로 다른 값이 여럿이거나 scope alias 인 실행은 사유를 남기고 0으로 끝난다. `--json` 은 그 사유를 `errors` 에 싣고 나머지 타깃의 `units` 를 낸다. `--json` 이든 아니든 같다.
 - 같은 패키지를 두 번 적어도(`--package=X,X`) 판정은 물러지지 않는다. 이 절은 `agents.assetPath` 부재에도 같이 적용된다 — 두 실패가 한 분기를 공유하기 때문이다.
 - 검증: `src/__tests__/cli.test.ts`.
@@ -154,9 +164,8 @@
 
 - `--json` 실행의 stdout 전체가 하나의 JSON 객체로 파싱된다.
 - 플래그 오류는 느슨한 텍스트가 아니라 `exitCode: 2` 인 문서로 보고된다.
-- 렌더러에 닿기 전에 실패하면 stdout 은 비고 진단은 stderr 로만 나간다.
+- 인자 구문·플래그·대상 해석·gate 오류를 포함한 모든 종료에서 stdout은 JSON 문서 하나이며 path·stage·reason을 보존합니다. 최종 결과 모델은 core/injectDocs의 계약을 따릅니다.
 - 검증: `src/__tests__/json.test.ts`.
-
 
 ## Last Updated
 

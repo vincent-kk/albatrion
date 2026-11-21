@@ -1,0 +1,238 @@
+import { spawnSync } from 'node:child_process';
+import {
+  chmodSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+
+// Runs the built bin against temp directories only (never ~/.claude or the repo).
+const PACKAGE_ROOT = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  '../../..',
+);
+const BIN_PATH = join(PACKAGE_ROOT, 'bin/inject-agents-settings.mjs');
+const PACKAGE = '@r2-periphery/probe';
+
+let outerRoot: string;
+let projectRoot: string;
+let packageRoot: string;
+let assetRoot: string;
+
+function writeAt(abs: string, body: string): void {
+  mkdirSync(dirname(abs), { recursive: true });
+  writeFileSync(abs, body, 'utf-8');
+}
+
+function run(...args: readonly string[]) {
+  return spawnSync(
+    process.execPath,
+    [BIN_PATH, '--package', PACKAGE, '--root', projectRoot, ...args],
+    { encoding: 'utf-8', cwd: projectRoot },
+  );
+}
+
+function setVersion(version: string) {
+  writeAt(
+    join(packageRoot, 'package.json'),
+    JSON.stringify({ name: PACKAGE, version }),
+  );
+}
+
+const probeFs = () => {
+  const dir = mkdtempSync(join(tmpdir(), 'r2p-fs-'));
+  writeFileSync(join(dir, 'Case'), 'x');
+  const caseInsensitive = existsSync(join(dir, 'CASE'));
+  writeFileSync(join(dir, 'é'), 'x');
+  const normInsensitive = existsSync(join(dir, 'é'));
+  rmSync(dir, { recursive: true, force: true });
+  return { caseInsensitive, normInsensitive };
+};
+const FS = probeFs();
+
+const BASE = ['--scope=project', '--asset-path=agents'];
+
+describe('r2-periphery agents-assets-sync probes (temp dirs only)', () => {
+  beforeEach(() => {
+    outerRoot = mkdtempSync(join(tmpdir(), 'r2p-aas-'));
+    projectRoot = join(outerRoot, 'project');
+    mkdirSync(join(projectRoot, '.git'), { recursive: true });
+    writeFileSync(join(projectRoot, 'AGENTS.md'), '# Project\n', 'utf-8');
+    packageRoot = join(projectRoot, 'node_modules', ...PACKAGE.split('/'));
+    assetRoot = join(packageRoot, 'agents');
+    setVersion('1.0.0');
+  });
+
+  afterEach(() => {
+    // Restore permissions so cleanup can remove everything.
+    const walk = (dir: string) => {
+      try {
+        chmodSync(dir, 0o755);
+        for (const e of readdirSync(dir, { withFileTypes: true }))
+          if (e.isDirectory()) walk(join(dir, e.name));
+      } catch {
+        /* ignore */
+      }
+    };
+    walk(outerRoot);
+    rmSync(outerRoot, { recursive: true, force: true });
+  });
+
+  it('a copy that fails with EACCES does not exit 0 and report the file as created', () => {
+    writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
+    expect(run('--agent=claude', ...BASE).status).toBe(0);
+    writeAt(join(assetRoot, 'skills/pp/new.md'), '# new\n');
+    const skillDir = join(projectRoot, '.claude/skills/pp');
+    chmodSync(skillDir, 0o555);
+
+    const result = run('--agent=claude', ...BASE, '--json');
+    chmodSync(skillDir, 0o755);
+    const doc = JSON.parse(result.stdout);
+    const created: string[] = doc.units[0].report.created;
+    const written = existsSync(join(skillDir, 'new.md'));
+    expect({
+      written,
+      status: result.status,
+      exitCode: doc.exitCode,
+      reportedCreated: created.includes('skills/pp/new.md'),
+    }).toEqual({
+      written: false,
+      status: 1,
+      exitCode: 1,
+      reportedCreated: false,
+    });
+  });
+
+  it('an orphan whose unlink fails with EACCES is not reported as deleted with exit 0', () => {
+    writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
+    writeAt(join(assetRoot, 'skills/pp/old.md'), '# old\n');
+    expect(run('--agent=claude', ...BASE).status).toBe(0);
+    rmSync(join(assetRoot, 'skills/pp/old.md'));
+    const skillDir = join(projectRoot, '.claude/skills/pp');
+    chmodSync(skillDir, 0o555);
+    const result = run('--agent=claude', ...BASE, '--force', '--yes', '--json');
+    chmodSync(skillDir, 0o755);
+    const doc = JSON.parse(result.stdout);
+    expect({
+      stillThere: existsSync(join(skillDir, 'old.md')),
+      exitCode: doc.exitCode,
+      reportedDeleted: doc.units[0].report.deleted.includes('skills/pp/old.md'),
+    }).toEqual({ stillThere: true, exitCode: 1, reportedDeleted: false });
+  });
+
+  it.skipIf(!FS.caseInsensitive)(
+    'a case-only rename between versions keeps the renamed file after --force',
+    () => {
+      writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
+      writeAt(join(assetRoot, 'skills/pp/README.md'), '# readme\n');
+      expect(run('--agent=claude', ...BASE).status).toBe(0);
+      // v2 renames README.md -> Readme.md (case only), same bytes.
+      rmSync(join(assetRoot, 'skills/pp/README.md'));
+      writeAt(join(assetRoot, 'skills/pp/Readme.md'), '# readme\n');
+      setVersion('2.0.0');
+      const plain = run('--agent=claude', ...BASE);
+      const forced = run('--agent=claude', ...BASE, '--force', '--yes');
+      const names = readdirSync(join(projectRoot, '.claude/skills/pp')).sort();
+      expect({
+        plainStatus: plain.status,
+        forcedStatus: forced.status,
+        names,
+      }).toEqual({
+        plainStatus: 0,
+        forcedStatus: 0,
+        names: ['Readme.md', 'SKILL.md'],
+      });
+    },
+  );
+
+  it.skipIf(!FS.normInsensitive)(
+    'an NFD -> NFC file-name change between versions keeps the file after --force',
+    () => {
+      const nfd = 'café.md';
+      const nfc = 'café.md';
+      writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
+      writeAt(join(assetRoot, 'skills/pp', nfd), '# cafe\n');
+      expect(run('--agent=claude', ...BASE).status).toBe(0);
+      rmSync(join(assetRoot, 'skills/pp', nfd));
+      writeAt(join(assetRoot, 'skills/pp', nfc), '# cafe\n');
+      setVersion('2.0.0');
+      const forced = run('--agent=claude', ...BASE, '--force', '--yes');
+      const names = readdirSync(join(projectRoot, '.claude/skills/pp'));
+      expect({ status: forced.status, count: names.length }).toEqual({
+        status: 0,
+        count: 2,
+      });
+    },
+  );
+
+  it('a blocked multi-agent run exits with the same code in plain and --json', () => {
+    writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
+    writeAt(join(assetRoot, 'rules/pp-rule.md'), '# rule\n');
+    expect(run('--agent=claude,codex', ...BASE).status).toBe(0);
+    writeAt(join(projectRoot, '.claude/skills/pp/SKILL.md'), '# edited\n');
+    const plain = run('--agent=claude,codex', ...BASE);
+    const json = run('--agent=claude,codex', ...BASE, '--json');
+    expect({ plain: plain.status, json: json.status }).toEqual({
+      plain: json.status,
+      json: json.status,
+    });
+    expect(plain.status).toBe(2);
+  });
+
+  it('a rule dropped by a new version is removed for claude as it is for codex', () => {
+    writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
+    writeAt(join(assetRoot, 'rules/pp-keep.md'), '# keep\n');
+    writeAt(join(assetRoot, 'rules/pp-old.md'), '# old\n');
+    expect(run('--agent=claude,codex', ...BASE).status).toBe(0);
+    rmSync(join(assetRoot, 'rules/pp-old.md'));
+    setVersion('2.0.0');
+    const forced = run('--agent=claude,codex', ...BASE, '--force', '--yes');
+    expect(forced.status).toBe(0);
+    const codexBlockGone = !readFileSync(
+      join(projectRoot, 'AGENTS.md'),
+      'utf-8',
+    ).includes('rules/pp-old.md');
+    const claudeFileGone = !existsSync(
+      join(projectRoot, '.claude/rules/pp-old.md'),
+    );
+    expect({ codexBlockGone, claudeFileGone }).toEqual({
+      codexBlockGone: true,
+      claudeFileGone: true,
+    });
+  });
+
+  it('a skill dropped by a new version is removed after --force', () => {
+    writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
+    writeAt(join(assetRoot, 'skills/pp-old/SKILL.md'), '# old skill\n');
+    expect(run('--agent=claude', ...BASE).status).toBe(0);
+    rmSync(join(assetRoot, 'skills/pp-old'), { recursive: true });
+    setVersion('2.0.0');
+    const forced = run('--agent=claude', ...BASE, '--force', '--yes');
+    expect(forced.status).toBe(0);
+    expect(
+      existsSync(join(projectRoot, '.claude/skills/pp-old/SKILL.md')),
+    ).toBe(false);
+  });
+
+  it('a package.json with a UTF-8 BOM (which Node accepts) resolves', () => {
+    writeAt(
+      join(packageRoot, 'package.json'),
+      '﻿' + JSON.stringify({ name: PACKAGE, version: '1.0.0' }),
+    );
+    writeAt(join(assetRoot, 'skills/pp/SKILL.md'), '# skill\n');
+    const result = run('--agent=claude', ...BASE);
+    expect({ status: result.status, stderr: result.stderr.slice(0, 200) }).toEqual({
+      status: 0,
+      stderr: '',
+    });
+  });
+});

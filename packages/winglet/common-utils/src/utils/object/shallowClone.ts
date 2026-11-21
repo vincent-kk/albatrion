@@ -275,6 +275,9 @@ import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
  */
 export const shallowClone = <Type>(value: Type): Type => {
   if (isArray(value)) return [...value] as Type;
-  if (isPlainObject(value)) return { ...value };
+  if (isPlainObject(value))
+    return Object.getPrototypeOf(value) === null
+      ? Object.assign(Object.create(null), value)
+      : { ...value };
   return value;
 };

@@ -1,5 +1,5 @@
 import {
-  type PropsWithChildren,
+  type PropsWithChildren, type ReactElement,
   memo,
   useLayoutEffect,
   useMemo,
@@ -30,7 +30,7 @@ export const ModalManagerContextProvider = memo(
   ({
     usePathname,
     children,
-  }: PropsWithChildren<ModalManagerContextProviderProps>) => {
+  }: PropsWithChildren<ModalManagerContextProviderProps>): ReactElement => {
     const { pathname } = usePathname();
     const initiator = useRef(pathname);
 
@@ -71,16 +71,36 @@ export const ModalManagerContextProvider = memo(
       return () => ModalManager.releaseOpenHandler(openHandler);
     }, [optionsRef, usePathname]);
 
+    /** Routes this instance assigned to visible nodes it received; undefined before the first route effect. */
+    const adoptedRoutes = useRef<Map<number, string> | undefined>(undefined);
+
     useLayoutEffect(() => {
+      const adopting = adoptedRoutes.current === undefined;
+      const routes = (adoptedRoutes.current ??= new Map());
       for (const id of ModalManager.ids) {
         const modal = ModalManager.node(id);
         if (!modal?.alive) continue;
-        if (modal.initiator === pathname) modal.onShow();
+        if (adopting && modal.visible && modal.initiator !== pathname)
+          routes.set(id, pathname);
+        if ((routes.get(id) ?? modal.initiator) === pathname) modal.onShow();
         else modal.onHide();
       }
       initiator.current = pathname;
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pathname]);
+
+    useLayoutEffect(
+      () =>
+        ModalManager.subscribe(() => {
+          const routes = adoptedRoutes.current;
+          if (!routes?.size) return;
+          for (const id of routes.keys()) {
+            const modal = ModalManager.node(id);
+            if (!modal?.alive || modal.settled) routes.delete(id);
+          }
+        }),
+      [],
+    );
 
     const getModalNodeRef = useRef((modalId?: ModalNode['id']) =>
       modalId !== undefined ? ModalManager.node(modalId) : undefined,

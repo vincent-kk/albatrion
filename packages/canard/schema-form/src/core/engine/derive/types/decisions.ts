@@ -35,6 +35,8 @@ export interface DeriveWrite<Self> {
   readonly targetPath: string;
   /** Static template for a latent target. */
   readonly template?: BlueprintNode;
+  /** Live owner of a latent target, through which a latent virtual group reaches its live constituents. */
+  readonly host?: Self;
   /** Sibling templates used when distributing a latent replacement. */
   readonly siblings?: readonly BlueprintChildEntry[];
   /** Document position of a latent target. */
@@ -57,7 +59,7 @@ export interface DeriveWrite<Self> {
 
 /** Pure decision for one complete-tree derivation round. */
 export interface DeriveRoundDecision<Self> {
-  /** At most one winning write for each target in this round. */
+  /** At most one winning write for each target in this round, in ascending rank order. */
   readonly writes: readonly DeriveWrite<Self>[];
   /** Development-only decisions, absent in production. */
   readonly trace: readonly DeriveTraceEntry[];

@@ -124,7 +124,11 @@ it('ERROR-139 reveals and focuses once for two overlapping Enter presses', async
   const form = await mountNativeSubmitForm();
   const focuses: string[] = [];
   form.view.container.addEventListener('focusin', (event) =>
-    focuses.push((event.target as HTMLElement).id),
+    focuses.push(
+      (event.target as HTMLElement)
+        .closest('[data-path]')
+        ?.getAttribute('data-path') ?? '',
+    ),
   );
   form.validator.hold();
   await form.user.type(form.field('/b')!, '{Enter}{Enter}');

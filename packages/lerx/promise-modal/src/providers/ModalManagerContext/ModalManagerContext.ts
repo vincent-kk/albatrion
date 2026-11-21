@@ -1,16 +1,13 @@
 import { createContext } from 'react';
 
-import type { Fn } from '@aileron/declare';
+import { getModalManagerState } from '@/promise-modal/app';
+import type { ModalActions, ModalNode } from '@/promise-modal/core/node';
+import type { ModalManagerContextProps } from '@/promise-modal/types/context';
 
-import type { ModalNode } from '@/promise-modal/core/node';
-import type { ModalActions } from '@/promise-modal/core/node';
-import type { ModalHandlersWithId } from '@/promise-modal/types/modal';
-
-export interface ModalManagerContextProps extends ModalHandlersWithId {
-  getModal: Fn<[id: ModalNode['id'] | undefined], ModalActions>;
-  getModalNode: Fn<[id: ModalNode['id'] | undefined], ModalNode | undefined>;
-}
-
-export const ModalManagerContext = createContext<ModalManagerContextProps>(
-  {} as ModalManagerContextProps,
-);
+/** Context identity follows the existing version-compatible runtime registry. */
+const state = getModalManagerState();
+/** Lazily initialized so a compatible older registry can adopt the identity. */
+export const ModalManagerContext = ((state.contexts ??= {}).manager ??=
+  createContext<ModalManagerContextProps<ModalNode, ModalActions> | undefined>(
+    undefined,
+  ));

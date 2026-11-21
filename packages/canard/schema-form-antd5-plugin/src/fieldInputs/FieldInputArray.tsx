@@ -22,6 +22,8 @@ const Remove = (props: ButtonProps) => (
 );
 
 const FieldInputArray = ({
+  inputId,
+  labelId,
   jsonSchema,
   node,
   readOnly,
@@ -43,7 +45,7 @@ const FieldInputArray = ({
     node.remove(index);
   });
   return (
-    <div style={style}>
+    <div id={inputId} role="group" aria-labelledby={labelId} style={style}>
       {ChildFields &&
         map(ChildFields, (ChildField, i) => {
           const key = ChildField.key;

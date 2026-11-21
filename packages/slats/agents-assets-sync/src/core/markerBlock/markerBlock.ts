@@ -1,9 +1,7 @@
 import { type Sha256Hex, hashContent, hashEquals } from '../hash/index.js';
-import {
-  createBlockPattern,
-  endMarker,
-  startMarker,
-} from './utils/markerLine.js';
+import { normalizeRuleSource } from '../utils/normalizeRuleSource.js';
+import { scanBlocks } from './utils/scanBlocks.js';
+import { writeNormalizedBlock } from './utils/writeNormalizedBlock.js';
 
 /** One block this tool owns inside a shared `AGENTS.md`. */
 export interface ParsedBlock {
@@ -35,21 +33,16 @@ export function formatBlockId(packageName: string, relPath: string): string {
  * @returns parsed blocks; empty when the document holds none
  */
 export function parseBlocks(content: string): ParsedBlock[] {
-  const blocks: ParsedBlock[] = [];
-  const pattern = createBlockPattern();
-  let match = pattern.exec(content);
-  while (match !== null) {
-    const blockId = match[1] as string;
-    const separator = blockId.indexOf(':');
-    blocks.push({
-      blockId,
-      packageName: separator === -1 ? blockId : blockId.slice(0, separator),
-      relPath: separator === -1 ? '' : blockId.slice(separator + 1),
-      body: match[2] as string,
-    });
-    match = pattern.exec(content);
-  }
-  return blocks;
+  return scanBlocks(content).map((block) => {
+    const separator = block.blockId.indexOf(':');
+    return {
+      blockId: block.blockId,
+      packageName:
+        separator === -1 ? block.blockId : block.blockId.slice(0, separator),
+      relPath: separator === -1 ? '' : block.blockId.slice(separator + 1),
+      body: block.body,
+    };
+  });
 }
 
 /**
@@ -74,22 +67,22 @@ export function findBlockBody(content: string, blockId: string): string | null {
  * @param content - full `AGENTS.md` content, possibly empty
  * @param blockId - identifier from `formatBlockId`
  * @param body - source file bytes to place between the markers
+ * @param context - optional file names for Markdown boundary diagnostics
  * @returns the updated document
+ * @throws When source or document boundaries prevent safe insertion.
  */
 export function upsertBlock(
   content: string,
   blockId: string,
   body: string,
+  context: { document?: string; source?: string } = {},
 ): string {
-  const rendered = `${startMarker(blockId)}\n${body}${
-    body.endsWith('\n') ? '' : '\n'
-  }${endMarker(blockId)}\n`;
-  const found = locateBlock(content, blockId);
-  if (found)
-    return content.slice(0, found.start) + rendered + content.slice(found.end);
-  const base =
-    content.length > 0 && !content.endsWith('\n') ? `${content}\n` : content;
-  return base + rendered;
+  return writeNormalizedBlock(
+    content,
+    blockId,
+    normalizeRuleSource(body),
+    context,
+  );
 }
 
 /**
@@ -109,17 +102,48 @@ export function removeBlock(content: string, blockId: string): string {
  * Decide whether a block's body still carries the manifest's content.
  *
  * `upsertBlock` appends a newline when the source file lacks one, so a body
- * read back may hold one byte the source did not. Both readings are checked,
+ * read back may hold one byte the source did not. Only that added byte is optional,
  * which keeps the verdict identical to the file-copy path's hash comparison.
+ * A body whose line endings a `core.autocrlf` checkout turned into CRLF is
+ * checked again with LF endings, since only the line endings changed.
  *
  * @param body - body returned by `parseBlocks` or `findBlockBody`
  * @param expected - the manifest's SHA-256 for the source file
+ * @param encoding - UTF-8 text by default, or Latin-1 for a reversible byte view
  * @returns `true` when the body matches the manifest
  */
-export function blockBodyMatches(body: string, expected: Sha256Hex): boolean {
-  if (hashEquals(hashContent(body), expected)) return true;
+export function blockBodyMatches(
+  body: string,
+  expected: Sha256Hex,
+  encoding: BufferEncoding = 'utf8',
+): boolean {
+  if (!body.endsWith('\n') && !body.endsWith('\r')) return false;
+  if (hashEquals(hashContent(Buffer.from(body, encoding)), expected))
+    return true;
+  if (
+    body.endsWith('\n') &&
+    !body.endsWith('\n\n') &&
+    hashEquals(hashContent(Buffer.from(body.slice(0, -1), encoding)), expected)
+  )
+    return true;
   return (
-    body.endsWith('\n') && hashEquals(hashContent(body.slice(0, -1)), expected)
+    body.indexOf('\r') !== -1 && lfReadingMatches(body, expected, encoding)
+  );
+}
+
+// The same two readings after a `core.autocrlf` checkout's CRLF endings are
+// turned back into LF. Reached only for a body holding a carriage return.
+function lfReadingMatches(
+  body: string,
+  expected: Sha256Hex,
+  encoding: BufferEncoding,
+): boolean {
+  const lf = body.replace(/\r\n?/g, '\n');
+  if (hashEquals(hashContent(Buffer.from(lf, encoding)), expected)) return true;
+  return (
+    lf.endsWith('\n') &&
+    !lf.endsWith('\n\n') &&
+    hashEquals(hashContent(Buffer.from(lf.slice(0, -1), encoding)), expected)
   );
 }
 
@@ -129,16 +153,5 @@ function locateBlock(
   content: string,
   blockId: string,
 ): { start: number; end: number; body: string } | null {
-  const pattern = createBlockPattern();
-  let match = pattern.exec(content);
-  while (match !== null) {
-    if (match[1] === blockId)
-      return {
-        start: match.index,
-        end: match.index + match[0].length,
-        body: match[2] as string,
-      };
-    match = pattern.exec(content);
-  }
-  return null;
+  return scanBlocks(content).find((block) => block.blockId === blockId) ?? null;
 }

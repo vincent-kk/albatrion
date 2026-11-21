@@ -33,10 +33,11 @@ afterEach(() => {
   window.removeEventListener('error', preventWindowError);
 });
 
-it('reads range, marks and lazy from presentation.FieldInputProps', () => {
+it('reads marks and lazy from presentation.FieldInputProps and lets the schema decide range', () => {
   render(
     <Form
       fieldInputDefinitions={[FieldInputSliderDefinition]}
+      defaultValue={{ level: 50 }}
       jsonSchema={{
         type: 'object',
         properties: {
@@ -52,7 +53,7 @@ it('reads range, marks and lazy from presentation.FieldInputProps', () => {
     />,
   );
   const props = received.props.at(-1)!;
-  expect(props.range).toBe(true);
+  expect(props.range).toBe(false);
   expect(props.marks).toEqual(marks);
   expect(props.onChange).toBeTypeOf('function');
   expect(props.onAfterChange).toBeUndefined();

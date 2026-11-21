@@ -107,7 +107,10 @@ const paymentByFieldsActive = {
         targets: ['bankName', 'accountNumber'],
         controls: { active: "./method === 'bank'" },
       },
-      { targets: ['receiptPhone'], controls: { active: "./method === 'cash'" } },
+      {
+        targets: ['receiptPhone'],
+        controls: { active: "./method === 'cash'" },
+      },
     ],
   },
   properties: {
@@ -336,7 +339,9 @@ function ConditionalExample({ schema, presets = [] }: ConditionalExampleProps) {
  * @returns The mounted input, or null when the field is not rendered.
  */
 const findField = (root: HTMLElement, path: string): HTMLElement | null =>
-  root.querySelector<HTMLElement>(`[id="${path}"]`);
+  root.querySelector<HTMLElement>(
+    `:is([id="${path}"], [id$=":${path}~input"]):not(label):not(legend)`,
+  );
 
 /**
  * Read whether a field is rendered.
@@ -501,7 +506,7 @@ export const AllOfMultipleIfThen: Story = {
     await expect(hasField(canvasElement, '/insurance')).toBe(false);
     await expect(hasField(canvasElement, '/expressDelivery')).toBe(false);
     await expect(
-      canvasElement.querySelector('label[for="/phone"]'),
+      canvasElement.querySelector('label[for$=":/phone~input"]'),
     ).toHaveTextContent('*');
 
     await userEvent.click(

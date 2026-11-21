@@ -10,6 +10,9 @@ import type {
 import { splitAssetKind } from './splitAssetKind.js';
 
 const SKILLS_PREFIX = 'skills/';
+// A `..` segment under either separator: `join` would resolve it above the
+// kind root. A name that merely contains dots (`a..b`) does not match.
+const PARENT_SEGMENT = /(?:^|[\\/])\.\.(?:[\\/]|$)/;
 
 interface ResolveDestinationsInput {
   readonly agentTarget: AgentTarget;
@@ -33,7 +36,9 @@ interface ResolveDestinationsInput {
  *
  * @param input - target, owning package, paths, namespaces and kind filter
  * @returns `destinations` keyed by manifest path, and the orphan scans to run
- * @throws when a skill directory would shadow a reserved agent namespace
+ * @throws when a skill directory would shadow a reserved agent namespace, or
+ *   when a manifest path or namespace prefix holds a `..` segment that would
+ *   place a destination or an orphan scan outside its kind root
  */
 export function resolveDestinations(input: ResolveDestinationsInput): {
   destinations: Map<string, Destination>;
@@ -48,6 +53,7 @@ export function resolveDestinations(input: ResolveDestinationsInput): {
     const split = splitAssetKind(relPath);
     if (!split || !assetKinds.has(split.kind)) continue;
     const { kind, rest } = split;
+    assertContained(relPath);
     assertNotReserved(kind, rest);
 
     const reason = unsupported[kind];
@@ -73,6 +79,7 @@ export function resolveDestinations(input: ResolveDestinationsInput): {
   if (assetKinds.has('skills') && skillsRoot !== null) {
     for (const prefix of namespacePrefixes) {
       if (!prefix.startsWith(SKILLS_PREFIX)) continue;
+      assertContained(prefix);
       // A namespace prefix ends with `/`, and `join` keeps it — trim so the
       // scan root reads as a directory path rather than a prefix.
       const namespace = prefix.slice(SKILLS_PREFIX.length).replace(/\/+$/, '');
@@ -94,11 +101,20 @@ export function resolveDestinations(input: ResolveDestinationsInput): {
   return { destinations, orphanScans };
 }
 
+// Manifest keys come from a published file or a public API caller, so they are
+// untrusted: refuse any that would climb out of the root they are joined to.
+function assertContained(manifestPath: string): void {
+  if (!PARENT_SEGMENT.test(manifestPath)) return;
+  throw new Error(
+    `[agents-assets-sync] ${manifestPath} contains a '..' segment; injected assets must stay inside their destination root.`,
+  );
+}
+
 // A dot-prefixed first segment is how agents mark their own reserved space
 // (Codex ships built-ins under `skills/.system/`). Writing there would look
 // like a built-in and could be overwritten by the agent's own updates.
 function assertNotReserved(kind: AssetKind, rest: string): void {
-  if (!rest.startsWith('.')) return;
+  if (kind !== 'skills' || !rest.startsWith('.') || !rest.includes('/')) return;
   throw new Error(
     `[agents-assets-sync] ${kind}/${rest} starts with a dot; that namespace is reserved by the agent and cannot receive injected assets.`,
   );

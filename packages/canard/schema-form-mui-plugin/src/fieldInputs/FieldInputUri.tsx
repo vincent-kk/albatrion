@@ -1,11 +1,4 @@
-import {
-  type ChangeEvent,
-  type ReactNode,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { type ChangeEvent, type ReactNode, useMemo, useState } from 'react';
 
 import type { SelectChangeEvent } from '@mui/material';
 import { Box, InputLabel, MenuItem, Select, TextField } from '@mui/material';
@@ -19,6 +12,8 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { formatProtocol } from './utils/uri/formatProtocol';
+import { parseUri } from './utils/uri/parseUri';
 
 type UriJSONSchema = StringSchema & { format?: 'uri' };
 
@@ -33,55 +28,15 @@ interface FieldInputUriProps
 
 const DEFAULT_PROTOCOLS = ['http', 'https'];
 
-
-const normalizeProtocol = (protocol: string): string => {
-  return protocol.replace(/:\/\/$/, '').replace(/:$/, '');
-};
-
-
-const getProtocolSeparator = (protocol: string): string => {
-  const normalizedProtocol = normalizeProtocol(protocol);
-
-  return ['mailto', 'tel'].includes(normalizedProtocol) ? ':' : '://';
-};
-
-
-const formatProtocolDisplay = (protocol: string): string => {
-  const normalizedProtocol = normalizeProtocol(protocol);
-  const separator = getProtocolSeparator(normalizedProtocol);
-  return `${normalizedProtocol}${separator}`;
-};
-
-
-const parseUri = (uri: string) => {
-
-  const singleColonMatch = uri.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):(.*)$/);
-  if (singleColonMatch && ['mailto', 'tel'].includes(singleColonMatch[1])) {
-    return {
-      protocol: singleColonMatch[1],
-      path: singleColonMatch[2],
-    };
-  }
-
-
-  const doubleColonMatch = uri.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):\/\/(.*)$/);
-  if (doubleColonMatch) {
-    return {
-      protocol: doubleColonMatch[1],
-      path: doubleColonMatch[2],
-    };
-  }
-
-  return null;
-};
-
 const FieldInputUri = ({
-  path,
+  inputId,
+  labelId: fieldTitleId,
+  getInputId,
   name,
   required,
   readOnly,
   disabled,
-  defaultValue,
+  value,
   onChange,
   context,
   label: labelProp,
@@ -117,100 +72,79 @@ const FieldInputUri = ({
     hideLabel,
   ]);
 
-
   const normalizedProtocols = useMemo(() => {
     const rawProtocols = protocolsProp || DEFAULT_PROTOCOLS;
-    return rawProtocols.map(normalizeProtocol);
+    return rawProtocols.map(formatProtocol);
   }, [protocolsProp]);
 
-
-  const textFieldRef = useRef<HTMLInputElement>(null);
-
-  // Only the protocol is stateful; the URI input remains uncontrolled.
-  const [protocol, setProtocol] = useState<string>(normalizedProtocols[0]);
-
-
-  const { initialProtocol, initialUri } = useMemo(() => {
-    if (typeof defaultValue !== 'string' || !defaultValue) {
-      return {
-        initialProtocol: normalizedProtocols[0],
-        initialUri: '',
-      };
-    }
-
-    const parsed = parseUri(defaultValue);
-    if (parsed) {
-      const normalizedDetected = normalizeProtocol(parsed.protocol);
-      return {
-        initialProtocol: normalizedProtocols.includes(normalizedDetected)
-          ? normalizedDetected
-          : normalizedProtocols[0],
-        initialUri: parsed.path,
-      };
-    }
-
-    return {
-      initialProtocol: normalizedProtocols[0],
-      initialUri: defaultValue,
-    };
-  }, [defaultValue, normalizedProtocols]);
-
-
-  useEffect(() => {
-    setProtocol(initialProtocol);
-  }, [initialProtocol]);
+  const parsed = useMemo(
+    () => (typeof value === 'string' ? parseUri(value) : undefined),
+    [value],
+  );
+  const [lastProtocol, setLastProtocol] = useState(
+    parsed?.protocol ?? normalizedProtocols[0] ?? '',
+  );
+  const protocol = parsed?.protocol ?? lastProtocol;
+  const uri = parsed?.path ?? '';
+  const protocolOptions = useMemo(
+    () =>
+      normalizedProtocols.includes(protocol)
+        ? normalizedProtocols
+        : [protocol, ...normalizedProtocols],
+    [normalizedProtocols, protocol],
+  );
 
   const handleProtocolChange = useHandle((event: SelectChangeEvent<string>) => {
     const newProtocol = event.target.value;
-    setProtocol(newProtocol);
+    setLastProtocol(newProtocol);
 
-    const currentUri = textFieldRef.current?.value || '';
-    const separator = getProtocolSeparator(newProtocol);
-    const newValue = currentUri
-      ? `${newProtocol}${separator}${currentUri}`
-      : undefined;
+    const currentUri = uri;
+    const newValue = currentUri ? `${newProtocol}${currentUri}` : undefined;
     onChange(newValue);
   });
 
   const handleUriChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const newUri = event.target.value;
-    const separator = getProtocolSeparator(protocol);
-    const newValue = newUri ? `${protocol}${separator}${newUri}` : undefined;
+    setLastProtocol(protocol);
+    const newValue = newUri ? `${protocol}${newUri}` : undefined;
     onChange(newValue);
   });
 
   return (
-    <Box>
-      <InputLabel htmlFor={path} required={required}>
+    <Box role="group" aria-labelledby={fieldTitleId}>
+      <InputLabel htmlFor={inputId} required={required}>
         {label}
       </InputLabel>
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
         <Select
+          inputProps={{ 'aria-label': 'Protocol' }}
+          id={getInputId('protocol')}
+          MenuProps={{ id: getInputId('protocol-menu') }}
           value={protocol}
           onChange={handleProtocolChange}
           disabled={disabled || readOnly}
           size={size}
           displayEmpty
         >
-          {normalizedProtocols.map((prot) => (
+          {protocolOptions.map((prot) => (
             <MenuItem key={prot} value={prot}>
-              {formatProtocolDisplay(prot)}
+              {prot || 'No scheme'}
             </MenuItem>
           ))}
         </Select>
         <TextField
-          inputRef={textFieldRef}
-          id={path}
+          id={inputId}
           name={name}
           variant={variant}
           fullWidth={fullWidth}
           size={size}
           placeholder={placeholder}
-          defaultValue={initialUri}
+          value={uri}
           onChange={handleUriChange}
           disabled={disabled}
           error={misfit}
           slotProps={{
+            htmlInput: { 'aria-labelledby': fieldTitleId },
             input: {
               readOnly,
             },
@@ -223,6 +157,7 @@ const FieldInputUri = ({
 
 export const FieldInputUriDefinition = {
   Component: FieldInputUri,
+  controlled: true,
   test: ({ type, format, inputType }) =>
     type === 'string' && (format === 'uri' || inputType === 'uri'),
 } satisfies FieldInputDefinition;

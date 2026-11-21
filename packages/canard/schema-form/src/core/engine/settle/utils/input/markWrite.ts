@@ -2,22 +2,36 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Optional } from '@aileron/declare';
 
-import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+import {
+  appendSegment,
+  isDescendantPath,
+} from '@/schema-form/helpers/jsonPointer';
 
-import type { FieldNodeRecord, UnionSpec } from '../../../record';
+import type { Distribution, FieldNodeRecord, UnionSpec } from '../../../record';
 import { FieldNodeWriteKind } from '../../../types/value';
+import { BATCH_HOST_SOURCE } from '../../../utils/batchHostSource';
 import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../types/settlement';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
+import { prepareSourcePruner } from '../slots/prepareSourcePruner';
 import { pruneInactiveSources } from '../slots/pruneInactiveSources';
+import { writeAbsentConstituent } from '../slots/writeAbsentConstituent';
+import { findDepartingChild } from '../transition/findDepartingChild';
+import { placeDeclarativeValue } from '../transition/placeDeclarativeValue';
+import { supersedeRevivedSlotSource } from '../transition/utils/supersedeRevivedSlotSource';
 import { arrayExtras } from './arrayExtras';
 import { assertVirtualWriteShape } from './assertVirtualWriteShape';
 import { hasDistributedChildInput } from './hasDistributedChildInput';
 import { isPlain } from './isPlain';
 import { nextExtras } from './nextExtras';
 import { staticSpec } from './staticSpec';
+import { acceptsRetainedWrite } from './utils/acceptsRetainedWrite';
 import { admitsSameValueWrite } from './utils/admitsSameValueWrite';
 import { keepsHostKeys } from './utils/keepsHostKeys';
+import { recordArrayBoundary } from './utils/recordArrayBoundary';
+import { recordNamedArrayItems } from './utils/recordNamedArrayItems';
+import { recordNamedObjectSlots } from './utils/recordNamedObjectSlots';
+import { recordRetainedSource } from './utils/recordRetainedSource';
 import { restoreWriteEpochPaths } from './utils/restoreWriteEpochPaths';
 
 /** Default of `changedValue`: the caller has not interpreted this node's input. */
@@ -26,7 +40,9 @@ const UNINTERPRETED: unique symbol = Symbol('uninterpreted');
 /**
  * Mark a terminal source or distribute an object host write by declared key.
  * An object host is written whole only inside the context's replacement scope; under a
- * multi-write batch that scope is the union of the written paths (191C-01).
+ * multi-write batch that scope is the union of the caller paths (191C-01). A declarative
+ * (automatic) write replaces its own target whole inside or outside a batch, and also writes a
+ * named value into a child leaving in this settlement, as the same write after the exit does.
  * In an admitted static write a host keeping its key set or item count stays out of
  * shape-dirty and its leaf children whose interpreted value equals their source are not marked (W1).
  * @param node - Caller target or descendant reached by a whole host write
@@ -34,6 +50,8 @@ const UNINTERPRETED: unique symbol = Symbol('uninterpreted');
  * @param context - Work list recording source, shape, and automatic changes
  * @param spec - Static or narrowed type restriction used for interpretation
  * @param changedValue - A leaf's input already interpreted under the static spec and proven unequal to its source by the distribution's skip test; omitted, the input is interpreted and compared here
+ * @param writeOrigin - Named rule input or replay from a cancelled exit, whose whole omissions also persist
+ * @param writeOrder - Original sequence when an existing distribution or input is re-read
  * @returns Nothing; only this node's own state channels are stored here
  */
 export const markWrite = <Self extends FieldNodeRecord<Self>>(
@@ -42,6 +60,8 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   spec: UnionSpec = staticSpec(node.schemaType, node.isNullable),
   changedValue: unknown = UNINTERPRETED,
+  writeOrigin?: Distribution['writeOrigin'],
+  writeOrder?: number,
 ): void => {
   if (context.writeEpoch !== undefined && context.isAutomatic)
     restoreWriteEpochPaths(context);
@@ -63,13 +83,23 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   const isMerge =
     context.kind === FieldNodeWriteKind.CallerPartial && !context.isAutomatic;
   if (!context.isAutomatic) context.writtenInputs.set(node, input);
-  else
-    context.automaticLog.push({
-      node,
-      previousSource: node.source,
-      previousExtras: node.extras,
-      previousDistributed: context.distributedInputs.get(node),
-    });
+  else {
+    if (writeOrder === undefined)
+      writeOrder = context.retainedWriteOrder =
+        (context.retainedWriteOrder ?? 0) + 1;
+    if (!acceptsRetainedWrite(node, context, writeOrder)) return;
+    recordRetainedSource(node, context, writeOrigin, writeOrder);
+    if (writeOrigin !== undefined) context.writtenInputs.set(node, input);
+    if (context.isMarkingLiveRule || context.replayingDepartingWrite) {
+      const previousRight =
+        context.retainedSources?.get(node)?.revivedSlotSource;
+      if (
+        previousRight &&
+        previousRight.write !== context.replayingDepartingWrite
+      )
+        supersedeRevivedSlotSource(previousRight);
+    }
+  }
   const known = changedValue !== UNINTERPRETED;
   const value = known ? changedValue : node.behavior.interpret(input, spec);
   if (node.behavior.strategy !== 'branch') {
@@ -88,17 +118,48 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     const fields = node.blueprintNode.fields ?? [];
     const values = isArray(value) ? value : undefined;
     for (let index = 0; index < fields.length; index++) {
-      const sibling = node.parent?.childrenByName?.[fields[index]];
-      if (!sibling) continue;
       if (
-        !context.isAutomatic &&
-        context.kind !== FieldNodeWriteKind.Load &&
-        !isMerge
-      ) {
+        node === context.target &&
+        context.virtualWriteFields &&
+        !context.virtualWriteFields.includes(fields[index])
+      )
+        continue;
+      const parent = node.parent;
+      const sibling = parent?.childrenByName?.[fields[index]];
+      if (!sibling) {
+        const entry = parent?.blueprintNode.childEntries.find(
+          (entry) => entry.name === fields[index],
+        );
+        if (parent && entry)
+          writeAbsentConstituent(
+            context,
+            parent.path,
+            entry,
+            values?.[index],
+            !isMerge,
+          );
+        continue;
+      }
+      if (context.kind === FieldNodeWriteKind.Load)
+        prepareSourcePruner(sibling)(
+          sibling.runtime,
+          sibling.path,
+          undefined,
+          context,
+        );
+      else if (!context.isAutomatic && !isMerge) {
         (context.virtualReplacementPaths ??= []).push(sibling.path);
         pruneInactiveSources(sibling.runtime, sibling.path, undefined, context);
       }
-      markWrite(sibling, values?.[index], context);
+      markWrite(
+        sibling,
+        values?.[index],
+        context,
+        undefined,
+        undefined,
+        writeOrigin,
+        writeOrder,
+      );
     }
     return;
   }
@@ -109,17 +170,19 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
 
   if (node.behavior.type === 'array') {
     const previousItemCount = node.itemCount;
-    if (context.isAutomatic)
-      context.arrayStructureLog.push({
-        host: node,
-        previousItems: [...(node.children ?? [])],
-        previousItemCount,
-        previousExtras: node.extras,
-      });
+    if (context.isAutomatic) recordArrayBoundary(node, context);
     if (!context.arrayCounts.has(node))
       context.arrayCounts.set(node, previousItemCount);
     node.itemCount = isArray(value) ? value.length : 0;
     countChanged = node.itemCount !== previousItemCount;
+    if (context.isAutomatic)
+      recordNamedArrayItems(
+        node,
+        value,
+        previousItemCount,
+        context,
+        writeOrigin,
+      );
     nextSource = isArray(value) ? undefined : value;
     extras = isArray(value) ? arrayExtras(node, value) : undefined;
     whole = true;
@@ -137,7 +200,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
       whole = false;
       if (!isMerge) {
         const replacementPaths = context.replacementPaths;
-        if (replacementPaths === undefined) whole = true;
+        if (replacementPaths === undefined || context.isAutomatic) whole = true;
         else
           for (const path of replacementPaths)
             if (node.path === path || isDescendantPath(node.path, path)) {
@@ -145,8 +208,10 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
               break;
             }
       }
-      nextSource = isMerge ? node.source : undefined;
-      if (isMerge && nextSource !== undefined) context.wrongKindHosts.add(node);
+      nextSource = isMerge
+        ? node.source
+        : context.replacementPaths && Reflect.get(value, BATCH_HOST_SOURCE);
+      if (nextSource !== undefined) context.wrongKindHosts.add(node);
       extras = nextExtras(node.extras, value, declared, isMerge);
     }
   }
@@ -169,11 +234,16 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     context.changedNodes.add(node);
     if (context.isAutomatic) context.hasAutomaticChanged = true;
   }
-  context.distributedInputs.set(node, {
+  const distribution: Distribution = {
     input: value,
     isWhole: whole,
     isAutomatic: context.isAutomatic,
-  });
+  };
+  if (writeOrigin !== undefined) distribution.writeOrigin = writeOrigin;
+  if (writeOrder !== undefined) distribution.writeOrder = writeOrder;
+  context.distributedInputs.set(node, distribution);
+  if (context.isAutomatic && writeOrigin !== undefined && isPlain(value))
+    recordNamedObjectSlots(node, value, context);
   if (context.writeEpoch !== undefined) node.writeEpoch = context.writeEpoch;
   else context.dirtyPaths.add(node.path);
   if (!sameShape) context.shapeDirtyPaths.add(node.path);
@@ -181,20 +251,15 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   for (const name of Object.keys(node.childrenByName)) {
     if (node.behavior.type === 'array' && Number(name) >= node.itemCount)
       continue;
-    if (
-      !whole &&
-      !hasDistributedChildInput(value, name, node.behavior.type === 'array')
-    )
-      continue;
     const child = node.childrenByName[name];
     if (child.behavior.type === 'virtual') continue;
-    const childInput = hasDistributedChildInput(
+    const hasInput = hasDistributedChildInput(
       value,
       name,
       node.behavior.type === 'array',
-    )
-      ? Reflect.get(value, name)
-      : undefined;
+    );
+    if (!whole && !hasInput) continue;
+    const childInput = hasInput ? Reflect.get(value, name) : undefined;
     let childSpec: Optional<UnionSpec>;
     let interpreted: unknown = UNINTERPRETED;
     if (sameShape && child.behavior.strategy !== 'branch') {
@@ -203,10 +268,42 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     }
     if (interpreted !== UNINTERPRETED && sameValue(child.source, interpreted))
       continue;
+    let childOrigin = writeOrigin;
     if (context.isAutomatic) {
-      context.writtenInputs.set(child, childInput);
-      context.filledNodes.add(child);
+      if (!acceptsRetainedWrite(child, context, writeOrder)) continue;
+      if (!hasInput && childOrigin === 'declarative') childOrigin = undefined;
+      if (childOrigin === undefined) {
+        context.writtenInputs.set(child, childInput);
+        context.filledNodes.add(child);
+      }
     }
-    markWrite(child, childInput, context, childSpec, interpreted);
+    markWrite(
+      child,
+      childInput,
+      context,
+      childSpec,
+      interpreted,
+      childOrigin,
+      writeOrder,
+    );
+  }
+  if (
+    !context.isAutomatic ||
+    context.pendingExits.size === 0 ||
+    node.behavior.type === 'array' ||
+    !isPlain(value)
+  )
+    return;
+  for (const name of Object.keys(value)) {
+    const childInput = Reflect.get(value, name);
+    if (childInput === undefined || node.childrenByName[name]) continue;
+    const departing = findDepartingChild(node, name, context);
+    if (departing)
+      placeDeclarativeValue(
+        context,
+        appendSegment(node.path, name),
+        departing.blueprintNode,
+        childInput,
+      );
   }
 };

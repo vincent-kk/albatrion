@@ -188,7 +188,7 @@ it.each([
     ['a'],
   ],
 ] as MisfitCase[])(
-  '%s renders both checkboxes unchecked and keeps the node value without throwing',
+  '%s shows the known checkbox selection and keeps the node value without throwing',
   (_, definition, jsonSchema, bad) => {
     const ref = createRef<FormHandle>();
     const { container } = render(
@@ -202,7 +202,7 @@ it.each([
     );
     const inputs = container.querySelectorAll('input[type="checkbox"]');
     expect(inputs).toHaveLength(2);
-    expect(container.querySelector('input:checked')).toBeNull();
+    expect(Array.from(container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]'), input => input.checked)).toEqual([true, false]);
     expect(ref.current!.getValue()).toEqual(bad);
     expect(container.querySelector(INVALID_CONTROL)).toBeNull();
   },

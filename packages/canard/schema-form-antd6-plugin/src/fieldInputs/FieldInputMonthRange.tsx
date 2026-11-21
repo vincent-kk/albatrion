@@ -43,7 +43,8 @@ interface FieldInputMonthRangeProps
 }
 
 const FieldInputMonthRange = ({
-  path,
+  inputId,
+  getInputId,
   name,
   readOnly,
   disabled,
@@ -54,6 +55,7 @@ const FieldInputMonthRange = ({
   minimum,
   maximum,
   misfit,
+  labelId: labelledBy,
 }: FieldInputMonthRangeProps) => {
   const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
     if (!range) return onChange(undefined);
@@ -85,15 +87,14 @@ const FieldInputMonthRange = ({
 
   return (
     <DatePicker.RangePicker
-      id={path}
+      id={{ start: inputId, end: getInputId('end') }}
+      aria-labelledby={labelledBy}
       name={name}
       picker="month"
-      disabled={disabled}
-      readOnly={readOnly}
+      disabled={disabled || readOnly}
       disabledDate={disabledDate}
       defaultValue={initialValue}
       onChange={handleChange}
-      onPanelChange={handleChange}
       size={size || context?.size}
       status={misfit ? 'error' : undefined}
       aria-invalid={misfit || undefined}

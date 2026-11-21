@@ -26,7 +26,7 @@ Promise는 최초 확인·취소 또는 렌더 오류로 한 번만 확정됩니
 - prompt 확인은 현재 값 그대로이며 입력이 없으면 undefined입니다. 일반 취소만 null이고 returnOnCancel 취소는 현재 값입니다.
 - 공개 Props 타입은 애플리케이션 래퍼의 선언에 사용합니다. 프레임은 group·subtype·settled를 받고 alert 내용도 context를 받습니다.
 - alive는 저장소에 남는 생명주기, visible은 경로에 따른 표시, settled는 결과 확정을 나타냅니다. 경로 숨김은 결과를 확정하지 않습니다.
-- Provider 해제는 열린 노드를 마이크로태스크 뒤 취소하며 같은 커밋의 재마운트는 입력값과 Promise를 유지합니다. DOM 없는 가져오기와 서버 렌더는 가능합니다. 서버에서는 모달 열기 함수를 호출하지 않습니다.
+- Provider의 실제 언마운트는 열린 노드를 마이크로태스크 뒤 취소하며 같은 커밋의 재마운트는 입력값과 Promise를 유지합니다. DOM 없는 가져오기와 서버 렌더는 가능합니다. 서버에서는 모달 열기 함수를 호출하지 않습니다.
 - 개수와 상태 구독은 Provider 밖에서도 저장소를 읽습니다. 개수 판별 함수는 읽기 전용 ModalNodeView를 받으며 노드 발행에 따라 갱신됩니다.
 
 모달 callback의 공통 함수형 표기는 호출 인자와 반환 의미를 보존합니다. 별칭은 실행 감싸개가 아니므로 handler 정체성·반환 Promise·종료 수명의 소유권을 바꾸지 않습니다.
@@ -48,6 +48,8 @@ Promise는 최초 확인·취소 또는 렌더 오류로 한 번만 확정됩니
 - 마운트 전 요청과 같은 커밋 재마운트는 원래 Promise와 입력값을 유지합니다.
 
 ### presentation-customization — 사용자 UI와 상태 구독
+
+- 포커스 동등성 표의 inside 행은 실제 내부 control에 포커스를 둔 뒤 숨김·중단을 일으킵니다. 최초 content 중단에는 control이 없으므로 inside 세 행은 그 사유를 표 데이터에 기록한 unavailable 행이며 body와 outside는 실행합니다.
 
 - 사용자 프레임과 Provider 밖 구독은 현재 노드 상태를 반영합니다.
 

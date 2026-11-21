@@ -1,5 +1,7 @@
 import type { AsyncFn } from '@aileron/declare';
 
+import { AbortError } from '@/common-utils/errors/AbortError';
+
 import type { DelayOptions } from './delay';
 import { timeout } from './timeout';
 
@@ -21,6 +23,7 @@ import { timeout } from './timeout';
  * @throws {TimeoutError} When function execution exceeds the specified timeout
  * @throws {AbortError} When canceled via AbortSignal
  * @throws {Error} Any error thrown by the original function
+ * @throws {TypeError} Before starting fn when the host has no AbortController implementation
  *
  * @example
  * Basic API call with timeout:
@@ -416,13 +419,20 @@ export const withTimeout = <T>(
   ms: number,
   options?: DelayOptions,
 ): Promise<T> => {
-  // Evaluated before anything is registered: a function that throws synchronously
-  // would otherwise leave the abort listener attached to a signal that outlives the call
+  const externalSignal = options?.signal;
+  if (externalSignal?.aborted)
+    return Promise.reject(
+      new AbortError('SIGNAL_RECEIVED_BEFORE_RUN', 'Aborted before run'),
+    );
+  if (typeof AbortController !== 'function')
+    throw new TypeError('withTimeout requires an AbortController implementation');
+  // A synchronous throw must leave no abort listener attached to the caller's signal.
   const pending = fn();
   const controller = new AbortController();
-  const externalSignal = options?.signal;
   const abort = () => controller.abort();
-  externalSignal?.addEventListener('abort', abort, { once: true });
+  // An already-aborted signal never fires 'abort' again, so it is forwarded here
+  if (externalSignal?.aborted) controller.abort();
+  else externalSignal?.addEventListener('abort', abort, { once: true });
   return Promise.race([
     pending,
     timeout(ms, { ...options, signal: controller.signal }),

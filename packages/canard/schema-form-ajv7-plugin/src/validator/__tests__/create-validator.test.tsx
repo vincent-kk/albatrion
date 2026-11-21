@@ -154,9 +154,10 @@ describe('createValidator for one AJV instance', () => {
     expect(validator.compileGuard(root, '/if')('first')).toBe(true);
     expect(ajvValidatorPlugin.compileGuard(root, '/if')('first')).toBe(true);
     validator.release!(root);
-    expect(remove).toHaveBeenCalled();
+    expect(remove).not.toHaveBeenCalled();
     expect(own.getSchema(root.$id!)).toBeUndefined();
-    expect(bound.getSchema(root.$id!)).toBeDefined();
+    expect(bound.getSchema(root.$id!)).toBeUndefined();
+    expect(ajvValidatorPlugin.compileGuard(root, '/if')('first')).toBe(true);
     const reused = {
       $id: 'https://example.test/create-validator-release',
       if: { const: 'second' },

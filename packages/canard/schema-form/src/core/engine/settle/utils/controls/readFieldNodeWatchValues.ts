@@ -29,7 +29,7 @@ interface WatchValuesWitness {
  * Read the selected effective watch paths from current or prior emitted inputs.
  * @param node - Live or detached occurrence with an effective schema
  * @param snapshot - Pre-settlement values captured when a node leaves
- * @returns Stable watched values for this commit or the detached snapshot
+ * @returns Watched values; the previous array while every value is Object.is-equal, across commits too
  */
 export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
   node: Self,
@@ -45,8 +45,9 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
   const paths = isArray(watch) ? watch : EMPTY_ARRAY;
   if (!snapshot && paths.length === 0 && (!memo || memo.values.length === 0))
     return EMPTY_ARRAY;
-  const reusable =
-    !snapshot && memo?.commit === commit && memo.values.length === paths.length;
+  const comparable =
+    !snapshot && memo !== undefined && memo.values.length === paths.length;
+  const reusable = comparable && memo.commit === commit;
   const derived = getHostDerived<'watchValuesWitness', WatchValuesWitness>(
     node,
   );
@@ -61,7 +62,7 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
     !witness.isSnapshotRead &&
     witness.isContextAbsent &&
     selectedContext == null;
-  let next: Optional<unknown[]> = reusable ? undefined : [];
+  let next: Optional<unknown[]> = comparable ? undefined : [];
   for (let index = 0; index < paths.length; index++) {
     const path = paths[index];
     const previous = reuseAbsentContext ? memo!.values[index] : undefined;

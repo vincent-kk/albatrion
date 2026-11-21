@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ChangeEvent } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
@@ -8,7 +9,7 @@ import type { FieldInputProps } from '@/schema-form/types';
 
 /** Render a number input whose empty field writes undefined and whose bad input stays a draft. */
 export const FieldInputNumber = ({
-  path,
+  inputId: fieldId,
   name,
   jsonSchema,
   readOnly,
@@ -20,7 +21,7 @@ export const FieldInputNumber = ({
   placeholder,
   style,
   className,
-}: FieldInputProps<Nullable<number>>) => {
+}: FieldInputProps<Nullable<number>>): ReactElement => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.validity.badInput) return;
     onChange(
@@ -30,7 +31,7 @@ export const FieldInputNumber = ({
   return (
     <input
       type="number"
-      id={path}
+      id={fieldId}
       name={name}
       step={jsonSchema.multipleOf}
       readOnly={readOnly}

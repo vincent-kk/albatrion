@@ -4,7 +4,6 @@ import { Checkbox } from 'antd';
 
 import { map } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
-import { isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
@@ -13,6 +12,10 @@ import type {
   FieldInputPropsWithSchema,
   StringSchema,
 } from '@canard/schema-form';
+
+import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
+import { getOwnLabel } from './utils/enum/getOwnLabel';
+import { mergeEnumSelection } from './utils/enum/mergeEnumSelection';
 
 type StringJSONSchema = StringSchema<{
   alias?: { [label: string]: ReactNode };
@@ -34,50 +37,58 @@ interface FieldInputStringCheckboxProps
 }
 
 const FieldInputStringCheckbox = ({
+  inputId,
+  getInputId,
   name,
   jsonSchema,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
   alias,
   misfit,
+  labelId: labelledBy,
 }: FieldInputStringCheckboxProps) => {
   const options = useMemo(() => {
     const labels = context.checkboxLabels || alias || {};
     return jsonSchema.items?.enum
-      ? map(jsonSchema.items.enum, (rawValue: string | null) => {
+      ? map(jsonSchema.items.enum, (rawValue: string | null, index: number) => {
           const value = JSON.stringify(rawValue);
           return {
+            id: getInputId(index),
             value,
             rawValue,
-            label: labels['' + rawValue] || '' + rawValue,
+            label: getOwnLabel(labels, '' + rawValue) || '' + rawValue,
           };
         })
       : [];
-  }, [context, jsonSchema, alias]);
+  }, [context, jsonSchema, alias, getInputId]);
 
   const handleChange = useHandle((value: string[]) => {
-    const convertedValues = value
-      .map((v) => options.find((opt) => opt.value === v)?.rawValue)
-      .filter((v) => v !== undefined);
-    onChange(convertedValues);
+    onChange((previous) =>
+      mergeEnumSelection(isArray(previous) ? previous : [], value, options),
+    );
   });
 
   const initialValue = useMemo(() => {
-    return isArray(defaultValue) &&
-      defaultValue.every((value) => value === null || typeof value === 'string')
+    return isArray(defaultValue)
       ? defaultValue.map((value) => JSON.stringify(value))
       : undefined;
   }, [defaultValue]);
 
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div
+      id={inputId}
+      role="group"
+      aria-labelledby={labelledBy}
+      aria-invalid={misfit || undefined}
+    >
       <Checkbox.Group
         name={name}
         style={{ display: 'flex' }}
         options={options}
-        disabled={disabled}
+        disabled={disabled || readOnly}
         defaultValue={initialValue}
         onChange={handleChange}
       />
@@ -87,12 +98,5 @@ const FieldInputStringCheckbox = ({
 
 export const FieldInputStringCheckboxDefinition = {
   Component: FieldInputStringCheckbox,
-  test: ({ type, inputType, jsonSchema }) => {
-    return (
-      type === 'array' &&
-      inputType === 'checkbox' &&
-      isStringSchema(jsonSchema.items) &&
-      !!jsonSchema.items.enum?.length
-    );
-  },
+  test: isCheckboxGroupInput,
 } satisfies FieldInputDefinition;

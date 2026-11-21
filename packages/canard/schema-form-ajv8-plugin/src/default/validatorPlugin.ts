@@ -10,8 +10,8 @@ import type { Fn } from '@aileron/declare';
 import { createGuardCompiler } from '../validator/createGuardCompiler';
 import { createValidatorFactory } from '../validator/createValidatorFactory';
 import { assertBindableInstance } from '../validator/utils/assertBindableInstance';
-import { type SchemaRootRegistry } from '../validator/utils/registerSchemaRoot';
 import { createSchemaRootRegistry } from '../validator/utils/createSchemaRootRegistry';
+import { type SchemaRootRegistry } from '../validator/utils/registerSchemaRoot';
 import { releaseSchemaRoot } from '../validator/utils/releaseSchemaRoot';
 
 export { createValidatorFactory };
@@ -25,6 +25,8 @@ export { createValidatorFactory };
  */
 const defaultSettings: Options = {
   allErrors: true,
+  multipleOfPrecision: 9,
+  strict: false,
   strictSchema: false,
   validateFormats: false,
   allowUnionTypes: true,

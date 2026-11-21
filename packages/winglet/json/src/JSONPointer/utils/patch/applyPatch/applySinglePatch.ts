@@ -1,5 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 import {
+  cloneLite,
   getDataProperty,
   isReservedName,
   setDataProperty,
@@ -7,15 +8,19 @@ import {
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
+import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
 import type { JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../patchModel';
-import { ensureOwnedFromPath } from './utils/ensureOwnedFromPath';
+import { applyRootOperation } from './utils/applyRootOperation';
+import { assertCopySourcePresent } from './utils/assertCopySourcePresent';
+import { copyObject } from './utils/copyObject';
+import { decodePatchFragment } from './utils/decodePatchFragment';
 import { JSONPatchError } from './utils/error';
 import { getArrayIndex } from './utils/getArrayIndex';
 import { handleArray } from './utils/handleArray';
 import { handleObject } from './utils/handleObject';
-import { handleRootPatch } from './utils/handleRootPatch';
+import { removeMoveSource } from './utils/removeMoveSource';
 
 /**
  * Applies a single JSON Patch operation to a source object or array.
@@ -43,7 +48,6 @@ import { handleRootPatch } from './utils/handleRootPatch';
  * @param source - The source object or array to apply the patch to
  * @param patch - A single JSON Patch operation containing op, path, and optional value
  * @param patchIndex - The index of this patch in the original patches array (for error reporting)
- * @param strict - Whether to enforce strict validation rules
  * @param cloned - Owned object references in immutable mode, or null in mutating mode
  *
  * @see https://datatracker.ietf.org/doc/html/rfc6901 - JSON Pointer specification
@@ -62,7 +66,7 @@ import { handleRootPatch } from './utils/handleRootPatch';
  * const source = { user: { name: "John", age: 30 } };
  * const patch = { op: "replace", path: "/user/age", value: 31 };
  *
- * const result = applySinglePatch(source, patch, 0, false, true, null);
+ * const result = applySinglePatch(source, patch, 0, null);
  * // Returns: { user: { name: "John", age: 31 } }
  * ```
  *
@@ -71,7 +75,7 @@ import { handleRootPatch } from './utils/handleRootPatch';
  * const sourceArray = [1, 2, 3];
  * const patch = { op: "add", path: "/1", value: 5 };
  *
- * const result = applySinglePatch(sourceArray, patch, 0, false, true, null);
+ * const result = applySinglePatch(sourceArray, patch, 0, null);
  * // Returns: [1, 5, 2, 3]
  * ```
  *
@@ -81,7 +85,7 @@ import { handleRootPatch } from './utils/handleRootPatch';
  * const source = { old: "data" };
  * const patch = { op: "replace", path: "", value: { new: "data" } };
  *
- * const result = applySinglePatch(source, patch, 0, false, true, null);
+ * const result = applySinglePatch(source, patch, 0, null);
  * // Returns: { new: "data" }
  * ```
  *
@@ -94,45 +98,65 @@ import { handleRootPatch } from './utils/handleRootPatch';
  *
  * // Throws JSONPatchError with PATCH_PATH_INVALID_INTERMEDIATE, exactly like
  * // any other missing intermediate path; Object.prototype is never touched
- * applySinglePatch(source, patch, 0, false, null);
+ * applySinglePatch(source, patch, 0, null);
  * ```
  */
 export const applySinglePatch = (
   source: JSONRoot,
   patch: Patch,
   patchIndex: number,
-  strict: boolean,
   cloned: WeakSet<object> | null,
 ): any => {
-
-  if (patch.path === '' || patch.path === JSONPointer.Fragment)
-    return handleRootPatch(source, patch, patchIndex, strict);
-
-  // Judged by operation rather than key presence: `move` and `copy` require a `from`
-  // pointer, and a missing or non-string one must surface as a patch error rather than
-  // as a TypeError thrown from somewhere deeper
-  if (patch.op === Operation.MOVE || patch.op === Operation.COPY) {
-    if (typeof patch.from !== 'string')
+  const operation = patch.op;
+  let path = patch.path;
+  if (path === '') return applyRootOperation(source, patch, patchIndex, cloned);
+  let segments = path.split('/');
+  if (segments[0] !== '') {
+    if (path[0] !== JSONPointer.Fragment)
       throw new JSONPatchError(
         'PATCH_PATH_INVALID',
-        `Patch operation '${patch.op}' requires a string 'from' pointer`,
-        { patch, index: patchIndex, operation: patch.op },
+        `Patch path '${patch.path}' must start with '${JSONPointer.Separator}' or '${JSONPointer.Fragment}'`,
+        { patch, index: patchIndex, path: patch.path, operation },
       );
-    if (patch.op === Operation.MOVE && cloned !== null)
-      ensureOwnedFromPath(source, patch.from, cloned);
+    path = decodePatchFragment(path, patch, patchIndex);
+    if (path === '')
+      return applyRootOperation(source, patch, patchIndex, cloned);
+    segments = path.split('/');
+  }
+  // RFC 6902 4.4 and 4.5: move is "remove from, then add at path" and copy is "add a copy
+  // at path", so both resolve their value first and then share the add handlers. The value
+  // is read before the target path is walked, so the walk sees the document after removal
+  let value: unknown;
+  if (operation === Operation.ADD || operation === Operation.REPLACE)
+    value = patch.value;
+  else if (operation === Operation.MOVE || operation === Operation.COPY) {
+    // Judged by operation rather than key presence: `move` and `copy` require a `from`
+    // pointer, and a missing or non-string one must surface as a patch error rather than
+    // as a TypeError thrown from somewhere deeper
+    const from = patch.from;
+    if (typeof from !== 'string')
+      throw new JSONPatchError(
+        'PATCH_PATH_INVALID',
+        `Patch operation '${operation}' requires a string 'from' pointer`,
+        { patch, index: patchIndex, operation: operation },
+      );
+    if (operation === Operation.COPY) {
+      let copied: unknown;
+      try {
+        copied = getValue(source, from);
+      } catch (error) {
+        if (from[0] === '#') decodePatchFragment(from, patch, patchIndex);
+        throw error;
+      }
+      // RFC 6902 4.5: the from location must exist. Only an undefined read can name a
+      // missing location, so only that read pays for the second walk
+      if (copied === undefined)
+        assertCopySourcePresent(source, from, patch, patchIndex);
+      else value = cloneLite(copied);
+    } else
+      value = removeMoveSource(source, from, patch, patchIndex, cloned, path);
   }
 
-  const segments = patch.path.split('/');
-
-  // Same set compilePointer accepts: a leading separator or the URI fragment form.
-  // The walk starts at index 1, so anything else silently drops its first segment
-  // and edits somewhere the caller never named
-  if (segments[0] !== '' && segments[0] !== JSONPointer.Fragment)
-    throw new JSONPatchError(
-      'PATCH_PATH_INVALID',
-      `Patch path '${patch.path}' must start with '${JSONPointer.Separator}' or '${JSONPointer.Fragment}'`,
-      { patch, index: patchIndex, path: patch.path, operation: patch.op },
-    );
   let current: any = source;
   let cursor = 1;
 
@@ -145,32 +169,25 @@ export const applySinglePatch = (
         const arrayIndex = getArrayIndex(segment, current);
         return handleArray(
           patch,
+          value,
           current,
           arrayIndex,
           source,
           patchIndex,
-          strict,
         );
       } else if (current && typeof current === 'object') {
-        return handleObject(
-          patch,
-          current,
-          segment,
-          source,
-          patchIndex,
-          strict,
-        );
+        return handleObject(patch, value, current, segment, source, patchIndex);
       } else {
         throw new JSONPatchError(
           'PATCH_TARGET_NOT_OBJECT',
-          `Cannot apply ${patch.op} operation to non-object value. Target path points to: ${typeof current}`,
+          `Cannot apply ${operation} operation to non-object value. Target path points to: ${typeof current}`,
           {
             patch,
             patchIndex: patchIndex,
             targetValue: current,
             targetType: typeof current,
             path: patch.path,
-            operation: patch.op,
+            operation: operation,
           },
         );
       }
@@ -189,13 +206,12 @@ export const applySinglePatch = (
       typeof next === 'object' &&
       !cloned.has(next)
     ) {
-      next = isArray(next) ? next.slice() : { ...next };
+      next = isArray(next) ? next.slice() : next instanceof Object ? { ...next } : copyObject(next);
       cloned.add(next);
       if (reserved) setDataProperty(current, segment as string, next);
       else current[segment] = next;
     }
     current = next;
-
 
     if (!current || typeof current !== 'object') {
       throw new JSONPatchError(
@@ -208,7 +224,7 @@ export const applySinglePatch = (
           intermediateType: current === null ? 'null' : typeof current,
           failedAtPath: segments.slice(0, cursor + 1).join('/'),
           remainingPath: segments.slice(cursor + 1).join('/'),
-          operation: patch.op,
+          operation: operation,
         },
       );
     }
@@ -221,7 +237,7 @@ export const applySinglePatch = (
     {
       patch,
       patchIndex: patchIndex,
-      operation: patch.op,
+      operation: operation,
       processedSegments: cursor,
       totalSegments: segmentsLength,
     },

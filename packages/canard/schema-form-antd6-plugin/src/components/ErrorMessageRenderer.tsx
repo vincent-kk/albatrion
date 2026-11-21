@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactElement } from 'react';
 
 import { Typography } from 'antd';
 
@@ -16,7 +16,7 @@ export const ErrorMessageRenderer = ({
   children,
   style,
   className,
-}: ErrorMessageRendererProps) => (
+}: ErrorMessageRendererProps): ReactElement => (
   <Typography.Text
     type="danger"
     style={style ?? ERROR_STYLE}

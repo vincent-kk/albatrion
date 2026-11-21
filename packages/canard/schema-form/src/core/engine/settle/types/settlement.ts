@@ -12,6 +12,7 @@ import type {
   Distribution,
   FieldNodeRecord,
   InactiveSlotBaseline,
+  InactiveSlotOverlay,
   SettlementBudget,
   SettlementEntryApi,
   SettlementFailureCause,
@@ -21,6 +22,7 @@ import type { FieldNodeWriteKind } from '../../types/value';
 import type { DependencyPresenceMemo } from '../utils/dependencies/trie/DependencyIndex';
 import type { GateOccurrence } from '../utils/gates/type';
 import type { DirtyPathSet } from '../utils/scratch/DirtyPathSet';
+import type { DepartingWrite, RevivedSlotSource } from './departingWrite';
 import type { FixedFirstLoadPreparation } from './fixedFirstLoad';
 import type { GateHostView } from './gateHostView';
 import type { GateSelectionRound } from './gateSelectionRound';
@@ -110,6 +112,54 @@ export interface ArraySpliceProof<Self extends FieldNodeRecord<Self>> {
   isValid: boolean;
 }
 
+/** Source channels captured at the first automatic write to a live binding. */
+export interface RetainedSource<Self> {
+  /** Source at the write boundary, including an absent value. */
+  readonly source: unknown;
+  /** Extras at the write boundary, including an absent value. */
+  readonly extras: unknown;
+  /** Host input still awaiting distribution at the write boundary. */
+  readonly distribution?: Distribution;
+  /** Whether the most recent accepted write selects the boundary channels. */
+  shouldUseBaseline: boolean;
+  /** Whether an automatic input wrote the node's own channels. */
+  hasAutomaticWrite?: boolean;
+  /** Last accepted input order at this live binding, or zero for caller input. */
+  writeOrder?: number;
+  /** Origin inherited by reinterpretation of the same accepted input. */
+  writeOrigin?: Distribution['writeOrigin'];
+  /** Final post-policy right attached to this actual live binding. */
+  revivedSlotSource?: RevivedSlotSource<Self>;
+  /** Rights of named candidate bindings that were absent during revival. */
+  revivedChildSources?: Map<BlueprintChildEntry, RevivedSlotSource<Self>>;
+  /** Structure captured before the first automatic array write. */
+  array?: RetainedArraySources<Self>;
+  /** Baseline and active retained decisions for this host's inactive bindings. */
+  slots?: Map<BlueprintChildEntry, RetainedSlotSource<Self>>;
+  /** Named input for child bindings that have not received a live occurrence. */
+  namedChildren?: Map<BlueprintChildEntry, InactiveSlotOverlay>;
+}
+
+/** Structure and input-only bindings of one automatically written array. */
+export interface RetainedArraySources<Self> {
+  /** Bindings in effect before any automatic shortening or growth. */
+  readonly previousItems: Self[];
+  /** Length at the automatic write boundary. */
+  readonly previousItemCount: number;
+  /** Whether the boundary bindings have already been reconnected. */
+  isRestored?: boolean;
+  /** Earliest index retired by shrinking this array in the settlement. */
+  retiredFrom: number;
+  /** Named inputs at positions without a live occurrence. */
+  namedItems?: ReadonlyMap<BlueprintChildEntry, InactiveSlotOverlay>;
+}
+
+/** A changed inactive binding's immutable baseline and current exit selection. */
+export interface RetainedSlotSource<Self> extends InactiveSlotBaseline<Self> {
+  /** Whether a named slot input owns the final selected retained source. */
+  selectsNamedSource?: boolean;
+}
+
 /** One synchronous write's work list and deferred failures. */
 export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Mount-only fixed shape witnesses; cleared before returning to the dispatcher. */
@@ -136,6 +186,14 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   previousOutputValue: unknown;
   /** Successful exit results, retained only for this settlement and applied after source capture. */
   inactiveValueOverrides?: Map<Self, unknown>;
+  /** Defined declarative values named for addresses at or below nodes leaving in this settlement, in rank order, applied after their exit policy. */
+  departingWrites?: DepartingWrite<Self>[];
+  /** Whether live bindings have post-policy rights to supersede. */
+  hasRevivedSlotSources?: boolean;
+  /** Current replay, whose own marks must leave its named channels eligible. */
+  replayingDepartingWrite?: DepartingWrite<Self>;
+  /** Live rule marking may supersede rights on the channels it reaches. */
+  isMarkingLiveRule?: boolean;
   /** First pre-move address per moved node, built once by an exit resolver. */
   inactivePathOrigins?: Map<Self, string>;
   /** Binding context from the preceding committed shape. */
@@ -227,6 +285,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   replacementPaths?: readonly string[];
   /** Real sibling paths replaced by a caller write through a virtual node. */
   virtualReplacementPaths?: string[];
+  /** Target virtual slots admitted at public call entry, independent of later gate changes. */
+  virtualWriteFields?: readonly string[];
   /** Nodes newly present after calculation or reset by this load. */
   enteredNodes: Set<Self>;
   /** Reused pending occurrences whose sources must remain visible to fills. */
@@ -276,21 +336,16 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   distributedInputs: Map<Self, Distribution>;
   /** Wrong-kind branch hosts eligible for conditional caller clearing. */
   wrongKindHosts: Set<Self>;
-  /** Previous state for each automatic write, restored in reverse order. */
-  automaticLog: {
-    node: Self;
-    previousSource: unknown;
-    previousExtras: unknown;
-    previousDistributed?: Distribution;
-  }[];
-  /** Reversible array shape changes made by automatic writes. */
-  arrayStructureLog: {
-    host: Self;
-    previousItems: Self[];
-    previousItemCount: number;
-    previousExtras: unknown;
-    isRestored?: boolean;
-  }[];
+  /** Changed owners keyed by actual binding lifetime, with candidate and structure channels below each owner. */
+  retainedSources?: Map<Self, RetainedSource<Self>>;
+  /** Most recent order for a new automatic write in this settlement. */
+  retainedWriteOrder?: number;
+  /** Earlier counts of arrays touched in the current fill traversal. */
+  fillArrayCounts?: Map<Self, number>;
+  /** Only a fill invocation collects per-round array growth evidence. */
+  isCollectingFillArrayCounts?: boolean;
+  /** A restored baseline structure needs occurrence-index synchronization. */
+  hasRestoredArrayStructure?: boolean;
   /** Initial array lengths for non-load snapshot alignment. */
   arrayCounts: Map<Self, number>;
   /** Existing source moves from candidate-bearing structural plans, retained only for this call. */
@@ -309,11 +364,6 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   filledNodes: Set<Self>;
   /** Whether shape updates belong to reversible automatic transition work. */
   isInTransition: boolean;
-  /** First source bindings changed by reversible transition work, local to this call. */
-  slotAutomaticLog?: Map<
-    Self,
-    Map<BlueprintChildEntry, InactiveSlotBaseline<Self>>
-  >;
   /** Caller source-change membership before restoring each fresh retained clone. */
   slotRestoredSource?: Map<Self, boolean>;
   /** Exit-only plans; private retained clones consume them before this call ends. */

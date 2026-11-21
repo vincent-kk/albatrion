@@ -3,7 +3,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { createValidationFrameClock } from '@/schema-form/__tests__/helpers/createValidationFrameClock';
 
 import { disposeFieldNodeTree } from '../settle';
-import { ValidationMode } from '../types/state';
+import { FieldNodeState, ValidationMode } from '../types/state';
 import {
   dispatchBatch,
   dispatchClearSubtreeState,
@@ -45,9 +45,9 @@ it('IR-6 H separate standalone writes retain every pre-change state in generatio
   const { a, runtime } = fixture();
   runtime.isValidationPending = true;
   const first = a.storedState;
-  dispatchSetState(a, { 4: false });
+  dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: false });
   const second = a.storedState;
-  dispatchSetState(a, { 4: true });
+  dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
   expect(a.revealBaseline).toMatchObject({
     entries: [
       { state: first, isPresent: true },
@@ -57,13 +57,13 @@ it('IR-6 H separate standalone writes retain every pre-change state in generatio
 });
 it('IR-6 H an intermediate hide within one batch coalesces to its painted entry', () => {
   const { root, a, clock } = fixture();
-  dispatchSetState(a, { 4: true });
+  dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
   clock.frame();
   return clock.task().then(() => {
     const before = a.storedState;
     dispatchBatch(root, () => {
-      dispatchSetState(a, { 4: false });
-      dispatchSetState(a, { 4: true });
+      dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: false });
+      dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
     });
     expect(a.revealBaseline).toMatchObject({
       entries: [{ state: before, isPresent: true }],
@@ -72,14 +72,14 @@ it('IR-6 H an intermediate hide within one batch coalesces to its painted entry'
 });
 it('IR-6 H a subtree walk shares one sequence across its standalone state writes', async () => {
   const { root, a, clock } = fixture();
-  dispatchSetState(a, { 4: true });
+  dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
   clock.frame();
   await clock.task();
   const before = a.storedState;
   dispatchVisitSubtree(root, (node) => {
     if (node === a) {
-      dispatchSetState(a, { 4: false });
-      dispatchSetState(a, { 4: true });
+      dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: false });
+      dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
     }
   });
   expect(a.revealBaseline).toMatchObject({
@@ -88,14 +88,14 @@ it('IR-6 H a subtree walk shares one sequence across its standalone state writes
 });
 it('IR-6 H later nodes do not extend the first node past its captured release generation', async () => {
   const { root, a, b, clock } = fixture();
-  dispatchSetState(a, { 2: true });
+  dispatchSetState(a, { [FieldNodeState.Touched]: true });
   clock.frame();
-  dispatchSetState(b, { 2: true });
+  dispatchSetState(b, { [FieldNodeState.Touched]: true });
   await clock.task();
   expect(a.revealBaseline).toBeUndefined();
   expect(b.revealBaseline).toBeDefined();
   clock.frame();
-  dispatchSetState(root, { 4: true });
+  dispatchSetState(root, { [FieldNodeState.ErrorVisibility]: true });
   await clock.task();
   expect(b.revealBaseline).toBeUndefined();
   expect(root.revealBaseline).toBeDefined();
@@ -107,7 +107,7 @@ it.each(['setState', 'setSubtreeState', 'clearState'] as const)(
   'IR-6 H %s schedules a release even when its listener throws',
   async (api) => {
     const { root, a, clock } = fixture();
-    dispatchSetState(a, { 4: true });
+    dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
     clock.frame();
     await clock.task();
     const failure = new Error('state listener');
@@ -115,9 +115,12 @@ it.each(['setState', 'setSubtreeState', 'clearState'] as const)(
       throw failure;
     });
     expect(() => {
-      if (api === 'setState') dispatchSetState(a, { 4: false });
+      if (api === 'setState')
+        dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: false });
       else if (api === 'setSubtreeState')
-        dispatchSetSubtreeState(root, { 4: false });
+        dispatchSetSubtreeState(root, {
+          [FieldNodeState.ErrorVisibility]: false,
+        });
       else dispatchClearSubtreeState(root);
     }).toThrow(failure);
     unsubscribe();
@@ -128,7 +131,7 @@ it.each(['setState', 'setSubtreeState', 'clearState'] as const)(
 );
 it('IR-6 D accepted root validation releases quiet history without a frame', async () => {
   const { root, a, runtime } = fixture();
-  dispatchSetState(a, { 4: true });
+  dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
   expect(runtime.isValidationPending).toBeFalsy();
   await dispatchValidate(root);
   expect(a.revealBaseline).toBeUndefined();
@@ -140,11 +143,11 @@ it('IR-6 H a release listener can record and schedule its own fresh drop', async
   const listener = vi.fn(() => {
     if (!once) {
       once = true;
-      dispatchSetState(b, { 4: true });
+      dispatchSetState(b, { [FieldNodeState.ErrorVisibility]: true });
     }
   });
   Object.assign(runtime, { revealReleaseListeners: new Set([listener]) });
-  dispatchSetState(a, { 4: true });
+  dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
   clock.frame();
   await clock.task();
   expect(listener).toHaveBeenCalledTimes(1);
@@ -165,7 +168,7 @@ it('IR-6 H disposal clears release listeners before settling and stays silent', 
     revealPolicy: { value: false, entries: [] },
   });
   runtime.isValidationPending = true;
-  dispatchSetState(a, { 4: true });
+  dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
   disposeFieldNodeTree(root);
   expect(listeners.size).toBe(0);
   expect(listener).not.toHaveBeenCalled();

@@ -13,6 +13,7 @@ import { afterEach, expect, inject, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import * as core from '@/schema-form/core';
+import { ValidationMode } from '@/schema-form/core';
 import { FormWarningCode } from '@/schema-form/errors';
 import {
   type FormErrorService,
@@ -80,7 +81,7 @@ it.each([
       <StrictMode>
         <Form
           ref={ref}
-          validationMode={0}
+          validationMode={ValidationMode.None}
           jsonSchema={detectable(Input)}
           onError={onError}
         />
@@ -90,8 +91,7 @@ it.each([
     const reports = vi.spyOn(service, 'reportInLoad');
     const warnings = () =>
       onError.mock.calls.filter(
-        ([record]) =>
-          record.code === FormWarningCode.ChildFieldsReadOnTerminal,
+        ([record]) => record.code === FormWarningCode.ChildFieldsReadOnTerminal,
       );
     await act(async () => {
       fireEvent.click(view.getByText('DR-15 read'));
@@ -141,7 +141,7 @@ it.skipIf(inject('reactMajor') !== '18')(
           <Form
             ref={ref}
             jsonSchema={detectable(Input)}
-            validationMode={0}
+            validationMode={ValidationMode.None}
             onError={onError}
           />
         </StrictMode>,
@@ -187,7 +187,7 @@ it('DR-15 failed rebuild keeps the root and permits the next warning in the rene
   const view = render(
     <Form
       ref={ref}
-      validationMode={0}
+      validationMode={ValidationMode.None}
       jsonSchema={detectable(Input)}
       onError={onError}
     />,
@@ -207,8 +207,7 @@ it('DR-15 failed rebuild keeps the root and permits the next warning in the rene
   });
   expect(
     onError.mock.calls.filter(
-      ([record]) =>
-        record.code === FormWarningCode.ChildFieldsReadOnTerminal,
+      ([record]) => record.code === FormWarningCode.ChildFieldsReadOnTerminal,
     ),
   ).toHaveLength(2);
 });
@@ -224,7 +223,7 @@ it('DR-15 preserves development warning delivery after unmount', async () => {
   };
   const view = render(
     <Form
-      validationMode={0}
+      validationMode={ValidationMode.None}
       jsonSchema={detectable(Input)}
       onError={onError}
     />,
@@ -236,8 +235,7 @@ it('DR-15 preserves development warning delivery after unmount', async () => {
   });
   expect(
     onError.mock.calls.filter(
-      ([record]) =>
-        record.code === FormWarningCode.ChildFieldsReadOnTerminal,
+      ([record]) => record.code === FormWarningCode.ChildFieldsReadOnTerminal,
     ),
   ).toHaveLength(1);
 });
@@ -252,7 +250,7 @@ it('round 180 hands a production build a plain empty list even with an error han
   };
   render(
     <Form
-      validationMode={0}
+      validationMode={ValidationMode.None}
       jsonSchema={detectable(Input)}
       onError={onError}
     />,
@@ -268,7 +266,7 @@ it('round 180 hands a production build a plain empty list even with an error han
   };
   render(
     <Form
-      validationMode={0}
+      validationMode={ValidationMode.None}
       jsonSchema={{
         type: 'string',
         presentation: { FieldInput: PlainInput },
@@ -287,7 +285,7 @@ it('round 180 hands a string node a plain empty list in development', async () =
   );
   render(
     <Form
-      validationMode={0}
+      validationMode={ValidationMode.None}
       jsonSchema={{ type: 'string', presentation: { FieldInput: Input } }}
       onError={onError}
     />,
@@ -312,7 +310,7 @@ it('ERROR-202 reports a terminal input first reading children in an event after 
   );
   const view = render(
     <Form
-      validationMode={0}
+      validationMode={ValidationMode.None}
       jsonSchema={detectable(Input)}
       onError={onError}
     />,
@@ -346,7 +344,7 @@ it('ERROR-202 reports a child layout read after the initial render', () => {
   };
   render(
     <Form
-      validationMode={0}
+      validationMode={ValidationMode.None}
       jsonSchema={detectable(Input)}
       onError={onError}
     />,
@@ -370,7 +368,7 @@ it('ERROR-202 keeps the terminal empty list stable across a late render read', a
   };
   render(
     <Form
-      validationMode={0}
+      validationMode={ValidationMode.None}
       jsonSchema={detectable(Input)}
       onError={onError}
     />,
@@ -394,7 +392,7 @@ it('ERROR-202 reports the first terminal child read again after a retained-root 
   render(
     <Form
       ref={ref}
-      validationMode={0}
+      validationMode={ValidationMode.None}
       jsonSchema={detectable(Input)}
       defaultValue="value"
       onError={onError}

@@ -1,0 +1,18 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "noEmit": true,
+    "emitDeclarationOnly": false,
+    "noUnusedLocals": false,
+    "customConditions": ["source"],
+    "paths": {
+      "@/react-utils": ["../../"],
+      "@/react-utils/*": ["../../*"],
+      "@/common-utils/*": ["../../../../common-utils/src/*"],
+      "@aileron/*": ["../../../../../aileron/common/*"]
+    }
+  },
+  "include": ["./withUploaderTypes.probe.tsx"]
+}

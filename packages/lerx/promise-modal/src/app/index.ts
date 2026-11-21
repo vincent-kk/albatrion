@@ -7,3 +7,4 @@ export {
 export { useActiveModalCount } from './hooks/useActiveModalCount';
 export { useSubscribeModal } from './hooks/useSubscribeModal';
 export { usePathname } from './hooks/useDefaultPathname';
+export { getModalManagerState } from './helpers/getModalManagerState/getModalManagerState';

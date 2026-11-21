@@ -35,7 +35,10 @@ it('reads protocols from presentation.FieldInputProps', async () => {
   );
   expect(screen.getByText('ftp://')).toBeTruthy();
   expect(screen.queryByText('http://')).toBeNull();
-  await userEvent.type(view.container.querySelector('input#\\/link')!, 'a');
+  await userEvent.type(
+    view.container.querySelector('input[id$=":/link~input"]')!,
+    'a',
+  );
   expect(onChange).toHaveBeenLastCalledWith({ link: 'ftp://a' });
 });
 
@@ -63,4 +66,27 @@ it('accepts protocols under options without a schema error', () => {
   expect(screen.queryByRole('alert')).toBeNull();
   expect(screen.queryByText('ftp://')).toBeNull();
   expect(screen.getByText('http://')).toBeTruthy();
+});
+
+it('editing a URI whose scheme is not in the protocol list keeps its scheme', async () => {
+  const onChange = vi.fn();
+  const view = render(
+    <Form
+      fieldInputDefinitions={[FieldInputUriDefinition]}
+      onChange={onChange}
+      jsonSchema={{
+        type: 'object',
+        properties: { link: { type: 'string', format: 'uri' } },
+      }}
+      defaultValue={{ link: 'wss://example.com/socket' }}
+    />,
+  );
+  expect(screen.getByText('wss://')).toBeTruthy();
+  await userEvent.type(
+    view.container.querySelector('input[id$=":/link~input"]')!,
+    '2',
+  );
+  expect(onChange).toHaveBeenLastCalledWith({
+    link: 'wss://example.com/socket2',
+  });
 });

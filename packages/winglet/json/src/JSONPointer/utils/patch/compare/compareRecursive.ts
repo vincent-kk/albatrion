@@ -6,6 +6,7 @@ import { escapeSegment } from '@/json/JSONPointer/utils/escape/escapeSegment';
 import type { JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../patchModel';
+import { compareDeep } from './utils/compareDeep';
 import { processValue } from './utils/processValue';
 
 /**
@@ -41,7 +42,18 @@ export const compareRecursive = <
   path: string,
   strict: boolean,
   immutable: boolean,
+  depth = 0,
 ) => {
+  if (depth === 256)
+    return compareDeep(
+      source,
+      target,
+      patches,
+      path,
+      strict,
+      immutable,
+      serializable,
+    );
   // @ts-expect-error: when target and source are same reference, it should return immediately
   if (source === target || (source !== source && target !== target)) return;
 
@@ -62,6 +74,7 @@ export const compareRecursive = <
         path,
         strict,
         immutable,
+        depth + 1,
       );
       return;
     }
@@ -90,9 +103,17 @@ export const compareRecursive = <
   // Early type mismatch detection - handle at current level
   if (sourceIsArray !== targetIsArray) {
     if (strict) {
-      patches.push({ op: Operation.TEST, path, value: source });
+      patches.push({
+        op: Operation.TEST,
+        path,
+        value: processValue(source, immutable),
+      });
     }
-    patches.push({ op: Operation.REPLACE, path, value: target });
+    patches.push({
+      op: Operation.REPLACE,
+      path,
+      value: processValue(target, immutable),
+    });
     return; // Early exit - no further processing needed
   }
 
@@ -148,6 +169,7 @@ export const compareRecursive = <
           path + JSONPointer.Separator + escapeSegment(key),
           strict,
           immutable,
+          depth + 1,
         );
       } else {
         // Value type change - replace the value

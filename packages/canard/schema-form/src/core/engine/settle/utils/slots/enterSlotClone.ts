@@ -3,6 +3,7 @@ import type { SettlementContext } from '../../types/settlement';
 import { getChildDistribution } from '../input/getChildDistribution';
 import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
 import { markWrite } from '../input/markWrite';
+import { acceptsRetainedWrite } from '../input/utils/acceptsRetainedWrite';
 
 /**
  * Apply current caller input without restoring an already cloned source again.
@@ -27,11 +28,26 @@ export const enterSlotClone = <Self extends FieldNodeRecord<Self>>(
   );
   if (!supplied && !distribution.isWhole) return;
   const value = supplied ? Reflect.get(distribution.input, name) : undefined;
+  const writeOrigin =
+    supplied || distribution.writeOrigin === 'revived'
+      ? distribution.writeOrigin
+      : undefined;
   if (distribution.isAutomatic) {
+    if (!acceptsRetainedWrite(child, context, distribution.writeOrder)) return;
     context.isAutomatic = true;
-    context.writtenInputs.set(child, value);
-    context.filledNodes.add(child);
+    if (writeOrigin === undefined) {
+      context.writtenInputs.set(child, value);
+      context.filledNodes.add(child);
+    }
   }
-  markWrite(child, value, context);
+  markWrite(
+    child,
+    value,
+    context,
+    undefined,
+    undefined,
+    writeOrigin,
+    distribution.writeOrder,
+  );
   if (distribution.isAutomatic) context.isAutomatic = false;
 };

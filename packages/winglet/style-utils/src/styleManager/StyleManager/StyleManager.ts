@@ -1,6 +1,7 @@
-import { compressCss } from '@/style-utils/utils/compressCss/compressCss';
+import { processCssSheet } from '@/style-utils/utils/cssTokens/processCssSheet/processCssSheet';
 
-import { type StyleManagerConfig, type StyleRoot, getUniqueId } from './type';
+import { type StyleManagerConfig, type StyleRoot } from './type';
+import { RuleScoper } from './utils/RuleScoper';
 
 /**
  * A scoped CSS management system that provides efficient style injection and cleanup.
@@ -60,7 +61,10 @@ import { type StyleManagerConfig, type StyleRoot, getUniqueId } from './type';
  */
 export class StyleManager {
   private static __SHEETS__ = new Map<string, StyleManager>();
-  private static __SHADOW_ID_KEY__ = Symbol('__styleManagerId__');
+  private static __SHADOW_SHEETS__ = new WeakMap<
+    ShadowRoot,
+    Map<string, StyleManager>
+  >();
   private __processedStyles__ = new Map<string, string>();
   private __element__: HTMLStyleElement | null = null;
   private __sheet__: CSSStyleSheet | null = null;
@@ -69,11 +73,10 @@ export class StyleManager {
   private __scope__: string;
   private __root__: StyleRoot;
   private __isShadowDOM__: boolean;
-  private __instanceKey__: string;
 
   private constructor(
     private scopeId: string,
-    instanceKey: string,
+    private __registry__: Map<string, StyleManager>,
     config?: StyleManagerConfig,
   ) {
     // Pre-calculate the scope prefix
@@ -82,9 +85,6 @@ export class StyleManager {
     // Pre-calculate the shadow DOM status
     this.__root__ = config?.shadowRoot || document;
     this.__isShadowDOM__ = !!config?.shadowRoot;
-
-    // Preserve the key passed by get() so the instance matches its registry entry.
-    this.__instanceKey__ = instanceKey;
   }
 
   /**
@@ -113,19 +113,23 @@ export class StyleManager {
     scopeId: string,
     config?: StyleManagerConfig,
   ): StyleManager {
-    // Optimize the unique key creation logic for Shadow DOM
-    let instanceKey: string;
     if (config?.shadowRoot) {
-      // Use Symbol for more secure property access
-      const shadowRoot = config.shadowRoot as any;
-      if (!shadowRoot[this.__SHADOW_ID_KEY__])
-        shadowRoot[this.__SHADOW_ID_KEY__] = getUniqueId();
-      instanceKey = `${scopeId}:shadow:${shadowRoot[this.__SHADOW_ID_KEY__]}`;
-    } else instanceKey = scopeId;
-    let manager = this.__SHEETS__.get(instanceKey);
+      let registry = this.__SHADOW_SHEETS__.get(config.shadowRoot);
+      if (!registry) {
+        registry = new Map<string, StyleManager>();
+        this.__SHADOW_SHEETS__.set(config.shadowRoot, registry);
+      }
+      let manager = registry.get(scopeId);
+      if (!manager) {
+        manager = new StyleManager(scopeId, registry, config);
+        registry.set(scopeId, manager);
+      }
+      return manager;
+    }
+    let manager = this.__SHEETS__.get(scopeId);
     if (!manager) {
-      manager = new StyleManager(scopeId, instanceKey, config);
-      this.__SHEETS__.set(instanceKey, manager);
+      manager = new StyleManager(scopeId, this.__SHEETS__);
+      this.__SHEETS__.set(scopeId, manager);
     }
     return manager;
   }
@@ -168,8 +172,9 @@ export class StyleManager {
     const previousProcessedCSS = this.__processedStyles__.get(id);
 
     // Pre-process the scoped CSS for this specific ID
-    const scopedCSS = this.__scopeCSS__(css);
-    const compressedCSS = compressed ? scopedCSS : compressCss(scopedCSS);
+    const shadow = this.__isShadowDOM__;
+    const preparedCSS = processCssSheet(css, !compressed, shadow ? 'shadow' : 'document');
+    const compressedCSS = shadow ? preparedCSS : this.__scopeCSS__(preparedCSS);
 
     // Only mark as dirty if processed CSS actually changed
     if (previousProcessedCSS !== compressedCSS) {
@@ -198,7 +203,9 @@ export class StyleManager {
    * ```
    */
   public remove(id: string): void {
-    if (this.__processedStyles__.delete(id)) this.__scheduleDOMUpdate__();
+    if (this.__processedStyles__.delete(id)) {
+      this.__scheduleDOMUpdate__();
+    }
   }
 
   /**
@@ -226,7 +233,6 @@ export class StyleManager {
    * ```
    */
   public destroy(): void {
-
     if (this.__frameId__) {
       cancelAnimationFrame(this.__frameId__);
       this.__frameId__ = 0;
@@ -267,8 +273,7 @@ export class StyleManager {
     this.__processedStyles__.clear();
     this.__dirty__ = false;
 
-    // 5. Remove from global registry - use instanceKey
-    StyleManager.__SHEETS__.delete(this.__instanceKey__);
+    this.__registry__.delete(this.scopeId);
   }
 
   private __scheduleDOMUpdate__(): void {
@@ -278,44 +283,9 @@ export class StyleManager {
     }
   }
 
+  /** Prefix document rules with this manager's scope. */
   private __scopeCSS__(css: string): string {
-    // If it's Shadow DOM, no need to scope
-    if (this.__isShadowDOM__) return css;
-
-    const scope = '.' + this.__scope__;
-    let result = '';
-    let currentIndex = 0;
-    const cssLength = css.length;
-
-    // Optimize CSS parsing: use more efficient methods instead of indexOf
-    while (currentIndex < cssLength) {
-      const ruleEnd = css.indexOf('}', currentIndex);
-      if (ruleEnd === -1) break;
-
-      const rule = css.slice(currentIndex, ruleEnd + 1);
-      const braceIndex = rule.indexOf('{');
-
-      if (braceIndex === -1) {
-        currentIndex = ruleEnd + 1;
-        continue;
-      }
-
-      const selector = rule.slice(0, braceIndex).trim();
-      const declarations = rule.slice(braceIndex);
-
-      if (!selector) {
-        currentIndex = ruleEnd + 1;
-        continue;
-      }
-
-      if (selector[0] === '@' || selector === ':root' || selector === ':host')
-        result += rule;
-      else result += scope + ' ' + selector + declarations;
-
-      currentIndex = ruleEnd + 1;
-    }
-
-    return result;
+    return new RuleScoper(css, '.' + this.__scope__).scopeSheet();
   }
 
   private __flush__(): void {
@@ -334,22 +304,14 @@ export class StyleManager {
     this.__applyCSS__(result);
   }
 
+  /**
+   * Apply the combined CSS using the target document's stylesheet support.
+   * @param css Scoped or shadow-local stylesheet text.
+   */
   private __applyCSS__(css: string): void {
-    if (
-      typeof CSSStyleSheet !== 'undefined' &&
-      'replaceSync' in CSSStyleSheet.prototype &&
-      'adoptedStyleSheets' in this.__root__
-    ) {
-      if (!this.__sheet__) {
-        this.__sheet__ = new CSSStyleSheet();
-        // Improve performance by directly creating an array instead of using spread operator
-        const currentSheets = this.__root__.adoptedStyleSheets;
-        const newSheets = new Array(currentSheets.length + 1);
-        for (let i = 0, l = currentSheets.length; i < l; i++)
-          newSheets[i] = currentSheets[i];
-        newSheets[currentSheets.length] = this.__sheet__;
-        this.__root__.adoptedStyleSheets = newSheets;
-      }
+    const ownerDocument = this.__root__.ownerDocument ?? document;
+    if (!this.__element__) this.__sheet__ ??= this.__adoptSheet__(ownerDocument);
+    if (this.__sheet__) {
       try {
         this.__sheet__.replaceSync(css);
       } catch (error) {
@@ -358,15 +320,43 @@ export class StyleManager {
           error,
         );
       }
-    } else {
-      if (!this.__element__) {
-        this.__element__ = document.createElement('style');
-        this.__element__.className = this.__scope__;
-        // If it's Shadow DOM, append to shadowRoot directly
-        if (this.__isShadowDOM__) this.__root__.appendChild(this.__element__);
-        else document.head.appendChild(this.__element__);
-      }
-      this.__element__.textContent = css;
+      return;
+    }
+
+    if (!this.__element__) {
+      this.__element__ = ownerDocument.createElement('style');
+      this.__element__.className = this.__scope__;
+      if (this.__isShadowDOM__) this.__root__.appendChild(this.__element__);
+      else ownerDocument.head.appendChild(this.__element__);
+    }
+    this.__element__.textContent = css;
+  }
+
+  /**
+   * Create an adopted sheet in the same realm as the destination.
+   * @param ownerDocument Document that owns the destination root.
+   * @returns The adopted sheet, or null when the style-element path is needed.
+   */
+  private __adoptSheet__(ownerDocument: Document): CSSStyleSheet | null {
+    try {
+      const view = ownerDocument.defaultView;
+      const Sheet: typeof CSSStyleSheet | undefined = view
+        ? Reflect.get(view, 'CSSStyleSheet')
+        : undefined;
+      if (
+        typeof Sheet !== 'function' ||
+        !('replaceSync' in Sheet.prototype) ||
+        !('adoptedStyleSheets' in this.__root__)
+      )
+        return null;
+      const sheet = new Sheet();
+      this.__root__.adoptedStyleSheets = [
+        ...this.__root__.adoptedStyleSheets,
+        sheet,
+      ];
+      return sheet;
+    } catch {
+      return null;
     }
   }
 }

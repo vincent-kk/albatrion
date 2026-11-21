@@ -79,3 +79,5 @@ Keep stable schema references to avoid unnecessary equivalence checks and clarif
 ## Standalone part roots
 
 Form.Label accepts children for explicit label content. Form.Label and Form.ErrorMessage use the registered part's own root; neither adds an outer label or span. If a path is absent, Form.Label omits htmlFor and id; pass an absolute path to associate a label with an input. Form.ErrorMessage renders its root even without a message, unlike the default group. For bound-part defaults and frame bypass, follow [part assembly](field-input.md#bound-parts-and-input-frames).
+
+Custom inputs and plugin renderers follow [control identifiers and author responsibility](field-input.md#control-identifiers-and-author-responsibility): use the supplied id on a focusable control, labelId for a group title, and the scoped id as a native radio group name. The name prop always remains the leaf name; path stays the data pointer.

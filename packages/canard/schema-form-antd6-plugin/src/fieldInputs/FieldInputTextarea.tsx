@@ -26,7 +26,7 @@ interface FieldInputTextareaProps
 }
 
 const FieldInputTextarea = ({
-  path,
+  inputId,
   name,
   jsonSchema,
   disabled,
@@ -51,7 +51,7 @@ const FieldInputTextarea = ({
   );
   return (
     <Input.TextArea
-      id={path}
+      id={inputId}
       name={name}
       disabled={disabled}
       readOnly={readOnly}

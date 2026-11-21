@@ -1,0 +1,198 @@
+import { MARKER_PREFIX } from '../markerLine.js';
+import type { LocatedBlock, MarkdownScan } from './types.js';
+import { hasUnclosedComment } from './utils/hasUnclosedComment.js';
+
+/** Scan supported Markdown contexts once, preserving original byte offsets.
+ * @param content Document text or a reversible Latin-1 byte view.
+ * @param isFragment Whether the text is embedded and has no file-header BOM.
+ * @returns Blocks and the first boundary that prevents insertion.
+ */
+export function scanDocument(
+  content: string,
+  isFragment = false,
+): MarkdownScan {
+  const blocks: LocatedBlock[] = [];
+  const marker = new RegExp(
+    `^<!-- ${MARKER_PREFIX}:(START|END):(.+?) -->[ \t]*$`,
+  );
+  let offset = isFragment
+    ? 0
+    : content.charCodeAt(0) === 0xfeff
+      ? 1
+      : content.startsWith('\xEF\xBB\xBF')
+        ? 3
+        : 0;
+  const endings = /\r\n?|\n/g;
+  let lineNumber = 0;
+  let fence = '';
+  let fenceLine = 0;
+  let commentLine = 0;
+  let reopened = false;
+  let listIndent = 0;
+  let blank = false;
+  let pending:
+    | { blockId: string; start: number; bodyStart: number; line: number }
+    | undefined;
+  while (offset < content.length) {
+    lineNumber++;
+    endings.lastIndex = offset;
+    const ending = endings.exec(content);
+    const next = ending ? ending.index + ending[0].length : content.length;
+    const line = content.slice(offset, ending?.index ?? content.length);
+    const delimiter = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
+    if (fence) {
+      if (
+        delimiter &&
+        delimiter[1][0] === fence[0] &&
+        delimiter[1].length >= fence.length &&
+        !delimiter[2].trim()
+      )
+        fence = '';
+    } else if (commentLine) {
+      // CommonMark ends the HTML block at the reopening line; HTML does not.
+      if (
+        reopened &&
+        (delimiter || line.trimStart().startsWith(`<!-- ${MARKER_PREFIX}`))
+      )
+        return {
+          blocks: [],
+          issue: {
+            line: lineNumber,
+            message: `HTML comment reopened after --> on line ${commentLine} is read differently by Markdown and HTML. Close it on that line before managed markers or fences.`,
+          },
+        };
+      const close = line.indexOf('-->');
+      if (close >= 0) {
+        reopened = hasUnclosedComment(line.slice(close + 3));
+        commentLine = reopened ? lineNumber : 0;
+      }
+    } else {
+      const container =
+        /^(?:(?: {0,3}>[ \t]*)|(?: {0,3}(?:[-+*]|\d+[.)])[ \t]+))+(.*)$/.exec(
+          line,
+        );
+      const list = /^( *)(?:[-+*]|\d+[.)])([ \t]+)(.*)$/.exec(line);
+      const indentedFence = /^([ \t]*)(`{3,}|~{3,})(.*)$/.exec(line);
+      const nested = container && /^\s*(`{3,}|~{3,})/.test(container[1]);
+      const validFence =
+        indentedFence &&
+        (indentedFence[2][0] !== '`' || !indentedFence[3].includes('`'));
+      if (
+        nested ||
+        (validFence && listIndent > 0 && indentedFence[1].length >= listIndent)
+      )
+        return {
+          blocks,
+          issue: {
+            line: lineNumber,
+            message:
+              'Fences inside blockquotes or list items are not supported. Move the fence to the top level and close it.',
+          },
+        };
+      if (
+        validFence &&
+        (indentedFence[1].includes('\t') || indentedFence[1].length > 3)
+      )
+        return {
+          blocks,
+          issue: {
+            line: lineNumber,
+            message:
+              'Indented fence syntax is not supported. Use at most three spaces and close the fence.',
+          },
+        };
+      if (validFence) {
+        fence = indentedFence[2];
+        fenceLine = lineNumber;
+        listIndent = 0;
+      } else {
+        if (list) listIndent = list[0].length - list[3].length;
+        else if (
+          blank &&
+          line.trim() &&
+          line.length - line.trimStart().length < listIndent
+        )
+          listIndent = 0;
+        blank = !line.trim();
+        const match = marker.exec(line);
+        if (match || /^ {0,3}<!--/.test(line)) listIndent = 0;
+        if (match?.[1] === 'START') {
+          if (pending)
+            return {
+              blocks: [],
+              issue: {
+                line: lineNumber,
+                message: `Nested START marker inside ${pending.blockId}. Close the current block first.`,
+              },
+            };
+          pending = {
+            blockId: match[2],
+            start: offset,
+            bodyStart: next,
+            line: lineNumber,
+          };
+        } else if (match?.[1] === 'END') {
+          if (pending?.blockId !== match[2])
+            return {
+              blocks: [],
+              issue: {
+                line: lineNumber,
+                message: `Unmatched END marker: ${match[2]}. Restore its matching START.`,
+              },
+            };
+          blocks.push({
+            blockId: pending.blockId,
+            body: content.slice(pending.bodyStart, offset),
+            start: pending.start,
+            end: next,
+          });
+          pending = undefined;
+        } else if (line.trimStart().startsWith(`<!-- ${MARKER_PREFIX}`)) {
+          return {
+            blocks: [],
+            issue: {
+              line: lineNumber,
+              message:
+                'Malformed managed marker. Restore a complete START or END marker line.',
+            },
+          };
+        } else if (
+          !match &&
+          /^ {0,3}<!--/.test(line) &&
+          hasUnclosedComment(line)
+        ) {
+          commentLine = lineNumber;
+          reopened = line.includes('-->', line.indexOf('<!--') + 4);
+        }
+      }
+    }
+    offset = next;
+  }
+  if (fence)
+    return {
+      blocks,
+      issue: {
+        line: fenceLine,
+        message:
+          'Unclosed fenced code block. Close the fence before adding managed blocks.',
+      },
+    };
+  if (commentLine)
+    return {
+      blocks,
+      issue: {
+        line: commentLine,
+        message:
+          'Unclosed HTML comment. Close the comment with --> before adding managed blocks.',
+      },
+    };
+  if (pending)
+    return {
+      blocks: [],
+      issue: {
+        line: pending.line,
+        message: `Unmatched START marker: ${pending.blockId}. Restore its matching END.`,
+      },
+    };
+  return { blocks };
+}

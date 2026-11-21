@@ -361,6 +361,8 @@ withTimeout<T>(fn: () => Promise<T>, ms: number, options?: { signal?: AbortSigna
 
 비동기 함수에 타임아웃을 추가합니다. `Promise.race`를 사용합니다. 시간 초과 시 `TimeoutError`를 throw합니다.
 
+전역 `AbortController` 구현이나 호환 polyfill이 필요합니다. 없으면 `fn`을 호출하기 전에 동기 `TypeError`를 던집니다. 외부 signal이 이미 중단되었으면 원본을 시작하지 않고 기존처럼 `AbortError`로 거부합니다.
+
 ```typescript
 try {
   const data = await withTimeout(() => fetchData(), 5000);
@@ -417,6 +419,8 @@ scheduleNextTick(task: () => void): void
 다음 이벤트 루프 틱으로 실행을 지연합니다. Node.js에서는 `process.nextTick` 사용, 브라우저에서는 `setImmediate` 또는 `setTimeout(0)`.
 
 #### scheduleMacrotask / cancelMacrotask / scheduleCancelableMacrotask
+
+Node의 네이티브 `setImmediate`는 콜백 사이에 마이크로태스크를 실행할 수 있습니다. 브라우저 폴백은 동기 예약 태스크를 한 배치로 실행하므로 중첩 마이크로태스크가 그 배치의 다음 태스크보다 늦게 실행될 수 있습니다. 취소 래퍼도 호스트의 순서를 따릅니다.
 
 ```typescript
 scheduleMacrotask(callback: () => void): number

@@ -5,6 +5,7 @@ import { FormErrorCode } from '../../../../../errors';
 import type { PendingFormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
+import { sameValueZero } from '../../../utils/compute/sameValueZero';
 import {
   prepareFieldNodeValidation,
   scheduleFieldNodeRevealDrop,
@@ -123,7 +124,10 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
       }
       guardRecords.clear();
     }
-    const changed = runtime.chainInitialOutputValue !== root.storedOutputValue;
+    const changed = !sameValueZero(
+      runtime.chainInitialOutputValue,
+      root.storedOutputValue,
+    );
     const requests = runtime.validationTargets;
     if (prepareFieldNodeValidation(root)) {
       if (changed && !requests?.has(root)) requestFieldNodeValidationWave(root);

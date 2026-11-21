@@ -5,7 +5,11 @@ import { afterEach, expect, it } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { ValidationMode } from '@/schema-form/core';
+import { expectedFieldPartId } from '@/schema-form/__tests__/fixtures/expectedFieldPartId';
 import { ErrorVisibility } from '@/schema-form/types';
+import type { FieldRendererProps } from '@/schema-form/types';
+
+import { FieldRenderer } from '../components/FieldRenderer';
 
 afterEach(cleanup);
 
@@ -53,8 +57,14 @@ it('omits empty group errors and delegates branch messages to the registered err
 it.each(['checkbox', 'radio'])(
   'names the builtin %s options group while preserving its title layout',
   (inputType) => {
+    let groupLabelId = '';
+    const Renderer = (props: FieldRendererProps) => {
+      if (props.path === '/Size') groupLabelId = props.labelId;
+      return <FieldRenderer {...props} />;
+    };
     render(
       <Form
+        FieldRenderer={Renderer}
         jsonSchema={{
           type: 'object',
           properties: {
@@ -80,13 +90,16 @@ it.each(['checkbox', 'radio'])(
     expect(title.tagName).toBe(inputType === 'checkbox' ? 'LEGEND' : 'LABEL');
     if (inputType === 'checkbox')
       expect(title.parentElement?.tagName).toBe('FIELDSET');
-    else expect(title.getAttribute('for')).toBe('/Size');
-    expect(title.id).toBe('label:/Size');
+    else
+      expect(expectedFieldPartId(title.getAttribute('for')!, 'label')).toBe(
+        groupLabelId,
+      );
+    expect(title.id).toBe(groupLabelId);
     expect(
       within(title.parentElement!)
         .getByRole('group', { name: 'Size' })
         .getAttribute('aria-labelledby'),
-    ).toBe('label:/Size');
+    ).toBe(groupLabelId);
   },
 );
 
@@ -101,8 +114,8 @@ it('keeps a plain string title associated with its input', () => {
   );
   const input = screen.getByRole<HTMLInputElement>('textbox');
   expect(screen.getByText('Text').getAttribute('for')).toBe(input.id);
-  expect(input.id).toBe('/Text');
-  expect(screen.getByText('Text').id).toBe('label:/Text');
+  expect(input.id).toMatch(/^.+:\/Text~input$/);
+  expect(screen.getByText('Text').id).toBe(expectedFieldPartId(input.id, 'label'));
   expect(screen.getByText('Text').textContent).toBe('Text');
   expect(screen.getByText('Text').childNodes).toHaveLength(1);
 });
@@ -127,7 +140,7 @@ it('keeps the title associated with a date-format input despite the radio hint',
   const title = screen.getByText('When');
   expect(input.type).toBe('date');
   expect(title.getAttribute('for')).toBe(input.id);
-  expect(title.id).toBe('label:/When');
+  expect(title.id).toBe(expectedFieldPartId(input.id, 'label'));
 });
 
 it('avoids title id collisions with sibling input paths', () => {
@@ -148,7 +161,10 @@ it('avoids title id collisions with sibling input paths', () => {
   );
   expect(ids.filter((id, index) => ids.indexOf(id) !== index)).toEqual([]);
   const inputs = screen.getAllByRole<HTMLInputElement>('textbox');
-  expect(inputs.map((input) => input.id)).toEqual(['/button', '/button-label']);
+  expect(inputs.map((input) => input.id)).toEqual([
+    expect.stringMatching(/^.+:\/button~input$/),
+    expect.stringMatching(/^.+:\/button-label~input$/),
+  ]);
   expect(screen.getByText('button').closest('label')!.control).toBe(inputs[0]);
   expect(screen.getByText('button-label').closest('label')!.control).toBe(
     inputs[1],
@@ -178,7 +194,7 @@ it('keeps a sibling textbox associated when the button field is a radio group', 
   expect(ids.filter((id, index) => ids.indexOf(id) !== index)).toEqual([]);
   expect(screen.getAllByRole('radio')).toHaveLength(2);
   const input = screen.getByRole<HTMLInputElement>('textbox');
-  expect(input.id).toBe('/button-label');
+  expect(input.id).toMatch(/^.+:\/button-label~input$/);
   expect(screen.getByText('button-label').closest('label')!.control).toBe(
     input,
   );

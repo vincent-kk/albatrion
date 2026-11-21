@@ -28,7 +28,8 @@ interface FieldInputStringProps
 }
 
 const FieldInputString = ({
-  path,
+  inputId,
+  labelId: fieldTitleId,
   name,
   jsonSchema,
   required,
@@ -83,7 +84,7 @@ const FieldInputString = ({
 
   return (
     <TextField
-      id={path}
+      id={inputId}
       name={name}
       type={isPassword ? 'password' : 'text'}
       variant={variant}
@@ -97,6 +98,7 @@ const FieldInputString = ({
       onChange={handleChange}
       size={size}
       slotProps={{
+        htmlInput: { 'aria-labelledby': fieldTitleId },
         input: {
           readOnly,
         },

@@ -14,7 +14,7 @@
 ### Always do
 
 - idle/flush 상태 전이를 바꾼 뒤 `MessageChannelScheduler.flush.test.ts`의 정지 인시던트 케이스를 통과시킨다
-- 태스크 실행 오류는 `onTaskError` 핸들러로만 격리하고 나머지 배치 실행을 계속한다
+- 태스크 실행 오류는 소비자의 `onTaskError`가 있으면 그 핸들러에만, 없으면 호스트에 보고하고 나머지 배치 실행을 계속한다
 - flush/idle 계약을 바꾸는 변경은 DETAIL.md를 먼저 갱신한다
 
 ### Ask first

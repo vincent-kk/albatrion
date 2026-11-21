@@ -5,12 +5,13 @@ import type { Optional } from '@aileron/declare';
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
-import { captureAbsentSlotInputs } from './captureAbsentSlotInputs';
 import { createClearedArrayOverlay } from './createClearedArrayOverlay';
 import { expirePackedSlotMemos } from './expirePackedSlotMemos';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
 import { hasSlotOverlaySource } from './hasSlotOverlaySource';
+import { readRetainedChildInputs } from './readRetainedChildInputs';
 import { readSlotExitPolicy } from './readSlotExitPolicy';
+import { selectBaselineArrayBindings } from './utils/selectBaselineArrayBindings';
 
 /** Source-preservation result for one recursively resolved exit policy. */
 interface ExitSlotOverlay {
@@ -42,12 +43,33 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
   context?: SettlementContext<Self>,
   sourceContext = context,
 ): ExitSlotOverlay => {
-  const supplied = context ? captureAbsentSlotInputs(node, context) : undefined;
-  if (supplied?.children)
+  const retained = context?.retainedSources?.get(node);
+  if (retained?.shouldUseBaseline && !context?.exceededBudget)
     previous = {
+      ...(retained.source !== node.source
+        ? { source: retained.source }
+        : undefined),
+      ...(retained.extras !== node.extras
+        ? { extras: retained.extras }
+        : undefined),
       ...previous,
-      children: new Map([...(previous?.children ?? []), ...supplied.children]),
     };
+  if (context) {
+    const supplied = readRetainedChildInputs(node, context, retained);
+    if (supplied)
+      previous = {
+        ...previous,
+        children: new Map([...(previous?.children ?? []), ...supplied]),
+      };
+  }
+  const baselineArray =
+    retained?.shouldUseBaseline && !context?.exceededBudget
+      ? retained.array
+      : undefined;
+  const baselineBindings =
+    baselineArray && selectBaselineArrayBindings(node, baselineArray, previous);
+  if (baselineBindings)
+    previous = { ...previous, itemCount: baselineBindings.itemCount };
   const policy = readSlotExitPolicy(node, inherited);
   const clear = applyPolicy && policy;
   if (
@@ -71,6 +93,7 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
       context,
       createExitSlotOverlay,
       sourceContext,
+      baselineBindings,
     );
     if (context) node.retainedSourceOverlay = overlay;
     const hasSource = overlay.itemCount !== 0;
@@ -95,9 +118,9 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
       extras !== undefined ||
       node.behavior.type === 'array');
   let children: Optional<Map<BlueprintChildEntry, InactiveSlotOverlay>>;
-  let isCompacted = false;
+  let isCompacted = baselineBindings !== undefined;
   const visited: BlueprintChildEntry[] = [];
-  for (const child of node.children ?? []) {
+  for (const child of baselineArray?.previousItems ?? node.children ?? []) {
     if (child.parent !== node) continue;
     const entry = getRetainedChildEntry(node, child.name, child.blueprintNode);
     if (!entry) continue;
@@ -119,7 +142,9 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
       else children.delete(entry);
     }
   }
-  for (const [entry, child] of node.inactiveSlots ?? []) {
+  for (const [entry, child] of baselineBindings?.sources ??
+    node.inactiveSlots ??
+    []) {
     if (visited.indexOf(entry) !== -1) continue;
     visited.push(entry);
     const prior =
@@ -139,12 +164,15 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
       if (result.overlay) children.set(entry, result.overlay);
     }
   }
-  for (const [entry, prior] of node.inactiveSlotOverlays ?? []) {
+  for (const [entry, prior] of baselineBindings?.overlays ??
+    node.inactiveSlotOverlays ??
+    []) {
     if (visited.indexOf(entry) !== -1) continue;
-    if (!clear && hasSlotOverlaySource(prior)) hasSource = true;
+    const supplied = previous?.children?.get(entry) ?? prior;
+    if (!clear && hasSlotOverlaySource(supplied)) hasSource = true;
     const overlay = clear
       ? { isWhole: true, source: undefined, extras: undefined }
-      : prior;
+      : supplied;
     if (overlay !== previous?.children?.get(entry)) {
       children ??= new Map(previous?.children);
       children.set(entry, overlay);
@@ -161,6 +189,17 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
     : children
       ? { ...previous, children }
       : previous;
+  if (baselineBindings && sourceContext) {
+    const snapshots: Map<Self, typeof baselineBindings> =
+      (sourceContext.compactedSlotSources ??= new Map());
+    snapshots.set(node, {
+      ...baselineBindings,
+      overlays: new Map([
+        ...baselineBindings.overlays,
+        ...(overlay?.children ?? []),
+      ]),
+    });
+  }
   if (context) node.retainedSourceOverlay = overlay;
   if (!clear && node.behavior.type === 'array' && node.source === undefined)
     expirePackedSlotMemos(node, overlay);

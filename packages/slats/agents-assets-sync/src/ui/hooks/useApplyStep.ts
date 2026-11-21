@@ -1,13 +1,6 @@
 import type { Fn } from '@aileron/declare';
 
-import {
-  type InjectReport,
-  applyAction,
-  applyBlockActions,
-  partitionActions,
-  summarize,
-} from '../../core/index.js';
-import { asyncPool } from '../../utils/asyncPool.js';
+import { type InjectReport, executeUnits } from '../../core/index.js';
 import type { InjectEvent, TargetPlan } from '../types/index.js';
 
 interface ApplyStepInput {
@@ -17,57 +10,20 @@ interface ApplyStepInput {
   readonly dispatch: Fn<[event: InjectEvent]>;
 }
 
-const CONCURRENCY = 8;
-
-/**
- * Execute every plan, then report.
- *
- * File copies run through a pool; block writes are applied one document at a
- * time, because concurrent writers to a shared `AGENTS.md` would each persist
- * their own read of it and only the last would survive.
- *
- * @returns the reports and the exit code the app should resolve with
+/** Compatibility apply transport; all writes and exit decisions stay in core.
+ * @param input Prepared plans and display transport.
+ * @returns Core reports and exit status.
  */
 export async function applyAllPlans({
   plans,
   dryRun,
   force,
   dispatch,
-}: ApplyStepInput): Promise<{
-  reports: InjectReport[];
-  exitCode: 0 | 1 | 2;
-}> {
-  const total = plans.reduce((acc, tp) => acc + tp.plan.actions.length, 0);
-  let done = 0;
-  dispatch({ type: 'apply-start', total });
-
-  if (dryRun) {
-    const reports = plans.map((tp) => summarize(tp.plan, 0));
-    dispatch({ type: 'done', reports, exitCode: 0, dryRun: true });
-    return { reports, exitCode: 0 };
-  }
-
-  const reports: InjectReport[] = [];
-  for (const tp of plans) {
-    const { fileActions, blockGroups } = partitionActions(
-      tp.plan.actions,
-      force,
-    );
-    await asyncPool(CONCURRENCY, fileActions, async (action) => {
-      await applyAction(action, tp.target.assetRoot);
-      done += 1;
-      dispatch({ type: 'apply-progress', done, current: action.relPath });
-    });
-    for (const [fileAbs, group] of blockGroups) {
-      await applyBlockActions(fileAbs, group, tp.target.assetRoot);
-      done += group.length;
-      dispatch({ type: 'apply-progress', done, current: fileAbs });
-    }
-    reports.push(summarize(tp.plan, 0));
-  }
-
-  const hasFailure = reports.some((r) => r.exitCode !== 0);
-  const exitCode: 0 | 1 | 2 = hasFailure ? 1 : 0;
-  dispatch({ type: 'done', reports, exitCode, dryRun: false });
-  return { reports, exitCode };
+}: ApplyStepInput): Promise<{ reports: InjectReport[]; exitCode: 0 | 1 | 2 }> {
+  const result = await executeUnits(plans, { dryRun, force }, []);
+  const reports = result.units.flatMap((unit) =>
+    unit.report ? [unit.report] : [],
+  );
+  dispatch({ type: 'done', reports, exitCode: result.exitCode, dryRun });
+  return { reports, exitCode: result.exitCode };
 }

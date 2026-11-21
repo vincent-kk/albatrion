@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+취소되지 않은 자기 form의 네이티브 reset은 FormHandle.reset()과 같은 로드·onChange·오류 공개 수명을 한 번 실행합니다. reset 이벤트 뒤 같은 작업의 microtask에서 로드하여 브라우저의 기본 reset이 비관리 입력과 사용자 입력 내부의 네이티브 요소도 먼저 복원하게 합니다. portal 안 다른 form의 reset과 취소된 기본 동작은 이 폼을 로드하지 않습니다.
+
 라벨·오류 등록 props는 [공개 부품 계약](../../../../types/DETAIL.md)을 따릅니다. 그룹과 입력 슬롯의 계약은 유지하며 여기서 부품의 실행이나 루트를 중복 소유하지 않습니다.
 
 Provider 조립은 외부 설정을 안쪽 소비자가 읽는 고정 의존 순서입니다. 노드·입력 상태를 이 계층에 복제하지 않습니다. 핸들은 현재 binding을 읽고, 값 읽기·제출은 `outputValue`, 쓰기는 전달받은 원본 값을 사용합니다. 비연결 루트의 조회·제출은 무해한 빈 결과로 끝나며 제출 callback을 호출하지 않습니다. nullish 노드의 구독은 [hooks 계약](../../../../hooks/DETAIL.md)을 따릅니다.
@@ -56,7 +58,7 @@ degraded 거부는 origin submit 기록을 한 번 보고한 뒤 caller에게 �
 
 현행 네이티브 판정은 committed 기본 정책이 Never가 아닐 때 공개합니다. Form의 disabled·readOnly는 공개를 막지 않고 focus만 막습니다. 후보는 present 조상 아래에서 자기 errors가 있고 disabled·readOnly가 아니며 자기 ErrorVisibility가 false가 아닌 노드의 전위 첫 항목입니다. 루트는 다른 후보가 없을 때만 고르므로 관련 없는 첫 입력으로 이동하지 않습니다. 선택 입력이 focus할 수 없더라도 다음 후보로 넘어가지 않아 트리 순서를 결정적으로 유지합니다.
 
-native 여부는 `true`만 인정합니다. handle.submit을 클릭 핸들러로 직접 넘겼을 때 이벤트 객체를 native 신호로 오인하지 않습니다. 네이티브 이벤트 기본 동작은 억제하며 안정적인 제출 함수 참조로 무관한 prop 변경이 FormRootProxy까지 전파되지 않게 합니다.
+native 여부는 `true`만 인정합니다. handle.submit을 클릭 핸들러로 직접 넘겼을 때 이벤트 객체를 native 신호로 오인하지 않습니다. 네이티브 submit은 event.target이 자기 form인 경우에만 처리합니다. portal 안쪽 Form에서 올라온 React 사건은 바깥 Form의 검증·공개·초점·제출을 시작하지 않습니다. 자기 네이티브 이벤트 기본 동작은 억제하며 안정적인 제출 함수 참조로 무관한 prop 변경이 FormRootProxy까지 전파되지 않게 합니다.
 
 ### root-boundary — ERROR-088·ERROR-091·ERROR-112: 보고기를 경계 바깥에 둡니다
 

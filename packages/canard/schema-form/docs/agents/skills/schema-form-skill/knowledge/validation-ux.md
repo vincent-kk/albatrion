@@ -24,12 +24,13 @@ Use `ErrorVisibility.AfterTouch` for feedback after blur, or `ErrorVisibility.Af
 A custom input publishes edits through `onChange` and renders messages behind `errorVisible`; this input also sets Touched on blur so a test can assert immediately (when Form records Touched itself is described in [interaction state](interaction-state.md)):
 
 ```tsx
-function NameInput({ value, onChange, node }: FieldInputProps<string>) {
+function NameInput({ inputId, value, onChange, node }: FieldInputProps<string>) {
   const { errors, errorVisible } = useFieldErrors(node);
 
   return (
     <>
       <input
+        id={inputId}
         aria-label="Name"
         value={value ?? ''}
         onChange={(event) => onChange(event.target.value || undefined)}
@@ -145,7 +146,7 @@ For message copy and section summaries, read [error feedback](error-feedback.md)
 Debounce input publication in FieldInput when needed; validation scheduling groups published edits rather than buffering the widget's local text. Validation still completes in background tabs and without `requestAnimationFrame`: the form falls back to a task, and to a 100 ms timer when a frame never arrives.
 Background tabs throttle that timer, and a slow validator delays the result. Schemas with `if` compile those conditions when the form is built or a condition is first evaluated.
 
-If your application changes `context` contents on every frame, newly eligible messages in `OnChange` mode can stay hidden until those changes stop. A fresh function counts as changed content; a fresh `Date`, `Map` or class instance with equal contents does not, because Form and FormProvider compare `context` by content first.
+If your application changes `context` contents on every frame, newly eligible messages in `OnChange` mode can stay hidden until those changes stop. A fresh function counts as changed content; a fresh Date, Map, array or plain object with equal contents does not. Form and FormProvider compare those supported values by content. URL, URLSearchParams and opaque class instances compare by reference: a new instance updates controls even when enumerable properties look equal. Mutating the same instance in place is not detected; replace it to publish a change.
 
 Known display limits: when React defers a field's render (a transition, Suspense or time slicing) past the next result, its message can appear without waiting; a write between a result and the next paint can leave that result's message visible for one or two frames. Writes grouped in one public `node.batch()` or `visitSubtree()` walk count as a single state for the hold, while separate public calls inside one React batch still count their intermediate states. The renderer and the input count only active and visible fields for the hold (see [error feedback](error-feedback.md) for `useChildFieldErrors`). Check timing-sensitive transitions in the real UI.
 
@@ -166,7 +167,7 @@ Only the component calling the hook opts into this field's value, state, error, 
 ```tsx
 const ErrorAwareInput = ({
   node,
-  path,
+  inputId,
   defaultValue,
   onChange,
 }: FieldInputProps) => {
@@ -174,7 +175,7 @@ const ErrorAwareInput = ({
   return (
     <>
       <input
-        id={path}
+        id={inputId}
         defaultValue={defaultValue}
         onChange={(event) => onChange(event.target.value)}
       />
@@ -186,4 +187,6 @@ const ErrorAwareInput = ({
 
 Import useFieldErrors and FieldInputProps from `@canard/schema-form` and supply ErrorAwareInput through the usual input selection. Unlike printing raw errors, this preserves the configured formatting.
 
-Limits: During a transition or hydration, React can pause a component’s render while error display becomes permitted. The hook can then lag by one committed render and catches up after that commit. A formatter reading sibling values, module state or time that it does not subscribe to can differ until the next update of the node properties it observes; prefer its arguments. The field computes its own message with the same formatter, so a formatter that throws for a field replaces the whole field with the fallback, and replacing formatError or a part renderer retries it. Only a throw raised solely by an input’s own useFieldErrors call is caught by that input’s boundary, which replacing formatError does not retry.
+During a transition or hydration, React can pause a component’s render while error display becomes permitted. The hook can then lag by one committed render and catches up after that commit. A formatter reading sibling values, module state or time that it does not subscribe to can differ until the next update of the node properties it observes. Prefer its arguments. A throw while formatting the field’s own message replaces that field with its fallback. After a field fails, replacing `formatError` retries its render once. If that retry also fails, subsequent formatter changes keep the fallback and the form reports the failure once. Replacing a part renderer can retry the field again. When only an input’s own `useFieldErrors` call throws, its input boundary owns the fallback and formatter replacement leaves that input boundary in place.
+
+Custom inputs and plugin renderers follow [control identifiers and author responsibility](field-input.md#control-identifiers-and-author-responsibility): use the supplied id on a focusable control, labelId for a group title, and the scoped id as a native radio group name. The name prop always remains the leaf name; path stays the data pointer.

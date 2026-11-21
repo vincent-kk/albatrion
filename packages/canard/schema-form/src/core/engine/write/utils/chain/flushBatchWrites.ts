@@ -3,6 +3,8 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Optional } from '@aileron/declare';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import { find } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import { writeFieldNode } from '../../../settle';
@@ -10,6 +12,8 @@ import { FieldNodeWriteKind } from '../../../types/value';
 import { WriteOption } from '../../../types/value';
 import { captureChainError } from './captureChainError';
 import { composeBatchValue } from './composeBatchValue';
+import { collectMarkedMergeOrigins } from './utils/collectMarkedMergeOrigins';
+import { restoreBatchOutput } from './utils/restoreBatchOutput';
 
 /**
  * Commit the final marked value of each batch target before delivery.
@@ -27,12 +31,41 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
     if (!writes.length) return;
     let option = WriteOption.None;
     for (const write of writes) option |= write.option;
-    const target = writes.length === 1 ? find(root, writes[0].node.path) : root;
-    if (!target) return;
-    const value =
-      writes.length === 1 ? writes[0].value : composeBatchValue(root, writes);
+    if (
+      option & WriteOption.EnableAutomaticWrites &&
+      !(option & WriteOption.DisableAutomaticWrites) &&
+      runtime.disableAutomaticWrites === true &&
+      writes.length > 1 &&
+      writes.some(
+        (write) => !(write.option & WriteOption.EnableAutomaticWrites),
+      )
+    ) {
+      for (const write of writes) {
+        const partial =
+          !!(write.option & WriteOption.Merge) &&
+          !(write.option & WriteOption.Replace);
+        writeFieldNode(
+          write.node,
+          write.value,
+          partial
+            ? FieldNodeWriteKind.CallerPartial
+            : FieldNodeWriteKind.CallerReplace,
+          write.option,
+          write.source,
+          undefined,
+          undefined,
+          write.virtualFields,
+        );
+      }
+      return;
+    }
+    // A lone mark kept past a refused reset can name a detached node; it then composes at the root.
+    const single =
+      writes.length === 1 ? find(root, writes[0].node.path) : undefined;
+    const target = single ?? root;
+    const value = single ? writes[0].value : composeBatchValue(root, writes);
     const merge =
-      writes.length === 1 &&
+      !!single &&
       (option & WriteOption.Merge) === WriteOption.Merge &&
       !(option & WriteOption.Replace);
     let allMatch = true;
@@ -62,7 +95,7 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
       source = allMatch2 ? FieldNodeWriteKind.Automatic : undefined;
     }
 
-    const origins = mapArray(
+    let origins = mapArray(
       writes,
       (
         write,
@@ -92,13 +125,31 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
           fields:
             !partial && write.node.behavior.type === 'virtual'
               ? (write.node.blueprintNode.fields ?? []).flatMap((field) => {
-                  const sibling = write.node.parent?.childrenByName?.[field];
-                  return sibling ? [sibling.path] : [];
+                  return write.node.parent &&
+                    (!write.virtualFields ||
+                      write.virtualFields.includes(field))
+                    ? [appendSegment(write.node.parent.path, field)]
+                    : [];
                 })
               : undefined,
         };
       },
     );
+    if (writes.length > 1 && option & WriteOption.Merge)
+      origins = writes.flatMap((write, index) =>
+        write.option & WriteOption.Merge &&
+        !(write.option & WriteOption.Replace) &&
+        write.source !== FieldNodeWriteKind.Automatic
+          ? collectMarkedMergeOrigins(
+              write.node,
+              write.value,
+              write.source ?? FieldNodeWriteKind.CallerPartial,
+              write.node.path,
+              write.node.blueprintNode,
+              write.virtualFields,
+            )
+          : [origins[index]],
+      );
     writeFieldNode(
       target,
       value,
@@ -110,10 +161,16 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
       option,
       source,
       origins,
+      undefined,
+      single ? writes[0].virtualFields : undefined,
     );
   } catch (error) {
     captureChainError(runtime, error);
   } finally {
+    if (runtime.batchHasArrayOperation && !runtime.batchDepth) {
+      runtime.batchHasArrayOperation = undefined;
+      restoreBatchOutput(root, runtime.chainInitialOutputValue);
+    }
     if (runtime.inputRelays !== undefined) runtime.inputRelays = undefined;
   }
 };

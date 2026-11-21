@@ -32,7 +32,8 @@ interface FieldInputTextareaProps
 }
 
 const FieldInputTextarea = ({
-  path,
+  inputId,
+  labelId: fieldTitleId,
   name,
   jsonSchema,
   required,
@@ -85,7 +86,7 @@ const FieldInputTextarea = ({
 
   return (
     <TextField
-      id={path}
+      id={inputId}
       name={name}
       multiline
       variant={variant}
@@ -101,6 +102,7 @@ const FieldInputTextarea = ({
       minRows={finalMinRows}
       maxRows={finalMaxRows}
       slotProps={{
+        htmlInput: { 'aria-labelledby': fieldTitleId },
         input: {
           readOnly,
         },

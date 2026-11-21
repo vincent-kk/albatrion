@@ -22,7 +22,7 @@ Shared behavior worth knowing:
 
 ## `compressCss`
 
-A single-pass byte walk over the UTF-8 encoding of the input. It collapses whitespace runs, strips `/* … */` comments, and drops semicolons made redundant by a following `}`. It performs **no semantic optimization** — duplicate declarations, empty rules, and long hex colors all survive untouched:
+A single pass over shared CSS token positions and grammar context. It collapses whitespace runs, strips comment contents, retaining `/**/` where adjacent CSS tokens need a boundary, and drops semicolons made redundant by a following `}`. It performs **no semantic optimization** — duplicate declarations, empty rules, and long hex colors all survive untouched:
 
 ```typescript
 compressCss('.a { color: red; color: blue; }'); // '.a{color:red;color:blue}'
@@ -32,20 +32,20 @@ compressCss('.a { color: #ffffff; }'); // '.a{color:#ffffff}'
 
 That is the intended scope: it is a runtime whitespace pass sized for CSS you assemble in the browser, not a replacement for a build-time minifier. Reach for cssnano or lightningcss when you want real minification.
 
-### Block-comment markers inside string literals corrupt the output
+### Quoted strings pass through untouched
 
-The comment scanner has no notion of CSS string literals, so a `/*` inside a quoted value opens a comment that swallows everything up to the next `*/` — or to the end of the input if there is none:
+A single- or double-quoted string, backslash escapes included, is copied byte for byte, so comment markers and spacing inside it survive:
 
 ```typescript
-compressCss('.a::before { content: "/*"; color: red; }');
-// '.a::before{content:"'          ← rest of the stylesheet consumed
-compressCss('.a::before { content: "/* hi */"; color: red; }');
-// '.a::before{content:"";color:red}'  ← literal silently emptied
-compressCss('.a { background: url("a/*b.png"); }');
-// '.a{background:url("a'          ← same failure through a URL
+compressCss('.a::before { content: "/*"; color: red; }'); // '.a::before{content:"/*";color:red}'
+compressCss('.a { background: url("a/*b.png"); }'); // '.a{background:url("a/*b.png")}'
 ```
 
-This is data loss, not a cosmetic artifact, and it is silent. Escape the marker in the source (`content: "\\2f* … *\\2f"`) or keep block-comment bytes out of CSS string values. It also applies transitively to `styleManagerFactory`, which runs this pass on every `add` unless told the input is already compressed.
+An unquoted `url(…)` is copied verbatim too, so a `/*` inside it opens no comment:
+
+```typescript
+compressCss('.a { background: url(a/*b.png); }'); // '.a{background:url(a/*b.png)}'
+```
 
 ### A comment ending a block leaves one orphan space
 
@@ -55,19 +55,23 @@ When a comment is the last thing before `}`, the whitespace collapser emits a se
 compressCss('.a {\n  color: red; /* note */\n}'); // '.a{color:red }'
 ```
 
-The artifact is locked by `src/utils/compressCss/__tests__/compress.test.ts:160`, whose input happens to end its block with a comment. Both that test and the `compressCss` JSDoc frame the space as a media-query quirk, and the JSDoc goes further — it ships an example asserting that `@media (max-width: 768px) { .container { padding: 0 16px; } }` returns `…{padding:0 16px }}`. It does not; without the trailing comment that input compresses cleanly. Since that JSDoc travels into `dist/*.d.ts`, an agent reading the declarations will carry the wrong rule. The trigger is a comment at the end of a block, in any context. Browsers parse the extra space correctly, so treat it as cosmetic; a `replace(/\s+\}/g, '}')` post-pass removes it at the cost of a second walk.
+The artifact is locked by `src/utils/compressCss/__tests__/compress.test.ts:160`, whose input happens to end its block with a comment. Both that test and the `compressCss` JSDoc frame the space as a media-query quirk, and the JSDoc goes further — it ships an example asserting that `@media (max-width: 768px) { .container { padding: 0 16px; } }` returns `…{padding:0 16px }}`. It does not; without the trailing comment that input compresses cleanly. Since that JSDoc travels into `dist/*.d.ts`, an agent reading the declarations will carry the wrong rule. The trigger is a comment at the end of a block, in any context. In this nonempty declaration example the space is cosmetic. Do not strip whitespace before `}` indiscriminately: a whitespace-only custom property value must remain nonempty.
 
-### Space before `(` is preserved; space before `:` is not
+### Whitespace that carries meaning is kept
 
-Whitespace between an identifier and `(` survives, because dropping it would break at-rule preludes and function-like syntax:
+Three kinds of whitespace survive because removing them changes what the CSS means:
 
 ```typescript
 compressCss('@supports (a: b) and (c: d) { .a { b: c; } }');
-// '@supports (a:b) and (c:d){.a{b:c}}'
-compressCss('.a { width: calc(100% - 10px); }'); // '.a{width:calc(100% - 10px)}'
+// '@supports (a:b) and (c:d){.a{b:c}}'       ← space between an identifier and `(`
+compressCss('.a { width: calc(100% + 10px); }'); // '.a{width:calc(100% + 10px)}'
+compressCss('.scope :hover { color: red; }'); // '.scope :hover{color:red}'
+compressCss('.a { color : red; }'); // '.a{color:red}'
 ```
 
-The mirror image is not safe: `:` is treated as punctuation that never needs a leading space, so a descendant combinator in front of a pseudo-selector is destroyed — `.scope :hover` compresses to `.scope:hover`, which selects a different element. Nothing in `compressCss` can distinguish the two, which is why the style manager's scope prefixing has a matching failure case (see `style-manager.md`).
+Existing whitespace around `+` and `-` stays in declaration values and at-rule preludes, inside or outside parentheses: a custom property can later be substituted into `calc()`. Selector combinators may lose surrounding whitespace only when the selector context proves that meaning stays the same; An+B boundaries in `:nth-child()` stay intact. Descendant spaces around attribute selectors or after selector functions remain significant. A colon loses separator whitespace only in declaration context; `.scope :hover` and `.scope:hover` remain different selectors, and `.a: hover` is not repaired into `.a:hover`. Custom-property token spacing, including a whitespace-only value, is preserved for substitution. Comment removal retains an empty comment whenever it would merge or split tokens, including CDO/CDC and attribute-match boundaries.
+
+Attribute contents use an opaque component context, so whitespace around `~=` or another attribute operator is not treated as selector-combinator trivia. Empty-namespace descendants such as `foo |div` and spaced column combinators retain their boundaries. A whitespace-only custom property or declaration-query value remains significant before trailing comments and at EOF; whitespace before a comment can also remain when a value follows, avoiding repeated scans of a comment gap.
 
 ## Related
 

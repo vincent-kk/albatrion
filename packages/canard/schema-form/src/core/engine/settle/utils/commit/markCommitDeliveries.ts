@@ -4,6 +4,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { Fn, Optional } from '@aileron/declare';
 
 import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
+import { INPUT_VALUE_REVISION } from '@/schema-form/constants/externalValueRevision';
 import {
   JSONPointer as $,
   isDescendantPath,
@@ -28,8 +29,10 @@ import type { SettlementContext } from '../../types/settlement';
 import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import { commitGlobalState } from './commitGlobalState';
 import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
+import { getInputCommitTracking } from './utils/getInputCommitTracking';
 import { getRequiredChildren } from './utils/getRequiredChildren';
 import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
+import { isExternalBranchValueChange } from './utils/isExternalBranchValueChange';
 import { isSameDeliveryValue } from './utils/isSameDeliveryValue';
 import { readSettlementSource } from './utils/readSettlementSource';
 
@@ -47,12 +50,12 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
   runtime.deliveries ??= new Set();
   const previousTransitions = runtime.revisionTransitions;
   try {
+    const isLoad = context.kind === FieldNodeWriteKind.Load;
+    const inputTracking = isLoad
+      ? undefined
+      : getInputCommitTracking(context, !!runtime.inputRelays?.length);
     const refreshTargets = runtime.refreshTargets;
-    const loadScope =
-      context.kind === FieldNodeWriteKind.Load ? context.loadScope : undefined;
-    const automaticNodes = new Set<Self>();
-    for (let index = 0; index < context.automaticLog.length; index++)
-      automaticNodes.add(context.automaticLog[index].node);
+    const loadScope = isLoad ? context.loadScope : undefined;
     const watchIndex = runtime.deliveryWatchIndex;
     const watchNodes = getFeatureNodeIndex(runtime.blueprint).watchNodes;
     let affectedPaths: Optional<Set<string>>;
@@ -242,6 +245,15 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
               node.storedOutputValue,
             ))
         ) {
+          if (
+            inputTracking &&
+            node.behavior.strategy === 'branch' &&
+            (inputTracking.hasInputBatch ||
+              inputTracking.hasRelay ||
+              node.path === inputTracking.inputPath) &&
+            !isExternalBranchValueChange(context, node)
+          )
+            node.pendingRevisionMask |= INPUT_VALUE_REVISION;
           if (silent) mark(node, FieldNodeEventType.UpdateValue);
           else {
             const pendingValue =
@@ -264,7 +276,8 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
                 : node.storedValue;
             const payload = { previous: oldValue, current };
             const source =
-              automaticNodes.has(node) || context.filledNodes.has(node)
+              context.retainedSources?.get(node)?.hasAutomaticWrite ||
+              context.filledNodes.has(node)
                 ? FieldNodeWriteKind.Automatic
                 : readSettlementSource(context, node.path);
             mark(
@@ -360,7 +373,8 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
               : node.storedValue;
           const payload = { previous: undefined, current };
           const source =
-            automaticNodes.has(node) || context.filledNodes.has(node)
+            context.retainedSources?.get(node)?.hasAutomaticWrite ||
+            context.filledNodes.has(node)
               ? FieldNodeWriteKind.Automatic
               : readSettlementSource(context, node.path);
           mark(

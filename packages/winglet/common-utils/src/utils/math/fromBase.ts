@@ -1,5 +1,3 @@
-import { BASE_36_DIGITS } from './constant';
-
 /**
  * Converts a string representation of a number in any base (2-36) to decimal.
  *
@@ -73,14 +71,20 @@ export const fromBase = (value: string, base: number): number => {
 
   const isNegative = value[0] === '-';
   const cleanValue = isNegative ? value.slice(1) : value;
-  const upperValue = cleanValue.toUpperCase();
 
   let result = 0;
-  for (let i = 0; i < upperValue.length; i++) {
-    const digit = BASE_36_DIGITS.indexOf(upperValue[i]);
+  for (let i = 0; i < cleanValue.length; i++) {
+    const code = cleanValue.charCodeAt(i);
+    const letter = code | 32;
+    const digit = code >= 48 && code <= 57 ? code - 48 : letter >= 97 && letter <= 122 ? letter - 87 : -1;
     if (digit === -1 || digit >= base)
-      throw new Error(`Invalid digit '${upperValue[i]}' for base ${base}`);
+      throw new Error(`Invalid digit '${cleanValue[i]}' for base ${base}`);
     result = result * base + digit;
   }
-  return isNegative ? -result : result;
+  if (isNegative) {
+    if (cleanValue.length === 0)
+      throw new Error('Value must be a non-empty string');
+    return -result;
+  }
+  return result;
 };

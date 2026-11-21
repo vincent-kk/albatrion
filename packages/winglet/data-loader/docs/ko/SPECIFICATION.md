@@ -83,7 +83,7 @@ const [user1, user2, user3] = await Promise.all([
 
 1. 키가 **현재 배치**에 추가됩니다.
 2. 스케줄러가 등록되지 않은 경우, 설정된 `batchScheduler`(기본값: `process.nextTick`)로 스케줄러를 등록합니다.
-3. 동일 틱 내에서 동기적으로 발생하는 모든 `load()` 호출이 같은 배치에 누적됩니다.
+3. 기본값처럼 비동기 스케줄러를 쓰면, 동일 틱 내에서 동기적으로 발생하는 모든 `load()` 호출이 같은 배치에 누적됩니다. `(fn) => fn()` 같은 동기 스케줄러는 배치가 등록되는 즉시 디스패치하므로 모든 `load()`가 키 하나짜리 배치가 되며, 반복된 키는 여전히 캐시에서 해석됩니다.
 4. 스케줄러가 실행되면 `__dispatchBatch__`가 누적된 모든 키로 `BatchLoader`를 호출합니다.
 
 ```
@@ -231,6 +231,8 @@ type BatchLoader<Key, Value> = (
 4. 인덱스 `i`의 값은 인덱스 `i`의 키에 대응해야 합니다.
 5. 키별 실패는 throw하는 예외가 아닌 `Error` 인스턴스로 표현하세요.
 
+키별 `Error` 결과는 `clear(key)` 또는 `clearAll()`을 호출할 때까지 캐시에 남습니다. 배치 전체가 실패하면 배치 Promise를 거부하여 해당 캐시 항목이 자동으로 제거되게 합니다.
+
 규칙 3 또는 4를 위반하면 해당 배치의 모든 키가 `DataLoaderError`로 거부됩니다.
 
 ---
@@ -376,7 +378,7 @@ class TtlMap<K, V> {
 }
 
 const cachedLoader = new DataLoader(batchLoad, {
-  cacheMap: new TtlMap(60_000), // 1분 TTL
+  cache: new TtlMap(60_000), // 1분 TTL
 });
 ```
 
@@ -406,7 +408,9 @@ const userLoader = new DataLoader(batchLoadUsers, { maxBatchSize: 100 });
 ### 커스텀 스케줄러
 
 ```typescript
-// 즉시 디스패치 — 테스트 또는 레이턴시 민감 코드에 유용
+// 즉시 디스패치 — 모든 load()가 반환되기 전에 키 하나짜리 배치를 디스패치하고,
+// 반복된 키는 여전히 캐시에서 해석됩니다. 테스트 또는 레이턴시 민감 코드에 유용하지만
+// 배칭은 일어나지 않습니다.
 const testLoader = new DataLoader(batchLoad, {
   batchScheduler: (fn) => fn(),
 });

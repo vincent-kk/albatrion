@@ -6,11 +6,13 @@
 
 ## API Contracts
 
+branch legend는 FieldRendererProps.labelId를 사용하고 입력·라벨은 묶인 부품의 scoped id를 공유합니다. 제목 연결을 node.path만으로 재구성하지 않아 sibling Form의 접근성 참조가 섞이지 않게 합니다.
+
 등록 라벨은 label을, 등록 오류는 em을 루트로 그립니다. Label은 비필수일 때 children 하나만 두고 필수이면 숨김 별표를 보탭니다. 그룹은 묶인 부품을 사용하며 문구가 null·undefined이면 오류 부품을 생략합니다. 빈 em이 없으므로 경로별 오류 관찰은 가장 가까운 data-path가 그 경로인 em만 읽습니다. 배열 라벨 생략·가지 legend·루트 입력 구조는 유지합니다.
 
 기본 LabelRenderer·ErrorMessageRenderer는 훅·Context·부수 효과 없이 props만으로 요소를 반환합니다. 묶인 부품이 이 두 참조만 직접 호출해 컴포넌트 층 하나를 생략하므로 React 렌더 밖의 함수 호출도 유효해야 합니다. 사용자·플러그인 렌더러에는 이 직접 호출 계약을 적용하지 않습니다.
 
-입력 동작과 오류 문구는 전달받은 props에 맡깁니다. 제목 연결은 [FormLabel](../Form/components/FormLabel/DETAIL.md)의 path·label: 규약을 따르며 branch의 legend도 같은 제목 id를 제공합니다. 입력 종류를 추측하여 별도 id 체계를 만들지 않습니다.
+입력 동작과 오류 문구는 전달받은 props에 맡깁니다. 제목 연결은 [FormLabel](../Form/components/FormLabel/DETAIL.md)의 경로·불투명 labelId 규약을 따르며 branch의 legend도 같은 제목 id를 제공합니다. 입력 종류를 추측하여 별도 id 체계를 만들지 않습니다.
 
 ## Acceptance Criteria
 

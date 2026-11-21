@@ -6,7 +6,9 @@ import { BEHAVIORS } from '../../../behaviors';
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
+import { BATCH_HOST_SOURCE } from '../../../utils/batchHostSource';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
+import { writeObjectKey } from '../../../utils/writeObjectKey';
 import { isPlain } from './isPlain';
 import { staticSpec } from './staticSpec';
 
@@ -27,6 +29,8 @@ export const interpretFieldNodeInput = <Self extends FieldNodeRecord<Self>>(
   live?: Self,
   seen = new WeakSet<object>(),
 ): unknown => {
+  if (input !== null && typeof input === 'object' && BATCH_HOST_SOURCE in input)
+    return Reflect.get(input, BATCH_HOST_SOURCE);
   template = live?.blueprintNode ?? template;
   const row = BEHAVIORS[template.kind]?.[template.strategy];
   const value = row
@@ -74,7 +78,8 @@ export const interpretFieldNodeInput = <Self extends FieldNodeRecord<Self>>(
         const child = item?.blueprintNode ?? children.get(name);
         if (!child) continue;
         const next = interpretFieldNodeInput(child, value[name], item, seen);
-        if (next !== value[name]) (copy ??= { ...value })[name] = next;
+        if (next !== value[name])
+          writeObjectKey((copy ??= { ...value }), name, next);
       }
       return copy ?? value;
     }

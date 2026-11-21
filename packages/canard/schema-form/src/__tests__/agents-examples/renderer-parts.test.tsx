@@ -1,3 +1,4 @@
+import { expectedFieldPartId } from '@/schema-form/__tests__/fixtures/expectedFieldPartId';
 import { createRef } from 'react';
 
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
@@ -107,7 +108,7 @@ const ErrorFrame = ({ node, children }: InputRendererProps) => {
  */
 const ErrorAwareInput = ({
   node,
-  path,
+  inputId,
   defaultValue,
   onChange,
 }: FieldInputProps) => {
@@ -115,7 +116,7 @@ const ErrorAwareInput = ({
   return (
     <>
       <input
-        id={path}
+        id={inputId}
         defaultValue={defaultValue}
         onChange={(event) => onChange(event.target.value)}
       />
@@ -144,8 +145,9 @@ it('assembles registered label and error roots with the field name and explicit 
   );
   const label = view.container.querySelector('label')!;
   expect(label.textContent).toBe('name *');
-  expect(label.htmlFor).toBe('/name');
-  expect(label.id).toBe('label:/name');
+  expect(label.htmlFor).toBe(view.container.querySelector('input')!.id);
+  expect(label.htmlFor).toMatch(/:\/name~input$/);
+  expect(label.id).toBe(expectedFieldPartId(label.htmlFor, 'label'));
   expect(label.querySelector('span')?.getAttribute('aria-hidden')).toBe('true');
   expect(view.container.querySelector('em')?.style.color).toBe('crimson');
   expect(view.getByText('Check name')).toBeTruthy();
@@ -293,9 +295,9 @@ it('frames the root, object, array and leaf inputs without marking root aggregat
 it('renders an input without observation only when its props change', () => {
   const ref = createRef<FormHandle>();
   let renders = 0;
-  const Input = ({ path, defaultValue }: FieldInputProps) => {
+  const Input = ({ inputId, defaultValue }: FieldInputProps) => {
     renders++;
-    return <input id={path} defaultValue={defaultValue} />;
+    return <input id={inputId} defaultValue={defaultValue} />;
   };
   render(
     <Form

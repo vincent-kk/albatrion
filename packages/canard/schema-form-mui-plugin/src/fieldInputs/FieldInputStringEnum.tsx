@@ -11,6 +11,7 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type StringEnumJSONSchema = StringSchema;
 
@@ -27,7 +28,9 @@ interface FieldInputStringEnumProps
 }
 
 const FieldInputStringEnum = ({
-  path,
+  inputId,
+  labelId: fieldTitleId,
+  getInputId,
   name,
   jsonSchema,
   required,
@@ -75,7 +78,7 @@ const FieldInputStringEnum = ({
         return {
           value,
           rawValue,
-          label: alias?.['' + rawValue] || '' + rawValue,
+          label: getOwnLabel(alias, '' + rawValue) || '' + rawValue,
         };
       }) || [],
     [jsonSchema, alias],
@@ -89,21 +92,29 @@ const FieldInputStringEnum = ({
     onChange(rawValue);
   });
 
-  const labelId = useMemo(() => `label-${path}`, [path]);
+  const labelId = getInputId('label');
 
-  const initialValue = useMemo(() => {
-    if (defaultValue === null) return JSON.stringify(null);
-    if (typeof defaultValue === 'string') return JSON.stringify(defaultValue);
-    return undefined;
-  }, [defaultValue]);
+  const initialValue = useMemo(
+    () =>
+      options.find((option) => option.rawValue === defaultValue)?.value ?? '',
+    [defaultValue, options],
+  );
 
   return (
     <FormControl fullWidth={fullWidth} variant={variant} error={misfit}>
-      <InputLabel id={labelId}>{label}</InputLabel>
+      <InputLabel id={labelId} htmlFor={getInputId('native')}>
+        {label}
+      </InputLabel>
       <Select
-        id={path}
+        id={inputId}
+        inputProps={{ id: getInputId('native') }}
+        SelectDisplayProps={{
+          id: inputId,
+          'aria-labelledby': fieldTitleId,
+        }}
+        MenuProps={{ id: getInputId('menu') }}
         name={name}
-        labelId={labelId}
+        labelId={fieldTitleId}
         label={label}
         required={required}
         readOnly={readOnly}

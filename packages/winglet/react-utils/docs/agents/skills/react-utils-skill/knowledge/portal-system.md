@@ -2,20 +2,11 @@
 
 A context-based alternative to bare `ReactDOM.createPortal`: content moves to another DOM location while staying in the React tree, so context and event bubbling follow the JSX nesting rather than the DOM nesting.
 
-## Architecture
+## Source ownership
 
-```
-Portal.with(Component)
-  └── PortalContextProvider           owns the registry and the anchor ref
-        ├── Component                 your tree
-        │     ├── <Portal>            renders null; registers children into the registry
-        │     └── <Portal.Anchor />   a div whose ref is the provider's anchor ref
-        └── createPortal(registry, anchorRef.current)
-```
+Portal renders a native React portal from its source position into `Portal.Anchor`. Context reads and click bubbling follow the source React ancestors, through `Portal.with` and beyond. A provider wrapping only the source is visible inside its content. To isolate clicks, stop propagation in the portal content; to share provider values throughout the scope, place the provider above `Portal.with`. Activity hide/show preserves subtree state. Before an anchor attaches, including server rendering and the first hydration render, content is absent; attaching or replacing the anchor updates the destination.
 
-Ownership is inverted relative to `createPortal`: `<Portal>` renders `null` at its own position and registers its children under a generated id; the **provider** is what renders them, into whatever DOM node the shared anchor ref currently points at. Where content lands is a property of the provider scope, never of the `<Portal>` call site. Unmounting a `<Portal>` unregisters its entry, so no manual cleanup exists or is needed.
-
-The provider only renders portal content while `anchorRef.current` is non-null, and a ref assignment does not itself trigger a render. The first registration's state update is what re-renders the provider after the anchor has attached — which is why content appears one commit after mount rather than immediately.
+The provider owns only the current anchor state. Each Portal returns `createPortal(children, anchor)` from its own React position. Unmounting the source removes its content without registration effects.
 
 ## Only `Portal` is exported
 
@@ -33,7 +24,7 @@ import { Portal } from '@winglet/react-utils/portal';
 
 ## Anchor constraints
 
-**One anchor per provider scope, and the last one to mount wins.** Every `Portal.Anchor` writes to the same ref object taken from context, so each mount overwrites whatever the previous anchor stored — the winner is the last to attach, not the first. Worse, React nulls that shared ref when _any_ anchor unmounts, and nothing reattaches the survivor: portal content silently disappears while an anchor is still on screen. Mount exactly one anchor per scope.
+**One anchor per provider scope, and the last one to mount wins.** Every `Portal.Anchor` reports its node through the same stable callback ref, so each mount overwrites whatever the previous anchor stored — the winner is the last to attach, not the first. Worse, React reports null through that shared callback when _any_ anchor unmounts, and nothing reattaches the survivor: portal content silently disappears while an anchor is still on screen. Mount exactly one anchor per scope.
 
 **A `style` prop replaces `display: contents` outright.** The anchor renders as `<div role="none" style={{ display: 'contents' }} {...props} ref={ref} />` — the spread comes after `style`, so a caller-supplied `style` overwrites the whole declaration rather than merging into it. The div then becomes a real layout box where the default was layout-transparent, shifting everything around it:
 
@@ -43,11 +34,11 @@ import { Portal } from '@winglet/react-utils/portal';
 <Portal.Anchor className="overlay-root" />                       // or style via class and leave `style` alone
 ```
 
-**Scopes nest without interfering.** Each `Portal.with` installs its own provider, registry, and anchor ref; an inner scope's `<Portal>` reaches the inner anchor and never the outer one.
+**Scopes nest without interfering.** Each `Portal.with` installs its own provider and anchor state; an inner scope's `<Portal>` reaches the inner anchor and never the outer one.
 
-**Content remounts on re-registration.** The registration effect depends on `children`, so a parent re-render producing a fresh element re-registers under a new id — and the new id becomes a new React key, remounting the portalled subtree and discarding its internal state. Memoize the children, or lift state that must survive above the `<Portal>`.
+**Content updates preserve state.** A fresh children element uses normal React reconciliation, so unrelated parent updates do not remount the subtree. Changing its component type or key still follows normal React reconciliation.
 
-Server-side rendering: `createPortal` is client-only, so guard accordingly.
+Server rendering produces an empty anchor. Hydration starts with the same output, then callback-ref attachment renders the portal content.
 
 ## Setup pattern
 
@@ -74,4 +65,4 @@ const Page = Portal.with(() => {
 });
 ```
 
-Multiple `<Portal>` instances in one scope all render at that single anchor, in registration order.
+Multiple `<Portal>` instances in one scope all render at that single anchor, in their mount order. Reordering already mounted source components does not reorder independent portal DOM nodes.

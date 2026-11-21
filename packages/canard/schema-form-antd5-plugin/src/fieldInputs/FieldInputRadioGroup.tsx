@@ -13,6 +13,9 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { isRadioGroupInput } from '../utils/inputs/isRadioGroupInput';
+import { getOwnLabel } from './utils/enum/getOwnLabel';
+
 type StringJSONSchema = StringSchema<{
   alias?: { [label: string]: ReactNode };
 }>;
@@ -32,30 +35,36 @@ interface FieldInputRadioGroupProps
 }
 
 const FieldInputRadioGroup = ({
-  path,
-  name,
+  inputId,
+  getInputId,
   jsonSchema,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
   size,
   alias,
   misfit,
+  labelId: labelledBy,
 }: FieldInputRadioGroupProps) => {
   const options = useMemo(() => {
     const labels = context.radioLabels || alias || {};
     return jsonSchema.enum
-      ? map(jsonSchema.enum, (rawValue: string | number | null) => {
-          const value = JSON.stringify(rawValue);
-          return {
-            value,
-            rawValue,
-            label: labels['' + rawValue] || '' + rawValue,
-          };
-        })
+      ? map(
+          jsonSchema.enum,
+          (rawValue: string | number | null, index: number) => {
+            const value = JSON.stringify(rawValue);
+            return {
+              id: getInputId(index),
+              value,
+              rawValue,
+              label: getOwnLabel(labels, '' + rawValue) || '' + rawValue,
+            };
+          },
+        )
       : [];
-  }, [context, jsonSchema, alias]);
+  }, [context, jsonSchema, alias, getInputId]);
   const initialValue = useMemo(
     () => options.find((option) => option.rawValue === defaultValue)?.value,
     [defaultValue, options],
@@ -68,11 +77,15 @@ const FieldInputRadioGroup = ({
     onChange(rawValue);
   });
   return (
-    <div role="radiogroup" aria-invalid={misfit || undefined}>
+    <div
+      id={inputId}
+      role="radiogroup"
+      aria-labelledby={labelledBy}
+      aria-invalid={misfit || undefined}
+    >
       <Radio.Group
-        id={path}
-        name={name}
-        disabled={disabled}
+        name={inputId}
+        disabled={disabled || readOnly}
         defaultValue={initialValue}
         options={options}
         onChange={handleChange}
@@ -84,11 +97,5 @@ const FieldInputRadioGroup = ({
 
 export const FieldInputRadioGroupDefinition = {
   Component: FieldInputRadioGroup,
-  test: ({ schemaType: type, inputType, jsonSchema }) => {
-    return (
-      (type === 'string' || type === 'number' || type === 'integer') &&
-      (inputType === 'radio' || inputType === 'radiogroup') &&
-      !!jsonSchema.enum?.length
-    );
-  },
+  test: isRadioGroupInput,
 } satisfies FieldInputDefinition;

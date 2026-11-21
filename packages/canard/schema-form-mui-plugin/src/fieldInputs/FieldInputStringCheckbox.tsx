@@ -1,9 +1,14 @@
 import { type ReactNode, useMemo, useState } from 'react';
 
-import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+} from '@mui/material';
 
 import { isArray } from '@winglet/common-utils/filter';
-import { isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
@@ -14,6 +19,9 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
+import { getOwnLabel } from './utils/enum/getOwnLabel';
+import { mergeEnumSelection } from './utils/enum/mergeEnumSelection';
 
 type StringCheckboxJSONSchema = ArraySchema & {
   type: 'array';
@@ -34,11 +42,15 @@ interface FieldInputStringCheckboxProps
 }
 
 const FieldInputStringCheckbox = ({
-  path,
+  inputId,
+  node,
+  labelId,
+  getInputId,
   name,
   jsonSchema,
   required,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -61,16 +73,13 @@ const FieldInputStringCheckbox = ({
       return {
         value,
         rawValue,
-        label: alias?.['' + rawValue] || '' + rawValue,
+        label: getOwnLabel(alias, '' + rawValue) || '' + rawValue,
       };
     });
   }, [jsonSchema, alias]);
 
   const [value, setValue] = useState<string[]>(() =>
-    isArray(defaultValue) &&
-    defaultValue.every((v) => v === null || typeof v === 'string')
-      ? defaultValue.map((v) => JSON.stringify(v))
-      : [],
+    isArray(defaultValue) ? defaultValue.map((v) => JSON.stringify(v)) : [],
   );
 
   const handleToggle = useHandle((optionValue: string) => {
@@ -85,54 +94,64 @@ const FieldInputStringCheckbox = ({
     }
 
     setValue(newValues);
-    onChange(newValues.map((token) => options.find((option) => option.value === token)?.rawValue).filter((rawValue) => rawValue !== undefined));
+    onChange((previous) =>
+      mergeEnumSelection(isArray(previous) ? previous : [], newValues, options),
+    );
   });
 
   return (
-    <FormControlLabel
-      label={label}
-      htmlFor={path}
+    <FormControl
+      component="fieldset"
+      role="group"
+      id={inputId}
+      aria-labelledby={labelId}
+      aria-invalid={misfit || undefined}
       required={required}
-      disabled={disabled}
-      labelPlacement="start"
+      disabled={disabled || readOnly}
       style={{
         display: 'flex',
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'start',
         gap: 8,
+        border: 0,
+        padding: 0,
+        margin: 0,
       }}
-      control={
-        <FormGroup row={row} role="group" aria-invalid={misfit || undefined}>
-          {options.map((option) => {
-            const isChecked = value.includes(option.value);
-            return (
-              <FormControlLabel
-                key={option.value}
-                disabled={disabled}
-                control={
-                  <Checkbox
-                    id={`${path}-${option.value}`}
-                    name={`${name}[]`}
-                    checked={isChecked}
-                    onChange={() => handleToggle(option.value)}
-                    size={size}
-                  />
-                }
-                label={option.label}
-              />
-            );
-          })}
-        </FormGroup>
-      }
-    />
+    >
+      <FormLabel
+        component="legend"
+        id={getInputId('legend')}
+        hidden={!!node?.parentNode}
+      >
+        {label}
+      </FormLabel>
+      <FormGroup row={row}>
+        {options.map((option, index) => {
+          const isChecked = value.includes(option.value);
+          return (
+            <FormControlLabel
+              key={option.value}
+              htmlFor={getInputId(index)}
+              disabled={disabled || readOnly}
+              control={
+                <Checkbox
+                  id={getInputId(index)}
+                  name={`${name}[]`}
+                  checked={isChecked}
+                  onChange={() => handleToggle(option.value)}
+                  size={size}
+                />
+              }
+              label={option.label}
+            />
+          );
+        })}
+      </FormGroup>
+    </FormControl>
   );
 };
 
 export const FieldInputStringCheckboxDefinition = {
   Component: FieldInputStringCheckbox,
-  test: ({ type, inputType, jsonSchema }) =>
-    type === 'array' &&
-    inputType === 'checkbox' &&
-    isStringSchema(jsonSchema.items) &&
-    !!jsonSchema.items?.enum?.length,
+  test: isCheckboxGroupInput,
 } satisfies FieldInputDefinition;

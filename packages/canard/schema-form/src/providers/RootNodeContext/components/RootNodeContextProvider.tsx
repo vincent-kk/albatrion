@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import {
   type PropsWithChildren,
   type RefObject,
@@ -17,10 +18,10 @@ import {
 import type { Fn, Optional } from '@aileron/declare';
 
 import { blueprintCacheDomain } from '@/schema-form/app/cache';
-import { PluginManager } from '@/schema-form/app/plugin';
 import type { FormProps } from '@/schema-form/components/Form';
 import {
   ValidationMode,
+  batchFieldNodeLoad,
   releaseValidationRoot,
   retainValidationRoot,
   setContext,
@@ -62,7 +63,7 @@ export const RootNodeContextProvider = ({
     onReset: Fn;
     errorVisibilityError?: SchemaFormError;
   }
->) => {
+>): ReactElement => {
   const external = useExternalFormContext();
   const { context, attachedFilesMap } = useWorkspaceContext();
   const reporter = useFormErrorContext();
@@ -76,7 +77,7 @@ export const RootNodeContextProvider = ({
     validator:
       props.validatorFactory ??
       external.validatorFactory ??
-      PluginManager.validator,
+      external.pluginManager.validator,
     validationMode:
       props.validationMode ??
       external.validationMode ??
@@ -276,7 +277,10 @@ export const RootNodeContextProvider = ({
         load.isPrepared = true;
         flushRootLoad(load);
         if (root) {
-          applyFormErrors(root, load.props.errors, undefined, 'load');
+          if (root.globalErrors.length)
+            batchFieldNodeLoad(root, () =>
+              reportRootLoadValidation(load, store),
+            );
           scheduleLoadValidation(load, store);
         }
       } else load.isPrepared = true;
@@ -289,7 +293,7 @@ export const RootNodeContextProvider = ({
   const lastErrors = useRef(props.errors);
   useLayoutEffect(() => {
     const root = store.load.root;
-    if (root && lastErrors.current !== props.errors)
+    if (root && !isSameSchema(lastErrors.current, props.errors))
       applyFormErrors(root, props.errors, lastErrors.current);
     lastErrors.current = props.errors;
   }, [load, props.errors, store]);

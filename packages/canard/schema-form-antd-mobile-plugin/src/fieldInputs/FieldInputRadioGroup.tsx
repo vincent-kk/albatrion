@@ -12,6 +12,10 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { isRadioGroupInput } from '../utils/inputs/isRadioGroupInput';
+import { useControlIdentifiers } from './utils/controls/useControlIdentifiers';
+import { getOwnLabel } from './utils/enum/getOwnLabel';
+
 interface FieldInputRadioGroupProps
   extends FieldInputPropsWithSchema<
     string | number | null,
@@ -26,7 +30,10 @@ interface FieldInputRadioGroupProps
 }
 
 const FieldInputRadioGroup = ({
+  inputId,
+  getInputId,
   jsonSchema,
+  readOnly,
   disabled,
   defaultValue,
   onChange,
@@ -34,6 +41,7 @@ const FieldInputRadioGroup = ({
   alias,
   style,
   misfit,
+  labelId: labelledBy,
 }: FieldInputRadioGroupProps) => {
   const options = useMemo(() => {
     const labels = context.radioLabels || alias || {};
@@ -43,12 +51,19 @@ const FieldInputRadioGroup = ({
           return {
             value,
             rawValue,
-            label: labels['' + rawValue] || '' + rawValue,
+            label: getOwnLabel(labels, '' + rawValue) || '' + rawValue,
           };
         })
       : [];
   }, [context, jsonSchema, alias]);
 
+  const bindControls = useControlIdentifiers(
+    inputId,
+    inputId,
+    'input',
+    getInputId,
+    options,
+  );
   const initialValue = useMemo(
     () => options.find((option) => option.rawValue === defaultValue)?.value,
     [defaultValue, options],
@@ -62,18 +77,22 @@ const FieldInputRadioGroup = ({
 
   return (
     <div
+      ref={bindControls}
+      id={inputId}
+      aria-labelledby={labelledBy}
       role="radiogroup"
       aria-invalid={misfit || undefined}
       style={{ display: 'flex', flexDirection: 'row', gap: 8, ...style }}
     >
       <Radio.Group
-        disabled={disabled}
+        disabled={disabled || readOnly}
         defaultValue={initialValue}
         onChange={handleChange}
       >
-        {map(options, (option) => (
+        {map(options, (option, index) => (
           <Radio
             key={option.value}
+            id={getInputId(index)}
             value={option.value}
             style={{
               '--icon-size': '24px',
@@ -91,11 +110,5 @@ const FieldInputRadioGroup = ({
 
 export const FieldInputRadioGroupDefinition = {
   Component: FieldInputRadioGroup,
-  test: ({ schemaType: type, inputType, jsonSchema }) => {
-    return (
-      (type === 'string' || type === 'number' || type === 'integer') &&
-      (inputType === 'radio' || inputType === 'radiogroup') &&
-      !!jsonSchema.enum?.length
-    );
-  },
+  test: isRadioGroupInput,
 } satisfies FieldInputDefinition;
