@@ -12,6 +12,7 @@ import {
 } from '../../../__tests__/roundThree/fixture.js';
 import type { DefaultFlags } from '../../../types/index.js';
 import { runInjection } from '../utils/session/runInjection.js';
+import type { RunInput } from '../utils/session/types.js';
 
 const packageName = '@probe/history';
 let projectRoot: string;
@@ -22,17 +23,15 @@ beforeEach(() => {
 
 afterEach(() => removeRoot(projectRoot));
 
-function prepare(assets: Record<string, string>) {
-  const packageRoot = installPackage(projectRoot, {
-    name: packageName,
-    assets,
-  });
-  const target = consumerOf(packageRoot, packageName, 'directory');
-  const run = (flags: DefaultFlags = {}) =>
+function prepare(assets: Record<string, string>, name = packageName) {
+  const packageRoot = installPackage(projectRoot, { name, assets });
+  const target = consumerOf(packageRoot, name, 'directory');
+  const run = (flags: DefaultFlags = {}, confirm?: RunInput['confirm']) =>
     runInjection({
       targets: [target],
       flags: { agent: ['claude'], scope: 'project', ...flags },
       originCwd: projectRoot,
+      confirm,
     });
   return { assetRoot: target.assetRoot, run };
 }
@@ -90,4 +89,31 @@ it('a preview does not record ownership of matching local content', async () => 
   rmSync(join(assetRoot, 'rules/preview.md'));
   expect((await run({ force: true, yes: true })).exitCode).toBe(0);
   expect(readFileSync(local, 'utf8')).toBe('# local\n');
+});
+
+it('retains a retired rule owned by another verified installation', async () => {
+  const first = prepare({ 'rules/shared.md': '# first\n' });
+  expect((await first.run()).exitCode).toBe(0);
+  const second = prepare({ 'rules/shared.md': '# second\n' }, '@probe/second');
+  expect((await second.run({ force: true, yes: true })).exitCode).toBe(0);
+
+  rmSync(join(first.assetRoot, 'rules/shared.md'));
+  const local = join(projectRoot, '.claude/rules/shared.md');
+  writeAt(local, '# first\n');
+  expect((await first.run({ force: true, yes: true })).exitCode).toBe(0);
+  expect(readFileSync(local, 'utf8')).toBe('# first\n');
+});
+
+it('rechecks the installed bytes after waiting for confirmation', async () => {
+  const { assetRoot, run } = prepare({ 'rules/retired.md': '# before\n' });
+  expect((await run()).exitCode).toBe(0);
+  rmSync(join(assetRoot, 'rules/retired.md'));
+  const local = join(projectRoot, '.claude/rules/retired.md');
+
+  const result = await run({ force: true }, async () => {
+    writeAt(local, '# edited during prompt\n');
+    return true;
+  });
+  expect(result.exitCode).toBe(1);
+  expect(readFileSync(local, 'utf8')).toBe('# edited during prompt\n');
 });

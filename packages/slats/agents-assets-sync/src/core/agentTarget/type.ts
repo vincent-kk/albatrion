@@ -52,6 +52,13 @@ export type OrphanScan =
       readonly fileAbs: string;
       /** Only blocks owned by this package are this scan's business. */
       readonly ownerPackage: string;
+    }
+  | {
+      readonly kind: 'installed-file';
+      readonly relPath: string;
+      readonly dstAbs: string;
+      /** Content observed during the prior successful installation. */
+      readonly installedHash: string;
     };
 
 /** Where a path lands once symbolic links are followed. */

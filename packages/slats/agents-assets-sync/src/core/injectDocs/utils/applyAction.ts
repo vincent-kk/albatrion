@@ -1,9 +1,10 @@
-import { lstat, unlink } from 'node:fs/promises';
+import { lstat, realpath, unlink } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import type { Action } from '../../buildPlan/index.js';
-import { readSourceSnapshot } from '../../hash/index.js';
+import { type Action, INSTALLED_HASH } from '../../buildPlan/index.js';
+import { hashEquals, readSourceSnapshot } from '../../hash/index.js';
 import type { SourceSnapshot } from '../../types/sourceSnapshot.js';
+import { hashInstalledFile } from '../../utils/hashInstalledFile.js';
 import { replaceDocument } from './replaceDocument.js';
 
 /**
@@ -40,6 +41,14 @@ export async function applyAction(
     });
     if (entry && !entry.isSymbolicLink() && (entry.mode & 0o222) === 0)
       throw new Error(`File is read-only: ${dstAbs}`);
+    const hash = action[INSTALLED_HASH];
+    if (
+      entry &&
+      hash &&
+      ((await realpath(dstAbs)) !== action.destinationKey ||
+        !hashEquals(await hashInstalledFile(dstAbs), hash))
+    )
+      throw new Error(`Installed file changed before orphan deletion: ${dstAbs}`);
     await unlink(dstAbs).catch((error) => {
       if (error?.code !== 'ENOENT') throw error;
     });

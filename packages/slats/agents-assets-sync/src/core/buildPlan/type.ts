@@ -18,6 +18,9 @@ export type ActionKind =
  */
 export type ActionTarget = Destination;
 
+/** Internal evidence for exact-file deletions, excluded from serialized actions. */
+export const INSTALLED_HASH = Symbol();
+
 export interface Action {
   /** Physical destination identity; spelling remains in target for diagnostics. */
   readonly destinationKey?: string;
@@ -29,6 +32,8 @@ export interface Action {
   readonly sourceHashReconciled?: boolean;
   /** Actual source bytes used to detect conflicting run-wide destinations. */
   readonly sourceHash?: Sha256Hex;
+  /** Previously installed content required by an exact-file orphan deletion. */
+  readonly [INSTALLED_HASH]?: Sha256Hex;
 }
 
 export interface InjectPlan {

@@ -19,7 +19,13 @@ import {
 import type { SourceSnapshot } from '../../../../types/sourceSnapshot.js';
 import { mergePlans } from '../mergePlans.js';
 import type { RunUnit, ValidatedFlags } from '../types.js';
+import {
+  type InstalledAssets,
+  RECORDED_CLAUDE_KINDS,
+  readInstalledAssets,
+} from '../utils/readInstalledAssets.js';
 import { describePreparationFailure } from './utils/describePreparationFailure.js';
+import { getInstalledOrphanScans } from './utils/getInstalledOrphanScans.js';
 import { getLinkedFileKey } from './utils/getLinkedFileKey.js';
 import { resolveCanonicalPath } from './utils/resolveCanonicalPath.js';
 import { validateUnitMarkdown } from './utils/validateUnitMarkdown.js';
@@ -46,6 +52,7 @@ export async function prepareUnits(
   const physicalPaths = new Map<string, Promise<string>>();
   const generatedAt = new Date().toISOString();
   const sourceSnapshots = new Map<string, SourceSnapshot | null>();
+  let installedAssets: Promise<InstalledAssets> | undefined;
   for (const target of targets) {
     const manifest = await resolveHashManifest(
       target,
@@ -105,19 +112,36 @@ export async function prepareUnits(
               resolveCanonicalPath(root, physicalPaths).catch(() => root),
             ),
         );
-        const { destinations, orphanScans } = resolveDestinations({
+        const locations = {
           agentTarget,
           packageName: target.name,
           relPaths: Object.keys(manifest.value.files),
           namespacePrefixes: prefixes,
           assetKinds: values.assetKinds,
-        });
+        };
+        const { destinations, orphanScans } = resolveDestinations(locations);
         await assertDestinationRootsContained({
           agentTarget,
           assetKinds: values.assetKinds,
           orphanScans,
           resolved,
         });
+        const installed =
+          agent === 'claude' &&
+          RECORDED_CLAUDE_KINDS.some((kind) => values.assetKinds.has(kind))
+            ? await (installedAssets ??= readInstalledAssets(agentTarget, resolved))
+            : undefined;
+        if (installed) {
+          const earlier = getInstalledOrphanScans(installed, locations, orphanScans);
+          if (earlier.length) {
+            await assertWriteTargetsContained({
+              agentTarget,
+              dstPaths: earlier.map((scan) => scan.dstAbs),
+              resolved,
+            });
+            orphanScans.push(...earlier);
+          }
+        }
         const plan = await buildPlan({
           sourceHashes: manifest.value.files,
           ruleBodyHashes: manifest.value.ruleBodyHashes,
@@ -153,7 +177,12 @@ export async function prepareUnits(
             return { ...action, destinationKey };
           }),
         );
-        const unit = { ...base, sourceSnapshots, plan: { ...plan, actions } };
+        const unit = {
+          ...base,
+          sourceSnapshots,
+          installedAssets: installed,
+          plan: { ...plan, actions },
+        };
         destinationsSeen.set(locationKey, unit);
         units.push(unit);
       } catch (error) {

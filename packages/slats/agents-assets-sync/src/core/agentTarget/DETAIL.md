@@ -24,6 +24,8 @@
 - orphan 스캔은 호출자가 요청한 kind 에 대해서만 만들어진다. `skills` 는 네임스페이스별 디렉터리 스캔, `rules` 는 소유 패키지를 명시한 block-file 스캔이다.
 - 이 fractal 은 경로를 계산할 뿐 asset 파일을 만들거나 읽거나 쓰지 않는다.
 
+이전 설치 기록이 제시한 단일 파일은 일반 스캔과 달리 하위 경로를 직접 해석합니다. 계획에서 해시를 읽기 전에 쓰기 대상과 동일한 프로젝트 포함 검사를 적용합니다.
+
 ## API Contracts
 
 - `resolveAgentTarget(agent: AgentType, scope: Scope, cwd?: string): AgentTarget`

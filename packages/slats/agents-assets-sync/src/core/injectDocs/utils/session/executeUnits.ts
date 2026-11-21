@@ -9,6 +9,7 @@ import { partitionActions } from '../partitionActions.js';
 import { summarize } from '../summarize.js';
 import type { PreparedUnit, RunFailure, RunResult, RunUnit } from './types.js';
 import { createRunDiagnostics } from './utils/createRunDiagnostics.js';
+import { recordInstalledAssets } from './utils/recordInstalledAssets.js';
 
 /** Apply prepared units once, then return the complete result model.
  * @param units Read-only plans.
@@ -26,7 +27,7 @@ export async function executeUnits(
 ): Promise<RunResult> {
   const results: RunUnit[] = [];
   for (const prepared of units) {
-    const { sourceSnapshots, ...metadata } = prepared;
+    const { sourceSnapshots, installedAssets, ...metadata } = prepared;
     const unit: RunUnit = {
       ...metadata,
       key:
@@ -96,10 +97,22 @@ export async function executeUnits(
         );
       }
     }
+    if (installedAssets && failures.length === 0) {
+      try {
+        await recordInstalledAssets(installedAssets, unit);
+      } catch (error) {
+        diagnostics.push({
+          unitKey: unit.key,
+          path: installedAssets.path,
+          stage: 'apply',
+          reason: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
     results.push({
       ...unit,
       failures: diagnostics,
-      ...(failures.length
+      ...(diagnostics.length
         ? {
             error: diagnostics
               .map(
@@ -109,7 +122,7 @@ export async function executeUnits(
               .join('\n'),
           }
         : {}),
-      report: summarize(unit.plan, failures.length ? 1 : 0, failures, [
+      report: summarize(unit.plan, diagnostics.length ? 1 : 0, failures, [
         ...fileActions,
         ...[...blockGroups.values()].flat(),
       ]),
