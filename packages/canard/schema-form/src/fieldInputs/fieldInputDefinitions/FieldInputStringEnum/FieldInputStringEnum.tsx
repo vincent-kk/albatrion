@@ -13,6 +13,7 @@ import type {
 } from '@/schema-form/types';
 
 import type { EnumLabelsContext } from './type';
+import { readEnumOptionValue } from '../../utils/readEnumOptionValue';
 
 /** Render a select for a string enum node. */
 export const FieldInputStringEnum = ({
@@ -73,9 +74,7 @@ export const FieldInputStringEnum = ({
   }
 
   const handleChange = useHandle((event: ChangeEvent<HTMLSelectElement>) => {
-    const rawValue = enumOptions.find(
-      (option) => option.value === event.target.value,
-    )?.rawValue;
+    const rawValue = readEnumOptionValue(enumOptions, event.target.value);
     if (rawValue === undefined) return;
     onChange(rawValue);
   });
