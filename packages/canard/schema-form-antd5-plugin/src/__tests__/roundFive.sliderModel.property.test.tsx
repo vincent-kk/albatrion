@@ -253,13 +253,15 @@ it.each(['ltr', 'rtl'] as const)(
     const view = render(<div />);
     for (const [type, multipleOf, start] of [
       ['number', undefined, 25],
+      ['number', undefined, 5],
       ['integer', 2, 24],
     ] as const) {
+      const maximum = start === 5 ? 10 : 50;
       const reference = sliderReference({
         type,
         multipleOf,
         minimum: 0,
-        maximum: 50,
+        maximum,
       });
       for (const lazy of [undefined, false]) {
         for (const [key, keyCode] of [
@@ -281,7 +283,7 @@ it.each(['ltr', 'rtl'] as const)(
                 jsonSchema={{
                   type,
                   minimum: 0,
-                  maximum: 50,
+                  maximum,
                   multipleOf,
                   format: 'slider',
                   presentation: {
