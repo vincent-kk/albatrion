@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import { act, cleanup, render, waitFor } from '@testing-library/react';
+import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import {
@@ -106,13 +106,8 @@ it.each([
         title,
         key: 'field',
       });
-      if (state.external) {
-        await waitFor(() =>
-          expect(view.getByRole('textbox', { name }), state.step).toBe(control),
-        );
-      } else {
-        expect(view.getByRole('textbox', { name }), state.step).toBe(control);
-      }
+      if (state.external) await act(async () => {});
+      expect(view.getByRole('textbox', { name }), state.step).toBe(control);
       observed.add(state.step);
     }
     expect(observed).toEqual(

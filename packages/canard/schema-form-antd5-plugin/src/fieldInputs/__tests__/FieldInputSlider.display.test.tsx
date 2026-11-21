@@ -6,12 +6,14 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle, type NumberSchema } from '@canard/schema-form';
 
-import { selectSliderCaseIndices } from '../../__tests__/utils/selectSliderCaseIndices';
 import { sliderReference } from '../../__tests__/utils/sliderReference';
 import { FieldInputSliderDefinition } from '../FieldInputSlider';
 
 /** Every directed lock transition appears exactly once in this circuit. */
 const modes = [0, 1, 2, 0, 2, 1, 0] as const;
+/** Each schema still exercises editable, read-only and disabled displays. */
+const schemaModes = [0, 2, 1] as const;
+const transitions = ['0:1', '0:2', '1:0', '1:2', '2:0', '2:1'] as const;
 /** A key that has no stored effect during either locked mode. */
 const movement = { key: 'ArrowRight', keyCode: 39 };
 
@@ -24,19 +26,15 @@ it('models slider display and retained values through all mounted lock transitio
   const boundaries = ['absent', 'inclusive', 'exclusive', 'both'];
   const lazyModes = [undefined, true, false];
   const directions = ['ltr', 'rtl'] as const;
-  const profile = selectSliderCaseIndices(
-    [
-      types.length,
-      steps.length,
-      boundaries.length,
-      boundaries.length,
-      3,
-      lazyModes.length * directions.length * markKinds.length,
-    ],
-    process.env.SCHEMA_FORM_TEST_PROFILE !== 'pr',
-  );
+  const pr = process.env.SCHEMA_FORM_TEST_PROFILE === 'pr';
+  const interactionCount =
+    3 * lazyModes.length * directions.length * markKinds.length;
   const expected = new Set<string>();
   const observed = new Set<string>();
+  const displayClasses = new Set<string>();
+  const observedPairs = new Set<string>();
+  const observedTransitions = new Set<string>();
+  let rendered = 0;
   const view = render(<div />);
   let index = 0;
   for (const type of types)
@@ -78,10 +76,32 @@ it('models slider display and retained values through all mounted lock transitio
                   const displayClass = JSON.stringify(coverage[1]);
                   expected.add(schemaClass);
                   expected.add(displayClass);
+                  displayClasses.add(displayClass);
                   const frame = index++;
-                  if (profile && !profile.has(frame)) continue;
+                  const schemaIndex = Math.floor(frame / interactionCount);
+                  // Rotate at both bound axes so the representatives cover every axis pair.
+                  const representative =
+                    (schemaIndex +
+                      Math.floor(schemaIndex / boundaries.length) +
+                      Math.floor(schemaIndex / boundaries.length ** 2)) %
+                    interactionCount;
+                  if (pr && frame % interactionCount !== representative)
+                    continue;
+                  const interactionModes =
+                    pr && observed.has(displayClass) ? schemaModes : modes;
                   observed.add(schemaClass);
                   observed.add(displayClass);
+                  rendered++;
+                  const tags = [
+                    ...coverage[0],
+                    coverage[1][0],
+                    coverage[1].slice(1),
+                  ];
+                  for (let left = 0; left < tags.length; left++)
+                    for (let right = left + 1; right < tags.length; right++)
+                      observedPairs.add(
+                        JSON.stringify([left, tags[left], right, tags[right]]),
+                      );
                   const marks = undefined;
                   const reference = sliderReference({ ...schema, type, marks });
                   const ref = createRef<FormHandle>();
@@ -106,7 +126,8 @@ it('models slider display and retained values through all mounted lock transitio
                   );
 
                   let thumb: HTMLElement | undefined;
-                  for (const mode of modes) {
+                  let previous: (typeof modes)[number] | undefined;
+                  for (const mode of interactionModes) {
                     view.rerender(
                       <ConfigProvider direction={direction}>
                         {form(mode)}
@@ -135,14 +156,26 @@ it('models slider display and retained values through all mounted lock transitio
                       fireEvent.keyUp(thumb, movement);
                     }
                     expect(ref.current?.getValue(), context).toBe(start);
+                    if (previous !== undefined)
+                      observedTransitions.add(
+                        `${displayClass}/${previous}:${mode}`,
+                      );
+                    previous = mode;
                   }
                 }
         }
   expect(observed).toEqual(expected);
   expect(observed.size).toBe(242);
-  expect(
-    new Set(modes.slice(1).map((mode, index) => `${modes[index]}:${mode}`)),
-  ).toEqual(new Set(['0:1', '0:2', '1:0', '1:2', '2:0', '2:1']));
+  expect(rendered).toBe(pr ? 224 : 224 * interactionCount);
+  expect(observedPairs.size).toBe(273);
+  expect(displayClasses.size).toBe(18);
+  expect(observedTransitions).toEqual(
+    new Set(
+      [...displayClasses].flatMap((key) =>
+        transitions.map((pair) => `${key}/${pair}`),
+      ),
+    ),
+  );
 }, 900000);
 
 it.each([
