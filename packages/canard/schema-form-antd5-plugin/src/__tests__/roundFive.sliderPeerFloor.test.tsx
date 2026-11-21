@@ -1,13 +1,23 @@
 import { type ComponentProps, createRef } from 'react';
 
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 
-import { Form, type FormHandle } from '@canard/schema-form';
+import {
+  type FieldInputDefinition,
+  Form,
+  type FormHandle,
+} from '@canard/schema-form';
 
-import { plugin } from '../index';
-
-const emulateAntd510 = { on: false };
+const emulateAntd510 = vi.hoisted(() => ({ on: false }));
 vi.mock('antd', async (importOriginal) => {
   const actual = await importOriginal<typeof import('antd')>();
   const RealSlider = actual.Slider;
@@ -54,6 +64,19 @@ afterEach(() => {
   emulateAntd510.on = false;
 });
 
+let modernDefinition: FieldInputDefinition;
+let legacyDefinition: FieldInputDefinition;
+
+beforeAll(async () => {
+  modernDefinition = (await import('../fieldInputs/FieldInputSlider'))
+    .FieldInputSliderDefinition;
+  vi.resetModules();
+  emulateAntd510.on = true;
+  legacyDefinition = (await import('../fieldInputs/FieldInputSlider'))
+    .FieldInputSliderDefinition;
+  emulateAntd510.on = false;
+});
+
 const renderSlider = (lazy?: boolean) => {
   const ref = createRef<FormHandle>();
   render(
@@ -75,7 +98,9 @@ const renderSlider = (lazy?: boolean) => {
         },
       }}
       defaultValue={{ level: 15 }}
-      fieldInputDefinitions={plugin.fieldInputDefinitions}
+      fieldInputDefinitions={[
+        emulateAntd510.on ? legacyDefinition : modernDefinition,
+      ]}
     />,
   );
   return ref;

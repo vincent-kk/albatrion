@@ -1,12 +1,18 @@
-import { useCallback, useMemo } from 'react';
-
 import { Slider } from 'antd';
+
+import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   FieldInputDefinition,
   FieldInputPropsWithSchema,
   NumberSchema,
 } from '@canard/schema-form';
+
+import { antdMinorVersion } from './utils/antdMinorVersion';
+
+/** Ant Design versions before 5.12 expose only the legacy commit callback. */
+const commitEvent =
+  antdMinorVersion < 12 ? 'onAfterChange' : 'onChangeComplete';
 
 interface FieldInputSliderProps
   extends FieldInputPropsWithSchema<number | null, NumberSchema> {
@@ -27,37 +33,23 @@ const FieldInputSlider = ({
   lazy,
   misfit,
 }: FieldInputSliderProps) => {
-  const handleChange = useCallback(
-    (value: number | null) => {
-      if (value === null) onChange(undefined);
-      else if (!Number.isNaN(value)) onChange(value);
-    },
-    [onChange],
-  );
-
-  const { min, max, step, ...changeHandler } = useMemo(() => {
-    return {
-      min: jsonSchema.minimum,
-      max: jsonSchema.maximum,
-      step: jsonSchema.multipleOf,
-      ...(lazy === false
-        ? { onChange: handleChange }
-        : { onChangeComplete: handleChange }),
-    } as const;
-  }, [handleChange, jsonSchema, lazy]);
+  const handleChange = useHandle((value: number | null) => {
+    if (value === null) onChange(undefined);
+    else if (!Number.isNaN(value)) onChange(value);
+  });
 
   return (
     <div role="group" aria-invalid={misfit || undefined}>
       <Slider
         id={path}
         disabled={disabled || readOnly}
-        min={min}
-        max={max}
-        step={step}
+        min={jsonSchema.minimum}
+        max={jsonSchema.maximum}
+        step={jsonSchema.multipleOf}
         defaultValue={
           typeof defaultValue === 'number' ? defaultValue : undefined
         }
-        {...changeHandler}
+        {...{ [lazy === false ? 'onChange' : commitEvent]: handleChange }}
       />
     </div>
   );
