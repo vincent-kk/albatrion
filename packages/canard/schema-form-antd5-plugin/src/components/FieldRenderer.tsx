@@ -24,9 +24,24 @@ export const FieldRenderer = ({
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps): ReactElement => {
-  if (depth === 0) return <Input />;
+  const isBranch = node.strategy === 'branch';
+  const hasErrorMessage =
+    errorMessage != null &&
+    errorMessage !== '' &&
+    typeof errorMessage !== 'boolean';
+  const error =
+    hasErrorMessage || (depth > 0 && !isBranch) ? (
+      <ErrorMessage style={EMPTY_OBJECT}>{errorMessage}</ErrorMessage>
+    ) : null;
+  if (depth === 0)
+    return (
+      <>
+        <Input />
+        {error}
+      </>
+    );
 
-  if (node.strategy === 'branch') {
+  if (isBranch) {
     return (
       <fieldset
         style={{
@@ -38,6 +53,7 @@ export const FieldRenderer = ({
           <Typography.Text style={TEXT_STYLE}>{name}</Typography.Text>
         </legend>
         <Input />
+        {error}
       </fieldset>
     );
   } else {
@@ -54,7 +70,7 @@ export const FieldRenderer = ({
           )}
           <Input />
         </Flex>
-        <ErrorMessage style={EMPTY_OBJECT}>{errorMessage}</ErrorMessage>
+        {error}
       </div>
     );
   }
