@@ -1,5 +1,8 @@
 import dayjs from 'dayjs';
 
+/** Stored format of time inputs and their bounds. */
+export const TIME_FORMAT = 'HH:mm:00Z';
+
 /**
  * Reads a saved picker value using the field format and RFC 3339 offset spelling.
  * @param value - Stored value or limit, with native Dayjs handling for absent values.
@@ -11,7 +14,7 @@ export const parsePickerValue = (
   format: string,
 ) =>
   dayjs(
-    typeof value === 'string' && format === 'HH:mm:00Z'
+    typeof value === 'string' && format === TIME_FORMAT
       ? value.replace(/z$/, 'Z')
       : value,
     format,

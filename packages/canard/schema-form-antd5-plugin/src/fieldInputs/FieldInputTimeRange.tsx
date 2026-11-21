@@ -2,11 +2,8 @@ import { useMemo } from 'react';
 
 import { DatePicker } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
-import type { Dayjs } from 'dayjs';
 
-import { isArray } from '@winglet/common-utils/filter';
 import { isStringSchema } from '@winglet/json-schema/filter';
-import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   ArraySchema,
@@ -15,11 +12,11 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-import type { Parameter } from '@aileron/declare';
+import type { PickerPresentation } from './utils/picker/PickerPresentation';
+import { getPickerRangeValue } from './utils/picker/getPickerRangeValue';
+import { TIME_FORMAT, parsePickerValue } from './utils/picker/parsePickerValue';
+import { usePickerRangeChange } from './utils/picker/usePickerRangeChange';
 
-import { parsePickerValue } from './utils/picker/parsePickerValue';
-
-const DATE_FORMAT = 'HH:mm:00Z';
 const HOURS = Array.from({ length: 24 }, (_, hour) => hour);
 const MINUTES = Array.from({ length: 60 }, (_, minute) => minute);
 
@@ -27,24 +24,12 @@ type DateRangeSchema = ArraySchema & {
   items: StringSchema;
 };
 
-type RangeValueType<T> = Parameter<
-  (typeof DatePicker<T>)['RangePicker']
->['defaultValue'];
-
-type OnChangeRangeValueType<T> = RangeValueType<T> | null;
-
-interface FieldInputTimeRangeProps
-  extends FieldInputPropsWithSchema<
-    [string | null, string | null] | null,
-    DateRangeSchema,
-    { size?: SizeType }
-  > {
-  size?: SizeType;
-  /** Earliest selectable value, from `presentation.FieldInputProps.minimum`. */
-  minimum?: string;
-  /** Latest selectable value, from `presentation.FieldInputProps.maximum`. */
-  maximum?: string;
-}
+type FieldInputTimeRangeProps = FieldInputPropsWithSchema<
+  [string | null, string | null] | null,
+  DateRangeSchema,
+  { size?: SizeType }
+> &
+  PickerPresentation;
 
 const FieldInputTimeRange = ({
   path,
@@ -59,21 +44,15 @@ const FieldInputTimeRange = ({
   maximum,
   misfit,
 }: FieldInputTimeRangeProps) => {
-  const initialValue = useMemo<RangeValueType<Dayjs>>(
-    () =>
-      isArray(defaultValue) && defaultValue.length === 2
-        ? [
-            parsePickerValue(defaultValue[0], DATE_FORMAT),
-            parsePickerValue(defaultValue[1], DATE_FORMAT),
-          ]
-        : undefined,
+  const initialValue = useMemo(
+    () => getPickerRangeValue(defaultValue, TIME_FORMAT),
     [defaultValue],
   );
 
   const disabledTime = useMemo(() => {
     if (!minimum && !maximum) return undefined;
-    const start = minimum ? parsePickerValue(minimum, DATE_FORMAT) : undefined;
-    const end = maximum ? parsePickerValue(maximum, DATE_FORMAT) : undefined;
+    const start = minimum ? parsePickerValue(minimum, TIME_FORMAT) : undefined;
+    const end = maximum ? parsePickerValue(maximum, TIME_FORMAT) : undefined;
     const first = start?.isValid() ? start.hour() * 60 + start.minute() : 0;
     const last = end?.isValid() ? end.hour() * 60 + end.minute() : 1439;
     const outside = (startMinute: number, endMinute: number) =>
@@ -92,12 +71,7 @@ const FieldInputTimeRange = ({
     });
   }, [minimum, maximum]);
 
-  const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
-    if (!range) return onChange(undefined);
-    const [start, end] = range;
-    if (!start || !end) return;
-    onChange([start.format(DATE_FORMAT), end.format(DATE_FORMAT)]);
-  });
+  const handleChange = usePickerRangeChange(onChange, TIME_FORMAT);
 
   return (
     <DatePicker.RangePicker
@@ -105,7 +79,7 @@ const FieldInputTimeRange = ({
       name={name}
       disabled={disabled}
       readOnly={readOnly}
-      format={DATE_FORMAT}
+      format={TIME_FORMAT}
       showTime={{ format: 'HH:mm' }}
       disabledTime={disabledTime}
       defaultValue={initialValue}

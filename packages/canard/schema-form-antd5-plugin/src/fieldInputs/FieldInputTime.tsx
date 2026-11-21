@@ -11,9 +11,7 @@ import type {
   FieldInputProps,
 } from '@canard/schema-form';
 
-import { parsePickerValue } from './utils/picker/parsePickerValue';
-
-const DATE_FORMAT = 'HH:mm:00Z';
+import { TIME_FORMAT, parsePickerValue } from './utils/picker/parsePickerValue';
 
 interface FieldInputTimeProps
   extends FieldInputProps<string | null, { size?: SizeType }> {
@@ -32,11 +30,11 @@ const FieldInputTime = ({
   misfit,
 }: FieldInputTimeProps) => {
   const handleChange = useHandle((date: Dayjs | null) => {
-    onChange(date ? date.format(DATE_FORMAT) : undefined);
+    onChange(date ? date.format(TIME_FORMAT) : undefined);
   });
   const initialValue = useMemo(
     () =>
-      defaultValue ? parsePickerValue(defaultValue, DATE_FORMAT) : undefined,
+      defaultValue ? parsePickerValue(defaultValue, TIME_FORMAT) : undefined,
     [defaultValue],
   );
   return (
