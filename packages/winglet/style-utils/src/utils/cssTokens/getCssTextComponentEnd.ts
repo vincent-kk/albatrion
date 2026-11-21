@@ -9,9 +9,14 @@ import { readCssToken } from './readCssToken';
  * Consume a text component with local nesting and table-classified ordinary runs.
  * @param css Stylesheet text containing the component.
  * @param open Its opening parenthesis, bracket or brace.
- * @returns Position after the matching close, or EOF.
+ * @param unclosedEnd Result when no matching close exists.
+ * @returns Position after the matching close, or `unclosedEnd`.
  */
-export function getCssTextComponentEnd(css: string, open: number): number {
+export function getCssTextComponentEnd(
+  css: string,
+  open: number,
+  unclosedEnd = css.length,
+): number {
   const opening = css.charCodeAt(open);
   const close = opening === 40 ? 41 : opening === 91 ? 93 : 125;
   let depth = 1,
@@ -19,7 +24,7 @@ export function getCssTextComponentEnd(css: string, open: number): number {
   while (index < css.length) {
     let code = css.charCodeAt(index);
     while (code >= 128 || (CSS_POSITION_CLASS[code] & 32) === 0) {
-      if (++index >= css.length) return css.length;
+      if (++index >= css.length) return unclosedEnd;
       code = css.charCodeAt(index);
     }
     if (code === 34 || code === 39)
@@ -39,5 +44,5 @@ export function getCssTextComponentEnd(css: string, open: number): number {
     } else if (code === close && --depth === 0) return index + 1;
     else index++;
   }
-  return css.length;
+  return unclosedEnd;
 }

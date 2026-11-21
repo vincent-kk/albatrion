@@ -18,9 +18,14 @@ const SIMPLE_BRACE = new RegExp(CONTENT + String.raw`\}`, 'y');
  * Skip a bracketed component through shared lexical positions and matching delimiters.
  * @param source Stylesheet code units or bytes.
  * @param open Opening bracket, brace or parenthesis.
- * @returns Position after its matching close, or EOF when unclosed.
+ * @param unclosedEnd Result to use when no matching close exists.
+ * @returns Position after its matching close, or `unclosedEnd` (EOF by default).
  */
-export function getCssComponentEnd(source: CssSource, open: number): number {
+export function getCssComponentEnd(
+  source: CssSource,
+  open: number,
+  unclosedEnd = source.length,
+): number {
   const opening = readCssCode(source, open);
   const close = opening === 40 ? 41 : opening === 91 ? 93 : 125;
   if (typeof source === 'string') {
@@ -32,7 +37,7 @@ export function getCssComponentEnd(source: CssSource, open: number): number {
           : SIMPLE_BRACE;
     probe.lastIndex = open + 1;
     if (probe.test(source)) return probe.lastIndex;
-    return getCssTextComponentEnd(source, open);
+    return getCssTextComponentEnd(source, open, unclosedEnd);
   }
   let index = open + 1;
   while (index < source.length) {
@@ -50,5 +55,5 @@ export function getCssComponentEnd(source: CssSource, open: number): number {
     else if (kind === CssTokenKind.Delimiter && code === close) return end;
     else index = end;
   }
-  return source.length;
+  return unclosedEnd;
 }

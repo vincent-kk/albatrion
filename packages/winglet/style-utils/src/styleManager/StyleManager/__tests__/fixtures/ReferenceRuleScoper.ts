@@ -1,7 +1,6 @@
 // Frozen copy of utils/RuleScoper.ts without the flat-rule fast path; the canonical
 // scoper is utils/RuleScoper.ts. Equivalence tests compare the two byte for byte,
 // so change this copy only together with an intended change of scoping output.
-import { getCssOpaqueEnd } from '../../../../utils/cssTokens/getCssOpaqueEnd';
 import { getCssUrlEndAtOpen } from '../../../../utils/cssTokens/getCssUrlEndAtOpen';
 
 import {
@@ -13,7 +12,8 @@ import {
   WHITESPACE_MAX,
 } from '../../constants/charCode';
 import { prefixSelector } from '../../utils/prefixSelector';
-import { prefixSelectorList } from '../../utils/prefixSelectorList';
+import { getCssOpaqueEnd } from '../../../../utils/cssTokens/getCssOpaqueEnd';
+import { prefixReferenceSelectorList } from './prefixReferenceSelectorList';
 
 /**
  * At-rules whose block holds style rules, which are scoped recursively.
@@ -150,7 +150,7 @@ export class ReferenceRuleScoper {
         }
         result +=
           (comma < stop
-            ? prefixSelectorList(css, cursor, stop, this.__prefix__)
+            ? prefixReferenceSelectorList(css, cursor, stop, this.__prefix__)
             : prefixSelector(prelude, this.__prefix__)) +
           css.slice(stop, close + 1);
       }
