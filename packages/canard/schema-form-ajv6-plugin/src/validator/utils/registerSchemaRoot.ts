@@ -108,8 +108,9 @@ export function registerSchemaRoot<T>(
   if (!(pool)) {
     const compiler = cloneInstance(instance, 'validation');
     pool = { compiler, refs: { ...compiler._refs }, schemas: { ...compiler._schemas }, fragments: {...compiler._fragments} };
-    profile.validation = pool;
   }
+  // A native keyword compile callback can reenter while this compiler holds form addresses.
+  profile.validation = undefined;
   const { compiler } = pool;
   const copy: JSONSchema = JSON.parse(snapshot);
   const id = copy[compiler._opts.schemaId === 'id' || (compiler._opts.schemaId === 'auto' && typeof copy.id === 'string') ? 'id' : '$id'];
@@ -134,6 +135,7 @@ export function registerSchemaRoot<T>(
     restoreRegistry(compiler._schemas, pool.schemas);
     restoreRegistry(compiler._refs, pool.refs);
     restoreRegistry(compiler._fragments, pool.fragments);
+    profile.validation ??= pool;
   }
   if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
   entry.validation = { profile, snapshot, validate };

@@ -125,8 +125,9 @@ export function registerSchemaRoot<T>(
   if (!(pool && pool.count < MAX_COMPILER_ROOTS)) {
     const compiler = makeSibling(instance, 'validation');
     pool = { compiler, refs: { ...compiler.refs }, schemas: { ...compiler.schemas }, count: 0 };
-    profile.validation = pool;
   }
+  // A native keyword compile callback can reenter while this compiler holds form addresses.
+  profile.validation = undefined;
   pool.count++;
   const { compiler } = pool;
   const copy: JSONSchema = JSON.parse(snapshot);
@@ -147,6 +148,7 @@ export function registerSchemaRoot<T>(
     compiler.removeSchema(copy);
     restoreRegistry(compiler.schemas, pool.schemas);
     restoreRegistry(compiler.refs, pool.refs);
+    profile.validation ??= pool;
   }
   if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
   entry.validation = { profile, snapshot, validate };
