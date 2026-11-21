@@ -1,8 +1,14 @@
 import { createRef } from 'react';
 
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
 import { computeAccessibleName } from 'dom-accessibility-api';
-import { afterEach, expect, it } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle, type JSONSchema } from '@canard/schema-form';
 
@@ -170,3 +176,65 @@ it.each([
     }
   },
 );
+
+it('applies the context labels and enum order after external writes, reset and live locks (DETAIL)', async () => {
+  const ref = createRef<FormHandle>();
+  const onChange = vi.fn();
+  const schema: JSONSchema = {
+    type: 'object',
+    properties: {
+      mode: {
+        type: 'string',
+        title: 'Mode',
+        enum: ['on', 'off'],
+        presentation: {
+          inputType: 'switch',
+          FieldInputProps: { alias: { on: 'Alias on', off: 'Alias off' } },
+        },
+      },
+    },
+  };
+  const form = (lock?: 'readOnly' | 'disabled') => (
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      defaultValue={{ mode: 'off' }}
+      context={{ switchLabels: { on: 'Context on', off: 'Context off' } }}
+      fieldInputDefinitions={plugin.fieldInputDefinitions}
+      FieldRenderer={plugin.FieldRenderer}
+      LabelRenderer={plugin.LabelRenderer}
+      onChange={onChange}
+      readOnly={lock === 'readOnly'}
+      disabled={lock === 'disabled'}
+    />
+  );
+  const view = render(form());
+  const control = () => screen.getByRole('switch');
+  const assertMode = (mode: string) => {
+    const element = control();
+    const checked =
+      element instanceof HTMLInputElement
+        ? element.checked
+        : element.getAttribute('aria-checked') === 'true';
+    expect(checked).toBe(mode === 'on');
+    expect(view.container.textContent).toContain(`Context ${mode}`);
+    expect(ref.current!.getValue()).toEqual({ mode });
+  };
+  assertMode('off');
+  for (const mode of ['on', 'off', 'on', 'off']) {
+    await act(async () => ref.current!.setValue({ mode }));
+    assertMode(mode);
+  }
+  fireEvent.click(control());
+  assertMode('on');
+  expect(onChange).toHaveBeenLastCalledWith({ mode: 'on' });
+  await act(async () => ref.current!.reset());
+  assertMode('off');
+  for (const lock of ['readOnly', 'disabled'] as const) {
+    view.rerender(form(lock));
+    onChange.mockClear();
+    fireEvent.click(control());
+    expect(onChange).not.toHaveBeenCalled();
+    assertMode('off');
+  }
+});
