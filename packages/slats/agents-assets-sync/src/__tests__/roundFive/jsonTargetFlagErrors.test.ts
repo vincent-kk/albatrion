@@ -50,6 +50,10 @@ function setup() {
 }
 
 it.each([
+  ['an empty --asset-path', '--asset-path='],
+  ['a blank --asset-path', '--asset-path=   '],
+  ['an absolute --asset-path', '--asset-path=/etc/agents'],
+  ['a home-relative --asset-path', '--asset-path=~/agents'],
   [
     'an --asset-path that names no directory in the package',
     '--asset-path=agentz',
@@ -72,6 +76,19 @@ it.each([
     expect(result).toEqual({ code: 2, parses: true, exitCode: 2 });
   },
 );
+
+it('trims a relative asset path before resolving the package', async () => {
+  const { root } = setup();
+  const result = await jsonRun([
+    '--package=@probe/kit',
+    '--agent=claude',
+    '--scope=project',
+    '--dry-run',
+    `--root=${root}`,
+    '--asset-path=  docs/agents  ',
+  ]);
+  expect(result).toEqual({ code: 0, parses: true, exitCode: 0 });
+});
 
 it.each([
   ['missing agents.assetPath', 'undeclared'],
