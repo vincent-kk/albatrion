@@ -20,7 +20,7 @@ const markLiveDeriveWrite = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   context.liveReplacementPathsAfterRevival?.push(node.path);
-  markWrite(node, value, context);
+  markWrite(node, value, context, undefined, undefined, 'declarative');
 };
 
 /**
