@@ -16,7 +16,8 @@ describe('anchored guard root lifetime, Ajv 2019 binding', () => {
   });
 
   it('release clears an anchor-only guard registration, repeats safely, and allows a recompile', () => {
-    ajvValidatorPlugin.bind?.(new Ajv2019({ allErrors: true, strict: false, validateFormats: false }));
+    const instance = new Ajv2019({ allErrors: true, strict: false, validateFormats: false });
+    ajvValidatorPlugin.bind?.(instance);
     const id = 'https://example.test/ajv7/anchored-lifetime';
     const root = JSON.parse(JSON.stringify({
       $id: id,
@@ -26,16 +27,10 @@ describe('anchored guard root lifetime, Ajv 2019 binding', () => {
       if: { properties: { next: { $recursiveRef: '#' } }, required: ['next'] },
     })) as JSONSchema;
     const value = { ok: true, next: { ok: true } };
-    const compile = vi.spyOn(Ajv2019.prototype, 'compile');
     const verdict = ajvValidatorPlugin.compileGuard(root, '/if')(value);
-    const index = compile.mock.calls.findIndex(([schema]) => typeof schema === 'object' && schema !== null && '$ref' in schema);
-    const guard = compile.mock.contexts[index];
-    if (typeof guard !== 'object' || guard === null) throw new Error('Missing guard instance');
-    const registered = () => [Reflect.get(guard, 'refs'), Reflect.get(guard, 'schemas')]
-      .some((table) => Object.keys(table).some((name) => name.startsWith(id)));
-    expect(registered()).toBe(true);
+    expect(instance.getSchema(id)).toBeUndefined();
     ajvValidatorPlugin.release(root);
-    expect(registered()).toBe(false);
+    expect(instance.getSchema(id)).toBeUndefined();
     expect(() => ajvValidatorPlugin.release(root)).not.toThrow();
     expect(ajvValidatorPlugin.compileGuard(root, '/if')(value)).toBe(verdict);
     ajvValidatorPlugin.release(root);

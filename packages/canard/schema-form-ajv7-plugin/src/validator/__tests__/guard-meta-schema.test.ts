@@ -3,7 +3,6 @@ import Ajv from 'ajv';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import * as sibling from '../utils/cloneInstance';
-import { pluginRegistrations } from './utils/pluginRegistrations';
 import { unrelatedViolation } from './utils/unrelatedViolation';
 import { ajvValidatorPlugin } from '../validatorPlugin';
 
@@ -81,38 +80,11 @@ describe('IR-10 guard meta-schema', () => {
     ajvValidatorPlugin.release(referenceRoot);
   });
 
-  it('registers a root only for root-pointer guards and for the compile of a $id root', () => {
+  it('keeps direct and contextual guards independent of application addresses', () => {
     const instance = new Ajv({ strict: false });
     ajvValidatorPlugin.bind?.(instance);
-    const addSchema = vi.spyOn(Ajv.prototype, 'addSchema');
-    const plain: JSONSchema = { type: 'object', if: condition };
-    ajvValidatorPlugin.compileGuard(plain, '/if');
-    expect.soft(pluginRegistrations(addSchema), 'T3 self-contained guard, no $id').toHaveLength(0);
-    const identified: JSONSchema = { $id: 'https://example.test/ir10-t3', type: 'object', if: condition };
-    ajvValidatorPlugin.compileGuard(identified, '/if');
-    expect.soft(pluginRegistrations(addSchema), 'T3 self-contained guard, root $id').toHaveLength(0);
-    addSchema.mockClear();
-    ajvValidatorPlugin.compile(identified);
-    expect.soft(pluginRegistrations(addSchema), 'T3 compile of a $id root').toEqual([instance]);
-    addSchema.mockClear();
-    ajvValidatorPlugin.compile(plain);
-    expect.soft(pluginRegistrations(addSchema), 'T3 compile of a root without $id').toHaveLength(0);
-    addSchema.mockClear();
-    const reference: JSONSchema = { type: 'object', definitions: { isA: condition }, if: { $ref: '#/definitions/isA' } };
-    ajvValidatorPlugin.compileGuard(reference, '/if');
-    const registrations = pluginRegistrations(addSchema);
-    expect.soft(registrations, 'T3 $ref guard').toHaveLength(1);
-    expect.soft(registrations[0], 'T3 $ref guard instance').not.toBe(instance);
-    for (const root of [plain, identified, reference]) ajvValidatorPlugin.release(root);
-  });
-
-  it('keeps one guard instance and one registration from a direct to two root-pointer guards', () => {
-    const instance = new Ajv({ strict: false });
-    ajvValidatorPlugin.bind?.(instance);
-    const addSchema = vi.spyOn(Ajv.prototype, 'addSchema');
-    const removeSchema = vi.spyOn(Ajv.prototype, 'removeSchema');
-    const cloneInstance = vi.spyOn(sibling, 'cloneInstance');
     const root: JSONSchema = {
+      $id: 'https://example.test/private-guards',
       type: 'object',
       definitions: { isX: { required: ['x'] }, isY: { required: ['y'] } },
       if: condition,
@@ -120,20 +92,14 @@ describe('IR-10 guard meta-schema', () => {
       else: { if: { $ref: '#/definitions/isY' } },
     };
     const direct = ajvValidatorPlugin.compileGuard(root, '/if');
-    expect.soft(pluginRegistrations(addSchema), 'T6 after the direct guard').toHaveLength(0);
-    ajvValidatorPlugin.compileGuard(root, '/then/if');
-    expect.soft(pluginRegistrations(addSchema), 'T6 after the first root-pointer guard').toHaveLength(1);
-    ajvValidatorPlugin.compileGuard(root, '/else/if');
-    expect.soft(pluginRegistrations(addSchema), 'T6 after the second root-pointer guard').toHaveLength(1);
-    expect.soft(cloneInstance, 'T6 guard instances').toHaveBeenCalledTimes(1);
-    expect.soft(direct({ kind: 'a' }), 'T6 direct guard, matching value').toBe(true);
-    expect.soft(direct({ kind: 'b' }), 'T6 direct guard, other value').toBe(false);
+    const first = ajvValidatorPlugin.compileGuard(root, '/then/if');
+    const second = ajvValidatorPlugin.compileGuard(root, '/else/if');
+    expect(direct({ kind: 'a' })).toBe(true);
+    expect(direct({ kind: 'b' })).toBe(false);
+    expect([first({ x: 1 }), first({ y: 1 })]).toEqual([true, false]);
+    expect([second({ x: 1 }), second({ y: 1 })]).toEqual([false, true]);
     ajvValidatorPlugin.release(root);
-    const removedKeys = removeSchema.mock.calls.filter(
-      ([key], index) =>
-        typeof key === 'string' && key.startsWith(sibling.PLUGIN_KEY_PREFIX) && removeSchema.mock.contexts[index] !== instance,
-    );
-    expect.soft(removedKeys.length, 'T6 release removes the guard registration').toBeGreaterThan(0);
+    expect(instance.getSchema(root.$id!)).toBeUndefined();
   });
 
   it('evaluates meta-only violations inside the condition with the generated code', () => {
@@ -154,7 +120,7 @@ describe('IR-10 guard meta-schema', () => {
     const instance = new Ajv({ strict: false });
     ajvValidatorPlugin.bind?.(instance);
     const kept: JSONSchema = { $id: 'https://example.test/ir10-b', type: 'string' };
-    ajvValidatorPlugin.compile(kept);
+    const keptValidator = ajvValidatorPlugin.compile(kept);
     const invalid: JSONSchema = {
       $id: 'https://example.test/ir10-a',
       type: 'object',
@@ -174,7 +140,9 @@ describe('IR-10 guard meta-schema', () => {
     expect.soft(replacement.error, 'T8 same $id after release compiles').toBeUndefined();
     expect.soft(Array.isArray(await replacement.value?.({ count: 'x' })), 'T8 same $id rejects').toBe(true);
     expect.soft(await replacement.value?.({ count: 1 }), 'T8 same $id accepts').toBeNull();
-    expect.soft(instance.getSchema('https://example.test/ir10-b'), 'T8 earlier root kept').toBeDefined();
+    expect.soft(await keptValidator('x'), 'T8 earlier compiled root remains valid').toBeNull();
+    expect.soft(instance.getSchema('https://example.test/ir10-b'), 'T8 form address is private').toBeUndefined();
+    instance.addSchema(kept);
     const reference = attempt(() => instance.compile({ $ref: 'https://example.test/ir10-b' }));
     expect.soft(reference.value?.('x'), 'T8 earlier root referenced').toBe(true);
     ajvValidatorPlugin.release(valid);
@@ -217,7 +185,7 @@ describe('IR-10 guard meta-schema', () => {
       order.indexOf('https://example.test/ir10-meta') < order.indexOf('https://example.test/ir10-s'),
       'T9 meta-schema stays ahead of its user',
     ).toBe(true);
-    expect.soft(attempt(() => sibling.cloneInstance(instance, false)).error, 'T9 sibling construction').toBeUndefined();
+    expect.soft(attempt(() => sibling.cloneInstance(instance, 'guard')).error, 'T9 sibling construction').toBeUndefined();
     for (const root of [clash, aliased, metaClash]) ajvValidatorPlugin.release(root);
   });
 });

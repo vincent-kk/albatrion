@@ -1,6 +1,6 @@
 import type { JSONSchema } from '@canard/schema-form';
 import Ajv from 'ajv';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { createValidatorFactory } from '../createValidatorFactory';
 import { ajvValidatorPlugin } from '../validatorPlugin';
@@ -154,29 +154,16 @@ describe('createValidatorFactory', () => {
     expect(errorKeywords).toContain('minimum');
   });
 
-  it('should compile the authored schema without changing it', async () => {
-    const compileSpy = vi.spyOn(ajv, 'compile');
+  it('leaves the authored schema unchanged and returns an asynchronous result', async () => {
     const factory = createValidatorFactory(ajv);
-    const schema = { type: 'string' } as unknown as JSONSchema;
-
-    factory(schema);
-
-    expect(compileSpy).toHaveBeenCalledWith(schema);
+    const schema = { type: 'string' } as const;
+    expect(await factory(schema)('valid')).toBeNull();
     expect(schema).toEqual({ type: 'string' });
   });
 
-  it('should throw non-validation errors', async () => {
+  it('surfaces a native compilation error', () => {
     const factory = createValidatorFactory(ajv);
-    const schema = { type: 'string' } as unknown as JSONSchema;
-
-    // ajv.compile이 throw하는 에러를 시뮬레이션
-    const mockCompile = vi.spyOn(ajv, 'compile').mockImplementation(() => {
-      throw new Error('Compilation error');
-    });
-
-    await expect(() => factory(schema)).toThrow('Compilation error');
-
-    mockCompile.mockRestore();
+    expect(() => factory({ $ref: 'https://example.test/unregistered' })).toThrow(/resolve reference/);
   });
 });
 

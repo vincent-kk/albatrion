@@ -1,10 +1,12 @@
+/// <reference lib="es2021.weakref" />
+
 import type { JSONSchema } from '@canard/schema-form';
 import Ajv from 'ajv';
 import { setFlagsFromString } from 'node:v8';
 import { runInNewContext } from 'node:vm';
 import { expect, it } from 'vitest';
 
-import { createValidator } from '../default/index';
+import { createValidator } from '../index';
 
 it('releases a discarded adapter while its original root remains alive', async () => {
   setFlagsFromString('--expose_gc');

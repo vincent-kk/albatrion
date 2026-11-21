@@ -1,6 +1,6 @@
 import { FormErrorCode } from '@canard/schema-form';
 import Ajv from 'ajv';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { ajvValidatorPlugin } from '../validatorPlugin';
 
@@ -13,7 +13,6 @@ describe('VALIDATE-050 TEST-077 bind refusal', () => {
       ['coerceTypes', 'useDefaults', 'removeAdditional']],
   ] as const)('refuses value-changing options before replacing the binding', (options, names) => {
     const original = new Ajv({ allErrors: true, strict: false });
-    const addSchema = vi.spyOn(original, 'addSchema');
     ajvValidatorPlugin.bind?.(original);
     let thrown: unknown;
     try { ajvValidatorPlugin.bind?.(new Ajv(options)); }
@@ -23,8 +22,8 @@ describe('VALIDATE-050 TEST-077 bind refusal', () => {
       name: 'ValidatorBindRefusedError', details: { options: names },
     });
     const schema = { $id: 'https://example.test/accepted-binding', type: 'string' } as const;
-    ajvValidatorPlugin.compile(schema);
-    expect(addSchema).toHaveBeenCalled();
+    original.addSchema({ $id: 'https://example.test/supplied', type: 'string' });
+    expect(() => ajvValidatorPlugin.compile({ $ref: 'https://example.test/supplied' })).not.toThrow();
     expect(schema).toEqual({ $id: 'https://example.test/accepted-binding', type: 'string' });
   });
 

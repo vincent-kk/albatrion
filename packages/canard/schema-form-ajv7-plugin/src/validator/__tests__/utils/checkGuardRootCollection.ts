@@ -34,16 +34,9 @@ export const checkGuardRootCollection = (
     const imported = require(require.resolve(moduleName, { paths: [packageRoot] }));
     const Constructor = typeof imported === 'function' ? imported : imported.default;
     const instance = new Constructor(version === 6 ? { format: false } : { strict: false });
-    const source = path.join(packageRoot, 'src/validator');
-    const { createGuardCompiler } = require(path.join(source, 'createGuardCompiler.ts'));
-    const { registerSchemaRoot } = require(path.join(source, 'utils/registerSchemaRoot.ts'));
-    const { disposeSchemaRoot } = require(path.join(source, 'utils/disposeSchemaRoot.ts'));
-    const finalizer = new FinalizationRegistry(disposeSchemaRoot);
-    const roots = new WeakMap();
-    const active = [];
-    const pool = { base: instance, current: instance, count: 0 };
-    const registry = version === 8
-      ? require(path.join(source, 'utils/createSchemaRootRegistry.ts')).createSchemaRootRegistry() : null;
+    const entry = version === 8 ? dialect + '/index.ts' : 'index.ts';
+    const { createValidator } = require(path.join(packageRoot, 'src', entry));
+    const adapter = createValidator(instance, { directGuardCompile: direct === 'true' });
     const makeRoot = () => {
       const root = anchored === 'true'
         ? dialect === '2020'
@@ -51,11 +44,7 @@ export const checkGuardRootCollection = (
           : { $recursiveAnchor: true, type: 'object', if: { properties: { next: { $recursiveRef: '#' } }, required: ['next'] } }
         : pointer === '/if' ? { type: 'object', if: { type: 'string' } } : { type: 'string' };
       const reference = new WeakRef(root);
-      if (version === 8) createGuardCompiler(instance, registry, root, pointer, direct === 'true');
-      else {
-        const registration = registerSchemaRoot(root, instance, roots, active, finalizer, pool);
-        createGuardCompiler(instance, registration, pointer, root, direct === 'true', finalizer);
-      }
+      adapter.compileGuard(root, pointer);
       return reference;
     };
     const reference = makeRoot();
