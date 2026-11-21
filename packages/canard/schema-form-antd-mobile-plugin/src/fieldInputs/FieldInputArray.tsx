@@ -33,6 +33,7 @@ const FieldInputArray = ({
   node,
   readOnly,
   disabled,
+  misfit,
   ChildFields,
   style,
   className,
@@ -56,6 +57,7 @@ const FieldInputArray = ({
       id={inputId}
       role={node.parentNode ? 'group' : undefined}
       aria-labelledby={node.parentNode ? labelId : undefined}
+      aria-invalid={misfit || undefined}
       style={style}
     >
       {ChildFields &&
