@@ -25,18 +25,20 @@ export interface InstanceValidatorOptions {
  * collection never touch the plugin's process-wide binding.
  * @param ajv - Instance supplying keywords and formats; must not coerce, default or remove
  * @param options - Per-object selections; omitted fields take their defaults
+ * @param controls - Entry-point lifetime and guard selection when creating the process-wide adapter
  * @returns An object satisfying the core validator contract, independent of `plugin.validator`
  * @throws ValidatorBindRefusedError when `coerceTypes`, `useDefaults` or `removeAdditional` is enabled
  */
 export const createValidator = (
   ajv: Ajv.Ajv,
   options: InstanceValidatorOptions = {},
-): ValidatorFactory => {
+  controls?: { finalizer: FinalizationRegistry<SchemaRootRegistration>; readDirectGuardCompile(): boolean },
+) => {
   assertBindableInstance(ajv);
   const directGuardCompile = options.directGuardCompile ?? true;
   const roots = new WeakMap<object, SchemaRootRegistration>();
   const active: WeakRef<SchemaRootRegistration>[] = [];
-  const finalizer = new FinalizationRegistry<SchemaRootRegistration>(
+  const finalizer = controls?.finalizer ?? new FinalizationRegistry<SchemaRootRegistration>(
     disposeSchemaRoot,
   );
   return {
@@ -49,11 +51,10 @@ export const createValidator = (
         finalizer,
       );
       registerValidationRoot(registered);
-      const validate = createValidatorFactory(
+      return createValidatorFactory(
         registered.validation,
         registered.validationCopy ? registered.key : undefined,
       )(jsonSchema);
-      return async (value: unknown) => validate(value);
     },
     compileGuard: (root: JSONSchema, pointer: string) => {
       const registered = registerSchemaRoot(
@@ -68,7 +69,7 @@ export const createValidator = (
         registered,
         pointer,
         root,
-        directGuardCompile,
+        controls?.readDirectGuardCompile() ?? directGuardCompile,
         finalizer,
       );
     },
