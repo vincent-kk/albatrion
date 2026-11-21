@@ -231,7 +231,7 @@ export function ManualApp() {
 
 ## 컴포넌트 소유권과 옵션
 
-React `Activity`나 Suspense로 호출자를 숨겨도 React가 effect 정리를 실행하므로 미확정 `useModal` 요청은 언마운트와 동일하게 취소됩니다. 호출 컴포넌트 언마운트 시 미확정 요청을 취소하려면 `useModal`을 사용합니다. 확정된 요청은 즉시 추적 목록에서 빠집니다. 정적 호출은 호출자보다 오래 유지될 수 있지만 Provider 소유권을 따릅니다. `useModal(config)`는 마운트 시점 기본값을 보관하므로 바뀌는 값은 호출별로 전달합니다.
+React `Activity`나 Suspense로 호출자를 숨기는 동안 미확정 `useModal` 요청은 유지됩니다. 숨긴 상태에서라도 호출자를 실제로 제거하면 대기 요청을 취소합니다. 호출 컴포넌트 언마운트 시 미확정 요청을 취소하려면 `useModal`을 사용합니다. 확정된 요청은 즉시 추적 목록에서 빠집니다. 정적 호출은 호출자보다 오래 유지될 수 있지만 Provider 소유권을 따릅니다. `useModal(config)`는 마운트 시점 기본값을 보관하므로 바뀌는 값은 호출별로 전달합니다.
 
 ```tsx
 import { type OverridableHandleProps, useModal } from '@lerx/promise-modal';
@@ -353,7 +353,7 @@ export async function showBrokenContent() {
 
 경로 이동은 미확정 요청을 확정 없이 숨기며 복귀하면 다시 표시합니다. 숨겨진 모달도 중단과 호출자 정리로 취소됩니다. 확정된 모달은 수동 파괴 모드에서도 다시 나타나지 않습니다. 초기화 주체 하나만 포털을 소유하며 추가 Provider는 대기하고 개발 환경에서 한 번 경고합니다. 소유자가 언마운트되면 첫 대기자가 이어받고 대기자가 없으면 현재 커밋 뒤 열린 요청을 취소합니다. 같은 커밋 재마운트와 StrictMode 점검은 미확정 결과와 prompt 입력을 유지하며 마운트 전 대기 요청은 대기열에 남습니다.
 
-Activity나 Suspense 재중단으로 Provider만 숨기면 키보드·포커스·페이지 효과를 해제하고 숨긴 트리 바깥 호출자의 요청을 대기 상태로 보존합니다. 다시 표시하면 같은 모달과 prompt 값이 돌아옵니다. 함께 숨겨진 useModal 호출자는 자신의 요청을 취소하며, 실제 Provider 제거는 기존 취소·인계 규칙을 따릅니다. Provider 숨김 때 취소하려면 명시적으로 중단하거나 Provider를 언마운트합니다.
+Activity나 Suspense 재중단으로 Provider만 숨기면 키보드·포커스·페이지 효과를 해제하고 숨긴 트리 바깥 호출자의 요청을 대기 상태로 보존합니다. 다시 표시하면 같은 모달과 prompt 값이 돌아옵니다. 함께 숨겨진 useModal 호출자는 대기 중인 요청을 유지하며, 실제 Provider 제거는 기존 취소·인계 규칙을 따릅니다. Provider 숨김 때 취소하려면 명시적으로 중단하거나 Provider를 언마운트합니다.
 
 ## 추가 참조
 

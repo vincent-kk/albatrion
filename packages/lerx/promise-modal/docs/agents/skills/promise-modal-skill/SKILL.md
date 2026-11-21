@@ -9,7 +9,7 @@ Use this skill when opening or customizing `@lerx/promise-modal` modals. Read th
 
 ## Lifecycle decisions
 
-A Promise belongs to a modal request rather than its calling React component. Static `alert`, `confirm`, and `prompt` calls may outlive that component. Hiding the caller with React `Activity` or Suspense cancels its pending `useModal` requests exactly like an unmount, because React runs effect cleanup on hide. Use `useModal` when unmounting the caller should cancel its pending requests; completed requests leave its tracking list immediately, including rejected requests.
+A Promise belongs to a modal request rather than its calling React component. Static `alert`, `confirm`, and `prompt` calls may outlive that component. Pending `useModal` requests survive React `Activity` and Suspense hiding. Removing the caller cancels them, including when the caller is removed while hidden. Use `useModal` when unmounting the caller should cancel its pending requests; completed requests leave its tracking list immediately, including rejected requests.
 
 Keep three states separate:
 
@@ -23,7 +23,7 @@ Route hiding changes visibility without settling the result. Returning restores 
 
 ## Ownership and failures
 
-Mount one `ModalProvider` or `useInitializeModal` bootstrap for the application. Extra bootstraps wait, warn once in development, and take over in registration order when the owner unmounts. Hiding only the Provider releases page and keyboard effects but preserves requests from outside the hidden subtree; show restores the same modal and input. A request settled while its Provider is hidden or its content is suspended does not reappear for an exit animation. A caller hidden with the Provider still cancels its own requests. With no waiter, actual provider removal cancels open modals after the current commit. Abort explicitly or unmount to cancel when hiding. Same-commit remounts and StrictMode checks preserve pending requests and prompt input. Requests queued before mounting retain their original Promise.
+Mount one `ModalProvider` or `useInitializeModal` bootstrap for the application. Extra bootstraps wait, warn once in development, and take over in registration order when the owner unmounts. Hiding only the Provider releases page and keyboard effects but preserves requests from outside the hidden subtree; show restores the same modal and input. A request settled while its Provider is hidden or its content is suspended does not reappear for an exit animation. A caller hidden with the Provider keeps its pending requests. With no waiter, actual provider removal cancels open modals after the current commit. Abort explicitly or unmount to cancel when hiding. Same-commit remounts and StrictMode checks preserve pending requests and prompt input. Requests queued before mounting retain their original Promise.
 
 Handle render failures with `try`/`catch`: a failing content, input, or frame rejects only its modal's Promise. Peers and future requests continue rendering. A failure in the shared anchor rejects and destroys every alive modal; the anchor retries only when another modal registers, preventing an immediate retry loop.
 
