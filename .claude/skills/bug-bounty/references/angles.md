@@ -17,6 +17,7 @@ Most consequential findings so far broke a rule of the form "these two must beha
 - `EQ9` A CLI's plain output against its `--json` output.
 - `EQ10` Composed operations against the same calls made one by one: a `batch` or transaction against sequential calls, a bulk API against a loop, one injected sheet against separate injections, a nested call against a flat one.
 - `EQ11` Sibling implementations of one contract against each other: the same schema and user action in every UI plugin, the same schema and data in every AJV plugin, the same input through every entry point of one behavior.
+- `EQ12` State another path created against state the package created itself: an application's own registration, cache entry, alias or file against the package's, and an object from an earlier lifecycle or another instance against a fresh one. Ownership, cleanup and overwrite decisions must not depend on which path made the state.
 
 ## Boundaries and scale
 
@@ -24,6 +25,7 @@ Most consequential findings so far broke a rule of the form "these two must beha
 - `BS2` Numbers: `-0`, `NaN`, `Infinity`, `1e21`, `Number.MAX_SAFE_INTEGER`, `BigInt`.
 - `BS3` Names: `__proto__`, `constructor`, `%`, `~`, `/`, `*`, `.`, `..`, `@`, spaces, the empty string, non-Latin text, emoji.
 - `BS4` Lexical context: escapes, quotes, comments, nested delimiters, and token boundaries inside text that a scanner or parser reads (CSS, expressions, JSON Pointers, URIs, Markdown block markers).
+- `BS5` Constraint combinations: several constraints on one value at once (exclusive and inclusive bounds, `multipleOf` written with an exponent, a step that does not divide the range, marks off the grid, a direction such as RTL or a reversed range), against each constraint alone.
 
 ## Lifecycle and concurrency
 
@@ -31,6 +33,7 @@ Most consequential findings so far broke a rule of the form "these two must beha
 - `LC2` Reentrancy: a callback that calls back into the API, and a subscriber that throws.
 - `LC3` Registrations released in an effect cleanup, and handles captured once (`ref.current`).
 - `LC4` Cleanup completeness after unmount or destroy: listeners, timers, styles, registries, caches.
+- `LC5` State sequences against their end state: an address, registration or request driven through several states (active, inactive, leaving, revived and leaving again; an array of length 1, then 0, then 1; a move; a candidate switch) against the same end state reached directly.
 
 ## Failure paths
 
@@ -38,6 +41,7 @@ Most consequential findings so far broke a rule of the form "these two must beha
 - `FP2` Partial failure in the middle of a batch (for example a permission error on one file): whether the report stays honest, and whether the run is atomic as documented.
 - `FP3` Failures that a cache keeps.
 - `FP4` Recovery: a failing call followed by a valid one, against the valid call alone. The failure surfaces exactly once, and nothing it left behind changes later results.
+- `FP5` An owner that disappears or fails first: the object, participant or adapter that holds a registration, plan or cleanup record is collected, unmounted or fails before the work it owns ends; whatever it owned must still be released or reported.
 
 ## Contracts and release artifacts
 
@@ -56,3 +60,4 @@ Most consequential findings so far broke a rule of the form "these two must beha
 - `RG1` Neighbors of earlier fixes: for each fix that the area's `FIXES.md` files list, the inputs next to the fixed one, the other entry points and surfaces of the same behavior (terminal and plain output, sibling plugins, documents), and the code paths that share the changed helper.
 - `RG2` Earlier probes at the current commit: copy every probe that earlier rounds kept under `bug-bounty/round-K/probes/` for the area's packages back into a package, run it, and give each failing test one role. It is a regression only when its item is recorded as fixed in that round's `FIXES.md` and the test fails for the item's own reason (the same assertion with the same actual value); a recorded decision or known limit, a test the fix deliberately inverted, a diagnostic or measurement, and an import or API that a later change renamed are classified apart, and a broken probe is ported to the new API only for a high or reopened item.
 - `RG3` Decision records as contracts: for each behavior that a `FIXES.md` records as decided (its decisions and known limits), derive the cases the decision implies but its pinned tests do not cover, and test the decided contract itself on every entry point and sibling it names; a redesigned contract is tested first.
+- `RG4` Generated and bounded verification against its claims: a generated model or a reduced test profile that a document says covers every input kind and assertion, checked for a kind it names but never builds into a real schema and operation, and for the dimensions its known limits say it does not generate, where a consumer-visible defect may hide.

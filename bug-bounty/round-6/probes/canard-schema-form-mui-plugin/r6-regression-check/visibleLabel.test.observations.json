@@ -1,0 +1,52 @@
+[
+  {
+    "revision": "0ce02213a-parent",
+    "kind": "enum",
+    "name": "Volume setting"
+  },
+  {
+    "revision": "0ce02213a",
+    "kind": "enum",
+    "name": "internalKey"
+  },
+  {
+    "revision": "0ce02213a-parent",
+    "kind": "slider",
+    "name": "Volume setting"
+  },
+  {
+    "revision": "0ce02213a",
+    "kind": "slider",
+    "name": "internalKey"
+  },
+  {
+    "revision": "0ce02213a-parent",
+    "kind": "boolean switch",
+    "name": "Volume setting"
+  },
+  {
+    "revision": "0ce02213a",
+    "kind": "boolean switch",
+    "name": "internalKey"
+  },
+  {
+    "revision": "0ce02213a-parent",
+    "kind": "string switch",
+    "name": "off on Volume setting"
+  },
+  {
+    "revision": "0ce02213a",
+    "kind": "string switch",
+    "name": "internalKey"
+  },
+  {
+    "revision": "0ce02213a-parent",
+    "kind": "text",
+    "name": "Volume setting"
+  },
+  {
+    "revision": "0ce02213a",
+    "kind": "text",
+    "name": "internalKey"
+  }
+]
