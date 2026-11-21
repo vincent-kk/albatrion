@@ -338,17 +338,17 @@ export class StyleManager {
    * @returns The adopted sheet, or null when the style-element path is needed.
    */
   private __adoptSheet__(ownerDocument: Document): CSSStyleSheet | null {
-    const view = ownerDocument.defaultView;
-    const Sheet: typeof CSSStyleSheet | undefined = view
-      ? Reflect.get(view, 'CSSStyleSheet')
-      : undefined;
-    if (
-      typeof Sheet !== 'function' ||
-      !('replaceSync' in Sheet.prototype) ||
-      !('adoptedStyleSheets' in this.__root__)
-    )
-      return null;
     try {
+      const view = ownerDocument.defaultView;
+      const Sheet: typeof CSSStyleSheet | undefined = view
+        ? Reflect.get(view, 'CSSStyleSheet')
+        : undefined;
+      if (
+        typeof Sheet !== 'function' ||
+        !('replaceSync' in Sheet.prototype) ||
+        !('adoptedStyleSheets' in this.__root__)
+      )
+        return null;
       const sheet = new Sheet();
       this.__root__.adoptedStyleSheets = [
         ...this.__root__.adoptedStyleSheets,
