@@ -5,6 +5,7 @@ import { createGuardCompiler } from './createGuardCompiler';
 import { createValidatorFactory } from './createValidatorFactory';
 import { assertBindableInstance } from './utils/assertBindableInstance';
 import { createSchemaRootRegistry } from './utils/createSchemaRootRegistry';
+import type { SchemaRootRegistry } from './utils/registerSchemaRoot';
 import { releaseSchemaRoot } from './utils/releaseSchemaRoot';
 
 /** Per-object selections of a validator built from one AJV instance. */
@@ -21,6 +22,8 @@ export interface InstanceValidatorOptions {
  * @param ajv - Instance supplying keywords and formats; must not coerce, default or remove
  * @param dialect - Dialect URI of the entry point that constructs the object
  * @param options - Per-object selections; omitted fields take their defaults
+ * @param roots - Registrations shared across bindings by a dialect entry point
+ * @param readDirectGuardCompile - Entry-point configuration for subsequent guards
  * @returns An object satisfying the core validator contract, bound to this instance
  * @throws ValidatorBindRefusedError when `coerceTypes`, `useDefaults` or `removeAdditional` is enabled
  */
@@ -28,15 +31,16 @@ export const createInstanceValidator = (
   ajv: Ajv,
   dialect: string,
   options: InstanceValidatorOptions = {},
-): ValidatorFactory => {
+  roots: SchemaRootRegistry = createSchemaRootRegistry(),
+  readDirectGuardCompile?: () => boolean,
+) => {
   assertBindableInstance(ajv);
-  const roots = createSchemaRootRegistry();
+  const compile = createValidatorFactory(ajv, roots);
   const directGuardCompile = options.directGuardCompile ?? true;
   return {
-    compile: (jsonSchema: JSONSchema) =>
-      createValidatorFactory(ajv, roots)(jsonSchema),
+    compile,
     compileGuard: (root: JSONSchema, pointer: string) =>
-      createGuardCompiler(ajv, roots, root, pointer, directGuardCompile),
+      createGuardCompiler(ajv, roots, root, pointer, readDirectGuardCompile?.() ?? directGuardCompile),
     release: (root: JSONSchema) => releaseSchemaRoot(roots, root),
     dialect,
   } satisfies ValidatorFactory;
