@@ -5,6 +5,7 @@ import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
 import type { FieldNodeRecord } from '../../../record';
 import { WriteOption } from '../../../types/value';
 import { isNamedPointerSegments } from '../../../utils/paths/isNamedPointerSegments';
+import { isVirtualWriteFieldAdmitted } from '../../../utils/paths/isVirtualWriteFieldAdmitted';
 import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
 import { replaceAtPath } from './utils/replaceAtPath';
 
@@ -49,9 +50,13 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
     for (let index = 0; index < targets.length; index++) {
       const target = targets[index];
       if (
-        write.virtualFields
-          ? !write.virtualFields.includes(target.name)
-          : !target.node && values?.[index] === undefined
+        !isVirtualWriteFieldAdmitted(
+          target.name,
+          index,
+          values,
+          !!target.node,
+          write.virtualFields,
+        )
       )
         continue;
       value = replaceAtPath(

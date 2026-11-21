@@ -5,6 +5,7 @@ import type { FieldNodeRecord } from '../../../record';
 import { assertVirtualWriteShape, writeFieldNode } from '../../../settle';
 import { FieldNodeWriteKind, WriteOption } from '../../../types/value';
 import { sameValue } from '../../../utils/compute/sameValue';
+import { isVirtualWriteFieldAdmitted } from '../../../utils/paths/isVirtualWriteFieldAdmitted';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
@@ -50,10 +51,14 @@ export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
       assertVirtualWriteShape(node, value);
       if (sameValue(value, marking ? readBatchValue(node) : node.storedValue))
         return;
-      virtualFields = (node.blueprintNode.fields ?? []).filter(
-        (name, index) =>
-          !!node.parent?.childrenByName?.[name] ||
-          (isArray(value) && value[index] !== undefined),
+      const values = isArray(value) ? value : undefined;
+      virtualFields = (node.blueprintNode.fields ?? []).filter((name, index) =>
+        isVirtualWriteFieldAdmitted(
+          name,
+          index,
+          values,
+          !!node.parent?.childrenByName?.[name],
+        ),
       );
     }
     if (marking) {
