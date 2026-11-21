@@ -10,6 +10,8 @@
 
 ## API Contracts
 
+- 예약 이름의 원본 값은 얕은 순회와 깊은 순회에서 같은 자기 데이터 속성 프리미티브로 읽습니다. 앞선 getter가 뒤의 자기 예약 키를 지우면 strict TEST의 이전 값은 두 깊이 모두 `null`입니다.
+
 - `compare(source, target, options?)`:
   - `options.strict`(기본 false): true면 REPLACE·REMOVE 연산 앞에 원래 값을 담은 TEST 연산을 추가한다. ADD 앞에는 TEST를 추가하지 않는다 — 추가 전 상태를 확인할 대상이 없다.
   - `options.immutable`(기본 true): 패치 값으로 들어가는 객체·배열을 클론한다. false면 `target`의 참조를 그대로 값으로 사용한다.
