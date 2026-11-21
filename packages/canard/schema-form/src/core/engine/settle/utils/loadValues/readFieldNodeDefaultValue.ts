@@ -1,8 +1,7 @@
 import type { FieldNodeRecord } from '../../../record';
-import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
-import { getDependencyIndex } from '../dependencies/getDependencyIndex';
 import { getLoadValue } from './getLoadValue';
 import { readLoadProperty } from './readLoadProperty';
+import { readLoadSegments } from './readLoadSegments';
 
 /**
  * Read a node's original load source without observing later caller writes.
@@ -24,11 +23,6 @@ export const readFieldNodeDefaultValue = <Self extends FieldNodeRecord<Self>>(
   return getLoadValue(
     node.runtime.loadSnapshot,
     node.path,
-    node.runtime.blueprint.capabilities.isBranchless
-      ? getCachedPointerSegments(node.runtime, node.path)
-      : getDependencyIndex(node.runtime.blueprint).pathSegments(
-          node.path,
-          node.runtime,
-        ),
+    readLoadSegments(node),
   );
 };
