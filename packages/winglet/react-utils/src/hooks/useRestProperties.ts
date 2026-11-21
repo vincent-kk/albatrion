@@ -1,10 +1,11 @@
 import { useMemo, useRef } from 'react';
 
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+
 import type { Dictionary } from '@aileron/declare';
 
+import { equalRestSymbols } from './utils/equalRestSymbols';
 import { useCommittedReference } from './utils/useCommittedReference';
-
-import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 /**
  * Maintains referential stability for object props by returning the previous reference when the contents are shallow-equal.
@@ -56,18 +57,29 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
  * @see useSnapshot - Deep comparison for nested objects, at a higher comparison cost
  */
 export const useRestProperties = <T extends Dictionary>(props: T): T => {
-  const holder = useRef<{ value: T; keys: string[] | null }>({ value: props, keys: null });
+  const holder = useRef<{ value: T; keys: string[] | null }>({
+    value: props,
+    keys: null,
+  });
   const next = useMemo(() => {
     const previous = holder.current;
     if (!props || props === previous.value) return previous;
     const keys = Object.keys(props);
-    const previousKeys = previous.keys ?? (previous.value ? Object.keys(previous.value) : []);
+    const previousKeys =
+      previous.keys ?? (previous.value ? Object.keys(previous.value) : []);
     if (keys.length !== previousKeys.length) return { value: props, keys };
     for (let index = 0; index < keys.length; index++) {
       const key = keys[index];
-      if (props[key] !== previous.value[key] || (props[key] === undefined && !hasOwnProperty(previous.value, key))) return { value: props, keys };
+      if (
+        props[key] !== previous.value[key] ||
+        (props[key] === undefined && !hasOwnProperty(previous.value, key))
+      )
+        return { value: props, keys };
     }
-    return previous.keys === null ? { value: previous.value, keys: previousKeys } : previous;
+    if (!equalRestSymbols(props, previous.value)) return { value: props, keys };
+    return previous.keys === null
+      ? { value: previous.value, keys: previousKeys }
+      : previous;
   }, [props]);
   useCommittedReference(holder, next);
   return props ? next.value : props;
