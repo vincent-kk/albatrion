@@ -46,7 +46,7 @@ const FieldInputBooleanSwitch = ({
   alias,
   misfit,
 }: FieldInputBooleanSwitchProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId, labelProp);
+  useFieldLabelAssociation(inputId, fieldTitleId);
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onChange(event.target.checked);

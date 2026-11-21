@@ -7,9 +7,11 @@ export const readVisibleLabel = (label: HTMLElement): string => {
   if (label.closest('[hidden], [aria-hidden="true"]')) return '';
   const style = label.ownerDocument.defaultView?.getComputedStyle(label);
   if (style?.display === 'none' || style?.visibility === 'hidden') return '';
-  const text = label.querySelector('.MuiFormControlLabel-label') ?? label;
-  const copy = text.cloneNode(true);
+  const text = label.querySelector('.MuiFormControlLabel-label');
+  const copy = (text ?? label).cloneNode(true);
   if (!(copy instanceof Element)) return '';
+  if (!text && copy.matches('.MuiFormControlLabel-root'))
+    copy.firstElementChild?.remove();
   for (const decorative of copy.querySelectorAll(
     '[aria-hidden="true"], [hidden]',
   ))

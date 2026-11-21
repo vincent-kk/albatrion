@@ -71,7 +71,7 @@ const FieldInputMonth = ({
   minimum,
   maximum,
 }: FieldInputMonthProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId, labelProp);
+  useFieldLabelAssociation(inputId, fieldTitleId);
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
       return [

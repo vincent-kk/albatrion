@@ -49,7 +49,7 @@ const FieldInputTime = ({
   hideLabel,
   misfit,
 }: FieldInputTimeProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId, labelProp);
+  useFieldLabelAssociation(inputId, fieldTitleId);
   const [label, size, variant, fullWidth, ampm] = useMemo(() => {
     if (hideLabel)
       return [

@@ -78,7 +78,7 @@ const FieldInputSlider = ({
   unsetValueText = DEFAULT_UNSET_VALUE_TEXT,
   misfit,
 }: FieldInputSliderProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId, labelProp);
+  useFieldLabelAssociation(inputId, fieldTitleId);
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
     return [
@@ -143,7 +143,7 @@ const FieldInputSlider = ({
           sx={{ mb: 1, display: 'block' }}
         >
           {label}
-          {required && ' *'}
+          {required && <span aria-hidden="true"> *</span>}
         </Typography>
       )}
       <Slider

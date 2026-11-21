@@ -54,7 +54,7 @@ const FieldInputNumber = ({
   hideLabel,
   misfit,
 }: FieldInputNumberProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId, labelProp);
+  useFieldLabelAssociation(inputId, fieldTitleId);
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
       return [

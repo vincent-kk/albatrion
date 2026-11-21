@@ -54,7 +54,7 @@ const FieldInputTextarea = ({
   hideLabel,
   misfit,
 }: FieldInputTextareaProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId, labelProp);
+  useFieldLabelAssociation(inputId, fieldTitleId);
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
       return [

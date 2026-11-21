@@ -50,7 +50,7 @@ const FieldInputStringSwitch = ({
   misfit,
   alias,
 }: FieldInputStringSwitchProps) => {
-  useFieldLabelAssociation(inputId, fieldTitleId, labelProp);
+  useFieldLabelAssociation(inputId, fieldTitleId);
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
     return [

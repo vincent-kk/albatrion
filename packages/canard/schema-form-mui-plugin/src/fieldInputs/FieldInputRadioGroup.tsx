@@ -61,7 +61,7 @@ const FieldInputRadioGroup = ({
   hideLabel,
   misfit,
 }: FieldInputRadioGroupProps) => {
-  useFieldLabelAssociation(inputId, labelId, labelProp);
+  useFieldLabelAssociation(inputId, labelId);
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
     return [
