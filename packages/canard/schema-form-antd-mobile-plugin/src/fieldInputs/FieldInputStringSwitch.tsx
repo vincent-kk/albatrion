@@ -10,9 +10,7 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-import { isStringSwitchInput } from '../utils/inputs/isStringSwitchInput';
 import { SwitchKeyboardControl } from './components/SwitchKeyboardControl';
-import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type StringSwitchSchema = StringSchema & {
   enum?: [string | null, string | null];
@@ -30,8 +28,7 @@ interface FieldInputStringSwitchProps
 }
 
 const FieldInputStringSwitch = ({
-  inputId,
-  name,
+  path,
   jsonSchema,
   disabled,
   value,
@@ -39,7 +36,6 @@ const FieldInputStringSwitch = ({
   context,
   alias,
   misfit,
-  labelId: labelledBy,
 }: FieldInputStringSwitchProps) => {
   const [checked, unchecked] = useMemo(() => {
     const [checked, unchecked] = jsonSchema.enum || [];
@@ -52,8 +48,8 @@ const FieldInputStringSwitch = ({
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
     const labels = context.switchLabels || alias || {};
     return [
-      getOwnLabel(labels, '' + checked) || checked,
-      getOwnLabel(labels, '' + unchecked) || unchecked,
+      labels['' + checked] || checked,
+      labels['' + unchecked] || unchecked,
     ];
   }, [checked, unchecked, context, alias]);
 
@@ -62,13 +58,12 @@ const FieldInputStringSwitch = ({
   });
 
   return (
-    <SwitchKeyboardControl id={inputId} name={name} disabled={disabled}>
+    <SwitchKeyboardControl disabled={disabled}>
       <Switch
-        aria-labelledby={labelledBy}
         data-focus-target
         tabIndex={disabled ? undefined : 0}
         aria-invalid={misfit || undefined}
-        key={inputId}
+        key={path}
         disabled={disabled}
         checked={value === checked}
         checkedText={checkedLabel}
@@ -82,5 +77,8 @@ const FieldInputStringSwitch = ({
 export const FieldInputStringSwitchDefinition = {
   Component: FieldInputStringSwitch,
   controlled: true,
-  test: isStringSwitchInput,
+  test: ({ type, inputType, jsonSchema }) =>
+    type === 'string' &&
+    inputType === 'switch' &&
+    jsonSchema.enum?.length === 2,
 } satisfies FieldInputDefinition;
