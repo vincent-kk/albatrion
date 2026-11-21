@@ -9,7 +9,7 @@ import type { ErrorObject } from 'ajv';
 export const transformDataPath = (error: ErrorObject, rejectedKey: string | undefined): string => {
   if (error.keyword === 'required' && typeof error.params.missingProperty === 'string')
     return `${error.instancePath ?? ''}/${error.params.missingProperty.replace(/~/g, '~0').replace(/\//g, '~1')}`;
-  if (error.keyword === 'false schema' && rejectedKey !== undefined)
+  if (error.keyword === 'false schema' && rejectedKey !== undefined && error.propertyName === undefined)
     return error.instancePath.slice(0, error.instancePath.lastIndexOf('/'));
   return error.instancePath ?? '';
 };
