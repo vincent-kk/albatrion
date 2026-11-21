@@ -172,9 +172,9 @@ AJV 전체 검증이 명세와 다른 다음 경우에는 가드가 명세를 �
 ```typescript
 const defaultSettings: Ajv.Options = {
   allErrors: true, // 첫 번째 오류뿐만 아니라 모든 검증 오류 수집
-  verbose: true, // 오류에 스키마 및 데이터 정보 포함
   strict: false, // 더 나은 호환성을 위한 strict 모드 비활성화
-  validateFormats: false, // Enable only after registering formats
+  validateFormats: false, // 포맷을 등록한 뒤 활성화
+  allowUnionTypes: true,
 };
 ```
 

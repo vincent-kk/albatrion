@@ -182,7 +182,7 @@ When no custom AJV instance is provided, the plugin uses these default settings 
 ```typescript
 const defaultSettings: Ajv.Options = {
   allErrors: true, // Collect all validation errors, not just the first one
-  strictSchema: false,
+  strict: false,
   validateFormats: false,
   allowUnionTypes: true,
 };
