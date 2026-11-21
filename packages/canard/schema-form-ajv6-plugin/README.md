@@ -62,7 +62,7 @@ The plugin implements the `ValidatorPlugin` interface with validation, synchrono
 - **Purpose**: Allows you to provide a custom AJV instance with your preferred configuration
 - **Usage**: Optional - if not called, a default AJV instance will be created automatically
 - **Benefits**: Full control over AJV settings, custom keywords, formats, and validation rules
-- **Restriction**: Instances with `coerceTypes`, `useDefaults`, or `removeAdditional` enabled are rejected immediately, before replacing the current binding. The thrown native `ValidatorBindRefusedError` lists the enabled options in `details.options`. Value-modifying custom keywords remain the consumer's responsibility.
+- **Restriction**: Instances with `coerceTypes`, `useDefaults`, or `removeAdditional` enabled are rejected immediately, before replacing the current binding. The thrown native `ValidatorBindRefusedError` lists the enabled options in `details.options`. Value-modifying custom keywords remain the consumer's responsibility. The next validator or guard compile also rejects if one of those options is enabled after binding.
 - **Binding order**: Call `bind` once before the first compile; re-binding after a root is registered is not supported, and in this plugin binding starts a new registry and does not carry roots registered before it.
 
 Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, the value of `FormErrorCode.ValidatorBindRefused`); core's `isUnhandledError` does not recognize it.

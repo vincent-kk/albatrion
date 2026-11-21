@@ -1,6 +1,7 @@
 import type { JSONSchema } from '@canard/schema-form';
 import type { AjvInstance as Ajv } from '../types/AjvInstance';
 
+import { assertBindableInstance } from './assertBindableInstance';
 import { cloneInstance } from './cloneInstance';
 import { readApplicationProfile } from './readApplicationProfile';
 
@@ -77,6 +78,7 @@ export function registerSchemaRoot<T>(
   const tables = readApplicationProfile(instance);
   let profile = profiles.get(instance);
   if (!profile || !isCurrent(tables, profile.image)) {
+    assertBindableInstance(instance);
     profile = { image: tables.map(Object.entries) };
     profiles.set(instance, profile);
   }
