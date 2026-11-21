@@ -4,7 +4,7 @@
 
 Breaking change: input identifiers and group title addresses now use Form-scoped `inputId`, `labelId`, and `getInputId(key)`, so selectors and labels based on JSON Pointer strings must migrate.
 
-Custom inputs use `FieldInputProps.inputId` on the real control; `path` remains the data pointer. Custom group renderers use `FieldRendererProps.labelId` on the title and `aria-labelledby` on the group. Options have distinct identifiers, radio inputs use the scoped `inputId` as their native `name`, and other inputs retain their leaf names.
+Custom inputs use `FieldInputProps.inputId` on the real control; `path` remains the data pointer. Custom group renderers use `FieldRendererProps.labelId` on the title and `aria-labelledby` on the group. On Ant Design versions that forward option IDs, options have distinct identifiers. Radio inputs use the scoped `inputId` as their native `name`, and other inputs retain their leaf names.
 
 Before:
 

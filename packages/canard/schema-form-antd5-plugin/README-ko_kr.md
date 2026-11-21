@@ -253,6 +253,8 @@ const Input = ({ inputId, name }: FieldInputProps<string>) => (
 
 해당 Form 안에서 `formElement.querySelector('[data-path="/email"] input')`처럼 조회하거나 컨트롤이 받은 id로 레이블을 연결합니다. Form API가 반환하는 값은 스키마 형태를 유지합니다.
 
+Ant Design 5.10부터 5.13까지는 RangePicker에 입력 ID 하나를 지원합니다.
+
 Ant Design 5 Select는 팝업이 마운트되기 전에 내부 접미사 `_list`가 붙은 id를 `aria-controls`로 가리킬 수 있으며, 팝업이 열리면 그 대상이 존재합니다.
 
 ## 연락처

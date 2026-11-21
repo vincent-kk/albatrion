@@ -48,6 +48,9 @@ it.each([
     const { container } = render(
       createElement(definition.Component, {
         path: '/r',
+        inputId: 'range-start',
+        labelId: 'range-label',
+        getInputId: () => 'range-end',
         name: 'r',
         jsonSchema: { type: 'array', format, items: { type: 'string' } },
         value: 'ab',
