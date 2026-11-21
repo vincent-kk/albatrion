@@ -13,6 +13,9 @@ const NEUTRAL_DIR = '.agents';
 /** Local ownership record kept beside the agent's asset directories. */
 const INSTALLED_ASSETS_FILE = 'agents-assets-sync.json';
 
+/** Resolver output with the ledger address derived from its agent layout. */
+type ResolvedAgentTarget = AgentTarget & { readonly installedAssetsFile: string };
+
 /**
  * Narrow an unknown value to a supported agent token.
  *
@@ -39,7 +42,7 @@ export function resolveAgentTarget(
   agent: AgentType,
   scope: Scope,
   cwd?: string,
-): AgentTarget {
+): ResolvedAgentTarget {
   const { projectRoot, autoLocated } = resolveProjectRoot(scope, cwd);
   const suffix = `(${agent}, ${scope}${autoLocated ? ', auto-located' : ''})`;
 
