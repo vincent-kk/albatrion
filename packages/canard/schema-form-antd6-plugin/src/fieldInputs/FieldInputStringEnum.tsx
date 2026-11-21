@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import { Select } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
-import { map } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 import { isArraySchema, isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
@@ -14,6 +13,8 @@ import type {
   FieldInputPropsWithSchema,
   StringSchema,
 } from '@canard/schema-form';
+
+import { getEnumOptions } from './utils/enum/getEnumOptions';
 
 type ArrayJSONSchema = ArraySchema & {
   items: StringSchema;
@@ -30,9 +31,11 @@ interface FieldInputStringEnumProps
 }
 
 const FieldInputStringEnum = ({
-  path,
+  inputId,
+  labelId,
   jsonSchema,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -41,74 +44,48 @@ const FieldInputStringEnum = ({
   size,
   misfit,
 }: FieldInputStringEnumProps) => {
-  const [schema, alias, mode] = useMemo(() => {
-    const labels = context.enumLabels || aliasProp;
-    if (isArraySchema(jsonSchema))
-      return [jsonSchema.items as StringSchema, labels, 'multiple'] as const;
-    else return [jsonSchema as StringSchema, labels, undefined] as const;
-  }, [context, jsonSchema, aliasProp]);
-
-  const options = useMemo(() => {
-    return schema.enum
-      ? map(schema.enum, (rawValue) => {
-          const value = JSON.stringify(rawValue);
-          return { value, rawValue, label: alias?.['' + rawValue] || '' + rawValue };
-        })
-      : [];
-  }, [alias, schema]);
-
-  const Options = useMemo(() => {
-    return map(options, ({ value, label }, index) => {
-      return (
-        <Select.Option key={index + value} value={value}>
-          {label}
-        </Select.Option>
-      );
-    });
-  }, [options]);
-
+  const multiple = isArraySchema(jsonSchema);
+  const schema = multiple ? jsonSchema.items : jsonSchema;
+  const values = schema && isStringSchema(schema) ? schema.enum : undefined;
+  const labels = context.enumLabels || aliasProp;
+  const options = useMemo(
+    () => getEnumOptions(values, labels),
+    [values, labels],
+  );
   const initialValue = useMemo(() => {
-    if (isArray(defaultValue))
-      return defaultValue.every(
-        (value) => value === null || typeof value === 'string',
-      )
+    if (multiple)
+      return isArray(defaultValue)
         ? defaultValue.map((value) => JSON.stringify(value))
-        : undefined;
+        : [];
     return defaultValue === null || typeof defaultValue === 'string'
       ? JSON.stringify(defaultValue)
       : undefined;
-  }, [defaultValue]);
+  }, [defaultValue, multiple]);
 
   const handleChange = useHandle((value: string | string[]) => {
-    if (Array.isArray(value)) {
-      const rawValues = value
-        .map((v) => options.find((option) => option.value === v)?.rawValue)
-        .filter((v) => v !== undefined);
-      return onChange(rawValues);
-    } else {
-      const rawValue = options.find(
-        (option) => option.value === value,
-      )?.rawValue;
-      if (rawValue === undefined) return;
-      onChange(rawValue);
-    }
+    onChange(
+      isArray(value)
+        ? value.map((token) => JSON.parse(token))
+        : JSON.parse(value),
+    );
   });
 
   return (
     <Select
-      id={path}
-      mode={mode}
+      id={inputId}
+      aria-labelledby={labelId}
+      mode={multiple ? 'multiple' : undefined}
+      options={options}
+      showSearch={{ optionFilterProp: 'label' }}
       placeholder={placeholder}
-      disabled={disabled}
+      disabled={disabled || readOnly}
       defaultValue={initialValue}
       onChange={handleChange}
       style={{ width: '100%' }}
       size={size || context?.size}
       status={misfit ? 'error' : undefined}
       aria-invalid={misfit || undefined}
-    >
-      {Options}
-    </Select>
+    />
   );
 };
 
