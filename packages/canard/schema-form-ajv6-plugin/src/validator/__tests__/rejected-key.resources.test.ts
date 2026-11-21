@@ -69,3 +69,12 @@ describe('FRAGMENT-020 rejectedKey inside identified resources', () => {
     expect(issues?.find((issue) => issue.keyword === 'not')).toMatchObject({ dataPath: '/b/named', rejectedKey: 'x' });
   });
 });
+
+it('reads the rejected key from the compiled copy after the authored schema changes', async () => {
+  ajvValidatorPlugin.bind(new Ajv({ allErrors: true }));
+  const required = ['original'];
+  const schema = { $id: 'https://example.test/compiled-key', not: { required } };
+  const validate = ajvValidatorPlugin.compile(schema);
+  required[0] = 'changed';
+  expect((await validate({ original: true }))?.[0]?.rejectedKey).toBe('original');
+});

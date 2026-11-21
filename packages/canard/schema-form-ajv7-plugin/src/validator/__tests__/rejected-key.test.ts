@@ -1,5 +1,6 @@
 import type { JSONSchema } from '@canard/schema-form';
 import Ajv from 'ajv';
+import Ajv2019 from 'ajv/dist/2019.js';
 import { describe, expect, it } from 'vitest';
 
 import { ajvValidatorPlugin } from '../validatorPlugin';
@@ -32,4 +33,14 @@ it('reads a negative key below a URI-encoded schema token', async () => {
     dataPath: '/이름 %~1~0',
     rejectedKey: 'blocked',
   });
+});
+
+it('leaves false under a dependent schema named items on the object', async () => {
+  ajvValidatorPlugin.bind(new Ajv2019({ strict: false }));
+  const schema = { properties: { value: { dependentSchemas: { items: false } } } };
+  const issues = await ajvValidatorPlugin.compile(schema)({ value: { items: true } });
+  expect(issues?.find(({ keyword }) => keyword === 'false schema')).toMatchObject({
+    dataPath: '/value',
+  });
+  expect(issues?.find(({ keyword }) => keyword === 'false schema')?.rejectedKey).toBeUndefined();
 });
