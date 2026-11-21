@@ -1,6 +1,6 @@
 // `.js` is required, not cosmetic: ajv ships no `exports` map, so Node's ESM
 // resolver takes this subpath literally and will not try extensions.
-import AjvConstructor from 'ajv/dist/2020.js';
+import AjvConstructor, { type Ajv2020 } from 'ajv/dist/2020.js';
 
 import { createValidatorFactory } from '../validator/createValidatorFactory';
 import { createValidatorPlugin } from '../validator/utils/createValidatorPlugin';
@@ -25,4 +25,4 @@ export { createValidatorFactory };
  * registerPlugin(plugin);
  * ```
  */
-export const ajvValidatorPlugin = createValidatorPlugin(AjvConstructor, 'https://json-schema.org/draft/2020-12/schema');
+export const ajvValidatorPlugin = createValidatorPlugin<Ajv2020>(AjvConstructor, 'https://json-schema.org/draft/2020-12/schema');

@@ -1,4 +1,4 @@
-import AjvConstructor from 'ajv';
+import AjvConstructor, { type Ajv } from 'ajv';
 
 import { createValidatorFactory } from '../validator/createValidatorFactory';
 import { createValidatorPlugin } from '../validator/utils/createValidatorPlugin';
@@ -25,4 +25,4 @@ export { createValidatorFactory };
  * registerPlugin(plugin);
  * ```
  */
-export const ajvValidatorPlugin = createValidatorPlugin(AjvConstructor, 'http://json-schema.org/draft-07/schema#');
+export const ajvValidatorPlugin = createValidatorPlugin<Ajv>(AjvConstructor, 'http://json-schema.org/draft-07/schema#');
