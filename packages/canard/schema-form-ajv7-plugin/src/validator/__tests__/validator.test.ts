@@ -155,7 +155,7 @@ describe('createValidatorFactory', () => {
   });
 
   it('should compile the authored schema without changing it', async () => {
-    const compileSpy = vi.spyOn(Ajv.prototype, 'compile');
+    const compileSpy = vi.spyOn(ajv, 'compile');
     const factory = createValidatorFactory(ajv);
     const schema = { type: 'string' } as unknown as JSONSchema;
 
@@ -170,11 +170,9 @@ describe('createValidatorFactory', () => {
     const schema = { type: 'string' } as unknown as JSONSchema;
 
     // ajv.compile이 throw하는 에러를 시뮬레이션
-    const mockCompile = vi
-      .spyOn(Ajv.prototype, 'compile')
-      .mockImplementation(() => {
-        throw new Error('Compilation error');
-      });
+    const mockCompile = vi.spyOn(ajv, 'compile').mockImplementation(() => {
+      throw new Error('Compilation error');
+    });
 
     await expect(() => factory(schema)).toThrow('Compilation error');
 

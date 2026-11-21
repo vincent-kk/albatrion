@@ -1,5 +1,4 @@
-/** Registration-key namespace observed on plugin-owned compilers only. */
-const PLUGIN_KEY_PREFIX = 'https://canard.invalid/ajv6/';
+import { PLUGIN_KEY_PREFIX } from '../../utils/cloneInstance';
 
 /**
  * List the instances that received an `addSchema` call under this plugin's registration keys.
