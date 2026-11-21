@@ -1,7 +1,7 @@
 import { useImperativeHandle, useRef } from 'react';
 
 import { act } from '@testing-library/react';
-import { afterEach, expect, it, vi } from 'vitest';
+import { type Mock, afterEach, expect, it, vi } from 'vitest';
 
 import { type FormHarness, renderForm } from '@/schema-form/__tests__/renderForm';
 import {
@@ -60,8 +60,11 @@ it('uses the committed native ref for initial Mount and later Render in StrictMo
   expect(focuses).toHaveBeenCalledTimes(2);
 });
 
-it('releases a position when an initial focus handle throws', async () => {
+it('releases the position and command subscription when an initial focus handle throws', async () => {
+  const subscriptions: Mock<() => void>[] = [];
+  let subscriptionsAtFocus: Mock<() => void>[] = [];
   const focus = vi.fn(() => {
+    subscriptionsAtFocus = subscriptions.slice();
     throw new Error('initial anchor focus');
   });
   const workspaces: object[] = [];
@@ -71,6 +74,12 @@ it('releases a position when an initial focus handle throws', async () => {
     const reserved = useRef(false);
     if (!reserved.current) {
       reserved.current = true;
+      const subscribe = node.subscribe.bind(node);
+      vi.spyOn(node, 'subscribe').mockImplementation((listener) => {
+        const unsubscribe = vi.fn(subscribe(listener));
+        subscriptions.push(unsubscribe);
+        return unsubscribe;
+      });
       registry?.reserve(
         node,
         FieldLifecycle.Mount,
@@ -85,6 +94,8 @@ it('releases a position when an initial focus handle throws', async () => {
     presentation: { FieldInput: Input },
   });
   expect(focus).toHaveBeenCalledTimes(1);
+  expect(subscriptionsAtFocus).toHaveLength(1);
+  expect(subscriptionsAtFocus[0]).toHaveBeenCalledExactlyOnceWith();
   const inputPositions = Reflect.get(workspaces[0], 'inputPositions');
   expect(inputPositions.size).toBe(0);
 });
