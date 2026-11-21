@@ -26,8 +26,8 @@ type GetValue = {
  * The function supports both string and array representations of JSON Pointers:
  * - **String format**: Uses forward slashes (`/`) as delimiters (e.g., `/foo/bar`)
  * - **Array format**: Each element represents a reference token (e.g., ["foo", "bar"])
- * - **Empty pointer**: Returns the entire input object
- * - **Root reference**: `/` or `#/` points to the root of the document
+ * - **Root reference**: `''` and `#` return the entire input object
+ * - **Empty member**: `/` or `#/` addresses the property named `''`
  *
  * Reference tokens are interpreted according to RFC 6901 escape sequences:
  * - `~0` represents the literal character `~`
