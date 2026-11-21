@@ -37,7 +37,7 @@ it('reads a negative key below a URI-encoded schema token', async () => {
 
 it('leaves false under a dependent schema named items on the object', async () => {
   ajvValidatorPlugin.bind(new Ajv2019({ strict: false }));
-  const schema = { properties: { value: { dependentSchemas: { items: false } } } };
+  const schema = JSON.parse('{"properties":{"value":{"dependentSchemas":{"items":false}}}}');
   const issues = await ajvValidatorPlugin.compile(schema)({ value: { items: true } });
   expect(issues?.find(({ keyword }) => keyword === 'false schema')).toMatchObject({
     dataPath: '/value',
