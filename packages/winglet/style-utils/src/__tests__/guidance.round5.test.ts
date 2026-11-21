@@ -10,6 +10,6 @@ it('keeps the Korean destroyScope contract aligned with its English source', () 
   });
   expect(sections[1].split('\n')[0]).toBe(sections[0].split('\n')[0]);
   expect(sections.every(section => section.includes('{ shadowRoot }'))).toBe(true);
-  expect(sections[0]).toMatch(/discard.*injector.*cleanup/);
-  expect(sections[1]).toMatch(/주입 함수와 정리 함수를 버립니다/);
+  expect(sections[0]).toContain('reuse the injector');
+  expect(sections[1]).toContain('주입 함수를 재사용할 수 있습니다');
 });

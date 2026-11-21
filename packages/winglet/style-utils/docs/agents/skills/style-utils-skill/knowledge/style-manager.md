@@ -165,7 +165,7 @@ Two behaviors follow from the same `Map`:
 
 `destroyScope` cancels the pending frame, detaches the sheet or removes the `<style>` element, clears the map, and deletes the registry entry. Removing styles one by one is not equivalent: once the last style is gone the flush writes an empty string, so the stylesheet stays attached to the root — empty, but still counted in `adoptedStyleSheets`. Only `destroyScope` detaches it.
 
-`destroyScope(scopeId, { shadowRoot })` cancels and detaches the matching shadow scope; omitting the config targets the document scope. An unknown scope is a no-op. Discard old factories and cleanup functions after destroying their manager, and construct a fresh factory before injecting again.
+`destroyScope(scopeId, { shadowRoot })` cancels and detaches the matching shadow scope; omitting the config targets the document scope. An unknown scope is a no-op. The injector can add styles again after destruction. A cleanup function remains bound to the manager that received its injection.
 
 For components rendered many times that each need their own rules, derive the scope per instance rather than sharing one:
 
