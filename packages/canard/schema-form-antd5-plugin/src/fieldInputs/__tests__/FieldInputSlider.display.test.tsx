@@ -1,8 +1,8 @@
 import { createRef } from 'react';
 
-import { cleanup, fireEvent, render } from '@testing-library/react';
+import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { ConfigProvider } from 'antd';
-import { afterEach, expect, it } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle, type NumberSchema } from '@canard/schema-form';
 
@@ -139,4 +139,139 @@ it('models slider display and retained values through all mounted lock transitio
                 }
         }
   expect(observed).toEqual(expected);
+  expect(observed.size).toBe(242);
+  expect(
+    new Set(modes.slice(1).map((mode, index) => `${modes[index]}:${mode}`)),
+  ).toEqual(new Set(['0:1', '0:2', '1:0', '1:2', '2:0', '2:1']));
 }, 900000);
+
+it.each([
+  { stored: 0.4, maximum: 2, multipleOf: 1 },
+  { stored: 0.5, maximum: 2, multipleOf: 1 },
+  { stored: 1.4, maximum: 1.8, multipleOf: undefined },
+])(
+  'uses the nearest grid stop for stored $stored',
+  ({ stored, maximum, multipleOf }) => {
+    const schema = {
+      type: 'number',
+      format: 'slider',
+      minimum: 0,
+      maximum,
+      multipleOf,
+      presentation: { inputType: 'slider' },
+    } satisfies NumberSchema;
+    const expected = sliderReference(schema).displayed(stored, false);
+    const ref = createRef<FormHandle>();
+    const view = render(
+      <Form
+        ref={ref}
+        jsonSchema={schema}
+        defaultValue={stored}
+        fieldInputDefinitions={[FieldInputSliderDefinition]}
+      />,
+    );
+    expect(view.getByRole('slider').getAttribute('aria-valuenow')).toBe(
+      String(expected),
+    );
+    expect(ref.current?.getValue()).toBe(stored);
+  },
+);
+
+it.each(['disabled', 'readOnly'] as const)(
+  'discards a lazy draft when entering %s and ignores its release',
+  (lock) => {
+    const schema = {
+      type: 'number',
+      format: 'slider',
+      minimum: 0,
+      maximum: 10,
+      presentation: { inputType: 'slider' },
+    } satisfies NumberSchema;
+    const ref = createRef<FormHandle>();
+    const reference = sliderReference(schema);
+    const form = (locked: boolean) => (
+      <Form
+        ref={ref}
+        jsonSchema={schema}
+        defaultValue={2.4}
+        fieldInputDefinitions={[FieldInputSliderDefinition]}
+        disabled={locked && lock === 'disabled'}
+        readOnly={locked && lock === 'readOnly'}
+      />
+    );
+    const view = render(form(false));
+    const thumb = view.getByRole('slider');
+    fireEvent.keyDown(thumb, movement);
+    expect(thumb.getAttribute('aria-valuenow')).toBe(
+      String(reference.expected(2.4, movement.key)),
+    );
+    expect(ref.current?.getValue()).toBe(2.4);
+    view.rerender(form(true));
+    expect(thumb.getAttribute('aria-valuenow')).toBe(
+      String(reference.displayed(2.4, lock === 'readOnly')),
+    );
+    view.rerender(form(false));
+    fireEvent.keyUp(thumb, movement);
+    expect(thumb.getAttribute('aria-valuenow')).toBe(
+      String(reference.displayed(2.4, false)),
+    );
+    expect(ref.current?.getValue()).toBe(2.4);
+    fireEvent.keyDown(thumb, movement);
+    fireEvent.keyUp(thumb, movement);
+    expect(ref.current?.getValue()).toBe(reference.expected(2.4, movement.key));
+    act(() => ref.current?.setValue(undefined));
+    const unset = view.getByRole('slider');
+    expect(unset.getAttribute('aria-valuenow')).toBeNull();
+    expect(unset.getAttribute('aria-valuetext')).toBe('Not set');
+    fireEvent.keyDown(unset, movement);
+    fireEvent.keyUp(unset, movement);
+    expect(ref.current?.getValue()).toBe(
+      reference.expected(undefined, movement.key),
+    );
+  },
+);
+
+it.each(['disabled', 'readOnly'] as const)(
+  'ignores a pointer release after passing through %s',
+  (lock) => {
+    const schema = {
+      type: 'number',
+      format: 'slider',
+      minimum: 0,
+      maximum: 10,
+      presentation: { inputType: 'slider' },
+    } satisfies NumberSchema;
+    const ref = createRef<FormHandle>();
+    const form = (locked: boolean) => (
+      <Form
+        ref={ref}
+        jsonSchema={schema}
+        defaultValue={2.4}
+        fieldInputDefinitions={[FieldInputSliderDefinition]}
+        disabled={locked && lock === 'disabled'}
+        readOnly={locked && lock === 'readOnly'}
+      />
+    );
+    const view = render(form(false));
+    const track = view.getByRole('slider').closest<HTMLElement>('.ant-slider');
+    if (!track) throw new Error('Missing slider track');
+    vi.spyOn(track, 'getBoundingClientRect').mockReturnValue(
+      DOMRect.fromRect({ width: 100, height: 10 }),
+    );
+    vi.spyOn(track, 'offsetWidth', 'get').mockReturnValue(100);
+    try {
+      fireEvent.mouseDown(track, { button: 0, buttons: 1, clientX: 60 });
+      expect(view.getByRole('slider').getAttribute('aria-valuenow')).toBe('6');
+      expect(ref.current?.getValue()).toBe(2.4);
+      view.rerender(form(true));
+      view.rerender(form(false));
+      fireEvent.mouseUp(document, { button: 0, clientX: 60 });
+      expect(ref.current?.getValue()).toBe(2.4);
+      fireEvent.mouseDown(track, { button: 0, buttons: 1, clientX: 60 });
+      fireEvent.mouseUp(document, { button: 0, clientX: 60 });
+      expect(ref.current?.getValue()).toBe(sliderReference(schema).pointer(6));
+    } finally {
+      vi.restoreAllMocks();
+    }
+  },
+);

@@ -18,6 +18,7 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type RadioGroupStringJSONSchema = StringSchema & {
@@ -61,8 +62,11 @@ const FieldInputRadioGroup = ({
 }: FieldInputRadioGroupProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || node.name, sizeProp || context.size];
-  }, [context, labelProp, node.name, sizeProp, hideLabel]);
+    return [
+      resolveFieldLabel(jsonSchema, node.name, labelProp),
+      sizeProp || context.size,
+    ];
+  }, [context, jsonSchema, labelProp, node.name, sizeProp, hideLabel]);
 
   const options = useMemo(() => {
     const enumValues = jsonSchema.enum || [];

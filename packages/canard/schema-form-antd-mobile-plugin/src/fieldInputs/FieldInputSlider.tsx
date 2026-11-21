@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { Slider, type SliderProps } from 'antd-mobile';
 
@@ -15,6 +15,7 @@ import type {
 import { isSliderInput } from '../utils/inputs/isSliderInput';
 import { SliderKeyboardControl } from './components/SliderKeyboardControl';
 import { getSliderBounds } from './utils/slider/getSliderBounds';
+import { getSliderDisplayValue } from './utils/slider/getSliderDisplayValue';
 
 /** A numeric array schema, rendered as a range slider. */
 type NumberArraySchema = ArraySchema & { items: NumberSchema };
@@ -95,53 +96,89 @@ const FieldInputSlider = ({
           normalizeValue(initialValue) !== initialValue,
     [initialValue, normalizeValue],
   );
-  const navigationValue = useRef<number | [number, number] | undefined>(
-    Array.isArray(initialValue)
-      ? [Math.min(...initialValue), Math.max(...initialValue)]
-      : initialValue,
+  const [stored, setStored] = useState<number | [number, number] | undefined>(
+    () =>
+      Array.isArray(initialValue)
+        ? [Math.min(...initialValue), Math.max(...initialValue)]
+        : initialValue,
   );
-  const [isUnset, setIsUnset] = useState(initialValue === undefined);
-  const [draft, setDraft] = useState<number | [number, number]>(() => {
-    const display = readOnly ? bounds.getReadOnlyValue : normalizeValue;
-    if (Array.isArray(initialValue))
-      return [
-        display(Math.min(...initialValue)),
-        display(Math.max(...initialValue)),
-      ];
-    return typeof initialValue === 'number'
-      ? display(initialValue)
-      : range
-        ? [min, min]
-        : min;
-  });
-  const handleChange = useCallback(
-    (value: number | [number, number] | null) => {
-      if (empty) return;
-      setIsUnset(false);
-      if (value === null) onChange(undefined);
-      else if (range) {
-        if (isArray(value) && !value.some(Number.isNaN))
-          onChange([normalizeValue(value[0]), normalizeValue(value[1])]);
-      } else if (typeof value === 'number' && !Number.isNaN(value))
-        onChange(normalizeValue(value));
-    },
-    [onChange, range, empty, normalizeValue],
-  );
+  const pointer = useRef<'idle' | 'active' | 'canceled'>('idle');
+  const [pendingDraft, setPendingDraft] = useState<number | [number, number]>();
+  const locked = !!(disabled || readOnly || empty);
+  const activeDraft = locked ? undefined : pendingDraft;
+  const normalizeDisplay = readOnly ? bounds.getReadOnlyValue : normalizeValue;
+  const displayed: number | [number, number] = range
+    ? [
+        getSliderDisplayValue(
+          Array.isArray(stored) ? stored[0] : undefined,
+          Array.isArray(activeDraft) ? activeDraft[0] : undefined,
+          min,
+          normalizeDisplay,
+          locked,
+        ),
+        getSliderDisplayValue(
+          Array.isArray(stored) ? stored[1] : undefined,
+          Array.isArray(activeDraft) ? activeDraft[1] : undefined,
+          min,
+          normalizeDisplay,
+          locked,
+        ),
+      ]
+    : getSliderDisplayValue(
+        typeof stored === 'number' ? stored : undefined,
+        typeof activeDraft === 'number' ? activeDraft : undefined,
+        min,
+        normalizeDisplay,
+        locked,
+      );
+  const isUnset = stored === undefined && activeDraft === undefined;
+  useLayoutEffect(() => {
+    if (!locked) return;
+    if (pointer.current === 'active') pointer.current = 'canceled';
+    setPendingDraft(undefined);
+  }, [locked]);
+
+  const beginPointer = () => {
+    if (!locked) pointer.current = 'active';
+  };
+  const handleChange = (value: number | [number, number] | null) => {
+    if (locked) return;
+    if (value === null) {
+      setStored(undefined);
+      setPendingDraft(undefined);
+      onChange(undefined);
+    } else if (range) {
+      if (isArray(value) && value.every(Number.isFinite)) {
+        const normalized: [number, number] = [
+          normalizeValue(value[0]),
+          normalizeValue(value[1]),
+        ];
+        setStored(normalized);
+        setPendingDraft(undefined);
+        onChange(normalized);
+      }
+    } else if (typeof value === 'number' && Number.isFinite(value)) {
+      const normalized = normalizeValue(value);
+      setStored(normalized);
+      setPendingDraft(undefined);
+      onChange(normalized);
+    }
+  };
 
   const handleDraftChange = (candidate: number | [number, number]) => {
-    if (empty) return;
+    if (locked) return;
     const value: number | [number, number] = Array.isArray(candidate)
       ? [normalizeValue(candidate[0]), normalizeValue(candidate[1])]
       : normalizeValue(candidate);
-    navigationValue.current = value;
-    setIsUnset(false);
-    setDraft(value);
     if (lazy === false) handleChange(value);
+    else setPendingDraft(value);
   };
 
   return (
     <div
       role="group"
+      onMouseDownCapture={beginPointer}
+      onTouchStartCapture={beginPointer}
       aria-labelledby={labelledBy}
       aria-label={labelledBy ? undefined : name}
       aria-invalid={misfit || undefined}
@@ -150,20 +187,20 @@ const FieldInputSlider = ({
         inputId={inputId}
         getInputId={getInputId}
         labelledBy={labelledBy}
-        value={draft}
-        navigationValue={navigationValue.current ?? draft}
+        value={displayed}
+        navigationValue={activeDraft ?? stored ?? displayed}
         unset={isUnset}
         min={min}
         max={max}
         step={step}
         stops={stops}
         navigate={bounds.keyboard}
-        disabled={!!(disabled || readOnly || empty)}
+        disabled={locked}
         onChange={handleDraftChange}
         onChangeCommitted={lazy === false ? undefined : handleChange}
       >
         <Slider
-          disabled={disabled || readOnly || empty}
+          disabled={locked}
           min={bounds.libraryMin}
           max={bounds.libraryMax}
           step={bounds.libraryStep}
@@ -171,12 +208,13 @@ const FieldInputSlider = ({
           marks={libraryMarks}
           defaultValue={initialValue}
           value={
-            Array.isArray(draft)
-              ? [bounds.toLibrary(draft[0]), bounds.toLibrary(draft[1])]
-              : bounds.toLibrary(draft)
+            Array.isArray(displayed)
+              ? [bounds.toLibrary(displayed[0]), bounds.toLibrary(displayed[1])]
+              : bounds.toLibrary(displayed)
           }
           aria-label={name}
           onChange={(value) => {
+            if (pointer.current === 'canceled') return;
             if (value === null) {
               handleChange(null);
               return;
@@ -192,6 +230,8 @@ const FieldInputSlider = ({
             lazy === false && !isUnset && !initialOffGrid
               ? undefined
               : (value) => {
+                  if (pointer.current === 'canceled') return;
+                  pointer.current = 'idle';
                   if (value === null) {
                     handleChange(null);
                     return;

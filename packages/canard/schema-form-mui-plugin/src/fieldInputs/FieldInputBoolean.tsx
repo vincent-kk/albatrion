@@ -10,6 +10,7 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
 
 interface FieldInputBooleanProps
   extends FieldInputProps<boolean | null, MuiContext>,
@@ -28,6 +29,7 @@ const FieldInputBoolean = ({
   value,
   onChange,
   context,
+  jsonSchema,
   label: labelProp,
   size: sizeProp = 'medium',
   hideLabel,
@@ -35,8 +37,11 @@ const FieldInputBoolean = ({
 }: FieldInputBooleanProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || name, sizeProp || context.size];
-  }, [context, labelProp, name, sizeProp, hideLabel]);
+    return [
+      resolveFieldLabel(jsonSchema, name, labelProp),
+      sizeProp || context.size,
+    ];
+  }, [context, jsonSchema, labelProp, name, sizeProp, hideLabel]);
 
   const indeterminate = value !== undefined && typeof value !== 'boolean';
 

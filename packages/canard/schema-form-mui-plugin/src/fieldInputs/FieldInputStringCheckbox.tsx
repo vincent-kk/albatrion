@@ -20,6 +20,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 import { mergeEnumSelection } from './utils/enum/mergeEnumSelection';
 
@@ -63,8 +64,11 @@ const FieldInputStringCheckbox = ({
 }: FieldInputStringCheckboxProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || name, sizeProp || context.size];
-  }, [hideLabel, sizeProp, context.size, labelProp, name]);
+    return [
+      resolveFieldLabel(jsonSchema, name, labelProp),
+      sizeProp || context.size,
+    ];
+  }, [hideLabel, sizeProp, context.size, jsonSchema, labelProp, name]);
 
   const options = useMemo(() => {
     const enumValues = jsonSchema.items.enum || [];

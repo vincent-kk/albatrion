@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import { type ReactElement, useMemo } from 'react';
 
 import { Space } from 'antd-mobile';
 
@@ -11,6 +11,7 @@ import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 import { isRadioGroupInput } from '../utils/inputs/isRadioGroupInput';
 import { isSliderInput } from '../utils/inputs/isSliderInput';
 import { isStringSwitchInput } from '../utils/inputs/isStringSwitchInput';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
 
 /**
  * Assemble mobile parts without adding Space items for absent message children.
@@ -28,6 +29,10 @@ export const FieldRenderer = ({
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps): ReactElement => {
+  const title = useMemo(
+    () => resolveFieldLabel(jsonSchema, name),
+    [jsonSchema, name],
+  );
   const presentation =
     typeof jsonSchema === 'object' && jsonSchema !== null
       ? jsonSchema.presentation
@@ -58,9 +63,16 @@ export const FieldRenderer = ({
       isBooleanSwitchInput(hint) ||
       isStringSwitchInput(hint) ||
       isSliderInput(hint));
+  const hiddenTitle = (
+    <Label
+      style={{ display: 'none' }}
+      {...(grouped || node.strategy === 'branch' ? { htmlFor: undefined } : {})}
+    />
+  );
   if (depth === 0)
     return (
       <>
+        {node.type !== 'object' && hiddenTitle}
         <Input />
         {errorMessage !== null &&
           errorMessage !== undefined &&
@@ -77,7 +89,7 @@ export const FieldRenderer = ({
         style={{ border: 0, margin: 0, padding: 0 }}
       >
         <span hidden={!(hint && isCheckboxGroupInput(hint))} id={labelId}>
-          {name}
+          {title}
         </span>
         <Space direction="vertical" block>
           <Input aria-labelledby={labelId} />
@@ -98,7 +110,7 @@ export const FieldRenderer = ({
           )}
           {node.parentNode && isArraySchema(node.parentNode) && (
             <span hidden id={labelId}>
-              {name}
+              {title}
             </span>
           )}
           <Input

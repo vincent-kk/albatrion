@@ -11,6 +11,7 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type StringSwitchJSONSchema = StringSchema & {
@@ -50,8 +51,11 @@ const FieldInputStringSwitch = ({
 }: FieldInputStringSwitchProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || name, sizeProp || context.size];
-  }, [hideLabel, sizeProp, context.size, labelProp, name]);
+    return [
+      resolveFieldLabel(jsonSchema, name, labelProp),
+      sizeProp || context.size,
+    ];
+  }, [hideLabel, sizeProp, context.size, jsonSchema, labelProp, name]);
 
   const { offValue, onValue, offLabel, onLabel } = useMemo(() => {
     const [first, second] = jsonSchema.enum;

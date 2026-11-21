@@ -2,6 +2,8 @@ import type { CSSProperties, ReactElement } from 'react';
 
 import type { LabelRendererProps } from '@canard/schema-form';
 
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+
 /** Preserve the required marker spacing and color. */
 const REQUIRED_STYLE: CSSProperties = { marginLeft: 4, color: 'red' };
 
@@ -12,6 +14,8 @@ const REQUIRED_STYLE: CSSProperties = { marginLeft: 4, color: 'red' };
  */
 export const LabelRenderer = ({
   children,
+  name,
+  jsonSchema,
   htmlFor,
   id,
   required,
@@ -19,7 +23,11 @@ export const LabelRenderer = ({
   className,
 }: LabelRendererProps): ReactElement => (
   <label htmlFor={htmlFor} id={id} style={style} className={className}>
-    {children}
+    {resolveFieldLabel(
+      jsonSchema,
+      name,
+      children === name ? undefined : children,
+    )}
     {required && (
       <span aria-hidden style={REQUIRED_STYLE}>
         *

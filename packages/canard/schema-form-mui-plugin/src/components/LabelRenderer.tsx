@@ -4,6 +4,8 @@ import { FormLabel as MuiFormLabel } from '@mui/material';
 
 import type { LabelRendererProps } from '@canard/schema-form';
 
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+
 /**
  * Focus the picker section group addressed by a field label.
  * @param event - A click on the label whose group receives keyboard focus.
@@ -26,6 +28,8 @@ const focusPickerGroup = (event: MouseEvent<HTMLLabelElement>) => {
  */
 export const LabelRenderer = ({
   children,
+  name,
+  jsonSchema,
   htmlFor,
   id,
   required,
@@ -40,6 +44,10 @@ export const LabelRenderer = ({
     style={style}
     className={className}
   >
-    {children}
+    {resolveFieldLabel(
+      jsonSchema,
+      name,
+      children === name ? undefined : children,
+    )}
   </MuiFormLabel>
 );

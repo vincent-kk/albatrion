@@ -9,6 +9,7 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
 import { getSliderBounds } from './utils/slider/getSliderBounds';
 import { useSliderControl } from './utils/slider/useSliderControl';
 
@@ -51,6 +52,7 @@ const SLIDER_SX = { mt: 1 };
  */
 const UNSET_SLIDER_SX = {
   mt: 1,
+  [`& .${sliderClasses.valueLabel}`]: { display: 'none' },
   [`& .${sliderClasses.thumb}:not(.${sliderClasses.focusVisible})`]: {
     opacity: 0,
   },
@@ -77,8 +79,11 @@ const FieldInputSlider = ({
 }: FieldInputSliderProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || name, sizeProp || context.size];
-  }, [context, labelProp, name, sizeProp, hideLabel]);
+    return [
+      resolveFieldLabel(jsonSchema, name, labelProp),
+      sizeProp || context.size,
+    ];
+  }, [context, jsonSchema, labelProp, name, sizeProp, hideLabel]);
 
   const bounds = useMemo(
     () =>
@@ -101,6 +106,7 @@ const FieldInputSlider = ({
     draft,
     change,
     complete,
+    beginPointer,
     keyDown,
     keyUp,
   } = useSliderControl(
@@ -114,11 +120,19 @@ const FieldInputSlider = ({
   const handleChange = (_event: Event, value: number | number[]) =>
     change(Array.isArray(value) ? value[0] : value);
   const handleChangeCommitted = (_event: unknown, value: number | number[]) => {
-    if (lazy !== false || needsCommit)
-      complete(Array.isArray(value) ? value[0] : value);
+    complete(
+      Array.isArray(value) ? value[0] : value,
+      lazy !== false || needsCommit,
+    );
   };
   return (
-    <Box sx={{ px: 2 }} onKeyDownCapture={keyDown} onKeyUpCapture={keyUp}>
+    <Box
+      sx={{ px: 2 }}
+      onMouseDownCapture={beginPointer}
+      onTouchStartCapture={beginPointer}
+      onKeyDownCapture={keyDown}
+      onKeyUpCapture={keyUp}
+    >
       {label && (
         <Typography
           variant="body2"
@@ -136,8 +150,7 @@ const FieldInputSlider = ({
         min={bounds.libraryMin}
         max={bounds.libraryMax}
         step={bounds.libraryStep}
-        valueLabelFormat={bounds.fromLibrary}
-        getAriaValueText={(value) => String(bounds.fromLibrary(value))}
+        valueLabelFormat={() => (isUnset ? null : String(draft))}
         onChange={handleChange}
         onChangeCommitted={handleChangeCommitted}
         disabled={disabled || readOnly || empty}
@@ -165,7 +178,7 @@ const FieldInputSlider = ({
                 'aria-valuetext': undefined,
               },
         }}
-        valueLabelDisplay={isUnset ? 'off' : 'auto'}
+        valueLabelDisplay="auto"
         sx={isUnset ? UNSET_SLIDER_SX : SLIDER_SX}
       />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>

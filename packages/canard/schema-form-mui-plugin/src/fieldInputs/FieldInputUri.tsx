@@ -12,6 +12,7 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
 import { formatProtocol } from './utils/uri/formatProtocol';
 import { parseUri } from './utils/uri/parseUri';
 
@@ -39,6 +40,7 @@ const FieldInputUri = ({
   value,
   onChange,
   context,
+  jsonSchema,
   label: labelProp,
   placeholder,
   size: sizeProp,
@@ -57,13 +59,14 @@ const FieldInputUri = ({
         fullWidthProp ?? context.fullWidth,
       ];
     return [
-      labelProp || name,
+      resolveFieldLabel(jsonSchema, name, labelProp),
       sizeProp || context.size,
       variantProp || context.variant,
       fullWidthProp ?? context.fullWidth,
     ];
   }, [
     context,
+    jsonSchema,
     labelProp,
     name,
     sizeProp,

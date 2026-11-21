@@ -1,10 +1,11 @@
-import type { ReactElement } from 'react';
+import { type ReactElement, useMemo } from 'react';
 
 import { Box } from '@mui/material';
 
 import type { FieldRendererProps } from '@canard/schema-form';
 
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
 
 /**
  * Connect group titles through the core label address while retaining the helper root.
@@ -21,6 +22,10 @@ export const FieldRenderer = ({
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps): ReactElement => {
+  const title = useMemo(
+    () => resolveFieldLabel(jsonSchema, name),
+    [jsonSchema, name],
+  );
   const presentation =
     typeof jsonSchema === 'object' && jsonSchema !== null
       ? jsonSchema.presentation
@@ -43,12 +48,16 @@ export const FieldRenderer = ({
       jsonSchema !== null &&
       Array.isArray(jsonSchema.enum) &&
       jsonSchema.enum.length > 0);
+
+  const titleElement = title ? (
+    <span hidden={!isChoiceGroup} id={labelId}>
+      {title}
+    </span>
+  ) : null;
   if (depth === 0)
     return (
       <>
-        <span hidden={!isChoiceGroup} id={labelId}>
-          {name}
-        </span>
+        {titleElement}
         <Input />
         {errorMessage !== null &&
           errorMessage !== undefined &&
@@ -62,7 +71,7 @@ export const FieldRenderer = ({
     return (
       <Box
         component={ownsTitle ? 'div' : 'fieldset'}
-        aria-labelledby={ownsTitle ? undefined : labelId}
+        aria-labelledby={!ownsTitle && title ? labelId : undefined}
         sx={{
           marginBottom: 1,
           marginLeft: depth * 2,
@@ -72,9 +81,7 @@ export const FieldRenderer = ({
           padding: 1,
         }}
       >
-        <span hidden={!isChoiceGroup} id={labelId}>
-          {name}
-        </span>
+        {titleElement}
         <Input />
         <ErrorMessage>{errorMessage}</ErrorMessage>
       </Box>
@@ -87,9 +94,7 @@ export const FieldRenderer = ({
           marginLeft: depth * 2,
         }}
       >
-        <span hidden={!isChoiceGroup} id={labelId}>
-          {name}
-        </span>
+        {titleElement}
         <Input />
         <ErrorMessage>{errorMessage}</ErrorMessage>
       </Box>

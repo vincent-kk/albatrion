@@ -15,6 +15,7 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
 
 // customParseFormat enables the strict parse below; the import does not extend dayjs by itself.
 dayjs.extend(customParseFormat);
@@ -59,6 +60,7 @@ const FieldInputMonth = ({
   defaultValue,
   onChange,
   context,
+  jsonSchema,
   label: labelProp,
   size: sizeProp,
   variant: variantProp,
@@ -77,13 +79,14 @@ const FieldInputMonth = ({
         fullWidthProp ?? context.fullWidth,
       ];
     return [
-      labelProp || name,
+      resolveFieldLabel(jsonSchema, name, labelProp),
       sizeProp || context.size,
       variantProp || context.variant,
       fullWidthProp ?? context.fullWidth,
     ];
   }, [
     context,
+    jsonSchema,
     labelProp,
     name,
     sizeProp,

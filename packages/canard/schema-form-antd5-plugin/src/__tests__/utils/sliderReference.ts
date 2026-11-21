@@ -118,10 +118,12 @@ export const sliderReference = (schema: {
   const displayed = (
     stored: number | undefined,
     readOnly: boolean,
+    includeOffGridUpper = true,
   ): number | undefined => {
     if (stored === undefined) return undefined;
     if (
       (readOnly &&
+        includeOffGridUpper &&
         schema.type === 'number' &&
         schema.multipleOf === undefined &&
         stored >= displayMin &&
@@ -140,19 +142,33 @@ export const sliderReference = (schema: {
     const snapped =
       nearest < gridMin ? gridMin : nearest > gridMax ? gridMax : nearest;
     if (position <= gridMin) return number(gridMin);
-    if (position >= gridMax) return number(gridMax);
+    if (includeOffGridUpper && position >= gridMax) return number(gridMax);
     const delta = snapped > position ? snapped - position : position - snapped;
     return number(
-      schema.type === 'number' &&
+      includeOffGridUpper &&
+        schema.type === 'number' &&
         schema.multipleOf === undefined &&
         !strictHigh &&
-        gridMax - position < delta
+        gridMax - position <= delta
         ? gridMax
         : snapped,
     );
   };
+  const pointer = (value: number, includeOffGridUpper = true) => {
+    if (empty) return undefined;
+    let nearest: number | undefined;
+    for (const mark of marks) {
+      if (
+        nearest === undefined ||
+        Math.abs(mark - value) <= Math.abs(nearest - value)
+      )
+        nearest = mark;
+    }
+    return nearest ?? displayed(value, false, includeOffGridUpper);
+  };
   return {
     displayed,
+    pointer,
     marks,
     min: number(first),
     max: number(last),

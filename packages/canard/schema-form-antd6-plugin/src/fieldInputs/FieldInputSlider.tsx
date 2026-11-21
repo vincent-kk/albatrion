@@ -51,8 +51,16 @@ const FieldInputSlider = ({
     onChange,
   );
   const { min, max, empty } = bounds;
-  const { unset, needsCommit, draft, change, complete, keyDown, keyUp } =
-    control;
+  const {
+    unset,
+    needsCommit,
+    draft,
+    change,
+    complete,
+    beginPointer,
+    keyDown,
+    keyUp,
+  } = control;
   // Ant Design's id targets the track rather than its keyboard-operable thumb.
   const markFocusTarget = useCallback(
     (group: HTMLDivElement | null) => {
@@ -75,17 +83,14 @@ const FieldInputSlider = ({
     },
     [inputId, labelledBy, unset, min, max, draft],
   );
-  const committedChange = { onChangeComplete: complete };
-  const changeHandler =
-    lazy === false
-      ? { onChange: change, ...(needsCommit ? committedChange : {}) }
-      : { onChange: change, ...committedChange };
   return (
     <div
       ref={markFocusTarget}
       role="group"
       aria-labelledby={labelledBy}
       aria-invalid={misfit || undefined}
+      onMouseDownCapture={beginPointer}
+      onTouchStartCapture={beginPointer}
       onKeyDownCapture={keyDown}
       onKeyUpCapture={keyUp}
     >
@@ -102,7 +107,11 @@ const FieldInputSlider = ({
         max={bounds.libraryMax}
         step={bounds.libraryStep}
         value={bounds.toLibrary(draft)}
-        {...changeHandler}
+        tooltip={{ formatter: unset ? null : () => String(draft) }}
+        onChange={change}
+        {...(lazy !== false || needsCommit
+          ? { onChangeComplete: complete }
+          : {})}
       />
     </div>
   );

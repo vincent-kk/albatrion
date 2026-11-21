@@ -1,4 +1,10 @@
-import { type KeyboardEvent, type ReactNode, useEffect, useRef } from 'react';
+import {
+  type KeyboardEvent,
+  type ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 
 import type { FieldInputProps } from '@canard/schema-form';
 
@@ -62,6 +68,9 @@ export const SliderKeyboardControl = ({
   const keyboardCommit = useRef<number | [number, number] | undefined>(
     undefined,
   );
+  useLayoutEffect(() => {
+    if (disabled) keyboardCommit.current = undefined;
+  }, [disabled]);
   useEffect(() => {
     const thumbs =
       ref.current?.querySelectorAll<HTMLElement>('[role="slider"]') ?? [];

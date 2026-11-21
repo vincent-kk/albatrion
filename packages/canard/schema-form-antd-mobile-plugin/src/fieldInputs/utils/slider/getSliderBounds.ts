@@ -1,6 +1,7 @@
 import { decimalRatio } from './getSliderBounds/decimalRatio';
 import { decimalStop } from './getSliderBounds/decimalStop';
 import { getIntegerSliderStep } from './getSliderBounds/getIntegerSliderStep';
+import { isAtOrAboveMidpoint } from './getSliderBounds/isAtOrAboveMidpoint';
 
 /**
  * Build the schema's decimal grid and its input-library coordinate mapping.
@@ -64,6 +65,11 @@ export const getSliderBounds = <MarkLabel>(
   const gridMin = empty ? low : upperOnly ? high : first;
   const gridMax = empty ? high : last;
   const clamp = (value: number) => Math.max(gridMin, Math.min(gridMax, value));
+  const hasOffGridUpper =
+    multipleOf === undefined &&
+    !integer &&
+    !strictHigh &&
+    lastRatio.floor !== lastRatio.ceil;
   const snap = (value: number) => {
     if (!Number.isFinite(value)) return gridMin;
     if (value <= gridMin) return gridMin;
@@ -71,10 +77,7 @@ export const getSliderBounds = <MarkLabel>(
     const nearest = clamp(
       decimalStop(anchor, decimalRatio(value, anchor, step).nearest, step),
     );
-    return multipleOf === undefined &&
-      !integer &&
-      !strictHigh &&
-      Math.abs(gridMax - value) < Math.abs(nearest - value)
+    return hasOffGridUpper && isAtOrAboveMidpoint(value, nearest, gridMax)
       ? gridMax
       : nearest;
   };

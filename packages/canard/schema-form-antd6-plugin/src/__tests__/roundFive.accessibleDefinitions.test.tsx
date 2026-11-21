@@ -1,4 +1,10 @@
-import { cleanup, isInaccessible, render } from '@testing-library/react';
+import {
+  cleanup,
+  getRoles,
+  isInaccessible,
+  render,
+  within,
+} from '@testing-library/react';
 import { computeAccessibleName } from 'dom-accessibility-api';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
@@ -10,6 +16,7 @@ import {
 } from '@canard/schema-form';
 
 import { plugin } from '../index';
+import { fieldNameReference } from './utils/fieldNameReference';
 
 type Classification = {
   kind: 'primary' | 'range-end' | 'auxiliary';
@@ -327,3 +334,152 @@ it.each(['plugin', 'standalone', 'custom', 'hideLabel'] as const)(
   },
   120000,
 );
+
+it.each(['schema title', 'custom renderer', 'options', 'fallback'] as const)(
+  'names every registered control from %s',
+  (source) => {
+    const key = 'internalKey';
+    const title = source === 'schema title' ? 'Schema title' : undefined;
+    const ariaLabel = source === 'options' ? 'Spoken caption' : undefined;
+    const customLabel =
+      source === 'custom renderer' ? 'Operator caption' : undefined;
+    const labelText = fieldNameReference({
+      visible: [customLabel ?? title ?? ''],
+      title,
+      ariaLabel,
+      key,
+    });
+    for (const definition of plugin.fieldInputDefinitions) {
+      const kind = definition.Component.name;
+      const entry = fields[kind];
+      expect(entry, kind).toBeDefined();
+      const schemas =
+        kind === 'FieldInputString'
+          ? [
+              entry.schema,
+              { type: 'string', format: 'password' } satisfies JSONSchema,
+            ]
+          : [entry.schema];
+      for (const schema of schemas) {
+        const jsonSchema: JSONSchema = {
+          type: 'object',
+          properties: {
+            [key]: {
+              ...schema,
+              ...(source === 'schema title' ? { title } : {}),
+              ...(source === 'options'
+                ? { options: { 'aria-label': ariaLabel } }
+                : {}),
+            },
+          },
+        };
+        const NameRenderer = ({ depth, Label, Input }: FieldRendererProps) =>
+          depth === 0 ? (
+            <Input />
+          ) : (
+            <>
+              <Label>{customLabel}</Label>
+              <Input hideLabel />
+            </>
+          );
+        const view = render(
+          <Form
+            jsonSchema={jsonSchema}
+            fieldInputDefinitions={[definition]}
+            FieldRenderer={
+              source === 'custom renderer' ? NameRenderer : plugin.FieldRenderer
+            }
+            LabelRenderer={plugin.LabelRenderer}
+            ErrorMessageRenderer={plugin.ErrorMessageRenderer}
+          />,
+        );
+        const field = view.container.querySelector(
+          '[data-path="/internalKey"]',
+        );
+        if (!(field instanceof HTMLElement)) throw new Error(kind);
+        const controls = [
+          ...field.querySelectorAll<HTMLElement>(entry.primary),
+        ].filter((element) => !element.closest('[aria-hidden="true"]'));
+        expect(controls.length, kind).toBeGreaterThan(0);
+        const availableRoles = Object.entries(getRoles(field));
+        for (const control of controls) {
+          const role = availableRoles.find(([, elements]) =>
+            elements.includes(control),
+          )?.[0];
+          if (control.matches('input[type="password"]')) {
+            expect(within(field).getAllByLabelText(labelText)).toContain(
+              control,
+            );
+          } else {
+            expect(role, kind).toBeDefined();
+            expect(
+              within(field).queryAllByRole(role ?? '', { name: labelText }),
+              kind,
+            ).toContain(control);
+          }
+        }
+        view.unmount();
+      }
+    }
+  },
+);
+
+it.each([
+  ['FieldInputStringCheckbox', 'checkbox'],
+  ['FieldInputRadioGroup', 'radio'],
+])('keeps the displayed alias in each %s option name', (kind, role) => {
+  const entry = fields[kind];
+  const definition = plugin.fieldInputDefinitions.find(
+    ({ Component }) => Component.name === kind,
+  );
+  if (!definition) throw new Error(`Missing option definition ${kind}`);
+  const schema = entry.schema;
+  const view = render(
+    <Form
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          internalKey: {
+            ...schema,
+            title: 'Choice group',
+            presentation: {
+              ...schema.presentation,
+              FieldInputProps: { alias: { one: 'First choice' } },
+            },
+          },
+        },
+      }}
+      fieldInputDefinitions={[definition]}
+      FieldRenderer={plugin.FieldRenderer}
+      LabelRenderer={plugin.LabelRenderer}
+    />,
+  );
+  const name = fieldNameReference({ visible: ['First choice'], key: 'one' });
+  expect(view.getByRole(role, { name })).toBeTruthy();
+});
+
+it('uses the authored name for a nested object container', () => {
+  const view = render(
+    <Form
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          internalKey: {
+            type: 'object',
+            title: 'Address details',
+            properties: { street: { type: 'string' } },
+          },
+        },
+      }}
+      fieldInputDefinitions={plugin.fieldInputDefinitions}
+      FieldRenderer={plugin.FieldRenderer}
+      LabelRenderer={plugin.LabelRenderer}
+    />,
+  );
+  const name = fieldNameReference({
+    visible: ['Address details'],
+    key: 'internalKey',
+  });
+  const group = view.getByRole('group', { name });
+  expect(within(group).getByRole('textbox')).toBeTruthy();
+});
