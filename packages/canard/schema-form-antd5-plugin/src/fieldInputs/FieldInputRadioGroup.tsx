@@ -33,8 +33,9 @@ interface FieldInputRadioGroupProps
 }
 
 const FieldInputRadioGroup = ({
-  path,
-  name,
+  inputId,
+  labelId,
+  getInputId,
   jsonSchema,
   disabled,
   readOnly,
@@ -49,8 +50,8 @@ const FieldInputRadioGroup = ({
     jsonSchema.enum;
   const labels = context.radioLabels || alias;
   const options = useMemo(
-    () => getEnumOptions(values, labels),
-    [values, labels],
+    () => getEnumOptions(values, labels, getInputId),
+    [values, labels, getInputId],
   );
   const initialValue = useMemo(
     () => options.find((option) => option.rawValue === defaultValue)?.value,
@@ -60,10 +61,14 @@ const FieldInputRadioGroup = ({
     onChange(JSON.parse(event.target.value));
   });
   return (
-    <div role="radiogroup" aria-invalid={misfit || undefined}>
+    <div
+      id={inputId}
+      role="radiogroup"
+      aria-labelledby={labelId}
+      aria-invalid={misfit || undefined}
+    >
       <Radio.Group
-        id={path}
-        name={name}
+        name={inputId}
         disabled={disabled || readOnly}
         defaultValue={initialValue}
         options={options}

@@ -29,7 +29,8 @@ interface FieldInputStringSwitchProps
 }
 
 const FieldInputStringSwitch = ({
-  path,
+  inputId,
+  labelId,
   jsonSchema,
   disabled,
   readOnly,
@@ -63,7 +64,8 @@ const FieldInputStringSwitch = ({
   return (
     <Switch
       aria-invalid={misfit || undefined}
-      key={path}
+      id={inputId}
+      aria-labelledby={labelId}
       disabled={disabled || readOnly}
       checked={value === checked}
       checkedChildren={checkedLabel}

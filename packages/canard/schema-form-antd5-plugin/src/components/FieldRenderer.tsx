@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactElement } from 'react';
+import type { ReactElement } from 'react';
 
 import { Flex, Typography } from 'antd';
 
@@ -7,8 +7,7 @@ import { isArraySchema } from '@winglet/json-schema/filter';
 
 import type { FieldRendererProps } from '@canard/schema-form';
 
-/** Legends use the same wrapping as registered labels. */
-const TITLE_STYLE: CSSProperties = { wordBreak: 'unset' };
+import { TEXT_STYLE } from './styles';
 
 /**
  * Assemble plugin parts while preserving the existing group structure and empty error line.
@@ -19,6 +18,7 @@ export const FieldRenderer = ({
   node,
   depth,
   name,
+  labelId,
   Input,
   Label,
   ErrorMessage,
@@ -34,8 +34,8 @@ export const FieldRenderer = ({
           marginLeft: 5 * depth,
         }}
       >
-        <legend>
-          <Typography.Text style={TITLE_STYLE}>{name}</Typography.Text>
+        <legend id={labelId}>
+          <Typography.Text style={TEXT_STYLE}>{name}</Typography.Text>
         </legend>
         <Input />
       </fieldset>

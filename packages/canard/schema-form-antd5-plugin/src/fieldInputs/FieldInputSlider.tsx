@@ -24,7 +24,8 @@ interface FieldInputSliderProps
 }
 
 const FieldInputSlider = ({
-  path,
+  inputId,
+  labelId,
   jsonSchema,
   disabled,
   readOnly,
@@ -41,7 +42,8 @@ const FieldInputSlider = ({
   return (
     <div role="group" aria-invalid={misfit || undefined}>
       <Slider
-        id={path}
+        id={inputId}
+        ariaLabelledByForHandle={labelId}
         disabled={disabled || readOnly}
         min={jsonSchema.minimum}
         max={jsonSchema.maximum}
