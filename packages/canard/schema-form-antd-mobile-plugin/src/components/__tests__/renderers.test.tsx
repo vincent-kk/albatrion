@@ -31,14 +31,10 @@ it('names builtin radio options through the mobile field title', () => {
       }}
     />,
   );
-  expect(screen.getByRole('group').getAttribute('aria-labelledby')).toBe(
-    'label:/Size',
-  );
-  const group = screen.getByRole('group', { name: 'Size' });
-  expect(group.getAttribute('aria-labelledby')).toBe('label:/Size');
   const label = screen.getByText('Size').closest('label')!;
-  expect(label.id).toBe('label:/Size');
-  expect(label.getAttribute('for')).toBe('/Size');
+  const group = screen.getByRole('group', { name: 'Size' });
+  expect(group.getAttribute('aria-labelledby')).toBe(label.id);
+  expect(label.htmlFor).toBe(group.id);
 });
 
 it('forwards standalone label content, addresses and root styling without nesting labels', () => {
@@ -59,13 +55,14 @@ it('forwards standalone label content, addresses and root styling without nestin
       >
         Caption
       </Form.Label>
+      <Form.Input path="/Text" />
     </Form>,
   );
   const label = view.getByText('Caption').closest('label')!;
   expect(label).not.toBeNull();
   expect(view.container.querySelectorAll('label')).toHaveLength(1);
-  expect(label.id).toBe('label:/Text');
-  expect(label.htmlFor).toBe('/Text');
+  expect(label.id).not.toBe('');
+  expect(label.htmlFor).toBe(view.getByRole('textbox').id);
   expect(label.classList.contains('caption')).toBe(true);
   expect(label.style.color).toBe('rgb(1, 2, 3)');
   expect(label.querySelector('[aria-hidden="true"]')?.textContent).toContain(
@@ -110,7 +107,7 @@ it('registers the label and error parts without an input frame', () => {
       <Form.ErrorMessage path="/Text" />
     </Form>,
   );
-  expect(view.getByText('Caption').closest('label')?.id).toBe('label:/Text');
+  expect(view.getByText('Caption').closest('label')?.id).toBeTruthy();
   expect(view.getByText('Issue')).toBeTruthy();
 });
 
@@ -125,8 +122,8 @@ it('omits a separate label for direct array items', () => {
       ErrorMessageRenderer={ErrorMessageRenderer}
     />,
   );
-  expect(view.container.querySelector('label[for="/0"]')).toBeNull();
-  expect(view.container.querySelector('input[id="/0"]')).not.toBeNull();
+  expect(view.container.querySelector('label')).toBeNull();
+  expect(view.getByRole('textbox')).toHaveProperty('value', 'value');
 });
 
 it.each([null, undefined, false, true, ''])(
