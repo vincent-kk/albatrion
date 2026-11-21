@@ -1,7 +1,13 @@
 import { createRef } from 'react';
 
-import { cleanup, render } from '@testing-library/react';
-import { afterEach, expect, it, vi } from 'vitest';
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@canard/schema-form';
 
@@ -46,5 +52,61 @@ it.each([
       outOfRange: [],
       value: stored === undefined ? {} : { topic: stored },
     });
+  },
+);
+
+beforeEach(() =>
+  vi.stubGlobal(
+    'ResizeObserver',
+    class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    },
+  ),
+);
+afterEach(() => vi.unstubAllGlobals());
+
+it.each(['unknown', 'Alpha'] as const)(
+  'preserves the stored enum and displays a later write or reset (DETAIL, initial=%s)',
+  async (initial) => {
+    const ref = createRef<FormHandle>();
+    render(
+      <Form
+        ref={ref}
+        jsonSchema={{
+          type: 'object',
+          properties: {
+            choice: {
+              type: 'string',
+              enum: ['Alpha', 'Beta'],
+              title: 'Choice',
+            },
+          },
+        }}
+        defaultValue={{ choice: initial }}
+        fieldInputDefinitions={plugin.fieldInputDefinitions}
+        FieldRenderer={plugin.FieldRenderer}
+        LabelRenderer={plugin.LabelRenderer}
+      />,
+    );
+    const assertChoice = (value: string) => {
+      expect(ref.current!.getValue()).toEqual({ choice: value });
+      expect(
+        screen.getByRole('combobox').closest('.ant-select')?.textContent,
+      ).toContain(value);
+    };
+    expect(ref.current!.getValue()).toEqual({ choice: initial });
+    fireEvent.mouseDown(screen.getByRole('combobox'));
+    if (initial === 'unknown') {
+      fireEvent.click(screen.getAllByText('Alpha').at(-1)!);
+      assertChoice('Alpha');
+      return;
+    }
+    await act(async () => ref.current!.setValue({ choice: 'Beta' }));
+    assertChoice('Beta');
+    fireEvent.mouseDown(screen.getByRole('combobox'));
+    await act(async () => ref.current!.reset());
+    assertChoice('Alpha');
   },
 );

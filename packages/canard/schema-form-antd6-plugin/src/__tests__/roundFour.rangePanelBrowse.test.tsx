@@ -5,6 +5,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import { Form, type FormHandle, type JSONSchema } from '@canard/schema-form';
 
+import { FieldInputDateRangeDefinition } from '../fieldInputs/FieldInputDateRange';
 import { plugin } from '../index';
 
 class TestResizeObserver {
@@ -147,4 +148,65 @@ it('an empty date range stays empty after choosing a start day and browsing to t
   fireEvent.click(panelButton('.ant-picker-header-next-btn')!);
   await act(async () => {});
   expect(ref.current!.getValue()).toEqual({});
+});
+
+it('saves both virtual date constituents on range completion and restores both on reset (virtual storage contract)', async () => {
+  const ref = createRef<FormHandle>();
+  const initial = { start: '2024-01-10', end: '2024-01-20' };
+  const { container } = render(
+    <Form
+      ref={ref}
+      defaultValue={initial}
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          start: { type: 'string', format: 'date' },
+          end: { type: 'string', format: 'date' },
+        },
+        options: {
+          virtual: {
+            period: {
+              fields: ['start', 'end'],
+              presentation: {
+                FieldInput: FieldInputDateRangeDefinition.Component,
+              },
+            },
+          },
+        },
+      }}
+      fieldInputDefinitions={plugin.fieldInputDefinitions}
+      FieldRenderer={plugin.FieldRenderer}
+      LabelRenderer={plugin.LabelRenderer}
+    >
+      <Form.Label path="/period" />
+      <Form.Input path="/period" />
+    </Form>,
+  );
+  const inputs = () =>
+    Array.from(
+      container.querySelectorAll<HTMLInputElement>('.ant-picker input'),
+    );
+  expect(inputs()).toHaveLength(2);
+  await openFirst(container);
+  const select = async (day: string) => {
+    const cell = document.querySelector<HTMLElement>(
+      `.ant-picker-dropdown:not(.ant-picker-dropdown-hidden) td[title="${day}"] .ant-picker-cell-inner`,
+    );
+    expect(cell).not.toBeNull();
+    fireEvent.click(cell!);
+    await act(async () => {});
+  };
+  await select('2024-01-12');
+  expect(ref.current!.getValue()).toEqual(initial);
+  await select('2024-01-25');
+  expect(ref.current!.getValue()).toEqual({
+    start: '2024-01-12',
+    end: '2024-01-25',
+  });
+  await act(async () => ref.current!.reset());
+  expect(ref.current!.getValue()).toEqual(initial);
+  expect(inputs().map((input) => input.value)).toEqual([
+    initial.start,
+    initial.end,
+  ]);
 });
