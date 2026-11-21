@@ -11,6 +11,8 @@ export const parsePickerValue = (
   format: string,
 ) =>
   dayjs(
-    format === 'HH:mm:00Z' ? (value?.replace(/z$/, 'Z') ?? value) : value,
+    typeof value === 'string' && format === 'HH:mm:00Z'
+      ? value.replace(/z$/, 'Z')
+      : value,
     format,
   );
