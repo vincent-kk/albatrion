@@ -11,8 +11,7 @@ import {
   runCliCode,
   writeAt,
 } from '../../__tests__/roundThree/fixture.js';
-import { renderJSON } from '../../commands/runCli/renderers/renderJSON.js';
-import { renderPlain } from '../../commands/runCli/renderers/renderPlain.js';
+import { renderOrFallback } from '../../commands/runCli/renderers/renderOrFallback.js';
 import type { ConsumerPackage, DefaultFlags } from '../../types/index.js';
 
 const roots: string[] = [];
@@ -37,10 +36,18 @@ async function run(
 ): Promise<number> {
   quiet();
   try {
-    return await (mode === 'plain' ? renderPlain : renderJSON)(
+    return await renderOrFallback(
       targets,
-      { agent: ['claude'], scope: 'project', yes: true, ...extra },
+      {
+        agent: ['claude'],
+        scope: 'project',
+        yes: true,
+        ...extra,
+        json: mode === 'json',
+      },
       root,
+      [],
+      { isTTY: false },
     );
   } finally {
     vi.restoreAllMocks();

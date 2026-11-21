@@ -1,40 +1,10 @@
-import {
-  type RunFailure,
-  type RunResult,
-  runInjection,
-} from '../../../core/index.js';
-import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
+import type { RunResult } from '../../../core/index.js';
 import { VERSION } from '../../../utils/version.js';
-
-/** Compatibility driver; core computes the same result used by other modes.
- * @param targets Resolved packages.
- * @param flags Completed arguments.
- * @param originCwd Scope origin.
- * @param notices Pre-render diagnostics.
- * @returns Core exit code.
- */
-export async function renderJSON(
-  targets: readonly ConsumerPackage[],
-  flags: DefaultFlags,
-  originCwd: string,
-  notices: readonly string[] = [],
-  diagnostics?: readonly RunFailure[],
-): Promise<number> {
-  const result = await runInjection({
-    targets,
-    flags,
-    originCwd,
-    notices,
-    diagnostics,
-  });
-  displayJSON(result);
-  return result.exitCode;
-}
 
 /** Serialize a completed result; never reads or writes destination files.
  * @param result Complete core result, including validation errors.
  */
-export function displayJSON(result: RunResult): void {
+export function renderJSON(result: RunResult): void {
   for (const error of result.errors) process.stderr.write(`error ${error}\n`);
   const document = {
     schemaVersion: 1,

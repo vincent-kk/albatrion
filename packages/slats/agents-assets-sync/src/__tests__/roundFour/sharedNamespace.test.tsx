@@ -10,8 +10,7 @@ import {
   makeRoot,
   removeRoot,
 } from '../../__tests__/roundThree/fixture.js';
-import { renderJSON } from '../../commands/runCli/renderers/renderJSON.js';
-import { renderPlain } from '../../commands/runCli/renderers/renderPlain.js';
+import { renderOrFallback } from '../../commands/runCli/renderers/renderOrFallback.js';
 import type { ConsumerPackage, DefaultFlags } from '../../types/index.js';
 import { InjectApp } from '../../ui/InjectApp/InjectApp.js';
 
@@ -81,10 +80,12 @@ async function run(
     });
   } else {
     quiet();
-    code = await (surface === 'plain' ? renderPlain : renderJSON)(
+    code = await renderOrFallback(
       targets,
-      flags,
+      { ...flags, json: surface === 'json' },
       root,
+      [],
+      { isTTY: false },
     );
     vi.restoreAllMocks();
   }

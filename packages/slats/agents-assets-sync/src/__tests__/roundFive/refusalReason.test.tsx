@@ -10,8 +10,7 @@ import {
   makeRoot,
   removeRoot,
 } from '../../__tests__/roundThree/fixture.js';
-import { renderJSON } from '../../commands/runCli/renderers/renderJSON.js';
-import { renderPlain } from '../../commands/runCli/renderers/renderPlain.js';
+import { renderOrFallback } from '../../commands/runCli/renderers/renderOrFallback.js';
 import type { DefaultFlags } from '../../types/index.js';
 import { InjectApp } from '../../ui/InjectApp/InjectApp.js';
 
@@ -106,10 +105,12 @@ async function capture(
     record(chunk);
     return true;
   });
-  const code = await (mode === 'plain' ? renderPlain : renderJSON)(
+  const code = await renderOrFallback(
     [target],
-    flagsFor(kind),
+    { ...flagsFor(kind), json: mode === 'json' },
     root,
+    [],
+    { isTTY: false },
   );
   vi.restoreAllMocks();
   return { code, output };
