@@ -30,6 +30,16 @@ export const placeDeclarativeValue = <Self extends FieldNodeRecord<Self>>(
     recordDepartingWrite({ ...owner, template, value }, context);
     return;
   }
-  writeSlotPath(context.root, path, template, value, true, context);
+  writeSlotPath(
+    context.root,
+    path,
+    template,
+    value,
+    true,
+    context,
+    false,
+    false,
+    true,
+  );
   rewriteCoveringDistributions(context, path, value);
 };
