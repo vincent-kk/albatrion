@@ -47,9 +47,8 @@ type GetValue = {
  *                  - Array: Sequence of reference tokens as strings or numbers
  *
  * @returns The value located at the specified JSON Pointer location, or `undefined` when
- *          the location does not exist; a miss is not an error. Ordinary keys are read
- *          without an own-property check, so inherited members such as `/toString` or an
- *          array's `/length` resolve; reserved member names are read as own data only.
+ *          the location does not exist. Object paths require own members, and array
+ *          paths require own elements at canonical decimal indices.
  *          The unknown-input overload requires callers to narrow the result.
  *
  * @throws {JSONPointerError} Thrown in the following cases:

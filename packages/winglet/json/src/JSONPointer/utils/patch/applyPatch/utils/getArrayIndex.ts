@@ -1,11 +1,7 @@
-import { isArrayIndex } from '@winglet/common-utils/filter';
-
 import type { JSONArray } from '@/json/type';
 
+import { getArrayElementIndex } from '../../../getArrayElementIndex';
 import { JSONPatchError } from './error';
-
-/** Largest JavaScript array index (2^32 - 2); a larger key names an ordinary property. */
-const MAX_ARRAY_INDEX = 4294967294;
 
 /**
  * Converts a string key to a valid array index for JSON Patch operations.
@@ -19,13 +15,8 @@ const MAX_ARRAY_INDEX = 4294967294;
  */
 export const getArrayIndex = (key: string, array: JSONArray): number => {
   if (key === '-') return array.length;
-  // RFC 6901 4: an index is "0" or digits without a leading zero. ~~ truncates to 32
-  // bits and would wrap ten digits onto a real element, so longer keys go through Number
-  if (isArrayIndex(key) && (key.length === 1 || key.charCodeAt(0) !== 48)) {
-    if (key.length < 10) return ~~key;
-    const index = Number(key);
-    if (index <= MAX_ARRAY_INDEX) return index;
-  }
+  const index = getArrayElementIndex(key);
+  if (index >= 0) return index;
   throw new JSONPatchError(
     'PATCH_ARRAY_INDEX_INVALID',
     `Invalid array index '${key}'. Expected a non-negative integer or '-' for end-of-array`,
