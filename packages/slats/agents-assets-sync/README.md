@@ -268,12 +268,12 @@ MIT — see [LICENSE](./LICENSE).
 ## Known limits
 
 - The programmatic API is ESM-only. Use ESM `import` or dynamic `import()` from CommonJS; `require()` is not exported. TypeScript `nodenext` may accept a CommonJS static import even though Node rejects it, so successful type-checking does not establish CommonJS compatibility.
-- Shared skill namespaces are merged across all packages in one run. Invoke those packages together when using `--force`: no persistent file ownership ledger is kept, so a later single-package run cannot distinguish another package's files from orphans under its managed namespace. Conflicting contents at one destination fail the affected units without writing that file.
+- Shared skill namespaces are merged across all packages in one run. Invoke those packages together when using `--force`: the current directory scan cannot distinguish every other package's files from orphans under its managed namespace. Conflicting contents at one destination fail the affected units without writing that file.
 - Failed participants, including discovery and gate failures, protect every namespace they could own from orphan deletion. The output names the participant and reason, and suppressed deletions are excluded from force confirmation.
 - Overwrites preserve mode, owner, group and hard links. A single-link file uses atomic replacement when its identity can be restored; otherwise writing stays in place and is not crash-atomic. Read-only targets and dangling write links are refused.
 - A user-scope AGENTS.md symlink is followed only when its target exists. A dangling link is refused with an error and preserved, so the tool cannot silently replace a dotfiles link.
 
-File orphan scans cover only skill namespaces present in the current manifest. Removed whole skills and Claude rule or command files remain installed, even with `--force`, because these files do not record which package owns them. Remove those retired files manually after checking their ownership. Codex and agents rules carry package-owned marker blocks, so retired blocks can be identified and removed with `--force`; this differs from Claude file cleanup.
+Claude rules and skills removed from a later package version are eligible for the same force confirmation when a previous successful installation recorded their path and SHA-256 in the scope’s `.agents-assets-sync/claude.json`. The file must still match the recorded content, and a different recorded owner protects it. Unrecorded files require manual ownership verification. Codex and agents keep ownership evidence in each managed rule block.
 
 ### Markdown boundaries for rules
 

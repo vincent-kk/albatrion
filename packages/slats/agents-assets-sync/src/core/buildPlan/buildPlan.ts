@@ -10,10 +10,11 @@ import {
   readSourceSnapshot,
 } from '../hash/index.js';
 import { blockBodyMatches, parseBlocks } from '../markerBlock/index.js';
+import { hashInstalledFile } from '../utils/hashInstalledFile.js';
 import { isNoisePath } from '../utils/isNoisePath.js';
 import { toPosix } from '../utils/toPosix.js';
 import { walkFiles } from '../utils/walkFiles.js';
-import type { Action, ActionKind, InjectPlan, PlanInput } from './type.js';
+import { type Action, type ActionKind, type InjectPlan, INSTALLED_HASH, type PlanInput } from './type.js';
 import { indexManagedAliases } from './utils/indexManagedAliases.js';
 import { isManagedAlias } from './utils/isManagedAlias.js';
 import { createDocumentReader } from './utils/readDocument.js';
@@ -88,8 +89,7 @@ export async function buildPlan(input: PlanInput): Promise<InjectPlan> {
       requiresForce = true;
       actions.push({
         kind: force ? 'delete' : 'warn-orphan',
-        relPath: orphan.relPath,
-        target: orphan.target,
+        ...orphan,
       });
     }
   }
@@ -133,7 +133,17 @@ async function* findOrphans(
   known: ReadonlySet<string>,
   readDocument: AsyncFn<[fileAbs: string], string | null>,
   aliases: ReadonlyMap<string, readonly string[]>,
-): AsyncGenerator<{ relPath: string; target: Destination }> {
+): AsyncGenerator<Pick<Action, 'relPath' | 'target' | typeof INSTALLED_HASH>> {
+  if (scan.kind === 'installed-file') {
+    const { dstAbs, relPath, installedHash } = scan;
+    if (
+      !known.has(relPath) &&
+      !(await isManagedAlias(relPath, dstAbs, aliases)) &&
+      hashEquals(await hashInstalledFile(dstAbs), installedHash)
+    )
+      yield { relPath, target: { kind: 'file', dstAbs }, [INSTALLED_HASH]: installedHash };
+    return;
+  }
   if (scan.kind === 'directory') {
     for await (const abs of walkFiles(scan.scanRoot)) {
       const scanRelPath = toPosix(relative(scan.scanRoot, abs));

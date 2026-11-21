@@ -8,6 +8,7 @@ import type { InjectPlan } from '../../../buildPlan/index.js';
 import type { Scope } from '../../../scope/index.js';
 import type { SourceSnapshot } from '../../../types/sourceSnapshot.js';
 import type { InjectReport } from '../../type.js';
+import type { InstalledAssets } from './utils/readInstalledAssets.js';
 
 /** One failure or protective notice shared by every display. */
 export interface RunFailure {
@@ -39,6 +40,8 @@ export interface RunUnit {
   readonly namespaceRoots?: readonly string[];
   /** Preparation-only cache; execution omits it from the final report. */
   readonly sourceSnapshots?: ReadonlyMap<string, SourceSnapshot | null>;
+  /** Scope-level ownership evidence retained only until execution finishes. */
+  readonly installedAssets?: InstalledAssets;
 }
 /** Complete execution result; views never derive its exit code. */
 export interface RunResult {
