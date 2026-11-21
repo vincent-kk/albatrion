@@ -33,3 +33,34 @@ it.each(['macro', 'anchored fragment'] as const)('uses native async semantics fo
   await expect(native('invalid')).rejects.toMatchObject({ errors: [expect.objectContaining({ keyword: 'format' }), ...(selection === 'macro' ? [expect.objectContaining({ keyword: 'available' })] : [])] });
   expect((await validate('invalid'))?.map((issue) => issue.keyword)).toEqual(selection === 'macro' ? ['format', 'available'] : ['format']);
 });
+
+it('keeps an active form address private during compilation from a custom keyword', async () => {
+  const Constructor = resolveAjvConstructor(Ajv);
+  const instance = new Constructor({ strict: false, logger: false });
+  const validator = createValidator(instance);
+  const address = 'https://example.test/outer-form';
+  const target = address + '#/definitions/shared';
+  let nestedFailure: unknown;
+  instance.addKeyword({
+    keyword: 'compileNested',
+    compile() {
+      try {
+        validator.compile({ $ref: target });
+      } catch (error) {
+        nestedFailure = error;
+      }
+      return () => true;
+    },
+  });
+
+  const validate = validator.compile({
+    $id: address,
+    compileNested: true,
+    definitions: { shared: { type: 'number' } },
+  });
+  expect(nestedFailure).toMatchObject({
+    message: expect.stringContaining(target),
+  });
+  expect(instance.getSchema(address)).toBeUndefined();
+  await expect(validate(42)).resolves.toBeNull();
+});
