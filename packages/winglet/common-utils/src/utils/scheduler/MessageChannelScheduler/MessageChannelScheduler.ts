@@ -173,7 +173,7 @@ export class MessageChannelScheduler {
       const maxTasksHandler = this.__options__.onMaxTasksExceeded;
       if (maxTasksHandler) {
         const shouldContinue = maxTasksHandler();
-        if (shouldContinue === false) return -1;
+        if (shouldContinue === false || this.__destroyed__) return -1;
       } else
         throw new MessageChannelSchedulerError(
           'MAX_TASKS_EXCEEDED',
