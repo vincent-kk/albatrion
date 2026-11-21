@@ -5,6 +5,7 @@ import { useHandle } from '@winglet/react-utils/hook';
 
 import type { FieldInputDateFormatProps } from './type';
 import { isRenderableDateInputValue } from './utils/isRenderableDateInputValue';
+import { readNativeTextValue } from '../../utils/readNativeTextValue';
 
 /** Render a native date, month, week, time or datetime-local input, falling back to text for an unrenderable default. */
 export const FieldInputDateFormat = ({
@@ -29,7 +30,7 @@ export const FieldInputDateFormat = ({
   );
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.validity.badInput) return;
-    onChange(event.target.value === '' ? undefined : event.target.value);
+    onChange(readNativeTextValue(event.target.value));
   });
   return (
     <input

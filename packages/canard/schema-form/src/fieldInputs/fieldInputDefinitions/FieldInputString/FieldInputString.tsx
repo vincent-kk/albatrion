@@ -4,6 +4,7 @@ import { type ChangeEvent, type ComponentPropsWithRef, useMemo } from 'react';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type { FieldInputProps } from '@/schema-form/types';
+import { readNativeTextValue } from '../../utils/readNativeTextValue';
 
 /** Render the common string input; binding wrappers may supply native draft handlers. */
 export const FieldInputString = ({
@@ -28,7 +29,7 @@ export const FieldInputString = ({
     else return 'text';
   }, [jsonSchema?.format]);
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value === '' ? undefined : event.target.value);
+    onChange(readNativeTextValue(event.target.value));
   });
   return (
     <input

@@ -12,6 +12,7 @@ import type {
 } from '@/schema-form/types';
 
 import type { RadioLabelsContext } from './type';
+import { readEnumOptionValue } from '../../utils/readEnumOptionValue';
 
 /** Render a radio group for a string enum node. */
 export const FieldInputStringRadio = ({
@@ -49,9 +50,7 @@ export const FieldInputStringRadio = ({
     [context, jsonSchema, alias],
   );
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-    const rawValue = radioOptions.find(
-      (option) => option.value === event.target.value,
-    )?.rawValue;
+    const rawValue = readEnumOptionValue(radioOptions, event.target.value);
     if (rawValue === undefined) return;
     onChange(rawValue);
   });
