@@ -25,7 +25,6 @@ import { hasDistributedChildInput } from '../../input/hasDistributedChildInput';
 import { updatePendingExitIndex } from '../../scratch/updatePendingExitIndex';
 import { cloneFromSlot } from '../../slots/cloneFromSlot';
 import { createFromSlotOverlay } from '../../slots/createFromSlotOverlay';
-import { enterSlotClone } from '../../slots/enterSlotClone';
 import { getSlotSource } from '../../slots/getSlotSource';
 import { applyDepartingSource } from '../../source/applyDepartingSource';
 import { createChildNode } from '../createChildNode';
@@ -265,7 +264,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     next[entry.name]?.blueprintNode === entry.node
       ? next[entry.name]
       : undefined;
-  const distribution = getChildDistribution(node, entry.name, context);
+  const distribution = getChildDistribution(node, entry, context);
   const ownsInput =
     distribution &&
     hasDistributedChildInput(
@@ -334,9 +333,14 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     context.enteredNodes.add(child);
 
     if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
-    else if (slotSource || slotOverlay)
-      enterSlotClone(node, child, entry.name, context);
-    else enterFieldNode(node, child, entry.name, context);
+    else
+      enterFieldNode(
+        node,
+        child,
+        entry,
+        context,
+        !!(slotSource || slotOverlay),
+      );
     if (child.behavior.strategy === 'branch')
       context.shapeDirtyPaths.add(child.path);
     frame.hasChanged = true;

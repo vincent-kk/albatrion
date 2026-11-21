@@ -5,6 +5,10 @@ import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
+import { getChildDistribution } from '../input/getChildDistribution';
+import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
+import { getSlotDecision } from '../source/getSlotDecision';
+import { supersedeCandidateInput } from '../source/supersedeCandidateInput';
 import { createSlotValueOverlay } from './createSlotValueOverlay';
 import { getSlotBinding } from './getSlotBinding';
 import { getSlotPathEntry } from './getSlotPathEntry';
@@ -27,6 +31,7 @@ type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
  * @param isAutomatic - Whether projected child writes preserve wrong-kind ancestor source
  * @param preserveCandidates - Structural replay keeps other kinds at the same address
  * @param selectsNamedSource - Whether this write owns the slot's retained source
+ * @param writeOrder - Rank of a directly accepted latent input
  * @returns Whether a terminal descendant has a projected value
  */
 export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
@@ -39,6 +44,7 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
   isAutomatic = false,
   preserveCandidates = false,
   selectsNamedSource?: boolean,
+  writeOrder?: number,
 ): boolean => {
   const names = getSlotPathNames(root.runtime, path);
   if (names === undefined) return false;
@@ -70,7 +76,26 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
       continue;
     }
     const instance = host.inactiveSlots?.get(entry);
-    const previous = host.inactiveSlotOverlays?.get(entry);
+    let previous = host.inactiveSlotOverlays?.get(entry);
+    if (context && writeOrder !== undefined && depth + 1 < names.length) {
+      const distribution = getChildDistribution(host, entry, context);
+      if (
+        distribution &&
+        !distribution.shouldPreserveLatent &&
+        hasDistributedChildInput(
+          distribution.input,
+          name,
+          template.kind === 'array',
+        )
+      )
+        previous = createSlotValueOverlay(
+          entry.node,
+          Reflect.get(distribution.input, name),
+          instance,
+          previous,
+          distribution.isWhole,
+        ).overlay;
+    }
     let wrote = false;
     const patch = (
       template: BlueprintNode,
@@ -136,6 +161,20 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
     overlays.set(entry, patch(entry.node, instance, previous, depth + 1));
     if (context && selectsNamedSource !== undefined)
       recordRetainedSlotWrite(host, entry, context, selectsNamedSource);
+    if (context && writeOrder !== undefined) {
+      const previousInput = getSlotDecision(
+        host,
+        entry,
+        context,
+        writeOrder,
+      ).postPolicyInput;
+      if (
+        previousInput &&
+        previousInput.order < writeOrder &&
+        depth + 1 === names.length
+      )
+        supersedeCandidateInput(previousInput, true);
+    }
     if (!preserveCandidates) {
       let entryIdentity: Optional<string>;
       for (const other of entries) {

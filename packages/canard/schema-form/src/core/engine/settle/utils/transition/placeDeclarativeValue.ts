@@ -1,7 +1,6 @@
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
-import { rewriteCoveringDistributions } from '../input/rewriteCoveringDistributions';
 import { writeSlotPath } from '../slots/writeSlotPath';
 import { recordExitInput } from '../source/recordExitInput';
 import { findDepartingOwner } from './findDepartingOwner';
@@ -10,8 +9,7 @@ import { findDepartingOwner } from './findDepartingOwner';
  * Place a declarative value at an address that has no live node when the write is applied; the one
  * place every such write lands (WRITE-079). At or below a node leaving in this settlement the value
  * waits in the departing record, which the revival of that node or its final exit applies. Any other
- * inactive address takes the value in its slot, and the settlement's distributions that cover the
- * address carry it, so a later compute does not replay an earlier caller value or lower winner.
+ * inactive address takes the value in its slot, with its accepted order so compute can decline an earlier distribution.
  * @param context - Settlement applying the write
  * @param path - Absolute data address the write names
  * @param template - Kind that interprets the value at the address
@@ -27,6 +25,7 @@ export const placeDeclarativeValue = <Self extends FieldNodeRecord<Self>>(
   order?: number,
 ): void => {
   if (value === undefined) return;
+  order ??= context.retainedWriteOrder = (context.retainedWriteOrder ?? 0) + 1;
   const owner = findDepartingOwner(context.root, path, context);
   if (owner) {
     recordExitInput(owner.node, owner.suffix, template, value, context, order);
@@ -42,6 +41,6 @@ export const placeDeclarativeValue = <Self extends FieldNodeRecord<Self>>(
     false,
     false,
     true,
+    order,
   );
-  rewriteCoveringDistributions(context, path, value);
 };

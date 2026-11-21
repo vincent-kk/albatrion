@@ -43,7 +43,12 @@ export const readAbsentSlotSource = <Self extends FieldNodeRecord<Self>>(
   }
   const name = '' + index;
   const path = appendSegment(host.path, name);
-  const distribution = getChildDistribution(host, name, context, path);
+  const distribution = getChildDistribution(
+    host,
+    candidates[0] ?? name,
+    context,
+    path,
+  );
   if (
     distribution &&
     !distribution.isAutomatic &&
