@@ -23,9 +23,11 @@ for (const tier of ["pr", "pre-release"])
       .map((w) => w.name)
       .sort();
     const shards = plan.shards.filter((s) => s.name.startsWith("plugins-"));
+    const antdGroups =
+      tier === "pr" ? ["plugins-antd5", "plugins-antd6"] : ["plugins-antd"];
     assert.deepEqual(
       shards.map((s) => s.name),
-      ["plugins-ajv", "plugins-antd", "plugins-ui"],
+      ["plugins-ajv", ...antdGroups, "plugins-ui"],
     );
     assert.deepEqual(shards.flatMap((s) => s.affected).sort(), plugins);
     for (const shard of shards) assert.equal(shard.browser, false);
@@ -33,12 +35,40 @@ for (const tier of ["pr", "pre-release"])
       shards[0].affected,
       plugins.filter((name) => name.includes("-ajv")),
     );
+    for (const group of antdGroups) {
+      const shard = shards.find(({ name }) => name === group);
+      const members = plugins.filter((name) =>
+        tier === "pr"
+          ? name.endsWith(`-${group.slice(8)}-plugin`)
+          : /-antd[56]-plugin$/.test(name),
+      );
+      assert.deepEqual(shard.affected, members);
+      if (tier !== "pr") continue;
+      const builds = shard.steps.filter(({ kind }) => kind === "build");
+      const core = "@canard/schema-form";
+      assert.ok(
+        builds.some(({ args }) => args[1] === core && args[2] === "exec"),
+      );
+      assert.ok(
+        builds.some(
+          ({ args }) => args[1] === core && args[2] === "build:types",
+        ),
+      );
+      const fullBuilds = builds
+        .filter(({ args }) => args[0] === "workspaces")
+        .flatMap(({ args }) => args);
+      assert.ok(fullBuilds.includes(members[0]));
+      assert.ok(fullBuilds.includes("@canard/schema-form-ajv8-plugin"));
+      assert.ok(!fullBuilds.includes(core));
+      assert.ok(!fullBuilds.includes("@canard/schema-form-ajv6-plugin"));
+      assert.ok(!fullBuilds.includes("@canard/schema-form-ajv7-plugin"));
+      assert.equal(
+        fullBuilds.filter((name) => /-antd[56]-plugin$/.test(name)).length,
+        1,
+      );
+    }
     assert.deepEqual(
-      shards[1].affected,
-      plugins.filter((name) => /-antd[56]-plugin$/.test(name)),
-    );
-    assert.deepEqual(
-      shards[2].affected,
+      shards.at(-1).affected,
       plugins.filter(
         (name) => !name.includes("-ajv") && !/-antd[56]-plugin$/.test(name),
       ),
