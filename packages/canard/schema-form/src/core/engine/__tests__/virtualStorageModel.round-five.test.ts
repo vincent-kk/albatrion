@@ -8,8 +8,9 @@ import { createSeedSampler } from './fixtures/createSeedSampler';
 
 /*
  * Seeds: 1 to 3000 locally and in the pre-release tier. The pr tier runs 600 stratified seeds: the
- * first 50 of each of 12 classes, constituent count 0 to 5 times the initial gate of the object
- * constituent's y, and the test fails unless all 22 operations run.
+ * first 50 of each of 12 classes, zero to five scalar constituents plus one object constituent,
+ * crossed with the initial gate of the object's y. Zero-scalar seeds also write to an empty group.
+ * The test fails unless all 22 operations and the actual group arities from zero to six are reached.
  */
 const SEED_CLASSES = [0, 1, 2, 3, 4, 5].flatMap((count) =>
   [false, true].map((yOn) => `${count}:${yOn}`),
@@ -104,6 +105,7 @@ it(`virtual operations follow the reference model in sequential and batched hist
           properties,
           options: {
             virtual: {
+              ...(count === 0 ? { empty: { fields: [] } } : {}),
               reversed: { fields: [...fields].reverse() },
               group: {
                 fields,
@@ -125,6 +127,18 @@ it(`virtual operations follow the reference model in sequential and batched hist
     for (const root of roots) {
       const value = root.find('/group')!.value;
       if (Array.isArray(value)) arities.add(value.length);
+      if (count === 0) {
+        const empty = root.find('/empty')!;
+        const before = root.value;
+        root.batch(() => {
+          empty.setValue([]);
+          empty.setValue([], WriteOption.Merge);
+          empty.resetSubtree();
+        });
+        expect(empty.value).toEqual([]);
+        expect(root.value).toBe(before);
+        if (Array.isArray(empty.value)) arities.add(empty.value.length);
+      }
     }
     // The direct root applies each object-slot effect to the constituent's own node.
     const direct = create();
