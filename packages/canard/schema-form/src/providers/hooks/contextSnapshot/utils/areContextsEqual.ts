@@ -1,25 +1,35 @@
-import { isPlainObject } from '@winglet/common-utils/filter';
+import {
+  isEmptyObject,
+  isError,
+  isPlainObject,
+} from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { equals } from '@winglet/common-utils/object';
 
-/** Built-in internal-slot tags supported by the shared comparator. */
+/** Tags delegated directly to the shared comparator. */
 const COMPARABLE_TAGS: readonly string[] = [
   '[object Date]',
   '[object RegExp]',
   '[object Set]',
-  '[object ArrayBuffer]',
-  '[object Number]',
-  '[object String]',
-  '[object Boolean]',
-  '[object Error]',
 ];
 
 /** Own non-enumerable error state: the ES2022 `cause` and AggregateError `errors`. */
 const ERROR_SLOTS: readonly string[] = ['cause', 'errors'];
 
-/** Whether content comparison can inspect this built-in state. */
-const hasComparableSlots = (value: object, tag: string): boolean =>
-  ArrayBuffer.isView(value) || COMPARABLE_TAGS.includes(tag);
+/** Detect errors whose comparison needs only name and message. */
+const hasNoErrorExtras = (error: Error): boolean =>
+  !(Symbol.toStringTag in error || 'cause' in error || 'errors' in error) &&
+  isEmptyObject(error) &&
+  Object.prototype.toString.call(error) === '[object Error]';
+
+/** An error's description may be supplied by its prototype. */
+type ErrorDescription = { name?: unknown; message?: unknown };
+
+/** Compare the name and message shared by plain and extended errors. */
+const areErrorNamesAndMessagesEqual = (
+  left: ErrorDescription,
+  right: ErrorDescription,
+): boolean => left.name === right.name && left.message === right.message;
 
 /**
  * Compare context content while treating opaque instance state as reference-owned.
@@ -29,6 +39,13 @@ const hasComparableSlots = (value: object, tag: string): boolean =>
  */
 export const areContextsEqual = (left: unknown, right: unknown): boolean => {
   if (left === right || (left !== left && right !== right)) return true;
+  if (
+    isError(left) &&
+    isError(right) &&
+    hasNoErrorExtras(left) &&
+    hasNoErrorExtras(right)
+  )
+    return areErrorNamesAndMessagesEqual(left, right);
   const pending: unknown[] = [left, right];
   const pairs: object[] = [];
   let pairIndex: Map<object, Set<object>> | undefined;
@@ -108,8 +125,9 @@ export const areContextsEqual = (left: unknown, right: unknown): boolean => {
       }
       continue;
     }
+    const isErrorTag = tag === '[object Error]';
     if (
-      tag === '[object Error]' ||
+      isErrorTag ||
       tag === '[object ArrayBuffer]' ||
       tag === '[object Number]' ||
       tag === '[object String]' ||
@@ -118,17 +136,16 @@ export const areContextsEqual = (left: unknown, right: unknown): boolean => {
     ) {
       const keys = Object.keys(left);
       if (keys.length !== Object.keys(right).length) return false;
-      if (tag === '[object Error]') {
-        if (
-          Reflect.get(left, 'name') !== Reflect.get(right, 'name') ||
-          Reflect.get(left, 'message') !== Reflect.get(right, 'message')
-        )
-          return false;
+      if (isErrorTag) {
+        if (!areErrorNamesAndMessagesEqual(left, right)) return false;
         for (const slot of ERROR_SLOTS) {
           const has = hasOwnProperty(left, slot);
           if (has !== hasOwnProperty(right, slot)) return false;
-          if (has)
-            pending.push(Reflect.get(left, slot), Reflect.get(right, slot));
+          if (has) {
+            const a = Reflect.get(left, slot);
+            const b = Reflect.get(right, slot);
+            if (a !== b) pending.push(a, b);
+          }
         }
       } else if (tag === '[object Number]') {
         const a = Number.prototype.valueOf.call(left),
@@ -149,11 +166,13 @@ export const areContextsEqual = (left: unknown, right: unknown): boolean => {
       } else if (!equals(left, right, keys)) return false;
       for (const key of keys) {
         if (!Object.prototype.hasOwnProperty.call(right, key)) return false;
-        pending.push(Reflect.get(left, key), Reflect.get(right, key));
+        const a = Reflect.get(left, key);
+        const b = Reflect.get(right, key);
+        if (a !== b) pending.push(a, b);
       }
       continue;
     }
-    if (!hasComparableSlots(left, tag) || !equals(left, right)) return false;
+    if (!COMPARABLE_TAGS.includes(tag) || !equals(left, right)) return false;
   }
   return true;
 };
