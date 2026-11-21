@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { TimePicker } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
-import type { Dayjs } from 'dayjs';
+import dayjs, { type Dayjs } from 'dayjs';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -10,8 +10,6 @@ import type {
   FieldInputDefinition,
   FieldInputProps,
 } from '@canard/schema-form';
-
-import { parseTime } from './utils/time/parseTime';
 
 const DATE_FORMAT = 'HH:mm:00Z';
 
@@ -21,7 +19,7 @@ interface FieldInputTimeProps
 }
 
 const FieldInputTime = ({
-  inputId,
+  path,
   name,
   disabled,
   readOnly,
@@ -35,14 +33,15 @@ const FieldInputTime = ({
     onChange(date ? date.format(DATE_FORMAT) : undefined);
   });
   const initialValue = useMemo(
-    () => (defaultValue ? parseTime(defaultValue) : undefined),
+    () => (defaultValue ? dayjs(defaultValue, DATE_FORMAT) : undefined),
     [defaultValue],
   );
   return (
     <TimePicker
-      id={inputId}
+      id={path}
       name={name}
-      disabled={disabled || readOnly}
+      disabled={disabled}
+      readOnly={readOnly}
       format={'HH:mm'}
       defaultValue={initialValue}
       onChange={handleChange}

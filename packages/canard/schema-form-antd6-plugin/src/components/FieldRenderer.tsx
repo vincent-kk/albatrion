@@ -7,9 +7,6 @@ import { isArraySchema } from '@winglet/json-schema/filter';
 
 import type { FieldRendererProps } from '@canard/schema-form';
 
-import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
-import { isRadioGroupInput } from '../utils/inputs/isRadioGroupInput';
-
 /** Legends use the same wrapping as registered labels. */
 const TITLE_STYLE: CSSProperties = { wordBreak: 'unset' };
 
@@ -22,65 +19,25 @@ export const FieldRenderer = ({
   node,
   depth,
   name,
-  labelId,
-  jsonSchema,
   Input,
   Label,
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps): ReactElement => {
-  const presentation =
-    typeof jsonSchema === 'object' && jsonSchema !== null
-      ? jsonSchema.presentation
-      : undefined;
-  const inputType =
-    typeof presentation === 'object' &&
-    presentation !== null &&
-    'inputType' in presentation
-      ? presentation.inputType
-      : undefined;
-  const hint =
-    typeof jsonSchema === 'object' && jsonSchema !== null
-      ? {
-          type: node.type,
-          schemaType: node.schemaType,
-          inputType: typeof inputType === 'string' ? inputType : undefined,
-          format:
-            'format' in jsonSchema && typeof jsonSchema.format === 'string'
-              ? jsonSchema.format
-              : undefined,
-          jsonSchema,
-        }
-      : undefined;
-  const grouped =
-    hint !== undefined &&
-    (isRadioGroupInput(hint) || isCheckboxGroupInput(hint));
-  if (depth === 0)
-    return (
-      <>
-        <Input />
-        {errorMessage !== null &&
-          errorMessage !== undefined &&
-          typeof errorMessage !== 'boolean' && (
-            <ErrorMessage style={EMPTY_OBJECT}>{errorMessage}</ErrorMessage>
-          )}
-      </>
-    );
+  if (depth === 0) return <Input />;
 
   if (node.strategy === 'branch') {
     return (
       <fieldset
-        aria-labelledby={labelId}
         style={{
           marginBottom: 5,
           marginLeft: 5 * depth,
         }}
       >
-        <legend id={labelId}>
+        <legend>
           <Typography.Text style={TITLE_STYLE}>{name}</Typography.Text>
         </legend>
-        <Input aria-labelledby={labelId} />
-        <ErrorMessage style={EMPTY_OBJECT}>{errorMessage}</ErrorMessage>
+        <Input />
       </fieldset>
     );
   } else {
@@ -93,15 +50,9 @@ export const FieldRenderer = ({
       >
         <Flex gap={10} align="center">
           {node.parentNode && isArraySchema(node.parentNode) === false && (
-            <Label {...(grouped ? { htmlFor: undefined } : {})} />
+            <Label />
           )}
-          <Input
-            aria-labelledby={
-              node.parentNode && !isArraySchema(node.parentNode)
-                ? labelId
-                : undefined
-            }
-          />
+          <Input />
         </Flex>
         <ErrorMessage style={EMPTY_OBJECT}>{errorMessage}</ErrorMessage>
       </div>

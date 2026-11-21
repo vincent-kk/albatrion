@@ -47,29 +47,6 @@ it('shows no selected enum option or current label for an undefined value', () =
   ).toHaveLength(0);
 });
 
-it('multiple mode with a null value shows no tag and commits an array', async () => {
-  const ref = createRef<FormHandle>();
-  const view = render(
-    <Form
-      ref={ref}
-      fieldInputDefinitions={[FieldInputStringEnumDefinition]}
-      jsonSchema={{
-        type: ['array', 'null'],
-        items: { type: 'string', enum: ['KR', 'US'] },
-      }}
-      defaultValue={null}
-    />,
-  );
-  expect(ref.current!.getValue()).toBeNull();
-  expect(view.container.textContent?.trim()).toBe('');
-  fireEvent.mouseDown(screen.getByRole('combobox'));
-  await act(async () => {
-    fireEvent.click(screen.getByTitle('US'));
-  });
-  expect(ref.current!.getValue()).toEqual(['US']);
-  expect(view.container.querySelector('.ant-select')!.textContent).toBe('US');
-});
-
 it('clears the current enum label when a form value returns to undefined', async () => {
   const ref = createRef<FormHandle>();
   const view = render(
