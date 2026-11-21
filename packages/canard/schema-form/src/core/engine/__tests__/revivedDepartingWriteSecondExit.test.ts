@@ -30,6 +30,7 @@ const createSchema = (
   target: Target,
   policy: Policy,
   neighbor?: Neighbor,
+  extraProperties?: Record<string, AuthoredSchema>,
 ): AuthoredSchema => {
   const nested = neighbor === 'nested address';
   const address = nested ? '/o/n/y' : '/o/y';
@@ -57,9 +58,12 @@ const createSchema = (
       o: {
         type: 'object',
         controls: { active: '/on === true' },
-        properties: nested
-          ? { n: { type: 'object', properties: { y: leaf } } }
-          : { y: leaf },
+        properties: {
+          ...(nested
+            ? { n: { type: 'object' as const, properties: { y: leaf } } }
+            : { y: leaf }),
+          ...extraProperties,
+        },
       },
       reopen: inject('../on', true),
       closeAgain: {
@@ -145,7 +149,10 @@ const observe = (
     validationMode: ValidationMode.None,
     errorReporter: { hasConsumer: () => true, report },
   });
-  if (policy === 'onInactive') root.find('/o/y')!.onInactive(resolver);
+  if (policy === 'onInactive') {
+    const address = neighbor === 'nested address' ? '/o/n/y' : '/o/y';
+    root.find(address)!.onInactive(resolver);
+  }
   write(root);
   return {
     on: root.find('/on')!.value,
@@ -259,3 +266,133 @@ it('lets the exit policy decide a value replaced by a later live write', () => {
         diagnostics: [],
       });
 });
+
+it.each([
+  'second revival',
+  'higher rank',
+  'nested address',
+  'caller',
+  'subtree reset',
+  'live overwrite',
+] as const)(
+  'matches the own-path write through %s under exit policies (WRITE-079)',
+  (neighbor) => {
+    for (const policy of [
+      'unsetOnInactive',
+      'inactiveValue',
+      'onInactive',
+    ] as const) {
+      const combined =
+        neighbor === 'caller'
+          ? { ...CALLER_VALUES, o: { y: 'caller' } }
+          : CALLER_VALUES;
+      const merge = (root: Root) => root.setValue(combined, WriteOption.Merge);
+      const batch = (root: Root) =>
+        root.batch(() => {
+          const object = root.find('/o')!;
+          writeFields(root);
+          if (neighbor === 'caller') root.find('/o/y')!.setValue('caller');
+          if (neighbor === 'subtree reset') object.resetSubtree();
+        });
+      const expected = observe('own path', policy, merge, neighbor);
+      expect(expected.diagnostics).toEqual([]);
+      for (const target of [
+        'own path',
+        'parent object',
+        'virtual group',
+      ] as const) {
+        for (const [form, write] of [
+          ['Merge', merge],
+          ['batch', batch],
+          ['nested batch', (root: Root) => root.batch(() => batch(root))],
+        ] as const)
+          expect(
+            observe(target, policy, write, neighbor),
+            `${policy}, ${target}, ${form}`,
+          ).toEqual(expected);
+      }
+    }
+  },
+);
+
+it.each(['leaf', 'container'] as const)(
+  'withdraws an unnamed %s default filled during revival (SETTLE-005)',
+  (kind) => {
+    for (const target of [
+      'own path',
+      'parent object',
+      'virtual group',
+    ] as const)
+      for (const policy of [
+        'default',
+        'unsetOnInactive',
+        'inactiveValue',
+        'onInactive',
+      ] as const)
+        for (const [form, write] of FORMS) {
+          const controls = { active: '/on === true && /src === "s"' };
+          const z: AuthoredSchema =
+            kind === 'container'
+              ? {
+                  type: 'object',
+                  default: { x: 'D' },
+                  controls,
+                  properties: { x: { type: 'string' } },
+                }
+              : { type: 'string', default: 'D', controls };
+          const root = nodeFromJSONSchema({
+            jsonSchema: createSchema(target, policy, undefined, { z }),
+            defaultValue: { on: true, o: { y: 'y0' } },
+            validationMode: ValidationMode.None,
+          });
+          if (policy === 'onInactive')
+            root.find('/o/y')!.onInactive(() => 'resolved');
+          write(root);
+          expect(root.inactiveValues, `${target}, ${policy}, ${form}`).toEqual([
+            { path: '/o/y', value: 'new' },
+          ]);
+        }
+  },
+);
+
+it.each(['default', 'unsetOnInactive', 'inactiveValue', 'onInactive'] as const)(
+  'rolls back unlatched automatic writes when the cycle exhausts the budget (SETTLE-011, %s)',
+  (policy) => {
+    for (const target of [
+      'own path',
+      'parent object',
+      'virtual group',
+    ] as const)
+      for (const [form, write] of FORMS) {
+        const schema = createSchema(target, policy);
+        schema.properties!.reopen!.controls!.derived =
+          '/on === false ? "r" : ""';
+        schema.properties!.closeAgain!.controls!.derived =
+          '/o/y === "new" ? "closed" : ""';
+        const report = vi.fn();
+        const root = nodeFromJSONSchema({
+          jsonSchema: schema,
+          defaultValue: { on: true, o: { y: 'y0' } },
+          validationMode: ValidationMode.None,
+          errorReporter: { hasConsumer: () => true, report },
+        });
+        if (policy === 'onInactive')
+          root.find('/o/y')!.onInactive(() => 'resolved');
+        const message = `${target}, ${form}`;
+        let thrown: unknown;
+        try {
+          write(root);
+        } catch (error) {
+          thrown = error;
+        }
+        expect(
+          [thrown, ...report.mock.calls.flat()].map(String).join(' '),
+          message,
+        ).toMatch(/budget|derive/i);
+        expect(root.inactiveValues, message).toEqual([
+          { path: '/o/y', value: 'y0' },
+        ]);
+        expect(root.find('/on')!.value, message).toBe(false);
+      }
+  },
+);

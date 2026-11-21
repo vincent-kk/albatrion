@@ -19,6 +19,7 @@ const SEED_CLASSES = [1, 2, 3, 4, 5].flatMap((count) =>
 const sampler = createSeedSampler(3000, SEED_CLASSES, 40);
 
 it(`virtual projections follow generated branch, retention and batch histories for ${sampler.label}`, () => {
+  const reachedBranches = new Set<string>();
   const reachedPolicies = new Set<number>();
   const reachedOperations = new Set<number>();
   for (let seed = 1; sampler.has(seed); seed++) {
@@ -84,18 +85,24 @@ it(`virtual projections follow generated branch, retention and batch histories f
       input[`on${index}`] = active[index];
       if (initial[index] !== undefined) input[names[index]] = initial[index];
     }
-    const root = nodeFromJSONSchema({
-      jsonSchema: {
-        type: 'object',
-        properties,
-        ...(seed % 2 && !useIf ? { oneOf: branches } : { allOf: branches }),
-        options: {
-          virtual: {
-            group: { fields: names },
-            reversed: { fields: [...names].reverse() },
-          },
+    const jsonSchema: AuthoredSchema = {
+      type: 'object',
+      properties,
+      ...(seed % 2 && !useIf ? { oneOf: branches } : { allOf: branches }),
+      options: {
+        virtual: {
+          group: { fields: names },
+          reversed: { fields: [...names].reverse() },
         },
       },
+    };
+    if (jsonSchema.allOf?.some((branch) => branch.if))
+      reachedBranches.add(`${count}:if`);
+    if (jsonSchema.oneOf?.length) reachedBranches.add(`${count}:oneOf`);
+    if (jsonSchema.allOf?.some((branch) => branch.controls?.active))
+      reachedBranches.add(`${count}:allOf`);
+    const root = nodeFromJSONSchema({
+      jsonSchema,
       defaultValue: input,
       validationMode: ValidationMode.None,
       ...(useIf
@@ -231,6 +238,7 @@ it(`virtual projections follow generated branch, retention and batch histories f
       expect(outside.errors).toBe(outsideErrors);
     }
   }
+  expect([...reachedBranches].sort()).toEqual([...SEED_CLASSES].sort());
   expect(sampler.shortfall()).toEqual([]);
   expect(reachedPolicies.size).toBe(4);
   expect(reachedOperations.size).toBe(8);
