@@ -84,8 +84,10 @@ it.each([
   ['nested batch', 1],
   ['batch', 2],
   ['nested batch', 2],
+  ['sequence', 1],
+  ['one Merge', 1],
 ] as const)(
-  'a refused reset in %s reads the keys in a later virtual Merge with %i constituent(s)',
+  'a refused reset in %s reads the keys in a later virtual Merge with %i constituent(s) (EVENT-013 and equivalent Merge)',
   (mode, constituentCount) => {
     const jsonSchema: AuthoredSchema = {
       type: 'object',
@@ -127,11 +129,127 @@ it.each([
       root.find('/on')!.setValue(false);
       n.resetSubtree();
     };
-    root.batch(mode === 'batch' ? write : () => root.batch(write));
+    if (mode === 'sequence') write();
+    else if (mode === 'one Merge')
+      root.setValue(
+        { on: false, o: { n: { x: 'lateX', y: 'earlyY' } } },
+        WriteOption.Merge,
+      );
+    else root.batch(mode === 'batch' ? write : () => root.batch(write));
     expect(
       Object.fromEntries(
         root.inactiveValues.map(({ path, value }) => [path, value]),
       ),
     ).toEqual({ '/o/n/x': 'lateX', '/o/n/y': 'earlyY' });
+  },
+);
+
+const EARLY = {
+  n: { x: 'earlyX', y: 'earlyY' },
+  a: ['earlyA', 'earlyB'],
+  z: 'earlyZ',
+};
+
+it.each([
+  {
+    name: 'nested key',
+    later: { on: false, o: { n: { x: 'lateX' } } },
+    combined: { on: false, o: { ...EARLY, n: { x: 'lateX', y: 'earlyY' } } },
+    option: WriteOption.Merge,
+  },
+  {
+    name: 'array replacement',
+    later: { on: false, o: { a: ['lateA'] } },
+    combined: { on: false, o: { ...EARLY, a: ['lateA'] } },
+    option: WriteOption.Merge,
+  },
+  {
+    name: 'whole scope',
+    later: {
+      on: false,
+      o: { n: { x: 'lateX', y: 'lateY' }, a: ['lateA'], z: 'lateZ' },
+    },
+    combined: {
+      on: false,
+      o: { n: { x: 'lateX', y: 'lateY' }, a: ['lateA'], z: 'lateZ' },
+    },
+    option: WriteOption.Merge,
+  },
+  {
+    name: 'no overlap',
+    later: { on: false, other: 'last' },
+    combined: { on: false, other: 'last', o: EARLY },
+    option: WriteOption.Merge,
+  },
+  {
+    name: 'overwrite',
+    later: { on: false, o: { n: { x: 'lateX' } } },
+    combined: {
+      on: false,
+      other: undefined,
+      o: { n: { x: 'lateX', y: undefined }, a: undefined, z: undefined },
+    },
+    option: WriteOption.Overwrite,
+  },
+] as const)(
+  'a refused reset with $name matches one Merge of the final caller values (EVENT-013)',
+  ({ later, combined, option }) => {
+    const jsonSchema: AuthoredSchema = {
+      type: 'object',
+      properties: {
+        on: { type: 'boolean' },
+        other: { type: 'string' },
+        o: {
+          type: 'object',
+          controls: { active: '/on === true' },
+          properties: {
+            n: {
+              type: 'object',
+              properties: { x: { type: 'string' }, y: { type: 'string' } },
+            },
+            a: { type: 'array', items: { type: 'string' } },
+            z: { type: 'string' },
+          },
+        },
+      },
+    };
+    const observe = (write: (root: Root) => void) => {
+      const root = nodeFromJSONSchema({
+        jsonSchema,
+        defaultValue: {
+          on: true,
+          other: 'v',
+          o: { n: { x: 'x0', y: 'y0' }, a: ['a0', 'b0'], z: 'z0' },
+        },
+        validationMode: ValidationMode.None,
+      });
+      write(root);
+      return {
+        value: root.value,
+        retained: Object.fromEntries(
+          root.inactiveValues.map(({ path, value }) => [path, value]),
+        ),
+      };
+    };
+    const expected = observe((root) =>
+      root.setValue(combined, WriteOption.Merge),
+    );
+    for (const mode of ['batch', 'nested batch', 'sequence'] as const)
+      for (const resets of [1, 2])
+        expect(
+          observe((root) => {
+            const object = root.find('/o')!;
+            const write = () => {
+              object.setValue(EARLY);
+              root.setValue(later, option);
+              for (let reset = 0; reset < resets; reset++)
+                object.resetSubtree();
+            };
+            if (mode === 'sequence') write();
+            else if (mode === 'batch') root.batch(write);
+            else root.batch(() => root.batch(write));
+          }),
+          `${mode}, ${resets} reset(s)`,
+        ).toEqual(expected);
   },
 );

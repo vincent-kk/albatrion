@@ -84,3 +84,177 @@ it.each(['merge', 'batch', 'nested'] as const)(
     });
   },
 );
+
+it.each([
+  [false, false],
+  [false, true],
+  [true, false],
+  [true, true],
+] as const)(
+  'applies overlapping addresses from one rule in return order (WRITE-079, reverse=%s, revived=%s)',
+  (reverse, revived) => {
+    const descendant = ['../o/n/y', 'low'] as const;
+    const parent = ['../o', { n: { x: 'wholeX', y: 'wholeY' } }] as const;
+    const entries = reverse ? [parent, descendant] : [descendant, parent];
+    const root = nodeFromJSONSchema({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          on: { type: 'boolean' },
+          src: {
+            type: 'string',
+            controls: {
+              injectTo: (value) => (value ? Object.fromEntries(entries) : {}),
+            },
+          },
+          o: {
+            type: 'object',
+            controls: { active: '/on === true' },
+            properties: {
+              n: {
+                type: 'object',
+                properties: { x: { type: 'string' }, y: { type: 'string' } },
+              },
+            },
+          },
+          ...(revived ? { reopen: inject('../on', true) } : {}),
+        },
+      },
+      defaultValue: { on: true, o: { n: { x: 'x0', y: 'y0' } } },
+      validationMode: ValidationMode.None,
+    });
+    root.setValue(
+      { on: false, src: 's', ...(revived ? { reopen: 'r' } : {}) },
+      WriteOption.Merge,
+    );
+    const expected = reverse ? 'low' : 'wholeY';
+    if (revived) expect(root.find('/o/n/y')!.value).toBe(expected);
+    else
+      expect(root.inactiveValues).toContainEqual({
+        path: '/o/n/y',
+        value: expected,
+      });
+  },
+);
+
+it.each([false, true] as const)(
+  'overlapping aliases keep their own addressed writes (WRITE-079, reverse caller order=%s)',
+  (reverse) => {
+    const root = nodeFromJSONSchema({
+      jsonSchema: {
+        type: 'object',
+        options: {
+          virtual: {
+            g1: { fields: ['box', 'b'] },
+            g2: { fields: ['box', 'c'] },
+          },
+        },
+        properties: {
+          on: { type: 'boolean' },
+          box: {
+            type: 'object',
+            properties: {
+              nested: {
+                type: 'object',
+                properties: {
+                  p: { type: 'string' },
+                  q: { type: 'string', controls: { active: '/on === true' } },
+                },
+              },
+            },
+          },
+          b: { type: 'string' },
+          c: { type: 'string' },
+          s1: inject('../g1', [{ nested: { q: 'retq' } }, 'b1']),
+          s2: inject('../g2', [{ nested: { p: 'newp' } }, 'c1']),
+        },
+      },
+      defaultValue: { on: false, box: { nested: { p: 'p0', q: 'q0' } } },
+      validationMode: ValidationMode.None,
+    });
+    const callers = [
+      ['/s1', 'retq'],
+      ['/s2', 'newp'],
+    ] as const;
+    root.batch(() => {
+      for (const [path, value] of reverse ? [...callers].reverse() : callers)
+        root.find(path)!.setValue(value);
+    });
+    expect(root.find('/box')!.value).toEqual({ nested: { p: 'newp' } });
+    expect(root.inactiveValues).toEqual([
+      { path: '/box/nested/q', value: 'retq' },
+    ]);
+  },
+);
+
+it.each([
+  ['whole last', false],
+  ['whole last', true],
+  ['whole first', false],
+  ['whole first', true],
+] as const)(
+  'three overlapping targets agree with sequential writes (WRITE-079, %s, revived=%s)',
+  (order, revived) => {
+    const low =
+      order === 'whole last'
+        ? inject('../o/n/y', 'low')
+        : inject('../o', { x: 'lowX', n: { x: 'lowNX', y: 'lowNY' } });
+    const high =
+      order === 'whole last'
+        ? inject('../o', { x: 'highX', n: { x: 'highNX', y: 'highNY' } })
+        : inject('../o/n/y', 'high');
+    const jsonSchema: AuthoredSchema = {
+      type: 'object',
+      properties: {
+        on: { type: 'boolean' },
+        low,
+        mid: inject('../o/g', ['middleX', { x: 'middleNX', y: 'middleNY' }]),
+        high,
+        o: {
+          type: 'object',
+          controls: { active: '/on === true' },
+          options: { virtual: { g: { fields: ['x', 'n'] } } },
+          properties: {
+            x: { type: 'string' },
+            n: {
+              type: 'object',
+              properties: { x: { type: 'string' }, y: { type: 'string' } },
+            },
+          },
+        },
+        ...(revived ? { reopen: inject('../on', true) } : {}),
+      },
+    };
+    const values = {
+      on: false,
+      low: 'l',
+      mid: 'm',
+      high: 'h',
+      ...(revived ? { reopen: 'r' } : {}),
+    };
+    const observe = (mode: Mode | 'sequence') => {
+      const root = nodeFromJSONSchema({
+        jsonSchema,
+        defaultValue: { on: true, o: { x: 'x0', n: { x: 'nx0', y: 'ny0' } } },
+        validationMode: ValidationMode.None,
+      });
+      const write = () => {
+        for (const [key, value] of Object.entries(values))
+          root.find('/' + key)!.setValue(value);
+      };
+      if (mode === 'merge') root.setValue(values, WriteOption.Merge);
+      else if (mode === 'batch') root.batch(write);
+      else if (mode === 'nested') root.batch(() => root.batch(write));
+      else write();
+      return {
+        value: root.value,
+        retained: Object.fromEntries(
+          root.inactiveValues.map(({ path, value }) => [path, value]),
+        ),
+      };
+    };
+    const expected = observe('sequence');
+    for (const mode of ['merge', 'batch', 'nested'] as const)
+      expect(observe(mode), mode).toEqual(expected);
+  },
+);

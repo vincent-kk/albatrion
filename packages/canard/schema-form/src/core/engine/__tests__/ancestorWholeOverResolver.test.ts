@@ -65,7 +65,7 @@ const PAYLOADS = [
 
 const close = (root: Root) => root.find('/on')!.setValue(false);
 
-/** The four single-settlement forms of one gate close and one whole write of /o. */
+/** The single-settlement forms of one gate close and one whole write of /o. */
 const FORMS = [
   [
     'batch, gate first',
@@ -94,6 +94,21 @@ const FORMS = [
       ),
   ],
   [
+    'nested batch, whole first',
+    (whole: unknown) => (root: Root) =>
+      root.batch(() =>
+        root.batch(() => {
+          root.find('/o')!.setValue(whole);
+          close(root);
+        }),
+      ),
+  ],
+  [
+    'one Merge, whole first',
+    (whole: unknown) => (root: Root) =>
+      root.setValue({ o: whole, on: false }, WriteOption.Merge),
+  ],
+  [
     'one Merge',
     (whole: unknown) => (root: Root) =>
       root.setValue({ on: false, o: whole }, WriteOption.Merge),
@@ -118,7 +133,9 @@ it.each(['default', 'unsetOnInactive', 'inactiveValue'] as const)(
       for (const [form, write] of FORMS) {
         // A Merge deep-merges an object into the live /o, so y keeps its committed value.
         const finalY =
-          form === 'one Merge' && whole !== undefined ? 'y0' : undefined;
+          form.startsWith('one Merge') && whole !== undefined
+            ? 'y0'
+            : undefined;
         expect(observe(policy, write(whole)), `${payload}, ${form}`).toEqual({
           o: whole === undefined ? {} : { x: 'x1' },
           retained: expectedRetained(policy, finalY),
@@ -137,3 +154,32 @@ it('the same calls in sequence with the gate first clear the resolved value in t
       payload,
     ).toEqual({});
 });
+
+it.each([
+  ['default', { '/o/y': 'caller' }],
+  ['unsetOnInactive', {}],
+  ['inactiveValue', { '/o/y': 'caller' }],
+] as const)(
+  'applies %s once to a whole write naming the leaving child (VALUE-043 and WRITE-031)',
+  (policy, retained) => {
+    const whole = { x: 'x1', y: 'caller' };
+    for (const [form, write] of FORMS)
+      expect(observe(policy, write(whole)), form).toEqual({
+        o: { x: 'x1' },
+        retained,
+      });
+    const valueFirst = observe(policy, (root) => {
+      root.find('/o')!.setValue(whole);
+      close(root);
+    });
+    expect(valueFirst.retained).toEqual(
+      policy === 'inactiveValue' ? { '/o/y': 'resolved' } : retained,
+    );
+    expect(
+      observe(policy, (root) => {
+        close(root);
+        root.find('/o')!.setValue(whole);
+      }).retained,
+    ).toEqual({ '/o/y': 'caller' });
+  },
+);

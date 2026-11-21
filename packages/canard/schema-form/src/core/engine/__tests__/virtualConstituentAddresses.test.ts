@@ -267,43 +267,40 @@ describe('a virtual group lifetime leaves the state counts of its constituents a
   });
 });
 
-it(
-  'keeps every source on a batched same-tuple write after a constituent was cleared',
-  () => {
-    const observe = (batched: boolean) => {
-      const root = create(
-        {
-          type: 'object',
-          properties: {
-            yOn: { type: 'boolean' },
-            other: { type: 'boolean' },
-            object: {
-              type: 'object',
-              properties: {
-                x: { type: 'string' },
-                y: { type: 'string', controls: { active: '/yOn === true' } },
-              },
+it('keeps every source on a batched same-tuple write after a constituent was cleared', () => {
+  const observe = (batched: boolean) => {
+    const root = create(
+      {
+        type: 'object',
+        properties: {
+          yOn: { type: 'boolean' },
+          other: { type: 'boolean' },
+          object: {
+            type: 'object',
+            properties: {
+              x: { type: 'string' },
+              y: { type: 'string', controls: { active: '/yOn === true' } },
             },
           },
-          options: { virtual: { group: { fields: ['object'] } } },
         },
-        { yOn: true, object: { x: 'x0' } },
-      );
-      const group = root.find('/group')!;
-      group.setValue([undefined]);
-      root.find('/object/y')!.setValue('y7');
-      root.find('/yOn')!.setValue(false);
-      const write = () => {
-        root.find('/other')!.setValue(true);
-        group.setValue(group.value);
-      };
-      if (batched) root.batch(write);
-      else write();
-      return root.inactiveValues.map(({ path, value }) => ({ path, value }));
+        options: { virtual: { group: { fields: ['object'] } } },
+      },
+      { yOn: true, object: { x: 'x0' } },
+    );
+    const group = root.find('/group')!;
+    group.setValue([undefined]);
+    root.find('/object/y')!.setValue('y7');
+    root.find('/yOn')!.setValue(false);
+    const write = () => {
+      root.find('/other')!.setValue(true);
+      group.setValue(group.value);
     };
-    expect(observe(true)).toEqual(observe(false));
-  },
-);
+    if (batched) root.batch(write);
+    else write();
+    return root.inactiveValues.map(({ path, value }) => ({ path, value }));
+  };
+  expect(observe(true)).toEqual(observe(false));
+});
 
 it.each([
   ['names the leaving constituent', ['injected', 'b1']],
@@ -353,3 +350,102 @@ it.each([
     expect(observe(true)).toEqual(observe(false));
   },
 );
+
+it('resetting a virtual group with an array constituent agrees with resetting the array (virtual storage contract)', () => {
+  const schema: AuthoredSchema = {
+    type: 'object',
+    options: { virtual: { g: { fields: ['a'] } } },
+    properties: {
+      on: { type: 'boolean' },
+      a: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            x: { type: 'string' },
+            y: { type: 'string', controls: { active: '/on === true' } },
+          },
+          options: { virtual: { inner: { fields: ['x', 'y'] } } },
+        },
+      },
+    },
+  };
+  const observe = (path: '/g' | '/a') => {
+    const root = create(schema, { on: true, a: [{ x: 'x' }] });
+    root.find('/a/0/y')!.setValue('edit');
+    root.find('/on')!.setValue(false);
+    root.find(path)!.resetSubtree();
+    root.find('/on')!.setValue(true);
+    expect(root.find('/a/0/y')!.value).toBeUndefined();
+    return root.value;
+  };
+  expect(observe('/g')).toEqual(observe('/a'));
+});
+
+it('a detached virtual group reset preserves the committed read and pending caller write (EVENT-013)', () => {
+  const root = create(
+    {
+      type: 'object',
+      properties: { on: { type: 'boolean' }, a: { type: 'string' } },
+      options: {
+        virtual: { g: { fields: ['a'], controls: { active: '/on === true' } } },
+      },
+    },
+    { on: true, a: 'old' },
+  );
+  const group = root.find('/g')!;
+  const field = root.find('/a')!;
+  root.find('/on')!.setValue(false);
+  field.setValue('new');
+  root.batch(() => {
+    field.setValue('pending');
+    group.resetSubtree();
+    expect(field.value).toBe('new');
+  });
+  expect(field.value).toBe('pending');
+});
+
+it('nested gate departures count a constituent like the same ungrouped field (virtual state contract)', () => {
+  const observe = (grouped: boolean) => {
+    const root = create(
+      {
+        type: 'object',
+        properties: {
+          on: { type: 'boolean' },
+          box: {
+            type: 'object',
+            controls: { active: '/boxOn === true' },
+            properties: {
+              x: { type: 'string', controls: { active: '/on === true' } },
+              y: { type: 'string' },
+            },
+            ...(grouped
+              ? {
+                  options: {
+                    virtual: {
+                      g: {
+                        fields: ['x', 'y'],
+                        controls: { active: '/groupOn === true' },
+                      },
+                    },
+                  },
+                }
+              : {}),
+          },
+          boxOn: { type: 'boolean' },
+          groupOn: { type: 'boolean' },
+        },
+      },
+      { on: true, boxOn: true, groupOn: true, box: { x: 'x', y: 'y' } },
+    );
+    root.find('/box/x')!.setState({ touched: true });
+    return [
+      root.globalState,
+      ...['/groupOn', '/on', '/boxOn'].map((gate) => {
+        root.find(gate)!.setValue(false);
+        return root.globalState;
+      }),
+    ];
+  };
+  expect(observe(true)).toEqual(observe(false));
+});

@@ -165,3 +165,23 @@ describe('a declarative write that addresses a leaving node keeps its value over
     expect(run(shape, policy, 'merge')).toEqual(sequence);
   });
 });
+
+it.each(['batch', 'merge'] as const)(
+  'the direct named value wins over onInactive (WRITE-079, %s)',
+  (mode) => {
+    const root = nodeFromJSONSchema({
+      jsonSchema: createSchema('leaf', 'default'),
+      defaultValue: DEFAULT_VALUES.leaf,
+      validationMode: ValidationMode.None,
+    });
+    root.find('/y')!.onInactive(() => 'listener');
+    if (mode === 'merge')
+      root.setValue({ on: false, src: 'new' }, WriteOption.Merge);
+    else
+      root.batch(() => {
+        root.find('/on')!.setValue(false);
+        root.find('/src')!.setValue('new');
+      });
+    expect(root.inactiveValues).toEqual([{ path: '/y', value: 'new' }]);
+  },
+);
