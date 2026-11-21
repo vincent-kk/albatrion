@@ -43,14 +43,8 @@ export function readCssToken(source: CssSource, start: number): number {
     index = getCssNameEnd(source, start);
     if (readCssCode(source, index) !== 40) return index * 16 + CssTokenKind.Name;
     if (isCssUrlName(source, start, index)) {
-      let head = index + 1;
-      while (head < source.length) {
-        const space = readCssCode(source, head);
-        if (space !== 32 && space !== 9 && space !== 10 && space !== 12 && space !== 13) break;
-        head++;
-      }
-      const quote = readCssCode(source, head);
-      if (quote !== 34 && quote !== 39) return getCssUrlToken(source, index);
+      const url = getCssUrlToken(source, index);
+      if (url !== 0) return url;
     }
     return (index + 1) * 16 + CssTokenKind.Function;
   }

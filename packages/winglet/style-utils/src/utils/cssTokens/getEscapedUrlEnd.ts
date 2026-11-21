@@ -26,14 +26,7 @@ export const getEscapedUrlEnd = (source: CssSource, escape: number): number => {
       return escape;
     cursor = escaped ? getCssEscapeEnd(source, cursor) : cursor + 1;
   }
-  if (readCssCode(source, cursor++) !== 40) return escape;
-  const open = cursor - 1;
-  while (cursor < source.length) {
-    const code = readCssCode(source, cursor);
-    if (code !== 32 && !(code >= 9 && code <= 13 && code !== 11)) break;
-    cursor++;
-  }
-  if (readCssCode(source, cursor) === 34 || readCssCode(source, cursor) === 39)
-    return escape;
-  return Math.floor(getCssUrlToken(source, open) / 16);
+  if (readCssCode(source, cursor) !== 40) return escape;
+  const token = getCssUrlToken(source, cursor);
+  return token === 0 ? escape : Math.floor(token / 16);
 };
