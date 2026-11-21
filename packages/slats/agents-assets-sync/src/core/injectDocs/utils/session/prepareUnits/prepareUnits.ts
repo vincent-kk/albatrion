@@ -16,6 +16,7 @@ import {
   resolveHashManifest,
 } from '../../../../hashManifest/index.js';
 import type { SourceSnapshot } from '../../../../types/sourceSnapshot.js';
+import { statFile } from '../../../../utils/statFile.js';
 import { mergePlans } from '../mergePlans.js';
 import type { RunUnit, ValidatedFlags } from '../types.js';
 import {
@@ -23,7 +24,6 @@ import {
   openInstalledAssets,
 } from '../utils/openInstalledAssets.js';
 import { describePreparationFailure } from './utils/describePreparationFailure.js';
-import { getLinkedFileKey } from './utils/getLinkedFileKey.js';
 import { resolveCanonicalPath } from './utils/resolveCanonicalPath.js';
 import { validateUnitMarkdown } from './utils/validateUnitMarkdown.js';
 
@@ -156,9 +156,9 @@ export async function prepareUnits(
               physicalPaths,
             );
             if (action.sourceHash) {
-              const linkedKey = await getLinkedFileKey(destinationKey);
-              if (linkedKey !== undefined)
-                linkedDestinations.set(destinationKey, linkedKey);
+              const entry = await statFile(destinationKey);
+              if (entry && entry.nlink > 1n)
+                linkedDestinations.set(destinationKey, `inode:${entry.dev}:${entry.ino}`);
             }
             return { ...action, destinationKey };
           }),

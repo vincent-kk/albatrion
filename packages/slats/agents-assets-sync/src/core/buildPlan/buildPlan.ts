@@ -14,8 +14,7 @@ import { isNoisePath } from '../utils/isNoisePath.js';
 import { toPosix } from '../utils/toPosix.js';
 import { walkFiles } from '../utils/walkFiles.js';
 import { type Action, type ActionKind, type InjectPlan, INSTALLED_HASH, type PlanInput } from './type.js';
-import { indexManagedAliases } from './utils/indexManagedAliases.js';
-import { isManagedAlias } from './utils/isManagedAlias.js';
+import { createManagedAliasCheck } from './utils/createManagedAliasCheck.js';
 import { createDocumentReader } from './utils/readDocument.js';
 
 /**
@@ -75,13 +74,13 @@ export async function buildPlan(input: PlanInput): Promise<InjectPlan> {
   }
 
   const known = new Set(Object.keys(sourceHashes));
-  const aliases = indexManagedAliases(destinations);
+  const isManagedAlias = createManagedAliasCheck(destinations);
   for (const scan of orphanScans) {
     for await (const orphan of findOrphans(
       scan,
       known,
       readDocument,
-      aliases,
+      isManagedAlias,
     )) {
       // Deleting is as user-visible as overwriting: under --force the flag is
       // what makes renderers confirm and list the deletion.
@@ -131,13 +130,13 @@ async function* findOrphans(
   scan: OrphanScan,
   known: ReadonlySet<string>,
   readDocument: AsyncFn<[fileAbs: string], string | null>,
-  aliases: ReadonlyMap<string, readonly string[]>,
+  isManagedAlias: ReturnType<typeof createManagedAliasCheck>,
 ): AsyncGenerator<Pick<Action, 'relPath' | 'target' | typeof INSTALLED_HASH>> {
   if (scan.kind === 'installed-file') {
     const { dstAbs, relPath, installedHash } = scan;
     if (
       !known.has(relPath) &&
-      !(await isManagedAlias(relPath, dstAbs, aliases)) &&
+      !(await isManagedAlias(relPath, dstAbs)) &&
       hashEquals(await hashFile(dstAbs, true), installedHash)
     )
       yield { relPath, target: { kind: 'file', dstAbs }, [INSTALLED_HASH]: installedHash };
@@ -148,7 +147,7 @@ async function* findOrphans(
       const scanRelPath = toPosix(relative(scan.scanRoot, abs));
       if (isNoisePath(scanRelPath)) continue;
       const relPath = scan.relPathPrefix + scanRelPath;
-      if (known.has(relPath) || (await isManagedAlias(relPath, abs, aliases)))
+      if (known.has(relPath) || (await isManagedAlias(relPath, abs)))
         continue;
       yield { relPath, target: { kind: 'file', dstAbs: abs } };
     }
