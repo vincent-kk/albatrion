@@ -12,13 +12,16 @@ import userEvent, {
 } from '@testing-library/user-event';
 import { afterEach, expect, it } from 'vitest';
 
-import { Form, type FormHandle } from '@canard/schema-form';
+import { Form, type FormHandle, type JSONSchema } from '@canard/schema-form';
 
+import { FieldInputBooleanDefinition } from '../FieldInputBoolean';
+import { FieldInputBooleanSwitchDefinition } from '../FieldInputBooleanSwitch';
 import { FieldInputDateRangeDefinition } from '../FieldInputDateRange';
 import { FieldInputRadioGroupDefinition } from '../FieldInputRadioGroup';
 import { FieldInputSliderDefinition } from '../FieldInputSlider';
 import { FieldInputStringCheckboxDefinition } from '../FieldInputStringCheckbox';
 import { FieldInputStringEnumDefinition } from '../FieldInputStringEnum';
+import { FieldInputStringSwitchDefinition } from '../FieldInputStringSwitch';
 import { FieldInputTimeDefinition } from '../FieldInputTime';
 
 afterEach(cleanup);
@@ -178,4 +181,30 @@ it('readOnly date range picker does not open a selectable calendar', async () =>
   }
   expect(ref.current!.getValue()).toEqual(['2024-01-10', '2024-01-12']);
   expect(input.value).toBe(before);
+});
+
+it.each<[string, JSONSchema]>([
+  ['checkbox', { type: 'boolean' }],
+  ['switch', { type: 'boolean', presentation: { inputType: 'switch' } }],
+  [
+    'switch',
+    {
+      type: 'string',
+      enum: ['on', 'off'],
+      presentation: { inputType: 'switch' },
+    },
+  ],
+])('locks the native %s control', (role, jsonSchema) => {
+  render(
+    <Form
+      readOnly
+      fieldInputDefinitions={[
+        FieldInputBooleanSwitchDefinition,
+        FieldInputBooleanDefinition,
+        FieldInputStringSwitchDefinition,
+      ]}
+      jsonSchema={jsonSchema}
+    />,
+  );
+  expect(screen.getByRole(role)).toHaveProperty('disabled', true);
 });
