@@ -116,7 +116,7 @@ it('omits a separate label for direct array items', () => {
     />,
   );
   expect(view.container.querySelector('label')).toBeNull();
-  expect(view.getByRole<HTMLInputElement>('textbox').value).toBe('value');
+  expect(view.getByRole('textbox')).toHaveProperty('value', 'value');
 });
 
 it('retains the empty error root and its existing layout', () => {
