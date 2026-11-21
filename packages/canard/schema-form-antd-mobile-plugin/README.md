@@ -189,12 +189,11 @@ const Input = ({ inputId, name }: FieldInputProps<string>) => (
 );
 ```
 
-Inputs read `labelId` directly, so the same field title names the control or group in the plugin layout, `Form.Label` with `Form.Input`, and a custom renderer with its bound `Label`. Both range endpoints reference the title. Auxiliary controls keep their own names within a named field group. Input-owned legends use `getInputId('legend')`; a bound field title is exposed once, and any duplicate title node uses `hidden` so it is outside the accessibility tree.
+Field titles connect through the id and ARIA props supported by the UI library.
 
 For a composite custom input, consume `labelId` and `getInputId` explicitly rather than spreading them into DOM props. A getter is stable until the field scope or path changes. Never derive ids from the leaf name or from `path`.
 
 Scope selectors to the intended Form, such as `formElement.querySelector('[data-path="/email"] input')`, or connect labels using the control's supplied id. Form API values retain the schema shape.
-Known server-rendering limit: Stepper native input ids/names, Switch DOM ids, radio native names, and Slider thumb ids and `aria-labelledby` complete at hydration because the library exposes no prop for those native attributes. Radio option ids and Switch `aria-labelledby` are present in server HTML. Native names remain bound after option and library state updates.
 
 ## Contact
 
@@ -206,16 +205,6 @@ For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the un
 
 A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
 
-### Unset slider values
+### Sliders
 
-An unset slider exposes no current value to assistive technology and stores nothing until the user acts.
-
-### Slider constraints
-
-With `multipleOf`, selectable values are multiples of that number within the inclusive bounds. Integer sliders select only integer multiples. Without `multipleOf`, number sliders retain their authored bounds. A range with no selectable value is disabled and stores nothing.
-
-Marked stops outside the bounds or incompatible with the numeric constraints are ignored. Range sliders apply the constraints of `items` to both ends.
-
-The minimum supported `antd-mobile` version is 5.2.0. Its `Stepper` supports empty numeric fields through `allowEmpty`; releases 5.0 and 5.1 do not accept the required null value.
-
-Sliders honor inclusive and exclusive bounds together. With `multipleOf`, stops are decimal-exact multiples; integer fields use their intersection with integers. Without `multipleOf`, the default step is anchored at the lower bound and inclusive endpoints remain selectable. Exclusive endpoints are excluded; if no step lies inside the bounds, interactions store nothing. `Home` and `End` choose the first and last permitted values; Page and Shift+Arrow move ten steps. Rendering preserves the stored value, including an off-grid value. Pointer precision across a track reaching `Number.MAX_SAFE_INTEGER` is outside the supported precision range.
+The UI library determines the slider’s unset display, stops, and keyboard behavior.

@@ -5,6 +5,7 @@ import type { CheckboxValue } from 'antd-mobile/es/components/checkbox';
 
 import { map } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
+import { isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
@@ -13,11 +14,6 @@ import type {
   FieldInputPropsWithSchema,
   StringSchema,
 } from '@canard/schema-form';
-
-import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
-import { useControlIdentifiers } from './utils/controls/useControlIdentifiers';
-import { getOwnLabel } from './utils/enum/getOwnLabel';
-import { mergeEnumSelection } from './utils/enum/mergeEnumSelection';
 
 type ArrayJSONSchema = ArraySchema & {
   items: StringSchema;
@@ -33,25 +29,14 @@ interface FieldInputStringCheckboxProps
 }
 
 const FieldInputStringCheckbox = ({
-  inputId,
-  getInputId,
-  name,
   jsonSchema,
-  readOnly,
   disabled,
   defaultValue,
   onChange,
   context,
   alias,
   misfit,
-  labelId: labelledBy,
 }: FieldInputStringCheckboxProps) => {
-  const bindControls = useControlIdentifiers(
-    inputId,
-    name,
-    'input',
-    getInputId,
-  );
   const options = useMemo(() => {
     const labels = context.checkboxLabels || alias || {};
     return jsonSchema.items?.enum
@@ -60,42 +45,41 @@ const FieldInputStringCheckbox = ({
           return {
             value,
             rawValue,
-            label: getOwnLabel(labels, '' + rawValue) || '' + rawValue,
+            label: labels['' + rawValue] || '' + rawValue,
           };
         })
       : [];
   }, [context, jsonSchema, alias]);
 
   const initialValue = useMemo(() => {
-    return isArray(defaultValue)
+    return isArray(defaultValue) &&
+      defaultValue.every((v) => v === null || typeof v === 'string')
       ? map(defaultValue, (v) => JSON.stringify(v))
       : undefined;
   }, [defaultValue]);
 
   const handleChange = useHandle((value: CheckboxValue[]) => {
-    onChange((previous) =>
-      mergeEnumSelection(isArray(previous) ? previous : [], value, options),
-    );
+    const convertedValues = map(value, (v) => {
+      const option = options.find((opt) => opt.value === v.toString());
+      return option ? option.rawValue : v.toString();
+    });
+    onChange(convertedValues);
   });
 
   return (
     <div
-      ref={bindControls}
-      id={inputId}
-      aria-labelledby={labelledBy}
       role="group"
       aria-invalid={misfit || undefined}
       style={{ display: 'flex', flexDirection: 'row', gap: 8 }}
     >
       <Checkbox.Group
-        disabled={disabled || readOnly}
+        disabled={disabled}
         defaultValue={initialValue}
         onChange={handleChange}
       >
-        {map(options, (option, index) => (
+        {map(options, (option) => (
           <Checkbox
             key={option.value}
-            id={getInputId(index)}
             value={option.value}
             style={{
               '--icon-size': '24px',
@@ -113,5 +97,12 @@ const FieldInputStringCheckbox = ({
 
 export const FieldInputStringCheckboxDefinition = {
   Component: FieldInputStringCheckbox,
-  test: isCheckboxGroupInput,
+  test: ({ type, inputType, jsonSchema }) => {
+    return (
+      type === 'array' &&
+      inputType === 'checkbox' &&
+      isStringSchema(jsonSchema.items) &&
+      !!jsonSchema.items.enum?.length
+    );
+  },
 } satisfies FieldInputDefinition;

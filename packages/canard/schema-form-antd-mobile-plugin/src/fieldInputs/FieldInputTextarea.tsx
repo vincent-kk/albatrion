@@ -10,8 +10,6 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-import { useControlIdentifiers } from './utils/controls/useControlIdentifiers';
-
 type TextareaSchema = StringSchema & {
   minRows?: number;
   maxRows?: number;
@@ -27,13 +25,7 @@ const FieldInputTextarea = ({
   onChange,
   placeholder,
   misfit,
-  labelId: labelledBy,
 }: FieldInputPropsWithSchema<string, TextareaSchema>) => {
-  const bindControls = useControlIdentifiers(
-    inputId,
-    name,
-    'textarea:not([aria-hidden="true"])',
-  );
   const handleChange = useHandle((text: string) =>
     onChange(text === '' ? undefined : text),
   );
@@ -45,14 +37,9 @@ const FieldInputTextarea = ({
     [jsonSchema],
   );
   return (
-    <div
-      ref={bindControls}
-      role="group"
-      aria-labelledby={labelledBy}
-      aria-label={labelledBy ? undefined : name}
-      aria-invalid={misfit || undefined}
-    >
+    <div role="group" aria-invalid={misfit || undefined}>
       <TextArea
+        id={inputId}
         name={name}
         disabled={disabled}
         readOnly={readOnly}

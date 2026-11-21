@@ -10,7 +10,6 @@ import type {
   FieldInputPropsWithSchema,
 } from '@canard/schema-form';
 
-import { isBooleanSwitchInput } from '../utils/inputs/isBooleanSwitchInput';
 import { SwitchKeyboardControl } from './components/SwitchKeyboardControl';
 
 interface FieldInputBooleanSwitchProps
@@ -28,15 +27,13 @@ interface FieldInputBooleanSwitchProps
 }
 
 const FieldInputBooleanSwitch = ({
-  inputId,
-  name,
+  path,
   disabled,
   value,
   onChange,
   context,
   alias,
   misfit,
-  labelId: labelledBy,
 }: FieldInputBooleanSwitchProps) => {
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
     const labels = context?.checkboxLabels || alias || {};
@@ -46,13 +43,12 @@ const FieldInputBooleanSwitch = ({
   const handleChange = useHandle(onChange);
 
   return (
-    <SwitchKeyboardControl id={inputId} name={name} disabled={disabled}>
+    <SwitchKeyboardControl disabled={disabled}>
       <Switch
-        aria-labelledby={labelledBy}
         data-focus-target
         tabIndex={disabled ? undefined : 0}
         aria-invalid={misfit || undefined}
-        key={inputId}
+        key={path}
         disabled={disabled}
         checked={value === true}
         checkedText={checkedLabel}
@@ -65,5 +61,5 @@ const FieldInputBooleanSwitch = ({
 export const FieldInputBooleanSwitchDefinition = {
   Component: FieldInputBooleanSwitch,
   controlled: true,
-  test: isBooleanSwitchInput,
+  test: ({ type, inputType }) => type === 'boolean' && inputType === 'switch',
 } satisfies FieldInputDefinition;
