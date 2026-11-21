@@ -22,7 +22,7 @@ FormProvider의 pluginScope는 string 또는 symbol로 선택한 독립 등록�
 
 검증 콜백을 공통 함수형 별칭으로 표현해도 동기 가드와 비동기 전체 검증의 반환 의미를 유지합니다. 형 표기를 이유로 동기 가드를 Promise로 감싸거나 오류 전달 경계를 바꾸지 않습니다.
 
-등록 중복 판정은 모듈 초기화에 공유한 fingerprint 함수와 Set의 참조를 직접 사용합니다. reset은 공유 Set을 비우며 그 신원이나 fingerprint 함수를 교체하지 않습니다.
+선택한 등록소의 관리자가 속성별 병합과 중복 판정을 함께 소유합니다. 관리자는 해당 등록소의 fingerprint 함수와 Set의 참조를 직접 보유하여 등록 중 다시 범위를 조회하지 않습니다. reset은 공유 Set을 비우며 그 신원이나 fingerprint 함수를 교체하지 않습니다.
 
 ## Acceptance Criteria
 

@@ -20,10 +20,10 @@
 
 - `compileGuard`와 `release`는 전체 `compile` 선행 없이 동일한 엔진 소유 사본으로 동작합니다. 조건 평가가 전체 검증의 준비 비용을 먼저 부담하지 않도록 합니다.
 
-- 새 플러그인 속성을 추가할 때 `SchemaFormPlugin` 인터페이스와 `PluginManager.append*` 메서드를 함께 추가
+- 새 플러그인 속성을 추가할 때 `SchemaFormPlugin` 인터페이스와 `PluginManager.register`의 병합을 함께 확인
 - `ValidatorPlugin.compile()`이 반환하는 검증 함수는 유효하면 `null`, 오류가 있으면 오류 배열을 반환
 - 플러그인 등록에 실패하면 `UnhandledError`로 감싸서 throw
-- 전역 상태는 `PluginManager.append*`와 `reset()`으로만 바꾸고, 기본 설정은 `registerPlugin(null)`로 복원
+- 전역 상태는 `PluginManager.register()`와 `reset()`으로만 바꾸고, 기본 설정은 `registerPlugin(null)`로 복원
 
 ### Ask first
 
