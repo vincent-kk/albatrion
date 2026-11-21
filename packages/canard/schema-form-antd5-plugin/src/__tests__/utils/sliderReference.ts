@@ -6,6 +6,7 @@ export const sliderReference = (schema: {
   exclusiveMinimum?: number;
   exclusiveMaximum?: number;
   multipleOf?: number;
+  marks?: readonly number[];
 }) => {
   const scale = 1000000000n;
   const units = (value: number) => BigInt(Math.round(value * Number(scale)));
@@ -50,11 +51,19 @@ export const sliderReference = (schema: {
     (strictHigh && anchor + finish * increment === high)
   )
     finish--;
-  const first = anchor + start * increment;
+  const firstOnGrid = anchor + start * increment;
   const last =
     schema.multipleOf === undefined && schema.type === 'number' && !strictHigh
       ? high
       : anchor + finish * increment;
+  const upperOnly =
+    schema.multipleOf === undefined &&
+    schema.type === 'number' &&
+    strictLow &&
+    !strictHigh &&
+    high > low &&
+    firstOnGrid > high;
+  const first = upperOnly ? high : firstOnGrid;
   const empty = first > high || (strictHigh && first === high) || first > last;
   const number = (value: bigint) => Number(value) / Number(scale);
   const valid = (value: number) => {
@@ -87,7 +96,64 @@ export const sliderReference = (schema: {
     const target = anchor + index * increment;
     return number(target < first ? first : target > last ? last : target);
   };
+  const marks = (schema.marks ?? [])
+    .filter((value) => {
+      const position = units(value);
+      if (schema.multipleOf !== undefined || schema.type === 'integer')
+        return valid(value);
+      return (
+        (strictLow ? position > low : position >= low) &&
+        (strictHigh ? position < high : position <= high)
+      );
+    })
+    .sort((left, right) => left - right);
+  const displayMin = Math.min(
+    number(empty ? low : first),
+    marks[0] ?? Infinity,
+  );
+  const displayMax = Math.max(
+    number(empty ? high : last),
+    marks.at(-1) ?? -Infinity,
+  );
+  const displayed = (
+    stored: number | undefined,
+    readOnly: boolean,
+  ): number | undefined => {
+    if (stored === undefined) return undefined;
+    if (
+      (readOnly &&
+        schema.type === 'number' &&
+        schema.multipleOf === undefined &&
+        stored >= displayMin &&
+        stored <= displayMax) ||
+      marks.includes(stored)
+    )
+      return stored;
+    const position = units(stored);
+    const lowerIndex = floor(position - anchor);
+    const gridLower = anchor + lowerIndex * increment;
+    const gridUpper = gridLower + increment;
+    const nearest =
+      position - gridLower < gridUpper - position ? gridLower : gridUpper;
+    const gridMin = empty ? low : first;
+    const gridMax = empty ? high : last;
+    const snapped =
+      nearest < gridMin ? gridMin : nearest > gridMax ? gridMax : nearest;
+    if (position <= gridMin) return number(gridMin);
+    if (position >= gridMax) return number(gridMax);
+    const delta = snapped > position ? snapped - position : position - snapped;
+    return number(
+      schema.type === 'number' &&
+        schema.multipleOf === undefined &&
+        !strictHigh &&
+        gridMax - position < delta
+        ? gridMax
+        : snapped,
+    );
+  };
   return {
+    displayed,
+    marks,
     min: number(first),
     max: number(last),
     step: number(increment),
