@@ -162,3 +162,28 @@ it('names the current Select when changing variant replaces its combobox', async
     expect(view.getByRole('combobox', { name: remaining })).toBe(replacement),
   );
 });
+
+it('names a root switch without changing its state-label markup', async () => {
+  const schema = {
+    type: 'boolean',
+    presentation: { inputType: 'switch' },
+  } satisfies JSONSchema;
+  const form = (external: boolean) => (
+    <Form
+      jsonSchema={schema}
+      fieldInputDefinitions={plugin.fieldInputDefinitions}
+      LabelRenderer={plugin.LabelRenderer}
+    >
+      {external && <Form.Label path="">Outer</Form.Label>}
+      <Form.Input path="" hideLabel />
+    </Form>
+  );
+  const view = render(form(false));
+  const control = view.getByRole('switch', { name: 'Field' });
+  view.rerender(form(true));
+  await waitFor(() =>
+    expect(view.getByRole('switch', { name: 'Outer' })).toBe(control),
+  );
+  view.rerender(form(false));
+  expect(view.getByRole('switch', { name: 'Field' })).toBe(control);
+});
