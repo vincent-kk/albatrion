@@ -19,6 +19,7 @@ const sampler = createSeedSampler(3000, SEED_CLASSES, 50);
 
 it(`virtual operations follow the reference model in sequential and batched histories for ${sampler.label}`, async () => {
   const reached = new Set<number>();
+  const arities = new Set<number>();
   for (let seed = 1; sampler.has(seed); seed++) {
     let randomState = seed;
     const random = (limit: number) => {
@@ -121,6 +122,10 @@ it(`virtual operations follow the reference model in sequential and batched hist
         },
       });
     const roots = [create(), create()];
+    for (const root of roots) {
+      const value = root.find('/group')!.value;
+      if (Array.isArray(value)) arities.add(value.length);
+    }
     // The direct root applies each object-slot effect to the constituent's own node.
     const direct = create();
     for (let step = 0; step < 12; step++) {
@@ -384,4 +389,5 @@ it(`virtual operations follow the reference model in sequential and batched hist
   }
   expect(sampler.shortfall()).toEqual([]);
   expect(reached.size).toBe(22);
+  expect([...arities].sort()).toEqual([0, 1, 2, 3, 4, 5, 6]);
 }, 300_000);
