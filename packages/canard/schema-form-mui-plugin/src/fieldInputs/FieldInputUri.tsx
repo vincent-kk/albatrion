@@ -28,6 +28,7 @@ const DEFAULT_PROTOCOLS = ['http', 'https'];
 
 const FieldInputUri = ({
   inputId,
+  focusRef,
   labelId: fieldTitleId,
   getInputId,
   name,
@@ -113,6 +114,7 @@ const FieldInputUri = ({
         </Select>
         <TextField
           id={inputId}
+          inputRef={disabled ? undefined : focusRef}
           name={name}
           variant={variant}
           fullWidth={fullWidth}

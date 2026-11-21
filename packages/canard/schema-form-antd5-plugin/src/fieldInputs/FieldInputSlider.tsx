@@ -25,6 +25,7 @@ interface FieldInputSliderProps
 
 const FieldInputSlider = ({
   inputId,
+  focusRef,
   labelId,
   jsonSchema,
   disabled,
@@ -36,6 +37,7 @@ const FieldInputSlider = ({
   className,
   style,
 }: FieldInputSliderProps) => {
+  const isLocked = disabled || readOnly;
   const handleChange = useHandle((value: number | null) => {
     if (value === null) onChange(undefined);
     else if (!Number.isNaN(value)) onChange(value);
@@ -50,8 +52,9 @@ const FieldInputSlider = ({
     >
       <Slider
         id={inputId}
+        ref={isLocked ? undefined : focusRef}
         ariaLabelledByForHandle={labelId}
-        disabled={disabled || readOnly}
+        disabled={isLocked}
         min={jsonSchema.minimum}
         max={jsonSchema.maximum}
         step={jsonSchema.multipleOf}

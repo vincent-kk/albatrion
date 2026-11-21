@@ -32,6 +32,7 @@ interface FieldInputMonthProps
 
 const FieldInputMonth = ({
   inputId,
+  focusRef,
   labelId,
   getInputId,
   name,
@@ -89,6 +90,7 @@ const FieldInputMonth = ({
               getInputId,
               !!label,
               disabled,
+              focusRef,
             ),
             name,
             required,

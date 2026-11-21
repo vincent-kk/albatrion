@@ -30,6 +30,7 @@ interface FieldInputTimeProps
 
 const FieldInputTime = ({
   inputId,
+  focusRef,
   labelId,
   getInputId,
   name,
@@ -87,6 +88,7 @@ const FieldInputTime = ({
               getInputId,
               !!label,
               disabled,
+              focusRef,
             ),
             name,
             required,
