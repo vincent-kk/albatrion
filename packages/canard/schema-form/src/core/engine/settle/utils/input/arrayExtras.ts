@@ -12,7 +12,7 @@ import { sameValue } from '../../../utils/compute/sameValue';
  * @returns Previous equal tail, new tail, or undefined when every position has a blueprint
  */
 export const arrayExtras = <Self extends FieldNodeRecord<Self>>(
-  node: Self,
+  node: Pick<FieldNodeRecord<Self>, 'blueprintNode' | 'extras'>,
   value: readonly unknown[],
 ): Optional<unknown[]> => {
   if (node.blueprintNode.item) return undefined;

@@ -14,4 +14,5 @@ export { readFieldNodeIsMisfit } from './utils/detached/readFieldNodeIsMisfit';
 export { readFieldNodeMisfits } from './utils/detached/readFieldNodeMisfits';
 export { readFieldNodeWatchValues } from './utils/controls/readFieldNodeWatchValues';
 export { changeFieldNodeContext } from './utils/context/changeFieldNodeContext';
-export { interpretFieldNodeInput } from './utils/input/interpretFieldNodeInput';
+export { readStoredInput } from './utils/input/readStoredInput';
+export { hasCallerInputOutput } from './utils/input/hasCallerInputOutput';

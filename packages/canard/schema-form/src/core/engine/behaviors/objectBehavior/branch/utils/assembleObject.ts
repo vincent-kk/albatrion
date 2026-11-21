@@ -8,6 +8,7 @@ import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { objectKeyCounts } from '../../../../utils/cache/valueMemos';
 import { writeObjectKey } from '../../../../utils/writeObjectKey';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
+import { assembleObjectValue } from './assembleObjectValue';
 import { copyObjectValue } from './copyObjectValue';
 
 /** Combine live child projections and undeclared input in stable host order. */
@@ -188,108 +189,20 @@ export const assembleObject: Behavior['assemble'] = (
     )
       childValues.set(child.name, child.storedOutputValue);
   const names: string[] = [];
-  const seen = new Set<string>();
-  for (const name of propertyOrder) {
-    if (childValues.has(name)) {
-      if (childValues.get(name) !== undefined && !seen.has(name)) {
-        names.push(name);
-        seen.add(name);
-      }
-    } else if (extras && hasOwnProperty(extras, name) && !seen.has(name)) {
-      names.push(name);
-      seen.add(name);
-    }
-  }
-  // Built by settle getSlotChildIndex; each inner map's first value is the name's first childEntries position.
+  // Each inner map's first value is the first childEntries position.
   const orderIndex = getHostDerived<
     'childOrderIndex',
     ReadonlyMap<string, ReadonlyMap<object, number>>
   >(node.blueprintNode).childOrderIndex;
-  let ordered: { name: string; rank: number }[] | undefined;
-  if (orderIndex) {
-    ordered = [];
-    for (const name of childValues.keys()) {
-      const rank = orderIndex.get(name)?.values().next().value;
-      if (rank === undefined) {
-        ordered = undefined;
-        break;
-      }
-      ordered.push({ name, rank });
-    }
-    ordered?.sort((left, right) => left.rank - right.rank);
-  }
-  if (ordered) {
-    for (const { name } of ordered)
-      if (childValues.get(name) !== undefined && !seen.has(name)) {
-        names.push(name);
-        seen.add(name);
-      }
-  } else
-    for (const entry of entries) {
-      const name = entry.name;
-      if (
-        childValues.has(name) &&
-        childValues.get(name) !== undefined &&
-        !seen.has(name)
-      ) {
-        names.push(name);
-        seen.add(name);
-      }
-    }
-  if (extras)
-    for (const name of Object.keys(extras))
-      if (!childValues.has(name) && !seen.has(name)) {
-        names.push(name);
-        seen.add(name);
-      }
-
-  if (previous !== null && typeof previous === 'object' && !isArray(previous)) {
-    const oldNames = Object.keys(previous);
-    let matches = names.length === oldNames.length;
-    if (matches) {
-      for (let index = 0, count = names.length; index < count; index++) {
-        const name = names[index];
-
-        if (!(name === oldNames[index])) {
-          matches = false;
-          break;
-        }
-      }
-    }
-    if (matches) {
-      let patch: Optional<Dictionary<unknown>>;
-      for (const name of names) {
-        const value = childValues.has(name)
-          ? childValues.get(name)
-          : extras
-            ? Reflect.get(extras, name)
-            : undefined;
-        if (!Object.is(value, Reflect.get(previous, name))) {
-          if (!patch) patch = copyObjectValue(previous, names.length);
-          writeObjectKey(patch, name, value);
-        }
-      }
-      (node.runtime.objectShapes ??= new WeakMap()).set(node, {
-        children,
-        schema: node.schema,
-        extras: node.extras,
-        names,
-      });
-      objectKeyCounts.set(patch ?? previous, names.length);
-      return patch ?? previous;
-    }
-  }
-  const result: Dictionary<unknown> = {};
-  for (const name of names)
-    writeObjectKey(
-      result,
-      name,
-      childValues.has(name)
-        ? childValues.get(name)
-        : extras
-          ? Reflect.get(extras, name)
-          : undefined,
-    );
+  const result = assembleObjectValue(
+    previous,
+    entries,
+    propertyOrder,
+    orderIndex,
+    childValues,
+    extras,
+    names,
+  );
   (node.runtime.objectShapes ??= new WeakMap()).set(node, {
     children,
     schema: node.schema,

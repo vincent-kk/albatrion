@@ -3,10 +3,10 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { BlueprintNode } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
+import { hasCallerInputOutput } from '../../../../settle';
 import { WriteOption } from '../../../../types/value';
 import { BATCH_HOST_SOURCE } from '../../../../utils/batchHostSource';
 import { writeObjectKey } from '../../../../utils/writeObjectKey';
-import { hasMarkedOutput } from './hasMarkedOutput';
 import { mergeMarkedValue } from './mergeMarkedValue';
 
 /**
@@ -88,7 +88,11 @@ export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
     let childNode = node;
     while (childNode && childNode.depth > depth + 1)
       childNode = childNode.parent ?? undefined;
-    if (isCommittedInput || !childNode || !hasMarkedOutput(child, childNode))
+    if (
+      isCommittedInput ||
+      !childNode ||
+      !hasCallerInputOutput(child, childNode)
+    )
       Object.defineProperty(next, BATCH_HOST_SOURCE, {
         value: wrongSource,
         enumerable: true,

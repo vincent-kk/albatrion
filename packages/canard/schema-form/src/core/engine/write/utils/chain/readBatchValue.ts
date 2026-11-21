@@ -4,10 +4,10 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { Nullable } from '@aileron/declare';
 
 import type { FieldNodeRecord } from '../../../record';
+import { readStoredInput } from '../../../settle';
 import { WriteOption } from '../../../types/value';
 import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
 import { composeBatchValue } from './composeBatchValue';
-import { readMarkedStoredValue } from './utils/readMarkedStoredValue';
 import { replaceAtPath } from './utils/replaceAtPath';
 
 /** Follow own properties only; a missing step or a primitive reads undefined. */
@@ -34,6 +34,8 @@ export const readBatchValue = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): unknown => {
   const root = node.rootNode;
+  const writes = root.runtime.batchWrites;
+  if (!writes?.length) return node.storedValue;
   const targets = resolveStorageTargets(node);
   const names: string[] = [];
   for (
@@ -71,14 +73,11 @@ export const readBatchValue = <Self extends FieldNodeRecord<Self>>(
           true,
         );
   }
-  const value = readOwnPath(
-    composeBatchValue(root, root.runtime.batchWrites ?? [], base),
-    names,
-  );
-  if (!targets) return readMarkedStoredValue(node, value);
+  const value = readOwnPath(composeBatchValue(root, writes, base), names);
+  if (!targets) return readStoredInput(node.blueprintNode, value, node);
   return mapArray(targets, (target) => {
     if (!target.node) return undefined;
     const slot = readOwnPath(value, [target.name]);
-    return readMarkedStoredValue(target.node, slot);
+    return readStoredInput(target.node.blueprintNode, slot, target.node);
   });
 };

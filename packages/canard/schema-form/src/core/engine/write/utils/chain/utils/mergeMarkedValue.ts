@@ -3,9 +3,9 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { BlueprintNode } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
+import { hasCallerInputOutput } from '../../../../settle';
 import { BATCH_HOST_SOURCE } from '../../../../utils/batchHostSource';
 import { writeObjectKey } from '../../../../utils/writeObjectKey';
-import { hasMarkedOutput } from './hasMarkedOutput';
 
 /**
  * Merge marked branch objects with the same child boundaries as a settled Merge.
@@ -62,7 +62,7 @@ export const mergeMarkedValue = <Self extends FieldNodeRecord<Self>>(
       binding &&
       (child || !node)
     )
-      hasChildOutput = hasMarkedOutput(value, child, binding);
+      hasChildOutput = hasCallerInputOutput(value, child, binding);
   }
   if (wrongSource !== undefined) {
     if (hasChildOutput) Reflect.deleteProperty(next, BATCH_HOST_SOURCE);

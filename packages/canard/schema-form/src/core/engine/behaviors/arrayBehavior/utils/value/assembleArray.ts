@@ -3,6 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { Optional } from '@aileron/declare';
 
 import type { Behavior, FieldNodeRecord } from '../../../../record';
+import { assembleArrayValue } from './assembleArrayValue';
 import { getArrayItemTemplate } from './getArrayItemTemplate';
 import { holeValue } from './holeValue';
 
@@ -162,38 +163,7 @@ export const assembleArray: Behavior['assemble'] = (
       return patch ?? previous;
     }
   }
-  const extras = isArray(node.extras) ? node.extras : [];
-  const result: unknown[] = [];
-  let tailStart = 0;
-  for (let index = 0; index < node.itemCount; index++) {
-    const template = getArrayItemTemplate(node, index);
-    if (!template) {
-      result.push(extras[index - tailStart]);
-      continue;
-    }
-    tailStart++;
-    const child = node.childrenByName?.['' + index];
-    const outputValue =
-      child !== null &&
-      typeof child === 'object' &&
-      'storedOutputValue' in child
-        ? child.storedOutputValue
-        : undefined;
-    result.push(
-      outputValue === undefined
-        ? holeValue(template.kind, previous?.[index])
-        : outputValue,
-    );
-  }
+  const result = assembleArrayValue(node, previous);
   rememberShape(node, children);
-  if (previous?.length === result.length) {
-    let unchanged = true;
-    for (let index = 0; index < result.length; index++)
-      if (!Object.is(result[index], previous[index])) {
-        unchanged = false;
-        break;
-      }
-    if (unchanged) return previous;
-  }
   return result;
 };
