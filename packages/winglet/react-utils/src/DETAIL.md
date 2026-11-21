@@ -19,7 +19,7 @@ workspace의 source 조건은 개발 빌드의 입력입니다. 배포 파일에
 훅과 고차 컴포넌트의 함수형 별칭은 매개변수·반환값의 표현만 담당합니다. 콜백의 최신 값 읽기·참조 안정성·정리 시점은 각 구현 소유자의 계약이며 타입 표기로 감싸개를 추가하지 않습니다.
 
 - `useTimeout`의 마운트 표지는 React 18·19의 insertion effect에서 설정되고 언마운트에서 해제된다. 이전 peer에서는 layout effect가 이 역할을 한다. passive effect 정리는 예약 타이머를 취소하며 StrictMode 재실행과 Activity 재표시의 마운트 호출을 막지 않는다.
-- `useSnapshotReference`는 마지막 커밋의 스냅샷만 외부 참조로 게시한다. `useSnapshot`과 `useRestProperties`는 현재 렌더의 후보를 반환하되, 비교 기준과 반복 입력 캐시는 커밋에서만 바뀐다. 중단한 렌더는 기준을 바꾸지 않는다. `omit`은 처음 커밋되는 비교에서 고정된다.
+- `useSnapshotReference`는 마지막 커밋의 스냅샷만 외부 참조로 게시한다. `useSnapshot`과 `useRestProperties`는 현재 렌더의 후보를 반환하되, 비교 기준과 반복 입력 캐시는 커밋에서만 바뀐다. 중단한 렌더는 기준을 바꾸지 않는다. `useRestProperties`는 own 열거 가능 문자열과 심볼 키를 모두 얕게 비교합니다. 심볼 키의 삭제나 교체도 새로운 참조를 반환합니다. `omit`은 처음 커밋되는 비교에서 고정된다.
 
 ## Acceptance Criteria
 
