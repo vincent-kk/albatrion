@@ -1,5 +1,5 @@
 import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
-import Ajv from 'ajv';
+import type Ajv from 'ajv';
 
 import { transformDataPath } from './utils/transformDataPath';
 
@@ -9,19 +9,23 @@ import { transformDataPath } from './utils/transformDataPath';
 export const createValidatorFactory =
   (ajv: Ajv.Ajv, key?: string) =>
   (jsonSchema: JSONSchema): ValidateFunction => {
-    const transient = key ? undefined : { ...JSON.parse(JSON.stringify(jsonSchema)), $async: true };
-    const validate = key ? ajv.getSchema(key) : transient && ajv.compile(transient);
+    const transient = key !== undefined ? undefined : { ...JSON.parse(JSON.stringify(jsonSchema)), $async: true };
+    const validate = key !== undefined ? ajv.getSchema(key) : transient && ajv.compile(transient);
     if (transient) ajv.removeSchema(transient);
     if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
     const schema = typeof validate.schema === 'object' ? validate.schema : undefined;
-    const schemaId = ajv._opts.schemaId;
+    const { schemaId, errorDataPath } = ajv._opts;
     return async (data) => {
       try {
-        const valid = await validate(data);
-        return valid ? null : transformDataPath(validate.errors ?? [], schema, schemaId);
+        const result = validate(data);
+        if (typeof result === 'boolean')
+          return result ? null : transformDataPath(validate.errors ?? [], schema, schemaId, errorDataPath);
+        await result;
+        return null;
       } catch (thrown) {
-        if (thrown instanceof Ajv.ValidationError)
-          return transformDataPath(thrown.errors, schema, schemaId);
+        if (thrown instanceof Error && 'ajv' in thrown && thrown.ajv === true &&
+            'validation' in thrown && thrown.validation === true && 'errors' in thrown && Array.isArray(thrown.errors))
+          return transformDataPath(thrown.errors, schema, schemaId, errorDataPath);
         throw thrown;
       }
     };
