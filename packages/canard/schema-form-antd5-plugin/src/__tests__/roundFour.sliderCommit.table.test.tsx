@@ -1,6 +1,12 @@
 import { createRef } from 'react';
 
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@canard/schema-form';
@@ -181,3 +187,31 @@ it.each([undefined, false])(
     expect(ref.current!.getValue()).toEqual({ level: 10 });
   },
 );
+
+it('an obsolete pointer release keeps the value of the later external write (controlled value equivalence)', () => {
+  const ref = createRef<FormHandle>();
+  render(
+    <Form
+      ref={ref}
+      defaultValue={5}
+      jsonSchema={{
+        type: 'number',
+        minimum: 0,
+        maximum: 10,
+        presentation: { inputType: 'slider' },
+      }}
+      fieldInputDefinitions={plugin.fieldInputDefinitions}
+    />,
+  );
+  const track = screen.getByRole('slider').closest(rootSelector)!;
+  fireEvent.mouseDown(track, {
+    button: 0,
+    buttons: 1,
+    clientX: 80,
+    clientY: 0,
+  });
+  expect(ref.current!.getValue()).toBe(5);
+  act(() => ref.current!.setValue(2));
+  fireEvent.mouseUp(document, { button: 0, clientX: 80, clientY: 0 });
+  expect(ref.current!.getValue()).toBe(2);
+});
