@@ -129,7 +129,7 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
       root.storedOutputValue,
     );
     const requests = runtime.validationTargets;
-    if (prepareFieldNodeValidation(root)) {
+    if (prepareFieldNodeValidation(root, changed)) {
       if (changed && !requests?.has(root)) requestFieldNodeValidationWave(root);
       for (const target of requests ?? [])
         requestFieldNodeValidationWave(target);

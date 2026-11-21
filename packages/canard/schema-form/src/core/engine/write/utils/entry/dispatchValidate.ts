@@ -7,11 +7,11 @@ import {
 } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
-import { sameValueZero } from '../../../utils/compute/sameValueZero';
 import type { ValidationIssue } from '../../../validation';
 import {
   isFieldNodeValidationCurrent,
   isFieldNodeValidationLifetimeCurrent,
+  readFieldNodeValidationCommit,
   releaseFieldNodeRevealHistory,
   retainEqualValidationIssues,
   routeValidationIssues,
@@ -49,7 +49,7 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
   const running =
     node === node.rootNode ? { stamp, targets: new Set([node]) } : undefined;
   if (running) runtime.activeValidationRun = running;
-  let commit = runtime.commitNumber ?? 0;
+  const initialCommit = runtime.commitNumber ?? 0;
   const validatedValue = root.storedOutputValue;
   const validatedContext = runtime.context;
   const loadStamp = runtime.validationLoadStamp;
@@ -111,11 +111,13 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
     if (node === node.rootNode) settleFieldNodeValidation(node, stamp);
     return [];
   }
-  if (
-    (runtime.commitNumber ?? 0) !== commit &&
-    (!sameValueZero(root.storedOutputValue, validatedValue) ||
-      runtime.context !== validatedContext)
-  ) {
+  const commit = readFieldNodeValidationCommit(
+    root,
+    initialCommit,
+    validatedValue,
+    validatedContext,
+  );
+  if (commit === undefined) {
     if (node === node.rootNode) {
       if (
         (runtime.validationMode ?? ValidationMode.None) &
@@ -126,7 +128,6 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
     }
     return result;
   }
-  commit = runtime.commitNumber ?? 0;
   const issues = retainEqualValidationIssues(node, result);
   routeValidationIssues([node], issues);
   runtime.validationResult = { commit, issues };
