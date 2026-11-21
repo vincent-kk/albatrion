@@ -16,6 +16,7 @@
   - 둘 다 plain object면 `differenceObjectPatch`(재귀 비교)의 결과를 반환한다.
   - 그 외(배열 포함)는 `equals(source, target)`이 true면 `undefined`, 아니면 `target`을 그대로 반환한다 — 배열은 원소 단위로 병합하지 않는다.
 - `differenceObjectPatch(source, target)`(내부 재귀 위임, entry point 비노출):
+  - 소스 키를 대조할 때 일반 깊이와 명시적 작업 프레임은 기존 자기 멤버의 대상 값을 한 번씩 읽습니다.
   - 제거된 속성과 값이 `undefined`로 바뀐 기존 속성은 `null`로 인코딩된다.
   - 값이 `undefined`인 새 속성은 결과에서 생략된다 — 추가해도 병합 결과가 바뀌지 않는다.
   - 값이 바뀐 배열·객체는 `target`과 참조를 공유하지 않도록 클론되어 들어간다.
