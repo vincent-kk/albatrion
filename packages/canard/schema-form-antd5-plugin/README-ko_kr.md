@@ -247,12 +247,11 @@ const Input = ({ inputId, name }: FieldInputProps<string>) => (
 );
 ```
 
-입력은 `labelId`를 직접 읽으므로 플러그인 레이아웃, `Form.Label`과 `Form.Input`, bound `Label`을 쓰는 사용자 렌더러에서도 같은 필드 제목이 컨트롤 또는 그룹의 이름입니다. 범위 양끝은 각각 제목에 연결합니다. 보조 컨트롤은 제목 있는 필드 그룹 안에서 자기 이름을 유지합니다. 입력 자체 legend는 `getInputId('legend')`를 사용합니다. 필드 제목은 접근성 트리에 한 번만 노출하며 중복 제목 노드는 `hidden`으로 트리에서 제외합니다.
+필드 제목의 연결은 Ant Design이 각 컴포넌트에 제공하는 id와 ARIA 속성을 따릅니다.
 
 복합 사용자 정의 입력은 `labelId`와 `getInputId`를 명시적으로 소비하고 DOM props에 펼치지 않습니다. getter의 참조는 필드 범위나 경로가 바뀔 때까지 유지됩니다. 말단 이름이나 `path`로 ID를 만들지 않습니다.
 
 해당 Form 안에서 `formElement.querySelector('[data-path="/email"] input')`처럼 조회하거나 컨트롤이 받은 id로 레이블을 연결합니다. Form API가 반환하는 값은 스키마 형태를 유지합니다.
-서버 렌더링 한계: Slider handle의 접근성 제목은 `ariaLabelledByForHandle`로 서버 HTML에도 연결하며 실제 포커스 handle의 id 연결은 hydration에서 완성됩니다. 라이브러리 Slider의 `id` prop은 바깥 root에 적용되며 handle을 식별하지 않습니다.
 
 Ant Design 5 Select는 팝업이 마운트되기 전에 내부 접미사 `_list`가 붙은 id를 `aria-controls`로 가리킬 수 있으며, 팝업이 열리면 그 대상이 존재합니다.
 
@@ -266,14 +265,6 @@ For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the un
 
 A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
 
-### Unset slider values
+### 슬라이더와 검색
 
-An unset slider exposes no current value to assistive technology and stores nothing until the user acts.
-
-### Slider constraints
-
-With `multipleOf`, selectable values are multiples of that number within the inclusive bounds. Integer sliders select only integer multiples. Without `multipleOf`, number sliders retain their authored bounds. A range with no selectable value is disabled and stores nothing.
-
-슬라이더 commit은 Ant Design peer 범위 전체에서 지원합니다. 5.10·5.11에서는 `onAfterChange`, 5.12 이상에서는 `onChangeComplete`를 사용합니다. `lazy`를 생략하면 조작을 끝낼 때 저장하고 `lazy: false`는 이동 중에 저장합니다.
-
-슬라이더는 inclusive·exclusive 경계를 함께 적용합니다. `multipleOf`가 있으면 정확한 십진 배수를, 정수 필드는 이 격자와 정수의 교집합을 사용합니다. `multipleOf`가 없으면 하한이 기본 step의 anchor이며 inclusive 경계를 그대로 선택할 수 있습니다. exclusive 경계는 제외하며 경계 안의 step 값이 없으면 어떤 조작도 저장하지 않습니다. `Home`·`End`는 처음·마지막 허용 값을, Page·Shift+Arrow는 열 step을 선택합니다. 격자 밖 값도 렌더링만으로 변경하지 않습니다. `Number.MAX_SAFE_INTEGER`까지의 track에서 pointer 정밀도는 지원 범위 밖입니다.
+슬라이더의 미설정 표시, 정지점, 키 입력과 값 반올림은 Ant Design이 처리합니다. 검색은 Ant Design의 문자열 필터를 사용합니다.

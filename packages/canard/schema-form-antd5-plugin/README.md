@@ -247,12 +247,11 @@ const Input = ({ inputId, name }: FieldInputProps<string>) => (
 );
 ```
 
-Inputs read `labelId` directly, so the same field title names the control or group in the plugin layout, `Form.Label` with `Form.Input`, and a custom renderer with its bound `Label`. Both range endpoints reference the title. Auxiliary controls keep their own names within a named field group. Input-owned legends use `getInputId('legend')`; a bound field title is exposed once, and any duplicate title node uses `hidden` so it is outside the accessibility tree.
+Field titles connect through the id and ARIA props supported by each Ant Design component.
 
 For a composite custom input, consume `labelId` and `getInputId` explicitly rather than spreading them into DOM props. A getter is stable until the field scope or path changes. Never derive ids from the leaf name or from `path`.
 
 Scope selectors to the intended Form, such as `formElement.querySelector('[data-path="/email"] input')`, or connect labels using the control's supplied id. Form API values retain the schema shape.
-Known server-rendering limit: Slider handles receive their accessible title in server HTML through `ariaLabelledByForHandle`, while their focusable handle id completes at hydration. The library Slider `id` prop targets its outer root and does not identify the handle.
 
 Ant Design 5 Select can set `aria-controls` to its internally suffixed `_list` id before the popup mounts; the reference resolves when the popup opens.
 
@@ -266,14 +265,6 @@ For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the un
 
 A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
 
-### Unset slider values
+### Sliders and search
 
-An unset slider exposes no current value to assistive technology and stores nothing until the user acts.
-
-### Slider constraints
-
-With `multipleOf`, selectable values are multiples of that number within the inclusive bounds. Integer sliders select only integer multiples. Without `multipleOf`, number sliders retain their authored bounds. A range with no selectable value is disabled and stores nothing.
-
-Slider commit handling supports the full Ant Design peer range: 5.10 and 5.11 use `onAfterChange`, and 5.12 or later use `onChangeComplete`. Omitting `lazy` commits on release; `lazy: false` publishes during movement.
-
-Sliders honor inclusive and exclusive bounds together. With `multipleOf`, stops are decimal-exact multiples; integer fields use their intersection with integers. Without `multipleOf`, the default step is anchored at the lower bound and inclusive endpoints remain selectable. Exclusive endpoints are excluded; if no step lies inside the bounds, interactions store nothing. `Home` and `End` choose the first and last permitted values; Page and Shift+Arrow move ten steps. Rendering preserves the stored value, including an off-grid value. Pointer precision across a track reaching `Number.MAX_SAFE_INTEGER` is outside the supported precision range.
+Ant Design determines the slider’s unset display, stops, keyboard behavior, and rounding. Search uses Ant Design’s string filter.
