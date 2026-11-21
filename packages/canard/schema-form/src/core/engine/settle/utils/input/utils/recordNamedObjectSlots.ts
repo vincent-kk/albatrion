@@ -5,6 +5,7 @@ import { getDeclaredChildNames } from '../../declarations/getDeclaredChildNames'
 import { createSlotValueOverlay } from '../../slots/createSlotValueOverlay';
 import { getSlotBinding } from '../../slots/getSlotBinding';
 import { getSlotSource } from '../../slots/getSlotSource';
+import { supersedeRevivedSlotSource } from '../../transition/utils/supersedeRevivedSlotSource';
 
 /**
  * Select sources for named object bindings that may remain absent through compute.
@@ -29,6 +30,10 @@ export const recordNamedObjectSlots = <Self extends FieldNodeRecord<Self>>(
     const request = entries.find((entry) => entry.name === name);
     if (!request || request.node.kind === 'virtual') continue;
     const entry = getSlotBinding(host, request);
+    if (context.isMarkingLiveRule) {
+      const revived = retained.revivedChildSources?.get(entry);
+      if (revived) supersedeRevivedSlotSource(revived, true);
+    }
     const prior = getSlotSource(host, entry);
     const { overlay } = createSlotValueOverlay(
       entry.node,

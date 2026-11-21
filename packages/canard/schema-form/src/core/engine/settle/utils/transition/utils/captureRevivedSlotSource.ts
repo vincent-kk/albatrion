@@ -12,6 +12,7 @@ import type {
 import type { SettlementContext } from '../../../types/settlement';
 import { isPlain } from '../../input/isPlain';
 import { getSourceBoundary } from '../../source/getSourceBoundary';
+import { recordRevivedChildSource } from './recordRevivedChildSource';
 import { supersedeRevivedSlotSource } from './supersedeRevivedSlotSource';
 
 /**
@@ -53,21 +54,28 @@ export const captureRevivedSlotSource = <Self extends FieldNodeRecord<Self>>(
       seen.add(value);
       for (const name of Object.keys(value)) {
         const child = binding?.childrenByName?.[name];
-        const entry =
-          child?.blueprintNode ??
-          template.childEntries.find(
-            (entry) => entry.name === name && entry.node.kind !== 'virtual',
-          )?.node;
-        if (entry && entry.kind !== 'virtual' && value[name] !== undefined)
-          (source.children ??= []).push(
-            capture(
-              child,
-              entry,
-              appendSegment(suffix, name),
-              value[name],
-              source,
-            ),
-          );
+        const entry = child
+          ? undefined
+          : template.childEntries.find(
+              (entry) => entry.name === name && entry.node.kind !== 'virtual',
+            );
+        const candidate = child?.blueprintNode ?? entry?.node;
+        if (
+          !candidate ||
+          candidate.kind === 'virtual' ||
+          value[name] === undefined
+        )
+          continue;
+        const named = capture(
+          child,
+          candidate,
+          appendSegment(suffix, name),
+          value[name],
+          source,
+        );
+        (source.children ??= []).push(named);
+        if (binding && entry)
+          recordRevivedChildSource(binding, entry, named, context);
       }
       seen.delete(value);
     } else if (
@@ -78,18 +86,19 @@ export const captureRevivedSlotSource = <Self extends FieldNodeRecord<Self>>(
       seen.add(value);
       for (let index = 0; index < value.length; index++) {
         const child = binding?.childrenByName?.['' + index];
-        const entry =
-          child?.blueprintNode ?? getItemEntries(template, index)[0]?.node;
-        if (entry && value[index] !== undefined)
-          (source.children ??= []).push(
-            capture(
-              child,
-              entry,
-              appendSegment(suffix, index),
-              value[index],
-              source,
-            ),
-          );
+        const entry = child ? undefined : getItemEntries(template, index)[0];
+        const candidate = child?.blueprintNode ?? entry?.node;
+        if (!candidate || value[index] === undefined) continue;
+        const named = capture(
+          child,
+          candidate,
+          appendSegment(suffix, index),
+          value[index],
+          source,
+        );
+        (source.children ??= []).push(named);
+        if (binding && entry)
+          recordRevivedChildSource(binding, entry, named, context);
       }
       seen.delete(value);
     }
