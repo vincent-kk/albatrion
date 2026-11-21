@@ -12,6 +12,7 @@ import { transformErrors } from './utils/transformErrors';
  */
 export const createValidatorFactory = (ajv: Ajv, registry?: SchemaRootRegistry) => {
   const roots = registry ?? new WeakMap();
+  const ValidationError: unknown = Reflect.get(ajv.constructor, 'ValidationError');
   return (jsonSchema: JSONSchema): ValidateFunction => {
     const validate = registerSchemaRoot(roots, ajv, jsonSchema);
     return async (data) => {
@@ -22,8 +23,8 @@ export const createValidatorFactory = (ajv: Ajv, registry?: SchemaRootRegistry) 
         await result;
         return null;
       } catch (thrown: unknown) {
-        if (thrown instanceof Error && 'ajv' in thrown && thrown.ajv === true &&
-            'validation' in thrown && thrown.validation === true && 'errors' in thrown && Array.isArray(thrown.errors))
+        if (typeof ValidationError === 'function' && thrown instanceof ValidationError &&
+            'errors' in thrown && Array.isArray(thrown.errors))
           return transformErrors(thrown.errors, validate.schema);
         throw thrown;
       }

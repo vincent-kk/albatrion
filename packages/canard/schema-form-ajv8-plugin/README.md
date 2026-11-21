@@ -134,6 +134,8 @@ The guard instance retains the bound dialect, formats and keywords with
 - **Returns**: A validator factory function that can validate data against the schema
 - **Features**: Automatic `ValidationIssue` conversion and a root `dataPath` of `''`
 
+Validation errors from the selected AJV instance's `ValidationError` class become issues. Other exceptions, including a `ValidationError` thrown by application code from a different AJV copy, reject with the original value.
+
 #### **`compileGuard(root, pointer)` and `release(root)`**
 
 Guards are synchronous and use a JSON Pointer into the engine-owned copy root. `compileGuard` accepts that copy whether or not `compile` has run. A self-contained guard compiles its subschema without registering the root; only guards that need the root location, such as guards with `$ref` into root definitions, register the root on the guard instance. Whole validation compiles a detached root on a private AJV instance with the current application registrations. To make a schema address available to the application or to another root, register it on the application instance. The plugin enables asynchronous validation on its own root copy. Declare `$async: true` on separately registered resources that require asynchronous validation. Both kinds of guard work before whole-schema compilation. Pass the same copy object to `compile`, every `compileGuard`, and `release`; whole-schema validation can be compiled later.
