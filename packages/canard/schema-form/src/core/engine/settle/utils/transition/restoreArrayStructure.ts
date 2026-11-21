@@ -7,20 +7,17 @@ import type { SettlementContext } from '../../types/settlement';
 import { getGateRegistry } from '../gates/getGateRegistry';
 
 /**
- * Replay automatic array shapes backwards without rewinding identity keys.
- * @param context - Failed settlement with ordered structural changes
- * @param onlyHost - Optional detached array whose final decision selects the boundary structure
+ * Reconnect write-boundary array shapes without rewinding identity keys.
+ * @param context - Settlement owning the captured array bindings
  * @returns Nothing; each host again owns its earlier item occurrences
  */
 export const restoreArrayStructure = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
-  onlyHost?: Self,
 ): void => {
-  for (let index = context.arrayStructureLog.length - 1; index >= 0; index--) {
-    const entry = context.arrayStructureLog[index];
-    if (entry.isRestored) continue;
-    const { host, previousItems, previousItemCount, previousExtras } = entry;
-    if (onlyHost && host !== onlyHost) continue;
+  for (const [host, source] of context.retainedSources ?? []) {
+    const entry = source.array;
+    if (!entry || entry.isRestored) continue;
+    const { previousItems, previousItemCount } = entry;
     const prior = new Set(previousItems);
     for (const item of host.children ?? [])
       if (!prior.has(item)) {
@@ -50,9 +47,10 @@ export const restoreArrayStructure = <Self extends FieldNodeRecord<Self>>(
     host.childrenByName = childrenByName;
     host.children = captureFieldNodeChange(host, 'children', previousItems);
     host.itemCount = previousItemCount;
-    host.extras = previousExtras;
+    host.extras = source.extras;
     context.dirtyPaths.add(host.path);
     context.shapeDirtyPaths.add(host.path);
     entry.isRestored = true;
+    context.hasRestoredArrayStructure = true;
   }
 };

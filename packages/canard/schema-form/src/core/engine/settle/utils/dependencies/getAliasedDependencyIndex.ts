@@ -80,7 +80,7 @@ class AliasedDependencyIndex {
       !context.pathChanges.length &&
       !context.exitedNodes.size &&
       !context.perishedNodes.size &&
-      !context.arrayStructureLog.length
+      !context.hasRestoredArrayStructure
     )
       return;
     if (
@@ -97,8 +97,9 @@ class AliasedDependencyIndex {
       for (const change of context.pathChanges)
         this.registerSubtree(change.node, seen);
     }
-    for (const entry of context.arrayStructureLog)
-      if (entry.isRestored) this.register(entry.host);
+    if (context.hasRestoredArrayStructure && context.retainedSources)
+      for (const [host, source] of context.retainedSources)
+        if (source.array?.isRestored) this.register(host);
     for (const node of context.changedNodes) this.register(node);
     for (const node of context.exitedNodes)
       if (node.isDetached || node.isDisposed) this.remove(node);

@@ -19,6 +19,7 @@ import { applyDeriveWrite } from './utils/applyDeriveWrite';
 import { computeDeriveWave } from './utils/computeDeriveWave';
 import { hasOverlappingWrites } from './utils/hasOverlappingWrites';
 import { readWriteAddresses } from './utils/readWriteAddresses';
+import { retainEqualDeriveWrite } from './utils/retainEqualDeriveWrite';
 
 /** Deferred error codes follow the failure's contract category. */
 const ERROR_CODES = {
@@ -34,7 +35,10 @@ const ERROR_LABELS = {
 } as const;
 
 /** Whether an address equals, contains or lies inside one already written in this wave. */
-const overlapsAddress = (wave: readonly string[], addresses: readonly string[]) =>
+const overlapsAddress = (
+  wave: readonly string[],
+  addresses: readonly string[],
+) =>
   addresses.some((address) =>
     wave.some(
       (path) =>
@@ -108,7 +112,11 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
       for (let index = 0; index < decision.writes.length; index++)
         if (!isUnchanged(decision.writes[index]))
           changed.push(decision.writes[index]);
-      if (changed.length === 0) return;
+      if (changed.length === 0) {
+        for (const write of decision.writes)
+          retainEqualDeriveWrite(write, context);
+        return;
+      }
       if ((context.deriveRounds ?? 0) >= DERIVE_ROUND_CAP) {
         recordSettlementFailure(
           context,
@@ -138,6 +146,13 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
       // winner equal to the round's starting value still replaces a lower one.
       const isLayered =
         decision.writes.length > 1 && hasOverlappingWrites(decision.writes);
+      if (
+        !isLayered &&
+        changed.length !== decision.writes.length &&
+        (context.filledNodes.size || context.hasRevivedSlotSources)
+      )
+        for (const write of decision.writes)
+          if (isUnchanged(write)) retainEqualDeriveWrite(write, context);
       const writes = isLayered ? decision.writes : changed;
       let wave: Optional<string[]>;
       for (let index = 0; index < writes.length; index++) {
@@ -150,7 +165,11 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
             context.isAutomatic = true;
             wave = undefined;
           }
-          if (write.target?.isDetached || isUnchanged(write)) continue;
+          if (write.target?.isDetached) continue;
+          if (isUnchanged(write)) {
+            retainEqualDeriveWrite(write, context);
+            continue;
+          }
           (wave ??= []).push(...addresses);
         }
         if (skipConfirmation && !terminalTargets!.has(write.targetPath))

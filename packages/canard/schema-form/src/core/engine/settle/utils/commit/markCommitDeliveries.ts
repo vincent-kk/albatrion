@@ -29,8 +29,8 @@ import type { SettlementContext } from '../../types/settlement';
 import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import { commitGlobalState } from './commitGlobalState';
 import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
-import { getRequiredChildren } from './utils/getRequiredChildren';
 import { getInputCommitTracking } from './utils/getInputCommitTracking';
+import { getRequiredChildren } from './utils/getRequiredChildren';
 import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
 import { isExternalBranchValueChange } from './utils/isExternalBranchValueChange';
 import { isSameDeliveryValue } from './utils/isSameDeliveryValue';
@@ -51,16 +51,11 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
   const previousTransitions = runtime.revisionTransitions;
   try {
     const isLoad = context.kind === FieldNodeWriteKind.Load;
-    const inputTracking =
-      isLoad
-        ? undefined
-        : getInputCommitTracking(context, !!runtime.inputRelays?.length);
+    const inputTracking = isLoad
+      ? undefined
+      : getInputCommitTracking(context, !!runtime.inputRelays?.length);
     const refreshTargets = runtime.refreshTargets;
     const loadScope = isLoad ? context.loadScope : undefined;
-    const automaticNodes = new Set<Self>();
-    for (let index = 0; index < context.automaticLog.length; index++)
-      if (!context.automaticLog[index].isDistributionOnly)
-        automaticNodes.add(context.automaticLog[index].node);
     const watchIndex = runtime.deliveryWatchIndex;
     const watchNodes = getFeatureNodeIndex(runtime.blueprint).watchNodes;
     let affectedPaths: Optional<Set<string>>;
@@ -281,7 +276,8 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
                 : node.storedValue;
             const payload = { previous: oldValue, current };
             const source =
-              automaticNodes.has(node) || context.filledNodes.has(node)
+              context.retainedSources?.get(node)?.hasAutomaticWrite ||
+              context.filledNodes.has(node)
                 ? FieldNodeWriteKind.Automatic
                 : readSettlementSource(context, node.path);
             mark(
@@ -377,7 +373,8 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
               : node.storedValue;
           const payload = { previous: undefined, current };
           const source =
-            automaticNodes.has(node) || context.filledNodes.has(node)
+            context.retainedSources?.get(node)?.hasAutomaticWrite ||
+            context.filledNodes.has(node)
               ? FieldNodeWriteKind.Automatic
               : readSettlementSource(context, node.path);
           mark(

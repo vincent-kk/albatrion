@@ -32,7 +32,7 @@ export const readAbsentSlotSource = <Self extends FieldNodeRecord<Self>>(
   candidates: readonly BlueprintChildEntry[],
   context: SettlementContext<Self>,
 ): unknown => {
-  const array = context.retainedArrays?.get(host);
+  const array = context.retainedSources?.get(host)?.array;
   if (array && !context.exceededBudget) {
     for (const entry of candidates) {
       const overlay = array.namedItems?.get(entry);

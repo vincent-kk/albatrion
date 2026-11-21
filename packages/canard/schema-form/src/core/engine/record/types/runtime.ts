@@ -111,6 +111,8 @@ export interface Distribution {
   readonly isAutomatic: boolean;
   /** Provenance of an automatic input whose named children survive fill withdrawal. */
   writeOrigin?: 'declarative' | 'revived';
+  /** Sequence of the supplying automatic write, reused by every re-read. */
+  writeOrder?: number;
   /** Restored array positions whose sources remain under candidate-specific latent keys. */
   readonly retainedItemNames?: readonly string[];
   /** Surviving-slot reconstruction whose stored candidates remain authoritative. */
@@ -141,23 +143,6 @@ export interface SettlementScratch<Self> {
   distributedInputs: Map<Self, Distribution>;
   /** Wrong-kind hosts considered for conditional caller clearing. */
   wrongKindHosts: Set<Self>;
-  /** Previous state of each reversible automatic node write. */
-  automaticLog: {
-    node: Self;
-    previousSource: unknown;
-    previousExtras: unknown;
-    previousDistributed?: Distribution;
-    /** The entry only rewrote the node's distribution for an inactive descendant; the node itself was not written. */
-    isDistributionOnly?: boolean;
-  }[];
-  /** Ordered array shapes before reversible automatic writes. */
-  arrayStructureLog: {
-    host: Self;
-    previousItems: Self[];
-    previousItemCount: number;
-    previousExtras: unknown;
-    isRestored?: boolean;
-  }[];
   /** First array length observed in this settlement for snapshot alignment. */
   arrayCounts: Map<Self, number>;
   /** Paths changed before settlement, retained for later UpdatePath delivery. */

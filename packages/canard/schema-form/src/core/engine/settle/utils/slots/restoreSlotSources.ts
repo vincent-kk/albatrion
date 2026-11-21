@@ -1,8 +1,3 @@
-import {
-  appendSegment,
-  isDescendantPath,
-} from '@/schema-form/helpers/jsonPointer';
-
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
@@ -16,24 +11,13 @@ type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
 /**
  * Restore bindings changed after the caller's Source B boundary.
  * @param context - Transition-local first-change journal
- * @param scope - Optional finally detached fill subtree being withdrawn
  * @returns Nothing; restored sources publish with the final settlement
  */
 export const restoreSlotSources = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
-  scope?: string,
 ): void => {
-  for (const [host, bindings] of context.slotAutomaticLog ?? [])
-    for (const [entry, previous] of bindings) {
-      if (scope !== undefined && context.namedSlotWrites?.get(host)?.has(entry))
-        continue;
-      const path = appendSegment(host.path, entry.name);
-      if (
-        scope !== undefined &&
-        path !== scope &&
-        !isDescendantPath(path, scope)
-      )
-        continue;
+  for (const [host, source] of context.retainedSources ?? [])
+    for (const [entry, previous] of source.slots ?? []) {
       markSlotChange(host, entry);
       if (previous.instance) {
         const slots: InactiveSlots<Self> = (host.inactiveSlots ??= new Map());

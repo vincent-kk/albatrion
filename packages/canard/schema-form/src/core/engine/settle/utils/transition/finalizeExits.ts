@@ -21,7 +21,6 @@ import { retainExitedSlot } from '../slots/retainExitedSlot';
 import { applyDepartingWrites } from './applyDepartingWrites';
 import { finalizePerished } from './finalizePerished';
 import { isRekeyedDestination } from './utils/isRekeyedDestination';
-import { withdrawDetachedFills } from './withdrawDetachedFills';
 
 /**
  * Decide exits only against the settled final shape, including Source B.
@@ -109,7 +108,11 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       }
     }
   }
-  withdrawDetachedFills(context);
+  for (const filled of context.filledNodes)
+    if (filled.isDetached) {
+      context.changedSource.delete(filled.path);
+      context.writtenInputs.delete(filled);
+    }
   for (const node of context.exitedNodes)
     if (!inLoadScope(node) && node.isDetached)
       retainExitedSlot(

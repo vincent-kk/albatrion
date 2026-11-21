@@ -11,10 +11,8 @@ import type {
 } from '../../../types/departingWrite';
 import type { SettlementContext } from '../../../types/settlement';
 import { isPlain } from '../../input/isPlain';
+import { getSourceBoundary } from '../../source/getSourceBoundary';
 import { supersedeRevivedSlotSource } from './supersedeRevivedSlotSource';
-
-/** Active bindings point to the final eligible own right. */
-type RevivedSlotSources<Self> = Map<Self, RevivedSlotSource<Self>>;
 
 /**
  * Bind the named input of a cancelled exit to the occurrences receiving it.
@@ -28,8 +26,7 @@ export const captureRevivedSlotSource = <Self extends FieldNodeRecord<Self>>(
   write: DepartingWrite<Self>,
   context: SettlementContext<Self>,
 ): RevivedSlotSource<Self> => {
-  const bindings: RevivedSlotSources<Self> = (context.revivedSlotSources ??=
-    new Map());
+  context.hasRevivedSlotSources = true;
   const seen = new WeakSet<object>();
   const capture = (
     binding: Self | undefined,
@@ -46,9 +43,10 @@ export const captureRevivedSlotSource = <Self extends FieldNodeRecord<Self>>(
       parent,
     };
     if (binding) {
-      const earlier = bindings.get(binding);
+      const retained = getSourceBoundary(binding, context);
+      const earlier = retained.revivedSlotSource;
       if (earlier) supersedeRevivedSlotSource(earlier);
-      bindings.set(binding, source);
+      retained.revivedSlotSource = source;
     }
     if (template.strategy !== 'branch') return source;
     if (isPlain(value) && template.kind === 'object' && !seen.has(value)) {
