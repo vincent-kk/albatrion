@@ -304,22 +304,14 @@ export class StyleManager {
     this.__applyCSS__(result);
   }
 
+  /**
+   * Apply the combined CSS using the target document's stylesheet support.
+   * @param css Scoped or shadow-local stylesheet text.
+   */
   private __applyCSS__(css: string): void {
-    if (
-      typeof CSSStyleSheet !== 'undefined' &&
-      'replaceSync' in CSSStyleSheet.prototype &&
-      'adoptedStyleSheets' in this.__root__
-    ) {
-      if (!this.__sheet__) {
-        this.__sheet__ = new CSSStyleSheet();
-        // Improve performance by directly creating an array instead of using spread operator
-        const currentSheets = this.__root__.adoptedStyleSheets;
-        const newSheets = new Array(currentSheets.length + 1);
-        for (let i = 0, l = currentSheets.length; i < l; i++)
-          newSheets[i] = currentSheets[i];
-        newSheets[currentSheets.length] = this.__sheet__;
-        this.__root__.adoptedStyleSheets = newSheets;
-      }
+    const ownerDocument = this.__root__.ownerDocument ?? document;
+    if (!this.__element__) this.__sheet__ ??= this.__adoptSheet__(ownerDocument);
+    if (this.__sheet__) {
       try {
         this.__sheet__.replaceSync(css);
       } catch (error) {
@@ -328,15 +320,43 @@ export class StyleManager {
           error,
         );
       }
-    } else {
-      if (!this.__element__) {
-        this.__element__ = document.createElement('style');
-        this.__element__.className = this.__scope__;
-        // If it's Shadow DOM, append to shadowRoot directly
-        if (this.__isShadowDOM__) this.__root__.appendChild(this.__element__);
-        else document.head.appendChild(this.__element__);
-      }
-      this.__element__.textContent = css;
+      return;
+    }
+
+    if (!this.__element__) {
+      this.__element__ = ownerDocument.createElement('style');
+      this.__element__.className = this.__scope__;
+      if (this.__isShadowDOM__) this.__root__.appendChild(this.__element__);
+      else ownerDocument.head.appendChild(this.__element__);
+    }
+    this.__element__.textContent = css;
+  }
+
+  /**
+   * Create an adopted sheet in the same realm as the destination.
+   * @param ownerDocument Document that owns the destination root.
+   * @returns The adopted sheet, or null when the style-element path is needed.
+   */
+  private __adoptSheet__(ownerDocument: Document): CSSStyleSheet | null {
+    const view = ownerDocument.defaultView;
+    const Sheet: typeof CSSStyleSheet | undefined = view
+      ? Reflect.get(view, 'CSSStyleSheet')
+      : undefined;
+    if (
+      typeof Sheet !== 'function' ||
+      !('replaceSync' in Sheet.prototype) ||
+      !('adoptedStyleSheets' in this.__root__)
+    )
+      return null;
+    try {
+      const sheet = new Sheet();
+      this.__root__.adoptedStyleSheets = [
+        ...this.__root__.adoptedStyleSheets,
+        sheet,
+      ];
+      return sheet;
+    } catch {
+      return null;
     }
   }
 }
