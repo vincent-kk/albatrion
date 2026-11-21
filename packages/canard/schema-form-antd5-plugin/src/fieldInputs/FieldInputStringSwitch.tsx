@@ -32,6 +32,7 @@ const FieldInputStringSwitch = ({
   path,
   jsonSchema,
   disabled,
+  readOnly,
   value,
   onChange,
   context,
@@ -63,7 +64,7 @@ const FieldInputStringSwitch = ({
     <Switch
       aria-invalid={misfit || undefined}
       key={path}
-      disabled={disabled}
+      disabled={disabled || readOnly}
       checked={value === checked}
       checkedChildren={checkedLabel}
       unCheckedChildren={uncheckedLabel}
