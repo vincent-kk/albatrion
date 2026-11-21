@@ -12,8 +12,8 @@ import { setDataProperty } from './setDataProperty';
  *
  * Performs high-speed deep cloning optimized for simple structures consisting
  * only of primitives, plain objects, and arrays. Trades comprehensive type
- * support for significant performance gains by eliminating circular reference
- * tracking, type checking overhead, and specialized handlers.
+ * support for lower overhead on simple values. Unbounded traversal rejects
+ * cycles with a RangeError once it reaches the explicit work stack.
  *
  * @template Type - Type of the value to clone
  * @param target - The value to create a lightweight clone of

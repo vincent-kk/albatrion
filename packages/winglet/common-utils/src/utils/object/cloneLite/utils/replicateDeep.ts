@@ -31,7 +31,8 @@ export function replicateDeep(
   depth: number,
 ): unknown {
   let result: unknown;
-  const pending: CloneFrame[] = [
+  const active = Number.isFinite(limit) ? null : new WeakSet<object>();
+  const pending: (CloneFrame | (() => void))[] = [
     {
       read: () => value,
       depth,
@@ -42,10 +43,29 @@ export function replicateDeep(
   ];
   while (pending.length) {
     const frame = pending.pop()!;
+    if (typeof frame === 'function') {
+      frame();
+      continue;
+    }
     const current = frame.read();
     if (limit !== undefined && frame.depth >= limit) {
       frame.write(current);
-    } else if (isArray(current)) {
+      continue;
+    }
+    const isArrayValue = isArray(current);
+    if (!isArrayValue && !isPlainObject(current)) {
+      frame.write(current);
+      continue;
+    }
+    if (active) {
+      if (active.has(current))
+        throw new RangeError('cloneLite input contains a cycle');
+      active.add(current);
+      pending.push(() => {
+        active.delete(current);
+      });
+    }
+    if (isArrayValue) {
       const output: unknown[] = new Array(current.length);
       frame.write(output);
       for (let index = current.length - 1; index >= 0; index--) {
@@ -58,7 +78,7 @@ export function replicateDeep(
             },
           });
       }
-    } else if (isPlainObject(current)) {
+    } else {
       const prototype = Object.getPrototypeOf(current);
       const output: Record<string, unknown> =
         prototype === Object.prototype ? {} : Object.create(prototype);
@@ -74,7 +94,7 @@ export function replicateDeep(
           },
         });
       }
-    } else frame.write(current);
+    }
   }
   return result;
 }

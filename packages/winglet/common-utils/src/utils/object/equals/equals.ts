@@ -159,7 +159,7 @@ import { equalsRecursive } from './utils/equalsRecursive';
  * ```
  *
  * **Cyclic Inputs:**
- * Cyclic input is unsupported and can fail to terminate after the explicit-frame fallback.
+ * A repeated comparison pair on the current path throws a RangeError.
  * Use `stableEquals` for comparison and `clone` for copying when cycles are possible.
  * ```typescript
  * const circular: { name: string; self?: unknown } = { name: 'node' };
@@ -206,7 +206,7 @@ import { equalsRecursive } from './utils/equalsRecursive';
  * ```
  *
  * **Limitations:**
- * - **Does not handle circular references** (comparison does not terminate)
+ * - Repeated active comparison pairs throw a RangeError
  * - Functions are compared by reference only, not by implementation
  * - Set members and Map keys that are objects match by reference only
  * - Typed arrays are compared by index value, so `0` and `-0` are equal
