@@ -18,8 +18,6 @@ export interface AgentTarget {
   readonly scope: Scope;
   /** Agent-neutral root the locations below were derived from. */
   readonly projectRoot: string;
-  /** Ownership record beside the assets this target writes. */
-  readonly installedAssetsFile: string;
   /** Copy root per kind; `null` when this agent does not place that kind as files. */
   readonly directoryRoots: Readonly<Record<AssetKind, string | null>>;
   /** Document that rules are merged into as marker blocks; `null` when rules are copied. */

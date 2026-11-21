@@ -44,7 +44,7 @@
 
 - `AgentType = 'claude' | 'codex' | 'agents'`
 - `AssetKind = 'skills' | 'rules' | 'commands'`
-- `AgentTarget`은 자산과 규칙 병합 파일의 위치에 더해 설치 기록의 절대 위치를 제공합니다.
+- `resolveAgentTarget`의 반환값은 `AgentTarget`에 더해 설치 기록의 절대 위치를 제공합니다. 기존 호출자가 직접 구성하는 `AgentTarget`은 설치 기록 경로를 요구하지 않습니다.
 - `Destination` — `{ kind: 'file', dstAbs }` | `{ kind: 'block', fileAbs, blockId }` | `{ kind: 'unsupported', reason }`
 - `OrphanScan` — `{ kind: 'directory', scanRoot, relPathPrefix }` | `{ kind: 'block-file', fileAbs, ownerPackage }`
 
