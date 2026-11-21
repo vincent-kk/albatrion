@@ -4,16 +4,16 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { Optional } from '@aileron/declare';
 
 import { BEHAVIORS, isOmittedEmpty } from '../../../behaviors';
-import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { BATCH_HOST_SOURCE } from '../../../utils/batchHostSource';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
+import { canReleaseCallerHost } from '../input/canReleaseCallerHost';
 import { decideAddressWrite } from '../input/decideAddressWrite';
-import { getWriteChild } from '../input/getWriteChild';
 import { isPlain } from '../input/isPlain';
 import { nextExtras } from '../input/nextExtras';
 import { staticSpec } from '../input/staticSpec';
+import { visitInputChildren } from '../input/visitInputChildren';
 import { getSlotSource } from './getSlotSource';
 
 /**
@@ -50,49 +50,66 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
       hasWritten: source !== undefined && !isOmittedEmpty(template, source),
     };
   }
-  if (
+  const array =
     template.kind === 'array' &&
     template.hasCandidateDescendants &&
     isArray(input)
-  ) {
-    if (seen.has(input))
-      return { overlay: { isWhole: true }, hasWritten: false };
-    seen.add(input);
-    const source = input.slice();
-    const children = new Map<BlueprintChildEntry, InactiveSlotOverlay>();
-    let hasWritten = false;
-    for (let index = 0; index < input.length; index++) {
-      const entry = getItemEntries(template, index)[0];
-      if (!entry) continue;
+      ? input
+      : undefined;
+  const object = isPlain(input) ? input : undefined;
+  if (!array && !object)
+    return { overlay: { isWhole: true, source: input }, hasWritten: false };
+  const keepsChildren = !array && decideAddressWrite(template, input, !isWhole);
+  const source = array?.slice();
+  const children = new Map<BlueprintChildEntry, InactiveSlotOverlay>(
+    keepsChildren ? previous?.children : undefined,
+  );
+  let hasWritten = false;
+  const visited = visitInputChildren(
+    template,
+    input,
+    undefined,
+    seen,
+    (name, entry, _, value) => {
+      if (!entry) return;
+      const prior = keepsChildren
+        ? getSlotSource(instance, entry, previous)
+        : undefined;
       const child = createSlotValueOverlay(
         entry.node,
-        input[index],
-        undefined,
-        undefined,
-        isWhole,
+        value,
+        prior?.instance,
+        prior?.overlay,
+        array ? isWhole : !keepsChildren,
         isAutomatic,
         seen,
       );
       children.set(entry, child.overlay);
       if (child.hasWritten) hasWritten = true;
-      source[index] = undefined;
-    }
-    seen.delete(input);
+      if (source) source[Number(name)] = undefined;
+      else
+        for (const sibling of template.childEntries) {
+          if (sibling.name !== name || sibling.node === entry.node) continue;
+          const prior = getSlotSource(instance, sibling, previous);
+          if (prior.instance || prior.overlay)
+            children.set(sibling, { isWhole: true, source: undefined });
+        }
+    },
+  );
+  if (array)
     return {
-      overlay: {
-        isWhole: true,
-        source: Object.freeze(source),
-        itemCount: input.length,
-        children,
-      },
+      overlay: visited
+        ? {
+            isWhole: true,
+            source: Object.freeze(source),
+            itemCount: array.length,
+            children,
+          }
+        : { isWhole: true },
       hasWritten,
     };
-  }
-  if (!isPlain(input))
-    return { overlay: { isWhole: true, source: input }, hasWritten: false };
-  isWhole = !decideAddressWrite(template, input, !isWhole);
-  if (seen.has(input)) return { overlay: { isWhole: true }, hasWritten: false };
-  seen.add(input);
+  if (!object || (!visited && template.kind === 'object'))
+    return { overlay: { isWhole: true }, hasWritten: false };
   const previousSource =
     previous && hasOwnProperty(previous, 'source')
       ? previous.source
@@ -105,50 +122,23 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
       : previous?.isWhole
         ? undefined
         : instance?.extras;
-  const extras = nextExtras(
-    isWhole ? undefined : previousExtras,
-    input,
-    getDeclaredChildNames(template),
-    !isWhole,
-  );
-  const children = new Map(isWhole ? undefined : previous?.children);
-  let hasWritten = false;
-  for (const name of Object.keys(input)) {
-    const { entry } = getWriteChild(template, undefined, name);
-    if (!entry) continue;
-    const prior = isWhole
-      ? undefined
-      : getSlotSource(instance, entry, previous);
-    const child = createSlotValueOverlay(
-      entry.node,
-      Reflect.get(input, name),
-      prior?.instance,
-      prior?.overlay,
-      isWhole,
-      isAutomatic,
-      seen,
-    );
-    children.set(entry, child.overlay);
-    if (child.hasWritten) hasWritten = true;
-    for (const sibling of template.childEntries) {
-      if (sibling.name !== name || sibling.node === entry.node) continue;
-      const prior = getSlotSource(instance, sibling, previous);
-      if (prior.instance || prior.overlay)
-        children.set(sibling, { isWhole: true, source: undefined });
-    }
-  }
-  seen.delete(input);
   return {
     overlay: {
-      ...(!isWhole ? previous : undefined),
-      isWhole: isWhole || previous?.isWhole,
+      ...(keepsChildren ? previous : undefined),
+      isWhole: !keepsChildren || previous?.isWhole,
       source:
-        BATCH_HOST_SOURCE in input
-          ? Reflect.get(input, BATCH_HOST_SOURCE)
-          : isWhole || (hasWritten && !isAutomatic)
+        BATCH_HOST_SOURCE in object
+          ? Reflect.get(object, BATCH_HOST_SOURCE)
+          : !keepsChildren ||
+              (!isAutomatic && canReleaseCallerHost(previousSource, hasWritten))
             ? undefined
             : previousSource,
-      extras,
+      extras: nextExtras(
+        keepsChildren ? previousExtras : undefined,
+        object,
+        getDeclaredChildNames(template),
+        keepsChildren,
+      ),
       children,
     },
     hasWritten,

@@ -5,9 +5,13 @@ import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { FieldNodeWriteKind } from '../../../types/value';
 import type { WriteOption } from '../../../types/value';
-import { BATCH_HOST_SOURCE } from '../../../utils/batchHostSource';
+import {
+  BATCH_HOST_SOURCE,
+  writeBatchHostSource,
+} from '../../../utils/batchHostSource';
 import { writeObjectKey } from '../../../utils/writeObjectKey';
 import type { WriteRange } from '../../types/writeRange';
+import { canReleaseCallerHost } from './canReleaseCallerHost';
 import { hasCallerInputOutput } from './hasCallerInputOutput';
 import { isMergeWrite } from './isMergeWrite';
 import { mergeMarkedValue } from './mergeMarkedValue';
@@ -50,8 +54,11 @@ export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
       node.source !== undefined &&
       incoming !== null &&
       typeof incoming === 'object'
-    )
-      return { ...incoming, [BATCH_HOST_SOURCE]: node.source };
+    ) {
+      const next = { ...incoming };
+      writeBatchHostSource(next, node.source);
+      return next;
+    }
     if (isMergeWrite(option))
       return mergeMarkedValue(
         node,
@@ -120,17 +127,14 @@ export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
     let childNode = node;
     while (childNode && childNode.depth > depth + 1)
       childNode = childNode.parent ?? undefined;
-    if (
-      isCommittedInput ||
-      !childNode ||
-      !hasCallerInputOutput(child, childNode)
-    )
-      Object.defineProperty(next, BATCH_HOST_SOURCE, {
-        value: wrongSource,
-        enumerable: true,
-        configurable: true,
-      });
-    else Reflect.deleteProperty(next, BATCH_HOST_SOURCE);
+    const hasOutput =
+      !isCommittedInput &&
+      !!childNode &&
+      hasCallerInputOutput(child, childNode);
+    writeBatchHostSource(
+      next,
+      canReleaseCallerHost(wrongSource, hasOutput) ? undefined : wrongSource,
+    );
   }
   return next;
 };
