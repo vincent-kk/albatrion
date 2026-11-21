@@ -22,7 +22,9 @@ export const readCurrentFieldLabels = (
   const external = document.getElementById(labelId);
   if (!field || !control) return { field, external };
   const internal = Array.from(
-    field.querySelectorAll<HTMLLabelElement>('label'),
+    field.querySelectorAll<HTMLLabelElement>(
+      'label:not([data-field-name-fallback])',
+    ),
   ).filter(
     (candidate) =>
       candidate !== external &&
