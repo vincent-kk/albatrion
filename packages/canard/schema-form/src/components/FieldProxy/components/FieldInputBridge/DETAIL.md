@@ -84,7 +84,9 @@ Activity·Suspense의 layout 해제는 조합 보류를 끝냅니다. 끝 이벤
 
 렌더가 직접 읽는 Refresh revision은 초기 세대와 적용 세대에 공유하여 렌더당 중복 조회를 피합니다. 이 호출 한정 값은 구독의 스냅숏 확인을 대체하지 않으므로 렌더와 attach 사이 변경 및 Activity 재연결을 계속 따라잡습니다.
 
-focus/select는 지연 프록시의 재발행을 받도록 layout에서 구독합니다. focus는 문서 순서상 첫 `[data-focus-target]`·input·textarea·select·button, select는 첫 input·textarea를 대상으로 하여 앞의 버튼·select가 텍스트 선택을 가로채지 않게 합니다. 입력의 commit 작업은 같은 layout effect를 공유하고, 컨테이너 교체와 composition 종료는 useVersion의 안정된 갱신 dispatch를 공유하여 effect를 추가하지 않습니다.
+직접 focus와 Mount·Render 예약은 연결된 `focusRef` 대상을 한 번 호출합니다. 대상이 없으면 입력 컨테이너에서 `[data-focus-target]`, `input`, `textarea`, `select`, `button`에 일치하는 문서 순서상 첫 요소를 사용합니다. DOM 앵커는 연결된 같은 문서에 있어야 하며 같은 문서의 포털도 허용합니다. Select는 첫 `input` 또는 `textarea`에 독립적으로 적용하고 동시 요청에서는 Focus 뒤에 실행합니다.
+
+대상은 한 입력 위치의 React ref가 연결·해제합니다. 기존 layout effect는 폼의 실제 입력 위치를 등록하고 구독하며, 해제하거나 초기 Mount·Render 행동이 실패하면 그 위치와 구독을 정리합니다. 컨테이너 교체와 composition 종료는 기존 갱신 dispatch를 공유합니다.
 
 ### GOAL-067 — 자식 캐시와 하이드레이션
 
@@ -108,7 +110,7 @@ useFieldLifecycle의 cleanup이 안정된 releaseComposition을 호출하므로 
 
 ### 라이프사이클 시점
 
-- 위치는 입력 컨테이너가 있는 브리지 인스턴스입니다. 입력이 없어 null을 반환하는 브리지는 시점을 발행하지 않습니다. 유일한 layout effect는 useFieldLifecycle이 소유하며 터미널 자식 커밋, hydration 표시, 노출 기록, 가상화 입력 등록, 명령 구독 뒤 Mount와 Render를 실행합니다. callback ref는 기존 메모 안에서 한 번 만들고 ref 객체를 최신 컨테이너로 유지합니다. 첫 effect 전, null, 같은 등록 요소의 StrictMode 재연결은 교체로 세지 않습니다. cleanup은 isCommittedRef를 지우고 조합·구독·현재 등록 요소를 정리한 뒤 Unmount를 실행합니다.
+- 위치는 입력 컨테이너가 있는 브리지 인스턴스입니다. 입력이 없어 null을 반환하는 브리지는 시점을 발행하지 않습니다. 유일한 layout effect는 useFieldLifecycle이 소유하며 터미널 자식 커밋, hydration 표시, 노출 기록, 폼의 실제 입력 위치 등록, 명령 구독 뒤 Mount와 Render를 실행합니다. callback ref는 기존 메모 안에서 한 번 만들고 ref 객체를 최신 컨테이너로 유지합니다. 첫 effect 전, null, 같은 등록 요소의 StrictMode 재연결은 교체로 세지 않습니다. cleanup은 isCommittedRef를 지우고 조합·구독·현재 등록 요소를 정리한 뒤 Unmount를 실행합니다.
 - effect 함수는 같은 의존성으로 useMemo에서 만들며 실행 여부를 그 클로저에 보존합니다. 같은 함수의 StrictMode 재실행·Activity 재표시는 Mount와 Render를 소비하지 않습니다. 이 재실행 방지는 React 18·19의 해당 재연결 경로처럼 의존성이 같은 동안 React가 메모된 effect를 유지한다는 전제에 의존하며, 향후 React가 이를 폐기하면 실행 여부도 초기화되어 StrictMode 재실행·Activity 재표시에서 Mount와 Render 예약을 다시 소비할 수 있습니다. 숨겨진 동안 의존성이 바뀌면 재표시가 새 Mount입니다. Unmount는 cleanup에서 실행되므로 StrictMode 재실행과 Activity 숨김에도 실행되며 행동은 무시합니다.
 - 한 커밋의 Render는 Mount 뒤 한 번입니다. 다른 커밋은 isCommittedRef가 true이고 Render 예약이 있는 위치에만 감지 컴포넌트를 렌더합니다. 의존성 변경의 mutation cleanup이 isCommittedRef를 지워 자식 감지기가 Mount보다 먼저 실행하지 못하게 합니다. 감지기 자신의 effect 재실행도 같은 함수 비교로 막습니다.
 - 예약만으로 렌더하지 않으며 같은 노드의 여러 위치는 커밋 순서상 먼저 실행한 위치가 큐를 가져갑니다. 한 시점의 행동은 합쳐 컨테이너에 한 번 실행하고 Focus 다음 Select 순서를 지킵니다.
