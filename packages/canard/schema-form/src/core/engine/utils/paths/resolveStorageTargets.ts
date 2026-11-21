@@ -1,7 +1,5 @@
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
-import { hasOwnProperty } from '@winglet/common-utils/lib';
-
-import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+import { resolveVirtualStorageTargets } from './resolveVirtualStorageTargets';
 
 /**
  * Expand a virtual address into its ordered physical storage fields.
@@ -26,12 +24,9 @@ export const resolveStorageTargets = <
   if (node.behavior.type !== 'virtual') return undefined;
   const parent = node.parent;
   if (!parent) return EMPTY_ARRAY;
-  return (node.blueprintNode.fields ?? EMPTY_ARRAY).map((name) => ({
-    name,
-    path: appendSegment(parent.path, name),
-    node:
-      parent.childrenByName && hasOwnProperty(parent.childrenByName, name)
-        ? parent.childrenByName[name]
-        : undefined,
-  }));
+  return resolveVirtualStorageTargets(
+    parent.path,
+    node.blueprintNode.fields,
+    parent.childrenByName,
+  );
 };
