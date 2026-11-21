@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { DatePicker } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
-import type { Dayjs } from 'dayjs';
+import dayjs, { type Dayjs } from 'dayjs';
 
 import { isArray } from '@winglet/common-utils/filter';
 import { isStringSchema } from '@winglet/json-schema/filter';
@@ -17,8 +17,6 @@ import type {
 
 import type { Parameter } from '@aileron/declare';
 
-import { parseTime } from './utils/time/parseTime';
-
 const DATE_FORMAT = 'HH:mm:00Z';
 
 type DateRangeSchema = ArraySchema & {
@@ -30,43 +28,6 @@ type RangeValueType<T> = Parameter<
 >['defaultValue'];
 
 type OnChangeRangeValueType<T> = RangeValueType<T> | null;
-
-type DisabledTimeType<T> = Parameter<
-  (typeof DatePicker<T>)['RangePicker']
->['disabledTime'];
-
-type TimeLimits = ReturnType<NonNullable<DisabledTimeType<Dayjs>>>;
-
-const MINUTES_PER_DAY = 24 * 60;
-const HOURS = Array.from({ length: 24 }, (_, hour) => hour);
-const MINUTES = Array.from({ length: 60 }, (_, minute) => minute);
-
-/**
- * Converts an `HH:mm:00Z` limit to the local minute of the day the time panel shows.
- * @param limit - `minimum` or `maximum`; an empty or unparsable limit means no limit.
- * @returns Minutes since local midnight, or `undefined` when there is no limit.
- */
-const toLocalMinute = (limit: string | undefined) => {
-  if (!limit) return undefined;
-  const time = parseTime(limit);
-  return time.isValid() ? time.hour() * 60 + time.minute() : undefined;
-};
-
-/**
- * Tells whether a local minute of the day lies outside the selectable window.
- * @param minute - Minutes since local midnight.
- * @param minimum - Window start, inclusive; when later than `maximum` the window wraps past midnight.
- * @param maximum - Window end, inclusive.
- * @returns `true` when the minute cannot be selected.
- */
-const isOutsideWindow = (
-  minute: number,
-  minimum = 0,
-  maximum = MINUTES_PER_DAY - 1,
-) =>
-  minimum <= maximum
-    ? minute < minimum || minute > maximum
-    : minute < minimum && minute > maximum;
 
 interface FieldInputTimeRangeProps
   extends FieldInputPropsWithSchema<
@@ -82,8 +43,7 @@ interface FieldInputTimeRangeProps
 }
 
 const FieldInputTimeRange = ({
-  inputId,
-  getInputId,
+  path,
   name,
   readOnly,
   disabled,
@@ -94,35 +54,27 @@ const FieldInputTimeRange = ({
   minimum,
   maximum,
   misfit,
-  labelId: labelledBy,
 }: FieldInputTimeRangeProps) => {
   const initialValue = useMemo<RangeValueType<Dayjs>>(
     () =>
       isArray(defaultValue) && defaultValue.length === 2
-        ? [parseTime(defaultValue[0]), parseTime(defaultValue[1])]
+        ? [
+            dayjs(defaultValue[0], DATE_FORMAT),
+            dayjs(defaultValue[1], DATE_FORMAT),
+          ]
         : undefined,
     [defaultValue],
   );
 
-  const disabledTime = useMemo<DisabledTimeType<Dayjs>>(() => {
-    if (!minimum && !maximum) return undefined;
-    let limits: TimeLimits | undefined;
-    // Limits are parsed when the panel first asks, so mounting parses nothing.
-    return () => {
-      if (limits) return limits;
-      const start = toLocalMinute(minimum);
-      const end = toLocalMinute(maximum);
-      const isDisabled = (hour: number, minute: number) =>
-        isOutsideWindow(hour * 60 + minute, start, end);
-      limits = {
-        disabledHours: () =>
-          HOURS.filter((hour) =>
-            MINUTES.every((minute) => isDisabled(hour, minute)),
-          ),
-        disabledMinutes: (hour: number) =>
-          MINUTES.filter((minute) => isDisabled(hour, minute)),
-      };
-      return limits;
+  const disabledDate = useMemo(() => {
+    return (date: Dayjs | null) => {
+      if (!date) return false;
+      if (!minimum && !maximum) return false;
+      if (minimum && date.isBefore(dayjs(minimum, DATE_FORMAT), 'minute'))
+        return true;
+      if (maximum && date.isAfter(dayjs(maximum, DATE_FORMAT), 'minute'))
+        return true;
+      return false;
     };
   }, [minimum, maximum]);
 
@@ -135,15 +87,16 @@ const FieldInputTimeRange = ({
 
   return (
     <DatePicker.RangePicker
-      id={{ start: inputId, end: getInputId('end') }}
-      aria-labelledby={labelledBy}
+      id={path}
       name={name}
-      disabled={disabled || readOnly}
+      disabled={disabled}
+      readOnly={readOnly}
       format={DATE_FORMAT}
       showTime={{ format: 'HH:mm' }}
-      disabledTime={disabledTime}
+      disabledDate={disabledDate}
       defaultValue={initialValue}
       onChange={handleChange}
+      onPanelChange={handleChange}
       size={size || context?.size}
       status={misfit ? 'error' : undefined}
       aria-invalid={misfit || undefined}

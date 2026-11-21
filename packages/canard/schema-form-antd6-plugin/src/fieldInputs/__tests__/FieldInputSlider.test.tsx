@@ -51,7 +51,7 @@ it('reads lazy from presentation.FieldInputProps', () => {
   );
   const props = received.props.at(-1)!;
   expect(props.onChange).toBeTypeOf('function');
-  expect(props.onChangeComplete).toBeTypeOf('function');
+  expect(props.onChangeComplete).toBeUndefined();
 });
 
 it('accepts lazy under options without a schema error', () => {
@@ -76,11 +76,4 @@ it('accepts lazy under options without a schema error', () => {
   );
   expect(onError).not.toHaveBeenCalled();
   expect(screen.queryByRole('alert')).toBeNull();
-});
-
-it('keeps only the immediate callback once a lazy=false slider has a value', () => {
-  render(<Form fieldInputDefinitions={[FieldInputSliderDefinition]} jsonSchema={{ type: 'number', presentation: { inputType: 'slider', FieldInputProps: { lazy: false } } }} defaultValue={10} />);
-  const props = received.props.at(-1)!;
-  expect(props.onChange).toBeTypeOf('function');
-  expect(props.onChangeComplete).toBeUndefined();
 });

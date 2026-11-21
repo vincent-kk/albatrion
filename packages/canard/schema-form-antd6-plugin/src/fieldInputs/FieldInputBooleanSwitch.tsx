@@ -31,7 +31,7 @@ interface FieldInputBooleanSwitchProps
 }
 
 const FieldInputBooleanSwitch = ({
-  inputId,
+  path,
   disabled,
   value,
   onChange,
@@ -52,8 +52,7 @@ const FieldInputBooleanSwitch = ({
   return (
     <Switch
       aria-invalid={misfit || undefined}
-      id={inputId}
-      key={inputId}
+      key={path}
       disabled={disabled}
       checked={value === true}
       checkedChildren={checkedLabel}

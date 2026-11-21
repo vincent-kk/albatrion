@@ -1,12 +1,13 @@
 import {
   type ChangeEvent,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
 
-import { Input, type InputRef, Select, Space } from 'antd';
+import { Input, Select } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
 import { map } from '@winglet/common-utils/array';
@@ -17,14 +18,53 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-import { formatProtocol } from './utils/uri/formatProtocol';
-import { parseUri } from './utils/uri/parseUri';
-
 type StringJSONSchema = StringSchema & {
   format?: 'uri';
 };
 
 const DEFAULT_PROTOCOLS = ['http', 'https', 'ftp', 'mailto', 'tel'];
+
+
+const normalizeProtocol = (protocol: string): string => {
+  return protocol.replace(/:\/\/$/, '').replace(/:$/, '');
+};
+
+
+const getProtocolSeparator = (protocol: string): string => {
+  const normalizedProtocol = normalizeProtocol(protocol);
+
+  return ['mailto', 'tel'].includes(normalizedProtocol) ? ':' : '://';
+};
+
+
+const formatProtocolDisplay = (protocol: string): string => {
+  const normalizedProtocol = normalizeProtocol(protocol);
+  const separator = getProtocolSeparator(normalizedProtocol);
+  return `${normalizedProtocol}${separator}`;
+};
+
+
+const parseUri = (uri: string) => {
+
+  const singleColonMatch = uri.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):(.*)$/);
+  if (singleColonMatch && ['mailto', 'tel'].includes(singleColonMatch[1])) {
+    return {
+      protocol: singleColonMatch[1],
+      path: singleColonMatch[2],
+    };
+  }
+
+
+  const doubleColonMatch = uri.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):\/\/(.*)$/);
+  if (doubleColonMatch) {
+    return {
+      protocol: doubleColonMatch[1],
+      path: doubleColonMatch[2],
+    };
+  }
+
+  return null;
+};
 
 interface FieldInputUriProps
   extends FieldInputPropsWithSchema<
@@ -38,13 +78,11 @@ interface FieldInputUriProps
 }
 
 const FieldInputUri = ({
-  inputId,
-  labelId,
-  getInputId,
+  path,
   name,
   readOnly,
   disabled,
-  value,
+  defaultValue,
   onChange,
   context,
   placeholder,
@@ -52,35 +90,58 @@ const FieldInputUri = ({
   protocols,
   misfit,
 }: FieldInputUriProps) => {
+
   const normalizedProtocols = useMemo(() => {
     const rawProtocols = protocols || DEFAULT_PROTOCOLS;
-    return rawProtocols.map(formatProtocol);
+    return rawProtocols.map(normalizeProtocol);
   }, [protocols]);
 
-  const inputRef = useRef<InputRef>(null);
-  const parsed = useMemo(
-    () => (typeof value === 'string' ? parseUri(value) : undefined),
-    [value],
-  );
-  const [lastProtocol, setLastProtocol] = useState(
-    parsed?.protocol ?? normalizedProtocols[0] ?? '',
-  );
-  const protocol = parsed?.protocol ?? lastProtocol;
-  const uri = parsed?.path ?? '';
-  const protocolOptions = useMemo(
-    () =>
-      normalizedProtocols.includes(protocol)
-        ? normalizedProtocols
-        : [protocol, ...normalizedProtocols],
-    [normalizedProtocols, protocol],
-  );
+
+  const inputRef = useRef<any>(null);
+
+  // Only the protocol is stateful; the URI input remains uncontrolled.
+  const [protocol, setProtocol] = useState<string>(normalizedProtocols[0]);
+
+
+  const { initialProtocol, initialUri } = useMemo(() => {
+    if (typeof defaultValue !== 'string' || !defaultValue) {
+      return {
+        initialProtocol: normalizedProtocols[0],
+        initialUri: '',
+      };
+    }
+
+    const parsed = parseUri(defaultValue);
+    if (parsed) {
+      const normalizedDetected = normalizeProtocol(parsed.protocol);
+      return {
+        initialProtocol: normalizedProtocols.includes(normalizedDetected)
+          ? normalizedDetected
+          : normalizedProtocols[0],
+        initialUri: parsed.path,
+      };
+    }
+
+    return {
+      initialProtocol: normalizedProtocols[0],
+      initialUri: defaultValue,
+    };
+  }, [defaultValue, normalizedProtocols]);
+
+
+  useEffect(() => {
+    setProtocol(initialProtocol);
+  }, [initialProtocol]);
 
   const handleProtocolChange = useCallback(
     (value: string) => {
-      setLastProtocol(value);
+      setProtocol(value);
 
       const currentUri = inputRef.current?.input?.value || '';
-      const newValue = currentUri ? `${value}${currentUri}` : undefined;
+      const separator = getProtocolSeparator(value);
+      const newValue = currentUri
+        ? `${value}${separator}${currentUri}`
+        : undefined;
       onChange(newValue);
     },
     [onChange],
@@ -89,8 +150,8 @@ const FieldInputUri = ({
   const handleUriChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       const newUri = event.target.value;
-      setLastProtocol(protocol);
-      const newValue = newUri ? `${protocol}${newUri}` : undefined;
+      const separator = getProtocolSeparator(protocol);
+      const newValue = newUri ? `${protocol}${separator}${newUri}` : undefined;
       onChange(newValue);
     },
     [protocol, onChange],
@@ -99,57 +160,39 @@ const FieldInputUri = ({
   const ProtocolDropdown = useMemo(() => {
     return (
       <Select
-        aria-label="Protocol"
-        id={getInputId('protocol')}
         value={protocol}
         onChange={handleProtocolChange}
         disabled={disabled || readOnly}
       >
-        {map(protocolOptions, (prot) => (
+        {map(normalizedProtocols, (prot) => (
           <Select.Option key={prot} value={prot}>
-            {prot || 'No scheme'}
+            {formatProtocolDisplay(prot)}
           </Select.Option>
         ))}
       </Select>
     );
-  }, [
-    getInputId,
-    protocol,
-    protocolOptions,
-    disabled,
-    readOnly,
-    handleProtocolChange,
-  ]);
+  }, [protocol, normalizedProtocols, disabled, readOnly, handleProtocolChange]);
 
   return (
-    <Space.Compact
-      role="group"
-      aria-labelledby={labelId}
-      block
+    <Input
+      ref={inputRef}
+      id={path}
+      name={name}
+      readOnly={readOnly}
+      disabled={disabled}
+      addonBefore={ProtocolDropdown}
+      placeholder={placeholder}
+      defaultValue={initialUri}
+      onChange={handleUriChange}
       size={size || context?.size}
-    >
-      {ProtocolDropdown}
-      <Input
-        ref={inputRef}
-        aria-labelledby={labelId}
-        id={inputId}
-        name={name}
-        readOnly={readOnly}
-        disabled={disabled}
-        placeholder={placeholder}
-        value={uri}
-        onChange={handleUriChange}
-        size={size || context?.size}
-        status={misfit ? 'error' : undefined}
-        aria-invalid={misfit || undefined}
-      />
-    </Space.Compact>
+      status={misfit ? 'error' : undefined}
+      aria-invalid={misfit || undefined}
+    />
   );
 };
 
 export const FieldInputUriDefinition = {
   Component: FieldInputUri,
-  controlled: true,
   test: ({ type, format, inputType }) =>
     type === 'string' && (format === 'uri' || inputType === 'uri'),
 } satisfies FieldInputDefinition;

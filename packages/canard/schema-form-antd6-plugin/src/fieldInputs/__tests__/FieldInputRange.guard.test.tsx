@@ -69,10 +69,6 @@ it.each([
         defaultValue: 'ab',
         onChange: () => {},
         context: {},
-        inputId: 'fixture-control',
-        labelId: 'fixture-title',
-        getInputId: (key: string | number) =>
-          key === 0 ? 'fixture-first' : 'fixture-second',
         misfit: true,
       } as never),
     );

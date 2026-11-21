@@ -11,8 +11,6 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-import { getOwnLabel } from './utils/enum/getOwnLabel';
-
 type StringSwitchSchema = StringSchema & {
   enum?: [string | null, string | null];
 };
@@ -29,7 +27,7 @@ interface FieldInputStringSwitchProps
 }
 
 const FieldInputStringSwitch = ({
-  inputId,
+  path,
   jsonSchema,
   disabled,
   value,
@@ -50,8 +48,8 @@ const FieldInputStringSwitch = ({
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
     const labels = context.switchLabels || alias || {};
     return [
-      getOwnLabel(labels, '' + checked) || checked,
-      getOwnLabel(labels, '' + unchecked) || unchecked,
+      labels['' + checked] || checked,
+      labels['' + unchecked] || unchecked,
     ];
   }, [checked, unchecked, context, alias]);
 
@@ -62,8 +60,7 @@ const FieldInputStringSwitch = ({
   return (
     <Switch
       aria-invalid={misfit || undefined}
-      id={inputId}
-      key={inputId}
+      key={path}
       disabled={disabled}
       checked={value === checked}
       checkedChildren={checkedLabel}
