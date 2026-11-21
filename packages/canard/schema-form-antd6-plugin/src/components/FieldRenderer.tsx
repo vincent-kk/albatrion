@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactElement } from 'react';
+import type { ReactElement } from 'react';
 
 import { Flex, Typography } from 'antd';
 
@@ -7,8 +7,7 @@ import { isArraySchema } from '@winglet/json-schema/filter';
 
 import type { FieldRendererProps } from '@canard/schema-form';
 
-/** Legends use the same wrapping as registered labels. */
-const TITLE_STYLE: CSSProperties = { wordBreak: 'unset' };
+import { TEXT_STYLE } from './styles';
 
 /**
  * Assemble plugin parts while preserving the existing group structure and empty error line.
@@ -19,14 +18,30 @@ export const FieldRenderer = ({
   node,
   depth,
   name,
+  labelId,
   Input,
   Label,
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps): ReactElement => {
-  if (depth === 0) return <Input />;
+  const isBranch = node.strategy === 'branch';
+  const hasErrorMessage =
+    errorMessage != null &&
+    errorMessage !== '' &&
+    typeof errorMessage !== 'boolean';
+  const error =
+    hasErrorMessage || (depth > 0 && !isBranch) ? (
+      <ErrorMessage style={EMPTY_OBJECT}>{errorMessage}</ErrorMessage>
+    ) : null;
+  if (depth === 0)
+    return (
+      <>
+        <Input />
+        {error}
+      </>
+    );
 
-  if (node.strategy === 'branch') {
+  if (isBranch) {
     return (
       <fieldset
         style={{
@@ -34,10 +49,11 @@ export const FieldRenderer = ({
           marginLeft: 5 * depth,
         }}
       >
-        <legend>
-          <Typography.Text style={TITLE_STYLE}>{name}</Typography.Text>
+        <legend id={labelId}>
+          <Typography.Text style={TEXT_STYLE}>{name}</Typography.Text>
         </legend>
         <Input />
+        {error}
       </fieldset>
     );
   } else {
@@ -54,7 +70,7 @@ export const FieldRenderer = ({
           )}
           <Input />
         </Flex>
-        <ErrorMessage style={EMPTY_OBJECT}>{errorMessage}</ErrorMessage>
+        {error}
       </div>
     );
   }

@@ -3,7 +3,6 @@ import { type ReactNode, useMemo } from 'react';
 import { Radio, type RadioChangeEvent } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
-import { map } from '@winglet/common-utils/array';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
@@ -12,6 +11,8 @@ import type {
   NumberSchema,
   StringSchema,
 } from '@canard/schema-form';
+
+import { getEnumOptions } from './utils/enum/getEnumOptions';
 
 type StringJSONSchema = StringSchema<{
   alias?: { [label: string]: ReactNode };
@@ -32,10 +33,12 @@ interface FieldInputRadioGroupProps
 }
 
 const FieldInputRadioGroup = ({
-  path,
-  name,
+  inputId,
+  labelId,
+  getInputId,
   jsonSchema,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -43,41 +46,36 @@ const FieldInputRadioGroup = ({
   alias,
   misfit,
 }: FieldInputRadioGroupProps) => {
-  const options = useMemo(() => {
-    const labels = context.radioLabels || alias || {};
-    return jsonSchema.enum
-      ? map(jsonSchema.enum, (rawValue: string | number | null) => {
-          const value = JSON.stringify(rawValue);
-          return {
-            value,
-            rawValue,
-            label: labels['' + rawValue] || '' + rawValue,
-          };
-        })
-      : [];
-  }, [context, jsonSchema, alias]);
+  const values: readonly (string | number | null)[] | undefined =
+    jsonSchema.enum;
+  const labels = context.radioLabels || alias;
+  const options = useMemo(
+    () => getEnumOptions(values, labels, getInputId),
+    [values, labels, getInputId],
+  );
   const initialValue = useMemo(
     () => options.find((option) => option.rawValue === defaultValue)?.value,
     [defaultValue, options],
   );
   const handleChange = useHandle((event: RadioChangeEvent) => {
-    const rawValue = options.find(
-      (option) => option.value === event.target.value,
-    )?.rawValue;
-    if (rawValue === undefined) return;
-    onChange(rawValue);
+    onChange(JSON.parse(event.target.value));
   });
   return (
-    <Radio.Group
-      id={path}
-      name={name}
-      disabled={disabled}
-      defaultValue={initialValue}
-      options={options}
-      onChange={handleChange}
-      size={size || context?.size}
+    <div
+      id={inputId}
+      role="radiogroup"
+      aria-labelledby={labelId}
       aria-invalid={misfit || undefined}
-    />
+    >
+      <Radio.Group
+        name={inputId}
+        disabled={disabled || readOnly}
+        defaultValue={initialValue}
+        options={options}
+        onChange={handleChange}
+        size={size || context?.size}
+      />
+    </div>
   );
 };
 

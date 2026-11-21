@@ -4,8 +4,8 @@ import { Typography } from 'antd';
 
 import type { LabelRendererProps } from '@canard/schema-form';
 
-/** Keep title wrapping consistent with the group legend. */
-const TITLE_STYLE: CSSProperties = { wordBreak: 'unset' };
+import { TEXT_STYLE } from './styles';
+
 /** Preserve the visual required marker while excluding it from the accessible name. */
 const REQUIRED_STYLE: CSSProperties = { marginLeft: 4 };
 
@@ -23,7 +23,7 @@ export const LabelRenderer = ({
   className,
 }: LabelRendererProps): ReactElement => (
   <label htmlFor={htmlFor} id={id} style={style} className={className}>
-    <Typography.Text style={TITLE_STYLE}>{children}</Typography.Text>
+    <Typography.Text style={TEXT_STYLE}>{children}</Typography.Text>
     {required && (
       <Typography.Text type="danger" aria-hidden style={REQUIRED_STYLE}>
         *

@@ -1,6 +1,6 @@
-import { useCallback, useMemo } from 'react';
-
 import { Slider } from 'antd';
+
+import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   FieldInputDefinition,
@@ -18,45 +18,36 @@ interface FieldInputSliderProps
 }
 
 const FieldInputSlider = ({
-  path,
+  inputId,
+  labelId,
   jsonSchema,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   lazy,
   misfit,
 }: FieldInputSliderProps) => {
-  const handleChange = useCallback(
-    (value: number | null) => {
-      if (value === null) onChange(undefined);
-      else if (!Number.isNaN(value)) onChange(value);
-    },
-    [onChange],
-  );
-
-  const { min, max, step, ...changeHandler } = useMemo(() => {
-    return {
-      min: jsonSchema.minimum,
-      max: jsonSchema.maximum,
-      step: jsonSchema.multipleOf,
-      ...(lazy === false
-        ? { onChange: handleChange }
-        : { onChangeComplete: handleChange }),
-    } as const;
-  }, [handleChange, jsonSchema, lazy]);
+  const handleChange = useHandle((value: number | null) => {
+    if (value === null) onChange(undefined);
+    else if (!Number.isNaN(value)) onChange(value);
+  });
 
   return (
     <div role="group" aria-invalid={misfit || undefined}>
       <Slider
-        id={path}
-        disabled={disabled}
-        min={min}
-        max={max}
-        step={step}
+        id={inputId}
+        ariaLabelledByForHandle={labelId}
+        disabled={disabled || readOnly}
+        min={jsonSchema.minimum}
+        max={jsonSchema.maximum}
+        step={jsonSchema.multipleOf}
         defaultValue={
           typeof defaultValue === 'number' ? defaultValue : undefined
         }
-        {...changeHandler}
+        {...{
+          [lazy === false ? 'onChange' : 'onChangeComplete']: handleChange,
+        }}
       />
     </div>
   );

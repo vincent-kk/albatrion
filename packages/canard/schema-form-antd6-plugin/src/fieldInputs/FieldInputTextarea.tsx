@@ -23,6 +23,10 @@ interface FieldInputTextareaProps
     { size?: SizeType }
   > {
   size?: SizeType;
+  /** Minimum visible rows before the textarea grows. */
+  minRows?: number;
+  /** Maximum visible rows before the textarea scrolls. */
+  maxRows?: number;
 }
 
 const FieldInputTextarea = ({
@@ -36,6 +40,8 @@ const FieldInputTextarea = ({
   context,
   placeholder,
   size,
+  minRows,
+  maxRows,
   misfit,
 }: FieldInputTextareaProps) => {
   const handleChange = useHandle((value: ChangeEvent<HTMLTextAreaElement>) => {
@@ -44,10 +50,10 @@ const FieldInputTextarea = ({
   });
   const autoSize = useMemo(
     () => ({
-      minRows: jsonSchema.minRows,
-      maxRows: jsonSchema.maxRows,
+      minRows: minRows ?? jsonSchema.minRows,
+      maxRows: maxRows ?? jsonSchema.maxRows,
     }),
-    [jsonSchema],
+    [minRows, maxRows, jsonSchema.minRows, jsonSchema.maxRows],
   );
   return (
     <Input.TextArea
