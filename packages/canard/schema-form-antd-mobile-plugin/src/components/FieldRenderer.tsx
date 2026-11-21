@@ -88,14 +88,15 @@ export const FieldRenderer = ({
     );
 
   if (node.strategy === 'branch') {
+    const showTitle = hint && isCheckboxGroupInput(hint);
     return (
       <fieldset
         aria-labelledby={titleId}
         aria-label={fallbackName}
         style={{ border: 0, margin: 0, padding: 0 }}
       >
-        <span hidden={!(hint && isCheckboxGroupInput(hint))} id={labelId}>
-          {hint && isCheckboxGroupInput(hint) ? title : fallbackName}
+        <span id={labelId} style={showTitle ? undefined : { display: 'none' }}>
+          {showTitle ? title : fallbackName}
         </span>
         <Space direction="vertical" block>
           <Input aria-labelledby={titleId} />
