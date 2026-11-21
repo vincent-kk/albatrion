@@ -25,4 +25,4 @@ export { createValidatorFactory };
  * registerPlugin(plugin);
  * ```
  */
-export const ajvValidatorPlugin = createValidatorPlugin<Ajv2020>(AjvConstructor, 'https://json-schema.org/draft/2020-12/schema');
+export const ajvValidatorPlugin: ReturnType<typeof createValidatorPlugin<Ajv2020>> = createValidatorPlugin(AjvConstructor, 'https://json-schema.org/draft/2020-12/schema');
