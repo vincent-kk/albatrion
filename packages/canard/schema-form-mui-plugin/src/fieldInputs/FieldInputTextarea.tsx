@@ -52,6 +52,9 @@ const FieldInputTextarea = ({
   maxRows,
   hideLabel,
   misfit,
+  getInputId,
+  className,
+  style,
 }: FieldInputTextareaProps) => {
   const [label, size, variant, fullWidth] = getMuiFieldPresentation(
     labelProp,
@@ -69,8 +72,11 @@ const FieldInputTextarea = ({
   const finalMinRows = minRows ?? jsonSchema.minRows ?? 3;
   const finalMaxRows = maxRows ?? jsonSchema.maxRows ?? 8;
 
+  const labelId = label ? getInputId('legend') : fieldTitleId;
   return (
     <TextField
+      className={className}
+      style={style}
       id={inputId}
       name={name}
       multiline
@@ -87,7 +93,8 @@ const FieldInputTextarea = ({
       minRows={finalMinRows}
       maxRows={finalMaxRows}
       slotProps={{
-        htmlInput: { 'aria-labelledby': fieldTitleId },
+        inputLabel: { id: labelId },
+        htmlInput: { 'aria-labelledby': labelId },
         input: {
           readOnly,
         },

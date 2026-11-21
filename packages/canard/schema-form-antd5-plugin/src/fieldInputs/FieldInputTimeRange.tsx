@@ -35,6 +35,7 @@ type FieldInputTimeRangeProps = FieldInputPropsWithSchema<
 const FieldInputTimeRange = ({
   inputId,
   labelId,
+  required,
   getInputId,
   name,
   readOnly,
@@ -46,6 +47,9 @@ const FieldInputTimeRange = ({
   minimum,
   maximum,
   misfit,
+  placeholder,
+  className,
+  style,
 }: FieldInputTimeRangeProps) => {
   const initialValue = useMemo(
     () => getPickerRangeValue(defaultValue, TIME_FORMAT),
@@ -65,21 +69,40 @@ const FieldInputTimeRange = ({
     const disabledHours = HOURS.filter((hour) =>
       outside(hour * 60, hour * 60 + 59),
     );
-    return () => ({
+    const limits = {
       disabledHours: () => disabledHours,
-      disabledMinutes: (hour: number) =>
-        MINUTES.filter((minute) =>
-          outside(hour * 60 + minute, hour * 60 + minute),
-        ),
-    });
+      disabledMinutes: (hour: number) => {
+        const hourStart = hour * 60;
+        const hourEnd = hourStart + 59;
+        if (outside(hourStart, hourEnd)) return MINUTES;
+        if (
+          !(
+            (first >= hourStart && first <= hourEnd) ||
+            (last >= hourStart && last <= hourEnd)
+          )
+        )
+          return [];
+        return MINUTES.filter((minute) => {
+          const time = hourStart + minute;
+          return outside(time, time);
+        });
+      },
+    };
+    return () => limits;
   }, [minimum, maximum]);
 
   const handleChange = usePickerRangeChange(onChange, TIME_FORMAT);
 
   return (
     <DatePicker.RangePicker
+      className={className}
+      style={style}
+      placeholder={
+        placeholder === undefined ? undefined : [placeholder, placeholder]
+      }
       id={getRangePickerId(inputId, getInputId)}
       aria-labelledby={labelId}
+      aria-required={required || undefined}
       name={name}
       disabled={disabled || readOnly}
       format={TIME_FORMAT}

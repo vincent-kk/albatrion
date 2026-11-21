@@ -15,10 +15,17 @@ const FieldInputBoolean = ({
   value,
   onChange,
   misfit,
+  className,
+  style,
 }: FieldInputProps<boolean | null>) => {
   const handleChange = useHandle(onChange);
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div
+      className={className}
+      style={style}
+      role="group"
+      aria-invalid={misfit || undefined}
+    >
       <Checkbox
         aria-labelledby={labelId}
         id={inputId}

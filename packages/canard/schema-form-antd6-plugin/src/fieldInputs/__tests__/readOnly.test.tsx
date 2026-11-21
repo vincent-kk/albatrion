@@ -86,12 +86,12 @@ it('readOnly enum select keeps the displayed selection equal to the stored value
       defaultValue="alpha"
     />,
   );
-  await userEvent.click(container.querySelector('.ant-select-selector')!);
+  await userEvent.click(container.querySelector('.ant-select-content')!);
   const option = screen.queryByTitle('beta');
   if (option) await userEvent.click(option);
   expect(ref.current!.getValue()).toBe('alpha');
   expect(
-    container.querySelector('.ant-select-selection-item')!.textContent,
+    container.querySelector('.ant-select-content-value')!.textContent,
   ).toBe('alpha');
 });
 

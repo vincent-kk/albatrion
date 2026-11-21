@@ -23,20 +23,28 @@ export const FieldRenderer = ({
   Label,
   ErrorMessage,
   errorMessage,
+  readOnly,
+  disabled,
+  className,
+  style,
 }: FieldRendererProps): ReactElement => {
   const isBranch = node.strategy === 'branch';
-  const hasErrorMessage =
-    errorMessage != null &&
-    errorMessage !== '' &&
-    typeof errorMessage !== 'boolean';
   const error =
-    hasErrorMessage || (depth > 0 && !isBranch) ? (
+    (depth > 0 && !isBranch) ||
+    (errorMessage != null &&
+      errorMessage !== '' &&
+      typeof errorMessage !== 'boolean') ? (
       <ErrorMessage style={EMPTY_OBJECT}>{errorMessage}</ErrorMessage>
     ) : null;
   if (depth === 0)
     return (
       <>
-        <Input />
+        <Input
+          readOnly={readOnly}
+          disabled={disabled}
+          {...(className != null && { className })}
+          {...(style != null && { style })}
+        />
         {error}
       </>
     );
@@ -44,31 +52,35 @@ export const FieldRenderer = ({
   if (isBranch) {
     return (
       <fieldset
+        className={className}
         style={{
           marginBottom: 5,
           marginLeft: 5 * depth,
+          ...style,
         }}
       >
         <legend id={labelId}>
           <Typography.Text style={TEXT_STYLE}>{name}</Typography.Text>
         </legend>
-        <Input />
+        <Input readOnly={readOnly} disabled={disabled} />
         {error}
       </fieldset>
     );
   } else {
     return (
       <div
+        className={className}
         style={{
           marginBottom: 5,
           marginLeft: 5 * depth,
+          ...style,
         }}
       >
         <Flex gap={10} align="center">
           {node.parentNode && isArraySchema(node.parentNode) === false && (
             <Label />
           )}
-          <Input />
+          <Input readOnly={readOnly} disabled={disabled} />
         </Flex>
         {error}
       </div>

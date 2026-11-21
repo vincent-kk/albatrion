@@ -43,6 +43,10 @@ const FieldInputTextarea = ({
   minRows,
   maxRows,
   misfit,
+  labelId,
+  required,
+  className,
+  style,
 }: FieldInputTextareaProps) => {
   const handleChange = useHandle((value: ChangeEvent<HTMLTextAreaElement>) => {
     const text = value.target.value;
@@ -57,6 +61,10 @@ const FieldInputTextarea = ({
   );
   return (
     <Input.TextArea
+      className={className}
+      style={style}
+      aria-labelledby={labelId}
+      aria-required={required || undefined}
       id={inputId}
       name={name}
       disabled={disabled}

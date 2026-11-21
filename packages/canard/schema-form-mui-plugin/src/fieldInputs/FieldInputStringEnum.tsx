@@ -53,6 +53,8 @@ const FieldInputStringEnum = ({
   fullWidth: fullWidthProp,
   hideLabel,
   misfit,
+  className,
+  style,
 }: FieldInputStringEnumProps) => {
   const [label, size, variant, fullWidth] = getMuiFieldPresentation(
     labelProp,
@@ -73,7 +75,13 @@ const FieldInputStringEnum = ({
   });
 
   return (
-    <FormControl fullWidth={fullWidth} variant={variant} error={misfit}>
+    <FormControl
+      className={className}
+      style={style}
+      fullWidth={fullWidth}
+      variant={variant}
+      error={misfit}
+    >
       {label && <InputLabel id={ownLabelId}>{label}</InputLabel>}
       <Select
         SelectDisplayProps={{

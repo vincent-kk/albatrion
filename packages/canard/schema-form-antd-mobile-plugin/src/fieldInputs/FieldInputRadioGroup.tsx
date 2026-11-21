@@ -40,6 +40,7 @@ const FieldInputRadioGroup = ({
   alias,
   style,
   misfit,
+  className,
 }: FieldInputRadioGroupProps) => {
   const values: readonly (string | number | null)[] | undefined =
     jsonSchema.enum;
@@ -60,6 +61,7 @@ const FieldInputRadioGroup = ({
 
   return (
     <div
+      className={className}
       id={inputId}
       aria-labelledby={labelId}
       role="radiogroup"

@@ -46,6 +46,9 @@ const FieldInputString = ({
   fullWidth: fullWidthProp,
   hideLabel,
   misfit,
+  getInputId,
+  className,
+  style,
 }: FieldInputStringProps) => {
   const [label, size, variant, fullWidth] = getMuiFieldPresentation(
     labelProp,
@@ -67,8 +70,11 @@ const FieldInputString = ({
     onChange(text === '' ? undefined : text);
   });
 
+  const labelId = label ? getInputId('legend') : fieldTitleId;
   return (
     <TextField
+      className={className}
+      style={style}
       id={inputId}
       name={name}
       type={isPassword ? 'password' : 'text'}
@@ -83,7 +89,8 @@ const FieldInputString = ({
       onChange={handleChange}
       size={size}
       slotProps={{
-        htmlInput: { 'aria-labelledby': fieldTitleId },
+        inputLabel: { id: labelId },
+        htmlInput: { 'aria-labelledby': labelId },
         input: {
           readOnly,
         },

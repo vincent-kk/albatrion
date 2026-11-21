@@ -28,6 +28,11 @@ const FieldInputTime = ({
   context,
   size,
   misfit,
+  labelId,
+  required,
+  placeholder,
+  className,
+  style,
 }: FieldInputTimeProps) => {
   const handleChange = useHandle((date: Dayjs | null) => {
     onChange(date ? date.format(TIME_FORMAT) : undefined);
@@ -39,6 +44,11 @@ const FieldInputTime = ({
   );
   return (
     <TimePicker
+      className={className}
+      style={style}
+      aria-labelledby={labelId}
+      aria-required={required || undefined}
+      placeholder={placeholder}
       id={inputId}
       name={name}
       disabled={disabled || readOnly}

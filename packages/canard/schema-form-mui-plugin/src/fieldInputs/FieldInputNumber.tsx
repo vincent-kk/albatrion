@@ -1,9 +1,4 @@
-import {
-  type ChangeEvent,
-  type FocusEvent,
-  type ReactNode,
-  useRef,
-} from 'react';
+import { type ChangeEvent, type ReactNode, useState } from 'react';
 
 import { TextField } from '@mui/material';
 
@@ -40,7 +35,6 @@ const FieldInputNumber = ({
   required,
   readOnly,
   disabled,
-  defaultValue,
   value,
   onChange,
   context,
@@ -51,6 +45,9 @@ const FieldInputNumber = ({
   fullWidth: fullWidthProp,
   hideLabel,
   misfit,
+  getInputId,
+  className,
+  style,
 }: FieldInputNumberProps) => {
   const [label, size, variant, fullWidth] = getMuiFieldPresentation(
     labelProp,
@@ -60,16 +57,16 @@ const FieldInputNumber = ({
     context,
   );
 
-  const draftRef = useRef<string | null>(null);
+  const [draft, setDraft] = useState<string>();
 
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
     if (event.target.validity.badInput) {
-      draftRef.current = inputValue;
+      setDraft(inputValue);
       return;
     }
     if (inputValue === '') {
-      draftRef.current = null;
+      setDraft(undefined);
       onChange(undefined);
       return;
     }
@@ -78,21 +75,18 @@ const FieldInputNumber = ({
       !Number.isFinite(numeric) ||
       (type === 'integer' && !Number.isInteger(numeric))
     ) {
-      draftRef.current = inputValue;
+      setDraft(inputValue);
       return;
     }
-    draftRef.current = null;
+    setDraft(undefined);
     onChange(numeric);
   });
 
-  const handleBlur = useHandle((event: FocusEvent<HTMLInputElement>) => {
-    if (draftRef.current === null && !event.target.validity.badInput) return;
-    event.target.value = typeof value === 'number' ? '' + value : '';
-    draftRef.current = null;
-  });
-
+  const labelId = label ? getInputId('legend') : fieldTitleId;
   return (
     <TextField
+      className={className}
+      style={style}
       id={inputId}
       name={name}
       type="number"
@@ -102,24 +96,22 @@ const FieldInputNumber = ({
       required={required}
       size={size}
       placeholder={placeholder}
-      defaultValue={
-        typeof defaultValue === 'number' && Number.isFinite(defaultValue)
-          ? defaultValue
-          : undefined
+      value={
+        draft ??
+        (typeof value === 'number' && Number.isFinite(value) ? value : '')
       }
       onChange={handleChange}
-      onBlur={handleBlur}
+      onBlur={() => setDraft(undefined)}
       disabled={disabled}
       error={misfit}
       slotProps={{
-        input: {
-          readOnly,
-          inputProps: {
-            'aria-labelledby': fieldTitleId,
-            min: jsonSchema.minimum,
-            max: jsonSchema.maximum,
-            step: jsonSchema.multipleOf || (type === 'integer' ? 1 : 'any'),
-          },
+        inputLabel: { id: labelId },
+        input: { readOnly },
+        htmlInput: {
+          'aria-labelledby': labelId,
+          min: jsonSchema.minimum,
+          max: jsonSchema.maximum,
+          step: jsonSchema.multipleOf || (type === 'integer' ? 1 : 'any'),
         },
       }}
     />
@@ -128,6 +120,7 @@ const FieldInputNumber = ({
 
 export const FieldInputNumberDefinition = {
   Component: FieldInputNumber,
+  controlled: true,
   test: {
     schemaType: ['number', 'integer'],
   },

@@ -44,6 +44,8 @@ const FieldInputBooleanSwitch = ({
   size: sizeProp,
   hideLabel,
   misfit,
+  className,
+  style,
 }: FieldInputBooleanSwitchProps) => {
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,6 +65,8 @@ const FieldInputBooleanSwitch = ({
 
   return (
     <FormControlLabel
+      className={className}
+      style={style}
       label={label && <span id={captionId}>{label}</span>}
       htmlFor={inputId}
       required={required}

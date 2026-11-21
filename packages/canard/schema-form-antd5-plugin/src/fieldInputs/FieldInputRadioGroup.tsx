@@ -35,6 +35,7 @@ interface FieldInputRadioGroupProps
 const FieldInputRadioGroup = ({
   inputId,
   labelId,
+  required,
   getInputId,
   jsonSchema,
   disabled,
@@ -45,6 +46,8 @@ const FieldInputRadioGroup = ({
   size,
   alias,
   misfit,
+  className,
+  style,
 }: FieldInputRadioGroupProps) => {
   const values: readonly (string | number | null)[] | undefined =
     jsonSchema.enum;
@@ -62,9 +65,12 @@ const FieldInputRadioGroup = ({
   });
   return (
     <div
+      className={className}
+      style={style}
       id={inputId}
       role="radiogroup"
       aria-labelledby={labelId}
+      aria-required={required || undefined}
       aria-invalid={misfit || undefined}
     >
       <Radio.Group

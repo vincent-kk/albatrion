@@ -22,13 +22,20 @@ const FieldInputString = ({
   onChange,
   placeholder,
   misfit,
+  className,
+  style,
 }: FieldInputPropsWithSchema<string | null, StringJSONSchema>) => {
   const type = jsonSchema.format === 'password' ? 'password' : 'text';
   const handleChange = useHandle((text: string) =>
     onChange(text === '' ? undefined : text),
   );
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div
+      className={className}
+      style={style}
+      role="group"
+      aria-invalid={misfit || undefined}
+    >
       <Input
         id={inputId}
         name={name}

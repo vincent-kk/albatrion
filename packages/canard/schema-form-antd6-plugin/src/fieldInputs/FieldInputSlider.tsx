@@ -27,6 +27,8 @@ const FieldInputSlider = ({
   onChange,
   lazy,
   misfit,
+  className,
+  style,
 }: FieldInputSliderProps) => {
   const handleChange = useHandle((value: number | null) => {
     if (value === null) onChange(undefined);
@@ -34,7 +36,12 @@ const FieldInputSlider = ({
   });
 
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div
+      className={className}
+      style={style}
+      role="group"
+      aria-invalid={misfit || undefined}
+    >
       <Slider
         id={inputId}
         ariaLabelledByForHandle={labelId}

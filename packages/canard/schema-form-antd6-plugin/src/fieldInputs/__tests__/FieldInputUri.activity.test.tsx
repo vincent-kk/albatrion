@@ -28,7 +28,7 @@ const Host = ({ children }: { children: ReactNode }) => {
 };
 
 const chooseProtocol = (label: string) => {
-  fireEvent.mouseDown(document.querySelector('.ant-select-selector')!);
+  fireEvent.mouseDown(document.querySelector('.ant-select-content')!);
   const option = Array.from(
     document.querySelectorAll('.ant-select-item-option'),
   ).find((element) => element.textContent === label)!;
@@ -36,7 +36,7 @@ const chooseProtocol = (label: string) => {
 };
 
 const selectedProtocol = () =>
-  document.querySelector('.ant-select-selection-item')?.textContent;
+  document.querySelector('.ant-select-content-value')?.textContent;
 
 describe('URI protocol across an Activity hide and show (antd6)', () => {
   it('Activity preserves the same edited URI as a continuously visible input', () => {
@@ -67,9 +67,8 @@ describe('URI protocol across an Activity hide and show (antd6)', () => {
         link: 'https://example.com',
       });
 
-      const input = document.querySelector<HTMLInputElement>(
-        'input:not([role])',
-      )!;
+      const input =
+        document.querySelector<HTMLInputElement>('input:not([role])')!;
       fireEvent.change(input, { target: { value: 'example.com/x' } });
       const value = formRef.current?.getValue();
       cleanup();
@@ -115,9 +114,8 @@ describe('URI protocol across an Activity hide and show (antd6)', () => {
       </Host>,
     );
     chooseProtocol('https://');
-    const input = document.querySelector<HTMLInputElement>(
-      'input:not([role])',
-    )!;
+    const input =
+      document.querySelector<HTMLInputElement>('input:not([role])')!;
     fireEvent.change(input, { target: { value: 'example.com/x' } });
     expect(formRef.current?.getValue()).toEqual({
       link: 'https://example.com/x',

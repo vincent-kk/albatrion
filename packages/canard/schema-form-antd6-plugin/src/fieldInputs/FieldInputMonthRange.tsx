@@ -33,6 +33,7 @@ type FieldInputMonthRangeProps = FieldInputPropsWithSchema<
 const FieldInputMonthRange = ({
   inputId,
   labelId,
+  required,
   getInputId,
   name,
   readOnly,
@@ -44,6 +45,9 @@ const FieldInputMonthRange = ({
   minimum,
   maximum,
   misfit,
+  placeholder,
+  className,
+  style,
 }: FieldInputMonthRangeProps) => {
   const handleChange = usePickerRangeChange(onChange, DATE_FORMAT);
   const initialValue = useMemo(
@@ -57,8 +61,14 @@ const FieldInputMonthRange = ({
 
   return (
     <DatePicker.RangePicker
+      className={className}
+      style={style}
+      placeholder={
+        placeholder === undefined ? undefined : [placeholder, placeholder]
+      }
       id={{ start: inputId, end: getInputId('end') }}
       aria-labelledby={labelId}
+      aria-required={required || undefined}
       name={name}
       picker="month"
       disabled={disabled || readOnly}

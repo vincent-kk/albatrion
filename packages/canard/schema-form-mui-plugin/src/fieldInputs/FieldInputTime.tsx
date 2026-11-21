@@ -47,6 +47,8 @@ const FieldInputTime = ({
   ampm: ampmProp,
   hideLabel,
   misfit,
+  className,
+  style,
 }: FieldInputTimeProps) => {
   const [label, size, variant, fullWidth] = getMuiFieldPresentation(
     labelProp,
@@ -77,6 +79,8 @@ const FieldInputTime = ({
         ampm={ampm}
         slotProps={{
           textField: {
+            className,
+            style,
             ...getPickerSlotProps(
               inputId,
               labelId,

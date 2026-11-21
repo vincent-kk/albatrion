@@ -34,6 +34,7 @@ type FieldInputDateRangeProps = FieldInputPropsWithSchema<
 const FieldInputDateRange = ({
   inputId,
   labelId,
+  required,
   getInputId,
   name,
   readOnly,
@@ -45,6 +46,9 @@ const FieldInputDateRange = ({
   minimum,
   maximum,
   misfit,
+  placeholder,
+  className,
+  style,
 }: FieldInputDateRangeProps) => {
   const handleChange = usePickerRangeChange(onChange, DATE_FORMAT);
 
@@ -59,8 +63,14 @@ const FieldInputDateRange = ({
 
   return (
     <DatePicker.RangePicker
+      className={className}
+      style={style}
+      placeholder={
+        placeholder === undefined ? undefined : [placeholder, placeholder]
+      }
       id={getRangePickerId(inputId, getInputId)}
       aria-labelledby={labelId}
+      aria-required={required || undefined}
       name={name}
       picker="date"
       disabled={disabled || readOnly}

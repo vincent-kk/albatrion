@@ -45,6 +45,8 @@ const FieldInputUri = ({
   protocols: protocolsProp,
   hideLabel,
   misfit,
+  className,
+  style,
 }: FieldInputUriProps) => {
   const [label, size, variant, fullWidth] = getMuiFieldPresentation(
     labelProp,
@@ -83,7 +85,12 @@ const FieldInputUri = ({
   };
 
   return (
-    <Box role="group" aria-labelledby={captionId ?? fieldTitleId}>
+    <Box
+      className={className}
+      style={style}
+      role="group"
+      aria-labelledby={captionId ?? fieldTitleId}
+    >
       <InputLabel id={captionId} htmlFor={inputId} required={required}>
         {label}
       </InputLabel>

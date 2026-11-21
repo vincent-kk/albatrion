@@ -47,6 +47,8 @@ const FieldInputStringCheckbox = ({
   context,
   alias,
   misfit,
+  className,
+  style,
 }: FieldInputStringCheckboxProps) => {
   const values = jsonSchema.items?.enum;
   const labels = context.checkboxLabels || alias;
@@ -55,9 +57,7 @@ const FieldInputStringCheckbox = ({
     [values, labels, getInputId],
   );
   const handleChange = useHandle((tokens: string[]) => {
-    const selected = options
-      .filter(({ value }) => tokens.includes(value))
-      .map(({ rawValue }) => rawValue);
+    const selected = tokens.map((token) => JSON.parse(token));
     onChange((previous) => {
       const stored = isArray(previous) ? previous : [];
       return [
@@ -81,6 +81,8 @@ const FieldInputStringCheckbox = ({
 
   return (
     <div
+      className={className}
+      style={style}
       id={inputId}
       role="group"
       aria-labelledby={labelId}

@@ -34,6 +34,8 @@ const FieldInputBoolean = ({
   size: sizeProp,
   hideLabel,
   misfit,
+  className,
+  style,
 }: FieldInputBooleanProps) => {
   const [label, size] = getMuiFieldPresentation(
     labelProp,
@@ -55,6 +57,8 @@ const FieldInputBoolean = ({
 
   return (
     <FormControlLabel
+      className={className}
+      style={style}
       label={label && <span id={captionId}>{label}</span>}
       htmlFor={inputId}
       required={required}
