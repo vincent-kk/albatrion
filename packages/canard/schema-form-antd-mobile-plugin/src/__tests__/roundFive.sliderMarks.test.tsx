@@ -81,3 +81,29 @@ it.each([
     String(endpoint),
   );
 });
+
+it('displays a valid mark when the exclusive interval has no grid stops', () => {
+  const ref = createRef<FormHandle>();
+  render(
+    <Form
+      ref={ref}
+      fieldInputDefinitions={[FieldInputSliderDefinition]}
+      jsonSchema={{
+        type: 'number',
+        format: 'slider',
+        exclusiveMinimum: 0,
+        exclusiveMaximum: 0.5,
+        presentation: {
+          FieldInputProps: { marks: { 0.25: 'Quarter' } },
+        },
+      }}
+      defaultValue={0.25}
+    />,
+  );
+  expect(screen.queryByText('Quarter')).not.toBeNull();
+  const thumb = screen.getByRole('slider');
+  expect(thumb.tabIndex).toBe(-1);
+  fireEvent.keyDown(thumb, { key: 'End' });
+  fireEvent.keyUp(thumb, { key: 'End' });
+  expect(ref.current?.getValue()).toBe(0.25);
+});
