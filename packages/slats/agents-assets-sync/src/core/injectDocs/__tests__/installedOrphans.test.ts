@@ -91,6 +91,28 @@ it('a preview does not record ownership of matching local content', async () => 
   expect(readFileSync(local, 'utf8')).toBe('# local\n');
 });
 
+it('cleans a Codex skill when the package removes the whole namespace', async () => {
+  const { assetRoot, run } = prepare({
+    'skills/retired/SKILL.md': '# retired\n',
+    'skills/active/SKILL.md': '# active\n',
+    'rules/current.md': '# current rule\n',
+  });
+  const agent = ['codex'];
+  const retired = join(projectRoot, '.agents/skills/retired/SKILL.md');
+  expect((await run({ agent })).exitCode).toBe(0);
+  expect(existsSync(retired)).toBe(true);
+
+  rmSync(join(assetRoot, 'skills/retired'), { recursive: true });
+  expect((await run({ agent })).exitCode).toBe(2);
+  expect(existsSync(retired)).toBe(true);
+
+  expect((await run({ agent, force: true, yes: true })).exitCode).toBe(0);
+  expect(existsSync(retired)).toBe(false);
+  expect(readFileSync(join(projectRoot, 'AGENTS.md'), 'utf8')).toContain(
+    '# current rule',
+  );
+});
+
 it('retains a retired rule owned by another verified installation', async () => {
   const first = prepare({ 'rules/shared.md': '# first\n' });
   expect((await first.run()).exitCode).toBe(0);
