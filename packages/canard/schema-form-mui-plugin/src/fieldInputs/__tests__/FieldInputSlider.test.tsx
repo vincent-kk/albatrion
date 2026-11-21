@@ -25,49 +25,33 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
-it('publishes only on commit when presentation.FieldInputProps.lazy is true', async () => {
-  const ref = createRef<FormHandle>();
-  render(
-    <Form
-      ref={ref}
-      fieldInputDefinitions={[FieldInputSliderDefinition]}
-      jsonSchema={{
-        type: 'number',
-        default: 0,
-        presentation: {
-          inputType: 'slider',
-          FieldInputProps: { lazy: true },
-        },
-      }}
-    />,
-  );
-  await act(async () => {});
-  expect(ref.current!.getValue()).toBe(0);
-  const props = received.props.at(-1)!;
-
-  await act(async () => props.onChange!(new Event('change'), 42, 0));
-  expect(ref.current!.getValue()).toBe(0);
-
-  await act(async () => props.onChangeCommitted!(new Event('mouseup'), 42));
-  expect(ref.current!.getValue()).toBe(42);
-});
-
-it('publishes on every move when lazy is omitted', async () => {
-  const ref = createRef<FormHandle>();
-  render(
-    <Form
-      ref={ref}
-      fieldInputDefinitions={[FieldInputSliderDefinition]}
-      jsonSchema={{
-        type: 'number',
-        default: 0,
-        presentation: { inputType: 'slider' },
-      }}
-    />,
-  );
-  await act(async () => {});
-  const props = received.props.at(-1)!;
-
-  await act(async () => props.onChange!(new Event('change'), 42, 0));
-  expect(ref.current!.getValue()).toBe(42);
-});
+it.each([undefined, true, false])(
+  'chooses a single native event for lazy %s',
+  async (lazy) => {
+    const ref = createRef<FormHandle>();
+    render(
+      <Form
+        ref={ref}
+        fieldInputDefinitions={[FieldInputSliderDefinition]}
+        jsonSchema={{
+          type: 'number',
+          multipleOf: 3,
+          default: 0,
+          presentation: { inputType: 'slider', FieldInputProps: { lazy } },
+        }}
+      />,
+    );
+    const props = received.props.at(-1)!;
+    expect(props.shiftStep).toBe(30);
+    if (lazy === false) {
+      expect(props.onChangeCommitted).toBeUndefined();
+      await act(async () => props.onChange?.(new Event('change'), 42, 0));
+    } else {
+      expect(props.onChange).toBeUndefined();
+      await act(async () =>
+        props.onChangeCommitted?.(new Event('mouseup'), 42),
+      );
+    }
+    expect(ref.current?.getValue()).toBe(42);
+  },
+);
