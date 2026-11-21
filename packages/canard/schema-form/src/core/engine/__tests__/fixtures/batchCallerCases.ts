@@ -171,6 +171,75 @@ export const callerCases = [
       return root.value;
     },
   })),
+  {
+    name: 'inactive object accepts a Merge without losing its earlier null source',
+    run: (batched: boolean) => {
+      const root = nodeFromJSONSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            open: { type: 'boolean' },
+            box: {
+              type: 'object',
+              properties: {
+                held: {
+                  type: ['object', 'null'],
+                  controls: { active: '/open === true' },
+                  properties: { child: { type: 'string' } },
+                },
+              },
+            },
+          },
+        },
+        defaultValue: { open: false },
+        validationMode: ValidationMode.None,
+      });
+      expect(root.find('/box/held')).toBeNull();
+      const calls = () => {
+        root.find('/box')!.setValue({ held: null });
+        root.setValue({ box: { held: { child: '' } } }, MERGE);
+      };
+      if (batched) root.batch(calls);
+      else calls();
+      root.find('/open')!.setValue(true);
+      return root.value;
+    },
+  },
+  {
+    name: 'an inactive virtual slot does not promote its null host',
+    run: (batched: boolean, text: string) => {
+      const root = nodeFromJSONSchema({
+        jsonSchema: {
+          type: 'object',
+          properties: {
+            open: { type: 'boolean' },
+            other: { type: 'boolean' },
+            box: {
+              type: ['object', 'null'],
+              properties: {
+                held: {
+                  type: 'string',
+                  controls: { active: '/open === true' },
+                },
+              },
+              options: { virtual: { group: { fields: ['held'] } } },
+            },
+          },
+        },
+        defaultValue: { open: false, other: false, box: null },
+        validationMode: ValidationMode.None,
+      });
+      const group = root.find('/box/group')!;
+      expect(group.value).toEqual([undefined]);
+      const calls = () => {
+        root.find('/other')!.setValue(true);
+        group.setValue([text]);
+      };
+      if (batched) root.batch(calls);
+      else calls();
+      return { value: root.value, retained: root.inactiveValues };
+    },
+  },
   ...[false, true].flatMap((absent) =>
     virtualWriters.flatMap((writer) =>
       virtualReaders.map((reader) => ({
