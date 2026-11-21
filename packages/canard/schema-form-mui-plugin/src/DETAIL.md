@@ -8,6 +8,8 @@
 
 라이브러리가 지원하는 식별자 prop에 코어의 inputId와 labelId를 전달합니다. 보조 요소의 주소는 getInputId(key)에서 받습니다.
 
+선택기와 피커의 편집 슬롯에는 코어 기본 ID를 넘깁니다. 입력 자체의 표시 제목은 keyed 주소를 사용하며 보이는 제목이 없으면 외부 제목을 참조합니다. Slider는 기본적으로 native 확정 이벤트로 저장하고 Switch 켜짐은 열거형 첫 항목입니다. 루트와 분기에 코어의 오류 메시지를 표시합니다.
+
 ## Acceptance Criteria
 
 ### control-bindings — 폼 상태 전달

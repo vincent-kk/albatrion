@@ -57,7 +57,7 @@ it('gives no marker to a string outside the enum on a string switch, and follows
       fieldInputDefinitions={[FieldInputStringSwitchDefinition]}
       jsonSchema={{
         type: 'string',
-        enum: ['off', 'on'],
+        enum: ['on', 'off'],
         presentation: { inputType: 'switch' },
       }}
       defaultValue="other"

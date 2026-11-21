@@ -1,6 +1,6 @@
-import { type ReactNode, useMemo } from 'react';
+import type { ReactNode } from 'react';
 
-import { FormControlLabel, Switch } from '@mui/material';
+import { FormControlLabel, Stack, Switch } from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -11,6 +11,8 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { getOwnLabel } from './utils/enum/getOwnLabel';
+import { getMuiFieldPresentation } from './utils/presentation/getMuiFieldPresentation';
 
 type BooleanSwitchJSONSchema = BooleanSchema & {};
 
@@ -18,23 +20,28 @@ interface FieldInputBooleanSwitchProps
   extends FieldInputPropsWithSchema<
       boolean | null,
       BooleanSwitchJSONSchema,
-      MuiContext
+      MuiContext & { checkboxLabels?: Record<string, ReactNode> }
     >,
     MuiContext {
   label?: ReactNode;
+  alias?: { checked?: ReactNode; unchecked?: ReactNode };
   hideLabel?: boolean;
 }
 
 const FieldInputBooleanSwitch = ({
-  path,
+  inputId,
+  labelId,
+  getInputId,
   name,
   required,
   disabled,
+  readOnly,
   value,
   onChange,
   context,
+  alias,
   label: labelProp,
-  size: sizeProp = 'medium',
+  size: sizeProp,
   hideLabel,
   misfit,
 }: FieldInputBooleanSwitchProps) => {
@@ -44,30 +51,45 @@ const FieldInputBooleanSwitch = ({
     },
   );
 
-  const [label, size] = useMemo(() => {
-    if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || name, sizeProp || context.size];
-  }, [context, labelProp, name, sizeProp, hideLabel]);
+  const [label, size] = getMuiFieldPresentation(
+    labelProp,
+    name,
+    hideLabel,
+    { size: sizeProp },
+    context,
+  );
+
+  const captionId = label ? getInputId('legend') : undefined;
 
   return (
     <FormControlLabel
-      label={label}
-      htmlFor={path}
+      label={label && <span id={captionId}>{label}</span>}
+      htmlFor={inputId}
       required={required}
-      disabled={disabled}
+      disabled={disabled || readOnly}
       labelPlacement="start"
       control={
-        <Switch
-          id={path}
-          name={name}
-          checked={value === true}
-          onChange={handleChange}
-          disabled={disabled}
-          size={size}
-          slotProps={{
-            input: { role: 'switch', 'aria-invalid': misfit || undefined },
-          }}
-        />
+        <Stack direction="row" alignItems="center">
+          <Switch
+            id={inputId}
+            name={name}
+            checked={value === true}
+            onChange={handleChange}
+            disabled={disabled || readOnly}
+            size={size}
+            slotProps={{
+              input: {
+                role: 'switch',
+                'aria-labelledby': captionId ?? labelId,
+                'aria-invalid': misfit || undefined,
+              },
+            }}
+          />
+          {getOwnLabel(
+            context.checkboxLabels || alias,
+            value === true ? 'checked' : 'unchecked',
+          )}
+        </Stack>
       }
     />
   );

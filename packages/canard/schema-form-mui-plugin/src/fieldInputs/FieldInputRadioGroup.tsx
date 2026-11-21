@@ -1,6 +1,12 @@
 import { type ReactNode, useMemo } from 'react';
 
-import { FormControlLabel, Radio, RadioGroup } from '@mui/material';
+import {
+  Box,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+} from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -12,6 +18,8 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { getEnumOptions } from './utils/enum/getEnumOptions';
+import { getMuiFieldPresentation } from './utils/presentation/getMuiFieldPresentation';
 
 type RadioGroupStringJSONSchema = StringSchema & {
   radioLabels?: string[];
@@ -34,39 +42,39 @@ type FieldInputRadioGroupProps = {
   >;
 
 const FieldInputRadioGroup = ({
-  path,
+  inputId,
+  labelId,
+  getInputId,
   name,
   jsonSchema,
   required,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
   label: labelProp,
   alias,
-  size: sizeProp = 'medium',
+  size: sizeProp,
   row = true,
   hideLabel,
   misfit,
 }: FieldInputRadioGroupProps) => {
-  const [label, size] = useMemo(() => {
-    if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || name, sizeProp || context.size];
-  }, [context, labelProp, name, sizeProp, hideLabel]);
+  const [label, size] = getMuiFieldPresentation(
+    labelProp,
+    name,
+    hideLabel,
+    { size: sizeProp },
+    context,
+  );
 
-  const options = useMemo(() => {
-    const enumValues = jsonSchema.enum || [];
-    const radioLabels = jsonSchema.radioLabels;
-
-    return enumValues.map((rawValue, index) => {
-      const value = JSON.stringify(rawValue);
-      return {
-        value,
-        rawValue,
-        label: radioLabels?.[index] || alias?.['' + rawValue] || '' + rawValue,
-      };
-    });
-  }, [jsonSchema, alias]);
+  const values: readonly (string | number | null)[] | undefined =
+    jsonSchema.enum;
+  const labels = jsonSchema.radioLabels;
+  const options = useMemo(
+    () => getEnumOptions(values, alias, getInputId, labels),
+    [values, alias, getInputId, labels],
+  );
 
   const initialValue = useMemo(
     () => options.find((option) => option.rawValue === defaultValue)?.value,
@@ -83,46 +91,35 @@ const FieldInputRadioGroup = ({
     },
   );
 
+  const captionId = label ? getInputId('legend') : undefined;
+  const locked = disabled || readOnly;
   return (
-    <FormControlLabel
-      label={label}
-      htmlFor={path}
-      required={required}
-      disabled={disabled}
-      labelPlacement="start"
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'start',
-        gap: 8,
-      }}
-      control={
-        <RadioGroup
-          name={name}
-          defaultValue={initialValue}
-          onChange={handleChange}
-          row={row}
-        >
-          {options.map((option) => (
-            <FormControlLabel
-              key={option.value}
-              value={option.value}
-              disabled={disabled}
-              control={
-                <Radio
-                  size={size}
-                  id={`${path}-${option.value}`}
-                  slotProps={{
-                    input: { 'aria-invalid': misfit || undefined },
-                  }}
-                />
-              }
-              label={option.label}
-            />
-          ))}
-        </RadioGroup>
-      }
-    />
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      {label && (
+        <FormLabel component="span" id={captionId} required={required}>
+          {label}
+        </FormLabel>
+      )}
+      <RadioGroup
+        id={inputId}
+        name={inputId}
+        aria-labelledby={captionId ?? labelId}
+        aria-invalid={misfit || undefined}
+        defaultValue={initialValue}
+        onChange={handleChange}
+        row={row}
+      >
+        {options.map((option) => (
+          <FormControlLabel
+            key={option.value}
+            value={option.value}
+            disabled={locked}
+            control={<Radio size={size} id={option.id} />}
+            label={option.label}
+          />
+        ))}
+      </RadioGroup>
+    </Box>
   );
 };
 

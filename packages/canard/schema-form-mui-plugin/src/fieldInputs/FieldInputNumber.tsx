@@ -2,7 +2,6 @@ import {
   type ChangeEvent,
   type FocusEvent,
   type ReactNode,
-  useMemo,
   useRef,
 } from 'react';
 
@@ -17,6 +16,7 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { getMuiFieldPresentation } from './utils/presentation/getMuiFieldPresentation';
 
 type NumberJSONSchema = NumberSchema;
 
@@ -52,29 +52,13 @@ const FieldInputNumber = ({
   hideLabel,
   misfit,
 }: FieldInputNumberProps) => {
-  const [label, size, variant, fullWidth] = useMemo(() => {
-    if (hideLabel)
-      return [
-        undefined,
-        sizeProp || context.size,
-        variantProp || context.variant,
-        fullWidthProp ?? context.fullWidth,
-      ];
-    return [
-      labelProp || name,
-      sizeProp || context.size,
-      variantProp || context.variant,
-      fullWidthProp ?? context.fullWidth,
-    ];
-  }, [
-    context,
+  const [label, size, variant, fullWidth] = getMuiFieldPresentation(
     labelProp,
     name,
-    sizeProp,
-    variantProp,
-    fullWidthProp,
     hideLabel,
-  ]);
+    { size: sizeProp, variant: variantProp, fullWidth: fullWidthProp },
+    context,
+  );
 
   const draftRef = useRef<string | null>(null);
 

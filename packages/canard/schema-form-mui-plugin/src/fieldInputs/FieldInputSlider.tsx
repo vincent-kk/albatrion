@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo } from 'react';
+import type { ReactNode } from 'react';
 
 import { Box, Slider, Typography } from '@mui/material';
 
@@ -11,6 +11,7 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { getMuiFieldPresentation } from './utils/presentation/getMuiFieldPresentation';
 
 type SliderJSONSchema = NumberSchema & {
   minimum?: number;
@@ -36,42 +37,39 @@ interface FieldInputSliderProps
 }
 
 const FieldInputSlider = ({
-  path,
+  inputId,
+  labelId,
+  getInputId,
   name,
   jsonSchema,
   required,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
   label: labelProp,
-  size: sizeProp = 'medium',
+  size: sizeProp,
   showMarks = false,
   hideLabel,
   lazy,
   misfit,
 }: FieldInputSliderProps) => {
-  const [label, size] = useMemo(() => {
-    if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || name, sizeProp || context.size];
-  }, [context, labelProp, name, sizeProp, hideLabel]);
+  const [label, size] = getMuiFieldPresentation(
+    labelProp,
+    name,
+    hideLabel,
+    { size: sizeProp },
+    context,
+  );
 
   const min = jsonSchema.minimum ?? 0;
   const max = jsonSchema.maximum ?? 100;
   const step = jsonSchema.multipleOf ?? 1;
-  const isLazy = lazy ?? false;
-
-  const handleChange = useHandle((_, newValue: number | number[]) => {
-    if (!isLazy) {
-      onChange(Array.isArray(newValue) ? newValue[0] : newValue);
-    }
+  const handleChange = useHandle((_, value: number | number[]) => {
+    if (typeof value === 'number') onChange(value);
   });
-
-  const handleChangeCommitted = useHandle((_, newValue: number | number[]) => {
-    if (isLazy) {
-      onChange(Array.isArray(newValue) ? newValue[0] : newValue);
-    }
-  });
+  const captionId = label ? getInputId('legend') : undefined;
 
   return (
     <Box sx={{ px: 2 }}>
@@ -79,7 +77,8 @@ const FieldInputSlider = ({
         <Typography
           variant="body2"
           component="label"
-          htmlFor={path}
+          htmlFor={inputId}
+          id={captionId}
           sx={{ mb: 1, display: 'block' }}
         >
           {label}
@@ -87,18 +86,25 @@ const FieldInputSlider = ({
         </Typography>
       )}
       <Slider
-        id={path}
         name={name}
         defaultValue={typeof defaultValue === 'number' ? defaultValue : min}
         min={min}
         max={max}
         step={step}
-        onChange={handleChange}
-        onChangeCommitted={handleChangeCommitted}
-        disabled={disabled}
+        shiftStep={step * 10}
+        {...{
+          [lazy === false ? 'onChange' : 'onChangeCommitted']: handleChange,
+        }}
+        disabled={disabled || readOnly}
         size={size}
         marks={showMarks}
-        slotProps={{ input: { 'aria-invalid': misfit || undefined } }}
+        slotProps={{
+          input: {
+            id: inputId,
+            'aria-labelledby': captionId ?? labelId,
+            'aria-invalid': misfit || undefined,
+          },
+        }}
         valueLabelDisplay="auto"
         sx={{ mt: 1 }}
       />

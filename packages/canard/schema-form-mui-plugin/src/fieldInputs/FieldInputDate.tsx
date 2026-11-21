@@ -3,9 +3,7 @@ import { type ReactNode, useMemo } from 'react';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs, { type Dayjs } from 'dayjs';
-
-import { useHandle } from '@winglet/react-utils/hook';
+import dayjs from 'dayjs';
 
 import type {
   FieldInputDefinition,
@@ -14,6 +12,10 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { getPickerSlotProps } from './utils/picker/getPickerSlotProps';
+import { parsePickerLimit } from './utils/picker/parsePickerLimit';
+import { usePickerValueChange } from './utils/picker/usePickerValueChange';
+import { getMuiFieldPresentation } from './utils/presentation/getMuiFieldPresentation';
 
 type DateJSONSchema = StringSchema & {
   format: 'date';
@@ -26,10 +28,14 @@ interface FieldInputDateProps
     MuiContext {
   label?: ReactNode;
   hideLabel?: boolean;
+  minimum?: string;
+  maximum?: string;
 }
 
 const FieldInputDate = ({
-  path,
+  inputId,
+  labelId,
+  getInputId,
   name,
   jsonSchema,
   required,
@@ -44,52 +50,28 @@ const FieldInputDate = ({
   fullWidth: fullWidthProp,
   hideLabel,
   misfit,
+  minimum: minimumProp,
+  maximum: maximumProp,
 }: FieldInputDateProps) => {
-  const [label, size, variant, fullWidth] = useMemo(() => {
-    if (hideLabel)
-      return [
-        undefined,
-        sizeProp || context.size,
-        variantProp || context.variant,
-        fullWidthProp ?? context.fullWidth,
-      ];
-    return [
-      labelProp || name,
-      sizeProp || context.size,
-      variantProp || context.variant,
-      fullWidthProp ?? context.fullWidth,
-    ];
-  }, [
-    context,
+  const [label, size, variant, fullWidth] = getMuiFieldPresentation(
     labelProp,
     name,
-    sizeProp,
-    variantProp,
-    fullWidthProp,
     hideLabel,
-  ]);
+    { size: sizeProp, variant: variantProp, fullWidth: fullWidthProp },
+    context,
+  );
 
-  const { minDate, maxDate } = useMemo(() => {
-    return {
-      minDate: jsonSchema.minimum ? dayjs(jsonSchema.minimum) : undefined,
-      maxDate: jsonSchema.maximum ? dayjs(jsonSchema.maximum) : undefined,
-    };
-  }, [jsonSchema.minimum, jsonSchema.maximum]);
+  const minimum = minimumProp ?? jsonSchema.minimum;
+  const maximum = maximumProp ?? jsonSchema.maximum;
+  const { minDate, maxDate } = useMemo(
+    () => ({
+      minDate: parsePickerLimit(minimum, 'YYYY-MM-DD'),
+      maxDate: parsePickerLimit(maximum, 'YYYY-MM-DD'),
+    }),
+    [minimum, maximum],
+  );
 
-  const handleChange = useHandle((newValue: Dayjs | null) => {
-    if (newValue === null) {
-      onChange(undefined);
-      return;
-    }
-    if (!newValue.isValid()) return;
-    onChange(newValue.format('YYYY-MM-DD'));
-  });
-
-  const disableDate = useHandle((date: Dayjs) => {
-    if (minDate && date.isBefore(minDate, 'day')) return true;
-    if (maxDate && date.isAfter(maxDate, 'day')) return true;
-    return false;
-  });
+  const handleChange = usePickerValueChange(onChange, 'YYYY-MM-DD');
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -105,10 +87,15 @@ const FieldInputDate = ({
         readOnly={readOnly}
         minDate={minDate}
         maxDate={maxDate}
-        shouldDisableDate={disableDate}
         slotProps={{
           textField: {
-            id: path,
+            ...getPickerSlotProps(
+              inputId,
+              labelId,
+              getInputId,
+              !!label,
+              disabled,
+            ),
             name,
             required,
             size,
