@@ -1,14 +1,19 @@
 import { getSymbols } from '../../getSymbols';
 
 /**
- * Enumerate exactly the keys handled by the ordinary recursive clone profile.
+ * Yield keys in recursive clone order, observing metadata after array elements.
  * @param source Ordinary dictionary or intrinsic array at a deep work frame.
- * @returns Enumerable dictionary keys, or present array indices and match metadata.
+ * @returns An iterator over the keys copied by the recursive clone.
  */
-export function getCloneFrameKeys(source: object): PropertyKey[] {
-  if (!Array.isArray(source)) return [...Object.keys(source), ...getSymbols(source)];
-  const keys: PropertyKey[] = [];
-  for (let index = 0; index < source.length; index++) if (index in source) keys.push(index);
-  for (const key of ['index', 'input', 'groups']) if (key in source) keys.push(key);
-  return keys;
+export function* getCloneFrameKeys(source: object): Generator<PropertyKey> {
+  if (!Array.isArray(source)) {
+    yield* Object.keys(source);
+    yield* getSymbols(source);
+    return;
+  }
+  for (let index = 0, length = source.length; index < length; index++)
+    if (index in source) yield index;
+  if ('index' in source) yield 'index';
+  if ('input' in source) yield 'input';
+  if ('groups' in source) yield 'groups';
 }
