@@ -1,5 +1,4 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { getDataProperty } from '@winglet/common-utils/object';
 
 import type { Dictionary } from '@aileron/declare';
 
@@ -15,16 +14,12 @@ export const getValueByPointer = <Input extends Dictionary | Array<any>>(
   let cursor: any = value;
   for (let i = hasRootPrefix ? 1 : 0; i < length; ) {
     const segment = segments[i++];
-    if (Array.isArray(cursor) && getArrayElementIndex(segment) < 0)
-      return undefined;
     if (
-      segment === '__proto__' ||
-      segment === 'constructor' ||
-      segment === 'prototype'
+      (Array.isArray(cursor) && getArrayElementIndex(segment) < 0) ||
+      !hasOwnProperty(cursor, segment)
     )
-      cursor = getDataProperty(cursor, segment);
-    else if (hasOwnProperty(cursor, segment)) cursor = cursor[segment];
-    else return undefined;
+      return undefined;
+    cursor = cursor[segment];
     if (i === length) break;
     if (typeof cursor !== 'object' || cursor === null) return undefined;
   }
