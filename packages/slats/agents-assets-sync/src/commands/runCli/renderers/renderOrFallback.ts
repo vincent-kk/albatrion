@@ -1,7 +1,11 @@
-import type { RunFailure, RunResult } from '../../../core/index.js';
+import {
+  type RunFailure,
+  type RunResult,
+  runInjection,
+} from '../../../core/index.js';
 import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
-import { displayJSON, renderJSON } from './renderJSON.js';
-import { displayPlain, renderPlain } from './renderPlain.js';
+import { renderJSON } from './renderJSON.js';
+import { renderPlain } from './renderPlain.js';
 
 interface RenderEnv {
   readonly isTTY?: boolean;
@@ -33,19 +37,19 @@ export async function renderOrFallback(
   diagnostics?: readonly RunFailure[],
 ): Promise<number> {
   const isTTY = env.isTTY ?? Boolean(process.stdout.isTTY);
-  if (flags.json) {
-    if (result) {
-      displayJSON(result);
-      return result.exitCode;
-    }
-    return renderJSON(targets, flags, originCwd, notices, diagnostics);
-  }
-  if (!isTTY || flags.interactive === false) {
-    if (result) {
-      displayPlain(result, Boolean(flags.force));
-      return result.exitCode;
-    }
-    return renderPlain(targets, flags, originCwd, notices, diagnostics);
+  if (flags.json || !isTTY || flags.interactive === false) {
+    const completed =
+      result ??
+      (await runInjection({
+        targets,
+        flags,
+        originCwd,
+        notices,
+        diagnostics,
+      }));
+    if (flags.json) renderJSON(completed);
+    else renderPlain(completed, Boolean(flags.force));
+    return completed.exitCode;
   }
   const ui = await import('../../../ui/index.js');
   return ui.renderInjectApp({

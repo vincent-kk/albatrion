@@ -1,15 +1,12 @@
 // r3-agents-assets-sync: invalid --asset / --agent values on the TTY path.
-// src/DETAIL.md: invalid --agent and --asset values exit 2. Only renderPlain and
-// renderJSON validate them; useInjectSession filters unknown --asset values out
-// ("the CLI layer already rejected unknown values") and useResolveStep drops
-// unknown --agent values, so the Ink path never sees an error.
+// Invalid --agent and --asset values reach the same validation in both render paths.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { render } from 'ink-testing-library';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { renderPlain } from '../../commands/runCli/renderers/renderPlain.js';
+import { renderOrFallback } from '../../commands/runCli/renderers/renderOrFallback.js';
 import type { ConsumerPackage, DefaultFlags } from '../../types/index.js';
 import { InjectApp } from '../../ui/InjectApp/InjectApp.js';
 import {
@@ -66,7 +63,13 @@ async function plainExitCode(
     },
   );
   try {
-    return await renderPlain(targets, flags, originCwd);
+    return await renderOrFallback(
+      targets,
+      { ...flags, json: false },
+      originCwd,
+      [],
+      { isTTY: false },
+    );
   } catch (error) {
     if (
       error instanceof Error &&

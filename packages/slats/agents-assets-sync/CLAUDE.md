@@ -97,7 +97,7 @@ The shape mirrors the `FILID:` / `SEIRI:` markers such files already carry. Cont
 
 ## Render Paths
 
-The core validates completed arguments, prepares all units before writing, merges shared namespaces, and applies the plan once. The plain and JSON compatibility entry functions delegate to that core and display its result. The terminal session supplies missing arguments and confirmation answers to the same function. Input views never plan, validate independently, or write. General orchestrator objects and per-renderer primitive pipelines are forbidden because they make output format affect behavior.
+The core validates completed arguments, prepares all units before writing, merges shared namespaces, and applies the plan once. The renderer dispatcher executes the non-interactive run once, then the plain or JSON renderer displays that result. The terminal session supplies missing arguments and confirmation answers to the same function. Input views never plan, validate independently, or write. General orchestrator objects and per-renderer primitive pipelines are forbidden because they make output format affect behavior.
 
 ## Consumer Integration Pattern
 

@@ -1,43 +1,16 @@
-import {
-  type ActionTarget,
-  type AgentTarget,
-  type InjectPlan,
-  type RunFailure,
-  type RunResult,
-  runInjection,
+import type {
+  ActionTarget,
+  AgentTarget,
+  InjectPlan,
+  RunResult,
 } from '../../../core/index.js';
-import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
 import { logger } from '../../../utils/logger.js';
-
-/** Compatibility driver for non-TTY callers; all decisions belong to core.
- * @param targets Resolved packages.
- * @param flags Completed arguments.
- * @param originCwd Scope origin.
- * @returns Core exit code after displaying its result.
- */
-export async function renderPlain(
-  targets: readonly ConsumerPackage[],
-  flags: DefaultFlags,
-  originCwd: string,
-  notices: readonly string[] = [],
-  diagnostics?: readonly RunFailure[],
-): Promise<number> {
-  const result = await runInjection({
-    targets,
-    flags,
-    originCwd,
-    notices,
-    diagnostics,
-  });
-  displayPlain(result, Boolean(flags.force));
-  return result.exitCode;
-}
 
 /** Display a completed model without planning, writes, or exit decisions.
  * @param result Core execution result.
  * @param force Whether the transcript should list force operations.
  */
-export function displayPlain(result: RunResult, force: boolean): void {
+export function renderPlain(result: RunResult, force: boolean): void {
   for (const error of result.errors) logger.error(error);
   for (const failure of result.failures ?? [])
     logger.error(`${failure.path} [${failure.stage}]: ${failure.reason}`);

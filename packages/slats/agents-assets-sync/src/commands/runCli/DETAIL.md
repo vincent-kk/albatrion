@@ -19,7 +19,7 @@
 - `renderOrFallback` 은 target 해석 이후 실행당 정확히 한 번 호출되며 렌더러 분기를 소유한다. 분기 순서: `--json` → `renderJSON`; 비TTY 이거나 `flags.interactive === false` → `renderPlain`; 나머지 → `ui/` 동적 import. 패키지가 ESM 전용이므로 `await import()` 로 충분하다.
 - `renderOrFallback` 의 `env.isTTY` 는 테스트를 위해 주입 가능하며, 생략 시 `process.stdout.isTTY` 를 쓴다.
 - `--json` 이 켜지면 액션 진입 즉시 `divertLogsToStderr()` 가 호출된다. 이후의 모든 진단은 — 종료 경로의 것까지 — stderr 로 간다. stdout 은 JSON 문서만의 것이다.
-- 모든 출력 경로는 코어의 같은 검증과 실행 함수를 사용하고, JSON 표시 함수는 오류도 값으로 받아 문서에 담습니다.
+- 입력을 받을 수 없는 경로에서는 `renderOrFallback`이 전달받은 결과를 사용하거나 코어 실행을 한 번 호출합니다. 일반 텍스트와 JSON 렌더러는 받은 결과만 표시하며 JSON은 오류도 값으로 받아 문서에 담습니다.
 - asset 누락 정책은 `--package` 가 지목한 대상의 개수로 갈린다. **중복을 제거한** 값이 정확히 하나이고 그 값이 패키지 이름이면 strict 다 — `agents.assetPath` 가 없으면 2로 종료한다. 서로 다른 값이 여럿이면 soft skip 이라 나머지 배치가 계속된다. 같은 패키지를 두 번 적는 것은 여전히 한 패키지를 지목한 것이므로 판정이 물러지지 않는다.
 - scope alias 는 언제나 soft skip 으로 열거된다. workspace 안의 어떤 패키지가 asset 을 선언하지 않는 것은 정상이기 때문이다.
 - `--asset-path` 가 있으면 `agents.assetPath` 부재 검사 자체를 건너뛴다. 실패는 위와 **같은** strict / soft skip 분기를 탄다. 새 정책을 만들지 않는다.
@@ -82,8 +82,6 @@
   - `assetPathSource: 'flag'` → `'directory'`. 선언(`'package'`) 이면 빌드 출력 디렉터리의 `agents-hashes.json` 이 있을 때 `'manifest'`, 없고 asset 디렉터리가 있으면 `'directory'`, 둘 다 없으면 `'manifest'` 로 남겨 게이트에 넘긴다
   - `hashesPresent` 는 빌드 출력 디렉터리의 `agents-hashes.json` 을 실제로 찾았을 때만 `true` 다. `'directory'` 로 정해진 target 은 그 파일을 읽지 않으므로 언제나 `false` 이며, 게이트도 이 값을 보지 않는다
 - `renderOrFallback(targets, flags, originCwd, notices?, env?): Promise<number>`
-- `renderPlain(targets, flags, originCwd): Promise<number>`
-- `renderJSON(targets, flags, originCwd, notices?): Promise<number>`
   - `notices` 는 렌더러 이전 단계의 메시지다. 실행을 실패시키지 않으면서 `errors` 에 실린다
 - `resolveScopeFlag` / `resolveAgentFlag` / `resolveAssetFlag` — 실패 시 exit 2
 - `parseScopeFlag` / `parseAgentFlag` / `parseAssetFlag` — 실패를 값으로 반환

@@ -4,8 +4,7 @@ import { join } from 'node:path';
 import { render } from 'ink-testing-library';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { renderJSON } from '../../commands/runCli/renderers/renderJSON.js';
-import { renderPlain } from '../../commands/runCli/renderers/renderPlain.js';
+import { renderOrFallback } from '../../commands/runCli/renderers/renderOrFallback.js';
 import type { ConsumerPackage, DefaultFlags } from '../../types/index.js';
 import { InjectApp } from '../../ui/InjectApp/InjectApp.js';
 import {
@@ -133,10 +132,12 @@ async function run(
         );
       });
     } else
-      code = await (surface === 'plain' ? renderPlain : renderJSON)(
+      code = await renderOrFallback(
         targets,
-        flags,
+        { ...flags, json: surface === 'json' },
         root,
+        [],
+        { isTTY: false },
       );
   } catch (error) {
     if (!(error instanceof FlagExit)) throw error;

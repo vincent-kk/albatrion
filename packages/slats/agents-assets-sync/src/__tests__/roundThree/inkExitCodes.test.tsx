@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { render } from 'ink-testing-library';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { renderPlain } from '../../commands/runCli/renderers/renderPlain.js';
+import { renderOrFallback } from '../../commands/runCli/renderers/renderOrFallback.js';
 import type { ConsumerPackage, DefaultFlags } from '../../types/index.js';
 import { InjectApp } from '../../ui/InjectApp/InjectApp.js';
 import {
@@ -68,7 +68,13 @@ async function plainExitCode(
   vi.spyOn(console, 'warn').mockImplementation(() => {});
   vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
   try {
-    return await renderPlain(targets, flags, originCwd);
+    return await renderOrFallback(
+      targets,
+      { ...flags, json: false },
+      originCwd,
+      [],
+      { isTTY: false },
+    );
   } finally {
     vi.restoreAllMocks();
   }

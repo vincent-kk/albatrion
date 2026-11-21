@@ -3,8 +3,7 @@ import { realpathSync } from 'node:fs';
 import { render } from 'ink-testing-library';
 import { expect, vi } from 'vitest';
 
-import { renderJSON } from '../../../commands/runCli/renderers/renderJSON.js';
-import { renderPlain } from '../../../commands/runCli/renderers/renderPlain.js';
+import { renderOrFallback } from '../../../commands/runCli/renderers/renderOrFallback.js';
 import * as core from '../../../core/index.js';
 import type { RunResult } from '../../../core/index.js';
 import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
@@ -98,10 +97,12 @@ export async function runSurface(
   } else if (mode !== 'ink') {
     vi.spyOn(process.stdout, 'write').mockImplementation(recordOut);
     vi.spyOn(process.stderr, 'write').mockImplementation(recordError);
-    code = await (mode === 'plain' ? renderPlain : renderJSON)(
+    code = await renderOrFallback(
       targets,
-      flags,
+      { ...flags, json: mode === 'json' },
       root,
+      [],
+      { isTTY: false },
     );
   } else {
     code = await new Promise<number>((resolve, reject) => {

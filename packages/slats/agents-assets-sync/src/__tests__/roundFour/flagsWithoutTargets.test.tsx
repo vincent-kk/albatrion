@@ -9,8 +9,7 @@ import {
   runCliCode,
   writeAt,
 } from '../../__tests__/roundThree/fixture.js';
-import { renderJSON } from '../../commands/runCli/renderers/renderJSON.js';
-import { renderPlain } from '../../commands/runCli/renderers/renderPlain.js';
+import { renderOrFallback } from '../../commands/runCli/renderers/renderOrFallback.js';
 import type { DefaultFlags } from '../../types/index.js';
 import { InjectApp } from '../../ui/InjectApp/InjectApp.js';
 
@@ -88,8 +87,16 @@ describe.each([
       interactive: true,
     };
     quiet();
-    const plain = await codeOf(() => renderPlain([], flags, root));
-    const json = await codeOf(() => renderJSON([], flags, root));
+    const plain = await codeOf(() =>
+      renderOrFallback([], { ...flags, json: false }, root, [], {
+        isTTY: false,
+      }),
+    );
+    const json = await codeOf(() =>
+      renderOrFallback([], { ...flags, json: true }, root, [], {
+        isTTY: false,
+      }),
+    );
     vi.restoreAllMocks();
     const ink = await inkCode(flags, root);
     expect({ plain, json, ink }).toEqual({ plain: 2, json: 2, ink: 2 });
