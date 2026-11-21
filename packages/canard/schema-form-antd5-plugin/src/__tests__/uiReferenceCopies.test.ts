@@ -10,6 +10,7 @@ it('keeps the independent reference models identical across UI plugins', () => {
   for (const model of [
     'sliderReference.ts',
     'fieldNameReference.ts',
+    'fieldLabelLifecycle.ts',
     ...helpers,
   ]) {
     const file = `src/__tests__/utils/${model}`;
