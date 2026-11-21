@@ -30,6 +30,7 @@ import { createGatePredicate } from './predicates/createGatePredicate';
 import { getIfGateReadNames } from './predicates/getIfGateReadNames';
 import { resolveGateOccurrence } from './resolveGateOccurrence';
 import type { GateOccurrence } from './type';
+import { isOwnActiveGate } from './isOwnActiveGate';
 
 /** Bound gate with exact read paths used to invalidate its L. */
 class RegisteredGateOccurrence implements GateOccurrence {
@@ -180,11 +181,7 @@ class GateRegistry {
           node,
           gate,
           (memo ??= new Map()),
-          gate.schemaPath ===
-            appendSegment(
-              appendSegment(declaration.schemaPath, 'controls'),
-              'active',
-            )
+          isOwnActiveGate(gate.schemaPath, declaration.schemaPath)
             ? node.path
             : undefined,
         );
@@ -193,11 +190,7 @@ class GateRegistry {
       for (const declaration of entry.declarations)
         for (const gate of declaration.gates)
           if (
-            gate.schemaPath ===
-            appendSegment(
-              appendSegment(declaration.schemaPath, 'controls'),
-              'active',
-            )
+            isOwnActiveGate(gate.schemaPath, declaration.schemaPath)
           ) {
             edges ??= new Map();
             let edgeMemo = edges.get(entry.name);
