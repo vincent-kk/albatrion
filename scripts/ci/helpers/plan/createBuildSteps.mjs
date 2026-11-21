@@ -5,15 +5,23 @@ import { createTopologicalBuild } from "./helpers/createTopologicalBuild.mjs";
  * Emits manifest-topological builds with the schema-form bootstrap and the plugin packages its tests import (AJV 6/7/8, antd5).
  * @param {string[]} affected Names whose build dependencies must exist.
  * @param {object[]} workspaces Manifest dependency graph and current scripts.
+ * @param {string} tier Check policy; PR Ant Design jobs need core artifacts as consumers only.
  * @returns {object[]} Yarn commands restricted to eligible build workspaces.
  */
-export function createBuildSteps(affected, workspaces) {
+export function createBuildSteps(affected, workspaces, tier = "pre-release") {
   const closure = collectClosure(affected, workspaces);
   const schemaForm = "@canard/schema-form";
   const ajvPlugins = [6, 7, 8].map(
     (version) => `@canard/schema-form-ajv${version}-plugin`,
   );
-  const bootstrapPlugins = [...ajvPlugins, "@canard/schema-form-antd5-plugin"];
+  const verifySchemaForm =
+    tier !== "pr" ||
+    affected.some(
+      (name) => !/^@canard\/schema-form-antd[56]-plugin$/.test(name),
+    );
+  const bootstrapPlugins = verifySchemaForm
+    ? [...ajvPlugins, "@canard/schema-form-antd5-plugin"]
+    : [];
   if (closure.includes(schemaForm)) {
     for (const name of collectClosure(bootstrapPlugins, workspaces))
       if (!closure.includes(name)) closure.push(name);
@@ -59,15 +67,18 @@ export function createBuildSteps(affected, workspaces) {
       label: "Bootstrap schema-form declarations",
       args: ["workspace", schemaForm, "build:types"],
     });
-    steps.push(
-      createTopologicalBuild(
-        bootstrapPlugins.filter((name) => buildNames.includes(name)),
-        "Build schema-form plugin declarations",
-      ),
-    );
+    if (bootstrapPlugins.length)
+      steps.push(
+        createTopologicalBuild(
+          bootstrapPlugins.filter((name) => buildNames.includes(name)),
+          "Build schema-form plugin declarations",
+        ),
+      );
     remainingBuildNames = buildNames.filter(
       (name) =>
-        !prerequisites.includes(name) && !bootstrapPlugins.includes(name),
+        !prerequisites.includes(name) &&
+        !bootstrapPlugins.includes(name) &&
+        (verifySchemaForm || name !== schemaForm),
     );
   }
   if (remainingBuildNames.length)

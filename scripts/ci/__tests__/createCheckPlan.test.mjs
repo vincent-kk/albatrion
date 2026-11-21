@@ -62,6 +62,13 @@ test("schema-form closure bootstraps runtime and declarations before AJV and ful
       labels.indexOf("Bootstrap schema-form runtime") <
         labels.indexOf("Bootstrap schema-form declarations"),
     );
+    if (/^plugins-antd[56]$/.test(shard.name)) {
+      assert.ok(
+        labels.indexOf("Bootstrap schema-form declarations") <
+          labels.indexOf("Build workspace closure"),
+      );
+      continue;
+    }
     assert.ok(
       labels.indexOf("Bootstrap schema-form declarations") <
         labels.indexOf("Build schema-form plugin declarations"),
@@ -133,7 +140,8 @@ test("default pr tier splits schema-form unit and input lifetime regressions acr
       "schema-form-unit-2",
       "schema-form-render",
       "plugins-ajv",
-      "plugins-antd",
+      "plugins-antd5",
+      "plugins-antd6",
       "plugins-ui",
     ],
   );

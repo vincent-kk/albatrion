@@ -32,7 +32,7 @@ export function createShard(
       label: `Lint ${workspace.name}`,
       args: ["workspace", workspace.name, "lint"],
     }));
-  const builds = createBuildSteps(affected, workspaces);
+  const builds = createBuildSteps(affected, workspaces, tier);
   // ESLint import/no-unresolved resolves workspace dist exports, which clean checkouts must build first.
   const steps = [...builds, ...lint];
   for (const workspace of selected) {
