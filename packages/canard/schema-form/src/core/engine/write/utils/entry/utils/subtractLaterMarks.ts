@@ -1,68 +1,55 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { Optional } from '@aileron/declare';
+import type { FieldNodeRecord, FieldNodeRuntime } from '../../../../record';
+import { mergeMarkedValue, readWriteCoverage } from '../../../../settle';
+import type { WriteRange } from '../../../../settle';
 
-import type { FieldNodeRecord } from '../../../../record';
-import type { WriteOption } from '../../../../types/value';
-import { resolveStorageTargets } from '../../../../utils/paths/resolveStorageTargets';
-import { mergeMarkedValue } from '../../chain/utils/mergeMarkedValue';
-import { type LaterMark, readLaterCoverage } from './readLaterCoverage';
-
-/** The batch write a mark holds: its node, value and the virtual fields it still admits. */
-type MarkWrite<Self> = {
-  readonly node: Self;
-  readonly value: unknown;
-  readonly option: WriteOption;
-  readonly virtualFields?: readonly string[];
-};
+type BatchWrite<Self extends FieldNodeRecord<Self>> = NonNullable<
+  FieldNodeRuntime<Self>['batchWrites']
+>[number];
 
 /**
- * Remove from an earlier batch mark what the later marks of the same segment write, as the later
- * calls in sequence would overwrite it (write DETAIL EVENT-013). An address a later mark covers
- * whole leaves the mark, and the part of an address a later Merge names is merged into the mark's
- * value, so applying the reduced mark after the later marks leaves what the calls in order leave.
- * @param node - Node the earlier mark writes, which decides its storage addresses and merge boundaries
- * @param earlier - The earlier mark, its storage paths and the batch write that holds it
- * @param laters - The later marks, in call order
- * @returns The reduced write, or undefined when the later marks cover every address of the mark
+ * Replay only the part of a withheld mark that later physical writes left behind.
+ * @param write - The original withheld caller write
+ * @param ranges - Actual decisions from marks applied at the reset barrier
+ * @param start - Index of the first applied mark that follows the withheld one
+ * @returns A write admitting only surviving physical targets
  */
-export const subtractLaterMarks = <
-  Self extends FieldNodeRecord<Self>,
-  Write extends MarkWrite<Self>,
->(
-  node: Self,
-  earlier: LaterMark & { readonly write: Write },
-  laters: readonly LaterMark[],
-): Optional<Write> => {
-  const targets = resolveStorageTargets(node);
-  const { isVirtual } = earlier;
-  const live = earlier.paths.map(() => true);
-  const values: unknown[] = isVirtual
-    ? earlier.paths.map((_, index) =>
-        isArray(earlier.value) ? earlier.value[index] : undefined,
-      )
-    : [earlier.value];
-  for (const later of laters)
-    for (let index = 0; index < earlier.paths.length; index++) {
-      if (!live[index]) continue;
-      const coverage = readLaterCoverage(earlier.paths[index], later);
-      if (coverage.kind === 'covered') live[index] = false;
-      else if (coverage.kind === 'merged')
-        values[index] = mergeMarkedValue(
-          isVirtual ? targets?.[index]?.node : node,
-          values[index],
-          coverage.value,
-        );
+export const subtractLaterMarks = <Self extends FieldNodeRecord<Self>>(
+  write: BatchWrite<Self>,
+  ranges: readonly WriteRange[][],
+  start: number,
+): BatchWrite<Self> | undefined => {
+  if (start === ranges.length) return write;
+  const targets = write.virtualTargets;
+  const values = isArray(write.value) ? write.value.slice() : [];
+  const kept = [];
+  let value = write.value;
+  for (const target of targets ?? [undefined]) {
+    const node = target ? target.node : write.node;
+    const path = target?.path ?? write.node.path;
+    let input = target ? values[target.index] : value;
+    let isCovered = false;
+    for (let index = start; index < ranges.length; index++) {
+      const range = readWriteCoverage(ranges[index], path, 'latest');
+      if (!range || range.isLogical) continue;
+      if (!range.partial) {
+        isCovered = true;
+        break;
+      }
+      input = mergeMarkedValue(node, input, range.partial);
     }
-  if (!live.some(Boolean)) return undefined;
-  if (!isVirtual) return { ...earlier.write, value: values[0] };
-  const names = (targets ?? []).map((target) => target.name);
-  return {
-    ...earlier.write,
-    value: values,
-    virtualFields: names.filter(
-      (name, index) =>
-        live[index] && (earlier.write.virtualFields?.includes(name) ?? true),
-    ),
-  };
+    if (target) {
+      if (isCovered) continue;
+      kept.push(target);
+      values[target.index] = input;
+    } else {
+      if (isCovered) return undefined;
+      value = input;
+    }
+  }
+  if (!targets) return value === write.value ? write : { ...write, value };
+  return kept.length
+    ? { ...write, value: values, virtualTargets: kept }
+    : undefined;
 };

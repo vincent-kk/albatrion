@@ -2,10 +2,16 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
-import { assertVirtualWriteShape, writeFieldNode } from '../../../settle';
+import {
+  assertVirtualWriteShape,
+  isMergeWrite,
+  writeFieldNode,
+} from '../../../settle';
 import { FieldNodeWriteKind, WriteOption } from '../../../types/value';
 import { sameValue } from '../../../utils/compute/sameValue';
 import { isVirtualWriteFieldAdmitted } from '../../../utils/paths/isVirtualWriteFieldAdmitted';
+import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
+import type { StorageTarget } from '../../../utils/paths/resolveStorageTargets';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
@@ -46,41 +52,33 @@ export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
       typeof input === 'function'
         ? input(marking ? readBatchValue(node) : node.storedValue)
         : input;
-    let virtualFields: readonly string[] | undefined;
+    let virtualTargets: readonly StorageTarget<Self>[] | undefined;
     if (node.behavior.type === 'virtual') {
       assertVirtualWriteShape(node, value);
       if (sameValue(value, marking ? readBatchValue(node) : node.storedValue))
         return;
       const values = isArray(value) ? value : undefined;
-      virtualFields = (node.blueprintNode.fields ?? []).filter((name, index) =>
-        isVirtualWriteFieldAdmitted(
-          name,
-          index,
-          values,
-          !!node.parent?.childrenByName?.[name],
-        ),
+      virtualTargets = resolveStorageTargets(node)?.filter(({ node, index }) =>
+        isVirtualWriteFieldAdmitted(!!node, node ? undefined : values?.[index]),
       );
     }
     if (marking) {
       const writes = (node.rootNode.runtime.batchWrites ??= []);
-      if (virtualFields)
-        writes.push({ node, value, option, source, virtualFields });
+      if (virtualTargets)
+        writes.push({ node, value, option, source, virtualTargets });
       else writes.push({ node, value, option, source });
     } else {
-      const merge =
-        (option & WriteOption.Merge) === WriteOption.Merge &&
-        !(option & WriteOption.Replace);
       writeFieldNode(
         node,
         value,
-        merge
+        isMergeWrite(option)
           ? FieldNodeWriteKind.CallerPartial
           : FieldNodeWriteKind.CallerReplace,
         option,
         source,
         undefined,
         undefined,
-        virtualFields,
+        virtualTargets,
       );
     }
   } catch (error) {

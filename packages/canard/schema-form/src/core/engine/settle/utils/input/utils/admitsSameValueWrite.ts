@@ -22,7 +22,7 @@ export const admitsSameValueWrite = <Self extends FieldNodeRecord<Self>>(
     context.isAutomatic ||
     context.hasGates ||
     context.loadScope !== undefined ||
-    context.replacementPaths !== undefined ||
+    context.writeOrigins !== undefined ||
     node.isDetached ||
     runtime.batchDepth ||
     runtime.visitDepth ||

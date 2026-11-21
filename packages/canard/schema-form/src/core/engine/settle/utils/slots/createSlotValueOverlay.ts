@@ -9,6 +9,8 @@ import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { BATCH_HOST_SOURCE } from '../../../utils/batchHostSource';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
+import { decideAddressWrite } from '../input/decideAddressWrite';
+import { getWriteChild } from '../input/getWriteChild';
 import { isPlain } from '../input/isPlain';
 import { nextExtras } from '../input/nextExtras';
 import { staticSpec } from '../input/staticSpec';
@@ -88,6 +90,7 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
   }
   if (!isPlain(input))
     return { overlay: { isWhole: true, source: input }, hasWritten: false };
+  isWhole = !decideAddressWrite(template, input, !isWhole);
   if (seen.has(input)) return { overlay: { isWhole: true }, hasWritten: false };
   seen.add(input);
   const previousSource =
@@ -111,7 +114,7 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
   const children = new Map(isWhole ? undefined : previous?.children);
   let hasWritten = false;
   for (const name of Object.keys(input)) {
-    const entry = template.childEntries.find((entry) => entry.name === name);
+    const { entry } = getWriteChild(template, undefined, name);
     if (!entry) continue;
     const prior = isWhole
       ? undefined

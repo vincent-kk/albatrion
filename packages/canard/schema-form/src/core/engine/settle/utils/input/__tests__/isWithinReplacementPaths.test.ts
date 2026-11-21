@@ -2,13 +2,19 @@ import { describe, expect, it } from 'vitest';
 
 import type { FieldNodeRecord } from '@/schema-form/core/engine/record';
 
+import { FieldNodeWriteKind } from '../../../../types/value';
 import type { SettlementContext } from '../../../types/settlement';
 import { isWithinReplacementPaths } from '../isWithinReplacementPaths';
 
 type TestNode = FieldNodeRecord<TestNode>;
 
 const context = (replacementPaths?: readonly string[]) =>
-  ({ replacementPaths }) as unknown as SettlementContext<TestNode>;
+  ({
+    writeOrigins: replacementPaths?.map((path) => ({
+      path,
+      source: FieldNodeWriteKind.CallerReplace,
+    })),
+  }) as unknown as SettlementContext<TestNode>;
 
 describe('isWithinReplacementPaths (R1)', () => {
   it('counts every path outside a batch', () => {

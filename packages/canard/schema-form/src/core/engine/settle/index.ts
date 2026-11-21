@@ -16,3 +16,9 @@ export { readFieldNodeWatchValues } from './utils/controls/readFieldNodeWatchVal
 export { changeFieldNodeContext } from './utils/context/changeFieldNodeContext';
 export { readStoredInput } from './utils/input/readStoredInput';
 export { hasCallerInputOutput } from './utils/input/hasCallerInputOutput';
+export type { WriteRange } from './types/writeRange';
+export { composeBatchValue } from './utils/input/composeBatchValue';
+export { mergeMarkedValue } from './utils/input/mergeMarkedValue';
+export { isMergeWrite } from './utils/input/isMergeWrite';
+export { replaceAtPath } from './utils/input/replaceAtPath';
+export { readWriteCoverage } from './utils/write/readWriteCoverage';

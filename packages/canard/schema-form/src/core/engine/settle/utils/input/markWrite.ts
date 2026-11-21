@@ -2,15 +2,13 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Optional } from '@aileron/declare';
 
-import {
-  appendSegment,
-  isDescendantPath,
-} from '@/schema-form/helpers/jsonPointer';
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { Distribution, FieldNodeRecord, UnionSpec } from '../../../record';
 import { FieldNodeWriteKind } from '../../../types/value';
 import { BATCH_HOST_SOURCE } from '../../../utils/batchHostSource';
 import { sameValue } from '../../../utils/compute/sameValue';
+import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
 import type { SettlementContext } from '../../types/settlement';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { prepareSourcePruner } from '../slots/prepareSourcePruner';
@@ -19,8 +17,11 @@ import { writeAbsentConstituent } from '../slots/writeAbsentConstituent';
 import { findDepartingChild } from '../transition/findDepartingChild';
 import { placeDeclarativeValue } from '../transition/placeDeclarativeValue';
 import { supersedeRevivedSlotSource } from '../transition/utils/supersedeRevivedSlotSource';
+import { readWriteCoverage } from '../write/readWriteCoverage';
 import { arrayExtras } from './arrayExtras';
 import { assertVirtualWriteShape } from './assertVirtualWriteShape';
+import { decideAddressWrite } from './decideAddressWrite';
+import { getWriteChild } from './getWriteChild';
 import { hasDistributedChildInput } from './hasDistributedChildInput';
 import { isPlain } from './isPlain';
 import { nextExtras } from './nextExtras';
@@ -115,29 +116,27 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   }
   if (node.behavior.type === 'virtual') {
     context.dirtyPaths.add(node.path);
-    const fields = node.blueprintNode.fields ?? [];
+    const parent = node.parent;
+    if (!parent) return;
+    const targets =
+      (node === context.target ? context.virtualWriteTargets : undefined) ??
+      resolveStorageTargets(node);
     const values = isArray(value) ? value : undefined;
-    for (let index = 0; index < fields.length; index++) {
-      if (
-        node === context.target &&
-        context.virtualWriteFields &&
-        !context.virtualWriteFields.includes(fields[index])
-      )
-        continue;
-      const parent = node.parent;
-      const sibling = parent?.childrenByName?.[fields[index]];
+    for (const target of targets ?? []) {
+      const { child: sibling, entry } = getWriteChild(
+        parent.blueprintNode,
+        parent,
+        target.name,
+      );
+      const input = values?.[target.index];
+      const partial = decideAddressWrite(
+        sibling?.blueprintNode ?? entry?.node,
+        input,
+        isMerge,
+      );
       if (!sibling) {
-        const entry = parent?.blueprintNode.childEntries.find(
-          (entry) => entry.name === fields[index],
-        );
-        if (parent && entry)
-          writeAbsentConstituent(
-            context,
-            parent.path,
-            entry,
-            values?.[index],
-            !isMerge,
-          );
+        if (entry)
+          writeAbsentConstituent(context, parent.path, entry, input, !partial);
         continue;
       }
       if (context.kind === FieldNodeWriteKind.Load)
@@ -147,13 +146,13 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
           undefined,
           context,
         );
-      else if (!context.isAutomatic && !isMerge) {
+      else if (!context.isAutomatic && !partial) {
         (context.virtualReplacementPaths ??= []).push(sibling.path);
         pruneInactiveSources(sibling.runtime, sibling.path, undefined, context);
       }
       markWrite(
         sibling,
-        values?.[index],
+        input,
         context,
         undefined,
         undefined,
@@ -197,20 +196,15 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
         pruneInactiveSources(node.runtime, node.path, undefined, context);
     } else {
       const declared = getDeclaredChildNames(node.blueprintNode);
-      whole = false;
-      if (!isMerge) {
-        const replacementPaths = context.replacementPaths;
-        if (replacementPaths === undefined || context.isAutomatic) whole = true;
-        else
-          for (const path of replacementPaths)
-            if (node.path === path || isDescendantPath(node.path, path)) {
-              whole = true;
-              break;
-            }
-      }
+      whole =
+        !decideAddressWrite(node.blueprintNode, value, isMerge) &&
+        (context.isAutomatic ||
+          !context.writeOrigins ||
+          readWriteCoverage(context.writeOrigins, node.path, 'whole') !==
+            undefined);
       nextSource = isMerge
         ? node.source
-        : context.replacementPaths && Reflect.get(value, BATCH_HOST_SOURCE);
+        : context.writeOrigins && Reflect.get(value, BATCH_HOST_SOURCE);
       if (nextSource !== undefined) context.wrongKindHosts.add(node);
       extras = nextExtras(node.extras, value, declared, isMerge);
     }
