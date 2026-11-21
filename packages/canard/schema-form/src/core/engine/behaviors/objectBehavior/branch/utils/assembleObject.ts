@@ -1,15 +1,38 @@
 import { isArray } from '@winglet/common-utils/filter';
-import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { Dictionary, Optional } from '@aileron/declare';
+import type { Dictionary } from '@aileron/declare';
 
-import type { Behavior } from '../../../../record';
+import type { Behavior, FieldNodeRecord } from '../../../../record';
 import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { objectKeyCounts } from '../../../../utils/cache/valueMemos';
 import { writeObjectKey } from '../../../../utils/writeObjectKey';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
+import { patchObjectKeys } from './assembleObject/patchObjectKeys';
 import { assembleObjectValue } from './assembleObjectValue';
-import { copyObjectValue } from './copyObjectValue';
+
+/**
+ * Store the shape proven during assembly for the next value-only patch.
+ * @param node - Object occurrence owning the shape.
+ * @param children - Current child identity used by the shape proof.
+ * @param result - Assembled stored value.
+ * @param names - Own keys in the assembled order.
+ * @returns The same assembled value.
+ */
+const rememberObjectShape = <Node>(
+  node: FieldNodeRecord<Node>,
+  children: readonly Node[],
+  result: object,
+  names: readonly string[],
+): object => {
+  (node.runtime.objectShapes ??= new WeakMap()).set(node, {
+    children,
+    schema: node.schema,
+    extras: node.extras,
+    names,
+  });
+  objectKeyCounts.set(result, names.length);
+  return result;
+};
 
 /** Combine live child projections and undeclared input in stable host order. */
 export const assembleObject: Behavior['assemble'] = (
@@ -31,36 +54,11 @@ export const assembleObject: Behavior['assemble'] = (
     typeof previous === 'object' &&
     objectKeyCounts.get(previous) === stable.names.length
   ) {
-    let patch: Optional<Dictionary<unknown>>;
-    let sameKeys = true;
-    for (const child of recalculated) {
-      if (
-        child === null ||
-        typeof child !== 'object' ||
-        !('name' in child) ||
-        typeof child.name !== 'string' ||
-        !('storedOutputValue' in child)
-      ) {
-        sameKeys = false;
-        break;
-      }
-      const oldHasKey = hasOwnProperty(previous, child.name);
-      if ((child.storedOutputValue === undefined) === oldHasKey) {
-        sameKeys = false;
-        break;
-      }
-      if (
-        oldHasKey &&
-        !Object.is(child.storedOutputValue, Reflect.get(previous, child.name))
-      ) {
-        if (!patch) patch = copyObjectValue(previous, stable.names.length);
-        writeObjectKey(patch, child.name, child.storedOutputValue);
-      }
-    }
-    if (sameKeys) {
+    const result = patchObjectKeys(previous, recalculated, stable.names.length);
+    if (result !== undefined) {
       hint.isIncremental = true;
-      if (patch) objectKeyCounts.set(patch, stable.names.length);
-      return patch ?? previous;
+      if (result !== previous) objectKeyCounts.set(result, stable.names.length);
+      return result;
     }
   }
   if (
@@ -72,7 +70,6 @@ export const assembleObject: Behavior['assemble'] = (
     typeof previous === 'object' &&
     !isArray(previous)
   ) {
-    let patch: Optional<Dictionary<unknown>>;
     let sameKeys = true;
     const oldNames = Object.keys(previous);
     if (oldNames.length !== stable.names.length) sameKeys = false;
@@ -83,34 +80,11 @@ export const assembleObject: Behavior['assemble'] = (
           break;
         }
     if (sameKeys) {
-      for (const child of children) {
-        if (
-          child === null ||
-          typeof child !== 'object' ||
-          !('name' in child) ||
-          typeof child.name !== 'string' ||
-          !('storedOutputValue' in child)
-        ) {
-          sameKeys = false;
-          break;
-        }
-        const oldHasKey = hasOwnProperty(previous, child.name);
-        if ((child.storedOutputValue === undefined) === oldHasKey) {
-          sameKeys = false;
-          break;
-        }
-        if (
-          oldHasKey &&
-          !Object.is(child.storedOutputValue, Reflect.get(previous, child.name))
-        ) {
-          if (!patch) patch = copyObjectValue(previous, oldNames.length);
-          writeObjectKey(patch, child.name, child.storedOutputValue);
-        }
+      const result = patchObjectKeys(previous, children, oldNames.length);
+      if (result !== undefined) {
+        objectKeyCounts.set(result, oldNames.length);
+        return result;
       }
-    }
-    if (sameKeys) {
-      objectKeyCounts.set(patch ?? previous, stable.names.length);
-      return patch ?? previous;
     }
   }
   const propertyOrder = getStaticChoices(node.schema).propertyOrder;
@@ -143,14 +117,7 @@ export const assembleObject: Behavior['assemble'] = (
       }
     }
     if (aligned) {
-      (node.runtime.objectShapes ??= new WeakMap()).set(node, {
-        children,
-        schema: node.schema,
-        extras: node.extras,
-        names,
-      });
-      objectKeyCounts.set(result, names.length);
-      return result;
+      return rememberObjectShape(node, children, result, names);
     }
   }
   const rawExtras = node.extras;
@@ -169,14 +136,7 @@ export const assembleObject: Behavior['assemble'] = (
     const result: Dictionary<unknown> = {};
     for (const name of names)
       writeObjectKey(result, name, Reflect.get(extras, name));
-    (node.runtime.objectShapes ??= new WeakMap()).set(node, {
-      children,
-      schema: node.schema,
-      extras: node.extras,
-      names,
-    });
-    objectKeyCounts.set(result, names.length);
-    return result;
+    return rememberObjectShape(node, children, result, names);
   }
   const childValues = new Map<string, unknown>();
   for (const child of children)
@@ -203,12 +163,5 @@ export const assembleObject: Behavior['assemble'] = (
     extras,
     names,
   );
-  (node.runtime.objectShapes ??= new WeakMap()).set(node, {
-    children,
-    schema: node.schema,
-    extras: node.extras,
-    names,
-  });
-  objectKeyCounts.set(result, names.length);
-  return result;
+  return rememberObjectShape(node, children, result, names);
 };
