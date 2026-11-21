@@ -7,18 +7,23 @@ import { transformErrors } from './utils/transformErrors';
 export const createValidatorFactory =
   (ajv: Ajv, key?: string) =>
   (jsonSchema: JSONSchema): ValidateFunction => {
-    const transient: JSONSchema | undefined = key
+    const transient: JSONSchema | undefined = key !== undefined
       ? undefined : JSON.parse(JSON.stringify(jsonSchema));
-    const validate = key ? ajv.getSchema(key) : transient && ajv.compile(transient);
+    const validate = key !== undefined ? ajv.getSchema(key) : transient && ajv.compile(transient);
     if (transient) ajv.removeSchema(transient);
     if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
+    const schema = typeof validate.schema === 'object' ? validate.schema : undefined;
     return async (data) => {
       try {
-        const valid = await validate(data);
-        return valid ? null : transformErrors(validate.errors ?? [], jsonSchema);
+        const result = validate(data);
+        if (typeof result === 'boolean')
+          return result ? null : transformErrors(validate.errors ?? [], schema);
+        await result;
+        return null;
       } catch (thrown) {
-        if (thrown instanceof Error && 'errors' in thrown && Array.isArray(thrown.errors))
-          return transformErrors(thrown.errors, jsonSchema);
+        if (thrown instanceof Error && 'ajv' in thrown && thrown.ajv === true &&
+            'validation' in thrown && thrown.validation === true && 'errors' in thrown && Array.isArray(thrown.errors))
+          return transformErrors(thrown.errors, schema);
         throw thrown;
       }
     };

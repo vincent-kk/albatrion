@@ -9,7 +9,7 @@ import { collectSchemaResources, type SchemaResource } from './schemaPath/collec
 import { localizeSchemaPath } from './schemaPath/localizeSchemaPath';
 
 /** Normalize Ajv 6 paths and attach the key rejected by a constraint. */
-export const transformDataPath = (errors: ErrorObject[], root?: object, schemaId?: string): ValidationIssue[] => {
+export const transformDataPath = (errors: ErrorObject[], root?: object, schemaId?: string, errorDataPath?: string): ValidationIssue[] => {
   let resources: SchemaResource[] | undefined;
   const result = new Array<ValidationIssue>(errors.length);
   for (let i = 0, l = errors.length; i < l; i++) {
@@ -17,7 +17,7 @@ export const transformDataPath = (errors: ErrorObject[], root?: object, schemaId
     let convertedDataPath = toJSONPointer(ajvError.dataPath || '');
     let rejectedKey: string | undefined;
     if (
-      ajvError.keyword === 'required' &&
+      ajvError.keyword === 'required' && errorDataPath !== 'property' &&
       ajvError.params &&
       'missingProperty' in ajvError.params
     ) {

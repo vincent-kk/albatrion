@@ -17,18 +17,22 @@ export const createValidatorFactory = (ajv: Ajv, registry?: SchemaRootRegistry) 
   return (jsonSchema: JSONSchema): ValidateFunction => {
     const registration = registerSchemaRoot(roots, ajv, jsonSchema);
     registerValidationRoot(registration);
-    const transient = registration.validationCopy
-      ? { $async: true, $ref: registration.key }
-      : { ...JSON.parse(JSON.stringify(jsonSchema)), $async: true };
-    const validate = registration.validationAjv.compile(transient);
-    registration.validationAjv.removeSchema(transient);
+    const { validationAjv, validationCopy, key } = registration;
+    const transient = validationCopy ? undefined : { ...JSON.parse(JSON.stringify(jsonSchema)), $async: true };
+    const validate = transient ? validationAjv.compile(transient) : validationAjv.getSchema(key);
+    if (transient) validationAjv.removeSchema(transient);
+    if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
     return async (data) => {
       try {
-        await validate(data);
+        const result = validate(data);
+        if (typeof result === 'boolean')
+          return result ? null : transformErrors(validate.errors ?? [], validate.schema);
+        await result;
         return null;
       } catch (thrown: unknown) {
-        if (thrown instanceof Error && 'errors' in thrown && Array.isArray(thrown.errors))
-          return transformErrors(thrown.errors, jsonSchema);
+        if (thrown instanceof Error && 'ajv' in thrown && thrown.ajv === true &&
+            'validation' in thrown && thrown.validation === true && 'errors' in thrown && Array.isArray(thrown.errors))
+          return transformErrors(thrown.errors, validate.schema);
         throw thrown;
       }
     };
