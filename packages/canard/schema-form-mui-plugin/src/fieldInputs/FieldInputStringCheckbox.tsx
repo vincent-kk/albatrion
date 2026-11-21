@@ -20,6 +20,8 @@ import type {
 
 import type { MuiContext } from '../type';
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 import { mergeEnumSelection } from './utils/enum/mergeEnumSelection';
 
@@ -61,10 +63,19 @@ const FieldInputStringCheckbox = ({
   hideLabel,
   misfit,
 }: FieldInputStringCheckboxProps) => {
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    labelId,
+    jsonSchema,
+    name,
+  );
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || name, sizeProp || context.size];
-  }, [hideLabel, sizeProp, context.size, labelProp, name]);
+    return [
+      resolveFieldLabel(jsonSchema, name, labelProp),
+      sizeProp || context.size,
+    ];
+  }, [hideLabel, sizeProp, context.size, jsonSchema, labelProp, name]);
 
   const options = useMemo(() => {
     const enumValues = jsonSchema.items.enum || [];
@@ -105,6 +116,7 @@ const FieldInputStringCheckbox = ({
       role="group"
       id={inputId}
       aria-labelledby={labelId}
+      aria-label={fieldName}
       aria-invalid={misfit || undefined}
       required={required}
       disabled={disabled || readOnly}

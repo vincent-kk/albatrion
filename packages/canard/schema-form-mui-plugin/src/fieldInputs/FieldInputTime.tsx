@@ -13,6 +13,8 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 
 type TimeJSONSchema = StringSchema & {
   format: 'time';
@@ -47,6 +49,12 @@ const FieldInputTime = ({
   hideLabel,
   misfit,
 }: FieldInputTimeProps) => {
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const [label, size, variant, fullWidth, ampm] = useMemo(() => {
     if (hideLabel)
       return [
@@ -57,7 +65,7 @@ const FieldInputTime = ({
         ampmProp ?? jsonSchema.ampm,
       ];
     return [
-      labelProp || name,
+      resolveFieldLabel(jsonSchema, name, labelProp),
       sizeProp || context.size,
       variantProp || context.variant,
       fullWidthProp ?? context.fullWidth,
@@ -105,12 +113,14 @@ const FieldInputTime = ({
             id: getInputId('native'),
             InputProps: {
               'aria-labelledby': fieldTitleId,
+              'aria-label': fieldName,
               slotProps: {
                 input: {
                   id: inputId,
                   role: 'group',
                   'aria-disabled': disabled || undefined,
                   'aria-labelledby': fieldTitleId,
+                  'aria-label': fieldName,
                 },
               },
             },

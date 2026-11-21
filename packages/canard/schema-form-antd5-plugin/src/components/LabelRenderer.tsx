@@ -4,6 +4,8 @@ import { Typography } from 'antd';
 
 import type { LabelRendererProps } from '@canard/schema-form';
 
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+
 /** Keep title wrapping consistent with the group legend. */
 const TITLE_STYLE: CSSProperties = { wordBreak: 'unset' };
 /** Preserve the visual required marker while excluding it from the accessible name. */
@@ -16,6 +18,8 @@ const REQUIRED_STYLE: CSSProperties = { marginLeft: 4 };
  */
 export const LabelRenderer = ({
   children,
+  name,
+  jsonSchema,
   htmlFor,
   id,
   required,
@@ -23,7 +27,13 @@ export const LabelRenderer = ({
   className,
 }: LabelRendererProps): ReactElement => (
   <label htmlFor={htmlFor} id={id} style={style} className={className}>
-    <Typography.Text style={TITLE_STYLE}>{children}</Typography.Text>
+    <Typography.Text style={TITLE_STYLE}>
+      {resolveFieldLabel(
+        jsonSchema,
+        name,
+        children === name ? undefined : children,
+      )}
+    </Typography.Text>
     {required && (
       <Typography.Text type="danger" aria-hidden style={REQUIRED_STYLE}>
         *

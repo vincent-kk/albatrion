@@ -10,6 +10,18 @@ import { FieldInputSliderDefinition } from '../fieldInputs/FieldInputSlider';
 import { selectSliderCaseIndices } from './utils/selectSliderCaseIndices';
 import { sliderReference } from './utils/sliderReference';
 
+// The storage matrix uses the real Slider; hover formatting has its own DOM tests.
+vi.mock('antd', async (importOriginal) => {
+  const antd = await importOriginal<typeof import('antd')>();
+  const RealSlider = antd.Slider;
+  return {
+    ...antd,
+    Slider: (props: ComponentProps<typeof RealSlider>) => (
+      <RealSlider {...props} tooltip={{ ...props.tooltip, open: false }} />
+    ),
+  };
+});
+
 const Input = FieldInputSliderDefinition.Component;
 type InputProps = ComponentProps<typeof Input>;
 let captured: InputProps | undefined;

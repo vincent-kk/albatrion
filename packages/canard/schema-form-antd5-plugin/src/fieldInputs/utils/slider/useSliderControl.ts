@@ -1,6 +1,19 @@
-import { type KeyboardEvent, useRef, useState } from 'react';
+import { type KeyboardEvent, useLayoutEffect, useRef, useState } from 'react';
 
 import type { getSliderBounds } from './getSliderBounds';
+import { getSliderDisplayValue } from './getSliderDisplayValue';
+
+/** The movement releases that Ant Design can turn into completion callbacks. */
+const MOVEMENT_KEYS: readonly string[] = [
+  'ArrowLeft',
+  'ArrowRight',
+  'ArrowUp',
+  'ArrowDown',
+  'Home',
+  'End',
+  'PageUp',
+  'PageDown',
+];
 
 /**
  * Separate transient library coordinates from committed schema values.
@@ -8,7 +21,7 @@ import type { getSliderBounds } from './getSliderBounds';
  * @param initial - Stored starting value; rendering preserves it in the form.
  * @param lazy - False publishes movement; omitted or true publishes commits.
  * @param locked - Block pointer, keyboard and callback changes when true.
- * @param readOnly - Preserve the stored value on a read-only mount.
+ * @param readOnly - Use the read-only display conversion for the current render.
  * @param onChange - Publish valid values, or undefined for an explicit clear.
  * @returns Draft state and event handlers that write only on user interaction.
  */
@@ -20,33 +33,49 @@ export const useSliderControl = (
   readOnly: boolean | undefined,
   onChange: (value: number | undefined) => void,
 ) => {
-  const [unset, setUnset] = useState(typeof initial !== 'number');
-  const [draft, setDraft] = useState(() => {
-    const value = typeof initial === 'number' ? initial : bounds.min;
-    return readOnly ? bounds.getReadOnlyValue(value) : bounds.snap(value);
-  });
+  const [stored, setStored] = useState(initial);
+  const [pendingDraft, setPendingDraft] = useState<number>();
   const current = useRef(typeof initial === 'number' ? initial : bounds.min);
-  const stored = useRef(initial);
   const pending = useRef<{ key: string; value: number } | undefined>(undefined);
+  const pointer = useRef<'idle' | 'active' | 'canceled'>('idle');
+  const isLocked = !!locked || bounds.empty;
+  const draft = getSliderDisplayValue(
+    stored,
+    pendingDraft,
+    bounds.min,
+    readOnly ? bounds.getReadOnlyValue : bounds.snap,
+    isLocked,
+  );
+  const unset =
+    typeof stored !== 'number' && (isLocked || pendingDraft === undefined);
+  useLayoutEffect(() => {
+    if (!isLocked) return;
+    pending.current = undefined;
+    if (pointer.current === 'active') pointer.current = 'canceled';
+    current.current = typeof stored === 'number' ? stored : bounds.min;
+    setPendingDraft(undefined);
+  }, [bounds.min, isLocked, stored]);
   const commit = (value: number) => {
     if (locked || bounds.empty || !Number.isFinite(value)) return;
     const valid = bounds.snap(value);
     current.current = valid;
-    stored.current = valid;
-    setDraft(valid);
-    setUnset(false);
+    setStored(valid);
+    setPendingDraft(undefined);
     onChange(valid);
   };
   const clear = () => {
     if (locked || bounds.empty) return;
     current.current = bounds.min;
-    stored.current = undefined;
+    setStored(undefined);
     pending.current = undefined;
-    setDraft(bounds.min);
-    setUnset(true);
+    setPendingDraft(undefined);
     onChange(undefined);
   };
+  const beginPointer = () => {
+    if (!isLocked) pointer.current = 'active';
+  };
   const change = (value: number | null) => {
+    if (pointer.current === 'canceled') return;
     if (value === null) {
       if (lazy === false) clear();
       return;
@@ -54,10 +83,12 @@ export const useSliderControl = (
     if (locked || bounds.empty || !Number.isFinite(value)) return;
     const valid = bounds.snap(bounds.fromLibrary(value));
     current.current = valid;
-    setDraft(valid);
+    setPendingDraft(valid);
     if (lazy === false) commit(valid);
   };
   const complete = (value: number | null) => {
+    if (pointer.current === 'canceled') return;
+    pointer.current = 'idle';
     if (value === null) clear();
     else if (Number.isFinite(value)) commit(bounds.fromLibrary(value));
   };
@@ -81,24 +112,27 @@ export const useSliderControl = (
     event.preventDefault();
     event.stopPropagation();
     current.current = value;
-    setDraft(value);
+    setPendingDraft(value);
     pending.current = { key, value };
     if (lazy === false) commit(value);
   };
   const keyUp = (event: KeyboardEvent<HTMLElement>) => {
+    if (!MOVEMENT_KEYS.includes(event.key)) return;
+    // After a remount, the library still completes a release it never started.
+    event.preventDefault();
+    event.stopPropagation();
     const movement = pending.current;
     if (movement?.key !== event.key) return;
     pending.current = undefined;
-    event.preventDefault();
-    event.stopPropagation();
     if (lazy !== false) commit(movement.value);
   };
   return {
     unset,
-    needsCommit: unset || stored.current !== draft,
+    needsCommit: unset || stored !== draft,
     draft,
     change,
     complete,
+    beginPointer,
     keyDown,
     keyUp,
   };

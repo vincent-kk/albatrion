@@ -18,6 +18,8 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type RadioGroupStringJSONSchema = StringSchema & {
@@ -59,10 +61,19 @@ const FieldInputRadioGroup = ({
   hideLabel,
   misfit,
 }: FieldInputRadioGroupProps) => {
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    labelId,
+    jsonSchema,
+    node.name,
+  );
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || node.name, sizeProp || context.size];
-  }, [context, labelProp, node.name, sizeProp, hideLabel]);
+    return [
+      resolveFieldLabel(jsonSchema, node.name, labelProp),
+      sizeProp || context.size,
+    ];
+  }, [context, jsonSchema, labelProp, node.name, sizeProp, hideLabel]);
 
   const options = useMemo(() => {
     const enumValues = jsonSchema.enum || [];
@@ -100,6 +111,7 @@ const FieldInputRadioGroup = ({
     <FormControl
       component="fieldset"
       aria-labelledby={labelId}
+      aria-label={fieldName}
       required={required}
       disabled={disabled || readOnly}
       style={{
@@ -122,6 +134,7 @@ const FieldInputRadioGroup = ({
       <RadioGroup
         id={inputId}
         aria-labelledby={labelId}
+        aria-label={fieldName}
         name={inputId}
         defaultValue={initialValue}
         onChange={handleChange}

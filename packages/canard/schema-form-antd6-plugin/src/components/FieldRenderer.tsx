@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactElement } from 'react';
+import { type CSSProperties, type ReactElement, useMemo } from 'react';
 
 import { Flex, Typography } from 'antd';
 
@@ -9,6 +9,8 @@ import type { FieldRendererProps } from '@canard/schema-form';
 
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 import { isRadioGroupInput } from '../utils/inputs/isRadioGroupInput';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
 
 /** Legends use the same wrapping as registered labels. */
 const TITLE_STYLE: CSSProperties = { wordBreak: 'unset' };
@@ -29,6 +31,10 @@ export const FieldRenderer = ({
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps): ReactElement => {
+  const title = useMemo(
+    () => resolveFieldLabel(jsonSchema, name),
+    [jsonSchema, name],
+  );
   const presentation =
     typeof jsonSchema === 'object' && jsonSchema !== null
       ? jsonSchema.presentation
@@ -55,9 +61,18 @@ export const FieldRenderer = ({
   const grouped =
     hint !== undefined &&
     (isRadioGroupInput(hint) || isCheckboxGroupInput(hint));
+  const fallbackName = useFieldNameFallback(jsonSchema, name);
+  const hiddenTitle = (
+    <Label
+      children={fallbackName}
+      style={{ display: 'none' }}
+      {...(grouped || node.strategy === 'branch' ? { htmlFor: undefined } : {})}
+    />
+  );
   if (depth === 0)
     return (
       <>
+        {node.type !== 'object' && hiddenTitle}
         <Input />
         {errorMessage !== null &&
           errorMessage !== undefined &&
@@ -77,7 +92,7 @@ export const FieldRenderer = ({
         }}
       >
         <legend id={labelId}>
-          <Typography.Text style={TITLE_STYLE}>{name}</Typography.Text>
+          <Typography.Text style={TITLE_STYLE}>{title}</Typography.Text>
         </legend>
         <Input aria-labelledby={labelId} />
         <ErrorMessage style={EMPTY_OBJECT}>{errorMessage}</ErrorMessage>

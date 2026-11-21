@@ -11,6 +11,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useNativeFieldName } from '../utils/useNativeFieldName';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type StringSwitchSchema = StringSchema & {
@@ -30,6 +32,8 @@ interface FieldInputStringSwitchProps
 
 const FieldInputStringSwitch = ({
   inputId,
+  labelId,
+  name,
   jsonSchema,
   disabled,
   value,
@@ -39,6 +43,11 @@ const FieldInputStringSwitch = ({
   alias,
   misfit,
 }: FieldInputStringSwitchProps) => {
+  const naming = useNativeFieldName(
+    inputId,
+    labelId,
+    useFieldNameFallback(jsonSchema, name),
+  );
   const [checked, unchecked] = useMemo(() => {
     const [checked, unchecked] = jsonSchema.enum || [];
     return [
@@ -63,6 +72,7 @@ const FieldInputStringSwitch = ({
     <Switch
       aria-invalid={misfit || undefined}
       id={inputId}
+      {...naming}
       key={inputId}
       disabled={disabled}
       checked={value === checked}

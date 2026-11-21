@@ -11,6 +11,9 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useNativeFieldName } from '../utils/useNativeFieldName';
+
 type TextareaSchema = StringSchema & {
   minRows?: number;
   maxRows?: number;
@@ -27,6 +30,7 @@ interface FieldInputTextareaProps
 
 const FieldInputTextarea = ({
   inputId,
+  labelId,
   name,
   jsonSchema,
   disabled,
@@ -38,6 +42,11 @@ const FieldInputTextarea = ({
   size,
   misfit,
 }: FieldInputTextareaProps) => {
+  const naming = useNativeFieldName(
+    inputId,
+    labelId,
+    useFieldNameFallback(jsonSchema, name),
+  );
   const handleChange = useHandle((value: ChangeEvent<HTMLTextAreaElement>) => {
     const text = value.target.value;
     onChange(text === '' ? undefined : text);
@@ -52,6 +61,7 @@ const FieldInputTextarea = ({
   return (
     <Input.TextArea
       id={inputId}
+      {...naming}
       name={name}
       disabled={disabled}
       readOnly={readOnly}

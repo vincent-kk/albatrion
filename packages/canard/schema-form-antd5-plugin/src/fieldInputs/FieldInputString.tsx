@@ -11,6 +11,9 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useNativeFieldName } from '../utils/useNativeFieldName';
+
 type StringJSONSchema = StringSchema & {
   format?: 'password';
 };
@@ -26,6 +29,7 @@ interface FieldInputStringProps
 
 const FieldInputString = ({
   inputId,
+  labelId,
   name,
   jsonSchema,
   readOnly,
@@ -37,6 +41,11 @@ const FieldInputString = ({
   size,
   misfit,
 }: FieldInputStringProps) => {
+  const naming = useNativeFieldName(
+    inputId,
+    labelId,
+    useFieldNameFallback(jsonSchema, name),
+  );
   const TextInput = useMemo(() => {
     if (
       jsonSchema.format === 'password' ||
@@ -53,6 +62,7 @@ const FieldInputString = ({
   return (
     <TextInput
       id={inputId}
+      {...naming}
       name={name}
       readOnly={readOnly}
       disabled={disabled}

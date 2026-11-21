@@ -11,6 +11,8 @@ import type {
   FieldInputProps,
 } from '@canard/schema-form';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useNativeFieldName } from '../utils/useNativeFieldName';
 import { parseTime } from './utils/time/parseTime';
 
 const DATE_FORMAT = 'HH:mm:00Z';
@@ -22,6 +24,8 @@ interface FieldInputTimeProps
 
 const FieldInputTime = ({
   inputId,
+  labelId,
+  jsonSchema,
   name,
   disabled,
   readOnly,
@@ -31,6 +35,11 @@ const FieldInputTime = ({
   size,
   misfit,
 }: FieldInputTimeProps) => {
+  const naming = useNativeFieldName(
+    inputId,
+    labelId,
+    useFieldNameFallback(jsonSchema, name),
+  );
   const handleChange = useHandle((date: Dayjs | null) => {
     onChange(date ? date.format(DATE_FORMAT) : undefined);
   });
@@ -41,6 +50,7 @@ const FieldInputTime = ({
   return (
     <TimePicker
       id={inputId}
+      {...naming}
       name={name}
       disabled={disabled || readOnly}
       format={'HH:mm'}

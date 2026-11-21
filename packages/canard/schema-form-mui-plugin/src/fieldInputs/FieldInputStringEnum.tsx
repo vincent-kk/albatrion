@@ -11,6 +11,8 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type StringEnumJSONSchema = StringSchema;
@@ -47,6 +49,12 @@ const FieldInputStringEnum = ({
   hideLabel,
   misfit,
 }: FieldInputStringEnumProps) => {
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
       return [
@@ -56,13 +64,14 @@ const FieldInputStringEnum = ({
         fullWidthProp ?? context.fullWidth,
       ];
     return [
-      labelProp || name,
+      resolveFieldLabel(jsonSchema, name, labelProp),
       sizeProp || context.size,
       variantProp || context.variant,
       fullWidthProp ?? context.fullWidth,
     ];
   }, [
     context,
+    jsonSchema,
     labelProp,
     name,
     sizeProp,
@@ -111,6 +120,7 @@ const FieldInputStringEnum = ({
         SelectDisplayProps={{
           id: inputId,
           'aria-labelledby': fieldTitleId,
+          'aria-label': fieldName,
         }}
         MenuProps={{ id: getInputId('menu') }}
         name={name}

@@ -10,14 +10,24 @@ import type {
   FieldInputProps,
 } from '@canard/schema-form';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useNativeFieldName } from '../utils/useNativeFieldName';
+
 const FieldInputBoolean = ({
   inputId,
+  labelId,
+  jsonSchema,
   name,
   disabled,
   value,
   onChange,
   misfit,
 }: FieldInputProps<boolean | null>) => {
+  const naming = useNativeFieldName(
+    inputId,
+    labelId,
+    useFieldNameFallback(jsonSchema, name),
+  );
   const [indeterminate, checked] = useMemo(
     () => [
       value !== undefined && typeof value !== 'boolean',
@@ -32,6 +42,7 @@ const FieldInputBoolean = ({
     <Checkbox
       aria-invalid={misfit || undefined}
       id={inputId}
+      {...naming}
       name={name}
       disabled={disabled}
       indeterminate={indeterminate}

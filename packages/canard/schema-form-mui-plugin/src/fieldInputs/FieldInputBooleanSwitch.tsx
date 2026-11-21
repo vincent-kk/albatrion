@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo } from 'react';
+import { type CSSProperties, type ReactNode, useMemo } from 'react';
 
 import { FormControlLabel, Switch } from '@mui/material';
 
@@ -11,6 +11,19 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useMountedTitle } from './FieldInputBooleanSwitch/useMountedTitle';
+import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
+
+/** Visually hide the native fallback without excluding it from name calculation. */
+const HIDDEN_LABEL_STYLE: CSSProperties = {
+  position: 'absolute',
+  width: 1,
+  height: 1,
+  clipPath: 'inset(50%)',
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+};
 
 type BooleanSwitchJSONSchema = BooleanSchema & {};
 
@@ -37,12 +50,20 @@ const FieldInputBooleanSwitch = ({
   value,
   onChange,
   context,
+  jsonSchema,
   label: labelProp,
   size: sizeProp = 'medium',
   hideLabel,
   alias,
   misfit,
 }: FieldInputBooleanSwitchProps) => {
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
+  const rootTitle = useMountedTitle(node.parentNode ? undefined : fieldTitleId);
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onChange(event.target.checked);
@@ -51,46 +72,61 @@ const FieldInputBooleanSwitch = ({
 
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || name, sizeProp || context.size];
-  }, [context, labelProp, name, sizeProp, hideLabel]);
+    return [
+      resolveFieldLabel(jsonSchema, name, labelProp),
+      sizeProp || context.size,
+    ];
+  }, [context, jsonSchema, labelProp, name, sizeProp, hideLabel]);
 
   const labels = context.checkboxLabels || alias;
   const stateLabel = value === true ? labels?.checked : labels?.unchecked;
 
   return (
-    <FormControlLabel
-      label={
-        stateLabel === undefined ? (
-          label
-        ) : (
-          <>
-            {label}
-            <span aria-hidden="true"> {stateLabel}</span>
-          </>
-        )
-      }
-      htmlFor={inputId}
-      required={required}
-      disabled={disabled}
-      labelPlacement="start"
-      control={
-        <Switch
-          id={inputId}
-          name={name}
-          checked={value === true}
-          onChange={handleChange}
-          disabled={disabled}
-          size={size}
-          slotProps={{
-            input: {
-              'aria-labelledby': node.parentNode ? fieldTitleId : undefined,
-              role: 'switch',
-              'aria-invalid': misfit || undefined,
-            },
-          }}
-        />
-      }
-    />
+    <>
+      <FormControlLabel
+        label={
+          stateLabel === undefined ? (
+            label
+          ) : (
+            <>
+              {label}
+              <span aria-hidden="true"> {stateLabel}</span>
+            </>
+          )
+        }
+        htmlFor={inputId}
+        required={required}
+        disabled={disabled}
+        labelPlacement="start"
+        control={
+          <Switch
+            id={inputId}
+            name={name}
+            checked={value === true}
+            onChange={handleChange}
+            disabled={disabled}
+            size={size}
+            slotProps={{
+              input: {
+                'aria-labelledby': node.parentNode ? fieldTitleId : rootTitle,
+                'aria-label': node.parentNode ? fieldName : undefined,
+                role: 'switch',
+                'aria-invalid': misfit || undefined,
+              },
+            }}
+          />
+        }
+      />
+      {!node.parentNode && (label == null || label === '') && fieldName && (
+        <label
+          htmlFor={inputId}
+          style={HIDDEN_LABEL_STYLE}
+          data-field-name-fallback=""
+        >
+          {fieldName}
+        </label>
+      )}
+    </>
   );
 };
 

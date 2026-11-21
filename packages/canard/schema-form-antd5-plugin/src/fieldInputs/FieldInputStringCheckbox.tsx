@@ -14,6 +14,7 @@ import type {
 } from '@canard/schema-form';
 
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 import { mergeEnumSelection } from './utils/enum/mergeEnumSelection';
 
@@ -50,6 +51,7 @@ const FieldInputStringCheckbox = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputStringCheckboxProps) => {
+  const fieldName = useFieldNameFallback(jsonSchema, name);
   const options = useMemo(() => {
     const labels = context.checkboxLabels || alias || {};
     return jsonSchema.items?.enum
@@ -82,6 +84,7 @@ const FieldInputStringCheckbox = ({
       id={inputId}
       role="group"
       aria-labelledby={labelledBy}
+      aria-label={fieldName}
       aria-invalid={misfit || undefined}
     >
       <Checkbox.Group

@@ -17,6 +17,8 @@ import type {
 
 import type { Parameter } from '@aileron/declare';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+
 const DATE_FORMAT = 'YYYY-MM';
 
 type MonthRangeSchema = ArraySchema & {
@@ -44,6 +46,7 @@ interface FieldInputMonthRangeProps
 
 const FieldInputMonthRange = ({
   inputId,
+  jsonSchema,
   getInputId,
   name,
   readOnly,
@@ -57,6 +60,7 @@ const FieldInputMonthRange = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputMonthRangeProps) => {
+  const fieldName = useFieldNameFallback(jsonSchema, name);
   const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
     if (!range) return onChange(undefined);
     const [start, end] = range;
@@ -89,6 +93,7 @@ const FieldInputMonthRange = ({
     <DatePicker.RangePicker
       id={{ start: inputId, end: getInputId('end') }}
       aria-labelledby={labelledBy}
+      aria-label={fieldName}
       name={name}
       picker="month"
       disabled={disabled || readOnly}

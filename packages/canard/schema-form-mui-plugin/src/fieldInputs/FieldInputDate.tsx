@@ -15,6 +15,8 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 
 // customParseFormat enables the strict parse below; the import does not extend dayjs by itself.
 dayjs.extend(customParseFormat);
@@ -59,6 +61,7 @@ const FieldInputDate = ({
   defaultValue,
   onChange,
   context,
+  jsonSchema,
   label: labelProp,
   size: sizeProp,
   variant: variantProp,
@@ -68,6 +71,12 @@ const FieldInputDate = ({
   minimum,
   maximum,
 }: FieldInputDateProps) => {
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
       return [
@@ -77,13 +86,14 @@ const FieldInputDate = ({
         fullWidthProp ?? context.fullWidth,
       ];
     return [
-      labelProp || name,
+      resolveFieldLabel(jsonSchema, name, labelProp),
       sizeProp || context.size,
       variantProp || context.variant,
       fullWidthProp ?? context.fullWidth,
     ];
   }, [
     context,
+    jsonSchema,
     labelProp,
     name,
     sizeProp,
@@ -134,12 +144,14 @@ const FieldInputDate = ({
             id: getInputId('native'),
             InputProps: {
               'aria-labelledby': fieldTitleId,
+              'aria-label': fieldName,
               slotProps: {
                 input: {
                   id: inputId,
                   role: 'group',
                   'aria-disabled': disabled || undefined,
                   'aria-labelledby': fieldTitleId,
+                  'aria-label': fieldName,
                 },
               },
             },

@@ -17,6 +17,7 @@ import type {
 
 import type { Parameter } from '@aileron/declare';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
 import { parseTime } from './utils/time/parseTime';
 
 const DATE_FORMAT = 'HH:mm:00Z';
@@ -83,6 +84,7 @@ interface FieldInputTimeRangeProps
 
 const FieldInputTimeRange = ({
   inputId,
+  jsonSchema,
   getInputId,
   name,
   readOnly,
@@ -96,6 +98,7 @@ const FieldInputTimeRange = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputTimeRangeProps) => {
+  const fieldName = useFieldNameFallback(jsonSchema, name);
   const initialValue = useMemo<RangeValueType<Dayjs>>(
     () =>
       isArray(defaultValue) && defaultValue.length === 2
@@ -137,6 +140,7 @@ const FieldInputTimeRange = ({
     <DatePicker.RangePicker
       id={{ start: inputId, end: getInputId('end') }}
       aria-labelledby={labelledBy}
+      aria-label={fieldName}
       name={name}
       disabled={disabled || readOnly}
       format={DATE_FORMAT}

@@ -17,6 +17,8 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 
 type NumberJSONSchema = NumberSchema;
 
@@ -52,6 +54,12 @@ const FieldInputNumber = ({
   hideLabel,
   misfit,
 }: FieldInputNumberProps) => {
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
       return [
@@ -61,13 +69,14 @@ const FieldInputNumber = ({
         fullWidthProp ?? context.fullWidth,
       ];
     return [
-      labelProp || name,
+      resolveFieldLabel(jsonSchema, name, labelProp),
       sizeProp || context.size,
       variantProp || context.variant,
       fullWidthProp ?? context.fullWidth,
     ];
   }, [
     context,
+    jsonSchema,
     labelProp,
     name,
     sizeProp,
@@ -132,6 +141,7 @@ const FieldInputNumber = ({
           readOnly,
           inputProps: {
             'aria-labelledby': fieldTitleId,
+            'aria-label': fieldName,
             min: jsonSchema.minimum,
             max: jsonSchema.maximum,
             step: jsonSchema.multipleOf || (type === 'integer' ? 1 : 'any'),

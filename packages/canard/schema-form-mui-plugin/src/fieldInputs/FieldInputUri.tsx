@@ -12,6 +12,8 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 import { formatProtocol } from './utils/uri/formatProtocol';
 import { parseUri } from './utils/uri/parseUri';
 
@@ -39,6 +41,7 @@ const FieldInputUri = ({
   value,
   onChange,
   context,
+  jsonSchema,
   label: labelProp,
   placeholder,
   size: sizeProp,
@@ -48,6 +51,12 @@ const FieldInputUri = ({
   hideLabel,
   misfit,
 }: FieldInputUriProps) => {
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
       return [
@@ -57,13 +66,14 @@ const FieldInputUri = ({
         fullWidthProp ?? context.fullWidth,
       ];
     return [
-      labelProp || name,
+      resolveFieldLabel(jsonSchema, name, labelProp),
       sizeProp || context.size,
       variantProp || context.variant,
       fullWidthProp ?? context.fullWidth,
     ];
   }, [
     context,
+    jsonSchema,
     labelProp,
     name,
     sizeProp,
@@ -111,7 +121,7 @@ const FieldInputUri = ({
   });
 
   return (
-    <Box role="group" aria-labelledby={fieldTitleId}>
+    <Box role="group" aria-labelledby={fieldTitleId} aria-label={fieldName}>
       <InputLabel htmlFor={inputId} required={required}>
         {label}
       </InputLabel>
@@ -144,7 +154,10 @@ const FieldInputUri = ({
           disabled={disabled}
           error={misfit}
           slotProps={{
-            htmlInput: { 'aria-labelledby': fieldTitleId },
+            htmlInput: {
+              'aria-labelledby': fieldTitleId,
+              'aria-label': fieldName,
+            },
             input: {
               readOnly,
             },

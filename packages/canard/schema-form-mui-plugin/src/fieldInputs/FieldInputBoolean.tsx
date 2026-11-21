@@ -10,6 +10,8 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 
 interface FieldInputBooleanProps
   extends FieldInputProps<boolean | null, MuiContext>,
@@ -28,15 +30,25 @@ const FieldInputBoolean = ({
   value,
   onChange,
   context,
+  jsonSchema,
   label: labelProp,
   size: sizeProp = 'medium',
   hideLabel,
   misfit,
 }: FieldInputBooleanProps) => {
+  const fieldName = useFieldLabelAssociation(
+    inputId,
+    fieldTitleId,
+    jsonSchema,
+    name,
+  );
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || name, sizeProp || context.size];
-  }, [context, labelProp, name, sizeProp, hideLabel]);
+    return [
+      resolveFieldLabel(jsonSchema, name, labelProp),
+      sizeProp || context.size,
+    ];
+  }, [context, jsonSchema, labelProp, name, sizeProp, hideLabel]);
 
   const indeterminate = value !== undefined && typeof value !== 'boolean';
 
@@ -64,6 +76,7 @@ const FieldInputBoolean = ({
           slotProps={{
             input: {
               'aria-labelledby': fieldTitleId,
+              'aria-label': fieldName,
               'aria-invalid': misfit || undefined,
             },
           }}

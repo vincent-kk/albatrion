@@ -8,6 +8,7 @@ import type {
   NumberSchema,
 } from '@canard/schema-form';
 
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
 import { getSliderBounds } from './utils/slider/getSliderBounds';
 import { useSliderControl } from './utils/slider/useSliderControl';
 
@@ -19,6 +20,7 @@ interface FieldInputSliderProps
 
 const FieldInputSlider = ({
   inputId,
+  name,
   jsonSchema,
   disabled,
   readOnly,
@@ -28,6 +30,7 @@ const FieldInputSlider = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputSliderProps) => {
+  const fieldName = useFieldNameFallback(jsonSchema, name);
   const bounds = useMemo(
     () =>
       getSliderBounds(
@@ -51,8 +54,16 @@ const FieldInputSlider = ({
     onChange,
   );
   const { min, max, empty } = bounds;
-  const { unset, needsCommit, draft, change, complete, keyDown, keyUp } =
-    control;
+  const {
+    unset,
+    needsCommit,
+    draft,
+    change,
+    complete,
+    beginPointer,
+    keyDown,
+    keyUp,
+  } = control;
   // Ant Design's id targets the track rather than its keyboard-operable thumb.
   const markFocusTarget = useCallback(
     (group: HTMLDivElement | null) => {
@@ -62,7 +73,6 @@ const FieldInputSlider = ({
       handle.setAttribute('data-focus-target', '');
       handle.setAttribute('aria-valuemin', String(min));
       handle.setAttribute('aria-valuemax', String(max));
-      if (labelledBy) handle.setAttribute('aria-labelledby', labelledBy);
       if (unset) {
         handle.removeAttribute('aria-valuenow');
         handle.setAttribute('aria-valuetext', 'Not set');
@@ -73,24 +83,23 @@ const FieldInputSlider = ({
         handle.style.opacity = '';
       }
     },
-    [inputId, labelledBy, unset, min, max, draft],
+    [inputId, unset, min, max, draft],
   );
-  const committedChange = { onChangeComplete: complete };
-  const changeHandler =
-    lazy === false
-      ? { onChange: change, ...(needsCommit ? committedChange : {}) }
-      : { onChange: change, ...committedChange };
   return (
     <div
       ref={markFocusTarget}
       role="group"
       aria-labelledby={labelledBy}
+      aria-label={fieldName}
       aria-invalid={misfit || undefined}
+      onMouseDownCapture={beginPointer}
+      onTouchStartCapture={beginPointer}
       onKeyDownCapture={keyDown}
       onKeyUpCapture={keyUp}
     >
       <Slider
         ariaLabelledByForHandle={labelledBy}
+        ariaLabelForHandle={fieldName}
         onFocus={(event) => {
           if (unset) event.currentTarget.style.opacity = '1';
         }}
@@ -102,7 +111,11 @@ const FieldInputSlider = ({
         max={bounds.libraryMax}
         step={bounds.libraryStep}
         value={bounds.toLibrary(draft)}
-        {...changeHandler}
+        tooltip={{ formatter: unset ? null : () => String(draft) }}
+        onChange={change}
+        {...(lazy !== false || needsCommit
+          ? { onChangeComplete: complete }
+          : {})}
       />
     </div>
   );

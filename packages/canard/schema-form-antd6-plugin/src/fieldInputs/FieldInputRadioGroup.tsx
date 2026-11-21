@@ -14,6 +14,7 @@ import type {
 } from '@canard/schema-form';
 
 import { isRadioGroupInput } from '../utils/inputs/isRadioGroupInput';
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type StringJSONSchema = StringSchema<{
@@ -36,6 +37,7 @@ interface FieldInputRadioGroupProps
 
 const FieldInputRadioGroup = ({
   inputId,
+  name,
   getInputId,
   jsonSchema,
   disabled,
@@ -48,6 +50,7 @@ const FieldInputRadioGroup = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputRadioGroupProps) => {
+  const fieldName = useFieldNameFallback(jsonSchema, name);
   const options = useMemo(() => {
     const labels = context.radioLabels || alias || {};
     return jsonSchema.enum
@@ -80,6 +83,7 @@ const FieldInputRadioGroup = ({
     <Radio.Group
       id={inputId}
       aria-labelledby={labelledBy}
+      aria-label={fieldName}
       aria-invalid={misfit || undefined}
       name={inputId}
       disabled={disabled || readOnly}
