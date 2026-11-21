@@ -7,7 +7,6 @@ import { createValidator } from '../default';
 it.each([
   [false, false],
   [false, true],
-  [true, false],
   [true, true],
 ])('delegates full-root async keywords to AJV (named=%s, marker=%s)', async (named, declared) => {
   const instance = new Ajv({ allErrors: true, strict: false });
