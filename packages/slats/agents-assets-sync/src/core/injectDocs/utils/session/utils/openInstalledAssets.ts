@@ -1,13 +1,13 @@
 import { splitAssetKind } from '../../../../agentTarget/index.js';
+import type { Action } from '../../../../buildPlan/index.js';
 import { readRegularFile } from '../../../../hash/index.js';
 import { replaceDocument } from '../../replaceDocument.js';
-import type { RunUnit } from '../types.js';
 
 /** Scope-local file ownership, created only by successful installed writes. */
 export interface InstalledAssets {
   readonly path: string;
   previousPaths(owner: string): ReadonlyMap<string, string> | undefined;
-  record(unit: RunUnit): Promise<void>;
+  record(owner: string, fileActions: readonly Action[]): Promise<void>;
 }
 
 /**
@@ -41,19 +41,14 @@ export async function openInstalledAssets(path: string): Promise<InstalledAssets
         if (peer !== owner) for (const relPath of paths.keys()) files.delete(relPath);
       return files;
     },
-    async record(unit) {
-      const owner = unit.target.name;
+    async record(owner, fileActions) {
       const hashes = new Map(packages.get(owner));
       let changed = false;
-      for (const action of unit.plan.actions) {
-        if (action.target.kind !== 'file') continue;
+      for (const action of fileActions) {
         const kind = splitAssetKind(action.relPath)?.kind;
         if (kind !== 'rules' && kind !== 'skills') continue;
         if (action.kind === 'delete') changed = hashes.delete(action.relPath) || changed;
-        else if (
-          (action.kind === 'copy' || action.kind === 'warn-diverged') &&
-          action.sourceHash && action.sourceHash !== hashes.get(action.relPath)
-        ) {
+        else if (action.sourceHash && action.sourceHash !== hashes.get(action.relPath)) {
           hashes.set(action.relPath, action.sourceHash);
           changed = true;
         }
