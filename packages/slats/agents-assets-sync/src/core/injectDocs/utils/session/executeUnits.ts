@@ -85,9 +85,9 @@ export async function executeUnits(
         );
       }
     }
-    if (installedAssets && failures.length === 0) {
+    if (installedAssets && fileActions.length && failures.length === 0) {
       try {
-        await installedAssets.record(unit);
+        await installedAssets.record(unit.target.name, fileActions);
       } catch (error) {
         diagnostics.push({
           unitKey: unit.key,
