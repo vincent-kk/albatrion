@@ -7,11 +7,7 @@ import { FormErrorCode, UnhandledError } from '@/schema-form/errors';
 import type { SchemaFormPlugin } from '../type';
 import { PluginManager } from './PluginManager';
 import { formatRegisterPluginError } from './formatRegisterPluginError';
-import { getPluginRegistry } from './getPluginRegistry';
 import { getScopedPluginManager } from './getScopedPluginManager';
-
-/** Registration fingerprints share the same realm ownership as plugin state. */
-const { getPluginKey, registeredPlugins } = getPluginRegistry();
 
 /**
  * Registers a schema form plugin to extend or customize form functionality globally.
@@ -210,9 +206,6 @@ export const registerPlugin = (
     return;
   }
   if (plugin === undefined) return;
-  const registry = scope === undefined ? undefined : getPluginRegistry(scope);
-  const fingerprint = registry?.getPluginKey ?? getPluginKey;
-  const registered = registry?.registeredPlugins ?? registeredPlugins;
   try {
     const candidate = plugin;
     const configuration = isPlainObject(plugin)
@@ -226,16 +219,7 @@ export const registerPlugin = (
           validator: candidate.validator,
           formatError: candidate.formatError,
         };
-    const hash = fingerprint(configuration);
-    if (registered.has(hash)) return;
-    const { fieldInputDefinitions, validator, formatError, ...renderKit } =
-      configuration;
-    // Normalization is the only step that throws; running it first leaves a failed plugin unapplied.
-    manager.appendFieldInputDefinitions(fieldInputDefinitions);
-    manager.appendRenderKit(renderKit);
-    manager.appendValidator(validator);
-    manager.appendFormatError(formatError);
-    registered.add(hash);
+    manager.register(configuration);
   } catch (error) {
     throw new UnhandledError(
       FormErrorCode.RegisterPlugin,
