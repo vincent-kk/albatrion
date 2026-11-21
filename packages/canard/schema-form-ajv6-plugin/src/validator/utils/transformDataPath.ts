@@ -5,12 +5,11 @@ import type { ErrorObject } from 'ajv';
 import type { Dictionary } from '@aileron/declare';
 
 import { isChildSchemaPath } from './isChildSchemaPath';
-import { collectSchemaResources, type SchemaResource } from './schemaPath/collectSchemaResources';
+import type { SchemaResource } from './schemaPath/collectSchemaResources';
 import { localizeSchemaPath } from './schemaPath/localizeSchemaPath';
 
 /** Normalize Ajv 6 paths and attach the key rejected by a constraint. */
-export const transformDataPath = (errors: ErrorObject[], root?: object, schemaId?: string, errorDataPath?: string): ValidationIssue[] => {
-  let resources: SchemaResource[] | undefined;
+export const transformDataPath = (errors: ErrorObject[], root?: object, errorDataPath?: string, getResources?: () => SchemaResource[]): ValidationIssue[] => {
   const result = new Array<ValidationIssue>(errors.length);
   for (let i = 0, l = errors.length; i < l; i++) {
     const ajvError = errors[i];
@@ -27,8 +26,8 @@ export const transformDataPath = (errors: ErrorObject[], root?: object, schemaId
     }
     const path = ajvError.schemaPath;
     const routed = ajvError.keyword === 'not' || ajvError.keyword === 'false schema';
-    const local = routed && root && !path.startsWith('#/')
-      ? localizeSchemaPath(path, resources ??= collectSchemaResources(root, schemaId))
+    const local = routed && getResources && !path.startsWith('#/')
+      ? localizeSchemaPath(path, getResources())
       : undefined;
     if (ajvError.keyword === 'false schema' && convertedDataPath && isChildSchemaPath(local?.path ?? path)) {
       const lastSlash = convertedDataPath.lastIndexOf('/');

@@ -1,5 +1,5 @@
 /** Keywords followed by an authored name or a tuple position. */
-const NAMING_KEYWORDS = new Set(['properties', 'patternProperties', 'definitions', 'dependencies']);
+const NAMING_KEYWORDS = new Set(['properties', 'patternProperties', 'definitions', '$defs', 'dependencies', 'dependentSchemas']);
 
 /**
  * Determines whether a native false-schema path judges one child.
