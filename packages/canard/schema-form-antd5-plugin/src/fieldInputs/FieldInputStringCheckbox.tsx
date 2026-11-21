@@ -2,7 +2,6 @@ import { type ReactNode, useMemo } from 'react';
 
 import { Checkbox } from 'antd';
 
-import { map } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 import { isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
@@ -13,6 +12,8 @@ import type {
   FieldInputPropsWithSchema,
   StringSchema,
 } from '@canard/schema-form';
+
+import { getEnumOptions } from './utils/enum/getEnumOptions';
 
 type StringJSONSchema = StringSchema<{
   alias?: { [label: string]: ReactNode };
@@ -43,33 +44,36 @@ const FieldInputStringCheckbox = ({
   alias,
   misfit,
 }: FieldInputStringCheckboxProps) => {
-  const options = useMemo(() => {
-    const labels = context.checkboxLabels || alias || {};
-    return jsonSchema.items?.enum
-      ? map(jsonSchema.items.enum, (rawValue: string | null) => {
-          const value = JSON.stringify(rawValue);
-          return {
-            value,
-            rawValue,
-            label: labels['' + rawValue] || '' + rawValue,
-          };
-        })
-      : [];
-  }, [context, jsonSchema, alias]);
-
-  const handleChange = useHandle((value: string[]) => {
-    const convertedValues = value
-      .map((v) => options.find((opt) => opt.value === v)?.rawValue)
-      .filter((v) => v !== undefined);
-    onChange(convertedValues);
+  const values = jsonSchema.items?.enum;
+  const labels = context.checkboxLabels || alias;
+  const options = useMemo(
+    () => getEnumOptions(values, labels),
+    [values, labels],
+  );
+  const handleChange = useHandle((tokens: string[]) => {
+    const selected = options
+      .filter(({ value }) => tokens.includes(value))
+      .map(({ rawValue }) => rawValue);
+    onChange((previous) => {
+      const stored = isArray(previous) ? previous : [];
+      return [
+        ...stored.filter(
+          (value) => selected.includes(value) || !values?.includes(value),
+        ),
+        ...selected.filter((value) => !stored.includes(value)),
+      ];
+    });
   });
-
-  const initialValue = useMemo(() => {
-    return isArray(defaultValue) &&
-      defaultValue.every((value) => value === null || typeof value === 'string')
-      ? defaultValue.map((value) => JSON.stringify(value))
-      : undefined;
-  }, [defaultValue]);
+  const initialValue = useMemo(
+    () =>
+      options
+        .filter(
+          ({ rawValue }) =>
+            isArray(defaultValue) && defaultValue.includes(rawValue),
+        )
+        .map(({ value }) => value),
+    [defaultValue, options],
+  );
 
   return (
     <div role="group" aria-invalid={misfit || undefined}>
