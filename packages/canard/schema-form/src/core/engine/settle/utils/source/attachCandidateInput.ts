@@ -36,6 +36,12 @@ export const attachCandidateInput = <Self extends FieldNodeRecord<Self>>(
       );
   if (decision) {
     const previous = decision.postPolicyInput;
+    if (
+      Math.max(decision.writeOrder ?? 0, previous?.order ?? 0) > input.order
+    ) {
+      supersedeCandidateInput(input, true);
+      return;
+    }
     if (previous) supersedeCandidateInput(previous, !node);
     decision.postPolicyInput = input;
   }

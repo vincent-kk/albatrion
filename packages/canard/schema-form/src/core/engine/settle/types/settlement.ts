@@ -196,8 +196,6 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   inactiveValueOverrides?: Map<Self, unknown>;
   /** Whether live bindings have post-policy rights to supersede. */
   hasRevivedSourceDecisions?: boolean;
-  /** Current replay, whose own marks must leave its named channels eligible. */
-  replayingSourceOrder?: number;
   /** Live rule marking may supersede rights on the channels it reaches. */
   isMarkingLiveRule?: boolean;
   /** First pre-move address per moved node, built once by an exit resolver. */

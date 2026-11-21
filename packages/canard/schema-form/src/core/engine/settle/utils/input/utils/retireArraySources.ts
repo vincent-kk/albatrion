@@ -1,6 +1,7 @@
 import type { FieldNodeRecord } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
 import { pruneArraySlotTail } from '../../slots/pruneArraySlotTail';
+import { supersedeCandidateInput } from '../../source/supersedeCandidateInput';
 import { selectRetiredArrayBaseline } from './selectRetiredArrayBaseline';
 
 /**
@@ -21,6 +22,12 @@ export const retireArraySources = <Self extends FieldNodeRecord<Self>>(
   if (host.itemCount >= previousCount) return;
   array.retiredFrom = Math.min(array.retiredFrom, host.itemCount);
   if (source.shouldUseBaseline) selectRetiredArrayBaseline(host, context);
+  for (const [entry, slot] of source.slots ?? []) {
+    if (Number(entry.name) < host.itemCount) continue;
+    if (slot.postPolicyInput)
+      supersedeCandidateInput(slot.postPolicyInput, true);
+    slot.namedInput = slot.postPolicyInput = slot.writeOrder = undefined;
+  }
   if (
     host.inactiveSlots?.size ||
     host.inactiveSlotOverlays?.size ||

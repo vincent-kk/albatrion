@@ -1,9 +1,12 @@
 import type { Optional } from '@aileron/declare';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import type { CandidateInput } from '../../types/candidateInput';
 import type { SettlementContext } from '../../types/settlement';
 import { getChildDistribution } from '../input/getChildDistribution';
 import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
@@ -102,8 +105,15 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
       instance: Optional<Self>,
       previous: Optional<InactiveSlotOverlay>,
       index: number,
+      policyInput?: CandidateInput,
     ): InactiveSlotOverlay => {
       if (index === names.length) {
+        if (
+          policyInput &&
+          writeOrder !== undefined &&
+          policyInput.order < writeOrder
+        )
+          supersedeCandidateInput(policyInput, true);
         const result = createSlotValueOverlay(
           template,
           input,
@@ -133,9 +143,19 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
       if (!binding) return previous ?? {};
       const prior = getSlotSource(instance, binding, previous);
       const children = new Map(previous?.children);
+      const suffix = policyInput && appendSegment(policyInput.suffix, name);
+      const childInput = policyInput?.children?.find(
+        (child) => child.template === binding.node && child.suffix === suffix,
+      );
       children.set(
         binding,
-        patch(binding.node, prior.instance, prior.overlay, index + 1),
+        patch(
+          binding.node,
+          prior.instance,
+          prior.overlay,
+          index + 1,
+          childInput,
+        ),
       );
       if (!preserveCandidates) {
         let bindingIdentity: Optional<string>;
@@ -158,23 +178,22 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
     markSlotChange(host, entry, undefined, context);
     const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
       new Map());
-    overlays.set(entry, patch(entry.node, instance, previous, depth + 1));
+    const decision =
+      context && writeOrder !== undefined
+        ? getSlotDecision(host, entry, context, writeOrder)
+        : undefined;
+    overlays.set(
+      entry,
+      patch(
+        entry.node,
+        instance,
+        previous,
+        depth + 1,
+        decision?.postPolicyInput,
+      ),
+    );
     if (context && selectsNamedSource !== undefined)
       recordRetainedSlotWrite(host, entry, context, selectsNamedSource);
-    if (context && writeOrder !== undefined) {
-      const previousInput = getSlotDecision(
-        host,
-        entry,
-        context,
-        writeOrder,
-      ).postPolicyInput;
-      if (
-        previousInput &&
-        previousInput.order < writeOrder &&
-        depth + 1 === names.length
-      )
-        supersedeCandidateInput(previousInput, true);
-    }
     if (!preserveCandidates) {
       let entryIdentity: Optional<string>;
       for (const other of entries) {

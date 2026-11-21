@@ -90,7 +90,6 @@ export const applyDepartingSource = <Self extends FieldNodeRecord<Self>>(
       input.isApplied = true;
       context.hasRevivedSourceDecisions = true;
       attachCandidateInput(input, target, context);
-      context.replayingSourceOrder = input.order;
       markWrite(
         target,
         input.value,
@@ -102,7 +101,6 @@ export const applyDepartingSource = <Self extends FieldNodeRecord<Self>>(
       );
     }
   } finally {
-    context.replayingSourceOrder = undefined;
     context.isAutomatic = wasAutomatic;
   }
 };
