@@ -3,6 +3,8 @@ import type {
   InferValueType as BaseInferValueType,
 } from '@winglet/json-schema';
 
+import type { LiteralPrimitiveKind } from './literalPrimitiveKind';
+
 export type VirtualNodeValue = any[];
 
 export type AllowedValue = BaseAllowedValue | VirtualNodeValue;
@@ -19,16 +21,8 @@ type NormalizeType<Schema> = {
 /** The existing loose inference for shapes that cannot be narrowed statically. */
 type BroadValue = BaseInferValueType<{ type?: string }>;
 
-/** Maps JSON literal values to their primitive kinds. */
-type LiteralKind<Value> = Value extends string
-  ? 'string'
-  : Value extends number
-    ? 'number'
-    : Value extends boolean
-      ? 'boolean'
-      : Value extends null
-        ? 'null'
-        : 'unsupported';
+/** This inference narrows primitive literals and leaves other authored values broad. */
+type LiteralKind<Value> = LiteralPrimitiveKind<Value, 'unsupported'>;
 
 /** True only for one statically known primitive kind plus optional null. */
 type HasSingleLiteralKind<Value> = [

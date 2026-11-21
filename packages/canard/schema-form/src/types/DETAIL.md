@@ -14,6 +14,8 @@ FieldInputProps와 UnknownFieldInputProps의 inputId는 실제 DOM 식별자이�
 
 LabelRendererProps·ErrorMessageRendererProps·InputRendererProps는 node·주소·이름·스키마·표시 필수 여부를 공유하는 공개 부품 계약입니다. 공통 기반은 비공개이며 오류 정보는 기본 props가 아닙니다. 라벨·오류의 context도 자동 주입하지 않고 호출자가 필요할 때 명시합니다. 입력 틀은 children을 같은 커밋에 정확히 한 번 조건 없이 그립니다. 틀 루트와 children 사이의 요소·컴포넌트 경로 변경은 입력을 교체합니다. 교체된 입력은 현재 노드 값에서 시작하며 포커스와 진행 중인 조합을 잃습니다. FieldRendererProps의 Label·ErrorMessage는 이 계약의 partial props를 받는 묶인 컴포넌트입니다.
 
+작성 리터럴의 원시 종류는 값 추론과 필드 추론이 공유합니다. 필드 추론의 배열·객체 종류와 값 추론에서의 미지원 처분은 각각의 결과 정책을 따릅니다.
+
 ### Roll 표현과 재귀 형
 
 Roll은 편집기의 형 표시를 평평하게 하는 표현이며 런타임 변환이 아닙니다. 재귀 스키마의 정의 자리에서 Roll로 감싸면 순환 별칭이 되므로 재귀 고리 밖의 Rolled 형이 내부 형을 감싸고 패키지 진입점에서 공개 이름을 부여합니다. 내부 형과 공개 표시용 형을 분리하는 이유입니다.

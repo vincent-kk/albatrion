@@ -6,6 +6,8 @@ import type {
   Optional,
 } from '@aileron/declare';
 
+import type { LiteralPrimitiveKind } from '@/schema-form/types';
+
 import type { BlueprintSchema, NodeStrategy, SchemaTypeName } from '../engine';
 import type { InactiveValueResolver } from '../engine';
 import type { FieldNodeListener } from '../engine';
@@ -328,19 +330,15 @@ export type FieldNode =
 export type BranchNode = Extract<FieldNode, { strategy: 'branch' }>;
 export type TerminalNode = Exclude<FieldNode, BranchNode>;
 
-type LiteralKind<Value> = Value extends string
-  ? 'string'
-  : Value extends number
-    ? 'number'
-    : Value extends boolean
-      ? 'boolean'
-      : Value extends null
-        ? 'null'
-        : Value extends readonly unknown[]
-          ? 'array'
-          : Value extends Dictionary<unknown>
-            ? 'object'
-            : never;
+/** Node inference recognizes concrete collection kinds as well as primitive literals. */
+type LiteralKind<Value> = LiteralPrimitiveKind<
+  Value,
+  Value extends readonly unknown[]
+    ? 'array'
+    : Value extends Dictionary<unknown>
+      ? 'object'
+      : never
+>;
 type KindNode<Kind> = Kind extends 'string'
   ? StringNode
   : Kind extends 'number' | 'integer'
