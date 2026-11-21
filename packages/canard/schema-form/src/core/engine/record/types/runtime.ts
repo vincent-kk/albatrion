@@ -109,8 +109,8 @@ export interface Distribution {
   readonly isWhole: boolean;
   /** Whether this distribution was an automatic transition write. */
   readonly isAutomatic: boolean;
-  /** Named input replayed from a cancelled exit, including distribution to a new child. */
-  isRevivedWrite?: true;
+  /** Provenance of an automatic input whose named children survive fill withdrawal. */
+  writeOrigin?: 'declarative' | 'revived';
   /** Restored array positions whose sources remain under candidate-specific latent keys. */
   readonly retainedItemNames?: readonly string[];
   /** Surviving-slot reconstruction whose stored candidates remain authoritative. */

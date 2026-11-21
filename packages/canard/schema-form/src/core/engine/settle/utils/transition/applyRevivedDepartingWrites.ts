@@ -45,7 +45,7 @@ export const applyRevivedDepartingWrites = <Self extends FieldNodeRecord<Self>>(
     if (target) {
       const replacements = (context.liveReplacementPathsAfterRevival ??= []);
       write.revivedAt = replacements.push(target.path);
-      markWrite(target, write.value, context, undefined, undefined, true);
+      markWrite(target, write.value, context, undefined, undefined, 'revived');
     } else {
       writes.splice(writes.indexOf(write), 1);
       placeDeclarativeValue(

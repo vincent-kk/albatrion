@@ -36,21 +36,18 @@ export const enterFieldNode = <Self extends FieldNodeRecord<Self>>(
     );
   else if (write || distribution?.isWhole) {
     const value = write ? Reflect.get(distribution.input, name) : undefined;
+    const writeOrigin =
+      write || distribution.writeOrigin === 'revived'
+        ? distribution.writeOrigin
+        : undefined;
     if (distribution.isAutomatic) {
       context.isAutomatic = true;
-      if (!distribution.isRevivedWrite) {
+      if (writeOrigin === undefined) {
         context.writtenInputs.set(child, value);
         context.filledNodes.add(child);
       }
     }
-    markWrite(
-      child,
-      value,
-      context,
-      undefined,
-      undefined,
-      distribution.isRevivedWrite,
-    );
+    markWrite(child, value, context, undefined, undefined, writeOrigin);
     if (distribution.isAutomatic) context.isAutomatic = false;
   } else if (child.behavior.strategy === 'terminal')
     markWrite(child, undefined, context);

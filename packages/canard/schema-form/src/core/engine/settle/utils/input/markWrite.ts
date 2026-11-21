@@ -43,7 +43,7 @@ const UNINTERPRETED: unique symbol = Symbol('uninterpreted');
  * @param context - Work list recording source, shape, and automatic changes
  * @param spec - Static or narrowed type restriction used for interpretation
  * @param changedValue - A leaf's input already interpreted under the static spec and proven unequal to its source by the distribution's skip test; omitted, the input is interpreted and compared here
- * @param isRevivedWrite - Whether a departing record names this write instead of supplying an appearance fill
+ * @param writeOrigin - Named rule input or replay from a cancelled exit, whose whole omissions also persist
  * @returns Nothing; only this node's own state channels are stored here
  */
 export const markWrite = <Self extends FieldNodeRecord<Self>>(
@@ -52,7 +52,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   spec: UnionSpec = staticSpec(node.schemaType, node.isNullable),
   changedValue: unknown = UNINTERPRETED,
-  isRevivedWrite = false,
+  writeOrigin?: Distribution['writeOrigin'],
 ): void => {
   if (context.writeEpoch !== undefined && context.isAutomatic)
     restoreWriteEpochPaths(context);
@@ -138,7 +138,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
         context,
         undefined,
         undefined,
-        isRevivedWrite,
+        writeOrigin,
       );
     }
     return;
@@ -215,7 +215,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     isWhole: whole,
     isAutomatic: context.isAutomatic,
   };
-  if (isRevivedWrite) distribution.isRevivedWrite = true;
+  if (writeOrigin !== undefined) distribution.writeOrigin = writeOrigin;
   context.distributedInputs.set(node, distribution);
   if (context.writeEpoch !== undefined) node.writeEpoch = context.writeEpoch;
   else context.dirtyPaths.add(node.path);
@@ -224,20 +224,15 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   for (const name of Object.keys(node.childrenByName)) {
     if (node.behavior.type === 'array' && Number(name) >= node.itemCount)
       continue;
-    if (
-      !whole &&
-      !hasDistributedChildInput(value, name, node.behavior.type === 'array')
-    )
-      continue;
     const child = node.childrenByName[name];
     if (child.behavior.type === 'virtual') continue;
-    const childInput = hasDistributedChildInput(
+    const hasInput = hasDistributedChildInput(
       value,
       name,
       node.behavior.type === 'array',
-    )
-      ? Reflect.get(value, name)
-      : undefined;
+    );
+    if (!whole && !hasInput) continue;
+    const childInput = hasInput ? Reflect.get(value, name) : undefined;
     let childSpec: Optional<UnionSpec>;
     let interpreted: unknown = UNINTERPRETED;
     if (sameShape && child.behavior.strategy !== 'branch') {
@@ -246,18 +241,15 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     }
     if (interpreted !== UNINTERPRETED && sameValue(child.source, interpreted))
       continue;
-    if (context.isAutomatic && !isRevivedWrite) {
-      context.writtenInputs.set(child, childInput);
-      context.filledNodes.add(child);
+    let childOrigin = writeOrigin;
+    if (context.isAutomatic) {
+      if (!hasInput && childOrigin === 'declarative') childOrigin = undefined;
+      if (childOrigin === undefined) {
+        context.writtenInputs.set(child, childInput);
+        context.filledNodes.add(child);
+      }
     }
-    markWrite(
-      child,
-      childInput,
-      context,
-      childSpec,
-      interpreted,
-      isRevivedWrite,
-    );
+    markWrite(child, childInput, context, childSpec, interpreted, childOrigin);
   }
   if (
     !context.isAutomatic ||
