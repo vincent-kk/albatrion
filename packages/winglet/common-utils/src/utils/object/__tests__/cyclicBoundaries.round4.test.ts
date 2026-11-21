@@ -25,6 +25,18 @@ it('equals rejects a repeated active comparison within the watchdog', () => {
   ).toThrow(RangeError);
 });
 
+it('equals can revisit the same left object with a different right object', () => {
+  type Link = { leaf: number; next: Link | null };
+  const tail: Link = { leaf: 1, next: null };
+  const head: Link = { leaf: 1, next: tail };
+  const compare = () => equals(makeCycle(), head);
+  expect(compare()).toBe(false);
+  tail.next = head;
+  expect(() =>
+    runInNewContext('compare()', { compare }, { timeout: 250 }),
+  ).toThrow(RangeError);
+});
+
 it('a shared descendant is not a back edge in either traversal', () => {
   const leaf = { value: 1 };
   const input = { first: leaf, second: leaf };
