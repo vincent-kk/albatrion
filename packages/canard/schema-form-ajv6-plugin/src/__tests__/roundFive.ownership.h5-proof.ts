@@ -82,3 +82,14 @@ it('round-5 class 44: discarded adapters release their roots and preserve the ne
   expect(Object.keys(instance._refs)).toEqual(before);
   expect((await visit()).verdict).toEqual(first.verdict);
 });
+
+it('keeps a form-only address out of a later form and the application registry', async () => {
+  const instance = new Ajv({ allErrors: true, logger: false });
+  const formId = 'https://example.test/form-only';
+  const first = createValidator(instance);
+  const validate = first.compile({ $id: formId, type: 'string' });
+  expect(await validate('valid')).toBeNull();
+  expect(instance.getSchema(formId)).toBeUndefined();
+  const second = createValidator(instance);
+  expect(() => second.compile({ $ref: formId })).toThrow(/resolve reference/);
+});
