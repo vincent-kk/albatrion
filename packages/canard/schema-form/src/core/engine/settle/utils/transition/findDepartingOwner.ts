@@ -8,7 +8,6 @@ import {
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { DepartingAddress } from '../../types/departingWrite';
 import type { SettlementContext } from '../../types/settlement';
 import { findDepartingChild } from './findDepartingChild';
 
@@ -25,7 +24,7 @@ export const findDepartingOwner = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   path: string,
   context: SettlementContext<Self>,
-): Optional<DepartingAddress<Self>> => {
+): Optional<{ node: Self; suffix: string }> => {
   if (context.pendingExits.size === 0) return undefined;
   const segments = parsePointerSegments(path);
   let host = root;

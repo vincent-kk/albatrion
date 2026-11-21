@@ -19,7 +19,7 @@ const markLiveDeriveWrite = <Self extends FieldNodeRecord<Self>>(
   value: unknown,
   context: SettlementContext<Self>,
 ): void => {
-  if (context.hasRevivedSlotSources) {
+  if (context.hasRevivedSourceDecisions) {
     context.isMarkingLiveRule = true;
     try {
       markWrite(node, value, context, undefined, undefined, 'declarative');

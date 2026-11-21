@@ -24,40 +24,43 @@ export const readRetainedChildInputs = <Self extends FieldNodeRecord<Self>>(
   let children: Map<BlueprintChildEntry, InactiveSlotOverlay> | undefined;
   if (!context.exceededBudget) {
     for (const [entry, source] of retained?.slots ?? []) {
+      const live = node.childrenByName?.[entry.name];
+      const array = retained?.array;
       if (
-        retained?.array &&
-        !retained.shouldUseBaseline &&
-        Number(entry.name) >= retained.array.retiredFrom
-      )
+        source.namedInput &&
+        !live &&
+        (!array || !retained?.shouldUseBaseline)
+      ) {
+        (children ??= new Map()).set(entry, source.namedInput);
         continue;
+      }
+      const previous = source.baseline;
       if (
+        !previous ||
+        (array &&
+          !retained?.shouldUseBaseline &&
+          Number(entry.name) >= array.retiredFrom) ||
         source.selectsNamedSource ||
-        node.childrenByName?.[entry.name]?.blueprintNode === entry.node
+        live?.blueprintNode === entry.node
       )
         continue;
       const current = getSlotSource(node, entry);
       if (
-        current.instance === source.instance &&
-        current.overlay === source.overlay
+        current.instance === previous.instance &&
+        current.overlay === previous.overlay
       )
         continue;
-      const baseline =
-        current.instance === source.instance && source.overlay
-          ? source.overlay
+      (children ??= new Map()).set(
+        entry,
+        current.instance === previous.instance && previous.overlay
+          ? previous.overlay
           : materializeKeptSlotOverlay(
               entry.node,
-              source.instance,
-              source.overlay,
-            );
-      (children ??= new Map()).set(entry, baseline);
+              previous.instance,
+              previous.overlay,
+            ),
+      );
     }
-    for (const [entry, overlay] of retained?.namedChildren ?? [])
-      if (!node.childrenByName?.[entry.name])
-        (children ??= new Map()).set(entry, overlay);
-    if (!retained?.shouldUseBaseline)
-      for (const [entry, overlay] of retained?.array?.namedItems ?? [])
-        if (!node.childrenByName?.[entry.name])
-          (children ??= new Map()).set(entry, overlay);
   }
   const distribution =
     retained?.shouldUseBaseline && !context.exceededBudget

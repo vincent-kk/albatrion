@@ -17,7 +17,8 @@ export const restoreSlotSources = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   for (const [host, source] of context.retainedSources ?? [])
-    for (const [entry, previous] of source.slots ?? []) {
+    for (const [entry, { baseline: previous }] of source.slots ?? []) {
+      if (!previous) continue;
       markSlotChange(host, entry);
       if (previous.instance) {
         const slots: InactiveSlots<Self> = (host.inactiveSlots ??= new Map());

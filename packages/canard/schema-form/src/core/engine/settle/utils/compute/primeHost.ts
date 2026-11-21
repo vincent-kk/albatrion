@@ -9,7 +9,6 @@ import { mergeEffectiveSchema } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { captureFieldNodeChange } from '../../../record';
 import { FieldNodeWriteKind } from '../../../types/value';
-import { applyRevivedDepartingWrites } from '../transition/applyRevivedDepartingWrites';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
@@ -20,6 +19,7 @@ import { cloneFromSlot } from '../slots/cloneFromSlot';
 import { createFromSlotOverlay } from '../slots/createFromSlotOverlay';
 import { enterSlotClone } from '../slots/enterSlotClone';
 import { getSlotSource } from '../slots/getSlotSource';
+import { applyDepartingSource } from '../source/applyDepartingSource';
 import { isSameChildList } from '../structure/isSameChildList';
 import { getDirectChildSelectionPlan } from './childSelection/getDirectChildSelectionPlan';
 import { createStaticEntryReuser } from './childSelection/utils/createStaticEntryReuser';
@@ -151,7 +151,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     }
     if (pending && child === pending) {
       context.revivedNodes.add(child);
-      applyRevivedDepartingWrites(child, context);
+      applyDepartingSource(context, child);
     }
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     if (!priorChild && !pending) {

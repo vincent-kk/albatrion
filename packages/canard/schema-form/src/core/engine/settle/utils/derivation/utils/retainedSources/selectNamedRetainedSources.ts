@@ -1,7 +1,7 @@
 import type { FieldNodeRecord } from '../../../../../record';
 import type { SettlementContext } from '../../../../types/settlement';
 import { hasDistributedChildInput } from '../../../input/hasDistributedChildInput';
-import { supersedeRevivedSlotSource } from '../../../transition/utils/supersedeRevivedSlotSource';
+import { supersedeCandidateInput } from '../../../source/supersedeCandidateInput';
 
 /**
  * Apply an accepted write's named input and order to the occurrence's retained channels.
@@ -14,8 +14,8 @@ export const selectNamedRetainedSources = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const retained = context.retainedSources?.get(node);
   if (retained) {
-    if (retained.revivedSlotSource)
-      supersedeRevivedSlotSource(retained.revivedSlotSource);
+    if (retained.postPolicyInput)
+      supersedeCandidateInput(retained.postPolicyInput);
     if (retained.shouldUseBaseline) {
       retained.shouldUseBaseline = false;
       retained.writeOrder = order;

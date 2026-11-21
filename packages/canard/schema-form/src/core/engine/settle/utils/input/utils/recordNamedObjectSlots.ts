@@ -1,11 +1,11 @@
-import type { BlueprintChildEntry } from '../../../../blueprint';
-import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../../record';
+import type { FieldNodeRecord } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
 import { getDeclaredChildNames } from '../../declarations/getDeclaredChildNames';
 import { createSlotValueOverlay } from '../../slots/createSlotValueOverlay';
 import { getSlotBinding } from '../../slots/getSlotBinding';
 import { getSlotSource } from '../../slots/getSlotSource';
-import { supersedeRevivedSlotSource } from '../../transition/utils/supersedeRevivedSlotSource';
+import { getSlotDecision } from '../../source/getSlotDecision';
+import { supersedeCandidateInput } from '../../source/supersedeCandidateInput';
 
 /**
  * Select sources for named object bindings that may remain absent through compute.
@@ -31,19 +31,18 @@ export const recordNamedObjectSlots = <Self extends FieldNodeRecord<Self>>(
     if (!request || request.node.kind === 'virtual') continue;
     const entry = getSlotBinding(host, request);
     if (context.isMarkingLiveRule) {
-      const revived = retained.revivedChildSources?.get(entry);
-      if (revived) supersedeRevivedSlotSource(revived, true);
+      const revived = retained.slots?.get(entry)?.postPolicyInput;
+      if (revived) supersedeCandidateInput(revived, true);
     }
     const prior = getSlotSource(host, entry);
+    const slot = getSlotDecision(host, entry, context);
     const { overlay } = createSlotValueOverlay(
       entry.node,
       value,
       prior.instance,
-      retained.namedChildren?.get(entry) ?? prior.overlay,
+      slot.namedInput ?? prior.overlay,
       true,
     );
-    const named: Map<BlueprintChildEntry, InactiveSlotOverlay> =
-      (retained.namedChildren ??= new Map());
-    named.set(entry, overlay);
+    slot.namedInput = overlay;
   }
 };

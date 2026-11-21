@@ -18,6 +18,7 @@ export const recordRetainedSlotWrite = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const source = context.retainedSources?.get(host);
   const slot = source?.slots?.get(entry);
-  if (slot) slot.selectsNamedSource = selectsNamedSource;
-  if (selectsNamedSource) source?.namedChildren?.delete(entry);
+  if (!slot) return;
+  slot.selectsNamedSource = selectsNamedSource;
+  if (selectsNamedSource) slot.namedInput = undefined;
 };
