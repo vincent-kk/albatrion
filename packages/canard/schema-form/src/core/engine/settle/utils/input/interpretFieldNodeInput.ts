@@ -6,6 +6,7 @@ import { BEHAVIORS } from '../../../behaviors';
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
+import { BATCH_HOST_SOURCE } from '../../../utils/batchHostSource';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { isPlain } from './isPlain';
 import { staticSpec } from './staticSpec';
@@ -27,6 +28,8 @@ export const interpretFieldNodeInput = <Self extends FieldNodeRecord<Self>>(
   live?: Self,
   seen = new WeakSet<object>(),
 ): unknown => {
+  if (input !== null && typeof input === 'object' && BATCH_HOST_SOURCE in input)
+    return Reflect.get(input, BATCH_HOST_SOURCE);
   template = live?.blueprintNode ?? template;
   const row = BEHAVIORS[template.kind]?.[template.strategy];
   const value = row

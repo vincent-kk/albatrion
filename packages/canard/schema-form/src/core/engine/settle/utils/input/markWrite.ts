@@ -9,6 +9,7 @@ import {
 
 import type { Distribution, FieldNodeRecord, UnionSpec } from '../../../record';
 import { FieldNodeWriteKind } from '../../../types/value';
+import { BATCH_HOST_SOURCE } from '../../../utils/batchHostSource';
 import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../types/settlement';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
@@ -207,8 +208,10 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
               break;
             }
       }
-      nextSource = isMerge ? node.source : undefined;
-      if (isMerge && nextSource !== undefined) context.wrongKindHosts.add(node);
+      nextSource = isMerge
+        ? node.source
+        : context.replacementPaths && Reflect.get(value, BATCH_HOST_SOURCE);
+      if (nextSource !== undefined) context.wrongKindHosts.add(node);
       extras = nextExtras(node.extras, value, declared, isMerge);
     }
   }

@@ -6,6 +6,7 @@ import { isArrayNode } from '../../surface';
 import type { AuthoredSchema } from '../types/jsonSchema';
 import { ValidationMode } from '../types/state';
 import { WriteOption } from '../types/value';
+import { callerCases } from './fixtures/batchCallerCases';
 import { createSeedSampler } from './fixtures/createSeedSampler';
 
 /*
@@ -655,3 +656,18 @@ it(`a batch of declarative and caller writes leaves the state of the same calls 
   expect(sampler.shortfall()).toEqual([]);
   expect(reached.size).toBe(29 + 23);
 }, 300_000);
+
+it('caller-only segments match sequential writes through the generated schema classes', () => {
+  const named = callerCases.map(({ name }) => name);
+  const callerSampler = createSeedSampler(named.length * 20, named, 2);
+  const observed = new Set<string>();
+  for (let seed = 1; callerSampler.has(seed); seed++) {
+    const { name, run } = callerCases[(seed - 1) % callerCases.length];
+    if (!callerSampler.accept(name)) continue;
+    const text = `value ${seed}`;
+    expect(run(true, text), `${name} seed=${seed}`).toEqual(run(false, text));
+    observed.add(name);
+  }
+  expect(callerSampler.shortfall()).toEqual([]);
+  expect([...observed].sort()).toEqual(named.sort());
+});
