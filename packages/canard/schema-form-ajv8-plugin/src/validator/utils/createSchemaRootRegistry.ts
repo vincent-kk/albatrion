@@ -1,6 +1,10 @@
+import { disposeSchemaRoot } from './disposeSchemaRoot';
 import type { SchemaRootRegistry } from './registerSchemaRoot';
 
-/** Construct only weak adapter-local selections; native compilers are created lazily. */
+/** Construct weak root ownership with cleanup for roots callers abandon. */
 export const createSchemaRootRegistry = (): SchemaRootRegistry => ({
   entries: new WeakMap(),
+  active: [],
+  finalizer: new FinalizationRegistry(disposeSchemaRoot),
+  compilerCount: 0,
 });

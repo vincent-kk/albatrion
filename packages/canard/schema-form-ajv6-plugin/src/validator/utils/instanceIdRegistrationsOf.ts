@@ -1,58 +1,28 @@
-/// <reference lib="es2021.weakref" preserve="true" />
-import type { Ajv } from 'ajv';
+/// <reference lib="es2021.weakref" />
+import type Ajv from 'ajv';
 
-import { createFinalizer } from './createFinalizer';
-import { disposeSchemaRoot } from './disposeSchemaRoot';
-import type { PrivateCompiler } from './privateCompiler/types';
 import type { SchemaRootRegistration } from './registerSchemaRoot';
 
-/** Realm-shared ownership; a pool contains at most 64 detached root attempts. */
-export interface InstanceIdRegistrations {
-  /** Unordered weak slots whose cleanup never changes application registry order. */
-  readonly active: Pick<WeakRef<SchemaRootRegistration>, 'deref'>[];
-  /** Next cleanup slot; an absent cursor starts at the first weak slot. */
-  cursor?: number;
-  /** Opaque observation tokens have no strong path back to their weak application keys. */
-  identities?: WeakMap<object, object>;
-  readonly finalizer: FinalizationRegistry<SchemaRootRegistration> | undefined;
-  nextKey: number;
-  readonly pool: {
-    count: number;
-    validation?: PrivateCompiler;
-    guard?: PrivateCompiler;
-  };
-  meta?: PrivateCompiler;
-}
-/** Module evaluation shares metadata through a versioned realm symbol. */
-const REGISTRATIONS_KEY = Symbol.for(
-  '@canard/schema-form-ajv6-plugin/registrations/v2',
-);
-/** Weak keys never change or retain the application instance. */
-const realm: typeof globalThis & {
-  [REGISTRATIONS_KEY]?: WeakMap<Ajv, InstanceIdRegistrations>;
-} = globalThis;
-/** Shared ledger map is looked up once per evaluated copy. */
-const registrationsByInstance =
-  realm[REGISTRATIONS_KEY] ?? new WeakMap<Ajv, InstanceIdRegistrations>();
-if (!realm[REGISTRATIONS_KEY])
-  Object.defineProperty(realm, REGISTRATIONS_KEY, {
-    value: registrationsByInstance,
-  });
+/** `$id` registrations placed on each base instance by every registry that uses it. */
+const registrationsByInstance = new WeakMap<
+  Ajv.Ajv,
+  WeakRef<SchemaRootRegistration>[]
+>();
 
-/** Read the exact application's ledger without altering application state. */
+/**
+ * Return the live list of `$id` registrations held on one base instance, so registries
+ * that share an instance (several per-instance validators, or one beside `bind`) see each
+ * other's ids when deciding whether a root needs a sibling instance.
+ * @param instance - Base AJV instance the registrations were added to
+ * @returns The mutable list for that instance; callers push on registration and prune on release
+ */
 export const instanceIdRegistrationsOf = (
-  instance: Ajv,
-): InstanceIdRegistrations => {
-  let ledger = registrationsByInstance.get(instance);
-  if (!ledger) {
-    ledger = {
-      active: [],
-      cursor: 0,
-      finalizer: createFinalizer(disposeSchemaRoot),
-      nextKey: 0,
-      pool: { count: 0 },
-    };
-    registrationsByInstance.set(instance, ledger);
+  instance: Ajv.Ajv,
+): WeakRef<SchemaRootRegistration>[] => {
+  let list = registrationsByInstance.get(instance);
+  if (!list) {
+    list = [];
+    registrationsByInstance.set(instance, list);
   }
-  return ledger;
+  return list;
 };

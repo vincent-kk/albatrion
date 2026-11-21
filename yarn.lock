@@ -2040,7 +2040,6 @@ __metadata:
     rolldown: "npm:^1.2.0"
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
-    uri-js: "npm:4.4.1"
   peerDependencies:
     "@canard/schema-form": "workspace:^"
   languageName: unknown
@@ -25044,7 +25043,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uri-js@npm:4.4.1, uri-js@npm:^4.2.2":
+"uri-js@npm:^4.2.2":
   version: 4.4.1
   resolution: "uri-js@npm:4.4.1"
   dependencies:

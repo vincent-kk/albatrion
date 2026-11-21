@@ -332,21 +332,6 @@ describe('transformErrors', () => {
     });
   });
 
-  describe('not.required rejected key memo', () => {
-    it('stores the resolved key by schema path and reads stored keys, null meaning none', () => {
-      const root = { properties: { a: { not: { required: ['x'] } }, b: { not: { required: ['x'] } } } };
-      const issue = (schemaPath: string) =>
-        ({ schemaPath, keyword: 'not', params: {}, message: 'must NOT be valid', dataPath: '' }) as ErrorObject;
-      const memo = new Map<string, string | null>([['#/properties/b/not', null]]);
-
-      expect(transformErrors([issue('#/properties/a/not')], root, memo)[0].rejectedKey).toBe('x');
-      expect(memo.get('#/properties/a/not')).toBe('x');
-      memo.set('#/properties/a/not', 'memo');
-      expect(transformErrors([issue('#/properties/a/not')], root, memo)[0].rejectedKey).toBe('memo');
-      expect(transformErrors([issue('#/properties/b/not')], root, memo)[0].rejectedKey).toBeUndefined();
-    });
-  });
-
   describe('성능 테스트', () => {
     it('대량의 에러를 효율적으로 처리해야 한다', () => {
       const errors: ErrorObject[] = Array.from(

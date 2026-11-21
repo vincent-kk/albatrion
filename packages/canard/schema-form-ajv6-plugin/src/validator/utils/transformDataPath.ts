@@ -1,27 +1,11 @@
 import type { ValidationIssue } from '@canard/schema-form';
 import { toJSONPointer } from './dataPath/toJSONPointer';
-import { isChildSchemaPath } from './schemaPath/isChildSchemaPath';
 import type { ErrorObject } from 'ajv';
 
-/**
- * Normalize Ajv 6 paths and attach the key rejected by a constraint.
- * @param errors - AJV6 issues of one validation run.
- * @param isChildPath - Classifier of a `false schema` issue's schema path: `isChildSchemaPath` for
- *   a root without resources, which is the default, or `createChildSchemaPathTest` for one with them.
- * @param notRequiredKeyOf - Lookup from a `not` issue's schema path to the single name its schema
- *   requires (see `createNotRequiredKeyLookup`); without it `not` issues carry no rejected key.
- * @param getContext - Lazy metadata for special schema-dependent paths, unused by ordinary errors.
- * @returns One issue per AJV6 issue, in order, with a JSON Pointer data path.
- */
-export const transformDataPath = (
-  errors: ErrorObject[],
-  isChildPath: (schemaPath: string) => boolean = isChildSchemaPath,
-  notRequiredKeyOf?: (schemaPath: string) => string | undefined,
-  getContext?: () => {
-    isChildPath: (schemaPath: string) => boolean;
-    notRequiredKeyOf: (schemaPath: string) => string | undefined;
-  },
-): ValidationIssue[] => {
+import type { Dictionary } from '@aileron/declare';
+
+/** Normalize Ajv 6 paths and attach the key rejected by a constraint. */
+export const transformDataPath = (errors: ErrorObject[], root?: object): ValidationIssue[] => {
   const result = new Array<ValidationIssue>(errors.length);
   for (let i = 0, l = errors.length; i < l; i++) {
     const ajvError = errors[i];
@@ -36,8 +20,7 @@ export const transformDataPath = (
       if (typeof missingProperty === 'string')
         convertedDataPath += `/${missingProperty.replace(/~/g, '~0').replace(/\//g, '~1')}`;
     }
-    if (ajvError.keyword === 'false schema' && convertedDataPath &&
-      (getContext?.().isChildPath ?? isChildPath)(ajvError.schemaPath)) {
+    if (ajvError.keyword === 'false schema' && convertedDataPath) {
       const lastSlash = convertedDataPath.lastIndexOf('/');
       rejectedKey = convertedDataPath.slice(lastSlash + 1)
         .replace(/~1/g, '/').replace(/~0/g, '~');
@@ -51,18 +34,26 @@ export const transformDataPath = (
       rejectedKey = String(ajvError.params.propertyName);
     if (typeof ajvError.propertyName === 'string')
       rejectedKey = ajvError.propertyName;
-    if (ajvError.keyword === 'not')
-      rejectedKey = (notRequiredKeyOf ?? getContext?.().notRequiredKeyOf)?.(ajvError.schemaPath) ?? rejectedKey;
-    const issue: ValidationIssue = {
+    if (ajvError.keyword === 'not' && root && ajvError.schemaPath.startsWith('#')) {
+      const segments = ajvError.schemaPath.slice(2).split('/');
+      let target: unknown = root;
+      for (const segment of segments) {
+        if (typeof target !== 'object' || target === null) break;
+        target = (target as Dictionary<unknown>)[segment.replace(/~1/g, '/').replace(/~0/g, '~')];
+      }
+      if (typeof target === 'object' && target !== null && 'required' in target &&
+          Array.isArray(target.required) && target.required.length === 1 &&
+          typeof target.required[0] === 'string') rejectedKey = target.required[0];
+    }
+    result[i] = {
       dataPath: convertedDataPath,
       schemaPath: ajvError.schemaPath,
       keyword: ajvError.keyword,
       message: ajvError.message,
       details: { ...ajvError.params },
       source: ajvError,
+      ...(rejectedKey === undefined ? {} : { rejectedKey }),
     };
-    if (rejectedKey !== undefined) issue.rejectedKey = rejectedKey;
-    result[i] = issue;
   }
   return result;
 };

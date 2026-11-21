@@ -21,16 +21,8 @@ it('directGuardCompile uses the copy subschema identity and release frees it', (
   const predicate = ajvValidatorPlugin.compileGuard(copy, '/if');
   expect(predicate('ok')).toBe(true);
   expect(predicate(1)).toBe(false);
-  const index = compile.mock.calls.findIndex(
-    ([schema]) =>
-      typeof schema === 'object' &&
-      schema !== null &&
-      Reflect.get(schema, 'type') === 'string',
-  );
+  const index = compile.mock.calls.findIndex(([schema]) => schema === copy.if);
   expect(index).toBeGreaterThanOrEqual(0);
-  const detached = compile.mock.calls[index][0];
-  expect(detached).toEqual(copy.if);
-  expect(detached).not.toBe(copy.if);
   expect(
     compile.mock.calls.some(
       ([schema]) =>
@@ -45,8 +37,8 @@ it('directGuardCompile uses the copy subschema identity and release frees it', (
     throw new Error('Missing guard instance');
   expect(guard).toMatchObject({ opts: { allErrors: false } });
   ajvValidatorPlugin.release(copy);
-  expect(remove).toHaveBeenCalledWith(detached);
-  expect(Reflect.get(guard, '_cache').has(detached)).toBe(false);
+  expect(remove).toHaveBeenCalledWith(copy.if);
+  expect(Reflect.get(guard, '_cache').has(copy.if)).toBe(false);
 });
 
 it.each(['root', 'nested'] as const)(
@@ -73,15 +65,9 @@ it.each(['root', 'nested'] as const)(
     const guard = ajvValidatorPlugin.compileGuard(copy, '/if');
     expect(guard({ n: 6 })).toBe(true);
     expect(guard({ n: 'six' })).toBe(false);
-    expect(
-      compile.mock.calls.some(
-        ([candidate]) =>
-          candidate !== null &&
-          typeof candidate === 'object' &&
-          !('$ref' in candidate) &&
-          JSON.stringify(candidate) === JSON.stringify(schema),
-      ),
-    ).toBe(false);
+    expect(compile.mock.calls.some(([candidate]) => candidate === schema)).toBe(
+      false,
+    );
     expect(
       compile.mock.calls.some(
         ([candidate]) =>
@@ -174,15 +160,9 @@ it('uses the root-pointer path for contextual guards and when configured off', (
     ajvValidatorPlugin.configure({ directGuardCompile: enabled });
     compile.mockClear();
     ajvValidatorPlugin.compileGuard(copy, '/if');
-    expect(
-      compile.mock.calls.some(
-        ([candidate]) =>
-          candidate !== null &&
-          typeof candidate === 'object' &&
-          !('$ref' in candidate) &&
-          JSON.stringify(candidate) === JSON.stringify(schema),
-      ),
-    ).toBe(false);
+    expect(compile.mock.calls.some(([candidate]) => candidate === schema)).toBe(
+      false,
+    );
     expect(
       compile.mock.calls.some(
         ([candidate]) =>
