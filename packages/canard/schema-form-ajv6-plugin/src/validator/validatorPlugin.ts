@@ -2,8 +2,6 @@ import type { ValidatorPlugin } from '@canard/schema-form';
 import Ajv from 'ajv';
 
 import { createValidator } from './createValidator';
-import { disposeSchemaRoot } from './utils/disposeSchemaRoot';
-import type { SchemaRootRegistration } from './utils/registerSchemaRoot';
 
 /**
  * AJV6 defaults preserve the plugin's Draft-07 and format behavior.
@@ -30,9 +28,8 @@ type ConfigurableValidatorPlugin = ValidatorPlugin & {
    */
   configure(options: { directGuardCompile?: boolean }): void;
 };
-const finalizer = new FinalizationRegistry<SchemaRootRegistration>(disposeSchemaRoot);
 const makeValidator = (instance = new Ajv(defaultSettings)) =>
-  createValidator(instance, undefined, { finalizer, readDirectGuardCompile: () => directGuardCompile });
+  createValidator(instance, undefined, () => directGuardCompile);
 
 /**
  * Ajv 6 validation and synchronous guards for schema-form.

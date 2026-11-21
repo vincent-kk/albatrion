@@ -1,5 +1,6 @@
 import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
 import type Ajv from 'ajv';
+import { registerSchemaRoot, type SchemaRootRegistry } from './utils/registerSchemaRoot';
 
 import { collectSchemaResources, type SchemaResource } from './utils/schemaPath/collectSchemaResources';
 import { transformDataPath } from './utils/transformDataPath';
@@ -8,14 +9,13 @@ import { transformDataPath } from './utils/transformDataPath';
  * Create promise-returning validation from an Ajv 6 instance and optional root key.
  */
 export const createValidatorFactory =
-  (ajv: Ajv.Ajv, key?: string) =>
+  (ajv: Ajv.Ajv, key?: string, roots: SchemaRootRegistry = new WeakMap()) =>
   (jsonSchema: JSONSchema): ValidateFunction => {
-    const transient = key !== undefined ? undefined : { ...JSON.parse(JSON.stringify(jsonSchema)), $async: true };
-    const validate = key !== undefined ? ajv.getSchema(key) : transient && ajv.compile(transient);
-    if (transient) ajv.removeSchema(transient);
+    const validate = key === undefined ? registerSchemaRoot(roots, ajv, jsonSchema) : ajv.getSchema(key);
     if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
     const schema = typeof validate.schema === 'object' ? validate.schema : undefined;
-    const { schemaId, errorDataPath } = ajv._opts;
+    const { schemaId } = ajv._opts;
+    const errorDataPath = key === undefined ? undefined : ajv._opts.errorDataPath;
     let resources: SchemaResource[] | undefined;
     const getResources = schema && (() => resources ??= collectSchemaResources(schema, schemaId));
     return async (data) => {

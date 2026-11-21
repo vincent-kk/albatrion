@@ -4,9 +4,7 @@ import AjvModule, { type Options } from 'ajv';
 import type { AjvInstance as Ajv } from './types/AjvInstance';
 
 import { createValidator } from './createValidator';
-import { disposeSchemaRoot } from './utils/disposeSchemaRoot';
 import { resolveAjvConstructor } from './utils/resolveAjvConstructor';
-import type { SchemaRootRegistration } from './utils/registerSchemaRoot';
 
 /**
  * ajv@7's `module.exports` is an ESM-interop namespace, not the class, so the
@@ -42,9 +40,8 @@ type ConfigurableValidatorPlugin = ValidatorPlugin & {
    */
   configure(options: { directGuardCompile?: boolean }): void;
 };
-const finalizer = new FinalizationRegistry<SchemaRootRegistration>(disposeSchemaRoot);
 const makeValidator = (instance = new AjvConstructor(defaultSettings)) =>
-  createValidator(instance, undefined, { finalizer, readDirectGuardCompile: () => directGuardCompile });
+  createValidator(instance, undefined, () => directGuardCompile);
 
 /**
  * AJV7 validator plugin for schema-form.

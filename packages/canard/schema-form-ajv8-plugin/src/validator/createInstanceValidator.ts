@@ -4,9 +4,7 @@ import type { Ajv } from 'ajv';
 import { createGuardCompiler } from './createGuardCompiler';
 import { createValidatorFactory } from './createValidatorFactory';
 import { assertBindableInstance } from './utils/assertBindableInstance';
-import { createSchemaRootRegistry } from './utils/createSchemaRootRegistry';
 import type { SchemaRootRegistry } from './utils/registerSchemaRoot';
-import { releaseSchemaRoot } from './utils/releaseSchemaRoot';
 
 /** Per-object selections of a validator built from one AJV instance. */
 export interface InstanceValidatorOptions {
@@ -31,7 +29,7 @@ export const createInstanceValidator = (
   ajv: Ajv,
   dialect: string,
   options: InstanceValidatorOptions = {},
-  roots: SchemaRootRegistry = createSchemaRootRegistry(),
+  roots: SchemaRootRegistry = new WeakMap(),
   readDirectGuardCompile?: () => boolean,
 ) => {
   assertBindableInstance(ajv);
@@ -41,7 +39,7 @@ export const createInstanceValidator = (
     compile,
     compileGuard: (root: JSONSchema, pointer: string) =>
       createGuardCompiler(ajv, roots, root, pointer, readDirectGuardCompile?.() ?? directGuardCompile),
-    release: (root: JSONSchema) => releaseSchemaRoot(roots, root),
+    release: (root: JSONSchema) => { roots.delete(root); },
     dialect,
   } satisfies ValidatorFactory;
 };

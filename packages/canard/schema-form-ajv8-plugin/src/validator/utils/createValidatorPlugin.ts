@@ -2,7 +2,7 @@ import type { ValidatorPlugin } from '@canard/schema-form';
 import type { Ajv, Options } from 'ajv';
 
 import { createInstanceValidator } from '../createInstanceValidator';
-import { createSchemaRootRegistry } from './createSchemaRootRegistry';
+import type { SchemaRootRegistry } from './registerSchemaRoot';
 
 /** Shared default profile for the three dialect entry points. */
 const defaultSettings: Options = { allErrors: true, strict: false, validateFormats: false, allowUnionTypes: true };
@@ -17,7 +17,7 @@ export const createValidatorPlugin = <Instance extends Ajv>(
   Constructor: new (options: Options) => Instance,
   dialect: string,
 ) => {
-  const roots = createSchemaRootRegistry();
+  const roots: SchemaRootRegistry = new WeakMap();
   let validator: ReturnType<typeof createInstanceValidator> | undefined;
   let directGuardCompile = true;
   const makeValidator = (instance: Instance) =>
