@@ -58,7 +58,10 @@ export const FieldRenderer = ({
     () => resolveFieldLabel(jsonSchema, name, undefined, titleMode),
     [jsonSchema, name, titleMode],
   );
-  const branchFallback = node.strategy === 'branch' && !isChoiceGroup;
+  const branchFallback =
+    node.strategy === 'branch' &&
+    !isChoiceGroup &&
+    node.parentNode?.type !== 'array';
   const titleElement = title ? (
     <span
       hidden={!isChoiceGroup && !branchFallback}
