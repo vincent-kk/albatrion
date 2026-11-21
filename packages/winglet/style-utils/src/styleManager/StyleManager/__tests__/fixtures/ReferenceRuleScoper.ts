@@ -1,6 +1,7 @@
 // Frozen copy of utils/RuleScoper.ts without the flat-rule fast path; the canonical
 // scoper is utils/RuleScoper.ts. Equivalence tests compare the two byte for byte,
 // so change this copy only together with an intended change of scoping output.
+import { getCssOpaqueEnd } from '../../../../utils/cssTokens/getCssOpaqueEnd';
 import { getCssUrlEndAtOpen } from '../../../../utils/cssTokens/getCssUrlEndAtOpen';
 
 import {
@@ -13,7 +14,6 @@ import {
 } from '../../constants/charCode';
 import { prefixSelector } from '../../utils/prefixSelector';
 import { prefixSelectorList } from '../../utils/prefixSelectorList';
-import { skipOpaqueToken } from '../../utils/skipOpaqueToken';
 
 /**
  * At-rules whose block holds style rules, which are scoped recursively.
@@ -104,7 +104,7 @@ export class ReferenceRuleScoper {
         continue;
       }
       if (first === SLASH && css.charCodeAt(cursor + 1) === ASTERISK) {
-        cursor = skipOpaqueToken(css, cursor);
+        cursor = getCssOpaqueEnd(css, cursor);
         continue;
       }
       const isAtRule = first === AT_SIGN;
@@ -215,7 +215,7 @@ export class ReferenceRuleScoper {
       from =
         css.charCodeAt(opaque) === SLASH
           ? skipCommentOrUrl(css, segmentStart, opaque)
-          : skipOpaqueToken(css, opaque);
+          : getCssOpaqueEnd(css, opaque);
     }
   }
 
@@ -258,5 +258,5 @@ const skipCommentOrUrl = (
   comment: number,
 ): number => {
   const urlEnd = findEnclosingUrlEnd(css, segmentStart, comment);
-  return urlEnd === -1 ? skipOpaqueToken(css, comment) : urlEnd;
+  return urlEnd === -1 ? getCssOpaqueEnd(css, comment) : urlEnd;
 };
