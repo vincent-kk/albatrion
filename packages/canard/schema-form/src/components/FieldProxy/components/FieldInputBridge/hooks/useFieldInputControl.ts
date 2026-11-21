@@ -78,14 +78,10 @@ export const useFieldInputControl = <Node extends FieldNode>(
   const [, update] = useVersion();
   const ref = useRef<HTMLDivElement>(null);
   const refreshDeferral = useTruthyConstant(createRefreshDeferral);
-  refreshDeferral.current =
-    (refreshDeferral.current & COMPOSING) |
-    (mountedChildren.current > 0 ? MOUNTED_CHILDREN : BIT_MASK_NONE);
+  synchronizeMountedChildren(refreshDeferral, mountedChildren.current);
   const subscribe = useCallback(
     (onStoreChange: Fn) => {
-      refreshDeferral.current =
-        (refreshDeferral.current & COMPOSING) |
-        (mountedChildren.current > 0 ? MOUNTED_CHILDREN : BIT_MASK_NONE);
+      synchronizeMountedChildren(refreshDeferral, mountedChildren.current);
       const unsubscribe = node.subscribe(({ type }) => {
         if (
           !(type & INPUT_TRACKING_EVENTS) &&
@@ -101,9 +97,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
               ))
         )
           return;
-        refreshDeferral.current =
-          (refreshDeferral.current & COMPOSING) |
-          (mountedChildren.current > 0 ? MOUNTED_CHILDREN : BIT_MASK_NONE);
+        synchronizeMountedChildren(refreshDeferral, mountedChildren.current);
         onStoreChange();
       });
       onStoreChange();
@@ -187,4 +181,18 @@ const createRefreshDeferral = () => {
     },
   };
   return deferral;
+};
+
+/**
+ * Preserve IME deferral while replacing the bit owned by committed child proxies.
+ * @param deferral - The live input's existing refresh bookkeeping.
+ * @param count - Child ownership count at render, subscription or delivery.
+ */
+const synchronizeMountedChildren = (
+  deferral: ReturnType<typeof createRefreshDeferral>,
+  count: number,
+): void => {
+  deferral.current =
+    (deferral.current & COMPOSING) |
+    (count > 0 ? MOUNTED_CHILDREN : BIT_MASK_NONE);
 };
