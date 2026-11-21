@@ -1,12 +1,9 @@
 import { remainOnlyReactComponent } from '@winglet/react-utils/object';
 
-import type { Optional } from '@aileron/declare';
-
 import { formatValidationError } from '@/schema-form/helpers/error';
 import { normalizeFieldInputDefinitions } from '@/schema-form/helpers/fieldInputDefinition';
-import type { FieldInputDefinition, FormatError } from '@/schema-form/types';
 
-import type { ValidatorPlugin } from '../type';
+import type { SchemaFormPlugin } from '../type';
 import type { getPluginRegistry } from './getPluginRegistry';
 
 /**
@@ -17,7 +14,7 @@ import type { getPluginRegistry } from './getPluginRegistry';
 export const createPluginManager = (
   registry: ReturnType<typeof getPluginRegistry>,
 ) => {
-  type RenderKit = typeof registry.renderKit;
+  const { getPluginKey, registeredPlugins } = registry;
   return class RegistryPluginManager {
     static get FieldRenderer() {
       return registry.renderKit.FieldRenderer;
@@ -32,26 +29,8 @@ export const createPluginManager = (
       return registry.renderKit.ErrorMessageRenderer;
     }
 
-    static appendRenderKit(renderKit: Optional<Partial<RenderKit>>) {
-      if (!renderKit) return;
-      registry.renderKit = {
-        ...registry.renderKit,
-        ...remainOnlyReactComponent(renderKit),
-      };
-    }
-
     static get fieldInputDefinitions() {
       return registry.fieldInputDefinitions;
-    }
-
-    static appendFieldInputDefinitions(
-      fieldInputDefinitions: Optional<FieldInputDefinition[]>,
-    ) {
-      if (!fieldInputDefinitions) return;
-      registry.fieldInputDefinitions = [
-        ...normalizeFieldInputDefinitions(fieldInputDefinitions),
-        ...registry.fieldInputDefinitions,
-      ];
     }
 
     static get validator() {
@@ -61,13 +40,25 @@ export const createPluginManager = (
       return registry.formatError;
     }
 
-    static appendValidator(validator: Optional<ValidatorPlugin>) {
-      if (!validator) return;
-      registry.validator = validator;
-    }
-    static appendFormatError(formatError: Optional<FormatError>) {
-      if (!formatError) return;
-      registry.formatError = formatError;
+    /** Apply one normalized plugin to this manager's registry, once per fingerprint. */
+    static register(configuration: SchemaFormPlugin): void {
+      const hash = getPluginKey(configuration);
+      if (registeredPlugins.has(hash)) return;
+      const { fieldInputDefinitions, validator, formatError, ...renderKit } =
+        configuration;
+      // Normalize before changing the other fields, so a failure cannot partially register a plugin.
+      if (fieldInputDefinitions)
+        registry.fieldInputDefinitions = [
+          ...normalizeFieldInputDefinitions(fieldInputDefinitions),
+          ...registry.fieldInputDefinitions,
+        ];
+      registry.renderKit = {
+        ...registry.renderKit,
+        ...remainOnlyReactComponent(renderKit),
+      };
+      if (validator) registry.validator = validator;
+      if (formatError) registry.formatError = formatError;
+      registeredPlugins.add(hash);
     }
 
     static reset() {
@@ -75,7 +66,7 @@ export const createPluginManager = (
       registry.fieldInputDefinitions = registry.defaultFieldInputDefinitions;
       registry.validator = undefined;
       registry.formatError = formatValidationError;
-      registry.registeredPlugins.clear();
+      registeredPlugins.clear();
     }
   };
 };
