@@ -34,12 +34,10 @@ export function createShard(
       label: `Lint ${workspace.name}`,
       args: ["workspace", workspace.name, "lint"],
     }));
-  const builds = createBuildSteps(
-    affected,
-    workspaces,
-    tier,
+  const builds = createBuildSteps(affected, workspaces, tier, {
     bootstrapSchemaForm,
-  );
+    parallelJobs: schemaFormUnitShard || bootstrapSchemaForm ? 3 : undefined,
+  });
   // ESLint import/no-unresolved resolves workspace dist exports, which clean checkouts must build first.
   const steps = [...builds, ...lint];
   for (const workspace of selected) {

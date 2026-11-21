@@ -6,14 +6,16 @@ import { createTopologicalBuild } from "./helpers/createTopologicalBuild.mjs";
  * @param {string[]} affected Names whose build dependencies must exist.
  * @param {object[]} workspaces Manifest dependency graph and current scripts.
  * @param {string} tier Check policy; PR Ant Design jobs need core artifacts as consumers only.
- * @param {boolean} [bootstrapSchemaForm] Use the core artifacts when another shard runs the full schema-form build.
+ * @param {object} [options] Build policy for this shard.
+ * @param {boolean} [options.bootstrapSchemaForm] Use the core artifacts when another shard runs the full schema-form build.
+ * @param {number} [options.parallelJobs] Concurrency within the core prerequisite and plugin build groups.
  * @returns {object[]} Yarn commands restricted to eligible build workspaces.
  */
 export function createBuildSteps(
   affected,
   workspaces,
   tier = "pre-release",
-  bootstrapSchemaForm = false,
+  { bootstrapSchemaForm = false, parallelJobs } = {},
 ) {
   const closure = collectClosure(affected, workspaces);
   const schemaForm = "@canard/schema-form";
@@ -26,9 +28,12 @@ export function createBuildSteps(
       affected.some(
         (name) => !/^@canard\/schema-form-antd[56]-plugin$/.test(name),
       ));
+  // The benchmark lint and source typecheck resolve AJV imports absent from its manifest.
   const bootstrapPlugins = verifySchemaForm
     ? [...ajvPlugins, "@canard/schema-form-antd5-plugin"]
-    : [];
+    : affected.includes("@aileron/benchmark-form")
+      ? ajvPlugins
+      : [];
   if (closure.includes(schemaForm)) {
     for (const name of collectClosure(bootstrapPlugins, workspaces))
       if (!closure.includes(name)) closure.push(name);
@@ -61,9 +66,10 @@ export function createBuildSteps(
         createTopologicalBuild(
           prerequisites,
           "Build schema-form prerequisites",
+          parallelJobs,
         ),
       );
-    // schema-form typechecks and render tests import the AJV and antd5 plugin builds, whose own types require schema-form first.
+    // Plugin declarations import schema-form, so they build after its bootstrap.
     steps.push({
       kind: "build",
       label: "Bootstrap schema-form runtime",
@@ -79,6 +85,7 @@ export function createBuildSteps(
         createTopologicalBuild(
           bootstrapPlugins.filter((name) => buildNames.includes(name)),
           "Build schema-form plugin declarations",
+          parallelJobs,
         ),
       );
     remainingBuildNames = buildNames.filter(

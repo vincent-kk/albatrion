@@ -62,7 +62,7 @@ test("schema-form closure bootstraps runtime and declarations before AJV and ful
       labels.indexOf("Bootstrap schema-form runtime") <
         labels.indexOf("Bootstrap schema-form declarations"),
     );
-    if (shard.name === "main" || /^plugins-antd[56]$/.test(shard.name)) {
+    if (/^plugins-antd[56]$/.test(shard.name)) {
       const closure = labels.indexOf("Build workspace closure");
       if (closure >= 0)
         assert.ok(
@@ -75,6 +75,13 @@ test("schema-form closure bootstraps runtime and declarations before AJV and ful
       labels.indexOf("Bootstrap schema-form declarations") <
         labels.indexOf("Build schema-form plugin declarations"),
     );
+    if (shard.name === "main") {
+      const plugins = shard.steps.find(
+        ({ label }) => label === "Build schema-form plugin declarations",
+      );
+      assert.ok(!plugins.args.includes("@canard/schema-form-antd5-plugin"));
+      continue;
+    }
     assert.ok(
       labels.indexOf("Build schema-form plugin declarations") <
         labels.indexOf("Build workspace closure"),
@@ -152,13 +159,25 @@ test("default pr tier splits schema-form unit and input lifetime regressions acr
   const [firstUnit, secondUnit, thirdUnit, render] = plan.shards.slice(2, 6);
   const schemaShards = [firstUnit, secondUnit, thirdUnit, render];
   const schemaForm = "@canard/schema-form";
+  const serialBuilds = createBuildSteps([schemaForm], workspaces, "pr");
   for (const shard of schemaShards) {
     assert.equal(shard.browser, false);
     assert.deepEqual(shard.affected, [schemaForm]);
-    assert.deepEqual(
-      shard.steps.filter(({ kind }) => kind === "build"),
-      createBuildSteps([schemaForm], workspaces),
-    );
+    const buildSteps = shard.steps.filter(({ kind }) => kind === "build");
+    const serialSteps = buildSteps.map((step) => {
+      if (
+        shard === render ||
+        ![
+          "Build schema-form prerequisites",
+          "Build schema-form plugin declarations",
+        ].includes(step.label)
+      )
+        return step;
+      const args = [...step.args];
+      assert.deepEqual(args.splice(4, 3), ["--parallel", "--jobs", "3"]);
+      return { ...step, args };
+    });
+    assert.deepEqual(serialSteps, serialBuilds);
   }
   assert.deepEqual(
     schemaShards.flatMap(({ name, steps }) =>
@@ -256,6 +275,16 @@ test("PR main shards preserve workspace checks and the full build closure", () =
     builds(combined.steps),
   );
   assert.ok(!builds(main.steps).includes("@canard/schema-form"));
+  const benchmarkLint = main.steps.findIndex(
+    ({ kind, args }) =>
+      kind === "lint" && args[1] === "@aileron/benchmark-form",
+  );
+  assert.ok(benchmarkLint > 0);
+  const beforeBenchmarkLint = builds(main.steps.slice(0, benchmarkLint));
+  for (const version of [6, 7, 8])
+    assert.ok(
+      beforeBenchmarkLint.includes(`@canard/schema-form-ajv${version}-plugin`),
+    );
   assert.ok(builds(consumers.steps).includes("@canard/schema-form"));
 });
 

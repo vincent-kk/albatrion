@@ -70,6 +70,7 @@ test(
       try {
         const files = await vitest.globTestSpecifications();
         if (shard) {
+          assert.equal(vitest.config.maxWorkers, 4);
           const Sequencer = vitest.config.sequence.sequencer;
           const selected = await new Sequencer(vitest).shard(files);
           assert.ok(selected.length > 0);
