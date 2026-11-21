@@ -37,7 +37,7 @@ describe('round-2 style-utils 1: target-specific release', () => {
 });
 
 describe('round-2 style-utils 2: injector generations', () => {
-  it.fails('releases a reused injector like a newly created injector', () => {
+  it('releases a reused injector like a newly created injector', () => {
     const reused = styleManagerFactory('reused');
     reused('x', '.a{color:red}');
     flush();
@@ -52,7 +52,7 @@ describe('round-2 style-utils 2: injector generations', () => {
       document.querySelectorAll('style.fresh').length,
     );
   });
-  it.fails(
+  it(
     'keeps old cleanup bound to its generation like an independent scope cleanup',
     () => {
       const inject = styleManagerFactory('generation');
