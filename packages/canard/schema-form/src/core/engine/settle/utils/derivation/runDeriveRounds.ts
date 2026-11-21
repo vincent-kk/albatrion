@@ -58,7 +58,7 @@ const isUnchanged = <Self extends FieldNodeRecord<Self>>(
 
 /**
  * Apply bounded automatic candidates and recalculate before the next decision.
- * @param context - Current write and its reversible automatic log
+ * @param context - Current settlement with its write boundary and retained-source decisions
  * @returns Nothing; failures and applied-round count stay in the settlement
  * Package Vitest setup owns the module-local shadow switch; passing it through
  * SettlementContext would expose test-only verification in runtime contracts.

@@ -5,6 +5,7 @@ import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSO
 import { FormErrorCode } from '../../../errors';
 import { ValidationMode } from '../types/state';
 import { WriteOption } from '../types/value';
+import { writeRetainedBudgetInputs } from './fixtures/writeRetainedBudgetInputs';
 
 const CASES = [
   ['own', 'merge'],
@@ -131,23 +132,7 @@ it.each(CASES)(
     const oldItem = root.find('/o/list/0')!;
     const resolver = vi.fn(() => 'resolved');
     root.find('/o/y')!.onInactive(resolver);
-    const write = () => {
-      if (call === 'merge') {
-        root.setValue(
-          { on: false, caller: 'kept', write: true, reopen: true },
-          WriteOption.Merge,
-        );
-        return;
-      }
-      const batch = () => {
-        root.find('/on')!.setValue(false);
-        root.find('/caller')!.setValue('kept');
-        root.find('/write')!.setValue(true);
-        root.find('/reopen')!.setValue(true);
-      };
-      root.batch(call === 'batch' ? batch : () => root.batch(batch));
-    };
-    expect(write).toThrowError(
+    expect(() => writeRetainedBudgetInputs(root, call)).toThrowError(
       expect.objectContaining({ code: FormErrorCode.BudgetExceeded }),
     );
     expect(secondRevival).toHaveBeenCalledOnce();
