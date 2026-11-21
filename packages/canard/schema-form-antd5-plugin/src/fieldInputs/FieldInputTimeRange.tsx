@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { DatePicker } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
-import dayjs, { type Dayjs } from 'dayjs';
+import type { Dayjs } from 'dayjs';
 
 import { isArray } from '@winglet/common-utils/filter';
 import { isStringSchema } from '@winglet/json-schema/filter';
@@ -17,7 +17,11 @@ import type {
 
 import type { Parameter } from '@aileron/declare';
 
+import { parsePickerValue } from './utils/picker/parsePickerValue';
+
 const DATE_FORMAT = 'HH:mm:00Z';
+const HOURS = Array.from({ length: 24 }, (_, hour) => hour);
+const MINUTES = Array.from({ length: 60 }, (_, minute) => minute);
 
 type DateRangeSchema = ArraySchema & {
   items: StringSchema;
@@ -59,23 +63,33 @@ const FieldInputTimeRange = ({
     () =>
       isArray(defaultValue) && defaultValue.length === 2
         ? [
-            dayjs(defaultValue[0], DATE_FORMAT),
-            dayjs(defaultValue[1], DATE_FORMAT),
+            parsePickerValue(defaultValue[0], DATE_FORMAT),
+            parsePickerValue(defaultValue[1], DATE_FORMAT),
           ]
         : undefined,
     [defaultValue],
   );
 
-  const disabledDate = useMemo(() => {
-    return (date: Dayjs | null) => {
-      if (!date) return false;
-      if (!minimum && !maximum) return false;
-      if (minimum && date.isBefore(dayjs(minimum, DATE_FORMAT), 'minute'))
-        return true;
-      if (maximum && date.isAfter(dayjs(maximum, DATE_FORMAT), 'minute'))
-        return true;
-      return false;
-    };
+  const disabledTime = useMemo(() => {
+    if (!minimum && !maximum) return undefined;
+    const start = minimum ? parsePickerValue(minimum, DATE_FORMAT) : undefined;
+    const end = maximum ? parsePickerValue(maximum, DATE_FORMAT) : undefined;
+    const first = start?.isValid() ? start.hour() * 60 + start.minute() : 0;
+    const last = end?.isValid() ? end.hour() * 60 + end.minute() : 1439;
+    const outside = (startMinute: number, endMinute: number) =>
+      first <= last
+        ? endMinute < first || startMinute > last
+        : endMinute < first && startMinute > last;
+    const disabledHours = HOURS.filter((hour) =>
+      outside(hour * 60, hour * 60 + 59),
+    );
+    return () => ({
+      disabledHours: () => disabledHours,
+      disabledMinutes: (hour: number) =>
+        MINUTES.filter((minute) =>
+          outside(hour * 60 + minute, hour * 60 + minute),
+        ),
+    });
   }, [minimum, maximum]);
 
   const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
@@ -93,10 +107,9 @@ const FieldInputTimeRange = ({
       readOnly={readOnly}
       format={DATE_FORMAT}
       showTime={{ format: 'HH:mm' }}
-      disabledDate={disabledDate}
+      disabledTime={disabledTime}
       defaultValue={initialValue}
       onChange={handleChange}
-      onPanelChange={handleChange}
       size={size || context?.size}
       status={misfit ? 'error' : undefined}
       aria-invalid={misfit || undefined}
