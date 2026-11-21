@@ -78,47 +78,11 @@ const FieldInputSlider = ({
         integer,
         constraints.exclusiveMinimum ?? jsonSchema.exclusiveMinimum,
         constraints.exclusiveMaximum ?? jsonSchema.exclusiveMaximum,
+        marks,
       ),
-    [constraints, jsonSchema, multipleOf, integer],
+    [constraints, jsonSchema, multipleOf, integer, marks],
   );
-  const { min, max, step, empty } = bounds;
-  const validMarks = useMemo(
-    () =>
-      marks &&
-      Object.fromEntries(
-        Object.entries(marks).filter(([key]) => {
-          const value = Number(key);
-          return (
-            Number.isFinite(value) &&
-            value >= min &&
-            value <= max &&
-            (!integer || Number.isInteger(value)) &&
-            (multipleOf === undefined || bounds.snap(value) === value)
-          );
-        }),
-      ),
-    [marks, min, max, integer, multipleOf, bounds],
-  );
-  const libraryMarks = useMemo(
-    () =>
-      validMarks &&
-      Object.fromEntries(
-        Object.entries(validMarks).map(([key, label]) => [
-          bounds.toLibrary(Number(key)),
-          label,
-        ]),
-      ),
-    [validMarks, bounds],
-  );
-  const stops = useMemo(
-    () =>
-      validMarks
-        ? Object.keys(validMarks)
-            .map(Number)
-            .sort((a, b) => a - b)
-        : [],
-    [validMarks],
-  );
+  const { min, max, step, empty, stops, libraryMarks } = bounds;
   const normalizeValue = useCallback(
     (value: number) => (stops.includes(value) ? value : bounds.snap(value)),
     [stops, bounds],

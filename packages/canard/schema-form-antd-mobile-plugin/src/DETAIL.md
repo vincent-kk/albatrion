@@ -22,7 +22,7 @@ multipleOf가 없는 number는 하한을 anchor로 기본 step 1을 적용합니
 
 Arrow·PageUp·PageDown·Shift+Arrow는 저장 값이 미설정·격자 밖·경계 밖인 경우도 같은 격자 안으로 이동합니다. Page와 Shift는 열 step입니다. 십진 지수 표기의 작은 step도 십진 정수 연산으로 처리합니다. lazy 생략은 commit에서, false는 이동에서 저장하며 같은 완료 조작의 결과는 같습니다. 모바일 범위는 양끝에 같은 규칙을 적용합니다.
 
-모바일의 marks가 있으면 스키마에 유효한 표시 stop의 기존 탐색을 유지합니다. multipleOf가 없는 number의 표시 stop은 기본 step에 맞추어 변경하지 않습니다.
+모바일의 marks가 있으면 스키마에 유효한 표시 stop을 탐색합니다. multipleOf가 없는 number의 표시 stop은 스키마의 inclusive·exclusive 경계로 판정합니다. 기본 step에서 도달할 수 없는 경계 안의 mark도 track에 포함하며 Home·End는 각 thumb의 이동 범위에서 가장 바깥쪽의 유효한 mark를 선택합니다.
 
 Number.MAX_SAFE_INTEGER에 이르는 track의 pointer 정밀도는 라이브러리의 부동소수점 좌표 한계이며 보장 범위 밖입니다.
 
