@@ -12,9 +12,9 @@ import { isPlainObject } from '@/common-utils/utils/filter';
 
 import { getSymbols } from './getSymbols';
 import { cloneArraySubclass } from './utils/clone/cloneArraySubclass';
-import { cloneBuiltinSubclass } from './utils/clone/cloneBuiltinSubclass';
+import { copyBuiltinSlots } from './utils/clone/copyBuiltinSlots/copyBuiltinSlots';
+import { copyCollectionEntries } from './utils/clone/copyCollectionEntries';
 import { copyErrorEnumerability } from './utils/clone/copyErrorEnumerability';
-import { copyForeignBuiltin } from './utils/clone/copyForeignBuiltin/copyForeignBuiltin';
 import { getPrototypeProfile } from './utils/clone/getPrototypeProfile';
 import { replicateBox } from './utils/clone/replicateBox';
 import { replicateDeep } from './utils/clone/replicateDeep';
@@ -320,31 +320,21 @@ const replicate = (
 
   if (value instanceof Date) {
     const prototype = getPrototypeOf(value);
-    if (prototype !== Date.prototype)
-      return cloneBuiltinSubclass(
-        value,
-        prototype,
-        limit,
-        depth,
-        cache,
-        replicate,
-      );
-    const result = new Date(value.getTime());
+    const result =
+      prototype === Date.prototype
+        ? new Date(value.getTime())
+        : copyBuiltinSlots(value, '[object Date]', prototype);
     cache.set(value, result);
     return result;
   }
 
   if (value instanceof RegExp) {
     const prototype = getPrototypeOf(value);
-    if (prototype !== RegExp.prototype)
-      return cloneBuiltinSubclass(
-        value,
-        prototype,
-        limit,
-        depth,
-        cache,
-        replicate,
-      );
+    if (prototype !== RegExp.prototype) {
+      const result = copyBuiltinSlots(value, '[object RegExp]', prototype);
+      cache.set(value, result);
+      return result;
+    }
     const result = new RegExp(value.source, value.flags);
     result.lastIndex = value.lastIndex;
     cache.set(value, result);
@@ -363,14 +353,18 @@ const replicate = (
         );
       return result;
     }
-    return cloneBuiltinSubclass(
+    const result = copyBuiltinSlots(value, '[object Map]', prototype)!;
+    cache.set(value, result);
+    copyCollectionEntries(
+      '[object Map]',
       value,
-      prototype,
+      result,
       limit,
       depth,
       cache,
       replicate,
     );
+    return result;
   }
 
   if (value instanceof Set) {
@@ -381,14 +375,18 @@ const replicate = (
       for (const key of value) result.add(replicate(key, limit, depth, cache));
       return result;
     }
-    return cloneBuiltinSubclass(
+    const result = copyBuiltinSlots(value, '[object Set]', prototype)!;
+    cache.set(value, result);
+    copyCollectionEntries(
+      '[object Set]',
       value,
-      prototype,
+      result,
       limit,
       depth,
       cache,
       replicate,
     );
+    return result;
   }
 
   if (isBuffer(value)) {
@@ -495,20 +493,20 @@ const replicate = (
     const builtin = CLONE_PROFILE[tag];
     if (builtin === undefined) return value;
     const prototype = getPrototypeOf(value);
-    const foreign = builtin ? copyForeignBuiltin(value, tag) : undefined;
+    const foreign = builtin ? copyBuiltinSlots(value, tag) : undefined;
     if (foreign !== undefined) {
       cache.set(value, foreign);
-      if (tag === '[object Map]') {
-        for (const [key, item] of Map.prototype.entries.call(value))
-          Map.prototype.set.call(
-            foreign,
-            replicate(key, limit, depth, cache),
-            replicate(item, limit, depth, cache),
-          );
-      } else if (tag === '[object Set]') {
-        for (const item of Set.prototype.values.call(value))
-          Set.prototype.add.call(foreign, replicate(item, limit, depth, cache));
-      } else if (Object.prototype.toString.call(foreign) === '[object Error]') {
+      if (tag === '[object Map]' || tag === '[object Set]')
+        copyCollectionEntries(
+          tag,
+          value,
+          foreign,
+          limit,
+          depth,
+          cache,
+          replicate,
+        );
+      else if (Object.prototype.toString.call(foreign) === '[object Error]') {
         for (const key of ['cause', 'errors'])
           if (hasOwnProperty(value, key))
             defineProperty(foreign, key, {

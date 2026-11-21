@@ -2,32 +2,50 @@ import { constructBuiltin } from '../constructBuiltin';
 import { copyForeignError } from './utils/copyForeignError';
 
 /**
- * Creates a built-in shell from native slots or a recognized Error prototype lineage.
- * @param value - Object missed by this realm's constructor checks
- * @param tag - Type tag already read by the clone dispatcher
- * @returns A usable shell, or undefined for ordinary objects and forged slotless tags
+ * Creates the native shell of a subclass or a built-in from another realm.
+ * @param value Value from the clone dispatcher.
+ * @param tag Dispatcher's built-in tag.
+ * @param prototype Original prototype for a subclass already identified locally.
+ * @returns A usable shell, or undefined when a foreign tag has no native slots.
  */
-export const copyForeignBuiltin = (
+export const copyBuiltinSlots = (
   value: object,
   tag: string,
+  prototype?: object | null,
 ): object | undefined => {
   if (tag === '[object Error]') return copyForeignError(value);
   try {
     switch (tag) {
       case '[object Date]':
-        return constructBuiltin(Date, [Date.prototype.getTime.call(value)], Object.getPrototypeOf(value));
+        return constructBuiltin(
+          Date,
+          [Date.prototype.getTime.call(value)],
+          prototype === undefined ? Object.getPrototypeOf(value) : prototype,
+        );
       case '[object Map]':
-        Map.prototype.has.call(value, undefined);
-        return constructBuiltin(Map, [], Object.getPrototypeOf(value));
+        if (prototype === undefined) Map.prototype.has.call(value, undefined);
+        return constructBuiltin(
+          Map,
+          [],
+          prototype === undefined ? Object.getPrototypeOf(value) : prototype,
+        );
       case '[object Set]':
-        Set.prototype.has.call(value, undefined);
-        return constructBuiltin(Set, [], Object.getPrototypeOf(value));
+        if (prototype === undefined) Set.prototype.has.call(value, undefined);
+        return constructBuiltin(
+          Set,
+          [],
+          prototype === undefined ? Object.getPrototypeOf(value) : prototype,
+        );
       case '[object RegExp]': {
         const source = Object.getOwnPropertyDescriptor(
           RegExp.prototype,
           'source',
         )!.get!.call(value);
-        const copy = constructBuiltin(RegExp, [source, Reflect.get(value, 'flags')], Object.getPrototypeOf(value));
+        const copy = constructBuiltin(
+          RegExp,
+          [source, Reflect.get(value, 'flags')],
+          prototype === undefined ? Object.getPrototypeOf(value) : prototype,
+        );
         copy.lastIndex = Reflect.get(value, 'lastIndex');
         return copy;
       }
@@ -53,7 +71,8 @@ export const copyForeignBuiltin = (
       default:
         return undefined;
     }
-  } catch {
+  } catch (error) {
+    if (prototype !== undefined) throw error;
     return undefined;
   }
 };
