@@ -7,7 +7,9 @@ import { createBuildSteps } from "./createBuildSteps.mjs";
  * @param {string[]} changed Workspaces whose sources changed.
  * @param {object[]} workspaces Manifest scripts and build edges.
  * @param {string} tier Check policy, either pr or pre-release; other values throw.
- * @param {string} [schemaFormUnitShard] Vitest file partition for a schema-form PR unit job. The PR render job omits it.
+ * @param {object} [options] PR-only build or unit-test partition.
+ * @param {string} [options.schemaFormUnitShard] Vitest file partition; the PR render job omits it.
+ * @param {boolean} [options.bootstrapSchemaForm] Another shard already runs schema-form's full build.
  * @returns {object} Named shard with browser requirement and serial steps.
  */
 export function createShard(
@@ -16,7 +18,7 @@ export function createShard(
   changed,
   workspaces,
   tier = "pr",
-  schemaFormUnitShard,
+  { schemaFormUnitShard, bootstrapSchemaForm } = {},
 ) {
   if (tier !== "pr" && tier !== "pre-release")
     throw new Error(`Invalid check tier: ${tier}`);
@@ -32,7 +34,12 @@ export function createShard(
       label: `Lint ${workspace.name}`,
       args: ["workspace", workspace.name, "lint"],
     }));
-  const builds = createBuildSteps(affected, workspaces, tier);
+  const builds = createBuildSteps(
+    affected,
+    workspaces,
+    tier,
+    bootstrapSchemaForm,
+  );
   // ESLint import/no-unresolved resolves workspace dist exports, which clean checkouts must build first.
   const steps = [...builds, ...lint];
   for (const workspace of selected) {
@@ -62,6 +69,8 @@ export function createShard(
           "--run",
           "--project",
           "unit",
+          "--config",
+          "../../../scripts/ci/helpers/plan/schemaFormUnit.config.mjs",
           `--shard=${schemaFormUnitShard}`,
         ],
       });

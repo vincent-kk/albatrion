@@ -2,6 +2,13 @@ import { classifyChangedFile } from "../selection/classifyChangedFile.mjs";
 import { collectClosure } from "../selection/collectClosure.mjs";
 import { createShard } from "./createShard.mjs";
 
+/** App, site, and modal workspaces whose checks share a consumer build closure. */
+const mainFormConsumers = [
+  "@aileron/production-testbed",
+  "@albatrion/documents",
+  "@lerx/promise-modal",
+];
+
 /**
  * Produces conservative selection and independently executable matrix shards.
  * @param {object[]} workspaces Current named workspace graph and scripts.
@@ -37,19 +44,44 @@ export function createCheckPlan(workspaces, files, reason = null, tier = "pr") {
   const shared = affected.filter((name) =>
     ["@slats/agents-assets-sync", "@winglet/common-utils"].includes(name),
   );
-  const main = affected.filter(
+  const remaining = affected.filter(
     (name) =>
       name !== "@canard/schema-form" &&
       !plugins.includes(name) &&
       !shared.includes(name),
   );
-  if (main.length)
-    shards.push(createShard("main", main, changed, workspaces, tier));
+  const formConsumers =
+    tier === "pr"
+      ? remaining.filter((name) => mainFormConsumers.includes(name))
+      : [];
+  const main = remaining.filter((name) => !formConsumers.includes(name));
+  if (main.length) {
+    const bootstrapSchemaForm = collectClosure(
+      formConsumers,
+      workspaces,
+    ).includes("@canard/schema-form");
+    shards.push(
+      createShard("main", main, changed, workspaces, tier, {
+        bootstrapSchemaForm,
+      }),
+    );
+  }
+  if (formConsumers.length)
+    shards.push(
+      createShard(
+        "main-form-consumers",
+        formConsumers,
+        changed,
+        workspaces,
+        tier,
+      ),
+    );
   if (affected.includes("@canard/schema-form")) {
     const schemaForm = ["@canard/schema-form"];
     if (tier === "pr") {
-      // Run lint in the render job so neither unit job spends its time on lint.
-      for (const index of [1, 2])
+      // Run lint in the render job so the unit jobs stay within their time budget.
+      const unitShardCount = 3;
+      for (let index = 1; index <= unitShardCount; index++)
         shards.push(
           createShard(
             `schema-form-unit-${index}`,
@@ -57,7 +89,7 @@ export function createCheckPlan(workspaces, files, reason = null, tier = "pr") {
             [],
             workspaces,
             tier,
-            `${index}/2`,
+            { schemaFormUnitShard: `${index}/${unitShardCount}` },
           ),
         );
       shards.push(
