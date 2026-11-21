@@ -1,6 +1,8 @@
 // Frozen copy of utils/RuleScoper.ts without the flat-rule fast path; the canonical
 // scoper is utils/RuleScoper.ts. Equivalence tests compare the two byte for byte,
 // so change this copy only together with an intended change of scoping output.
+import { getCssUrlEndAtOpen } from '../../../../utils/cssTokens/getCssUrlEndAtOpen';
+
 import {
   ASTERISK,
   AT_SIGN,
@@ -9,7 +11,6 @@ import {
   SLASH,
   WHITESPACE_MAX,
 } from '../../constants/charCode';
-import { findUnquotedUrlEnd } from '../../utils/findUnquotedUrlEnd';
 import { prefixSelector } from '../../utils/prefixSelector';
 import { prefixSelectorList } from '../../utils/prefixSelectorList';
 import { skipOpaqueToken } from '../../utils/skipOpaqueToken';
@@ -243,7 +244,7 @@ const findEnclosingUrlEnd = (
 ): number => {
   const url = css.slice(segmentStart, index).search(LAST_URL_OPEN);
   const urlEnd =
-    url === -1 ? -1 : findUnquotedUrlEnd(css, segmentStart + url + 3);
+    url === -1 ? -1 : getCssUrlEndAtOpen(css, segmentStart + url + 3);
   return urlEnd > index ? urlEnd : -1;
 };
 

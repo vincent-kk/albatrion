@@ -1,12 +1,15 @@
 import { describe, expect, test } from 'vitest';
 
-import { findUnquotedUrlEnd } from '../utils/findUnquotedUrlEnd';
+import { getCssUrlEndAtOpen } from '../getCssUrlEndAtOpen';
 
-describe('findUnquotedUrlEnd', () => {
+const encoder = new TextEncoder();
+
+describe('getCssUrlEndAtOpen', () => {
   test.each(['url(x)', ' url(x)', ':url(x)', ',URL(x)', '(url(x)'])(
     'reads url( at the start or after a non-identifier character: %s',
     (text) => {
-      expect(findUnquotedUrlEnd(text, text.length - 3)).toBe(text.length);
+      for (const source of [text, encoder.encode(text)])
+        expect(getCssUrlEndAtOpen(source, source.length - 3)).toBe(source.length);
     },
   );
 
@@ -21,8 +24,10 @@ describe('findUnquotedUrlEnd', () => {
   ])(
     'treats url( after an identifier character as another function: %s',
     (text) => {
-      const open = text.length - 3;
-      expect(findUnquotedUrlEnd(text, open)).toBe(open);
+      for (const source of [text, encoder.encode(text)]) {
+        const open = source.length - 3;
+        expect(getCssUrlEndAtOpen(source, open)).toBe(open);
+      }
     },
   );
 });
