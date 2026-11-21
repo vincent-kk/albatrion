@@ -14,7 +14,7 @@ import { SCHEMA_DICTIONARY_KEYWORDS } from './schemaKeywords';
  * The chain resources are the root and every ancestor on the pointer path that opens a resource with its own
  * `$id`, outermost first. Each anchor name binds to its declaration in the outermost chain resource that declares
  * it (`$recursiveAnchor: true` only at a resource root, under `''`), outside the guard's own subtree; AJV's
- * truthiness check on a plain `{}` decides whether a name is taken.
+ * truthiness check on the own-key table decides whether a name is taken.
  * @param root - The registered root copy in which the pointer locates a schema.
  * @param key - The reference under which `ajv` holds the root; locations resolve as `key#<pointer>`.
  * @param pointer - The guard's JSON Pointer, or a percent-encoded URI fragment prefixed with #.
@@ -47,7 +47,7 @@ export const collectGuardDynamicAnchors = (
       !Array.isArray(schema) && opensSchemaResource(schema))
       resources.push({ path, schema });
   }
-  const anchors: Dictionary<ValidateFunction> = {};
+  const anchors: Dictionary<ValidateFunction> = Object.create(null);
   for (const resource of resources)
     for (const [name, at] of collectResourceAnchors(resource.schema, schema)) {
       if (anchors[name]) continue;
