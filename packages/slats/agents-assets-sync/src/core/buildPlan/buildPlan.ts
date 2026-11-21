@@ -1,7 +1,5 @@
 import { join, relative } from 'node:path';
 
-import type { AsyncFn } from '@aileron/declare';
-
 import type { Destination, OrphanScan } from '../agentTarget/index.js';
 import {
   type Sha256Hex,
@@ -9,13 +7,16 @@ import {
   hashFile,
   readSourceSnapshot,
 } from '../hash/index.js';
-import { blockBodyMatches, parseBlocks } from '../markerBlock/index.js';
+import { blockBodyMatches, formatBlockId } from '../markerBlock/index.js';
 import { isNoisePath } from '../utils/isNoisePath.js';
 import { toPosix } from '../utils/toPosix.js';
 import { walkFiles } from '../utils/walkFiles.js';
 import { type Action, type ActionKind, type InjectPlan, INSTALLED_HASH, type PlanInput } from './type.js';
 import { createManagedAliasCheck } from './utils/createManagedAliasCheck.js';
 import { createDocumentReader } from './utils/readDocument.js';
+
+/** Per-plan reader of the already checked destination blocks. */
+type DocumentReader = ReturnType<typeof createDocumentReader>;
 
 /**
  * Compare every manifest entry against what is already installed and produce
@@ -100,7 +101,7 @@ export async function buildPlan(input: PlanInput): Promise<InjectPlan> {
 async function classify(
   destination: Destination,
   srcHash: Sha256Hex,
-  readDocument: AsyncFn<[fileAbs: string], string | null>,
+  readDocument: DocumentReader,
 ): Promise<ActionKind> {
   if (destination.kind === 'unsupported') return 'skip-unsupported';
   if (destination.kind === 'file') {
@@ -108,12 +109,10 @@ async function classify(
     if (dstHash === null) return 'copy';
     return hashEquals(dstHash, srcHash) ? 'skip-uptodate' : 'warn-diverged';
   }
-  const content = await readDocument(destination.fileAbs);
-  if (content === null) return 'copy';
+  const document = await readDocument(destination.fileAbs);
+  if (document === null) return 'copy';
   const blockId = Buffer.from(destination.blockId, 'utf8').toString('latin1');
-  const blocks = parseBlocks(content).filter(
-    (block) => block.blockId === blockId,
-  );
+  const blocks = document.filter((block) => block.blockId === blockId);
   if (!blocks.length) return 'copy';
   return blocks.every((block) =>
     blockBodyMatches(block.body, srcHash, 'latin1'),
@@ -129,7 +128,7 @@ async function classify(
 async function* findOrphans(
   scan: OrphanScan,
   known: ReadonlySet<string>,
-  readDocument: AsyncFn<[fileAbs: string], string | null>,
+  readDocument: DocumentReader,
   isManagedAlias: ReturnType<typeof createManagedAliasCheck>,
 ): AsyncGenerator<Pick<Action, 'relPath' | 'target' | typeof INSTALLED_HASH>> {
   if (scan.kind === 'installed-file') {
@@ -153,24 +152,27 @@ async function* findOrphans(
     }
     return;
   }
-  let content: string | null;
+  let document;
   try {
-    content = await readDocument(scan.fileAbs);
+    document = await readDocument(scan.fileAbs);
   } catch (error) {
     if (![...known].some((path) => path.startsWith('rules/'))) return;
     throw error;
   }
-  if (content === null) return;
-  for (const block of parseBlocks(content)) {
-    if (block.packageName !== scan.ownerPackage) continue;
-    const relPath = Buffer.from(block.relPath, 'latin1').toString('utf8');
+  if (document === null) return;
+  const prefix = formatBlockId(scan.ownerPackage, '');
+  for (const { blockId } of document) {
+    if (blockId !== scan.ownerPackage && !blockId.startsWith(prefix)) continue;
+    const relPath = Buffer.from(blockId.slice(prefix.length), 'latin1').toString(
+      'utf8',
+    );
     if (known.has(relPath)) continue;
     yield {
       relPath,
       target: {
         kind: 'block',
         fileAbs: scan.fileAbs,
-        blockId: Buffer.from(block.blockId, 'latin1').toString('utf8'),
+        blockId: Buffer.from(blockId, 'latin1').toString('utf8'),
       },
     };
   }
