@@ -85,7 +85,7 @@
   - `notices` 는 렌더러 이전 단계의 메시지다. 실행을 실패시키지 않으면서 `errors` 에 실린다
 - `resolveScopeFlag` / `resolveAgentFlag` / `resolveAssetFlag` — 실패 시 exit 2
 - `parseScopeFlag` / `parseAgentFlag` / `parseAssetFlag` — 실패를 값으로 반환
-- `resolveAssetPathFlag(value?: string): string | undefined` — 모양 검증만, 실패 시 exit 2. `parse` 짝이 없다 (렌더러가 부르지 않으므로)
+- CLI 인자 해석은 `--asset-path`의 앞뒤 공백을 지운 값을 대상 해석에 넘긴다. 빈 값, 절대 경로, 홈 기준 경로는 공통 인자 오류 결과와 exit 2를 사용한다.
 
 ## Acceptance Criteria
 

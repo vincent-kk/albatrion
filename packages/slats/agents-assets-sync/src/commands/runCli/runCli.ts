@@ -6,7 +6,6 @@ import { type RunFailure, validateFlags } from '../../core/index.js';
 import type { DefaultFlags } from '../../types/index.js';
 import { divertLogsToStderr, logger } from '../../utils/logger.js';
 import { VERSION } from '../../utils/version.js';
-import { resolveAssetPathFlag } from './flags/resolveAssetPathFlag.js';
 import { renderOrFallback } from './renderers/renderOrFallback.js';
 import { classifyTarget } from './targets/classifyTarget.js';
 import { resolveTargets } from './targets/resolveTargets.js';
@@ -111,11 +110,10 @@ export async function runCli(
         const classified = classifyTarget(target);
         if (classified.kind === 'invalid') errors.push(classified.reason);
       }
+      const assetPath = flags.assetPath?.trim();
       if (
-        flags.assetPath !== undefined &&
-        (!flags.assetPath.trim() ||
-          isAbsolute(flags.assetPath.trim()) ||
-          flags.assetPath.trim().startsWith('~'))
+        assetPath !== undefined &&
+        (!assetPath || isAbsolute(assetPath) || assetPath.startsWith('~'))
       )
         errors.push(`Invalid --asset-path: ${flags.assetPath}`);
       const checked = validateFlags(flags, true);
@@ -138,7 +136,6 @@ export async function runCli(
         exitCode = result.exitCode;
         return;
       }
-      const assetPath = resolveAssetPathFlag(flags.assetPath);
       const originCwd = resolvePath(flags.root ?? process.cwd());
       const { resolved, skipped, strict } = await resolveTargets(
         targets,

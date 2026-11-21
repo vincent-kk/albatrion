@@ -20,7 +20,6 @@ import {
 } from 'vitest';
 
 import { logger } from '../../../utils/logger.js';
-import { resolveAssetPathFlag } from '../flags/resolveAssetPathFlag.js';
 import { resolvePackage } from '../targets/resolvePackage.js';
 
 vi.mock('../../../utils/logger.js', () => ({
@@ -62,29 +61,6 @@ beforeEach(() => {
 afterEach(() => {
   rmSync(root, { recursive: true, force: true });
   exitSpy.mockRestore();
-});
-
-describe('resolveAssetPathFlag', () => {
-  it('passes an unset flag through untouched', () => {
-    expect(resolveAssetPathFlag(undefined)).toBeUndefined();
-  });
-
-  it('accepts a relative path and trims it', () => {
-    expect(resolveAssetPathFlag('  docs/agents  ')).toBe('docs/agents');
-  });
-
-  // The shape checks that hold for every target, whatever package it is.
-  it.each([
-    ['empty', ''],
-    ['blank', '   '],
-    ['absolute', '/etc/agents'],
-    ['home-relative', '~/agents'],
-  ])('exits 2 on a %s value', (_label, value) => {
-    expect(() => resolveAssetPathFlag(value)).toThrow('process.exit(2)');
-    expect(errorMock).toHaveBeenCalledWith(
-      expect.stringContaining('Invalid --asset-path'),
-    );
-  });
 });
 
 describe('resolvePackage with an override', () => {
