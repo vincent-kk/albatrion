@@ -83,8 +83,6 @@ export const compareDeep = (
       }
       continue;
     }
-    const sourceKeys = getKeys(source),
-      targetKeys = getKeys(target);
     const sourceIsArray = isArray(source),
       targetIsArray = isArray(target);
     if (sourceIsArray !== targetIsArray) {
@@ -101,6 +99,8 @@ export const compareDeep = (
       });
       continue;
     }
+    const sourceKeys = getKeys(source),
+      targetKeys = getKeys(target);
     let hasRemoved = false;
     const work: StepFrame[] = [];
     const removals: Patch[][] = [];
