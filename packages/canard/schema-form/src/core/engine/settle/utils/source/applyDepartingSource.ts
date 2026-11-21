@@ -47,9 +47,9 @@ export const applyDepartingSource = <Self extends FieldNodeRecord<Self>>(
       for (const input of paths.values())
         if (!input.isApplied) accepted.push({ owner: returning, input });
   } else {
-    for (const [owner, source] of sources)
+    for (const owner of context.pendingExits.values())
       if (owner.isDetached)
-        for (const paths of source.exitInputs?.values() ?? [])
+        for (const paths of sources.get(owner)?.exitInputs?.values() ?? [])
           for (const input of paths.values()) accepted.push({ owner, input });
   }
   if (!accepted.length) return;
