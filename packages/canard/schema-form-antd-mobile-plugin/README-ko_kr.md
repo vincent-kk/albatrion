@@ -90,7 +90,7 @@ registerPlugin(plugin);
 
 - **역할**: 멀티라인 텍스트 입력을 위한 텍스트 영역
 - **적용 조건**: `type`이 `"string"`이고 `format` 또는 `inputType`이 `"textarea"`인 경우
-- **추가 사항**: `type`·`format` 옆의 스키마 확장 `minRows`와 `maxRows`로 자동 크기를 조절합니다. 이 두 설정은 `presentation.FieldInputProps`에서 읽지 않습니다
+- **추가 사항**: `presentation.FieldInputProps`에 `minRows`와 `maxRows`를 지정합니다. 생략값은 스키마 확장을 사용합니다.
 
 ### **[`FieldInputString.tsx`](./src/fieldInputs/FieldInputString.tsx)**
 
@@ -102,7 +102,7 @@ registerPlugin(plugin);
 
 - **역할**: 숫자 입력을 위한 스테퍼 컴포넌트
 - **적용 조건**: `type`이 `"number"` 또는 `"integer"`인 경우 (다른 조건에 해당하지 않는 fallback)
-- **추가 사항**: `minimum`, `maximum`, `multipleOf` 스키마 속성 지원
+- **추가 사항**: `minimum`, `maximum`, `multipleOf` 스키마 속성 지원. Stepper의 사용자 정의 `formatter`와 `parser`는 Ant Design Mobile 5.26 이상에서 지원합니다.
 
 ### **[`FieldInputBoolean.tsx`](./src/fieldInputs/FieldInputBoolean.tsx)**
 
@@ -112,17 +112,13 @@ registerPlugin(plugin);
 
 ---
 
-## 스위치 키보드 접근
-
-`formRef.current.focus(path)`는 스위치의 `data-focus-target` 요소에 포커스합니다.
-
-boolean 및 string 스위치 입력은 클릭하면 포커스를 받고 자연스러운 Tab 순서에 포함됩니다. Space와 Enter는 포커스된 스위치를 클릭과 같은 값 변환으로 누를 때마다 한 번 전환합니다. 키를 길게 눌러도 반복 전환하지 않으며, Space는 페이지를 스크롤하지 않습니다. 비활성 스위치는 클릭이나 Tab으로 포커스를 받지 않으며 활성화 키에 반응하지 않습니다.
+Switch의 조작은 Ant Design Mobile이 제공합니다. 폼에 키보드 활성화가 필요하면 사용자 정의 FieldInput을 사용합니다.
 
 ---
 
 ## 입력 설정
 
-위의 `lazy`, `marks` 같은 textarea 행 제한 이외의 입력별 설정은 `presentation.FieldInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
+위의 `lazy`, `marks` 같은 입력별 설정은 `presentation.FieldInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
 
 ```ts
 const jsonSchema = {

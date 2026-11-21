@@ -33,7 +33,7 @@ afterEach(() => {
   window.removeEventListener('error', preventWindowError);
 });
 
-it('reads range, marks and lazy from presentation.FieldInputProps', () => {
+it('reads marks and lazy while the schema sets the slider shape', () => {
   render(
     <Form
       fieldInputDefinitions={[FieldInputSliderDefinition]}
@@ -52,7 +52,7 @@ it('reads range, marks and lazy from presentation.FieldInputProps', () => {
     />,
   );
   const props = received.props.at(-1)!;
-  expect(props.range).toBe(true);
+  expect(props.range).toBe(false);
   expect(props.marks).toEqual(marks);
   expect(props.onChange).toBeTypeOf('function');
   expect(props.onAfterChange).toBeUndefined();

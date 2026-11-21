@@ -24,6 +24,8 @@ const FieldInputTextarea = ({
   defaultValue,
   onChange,
   placeholder,
+  minRows,
+  maxRows,
   misfit,
 }: FieldInputPropsWithSchema<string, TextareaSchema>) => {
   const handleChange = useHandle((text: string) =>
@@ -31,10 +33,10 @@ const FieldInputTextarea = ({
   );
   const autoSize = useMemo(
     () => ({
-      minRows: jsonSchema.minRows,
-      maxRows: jsonSchema.maxRows,
+      minRows: minRows ?? jsonSchema.minRows,
+      maxRows: maxRows ?? jsonSchema.maxRows,
     }),
-    [jsonSchema],
+    [minRows, maxRows, jsonSchema.minRows, jsonSchema.maxRows],
   );
   return (
     <div role="group" aria-invalid={misfit || undefined}>

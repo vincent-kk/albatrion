@@ -19,29 +19,28 @@ export const FieldRenderer = ({
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps): ReactElement => {
-  if (depth === 0) return <Input />;
-
-  if (node.strategy === 'branch') {
+  const error =
+    errorMessage != null &&
+    (errorMessage !== '' || (depth > 0 && node.strategy !== 'branch')) &&
+    typeof errorMessage !== 'boolean' ? (
+      <ErrorMessage>{errorMessage}</ErrorMessage>
+    ) : null;
+  if (depth === 0)
     return (
-      <Space direction="vertical" block>
+      <>
         <Input />
-      </Space>
+        {error}
+      </>
     );
-  } else {
-    return (
-      <Space direction="vertical" block>
-        <div>
-          {node.parentNode && isArraySchema(node.parentNode) === false && (
-            <Label />
-          )}
-          <Input />
-        </div>
-        {errorMessage !== null &&
-          errorMessage !== undefined &&
-          typeof errorMessage !== 'boolean' && (
-            <ErrorMessage>{errorMessage}</ErrorMessage>
-          )}
-      </Space>
-    );
-  }
+
+  const title = node.parentNode && !isArraySchema(node.parentNode) && <Label />;
+  return (
+    <Space direction="vertical" block>
+      <div>
+        {title}
+        <Input />
+      </div>
+      {error}
+    </Space>
+  );
 };

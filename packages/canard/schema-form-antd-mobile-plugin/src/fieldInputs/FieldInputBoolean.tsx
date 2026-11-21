@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import { Checkbox } from 'antd-mobile';
 
 import { useHandle } from '@winglet/react-utils/hook';
@@ -11,26 +9,22 @@ import type {
 
 const FieldInputBoolean = ({
   inputId,
+  labelId,
   disabled,
+  readOnly,
   value,
   onChange,
   misfit,
 }: FieldInputProps<boolean | null>) => {
-  const [indeterminate, checked] = useMemo(
-    () => [
-      value !== undefined && typeof value !== 'boolean',
-      value ?? undefined,
-    ],
-    [value],
-  );
   const handleChange = useHandle(onChange);
   return (
     <div role="group" aria-invalid={misfit || undefined}>
       <Checkbox
+        aria-labelledby={labelId}
         id={inputId}
-        disabled={disabled}
-        indeterminate={indeterminate}
-        checked={checked}
+        disabled={disabled || readOnly}
+        indeterminate={value !== undefined && typeof value !== 'boolean'}
+        checked={value === true}
         onChange={handleChange}
         style={{
           '--icon-size': '24px',

@@ -12,6 +12,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { getEnumOptions } from './utils/enum/getEnumOptions';
+
 interface FieldInputRadioGroupProps
   extends FieldInputPropsWithSchema<
     string | number | null,
@@ -26,8 +28,12 @@ interface FieldInputRadioGroupProps
 }
 
 const FieldInputRadioGroup = ({
+  inputId,
+  labelId,
+  getInputId,
   jsonSchema,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
@@ -35,45 +41,40 @@ const FieldInputRadioGroup = ({
   style,
   misfit,
 }: FieldInputRadioGroupProps) => {
-  const options = useMemo(() => {
-    const labels = context.radioLabels || alias || {};
-    return jsonSchema.enum
-      ? map(jsonSchema.enum, (rawValue: string | number | null) => {
-          const value = JSON.stringify(rawValue);
-          return {
-            value,
-            rawValue,
-            label: labels['' + rawValue] || '' + rawValue,
-          };
-        })
-      : [];
-  }, [context, jsonSchema, alias]);
+  const values: readonly (string | number | null)[] | undefined =
+    jsonSchema.enum;
+  const labels = context.radioLabels || alias;
+  const options = useMemo(
+    () => getEnumOptions(values, labels, getInputId),
+    [values, labels, getInputId],
+  );
 
   const initialValue = useMemo(
     () => options.find((option) => option.rawValue === defaultValue)?.value,
     [defaultValue, options],
   );
-
   const handleChange = useHandle((value: string | number) => {
-    const selectedOption = options.find((opt) => opt.value === value);
-    if (selectedOption === undefined) return;
-    onChange(selectedOption.rawValue);
+    const selected = options.find((option) => option.value === value);
+    if (selected) onChange(selected.rawValue);
   });
 
   return (
     <div
+      id={inputId}
+      aria-labelledby={labelId}
       role="radiogroup"
       aria-invalid={misfit || undefined}
       style={{ display: 'flex', flexDirection: 'row', gap: 8, ...style }}
     >
       <Radio.Group
-        disabled={disabled}
+        disabled={disabled || readOnly}
         defaultValue={initialValue}
         onChange={handleChange}
       >
         {map(options, (option) => (
           <Radio
             key={option.value}
+            id={option.id}
             value={option.value}
             style={{
               '--icon-size': '24px',

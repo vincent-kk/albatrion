@@ -22,6 +22,8 @@ interface FieldInputNumberProps
 const parseDraft = (text: string) => (text.trim() === '' ? NaN : Number(text));
 
 const FieldInputNumber = ({
+  inputId,
+  labelId,
   jsonSchema,
   schemaType,
   readOnly,
@@ -39,10 +41,15 @@ const FieldInputNumber = ({
     else onChange(input);
   });
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div
+      id={inputId}
+      role="group"
+      aria-labelledby={labelId}
+      aria-invalid={misfit || undefined}
+    >
       <Stepper
         inputReadOnly={readOnly}
-        disabled={disabled}
+        disabled={disabled || readOnly}
         min={jsonSchema.minimum}
         max={jsonSchema.maximum}
         step={jsonSchema.multipleOf}

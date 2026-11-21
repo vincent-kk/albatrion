@@ -16,6 +16,7 @@ afterEach(() => {
 it('names builtin radio options through the mobile field title', () => {
   render(
     <Form
+      fieldInputDefinitions={plugin.fieldInputDefinitions}
       FieldRenderer={FieldRenderer}
       LabelRenderer={LabelRenderer}
       ErrorMessageRenderer={ErrorMessageRenderer}
@@ -32,7 +33,7 @@ it('names builtin radio options through the mobile field title', () => {
     />,
   );
   const label = screen.getByText('Size').closest('label')!;
-  const group = screen.getByRole('group', { name: 'Size' });
+  const group = screen.getByRole('radiogroup', { name: 'Size' });
   expect(group.getAttribute('aria-labelledby')).toBe(label.id);
   expect(label.htmlFor).toBe(group.id);
 });

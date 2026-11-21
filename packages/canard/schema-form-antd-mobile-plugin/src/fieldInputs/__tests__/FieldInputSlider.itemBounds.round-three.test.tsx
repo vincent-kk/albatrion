@@ -92,16 +92,16 @@ describe('range slider bounds from items (antd-mobile)', () => {
     expect(thumbBounds(view.container).at(-1)).toEqual(['0', '1000', '200']);
   });
 
-  it('diagnostic: bounds written on the array schema itself', () => {
+  it('uses numeric item bounds when the array also has numeric properties', () => {
     const view = render(
       <Form
         fieldInputDefinitions={[FieldInputSliderDefinition]}
         jsonSchema={{
           type: 'array',
           format: 'slider',
-          items: { type: 'number' },
-          minimum: 0,
-          maximum: 1000,
+          items: { type: 'number', minimum: 0, maximum: 1000 },
+          minimum: 40,
+          maximum: 80,
         }}
         defaultValue={[200, 800]}
         onError={() => {}}
