@@ -14,7 +14,7 @@
 
 FormCore가 외부 기본 context를 공급하고 WorkspaceContext가 그 위에 Form context를 합칩니다. 입력이 생성되기 전에 context를 조립하며 원래 딕셔너리는 수정하지 않습니다. [context 비교 계약](../DETAIL.md)에 따른 안정화로 동등한 값의 참조 교체가 불필요한 Context 전파를 만들지 않게 합니다.
 
-폼이 소유한 실제 입력 위치 맵을 전달합니다. 입력이 커밋된 동안 컨테이너가 위치의 키이고, 같은 노드의 여러 표시 위치가 각자 앵커를 가질 수 있습니다. 등록과 해제는 입력의 layout 수명을 따릅니다.
+[FormCore](../../components/Form/components/FormCore/DETAIL.md)가 소유한 실제 입력 위치 맵을 바꾸지 않고 전달합니다. [위치 키](../../helpers/focusTarget/DETAIL.md)와 [등록 수명](../../components/FieldProxy/components/FieldInputBridge/DETAIL.md#goal-052--입력-추적-비용과-명령)은 각 소유자의 계약을 따릅니다.
 
 ## Acceptance Criteria
 

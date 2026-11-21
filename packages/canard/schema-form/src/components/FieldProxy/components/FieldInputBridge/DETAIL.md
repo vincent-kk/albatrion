@@ -84,7 +84,7 @@ Activity·Suspense의 layout 해제는 조합 보류를 끝냅니다. 끝 이벤
 
 렌더가 직접 읽는 Refresh revision은 초기 세대와 적용 세대에 공유하여 렌더당 중복 조회를 피합니다. 이 호출 한정 값은 구독의 스냅숏 확인을 대체하지 않으므로 렌더와 attach 사이 변경 및 Activity 재연결을 계속 따라잡습니다.
 
-직접 focus와 Mount·Render 예약은 연결된 `focusRef` 대상을 한 번 호출합니다. 대상이 없으면 입력 컨테이너에서 `[data-focus-target]`, `input`, `textarea`, `select`, `button`에 일치하는 문서 순서상 첫 요소를 사용합니다. DOM 앵커는 연결된 같은 문서에 있어야 하며 같은 문서의 포털도 허용합니다. Select는 첫 `input` 또는 `textarea`에 독립적으로 적용하고 동시 요청에서는 Focus 뒤에 실행합니다.
+직접 focus와 Mount·Render 예약은 [공통 대상 선택 규칙](../../../../helpers/focusTarget/DETAIL.md)을 사용해 현재 입력 위치의 대상을 한 번 호출합니다. Select는 첫 `input` 또는 `textarea`에 독립적으로 적용하고 동시 요청에서는 Focus 뒤에 실행합니다.
 
 대상은 한 입력 위치의 React ref가 연결·해제합니다. 기존 layout effect는 폼의 실제 입력 위치를 등록하고 구독하며, 해제하거나 초기 Mount·Render 행동이 실패하면 그 위치와 구독을 정리합니다. 컨테이너 교체와 composition 종료는 기존 갱신 dispatch를 공유합니다.
 
