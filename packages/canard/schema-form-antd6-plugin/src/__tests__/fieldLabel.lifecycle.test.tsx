@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import {
@@ -143,11 +143,8 @@ it.each([
           ),
           key: '',
         });
-        await waitFor(() =>
-          expect(screen.getByRole('textbox', { name }), step.step).toBe(
-            control,
-          ),
-        );
+        await act(async () => {});
+        expect(screen.getByRole('textbox', { name }), step.step).toBe(control);
         expect(
           screen.getByRole('slider').getAttribute('aria-valuenow'),
           step.step,
