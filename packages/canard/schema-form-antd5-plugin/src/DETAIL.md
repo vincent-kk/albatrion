@@ -8,6 +8,8 @@
 
 코어가 공급한 inputId와 labelId는 Ant Design이 받는 id 및 ARIA 속성에 연결합니다. 복합 입력의 별도 주소는 getInputId(key)로 받습니다. path는 JSON Pointer로 사용합니다.
 
+루트와 분기 렌더러는 코어가 제공한 오류 메시지가 있을 때 기존 오류 부품을 표시합니다. 날짜·월·시간 기간은 완결된 선택을 저장하고 clear를 빈 값으로 전달합니다. 피커와 선택기의 잠금은 Ant Design의 disabled 속성에 전달합니다. 텍스트 영역의 행 범위는 presentation 입력 설정을 우선 적용합니다.
+
 Select는 표시한 태그의 선택을 저장합니다. Checkbox 그룹은 표시하지 않는 기존 값을 유지합니다. 별칭은 제공된 객체의 자체 속성에서 읽습니다.
 
 ## Acceptance Criteria

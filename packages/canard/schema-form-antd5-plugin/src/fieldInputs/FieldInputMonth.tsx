@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { DatePicker } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
-import dayjs, { type Dayjs } from 'dayjs';
+import type { Dayjs } from 'dayjs';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -12,20 +12,18 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import type { PickerPresentation } from './utils/picker/PickerPresentation';
+import { getPickerDateLimits } from './utils/picker/getPickerDateLimits';
+import { parsePickerValue } from './utils/picker/parsePickerValue';
+
 const DATA_FORMAT = 'YYYY-MM';
 
-interface FieldInputMonthProps
-  extends FieldInputPropsWithSchema<
-    string | null,
-    StringSchema,
-    { size?: SizeType }
-  > {
-  size?: SizeType;
-  /** Earliest selectable value, from `presentation.FieldInputProps.minimum`. */
-  minimum?: string;
-  /** Latest selectable value, from `presentation.FieldInputProps.maximum`. */
-  maximum?: string;
-}
+type FieldInputMonthProps = FieldInputPropsWithSchema<
+  string | null,
+  StringSchema,
+  { size?: SizeType }
+> &
+  PickerPresentation;
 
 const FieldInputMonth = ({
   path,
@@ -44,20 +42,14 @@ const FieldInputMonth = ({
     onChange(value ? value.format(DATA_FORMAT) : undefined);
   });
   const initialValue = useMemo(
-    () => (defaultValue ? dayjs(defaultValue, DATA_FORMAT) : undefined),
+    () =>
+      defaultValue ? parsePickerValue(defaultValue, DATA_FORMAT) : undefined,
     [defaultValue],
   );
-  const disabledDate = useMemo(() => {
-    return (date: Dayjs | null) => {
-      if (!date) return false;
-      if (!minimum && !maximum) return false;
-      if (minimum && date.isBefore(dayjs(minimum, DATA_FORMAT), 'month'))
-        return true;
-      if (maximum && date.isAfter(dayjs(maximum, DATA_FORMAT), 'month'))
-        return true;
-      return false;
-    };
-  }, [minimum, maximum]);
+  const disabledDate = useMemo(
+    () => getPickerDateLimits(minimum, maximum, DATA_FORMAT, 'month'),
+    [minimum, maximum],
+  );
 
   return (
     <DatePicker
