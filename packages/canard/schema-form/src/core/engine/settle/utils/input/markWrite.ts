@@ -17,6 +17,7 @@ import { pruneInactiveSources } from '../slots/pruneInactiveSources';
 import { writeAbsentConstituent } from '../slots/writeAbsentConstituent';
 import { findDepartingChild } from '../transition/findDepartingChild';
 import { placeDeclarativeValue } from '../transition/placeDeclarativeValue';
+import { supersedeRevivedSlotSource } from '../transition/utils/supersedeRevivedSlotSource';
 import { arrayExtras } from './arrayExtras';
 import { assertVirtualWriteShape } from './assertVirtualWriteShape';
 import { hasDistributedChildInput } from './hasDistributedChildInput';
@@ -79,6 +80,14 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   if (!context.isAutomatic) context.writtenInputs.set(node, input);
   else {
     recordRetainedSource(node, context, writeOrigin);
+    if (context.isMarkingLiveRule || context.replayingDepartingWrite) {
+      const previousRight = context.revivedSlotSources?.get(node);
+      if (
+        previousRight &&
+        previousRight.write !== context.replayingDepartingWrite
+      )
+        supersedeRevivedSlotSource(previousRight);
+    }
     context.automaticLog.push({
       node,
       previousSource: node.source,

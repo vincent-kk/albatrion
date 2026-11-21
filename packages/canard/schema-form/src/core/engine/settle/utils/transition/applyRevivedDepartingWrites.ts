@@ -6,6 +6,7 @@ import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { markWrite } from '../input/markWrite';
 import { placeDeclarativeValue } from './placeDeclarativeValue';
+import { captureRevivedSlotSource } from './utils/captureRevivedSlotSource';
 
 /** Live node at `suffix` below `node`, or undefined when a step on the way is not live. */
 const findLive = <Self extends FieldNodeRecord<Self>>(
@@ -35,7 +36,7 @@ export const applyRevivedDepartingWrites = <Self extends FieldNodeRecord<Self>>(
   const writes = context.departingWrites;
   if (!writes || context.exceededBudget) return;
   const pending = writes.filter(
-    (write) => write.node === node && write.revivedAt === undefined,
+    (write) => write.node === node && write.revived === undefined,
   );
   if (!pending.length) return;
   const wasAutomatic = context.isAutomatic;
@@ -43,9 +44,20 @@ export const applyRevivedDepartingWrites = <Self extends FieldNodeRecord<Self>>(
   for (const write of pending) {
     const target = findLive(node, write.suffix);
     if (target) {
-      const replacements = (context.liveReplacementPathsAfterRevival ??= []);
-      write.revivedAt = replacements.push(target.path);
-      markWrite(target, write.value, context, undefined, undefined, 'revived');
+      write.revived = captureRevivedSlotSource(target, write, context);
+      context.replayingDepartingWrite = write;
+      try {
+        markWrite(
+          target,
+          write.value,
+          context,
+          undefined,
+          undefined,
+          'revived',
+        );
+      } finally {
+        context.replayingDepartingWrite = undefined;
+      }
     } else {
       writes.splice(writes.indexOf(write), 1);
       placeDeclarativeValue(

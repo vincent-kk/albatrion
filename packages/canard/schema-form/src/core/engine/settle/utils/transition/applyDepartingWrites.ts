@@ -2,7 +2,7 @@ import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { getInactiveValuePath } from '../inactive/getInactiveValuePath';
 import { writeSlotPath } from '../slots/writeSlotPath';
-import { getRevivedSlotValues } from './utils/getRevivedSlotValues';
+import { readRevivedSlotWrites } from './utils/readRevivedSlotWrites';
 
 /**
  * Write the declarative values named for departed nodes and the addresses below them into their
@@ -22,21 +22,25 @@ export const applyDepartingWrites = <Self extends FieldNodeRecord<Self>>(
     suffix,
     template,
     value,
-    revivedAt,
+    revived,
   } of context.departingWrites) {
     if (!node.isDetached) continue;
     const path = getInactiveValuePath(node, context);
     if (path === undefined) continue;
-    if (revivedAt === undefined) {
-      writeSlotPath(context.root, path + suffix, template, value, true, context);
+    if (revived === undefined) {
+      writeSlotPath(
+        context.root,
+        path + suffix,
+        template,
+        value,
+        true,
+        context,
+      );
       continue;
     }
-    const values = getRevivedSlotValues(
-      node.path,
-      { suffix, template, value },
-      context.liveReplacementPathsAfterRevival?.slice(revivedAt) ?? [],
-    );
-    for (const { suffix, template, value, isWhole } of values)
+    for (const { suffix, template, value, isWhole } of readRevivedSlotWrites(
+      revived,
+    ))
       writeSlotPath(
         context.root,
         path + suffix,
