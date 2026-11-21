@@ -23,7 +23,7 @@ it.each([
   '%s publishes undefined after typing and clearing',
   async (_, definition, format, nullable) => {
     const ref = createRef<FormHandle>();
-    const { container } = render(
+    render(
       <Form
         ref={ref}
         fieldInputDefinitions={[definition]}
@@ -41,9 +41,9 @@ it.each([
         onError={() => {}}
       />,
     );
-    const input = container.querySelector<
-      HTMLInputElement | HTMLTextAreaElement
-    >('[id="/text"]')!;
+    const input = screen.getByRole<HTMLInputElement | HTMLTextAreaElement>(
+      'textbox',
+    );
     await userEvent.type(input, 'example.com');
     expect(ref.current!.getValue()).toEqual({
       text: format === 'uri' ? 'http://example.com' : 'example.com',
@@ -82,7 +82,7 @@ it.each([false, true])(
     expect(
       container.querySelector('.ant-select-selection-item')!.textContent,
     ).toBe('ftp://');
-    const input = container.querySelector<HTMLInputElement>('[id="/text"]')!;
+    const input = screen.getByRole<HTMLInputElement>('textbox');
     await userEvent.type(input, 'example.com');
     expect(ref.current!.getValue()).toEqual({ text: 'ftp://example.com' });
     await userEvent.clear(input);
