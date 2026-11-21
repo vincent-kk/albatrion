@@ -13,4 +13,5 @@ export const localizeSchemaPath = (path: string, resources: readonly SchemaResou
     if (suffix.startsWith('#/')) return { schema, path: suffix };
     if (suffix.startsWith('/')) return { schema, path: '#' + suffix };
   }
+  return undefined;
 };
