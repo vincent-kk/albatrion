@@ -7,16 +7,11 @@ import type {
   FieldNodeRecord,
   InactiveSlotOverlay,
 } from '../../../../record';
-import type {
-  RetainedArraySources,
-  SettlementContext,
-} from '../../../types/settlement';
+import type { SettlementContext } from '../../../types/settlement';
 import { createSlotValueOverlay } from '../../slots/createSlotValueOverlay';
 import { getSlotSource } from '../../slots/getSlotSource';
 import { packArrayInputOverlay } from '../../slots/utils/packArrayInputOverlay';
-
-/** Arrays whose automatic writes changed the binding generation or named slots. */
-type RetainedArrays<Self> = Map<Self, RetainedArraySources>;
+import { selectRetiredArrayBaseline } from './selectRetiredArrayBaseline';
 
 /**
  * Record named positions that compute may never instantiate and retire shortened bindings.
@@ -34,14 +29,13 @@ export const recordNamedArrayItems = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   origin: Distribution['writeOrigin'],
 ): void => {
-  const arrays: RetainedArrays<Self> = (context.retainedArrays ??= new Map());
-  let array = arrays.get(host);
-  if (!array) {
-    array = { retiredFrom: Infinity };
-    arrays.set(host, array);
-  }
-  if (host.itemCount < previousCount)
+  const source = context.retainedSources?.get(host);
+  const array = source?.array;
+  if (!array) return;
+  if (host.itemCount < previousCount) {
     array.retiredFrom = Math.min(array.retiredFrom, host.itemCount);
+    if (source.shouldUseBaseline) selectRetiredArrayBaseline(host, context);
+  }
   let items: Map<BlueprintChildEntry, InactiveSlotOverlay> | undefined;
   if (origin && isArray(input))
     for (let index = 0; index < input.length; index++) {

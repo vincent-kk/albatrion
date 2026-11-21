@@ -24,8 +24,10 @@ import { hasDistributedChildInput } from './hasDistributedChildInput';
 import { isPlain } from './isPlain';
 import { nextExtras } from './nextExtras';
 import { staticSpec } from './staticSpec';
+import { acceptsRetainedWrite } from './utils/acceptsRetainedWrite';
 import { admitsSameValueWrite } from './utils/admitsSameValueWrite';
 import { keepsHostKeys } from './utils/keepsHostKeys';
+import { recordArrayBoundary } from './utils/recordArrayBoundary';
 import { recordNamedArrayItems } from './utils/recordNamedArrayItems';
 import { recordNamedObjectSlots } from './utils/recordNamedObjectSlots';
 import { recordRetainedSource } from './utils/recordRetainedSource';
@@ -48,6 +50,7 @@ const UNINTERPRETED: unique symbol = Symbol('uninterpreted');
  * @param spec - Static or narrowed type restriction used for interpretation
  * @param changedValue - A leaf's input already interpreted under the static spec and proven unequal to its source by the distribution's skip test; omitted, the input is interpreted and compared here
  * @param writeOrigin - Named rule input or replay from a cancelled exit, whose whole omissions also persist
+ * @param writeOrder - Original sequence when an existing distribution or input is re-read
  * @returns Nothing; only this node's own state channels are stored here
  */
 export const markWrite = <Self extends FieldNodeRecord<Self>>(
@@ -57,6 +60,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   spec: UnionSpec = staticSpec(node.schemaType, node.isNullable),
   changedValue: unknown = UNINTERPRETED,
   writeOrigin?: Distribution['writeOrigin'],
+  writeOrder?: number,
 ): void => {
   if (context.writeEpoch !== undefined && context.isAutomatic)
     restoreWriteEpochPaths(context);
@@ -79,21 +83,21 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     context.kind === FieldNodeWriteKind.CallerPartial && !context.isAutomatic;
   if (!context.isAutomatic) context.writtenInputs.set(node, input);
   else {
-    recordRetainedSource(node, context, writeOrigin);
+    if (writeOrder === undefined)
+      writeOrder = context.retainedWriteOrder =
+        (context.retainedWriteOrder ?? 0) + 1;
+    if (!acceptsRetainedWrite(node, context, writeOrder)) return;
+    recordRetainedSource(node, context, writeOrigin, writeOrder);
+    if (writeOrigin !== undefined) context.writtenInputs.set(node, input);
     if (context.isMarkingLiveRule || context.replayingDepartingWrite) {
-      const previousRight = context.revivedSlotSources?.get(node);
+      const previousRight =
+        context.retainedSources?.get(node)?.revivedSlotSource;
       if (
         previousRight &&
         previousRight.write !== context.replayingDepartingWrite
       )
         supersedeRevivedSlotSource(previousRight);
     }
-    context.automaticLog.push({
-      node,
-      previousSource: node.source,
-      previousExtras: node.extras,
-      previousDistributed: context.distributedInputs.get(node),
-    });
   }
   const known = changedValue !== UNINTERPRETED;
   const value = known ? changedValue : node.behavior.interpret(input, spec);
@@ -153,6 +157,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
         undefined,
         undefined,
         writeOrigin,
+        writeOrder,
       );
     }
     return;
@@ -164,13 +169,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
 
   if (node.behavior.type === 'array') {
     const previousItemCount = node.itemCount;
-    if (context.isAutomatic)
-      context.arrayStructureLog.push({
-        host: node,
-        previousItems: [...(node.children ?? [])],
-        previousItemCount,
-        previousExtras: node.extras,
-      });
+    if (context.isAutomatic) recordArrayBoundary(node, context);
     if (!context.arrayCounts.has(node))
       context.arrayCounts.set(node, previousItemCount);
     node.itemCount = isArray(value) ? value.length : 0;
@@ -238,6 +237,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     isAutomatic: context.isAutomatic,
   };
   if (writeOrigin !== undefined) distribution.writeOrigin = writeOrigin;
+  if (writeOrder !== undefined) distribution.writeOrder = writeOrder;
   context.distributedInputs.set(node, distribution);
   if (context.isAutomatic && writeOrigin !== undefined && isPlain(value))
     recordNamedObjectSlots(node, value, context);
@@ -267,13 +267,22 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
       continue;
     let childOrigin = writeOrigin;
     if (context.isAutomatic) {
+      if (!acceptsRetainedWrite(child, context, writeOrder)) continue;
       if (!hasInput && childOrigin === 'declarative') childOrigin = undefined;
       if (childOrigin === undefined) {
         context.writtenInputs.set(child, childInput);
         context.filledNodes.add(child);
       }
     }
-    markWrite(child, childInput, context, childSpec, interpreted, childOrigin);
+    markWrite(
+      child,
+      childInput,
+      context,
+      childSpec,
+      interpreted,
+      childOrigin,
+      writeOrder,
+    );
   }
   if (
     !context.isAutomatic ||

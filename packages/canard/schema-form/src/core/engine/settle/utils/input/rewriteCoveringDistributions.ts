@@ -5,6 +5,7 @@ import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
+import { getSourceBoundary } from '../source/getSourceBoundary';
 import { hasDistributedChildInput } from './hasDistributedChildInput';
 import { isPlain } from './isPlain';
 
@@ -63,13 +64,7 @@ export const rewriteCoveringDistributions = <
         host.behavior.type === 'array',
       )
     ) {
-      context.automaticLog.push({
-        node: host,
-        previousSource: host.source,
-        previousExtras: host.extras,
-        previousDistributed: distribution,
-        isDistributionOnly: true,
-      });
+      getSourceBoundary(host, context);
       context.distributedInputs.set(host, {
         ...distribution,
         input: replaceAt(distribution.input, names, index, value),

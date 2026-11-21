@@ -19,14 +19,15 @@ export const isExternalBranchValueChange = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): boolean => {
   const relays = node.runtime.inputRelays;
-  if (relays && isRelayedInput(relays, node.path, isEqualRelayArray)) return false;
-  for (const automatic of context.automaticLog)
-    if (
-      !automatic.isDistributionOnly &&
-      (automatic.node === node ||
-        isDescendantPath(automatic.node.path, node.path))
-    )
-      return true;
+  if (relays && isRelayedInput(relays, node.path, isEqualRelayArray))
+    return false;
+  if (context.retainedSources)
+    for (const [written, source] of context.retainedSources)
+      if (
+        source.hasAutomaticWrite &&
+        (written === node || isDescendantPath(written.path, node.path))
+      )
+        return true;
   if (context.writeOrigins?.length)
     for (const changed of context.changedSource) {
       if (changed !== node.path && !isDescendantPath(changed, node.path))
@@ -39,7 +40,8 @@ export const isExternalBranchValueChange = <Self extends FieldNodeRecord<Self>>(
     }
   if (context.writeOrigins?.length)
     return (
-      readSettlementSource(context, node.path, true) !== FieldNodeWriteKind.Input
+      readSettlementSource(context, node.path, true) !==
+      FieldNodeWriteKind.Input
     );
   return (
     node !== context.target ||
