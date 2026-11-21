@@ -3,6 +3,7 @@ import { isArray, isString } from '@winglet/common-utils/filter';
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 
+import { decodePointerFragment } from '../../decodePointerFragment';
 import { JSONPointerError } from './error';
 
 export const compilePointer = (pointer: string | (string | number)[]) => {
@@ -17,9 +18,9 @@ export const compilePointer = (pointer: string | (string | number)[]) => {
 
 const handleStringPointer = (pointer: string) => {
   if (pointer.length === 0) return [];
-  if (pointer.charCodeAt(0) === 35 && pointer.indexOf('%') !== -1) {
+  if (pointer.charCodeAt(0) === 35) {
     try {
-      pointer = '#' + decodeURIComponent(pointer.slice(1));
+      pointer = decodePointerFragment(pointer);
     } catch {
       throw new JSONPointerError(
         'INVALID_POINTER_TYPE',

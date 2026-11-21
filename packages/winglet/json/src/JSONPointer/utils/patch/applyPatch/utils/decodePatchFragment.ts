@@ -1,4 +1,5 @@
 import type { Patch } from '../../../patchModel';
+import { decodePointerFragment } from '../../../decodePointerFragment';
 import { JSONPatchError } from './error';
 
 /**
@@ -16,10 +17,7 @@ export const decodePatchFragment = (
 ): string => {
   let decoded: string;
   try {
-    decoded =
-      pointer.indexOf('%') === -1
-        ? pointer.slice(1)
-        : decodeURIComponent(pointer.slice(1));
+    decoded = decodePointerFragment(pointer).slice(1);
   } catch {
     throw new JSONPatchError(
       'PATCH_PATH_INVALID',
