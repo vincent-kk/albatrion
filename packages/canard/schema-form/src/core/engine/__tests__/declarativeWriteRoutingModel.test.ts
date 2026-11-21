@@ -20,11 +20,12 @@ import { createSeedSampler } from './fixtures/createSeedSampler';
  * root Merge write are drawn per seed. The rank and reset-overlap dimensions observe /outer. The
  * two repeated-exit dimensions observe a named write through a parent object and require either
  * its retained value after the second exit or its live value after a second revival. A separate
- * dimension writes the live composite and closes its gate in one rule, then observes the exit policy.
+ * dimension writes the live composite and closes its gate in one rule. The two fill-order
+ * dimensions omit and name the same child in successive live whole writes before the gate closes.
  *
- * Locally and in pre-release, seeds 1 to 3000 retain the earlier dimensions and seeds 3001 to 3360
- * cover the live whole exit. The pr tier runs 1440 stratified seeds: the
- * first 20 of each of 72 classes, dimension times exit policy times batch or Merge (each reset
+ * Locally and in pre-release, seeds 1 to 3000 retain the earlier dimensions and each later
+ * dimension has 360 consecutive seeds. The pr tier runs 1920 stratified seeds: the
+ * first 20 of each of 96 classes, dimension times exit policy times batch or Merge (each reset
  * dimension contributes 3 classes without Merge; each composite-target dimension contributes 12,
  * parent and virtual targets for each form and policy; the other dimensions contribute 6 each).
  */
@@ -38,6 +39,8 @@ type Dimension =
   | 'exitRepeated'
   | 'exitRepeatedAndCancelled'
   | 'liveWholeExit'
+  | 'omissionThenName'
+  | 'nameThenOmission'
   | 'layered'
   | 'resetDetached'
   | 'reverseRank'
@@ -72,13 +75,19 @@ const REPEATED_EXIT_DIMENSIONS: readonly Dimension[] = [
   'exitRepeatedAndCancelled',
 ];
 
+const WHOLE_EXIT_DIMENSIONS = [
+  'liveWholeExit',
+  'omissionThenName',
+  'nameThenOmission',
+] as const;
+
 /** Both composite addresses route to the same stored value. */
 const COMPOSITE_DIMENSIONS: readonly Dimension[] = [
   ...REPEATED_EXIT_DIMENSIONS,
-  'liveWholeExit',
+  ...WHOLE_EXIT_DIMENSIONS,
 ];
 
-const SEED_CLASSES = [...DIMENSIONS, 'liveWholeExit' as const].flatMap(
+const SEED_CLASSES = [...DIMENSIONS, ...WHOLE_EXIT_DIMENSIONS].flatMap(
   (dimension) =>
     POLICIES.flatMap((policy) =>
       (RESET_DIMENSIONS.includes(dimension) ? [false] : [false, true]).flatMap(
@@ -94,7 +103,12 @@ const SEED_CLASSES = [...DIMENSIONS, 'liveWholeExit' as const].flatMap(
 );
 
 const PRIMARY_SEED_COUNT = 3000;
-const sampler = createSeedSampler(PRIMARY_SEED_COUNT + 360, SEED_CLASSES, 20);
+const SEEDS_PER_WHOLE_EXIT = 360;
+const sampler = createSeedSampler(
+  PRIMARY_SEED_COUNT + SEEDS_PER_WHOLE_EXIT * WHOLE_EXIT_DIMENSIONS.length,
+  SEED_CLASSES,
+  20,
+);
 
 const rule = (target: string, value: (source: string) => unknown) => ({
   type: 'string' as const,
@@ -168,7 +182,10 @@ const createSchema = (policy: Policy, isVirtual: boolean): AuthoredSchema => ({
     roundTrip: {
       type: 'object',
       controls: { active: '/roundTripOn === true' },
-      properties: { y: { type: 'string', controls: policyControls(policy) } },
+      properties: {
+        y: { type: 'string', controls: policyControls(policy) },
+        z: { type: 'string' },
+      },
     },
     reopenRoundTrip: rule('../roundTripOn', () => true),
     closeRoundTripAgain: {
@@ -202,6 +219,29 @@ const createSchema = (policy: Policy, isVirtual: boolean): AuthoredSchema => ({
                   : { '../roundTrip': { y: source } }),
               }
             : {},
+      },
+    },
+    omitRoundTripY: isVirtual
+      ? rule('../roundTripGroup', (source) => [{ z: source }])
+      : rule('../roundTrip', (source) => ({ z: source })),
+    nameRoundTripY: isVirtual
+      ? rule('../roundTripGroup', (source) => [{ y: source }])
+      : rule('../roundTrip', (source) => ({ y: source })),
+    closeAfterWhole: {
+      type: 'string',
+      controls: {
+        derived:
+          '/omitRoundTripY != null && /roundTrip/z === /omitRoundTripY ? "name:" + /omitRoundTripY : /nameRoundTripY != null && /roundTrip/y === /nameRoundTripY ? "omit" : /closeAfterWhole',
+        injectTo: (value: unknown) => {
+          if (typeof value !== 'string' || !value) return {};
+          const next = value === 'omit' ? { z: 'last' } : { y: value.slice(5) };
+          return {
+            '../roundTripOn': false,
+            ...(isVirtual
+              ? { '../roundTripGroup': [next] }
+              : { '../roundTrip': next }),
+          };
+        },
       },
     },
     close: rule('../object/on', () => false),
@@ -248,7 +288,9 @@ const model = (
     return { live: caller, closedAgain: 'closed', reopenedAgain: 'open' };
   // The lower winner omits the live y it makes leave; that exit keeps y's committed value, as the
   // lower winner's own single call does, so the policy applies to y0.
-  if (dimension === 'liveWholeExit') return exit(policy, caller);
+  if (dimension === 'liveWholeExit' || dimension === 'omissionThenName')
+    return exit(policy, caller);
+  if (dimension === 'nameThenOmission') return exit(policy, 'initial');
   if (dimension === 'layered')
     return named !== undefined ? { retained: named } : exit(policy, 'y0');
   if (dimension === 'resetDetached') return { retained: caller };
@@ -301,7 +343,9 @@ it(`places each declarative value where the routing model says for ${sampler.lab
     const dimension =
       seed <= PRIMARY_SEED_COUNT
         ? DIMENSIONS[random(DIMENSIONS.length)]
-        : 'liveWholeExit';
+        : WHOLE_EXIT_DIMENSIONS[
+            Math.floor((seed - PRIMARY_SEED_COUNT - 1) / SEEDS_PER_WHOLE_EXIT)
+          ];
     const policy = POLICIES[random(POLICIES.length)];
     const isMerge = !RESET_DIMENSIONS.includes(dimension) && random(2) === 1;
     const isVirtual =
@@ -342,6 +386,8 @@ it(`places each declarative value where the routing model says for ${sampler.lab
         reopenTwice: true,
       },
       liveWholeExit: { writeAndCloseRoundTrip: caller },
+      omissionThenName: { omitRoundTripY: caller },
+      nameThenOmission: { nameRoundTripY: caller },
       layered: { low: 'l', src: source },
       reverseRank: {
         outerOn: false,
