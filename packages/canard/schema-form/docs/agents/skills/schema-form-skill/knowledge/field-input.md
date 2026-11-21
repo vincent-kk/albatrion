@@ -77,8 +77,8 @@ const valueReading: FieldInputDefinition[] = [
 
 ## Custom Input Contract
 
-- Connect the optional `focusRef` prop to one control's React `ref`. It accepts a DOM element or a public component handle with a synchronous `focus()` method. Let the control provide its own keyboard behavior and disconnect an imperative handle when it cannot receive focus.
-- `focus(path)` calls the connected target once. Without one, it chooses the first in DOM order matching `[data-focus-target], input, textarea, select, button`. A fallback marker belongs on an already focusable element. Mounted-target detection checks native disabled controls and `aria-disabled="true"`.
+- Connect the optional `focusRef` prop to one control's React `ref`. A DOM anchor must be a connected element in the same document as the input container. You can also connect a public component handle with a synchronous `focus()` method. Let the control provide its own keyboard behavior and disconnect an imperative handle when it cannot receive focus.
+- `focus(path)` calls the eligible target once. Without one, it chooses the first in DOM order matching `[data-focus-target], input, textarea, select, button`. When you fill an empty array slot, automatic focus looks for an anchor on the new item's input within that row, then uses the same DOM fallback within the row if needed. A fallback marker belongs on an already focusable element. Mounted-target detection checks native disabled controls and `aria-disabled="true"`.
 - Destructure `focusRef` before forwarding the remaining props to a control.
 
 ```tsx
