@@ -158,7 +158,7 @@ Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores th
 
 - **Role**: Text area for multiline text input
 - **Applied when**: `type` is `"string"` and `format` or `inputType` is `"textarea"`
-- **Additional features**: Automatic resizing uses the schema-level extensions `minRows` and `maxRows`, alongside `type` and `format`; these two settings are not read from `presentation.FieldInputProps`
+- **Additional features**: Set `minRows` and `maxRows` in `presentation.FieldInputProps` to control automatic resizing. The schema-level extensions supply defaults
 
 ### **[`FieldInputString.tsx`](./src/fieldInputs/FieldInputString.tsx)**
 
