@@ -53,17 +53,17 @@ export function cloneBuiltinSubclass(
   if (value instanceof Map) {
     const result = constructBuiltin(Map, [], prototype);
     cache.set(value, result);
-    for (const entry of value)
+    for (const [key, item] of Map.prototype.entries.call(value))
       Map.prototype.set.call(
         result,
-        replicate(entry[0], limit, depth, cache),
-        replicate(entry[1], limit, depth, cache),
+        replicate(key, limit, depth, cache),
+        replicate(item, limit, depth, cache),
       );
     return result;
   }
   const result = constructBuiltin(Set, [], prototype);
   cache.set(value, result);
-  for (const key of value)
+  for (const key of Set.prototype.values.call(value))
     Set.prototype.add.call(result, replicate(key, limit, depth, cache));
   return result;
 }
