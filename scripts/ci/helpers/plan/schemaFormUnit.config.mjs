@@ -37,5 +37,5 @@ class SchemaFormUnitSequencer extends BaseSequencer {
 }
 
 export default mergeConfig(config, {
-  test: { sequence: { sequencer: SchemaFormUnitSequencer } },
+  test: { maxWorkers: 4, sequence: { sequencer: SchemaFormUnitSequencer } },
 });
