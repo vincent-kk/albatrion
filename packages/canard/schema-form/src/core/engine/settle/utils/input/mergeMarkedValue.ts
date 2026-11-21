@@ -5,9 +5,13 @@ import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { FieldNodeWriteKind } from '../../../types/value';
-import { BATCH_HOST_SOURCE } from '../../../utils/batchHostSource';
+import {
+  BATCH_HOST_SOURCE,
+  writeBatchHostSource,
+} from '../../../utils/batchHostSource';
 import { writeObjectKey } from '../../../utils/writeObjectKey';
 import type { WriteRange } from '../../types/writeRange';
+import { canReleaseCallerHost } from './canReleaseCallerHost';
 import { decideAddressWrite } from './decideAddressWrite';
 import { getWriteChild } from './getWriteChild';
 import { hasCallerInputOutput } from './hasCallerInputOutput';
@@ -69,14 +73,12 @@ export const mergeMarkedValue = <Self extends FieldNodeRecord<Self>>(
     )
       hasChildOutput = hasCallerInputOutput(value, child, binding);
   }
-  if (wrongSource !== undefined) {
-    if (hasChildOutput) Reflect.deleteProperty(next, BATCH_HOST_SOURCE);
-    else
-      Object.defineProperty(next, BATCH_HOST_SOURCE, {
-        value: wrongSource,
-        enumerable: true,
-        configurable: true,
-      });
-  }
+  if (wrongSource !== undefined)
+    writeBatchHostSource(
+      next,
+      canReleaseCallerHost(wrongSource, hasChildOutput)
+        ? undefined
+        : wrongSource,
+    );
   return next;
 };

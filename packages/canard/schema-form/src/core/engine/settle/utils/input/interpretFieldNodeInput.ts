@@ -3,16 +3,13 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { Dictionary, Optional } from '@aileron/declare';
 
 import { BEHAVIORS } from '../../../behaviors';
-import { getItemEntries } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { BATCH_HOST_SOURCE } from '../../../utils/batchHostSource';
-import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { writeObjectKey } from '../../../utils/writeObjectKey';
 import { isPlain } from './isPlain';
 import { staticSpec } from './staticSpec';
-
-/** First declared child bindings are shared by all occurrences of a template. */
+import { visitInputChildren } from './visitInputChildren';
 
 /**
  * Interpret an input subtree without applying any settlement semantics.
@@ -36,55 +33,25 @@ export const interpretFieldNodeInput = <Self extends FieldNodeRecord<Self>>(
   const value = row
     ? row.interpret(input, staticSpec(template.schemaType, template.isNullable))
     : input;
-  if (
-    template.strategy !== 'branch' ||
-    value === null ||
-    typeof value !== 'object' ||
-    seen.has(value)
-  )
-    return value;
-  seen.add(value);
-  try {
-    if (template.kind === 'array' && isArray(value)) {
-      let copy: Optional<unknown[]>;
-      for (let index = 0; index < value.length; index++) {
-        const item = live?.childrenByName?.['' + index];
-        const candidates = getItemEntries(template, index);
-        const child =
-          item?.blueprintNode ??
-          (candidates.length === 1 ? candidates[0].node : undefined);
-        if (!child) continue;
-        const next = interpretFieldNodeInput(child, value[index], item, seen);
-        if (next !== value[index]) (copy ??= value.slice())[index] = next;
-      }
-      return copy ?? value;
-    }
-    if (template.kind === 'object' && isPlain(value)) {
-      let children = getHostDerived<
-        'objectChildren',
-        ReadonlyMap<string, BlueprintNode>
-      >(template).objectChildren;
-      if (!children) {
-        const bindings = new Map<string, BlueprintNode>();
-        for (const entry of template.childEntries)
-          if (!bindings.has(entry.name)) bindings.set(entry.name, entry.node);
-        getHostDerived<'objectChildren', ReadonlyMap<string, BlueprintNode>>(
-          template,
-        ).objectChildren = children = bindings;
-      }
-      let copy: Optional<Dictionary<unknown>>;
-      for (const name of Object.keys(value)) {
-        const item = live?.childrenByName?.[name];
-        const child = item?.blueprintNode ?? children.get(name);
-        if (!child) continue;
-        const next = interpretFieldNodeInput(child, value[name], item, seen);
-        if (next !== value[name])
-          writeObjectKey((copy ??= { ...value }), name, next);
-      }
-      return copy ?? value;
-    }
-    return value;
-  } finally {
-    seen.delete(value);
-  }
+  if (template.strategy !== 'branch') return value;
+  let objectCopy: Optional<Dictionary<unknown>>;
+  let arrayCopy: Optional<unknown[]>;
+  visitInputChildren(
+    template,
+    value,
+    live,
+    seen,
+    (key, entry, child, raw, _, isAmbiguous) => {
+      if (!child && isAmbiguous) return;
+      const binding = child?.blueprintNode ?? entry?.node;
+      if (!binding) return;
+      const next = interpretFieldNodeInput(binding, raw, child, seen);
+      if (next === raw) return;
+      if (typeof key === 'number' && isArray(value))
+        (arrayCopy ??= value.slice())[key] = next;
+      else if (isPlain(value))
+        writeObjectKey((objectCopy ??= { ...value }), String(key), next);
+    },
+  );
+  return objectCopy ?? arrayCopy ?? value;
 };

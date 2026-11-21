@@ -1,11 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
-import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import {
   BEHAVIORS,
   assembleArrayValue,
   assembleObjectValue,
-  getArrayItemTemplate,
   getStaticChoices,
 } from '../../../behaviors';
 import { mergeEffectiveSchema } from '../../../blueprint';
@@ -18,6 +16,7 @@ import { arrayExtras } from './arrayExtras';
 import { isPlain } from './isPlain';
 import { nextExtras } from './nextExtras';
 import { staticSpec } from './staticSpec';
+import { visitInputChildren } from './visitInputChildren';
 
 /**
  * Evaluate a marked storage input with the currently selected child bindings.
@@ -56,43 +55,28 @@ export const readStoredInput = <Self extends FieldNodeRecord<Self>>(
     const active = new Map<string, unknown>();
     let extras: object | undefined;
     if (isPlain(value) && !ancestors.has(value)) {
-      ancestors.add(value);
-      try {
-        source = Reflect.get(value, BATCH_HOST_SOURCE);
-        const undeclared = nextExtras(
-          undefined,
+      source = Reflect.get(value, BATCH_HOST_SOURCE);
+      const undeclared = nextExtras(
+        undefined,
+        value,
+        getDeclaredChildNames(template),
+        false,
+      );
+      if (isPlain(undeclared)) extras = undeclared;
+      if (source === undefined)
+        visitInputChildren(
+          template,
           value,
-          getDeclaredChildNames(template),
-          false,
+          live,
+          ancestors,
+          (name, entry, child, raw) => {
+            if (entry && (child || !live))
+              active.set(
+                String(name),
+                readStoredInput(entry.node, raw, child, true, ancestors),
+              );
+          },
         );
-        if (isPlain(undeclared)) extras = undeclared;
-        if (source === undefined) {
-          for (const entry of entries) {
-            const name = entry.name;
-            if (active.has(name)) continue;
-            const children = live?.childrenByName;
-            const child =
-              children && hasOwnProperty(children, name)
-                ? children[name]
-                : undefined;
-            if (!child && live) continue;
-            active.set(
-              name,
-              hasOwnProperty(value, name)
-                ? readStoredInput(
-                    entry.node,
-                    value[name],
-                    child,
-                    true,
-                    ancestors,
-                  )
-                : undefined,
-            );
-          }
-        }
-      } finally {
-        ancestors.delete(value);
-      }
     }
     stored =
       source === null
@@ -110,35 +94,31 @@ export const readStoredInput = <Self extends FieldNodeRecord<Self>>(
             [],
           );
   } else if (template.strategy === 'branch' && template.kind === 'array') {
-    const selection = {
-      blueprintNode: template,
-      childrenByName: live?.childrenByName ?? null,
-    };
     const slots: Record<string, unknown> = {};
     const items = isArray(value) && !ancestors.has(value) ? value : undefined;
     if (items) {
       source = undefined;
-      ancestors.add(items);
-      try {
-        for (let index = 0; index < items.length; index++) {
-          const binding = getArrayItemTemplate(selection, index);
-          if (!binding) continue;
-          const child = live?.childrenByName?.['' + index];
-          if (!child && live && index < live.itemCount) continue;
+      visitInputChildren(
+        template,
+        items,
+        live,
+        ancestors,
+        (index, entry, child, raw, isNamed) => {
+          if (!entry || (live && !child && Number(index) < live.itemCount))
+            return;
+          const node = entry.node;
           slots[index] = {
-            blueprintNode: binding,
+            blueprintNode: node,
             storedOutputValue: readStoredInput(
-              binding,
-              hasOwnProperty(items, index) ? items[index] : undefined,
+              node,
+              isNamed ? raw : undefined,
               child,
               true,
               ancestors,
             ),
           };
-        }
-      } finally {
-        ancestors.delete(items);
-      }
+        },
+      );
     }
     const previous = live?.storedValue;
     stored = assembleArrayValue(

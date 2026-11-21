@@ -2,7 +2,7 @@ import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { computeNode } from '../compute/computeNode';
 import { registerRecalculation } from '../dependencies/registerRecalculation';
-import { isPlain } from '../input/isPlain';
+import { canReleaseCallerHost } from '../input/canReleaseCallerHost';
 
 /**
  * Clear a caller-touched wrong-kind host only after a child emits.
@@ -19,23 +19,16 @@ export const releaseWrongKindHosts = <Self extends FieldNodeRecord<Self>>(
       (left, right) => right.depth - left.depth,
     );
     for (const host of hosts) {
-      if (host.isDetached || host.source === undefined || isPlain(host.source))
+      if (
+        host.isDetached ||
+        !canReleaseCallerHost(
+          host.source,
+          host.children?.some(
+            (child) => child.storedOutputValue !== undefined,
+          ) ?? false,
+        )
+      )
         continue;
-      let hasEmittedChild = false;
-
-      const hostChildren = host.children ?? [];
-      for (let index = 0, count = hostChildren.length; index < count; index++) {
-        const child = hostChildren[index];
-
-        if (child.storedOutputValue !== undefined) {
-          hasEmittedChild = true;
-          break;
-        }
-      }
-
-      if (!hasEmittedChild) {
-        continue;
-      }
       host.source = undefined;
       context.changedSource.add(host.path);
       context.changedNodes.add(host);
