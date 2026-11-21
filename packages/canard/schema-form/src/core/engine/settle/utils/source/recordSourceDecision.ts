@@ -28,10 +28,8 @@ export const recordSourceDecision = <Self extends FieldNodeRecord<Self>>(
   const previous = retained.postPolicyInput;
   if (
     previous &&
-    previous.order !== context.replayingSourceOrder &&
-    (isOutputEqual ||
-      context.isMarkingLiveRule ||
-      context.replayingSourceOrder !== undefined)
+    previous.order < order &&
+    (isOutputEqual || context.isMarkingLiveRule || origin === 'revived')
   )
     supersedeCandidateInput(previous);
   if (isOutputEqual && !retained.shouldUseBaseline) return;
