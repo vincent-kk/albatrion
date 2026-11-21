@@ -6,7 +6,7 @@
 
 ## API Contracts
 
-전체 검증 결과는 성공 시 `null`이고 실패 시 호출별 순서를 유지하는 `ValidationIssue[]`입니다. 네이티브 검증 오류 표지가 있는 AJV 오류를 issue로 변환합니다. 다른 실행 예외는 같은 값으로 전달합니다. 검증 메타데이터는 AJV가 컴파일한 스키마를 따릅니다.
+전체 검증 결과는 성공 시 `null`이고 실패 시 호출별 순서를 유지하는 `ValidationIssue[]`입니다. 선택한 AJV 인스턴스의 생성자가 제공하는 `ValidationError`를 issue로 변환합니다. 다른 AJV 사본이 만든 오류를 포함한 실행 예외는 같은 값으로 전달합니다. 검증 메타데이터는 AJV가 컴파일한 스키마를 따릅니다.
 
 오류의 데이터 위치는 JSON Pointer입니다. 실제 자식에 놓인 false 스키마만 부모 위치와 거부된 키로 바꾸며, 현재 값에 적용된 false는 해당 위치에 남깁니다. 단일 키 `not.required`는 native 주소가 가리키는 확인 가능한 스키마에서만 키를 얻습니다. `propertyNames`의 내부 오류에도 AJV가 제공한 원래 키를 전달합니다.
 
@@ -21,7 +21,7 @@
 ### native-validation — 호출별 결과와 주소
 
 - 호출이 겹쳐도 각 검증이 자기 issue 순서와 위치를 유지합니다.
-- 실행 예외는 같은 객체로 거부하며 비동기 성공값의 truthiness는 검증 결과를 바꾸지 않습니다.
+- 세 방언에서 선택한 AJV의 `ValidationError`는 issue가 됩니다. 다른 AJV 사본의 오류와 일반 실행 예외는 같은 객체로 거부하며 비동기 성공값의 truthiness는 검증 결과를 바꾸지 않습니다.
 - 직접 자식과 값 수준 false, 인코딩된 `not.required`, `propertyNames`를 구별합니다.
 
 ### native-guards — 동기 조건의 원래 문맥
