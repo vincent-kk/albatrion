@@ -231,7 +231,7 @@ export function ManualApp() {
 
 ## Component ownership and options
 
-Hiding the caller with React `Activity` or Suspense cancels its pending `useModal` requests exactly like an unmount, because React runs effect cleanup on hide. Use `useModal` when unmounting the caller should cancel its pending requests; settled requests leave its tracking list immediately. Static calls can outlive their caller but still follow Provider ownership. `useModal(config)` captures mount-time defaults, so pass changing values per call.
+Pending `useModal` requests survive React `Activity` and Suspense hiding. Removing the caller cancels them, including when the caller is removed while hidden. Use `useModal` when unmounting the caller should cancel its pending requests; settled requests leave its tracking list immediately. Static calls can outlive their caller but still follow Provider ownership. `useModal(config)` captures mount-time defaults, so pass changing values per call.
 
 ```tsx
 import { type OverridableHandleProps, useModal } from '@lerx/promise-modal';
@@ -353,7 +353,7 @@ export async function showBrokenContent() {
 
 Route navigation hides pending requests without settling them; returning restores them. Hidden modals still respond to abort and caller cleanup. A settled modal never reappears, including in manual destruction mode. One bootstrap owns the portal; extra Providers wait and warn once in development. When the owner unmounts, the first waiter takes over; with no waiter, open requests cancel after the current commit. Same-commit remounts and StrictMode checks preserve pending results and prompt input. Queued pre-mount requests remain queued.
 
-Hiding only the Provider with Activity or a re-suspended Suspense boundary releases its keyboard, focus and page effects while keeping requests from outside the hidden subtree pending. The same modal and prompt value return when the Provider is shown. A hidden useModal caller still cancels its own requests; actual Provider removal cancels or hands over as described above. To cancel on Provider hide, abort explicitly or unmount the Provider.
+Hiding only the Provider with Activity or a re-suspended Suspense boundary releases its keyboard, focus and page effects while keeping requests from outside the hidden subtree pending. The same modal and prompt value return when the Provider is shown. A hidden useModal caller keeps its pending requests; actual Provider removal cancels or hands over as described above. To cancel on Provider hide, abort explicitly or unmount the Provider.
 
 ## Further reference
 
