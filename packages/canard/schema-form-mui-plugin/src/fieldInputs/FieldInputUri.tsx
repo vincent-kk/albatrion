@@ -13,6 +13,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 import { formatProtocol } from './utils/uri/formatProtocol';
 import { parseUri } from './utils/uri/parseUri';
 
@@ -50,6 +51,7 @@ const FieldInputUri = ({
   hideLabel,
   misfit,
 }: FieldInputUriProps) => {
+  useFieldLabelAssociation(inputId, fieldTitleId, labelProp);
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
       return [

@@ -21,6 +21,7 @@ import type {
 import type { MuiContext } from '../type';
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 import { mergeEnumSelection } from './utils/enum/mergeEnumSelection';
 
@@ -62,6 +63,7 @@ const FieldInputStringCheckbox = ({
   hideLabel,
   misfit,
 }: FieldInputStringCheckboxProps) => {
+  useFieldLabelAssociation(inputId, labelId, labelProp);
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
     return [

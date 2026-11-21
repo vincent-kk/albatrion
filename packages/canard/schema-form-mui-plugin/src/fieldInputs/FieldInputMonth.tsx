@@ -16,6 +16,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 
 // customParseFormat enables the strict parse below; the import does not extend dayjs by itself.
 dayjs.extend(customParseFormat);
@@ -70,6 +71,7 @@ const FieldInputMonth = ({
   minimum,
   maximum,
 }: FieldInputMonthProps) => {
+  useFieldLabelAssociation(inputId, fieldTitleId, labelProp);
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
       return [

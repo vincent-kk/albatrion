@@ -2,4 +2,4 @@
 "@canard/schema-form-antd5-plugin": patch
 ---
 
-Read-only sliders show the same value when switched in place as when mounted read-only. Slider tooltips use schema values for exponent steps. Field titles and custom labels supply control names.
+Read-only sliders show the same value when switched in place as when mounted read-only. Slider tooltips use schema values for exponent steps. Field titles and custom labels supply control names. Empty React labels fall back to the field title. A key release from an interrupted slider interaction preserves the externally supplied value.

@@ -1,3 +1,7 @@
+import { resolveDisplayedStop } from './sliderReference/resolveDisplayedStop';
+import { resolvePointerStop } from './sliderReference/resolvePointerStop';
+import { resolveSliderRelease } from './sliderReference/resolveSliderRelease';
+
 /** Independent decimal reference: every input number is an integer count of billionths. */
 export const sliderReference = (schema: {
   type: 'number' | 'integer';
@@ -115,60 +119,33 @@ export const sliderReference = (schema: {
     number(empty ? high : last),
     marks.at(-1) ?? -Infinity,
   );
+  const unsteppedNumber =
+    schema.type === 'number' && schema.multipleOf === undefined;
+  const displayGrid = {
+    units,
+    number,
+    floor,
+    anchor,
+    increment,
+    displayMin,
+    displayMax,
+    marks,
+    gridMin: empty ? low : first,
+    gridMax: empty ? high : last,
+    unsteppedNumber,
+    retainsUpper: unsteppedNumber && !strictHigh,
+  };
   const displayed = (
     stored: number | undefined,
     readOnly: boolean,
     includeOffGridUpper = true,
-  ): number | undefined => {
-    if (stored === undefined) return undefined;
-    if (
-      (readOnly &&
-        includeOffGridUpper &&
-        schema.type === 'number' &&
-        schema.multipleOf === undefined &&
-        stored >= displayMin &&
-        stored <= displayMax) ||
-      marks.includes(stored)
-    )
-      return stored;
-    const position = units(stored);
-    const lowerIndex = floor(position - anchor);
-    const gridLower = anchor + lowerIndex * increment;
-    const gridUpper = gridLower + increment;
-    const nearest =
-      position - gridLower < gridUpper - position ? gridLower : gridUpper;
-    const gridMin = empty ? low : first;
-    const gridMax = empty ? high : last;
-    const snapped =
-      nearest < gridMin ? gridMin : nearest > gridMax ? gridMax : nearest;
-    if (position <= gridMin) return number(gridMin);
-    if (includeOffGridUpper && position >= gridMax) return number(gridMax);
-    const delta = snapped > position ? snapped - position : position - snapped;
-    return number(
-      includeOffGridUpper &&
-        schema.type === 'number' &&
-        schema.multipleOf === undefined &&
-        !strictHigh &&
-        gridMax - position <= delta
-        ? gridMax
-        : snapped,
-    );
-  };
-  const pointer = (value: number, includeOffGridUpper = true) => {
-    if (empty) return undefined;
-    let nearest: number | undefined;
-    for (const mark of marks) {
-      if (
-        nearest === undefined ||
-        Math.abs(mark - value) <= Math.abs(nearest - value)
-      )
-        nearest = mark;
-    }
-    return nearest ?? displayed(value, false, includeOffGridUpper);
-  };
+  ) => resolveDisplayedStop(displayGrid, stored, readOnly, includeOffGridUpper);
+  const pointer = (value: number, includeOffGridUpper = true) =>
+    resolvePointerStop(displayGrid, empty, value, includeOffGridUpper);
   return {
     displayed,
     pointer,
+    afterRelease: resolveSliderRelease,
     marks,
     min: number(first),
     max: number(last),

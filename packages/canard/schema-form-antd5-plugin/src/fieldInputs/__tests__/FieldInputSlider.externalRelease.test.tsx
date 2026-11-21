@@ -53,6 +53,7 @@ it.each([undefined, true, false])(
     );
     act(() => ref.current?.setValue(7.4));
     const replacement = view.getByRole('slider');
+    expect(replacement).not.toBe(old);
     act(() => replacement.focus());
     expect(document.activeElement).toBe(replacement);
     expect(ref.current?.getValue()).toBe(7.4);
@@ -60,7 +61,13 @@ it.each([undefined, true, false])(
       String(reference.displayed(7.4, false)),
     );
     fireEvent.keyUp(replacement, key);
-    expect(ref.current?.getValue()).toBe(7.4);
+    expect(ref.current?.getValue()).toBe(
+      reference.afterRelease({
+        stored: 7.4,
+        draft: reference.expected(2.4, key.key),
+        interrupted: true,
+      }),
+    );
     fireEvent.keyDown(replacement, key);
     fireEvent.keyUp(replacement, key);
     expect(ref.current?.getValue()).toBe(reference.expected(7.4, key.key));

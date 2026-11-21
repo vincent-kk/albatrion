@@ -12,6 +12,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 
 type BooleanSwitchJSONSchema = BooleanSchema & {};
 
@@ -45,6 +46,7 @@ const FieldInputBooleanSwitch = ({
   alias,
   misfit,
 }: FieldInputBooleanSwitchProps) => {
+  useFieldLabelAssociation(inputId, fieldTitleId, labelProp);
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onChange(event.target.checked);

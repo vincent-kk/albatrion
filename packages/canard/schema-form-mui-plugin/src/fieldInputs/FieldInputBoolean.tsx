@@ -11,6 +11,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 
 interface FieldInputBooleanProps
   extends FieldInputProps<boolean | null, MuiContext>,
@@ -35,6 +36,7 @@ const FieldInputBoolean = ({
   hideLabel,
   misfit,
 }: FieldInputBooleanProps) => {
+  useFieldLabelAssociation(inputId, fieldTitleId, labelProp);
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
     return [

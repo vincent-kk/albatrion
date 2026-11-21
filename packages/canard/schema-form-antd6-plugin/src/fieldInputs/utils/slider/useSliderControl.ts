@@ -3,6 +3,18 @@ import { type KeyboardEvent, useLayoutEffect, useRef, useState } from 'react';
 import type { getSliderBounds } from './getSliderBounds';
 import { getSliderDisplayValue } from './getSliderDisplayValue';
 
+/** The movement releases that Ant Design can turn into completion callbacks. */
+const MOVEMENT_KEYS: readonly string[] = [
+  'ArrowLeft',
+  'ArrowRight',
+  'ArrowUp',
+  'ArrowDown',
+  'Home',
+  'End',
+  'PageUp',
+  'PageDown',
+];
+
 /**
  * Separate transient library coordinates from committed schema values.
  * @param bounds - Memoized decimal grid and coordinate conversion.
@@ -25,7 +37,6 @@ export const useSliderControl = (
   const [pendingDraft, setPendingDraft] = useState<number>();
   const current = useRef(typeof initial === 'number' ? initial : bounds.min);
   const pending = useRef<{ key: string; value: number } | undefined>(undefined);
-  const canceledKey = useRef<string | undefined>(undefined);
   const pointer = useRef<'idle' | 'active' | 'canceled'>('idle');
   const isLocked = !!locked || bounds.empty;
   const draft = getSliderDisplayValue(
@@ -39,7 +50,6 @@ export const useSliderControl = (
     typeof stored !== 'number' && (isLocked || pendingDraft === undefined);
   useLayoutEffect(() => {
     if (!isLocked) return;
-    if (pending.current) canceledKey.current = pending.current.key;
     pending.current = undefined;
     if (pointer.current === 'active') pointer.current = 'canceled';
     current.current = typeof stored === 'number' ? stored : bounds.min;
@@ -103,22 +113,17 @@ export const useSliderControl = (
     event.stopPropagation();
     current.current = value;
     setPendingDraft(value);
-    if (canceledKey.current === key) canceledKey.current = undefined;
     pending.current = { key, value };
     if (lazy === false) commit(value);
   };
   const keyUp = (event: KeyboardEvent<HTMLElement>) => {
-    if (event.key === canceledKey.current) {
-      canceledKey.current = undefined;
-      event.preventDefault();
-      event.stopPropagation();
-      return;
-    }
+    if (!MOVEMENT_KEYS.includes(event.key)) return;
+    // After a remount, the library still completes a release it never started.
+    event.preventDefault();
+    event.stopPropagation();
     const movement = pending.current;
     if (movement?.key !== event.key) return;
     pending.current = undefined;
-    event.preventDefault();
-    event.stopPropagation();
     if (lazy !== false) commit(movement.value);
   };
   return {

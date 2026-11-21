@@ -1,23 +1,10 @@
-import {
-  type MouseEvent,
-  type ReactElement,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-} from 'react';
+import type { MouseEvent, ReactElement } from 'react';
 
 import { FormLabel as MuiFormLabel } from '@mui/material';
-
-import { isPlainObject } from '@winglet/common-utils/filter';
 
 import type { LabelRendererProps } from '@canard/schema-form';
 
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
-import { observeFieldLabels } from './utils/observeFieldLabels';
-
-/** The composed title reads input markup after client layout. */
-const useClientLayoutEffect =
-  typeof document === 'undefined' ? useEffect : useLayoutEffect;
 
 /**
  * Focus the picker section group addressed by a field label.
@@ -49,18 +36,8 @@ export const LabelRenderer = ({
   style,
   className,
 }: LabelRendererProps): ReactElement => {
-  const ref = useRef<HTMLLabelElement>(null);
-  useClientLayoutEffect(() => {
-    const label = ref.current;
-    const presentation = isPlainObject(jsonSchema) && jsonSchema.presentation;
-    const input = isPlainObject(presentation) && presentation.FieldInputProps;
-    return label && isPlainObject(input) && input.label != null
-      ? observeFieldLabels(label)
-      : undefined;
-  }, [children, htmlFor, id, jsonSchema]);
   return (
     <MuiFormLabel
-      ref={ref}
       htmlFor={htmlFor}
       onClick={focusPickerGroup}
       id={id}

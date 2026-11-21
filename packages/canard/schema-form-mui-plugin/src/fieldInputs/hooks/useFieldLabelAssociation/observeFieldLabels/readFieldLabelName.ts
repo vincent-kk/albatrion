@@ -10,7 +10,7 @@ import { readVisibleLabel } from './readVisibleLabel';
 export const readFieldLabelName = (
   field: Element,
   control: HTMLElement,
-  external: HTMLLabelElement,
+  external: HTMLElement,
 ): string | undefined => {
   const internal = Array.from(
     field.querySelectorAll<HTMLLabelElement>('label'),

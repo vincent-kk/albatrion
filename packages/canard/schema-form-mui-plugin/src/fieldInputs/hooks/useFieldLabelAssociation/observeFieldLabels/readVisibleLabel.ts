@@ -3,7 +3,7 @@
  * @param label - A registered label root or an input-owned MUI label.
  * @returns Normalized label text with presentational text removed.
  */
-export const readVisibleLabel = (label: HTMLLabelElement): string => {
+export const readVisibleLabel = (label: HTMLElement): string => {
   if (label.closest('[hidden], [aria-hidden="true"]')) return '';
   const style = label.ownerDocument.defaultView?.getComputedStyle(label);
   if (style?.display === 'none' || style?.visibility === 'hidden') return '';

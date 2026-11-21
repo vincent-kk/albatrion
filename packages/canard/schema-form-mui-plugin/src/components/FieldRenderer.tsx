@@ -45,9 +45,14 @@ export const FieldRenderer = ({
       Array.isArray(jsonSchema.enum) &&
       jsonSchema.enum.length > 0);
 
+  const titleMode = isChoiceGroup
+    ? 'visible'
+    : node.strategy === 'branch'
+      ? 'hidden'
+      : 'input';
   const title = useMemo(
-    () => resolveFieldLabel(jsonSchema, name, undefined, !isChoiceGroup),
-    [jsonSchema, name, isChoiceGroup],
+    () => resolveFieldLabel(jsonSchema, name, undefined, titleMode),
+    [jsonSchema, name, titleMode],
   );
   const titleElement = title ? (
     <span hidden={!isChoiceGroup} id={labelId}>

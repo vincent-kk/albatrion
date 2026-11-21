@@ -12,6 +12,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 
 type StringJSONSchema = StringSchema & {
   format?: 'password';
@@ -47,6 +48,7 @@ const FieldInputString = ({
   hideLabel,
   misfit,
 }: FieldInputStringProps) => {
+  useFieldLabelAssociation(inputId, fieldTitleId, labelProp);
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
       return [

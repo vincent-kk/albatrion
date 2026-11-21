@@ -1,16 +1,10 @@
-import { type ReactNode, isValidElement } from 'react';
+import type { ReactNode } from 'react';
 
 import { isPlainObject } from '@winglet/common-utils/filter';
 
 import type { FieldRendererProps } from '@canard/schema-form';
 
-/** Extract usable React label content from opaque schema presentation metadata. */
-const readLabel = (value: unknown): ReactNode => {
-  if (typeof value === 'string') return value.trim().replace(/\s+/g, ' ');
-  if (typeof value === 'number' || isValidElement(value)) return value;
-  if (Array.isArray(value)) return value.map(readLabel);
-  return undefined;
-};
+import { readLabel } from './resolveFieldLabel/readLabel';
 
 /**
  * Use the author's field label for both visible and hidden title elements.
@@ -32,10 +26,9 @@ export const resolveFieldLabel = (
     : undefined;
   const renderer = presentation?.FieldRendererProps;
   const input = presentation?.FieldInputProps;
-  const authoredLabel = readLabel(
-    (isPlainObject(renderer) ? renderer.label : undefined) ??
-      (isPlainObject(input) ? input.label : undefined),
-  );
+  const authoredLabel =
+    readLabel(isPlainObject(renderer) ? renderer.label : undefined) ??
+    readLabel(isPlainObject(input) ? input.label : undefined);
   if (authoredLabel || authoredLabel === 0) return authoredLabel;
   const title = typeof schema.title === 'string' ? readLabel(schema.title) : '';
   const ariaLabel = isPlainObject(schema.options)

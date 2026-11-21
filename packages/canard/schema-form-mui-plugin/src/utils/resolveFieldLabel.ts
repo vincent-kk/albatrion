@@ -1,30 +1,24 @@
-import { type ReactNode, isValidElement } from 'react';
+import type { ReactNode } from 'react';
 
 import { isPlainObject } from '@winglet/common-utils/filter';
 
 import type { FieldRendererProps } from '@canard/schema-form';
 
-/** Extract usable React label content from opaque schema presentation metadata. */
-const readLabel = (value: unknown): ReactNode => {
-  if (typeof value === 'string') return value.trim().replace(/\s+/g, ' ');
-  if (typeof value === 'number' || isValidElement(value)) return value;
-  if (Array.isArray(value)) return value.map(readLabel);
-  return undefined;
-};
+import { readLabel } from './resolveFieldLabel/readLabel';
 
 /**
  * Use the author's field label for both visible and hidden title elements.
  * @param schema - Current field schema, including optional presentation labels.
  * @param name - Field key or array index used as a fallback.
  * @param label - Explicit label content for the current renderer or input.
- * @param prefersInput - The plugin title is hidden and names an input with its own visible label.
+ * @param mode - Whether a renderer label, input label, or hidden fallback supplies the title.
  * @returns Content referenced by the field's accessible name.
  */
 export const resolveFieldLabel = (
   schema: FieldRendererProps['jsonSchema'],
   name: string,
   label?: ReactNode,
-  prefersInput = false,
+  mode: 'visible' | 'input' | 'hidden' = 'visible',
 ): ReactNode => {
   const explicit = readLabel(label);
   if (explicit || explicit === 0) return explicit;
@@ -34,19 +28,28 @@ export const resolveFieldLabel = (
     : undefined;
   const renderer = presentation?.FieldRendererProps;
   const input = presentation?.FieldInputProps;
+  const title = readLabel(
+    typeof schema.title === 'string' ? schema.title : undefined,
+  );
+  const ariaLabel =
+    isPlainObject(schema.options) &&
+    typeof schema.options['aria-label'] === 'string'
+      ? readLabel(schema.options['aria-label'])
+      : undefined;
+  if (
+    mode === 'hidden' ||
+    (mode === 'input' && isPlainObject(input) && input.hideLabel === true)
+  )
+    return ariaLabel ?? title ?? name;
   const rendererLabel = readLabel(
     isPlainObject(renderer) ? renderer.label : undefined,
   );
   const inputLabel = readLabel(
     isPlainObject(input) && input.hideLabel !== true ? input.label : undefined,
   );
-  const authoredLabel = prefersInput
-    ? (inputLabel ?? rendererLabel)
-    : (rendererLabel ?? inputLabel);
-  if (authoredLabel || authoredLabel === 0) return authoredLabel;
-  const title = typeof schema.title === 'string' ? readLabel(schema.title) : '';
-  const ariaLabel = isPlainObject(schema.options)
-    ? readLabel(schema.options['aria-label'])
-    : undefined;
-  return title || ariaLabel || name;
+  const authoredLabel =
+    mode === 'input'
+      ? (inputLabel ?? rendererLabel)
+      : (rendererLabel ?? inputLabel);
+  return authoredLabel ?? title ?? ariaLabel ?? name;
 };
