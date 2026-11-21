@@ -6,8 +6,7 @@ import type {
 } from '../../../../../types/index.js';
 import {
   type ResolvedLocations,
-  assertDestinationRootsContained,
-  assertWriteTargetsContained,
+  assertProjectPathsContained,
   resolveAgentTarget,
   resolveDestinations,
 } from '../../../../agentTarget/index.js';
@@ -120,7 +119,7 @@ export async function prepareUnits(
           assetKinds: values.assetKinds,
         };
         const { destinations, orphanScans } = resolveDestinations(locations);
-        await assertDestinationRootsContained({
+        await assertProjectPathsContained({
           agentTarget,
           assetKinds: values.assetKinds,
           orphanScans,
@@ -134,7 +133,7 @@ export async function prepareUnits(
         if (installed) {
           const earlier = getInstalledOrphanScans(installed, locations, orphanScans);
           if (earlier.length) {
-            await assertWriteTargetsContained({
+            await assertProjectPathsContained({
               agentTarget,
               dstPaths: earlier.map((scan) => scan.dstAbs),
               resolved,
@@ -157,7 +156,7 @@ export async function prepareUnits(
           markdown,
           sourceSnapshots,
         );
-        await assertWriteTargetsContained({
+        await assertProjectPathsContained({
           agentTarget,
           dstPaths: collectFileWrites(plan),
           resolved,

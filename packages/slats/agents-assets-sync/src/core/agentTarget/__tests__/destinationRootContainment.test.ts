@@ -12,7 +12,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { resolveAgentTarget } from '../agentTarget.js';
 import type { AgentTarget, AssetKind, OrphanScan } from '../type.js';
-import { assertDestinationRootsContained } from '../utils/assertDestinationRootsContained.js';
+import { assertProjectPathsContained } from '../utils/assertProjectPathsContained.js';
 
 const ALL_KINDS: ReadonlySet<AssetKind> = new Set([
   'skills',
@@ -38,7 +38,7 @@ function check(
   assetKinds: ReadonlySet<AssetKind> = ALL_KINDS,
   agentTarget: AgentTarget = target,
 ) {
-  return assertDestinationRootsContained({
+  return assertProjectPathsContained({
     agentTarget,
     assetKinds,
     orphanScans,

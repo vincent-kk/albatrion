@@ -3,7 +3,7 @@ import { lstat } from 'node:fs/promises';
 import {
   type AgentTarget,
   type ResolvedLocations,
-  assertWriteTargetsContained,
+  assertProjectPathsContained,
 } from '../../../../agentTarget/index.js';
 
 /**
@@ -19,7 +19,7 @@ export async function checkInstalledRecord(
   agentTarget: AgentTarget,
   resolved: ResolvedLocations,
 ): Promise<boolean> {
-  await assertWriteTargetsContained({
+  await assertProjectPathsContained({
     agentTarget,
     dstPaths: [path],
     resolved,

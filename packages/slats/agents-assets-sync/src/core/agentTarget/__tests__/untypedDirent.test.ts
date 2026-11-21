@@ -13,7 +13,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { resolveAgentTarget } from '../agentTarget.js';
 import type { AgentTarget } from '../type.js';
-import { assertWriteTargetsContained } from '../utils/assertWriteTargetsContained.js';
+import { assertProjectPathsContained } from '../utils/assertProjectPathsContained.js';
 
 const { untypedNames } = vi.hoisted(() => ({
   untypedNames: new Set<string>(),
@@ -47,7 +47,7 @@ let outside: string;
 let target: AgentTarget;
 
 function check(dstPaths: readonly string[]) {
-  return assertWriteTargetsContained({
+  return assertProjectPathsContained({
     agentTarget: target,
     dstPaths,
     resolved: new Map(),
