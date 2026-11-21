@@ -28,7 +28,7 @@ export const rekeyValidationIssuePaths = <Self>(
   }
   if (!moved) return undefined;
   const replacements = moved;
-  const next = rewriteIssues(routed, replacements);
+  const next = rewriteIssues(routed, replacements) ?? routed;
   const global = runtime.globalErrors ?? routed;
   runtime.globalErrors =
     global === routed
@@ -39,8 +39,9 @@ export const rekeyValidationIssuePaths = <Self>(
   const held = runtime.validationErrors;
   if (!held) return changed;
   for (const [node, issues] of held) {
-    if (!issues.some((issue) => replacements.has(issue))) continue;
-    held.set(node, rewriteIssues(issues, replacements));
+    const rewritten = rewriteIssues(issues, replacements);
+    if (!rewritten) continue;
+    held.set(node, rewritten);
     runtime.combinedErrors?.delete(node);
     changed.add(node);
   }
@@ -51,16 +52,19 @@ export const rekeyValidationIssuePaths = <Self>(
  * Replace moved issues and drop perished ones, keeping order.
  * @param issues - Held list in its current order
  * @param moved - Replacement per moved issue, or null for a perished one
- * @returns A new list; unmoved issues keep their identity
+ * @returns A new list only when an issue moved; unmoved issues keep their identity
  */
 const rewriteIssues = <Item>(
   issues: readonly Item[],
   moved: ReadonlyMap<unknown, Item | null>,
-): Item[] => {
-  const next: Item[] = [];
-  for (const issue of issues) {
-    const replacement = moved.has(issue) ? moved.get(issue) : issue;
-    if (replacement) next.push(replacement);
+): Optional<Item[]> => {
+  let next: Item[] | undefined;
+  for (let index = 0; index < issues.length; index++) {
+    const issue = issues[index];
+    const replacement = moved.get(issue);
+    if (replacement !== undefined) next ??= issues.slice(0, index).filter(Boolean);
+    const current = replacement === undefined ? issue : replacement;
+    if (current) next?.push(current);
   }
   return next;
 };
