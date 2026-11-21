@@ -62,11 +62,13 @@ test("schema-form closure bootstraps runtime and declarations before AJV and ful
       labels.indexOf("Bootstrap schema-form runtime") <
         labels.indexOf("Bootstrap schema-form declarations"),
     );
-    if (/^plugins-antd[56]$/.test(shard.name)) {
-      assert.ok(
-        labels.indexOf("Bootstrap schema-form declarations") <
-          labels.indexOf("Build workspace closure"),
-      );
+    if (shard.name === "main" || /^plugins-antd[56]$/.test(shard.name)) {
+      const closure = labels.indexOf("Build workspace closure");
+      if (closure >= 0)
+        assert.ok(
+          labels.indexOf("Bootstrap schema-form declarations") < closure,
+        );
+      assert.ok(!labels.includes("Build schema-form plugin declarations"));
       continue;
     }
     assert.ok(
@@ -136,8 +138,10 @@ test("default pr tier splits schema-form unit and input lifetime regressions acr
     plan.shards.map(({ name }) => name),
     [
       "main",
+      "main-form-consumers",
       "schema-form-unit-1",
       "schema-form-unit-2",
+      "schema-form-unit-3",
       "schema-form-render",
       "plugins-ajv",
       "plugins-antd5",
@@ -145,8 +149,8 @@ test("default pr tier splits schema-form unit and input lifetime regressions acr
       "plugins-ui",
     ],
   );
-  const [firstUnit, secondUnit, render] = plan.shards.slice(1, 4);
-  const schemaShards = [firstUnit, secondUnit, render];
+  const [firstUnit, secondUnit, thirdUnit, render] = plan.shards.slice(2, 6);
+  const schemaShards = [firstUnit, secondUnit, thirdUnit, render];
   const schemaForm = "@canard/schema-form";
   for (const shard of schemaShards) {
     assert.equal(shard.browser, false);
@@ -162,7 +166,7 @@ test("default pr tier splits schema-form unit and input lifetime regressions acr
     ),
     ["schema-form-render"],
   );
-  for (const [index, shard] of [firstUnit, secondUnit].entries()) {
+  for (const [index, shard] of [firstUnit, secondUnit, thirdUnit].entries()) {
     const tests = shard.steps.filter(({ kind }) => kind === "test");
     assert.deepEqual(
       tests.map(({ args }) => args),
@@ -174,7 +178,9 @@ test("default pr tier splits schema-form unit and input lifetime regressions acr
           "--run",
           "--project",
           "unit",
-          `--shard=${index + 1}/2`,
+          "--config",
+          "../../../scripts/ci/helpers/plan/schemaFormUnit.config.mjs",
+          `--shard=${index + 1}/3`,
         ],
       ],
     );
@@ -204,6 +210,75 @@ test("default pr tier splits schema-form unit and input lifetime regressions acr
         ],
       },
     ],
+  );
+});
+
+test("PR main shards preserve workspace checks and the full build closure", () => {
+  const pr = createCheckPlan(workspaces, ["scripts/ci/runCheckPlan.mjs"]);
+  const preRelease = createCheckPlan(workspaces, [], null, "pre-release");
+  const [main, consumers] = pr.shards;
+  const [combined] = preRelease.shards;
+  const checks = (steps) =>
+    steps
+      .filter(({ kind }) => kind !== "build")
+      .map(({ args }) => args.join(" "))
+      .sort();
+  const builds = (steps) =>
+    [
+      ...new Set(
+        steps
+          .filter(
+            ({ kind, args }) => kind === "build" && args[0] === "workspaces",
+          )
+          .flatMap(({ args }) =>
+            args.filter((_, index) => args[index - 1] === "--include"),
+          ),
+      ),
+    ].sort();
+
+  assert.equal(main.name, "main");
+  assert.equal(consumers.name, "main-form-consumers");
+  assert.deepEqual(consumers.affected, [
+    "@aileron/production-testbed",
+    "@albatrion/documents",
+    "@lerx/promise-modal",
+  ]);
+  assert.deepEqual(
+    [...main.affected, ...consumers.affected].sort(),
+    combined.affected,
+  );
+  assert.deepEqual(
+    checks([...main.steps, ...consumers.steps]),
+    checks(combined.steps),
+  );
+  assert.deepEqual(
+    builds([...main.steps, ...consumers.steps]),
+    builds(combined.steps),
+  );
+  assert.ok(!builds(main.steps).includes("@canard/schema-form"));
+  assert.ok(builds(consumers.steps).includes("@canard/schema-form"));
+});
+
+test("an isolated form benchmark still builds schema-form and empty main shards are omitted", () => {
+  const benchmark = createCheckPlan(workspaces, [
+    "packages/aileron/benchmark-form/src/index.ts",
+  ]);
+  assert.deepEqual(
+    benchmark.shards.map(({ name }) => name),
+    ["main"],
+  );
+  assert.ok(
+    benchmark.shards[0].steps.some(
+      ({ kind, args }) =>
+        kind === "build" &&
+        args[0] === "workspaces" &&
+        args.includes("@canard/schema-form"),
+    ),
+  );
+  const site = createCheckPlan(workspaces, ["documents/src/index.ts"]);
+  assert.deepEqual(
+    site.shards.map(({ name }) => name),
+    ["main-form-consumers"],
   );
 });
 
@@ -280,7 +355,6 @@ test("pre-release preserves an explicit reason and other workspace checks", () =
     createCheckPlan(workspaces, ["README.md"], "", "pre-release").changed,
     preRelease.changed,
   );
-  assert.deepEqual(preRelease.shards[0], pr.shards[0]);
   assert.deepEqual(
     preRelease.shards[1].steps.filter(({ kind }) => kind !== "test"),
     pr.shards
@@ -319,13 +393,13 @@ test("build steps keep leaf builds and omit an empty closure", () => {
   assert.deepEqual(createBuildSteps([], graph), []);
 });
 
-test("a leaf has one main shard and markdown-only changes have no steps", () => {
+test("a utility fans out to its consumer shard and markdown-only changes have no steps", () => {
   const leaf = createCheckPlan(workspaces, [
     "packages/winglet/style-utils/src/index.ts",
   ]);
   assert.deepEqual(
     leaf.shards.map(({ name }) => name),
-    ["main"],
+    ["main", "main-form-consumers"],
   );
   assert.equal(leaf.browser, false);
   const markdown = createCheckPlan(workspaces, [

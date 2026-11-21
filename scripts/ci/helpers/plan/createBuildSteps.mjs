@@ -6,9 +6,15 @@ import { createTopologicalBuild } from "./helpers/createTopologicalBuild.mjs";
  * @param {string[]} affected Names whose build dependencies must exist.
  * @param {object[]} workspaces Manifest dependency graph and current scripts.
  * @param {string} tier Check policy; PR Ant Design jobs need core artifacts as consumers only.
+ * @param {boolean} [bootstrapSchemaForm] Use the core artifacts when another shard runs the full schema-form build.
  * @returns {object[]} Yarn commands restricted to eligible build workspaces.
  */
-export function createBuildSteps(affected, workspaces, tier = "pre-release") {
+export function createBuildSteps(
+  affected,
+  workspaces,
+  tier = "pre-release",
+  bootstrapSchemaForm = false,
+) {
   const closure = collectClosure(affected, workspaces);
   const schemaForm = "@canard/schema-form";
   const ajvPlugins = [6, 7, 8].map(
@@ -16,9 +22,10 @@ export function createBuildSteps(affected, workspaces, tier = "pre-release") {
   );
   const verifySchemaForm =
     tier !== "pr" ||
-    affected.some(
-      (name) => !/^@canard\/schema-form-antd[56]-plugin$/.test(name),
-    );
+    (!bootstrapSchemaForm &&
+      affected.some(
+        (name) => !/^@canard\/schema-form-antd[56]-plugin$/.test(name),
+      ));
   const bootstrapPlugins = verifySchemaForm
     ? [...ajvPlugins, "@canard/schema-form-antd5-plugin"]
     : [];

@@ -95,7 +95,7 @@ for (const tier of ["pr", "pre-release"])
       plan.shards
         .filter(({ name }) => name.startsWith("schema-form"))
         .map(({ affected }) => affected),
-      Array.from({ length: tier === "pr" ? 3 : 1 }, () => [
+      Array.from({ length: tier === "pr" ? 4 : 1 }, () => [
         "@canard/schema-form",
       ]),
     );
@@ -122,7 +122,9 @@ for (const tier of ["pr", "pre-release"])
         1,
       );
     assert.equal(
-      plan.shards[1].name,
+      plan.shards.find(({ affected }) =>
+        affected.includes("@canard/schema-form"),
+      ).name,
       tier === "pr" ? "schema-form-unit-1" : "schema-form",
     );
   });
