@@ -19,6 +19,7 @@ import type {
   SettlementScratch,
 } from '../../record';
 import type { FieldNodeWriteKind } from '../../types/value';
+import type { StorageTarget } from '../../utils/paths/resolveStorageTargets';
 import type { DependencyPresenceMemo } from '../utils/dependencies/trie/DependencyIndex';
 import type { GateOccurrence } from '../utils/gates/type';
 import type { DirtyPathSet } from '../utils/scratch/DirtyPathSet';
@@ -31,6 +32,7 @@ import type { PendingPresenceTemplate } from './pendingPresenceTemplate';
 import type { PresenceQueryCursor } from './presenceQueryCursor';
 import type { CompactedSlotSources } from './slots';
 import type { SplitBucket } from './splitRegistration';
+import type { WriteRange } from './writeRange';
 
 /** Virtual child names indexed by their real sibling's host template and field. */
 export type VirtualReferenceIndex = ReadonlyMap<
@@ -205,13 +207,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Binding delivery origin, independent of replacement or merge semantics. */
   source?: FieldNodeWriteKind;
   /** Call-ordered origins, resolved by the final write covering each path. */
-  writeOrigins?: readonly {
-    path: string;
-    source: FieldNodeWriteKind;
-    keys?: readonly string[];
-    /** Sibling paths an overwriting virtual write replaces; the batch form of virtualReplacementPaths. */
-    fields?: readonly string[];
-  }[];
+  writeOrigins?: readonly WriteRange[];
   /** Public bit mask retained for the development trace entry. */
   option: number;
   /** Binding entry name when the settlement has no public write kind. */
@@ -281,12 +277,10 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   loadScope?: Self;
   /** Whole-replacement boundary whose subtree keeps only the written source per path. */
   replacementScope?: Self;
-  /** Multi-write batch scopes: each marked path, or each received key's child path of a shallow Merge; bounds replacement instead of `replacementScope` (191C-01). */
-  replacementPaths?: readonly string[];
   /** Real sibling paths replaced by a caller write through a virtual node. */
   virtualReplacementPaths?: string[];
   /** Target virtual slots admitted at public call entry, independent of later gate changes. */
-  virtualWriteFields?: readonly string[];
+  virtualWriteTargets?: readonly StorageTarget<Self>[];
   /** Nodes newly present after calculation or reset by this load. */
   enteredNodes: Set<Self>;
   /** Reused pending occurrences whose sources must remain visible to fills. */

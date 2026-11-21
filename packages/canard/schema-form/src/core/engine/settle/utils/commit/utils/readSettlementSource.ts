@@ -1,14 +1,9 @@
 import type { Optional } from '@aileron/declare';
 
-import {
-  getChildPointer,
-  isDescendantPath,
-  readPointerSegment,
-} from '@/schema-form/helpers/jsonPointer';
-
 import type { FieldNodeRecord } from '../../../../record';
 import type { FieldNodeWriteKind } from '../../../../types/value';
 import type { SettlementContext } from '../../../types/settlement';
+import { readWriteCoverage } from '../../write/readWriteCoverage';
 
 /**
  * Resolve the last marked write covering a committed path.
@@ -23,18 +18,11 @@ export const readSettlementSource = <Self extends FieldNodeRecord<Self>>(
   exact = false,
 ): Optional<FieldNodeWriteKind> => {
   const origins = context.writeOrigins;
-  for (let index = (origins?.length ?? 0) - 1; index >= 0; index--) {
-    const origin = origins![index];
-    if (origin.keys && path !== origin.path) {
-      const child = getChildPointer(path, origin.path);
-      const name =
-        child === undefined ? undefined : readPointerSegment(child, -1);
-      if (typeof name !== 'string' || origin.keys.indexOf(name) === -1)
-        continue;
-    }
-    if (path === origin.path || isDescendantPath(path, origin.path))
-      return !exact || path === origin.path ? origin.source : undefined;
-  }
+  const origin = origins && readWriteCoverage(origins, path, 'latest');
+  if (origin)
+    return !exact || (path === origin.path && !origin.isIndirect)
+      ? origin.source
+      : undefined;
   return !exact || path === context.target.path
     ? (context.source ?? context.kind)
     : undefined;

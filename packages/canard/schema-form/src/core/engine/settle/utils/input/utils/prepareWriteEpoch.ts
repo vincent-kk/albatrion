@@ -22,7 +22,7 @@ export const prepareWriteEpoch = <Self extends FieldNodeRecord<Self>>(
     context.replacementScope !== node ||
     (context.kind !== FieldNodeWriteKind.CallerReplace &&
       context.kind !== FieldNodeWriteKind.Input) ||
-    context.replacementPaths !== undefined ||
+    context.writeOrigins !== undefined ||
     runtime.batchDepth ||
     runtime.visitDepth ||
     context.root.inactiveSlots?.size ||

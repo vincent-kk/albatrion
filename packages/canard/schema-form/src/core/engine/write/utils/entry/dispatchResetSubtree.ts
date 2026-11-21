@@ -1,6 +1,7 @@
 import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
+import type { WriteRange } from '../../../settle';
 import { resetFieldNodeSubtree } from '../../../settle';
 import { WriteOption } from '../../../types/value';
 import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
@@ -34,40 +35,27 @@ export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
     if (runtime.batchWrites) {
       const scope = resolveStorageTargets(node);
       const scopePaths = scope ? scope.map((field) => field.path) : [node.path];
-      const marks = runtime.batchWrites.map((write) => {
-        const storage = resolveStorageTargets(write.node);
-        const paths = storage
-          ? storage.map((field) => field.path)
-          : [write.node.path];
-        return {
-          write,
-          paths,
-          isVirtual: storage !== undefined,
-          option: write.option,
-          value: write.value,
-          isContained: paths.every((path) =>
-            scopePaths.some(
-              (scopePath) =>
-                path === scopePath || isDescendantPath(path, scopePath),
-            ),
+      const marks = runtime.batchWrites;
+      const isContained = marks.map((write) =>
+        (write.virtualTargets ?? [write.node]).every(({ path }) =>
+          scopePaths.some(
+            (scopePath) =>
+              path === scopePath || isDescendantPath(path, scopePath),
           ),
-        };
-      });
-      const remaining = marks.filter((mark) => !mark.isContained);
-      runtime.batchWrites = remaining.map((mark) => mark.write);
-      if (remaining.length) flushBatchWrites(node.rootNode);
+        ),
+      );
+      const remaining = marks.filter((_, index) => !isContained[index]);
+      runtime.batchWrites = remaining;
+      const ranges: WriteRange[][] = [];
+      if (remaining.length) flushBatchWrites(node.rootNode, ranges);
       if (node.isDetached) {
-        // The refused reset discards nothing: what later marks did not overwrite of the in-scope
-        // marks stays as the first caller marks of the next segment.
+        let rangeIndex = 0;
         const kept = marks.flatMap((mark, index) => {
-          if (!mark.isContained) return [];
-          const write = subtractLaterMarks(
-            mark.write.node,
-            mark,
-            marks.filter(
-              (later, laterIndex) => laterIndex > index && !later.isContained,
-            ),
-          );
+          if (!isContained[index]) {
+            rangeIndex++;
+            return [];
+          }
+          const write = subtractLaterMarks(mark, ranges, rangeIndex);
           return write ? [write] : [];
         });
         if (kept.length)

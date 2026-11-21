@@ -27,7 +27,7 @@ export const getChildDistribution = <Self extends FieldNodeRecord<Self>>(
 ): Optional<Distribution> => {
   if (
     distribution === undefined ||
-    (context.replacementPaths !== undefined &&
+    (context.writeOrigins !== undefined &&
       !distribution.isAutomatic &&
       !isWithinReplacementPaths(
         context,

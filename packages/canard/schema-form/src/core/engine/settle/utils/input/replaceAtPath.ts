@@ -1,12 +1,15 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { BlueprintNode } from '../../../../blueprint';
-import type { FieldNodeRecord } from '../../../../record';
-import { hasCallerInputOutput } from '../../../../settle';
-import { WriteOption } from '../../../../types/value';
-import { BATCH_HOST_SOURCE } from '../../../../utils/batchHostSource';
-import { writeObjectKey } from '../../../../utils/writeObjectKey';
+import type { BlueprintNode } from '../../../blueprint';
+import type { FieldNodeRecord } from '../../../record';
+import type { FieldNodeWriteKind } from '../../../types/value';
+import type { WriteOption } from '../../../types/value';
+import { BATCH_HOST_SOURCE } from '../../../utils/batchHostSource';
+import { writeObjectKey } from '../../../utils/writeObjectKey';
+import type { WriteRange } from '../../types/writeRange';
+import { hasCallerInputOutput } from './hasCallerInputOutput';
+import { isMergeWrite } from './isMergeWrite';
 import { mergeMarkedValue } from './mergeMarkedValue';
 
 /**
@@ -19,6 +22,10 @@ import { mergeMarkedValue } from './mergeMarkedValue';
  * @param template - Target's declaration when an occurrence is absent
  * @param isCommittedInput - Whether this value is the target's baseline, not a caller write
  * @param depth - Index of the next child address
+ * @param ranges - Batch physical range sink, omitted for read-only composition
+ * @param source - Binding origin and target address for the mark
+ * @param path - Target's physical address
+ * @param isIndirect - Whether the target is a constituent of a whole virtual write
  * @returns Candidate value with one path overlaid
  */
 export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
@@ -30,6 +37,10 @@ export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
   template?: BlueprintNode,
   isCommittedInput = false,
   depth = 0,
+  ranges?: WriteRange[],
+  source?: FieldNodeWriteKind,
+  path = node?.path ?? '',
+  isIndirect?: true,
 ): unknown => {
   if (depth === names.length) {
     if (
@@ -41,9 +52,22 @@ export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
       typeof incoming === 'object'
     )
       return { ...incoming, [BATCH_HOST_SOURCE]: node.source };
-    return option & WriteOption.Merge && !(option & WriteOption.Replace)
-      ? mergeMarkedValue(node, current, incoming, template)
-      : incoming;
+    if (isMergeWrite(option))
+      return mergeMarkedValue(
+        node,
+        current,
+        incoming,
+        template,
+        ranges,
+        source,
+        path,
+      );
+    if (ranges && source !== undefined) {
+      const range: WriteRange = { path, source };
+      if (isIndirect) range.isIndirect = true;
+      ranges.push(range);
+    }
+    return incoming;
   }
 
   const name = names[depth];
@@ -59,6 +83,10 @@ export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
       template,
       isCommittedInput,
       depth + 1,
+      ranges,
+      source,
+      path,
+      isIndirect,
     );
     return next;
   }
@@ -77,6 +105,10 @@ export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
     template,
     isCommittedInput,
     depth + 1,
+    ranges,
+    source,
+    path,
+    isIndirect,
   );
   const next = isObject ? { ...current } : {};
   writeObjectKey(next, name, child);

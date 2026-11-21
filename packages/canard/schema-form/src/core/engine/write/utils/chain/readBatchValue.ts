@@ -4,11 +4,13 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { Nullable } from '@aileron/declare';
 
 import type { FieldNodeRecord } from '../../../record';
-import { readStoredInput } from '../../../settle';
+import {
+  composeBatchValue,
+  readStoredInput,
+  replaceAtPath,
+} from '../../../settle';
 import { WriteOption } from '../../../types/value';
 import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
-import { composeBatchValue } from './composeBatchValue';
-import { replaceAtPath } from './utils/replaceAtPath';
 
 /** An ancestor replacement can omit an address independently of its value. */
 const OMITTED_ADDRESS = Symbol('omitted batch address');

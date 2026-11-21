@@ -18,6 +18,7 @@ import type { TreeMemoStores } from '../../types/treeMemoStores';
 import type { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import type { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import type { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
+import type { StorageTarget } from '../../utils/paths/resolveStorageTargets';
 import type { ValidationCadence } from '../../validationScheduling';
 import type { FieldNodeFactory } from './behavior';
 import type { FieldNodeDelivery, FieldNodeRecord } from './record';
@@ -274,8 +275,8 @@ export interface FieldNodeRuntime<Self>
     value: unknown;
     option: WriteOption;
     source?: FieldNodeWriteKind.Input | FieldNodeWriteKind.Automatic;
-    /** Physical field names admitted by a virtual call before later marks settle. */
-    virtualFields?: readonly string[];
+    /** Physical fields admitted by a virtual call before later marks settle. */
+    virtualTargets?: readonly StorageTarget<Self>[];
   }[];
   /** Load defers validation until the binding's slot. */
   shouldDeferLoadValidation?: boolean;

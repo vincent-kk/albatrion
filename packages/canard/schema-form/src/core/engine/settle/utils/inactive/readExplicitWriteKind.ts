@@ -1,14 +1,9 @@
 import type { Optional } from '@aileron/declare';
 
-import {
-  getChildPointer,
-  isDescendantPath,
-  readPointerSegment,
-} from '@/schema-form/helpers/jsonPointer';
-
 import type { FieldNodeRecord } from '../../../record';
 import { FieldNodeWriteKind } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
+import { readWriteCoverage } from '../write/readWriteCoverage';
 
 /**
  * Read caller coverage at one explicit input position: a whole batch scope first, then the last covering origin.
@@ -22,50 +17,12 @@ export const readExplicitWriteKind = <Self extends FieldNodeRecord<Self>>(
 ): Optional<FieldNodeWriteKind> => {
   const origins = context.writeOrigins;
   if (!origins) return context.kind;
-  // Batch replacement paths retain earlier whole writes after later merges.
-  let matchesReplacementPath: Optional<boolean> = undefined;
-
-  const replacementPaths = context.replacementPaths;
-  if (replacementPaths != null) {
-    matchesReplacementPath = false;
-    for (
-      let index = 0, count = replacementPaths.length;
-      index < count;
-      index++
-    ) {
-      const path = replacementPaths[index];
-
-      if (inputPath === path || isDescendantPath(inputPath, path)) {
-        matchesReplacementPath = true;
-        break;
-      }
-    }
-  }
-
-  if (matchesReplacementPath) {
+  if (readWriteCoverage(origins, inputPath, 'whole'))
     return FieldNodeWriteKind.CallerReplace;
-  }
-  for (let index = origins.length - 1; index >= 0; index--) {
-    const origin = origins[index];
-    const path =
-      origin.fields?.find(
-        (field) => inputPath === field || isDescendantPath(inputPath, field),
-      ) ?? origin.path;
-    if (inputPath !== path && !isDescendantPath(inputPath, path)) continue;
-    if (origin.keys && inputPath !== path) {
-      const child = getChildPointer(inputPath, path);
-      const name =
-        child === undefined ? undefined : readPointerSegment(child, -1);
-      if (typeof name !== 'string' || origin.keys.indexOf(name) === -1)
-        continue;
-    }
-    if (origin.source === FieldNodeWriteKind.Automatic)
-      return FieldNodeWriteKind.Automatic;
-    if (!origin.keys) return FieldNodeWriteKind.CallerReplace;
-    // Deep batch merges carry partial branch scopes and separate replacement leaves.
-    return origins.length === 1 || inputPath === path
-      ? FieldNodeWriteKind.CallerPartial
-      : FieldNodeWriteKind.CallerReplace;
-  }
-  return undefined;
+  const origin = readWriteCoverage(origins, inputPath, 'latest');
+  if (!origin) return undefined;
+  if (origin.source === FieldNodeWriteKind.Automatic) return origin.source;
+  return origin.partial
+    ? FieldNodeWriteKind.CallerPartial
+    : FieldNodeWriteKind.CallerReplace;
 };

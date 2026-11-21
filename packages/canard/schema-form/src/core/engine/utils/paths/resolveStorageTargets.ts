@@ -1,5 +1,9 @@
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+
 import { resolveVirtualStorageTargets } from './resolveVirtualStorageTargets';
+import type { StorageTarget } from './resolveVirtualStorageTargets';
+
+export type { StorageTarget } from './resolveVirtualStorageTargets';
 
 /**
  * Expand a virtual address into its ordered physical storage fields.
@@ -18,9 +22,7 @@ export const resolveStorageTargets = <
   },
 >(
   node: Node,
-):
-  | readonly { name: string; path: string; node: Node | undefined }[]
-  | undefined => {
+): readonly StorageTarget<Node>[] | undefined => {
   if (node.behavior.type !== 'virtual') return undefined;
   const parent = node.parent;
   if (!parent) return EMPTY_ARRAY;
