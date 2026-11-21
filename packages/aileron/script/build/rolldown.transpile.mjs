@@ -21,6 +21,7 @@ import {
   getCodegenOptions,
 } from './utils/getCodegenOptions.mjs';
 import { isExternalModule } from './utils/isExternalModule.mjs';
+import { mapInputs } from './utils/mapInputs.mjs';
 import { validateBuildOptions } from './utils/validateBuildOptions.mjs';
 
 export { getEntrypoints } from './utils/getEntrypoints.mjs';
@@ -88,20 +89,6 @@ const createLibBuildOptions = (callerUrl) => async (options) => {
       ...getCodegenOptions(sourcemap),
     },
   };
-};
-
-/** @type {(dirName: string, srcFiles: string[]) => Record<string, string>} */
-const mapInputs = (dirName, srcFiles) => {
-  if (!srcFiles || srcFiles.length === 0) {
-    throw new Error('No source files provided');
-  }
-
-  return Object.fromEntries(
-    srcFiles.map((file) => [
-      file.replace(/^(\.\/)?src\//, '').replace(/\.[cm]?(js|ts)$/, ''),
-      join(dirName, file),
-    ]),
-  );
 };
 
 /** @type {(extension?: string) => {entryFileNames: string, chunkFileNames: string}} */
