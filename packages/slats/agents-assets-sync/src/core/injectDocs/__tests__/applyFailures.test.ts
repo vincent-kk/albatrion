@@ -4,8 +4,8 @@ import { join } from 'node:path';
 
 import { expect, it } from 'vitest';
 
-import type { Action } from '../../core/index.js';
-import { applyAllPlans } from '../hooks/useApplyStep.js';
+import type { Action } from '../../buildPlan/index.js';
+import { executeUnits } from '../utils/session/executeUnits.js';
 
 it.each(['file', 'block'] as const)(
   '(round-2 agents-assets-sync 1) reports %s failures without claiming creation',
@@ -30,8 +30,8 @@ it.each(['file', 'block'] as const)(
                 blockId: 'pkg:rules/missing.md',
               },
       };
-      const result = await applyAllPlans({
-        plans: [
+      const result = await executeUnits(
+        [
           {
             target: {
               name: 'pkg',
@@ -54,13 +54,12 @@ it.each(['file', 'block'] as const)(
             plan: { actions: [good, bad], requiresForce: false },
           },
         ],
-        dryRun: false,
-        force: false,
-        dispatch: () => {},
-      });
+        { dryRun: false, force: false },
+        [],
+      );
       expect(result.exitCode).toBe(1);
-      expect(result.reports[0].created).toEqual(['good.md']);
-      expect(result.reports[0].warnings).toContainEqual({
+      expect(result.units[0].report?.created).toEqual(['good.md']);
+      expect(result.units[0].report?.warnings).toContainEqual({
         relPath: 'missing.md',
         reason: 'failed',
       });
