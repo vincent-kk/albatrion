@@ -7,7 +7,7 @@ import { applyAction } from '../applyAction.js';
 import { applyBlockActions } from '../applyBlockActions.js';
 import { partitionActions } from '../partitionActions.js';
 import { summarize } from '../summarize.js';
-import type { PreparedUnit, RunFailure, RunResult, RunUnit } from './types.js';
+import type { RunFailure, RunResult, RunUnit } from './types.js';
 import { createRunDiagnostics } from './utils/createRunDiagnostics.js';
 
 /** Apply prepared units once, then return the complete result model.
@@ -18,20 +18,14 @@ import { createRunDiagnostics } from './utils/createRunDiagnostics.js';
  * @returns Successful operations and failures with their final exit code.
  */
 export async function executeUnits(
-  units: readonly PreparedUnit[],
+  units: readonly RunUnit[],
   flags: DefaultFlags,
   errors: readonly string[],
   cancelled = false,
   diagnostics?: readonly RunFailure[],
 ): Promise<RunResult> {
   const results: RunUnit[] = [];
-  for (const prepared of units) {
-    const { sourceSnapshots, installedAssets, ...metadata } = prepared;
-    const unit: RunUnit = {
-      ...metadata,
-      key:
-        prepared.key ?? `${prepared.agentTarget.agent}:${prepared.target.name}`,
-    };
+  for (const { sourceSnapshots, installedAssets, ...unit } of units) {
     const blocked = unit.plan.requiresForce && !flags.force && !flags.dryRun;
     if (unit.error || blocked || flags.dryRun || cancelled) {
       results.push({
@@ -57,25 +51,20 @@ export async function executeUnits(
           undefined,
       ),
     );
-    const failures: Action[] = fileActions.filter(
-      (_, index) => settled[index].status === 'rejected',
-    );
-    const diagnostics: RunFailure[] = fileActions.flatMap((action, index) => {
+    const failures: Action[] = [];
+    const diagnostics: RunFailure[] = [];
+    for (let index = 0; index < settled.length; index++) {
       const result = settled[index];
-      return result.status === 'rejected'
-        ? [
-            {
-              unitKey: unit.key,
-              path:
-                action.target.kind === 'file'
-                  ? action.target.dstAbs
-                  : action.relPath,
-              stage: 'apply',
-              reason: String(result.reason),
-            },
-          ]
-        : [];
-    });
+      if (result.status !== 'rejected') continue;
+      const action = fileActions[index];
+      failures.push(action);
+      diagnostics.push({
+        unitKey: unit.key,
+        path: action.target.kind === 'file' ? action.target.dstAbs : action.relPath,
+        stage: 'apply',
+        reason: String(result.reason),
+      });
+    }
     for (const [path, actions] of blockGroups) {
       try {
         await applyBlockActions(

@@ -4,7 +4,7 @@ import { resolveAgentTarget } from '../../agentTarget/index.js';
 import { mergePlans } from '../utils/session/mergePlans.js';
 import type { RunUnit } from '../utils/session/types.js';
 
-it('matches a complete-knowledge deletion model for 4000 seeded participant sets', () => {
+it('matches a complete-knowledge deletion model for 4000 seeded participant sets', async () => {
   let seed = 0x51a75;
   for (let sequence = 0; sequence < 4000; sequence++) {
     seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
@@ -58,7 +58,7 @@ it('matches a complete-knowledge deletion model for 4000 seeded participant sets
       },
     }));
     const discoverFailure = sequence % 5 === 0;
-    const result = mergePlans(
+    const result = await mergePlans(
       units,
       discoverFailure ? ['discover: injected participant failure'] : [],
     );
@@ -77,7 +77,7 @@ it('matches a complete-knowledge deletion model for 4000 seeded participant sets
   }
 });
 
-it('matches independent pairwise source-conflict ownership for 2000 participant sets (seed 0xc0111de)', () => {
+it('matches independent pairwise source-conflict ownership for 2000 participant sets (seed 0xc0111de)', async () => {
   let seed = 0xc0111de;
   const observed = new Set<string>();
   for (let sequence = 0; sequence < 2000; sequence++) {
@@ -130,7 +130,7 @@ it('matches independent pairwise source-conflict ownership for 2000 participant 
           unit.plan.actions[0].sourceHash !== peer.plan.actions[0].sourceHash,
       ),
     );
-    const result = mergePlans(units);
+    const result = await mergePlans(units);
     for (let index = 0; index < units.length; index++) {
       const unit = units[index];
       const action = unit.plan.actions[0];

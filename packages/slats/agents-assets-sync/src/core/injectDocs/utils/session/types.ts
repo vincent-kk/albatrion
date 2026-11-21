@@ -36,7 +36,7 @@ export interface RunUnit {
   readonly report?: InjectReport;
   readonly failures?: readonly RunFailure[];
   readonly notices?: readonly RunFailure[];
-  /** Physical roots whose ownership may be incomplete if this participant fails. */
+  /** Known namespaces to resolve if failure leaves their ownership incomplete. */
   readonly namespaceRoots?: readonly string[];
   /** Preparation-only cache; execution omits it from the final report. */
   readonly sourceSnapshots?: ReadonlyMap<string, SourceSnapshot | null>;
@@ -71,6 +71,3 @@ export interface RunInput {
   readonly confirm?: (units: readonly RunUnit[]) => Promise<boolean>;
   readonly onPlan?: (units: readonly RunUnit[], values: ValidatedFlags) => void;
 }
-
-/** Legacy prepared input can omit its identity; core supplies it once. */
-export type PreparedUnit = Omit<RunUnit, 'key'> & { readonly key?: string };

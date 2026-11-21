@@ -39,10 +39,10 @@ function unit(name: string, hash: string): RunUnit {
   };
 }
 
-it('identical owners share one write while distinct bytes refuse both owners', () => {
+it('identical owners share one write while distinct bytes refuse both owners', async () => {
   const first = unit('first', 'a');
-  const same = mergePlans([first, unit('second', 'a')]);
-  const different = mergePlans([first, unit('second', 'b')]);
+  const same = await mergePlans([first, unit('second', 'a')]);
+  const different = await mergePlans([first, unit('second', 'b')]);
   expect(
     same
       .flatMap((entry) => entry.plan.actions)
@@ -53,7 +53,7 @@ it('identical owners share one write while distinct bytes refuse both owners', (
   );
 });
 
-it('discovery uncertainty suppresses deletion as a notice without force confirmation', () => {
+it('discovery uncertainty suppresses deletion as a notice without force confirmation', async () => {
   const first = unit('first', 'a');
   const units = [
     {
@@ -67,7 +67,7 @@ it('discovery uncertainty suppresses deletion as a notice without force confirma
       },
     },
   ];
-  const result = mergePlans(units, ['broken package.json: participant second']);
+  const result = await mergePlans(units, ['broken package.json: participant second']);
   expect(result[0].plan).toEqual({ actions: [], requiresForce: false });
   expect(result[0].notices).toEqual([
     expect.objectContaining({ reason: expect.stringContaining('second') }),
@@ -75,9 +75,9 @@ it('discovery uncertainty suppresses deletion as a notice without force confirma
   expect(result[0].error).toBeUndefined();
 });
 
-it('unknown discovery ownership protects orphan blocks as well as directory entries', () => {
+it('unknown discovery ownership protects orphan blocks as well as directory entries', async () => {
   const first = unit('first', 'a');
-  const result = mergePlans(
+  const result = await mergePlans(
     [
       {
         ...first,

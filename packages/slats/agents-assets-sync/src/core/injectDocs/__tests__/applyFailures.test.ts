@@ -33,6 +33,7 @@ it.each(['file', 'block'] as const)(
       const result = await executeUnits(
         [
           {
+            key: 'claude:pkg',
             target: {
               name: 'pkg',
               version: '1',
