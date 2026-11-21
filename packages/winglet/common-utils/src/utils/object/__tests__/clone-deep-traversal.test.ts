@@ -26,23 +26,18 @@ it('clone bounded aliases have the same contents at shallow and deep positions',
 });
 
 it('clone preserves traversal-time getter observations at its deep boundary', () => {
-  const make = () => {
+  /** Create two branches whose enumerable getters share a counter. */
+  const createPayload = () => {
     let value = 0;
-    return {
-      first: {
-        get value() {
-          return ++value;
-        },
+    const branch = () => ({
+      get value() {
+        return ++value;
       },
-      second: {
-        get value() {
-          return ++value;
-        },
-      },
-    };
+    });
+    return { first: branch(), second: branch() };
   };
-  const shallow = clone(make());
-  const deep = unwrap(clone(wrap(make(), 256)), 256);
+  const shallow = clone(createPayload());
+  const deep = unwrap(clone(wrap(createPayload(), 256)), 256);
   expect(deep).toEqual(shallow);
 });
 
