@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 
-import { act, cleanup, render } from '@testing-library/react';
+import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import {
@@ -313,7 +313,7 @@ it.each([
   },
 );
 
-it('StringCheckbox with an uncoercible element renders both checkboxes unchecked and keeps the node value without throwing', () => {
+it('StringCheckbox with an uncoercible element keeps the valid checkbox selected and keeps the node value without throwing', () => {
   const ref = createRef<FormHandle>();
   const bad = ['a', { toString: 'oops' }];
   const { container } = render(
@@ -330,7 +330,11 @@ it('StringCheckbox with an uncoercible element renders both checkboxes unchecked
     />,
   );
   expect(container.querySelectorAll('input[type="checkbox"]')).toHaveLength(2);
-  expect(container.querySelector('input:checked')).toBeNull();
+  expect(
+    screen
+      .getAllByRole<HTMLInputElement>('checkbox')
+      .map((input) => input.checked),
+  ).toEqual([true, false]);
   expect(ref.current!.getValue()).toEqual(bad);
   expect(container.querySelector('.Mui-error')).toBeNull();
 });

@@ -1,6 +1,12 @@
 import { type ReactNode, useMemo } from 'react';
 
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  type SelectChangeEvent,
+} from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -11,6 +17,8 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { getEnumOptions } from './utils/enum/getEnumOptions';
+import { getMuiFieldPresentation } from './utils/presentation/getMuiFieldPresentation';
 
 type StringEnumJSONSchema = StringSchema;
 
@@ -27,7 +35,9 @@ interface FieldInputStringEnumProps
 }
 
 const FieldInputStringEnum = ({
-  path,
+  inputId,
+  labelId,
+  getInputId,
   name,
   jsonSchema,
   required,
@@ -44,66 +54,34 @@ const FieldInputStringEnum = ({
   hideLabel,
   misfit,
 }: FieldInputStringEnumProps) => {
-  const [label, size, variant, fullWidth] = useMemo(() => {
-    if (hideLabel)
-      return [
-        undefined,
-        sizeProp || context.size,
-        variantProp || context.variant,
-        fullWidthProp ?? context.fullWidth,
-      ];
-    return [
-      labelProp || name,
-      sizeProp || context.size,
-      variantProp || context.variant,
-      fullWidthProp ?? context.fullWidth,
-    ];
-  }, [
-    context,
+  const [label, size, variant, fullWidth] = getMuiFieldPresentation(
     labelProp,
     name,
-    sizeProp,
-    variantProp,
-    fullWidthProp,
     hideLabel,
-  ]);
-
-  const options = useMemo(
-    () =>
-      jsonSchema.enum?.map((rawValue) => {
-        const value = JSON.stringify(rawValue);
-        return {
-          value,
-          rawValue,
-          label: alias?.['' + rawValue] || '' + rawValue,
-        };
-      }) || [],
-    [jsonSchema, alias],
+    { size: sizeProp, variant: variantProp, fullWidth: fullWidthProp },
+    context,
   );
 
-  const handleChange = useHandle((event: any) => {
-    const rawValue = options.find(
-      (option) => option.value === event.target.value,
-    )?.rawValue;
-    if (rawValue === undefined) return;
-    onChange(rawValue);
+  const values = jsonSchema.enum;
+  const options = useMemo(() => getEnumOptions(values, alias), [values, alias]);
+  const initialValue =
+    options.find(({ rawValue }) => rawValue === defaultValue)?.value ?? '';
+  const ownLabelId = label ? getInputId('legend') : undefined;
+  const handleChange = useHandle((event: SelectChangeEvent<string>) => {
+    const selected = options.find(({ value }) => value === event.target.value);
+    if (selected) onChange(selected.rawValue);
   });
-
-  const labelId = useMemo(() => `label-${path}`, [path]);
-
-  const initialValue = useMemo(() => {
-    if (defaultValue === null) return JSON.stringify(null);
-    if (typeof defaultValue === 'string') return JSON.stringify(defaultValue);
-    return undefined;
-  }, [defaultValue]);
 
   return (
     <FormControl fullWidth={fullWidth} variant={variant} error={misfit}>
-      <InputLabel id={labelId}>{label}</InputLabel>
+      {label && <InputLabel id={ownLabelId}>{label}</InputLabel>}
       <Select
-        id={path}
+        SelectDisplayProps={{
+          id: inputId,
+          'aria-labelledby': ownLabelId ?? labelId,
+        }}
         name={name}
-        labelId={labelId}
+        labelId={ownLabelId}
         label={label}
         required={required}
         readOnly={readOnly}

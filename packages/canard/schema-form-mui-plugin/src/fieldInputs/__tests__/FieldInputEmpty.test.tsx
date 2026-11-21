@@ -21,7 +21,6 @@ type EmptyCase = readonly [
   name: string,
   definition: FieldInputDefinition,
   jsonSchema: JSONSchema,
-  selector: string,
   typedValue: string,
 ];
 
@@ -30,49 +29,43 @@ it.each([
     'String (non-nullable)',
     FieldInputStringDefinition,
     { type: 'string' },
-    'input#\\/field',
     'abc',
   ],
   [
     'String (nullable)',
     FieldInputStringDefinition,
     { type: ['string', 'null'] },
-    'input#\\/field',
     'abc',
   ],
   [
     'Textarea (non-nullable)',
     FieldInputTextareaDefinition,
     { type: 'string', format: 'textarea' },
-    'textarea#\\/field',
     'abc',
   ],
   [
     'Textarea (nullable)',
     FieldInputTextareaDefinition,
     { type: ['string', 'null'], format: 'textarea' },
-    'textarea#\\/field',
     'abc',
   ],
   [
     'Uri (non-nullable)',
     FieldInputUriDefinition,
     { type: 'string', format: 'uri' },
-    'input#\\/field',
     'http://abc',
   ],
   [
     'Uri (nullable)',
     FieldInputUriDefinition,
     { type: ['string', 'null'], format: 'uri' },
-    'input#\\/field',
     'http://abc',
   ],
 ] as EmptyCase[])(
   '%s publishes undefined when typed text is cleared',
-  async (_, definition, fieldSchema, selector, typedValue) => {
+  async (_, definition, fieldSchema, typedValue) => {
     const ref = createRef<FormHandle>();
-    const { container } = render(
+    render(
       <Form
         ref={ref}
         fieldInputDefinitions={[definition]}
@@ -85,7 +78,7 @@ it.each([
       />,
     );
 
-    const input = container.querySelector(selector)!;
+    const input = screen.getByRole('textbox');
     await userEvent.type(input, 'abc');
     expect(ref.current!.getValue()?.field).toBe(typedValue);
 
@@ -101,7 +94,7 @@ it.each([
   '%s keeps chosen protocol in local state and publishes undefined on protocol-only change',
   async (_, fieldSchema) => {
     const ref = createRef<FormHandle>();
-    const { container } = render(
+    render(
       <Form
         ref={ref}
         fieldInputDefinitions={[FieldInputUriDefinition]}
@@ -121,7 +114,7 @@ it.each([
 
     expect(ref.current!.getValue()?.field).toBeUndefined();
 
-    const input = container.querySelector('input#\\/field')!;
+    const input = screen.getByRole('textbox');
     await userEvent.type(input, 'example.com');
     expect(ref.current!.getValue()?.field).toBe('https://example.com');
   },

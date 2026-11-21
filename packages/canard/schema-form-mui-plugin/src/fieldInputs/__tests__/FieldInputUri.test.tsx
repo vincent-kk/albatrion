@@ -15,7 +15,7 @@ afterEach(() => {
 
 it('reads protocols from presentation.FieldInputProps', async () => {
   const onChange = vi.fn();
-  const view = render(
+  render(
     <Form
       fieldInputDefinitions={[FieldInputUriDefinition]}
       onChange={onChange}
@@ -35,7 +35,7 @@ it('reads protocols from presentation.FieldInputProps', async () => {
   );
   expect(screen.getByText('ftp://')).toBeTruthy();
   expect(screen.queryByText('http://')).toBeNull();
-  await userEvent.type(view.container.querySelector('input#\\/link')!, 'a');
+  await userEvent.type(screen.getByRole('textbox'), 'a');
   expect(onChange).toHaveBeenLastCalledWith({ link: 'ftp://a' });
 });
 

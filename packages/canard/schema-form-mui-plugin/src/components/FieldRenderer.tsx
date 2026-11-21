@@ -16,7 +16,17 @@ export const FieldRenderer = ({
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps): ReactElement => {
-  if (depth === 0) return <Input />;
+  const hasError =
+    errorMessage != null &&
+    errorMessage !== '' &&
+    typeof errorMessage !== 'boolean';
+  if (depth === 0)
+    return (
+      <>
+        <Input />
+        {hasError && <ErrorMessage>{errorMessage}</ErrorMessage>}
+      </>
+    );
 
   if (node.strategy === 'branch') {
     return (
@@ -32,6 +42,7 @@ export const FieldRenderer = ({
         }}
       >
         <Input />
+        {hasError && <ErrorMessage>{errorMessage}</ErrorMessage>}
       </Box>
     );
   } else {

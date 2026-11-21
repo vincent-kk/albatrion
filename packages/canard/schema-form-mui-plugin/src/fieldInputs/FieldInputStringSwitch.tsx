@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo } from 'react';
+import type { ReactNode } from 'react';
 
 import { FormControlLabel, Stack, Switch, Typography } from '@mui/material';
 
@@ -11,6 +11,8 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { getOwnLabel } from './utils/enum/getOwnLabel';
+import { getMuiFieldPresentation } from './utils/presentation/getMuiFieldPresentation';
 
 type StringSwitchJSONSchema = StringSchema & {
   enum: [string | null, string | null];
@@ -23,45 +25,47 @@ interface FieldInputStringSwitchProps
   extends FieldInputPropsWithSchema<
       string | null,
       StringSwitchJSONSchema,
-      MuiContext
+      MuiContext & { switchLabels?: Record<string, ReactNode> }
     >,
     MuiContext {
   label?: ReactNode;
+  alias?: Record<string, ReactNode>;
 }
 
 const FieldInputStringSwitch = ({
-  path,
+  inputId,
+  labelId,
+  getInputId,
   name,
   jsonSchema,
   required,
   disabled,
+  readOnly,
   value,
   onChange,
   context,
+  alias,
   label: labelProp,
-  size: sizeProp = 'medium',
+  size: sizeProp,
   hideLabel,
   misfit,
 }: FieldInputStringSwitchProps) => {
-  const [label, size] = useMemo(() => {
-    if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || name, sizeProp || context.size];
-  }, [hideLabel, sizeProp, context.size, labelProp, name]);
+  const [label, size] = getMuiFieldPresentation(
+    labelProp,
+    name,
+    hideLabel,
+    { size: sizeProp },
+    context,
+  );
 
-  const { offValue, onValue, offLabel, onLabel } = useMemo(() => {
-    const [first, second] = jsonSchema.enum;
-    const [firstLabel, secondLabel] = jsonSchema.switchLabels || [
-      first,
-      second,
-    ];
-
-    return {
-      offValue: first,
-      onValue: second,
-      offLabel: firstLabel,
-      onLabel: secondLabel,
-    };
-  }, [jsonSchema.enum, jsonSchema.switchLabels]);
+  const [onValue, offValue] = jsonSchema.enum;
+  const labels = context.switchLabels || alias;
+  const [onLabel, offLabel] = labels
+    ? [
+        getOwnLabel(labels, String(onValue)) || onValue,
+        getOwnLabel(labels, String(offValue)) || offValue,
+      ]
+    : jsonSchema.switchLabels || [onValue, offValue];
 
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,12 +75,14 @@ const FieldInputStringSwitch = ({
 
   const switchSize = jsonSchema.switchSize || size;
 
+  const captionId = label ? getInputId('legend') : undefined;
+
   return (
     <FormControlLabel
-      label={label}
-      htmlFor={path}
+      label={label && <span id={captionId}>{label}</span>}
+      htmlFor={inputId}
       required={required}
-      disabled={disabled}
+      disabled={disabled || readOnly}
       labelPlacement="start"
       sx={{
         alignItems: 'center',
@@ -86,14 +92,18 @@ const FieldInputStringSwitch = ({
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
           <Typography>{offLabel}</Typography>
           <Switch
-            id={path}
+            id={inputId}
             name={name}
             checked={value === onValue}
             onChange={handleChange}
-            disabled={disabled}
+            disabled={disabled || readOnly}
             size={switchSize}
             slotProps={{
-              input: { role: 'switch', 'aria-invalid': misfit || undefined },
+              input: {
+                role: 'switch',
+                'aria-labelledby': captionId ?? labelId,
+                'aria-invalid': misfit || undefined,
+              },
             }}
           />
           <Typography>{onLabel}</Typography>

@@ -1,5 +1,5 @@
 import { cleanup, render } from '@testing-library/react';
-import dayjs, { type Dayjs } from 'dayjs';
+import type { Dayjs } from 'dayjs';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import { Form } from '@canard/schema-form';
@@ -109,7 +109,7 @@ it('date picker does not apply an overflowing or unparsable limit as a shifted d
   const props = renderDate('2024-02-31', 'not a date');
   expect(props.minDate).toBeUndefined();
   expect(props.maxDate).toBeUndefined();
-  expect(props.shouldDisableDate!(dayjs('2024-03-01'))).toBe(false);
+  expect(props.shouldDisableDate).toBeUndefined();
 });
 
 it('month picker does not apply an overflowing or unparsable limit as a shifted month', () => {
@@ -120,8 +120,6 @@ it('month picker does not apply an overflowing or unparsable limit as a shifted 
 
 it('control: date picker keeps both boundary days selectable', () => {
   const props = renderDate('2024-03-01', '2024-06-30');
-  expect(props.shouldDisableDate!(dayjs('2024-03-01'))).toBe(false);
-  expect(props.shouldDisableDate!(dayjs('2024-06-30'))).toBe(false);
-  expect(props.shouldDisableDate!(dayjs('2024-02-29'))).toBe(true);
-  expect(props.shouldDisableDate!(dayjs('2024-07-01'))).toBe(true);
+  expect(props.minDate?.format('YYYY-MM-DD')).toBe('2024-03-01');
+  expect(props.maxDate?.format('YYYY-MM-DD')).toBe('2024-06-30');
 });

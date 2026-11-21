@@ -1,4 +1,4 @@
-import { type ChangeEvent, type ReactNode, useMemo } from 'react';
+import type { ChangeEvent, ReactNode } from 'react';
 
 import { TextField } from '@mui/material';
 
@@ -11,6 +11,7 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { getMuiFieldPresentation } from './utils/presentation/getMuiFieldPresentation';
 
 type TextareaJSONSchema = StringSchema & {
   format?: 'textarea';
@@ -52,29 +53,13 @@ const FieldInputTextarea = ({
   hideLabel,
   misfit,
 }: FieldInputTextareaProps) => {
-  const [label, size, variant, fullWidth] = useMemo(() => {
-    if (hideLabel)
-      return [
-        undefined,
-        sizeProp || context.size,
-        variantProp || context.variant,
-        fullWidthProp ?? context.fullWidth,
-      ];
-    return [
-      labelProp || name,
-      sizeProp || context.size,
-      variantProp || context.variant,
-      fullWidthProp ?? context.fullWidth,
-    ];
-  }, [
-    context,
+  const [label, size, variant, fullWidth] = getMuiFieldPresentation(
     labelProp,
     name,
-    sizeProp,
-    variantProp,
-    fullWidthProp,
     hideLabel,
-  ]);
+    { size: sizeProp, variant: variantProp, fullWidth: fullWidthProp },
+    context,
+  );
 
   const handleChange = useHandle((event: ChangeEvent<HTMLTextAreaElement>) => {
     const text = event.target.value;

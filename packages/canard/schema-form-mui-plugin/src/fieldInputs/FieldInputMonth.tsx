@@ -1,11 +1,9 @@
-import { type ReactNode, useMemo } from 'react';
+import type { ReactNode } from 'react';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs, { type Dayjs } from 'dayjs';
-
-import { useHandle } from '@winglet/react-utils/hook';
+import dayjs from 'dayjs';
 
 import type {
   FieldInputDefinition,
@@ -14,6 +12,10 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { getPickerSlotProps } from './utils/picker/getPickerSlotProps';
+import { parsePickerLimit } from './utils/picker/parsePickerLimit';
+import { usePickerValueChange } from './utils/picker/usePickerValueChange';
+import { getMuiFieldPresentation } from './utils/presentation/getMuiFieldPresentation';
 
 type MonthJSONSchema = StringSchema & {
   format: 'month';
@@ -24,10 +26,14 @@ interface FieldInputMonthProps
     MuiContext {
   label?: ReactNode;
   hideLabel?: boolean;
+  minimum?: string;
+  maximum?: string;
 }
 
 const FieldInputMonth = ({
-  path,
+  inputId,
+  labelId,
+  getInputId,
   name,
   required,
   disabled,
@@ -41,39 +47,18 @@ const FieldInputMonth = ({
   fullWidth: fullWidthProp,
   hideLabel,
   misfit,
+  minimum,
+  maximum,
 }: FieldInputMonthProps) => {
-  const [label, size, variant, fullWidth] = useMemo(() => {
-    if (hideLabel)
-      return [
-        undefined,
-        sizeProp || context.size,
-        variantProp || context.variant,
-        fullWidthProp ?? context.fullWidth,
-      ];
-    return [
-      labelProp || name,
-      sizeProp || context.size,
-      variantProp || context.variant,
-      fullWidthProp ?? context.fullWidth,
-    ];
-  }, [
-    context,
+  const [label, size, variant, fullWidth] = getMuiFieldPresentation(
     labelProp,
     name,
-    sizeProp,
-    variantProp,
-    fullWidthProp,
     hideLabel,
-  ]);
+    { size: sizeProp, variant: variantProp, fullWidth: fullWidthProp },
+    context,
+  );
 
-  const handleChange = useHandle((newValue: Dayjs | null) => {
-    if (newValue === null) {
-      onChange(undefined);
-      return;
-    }
-    if (!newValue.isValid()) return;
-    onChange(newValue.format('YYYY-MM'));
-  });
+  const handleChange = usePickerValueChange(onChange, 'YYYY-MM');
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -85,6 +70,8 @@ const FieldInputMonth = ({
             : null
         }
         onChange={handleChange}
+        minDate={parsePickerLimit(minimum, 'YYYY-MM')}
+        maxDate={parsePickerLimit(maximum, 'YYYY-MM')}
         disabled={disabled}
         readOnly={readOnly}
         views={['year', 'month']}
@@ -92,7 +79,13 @@ const FieldInputMonth = ({
         format="YYYY-MM"
         slotProps={{
           textField: {
-            id: path,
+            ...getPickerSlotProps(
+              inputId,
+              labelId,
+              getInputId,
+              !!label,
+              disabled,
+            ),
             name,
             required,
             size,

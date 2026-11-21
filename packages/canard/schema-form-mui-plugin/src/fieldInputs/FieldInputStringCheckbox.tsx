@@ -1,6 +1,12 @@
-import { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
-import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
+import {
+  Box,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+} from '@mui/material';
 
 import { isArray } from '@winglet/common-utils/filter';
 import { isStringSchema } from '@winglet/json-schema/filter';
@@ -14,6 +20,8 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { getEnumOptions } from './utils/enum/getEnumOptions';
+import { getMuiFieldPresentation } from './utils/presentation/getMuiFieldPresentation';
 
 type StringCheckboxJSONSchema = ArraySchema & {
   type: 'array';
@@ -34,102 +42,87 @@ interface FieldInputStringCheckboxProps
 }
 
 const FieldInputStringCheckbox = ({
-  path,
+  inputId,
+  labelId,
+  getInputId,
   name,
   jsonSchema,
   required,
   disabled,
-  defaultValue,
+  readOnly,
+  value,
   onChange,
   context,
   label: labelProp,
   alias,
-  size: sizeProp = 'medium',
+  size: sizeProp,
   row = true,
   hideLabel,
   misfit,
 }: FieldInputStringCheckboxProps) => {
-  const [label, size] = useMemo(() => {
-    if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || name, sizeProp || context.size];
-  }, [hideLabel, sizeProp, context.size, labelProp, name]);
-
-  const options = useMemo(() => {
-    const enumValues = jsonSchema.items.enum || [];
-    return enumValues.map((rawValue) => {
-      const value = JSON.stringify(rawValue);
-      return {
-        value,
-        rawValue,
-        label: alias?.['' + rawValue] || '' + rawValue,
-      };
-    });
-  }, [jsonSchema, alias]);
-
-  const [value, setValue] = useState<string[]>(() =>
-    isArray(defaultValue) &&
-    defaultValue.every((v) => v === null || typeof v === 'string')
-      ? defaultValue.map((v) => JSON.stringify(v))
-      : [],
+  const [label, size] = getMuiFieldPresentation(
+    labelProp,
+    name,
+    hideLabel,
+    { size: sizeProp },
+    context,
   );
 
-  const handleToggle = useHandle((optionValue: string) => {
-    const currentValues = value;
-    const isSelected = currentValues.includes(optionValue);
-    let newValues: string[];
-
-    if (isSelected) {
-      newValues = currentValues.filter((val) => val !== optionValue);
-    } else {
-      newValues = [...currentValues, optionValue];
-    }
-
-    setValue(newValues);
-    onChange(newValues.map((token) => options.find((option) => option.value === token)?.rawValue).filter((rawValue) => rawValue !== undefined));
+  const values = jsonSchema.items.enum;
+  const options = useMemo(
+    () => getEnumOptions(values, alias, getInputId),
+    [values, alias, getInputId],
+  );
+  const handleToggle = useHandle((option: string | null, checked: boolean) => {
+    onChange((previous) => {
+      const stored = isArray(previous) ? previous : [];
+      if (!checked) return stored.filter((value) => value !== option);
+      return stored.includes(option) ? stored : [...stored, option];
+    });
   });
 
+  const captionId = label ? getInputId('legend') : undefined;
+  const locked = disabled || readOnly;
   return (
-    <FormControlLabel
-      label={label}
-      htmlFor={path}
-      required={required}
-      disabled={disabled}
-      labelPlacement="start"
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'start',
-        gap: 8,
-      }}
-      control={
-        <FormGroup row={row} role="group" aria-invalid={misfit || undefined}>
-          {options.map((option) => {
-            const isChecked = value.includes(option.value);
-            return (
-              <FormControlLabel
-                key={option.value}
-                disabled={disabled}
-                control={
-                  <Checkbox
-                    id={`${path}-${option.value}`}
-                    name={`${name}[]`}
-                    checked={isChecked}
-                    onChange={() => handleToggle(option.value)}
-                    size={size}
-                  />
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      {label && (
+        <FormLabel component="span" id={captionId} required={required}>
+          {label}
+        </FormLabel>
+      )}
+      <FormGroup
+        id={inputId}
+        row={row}
+        role="group"
+        aria-labelledby={captionId ?? labelId}
+        aria-invalid={misfit || undefined}
+      >
+        {options.map((option) => (
+          <FormControlLabel
+            key={option.value}
+            disabled={locked}
+            control={
+              <Checkbox
+                id={option.id}
+                name={name}
+                size={size}
+                checked={isArray(value) && value.includes(option.rawValue)}
+                onChange={(event) =>
+                  handleToggle(option.rawValue, event.target.checked)
                 }
-                label={option.label}
               />
-            );
-          })}
-        </FormGroup>
-      }
-    />
+            }
+            label={option.label}
+          />
+        ))}
+      </FormGroup>
+    </Box>
   );
 };
 
 export const FieldInputStringCheckboxDefinition = {
   Component: FieldInputStringCheckbox,
+  controlled: true,
   test: ({ type, inputType, jsonSchema }) =>
     type === 'array' &&
     inputType === 'checkbox' &&

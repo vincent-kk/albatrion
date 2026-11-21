@@ -114,7 +114,7 @@ URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid schem
 
 - **Role**: Input numeric values using a slider
 - **Applied when**: `type` is `"number"` or `"integer"` and `inputType` is `"slider"`
-- **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties, lazy update option (`presentation.FieldInputProps.lazy`), mark display option, automatic value label display; while the form holds no value, the thumb and value label stay hidden (the thumb shows while it has keyboard focus) until the first change, and assistive technology hears `Not set` instead of the minimum (`presentation.FieldInputProps.unsetValueText` changes the phrase)
+- **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties, lazy update option (`presentation.FieldInputProps.lazy`), mark display option, automatic value label display
 
 Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores the value on commit (key up, pointer up, or the library change-complete event); `false` stores on every move.
 
