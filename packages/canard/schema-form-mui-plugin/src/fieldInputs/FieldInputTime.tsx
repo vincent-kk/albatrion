@@ -14,6 +14,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 
 type TimeJSONSchema = StringSchema & {
@@ -49,6 +50,7 @@ const FieldInputTime = ({
   hideLabel,
   misfit,
 }: FieldInputTimeProps) => {
+  const titleId = useMeaningfulLabelId(fieldTitleId);
   const fieldName = useFieldLabelAssociation(
     inputId,
     fieldTitleId,
@@ -112,14 +114,14 @@ const FieldInputTime = ({
           textField: {
             id: getInputId('native'),
             InputProps: {
-              'aria-labelledby': fieldTitleId,
+              'aria-labelledby': titleId,
               'aria-label': fieldName,
               slotProps: {
                 input: {
                   id: inputId,
                   role: 'group',
                   'aria-disabled': disabled || undefined,
-                  'aria-labelledby': fieldTitleId,
+                  'aria-labelledby': titleId,
                   'aria-label': fieldName,
                 },
               },

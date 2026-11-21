@@ -9,6 +9,7 @@ import type {
 } from '@canard/schema-form';
 
 import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { getSliderBounds } from './utils/slider/getSliderBounds';
 import { useSliderControl } from './utils/slider/useSliderControl';
 
@@ -30,6 +31,7 @@ const FieldInputSlider = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputSliderProps) => {
+  const titleId = useMeaningfulLabelId(labelledBy);
   const fieldName = useFieldNameFallback(jsonSchema, name);
   const bounds = useMemo(
     () =>
@@ -93,7 +95,7 @@ const FieldInputSlider = ({
     <div
       ref={markFocusTarget}
       role="group"
-      aria-labelledby={labelledBy}
+      aria-labelledby={titleId}
       aria-label={fieldName}
       aria-invalid={misfit || undefined}
       onMouseDownCapture={beginPointer}
@@ -102,7 +104,7 @@ const FieldInputSlider = ({
       onKeyUpCapture={keyUp}
     >
       <Slider
-        ariaLabelledByForHandle={labelledBy}
+        ariaLabelledByForHandle={titleId}
         ariaLabelForHandle={fieldName}
         onFocus={(event) => {
           if (unset) event.currentTarget.style.opacity = '1';

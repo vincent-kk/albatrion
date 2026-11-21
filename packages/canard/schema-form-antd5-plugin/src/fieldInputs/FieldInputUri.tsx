@@ -18,6 +18,7 @@ import type {
 } from '@canard/schema-form';
 
 import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { formatProtocol } from './utils/uri/formatProtocol';
 import { parseUri } from './utils/uri/parseUri';
 
@@ -54,6 +55,7 @@ const FieldInputUri = ({
   protocols,
   misfit,
 }: FieldInputUriProps) => {
+  const titleId = useMeaningfulLabelId(labelId);
   const fieldName = useFieldNameFallback(jsonSchema, name);
   const normalizedProtocols = useMemo(() => {
     const rawProtocols = protocols || DEFAULT_PROTOCOLS;
@@ -127,7 +129,7 @@ const FieldInputUri = ({
   return (
     <Space.Compact
       role="group"
-      aria-labelledby={labelId}
+      aria-labelledby={titleId}
       aria-label={fieldName}
       block
       size={size || context?.size}
@@ -135,7 +137,7 @@ const FieldInputUri = ({
       {ProtocolDropdown}
       <Input
         ref={inputRef}
-        aria-labelledby={labelId}
+        aria-labelledby={titleId}
         aria-label={fieldName}
         id={inputId}
         name={name}

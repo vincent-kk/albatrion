@@ -8,6 +8,7 @@ import {
 
 import type { FieldInputProps } from '@canard/schema-form';
 
+import { useOwnedControlName } from '../../utils/useOwnedControlName';
 import { getKeyboardValue } from '../utils/slider/getKeyboardValue';
 import type { getSliderBounds } from '../utils/slider/getSliderBounds';
 import { bindSliderThumbs } from './SliderKeyboardControl/bindSliderThumbs';
@@ -72,14 +73,13 @@ export const SliderKeyboardControl = ({
   useLayoutEffect(() => {
     if (disabled) keyboardCommit.current = undefined;
   }, [disabled]);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const boundary = ref.current;
     if (!boundary) return;
     const bind = () =>
       bindSliderThumbs(boundary, {
         inputId,
         getInputId,
-        labelledBy,
         min,
         max,
         disabled,
@@ -100,7 +100,9 @@ export const SliderKeyboardControl = ({
     });
     observer.observe(boundary, { childList: true, subtree: true });
     return () => observer.disconnect();
-  }, [disabled, inputId, getInputId, labelledBy, min, max]);
+  }, [disabled, inputId, getInputId, min, max]);
+  useOwnedControlName(inputId, { 'aria-labelledby': labelledBy });
+  useOwnedControlName(getInputId(1), { 'aria-labelledby': labelledBy });
   useEffect(() => {
     const thumbs =
       ref.current?.querySelectorAll<HTMLElement>('[role="slider"]') ?? [];

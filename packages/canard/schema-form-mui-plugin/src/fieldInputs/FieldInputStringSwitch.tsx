@@ -12,6 +12,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
@@ -50,6 +51,7 @@ const FieldInputStringSwitch = ({
   misfit,
   alias,
 }: FieldInputStringSwitchProps) => {
+  const titleId = useMeaningfulLabelId(fieldTitleId);
   const fieldName = useFieldLabelAssociation(
     inputId,
     fieldTitleId,
@@ -113,7 +115,7 @@ const FieldInputStringSwitch = ({
             size={switchSize}
             slotProps={{
               input: {
-                'aria-labelledby': fieldTitleId,
+                'aria-labelledby': titleId,
                 'aria-label': fieldName,
                 role: 'switch',
                 'aria-invalid': misfit || undefined,

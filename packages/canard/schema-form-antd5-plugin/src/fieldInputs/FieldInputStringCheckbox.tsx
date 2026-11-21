@@ -15,6 +15,7 @@ import type {
 
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 import { mergeEnumSelection } from './utils/enum/mergeEnumSelection';
 
@@ -51,6 +52,7 @@ const FieldInputStringCheckbox = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputStringCheckboxProps) => {
+  const titleId = useMeaningfulLabelId(labelledBy);
   const fieldName = useFieldNameFallback(jsonSchema, name);
   const options = useMemo(() => {
     const labels = context.checkboxLabels || alias || {};
@@ -83,7 +85,7 @@ const FieldInputStringCheckbox = ({
     <div
       id={inputId}
       role="group"
-      aria-labelledby={labelledBy}
+      aria-labelledby={titleId}
       aria-label={fieldName}
       aria-invalid={misfit || undefined}
     >

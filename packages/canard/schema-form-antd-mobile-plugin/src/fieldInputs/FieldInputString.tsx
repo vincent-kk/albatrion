@@ -1,3 +1,5 @@
+import { useRef } from 'react';
+
 import { Input } from 'antd-mobile';
 
 import { useHandle } from '@winglet/react-utils/hook';
@@ -9,8 +11,9 @@ import type {
 } from '@canard/schema-form';
 
 import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { useNativeFieldName } from '../utils/useNativeFieldName';
-import { useControlIdentifiers } from './utils/controls/useControlIdentifiers';
+import { useOwnedControlName } from '../utils/useOwnedControlName';
 
 type StringJSONSchema = StringSchema & {
   format?: 'password';
@@ -28,31 +31,25 @@ const FieldInputString = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputPropsWithSchema<string | null, StringJSONSchema>) => {
+  const titleId = useMeaningfulLabelId(labelledBy);
   const fieldName = useFieldNameFallback(jsonSchema, name);
   const naming = useNativeFieldName(inputId, labelledBy, fieldName);
-  const bindControls = useControlIdentifiers(
-    inputId,
-    name,
-    'input',
-    undefined,
-    undefined,
-    naming,
-  );
+  const initialName = useRef(fieldName).current;
+  useOwnedControlName(inputId, naming, initialName);
   const type = jsonSchema.format === 'password' ? 'password' : 'text';
   const handleChange = useHandle((text: string) =>
     onChange(text === '' ? undefined : text),
   );
   return (
     <div
-      ref={bindControls}
       role="group"
-      aria-labelledby={labelledBy}
+      aria-labelledby={titleId}
       aria-label={fieldName}
       aria-invalid={misfit || undefined}
     >
       <Input
         id={inputId}
-        aria-label={naming['aria-label']}
+        aria-label={initialName}
         name={name}
         type={type}
         readOnly={readOnly}

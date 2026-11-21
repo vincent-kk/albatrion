@@ -13,6 +13,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 import { formatProtocol } from './utils/uri/formatProtocol';
 import { parseUri } from './utils/uri/parseUri';
@@ -51,6 +52,7 @@ const FieldInputUri = ({
   hideLabel,
   misfit,
 }: FieldInputUriProps) => {
+  const titleId = useMeaningfulLabelId(fieldTitleId);
   const fieldName = useFieldLabelAssociation(
     inputId,
     fieldTitleId,
@@ -121,7 +123,7 @@ const FieldInputUri = ({
   });
 
   return (
-    <Box role="group" aria-labelledby={fieldTitleId} aria-label={fieldName}>
+    <Box role="group" aria-labelledby={titleId} aria-label={fieldName}>
       <InputLabel htmlFor={inputId} required={required}>
         {label}
       </InputLabel>
@@ -155,7 +157,7 @@ const FieldInputUri = ({
           error={misfit}
           slotProps={{
             htmlInput: {
-              'aria-labelledby': fieldTitleId,
+              'aria-labelledby': titleId,
               'aria-label': fieldName,
             },
             input: {

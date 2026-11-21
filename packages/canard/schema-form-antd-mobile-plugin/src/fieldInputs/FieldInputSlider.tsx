@@ -14,6 +14,7 @@ import type {
 
 import { isSliderInput } from '../utils/inputs/isSliderInput';
 import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { SliderKeyboardControl } from './components/SliderKeyboardControl';
 import { getSliderBounds } from './utils/slider/getSliderBounds';
 import { getSliderDisplayValue } from './utils/slider/getSliderDisplayValue';
@@ -53,6 +54,7 @@ const FieldInputSlider = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputSliderProps) => {
+  const titleId = useMeaningfulLabelId(labelledBy);
   const fieldName = useFieldNameFallback(jsonSchema, name);
   const range = type === 'array';
   const initialValue = range
@@ -181,14 +183,14 @@ const FieldInputSlider = ({
       role="group"
       onMouseDownCapture={beginPointer}
       onTouchStartCapture={beginPointer}
-      aria-labelledby={labelledBy}
+      aria-labelledby={titleId}
       aria-label={fieldName}
       aria-invalid={misfit || undefined}
     >
       <SliderKeyboardControl
         inputId={inputId}
         getInputId={getInputId}
-        labelledBy={labelledBy}
+        labelledBy={titleId}
         value={displayed}
         navigationValue={activeDraft ?? stored ?? displayed}
         unset={isUnset}

@@ -12,7 +12,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
-import { useMountedTitle } from './FieldInputBooleanSwitch/useMountedTitle';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 
 /** Visually hide the native fallback without excluding it from name calculation. */
@@ -63,7 +63,7 @@ const FieldInputBooleanSwitch = ({
     jsonSchema,
     name,
   );
-  const rootTitle = useMountedTitle(node.parentNode ? undefined : fieldTitleId);
+  const titleId = useMeaningfulLabelId(fieldTitleId, !node.parentNode);
   const handleChange = useHandle(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onChange(event.target.checked);
@@ -108,7 +108,7 @@ const FieldInputBooleanSwitch = ({
             size={size}
             slotProps={{
               input: {
-                'aria-labelledby': node.parentNode ? fieldTitleId : rootTitle,
+                'aria-labelledby': titleId,
                 'aria-label': node.parentNode ? fieldName : undefined,
                 role: 'switch',
                 'aria-invalid': misfit || undefined,

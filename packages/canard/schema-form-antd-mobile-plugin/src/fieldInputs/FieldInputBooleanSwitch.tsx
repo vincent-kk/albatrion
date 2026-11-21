@@ -12,6 +12,7 @@ import type {
 
 import { isBooleanSwitchInput } from '../utils/inputs/isBooleanSwitchInput';
 import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { SwitchKeyboardControl } from './components/SwitchKeyboardControl';
 
 interface FieldInputBooleanSwitchProps
@@ -40,6 +41,7 @@ const FieldInputBooleanSwitch = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputBooleanSwitchProps) => {
+  const titleId = useMeaningfulLabelId(labelledBy);
   const fieldName = useFieldNameFallback(jsonSchema, name);
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
     const labels = context?.checkboxLabels || alias || {};
@@ -51,7 +53,7 @@ const FieldInputBooleanSwitch = ({
   return (
     <SwitchKeyboardControl id={inputId} name={name} disabled={disabled}>
       <Switch
-        aria-labelledby={labelledBy}
+        aria-labelledby={titleId}
         aria-label={fieldName}
         data-focus-target
         tabIndex={disabled ? undefined : 0}

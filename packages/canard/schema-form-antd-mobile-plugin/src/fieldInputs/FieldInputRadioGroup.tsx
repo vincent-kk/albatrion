@@ -14,6 +14,7 @@ import type {
 
 import { isRadioGroupInput } from '../utils/inputs/isRadioGroupInput';
 import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { useControlIdentifiers } from './utils/controls/useControlIdentifiers';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
@@ -45,6 +46,7 @@ const FieldInputRadioGroup = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputRadioGroupProps) => {
+  const titleId = useMeaningfulLabelId(labelledBy);
   const fieldName = useFieldNameFallback(jsonSchema, name);
   const options = useMemo(() => {
     const labels = context.radioLabels || alias || {};
@@ -82,7 +84,7 @@ const FieldInputRadioGroup = ({
     <div
       ref={bindControls}
       id={inputId}
-      aria-labelledby={labelledBy}
+      aria-labelledby={titleId}
       aria-label={fieldName}
       role="radiogroup"
       aria-invalid={misfit || undefined}

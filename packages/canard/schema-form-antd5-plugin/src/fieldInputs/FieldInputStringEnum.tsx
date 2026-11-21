@@ -16,6 +16,7 @@ import type {
 } from '@canard/schema-form';
 
 import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { decodeEnumSelection } from './utils/enum/decodeEnumSelection';
 import { filterEnumOption } from './utils/enum/filterEnumOption';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
@@ -49,6 +50,7 @@ const FieldInputStringEnum = ({
   size,
   misfit,
 }: FieldInputStringEnumProps) => {
+  const titleId = useMeaningfulLabelId(labelId);
   const fieldName = useFieldNameFallback(jsonSchema, name);
   const [schema, alias, mode] = useMemo(() => {
     const labels = context.enumLabels || aliasProp;
@@ -107,7 +109,7 @@ const FieldInputStringEnum = ({
   return (
     <Select
       id={inputId}
-      aria-labelledby={labelId}
+      aria-labelledby={titleId}
       aria-label={fieldName}
       mode={mode}
       filterOption={filterEnumOption}

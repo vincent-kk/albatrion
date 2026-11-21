@@ -19,6 +19,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
@@ -61,6 +62,7 @@ const FieldInputRadioGroup = ({
   hideLabel,
   misfit,
 }: FieldInputRadioGroupProps) => {
+  const titleId = useMeaningfulLabelId(labelId);
   const fieldName = useFieldLabelAssociation(
     inputId,
     labelId,
@@ -110,7 +112,7 @@ const FieldInputRadioGroup = ({
   return (
     <FormControl
       component="fieldset"
-      aria-labelledby={labelId}
+      aria-labelledby={titleId}
       aria-label={fieldName}
       required={required}
       disabled={disabled || readOnly}
@@ -133,7 +135,7 @@ const FieldInputRadioGroup = ({
       </FormLabel>
       <RadioGroup
         id={inputId}
-        aria-labelledby={labelId}
+        aria-labelledby={titleId}
         aria-label={fieldName}
         name={inputId}
         defaultValue={initialValue}

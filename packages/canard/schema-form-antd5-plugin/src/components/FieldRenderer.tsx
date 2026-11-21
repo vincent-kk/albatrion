@@ -11,6 +11,7 @@ import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 import { isRadioGroupInput } from '../utils/inputs/isRadioGroupInput';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
 import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 
 /** Legends use the same wrapping as registered labels. */
 const TITLE_STYLE: CSSProperties = { wordBreak: 'unset' };
@@ -31,6 +32,7 @@ export const FieldRenderer = ({
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps): ReactElement => {
+  const titleId = useMeaningfulLabelId(labelId);
   const title = useMemo(
     () => resolveFieldLabel(jsonSchema, name),
     [jsonSchema, name],
@@ -85,7 +87,8 @@ export const FieldRenderer = ({
   if (node.strategy === 'branch') {
     return (
       <fieldset
-        aria-labelledby={labelId}
+        aria-labelledby={titleId}
+        aria-label={fallbackName}
         style={{
           marginBottom: 5,
           marginLeft: 5 * depth,
@@ -94,7 +97,7 @@ export const FieldRenderer = ({
         <legend id={labelId}>
           <Typography.Text style={TITLE_STYLE}>{title}</Typography.Text>
         </legend>
-        <Input aria-labelledby={labelId} />
+        <Input aria-labelledby={titleId} />
         <ErrorMessage style={EMPTY_OBJECT}>{errorMessage}</ErrorMessage>
       </fieldset>
     );
@@ -113,7 +116,7 @@ export const FieldRenderer = ({
           <Input
             aria-labelledby={
               node.parentNode && !isArraySchema(node.parentNode)
-                ? labelId
+                ? titleId
                 : undefined
             }
           />

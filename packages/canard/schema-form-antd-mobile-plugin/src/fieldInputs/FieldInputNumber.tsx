@@ -9,7 +9,9 @@ import type {
 } from '@canard/schema-form';
 
 import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { useNativeFieldName } from '../utils/useNativeFieldName';
+import { useOwnedControlName } from '../utils/useOwnedControlName';
 import { useControlIdentifiers } from './utils/controls/useControlIdentifiers';
 
 type SingleStepperProps = StepperProps extends { stringMode: false }
@@ -39,16 +41,11 @@ const FieldInputNumber = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputNumberProps) => {
+  const titleId = useMeaningfulLabelId(labelledBy);
   const fieldName = useFieldNameFallback(jsonSchema, name);
   const naming = useNativeFieldName(inputId, labelledBy, fieldName);
-  const bindControls = useControlIdentifiers(
-    inputId,
-    name,
-    'input',
-    undefined,
-    undefined,
-    naming,
-  );
+  useOwnedControlName(inputId, naming);
+  const bindControls = useControlIdentifiers(inputId, name, 'input');
   const handleChange = useHandle((input: number | null) => {
     if (input === null) onChange(undefined);
     else if (Number.isNaN(input)) return;
@@ -59,7 +56,7 @@ const FieldInputNumber = ({
     <div
       ref={bindControls}
       role="group"
-      aria-labelledby={labelledBy}
+      aria-labelledby={titleId}
       aria-label={fieldName}
       aria-invalid={misfit || undefined}
     >

@@ -4,4 +4,4 @@
 
 Read-only sliders show the same value when switched in place as when mounted read-only. Fields use authored titles and custom labels as control names. Empty React labels fall back to the field title.
 
-Fields retain an accessible name when a visible label has not mounted or is removed. The current visible label takes precedence over the schema’s spoken fallback.
+Fields retain an accessible name when a meaningful label has not mounted or is removed. Decorative-only labels and labels hidden with HTML or ARIA attributes use the schema’s spoken fallback. Labels hidden only with CSS retain their text as the name. Consumer-owned ARIA values are preserved.

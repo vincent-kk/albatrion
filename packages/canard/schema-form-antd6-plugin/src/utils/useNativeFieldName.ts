@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useState } from 'react';
 
-import { observeLabelAddress } from './useNativeFieldName/observeLabelAddress';
+import { observeLabelAddress } from './observeLabelAddress';
 import { readNativeLabelSource } from './useNativeFieldName/readNativeLabelSource';
 
 /** Connected labels are resolved after the client commit. */

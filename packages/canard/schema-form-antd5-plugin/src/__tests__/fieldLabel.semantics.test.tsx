@@ -137,6 +137,7 @@ it('keeps consumer names written before and during generation and after unmount'
       await act(async () => {
         view.rerender(
           <Form
+            key={state.mount}
             jsonSchema={schema}
             fieldInputDefinitions={[stringInput]}
             LabelRenderer={Caption}
@@ -155,11 +156,12 @@ it('keeps consumer names written before and during generation and after unmount'
     }
     expect
       .soft(control?.getAttribute('aria-label'), state.kind)
-      .toBe(state.caption);
+      .toBe(state.caption ?? 'Spoken fallback');
     observed.add(state.kind);
   }
   expect([...observed]).toEqual([
     'authored before',
+    'generated first',
     'authored after',
     'authored changed',
     'cleanup',

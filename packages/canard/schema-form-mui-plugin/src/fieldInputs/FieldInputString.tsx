@@ -12,6 +12,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 
 type StringJSONSchema = StringSchema & {
@@ -48,6 +49,7 @@ const FieldInputString = ({
   hideLabel,
   misfit,
 }: FieldInputStringProps) => {
+  const titleId = useMeaningfulLabelId(fieldTitleId);
   const fieldName = useFieldLabelAssociation(
     inputId,
     fieldTitleId,
@@ -107,7 +109,7 @@ const FieldInputString = ({
       onChange={handleChange}
       size={size}
       slotProps={{
-        htmlInput: { 'aria-labelledby': fieldTitleId, 'aria-label': fieldName },
+        htmlInput: { 'aria-labelledby': titleId, 'aria-label': fieldName },
         input: {
           readOnly,
         },

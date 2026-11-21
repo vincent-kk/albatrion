@@ -6,6 +6,8 @@ import type { FieldRendererProps } from '@canard/schema-form';
 
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 
 /**
  * Connect group titles through the core label address while retaining the helper root.
@@ -22,6 +24,8 @@ export const FieldRenderer = ({
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps): ReactElement => {
+  const fallbackName = useFieldNameFallback(jsonSchema, name);
+  const titleId = useMeaningfulLabelId(labelId);
   const presentation =
     typeof jsonSchema === 'object' && jsonSchema !== null
       ? jsonSchema.presentation
@@ -76,7 +80,8 @@ export const FieldRenderer = ({
     return (
       <Box
         component={ownsTitle ? 'div' : 'fieldset'}
-        aria-labelledby={!ownsTitle && title ? labelId : undefined}
+        aria-labelledby={!ownsTitle && title ? titleId : undefined}
+        aria-label={!ownsTitle ? fallbackName : undefined}
         sx={{
           marginBottom: 1,
           marginLeft: depth * 2,

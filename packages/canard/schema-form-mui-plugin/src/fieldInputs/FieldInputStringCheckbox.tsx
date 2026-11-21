@@ -21,6 +21,7 @@ import type {
 import type { MuiContext } from '../type';
 import { isCheckboxGroupInput } from '../utils/inputs/isCheckboxGroupInput';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 import { mergeEnumSelection } from './utils/enum/mergeEnumSelection';
@@ -63,6 +64,7 @@ const FieldInputStringCheckbox = ({
   hideLabel,
   misfit,
 }: FieldInputStringCheckboxProps) => {
+  const titleId = useMeaningfulLabelId(labelId);
   const fieldName = useFieldLabelAssociation(
     inputId,
     labelId,
@@ -115,7 +117,7 @@ const FieldInputStringCheckbox = ({
       component="fieldset"
       role="group"
       id={inputId}
-      aria-labelledby={labelId}
+      aria-labelledby={titleId}
       aria-label={fieldName}
       aria-invalid={misfit || undefined}
       required={required}

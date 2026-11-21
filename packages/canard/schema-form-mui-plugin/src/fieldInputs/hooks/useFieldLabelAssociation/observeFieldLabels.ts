@@ -1,7 +1,7 @@
+import { observeLabelAddress } from '../../../utils/observeLabelAddress';
 import { applyFieldLabel } from './observeFieldLabels/applyFieldLabel';
 import { hasInputLabelChange } from './observeFieldLabels/hasInputLabelChange';
 import { observeInputLabels } from './observeFieldLabels/observeInputLabels';
-import { observeLabelAddress } from './observeFieldLabels/observeLabelAddress';
 import { readCurrentFieldLabels } from './observeFieldLabels/readCurrentFieldLabels';
 
 /**

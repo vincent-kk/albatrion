@@ -4,7 +4,6 @@ import type { FieldInputProps } from '@canard/schema-form';
 interface ThumbIdentifiers {
   inputId: string;
   getInputId: FieldInputProps['getInputId'];
-  labelledBy?: string;
   min: number;
   max: number;
   disabled: boolean;
@@ -17,12 +16,11 @@ interface ThumbIdentifiers {
  */
 export const bindSliderThumbs = (
   boundary: HTMLDivElement,
-  { inputId, getInputId, labelledBy, min, max, disabled }: ThumbIdentifiers,
+  { inputId, getInputId, min, max, disabled }: ThumbIdentifiers,
 ): void => {
   const thumbs = boundary.querySelectorAll<HTMLElement>('[role="slider"]');
   for (const [index, thumb] of Array.from(thumbs).entries()) {
     thumb.id = index === 0 ? inputId : getInputId(index);
-    if (labelledBy) thumb.setAttribute('aria-labelledby', labelledBy);
     thumb.setAttribute('aria-valuemin', String(min));
     thumb.setAttribute('aria-valuemax', String(max));
     thumb.tabIndex = disabled ? -1 : 0;

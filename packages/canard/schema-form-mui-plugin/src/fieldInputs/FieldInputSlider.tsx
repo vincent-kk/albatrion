@@ -10,6 +10,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 import { getSliderBounds } from './utils/slider/getSliderBounds';
 import { useSliderControl } from './utils/slider/useSliderControl';
@@ -78,6 +79,7 @@ const FieldInputSlider = ({
   unsetValueText = DEFAULT_UNSET_VALUE_TEXT,
   misfit,
 }: FieldInputSliderProps) => {
+  const titleId = useMeaningfulLabelId(fieldTitleId);
   const fieldName = useFieldLabelAssociation(
     inputId,
     fieldTitleId,
@@ -167,7 +169,7 @@ const FieldInputSlider = ({
           input: isUnset
             ? {
                 id: inputId,
-                'aria-labelledby': fieldTitleId,
+                'aria-labelledby': titleId,
                 'aria-label': fieldName,
                 'aria-valuemin': min,
                 'aria-valuemax': max,
@@ -178,7 +180,7 @@ const FieldInputSlider = ({
               }
             : {
                 id: inputId,
-                'aria-labelledby': fieldTitleId,
+                'aria-labelledby': titleId,
                 'aria-label': fieldName,
                 'aria-valuemin': min,
                 'aria-valuemax': max,

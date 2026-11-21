@@ -11,6 +11,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 
 interface FieldInputBooleanProps
@@ -36,6 +37,7 @@ const FieldInputBoolean = ({
   hideLabel,
   misfit,
 }: FieldInputBooleanProps) => {
+  const titleId = useMeaningfulLabelId(fieldTitleId);
   const fieldName = useFieldLabelAssociation(
     inputId,
     fieldTitleId,
@@ -75,7 +77,7 @@ const FieldInputBoolean = ({
           size={size}
           slotProps={{
             input: {
-              'aria-labelledby': fieldTitleId,
+              'aria-labelledby': titleId,
               'aria-label': fieldName,
               'aria-invalid': misfit || undefined,
             },

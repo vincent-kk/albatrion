@@ -13,6 +13,7 @@ import { isSliderInput } from '../utils/inputs/isSliderInput';
 import { isStringSwitchInput } from '../utils/inputs/isStringSwitchInput';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
 import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 
 /**
  * Assemble mobile parts without adding Space items for absent message children.
@@ -30,6 +31,7 @@ export const FieldRenderer = ({
   ErrorMessage,
   errorMessage,
 }: FieldRendererProps): ReactElement => {
+  const titleId = useMeaningfulLabelId(labelId);
   const title = useMemo(
     () => resolveFieldLabel(jsonSchema, name),
     [jsonSchema, name],
@@ -88,14 +90,15 @@ export const FieldRenderer = ({
   if (node.strategy === 'branch') {
     return (
       <fieldset
-        aria-labelledby={labelId}
+        aria-labelledby={titleId}
+        aria-label={fallbackName}
         style={{ border: 0, margin: 0, padding: 0 }}
       >
         <span hidden={!(hint && isCheckboxGroupInput(hint))} id={labelId}>
           {hint && isCheckboxGroupInput(hint) ? title : fallbackName}
         </span>
         <Space direction="vertical" block>
-          <Input aria-labelledby={labelId} />
+          <Input aria-labelledby={titleId} />
           {errorMessage !== null &&
             errorMessage !== undefined &&
             typeof errorMessage !== 'boolean' && (
@@ -119,7 +122,7 @@ export const FieldRenderer = ({
           <Input
             aria-labelledby={
               node.parentNode && !isArraySchema(node.parentNode)
-                ? labelId
+                ? titleId
                 : undefined
             }
           />

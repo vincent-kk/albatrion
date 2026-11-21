@@ -1,11 +1,4 @@
-/** Return visible text from a native label or an external title. */
-const readText = (element: HTMLElement): string => {
-  if (element.closest('[hidden], [aria-hidden="true"]')) return '';
-  const style = element.ownerDocument.defaultView?.getComputedStyle(element);
-  return style?.display === 'none' || style?.visibility === 'hidden'
-    ? ''
-    : (element.textContent ?? '').trim();
-};
+import { readMeaningfulLabel } from '../readMeaningfulLabel';
 
 /**
  * Find current label addresses and the text of any unaddressed native label.
@@ -28,7 +21,7 @@ export const readNativeLabelSource = (
       ? [external, ...native]
       : native;
   const visible = labels.flatMap((element) => {
-    const text = readText(element);
+    const text = readMeaningfulLabel(element);
     return text ? [{ id: element.id, text }] : [];
   });
   if (visible.some(({ id }) => !id))

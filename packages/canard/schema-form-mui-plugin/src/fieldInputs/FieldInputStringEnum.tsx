@@ -12,6 +12,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
@@ -49,6 +50,7 @@ const FieldInputStringEnum = ({
   hideLabel,
   misfit,
 }: FieldInputStringEnumProps) => {
+  const titleId = useMeaningfulLabelId(fieldTitleId);
   const fieldName = useFieldLabelAssociation(
     inputId,
     fieldTitleId,
@@ -119,12 +121,12 @@ const FieldInputStringEnum = ({
         inputProps={{ id: getInputId('native') }}
         SelectDisplayProps={{
           id: inputId,
-          'aria-labelledby': fieldTitleId,
+          'aria-labelledby': titleId,
           'aria-label': fieldName,
         }}
         MenuProps={{ id: getInputId('menu') }}
         name={name}
-        labelId={fieldTitleId}
+        labelId={titleId}
         label={label}
         required={required}
         readOnly={readOnly}

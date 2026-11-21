@@ -12,6 +12,7 @@ import type {
 } from '@canard/schema-form';
 
 import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 
 const Add = (props: ButtonProps) => (
   <Button color="primary" startIcon={<AddIcon />} {...props}>
@@ -34,6 +35,7 @@ const FieldInputArray = ({
   ChildFields,
   style,
 }: FieldInputProps<any[]>) => {
+  const titleId = useMeaningfulLabelId(fieldTitleId);
   const maxItems = minLite(
     typeof jsonSchema.maxItems === 'number' ? jsonSchema.maxItems : Infinity,
     !jsonSchema.items && isArray(jsonSchema.prefixItems)
@@ -52,7 +54,7 @@ const FieldInputArray = ({
     <div
       id={inputId}
       role="group"
-      aria-labelledby={fieldTitleId}
+      aria-labelledby={titleId}
       aria-label={useFieldNameFallback(jsonSchema, name)}
       style={style}
     >

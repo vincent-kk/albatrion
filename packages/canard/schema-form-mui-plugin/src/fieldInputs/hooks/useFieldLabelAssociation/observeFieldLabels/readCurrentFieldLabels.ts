@@ -1,4 +1,4 @@
-import { readVisibleLabel } from './readVisibleLabel';
+import { readMeaningfulLabel } from '../../../../utils/readMeaningfulLabel';
 
 /**
  * Resolve the current control and derive its rendered title sources.
@@ -32,12 +32,12 @@ export const readCurrentFieldLabels = (
       (candidate.htmlFor === control.id ||
         candidate.matches('.MuiInputLabel-root')),
   );
-  const primary = external ? readVisibleLabel(external) : '';
-  const captions = internal.map(readVisibleLabel).filter(Boolean);
+  const primary = readMeaningfulLabel(external);
+  const captions = internal.map(readMeaningfulLabel).filter(Boolean);
   const names = [...new Set([primary, ...captions].filter(Boolean))];
   return {
     field,
-    external,
+    external: primary ? external : null,
     caption: [...new Set(captions)].join(' ') || undefined,
     override:
       names.length > 1 || (!primary && names.length)

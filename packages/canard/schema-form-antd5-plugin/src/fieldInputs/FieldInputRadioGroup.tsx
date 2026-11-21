@@ -15,6 +15,7 @@ import type {
 
 import { isRadioGroupInput } from '../utils/inputs/isRadioGroupInput';
 import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type StringJSONSchema = StringSchema<{
@@ -50,6 +51,7 @@ const FieldInputRadioGroup = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputRadioGroupProps) => {
+  const titleId = useMeaningfulLabelId(labelledBy);
   const fieldName = useFieldNameFallback(jsonSchema, name);
   const options = useMemo(() => {
     const labels = context.radioLabels || alias || {};
@@ -83,7 +85,7 @@ const FieldInputRadioGroup = ({
     <div
       id={inputId}
       role="radiogroup"
-      aria-labelledby={labelledBy}
+      aria-labelledby={titleId}
       aria-label={fieldName}
       aria-invalid={misfit || undefined}
     >

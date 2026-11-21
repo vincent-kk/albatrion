@@ -18,6 +18,7 @@ import type {
 import type { Parameter } from '@aileron/declare';
 
 import { useFieldNameFallback } from '../utils/useFieldNameFallback';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -60,6 +61,7 @@ const FieldInputDateRange = ({
   misfit,
   labelId: labelledBy,
 }: FieldInputDateRangeProps) => {
+  const titleId = useMeaningfulLabelId(labelledBy);
   const fieldName = useFieldNameFallback(jsonSchema, name);
   const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
     if (!range) return onChange(undefined);
@@ -93,7 +95,7 @@ const FieldInputDateRange = ({
   return (
     <DatePicker.RangePicker
       id={{ start: inputId, end: getInputId('end') }}
-      aria-labelledby={labelledBy}
+      aria-labelledby={titleId}
       aria-label={fieldName}
       name={name}
       picker="date"

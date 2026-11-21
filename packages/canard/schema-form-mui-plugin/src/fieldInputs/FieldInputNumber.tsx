@@ -18,6 +18,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 
 type NumberJSONSchema = NumberSchema;
@@ -54,6 +55,7 @@ const FieldInputNumber = ({
   hideLabel,
   misfit,
 }: FieldInputNumberProps) => {
+  const titleId = useMeaningfulLabelId(fieldTitleId);
   const fieldName = useFieldLabelAssociation(
     inputId,
     fieldTitleId,
@@ -140,7 +142,7 @@ const FieldInputNumber = ({
         input: {
           readOnly,
           inputProps: {
-            'aria-labelledby': fieldTitleId,
+            'aria-labelledby': titleId,
             'aria-label': fieldName,
             min: jsonSchema.minimum,
             max: jsonSchema.maximum,

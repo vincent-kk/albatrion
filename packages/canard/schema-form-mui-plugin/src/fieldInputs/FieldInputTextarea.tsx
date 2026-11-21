@@ -12,6 +12,7 @@ import type {
 
 import type { MuiContext } from '../type';
 import { resolveFieldLabel } from '../utils/resolveFieldLabel';
+import { useMeaningfulLabelId } from '../utils/useMeaningfulLabelId';
 import { useFieldLabelAssociation } from './hooks/useFieldLabelAssociation';
 
 type TextareaJSONSchema = StringSchema & {
@@ -54,6 +55,7 @@ const FieldInputTextarea = ({
   hideLabel,
   misfit,
 }: FieldInputTextareaProps) => {
+  const titleId = useMeaningfulLabelId(fieldTitleId);
   const fieldName = useFieldLabelAssociation(
     inputId,
     fieldTitleId,
@@ -111,7 +113,7 @@ const FieldInputTextarea = ({
       minRows={finalMinRows}
       maxRows={finalMaxRows}
       slotProps={{
-        htmlInput: { 'aria-labelledby': fieldTitleId, 'aria-label': fieldName },
+        htmlInput: { 'aria-labelledby': titleId, 'aria-label': fieldName },
         input: {
           readOnly,
         },

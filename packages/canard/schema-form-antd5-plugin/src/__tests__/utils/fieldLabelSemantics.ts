@@ -11,9 +11,10 @@ export const fieldLabelSemantics = () => ({
     { kind: 'CSS class', caption: 'Outer' },
   ] as const,
   ownership: [
-    { kind: 'authored before', caption: 'Before', outer: true },
-    { kind: 'authored after', caption: 'After', outer: false },
-    { kind: 'authored changed', caption: 'Changed', outer: true },
-    { kind: 'cleanup', caption: 'Changed', outer: false },
+    { kind: 'authored before', caption: 'Before', outer: true, mount: 1 },
+    { kind: 'generated first', caption: undefined, outer: false, mount: 2 },
+    { kind: 'authored after', caption: 'After', outer: true, mount: 2 },
+    { kind: 'authored changed', caption: 'Changed', outer: false, mount: 2 },
+    { kind: 'cleanup', caption: 'Changed', outer: false, mount: 2 },
   ] as const,
 });
