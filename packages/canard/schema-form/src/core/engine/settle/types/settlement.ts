@@ -136,6 +136,8 @@ export interface RetainedSource<Self> {
   exitInputs?: Map<BlueprintNode, Map<string, CandidateInput>>;
   /** Structure captured before the first automatic array write. */
   array?: RetainedArraySources<Self>;
+  /** Highest rank already placed directly into an inactive candidate. */
+  latestSlotWriteOrder?: number;
   /** Baseline and active retained decisions for this host's inactive bindings. */
   slots?: Map<BlueprintChildEntry, RetainedSlotSource<Self>>;
 }
@@ -156,6 +158,8 @@ export interface RetainedArraySources<Self> {
 export interface RetainedSlotSource<Self> {
   /** Published binding before the first automatic slot mutation. */
   baseline?: InactiveSlotBaseline<Self>;
+  /** Rank of the latest value already placed in this exact slot. */
+  writeOrder?: number;
   /** Named parent input for a candidate that has yet to receive a live occurrence. */
   namedInput?: InactiveSlotOverlay;
   /** Named input eligible to be applied after the owner's exit policy. */

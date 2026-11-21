@@ -14,7 +14,8 @@ import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { prepareSourcePruner } from '../slots/prepareSourcePruner';
 import { pruneInactiveSources } from '../slots/pruneInactiveSources';
 import { writeAbsentConstituent } from '../slots/writeAbsentConstituent';
-import { supersedeCandidateInput } from '../source/supersedeCandidateInput';
+import { recordNamedChildSource } from '../source/recordNamedChildSource';
+import { recordSourceDecision } from '../source/recordSourceDecision';
 import { findDepartingChild } from '../transition/findDepartingChild';
 import { placeDeclarativeValue } from '../transition/placeDeclarativeValue';
 import { readWriteCoverage } from '../write/readWriteCoverage';
@@ -30,10 +31,8 @@ import { acceptsRetainedWrite } from './utils/acceptsRetainedWrite';
 import { admitsSameValueWrite } from './utils/admitsSameValueWrite';
 import { keepsHostKeys } from './utils/keepsHostKeys';
 import { recordArrayBoundary } from './utils/recordArrayBoundary';
-import { recordNamedArrayItems } from './utils/recordNamedArrayItems';
-import { recordNamedObjectSlots } from './utils/recordNamedObjectSlots';
-import { recordRetainedSource } from './utils/recordRetainedSource';
 import { restoreWriteEpochPaths } from './utils/restoreWriteEpochPaths';
+import { retireArraySources } from './utils/retireArraySources';
 
 /** Default of `changedValue`: the caller has not interpreted this node's input. */
 const UNINTERPRETED: unique symbol = Symbol('uninterpreted');
@@ -89,13 +88,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
       writeOrder = context.retainedWriteOrder =
         (context.retainedWriteOrder ?? 0) + 1;
     if (!acceptsRetainedWrite(node, context, writeOrder)) return;
-    recordRetainedSource(node, context, writeOrigin, writeOrder);
-    if (writeOrigin !== undefined) context.writtenInputs.set(node, input);
-    if (context.isMarkingLiveRule || context.replayingSourceOrder) {
-      const previousRight = context.retainedSources?.get(node)?.postPolicyInput;
-      if (previousRight && previousRight.order !== context.replayingSourceOrder)
-        supersedeCandidateInput(previousRight);
-    }
+    recordSourceDecision(node, input, context, writeOrigin, writeOrder);
   }
   const known = changedValue !== UNINTERPRETED;
   const value = known ? changedValue : node.behavior.interpret(input, spec);
@@ -162,22 +155,17 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   let extras: unknown;
   let whole: boolean;
   let countChanged = false;
+  let previousItemCount: number | undefined;
 
   if (node.behavior.type === 'array') {
-    const previousItemCount = node.itemCount;
+    previousItemCount = node.itemCount;
     if (context.isAutomatic) recordArrayBoundary(node, context);
     if (!context.arrayCounts.has(node))
       context.arrayCounts.set(node, previousItemCount);
     node.itemCount = isArray(value) ? value.length : 0;
     countChanged = node.itemCount !== previousItemCount;
     if (context.isAutomatic)
-      recordNamedArrayItems(
-        node,
-        value,
-        previousItemCount,
-        context,
-        writeOrigin,
-      );
+      retireArraySources(node, previousItemCount, context);
     nextSource = isArray(value) ? undefined : value;
     extras = isArray(value) ? arrayExtras(node, value) : undefined;
     whole = true;
@@ -232,8 +220,17 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   if (writeOrigin !== undefined) distribution.writeOrigin = writeOrigin;
   if (writeOrder !== undefined) distribution.writeOrder = writeOrder;
   context.distributedInputs.set(node, distribution);
-  if (context.isAutomatic && writeOrigin !== undefined && isPlain(value))
-    recordNamedObjectSlots(node, value, context);
+  if (
+    context.isAutomatic &&
+    (writeOrigin !== undefined || previousItemCount !== undefined)
+  )
+    recordNamedChildSource(
+      node,
+      value,
+      context,
+      writeOrigin,
+      previousItemCount,
+    );
   if (context.writeEpoch !== undefined) node.writeEpoch = context.writeEpoch;
   else context.dirtyPaths.add(node.path);
   if (!sameShape) context.shapeDirtyPaths.add(node.path);

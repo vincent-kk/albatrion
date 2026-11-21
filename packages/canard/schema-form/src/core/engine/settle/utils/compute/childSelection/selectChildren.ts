@@ -4,7 +4,7 @@ import type { Dictionary, Fn, Optional } from '@aileron/declare';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
-import { HostStaticPartition, getItemEntries } from '../../../../blueprint';
+import { HostStaticPartition } from '../../../../blueprint';
 import type { BlueprintChildEntry } from '../../../../blueprint';
 import { captureFieldNodeChange } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
@@ -18,7 +18,7 @@ import { flushPendingOutput } from '../../output/flushPendingOutput';
 import { updatePendingExitIndex } from '../../scratch/updatePendingExitIndex';
 import { distributeMovedSource } from '../../slots/distributeMovedSource';
 import { getSlotOrder } from '../../slots/getSlotOrder';
-import { writeInactiveSource } from '../../slots/writeInactiveSource';
+import { writeSlotPath } from '../../slots/writeSlotPath';
 import { isSameChildList } from '../../structure/isSameChildList';
 import { canReuseArrayChildren } from './canReuseArrayChildren';
 import { selectTableChildren } from './gateSelection/selectTableChildren';
@@ -279,7 +279,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     )
       continue;
     seenNodesByName.set(entry.name, entry.node);
-    const distribution = getChildDistribution(node, entry.name, context);
+    const distribution = getChildDistribution(node, entry, context);
     if (
       !distribution ||
       !hasDistributedChildInput(
@@ -300,17 +300,15 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       );
       continue;
     }
-    writeInactiveSource(
-      context,
+    writeSlotPath(
+      context.root,
       path,
       entry.node,
       Reflect.get(distribution.input, entry.name),
-      getSlotOrder(node, entry.name, entry.node),
       distribution.isWhole,
-      node.behavior.type === 'array'
-        ? getItemEntries(node.blueprintNode, Number(entry.name))
-        : node.blueprintNode.childEntries,
+      context,
       distribution.isAutomatic,
+      false,
       distribution.isAutomatic
         ? distribution.writeOrigin !== undefined
         : undefined,

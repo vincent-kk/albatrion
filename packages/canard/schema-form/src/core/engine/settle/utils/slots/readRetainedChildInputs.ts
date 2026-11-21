@@ -1,8 +1,8 @@
 import type { BlueprintChildEntry } from '../../../blueprint';
-import { getItemEntries } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { RetainedSource, SettlementContext } from '../../types/settlement';
 import { getChildDistribution } from '../input/getChildDistribution';
+import { getWriteChild } from '../input/getWriteChild';
 import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
 import { createSlotValueOverlay } from './createSlotValueOverlay';
 import { getSlotSource } from './getSlotSource';
@@ -74,20 +74,26 @@ export const readRetainedChildInputs = <Self extends FieldNodeRecord<Self>>(
     return children;
   const isArray = node.behavior.type === 'array';
   for (const name of Object.keys(distribution.input ?? {})) {
-    if (node.childrenByName?.[name]) continue;
+    if (
+      node.childrenByName?.[name] ||
+      !hasDistributedChildInput(distribution.input, name, isArray)
+    )
+      continue;
+    const { entry } = getWriteChild(
+      node.blueprintNode,
+      undefined,
+      isArray ? Number(name) : name,
+    );
+    if (!entry || children?.has(entry)) continue;
     const current = getChildDistribution(
       node,
-      name,
+      entry,
       context,
       undefined,
       distribution,
     );
     if (!current || !hasDistributedChildInput(current.input, name, isArray))
       continue;
-    const entry = isArray
-      ? getItemEntries(node.blueprintNode, Number(name))[0]
-      : node.blueprintNode.childEntries.find((entry) => entry.name === name);
-    if (!entry || children?.has(entry)) continue;
     const prior = getSlotSource(node, entry);
     const { overlay } = createSlotValueOverlay(
       entry.node,

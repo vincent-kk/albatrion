@@ -33,7 +33,14 @@ export const applyDepartingSource = <Self extends FieldNodeRecord<Self>>(
   returning?: Self,
 ): void => {
   const sources = context.retainedSources;
-  if (!sources || context.exceededBudget) return;
+  if (
+    !sources ||
+    context.exceededBudget ||
+    (returning
+      ? !sources.get(returning)?.exitInputs
+      : context.pendingExits.size === 0)
+  )
+    return;
   const accepted: { owner: Self; input: CandidateInput }[] = [];
   if (returning) {
     for (const paths of sources.get(returning)?.exitInputs?.values() ?? [])

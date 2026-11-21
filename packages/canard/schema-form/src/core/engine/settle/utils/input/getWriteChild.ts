@@ -25,7 +25,10 @@ export const getWriteChild = <Self extends FieldNodeRecord<Self>>(
     return {
       child,
       entry:
-        entries.find(({ node }) => node === child?.blueprintNode) ?? entries[0],
+        child && child.blueprintNode !== entries[0]?.node
+          ? (entries.find(({ node }) => node === child.blueprintNode) ??
+            entries[0])
+          : entries[0],
       isAmbiguous: entries.length > 1,
     };
   }
