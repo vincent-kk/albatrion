@@ -158,7 +158,7 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 
 
 - **역할**: 멀티라인 텍스트 입력을 위한 텍스트 영역
 - **적용 조건**: `type`이 `"string"`이고 `format` 또는 `inputType`이 `"textarea"`인 경우
-- **추가 사항**: `type`·`format` 옆의 스키마 확장 `minRows`와 `maxRows`로 자동 크기를 조절합니다. 이 두 설정은 `presentation.FieldInputProps`에서 읽지 않습니다
+- **추가 사항**: `presentation.FieldInputProps`의 `minRows`와 `maxRows`로 자동 크기를 조절합니다. 생략한 값은 스키마 확장 설정을 사용합니다
 
 ### **[`FieldInputString.tsx`](./src/fieldInputs/FieldInputString.tsx)**
 
