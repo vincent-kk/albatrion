@@ -34,6 +34,8 @@ export interface ModalManagerState {
   frames: Map<number, HTMLElement>;
   /** Registration captures the opener until the request first settles. */
   focusTargets: Map<number, Element | null>;
+  /** Opener ownership retained across temporary frame detachment. */
+  detachedOpenerOwners?: Map<number, number>;
   /** Visible intervals receive initial focus only once. */
   focused: Set<number>;
   /** Only attributes introduced by this manager are removed on release. */
