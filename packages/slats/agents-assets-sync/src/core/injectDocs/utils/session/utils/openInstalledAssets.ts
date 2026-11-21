@@ -62,7 +62,12 @@ export async function openInstalledAssets(path: string): Promise<InstalledAssets
       const next = new Map(packages);
       if (hashes.size) next.set(owner, hashes);
       else next.delete(owner);
-      const json = Object.fromEntries(Array.from(next, ([name, files]) => [name, Object.fromEntries(files)]));
+      const json = Object.fromEntries(
+        sortedEntries(next).map(([name, files]) => [
+          name,
+          Object.fromEntries(sortedEntries(files)),
+        ]),
+      );
       await replaceDocument(path, Buffer.from(JSON.stringify(json) + '\n'), undefined, true);
       if (hashes.size) packages.set(owner, hashes);
       else packages.delete(owner);
@@ -75,4 +80,9 @@ function recordEntries(value: unknown, path: string): [string, unknown][] {
   if (value === null || typeof value !== 'object' || Array.isArray(value))
     throw new Error(`Invalid installed asset record: ${path}`);
   return Object.entries(value);
+}
+
+/** Give the same ownership record a stable serialized order. */
+function sortedEntries<T>(record: ReadonlyMap<string, T>): [string, T][] {
+  return [...record].sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0));
 }
