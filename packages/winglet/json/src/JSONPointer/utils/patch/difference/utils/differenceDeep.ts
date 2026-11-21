@@ -47,17 +47,14 @@ export const differenceDeep = (
     if (frame.index < frame.keys.length) {
       const key = frame.keys[frame.index++];
       const sourceValue = frame.source[key];
-      if (
-        !hasOwnProperty(frame.target, key) ||
-        frame.target[key] === undefined
-      ) {
-        if (hasOwnProperty(frame.target, key) && sourceValue === undefined)
-          continue;
+      const present = hasOwnProperty(frame.target, key);
+      const targetValue = present ? frame.target[key] : undefined;
+      if (targetValue === undefined) {
+        if (present && sourceValue === undefined) continue;
         setDataProperty((frame.patch ??= {}), key, null);
         frame.hasRemoved = true;
         continue;
       }
-      const targetValue = frame.target[key];
       if (
         sourceValue === targetValue ||
         (sourceValue !== sourceValue && targetValue !== targetValue)
