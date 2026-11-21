@@ -76,18 +76,7 @@ export class ModalManager {
           ModalManager.isDisplayed() &&
           ModalManager.ownsFocus(node.id);
         const target = ModalManager.__state__.focusTargets.get(node.id);
-        if (restore) {
-          const frame = ModalManager.__state__.frames.get(node.id);
-          if (frame && target)
-            for (const [peerId, opener] of ModalManager.__state__.focusTargets)
-              if (
-                peerId !== node.id &&
-                opener &&
-                containsComposedElement(frame, opener)
-              )
-                ModalManager.__state__.focusTargets.set(peerId, target);
-          ModalManager.__state__.focusTargets.delete(node.id);
-        }
+        if (restore) ModalManager.rebaseOpeners(node.id, target);
         if (restore && node.visible)
           ModalManager.__state__.settlements =
             (ModalManager.__state__.settlements ?? 0) + 1;
@@ -106,6 +95,31 @@ export class ModalManager {
     );
     ModalManager.updateAccessibility();
     ModalManager.notify();
+  }
+  /**
+   * Transfer a closing request's opener to requests opened inside its frame.
+   * @param id Closing request with a recorded opener.
+   * @param target Original opener of the closing request.
+   */
+  private static rebaseOpeners(id: number, target?: Element | null): void {
+    const { frames, focusTargets, detachedOpenerOwners } =
+      ModalManager.__state__;
+    const frame = frames.get(id);
+    const parent = detachedOpenerOwners?.get(id);
+    for (const [peerId, opener] of focusTargets) {
+      if (peerId === id) continue;
+      const ownsOpener = frame
+        ? !!opener && containsComposedElement(frame, opener)
+        : detachedOpenerOwners?.get(peerId) === id;
+      if (ownsOpener && target) {
+        focusTargets.set(peerId, target);
+        if (parent !== undefined) detachedOpenerOwners?.set(peerId, parent);
+        else detachedOpenerOwners?.delete(peerId);
+      } else if (detachedOpenerOwners?.get(peerId) === id)
+        detachedOpenerOwners.delete(peerId);
+    }
+    focusTargets.delete(id);
+    detachedOpenerOwners?.delete(id);
   }
   /** Brings an existing node forward without publishing when already on top. */
   static raise(id: number): void {
@@ -287,8 +301,26 @@ export class ModalManager {
       )
         ModalManager.__state__.focused.delete(id);
       ModalManager.__state__.frames.set(id, element);
-    } else ModalManager.__state__.frames.delete(id);
+    } else ModalManager.detachFrame(id);
     ModalManager.updateAccessibility(true);
+  }
+  /**
+   * Record opener ownership before discarding a frame temporarily detached by React.
+   * @param id Request whose foreground wrapper has detached.
+   */
+  private static detachFrame(id: number): void {
+    const state = ModalManager.__state__;
+    const frame = state.frames.get(id);
+    if (!frame) return;
+    if (state.focusTargets.has(id)) {
+      const owners = (state.detachedOpenerOwners ??= new Map());
+      for (const [peerId, opener] of state.focusTargets) {
+        if (peerId !== id && opener && containsComposedElement(frame, opener))
+          owners.set(peerId, id);
+        else if (owners.get(peerId) === id) owners.delete(peerId);
+      }
+    }
+    state.frames.delete(id);
   }
   /** Reads actual Provider attachment at the instant a request settles. */
   private static isDisplayed(): boolean {
@@ -713,6 +745,7 @@ export class ModalManager {
     ].reverse())
       if (ModalManager.node(id)?.dimmed) ModalManager.restoreFocus(id, target);
     ModalManager.__state__.focusTargets.clear();
+    ModalManager.__state__.detachedOpenerOwners?.clear();
     ModalManager.__state__.frames.clear();
     ModalManager.__state__.focused.clear();
     ModalManager.__state__.anchor?.remove();
