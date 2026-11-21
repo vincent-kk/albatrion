@@ -1,6 +1,7 @@
 import { createRef } from 'react';
 
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -74,3 +75,45 @@ it('a value outside the enum is preserved until the user picks, then the pick is
   fireEvent.click(within(screen.getByRole('listbox')).getByText('news'));
   expect(ref.current!.getValue()).toEqual({ topic: 'news' });
 });
+
+it.each(['unknown', 'Alpha'] as const)(
+  'preserves the stored enum and displays a later write or reset (DETAIL, initial=%s)',
+  async (initial) => {
+    const ref = createRef<FormHandle>();
+    render(
+      <Form
+        ref={ref}
+        jsonSchema={{
+          type: 'object',
+          properties: {
+            choice: {
+              type: 'string',
+              enum: ['Alpha', 'Beta'],
+              title: 'Choice',
+            },
+          },
+        }}
+        defaultValue={{ choice: initial }}
+        fieldInputDefinitions={plugin.fieldInputDefinitions}
+        FieldRenderer={plugin.FieldRenderer}
+        LabelRenderer={plugin.LabelRenderer}
+      />,
+    );
+    const assertChoice = (value: string) => {
+      expect(ref.current!.getValue()).toEqual({ choice: value });
+      expect(screen.getByRole('combobox').textContent).toBe(value);
+    };
+    expect(ref.current!.getValue()).toEqual({ choice: initial });
+    fireEvent.mouseDown(screen.getByRole('combobox'));
+    if (initial === 'unknown') {
+      fireEvent.click(within(screen.getByRole('listbox')).getByText('Alpha'));
+      assertChoice('Alpha');
+      return;
+    }
+    await act(async () => ref.current!.setValue({ choice: 'Beta' }));
+    assertChoice('Beta');
+    fireEvent.mouseDown(screen.getByRole('combobox'));
+    await act(async () => ref.current!.reset());
+    assertChoice('Alpha');
+  },
+);
