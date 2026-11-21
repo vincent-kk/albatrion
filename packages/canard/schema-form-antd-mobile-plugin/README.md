@@ -112,7 +112,7 @@ Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores th
 
 ---
 
-Ant Design Mobile supplies the native Switch interaction. Use a custom FieldInput when the form requires keyboard activation.
+Ant Design Mobile Switch inputs now use the library's pointer interaction. Tab and `formRef.current.focus(path)` no longer focus these switches, and Space and Enter no longer toggle them. To keep keyboard interaction, register a custom `FieldInput` through `fieldInputDefinitions` that renders a keyboard-accessible switch or a native checkbox and forwards the core's value, change handler and lock state.
 
 ---
 

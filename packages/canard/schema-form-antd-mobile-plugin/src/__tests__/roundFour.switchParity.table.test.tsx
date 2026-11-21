@@ -7,6 +7,8 @@ import {
   render,
   screen,
 } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { Switch } from 'antd-mobile';
 import { computeAccessibleName } from 'dom-accessibility-api';
 import { afterEach, expect, it, vi } from 'vitest';
 
@@ -225,9 +227,11 @@ it('applies the context labels and enum order after external writes, reset and l
     await act(async () => ref.current!.setValue({ mode }));
     assertMode(mode);
   }
+  onChange.mockClear();
   fireEvent.click(control());
   assertMode('on');
-  expect(onChange).toHaveBeenLastCalledWith({ mode: 'on' });
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onChange).toHaveBeenCalledWith({ mode: 'on' });
   await act(async () => ref.current!.reset());
   assertMode('off');
   for (const lock of ['readOnly', 'disabled'] as const) {
@@ -239,19 +243,94 @@ it('applies the context labels and enum order after external writes, reset and l
   }
 });
 
-it('leaves native Switch keyboard behavior to the library', () => {
-  const ref = createRef<FormHandle>();
+it('plain Ant Design Mobile Switch skips Tab and never saves on Space or Enter', async () => {
+  const onChange = vi.fn();
+  const keys = userEvent.setup();
   render(
-    <Form
-      ref={ref}
-      defaultValue={false}
-      jsonSchema={{ type: 'boolean', presentation: { inputType: 'switch' } }}
-      fieldInputDefinitions={plugin.fieldInputDefinitions}
-    />,
+    <>
+      <button>Before</button>
+      <Switch onChange={onChange} />
+      <button>After</button>
+    </>,
   );
   const widget = screen.getByRole('switch');
-  fireEvent.keyDown(widget, { key: ' ' });
-  expect(ref.current?.getValue()).toBe(false);
+
+  await keys.tab();
+  expect(document.activeElement).toBe(
+    screen.getByRole('button', { name: 'Before' }),
+  );
+  await keys.tab();
+  const after = screen.getByRole('button', { name: 'After' });
+  expect(document.activeElement).toBe(after);
+  widget.focus();
+  expect(document.activeElement).toBe(after);
+
+  for (const key of [' ', 'Enter']) {
+    fireEvent.keyDown(widget, { key });
+    fireEvent.keyUp(widget, { key });
+  }
+  expect(onChange).not.toHaveBeenCalled();
   fireEvent.click(widget);
-  expect(ref.current?.getValue()).toBe(true);
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onChange).toHaveBeenCalledWith(true);
+});
+
+it('keeps native focus and activation behavior and saves one unlocked boolean click', async () => {
+  const ref = createRef<FormHandle>();
+  const onChange = vi.fn();
+  const keys = userEvent.setup();
+  const schema: JSONSchema = {
+    type: 'object',
+    properties: {
+      notify: { type: 'boolean', presentation: { inputType: 'switch' } },
+    },
+  };
+  const form = (lock?: 'readOnly' | 'disabled') => (
+    <>
+      <button>Before</button>
+      <Form
+        ref={ref}
+        defaultValue={{ notify: false }}
+        jsonSchema={schema}
+        fieldInputDefinitions={plugin.fieldInputDefinitions}
+        onChange={onChange}
+        readOnly={lock === 'readOnly'}
+        disabled={lock === 'disabled'}
+        validationMode={0}
+      />
+      <button>After</button>
+    </>
+  );
+  const view = render(form());
+  const widget = screen.getByRole('switch');
+
+  await keys.tab();
+  expect(document.activeElement).toBe(
+    screen.getByRole('button', { name: 'Before' }),
+  );
+  await keys.tab();
+  const after = screen.getByRole('button', { name: 'After' });
+  expect(document.activeElement).toBe(after);
+  await act(async () => ref.current!.focus('/notify'));
+  expect(document.activeElement).toBe(after);
+
+  for (const key of [' ', 'Enter']) {
+    fireEvent.keyDown(widget, { key });
+    fireEvent.keyUp(widget, { key });
+  }
+  expect(onChange).not.toHaveBeenCalled();
+  expect(ref.current!.getValue()).toEqual({ notify: false });
+
+  fireEvent.click(widget);
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onChange).toHaveBeenCalledWith({ notify: true });
+  expect(ref.current!.getValue()).toEqual({ notify: true });
+
+  for (const lock of ['readOnly', 'disabled'] as const) {
+    view.rerender(form(lock));
+    onChange.mockClear();
+    fireEvent.click(screen.getByRole('switch'));
+    expect(onChange).not.toHaveBeenCalled();
+    expect(ref.current!.getValue()).toEqual({ notify: true });
+  }
 });

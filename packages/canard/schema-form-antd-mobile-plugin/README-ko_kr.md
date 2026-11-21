@@ -112,7 +112,7 @@ registerPlugin(plugin);
 
 ---
 
-Switch의 조작은 Ant Design Mobile이 제공합니다. 폼에 키보드 활성화가 필요하면 사용자 정의 FieldInput을 사용합니다.
+Ant Design Mobile Switch는 이제 라이브러리의 포인터 조작을 따릅니다. Tab과 `formRef.current.focus(path)`로는 더 이상 이 Switch에 초점을 줄 수 없고, Space와 Enter로는 상태를 바꿀 수 없습니다. 키보드 조작을 유지하려면 키보드를 지원하는 Switch 또는 네이티브 체크박스를 렌더하는 사용자 정의 `FieldInput`을 `fieldInputDefinitions`에 등록하고 코어의 값, 변경 핸들러, 잠금 상태를 전달하세요.
 
 ---
 
