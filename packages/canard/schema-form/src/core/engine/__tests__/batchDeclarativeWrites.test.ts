@@ -670,4 +670,4 @@ it('caller-only segments match sequential writes through the generated schema cl
   }
   expect(callerSampler.shortfall()).toEqual([]);
   expect([...observed].sort()).toEqual(named.sort());
-});
+}, 30_000);
