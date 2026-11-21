@@ -1,16 +1,14 @@
 import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
 import type { AjvInstance as Ajv } from './types/AjvInstance';
+import { registerSchemaRoot, type SchemaRootRegistry } from './utils/registerSchemaRoot';
 
 import { transformErrors } from './utils/transformErrors';
 
 /** Create promise-returning validation from a root registered with Ajv 7. */
 export const createValidatorFactory =
-  (ajv: Ajv, key?: string) =>
+  (ajv: Ajv, key?: string, roots: SchemaRootRegistry = new WeakMap()) =>
   (jsonSchema: JSONSchema): ValidateFunction => {
-    const transient: JSONSchema | undefined = key !== undefined
-      ? undefined : JSON.parse(JSON.stringify(jsonSchema));
-    const validate = key !== undefined ? ajv.getSchema(key) : transient && ajv.compile(transient);
-    if (transient) ajv.removeSchema(transient);
+    const validate = key === undefined ? registerSchemaRoot(roots, ajv, jsonSchema) : ajv.getSchema(key);
     if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
     const schema = typeof validate.schema === 'object' ? validate.schema : undefined;
     return async (data) => {

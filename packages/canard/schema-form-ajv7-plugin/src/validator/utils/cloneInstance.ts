@@ -1,35 +1,37 @@
-import type { AjvInstance as Ajv } from '../types/AjvInstance';
 import type { Options } from 'ajv';
+import type { AjvInstance as Ajv } from '../types/AjvInstance';
 
-/** Registration keys belong to this plugin and must not enter a sibling. */
-export const PLUGIN_KEY_PREFIX = 'urn:canard:schema-form:ajv7:';
+import { registerApplicationSchemas } from './registerApplicationSchemas';
 
-/**
- * Clone a bound Ajv 7 profile, including consumer schemas and keywords.
- * @param instance - Bound instance whose options, formats, keywords and consumer schemas are copied
- * @param allErrors - Error collection of the clone
- * @param validateSchema - Schema validation of the clone; defaults to the bound instance's setting
- * @returns A new instance of the bound instance's class
- */
+/** Builds a native compiler with independent registries, code and extension tables. */
 export const cloneInstance = (
   instance: Ajv,
-  allErrors: boolean,
-  validateSchema: Options['validateSchema'] = instance.opts.validateSchema,
+  kind: 'guard' | 'validation',
 ): Ajv => {
-  const Constructor = instance.constructor as new (options?: Options) => Ajv;
-  const clone = new Constructor({ ...instance.opts, allErrors, validateSchema });
-  for (const [name, format] of Object.entries(instance.formats))
-    if (format !== undefined) clone.addFormat(name, format);
-  for (const name of Object.keys(clone.RULES.keywords))
-    clone.removeKeyword(name);
-  for (const name of Object.keys(instance.RULES.keywords)) {
-    if (clone.RULES.keywords[name]) continue;
-    const definition = instance.getKeyword(name);
-    if (definition && typeof definition === 'object') clone.addKeyword({ ...definition, keyword: name, implements: undefined });
-    else clone.addKeyword(name);
-  }
-  for (const [key, env] of Object.entries(instance.schemas))
-    if (env && !key.startsWith(PLUGIN_KEY_PREFIX) && !clone.schemas[key])
-      clone.addSchema(env.schema, key);
-  return clone;
+  const Constructor = instance.constructor as new (options: Options) => Ajv;
+  const options = instance.opts;
+  const validateSchema = kind === 'guard' ? false : options.validateSchema;
+  const sibling = new Constructor({
+    ...options, schemas: undefined, keywords: undefined, formats: undefined,
+    code: { ...options.code }, meta: false, validateSchema: false,
+    allErrors: kind === 'guard' ? false : options.allErrors,
+  });
+  if (sibling === instance || sibling.opts === options || sibling.schemas === instance.schemas ||
+      sibling.refs === instance.refs || sibling.RULES === instance.RULES ||
+      sibling.formats === instance.formats || sibling._compilations === instance._compilations ||
+      Reflect.get(sibling, '_cache') === Reflect.get(instance, '_cache') || sibling.scope === instance.scope)
+    throw new Error('AJV isolation compiler creation failed: constructor shares native state');
+  if (Object.keys(sibling.schemas).length || Object.keys(sibling.refs).length)
+    throw new Error('AJV isolation compiler creation failed: constructor registers bootstrap schemas');
+  for (const [key, format] of Object.entries(instance.formats))
+    if (format !== undefined) sibling.addFormat(key, format);
+  Object.assign(sibling.RULES, {
+    all: { ...instance.RULES.all }, keywords: { ...instance.RULES.keywords },
+    types: { ...instance.RULES.types },
+    post: { ...instance.RULES.post, rules: [...instance.RULES.post.rules] },
+    rules: instance.RULES.rules.map((group) => ({ ...group, rules: [...group.rules] })),
+  });
+  registerApplicationSchemas(instance, sibling);
+  Object.assign(sibling.opts, { meta: options.meta, validateSchema, addUsedSchema: false });
+  return sibling;
 };

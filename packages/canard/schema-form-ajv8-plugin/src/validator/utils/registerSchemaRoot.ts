@@ -1,104 +1,155 @@
-/// <reference lib="es2021.weakref" />
-
 import type { JSONSchema } from '@canard/schema-form';
 import type { Ajv } from 'ajv';
 
-import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
-import { makeSibling, PLUGIN_KEY_PREFIX } from './makeSibling';
+import { makeSibling } from './makeSibling';
+import { readApplicationProfile } from './readApplicationProfile';
 
-/** Provisional cap: Ajv's code scope keeps functions after removeSchema. */
-const MAX_TRANSIENT_ROOTS = 64;
+/** Captured native table entries used to detect additions, removals and replacements. */
+type ProfileImage = readonly (readonly [string, unknown][])[];
 
-/** Dynamic-scope keywords; a root naming none of them as a key needs no guard anchor table. */
-const DYNAMIC_KEYWORDS: ReadonlySet<string> = new Set(['$dynamicAnchor', '$recursiveAnchor', '$dynamicRef', '$recursiveRef']);
+/** Holds only the latest native configuration for an application. */
+interface ApplicationProfile {
+  readonly image: ProfileImage;
+  validation?: { readonly compiler: Ajv; readonly refs: Ajv['refs']; readonly schemas: Ajv['schemas']; count: number; };
+}
 
-/** One root's validation and optional guard registrations. */
-export interface SchemaRootRegistration {
-  /** Direct schemas are owned and released with this root's guard instance. */
-  readonly directGuards: (object | boolean)[];
-  /** Self-containment is computed once per object in this bound profile. */
-  readonly guardChecks: WeakMap<object, boolean>;
-  readonly baseAjv: Ajv;
-  readonly validationAjv: Ajv;
-  guardAjv?: Ajv;
-  readonly validationCopy?: JSONSchema;
-  guardCopy?: JSONSchema;
-  /** `refs` entries the validation registration added; empty until `registerValidationRoot` succeeds. */
-  validationRefs: readonly string[];
-  /** Whether `validationCopy` is registered on `validationAjv`; set only by a successful `registerValidationRoot`. */
-  validationRegistered: boolean;
-  guardRefs?: readonly string[];
+const profiles = new WeakMap<Ajv, ApplicationProfile>();
+/** AJV keeps generated scope values after a schema is removed. */
+const MAX_COMPILER_ROOTS = 64;
+let nextRootKey = 0;
+
+/** Guard compiler and detached schema owned by one adapter and authored root. */
+interface GuardRoot {
+  readonly profile: ApplicationProfile;
+  readonly compiler: Ajv;
+  readonly snapshot: string;
+  readonly copy: JSONSchema;
   readonly key: string;
-  readonly ids: readonly string[];
-  /** Whether any key in the root is a dynamic-scope keyword (data included); when false, root-pointer guards skip the dynamic-anchor collection. */
+  readonly rootId: string;
   readonly hasDynamicKeywords: boolean;
+  readonly guardChecks: WeakMap<object, boolean>;
+  isRegistered: boolean;
 }
 
-/** Mutable registration ownership retained by one plugin entry point. */
-export interface SchemaRootRegistry {
-  readonly entries: WeakMap<JSONSchema, SchemaRootRegistration[]>;
-  readonly active: WeakRef<SchemaRootRegistration>[];
-  readonly finalizer: FinalizationRegistry<SchemaRootRegistration>;
-  compilerBase?: Ajv;
-  compilerCurrent?: Ajv;
-  compilerCount: number;
+type NativeValidator = NonNullable<ReturnType<Ajv['getSchema']>>;
+
+/** Products retained while a caller holds the authored root and its adapter. */
+interface RootEntry {
+  guard?: GuardRoot;
+  validation?: { profile: ApplicationProfile; snapshot: string; validate: NativeValidator };
 }
 
-/** Monotonic keys stay unique across every registry that shares one instance. */
-let nextSchemaRootKey = 0;
+/** Weak lifetime of detached compiles by authored root. */
+export type SchemaRootRegistry = WeakMap<JSONSchema, RootEntry>;
 
-/** Records a copy once for each bound instance and authored root identity; `registerValidationRoot` registers it with AJV. */
-export const registerSchemaRoot = (
-  registry: SchemaRootRegistry,
-  baseAjv: Ajv,
-  root: JSONSchema,
-): SchemaRootRegistration => {
-  const registrations = registry.entries.get(root) ?? [];
-  const existing = registrations.find((entry) => entry.baseAjv === baseAjv);
-  if (existing) return existing;
-  const ids: string[] = [];
-  let hasDynamicKeywords = false;
-  JSON.stringify(root, (name, value: unknown) => {
-    if (name === '$id' && typeof value === 'string') ids.push(value);
-    if (DYNAMIC_KEYWORDS.has(name)) hasDynamicKeywords = true;
-    return value;
+const isCurrent = (tables: readonly object[], image: ProfileImage): boolean =>
+  image.every((entries, index) => {
+    const table = tables[index];
+    const keys = Object.keys(table);
+    return keys.length === entries.length && entries.every(
+      ([key, value], index) => keys[index] === key && Reflect.get(table, key) === value,
+    );
   });
-  if (ids.length)
-    for (let index = registry.active.length - 1; index >= 0; index--)
-      if (!registry.active[index].deref()) registry.active.splice(index, 1);
-  const shared = ids.length ? instanceIdRegistrationsOf(baseAjv) : [];
-  for (let index = shared.length - 1; index >= 0; index--)
-    if (!shared[index].deref()) shared.splice(index, 1);
-  const conflict = ids.some((id) => registry.active.some((ref) => {
-    const entry = ref.deref();
-    return entry?.baseAjv === baseAjv && entry.ids.includes(id);
-  }) || shared.some((ref) => ref.deref()?.ids.includes(id)));
-  if (!ids.length && registry.compilerBase !== baseAjv) {
-    registry.compilerBase = baseAjv;
-    registry.compilerCurrent = baseAjv;
-    registry.compilerCount = 0;
-  }
-  if (!ids.length && registry.compilerCount === MAX_TRANSIENT_ROOTS) {
-    registry.compilerCurrent = makeSibling(baseAjv, !!baseAjv.opts.allErrors);
-    registry.compilerCount = 0;
-  }
-  const validationAjv = conflict ? makeSibling(baseAjv, !!baseAjv.opts.allErrors)
-    : ids.length ? baseAjv : registry.compilerCurrent ?? baseAjv;
-  if (!ids.length) registry.compilerCount++;
-  const key = `${PLUGIN_KEY_PREFIX}root/${++nextSchemaRootKey}`;
-  const validationCopy: JSONSchema | undefined = ids.length
-    ? JSON.parse(JSON.stringify(root)) : undefined;
-  const registration: SchemaRootRegistration = {
-    baseAjv, validationAjv, validationCopy, validationRefs: [], validationRegistered: false, key, ids,
-    directGuards: [], guardChecks: new WeakMap(), hasDynamicKeywords,
-  };
-  registrations.push(registration);
-  registry.entries.set(root, registrations);
-  registry.finalizer.register(root, registration, registration);
-  if (ids.length) {
-    const ref = new WeakRef(registration);
-    registry.active.push(ref);
-    shared.push(ref);
-  }
-  return registration;
+
+/** Restore native addresses after a temporary registration without replacing the registry. */
+const restoreRegistry = <T>(target: Record<string, T>, snapshot: Record<string, T>): void => {
+  for (const key of Object.keys(target))
+    if (!Object.prototype.hasOwnProperty.call(snapshot, key)) delete target[key];
+  Object.assign(target, snapshot);
 };
+
+/**
+ * Compiles against the current application profile without installing form addresses on it.
+ * Contextual guards may install their detached root in a root-scoped compiler. Whole-root
+ * compiles share a bounded compiler and roll its addresses back before returning.
+ */
+export function registerSchemaRoot(
+  registry: SchemaRootRegistry, instance: Ajv, root: JSONSchema,
+): NativeValidator;
+export function registerSchemaRoot<T>(
+  registry: SchemaRootRegistry, instance: Ajv, root: JSONSchema,
+  guard: (root: GuardRoot, register: () => void) => T,
+): T;
+export function registerSchemaRoot<T>(
+  registry: SchemaRootRegistry, instance: Ajv, root: JSONSchema,
+  guard?: (root: GuardRoot, register: () => void) => T,
+): NativeValidator | T {
+  const tables = readApplicationProfile(instance);
+  let profile = profiles.get(instance);
+  if (!profile || !isCurrent(tables, profile.image)) {
+    profile = { image: tables.map(Object.entries) };
+    profiles.set(instance, profile);
+  }
+  const snapshot = JSON.stringify(root);
+  const entry = registry.get(root) ?? {};
+  if (guard) {
+    const previous = entry.guard;
+    const current = previous?.profile === profile && previous.snapshot === snapshot ? previous : undefined;
+    const compiler = current?.compiler ?? makeSibling(instance, 'guard');
+    const copy: JSONSchema = current?.copy ?? JSON.parse(snapshot);
+    const key = current?.key ?? `https://canard.invalid/ajv8/root/${++nextRootKey}`;
+    const id = copy.$id;
+    const state = current ?? {
+      profile, compiler, snapshot, copy, key, rootId: key,
+      hasDynamicKeywords: /"\$(?:dynamicAnchor|recursiveAnchor|dynamicRef|recursiveRef)":/.test(snapshot),
+      guardChecks: new WeakMap(), isRegistered: false,
+    };
+    const result = guard(state, () => {
+      if (state.isRegistered) return;
+      const { compiler, copy, key } = state;
+      if (typeof id === 'string' && id) compiler.addSchema(copy, key);
+      else {
+        const emptySchema = compiler.schemas[''];
+        const emptyRef = compiler.refs[''];
+        delete compiler.schemas[''];
+        delete compiler.refs[''];
+        try {
+          compiler.addSchema(copy);
+          compiler.schemas[key] = compiler.schemas[''];
+        } finally {
+          if (emptySchema) compiler.schemas[''] = emptySchema;
+          else delete compiler.schemas[''];
+          if (emptyRef) compiler.refs[''] = emptyRef;
+          else delete compiler.refs[''];
+        }
+      }
+      state.isRegistered = true;
+    });
+    entry.guard = state;
+    registry.set(root, entry);
+    return result;
+  }
+  const previous = entry.validation;
+  if (previous?.profile === profile && previous.snapshot === snapshot) return previous.validate;
+  let pool = profile.validation;
+  if (!(pool && pool.count < MAX_COMPILER_ROOTS)) {
+    const compiler = makeSibling(instance, 'validation');
+    pool = { compiler, refs: { ...compiler.refs }, schemas: { ...compiler.schemas }, count: 0 };
+    profile.validation = pool;
+  }
+  pool.count++;
+  const { compiler } = pool;
+  const copy: JSONSchema = JSON.parse(snapshot);
+  const id = copy[compiler.opts.schemaId];
+  const key = `https://canard.invalid/ajv8/root/${++nextRootKey}`;
+  let validate: NativeValidator | undefined;
+  try {
+    if (typeof id === 'string' && id) {
+
+      copy.$async = true;
+      compiler.addSchema(copy, key);
+      validate = compiler.getSchema(key);
+    } else {
+      copy.$async = true;
+      validate = compiler.compile(copy);
+    }
+  } finally {
+    compiler.removeSchema(copy);
+    restoreRegistry(compiler.schemas, pool.schemas);
+    restoreRegistry(compiler.refs, pool.refs);
+  }
+  if (!validate) throw new Error(`Registered Ajv schema was not found: ${key}`);
+  entry.validation = { profile, snapshot, validate };
+  registry.set(root, entry);
+  return validate;
+}

@@ -4,14 +4,7 @@ import type { AjvInstance as Ajv } from './types/AjvInstance';
 import { createGuardCompiler } from './createGuardCompiler';
 import { createValidatorFactory } from './createValidatorFactory';
 import { assertBindableInstance } from './utils/assertBindableInstance';
-import { disposeSchemaRoot } from './utils/disposeSchemaRoot';
-import {
-  type SchemaCompilerPool,
-  type SchemaRootRegistration,
-  registerSchemaRoot,
-} from './utils/registerSchemaRoot';
-import { registerValidationRoot } from './utils/registerValidationRoot';
-import { releaseSchemaRoot } from './utils/releaseSchemaRoot';
+import type { SchemaRootRegistry } from './utils/registerSchemaRoot';
 
 /** Per-object selections of a validator built from one AJV instance. */
 export interface InstanceValidatorOptions {
@@ -26,59 +19,23 @@ export interface InstanceValidatorOptions {
  * collection never touch the plugin's process-wide binding.
  * @param ajv - Instance supplying keywords and formats; must not coerce, default or remove
  * @param options - Per-object selections; omitted fields take their defaults
- * @param controls - Entry-point lifetime and guard selection when creating the process-wide adapter
+ * @param readDirectGuardCompile - Entry-point selection for later guards
  * @returns An object satisfying the core validator contract, independent of `plugin.validator`
  * @throws ValidatorBindRefusedError when `coerceTypes`, `useDefaults` or `removeAdditional` is enabled
  */
 export const createValidator = (
   ajv: Ajv,
   options: InstanceValidatorOptions = {},
-  controls?: { finalizer: FinalizationRegistry<SchemaRootRegistration>; readDirectGuardCompile(): boolean },
+  readDirectGuardCompile?: () => boolean,
 ) => {
   assertBindableInstance(ajv);
   const directGuardCompile = options.directGuardCompile ?? true;
-  const roots = new WeakMap<object, SchemaRootRegistration>();
-  const active: WeakRef<SchemaRootRegistration>[] = [];
-  const finalizer = controls?.finalizer ?? new FinalizationRegistry<SchemaRootRegistration>(
-    disposeSchemaRoot,
-  );
-  const pool: SchemaCompilerPool = { base: ajv, current: ajv, count: 0 };
+  const roots: SchemaRootRegistry = new WeakMap();
   return {
-    compile: (jsonSchema: JSONSchema) => {
-      const registered = registerSchemaRoot(
-        jsonSchema,
-        ajv,
-        roots,
-        active,
-        finalizer,
-        pool,
-      );
-      registerValidationRoot(registered);
-      return createValidatorFactory(
-        registered.validation,
-        registered.validationCopy ? registered.key : undefined,
-      )(jsonSchema);
-    },
-    compileGuard: (root: JSONSchema, pointer: string) => {
-      const registered = registerSchemaRoot(
-        root,
-        ajv,
-        roots,
-        active,
-        finalizer,
-        pool,
-      );
-      return createGuardCompiler(
-        ajv,
-        registered,
-        pointer,
-        root,
-        controls?.readDirectGuardCompile() ?? directGuardCompile,
-        finalizer,
-      );
-    },
-    release: (root: JSONSchema) =>
-      releaseSchemaRoot(root, roots, active, finalizer),
+    compile: createValidatorFactory(ajv, undefined, roots),
+    compileGuard: (root: JSONSchema, pointer: string) =>
+      createGuardCompiler(ajv, roots, pointer, root, readDirectGuardCompile?.() ?? directGuardCompile),
+    release: (root: JSONSchema) => { roots.delete(root); },
     dialect: 'http://json-schema.org/draft-07/schema#',
   } satisfies ValidatorFactory;
 };

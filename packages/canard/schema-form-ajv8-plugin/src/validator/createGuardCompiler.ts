@@ -7,8 +7,6 @@ import type { Dictionary, Fn } from '@aileron/declare';
 import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
 import { collectGuardDynamicAnchors } from './utils/dynamicScope/collectGuardDynamicAnchors';
 import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
-import { makeSibling } from './utils/makeSibling';
-import { registerSchemaGuard } from './utils/registerSchemaGuard';
 import {
   type SchemaRootRegistry,
   registerSchemaRoot,
@@ -33,11 +31,11 @@ export const createGuardCompiler = (
   root: JSONSchema,
   pointer: string,
   directGuardCompile: boolean,
-): Fn<[value: unknown], boolean> => {
-  const registration = registerSchemaRoot(registry, ajv, root);
+) : Fn<[value: unknown], boolean> => registerSchemaRoot(registry, ajv, root, (registration, register) => {
+  const { copy, compiler: guard } = registration;
   const rootId = typeof root.$id === 'string' ? root.$id : '';
   const fragment = pointer.startsWith('#') ? pointer.replace(/^#%2f/i, '#/') : `#${pointer.replace(/[^A-Za-z0-9_~./-]/gu, encodeURIComponent)}`;
-  const located = resolveGuardSchema(root, fragment);
+  const located = resolveGuardSchema(copy, fragment);
   if (located === undefined)
     throw new GuardPointerNotSchemaError(rootId, pointer);
   const schema = directGuardCompile ? located : undefined;
@@ -46,23 +44,17 @@ export const createGuardCompiler = (
     !Object.prototype.hasOwnProperty.call(root, '$schema') &&
     isSelfContainedGuard(schema, registration.guardChecks)
   ) {
-    // A direct root would retain itself through the finalizer's held value.
-    // Its ID-free, dedicated guard is collected with the weak root registration.
-    if (schema === root) registry.finalizer.unregister(registration);
-    if (!registration.directGuards.includes(schema))
-      registration.directGuards.push(schema);
-    registration.guardAjv ??= makeSibling(ajv, false, false);
-    const validate = registration.guardAjv.compile(schema);
+    const validate = guard.compile(schema);
     if ('$async' in validate && validate.$async === true)
       throw new Error('async schema in sync schema');
     return (value) => !!validate(value);
   }
-  const guard = registerSchemaGuard(ajv, root, registration);
+  register();
   // Anchor locations compile before the guard so AJV generates the table lookup for its dynamic references.
   // A draft-07 instance leaves dynamic keywords unknown and ignored, so only a dynamic-vocabulary instance collects.
   const dynamicAnchors: Dictionary<ValidateFunction> =
     guard.opts.dynamicRef && registration.hasDynamicKeywords
-      ? collectGuardDynamicAnchors(root, registration.key, fragment, guard)
+      ? collectGuardDynamicAnchors(copy, registration.key, fragment, guard)
       : {};
   const validate = guard.compile({ $ref: `${registration.key}${fragment}` });
   if (Object.keys(dynamicAnchors).length === 0)
@@ -76,4 +68,4 @@ export const createGuardCompiler = (
       rootData: value,
       dynamicAnchors: { ...dynamicAnchors },
     } satisfies Omit<NonNullable<Parameters<typeof validate>[1]>, 'rootData'> & { rootData: unknown }]);
-};
+});
