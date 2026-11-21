@@ -7,8 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { resolveAgentTarget } from '../agentTarget.js';
 import type { AssetKind, OrphanScan, ResolvedLocations } from '../type.js';
-import { assertDestinationRootsContained } from '../utils/assertDestinationRootsContained.js';
-import { assertWriteTargetsContained } from '../utils/assertWriteTargetsContained.js';
+import { assertProjectPathsContained } from '../utils/assertProjectPathsContained.js';
 
 // Wrap, do not replace: every call still reaches the real file system, and the
 // spies only count what the checks ask of it.
@@ -64,14 +63,14 @@ async function countBothChecks() {
   const agentTarget = resolveAgentTarget('claude', 'project', root);
   const resolved: ResolvedLocations = new Map();
   takeCounts();
-  await assertDestinationRootsContained({
+  await assertProjectPathsContained({
     agentTarget,
     assetKinds: KINDS,
     orphanScans: namespaceScans(),
     resolved,
   });
   const roots = takeCounts();
-  await assertWriteTargetsContained({
+  await assertProjectPathsContained({
     agentTarget,
     dstPaths: destinationFiles(),
     resolved,

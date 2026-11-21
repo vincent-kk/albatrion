@@ -13,7 +13,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { resolveAgentTarget } from '../agentTarget.js';
 import type { AgentTarget, ResolvedLocations } from '../type.js';
-import { assertWriteTargetsContained } from '../utils/assertWriteTargetsContained.js';
+import { assertProjectPathsContained } from '../utils/assertProjectPathsContained.js';
 
 let outerRoot: string;
 let projectRoot: string;
@@ -23,7 +23,7 @@ let target: AgentTarget;
 let resolved: ResolvedLocations;
 
 function check(dstPaths: readonly string[], agentTarget = target) {
-  return assertWriteTargetsContained({ agentTarget, dstPaths, resolved });
+  return assertProjectPathsContained({ agentTarget, dstPaths, resolved });
 }
 
 describe('core/agentTarget — written files resolve inside the project', () => {

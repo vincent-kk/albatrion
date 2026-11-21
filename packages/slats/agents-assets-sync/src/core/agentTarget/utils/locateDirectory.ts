@@ -12,7 +12,7 @@ import { resolveLocation } from './resolveLocation.js';
  * parent's real location, while a link or an unlisted name goes through
  * `resolveLocation`; below a missing level nothing is read at all. With the
  * destination roots and skill namespaces already cached by
- * `assertDestinationRootsContained`, a subdirectory costs at most its
+ * `assertProjectPathsContained`, a subdirectory costs at most its
  * parent's listing, which the files written there reuse.
  *
  * @param dir - absolute destination directory

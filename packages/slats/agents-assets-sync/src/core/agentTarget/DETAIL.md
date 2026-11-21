@@ -17,7 +17,7 @@
 - `project` scope 에서는 요청한 kind 의 목적지 루트(kind 디렉터리와 `AGENTS.md` 병합 파일)와 각 스킬 네임스페이스 디렉터리를 심볼릭 링크를 따라 해석한 위치가 `realpath(projectRoot)` 안에 있어야 한다. 아니면 그 경로를 명시한 `Error` 로 거부한다. 저장소는 심볼릭 링크를 커밋할 수 있으므로, 받아 온 프로젝트의 `.claude/skills -> /다른/곳` 같은 링크가 복사와 `--force` 삭제를 프로젝트 밖으로 보내기 때문이다. 해석에 실패하는 끊긴 링크도 거부한다. 아직 없는 경로는 가장 가까운 기존 조상의 해석 위치로 판단한다.
 - `user` scope 는 이 검사를 하지 않는다. `~/.claude` 나 `~/.claude/skills` 를 dotfiles 저장소로 링크하는 것은 사용자가 의도한 흔한 구성이고, 위협은 받아 온 프로젝트에 커밋된 링크이기 때문이다.
 - 루트 검사는 실행 단위(패키지와 agent 쌍)마다 루트와 네임스페이스당 한 번이다.
-- 그 아래는 계획이 정해진 뒤 `assertWriteTargetsContained` 가 같은 규칙으로 검사한다. 계획이 복사하거나 덮어쓰는 파일을 디렉터리별로 묶고, 가장 깊은 디렉터리부터 본다. 각 디렉터리는 루트 검사가 같은 실행 캐시에 남긴 가장 가까운 조상에서 내려오며 위 단계의 목록(`readdir` 의 `withFileTypes`)으로 판단한다. 목록에 정확히 있고 링크가 아닌 이름은 부모의 실제 위치 아래에 있다고 보고, 링크이거나 목록에 없는 이름만 `realpath` 로 해석한다. 대소문자를 구별하지 않는 파일 시스템에서는 목록에 없는 이름도 대소문자만 다른 기존 항목, 링크를 포함한 항목에 닿을 수 있기 때문이다. `d_type` 을 채우지 않는 일부 네트워크·FUSE 마운트처럼 목록이 파일, 디렉터리, 링크 중 무엇인지 알려 주지 않는 항목은 목록에서 빼서, 목록에 없는 이름과 똑같이 파일은 `lstat`, 디렉터리는 `realpath` 로 확인한다. 없는 디렉터리 아래는 아무것도 읽지 않는다. 이미 있는 디렉터리에 쓰는 파일도 같은 목록으로 판단한다. 목록이 아직 없고 그 디렉터리에 이름 하나만 쓰면 그 이름에 `lstat` 을 한 번 하고, 목록에 없는 이름은 같은 이유로 `lstat` 한다. 이름 하나에는 `lstat` 이 목록보다 싸고, 이 도구가 쓰는 디렉터리에는 대개 이 도구가 쓰는 파일만 있기 때문이다. `realpath` 는 링크에만 쓴다. 캐시에 있는 가장 가까운 조상이 서로 다른 디렉터리들, 예를 들어 두 스킬 네임스페이스 아래는 같은 디렉터리를 읽지 않으므로 동시에 검사한다(`groupByCachedAncestor`). 여러 곳이 밖으로 나가면 가장 깊은 디렉터리 순서로 먼저 나오는 묶음의 경로를 알린다. 그래서 40개 파일 트리에서 쓰기 검사는 새 설치에서 파일 시스템 호출이 없고, 덮어쓰기에서는 `readdir` 12번만 한다(`__tests__/writeTargetCallCount.test.ts`). 링크가 프로젝트 안을 가리키면 루트와 마찬가지로 허용한다. 받아 온 프로젝트가 네임스페이스 아래에 커밋한 `knowledge -> /다른/곳` 같은 디렉터리 링크나 `SKILL.md -> /다른/파일` 같은 파일 링크가 복사를 프로젝트 밖으로 보내기 때문이다.
+- 그 아래는 계획이 정해진 뒤 `assertProjectPathsContained`의 쓰기 경로가 같은 규칙으로 검사한다. 계획이 복사하거나 덮어쓰는 파일을 디렉터리별로 묶고, 가장 깊은 디렉터리부터 본다. 각 디렉터리는 루트 검사가 같은 실행 캐시에 남긴 가장 가까운 조상에서 내려오며 위 단계의 목록(`readdir` 의 `withFileTypes`)으로 판단한다. 목록에 정확히 있고 링크가 아닌 이름은 부모의 실제 위치 아래에 있다고 보고, 링크이거나 목록에 없는 이름만 `realpath` 로 해석한다. 대소문자를 구별하지 않는 파일 시스템에서는 목록에 없는 이름도 대소문자만 다른 기존 항목, 링크를 포함한 항목에 닿을 수 있기 때문이다. `d_type` 을 채우지 않는 일부 네트워크·FUSE 마운트처럼 목록이 파일, 디렉터리, 링크 중 무엇인지 알려 주지 않는 항목은 목록에서 빼서, 목록에 없는 이름과 똑같이 파일은 `lstat`, 디렉터리는 `realpath` 로 확인한다. 없는 디렉터리 아래는 아무것도 읽지 않는다. 이미 있는 디렉터리에 쓰는 파일도 같은 목록으로 판단한다. 목록이 아직 없고 그 디렉터리에 이름 하나만 쓰면 그 이름에 `lstat` 을 한 번 하고, 목록에 없는 이름은 같은 이유로 `lstat` 한다. 이름 하나에는 `lstat` 이 목록보다 싸고, 이 도구가 쓰는 디렉터리에는 대개 이 도구가 쓰는 파일만 있기 때문이다. `realpath` 는 링크에만 쓴다. 캐시에 있는 가장 가까운 조상이 서로 다른 디렉터리들, 예를 들어 두 스킬 네임스페이스 아래는 같은 디렉터리를 읽지 않으므로 동시에 검사한다(`groupByCachedAncestor`). 여러 곳이 밖으로 나가면 가장 깊은 디렉터리 순서로 먼저 나오는 묶음의 경로를 알린다. 그래서 40개 파일 트리에서 쓰기 검사는 새 설치에서 파일 시스템 호출이 없고, 덮어쓰기에서는 `readdir` 12번만 한다(`__tests__/writeTargetCallCount.test.ts`). 링크가 프로젝트 안을 가리키면 루트와 마찬가지로 허용한다. 받아 온 프로젝트가 네임스페이스 아래에 커밋한 `knowledge -> /다른/곳` 같은 디렉터리 링크나 `SKILL.md -> /다른/파일` 같은 파일 링크가 복사를 프로젝트 밖으로 보내기 때문이다.
 - 삭제에는 이 검사가 필요 없다. 고아 탐색의 `walkFiles` 는 디렉터리 목록이 링크라고 알려 주는 항목을 따라가지도 내놓지도 않으므로 `--force` 는 링크를 통해 지우지 않고 링크 자체도 남겨 둔다. 블록 쓰기는 루트로 검사한 병합 파일에만 한다.
 - 남은 한계: 검사와 실제 쓰기 사이에 다른 프로세스가 링크를 만들면 막지 못한다. 검사는 계획 직후 한 번이고 쓰기는 링크를 따르는 `copyFile` 이기 때문이다.
 - 경로 포함 관계는 하드 링크의 inode 소유권을 추측하지 않습니다. 실제 덮어쓰기의 링크 수·owner·group·mode 보존은 injectDocs의 동일한 identity 규칙이 담당합니다. 고아 삭제는 디렉터리 항목 자체의 unlink이며 링크를 따라가지 않습니다. 명시적으로 계획된 dangling orphan link는 항목만 제거하고 ENOENT는 무시합니다. 일반 walkFiles가 내놓지 않는 링크는 삭제 계획에 들어가지 않으므로 그대로 남습니다.
@@ -35,12 +35,9 @@
 - `resolveDestinations(input): { destinations: Map<string, Destination>; orphanScans: OrphanScan[] }`
   - `input`: `{ agentTarget, packageName, relPaths, namespacePrefixes, assetKinds }`
   - 예약 네임스페이스를 침범하는 skill 경로, `..` 세그먼트를 가진 경로나 네임스페이스 접두사에서 throw
-- `assertWriteTargetsContained(input): Promise<void>`
-  - `input`: `{ agentTarget, dstPaths, resolved }`. `dstPaths` 는 계획이 복사하거나 덮어쓰는 파일(`collectFileWrites(plan)`), `resolved` 는 실행마다 하나 만들어 모든 단위가 공유하는 `ResolvedLocations` 캐시다.
-  - `project` scope 에서 파일의 디렉터리나 파일 링크가 프로젝트 밖으로 해석되거나 끊긴 링크를 지나면 그 경로를 명시해 reject 한다. `user` scope 는 즉시 resolve 한다.
-- `assertDestinationRootsContained(input): Promise<void>`
-  - `input`: `{ agentTarget, assetKinds, orphanScans, resolved }`. `orphanScans` 는 `resolveDestinations` 의 결과이며, 그중 디렉터리 스캔 루트가 검사할 스킬 네임스페이스다. `resolved` 는 `assertWriteTargetsContained` 와 공유하는 실행 캐시이며, 쓰기 검사는 여기 남은 루트에서 출발한다.
-  - `project` scope 에서 해석한 위치가 프로젝트 밖인 루트나 끊긴 링크가 있으면 그 경로를 명시해 reject 한다. `user` scope 는 즉시 resolve 한다.
+- `assertProjectPathsContained(input): Promise<void>`
+  - 공통 입력은 `{ agentTarget, resolved }`입니다. 계획 전 `{ assetKinds, orphanScans }`로 루트와 스킬 네임스페이스를 확인합니다. 계획 후 `{ dstPaths }`로 쓰기 대상을 검사하며 먼저 채운 실행 캐시를 재사용합니다.
+  - 프로젝트 경로가 밖으로 해석되거나 끊긴 링크를 지나면 해당 경로를 명시해 거부합니다. 사용자 스코프는 즉시 반환합니다.
 
 ## Exported Types
 
