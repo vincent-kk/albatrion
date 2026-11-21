@@ -7,27 +7,13 @@ import {
   render,
   screen,
 } from '@testing-library/react';
-import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+import { afterEach, expect, it } from 'vitest';
 
 import { Form, type FormHandle } from '@canard/schema-form';
 
 import { FieldInputStringEnumDefinition } from '../FieldInputStringEnum';
 
-beforeEach(() => {
-  vi.stubGlobal(
-    'ResizeObserver',
-    class {
-      observe = vi.fn();
-      unobserve = vi.fn();
-      disconnect = vi.fn();
-    },
-  );
-});
-
-afterEach(() => {
-  cleanup();
-  vi.unstubAllGlobals();
-});
+afterEach(cleanup);
 
 it('shows no selected enum option or current label for an undefined value', () => {
   const view = render(
@@ -38,7 +24,7 @@ it('shows no selected enum option or current label for an undefined value', () =
   );
   const combobox = screen.getByRole<HTMLInputElement>('combobox');
   expect(combobox.value).toBe('');
-  expect(view.container.textContent?.trim()).toBe('');
+  expect(view.container.querySelector('.ant-select-selection-item')).toBeNull();
   fireEvent.mouseDown(combobox);
   expect(
     screen
@@ -57,10 +43,12 @@ it('clears the current enum label when a form value returns to undefined', async
       defaultValue="US"
     />,
   );
-  expect(view.container.textContent?.trim()).toBe('US');
+  expect(
+    view.container.querySelector('.ant-select-selection-item')?.textContent,
+  ).toBe('US');
   await act(async () => ref.current!.setValue(undefined));
   expect(ref.current!.getValue()).toBeUndefined();
-  expect(view.container.textContent?.trim()).toBe('');
+  expect(view.container.querySelector('.ant-select-selection-item')).toBeNull();
   const combobox = screen.getByRole<HTMLInputElement>('combobox');
   expect(combobox.value).toBe('');
   fireEvent.mouseDown(combobox);
@@ -69,4 +57,23 @@ it('clears the current enum label when a form value returns to undefined', async
       .getAllByRole('option')
       .filter((option) => option.getAttribute('aria-selected') === 'true'),
   ).toHaveLength(0);
+});
+
+it.each([
+  { value: null, count: 0 },
+  { value: [null], count: 1 },
+  { value: ['null'], count: 1 },
+])('shows the correct tags when an enum array starts at $value', ({ value, count }) => {
+  const { container } = render(
+    <Form
+      fieldInputDefinitions={[FieldInputStringEnumDefinition]}
+      jsonSchema={{
+        type: ['array', 'null'],
+        items: { type: ['string', 'null'], enum: [null, 'null'] },
+      }}
+      defaultValue={value}
+    />,
+  );
+  const selected = container.querySelectorAll('.ant-select-selection-item-content');
+  expect(selected).toHaveLength(count);
 });

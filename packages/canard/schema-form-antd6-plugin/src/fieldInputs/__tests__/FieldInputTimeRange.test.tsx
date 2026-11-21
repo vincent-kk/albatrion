@@ -9,7 +9,10 @@ import { Form, ValidationMode } from '@canard/schema-form';
 
 import { FieldInputTimeRangeDefinition } from '../FieldInputTimeRange';
 
-type PickerProps = Pick<ComponentProps<typeof AntdDatePicker>, 'disabledDate'>;
+type PickerProps = Pick<
+  ComponentProps<typeof AntdDatePicker.RangePicker>,
+  'disabledTime'
+>;
 
 const received = vi.hoisted(() => ({
   props: [] as { widget: string; props: PickerProps }[],
@@ -66,11 +69,17 @@ it('reads minimum and maximum from presentation.FieldInputProps', () => {
   );
   const last = received.props.at(-1)!;
   expect(last.widget).toBe('RangePicker');
-  const disabledDate = last.props.disabledDate!;
-  const info = { type: 'date' as const };
-  expect(disabledDate(dayjs('09:00:00+00:00', FORMAT), info)).toBe(true);
-  expect(disabledDate(dayjs('12:00:00+00:00', FORMAT), info)).toBe(false);
-  expect(disabledDate(dayjs('19:00:00+00:00', FORMAT), info)).toBe(true);
+  const limits = last.props.disabledTime?.(
+    dayjs('12:00:00+00:00', FORMAT),
+    'start',
+    {},
+  );
+  const hours = limits?.disabledHours?.();
+  const localHour = (hour: string) =>
+    dayjs(hour + ':00:00+00:00', FORMAT).hour();
+  expect(hours).toContain(localHour('09'));
+  expect(hours).not.toContain(localHour('12'));
+  expect(hours).toContain(localHour('19'));
 });
 
 it('accepts minimum under options without a schema error', () => {
