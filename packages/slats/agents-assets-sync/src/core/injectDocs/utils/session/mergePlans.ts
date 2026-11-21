@@ -5,36 +5,43 @@ import { protectsDestination } from './utils/protectsDestination.js';
 /** Merge ownership from every participant before deciding any destructive action.
  * @param units Prepared units, retaining failed participants.
  * @param discoveryFailures Unknown owners rejected before preparation.
+ * @param linkedDestinations Physical paths that share their file content with hard links.
  * @returns Plans with collisions refused and uncertain deletions recorded as notices.
  */
 export function mergePlans(
   units: readonly RunUnit[],
   discoveryFailures: readonly string[] = [],
+  linkedDestinations: ReadonlyMap<string, string> = new Map(),
 ): RunUnit[] {
   const managed = new Set<string>();
   const contents = new Map<string, string>();
   const conflicts = new Set<string>();
+  const contentKey = (path: string): string =>
+    linkedDestinations.get(path) ?? path;
   for (const unit of units)
     for (const action of unit.plan.actions) {
       if (action.target.kind !== 'file' || isOrphan(action)) continue;
       const key = destinationKey(action);
       managed.add(key);
       if (!action.sourceHash) continue;
-      const previous = contents.get(key);
+      const storage = contentKey(key);
+      const previous = contents.get(storage);
       if (previous !== undefined && previous !== action.sourceHash)
-        conflicts.add(key);
-      contents.set(key, action.sourceHash);
+        conflicts.add(storage);
+      contents.set(storage, action.sourceHash);
     }
   const failedUnits = units.filter(
     (unit) =>
       unit.error ||
-      unit.plan.actions.some((action) => conflicts.has(destinationKey(action))),
+      unit.plan.actions.some((action) =>
+        conflicts.has(contentKey(destinationKey(action))),
+      ),
   );
   const owners = new Map<string, string>();
   return units.map((unit) => {
     const notices: RunFailure[] = [];
     const conflicting = unit.plan.actions.find((action) =>
-      conflicts.has(destinationKey(action)),
+      conflicts.has(contentKey(destinationKey(action))),
     );
     const actions = unit.plan.actions.filter((action) => {
       if (unit.error || conflicting) return true;
