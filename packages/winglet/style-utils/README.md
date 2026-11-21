@@ -522,7 +522,7 @@ const addShadowStyle = styleManagerFactory('shadow-scope', {
 
 #### `destroyScope(scopeId: string, config?: StyleManagerConfig): void`
 
-After destroying a scope, discard its existing injector and cleanup functions. Create a new factory to inject again; reusing the destroyed injector can leave styles outside the registry.
+You can reuse the injector after destroying the scope. A cleanup function only removes styles from the manager that received its injection, so it cannot remove a style added after destruction.
 
 Pass the same `{ shadowRoot }` used for `styleManagerFactory` to release a Shadow DOM scope. Without this option, only the document scope is released. Detached shadow hosts are not retained by the registry.
 
