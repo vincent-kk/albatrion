@@ -34,6 +34,7 @@ interface FieldInputDateProps
 
 const FieldInputDate = ({
   inputId,
+  focusRef,
   labelId,
   getInputId,
   name,
@@ -99,6 +100,7 @@ const FieldInputDate = ({
               getInputId,
               !!label,
               disabled,
+              focusRef,
             ),
             name,
             required,

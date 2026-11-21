@@ -14,6 +14,8 @@
 
 Select는 표시한 태그의 선택을 저장합니다. Checkbox 그룹은 표시하지 않는 기존 값을 유지합니다. 별칭은 제공된 객체의 자체 속성에서 읽습니다.
 
+Slider는 코어의 focusRef를 공개 Slider ref에 연결합니다. 읽기 전용과 비활성에는 같은 잠금 상태를 적용하고 포커스 핸들을 해제합니다.
+
 ## Acceptance Criteria
 
 ### control-bindings — 컨트롤 연결

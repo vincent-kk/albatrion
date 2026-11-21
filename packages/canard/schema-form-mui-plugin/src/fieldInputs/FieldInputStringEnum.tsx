@@ -36,6 +36,7 @@ interface FieldInputStringEnumProps
 
 const FieldInputStringEnum = ({
   inputId,
+  focusRef,
   labelId,
   getInputId,
   name,
@@ -84,6 +85,7 @@ const FieldInputStringEnum = ({
     >
       {label && <InputLabel id={ownLabelId}>{label}</InputLabel>}
       <Select
+        inputRef={disabled ? undefined : focusRef}
         SelectDisplayProps={{
           id: inputId,
           'aria-labelledby': ownLabelId ?? labelId,
