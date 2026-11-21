@@ -8,6 +8,7 @@ import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { BATCH_HOST_SOURCE } from '../../../utils/batchHostSource';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
+import { writeObjectKey } from '../../../utils/writeObjectKey';
 import { isPlain } from './isPlain';
 import { staticSpec } from './staticSpec';
 
@@ -18,6 +19,7 @@ import { staticSpec } from './staticSpec';
  * @param template - Static occurrence restriction, including array item bindings
  * @param input - Marked source input; undeclared keys and tail slots remain intact
  * @param live - Current occurrence, whose selected descendants take priority over first candidates
+ * @param readStoredValue - Use live child emissions for an updater while preserving the target's own value
  * @param seen - Ancestors already visited, preventing cyclic input recursion
  * @returns Interpreted source tree; unselected multi-candidate slots retain their input until selection, and unchanged containers retain their reference
  * @remarks O(visited input subtree); only changed containers are copied.
@@ -26,6 +28,7 @@ export const interpretFieldNodeInput = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
   input: unknown,
   live?: Self,
+  readStoredValue = false,
   seen = new WeakSet<object>(),
 ): unknown => {
   if (input !== null && typeof input === 'object' && BATCH_HOST_SOURCE in input)
@@ -53,7 +56,13 @@ export const interpretFieldNodeInput = <Self extends FieldNodeRecord<Self>>(
           item?.blueprintNode ??
           (candidates.length === 1 ? candidates[0].node : undefined);
         if (!child) continue;
-        const next = interpretFieldNodeInput(child, value[index], item, seen);
+        const next = interpretFieldNodeInput(
+          child,
+          value[index],
+          item,
+          readStoredValue,
+          seen,
+        );
         if (next !== value[index]) (copy ??= value.slice())[index] = next;
       }
       return copy ?? value;
@@ -76,8 +85,27 @@ export const interpretFieldNodeInput = <Self extends FieldNodeRecord<Self>>(
         const item = live?.childrenByName?.[name];
         const child = item?.blueprintNode ?? children.get(name);
         if (!child) continue;
-        const next = interpretFieldNodeInput(child, value[name], item, seen);
-        if (next !== value[name]) (copy ??= { ...value })[name] = next;
+        if (readStoredValue && live && !item) {
+          delete (copy ??= { ...value })[name];
+          continue;
+        }
+        const next = interpretFieldNodeInput(
+          child,
+          value[name],
+          item,
+          readStoredValue,
+          seen,
+        );
+        if (readStoredValue && item) {
+          const output = item.behavior.project(
+            { schema: item.schema, source: next },
+            next,
+          );
+          if (output === undefined) delete (copy ??= { ...value })[name];
+          else if (output !== value[name])
+            writeObjectKey((copy ??= { ...value }), name, output);
+        } else if (next !== value[name])
+          writeObjectKey((copy ??= { ...value }), name, next);
       }
       return copy ?? value;
     }

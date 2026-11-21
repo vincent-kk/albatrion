@@ -33,5 +33,5 @@ export const readMarkedStoredValue = <Self extends FieldNodeRecord<Self>>(
       return extras;
     }
   }
-  return interpretFieldNodeInput(node.blueprintNode, input, node);
+  return interpretFieldNodeInput(node.blueprintNode, input, node, true);
 };

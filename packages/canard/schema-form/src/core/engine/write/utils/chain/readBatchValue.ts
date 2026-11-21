@@ -27,7 +27,8 @@ const readOwnPath = (value: unknown, names: readonly string[]): unknown => {
  * the call-order marks overlaid; the parent's committed value can omit an emptied object, so it is
  * replaced at the target address before the marks; a virtual target reads its reference fields as a tuple.
  * Each node's input is interpreted under its static type as the settlement interprets it, so a read
- * sees what an earlier call produced; fills, derivation and projection do not run.
+ * sees what an earlier call produced. Only child emissions needed for the stored view
+ * are projected; fills, derivation and publication do not run.
  */
 export const readBatchValue = <Self extends FieldNodeRecord<Self>>(
   node: Self,
