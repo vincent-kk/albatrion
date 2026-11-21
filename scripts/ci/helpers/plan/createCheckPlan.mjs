@@ -74,9 +74,17 @@ export function createCheckPlan(workspaces, files, reason = null, tier = "pr") {
         createShard("schema-form", schemaForm, changed, workspaces, tier),
       );
   }
+  const antd = plugins.filter((name) => /-antd[56]-plugin$/.test(name));
+  const antdGroups =
+    tier === "pr"
+      ? [5, 6].map((version) => [
+          `plugins-antd${version}`,
+          antd.filter((name) => name.endsWith(`-antd${version}-plugin`)),
+        ])
+      : [["plugins-antd", antd]];
   const pluginGroups = [
     ["plugins-ajv", plugins.filter((name) => name.includes("-ajv"))],
-    ["plugins-antd", plugins.filter((name) => /-antd[56]-plugin$/.test(name))],
+    ...antdGroups,
     [
       "plugins-ui",
       plugins.filter(
