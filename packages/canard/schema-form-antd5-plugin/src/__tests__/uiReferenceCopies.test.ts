@@ -11,6 +11,7 @@ it('keeps the independent reference models identical across UI plugins', () => {
     'sliderReference.ts',
     'fieldNameReference.ts',
     'fieldLabelLifecycle.ts',
+    'fieldLabelPresence.ts',
     ...helpers,
   ]) {
     const file = `src/__tests__/utils/${model}`;
