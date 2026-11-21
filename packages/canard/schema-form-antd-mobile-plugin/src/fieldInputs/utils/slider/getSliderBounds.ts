@@ -82,9 +82,14 @@ export const getSliderBounds = <MarkLabel>(
     marks &&
     Object.entries(marks).filter(([key]) => {
       const value = Number(key);
-      if (!Number.isFinite(value) || empty) return false;
+      if (!Number.isFinite(value) || !valid) return false;
       if (multipleOf !== undefined || integer)
-        return value >= gridMin && value <= gridMax && snap(value) === value;
+        return (
+          !empty &&
+          value >= gridMin &&
+          value <= gridMax &&
+          snap(value) === value
+        );
       return (
         (strictLow ? value > low : value >= low) &&
         (strictHigh ? value < high : value <= high)
