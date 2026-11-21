@@ -20,6 +20,21 @@ const failure = (lookup: () => unknown) => {
 };
 
 describe('a failed registration check on one resolver', () => {
+  it('checks a registered key whose trailing line feed is encoded in its address', () => {
+    const document = {
+      ...root,
+      $defs: {
+        embedded: { $id: 'https://ex.example/b.json%0A', type: 'string' },
+      },
+    };
+    const resolver = createReferenceResolver(document, {
+      resources: { 'https://ex.example/b.json\n': { type: 'number' } },
+    });
+    expect(() =>
+      resolver.resolve('b.json%0A', '$ref', resolver.root(document)),
+    ).toThrow('https://ex.example/b.json%0A declared at');
+  });
+
   it.each([
     [
       'canonical key',
