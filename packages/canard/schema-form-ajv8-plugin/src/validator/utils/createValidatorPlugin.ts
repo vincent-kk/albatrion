@@ -5,7 +5,7 @@ import { createInstanceValidator } from '../createInstanceValidator';
 import { createSchemaRootRegistry } from './createSchemaRootRegistry';
 
 /** Shared default profile for the three dialect entry points. */
-const defaultSettings: Options = { allErrors: true, strictSchema: false, validateFormats: false, allowUnionTypes: true };
+const defaultSettings: Options = { allErrors: true, strict: false, validateFormats: false, allowUnionTypes: true };
 
 /**
  * Creates one dialect entry point with its own binding and guard policy.
