@@ -2,9 +2,11 @@ import { useInsertionEffect, useRef } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
+import { ModalManager } from '@/promise-modal/app';
 import type { ModalNode } from '@/promise-modal/core/node';
 import { closeModal } from '@/promise-modal/core/node';
 import { mergeDefined } from '@/promise-modal/helpers/mergeDefined';
+import { useIsomorphicLayoutEffect } from '@/promise-modal/hooks/useIsomorphicLayoutEffect';
 
 import type {
   AlertProps,
@@ -42,6 +44,17 @@ function trackRequest<Result>(
 }
 
 /**
+ * Cancels an owned request through its live node or its prerender handle.
+ * @param pending Requests relinquished by the caller.
+ */
+function cancelRequests(pending: readonly PendingRequest[]): void {
+  for (const request of pending) {
+    if (request.modalNode) closeModal(request.modalNode);
+    else request.cancel();
+  }
+}
+
+/**
  * Opens component-owned modals and releases completed request handles immediately.
  * @param configuration - Mount-time defaults; each call can override them.
  * @returns Stable alert, confirm and prompt functions; unmount cancels pending requests.
@@ -73,18 +86,31 @@ export const useModal = (configuration?: OverridableHandleProps) => {
       ),
   );
 
-  // React keeps insertion effects connected while hiding an Activity or Suspense tree.
+  // Insertion effects span hiding and run this cleanup at actual removal.
   useInsertionEffect(
     () => () => {
       const results = modalResultsRef.current;
       if (!results.length) return;
       modalResultsRef.current = [];
+      queueMicrotask(() => cancelRequests(results));
+    },
+    [],
+  );
+
+  useIsomorphicLayoutEffect(
+    () => () => {
+      const results = modalResultsRef.current;
+      if (!results.length) return;
       queueMicrotask(() => {
-        for (const result of results) {
-          const modalNode = result.modalNode;
-          if (modalNode) closeModal(modalNode);
-          else result.cancel();
-        }
+        // When both lifetimes hide together, the Provider has released its anchor.
+        if (
+          modalResultsRef.current !== results ||
+          ModalManager.anchored ||
+          !results.some((request) => request.modalNode)
+        )
+          return;
+        modalResultsRef.current = [];
+        cancelRequests(results);
       });
     },
     [],
