@@ -135,7 +135,7 @@ function getValue<Output>(
 | `value`   | `object \| any[]`    | 원본 JSON 문서 (일반 객체 또는 배열)    |
 | `pointer` | `string \| string[]` | JSON Pointer 문자열 또는 참조 토큰 배열 |
 
-**반환값**: 지정된 위치의 값. 위치가 없으면 `undefined`를 반환합니다. 일반 키는 own 속성 검사 없이 읽으므로 상속 멤버도 해석됩니다: `getValue({}, '/toString')`은 `Object.prototype.toString`을, `getValue({ a: [1] }, '/a/length')`는 `1`을 반환합니다. 예약 멤버 이름은 own 데이터로만 읽습니다([프로토타입 오염 방지](#프로토타입-오염-방지) 참고).
+**반환값**: 지정된 위치의 값. 위치가 없으면 `undefined`를 반환합니다. 객체에서는 자기 멤버를 읽습니다. 배열에서는 정규 십진 인덱스의 자기 요소를 읽으므로 `getValue({}, '/toString')`과 `getValue({ a: [1] }, '/a/length')`는 모두 `undefined`를 반환합니다.
 
 **예외**: `INVALID_INPUT` 또는 `INVALID_POINTER_TYPE` 코드의 `JSONPointerError`. 위치가 없는 것은 예외가 아닙니다.
 

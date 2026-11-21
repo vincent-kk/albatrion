@@ -64,7 +64,7 @@ This is a TypeScript library implementing RFC 6901 (JSON Pointer) and RFC 6902 (
 
 **Security Features:**
 
-- Reserved member names (`__proto__`, `constructor`, `prototype`) are handled as opaque own data properties (RFC 6901/6902/7396-aligned) — reads of these names never walk the prototype chain, writes never mutate inherited objects; ordinary keys are read without an own-property check
+- Reserved member names (`__proto__`, `constructor`, `prototype`) are handled as opaque own data properties (RFC 6901/6902/7396-aligned) — reads of these names never walk the prototype chain, writes never mutate inherited objects; pointer reads require an own member and accept canonical array indices
 - Input validation for plain objects/arrays only
 - RFC-compliant escape sequence handling (`~0` for `~`, `~1` for `/`)
 

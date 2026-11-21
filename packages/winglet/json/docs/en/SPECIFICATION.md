@@ -136,7 +136,7 @@ function getValue<Output>(
 | `value`   | `object \| any[]`    | Source JSON document (plain object or array)     |
 | `pointer` | `string \| string[]` | JSON Pointer string or array of reference tokens |
 
-**Returns**: The value at the specified location, or `undefined` when the location does not exist. Ordinary keys are read without an own-property check, so inherited members resolve: `getValue({}, '/toString')` returns `Object.prototype.toString`, and `getValue({ a: [1] }, '/a/length')` returns `1`. Reserved member names are read as own data only (see [Prototype Pollution Protection](#prototype-pollution-protection)).
+**Returns**: The value at the specified location, or `undefined` when the location does not exist. Object paths read own members. Array paths read own elements at canonical decimal indices, so both `getValue({}, '/toString')` and `getValue({ a: [1] }, '/a/length')` return `undefined`.
 
 **Throws**: `JSONPointerError` with code `INVALID_INPUT` or `INVALID_POINTER_TYPE`. A missing location is not an error.
 

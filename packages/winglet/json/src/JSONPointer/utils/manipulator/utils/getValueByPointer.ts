@@ -1,6 +1,8 @@
-import { getDataProperty } from '@winglet/common-utils/object';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Dictionary } from '@aileron/declare';
+
+import { getArrayElementIndex } from '../../getArrayElementIndex';
 
 export const getValueByPointer = <Input extends Dictionary | Array<any>>(
   value: Input,
@@ -12,14 +14,12 @@ export const getValueByPointer = <Input extends Dictionary | Array<any>>(
   let cursor: any = value;
   for (let i = hasRootPrefix ? 1 : 0; i < length; ) {
     const segment = segments[i++];
-    // Inline copy of isReservedName: a per-segment cross-module call measurably
-    // slows this leanest loop; RC-5 pins both predicates to the same verdict
-    cursor =
-      segment === '__proto__' ||
-      segment === 'constructor' ||
-      segment === 'prototype'
-        ? getDataProperty(cursor, segment)
-        : cursor[segment];
+    if (
+      !hasOwnProperty(cursor, segment) ||
+      (Array.isArray(cursor) && getArrayElementIndex(segment) < 0)
+    )
+      return undefined;
+    cursor = cursor[segment];
     if (i === length) break;
     if (typeof cursor !== 'object' || cursor === null) return undefined;
   }
