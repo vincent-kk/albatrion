@@ -8,5 +8,6 @@ export type {
   ResolvedLocations,
 } from './type.js';
 export { assertProjectPathsContained } from './utils/assertProjectPathsContained.js';
+export { isWithin } from './utils/isWithin.js';
 export { resolveDestinations } from './utils/resolveDestinations.js';
 export { splitAssetKind } from './utils/splitAssetKind.js';

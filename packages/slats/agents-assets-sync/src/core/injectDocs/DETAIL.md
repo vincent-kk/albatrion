@@ -45,7 +45,7 @@
 - runInjection과 executeUnits는 실행 완료 시 최종 결과 하나를 만듭니다. 진행 화면은 같은 계획과 실패 기록을 전달받고 최종 화면은 이 최종 결과를 표시합니다. 일반·JSON·터미널은 동일한 실패와 종료 코드를 표시합니다. JSON 표준 출력에는 종료 코드와 관계없이 문서 하나가 있습니다.
 - 종료 코드의 단일 기준은 최상위 `src/DETAIL.md`의 종료 판정 표입니다. 미리보기는 강제 적용 필요로 차단하지 않지만 준비 오류를 숨기지 않으며 적용만 생략합니다.
 - discover는 명시된 패키지 또는 스코프 별칭에서 발견한 디렉터리마다 참여자 기록을 남깁니다. agents.assetPath를 선언하지 않은 정상 패키지는 opt-out이며 소유 후보가 아닙니다. 읽거나 파싱할 수 없는 package.json, 해석 실패와 gate 실패는 opt-out으로 바꾸지 않습니다. 이름·manifest를 알 수 없는 실패자는 선택된 모든 agent 목적지의 모든 네임스페이스를 보호합니다. 이 보호는 prepare 전부터 적용합니다.
-- 네임스페이스 키는 해석한 목적지 루트·asset kind·스킬 접두사입니다. 명확한 실패자의 소유 접두사를 알 수 있으면 그 접두사만 보호하며, 알 수 없으면 해당 루트 전체를 보호합니다. 실행 가능한 형제 계획의 보호된 delete 또는 warn-orphan은 적용 액션에서 빠지고 참여자·경로·이유를 가진 notice가 됩니다. force 확인과 deleted·created·updated 집계에는 나타나지 않으며 notice 자체는 종료 코드를 높이지 않습니다.
+- 네임스페이스 키는 해석한 목적지 루트·asset kind·스킬 접두사입니다. 삭제 후보와 실패자가 함께 있을 때 실패자의 보호 범위만 실제 경로로 해석합니다. 명확한 실패자의 소유 접두사를 알 수 있으면 그 접두사만 보호하며, 알 수 없으면 해당 루트 전체를 보호합니다. 실행 가능한 형제 계획의 보호된 delete 또는 warn-orphan은 적용 액션에서 빠지고 참여자·경로·이유를 가진 notice가 됩니다. force 확인과 deleted·created·updated 집계에는 나타나지 않으며 notice 자체는 종료 코드를 높이지 않습니다.
 - 거부된 유닛은 원래 계획을 진단 증거로 보관하고 refused=true·requiresForce=false로 표시하며 모든 액션을 실행과 force 확인에서 제외합니다.
 - 일반·JSON·터미널은 거부된 계획의 액션을 diagnostic 표시로만 보여 주며 JSON 단위의 diagnosticOnly는 refused에 대응합니다.
 - 최종 RunResult는 units, errors, failures, notices, exitCode, dryRun을 담습니다. 실패는 unitKey(단위를 아직 모르면 요청 식별자), path(실제 목적지 또는 원본의 절대 경로, 발견 전이면 요청 문자열), stage(discover, gate, prepare, merge, apply), reason입니다. notice도 같은 경로·단계·이유를 가지며 실패와 별도로 집계합니다. units의 report는 성공한 액션만 집계하고 실패한 경로는 모든 출력의 마지막 화면에서 같은 이유와 함께 읽을 수 있습니다.

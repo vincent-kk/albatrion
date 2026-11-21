@@ -79,35 +79,22 @@ export async function prepareUnits(
         });
         continue;
       }
-      const namespaceRoots = await Promise.all(
-        Object.values(agentTarget.directoryRoots)
-          .filter((root): root is string => root !== null)
-          .map((root) =>
-            resolveCanonicalPath(root, physicalPaths).catch(() => root),
-          ),
-      );
       const base = {
         key: `${agent}:${target.name}`,
         target,
         agentTarget,
-        namespaceRoots,
       };
+      let namespaceRoots: string[] | undefined;
       try {
         if ('error' in manifest) throw manifest.error;
         const prefixes = computeNamespacePrefixes(manifest.value);
-        base.namespaceRoots = await Promise.all(
-          Object.entries(agentTarget.directoryRoots)
-            .flatMap(([kind, root]) => {
-              if (!root) return [];
-              return kind === 'skills'
-                ? prefixes.map((prefix) =>
-                    join(root, prefix.slice('skills/'.length)),
-                  )
-                : [root];
-            })
-            .map((root) =>
-              resolveCanonicalPath(root, physicalPaths).catch(() => root),
-            ),
+        namespaceRoots = Object.entries(agentTarget.directoryRoots).flatMap(
+          ([kind, root]) => {
+            if (!root) return [];
+            return kind === 'skills'
+              ? prefixes.map((prefix) => join(root, prefix.slice('skills/'.length)))
+              : [root];
+          },
         );
         const recordPath = agentTarget.installedAssetsFile;
         let installed: InstalledAssets | undefined;
@@ -178,6 +165,7 @@ export async function prepareUnits(
         );
         const unit = {
           ...base,
+          namespaceRoots,
           sourceSnapshots,
           installedAssets: installed,
           plan: { ...plan, actions },
@@ -185,22 +173,18 @@ export async function prepareUnits(
         destinationsSeen.set(locationKey, unit);
         units.push(unit);
       } catch (error) {
-        const reason = error instanceof Error ? error.message : String(error);
+        const failure = describePreparationFailure(error, target, 'error' in manifest);
         units.push({
           ...base,
+          namespaceRoots,
           plan: { actions: [], requiresForce: false },
-          error: reason,
-          failures: [
-            {
-              unitKey: base.key,
-              ...describePreparationFailure(error, target, 'error' in manifest),
-              stage: 'prepare',
-              reason,
-            },
-          ],
+          error: failure.reason,
+          failures: [{ unitKey: base.key, stage: 'prepare', ...failure }],
         });
       }
     }
   }
-  return mergePlans(units, discoveryFailures, linkedDestinations);
+  return mergePlans(units, discoveryFailures, linkedDestinations, (path) =>
+    resolveCanonicalPath(path, physicalPaths).catch(() => path),
+  );
 }
