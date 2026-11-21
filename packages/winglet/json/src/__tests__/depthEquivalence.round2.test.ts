@@ -89,6 +89,19 @@ describe('round-2 json 7: deep traversal preserves shallow policies', () => {
 });
 
 describe('round-2 json 7: serialization traversal order', () => {
+  it('reads a changed merge-patch member once at any depth', () => {
+    for (const depth of [0, 300]) {
+      let reads = 0;
+      const target = {
+        get value() {
+          return ++reads === 1 ? 2 : 9;
+        },
+      };
+      const patch = difference(nest({ value: 1 }, depth), nest(target, depth));
+      expect({ patch: leafOf(patch), reads }).toEqual({ patch: { value: 2 }, reads: 1 });
+    }
+  });
+
   it('reads sibling values in the same order around toJSON at any depth', () => {
     const observe = (depth: number) => {
       const log: string[] = [];
