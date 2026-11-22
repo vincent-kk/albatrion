@@ -1,11 +1,8 @@
 import type { JSONSchema } from '@canard/schema-form';
-import AjvModule from 'ajv';
+import Ajv from 'ajv';
 import { expect, it } from 'vitest';
 
 import { createValidator } from '../index';
-import { resolveAjvConstructor } from '../validator/utils/resolveAjvConstructor';
-
-const Ajv = resolveAjvConstructor(AjvModule);
 
 it.each(['keyword', 'format', 'late-format', 'async-ref', 'declared'])(
   'round-5: root-pointer guard order is independent for %s',
@@ -62,7 +59,7 @@ it.each(['keyword', 'format', 'late-format', 'async-ref', 'declared'])(
 );
 
 it('a macro in another location affects only the root-pointer guard', () => {
-  const ajv = new AjvModule({ strict: false });
+  const ajv = new Ajv({ strict: false });
   ajv.addFormat('async-format', { async: true, validate: async () => true });
   ajv.addKeyword({ keyword: 'asyncMacro', macro: () => ({ format: 'async-format' }) });
   const schema: JSONSchema = {
