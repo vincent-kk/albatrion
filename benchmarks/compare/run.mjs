@@ -44,6 +44,29 @@ if (!(rounds > 0) || rounds % 6)
   throw new Error("--rounds must be a positive multiple of 6");
 if (existsSync(args.out)) throw new Error(`${args.out} already exists`);
 
+/** Machine-wide lock: a second comparison waits here, because two at once distort each other. */
+const LOCK = "/tmp/benchmarks-compare.lock";
+const isAlive = (pid) => {
+  try {
+    return process.kill(pid, 0);
+  } catch (error) {
+    return error.code === "EPERM";
+  }
+};
+for (;;) {
+  try {
+    writeFileSync(LOCK, String(process.pid), { flag: "wx" });
+    break;
+  } catch {
+    const owner = existsSync(LOCK) ? Number(readFileSync(LOCK, "utf8")) : 0;
+    if (owner && !isAlive(owner)) rmSync(LOCK, { force: true });
+    else Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 5000);
+  }
+}
+process.on("exit", () => rmSync(LOCK, { force: true }));
+for (const signal of ["SIGINT", "SIGTERM"])
+  process.on(signal, () => process.exit(1));
+
 const rowsDir = resolve(args.rows);
 const trees = { A1: resolve(args.a), A2: resolve(args.a), B: resolve(args.b) };
 for (const tree of new Set(Object.values(trees))) {
