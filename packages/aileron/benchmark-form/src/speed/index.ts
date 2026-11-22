@@ -6,12 +6,12 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createOutput } from './createOutput';
+import { nearestRank } from './nearestRank';
 import { ratios as calculateRatios } from './ratios';
 import { resolveRef } from './resolveRef';
 import { rows } from './rows';
 import { runSafely } from './runSafely';
 import { slotOrder } from './slotOrder';
-import { nearestRank } from './nearestRank';
 import { verdict } from './verdict';
 
 type Slot = { round: number; slot: string; data: ReturnType<typeof execute> };
@@ -204,6 +204,22 @@ for (const row of rows.filter((item) => selected.includes(item.id))) {
         ((phase = 'calibration slot pilot arm candidate'),
         execute(candidate, row.id, 0)),
       ];
+      for (let index = 0; index < calibration.length; index++) {
+        phase = `calibration slot pilot arm ${index === 0 ? 'baseline' : 'candidate'}`;
+        const actual = calibration[index].provenance;
+        const expected = index === 0 ? left : right;
+        const actualPackages = thirdParty(actual);
+        const expectedPackages = thirdParty(expected);
+        if (
+          actual.leaks.length ||
+          actualPackages.length !== expectedPackages.length ||
+          actualPackages.some((item) => !expectedPackages.includes(item))
+        ) {
+          throw new Error(
+            `Calibration provenance violation: ${actual.leaks.join(', ') || 'dependency set changed'}`,
+          );
+        }
+      }
       const count = Math.max(...calibration.map((item) => item.count));
       for (let round = 0; round < (row.rounds ?? 20); round++) {
         for (const slot of slotOrder(round)) {
