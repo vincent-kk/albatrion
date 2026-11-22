@@ -117,6 +117,7 @@ it.each<[JSONSchema, string]>([
       view.container.querySelector<HTMLLabelElement>('label[for]')!;
     const target = () => document.getElementById(label().htmlFor)!;
     expect(target()).toBeTruthy();
+    expect(label().control).toBeNull();
     fireEvent.click(label());
     expect(target().contains(document.activeElement)).toBe(false);
 
@@ -125,3 +126,24 @@ it.each<[JSONSchema, string]>([
     expect(target().contains(document.activeElement)).toBe(true);
   },
 );
+
+it('keeps the Select caption and external field label with a non-labelable trigger', () => {
+  const view = render(
+    <Form
+      jsonSchema={{
+        type: 'object',
+        properties: { field: { type: 'string', enum: ['a', 'b'] } },
+      }}
+      fieldInputDefinitions={plugin.fieldInputDefinitions}
+      LabelRenderer={plugin.LabelRenderer}
+    >
+      <Form.Label path="/field">External field title</Form.Label>
+      <Form.Input path="/field" />
+    </Form>,
+  );
+  const label = view.getByText('External field title', { selector: 'label' });
+  const trigger = view.getByRole('combobox', { name: 'field' });
+  expect(view.getByText('field', { selector: 'label' })).toBeTruthy();
+  expect(label).toHaveProperty('htmlFor', trigger.id);
+  expect(label).toHaveProperty('control', null);
+});

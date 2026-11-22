@@ -65,7 +65,7 @@ it.each<[string, JSONSchema, (string | number)[]]>([
   ],
 ])(
   'renders core-provided keyed addresses for %s in two Forms',
-  (_kind, fieldSchema, keys) => {
+  (kind, fieldSchema, keys) => {
     const captured = new Map<string, FieldInputProps>();
     const definitions = plugin.fieldInputDefinitions.map((definition) => {
       const Component = definition.Component;
@@ -105,6 +105,22 @@ it.each<[string, JSONSchema, (string | number)[]]>([
     for (const props of captured.values()) {
       expect(ids.filter((id) => id === props.inputId)).toHaveLength(1);
       expect(ids.filter((id) => id === props.labelId)).toHaveLength(1);
+
+      const group = document.getElementById(props.inputId);
+      if (kind === 'radio' || kind === 'radiogroup') {
+        const radios = Array.from(
+          group?.querySelectorAll('input[type="radio"]') ?? [],
+        );
+        expect(radios).toHaveLength(2);
+        expect(radios.every((radio) => !radio.hasAttribute('name'))).toBe(true);
+      }
+      if (kind === 'range slider') {
+        const thumbs = Array.from(
+          group?.querySelectorAll('[role="slider"]') ?? [],
+        );
+        expect(thumbs).toHaveLength(2);
+        expect(thumbs.every((thumb) => thumb.id === '')).toBe(true);
+      }
       for (const key of keys) {
         expect(ids.filter((id) => id === props.getInputId(key))).toHaveLength(
           1,

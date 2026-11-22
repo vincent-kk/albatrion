@@ -6,7 +6,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle, type NumberSchema } from '@canard/schema-form';
 
-import { FieldInputSliderDefinition } from '../fieldInputs/FieldInputSlider';
+import { plugin } from '../index';
 
 afterEach(() => {
   cleanup();
@@ -20,7 +20,13 @@ const mount = (
     readOnly = false,
     direction = 'ltr',
     lazy,
-  }: { readOnly?: boolean; direction?: 'ltr' | 'rtl'; lazy?: boolean } = {},
+    unsetValueText,
+  }: {
+    readOnly?: boolean;
+    direction?: 'ltr' | 'rtl';
+    lazy?: boolean;
+    unsetValueText?: string;
+  } = {},
 ) => {
   const ref = createRef<FormHandle>();
   const view = render(
@@ -33,10 +39,10 @@ const mount = (
         ...constraints,
         presentation: {
           inputType: 'slider',
-          FieldInputProps: { unsetValueText: '미설정', lazy },
+          FieldInputProps: { unsetValueText, lazy },
         },
       }}
-      fieldInputDefinitions={[FieldInputSliderDefinition]}
+      fieldInputDefinitions={plugin.fieldInputDefinitions}
     />,
     {
       wrapper: ({ children }) => (
@@ -56,7 +62,7 @@ const mount = (
   };
 };
 
-const pressTrack = (track: HTMLElement, clientX: number) => {
+const startTrack = (track: HTMLElement, clientX: number) => {
   vi.spyOn(track, 'getBoundingClientRect').mockReturnValue({
     x: 0,
     y: 0,
@@ -69,11 +75,21 @@ const pressTrack = (track: HTMLElement, clientX: number) => {
     toJSON: () => ({}),
   });
   fireEvent.mouseDown(track, { button: 0, buttons: 1, clientX, clientY: 5 });
+};
+
+const releaseTrack = (clientX: number) => {
   fireEvent.mouseUp(document, { button: 0, clientX, clientY: 5 });
 };
 
+const pressTrack = (track: HTMLElement, clientX: number) => {
+  startTrack(track, clientX);
+  releaseTrack(clientX);
+};
+
 it('announces and hides an unset slider until a value is committed', async () => {
-  const { ref, slider, track, thumb } = mount({ maximum: 10 });
+  const { ref, slider, track, thumb } = mount({ maximum: 10 }, undefined, {
+    unsetValueText: '미설정',
+  });
   expect(ref.current?.getValue()).toBeUndefined();
   expect(slider().getAttribute('aria-valuenow')).toBeNull();
   expect(slider().getAttribute('aria-valuetext')).toBe('미설정');
@@ -153,7 +169,7 @@ it('commits a native keyboard change once on keydown with the default lazy polic
       defaultValue={20}
       onChange={change}
       jsonSchema={{ type: 'number', presentation: { inputType: 'slider' } }}
-      fieldInputDefinitions={[FieldInputSliderDefinition]}
+      fieldInputDefinitions={plugin.fieldInputDefinitions}
     />,
   );
   const slider = view.getByRole('slider');
@@ -170,6 +186,7 @@ it('starts keyboard movement from a legal stop when the stored value is off grid
     52,
   );
   expect(ref.current?.getValue()).toBe(52);
+  expect(slider().getAttribute('aria-valuenow')).toBe('50');
   fireEvent.keyDown(slider(), { key: 'ArrowUp', keyCode: 38 });
   expect(ref.current?.getValue()).toBe(55);
 });
@@ -191,7 +208,7 @@ it('stores the minimum when an unset slider with immediate updates is tapped the
   const { ref, slider, track } = mount(
     { minimum: 10, maximum: 20 },
     undefined,
-    { lazy: false },
+    { lazy: false, unsetValueText: '미설정' },
   );
   expect(slider().getAttribute('aria-valuetext')).toBe('미설정');
   pressTrack(track(), 0);
@@ -214,3 +231,35 @@ it('honors the provider direction while using the configured shift step', () => 
   fireEvent.keyDown(slider(), { key: 'PageUp', keyCode: 33 });
   expect(ref.current?.getValue()).toBe(60);
 });
+
+it.each([undefined, false])(
+  'stores pointer selection according to lazy=%s',
+  (lazy) => {
+    const { ref, track } = mount({ maximum: 10 }, 2, { lazy });
+    startTrack(track(), 50);
+    expect(ref.current?.getValue()).toBe(lazy === false ? 5 : 2);
+    releaseTrack(50);
+    expect(ref.current?.getValue()).toBe(5);
+  },
+);
+
+it('uses the default unset announcement and stores the minimum on Home', () => {
+  const { ref, slider } = mount({ minimum: 10, maximum: 20 }, undefined, {
+    unsetValueText: undefined,
+  });
+  expect(slider().getAttribute('aria-valuetext')).toBe('Not set');
+  fireEvent.keyDown(slider(), { key: 'Home', keyCode: 36 });
+  expect(ref.current?.getValue()).toBe(10);
+});
+
+it.each([
+  { step: 0.1, initial: 0.2, stored: 0.30000000000000004 },
+  { step: 1e-7, initial: 1.2e-6, stored: 0.0000012999999999999998 },
+])(
+  'stores native keyboard precision for step $step',
+  ({ step, initial, stored }) => {
+    const { ref, slider } = mount({ multipleOf: step }, initial);
+    fireEvent.keyDown(slider(), { key: 'ArrowUp', keyCode: 38 });
+    expect(ref.current?.getValue()).toBe(stored);
+  },
+);

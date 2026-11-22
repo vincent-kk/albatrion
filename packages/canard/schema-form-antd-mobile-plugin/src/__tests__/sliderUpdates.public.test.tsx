@@ -1,0 +1,83 @@
+import type { ComponentProps } from 'react';
+
+import { cleanup, render, screen } from '@testing-library/react';
+import type { Slider as MobileSlider } from 'antd-mobile';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+
+import { Form, ValidationMode } from '@canard/schema-form';
+
+import { plugin } from '../index';
+
+type SliderProps = ComponentProps<typeof MobileSlider>;
+
+const received = vi.hoisted(() => ({ props: [] as SliderProps[] }));
+
+vi.mock('antd-mobile', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('antd-mobile')>()),
+  Slider: (props: SliderProps) => {
+    received.props.push(props);
+    return null;
+  },
+}));
+
+const marks = { 0: '0', 50: '50', 100: '100' };
+
+const preventWindowError = (event: ErrorEvent) => event.preventDefault();
+
+beforeEach(() => {
+  received.props.length = 0;
+});
+
+afterEach(() => {
+  cleanup();
+  window.removeEventListener('error', preventWindowError);
+});
+
+it('reads marks and lazy while the schema sets the slider shape', () => {
+  render(
+    <Form
+      fieldInputDefinitions={plugin.fieldInputDefinitions}
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          level: {
+            type: 'number',
+            format: 'slider',
+            presentation: {
+              FieldInputProps: { range: true, marks, lazy: false },
+            },
+          },
+        },
+      }}
+    />,
+  );
+  const props = received.props.at(-1)!;
+  expect(props.range).toBe(false);
+  expect(props.marks).toEqual(marks);
+  expect(props.onChange).toBeTypeOf('function');
+  expect(props.onAfterChange).toBeUndefined();
+});
+
+it('accepts range under options without a schema error', () => {
+  window.addEventListener('error', preventWindowError);
+  const onError = vi.fn();
+  render(
+    <Form
+      fieldInputDefinitions={plugin.fieldInputDefinitions}
+      onError={onError}
+      validationMode={ValidationMode.None}
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          level: {
+            type: 'number',
+            format: 'slider',
+            options: { range: true },
+          },
+        },
+      }}
+    />,
+  );
+  expect(onError).not.toHaveBeenCalled();
+  expect(screen.queryByRole('alert')).toBeNull();
+});

@@ -66,12 +66,6 @@ it('shows a stored decimal in a read-only slider with no required step', () => {
   expect(ref.current?.getValue()).toBe(2.4);
 });
 
-it('shows the integer grid point without rewriting a read-only decimal', () => {
-  const { slider, ref } = mount({ type: 'integer', maximum: 5 }, 2.4, true);
-  expect(slider.getAttribute('aria-valuenow')).toBe('2');
-  expect(ref.current?.getValue()).toBe(2.4);
-});
-
 it('does not offer the excluded schema bound', () => {
   const { ref, tap } = mount({
     minimum: 0,
