@@ -1,59 +1,58 @@
 import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import { dirname, join, relative, sep } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 
-type Edge = { specifier: string; parent?: string; url: string };
-
-/** Collects package identities reached from an instrumented entry replay. */
-export function provenance(
-  stderr: string,
-  entry: string,
-  root: string,
-  commonjs: string[],
-) {
-  const edges: Edge[] = stderr
-    .split('\n')
-    .filter((line) => line.startsWith('SPEED_RESOLVE '))
-    .map((line) => JSON.parse(line.slice(14)) as Edge);
-  const reachable = new Set([pathToFileURL(entry).href]);
-  let size = 0;
-  while (size !== reachable.size) {
-    size = reachable.size;
-    for (const edge of edges)
-      if (edge.parent && reachable.has(edge.parent)) reachable.add(edge.url);
-  }
-  const packages: Record<string, { version: string; path: string }> = {};
+/** Records resolved files and package identities, including duplicate versions. */
+export function provenance(urls: string[], root: string) {
+  const tree = realpathSync(root);
+  const packages = new Map<
+    string,
+    { name: string; version: string; path: string }
+  >();
   const leaks: string[] = [];
-  for (const url of [
-    ...reachable,
-    ...commonjs.map((path) => pathToFileURL(path).href),
-  ]) {
-    if (!url.startsWith('file:')) continue;
-    const path = realpathSync(fileURLToPath(url));
+  const runtimePaths: Record<string, Set<string>> = {
+    react: new Set(),
+    'react-dom': new Set(),
+  };
+  for (const url of urls) {
+    const file = fileURLToPath(url);
+    if (!existsSync(file)) continue;
+    const path = realpathSync(file);
     let directory = dirname(path);
     while (
       !existsSync(join(directory, 'package.json')) &&
       dirname(directory) !== directory
     )
       directory = dirname(directory);
-    const manifestPath = join(directory, 'package.json');
-    if (!existsSync(manifestPath)) continue;
-    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as {
-      name?: string;
-      version?: string;
-    };
+    if (!existsSync(join(directory, 'package.json'))) continue;
+    const manifest = JSON.parse(
+      readFileSync(join(directory, 'package.json'), 'utf8'),
+    ) as { name?: string; version?: string };
     if (!manifest.name || !manifest.version) continue;
-    packages[manifest.name] = { version: manifest.version, path: directory };
+    const item = {
+      name: manifest.name,
+      version: manifest.version,
+      path: realpathSync(directory),
+    };
+    packages.set(JSON.stringify(item), item);
     if (
-      directory.includes(`${sep}packages${sep}`) &&
-      relative(root, directory).startsWith('..')
-    )
-      leaks.push(directory);
+      /^@(canard|winglet|lerx|slats)\//.test(item.name) ||
+      item.name === 'react' ||
+      item.name === 'react-dom'
+    ) {
+      const inside = relative(tree, path);
+      if (inside === '..' || inside.startsWith(`..${sep}`)) leaks.push(path);
+    }
+    runtimePaths[item.name]?.add(item.path);
   }
+  for (const [name, paths] of Object.entries(runtimePaths))
+    if (paths.size > 1)
+      leaks.push(`Multiple ${name} paths: ${[...paths].join(', ')}`);
   return {
-    edges: edges.filter((edge) => !!edge.parent && reachable.has(edge.parent)),
-    packages,
+    urls,
+    packages: [...packages.values()].sort((a, b) =>
+      JSON.stringify(a).localeCompare(JSON.stringify(b)),
+    ),
     leaks,
-    complete: edges.some((edge) => edge.parent && reachable.has(edge.parent)),
   };
 }
