@@ -17,7 +17,11 @@ describe.each([false, true])(
         startTransition(() => form.ref.current!.focus('/3'));
         flushSync(() => form.options({ ...liveOptions, rootMargin: '40px' }));
       });
-      expect(document.activeElement?.id).toBe('/3');
+      expect(
+        document.activeElement
+          ?.closest('[data-path]')
+          ?.getAttribute('data-path'),
+      ).toBe('/3');
       expect(focus).toHaveBeenCalledTimes(1);
       expect(
         removed.mock.calls.filter(([type]) => type === 'focusin'),
@@ -39,7 +43,11 @@ describe.each([false, true])(
       });
       await act(async () => {});
       expect(form.deferred()).toHaveLength(0);
-      expect(document.activeElement?.id).toBe('/3');
+      expect(
+        document.activeElement
+          ?.closest('[data-path]')
+          ?.getAttribute('data-path'),
+      ).toBe('/3');
       expect(focus).toHaveBeenCalledTimes(1);
       for (const type of ['focusin', 'focusout']) {
         const listener = added.mock.calls.find(

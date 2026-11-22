@@ -13,6 +13,25 @@ describe('blueprint expression compilation', () => {
     expect(result.expressions).toHaveLength(1);
     expect(() => result.expressions[0].evaluate([])).toThrow('execute');
   });
+  it('keeps leading-dot decimal division beside a parent path', () => {
+    const result = blueprint({
+      type: 'object',
+      properties: {
+        a: { type: 'number' },
+        computed: { type: 'number', controls: { derived: '.5/2 + ../a' } },
+      },
+    });
+    expect(result.expressions[0].dependencies).toEqual(['../a']);
+    expect(result.expressions[0].evaluate([1])).toBe(1.25);
+  });
+  it('compiles a returned regular expression without path dependencies', () => {
+    const result = blueprint({
+      type: 'string',
+      controls: { derived: '{ return /a/ }' },
+    });
+    expect(result.expressions[0].dependencies).toEqual([]);
+    expect(result.expressions[0].evaluate([])).toEqual(/a/);
+  });
   it('unions watches and expression paths from every gated declaration', () => {
     const result = blueprint({
       type: 'object',

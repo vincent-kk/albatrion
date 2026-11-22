@@ -25,7 +25,7 @@ interface FieldInputStringProps
 }
 
 const FieldInputString = ({
-  path,
+  inputId,
   name,
   jsonSchema,
   readOnly,
@@ -36,6 +36,10 @@ const FieldInputString = ({
   placeholder,
   size,
   misfit,
+  labelId,
+  required,
+  className,
+  style,
 }: FieldInputStringProps) => {
   const TextInput = useMemo(() => {
     if (
@@ -52,7 +56,11 @@ const FieldInputString = ({
   });
   return (
     <TextInput
-      id={path}
+      className={className}
+      style={style}
+      aria-labelledby={labelId}
+      aria-required={required || undefined}
+      id={inputId}
       name={name}
       readOnly={readOnly}
       disabled={disabled}

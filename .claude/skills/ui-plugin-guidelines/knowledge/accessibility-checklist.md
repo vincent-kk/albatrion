@@ -9,17 +9,17 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 ```typescript
 <TextField
   // ✅ Required attributes
-  id={path}                          // Unique ID
+  id={id}                          // Unique ID
   name={name}                        // Used on form submit
   required={required}                // HTML required
 
   // ✅ ARIA attributes
   aria-required={required}           // For screen readers
   aria-invalid={hasError}            // Error state
-  aria-describedby={hasError ? `${path}-error` : undefined}  // Links the error message
+  aria-describedby={hasError ? `${id}-error` : undefined}  // Links the error message
 
   // ✅ Label association
-  // Connect LabelRenderer htmlFor={path} with id={path}
+  // Connect LabelRenderer htmlFor={id} with id={id}
 />
 ```
 
@@ -28,14 +28,14 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 ```typescript
 // Input
 <TextField
-  id={path}
-  aria-describedby={`${path}-error`}
+  id={id}
+  aria-describedby={`${id}-error`}
   aria-invalid={true}
 />
 
 // Error
 <FormHelperText
-  id={`${path}-error`}  // ✅ Matching ID
+  id={`${id}-error`}  // ✅ Matching ID
   error
 >
   {errorMessage}
@@ -47,14 +47,14 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 ```typescript
 // Label
 <Label
-  htmlFor={path}  // ✅ Connected to the input ID
+  htmlFor={id}  // ✅ Connected to the input ID
 >
   {label}
 </Label>
 
 // Input
 <TextField
-  id={path}  // ✅ Connected to the label htmlFor
+  id={id}  // ✅ Connected to the label htmlFor
 />
 ```
 
@@ -109,16 +109,18 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 
 ### Grouping
 
+Use the `labelId` supplied to `FieldRendererProps` for the title and group association. Option ids derive from the supplied input `id`; native radio names use that scoped input id. `path` is only a data pointer.
+
 ```typescript
 // Group object types with fieldset
-<fieldset>
-  <legend>{jsonSchema.title || name}</legend>
+<fieldset aria-labelledby={labelId}>
+  <legend id={labelId}>{jsonSchema.title || name}</legend>
   {/* children */}
 </fieldset>
 
 // Group array types as well
-<div role="group" aria-labelledby={`label:${path}`}>
-  <Typography id={`label:${path}`}>{name}</Typography>
+<div role="group" aria-labelledby={labelId}>
+  <Typography id={labelId}>{name}</Typography>
   {/* children */}
 </div>
 ```
@@ -153,12 +155,12 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 
 ```typescript
 <TextField
-  id={path}
+  id={id}
   name={name}
   required={required}
   aria-required={required}
   aria-invalid={hasError}
-  aria-describedby={hasError ? `${path}-error` : undefined}
+  aria-describedby={hasError ? `${id}-error` : undefined}
   placeholder={placeholder}  // Additional hint
 />
 ```
@@ -169,12 +171,12 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 <FormControlLabel
   control={
     <Checkbox
-      id={path}
+      id={id}
       name={name}
       required={required}
       aria-required={required}
       aria-invalid={hasError}
-      aria-describedby={hasError ? `${path}-error` : undefined}
+      aria-describedby={hasError ? `${id}-error` : undefined}
     />
   }
   label={label}  // ✅ Label is required
@@ -185,12 +187,12 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 
 ```typescript
 <Select
-  id={path}
+  id={id}
   name={name}
   required={required}
   aria-required={required}
   aria-invalid={hasError}
-  aria-describedby={hasError ? `${path}-error` : undefined}
+  aria-describedby={hasError ? `${id}-error` : undefined}
   aria-label={label}  // ✅ When there is no label
 >
   {options.map(option => (
@@ -205,16 +207,16 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 
 ```typescript
 <RadioGroup
-  name={name}
-  aria-labelledby={`label:${path}`}
-  aria-describedby={hasError ? `${path}-error` : undefined}
+  name={id}
+  aria-labelledby={labelId}
+  aria-describedby={hasError ? `${id}-error` : undefined}
   aria-required={required}
 >
-  {options.map(option => (
+  {options.map((option, index) => (
     <FormControlLabel
       key={option.value}
       value={option.value}
-      control={<Radio />}
+      control={<Radio id={`${id}-${index}`} />}
       label={option.label}
     />
   ))}
@@ -224,8 +226,8 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 ### Array (Dynamic Items)
 
 ```typescript
-<Box role="group" aria-labelledby={`label:${path}`}>
-  <Typography id={`label:${path}`}>{label}</Typography>
+<Box role="group" aria-labelledby={labelId}>
+  <Typography id={labelId}>{label}</Typography>
 
   {items.map((item, index) => (
     <Box key={index} role="listitem">

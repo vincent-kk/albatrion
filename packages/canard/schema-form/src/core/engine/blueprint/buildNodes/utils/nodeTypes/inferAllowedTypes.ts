@@ -8,7 +8,10 @@ import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
-import { foldAllowedTypes } from '../../../../utils/nodeIdentity/foldAllowedTypes';
+import {
+  TYPE_MASK,
+  foldAllowedTypes,
+} from '../../../../utils/nodeIdentity/foldAllowedTypes';
 import type { AnalysisContext } from '../../../types/analysis';
 import type { BlueprintSchema, SchemaTypeName } from '../../../types/schema';
 import { intersectAllowedTypes } from '../../../utils/allowedTypes/intersectAllowedTypes';
@@ -21,12 +24,8 @@ import { inferLiteralTypes } from './inferLiteralTypes';
 /** Authored disjunctions examined in S3 order without per-call allocation. */
 const BRANCH_KEYWORDS = ['oneOf', 'anyOf'] as const;
 
-/** Kind mask of a node that is only an object. */
-const OBJECT_KIND_MASK = foldAllowedTypes('object');
-/** Kind mask of a node that is only an array. */
-const ARRAY_KIND_MASK = foldAllowedTypes('array');
 /** Container kinds, which cannot share a node with any other kind. */
-const CONTAINER_KIND_MASK = OBJECT_KIND_MASK | ARRAY_KIND_MASK;
+const CONTAINER_KIND_MASK = TYPE_MASK.object | TYPE_MASK.array;
 
 /**
  * Resolve S0-S3 for one authored slot without evaluating branch guards.
@@ -144,8 +143,8 @@ export const inferAllowedTypes = (
     const kindMask = foldAllowedTypes(inferred);
     if (
       (kindMask & CONTAINER_KIND_MASK) !== BIT_MASK_NONE &&
-      kindMask !== OBJECT_KIND_MASK &&
-      kindMask !== ARRAY_KIND_MASK
+      kindMask !== TYPE_MASK.object &&
+      kindMask !== TYPE_MASK.array
     )
       return throwBlueprintError(
         FormErrorCode.UnknownJsonSchema,

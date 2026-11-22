@@ -62,7 +62,7 @@ export const validateBuildOptions = (options) => {
  *   entry?: string;
  *   entrypoints?: string[];
  *   format?: string;
- *   outFile?: string;
+ *   outFile?: string | { types?: string; default: string };
  *   outDir?: string;
  *   name?: string;
  * }) => void}

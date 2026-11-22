@@ -1,5 +1,7 @@
 import { expect, it } from 'vitest';
 
+import { FieldNodeState, ValidationMode } from '@/schema-form/core/engine';
+
 import { buildFieldNodeTree } from '../buildFieldNodeTree';
 import { mountFieldNode } from '../mountFieldNode';
 import { observeFieldNodeReports } from '../observeFieldNodeReports';
@@ -35,7 +37,7 @@ it('ERROR-113 restores the previous report scope when delivery throws', () => {
         throw failure;
       }),
     ).toThrow(failure);
-    expect(() => root.setState({ 1: true })).toThrowError(
+    expect(() => root.setState({ [FieldNodeState.Edited]: true })).toThrowError(
       expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' }),
     );
   });
@@ -52,7 +54,7 @@ it('ERROR-113 retains the core reporter scope after a nested binding delivery', 
   let failures = 0;
   const root = buildFieldNodeTree({
     jsonSchema: { type: 'number' },
-    validationMode: 0,
+    validationMode: ValidationMode.None,
     errorReporter: {
       hasConsumer: () => true,
       report: () => {

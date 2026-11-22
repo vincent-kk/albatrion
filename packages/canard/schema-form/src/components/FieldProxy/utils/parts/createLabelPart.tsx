@@ -1,9 +1,11 @@
+import type { ReactElement } from 'react';
 import { type ComponentType, memo } from 'react';
 
 import { NULL_FUNCTION } from '@winglet/common-utils/constant';
 
 import { LabelRenderer as FallbackLabelRenderer } from '@/schema-form/components/FallbackComponents';
 import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
+import { resolveFieldIdentifiers } from '@/schema-form/helpers/fieldId/resolveFieldIdentifiers';
 import { useFieldNodeTracker } from '@/schema-form/hooks';
 import type { LabelRendererProps } from '@/schema-form/types';
 
@@ -22,22 +24,24 @@ export const createLabelPart = (
   node: FieldNode | null | undefined,
   required: boolean,
   jsonSchema: FieldNode['jsonSchema'] | undefined,
+  formId: string,
 ): ComponentType<Partial<LabelRendererProps>> => {
   if (!node) return NULL_FUNCTION;
   const isFallback = Renderer === FallbackLabelRenderer;
   const render = function Label({
     children,
     ...props
-  }: Partial<LabelRendererProps>) {
+  }: Partial<LabelRendererProps>): ReactElement {
     const path = node.path;
     const name = node.name;
+    const { inputId, labelId } = resolveFieldIdentifiers(formId, path, false);
     const rendererProps: LabelRendererProps = {
       path,
       name,
       jsonSchema: jsonSchema!,
       required,
-      htmlFor: path,
-      id: 'label:' + path,
+      htmlFor: inputId,
+      id: labelId,
       ...props,
       children: children === undefined ? name : children,
       node,
@@ -50,7 +54,7 @@ export const createLabelPart = (
   };
   return memo(
     hasArrayAncestor(node)
-      ? function Label(props: Partial<LabelRendererProps>) {
+      ? function Label(props: Partial<LabelRendererProps>): ReactElement {
           useFieldNodeTracker(node, FieldNodeEventType.UpdatePath);
           return render(props);
         }

@@ -4,7 +4,11 @@ import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
-import { FieldNodeEventType, ValidationMode } from '@/schema-form/core';
+import {
+  FieldNodeEventType,
+  FieldNodeState,
+  ValidationMode,
+} from '@/schema-form/core';
 import type { FieldInputProps } from '@/schema-form/types';
 
 afterEach(() => {
@@ -96,7 +100,7 @@ it('REACT-009 REACT-011 batches input write, error clear and edited without refr
   act(() => props!.onChange('draft'));
   expect(node.value).toBe('draft');
   expect(node.errors).toEqual([]);
-  expect(node.state[1]).toBe(true);
+  expect(node.state[FieldNodeState.Edited]).toBe(true);
   expect(
     events.filter((type) => type & FieldNodeEventType.UpdateValue),
   ).toHaveLength(1);

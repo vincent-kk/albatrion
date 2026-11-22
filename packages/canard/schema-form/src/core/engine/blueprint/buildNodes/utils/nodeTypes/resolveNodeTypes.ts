@@ -87,13 +87,16 @@ export const resolveNodeTypes = (
         declaration.schemaPath,
         true,
       );
-      if (types && (foldAllowedTypes(types) & mask) !== foldAllowedTypes(types))
-        throwBlueprintError(
-          FormErrorCode.SharedNodeKindConflict,
-          declaration.schemaPath,
-          { staticTypes: allowed, branchTypes: types },
-          context.options,
-        );
+      if (types) {
+        const branchMask = foldAllowedTypes(types);
+        if ((branchMask & mask) !== branchMask)
+          throwBlueprintError(
+            FormErrorCode.SharedNodeKindConflict,
+            declaration.schemaPath,
+            { staticTypes: allowed, branchTypes: types },
+            context.options,
+          );
+      }
     }
     return [{ allowed: allowed!, declarations }];
   }

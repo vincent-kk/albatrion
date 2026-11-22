@@ -7,6 +7,7 @@ import { flushSync } from 'react-dom';
 import { createRoot } from 'react-dom/profiling';
 
 import { Form } from '@/schema-form/components/Form';
+import { ValidationMode } from '@/schema-form/core';
 import { ExternalFormContextProvider as FormProvider } from '@/schema-form/providers';
 import type { FormatError } from '@/schema-form/types';
 
@@ -80,7 +81,7 @@ export function mount(mode: 'ctl' | 'unctl', scenario: 'flat' | 'array') {
     fieldInputDefinitions: [
       { test: { type: 'string' as const }, Component: Input },
     ],
-    validationMode: 0 as const,
+    validationMode: ValidationMode.None as const,
     onChange: () => {},
     context: { k: 1 },
   };

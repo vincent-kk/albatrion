@@ -5,7 +5,7 @@ import {
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
-import { JSON_POINTER_PATH_REGEX } from '../../../utils/expressions/regex';
+import { replaceExpressionPaths } from '../../../utils/expressions/replaceExpressionPaths';
 
 /**
  * Preserve the host-independent part of every expression node read.
@@ -18,10 +18,9 @@ export const collectGateEvaluationReads = (
   // eslint-disable-next-line no-restricted-syntax -- Per-gate ownership; evaluationReads arrays are compared by reference.
   if (typeof condition !== 'string') return Object.freeze([]);
   const reads: (string | number)[] = [];
-  for (const match of condition.matchAll(JSON_POINTER_PATH_REGEX)) {
-    const path = match[0];
+  replaceExpressionPaths(condition, (path) => {
     const parsed = parsePointer(path);
-    if (parsed.segments[0] === PointerOperator.Context) continue;
+    if (parsed.segments[0] === PointerOperator.Context) return path;
     if (parsed.isAbsolute) reads.push(resolvePointer($.Root, path));
     else {
       let levels = 0;
@@ -31,6 +30,7 @@ export const collectGateEvaluationReads = (
       }
       reads.push(levels);
     }
-  }
+    return path;
+  });
   return Object.freeze(reads);
 };

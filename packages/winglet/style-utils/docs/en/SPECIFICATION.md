@@ -113,7 +113,7 @@ destroyScope('my-component'); // tear down the whole scope
 
 - **Singleton per scope**: `StyleManager.get(scopeId, config)` returns a shared instance per scope (per shadow root, if provided). Multiple factories for the same `scopeId` feed the same stylesheet.
 - **Batched writes**: `add` and `remove` set a dirty flag; a single `requestAnimationFrame` flush concatenates all active rules and writes them via `CSSStyleSheet.replaceSync` (or `<style>.textContent` fallback).
-- **Selector scoping**: `.scopeId ` is prepended to every selector except `@`-rules and the bare selectors `:root` / `:host`. Shadow roots skip prefixing altogether.
+- **Selector scoping**: `.scopeId ` is prepended to every selector of a selector list (split at top-level commas) except the bare selectors `:root` / `:host`. Rules inside `@media`, `@supports`, `@container`, `@layer`, `@scope`, `@document` and `@starting-style` are scoped the same way; other at-rules (`@keyframes`, `@font-face`, `@import`, …) are copied unchanged. Braces, semicolons and commas inside quoted strings, comments and backslash escapes are not structure, and neither are a `/*` or a statement-ending `;` inside an unquoted `url(…)`. The one exception is a brace inside an unquoted `url(…)`, which still counts as structure, so quote such URLs. Shadow roots skip prefixing altogether.
 - **Dual DOM path**: modern browsers use `adoptedStyleSheets`; older environments get a `<style>` element in `document.head` (or inside the shadow root for shadow mode).
 
 ---
@@ -203,10 +203,10 @@ const cleanup = addStyle('title', '.title { font-size: 20px; }');
 cleanup();
 ```
 
-#### `destroyScope(scopeId): void`
+#### `destroyScope(scopeId, config?): void`
 
 ```typescript
-function destroyScope(scopeId: string): void;
+function destroyScope(scopeId: string, config?: { shadowRoot?: ShadowRoot }): void;
 ```
 
 Tears down the document-root `StyleManager` registered under `scopeId`:
@@ -217,7 +217,7 @@ Tears down the document-root `StyleManager` registered under `scopeId`:
 4. Clears cached styles.
 5. Removes the registry entry.
 
-Shadow-root-keyed managers live per-`ShadowRoot` and are not directly targeted by `destroyScope`; rely on per-style cleanup or shadow-root garbage collection.
+`destroyScope(scopeId, { shadowRoot })` releases the scope in that root. Omitting config targets the document. Shadow managers use a per-root weak registry, so an unreachable host can also be collected.
 
 ```typescript
 destroyScope('header'); // full teardown

@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import {
   type ForwardedRef,
   type RefObject,
@@ -21,6 +22,7 @@ import {
 } from '@/schema-form/core';
 import { FormErrorCode } from '@/schema-form/errors';
 import { FieldLifecycleRegistry } from '@/schema-form/helpers/fieldLifecycle/FieldLifecycleRegistry';
+import type { InputPosition } from '@/schema-form/helpers/focusTarget';
 import { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 import {
   FieldInputsContextProvider,
@@ -52,12 +54,14 @@ import { submitForm } from '../utils/submitForm';
 import { FormRootProxy } from './FormRootProxy';
 
 /** Compose the fixed provider hierarchy and expose the current binding through the handle. */
-export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
+export const FormRoot = (
+  props: FormProps,
+  ref: ForwardedRef<FormHandle>,
+): ReactElement => {
   const formRef = useRef<HTMLFormElement>(null);
   const binding = useLazyConstant<RefObject<RootBinding>>(() => ({
     current: { reset: NOOP_FUNCTION, rebuild: NOOP_FUNCTION },
   }));
-  const attachedFilesMap = useLazyConstant(() => new AttachedFilesStore());
   const reporter = useFormErrorContext();
   const reportLifecycleError = useHandle((error: unknown, node: FieldNode) => {
     let message: string;
@@ -83,19 +87,22 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
       }
     }
   });
-  const lifecycle = useLazyConstant(
-    () => new FieldLifecycleRegistry(reportLifecycleError),
-  );
-  const providerErrorVisibility = useExternalFormContext().errorVisibility;
+  const { attachedFilesMap, inputPositions, lifecycle, virtualization } =
+    useLazyConstant(() => ({
+      attachedFilesMap: new AttachedFilesStore(),
+      inputPositions: new Map<Element, InputPosition>(),
+      lifecycle: new FieldLifecycleRegistry(reportLifecycleError),
+      virtualization: {
+        manager: VirtualizationManager.create(props.virtualization),
+      },
+    }));
+  const { errorVisibility: providerErrorVisibility, context: externalContext } =
+    useExternalFormContext();
   const inputPolicy = props.errorVisibility ?? providerErrorVisibility;
   const resolvedPolicy = useMemo(
     () => resolveErrorVisibilityPolicy(inputPolicy),
     [inputPolicy],
   );
-  // FormRoot owns the stable manager shared by focus requests and input positions.
-  const virtualization = useLazyConstant(() => ({
-    manager: VirtualizationManager.create(props.virtualization),
-  }));
   useLayoutEffect(() => {
     virtualization.manager?.updateOptions(props.virtualization);
   }, [virtualization, props.virtualization]);
@@ -114,6 +121,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
       formRef.current,
       virtualization.manager?.isEnabled ? virtualization.manager : null,
       lifecycle,
+      inputPositions,
       request,
     );
   });
@@ -233,8 +241,24 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     [binding, captureValidationLifetime, focusNode, reporter, revealErrors],
   );
   const handleSubmit = useMemo(() => getTrackableHandler(submit), [submit]);
+  const handleNativeReset = useCallback(
+    (event: SyntheticEvent<HTMLFormElement>) => {
+      if (event.target !== event.currentTarget) return;
+      const nativeEvent = event.nativeEvent;
+      queueMicrotask(() => {
+        if (nativeEvent.defaultPrevented || !mounted.current) return;
+        try {
+          binding.current.reset();
+        } catch (error) {
+          reportFailureToHost(error);
+        }
+      });
+    },
+    [binding],
+  );
   const handleNativeSubmit = useCallback(
     async (event: SyntheticEvent) => {
+      if (event.target !== event.currentTarget) return;
       event.preventDefault();
       const isCurrent = captureValidationLifetime();
       try {
@@ -291,6 +315,8 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   return (
     <WorkspaceContextProvider
       attachedFilesMap={attachedFilesMap}
+      inputPositions={inputPositions}
+      externalContext={externalContext}
       context={props.context}
     >
       <FieldInputsContextProvider
@@ -324,6 +350,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
                         : null
                     }
                     onSubmit={handleNativeSubmit}
+                    onReset={handleNativeReset}
                   >
                     {children}
                   </FormRootProxy>

@@ -1,8 +1,8 @@
 import { Box, Text } from 'ink';
 import type React from 'react';
 
-import type { ConsumerPackage } from '../../types/index.js';
 import type { Action, AgentType, InjectPlan } from '../../core/index.js';
+import type { ConsumerPackage } from '../../types/index.js';
 import { colors } from '../theme/colors.js';
 import { icons } from '../theme/icons.js';
 import { PlanTable } from './PlanTable.js';
@@ -12,6 +12,8 @@ interface TargetCardProps {
   /** Which agent this card's plan belongs to; one package can have several. */
   readonly agent?: AgentType;
   readonly plan?: InjectPlan;
+  /** Refused actions are evidence, never proposed work. */
+  readonly diagnosticOnly?: boolean;
   readonly expanded?: boolean;
   readonly highlighted?: boolean;
 }
@@ -48,6 +50,7 @@ export function TargetCard({
   plan,
   expanded = true,
   highlighted = false,
+  diagnosticOnly = false,
 }: TargetCardProps): React.ReactElement {
   const counts = plan ? countActions(plan.actions) : null;
 
@@ -97,9 +100,28 @@ export function TargetCard({
           </Text>
         ) : null}
       </Box>
-      {expanded && plan ? (
+      {plan?.actions
+        .filter((action) => action.sourceHashReconciled)
+        .map((action) => (
+          <Text key={action.relPath} color={colors.warn}>
+            source-hash-reconciled: {action.relPath}
+          </Text>
+        ))}
+      {diagnosticOnly ? (
+        <Text color={colors.warn}>
+          diagnostic plan only: refused unit; no actions will run
+        </Text>
+      ) : null}
+      {diagnosticOnly
+        ? plan?.actions.map((action, index) => (
+            <Text key={`diagnostic:${index}`} color={colors.muted}>
+              [diagnostic] {action.kind} {action.relPath}
+            </Text>
+          ))
+        : null}
+      {expanded && plan && !diagnosticOnly ? (
         <Box marginLeft={2}>
-          <PlanTable plan={plan} />
+          <PlanTable plan={plan} maxRows={Infinity} />
         </Box>
       ) : null}
     </Box>

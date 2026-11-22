@@ -57,11 +57,15 @@ it.each([
   ['object', { a: 1 }],
   ['null', null],
 ])(
-  'directly renders a %s defaultValue with two unchecked checkboxes without throwing',
+  'directly renders a %s value with two unchecked checkboxes without throwing',
   (_, defaultValue) => {
     render(
       createElement(FieldInputStringCheckboxDefinition.Component, {
         path: '/tags',
+        inputId: 'tags-input',
+        labelId: 'tags-title',
+        getInputId: (key: string | number) => String(key),
+
         name: 'tags',
         jsonSchema: schemaOf('array'),
         defaultValue,

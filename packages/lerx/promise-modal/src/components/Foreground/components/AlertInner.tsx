@@ -1,6 +1,7 @@
 import { Fragment, memo, useMemo } from 'react';
 
 import { isString } from '@winglet/common-utils/filter';
+import { isReactComponent } from '@winglet/react-utils/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 import { renderComponent } from '@winglet/react-utils/render';
 
@@ -54,11 +55,13 @@ export const AlertInner = memo(
             <ContentComponent context={userDefinedContext}>
               {content}
             </ContentComponent>
-          ) : (
+          ) : typeof content === 'function' || isReactComponent(content) ? (
             renderComponent(content, {
               onConfirm: handleConfirm,
               context: userDefinedContext,
             })
+          ) : (
+            content
           ))}
         {footer !== false &&
           (typeof footer === 'function' ? (

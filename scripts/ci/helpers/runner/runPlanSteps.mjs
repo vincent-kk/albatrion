@@ -4,10 +4,15 @@ import { performance } from "node:perf_hooks";
 /**
  * Runs only Yarn argument arrays sequentially, retaining the first failure code.
  * @param {object[]} shards Named command groups from a selected plan.
- * @param {object} options Explicit cwd, environment, dry-run flag and logger.
+ * @param {object} options Explicit cwd, environment, tier, dry-run flag and logger.
  * @returns {object} Exit code and results, including commands skipped after failure.
  */
-export function runPlanSteps(shards, { root, env, dryRun, log }) {
+export function runPlanSteps(shards, { root, env, dryRun, log, tier = "pr" }) {
+  if (tier !== "pr" && tier !== "pre-release")
+    throw new Error(`Invalid check tier: ${tier}`);
+  const commandEnv = { ...env };
+  if (tier === "pr") commandEnv.SCHEMA_FORM_TEST_PROFILE = "pr";
+  else delete commandEnv.SCHEMA_FORM_TEST_PROFILE;
   const results = [];
   let exitCode = 0;
   for (const shard of shards) {
@@ -29,7 +34,7 @@ export function runPlanSteps(shards, { root, env, dryRun, log }) {
         if (!dryRun) {
           const result = spawnSync("yarn", args, {
             cwd: root,
-            env,
+            env: commandEnv,
             stdio: "inherit",
             shell: false,
           });

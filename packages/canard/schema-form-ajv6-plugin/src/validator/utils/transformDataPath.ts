@@ -4,15 +4,19 @@ import type { ErrorObject } from 'ajv';
 
 import type { Dictionary } from '@aileron/declare';
 
+import { isChildSchemaPath } from './isChildSchemaPath';
+import type { SchemaResource } from './schemaPath/collectSchemaResources';
+import { localizeSchemaPath } from './schemaPath/localizeSchemaPath';
+
 /** Normalize Ajv 6 paths and attach the key rejected by a constraint. */
-export const transformDataPath = (errors: ErrorObject[], root?: object): ValidationIssue[] => {
+export const transformDataPath = (errors: ErrorObject[], root?: object, errorDataPath?: string, getResources?: () => SchemaResource[]): ValidationIssue[] => {
   const result = new Array<ValidationIssue>(errors.length);
   for (let i = 0, l = errors.length; i < l; i++) {
     const ajvError = errors[i];
     let convertedDataPath = toJSONPointer(ajvError.dataPath || '');
     let rejectedKey: string | undefined;
     if (
-      ajvError.keyword === 'required' &&
+      ajvError.keyword === 'required' && errorDataPath !== 'property' &&
       ajvError.params &&
       'missingProperty' in ajvError.params
     ) {
@@ -20,7 +24,12 @@ export const transformDataPath = (errors: ErrorObject[], root?: object): Validat
       if (typeof missingProperty === 'string')
         convertedDataPath += `/${missingProperty.replace(/~/g, '~0').replace(/\//g, '~1')}`;
     }
-    if (ajvError.keyword === 'false schema' && convertedDataPath) {
+    const path = ajvError.schemaPath;
+    const routed = ajvError.keyword === 'not' || ajvError.keyword === 'false schema';
+    const local = routed && getResources && !path.startsWith('#/')
+      ? localizeSchemaPath(path, getResources())
+      : undefined;
+    if (ajvError.keyword === 'false schema' && convertedDataPath && isChildSchemaPath(local?.path ?? path)) {
       const lastSlash = convertedDataPath.lastIndexOf('/');
       rejectedKey = convertedDataPath.slice(lastSlash + 1)
         .replace(/~1/g, '/').replace(/~0/g, '~');
@@ -34,12 +43,14 @@ export const transformDataPath = (errors: ErrorObject[], root?: object): Validat
       rejectedKey = String(ajvError.params.propertyName);
     if (typeof ajvError.propertyName === 'string')
       rejectedKey = ajvError.propertyName;
-    if (ajvError.keyword === 'not' && root && ajvError.schemaPath.startsWith('#')) {
-      const segments = ajvError.schemaPath.slice(2).split('/');
-      let target: unknown = root;
+    if (ajvError.keyword === 'not' && (local || path.startsWith('#/'))) {
+      const segments = (local?.path ?? path).slice(2).split('/');
+      let target: unknown = local?.schema ?? root;
       for (const segment of segments) {
-        if (typeof target !== 'object' || target === null) break;
-        target = (target as Dictionary<unknown>)[segment.replace(/~1/g, '/').replace(/~0/g, '~')];
+        const token = segment.includes('%') ? decodeURIComponent(segment) : segment;
+        target = typeof target === 'object' && target !== null
+          ? (target as Dictionary<unknown>)[token.replace(/~1/g, '/').replace(/~0/g, '~')]
+          : undefined;
       }
       if (typeof target === 'object' && target !== null && 'required' in target &&
           Array.isArray(target.required) && target.required.length === 1 &&

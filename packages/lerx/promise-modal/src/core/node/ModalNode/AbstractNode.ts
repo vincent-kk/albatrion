@@ -14,6 +14,12 @@ import type { ManagedEntity } from '@/promise-modal/types/modal';
 type AbstractNodeProps<T, B> = BaseModal<T, B> & ManagedEntity;
 
 export abstract class AbstractNode<T, B> {
+  /** Register the runtime display query before the first settlement.
+   * @param reader Reads actual committed display participation for this node id.
+   */
+  setDisplayReader(reader: Fn<[id: number], boolean>): void {
+    if (!this.__settled__) this.__settlementVisibility__ = reader;
+  }
   readonly id: number;
   readonly group?: string;
   /** Styling variant preserved independently of modal kind. */
@@ -24,6 +30,14 @@ export abstract class AbstractNode<T, B> {
   version = 0;
   /** Whether the request already has a result or error. */
   private __settled__ = false;
+  /** Holds a live display query until settlement replaces it with its snapshot. */
+  private __settlementVisibility__: boolean | Fn<[id: number], boolean> = false;
+  /** Whether the first result or error happened while the modal was shown. */
+  get isVisibleAtSettlement() {
+    return typeof this.__settlementVisibility__ === 'boolean'
+      ? this.__settlementVisibility__
+      : false;
+  }
   /** Reports whether a result or rendering error is final. */
   get settled() {
     return this.__settled__;
@@ -118,6 +132,10 @@ export abstract class AbstractNode<T, B> {
   /** Commits the first result and publishes the settled transition. */
   protected onResolve(result: T | undefined | null) {
     if (this.__settled__) return;
+    const display = this.__settlementVisibility__;
+    this.__settlementVisibility__ =
+      this.__visible__ &&
+      (typeof display === 'function' ? display(this.id) : true);
     this.__settled__ = true;
     this.__handleResolve__?.(result);
     this.publish();
@@ -126,6 +144,10 @@ export abstract class AbstractNode<T, B> {
   /** Rejects an uncompleted request with its rendering error. */
   onReject(error: unknown) {
     if (this.__settled__) return;
+    const display = this.__settlementVisibility__;
+    this.__settlementVisibility__ =
+      this.__visible__ &&
+      (typeof display === 'function' ? display(this.id) : true);
     this.__settled__ = true;
     this.__handleReject__?.(error);
     this.publish();

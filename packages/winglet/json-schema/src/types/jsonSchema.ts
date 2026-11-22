@@ -13,7 +13,7 @@ import type {
 
 /** Base type for any JSON Schema definition */
 export type UnknownSchema = {
-  type?: string | readonly string[];
+  type?: string | readonly string[] | undefined;
   [key: string]: any;
 };
 
@@ -116,17 +116,17 @@ interface BaseNumberSchema<
   Schema extends UnknownSchema = JSONSchema,
 > extends BasicSchema<Value, Options, Schema> {
   /** Minimum value (inclusive) */
-  minimum?: number;
+  minimum?: number | undefined;
   /** Maximum value (inclusive) */
-  maximum?: number;
+  maximum?: number | undefined;
   /** Minimum value (exclusive) */
-  exclusiveMinimum?: number;
+  exclusiveMinimum?: number | undefined;
   /** Maximum value (exclusive) */
-  exclusiveMaximum?: number;
+  exclusiveMaximum?: number | undefined;
   /** Value must be a multiple of this number */
-  multipleOf?: number;
+  multipleOf?: number | undefined;
   /** String format hint (e.g., 'float', 'double') */
-  format?: string;
+  format?: string | undefined;
 }
 
 /** String type schema */
@@ -160,13 +160,13 @@ interface BaseStringSchema<
   Schema extends UnknownSchema = JSONSchema,
 > extends BasicSchema<Value, Options, Schema> {
   /** Minimum string length */
-  minLength?: number;
+  minLength?: number | undefined;
   /** Maximum string length */
-  maxLength?: number;
+  maxLength?: number | undefined;
   /** Regular expression pattern */
-  pattern?: string;
+  pattern?: string | undefined;
   /** String format hint (e.g., 'email', 'date', 'uri') */
-  format?: string;
+  format?: string | undefined;
 }
 
 /** Boolean type schema */
@@ -224,23 +224,23 @@ interface BaseArraySchema<
   Schema extends UnknownSchema = JSONSchema,
 > extends BasicSchema<Value, Options, Schema> {
   /** Schema for all array items */
-  items?: Schema | false;
+  items?: Schema | false | undefined;
   /** Schema for all array items */
-  prefixItems?: readonly Schema[];
+  prefixItems?: readonly Schema[] | undefined;
   /** Schema for items that must be present */
-  contains?: Partial<Schema>;
+  contains?: Partial<Schema> | undefined;
   /** Minimum number of items */
-  minItems?: number;
+  minItems?: number | undefined;
   /** Maximum number of items */
-  maxItems?: number;
+  maxItems?: number | undefined;
   /** Minimum number of items matching 'contains' */
-  minContains?: number;
+  minContains?: number | undefined;
   /** Maximum number of items matching 'contains' */
-  maxContains?: number;
+  maxContains?: number | undefined;
   /** Whether all items must be unique */
-  uniqueItems?: boolean;
+  uniqueItems?: boolean | undefined;
   /** Schema for additional items beyond 'items' */
-  additionalItems?: Partial<Schema> | boolean;
+  additionalItems?: Partial<Schema> | boolean | undefined;
 }
 
 /** Object type schema */
@@ -274,27 +274,27 @@ interface BaseObjectSchema<
   Schema extends UnknownSchema = JSONSchema,
 > extends BasicSchema<Type, Options, Schema> {
   /** Schema for additional properties not in 'properties' */
-  additionalProperties?: boolean | Partial<Schema>;
+  additionalProperties?: boolean | Partial<Schema> | undefined;
   /** Schema for unevaluated properties */
-  unevaluatedProperties?: boolean | Partial<Schema>;
+  unevaluatedProperties?: boolean | Partial<Schema> | undefined;
   /** Schema definitions for specific properties */
-  properties?: Dictionary<Schema>;
+  properties?: Dictionary<Schema> | undefined;
   /** Schema definitions for properties matching regex patterns */
-  patternProperties?: Dictionary<Schema>;
+  patternProperties?: Dictionary<Schema> | undefined;
   /** Schema for property names */
-  propertyNames?: Partial<Extract<Schema, { type: StringSchema['type'] }>>;
+  propertyNames?: Partial<Extract<Schema, { type: StringSchema['type'] }>> | undefined;
   /** Property dependencies (deprecated, use dependentSchemas) */
-  dependencies?: Dictionary<Partial<Schema> | readonly string[]>;
+  dependencies?: Dictionary<Partial<Schema> | readonly string[]> | undefined;
   /** Required properties when another property is present */
-  dependentRequired?: Dictionary<readonly string[]>;
+  dependentRequired?: Dictionary<readonly string[]> | undefined;
   /** Schema dependencies when another property is present */
-  dependentSchemas?: Dictionary<Partial<Schema>>;
+  dependentSchemas?: Dictionary<Partial<Schema>> | undefined;
   /** Minimum number of properties */
-  minProperties?: number;
+  minProperties?: number | undefined;
   /** Maximum number of properties */
-  maxProperties?: number;
+  maxProperties?: number | undefined;
   /** List of required property names */
-  required?: readonly string[];
+  required?: readonly string[] | undefined;
 }
 
 /** Null type schema */
@@ -320,47 +320,47 @@ export interface BasicSchema<
   Schema extends UnknownSchema = JSONSchema,
 > extends CustomOptions<Options> {
   /** Schema definitions for reusable schemas */
-  $defs?: Dictionary<Schema>;
+  $defs?: Dictionary<Schema> | undefined;
   /** Conditional schema (if-then-else) */
-  if?: Partial<Schema>;
+  if?: Partial<Schema> | undefined;
   /** Schema to apply if 'if' is valid; a boolean schema accepts (`true`) or rejects (`false`) every value */
-  then?: Partial<Schema> | boolean;
+  then?: Partial<Schema> | boolean | undefined;
   /** Schema to apply if 'if' is invalid; `else: false` makes a failed guard reject the value */
-  else?: Partial<Schema> | boolean;
+  else?: Partial<Schema> | boolean | undefined;
   /** Schema that must NOT be valid */
-  not?: Partial<Schema>;
+  not?: Partial<Schema> | undefined;
   /** All schemas must be valid */
-  allOf?: readonly Partial<Schema>[];
+  allOf?: readonly Partial<Schema>[] | undefined;
   /** At least one schema must be valid */
-  anyOf?: readonly Partial<Schema>[];
+  anyOf?: readonly Partial<Schema>[] | undefined;
   /** Exactly one schema must be valid */
-  oneOf?: readonly Partial<Schema>[];
+  oneOf?: readonly Partial<Schema>[] | undefined;
   /**
    * OpenAPI 3.0 compatible notation; nullable: true is officially supported
    * and equivalent to type: [..., 'null'].
    */
-  nullable?: boolean;
+  nullable?: boolean | undefined;
   /** Constant value constraint */
-  const?: Nullable<Type>;
+  const?: Nullable<Type> | undefined;
   /** Default value */
-  default?: Nullable<Type>;
+  default?: Nullable<Type> | undefined;
   /** Enumeration of allowed values */
-  enum?: readonly Nullable<Type>[];
+  enum?: readonly Nullable<Type>[] | undefined;
 }
 
 /** Custom options for schema extensions */
 interface CustomOptions<Options extends Dictionary> {
   /** Format hint (e.g., 'email', 'date', 'uri') */
-  format?: string;
+  format?: string | undefined;
   /** Whether field is active */
-  active?: boolean;
+  active?: boolean | undefined;
   /** Whether field is visible */
-  visible?: boolean;
+  visible?: boolean | undefined;
   /** Whether field is read-only */
-  readOnly?: boolean;
+  readOnly?: boolean | undefined;
   /** Whether field is disabled */
-  disabled?: boolean;
+  disabled?: boolean | undefined;
   /** Custom options specific to implementation */
-  options?: Options;
+  options?: Options | undefined;
   [alt: string]: any;
 }

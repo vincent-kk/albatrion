@@ -79,7 +79,7 @@ describe('array entry integration', () => {
     expect(root.storedValue).toEqual([1, 2]);
   });
 
-  it('62C-01 EVENT-035 setValue then push reads marks and settles/onChanges once', () => {
+  it('62C-01 EVENT-035 setValue then push applies both inputs before one onChange', () => {
     const { root, runtime } = createDispatchTree({
       type: 'array',
       items: { type: 'number' },
@@ -90,11 +90,11 @@ describe('array entry integration', () => {
     dispatchBatch(root, () => {
       dispatchSetValue(root, [1, 2]);
       expect(dispatchPush(root, 3)).toBe(3);
-      expect(root.storedValue).toEqual([0]);
-      expect(runtime.commitNumber).toBe(commit);
+      expect(root.storedValue).toEqual([1, 2, 3]);
+      expect(runtime.commitNumber).toBe(commit + 2);
     });
     expect(root.storedValue).toEqual([1, 2, 3]);
-    expect(runtime.commitNumber).toBe(commit + 1);
+    expect(runtime.commitNumber).toBe(commit + 2);
     expect(runtime.onChange).toHaveBeenCalledExactlyOnceWith([1, 2, 3]);
   });
 
@@ -147,7 +147,7 @@ describe('array entry integration', () => {
     }
   });
 
-  it('62C-01 wrong-kind marks only push; other verbs leave the mark unchanged', () => {
+  it('62C-01 wrong-kind marks settle before array verbs; only push adds an item', () => {
     const { root, runtime } = createDispatchTree({
       type: 'array',
       items: { type: 'number' },
@@ -155,12 +155,11 @@ describe('array entry integration', () => {
     dispatchSetValue(root, [1, 2]);
     dispatchBatch(root, () => {
       dispatchSetValue(root, null);
-      const marks = runtime.batchWrites?.length;
       expect(dispatchPop(root)).toBeUndefined();
       expect(dispatchRemove(root, 0)).toBeUndefined();
       expect(dispatchUpdate(root, 0, 7)).toBeUndefined();
       expect(dispatchClear(root)).toBeUndefined();
-      expect(runtime.batchWrites?.length).toBe(marks);
+      expect(runtime.batchWrites).toBeUndefined();
       expect(dispatchPush(root, 3)).toBe(1);
     });
     expect(root.storedValue).toEqual([3]);
@@ -298,7 +297,7 @@ describe('array entry integration', () => {
     expect(root.storedValue).toEqual([1, 9, 2]);
   });
 
-  it('62C-01 insert and remove mixed in one batch return call-site results and settle once', () => {
+  it('62C-01 insert and remove in one batch apply arrangements before one delivery', () => {
     const { root, runtime } = createDispatchTree({
       type: 'array',
       items: { type: 'number' },
@@ -315,13 +314,14 @@ describe('array entry integration', () => {
       expect(dispatchInsert(root, 0.5, 0)).toBe(4);
       expect(dispatchRemove(root, 1)).toBe(2);
       expect(dispatchInsert(root, 0, '5')).toBe(4);
-      expect(root.storedValue).toEqual([1, 2, 3]);
-      expect(runtime.commitNumber).toBe(commit);
+      expect(root.storedValue).toEqual([5, 9, 3, 7]);
+      expect(runtime.commitNumber).toBe(commit + 5);
     });
     expect(root.storedValue).toEqual([5, 9, 3, 7]);
-    expect(runtime.commitNumber).toBe(commit + 1);
+    expect(runtime.commitNumber).toBe(commit + 5);
     expect(runtime.onChange).toHaveBeenCalledExactlyOnceWith([5, 9, 3, 7]);
-    expect(getDispatchChild(root, '0')).toBe(first);
+    expect(first.isDetached).toBe(true);
+    expect(getDispatchChild(root, '0')).not.toBe(first);
   });
 
   it('62C-01 47C-02 batch insert on a marked non-array value follows push only at index 0', () => {

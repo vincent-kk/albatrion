@@ -57,9 +57,9 @@ export interface Behavior<Self = unknown> {
       remainingItemCount?: number;
     },
   ): unknown;
-  /** Project a stored value into the output value. */
+  /** Project a stored value using the input source and effective schema. */
   project<Node extends Self>(
-    node: FieldNodeRecord<Node>,
+    node: Pick<FieldNodeRecord<Node>, 'schema' | 'source'>,
     value: unknown,
   ): unknown;
   /** Return a completed input string, or undefined when there is no write. */

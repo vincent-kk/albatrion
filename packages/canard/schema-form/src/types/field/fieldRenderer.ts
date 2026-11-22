@@ -37,6 +37,10 @@ export interface FieldRendererProps {
   node: FieldNode;
   /** Type of the field node assigned to FieldRenderer Component */
   type: FieldNode['type'];
+  /** Scoped title element id shared with bound Label and option groups. */
+  labelId: string;
+  /** DOM id of the primary input control, shared with Label htmlFor. */
+  inputId: string;
   /** Path of the field node assigned to FieldRenderer Component */
   path: FieldNode['path'];
   /** Name of the field node assigned to FieldRenderer Component */

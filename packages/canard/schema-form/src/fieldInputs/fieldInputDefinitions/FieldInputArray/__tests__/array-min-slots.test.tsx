@@ -1,13 +1,14 @@
 import { createRef } from 'react';
 
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
-import { afterEach, expect, it } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
 
 import { renderForm } from '@/schema-form/__tests__/renderForm';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
-import type { JSONSchema } from '@/schema-form/types';
+import type { FieldInputProps, JSONSchema } from '@/schema-form/types';
 
 afterEach(cleanup);
+afterEach(() => vi.unstubAllGlobals());
 
 /**
  * Render a form and expose the array wrapper under the given path.
@@ -101,4 +102,36 @@ it('tidy-S follows a gated minItems change with the slot count', async () => {
   } finally {
     form.unmount();
   }
+});
+
+it('focuses the new row anchor with no observer and ignores another position of the same node', () => {
+  vi.stubGlobal('IntersectionObserver', undefined);
+  const Row = ({ focusRef }: FieldInputProps) => (
+    <div tabIndex={-1} ref={focusRef} aria-label="row anchor" />
+  );
+  const Outside = ({ focusRef }: FieldInputProps) => (
+    <div tabIndex={-1} ref={focusRef} aria-label="outside anchor" />
+  );
+  const schema = {
+    type: 'object',
+    properties: {
+      rows: {
+        type: 'array',
+        minItems: 1,
+        items: { type: 'string', presentation: { FieldInput: Row } },
+      },
+    },
+  } satisfies JSONSchema;
+  const view = render(
+    <Form jsonSchema={schema} defaultValue={{ rows: [] }}>
+      <Form.Input path="/rows/0" FieldInput={Outside} />
+      <Form.Input path="/rows" />
+    </Form>,
+  );
+  const wrapper = view.container.querySelector<HTMLElement>(
+    '[data-path="/rows"]',
+  )!;
+  fireEvent.change(slotInputs(wrapper)[0], { target: { value: 'a' } });
+  expect(view.getByLabelText('outside anchor')).toBeTruthy();
+  expect(document.activeElement).toBe(view.getByLabelText('row anchor'));
 });

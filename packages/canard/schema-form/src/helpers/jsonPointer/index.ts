@@ -1,3 +1,5 @@
+export { escapeSegment } from '@winglet/json/pointer-escape';
+
 export { JSONPointer } from './constants/JSONPointer';
 export { PointerOperator } from './constants/PointerOperator';
 export type { PointerSegment } from './constants/PointerOperator';

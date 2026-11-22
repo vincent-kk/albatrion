@@ -40,7 +40,12 @@ export const BackgroundFrame = ({
       className={cxLite(
         background,
         modal.visible && (modal.closeOnBackdropClick || modal.dimmed) && active,
-        (modal.manualDestroy ? modal.alive : modal.visible) && visible,
+        (modal.visible ||
+          (modal.manualDestroy &&
+            modal.settled &&
+            modal.isVisibleAtSettlement !== false &&
+            modal.alive)) &&
+          visible,
       )}
       onClick={handleClose}
     >

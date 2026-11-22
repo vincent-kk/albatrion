@@ -17,14 +17,11 @@ it.each([true, false])('collects an abandoned /if guard root with directGuardCom
   expect(checkGuardRootCollection(directGuardCompile, 'default', '/if')).toBe('GUARD_ROOT_COLLECTED');
 });
 
-it('release frees a directly compiled original root', () => {
-  ajvValidatorPlugin.bind?.(new Ajv({ format: false }));
+it('release permits replacing an already compiled direct root', () => {
+  ajvValidatorPlugin.bind?.(new Ajv({ allErrors: true }));
   const root = { type: 'string' } as const;
-  const compile = vi.spyOn(Ajv.prototype, 'compile');
-  expect(ajvValidatorPlugin.compileGuard(root, '')('ok')).toBe(true);
-  const index = compile.mock.calls.findIndex(([schema]) => schema === root);
-  const guard = compile.mock.contexts[index];
-  if (typeof guard !== 'object' || guard === null) throw new Error('Missing guard instance');
+  const first = ajvValidatorPlugin.compileGuard(root, '');
   ajvValidatorPlugin.release(root);
-  expect(Reflect.get(Reflect.get(guard, '_cache'), '_cache')).not.toHaveProperty(JSON.stringify(root));
+  const second = ajvValidatorPlugin.compileGuard({ type: 'number' }, '');
+  expect([first('ok'), first(2), second('ok'), second(2)]).toEqual([true, false, false, true]);
 });

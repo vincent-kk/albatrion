@@ -28,8 +28,6 @@ export const getSettlementScratch = <Self>(
           writtenInputs: new Map<Self, unknown>(),
           distributedInputs: new Map(),
           wrongKindHosts: new Set<Self>(),
-          automaticLog: [],
-          arrayStructureLog: [],
           arrayCounts: new Map<Self, number>(),
           pathChanges: [],
           filledNodes: new Set<Self>(),

@@ -5,16 +5,22 @@
 - `MessageChannelScheduler.getInstance(options?)`는 전역 싱글턴을 반환한다; 이미 인스턴스가 있고 파괴되지 않았다면 옵션은 무시되고 기존 인스턴스를 반환한다.
 - `schedule(callback)`은 동기 컨텍스트에서 함께 호출된 태스크들을 하나의 배치로 묶어 단일 매크로태스크(하나의 `MessageChannel` 메시지)에서 실행한다.
 - 빈 대기열에서 flush가 실행되면 스케줄러는 스스로 idle 상태로 복귀해야 하고, 배치 실행 중 새로 등록된 태스크가 있으면 그 배치의 메시지 핸들러가 다시 flush를 요청해야 한다 — 이 두 조건 중 하나라도 깨지면 스케줄러가 영구 정지한다.
-- 태스크 실행 중 던져진 오류는 `onTaskError` 핸들러로만 전달되고, 같은 배치의 나머지 태스크 실행을 막지 않는다.
-- `destroy()`는 멱등이며, 파괴된 스케줄러는 `schedule()` 호출 시 `MessageChannelSchedulerError`를 던진다.
+- 태스크 실행 중 던져진 오류는 소비자의 `onTaskError`가 있으면 그 핸들러에만 전달하고, 없으면 호스트에 보고합니다. 어느 경우도 같은 배치의 나머지 태스크 실행을 막지 않습니다.
+- `destroy()`는 멱등이며, 파괴된 스케줄러는 `schedule()` 호출 시 `MessageChannelSchedulerError`를 던진다. 초과 처리기에서 파괴하면 이미 진행 중인 예약을 거부하여 -1을 반환하고 대기열을 비운 상태로 유지한다.
+
+태스크 ID는 이 realm에서 같은 스케줄러 클래스가 유지되는 페이지 수명 동안 인스턴스의 파괴·재생성과 무관하게 고유한 양의 증가 정수입니다. ID가 조밀하거나 새 인스턴스에서 1로 시작한다고 가정하지 않습니다. 전역 래퍼도 같은 클래스의 발급기를 사용하므로 직접 예약한 ID와 충돌하지 않습니다. 발급 카운터는 모듈 수명에 속하므로 인스턴스 파괴가 초기화하지 않으며, 예약 경로는 클래스 프로퍼티 조회를 반복하지 않습니다.
 
 ## API Contracts
+
+오류 소유권은 태스크 예약 경로가 아니라 싱글턴의 최초 생성 옵션이 정합니다. 소비자가 onTaskError를 설정하면 직접 예약과 브라우저 래퍼 예약의 오류 모두 그 핸들러에만 전달합니다. 처리기가 없으면 reportHostError가 원래 던진 값을 호스트에 보고합니다. 모듈 import 순서로 정책이 갈라지지 않으며, 최초 옵션만 적용하는 배치·취소·제한·파괴 공유는 유지합니다.
+
+호스트가 reportError를 제공하면 그것으로 보고하고, 없으면 네이티브 전역 setTimeout으로 예약한 별도 작업에서 다시 던집니다. 이 경로는 scheduleMacrotask나 MessageChannelScheduler를 호출하지 않으므로 같은 큐로 재귀하지 않습니다. 브라우저에서는 window.onerror 또는 미처리 오류 경로로 전달합니다. MessageChannel을 제공하는 Node 같은 호스트에서도 클래스를 직접 사용할 수 있으며, reportError가 없으면 타이머의 uncaughtException 경로로 전달되어 별도 처리기가 없는 프로세스는 종료될 수 있습니다.
 
 - `MessageChannelScheduler.getInstance(options?: SchedulerOptions): MessageChannelScheduler` — 싱글턴; 옵션은 최초 생성 시에만 적용된다.
 - `schedule(callback: Fn): number` — 양의 정수 태스크 ID를 반환하거나, 대기 태스크가 `maxPendingTasks`를 넘고 `onMaxTasksExceeded`가 `false`를 반환하면 `-1`을 반환한다. 핸들러가 없는 상태로 한도를 넘기면 `MessageChannelSchedulerError('MAX_TASKS_EXCEEDED', ...)`를 던진다.
 - `cancel(taskId: number): boolean`, `cancelAll(): number`, `isPending(taskId: number): boolean`, `getPendingCount(): number`, `destroyed: boolean`(getter), `destroy(): void` — 인스턴스 메서드/게터.
 - 전역 핸들러 함수 `setImmediate`/`clearImmediate`/`getPendingCount`/`destroyGlobalScheduler`(그리고 `handler.ts`에는 있지만 `index.ts`에서 재수출되지 않는 `isPending`/`cancelAll`/`isSchedulerActive`)는 캐시된 전역 인스턴스를 지연 생성해 위 인스턴스 메서드로 위임한다.
-- 태스크 콜백이 던진 예외는 `onTaskError(error, taskId)`로 전달된다; `Error`가 아닌 값을 던지면 `new Error(String(error))`로 감싼다.
+- 소비자 처리기가 있을 때 태스크 콜백이 던진 예외는 `onTaskError(error, taskId)`로 전달된다; `Error`가 아닌 값을 던지면 `new Error(String(error))`로 감싼다.
 - `MessageChannelSchedulerError`는 `errors`의 `BaseError`를 상속하고 `code: 'MESSAGE_CHANNEL_SCHEDULER'`로 생성된다; `isMessageChannelSchedulerError(error)`가 판별 가드다.
 
 ## Acceptance Criteria
@@ -40,7 +46,7 @@
 ### task-error-isolation — 태스크 오류 격리
 
 - 한 태스크가 던진 오류는 `onTaskError(error, taskId)`로 전달되고, 해당 태스크의 `taskId`와 짝지어진다.
-- 오류를 던진 태스크가 있어도 같은 배치의 앞뒤 태스크는 정상 실행된다.
+- 오류를 던진 태스크가 있어도 같은 배치의 앞뒤 태스크는 정상 실행된다. onTaskError 자체가 던지는 경우도 해당 태스크는 완료 처리되고 나머지 배치와 후속 예약은 계속된다. 핸들러의 예외는 호스트 reportError 또는 별도로 예약한 throw로 보고한다.
 
 ### global-handler-delegation — 전역 핸들러 함수 위임
 

@@ -67,7 +67,7 @@ export type Batch<Key, Value> = {
   /** Resolve/reject functions of Promise corresponding to each key */
   promises: Array<{
     resolve: Fn<[value: Value]>;
-    reject: Fn<[error: Error]>;
+    reject: Fn<[error: unknown]>;
   }>;
   /** Array of callback functions for cache hit processing */
   cacheHits?: Array<Fn>;

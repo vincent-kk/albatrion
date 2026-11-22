@@ -14,7 +14,10 @@ import {
 } from '@/schema-form/helpers/schemaIntersection';
 
 import { SCHEMA_GROUP } from '../../../../constants/schemaGroup';
-import { foldAllowedTypes } from '../../../../utils/nodeIdentity/foldAllowedTypes';
+import {
+  TYPE_MASK,
+  foldAllowedTypes,
+} from '../../../../utils/nodeIdentity/foldAllowedTypes';
 import type { AnalysisContext } from '../../../types/analysis';
 import type { BlueprintGate } from '../../../types/node';
 import type { BlueprintSchema } from '../../../types/schema';
@@ -84,9 +87,13 @@ export const readDiscriminatorBranches = (
         readAllowedTypes(tag.schema, tag.schemaPath, context.options),
       );
   }
-  if (hostTypes !== undefined && foldAllowedTypes(hostTypes) !== 8)
+  if (
+    hostTypes !== undefined &&
+    foldAllowedTypes(hostTypes) !== TYPE_MASK.object
+  )
     return result;
   if (!isArray(host.oneOf) && !isArray(host.anyOf)) return result;
+  let hostTagMask: Optional<number>;
   for (const keyword of UNION_KEYWORDS) {
     if (!isArray(host[keyword])) continue;
     let previousMask: Optional<number>;
@@ -243,7 +250,8 @@ export const readDiscriminatorBranches = (
             ? { canLift: false }
             : hostTagTypes !== undefined &&
                 ((mask !== undefined &&
-                  (mask & foldAllowedTypes(hostTagTypes)) === BIT_MASK_NONE) ||
+                  (mask & (hostTagMask ??= foldAllowedTypes(hostTagTypes))) ===
+                    BIT_MASK_NONE) ||
                   !values.some((value) =>
                     value === null
                       ? hostTagTypes.includes('null')

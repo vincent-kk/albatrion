@@ -7,7 +7,11 @@ import { readFieldNodeRuntime } from '@/schema-form/__tests__/helpers/readFieldN
 import { releaseFieldNodeRevealHistory } from '@/schema-form/__tests__/helpers/releaseFieldNodeRevealHistory';
 import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
-import { isArrayNode } from '@/schema-form/core';
+import {
+  FieldNodeState,
+  ValidationMode,
+  isArrayNode,
+} from '@/schema-form/core';
 import type { FieldNode } from '@/schema-form/core';
 import {
   type ErrorMessageRendererProps,
@@ -111,16 +115,27 @@ it.each(['input', 'frame', 'label', 'error'] as const)(
         .current!.findNode('/a')!
         .setExternalErrors([{ dataPath: '/a', message: 'external' }]),
     );
-    fireEvent.change(view.container.querySelector('input[id="/a"]')!, {
-      target: { value: 'edited' },
-    });
-    act(() => ref.current!.findNode('/a')!.setState({ 2: true }));
+    fireEvent.change(
+      view.container.querySelector(
+        'input:is([id="/a"], [id$=":/a~input"]):not(label):not(legend)',
+      )!,
+      {
+        target: { value: 'edited' },
+      },
+    );
+    act(() =>
+      ref.current!.findNode('/a')!.setState({ [FieldNodeState.Touched]: true }),
+    );
     await settleValidation(() => ref.current?.node);
     act(() => ref.current!.revealErrors());
     act(() => releaseFieldNodeRevealHistory(ref.current!.node!));
     expect(actual.get('/a')?.errorVisible).toBe(true);
     act(() => ref.current!.findNode('/show')!.setValue(false));
-    expect(view.container.querySelector('input[id="/a"]')).toBeNull();
+    expect(
+      view.container.querySelector(
+        'input:is([id="/a"], [id$=":/a~input"]):not(label):not(legend)',
+      ),
+    ).toBeNull();
     act(() => ref.current!.findNode('/show')!.setValue(true));
     await settleValidation(() => ref.current?.node);
     view.rerender(
@@ -154,7 +169,7 @@ it('keeps the result reference when all four values stay equal after a value wri
     <Form
       ref={ref}
       jsonSchema={{ type: 'object', properties: { a: { type: 'string' } } }}
-      validationMode={0}
+      validationMode={ValidationMode.None}
       errorVisibility={ErrorVisibility.Never}
       fieldInputDefinitions={[
         { test: { type: 'string' }, Component: Input, controlled: true },
@@ -194,9 +209,9 @@ it('connects release listeners only through repeated held intervals of the same 
   const runtime = readFieldNodeRuntime(node);
   expect(runtime.revealReleaseListeners?.size ?? 0).toBe(0);
   for (let index = 0; index < 3; index++) {
-    act(() => node.setState({ 4: false }));
+    act(() => node.setState({ [FieldNodeState.ErrorVisibility]: false }));
     act(() => releaseFieldNodeRevealHistory(node));
-    act(() => node.setState({ 4: true }));
+    act(() => node.setState({ [FieldNodeState.ErrorVisibility]: true }));
     expect(runtime.revealReleaseListeners?.size).toBe(2);
     act(() => releaseFieldNodeRevealHistory(node));
     expect(runtime.revealReleaseListeners?.size ?? 0).toBe(0);
@@ -214,7 +229,7 @@ it('reads the new path after array removal with a path-dependent formatter', () 
       ref={ref}
       jsonSchema={{ type: 'array', items: { type: 'string' } }}
       defaultValue={['first', 'second']}
-      validationMode={0}
+      validationMode={ValidationMode.None}
       errorVisibility={ErrorVisibility.Always}
       formatError={(_error, node) => node.path}
       fieldInputDefinitions={[
@@ -259,7 +274,7 @@ it('lets an error renderer show all errors without children and follow formatter
   );
   const props = {
     jsonSchema: { type: 'string' as const },
-    validationMode: 0,
+    validationMode: ValidationMode.None,
     errorVisibility: ErrorVisibility.Always,
     errors: [
       { dataPath: '', message: 'one' },
@@ -301,7 +316,7 @@ it('isolates a formatter thrown from the input hook from a healthy sibling', () 
         b: { type: 'string' as const },
       },
     },
-    validationMode: 0,
+    validationMode: ValidationMode.None,
     errorVisibility: ErrorVisibility.Always,
     errors: [{ dataPath: '/a', message: 'bad' }],
     fieldInputDefinitions: [
@@ -323,9 +338,9 @@ it('isolates a formatter thrown from the input hook from a healthy sibling', () 
   shouldThrow = true;
   act(() => replace());
   expect(view.queryByLabelText('a')).toBeNull();
-  expect(view.container.querySelector('label[for="/a"]')).not.toBeNull();
+  expect(view.container.querySelector('label[for$=":/a~input"]')).not.toBeNull();
   view.rerender(<Form {...props} formatError={(error) => error.message} />);
   expect(view.queryByLabelText('a')).toBeNull();
   expect(view.getByLabelText('b')).toBe(sibling);
-  expect(view.container.querySelector('label[for="/a"]')).not.toBeNull();
+  expect(view.container.querySelector('label[for$=":/a~input"]')).not.toBeNull();
 });

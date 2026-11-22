@@ -178,7 +178,7 @@ describe('468C-01 exit default read characterization', () => {
     );
     const group = requireNode(root, '/period');
     detach(group);
-    expect(readFieldNodeDefaultValue(group)).toBeUndefined();
+    expect(readFieldNodeDefaultValue(group)).toEqual(['a', 'b']);
     expect(readFieldNodeDefaultValue(requireNode(root, '/start'))).toBe('a');
     expect(readFieldNodeDefaultValue(requireNode(root, '/end'))).toBe('b');
   });

@@ -25,6 +25,6 @@ it.each([true, false])('preserves a replaced builtin in guards and same-id compi
 it('keeps a removed builtin absent in a sibling', () => {
   const instance = new (resolveAjvConstructor(Ajv))({ strict: false });
   instance.removeKeyword('minimum');
-  const sibling = cloneInstance(instance, false, false);
+  const sibling = cloneInstance(instance, 'guard');
   expect(sibling.getKeyword('minimum')).toBe(false);
 });

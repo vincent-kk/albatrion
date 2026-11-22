@@ -1,8 +1,10 @@
 import { ARRAY_BUFFER_TAG, OBJECT_TAG } from '@/common-utils/constant/typeTag';
 import { getTypeTag } from '@/common-utils/libs/getTypeTag';
+import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 
 import { countRetainedKeys } from './countRetainedKeys';
 import { equalsBuiltin } from './equalsBuiltin';
+import { stableEqualsDeep } from './stableEquals/stableEqualsDeep';
 
 /**
  * Sentinel used to bypass internal-state tag checks for current-realm
@@ -23,7 +25,8 @@ const OBJECT_PROTOTYPE = Object.prototype;
  * - **Advanced Type Support**: Proper comparison for Date, RegExp, TypedArrays, ArrayBuffers
  * - **Sparse Array Handling**: Correctly distinguishes sparse arrays from dense ones
  * - **Symbol Property Support**: Compares symbol-keyed properties using Reflect.ownKeys
- * - **Memory Safety**: No risk of stack overflow with deeply nested circular structures
+ * - **Depth Safety**: Plain-object and array graphs, including cycles, use work frames.
+ *   User getters, proxies and paths made only of other built-ins retain their own stack limits.
  * - **Performance**: ~2x slower than `equals` but handles much more complex scenarios
  *
  * **When to Use stableEquals vs equals:**
@@ -281,7 +284,7 @@ const OBJECT_PROTOTYPE = Object.prototype;
  * **Supported Data Types:**
  * - **Primitives**: string, number, boolean, null, undefined, symbol, bigint
  * - **Objects**: Plain objects, arrays (including sparse), functions
- * - **Built-ins**: Date, RegExp, Error, Map, Set (reference equality)
+ * - **Built-ins**: Date, RegExp, Map, Set, boxed primitives and Error, compared by state
  * - **Binary Data**: ArrayBuffer, SharedArrayBuffer, TypedArrays, DataView
  * - **Custom Objects**: Objects with custom prototypes
  *
@@ -325,8 +328,10 @@ const stableEqualsRecursive = (
   right: unknown,
   visited: Map<object, Set<object>>,
   omits: Set<PropertyKey> | null,
+  depth = 0,
 ): boolean => {
   if (left === right || (left !== left && right !== right)) return true;
+  if (depth >= 256) return stableEqualsDeep(left, right, visited, omits, stableEqualsRecursive);
 
   if (
     left === null ||
@@ -362,6 +367,7 @@ const stableEqualsRecursive = (
           new Uint8Array(right),
           visited,
           omits,
+          depth + 1,
         );
     }
 
@@ -372,7 +378,7 @@ const stableEqualsRecursive = (
       const rightHasIndex = i in right;
       if (leftHasIndex !== rightHasIndex) return false;
       if (leftHasIndex)
-        if (stableEqualsRecursive(left[i], right[i], visited, omits) === false)
+        if (stableEqualsRecursive(left[i], right[i], visited, omits, depth + 1) === false)
           return false;
     }
     return true;
@@ -386,14 +392,6 @@ const stableEqualsRecursive = (
     // plain one both expose no own keys and would compare equal
     const tag = getTypeTag(left);
     if (tag !== getTypeTag(right)) return false;
-
-    if (tag === ARRAY_BUFFER_TAG)
-      return stableEqualsRecursive(
-        new Uint8Array(left as ArrayBufferLike),
-        new Uint8Array(right as ArrayBufferLike),
-        visited,
-        omits,
-      );
 
     if (ArrayBuffer.isView(left) && ArrayBuffer.isView(right)) {
       if (left.constructor !== right.constructor) return false;
@@ -418,7 +416,7 @@ const stableEqualsRecursive = (
     // built-ins carry their state where own keys cannot reach it
     if (tag !== OBJECT_TAG) {
       const byState = equalsBuiltin(left, right, tag, (leftValue, rightValue) =>
-        stableEqualsRecursive(leftValue, rightValue, visited, omits),
+        stableEqualsRecursive(leftValue, rightValue, visited, omits, depth + 1),
       );
       if (byState !== undefined) return byState;
     }
@@ -436,13 +434,14 @@ const stableEqualsRecursive = (
     return false;
   for (let i = 0, k = leftKeys[0]; i < leftLength; i++, k = leftKeys[i]) {
     if (omits?.has(k)) continue;
-    if (!Reflect.has(right, k)) return false;
+    if (!hasOwnProperty(right, k)) return false;
     if (
       stableEqualsRecursive(
         left[k as keyof typeof left],
         right[k as keyof typeof right],
         visited,
         omits,
+        depth + 1,
       ) === false
     )
       return false;

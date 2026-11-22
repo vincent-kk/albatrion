@@ -1,20 +1,36 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 import { Slider, type SliderProps } from 'antd-mobile';
 
 import { isArray } from '@winglet/common-utils/filter';
-import { isNumberSchema } from '@winglet/json-schema/filter';
+import { isArraySchema, isNumberSchema } from '@winglet/json-schema/filter';
 
 import type {
+  ArraySchema,
   FieldInputDefinition,
   FieldInputPropsWithSchema,
   NumberSchema,
 } from '@canard/schema-form';
 
+import { getSliderBounds } from './utils/slider/getSliderBounds';
+
+/** Array-level numeric extensions used when the item schema omits a limit. */
+type RangeSchema = ArraySchema<
+  Pick<
+    NumberSchema,
+    | 'minimum'
+    | 'maximum'
+    | 'exclusiveMinimum'
+    | 'exclusiveMaximum'
+    | 'multipleOf'
+  >
+>;
+
 interface FieldInputSliderProps
-  extends FieldInputPropsWithSchema<number | [number, number], NumberSchema> {
-  /** Two thumbs selecting a range, from `presentation.FieldInputProps.range`. */
-  range?: SliderProps['range'];
+  extends FieldInputPropsWithSchema<
+    number | [number, number],
+    NumberSchema | RangeSchema
+  > {
   /** Labeled stops on the track, from `presentation.FieldInputProps.marks`. */
   marks?: SliderProps['marks'];
   /** `false` publishes on every move; otherwise only when the drag ends. */
@@ -22,56 +38,94 @@ interface FieldInputSliderProps
 }
 
 const FieldInputSlider = ({
+  inputId,
+  labelId,
+  name,
   jsonSchema,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
-  range,
   marks,
   lazy,
   misfit,
+  className,
+  style,
 }: FieldInputSliderProps) => {
-  const initialValue = range
+  const range = isArraySchema(jsonSchema);
+  const items = range ? jsonSchema.items : undefined;
+  const constraints = items && isNumberSchema(items) ? items : undefined;
+  const {
+    min,
+    max,
+    step,
+    isEmpty,
+    marks: allowedMarks,
+  } = getSliderBounds(
+    range
+      ? {
+          type: constraints?.type ?? 'number',
+          minimum: constraints?.minimum ?? jsonSchema.minimum,
+          maximum: constraints?.maximum ?? jsonSchema.maximum,
+          exclusiveMinimum:
+            constraints?.exclusiveMinimum ?? jsonSchema.exclusiveMinimum,
+          exclusiveMaximum:
+            constraints?.exclusiveMaximum ?? jsonSchema.exclusiveMaximum,
+          multipleOf: constraints?.multipleOf ?? jsonSchema.multipleOf,
+        }
+      : isNumberSchema(jsonSchema)
+        ? jsonSchema
+        : { type: 'number' },
+    marks,
+  );
+  const initialValue: SliderProps['defaultValue'] = range
     ? isArray(defaultValue) &&
       defaultValue.length === 2 &&
       defaultValue.every((value) => typeof value === 'number')
-      ? defaultValue
+      ? [defaultValue[0], defaultValue[1]]
       : undefined
     : typeof defaultValue === 'number'
       ? defaultValue
       : undefined;
   const handleChange = useCallback(
     (value: number | [number, number] | null) => {
+      if (isEmpty) return;
       if (value === null) onChange(undefined);
-      else if (typeof value === 'number') {
-        if (!Number.isNaN(value)) onChange(value);
-      } else if (!value.some(Number.isNaN)) onChange(value);
+      else if (range) {
+        if (
+          isArray(value) &&
+          value.length === 2 &&
+          value.every(Number.isFinite)
+        )
+          onChange(value);
+      } else if (typeof value === 'number' && Number.isFinite(value))
+        onChange(value);
     },
-    [onChange],
+    [onChange, range, isEmpty],
   );
 
-  const { min, max, step, ...changeHandler } = useMemo(() => {
-    return {
-      min: jsonSchema.minimum,
-      max: jsonSchema.maximum,
-      step: jsonSchema.multipleOf,
-      ...(lazy === false
-        ? { onChange: handleChange }
-        : { onAfterChange: handleChange }),
-    } as const;
-  }, [handleChange, jsonSchema, lazy]);
-
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div
+      className={className}
+      style={style}
+      id={inputId}
+      role="group"
+      aria-labelledby={labelId}
+      aria-invalid={misfit || undefined}
+    >
       <Slider
-        disabled={disabled}
+        disabled={disabled || readOnly || isEmpty}
+        aria-label={jsonSchema.title || name}
         min={min}
         max={max}
         step={step}
         range={range}
-        marks={marks}
+        marks={allowedMarks}
         defaultValue={initialValue}
-        {...changeHandler}
+        {...{
+          [lazy === false && min !== max ? 'onChange' : 'onAfterChange']:
+            handleChange,
+        }}
       />
     </div>
   );

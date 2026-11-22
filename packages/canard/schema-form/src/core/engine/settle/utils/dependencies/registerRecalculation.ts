@@ -13,6 +13,7 @@ import { getGateRegistry } from '../gates/getGateRegistry';
 import { verifyGateSelection } from '../gates/verifyGateSelection';
 import { verifyWriteEpoch } from '../input/utils/verifyWriteEpoch';
 import { DirtyPathSet } from '../scratch/DirtyPathSet';
+import { getAliasedDependencyIndex } from './getAliasedDependencyIndex';
 import { getDependencyIndex } from './getDependencyIndex';
 
 /** Annotates the lazily created `splitHitEpochs`; an argument-less `new Map()` would be `Map<any, any>`. */
@@ -102,6 +103,14 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
         context.shapeDirtyPaths.add(resolvePointer(declarationPath, $.Parent));
       }
   }
+  const aliases = blueprint.capabilities.hasAliasedDependencies ? getAliasedDependencyIndex(context) : undefined;
+  if (aliases)
+    for (const changed of context.changedSource)
+      for (const owner of aliases.affectedOwners(changed)) {
+        context.dirtyPaths.add(owner);
+        context.dependencyOwnerPaths.add(owner);
+        context.shapeDirtyPaths.add(resolvePointer(owner, $.Parent));
+      }
   const expanded = new Set<string>();
   for (const path of context.dirtyPaths) {
     let ancestor = path;

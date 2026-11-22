@@ -42,19 +42,25 @@ const scenario = findScenario(
 /** Shared scenario `input-components.child-components`: a card input draws children and reports their errors. */
 export const CardWithChildErrors: Story = {
   args: { scenario, formProps: { fieldInputDefinitions: childDefinitions } },
-  parameters: { docs: { description: { story: formatScenarioDescription(scenario.description ?? '') } } },
+  parameters: {
+    docs: {
+      description: {
+        story: formatScenarioDescription(scenario.description ?? ''),
+      },
+    },
+  },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
     const card = () =>
       canvasElement.querySelector<HTMLElement>(
-        '[id="/address"][data-card-fields]',
+        ':is([id="/address"], [id$=":/address~input"]):not(label):not(legend)[data-card-fields]',
       )!;
     for (const [index, stage] of childComponentStages.entries()) {
       if (stage.act === 'edit') {
         await userEvent.type(
           canvasElement.querySelector<HTMLInputElement>(
-            `input[id="${stage.path}"]`,
+            `input:is([id="${stage.path}"], [id$=":${stage.path}~input"]):not(label):not(legend)`,
           )!,
           stage.text!,
         );
@@ -88,14 +94,22 @@ export const OpenObjectAsTerminal: Story = {
     formProps: { fieldInputDefinitions: childDefinitions },
     onHandle: mapProbe.onHandle,
   },
-  parameters: { docs: { description: { story: formatScenarioDescription(scenario.description ?? '') } } },
+  parameters: {
+    docs: {
+      description: {
+        story: formatScenarioDescription(scenario.description ?? ''),
+      },
+    },
+  },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
     const handle = await mapProbe.handle(canvasElement);
     for (const [index, stage] of mapEntryStages.entries()) {
       await userEvent.type(
-        canvasElement.querySelector<HTMLInputElement>('input[id="/labels"]')!,
+        canvasElement.querySelector<HTMLInputElement>(
+          'input:is([id="/labels"], [id$=":/labels~input"]):not(label):not(legend)',
+        )!,
         stage.entry,
       );
       await userEvent.tab();

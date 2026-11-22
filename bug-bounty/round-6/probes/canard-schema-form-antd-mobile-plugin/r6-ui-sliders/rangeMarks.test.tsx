@@ -1,0 +1,20 @@
+import { createRef } from 'react';
+import { cleanup, fireEvent, render } from '@testing-library/react';
+import { afterEach, expect, it } from 'vitest';
+import { Form, type FormHandle } from '@canard/schema-form';
+import { plugin } from '../../index';
+afterEach(cleanup);
+it.each([undefined, false])('control: exponent range constraints and filtered marks survive both thumb commits (lazy=%s)', (lazy) => {
+  const ref = createRef<FormHandle>();
+  const view = render(<Form ref={ref} defaultValue={[3e-7, 7e-7]} jsonSchema={{ type: 'array', format: 'slider', items: { type: 'number', exclusiveMinimum: 1e-7, exclusiveMaximum: 9e-7, multipleOf: 1e-7 }, presentation: { FieldInputProps: { lazy, marks: { '1e-7': 'Invalid low', '2e-7': 'Low', '8e-7': 'High', '9e-7': 'Invalid high' } } } }} fieldInputDefinitions={plugin.fieldInputDefinitions} FieldRenderer={plugin.FieldRenderer} LabelRenderer={plugin.LabelRenderer} />);
+  const thumbs = view.getAllByRole('slider');
+  expect(thumbs).toHaveLength(2);
+  expect(thumbs[0].id).not.toBe(thumbs[1].id);
+  expect(view.queryByText('Invalid low')).toBeNull();
+  expect(view.queryByText('Invalid high')).toBeNull();
+  fireEvent.keyDown(thumbs[0], { key: 'Home' });
+  fireEvent.keyUp(thumbs[0], { key: 'Home' });
+  fireEvent.keyDown(thumbs[1], { key: 'End' });
+  fireEvent.keyUp(thumbs[1], { key: 'End' });
+  expect(ref.current!.getValue()).toEqual([2e-7, 8e-7]);
+});

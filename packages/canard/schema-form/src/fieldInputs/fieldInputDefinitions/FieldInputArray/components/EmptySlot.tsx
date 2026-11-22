@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type CSSProperties, type ChangeEvent, memo } from 'react';
 
 import type { Fn } from '@aileron/declare';
@@ -26,7 +27,7 @@ export const EmptySlot = memo(function EmptySlot({
   readOnly?: boolean;
   disabled?: boolean;
   onWrite: Fn<[index: number, value: unknown]>;
-}) {
+}): ReactElement {
   if (kind === 'fill')
     return (
       <div style={FLEX_ROW_STYLE}>

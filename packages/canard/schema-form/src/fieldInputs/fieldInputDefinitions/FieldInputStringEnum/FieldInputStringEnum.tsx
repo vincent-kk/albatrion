@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ChangeEvent, useMemo } from 'react';
 
 import { map } from '@winglet/common-utils/array';
@@ -12,10 +13,11 @@ import type {
 } from '@/schema-form/types';
 
 import type { EnumLabelsContext } from './type';
+import { readEnumOptionValue } from '../../utils/readEnumOptionValue';
 
 /** Render a select for a string enum node. */
 export const FieldInputStringEnum = ({
-  path,
+  inputId: fieldId,
   name,
   jsonSchema,
   defaultValue,
@@ -31,7 +33,7 @@ export const FieldInputStringEnum = ({
   Nullable<string>,
   StringSchema,
   EnumLabelsContext
->) => {
+>): ReactElement => {
   const enumOptions = useMemo(
     () =>
       jsonSchema.enum
@@ -72,15 +74,13 @@ export const FieldInputStringEnum = ({
   }
 
   const handleChange = useHandle((event: ChangeEvent<HTMLSelectElement>) => {
-    const rawValue = enumOptions.find(
-      (option) => option.value === event.target.value,
-    )?.rawValue;
+    const rawValue = readEnumOptionValue(enumOptions, event.target.value);
     if (rawValue === undefined) return;
     onChange(rawValue);
   });
   return (
     <select
-      id={path}
+      id={fieldId}
       name={name}
       disabled={disabled || readOnly}
       defaultValue={initialValue}
@@ -94,11 +94,14 @@ export const FieldInputStringEnum = ({
           {outOfDomainValue}
         </option>
       )}
-      {map(enumOptions, ({ value, label }) => (
-        <option key={value} value={value}>
-          {label}
-        </option>
-      ))}
+      {map(
+        enumOptions,
+        ({ value, label }): ReactElement => (
+          <option key={value} value={value}>
+            {label}
+          </option>
+        ),
+      )}
     </select>
   );
 };

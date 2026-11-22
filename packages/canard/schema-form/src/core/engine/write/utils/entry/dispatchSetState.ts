@@ -1,4 +1,7 @@
-import { advanceFieldNodeRevealSequence } from '../../../record';
+import {
+  advanceFieldNodeRevealSequence,
+  queueNonSettleEvent,
+} from '../../../record';
 import {
   FieldNodeEventType,
   accumulateGlobalStateDeltas,
@@ -10,7 +13,6 @@ import { assertFieldNodeWritable } from '../../../settle';
 import type { NodeStateFlags } from '../../../types/state';
 import { scheduleFieldNodeRevealDrop } from '../../../validation';
 import { closeNonSettleEntry } from '../chain/closeNonSettleEntry';
-import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
 

@@ -325,32 +325,13 @@ describe('applyPatch 에러 처리', () => {
   });
 
   describe('에러 처리 - MOVE 연산 순환 참조', () => {
-    it('MOVE 연산에서 자기 자신으로 이동 시 PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN 에러를 발생시켜야 한다', () => {
+    it('MOVE 연산에서 자기 자신으로 이동하면 문서가 그대로여야 한다', () => {
       const source = { a: { b: 'value' } };
       const patches: Patch[] = [
         { op: Operation.MOVE, from: '/a/b', path: '/a/b' },
       ];
 
-      expect(() => {
-        applyPatch(source, patches);
-      }).toThrow(JSONPatchError);
-
-      try {
-        applyPatch(source, patches);
-      } catch (error) {
-        expect(error).toBeInstanceOf(JSONPatchError);
-        expect((error as JSONPatchError).specific).toBe(
-          'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN',
-        );
-        expect((error as JSONPatchError).message).toContain(
-          'identical to source location',
-        );
-        expect((error as JSONPatchError).details.patch).toEqual(patches[0]);
-        expect((error as JSONPatchError).details.patchIndex).toBe(0);
-        expect((error as JSONPatchError).details.operation).toBe('move');
-        expect((error as JSONPatchError).details.from).toBe('/a/b');
-        expect((error as JSONPatchError).details.path).toBe('/a/b');
-      }
+      expect(applyPatch(source, patches)).toEqual({ a: { b: 'value' } });
     });
 
     it('MOVE 연산에서 하위 경로로 이동 시 PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN 에러를 발생시켜야 한다', () => {
@@ -437,24 +418,9 @@ describe('applyPatch 에러 처리', () => {
         { op: Operation.COPY, from: '/a', path: '/a/copied' },
       ];
 
-      // COPY는 순환 참조 제한이 없으므로 정상 처리되어야 함
-      expect(() => {
-        applyPatch(source, patches);
-      }).toThrow(JSONPatchError);
-
-      try {
-        applyPatch(source, patches);
-      } catch (error) {
-        expect(error).toBeInstanceOf(JSONPatchError);
-        expect((error as JSONPatchError).specific).toBe(
-          'PATCH_COPY_INTO_DESCENDANT_FORBIDDEN',
-        );
-        expect((error as JSONPatchError).details.patch).toEqual(patches[0]);
-        expect((error as JSONPatchError).details.patchIndex).toBe(0);
-        expect((error as JSONPatchError).details.operation).toBe('copy');
-        expect((error as JSONPatchError).details.from).toBe('/a');
-        expect((error as JSONPatchError).details.path).toBe('/a/copied');
-      }
+      expect(applyPatch(source, patches)).toEqual({
+        a: { b: 'value', copied: { b: 'value' } },
+      });
     });
   });
 

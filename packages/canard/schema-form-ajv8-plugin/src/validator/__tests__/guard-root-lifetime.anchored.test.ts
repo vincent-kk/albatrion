@@ -21,7 +21,8 @@ describe.each([
   });
 
   it('release clears an anchor-only guard registration, repeats safely, and allows a recompile', () => {
-    plugin.bind(new Constructor({ strict: false }));
+    const instance = new Constructor({ strict: false });
+    plugin.bind?.(instance);
     const id = `https://example.test/ajv8/${dialect}/anchored-lifetime`;
     const root = JSON.parse(JSON.stringify({
       $id: id,
@@ -31,16 +32,10 @@ describe.each([
       if: { properties: { next: reference }, required: ['next'] },
     })) as JSONSchema;
     const value = { ok: true, next: { ok: true } };
-    const compile = vi.spyOn(Constructor.prototype, 'compile');
     const verdict = plugin.compileGuard(root, '/if')(value);
-    const index = compile.mock.calls.findIndex(([schema]) => typeof schema === 'object' && schema !== null && '$ref' in schema);
-    const guard = compile.mock.contexts[index];
-    if (typeof guard !== 'object' || guard === null) throw new Error('Missing guard instance');
-    const registered = () => [Reflect.get(guard, 'refs'), Reflect.get(guard, 'schemas')]
-      .some((table) => Object.keys(table).some((name) => name.startsWith(id)));
-    expect(registered()).toBe(true);
+    expect(instance.getSchema(id)).toBeUndefined();
     plugin.release(root);
-    expect(registered()).toBe(false);
+    expect(instance.getSchema(id)).toBeUndefined();
     expect(() => plugin.release(root)).not.toThrow();
     expect(plugin.compileGuard(root, '/if')(value)).toBe(verdict);
     plugin.release(root);

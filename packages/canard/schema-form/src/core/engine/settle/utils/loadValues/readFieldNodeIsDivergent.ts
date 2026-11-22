@@ -1,8 +1,8 @@
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
-import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
-import { getDependencyIndex } from '../dependencies/getDependencyIndex';
 import { getLoadValue } from './getLoadValue';
+import { readLoadProperty } from './readLoadProperty';
+import { readLoadSegments } from './readLoadSegments';
 
 /**
  * Compare the form output at one occurrence's path with its last root load output.
@@ -16,12 +16,22 @@ export const readFieldNodeIsDivergent = <Self extends FieldNodeRecord<Self>>(
   if (!baseline || node.isDetached) return false;
   let segments = node.divergenceSegments;
   if (!segments || !Object.is(node.path, node.divergencePath)) {
-    segments = node.runtime.blueprint.capabilities.isBranchless
-      ? getCachedPointerSegments(node.runtime, node.path)
-      : getDependencyIndex(node.runtime.blueprint).pathSegments(
-          node.path,
-          node.runtime,
-        );
+    if (node.behavior.type === 'virtual') {
+      if (!node.parent) return false;
+      const current = getLoadValue(
+        node.rootNode.storedOutputValue,
+        node.parent.path,
+      );
+      const base = getLoadValue(baseline.value, node.parent.path);
+      return (node.blueprintNode.fields ?? []).some(
+        (name) =>
+          !sameValue(
+            readLoadProperty(current, name),
+            readLoadProperty(base, name),
+          ),
+      );
+    }
+    segments = readLoadSegments(node);
     node.divergencePath = node.path;
     node.divergenceSegments = segments;
   }

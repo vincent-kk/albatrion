@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+findNodes는 각 단계에서 처음 만난 노드의 순서를 보존하며 같은 인스턴스를 한 번만 반환합니다. 한 단계의 결과를 모은 뒤 한 곳에서 중복을 제거합니다. 후보가 하나면 수집한 배열을 그대로 넘기고, 256개 미만의 다중 결과는 배열에서 처음 나온 위치를 사용합니다. 더 넓은 단계는 삽입 순서를 유지하는 Set으로 중복 제거해 wildcard의 제곱 증가를 막습니다.
+
 문자열 경로의 정본은 [jsonPointer](../../../helpers/jsonPointer/DETAIL.md)입니다. 탐색은 파싱된 리터럴 이름과 심볼 연산자만 소비하며 같은 토큰을 다시 해석하지 않습니다. 공개 참조의 수명과 명령은 [surface](../../surface/DETAIL.md), 형상과 보유 원본의 구분은 [record](../record/DETAIL.md)가 소유합니다.
 
 ## Acceptance Criteria

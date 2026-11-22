@@ -20,14 +20,14 @@ describe('difference round-trip', () => {
     expect(mergePatch(source, patch)).toEqual(target);
   });
 
-  it('still emits additions when a forbidden key balances the key counts', () => {
+  it('emits removals and additions when a reserved key balances the key counts', () => {
     const source = { a: 1, constructor: 123 };
     const target = { a: 1, b: 2 };
 
-    expect(difference(source, target)).toEqual({ b: 2 });
+    expect(difference(source, target)).toEqual({ constructor: null, b: 2 });
   });
 
-  it('drops forbidden keys instead of exposing or polluting the patch', () => {
+  it('preserves reserved data keys without polluting the patch', () => {
     const source = JSON.parse(
       '{"safe":1,"__proto__":{"x":1},"constructor":{"y":1},"prototype":{"z":1}}',
     );
@@ -36,8 +36,18 @@ describe('difference round-trip', () => {
     );
     const patch = difference(source, target) as Record<string, unknown>;
 
-    expect(patch).toEqual({ safe: 2 });
-    expect(Object.keys(patch)).toEqual(['safe']);
+    expect(patch).toEqual({
+      safe: 2,
+      ['__proto__']: { x: 9 },
+      constructor: { y: 9 },
+      prototype: { z: 9 },
+    });
+    expect(Object.keys(patch)).toEqual([
+      'safe',
+      '__proto__',
+      'constructor',
+      'prototype',
+    ]);
     expect(Object.getPrototypeOf(patch)).toBe(Object.prototype);
   });
 });

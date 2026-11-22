@@ -1,7 +1,7 @@
 import { createElement } from 'react';
 
 import { cleanup, render } from '@testing-library/react';
-import { afterAll, afterEach, beforeAll, expect, it, vi } from 'vitest';
+import { afterEach, expect, it } from 'vitest';
 
 import { Form } from '@canard/schema-form';
 
@@ -10,21 +10,6 @@ import { FieldInputMonthRangeDefinition } from '../FieldInputMonthRange';
 import { FieldInputTimeRangeDefinition } from '../FieldInputTimeRange';
 
 afterEach(cleanup);
-
-beforeAll(() => {
-  vi.stubGlobal(
-    'ResizeObserver',
-    class {
-      observe() {}
-      unobserve() {}
-      disconnect() {}
-    },
-  );
-});
-
-afterAll(() => {
-  vi.unstubAllGlobals();
-});
 
 it.each([
   ['date-range', FieldInputDateRangeDefinition],
@@ -58,11 +43,14 @@ it.each([
   ['month-range', FieldInputMonthRangeDefinition],
   ['time-range', FieldInputTimeRangeDefinition],
 ])(
-  '%s renders a string value directly as an empty range',
+  '%s direct render of a length-2 string yields an empty range',
   (format, definition) => {
     const { container } = render(
       createElement(definition.Component, {
         path: '/r',
+        inputId: 'range-start',
+        labelId: 'range-label',
+        getInputId: () => 'range-end',
         name: 'r',
         jsonSchema: { type: 'array', format, items: { type: 'string' } },
         value: 'ab',

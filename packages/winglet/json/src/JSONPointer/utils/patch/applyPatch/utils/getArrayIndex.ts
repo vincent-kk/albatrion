@@ -1,7 +1,6 @@
-import { isArrayIndex } from '@winglet/common-utils/filter';
-
 import type { JSONArray } from '@/json/type';
 
+import { getArrayElementIndex } from '../../../getArrayElementIndex';
 import { JSONPatchError } from './error';
 
 /**
@@ -16,7 +15,8 @@ import { JSONPatchError } from './error';
  */
 export const getArrayIndex = (key: string, array: JSONArray): number => {
   if (key === '-') return array.length;
-  if (isArrayIndex(key)) return ~~key;
+  const index = getArrayElementIndex(key);
+  if (index >= 0) return index;
   throw new JSONPatchError(
     'PATCH_ARRAY_INDEX_INVALID',
     `Invalid array index '${key}'. Expected a non-negative integer or '-' for end-of-array`,

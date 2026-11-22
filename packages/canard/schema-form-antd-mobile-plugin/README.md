@@ -82,13 +82,21 @@ This plugin provides the following Ant Design Mobile components:
 - **Applied when**:
   - `type` is `"number"` or `"integer"` and `format` is `"slider"`
   - or `type` is `"array"`, `items.type` is `"number"` or `"integer"`, and `format` is `"slider"` (range slider)
-- **Additional features**: `presentation.FieldInputProps.lazy` (`false` publishes on every move), `marks` (mark display) and `range` (range slider)
+- **Additional features**: `presentation.FieldInputProps.lazy` (`false` publishes on every move) and `marks` (restricts selectable values to the marked stops). For range sliders, the numeric bounds and `multipleOf` on `items` take precedence. Omitted limits and steps fall back to the array schema. The schema type decides the shape: an array schema gets a range slider that only writes a two-number array, and a number schema gets a single thumb that only writes a number. `presentation.FieldInputProps.range` is ignored
+
+Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores the value on commit (pointer release or track tap); `false` stores on every move.
+
+Range thumbs are displayed in ascending order. Mounting the Slider leaves the form value in its supplied order. For example, `[80, 20]` displays the thumbs at `20` and `80` while the form still stores `[80, 20]`. The scoped Slider ID identifies the group around the track. Ant Design Mobile does not expose a thumb ID prop.
+
+An unset Slider leaves the form value unset until interaction. Its accessibility tree exposes the initial thumb position, such as `0` on the default range. To omit that number, register a custom `FieldInput` through `fieldInputDefinitions`.
+
+For very small `multipleOf` values, pointer commits do not guarantee an exact schema grid point. With bounds of `1e-7` to `9e-7` and `multipleOf: 1e-7`, tapping the midpoint can store `0` instead of `5e-7` in Ant Design Mobile 5.43.0. If your form needs an exact decimal grid, register a custom `FieldInput` through `fieldInputDefinitions`.
 
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 
 - **Role**: Text area for multiline text input
 - **Applied when**: `type` is `"string"` and `format` or `inputType` is `"textarea"`
-- **Additional features**: Support for automatic resizing via `minRows`, `maxRows`
+- **Additional features**: Set `minRows` and `maxRows` in `presentation.FieldInputProps`. Schema-level extensions supply defaults.
 
 ### **[`FieldInputString.tsx`](./src/fieldInputs/FieldInputString.tsx)**
 
@@ -100,27 +108,25 @@ This plugin provides the following Ant Design Mobile components:
 
 - **Role**: Stepper component for numeric input
 - **Applied when**: `type` is `"number"` or `"integer"` (fallback when other conditions don't match)
-- **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties
+- **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties. Custom Stepper `formatter` and `parser` require Ant Design Mobile 5.26 or later.
 
 ### **[`FieldInputBoolean.tsx`](./src/fieldInputs/FieldInputBoolean.tsx)**
 
+In a read-only boolean field the Checkbox remains enabled, and the form keeps its stored value.
+
 - **Role**: Display boolean values as checkboxes
 - **Applied when**: `type` is `"boolean"` (fallback when other conditions don't match)
-- **Additional features**: Support for `indeterminate` state for `undefined` values
+- **Additional features**: `null` and any other non-boolean value show the `indeterminate` state; an unset (`undefined`) value shows an unchecked box
 
 ---
 
-## Switch keyboard access
-
-`formRef.current.focus(path)` reaches the switch’s `data-focus-target` element.
-
-Boolean and string switch inputs receive focus when clicked and participate in the natural Tab order. Space and Enter toggle the focused switch once per press through the same value mapping as a click; holding a key does not toggle repeatedly, and Space does not scroll the page. Disabled switches cannot receive focus by click or Tab and ignore activation keys.
+Ant Design Mobile Switch inputs now use the library's pointer interaction. Tab and `formRef.current.focus(path)` no longer focus these switches, and Space and Enter no longer toggle them. To keep keyboard interaction, register a custom `FieldInput` through `fieldInputDefinitions` that renders a keyboard-accessible switch or a native checkbox and forwards the core's value, change handler and lock state.
 
 ---
 
 ## Input Settings
 
-Per-input settings such as `lazy`, `marks` and `range` above go in `presentation.FieldInputProps`; the form spreads that object into the input's props.
+Per-input settings such as `lazy` and `marks` above go in `presentation.FieldInputProps`; the form spreads that object into the input's props.
 
 ```ts
 const jsonSchema = {
@@ -130,7 +136,7 @@ const jsonSchema = {
       type: 'number',
       format: 'slider',
       presentation: {
-        FieldInputProps: { lazy: false, marks: { 0: '0', 100: '100' } },
+        FieldInputProps: { lazy: false },
       },
     },
   },
@@ -151,7 +157,7 @@ Component selection is determined by the following priority order:
 6. **Fallback**: Default fallback components
 
 Within the same priority level, earlier items in the array take precedence. Components in this plugin are defined in the following order:
-`FieldInputBooleanSwitch` → `FieldInputStringCheckbox` → `FieldInputStringSwitch` → `FieldInputRadioGroup` → `FieldInputArray` → `FieldInputSlider` → `FieldInputTextarea` → `FieldInputString` → `FieldInputNumber` → `FieldInputBoolean`
+`FieldInputBooleanSwitch` → `FieldInputStringCheckbox` → `FieldInputStringSwitch` → `FieldInputRadioGroup` → `FieldInputSlider` → `FieldInputArray` → `FieldInputTextarea` → `FieldInputString` → `FieldInputNumber` → `FieldInputBoolean`
 
 ---
 
@@ -177,6 +183,32 @@ This repository is licensed under the MIT License. Please refer to the [`LICENSE
 
 ---
 
+## Scoped control identifiers
+
+Element ids are scoped to each Form and unique across Forms and contain no whitespace. Treat their spelling as opaque: never append to, decode, or parse an id. `path` remains the JSON Pointer used for form data. Custom inputs put `inputId` on their primary control and use `getInputId(key)` for additional elements; the key is required, and numeric and string keys with the same spelling identify the same element. Use a distinct key for each option, range endpoint, thumb, protocol selector, or input-owned label. A field title uses `labelId`, referenced through `aria-labelledby`. Custom renderers receive `inputId` and `labelId` for the same field. Single-control labels target `inputId`. `name` retains the leaf name; Ant Design Mobile radios do not forward a native `name`. Use a custom input when native radio grouping by name is required.
+
+```tsx
+const Input = ({ inputId, name }: FieldInputProps<string>) => (
+  <input id={inputId} name={name} />
+);
+```
+
+Field titles connect through the id and ARIA props supported by the UI library.
+
+For a composite custom input, consume `labelId` and `getInputId` explicitly rather than spreading them into DOM props. A getter is stable until the field scope or path changes. Never derive ids from the leaf name or from `path`.
+
+Scope selectors to the intended Form, such as `formElement.querySelector('[data-path="/email"] input')`, or connect labels using the control's supplied id. Form API values retain the schema shape.
+
 ## Contact
 
 For inquiries or suggestions related to the project, please create an issue.
+
+### Switch values and state labels
+
+For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the unchecked (off) value.
+
+A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
+
+### Sliders
+
+Ant Design Mobile Slider thumbs are not reached by Tab or `formRef.current.focus(path)`. Keyboard input does not move the thumbs or commit a value. Pointer interaction still updates both single and range sliders, using the schema's numeric bounds and step. To keep keyboard interaction, register a custom `FieldInput` through `fieldInputDefinitions` with a keyboard-accessible slider and forward the core's value, change handler and lock state.

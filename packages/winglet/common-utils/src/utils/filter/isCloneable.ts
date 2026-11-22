@@ -27,7 +27,7 @@ import { getTypeTag } from '@/common-utils/libs/getTypeTag';
 /**
  * Set of cloneable type tags
  */
-const CLONEABLE_TAGS = new Set([
+export const CLONEABLE_TAGS: ReadonlySet<string> = new Set([
   ARGUMENTS_TAG,
   ARRAY_TAG,
   ARRAY_BUFFER_TAG,

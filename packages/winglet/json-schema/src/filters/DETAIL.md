@@ -5,7 +5,7 @@
 - 각 판별자는 인자로 받은 스키마 객체를 변경하지 않고 boolean을 반환하며, TypeScript 타입가드로 좁혀진 타입을 제공한다.
 - nullable 계열 판별자는 `type`이 배열이고 그 배열에 `'null'`이 포함된 경우에만 true를 반환한다 — 단일 `'null'` 타입은 nullable로 취급하지 않는다.
 - `isCompatibleSchemaType`은 `number`/`integer`를 서로 호환 타입으로, `[...types, 'null']`을 `[...types]`와 호환으로 취급하며 좌우 인자 순서에 대해 대칭이다.
-- `isIdenticalSchemaType`은 JSON Schema 배열 `type` 표기와 OpenAPI 3.0 `nullable: true` 표기를 동등하게 비교하고, 배열 `type`은 순서·중복 개수와 무관하게 원소 집합이 같으면 동일로 판정한다.
+- `isIdenticalSchemaType`은 JSON Schema 배열 `type` 표기와 OpenAPI 3.0 `nullable: true` 표기를 동등하게 비교하고, 배열 `type`은 JSON Schema가 허용하는 중복 없는 원소를 입력으로 하며, 순서와 무관하게 원소 집합이 같으면 동일로 판정한다. 같은 타입 문자열이나 같은 배열 객체라도 `nullable: true`가 추가하는 null의 차이를 비교한다. 단일 null 타입과 null을 이미 포함한 배열에서는 nullable 플래그가 중복 표기다.
 
 ## API Contracts
 

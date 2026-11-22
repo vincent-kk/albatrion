@@ -1,7 +1,7 @@
 import {
   type CSSProperties,
   type ComponentType,
-  type PropsWithChildren,
+  type PropsWithChildren, type ReactElement,
   memo,
   useMemo,
 } from 'react';
@@ -29,12 +29,10 @@ import type {
   ForegroundComponent,
   WrapperComponentProps,
 } from '@/promise-modal/types/base';
+import type { ConfigurationContextProps } from '@/promise-modal/types/context';
 import type { ModalOptions } from '@/promise-modal/types/option';
 
-import {
-  ConfigurationContext,
-  type ConfigurationContextProps,
-} from './ConfigurationContext';
+import { ConfigurationContext } from './ConfigurationContext';
 
 const DEFAULT_OPTIONS = {
   zIndex: DEFAULT_Z_INDEX,
@@ -68,7 +66,7 @@ export const ConfigurationContextProvider = memo(
     FooterComponent,
     options: inputOptions,
     children,
-  }: PropsWithChildren<ConfigurationContextProviderProps>) => {
+  }: PropsWithChildren<ConfigurationContextProviderProps>): ReactElement => {
     const constant = useMemorize(() => ({
       BackgroundComponent,
       ForegroundComponent: ForegroundComponent || FallbackForegroundFrame,

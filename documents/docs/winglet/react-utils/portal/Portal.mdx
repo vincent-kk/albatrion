@@ -32,10 +32,8 @@ For detailed documentation with comprehensive examples and API details:
 - **Portal.with HOC**: See `withPortal` export
 - **Portal.Anchor component**: See `Anchor` export
 ### Design Philosophy
-This dual-export approach provides both convenience and flexibility:
-- Use `Portal.*` for quick prototyping and compact code
-- Use individual imports when you need detailed documentation or tree-shaking
-- All approaches provide identical functionality and type safety
+The compound Portal is the public value export. Use Portal.with and Portal.Anchor
+at runtime; the individual implementation names are exported only as type references.
 
 ## Import
 
@@ -48,7 +46,7 @@ import { Portal } from '@winglet/react-utils';
 
 ```typescript
 const Portal: {
-    (props: PropsWithChildren): null;
+    (props: PropsWithChildren): ReactPortal | null;
     with: typeof withPortal;
     Anchor: typeof Anchor;
 }

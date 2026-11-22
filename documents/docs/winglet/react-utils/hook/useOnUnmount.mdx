@@ -19,7 +19,7 @@ remembering to return cleanup functions from `useEffect` and makes unmount logic
 - **State Persistence**: Save component state before unmounting
 - **Analytics Tracking**: Record session duration or usage metrics
 ### Handler Freshness
-The handler passed on the most recent render is the one that runs, so it observes the
+The handler passed on the most recent committed render is the one that runs, so it observes the
 props and state of that render — no `useRef` dance is needed to reach current values.
 The handler is never invoked on re-renders, only on unmount.
 
@@ -47,7 +47,7 @@ const useOnUnmount: (handler: Fn) => void
 ### Example 1
 
 ```typescript
-// Reads the value from the last render, not from mount
+// Reads the value from the last committed render, not from mount
 const [count, setCount] = useState(0);
 useOnUnmount(() => reportSessionLength(count));
 
@@ -77,7 +77,7 @@ useOnUnmount(() => {
 
 <WingletPlayground
   dependencies={{ "@winglet/react-utils": "0.14.1" }}
-  code={`// Reads the value from the last render, not from mount
+  code={`// Reads the value from the last committed render, not from mount
 const [count, setCount] = useState(0);
 useOnUnmount(() => reportSessionLength(count));
 

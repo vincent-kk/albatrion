@@ -37,7 +37,7 @@ import { chunk, intersection, unique } from '@winglet/common-utils/array';
 // 콘솔 유틸리티
 import { printError } from '@winglet/common-utils/console';
 // 상수
-import { TIME_UNITS, TYPE_TAGS } from '@winglet/common-utils/constant';
+import { SECOND, ARRAY_TAG } from '@winglet/common-utils/constant';
 // 변환 유틸리티
 import { convertMsFromDuration } from '@winglet/common-utils/convert';
 // 에러 클래스
@@ -98,6 +98,8 @@ package.json의 exports 설정을 기반으로 합니다:
 
 - Node.js 14.0.0 이상
 - 모던 브라우저 (ES2020 지원)
+
+`withTimeout`에는 전역 `AbortController` 구현이 필요합니다. 지원하지 않는 환경에서는 호환 polyfill을 제공합니다. 이 기능이 없으면 원본 작업을 시작하기 전에 예외를 던집니다.
 
 **레거시 환경 지원이 필요한 경우:**
 Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환해주세요.
@@ -181,7 +183,7 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 - **[`isEmptyArray`](./src/utils/filter/isEmptyArray.ts)**: 배열이 비어있는지 확인하는 함수
 - **[`isEmptyObject`](./src/utils/filter/isEmptyObject.ts)**: 객체가 비어있는지 확인하는 함수
 - **[`isEmptyPlainObject`](./src/utils/filter/isEmptyPlainObject.ts)**: 일반 객체가 비어있는지 확인하는 함수
-- **[`isEmpty`](./src/utils/filter/isEmpty.ts)**: 값이 비어있는지 포괄적으로 확인하는 함수 (null, undefined, 빈 문자열, 빈 배열, 빈 객체 등)
+- **[`isEmpty`](./src/utils/filter/isEmpty.ts)**: 값이 비어있는지 확인하는 함수 (null, undefined, 빈 문자열, 빈 배열, 빈 객체 등). 다른 realm의 Map과 Set은 size 대신 열거 가능한 자기 속성으로 판정하므로 값이 있어도 비어 있다고 판정될 수 있습니다.
 - **[`isError`](./src/utils/filter/isError.ts)**: 값이 Error 객체인지 확인하는 함수
 - **[`isFile`](./src/utils/filter/isFile.ts)**: 값이 File 객체인지 확인하는 함수
 - **[`isFunction`](./src/utils/filter/isFunction.ts)**: 값이 함수인지 확인하는 함수
@@ -342,10 +344,10 @@ async function fetchWithTimeout(url: string) {
 ### 배열 유틸리티 사용하기
 
 ```typescript
-import { array } from '@winglet/common-utils';
+import { chunk } from '@winglet/common-utils/array';
 
 // 예제 코드:
-const chunks = array.chunk([1, 2, 3, 4, 5, 6], 2);
+const chunks = chunk([1, 2, 3, 4, 5, 6], 2);
 console.log(chunks); // [[1, 2], [3, 4], [5, 6]]
 ```
 

@@ -1,11 +1,9 @@
 import { equals } from '@winglet/common-utils/object';
 
-import { getValue } from '@/json/JSONPointer/utils/manipulator/getValue';
 import type { JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../../patchModel';
 import { JSONPatchError } from './error';
-import { isCircularMoveReference } from './isCircularMoveReference';
 
 /**
  * Handles JSON Patch operations targeting the root document (empty path).
@@ -13,8 +11,9 @@ import { isCircularMoveReference } from './isCircularMoveReference';
  *
  * @param source - The source document
  * @param patch - The patch operation to apply
+ * @param value - The replacement document: `patch.value` for add and replace, the `from`
+ *                value for move, and a deep copy of it for copy
  * @param patchIndex - The index of the patch for error reporting
- * @param strict - Whether to use strict equality checking
  * @returns The modified document or null for remove operations
  * @throws {JSONPatchError} When operation fails or is invalid
  * @internal
@@ -22,43 +21,17 @@ import { isCircularMoveReference } from './isCircularMoveReference';
 export const handleRootPatch = (
   source: JSONRoot,
   patch: Patch,
+  value: unknown,
   patchIndex: number,
-  strict: boolean,
 ): any => {
   switch (patch.op) {
     case Operation.ADD:
     case Operation.REPLACE:
-      return patch.value;
     case Operation.MOVE:
-      if (isCircularMoveReference(patch.from, patch.path))
-        throw new JSONPatchError(
-          'PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN',
-          `Cannot move location '${patch.from}' to '${patch.path}' - target location is a descendant of or identical to source location. This would create a circular reference.`,
-          {
-            patch,
-            patchIndex,
-            operation: patch.op,
-            from: patch.from,
-            path: patch.path,
-          },
-        );
-      return getValue(source, patch.from);
     case Operation.COPY:
-      if (isCircularMoveReference(patch.from, patch.path))
-        throw new JSONPatchError(
-          'PATCH_COPY_INTO_DESCENDANT_FORBIDDEN',
-          `Cannot copy location '${patch.from}' to '${patch.path}' - target location is a descendant of or identical to source location. This would create a circular reference.`,
-          {
-            patch,
-            patchIndex,
-            operation: patch.op,
-            from: patch.from,
-            path: patch.path,
-          },
-        );
-      return getValue(source, patch.from);
+      return value;
     case Operation.TEST:
-      if (!strict || equals(source, patch.value)) return source;
+      if (source === patch.value || equals(source, patch.value)) return source;
       throw new JSONPatchError(
         'PATCH_TEST_FAILED',
         'Test operation failed at root level. Expected value does not match actual document value',

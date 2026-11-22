@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { isArray } from '@winglet/common-utils/filter';
@@ -12,7 +13,7 @@ import { FieldInputString } from '../FieldInputString';
 import { readUnionDisplay } from './utils/readUnionDisplay';
 
 /** Wrap the string fallback with a local draft interpreted only against live union types. */
-export const FieldInputUnion = (props: FieldInputProps) => {
+export const FieldInputUnion = (props: FieldInputProps): ReactElement => {
   const { node, value, nullable, schemaType, jsonSchema, misfit } = props;
   const display = useMemo(
     () => readUnionDisplay(value, nullable),

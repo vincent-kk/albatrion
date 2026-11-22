@@ -33,10 +33,10 @@ yarn add @canard/schema-form-mui-plugin
 ### 피어 의존성 {#peer-dependencies}
 
 ```bash
-yarn add @mui/material@>=7.0.0 @mui/x-date-pickers@>=8.0.0 \
-         @mui/icons-material@>=7.0.0 \
-         @emotion/react@>=11.0.0 @emotion/styled@>=11.0.0 \
-         dayjs@>=1 react@>=18 react-dom@>=18
+yarn add @mui/material@^7.0.0 @mui/x-date-pickers@^8.0.0 \
+         @mui/icons-material@^7.0.0 \
+         @emotion/react@^11.0.0 @emotion/styled@^11.0.0 \
+         dayjs@^1.0.0 "react@>=18 <20" "react-dom@>=18 <20"
 ```
 
 ## 빠른 설정 {#quick-setup}
@@ -69,6 +69,8 @@ registerPlugin(plugin);
 | `FieldInputString` | `string` | — | — | — | MUI TextField (`format:"password"`로 비밀번호 지원) |
 | `FieldInputNumber` | `number` \| `integer` | — | — | — | MUI TextField의 type=number |
 | `FieldInputBoolean` | `boolean` | — | — | — | `indeterminate` 상태를 지원하는 MUI Checkbox |
+
+기본 저장 시점과 작은 소수 간격의 키보드 확정값 정밀도는 [패키지 README의 Slider 설명](https://github.com/vincent-kk/albatrion/blob/master/packages/canard/schema-form-mui-plugin/README-ko_kr.md#fieldinputslidertsx)을 참고하세요.
 
 ## 스키마 확장 속성 {#schema-extension-properties}
 
@@ -147,7 +149,7 @@ import type { MuiContext } from '@canard/schema-form-mui-plugin';
 ```
 
 ### 피어 의존성 {#peer-dependencies-1}
-`@mui/material@>=7`, `@mui/x-date-pickers@>=8`, `@mui/icons-material@>=7`, `@emotion/react@>=11`, `@emotion/styled@>=11`, `dayjs@>=1`, `react@>=18`
+`@mui/material@^7.0.0`, `@mui/x-date-pickers@^8.0.0`, `@mui/icons-material@^7.0.0`, `@emotion/react@^11.0.0`, `@emotion/styled@^11.0.0`, `dayjs@^1.0.0`, `react@>=18 <20`
 
 ### 컴포넌트 매핑 (우선순위 높은 순) {#component-mapping-priority-order-high--low}
 | 컴포넌트 | 선택 조건 |

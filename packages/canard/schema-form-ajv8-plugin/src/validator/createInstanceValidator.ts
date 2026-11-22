@@ -2,10 +2,8 @@ import type { JSONSchema, ValidatorFactory } from '@canard/schema-form';
 import type { Ajv } from 'ajv';
 
 import { createGuardCompiler } from './createGuardCompiler';
-import { createValidatorFactory } from './createValidatorFactory';
-import { assertBindableInstance } from './utils/assertBindableInstance';
-import { createSchemaRootRegistry } from './utils/createSchemaRootRegistry';
-import { releaseSchemaRoot } from './utils/releaseSchemaRoot';
+import { createValidationCompiler } from './createValidationCompiler';
+import type { SchemaRootRegistry } from './utils/registerSchemaRoot';
 
 /** Per-object selections of a validator built from one AJV instance. */
 export interface InstanceValidatorOptions {
@@ -21,6 +19,8 @@ export interface InstanceValidatorOptions {
  * @param ajv - Instance supplying keywords and formats; must not coerce, default or remove
  * @param dialect - Dialect URI of the entry point that constructs the object
  * @param options - Per-object selections; omitted fields take their defaults
+ * @param roots - Registrations shared across bindings by a dialect entry point
+ * @param readDirectGuardCompile - Entry-point configuration for subsequent guards
  * @returns An object satisfying the core validator contract, bound to this instance
  * @throws ValidatorBindRefusedError when `coerceTypes`, `useDefaults` or `removeAdditional` is enabled
  */
@@ -28,16 +28,16 @@ export const createInstanceValidator = (
   ajv: Ajv,
   dialect: string,
   options: InstanceValidatorOptions = {},
-): ValidatorFactory => {
-  assertBindableInstance(ajv);
-  const roots = createSchemaRootRegistry();
+  roots: SchemaRootRegistry = new WeakMap(),
+  readDirectGuardCompile?: () => boolean,
+) => {
+  const compile = createValidationCompiler(ajv, roots);
   const directGuardCompile = options.directGuardCompile ?? true;
   return {
-    compile: (jsonSchema: JSONSchema) =>
-      createValidatorFactory(ajv, roots)(jsonSchema),
+    compile,
     compileGuard: (root: JSONSchema, pointer: string) =>
-      createGuardCompiler(ajv, roots, root, pointer, directGuardCompile),
-    release: (root: JSONSchema) => releaseSchemaRoot(roots, root),
+      createGuardCompiler(ajv, roots, root, pointer, readDirectGuardCompile?.() ?? directGuardCompile),
+    release: (root: JSONSchema) => { roots.delete(root); },
     dialect,
   } satisfies ValidatorFactory;
 };

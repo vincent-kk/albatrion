@@ -34,10 +34,10 @@ yarn add @canard/schema-form-mui-plugin
 ### Peer Dependencies
 
 ```bash
-yarn add @mui/material@>=7.0.0 @mui/x-date-pickers@>=8.0.0 \
-         @mui/icons-material@>=7.0.0 \
-         @emotion/react@>=11.0.0 @emotion/styled@>=11.0.0 \
-         dayjs@>=1 react@>=18 react-dom@>=18
+yarn add @mui/material@^7.0.0 @mui/x-date-pickers@^8.0.0 \
+         @mui/icons-material@^7.0.0 \
+         @emotion/react@^11.0.0 @emotion/styled@^11.0.0 \
+         dayjs@^1.0.0 "react@>=18 <20" "react-dom@>=18 <20"
 ```
 
 ## Quick Setup
@@ -70,6 +70,8 @@ Components are selected automatically based on JSON Schema properties. Priority 
 | `FieldInputString` | `string` | — | — | — | MUI TextField (password via `format:"password"`) |
 | `FieldInputNumber` | `number` \| `integer` | — | — | — | MUI TextField type=number |
 | `FieldInputBoolean` | `boolean` | — | — | — | MUI Checkbox with indeterminate |
+
+See the [package README’s Slider section](https://github.com/vincent-kk/albatrion/blob/master/packages/canard/schema-form-mui-plugin/README.md#fieldinputslidertsx) for commit timing and numeric precision when selecting with a keyboard.
 
 ## Schema Extension Properties
 
@@ -148,7 +150,7 @@ import type { MuiContext } from '@canard/schema-form-mui-plugin';
 ```
 
 ### Peer dependencies
-`@mui/material@>=7`, `@mui/x-date-pickers@>=8`, `@mui/icons-material@>=7`, `@emotion/react@>=11`, `@emotion/styled@>=11`, `dayjs@>=1`, `react@>=18`
+`@mui/material@^7.0.0`, `@mui/x-date-pickers@^8.0.0`, `@mui/icons-material@^7.0.0`, `@emotion/react@^11.0.0`, `@emotion/styled@^11.0.0`, `dayjs@^1.0.0`, `react@>=18 <20`
 
 ### Component mapping (priority order, high → low)
 | Component | Trigger |

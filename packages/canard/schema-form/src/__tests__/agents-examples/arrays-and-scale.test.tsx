@@ -216,10 +216,9 @@ it('one setValue or one batch notifies the array node once while a push loop not
 for (let i = 0; i < 100; i++) arrayNode.push(createItem(i));
 
 // ✅ notifies once per affected node
-formRef.current?.setValue((prev) => ({
-  ...prev,
-  items: Array.from({ length: 100 }, (_, i) => createItem(i)),
-}));
+formRef.current
+  ?.findNode('/items')
+  ?.setValue(Array.from({ length: 100 }, (_, i) => createItem(i)));
     }
   });
   expect(deliveriesAfterLoop).toBe(100);
@@ -238,7 +237,7 @@ formRef.current?.setValue((prev) => ({
   expect(FieldNodeEventType.UpdateValue).toBeGreaterThan(0);
 });
 
-it('uses a fixed removal count while batch getters retain the committed array', () => {
+it('uses a fixed removal count and batch getters observe the applied array', () => {
   const formRef = createRef<FormHandle<typeof bulkSchema>>();
   render(
     <Form
@@ -260,13 +259,12 @@ it('uses a fixed removal count while batch getters retain the committed array', 
       {
 const removeCount = Math.max(0, arrayNode.children!.length - 1);
 arrayNode.batch(() => {
-  for (let remaining = removeCount; remaining > 0; remaining--)
-    arrayNode.pop();
+  for (let remaining = removeCount; remaining > 0; remaining--) arrayNode.pop();
 });
       }
-      expect(arrayNode.value).toBe(committedValue);
-      expect(arrayNode.children).toBe(committedChildren);
-      expect(arrayNode.children).toHaveLength(3);
+      expect(arrayNode.value).toEqual([committedValue?.[0]]);
+      expect(arrayNode.children?.[0]).toBe(committedChildren?.[0]);
+      expect(arrayNode.children).toHaveLength(1);
       expect(listener).not.toHaveBeenCalled();
     });
   });

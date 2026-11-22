@@ -16,7 +16,7 @@ type TextareaSchema = StringSchema & {
 };
 
 const FieldInputTextarea = ({
-  path,
+  inputId,
   name,
   jsonSchema,
   readOnly,
@@ -24,22 +24,31 @@ const FieldInputTextarea = ({
   defaultValue,
   onChange,
   placeholder,
+  minRows,
+  maxRows,
   misfit,
+  className,
+  style,
 }: FieldInputPropsWithSchema<string, TextareaSchema>) => {
   const handleChange = useHandle((text: string) =>
     onChange(text === '' ? undefined : text),
   );
   const autoSize = useMemo(
     () => ({
-      minRows: jsonSchema.minRows,
-      maxRows: jsonSchema.maxRows,
+      minRows: minRows ?? jsonSchema.minRows,
+      maxRows: maxRows ?? jsonSchema.maxRows,
     }),
-    [jsonSchema],
+    [minRows, maxRows, jsonSchema.minRows, jsonSchema.maxRows],
   );
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div
+      className={className}
+      style={style}
+      role="group"
+      aria-invalid={misfit || undefined}
+    >
       <TextArea
-        id={path}
+        id={inputId}
         name={name}
         disabled={disabled}
         readOnly={readOnly}

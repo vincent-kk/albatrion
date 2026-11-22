@@ -11,6 +11,7 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { getMuiFieldPresentation } from './utils/presentation/getMuiFieldPresentation';
 
 type StringJSONSchema = StringSchema & {
   format?: 'password';
@@ -28,7 +29,8 @@ interface FieldInputStringProps
 }
 
 const FieldInputString = ({
-  path,
+  inputId,
+  labelId: fieldTitleId,
   name,
   jsonSchema,
   required,
@@ -44,30 +46,17 @@ const FieldInputString = ({
   fullWidth: fullWidthProp,
   hideLabel,
   misfit,
+  getInputId,
+  className,
+  style,
 }: FieldInputStringProps) => {
-  const [label, size, variant, fullWidth] = useMemo(() => {
-    if (hideLabel)
-      return [
-        undefined,
-        sizeProp || context.size,
-        variantProp || context.variant,
-        fullWidthProp ?? context.fullWidth,
-      ];
-    return [
-      labelProp || name,
-      sizeProp || context.size,
-      variantProp || context.variant,
-      fullWidthProp ?? context.fullWidth,
-    ];
-  }, [
-    context,
+  const [label, size, variant, fullWidth] = getMuiFieldPresentation(
     labelProp,
     name,
-    sizeProp,
-    variantProp,
-    fullWidthProp,
     hideLabel,
-  ]);
+    { size: sizeProp, variant: variantProp, fullWidth: fullWidthProp },
+    context,
+  );
 
   const isPassword = useMemo(() => {
     return (
@@ -81,9 +70,12 @@ const FieldInputString = ({
     onChange(text === '' ? undefined : text);
   });
 
+  const labelId = label ? getInputId('legend') : fieldTitleId;
   return (
     <TextField
-      id={path}
+      className={className}
+      style={style}
+      id={inputId}
       name={name}
       type={isPassword ? 'password' : 'text'}
       variant={variant}
@@ -97,6 +89,8 @@ const FieldInputString = ({
       onChange={handleChange}
       size={size}
       slotProps={{
+        inputLabel: { id: labelId },
+        htmlInput: { 'aria-labelledby': labelId },
         input: {
           readOnly,
         },

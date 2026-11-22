@@ -1,7 +1,4 @@
-import {
-  appendSegment,
-  parsePointerSegments,
-} from '@/schema-form/helpers/jsonPointer';
+import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
 
 import type {
   Blueprint,
@@ -10,6 +7,7 @@ import type {
 } from '../../../blueprint';
 import type { TreeMemoStores } from '../../../types/treeMemoStores';
 import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
+import { isOwnActiveGate } from './isOwnActiveGate';
 
 interface GateBudgetIndex {
   /** Authored decisions reached by each evaluated gate. */
@@ -69,11 +67,7 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
       if (fieldControl) add(gate, 'node:' + gate.schemaPath);
       else if (
         declaration.scope === 'node' &&
-        gate.schemaPath ===
-          appendSegment(
-            appendSegment(declaration.schemaPath, 'controls'),
-            'active',
-          )
+        isOwnActiveGate(gate.schemaPath, declaration.schemaPath)
       )
         add(gate, 'node:' + gate.schemaPath);
     }

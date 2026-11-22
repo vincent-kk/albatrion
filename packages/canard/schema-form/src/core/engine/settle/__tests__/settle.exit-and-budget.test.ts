@@ -522,7 +522,7 @@ describe('settle exits and budgets', () => {
     ).toThrow();
     expect(unstable.runtime.settlementScratch?.isInUse).toBe(false);
     expect(unstable.runtime.settlementScratch?.enteredNodes.size).toBe(0);
-    expect(unstable.runtime.settlementScratch?.automaticLog).toHaveLength(0);
+    expect(unstable.storedOutputValue).toEqual({ a: true, b: true });
     expect(unstable.runtime.settlementScratch?.changedNodes.size).toBe(0);
   });
 });

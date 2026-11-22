@@ -1,12 +1,19 @@
-import { useCallback, useMemo } from 'react';
-
 import { Slider } from 'antd';
+
+import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   FieldInputDefinition,
   FieldInputPropsWithSchema,
   NumberSchema,
 } from '@canard/schema-form';
+
+import { antdMinorVersion } from './utils/antdMinorVersion';
+import { getSliderBounds } from './utils/slider/getSliderBounds';
+
+/** Ant Design versions before 5.12 expose only the legacy commit callback. */
+const commitEvent =
+  antdMinorVersion < 12 ? 'onAfterChange' : 'onChangeComplete';
 
 interface FieldInputSliderProps
   extends FieldInputPropsWithSchema<number | null, NumberSchema> {
@@ -18,45 +25,66 @@ interface FieldInputSliderProps
 }
 
 const FieldInputSlider = ({
-  path,
+  inputId,
+  focusRef,
+  labelId,
   jsonSchema,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   lazy,
   misfit,
+  className,
+  style,
 }: FieldInputSliderProps) => {
-  const handleChange = useCallback(
-    (value: number | null) => {
-      if (value === null) onChange(undefined);
-      else if (!Number.isNaN(value)) onChange(value);
-    },
-    [onChange],
-  );
-
-  const { min, max, step, ...changeHandler } = useMemo(() => {
-    return {
-      min: jsonSchema.minimum,
-      max: jsonSchema.maximum,
-      step: jsonSchema.multipleOf,
-      ...(lazy === false
-        ? { onChange: handleChange }
-        : { onChangeComplete: handleChange }),
-    } as const;
-  }, [handleChange, jsonSchema, lazy]);
+  const { min, max, step, isEmpty } = getSliderBounds(jsonSchema);
+  const isLocked = disabled || readOnly || isEmpty;
+  const initialValue =
+    typeof defaultValue === 'number' ? defaultValue : undefined;
+  const storedDecimal =
+    readOnly &&
+    jsonSchema.type.includes('number') &&
+    jsonSchema.multipleOf === undefined &&
+    initialValue !== undefined &&
+    initialValue >= min &&
+    initialValue <= max &&
+    !Number.isInteger(initialValue)
+      ? initialValue
+      : undefined;
+  const handleChange = useHandle((value: number | null) => {
+    if (isEmpty) return;
+    if (value === null) onChange(undefined);
+    else if (!Number.isNaN(value)) onChange(value);
+  });
 
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div
+      className={className}
+      style={style}
+      role="group"
+      aria-invalid={misfit || undefined}
+    >
       <Slider
-        id={path}
-        disabled={disabled}
+        id={inputId}
+        ref={isLocked ? undefined : focusRef}
+        ariaLabelledByForHandle={labelId}
+        disabled={isLocked}
         min={min}
         max={max}
-        step={step}
-        defaultValue={
-          typeof defaultValue === 'number' ? defaultValue : undefined
+        step={storedDecimal === undefined ? step : null}
+        marks={
+          storedDecimal === undefined
+            ? undefined
+            : {
+                [storedDecimal]: { label: ' ', style: { display: 'none' } },
+              }
         }
-        {...changeHandler}
+        defaultValue={initialValue}
+        {...{
+          [lazy === false && min !== max ? 'onChange' : commitEvent]:
+            handleChange,
+        }}
       />
     </div>
   );

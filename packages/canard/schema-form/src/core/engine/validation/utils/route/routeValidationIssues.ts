@@ -103,8 +103,10 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
       while (node.parent && node.childrenByName === null) node = node.parent;
     }
     if (!inScope(node)) continue;
-    const previous = next.get(node) ?? [];
-    next.set(node, [...previous, issue]);
+    const previous = next.get(node);
+    // In-scope buckets are removed before collection; these arrays belong to this pass.
+    if (Array.isArray(previous)) previous.push(issue);
+    else next.set(node, [issue]);
   }
   const changed = new Set<Self>();
   const candidates = new Set(before.keys());

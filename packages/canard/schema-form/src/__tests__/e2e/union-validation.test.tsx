@@ -56,7 +56,15 @@ describe('VALIDATE-010 / VALIDATE-036 split render disposition', () => {
     try {
       expect((await form.validate()).length).toBeGreaterThan(0);
       expect(
-        Array.from(form.container.querySelector('[data-view="split"]')?.querySelectorAll('em') ?? []).find((message) => message.closest('[data-path]')?.getAttribute('data-path') === '/name')?.textContent,
+        Array.from(
+          form.container
+            .querySelector('[data-view="split"]')
+            ?.querySelectorAll('em') ?? [],
+        ).find(
+          (message) =>
+            message.closest('[data-path]')?.getAttribute('data-path') ===
+            '/name',
+        )?.textContent,
       ).toBeTruthy();
       await form.setValue({ kind: 'b', name: 'valid', b: 'B' });
       expect(await form.validate()).toEqual([]);
@@ -65,7 +73,10 @@ describe('VALIDATE-010 / VALIDATE-036 split render disposition', () => {
       )) {
         expect(view.querySelector('[data-path="/a"]')).toBeNull();
         expect(
-          view.querySelector('[data-path="/b"] input')?.getAttribute('id'),
+          view
+            .querySelector('[data-path="/b"] input')
+            ?.closest('[data-path]')
+            ?.getAttribute('data-path'),
         ).toBe('/b');
       }
       expect(form.errorTexts()).toEqual([]);

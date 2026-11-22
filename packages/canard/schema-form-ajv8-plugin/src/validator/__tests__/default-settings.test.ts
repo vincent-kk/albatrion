@@ -100,3 +100,18 @@ it('VALIDATE-046 resolves a bound schema in a same-id conflict sibling', async (
 });
 
 });
+
+it('keeps default guard and 2020 tuple compilation quiet', async () => {
+  vi.resetModules();
+  const { ajvValidatorPlugin } = await import('../../2020/validatorPlugin');
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+  try {
+    const root = { properties: { guard: { required: ['name'] } } };
+    expect(ajvValidatorPlugin.compileGuard(root, '/properties/guard')({})).toBe(false);
+    const validate = ajvValidatorPlugin.compile({ type: 'array', prefixItems: [{ type: 'number' }] });
+    expect(await validate([1])).toBeNull();
+    expect(warn).not.toHaveBeenCalled();
+  } finally {
+    warn.mockRestore();
+  }
+});

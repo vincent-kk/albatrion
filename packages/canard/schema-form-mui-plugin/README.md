@@ -18,7 +18,7 @@ FieldRenderer composes the bound Input and ErrorMessage parts without a group la
 
 ## Notice
 
-⚠️ This plugin provides pre-implemented core components commonly needed when using `@canard/schema-form` in Ant Design Mobile environments.
+⚠️ This plugin provides pre-implemented core components commonly needed when using `@canard/schema-form` in Material-UI environments.
 
 📌 As the plugin's purpose is to enhance development convenience, it does not include every possible component.
 
@@ -68,25 +68,31 @@ This plugin provides the following Material-UI components:
 
 - **Role**: Special input field for URI entry (with protocol dropdown)
 - **Applied when**: `type` is `"string"` and `format` or `inputType` is `"uri"`
-- **Additional features**: Protocol selection dropdown, default protocol list support (http, https), custom protocol list via `presentation.FieldInputProps.protocols`, support for single-colon protocols like mailto/tel
+- **Additional features**: Protocol selection dropdown, default protocol list support (http, https), custom protocol list via `presentation.FieldInputProps.protocols`, support for single-colon protocols like mailto/tel; a value whose scheme is not in the list keeps that scheme, which the dropdown adds as an extra option
+
+#### URI scheme preservation
+
+URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid scheme prefix is preserved with its original case and delimiter (`:` or `://`), including unlisted schemes, `localhost:3000`, and `a:b`. Values without a scheme keep no scheme. Mounting, external writes, reset, and Activity visibility changes never rewrite stored values, including stored scheme-only strings. While the address is non-empty, changing either displayed part preserves the other. Clearing the address or choosing only a scheme with an empty address publishes `undefined`; the chosen scheme stays local so typing resumes with that choice. External writes and reset display the stored scheme, or retain the last user choice when the value is undefined. Bare configured `http`, `https`, and `ftp` use `://`; other bare schemes use `:`. An explicitly configured delimiter is preserved.
 
 ### **[`FieldInputMonth.tsx`](./src/fieldInputs/FieldInputMonth.tsx)**
 
 - **Role**: DatePicker for month selection (month mode)
 - **Applied when**: `type` is `"string"` and `format` is `"month"`
-- **Additional features**: Uses MUI X DatePickers, support for `minimum`, `maximum` range limits, YYYY-MM format
+- **Additional features**: Uses MUI X DatePickers, range limits through `presentation.FieldInputProps.minimum` and `maximum` (YYYY-MM; an invalid limit such as `2024-13` is ignored), YYYY-MM format
 
 ### **[`FieldInputDate.tsx`](./src/fieldInputs/FieldInputDate.tsx)**
 
 - **Role**: DatePicker for date selection
 - **Applied when**: `type` is `"string"` and `format` is `"date"`
-- **Additional features**: Uses MUI X DatePickers with Dayjs, support for `minimum`, `maximum` date range limits, YYYY-MM-DD format
+- **Additional features**: Uses MUI X DatePickers with Dayjs, date range limits from `presentation.FieldInputProps.minimum` and `maximum` (YYYY-MM-DD. An invalid limit such as `2024-02-31` is ignored), YYYY-MM-DD format
+
+The Date adapter also reads a matching limit from the schema passed directly to its input definition when the presentation limit is absent. In a standard Form, supply the limits in presentation because the bound string schema omits those numeric keywords.
 
 ### **[`FieldInputTime.tsx`](./src/fieldInputs/FieldInputTime.tsx)**
 
 - **Role**: TimePicker for time selection
 - **Applied when**: `type` is `"string"` and `format` is `"time"`
-- **Additional features**: Uses MUI X DatePickers, time stored in HH:mm:00Z format
+- **Additional features**: Uses MUI X DatePickers, time stored in HH:mm:ss format, without a time-zone offset
 
 ### **[`FieldInputRadioGroup.tsx`](./src/fieldInputs/FieldInputRadioGroup.tsx)**
 
@@ -96,9 +102,11 @@ This plugin provides the following Material-UI components:
 
 ### **[`FieldInputStringEnum.tsx`](./src/fieldInputs/FieldInputStringEnum.tsx)**
 
-- **Role**: Display string or string array selection as Select dropdown
+- **Role**: Display a string selection as Select dropdown
 - **Applied when**: `type` is `"string"` and `enum` values exist
 - **Additional features**: Material Design styling with FormControl and InputLabel, support for custom labels per option (alias)
+
+The Select trigger, popup menu and hidden native input have separate Form-scoped IDs. Two Forms can use a Select with the same leaf name and still have distinct menu IDs.
 
 ### **[`FieldInputArray.tsx`](./src/fieldInputs/FieldInputArray.tsx)**
 
@@ -111,6 +119,13 @@ This plugin provides the following Material-UI components:
 - **Role**: Input numeric values using a slider
 - **Applied when**: `type` is `"number"` or `"integer"` and `inputType` is `"slider"`
 - **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties, lazy update option (`presentation.FieldInputProps.lazy`), mark display option, automatic value label display
+
+With `presentation.FieldInputProps.lazy` omitted or set to `true`, the Slider stores the value when you press a movement key or release the pointer. Set `lazy: false` to store every move. If your app must store only on key release, register a custom `FieldInput` through `fieldInputDefinitions`.
+
+An unset slider hides its resting thumb. Set `presentation.FieldInputProps.unsetValueText` to localize its screen reader announcement.
+
+Keyboard commits at decimal steps can include floating-point error. MUI Material 7.3.1 can store `0.30000000000000004` after ArrowUp at `0.2` with `multipleOf: 0.1`, where the grid value is `0.3`. With `multipleOf: 1e-7` and a current value of `1.2e-6`, ArrowUp can store `0.0000012999999999999998` instead of `1.3e-6` in MUI Material 7.3.1. If your form needs an exact decimal grid, register a custom `FieldInput` through `fieldInputDefinitions`.
+The slider uses inclusive and exclusive schema limits to declare legal stops. If the interval contains no supported stop, the slider is disabled. An unset field announces `Not set` without a visible resting thumb. Set `presentation.FieldInputProps.unsetValueText` to localize that announcement.
 
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 
@@ -134,7 +149,7 @@ This plugin provides the following Material-UI components:
 
 - **Role**: Display boolean values as checkboxes
 - **Applied when**: `type` is `"boolean"` (fallback when other conditions don't match)
-- **Additional features**: Support for `indeterminate` state for `undefined` values, uses FormControlLabel
+- **Additional features**: `null` and any other non-boolean value show the `indeterminate` state; an unset (`undefined`) value shows an unchecked box; uses FormControlLabel
 
 ---
 
@@ -189,7 +204,7 @@ Please use a transpiler like Babel to transform the code for your target environ
 
 **Dependency requirements:**
 
-- React 18.0.0 or later (below 19.0.0)
+- React 18.0.0 or later (below 20.0.0)
 - @mui/material 7.0.0 or later
 - @mui/x-date-pickers 8.0.0 or later (for date/time related components)
 - @emotion/react, @emotion/styled (MUI styling engine)
@@ -203,6 +218,34 @@ This repository is licensed under the MIT License. Please refer to the [`LICENSE
 
 ---
 
+## Scoped control identifiers
+
+Element ids are scoped to each Form and unique across Forms and contain no whitespace. Treat their spelling as opaque: never append to, decode, or parse an id. `path` remains the JSON Pointer used for form data. Custom inputs put `inputId` on their primary control and use `getInputId(key)` for additional elements; the key is required, and numeric and string keys with the same spelling identify the same element. Use a distinct key for each option, range endpoint, thumb, protocol selector, or input-owned label. A field title uses `labelId`, referenced through `aria-labelledby`. Custom renderers receive `inputId` and `labelId` for the same field. Single-control labels target `inputId`. `name` retains the leaf name; native radio names use `inputId` so fields and Forms remain independent.
+
+```tsx
+const Input = ({ inputId, name }: FieldInputProps<string>) => (
+  <input id={inputId} name={name} />
+);
+```
+
+Field titles connect through the id and ARIA props supported by the UI library.
+
+For a composite custom input, consume `labelId` and `getInputId` explicitly rather than spreading them into DOM props. A getter is stable until the field scope or path changes. Never derive ids from the leaf name or from `path`.
+
+Scope selectors to the intended Form, such as `formElement.querySelector('[data-path="/email"] input')`, or connect labels using the control's supplied id. Form API values retain the schema shape.
+
 ## Contact
 
 For inquiries or suggestions related to the project, please create an issue.
+
+### Switch values and state labels
+
+For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the unchecked (off) value.
+
+A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
+
+For string switches, use the schema-level `switchLabels: [checkedLabel, uncheckedLabel]` tuple for custom state labels.
+
+### Sliders
+
+The UI library determines the slider’s unset display, stops, and keyboard behavior.

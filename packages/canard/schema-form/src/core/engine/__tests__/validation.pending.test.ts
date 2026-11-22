@@ -6,6 +6,7 @@ import { ValidationMode } from '../types/state';
 import { subscribeFieldNodeRevealReleased } from '../validation';
 import {
   adoptFieldNodeChain,
+  dispatchContextChange,
   dispatchMount,
   dispatchResetForm,
   dispatchSetValue,
@@ -78,7 +79,7 @@ it.each(['null', 'throw', 'compile'] as const)(
   },
 );
 
-it('IR-6 a commit-only discard keeps pending until the newest verdict', async () => {
+it('IR-6 a commit-only change accepts the verdict without keeping pending', async () => {
   const clock = createValidationFrameClock();
   let finish!: (issues: readonly []) => void;
   const { root, runtime } = createDispatchTree({ type: 'string' }, undefined, {
@@ -94,13 +95,6 @@ it('IR-6 a commit-only discard keeps pending until the newest verdict', async ()
   clock.frame();
   await clock.task();
   runtime.commitNumber = (runtime.commitNumber ?? 0) + 1;
-  finish([]);
-  await clock.task();
-  expect(root.rootNode.runtime.isValidationPending ?? false).toBe(true);
-  clock.frame();
-  await clock.task();
-  clock.frame();
-  await clock.task();
   finish([]);
   await clock.task();
   expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
@@ -237,16 +231,6 @@ it.each(['null', 'execute', 'compile', 'commit'] as const)(
     if (mode === 'execute' || mode === 'compile')
       await expect(verdict).rejects.toBeDefined();
     else await verdict;
-    if (mode === 'commit') {
-      expect(root.rootNode.runtime.isValidationPending ?? false).toBe(true);
-      expect(listener).not.toHaveBeenCalled();
-      clock.frame();
-      await clock.task();
-      clock.frame();
-      await clock.task();
-      finish([]);
-      await clock.task();
-    }
     expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
     expect(listener).toHaveBeenCalledTimes(1);
     clock.frame();
@@ -272,3 +256,39 @@ it('IR-6 unsubscribed release listeners stay silent during explicit root validat
   expect(listener).not.toHaveBeenCalled();
   expect(root.rootNode.runtime.isValidationPending ?? false).toBe(false);
 });
+
+it.each(['output', 'context'] as const)(
+  'IR-6 changed %s still discards an in-flight verdict and reruns',
+  async (change) => {
+    const clock = createValidationFrameClock();
+    const finishes: ((issues: readonly []) => void)[] = [];
+    const { root, runtime } = createDispatchTree(
+      { type: 'string' },
+      undefined,
+      {
+        compile: () => () =>
+          new Promise<readonly []>((resolve) => finishes.push(resolve)),
+        compileGuard: () => () => true,
+      },
+    );
+    dispatchMount(root, 'old', undefined, { deferValidation: true });
+    runtime.validationMode = ValidationMode.OnChange;
+    dispatchSetValue(root, 'new');
+    clock.frame();
+    await clock.task();
+    if (change === 'output') dispatchSetValue(root, 'newest');
+    else dispatchContextChange(root, { changed: true });
+    finishes[0]([]);
+    await clock.task();
+    expect(runtime.isValidationPending).toBe(true);
+    clock.frame();
+    await clock.task();
+    clock.frame();
+    await clock.task();
+    expect(finishes).toHaveLength(2);
+    finishes[1]([]);
+    await clock.task();
+    expect(runtime.isValidationPending).toBe(false);
+    expect(runtime.validationResult?.commit).toBe(runtime.commitNumber);
+  },
+);

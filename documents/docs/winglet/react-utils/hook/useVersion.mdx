@@ -493,3 +493,8 @@ const ErrorRecoveryComponent = () => {
   );
 };`}
 />
+
+## Notes
+
+Callback reads use the last committed render. React 18 and 19 publish
+before layout effects; older supported React peers publish in the parent layout effect.

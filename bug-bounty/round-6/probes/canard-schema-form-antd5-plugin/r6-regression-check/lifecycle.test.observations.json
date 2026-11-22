@@ -1,0 +1,18 @@
+[
+  {
+    "revision": "16f3ba679-parent",
+    "transitioned": "2.4",
+    "mounted": "2.4",
+    "stored": {
+      "level": 2.4
+    }
+  },
+  {
+    "revision": "16f3ba679",
+    "transitioned": "2",
+    "mounted": "2.4",
+    "stored": {
+      "level": 2.4
+    }
+  }
+]

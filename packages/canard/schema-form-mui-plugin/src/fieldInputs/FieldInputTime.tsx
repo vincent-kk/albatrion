@@ -2,9 +2,7 @@ import { type ReactNode, useMemo } from 'react';
 
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { type Dayjs } from 'dayjs';
-
-import { useHandle } from '@winglet/react-utils/hook';
+import dayjs from 'dayjs';
 
 import type {
   FieldInputDefinition,
@@ -13,6 +11,9 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
+import { getPickerSlotProps } from './utils/picker/getPickerSlotProps';
+import { usePickerValueChange } from './utils/picker/usePickerValueChange';
+import { getMuiFieldPresentation } from './utils/presentation/getMuiFieldPresentation';
 
 type TimeJSONSchema = StringSchema & {
   format: 'time';
@@ -28,7 +29,10 @@ interface FieldInputTimeProps
 }
 
 const FieldInputTime = ({
-  path,
+  inputId,
+  focusRef,
+  labelId,
+  getInputId,
   name,
   jsonSchema,
   required,
@@ -44,52 +48,26 @@ const FieldInputTime = ({
   ampm: ampmProp,
   hideLabel,
   misfit,
+  className,
+  style,
 }: FieldInputTimeProps) => {
-  const [label, size, variant, fullWidth, ampm] = useMemo(() => {
-    if (hideLabel)
-      return [
-        undefined,
-        sizeProp || context.size,
-        variantProp || context.variant,
-        fullWidthProp ?? context.fullWidth,
-        ampmProp ?? jsonSchema.ampm,
-      ];
-    return [
-      labelProp || name,
-      sizeProp || context.size,
-      variantProp || context.variant,
-      fullWidthProp ?? context.fullWidth,
-      ampmProp ?? jsonSchema.ampm,
-    ];
-  }, [
-    jsonSchema,
-    context,
+  const [label, size, variant, fullWidth] = getMuiFieldPresentation(
     labelProp,
     name,
-    sizeProp,
-    variantProp,
-    fullWidthProp,
-    ampmProp,
     hideLabel,
-  ]);
+    { size: sizeProp, variant: variantProp, fullWidth: fullWidthProp },
+    context,
+  );
+  const ampm = ampmProp ?? jsonSchema.ampm;
 
   const timeValue = useMemo(() => {
     if (typeof defaultValue !== 'string' || !defaultValue) return null;
-
-
 
     const today = dayjs().format('YYYY-MM-DD');
     return dayjs(`${today}T${defaultValue}`);
   }, [defaultValue]);
 
-  const handleChange = useHandle((newValue: Dayjs | null) => {
-    if (newValue === null) {
-      onChange(undefined);
-      return;
-    }
-    if (!newValue.isValid()) return;
-    onChange(newValue.format('HH:mm:ss'));
-  });
+  const handleChange = usePickerValueChange(onChange, 'HH:mm:ss');
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -102,7 +80,16 @@ const FieldInputTime = ({
         ampm={ampm}
         slotProps={{
           textField: {
-            id: path,
+            className,
+            style,
+            ...getPickerSlotProps(
+              inputId,
+              labelId,
+              getInputId,
+              !!label,
+              disabled,
+              focusRef,
+            ),
             name,
             required,
             size,

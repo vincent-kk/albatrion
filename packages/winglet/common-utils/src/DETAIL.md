@@ -8,6 +8,8 @@
 
 ## API Contracts
 
+workspace의 source 조건은 개발 빌드의 입력입니다. 배포 파일에는 src가 없으므로 publishConfig.exports는 source 조건을 제외한 동일한 런타임·선언 경계를 기록합니다. 공개 진입점과 types·import·require 대상의 일치를 유지하여 개발 입력이 배포 해석을 가로채지 않게 합니다.
+
 - `index.ts`는 값에는 `export { ... } from`, 타입 전용 심볼에는 `export type { ... } from` 형태의 이름 재수출을 사용한다. 어느 경우에도 심볼 이름은 원본 모듈의 export 이름과 동일하다.
 - 재수출 대상의 동작 계약은 해당 소유 모듈이 책임진다. 루트 계약은 이름과 공개 경계의 일관성만 다룬다.
 

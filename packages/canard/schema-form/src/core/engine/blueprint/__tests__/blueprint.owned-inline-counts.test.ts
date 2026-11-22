@@ -3,6 +3,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import { type AuthoredSchema } from '@/schema-form/core/engine/types/jsonSchema';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
 
 import { default as fixtures } from './fixtures/ownedInlineMounts.json';
 
@@ -24,7 +25,7 @@ it.each(expectations)(
     const frozen = vi.spyOn(Object, 'freeze');
     nodeFromJSONSchema({
       jsonSchema: schema,
-      validationMode: 0,
+      validationMode: ValidationMode.None,
       onChange: () => {},
     });
     for (let turn = 0; turn < 64; turn++) await Promise.resolve();

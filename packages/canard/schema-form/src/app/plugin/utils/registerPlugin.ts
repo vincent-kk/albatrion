@@ -1,5 +1,4 @@
 import { isPlainObject } from '@winglet/common-utils/filter';
-import { createFingerprintFactory } from '@winglet/common-utils/object';
 
 import type { Nullable } from '@aileron/declare';
 
@@ -8,10 +7,7 @@ import { FormErrorCode, UnhandledError } from '@/schema-form/errors';
 import type { SchemaFormPlugin } from '../type';
 import { PluginManager } from './PluginManager';
 import { formatRegisterPluginError } from './formatRegisterPluginError';
-
-const RegisteredPlugin = new Set<string>();
-/** Identity scope shared by plugin registrations; mutable content is recomputed. */
-const getPluginKey = createFingerprintFactory();
+import { getScopedPluginManager } from './getScopedPluginManager';
 
 /**
  * Registers a schema form plugin to extend or customize form functionality globally.
@@ -21,6 +17,7 @@ const getPluginKey = createFingerprintFactory();
  * to prevent duplicate registrations.
  *
  * @param plugin - Plugin configuration object or null to reset all plugins to defaults
+ * @param options - Optional application scope, paired with FormProvider.pluginScope.
  * @throws {UnhandledError} When plugin registration fails
  *
  * @example
@@ -197,22 +194,32 @@ const getPluginKey = createFingerprintFactory();
  * - Use `null` parameter to reset ALL plugins to system defaults
  * - After reset, previously registered plugins need to be re-registered
  */
-export const registerPlugin = (plugin: Nullable<SchemaFormPlugin>) => {
+export const registerPlugin = (
+  plugin: Nullable<SchemaFormPlugin>,
+  options?: { scope: string | symbol },
+) => {
+  const scope = options?.scope;
+  const manager =
+    scope === undefined ? PluginManager : getScopedPluginManager(scope);
   if (plugin === null) {
-    PluginManager.reset();
-    RegisteredPlugin.clear();
+    manager.reset();
     return;
   }
-  if (!isPlainObject(plugin)) return;
-  const hash = getPluginKey(plugin);
-  if (RegisteredPlugin.has(hash)) return;
+  if (plugin === undefined) return;
   try {
-    const { fieldInputDefinitions, validator, formatError, ...renderKit } =
-      plugin;
-    PluginManager.appendRenderKit(renderKit);
-    PluginManager.appendFieldInputDefinitions(fieldInputDefinitions);
-    PluginManager.appendValidator(validator);
-    PluginManager.appendFormatError(formatError);
+    const candidate = plugin;
+    const configuration = isPlainObject(plugin)
+      ? plugin
+      : {
+          FieldRenderer: candidate.FieldRenderer,
+          LabelRenderer: candidate.LabelRenderer,
+          InputRenderer: candidate.InputRenderer,
+          ErrorMessageRenderer: candidate.ErrorMessageRenderer,
+          fieldInputDefinitions: candidate.fieldInputDefinitions,
+          validator: candidate.validator,
+          formatError: candidate.formatError,
+        };
+    manager.register(configuration);
   } catch (error) {
     throw new UnhandledError(
       FormErrorCode.RegisterPlugin,
@@ -223,5 +230,4 @@ export const registerPlugin = (plugin: Nullable<SchemaFormPlugin>) => {
       },
     );
   }
-  RegisteredPlugin.add(hash);
 };

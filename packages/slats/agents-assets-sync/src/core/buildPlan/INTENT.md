@@ -18,7 +18,7 @@
 ### Always do
 
 - 매니페스트 항목과 발견한 orphan 각각에 대해 액션을 최대 하나만 만듭니다.
-- warn-diverged와 force 없이 발견한 orphan은 requiresForce를 설정합니다.
+- warn-diverged와 발견한 모든 orphan은 force 여부와 무관하게 requiresForce를 설정합니다.
 - 목적지가 없는 매니페스트 항목은 건너뜁니다. 목적지 부재는 종류 필터에 의해 제외되었다는 신호입니다.
 
 ### Ask first

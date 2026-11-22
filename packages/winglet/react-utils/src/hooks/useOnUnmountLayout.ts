@@ -1,8 +1,8 @@
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import { useReference } from './useReference';
+import { useCommittedReference } from './utils/useCommittedReference';
 
 /**
  * Executes a cleanup function synchronously when the component unmounts, before browser painting.
@@ -23,7 +23,7 @@ import { useReference } from './useReference';
  * is essential to prevent visual artifacts. For most cleanup, prefer `useOnUnmount`.
  *
  * ### Handler Freshness
- * The handler passed on the most recent render is the one that runs, so it observes the
+ * The handler passed on the most recent committed render is the one that runs, so it observes the
  * props and state of that render. The handler is never invoked on re-renders, only on
  * unmount.
  *
@@ -56,6 +56,6 @@ import { useReference } from './useReference';
  * @see useOnUnmount - The non-blocking variant, correct for most cleanup
  */
 export const useOnUnmountLayout = (handler: Fn) => {
-  const handlerRef = useReference(handler);
+  const handlerRef = useCommittedReference(useRef(handler), handler);
   useLayoutEffect(() => () => handlerRef.current(), [handlerRef]);
 };

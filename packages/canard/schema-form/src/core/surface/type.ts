@@ -6,6 +6,8 @@ import type {
   Optional,
 } from '@aileron/declare';
 
+import type { LiteralPrimitiveKind } from '@/schema-form/types';
+
 import type { BlueprintSchema, NodeStrategy, SchemaTypeName } from '../engine';
 import type { InactiveValueResolver } from '../engine';
 import type { FieldNodeListener } from '../engine';
@@ -82,6 +84,7 @@ export interface NodeSurface<
   readonly extras: unknown;
   readonly value: Value;
   readonly outputValue: unknown;
+  /** Retained values below this storage address, or below a virtual group's constituent addresses; detached reads retain the exit snapshot. */
   readonly inactiveValues: readonly InactiveValue[];
   /** Whether this occurrence remains in the current shape. */
   readonly isActive: boolean;
@@ -101,13 +104,14 @@ export interface NodeSurface<
   readonly isMisfit: boolean;
   readonly misfits: readonly string[];
   readonly diagnostics: NodeDiagnostics;
+  /** Original loaded input at this address, or the declaration-ordered tuple of a virtual group's constituent inputs; detached reads retain the exit snapshot. */
   readonly defaultValue: unknown;
   /** User-input state truthiness; React consumers re-read on UpdateState. */
   readonly isEdited: boolean;
   /** Blur state truthiness; React consumers re-read on UpdateState. */
   readonly isTouched: boolean;
   /**
-   * Whether current form output differs from the last root load at this path.
+   * Whether current form output differs from the last root load at this path or any constituent storage address of a virtual group.
    * False before the first load and after detach. Array positions and key order matter.
    * Re-read on the root node's UpdateValue, UpdateState or RequestRefresh and this node's UpdatePath; rebind when the root or node changes. Both root-load paths deliver RequestRefresh, including a same-output reset. Detached references do not gain new events.
    */
@@ -326,19 +330,15 @@ export type FieldNode =
 export type BranchNode = Extract<FieldNode, { strategy: 'branch' }>;
 export type TerminalNode = Exclude<FieldNode, BranchNode>;
 
-type LiteralKind<Value> = Value extends string
-  ? 'string'
-  : Value extends number
-    ? 'number'
-    : Value extends boolean
-      ? 'boolean'
-      : Value extends null
-        ? 'null'
-        : Value extends readonly unknown[]
-          ? 'array'
-          : Value extends Dictionary<unknown>
-            ? 'object'
-            : never;
+/** Node inference recognizes concrete collection kinds as well as primitive literals. */
+type LiteralKind<Value> = LiteralPrimitiveKind<
+  Value,
+  Value extends readonly unknown[]
+    ? 'array'
+    : Value extends Dictionary<unknown>
+      ? 'object'
+      : never
+>;
 type KindNode<Kind> = Kind extends 'string'
   ? StringNode
   : Kind extends 'number' | 'integer'

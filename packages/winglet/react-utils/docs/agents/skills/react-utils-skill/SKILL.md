@@ -22,7 +22,7 @@ Applies when choosing between this package's hooks, wiring its Portal system, or
 
 `useConstant` and `useMemorize` accept the same argument shape and do the opposite thing with it. Confusing that pair is the most common defect in this package's usage.
 
-**The Portal system inverts ownership.** `<Portal>` renders `null` where you write it and registers its children into context; the provider renders every registration through `createPortal` into a single anchor ref that all `Portal.Anchor` instances share. Where content lands is a property of the provider, never of the `<Portal>` call site.
+**Portal follows its source React ancestry.** Portal renders a native React portal from its source position into `Portal.Anchor`. Context reads and click bubbling follow the source React ancestors, through `Portal.with` and beyond. A provider wrapping only the source is visible inside its content. To isolate clicks, stop propagation in the portal content; to share provider values throughout the scope, place the provider above `Portal.with`. Activity hide/show preserves subtree state. Before an anchor attaches, including server rendering and the first hydration render, content is absent; attaching or replacing the anchor updates the destination.
 
 ## Decision Guide
 
@@ -51,12 +51,12 @@ Applies when choosing between this package's hooks, wiring its Portal system, or
 - **`useMemorize(() => x)` does call it**, being the mirror image of the rule above. Same argument shape, opposite semantics.
 - **`useTruthyConstant` re-runs its factory on every render where the held value is falsy.** Unusable when `null`, `0`, `''`, or `false` is a legitimate result — that is what `useLazyConstant` is for.
 - **`useHandle(undefined)` still returns a callable**, which returns `null` at runtime while typed as the handler's return type. It never throws, so a missing handler surfaces as a downstream `null`, not as an error at the call site.
-- **`useOnUnmount(fn)` captures `fn` at mount.** Component state read inside it yields mount-time values; route through `useReference` for current state. The same applies to `useOnUnmountLayout`.
-- **`isReactComponent` does not detect `forwardRef`, and `isFunctionComponent` returns `true` for any function.** `remainOnlyReactComponent` inherits both: it silently drops `forwardRef` components and keeps unrelated functions. Detect `forwardRef` manually with `$$typeof === Symbol.for('react.forward_ref')`.
+- **`useOnUnmount(fn)` runs the handler from the last render, not the one from mount.** State read inside it is current, so wrapping values in `useReference` first is unnecessary. The same applies to `useOnUnmountLayout`.
+- **`isReactComponent` accepts `forwardRef` and `lazy` as well as functions, classes, and `memo`.** `remainOnlyReactComponent` preserves those component types. Ordinary helper functions also pass the function predicate; validate mixed registries downstream.
 - **`@winglet/react-utils/portal` exports exactly one value: `Portal`.** `PortalContextProvider` and `withPortal` are not public values, so `Portal.with(Component)` is the only supported setup — any answer importing the provider directly does not compile. Setup and `<Portal.Anchor />` placement are always answered together; neither works alone.
 - **With several anchors in one provider scope, the LAST one to mount wins** — every anchor writes to the same shared ref, so each mount overwrites the previous. One anchor per scope is the only predictable arrangement.
 - **A `style` prop on `Portal.Anchor` replaces `display: contents` outright** rather than merging with it, silently turning the anchor into a layout-participating block.
-- **`useDebounce` defaults to `immediate: true`** — it fires on the leading edge, and its options are frozen at first render.
+- **`useDebounce` defaults to `immediate: true`** — it uses leading and trailing edges for a burst, and its options are frozen at first render.
 - **`useWindowSize()` returns `{ width: 0, height: 0 }` on the first render**, including every server render. Branch on it and the SSR and client markup diverge.
 - **Pick the error-boundary HOC by `forwardRef` usage**, not by preference: `withErrorBoundaryForwardRef` exists because `withErrorBoundary` drops the ref contract.
 
@@ -82,4 +82,4 @@ import { renderComponent } from '@winglet/react-utils/render';
 import { useHandle } from '@winglet/react-utils';           // barrel — everything above
 ```
 
-Peer dependencies: React and React DOM `>=16 <20`. Ships ESM (`.mjs`) and CJS (`.cjs`) with declarations.
+Peer dependencies: React and React DOM `>=16.14 <20`. Ships ESM (`.mjs`) and CJS (`.cjs`) with declarations. The ESM build imports `react/jsx-runtime`, which React 18 and later export. With React 16.14 or 17, use the CommonJS build or a bundler alias for `react/jsx-runtime`; strict ESM resolution is unsupported for those versions.

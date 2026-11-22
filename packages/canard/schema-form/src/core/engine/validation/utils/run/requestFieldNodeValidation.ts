@@ -7,6 +7,7 @@ import { createValidationCadence } from '../../../validationScheduling';
 import type { ValidationIssue } from '../../types/issue';
 import { isFieldNodeValidationCurrent } from '../read/isFieldNodeValidationCurrent';
 import { isFieldNodeValidationLifetimeCurrent } from '../read/isFieldNodeValidationLifetimeCurrent';
+import { readFieldNodeValidationCommit } from '../read/readFieldNodeValidationCommit';
 import { retainEqualValidationIssues } from '../route/retainEqualValidationIssues';
 import { routeValidationIssues } from '../route/routeValidationIssues';
 import { failValidationCompile } from './failValidationCompile';
@@ -56,7 +57,9 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
     const stamp = runtime.validationStamp ?? 0;
     const running = { stamp, targets };
     runtime.activeValidationRun = running;
-    const commit = runtime.commitNumber ?? 0;
+    const initialCommit = runtime.commitNumber ?? 0;
+    const validatedValue = root.storedOutputValue;
+    const validatedContext = runtime.context;
     void runFieldNodeValidation(node)
       .then((result) => {
         if (runtime.activeValidationRun === running)
@@ -66,7 +69,13 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
           settleFieldNodeValidation(node, stamp);
           return;
         }
-        if ((runtime.commitNumber ?? 0) !== commit) {
+        const commit = readFieldNodeValidationCommit(
+          root,
+          initialCommit,
+          validatedValue,
+          validatedContext,
+        );
+        if (commit === undefined) {
           for (const target of targets)
             (runtime.validationPendingTargets ??= new Set()).add(target);
           runtime.validationCadence?.request();

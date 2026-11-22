@@ -6,6 +6,7 @@
 - 단일 파일 선택만 지원한다 — 선택된 FileList의 첫 번째 파일만 사용한다.
 - change 이벤트가 발생할 때마다 input 값을 초기화해 동일 파일의 재선택을 허용한다.
 - 원본 onClick 핸들러는 파일 다이얼로그를 열기 전에 먼저 호출되고, 원본 컴포넌트에는 래핑된 클릭 핸들러가 전달된다.
+- 파일 input은 네이티브 click을 호출하는 동안 DOM에서 분리되고 finally에서 같은 위치로 복원된다. 두 번째 활성화는 문서·React 조상의 캡처와 버블링을 통과하지 않아 원본 클릭만 조상 핸들러에 도달한다. 파일 선택 change 이벤트가 발생할 때는 input이 원래 루트에 있어 기존 React 처리가 유지된다.
 - 반환 컴포넌트는 `React.memo`로 메모이즈된다.
 
 ## API Contracts
@@ -13,6 +14,7 @@
 - `withUploader(Component)` → `Component`의 props에 `acceptFormat?: string[]`과 `onChange?: (file: File) => void`를 더한 컴포넌트를 반환한다.
   - `acceptFormat`은 쉼표로 결합되어 숨겨진 input의 `accept` 속성에 전달된다.
   - 파일이 선택되면 `onChange`가 선택된 `File` 객체와 함께 호출된다. 파일이 없으면 호출되지 않는다.
+  - `onClick`은 일반 React 클릭 핸들러와 네이티브 클릭을 전달하는 래퍼를 받는다. `onChange`와 `acceptFormat`은 업로더가 소유하며 원본 컴포넌트의 같은 이름 props를 대체한다.
   - `onClick`이 함수이면 파일 다이얼로그를 열기 전에 먼저 호출된다.
 
 ## Acceptance Criteria

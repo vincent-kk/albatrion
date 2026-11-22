@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import type { CSSProperties } from 'react';
 
 import { isArraySchema } from '@winglet/json-schema/filter';
@@ -14,14 +15,14 @@ const LABEL_GAP_STYLE: CSSProperties = { marginRight: 5 };
 export const FieldRenderer = ({
   node,
   depth,
-  path,
+  labelId,
   Label,
   ErrorMessage,
   Input,
   errorMessage,
   style,
   className,
-}: FieldRendererProps) => {
+}: FieldRendererProps): ReactElement => {
   if (depth === 0) return <Input />;
 
   if (node.strategy === 'branch') {
@@ -34,7 +35,7 @@ export const FieldRenderer = ({
         }}
         className={className}
       >
-        <legend id={'label:' + path}>{node.name}</legend>
+        <legend id={labelId}>{node.name}</legend>
         <div>
           {errorMessage != null && (
             <ErrorMessage style={LABEL_NOTE_STYLE}>{errorMessage}</ErrorMessage>

@@ -69,8 +69,8 @@ import { setValueByPointer } from './utils/setValueByPointer';
  *
  * @throws {JSONPointerError} Thrown in the following cases:
  *         - **INVALID_INPUT**: When input is not a plain object or array
- *         - **INVALID_POINTER**: When pointer format is malformed
- *         - **INVALID_PATH**: When intermediate path cannot be created or accessed
+ *         - **INVALID_POINTER_TYPE**: When the pointer is not a string or an array of
+ *           strings and numbers, or a string pointer does not start with `/` or `#`
  *
  * @see https://datatracker.ietf.org/doc/html/rfc6901 - JSON Pointer specification
  *

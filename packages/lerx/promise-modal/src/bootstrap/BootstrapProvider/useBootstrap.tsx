@@ -18,16 +18,20 @@ import type { BootstrapProviderProps } from './type';
  * @example
  * ```tsx
  * import { useEffect, useRef } from 'react';
- * import { confirm, useInitializeModal } from '@lerx/promise-modal';
+ * import { confirm, useInitializeModal, type FooterComponentProps } from '@lerx/promise-modal';
+ *
+ * function Footer({ onConfirm, onCancel }: FooterComponentProps) {
+ *   return <footer>
+ *     {onCancel && <button onClick={onCancel}>Cancel</button>}
+ *     <button onClick={onConfirm}>Confirm</button>
+ *   </footer>;
+ * }
  *
  * function App() {
  *   const root = useRef<HTMLDivElement>(null);
  *   const { portal, initialize } = useInitializeModal({
  *     mode: 'manual',
- *     FooterComponent: ({ onConfirm, onCancel }) => <footer>
- *       {onCancel && <button onClick={onCancel}>Cancel</button>}
- *       <button onClick={onConfirm}>Confirm</button>
- *     </footer>,
+ *     FooterComponent: Footer,
  *   });
  *   useEffect(() => { if (root.current) initialize(root.current); }, [initialize]);
  *   return <>

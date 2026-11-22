@@ -1,7 +1,8 @@
 // Loaded by Storybook CSF through the composite glob in .storybook/main.ts; each named export is one story.
-import { amountInputPlan } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent } from 'storybook/test';
+
+import { amountInputPlan } from '@aileron/schema-form-scenarios';
 
 import { FeatureStory } from '../features/components/FeatureStory';
 import { expectEventually } from '../features/components/expectEventually';
@@ -15,26 +16,59 @@ import { submitButtonLayout } from './utils/submitButtonLayout';
  */
 const browserContext = () => import('vitest/browser');
 
-export default { title: 'Composite/CX04AmountInput', component: FeatureStory, tags: ['autodocs'] } satisfies Meta<typeof FeatureStory>;
+export default {
+  title: 'Composite/CX04AmountInput',
+  component: FeatureStory,
+  tags: ['autodocs'],
+} satisfies Meta<typeof FeatureStory>;
 type Story = StoryObj<typeof FeatureStory>;
 
 /** Shared composite case `composite.cx04-amount-input`, then formatter typing into /price, a native badInput draft, and an Enter submit. */
 export const Case: Story = createCompositeStory('composite.cx04-amount-input', {
-  cdpSkipReason: 'CDP is unavailable in ordinary Storybook; type into /price to check formatting, enter an incomplete exponent into /count to confirm the committed count is kept, and press Enter in /memo to confirm one submission; this play runs in Vitest Browser Mode (yarn workspace @canard/schema-form test --run --project storybook)',
+  cdpSkipReason:
+    'CDP is unavailable in ordinary Storybook; type into /price to check formatting, enter an incomplete exponent into /count to confirm the committed count is kept, and press Enter in /memo to confirm one submission; this play runs in Vitest Browser Mode (yarn workspace @canard/schema-form test --run --project storybook)',
   layout: submitButtonLayout,
   formProps: { fieldInputMap: { '/price': FormattedAmountInput } },
   async after({ canvasElement, handle, submitted }) {
-    const price = canvasElement.querySelector<HTMLInputElement>('input[id="/price"]')!;
+    const price = canvasElement.querySelector<HTMLInputElement>(
+      'input:is([id="/price"], [id$=":/price~input"]):not(label):not(legend)',
+    )!;
     await userEvent.type(price, amountInputPlan.typed);
-    await expectEventually(() => ({ shown: price.value, value: handle.findNode('/price')!.value }), { shown: amountInputPlan.shown, value: amountInputPlan.value }, 'formatter input');
-    const count = canvasElement.querySelector<HTMLInputElement>('input[id="/count"]')!;
+    await expectEventually(
+      () => ({ shown: price.value, value: handle.findNode('/price')!.value }),
+      { shown: amountInputPlan.shown, value: amountInputPlan.value },
+      'formatter input',
+    );
+    const count = canvasElement.querySelector<HTMLInputElement>(
+      'input:is([id="/count"], [id$=":/count~input"]):not(label):not(legend)',
+    )!;
     await userEvent.type(count, amountInputPlan.validDigit);
     const { cdp } = await browserContext();
     await cdp().send('Input.insertText', { text: amountInputPlan.badSuffix });
-    await expectEventually(() => ({ badInput: count.validity.badInput, value: handle.findNode('/count')!.value }), { badInput: true, value: amountInputPlan.keptCount }, 'native number draft');
+    await expectEventually(
+      () => ({
+        badInput: count.validity.badInput,
+        value: handle.findNode('/count')!.value,
+      }),
+      { badInput: true, value: amountInputPlan.keptCount },
+      'native number draft',
+    );
     const before = submitted.length;
-    await userEvent.type(canvasElement.querySelector<HTMLInputElement>('input[id="/memo"]')!, '{Enter}');
-    await expectEventually(() => submitted.length - before, 1, 'Enter submits once');
-    expect(submitted.at(-1)).toMatchObject({ amount: amountInputPlan.value, price: amountInputPlan.value, count: amountInputPlan.keptCount });
+    await userEvent.type(
+      canvasElement.querySelector<HTMLInputElement>(
+        'input:is([id="/memo"], [id$=":/memo~input"]):not(label):not(legend)',
+      )!,
+      '{Enter}',
+    );
+    await expectEventually(
+      () => submitted.length - before,
+      1,
+      'Enter submits once',
+    );
+    expect(submitted.at(-1)).toMatchObject({
+      amount: amountInputPlan.value,
+      price: amountInputPlan.value,
+      count: amountInputPlan.keptCount,
+    });
   },
 });

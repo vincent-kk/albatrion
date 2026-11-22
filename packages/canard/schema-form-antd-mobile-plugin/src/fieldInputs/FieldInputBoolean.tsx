@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import { Checkbox } from 'antd-mobile';
 
 import { useHandle } from '@winglet/react-utils/hook';
@@ -10,27 +8,29 @@ import type {
 } from '@canard/schema-form';
 
 const FieldInputBoolean = ({
-  path,
+  inputId,
+  labelId,
   disabled,
   value,
   onChange,
   misfit,
+  className,
+  style,
 }: FieldInputProps<boolean | null>) => {
-  const [indeterminate, checked] = useMemo(
-    () => [
-      value !== undefined && typeof value !== 'boolean',
-      value ?? undefined,
-    ],
-    [value],
-  );
   const handleChange = useHandle(onChange);
   return (
-    <div role="group" aria-invalid={misfit || undefined}>
+    <div
+      className={className}
+      style={style}
+      role="group"
+      aria-invalid={misfit || undefined}
+    >
       <Checkbox
-        id={path}
+        aria-labelledby={labelId}
+        id={inputId}
         disabled={disabled}
-        indeterminate={indeterminate}
-        checked={checked}
+        indeterminate={value !== undefined && typeof value !== 'boolean'}
+        checked={value === true}
         onChange={handleChange}
         style={{
           '--icon-size': '24px',

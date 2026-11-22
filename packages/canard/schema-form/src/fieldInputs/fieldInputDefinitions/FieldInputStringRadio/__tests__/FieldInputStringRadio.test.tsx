@@ -68,5 +68,7 @@ it('keeps radio options in an inline group named by the field title', () => {
   );
   const group = screen.getByRole('group', { name: 'Size' });
   expect(group.tagName).toBe('SPAN');
-  expect(group.getAttribute('aria-labelledby')).toBe('label:/Size');
+  expect(group.getAttribute('aria-labelledby')).toBe(
+    screen.getByText('Size').id,
+  );
 });

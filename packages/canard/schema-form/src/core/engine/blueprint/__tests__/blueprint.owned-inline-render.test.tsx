@@ -8,6 +8,7 @@ import { expect, it } from 'vitest';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { Form } from '@/schema-form/components/Form';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
 import { type RolledFieldRendererProps } from '@/schema-form/types';
 import { type FieldInputProps } from '@/schema-form/types';
 
@@ -54,7 +55,7 @@ it('loads the selected React build and renders authored lazy input and inline JS
         <Form
           key={label}
           jsonSchema={schema}
-          validationMode={0}
+          validationMode={ValidationMode.None}
           FieldRenderer={Renderer}
           onError={(error) => {
             if (error.code !== 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING')

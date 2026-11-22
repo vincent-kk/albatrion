@@ -17,8 +17,8 @@ export const loadMergeDistribution = async (packageRoot) => {
   );
   const exported = manifest.exports['./object'];
   const entries = {
-    esm: resolve(root, exported.import),
-    cjs: resolve(root, exported.require),
+    esm: resolve(root, (exported.import.default ?? exported.import)),
+    cjs: resolve(root, (exported.require.default ?? exported.require)),
   };
   for (const path of Object.values(entries))
     if (!path.startsWith(resolve(root, 'dist') + sep))

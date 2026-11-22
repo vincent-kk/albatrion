@@ -1,4 +1,4 @@
-import { map } from '@/common-utils/utils/array';
+import { createConsoleArguments } from './utils/createConsoleArguments';
 
 import type { PrintConsoleOptions } from './type';
 
@@ -13,12 +13,4 @@ export const printWarning = (
   message: readonly string[],
   options?: PrintConsoleOptions,
 ) =>
-  console.warn(
-    `%c${options?.info || ''}\n\n` +
-      `%c ${options?.emoji || '⚠️'} ${title} ${options?.emoji || '⚠️'} \n\n` +
-      map(message, (line: string) => `%c  ${line}\n`).join(''),
-    'color: #666;',
-    `color: ${options?.titleColor || '#f59e0b'}; font-weight: bold; font-size: 1.25em;`,
-    ...map(message, () => `color: ${options?.messageColor || '#d97706'}`),
-    ...(options?.details === undefined ? [] : [options.details]),
-  );
+  console.warn(...createConsoleArguments(title, message, options, '#f59e0b', '#d97706'));

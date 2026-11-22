@@ -178,7 +178,8 @@ describe('TEST-020 — finishInput and consumer presentation', () => {
       expect(
         form.container
           .querySelector('[data-virtual] input')
-          ?.getAttribute('id'),
+          ?.closest('[data-path]')
+          ?.getAttribute('data-path'),
       ).toBe('/name');
       await act(async () => {
         form.node('/group')!.setValue(['whole']);

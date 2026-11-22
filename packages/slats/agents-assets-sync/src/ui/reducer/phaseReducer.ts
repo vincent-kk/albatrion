@@ -138,24 +138,33 @@ export function phaseReducer(phase: Phase, event: InjectEvent): Phase {
     }
     case 'done': {
       const scope =
-        phase.kind === 'applying' || phase.kind === 'diff-review'
+        phase.kind === 'applying' ||
+        phase.kind === 'diff-review' ||
+        phase.kind === 'force-confirm'
           ? phase.scope
           : 'user';
       const plans =
-        phase.kind === 'applying' || phase.kind === 'diff-review'
+        phase.kind === 'applying' ||
+        phase.kind === 'diff-review' ||
+        phase.kind === 'force-confirm'
           ? phase.plans
           : [];
       return {
         kind: 'summary',
         reports: event.reports,
-        plans,
+        ...(event.result ? { result: event.result } : {}),
+        plans: event.plans ?? plans,
         exitCode: event.exitCode,
         scope,
         dryRun: event.dryRun,
       };
     }
     case 'fail': {
-      return { kind: 'error', error: event.error };
+      return {
+        kind: 'error',
+        error: event.error,
+        ...(event.exitCode ? { exitCode: event.exitCode } : {}),
+      };
     }
     default: {
       const _exhaustive: never = event;

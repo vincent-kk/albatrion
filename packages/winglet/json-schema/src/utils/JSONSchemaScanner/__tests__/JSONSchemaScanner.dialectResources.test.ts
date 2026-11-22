@@ -55,12 +55,56 @@ describe.each<[string, ScannerConstructor]>([
     });
     expect(seen).toEqual([
       ['#/properties/nonResource/if', true],
-      ['#/properties/embedded/prefixItems/0', false],
+      ['#/properties/embedded/prefixItems/0', true],
       ['#/properties/inherited/if', true],
       ['#/properties/unknown/if', true],
       ['#/properties/dollar/if', false],
     ]);
   });
+
+  it.each([
+    [
+      'id of a draft-04 subschema under a 2020-12 root',
+      {
+        $defs: {
+          A: {
+            $schema: 'http://json-schema.org/draft-04/schema#',
+            id: 'http://x.example/a.json',
+            contains: { type: 'string' },
+          },
+        },
+      },
+      '#/$defs/A/contains',
+    ],
+    [
+      'only id in a draft-06 subschema under a draft-04 root',
+      {
+        $schema: 'http://json-schema.org/draft-04/schema#',
+        definitions: {
+          A: {
+            $schema: 'http://json-schema.org/draft-06/schema#',
+            id: 'http://x.example/b.json',
+            contains: { type: 'string' },
+          },
+        },
+      },
+      '#/definitions/A/contains',
+    ],
+  ])(
+    'chooses the identifier keyword by the subschema own dialect: %s',
+    async (_case, schema, path) => {
+      let inert: boolean | undefined;
+      const scanner = new Scanner({
+        visitor: {
+          enter: (e) => {
+            if (e.path === path) inert = !!e.inert;
+          },
+        },
+      });
+      await scanner.scan(schema);
+      expect(inert).toBe(true);
+    },
+  );
 
   it('inherits inertness and records no output operations or reference calls there', async () => {
     const original = {

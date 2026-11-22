@@ -1,3 +1,5 @@
+import type { ReactElement } from 'react';
+
 import { Space } from 'antd-mobile';
 
 import { isArraySchema } from '@winglet/json-schema/filter';
@@ -16,30 +18,38 @@ export const FieldRenderer = ({
   Label,
   ErrorMessage,
   errorMessage,
-}: FieldRendererProps) => {
-  if (depth === 0) return <Input />;
+  readOnly,
+  disabled,
+  className,
+  style,
+}: FieldRendererProps): ReactElement => {
+  const error =
+    errorMessage != null &&
+    (errorMessage !== '' || (depth > 0 && node.strategy !== 'branch')) &&
+    typeof errorMessage !== 'boolean' ? (
+      <ErrorMessage>{errorMessage}</ErrorMessage>
+    ) : null;
+  if (depth === 0)
+    return (
+      <>
+        <Input
+          readOnly={readOnly}
+          disabled={disabled}
+          {...(className != null && { className })}
+          {...(style != null && { style })}
+        />
+        {error}
+      </>
+    );
 
-  if (node.strategy === 'branch') {
-    return (
-      <Space direction="vertical" block>
-        <Input />
-      </Space>
-    );
-  } else {
-    return (
-      <Space direction="vertical" block>
-        <div>
-          {node.parentNode && isArraySchema(node.parentNode) === false && (
-            <Label />
-          )}
-          <Input />
-        </div>
-        {errorMessage !== null &&
-          errorMessage !== undefined &&
-          typeof errorMessage !== 'boolean' && (
-            <ErrorMessage>{errorMessage}</ErrorMessage>
-          )}
-      </Space>
-    );
-  }
+  const title = node.parentNode && !isArraySchema(node.parentNode) && <Label />;
+  return (
+    <Space direction="vertical" block className={className} style={style}>
+      <div>
+        {title}
+        <Input readOnly={readOnly} disabled={disabled} />
+      </div>
+      {error}
+    </Space>
+  );
 };

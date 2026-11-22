@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MessageChannelScheduler } from '../MessageChannelScheduler';
 import {
@@ -269,19 +269,28 @@ describe('MessageChannelScheduler', () => {
     });
 
     it('should continue processing after errors', async () => {
-      scheduler = MessageChannelScheduler.getInstance();
+      const report = vi.fn();
+      vi.stubGlobal('reportError', report);
+      try {
+        scheduler = MessageChannelScheduler.getInstance();
 
-      const executed: string[] = [];
+        const executed: string[] = [];
 
-      scheduler.schedule(() => executed.push('before-error'));
-      scheduler.schedule(() => {
-        throw new Error('Intentional error');
-      });
-      scheduler.schedule(() => executed.push('after-error'));
+        scheduler.schedule(() => executed.push('before-error'));
+        scheduler.schedule(() => {
+          throw new Error('Intentional error');
+        });
+        scheduler.schedule(() => executed.push('after-error'));
 
-      await new Promise((resolve) => setTimeout(resolve, 50));
+        await new Promise((resolve) => setTimeout(resolve, 50));
 
-      expect(executed).toEqual(['before-error', 'after-error']);
+        expect(executed).toEqual(['before-error', 'after-error']);
+        expect(report).toHaveBeenCalledExactlyOnceWith(
+          expect.objectContaining({ message: 'Intentional error' }),
+        );
+      } finally {
+        vi.unstubAllGlobals();
+      }
     });
   });
 

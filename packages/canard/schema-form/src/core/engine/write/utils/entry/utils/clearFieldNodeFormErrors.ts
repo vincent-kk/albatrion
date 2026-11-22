@@ -1,11 +1,10 @@
-import { FieldNodeEventType } from '../../../../record';
+import { FieldNodeEventType, queueNonSettleEvent } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
 import { ValidationMode } from '../../../../types/state';
 import {
   routeValidationIssues,
   settleFieldNodeValidation,
 } from '../../../../validation';
-import { queueNonSettleEvent } from '../../chain/queueNonSettleEvent';
 
 /**
  * Clear both error layers at a form reset boundary before loading its value.

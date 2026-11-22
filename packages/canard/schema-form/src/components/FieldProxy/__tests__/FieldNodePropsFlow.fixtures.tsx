@@ -6,6 +6,7 @@ import { vi } from 'vitest';
 import {
   type FieldNode,
   FieldNodeEventType,
+  FieldNodeState,
   SetValueOption,
 } from '@/schema-form/core';
 import type { FieldInputProps, JSONSchema } from '@/schema-form/types';
@@ -328,8 +329,8 @@ export const testScenarios = {
       name: 'name',
       value: 'modified',
       state: {
-        [1]: true,
-        [2]: true,
+        [FieldNodeState.Edited]: true,
+        [FieldNodeState.Touched]: true,
       },
     }),
 

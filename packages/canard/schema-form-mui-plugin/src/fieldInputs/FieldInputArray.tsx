@@ -22,12 +22,16 @@ const Remove = (props: ButtonProps) => (
 );
 
 const FieldInputArray = ({
+  inputId,
+  labelId: fieldTitleId,
   jsonSchema,
   node,
   readOnly,
   disabled,
+  misfit,
   ChildFields,
   style,
+  className,
 }: FieldInputProps<any[]>) => {
   const maxItems = minLite(
     typeof jsonSchema.maxItems === 'number' ? jsonSchema.maxItems : Infinity,
@@ -44,7 +48,14 @@ const FieldInputArray = ({
   });
 
   return (
-    <div style={style}>
+    <div
+      className={className}
+      id={inputId}
+      role="group"
+      aria-labelledby={fieldTitleId}
+      aria-invalid={misfit || undefined}
+      style={style}
+    >
       {ChildFields &&
         map(ChildFields, (ChildField, i) => {
           const key = ChildField.key;

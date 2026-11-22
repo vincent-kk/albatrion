@@ -11,6 +11,8 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { getOwnLabel } from './utils/enum/getOwnLabel';
+
 type StringSwitchSchema = StringSchema & {
   enum?: [string | null, string | null];
 };
@@ -27,15 +29,20 @@ interface FieldInputStringSwitchProps
 }
 
 const FieldInputStringSwitch = ({
-  path,
+  inputId,
+  labelId,
+  name,
   jsonSchema,
   disabled,
+  readOnly,
   value,
   onChange,
   context,
   size,
   alias,
   misfit,
+  className,
+  style,
 }: FieldInputStringSwitchProps) => {
   const [checked, unchecked] = useMemo(() => {
     const [checked, unchecked] = jsonSchema.enum || [];
@@ -46,10 +53,10 @@ const FieldInputStringSwitch = ({
   }, [jsonSchema]);
 
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
-    const labels = context.switchLabels || alias || {};
+    const labels = context.switchLabels || alias;
     return [
-      labels['' + checked] || checked,
-      labels['' + unchecked] || unchecked,
+      getOwnLabel(labels, String(checked)) || checked,
+      getOwnLabel(labels, String(unchecked)) || unchecked,
     ];
   }, [checked, unchecked, context, alias]);
 
@@ -59,9 +66,13 @@ const FieldInputStringSwitch = ({
 
   return (
     <Switch
+      className={className}
+      style={style}
       aria-invalid={misfit || undefined}
-      key={path}
-      disabled={disabled}
+      id={inputId}
+      {...{ name }}
+      aria-labelledby={labelId}
+      disabled={disabled || readOnly}
       checked={value === checked}
       checkedChildren={checkedLabel}
       unCheckedChildren={uncheckedLabel}

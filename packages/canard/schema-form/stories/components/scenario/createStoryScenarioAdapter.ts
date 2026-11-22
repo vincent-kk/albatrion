@@ -64,7 +64,10 @@ export function createStoryScenarioAdapter(
                 element.querySelectorAll<HTMLInputElement | HTMLSelectElement>(
                   'input[id], select[id], textarea[id]',
                 ),
-              ).find((item) => item.id === step.path)
+              ).find(
+                (item) =>
+                  item.closest('[data-path]')?.getAttribute('data-path') === step.path || item.id === step.path,
+              )
             : undefined;
         if (field && !field.disabled && !(field as HTMLInputElement).readOnly) {
           if (

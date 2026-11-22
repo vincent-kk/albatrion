@@ -1,3 +1,5 @@
+import type { ReactElement } from 'react';
+
 import type { ErrorMessageRendererProps } from '@canard/schema-form';
 
 /**
@@ -9,7 +11,7 @@ export const ErrorMessageRenderer = ({
   children,
   style,
   className,
-}: ErrorMessageRendererProps) => (
+}: ErrorMessageRendererProps): ReactElement => (
   <span style={style} className={className}>
     {children}
   </span>

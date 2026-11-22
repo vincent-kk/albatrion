@@ -1,0 +1,26 @@
+import { createRequire } from 'node:module';
+import { expect, it } from 'vitest';
+
+import manifest from '../../package.json';
+
+it('preserves the published peer range for each bundled UI library', () => {
+  expect(manifest.peerDependencies).toMatchObject({
+    'antd-mobile': '^5.2.0',
+    dayjs: '^1.0.0',
+  });
+});
+
+const semver: { subset(left: string, right: string): boolean } = createRequire(
+  import.meta.url,
+)('semver');
+
+it.each(['antd-mobile', 'dayjs'])(
+  '%s accepts the same host versions as its bundled dependency (round-2 antd-mobile-plugin 3)',
+  (name) => {
+    const dependencies: Record<string, string> = manifest.dependencies;
+    const peers: Record<string, string> = manifest.peerDependencies;
+    expect(peers[name]).toBeDefined();
+    expect(semver.subset(peers[name], dependencies[name])).toBe(true);
+    expect(semver.subset(dependencies[name], peers[name])).toBe(true);
+  },
+);

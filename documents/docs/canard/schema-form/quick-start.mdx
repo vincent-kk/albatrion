@@ -27,11 +27,11 @@ The core's peer ranges are `react >=18 <20` and `react-dom >=18 <20`. The core a
 
 | Package | Declared peers and direct UI / validator dependencies |
 | --- | --- |
-| AJV 6 / 7 / 8 plugins | Direct dependency `ajv ^6.0.0` / `^7.0.0` / `^8.0.0`; no core peer declaration |
-| antd-mobile | React / React DOM `>=18 <20`, dayjs `>=1`; direct `antd-mobile ^5.0.0`, dayjs `^1.0.0` |
-| antd5 | React / React DOM `>=18 <20`, antd `>=5.10.0`, dayjs `>=1`; direct antd `^5.10.0`, icons `^5.0.0` |
-| antd6 | React / React DOM `>=18 <20`, antd `>=6.0.0`, dayjs `>=1`; direct antd `^6.0.0`, icons `^6.0.0` |
-| MUI | React / React DOM `>=18 <20`, Material / icons `>=7.0.0`, X date pickers `>=8.0.0`, Emotion react / styled `>=11.0.0`, dayjs `>=1` |
+| AJV 6 / 7 / 8 plugins | Direct dependency `ajv ^6.0.0` / `^7.0.0` / `^8.0.0`; core peer `@canard/schema-form` in the matching package release range |
+| antd-mobile | React / React DOM `>=18 <20`, peer `antd-mobile ^5.2.0`, dayjs `^1.0.0`; direct `antd-mobile ^5.2.0`, dayjs `^1.0.0` |
+| antd5 | React / React DOM `>=18 <20`, antd `^5.10.0`, dayjs `^1.0.0`; direct antd `^5.10.0`, icons `^5.0.0` |
+| antd6 | React / React DOM `>=18 <20`, antd `^6.0.0`, dayjs `^1.0.0`; direct antd `^6.0.0`, icons `^6.0.0` |
+| MUI | React / React DOM `>=18 <20`, Material / icons `^7.0.0`, X date pickers `^8.0.0`, Emotion react / styled `^11.0.0`, dayjs `^1.0.0` |
 
 The MUI plugin depends on MUI 7, MUI X 8, Emotion 11, and dayjs 1 ranges. Keep the UI library and its plugin aligned. For Ant Design CSS-variable defaults and theme configuration, follow [Ant Design's v6 migration documentation](https://ant.design/docs/react/migration-v6/); this guide does not assign that dependency's defaults.
 

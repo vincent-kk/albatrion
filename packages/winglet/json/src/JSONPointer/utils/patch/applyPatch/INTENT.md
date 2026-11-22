@@ -9,7 +9,7 @@ RFC 6902 JSON Patch 연산 시퀀스(add, remove, replace, move, copy, test)를 
 ## Conventions
 
 - 연산은 주어진 순서대로 하나씩 적용되고, 실패는 `JSONPatchError`(구조화된 코드 포함)로 표면화된다.
-- immutable 기본값(true)에서 변경 경로만 copy-on-write로 소유하고 무변경 서브트리는 소스와 구조를 공유한다.
+- immutable 기본값(true)에서 실제 쓰기 경로만 copy-on-write로 소유하고 쓰지 않은 컨테이너는 소스 및 patch 값과 구조를 공유한다. 루트와 중첩 값에 같은 공유 규칙을 적용한다.
 - 예약 멤버 이름(`__proto__`, `constructor`, `prototype`)은 불투명한 문자열, 즉 own 데이터 속성으로 취급한다. 경로 순회와 연산 핸들러의 멤버 접근은 `@winglet/common-utils` 데이터 속성 프리미티브를 경유하며, 어떤 패치 입력에서도 상속 객체는 변경되지 않는다 — 안전성은 옵션이 아니라 구조적 보증이다.
 
 ## Boundaries

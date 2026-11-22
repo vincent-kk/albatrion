@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Box, Text } from 'ink';
-import type React from 'react';
+import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
+import { useState } from 'react';
+import type React from 'react';
 
 import type { Fn } from '@aileron/declare';
 
@@ -21,6 +21,10 @@ export function ConfirmForce({
   warnings,
   onAnswer,
 }: ConfirmForceProps): React.ReactElement {
+  useInput((input, key) => {
+    if (input.toLowerCase() === 'y') onAnswer(true);
+    else if (input.toLowerCase() === 'n' || key.escape) onAnswer(false);
+  });
   const [expanded, setExpanded] = useState(false);
   const showAll =
     expanded || warnings.length <= limits.maxWarningsBeforeCollapse;
@@ -32,8 +36,16 @@ export function ConfirmForce({
   const diverged = warnings.filter((w) => w.kind === 'warn-diverged').length;
   const orphans = warnings.filter((w) => w.kind === 'warn-orphan').length;
 
+  // The answer must name what accepting does: a deletion-only plan overwrites
+  // nothing, and an "overwrite" label would understate it.
+  const verb =
+    orphans === 0
+      ? 'overwrite'
+      : diverged === 0
+        ? 'delete'
+        : 'overwrite or delete';
   const items: Array<{ label: string; value: Choice }> = [
-    { label: `Yes, overwrite ${warnings.length} path(s)`, value: 'accept' },
+    { label: `Yes, ${verb} ${warnings.length} path(s)`, value: 'accept' },
     { label: 'No, cancel', value: 'cancel' },
   ];
   if (!showAll) {
@@ -52,7 +64,9 @@ export function ConfirmForce({
       </Box>
       <Box flexDirection="column" marginLeft={2} marginTop={1}>
         {shown.map((warning) => (
-          <Box key={`${warning.packageName}:${warning.relPath}`}>
+          <Box
+            key={`${warning.packageName}:${warning.agent}:${warning.relPath}`}
+          >
             <Text
               color={
                 warning.kind === 'warn-diverged' ? colors.warn : colors.accent

@@ -1,15 +1,17 @@
-import { isArray } from '@winglet/common-utils/filter';
-
 import type { Blueprint } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { FieldNodeWriteKind } from '../../../types/value';
 import type { WriteOption } from '../../../types/value';
+import type { StorageTarget } from '../../../utils/paths/resolveStorageTargets';
 import type { SettlementContext } from '../../types/settlement';
+import type { WriteRange } from '../../types/writeRange';
 import { computeNode } from '../compute/computeNode';
 import { registerRecalculation } from '../dependencies/registerRecalculation';
 import { assertFieldNodeWritable } from '../dispose/assertFieldNodeWritable';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { assertVirtualWriteShape } from '../input/assertVirtualWriteShape';
+import { composeBatchValue } from '../input/composeBatchValue';
+import { decideAddressWrite } from '../input/decideAddressWrite';
 import { markWrite } from '../input/markWrite';
 import { prepareWriteEpoch } from '../input/utils/prepareWriteEpoch';
 import { DirtyPathSet } from '../scratch/DirtyPathSet';
@@ -18,7 +20,6 @@ import { releaseSettlementScratch } from '../scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../settlement/createSettlementContext';
 import { finishSettlement } from '../settlement/finishSettlement';
 import { prepareSourcePruner } from '../slots/prepareSourcePruner';
-import { collectReplacementPaths } from './collectReplacementPaths';
 import { markWrongKindAncestors } from './markWrongKindAncestors';
 import { releaseWrongKindHosts } from './releaseWrongKindHosts';
 
@@ -33,6 +34,8 @@ import { releaseWrongKindHosts } from './releaseWrongKindHosts';
  * @param source - Binding origin independent of merge and replacement semantics
  * @param writeOrigins - Call-ordered batch origins for delivery and Refresh
  * @param fixedFirstLoadPlan - Mount-only compiler proof supplied after freshness admission
+ * @param virtualTargets - Physical slots admitted at the public virtual call boundary
+ * @param markRanges - Range sink for a reset barrier holding this direct mark
  * @returns Nothing; live records carry the committed shape and values
  * @throws A deferred gate or shared declaration failure after commit
  */
@@ -44,7 +47,11 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
   source: FieldNodeWriteKind = kind,
   writeOrigins?: SettlementContext<Self>['writeOrigins'],
   fixedFirstLoadPlan?: Blueprint['fixedFirstLoadPlan'],
+  virtualTargets?: readonly StorageTarget<Self>[],
+  markRanges?: WriteRange[][],
 ): void => {
+  const directRanges: WriteRange[] | undefined = markRanges ? [] : undefined;
+  if (directRanges && markRanges) markRanges.push(directRanges);
   if (node.isDetached) return;
   const root = node.rootNode;
   if (
@@ -82,6 +89,27 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
     )
       assertVirtualWriteShape(node, input);
   }
+  if (directRanges)
+    input = composeBatchValue(
+      root,
+      [
+        {
+          node,
+          value: input,
+          option,
+          source:
+            source === FieldNodeWriteKind.Input ||
+            source === FieldNodeWriteKind.Automatic
+              ? source
+              : undefined,
+          virtualTargets,
+        },
+      ],
+      undefined,
+      directRanges,
+      undefined,
+      'direct',
+    );
   const scratch = getSettlementScratch(root.runtime);
   const replaces = scalarWrite
     ? kind !== FieldNodeWriteKind.Input
@@ -89,11 +117,8 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
       (kind === FieldNodeWriteKind.Input &&
         node.behavior.strategy === 'branch') ||
       (kind === FieldNodeWriteKind.CallerPartial &&
-        (input === null ||
-          typeof input !== 'object' ||
-          isArray(input) ||
-          node.behavior.strategy !== 'branch'));
-  const batch = writeOrigins !== undefined && writeOrigins.length > 1;
+        !decideAddressWrite(node.blueprintNode, input, true));
+  const batch = writeOrigins !== undefined;
   const context = createSettlementContext(
     node,
     kind,
@@ -104,8 +129,8 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
   if (kind === FieldNodeWriteKind.Load && fixedFirstLoadPlan)
     context.fixedFirstLoad = { plan: fixedFirstLoadPlan, hosts: new Map() };
   context.source = source;
+  if (virtualTargets) context.virtualWriteTargets = virtualTargets;
   context.writeOrigins = writeOrigins;
-  if (batch) context.replacementPaths = collectReplacementPaths(writeOrigins);
   if (!scalarWrite && replaces) prepareWriteEpoch(context);
   try {
     if (context.hasGates)
@@ -115,11 +140,12 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
       if (batch) {
         for (let index = 0; index < writeOrigins.length; index++) {
           const origin = writeOrigins[index];
-          if (origin.source === FieldNodeWriteKind.Automatic) continue;
-          pruneSources(node.runtime, origin.path, origin.keys, context);
-          if (origin.fields)
-            for (const field of origin.fields)
-              pruneSources(node.runtime, field, undefined, context);
+          if (
+            origin.source !== FieldNodeWriteKind.Automatic &&
+            !origin.partial &&
+            !origin.isLogical
+          )
+            pruneSources(node.runtime, origin.path, undefined, context);
         }
       } else pruneSources(node.runtime, node.path, undefined, context);
     }

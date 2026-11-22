@@ -51,8 +51,18 @@ export interface FieldInputProps<
   schemaType: Node['schemaType'];
   /** Whether the stored value mismatches the accepted kinds. */
   misfit: Node['isMisfit'];
-  /** Name of field node assigned to FieldInput Component */
+  /** Leaf field name (key or index), unchanged by input selection hints. */
   name: Node['name'];
+  /** DOM id of the primary control; also the native radio group name. */
+  inputId: string;
+  /** DOM id of the title rendered by the field renderer. */
+  labelId: string;
+  /** Resolve a further control id; keys compare as strings and must be supplied. */
+  getInputId: Fn<[key: string | number], string>;
+  /** Connects this input position's focus target using a React ref. */
+  focusRef?: (target: { focus(): void } | null) => void;
+  /** @deprecated Use inputId. */
+  id?: never;
   /** Path of field node assigned to FieldInput Component */
   path: Node['path'];
   /** Whether this field accepts null as a valid value (derived from schema type array including 'null') */
@@ -122,7 +132,18 @@ export interface UnknownFieldInputProps {
   disabled: boolean;
   required: boolean;
   node: any;
+  /** Leaf field name (key or index), unchanged by input selection hints. */
   name: string;
+  /** DOM id of the primary control; also the native radio group name. */
+  inputId: string;
+  /** DOM id of the title rendered by the field renderer. */
+  labelId: string;
+  /** Resolve a further control id; keys compare as strings and must be supplied. */
+  getInputId: Fn<[key: string | number], string>;
+  /** Connects this input position's focus target using a React ref. */
+  focusRef?: FieldInputProps['focusRef'];
+  /** @deprecated Use inputId. */
+  id?: never;
   path: string;
   type: FieldNodeType;
   schemaType: FieldNode['schemaType'];
@@ -149,7 +170,18 @@ export type InferFieldInputProps<Value> = Value extends AllowedValue
   ? FieldInputProps<Value>
   : UnknownFieldInputProps;
 
-export type ChildFieldProps<Value extends AllowedValue = any> = {
+/** Presentation options shared by child and configured field input overrides. */
+interface FieldInputPresentationOverrides {
+  /** @deprecated Use inputId. */
+  id?: never;
+  /** Identifiers belong to the binding and cannot be overridden. */
+  inputId?: never;
+  /** Title identity belongs to the binding. */
+  labelId?: never;
+  /** Keyed identities belong to the binding. */
+  getInputId?: never;
+  /** The input binding supplies the ref. */
+  focusRef?: never;
   /** @deprecated Use useFieldErrors(node). */
   errors?: never;
   /** @deprecated Use useFieldErrors(node). */
@@ -157,34 +189,28 @@ export type ChildFieldProps<Value extends AllowedValue = any> = {
   required?: boolean;
   readOnly?: boolean;
   disabled?: boolean;
-  /** Defaults belong to the node, not to a child override. */
-  defaultValue?: never;
-  /** Current values are written through the binding callback. */
-  value?: never;
-  onChange?: SetStateFnWithOptions<Value>;
-  onFileAttach?: Fn<[file: Optional<File | File[]>]>;
-  FieldRenderer?: ComponentType<FieldRendererProps>;
   className?: string;
   style?: CSSProperties;
   [alt: string]: any;
-};
+}
+
+export type ChildFieldProps<Value extends AllowedValue = any> =
+  FieldInputPresentationOverrides & {
+    /** Defaults belong to the node. */
+    defaultValue?: never;
+    /** Current values are written through the binding callback. */
+    value?: never;
+    onChange?: SetStateFnWithOptions<Value>;
+    onFileAttach?: Fn<[file: Optional<File | File[]>]>;
+    FieldRenderer?: ComponentType<FieldRendererProps>;
+  };
 
 /** Presentation overrides cannot replace the binding-owned callback channels. */
-export type OverridableFieldInputProps = {
-  /** @deprecated Use useFieldErrors(node). */
-  errors?: never;
-  /** @deprecated Use useFieldErrors(node). */
-  errorVisible?: never;
-  required?: boolean;
-  readOnly?: boolean;
-  disabled?: boolean;
-  className?: string;
-  style?: CSSProperties;
+export type OverridableFieldInputProps = FieldInputPresentationOverrides & {
   value?: never;
   defaultValue?: never;
   onChange?: never;
   onFileAttach?: never;
-  [alt: string]: any;
 };
 
 export type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;

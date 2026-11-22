@@ -1,3 +1,6 @@
+import { isPlainObject } from '@/common-utils/utils/filter/isPlainObject';
+
+import { readForeignFingerprint } from './readForeignFingerprint';
 import type { FingerprintOptions } from '../types/type';
 import { isOmitted } from './isOmitted';
 
@@ -47,8 +50,8 @@ export function createSafeWriter(defaultSort = true) {
       return 'Date(' + Date.prototype.getTime.call(value) + ')';
     if (prototype === RegExp.prototype) return String(value);
     const array = Array.isArray(value);
-    if (!array && prototype !== null && prototype !== Object.prototype)
-      return identity(value);
+    if (!array && prototype !== null && prototype !== Object.prototype && !isPlainObject(value))
+      return readForeignFingerprint(value) ?? identity(value);
     seen.set(value, '#' + seen.size);
     let result: string;
     if (array) {

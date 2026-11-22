@@ -1,7 +1,7 @@
 import { createRef } from 'react';
 
-import { cleanup, fireEvent, render } from '@testing-library/react';
-import { afterEach, expect, it, vi } from 'vitest';
+import { act, cleanup, fireEvent, render } from '@testing-library/react';
+import { afterEach, expect, it } from 'vitest';
 
 import { Form, type FormHandle } from '@canard/schema-form';
 
@@ -84,7 +84,38 @@ it('restores an empty display on blur when the browser holds unparsable text in 
   );
   const input = view.container.querySelector('input') as HTMLInputElement;
   Object.defineProperty(input, 'validity', { value: { badInput: true } });
-  const write = vi.spyOn(input, 'value', 'set');
+  fireEvent.change(input, { target: { value: '5' } });
+  expect(input.value).toBe('5');
   fireEvent.blur(input);
-  expect(write).toHaveBeenCalledWith('');
+  expect(ref.current!.getValue()).toBeUndefined();
+  expect(input.value).toBe('');
+});
+
+it('discards an invalid integer draft on an external write and reset', async () => {
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      fieldInputDefinitions={[FieldInputNumberDefinition]}
+      jsonSchema={{ type: 'object', properties: { field: { type: 'integer' } } }}
+      defaultValue={{ field: 3 }}
+    />,
+  );
+  const input = () => {
+    const control = view.getByRole('spinbutton');
+    if (!(control instanceof HTMLInputElement))
+      throw new Error('Expected a native number input');
+    return control;
+  };
+  fireEvent.change(input(), { target: { value: '1.5' } });
+  expect(input().value).toBe('1.5');
+  await act(async () => ref.current!.setValue({ field: 8 }));
+  expect(ref.current!.getValue()).toEqual({ field: 8 });
+  expect(input().value).toBe('8');
+
+  fireEvent.change(input(), { target: { value: '9.5' } });
+  expect(input().value).toBe('9.5');
+  await act(async () => ref.current!.reset());
+  expect(ref.current!.getValue()).toEqual({ field: 3 });
+  expect(input().value).toBe('3');
 });

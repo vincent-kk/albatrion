@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
 import { buildFieldNodeTree, mountFieldNode } from '@/schema-form/core/surface';
 
 import * as registration from '../utils/dependencies/registerRecalculation';
@@ -22,7 +23,7 @@ describe('gate-less write dirty indexing', () => {
           },
         },
       },
-      validationMode: 0,
+      validationMode: ValidationMode.None,
     });
     mountFieldNode(root, undefined, undefined, { deferValidation: false });
     const begin = vi.spyOn(DirtyPathSet.prototype, 'beginPostOrder');
@@ -50,7 +51,7 @@ describe('gate-less write dirty indexing', () => {
           },
         },
       },
-      validationMode: 0,
+      validationMode: ValidationMode.None,
     });
     mountFieldNode(root, undefined, undefined, { deferValidation: false });
     const begin = vi.spyOn(DirtyPathSet.prototype, 'beginPostOrder');
@@ -80,7 +81,7 @@ describe('gate-less write dirty indexing', () => {
           },
         },
       },
-      validationMode: 0,
+      validationMode: ValidationMode.None,
     });
     mountFieldNode(root, undefined, undefined, { deferValidation: false });
     const begin = vi.spyOn(DirtyPathSet.prototype, 'beginPostOrder');

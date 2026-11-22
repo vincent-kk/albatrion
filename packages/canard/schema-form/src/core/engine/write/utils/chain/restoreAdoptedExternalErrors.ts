@@ -1,8 +1,7 @@
 import { find } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
-import { FieldNodeEventType } from '../../../record';
+import { FieldNodeEventType, queueNonSettleEvent } from '../../../record';
 import { updateFieldNodeGlobalErrors } from '../../../validation';
-import { queueNonSettleEvent } from './queueNonSettleEvent';
 
 /** Annotates the lazily created `nodeErrors`; an argument-less `new Map()` would be `Map<any, any>`. */
 type NodeErrors = Map<unknown, readonly { dataPath: string }[]>;

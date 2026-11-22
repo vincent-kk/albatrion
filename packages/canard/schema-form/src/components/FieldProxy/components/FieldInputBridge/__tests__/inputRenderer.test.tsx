@@ -6,6 +6,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { advanceValidationFrame } from '@/schema-form/__tests__/helpers/advanceValidationFrame';
 import { registerPlugin } from '@/schema-form/app/plugin';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
+import { FieldNodeState, ValidationMode } from '@/schema-form/core';
 import { useWorkspaceContext } from '@/schema-form/providers';
 import { ExternalFormContextProvider as FormProvider } from '@/schema-form/providers/ExternalFormContext';
 import type {
@@ -31,7 +32,7 @@ it('applies a nested FormProvider frame to both bound Input and Form.Input', () 
         type: 'object',
         properties: { a: { type: 'string' }, b: { type: 'string' } },
       }}
-      validationMode={0}
+      validationMode={ValidationMode.None}
     >
       <FormProvider InputRenderer={Frame}>
         <Form.Field path="/a" />
@@ -63,7 +64,11 @@ it('selects the Form frame before the nearest provider and then the plugin frame
     properties: { a: { type: 'string' } },
   } as const;
   const view = render(
-    <Form jsonSchema={schema} validationMode={0} InputRenderer={Local}>
+    <Form
+      jsonSchema={schema}
+      validationMode={ValidationMode.None}
+      InputRenderer={Local}
+    >
       <FormProvider InputRenderer={External}>
         <Form.Input path="/a" />
       </FormProvider>
@@ -76,7 +81,7 @@ it('selects the Form frame before the nearest provider and then the plugin frame
     view.container.querySelector('[data-frame-owner="provider"]'),
   ).toBeNull();
   view.rerender(
-    <Form jsonSchema={schema} validationMode={0}>
+    <Form jsonSchema={schema} validationMode={ValidationMode.None}>
       <FormProvider InputRenderer={External}>
         <Form.Input path="/a" />
       </FormProvider>
@@ -87,7 +92,7 @@ it('selects the Form frame before the nearest provider and then the plugin frame
   ).not.toBeNull();
   view.rerender(
     <FormProvider InputRenderer={External}>
-      <Form jsonSchema={schema} validationMode={0}>
+      <Form jsonSchema={schema} validationMode={ValidationMode.None}>
         <FormProvider>
           <Form.Input path="/a" />
         </FormProvider>
@@ -117,7 +122,7 @@ it('frames root, branch and leaf inputs with the real input metadata and locks',
   } as const;
   const props = {
     jsonSchema: schema,
-    validationMode: 0,
+    validationMode: ValidationMode.None,
     InputRenderer: frames,
     FieldRenderer: Group,
     context: { x: 1 },
@@ -180,7 +185,7 @@ it.each(['bound', 'form', 'child', 'schema'] as const)(
             },
           },
         }}
-        validationMode={0}
+        validationMode={ValidationMode.None}
         FieldRenderer={Group}
         InputRenderer={Frame}
         fieldInputDefinitions={[
@@ -213,7 +218,7 @@ it('keeps identical input DOM without a registered frame', () => {
   const view = render(
     <Form
       jsonSchema={schema}
-      validationMode={0}
+      validationMode={ValidationMode.None}
       FieldRenderer={Group}
       context={{ skip: false }}
     />,
@@ -222,7 +227,7 @@ it('keeps identical input DOM without a registered frame', () => {
   view.rerender(
     <Form
       jsonSchema={schema}
-      validationMode={0}
+      validationMode={ValidationMode.None}
       FieldRenderer={Group}
       context={{ skip: true }}
     />,
@@ -273,7 +278,7 @@ it('replaces frames and direct unwrapped while retaining own files, current valu
     defaultValue: { a: 'initial' },
     fieldInputDefinitions: definitions,
     FieldRenderer: Group,
-    validationMode: 0,
+    validationMode: ValidationMode.None,
     virtualization: { threshold: 1, eagerCount: 1 },
   };
   const view = render(<Form {...props} />);
@@ -308,7 +313,7 @@ it('replaces frames and direct unwrapped while retaining own files, current valu
   expect(ref.current!.findNode('/a')!.value).toBe('next');
   fireEvent.blur(view.container.querySelector('input')!);
   await advanceValidationFrame();
-  expect(ref.current!.findNode('/a')!.state[2]).toBe(true);
+  expect(ref.current!.findNode('/a')!.state[FieldNodeState.Touched]).toBe(true);
 });
 
 it('remounts branch children on frame replacement and clears only their attached files', () => {
@@ -351,7 +356,7 @@ it('remounts branch children on frame replacement and clears only their attached
       },
     },
     defaultValue: { o: { a: 'value' } },
-    validationMode: 0,
+    validationMode: ValidationMode.None,
     FieldRenderer: Group,
     fieldInputDefinitions: [
       { test: { type: 'object' as const }, Component: Branch },
@@ -384,7 +389,7 @@ it('switches Form.Input unwrapped and retains a working standalone input', () =>
       properties: { a: { type: 'string' as const } },
     },
     InputRenderer: Frame,
-    validationMode: 0,
+    validationMode: ValidationMode.None,
   };
   const view = render(
     <Form {...props}>
@@ -414,7 +419,10 @@ it('recovers a throwing frame when the selected frame changes', () => {
   const Healthy = ({ children }: InputRendererProps) => (
     <section>{children}</section>
   );
-  const props = { jsonSchema: { type: 'string' as const }, validationMode: 0 };
+  const props = {
+    jsonSchema: { type: 'string' as const },
+    validationMode: ValidationMode.None,
+  };
   const view = render(<Form {...props} InputRenderer={Broken} />);
   expect(view.container.querySelector('input')).toBeNull();
   view.rerender(<Form {...props} InputRenderer={Healthy} />);
@@ -440,7 +448,7 @@ it.each([false, true])(
       <Form
         ref={ref}
         jsonSchema={{ type: 'object', properties: { a: { type: 'string' } } }}
-        validationMode={0}
+        validationMode={ValidationMode.None}
         fieldInputDefinitions={[
           { test: { type: 'object' }, Component: Container, controlled },
         ]}

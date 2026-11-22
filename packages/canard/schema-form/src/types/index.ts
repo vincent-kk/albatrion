@@ -33,6 +33,7 @@ export type {
   ArraySchema,
 } from './schema/jsonSchema';
 export type { AllowedValue, InferValueType } from './schema/value';
+export type { LiteralPrimitiveKind } from './schema/literalPrimitiveKind';
 export type { RolledFieldRendererProps } from './rolled/fieldRenderer';
 export type {
   RolledNonNullableBooleanSchema,

@@ -5,7 +5,7 @@ import { afterEach, expect, it } from 'vitest';
 
 import { advanceValidationFrame } from '@/schema-form/__tests__/helpers/advanceValidationFrame';
 import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
-import { ValidationMode } from '@/schema-form/core';
+import { FieldNodeState, ValidationMode } from '@/schema-form/core';
 import { FieldRendererContextProvider } from '@/schema-form/providers';
 
 import { nodeFromJSONSchema } from '../../__tests__/fixtures/nodeFromJSONSchema';
@@ -30,7 +30,7 @@ it('LANDING-170 REACT-019 tracks child errors, state and reordered paths under S
   });
   act(() => {
     second.setExternalErrors([issue]);
-    second.setState({ 4: true });
+    second.setState({ [FieldNodeState.ErrorVisibility]: true });
   });
   expect(result.current.errorMatrix[1]).toEqual([issue]);
   expect(result.current.childErrorVisibleList).toEqual([false, true]);
@@ -60,12 +60,12 @@ it('IR-6 removing a visible array child never transfers eligibility to the held 
       </StrictMode>
     ),
   });
-  act(() => first.setState({ 4: true }));
+  act(() => first.setState({ [FieldNodeState.ErrorVisibility]: true }));
   await advanceValidationFrame();
   expect(result.current.childErrorVisibleList).toEqual([true, false]);
   act(() => {
     if (root.type === 'array') root.remove(0);
-    second.setState({ 4: true });
+    second.setState({ [FieldNodeState.ErrorVisibility]: true });
   });
   expect(result.current.childErrorVisibleList).toEqual([false]);
   expect(result.current.errorVisible).toBe(false);

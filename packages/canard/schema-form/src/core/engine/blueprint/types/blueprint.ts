@@ -31,6 +31,8 @@ export interface Blueprint {
   readonly isStaticFirstLoadEligible?: boolean;
   /** Independent absence proofs over every authored position declaration collection reaches. */
   readonly capabilities: {
+    /** Reused or recursive templates require live dependency occurrence binding. */
+    readonly hasAliasedDependencies?: boolean;
     /** No disjunction, if, discriminator or active control was reached. */
     readonly isBranchless: boolean;
     /** At least one supported control was authored as an expression string. */

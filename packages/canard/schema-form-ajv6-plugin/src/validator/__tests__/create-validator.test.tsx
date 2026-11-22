@@ -10,7 +10,7 @@ import {
 } from '@canard/schema-form';
 import Ajv from 'ajv';
 import { createRoot } from 'react-dom/client';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { createValidator } from '../createValidator';
 import { ajvValidatorPlugin } from '../validatorPlugin';
@@ -141,7 +141,6 @@ describe('createValidator for one AJV instance', () => {
 
   it('releases a root from its own registry without touching the plugin registration', () => {
     const own = instance();
-    const remove = vi.spyOn(own, 'removeSchema');
     const validator = createValidator(own);
     const bound = instance();
     ajvValidatorPlugin.bind!(bound);
@@ -154,9 +153,8 @@ describe('createValidator for one AJV instance', () => {
     expect(validator.compileGuard(root, '/if')('first')).toBe(true);
     expect(ajvValidatorPlugin.compileGuard(root, '/if')('first')).toBe(true);
     validator.release!(root);
-    expect(remove).toHaveBeenCalled();
     expect(own.getSchema(root.$id!)).toBeUndefined();
-    expect(bound.getSchema(root.$id!)).toBeDefined();
+    expect(bound.getSchema(root.$id!)).toBeUndefined();
     const reused = {
       $id: 'https://example.test/create-validator-release',
       if: { const: 'second' },

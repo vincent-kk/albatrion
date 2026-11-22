@@ -6,8 +6,15 @@ import { readDomNode } from './readDomObservation/utils/readDomNode';
  * @returns Semantic DOM with mount-local React IDs normalized consistently.
  */
 export function readDomObservation(container: HTMLElement): unknown {
-  const ids = Array.from(container.querySelectorAll('[id]'))
-    .map((element) => element.id)
-    .filter((id) => /^:r.*:$/.test(id) || /^_r_.*_$/.test(id));
+  const ids = [
+    ...new Set(
+      Array.from(container.querySelectorAll('[id]')).flatMap((element) => {
+        const match = element.id.match(
+          /^(?:label:)?((?:_[rR]_.*?_)|(?::[rR][^:]*:))(?::|$)/,
+        );
+        return match ? [match[1]] : [];
+      }),
+    ),
+  ];
   return readDomNode(container, ids);
 }

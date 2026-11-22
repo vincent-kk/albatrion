@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { memo } from 'react';
 
 import { useReference } from '@winglet/react-utils/hook';
@@ -53,7 +54,7 @@ import type { FormErrorMessageProps } from './types/props';
  * ```
  */
 export const FormErrorMessage = memo(
-  ({ path, style, className }: FormErrorMessageProps) => {
+  ({ path, style, className }: FormErrorMessageProps): ReactElement => {
     const overridePropsRef = useReference({ style, className });
     return (
       <FieldProxy

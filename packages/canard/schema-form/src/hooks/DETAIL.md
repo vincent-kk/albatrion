@@ -6,6 +6,8 @@ React의 렌더와 엔진의 동기 배달 사이를 연결합니다. 이 계층
 
 ## API Contracts
 
+useChildFieldMap은 제공된 자식의 자기 이름만 조회합니다. 없는 이름은 Object.prototype의 이름과 같아도 아무것도 렌더하지 않아 선택적인 자식 하나가 그룹 전체를 깨뜨리지 않습니다.
+
 useFieldErrors(node)는 해당 노드가 속한 폼 아래에서 원시 errors·errorVisible·errorMessage·가려진 formatError를 읽는 공개 소비자 계약입니다. 입력·틀·라벨·오류 렌더러와 에이전트 예제 테스트가 소비합니다. FieldProxy와 같은 공유 추적 마스크·표시 계산·첫 문구 계산을 사용하고, 반환 네 값이 같으면 객체 참조를 유지합니다. 모든 훅을 조건 없이 호출하며 공개 해제 구독은 표시가 보류된 동안만 연결합니다.
 
 같은 폼의 동기 커밋에서 인자와 추적되는 노드 상태만 읽는 포맷터에 대해 그룹과 표시 값이 같습니다. React 요소 문구는 내용이 같아도 참조가 다를 수 있습니다. transition·hydration 중 노드 사건 없는 공개 해제는 한 커밋 차이 뒤 수동 효과로 맞춰지고, 추적 범위 밖의 값에 의존한 포맷터는 다음 사건까지 다를 수 있습니다. 포맷 실패는 호출한 컴포넌트의 가까운 경계가 잡으며 입력 경계는 포맷터 교체만으로 복구하지 않습니다.
@@ -44,7 +46,7 @@ ref 할당은 렌더를 만들지 않습니다. `formRef.current?.node`를 전�
 
 ### EVENT-044 — 제출 핸들 위임
 
-`useFormSubmit`은 현재 핸들의 submit을 호출하고 그 거부를 그대로 호출자에게 전달합니다. 훅이 검증·degraded 판정을 재구현하거나 거부를 삼키지 않습니다. 제출 차단과 native submit 보고는 [FormCore](../components/Form/components/FormCore/DETAIL.md)가 소유합니다. pending 구독은 연결 직후 현재 값을 검사하여 숨김 중 시작·완료를 따라잡습니다. 핸들이 없으면 제출은 undefined로 이행하며 pending도 undefined일 수 있습니다.
+`useFormSubmit`은 현재 핸들의 submit을 호출하고 그 거부를 그대로 호출자에게 전달합니다. 훅이 검증·degraded 판정을 재구현하거나 거부를 삼키지 않습니다. 제출 차단과 native submit 보고는 [FormCore](../components/Form/components/FormCore/DETAIL.md)가 소유합니다. pending 구독은 연결 직후 현재 값을 검사하여 숨김 중 시작·완료를 따라잡습니다. ref 대입은 렌더를 일으키지 않으므로, 훅을 쓰는 컴포넌트가 커밋될 때마다 구독한 submit이 ref의 현재 submit과 같은지 확인하고 다르면 새 submit에 다시 구독합니다. 훅보다 늦게 마운트되거나 key 교체·오류 복구로 다시 마운트된 Form의 pending을 놓치지 않기 위해서입니다. 이 확인은 훅 컴포넌트의 커밋에만 일어나므로, 그 컴포넌트가 다시 렌더되지 않는 채로 다른 곳에서 Form만 교체되면 다음 커밋까지 이전 submit을 따릅니다. 핸들이 없으면 제출은 undefined로 이행하며 pending도 undefined일 수 있습니다.
 
 ## Acceptance Criteria
 

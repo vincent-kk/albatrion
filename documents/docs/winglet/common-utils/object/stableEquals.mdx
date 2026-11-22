@@ -18,7 +18,8 @@ high performance for nested structures.
 - **Advanced Type Support**: Proper comparison for Date, RegExp, TypedArrays, ArrayBuffers
 - **Sparse Array Handling**: Correctly distinguishes sparse arrays from dense ones
 - **Symbol Property Support**: Compares symbol-keyed properties using Reflect.ownKeys
-- **Memory Safety**: No risk of stack overflow with deeply nested circular structures
+- **Depth Safety**: Plain-object and array graphs, including cycles, use work frames.
+User getters, proxies and paths made only of other built-ins retain their own stack limits.
 - **Performance**: ~2x slower than `equals` but handles much more complex scenarios
 **When to Use stableEquals vs equals:**
 ```typescript
@@ -316,7 +317,7 @@ console.log(obj1 === obj2); // false (different references)`}
 **Supported Data Types:**
 - **Primitives**: string, number, boolean, null, undefined, symbol, bigint
 - **Objects**: Plain objects, arrays (including sparse), functions
-- **Built-ins**: Date, RegExp, Error, Map, Set (reference equality)
+- **Built-ins**: Date, RegExp, Map, Set, boxed primitives and Error, compared by state
 - **Binary Data**: ArrayBuffer, SharedArrayBuffer, TypedArrays, DataView
 - **Custom Objects**: Objects with custom prototypes
 

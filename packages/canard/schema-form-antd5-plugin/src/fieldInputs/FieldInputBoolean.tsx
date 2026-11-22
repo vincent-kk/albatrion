@@ -11,12 +11,17 @@ import type {
 } from '@canard/schema-form';
 
 const FieldInputBoolean = ({
-  path,
+  inputId,
   name,
   disabled,
+  readOnly,
   value,
   onChange,
   misfit,
+  labelId,
+  required,
+  className,
+  style,
 }: FieldInputProps<boolean | null>) => {
   const [indeterminate, checked] = useMemo(
     () => [
@@ -30,10 +35,14 @@ const FieldInputBoolean = ({
   });
   return (
     <Checkbox
+      className={className}
+      style={style}
+      aria-labelledby={labelId}
+      aria-required={required || undefined}
       aria-invalid={misfit || undefined}
-      id={path}
+      id={inputId}
       name={name}
-      disabled={disabled}
+      disabled={disabled || readOnly}
       indeterminate={indeterminate}
       checked={checked}
       onChange={handleChange}

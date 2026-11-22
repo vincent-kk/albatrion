@@ -34,6 +34,8 @@ export type SchemaPresentation = {
   >;
   /** Props passed to FieldInput component */
   FieldInputProps?: {
+    /** The input binding supplies the ref. */
+    focusRef?: never;
     /** Placeholder text for input fields */
     placeholder?: string;
     /** Display name aliases for enum values */

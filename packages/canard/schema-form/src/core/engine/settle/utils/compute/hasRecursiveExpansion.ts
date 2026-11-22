@@ -92,6 +92,7 @@ export const hasRecursiveExpansion = <Self extends FieldNodeRecord<Self>>(
   schema?: EffectiveSchema,
   hosts?: ReadonlySet<Self>,
 ): boolean => {
+  if (parent.depth >= 256) return true;
   if (input !== undefined) return false;
   const analysis = parent.runtime.blueprint;
   let cyclic = getBlueprintDerived<'recursiveExpansion', boolean>(

@@ -17,7 +17,7 @@ const FieldInputString = ({ onChange, ...props }: Props) => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value === '' ? undefined : event.target.value);
   });
-  return <TextField onChange={handleChange} id={props.path} name={props.name} disabled={props.disabled || props.readOnly} />;
+  return <TextField onChange={handleChange} id={props.id} name={props.name} disabled={props.disabled || props.readOnly} />;
 };
 ```
 
@@ -122,7 +122,7 @@ const FieldInputString = ({
 ```typescript
 const FieldInputDate = ({
   jsonSchema,
-  path,
+  id,
   name,
   required,
   disabled,
@@ -131,7 +131,7 @@ const FieldInputDate = ({
   // ✅ Memoize nested objects with useMemo
   const slotProps = useMemo(() => ({
     textField: {
-      id: path,
+      id: id,
       name,
       required,
       disabled,
@@ -144,7 +144,7 @@ const FieldInputDate = ({
         },
       },
     },
-  }), [path, name, required, disabled, size, jsonSchema.highlightColor]);
+  }), [id, name, required, disabled, size, jsonSchema.highlightColor]);
 
   return <DatePicker slotProps={slotProps} />;
 };
@@ -262,18 +262,18 @@ const FieldInputArray = ({
 // ❌ Handle the condition in one component - it gets complicated
 const FieldInputString = ({ isPassword, ...props }: Props) => {
   if (isPassword) {
-    return <PasswordField id={props.path} name={props.name} disabled={props.disabled || props.readOnly} />;
+    return <PasswordField id={props.id} name={props.name} disabled={props.disabled || props.readOnly} />;
   }
-  return <TextField id={props.path} name={props.name} disabled={props.disabled || props.readOnly} />;
+  return <TextField id={props.id} name={props.name} disabled={props.disabled || props.readOnly} />;
 };
 
 // ✅ Split into separate components - it stays clear
 const FieldInputString = (props: Props) => {
-  return <TextField id={props.path} name={props.name} disabled={props.disabled || props.readOnly} />;
+  return <TextField id={props.id} name={props.name} disabled={props.disabled || props.readOnly} />;
 };
 
 const FieldInputPassword = (props: Props) => {
-  return <PasswordField id={props.path} name={props.name} disabled={props.disabled || props.readOnly} />;
+  return <PasswordField id={props.id} name={props.name} disabled={props.disabled || props.readOnly} />;
 };
 
 // Split at the definition stage
@@ -378,7 +378,7 @@ if (process.env.NODE_ENV === 'development') {
 
     console.log(`FieldInputString rendered ${renderCount.current} times`);
 
-    return <TextField id={props.path} name={props.name} disabled={props.disabled || props.readOnly} />;
+    return <TextField id={props.id} name={props.name} disabled={props.disabled || props.readOnly} />;
   };
 }
 ```
@@ -409,7 +409,7 @@ const handleChange = (event) => {
 
 // ❌ Recreate the object on every render
 const slotProps = {
-  textField: { id: path, name },
+  textField: { id: id, name },
 };
 
 // ❌ Inline function

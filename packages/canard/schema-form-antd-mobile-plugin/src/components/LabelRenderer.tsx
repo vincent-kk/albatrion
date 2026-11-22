@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactElement } from 'react';
 
 import type { LabelRendererProps } from '@canard/schema-form';
 
@@ -17,7 +17,7 @@ export const LabelRenderer = ({
   required,
   style,
   className,
-}: LabelRendererProps) => (
+}: LabelRendererProps): ReactElement => (
   <label htmlFor={htmlFor} id={id} style={style} className={className}>
     {children}
     {required && (

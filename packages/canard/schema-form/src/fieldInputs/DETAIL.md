@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+모든 기본 입력의 DOM 식별은 바인딩의 scoped id를 사용하며 데이터 조회용 path를 id로 재구성하지 않습니다. 여러 Form의 동명 필드 사이에서 라벨·선택지 연결이 섞이지 않게 하기 위한 규칙입니다.
+
 - 입력 선택의 전체 우선순위와 수명은 [FieldInputBridge 계약](../components/FieldProxy/components/FieldInputBridge/DETAIL.md)에 둡니다. 이곳은 기본 정의 사이의 우선순위와 표현 정책을 소유합니다.
 - 공개 Hint·props·presentation 형은 [types 계약](../types/DETAIL.md), 시험 객체의 실행 의미는 [fieldInputDefinition 계약](../helpers/fieldInputDefinition/DETAIL.md)을 따릅니다. 같은 형과 시험 규칙을 입력마다 다시 정의하지 않습니다.
 

@@ -1,11 +1,10 @@
-import type { CSSProperties } from 'react';
+import type { ReactElement } from 'react';
 
 import { Typography } from 'antd';
 
 import type { ErrorMessageRendererProps } from '@canard/schema-form';
 
-/** Standalone errors retain their unconstrained word breaking. */
-const ERROR_STYLE: CSSProperties = { wordBreak: 'unset' };
+import { TEXT_STYLE } from './styles';
 
 /**
  * Render explicit error content in the typography root.
@@ -16,10 +15,10 @@ export const ErrorMessageRenderer = ({
   children,
   style,
   className,
-}: ErrorMessageRendererProps) => (
+}: ErrorMessageRendererProps): ReactElement => (
   <Typography.Text
     type="danger"
-    style={style ?? ERROR_STYLE}
+    style={style ?? TEXT_STYLE}
     className={className}
   >
     {children}

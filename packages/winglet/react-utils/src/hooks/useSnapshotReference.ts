@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import { equals } from '@winglet/common-utils/object';
+import { useSnapshotValue } from './utils/useSnapshotValue';
 
 /**
  * Creates a ref holding a deep-compared snapshot whose `current` changes only when
@@ -22,16 +22,10 @@ import { equals } from '@winglet/common-utils/object';
  * render therefore pays one comparison per render, which is inherent to the question being
  * asked; a caller that keeps the reference stable pays nothing after the first.
  *
- * @remarks The identity gate is a `useRef`, never a `useMemo`: a memo's dependency record
- *          lives on the committed fiber, so a render React discards would leave its write
- *          to the snapshot behind while the deps that justified it roll back, and no later
- *          render carrying that same input could ever re-examine it. Refs roll back with
- *          nothing, so gate and write always move together.
- *
- * @remarks `omit` is captured on the first render that compares a new `input` reference,
- *          not on mount — the initial render has nothing to compare against, so it never
- *          reaches the capture. Later changes are ignored, so pass a value that stays
- *          fixed for the component's lifetime.
+ * @remarks Snapshot and comparison caches publish only at commit. Suspended render
+ * attempts cannot change imperative readers or the next committed comparison.
+ * `omit` is captured on the first committed comparison of a new input reference.
+ * Keep it fixed for the component lifetime.
  *
  * @example
  * ```tsx
@@ -59,15 +53,6 @@ export const useSnapshotReference = <Input extends object | undefined>(
   omit?: Set<keyof Input> | Array<keyof Input>,
 ) => {
   const snapshotRef = useRef(input);
-  const comparedRef = useRef(input);
-  const omitKeysRef = useRef<Set<keyof Input> | undefined | null>(null);
-  if (input !== comparedRef.current) {
-    comparedRef.current = input;
-    if (omitKeysRef.current === null)
-      omitKeysRef.current =
-        omit === undefined || omit instanceof Set ? omit : new Set(omit);
-    if (!equals(snapshotRef.current, input, omitKeysRef.current))
-      snapshotRef.current = input;
-  }
+  useSnapshotValue(snapshotRef, input, omit);
   return snapshotRef;
 };

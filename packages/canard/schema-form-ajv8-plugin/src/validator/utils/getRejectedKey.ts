@@ -2,19 +2,21 @@ import type { ErrorObject } from 'ajv';
 
 import type { Dictionary } from '@aileron/declare';
 
+import { isChildSchemaPath } from './isChildSchemaPath';
+
 /**
  * Resolves an authored subschema from an AJV fragment path.
  * @param root - Authored root supplied to error transformation.
- * @param path - AJV schema path, possibly prefixed by an absolute URI.
+ * @param path - AJV schema path relative to the compiled root.
  * @returns The referenced subschema, or undefined when it is not local.
  */
 const schemaAtPath = (root: unknown, path: string): unknown => {
-  const fragment = path.slice(path.indexOf('#') + 1);
-  if (!fragment.startsWith('/')) return root;
+  if (!path.startsWith('#/')) return undefined;
   let current = root;
-  for (const part of fragment.slice(1).split('/')) {
+  for (const part of path.slice(2).split('/')) {
     if (typeof current !== 'object' || current === null) return undefined;
-    current = (current as Dictionary<unknown>)[part.replace(/~1/g, '/').replace(/~0/g, '~')];
+    const token = part.includes('%') ? decodeURIComponent(part) : part;
+    current = (current as Dictionary<unknown>)[token.replace(/~1/g, '/').replace(/~0/g, '~')];
   }
   return current;
 };
@@ -26,13 +28,14 @@ const schemaAtPath = (root: unknown, path: string): unknown => {
  * @returns The property name, or undefined for host-only issues.
  */
 export const getRejectedKey = (error: ErrorObject, root: unknown): string | undefined => {
+  if (typeof error.propertyName === 'string') return error.propertyName;
   if (error.keyword === 'additionalProperties' || error.keyword === 'unevaluatedProperties') {
     const property = error.params.additionalProperty ?? error.params.unevaluatedProperty;
     return typeof property === 'string' ? property : undefined;
   }
   if (error.keyword === 'propertyNames')
     return typeof error.params.propertyName === 'string' ? error.params.propertyName : undefined;
-  if (error.keyword === 'false schema' && error.instancePath)
+  if (error.keyword === 'false schema' && error.instancePath && isChildSchemaPath(error.schemaPath))
     return error.instancePath?.split('/').at(-1)?.replace(/~1/g, '/').replace(/~0/g, '~');
   if (error.keyword !== 'not') return undefined;
   const schema = schemaAtPath(root, error.schemaPath);

@@ -4,4 +4,4 @@
 "@canard/schema-form-ajv8-plugin": patch
 ---
 
-Preserve removed and redefined built-in AJV keywords in guard and same-id schema compilers. Conditional fields and isolated validation now use the same keyword profile as the bound instance.
+Compile with current application formats, keywords, options, and reference registrations. Edits to schemas registered with `addSchema` apply to new compiles. A registration key and an ID can select different schemas, and a removed embedded ID is unavailable to new compiles. Existing validators and guards keep their compiled rules.

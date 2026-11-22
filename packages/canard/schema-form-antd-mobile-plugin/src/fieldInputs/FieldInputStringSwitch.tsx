@@ -10,7 +10,7 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-import { SwitchKeyboardControl } from './components/SwitchKeyboardControl';
+import { getOwnLabel } from './utils/enum/getOwnLabel';
 
 type StringSwitchSchema = StringSchema & {
   enum?: [string | null, string | null];
@@ -28,14 +28,17 @@ interface FieldInputStringSwitchProps
 }
 
 const FieldInputStringSwitch = ({
-  path,
+  labelId,
   jsonSchema,
   disabled,
+  readOnly,
   value,
   onChange,
   context,
   alias,
   misfit,
+  className,
+  style,
 }: FieldInputStringSwitchProps) => {
   const [checked, unchecked] = useMemo(() => {
     const [checked, unchecked] = jsonSchema.enum || [];
@@ -48,8 +51,8 @@ const FieldInputStringSwitch = ({
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
     const labels = context.switchLabels || alias || {};
     return [
-      labels['' + checked] || checked,
-      labels['' + unchecked] || unchecked,
+      getOwnLabel(labels, String(checked)) || checked,
+      getOwnLabel(labels, String(unchecked)) || unchecked,
     ];
   }, [checked, unchecked, context, alias]);
 
@@ -58,19 +61,17 @@ const FieldInputStringSwitch = ({
   });
 
   return (
-    <SwitchKeyboardControl disabled={disabled}>
-      <Switch
-        data-focus-target
-        tabIndex={disabled ? undefined : 0}
-        aria-invalid={misfit || undefined}
-        key={path}
-        disabled={disabled}
-        checked={value === checked}
-        checkedText={checkedLabel}
-        uncheckedText={uncheckedLabel}
-        onChange={handleChange}
-      />
-    </SwitchKeyboardControl>
+    <Switch
+      className={className}
+      style={style}
+      aria-invalid={misfit || undefined}
+      aria-labelledby={labelId}
+      disabled={disabled || readOnly}
+      checked={value === checked}
+      checkedText={checkedLabel}
+      uncheckedText={uncheckedLabel}
+      onChange={handleChange}
+    />
   );
 };
 

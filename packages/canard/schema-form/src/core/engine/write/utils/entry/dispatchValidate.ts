@@ -11,6 +11,7 @@ import type { ValidationIssue } from '../../../validation';
 import {
   isFieldNodeValidationCurrent,
   isFieldNodeValidationLifetimeCurrent,
+  readFieldNodeValidationCommit,
   releaseFieldNodeRevealHistory,
   retainEqualValidationIssues,
   routeValidationIssues,
@@ -48,7 +49,9 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
   const running =
     node === node.rootNode ? { stamp, targets: new Set([node]) } : undefined;
   if (running) runtime.activeValidationRun = running;
-  const commit = runtime.commitNumber ?? 0;
+  const initialCommit = runtime.commitNumber ?? 0;
+  const validatedValue = root.storedOutputValue;
+  const validatedContext = runtime.context;
   const loadStamp = runtime.validationLoadStamp;
   const epoch = runtime.validationEpoch;
   let result: Nullable<readonly ValidationIssue[]>;
@@ -108,7 +111,13 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
     if (node === node.rootNode) settleFieldNodeValidation(node, stamp);
     return [];
   }
-  if ((runtime.commitNumber ?? 0) !== commit) {
+  const commit = readFieldNodeValidationCommit(
+    root,
+    initialCommit,
+    validatedValue,
+    validatedContext,
+  );
+  if (commit === undefined) {
     if (node === node.rootNode) {
       if (
         (runtime.validationMode ?? ValidationMode.None) &

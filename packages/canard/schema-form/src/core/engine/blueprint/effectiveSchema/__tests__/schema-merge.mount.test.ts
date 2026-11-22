@@ -3,6 +3,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import { captureBranchlessNodeTree } from '@/schema-form/core/__tests__/fixtures/captureBranchlessNodeTree';
 import type { AuthoredSchema } from '@/schema-form/core/engine/types/jsonSchema';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
 
 import type { mergeEffectiveSchema } from '../utils/merge/mergeEffectiveSchema';
 import type { mergeSchemaContributions } from '../utils/merge/mergeSchemaContributions';
@@ -62,7 +63,7 @@ it('removes runtime remerges per cold mount while retaining every static check',
   counts.fallback = true;
   const oracle = nodeFromJSONSchema<AuthoredSchema>({
     jsonSchema: schema,
-    validationMode: 0,
+    validationMode: ValidationMode.None,
   });
   const before = { runtime: counts.runtime, static: counts.static };
   counts.fallback = false;
@@ -70,7 +71,7 @@ it('removes runtime remerges per cold mount while retaining every static check',
   counts.static = 0;
   const root = nodeFromJSONSchema<AuthoredSchema>({
     jsonSchema: structuredClone(schema),
-    validationMode: 0,
+    validationMode: ValidationMode.None,
   });
   console.log(
     'SCHEMA_MERGE_COUNTS',
@@ -107,12 +108,12 @@ it('preserves node values, schemas, revisions, warning and event order through l
   counts.fallback = true;
   const oracle = nodeFromJSONSchema<AuthoredSchema>({
     jsonSchema: schema,
-    validationMode: 0,
+    validationMode: ValidationMode.None,
   });
   counts.fallback = false;
   const root = nodeFromJSONSchema<AuthoredSchema>({
     jsonSchema: structuredClone(schema),
-    validationMode: 0,
+    validationMode: ValidationMode.None,
   });
   await new Promise((resolve) => setImmediate(resolve));
   const events: unknown[][] = [[], []];

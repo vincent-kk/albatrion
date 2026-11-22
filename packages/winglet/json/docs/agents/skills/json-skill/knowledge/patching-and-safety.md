@@ -1,6 +1,6 @@
 # Patching and Safety
 
-Generating and applying diffs, and the three things that decide whether that is safe: the reserved-member data contract, the `strict` guard pipeline, and which function is allowed to mutate what.
+Generating and applying diffs, and the three things that decide whether that is safe: the reserved-member data contract, the `test` guard pipeline, and which function is allowed to mutate what.
 
 ## Prototype pollution
 
@@ -18,13 +18,13 @@ The library defends structurally, and the rule is uniform across `setValue`, `ap
 1. **Container validation.** `getValue` and `setValue` accept only plain objects and arrays. Class instances, functions, `Map`, `Set`, and primitives are rejected outright, so a patch cannot start a traversal on a prototype chain by accident.
 2. **Reserved members are opaque own data.** `__proto__`, `constructor`, and `prototype` are treated exactly like any other member name, per RFC 6901/6902/7396: reads return the own data property or `undefined` — never the prototype chain — and writes define an own data property without triggering the `__proto__` setter. There is no guard to configure and nothing to switch off; no input can modify `Object.prototype` or any inherited object.
 
-Both payload lines above therefore fail structurally with `PATCH_PATH_INVALID_INTERMEDIATE`, for the same reason `/missing/isAdmin` fails: the intermediate container is not an own property. Writing `/__proto__` directly (one segment, no missing intermediate) succeeds — as an own data property on the document, prototype untouched. The same pointer produces the same observable result through all three write APIs: no API throws a security error, none silently skips, and there is no `protectPrototype` option.
+Both payload lines above therefore fail structurally with `PATCH_PATH_INVALID_INTERMEDIATE`, for the same reason `/missing/isAdmin` fails: the intermediate container is not an own property. Writing `/__proto__` directly (one segment, no missing intermediate) succeeds — as an own data property on the document, prototype untouched. The shared guarantee is own-data access and prototype preservation. Intermediate-container policies differ: `applyPatch` requires an existing parent, while `setValue` creates a missing parent, including an own reserved-name container. `mergePatch` follows its object-merge rules. None silently skips reserved names, and there is no `protectPrototype` option.
 
 One consequence worth knowing: a returned document can now carry an own `__proto__` data key (exactly as `JSON.parse` output can). Spread (`{ ...x }`), `JSON.parse(JSON.stringify(x))`, and `structuredClone` preserve it as data, but `Object.assign({}, x)` and a `for-in` copy loop will swap the copy's prototype. Prefer spread when copying documents that may contain reserved member keys.
 
-## The strict pipeline: compare writes guards, applyPatch enforces them
+## Test guards: compare writes them, applyPatch enforces them
 
-`strict` is not a validation-strictness dial. It is one optimistic-concurrency feature whose two halves live in different functions, both defaulting to `false`.
+Optimistic concurrency has two halves in two functions. Only the writing half is optional.
 
 `compare(source, target, { strict: true })` inserts a `test` operation carrying the _old_ value before each `replace` and each `remove`. Additions get no guard, since there is nothing yet to assert:
 
@@ -34,17 +34,17 @@ compare({ v: 1 }, { v: 2 }, { strict: true });
 //   { op: 'replace', path: '/v', value: 2 } ]
 ```
 
-`applyPatch(doc, patches, { strict: true })` is what makes those guards do anything. With the default `strict: false`, a `test` operation whose property exists **always passes without comparing the value**:
+`applyPatch` compares every `test` operation's value with deep equality, in every mode, and aborts the whole patch with `PATCH_TEST_FAILED` on a mismatch (RFC 6902 4.6 and 5). The guard holds with no option on the applying side:
 
 ```typescript
 const guarded = compare({ v: 1 }, { v: 2 }, { strict: true });
-applyPatch({ v: 999 }, guarded); // { v: 2 }  — guard ignored, drift overwritten
-applyPatch({ v: 999 }, guarded, { strict: true }); // throws PATCH_TEST_FAILED
+applyPatch({ v: 1 }, guarded); // { v: 2 }
+applyPatch({ v: 999 }, guarded); // throws PATCH_TEST_FAILED — drift is not overwritten
 ```
 
-So a patch that looks guarded is only guarded if the applying side also opts in. Set `strict: true` on both ends, or the `test` operations are decoration.
+`applyPatch`'s `strict` option is deprecated and ignored; passing it changes nothing.
 
-Everything else `applyPatch` rejects is independent of `strict` and always throws: `remove` of a missing property, `test` naming a missing property, an array index out of bounds or non-numeric, an unknown `op`, and `move`/`copy` whose destination lies inside the source subtree. The one case that never throws is `replace` on a path that does not exist — it is applied as an add, in both modes.
+Everything else `applyPatch` rejects always throws as well: `remove` or `replace` of a missing property, `test` naming a missing property, an array index out of bounds, non-numeric, with a leading zero (`/a/01`), or past the largest array index `4294967294`, an unknown `op`, a `move` or `copy` whose `from` does not exist (a member set to `undefined`, an array hole, and an `undefined` element exist), and a `move` whose destination lies strictly inside its `from` subtree (a `move` onto its own `from` leaves the document unchanged, and `copy` has no location restriction).
 
 ## Who is allowed to mutate
 
@@ -77,7 +77,7 @@ The default `immutable: true` makes failure atomic from the caller's point of vi
 
 ## What compare produces
 
-Only `add`, `remove`, `replace`, and — under `strict` — `test`. It never emits `move` or `copy`, even when a subtree is relocated; that shows up as a `remove` plus an `add`. `move` and `copy` are accepted by `applyPatch` but must be hand-written.
+Only `add`, `remove`, `replace`, and — under `strict` — `test`. It never emits `move` or `copy`, even when a subtree is relocated; that shows up as a `remove` plus an `add`. `move` and `copy` are accepted by `applyPatch` but must be hand-written. Both follow RFC 6902: `move` removes `from` and then adds at `path`, resolved against the document after the removal, and `copy` adds a deep copy at `path`. At an array index both insert rather than overwrite — moving `/foo/1` to `/foo/3` in `['all', 'grass', 'cows', 'eat']` yields `['all', 'cows', 'eat', 'grass']`.
 
 Objects exposing a `toJSON()` method are serialized through it before comparison, so a domain model diffs as its JSON projection rather than by its class fields.
 
@@ -101,7 +101,7 @@ Neither error class nor its type guard is exported, so `instanceof JSONPatchErro
 
 ```typescript
 try {
-  return applyPatch(doc, untrustedPatches, { strict: true });
+  return applyPatch(doc, untrustedPatches);
 } catch (error) {
   if (error instanceof Error && error.name === 'JSONPatch') {
     const code = (error as Error & { specific: string }).specific;
@@ -116,12 +116,12 @@ Matching on `code` works too, but remember it is prefixed — `'JSON_PATCH.PATCH
 
 ## Recommended options by use case
 
-| Use case                                         | Options                                                                       |
-| ------------------------------------------------ | ----------------------------------------------------------------------------- |
-| Reading a value that may be absent               | `getValue` — no options; check for `undefined`                                |
-| Applying a patch from an untrusted source        | `{ strict: true, immutable: true }` — reserved-member safety is structural    |
-| Applying a patch you generated, in a hot path    | `{ immutable: false, strict: false }` — after confirming you own the document |
-| Optimistic concurrency against a shared document | `compare(..., { strict: true })` **and** `applyPatch(..., { strict: true })`  |
-| Diffing for state management                     | `compare` defaults; keep `immutable: true` if the patch outlives the tick     |
-| Merging an API response                          | `mergePatch(source, patch)` — defaults are correct                            |
-| Updating one form field                          | `setValue(state, pointer, value)` — mutation is the point                     |
+| Use case                                         | Options                                                                   |
+| ------------------------------------------------ | ------------------------------------------------------------------------- |
+| Reading a value that may be absent               | `getValue` — no options; check for `undefined`                            |
+| Applying a patch from an untrusted source        | Defaults (`immutable: true`) — reserved-member safety is structural       |
+| Applying a patch you generated, in a hot path    | `{ immutable: false }` — after confirming you own the document            |
+| Optimistic concurrency against a shared document | `compare(..., { strict: true })`; `applyPatch` enforces the guards        |
+| Diffing for state management                     | `compare` defaults; keep `immutable: true` if the patch outlives the tick |
+| Merging an API response                          | `mergePatch(source, patch)` — defaults are correct                        |
+| Updating one form field                          | `setValue(state, pointer, value)` — mutation is the point                 |

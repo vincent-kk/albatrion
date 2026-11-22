@@ -18,7 +18,6 @@ import { hasRecursiveFill } from './hasRecursiveFill';
 import { hasWrongKindBranchAncestor } from './hasWrongKindBranchAncestor';
 import { isMissingSource } from './isMissingSource';
 import { readDefault } from './readDefault';
-import { withdrawDetachedFills } from './withdrawDetachedFills';
 
 /**
  * Apply appearance fills and final-list interpretation within a bounded round.
@@ -127,33 +126,23 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
         context.filledNodes.add(node);
         context.isAutomatic = true;
         context.writtenInputs.set(node, value);
-        // markWrite logs array structure only for branch hosts and array nodes.
-        const logsStructure =
-          node.behavior.strategy === 'branch' || node.behavior.type === 'array';
-        const arrayLogStart = logsStructure
-          ? context.arrayStructureLog.length
-          : 0;
+        context.isCollectingFillArrayCounts =
+          node.behavior.strategy === 'branch';
         markWrite(node, value, context);
         context.isAutomatic = false;
-        if (logsStructure)
-          for (
-            let logIndex = arrayLogStart;
-            logIndex < context.arrayStructureLog.length;
-            logIndex++
-          ) {
-            const entry = context.arrayStructureLog[logIndex];
+        context.isCollectingFillArrayCounts = false;
+        if (context.fillArrayCounts?.size) {
+          for (const [host, previousCount] of context.fillArrayCounts) {
             if (
               fillAncestors &&
-              (!fillAncestors.has(entry.host) ||
-                fillAncestors.get(entry.host) === -1)
+              (!fillAncestors.has(host) || fillAncestors.get(host) === -1)
             )
-              fillAncestors.set(entry.host, entry.previousItemCount);
-            if (
-              context.hasGates &&
-              entry.host.itemCount > entry.previousItemCount
-            )
-              (newArrayHosts ??= new Set()).add(entry.host);
+              fillAncestors.set(host, previousCount);
+            if (context.hasGates && host.itemCount > previousCount)
+              (newArrayHosts ??= new Set()).add(host);
           }
+          context.fillArrayCounts.clear();
+        }
       }
     }
     for (const [node, original] of context.writtenInputs) {
@@ -170,12 +159,16 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
         continue;
       const effective = effectiveType(node);
       if (effective === node.schemaType) continue;
+      const retained = context.retainedSources?.get(node);
       context.isAutomatic = true;
       markWrite(
         node,
         original,
         context,
         staticSpec(effective, node.isNullable),
+        undefined,
+        retained?.writeOrigin,
+        retained?.writeOrder ?? 0,
       );
       context.isAutomatic = false;
     }
@@ -190,7 +183,6 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
     }
     if (!context.hasAutomaticChanged) {
       if (continuingFill && context.hasGates) continue;
-      withdrawDetachedFills(context);
       context.isInTransition = false;
       return;
     }

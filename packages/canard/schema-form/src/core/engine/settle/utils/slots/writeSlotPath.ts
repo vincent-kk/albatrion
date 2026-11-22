@@ -1,16 +1,24 @@
 import type { Optional } from '@aileron/declare';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import type { CandidateInput } from '../../types/candidateInput';
 import type { SettlementContext } from '../../types/settlement';
+import { getChildDistribution } from '../input/getChildDistribution';
+import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
+import { getSlotDecision } from '../source/getSlotDecision';
+import { supersedeCandidateInput } from '../source/supersedeCandidateInput';
 import { createSlotValueOverlay } from './createSlotValueOverlay';
 import { getSlotBinding } from './getSlotBinding';
 import { getSlotPathEntry } from './getSlotPathEntry';
 import { getSlotPathNames } from './getSlotPathNames';
 import { getSlotSource } from './getSlotSource';
 import { markSlotChange } from './markSlotChange';
+import { recordRetainedSlotWrite } from './utils/recordRetainedSlotWrite';
 
 /** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
@@ -25,6 +33,8 @@ type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
  * @param context - Optional automatic-write rollback scope
  * @param isAutomatic - Whether projected child writes preserve wrong-kind ancestor source
  * @param preserveCandidates - Structural replay keeps other kinds at the same address
+ * @param selectsNamedSource - Whether this write owns the slot's retained source
+ * @param writeOrder - Rank of a directly accepted latent input
  * @returns Whether a terminal descendant has a projected value
  */
 export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
@@ -36,6 +46,8 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
   context?: SettlementContext<Self>,
   isAutomatic = false,
   preserveCandidates = false,
+  selectsNamedSource?: boolean,
+  writeOrder?: number,
 ): boolean => {
   const names = getSlotPathNames(root.runtime, path);
   if (names === undefined) return false;
@@ -67,15 +79,41 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
       continue;
     }
     const instance = host.inactiveSlots?.get(entry);
-    const previous = host.inactiveSlotOverlays?.get(entry);
+    let previous = host.inactiveSlotOverlays?.get(entry);
+    if (context && writeOrder !== undefined && depth + 1 < names.length) {
+      const distribution = getChildDistribution(host, entry, context);
+      if (
+        distribution &&
+        !distribution.shouldPreserveLatent &&
+        hasDistributedChildInput(
+          distribution.input,
+          name,
+          template.kind === 'array',
+        )
+      )
+        previous = createSlotValueOverlay(
+          entry.node,
+          Reflect.get(distribution.input, name),
+          instance,
+          previous,
+          distribution.isWhole,
+        ).overlay;
+    }
     let wrote = false;
     const patch = (
       template: BlueprintNode,
       instance: Optional<Self>,
       previous: Optional<InactiveSlotOverlay>,
       index: number,
+      policyInput?: CandidateInput,
     ): InactiveSlotOverlay => {
       if (index === names.length) {
+        if (
+          policyInput &&
+          writeOrder !== undefined &&
+          policyInput.order < writeOrder
+        )
+          supersedeCandidateInput(policyInput, true);
         const result = createSlotValueOverlay(
           template,
           input,
@@ -105,45 +143,75 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
       if (!binding) return previous ?? {};
       const prior = getSlotSource(instance, binding, previous);
       const children = new Map(previous?.children);
+      const suffix = policyInput && appendSegment(policyInput.suffix, name);
+      const childInput = policyInput?.children?.find(
+        (child) => child.template === binding.node && child.suffix === suffix,
+      );
       children.set(
         binding,
-        patch(binding.node, prior.instance, prior.overlay, index + 1),
+        patch(
+          binding.node,
+          prior.instance,
+          prior.overlay,
+          index + 1,
+          childInput,
+        ),
       );
-      for (const other of entries) {
-        if (
-          preserveCandidates ||
-          other.name !== name ||
-          getBlueprintNodeIdentity(other.node) ===
-            getBlueprintNodeIdentity(binding.node) ||
-          instance?.childrenByName?.[name]?.blueprintNode === other.node
-        )
-          continue;
-        const prior = getSlotSource(instance, other, previous);
-        if (prior.instance || prior.overlay)
-          children.set(other, { isWhole: true });
+      if (!preserveCandidates) {
+        let bindingIdentity: Optional<string>;
+        for (const other of entries) {
+          if (
+            other.name !== name ||
+            other.node === binding.node ||
+            instance?.childrenByName?.[name]?.blueprintNode === other.node ||
+            getBlueprintNodeIdentity(other.node) ===
+              (bindingIdentity ??= getBlueprintNodeIdentity(binding.node))
+          )
+            continue;
+          const prior = getSlotSource(instance, other, previous);
+          if (prior.instance || prior.overlay)
+            children.set(other, { isWhole: true });
+        }
       }
       return { ...previous, children };
     };
     markSlotChange(host, entry, undefined, context);
     const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
       new Map());
-    overlays.set(entry, patch(entry.node, instance, previous, depth + 1));
-    for (const other of entries) {
-      if (
-        preserveCandidates ||
-        other.name !== name ||
-        getBlueprintNodeIdentity(other.node) ===
-          getBlueprintNodeIdentity(entry.node)
-      )
-        continue;
-      if (
-        !host.inactiveSlots?.has(other) &&
-        !host.inactiveSlotOverlays?.has(other)
-      )
-        continue;
-      markSlotChange(host, other, undefined, context);
-      host.inactiveSlots?.delete(other);
-      host.inactiveSlotOverlays?.delete(other);
+    const decision =
+      context && writeOrder !== undefined
+        ? getSlotDecision(host, entry, context, writeOrder)
+        : undefined;
+    overlays.set(
+      entry,
+      patch(
+        entry.node,
+        instance,
+        previous,
+        depth + 1,
+        decision?.postPolicyInput,
+      ),
+    );
+    if (context && selectsNamedSource !== undefined)
+      recordRetainedSlotWrite(host, entry, context, selectsNamedSource);
+    if (!preserveCandidates) {
+      let entryIdentity: Optional<string>;
+      for (const other of entries) {
+        if (
+          other.name !== name ||
+          other.node === entry.node ||
+          (!host.inactiveSlots?.has(other) &&
+            !host.inactiveSlotOverlays?.has(other)) ||
+          getBlueprintNodeIdentity(other.node) ===
+            (entryIdentity ??= getBlueprintNodeIdentity(entry.node))
+        )
+          continue;
+        markSlotChange(host, other, undefined, context);
+        host.inactiveSlots?.delete(other);
+        host.inactiveSlotOverlays?.delete(other);
+        if (context && selectsNamedSource !== undefined)
+          recordRetainedSlotWrite(host, other, context, selectsNamedSource);
+      }
     }
     return wrote;
   }

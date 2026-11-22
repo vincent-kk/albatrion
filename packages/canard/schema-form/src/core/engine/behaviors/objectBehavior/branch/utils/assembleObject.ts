@@ -1,14 +1,38 @@
 import { isArray } from '@winglet/common-utils/filter';
-import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { Dictionary, Optional } from '@aileron/declare';
+import type { Dictionary } from '@aileron/declare';
 
-import type { Behavior } from '../../../../record';
+import type { Behavior, FieldNodeRecord } from '../../../../record';
 import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { objectKeyCounts } from '../../../../utils/cache/valueMemos';
 import { writeObjectKey } from '../../../../utils/writeObjectKey';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
-import { copyObjectValue } from './copyObjectValue';
+import { patchObjectKeys } from './patchObjectKeys';
+import { assembleObjectValue } from './assembleObjectValue';
+
+/**
+ * Store the shape proven during assembly for the next value-only patch.
+ * @param node - Object occurrence owning the shape.
+ * @param children - Current child identity used by the shape proof.
+ * @param result - Assembled stored value.
+ * @param names - Own keys in the assembled order.
+ * @returns The same assembled value.
+ */
+const rememberObjectShape = <Node>(
+  node: FieldNodeRecord<Node>,
+  children: readonly Node[],
+  result: object,
+  names: readonly string[],
+): object => {
+  (node.runtime.objectShapes ??= new WeakMap()).set(node, {
+    children,
+    schema: node.schema,
+    extras: node.extras,
+    names,
+  });
+  objectKeyCounts.set(result, names.length);
+  return result;
+};
 
 /** Combine live child projections and undeclared input in stable host order. */
 export const assembleObject: Behavior['assemble'] = (
@@ -17,6 +41,7 @@ export const assembleObject: Behavior['assemble'] = (
   recalculated,
   hint,
 ) => {
+  if (node.source === null) return null;
   const previous = node.storedValue;
   const stable = node.runtime.objectShapes?.get(node);
   if (
@@ -29,36 +54,11 @@ export const assembleObject: Behavior['assemble'] = (
     typeof previous === 'object' &&
     objectKeyCounts.get(previous) === stable.names.length
   ) {
-    let patch: Optional<Dictionary<unknown>>;
-    let sameKeys = true;
-    for (const child of recalculated) {
-      if (
-        child === null ||
-        typeof child !== 'object' ||
-        !('name' in child) ||
-        typeof child.name !== 'string' ||
-        !('storedOutputValue' in child)
-      ) {
-        sameKeys = false;
-        break;
-      }
-      const oldHasKey = hasOwnProperty(previous, child.name);
-      if ((child.storedOutputValue === undefined) === oldHasKey) {
-        sameKeys = false;
-        break;
-      }
-      if (
-        oldHasKey &&
-        !Object.is(child.storedOutputValue, Reflect.get(previous, child.name))
-      ) {
-        if (!patch) patch = copyObjectValue(previous, stable.names.length);
-        writeObjectKey(patch, child.name, child.storedOutputValue);
-      }
-    }
-    if (sameKeys) {
+    const result = patchObjectKeys(previous, recalculated, stable.names.length);
+    if (result !== undefined) {
       hint.isIncremental = true;
-      if (patch) objectKeyCounts.set(patch, stable.names.length);
-      return patch ?? previous;
+      if (result !== previous) objectKeyCounts.set(result, stable.names.length);
+      return result;
     }
   }
   if (
@@ -70,7 +70,6 @@ export const assembleObject: Behavior['assemble'] = (
     typeof previous === 'object' &&
     !isArray(previous)
   ) {
-    let patch: Optional<Dictionary<unknown>>;
     let sameKeys = true;
     const oldNames = Object.keys(previous);
     if (oldNames.length !== stable.names.length) sameKeys = false;
@@ -81,40 +80,17 @@ export const assembleObject: Behavior['assemble'] = (
           break;
         }
     if (sameKeys) {
-      for (const child of children) {
-        if (
-          child === null ||
-          typeof child !== 'object' ||
-          !('name' in child) ||
-          typeof child.name !== 'string' ||
-          !('storedOutputValue' in child)
-        ) {
-          sameKeys = false;
-          break;
-        }
-        const oldHasKey = hasOwnProperty(previous, child.name);
-        if ((child.storedOutputValue === undefined) === oldHasKey) {
-          sameKeys = false;
-          break;
-        }
-        if (
-          oldHasKey &&
-          !Object.is(child.storedOutputValue, Reflect.get(previous, child.name))
-        ) {
-          if (!patch) patch = copyObjectValue(previous, oldNames.length);
-          writeObjectKey(patch, child.name, child.storedOutputValue);
-        }
+      const result = patchObjectKeys(previous, children, oldNames.length);
+      if (result !== undefined) {
+        objectKeyCounts.set(result, oldNames.length);
+        return result;
       }
-    }
-    if (sameKeys) {
-      objectKeyCounts.set(patch ?? previous, stable.names.length);
-      return patch ?? previous;
     }
   }
   const propertyOrder = getStaticChoices(node.schema).propertyOrder;
   const entries = node.blueprintNode.childEntries;
   if (
-    previous === undefined &&
+    (previous === undefined || previous === null) &&
     node.extras === undefined &&
     propertyOrder.length === 0 &&
     entries.length === children.length
@@ -141,14 +117,7 @@ export const assembleObject: Behavior['assemble'] = (
       }
     }
     if (aligned) {
-      (node.runtime.objectShapes ??= new WeakMap()).set(node, {
-        children,
-        schema: node.schema,
-        extras: node.extras,
-        names,
-      });
-      objectKeyCounts.set(result, names.length);
-      return result;
+      return rememberObjectShape(node, children, result, names);
     }
   }
   const rawExtras = node.extras;
@@ -167,14 +136,7 @@ export const assembleObject: Behavior['assemble'] = (
     const result: Dictionary<unknown> = {};
     for (const name of names)
       writeObjectKey(result, name, Reflect.get(extras, name));
-    (node.runtime.objectShapes ??= new WeakMap()).set(node, {
-      children,
-      schema: node.schema,
-      extras: node.extras,
-      names,
-    });
-    objectKeyCounts.set(result, names.length);
-    return result;
+    return rememberObjectShape(node, children, result, names);
   }
   const childValues = new Map<string, unknown>();
   for (const child of children)
@@ -187,114 +149,19 @@ export const assembleObject: Behavior['assemble'] = (
     )
       childValues.set(child.name, child.storedOutputValue);
   const names: string[] = [];
-  const seen = new Set<string>();
-  for (const name of propertyOrder) {
-    if (childValues.has(name)) {
-      if (childValues.get(name) !== undefined && !seen.has(name)) {
-        names.push(name);
-        seen.add(name);
-      }
-    } else if (extras && hasOwnProperty(extras, name) && !seen.has(name)) {
-      names.push(name);
-      seen.add(name);
-    }
-  }
-  // Built by settle getSlotChildIndex; each inner map's first value is the name's first childEntries position.
+  // Each inner map's first value is the first childEntries position.
   const orderIndex = getHostDerived<
     'childOrderIndex',
     ReadonlyMap<string, ReadonlyMap<object, number>>
   >(node.blueprintNode).childOrderIndex;
-  let ordered: { name: string; rank: number }[] | undefined;
-  if (orderIndex) {
-    ordered = [];
-    for (const name of childValues.keys()) {
-      const rank = orderIndex.get(name)?.values().next().value;
-      if (rank === undefined) {
-        ordered = undefined;
-        break;
-      }
-      ordered.push({ name, rank });
-    }
-    ordered?.sort((left, right) => left.rank - right.rank);
-  }
-  if (ordered) {
-    for (const { name } of ordered)
-      if (childValues.get(name) !== undefined && !seen.has(name)) {
-        names.push(name);
-        seen.add(name);
-      }
-  } else
-    for (const entry of entries) {
-      const name = entry.name;
-      if (
-        childValues.has(name) &&
-        childValues.get(name) !== undefined &&
-        !seen.has(name)
-      ) {
-        names.push(name);
-        seen.add(name);
-      }
-    }
-  if (extras)
-    for (const name of Object.keys(extras))
-      if (!childValues.has(name) && !seen.has(name)) {
-        names.push(name);
-        seen.add(name);
-      }
-
-  if (previous !== null && typeof previous === 'object' && !isArray(previous)) {
-    const oldNames = Object.keys(previous);
-    let matches = names.length === oldNames.length;
-    if (matches) {
-      for (let index = 0, count = names.length; index < count; index++) {
-        const name = names[index];
-
-        if (!(name === oldNames[index])) {
-          matches = false;
-          break;
-        }
-      }
-    }
-    if (matches) {
-      let patch: Optional<Dictionary<unknown>>;
-      for (const name of names) {
-        const value = childValues.has(name)
-          ? childValues.get(name)
-          : extras
-            ? Reflect.get(extras, name)
-            : undefined;
-        if (!Object.is(value, Reflect.get(previous, name))) {
-          if (!patch) patch = copyObjectValue(previous, names.length);
-          writeObjectKey(patch, name, value);
-        }
-      }
-      (node.runtime.objectShapes ??= new WeakMap()).set(node, {
-        children,
-        schema: node.schema,
-        extras: node.extras,
-        names,
-      });
-      objectKeyCounts.set(patch ?? previous, names.length);
-      return patch ?? previous;
-    }
-  }
-  const result: Dictionary<unknown> = {};
-  for (const name of names)
-    writeObjectKey(
-      result,
-      name,
-      childValues.has(name)
-        ? childValues.get(name)
-        : extras
-          ? Reflect.get(extras, name)
-          : undefined,
-    );
-  (node.runtime.objectShapes ??= new WeakMap()).set(node, {
-    children,
-    schema: node.schema,
-    extras: node.extras,
+  const result = assembleObjectValue(
+    previous,
+    entries,
+    propertyOrder,
+    orderIndex,
+    childValues,
+    extras,
     names,
-  });
-  objectKeyCounts.set(result, names.length);
-  return result;
+  );
+  return rememberObjectShape(node, children, result, names);
 };

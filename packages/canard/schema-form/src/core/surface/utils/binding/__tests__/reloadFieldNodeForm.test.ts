@@ -1,5 +1,7 @@
 import { expect, it } from 'vitest';
 
+import { FieldNodeState } from '@/schema-form/core/engine';
+
 import { buildFieldNodeTree } from '../buildFieldNodeTree';
 import { mountFieldNode } from '../mountFieldNode';
 import { reloadFieldNodeForm } from '../reloadFieldNodeForm';
@@ -12,7 +14,10 @@ it('WRITE-043 WRITE-045 same-tree reset to explicit undefined preserves root ide
   mountFieldNode(root);
   const identity = root.rootNode;
   root.setExternalErrors([{ dataPath: '', message: 'external' }]);
-  root.setState({ 1: true, 2: true });
+  root.setState({
+    [FieldNodeState.Edited]: true,
+    [FieldNodeState.Touched]: true,
+  });
   reloadFieldNodeForm(root, undefined);
   expect(root.rootNode).toBe(identity);
   expect(root.value).toBeUndefined();

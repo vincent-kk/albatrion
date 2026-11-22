@@ -1,6 +1,6 @@
-import { type ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 
-import { Box, Slider, Typography } from '@mui/material';
+import { Box, Slider, Typography, sliderClasses } from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -11,19 +11,11 @@ import type {
 } from '@canard/schema-form';
 
 import type { MuiContext } from '../type';
-
-type SliderJSONSchema = NumberSchema & {
-  minimum?: number;
-  maximum?: number;
-  multipleOf?: number;
-};
+import { getMuiFieldPresentation } from './utils/presentation/getMuiFieldPresentation';
+import { getSliderBounds } from './utils/slider/getSliderBounds';
 
 interface FieldInputSliderProps
-  extends FieldInputPropsWithSchema<
-      number | null,
-      SliderJSONSchema,
-      MuiContext
-    >,
+  extends FieldInputPropsWithSchema<number | null, NumberSchema, MuiContext>,
     MuiContext {
   label?: ReactNode;
   showMarks?: boolean;
@@ -33,53 +25,77 @@ interface FieldInputSliderProps
    * From `presentation.FieldInputProps.lazy`.
    */
   lazy?: boolean;
+  /** Accessible text for an empty field, supplied by presentation. */
+  unsetValueText?: string;
 }
 
+/** Native thumb styling for a slider with no stored value. */
+const UNSET_SLIDER_STYLE = {
+  mt: 1,
+  [`& .${sliderClasses.thumb}:not(.${sliderClasses.focusVisible}):not(.${sliderClasses.active})`]:
+    {
+      opacity: 0,
+    },
+};
+
 const FieldInputSlider = ({
-  path,
+  inputId,
+  labelId,
+  getInputId,
   name,
   jsonSchema,
   required,
   disabled,
+  readOnly,
   defaultValue,
   onChange,
   context,
   label: labelProp,
-  size: sizeProp = 'medium',
+  size: sizeProp,
   showMarks = false,
   hideLabel,
   lazy,
+  unsetValueText = 'Not set',
   misfit,
+  className,
+  style,
 }: FieldInputSliderProps) => {
-  const [label, size] = useMemo(() => {
-    if (hideLabel) return [undefined, sizeProp || context.size];
-    return [labelProp || name, sizeProp || context.size];
-  }, [context, labelProp, name, sizeProp, hideLabel]);
+  const [label, size] = getMuiFieldPresentation(
+    labelProp,
+    name,
+    hideLabel,
+    { size: sizeProp },
+    context,
+  );
 
-  const min = jsonSchema.minimum ?? 0;
-  const max = jsonSchema.maximum ?? 100;
-  const step = jsonSchema.multipleOf ?? 1;
-  const isLazy = lazy ?? false;
-
-  const handleChange = useHandle((_, newValue: number | number[]) => {
-    if (!isLazy) {
-      onChange(Array.isArray(newValue) ? newValue[0] : newValue);
+  const storedValue =
+    typeof defaultValue === 'number' ? defaultValue : undefined;
+  const { min, max, step, initialValue, isEmpty } = useMemo(
+    () => getSliderBounds(jsonSchema, storedValue),
+    [jsonSchema, storedValue],
+  );
+  const [isUnset, setIsUnset] = useState(typeof defaultValue !== 'number');
+  const updatesImmediately = lazy === false;
+  const handleChange = useHandle((_, value: number | number[]) => {
+    if (!isEmpty && typeof value === 'number') {
+      setIsUnset(false);
+      onChange(value);
     }
   });
-
-  const handleChangeCommitted = useHandle((_, newValue: number | number[]) => {
-    if (isLazy) {
-      onChange(Array.isArray(newValue) ? newValue[0] : newValue);
-    }
+  const handleCommit = useHandle((event, value: number | number[]) => {
+    if (!updatesImmediately || (isUnset && value === initialValue))
+      handleChange(event, value);
   });
+  const captionId = label ? getInputId('legend') : undefined;
 
   return (
-    <Box sx={{ px: 2 }}>
+    <Box className={className} style={style} sx={{ px: 2 }}>
       {label && (
         <Typography
           variant="body2"
           component="label"
-          htmlFor={path}
+          htmlFor={inputId}
+          id={captionId}
           sx={{ mb: 1, display: 'block' }}
         >
           {label}
@@ -87,20 +103,32 @@ const FieldInputSlider = ({
         </Typography>
       )}
       <Slider
-        id={path}
         name={name}
-        defaultValue={typeof defaultValue === 'number' ? defaultValue : min}
+        defaultValue={initialValue}
         min={min}
         max={max}
         step={step}
-        onChange={handleChange}
-        onChangeCommitted={handleChangeCommitted}
-        disabled={disabled}
+        shiftStep={step * 10}
+        onChange={updatesImmediately ? handleChange : undefined}
+        onChangeCommitted={
+          updatesImmediately && !isUnset ? undefined : handleCommit
+        }
+        disabled={disabled || readOnly || isEmpty}
         size={size}
         marks={showMarks}
-        slotProps={{ input: { 'aria-invalid': misfit || undefined } }}
-        valueLabelDisplay="auto"
-        sx={{ mt: 1 }}
+        slotProps={{
+          input: {
+            id: inputId,
+            'aria-labelledby': captionId ?? labelId,
+            'aria-invalid': misfit || undefined,
+            ...(isUnset && {
+              'aria-valuenow': undefined,
+              'aria-valuetext': unsetValueText,
+            }),
+          },
+        }}
+        valueLabelDisplay={isUnset ? 'off' : 'auto'}
+        sx={isUnset ? UNSET_SLIDER_STYLE : { mt: 1 }}
       />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
         <Typography variant="caption" color="text.secondary">

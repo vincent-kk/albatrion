@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ReactNode, memo } from 'react';
 
 import type { Fn } from '@aileron/declare';
@@ -32,7 +33,7 @@ const FormChildrenRendererInner = <
   Value extends AllowedValue = InferValueType<Schema>,
 >({
   render,
-}: FormChildrenRendererProps<Schema, Value>) => {
+}: FormChildrenRendererProps<Schema, Value>): ReactElement => {
   const rootNode = useRootNodeContext();
   useFieldNodeTracker(rootNode, RERENDERING_EVENT);
   return (

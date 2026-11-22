@@ -4,6 +4,7 @@ import { render } from '@testing-library/react';
 import { vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
+import { ValidationMode } from '@/schema-form/core';
 import type {
   FieldInputProps,
   FieldRendererProps,
@@ -54,7 +55,7 @@ export const createStateDeliveryForm = (withError = true) => {
       ref={ref}
       jsonSchema={{ type: 'object', properties: { field: { type: 'string' } } }}
       defaultValue={{ field: 'initial' }}
-      validationMode={0}
+      validationMode={ValidationMode.None}
       errorVisibility={ErrorVisibility.AfterTouch}
       errors={
         withError ? [{ dataPath: '/field', message: 'Issue' }] : undefined

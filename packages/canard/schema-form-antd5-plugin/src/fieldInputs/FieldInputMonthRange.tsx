@@ -2,11 +2,8 @@ import { useMemo } from 'react';
 
 import { DatePicker } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
-import dayjs, { type Dayjs } from 'dayjs';
 
-import { isArray } from '@winglet/common-utils/filter';
 import { isStringSchema } from '@winglet/json-schema/filter';
-import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   ArraySchema,
@@ -15,7 +12,11 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-import type { Parameter } from '@aileron/declare';
+import type { PickerPresentation } from './utils/picker/PickerPresentation';
+import { getPickerDateLimits } from './utils/picker/getPickerDateLimits';
+import { getPickerRangeValue } from './utils/picker/getPickerRangeValue';
+import { getRangePickerId } from './utils/picker/getRangePickerId';
+import { usePickerRangeChange } from './utils/picker/usePickerRangeChange';
 
 const DATE_FORMAT = 'YYYY-MM';
 
@@ -23,27 +24,18 @@ type MonthRangeSchema = ArraySchema & {
   items: StringSchema;
 };
 
-type RangeValueType<T> = Parameter<
-  (typeof DatePicker<T>)['RangePicker']
->['defaultValue'];
-
-type OnChangeRangeValueType<T> = RangeValueType<T> | null;
-
-interface FieldInputMonthRangeProps
-  extends FieldInputPropsWithSchema<
-    [string | null, string | null] | null,
-    MonthRangeSchema,
-    { size?: SizeType }
-  > {
-  size?: SizeType;
-  /** Earliest selectable value, from `presentation.FieldInputProps.minimum`. */
-  minimum?: string;
-  /** Latest selectable value, from `presentation.FieldInputProps.maximum`. */
-  maximum?: string;
-}
+type FieldInputMonthRangeProps = FieldInputPropsWithSchema<
+  [string | null, string | null] | null,
+  MonthRangeSchema,
+  { size?: SizeType }
+> &
+  PickerPresentation;
 
 const FieldInputMonthRange = ({
-  path,
+  inputId,
+  labelId,
+  required,
+  getInputId,
   name,
   readOnly,
   disabled,
@@ -54,46 +46,36 @@ const FieldInputMonthRange = ({
   minimum,
   maximum,
   misfit,
+  placeholder,
+  className,
+  style,
 }: FieldInputMonthRangeProps) => {
-  const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
-    if (!range) return onChange(undefined);
-    const [start, end] = range;
-    if (!start || !end) return;
-    onChange([start.format(DATE_FORMAT), end.format(DATE_FORMAT)]);
-  });
-  const initialValue = useMemo<RangeValueType<Dayjs>>(
-    () =>
-      isArray(defaultValue) && defaultValue.length === 2
-        ? [
-            dayjs(defaultValue[0], DATE_FORMAT),
-            dayjs(defaultValue[1], DATE_FORMAT),
-          ]
-        : undefined,
+  const handleChange = usePickerRangeChange(onChange, DATE_FORMAT);
+  const initialValue = useMemo(
+    () => getPickerRangeValue(defaultValue, DATE_FORMAT),
     [defaultValue],
   );
-  const disabledDate = useMemo(() => {
-    return (date: Dayjs | null) => {
-      if (!date) return false;
-      if (!minimum && !maximum) return false;
-      if (minimum && date.isBefore(dayjs(minimum, DATE_FORMAT), 'day'))
-        return true;
-      if (maximum && date.isAfter(dayjs(maximum, DATE_FORMAT), 'day'))
-        return true;
-      return false;
-    };
-  }, [minimum, maximum]);
+  const disabledDate = useMemo(
+    () => getPickerDateLimits(minimum, maximum, DATE_FORMAT, 'day'),
+    [minimum, maximum],
+  );
 
   return (
     <DatePicker.RangePicker
-      id={path}
+      className={className}
+      style={style}
+      placeholder={
+        placeholder === undefined ? undefined : [placeholder, placeholder]
+      }
+      id={getRangePickerId(inputId, getInputId)}
+      aria-labelledby={labelId}
+      aria-required={required || undefined}
       name={name}
       picker="month"
-      disabled={disabled}
-      readOnly={readOnly}
+      disabled={disabled || readOnly}
       disabledDate={disabledDate}
       defaultValue={initialValue}
       onChange={handleChange}
-      onPanelChange={handleChange}
       size={size || context?.size}
       status={misfit ? 'error' : undefined}
       aria-invalid={misfit || undefined}

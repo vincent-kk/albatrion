@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { Fragment, memo, useMemo } from 'react';
 
 import { NULL_FUNCTION } from '@winglet/common-utils/constant';
@@ -10,6 +11,7 @@ import {
 
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
 import { FieldNodeEventType } from '@/schema-form/core';
+import { resolveFieldIdentifiers } from '@/schema-form/helpers/fieldId/resolveFieldIdentifiers';
 import { useFieldNode } from '@/schema-form/hooks';
 import { useFieldNodeTracker } from '@/schema-form/hooks';
 import {
@@ -42,7 +44,7 @@ export const FieldProxy = ({
   FieldInput,
   FieldRenderer: InputFieldRenderer,
   Wrapper: InputWrapper,
-}: FieldProxyProps) => {
+}: FieldProxyProps): ReactElement | null => {
   const node = useFieldNode(inputNode || inputPath);
   const refresh = useFieldNodeTracker(node, FIELD_ERROR_TRACKING_EVENTS);
   const refreshRef = useReference(refresh);
@@ -71,6 +73,10 @@ export const FieldProxy = ({
     errorVisibility,
   } = useFieldRendererContext();
 
+  const { context, formId } = useWorkspaceContext();
+  const identifiers = node
+    ? resolveFieldIdentifiers(formId, node.path, false)
+    : null;
   const jsonSchema = node?.jsonSchema;
   const presentation = (jsonSchema as JSONSchema | undefined)?.presentation;
   const required = resolveRequired(
@@ -79,8 +85,8 @@ export const FieldProxy = ({
     node?.isRequired ?? false,
   );
   const Label = useMemo(
-    () => createLabelPart(LabelRenderer, node, required, jsonSchema),
-    [LabelRenderer, node, jsonSchema, required],
+    () => createLabelPart(LabelRenderer, node, required, jsonSchema, formId),
+    [LabelRenderer, node, jsonSchema, required, formId],
   );
   const ErrorMessage = useMemo(
     () =>
@@ -94,7 +100,7 @@ export const FieldProxy = ({
     /** Compute the message below the owning boundary without leaking extra props to the renderer. */
     function RendererWithErrorMessage(
       props: Omit<FieldRendererProps, 'errorMessage'>,
-    ) {
+    ): ReactElement {
       const { node, context, formatError } = props;
       const errorMessage = useMemo(() => {
         return selectFieldErrorMessage(node, context, formatError);
@@ -106,7 +112,6 @@ export const FieldProxy = ({
     return [RendererWithErrorMessage, getRendererBoundary(Component)] as const;
   }, [Component, refreshRef]);
   const Wrapper = useConstant(InputWrapper || Fragment);
-  const { context } = useWorkspaceContext();
   const [, update] = useVersion();
   const version = useFieldNodeTracker(node, FieldNodeEventType.RequestRemount);
 
@@ -139,6 +144,8 @@ export const FieldProxy = ({
             jsonSchema={node.jsonSchema}
             isRoot={node.isRoot}
             depth={node.depth}
+            inputId={identifiers!.inputId}
+            labelId={identifiers!.labelId}
             path={node.path}
             name={node.name}
             value={node.value}

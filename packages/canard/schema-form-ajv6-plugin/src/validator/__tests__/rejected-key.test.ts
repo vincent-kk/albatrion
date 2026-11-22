@@ -25,3 +25,13 @@ describe('FRAGMENT-020 FRAGMENT-053 rejectedKey', () => {
     expect(issues?.[0]?.rejectedKey).toBeUndefined();
   });
 });
+
+it('reads a negative key below a URI-encoded schema token', async () => {
+  const name = '이름 %/~';
+  const root = { type: 'object', properties: { [name]: { not: { required: ['blocked'] } } } } as const;
+  const issues = await ajvValidatorPlugin.compile(root)({ [name]: { blocked: true } });
+  expect(issues?.find(({ keyword }) => keyword === 'not')).toMatchObject({
+    dataPath: '/이름 %~1~0',
+    rejectedKey: 'blocked',
+  });
+});

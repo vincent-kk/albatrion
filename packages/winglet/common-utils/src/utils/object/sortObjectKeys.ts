@@ -2,6 +2,8 @@ import type { Dictionary, Nullish } from '@aileron/declare';
 
 import { hasOwnProperty } from '@/common-utils/libs/hasOwnProperty';
 
+import { setDataProperty } from './setDataProperty';
+
 /**
  * Reorders object properties according to a specified key sequence with optional filtering.
  *
@@ -270,14 +272,15 @@ export const sortObjectKeys = <Dict extends Dictionary>(
   const ignoreUndefinedKey = options?.ignoreUndefinedKey === true;
   const ignoreUndefinedValue = options?.ignoreUndefinedValue === true;
 
-  const result: Dictionary = {};
+  const result: Dictionary = Object.getPrototypeOf(object) === null ? Object.create(null) : {};
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
     if (
       hasOwnProperty(object, k) === false ||
       (ignoreUndefinedValue && object[k] === undefined)
     )
       continue;
-    result[k] = object[k];
+    if (k === '__proto__') setDataProperty(result, k, object[k]);
+    else result[k] = object[k];
   }
   if (ignoreUndefinedKey) return result as Dict;
 
@@ -288,7 +291,8 @@ export const sortObjectKeys = <Dict extends Dictionary>(
       (ignoreUndefinedValue && object[k] === undefined)
     )
       continue;
-    result[k] = object[k];
+    if (k === '__proto__') setDataProperty(result, k, object[k]);
+    else result[k] = object[k];
   }
   return result as Dict;
 };

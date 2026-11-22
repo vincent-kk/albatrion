@@ -89,3 +89,5 @@ Validators: `@canard/schema-form-ajv8-plugin`, `-ajv7-`, `-ajv6-`. UI: `@canard/
 `controls.discriminator` requires an object or nullable-object host (`type: 'object'`, `['object', 'null']`, or `['null', 'object']`) with `oneOf` or `anyOf`; other host types are TypeScript errors.
 
 For runtime classification (C1–C13), read `knowledge/expressions.md`: union-less declarations and known non-object hosts warn and ignore the key; anyOf overlap, host-declared tag unions, and independent keys per declaration are allowed. Mismatch errors retain only missing, kind, and overlap reasons. Unreachable kind/empty branches warn without lifting their tag declarations. Discriminator diagnostics use `{ propertyName, reason }`, without values; terminal objects keep mismatch errors and omit unreachable warnings.
+
+Custom inputs, labels, renderers and plugins follow [control identifiers and author responsibility](knowledge/field-input.md#control-identifiers-and-author-responsibility): use the supplied id on the focusable control, labelId on group titles, and the scoped id as the native radio name. The name prop always remains the leaf name; keep path for data lookup.

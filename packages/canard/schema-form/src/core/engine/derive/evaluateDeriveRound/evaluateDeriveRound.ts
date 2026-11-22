@@ -27,6 +27,7 @@ import { evaluateInjectTo } from './utils/inject/evaluateInjectTo';
 import { getDeriveSourceOrder } from './utils/rank/getDeriveSourceOrder';
 import { KIND_RANK } from './utils/rank/kindRank';
 import { LAYER_RANK } from './utils/rank/layerRank';
+import { compareDeriveWrites } from './utils/rank/compareDeriveWrites';
 import { chooseDeriveWrite } from './utils/writes/chooseDeriveWrite';
 import { getVirtualWriteFailure } from './utils/writes/getVirtualWriteFailure';
 
@@ -41,7 +42,7 @@ const EMPTY_DECISION: DeriveRoundDecision<never> = Object.freeze({
  * Consume active derived and unsetValue edges in the completed current shape.
  * @param root - Live calculated root whose projected output is current
  * @param state - Commit and call-local rule baselines without settlement imports
- * @returns Candidate writes, optional trace entries, and all authored failures
+ * @returns Candidate writes in ascending rank order (the order settle applies overlapping winners), optional trace entries, and all authored failures
  */
 export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
   root: Self,
@@ -249,8 +250,10 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
       for (let index = (node.children?.length ?? 0) - 1; index >= 0; index--)
         pending.push(node.children![index]);
   }
+  const writes = [...winners.values()];
+  if (writes.length > 1) writes.sort(compareDeriveWrites);
   return {
-    writes: [...winners.values()],
+    writes,
     trace,
     failures: failures ?? EMPTY_ARRAY,
   };

@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import {
   type ComponentType,
   type MemoExoticComponent,
@@ -15,11 +16,13 @@ import { useLazyConstant, useReference } from '@winglet/react-utils/hook';
 
 import { DeferredFieldProxy } from '@/schema-form/components/FieldProxy/components/DeferredFieldProxy';
 import type { FieldProxyProps } from '@/schema-form/components/FieldProxy/type';
+import { EXTERNAL_VALUE_REVISION } from '@/schema-form/constants/externalValueRevision';
 import { type FieldNode, isTerminalNode } from '@/schema-form/core';
 import type { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 import { useVirtualizationContext } from '@/schema-form/providers';
 import type { ChildFieldProps } from '@/schema-form/types';
 
+import type { ChildInputOwnership } from '../type';
 import type { AdditionalChildNodeProperties, ChildField } from '../type';
 
 /** The form manager is fixed for this hook's lifetime; no notifications are needed. */
@@ -36,7 +39,7 @@ const getNoManager = () => null;
  * @param terminalChildren - List from `useTerminalChildren`, returned as is for terminal nodes and empty branches
  * @returns Child fields and an optional ref that the input's existing layout
  *          effect marks true before passive snapshot consistency checks,
- *          plus the form manager used to record the slot's real input commit
+ *          plus the form manager and its persistent child-ownership record
  *
  * @remarks `node.children` is read during render and kept consistent by the
  *          input's combined `useSyncExternalStore` tracker, so
@@ -58,6 +61,7 @@ export const useChildFields = (
   ChildField[],
   RefObject<boolean> | undefined,
   VirtualizationManager | null,
+  ChildInputOwnership,
 ] => {
   const children = node.children;
 
@@ -72,9 +76,19 @@ export const useChildFields = (
     getSnapshot,
     getNoManager,
   );
-  const cache = useLazyConstant(() => ({
+  const cache = useLazyConstant<
+    ChildInputOwnership & {
+      fields: WeakMap<FieldNode, ChildField>;
+      nextKey: number;
+    }
+  >(() => ({
     fields: new WeakMap<FieldNode, ChildField>(),
     nextKey: 0,
+    node: undefined,
+    input: undefined,
+    frame: undefined,
+    isControlled: undefined,
+    externalValueRevision: undefined,
   }));
 
   const ChildFields = useMemo(() => {
@@ -102,7 +116,11 @@ export const useChildFields = (
             onChange,
             onFileAttach,
             ...restProps
-          }: ChildFieldProps) => {
+          }: ChildFieldProps): ReactElement => {
+            if (cache.externalValueRevision === undefined)
+              cache.externalValueRevision = branch.revision(
+                EXTERNAL_VALUE_REVISION,
+              );
             useLayoutEffect(() => {
               mountedChildren.current++;
               return () => {
@@ -159,5 +177,6 @@ export const useChildFields = (
     ChildFields,
     snapshot === null && formManager !== null ? hydratedRef : undefined,
     formManager,
+    cache,
   ];
 };

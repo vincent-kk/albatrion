@@ -1,9 +1,8 @@
-import { FieldNodeEventType } from '../../../record';
+import { FieldNodeEventType, queueNonSettleEvent } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { assertFieldNodeWritable } from '../../../settle';
 import type { ValidationIssue } from '../../../validation';
 import { closeNonSettleEntry } from '../chain/closeNonSettleEntry';
-import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
 import { propagateExternalErrorsToRoot } from './utils/propagateExternalErrorsToRoot';

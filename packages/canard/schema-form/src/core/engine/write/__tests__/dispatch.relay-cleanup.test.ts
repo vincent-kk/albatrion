@@ -67,7 +67,7 @@ describe('relay cleanup across immediate commits and failed flushes', () => {
     ).toBe(refresh + 1);
   });
 
-  it('clears a pending relay when the only marked target disappears before flush', () => {
+  it('clears a pending relay after a reset settled the only mark and removed its target', () => {
     const { root, runtime } = createDispatchTree({
       type: 'object',
       properties: {
@@ -92,7 +92,7 @@ describe('relay cleanup across immediate commits and failed flushes', () => {
       expect(root.childrenByName?.input).toBeUndefined();
       dispatchRelayInput(other, 'x', WriteOption.Overwrite, () => undefined);
       expect(runtime.inputRelays).toHaveLength(1);
-      expect(runtime.batchWrites).toHaveLength(1);
+      expect(runtime.batchWrites).toBeUndefined();
     });
     const remainingRelays = runtime.inputRelays;
     dispatchSetValue(other, 'x');

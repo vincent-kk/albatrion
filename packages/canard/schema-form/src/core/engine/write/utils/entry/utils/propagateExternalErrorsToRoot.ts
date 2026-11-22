@@ -4,10 +4,9 @@ import {
 } from '@/schema-form/helpers/jsonPointer';
 
 import { find } from '../../../../navigation';
-import { FieldNodeEventType } from '../../../../record';
+import { FieldNodeEventType, queueNonSettleEvent } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
 import type { ValidationIssue } from '../../../../validation';
-import { queueNonSettleEvent } from '../../chain/queueNonSettleEvent';
 import { publishRootExternalErrors } from './publishRootExternalErrors';
 
 /** Annotates the lazily created `externalContributions`; an argument-less `new Map()` would be `Map<any, any>`. */

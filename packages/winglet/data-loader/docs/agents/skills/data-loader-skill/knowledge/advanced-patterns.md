@@ -92,6 +92,8 @@ The `?? 'DataLoader'` fallback is load-bearing: the default is `null`, not the c
 
 ## Per-Key Error Isolation
 
+For transient fetch failures, apply the [retry and error-caching policy](batching-and-caching.md#per-key-errors-stay-cached).
+
 Returning `Error` instances _inside_ the result array fails single keys without failing the batch. Throwing from the BatchLoader fails all of them — reserve that for genuinely batch-wide failures like a dead connection.
 
 ```typescript

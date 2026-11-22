@@ -16,7 +16,7 @@
 
 ## Notice
 
-⚠️ This plugin uses AJV 6.x which is compatible with older JSON Schema specifications (Draft-07 and earlier).
+⚠️ This plugin uses AJV 6.x. The default instance validates Draft-07; older declared drafts require additional configuration as shown below.
 
 📌 If you need support for newer JSON Schema features (Draft 2019-09, Draft 2020-12), consider using `@canard/schema-form-ajv8-plugin` instead.
 
@@ -62,7 +62,7 @@ The plugin implements the `ValidatorPlugin` interface with validation, synchrono
 - **Purpose**: Allows you to provide a custom AJV instance with your preferred configuration
 - **Usage**: Optional - if not called, a default AJV instance will be created automatically
 - **Benefits**: Full control over AJV settings, custom keywords, formats, and validation rules
-- **Restriction**: Instances with `coerceTypes`, `useDefaults`, or `removeAdditional` enabled are rejected immediately, before replacing the current binding. The thrown native `ValidatorBindRefusedError` lists the enabled options in `details.options`. Value-modifying custom keywords remain the consumer's responsibility.
+- **Restriction**: Instances with `coerceTypes`, `useDefaults`, or `removeAdditional` enabled are rejected immediately, before replacing the current binding. The thrown native `ValidatorBindRefusedError` lists the enabled options in `details.options`. Value-modifying custom keywords remain the consumer's responsibility. The next validator or guard compile also rejects if one of those options is enabled after binding.
 - **Binding order**: Call `bind` once before the first compile; re-binding after a root is registered is not supported, and in this plugin binding starts a new registry and does not carry roots registered before it.
 
 Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, the value of `FormErrorCode.ValidatorBindRefused`); core's `isUnhandledError` does not recognize it.
@@ -101,7 +101,7 @@ AJV6 defaults to `$id`; `schemaId: 'id'` or `'auto'` also treats draft-04 `id` a
 #### **`compileGuard(root, pointer)`**
 
 - **Purpose**: Compiles a synchronous boolean guard at a schema pointer in the engine-owned copy root, retaining its `$ref` context
-- **Call order**: Accepts that copy whether or not `compile` has run. A self-contained guard compiles its subschema without registering the root; only guards that need the root location, such as guards with `$ref` into root definitions, register the root on the guard instance. `compile` registers a copy of a root with `$id` on the selected validation instance (a separate sibling when its `$id` conflicts) and compiles a root without `$id` as a transient copy without registering it. Both kinds of guard work before whole-schema compilation.
+- **Call order**: Accepts that copy whether or not `compile` has run. A self-contained guard compiles its subschema without registering the root; only guards that need the root location, such as guards with `$ref` into root definitions, register the root on the guard instance. Whole validation compiles a detached root on a private AJV instance with the current application registrations. To make a schema address available to the application or to another root, register it on the application instance. The plugin enables asynchronous validation on its own root copy. Declare `$async: true` on separately registered resources that require asynchronous validation. Both kinds of guard work before whole-schema compilation.
 - **Identity**: Pass the same copy object to `compile`, every `compileGuard`, and `release`; whole-schema validation can be compiled later.
 - **Limits**: Asynchronous formats and keywords are unsupported
 - **Refusal**: `compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.
@@ -123,6 +123,7 @@ const defaultSettings: Ajv.Options = {
   nullable: true, // Enable `nullable` keyword (= `type:[{type}, 'null']`)
   verbose: true, // Include schema and data information in errors
   format: false, // Disable format validation (can be enabled if needed)
+  multipleOfPrecision: 9,
 };
 ```
 
@@ -135,9 +136,17 @@ The `createValidatorFactory` function provides:
 - **Detailed Error Messages**: Rich error information for better user experience
 - **Type Safety**: Full TypeScript support with proper type inference
 
+`createValidatorFactory` throws `ValidatorBindRefusedError` when the AJV instance is configured to coerce values, apply defaults, or remove additional properties. Compiling a new validator also refuses those options if enabled after factory creation. An explicit key selects an application registration and compiles it privately using the current application configuration. A custom constructor must leave the private compiler free of bootstrap schemas. Register application schemas with `addSchema` after constructing the application instance.
+
 `createValidator(ajv)` returns a per-instance `{ compile, compileGuard }` object for a Form's `validatorFactory`: create it once outside render (`const validator = createValidator(customAjv);` then `<Form validatorFactory={validator} />`), because a new object makes the Form rebuild its tree; several validators may share one AJV instance, which must not modify values (`coerceTypes`, `useDefaults`, `removeAdditional` off).
 
 ---
+
+## Decimal multiples
+
+The plugin's default validation uses AJV's `multipleOfPrecision: 9`. It accepts decimal multiples such as `19.99` for `multipleOf: 0.01` and rejects `19.995` for the same divisor. The `1e-9` tolerance on the quotient can accept extremely close nonmultiples. Exact decimal multiples are supported for finite values with `Math.abs(value / multipleOf) <= 1e6` and a finite divisor of at least `2.2250738585072014e-308`. The default validator rejects a zero divisor when it compiles the schema. A supplied AJV instance retains its own precision and schema-validation options.
+
+In AJV 6.12.6, a synchronous guard can accept numbers for an invalid `multipleOf: 0` condition. Guards compile with meta-schema validation disabled, and AJV's precision check compares a `NaN` difference for a zero divisor. Whole-schema compilation still rejects it.
 
 ## Compatibility
 
@@ -159,9 +168,9 @@ Please use a transpiler like Babel to transform the code for your target environ
 
 **JSON Schema Support:**
 
-- Draft-04
-- Draft-06
-- Draft-07
+- Draft-07 with the default instance.
+- Draft-06 after registering its meta-schema on a bound instance.
+- Draft-04 is not configured by default; it additionally requires the Draft-04 meta-schema and an appropriate `schemaId` option on the bound AJV 6 instance.
 
 ---
 
@@ -203,3 +212,23 @@ This repository is licensed under the MIT License. Please refer to the [`LICENSE
 ## Contact
 
 For inquiries or suggestions related to the project, please create an issue on the [GitHub repository](https://github.com/vincent-kk/albatrion).
+
+### Enabling a declared Draft-06 schema
+
+The default instance does not register the Draft-06 meta-schema. Bind a compatible instance before compiling the schema:
+
+```typescript
+import Ajv from 'ajv';
+import draft06 from 'ajv/lib/refs/json-schema-draft-06.json';
+import { createValidator } from '@canard/schema-form-ajv6-plugin';
+
+const ajv = new Ajv({ allErrors: true, nullable: true, format: false });
+ajv.addMetaSchema(draft06);
+const validator = createValidator(ajv);
+const validate = validator.compile({
+  $schema: 'http://json-schema.org/draft-06/schema#',
+  type: 'number',
+  exclusiveMaximum: 5,
+});
+await validate(5); // Reports exclusiveMaximum.
+```

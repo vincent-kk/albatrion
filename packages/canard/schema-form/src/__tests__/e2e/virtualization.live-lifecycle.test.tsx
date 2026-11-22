@@ -36,7 +36,9 @@ describe.each([false, true])(
           [FieldNodeState.Edited]: true,
           [FieldNodeState.Touched]: true,
         });
-        field.setExternalErrors([{ dataPath: '/0', message: 'external issue' }]);
+        field.setExternalErrors([
+          { dataPath: '/0', message: 'external issue' },
+        ]);
       });
       const first = form.inputs()[0];
       const value = root.value;
@@ -145,9 +147,17 @@ describe.each([false, true])(
       expect(
         form.container.querySelector('[data-path="/1"][data-deferred]'),
       ).not.toBeNull();
-      expect(form.container.querySelector('input[id="/1/target"]')).toBeNull();
+      expect(
+        form.container.querySelector(
+          'input:is([id="/1/target"], [id$=":/1/target~input"]):not(label):not(legend)',
+        ),
+      ).toBeNull();
       act(() => ref.current!.focus('/1/target'));
-      expect(document.activeElement?.id).toBe('/1/target');
+      expect(
+        document.activeElement
+          ?.closest('[data-path]')
+          ?.getAttribute('data-path'),
+      ).toBe('/1/target');
     });
 
     it('preserves hydrated DOM through enable and gates only later additions', async () => {

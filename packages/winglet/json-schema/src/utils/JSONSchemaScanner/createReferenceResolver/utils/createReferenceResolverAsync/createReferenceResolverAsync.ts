@@ -31,7 +31,12 @@ export function createReferenceResolverAsync(
             });
           pending.set(uri, request);
         }
-        await request;
+        try {
+          await request;
+        } catch (error) {
+          if (pending.get(uri) === request) pending.delete(uri);
+          throw error;
+        }
       }
       return store.resolve(reference, keyword, context);
     },

@@ -35,7 +35,7 @@ it('reads protocols from presentation.FieldInputProps', async () => {
   );
   expect(screen.getByText('ftp://')).toBeTruthy();
   expect(screen.queryByText('http://')).toBeNull();
-  await userEvent.type(view.container.querySelector('input#\\/link')!, 'a');
+  await userEvent.type(view.container.querySelector('input:not([role])')!, 'a');
   expect(onChange).toHaveBeenLastCalledWith({ link: 'ftp://a' });
 });
 

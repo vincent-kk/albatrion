@@ -340,16 +340,11 @@ const resolvers = {
 
 ```typescript
 const userLoader = new DataLoader(async (userIds: ReadonlyArray<string>) => {
-  try {
-    const users = await fetchUsersWithRetry(userIds);
-    return users;
-  } catch (error) {
-    // 전체 배치가 실패한 경우, 각 키에 대해 동일한 에러 반환
-    return userIds.map(() => error);
-  }
+  // A batch-wide rejection is removed from the cache, allowing the next load to retry.
+  return fetchUsersWithRetry(userIds);
 });
 
-// 특정 사용자만 실패한 경우
+// When only specific users fail
 const userLoaderPartialFailure = new DataLoader(
   async (userIds: ReadonlyArray<string>) => {
     const results = await Promise.allSettled(
@@ -368,6 +363,8 @@ const userLoaderPartialFailure = new DataLoader(
   },
 );
 ```
+
+배치 전체의 거부는 자동으로 캐시에서 제거됩니다. 키별 `Error` 결과는 `clear(key)` 또는 `clearAll()`을 호출할 때까지 캐시에 남습니다. 실패한 키를 재시도하기 전에 `userLoaderPartialFailure.clear(key)`를 호출합니다.
 
 ---
 

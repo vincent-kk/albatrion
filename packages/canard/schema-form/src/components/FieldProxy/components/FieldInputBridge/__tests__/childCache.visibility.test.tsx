@@ -4,6 +4,7 @@ import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
+import { ValidationMode } from '@/schema-form/core';
 import type { FieldInputProps } from '@/schema-form/types';
 
 import type { ChildField } from '../type';
@@ -31,7 +32,7 @@ it.each([false, true])(
     const form = (
       <Form
         ref={ref}
-        validationMode={0}
+        validationMode={ValidationMode.None}
         jsonSchema={{
           type: 'object',
           properties: {

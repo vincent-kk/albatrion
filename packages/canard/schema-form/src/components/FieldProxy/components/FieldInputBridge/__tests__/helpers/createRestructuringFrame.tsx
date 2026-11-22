@@ -3,6 +3,7 @@ import { createRef, useLayoutEffect } from 'react';
 import { render } from '@testing-library/react';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
+import { ValidationMode } from '@/schema-form/core';
 import { useFieldErrors } from '@/schema-form/hooks';
 import { useWorkspaceContext } from '@/schema-form/providers';
 import type {
@@ -14,17 +15,20 @@ import { ErrorVisibility } from '@/schema-form/types';
 
 /**
  * Mount an uncontrolled leaf whose frame changes its container's ancestry on error.
- * @param virtualized - Enable the real manager's input registration.
- * @returns The view, live node, current input props and bridge-owned attachment map.
+ * @param virtualized - Enable the real form's gate manager.
+ * @returns The view, live node, current input props and form resources.
  */
 export const createRestructuringFrame = (virtualized = false) => {
   const ref = createRef<FormHandle>();
   let current!: FieldInputProps;
   let files!: ReturnType<typeof useWorkspaceContext>['attachedFilesMap'];
+  let inputPositions!: ReturnType<typeof useWorkspaceContext>['inputPositions'];
   let mounts = 0;
   const Input = (props: FieldInputProps) => {
     current = props;
-    files = useWorkspaceContext().attachedFilesMap;
+    const workspace = useWorkspaceContext();
+    files = workspace.attachedFilesMap;
+    inputPositions = workspace.inputPositions;
     useLayoutEffect(() => {
       mounts++;
     }, []);
@@ -59,7 +63,7 @@ export const createRestructuringFrame = (virtualized = false) => {
         },
       }}
       defaultValue={{ field: 'initial' }}
-      validationMode={0}
+      validationMode={ValidationMode.None}
       errorVisibility={ErrorVisibility.Always}
       FieldRenderer={Group}
       InputRenderer={Frame}
@@ -74,6 +78,7 @@ export const createRestructuringFrame = (virtualized = false) => {
     props: () => current,
     mounts: () => mounts,
     files: () => files,
+    inputPositions: () => inputPositions,
     input: () => view.container.querySelector('input')!,
   };
 };

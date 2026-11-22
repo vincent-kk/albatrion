@@ -1,5 +1,6 @@
 import {
   HASH_MANIFEST_FILENAME,
+  type RunFailure,
   needsBuiltManifest,
 } from '../../../core/index.js';
 import type { ConsumerPackage } from '../../../types/index.js';
@@ -20,6 +21,7 @@ import { logger } from '../../../utils/logger.js';
 export function selectInjectableTargets(
   targets: readonly ConsumerPackage[],
   skipReasons: string[],
+  diagnostics?: RunFailure[],
 ): ConsumerPackage[] {
   const injectable: ConsumerPackage[] = [];
   for (const target of targets) {
@@ -30,6 +32,12 @@ export function selectInjectableTargets(
     const reason = `"${target.name}": no source hashes — neither dist/${HASH_MANIFEST_FILENAME} nor the declared asset directory "${target.assetPath}" is there. Build the package (e.g. yarn build), or pass --asset-path to name a directory that is.`;
     logger.warn(reason);
     skipReasons.push(reason);
+    diagnostics?.push({
+      unitKey: target.name,
+      path: target.assetRoot,
+      stage: 'gate',
+      reason,
+    });
   }
   return injectable;
 }

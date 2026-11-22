@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { memo } from 'react';
 
 import { useReference } from '@winglet/react-utils/hook';
@@ -11,9 +12,10 @@ import type { FormLabelProps } from './types/props';
  * Renders an accessible label for form fields.
  *
  * Uses children when supplied, otherwise the field name (key or index),
- * associated with its input through `htmlFor={path}`. Its `id="label:${path}"`
+ * associated with its input through the Form-scoped id of the resolved field. Its title id
  * also lets options groups reference the title through `aria-labelledby`.
- * Both attributes are built from `path` as given, so pass the absolute path.
+ * A query resolving to one node uses that node's scoped id for both attributes.
+ * Multiple matches retain the supplied path; no match renders nothing.
  * The registered LabelRenderer owns the label root; no outer label is added.
  *
  * @example
@@ -36,13 +38,17 @@ import type { FormLabelProps } from './types/props';
  * @example
  * Custom label layout:
  * ```tsx
+ * <Form jsonSchema={{ type: 'object', properties: {
+ *   password: { type: 'string', format: 'password' },
+ * } }}>
  * <div className="form-field">
  *   <div className="label-row">
  *     <Form.Label path="/password" />
  *     <span className="hint">Min 8 characters</span>
  *   </div>
- *   <Form.Input path="/password" type="password" />
+ *   <Form.Input path="/password" />
  * </div>
+ * </Form>
  * ```
  *
  * @example
@@ -55,13 +61,12 @@ import type { FormLabelProps } from './types/props';
  * ```
  */
 export const FormLabel = memo(
-  ({ path, style, className, children }: FormLabelProps) => {
+  ({ path, style, className, children }: FormLabelProps): ReactElement => {
     const overridePropsRef = useReference({
       style,
       className,
       children,
       htmlFor: path,
-      id: path === undefined ? undefined : 'label:' + path,
     });
     return (
       <FieldProxy

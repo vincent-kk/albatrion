@@ -111,3 +111,34 @@ it('SURFACE-063 adds rebuild with the reset option contract to FormHandle', () =
   expect(describe(rebuild!)).toBe(describe(reset));
   expect(properties.map((value) => value.name).sort()).toMatchSnapshot();
 }, 60000);
+
+it('round-3 identifier additions have the approved public string types', () => {
+  const entryPath = join(packageRoot, 'src/index.ts');
+  const program = ts.createProgram([entryPath], readCompilerOptions());
+  const checker = program.getTypeChecker();
+  const entry = program.getSourceFile(entryPath)!;
+  const module = checker.getSymbolAtLocation(entry)!;
+  const additions = [
+    ['FieldInputProps', 'inputId'],
+    ['FieldRendererProps', 'labelId'],
+  ].map(([name, member]) => {
+    let symbol = checker
+      .getExportsOfModule(module)
+      .find((value) => value.name === name)!;
+    while (symbol.flags & ts.SymbolFlags.Alias)
+      symbol = checker.getAliasedSymbol(symbol);
+    const property = checker.getPropertyOfType(
+      checker.getDeclaredTypeOfSymbol(symbol),
+      member,
+    )!;
+    expect(property, name + '.' + member).toBeDefined();
+    return (
+      name +
+      '.' +
+      member +
+      ': ' +
+      checker.typeToString(checker.getTypeOfSymbolAtLocation(property, entry))
+    );
+  });
+  expect(additions).toMatchSnapshot();
+}, 60000);

@@ -1,11 +1,11 @@
-import type { RenderInput } from '../../../ui/index.js';
+import {
+  type RunFailure,
+  type RunResult,
+  runInjection,
+} from '../../../core/index.js';
 import type { ConsumerPackage, DefaultFlags } from '../../../types/index.js';
 import { renderJSON } from './renderJSON.js';
 import { renderPlain } from './renderPlain.js';
-
-interface UiModule {
-  renderInjectApp(input: RenderInput): Promise<number>;
-}
 
 interface RenderEnv {
   readonly isTTY?: boolean;
@@ -33,12 +33,31 @@ export async function renderOrFallback(
   originCwd: string,
   notices: readonly string[] = [],
   env: RenderEnv = {},
+  result?: RunResult,
+  diagnostics?: readonly RunFailure[],
 ): Promise<number> {
   const isTTY = env.isTTY ?? Boolean(process.stdout.isTTY);
-  if (flags.json) return renderJSON(targets, flags, originCwd, notices);
-  if (!isTTY || flags.interactive === false) {
-    return renderPlain(targets, flags, originCwd);
+  if (flags.json || !isTTY || flags.interactive === false) {
+    const completed =
+      result ??
+      (await runInjection({
+        targets,
+        flags,
+        originCwd,
+        notices,
+        diagnostics,
+      }));
+    if (flags.json) renderJSON(completed);
+    else renderPlain(completed, Boolean(flags.force));
+    return completed.exitCode;
   }
-  const ui = (await import('../../../ui/index.js')) as unknown as UiModule;
-  return ui.renderInjectApp({ targets, flags, originCwd });
+  const ui = await import('../../../ui/index.js');
+  return ui.renderInjectApp({
+    targets,
+    flags,
+    originCwd,
+    result,
+    notices,
+    diagnostics,
+  });
 }

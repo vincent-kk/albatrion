@@ -1,6 +1,7 @@
 import { expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
 import * as pointer from '@/schema-form/helpers/jsonPointer';
 
 import { readFieldNodeErrors } from '../utils/read/readFieldNodeErrors';
@@ -23,7 +24,7 @@ it('builds active IDs and resolves each issue once for one merged validation run
     defaultValue: Object.fromEntries(
       Object.keys(properties).map((name) => [name, 'a']),
     ),
-    validationMode: 1,
+    validationMode: ValidationMode.OnChange,
     validator: { compile: () => () => issues, compileGuard: () => () => true },
   });
   for (const target of root.children ?? [])

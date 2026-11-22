@@ -1,13 +1,14 @@
 import {
   type RefObject,
   useCallback,
+  useEffect,
   useMemo,
   useSyncExternalStore,
 } from 'react';
 
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
-import type { Fn, Nullable } from '@aileron/declare';
+import type { Fn, Nullable, Optional } from '@aileron/declare';
 
 import type { FormHandle } from '@/schema-form/components/Form';
 import type {
@@ -20,6 +21,8 @@ import type {
  * Hook for handling form submission with pending state management.
  * Provides a submit function and pending state synchronized with the form's internal submit handler.
  * Every subscription checks pending on attach, including Activity reconnects.
+ * Each commit of the calling component re-subscribes when `ref.current.submit` has changed,
+ * so a Form mounted after the hook, or remounted by key or error recovery, is tracked.
  *
  * @example
  * ```typescript
@@ -51,19 +54,36 @@ export const useFormSubmit = <
 >(
   ref: RefObject<Nullable<FormHandle<Schema, Value>>>,
 ) => {
-  const [subscribe, getSnapshot] = useMemo(
-    () => [
+  const [subscribe, getSnapshot, rebind] = useMemo(() => {
+    let notify: Optional<Fn>;
+    let target: Optional<FormHandle<Schema, Value>['submit']>;
+    let unsubscribe: Fn = NOOP_FUNCTION;
+    const bind = (onStoreChange: Fn) => {
+      notify = onStoreChange;
+      target = ref.current?.submit;
+      unsubscribe = target?.subscribe?.(onStoreChange) || NOOP_FUNCTION;
+      onStoreChange();
+    };
+    return [
       (onStoreChange: Fn) => {
-        const unsubscribe =
-          ref.current?.submit?.subscribe?.(onStoreChange) || NOOP_FUNCTION;
-        onStoreChange();
-        return unsubscribe;
+        bind(onStoreChange);
+        return () => {
+          unsubscribe();
+          notify = target = undefined;
+          unsubscribe = NOOP_FUNCTION;
+        };
       },
       () => ref?.current?.submit?.pending,
-    ],
-    [ref],
-  );
+      // Ref assignment renders nothing, so each consumer commit checks for a new handle.
+      () => {
+        if (!notify || ref.current?.submit === target) return;
+        unsubscribe();
+        bind(notify);
+      },
+    ] as const;
+  }, [ref]);
   const pending = useSyncExternalStore(subscribe, getSnapshot);
+  useEffect(rebind);
 
   const submit = useCallback(() => {
     const handler = ref.current?.submit;

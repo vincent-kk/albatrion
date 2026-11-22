@@ -3,7 +3,7 @@ import { StrictMode, createRef, useLayoutEffect, useRef } from 'react';
 import { render } from '@testing-library/react';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
-import { isArrayNode } from '@/schema-form/core';
+import { ValidationMode, isArrayNode } from '@/schema-form/core';
 import type { FieldInputProps } from '@/schema-form/types';
 
 import type { ChildField } from '../../type';
@@ -69,7 +69,7 @@ export function createChildCacheForm(strict: boolean) {
         ref={ref}
         jsonSchema={schema}
         defaultValue={['a', 'b', 'c']}
-        validationMode={0}
+        validationMode={ValidationMode.None}
         context={{ tick }}
       />
     );

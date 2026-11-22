@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type ComponentType, type RefObject, memo } from 'react';
 
 import { NULL_FUNCTION } from '@winglet/common-utils/constant';
@@ -46,7 +47,7 @@ export const createFieldInputBridge = (
     onChange: preferredOnChange,
     onFileAttach: preferredOnFileAttach,
     ...preferredOverrideProps
-  }: ChildFieldProps & { unwrapped?: boolean }) => {
+  }: ChildFieldProps & { unwrapped?: boolean }): ReactElement => {
     const onChangeRef = useReference(preferredOnChange);
     const onFileAttachRef = useReference(preferredOnFileAttach);
     const overrideProps = useSnapshot({

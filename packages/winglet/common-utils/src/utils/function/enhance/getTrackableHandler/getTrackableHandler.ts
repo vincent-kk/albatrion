@@ -1,4 +1,9 @@
+import { reportHostError } from '@/common-utils/utils/errorReporting/reportHostError';
+
 import type { Dictionary, Fn } from '@aileron/declare';
+
+import { getHookStateManager } from './utils/getHookStateManager';
+import { isThenable } from './utils/isThenable';
 
 import type {
   StateManager,
@@ -268,10 +273,10 @@ import type {
  *
  * **Execution Flow:**
  * 1. Check concurrent execution prevention (if enabled)
- * 2. Call `beforeExecute` hook with arguments and state manager
- * 3. Set `pending` to `true` and notify subscribers
+ * 2. Reserve pending execution, then call and await a thenable `beforeExecute` result
+ * 3. Notify subscribers after the hook settles
  * 4. Execute original function
- * 5. Call `afterExecute` hook (always, regardless of success/failure)
+ * 5. Call `afterExecute` after execution starts and await any returned thenable
  * 6. Set `pending` to `false` and notify subscribers
  * 7. Return original function result or `undefined` if prevented
  *
@@ -333,7 +338,7 @@ import type {
  * **Performance Considerations:**
  * - Subscribers are notified synchronously on state changes
  * - State updates create new objects (immutable pattern)
- * - Concurrent prevention uses simple boolean flag (minimal overhead)
+ * - Concurrent admission is checked before running hooks or origin
  * - Subscribe/unsubscribe operations are O(1) using Set
  */
 export function getTrackableHandler<
@@ -356,6 +361,10 @@ export function getTrackableHandler<
 
   /** Whether the function is currently executing */
   let pending = false;
+  let getPending = () => pending;
+
+  /** Number of calls whose completion cleanup has not run. */
+  let pendingCallCount = 0;
 
   /** Current state (initialized as a copy of initialState) */
   let state = (initialState ? { ...initialState } : {}) as State;
@@ -365,16 +374,21 @@ export function getTrackableHandler<
    * Called whenever state changes or execution status changes.
    * @internal
    */
-  /** Set while a lifecycle hook runs, so its updates fold into the publish that follows it. */
-  let hookRunning = false;
-
-  const publish = () => {
-    if (hookRunning) return;
-    for (const listener of listeners) listener();
+  const publish = (completion = false) => {
+    let failures: unknown[] | undefined;
+    for (const listener of listeners) {
+      try { listener(); }
+      catch (error) { (failures ??= []).push(error); }
+    }
+    if (failures !== undefined) {
+      for (let index = completion ? 0 : 1; index < failures.length; index++)
+        reportHostError(failures[index]);
+      if (!completion) throw failures[0];
+    }
   };
 
   /**
-   * Updates the state and sends notifications to subscribers.
+   * Updates shared state; call-owned managers decide when to publish.
    * Supports both partial state objects and updater functions.
    * @param updater - Partial state to merge or function that receives previous state and returns partial state
    * @internal
@@ -384,7 +398,6 @@ export function getTrackableHandler<
   ) => {
     const update = typeof updater === 'function' ? updater(state) : updater;
     state = { ...state, ...update };
-    publish();
   };
 
   /**
@@ -392,7 +405,7 @@ export function getTrackableHandler<
    * Provides read-only access to current state and update functionality.
    * @internal
    */
-  const stateManager: StateManager<State> = {
+  const stateOwner: StateManager<State> = {
     get state(): State {
       return state;
     },
@@ -406,42 +419,115 @@ export function getTrackableHandler<
    * @returns Result of the original function execution, or undefined if execution was prevented
    * @internal
    */
-  const handler = async (...args: Args): Promise<Result | undefined> => {
-    // Check for concurrent execution prevention (based on pending status)
-    if (preventConcurrent && pending) return undefined;
-
-    // Execute beforeExecute hook - may throw and prevent execution
-    hookRunning = true;
-    try {
-      beforeExecute?.(args, stateManager);
-    } catch (error) {
-      // The publish below is never reached on this path, so a state change the hook
-      // made before throwing would otherwise never reach subscribers
-      hookRunning = false;
-      publish();
-      throw error;
-    } finally {
-      hookRunning = false;
-    }
-    pending = true;
-    publish(); // Notify subscribers of pending state change
-
-    try {
-      // Execute original function and return its result
-      return await origin(...args);
-    } finally {
-      // Nested finally keeps cleanup reachable when afterExecute throws;
-      // otherwise its error would seal the handler with pending stuck true
-      hookRunning = true;
+  let handler: Fn<Args, Promise<Result | undefined>>;
+  if (!beforeExecute && !afterExecute) {
+    handler = async (...args: Args): Promise<Result | undefined> => {
+      if (preventConcurrent && pending) return undefined;
+      pendingCallCount++;
+      pending = true;
       try {
-        afterExecute?.(args, stateManager);
+        publish();
+        return await origin(...args);
       } finally {
-        hookRunning = false;
-        pending = false;
-        publish(); // Notify subscribers of completion
+        pending = --pendingCallCount > 0;
+        publish(true);
       }
-    }
-  };
+    };
+  } else {
+    const HookStateManager = getHookStateManager(stateOwner, publish);
+    if (preventConcurrent) {
+    // Guarded continuations own one argument tuple until completion.
+    let callArgs: Args | undefined;
+    getPending = () => callArgs !== undefined;
+    let callStateManager: InstanceType<typeof HookStateManager>;
+    const deliver = (value?: Result, error?: unknown, failed = false): Result | undefined => {
+      callArgs = undefined;
+      callStateManager.isHookRunning = false;
+      publish(true);
+      if (failed) throw error;
+      return value;
+    };
+    const rejectAfter = (error: unknown): Result | undefined => {
+      return deliver(undefined, error, true);
+    };
+    const complete = (value?: Result, error?: unknown, failed = false): Result | undefined | Promise<Result | undefined> => {
+      callStateManager.isHookRunning = true;
+      try {
+        const returned = afterExecute?.(callArgs!, callStateManager);
+        if (returned != null && isThenable(returned))
+          return Promise.resolve(returned).then(() => deliver(value, error, failed), rejectAfter);
+      } catch (afterError) { return rejectAfter(afterError); }
+      return deliver(value, error, failed);
+    };
+    const resolveOrigin = (value: Result): Result | undefined | Promise<Result | undefined> => {
+      return complete(value);
+    };
+    const rejectOrigin = (error: unknown): Result | undefined | Promise<Result | undefined> => {
+      return complete(undefined, error, true);
+    };
+    const runOrigin = (): Promise<Result | undefined> => {
+      callStateManager.isHookRunning = false;
+      try {
+        publish();
+        return origin(...callArgs!).then(resolveOrigin, rejectOrigin);
+      } catch (error) {
+        try { return Promise.resolve(rejectOrigin(error)); }
+        catch (completionError) { return Promise.reject(completionError); }
+      }
+    };
+    const rejectBefore = (error: unknown): never => {
+      callArgs = undefined;
+      callStateManager.isHookRunning = false;
+      publish(true);
+      throw error;
+    };
+    handler = (...args: Args): Promise<Result | undefined> => {
+      if (callArgs !== undefined) return Promise.resolve(undefined);
+      callArgs = args;
+      callStateManager = new HookStateManager();
+      try {
+        const returned = beforeExecute?.(args, callStateManager);
+        if (returned != null && isThenable(returned))
+          return Promise.resolve(returned).then(runOrigin, rejectBefore);
+      } catch (error) {
+        callArgs = undefined;
+        callStateManager.isHookRunning = false;
+        publish(true);
+        return Promise.reject(error);
+      }
+      return runOrigin();
+    };
+  } else {
+    handler = async (...args: Args): Promise<Result | undefined> => {
+      pendingCallCount++;
+      pending = true;
+      const stateManager = new HookStateManager();
+      try {
+        const returned = beforeExecute?.(args, stateManager);
+        if (returned != null && isThenable(returned)) await returned;
+      } catch (error) {
+        stateManager.isHookRunning = false;
+        pending = --pendingCallCount > 0;
+        publish(true);
+        throw error;
+      } finally { stateManager.isHookRunning = false; }
+      try {
+        publish();
+        return await origin(...args);
+      } finally {
+        stateManager.isHookRunning = true;
+        try {
+          const returned = afterExecute?.(args, stateManager);
+          if (returned != null && isThenable(returned)) await returned;
+        } finally {
+          stateManager.isHookRunning = false;
+          pending = --pendingCallCount > 0;
+          publish(true);
+        }
+      }
+    };
+  }
+  }
 
   // Add subscribe method (non-enumerable to avoid iteration)
   Object.defineProperty(handler, 'subscribe', {
@@ -468,7 +554,7 @@ export function getTrackableHandler<
      * @returns {boolean} True if function is currently running, false otherwise
      */
     get() {
-      return pending;
+      return getPending();
     },
     configurable: false,
     enumerable: false,

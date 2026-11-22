@@ -26,8 +26,8 @@ type GetValue = {
  * The function supports both string and array representations of JSON Pointers:
  * - **String format**: Uses forward slashes (`/`) as delimiters (e.g., `/foo/bar`)
  * - **Array format**: Each element represents a reference token (e.g., ["foo", "bar"])
- * - **Empty pointer**: Returns the entire input object
- * - **Root reference**: `/` or `#/` points to the root of the document
+ * - **Root reference**: `''` and `#` return the entire input object
+ * - **Empty member**: `/` or `#/` addresses the property named `''`
  *
  * Reference tokens are interpreted according to RFC 6901 escape sequences:
  * - `~0` represents the literal character `~`
@@ -46,14 +46,15 @@ type GetValue = {
  *                  - String: JSON Pointer string following RFC 6901 format
  *                  - Array: Sequence of reference tokens as strings or numbers
  *
- * @returns The value located at the specified JSON Pointer location.
- *          Returns any valid JSON value (object, array, string, number, boolean, null).
+ * @returns The value located at the specified JSON Pointer location, or `undefined` when
+ *          the location does not exist. Object paths require own members, and array
+ *          paths require own elements at canonical decimal indices.
  *          The unknown-input overload requires callers to narrow the result.
  *
  * @throws {JSONPointerError} Thrown in the following cases:
  *         - **INVALID_INPUT**: When input is not a plain object or array
- *         - **INVALID_POINTER**: When pointer format is malformed
- *         - **PROPERTY_NOT_FOUND**: When the pointer references a non-existent path
+ *         - **INVALID_POINTER_TYPE**: When the pointer is not a string or an array of
+ *           strings and numbers, or a string pointer does not start with `/` or `#`
  *
  * @see https://datatracker.ietf.org/doc/html/rfc6901 - JSON Pointer specification
  *

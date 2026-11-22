@@ -3,6 +3,9 @@
  *
  * @param dataPath - AJV dataPath string to convert (e.g., "data.users[0].name")
  * @returns JSONPointer format string (e.g., "/data/users/0/name")
+ * @remarks Consecutive and trailing property separators preserve empty tokens. The
+ * leading dot and the separator immediately after an array index are syntax, not tokens.
+ * This retains the existing data-path grammar and its documented lossy spellings.
  *
  * @example
  * ```ts
@@ -31,7 +34,7 @@ export const convertJSONPathToPointer = (dataPath: string): string => {
     // Handle property separator '.'
     if (character === JSON_PATH_SEPARATOR) {
       // Add current segment if exists
-      if (index > start)
+      if (index > start || (index !== 0 && dataPath[index - 1] !== JSON_PATH_ARRAY_INDEX_SUFFIX))
         result += JSON_POINTER_SEPARATOR + dataPath.slice(start, index);
       start = index + 1; // Move start past the separator
       index++;
@@ -64,6 +67,7 @@ export const convertJSONPathToPointer = (dataPath: string): string => {
 
   // Add any remaining segment
   if (start < length) result += JSON_POINTER_SEPARATOR + dataPath.slice(start);
+  else if (dataPath[length - 1] === JSON_PATH_SEPARATOR) result += JSON_POINTER_SEPARATOR;
 
   // Return result or root pointer if empty
   return result || JSON_POINTER_SEPARATOR;

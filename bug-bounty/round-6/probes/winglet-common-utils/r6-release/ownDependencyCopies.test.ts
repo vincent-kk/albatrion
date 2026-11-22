@@ -1,0 +1,22 @@
+import { afterEach, expect, it } from 'vitest';
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
+import { dirname, join, resolve } from 'node:path';
+import { spawnSync } from 'node:child_process';
+const root=resolve(import.meta.dirname,'../../../../../..');
+const roots:string[]=[];
+afterEach(()=>{for(const dir of roots.splice(0))rmSync(dir,{recursive:true,force:true});});
+it.each([6,7,8])('AJV %i from an application-owned installation works in both plugin formats',version=>{
+ const packageDir=join(root,`packages/canard/schema-form-ajv${version}-plugin`);
+ const require=createRequire(join(packageDir,'package.json'));
+ const original=require.resolve('ajv/package.json');
+ const scratch=mkdtempSync(join(tmpdir(),'r6-release-own-ajv-'));roots.push(scratch);
+ const app=join(scratch,'app');mkdirSync(join(app,'node_modules'),{recursive:true});
+ symlinkSync(join(root,'node_modules'),join(scratch,'node_modules'),'dir');
+ cpSync(dirname(original),join(app,'node_modules/ajv'),{recursive:true});
+ const code=`import{createRequire}from'node:module';import{pathToFileURL}from'node:url';const req=createRequire(import.meta.url);const exported=req('ajv');const Ajv=exported.default??exported;const installed=createRequire(${JSON.stringify(join(packageDir,'package.json'))})('ajv');const original=installed.default??installed;if(Ajv===original)throw Error('probe did not create a distinct application dependency');let results=[];for(const format of ['mjs','cjs']){const api=format==='mjs'?await import(pathToFileURL(${JSON.stringify(join(packageDir,'dist',version===8?'default/index.':'index.'))}+format).href):req(${JSON.stringify(join(packageDir,'dist',version===8?'default/index.':'index.'))}+format);const ajv=new Ajv({allErrors:true,strict:false});ajv.addSchema({$id:'https://r6.invalid/resource',type:'string',minLength:3});const adapter=api.createValidator(ajv);const root={$ref:'https://r6.invalid/resource'};const validate=adapter.compile(root);const bad=await validate('a');if(!bad?.some(e=>e.keyword==='minLength'))throw Error('validation did not use application resource '+JSON.stringify(bad));if(await validate('abc')!==null)throw Error('valid data failed');adapter.release(root);if(!ajv.getSchema('https://r6.invalid/resource')('abc'))throw Error('application resource removed');const privateRoot={$id:'https://r6.invalid/private',type:'string'};adapter.compile(privateRoot);if(ajv.getSchema(privateRoot.$id)!==undefined)throw Error('form root exposed');results.push(format);}console.log(JSON.stringify(results));`;
+ const result=spawnSync(process.execPath,['--input-type=module','-e',code],{cwd:app,encoding:'utf8',timeout:90000,maxBuffer:2e6});
+ expect({status:result.status,error:result.error?.message},result.stdout+'\n'+result.stderr).toEqual({status:0,error:undefined});
+ expect(JSON.parse(result.stdout)).toEqual(['mjs','cjs']);
+},120000);

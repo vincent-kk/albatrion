@@ -79,7 +79,8 @@ interface ExecutionContext<F extends Fn<any[]>> {
  * **Context Management:**
  * - Preserves exact 'this' binding from original call site
  * - Stores complete argument list for deferred execution
- * - Automatically clears context after execution to prevent stale references
+ * - Clears context before calling the function, so a call made from inside the function
+ *   keeps its own context and a function that throws is not re-run with the same arguments
  * - Handles edge cases like null/undefined contexts safely
  *
  * **Timer Lifecycle:**
@@ -144,13 +145,16 @@ export class FunctionContext<F extends Fn<any[]>> {
 
   /**
    * Executes the function immediately with the stored context.
-   * Clears the context after execution to prevent stale references.
+   * Clears the context before the call, so arguments stored by a call made from inside
+   * the function survive, and a function that throws leaves nothing to re-run.
    * Does nothing if no arguments have been set.
    */
   public execute() {
-    if (this.__context__.args === null) return;
-    this.__function__.apply(this.__context__.self, this.__context__.args);
+    const self = this.__context__.self;
+    const args = this.__context__.args;
+    if (args === null) return;
     this.__clearContext__();
+    this.__function__.apply(self, args);
   }
 
   /**
@@ -160,12 +164,30 @@ export class FunctionContext<F extends Fn<any[]>> {
    */
   public schedule(execute?: boolean) {
     if (this.__timer__ !== null) clearTimeout(this.__timer__);
-    const timer = setTimeout(() => {
+    const run = () => {
       this.__timer__ = null;
+      // Not clear(): a call made from inside the function may already have scheduled again
       if (execute) this.execute();
-      this.clear();
-    }, this.__delay__);
-    this.__timer__ = timer;
+      else this.__clearContext__();
+    };
+    this.__timer__ = this.__delay__ > 0x7fffffff
+      ? this.__scheduleLong__(this.__delay__, run)
+      : setTimeout(run, this.__delay__);
+  }
+
+  /**
+   * Schedules a duration above the host timer limit in cancellable segments.
+   * @param remainingMs - Remaining duration, greater than 2^31 - 1 milliseconds
+   * @param done - Callback to run only after every finite segment completes
+   * @returns The first timer handle, also stored anew for every following segment
+   */
+  private __scheduleLong__(remainingMs: number, done: () => void): ReturnType<typeof setTimeout> {
+    return setTimeout(() => {
+      remainingMs -= 0x7fffffff;
+      this.__timer__ = remainingMs > 0x7fffffff
+        ? this.__scheduleLong__(remainingMs, done)
+        : setTimeout(done, remainingMs);
+    }, 0x7fffffff);
   }
 
   /**
@@ -173,8 +195,8 @@ export class FunctionContext<F extends Fn<any[]>> {
    * Combines immediate execution with timer cleanup for manual control.
    */
   public manualExecute() {
-    this.execute();
     this.__clearTimer__();
+    this.execute();
   }
 
   /**

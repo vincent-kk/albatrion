@@ -25,8 +25,8 @@ import { hasDistributedChildInput } from '../../input/hasDistributedChildInput';
 import { updatePendingExitIndex } from '../../scratch/updatePendingExitIndex';
 import { cloneFromSlot } from '../../slots/cloneFromSlot';
 import { createFromSlotOverlay } from '../../slots/createFromSlotOverlay';
-import { enterSlotClone } from '../../slots/enterSlotClone';
 import { getSlotSource } from '../../slots/getSlotSource';
+import { applyDepartingSource } from '../../source/applyDepartingSource';
 import { createChildNode } from '../createChildNode';
 import { enterFieldNode } from '../enterFieldNode';
 import { hasRecursiveExpansion } from '../hasRecursiveExpansion';
@@ -36,6 +36,7 @@ import { staticIds } from './staticIds';
 import type { PreparedDiscriminatorEntry } from './utils/prepareDiscriminatorEntrySelection';
 import type { PreparedStaticHost } from './utils/prepareStaticHost';
 import { readDiscriminatorEntrySelection } from './utils/readDiscriminatorEntrySelection';
+import { isOwnActiveGate } from '../../gates/isOwnActiveGate';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
 const NO_ACTIVE_IDS: readonly number[] = EMPTY_ARRAY;
@@ -172,11 +173,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
               gate,
               context,
               node,
-              gate.schemaPath ===
-                appendSegment(
-                  appendSegment(declaration.schemaPath, 'controls'),
-                  'active',
-                )
+              isOwnActiveGate(gate.schemaPath, declaration.schemaPath)
                 ? entry.name
                 : undefined,
             )
@@ -267,7 +264,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     next[entry.name]?.blueprintNode === entry.node
       ? next[entry.name]
       : undefined;
-  const distribution = getChildDistribution(node, entry.name, context);
+  const distribution = getChildDistribution(node, entry, context);
   const ownsInput =
     distribution &&
     hasDistributedChildInput(
@@ -328,6 +325,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   }
   if (pending && child === pending) {
     context.revivedNodes.add(child);
+    applyDepartingSource(context, child);
   }
   if (context.hasGates) getGateRegistry(child.runtime).register(child);
   let entryChanged = false;
@@ -335,9 +333,14 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     context.enteredNodes.add(child);
 
     if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
-    else if (slotSource || slotOverlay)
-      enterSlotClone(node, child, entry.name, context);
-    else enterFieldNode(node, child, entry.name, context);
+    else
+      enterFieldNode(
+        node,
+        child,
+        entry,
+        context,
+        !!(slotSource || slotOverlay),
+      );
     if (child.behavior.strategy === 'branch')
       context.shapeDirtyPaths.add(child.path);
     frame.hasChanged = true;

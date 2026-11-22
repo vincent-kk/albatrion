@@ -3,7 +3,7 @@ import { StrictMode, createRef } from 'react';
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { useFieldErrors } from '@/schema-form';
+import { FieldNodeState, useFieldErrors } from '@/schema-form';
 import {
   ErrorVisibility,
   type FieldInputProps,
@@ -65,7 +65,8 @@ const fixture = async () => {
     ref,
     view,
     clock,
-    revealState: () => ref.current!.node!.setState({ 4: true }),
+    revealState: () =>
+      ref.current!.node!.setState({ [FieldNodeState.ErrorVisibility]: true }),
     revealPolicy: () => ref.current!.revealErrors(),
   };
 };
@@ -190,7 +191,7 @@ it('IR-6 Y3 the parent own entry cannot reveal a child aggregate until its curre
   const clock = createValidationFrameClock();
   act(() => {
     ref.current!.setValue({ a: 'new' });
-    ref.current!.setState({ 4: true });
+    ref.current!.setState({ [FieldNodeState.ErrorVisibility]: true });
   });
   expect(view.getByTestId('aggregate').textContent).toBe('');
   await act(async () => {
@@ -352,7 +353,9 @@ it.each([true, false])(
       clock.frame();
       await clock.task();
     });
-    expect(ref.current!.findNode('/a')!.state[2]).toBe(true);
+    expect(ref.current!.findNode('/a')!.state[FieldNodeState.Touched]).toBe(
+      true,
+    );
     expect(view.getByTestId('blur-error:/a').textContent).toBe('');
     if (painted)
       await act(async () => {

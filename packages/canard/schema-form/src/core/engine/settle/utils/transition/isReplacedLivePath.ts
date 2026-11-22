@@ -1,10 +1,9 @@
-import type { Optional } from '@aileron/declare';
-
 import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import { find } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
+import { readWriteCoverage } from '../write/readWriteCoverage';
 
 /**
  * Whether a whole replacement already gave this path's only source to a live node.
@@ -20,47 +19,17 @@ export const isReplacedLivePath = <Self extends FieldNodeRecord<Self>>(
   const withinScope =
     scope !== undefined &&
     (!scope.path || path === scope.path || isDescendantPath(path, scope.path));
-  let matchesVirtualReplacement: Optional<boolean> = undefined;
-
-  const virtualReplacementPaths = context.virtualReplacementPaths;
-  if (virtualReplacementPaths != null) {
-    matchesVirtualReplacement = false;
-    for (
-      let index = 0, count = virtualReplacementPaths.length;
-      index < count;
-      index++
-    ) {
-      const replaced = virtualReplacementPaths[index];
-
-      if (path === replaced || isDescendantPath(path, replaced)) {
-        matchesVirtualReplacement = true;
-        break;
-      }
-    }
-  }
-
-  const withinVirtual = matchesVirtualReplacement ?? false;
-  let matchesBatchReplacement: Optional<boolean> = undefined;
-
-  const replacementPaths = context.replacementPaths;
-  if (replacementPaths != null) {
-    matchesBatchReplacement = false;
-    for (
-      let index = 0, count = replacementPaths.length;
-      index < count;
-      index++
-    ) {
-      const replaced = replacementPaths[index];
-
-      if (path === replaced || isDescendantPath(path, replaced)) {
-        matchesBatchReplacement = true;
-        break;
-      }
-    }
-  }
-
-  const withinBatch = matchesBatchReplacement ?? false;
-  if (!withinScope && !withinVirtual && !withinBatch) return false;
+  if (
+    !withinScope &&
+    !context.virtualReplacementPaths?.some(
+      (replaced) => path === replaced || isDescendantPath(path, replaced),
+    ) &&
+    !(
+      context.writeOrigins &&
+      readWriteCoverage(context.writeOrigins, path, 'whole')
+    )
+  )
+    return false;
   const live = find(context.root, path);
   return live !== null && !live.isDetached;
 };

@@ -93,7 +93,6 @@ Every code below belongs to `DataLoaderError`, whose `code` is `DATA_LOADER.<COD
 | Calling `prime()` to overwrite a cached key | `prime()` is a no-op when the key exists — `clear(key).prime(key, next)` is the only replace sequence |
 | Passing `null`/`undefined` to `load()`      | Throws `INVALID_KEY` synchronously; guard before calling                                              |
 | Object keys without `cacheKeyFn`            | Objects are compared by identity, so equal-shaped keys always miss — derive a string key              |
-| `cacheKeyFn` that can return `''` or `0`    | A falsy cache key silently bypasses the cache in both directions — no read, no write, no dedup        |
 | Awaiting loads one at a time                | Each `await` closes the batch — issue the loads concurrently, then await                              |
 
 ## Knowledge Router

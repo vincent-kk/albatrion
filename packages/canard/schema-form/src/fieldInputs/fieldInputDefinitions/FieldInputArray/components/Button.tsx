@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { type CSSProperties, type MouseEventHandler, memo } from 'react';
 
 /**
@@ -20,7 +21,7 @@ export const Button = memo(function Button({
   onClick: MouseEventHandler<HTMLButtonElement>;
   index?: number;
   style?: CSSProperties;
-}) {
+}): ReactElement {
   return (
     <button
       type="button"

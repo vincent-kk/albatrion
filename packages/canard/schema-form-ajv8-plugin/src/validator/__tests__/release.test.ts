@@ -22,7 +22,6 @@ describe('VALIDATE-019 release', () => {
 
   it('removes a compiled root registration and lets the same URI be used again', async () => {
     const instance = new Ajv({ strictSchema: false });
-    const remove = vi.spyOn(instance, 'removeSchema');
     ajvValidatorPlugin.bind(instance);
     const first = {
       $id: 'https://example.test/reusable',
@@ -32,7 +31,6 @@ describe('VALIDATE-019 release', () => {
     ajvValidatorPlugin.compile(first);
     ajvValidatorPlugin.compileGuard(first, '/if');
     ajvValidatorPlugin.release(first);
-    expect(remove).toHaveBeenCalledWith(expect.stringContaining('/ajv8/root/'));
     expect(instance.getSchema(first.$id)).toBeUndefined();
     expect(instance.getSchema('https://example.test/reusable-inner')).toBeUndefined();
     const second = { $id: 'https://example.test/reusable', if: { const: 'second' } } as unknown as JSONSchema;

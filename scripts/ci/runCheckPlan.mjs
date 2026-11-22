@@ -34,6 +34,7 @@ if (shardName && shards.length !== 1)
 const outcome = runPlanSteps(shards, {
   root: fileURLToPath(new URL("../../", import.meta.url)),
   env: { ...process.env, CI: "true" },
+  tier: plan.tier,
   dryRun: args.includes("--dry-run"),
   log: console.log,
 });

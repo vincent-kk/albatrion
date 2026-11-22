@@ -30,22 +30,37 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/default/index.d.ts",
       "source": "./src/default/index.ts",
-      "import": "./dist/default/index.mjs",
-      "require": "./dist/default/index.cjs"
+      "import": {
+        "types": "./dist/default/index.d.ts",
+        "default": "./dist/default/index.mjs"
+      },
+      "require": {
+        "types": "./dist/default/index.d.cts",
+        "default": "./dist/default/index.cjs"
+      }
     },
     "./2019": {
-      "types": "./dist/2019/index.d.ts",
       "source": "./src/2019/index.ts",
-      "import": "./dist/2019/index.mjs",
-      "require": "./dist/2019/index.cjs"
+      "import": {
+        "types": "./dist/2019/index.d.ts",
+        "default": "./dist/2019/index.mjs"
+      },
+      "require": {
+        "types": "./dist/2019/index.d.cts",
+        "default": "./dist/2019/index.cjs"
+      }
     },
     "./2020": {
-      "types": "./dist/2020/index.d.ts",
       "source": "./src/2020/index.ts",
-      "import": "./dist/2020/index.mjs",
-      "require": "./dist/2020/index.cjs"
+      "import": {
+        "types": "./dist/2020/index.d.ts",
+        "default": "./dist/2020/index.mjs"
+      },
+      "require": {
+        "types": "./dist/2020/index.d.cts",
+        "default": "./dist/2020/index.cjs"
+      }
     }
   },
   "main": "dist/default/index.cjs",
@@ -89,5 +104,39 @@
     "rolldown": "^1.2.0",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.7.2"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "import": {
+          "types": "./dist/default/index.d.ts",
+          "default": "./dist/default/index.mjs"
+        },
+        "require": {
+          "types": "./dist/default/index.d.cts",
+          "default": "./dist/default/index.cjs"
+        }
+      },
+      "./2019": {
+        "import": {
+          "types": "./dist/2019/index.d.ts",
+          "default": "./dist/2019/index.mjs"
+        },
+        "require": {
+          "types": "./dist/2019/index.d.cts",
+          "default": "./dist/2019/index.cjs"
+        }
+      },
+      "./2020": {
+        "import": {
+          "types": "./dist/2020/index.d.ts",
+          "default": "./dist/2020/index.mjs"
+        },
+        "require": {
+          "types": "./dist/2020/index.d.cts",
+          "default": "./dist/2020/index.cjs"
+        }
+      }
+    }
   }
 }

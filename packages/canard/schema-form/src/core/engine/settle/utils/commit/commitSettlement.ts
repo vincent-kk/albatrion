@@ -1,4 +1,5 @@
 import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
+import { equals as isEqualRelayArray } from '@winglet/common-utils/object';
 
 import type { Fn, Optional } from '@aileron/declare';
 
@@ -15,6 +16,7 @@ import { FieldNodeWriteKind } from '../../../types/value';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import type { SettlementContext } from '../../types/settlement';
+import { getAliasedDependencyIndex } from '../dependencies/getAliasedDependencyIndex';
 import { commitSlotChanges } from '../slots/commitSlotChanges';
 import { collectNonJsonPaths } from './collectNonJsonPaths';
 import { commitDeriveRules } from './commitDeriveRules';
@@ -37,6 +39,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const runtime = context.root.runtime;
+  if (runtime.blueprint.capabilities.hasAliasedDependencies) getAliasedDependencyIndex(context);
   const development = process.env.NODE_ENV !== 'production';
   if (runtime.blueprint.capabilities.hasDerive) commitDeriveRules(context);
   if (runtime.blueprint.capabilities.hasExpressions)
@@ -81,7 +84,6 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   const loadScope =
     context.kind === FieldNodeWriteKind.Load ? context.loadScope : undefined;
   const relays = runtime.inputRelays;
-  if (relays !== undefined) runtime.inputRelays = undefined;
   for (const path of context.changedSource) {
     if (
       loadScope &&
@@ -90,7 +92,11 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
       continue;
     if (readSettlementSource(context, path, true) === FieldNodeWriteKind.Input)
       continue;
-    if (relays !== undefined && isRelayedInput(relays, path)) continue;
+    if (
+      relays !== undefined &&
+      isRelayedInput(relays, path, isEqualRelayArray)
+    )
+      continue;
     refreshTargets.add(path);
   }
   runtime.refreshTargets = refreshTargets;
@@ -202,6 +208,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
       }
     });
   });
+  if (relays !== undefined) runtime.inputRelays = undefined;
   if (warningTasks)
     for (const node of context.changedNodes) warningTasks.get(node)?.();
   runtime.misfitRecords = warnings ? Object.freeze(warnings) : EMPTY_ARRAY;

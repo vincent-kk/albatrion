@@ -3,11 +3,25 @@ import { afterEach, expect, it } from 'vitest';
 
 import { Form } from '../components/Form';
 import { ValidationMode } from '../core';
+import { expectedFieldPartId } from '@/schema-form/__tests__/fixtures/expectedFieldPartId';
 
 afterEach(cleanup);
 
 it('owns one associated label root, honors children and shows a hidden required marker', () => {
-  const view = render(<Form jsonSchema={{ type: 'object', required: ['name'], properties: { name: { type: 'string' } } }} validationMode={ValidationMode.None}><Form.Label path="/name">Custom</Form.Label><Form.Input path="/name" /><Form.Label path="/missing" /></Form>);
+  const view = render(
+    <Form
+      jsonSchema={{
+        type: 'object',
+        required: ['name'],
+        properties: { name: { type: 'string' } },
+      }}
+      validationMode={ValidationMode.None}
+    >
+      <Form.Label path="/name">Custom</Form.Label>
+      <Form.Input path="/name" />
+      <Form.Label path="/missing" />
+    </Form>,
+  );
   const label = view.getByText('Custom').closest('label')!;
   expect(view.container.querySelectorAll('label')).toHaveLength(1);
   expect(label.control).toBe(view.container.querySelector('input'));
@@ -16,7 +30,34 @@ it('owns one associated label root, honors children and shows a hidden required 
 });
 
 it('keeps standalone presentation overrides explicit and forwards its own context', () => {
-  const view = render(<Form jsonSchema={{ type: 'string', presentation: { FieldRendererProps: { className: 'schema-class', style: { color: 'red' } } } }} validationMode={ValidationMode.None} context={{ source: 'form' }} LabelRenderer={({ children, className, style, htmlFor, id, context }) => <label className={className} style={style} htmlFor={htmlFor} id={id} data-context={context.source}>{children}</label>}><Form.Label>Own</Form.Label></Form>);
+  const view = render(
+    <Form
+      jsonSchema={{
+        type: 'string',
+        presentation: {
+          FieldRendererProps: {
+            className: 'schema-class',
+            style: { color: 'red' },
+          },
+        },
+      }}
+      validationMode={ValidationMode.None}
+      context={{ source: 'form' }}
+      LabelRenderer={({ children, className, style, htmlFor, id, context }) => (
+        <label
+          className={className}
+          style={style}
+          htmlFor={htmlFor}
+          id={id}
+          data-context={context.source}
+        >
+          {children}
+        </label>
+      )}
+    >
+      <Form.Label>Own</Form.Label>
+    </Form>,
+  );
   const label = view.getByText('Own');
   expect(label.getAttribute('class')).toBeNull();
   expect(label.getAttribute('style')).toBeNull();
@@ -55,13 +96,13 @@ it.each(['checkbox', 'radio'])(
       </Form>,
     );
     const label = screen.getByText('Size').closest('label')!;
-    expect(label.getAttribute('for')).toBe('/Size');
-    expect(label.id).toBe('label:/Size');
+    expect(label.htmlFor).toMatch(/:\/Size~input$/);
+    expect(label.id).toBe(expectedFieldPartId(label.htmlFor, 'label'));
     expect(
       screen
         .getByRole('group', { name: 'Size' })
         .getAttribute('aria-labelledby'),
-    ).toBe('label:/Size');
+    ).toBe(label.id);
   },
 );
 
@@ -81,8 +122,10 @@ it('keeps Form.Label associated with a plain string input', () => {
   expect(screen.getByText('Text').closest('label')!.getAttribute('for')).toBe(
     input.id,
   );
-  expect(input.id).toBe('/Text');
-  expect(screen.getByText('Text').closest('label')!.id).toBe('label:/Text');
+  expect(input.id).toMatch(/^.+:\/Text~input$/);
+  expect(screen.getByText('Text').closest('label')!.id).toBe(
+    expectedFieldPartId(input.id, 'label'),
+  );
 });
 
 it('keeps Form.Label associated with a date-format input despite the radio hint', () => {
@@ -108,7 +151,7 @@ it('keeps Form.Label associated with a date-format input despite the radio hint'
   const label = screen.getByText('When').closest('label')!;
   expect(input.type).toBe('date');
   expect(label.getAttribute('for')).toBe(input.id);
-  expect(label.id).toBe('label:/When');
+  expect(label.id).toBe(expectedFieldPartId(input.id, 'label'));
 });
 
 it('omits for and id when the Form.Label path prop is undefined', () => {
@@ -119,7 +162,11 @@ it('omits for and id when the Form.Label path prop is undefined', () => {
         enum: ['S', 'M'],
         presentation: { inputType: 'radio' },
       }}
-      LabelRenderer={({ htmlFor, id }) => <label htmlFor={htmlFor} id={id}>Size</label>}
+      LabelRenderer={({ htmlFor, id }) => (
+        <label htmlFor={htmlFor} id={id}>
+          Size
+        </label>
+      )}
     >
       <Form.Label />
       <Form.Input />
@@ -147,10 +194,16 @@ it('avoids title id collisions with sibling input paths in Form.Label compositio
       <Form.Input path="/button-label" />
     </Form>,
   );
-  const ids = Array.from(view.container.querySelectorAll('[id]'), (el) => el.id);
+  const ids = Array.from(
+    view.container.querySelectorAll('[id]'),
+    (el) => el.id,
+  );
   expect(ids.filter((id, index) => ids.indexOf(id) !== index)).toEqual([]);
   const inputs = screen.getAllByRole<HTMLInputElement>('textbox');
-  expect(inputs.map((input) => input.id)).toEqual(['/button', '/button-label']);
+  expect(inputs.map((input) => input.id)).toEqual([
+    expect.stringMatching(/^.+:\/button~input$/),
+    expect.stringMatching(/^.+:\/button-label~input$/),
+  ]);
   expect(screen.getByText('button').closest('label')!.control).toBe(inputs[0]);
   expect(screen.getByText('button-label').closest('label')!.control).toBe(
     inputs[1],
@@ -165,16 +218,20 @@ it('names a root group with the label prefix when path is empty', () => {
         enum: ['S', 'M'],
         presentation: { inputType: 'radio' },
       }}
-      LabelRenderer={({ htmlFor, id }) => <label htmlFor={htmlFor} id={id}>Size</label>}
+      LabelRenderer={({ htmlFor, id }) => (
+        <label htmlFor={htmlFor} id={id}>
+          Size
+        </label>
+      )}
     >
       <Form.Label path="" />
       <Form.Input path="" />
     </Form>,
   );
   const label = screen.getByText('Size').closest('label')!;
-  expect(label.getAttribute('for')).toBe('');
-  expect(label.id).toBe('label:');
+  expect(label.htmlFor).toMatch(/:~input$/);
+  expect(label.id).toBe(expectedFieldPartId(label.htmlFor, 'label'));
   expect(
     screen.getByRole('group', { name: 'Size' }).getAttribute('aria-labelledby'),
-  ).toBe('label:');
+  ).toBe(label.id);
 });

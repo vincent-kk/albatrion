@@ -1,109 +1,132 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import type { AgentType, AssetKind, Scope } from '../../core/index.js';
+import type { RunFailure, RunResult } from '../../core/index.js';
+import { type AgentType, type Scope, runInjection } from '../../core/index.js';
 import type { ConsumerPackage, DefaultFlags } from '../../types/index.js';
-import type { InjectEvent, TargetPlan, Warning } from '../types/index.js';
-import { applyAllPlans } from './useApplyStep.js';
-import { requestForceConfirm } from './useForceConfirmStep.js';
-import { usePlanStep } from './usePlanStep.js';
-import { useResolveStep } from './useResolveStep.js';
+import type { InjectEvent } from '../types/index.js';
 
-const ALL_KINDS: readonly AssetKind[] = ['skills', 'rules', 'commands'];
-
-interface UseInjectSessionOptions {
-  readonly targets: readonly ConsumerPackage[];
-  readonly flags: DefaultFlags;
-  readonly originCwd: string;
-  readonly dispatch: Fn<[event: InjectEvent]>;
-}
-
+/** Transport core input requests and completed models into the UI reducer.
+ * @param options Inputs and the pure display-event sink.
+ */
 export function useInjectSession({
   targets,
   flags,
   originCwd,
   dispatch,
-}: UseInjectSessionOptions): void {
-  const [resolved, setResolved] = useState<{
-    agents: readonly AgentType[];
-    scope: Scope;
-  } | null>(null);
-  const [plansReady, setPlansReady] = useState<{
-    plans: readonly TargetPlan[];
-    warnings: readonly Warning[];
-  } | null>(null);
-  const pipelineStarted = useRef(false);
-
-  // The CLI layer already rejected unknown values, so anything unrecognised
-  // here can only be an empty flag — which means every kind.
-  const assetKinds = useMemo(() => {
-    const requested = (flags.asset ?? []).filter((value): value is AssetKind =>
-      ALL_KINDS.includes(value as AssetKind),
-    );
-    return new Set<AssetKind>(requested.length > 0 ? requested : ALL_KINDS);
-  }, [flags.asset]);
-
-  const onResolved = useCallback(
-    (agents: readonly AgentType[], scope: Scope) => {
-      setResolved({ agents, scope });
-    },
-    [],
-  );
-
-  const onPlansReady = useCallback(
-    (plans: readonly TargetPlan[], warnings: readonly Warning[]) => {
-      setPlansReady({ plans, warnings });
-    },
-    [],
-  );
-
-  useResolveStep({ targets, flags, dispatch, onResolved });
-  usePlanStep({
-    targets,
-    agents: resolved?.agents ?? null,
-    scope: resolved?.scope ?? null,
-    originCwd,
-    assetKinds,
-    force: Boolean(flags.force),
-    dispatch,
-    onPlansReady,
-  });
-
+  result: supplied,
+  notices,
+  diagnostics,
+}: {
+  readonly targets: readonly ConsumerPackage[];
+  readonly flags: DefaultFlags;
+  readonly originCwd: string;
+  readonly dispatch: Fn<[event: InjectEvent]>;
+  readonly result?: RunResult;
+  readonly diagnostics?: readonly RunFailure[];
+  readonly notices?: readonly string[];
+}): void {
+  const started = useRef(false);
   useEffect(() => {
-    if (!plansReady || pipelineStarted.current) return;
-    pipelineStarted.current = true;
-
-    (async () => {
-      const { plans, warnings } = plansReady;
-      if (plans.length === 0) {
-        dispatch({
-          type: 'done',
-          reports: [],
-          exitCode: 2,
-          dryRun: Boolean(flags.dryRun),
+    if (started.current) return;
+    started.current = true;
+    const execution = supplied
+      ? Promise.resolve(supplied)
+      : runInjection({
+          targets,
+          flags,
+          originCwd,
+          notices,
+          diagnostics,
+          selectAgents: () =>
+            new Promise<readonly AgentType[]>((resolve) =>
+              dispatch({ type: 'agent-needed', pending: resolve }),
+            ),
+          selectScope: () =>
+            new Promise<Scope>((resolve) =>
+              dispatch({ type: 'scope-needed', agents: [], pending: resolve }),
+            ),
+          onPlan: (units, values) => {
+            dispatch({
+              type: 'planning-started',
+              targets,
+              agents: values.agents,
+              scope: values.scope,
+            });
+            dispatch({ type: 'plans-ready', plans: units });
+          },
+          confirm: (units) =>
+            new Promise<boolean>((resolve) =>
+              dispatch({
+                type: 'force-confirm-required',
+                warnings: units.flatMap((unit) =>
+                  unit.plan.actions.flatMap((action) =>
+                    action.kind === 'warn-diverged' ||
+                    action.kind === 'warn-orphan' ||
+                    action.kind === 'delete'
+                      ? [
+                          {
+                            packageName: unit.target.name,
+                            agent: unit.agentTarget.agent,
+                            kind:
+                              action.kind === 'warn-diverged'
+                                ? 'warn-diverged'
+                                : 'warn-orphan',
+                            relPath: action.relPath,
+                            description:
+                              action.kind === 'warn-diverged'
+                                ? 'local differs from source (user edit or version change)'
+                                : 'exists locally but not in manifest',
+                          },
+                        ]
+                      : [],
+                  ),
+                ),
+                pending: (ok) => {
+                  resolve(ok);
+                },
+              }),
+            ),
         });
-        return;
-      }
-      const ok = await requestForceConfirm({
-        plans,
-        warnings,
-        force: Boolean(flags.force),
-        autoApprove: Boolean(flags.yes),
-        dispatch,
-      });
-      if (!ok) return;
-      await applyAllPlans({
-        plans,
-        dryRun: Boolean(flags.dryRun),
-        force: Boolean(flags.force),
-        dispatch,
-      });
-    })().catch((error) => {
-      dispatch({
-        type: 'fail',
-        error: error instanceof Error ? error : new Error(String(error)),
-      });
-    });
-  }, [plansReady, flags.force, flags.dryRun, flags.yes, dispatch]);
+    execution
+      .then((result) => {
+        if (
+          result.errors.length &&
+          !result.units.length &&
+          result.exitCode !== 0
+        )
+          dispatch({
+            type: 'fail',
+            error: new Error(
+              result.failures?.length
+                ? result.failures
+                    .map(
+                      (failure) =>
+                        `${failure.path} [${failure.stage}]: ${failure.reason}`,
+                    )
+                    .join('\n')
+                : result.errors.join('\n'),
+            ),
+            exitCode: result.exitCode,
+          });
+        else
+          dispatch({
+            type: 'done',
+            result,
+            plans: result.units,
+            reports: result.units.flatMap((unit) =>
+              unit.report ? [unit.report] : [],
+            ),
+            exitCode: result.exitCode,
+            dryRun: result.dryRun,
+          });
+      })
+      .catch((error) =>
+        dispatch({
+          type: 'fail',
+          error: error instanceof Error ? error : new Error(String(error)),
+        }),
+      );
+  }, [targets, flags, originCwd, dispatch, supplied, notices, diagnostics]);
 }

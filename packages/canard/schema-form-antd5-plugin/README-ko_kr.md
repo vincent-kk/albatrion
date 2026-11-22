@@ -84,7 +84,11 @@ registerPlugin(plugin);
 
 - **역할**: URI 입력을 위한 특수 입력 필드 (프로토콜 드롭다운 포함)
 - **적용 조건**: `type`이 `"string"`이고 `format` 또는 `inputType`이 `"uri"`인 경우
-- **추가 사항**: 프로토콜 선택 드롭다운, 기본 프로토콜 목록 지원 (http, https, ftp, mailto, tel), `presentation.FieldInputProps.protocols`로 커스텀 프로토콜 목록 설정
+- **추가 사항**: 프로토콜 선택 드롭다운, 기본 프로토콜 목록 지원 (http, https, ftp, mailto, tel), `presentation.FieldInputProps.protocols`로 커스텀 프로토콜 목록 설정. 목록에 없는 스킴을 가진 값은 그 스킴을 유지하며, 드롭다운에 해당 스킴이 추가 선택지로 나타납니다
+
+#### URI scheme preservation
+
+URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 스킴과 `localhost:3000`, `a:b`도 원래 대소문자와 구분자(`:` 또는 `://`)를 보존합니다. 스킴이 없는 값은 스킴을 덧붙이지 않습니다. 마운트·외부 쓰기·reset·Activity 숨김과 표시는 스킴만 있는 문자열을 포함한 저장 값을 고쳐 쓰지 않습니다. 주소가 있을 때 경로와 스킴 중 하나를 편집해도 나머지는 유지합니다. 주소를 지우거나 빈 주소에서 스킴만 고르면 `undefined`를 기록하고 선택한 스킴은 입력 상태로 보존하여 다음 문자를 그 스킴에 이어 붙입니다. 외부 쓰기와 reset은 저장 값의 스킴을 표시하며 값이 `undefined`이면 마지막 사용자 선택을 유지합니다. 구분자를 생략한 설정은 `http`·`https`·`ftp`에 `://`, 다른 스킴에 `:`를 사용하고 명시한 구분자는 그대로 유지합니다.
 
 ### **[`FieldInputMonth.tsx`](./src/fieldInputs/FieldInputMonth.tsx)**
 
@@ -136,6 +140,8 @@ registerPlugin(plugin);
   - 또는 `type`이 `"array"`이고 `items.type`이 `"string"`이며 `items.enum` 값이 존재하는 경우
 - **추가 사항**: 단일/다중 선택 자동 감지, 옵션별 커스텀 라벨 지원
 
+다중 Select 검색은 표시 레이블과 원래 enum 값을 대소문자와 유니코드 정규화 형식의 차이 없이 찾습니다. 예를 들어 NFD 검색어로 NFC 레이블을 찾을 수 있습니다.
+
 ### **[`FieldInputArray.tsx`](./src/fieldInputs/FieldInputArray.tsx)**
 
 - **역할**: 배열 데이터를 동적으로 추가/삭제 가능한 리스트로 표시
@@ -148,11 +154,17 @@ registerPlugin(plugin);
 - **적용 조건**: `type`이 `"number"` 또는 `"integer"`이고 `inputType`이 `"slider"`인 경우
 - **추가 사항**: `minimum`, `maximum`, `multipleOf` 스키마 속성 지원, `presentation.FieldInputProps.lazy: false`이면 놓을 때가 아니라 움직일 때마다 값 반영
 
+`presentation.FieldInputProps.lazy`를 생략하거나 `true`로 두면 Ant Design 5.10.x와 5.11.x는 이동 키를 누를 때, 5.12 이상의 5.x는 이동 키를 놓을 때 저장합니다. 포인터로 선택하면 포인터를 놓을 때 저장합니다. `lazy: false`이면 이동마다 변경값을 저장합니다.
+
+미설정 Slider는 조작 전까지 폼 값을 저장하지 않습니다. 접근성 트리에는 기본 범위의 `0`과 같은 라이브러리의 초기 thumb 위치가 표시됩니다. 이 수치를 생략하려면 `fieldInputDefinitions`에 사용자 정의 `FieldInput`을 등록하세요.
+
+`multipleOf`가 매우 작을 때는 포인터로 확정한 값이 정확한 스키마 격자점이라는 보장이 없습니다. Ant Design 5.27.0에서 범위를 `1e-7`부터 `9e-7`로, 간격을 `multipleOf: 1e-7`로 설정하고 트랙 가운데를 누르면 `5e-7` 대신 `9e-7`이 저장될 수 있습니다. 정확한 십진 격자가 필요하면 `fieldInputDefinitions`에 사용자 정의 `FieldInput`을 등록하세요.
+
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 
 - **역할**: 멀티라인 텍스트 입력을 위한 텍스트 영역
 - **적용 조건**: `type`이 `"string"`이고 `format` 또는 `inputType`이 `"textarea"`인 경우
-- **추가 사항**: `minRows`, `maxRows`를 통한 자동 크기 조절 지원
+- **추가 사항**: `presentation.FieldInputProps`의 `minRows`와 `maxRows`로 자동 크기를 조절합니다. 생략한 값은 스키마 확장 설정을 사용합니다
 
 ### **[`FieldInputString.tsx`](./src/fieldInputs/FieldInputString.tsx)**
 
@@ -170,13 +182,13 @@ registerPlugin(plugin);
 
 - **역할**: boolean 값을 체크박스로 표시
 - **적용 조건**: `type`이 `"boolean"`인 경우 (다른 조건에 해당하지 않는 fallback)
-- **추가 사항**: `undefined` 값에 대한 `indeterminate` 상태 지원
+- **추가 사항**: `null`과 불리언이 아닌 값은 `indeterminate` 상태로 표시되고, 값이 없는(`undefined`) 경우에는 체크되지 않은 상태로 표시됩니다
 
 ---
 
 ## 입력 설정
 
-위의 `protocols`, `lazy`, `minimum`, `maximum` 같은 입력별 설정은 `presentation.FieldInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
+위의 `protocols`, `lazy`, `minimum`, `maximum` 같은 textarea 행 제한 이외의 입력별 설정은 `presentation.FieldInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
 
 ```ts
 const jsonSchema = {
@@ -231,6 +243,38 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 ---
 
+## Form 범위의 컨트롤 식별자
+
+요소 ID는 필드와 Form 사이에서 고유하며 공백을 포함하지 않습니다. ID의 표기는 불투명한 값으로 취급하고 문자열을 덧붙이거나 디코딩·파싱하지 않습니다. `path`는 폼 데이터에 사용하는 JSON Pointer입니다. 사용자 정의 입력은 기본 컨트롤에 `inputId`를 지정하고 추가 요소에는 `getInputId(key)`를 사용합니다. 키는 필수이며 표기가 같은 숫자 키와 문자열 키는 같은 요소를 가리킵니다. 선택지·범위 끝점·thumb·프로토콜 선택기·입력 자체 레이블은 서로 다른 키를 사용합니다. 필드 제목에는 `labelId`를 지정하고 `aria-labelledby`로 연결합니다. 사용자 정의 렌더러도 같은 필드의 `inputId`와 `labelId`를 받습니다. 단일 입력의 레이블은 `inputId`를 가리킵니다. `name`은 말단 이름을 유지하며 라디오의 native name은 `inputId`를 사용하여 필드와 Form을 구별합니다.
+
+```tsx
+const Input = ({ inputId, name }: FieldInputProps<string>) => (
+  <input id={inputId} name={name} />
+);
+```
+
+필드 제목의 연결은 Ant Design이 각 컴포넌트에 제공하는 id와 ARIA 속성을 따릅니다.
+
+복합 사용자 정의 입력은 `labelId`와 `getInputId`를 명시적으로 소비하고 DOM props에 펼치지 않습니다. getter의 참조는 필드 범위나 경로가 바뀔 때까지 유지됩니다. 말단 이름이나 `path`로 ID를 만들지 않습니다.
+
+해당 Form 안에서 `formElement.querySelector('[data-path="/email"] input')`처럼 조회하거나 컨트롤이 받은 id로 레이블을 연결합니다. Form API가 반환하는 값은 스키마 형태를 유지합니다.
+
+Ant Design 5.10부터 5.13까지는 RangePicker에 입력 ID 하나를 지원합니다.
+
+Ant Design 5 Select는 팝업이 마운트되기 전에 내부 접미사 `_list`가 붙은 id를 `aria-controls`로 가리킬 수 있으며, 팝업이 열리면 그 대상이 존재합니다.
+
 ## 연락처
 
 프로젝트와 관련된 문의나 제안은 이슈를 생성해 주세요.
+
+### Switch values and state labels
+
+For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the unchecked (off) value.
+
+A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
+
+### 슬라이더
+
+읽기 전용 Slider는 `multipleOf`가 없는 `number` 스키마에서 범위 안의 소수를 그대로 표시합니다. `integer` 스키마는 정수 격자점을 표시하고 저장값을 유지합니다. Form 범위의 Slider ID는 루트 요소를 가리킵니다. 라이브러리는 thumb ID prop을 제공하지 않습니다. 편집 가능한 thumb로 이동하려면 `form.focus(path)`를 사용하세요.
+
+슬라이더의 미설정 표시, 정지점, 키 입력과 값 반올림은 Ant Design이 처리합니다.

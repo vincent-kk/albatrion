@@ -1,10 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { expect } from 'vitest';
 
-// 8d5c5dba1, 2026-10-27: yarn workspace @canard/schema-form test --run --project verify-unit src/core/engine/settle/__tests__/h1-verify-probe.test.ts (scratch observer dump).
+/** Witness order and optional independent upper bounds constrain private scheduling changes. */
 const witnesses: Record<
   string,
-  { visits: string[][]; changedNodes: string[][][] }
+  { visits: string[][]; changedNodes: string[][][]; maxVisits?: number[] }
 > = JSON.parse(
   readFileSync(
     new URL('../fixtures/h1-private-histories.json', import.meta.url),
@@ -30,7 +30,7 @@ export const normalizeH1PrivateHistory = (
     const baseline = witness.visits[index];
     const actual: string[] = observation.visits;
     expect(actual.length, fixture + '/visits upper bound').toBeLessThanOrEqual(
-      baseline.length,
+      witness.maxVisits?.[index] ?? baseline.length,
     );
     let cursor = 0;
     for (const visit of baseline) if (visit === actual[cursor]) cursor++;

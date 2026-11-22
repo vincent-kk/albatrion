@@ -155,31 +155,16 @@ describe('createValidatorFactory', () => {
     expect(errorKeywords).toContain('minimum');
   });
 
-  it('should set $async: true on compiled schema', async () => {
-    const compileSpy = vi.spyOn(ajv, 'compile');
+  it('leaves the authored schema unchanged and returns an asynchronous result', async () => {
     const factory = createValidatorFactory(ajv);
-    const schema = { type: 'string' } as any;
-
-    factory(schema);
-
-    expect(compileSpy).toHaveBeenCalledWith({
-      ...schema,
-      $async: true,
-    });
+    const schema = { type: 'string' } as const;
+    expect(await factory(schema)('valid')).toBeNull();
+    expect(schema).toEqual({ type: 'string' });
   });
 
-  it('should throw non-validation errors', async () => {
+  it('surfaces a native compilation error', () => {
     const factory = createValidatorFactory(ajv);
-    const schema = { type: 'string' } as any;
-
-    // ajv.compile이 throw하는 에러를 시뮬레이션
-    const mockCompile = vi.spyOn(ajv, 'compile').mockImplementation(() => {
-      throw new Error('Compilation error');
-    });
-
-    await expect(() => factory(schema)).toThrow('Compilation error');
-
-    mockCompile.mockRestore();
+    expect(() => factory({ $ref: 'https://example.test/unregistered' })).toThrow(/resolve reference/);
   });
 });
 

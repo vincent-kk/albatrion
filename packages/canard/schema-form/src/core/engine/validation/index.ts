@@ -24,5 +24,6 @@ export { readFieldNodeRevealVersion } from './utils/read/readFieldNodeRevealVers
 export { subscribeFieldNodeRevealReleased } from './utils/read/subscribeFieldNodeRevealReleased';
 export { releaseFieldNodeRevealHistory } from './utils/lifetime/releaseFieldNodeRevealHistory';
 export { transitionFieldNodeValidation } from './utils/lifetime/transitionFieldNodeValidation';
+export { readFieldNodeValidationCommit } from './utils/read/readFieldNodeValidationCommit';
 export { isFieldNodeValidationCurrent } from './utils/read/isFieldNodeValidationCurrent';
 export { isFieldNodeValidationLifetimeCurrent } from './utils/read/isFieldNodeValidationLifetimeCurrent';

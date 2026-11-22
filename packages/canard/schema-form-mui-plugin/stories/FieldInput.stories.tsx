@@ -180,14 +180,9 @@ StringSwitch.args = {
   jsonSchema: {
     type: 'string',
     enum: ['on', 'off'],
+    switchLabels: ['alias on', 'alias off'],
     presentation: {
       FieldInput: FieldInputStringSwitchDefinition.Component,
-      FieldInputProps: {
-        alias: {
-          on: 'alias on',
-          off: 'alias off',
-        },
-      },
     },
   },
 };

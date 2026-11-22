@@ -45,12 +45,12 @@ const loader = new DataLoader<Key, Value>(batchLoader, options?);
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `batch` | `boolean` | `true` | Enable request batching |
+| `disableBatch` | `true` | omitted | Disable request batching |
 | `maxBatchSize` | `number` | `Infinity` | Max keys per batch |
-| `cache` | `boolean` | `true` | Enable promise caching |
+| `cache` | `MapLike \| false` | `new Map()` | Custom promise cache, or `false` to disable caching |
 | `cacheKeyFn` | `(key) => CacheKey` | identity | Map key to cache key |
-| `cacheMap` | `MapLike` | `new Map()` | Custom cache implementation |
-| `scheduler` | `(fn) => void` | `process.nextTick` | Controls batching timing |
+| `batchScheduler` | `(task) => void` | `scheduleNextTick` | Controls batching timing |
+| `name` | `string` | `null` | Optional loader label |
 
 ## Usage Examples
 
@@ -87,7 +87,7 @@ Inject those assets with `@slats/agents-assets-sync` (bin: `inject-agents-settin
 # Into ~/.claude (user-level)
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/data-loader --agent=claude --scope=user
 
-# Into the nearest existing .claude, walking up from cwd
+# Into the project root: nearest ancestor with .git, workspace manifest or lockfile; else the nearest agent directory
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@winglet/data-loader --agent=claude --scope=project
 
 # The same assets into Codex locations (skills into .agents/, rules into AGENTS.md)
@@ -131,11 +131,11 @@ const loader = new DataLoader<Key, Value>(batchLoadFn, options?);
 ### Options
 | Option | Type | Default |
 |---|---|---|
-| `batch` | `boolean` | `true` |
+| `disableBatch` | `true` | omitted |
 | `maxBatchSize` | `number` | `Infinity` |
-| `cache` | `boolean` | `true` |
+| `cache` | `MapLike \| false` | `new Map()` |
 | `cacheKeyFn` | `(key) => CacheKey` | identity |
-| `cacheMap` | `MapLike` | `new Map()` |
-| `scheduler` | `(fn) => void` | `process.nextTick` |
+| `batchScheduler` | `(task) => void` | `scheduleNextTick` |
+| `name` | `string` | `null` |
 
 </ForAI>

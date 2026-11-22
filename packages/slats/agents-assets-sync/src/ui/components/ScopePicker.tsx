@@ -21,7 +21,7 @@ const ITEMS: Array<{ label: string; value: Scope; hint: string }> = [
   {
     label: 'project',
     value: 'project',
-    hint: 'nearest ancestor .claude (or cwd)',
+    hint: 'nearest root marker; otherwise nearest agent anchor (or cwd)',
   },
 ];
 

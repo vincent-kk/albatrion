@@ -23,10 +23,14 @@ interface FieldInputTextareaProps
     { size?: SizeType }
   > {
   size?: SizeType;
+  /** Minimum visible rows before the textarea grows. */
+  minRows?: number;
+  /** Maximum visible rows before the textarea scrolls. */
+  maxRows?: number;
 }
 
 const FieldInputTextarea = ({
-  path,
+  inputId,
   name,
   jsonSchema,
   disabled,
@@ -36,7 +40,13 @@ const FieldInputTextarea = ({
   context,
   placeholder,
   size,
+  minRows,
+  maxRows,
   misfit,
+  labelId,
+  required,
+  className,
+  style,
 }: FieldInputTextareaProps) => {
   const handleChange = useHandle((value: ChangeEvent<HTMLTextAreaElement>) => {
     const text = value.target.value;
@@ -44,14 +54,18 @@ const FieldInputTextarea = ({
   });
   const autoSize = useMemo(
     () => ({
-      minRows: jsonSchema.minRows,
-      maxRows: jsonSchema.maxRows,
+      minRows: minRows ?? jsonSchema.minRows,
+      maxRows: maxRows ?? jsonSchema.maxRows,
     }),
-    [jsonSchema],
+    [minRows, maxRows, jsonSchema.minRows, jsonSchema.maxRows],
   );
   return (
     <Input.TextArea
-      id={path}
+      className={className}
+      style={style}
+      aria-labelledby={labelId}
+      aria-required={required || undefined}
+      id={inputId}
       name={name}
       disabled={disabled}
       readOnly={readOnly}

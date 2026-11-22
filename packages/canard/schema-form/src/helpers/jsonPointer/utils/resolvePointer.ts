@@ -21,8 +21,9 @@ export const resolvePointer = (basePath: string, pointer: string): string => {
     return end > 0 ? basePath.slice(0, end) : $.Root;
   }
   if (pointer === $.Current) return basePath;
-  if (pointer[0] === $.Separator) return pointer;
-  if (pointer.startsWith(FragmentPrefix)) return pointer.slice(1);
+  if (pointer[0] === $.Separator && !pointer.includes('/.')) return pointer;
+  if (pointer.startsWith(FragmentPrefix) && !pointer.includes('/.'))
+    return pointer.slice(1);
   const parsed = parsePointer(pointer);
   const resolved: PointerSegment[] = parsed.isAbsolute
     ? []

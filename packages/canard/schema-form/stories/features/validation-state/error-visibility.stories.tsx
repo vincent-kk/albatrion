@@ -47,7 +47,9 @@ const policyStory = (policy: ErrorVisibilityName): Story => {
     },
     parameters: {
       docs: {
-        description: { story: `${formatScenarioDescription(scenario.description ?? '')} Policy: ${policy}.` },
+        description: {
+          story: `${formatScenarioDescription(scenario.description ?? '')} Policy: ${policy}.`,
+        },
       },
     },
     async play({ args, canvasElement, step }) {
@@ -56,7 +58,9 @@ const policyStory = (policy: ErrorVisibilityName): Story => {
       const shown = () => readShownMessage(canvasElement, '/code') !== '';
       await expectEventually(shown, item.atLoad, 'message on load');
       await userEvent.type(
-        canvasElement.querySelector<HTMLInputElement>('input[id="/code"]')!,
+        canvasElement.querySelector<HTMLInputElement>(
+          'input:is([id="/code"], [id$=":/code~input"]):not(label):not(legend)',
+        )!,
         'd',
       );
       await expectEventually(shown, item.afterInput, 'message after input');

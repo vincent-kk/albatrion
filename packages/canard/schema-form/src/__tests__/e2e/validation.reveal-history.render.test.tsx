@@ -12,6 +12,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import {
   ErrorVisibility,
   type FieldInputProps,
+  FieldNodeState,
   type FieldRendererProps,
   Form,
   type FormHandle,
@@ -82,7 +83,9 @@ const fixture = async (
 };
 it('IR-6 H a quiet reveal stays hidden until its release', async () => {
   const f = await fixture(ErrorVisibility.Never);
-  act(() => f.ref.current!.node!.setState({ 4: true }));
+  act(() =>
+    f.ref.current!.node!.setState({ [FieldNodeState.ErrorVisibility]: true }),
+  );
   expect(f.text()).toBe('');
   await act(async () => {
     f.clock.frame();
@@ -98,9 +101,13 @@ it('IR-6 H standalone ErrorVisibility off then on never restores an earlier pend
     f.clock.frame();
     await f.clock.task();
   });
-  act(() => f.ref.current!.node!.setState({ 4: false }));
+  act(() =>
+    f.ref.current!.node!.setState({ [FieldNodeState.ErrorVisibility]: false }),
+  );
   await f.clock.task();
-  act(() => f.ref.current!.node!.setState({ 4: true }));
+  act(() =>
+    f.ref.current!.node!.setState({ [FieldNodeState.ErrorVisibility]: true }),
+  );
   expect(f.text()).toBe('');
   await act(async () => {
     f.clock.frame();
@@ -117,8 +124,10 @@ it('IR-6 H one batch hides and re-reveals without losing an eligible painted err
   const f = await fixture();
   act(() =>
     f.ref.current!.node!.batch(() => {
-      f.ref.current!.node!.setState({ 4: false });
-      f.ref.current!.node!.setState({ 4: true });
+      f.ref.current!.node!.setState({
+        [FieldNodeState.ErrorVisibility]: false,
+      });
+      f.ref.current!.node!.setState({ [FieldNodeState.ErrorVisibility]: true });
     }),
   );
   expect(f.text()).toBe('too short');
@@ -131,7 +140,9 @@ it('IR-6 H one batch hides and re-reveals without losing an eligible painted err
 });
 it('IR-6 D root validate releases a quiet reveal before any frame and preserves it through a write', async () => {
   const f = await fixture(ErrorVisibility.Never);
-  act(() => f.ref.current!.node!.setState({ 4: true }));
+  act(() =>
+    f.ref.current!.node!.setState({ [FieldNodeState.ErrorVisibility]: true }),
+  );
   await act(async () => {
     await f.ref.current!.validate();
   });
@@ -152,7 +163,9 @@ it('IR-6 D root validate releases a quiet reveal before any frame and preserves 
 });
 it('IR-6 H committed errorVisibility before clearState retains an eligible error during a pending write', async () => {
   const f = await fixture(ErrorVisibility.Never);
-  act(() => f.ref.current!.node!.setState({ 4: true }));
+  act(() =>
+    f.ref.current!.node!.setState({ [FieldNodeState.ErrorVisibility]: true }),
+  );
   await act(async () => {
     f.clock.frame();
     await f.clock.task();
@@ -176,7 +189,7 @@ it('IR-6 H committed errorVisibility before clearState retains an eligible error
 it('IR-6 H limit v a same-handler policy reveal and clearState counts the unpainted combination', async () => {
   const f = await fixture(ErrorVisibility.Never);
   act(() => {
-    f.ref.current!.node!.setState({ 4: true });
+    f.ref.current!.node!.setState({ [FieldNodeState.ErrorVisibility]: true });
   });
   await act(async () => {
     f.clock.frame();
@@ -263,7 +276,7 @@ it('IR-6 H transition layout normalization never exposes the old verdict to a sa
     const [shown, setShown] = useState(false);
     reveal = () =>
       startTransition(() => {
-        ref.current!.node!.setState({ 4: true });
+        ref.current!.node!.setState({ [FieldNodeState.ErrorVisibility]: true });
         setShown(true);
       });
     return (

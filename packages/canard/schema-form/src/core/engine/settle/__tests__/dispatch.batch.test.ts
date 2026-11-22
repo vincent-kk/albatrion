@@ -396,21 +396,24 @@ describe('dispatcher batch', () => {
     expect(getDispatchChild(side, 'nested').storedOutputValue).toBe('N');
   });
 
-  it('62C-01 NODE-051 keeps positional item identity for batched array verbs', () => {
+  it('62C-01 NODE-051 keeps surviving item identity for batched array verbs', () => {
     const { root } = createDispatchTree({
       type: 'array',
       items: { type: 'object', properties: { name: { type: 'string' } } },
     });
     dispatchMount(root, [{ name: 'a' }, { name: 'b' }, { name: 'c' }]);
     const first = root.children![0];
+    const second = root.children![1];
     const third = root.children![2];
     dispatchBatch(root, () => {
       dispatchRemove(root, 0);
       dispatchUpdate(root, 1, { name: 'C2' });
     });
     expect(root.storedOutputValue).toEqual([{ name: 'b' }, { name: 'C2' }]);
-    expect(root.children![0]).toBe(first);
-    expect(third.isDetached).toBe(true);
+    expect(root.children![0]).toBe(second);
+    expect(root.children![1]).toBe(third);
+    expect(first.isDetached).toBe(true);
+    expect(third.isDetached).toBe(false);
   });
 
   it('191C-01 pins the replaced-exit clause for a written path inside a batch', () => {

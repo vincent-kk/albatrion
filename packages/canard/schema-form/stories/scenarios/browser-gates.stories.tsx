@@ -46,7 +46,7 @@ export const ImeComposition: Story = {
     const session = cdp();
     for (const path of ['/plain', '/formatter', '/refresh']) {
       const input = canvasElement.querySelector<HTMLInputElement>(
-        `input[id="${path}"]`,
+        `input:is([id="${path}"], [id$=":${path}~input"]):not(label):not(legend)`,
       )!;
       await browserPage.elementLocator(input).click();
       let composing = false;
@@ -101,7 +101,9 @@ export const ImeComposition: Story = {
               await expect(composing).toBe(true);
               await expect(ends).toBe(0);
               await expect(
-                canvasElement.querySelector(`input[id="${path}"]`),
+                canvasElement.querySelector(
+                  `input:is([id="${path}"], [id$=":${path}~input"]):not(label):not(legend)`,
+                ),
               ).toBe(input);
               await expect(setterCalls).toBe(0);
               await expect(observations.changes.length).toBe(before);
@@ -176,9 +178,15 @@ export const InputRemountJudgment: Story = {
     const { handle, observations } = fixture(canvasElement);
     const rootContainer = canvasElement.querySelector('[data-container=""]');
     const branch = canvasElement.querySelector('[data-container="/branch"]');
-    const terminal = canvasElement.querySelector('input[id="/terminal"]');
-    const whole = canvasElement.querySelector('input[id="/whole"]');
-    const collapsed = canvasElement.querySelector('input[id="/collapsed"]');
+    const terminal = canvasElement.querySelector(
+      'input:is([id="/terminal"], [id$=":/terminal~input"]):not(label):not(legend)',
+    );
+    const whole = canvasElement.querySelector(
+      'input:is([id="/whole"], [id$=":/whole~input"]):not(label):not(legend)',
+    );
+    const collapsed = canvasElement.querySelector(
+      'input:is([id="/collapsed"], [id$=":/collapsed~input"]):not(label):not(legend)',
+    );
     const empty = canvasElement.querySelector('[data-container="/empty"]');
     const deferred = canvasElement.querySelector<HTMLElement>(
       '[data-deferred][data-path^="/virtual/"]',
@@ -195,11 +203,13 @@ export const InputRemountJudgment: Story = {
     handle.focus(virtualPath);
     await waitFor(() =>
       expect(
-        canvasElement.querySelector(`input[id="${virtualPath}"]`),
+        canvasElement.querySelector(
+          `input:is([id="${virtualPath}"], [id$=":${virtualPath}~input"]):not(label):not(legend)`,
+        ),
       ).not.toBeNull(),
     );
     const virtualInput = canvasElement.querySelector(
-      `input[id="${virtualPath}"]`,
+      `input:is([id="${virtualPath}"], [id$=":${virtualPath}~input"]):not(label):not(legend)`,
     );
     const before = { ...observations.mounts };
     handle.reset();
@@ -210,20 +220,28 @@ export const InputRemountJudgment: Story = {
     await expect(
       canvasElement.querySelector('[data-container="/branch"]'),
     ).toBe(branch);
-    await expect(canvasElement.querySelector('input[id="/terminal"]')).not.toBe(
-      terminal,
-    );
-    await expect(canvasElement.querySelector('input[id="/whole"]')).not.toBe(
-      whole,
-    );
     await expect(
-      canvasElement.querySelector('input[id="/collapsed"]'),
+      canvasElement.querySelector(
+        'input:is([id="/terminal"], [id$=":/terminal~input"]):not(label):not(legend)',
+      ),
+    ).not.toBe(terminal);
+    await expect(
+      canvasElement.querySelector(
+        'input:is([id="/whole"], [id$=":/whole~input"]):not(label):not(legend)',
+      ),
+    ).not.toBe(whole);
+    await expect(
+      canvasElement.querySelector(
+        'input:is([id="/collapsed"], [id$=":/collapsed~input"]):not(label):not(legend)',
+      ),
     ).not.toBe(collapsed);
     await expect(
       canvasElement.querySelector('[data-container="/empty"]'),
     ).not.toBe(empty);
     await expect(
-      canvasElement.querySelector(`input[id="${virtualPath}"]`),
+      canvasElement.querySelector(
+        `input:is([id="${virtualPath}"], [id$=":${virtualPath}~input"]):not(label):not(legend)`,
+      ),
     ).not.toBe(virtualInput);
     await expect(observations.mounts['']).toBe(before['']);
     await expect(observations.mounts['/branch']).toBe(before['/branch']);
@@ -249,8 +267,7 @@ export const EmptyChildDetectionCost: Story = {
     );
     await expect(
       observations.warnings.filter(
-        (code) =>
-          code === 'SCHEMA_FORM_WARNING.CHILD_FIELDS_READ_ON_TERMINAL',
+        (code) => code === 'SCHEMA_FORM_WARNING.CHILD_FIELDS_READ_ON_TERMINAL',
       ),
     ).toHaveLength(1);
     for (const sample of observations.childReads) {

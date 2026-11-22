@@ -17,8 +17,8 @@ import { getGateRegistry } from '../gates/getGateRegistry';
 import { updatePendingExitIndex } from '../scratch/updatePendingExitIndex';
 import { cloneFromSlot } from '../slots/cloneFromSlot';
 import { createFromSlotOverlay } from '../slots/createFromSlotOverlay';
-import { enterSlotClone } from '../slots/enterSlotClone';
 import { getSlotSource } from '../slots/getSlotSource';
+import { applyDepartingSource } from '../source/applyDepartingSource';
 import { isSameChildList } from '../structure/isSameChildList';
 import { getDirectChildSelectionPlan } from './childSelection/getDirectChildSelectionPlan';
 import { createStaticEntryReuser } from './childSelection/utils/createStaticEntryReuser';
@@ -150,15 +150,21 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     }
     if (pending && child === pending) {
       context.revivedNodes.add(child);
+      applyDepartingSource(context, child);
     }
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     if (!priorChild && !pending) {
       context.enteredNodes.add(child);
 
       if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
-      else if (slotSource || slotOverlay)
-        enterSlotClone(node, child, entry.name, context);
-      else enterFieldNode(node, child, entry.name, context);
+      else
+        enterFieldNode(
+          node,
+          child,
+          entry,
+          context,
+          !!(slotSource || slotOverlay),
+        );
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);
     }

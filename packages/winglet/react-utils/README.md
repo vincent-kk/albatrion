@@ -40,7 +40,7 @@ import { withErrorBoundary, withUploader } from '@winglet/react-utils/hoc';
 // Custom hooks
 import { useMemorize, useOnMount } from '@winglet/react-utils/hook';
 // Object utilities
-import { extractProps, mergeRefs } from '@winglet/react-utils/object';
+import { remainOnlyReactComponent } from '@winglet/react-utils/object';
 // Portal components
 import { Portal } from '@winglet/react-utils/portal';
 // Render utilities
@@ -56,7 +56,7 @@ Based on the package.json exports configuration:
 - `@winglet/react-utils/hoc` - Higher-order components (withErrorBoundary, withUploader)
 - `@winglet/react-utils/portal` - Portal component and utilities (Portal component)
 - `@winglet/react-utils/filter` - React component type checking utilities (isReactComponent, isReactElement, etc.)
-- `@winglet/react-utils/object` - React-specific object utilities (extractProps, mergeRefs)
+- `@winglet/react-utils/object` - React-specific object utilities (remainOnlyReactComponent)
 - `@winglet/react-utils/render` - Component rendering utilities (renderComponent)
 
 ---
@@ -69,6 +69,8 @@ This package is written using ECMAScript 2020 (ES2020) syntax.
 
 - Node.js 14.0.0 or higher
 - Modern browsers (with ES2020 support)
+
+The ESM build imports `react/jsx-runtime`, which React 18 and later export. With React 16.14 or 17, use the CommonJS build or configure a bundler alias for `react/jsx-runtime`; strict ESM resolution is not supported for those React versions.
 
 **For Legacy Environment Support:**
 Use transpilers like Babel to convert the code to match your target environment.
@@ -209,6 +211,8 @@ const App = () => <SafeComponent />;
 ```
 
 #### Portal
+
+Portal renders a native React portal from its source position into `Portal.Anchor`. Context reads and click bubbling follow the source React ancestors, through `Portal.with` and beyond. A provider wrapping only the source is visible inside its content. To isolate clicks, stop propagation in the portal content; to share provider values throughout the scope, place the provider above `Portal.with`. Activity hide/show preserves subtree state. Before an anchor attaches, including server rendering and the first hydration render, content is absent; attaching or replacing the anchor updates the destination.
 
 Render component content at different locations in the DOM tree.
 This feature is useful when implementing sticky headers.

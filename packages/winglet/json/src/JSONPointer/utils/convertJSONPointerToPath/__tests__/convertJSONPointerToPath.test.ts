@@ -152,4 +152,11 @@ describe('convertJSONPointerToPath', () => {
       expect(convertJSONPointerToPath(arrayPointer)).toBe(expected);
     });
   });
+
+  describe('RFC 6901 이스케이프', () => {
+    it('~0과 ~1을 풀지 않고 그대로 유지해야 한다', () => {
+      expect(convertJSONPointerToPath('/a~1b/c~0d')).toBe('.a~1b.c~0d');
+      expect(convertJSONPointerToPath('/~01')).toBe('.~01');
+    });
+  });
 });

@@ -2,6 +2,7 @@ import { type ComponentType, createContext } from 'react';
 
 import type { Dictionary } from '@aileron/declare';
 
+import { PluginManager } from '@/schema-form/app/plugin';
 import type { ValidationMode } from '@/schema-form/core';
 import type { NormalizedFieldInputDefinition } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
@@ -15,6 +16,8 @@ import type {
 } from '@/schema-form/types';
 
 export interface ExternalFormContext {
+  /** Registry selected once at the application provider boundary. */
+  pluginManager: typeof PluginManager;
   /** List of FieldInputDefinition declared externally */
   fromExternalFieldInputDefinitions?: NormalizedFieldInputDefinition[];
   /** FieldRenderer component declared externally */
@@ -37,6 +40,6 @@ export interface ExternalFormContext {
   validatorFactory?: ValidatorFactory;
 }
 
-export const ExternalFormContext = createContext<ExternalFormContext>(
-  {} as ExternalFormContext,
-);
+export const ExternalFormContext = createContext<ExternalFormContext>({
+  pluginManager: PluginManager,
+});

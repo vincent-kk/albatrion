@@ -33,7 +33,18 @@ Declare the real names, such as `startDate` and `endDate`, in the object's `requ
 
 ## Node Access
 
-- Inside the virtual `FieldInput`, reach constituent nodes via `node.children[i]` (ordered like `fields`).
+- Match tuple slots by the declared field name. `node.children` contains only active constituents, so its index is not the tuple index. Inactive or absent constituents contribute `undefined` to their own tuple slot.
+For a group over `a` and `b`, this field-name pairing keeps an inactive `b` in its tuple slot:
+
+```typescript
+const fields = ['a', 'b'];
+const slots = fields.map((name, index) => ({
+  name,
+  value: Array.isArray(group.value) ? group.value[index] : undefined,
+  node: group.children?.find((child) => child.name === name),
+}));
+```
+
 - From outside: `formRef.current?.findNode('/period')`, narrowed with the exported `isVirtualNode()` guard.
 
 The virtual FieldInput's node and subtree visitors remain required, as do array operations on its constituents and virtualization `Placeholder` / `estimateHeight` callbacks. Their live-update contract follows [arrays and scale](./arrays-and-scale.md#render-level-virtualization-built-in). Narrow missing lookups before using them. The observation hooks' null/undefined support does not make those inputs optional, and a null JSON value, `NullNode`, or nullable schema does not mean the node reference is absent.
@@ -50,7 +61,7 @@ Do not submit both representations as separate sources of truth.
 
 An issue addressed to a stored field belongs to that field even when a grouped widget edits it.
 The group can show a summary, but should identify which constituent the user must correct.
-Use the current child order when pairing tuple positions with nodes; do not infer field names from a formatted label.
+Pair each declared field name with the child whose `name` matches it; do not pair tuple positions with compressed child indices or infer names from labels.
 Keep interaction and display policy centralized so the grouped widget does not reveal errors merely because it can read them.
 The [interaction state recipe](interaction-state.md) explains touch, edit and loaded-value comparisons.
 

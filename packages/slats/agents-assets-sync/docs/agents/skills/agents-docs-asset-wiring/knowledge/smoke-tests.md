@@ -25,13 +25,13 @@ BIN="$PWD/packages/slats/agents-assets-sync/bin/inject-agents-settings.mjs"
 DIR=/tmp/inject-smoke-${SHORTCUT:-target}
 [ -d "$DIR" ] && find "$DIR" -mindepth 1 -delete
 mkdir -p "$DIR" && cd "$DIR"
-touch AGENTS.md
+mkdir -p "$DIR/.git"
 run() { node "$BIN" --no-interactive "$@"; echo "EXIT=$?"; }
 ```
 
 `[ -d ... ] && find -delete` keeps the setup idempotent. **Never** use `rm -rf` or unquoted `*` globs — too easy to nuke the wrong directory.
 
-`touch AGENTS.md` pins the project root to `$DIR` instead of leaving it to whatever ancestor of `/tmp` happens to own an anchor. It is inert for `--agent=claude`, which writes only under `.claude/`.
+`mkdir -p "$DIR/.git"` pins the project root to `$DIR` instead of leaving it to whatever ancestor of `/tmp` happens to own an anchor. It is inert for `--agent=claude`, which writes only under `.claude/`.
 
 ---
 
@@ -76,7 +76,7 @@ BIN="$PWD/packages/slats/agents-assets-sync/bin/inject-agents-settings.mjs"
 DIR=/tmp/inject-smoke-${SHORTCUT:-target}
 [ -d "$DIR" ] && find "$DIR" -mindepth 1 -delete
 mkdir -p "$DIR" && cd "$DIR"
-touch AGENTS.md
+mkdir -p "$DIR/.git"
 run() { node "$BIN" --no-interactive "$@"; echo "EXIT=$?"; }
 
 run --package=${PACKAGE_NAME} --agent=claude --scope=project --dry-run

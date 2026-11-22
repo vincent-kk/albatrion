@@ -41,6 +41,8 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
     previousContext: runtime.context,
     target: node,
     kind,
+    source: undefined,
+    writeOrigins: undefined,
     option,
     hasGates:
       !blueprint.capabilities.isBranchless && getTransitionCap(blueprint) > 1,
@@ -62,8 +64,6 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
     writtenInputs: scratch.writtenInputs,
     distributedInputs: scratch.distributedInputs,
     wrongKindHosts: scratch.wrongKindHosts,
-    automaticLog: scratch.automaticLog,
-    arrayStructureLog: scratch.arrayStructureLog,
     arrayCounts: scratch.arrayCounts,
     pathChanges: scratch.pathChanges,
     filledNodes: scratch.filledNodes,

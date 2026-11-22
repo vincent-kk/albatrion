@@ -23,7 +23,7 @@ interface FieldInputNumberProps
 }
 
 const FieldInputNumber = ({
-  path,
+  inputId,
   name,
   jsonSchema,
   schemaType,
@@ -38,6 +38,10 @@ const FieldInputNumber = ({
   parser,
   size,
   misfit,
+  labelId,
+  required,
+  className,
+  style,
 }: FieldInputNumberProps) => {
   const withheld = useRef(false);
   const [revision, setRevision] = useState(0);
@@ -66,8 +70,12 @@ const FieldInputNumber = ({
   const initialValue = revision === 0 ? defaultValue : value;
   return (
     <InputNumber
+      className={className}
+      style={style}
+      aria-labelledby={labelId}
+      aria-required={required || undefined}
       key={revision}
-      id={path}
+      id={inputId}
       name={name}
       readOnly={readOnly}
       disabled={disabled}

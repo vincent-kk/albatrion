@@ -11,6 +11,7 @@ import type { FieldNodeRecord } from '../../../record';
 import { FieldNodeWriteKind, WriteOption } from '../../../types/value';
 import { sameValue } from '../../../utils/compute/sameValue';
 import { computeNode } from '../compute/computeNode';
+import { getAliasedDependencyIndex } from '../dependencies/getAliasedDependencyIndex';
 import { getContextOwners } from '../dependencies/getContextOwners';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { getSettlementScratch } from '../scratch/getSettlementScratch';
@@ -51,6 +52,11 @@ export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
   context.contextOwners = hasContextOwner
     ? owners.flatMap((owner) => expandTemplatePaths(root, owner))
     : owners;
+  const aliases = root.runtime.blueprint.capabilities.hasAliasedDependencies ? getAliasedDependencyIndex(context) : undefined;
+  if (aliases)
+    context.contextOwners = [
+      ...new Set([...context.contextOwners, ...aliases.contextOwners()]),
+    ];
   root.runtime.context = contextValue;
   context.changedNodes.add(root);
   try {

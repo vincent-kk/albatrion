@@ -1,3 +1,5 @@
+import type { ReactElement } from 'react';
+
 import { FormHelperText } from '@mui/material';
 
 import type { ErrorMessageRendererProps } from '@canard/schema-form';
@@ -11,7 +13,7 @@ export const ErrorMessageRenderer = ({
   children,
   style,
   className,
-}: ErrorMessageRendererProps) => (
+}: ErrorMessageRendererProps): ReactElement => (
   <FormHelperText error style={style} className={className}>
     {children}
   </FormHelperText>

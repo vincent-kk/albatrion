@@ -33,7 +33,7 @@ yarn add @canard/schema-form-antd5-plugin
 ### 피어 의존성 {#peer-dependencies}
 
 ```bash
-yarn add antd@>=5.10.0 dayjs@>=1 react@>=18 react-dom@>=18
+yarn add antd@^5.10.0 dayjs@^1.0.0 "react@>=18 <20" "react-dom@>=18 <20"
 ```
 
 ## 빠른 설정 {#quick-setup}
@@ -69,6 +69,8 @@ registerPlugin(plugin);
 | `FieldInputString` | `string` | — | — | — | 기본 텍스트 입력 (`format: "password"`로 비밀번호 지원) |
 | `FieldInputNumber` | `number` \| `integer` | — | — | — | 숫자 입력 |
 | `FieldInputBoolean` | `boolean` | — | — | — | 체크박스 |
+
+기본 저장 시점과 작은 소수 간격의 포인터 확정값 정밀도는 [패키지 README의 Slider 설명](https://github.com/vincent-kk/albatrion/blob/master/packages/canard/schema-form-antd5-plugin/README-ko_kr.md#fieldinputslidertsx)을 참고하세요.
 
 ## 스키마 확장 속성 {#schema-extension-properties}
 
@@ -127,7 +129,7 @@ import { plugin } from '@canard/schema-form-antd5-plugin';
 ```
 
 ### 피어 의존성 {#peer-dependencies-1}
-`antd@>=5.10.0`, `dayjs@>=1`, `react@>=18`
+`antd@^5.10.0`, `dayjs@^1.0.0`, `react@>=18 <20`
 
 ### 컴포넌트 매핑 (우선순위 높은 순) {#component-mapping-priority-order-high--low}
 | 컴포넌트 | 선택 조건 |

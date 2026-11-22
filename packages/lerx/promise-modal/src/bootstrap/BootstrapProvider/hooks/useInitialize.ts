@@ -19,20 +19,64 @@ export const useInitialize = (
 ) => {
   const [, update] = useVersion();
   const identity = useRef({});
+  const lifetime = useRef<{
+    generation: number;
+    observer?: MutationObserver;
+    pending?: {
+      anchor: HTMLElement | null;
+      marker: Element | null | undefined;
+    };
+  }>({
+    generation: 0,
+  });
   const anchorRef = useRef<HTMLElement | null>(null);
   const effectiveRoot = useRef(mode === 'manual' ? null : root);
   const previousRoot = useRef(root);
   const handleInitialize = useRef(
     (element: HTMLElement | null = document.body) => {
+      lifetime.current.generation++;
+      lifetime.current.observer?.disconnect();
+      lifetime.current.observer = undefined;
       effectiveRoot.current = element;
       ModalManager.attach(identity.current, element, (anchor) => {
+        if (!anchor) {
+          const pending = lifetime.current.pending;
+          if (pending) pending.anchor = pending.marker = null;
+          lifetime.current.pending = undefined;
+          lifetime.current.generation++;
+        }
         if (anchorRef.current === anchor) return;
         anchorRef.current = anchor;
         update();
       });
     },
   );
-  const handleReset = useRef(() => ModalManager.detach(identity.current));
+  const handleReset = useRef(() => {
+    const pending = {
+      anchor: anchorRef.current,
+      marker: anchorRef.current?.firstElementChild,
+    };
+    lifetime.current.pending = pending;
+    const generation = ++lifetime.current.generation;
+    ModalManager.suspend(identity.current);
+    queueMicrotask(() => {
+      if (generation !== lifetime.current.generation) return;
+      lifetime.current.pending = undefined;
+      const { anchor, marker } = pending;
+      if (!anchor || !marker || marker.parentNode !== anchor) {
+        ModalManager.detach(identity.current);
+        return;
+      }
+      const observer = new MutationObserver(() => {
+        if (marker.parentNode === anchor) return;
+        observer.disconnect();
+        lifetime.current.observer = undefined;
+        ModalManager.detach(identity.current);
+      });
+      observer.observe(anchor, { childList: true });
+      lifetime.current.observer = observer;
+    });
+  });
   useIsomorphicLayoutEffect(() => {
     if (previousRoot.current !== root) effectiveRoot.current = root;
     previousRoot.current = root;

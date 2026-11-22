@@ -40,7 +40,7 @@ import { withErrorBoundary, withUploader } from '@winglet/react-utils/hoc';
 // 커스텀 훅
 import { useMemorize, useOnMount } from '@winglet/react-utils/hook';
 // 객체 유틸리티
-import { extractProps, mergeRefs } from '@winglet/react-utils/object';
+import { remainOnlyReactComponent } from '@winglet/react-utils/object';
 // Portal 컴포넌트
 import { Portal } from '@winglet/react-utils/portal';
 // 렌더링 유틸리티
@@ -56,7 +56,7 @@ package.json의 exports 설정을 기반으로 합니다:
 - `@winglet/react-utils/hoc` - 고차 컴포넌트 (withErrorBoundary, withUploader)
 - `@winglet/react-utils/portal` - Portal 컴포넌트 및 유틸리티 (Portal 컴포넌트)
 - `@winglet/react-utils/filter` - React 컴포넌트 타입 검사 유틸리티 (isReactComponent, isReactElement 등)
-- `@winglet/react-utils/object` - React 전용 객체 유틸리티 (extractProps, mergeRefs)
+- `@winglet/react-utils/object` - React 전용 객체 유틸리티 (remainOnlyReactComponent)
 - `@winglet/react-utils/render` - 컴포넌트 렌더링 유틸리티 (renderComponent)
 
 ---
@@ -69,6 +69,8 @@ package.json의 exports 설정을 기반으로 합니다:
 
 - Node.js 14.0.0 이상
 - 모던 브라우저 (ES2020 지원)
+
+ESM 빌드는 React 18 이상이 export하는 `react/jsx-runtime`을 가져옵니다. React 16.14 또는 17에서는 CommonJS 빌드를 사용하거나 `react/jsx-runtime`에 대한 번들러 alias를 설정합니다. 해당 React 버전의 strict ESM 해석은 지원하지 않습니다.
 
 **레거시 환경 지원이 필요한 경우:**
 Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환해주세요.
@@ -213,6 +215,8 @@ const App = () => <SafeComponent />;
 ```
 
 #### Portal
+
+Portal은 소스 위치에서 원시 React 포털을 반환하여 `Portal.Anchor`에 내용을 배치합니다. 컨텍스트 읽기와 클릭 버블링은 소스의 React 조상을 따라 `Portal.with`와 그 위까지 전달됩니다. 소스만 감싼 프로바이더도 포털 안에서 읽습니다. 클릭을 격리하려면 포털 내용에서 전파를 중단하고, 범위 전체에서 값을 공유하려면 프로바이더를 `Portal.with` 위에 두십시오. Activity 숨김·표시 사이에는 상태를 유지합니다. 서버와 첫 hydration 렌더를 포함하여 앵커가 연결되기 전에는 내용이 없으며, 앵커 연결·교체가 렌더 위치를 갱신합니다.
 
 컴포넌트 내용을 DOM 트리의 다른 위치에 렌더링할 수 있습니다.
 이 기능은 sticky header를 구현할때 유용합니다.

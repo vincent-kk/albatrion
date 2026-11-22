@@ -37,7 +37,7 @@ import { chunk, intersection, unique } from '@winglet/common-utils/array';
 // Console utilities
 import { printError } from '@winglet/common-utils/console';
 // Constants
-import { TIME_UNITS, TYPE_TAGS } from '@winglet/common-utils/constant';
+import { SECOND, ARRAY_TAG } from '@winglet/common-utils/constant';
 // Convert utilities
 import { convertMsFromDuration } from '@winglet/common-utils/convert';
 // Error classes
@@ -105,6 +105,8 @@ This package is written using ECMAScript 2020 (ES2020) syntax.
 
 - Node.js 14.0.0 or higher
 - Modern browsers (with ES2020 support)
+
+`withTimeout` requires a global `AbortController` implementation. Provide a compatible polyfill on hosts without it; this helper throws before starting the wrapped operation when the capability is absent.
 
 **For Legacy Environment Support:**
 Use transpilers like Babel to convert the code to match your target environment.
@@ -188,7 +190,7 @@ Use transpilers like Babel to convert the code to match your target environment.
 - **[`isEmptyArray`](./src/utils/filter/isEmptyArray.ts)**: Function to check if an array is empty
 - **[`isEmptyObject`](./src/utils/filter/isEmptyObject.ts)**: Function to check if an object is empty
 - **[`isEmptyPlainObject`](./src/utils/filter/isEmptyPlainObject.ts)**: Function to check if a plain object is empty
-- **[`isEmpty`](./src/utils/filter/isEmpty.ts)**: Function to comprehensively check if a value is empty (null, undefined, empty string, empty array, empty object, etc.)
+- **[`isEmpty`](./src/utils/filter/isEmpty.ts)**: Checks empty values. Map and Set sizes are recognized only for instances from the current realm; foreign collections are checked by own enumerable keys.
 - **[`isError`](./src/utils/filter/isError.ts)**: Function to check if a value is an Error object
 - **[`isFile`](./src/utils/filter/isFile.ts)**: Function to check if a value is a File object
 - **[`isFunction`](./src/utils/filter/isFunction.ts)**: Function to check if a value is a function
@@ -349,10 +351,10 @@ async function fetchWithTimeout(url: string) {
 ### Using Array Utilities
 
 ```typescript
-import { array } from '@winglet/common-utils';
+import { chunk } from '@winglet/common-utils/array';
 
 // Example code:
-const chunks = array.chunk([1, 2, 3, 4, 5, 6], 2);
+const chunks = chunk([1, 2, 3, 4, 5, 6], 2);
 console.log(chunks); // [[1, 2], [3, 4], [5, 6]]
 ```
 

@@ -28,52 +28,176 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
       "source": "./src/index.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     },
     "./path": {
-      "types": "./dist/JSONPath/index.d.ts",
       "source": "./src/JSONPath/index.ts",
-      "import": "./dist/JSONPath/index.mjs",
-      "require": "./dist/JSONPath/index.cjs"
+      "import": {
+        "types": "./dist/JSONPath/index.d.ts",
+        "default": "./dist/JSONPath/index.mjs"
+      },
+      "require": {
+        "types": "./dist/JSONPath/index.d.cts",
+        "default": "./dist/JSONPath/index.cjs"
+      }
     },
     "./path-common": {
-      "types": "./dist/JSONPath/utils/common.d.ts",
       "source": "./src/JSONPath/utils/common.ts",
-      "import": "./dist/JSONPath/utils/common.mjs",
-      "require": "./dist/JSONPath/utils/common.cjs"
+      "import": {
+        "types": "./dist/JSONPath/utils/common.d.ts",
+        "default": "./dist/JSONPath/utils/common.mjs"
+      },
+      "require": {
+        "types": "./dist/JSONPath/utils/common.d.cts",
+        "default": "./dist/JSONPath/utils/common.cjs"
+      }
     },
     "./pointer": {
-      "types": "./dist/JSONPointer/index.d.ts",
       "source": "./src/JSONPointer/index.ts",
-      "import": "./dist/JSONPointer/index.mjs",
-      "require": "./dist/JSONPointer/index.cjs"
+      "import": {
+        "types": "./dist/JSONPointer/index.d.ts",
+        "default": "./dist/JSONPointer/index.mjs"
+      },
+      "require": {
+        "types": "./dist/JSONPointer/index.d.cts",
+        "default": "./dist/JSONPointer/index.cjs"
+      }
     },
     "./pointer-common": {
-      "types": "./dist/JSONPointer/utils/common.d.ts",
       "source": "./src/JSONPointer/utils/common.ts",
-      "import": "./dist/JSONPointer/utils/common.mjs",
-      "require": "./dist/JSONPointer/utils/common.cjs"
+      "import": {
+        "types": "./dist/JSONPointer/utils/common.d.ts",
+        "default": "./dist/JSONPointer/utils/common.mjs"
+      },
+      "require": {
+        "types": "./dist/JSONPointer/utils/common.d.cts",
+        "default": "./dist/JSONPointer/utils/common.cjs"
+      }
     },
     "./pointer-escape": {
-      "types": "./dist/JSONPointer/utils/escape/index.d.ts",
       "source": "./src/JSONPointer/utils/escape/index.ts",
-      "import": "./dist/JSONPointer/utils/escape/index.mjs",
-      "require": "./dist/JSONPointer/utils/escape/index.cjs"
+      "import": {
+        "types": "./dist/JSONPointer/utils/escape/index.d.ts",
+        "default": "./dist/JSONPointer/utils/escape/index.mjs"
+      },
+      "require": {
+        "types": "./dist/JSONPointer/utils/escape/index.d.cts",
+        "default": "./dist/JSONPointer/utils/escape/index.cjs"
+      }
     },
     "./pointer-manipulator": {
-      "types": "./dist/JSONPointer/utils/manipulator/index.d.ts",
       "source": "./src/JSONPointer/utils/manipulator/index.ts",
-      "import": "./dist/JSONPointer/utils/manipulator/index.mjs",
-      "require": "./dist/JSONPointer/utils/manipulator/index.cjs"
+      "import": {
+        "types": "./dist/JSONPointer/utils/manipulator/index.d.ts",
+        "default": "./dist/JSONPointer/utils/manipulator/index.mjs"
+      },
+      "require": {
+        "types": "./dist/JSONPointer/utils/manipulator/index.d.cts",
+        "default": "./dist/JSONPointer/utils/manipulator/index.cjs"
+      }
     },
     "./pointer-patch": {
-      "types": "./dist/JSONPointer/utils/patch/index.d.ts",
       "source": "./src/JSONPointer/utils/patch/index.ts",
-      "import": "./dist/JSONPointer/utils/patch/index.mjs",
-      "require": "./dist/JSONPointer/utils/patch/index.cjs"
+      "import": {
+        "types": "./dist/JSONPointer/utils/patch/index.d.ts",
+        "default": "./dist/JSONPointer/utils/patch/index.mjs"
+      },
+      "require": {
+        "types": "./dist/JSONPointer/utils/patch/index.d.cts",
+        "default": "./dist/JSONPointer/utils/patch/index.cjs"
+      }
+    }
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "import": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.mjs"
+        },
+        "require": {
+          "types": "./dist/index.d.cts",
+          "default": "./dist/index.cjs"
+        }
+      },
+      "./path": {
+        "import": {
+          "types": "./dist/JSONPath/index.d.ts",
+          "default": "./dist/JSONPath/index.mjs"
+        },
+        "require": {
+          "types": "./dist/JSONPath/index.d.cts",
+          "default": "./dist/JSONPath/index.cjs"
+        }
+      },
+      "./path-common": {
+        "import": {
+          "types": "./dist/JSONPath/utils/common.d.ts",
+          "default": "./dist/JSONPath/utils/common.mjs"
+        },
+        "require": {
+          "types": "./dist/JSONPath/utils/common.d.cts",
+          "default": "./dist/JSONPath/utils/common.cjs"
+        }
+      },
+      "./pointer": {
+        "import": {
+          "types": "./dist/JSONPointer/index.d.ts",
+          "default": "./dist/JSONPointer/index.mjs"
+        },
+        "require": {
+          "types": "./dist/JSONPointer/index.d.cts",
+          "default": "./dist/JSONPointer/index.cjs"
+        }
+      },
+      "./pointer-common": {
+        "import": {
+          "types": "./dist/JSONPointer/utils/common.d.ts",
+          "default": "./dist/JSONPointer/utils/common.mjs"
+        },
+        "require": {
+          "types": "./dist/JSONPointer/utils/common.d.cts",
+          "default": "./dist/JSONPointer/utils/common.cjs"
+        }
+      },
+      "./pointer-escape": {
+        "import": {
+          "types": "./dist/JSONPointer/utils/escape/index.d.ts",
+          "default": "./dist/JSONPointer/utils/escape/index.mjs"
+        },
+        "require": {
+          "types": "./dist/JSONPointer/utils/escape/index.d.cts",
+          "default": "./dist/JSONPointer/utils/escape/index.cjs"
+        }
+      },
+      "./pointer-manipulator": {
+        "import": {
+          "types": "./dist/JSONPointer/utils/manipulator/index.d.ts",
+          "default": "./dist/JSONPointer/utils/manipulator/index.mjs"
+        },
+        "require": {
+          "types": "./dist/JSONPointer/utils/manipulator/index.d.cts",
+          "default": "./dist/JSONPointer/utils/manipulator/index.cjs"
+        }
+      },
+      "./pointer-patch": {
+        "import": {
+          "types": "./dist/JSONPointer/utils/patch/index.d.ts",
+          "default": "./dist/JSONPointer/utils/patch/index.mjs"
+        },
+        "require": {
+          "types": "./dist/JSONPointer/utils/patch/index.d.cts",
+          "default": "./dist/JSONPointer/utils/patch/index.cjs"
+        }
+      }
     }
   },
   "main": "dist/index.cjs",
@@ -101,7 +225,8 @@
     "typecheck": "tsc --noEmit --composite false --rootDir . -p tsconfig.json",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",
-    "version:patch": "yarn version patch"
+    "version:patch": "yarn version patch",
+    "build:verify:types": "node ../../aileron/script/build/verifyDeclarations.mjs"
   },
   "dependencies": {
     "@winglet/common-utils": "workspace:^"

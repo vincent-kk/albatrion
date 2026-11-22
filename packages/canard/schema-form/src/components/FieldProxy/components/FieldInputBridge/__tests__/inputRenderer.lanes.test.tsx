@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
+import { ValidationMode } from '@/schema-form/core';
 import type { InputRendererProps } from '@/schema-form/types';
 
 afterEach(() => vi.unstubAllGlobals());
@@ -29,7 +30,7 @@ it('renders a write followed by error-only delivery in the same task only twice'
           }}
           defaultValue={{ field: 'initial' }}
           InputRenderer={frames}
-          validationMode={0}
+          validationMode={ValidationMode.None}
         />,
       ),
     );

@@ -39,6 +39,7 @@ type ResolveExit<Self extends FieldNodeRecord<Self>> = Fn<
  * @param context - Last-live exit inputs, absent for already inactive sources
  * @param resolve - Owner's ordinary object/terminal exit-policy traversal
  * @param sourceContext - Call-local plan owner, also available for inactive sources
+ * @param baseline - Optional boundary bindings selected by a structural fill
  * @returns A replacement with compacted source and independently bound child patches
  */
 export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
@@ -47,11 +48,16 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
   context: Optional<SettlementContext<Self>>,
   resolve: ResolveExit<Self>,
   sourceContext = context,
+  baseline?: CompactedSlotSources<Self>,
 ): InactiveSlotOverlay => {
   const source: unknown[] = [];
   const children = new Map<BlueprintChildEntry, InactiveSlotOverlay>();
   const sources = new Map<BlueprintChildEntry, Self>();
-  const entries = getSlotEntries(node, previous);
+  const entries = baseline
+    ? [
+        ...new Set([...baseline.sources.keys(), ...baseline.overlays.keys()]),
+      ].sort((left, right) => Number(left.name) - Number(right.name))
+    : getSlotEntries(node, previous);
   let position = 0;
   while (position < entries.length) {
     const name = entries[position].name;
@@ -59,7 +65,12 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
     let retained = false;
     do {
       const entry = entries[position++];
-      const child = getSlotSource(node, entry, previous);
+      const child = baseline
+        ? {
+            instance: baseline.sources.get(entry),
+            overlay: baseline.overlays.get(entry),
+          }
+        : getSlotSource(node, entry, previous);
       if (!child.instance) continue;
       const result = resolve(
         child.instance,

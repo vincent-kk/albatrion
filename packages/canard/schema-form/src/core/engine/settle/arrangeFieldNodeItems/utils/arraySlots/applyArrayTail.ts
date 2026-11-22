@@ -20,6 +20,7 @@ import { readInactiveSlotSource } from '../../../utils/slots/readInactiveSlotSou
 import { prunePerishedPaths } from '../../../utils/transition/prunePerishedPaths';
 import type { ArrayPathMove } from '../../types/pathMoves';
 import { clearArrayRuntimePaths } from '../rekey/clearArrayRuntimePaths';
+import { queueValidationIssueMoves } from '../rekey/queueValidationIssueMoves';
 import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 
 /**
@@ -139,11 +140,19 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
     if (length) (perishedPaths ??= []).push(item.path);
     delete items['' + index];
   }
-  if (!length) clearArrayRuntimePaths(host.runtime, host.path, oldCount);
+  let issueOwners: Optional<Set<unknown>>;
+  if (!length)
+    issueOwners = clearArrayRuntimePaths(host.runtime, host.path, oldCount);
   else {
     if (perishedPaths) prunePerishedPaths(host.runtime, perishedPaths);
-    rekeyArrayRuntimePaths(host.runtime, host.path, moves, prefixCount);
+    issueOwners = rekeyArrayRuntimePaths(
+      host.runtime,
+      host.path,
+      moves,
+      prefixCount,
+    );
   }
+  if (issueOwners) queueValidationIssueMoves(host.rootNode, issueOwners);
 
   host.itemCount = length;
   host.source = undefined;

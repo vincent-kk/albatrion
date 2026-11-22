@@ -1,4 +1,5 @@
 import type { BlueprintNode } from '../../../engine';
+import { ValidationMode } from '../../../engine';
 import {
   ObservationCodec,
   assertObservationEqual,
@@ -228,7 +229,7 @@ export function captureObservation(
   const props: Record<string, unknown> = {
     jsonSchema: scene.schema,
     validator,
-    validationMode: 0,
+    validationMode: ValidationMode.None,
     errorReporter: { hasConsumer: () => true, report: () => undefined },
     onChange: (value: unknown) => onChangeHistory.push(codec.encode(value)),
   };

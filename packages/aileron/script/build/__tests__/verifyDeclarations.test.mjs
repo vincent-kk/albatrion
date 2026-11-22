@@ -13,7 +13,7 @@ const script = fileURLToPath(new URL('../verifyDeclarations.mjs', import.meta.ur
 function verify(exports, files = {}) {
   const root = mkdtempSync(join(tmpdir(), 'verify-declarations-'));
   try {
-    writeFileSync(join(root, 'package.json'), JSON.stringify({ name: 'declaration-fixture', type: 'module', exports }));
+    writeFileSync(join(root, 'package.json'), JSON.stringify({ name: 'declaration-fixture', type: 'commonjs', exports }));
     for (const [name, contents] of Object.entries(files)) writeFileSync(join(root, name), contents);
     const result = spawnSync(process.execPath, [script], { cwd: root, encoding: 'utf8' });
     return { status: result.status, output: result.stdout + result.stderr };
@@ -44,7 +44,7 @@ test('explicitly reports blocked null exports without importing them', () => {
   assert.match(result.output, /1 exports/);
 });
 
-test('rejects nested-only types conditions with the affected export named', () => {
+test('rejects incomplete nested type branches with the affected export named', () => {
   const result = verify({ '.': { types: './index.d.ts' }, './nested': { import: { types: './nested.d.mts', default: './nested.mjs' } } }, { 'index.d.ts': 'export type Value = string;' });
   assert.notEqual(result.status, 0, result.output);
   assert.match(result.output, /nested.*top-level types/);
@@ -60,4 +60,26 @@ test('fails loudly when every public export is blocked', () => {
   const result = verify({ '.': null });
   assert.notEqual(result.status, 0, result.output);
   assert.match(result.output, /no .*public exports/);
+});
+
+
+test('verifies explicit ESM and CJS consumers under Node16 and NodeNext', () => {
+  const result = verify({ '.': { import: { types: './index.d.mts', default: './index.mjs' }, require: { types: './index.d.cts', default: './index.cjs' } } }, {
+    'index.d.mts': 'export type Value = string;', 'index.d.cts': 'export type Value = string;',
+  });
+  assert.equal(result.status, 0, result.output);
+  for (const mode of ['Node16', 'NodeNext']) for (const extension of ['mts', 'cts']) assert.ok(result.output.includes(`${mode} ${extension}: 0 diagnostics`), result.output);
+});
+
+test('does not report success when only the CJS declaration branch is broken', () => {
+  const result = verify({ '.': { import: { types: './index.d.mts' }, require: { types: './missing.d.cts' } } }, { 'index.d.mts': 'export type Value = string;' });
+  assert.notEqual(result.status, 0, result.output);
+  assert.match(result.output, /cts/);
+});
+
+
+test('keeps string runtime addresses whose declarations resolve beside the JavaScript file', () => {
+  const result = verify('./index.js', { 'index.js': 'exports.value = 1;', 'index.d.ts': 'export declare const value: number;' });
+  assert.equal(result.status, 0, result.output);
+  assert.match(result.output, /DECLARATIONS_OK/);
 });

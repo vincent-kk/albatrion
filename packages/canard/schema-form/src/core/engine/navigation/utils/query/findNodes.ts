@@ -11,6 +11,9 @@ import {
 
 import type { FieldNodeRecord } from '../../../record';
 
+/** Candidate count at which indexed deduplication avoids quadratic scanning. */
+const INDEX_THRESHOLD = 256;
+
 /** Resolve every current-shape match in path order, retaining each instance once. */
 export const findNodes = <Self extends FieldNodeRecord<Self>>(
   origin: Self,
@@ -24,33 +27,31 @@ export const findNodes = <Self extends FieldNodeRecord<Self>>(
     const next: Self[] = [];
     if (token === PointerOperator.Context) return [];
     for (const cursor of cursors) {
-      if (token === PointerOperator.Current) {
-        if (next.indexOf(cursor) === -1) next.push(cursor);
-      } else if (token === PointerOperator.Parent) {
+      if (token === PointerOperator.Current) next.push(cursor);
+      else if (token === PointerOperator.Parent) {
         const parent = cursor.parent;
-        if (
-          parent !== null &&
-          (!cursor.isDetached || parent.isDetached) &&
-          next.indexOf(parent) === -1
-        )
+        if (parent !== null && (!cursor.isDetached || parent.isDetached))
           next.push(parent);
       } else if (cursor.childrenByName !== null) {
         if (token === PointerOperator.Wildcard) {
           for (const child of Object.values(cursor.childrenByName))
-            if (next.indexOf(child) === -1) next.push(child);
-        } else {
-          if (typeof token !== 'string') continue;
-          const name = token;
-          if (hasOwnProperty(cursor.childrenByName, name)) {
-            const child = cursor.childrenByName[name];
-            if (child !== undefined && next.indexOf(child) === -1)
-              next.push(child);
-          }
+            next.push(child);
+        } else if (
+          typeof token === 'string' &&
+          hasOwnProperty(cursor.childrenByName, token)
+        ) {
+          const child = cursor.childrenByName[token];
+          if (child !== undefined) next.push(child);
         }
       }
     }
     if (next.length === 0) return [];
-    cursors = next;
+    cursors =
+      next.length < 2
+        ? next
+        : next.length >= INDEX_THRESHOLD
+          ? [...new Set(next)]
+          : next.filter((node, index) => next.indexOf(node) === index);
   }
   return cursors;
 };

@@ -1,7 +1,5 @@
 import { useContext } from 'react';
 
-import { PluginManager } from '@/schema-form/app/plugin';
-
 import { useExternalFormContext } from '../../ExternalFormContext';
 import { FieldRendererContext } from '../components/FieldRendererContext';
 
@@ -12,17 +10,18 @@ export const useFieldRendererContext = () => {
     LabelRenderer:
       context.LabelRenderer ||
       external.LabelRenderer ||
-      PluginManager.LabelRenderer,
+      external.pluginManager.LabelRenderer,
     InputRenderer:
       context.InputRenderer ||
       external.InputRenderer ||
-      PluginManager.InputRenderer,
+      external.pluginManager.InputRenderer,
     ErrorMessageRenderer:
       context.ErrorMessageRenderer ||
       external.ErrorMessageRenderer ||
-      PluginManager.ErrorMessageRenderer,
-    FieldRenderer: context.FieldRenderer || PluginManager.FieldRenderer,
-    formatError: context.formatError || PluginManager.formatError,
+      external.pluginManager.ErrorMessageRenderer,
+    FieldRenderer:
+      context.FieldRenderer || external.pluginManager.FieldRenderer,
+    formatError: context.formatError || external.pluginManager.formatError,
     checkErrorVisibility: context.checkErrorVisibility,
     errorVisibility: context.errorVisibility,
   };

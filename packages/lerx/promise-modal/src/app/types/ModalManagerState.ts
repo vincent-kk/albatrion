@@ -2,7 +2,8 @@ import type { styleManagerFactory } from '@winglet/style-utils/style-manager';
 
 import type { Fn } from '@aileron/declare';
 
-import type { ModalNode } from '@/promise-modal/core/node';
+import type { ModalActions, ModalNode } from '@/promise-modal/core/node';
+import type { ModalContexts } from '@/promise-modal/types/context';
 import type { Modal } from '@/promise-modal/types/modal';
 
 /** Queued requests retain both Promise channels while no portal is attached. */
@@ -25,10 +26,16 @@ export interface BootstrapOwner {
 export interface ModalManagerState {
   /** Increment whenever another copy cannot use this state shape. */
   version: number;
+  /** Private fallback refuses DOM ownership when another state version exists. */
+  isIsolated?: boolean;
+  /** Optional for copies that predate shared React context identities. */
+  contexts?: ModalContexts<ModalNode, ModalActions>;
   /** Rendered wrappers provide focus boundaries without imposing frame semantics. */
   frames: Map<number, HTMLElement>;
   /** Registration captures the opener until the request first settles. */
   focusTargets: Map<number, Element | null>;
+  /** Opener ownership retained across temporary frame detachment. */
+  detachedOpenerOwners?: Map<number, number>;
   /** Visible intervals receive initial focus only once. */
   focused: Set<number>;
   /** Only attributes introduced by this manager are removed on release. */
@@ -44,6 +51,16 @@ export interface ModalManagerState {
   };
   /** The exact installed callback is shared by Escape and Tab handling. */
   keydown?: Fn<[event: KeyboardEvent]>;
+  /**
+   * Capture-phase partner of `keydown` that records `settlements` when Escape began.
+   * Optional so copies that predate it still share this state shape.
+   */
+  keydownCapture?: Fn<[event: KeyboardEvent]>;
+  /**
+   * Counts first settlements of visible nodes, so Escape can tell that a control
+   * already closed a modal during the same press. Optional for the same reason.
+   */
+  settlements?: number;
   /** The portal container belongs to the active bootstrap. */
   anchor: HTMLElement | null;
   /** A stable style scope survives provider handoffs and duplicate loads. */
@@ -52,8 +69,12 @@ export interface ModalManagerState {
   hash: string;
   /** The scope manager exists only between browser attach and detach. */
   styleManager?: ReturnType<typeof styleManagerFactory>;
+  /** Captures the creating copy so any compatible owner can release its stylesheet. */
+  destroyStyleManager?: Fn;
   /** Canonical CSS definitions survive detach for later initialization. */
   styleSheetDefinition: Map<string, string>;
+  /** Last applied definitions avoid re-scoping identical CSS on an unchanged attach. */
+  appliedStyleSheetDefinition?: Map<string, string>;
   /** Alive nodes remain independent of the provider render tree. */
   nodes: Map<number, ModalNode>;
   /** Each registered node has one store-owned subscription. */

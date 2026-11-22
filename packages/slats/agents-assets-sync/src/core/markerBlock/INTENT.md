@@ -6,8 +6,9 @@
 
 ## Conventions
 
+- 블록 스캐너는 문서의 fence 상태를 한 번 순회하며 START와 END를 같은 어휘 문맥에서 인식합니다.
+
 - 마커 형식은 `<!-- AGENTS-ASSETS-SYNC:START:<packageName>:<relPath> -->`이며 같은 파일의 `FILID:` / `SEIRI:` 마커 형식을 따릅니다.
-- `createBlockPattern`은 호출마다 새 정규식을 반환합니다. 공유 전역 정규식은 `lastIndex`를 보유하여 일치를 건너뛸 수 있습니다.
 
 ## Boundaries
 

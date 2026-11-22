@@ -8,6 +8,9 @@
 
 - 공통 무효 표시와 값 보존 정책은 [상위 계약](../../DETAIL.md)에 둡니다.
 - 선택지 연결과 묶음 이름의 공통 규약은 [문자열 checkbox 계약](../FieldInputStringCheckbox/DETAIL.md)에 둡니다. 두 입력의 접근성 연결 규칙이 따로 달라지지 않게 합니다.
+- name prop은 다른 입력과 같은 말단 이름입니다. 각 라디오의 native name에는 전달된 scoped id를 사용하여 서로 다른 필드·Form의 선택을 격리합니다.
+
+최초 마운트는 바인딩 어댑터가 현재 저장값으로 만든 defaultValue를 native 선택에 적용하므로 추가 DOM 탐색을 하지 않습니다. 배열 항목의 이동으로 native name이 바뀌거나 숨긴 입력이 다시 연결되면 DOM 변경이 끝난 layout 단계에서 현재 저장값의 선택을 다시 적용합니다. 브라우저가 변경 도중 잠시 같은 이름이 된 다른 그룹의 선택을 지워도 최종 그룹과 값의 연결을 보존하며, 값 입력 자체는 비제어 방식을 유지합니다.
 
 ## Acceptance Criteria
 

@@ -5,6 +5,7 @@ import {
   blueprint,
   getFeatureNodeIndex,
 } from '@/schema-form/core/engine/blueprint';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
 
 import { getDeriveRuleTable } from '../../derive';
 import { getDependencyIndex } from '../utils/dependencies/getDependencyIndex';
@@ -13,7 +14,7 @@ import { getDependencyIndex } from '../utils/dependencies/getDependencyIndex';
 describe('branchless feature indexes and empty rule tables', () => {
   it('builds derive/watch/state and reverse dependencies independently of branch absence', () => {
     const root = nodeFromJSONSchema({
-      validationMode: 0,
+      validationMode: ValidationMode.None,
       jsonSchema: {
         type: 'object',
         properties: {

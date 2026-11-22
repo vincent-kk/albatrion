@@ -23,9 +23,10 @@ import type {
   ResolverContext,
   Resource,
 } from './type';
+import { isCanonicalRetrievalURI } from './utils/isCanonicalRetrievalURI';
 import { shortestReference } from './utils/shortestReference';
 
-/** These fields affect source scope and are removed only from proven relocatable template copies. */
+/** Identifier names of any dialect; a copy is inspected when one occurs, whatever its dialect. */
 const identifiers = [
   '$id',
   'id',
@@ -35,6 +36,37 @@ const identifiers = [
   '$recursiveAnchor',
   '$vocabulary',
 ];
+/** Identifiers each dialect defines; elsewhere the same names are annotations a copy keeps. */
+const dialectIdentifiers: Readonly<Record<Dialect, readonly string[]>> = {
+  [Dialect.Draft04]: ['id', '$schema'],
+  [Dialect.Draft06]: ['$id', '$schema'],
+  [Dialect.Draft07]: ['$id', '$schema'],
+  [Dialect.Draft201909]: [
+    '$id',
+    '$schema',
+    '$anchor',
+    '$recursiveAnchor',
+    '$vocabulary',
+  ],
+  [Dialect.Draft202012]: [
+    '$id',
+    '$schema',
+    '$anchor',
+    '$dynamicAnchor',
+    '$vocabulary',
+  ],
+};
+/**
+ * Choose the identifier names of a copied position.
+ * @param context Indexed lexical context of the position, or undefined when indexing did not reach it.
+ * @returns Its resource dialect's identifiers, or every dialect's for an unindexed position.
+ */
+function identifiersAt(
+  context: ResolverContext | undefined,
+): readonly string[] {
+  return context ? dialectIdentifiers[context.resource.dialect] : identifiers;
+}
+
 /** Reference-shaped data is permitted below these annotation/assertion values without rewriting. */
 const dataKeywords = ['default', 'const', 'enum', 'examples'];
 
@@ -60,6 +92,14 @@ export class ResolverStore {
   >();
   /** Custom metaschema URI aliases are normalized once. */
   private dialectAliases = new Map<string, Dialect>();
+  /** Registered documents by normalized address, built by the first lookup that no key as written matches. */
+  private registered: Map<string, SchemaValue> | undefined;
+  /** Whether every registered key is already spelled as resolution writes it; computed once, only by a known-address lookup. */
+  private canonicalKeys: boolean | undefined;
+  /** Known addresses already checked against the registrations; the answer cannot change afterwards. */
+  private settled = new Set<string>();
+  /** Retrieval addresses already passed to indexing; an embedded identifier at the same address does not count. */
+  private indexed = new Set<string>();
 
   /**
    * Eagerly index the root while retaining registered documents for lazy lookup.
@@ -193,61 +233,83 @@ export class ResolverStore {
               reason: ReferenceSkipReason.Unresolved,
             }),
           };
-    new JSONSchemaScanner({
-      options: {
-        resolveReference: indexProvider,
-        defaultDialect: initial.resource.dialect,
-        keywords: this.options.keywords,
-        additionalKeywords: this.options.additionalKeywords,
-      },
-      visitor: {
-        enter: (entry) => {
-          const parent = stack[stack.length - 1]?.context ?? initial;
-          const context =
-            entry.depth === 0
-              ? initial
-              : entry.inert
-                ? parent
-                : this.child(parent, entry.schema);
-          if (
-            entry.depth === 0 ||
-            (context !== parent && !context.resource.owner)
-          ) {
-            if (context.resource.path && context.resource.path !== entry.path)
-              this.duplicate(
-                context.resource.uri,
-                context.resource.document.uri + context.resource.path,
-                retrieval + entry.path,
-              );
-            if (!context.resource.path) context.resource.path = entry.path;
-            this.registerResource(context.resource);
-          }
-          const location: Location = {
-            schema: entry.schema,
-            path: entry.path,
-            context,
-            uri: '',
-            inert: !!entry.inert,
-          };
-          document.paths.set(entry.path, location);
-          if (!entry.inert && typeof entry.schema === 'object')
-            this.registerAnchors(location);
-          stack.push({ depth: entry.depth, context });
+    try {
+      new JSONSchemaScanner({
+        options: {
+          resolveReference: indexProvider,
+          defaultDialect: initial.resource.dialect,
+          keywords: this.options.keywords,
+          additionalKeywords: this.options.additionalKeywords,
         },
-        exit: () => {
-          stack.pop();
+        visitor: {
+          enter: (entry) => {
+            const parent = stack[stack.length - 1]?.context ?? initial;
+            const context =
+              entry.depth === 0
+                ? initial
+                : entry.inert
+                  ? parent
+                  : this.child(parent, entry.schema);
+            if (
+              entry.depth === 0 ||
+              (context !== parent && !context.resource.owner)
+            ) {
+              if (context.resource.path && context.resource.path !== entry.path)
+                this.duplicate(
+                  context.resource.uri,
+                  context.resource.document.uri + context.resource.path,
+                  retrieval + entry.path,
+                );
+              if (!context.resource.path) context.resource.path = entry.path;
+              this.registerResource(context.resource);
+            }
+            const location: Location = {
+              schema: entry.schema,
+              path: entry.path,
+              context,
+              uri: '',
+              inert: !!entry.inert,
+            };
+            document.paths.set(entry.path, location);
+            if (!entry.inert && typeof entry.schema === 'object')
+              this.registerAnchors(location);
+            stack.push({ depth: entry.depth, context });
+          },
+          exit: () => {
+            stack.pop();
+          },
         },
-      },
-    }).scan(schema);
-    const prior = this.resources.get(retrieval);
-    if (prior && (prior.document !== document || prior.path !== '#'))
-      this.duplicate(
-        retrieval,
-        prior.document.uri + prior.path,
-        retrieval + '#',
-      );
-    this.resources.set(retrieval, initial.resource);
-    return initial;
+      }).scan(schema);
+      const prior = this.resources.get(retrieval);
+      if (prior && (prior.document !== document || prior.path !== '#'))
+        this.duplicate(
+          retrieval,
+          prior.document.uri + prior.path,
+          retrieval + '#',
+        );
+      this.resources.set(retrieval, initial.resource);
+      this.indexed.add(retrieval);
+      return initial;
+    } catch (error) {
+      this.discard(document);
+      throw error;
+    }
+  }
+
+  /**
+   * Remove only registrations owned by a rejected indexing attempt.
+   * @param document Failed attempt; committed documents are never overwritten during indexing.
+   * @returns Nothing; successful registrations and cached requests remain intact.
+   */
+  private discard(document: DocumentRecord): void {
+    for (const [uri, resource] of this.resources)
+      if (resource.document === document) this.resources.delete(uri);
+    for (const [uri, names] of this.anchors) {
+      for (const [name, anchor] of names)
+        if (anchor.location.context.resource.document === document)
+          names.delete(name);
+      if (names.size === 0) this.anchors.delete(uri);
+    }
   }
 
   /**
@@ -346,21 +408,94 @@ export class ResolverStore {
 
   /**
    * Supply a registered external document lazily; no I/O occurs here.
-   * @param uri Document address; only an absolute one is looked up among registrations.
-   * @returns Whether the resource is known after checking registrations.
+   * @param uri Normalized document address; only an absolute one is looked up among registrations.
+   * @returns Whether the resource is known after checking registrations; an address no key names
+   *   is known once indexing every registered document finds it embedded in one of them.
+   * @throws Duplicate-identifier error when two keys normalize to one address with different documents,
+   *   or when indexing finds an identifier declared twice, including a known identifier whose address
+   *   is a registered key not yet indexed.
    */
   public ensure(uri: string): boolean {
-    if (this.resources.has(uri)) return true;
+    const known = this.resources.get(uri);
     const source = this.options.resources;
-    if (isAbsoluteURI(uri) && source && hasOwnProperty(source, uri)) {
-      this.index(
-        source[uri],
-        uri,
-        this.options.defaultDialect ?? DEFAULT_DIALECT,
-      );
-      return this.resources.has(uri);
+    if (known !== undefined) {
+      if (
+        known.document.uri !== uri &&
+        source !== undefined &&
+        !this.settled.has(uri)
+      )
+        this.settle(uri, source);
+      return true;
     }
-    return false;
+    if (source === undefined || !isAbsoluteURI(uri)) return false;
+    const dialect = this.options.defaultDialect ?? DEFAULT_DIALECT;
+    if (hasOwnProperty(source, uri)) this.index(source[uri], uri, dialect);
+    else {
+      const registered = (this.registered ??= this.normalizeRegistered(source));
+      const schema = registered.get(uri);
+      if (schema !== undefined) this.index(schema, uri, dialect);
+      else
+        for (const [address, document] of registered)
+          if (!this.indexed.has(address))
+            this.index(document, address, dialect);
+    }
+    return this.resources.has(uri);
+  }
+
+  /**
+   * Index the registered key for a known address that no indexing stored there, once per address.
+   * @param uri Address known from another document's identifier, not from indexing at that address.
+   * @param source Caller's registrations.
+   * @returns Nothing; normalizes the keys only when some key is not already a canonical spelling.
+   * @throws Duplicate-identifier error when a registered key names this address; the address then
+   *   stays unchecked, so repeating the lookup on this resolver fails the same way.
+   */
+  private settle(
+    uri: string,
+    source: Readonly<Record<string, SchemaValue>>,
+  ): void {
+    this.settled.add(uri);
+    try {
+      if (
+        this.registered === undefined &&
+        !hasOwnProperty(source, uri) &&
+        !(this.canonicalKeys ??= Object.keys(source).every(
+          isCanonicalRetrievalURI,
+        ))
+      )
+        this.registered = this.normalizeRegistered(source);
+      const schema = hasOwnProperty(source, uri)
+        ? source[uri]
+        : this.registered?.get(uri);
+      if (schema !== undefined && isAbsoluteURI(uri))
+        this.index(schema, uri, this.options.defaultDialect ?? DEFAULT_DIALECT);
+    } catch (error) {
+      this.settled.delete(uri);
+      throw error;
+    }
+  }
+
+  /**
+   * Key registered documents by the address a reference to them resolves to.
+   * @param source Caller's registrations, keyed by absolute retrieval URI in any spelling.
+   * @returns Documents by normalized absolute address; keys that are not absolute URIs are left out.
+   * @throws Duplicate-identifier error naming both keys when they normalize to one address with different documents.
+   */
+  private normalizeRegistered(
+    source: Readonly<Record<string, SchemaValue>>,
+  ): Map<string, SchemaValue> {
+    const registered = new Map<string, SchemaValue>();
+    const keys = new Map<string, string>();
+    for (const key of Object.keys(source)) {
+      const uri = resolveURI(key, '');
+      if (uri === undefined || !isAbsoluteURI(uri)) continue;
+      const previous = keys.get(uri);
+      if (previous !== undefined && source[previous] !== source[key])
+        this.duplicate(uri, previous, key);
+      keys.set(uri, key);
+      registered.set(uri, source[key]);
+    }
+    return registered;
   }
 
   /**
@@ -622,7 +757,9 @@ export class ResolverStore {
           (prefix) =>
             item.path === prefix || item.path.startsWith(prefix + '/'),
         ) &&
-        item.keys.some((key) => identifiers.includes(key)),
+        item.keys.some((key) =>
+          identifiersAt(positions.get(item.path)).includes(key),
+        ),
     );
     if (source === host && !hasIdentifiers)
       return { status: 'resolved', uri: location.uri, target };
@@ -639,7 +776,7 @@ export class ResolverStore {
       const context = positions.get(item.path);
       if (!context) return relocation;
       if (item.keys.includes('$recursiveRef')) return relocation;
-      for (const key of identifiers) delete item.copy[key];
+      for (const key of identifiersAt(context)) delete item.copy[key];
       for (const key of ['$ref', '$dynamicRef']) {
         if (
           typeof item.source[key] !== 'string' ||

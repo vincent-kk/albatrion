@@ -44,3 +44,17 @@ export const REACTIVE_RERENDERING_EVENTS =
   FieldNodeEventType.UpdateControlledProperties |
   FieldNodeEventType.UpdateJsonSchema |
   FieldNodeEventType.UpdatePath;
+
+/** Child ownership shares the existing child-field cache across Activity cleanup. */
+export interface ChildInputOwnership {
+  /** Field binding identity owning this record. */
+  node?: FieldNode;
+  /** External-value revision captured by the first child render. */
+  externalValueRevision?: number;
+  /** Raw input identity owning this record. */
+  input?: unknown;
+  /** Input frame identity owning this record. */
+  frame?: unknown;
+  /** Whether this input uses the controlled declaration. */
+  isControlled?: boolean;
+}

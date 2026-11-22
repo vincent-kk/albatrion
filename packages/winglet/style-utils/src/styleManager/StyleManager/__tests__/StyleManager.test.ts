@@ -146,6 +146,31 @@ describe('StyleManager', () => {
       // :root는 스코프 없이 유지
       expect(styleContent).toContain(':root');
     });
+
+    test('every selector in a selector list receives the scope prefix', () => {
+      const manager = StyleManager.get('bounty-list');
+      vi.useFakeTimers();
+      manager.add('s', '.a, .b { color: red; }');
+      vi.runAllTimers();
+
+      const styleContent = getAppliedStyles(manager);
+      expect(styleContent).toContain('.bounty-list .a');
+      expect(styleContent).toContain('.bounty-list .b');
+    });
+
+    test('a nested @media block keeps its closing brace so later rules stay outside it', () => {
+      const manager = StyleManager.get('bounty-media');
+      vi.useFakeTimers();
+      manager.add(
+        's',
+        '@media (max-width: 1px) { .a { color: red; } } .b { color: blue; }',
+      );
+      vi.runAllTimers();
+
+      expect(getAppliedStyles(manager)).toBe(
+        '@media (max-width:1px){.bounty-media .a{color:red}}.bounty-media .b{color:blue}',
+      );
+    });
   });
 
   describe('Shadow DOM 환경', () => {

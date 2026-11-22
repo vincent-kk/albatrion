@@ -6,6 +6,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import {
   ErrorVisibility,
   type FieldInputProps,
+  FieldNodeState,
   type FieldRendererProps,
   Form,
   type FormHandle,
@@ -103,13 +104,25 @@ it.each([false, true])(
     expect(view.getByTestId('error/a').textContent).toBe('too short');
     slow = true;
     act(() => ref.current!.findNode('/kind')!.setValue(true));
-    expect(ref.current!.findNode('/a')!.state[1]).toBeFalsy();
+    expect(
+      ref.current!.findNode('/a')!.state[FieldNodeState.Edited],
+    ).toBeFalsy();
     fireEvent.change(view.getByLabelText('a'), { target: { value: 'abc' } });
     expect((view.getByLabelText('a') as HTMLInputElement).value).toBe('abc');
-    expect(ref.current!.findNode('/a')!.state[1]).toBe(true);
+    expect(ref.current!.findNode('/a')!.state[FieldNodeState.Edited]).toBe(
+      true,
+    );
     if (toggle) {
-      act(() => ref.current!.findNode('/a')!.setState({ 4: false }));
-      act(() => ref.current!.findNode('/a')!.setState({ 4: true }));
+      act(() =>
+        ref
+          .current!.findNode('/a')!
+          .setState({ [FieldNodeState.ErrorVisibility]: false }),
+      );
+      act(() =>
+        ref
+          .current!.findNode('/a')!
+          .setState({ [FieldNodeState.ErrorVisibility]: true }),
+      );
     }
     expect(view.getByTestId('error/a').textContent).toBe('');
     await act(async () => {

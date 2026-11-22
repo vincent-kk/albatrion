@@ -8,7 +8,7 @@ Form.Label은 입력 선택을 몰라도 접근 가능한 제목을 연결할 �
 
 Form.Label은 묶인 Label을 통해 등록 렌더러가 루트를 소유하게 합니다. style·className·children·htmlFor·id를 undefined여도 항상 전달하여 스키마의 표현 props가 새지 않게 합니다. path가 없으면 for·id도 없으며 children undefined는 이름, null은 빈 내용입니다. 자기 FieldProxy의 context를 명시적으로 전달합니다.
 
-절대 path를 받은 label은 htmlFor와 label: 접두 id를 함께 제공합니다. 단일 입력은 path id, 묶음 입력은 aria-labelledby로 같은 제목을 사용합니다. label:는 /로 시작하는 필드 path와 겹치지 않아 형제 속성의 이름 때문에 제목 id가 충돌하지 않습니다. path가 undefined이면 두 속성도 만들지 않으므로 루트 제목이 필요하면 명시적 경로를 전달합니다.
+하나의 노드를 찾는 명시 path 질의는 해석된 노드의 inputId·labelId를 htmlFor와 제목 id로 그대로 사용합니다. 질의 철자에서 DOM 주소를 다시 구성하지 않으므로 별칭도 같은 입력을 가리킵니다. 여러 노드를 찾는 질의는 기존의 원문 속성을 유지하고, 일치하지 않는 질의는 FieldProxy의 기존 빈 출력을 유지합니다. 단일 입력은 scoped id, 묶음 입력은 aria-labelledby로 같은 제목을 사용합니다. labelId는 불투명한 값이며 입력 id를 복원하려고 접두사를 잘라내지 않습니다. path가 undefined이면 두 속성도 만들지 않으므로 루트 제목이 필요하면 명시적 경로를 전달합니다.
 
 ## Acceptance Criteria
 

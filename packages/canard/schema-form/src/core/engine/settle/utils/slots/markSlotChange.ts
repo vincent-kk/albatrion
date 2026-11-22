@@ -1,12 +1,8 @@
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotBaseline } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
+import { getSlotDecision } from '../source/getSlotDecision';
 
-/** Annotates the lazily created `slotAutomaticLog`; an argument-less `new Map()` would be `Map<any, any>`. */
-type SlotAutomaticLog<Self> = Map<
-  Self,
-  Map<BlueprintChildEntry, InactiveSlotBaseline<Self>>
->;
 /** Annotates the lazily created `inactiveSlotBaselines`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlotBaselines<Self> = Map<
   BlueprintChildEntry,
@@ -29,15 +25,11 @@ export const markSlotChange = <Self extends FieldNodeRecord<Self>>(
   context?: SettlementContext<Self>,
 ): void => {
   if (context?.isInTransition) {
-    const journal: SlotAutomaticLog<Self> = (context.slotAutomaticLog ??=
-      new Map());
-    let bindings = journal.get(host);
-    if (!bindings) journal.set(host, (bindings = new Map()));
-    if (!bindings.has(entry))
-      bindings.set(entry, {
-        instance: host.inactiveSlots?.get(entry),
-        overlay: host.inactiveSlotOverlays?.get(entry),
-      });
+    const slot = getSlotDecision(host, entry, context);
+    slot.baseline ??= {
+      instance: host.inactiveSlots?.get(entry),
+      overlay: host.inactiveSlotOverlays?.get(entry),
+    };
   }
   const baselines: InactiveSlotBaselines<Self> = (host.inactiveSlotBaselines ??=
     new Map());

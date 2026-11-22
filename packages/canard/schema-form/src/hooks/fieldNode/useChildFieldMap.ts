@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Dictionary } from '@aileron/declare';
 
@@ -10,7 +11,9 @@ import type { ChildFieldProps } from '@/schema-form/types';
 /** Proxy handler that answers a missing child field with a no-op function. */
 const CHILD_FIELD_MAP_HANDLER: ProxyHandler<Dictionary> = {
   get(target, key) {
-    return target[key as keyof typeof target] ?? NOOP_FUNCTION;
+    return hasOwnProperty(target, key)
+      ? (Reflect.get(target, key) ?? NOOP_FUNCTION)
+      : NOOP_FUNCTION;
   },
 };
 

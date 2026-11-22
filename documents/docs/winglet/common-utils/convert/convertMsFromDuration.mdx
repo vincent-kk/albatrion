@@ -24,7 +24,7 @@ import { convertMsFromDuration } from '@winglet/common-utils';
 ## Signature
 
 ```typescript
-const convertMsFromDuration: (duration: string) => number
+const convertMsFromDuration: (duration: string | null | undefined) => number
 ```
 
 ## Parameters
@@ -102,8 +102,8 @@ console.log(convertMsFromDuration('-5s')); // 0 (negative not supported)
 console.log(convertMsFromDuration('5 seconds')); // 0 (full word units not supported)
 
 // Special values
-console.log(convertMsFromDuration(null as any)); // 0 (null input)
-console.log(convertMsFromDuration(undefined as any)); // 0 (undefined input)
+console.log(convertMsFromDuration(null)); // 0 (null input)
+console.log(convertMsFromDuration(undefined)); // 0 (undefined input)
 ```
 
 ### Configuration and timeout scenarios

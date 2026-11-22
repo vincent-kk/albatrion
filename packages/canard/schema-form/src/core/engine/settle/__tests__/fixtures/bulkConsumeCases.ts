@@ -22,7 +22,14 @@ const nested = (depth: number): { schema: BlueprintSchema; value: unknown } => {
   };
 };
 
-const tree = nested(6);
+/**
+ * Depth of the nested bulk history: 6 (5461 nodes) locally and in the pre-release tier. The pr runner
+ * sets SCHEMA_FORM_TEST_PROFILE=pr for depth 4 (341 nodes), which keeps the same
+ * deep string-leaf shape and every observed mode at about a sixteenth of the cost.
+ */
+const NESTED_DEPTH = process.env.SCHEMA_FORM_TEST_PROFILE === 'pr' ? 4 : 6;
+
+const tree = nested(NESTED_DEPTH);
 
 /** Bulk histories share the gate-table observer's complete observation surface. */
 export const bulkConsumeCases: typeof gateSelectionCases = [
@@ -50,7 +57,7 @@ export const bulkConsumeCases: typeof gateSelectionCases = [
     ],
   },
   {
-    name: 'bulk consume nested-d6-f4',
+    name: `bulk consume nested-d${NESTED_DEPTH}-f4`,
     schema: tree.schema,
     input: {},
     writes: [{ value: tree.value }],

@@ -318,7 +318,7 @@ class MyCustomElement extends HTMLElement {
 
   disconnectedCallback() {
     // Clean up styles when element is removed
-    destroyScope('custom-element');
+    destroyScope('custom-element', { shadowRoot: this.shadowRoot });
   }
 }
 
@@ -520,7 +520,11 @@ const addShadowStyle = styleManagerFactory('shadow-scope', {
 });
 ```
 
-#### `destroyScope(scopeId: string): void`
+#### `destroyScope(scopeId: string, config?: StyleManagerConfig): void`
+
+You can reuse the injector after destroying the scope. A cleanup function only removes styles from the manager that received its injection, so it cannot remove a style added after destruction.
+
+Pass the same `{ shadowRoot }` used for `styleManagerFactory` to release a Shadow DOM scope. Without this option, only the document scope is released. Detached shadow hosts are not retained by the registry.
 
 Destroys a specific style scope and removes all associated styles from the DOM.
 

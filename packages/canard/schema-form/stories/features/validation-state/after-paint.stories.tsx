@@ -7,6 +7,7 @@ import { expect, userEvent } from 'storybook/test';
 import {
   ErrorVisibility,
   type FieldInputProps,
+  FieldNodeState,
   type FieldRendererProps,
   Form,
   type FormHandle,
@@ -166,7 +167,7 @@ const check = async (canvas: HTMLElement, touched: boolean, same: boolean) => {
     if (touched) {
       await started;
       await frame();
-      expect(handle.node!.state[2]).toBe(true);
+      expect(handle.node!.state[FieldNodeState.Touched]).toBe(true);
       expect(!!readFieldNodeRuntime(handle.node!).isValidationPending).toBe(
         true,
       );

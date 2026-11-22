@@ -8,6 +8,8 @@
 - 배열 통계 함수(`sum`/`mean`/`median`/`range`)는 빈 배열에 각각 `0`/`NaN`/`NaN`/`NaN`을 반환하고 예외를 던지지 않는다.
 - `isClose`는 상대·절대 오차를 결합한 공식으로 비교하며 `NaN`을 서로 같다고 판단하는 등 `===` 연산자와 다른 동치 규칙을 가진다.
 
+큰 조합은 각 단계의 분자·분모를 최대공약수로 약분해 안전 정수 중간값을 유지한다. 약분한 결과도 안전 범위를 넘는 최초 단계부터만 BigInt로 계산한다. 작은 입력은 기존 number 경로만 사용한다.
+
 ## API Contracts
 
 - 정수 전제 함수(`factorial`/`fibonacci`/`combination`/`permutation`/`digitSum`/`toBase`)는 `Number.isInteger`가 아니거나 범위를 벗어나면 함수별 고정 문자열로 throw한다. `fromBase`/`toBase`는 `base`가 2~36 정수가 아니어도 별도 메시지로 throw한다.
@@ -28,9 +30,10 @@
 
 ### combinatorics-and-base-conversion — 조합론·진법 변환
 
+- `factorial`은 작은 인자부터 오름차순으로 같은 곱셈 순서를 사용하여 캐시 이력과 무관한 결과를 반환합니다.
 - `factorial`/`fibonacci`는 모듈 스코프 `Map` 캐시를 두어 동일 인자를 다시 호출해도 같은 값을 반환한다.
-- `combination(n, r)`은 대칭성(`C(n,r) = C(n,n-r)`)으로 반복 횟수를 줄이고, `r > n`이면 `0`을, 음수·비정수 인자면 예외를 던진다.
-- `fromBase`/`toBase`는 base 2~36을 지원하고 대소문자를 구분하지 않으며, 잘못된 자릿수·범위를 벗어난 base·빈 문자열에 각각 다른 메시지로 예외를 던진다.
+- `combination(n, r)`은 약분한 중간 곱이 안전 정수 범위를 넘기는 최초 단계부터 BigInt 누산으로 전환해, 최종 정답이 안전 정수이면 정확한 값을 반환합니다. 작은 입력은 number 연산만 사용합니다. 대칭성(`C(n,r) = C(n,n-r)`)으로 반복 횟수를 줄이고, `r > n`이면 `0`을, 음수·비정수 인자면 예외를 던진다.
+- `fromBase`/`toBase`는 base 2~36의 ASCII 숫자·영문자를 지원하고 ASCII 대소문자를 구분하지 않으며, 잘못된 자릿수·범위를 벗어난 base·빈 문자열(부호만 있는 입력 포함)에 각각 다른 메시지로 예외를 던진다.
 - `digitSum`은 음수를 절대값으로 취급하고 비정수 입력에 예외를 던진다.
 
 ### precision-sensitive-pair-functions — gcd·lcm의 정밀도 처리

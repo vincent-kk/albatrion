@@ -8,4 +8,4 @@
 "@canard/schema-form-ajv8-plugin": patch
 ---
 
-Declare `@canard/schema-form` as a peer dependency so package installers check that the host form library is present. Install the matching core release alongside each UI or AJV plugin.
+Install a supported release of `@canard/schema-form` alongside each UI or AJV plugin. The plugin's peer dependency range identifies the supported core releases.

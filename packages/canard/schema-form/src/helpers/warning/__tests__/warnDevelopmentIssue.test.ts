@@ -1,3 +1,5 @@
+import { format } from 'node:util';
+
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { FormWarningCode } from '@/schema-form/errors';
@@ -16,10 +18,10 @@ describe('warnDevelopmentIssue', () => {
       code: FormWarningCode.VirtualizationDisabledForForm,
       message: 'prefix check message',
     });
-    expect(warn.mock.calls[0][0]).toContain(
+    expect(format(...warn.mock.calls[0])).toContain(
       `[@canard/schema-form] ${FormWarningCode.VirtualizationDisabledForForm}`,
     );
-    expect(warn.mock.calls[0][0]).toContain('prefix check message');
+    expect(format(...warn.mock.calls[0])).toContain('prefix check message');
   });
 
   it('details가 있으면 두 번째 인자로 함께 출력한다', () => {
@@ -30,7 +32,7 @@ describe('warnDevelopmentIssue', () => {
       message: 'details check',
       details,
     });
-    expect(warn.mock.calls[0][0]).toContain('details check');
+    expect(format(...warn.mock.calls[0])).toContain('details check');
     const call = warn.mock.calls[0];
     expect(call[call.length - 1]).toBe(details);
   });

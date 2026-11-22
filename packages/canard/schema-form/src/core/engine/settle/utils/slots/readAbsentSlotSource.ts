@@ -9,6 +9,7 @@ import { getChildDistribution } from '../input/getChildDistribution';
 import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
 import { interpretFieldNodeInput } from '../input/interpretFieldNodeInput';
 import { readInactiveSlotSource } from './readInactiveSlotSource';
+import { readSlotSourceTree } from './readSlotSourceTree';
 
 /**
  * Read the source of a templated array slot that has no node while its host departs.
@@ -31,9 +32,23 @@ export const readAbsentSlotSource = <Self extends FieldNodeRecord<Self>>(
   candidates: readonly BlueprintChildEntry[],
   context: SettlementContext<Self>,
 ): unknown => {
+  const retained = context.retainedSources?.get(host);
+  const array = retained?.array;
+  if (array && !context.exceededBudget) {
+    for (const entry of candidates) {
+      const overlay = retained?.slots?.get(entry)?.namedInput;
+      if (overlay) return readSlotSourceTree(entry.node, undefined, overlay);
+    }
+    if (index >= array.retiredFrom) return undefined;
+  }
   const name = '' + index;
   const path = appendSegment(host.path, name);
-  const distribution = getChildDistribution(host, name, context, path);
+  const distribution = getChildDistribution(
+    host,
+    candidates[0] ?? name,
+    context,
+    path,
+  );
   if (
     distribution &&
     !distribution.isAutomatic &&

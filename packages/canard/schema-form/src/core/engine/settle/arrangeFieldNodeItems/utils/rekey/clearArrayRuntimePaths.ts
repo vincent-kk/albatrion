@@ -1,9 +1,10 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { Fn } from '@aileron/declare';
+import type { Fn, Optional } from '@aileron/declare';
 
 import {
   appendSegment,
+  getChildPointer,
   readPointerSegment,
 } from '@/schema-form/helpers/jsonPointer';
 
@@ -12,6 +13,7 @@ import { indexFieldNodeWarning } from '../../../../record';
 import type { PathKeyedSet } from '../../../../utils/pathIndex/PathKeyedSet';
 import { updateCommittedRuleValue } from '../../../utils/commit/updateCommittedRuleValue';
 import { getRuntimePathStores } from '../../../utils/pathStores/getRuntimePathStores';
+import { rekeyValidationIssuePaths } from './rekeyValidationIssuePaths';
 
 /**
  * Collect the keys beneath a host's indexed positions that satisfy a slot filter.
@@ -39,13 +41,13 @@ const keysBeneath = (
  * @param runtime - Tree-owned stores and their persistent path indexes
  * @param hostPath - Array host whose every position perished
  * @param oldCount - Item count before the edit; positions at or beyond it are out of range
- * @returns Nothing; affected stores and memo entries are removed
+ * @returns Held validation-list owners whose issues beneath the host were dropped; undefined when no issue was held there
  */
 export const clearArrayRuntimePaths = <Self>(
   runtime: FieldNodeRuntime<Self>,
   hostPath: string,
   oldCount: number,
-): void => {
+): Optional<Set<unknown>> => {
   const stores = getRuntimePathStores(runtime);
   const inRange = (slot: string) =>
     Number(readPointerSegment(slot, -1)) < oldCount;
@@ -89,4 +91,7 @@ export const clearArrayRuntimePaths = <Self>(
       keys.add(key);
     for (const key of keys) store.delete(key);
   }
+  return rekeyValidationIssuePaths(runtime, (path) =>
+    getChildPointer(path, hostPath) === undefined ? path : undefined,
+  );
 };

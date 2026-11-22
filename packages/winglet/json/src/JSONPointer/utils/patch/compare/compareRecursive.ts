@@ -1,11 +1,13 @@
 import { isArray, isObject } from '@winglet/common-utils/filter';
 import { getKeys, hasOwnProperty } from '@winglet/common-utils/lib';
+import { getDataProperty } from '@winglet/common-utils/object';
 
 import { JSONPointer } from '@/json/JSONPointer/enum';
 import { escapeSegment } from '@/json/JSONPointer/utils/escape/escapeSegment';
 import type { JSONRoot } from '@/json/type';
 
 import { Operation, type Patch } from '../../patchModel';
+import { compareDeep } from './utils/compareDeep';
 import { processValue } from './utils/processValue';
 
 /**
@@ -41,7 +43,18 @@ export const compareRecursive = <
   path: string,
   strict: boolean,
   immutable: boolean,
+  depth = 0,
 ) => {
+  if (depth === 256)
+    return compareDeep(
+      source,
+      target,
+      patches,
+      path,
+      strict,
+      immutable,
+      serializable,
+    );
   // @ts-expect-error: when target and source are same reference, it should return immediately
   if (source === target || (source !== source && target !== target)) return;
 
@@ -62,6 +75,7 @@ export const compareRecursive = <
         path,
         strict,
         immutable,
+        depth + 1,
       );
       return;
     }
@@ -80,9 +94,6 @@ export const compareRecursive = <
     return;
   }
 
-  const sourceKeys = getKeys(source);
-  const targetKeys = getKeys(target);
-
   // Cache type checks for performance
   const sourceIsArray = isArray(source);
   const targetIsArray = isArray(target);
@@ -90,12 +101,22 @@ export const compareRecursive = <
   // Early type mismatch detection - handle at current level
   if (sourceIsArray !== targetIsArray) {
     if (strict) {
-      patches.push({ op: Operation.TEST, path, value: source });
+      patches.push({
+        op: Operation.TEST,
+        path,
+        value: processValue(source, immutable),
+      });
     }
-    patches.push({ op: Operation.REPLACE, path, value: target });
+    patches.push({
+      op: Operation.REPLACE,
+      path,
+      value: processValue(target, immutable),
+    });
     return; // Early exit - no further processing needed
   }
 
+  const sourceKeys = getKeys(source);
+  const targetKeys = getKeys(target);
   let hasRemoved = false;
   // Array removals are emitted last index first: applyPatch splices, so an ascending
   // order would make every later index point past the array it has already shrunk
@@ -104,7 +125,7 @@ export const compareRecursive = <
   // Process existing keys in source
   for (let i = 0, l = sourceKeys.length; i < l; i++) {
     const key = sourceKeys[i];
-    const sourceValue: unknown = source[key as keyof Source];
+    const sourceValue: unknown = getDataProperty(source, key);
 
     // Check if key exists in target (optimized)
     if (hasOwnProperty(target, key)) {
@@ -148,6 +169,7 @@ export const compareRecursive = <
           path + JSONPointer.Separator + escapeSegment(key),
           strict,
           immutable,
+          depth + 1,
         );
       } else {
         // Value type change - replace the value
