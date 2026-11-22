@@ -7,6 +7,7 @@ import { FieldNodeWriteKind } from '../../../types/value';
 import { isNamedPointerSegments } from '../../../utils/paths/isNamedPointerSegments';
 import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
 import type { WriteRange } from '../../types/writeRange';
+import { assertVirtualWriteShape } from './assertVirtualWriteShape';
 import { getWriteChild } from './getWriteChild';
 import { isMergeWrite } from './isMergeWrite';
 import { replaceAtPath } from './replaceAtPath';
@@ -57,6 +58,7 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
         source,
       );
     } else {
+      if (ranges) assertVirtualWriteShape(write.node, write.value);
       const values = isArray(write.value) ? write.value : undefined;
       const parentNames = names.slice(0, -1);
       const parent = write.node.parent;
