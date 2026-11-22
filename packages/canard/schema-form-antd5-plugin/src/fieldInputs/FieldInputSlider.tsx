@@ -44,6 +44,7 @@ const FieldInputSlider = ({
     typeof defaultValue === 'number' ? defaultValue : undefined;
   const storedDecimal =
     readOnly &&
+    jsonSchema.type.includes('number') &&
     jsonSchema.multipleOf === undefined &&
     initialValue !== undefined &&
     initialValue >= min &&
