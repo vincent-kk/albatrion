@@ -12,7 +12,7 @@ it.each([
     let reads = 0;
     const source = { a: { value: 2 } };
     const patch = {
-      get op() {
+      get op(): typeof Operation.MOVE {
         if (++reads > maxReads) throw new Error(`op read #${reads}`);
         return Operation.MOVE;
       },
