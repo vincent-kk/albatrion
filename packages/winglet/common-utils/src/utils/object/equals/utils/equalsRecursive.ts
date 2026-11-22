@@ -36,12 +36,21 @@ export const equalsRecursive = (
   )
     return false;
   const pending: unknown[] = [left, right];
-  const active = new WeakMap<object, Set<unknown>>();
+  const active = new WeakMap<object, object>();
+  let repeatedLeft: WeakMap<object, Set<object>> | undefined;
   while (pending.length) {
     right = pending.pop();
     left = pending.pop();
-    if (right === LEAVE_PAIR && left instanceof Set) {
-      left.delete(pending.pop());
+    if (right === LEAVE_PAIR) {
+      const source = left as object;
+      const counterpart = pending.pop() as object;
+      const counterparts = repeatedLeft?.get(source);
+      if (counterparts) {
+        counterparts.delete(counterpart);
+        if (counterparts.size) continue;
+        repeatedLeft!.delete(source);
+      }
+      active.delete(source);
       continue;
     }
     if (left === right || (left !== left && right !== right)) continue;
@@ -55,12 +64,19 @@ export const equalsRecursive = (
     const leftArray = Array.isArray(left) ? left : null;
     const rightArray = Array.isArray(right) ? right : null;
     if ((leftArray === null) !== (rightArray === null)) return false;
-    let rightValues = active.get(left);
-    if (!rightValues) active.set(left, (rightValues = new Set()));
-    if (rightValues.has(right))
+    const counterparts = repeatedLeft?.get(left);
+    const first = active.get(left);
+    if (counterparts ? counterparts.has(right) : first === right)
       throw new RangeError('equals input contains a repeated active comparison');
-    rightValues.add(right);
-    pending.push(right, rightValues, LEAVE_PAIR);
+    if (counterparts) counterparts.add(right);
+    else if (first) {
+      repeatedLeft ??= new WeakMap();
+      const promoted = new Set<object>();
+      promoted.add(first);
+      promoted.add(right);
+      repeatedLeft.set(left, promoted);
+    } else active.set(left, right);
+    pending.push(right, left, LEAVE_PAIR);
     if (leftArray && rightArray) {
       if (leftArray.length !== rightArray.length) return false;
       for (let i = leftArray.length - 1; i >= 0; i--) {
