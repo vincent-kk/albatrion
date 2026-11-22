@@ -42,6 +42,8 @@ export interface RunUnit {
   readonly sourceSnapshots?: ReadonlyMap<string, SourceSnapshot | null>;
   /** Scope-level ownership evidence retained only until execution finishes. */
   readonly installedAssets?: InstalledAssets;
+  /** Retired claims on earlier installations still held by another owner. */
+  readonly sharedRetirements?: readonly string[];
 }
 /** Complete execution result; views never derive its exit code. */
 export interface RunResult {
