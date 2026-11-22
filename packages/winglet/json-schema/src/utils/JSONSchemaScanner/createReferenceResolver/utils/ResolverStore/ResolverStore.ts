@@ -96,6 +96,8 @@ export class ResolverStore {
   private registered: Map<string, SchemaValue> | undefined;
   /** Whether every registered key is already spelled as resolution writes it; computed once, only by a known-address lookup. */
   private canonicalKeys: boolean | undefined;
+  /** Registered keys that normalization kept as written because their spelling is canonical. */
+  private canonical: Set<string> | undefined;
   /** Known addresses already checked against the registrations; the answer cannot change afterwards. */
   private settled = new Set<string>();
   /** Retrieval addresses already passed to indexing; an embedded identifier at the same address does not count. */
@@ -207,7 +209,10 @@ export class ResolverStore {
       // parser rejects it, falls back to it; either way the address stays the retrieval URI.
       if (
         typeof id === 'string' &&
-        !(id === retrieval && isCanonicalRetrievalURI(id))
+        !(
+          id === retrieval &&
+          (this.canonical?.has(id) || isCanonicalRetrievalURI(id))
+        )
       )
         uri = resolveURI(id, retrieval)?.split('#')[0] ?? retrieval;
     }
@@ -493,10 +498,9 @@ export class ResolverStore {
     const keys = new Map<string, string>();
     for (const key of Object.keys(source)) {
       // Parsing keeps a canonical key; an `xn--` label is parsed because runtimes differ on rejecting it.
-      const uri =
-        isCanonicalRetrievalURI(key) && !key.includes('xn--')
-          ? key
-          : resolveURI(key, '');
+      const canonical = isCanonicalRetrievalURI(key) && !key.includes('xn--');
+      if (canonical) (this.canonical ??= new Set()).add(key);
+      const uri = canonical ? key : resolveURI(key, '');
       if (uri === undefined || !isAbsoluteURI(uri)) continue;
       const previous = keys.get(uri);
       if (previous !== undefined && source[previous] !== source[key])
