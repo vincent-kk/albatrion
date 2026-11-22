@@ -1,3 +1,4 @@
+import { getSimpleRuleEnd } from '@/style-utils/utils/cssTokens/getSimpleRuleEnd';
 import { processCssSheet } from '@/style-utils/utils/cssTokens/processCssSheet/processCssSheet';
 
 import { type StyleManagerConfig, type StyleRoot } from './type';
@@ -173,8 +174,22 @@ export class StyleManager {
 
     // Pre-process the scoped CSS for this specific ID
     const shadow = this.__isShadowDOM__;
-    const preparedCSS = processCssSheet(css, !compressed, shadow ? 'shadow' : 'document');
-    const compressedCSS = shadow ? preparedCSS : this.__scopeCSS__(preparedCSS);
+    let compressedCSS: string;
+    if (
+      compressed &&
+      !shadow &&
+      typeof css === 'string' &&
+      getSimpleRuleEnd(css, 0) === css.length
+    ) {
+      compressedCSS = '.' + this.__scope__ + ' ' + css;
+    } else {
+      const preparedCSS = processCssSheet(
+        css,
+        !compressed,
+        shadow ? 'shadow' : 'document',
+      );
+      compressedCSS = shadow ? preparedCSS : this.__scopeCSS__(preparedCSS);
+    }
 
     // Only mark as dirty if processed CSS actually changed
     if (previousProcessedCSS !== compressedCSS) {
