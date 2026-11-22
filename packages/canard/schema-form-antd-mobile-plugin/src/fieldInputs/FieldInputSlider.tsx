@@ -14,10 +14,22 @@ import type {
 
 import { getSliderBounds } from './utils/slider/getSliderBounds';
 
+/** Array-level numeric extensions used when the item schema omits a limit. */
+type RangeSchema = ArraySchema<
+  Pick<
+    NumberSchema,
+    | 'minimum'
+    | 'maximum'
+    | 'exclusiveMinimum'
+    | 'exclusiveMaximum'
+    | 'multipleOf'
+  >
+>;
+
 interface FieldInputSliderProps
   extends FieldInputPropsWithSchema<
     number | [number, number],
-    NumberSchema | ArraySchema
+    NumberSchema | RangeSchema
   > {
   /** Labeled stops on the track, from `presentation.FieldInputProps.marks`. */
   marks?: SliderProps['marks'];
@@ -41,7 +53,8 @@ const FieldInputSlider = ({
   style,
 }: FieldInputSliderProps) => {
   const range = isArraySchema(jsonSchema);
-  const constraints = range ? jsonSchema.items : jsonSchema;
+  const items = range ? jsonSchema.items : undefined;
+  const constraints = items && isNumberSchema(items) ? items : undefined;
   const {
     min,
     max,
@@ -49,16 +62,27 @@ const FieldInputSlider = ({
     isEmpty,
     marks: allowedMarks,
   } = getSliderBounds(
-    constraints && isNumberSchema(constraints)
-      ? constraints
-      : { type: 'number' },
+    range
+      ? {
+          type: constraints?.type ?? 'number',
+          minimum: constraints?.minimum ?? jsonSchema.minimum,
+          maximum: constraints?.maximum ?? jsonSchema.maximum,
+          exclusiveMinimum:
+            constraints?.exclusiveMinimum ?? jsonSchema.exclusiveMinimum,
+          exclusiveMaximum:
+            constraints?.exclusiveMaximum ?? jsonSchema.exclusiveMaximum,
+          multipleOf: constraints?.multipleOf ?? jsonSchema.multipleOf,
+        }
+      : isNumberSchema(jsonSchema)
+        ? jsonSchema
+        : { type: 'number' },
     marks,
   );
-  const initialValue = range
+  const initialValue: SliderProps['defaultValue'] = range
     ? isArray(defaultValue) &&
       defaultValue.length === 2 &&
       defaultValue.every((value) => typeof value === 'number')
-      ? defaultValue
+      ? [defaultValue[0], defaultValue[1]]
       : undefined
     : typeof defaultValue === 'number'
       ? defaultValue
