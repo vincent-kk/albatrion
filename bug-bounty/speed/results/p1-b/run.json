@@ -1,0 +1,232 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p1-10-plain-multiple",
+   "pkg": "@winglet/style-utils",
+   "fn": "compressCss",
+   "input": "200 flat rules",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 512,
+   "stat": {
+    "A1": {
+     "min": 12976.562500000011,
+     "p10": 12998.535156250045,
+     "median": 13082.681640625093
+    },
+    "A2": {
+     "min": 12973.38867187492,
+     "p10": 12999.023437499924,
+     "median": 13077.148437500075
+    },
+    "B": {
+     "min": 10911.050781249987,
+     "p10": 10921.468749999996,
+     "median": 10939.859375000084
+    }
+   },
+   "min": 0.8408275135460549,
+   "p10": 0.8402076556102293,
+   "controlMin": 0.9997554184226299,
+   "controlP10": 1.000037564328904,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-12-clone-builtins",
+   "pkg": "@winglet/common-utils",
+   "fn": "clone",
+   "input": "array and built-in values",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 16384,
+   "stat": {
+    "A1": {
+     "min": 364.52740478515324,
+     "p10": 367.2230834960953,
+     "median": 379.53698730468915
+    },
+    "A2": {
+     "min": 364.3977050781233,
+     "p10": 366.82635498046926,
+     "median": 375.246704101561
+    },
+    "B": {
+     "min": 426.04064941406324,
+     "p10": 428.88641357421636,
+     "median": 436.1089477539076
+    }
+   },
+   "min": 1.168747929021043,
+   "p10": 1.1679179029026827,
+   "controlMin": 0.9996441976506365,
+   "controlP10": 0.9989196525669111,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-13-cloneLite-deep",
+   "pkg": "@winglet/common-utils",
+   "fn": "cloneLite",
+   "input": "300-deep child chain",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 512,
+   "stat": {
+    "A1": {
+     "min": 14255.453125000095,
+     "p10": 14358.072265625022,
+     "median": 14423.82812499987
+    },
+    "A2": {
+     "min": 14278.646484374935,
+     "p10": 14357.910156249876,
+     "median": 14429.76953125008
+    },
+    "B": {
+     "min": 18155.11132812486,
+     "p10": 18382.24414062495,
+     "median": 18579.26367187501
+    }
+   },
+   "min": 1.2735555417937472,
+   "p10": 1.280272434944786,
+   "controlMin": 1.001626981560773,
+   "controlP10": 0.9999887095306287,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-14-clone-deep",
+   "pkg": "@winglet/common-utils",
+   "fn": "clone",
+   "input": "300-deep next chain",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 128,
+   "stat": {
+    "A1": {
+     "min": 40834.63281249955,
+     "p10": 41265.95312499992,
+     "median": 42079.4296875
+    },
+    "A2": {
+     "min": 40954.1015624999,
+     "p10": 41334.31250000008,
+     "median": 42150.718749999425
+    },
+    "B": {
+     "min": 47932.61718750008,
+     "p10": 48623.37500000002,
+     "median": 49462.89062500009
+    }
+   },
+   "min": 1.1738226570468346,
+   "p10": 1.1782927890387875,
+   "controlMin": 1.0029256721995987,
+   "controlP10": 1.001656556309098,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-15-getValue-array",
+   "pkg": "@winglet/json",
+   "fn": "getValue",
+   "input": "array pointer",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 65536,
+   "stat": {
+    "A1": {
+     "min": 84.16621398925784,
+     "p10": 84.90371704101413,
+     "median": 85.41807556152348
+    },
+    "A2": {
+     "min": 84.68119812011717,
+     "p10": 84.96411132812541,
+     "median": 85.41998291015582
+    },
+    "B": {
+     "min": 91.07780456543007,
+     "p10": 91.66145324706991,
+     "median": 92.31376647949284
+    }
+   },
+   "min": 1.0821183494965612,
+   "p10": 1.0795929370535255,
+   "controlMin": 1.0061186562451896,
+   "controlP10": 1.0007113267736218,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-16-mount-plain",
+   "pkg": "@canard/schema-form",
+   "fn": "Form SSR",
+   "input": "object with string and number",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 226,
+   "stat": {
+    "A1": {
+     "min": 43386.96017698888,
+     "p10": 45257.3495575181,
+     "median": 55494.654867253565
+    },
+    "A2": {
+     "min": 43330.398230085666,
+     "p10": 45326.1327433597,
+     "median": 55904.48230088594
+    },
+    "B": {
+     "min": 47081.70353982279,
+     "p10": 50194.880530981754,
+     "median": 61199.092920363175
+    }
+   },
+   "min": 1.0851579218217156,
+   "p10": 1.1090989866118537,
+   "controlMin": 0.9986963376398696,
+   "controlP10": 1.0015198235538338,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-18-getValue-fragment-plain",
+   "pkg": "@winglet/json",
+   "fn": "getValue",
+   "input": "unencoded fragment pointer",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 65536,
+   "stat": {
+    "A1": {
+     "min": 84.0371398925779,
+     "p10": 85.61515808105415,
+     "median": 86.01632690429743
+    },
+    "A2": {
+     "min": 83.97038269042974,
+     "p10": 85.61961364746129,
+     "median": 86.03286743164105
+    },
+    "B": {
+     "min": 80.32226562500016,
+     "p10": 81.85896301269538,
+     "median": 82.36694335937537
+    }
+   },
+   "min": 0.9557948512725879,
+   "p10": 0.9561269855414777,
+   "controlMin": 0.9992056226302622,
+   "controlP10": 1.0000520417938483,
+   "verdict": "pass"
+  }
+ ]
+}

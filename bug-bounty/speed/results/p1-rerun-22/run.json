@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 48,
+ "rows": [
+  {
+   "row": "p1-22-stringSwitchMount",
+   "pkg": "@canard/schema-form-mui-plugin",
+   "fn": "string switch mount",
+   "input": "enum switch with aliases",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 21,
+   "stat": {
+    "A1": {
+     "min": 388291.7142857748,
+     "p10": 403178.6190476807,
+     "median": 424275.6666666364
+    },
+    "A2": {
+     "min": 389091.14285719884,
+     "p10": 403698.3809523918,
+     "median": 421309.5714286239
+    },
+    "B": {
+     "min": 395019.85714287,
+     "p10": 411335.38095235574,
+     "median": 433525.76190478605
+    }
+   },
+   "min": 1.0173275468148244,
+   "p10": 1.0202311370675894,
+   "controlMin": 1.0020588349995943,
+   "controlP10": 1.0012891603873706,
+   "verdict": "pass"
+  }
+ ]
+}

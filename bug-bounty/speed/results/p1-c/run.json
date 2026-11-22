@@ -1,0 +1,170 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p1-20-isEmpty-local-map",
+   "pkg": "@winglet/common-utils",
+   "fn": "isEmpty",
+   "input": "nonempty local map",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 4194304,
+   "stat": {
+    "A1": {
+     "min": 1.8587708473205533,
+     "p10": 1.8594365119934049,
+     "median": 1.8611948490142847
+    },
+    "A2": {
+     "min": 1.858780622482299,
+     "p10": 1.8594462871551505,
+     "median": 1.8612146377563543
+    },
+    "B": {
+     "min": 1.8587510585784837,
+     "p10": 1.8594663143157986,
+     "median": 1.8612146377563543
+    }
+   },
+   "min": 0.9999893538560183,
+   "p10": 1.000016027609548,
+   "controlMin": 1.0000052589385935,
+   "controlP10": 1.0000052570559321,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-21-engine-mount-plain",
+   "pkg": "@canard/schema-form",
+   "fn": "Form client mount",
+   "input": "object with a string and a number field",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 37,
+   "stat": {
+    "A1": {
+     "min": 249788.37837837188,
+     "p10": 267344.59459460696,
+     "median": 295345.7567567524
+    },
+    "A2": {
+     "min": 251087.83783781982,
+     "p10": 269619.4054053956,
+     "median": 299697.0810810691
+    },
+    "B": {
+     "min": 246096.86486486855,
+     "p10": 259030.40540540157,
+     "median": 293675.6756756753
+    }
+   },
+   "min": 0.9852214360913479,
+   "p10": 0.9689008517198084,
+   "controlMin": 1.0052022414648913,
+   "controlP10": 1.0085089089391843,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-22-stringSwitchMount",
+   "pkg": "@canard/schema-form-mui-plugin",
+   "fn": "string switch mount",
+   "input": "enum switch with aliases",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 24,
+   "stat": {
+    "A1": {
+     "min": 391916.7083333453,
+     "p10": 402216.91666670266,
+     "median": 423730.9583333323
+    },
+    "A2": {
+     "min": 387630.33333333395,
+     "p10": 403052.1666666118,
+     "median": 425463.5416666398
+    },
+    "B": {
+     "min": 395397.4999999825,
+     "p10": 408682.3749999553,
+     "median": 430553.9166666677
+    }
+   },
+   "min": 1.0088814576991103,
+   "p10": 1.016074555955612,
+   "controlMin": 0.9890630460277148,
+   "controlP10": 1.0020766157893883,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-23-patch-array-test-mutable",
+   "pkg": "@winglet/json",
+   "fn": "applyPatch",
+   "input": "mutable array test patch",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 131072,
+   "stat": {
+    "A1": {
+     "min": 53.10535430908198,
+     "p10": 54.036460876464524,
+     "median": 54.18109893798838
+    },
+    "A2": {
+     "min": 53.07324218749992,
+     "p10": 54.0173797607419,
+     "median": 54.25262451171867
+    },
+    "B": {
+     "min": 51.44087219238237,
+     "p10": 52.35067749023454,
+     "median": 52.58146667480503
+    }
+   },
+   "min": 0.968656981233718,
+   "p10": 0.9688028535013805,
+   "controlMin": 0.9993953129208938,
+   "controlP10": 0.9996468844292701,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-24-react-bridges",
+   "pkg": "@canard/schema-form",
+   "fn": "Form.Render SSR",
+   "input": "label and input bridge",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 389,
+   "stat": {
+    "A1": {
+     "min": 25811.573264780345,
+     "p10": 27833.32904884065,
+     "median": 37610.958868899055
+    },
+    "A2": {
+     "min": 25427.393316192738,
+     "p10": 28153.930591254866,
+     "median": 37656.8123393334
+    },
+    "B": {
+     "min": 26584.709511563753,
+     "p10": 28948.79948586027,
+     "median": 40062.76349614347
+    }
+   },
+   "min": 1.0299530849534981,
+   "p10": 1.0400767883375446,
+   "controlMin": 0.9851159809343425,
+   "controlP10": 1.011518620063437,
+   "verdict": "over"
+  }
+ ]
+}
