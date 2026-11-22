@@ -2,4 +2,4 @@
 "@slats/agents-assets-sync": patch
 ---
 
-Document that retired Claude rule files and whole skill namespaces require manual cleanup, while package-owned Codex and agents rule blocks can be removed with `--force`.
+Clarify orphan ownership. Review retired rule files or entire skill namespaces manually if there is no installation record for them. Package-owned Codex and agents rule blocks use their managed markers as ownership evidence.

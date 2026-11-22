@@ -1,4 +1,4 @@
-import type { Destination, OrphanScan } from '../agentTarget/index.js';
+import type { Destination, PlanningOrphanScan } from '../agentTarget/index.js';
 import type { Sha256Hex } from '../hash/index.js';
 import type { SourceSnapshot } from '../types/sourceSnapshot.js';
 
@@ -52,6 +52,6 @@ export interface PlanInput {
   readonly sourceSnapshots?: Map<string, SourceSnapshot | null>;
   /** From `resolveDestinations`. A path absent here is left untouched. */
   readonly destinations: ReadonlyMap<string, Destination>;
-  readonly orphanScans: readonly OrphanScan[];
+  readonly orphanScans: readonly PlanningOrphanScan[];
   readonly force: boolean;
 }
