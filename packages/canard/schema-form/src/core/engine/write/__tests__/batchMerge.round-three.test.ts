@@ -37,6 +37,25 @@ it('round-3: nested Merge and an unrelated write equal sequential writes', () =>
     root.find('/o')!.setValue({ a: { x: 9 } }, SetValueOption.Merge);
     root.find('/s')!.setValue('t');
   }));
+
+it('stores the first own getter result in a merged batch input', () => {
+  const root = create();
+  let reads = 0;
+  const input = {
+    get x() {
+      return ++reads;
+    },
+  };
+
+  root.batch(() => {
+    root.find('/o/a')!.setValue(input, SetValueOption.Merge);
+    root.find('/s')!.setValue('t');
+  });
+
+  expect(root.value).toEqual({ o: { a: { x: 1, y: 2 }, b: 1 }, s: 't' });
+  expect(reads).toBe(1);
+});
+
 it('round-3: two nested Merge writes equal sequential writes', () =>
   compare((root) => {
     root.find('/o')!.setValue({ a: { x: 9 } }, SetValueOption.Merge);
