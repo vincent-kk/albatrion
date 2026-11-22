@@ -76,7 +76,8 @@ export const equalsRecursive = (
       promoted.add(right);
       repeatedLeft.set(left, promoted);
     } else active.set(left, right);
-    pending.push(right, left, LEAVE_PAIR);
+    // With no pending sibling, this pair stays on the only remaining path.
+    if (pending.length) pending.push(right, left, LEAVE_PAIR);
     if (leftArray && rightArray) {
       if (leftArray.length !== rightArray.length) return false;
       for (let i = leftArray.length - 1; i >= 0; i--) {
