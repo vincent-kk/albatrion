@@ -80,7 +80,10 @@ export class StyleManager {
   private __scope__: string;
   private __root__: StyleRoot;
   private __isShadowDOM__: boolean;
-  /** Created by the first injector that resolves this manager; non-null only while it is registered. */
+  /**
+   * Created by the first injector that resolves this manager; `destroy` clears
+   * its manager when the manager leaves the registry.
+   */
   private __link__: ManagerLink | null = null;
 
   private constructor(
