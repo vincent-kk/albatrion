@@ -12,3 +12,5 @@ root.batch(() => {
 // now: /object holds its reset value, as without the batch
 // before: /object held { x: 'auto' }
 ```
+
+A virtual group with a constituent address outside the reset scope settles before the reset, even if that constituent is currently inactive. This preserves the effects of rules triggered by the group's active constituents.
