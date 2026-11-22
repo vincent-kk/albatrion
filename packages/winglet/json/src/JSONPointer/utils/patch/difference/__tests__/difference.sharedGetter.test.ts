@@ -34,6 +34,43 @@ it.each([0, 300])(
 );
 
 it.each([0, 300])(
+  'reads a shared target getter once when another member is added at depth %i',
+  (depth) => {
+    let reads = 0;
+    const source = { shared: 1 };
+    const target = {
+      get shared() {
+        return ++reads === 1 ? 2 : 9;
+      },
+      added: true,
+    };
+
+    expect(difference(nest(source, depth), nest(target, depth))).toEqual(
+      nest({ shared: 2, added: true }, depth),
+    );
+    expect(reads).toBe(1);
+  },
+);
+
+it.each([0, 300])(
+  'observes a getter update to a later source key at depth %i',
+  (depth) => {
+    const source = { first: 1, later: 0, removed: true };
+    const target = {
+      get first() {
+        source.later = 3;
+        return 2;
+      },
+      later: 3,
+    };
+
+    expect(difference(nest(source, depth), nest(target, depth))).toEqual(
+      nest({ first: 2, removed: null }, depth),
+    );
+  },
+);
+
+it.each([0, 300])(
   'observes a new target getter before checking its source membership at depth %i',
   (depth) => {
     const source: JSONObject = { removed: true };
