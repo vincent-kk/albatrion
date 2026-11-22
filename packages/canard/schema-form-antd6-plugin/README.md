@@ -173,7 +173,9 @@ URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid schem
 - **Applied when**: `type` is `"number"` or `"integer"` and `inputType` is `"slider"`
 - **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties; `presentation.FieldInputProps.lazy: false` publishes on every move instead of on release
 
-Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores the value on commit (key up, pointer up, or the library change-complete event); `false` stores on every move.
+With `presentation.FieldInputProps.lazy` omitted or set to `true`, keyboard selection stores when you release a movement key. Pointer selection stores on release. Set `lazy: false` to store each change during movement.
+
+For very small `multipleOf` values, pointer commits do not guarantee an exact schema grid point. With bounds of `1e-7` to `9e-7` and `multipleOf: 1e-7`, clicking the midpoint can store `9e-7` instead of `5e-7` in Ant Design 6.2.2. If your form needs an exact decimal grid, register a custom `FieldInput` through `fieldInputDefinitions`.
 
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 

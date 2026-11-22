@@ -86,6 +86,8 @@ registerPlugin(plugin);
 
 `presentation.FieldInputProps.lazy`를 생략하거나 `true`로 두면 확정 시점(포인터를 놓거나 트랙을 탭할 때)에 값을 저장하고, `false`이면 이동마다 저장합니다.
 
+`multipleOf`가 매우 작을 때는 포인터로 확정한 값이 정확한 스키마 격자점이라는 보장이 없습니다. Ant Design Mobile 5.43.0에서 범위를 `1e-7`부터 `9e-7`로, 간격을 `multipleOf: 1e-7`로 설정하고 트랙 가운데를 탭하면 `5e-7` 대신 `0`이 저장될 수 있습니다. 정확한 십진 격자가 필요하면 `fieldInputDefinitions`에 사용자 정의 `FieldInput`을 등록하세요.
+
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 
 - **역할**: 멀티라인 텍스트 입력을 위한 텍스트 영역

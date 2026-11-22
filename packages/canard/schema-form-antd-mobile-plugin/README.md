@@ -86,6 +86,8 @@ This plugin provides the following Ant Design Mobile components:
 
 Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores the value on commit (pointer release or track tap); `false` stores on every move.
 
+For very small `multipleOf` values, pointer commits do not guarantee an exact schema grid point. With bounds of `1e-7` to `9e-7` and `multipleOf: 1e-7`, tapping the midpoint can store `0` instead of `5e-7` in Ant Design Mobile 5.43.0. If your form needs an exact decimal grid, register a custom `FieldInput` through `fieldInputDefinitions`.
+
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 
 - **Role**: Text area for multiline text input
