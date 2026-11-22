@@ -12,7 +12,11 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-const mount = (limits: Partial<NumberSchema>, initial?: number, readOnly = false) => {
+const mount = (
+  limits: Partial<NumberSchema>,
+  initial?: number,
+  readOnly = false,
+) => {
   const ref = createRef<FormHandle>();
   const view = render(
     <Form
@@ -31,7 +35,14 @@ const mount = (limits: Partial<NumberSchema>, initial?: number, readOnly = false
   const slider = view.getByRole('slider');
   const track = view.container.querySelector<HTMLElement>('.adm-slider-track')!;
   vi.spyOn(track, 'getBoundingClientRect').mockReturnValue({
-    x: 0, y: 0, top: 0, bottom: 10, left: 0, right: 100, width: 100, height: 10,
+    x: 0,
+    y: 0,
+    top: 0,
+    bottom: 10,
+    left: 0,
+    right: 100,
+    width: 100,
+    height: 10,
     toJSON: () => ({}),
   });
   Object.defineProperty(track, 'offsetWidth', { value: 100 });
@@ -48,7 +59,12 @@ it('shows a stored decimal in a read-only slider with no required step', () => {
 });
 
 it('does not offer the excluded schema bound', () => {
-  const { ref, tap } = mount({ minimum: 0, exclusiveMinimum: 0, maximum: 10, multipleOf: 1 });
+  const { ref, tap } = mount({
+    minimum: 0,
+    exclusiveMinimum: 0,
+    maximum: 10,
+    multipleOf: 1,
+  });
   tap(0);
   expect(ref.current?.getValue()).toBe(1);
 });
@@ -60,7 +76,11 @@ it('offers the included maximum in an interval narrower than the default step', 
 });
 
 it('does not publish a pointer selection when the allowed grid is empty', () => {
-  const { ref, tap } = mount({ exclusiveMinimum: 0, exclusiveMaximum: 1, multipleOf: 1 });
+  const { ref, tap } = mount({
+    exclusiveMinimum: 0,
+    exclusiveMaximum: 1,
+    multipleOf: 1,
+  });
   tap(50);
   expect(ref.current?.getValue()).toBeUndefined();
 });
@@ -83,7 +103,9 @@ it('offers fractional marks within exclusive bounds and removes the excluded mar
         minimum: 0,
         exclusiveMaximum: 4.5,
         presentation: {
-          FieldInputProps: { marks: { 2: 'Middle', 4.25: 'Outer', 4.5: 'Excluded' } },
+          FieldInputProps: {
+            marks: { 2: 'Middle', 4.25: 'Outer', 4.5: 'Excluded' },
+          },
         },
       }}
       fieldInputDefinitions={[FieldInputSliderDefinition]}
@@ -91,7 +113,14 @@ it('offers fractional marks within exclusive bounds and removes the excluded mar
   );
   const track = view.container.querySelector<HTMLElement>('.adm-slider-track')!;
   vi.spyOn(track, 'getBoundingClientRect').mockReturnValue({
-    x: 0, y: 0, top: 0, bottom: 10, left: 0, right: 100, width: 100, height: 10,
+    x: 0,
+    y: 0,
+    top: 0,
+    bottom: 10,
+    left: 0,
+    right: 100,
+    width: 100,
+    height: 10,
     toJSON: () => ({}),
   });
   Object.defineProperty(track, 'offsetWidth', { value: 100 });

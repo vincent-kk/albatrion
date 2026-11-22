@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 
-import { Box, Slider, Typography } from '@mui/material';
+import { Box, Slider, Typography, sliderClasses } from '@mui/material';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -12,19 +12,10 @@ import type {
 
 import type { MuiContext } from '../type';
 import { getMuiFieldPresentation } from './utils/presentation/getMuiFieldPresentation';
-
-type SliderJSONSchema = NumberSchema & {
-  minimum?: number;
-  maximum?: number;
-  multipleOf?: number;
-};
+import { getSliderBounds } from './utils/slider/getSliderBounds';
 
 interface FieldInputSliderProps
-  extends FieldInputPropsWithSchema<
-      number | null,
-      SliderJSONSchema,
-      MuiContext
-    >,
+  extends FieldInputPropsWithSchema<number | null, NumberSchema, MuiContext>,
     MuiContext {
   label?: ReactNode;
   showMarks?: boolean;
@@ -34,7 +25,18 @@ interface FieldInputSliderProps
    * From `presentation.FieldInputProps.lazy`.
    */
   lazy?: boolean;
+  /** Accessible text for an empty field, supplied by presentation. */
+  unsetValueText?: string;
 }
+
+/** Native thumb styling for a slider with no stored value. */
+const UNSET_SLIDER_STYLE = {
+  mt: 1,
+  [`& .${sliderClasses.thumb}:not(.${sliderClasses.focusVisible}):not(.${sliderClasses.active})`]:
+    {
+      opacity: 0,
+    },
+};
 
 const FieldInputSlider = ({
   inputId,
@@ -53,6 +55,7 @@ const FieldInputSlider = ({
   showMarks = false,
   hideLabel,
   lazy,
+  unsetValueText = 'Not set',
   misfit,
   className,
   style,
@@ -65,11 +68,18 @@ const FieldInputSlider = ({
     context,
   );
 
-  const min = jsonSchema.minimum ?? 0;
-  const max = jsonSchema.maximum ?? 100;
-  const step = jsonSchema.multipleOf ?? 1;
+  const storedValue =
+    typeof defaultValue === 'number' ? defaultValue : undefined;
+  const { min, max, step, initialValue, isEmpty } = useMemo(
+    () => getSliderBounds(jsonSchema, storedValue),
+    [jsonSchema, storedValue],
+  );
+  const [isUnset, setIsUnset] = useState(typeof defaultValue !== 'number');
   const handleChange = useHandle((_, value: number | number[]) => {
-    if (typeof value === 'number') onChange(value);
+    if (!isEmpty && typeof value === 'number') {
+      setIsUnset(false);
+      onChange(value);
+    }
   });
   const captionId = label ? getInputId('legend') : undefined;
 
@@ -89,7 +99,7 @@ const FieldInputSlider = ({
       )}
       <Slider
         name={name}
-        defaultValue={typeof defaultValue === 'number' ? defaultValue : min}
+        defaultValue={initialValue}
         min={min}
         max={max}
         step={step}
@@ -97,7 +107,7 @@ const FieldInputSlider = ({
         {...{
           [lazy === false ? 'onChange' : 'onChangeCommitted']: handleChange,
         }}
-        disabled={disabled || readOnly}
+        disabled={disabled || readOnly || isEmpty}
         size={size}
         marks={showMarks}
         slotProps={{
@@ -105,10 +115,14 @@ const FieldInputSlider = ({
             id: inputId,
             'aria-labelledby': captionId ?? labelId,
             'aria-invalid': misfit || undefined,
+            ...(isUnset && {
+              'aria-valuenow': undefined,
+              'aria-valuetext': unsetValueText,
+            }),
           },
         }}
-        valueLabelDisplay="auto"
-        sx={{ mt: 1 }}
+        valueLabelDisplay={isUnset ? 'off' : 'auto'}
+        sx={isUnset ? UNSET_SLIDER_STYLE : { mt: 1 }}
       />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
         <Typography variant="caption" color="text.secondary">

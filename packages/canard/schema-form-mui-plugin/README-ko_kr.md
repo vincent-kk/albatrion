@@ -116,7 +116,8 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 
 - **적용 조건**: `type`이 `"number"` 또는 `"integer"`이고 `inputType`이 `"slider"`인 경우
 - **추가 사항**: `minimum`, `maximum`, `multipleOf` 스키마 속성 지원, 지연 업데이트 옵션(`presentation.FieldInputProps.lazy`), 마크 표시 옵션, 값 라벨 자동 표시
 
-`presentation.FieldInputProps.lazy`를 생략하거나 `true`로 두면 확정 시점(키 놓기, 포인터 놓기 또는 라이브러리 변경 완료 이벤트)에 값을 저장하고, `false`이면 이동마다 저장합니다.
+`presentation.FieldInputProps.lazy`를 생략하거나 `true`로 두면 확정 시점(이동 키를 누르거나 포인터를 놓을 때)에 값을 저장하고, `false`이면 이동마다 저장합니다.
+Slider는 스키마의 포함·배타 경계로 선택 가능한 정지점을 정합니다. 가능한 정지점이 없으면 비활성화합니다. 미설정 필드는 평소 thumb를 숨기고 `Not set`을 알립니다. `presentation.FieldInputProps.unsetValueText`로 안내를 현지화할 수 있습니다.
 
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 

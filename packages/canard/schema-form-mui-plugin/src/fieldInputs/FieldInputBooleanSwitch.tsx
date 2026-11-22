@@ -20,7 +20,7 @@ interface FieldInputBooleanSwitchProps
   extends FieldInputPropsWithSchema<
       boolean | null,
       BooleanSwitchJSONSchema,
-      MuiContext & { checkboxLabels?: Record<string, ReactNode> }
+      MuiContext
     >,
     MuiContext {
   label?: ReactNode;

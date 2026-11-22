@@ -84,7 +84,7 @@ registerPlugin(plugin);
   - 또는 `type`이 `"array"`이고 `items.type`이 `"number"` 또는 `"integer"`이며 `format`이 `"slider"`인 경우 (범위 슬라이더)
 - **추가 사항**: `presentation.FieldInputProps.lazy`(`false`이면 움직일 때마다 값 반영), `marks`(선택 가능한 값을 마크 위치로 제한). 범위 슬라이더의 숫자 제한과 `multipleOf`는 `items`에 둡니다. 슬라이더 형태는 스키마 타입이 정합니다. 배열 스키마는 숫자 두 개의 배열만 기록하는 범위 슬라이더를, 숫자 스키마는 숫자만 기록하는 단일 핸들 슬라이더를 받으며, `presentation.FieldInputProps.range`는 무시됩니다
 
-`presentation.FieldInputProps.lazy`를 생략하거나 `true`로 두면 확정 시점(키 놓기, 포인터 놓기 또는 라이브러리 변경 완료 이벤트)에 값을 저장하고, `false`이면 이동마다 저장합니다.
+`presentation.FieldInputProps.lazy`를 생략하거나 `true`로 두면 확정 시점(포인터를 놓거나 트랙을 탭할 때)에 값을 저장하고, `false`이면 이동마다 저장합니다.
 
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 
@@ -177,7 +177,7 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 ## Form 범위의 컨트롤 식별자
 
-요소 ID는 필드와 Form 사이에서 고유하며 공백을 포함하지 않습니다. ID의 표기는 불투명한 값으로 취급하고 문자열을 덧붙이거나 디코딩·파싱하지 않습니다. `path`는 폼 데이터에 사용하는 JSON Pointer입니다. 사용자 정의 입력은 기본 컨트롤에 `inputId`를 지정하고 추가 요소에는 `getInputId(key)`를 사용합니다. 키는 필수이며 표기가 같은 숫자 키와 문자열 키는 같은 요소를 가리킵니다. 선택지·범위 끝점·thumb·프로토콜 선택기·입력 자체 레이블은 서로 다른 키를 사용합니다. 필드 제목에는 `labelId`를 지정하고 `aria-labelledby`로 연결합니다. 사용자 정의 렌더러도 같은 필드의 `inputId`와 `labelId`를 받습니다. 단일 입력의 레이블은 `inputId`를 가리킵니다. `name`은 말단 이름을 유지하며 라디오의 native name은 `inputId`를 사용하여 필드와 Form을 구별합니다.
+요소 ID는 필드와 Form 사이에서 고유하며 공백을 포함하지 않습니다. ID의 표기는 불투명한 값으로 취급하고 문자열을 덧붙이거나 디코딩·파싱하지 않습니다. `path`는 폼 데이터에 사용하는 JSON Pointer입니다. 사용자 정의 입력은 기본 컨트롤에 `inputId`를 지정하고 추가 요소에는 `getInputId(key)`를 사용합니다. 키는 필수이며 표기가 같은 숫자 키와 문자열 키는 같은 요소를 가리킵니다. 선택지·범위 끝점·thumb·프로토콜 선택기·입력 자체 레이블은 서로 다른 키를 사용합니다. 필드 제목에는 `labelId`를 지정하고 `aria-labelledby`로 연결합니다. 사용자 정의 렌더러도 같은 필드의 `inputId`와 `labelId`를 받습니다. 단일 입력의 레이블은 `inputId`를 가리킵니다. `name`은 말단 이름을 유지하며 antd-mobile 라디오는 네이티브 `name`을 전달하지 않습니다. 네이티브 이름이 필요하면 사용자 정의 입력을 사용합니다.
 
 ```tsx
 const Input = ({ inputId, name }: FieldInputProps<string>) => (

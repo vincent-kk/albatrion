@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 
-import { sliderClasses } from '@mui/material';
+import { ThemeProvider, createTheme, sliderClasses } from '@mui/material';
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
@@ -17,6 +17,7 @@ const mount = (
   constraints: Partial<NumberSchema> = {},
   initial?: number,
   readOnly = false,
+  direction: 'ltr' | 'rtl' = 'ltr',
 ) => {
   const ref = createRef<FormHandle>();
   const view = render(
@@ -34,6 +35,13 @@ const mount = (
       }}
       fieldInputDefinitions={[FieldInputSliderDefinition]}
     />,
+    {
+      wrapper: ({ children }) => (
+        <ThemeProvider theme={createTheme({ direction })}>
+          {children}
+        </ThemeProvider>
+      ),
+    },
   );
   return {
     ref,
@@ -154,7 +162,10 @@ it('commits a native keyboard change once on keydown with the default lazy polic
 });
 
 it('starts keyboard movement from a legal stop when the stored value is off grid', () => {
-  const { ref, slider } = mount({ minimum: 0, maximum: 100, multipleOf: 5 }, 52);
+  const { ref, slider } = mount(
+    { minimum: 0, maximum: 100, multipleOf: 5 },
+    52,
+  );
   expect(ref.current?.getValue()).toBe(52);
   fireEvent.keyDown(slider(), { key: 'ArrowUp', keyCode: 38 });
   expect(ref.current?.getValue()).toBe(55);
@@ -164,4 +175,21 @@ it('offers the included maximum in an interval narrower than the default step', 
   const { ref, slider } = mount({ exclusiveMinimum: 0.1, maximum: 0.2 });
   fireEvent.keyDown(slider(), { key: 'End', keyCode: 35 });
   expect(ref.current?.getValue()).toBe(0.2);
+});
+
+it('honors the provider direction while using the configured shift step', () => {
+  const { ref, slider } = mount(
+    { minimum: 0, maximum: 120, multipleOf: 3 },
+    60,
+    false,
+    'rtl',
+  );
+  fireEvent.keyDown(slider(), {
+    key: 'ArrowRight',
+    keyCode: 39,
+    shiftKey: true,
+  });
+  expect(ref.current?.getValue()).toBe(30);
+  fireEvent.keyDown(slider(), { key: 'PageUp', keyCode: 33 });
+  expect(ref.current?.getValue()).toBe(60);
 });
