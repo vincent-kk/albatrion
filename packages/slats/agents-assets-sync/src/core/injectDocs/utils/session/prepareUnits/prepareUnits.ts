@@ -10,7 +10,11 @@ import {
   resolveAgentTarget,
   resolveDestinations,
 } from '../../../../agentTarget/index.js';
-import { buildPlan, collectFileWrites } from '../../../../buildPlan/index.js';
+import {
+  INSTALLED_HASH,
+  buildPlan,
+  collectFileWrites,
+} from '../../../../buildPlan/index.js';
 import {
   computeNamespacePrefixes,
   resolveHashManifest,
@@ -158,13 +162,24 @@ export async function prepareUnits(
           dstPaths: collectFileWrites(plan),
           resolved,
         });
-        const actions = await Promise.all(
+        const resolvedActions = await Promise.all(
           plan.actions.map(async (action) => {
             if (action.target.kind !== 'file') return action;
             const destinationKey = await resolveCanonicalPath(
               action.target.dstAbs,
               physicalPaths,
             );
+            const installedHash = action[INSTALLED_HASH];
+            if (
+              installedHash &&
+              (await installed?.hasVerifiedAlias(
+                target.name,
+                action.relPath,
+                destinationKey,
+                installedHash,
+              ))
+            )
+              return undefined;
             if (action.sourceHash) {
               const entry = await statFile(destinationKey);
               if (entry && entry.nlink > 1n)
@@ -173,6 +188,7 @@ export async function prepareUnits(
             return { ...action, destinationKey };
           }),
         );
+        const actions = resolvedActions.filter((action) => action !== undefined);
         const unit = {
           ...base,
           namespaceRoots,
