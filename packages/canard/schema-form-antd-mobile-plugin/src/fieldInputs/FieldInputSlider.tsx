@@ -12,6 +12,8 @@ import type {
   NumberSchema,
 } from '@canard/schema-form';
 
+import { getSliderBounds } from './utils/slider/getSliderBounds';
+
 interface FieldInputSliderProps
   extends FieldInputPropsWithSchema<
     number | [number, number],
@@ -40,8 +42,18 @@ const FieldInputSlider = ({
 }: FieldInputSliderProps) => {
   const range = isArraySchema(jsonSchema);
   const constraints = range ? jsonSchema.items : jsonSchema;
-  const bounds =
-    constraints && isNumberSchema(constraints) ? constraints : undefined;
+  const {
+    min,
+    max,
+    step,
+    isEmpty,
+    marks: allowedMarks,
+  } = getSliderBounds(
+    constraints && isNumberSchema(constraints)
+      ? constraints
+      : { type: 'number' },
+    marks,
+  );
   const initialValue = range
     ? isArray(defaultValue) &&
       defaultValue.length === 2 &&
@@ -53,6 +65,7 @@ const FieldInputSlider = ({
       : undefined;
   const handleChange = useCallback(
     (value: number | [number, number] | null) => {
+      if (isEmpty) return;
       if (value === null) onChange(undefined);
       else if (range) {
         if (
@@ -64,7 +77,7 @@ const FieldInputSlider = ({
       } else if (typeof value === 'number' && Number.isFinite(value))
         onChange(value);
     },
-    [onChange, range],
+    [onChange, range, isEmpty],
   );
 
   return (
@@ -77,15 +90,18 @@ const FieldInputSlider = ({
       aria-invalid={misfit || undefined}
     >
       <Slider
-        disabled={disabled || readOnly}
+        disabled={disabled || readOnly || isEmpty}
         aria-label={jsonSchema.title || name}
-        min={bounds?.minimum}
-        max={bounds?.maximum}
-        step={bounds?.multipleOf}
+        min={min}
+        max={max}
+        step={step}
         range={range}
-        marks={marks}
+        marks={allowedMarks}
         defaultValue={initialValue}
-        {...{ [lazy === false ? 'onChange' : 'onAfterChange']: handleChange }}
+        {...{
+          [lazy === false && min !== max ? 'onChange' : 'onAfterChange']:
+            handleChange,
+        }}
       />
     </div>
   );

@@ -84,7 +84,7 @@ This plugin provides the following Ant Design Mobile components:
   - or `type` is `"array"`, `items.type` is `"number"` or `"integer"`, and `format` is `"slider"` (range slider)
 - **Additional features**: `presentation.FieldInputProps.lazy` (`false` publishes on every move) and `marks` (restricts selectable values to the marked stops). For range sliders, put numeric bounds and `multipleOf` on `items`. The schema type decides the shape: an array schema gets a range slider that only writes a two-number array, and a number schema gets a single thumb that only writes a number. `presentation.FieldInputProps.range` is ignored
 
-Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores the value on commit (key up, pointer up, or the library change-complete event); `false` stores on every move.
+Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores the value on commit (pointer release or track tap); `false` stores on every move.
 
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 
@@ -177,7 +177,7 @@ This repository is licensed under the MIT License. Please refer to the [`LICENSE
 
 ## Scoped control identifiers
 
-Element ids are scoped to each Form and unique across Forms and contain no whitespace. Treat their spelling as opaque: never append to, decode, or parse an id. `path` remains the JSON Pointer used for form data. Custom inputs put `inputId` on their primary control and use `getInputId(key)` for additional elements; the key is required, and numeric and string keys with the same spelling identify the same element. Use a distinct key for each option, range endpoint, thumb, protocol selector, or input-owned label. A field title uses `labelId`, referenced through `aria-labelledby`. Custom renderers receive `inputId` and `labelId` for the same field. Single-control labels target `inputId`. `name` retains the leaf name; native radio names use `inputId` so fields and Forms remain independent.
+Element ids are scoped to each Form and unique across Forms and contain no whitespace. Treat their spelling as opaque: never append to, decode, or parse an id. `path` remains the JSON Pointer used for form data. Custom inputs put `inputId` on their primary control and use `getInputId(key)` for additional elements; the key is required, and numeric and string keys with the same spelling identify the same element. Use a distinct key for each option, range endpoint, thumb, protocol selector, or input-owned label. A field title uses `labelId`, referenced through `aria-labelledby`. Custom renderers receive `inputId` and `labelId` for the same field. Single-control labels target `inputId`. `name` retains the leaf name; Ant Design Mobile radios do not forward a native `name`. Use a custom input when native radio grouping by name is required.
 
 ```tsx
 const Input = ({ inputId, name }: FieldInputProps<string>) => (

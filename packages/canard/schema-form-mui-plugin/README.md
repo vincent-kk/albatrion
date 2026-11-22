@@ -116,7 +116,8 @@ URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid schem
 - **Applied when**: `type` is `"number"` or `"integer"` and `inputType` is `"slider"`
 - **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties, lazy update option (`presentation.FieldInputProps.lazy`), mark display option, automatic value label display
 
-Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores the value on commit (key up, pointer up, or the library change-complete event); `false` stores on every move.
+Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores the value on commit (keyboard keydown or pointer release); `false` stores on every move.
+The slider uses inclusive and exclusive schema limits to declare legal stops. If the interval contains no supported stop, the slider is disabled. An unset field announces `Not set` without a visible resting thumb. Set `presentation.FieldInputProps.unsetValueText` to localize that announcement.
 
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 

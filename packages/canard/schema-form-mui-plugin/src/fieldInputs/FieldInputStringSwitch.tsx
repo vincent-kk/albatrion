@@ -25,7 +25,7 @@ interface FieldInputStringSwitchProps
   extends FieldInputPropsWithSchema<
       string | null,
       StringSwitchJSONSchema,
-      MuiContext & { switchLabels?: Record<string, ReactNode> }
+      MuiContext
     >,
     MuiContext {
   label?: ReactNode;
