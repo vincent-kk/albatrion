@@ -31,7 +31,7 @@ export function replicateDeep(
   depth: number,
 ): unknown {
   let result: unknown;
-  const active = Number.isFinite(limit) ? null : new WeakSet<object>();
+  const active = Number.isFinite(limit) ? null : new Set<object>();
   const pending: (CloneFrame | (() => void))[] = [
     {
       read: () => value,
