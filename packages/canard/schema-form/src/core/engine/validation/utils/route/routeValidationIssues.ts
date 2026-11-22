@@ -37,6 +37,12 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
   if (!first) return new Set();
   const root = first.rootNode;
   const runtime = root.runtime;
+  if (
+    issues.length === 0 &&
+    runtime.routedValidationErrors === issues &&
+    !runtime.validationErrors?.size
+  )
+    return new Set();
   const before: ValidationErrors = runtime.validationErrors ?? new Map();
   const next = new Map<unknown, readonly unknown[]>(before);
   const isActive = createUnionBranchActivity(root);
