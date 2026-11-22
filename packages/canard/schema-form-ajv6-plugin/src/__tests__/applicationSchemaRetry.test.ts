@@ -69,4 +69,38 @@ describe.each([
     await expect(first(data)).resolves.toBeNull();
     expect(firstGuard(data)).toBe(true);
   });
+
+  it('keeps a registration key and a replaced id bound to different schemas', async () => {
+    const ajv = instance();
+    const adapter = adapterFor(ajv);
+    const id = 'https://app.invalid/replaced';
+    const alias = 'https://app.invalid/alias';
+    ajv.addSchema({ $id: id, type: 'number' }, alias);
+    ajv.removeSchema(id);
+    ajv.addSchema({ $id: id, type: 'string' });
+
+    expect(ajv.getSchema(alias)?.(4)).toBe(true);
+    expect(ajv.getSchema(id)?.('x')).toBe(true);
+    await expect(adapter.compile({ $ref: alias })(4)).resolves.toBeNull();
+    await expect(adapter.compile({ $ref: id })('x')).resolves.toBeNull();
+  });
+
+  it('leaves a removed embedded id absent from later compiles', async () => {
+    const ajv = instance();
+    const adapter = adapterFor(ajv);
+    const embedded = 'https://app.invalid/embedded';
+    ajv.addSchema({
+      $id: 'https://app.invalid/document',
+      definitions: { embedded: { $id: embedded, type: 'string', minLength: 2 } },
+    });
+
+    expect(ajv.getSchema(embedded)?.('xy')).toBe(true);
+    const compiled = adapter.compile({ $ref: embedded });
+    await expect(compiled('x')).resolves.toMatchObject([{ keyword: 'minLength' }]);
+
+    ajv.removeSchema(embedded);
+    expect(ajv.getSchema(embedded)).toBeUndefined();
+    expect(() => adapter.compile({ $ref: embedded })).toThrow(embedded);
+    await expect(compiled('x')).resolves.toMatchObject([{ keyword: 'minLength' }]);
+  });
 });
