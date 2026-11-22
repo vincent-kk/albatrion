@@ -8,7 +8,7 @@ import { JSONPointer } from '@/json/JSONPointer/enum';
 import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 import type { JSONRoot } from '@/json/type';
 
-import type { MovePatch } from '../../../patchModel';
+import type { CopyPatch, MovePatch } from '../../../patchModel';
 import { decodePatchFragment } from './decodePatchFragment';
 import { JSONPatchError } from './error';
 import { getArrayIndex } from './getArrayIndex';
@@ -28,7 +28,7 @@ import { resolveFromParent } from './resolveFromParent';
  * @param source - Root document of the patch application; an owned clone in immutable mode
  * @param from - JSON Pointer naming the value to move; `''` or `#` names the root, which is
  *               returned without removal because the following add replaces the whole document
- * @param patch - The MOVE operation, attached to error details
+ * @param patch - The original transfer attached to error details after the caller selects MOVE
  * @param patchIndex - Position of the operation in the patch list, attached to error details
  * @param cloned - Containers already owned by the immutable result, or null in mutating mode
  * @param path - Already decoded target pointer checked before removing the source
@@ -42,7 +42,7 @@ import { resolveFromParent } from './resolveFromParent';
 export const removeMoveSource = (
   source: JSONRoot,
   from: string,
-  patch: MovePatch,
+  patch: CopyPatch | MovePatch,
   patchIndex: number,
   cloned: WeakSet<object> | null,
   path: string,
