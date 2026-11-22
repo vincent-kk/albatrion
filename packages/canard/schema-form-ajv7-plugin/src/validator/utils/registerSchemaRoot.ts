@@ -2,6 +2,7 @@ import type { JSONSchema } from '@canard/schema-form';
 import type { AjvInstance as Ajv } from '../types/AjvInstance';
 
 import { assertBindableInstance } from './assertBindableInstance';
+import { canCompileUnmarkedRoot } from './canCompileUnmarkedRoot';
 import { cloneInstance } from './cloneInstance';
 import { readApplicationProfile } from './readApplicationProfile';
 
@@ -11,6 +12,7 @@ type ProfileImage = readonly (readonly [string, unknown][])[];
 /** Holds only the latest native configuration for an application. */
 interface ApplicationProfile {
   readonly image: ProfileImage;
+  readonly canCompileUnmarked: boolean;
   validation?: { readonly compiler: Ajv; readonly refs: Ajv['refs']; readonly schemas: Ajv['schemas']; count: number; };
 }
 
@@ -79,7 +81,7 @@ export function registerSchemaRoot<T>(
   let profile = profiles.get(instance);
   if (!profile || !isCurrent(tables, profile.image)) {
     assertBindableInstance(instance);
-    profile = { image: tables.map(Object.entries) };
+    profile = { image: tables.map(Object.entries), canCompileUnmarked: canCompileUnmarkedRoot(instance) };
     profiles.set(instance, profile);
   }
   const snapshot = JSON.stringify(root);
@@ -119,6 +121,7 @@ export function registerSchemaRoot<T>(
   const { compiler } = pool;
   const copy: JSONSchema = JSON.parse(snapshot);
   const id = copy.$id;
+  if (!profile.canCompileUnmarked || snapshot.includes('"$async"')) copy.$async = true;
   const key = `urn:canard:schema-form:ajv7:${++nextRootKey}`;
   let validate: NativeValidator | undefined;
   try {
