@@ -48,6 +48,9 @@ if (existsSync(args.out)) throw new Error(`${args.out} already exists`);
 /**
  * Machine-wide turn-taking: two comparisons at once distort each other, so each
  * run takes a ticket, waits until it is the oldest live ticket, then holds the lock.
+ * No signal handlers: the waits and slot runs are synchronous, so a handler would
+ * never run and would only swallow the signal; a killed run's ticket and lock are
+ * recognized as stale by its process id.
  */
 const QUEUE = "/tmp/benchmarks-compare.queue";
 const LOCK = "/tmp/benchmarks-compare.lock";
@@ -68,8 +71,6 @@ process.on("exit", () => {
   if (existsSync(LOCK) && readFileSync(LOCK, "utf8") === String(process.pid))
     rmSync(LOCK);
 });
-for (const signal of ["SIGINT", "SIGTERM"])
-  process.on(signal, () => process.exit(1));
 for (;;) {
   const live = readdirSync(QUEUE)
     .sort()
