@@ -11,7 +11,6 @@ const FieldInputBoolean = ({
   inputId,
   labelId,
   disabled,
-  readOnly,
   value,
   onChange,
   misfit,
@@ -29,7 +28,7 @@ const FieldInputBoolean = ({
       <Checkbox
         aria-labelledby={labelId}
         id={inputId}
-        disabled={disabled || readOnly}
+        disabled={disabled}
         indeterminate={value !== undefined && typeof value !== 'boolean'}
         checked={value === true}
         onChange={handleChange}
