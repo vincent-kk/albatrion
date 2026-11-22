@@ -1,6 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import { JSON_POINTER_PATH_REGEX } from '../regex';
+import {
+  JSON_POINTER_PATH_REGEX,
+  JSON_POINTER_PATH_STICKY_REGEX,
+} from '../regex';
 import { replaceExpressionPaths } from '../replaceExpressionPaths';
 
 /**
@@ -56,6 +59,16 @@ describe('replaceExpressionPaths on code-only expressions', () => {
     for (const expression of CODE_ONLY_EXPRESSIONS) {
       const expected = expression.replace(JSON_POINTER_PATH_REGEX, mark);
       expect(replaceExpressionPaths(expression, mark)).toBe(expected);
+    }
+  });
+
+  it('reuses the path match when a slash token could open a regexp', () => {
+    const matchPath = vi.spyOn(JSON_POINTER_PATH_STICKY_REGEX, 'exec');
+    try {
+      expect(replaceExpressionPaths('/a/g', mark)).toBe('</a/g>');
+      expect(matchPath).toHaveBeenCalledTimes(1);
+    } finally {
+      matchPath.mockRestore();
     }
   });
 });
