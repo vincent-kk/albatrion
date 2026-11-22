@@ -1,18 +1,27 @@
 // Invoked by the bench:speed package script; each slot runs in a separate Node process.
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync, unlinkSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import { arch, cpus, platform, release } from 'node:os';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createOutput } from './createOutput';
-import { provenance } from './provenance';
 import { ratios as calculateRatios } from './ratios';
 import { resolveRef } from './resolveRef';
 import { rows } from './rows';
+import { runSafely } from './runSafely';
 import { slotOrder } from './slotOrder';
-import { nearestRank, verdict } from './statistics';
+import { nearestRank } from './statistics';
+import { verdict } from './verdict';
+
+type Slot = { round: number; slot: string; data: ReturnType<typeof execute> };
+type ResultRow = (typeof rows)[number] & {
+  slots: Slot[];
+  verdict: 'pass' | 'over' | 'void';
+  voidReason?: string;
+  ratios?: number[];
+  control?: number[];
+};
 
 const args = process.argv.slice(2);
 const values = new Map<string, string[]>();
@@ -27,7 +36,6 @@ for (let i = 0; i < args.length; i += 2) {
       '--candidate-dir',
       '--candidate-ref',
       '--out',
-      '--rounds',
       '--row',
     ].includes(key)
   )
@@ -44,13 +52,6 @@ const candidate = resolve(required('--candidate-dir'));
 const baselineRef = await resolveRef(baseline, required('--baseline-ref'));
 const candidateRef = await resolveRef(candidate, required('--candidate-ref'));
 const out = resolve(required('--out'));
-const rounds = Number(values.get('--rounds')?.[0] ?? 20);
-if (
-  !Number.isInteger(rounds) ||
-  rounds < 1 ||
-  (values.get('--rounds')?.length ?? 0) > 1
-)
-  throw new Error('Invalid rounds');
 const selected = values.get('--row') ?? rows.map((row) => row.id);
 if (selected.some((id) => !rows.some((row) => row.id === id)))
   throw new Error('Unknown row');
@@ -61,7 +62,7 @@ const run: {
   candidateRef: string;
   harness: unknown;
   environment: unknown;
-  rows: any[];
+  rows: ResultRow[];
   error?: string;
 } = {
   status: 'running',
@@ -108,7 +109,7 @@ const report = () =>
     '|---|---|---|---|---|---|---|---|',
     ...run.rows.map(
       (item) =>
-        `| ${item.packageName} | ${item.operation} | ${item.input} | — | ${item.ratios?.[0].toFixed(4) ?? '—'} | ${item.ratios?.[1].toFixed(4) ?? '—'} | ${item.control?.map((n: number) => n.toFixed(4)).join(' / ') ?? '—'} | ${item.verdict} |`,
+        `| ${item.packageName} | ${item.operation} | ${item.input} | — | ${item.ratios?.[0].toFixed(4) ?? '—'} | ${item.ratios?.[1].toFixed(4) ?? '—'} | ${item.control?.map((n: number) => n.toFixed(4)).join(' / ') ?? '—'} | ${item.verdict}${item.voidReason ? `: ${item.voidReason.replace(/\|/g, '\\|').replace(/\n/g, ' ')}` : ''} |`,
     ),
   ].join('\n');
 const save = async () => {
@@ -118,22 +119,16 @@ const save = async () => {
   );
   await writeFile(resolve(out, 'report.md'), `${report()}\n`);
 };
-const execute = (root: string, id: string, count: number, trace = false) => {
-  const loader = trace
-    ? [
-        '--import',
-        fileURLToPath(new URL('./register-provenance.mjs', import.meta.url)),
-      ]
-    : [];
-  const traceFile = resolve(out, 'provenance.tmp');
+const execute = (root: string, id: string, count: number) => {
   const child = spawnSync(
     process.execPath,
     [
       '--expose-gc',
       '--experimental-import-meta-resolve',
       '--import',
+      fileURLToPath(new URL('./capture-provenance.mjs', import.meta.url)),
+      '--import',
       'tsx',
-      ...loader,
       fileURLToPath(new URL('./slot.ts', import.meta.url)),
       root,
       id,
@@ -144,14 +139,10 @@ const execute = (root: string, id: string, count: number, trace = false) => {
       env: {
         ...process.env,
         NODE_ENV: 'production',
-        SPEED_TRACE_FILE: traceFile,
       },
       maxBuffer: 16 * 1024 * 1024,
     },
   );
-  const traceOutput =
-    trace && existsSync(traceFile) ? readFileSync(traceFile, 'utf8') : '';
-  if (trace && existsSync(traceFile)) unlinkSync(traceFile);
   if (child.status !== 0)
     throw new Error(child.stderr || `Slot exited ${child.status}`);
   const data = JSON.parse(child.stdout) as {
@@ -160,105 +151,127 @@ const execute = (root: string, id: string, count: number, trace = false) => {
     samples: number[];
     observed: unknown;
     overhead: number;
-    commonjs: string[];
+    provenance: {
+      urls: string[];
+      packages: { name: string; version: string; path: string }[];
+      leaks: string[];
+    };
   };
-  return {
-    ...data,
-    trace: trace
-      ? provenance(traceOutput, data.arm.path, root, data.commonjs)
-      : undefined,
-  };
+  return data;
 };
-try {
-  for (const row of rows.filter((item) => selected.includes(item.id))) {
-    const slots: {
-      round: number;
-      slot: string;
-      data: ReturnType<typeof execute>;
-    }[] = [];
-    const resultRow: any = {
-      ...row,
-      slots,
-      verdict: 'void',
-      voidReason: 'Run incomplete',
-    };
-    run.rows.push(resultRow);
-    const replay = [
-      execute(baseline, row.id, 1, true),
-      execute(candidate, row.id, 1, true),
-    ];
-    const [left, right] = replay.map((item) => item.trace!);
-    const mismatch = Object.keys(left.packages).filter(
-      (name) =>
-        name !== row.packageName &&
-        right.packages[name] &&
-        left.packages[name].version !== right.packages[name].version,
-    );
-    const provenanceValid =
-      left.complete &&
-      right.complete &&
-      !left.leaks.length &&
-      !right.leaks.length &&
-      !mismatch.length;
-    const calibration = [
-      execute(baseline, row.id, 0),
-      execute(candidate, row.id, 0),
-    ];
-    const count = Math.max(...calibration.map((item) => item.count));
-    for (let round = 0; round < rounds; round++) {
-      for (const slot of slotOrder(round))
-        slots.push({
-          round,
-          slot,
-          data: execute(slot === 'B' ? candidate : baseline, row.id, count),
-        });
-    }
-    const summary = (slot: string) => {
-      const samples = slots
-        .filter((item) => item.slot === slot)
-        .flatMap((item) => item.data.samples);
-      return {
-        min: Math.min(...samples),
-        p10: nearestRank(samples, 0.1),
-        median: nearestRank(samples, 0.5),
+for (const row of rows.filter((item) => selected.includes(item.id))) {
+  const slots: Slot[] = [];
+  const resultRow: ResultRow = {
+    ...row,
+    slots,
+    verdict: 'void',
+    voidReason: 'Run incomplete',
+  };
+  run.rows.push(resultRow);
+  let phase = 'replay slot probe arm baseline';
+  await runSafely(
+    resultRow,
+    () => phase,
+    async () => {
+      const replay = [
+        execute(baseline, row.id, 1),
+        ((phase = 'replay slot probe arm candidate'),
+        execute(candidate, row.id, 1)),
+      ];
+      const [left, right] = replay.map((item) => item.provenance);
+      const thirdParty = (value: typeof left) =>
+        value.packages
+          .filter(
+            (item) =>
+              !/^@(canard|winglet|lerx|slats)\//.test(item.name) &&
+              !((row as import('./rows').SpeedRow).allowedVariants ?? []).some(
+                (variant) =>
+                  variant.name === item.name &&
+                  variant.version === item.version,
+              ),
+          )
+          .map((item) => JSON.stringify(item));
+      const mismatch = thirdParty(left)
+        .filter((item) => !thirdParty(right).includes(item))
+        .concat(
+          thirdParty(right).filter((item) => !thirdParty(left).includes(item)),
+        );
+      const provenanceValid =
+        !left.leaks.length && !right.leaks.length && !mismatch.length;
+      phase = 'calibration slot pilot arm baseline';
+      const calibration = [
+        execute(baseline, row.id, 0),
+        ((phase = 'calibration slot pilot arm candidate'),
+        execute(candidate, row.id, 0)),
+      ];
+      const count = Math.max(...calibration.map((item) => item.count));
+      for (let round = 0; round < (row.rounds ?? 20); round++) {
+        for (const slot of slotOrder(round)) {
+          phase = `round ${round + 1} slot ${slot} arm ${slot === 'B' ? 'candidate' : 'baseline'}`;
+          slots.push({
+            round,
+            slot,
+            data: execute(slot === 'B' ? candidate : baseline, row.id, count),
+          });
+        }
+      }
+      const summary = (slot: string) => {
+        const samples = slots
+          .filter((item) => item.slot === slot)
+          .flatMap((item) => item.data.samples);
+        return {
+          min: Math.min(...samples),
+          p10: nearestRank(samples, 0.1),
+          median: nearestRank(samples, 0.5),
+        };
       };
-    };
-    const a1 = summary('A1');
-    const a2 = summary('A2');
-    const b = summary('B');
-    const minRatio = calculateRatios(a1.min, a2.min, b.min);
-    const p10Ratio = calculateRatios(a1.p10, a2.p10, b.p10);
-    const ratios = [minRatio.candidate, p10Ratio.candidate];
-    const control = [minRatio.control, p10Ratio.control];
-    const overheadValid = slots.every(
-      (item) => item.data.overhead < Math.min(...item.data.samples) * 0.9,
-    );
-    const result =
-      provenanceValid && overheadValid ? verdict(ratios, control) : 'void';
-    Object.assign(resultRow, {
-      count,
-      replay,
-      mismatch,
-      calibration,
-      summary: { A1: a1, A2: a2, B: b },
-      ratios,
-      control,
-      verdict: result,
-      voidReason:
-        result !== 'void'
-          ? undefined
-          : !provenanceValid
-            ? 'Dependency provenance incomplete, mismatched, or outside its tree'
-            : !overheadValid
-              ? 'Driver overhead dominates'
-              : 'Control ratios outside the valid range',
-    });
-    await save();
-  }
-  run.status = 'complete';
-} catch (error) {
-  run.status = 'failed';
-  run.error = String(error);
-  process.exitCode = 1;
+      const a1 = summary('A1');
+      const a2 = summary('A2');
+      const b = summary('B');
+      const minRatio = calculateRatios(a1.min, a2.min, b.min);
+      const p10Ratio = calculateRatios(a1.p10, a2.p10, b.p10);
+      const ratios = [minRatio.candidate, p10Ratio.candidate];
+      const control = [minRatio.control, p10Ratio.control];
+      const overheadValid = slots.every(
+        (item) => item.data.overhead < Math.min(...item.data.samples) * 0.9,
+      );
+      const invalidSlots = slots.filter((item) => {
+        const actual = item.data.provenance;
+        const expected = item.slot === 'B' ? right : left;
+        const a = thirdParty(actual);
+        const b = thirdParty(expected);
+        return !(
+          actual.leaks.length === 0 &&
+          a.length === b.length &&
+          a.every((entry) => b.includes(entry))
+        );
+      });
+      const slotProvenanceValid = invalidSlots.length === 0;
+      const result =
+        provenanceValid && overheadValid && slotProvenanceValid
+          ? verdict(ratios, control)
+          : 'void';
+      Object.assign(resultRow, {
+        count,
+        replay,
+        mismatch,
+        calibration,
+        summary: { A1: a1, A2: a2, B: b },
+        ratios,
+        control,
+        verdict: result,
+        voidReason:
+          result !== 'void'
+            ? undefined
+            : !provenanceValid || !slotProvenanceValid
+              ? `Dependency provenance violation: ${[...left.leaks, ...right.leaks, ...mismatch, ...invalidSlots.map((item) => `round ${item.round + 1} slot ${item.slot}: ${item.data.provenance.leaks.join(', ') || 'dependency set changed'}`)].join('; ')}`
+              : !overheadValid
+                ? 'Driver overhead dominates'
+                : 'Control ratios outside the valid range',
+      });
+    },
+  );
+  await save();
 }
+run.status = 'complete';
 await save();
