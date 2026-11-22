@@ -1,4 +1,4 @@
-import { cleanup, render } from '@testing-library/react';
+import { cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import { Form, type JSONSchema } from '@canard/schema-form';
@@ -92,3 +92,32 @@ it.each<[string, JSONSchema, string]>([
     }
   },
 );
+
+it.each<[JSONSchema, string]>([
+  [{ type: 'string', format: 'date' }, '2024-01-02'],
+  [{ type: 'string', format: 'time' }, '12:30:00Z'],
+  [{ type: 'string', format: 'month' }, '2024-01'],
+])('forwards a field label click to an enabled picker editor', (field, value) => {
+  const form = (disabled: boolean) => (
+    <Form
+      jsonSchema={{ type: 'object', properties: { field } }}
+      defaultValue={{ field: value }}
+      fieldInputDefinitions={plugin.fieldInputDefinitions}
+      LabelRenderer={plugin.LabelRenderer}
+      disabled={disabled}
+    >
+      <Form.Label path="/field">Field title</Form.Label>
+      <Form.Input path="/field" />
+    </Form>
+  );
+  const view = render(form(true));
+  const label = () => view.container.querySelector<HTMLLabelElement>('label[for]')!;
+  const target = () => document.getElementById(label().htmlFor)!;
+  expect(target()).toBeTruthy();
+  fireEvent.click(label());
+  expect(target().contains(document.activeElement)).toBe(false);
+
+  view.rerender(form(false));
+  fireEvent.click(label());
+  expect(target().contains(document.activeElement)).toBe(true);
+});
