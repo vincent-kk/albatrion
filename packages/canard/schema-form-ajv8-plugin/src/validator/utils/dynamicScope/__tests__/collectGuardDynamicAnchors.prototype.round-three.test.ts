@@ -11,7 +11,7 @@ describe.each([
   'valueOf',
   '__proto__',
 ])('dynamic anchor own binding: %s', (name) => {
-  it('leaves declared prototype names to native resolution', () => {
+  it('binds declared prototype names as own entries', () => {
     const observe = (anchor: string) => {
       const root = {
         $defs: { box: { $dynamicAnchor: anchor, type: 'number', minimum: 2 } },
@@ -33,7 +33,7 @@ describe.each([
     };
     const ordinary = observe('ordinary');
     expect(ordinary).toEqual({ own: true, verdicts: [false, true] });
-    expect(observe(name)).toEqual({ own: false, verdicts: [] });
+    expect(observe(name)).toEqual(ordinary);
   });
 
   it('refuses an undeclared prototype name like an ordinary anchor', () => {

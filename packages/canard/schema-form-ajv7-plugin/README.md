@@ -129,7 +129,7 @@ The guard follows AJV, not the specification, in these cases:
 - Bookending: AJV does not check that the initial target of `$dynamicRef` is a `$dynamicAnchor` fragment; it branches on the root's anchor flags and the passed table.
 - When the root's flag for an anchor name is not set at compile time, AJV compiles `$dynamicRef` or `$recursiveRef` as a call to the enclosing compiled function (`it.validateName`) without consulting the anchor table (`dynamicRef.js:32-38`); the guard keeps that behaviour.
 - A `$dynamicRef` that is not a `#` fragment fails to compile in both.
-- Anchor names that collide with `Object.prototype` members, such as `constructor`, `toString` or `__proto__`, never bind, because AJV checks the anchor table by truthiness on a plain object; whole validation and the guard share this deviation.
+- An anchor name that collides with an `Object.prototype` member, such as `toString`, can fail during native evaluation of whole validation or a lexical declaration. A root-pointer guard supplies declared chain-resource anchors as own entries in its dynamic-anchor table.
 - `$data` references and custom keywords that read root or parent data see only the host value in a guard. This is a separate limit of the host-value guard interface and is unrelated to dynamic scope.
 
 Strict options on a bound instance, such as `strictTypes` and `strictRequired`, may make some `if` guards fail to compile. The affected gate becomes false and produces a `GUARD_FAILED` `onError` record. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
