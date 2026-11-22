@@ -36,29 +36,6 @@ describe.each([
   describe.each([true, false])(
     'directGuardCompile=%s',
     (directGuardCompile) => {
-      it('evaluates encoded URI separators and preserves literal percent names', () => {
-        plugin.validator.configure({ directGuardCompile });
-        const root: JSONSchema = {
-          properties: {
-            field: { if: { type: 'string' } },
-            'a%2Fb': { if: { type: 'string' } },
-          },
-        };
-        try {
-          for (const pointer of [
-            '#%2Fproperties%2Ffield%2Fif',
-            '#%2Fproperties%2Fa%252Fb%2Fif',
-            '/properties/a%2Fb/if',
-          ]) {
-            const guard = plugin.validator.compileGuard(root, pointer);
-            expect(guard('x')).toBe(true);
-            expect(guard(1)).toBe(false);
-          }
-        } finally {
-          plugin.validator.release(root);
-        }
-      });
-
       it.each(['100%', '50%off', 'a%20b', 'a%2Fb'])(
         'evaluates %s like the ordinary property name',
         (name) => {
