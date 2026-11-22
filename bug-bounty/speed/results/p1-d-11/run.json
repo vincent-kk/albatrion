@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p1-11-checkboxChangePlain",
+   "pkg": "@canard/schema-form-antd5-plugin",
+   "fn": "checkbox change",
+   "input": "two string options",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 3,
+   "stat": {
+    "A1": {
+     "min": 742236.3333331911,
+     "p10": 1369305.3333336138,
+     "median": 2202652.999999676
+    },
+    "A2": {
+     "min": 828985.9999999861,
+     "p10": 1376652.6666668141,
+     "median": 2184986.3333336543
+    },
+    "B": {
+     "min": 673347.6666668139,
+     "p10": 1439763.666666901,
+     "median": 2197417.0000000107
+    }
+   },
+   "min": 0.9071876926894483,
+   "p10": 1.0514555312230869,
+   "controlMin": 1.1168760713682995,
+   "controlP10": 1.0053657377608491,
+   "verdict": "void"
+  }
+ ]
+}
