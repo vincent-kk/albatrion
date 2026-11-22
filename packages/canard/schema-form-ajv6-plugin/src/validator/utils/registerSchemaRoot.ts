@@ -6,6 +6,7 @@ type Ajv = AjvModule.Ajv;
 import { assertBindableInstance } from './assertBindableInstance';
 import { cloneInstance } from './cloneInstance';
 import { readApplicationProfile } from './readApplicationProfile';
+import { readApplicationSchemaBodies } from './readApplicationSchemaBodies';
 
 /** Captured native table entries used to detect additions, removals and replacements. */
 type ProfileImage = readonly (readonly [string, unknown][])[];
@@ -13,6 +14,7 @@ type ProfileImage = readonly (readonly [string, unknown][])[];
 /** Holds only the latest native configuration for an application. */
 interface ApplicationProfile {
   readonly image: ProfileImage;
+  readonly schemaBodies: ReturnType<typeof readApplicationSchemaBodies>;
   validation?: { readonly compiler: Ajv; readonly refs: Record<string, unknown>; readonly schemas: Record<string, unknown>; readonly fragments: Record<string, unknown>; };
 }
 
@@ -76,9 +78,13 @@ export function registerSchemaRoot<T>(
 ): NativeValidator | T {
   const tables = readApplicationProfile(instance);
   let profile = profiles.get(instance);
-  if (!profile || !isCurrent(tables, profile.image)) {
+  if (!profile || !isCurrent(tables, profile.image) ||
+      profile.schemaBodies?.some(([entry, body]) => JSON.stringify(entry.schema) !== body)) {
     assertBindableInstance(instance);
-    profile = { image: tables.map(Object.entries) };
+    profile = {
+      image: tables.map(Object.entries),
+      schemaBodies: readApplicationSchemaBodies(instance),
+    };
     profiles.set(instance, profile);
   }
   const snapshot = JSON.stringify(root);
