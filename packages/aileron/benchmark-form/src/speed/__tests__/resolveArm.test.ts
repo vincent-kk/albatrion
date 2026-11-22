@@ -24,6 +24,12 @@ it('rejects escaped dist and non-public exports', async () => {
       resolveArm(root, 'pkg', 'test-package', '.'),
     ).rejects.toThrow();
     await rm(join(pkg, 'dist'));
+    await writeFile(join(pkg, 'index.mjs'), 'export {}');
+    await symlink(pkg, join(pkg, 'dist'));
+    await expect(
+      resolveArm(root, 'pkg', 'test-package', '.'),
+    ).rejects.toThrow();
+    await rm(join(pkg, 'dist'));
     await mkdir(join(pkg, 'dist'));
     await writeFile(join(pkg, 'dist/index.mjs'), 'export {}');
     await manifest({ '.': null });

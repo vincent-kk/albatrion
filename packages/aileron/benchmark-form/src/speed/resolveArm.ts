@@ -14,7 +14,10 @@ export async function resolveArm(
   const contains = (parent: string, child: string) => {
     const path = relative(parent, child);
     return (
-      path !== '..' && !path.startsWith(`..${sep}`) && !path.startsWith(sep)
+      path !== '' &&
+      path !== '..' &&
+      !path.startsWith(`..${sep}`) &&
+      !path.startsWith(sep)
     );
   };
   if (!contains(tree, directory)) throw new Error('Package is outside arm');
