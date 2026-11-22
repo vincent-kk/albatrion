@@ -84,7 +84,9 @@ URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid schem
 
 - **Role**: DatePicker for date selection
 - **Applied when**: `type` is `"string"` and `format` is `"date"`
-- **Additional features**: Uses MUI X DatePickers with Dayjs, date range limits from `presentation.FieldInputProps.minimum` and `maximum`, falling back to the matching schema property when a presentation limit is omitted (YYYY-MM-DD. An invalid limit such as `2024-02-31` is ignored), YYYY-MM-DD format
+- **Additional features**: Uses MUI X DatePickers with Dayjs, date range limits from `presentation.FieldInputProps.minimum` and `maximum` (YYYY-MM-DD. An invalid limit such as `2024-02-31` is ignored), YYYY-MM-DD format
+
+The Date adapter also reads a matching limit from the schema passed directly to its input definition when the presentation limit is absent. In a standard Form, supply the limits in presentation because the bound string schema omits those numeric keywords.
 
 ### **[`FieldInputTime.tsx`](./src/fieldInputs/FieldInputTime.tsx)**
 

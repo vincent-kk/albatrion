@@ -10,7 +10,7 @@ yarn add @canard/schema-form@^1.0.0 @canard/schema-form-antd6-plugin@^1.0.0
 
 Control IDs and native radio group names now use Form-scoped identifiers. Change custom input IDs from `path` to `inputId`, use `getInputId(key)` for additional controls, and use `labelId` for the field title. Keep `path` for form data. This release supports Ant Design 6.x and Day.js 1.x.
 
-`form.focus(path)` reaches an editable slider thumb. Sliders respect exclusive schema bounds, disable when no stop is legal, and show an in-range stored decimal in a read-only `number` field without a required step. Read-only `integer` fields display a grid point and keep the stored value. The scoped Slider ID identifies the root. By default, Ant Design 6 saves on movement key release or pointer release. Set `presentation.FieldInputProps.lazy` to `false` for updates during movement.
+`form.focus(path)` reaches an editable slider thumb. Sliders respect exclusive schema bounds, disable when no stop is legal, and show an in-range stored decimal in a read-only `number` field without a required step. Read-only `integer` fields display a grid point and keep the stored value. The scoped Slider ID identifies the root. Ant Design does not expose a thumb ID prop. By default, Ant Design 6 saves on movement key release or pointer release. Set `presentation.FieldInputProps.lazy` to `false` for updates during movement.
 
 Like beta, an unset Slider exposes the library’s initial thumb position to assistive technology, such as `0` on the default range. The form value stays unset until interaction. Register a custom `FieldInput` through `fieldInputDefinitions` to omit that number.
 

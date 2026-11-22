@@ -86,7 +86,7 @@ This plugin provides the following Ant Design Mobile components:
 
 Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores the value on commit (pointer release or track tap); `false` stores on every move.
 
-Range thumbs are displayed in ascending order. Mounting the Slider leaves the form value in its supplied order. For example, `[80, 20]` displays the thumbs at `20` and `80` while the form still stores `[80, 20]`. The scoped Slider ID identifies the group around the track.
+Range thumbs are displayed in ascending order. Mounting the Slider leaves the form value in its supplied order. For example, `[80, 20]` displays the thumbs at `20` and `80` while the form still stores `[80, 20]`. The scoped Slider ID identifies the group around the track. Ant Design Mobile does not expose a thumb ID prop.
 
 An unset Slider leaves the form value unset until interaction. Its accessibility tree exposes the initial thumb position, such as `0` on the default range. To omit that number, register a custom `FieldInput` through `fieldInputDefinitions`.
 
@@ -112,7 +112,7 @@ For very small `multipleOf` values, pointer commits do not guarantee an exact sc
 
 ### **[`FieldInputBoolean.tsx`](./src/fieldInputs/FieldInputBoolean.tsx)**
 
-Read-only boolean fields disable the Checkbox so it cannot display an attempted change.
+In a read-only boolean field the Checkbox remains enabled, and the form keeps its stored value.
 
 - **Role**: Display boolean values as checkboxes
 - **Applied when**: `type` is `"boolean"` (fallback when other conditions don't match)

@@ -40,7 +40,7 @@ The plugin exports a `SchemaFormPlugin` object:
 
 `@canard/schema-form`, `antd-mobile`, `dayjs`, React
 
-Every uncontrolled selection widget (radio group, checkbox group, slider) receives `disabled={disabled || readOnly}`. These widgets keep their own selection state and antd-mobile gives them no readOnly, so without the lock they would show a choice the core has already rejected. Switch, checkbox and Stepper receive the disabled state for read-only fields. Text inputs pass readOnly natively.
+Every uncontrolled selection widget (radio group, checkbox group, slider) receives `disabled={disabled || readOnly}`. These widgets keep their own selection state and antd-mobile gives them no readOnly, so without the lock they would show a choice the core has already rejected. Switch and Stepper receive the disabled state for read-only fields. The standalone boolean Checkbox remains enabled and the form rejects changes. Text inputs pass readOnly natively.
 
 Enum UI identities encode the raw JSON scalar, while labels and aliases use its display string. Initial selection and change payloads use the same identity mapping so null and the string "null" remain distinct.
 
