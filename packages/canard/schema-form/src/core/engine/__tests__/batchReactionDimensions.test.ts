@@ -221,6 +221,21 @@ describe('batch reactions beyond the generator', () => {
     expect(read(batch.root, 'pong')).toBeUndefined();
   });
 
+  it('a reset barrier preserves the target of a single write budget error', () => {
+    const batch = run(
+      [
+        set('/ping', 'x'),
+        set('/other', true),
+        (root) => root.find('/other')!.resetSubtree(),
+      ],
+      true,
+    );
+    expect(messageOf(batch.error)).toBe('Derive budget exceeded at /ping');
+    expect(read(batch.root, 'ping')).toBe('x');
+    expect(read(batch.root, 'pong')).toBeUndefined();
+    expect(read(batch.root, 'other')).toBe(false);
+  });
+
   it('a declarative write to a group inside an inactive owner keeps its tuple in the retained slots', () => {
     const calls = [set('/other', true), set('/pairSource', '["x","y"]')];
     for (const batched of [false, true]) {
