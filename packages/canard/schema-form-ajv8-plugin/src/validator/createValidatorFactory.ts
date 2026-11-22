@@ -1,51 +1,62 @@
-import type { JSONSchema, ValidateFunction } from '@canard/schema-form';
+/// <reference lib="es2021.weakref" preserve="true" />
+import type { JSONSchema } from '@canard/schema-form';
 import type { Ajv } from 'ajv';
 
-import { registerSchemaRoot, type SchemaRootRegistry } from './utils/registerSchemaRoot';
-import { transformErrors } from './utils/transformErrors';
+import { createValidationCompiler } from './createValidationCompiler';
+import type { SchemaRootRegistry as CompilerRootRegistry } from './utils/registerSchemaRoot';
 
-/** Accepts the beta registry's identity while keeping detached entries privately owned. */
-interface FactoryRegistry {
-  readonly entries: WeakMap<JSONSchema, unknown>;
+/** Registration shape carried by the beta factory's optional argument. */
+interface SchemaRootRegistration {
+  readonly directGuards: (object | boolean)[];
+  readonly guardChecks: WeakMap<object, boolean>;
+  readonly baseAjv: Ajv;
+  readonly validationAjv: Ajv;
+  guardAjv?: Ajv;
+  readonly validationCopy?: JSONSchema;
+  guardCopy?: JSONSchema;
+  validationRefs: readonly string[];
+  validationRegistered: boolean;
+  guardRefs?: readonly string[];
+  readonly key: string;
+  readonly ids: readonly string[];
+  readonly hasDynamicKeywords: boolean;
 }
 
-const factoryRoots = new WeakMap<FactoryRegistry['entries'], SchemaRootRegistry>();
+/** The beta factory's registry object, retained as its public argument type. */
+interface SchemaRootRegistry {
+  readonly entries: WeakMap<JSONSchema, SchemaRootRegistration[]>;
+  readonly active: WeakRef<SchemaRootRegistration>[];
+  readonly finalizer: FinalizationRegistry<SchemaRootRegistration>;
+  compilerBase?: Ajv;
+  compilerCurrent?: Ajv;
+  compilerCount: number;
+}
+
+/** Keep private roots under the caller's registry identity without changing its entries. */
+const factoryRoots = new WeakMap<
+  SchemaRootRegistry['entries'],
+  CompilerRootRegistry
+>();
 
 /**
  * Creates an asynchronous validator for an isolated schema root.
  * @param ajv - The active AJV instance whose options and extensions define validation.
- * @param registry - Registrations shared with guard compilation and release.
+ * @param registry - Optional beta registry whose entries identify shared registrations.
  * @returns A compiler that preserves the authored schema and normalizes failures.
+ * @throws ValidatorBindRefusedError if the instance can modify the input.
  */
-export const createValidatorFactory = <
-  Registry extends SchemaRootRegistry | FactoryRegistry,
->(
+export const createValidatorFactory = (
   ajv: Ajv,
-  registry?: Registry,
+  registry?: SchemaRootRegistry,
 ) => {
-  let roots: SchemaRootRegistry;
-  if (!registry || !('entries' in registry)) roots = registry ?? new WeakMap();
-  else {
-    const { entries } = registry;
-    roots = factoryRoots.get(entries) ?? new WeakMap();
-    factoryRoots.set(entries, roots);
-  }
-  const ValidationError: unknown = Reflect.get(ajv.constructor, 'ValidationError');
-  return (jsonSchema: JSONSchema): ValidateFunction => {
-    const validate = registerSchemaRoot(roots, ajv, jsonSchema);
-    return async (data) => {
-      try {
-        const result = validate(data);
-        if (typeof result === 'boolean')
-          return result ? null : transformErrors(validate.errors ?? [], validate.schema);
-        await result;
-        return null;
-      } catch (thrown: unknown) {
-        if (typeof ValidationError === 'function' && thrown instanceof ValidationError &&
-            'errors' in thrown && Array.isArray(thrown.errors))
-          return transformErrors(thrown.errors, validate.schema);
-        throw thrown;
-      }
-    };
-  };
+  if (registry === undefined)
+    return createValidationCompiler(ajv, new WeakMap());
+  const { entries } = registry;
+  if (typeof entries?.get !== 'function')
+    throw new TypeError('registry.entries.get is not a function');
+
+  const roots = factoryRoots.get(entries) ?? new WeakMap();
+  const compile = createValidationCompiler(ajv, roots);
+  factoryRoots.set(entries, roots);
+  return compile;
 };

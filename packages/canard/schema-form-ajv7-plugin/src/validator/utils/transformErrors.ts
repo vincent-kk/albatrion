@@ -18,9 +18,15 @@ const SLASH = /\//g;
  * keyword errors by appending the missing property to the dataPath.
  *
  * @param errors - Array of AJV7 error objects
+ * @param root - Detached schema used to identify single negative requirements.
+ * @param notRequiredKeys - Results retained for the compiled schema by native error path.
  * @returns Array of transformed ValidationIssue objects
  */
-export const transformErrors = (errors: ErrorObject[], root?: object): ValidationIssue[] => {
+export const transformErrors = (
+  errors: ErrorObject[],
+  root?: object,
+  notRequiredKeys?: Map<string, string | null>,
+): ValidationIssue[] => {
   if (!Array.isArray(errors)) return [];
   const result = new Array<ValidationIssue>(errors.length);
   for (let i = 0, l = errors.length; i < l; i++) {
@@ -42,17 +48,24 @@ export const transformErrors = (errors: ErrorObject[], root?: object): Validatio
     if (typeof ajvError.propertyName === 'string')
       rejectedKey = ajvError.propertyName;
     if (ajvError.keyword === 'not' && root && ajvError.schemaPath.startsWith('#/')) {
-      const segments = ajvError.schemaPath.slice(2).split('/');
-      let target: unknown = root;
-      for (const segment of segments) {
-        const token = segment.includes('%') ? decodeURIComponent(segment) : segment;
-        target = typeof target === 'object' && target !== null
-          ? (target as Dictionary<unknown>)[token.replace(/~1/g, '/').replace(/~0/g, '~')]
-          : undefined;
+      const path = ajvError.schemaPath;
+      let key = notRequiredKeys?.get(path);
+      if (key === undefined) {
+        key = null;
+        const segments = path.slice(2).split('/');
+        let target: unknown = root;
+        for (const segment of segments) {
+          const token = segment.includes('%') ? decodeURIComponent(segment) : segment;
+          target = typeof target === 'object' && target !== null
+            ? (target as Dictionary<unknown>)[token.replace(/~1/g, '/').replace(/~0/g, '~')]
+            : undefined;
+        }
+        if (typeof target === 'object' && target !== null && 'required' in target &&
+            Array.isArray(target.required) && target.required.length === 1 &&
+            typeof target.required[0] === 'string') key = target.required[0];
+        notRequiredKeys?.set(path, key);
       }
-      if (typeof target === 'object' && target !== null && 'required' in target &&
-          Array.isArray(target.required) && target.required.length === 1 &&
-          typeof target.required[0] === 'string') rejectedKey = target.required[0];
+      rejectedKey = key ?? rejectedKey;
     }
     result[i] = {
       dataPath,

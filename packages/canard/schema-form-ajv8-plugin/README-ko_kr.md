@@ -132,6 +132,8 @@ registerPlugin(plugin);
 
 #### **`compileGuard(root, pointer)`와 `release(root)`**
 
+루트 포인터 가드에는 슬래시로 시작하는 JSON Pointer를 전달하십시오. 예를 들어 속성 `a/b`에는 `/properties/a~1b/if`를 사용합니다. `#%2Fproperties%2Ffield%2Fif`처럼 인코딩된 구분자가 있는 URI 조각은 조건을 직접 컴파일할 수 있을 때 작동합니다.
+
 - `compileGuard`는 엔진이 소유한 복사본 루트의 JSON Pointer에서 동기 불리언 가드를 컴파일합니다. `compile` 호출 여부와 관계없이 복사본을 받습니다. 자체 완결적인 가드는 루트를 등록하지 않고 그 부분 스키마를 컴파일하며, 루트 정의를 `$ref`로 참조하는 가드처럼 루트 위치가 필요한 가드만 가드용 인스턴스에 루트를 등록하고, `compile`은 원본과 분리한 사본을 플러그인 소유의 검증 컴파일러에서 컴파일합니다. 새 컴파일에는 현재 애플리케이션 등록을 사용합니다. 애플리케이션에서 조회하거나 다른 루트에서 참조할 주소는 애플리케이션 인스턴스에 등록합니다. 전체 검증은 사적 루트 사본에 비동기 모드를 사용합니다. 비동기 검증이 필요한 별도 등록 자원은 `$async: true`를 선언합니다. 두 가드 모두 전체 스키마 컴파일 전에 사용할 수 있습니다. 가드는 AJV의 루트 메타 스키마 검사 없이(`validateSchema: false`) 컴파일되며 AJV의 루트 메타 스키마 검사는 전체 검증 컴파일에서만 돕니다. 그래서 조건과 무관한 곳의 루트 메타 스키마 위반은 어느 가드도 실패시키지 않고, 기본 검사 설정에서는 전체 검증이 `VALIDATOR_COMPILE_FAILED`로 보고합니다(`validateSchema: false`나 `'log'`로 바인딩한 인스턴스는 그 옵션대로 동작합니다). 사용자 정의 키워드의 메타 검사·엄격 옵션·코드 생성 검사는 가드 컴파일에도 남습니다.
 - `compile`, 모든 `compileGuard`, `release`에는 동일한 복사본 객체를 전달합니다. 전체 스키마 검증은 가드 컴파일 이후에 컴파일해도 됩니다.
 - `release`도 `compile` 호출 여부와 관계없이 같은 복사본을 받아 플러그인이 보유한 해당 루트 자원을 해제합니다. 등록되지 않은 루트를 해제하면 아무 작업도 하지 않습니다.
@@ -189,6 +191,8 @@ const defaultSettings: Ajv.Options = {
 - **성능 최적화**: 향상된 캐싱 및 검증 속도
 - **풍부한 오류 컨텍스트**: 더 나은 디버깅을 위한 상세한 오류 정보
 - **타입 안전성**: 고급 타입 추론과 함께 완전한 TypeScript 지원
+
+`createValidatorFactory`는 AJV 인스턴스에 값 변환, 기본값 삽입 또는 추가 속성 제거 옵션이 켜져 있으면 `ValidatorBindRefusedError`를 던집니다. 팩터리 생성 뒤에 옵션을 켜면 다음 검증기 컴파일에서 거부합니다.
 
 `createValidator(ajv)`는 Form의 `validatorFactory`에 넘길 인스턴스별 `{ compile, compileGuard }` 객체를 돌려줍니다. 새 객체는 Form이 트리를 다시 만들게 하므로 렌더 밖에서 한 번만 만드십시오(`const validator = createValidator(customAjv);` 뒤 `<Form validatorFactory={validator} />`). 여러 객체가 AJV 인스턴스 하나를 함께 써도 되며, 인스턴스는 값을 바꾸지 않아야 합니다(`coerceTypes`, `useDefaults`, `removeAdditional` 꺼짐).
 

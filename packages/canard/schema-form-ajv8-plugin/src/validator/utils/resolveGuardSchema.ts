@@ -11,7 +11,7 @@ export const resolveGuardSchema = (
   let path = pointer;
   if (pointer.startsWith('#')) {
     try {
-      path = pointer.slice(1).split('/').map((token) => decodeURIComponent(token).replace(/\//g, '~1')).join('/');
+      path = decodeURIComponent(pointer.slice(1));
     } catch {
       return undefined;
     }
