@@ -1,4 +1,4 @@
-import { chmodSync, existsSync, readFileSync, rmSync } from 'node:fs';
+import { chmodSync, existsSync, readFileSync, rmSync, symlinkSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { afterEach, beforeEach, expect, it } from 'vitest';
@@ -263,4 +263,75 @@ it('retains a retired rule whose case alias has a verified owner', async ({ skip
   rmSync(join(first.assetRoot, upper));
   expect((await first.run(flags)).exitCode).toBe(0);
   expect(readFileSync(join(projectRoot, '.claude', upper), 'utf8')).toBe('same');
+});
+
+it('records a same-bytes case alias before the first owner retires', async ({ skip }) => {
+  writeAt(join(projectRoot, 'probeCase'), 'probe');
+  if (!existsSync(join(projectRoot, 'PROBECASE')))
+    skip('The temporary volume is case-sensitive');
+
+  const lower = 'rules/shared.md';
+  const upper = 'rules/SHARED.md';
+  const content = '# shared\n';
+  const first = prepare({ [lower]: content, 'rules/a.md': '# A\n' });
+  const second = prepare({ [upper]: content }, '@probe/second');
+  expect((await first.run()).exitCode).toBe(0);
+  const match = await second.run();
+  expect(match.exitCode).toBe(0);
+  expect(match.units[0].plan.actions[0]?.kind).toBe('skip-uptodate');
+
+  rmSync(join(first.assetRoot, lower));
+  expect((await first.run({ force: true, yes: true })).exitCode).toBe(0);
+  expect(existsSync(join(projectRoot, '.claude', upper))).toBe(true);
+
+  const record = JSON.parse(
+    readFileSync(join(projectRoot, '.claude/agents-assets-sync.json'), 'utf8'),
+  );
+  expect(record['@probe/second'][upper]).toMatch(/^[a-f0-9]{64}$/);
+  expect(record[packageName][lower]).toBeUndefined();
+});
+
+it('releases a retired co-owner while the other package still ships the rule', async () => {
+  const rule = 'rules/shared.md';
+  const content = '# shared\n';
+  const first = prepare({ [rule]: content, 'rules/a.md': '# A\n' });
+  const second = prepare(
+    { [rule]: content, 'rules/b.md': '# B\n' },
+    '@probe/second',
+  );
+  expect((await first.run()).exitCode).toBe(0);
+  expect((await second.run()).exitCode).toBe(0);
+
+  const flags = { force: true, yes: true };
+  const destination = join(projectRoot, '.claude', rule);
+  const record = join(projectRoot, '.claude/agents-assets-sync.json');
+  rmSync(join(first.assetRoot, rule));
+  expect((await first.run(flags)).exitCode).toBe(0);
+  expect(readFileSync(destination, 'utf8')).toBe(content);
+  expect(JSON.parse(readFileSync(record, 'utf8'))[packageName][rule]).toBeUndefined();
+
+  rmSync(join(second.assetRoot, rule));
+  expect((await second.run(flags)).exitCode).toBe(0);
+  expect(existsSync(destination)).toBe(false);
+  expect(JSON.parse(readFileSync(record, 'utf8'))['@probe/second'][rule]).toBeUndefined();
+});
+
+it('retires a rule when a separate same-hash peer path cannot be resolved', async () => {
+  const rule = 'rules/retire.md';
+  const other = 'rules/unrelated.md';
+  const content = '# same hash\n';
+  const first = prepare({ [rule]: content, 'rules/a.md': '# A\n' });
+  const second = prepare({ [other]: content }, '@probe/second');
+  expect((await first.run()).exitCode).toBe(0);
+  expect((await second.run()).exitCode).toBe(0);
+
+  const peer = join(projectRoot, '.claude', other);
+  rmSync(peer);
+  symlinkSync('unrelated.md', peer);
+  rmSync(join(first.assetRoot, rule));
+
+  const retired = await first.run({ force: true, yes: true });
+  expect(retired.failures).toEqual([]);
+  expect(retired.exitCode).toBe(0);
+  expect(existsSync(join(projectRoot, '.claude', rule))).toBe(false);
 });
