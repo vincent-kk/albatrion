@@ -1,6 +1,7 @@
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
 
+import { measureBatch } from './measureBatch';
 import { resolveArm } from './resolveArm';
 import { rows } from './rows';
 
@@ -13,33 +14,26 @@ if (row.render) {
 }
 const arm = await resolveArm(root, row.packagePath, row.packageName, row.entry);
 const module = await import(pathToFileURL(arm.path).href);
-const prepared = row.prepare(module);
-let result: unknown;
-const batch = (count: number) => {
-  const start = process.hrtime.bigint();
-  for (let i = 0; i < count; i++) result = prepared.run();
-  return Number(process.hrtime.bigint() - start);
-};
+const batch = (count: number) => measureBatch(count, () => row.prepare(module));
 let count = Number(countText);
 if (count === 0) {
   count = 128;
-  while (batch(count) < 5_000_000 && count < 16_777_216) count *= 2;
+  while ((await batch(count)).elapsedNs < 5_000_000 && count < 16_777_216)
+    count *= 2;
 } else {
-  for (let i = 0; i < 10; i++) batch(count);
+  for (let i = 0; i < row.warmup; i++) await batch(count);
   if (!globalThis.gc) throw new Error('GC is unavailable');
   globalThis.gc();
 }
-const samples = Array.from(
-  { length: countText === '0' ? 1 : 5 },
-  () => batch(count) / count,
-);
-if (!prepared.validate(result))
-  throw new Error(`Unexpected result: ${String(result)}`);
-const observed = result;
+const measurements = [];
+for (let i = 0; i < (countText === '0' ? 1 : row.batches); i++)
+  measurements.push(await batch(count));
+const samples = measurements.map((item) => item.elapsedNs / count);
+const observed = measurements[measurements.length - 1].observed;
+let result: unknown;
 const overheadStart = process.hrtime.bigint();
 for (let i = 0; i < count; i++) result = i;
 const overhead = Number(process.hrtime.bigint() - overheadStart) / count;
-prepared.cleanup();
 process.stdout.write(
   JSON.stringify({
     arm,
