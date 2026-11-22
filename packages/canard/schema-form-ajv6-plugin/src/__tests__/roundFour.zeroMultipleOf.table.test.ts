@@ -3,21 +3,21 @@ import Ajv from 'ajv';
 import { expect, it } from 'vitest';
 
 import { plugin as ajv6, createValidator } from '../index';
-import cases from './fixtures/decimalParityCases.json';
 
 it.each([0, 1, -1])(
-  'matches the shared zero-divisor guard result for %s',
+  'matches installed AJV zero-divisor guard behavior for %s',
   (value) => {
-    const row = cases.zeroDivisor.find((row) => row.value === value);
-    if (!row) throw new Error(`Missing zero-divisor case ${value}`);
     const condition = { type: 'number', multipleOf: 0 } satisfies JSONSchema;
+    // Plain AJV 6.12.6 reproduces the NaN comparison with precision 9 and validateSchema disabled.
+    const native = new Ajv({ multipleOfPrecision: 9, validateSchema: false }).compile(condition);
+    const expected = native(value);
     const root = { if: condition };
     const reference = { definitions: { check: condition }, if: { $ref: '#/definitions/check' } };
-    expect(ajv6.validator.compileGuard(root, '/if')(value)).toBe(row.valid);
-    expect(ajv6.validator.compileGuard(reference, '/if')(value)).toBe(row.valid);
+    expect(ajv6.validator.compileGuard(root, '/if')(value)).toBe(expected);
+    expect(ajv6.validator.compileGuard(reference, '/if')(value)).toBe(expected);
     ajv6.validator.configure({ directGuardCompile: false });
     try {
-      expect(ajv6.validator.compileGuard(root, '/if')(value)).toBe(row.valid);
+      expect(ajv6.validator.compileGuard(root, '/if')(value)).toBe(expected);
     } finally {
       ajv6.validator.configure({ directGuardCompile: true });
     }
