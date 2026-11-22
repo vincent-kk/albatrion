@@ -55,6 +55,31 @@ it('a refused reset keeps the part of an earlier whole mark a later Merge does n
   ).toEqual(EXPECTED);
 });
 
+it('a refused reset reuses the value read from a later Merge getter', () => {
+  let reads = 0;
+  expect(
+    retained((root) =>
+      root.batch(() => {
+        const o = root.find('/o')!;
+        o.setValue({ x: 'earlyX', y: 'earlyY' });
+        root.setValue(
+          {
+            on: false,
+            o: {
+              get x() {
+                return `late${++reads}`;
+              },
+            },
+          },
+          WriteOption.Merge,
+        );
+        o.resetSubtree();
+      }),
+    ),
+  ).toEqual({ '/o/x': 'late1', '/o/y': 'earlyY' });
+  expect(reads).toBe(1);
+});
+
 it('one Merge of the same final caller value leaves the same retained sources', () => {
   expect(
     retained((root) =>
