@@ -106,7 +106,9 @@ it.each(['object', 'property'] as const)('normalizes the keyed required path in 
 
 it('keeps apostrophes in dynamic property paths for a keyed factory', async () => {
   const ajv = new Ajv();
-  const schema = { additionalProperties: { type: 'string', minLength: 5 } };
+  const schema = {
+    additionalProperties: { type: 'string', minLength: 5 },
+  } satisfies Parameters<ReturnType<typeof createValidatorFactory>>[0];
   ajv.addSchema(schema, 'keyed-dynamic-path');
 
   const validate = createValidatorFactory(ajv, 'keyed-dynamic-path')(schema);
