@@ -5,7 +5,13 @@ import { createInstanceValidator } from '../createInstanceValidator';
 import type { SchemaRootRegistry } from './registerSchemaRoot';
 
 /** Shared default profile for the three dialect entry points. */
-const defaultSettings: Options = { allErrors: true, strict: false, validateFormats: false, allowUnionTypes: true };
+const defaultSettings: Options = {
+  allErrors: true,
+  strict: false,
+  validateFormats: false,
+  allowUnionTypes: true,
+  multipleOfPrecision: 9,
+};
 
 /**
  * Creates one dialect entry point with its own binding and guard policy.

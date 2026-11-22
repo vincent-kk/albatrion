@@ -11,6 +11,7 @@ const defaultSettings: Ajv.Options = {
   nullable: true,
   verbose: true,
   format: false,
+  multipleOfPrecision: 9,
 };
 
 /** The consumer binding is process-wide, as required by ValidatorPlugin.bind. */

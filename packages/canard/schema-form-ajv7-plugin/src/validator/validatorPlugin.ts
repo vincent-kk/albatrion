@@ -23,6 +23,7 @@ const defaultSettings: Options = {
   allErrors: true,
   strict: false,
   validateFormats: false,
+  multipleOfPrecision: 9,
 };
 
 /** The consumer binding is process-wide, as required by ValidatorPlugin.bind. */
