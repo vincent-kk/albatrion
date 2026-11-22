@@ -27,7 +27,7 @@ The built-in Slider uses pointer interaction, as it did in beta. During developm
 
 Sliders use numeric or array-item schema bounds and disable when no stop is legal. Array schemas select the range slider. Custom input IDs now use `inputId` or `getInputId(key)`; use `labelId` for the title and keep `path` for form data. Ant Design Mobile's native radio inputs do not expose a `name` prop. A custom radio input can supply a native group name. Set textarea `minRows` and `maxRows` in `presentation.FieldInputProps` to override the schema's defaults.
 
-This release supports Ant Design Mobile 5.2 and later in the 5.x line. Install the supported version of `@canard/schema-form` alongside this plugin.
+This release supports Ant Design Mobile 5.2 and later in the 5.x line. Stepper `formatter` and `parser` require Ant Design Mobile 5.26 or later. Install the supported version of `@canard/schema-form` alongside this plugin.
 
 ```sh
 yarn add @canard/schema-form@^1.0.0 @canard/schema-form-antd-mobile-plugin@^1.0.0

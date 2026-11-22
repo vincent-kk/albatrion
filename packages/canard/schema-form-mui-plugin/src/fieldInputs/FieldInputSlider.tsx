@@ -75,11 +75,16 @@ const FieldInputSlider = ({
     [jsonSchema, storedValue],
   );
   const [isUnset, setIsUnset] = useState(typeof defaultValue !== 'number');
+  const updatesImmediately = lazy === false;
   const handleChange = useHandle((_, value: number | number[]) => {
     if (!isEmpty && typeof value === 'number') {
       setIsUnset(false);
       onChange(value);
     }
+  });
+  const handleCommit = useHandle((event, value: number | number[]) => {
+    if (!updatesImmediately || (isUnset && value === initialValue))
+      handleChange(event, value);
   });
   const captionId = label ? getInputId('legend') : undefined;
 
@@ -104,9 +109,10 @@ const FieldInputSlider = ({
         max={max}
         step={step}
         shiftStep={step * 10}
-        {...{
-          [lazy === false ? 'onChange' : 'onChangeCommitted']: handleChange,
-        }}
+        onChange={updatesImmediately ? handleChange : undefined}
+        onChangeCommitted={
+          updatesImmediately && !isUnset ? undefined : handleCommit
+        }
         disabled={disabled || readOnly || isEmpty}
         size={size}
         marks={showMarks}

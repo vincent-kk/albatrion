@@ -14,7 +14,7 @@ Sliders now save on movement keydown or pointer release by default. To keep the 
 <Form jsonSchema={{ type: 'number', presentation: { inputType: 'slider', FieldInputProps: { lazy: false } } }} />
 ```
 
-An unset slider announces `Not set` and hides its resting thumb until selection. Set `presentation.FieldInputProps.unsetValueText` to localize the announcement. The slider respects exclusive bounds and disables when there is no legal stop.
+An unset slider announces `Not set` and hides its resting thumb until selection. Set `presentation.FieldInputProps.unsetValueText` to localize the announcement. A first selection at the initial stop stores its value, including with `lazy: false`. The slider respects exclusive bounds and disables when there is no legal stop. Page Up, Page Down, and Shift with an arrow use a jump of ten slider steps.
 
 The first string enum value turns a Switch on and the second turns it off. Update beta enum and label tuples together when preserving their meaning. `MuiContext.switchLabels` and `MuiContext.checkboxLabels` supply default labels. String switches use the context map before a per-input `alias` map and fall back to the schema tuple when no map is supplied.
 
