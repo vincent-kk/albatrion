@@ -12,6 +12,30 @@ it('keeps content comparison for plain objects, arrays and supported built-ins',
   expect(areContextsEqual(make(), make())).toBe(true);
   expect(areContextsEqual(make(), { ...make(), list: [2] })).toBe(false);
 });
+
+it('compares a plain context proxy with one prototype read', () => {
+  let prototypeReads = 0;
+  const context = new Proxy({ label: 'field' }, {
+    getPrototypeOf(target) {
+      if (++prototypeReads > 1) throw new Error('Repeated prototype read');
+      return Object.getPrototypeOf(target);
+    },
+  });
+
+  expect(areContextsEqual(context, { label: 'field' })).toBe(true);
+  expect(prototypeReads).toBe(1);
+});
+
+it('compares an array context proxy without reading its prototype', () => {
+  const context = new Proxy([1], {
+    getPrototypeOf() {
+      throw new Error('Array prototype read');
+    },
+  });
+
+  expect(areContextsEqual(context, [1])).toBe(true);
+});
+
 it('treats URLs and opaque instances in objects, arrays and map values by reference', () => {
   class Opaque {
     private __value__ = 1;
