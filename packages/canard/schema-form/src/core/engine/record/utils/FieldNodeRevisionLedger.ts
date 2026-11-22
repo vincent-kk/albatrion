@@ -9,6 +9,10 @@ const KNOWN_BITS = (FieldNodeEventType.UpdateDiagnostics << 1) - 1;
 const COMMITTED_BITS = KNOWN_BITS | INPUT_VALUE_REVISION;
 /** Number of known event bits, one counter slot per bit. */
 const KNOWN_BIT_COUNT = 32 - Math.clz32(KNOWN_BITS);
+/** Counter slot of the public value bit. */
+const VALUE_INDEX = 31 - Math.clz32(FieldNodeEventType.UpdateValue);
+/** Counter slot of the private own-input bit, after the known bits. */
+const INPUT_VALUE_INDEX = 31 - Math.clz32(INPUT_VALUE_REVISION);
 
 /** Immutable per-bit counters with compatibility accessors for direct bit reads. */
 export class FieldNodeRevisionLedger {
@@ -59,9 +63,20 @@ export class FieldNodeRevisionLedger {
     return revision;
   }
 
+  /**
+   * Read the value counter less the internal own-input counter.
+   * Integer-keyed prototype accessors are far slower in V8, so repeated reads use this array path.
+   * @returns UpdateValue commits not written by the branch's own input
+   */
+  readExternalValue(): number {
+    return (
+      (this.counts[VALUE_INDEX] ?? 0) - (this.counts[INPUT_VALUE_INDEX] ?? 0)
+    );
+  }
+
   /** Internal own-input count, excluded from public revision sums. */
   get [INPUT_VALUE_REVISION]() {
-    return this.counts[31 - Math.clz32(INPUT_VALUE_REVISION)];
+    return this.counts[INPUT_VALUE_INDEX];
   }
 
   /** Initialization counter. */
