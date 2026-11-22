@@ -1,0 +1,217 @@
+import { describe, expect, it } from 'vitest';
+
+import type { UnknownSchema } from '../index';
+import { JSONSchemaScannerAsync } from '../index';
+import { JSONSchemaScanner } from '../index';
+import type { JSONScannerOptions, SchemaVisitor } from '../index';
+import { createTestResolver } from '../utils/JSONSchemaScanner/__tests__/fixtures/createTestResolver';
+
+/** Driver-independent constructor avoids intersecting private class state in shared tests. */
+type ScannerConstructor = new (config: {
+  options?: JSONScannerOptions;
+  visitor?: SchemaVisitor;
+}) => { scan(schema: UnknownSchema | boolean): unknown; getValue(): unknown };
+
+describe.each<[string, ScannerConstructor]>([
+  ['sync', JSONSchemaScanner],
+  ['async', JSONSchemaScannerAsync],
+])('%s dialect resources and roles', (_name, Scanner) => {
+  it('recognizes normalized metaschema URIs only at resource roots and restores sibling dialects', async () => {
+    const seen: Array<[string, boolean]> = [];
+    const scanner = new Scanner({
+      options: { defaultDialect: 'draft-07' },
+      visitor: {
+        enter: (e) => {
+          if (e.keyword === 'if' || e.keyword === 'prefixItems')
+            seen.push([e.path, !!e.inert]);
+        },
+      },
+    });
+    await scanner.scan({
+      $schema: 'https://json-schema.org/draft-04/schema#',
+      properties: {
+        nonResource: {
+          $schema: 'https://json-schema.org/draft/2020-12/schema',
+          if: {},
+        },
+        embedded: {
+          id: 'child',
+          $schema: 'http://json-schema.org/draft/2020-12/schema#',
+          prefixItems: [{}],
+        },
+        inherited: { id: 'inherited', if: {} },
+        unknown: {
+          id: 'unknown',
+          $schema: 'https://example.test/meta',
+          if: {},
+        },
+        dollar: {
+          $id: 'next',
+          $schema: 'https://json-schema.org/draft-07/schema#',
+          if: {},
+        },
+      },
+    });
+    expect(seen).toEqual([
+      ['#/properties/nonResource/if', true],
+      ['#/properties/embedded/prefixItems/0', true],
+      ['#/properties/inherited/if', true],
+      ['#/properties/unknown/if', true],
+      ['#/properties/dollar/if', false],
+    ]);
+  });
+
+  it.each([
+    [
+      'id of a draft-04 subschema under a 2020-12 root',
+      {
+        $defs: {
+          A: {
+            $schema: 'http://json-schema.org/draft-04/schema#',
+            id: 'http://x.example/a.json',
+            contains: { type: 'string' },
+          },
+        },
+      },
+      '#/$defs/A/contains',
+    ],
+    [
+      'only id in a draft-06 subschema under a draft-04 root',
+      {
+        $schema: 'http://json-schema.org/draft-04/schema#',
+        definitions: {
+          A: {
+            $schema: 'http://json-schema.org/draft-06/schema#',
+            id: 'http://x.example/b.json',
+            contains: { type: 'string' },
+          },
+        },
+      },
+      '#/definitions/A/contains',
+    ],
+  ])(
+    'chooses the identifier keyword by the subschema own dialect: %s',
+    async (_case, schema, path) => {
+      let inert: boolean | undefined;
+      const scanner = new Scanner({
+        visitor: {
+          enter: (e) => {
+            if (e.path === path) inert = !!e.inert;
+          },
+        },
+      });
+      await scanner.scan(schema);
+      expect(inert).toBe(true);
+    },
+  );
+
+  it('inherits inertness and records no output operations or reference calls there', async () => {
+    const original = {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      prefixItems: [
+        {
+          $id: 'child',
+          $schema: 'https://json-schema.org/draft/2020-12/schema',
+          properties: { child: { $ref: '#/target' } },
+        },
+      ],
+    };
+    const seen: string[] = [];
+    let resolves = 0;
+    const scanner = new Scanner({
+      options: {
+        mutate: (e) =>
+          e.inert
+            ? {
+                ...(typeof e.schema === 'object' ? e.schema : {}),
+                title: 'inert replacement',
+              }
+            : undefined,
+        resolveReference: createTestResolver(() => {
+          resolves++;
+          return { type: 'null' };
+        }),
+      },
+      visitor: {
+        enter: (e) => {
+          if (e.inert) seen.push(e.path);
+        },
+      },
+    });
+    await scanner.scan(original);
+    expect(seen).toEqual([
+      '#/prefixItems/0',
+      '#/prefixItems/0/properties/child',
+    ]);
+    expect(resolves).toBe(0);
+    expect(scanner.getValue() === original).toBe(true);
+  });
+
+  it('derives definition role from actual keyword frames including custom maps and escaped lookalike names', async () => {
+    const calls: string[] = [];
+    const skips: Array<[string, unknown]> = [];
+    const scanner = new Scanner({
+      options: {
+        additionalKeywords: [{ keyword: 'vendor', kind: 'schemaMap' }],
+        resolveReference: createTestResolver((ref) => {
+          calls.push(ref);
+          return { type: 'null' };
+        }),
+      },
+      visitor: {
+        exit: (e) => {
+          if (e.references?.some((outcome) => !outcome.resolved))
+            skips.push([e.path, e.references?.slice(-1)[0]?.skipped]);
+        },
+      },
+    });
+    await scanner.scan({
+      definitions: { A: { properties: { deep: { $ref: '#definition' } } } },
+      properties: {
+        definitions: { $ref: '#property' },
+        $defs: { $ref: '#dollar' },
+      },
+      vendor: {
+        definitions: { properties: { deep: { $ref: '#vendor' } } },
+        'a/b': { $ref: '#escaped' },
+      },
+    });
+    expect(calls).toEqual(['#property', '#dollar', '#vendor', '#escaped']);
+    expect(skips).toEqual([['#/definitions/A/properties/deep', 'definition']]);
+  });
+
+  it('replaces the vocabulary, appends overrides and escapes custom keyword path segments', async () => {
+    const seen: Array<[string, string, unknown]> = [];
+    const scanner = new Scanner({
+      options: {
+        keywords: [
+          { keyword: 'x/a~b', kind: 'schemaMap', dialects: ['draft-04'] },
+        ],
+        additionalKeywords: [{ keyword: 'x/a~b', kind: 'objectMap' }],
+      },
+      visitor: {
+        enter: (e) => {
+          if (e.depth) seen.push([e.path, e.dataPath, e.variant]);
+        },
+      },
+    });
+    await scanner.scan({
+      properties: { ignored: {} },
+      'x/a~b': { 'c/d~': false },
+    });
+    expect(seen).toEqual([['#/x~1a~0b/c~1d~0', '/c~1d~0', 'c/d~']]);
+  });
+  it('supports an empty replacement vocabulary without discovering built-in children', async () => {
+    const paths: string[] = [];
+    const scanner = new Scanner({
+      options: { keywords: [] },
+      visitor: {
+        enter: (e) => {
+          paths.push(e.path);
+        },
+      },
+    });
+    await scanner.scan({ properties: { child: {} }, not: false });
+    expect(paths).toEqual(['#']);
+  });
+});
