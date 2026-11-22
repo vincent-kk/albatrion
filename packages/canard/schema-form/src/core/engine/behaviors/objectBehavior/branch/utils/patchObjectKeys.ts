@@ -2,8 +2,8 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Dictionary } from '@aileron/declare';
 
-import { writeObjectKey } from '../../../../../utils/writeObjectKey';
-import { copyObjectValue } from '../copyObjectValue';
+import { writeObjectKey } from '../../../../utils/writeObjectKey';
+import { copyObjectValue } from './copyObjectValue';
 
 /**
  * Patch changed values after a caller has established the previous key order.

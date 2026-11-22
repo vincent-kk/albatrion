@@ -7,7 +7,7 @@ import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { objectKeyCounts } from '../../../../utils/cache/valueMemos';
 import { writeObjectKey } from '../../../../utils/writeObjectKey';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
-import { patchObjectKeys } from './assembleObject/patchObjectKeys';
+import { patchObjectKeys } from './patchObjectKeys';
 import { assembleObjectValue } from './assembleObjectValue';
 
 /**
