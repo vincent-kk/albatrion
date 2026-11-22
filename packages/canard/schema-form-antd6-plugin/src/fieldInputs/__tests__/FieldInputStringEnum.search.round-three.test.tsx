@@ -27,7 +27,12 @@ const schema = {
   items: { type: 'string', enum: ['kr', 'us', 'jp', 'raw-token'] },
   presentation: {
     FieldInputProps: {
-      alias: { kr: '대한민국', us: 'United States', jp: '日本', 'raw-token': 'café' },
+      alias: {
+        kr: '대한민국',
+        us: 'United States',
+        jp: '日本',
+        'raw-token': 'café',
+      },
     },
   },
 } as const;
