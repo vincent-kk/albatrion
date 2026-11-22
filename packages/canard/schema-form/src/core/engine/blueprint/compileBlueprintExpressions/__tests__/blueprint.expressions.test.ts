@@ -24,6 +24,14 @@ describe('blueprint expression compilation', () => {
     expect(result.expressions[0].dependencies).toEqual(['../a']);
     expect(result.expressions[0].evaluate([1])).toBe(1.25);
   });
+  it('compiles a returned regular expression without path dependencies', () => {
+    const result = blueprint({
+      type: 'string',
+      controls: { derived: '{ return /a/ }' },
+    });
+    expect(result.expressions[0].dependencies).toEqual([]);
+    expect(result.expressions[0].evaluate([])).toEqual(/a/);
+  });
   it('unions watches and expression paths from every gated declaration', () => {
     const result = blueprint({
       type: 'object',
