@@ -56,4 +56,35 @@ describe.each([
       expect((guard ?? compileGuard())({ a: 'xyz' })).toBe(true);
     },
   );
+
+  it('uses edits to an application schema for new compiles of the same root', async () => {
+    const ajv = instance();
+    const adapter = adapterFor(ajv, { directGuardCompile: false });
+    const id = 'https://app.invalid/mutable.json';
+    const applicationSchema = {
+      type: 'object',
+      properties: { name: { type: 'string', minLength: 2 } },
+    };
+    ajv.addSchema(applicationSchema, id);
+
+    const reference = { $ref: id };
+    const root = { allOf: [reference], if: reference, then: { type: 'object' } };
+    const data = { name: 'one' };
+    const first = adapter.compile(root);
+    const firstGuard = adapter.compileGuard(root, '/if');
+    await expect(first(data)).resolves.toBeNull();
+    expect(firstGuard(data)).toBe(true);
+
+    applicationSchema.properties.name.minLength = 5;
+
+    await expect(adapter.compile(root)(data)).resolves.toMatchObject([
+      { keyword: 'minLength', dataPath: '/name' },
+    ]);
+    await expect(adapter.compile({ ...root })(data)).resolves.toMatchObject([
+      { keyword: 'minLength', dataPath: '/name' },
+    ]);
+    expect(adapter.compileGuard(root, '/if')(data)).toBe(false);
+    await expect(first(data)).resolves.toBeNull();
+    expect(firstGuard(data)).toBe(true);
+  });
 });
