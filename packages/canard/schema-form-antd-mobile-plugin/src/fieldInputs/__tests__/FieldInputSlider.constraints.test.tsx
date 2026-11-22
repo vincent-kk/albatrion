@@ -64,3 +64,39 @@ it('does not publish a pointer selection when the allowed grid is empty', () => 
   tap(50);
   expect(ref.current?.getValue()).toBeUndefined();
 });
+
+it('selects the inclusive maximum when both ends are closer than one step', () => {
+  const { ref, tap } = mount({ minimum: 0.1, maximum: 0.2 });
+  tap(100);
+  expect(ref.current?.getValue()).toBe(0.2);
+});
+
+it('offers fractional marks within exclusive bounds and removes the excluded mark', () => {
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      defaultValue={2}
+      jsonSchema={{
+        type: 'number',
+        format: 'slider',
+        minimum: 0,
+        exclusiveMaximum: 4.5,
+        presentation: {
+          FieldInputProps: { marks: { 2: 'Middle', 4.25: 'Outer', 4.5: 'Excluded' } },
+        },
+      }}
+      fieldInputDefinitions={[FieldInputSliderDefinition]}
+    />,
+  );
+  const track = view.container.querySelector<HTMLElement>('.adm-slider-track')!;
+  vi.spyOn(track, 'getBoundingClientRect').mockReturnValue({
+    x: 0, y: 0, top: 0, bottom: 10, left: 0, right: 100, width: 100, height: 10,
+    toJSON: () => ({}),
+  });
+  Object.defineProperty(track, 'offsetWidth', { value: 100 });
+  expect(view.getByText('Outer')).toBeTruthy();
+  expect(view.queryByText('Excluded')).toBeNull();
+  fireEvent.click(track, { clientX: 100, clientY: 5 });
+  expect(ref.current?.getValue()).toBe(4.25);
+});
