@@ -92,6 +92,7 @@ The guard instance retains the bound dialect, formats and keywords with
 - **Purpose**: Creates a validator function from the provided JSON Schema
 - **Returns**: A validator factory function that can validate data against the schema
 - **Features**: Automatic error transformation, detailed validation messages, performance optimization
+- **Asynchronous rules**: The plugin enables asynchronous validation on its own root copy when needed, including named roots. Declare `$async: true` on any separately registered async reference schema.
 
 #### **`compileGuard(root, pointer)` and `release(root)`**
 
