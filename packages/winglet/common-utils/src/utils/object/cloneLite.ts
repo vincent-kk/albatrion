@@ -144,12 +144,12 @@ import { setDataProperty } from './setDataProperty';
  * - **Built-in Objects**: Date, RegExp, Map, Set, Error (returned as-is)
  * - **Binary Data**: TypedArrays, ArrayBuffer, Blob, File (returned as-is)
  * - **Special Objects**: DOM nodes, class instances, functions (returned as-is)
- * - **Circular References**: Unsupported; cloning does not terminate
+ * - **Circular References**: Unbounded cloning rejects cycles with a RangeError
  * - **Symbol Properties**: Not copied
  *
  * **Performance Characteristics:**
  * - **Speed**: ~5-10x faster than `clone` for simple structures
- * - **Memory**: Minimal overhead, no caching or tracking
+ * - **Memory**: The recursive copy uses the call stack. The deep unbounded copy tracks active ancestors.
  * - **Algorithm**: Recursive copying with an explicit-frame fallback after 256 levels
  * - **Time Complexity**: O(n) where n is total properties/elements
  * - **Space Complexity**: O(d) where d is maximum depth
@@ -171,7 +171,7 @@ import { setDataProperty } from './setDataProperty';
  * - Need for symbol property preservation
  *
  * **Implementation Details:**
- * - **No Circular Detection**: No Map-based tracking
+ * - **Cycle Detection**: The deep unbounded copy rejects a repeated ancestor
  * - **Type Checking**: Only `isArray` and `isPlainObject` checks
  * - **Property Copying**: Simple for-in loop for objects, indexed loop for arrays
  * - **Sparse Array Support**: Preserves array holes via `in` operator check
