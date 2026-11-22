@@ -61,9 +61,11 @@ export function replicateDeep(
       if (active.has(current))
         throw new RangeError('cloneLite input contains a cycle');
       active.add(current);
-      pending.push(() => {
-        active.delete(current);
-      });
+      // With no pending sibling, this container stays on the only remaining path.
+      if (pending.length)
+        pending.push(() => {
+          active.delete(current);
+        });
     }
     if (isArrayValue) {
       const output: unknown[] = new Array(current.length);
