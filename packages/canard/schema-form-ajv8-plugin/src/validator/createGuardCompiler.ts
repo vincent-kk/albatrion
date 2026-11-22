@@ -18,7 +18,7 @@ import { resolveGuardSchema } from './utils/resolveGuardSchema';
  * @param ajv - The active AJV instance supplying the guard's dialect and extensions.
  * @param registry - Root registrations shared with full validation.
  * @param root - The authored root that contains the guard.
- * @param pointer - An unfragmented JSON Pointer to the guard schema.
+ * @param pointer - A JSON Pointer or URI fragment to the guard schema.
  * @param directGuardCompile - Compile self-contained guards directly when enabled.
  * @returns A boolean predicate evaluated without changing its input.
  * @throws GuardPointerNotSchemaError when the pointer does not locate a schema
@@ -34,7 +34,9 @@ export const createGuardCompiler = (
 ) : Fn<[value: unknown], boolean> => registerSchemaRoot(registry, ajv, root, (registration, register) => {
   const { copy, compiler: guard } = registration;
   const rootId = typeof root.$id === 'string' ? root.$id : '';
-  const fragment = pointer.startsWith('#') ? pointer.replace(/^#%2f/i, '#/') : `#${pointer.replace(/[^A-Za-z0-9_~./-]/gu, encodeURIComponent)}`;
+  const fragment = pointer.startsWith('#')
+    ? pointer.replace(/%2f/gi, '/')
+    : `#${pointer.replace(/[^A-Za-z0-9_~./-]/gu, encodeURIComponent)}`;
   const located = resolveGuardSchema(copy, fragment);
   if (located === undefined)
     throw new GuardPointerNotSchemaError(rootId, pointer);
