@@ -209,3 +209,58 @@ it('reports a record write failure and leaves matching unrecorded files untouche
   expect((await run({ force: true, yes: true })).exitCode).toBe(0);
   expect(readFileSync(installed, 'utf8')).toBe('# installed\n');
 });
+
+it.each([true, false])(
+  'distinguishes installed ownership from unrecorded matching bytes (installed: %s)',
+  async (installed) => {
+    const rule = 'rules/shared.md';
+    const content = '# shared\n';
+    const local = join(projectRoot, '.claude', rule);
+    const first = prepare({ [rule]: content, 'rules/stays.md': '# first\n' });
+    const second = prepare({ [rule]: content }, '@probe/second');
+    if (!installed) writeAt(local, content);
+
+    expect((await first.run()).exitCode).toBe(0);
+    const matched = await second.run();
+    expect(matched.exitCode).toBe(0);
+    expect(matched.units[0].plan.actions[0].kind).toBe('skip-uptodate');
+
+    rmSync(join(first.assetRoot, rule));
+    expect((await first.run({ force: true, yes: true })).exitCode).toBe(0);
+    expect(readFileSync(local, 'utf8')).toBe(content);
+
+    const record = readFileSync(
+      join(projectRoot, '.claude/agents-assets-sync.json'),
+      'utf8',
+    );
+    expect(Object.hasOwn(JSON.parse(record), '@probe/second')).toBe(installed);
+  },
+);
+
+it('retains a retired rule whose case alias has a verified owner', async ({ skip }) => {
+  writeAt(join(projectRoot, 'probeCase'), 'probe');
+  if (!existsSync(join(projectRoot, 'PROBECASE')))
+    skip('The temporary volume is case-sensitive');
+  const upper = 'rules/SHARED.md';
+  const lower = 'rules/shared.md';
+  const first = prepare({ [upper]: 'same', 'rules/a.md': 'a' });
+  const second = prepare(
+    { [lower]: 'initially different', 'rules/b.md': 'b' },
+    '@probe/second',
+  );
+  const flags = { force: true, yes: true };
+  expect((await first.run(flags)).exitCode).toBe(0);
+  expect((await second.run(flags)).exitCode).toBe(0);
+  writeAt(join(second.assetRoot, lower), 'same');
+  expect((await second.run(flags)).exitCode).toBe(0);
+
+  const record = JSON.parse(
+    readFileSync(join(projectRoot, '.claude/agents-assets-sync.json'), 'utf8'),
+  );
+  expect(record[packageName][upper]).toMatch(/^[a-f0-9]{64}$/);
+  expect(record['@probe/second'][lower]).toBe(record[packageName][upper]);
+
+  rmSync(join(first.assetRoot, upper));
+  expect((await first.run(flags)).exitCode).toBe(0);
+  expect(readFileSync(join(projectRoot, '.claude', upper), 'utf8')).toBe('same');
+});

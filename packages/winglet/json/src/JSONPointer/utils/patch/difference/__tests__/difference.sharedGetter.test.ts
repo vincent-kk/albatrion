@@ -89,3 +89,21 @@ it.each([0, 300])(
     expect(reads).toBe(1);
   },
 );
+
+it.each([0, 300])(
+  'restores an already compared source key deleted by a later getter at depth %i',
+  (depth) => {
+    const source: JSONObject = { value: 1, trigger: 1, removed: 1 };
+    const target = {
+      value: 1,
+      get trigger() {
+        delete source.value;
+        return 1;
+      },
+    };
+
+    expect(difference(nest(source, depth), nest(target, depth))).toEqual(
+      nest({ removed: null, value: 1 }, depth),
+    );
+  },
+);
