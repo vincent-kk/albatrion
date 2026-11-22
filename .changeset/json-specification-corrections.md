@@ -2,7 +2,7 @@
 "@winglet/json": major
 ---
 
-Breaking change: `getValue` and JSON Patch COPY no longer read inherited members, array `length`, or array indices with leading zeroes. Both read own object members and use canonical decimal array indices. A missing `getValue` path returns `undefined`. COPY rejects a missing source position, while an in-range array hole still copies as `undefined`, even if the prototype has a value at that index.
+Breaking change: `getValue` and JSON Patch COPY no longer take values from inherited members, array `length`, or array indices with leading zeroes. Both resolve values through own object members and canonical decimal array indices. A missing `getValue` path returns `undefined`. COPY rejects a missing final object member or an out-of-range final array index. An in-range array hole still copies as `undefined`, even if the prototype has a value at that index.
 
 Before:
 
