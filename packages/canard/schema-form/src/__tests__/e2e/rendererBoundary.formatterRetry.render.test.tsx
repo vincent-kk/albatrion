@@ -40,3 +40,40 @@ it('reports a renderer once when the error callback rerenders an inline formatte
     errorLog.mockRestore();
   }
 });
+
+it('retries a failed renderer for one formatter replacement and then keeps its fallback', () => {
+  const report = vi.fn();
+  const fail = vi.fn(() => {
+    throw new Error('persistent renderer failure');
+  });
+  const errorLog = vi.spyOn(console, 'error').mockImplementation(() => {});
+  const Renderer = ({ Input, path }: FieldRendererProps) => {
+    if (path === '/a') fail();
+    return <Input />;
+  };
+  const form = (formatError: FieldRendererProps['formatError']) => (
+    <Form
+      jsonSchema={schema}
+      validationMode={ValidationMode.None}
+      FieldRenderer={Renderer}
+      formatError={formatError}
+      onError={report}
+    />
+  );
+
+  try {
+    const view = render(form(() => 'first'));
+    const initial = fail.mock.calls.length;
+    expect(initial).toBeGreaterThan(0);
+    view.rerender(form(() => 'second'));
+    const retried = fail.mock.calls.length;
+    expect(retried).toBeGreaterThan(initial);
+    view.rerender(form(() => 'third'));
+    expect(fail).toHaveBeenCalledTimes(retried);
+    expect(report).toHaveBeenCalledTimes(1);
+    expect(view.container.querySelector('input[name="a"]')).toBeNull();
+    expect(view.container.querySelector('input[name="b"]')).not.toBeNull();
+  } finally {
+    errorLog.mockRestore();
+  }
+});

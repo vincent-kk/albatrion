@@ -149,3 +149,52 @@ it('control: a plain string change in context recomputes visible', () => {
   );
   expect(ref.current!.findNode('/advanced')!.isVisible).toBe(true);
 });
+
+it('a mutation of the same opaque context object does not republish a visible state', () => {
+  const ref = createRef<FormHandle<typeof schema>>();
+  const query = new URLSearchParams('mode=basic');
+  const form = (current: URLSearchParams) => (
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      validationMode={ValidationMode.None}
+      context={{ query: current }}
+    />
+  );
+  const view = render(form(query));
+  expect(visibleOf(ref)).toBe(false);
+  query.set('mode', 'advanced');
+  view.rerender(form(query));
+  expect(visibleOf(ref)).toBe(false);
+  view.rerender(form(new URLSearchParams(query)));
+  expect(visibleOf(ref)).toBe(true);
+});
+
+it.each([
+  [{ value: 'same' }, { value: 'same' }, { value: 'different' }],
+  [new Date(0), new Date(0), new Date(1)],
+])(
+  'keeps the published context identity for equal %j data',
+  (first, equal, different) => {
+    const ref = createRef<FormHandle>();
+    const jsonSchema = {
+      type: 'object',
+      properties: { x: { type: 'string', controls: { watch: ['@'] } } },
+    } as const;
+    const form = (value: unknown) => (
+      <Form
+        ref={ref}
+        jsonSchema={jsonSchema}
+        context={{ value }}
+        validationMode={ValidationMode.None}
+      />
+    );
+    const view = render(form(first));
+    const watch = () => ref.current!.findNode('/x')!.watchValues?.[0];
+    const initial = watch();
+    view.rerender(form(equal));
+    expect(watch()).toBe(initial);
+    view.rerender(form(different));
+    expect(watch()).not.toBe(initial);
+  },
+);
