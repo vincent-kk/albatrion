@@ -16,8 +16,8 @@ using a sequence of reference tokens.
 The function supports both string and array representations of JSON Pointers:
 - **String format**: Uses forward slashes (`/`) as delimiters (e.g., `/foo/bar`)
 - **Array format**: Each element represents a reference token (e.g., ["foo", "bar"])
-- **Empty pointer**: Returns the entire input object
-- **Root reference**: `/` or `#/` points to the root of the document
+- **Root reference**: `''` and `#` return the entire input object
+- **Empty member**: `/` or `#/` addresses the property named `''`
 Reference tokens are interpreted according to RFC 6901 escape sequences:
 - `~0` represents the literal character `~`
 - `~1` represents the literal character `/`
@@ -49,7 +49,7 @@ const getValue: GetValue
 
 ## Returns
 
-The value located at the specified JSON Pointer location, or `undefined` when the location does not exist; a miss is not an error. Ordinary keys are read without an own-property check, so inherited members such as `/toString` or an array's `/length` resolve; reserved member names are read as own data only. The unknown-input overload requires callers to narrow the result.
+The value located at the specified JSON Pointer location, or `undefined` when the location does not exist. Object paths require own members, and array paths require own elements at canonical decimal indices. The unknown-input overload requires callers to narrow the result.
 
 ## Examples
 

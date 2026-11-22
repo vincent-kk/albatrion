@@ -16,8 +16,8 @@ This factory function returns a curried function that allows you to:
 - Handle both modern CSSStyleSheet API and fallback style element injection
 The returned function adds CSS styles that are automatically scoped with `className=".${scopeId}"`,
 ensuring styles only apply to elements within that scope.
-Discard the injector and its cleanup functions after destroyScope; create a new
-factory before injecting into that scope again.
+The injector follows the current scope manager after destroyScope. Each
+cleanup removes styles only from the manager that received its injection.
 
 ## Import
 
