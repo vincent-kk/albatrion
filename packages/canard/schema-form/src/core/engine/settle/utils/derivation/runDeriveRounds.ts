@@ -2,8 +2,6 @@ import { maxLite } from '@winglet/common-utils/math';
 
 import type { Optional } from '@aileron/declare';
 
-import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
-
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import { DeriveConvergenceTargets } from '../../../blueprint';
 import { DERIVE_ROUND_CAP, evaluateDeriveRound } from '../../../derive';
@@ -18,6 +16,7 @@ import { getDeriveState } from './getDeriveState';
 import { applyDeriveWrite } from './utils/applyDeriveWrite';
 import { computeDeriveWave } from './utils/computeDeriveWave';
 import { hasOverlappingWrites } from './utils/hasOverlappingWrites';
+import { isOverlappingAddress } from './utils/isOverlappingAddress';
 import { readWriteAddresses } from './utils/readWriteAddresses';
 import { retainEqualDeriveWrite } from './utils/retainEqualDeriveWrite';
 
@@ -40,12 +39,7 @@ const overlapsAddress = (
   addresses: readonly string[],
 ) =>
   addresses.some((address) =>
-    wave.some(
-      (path) =>
-        path === address ||
-        isDescendantPath(path, address) ||
-        isDescendantPath(address, path),
-    ),
+    wave.some((path) => isOverlappingAddress(path, address)),
   );
 
 /** Whether a write would leave its live target as it is now; a virtual write always counts as a change. */

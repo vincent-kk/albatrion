@@ -1,7 +1,6 @@
-import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
-
 import type { DeriveRoundDecision } from '../../../../derive';
 import type { FieldNodeRecord } from '../../../../record';
+import { isOverlappingAddress } from './isOverlappingAddress';
 import { readWriteAddresses } from './readWriteAddresses';
 
 /** Code unit of the JSON Pointer separator. */
@@ -33,10 +32,7 @@ export const hasOverlappingWrites = <Self extends FieldNodeRecord<Self>>(
   for (let index = 0; index < writes.length; index++)
     addresses.push(...readWriteAddresses(writes[index]));
   addresses.sort(compareTree);
-  for (let index = 1; index < addresses.length; index++) {
-    const previous = addresses[index - 1];
-    const current = addresses[index];
-    if (previous === current || isDescendantPath(current, previous)) return true;
-  }
+  for (let index = 1; index < addresses.length; index++)
+    if (isOverlappingAddress(addresses[index - 1], addresses[index])) return true;
   return false;
 };
