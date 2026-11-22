@@ -13,7 +13,7 @@ node benchmarks/compare/run.mjs --a <baseline tree> --b <candidate tree> --rows 
 - `--rounds` is a multiple of 6 so that all six slot orders run equally.
 - `--out` must not exist. It receives `run.json` (all statistics, rewritten after every row) and `report.md` (the verdict table).
 
-The machine must be otherwise idle. The driver holds a machine-wide lock file (`/tmp/benchmarks-compare.lock`) while it measures, so a second comparison started meanwhile waits for the first instead of distorting it.
+The machine must be otherwise idle. The driver takes a ticket in `/tmp/benchmarks-compare.queue` and holds `/tmp/benchmarks-compare.lock` while it measures, so comparisons started meanwhile run one at a time in the order they were started instead of distorting each other.
 
 ## Profiling
 

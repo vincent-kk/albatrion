@@ -45,7 +45,11 @@ if (!(rounds > 0) || rounds % 6)
   throw new Error("--rounds must be a positive multiple of 6");
 if (existsSync(args.out)) throw new Error(`${args.out} already exists`);
 
-/** Machine-wide lock: a second comparison waits here, because two at once distort each other. */
+/**
+ * Machine-wide turn-taking: two comparisons at once distort each other, so each
+ * run takes a ticket, waits until it is the oldest live ticket, then holds the lock.
+ */
+const QUEUE = "/tmp/benchmarks-compare.queue";
 const LOCK = "/tmp/benchmarks-compare.lock";
 const isAlive = (pid) => {
   try {
@@ -54,6 +58,29 @@ const isAlive = (pid) => {
     return error.code === "EPERM";
   }
 };
+const pause = () =>
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 2000);
+mkdirSync(QUEUE, { recursive: true });
+const ticket = `${String(Date.now()).padStart(15, "0")}-${process.pid}`;
+writeFileSync(join(QUEUE, ticket), "");
+process.on("exit", () => {
+  rmSync(join(QUEUE, ticket), { force: true });
+  if (existsSync(LOCK) && readFileSync(LOCK, "utf8") === String(process.pid))
+    rmSync(LOCK);
+});
+for (const signal of ["SIGINT", "SIGTERM"])
+  process.on(signal, () => process.exit(1));
+for (;;) {
+  const live = readdirSync(QUEUE)
+    .sort()
+    .filter(
+      (name) =>
+        isAlive(Number(name.split("-")[1])) ||
+        rmSync(join(QUEUE, name), { force: true }),
+    );
+  if (live[0] === ticket) break;
+  pause();
+}
 for (;;) {
   try {
     writeFileSync(LOCK, String(process.pid), { flag: "wx" });
@@ -61,12 +88,9 @@ for (;;) {
   } catch {
     const owner = existsSync(LOCK) ? Number(readFileSync(LOCK, "utf8")) : 0;
     if (owner && !isAlive(owner)) rmSync(LOCK, { force: true });
-    else Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 5000);
+    else pause();
   }
 }
-process.on("exit", () => rmSync(LOCK, { force: true }));
-for (const signal of ["SIGINT", "SIGTERM"])
-  process.on(signal, () => process.exit(1));
 
 const rowsDir = resolve(args.rows);
 const trees = { A1: resolve(args.a), A2: resolve(args.a), B: resolve(args.b) };
