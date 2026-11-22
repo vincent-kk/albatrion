@@ -1,7 +1,7 @@
 import type {
   AgentTarget,
   AssetKind,
-  OrphanScan,
+  PlanningOrphanScan,
   ResolvedLocations,
 } from '../type.js';
 import { findWriteEscape } from './assertProjectPathsContained/findWriteEscape.js';
@@ -12,7 +12,7 @@ import { resolveLocation } from './resolveLocation.js';
 type Inspection =
   | {
       readonly assetKinds: ReadonlySet<AssetKind>;
-      readonly orphanScans: readonly OrphanScan[];
+      readonly orphanScans: readonly PlanningOrphanScan[];
     }
   | { readonly dstPaths: readonly string[] };
 

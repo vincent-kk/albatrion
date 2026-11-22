@@ -36,10 +36,9 @@ export {
   type PlanInput,
 } from './buildPlan/index.js';
 export {
-  assertProjectPathsContained,
   isValidAgent,
   resolveAgentTarget,
-  resolveDestinations,
+  resolvePublicDestinations as resolveDestinations,
   splitAssetKind,
   type AgentTarget,
   type AgentType,

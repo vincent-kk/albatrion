@@ -117,14 +117,16 @@ export async function prepareUnits(
             installedRecords.set(physicalRecord, installed);
           }
         }
-        const { destinations, orphanScans } = resolveDestinations({
-          agentTarget,
-          packageName: target.name,
-          relPaths: Object.keys(manifest.value.files),
-          previous: installed?.previousPaths(target.name),
-          namespacePrefixes: prefixes,
-          assetKinds: values.assetKinds,
-        });
+        const { destinations, orphanScans } = resolveDestinations(
+          {
+            agentTarget,
+            packageName: target.name,
+            relPaths: Object.keys(manifest.value.files),
+            namespacePrefixes: prefixes,
+            assetKinds: values.assetKinds,
+          },
+          installed?.previousPaths(target.name),
+        );
         await assertProjectPathsContained({
           agentTarget,
           assetKinds: values.assetKinds,

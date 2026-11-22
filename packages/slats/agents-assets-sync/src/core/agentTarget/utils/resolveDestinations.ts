@@ -6,6 +6,7 @@ import type {
   AssetKind,
   Destination,
   OrphanScan,
+  PlanningOrphanScan,
 } from '../type.js';
 import { splitAssetKind } from './splitAssetKind.js';
 
@@ -20,13 +21,17 @@ interface ResolveDestinationsInput {
   readonly packageName: string;
   /** Manifest paths to place. */
   readonly relPaths: readonly string[];
-  /** Prior recorded paths owned only by the current package. */
-  readonly previous?: ReadonlyMap<string, string>;
   /** Managed skill namespaces, e.g. `['skills/foo/']`, from the hash manifest. */
   readonly namespacePrefixes: readonly string[];
   /** Kinds the caller asked for; anything else is left alone entirely. */
   readonly assetKinds: ReadonlySet<AssetKind>;
 }
+
+/** Destinations paired with the scans available to the caller. */
+type ResolvedDestinations<Scan extends PlanningOrphanScan> = {
+  destinations: Map<string, Destination>;
+  orphanScans: Scan[];
+};
 
 /**
  * Map every manifest path to the place this agent keeps it, and describe
@@ -37,20 +42,29 @@ interface ResolveDestinationsInput {
  * touch", which is what keeps a filtered run from deleting anything.
  *
  * @param input - target, owning package, paths, namespaces and kind filter
+ * @param previous - ownership evidence for paths absent from the current manifest, supplied by the planner
  * @returns `destinations` keyed by manifest path, and the orphan scans to run
  * @throws when a skill directory would shadow a reserved agent namespace, or
  *   when a manifest path or namespace prefix holds a `..` segment that would
  *   place a destination or an orphan scan outside its kind root
  */
-export function resolveDestinations(input: ResolveDestinationsInput): {
-  destinations: Map<string, Destination>;
-  orphanScans: OrphanScan[];
-} {
-  const { agentTarget, packageName, relPaths, previous, namespacePrefixes, assetKinds } = input;
+export function resolveDestinations(
+  input: ResolveDestinationsInput,
+): ResolvedDestinations<OrphanScan>;
+export function resolveDestinations(
+  input: ResolveDestinationsInput,
+  previous: ReadonlyMap<string, string> | undefined,
+): ResolvedDestinations<PlanningOrphanScan>;
+export function resolveDestinations(
+  input: ResolveDestinationsInput,
+  previous: ReadonlyMap<string, string> | undefined = undefined,
+): ResolvedDestinations<PlanningOrphanScan> {
+  const { agentTarget, packageName, relPaths, namespacePrefixes, assetKinds } =
+    input;
   const { directoryRoots, rulesMergeFile, unsupported } = agentTarget;
 
   const destinations = new Map<string, Destination>();
-  const orphanScans: OrphanScan[] = [];
+  const orphanScans: PlanningOrphanScan[] = [];
   const current = previous?.size ? new Set(relPaths) : undefined;
   const paths = current && previous ? new Set([...current, ...previous.keys()]) : relPaths;
   for (const relPath of paths) {
@@ -114,6 +128,11 @@ export function resolveDestinations(input: ResolveDestinationsInput): {
 
   return { destinations, orphanScans };
 }
+
+/** Public destination planning takes no installed ownership evidence. */
+export const resolvePublicDestinations: (
+  input: ResolveDestinationsInput,
+) => ResolvedDestinations<OrphanScan> = resolveDestinations;
 
 // Manifest keys come from a published file or a public API caller, so they are
 // untrusted: refuse any that would climb out of the root they are joined to.

@@ -52,7 +52,11 @@ export type OrphanScan =
       readonly fileAbs: string;
       /** Only blocks owned by this package are this scan's business. */
       readonly ownerPackage: string;
-    }
+    };
+
+/** Additional ownership evidence used when the installer plans a recorded orphan. */
+export type PlanningOrphanScan =
+  | OrphanScan
   | {
       readonly kind: 'installed-file';
       readonly relPath: string;

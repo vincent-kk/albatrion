@@ -1,6 +1,6 @@
 import { join, relative } from 'node:path';
 
-import type { Destination, OrphanScan } from '../agentTarget/index.js';
+import type { Destination, PlanningOrphanScan } from '../agentTarget/index.js';
 import {
   type Sha256Hex,
   hashEquals,
@@ -126,7 +126,7 @@ async function classify(
 // scan is limited to blocks the owner package wrote, so another package's
 // blocks in the same document are never proposed for deletion.
 async function* findOrphans(
-  scan: OrphanScan,
+  scan: PlanningOrphanScan,
   known: ReadonlySet<string>,
   readDocument: DocumentReader,
   isManagedAlias: ReturnType<typeof createManagedAliasCheck>,
