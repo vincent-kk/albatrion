@@ -1,0 +1,139 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-style-utils",
+  "ref": "a8c022263236c61473cd89465f0a65c595e85fdd"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p1-07-document-fresh-add",
+   "pkg": "@winglet/style-utils",
+   "fn": "styleManagerFactory/inject",
+   "input": "fresh document scope",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 353,
+   "stat": {
+    "A1": {
+     "min": 358.14164307056114,
+     "p10": 613.1983002967735,
+     "median": 848.4220963030646
+    },
+    "A2": {
+     "min": 372.87818696717983,
+     "p10": 590.5325778942027,
+     "median": 854.4475920530525
+    },
+    "B": {
+     "min": 470.46458923700465,
+     "p10": 762.9801699197152,
+     "median": 1137.7620396248237
+    }
+   },
+   "min": 1.3136271593647477,
+   "p10": 1.244263347681249,
+   "controlMin": 1.0411472504852368,
+   "controlP10": 0.9630368799267691,
+   "verdict": "void"
+  },
+  {
+   "row": "p1-08-flat-combinator",
+   "pkg": "@winglet/style-utils",
+   "fn": "compressCss",
+   "input": "flat combinator rule",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 16384,
+   "stat": {
+    "A1": {
+     "min": 576.4770507812531,
+     "p10": 588.3534545898412,
+     "median": 597.1196289062467
+    },
+    "A2": {
+     "min": 584.2717285156201,
+     "p10": 589.2486572265653,
+     "median": 601.1784667968728
+    },
+    "B": {
+     "min": 200.56658935546992,
+     "p10": 207.7713012695326,
+     "median": 210.68829345703006
+    }
+   },
+   "min": 0.3479177342509266,
+   "p10": 0.35314027588123226,
+   "controlMin": 1.0135212281630352,
+   "controlP10": 1.0015215388466583,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-09-inject-add",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "active document scope",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 21867,
+   "stat": {
+    "A1": {
+     "min": 189.946769103254,
+     "p10": 203.22472218420944,
+     "median": 211.5425527032695
+    },
+    "A2": {
+     "min": 193.22421914266815,
+     "p10": 199.72561393856643,
+     "median": 209.87058124256498
+    },
+    "B": {
+     "min": 201.01938995068167,
+     "p10": 216.06969405791827,
+     "median": 231.80797548889532
+    }
+   },
+   "min": 1.0582932834272567,
+   "p10": 1.0632057543769982,
+   "controlMin": 1.0172545711353087,
+   "controlP10": 0.982782073912881,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-10-plain-multiple",
+   "pkg": "@winglet/style-utils",
+   "fn": "compressCss",
+   "input": "200 flat rules",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 512,
+   "stat": {
+    "A1": {
+     "min": 12976.48242187499,
+     "p10": 13017.251953124975,
+     "median": 13124.431640625045
+    },
+    "A2": {
+     "min": 12976.97070312498,
+     "p10": 13010.49804687504,
+     "median": 13113.037109374947
+    },
+    "B": {
+     "min": 10913.90039062501,
+     "p10": 10929.525390624973,
+     "median": 11001.38281249996
+    }
+   },
+   "min": 0.8410523002926431,
+   "p10": 0.8396184870648667,
+   "controlMin": 1.0000376281671808,
+   "controlP10": 0.9994811572923182,
+   "verdict": "pass"
+  }
+ ]
+}
