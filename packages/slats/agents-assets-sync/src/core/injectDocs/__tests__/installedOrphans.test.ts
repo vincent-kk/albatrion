@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, rmSync } from 'node:fs';
+import { chmodSync, existsSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { afterEach, beforeEach, expect, it } from 'vitest';
@@ -150,4 +150,62 @@ it('rechecks the installed bytes after waiting for confirmation', async () => {
   });
   expect(result.exitCode).toBe(1);
   expect(readFileSync(local, 'utf8')).toBe('# edited during prompt\n');
+});
+
+it('records partial success through retry and cleans only owned retired files', async () => {
+  const owned = 'rules/successful.md';
+  const blocked = 'rules/blocked.md';
+  const unmanaged = 'rules/matching.md';
+  const { assetRoot, run } = prepare({
+    [owned]: '# installed\n',
+    [blocked]: '# replacement\n',
+    [unmanaged]: '# existing\n',
+  });
+  const target = (path: string) => join(projectRoot, '.claude', path);
+  writeAt(target(blocked), '# protected\n');
+  chmodSync(target(blocked), 0o444);
+  writeAt(target(unmanaged), '# existing\n');
+
+  const partial = await run({ force: true, yes: true });
+  expect(partial.exitCode).toBe(1);
+  expect(partial.failures).toEqual([
+    expect.objectContaining({ path: target(blocked), stage: 'apply' }),
+  ]);
+  expect(readFileSync(target(owned), 'utf8')).toBe('# installed\n');
+
+  chmodSync(target(blocked), 0o644);
+  expect((await run({ force: true, yes: true })).exitCode).toBe(0);
+  rmSync(join(assetRoot, owned));
+  rmSync(join(assetRoot, unmanaged));
+
+  expect((await run()).exitCode).toBe(2);
+  expect((await run({ force: true, yes: true })).exitCode).toBe(0);
+  expect(existsSync(target(owned))).toBe(false);
+  expect(readFileSync(target(unmanaged), 'utf8')).toBe('# existing\n');
+});
+
+it('reports a record write failure and leaves matching unrecorded files untouched', async () => {
+  const asset = 'rules/unrecorded.md';
+  const { assetRoot, run } = prepare({
+    [asset]: '# installed\n',
+    'rules/active.md': '# active\n',
+  });
+  const record = join(projectRoot, '.claude/agents-assets-sync.json');
+  const installed = join(projectRoot, '.claude', asset);
+  writeAt(record, '{}\n');
+  chmodSync(record, 0o444);
+
+  const result = await run();
+  expect(result.exitCode).toBe(1);
+  expect(result.failures).toEqual([
+    expect.objectContaining({ path: record, stage: 'apply' }),
+  ]);
+  expect(readFileSync(record, 'utf8')).toBe('{}\n');
+  expect(readFileSync(installed, 'utf8')).toBe('# installed\n');
+
+  chmodSync(record, 0o644);
+  expect((await run()).exitCode).toBe(0);
+  rmSync(join(assetRoot, asset));
+  expect((await run({ force: true, yes: true })).exitCode).toBe(0);
+  expect(readFileSync(installed, 'utf8')).toBe('# installed\n');
 });
