@@ -28,7 +28,6 @@ interface GuardRoot {
   readonly snapshot: string;
   readonly copy: JSONSchema;
   readonly key: string;
-  readonly rootId: string;
   readonly hasDynamicKeywords: boolean;
   readonly guardChecks: WeakMap<object, boolean>;
   isRegistered: boolean;
@@ -98,7 +97,7 @@ export function registerSchemaRoot<T>(
     const key = current?.key ?? `https://canard.invalid/ajv8/root/${++nextRootKey}`;
     const id = copy.$id;
     const state = current ?? {
-      profile, compiler, snapshot, copy, key, rootId: key,
+      profile, compiler, snapshot, copy, key,
       hasDynamicKeywords: /"\$(?:dynamicAnchor|recursiveAnchor|dynamicRef|recursiveRef)":/.test(snapshot),
       guardChecks: new WeakMap(), isRegistered: false,
     };
@@ -139,17 +138,15 @@ export function registerSchemaRoot<T>(
   pool.count++;
   const { compiler } = pool;
   const copy: JSONSchema = JSON.parse(snapshot);
+  copy.$async = true;
   const id = copy[compiler.opts.schemaId];
   const key = `https://canard.invalid/ajv8/root/${++nextRootKey}`;
   let validate: NativeValidator | undefined;
   try {
     if (typeof id === 'string' && id) {
-
-      copy.$async = true;
       compiler.addSchema(copy, key);
       validate = compiler.getSchema(key);
     } else {
-      copy.$async = true;
       validate = compiler.compile(copy);
     }
   } finally {
