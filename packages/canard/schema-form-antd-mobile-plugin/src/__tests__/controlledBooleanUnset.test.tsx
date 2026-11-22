@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 
-import { act, cleanup, render } from '@testing-library/react';
+import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import { Form, type FormHandle } from '@canard/schema-form';
@@ -8,6 +8,23 @@ import { Form, type FormHandle } from '@canard/schema-form';
 import { plugin } from '../index';
 
 afterEach(cleanup);
+
+it('keeps the native read-only Checkbox enabled while the form keeps its value', () => {
+  const ref = createRef<FormHandle>();
+  const { getByRole } = render(
+    <Form
+      ref={ref}
+      readOnly
+      fieldInputDefinitions={plugin.fieldInputDefinitions}
+      jsonSchema={{ type: 'boolean' }}
+      defaultValue={true}
+    />,
+  );
+  const checkbox = getByRole('checkbox');
+  expect(checkbox.hasAttribute('disabled')).toBe(false);
+  fireEvent.click(checkbox);
+  expect(ref.current?.getValue()).toBe(true);
+});
 
 const schema = {
   type: 'object',
