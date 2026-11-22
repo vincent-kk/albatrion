@@ -45,12 +45,13 @@ Defaults, from source. Omitting the options object applies all of them:
 
 Reserved member names (`__proto__`, `constructor`, `prototype`) are opaque own data in every function above — reads are own-only, writes define own data properties, and no option exists to change that.
 
+`getValue` reads own object members and own array elements at canonical decimal indices. A missing location returns `undefined`.
+
 Corrections for claims that are commonly assumed and are wrong here:
 
 | Assumption                                                | Reality                                                                                                                                                                                     |
 | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `getValue` throws when the path is missing                | It returns `undefined`. It throws only for a non-plain-object/array input or a malformed pointer.                                                                                           |
-| `getValue` can read inherited members                    | Object paths require own members and array paths require own elements at canonical indices. A missing location returns `undefined`. |
 | `err.code === 'INVALID_INPUT'` matches                    | `.code` is namespaced: `'JSON_POINTER.INVALID_INPUT'`. The bare code is on `.specific`.                                                                                                     |
 | `JSONPointerError` / `isJSONPointerError` can be imported | Neither is exported, from the main entry or any sub-path. Match on `.name` (`'JSONPointer'` / `'JSONPatch'`) or on `.code`.                                                                 |
 | `compare` emits only `add`/`remove`/`replace`             | With `strict: true` it also emits a `test` guard before each `replace` and `remove`. `add` never gets a guard.                                                                              |
