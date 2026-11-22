@@ -37,7 +37,7 @@ export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
       const scopePaths = scope ? scope.map((field) => field.path) : [node.path];
       const marks = runtime.batchWrites;
       const isContained = marks.map((write) =>
-        (write.virtualTargets ?? [write.node]).every(({ path }) =>
+        (resolveStorageTargets(write.node) ?? [write.node]).every(({ path }) =>
           scopePaths.some(
             (scopePath) =>
               path === scopePath || isDescendantPath(path, scopePath),
