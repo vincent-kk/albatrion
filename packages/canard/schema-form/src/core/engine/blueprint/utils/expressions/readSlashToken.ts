@@ -10,17 +10,17 @@ const WHITESPACE = /\s/;
 const OPERAND_START = /[\w$("'`#@[{!~/]/;
 
 /**
- * Find the end of a comment or regular expression literal that opens at a slash.
+ * Classify a slash that can open a comment, regular expression literal or path.
  * @param expression - Authored expression text
  * @param index - Position of a `/` in code
  * @param isAfterValue - True when the slash follows a value, so it can only divide or open a comment
- * @returns End offset (exclusive) of the comment or literal; -1 for division or a path
+ * @returns The exclusive end of a comment or literal, a matched path, or -1 to continue scanning.
  */
-export const readSlashTokenEnd = (
+export const readSlashToken = (
   expression: string,
   index: number,
   isAfterValue: boolean,
-): number => {
+): number | string => {
   const next = expression[index + 1];
   if (next === '/') {
     const end = expression.indexOf('\n', index);
@@ -59,10 +59,6 @@ export const readSlashTokenEnd = (
   if (hasRegexSyntax) return end;
   JSON_POINTER_PATH_STICKY_REGEX.lastIndex = index;
   const path = JSON_POINTER_PATH_STICKY_REGEX.exec(expression);
-  if (
-    path === null ||
-    index + path[0].length === close
-  )
-    return end;
-  return -1;
+  if (path === null || index + path[0].length === close) return end;
+  return path[0];
 };

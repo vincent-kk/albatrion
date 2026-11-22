@@ -1,4 +1,4 @@
-import { readSlashTokenEnd } from './readSlashTokenEnd';
+import { readSlashToken } from './readSlashToken';
 import { JSON_POINTER_PATH_STICKY_REGEX } from './regex';
 
 /** A character that ends a value, so a following slash divides. */
@@ -63,20 +63,24 @@ export const replaceExpressionPaths = (
       braces.pop();
       quote = '`';
     } else {
+      let path: string | undefined;
       if (char === '/') {
-        const end = readSlashTokenEnd(expression, index, isAfterValue);
-        if (end >= 0) {
+        const token = readSlashToken(expression, index, isAfterValue);
+        if (typeof token === 'string') path = token;
+        else if (token >= 0) {
           const next = expression[index + 1];
           if (next !== '/' && next !== '*') isAfterValue = true;
-          index = end - 1;
+          index = token - 1;
           continue;
         }
       }
       if (char === '#' || char === '.' || char === '/' || char === '@') {
-        JSON_POINTER_PATH_STICKY_REGEX.lastIndex = index;
-        const path = JSON_POINTER_PATH_STICKY_REGEX.exec(expression);
-        if (path !== null) {
-          const text = braces.length ? cutAtOpenBrace(path[0]) : path[0];
+        if (path === undefined) {
+          JSON_POINTER_PATH_STICKY_REGEX.lastIndex = index;
+          path = JSON_POINTER_PATH_STICKY_REGEX.exec(expression)?.[0];
+        }
+        if (path !== undefined) {
+          const text = braces.length ? cutAtOpenBrace(path) : path;
           output += expression.slice(copied, index) + replace(text);
           copied = index + text.length;
           index = copied - 1;
