@@ -31,6 +31,7 @@ export const differenceRecursive = (
   let patch: JSONObject | undefined = undefined;
   let hasRemoved = false;
   const sourceKeys = Object.keys(source);
+  const compared = new Map<string, JSONObject[string]>();
   for (let i = 0, l = sourceKeys.length; i < l; i++) {
     const key = sourceKeys[i];
     const reserved =
@@ -38,6 +39,7 @@ export const differenceRecursive = (
     const sourceValue = source[key];
     if (hasOwnProperty(target, key)) {
       const targetValue = target[key];
+      compared.set(key, targetValue);
       if (
         sourceValue === targetValue ||
         (sourceValue !== sourceValue && targetValue !== targetValue)
@@ -66,11 +68,9 @@ export const differenceRecursive = (
   }
   const targetKeys = Object.keys(target);
   if (!hasRemoved && targetKeys.length === sourceKeys.length) return patch;
-  const compared = new Set(sourceKeys);
   for (let i = 0, l = targetKeys.length; i < l; i++) {
     const key = targetKeys[i];
-    if (compared.has(key)) continue;
-    const targetValue = target[key];
+    const targetValue = compared.has(key) ? compared.get(key) : target[key];
     if (hasOwnProperty(source, key) || targetValue === undefined) continue;
     if (key === '__proto__' || key === 'constructor' || key === 'prototype')
       setDataProperty((patch ??= {}), key, cloneLite(targetValue));

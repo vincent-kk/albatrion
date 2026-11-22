@@ -23,6 +23,6 @@ export const applyRootOperation = (
   if (operation === Operation.ADD || operation === Operation.REPLACE)
     value = patch.value;
   else if (operation === Operation.MOVE || operation === Operation.COPY)
-    value = readTransferValue(source, patch, patchIndex, cloned, '');
+    value = readTransferValue(source, patch, operation, patchIndex, cloned, '');
   return handleRootPatch(source, patch, value, patchIndex);
 };

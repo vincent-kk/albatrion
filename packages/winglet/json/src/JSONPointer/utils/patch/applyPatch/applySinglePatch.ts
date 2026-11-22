@@ -127,7 +127,14 @@ export const applySinglePatch = (
   if (operation === Operation.ADD || operation === Operation.REPLACE)
     value = patch.value;
   else if (operation === Operation.MOVE || operation === Operation.COPY)
-    value = readTransferValue(source, patch, patchIndex, cloned, path);
+    value = readTransferValue(
+      source,
+      patch,
+      operation,
+      patchIndex,
+      cloned,
+      path,
+    );
 
   let current: any = source;
   let cursor = 1;
