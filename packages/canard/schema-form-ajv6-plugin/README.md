@@ -123,6 +123,7 @@ const defaultSettings: Ajv.Options = {
   nullable: true, // Enable `nullable` keyword (= `type:[{type}, 'null']`)
   verbose: true, // Include schema and data information in errors
   format: false, // Disable format validation (can be enabled if needed)
+  multipleOfPrecision: 9,
 };
 ```
 

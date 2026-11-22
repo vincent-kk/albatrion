@@ -134,6 +134,7 @@ const defaultSettings: Ajv.Options = {
   allErrors: true, // 첫 번째 오류뿐만 아니라 모든 검증 오류 수집
   strict: false, // 기존 스키마와의 호환성을 위해 strict 모드 비활성화
   validateFormats: false, // 성능 향상을 위해 포맷 검증 비활성화
+  multipleOfPrecision: 9,
 };
 ```
 

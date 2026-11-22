@@ -187,6 +187,7 @@ const defaultSettings: Ajv.Options = {
   strict: false,
   validateFormats: false,
   allowUnionTypes: true,
+  multipleOfPrecision: 9,
 };
 ```
 
