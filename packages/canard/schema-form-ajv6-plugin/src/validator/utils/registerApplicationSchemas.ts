@@ -23,7 +23,8 @@ export const registerApplicationSchemas = (source: Ajv, target: Ajv): void => {
     }
   }
   for (const [key, entry] of Object.entries(source._schemas))
-    target._schemas[key] = registrations.get(entry);
+    if (entry) target._schemas[key] = registrations.get(entry);
   for (const [key, entry] of Object.entries(source._refs))
-    target._refs[key] = typeof entry === 'string' ? entry : registrations.get(entry);
+    if (entry !== undefined)
+      target._refs[key] = typeof entry === 'string' ? entry : registrations.get(entry);
 };
