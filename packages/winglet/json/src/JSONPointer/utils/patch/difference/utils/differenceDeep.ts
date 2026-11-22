@@ -73,7 +73,9 @@ export const differenceDeep = (
     }
     const targetKeys = Object.keys(frame.target);
     if (frame.hasRemoved || targetKeys.length !== frame.keys.length) {
+      const compared = new Set(frame.keys);
       for (const key of targetKeys) {
+        if (compared.has(key)) continue;
         const value = frame.target[key];
         if (!hasOwnProperty(frame.source, key) && value !== undefined)
           setDataProperty((frame.patch ??= {}), key, cloneLite(value));

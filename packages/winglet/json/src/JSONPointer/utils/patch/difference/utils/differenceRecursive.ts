@@ -66,8 +66,10 @@ export const differenceRecursive = (
   }
   const targetKeys = Object.keys(target);
   if (!hasRemoved && targetKeys.length === sourceKeys.length) return patch;
+  const compared = new Set(sourceKeys);
   for (let i = 0, l = targetKeys.length; i < l; i++) {
     const key = targetKeys[i];
+    if (compared.has(key)) continue;
     const targetValue = target[key];
     if (hasOwnProperty(source, key) || targetValue === undefined) continue;
     if (key === '__proto__' || key === 'constructor' || key === 'prototype')
