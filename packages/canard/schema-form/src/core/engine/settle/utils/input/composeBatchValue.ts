@@ -1,3 +1,4 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
@@ -22,7 +23,8 @@ import { replaceAtPath } from './replaceAtPath';
  * committed value placed at the target address
  * @param ranges - Optional sink receiving physical decisions for the synthesized input
  * @param markRanges - Optional per-mark decisions while a reset is pending
- * @returns Candidate root input for one settlement
+ * @param mode - Prepare a single input at its own target after direct write admission
+ * @returns Candidate input at the root or at the original target of a direct write
  */
 export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
   root: Self,
@@ -30,7 +32,9 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
   base: unknown = root.storedValue,
   ranges?: WriteRange[],
   markRanges?: WriteRange[][],
+  mode: 'root' | 'direct' = 'root',
 ): unknown => {
+  const direct = mode === 'direct';
   let value = base;
   for (const write of writes) {
     const ownRanges = markRanges ? [] : ranges;
@@ -40,13 +44,13 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
       (merge
         ? FieldNodeWriteKind.CallerPartial
         : FieldNodeWriteKind.CallerReplace);
-    const names = parsePointerSegments(write.node.path);
+    const names = direct ? EMPTY_ARRAY : parsePointerSegments(write.node.path);
     if (!isNamedPointerSegments(names))
       throw new TypeError('Expected a named node path');
     const targets = write.virtualTargets ?? resolveStorageTargets(write.node);
     if (targets === undefined) {
       value = replaceAtPath(
-        value,
+        direct ? undefined : value,
         names,
         write.value,
         write.option,
@@ -56,25 +60,26 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
         0,
         ownRanges,
         source,
+        write.node.path,
+        undefined,
+        mode,
       );
     } else {
-      if (ranges) assertVirtualWriteShape(write.node, write.value);
+      if (ranges && !direct) assertVirtualWriteShape(write.node, write.value);
       const values = isArray(write.value) ? write.value : undefined;
-      const parentNames = names.slice(0, -1);
+      const tuple =
+        direct && values ? new Array<unknown>(values.length) : undefined;
+      const parentNames = direct ? EMPTY_ARRAY : names.slice(0, -1);
       const parent = write.node.parent;
       ownRanges?.push({ path: write.node.path, source, isLogical: true });
       for (const target of targets) {
         const current = parent?.childrenByName?.[target.name];
-        if (
-          !write.virtualTargets &&
-          !current &&
-          values?.[target.index] === undefined
-        )
-          continue;
-        value = replaceAtPath(
-          value,
-          [...parentNames, target.name],
-          values?.[target.index],
+        const input = values?.[target.index];
+        if (!write.virtualTargets && !current && input === undefined) continue;
+        const next = replaceAtPath(
+          direct ? undefined : value,
+          direct ? EMPTY_ARRAY : [...parentNames, target.name],
+          input,
           write.option,
           current,
           !current && parent && merge
@@ -87,8 +92,12 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
           source,
           target.path,
           merge ? undefined : true,
+          mode,
         );
+        if (tuple) tuple[target.index] = next;
+        else if (!direct) value = next;
       }
+      if (direct) value = tuple;
     }
     if (markRanges && ownRanges) {
       markRanges.push(ownRanges);

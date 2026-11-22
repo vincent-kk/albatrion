@@ -4,11 +4,13 @@ import { FieldNodeWriteKind } from '../../../types/value';
 import type { WriteOption } from '../../../types/value';
 import type { StorageTarget } from '../../../utils/paths/resolveStorageTargets';
 import type { SettlementContext } from '../../types/settlement';
+import type { WriteRange } from '../../types/writeRange';
 import { computeNode } from '../compute/computeNode';
 import { registerRecalculation } from '../dependencies/registerRecalculation';
 import { assertFieldNodeWritable } from '../dispose/assertFieldNodeWritable';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { assertVirtualWriteShape } from '../input/assertVirtualWriteShape';
+import { composeBatchValue } from '../input/composeBatchValue';
 import { decideAddressWrite } from '../input/decideAddressWrite';
 import { markWrite } from '../input/markWrite';
 import { prepareWriteEpoch } from '../input/utils/prepareWriteEpoch';
@@ -33,6 +35,7 @@ import { releaseWrongKindHosts } from './releaseWrongKindHosts';
  * @param writeOrigins - Call-ordered batch origins for delivery and Refresh
  * @param fixedFirstLoadPlan - Mount-only compiler proof supplied after freshness admission
  * @param virtualTargets - Physical slots admitted at the public virtual call boundary
+ * @param markRanges - Range sink for a reset barrier holding this direct mark
  * @returns Nothing; live records carry the committed shape and values
  * @throws A deferred gate or shared declaration failure after commit
  */
@@ -45,7 +48,10 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
   writeOrigins?: SettlementContext<Self>['writeOrigins'],
   fixedFirstLoadPlan?: Blueprint['fixedFirstLoadPlan'],
   virtualTargets?: readonly StorageTarget<Self>[],
+  markRanges?: WriteRange[][],
 ): void => {
+  const directRanges: WriteRange[] | undefined = markRanges ? [] : undefined;
+  if (directRanges && markRanges) markRanges.push(directRanges);
   if (node.isDetached) return;
   const root = node.rootNode;
   if (
@@ -83,6 +89,27 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
     )
       assertVirtualWriteShape(node, input);
   }
+  if (directRanges)
+    input = composeBatchValue(
+      root,
+      [
+        {
+          node,
+          value: input,
+          option,
+          source:
+            source === FieldNodeWriteKind.Input ||
+            source === FieldNodeWriteKind.Automatic
+              ? source
+              : undefined,
+          virtualTargets,
+        },
+      ],
+      undefined,
+      directRanges,
+      undefined,
+      'direct',
+    );
   const scratch = getSettlementScratch(root.runtime);
   const replaces = scalarWrite
     ? kind !== FieldNodeWriteKind.Input

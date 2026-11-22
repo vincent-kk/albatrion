@@ -11,6 +11,7 @@ import {
 } from '../../../utils/batchHostSource';
 import { writeObjectKey } from '../../../utils/writeObjectKey';
 import type { WriteRange } from '../../types/writeRange';
+import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { canReleaseCallerHost } from './canReleaseCallerHost';
 import { decideAddressWrite } from './decideAddressWrite';
 import { getWriteChild } from './getWriteChild';
@@ -26,6 +27,7 @@ import { isPlain } from './isPlain';
  * @param ranges - Optional sink for the physical decisions in call order
  * @param source - Binding origin for the physical decisions
  * @param path - Canonical storage path at this depth
+ * @param mode - Direct input keeps non-enumerable declared fields
  * @returns A candidate preserving omitted branch keys.
  */
 export const mergeMarkedValue = <Self extends FieldNodeRecord<Self>>(
@@ -36,24 +38,30 @@ export const mergeMarkedValue = <Self extends FieldNodeRecord<Self>>(
   ranges?: WriteRange[],
   source?: FieldNodeWriteKind,
   path = node?.path ?? '',
+  mode: 'root' | 'direct' = 'root',
 ): unknown => {
   if (!template || !decideAddressWrite(template, incoming, true)) {
     if (ranges && source !== undefined) ranges.push({ path, source });
     return incoming;
   }
-  if (ranges && source !== undefined)
-    ranges.push({ path, source, partial: incoming });
   const previousObject = isPlain(previous) ? previous : undefined;
   const wrongSource =
     previousObject === undefined
       ? previous
       : Reflect.get(previousObject, BATCH_HOST_SOURCE);
   const ownInput = { ...incoming };
+  if (mode === 'direct')
+    for (const name of getDeclaredChildNames(template))
+      if (!hasOwnProperty(ownInput, name) && hasOwnProperty(incoming, name))
+        writeObjectKey(ownInput, name, incoming[name]);
+  if (ranges && source !== undefined)
+    ranges.push({ path, source, partial: ownInput });
   const next = previousObject ? { ...previousObject, ...ownInput } : ownInput;
   let hasChildOutput = false;
   for (const name of Object.keys(ownInput)) {
     const { child, entry } = getWriteChild(template, node, name);
     const binding = child?.blueprintNode ?? entry?.node;
+    const childRange = ranges?.length ?? -1;
     const value = mergeMarkedValue(
       child,
       previousObject && hasOwnProperty(previousObject, name)
@@ -64,8 +72,12 @@ export const mergeMarkedValue = <Self extends FieldNodeRecord<Self>>(
       ranges,
       source,
       ranges ? appendSegment(path, name) : undefined,
+      mode,
     );
     writeObjectKey(next, name, value);
+    const childPartial = ranges?.[childRange]?.partial;
+    if (childPartial && ownInput !== next)
+      writeObjectKey(ownInput, name, childPartial);
     if (
       wrongSource !== undefined &&
       !hasChildOutput &&
