@@ -11,7 +11,7 @@ import { resolveRef } from './resolveRef';
 import { rows } from './rows';
 import { runSafely } from './runSafely';
 import { slotOrder } from './slotOrder';
-import { nearestRank } from './statistics';
+import { nearestRank } from './nearestRank';
 import { verdict } from './verdict';
 
 type Slot = { round: number; slot: string; data: ReturnType<typeof execute> };

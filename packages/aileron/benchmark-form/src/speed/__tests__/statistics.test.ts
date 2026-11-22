@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { ratios } from '../ratios';
 import { slotOrder } from '../slotOrder';
-import { nearestRank } from '../statistics';
+import { nearestRank } from '../nearestRank';
 import { verdict } from '../verdict';
 
 describe('speed harness statistics', () => {
