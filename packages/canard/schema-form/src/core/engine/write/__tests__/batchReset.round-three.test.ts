@@ -53,6 +53,37 @@ it.each([false, true])(
   },
 );
 
+it('runs a virtual mark before a constituent reset when its other member is inactive', () => {
+  const root = nodeFromJSONSchema({
+    jsonSchema: {
+      type: 'object',
+      properties: {
+        on: { type: 'boolean' },
+        a: {
+          type: 'string',
+          controls: {
+            injectTo: (value) =>
+              value === 'marked' ? { '../c': 'reacted' } : {},
+          },
+        },
+        b: { type: 'string', controls: { active: '/on === true' } },
+        c: { type: 'string' },
+      },
+      options: { virtual: { pair: { fields: ['a', 'b'] } } },
+    },
+    defaultValue: { a: 'base', c: 'base', on: false },
+  });
+  const a = root.find('/a')!;
+  expect(root.find('/b')).toBeNull();
+
+  root.batch(() => {
+    root.find('/pair')!.setValue(['marked', undefined]);
+    a.resetSubtree();
+  });
+
+  expect(root.value).toEqual({ a: 'base', c: 'reacted', on: false });
+});
+
 it('round-3: parent write followed by subtree reset equals sequential calls', () => {
   const run = (batch: boolean) => {
     const root = nodeFromJSONSchema({
