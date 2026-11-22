@@ -80,4 +80,36 @@ describe('a batched read interprets earlier caller writes under each static type
       expect(seen).toEqual([[2, 'b0']]);
     }
   });
+
+  it('an object updater reads own declared fields in declaration order', () => {
+    const root = nodeFromJSONSchema({ jsonSchema: schema });
+    const reads: string[] = [];
+    const input = Object.defineProperties(
+      {},
+      {
+        box: {
+          enumerable: true,
+          get: () => {
+            reads.push('box');
+            return { m: '6' };
+          },
+        },
+        n: {
+          get: () => {
+            reads.push('n');
+            return '5';
+          },
+        },
+      },
+    );
+    root.batch(() => {
+      root.setValue(input);
+      root.setValue((previous: unknown) => {
+        expect(previous).toEqual({ n: 5, box: { m: 6 } });
+        expect(reads).toEqual(['n', 'box']);
+        return { n: 2 };
+      });
+    });
+    expect(root.value).toEqual({ n: 2 });
+  });
 });
