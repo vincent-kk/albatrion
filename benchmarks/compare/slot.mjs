@@ -40,9 +40,17 @@ if (isRender) {
   let batch = Number(batchArg) || 1;
   const warmEnd = performance.now() + (row.warmMs ?? 1000);
   while (performance.now() < warmEnd) await timeRenders(batch);
-  // Calibration slot (batchArg 0): size the batch to about 10 ms of warm renders.
-  if (batchArg === "0")
-    batch = Math.max(1, Math.ceil(200 / (await timeRenders(20))));
+  // Calibration slot (batchArg 0): about 10 ms of timed work per sample, at most
+  // 100 ms of wall time so a slow untimed `before` or `after` cannot stall the run.
+  if (batchArg === "0") {
+    const wallStart = performance.now();
+    const timed = await timeRenders(20);
+    const wall = performance.now() - wallStart;
+    batch = Math.max(
+      1,
+      Math.min(Math.ceil(200 / timed), Math.floor(2000 / wall)),
+    );
+  }
   globalThis.gc();
   for (let i = 0; i < (row.samples ?? 40); i++)
     samples.push(((await timeRenders(batch)) * 1e6) / batch);
