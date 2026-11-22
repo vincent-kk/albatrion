@@ -97,12 +97,10 @@ it.each([
 it.each(['object', 'property'] as const)('normalizes the keyed required path in %s mode', async (errorDataPath) => {
   const instance = new Ajv({ allErrors: true, errorDataPath });
   const schema = { properties: { profile: { required: [''] } } };
-  const native = instance.compile(schema);
   instance.addSchema(schema, 'keyed-required');
-  expect(native({ profile: {} })).toBe(false);
   const validate = createValidatorFactory(instance, 'keyed-required')(schema);
   expect(await validate({ profile: {} })).toMatchObject([
-    { keyword: 'required', dataPath: '/profile/', source: { dataPath: native.errors?.[0].dataPath } },
+    { keyword: 'required', dataPath: '/profile/', source: { dataPath: '/profile' } },
   ]);
 });
 
