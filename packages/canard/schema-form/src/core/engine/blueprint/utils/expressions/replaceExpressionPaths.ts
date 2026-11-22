@@ -1,4 +1,4 @@
-import { readSlashTokenEnd } from './readSlashTokenEnd';
+import { readSlashToken } from './readSlashToken';
 import { JSON_POINTER_PATH_STICKY_REGEX } from './regex';
 
 /** A closed string literal, consuming escaped code units as text. */
@@ -79,15 +79,18 @@ export const replaceExpressionPaths = (
         index++;
         continue;
       }
+      let path: string | undefined;
       if (char === '/' && (!isAfterValue || next === '/' || next === '*')) {
-        const end = readSlashTokenEnd(expression, index, isAfterValue);
-        if (end >= 0) {
+        const token = readSlashToken(expression, index, isAfterValue);
+        if (typeof token === 'string') path = token;
+        else if (token >= 0) {
           if (next !== '/' && next !== '*') isAfterValue = true;
-          index = end - 1;
+          index = token - 1;
           continue;
         }
       }
       if (
+        path !== undefined ||
         char === '#' ||
         (char === '/' &&
           !isWhitespace(next, expression.charCodeAt(index + 1))) ||
@@ -95,10 +98,12 @@ export const replaceExpressionPaths = (
         (char === '.' &&
           (next === '/' || expression[index + 2] === '/'))
       ) {
-        JSON_POINTER_PATH_STICKY_REGEX.lastIndex = index;
-        const path = JSON_POINTER_PATH_STICKY_REGEX.exec(expression);
-        if (path !== null) {
-          const text = braces?.length ? cutAtOpenBrace(path[0]) : path[0];
+        if (path === undefined) {
+          JSON_POINTER_PATH_STICKY_REGEX.lastIndex = index;
+          path = JSON_POINTER_PATH_STICKY_REGEX.exec(expression)?.[0];
+        }
+        if (path !== undefined) {
+          const text = braces?.length ? cutAtOpenBrace(path) : path;
           output += expression.slice(copied, index) + replace(text);
           copied = index + text.length;
           index = copied - 1;
