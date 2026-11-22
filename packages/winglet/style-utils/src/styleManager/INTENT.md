@@ -14,7 +14,7 @@
 
 ### Always do
 
-- `destroyScope`/`styleManagerFactory`는 `StyleManager.get(...)`에 위임하는 얇은 어댑터로 유지한다 — 스코프 생명주기 로직을 이 층에 복제하지 않는다
+- `destroyScope`/`styleManagerFactory`는 `StyleManager.get(...)`과 `StyleManager.createInjector(...)`에 위임하는 얇은 어댑터로 유지한다 — 스코프 생명주기 로직을 이 층에 복제하지 않는다
 - `StyleManager`에서 발생한 예외는 삼키지 않고 그대로 전파한다
 
 ### Ask first
