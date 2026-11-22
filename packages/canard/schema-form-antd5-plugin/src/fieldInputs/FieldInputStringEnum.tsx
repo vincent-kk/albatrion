@@ -14,6 +14,7 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
+import { filterEnumOption } from './utils/enum/filterEnumOption';
 import { getEnumOptions } from './utils/enum/getEnumOptions';
 
 type ArrayJSONSchema = ArraySchema & {
@@ -82,6 +83,7 @@ const FieldInputStringEnum = ({
       mode={multiple ? 'multiple' : undefined}
       options={options}
       optionFilterProp="label"
+      filterOption={multiple ? filterEnumOption : undefined}
       placeholder={placeholder}
       disabled={disabled || readOnly}
       defaultValue={initialValue}
