@@ -136,7 +136,7 @@ describe('a batched read interprets earlier caller writes under each static type
         return [2];
       });
     });
-    expect(seen).toEqual([[undefined]]);
+    expect(seen).toEqual([[null]]);
     expect(root.value).toEqual([2]);
   });
 });

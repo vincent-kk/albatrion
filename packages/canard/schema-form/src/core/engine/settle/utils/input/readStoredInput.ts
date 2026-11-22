@@ -107,21 +107,22 @@ export const readStoredInput = <Self extends FieldNodeRecord<Self>>(
         items,
         live,
         ancestors,
-        (index, entry, child, raw, isNamed) => {
-          if (!entry || (live && !child && Number(index) < live.itemCount))
-            return;
+        (index, entry, child, raw) => {
+          if (!entry) return;
           const node = entry.node;
           slots[index] = {
             blueprintNode: node,
             storedOutputValue: readStoredInput(
               node,
-              isNamed ? raw : undefined,
+              raw,
               child,
               true,
               ancestors,
             ),
           };
         },
+        undefined,
+        'stored',
       );
     }
     const previous = live?.storedValue;
