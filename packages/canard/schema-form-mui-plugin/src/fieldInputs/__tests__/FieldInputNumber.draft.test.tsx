@@ -101,7 +101,12 @@ it('discards an invalid integer draft on an external write and reset', async () 
       defaultValue={{ field: 3 }}
     />,
   );
-  const input = () => view.getByRole<HTMLInputElement>('spinbutton');
+  const input = () => {
+    const control = view.getByRole('spinbutton');
+    if (!(control instanceof HTMLInputElement))
+      throw new Error('Expected a native number input');
+    return control;
+  };
   fireEvent.change(input(), { target: { value: '1.5' } });
   expect(input().value).toBe('1.5');
   await act(async () => ref.current!.setValue({ field: 8 }));
