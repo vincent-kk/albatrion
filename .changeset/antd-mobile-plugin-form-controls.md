@@ -27,6 +27,8 @@ The built-in Slider uses pointer interaction, as it did in beta. During developm
 
 Sliders use numeric or array-item schema bounds and disable when no stop is legal. Array schemas select the range slider. Custom input IDs now use `inputId` or `getInputId(key)`; use `labelId` for the title and keep `path` for form data. Ant Design Mobile's native radio inputs do not expose a `name` prop. A custom radio input can supply a native group name. Set textarea `minRows` and `maxRows` in `presentation.FieldInputProps` to override the schema's defaults.
 
+The default Slider saves on pointer release or a track tap. With bounds `1e-7` to `9e-7` and `multipleOf: 1e-7`, Ant Design Mobile 5.43.0 can commit `0` after a midpoint tap, where the expected grid value is `5e-7`. Use a custom `FieldInput` through `fieldInputDefinitions` if you need an exact decimal grid.
+
 This release supports Ant Design Mobile 5.2 and later in the 5.x line. Stepper `formatter` and `parser` require Ant Design Mobile 5.26 or later. Install the supported version of `@canard/schema-form` alongside this plugin.
 
 ```sh

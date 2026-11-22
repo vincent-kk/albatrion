@@ -117,6 +117,10 @@ URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid schem
 - **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties, lazy update option (`presentation.FieldInputProps.lazy`), mark display option, automatic value label display
 
 Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores the value on commit (keyboard keydown or pointer release); `false` stores on every move.
+
+An unset slider hides its resting thumb. Set `presentation.FieldInputProps.unsetValueText` to localize its screen reader announcement.
+
+Keyboard commits at very small decimal steps can include floating-point error. With `multipleOf: 1e-7` and a current value of `1.2e-6`, ArrowUp can store `0.0000012999999999999998` instead of `1.3e-6` in MUI Material 7.3.1. If your form needs an exact decimal grid, register a custom `FieldInput` through `fieldInputDefinitions`.
 The slider uses inclusive and exclusive schema limits to declare legal stops. If the interval contains no supported stop, the slider is disabled. An unset field announces `Not set` without a visible resting thumb. Set `presentation.FieldInputProps.unsetValueText` to localize that announcement.
 
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
