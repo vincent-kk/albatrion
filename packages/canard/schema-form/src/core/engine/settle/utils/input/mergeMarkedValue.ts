@@ -48,9 +48,10 @@ export const mergeMarkedValue = <Self extends FieldNodeRecord<Self>>(
     previousObject === undefined
       ? previous
       : Reflect.get(previousObject, BATCH_HOST_SOURCE);
-  const next: Record<string, unknown> = { ...previousObject, ...incoming };
+  const ownInput = { ...incoming };
+  const next = previousObject ? { ...previousObject, ...ownInput } : ownInput;
   let hasChildOutput = false;
-  for (const name of Object.keys(incoming)) {
+  for (const name of Object.keys(ownInput)) {
     const { child, entry } = getWriteChild(template, node, name);
     const binding = child?.blueprintNode ?? entry?.node;
     const value = mergeMarkedValue(
@@ -58,7 +59,7 @@ export const mergeMarkedValue = <Self extends FieldNodeRecord<Self>>(
       previousObject && hasOwnProperty(previousObject, name)
         ? previousObject[name]
         : undefined,
-      incoming[name],
+      ownInput[name],
       binding,
       ranges,
       source,
