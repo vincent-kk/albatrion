@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import { JSON_POINTER_PATH_REGEX } from '../regex';
 import { replaceExpressionPaths } from '../replaceExpressionPaths';
-import { replaceScannedExpressionPaths } from '../replaceScannedExpressionPaths';
 
 /**
  * Expressions without a quote, a comment or a regular expression literal, sampled from the
@@ -53,10 +52,9 @@ const CODE_ONLY_EXPRESSIONS = [
 const mark = (path: string) => `<${path}>`;
 
 describe('replaceExpressionPaths on code-only expressions', () => {
-  it('matches the plain path regex replacement through the scanner and the entry point', () => {
+  it('matches the plain path regex replacement through the scanner', () => {
     for (const expression of CODE_ONLY_EXPRESSIONS) {
       const expected = expression.replace(JSON_POINTER_PATH_REGEX, mark);
-      expect(replaceScannedExpressionPaths(expression, mark)).toBe(expected);
       expect(replaceExpressionPaths(expression, mark)).toBe(expected);
     }
   });
