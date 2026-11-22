@@ -43,12 +43,16 @@ describe('round-2 json 3: type replacement ownership', () => {
       const mutable = compare(source, target, { immutable: false });
       expect(reads).toBe(0);
       expect(mutable[0]).toMatchObject({ op: 'replace', path });
-      expect(mutable[0]?.value).toBe(replacement);
+      expect(mutable.find((patch) => patch.op === 'replace')?.value).toBe(
+        replacement,
+      );
 
       const immutable = compare(source, target, { immutable: true });
       expect(reads).toBe(1);
       expect(immutable).toEqual([{ op: 'replace', path, value: { x: 1 } }]);
-      expect(immutable[0]?.value).not.toBe(replacement);
+      expect(
+        immutable.find((patch) => patch.op === 'replace')?.value,
+      ).not.toBe(replacement);
     },
   );
 });
