@@ -25,7 +25,7 @@ export async function executeUnits(
   diagnostics?: readonly RunFailure[],
 ): Promise<RunResult> {
   const results: RunUnit[] = [];
-  for (const { sourceSnapshots, installedAssets, ...unit } of units) {
+  for (const { sourceSnapshots, installedAssets, sharedRetirements, ...unit } of units) {
     const blocked = unit.plan.requiresForce && !flags.force && !flags.dryRun;
     if (unit.error || blocked || flags.dryRun || cancelled) {
       results.push({
@@ -91,13 +91,17 @@ export async function executeUnits(
     }
     if (installedAssets) {
       try {
-        await installedAssets.record(unit.target.name, [
-          ...successfulFiles,
-          ...unit.plan.actions.filter(
-            (action) =>
-              action.kind === 'skip-uptodate' && action.target.kind === 'file',
-          ),
-        ]);
+        await installedAssets.record(
+          unit.target.name,
+          [
+            ...successfulFiles,
+            ...unit.plan.actions.filter(
+              (action) =>
+                action.kind === 'skip-uptodate' && action.target.kind === 'file',
+            ),
+          ],
+          sharedRetirements,
+        );
       } catch (error) {
         diagnostics.push({
           unitKey: unit.key,

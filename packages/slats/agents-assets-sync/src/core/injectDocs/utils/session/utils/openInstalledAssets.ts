@@ -1,10 +1,11 @@
-import { lstat, realpath, rmdir } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
+import { realpath, rmdir } from 'node:fs/promises';
+import { dirname } from 'node:path';
 
-import { isWithin, splitAssetKind } from '../../../../agentTarget/index.js';
+import { splitAssetKind } from '../../../../agentTarget/index.js';
 import type { Action } from '../../../../buildPlan/index.js';
 import { hashEquals, hashFile } from '../../../../hash/index.js';
 import { replaceDocument } from '../../replaceDocument.js';
+import { hasMatchingOwner } from './openInstalledAssets/hasMatchingOwner.js';
 import { lockInstalledAssetRecord } from './openInstalledAssets/lockInstalledAssetRecord.js';
 import { readInstalledAssetPackages } from './openInstalledAssets/readInstalledAssetPackages.js';
 
@@ -12,14 +13,20 @@ import { readInstalledAssetPackages } from './openInstalledAssets/readInstalledA
 export interface InstalledAssets {
   readonly path: string;
   previousPaths(owner: string): ReadonlyMap<string, string> | undefined;
-  /** Checks peer keys against a retired regular file whose hash is already verified. */
-  hasVerifiedAlias(
+  /** Protect an exact path claimed by another package. */
+  hasPeerPath(owner: string, relPath: string): boolean;
+  /** Check peers against the physical path and hash of a regular file. */
+  hasVerifiedOwner(
     owner: string,
     relPath: string,
     destination: string,
     hash: string,
   ): Promise<boolean>;
-  record(owner: string, fileActions: readonly Action[]): Promise<void>;
+  record(
+    owner: string,
+    fileActions: readonly Action[],
+    sharedRetirements?: readonly string[],
+  ): Promise<void>;
 }
 
 /**
@@ -32,43 +39,26 @@ export async function openInstalledAssets(path: string): Promise<InstalledAssets
   let packages = await readInstalledAssetPackages(path);
   return {
     path,
-    previousPaths(owner) {
-      const original = packages.get(owner);
-      if (!original?.size || packages.size === 1) return original;
-      const files = new Map(original);
+    previousPaths: (owner) => packages.get(owner),
+    hasPeerPath(owner, relPath) {
       for (const [peer, paths] of packages)
-        if (peer !== owner) for (const relPath of paths.keys()) files.delete(relPath);
-      return files;
-    },
-    async hasVerifiedAlias(owner, relPath, destination, hash) {
-      const asset = splitAssetKind(relPath)?.kind;
-      const root = dirname(path);
-      for (const [peer, paths] of packages) {
-        if (peer === owner) continue;
-        for (const [peerPath, peerHash] of paths) {
-          if (peerPath === relPath || !hashEquals(peerHash, hash)) continue;
-          if (splitAssetKind(peerPath)?.kind !== asset) continue;
-          const candidate = resolve(root, peerPath);
-          if (!isWithin(root, candidate)) continue;
-          try {
-            if (
-              (await realpath(candidate)) === destination &&
-              (await lstat(candidate)).isFile()
-            )
-              return true;
-          } catch (error) {
-            if (
-              !(error instanceof Error && 'code' in error) ||
-              (error.code !== 'ENOENT' && error.code !== 'ENOTDIR')
-            )
-              throw error;
-          }
-        }
-      }
+        if (peer !== owner && paths.has(relPath)) return true;
       return false;
     },
-    async record(owner, fileActions) {
-      const updates = new Map<string, string | undefined>();
+    hasVerifiedOwner(owner, relPath, destination, hash) {
+      return hasMatchingOwner(
+        packages,
+        owner,
+        dirname(path),
+        relPath,
+        destination,
+        hash,
+      );
+    },
+    async record(owner, fileActions, sharedRetirements = []) {
+      const updates = new Map<string, string | undefined>(
+        sharedRetirements.map((relPath) => [relPath, undefined]),
+      );
       const matches: Action[] = [];
       for (const action of fileActions) {
         const { kind, relPath, sourceHash } = action;
@@ -78,8 +68,16 @@ export async function openInstalledAssets(path: string): Promise<InstalledAssets
         else if (kind === 'skip-uptodate') {
           if (
             sourceHash &&
+            action.destinationKey &&
             packages.get(owner)?.get(relPath) !== sourceHash &&
-            hasMatchingOwner(packages, owner, relPath, sourceHash)
+            (await hasMatchingOwner(
+              packages,
+              owner,
+              dirname(path),
+              relPath,
+              action.destinationKey,
+              sourceHash,
+            ))
           )
             matches.push(action);
         } else if (sourceHash) updates.set(relPath, sourceHash);
@@ -93,8 +91,15 @@ export async function openInstalledAssets(path: string): Promise<InstalledAssets
           if (
             target.kind === 'file' &&
             sourceHash &&
-            hasMatchingOwner(next, owner, relPath, sourceHash) &&
-            hashEquals(await hashFile(target.dstAbs, true), sourceHash)
+            hashEquals(await hashFile(target.dstAbs, true), sourceHash) &&
+            (await hasMatchingOwner(
+              next,
+              owner,
+              dirname(path),
+              relPath,
+              await realpath(target.dstAbs),
+              sourceHash,
+            ))
           )
             updates.set(relPath, sourceHash);
         const hashes = new Map(next.get(owner));
@@ -128,19 +133,6 @@ export async function openInstalledAssets(path: string): Promise<InstalledAssets
       }
     },
   };
-}
-
-/** Check whether another package recorded the supplied path and bytes. */
-function hasMatchingOwner(
-  packages: ReadonlyMap<string, ReadonlyMap<string, string>>,
-  owner: string,
-  relPath: string,
-  hash: string,
-): boolean {
-  for (const [peer, paths] of packages)
-    if (peer !== owner && hashEquals(paths.get(relPath) ?? null, hash))
-      return true;
-  return false;
 }
 
 /** Give the same ownership record a stable serialized order. */

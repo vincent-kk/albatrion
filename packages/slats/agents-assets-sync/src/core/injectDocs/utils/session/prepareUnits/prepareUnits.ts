@@ -79,6 +79,7 @@ export async function prepareUnits(
           key: `${agent}:${target.name}`,
           agentTarget,
           aliasOf: existing.key,
+          sharedRetirements: undefined,
           plan: { actions: [], requiresForce: false },
         });
         continue;
@@ -121,7 +122,7 @@ export async function prepareUnits(
             installedRecords.set(physicalRecord, installed);
           }
         }
-        const { destinations, orphanScans } = resolveDestinations(
+        const { destinations, orphanScans: scans } = resolveDestinations(
           {
             agentTarget,
             packageName: target.name,
@@ -131,6 +132,16 @@ export async function prepareUnits(
           },
           installed?.previousPaths(target.name),
         );
+        const sharedRetirements: string[] = [];
+        const orphanScans = scans.filter((scan) => {
+          if (
+            scan.kind !== 'installed-file' ||
+            !installed?.hasPeerPath(target.name, scan.relPath)
+          )
+            return true;
+          sharedRetirements.push(scan.relPath);
+          return false;
+        });
         await assertProjectPathsContained({
           agentTarget,
           assetKinds: values.assetKinds,
@@ -172,14 +183,16 @@ export async function prepareUnits(
             const installedHash = action[INSTALLED_HASH];
             if (
               installedHash &&
-              (await installed?.hasVerifiedAlias(
+              (await installed?.hasVerifiedOwner(
                 target.name,
                 action.relPath,
                 destinationKey,
                 installedHash,
               ))
-            )
+            ) {
+              sharedRetirements.push(action.relPath);
               return undefined;
+            }
             if (action.sourceHash) {
               const entry = await statFile(destinationKey);
               if (entry && entry.nlink > 1n)
@@ -194,6 +207,7 @@ export async function prepareUnits(
           namespaceRoots,
           sourceSnapshots,
           installedAssets: installed,
+          sharedRetirements,
           plan: { ...plan, actions },
         };
         destinationsSeen.set(locationKey, unit);
