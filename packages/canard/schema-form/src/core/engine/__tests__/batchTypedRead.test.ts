@@ -112,4 +112,31 @@ describe('a batched read interprets earlier caller writes under each static type
     });
     expect(root.value).toEqual({ n: 2 });
   });
+
+  it('an array updater leaves inherited indices as holes', () => {
+    const root = nodeFromJSONSchema({
+      jsonSchema: { type: 'array', items: { type: 'number' } },
+      defaultValue: [1],
+    });
+    const input = Object.setPrototypeOf(
+      new Array<unknown>(1),
+      Object.create(Array.prototype, {
+        0: {
+          get: () => {
+            throw new Error('read inherited element');
+          },
+        },
+      }),
+    );
+    const seen: unknown[] = [];
+    root.batch(() => {
+      root.setValue(input);
+      root.setValue((previous: unknown) => {
+        seen.push(previous);
+        return [2];
+      });
+    });
+    expect(seen).toEqual([[undefined]]);
+    expect(root.value).toEqual([2]);
+  });
 });
