@@ -88,18 +88,11 @@ const runSlot = (slot, rowId, batch) => {
 const p10 = (sorted) => sorted[Math.ceil(sorted.length * 0.1) - 1];
 
 /** Measures one row and returns its record; a failing slot voids the row. */
-const measureRow = async (rowId) => {
-  const row = (await import(join(rowsDir, `${rowId}.mjs`))).default;
-  const record = {
-    row: rowId,
-    pkg: row.pkg,
-    fn: row.fn,
-    input: row.input,
-    inputKind: row.inputKind,
-    kind: row.kind,
-  };
+const measureRow = (rowId) => {
+  const record = { row: rowId };
   try {
-    const { batch } = runSlot("A1", rowId, 0);
+    const { batch, meta } = runSlot("A1", rowId, 0);
+    Object.assign(record, meta);
     const pool = { A1: [], A2: [], B: [] };
     for (let round = 0; round < rounds; round++)
       for (const slot of ORDERS[round % 6])
@@ -151,7 +144,7 @@ const run = {
 const fixed = (value) => (value === undefined ? "" : value.toFixed(3));
 mkdirSync(args.out, { recursive: true });
 for (const rowId of rowIds) {
-  const record = await measureRow(rowId);
+  const record = measureRow(rowId);
   run.rows.push(record);
   console.log(
     `${rowId}: ${record.verdict} min ${fixed(record.min)} p10 ${fixed(record.p10)} control ${fixed(record.controlMin)}/${fixed(record.controlP10)} ${record.reason ?? ""}`,

@@ -46,7 +46,7 @@ export default {
 ```
 
 - `setup` runs once per process, may be async, and builds everything the operation consumes.
-- `run` is the timed operation. A `micro` row is synchronous and timed in a tight loop. A `render` row may return a promise, and its `after(result)` (unmount, reset) runs untimed after every operation.
+- `run` is the timed operation. A `micro` row is synchronous and timed in a tight loop, so it must be repeatable on the same input. A `render` row is timed one operation at a time: it may return a promise, `before()` (fresh input or state) runs untimed before every operation and `after(result)` (unmount, reset) after it. Use `render` for any operation that needs fresh state each time, rendering or not; the two timer reads add a constant to both arms, which pulls the ratio of an operation under about 2 µs toward 1, so say so in such a row.
 - `check(result)` runs untimed and must return true; a false result voids the row.
 - A render row imports `../dom.mjs` first, before `react-dom`, to get jsdom globals.
 - Optional `samples` (default 40 batches per process) and, for render rows, `warmMs` (default 1000).

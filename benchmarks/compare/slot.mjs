@@ -4,7 +4,7 @@ import { performance } from "node:perf_hooks";
 
 const [rowId, batchArg] = process.argv.slice(2);
 const row = (await import(`./rows/${rowId}.mjs`)).default;
-const { run, check = () => true, after } = await row.setup();
+const { run, check = () => true, before, after } = await row.setup();
 const isRender = row.kind === "render";
 const fail = (reason) => {
   console.log(JSON.stringify({ error: reason }));
@@ -19,10 +19,11 @@ const timeBatch = (count) => {
   return [performance.now() - start, sink];
 };
 
-/** Times `count` operations and sums only the `run` regions; check and `after` (unmount, reset) stay untimed. */
+/** Times `count` operations and sums only the `run` regions; `before`, check and `after` stay untimed. */
 const timeRenders = async (count) => {
   let total = 0;
   for (let i = 0; i < count; i++) {
+    if (before) await before();
     const start = performance.now();
     const result = await run();
     total += performance.now() - start;
@@ -32,6 +33,8 @@ const timeRenders = async (count) => {
   return total;
 };
 
+const { pkg, fn, input, inputKind, kind } = row;
+const meta = { pkg, fn, input, inputKind, kind };
 const samples = [];
 if (isRender) {
   let batch = Number(batchArg) || 1;
@@ -43,7 +46,7 @@ if (isRender) {
   globalThis.gc();
   for (let i = 0; i < (row.samples ?? 40); i++)
     samples.push(((await timeRenders(batch)) * 1e6) / batch);
-  console.log(JSON.stringify({ batch, samples }));
+  console.log(JSON.stringify({ meta, batch, samples }));
 } else {
   if (!check(run())) fail("check failed");
   let batch = Number(batchArg) || 1;
@@ -57,5 +60,5 @@ if (isRender) {
     if (!check(sink)) fail("check failed");
     samples.push((elapsed * 1e6) / batch);
   }
-  console.log(JSON.stringify({ batch, samples }));
+  console.log(JSON.stringify({ meta, batch, samples }));
 }
