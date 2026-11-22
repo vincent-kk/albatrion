@@ -15,6 +15,10 @@ node benchmarks/compare/run.mjs --a <baseline tree> --b <candidate tree> --rows 
 
 The machine must be otherwise idle. The driver holds a machine-wide lock file (`/tmp/benchmarks-compare.lock`) while it measures, so a second comparison started meanwhile waits for the first instead of distorting it.
 
+## Profiling
+
+Add `--profile` to the same command to find where a row spends its time instead of comparing: under the same lock, the driver runs the row once in each tree with `--cpu-prof` and writes the profiles to `<out>/<row>/a` and `<out>/<row>/b`. Open them in a profile viewer or compare self time per function. Always profile through the driver, never by starting a slot by hand, so a profile cannot overlap a comparison.
+
 ## How it runs
 
 The driver copies `slot.mjs`, `dom.mjs` and the row directory into `<tree>/.speed/` of both trees and runs each slot there as `node --expose-gc .speed/slot.mjs <row> <batch>`. Bare imports in a row therefore resolve inside the measured tree. Each round starts three processes (A1 and A2 from the baseline tree, B from the candidate) in a rotating order. A calibration process in the baseline tree fixes the batch size for the row first.

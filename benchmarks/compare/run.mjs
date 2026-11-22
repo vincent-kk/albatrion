@@ -35,6 +35,7 @@ const { values: args } = parseArgs({
     rows: { type: "string" },
     only: { type: "string", default: "" },
     rounds: { type: "string", default: "24" },
+    profile: { type: "boolean", default: false },
   },
 });
 const rounds = Number(args.rounds);
@@ -82,10 +83,16 @@ const rowIds = readdirSync(rowsDir)
   .filter((id) => prefixes.some((prefix) => id.startsWith(prefix)));
 
 /** Runs one slot process; throws with the reason when it fails or times out. */
-const runSlot = (slot, rowId, batch) => {
+const runSlot = (slot, rowId, batch, nodeArgs = []) => {
   const child = spawnSync(
     process.execPath,
-    ["--expose-gc", join(trees[slot], ".speed/slot.mjs"), rowId, String(batch)],
+    [
+      "--expose-gc",
+      ...nodeArgs,
+      join(trees[slot], ".speed/slot.mjs"),
+      rowId,
+      String(batch),
+    ],
     {
       cwd: trees[slot],
       encoding: "utf8",
@@ -166,6 +173,22 @@ const run = {
 };
 const fixed = (value) => (value === undefined ? "" : value.toFixed(3));
 mkdirSync(args.out, { recursive: true });
+// --profile: instead of comparing, write one CPU profile per row and tree to <out>/<row>/<a|b>.
+if (args.profile) {
+  for (const rowId of rowIds) {
+    const { batch } = runSlot("A1", rowId, 0);
+    for (const [slot, side] of [
+      ["A1", "a"],
+      ["B", "b"],
+    ])
+      runSlot(slot, rowId, batch, [
+        "--cpu-prof",
+        `--cpu-prof-dir=${resolve(args.out, rowId, side)}`,
+      ]);
+    console.log(`${rowId}: profiled`);
+  }
+  process.exit(0);
+}
 for (const rowId of rowIds) {
   const record = measureRow(rowId);
   run.rows.push(record);
