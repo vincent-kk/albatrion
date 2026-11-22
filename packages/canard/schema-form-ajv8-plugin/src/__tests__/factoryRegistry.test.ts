@@ -14,13 +14,12 @@ it.each([
   ['2020', create2020Factory, () => new Ajv2020()],
 ] as const)('accepts a beta registry through the %s factory', async (_entry, factory, createAjv) => {
   type BetaRegistration = { baseAjv: Ajv; ids: readonly string[] };
-  const registry = {
+  const validate = factory(createAjv(), {
     entries: new WeakMap<JSONSchema, BetaRegistration[]>(),
     active: [],
     finalizer: new FinalizationRegistry<BetaRegistration>(() => {}),
     compilerCount: 0,
-  };
-  const validate = factory(createAjv(), registry)({ type: 'string' });
+  })({ type: 'string' });
 
   await expect(validate('x')).resolves.toBeNull();
 });
