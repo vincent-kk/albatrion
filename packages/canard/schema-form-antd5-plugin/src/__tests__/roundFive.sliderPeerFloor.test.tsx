@@ -64,16 +64,14 @@ afterEach(() => {
   emulateAntd510.on = false;
 });
 
-let modernDefinition: FieldInputDefinition;
-let legacyDefinition: FieldInputDefinition;
+let modernDefinitions: FieldInputDefinition[];
+let legacyDefinitions: FieldInputDefinition[];
 
 beforeAll(async () => {
-  modernDefinition = (await import('../fieldInputs/FieldInputSlider'))
-    .FieldInputSliderDefinition;
+  modernDefinitions = (await import('../index')).plugin.fieldInputDefinitions;
   vi.resetModules();
   emulateAntd510.on = true;
-  legacyDefinition = (await import('../fieldInputs/FieldInputSlider'))
-    .FieldInputSliderDefinition;
+  legacyDefinitions = (await import('../index')).plugin.fieldInputDefinitions;
   emulateAntd510.on = false;
 });
 
@@ -98,9 +96,9 @@ const renderSlider = (lazy?: boolean) => {
         },
       }}
       defaultValue={{ level: 15 }}
-      fieldInputDefinitions={[
-        emulateAntd510.on ? legacyDefinition : modernDefinition,
-      ]}
+      fieldInputDefinitions={
+        emulateAntd510.on ? legacyDefinitions : modernDefinitions
+      }
     />,
   );
   return ref;

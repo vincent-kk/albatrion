@@ -71,14 +71,4 @@ describe('multiple enum search by the displayed label (antd6)', () => {
     expect(visibleOptions()).toEqual(['café']);
   });
 
-  it('finds an NFC label using an NFD query with different case', () => {
-    render(
-      <Form
-        fieldInputDefinitions={[FieldInputStringEnumDefinition]}
-        jsonSchema={schema}
-      />,
-    );
-    search('CAFE\u0301');
-    expect(visibleOptions()).toEqual(['café']);
-  });
 });

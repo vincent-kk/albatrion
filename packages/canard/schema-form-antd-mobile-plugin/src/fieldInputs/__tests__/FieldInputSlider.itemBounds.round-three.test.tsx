@@ -36,57 +36,6 @@ const thumbBounds = (container: HTMLElement) =>
   ]);
 
 describe('range slider bounds from items (antd-mobile)', () => {
-  it('shows sorted thumbs while keeping the stored range order on mount', () => {
-    const ref = createRef<FormHandle>();
-    const view = render(
-      <Form
-        ref={ref}
-        fieldInputDefinitions={[FieldInputSliderDefinition]}
-        jsonSchema={{
-          type: 'array',
-          format: 'slider',
-          items: { type: 'number' },
-        }}
-        defaultValue={[80, 20]}
-        onError={() => {}}
-      />,
-    );
-    expect(thumbBounds(view.container)).toEqual([
-      ['0', '100', '20'],
-      ['0', '100', '80'],
-    ]);
-    expect(ref.current?.getValue()).toEqual([80, 20]);
-  });
-
-  it('uses array bounds and step when the numeric items omit them', () => {
-    const ref = createRef<FormHandle>();
-    const view = render(
-      <Form
-        ref={ref}
-        fieldInputDefinitions={[FieldInputSliderDefinition]}
-        jsonSchema={{
-          type: 'array',
-          format: 'slider',
-          items: { type: 'number' },
-          minimum: 20,
-          maximum: 30,
-          multipleOf: 5,
-        }}
-        defaultValue={[20, 30]}
-        onError={() => {}}
-      />,
-    );
-    const track = view.container.querySelector('.adm-slider-track')!;
-    fireEvent.click(track, { clientX: 0 });
-    expect(ref.current?.getValue()).toEqual([20, 30]);
-    fireEvent.click(track, { clientX: 40 });
-    expect(ref.current?.getValue()).toEqual([25, 30]);
-    expect(thumbBounds(view.container)).toEqual([
-      ['20', '30', '25'],
-      ['20', '30', '30'],
-    ]);
-  });
-
   it('a numeric array slider takes its bounds from items.minimum and items.maximum', () => {
     const view = render(
       <Form

@@ -5,7 +5,6 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import { Form, type FormHandle, type JSONSchema } from '@canard/schema-form';
 
-import { FieldInputDateRangeDefinition } from '../fieldInputs/FieldInputDateRange';
 import { plugin } from '../index';
 
 class TestResizeObserver {
@@ -153,6 +152,25 @@ it('an empty date range stays empty after choosing a start day and browsing to t
 it('saves both virtual date constituents on range completion and restores both on reset (virtual storage contract)', async () => {
   const ref = createRef<FormHandle>();
   const initial = { start: '2024-01-10', end: '2024-01-20' };
+  const dateRange = plugin.fieldInputDefinitions.find(
+    ({ test }) =>
+      typeof test === 'function' &&
+      test({
+        type: 'array',
+        schemaType: 'array',
+        format: 'date-range',
+        path: '/period',
+        misfit: false,
+        nullable: false,
+        required: false,
+        jsonSchema: {
+          type: 'array',
+          format: 'date-range',
+          items: { type: 'string' },
+        },
+      }),
+  );
+  if (!dateRange) throw new Error('The plugin must expose a date range input');
   const { container } = render(
     <Form
       ref={ref}
@@ -168,7 +186,7 @@ it('saves both virtual date constituents on range completion and restores both o
             period: {
               fields: ['start', 'end'],
               presentation: {
-                FieldInput: FieldInputDateRangeDefinition.Component,
+                FieldInput: dateRange.Component,
               },
             },
           },

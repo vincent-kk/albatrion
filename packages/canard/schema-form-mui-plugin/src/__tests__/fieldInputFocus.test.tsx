@@ -128,3 +128,18 @@ it('assigns distinct menu addresses to Selects with the same leaf name', async (
   }
   expect(new Set(menuIds).size).toBe(2);
 });
+
+it('stores an enum Select choice as one string', () => {
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={{ type: 'string', enum: ['alpha', 'beta'] }}
+      defaultValue="alpha"
+      fieldInputDefinitions={plugin.fieldInputDefinitions}
+    />,
+  );
+  fireEvent.mouseDown(view.getByRole('combobox'), { button: 0 });
+  fireEvent.click(view.getByRole('option', { name: 'beta' }));
+  expect(ref.current?.getValue()).toBe('beta');
+});
