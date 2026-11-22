@@ -64,3 +64,15 @@ describe.each([['default', plugin]] as const)(
     );
   },
 );
+
+it('preserves the native empty-segment limit for a root-pointer guard', () => {
+  const schema: JSONSchema = { properties: { '': { if: { type: 'string' } } } };
+  try {
+    expect(plugin.validator.compileGuard(schema, '/properties//if')('x')).toBe(true);
+    plugin.validator.configure({ directGuardCompile: false });
+    expect(() => plugin.validator.compileGuard(schema, '/properties//if')).toThrow(/can't resolve reference/);
+  } finally {
+    plugin.validator.configure({ directGuardCompile: true });
+    plugin.validator.release(schema);
+  }
+});

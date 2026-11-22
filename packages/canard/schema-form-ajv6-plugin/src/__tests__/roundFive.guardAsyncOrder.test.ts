@@ -56,3 +56,18 @@ it.each(['keyword', 'format', 'late-format', 'async-ref', 'declared'])(
     }
   },
 );
+
+it('a macro in another location affects only the root-pointer guard', () => {
+  const ajv = new Ajv();
+  ajv.addFormat('async-format', { async: true, validate: async () => true });
+  ajv.addKeyword('asyncMacro', { macro: () => ({ format: 'async-format' }) });
+  const schema: JSONSchema = {
+    if: { type: 'string' },
+    properties: { value: { asyncMacro: true } },
+  };
+
+  const direct = createValidator(ajv, { directGuardCompile: true });
+  expect(direct.compileGuard(schema, '/if')('x')).toBe(true);
+  const contextual = createValidator(ajv, { directGuardCompile: false });
+  expect(() => contextual.compileGuard(schema, '/if')).toThrow(/async (format|keyword) in sync schema/);
+});
