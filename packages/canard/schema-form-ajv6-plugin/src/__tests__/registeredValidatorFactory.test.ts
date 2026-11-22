@@ -105,3 +105,14 @@ it.each(['object', 'property'] as const)('normalizes the keyed required path in 
     { keyword: 'required', dataPath: '/profile/', source: { dataPath: native.errors?.[0].dataPath } },
   ]);
 });
+
+it('keeps apostrophes in dynamic property paths for a keyed factory', async () => {
+  const ajv = new Ajv();
+  const schema = { additionalProperties: { type: 'string', minLength: 5 } };
+  ajv.addSchema(schema, 'keyed-dynamic-path');
+
+  const validate = createValidatorFactory(ajv, 'keyed-dynamic-path')(schema);
+  await expect(validate({ "it's": 'x' })).resolves.toMatchObject([
+    { keyword: 'minLength', dataPath: "/it's" },
+  ]);
+});
