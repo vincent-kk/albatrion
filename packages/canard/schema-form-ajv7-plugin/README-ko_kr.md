@@ -86,6 +86,7 @@ registerPlugin(plugin);
 - **목적**: 제공된 JSON Schema로부터 validator 함수를 생성합니다
 - **반환값**: 스키마에 대해 데이터를 검증할 수 있는 validator factory 함수
 - **기능**: 자동 오류 변환, 상세한 검증 메시지, 성능 최적화
+- **비동기 규칙**: 이름 있는 루트를 포함해 필요할 때 플러그인 소유의 루트 사본에 비동기 검증을 활성화합니다. 별도로 등록하는 비동기 참조 스키마는 `$async: true`를 선언합니다.
 
 #### **`compileGuard(root, pointer)`와 `release(root)`**
 
