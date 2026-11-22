@@ -1,4 +1,4 @@
-import { join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 
 import type {
   ConsumerPackage,
@@ -102,11 +102,19 @@ export async function prepareUnits(
           values.assetKinds.has('skills') ||
           (values.assetKinds.has('rules') && agentTarget.rulesMergeFile === null)
         ) {
-          installed = installedRecords.get(recordPath);
+          await assertProjectPathsContained({
+            agentTarget,
+            dstPaths: [recordPath],
+            resolved,
+          });
+          const physicalRecord = join(
+            await resolveCanonicalPath(dirname(recordPath), physicalPaths),
+            basename(recordPath),
+          );
+          installed = installedRecords.get(physicalRecord);
           if (installed === undefined) {
-            await assertProjectPathsContained({ agentTarget, dstPaths: [recordPath], resolved });
             installed = await openInstalledAssets(recordPath);
-            installedRecords.set(recordPath, installed);
+            installedRecords.set(physicalRecord, installed);
           }
         }
         const { destinations, orphanScans } = resolveDestinations({
