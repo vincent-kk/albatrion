@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "bench": "node --expose-gc --import tsx src/index.ts",
+    "bench:speed": "node --experimental-import-meta-resolve --import tsx src/speed/index.ts",
     "bench:all": "node --expose-gc --import tsx src/index.ts --all-versions",
     "bench:array-stress": "node --expose-gc --import tsx src/index.ts --array-stress --no-core",
     "typecheck:browser": "tsc --noEmit -p browser-bench/tsconfig.json",

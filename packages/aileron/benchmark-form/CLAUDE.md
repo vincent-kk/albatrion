@@ -4,6 +4,8 @@ This private workspace owns the Node and production-browser form benchmarks. Kee
 measurement and reporting changes here; product engine changes belong elsewhere.
 Read README.md for the measurement contract and command arguments.
 
+`bench:speed` owns cross-package A/B distribution measurements in isolated processes.
+
 ## Commands
 
 Run these from the repository root with yarn:

@@ -137,3 +137,10 @@ L의 0.16.1 커밋 `7b49d62c7`에 있는
 `render-update-wall`은 제거했습니다. D4의 그 이름은 상호작용마다 `setTimeout(0)` 두 번을
 포함한 옛 정의이며 새 지표와 직접 비교하지 않습니다. `render-mount-wall`도 대기 정의 변경의 영향을 받습니다.
 원시 JSON에는 commit 수도 보존합니다. 성능 표본은 값·DOM 동치의 증명이 아닙니다.
+# Cross-package speed measurements
+
+`bench:speed` compares public built distributions from two prepared trees. Pass
+`--baseline-dir`, `--baseline-ref`, `--candidate-dir`, `--candidate-ref` and a
+fresh `--out` directory; use `--row <id>` to select a row and `--rounds <n>`
+to set the number of rounds. The command records raw samples and a report in
+the output directory.
