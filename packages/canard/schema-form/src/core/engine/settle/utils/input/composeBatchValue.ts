@@ -6,6 +6,7 @@ import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
 import type { FieldNodeRecord, FieldNodeRuntime } from '../../../record';
 import { FieldNodeWriteKind } from '../../../types/value';
 import { isNamedPointerSegments } from '../../../utils/paths/isNamedPointerSegments';
+import { isVirtualWriteFieldAdmitted } from '../../../utils/paths/isVirtualWriteFieldAdmitted';
 import { resolveStorageTargets } from '../../../utils/paths/resolveStorageTargets';
 import type { WriteRange } from '../../types/writeRange';
 import { assertVirtualWriteShape } from './assertVirtualWriteShape';
@@ -75,7 +76,11 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
       for (const target of targets) {
         const current = parent?.childrenByName?.[target.name];
         const input = values?.[target.index];
-        if (!write.virtualTargets && !current && input === undefined) continue;
+        if (
+          !write.virtualTargets &&
+          !isVirtualWriteFieldAdmitted(!!current, input)
+        )
+          continue;
         const next = replaceAtPath(
           direct ? undefined : value,
           direct ? EMPTY_ARRAY : [...parentNames, target.name],
