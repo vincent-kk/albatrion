@@ -36,7 +36,7 @@ export const equalsRecursive = (
   )
     return false;
   const pending: unknown[] = [left, right];
-  const active = new WeakMap<object, object>();
+  const active = new Map<object, object>();
   let repeatedLeft: WeakMap<object, Set<object>> | undefined;
   while (pending.length) {
     right = pending.pop();
