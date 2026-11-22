@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { createOutput } from './createOutput';
 import { provenance } from './provenance';
 import { ratios as calculateRatios } from './ratios';
+import { resolveRef } from './resolveRef';
 import { rows } from './rows';
 import { slotOrder } from './slotOrder';
 import { nearestRank, verdict } from './statistics';
@@ -40,8 +41,8 @@ const required = (key: string) => {
 };
 const baseline = resolve(required('--baseline-dir'));
 const candidate = resolve(required('--candidate-dir'));
-const baselineRef = required('--baseline-ref');
-const candidateRef = required('--candidate-ref');
+const baselineRef = await resolveRef(baseline, required('--baseline-ref'));
+const candidateRef = await resolveRef(candidate, required('--candidate-ref'));
 const out = resolve(required('--out'));
 const rounds = Number(values.get('--rounds')?.[0] ?? 20);
 if (

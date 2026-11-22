@@ -74,7 +74,7 @@ Chromium `bench:form`은 실제 프레임, Long Task, 페인트와 브라우저 
 
 ## 8. 실행 명령과 CI 재사용
 
-아래는 구현할 CLI입니다. `--baseline-ref`와 `--candidate-ref`는 archive 생성 시 기록한 ref와 빌드 인벤토리를 대조하는 데 사용합니다. 개선 브랜치는 검증한 빌드 경로와 해당 ref를 후보로 넘깁니다.
+아래는 구현할 CLI입니다. `--baseline-ref`와 `--candidate-ref`는 각 트리의 `.speed-ref`에 기록된 40자리 커밋 SHA와 최소 7자리 접두어로 비교하며, 파일이 없으면 해당 디렉터리의 `git rev-parse HEAD`를 사용하고 둘 다 사용할 수 없으면 중단합니다. 개선 브랜치는 검증한 빌드 경로와 해당 ref를 후보로 넘깁니다.
 
 ```sh
 yarn workspace @aileron/benchmark-form lint
