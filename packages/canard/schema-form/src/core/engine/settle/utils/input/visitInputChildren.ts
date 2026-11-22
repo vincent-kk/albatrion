@@ -53,18 +53,24 @@ export const visitInputChildren = <Self extends FieldNodeRecord<Self>>(
       const key = names?.[index] ?? index;
       if (admits && !admits(key)) continue;
       const { entry, child, isAmbiguous } = getWriteChild(template, live, key);
-      if (object && view === 'stored' && live && !child) continue;
+      if (!entry && !(array && child)) continue;
+      if (
+        view === 'stored' &&
+        live &&
+        !child &&
+        (object || index < live.itemCount)
+      )
+        continue;
       const isNamed =
         (!!object && view === 'input') || hasOwnProperty(container, key);
-      if (entry || (array && child))
-        visit(
-          key,
-          entry,
-          child,
-          object && !isNamed ? undefined : Reflect.get(container, key),
-          isNamed,
-          isAmbiguous,
-        );
+      visit(
+        key,
+        entry,
+        child,
+        view === 'stored' && !isNamed ? undefined : Reflect.get(container, key),
+        isNamed,
+        isAmbiguous,
+      );
     }
   } finally {
     seen?.delete(container);
