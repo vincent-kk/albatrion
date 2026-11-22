@@ -13,7 +13,11 @@ node benchmarks/compare/run.mjs --a <baseline tree> --b <candidate tree> --rows 
 - `--rounds` is a multiple of 6 so that all six slot orders run equally.
 - `--out` must not exist. It receives `run.json` (all statistics, rewritten after every row) and `report.md` (the verdict table).
 
-Run one comparison at a time; the machine must be otherwise idle.
+The machine must be otherwise idle. The driver takes a ticket in `/tmp/benchmarks-compare.queue` and holds `/tmp/benchmarks-compare.lock` while it measures, so comparisons started meanwhile run one at a time in the order they were started instead of distorting each other.
+
+## Profiling
+
+Add `--profile` to the same command to find where a row spends its time instead of comparing: under the same lock, the driver runs the row once in each tree with `--cpu-prof` and writes the profiles to `<out>/<row>/a` and `<out>/<row>/b`. Open them in a profile viewer or compare self time per function. Always profile through the driver, never by starting a slot by hand, so a profile cannot overlap a comparison.
 
 ## How it runs
 

@@ -35,6 +35,7 @@ const { values: args } = parseArgs({
     rows: { type: "string" },
     only: { type: "string", default: "" },
     rounds: { type: "string", default: "24" },
+    profile: { type: "boolean", default: false },
   },
 });
 const rounds = Number(args.rounds);
@@ -43,6 +44,54 @@ if (!args.a || !args.b || !args.rows || !args.out)
 if (!(rounds > 0) || rounds % 6)
   throw new Error("--rounds must be a positive multiple of 6");
 if (existsSync(args.out)) throw new Error(`${args.out} already exists`);
+
+/**
+ * Machine-wide turn-taking: two comparisons at once distort each other, so each
+ * run takes a ticket, waits until it is the oldest live ticket, then holds the lock.
+ * No signal handlers: the waits and slot runs are synchronous, so a handler would
+ * never run and would only swallow the signal; a killed run's ticket and lock are
+ * recognized as stale by its process id.
+ */
+const QUEUE = "/tmp/benchmarks-compare.queue";
+const LOCK = "/tmp/benchmarks-compare.lock";
+const isAlive = (pid) => {
+  try {
+    return process.kill(pid, 0);
+  } catch (error) {
+    return error.code === "EPERM";
+  }
+};
+const pause = () =>
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 2000);
+mkdirSync(QUEUE, { recursive: true });
+const ticket = `${String(Date.now()).padStart(15, "0")}-${process.pid}`;
+writeFileSync(join(QUEUE, ticket), "");
+process.on("exit", () => {
+  rmSync(join(QUEUE, ticket), { force: true });
+  if (existsSync(LOCK) && readFileSync(LOCK, "utf8") === String(process.pid))
+    rmSync(LOCK);
+});
+for (;;) {
+  const live = readdirSync(QUEUE)
+    .sort()
+    .filter(
+      (name) =>
+        isAlive(Number(name.split("-")[1])) ||
+        rmSync(join(QUEUE, name), { force: true }),
+    );
+  if (live[0] === ticket) break;
+  pause();
+}
+for (;;) {
+  try {
+    writeFileSync(LOCK, String(process.pid), { flag: "wx" });
+    break;
+  } catch {
+    const owner = existsSync(LOCK) ? Number(readFileSync(LOCK, "utf8")) : 0;
+    if (owner && !isAlive(owner)) rmSync(LOCK, { force: true });
+    else pause();
+  }
+}
 
 const rowsDir = resolve(args.rows);
 const trees = { A1: resolve(args.a), A2: resolve(args.a), B: resolve(args.b) };
@@ -59,10 +108,16 @@ const rowIds = readdirSync(rowsDir)
   .filter((id) => prefixes.some((prefix) => id.startsWith(prefix)));
 
 /** Runs one slot process; throws with the reason when it fails or times out. */
-const runSlot = (slot, rowId, batch) => {
+const runSlot = (slot, rowId, batch, nodeArgs = []) => {
   const child = spawnSync(
     process.execPath,
-    ["--expose-gc", join(trees[slot], ".speed/slot.mjs"), rowId, String(batch)],
+    [
+      "--expose-gc",
+      ...nodeArgs,
+      join(trees[slot], ".speed/slot.mjs"),
+      rowId,
+      String(batch),
+    ],
     {
       cwd: trees[slot],
       encoding: "utf8",
@@ -143,6 +198,22 @@ const run = {
 };
 const fixed = (value) => (value === undefined ? "" : value.toFixed(3));
 mkdirSync(args.out, { recursive: true });
+// --profile: instead of comparing, write one CPU profile per row and tree to <out>/<row>/<a|b>.
+if (args.profile) {
+  for (const rowId of rowIds) {
+    const { batch } = runSlot("A1", rowId, 0);
+    for (const [slot, side] of [
+      ["A1", "a"],
+      ["B", "b"],
+    ])
+      runSlot(slot, rowId, batch, [
+        "--cpu-prof",
+        `--cpu-prof-dir=${resolve(args.out, rowId, side)}`,
+      ]);
+    console.log(`${rowId}: profiled`);
+  }
+  process.exit(0);
+}
 for (const rowId of rowIds) {
   const record = measureRow(rowId);
   run.rows.push(record);

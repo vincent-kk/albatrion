@@ -1,0 +1,108 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-style-utils",
+  "ref": "c674ad3865afeda3f134ac5f8560a049298e955e"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p1-07-document-fresh-add",
+   "pkg": "@winglet/style-utils",
+   "fn": "styleManagerFactory/inject",
+   "input": "fresh document scope",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 374,
+   "stat": {
+    "A1": {
+     "min": 357.27005349222566,
+     "p10": 483.2834224483263,
+     "median": 731.5053475842413
+    },
+    "A2": {
+     "min": 356.1524064155536,
+     "p10": 485.14438504330207,
+     "median": 727.2673796844543
+    },
+    "B": {
+     "min": 459.3128342300836,
+     "p10": 591.0133689900872,
+     "median": 875.0989305009234
+    }
+   },
+   "min": 1.2856180632561145,
+   "p10": 1.2229125633898184,
+   "controlMin": 0.9968717023278405,
+   "controlP10": 1.003850665072574,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-08-flat-combinator",
+   "pkg": "@winglet/style-utils",
+   "fn": "compressCss",
+   "input": "flat combinator rule",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 16384,
+   "stat": {
+    "A1": {
+     "min": 561.0249633789082,
+     "p10": 566.0629272460915,
+     "median": 571.8333129882819
+    },
+    "A2": {
+     "min": 562.2787475585943,
+     "p10": 566.1341552734393,
+     "median": 571.1262817382836
+    },
+    "B": {
+     "min": 199.84942626953205,
+     "p10": 200.4674072265643,
+     "median": 201.79748535156457
+    }
+   },
+   "min": 0.3562219853210999,
+   "p10": 0.3541433250219063,
+   "controlMin": 1.0022348099666276,
+   "controlP10": 1.0001258305815828,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-10-plain-multiple",
+   "pkg": "@winglet/style-utils",
+   "fn": "compressCss",
+   "input": "200 flat rules",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 512,
+   "stat": {
+    "A1": {
+     "min": 12988.769531250055,
+     "p10": 13025.228515625042,
+     "median": 13124.837890625018
+    },
+    "A2": {
+     "min": 12989.908203125067,
+     "p10": 13021.972656250047,
+     "median": 13118.164062499993
+    },
+    "B": {
+     "min": 10895.589843750053,
+     "p10": 10926.269531249976,
+     "median": 11050.37304687495
+    }
+   },
+   "min": 0.838846960640578,
+   "p10": 0.8388543447159367,
+   "controlMin": 1.0000876658772235,
+   "controlP10": 0.9997500343758968,
+   "verdict": "pass"
+  }
+ ]
+}
