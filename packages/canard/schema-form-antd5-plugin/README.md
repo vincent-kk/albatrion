@@ -140,6 +140,8 @@ URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid schem
   - or `type` is `"array"`, `items.type` is `"string"`, and `items.enum` values exist
 - **Additional features**: Automatic single/multiple selection detection, support for custom labels per option
 
+Multiple Select matches the displayed label and the original enum value, ignoring case and canonical Unicode spelling. For example, an NFD query matches an NFC label.
+
 ### **[`FieldInputArray.tsx`](./src/fieldInputs/FieldInputArray.tsx)**
 
 - **Role**: Display array data as a list with dynamic add/remove capabilities
@@ -153,6 +155,8 @@ URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid schem
 - **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties; `presentation.FieldInputProps.lazy: false` publishes on every move instead of on release
 
 With `presentation.FieldInputProps.lazy` omitted or set to `true`, Ant Design 5.10.x and 5.11.x store when you press a movement key. Ant Design 5.12 and later in the 5.x line store when you release it. Pointer selection stores on release. Set `lazy: false` to store each change during movement.
+
+An unset Slider leaves the form value unset until interaction. Its accessibility tree exposes the initial thumb position, such as `0` on the default range. To omit that number, register a custom `FieldInput` through `fieldInputDefinitions`.
 
 For very small `multipleOf` values, pointer commits do not guarantee an exact schema grid point. With bounds of `1e-7` to `9e-7` and `multipleOf: 1e-7`, clicking the midpoint can store `9e-7` instead of `5e-7` in Ant Design 5.27.0. If your form needs an exact decimal grid, register a custom `FieldInput` through `fieldInputDefinitions`.
 
@@ -269,6 +273,8 @@ For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the un
 
 A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
 
-### Sliders and search
+### Sliders
 
-Ant Design determines the slider’s unset display, stops, keyboard behavior, and rounding. Search uses Ant Design’s string filter.
+A read-only Slider displays an in-range decimal as stored for a `number` schema without `multipleOf`. An `integer` schema displays a grid point and keeps the stored value. The scoped Slider ID identifies the root. Use `form.focus(path)` to reach an editable thumb.
+
+Ant Design determines the slider’s unset display, stops, keyboard behavior, and rounding.

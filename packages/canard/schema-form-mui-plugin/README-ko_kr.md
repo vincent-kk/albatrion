@@ -84,7 +84,7 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 
 
 - **역할**: 날짜 선택을 위한 DatePicker
 - **적용 조건**: `type`이 `"string"`이고 `format`이 `"date"`인 경우
-- **추가 사항**: MUI X DatePickers와 Dayjs 사용, `presentation.FieldInputProps.minimum`과 `maximum`(YYYY-MM-DD)으로 날짜 범위 제한 지원(`2024-02-31`처럼 유효하지 않은 제한값은 무시), YYYY-MM-DD 형식
+- **추가 사항**: MUI X DatePickers와 Dayjs 사용, `presentation.FieldInputProps.minimum`과 `maximum`으로 날짜 범위를 제한하고 표시 설정에 없는 제한은 스키마의 같은 속성에서 가져옵니다(YYYY-MM-DD. `2024-02-31`처럼 유효하지 않은 제한값은 무시), YYYY-MM-DD 형식
 
 ### **[`FieldInputTime.tsx`](./src/fieldInputs/FieldInputTime.tsx)**
 
@@ -104,6 +104,8 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 
 - **적용 조건**: `type`이 `"string"`이고 `enum` 값이 존재하는 경우
 - **추가 사항**: FormControl과 InputLabel을 활용한 Material Design 스타일, 옵션별 커스텀 라벨 지원 (alias)
 
+Select 트리거, 팝업 메뉴, 숨은 네이티브 입력은 각각 Form 범위의 고유 ID를 사용합니다. 두 Form에 말단 이름이 같은 Select가 있어도 메뉴 ID는 서로 다릅니다.
+
 ### **[`FieldInputArray.tsx`](./src/fieldInputs/FieldInputArray.tsx)**
 
 - **역할**: 배열 데이터를 동적으로 추가/삭제 가능한 리스트로 표시
@@ -116,11 +118,11 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 
 - **적용 조건**: `type`이 `"number"` 또는 `"integer"`이고 `inputType`이 `"slider"`인 경우
 - **추가 사항**: `minimum`, `maximum`, `multipleOf` 스키마 속성 지원, 지연 업데이트 옵션(`presentation.FieldInputProps.lazy`), 마크 표시 옵션, 값 라벨 자동 표시
 
-`presentation.FieldInputProps.lazy`를 생략하거나 `true`로 두면 확정 시점(이동 키를 누르거나 포인터를 놓을 때)에 값을 저장하고, `false`이면 이동마다 저장합니다.
+`presentation.FieldInputProps.lazy`를 생략하거나 `true`로 두면 이동 키를 누를 때와 포인터를 놓을 때 값을 저장합니다. `lazy: false`는 움직일 때마다 저장합니다. 키를 놓을 때만 저장해야 한다면 `fieldInputDefinitions`에 사용자 정의 `FieldInput`을 등록하세요.
 
 미설정 슬라이더는 조작하지 않을 때 손잡이를 숨깁니다. 스크린 리더 안내를 현지화하려면 `presentation.FieldInputProps.unsetValueText`를 설정하세요.
 
-매우 작은 소수 간격에서는 키보드로 확정한 값에 부동소수점 오차가 생길 수 있습니다. MUI Material 7.3.1에서 `multipleOf: 1e-7`이고 현재 값이 `1.2e-6`일 때 위쪽 화살표를 누르면 `1.3e-6` 대신 `0.0000012999999999999998`이 저장될 수 있습니다. 정확한 십진 격자가 필요하면 `fieldInputDefinitions`에 사용자 정의 `FieldInput`을 등록하세요.
+소수 간격에서 키보드로 확정한 값에 부동소수점 오차가 생길 수 있습니다. MUI Material 7.3.1에서 `multipleOf: 0.1`이고 현재 값이 `0.2`일 때 위쪽 화살표를 누르면 `0.3` 대신 `0.30000000000000004`가 저장될 수 있습니다. MUI Material 7.3.1에서 `multipleOf: 1e-7`이고 현재 값이 `1.2e-6`일 때 위쪽 화살표를 누르면 `1.3e-6` 대신 `0.0000012999999999999998`이 저장될 수 있습니다. 정확한 십진 격자가 필요하면 `fieldInputDefinitions`에 사용자 정의 `FieldInput`을 등록하세요.
 Slider는 스키마의 포함·배타 경계로 선택 가능한 정지점을 정합니다. 가능한 정지점이 없으면 비활성화합니다. 미설정 필드는 평소 thumb를 숨기고 `Not set`을 알립니다. `presentation.FieldInputProps.unsetValueText`로 안내를 현지화할 수 있습니다.
 
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**

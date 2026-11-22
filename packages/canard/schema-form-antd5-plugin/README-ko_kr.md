@@ -140,6 +140,8 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 
   - 또는 `type`이 `"array"`이고 `items.type`이 `"string"`이며 `items.enum` 값이 존재하는 경우
 - **추가 사항**: 단일/다중 선택 자동 감지, 옵션별 커스텀 라벨 지원
 
+다중 Select 검색은 표시 레이블과 원래 enum 값을 대소문자와 유니코드 정규화 형식의 차이 없이 찾습니다. 예를 들어 NFD 검색어로 NFC 레이블을 찾을 수 있습니다.
+
 ### **[`FieldInputArray.tsx`](./src/fieldInputs/FieldInputArray.tsx)**
 
 - **역할**: 배열 데이터를 동적으로 추가/삭제 가능한 리스트로 표시
@@ -153,6 +155,8 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 
 - **추가 사항**: `minimum`, `maximum`, `multipleOf` 스키마 속성 지원, `presentation.FieldInputProps.lazy: false`이면 놓을 때가 아니라 움직일 때마다 값 반영
 
 `presentation.FieldInputProps.lazy`를 생략하거나 `true`로 두면 Ant Design 5.10.x와 5.11.x는 이동 키를 누를 때, 5.12 이상의 5.x는 이동 키를 놓을 때 저장합니다. 포인터로 선택하면 포인터를 놓을 때 저장합니다. `lazy: false`이면 이동마다 변경값을 저장합니다.
+
+미설정 Slider는 조작 전까지 폼 값을 저장하지 않습니다. 접근성 트리에는 기본 범위의 `0`과 같은 라이브러리의 초기 thumb 위치가 표시됩니다. 이 수치를 생략하려면 `fieldInputDefinitions`에 사용자 정의 `FieldInput`을 등록하세요.
 
 `multipleOf`가 매우 작을 때는 포인터로 확정한 값이 정확한 스키마 격자점이라는 보장이 없습니다. Ant Design 5.27.0에서 범위를 `1e-7`부터 `9e-7`로, 간격을 `multipleOf: 1e-7`로 설정하고 트랙 가운데를 누르면 `5e-7` 대신 `9e-7`이 저장될 수 있습니다. 정확한 십진 격자가 필요하면 `fieldInputDefinitions`에 사용자 정의 `FieldInput`을 등록하세요.
 
@@ -269,6 +273,8 @@ For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the un
 
 A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
 
-### 슬라이더와 검색
+### 슬라이더
 
-슬라이더의 미설정 표시, 정지점, 키 입력과 값 반올림은 Ant Design이 처리합니다. 검색은 Ant Design의 문자열 필터를 사용합니다.
+읽기 전용 Slider는 `multipleOf`가 없는 `number` 스키마에서 범위 안의 소수를 그대로 표시합니다. `integer` 스키마는 정수 격자점을 표시하고 저장값을 유지합니다. Form 범위의 Slider ID는 루트 요소를 가리킵니다. 편집 가능한 thumb로 이동하려면 `form.focus(path)`를 사용하세요.
+
+슬라이더의 미설정 표시, 정지점, 키 입력과 값 반올림은 Ant Design이 처리합니다.

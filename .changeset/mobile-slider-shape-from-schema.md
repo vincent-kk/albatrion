@@ -24,4 +24,4 @@ const after = {
 };
 ```
 
-Schemas that still set `range` keep loading without errors; the setting has no effect.
+Schemas that still set `range` keep loading without errors. The setting has no effect. The two thumbs appear in ascending order, and mounting preserves the supplied order of the stored range. For example, the form keeps `[80, 20]` while the thumbs appear at `20` and `80`.
