@@ -17,7 +17,7 @@ inject-agents-settings --package @example/docs --agent claude --scope project --
 inject-agents-settings --package @example/docs --agent claude --scope project --force --yes
 ```
 
-The tool stores the paths and SHA-256 hashes of completed skill and copied-rule file actions in `agents-assets-sync.json` beside the agent's assets. It keeps a completed action's record even if another action fails, and concurrent record updates preserve other packages' ownership. Files with edits, competing owners, or no ownership evidence are protected from record-based deletion. Managed rule blocks continue to use their own markers.
+The tool stores the paths and SHA-256 hashes of completed skill and copied-rule file actions in `agents-assets-sync.json` beside the agent's assets. It keeps a completed action's record even if another action fails, and concurrent record updates preserve other packages' ownership. A package that provides identical bytes at an already owned path is recorded as a co-owner. Files with edits, competing owners, or no ownership evidence are protected from record-based deletion. Distinct spellings that reach the same file and match its recorded bytes also protect it. Managed rule blocks continue to use their own markers.
 
 If the record cannot be written, the CLI reports an error and keeps the file changes that already succeeded. Verify and deliberately reinstall affected files to establish ownership. A retry does not take ownership of matching files that have no record.
 

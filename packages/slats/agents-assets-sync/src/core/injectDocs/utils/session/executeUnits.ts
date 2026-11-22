@@ -89,9 +89,15 @@ export async function executeUnits(
         );
       }
     }
-    if (installedAssets && successfulFiles.length) {
+    if (installedAssets) {
       try {
-        await installedAssets.record(unit.target.name, successfulFiles);
+        await installedAssets.record(unit.target.name, [
+          ...successfulFiles,
+          ...unit.plan.actions.filter(
+            (action) =>
+              action.kind === 'skip-uptodate' && action.target.kind === 'file',
+          ),
+        ]);
       } catch (error) {
         diagnostics.push({
           unitKey: unit.key,
