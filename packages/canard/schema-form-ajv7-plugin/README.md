@@ -143,6 +143,7 @@ const defaultSettings: Ajv.Options = {
   allErrors: true, // Collect all validation errors, not just the first one
   strict: false, // Disable strict mode for better compatibility with existing schemas
   validateFormats: false, // Disable format validation for better performance
+  multipleOfPrecision: 9,
 };
 ```
 

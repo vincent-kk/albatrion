@@ -177,6 +177,7 @@ const defaultSettings: Ajv.Options = {
   strict: false, // 더 나은 호환성을 위한 strict 모드 비활성화
   validateFormats: false, // 포맷을 등록한 뒤 활성화
   allowUnionTypes: true,
+  multipleOfPrecision: 9,
 };
 ```
 
