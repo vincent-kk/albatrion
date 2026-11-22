@@ -2,8 +2,8 @@ import type AjvModule from 'ajv';
 
 type Ajv = AjvModule.Ajv;
 
-/** Native registry entry for an application validation document. */
-type RegisteredSchema = NonNullable<Ajv['_schemas'][string]>;
+/** Schema body exposed by a native registry entry. */
+type RegisteredSchema = { readonly schema: unknown };
 
 /**
  * Captures the mutable documents replayed as application validation references.
