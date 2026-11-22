@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import type { JSONRoot } from '@/json/type';
+
 import { compare } from '../compare';
 
 describe('round-2 json 3: type replacement ownership', () => {
@@ -18,6 +20,35 @@ describe('round-2 json 3: type replacement ownership', () => {
       expect(replacement?.value).not.toBe(target.a);
       if (strict)
         expect(patches.find((p) => p.op === 'test')?.value).not.toBe(source.a);
+    },
+  );
+
+  it.each([0, 300])(
+    'enumerates a replacement object only when copying it at depth %i',
+    (depth) => {
+      let reads = 0;
+      const replacement = new Proxy({ x: 1 }, {
+        ownKeys(value) {
+          reads++;
+          return Reflect.ownKeys(value);
+        },
+      });
+      let source: JSONRoot = [1];
+      let target: JSONRoot = replacement;
+      for (let level = 0; level < depth; level++) {
+        source = { node: source };
+        target = { node: target };
+      }
+      const path = '/node'.repeat(depth);
+      const mutable = compare(source, target, { immutable: false });
+      expect(reads).toBe(0);
+      expect(mutable[0]).toMatchObject({ op: 'replace', path });
+      expect(mutable[0]?.value).toBe(replacement);
+
+      const immutable = compare(source, target, { immutable: true });
+      expect(reads).toBe(1);
+      expect(immutable).toEqual([{ op: 'replace', path, value: { x: 1 } }]);
+      expect(immutable[0]?.value).not.toBe(replacement);
     },
   );
 });
