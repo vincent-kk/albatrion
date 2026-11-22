@@ -144,6 +144,8 @@ The `createValidatorFactory` function provides:
 
 The plugin's default validation uses AJV's `multipleOfPrecision: 9`. It accepts decimal multiples such as `19.99` for `multipleOf: 0.01` and rejects `19.995` for the same divisor. The `1e-9` tolerance on the quotient can accept extremely close nonmultiples. Exact decimal multiples are supported for finite values with `Math.abs(value / multipleOf) <= 1e6` and a finite divisor of at least `2.2250738585072014e-308`. The default validator rejects a zero divisor when it compiles the schema. A supplied AJV instance retains its own precision and schema-validation options.
 
+In AJV 6.12.6, a synchronous guard can accept numbers for an invalid `multipleOf: 0` condition. Guards compile with meta-schema validation disabled, and AJV's precision check compares a `NaN` difference for a zero divisor. Whole-schema compilation still rejects it.
+
 ## Compatibility
 
 `@canard/schema-form-ajv6-plugin` is built with ECMAScript 2020 (ES2020) syntax and supports AJV 6.x.
