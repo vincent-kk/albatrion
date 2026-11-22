@@ -30,6 +30,7 @@ import { mergeMarkedValue } from './mergeMarkedValue';
  * @param source - Binding origin and target address for the mark
  * @param path - Target's physical address
  * @param isIndirect - Whether the target is a constituent of a whole virtual write
+ * @param mode - Direct input keeps non-enumerable declared fields
  * @returns Candidate value with one path overlaid
  */
 export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
@@ -45,6 +46,7 @@ export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
   source?: FieldNodeWriteKind,
   path = node?.path ?? '',
   isIndirect?: true,
+  mode: 'root' | 'direct' = 'root',
 ): unknown => {
   if (depth === names.length) {
     if (
@@ -68,6 +70,7 @@ export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
         ranges,
         source,
         path,
+        mode,
       );
     if (ranges && source !== undefined) {
       const range: WriteRange = { path, source };

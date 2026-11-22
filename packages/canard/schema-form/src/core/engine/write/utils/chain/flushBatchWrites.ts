@@ -39,8 +39,6 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
       )
     ) {
       for (const write of writes) {
-        if (markRanges)
-          composeBatchValue(root, [write], undefined, undefined, markRanges);
         writeFieldNode(
           write.node,
           write.value,
@@ -52,6 +50,7 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
           undefined,
           undefined,
           write.virtualTargets,
+          markRanges,
         );
       }
       return;
@@ -61,8 +60,6 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
       writes.length === 1 ? find(root, writes[0].node.path) : undefined;
     const target = single ?? root;
     const ranges: WriteRange[] | undefined = single ? undefined : [];
-    if (single && markRanges)
-      composeBatchValue(root, writes, undefined, undefined, markRanges);
     const value = single
       ? writes[0].value
       : composeBatchValue(root, writes, undefined, ranges, markRanges);
@@ -85,6 +82,7 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
       ranges,
       undefined,
       single ? writes[0].virtualTargets : undefined,
+      single ? markRanges : undefined,
     );
   } catch (error) {
     captureChainError(runtime, error);

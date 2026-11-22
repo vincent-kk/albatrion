@@ -6,7 +6,7 @@ export interface WriteRange {
   path: string;
   /** Origin used for explicit input and delivery tracking. */
   source: FieldNodeWriteKind;
-  /** The original partial input at this address, used for refused-reset replay. */
+  /** The observed partial input at this address, used for refused-reset replay. */
   partial?: Record<string, unknown>;
   /** Physical constituent covered by a virtual whole write. */
   isIndirect?: true;
