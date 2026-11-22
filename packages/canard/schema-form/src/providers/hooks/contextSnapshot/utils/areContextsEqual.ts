@@ -1,8 +1,4 @@
-import {
-  isEmptyObject,
-  isError,
-  isPlainObject,
-} from '@winglet/common-utils/filter';
+import { isPlainObject } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { equals } from '@winglet/common-utils/object';
 
@@ -16,21 +12,6 @@ const COMPARABLE_TAGS: readonly string[] = [
 /** Own non-enumerable error state: the ES2022 `cause` and AggregateError `errors`. */
 const ERROR_SLOTS: readonly string[] = ['cause', 'errors'];
 
-/** Detect errors whose comparison needs only name and message. */
-const hasNoErrorExtras = (error: Error): boolean =>
-  !(Symbol.toStringTag in error || 'cause' in error || 'errors' in error) &&
-  isEmptyObject(error) &&
-  Object.prototype.toString.call(error) === '[object Error]';
-
-/** An error's description may be supplied by its prototype. */
-type ErrorDescription = { name?: unknown; message?: unknown };
-
-/** Compare the name and message shared by plain and extended errors. */
-const areErrorNamesAndMessagesEqual = (
-  left: ErrorDescription,
-  right: ErrorDescription,
-): boolean => left.name === right.name && left.message === right.message;
-
 /**
  * Compare context content while treating opaque instance state as reference-owned.
  * @param left - Previously published context or a nested value.
@@ -39,13 +20,6 @@ const areErrorNamesAndMessagesEqual = (
  */
 export const areContextsEqual = (left: unknown, right: unknown): boolean => {
   if (left === right || (left !== left && right !== right)) return true;
-  if (
-    isError(left) &&
-    isError(right) &&
-    hasNoErrorExtras(left) &&
-    hasNoErrorExtras(right)
-  )
-    return areErrorNamesAndMessagesEqual(left, right);
   const pending: unknown[] = [left, right];
   const pairs: object[] = [];
   let pairIndex: Map<object, Set<object>> | undefined;
@@ -137,7 +111,11 @@ export const areContextsEqual = (left: unknown, right: unknown): boolean => {
       const keys = Object.keys(left);
       if (keys.length !== Object.keys(right).length) return false;
       if (isErrorTag) {
-        if (!areErrorNamesAndMessagesEqual(left, right)) return false;
+        if (
+          Reflect.get(left, 'name') !== Reflect.get(right, 'name') ||
+          Reflect.get(left, 'message') !== Reflect.get(right, 'message')
+        )
+          return false;
         for (const slot of ERROR_SLOTS) {
           const has = hasOwnProperty(left, slot);
           if (has !== hasOwnProperty(right, slot)) return false;
