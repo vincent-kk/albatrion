@@ -8,6 +8,8 @@ type CloneFrame = {
   target: object;
   depth: number;
   keys: Generator<PropertyKey>;
+  /** Whether target's chain is only `Object.prototype` or empty, so a key absent from it is assignable. */
+  assignable: boolean;
 };
 
 /**
@@ -61,12 +63,16 @@ export function replicateDeep(
         copy = child.target;
       } else copy = replicate(value, limit, childDepth, cache);
     }
-    Object.defineProperty(frame.target, key, {
-      value: copy,
-      writable: true,
-      configurable: true,
-      enumerable: true,
-    });
+    // Assigning a key absent from an ordinary chain creates the same own data property.
+    if (frame.assignable && !(key in frame.target))
+      (frame.target as Record<PropertyKey, unknown>)[key] = copy;
+    else
+      Object.defineProperty(frame.target, key, {
+        value: copy,
+        writable: true,
+        configurable: true,
+        enumerable: true,
+      });
   }
   return root.target;
 }
@@ -77,9 +83,21 @@ function createFrame(
   depth: number,
   cache: Map<object, unknown>,
 ): CloneFrame {
-  const target: object = Array.isArray(source)
-    ? new Array(source.length)
-    : Object.create(Object.getPrototypeOf(source));
+  const prototype = Array.isArray(source)
+    ? undefined
+    : Object.getPrototypeOf(source);
+  const target: object =
+    prototype === undefined
+      ? new Array((source as unknown[]).length)
+      : Object.create(prototype);
   cache.set(source, target);
-  return { source, target, depth, keys: getCloneFrameKeys(source) };
+  return {
+    source,
+    target,
+    depth,
+    keys: getCloneFrameKeys(source),
+    assignable: prototype === OBJECT_PROTOTYPE || prototype === null,
+  };
 }
+
+const OBJECT_PROTOTYPE = Object.prototype;
