@@ -3,6 +3,17 @@ import { expect, it } from 'vitest';
 
 import manifest from '../../package.json';
 
+it('preserves the published peer range for each bundled UI library', () => {
+  expect(manifest.peerDependencies).toMatchObject({
+    '@emotion/react': '^11.0.0',
+    '@emotion/styled': '^11.0.0',
+    '@mui/icons-material': '^7.0.0',
+    '@mui/material': '^7.0.0',
+    '@mui/x-date-pickers': '^8.0.0',
+    dayjs: '^1.0.0',
+  });
+});
+
 const semver: { subset(left: string, right: string): boolean } = createRequire(
   import.meta.url,
 )('semver');
