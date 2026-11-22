@@ -3,6 +3,13 @@ import { expect, it } from 'vitest';
 
 import manifest from '../../package.json';
 
+it('preserves the published peer range for each bundled UI library', () => {
+  expect(manifest.peerDependencies).toMatchObject({
+    antd: '^6.0.0',
+    dayjs: '^1.0.0',
+  });
+});
+
 const semver: { subset(left: string, right: string): boolean } = createRequire(
   import.meta.url,
 )('semver');
