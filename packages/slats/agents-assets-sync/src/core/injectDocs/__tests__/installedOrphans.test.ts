@@ -233,7 +233,7 @@ it.each([true, false])(
       join(projectRoot, '.claude/agents-assets-sync.json'),
       'utf8',
     );
-    expect(Object.hasOwn(JSON.parse(record), '@probe/second')).toBe(installed);
+    expect(JSON.parse(record)['@probe/second'] !== undefined).toBe(installed);
   },
 );
 
