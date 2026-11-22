@@ -24,10 +24,10 @@ const search = (text: string) => {
 
 const schema = {
   type: 'array',
-  items: { type: 'string', enum: ['kr', 'us', 'jp'] },
+  items: { type: 'string', enum: ['kr', 'us', 'jp', 'raw-token'] },
   presentation: {
     FieldInputProps: {
-      alias: { kr: '대한민국', us: 'United States', jp: '日本' },
+      alias: { kr: '대한민국', us: 'United States', jp: '日本', 'raw-token': 'café' },
     },
   },
 } as const;
@@ -55,14 +55,25 @@ describe('multiple enum search by the displayed label (antd6)', () => {
     expect(visibleOptions()).toEqual(['United States']);
   });
 
-  it('does not find a raw token that is absent from the label', () => {
+  it('finds an original enum value that is absent from its label', () => {
     render(
       <Form
         fieldInputDefinitions={[FieldInputStringEnumDefinition]}
         jsonSchema={schema}
       />,
     );
-    search('us');
-    expect(visibleOptions()).toEqual([]);
+    search('RAW-TOKEN');
+    expect(visibleOptions()).toEqual(['café']);
+  });
+
+  it('finds an NFC label using an NFD query with different case', () => {
+    render(
+      <Form
+        fieldInputDefinitions={[FieldInputStringEnumDefinition]}
+        jsonSchema={schema}
+      />,
+    );
+    search('CAFE\u0301');
+    expect(visibleOptions()).toEqual(['café']);
   });
 });
