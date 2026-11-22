@@ -21,7 +21,7 @@
 | 1 | 코드 수정 | 내장 하위 클래스의 프로토타입을 지원 범위 안에서 보존합니다. | `f288aaa23`, `3101adc14`, `4c69036cf`, `55dea788c`, `01d6f7f40`, `e8624d8b9`, `7a3e36e5b`, `4d661c294` | `b33b4b968`, `e37b736dc`, `bbb21ec17`, `7059f3ddd`, `dbdd68782`, `a34c3db19`, `6b2dfd083`, `a49867fbe`, `c56487980`, `d4faa8135` | `packages/winglet/common-utils/src/utils/object/__tests__/clone.round4.test.ts` |
 | 2 | 코드 수정 | Error.cause의 열거 가능 여부를 보존합니다. | `f288aaa23` | `66f7557c7` | `packages/winglet/common-utils/src/utils/object/__tests__/clone.round4.test.ts` |
 | 3 | 코드 수정 | 중첩 호출의 알림 소유권을 호출마다 분리합니다. | `f288aaa23`, `ee9b52b4b` | `473b1ffab` | `packages/winglet/common-utils/src/utils/function/enhance/getTrackableHandler/__tests__/lifecycle-before.round4.test.ts` |
-| 4 | 문서 수정 | equals와 cloneLite의 순환 입력 미지원 및 대안을 문서화합니다. | `f288aaa23`, `5b654159a` | `7a7a2166a`, `a49867fbe` | `packages/winglet/common-utils/src/__tests__/cycleGuidance.round4.test.ts` |
+| 4 | 코드 수정 | `equals`의 활성 비교 경로와 깊이 제한 없는 `cloneLite`에서 순환을 만나면 `RangeError`를 던집니다. | `f288aaa23`, `5b654159a` | `7a7a2166a`, `a49867fbe` | `packages/winglet/common-utils/src/__tests__/cycleGuidance.round4.test.ts` |
 | 5 | 코드 수정 | 해제 전후에도 작업 식별자를 재사용하지 않습니다. | `f288aaa23` | `2592a0665`, `96ad1b8d7` | `packages/winglet/common-utils/src/utils/scheduler/MessageChannelScheduler/__tests__/identity.round4.test.ts` |
 | 6 | 코드 수정 | 프로토타입 없는 사전을 그대로 유지합니다. | `f288aaa23` | `477d7f862` | `packages/winglet/common-utils/src/utils/object/__tests__/nullPrototype.round4.test.ts` |
 | 7 | 코드 수정 | 콘솔 형식 문자열을 치환 데이터로 전달합니다. | `f288aaa23` | `0eeee1fa9`, `d5b11a043` | `packages/winglet/common-utils/src/utils/console/__tests__/format.round4.test.ts` |
@@ -142,7 +142,7 @@
 |---|---|---|---|---|---|
 | 1 | 코드 수정 | 호출별 오류를 분리합니다. | `4d75e319b` | `31c150e44` | `packages/canard/schema-form-ajv6-plugin/src/__tests__/roundFour.concurrent.table.test.ts` |
 | 2 | 코드 수정 | 자신이 등록한 항목만 해제합니다. | `ff622d23e` | `2e4061359` | `packages/canard/schema-form-ajv6-plugin/src/__tests__/roundFour.registration.table.test.ts` |
-| 3 | 코드 수정 | 기본 인스턴스의 소수 배수를 허용합니다. | `960cb951a` | `7180e6b09` | `packages/canard/schema-form-ajv6-plugin/src/__tests__/roundFour.decimal.table.test.ts` |
+| 3 | 코드 수정 및 외부 한계(EXTERNAL) | 기본 검증은 소수 배수를 허용하고 0 제수를 거부하며, 메타 스키마 검사가 꺼진 AJV 6.12.6 동기 가드는 0 제수를 통과시킬 수 있습니다. | `960cb951a` | `7180e6b09` | `packages/canard/schema-form-ajv6-plugin/src/__tests__/roundFour.decimal.table.test.ts` |
 | 4 | 코드 수정 | 나중에 등록된 스키마를 조회합니다. | `ce4c37054` | `4bd796081`, `2f0c3d1a0` | `packages/canard/schema-form-ajv6-plugin/src/__tests__/roundFour.lateSchemas.table.test.ts` |
 | 5 | 코드 수정 | 오류 경로 설정과 캐시를 분리합니다. | `eb7b99255` | `b267c050f`, `936b39b5e`, `f1521108e` | `packages/canard/schema-form-ajv6-plugin/src/__tests__/roundFour.pointerCache.table.test.ts` |
 | 6 | 코드 수정 | 비동기 키워드를 일관되게 컴파일합니다. | `abcdbc40b` | `a4ef334dd` | `packages/canard/schema-form-ajv6-plugin/src/__tests__/roundFour.asyncKeywords.table.test.ts` |
@@ -176,7 +176,7 @@
 | 항목 | 처리 | 결과 | 실패 커밋 | 수정 커밋 | 고정 검증 |
 |---|---|---|---|---|---|
 | 1 | 코드 수정 | 범위 선택 확정이나 지우기만 저장합니다. | `edd3c3238` | `bbd5e5e49` | `packages/canard/schema-form-antd5-plugin/src/__tests__/roundFour.rangePanelBrowse.test.tsx` |
-| 2 | 코드 수정 | 코어가 제공한 식별자만 사용합니다. | `b84092cf2` | `f9cd39478` | `packages/canard/schema-form-antd5-plugin/src/__tests__/fieldIdentifiers.resolver.roundFour.test.tsx` |
+| 2 | 코드 수정 및 외부 한계(EXTERNAL) | 코어 식별자를 전달하며, Ant 5.10–5.13의 RangePicker는 입력 ID 하나만 받고 Slider는 손잡이 ID 속성을 제공하지 않습니다. | `b84092cf2` | `f9cd39478` | `packages/canard/schema-form-antd5-plugin/src/__tests__/fieldIdentifiers.resolver.roundFour.test.tsx` |
 | 3 | 코드 수정 | 소문자 z 시간 표기를 허용합니다. | `2dbe5c12a` | `d558d8f78` | `packages/canard/schema-form-antd5-plugin/src/__tests__/roundFour.timeSpelling.table.test.tsx` |
 | 4 | 코드 수정 | 검색의 유니코드 정규화 차이를 없앱니다. | `2dbe5c12a` | `b2643d9ad` | `packages/canard/schema-form-antd5-plugin/src/fieldInputs/utils/enum/__tests__/filterEnumOption.roundFour.table.test.ts` |
 
@@ -185,7 +185,7 @@
 | 항목 | 처리 | 결과 | 실패 커밋 | 수정 커밋 | 고정 검증 |
 |---|---|---|---|---|---|
 | 1 | 코드 수정 | 범위 선택 확정이나 지우기만 저장합니다. | `d9924fc34` | `c5e4342c1` | `packages/canard/schema-form-antd6-plugin/src/__tests__/roundFour.rangePanelBrowse.test.tsx` |
-| 2 | 코드 수정 | 코어가 제공한 식별자만 사용합니다. | `868fec4bd` | `ec661aedf` | `packages/canard/schema-form-antd6-plugin/src/__tests__/fieldIdentifiers.resolver.roundFour.test.tsx` |
+| 2 | 코드 수정 및 외부 한계(EXTERNAL) | 공개 속성에 코어 식별자를 전달하며 Ant 6의 Slider는 손잡이 ID 속성을 제공하지 않습니다. | `868fec4bd` | `ec661aedf` | `packages/canard/schema-form-antd6-plugin/src/__tests__/fieldIdentifiers.resolver.roundFour.test.tsx` |
 | 3 | 코드 수정 | 소문자 z 시간 표기를 허용합니다. | `c598dd3f5` | `05c90d841` | `packages/canard/schema-form-antd6-plugin/src/__tests__/roundFour.timeSpelling.table.test.tsx` |
 | 4 | 코드 수정 | 검색의 유니코드 정규화 차이를 없앱니다. | `c598dd3f5` | `a6cf9e4d2` | `packages/canard/schema-form-antd6-plugin/src/fieldInputs/utils/enum/__tests__/filterEnumOption.roundFour.table.test.ts` |
 
@@ -209,8 +209,8 @@
 | 1 | 코드 수정 | 배열과 루트 분기의 검증 오류를 표시합니다. | `b0e680586` | `106a69d40`, `53d29e0af` | `packages/canard/schema-form-antd-mobile-plugin/src/__tests__/roundFour.branchErrors.table.test.tsx` |
 | 2 | 코드 수정 | 배수 격자와 범위를 교차합니다. | `9c4f24bf3` | `c44dcaff5`, `7cb6c7ca9` | `packages/canard/schema-form-antd-mobile-plugin/src/__tests__/roundFour.sliderGrid.table.test.tsx` |
 | 3 | 코드 수정 | 열거 밖 저장 값의 타입을 보존합니다. | `826ca1c29` | `3a7d1dde9` | `packages/canard/schema-form-antd-mobile-plugin/src/__tests__/roundFour.unknownCheckbox.table.test.tsx` |
-| 4 | 코드 수정 | 코어가 제공한 식별자만 사용합니다. | `f27cdb614` | `3043a5bbe` | `packages/canard/schema-form-antd-mobile-plugin/src/__tests__/fieldIdentifiers.resolver.roundFour.test.tsx` |
-| 5 | 코드 수정 | 값 없는 슬라이더를 현재 값으로 알리지 않습니다. | `0c84a647f` | `012a63260` | `packages/canard/schema-form-antd-mobile-plugin/src/__tests__/roundFour.sliderUnset.table.test.tsx` |
+| 4 | 코드 수정 및 외부 한계(EXTERNAL) | 공개 속성에 코어 식별자를 전달하며 antd-mobile은 Slider 손잡이 ID와 네이티브 라디오 `name` 속성을 제공하지 않습니다. | `f27cdb614` | `3043a5bbe` | `packages/canard/schema-form-antd-mobile-plugin/src/__tests__/fieldIdentifiers.resolver.roundFour.test.tsx` |
+| 5 | 외부 한계(EXTERNAL) | 조작 전까지 폼 값은 비어 있고 antd-mobile은 초기 손잡이 위치를 `aria-valuenow`로 노출합니다. | `0c84a647f` | `012a63260` | `packages/canard/schema-form-antd-mobile-plugin/src/__tests__/roundFour.sliderUnset.table.test.tsx` |
 
 함께 고친 형제는 네 UI 플러그인의 배열 및 루트 분기 오류, 열거 밖 값의 보존, 슬라이더 격자와 미설정 값, 문자열 스위치 이름과 저장 시점입니다. AJV는 세 버전의 비동기 키워드, 등록 소유권, 늦은 스키마와 소수 배수를 비교합니다. 이들은 번호를 새로 만든 발견으로 합산하지 않습니다.
 
@@ -347,14 +347,14 @@ promise-modal과 유틸리티 표는 수정된 측정 방법이 정해지기 전
 |---|---|
 | 네 UI 플러그인에서 문자열 스위치를 켭니다. | enum[0]을 저장하고 끄면 enum[1]을 저장합니다. |
 | 스위치 이름을 지정합니다. | 저장 값으로 찾는 alias 맵을 네 플러그인 모두 사용하며 context.switchLabels가 우선합니다. MUI의 스키마 튜플은 두 맵이 없을 때 유지합니다. |
-| lazy를 생략한 슬라이더를 움직입니다. | 확정할 때만 저장하고 lazy: false이면 움직일 때마다 저장합니다. 포인터와 키보드가 같은 규칙입니다. |
-| 슬라이더 값이 없습니다. | 보조 기술에 현재 값을 알리지 않고 사용자 조작 전까지 저장하지 않습니다. 경계 안의 유효한 격자와 정수 제약을 함께 만족합니다. |
+| lazy를 생략한 슬라이더를 움직입니다. | 포인터는 놓을 때 저장하고 `lazy: false`이면 이동 중에도 저장합니다. 키보드 저장 시점은 라이브러리 소유(EXTERNAL)이며 Ant 5.10–5.11과 MUI는 keydown, Ant 5.12 이상과 Ant 6은 keyup에서 저장하고 모바일은 키 이동을 지원하지 않습니다. |
+| 슬라이더 값이 없습니다. | 조작 전까지 폼 값은 비어 있으며 Ant 5·6과 antd-mobile은 초기 손잡이 위치를 보조 기술에 노출합니다(EXTERNAL). MUI는 미설정 상태로 알립니다. |
 | 범위 선택 패널만 탐색합니다. | 저장하지 않습니다. 양 끝의 선택 확정이나 지우기만 저장합니다. |
 | 열거 안팎의 값이 섞여 있습니다. | 알려진 값을 표시하고 건드리지 않은 미지의 값과 타입을 보존합니다. |
 | 같은 검증 함수를 겹쳐 부릅니다. | 비동기 경계를 넘기 전에 호출별 오류를 읽어 잘못된 값을 성공으로 바꾸지 않습니다. |
 | 등록을 해제하거나 복사본이 같은 인스턴스를 씁니다. | 등록 소유권을 공유하고 마지막 소유권이 끝난 자기 등록만 해제합니다. 애플리케이션의 등록은 지우지 않습니다. |
 | 애플리케이션이 스키마를 늦게 등록합니다. | 루트와 guard 모두 현재 등록을 조회합니다. |
-| 기본 검증기의 소수 multipleOf를 사용합니다. | 정확한 십진 배수를 허용하고 비배수와 0인 제수는 거절합니다. |
+| 기본 검증기의 소수 multipleOf를 사용합니다. | 정밀도 9로 소수 배수를 검사하고 전체 컴파일은 0 제수를 거부합니다. AJV 7·8 동기 가드는 0 제수에 false를 반환하며 AJV 6.12.6 동기 가드의 오판은 외부 한계(EXTERNAL)입니다. |
 | 라이브러리가 내부 메뉴 식별자를 요구합니다. | 플러그인은 코어가 제공한 불투명한 식별자를 전달하며 필드 이름을 조합하거나 식별자를 해석하지 않습니다. |
 
 ## 호환성이 깨지는 변경과 뒤집은 테스트
@@ -398,7 +398,7 @@ MUI의 반대 문자열 순서는 결과표의 switchParity 검증으로 대체�
 | 결정 | 표준 또는 문서 계약 | 형제 경로의 예측 가능한 결과 | 해당 속도 행 |
 |---|---|---|---|
 | 내장 하위 클래스 clone을 지원 범위로 한정합니다. | 내장 슬롯과 프로토타입을 함께 유지해야 메서드가 작동합니다. | 로컬과 다른 realm의 다섯 내장 계열을 비교하고 일반 객체 경로는 유지합니다. 뷰 등의 예외는 알려진 한계에 둡니다. | clone의 내장값과 클래스 행입니다. |
-| equals와 cloneLite의 순환 처리는 문서만 고칩니다. | 경량 경로에 순환 추적을 넣지 않는 기존 계약을 유지합니다. | 순환에는 stableEquals와 clone을 사용하며 무한 실행을 정상 성공으로 단언하지 않습니다. | 실행 코드를 바꾸지 않아 면제입니다. |
+| `equals`와 깊이 제한 없는 `cloneLite`는 순환을 감지하면 `RangeError`를 던집니다. | 활성 경로의 순환은 실패로 보고합니다. | 공유 자손은 지원하며 순환 값을 처리하려면 `stableEquals`와 `clone`을 씁니다. | 해당 없음 |
 | hook 알림 소유권을 호출별로 분리합니다. | 동시 실행 허용은 중첩 호출도 허용하는 계약입니다. | before, after, 원 함수와 겹친 완료를 비교합니다. hook 없는 경로와 동시 실행 거절 경로를 구성 때 분리합니다. | 일반 경로와 동시 실행 알림 행을 검토했습니다. |
 | scheduler 식별자는 모듈 수명을 따릅니다. | 취소는 발급받은 작업에만 작용해야 합니다. | 해제 전후 인스턴스와 전역 경로가 같은 결과를 냅니다. | scheduler 카운터 행입니다. |
 | 호스트 실행 순서는 문서로 구분합니다. | Node와 브라우저의 작업 큐 계약이 다릅니다. | 호스트 차이를 없애겠다고 약속하지 않습니다. | 실행 코드 변경 없이 면제이며 검증의 빈틈은 알려진 한계에 둡니다. |
@@ -444,7 +444,7 @@ agents-assets-sync 12·13번은 공개 이름과 루트 우선순위 문서만 �
 | 범위는 선택 확정만 저장하고 열거 밖 값은 보존합니다. | 탐색은 값 변경이 아니며 다른 선택이 기존 데이터를 지우면 안 됩니다. | 날짜, 월, 시간 범위와 네 플러그인의 단일 및 다중 열거를 비교합니다. | UI 면제입니다. |
 | AJV 오류를 호출마다 읽습니다. | 검증 결과는 그 호출의 입력에 속합니다. | 직렬 실행과 중첩 실행의 오류를 세 버전에서 비교합니다. | 반복 검증과 첫 실패 행입니다. |
 | 등록 소유권을 공유하고 현재 등록을 조회합니다. | 애플리케이션 등록을 플러그인이 지우면 안 됩니다. | 여러 복사본, release, 늦은 동기 및 비동기 스키마와 guard를 비교합니다. | 컴파일 26개 행입니다. |
-| 소수 multipleOf는 기본 인스턴스에서 정확히 처리합니다. | JSON Schema의 십진 배수와 코어의 입력 격자를 맞춥니다. | 세 버전이 같은 배수, 비배수와 0 제수를 검증합니다. | 기본 인스턴스 컴파일과 검증 행입니다. |
+| 기본 인스턴스는 정밀도 9로 소수 `multipleOf`를 검사합니다. | 전체 컴파일은 0 제수를 거부합니다. | AJV 7·8 동기 가드는 0 제수를 거부하며 AJV 6.12.6의 오판은 외부 한계(EXTERNAL)입니다. | 기본 인스턴스 컴파일과 검증 행입니다. |
 
 ## 알려진 한계
 

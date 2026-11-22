@@ -21,7 +21,7 @@
 | 3 | 코드 수정 | 깊은 그래프의 clone과 stableEquals를 반복 처리하여 스택 초과를 피합니다. | `c2dc22924` | `90f2cdcd2` | `utils/object/__tests__/depth.round5.test.ts` |
 | 4 | 코드 수정 | 키 정렬과 불변 병합이 프로토타입 없는 사전을 유지합니다. | `c2dc22924` | `ad0200dc8`, `31b67fd84` | `utils/object/__tests__/containerPrototypes.round5.test.ts` |
 | 5 | 한계 명시 | 내장 하위 클래스의 추가 자기 속성을 복사하지 않는 한계를 명시합니다. | `c2dc22924` | `362f983e1` | `__tests__/guidance.round5.test.ts` |
-| 6 | 문서 수정 | isEmpty의 다른 realm Map과 Set 한계를 한국어에도 명시합니다. | `c2dc22924` | `d50d5a1e2` | `__tests__/guidance.round5.test.ts` |
+| 6 | 문서화된 한계 | `isEmpty`는 다른 realm에서 만든 Map과 Set을 자기 열거 키로 판정하므로 내용이 있어도 비어 있다고 판단할 수 있습니다. | `c2dc22924` | `d50d5a1e2` | `__tests__/guidance.round5.test.ts` |
 | 7 | 코드 수정 | AbortController가 없는 환경은 함수를 시작하기 전에 거절합니다. | `c2dc22924` | `e1e262f25` | `utils/promise/__tests__/runtimeContract.round5.test.ts` |
 
 ### @winglet/json
@@ -51,7 +51,7 @@
 | 1 | 코드 수정 | 중첩 문장형 at-rule 뒤의 다음 식별자 규칙을 보존합니다. | `af9b6feb8` | `47a6b688a` | `__tests__/fragmentModel.round5.test.ts` |
 | 2 | 코드 수정 | 그림자 루트에서도 미완성 전주부가 다음 조각을 삼키지 않습니다. | `af9b6feb8` | `47a6b688a` | `__tests__/fragmentModel.round5.test.ts` |
 | 3 | 코드 수정 | 문법 문맥별로 의미 있는 공백과 부호 경계를 보존합니다. | `af9b6feb8` | `47a6b688a`, `ac0f24e4a`, `02e438804`, `b8f2e0217`, `72d8a0037` | `__tests__/compressionModel.round5.test.ts`, `__tests__/commentValues.round5.test.ts`, `__tests__/selectorBoundaries.round5.test.ts` |
-| 4 | 문서 수정 | 한국어 destroyScope에 shadowRoot와 이전 주입기 폐기 규칙을 적습니다. | `cd0baa321` | `1fa242296` | `__tests__/guidance.round5.test.ts` |
+| 4 | 문서 수정 | 한국어 문서는 shadow 스코프 해제에 같은 `shadowRoot`가 필요하며 기존 주입 함수는 새 스코프를 열 수 있다고 설명합니다. | `cd0baa321` | `1fa242296` | `__tests__/guidance.round5.test.ts` |
 
 ### @lerx/promise-modal
 
@@ -136,8 +136,8 @@ schema-form 6번은 한 패키지의 처리만으로 끝나지 않습니다. 위
 |---|---|---|---|---|---|
 | 1 | 코드 수정 | 레이블 배치에 관계없이 그룹과 범위 입력에 접근성 이름을 줍니다. | `3dbfa9deb` | `0ce02213a`, `21effb351` | `__tests__/roundFive.customLayoutNames.test.tsx` |
 | 2 | 코드 수정 | 배타적 상하한 안의 격자로 제한합니다. | `3dbfa9deb` | `cafc784f1` | `__tests__/roundFive.sliderInputs.test.tsx` |
-| 3 | 코드 수정 | 허용하는 가장 낮은 버전이 제공하는 확정 콜백을 씁니다. | `3dbfa9deb` | `37ecf7287` | `__tests__/roundFive.sliderPeerFloor.test.tsx` |
-| 4 | 코드 수정 | 아주 작은 multipleOf도 정확한 격자 값을 저장합니다. | `3dbfa9deb` | `cafc784f1` | `__tests__/roundFive.sliderInputs.test.tsx` |
+| 3 | 코드 수정 및 외부 한계(EXTERNAL) | `^5.10.0`을 지원하며 포인터는 놓을 때, 키보드는 Ant 5.10–5.11에서 누를 때, Ant 5.12 이상에서 놓을 때 저장합니다. | `3dbfa9deb` | `37ecf7287` | `__tests__/roundFive.sliderPeerFloor.test.tsx` |
+| 4 | 외부 한계(EXTERNAL) | 아주 작은 `multipleOf`의 포인터 커밋은 Ant 5 Slider의 반올림을 따릅니다. | `3dbfa9deb` | `cafc784f1` | `__tests__/roundFive.sliderInputs.test.tsx` |
 | 6번의 공개 선언 부분입니다. | 코드 수정 | 조기 React 타입에서도 공개 결과를 읽습니다. | `3677ad40f` | `8b6280c57` | `__tests__/publishedReactTypes.roundFive.test.ts` |
 
 ### @canard/schema-form-antd6-plugin
@@ -146,7 +146,7 @@ schema-form 6번은 한 패키지의 처리만으로 끝나지 않습니다. 위
 |---|---|---|---|---|---|
 | 1 | 코드 수정 | 레이블 배치에 관계없이 그룹과 범위 입력에 접근성 이름을 줍니다. | `d6beb13ce` | `0ce02213a`, `5b11c571b` | `__tests__/roundFive.customLayoutNames.test.tsx` |
 | 2 | 코드 수정 | 배타적 상하한 안의 격자로 제한합니다. | `d6beb13ce` | `cafc784f1` | `__tests__/roundFive.sliderInputs.test.tsx` |
-| 3 | 코드 수정 | 아주 작은 multipleOf도 정확한 격자 값을 저장합니다. | `d6beb13ce` | `cafc784f1` | `__tests__/roundFive.sliderInputs.test.tsx` |
+| 3 | 외부 한계(EXTERNAL) | 아주 작은 `multipleOf`의 포인터 커밋은 Ant 6 Slider의 반올림을 따릅니다. | `d6beb13ce` | `cafc784f1` | `__tests__/roundFive.sliderInputs.test.tsx` |
 | 6번의 공개 선언 부분입니다. | 코드 수정 | 조기 React 타입에서도 공개 결과를 읽습니다. | `ffbd82f46` | `96c1eaedd` | `__tests__/publishedReactTypes.roundFive.test.ts` |
 
 ### @canard/schema-form-mui-plugin
@@ -169,8 +169,8 @@ schema-form 6번은 한 패키지의 처리만으로 끝나지 않습니다. 위
 | 1 | 코드 수정 | 그룹과 스위치가 필드 제목을 접근성 이름으로 사용합니다. | `bef6a3971` | `0ce02213a` | `__tests__/roundFive.customLayoutNames.test.tsx` |
 | 2 | 코드 수정 | 배타적 상하한 안의 격자로 제한합니다. | `bef6a3971` | `cafc784f1` | `__tests__/roundFive.sliderInputs.test.tsx` |
 | 3 | 코드 수정 | 빈 숫자 입력을 지원하는 ^5.2.0부터 허용합니다. | `bef6a3971` | `42eb21410` | `__tests__/roundFive.stepperPeerFloor.test.tsx` |
-| 4 | 코드 수정 | 격자나 범위 밖에서 시작한 키 이동도 유효한 값으로 맞춥니다. | `bef6a3971` | `cafc784f1` | `__tests__/roundFive.sliderInputs.test.tsx` |
-| 5 | 코드 수정 | 아주 작은 multipleOf도 정확한 격자 값을 저장합니다. | `bef6a3971` | `cafc784f1` | `__tests__/roundFive.sliderInputs.test.tsx` |
+| 4 | 보장 철회(EXTERNAL) | antd-mobile Slider에는 키 이동이 없어 키로 격자나 범위 안으로 이동하는 동작을 보장하지 않습니다. | `bef6a3971` | `cafc784f1` | `__tests__/roundFive.sliderInputs.test.tsx` |
+| 5 | 외부 한계(EXTERNAL) | 아주 작은 `multipleOf`의 포인터 커밋은 antd-mobile Slider의 반올림을 따릅니다. | `bef6a3971` | `cafc784f1` | `__tests__/roundFive.sliderInputs.test.tsx` |
 | 6번의 공개 선언 부분입니다. | 코드 수정 | 조기 React 타입에서도 공개 결과를 읽습니다. | `b9d378590` | `b8f5a7091` | `__tests__/publishedReactTypes.roundFive.test.ts` |
 
 ### 첫 내부 검증의 결과
@@ -198,7 +198,7 @@ schema-form 6번은 한 패키지의 처리만으로 끝나지 않습니다. 위
 | 오른쪽에서 왼쪽으로 쓰는 슬라이더입니다. | 코드 수정 | antd5, antd6, MUI가 제공자의 방향대로 화살표를 해석합니다. | `eb1468552` | `fc247b641` | 각 패키지의 `src/__tests__/roundFive.sliderModel.property.test.tsx`입니다. |
 | 읽기 전용 소수 표시입니다. | 코드 수정 | 네 플러그인에서 multipleOf 없는 유효 소수를 저장 값 그대로 읽습니다. | `fb4dec31e` | `2182e4c4d`, `16f3ba679` | 각 패키지의 `src/__tests__/roundFive.sliderModel.property.test.tsx`입니다. |
 | 한 기본 간격보다 좁은 범위입니다. | 코드 수정 | 네 플러그인이 포함된 상한을 선택 가능하게 유지합니다. | `b0893f07b` | `141139aea` | 각 패키지의 `src/__tests__/roundFive.sliderModel.property.test.tsx`입니다. |
-| 보조 키 해제입니다. | 코드 수정 | antd5와 antd6는 이동 키를 놓을 때만 기본 lazy 값을 확정합니다. | `888aa2cbf` | `0f9285394` | 두 패키지의 `src/__tests__/roundFive.sliderModel.property.test.tsx`입니다. |
+| 보조 키 해제입니다. | 버전별 동작(EXTERNAL) | 기본 lazy에서 Ant 5.10–5.11은 이동 키를 누를 때, Ant 5.12 이상과 Ant 6은 이동 키를 놓을 때 확정합니다. | `888aa2cbf` | `0f9285394` | 두 패키지의 `src/__tests__/roundFive.sliderModel.property.test.tsx`입니다. |
 | MUI 선택기 레이블입니다. | 코드 수정 | 클릭을 조작 요소로 전달하며 비활성화된 선택기에 초점을 주지 않습니다. | `a5208678b`, `ec800d324` | `1b862c6f9`, `034d51dbb` | `packages/canard/schema-form-mui-plugin/src/__tests__/roundFive.labelTargets.test.tsx` |
 | 비표준 그릇의 참조입니다. | 코드 수정 | 세 AJV가 로컬 참조가 닿은 위치의 외부 의존성을 가져옵니다. | `6d3f0b1e5`, `b93aeef3d`, `87354ff37` | `c3dfc84ec`, `392467f1f`, `960b7439d`, `9dd927a8f` | 각 패키지의 `src/__tests__/referencedContainerImports.test.ts`입니다. |
 | 숨은 비동기 규칙입니다. | 코드 수정 | 세 AJV가 매크로 전개와 참조 위치의 비동기 사실을 기록합니다. | `d0fec666d`, `ce794a38c`, `2bcc847c5` | `c3dfc84ec`, `392467f1f`, `960b7439d` | 각 패키지의 `src/__tests__/expandedAsyncSchema.test.ts`입니다. |
@@ -251,7 +251,7 @@ schema-form 6번은 한 패키지의 처리만으로 끝나지 않습니다. 위
 
 | 항목 | 처리 | 결과 | 실패 커밋 | 수정 커밋 | 고정 검증 |
 |---|---|---|---|---|---|
-| 모바일 Home과 End입니다. | 코드 수정 | 배타 경계 안에서 가장 바깥의 유효 mark를 선택합니다. | `e48b05910` | `20248ee3a` | `packages/canard/schema-form-antd-mobile-plugin/src/__tests__/roundFive.sliderMarks.test.tsx` |
+| 모바일 Home과 End입니다. | 보장 철회(EXTERNAL) | antd-mobile Slider는 공개 API에서 Home과 End 조작을 지원하지 않습니다. | `e48b05910` | `20248ee3a` | `packages/canard/schema-form-antd-mobile-plugin/src/__tests__/roundFive.sliderMarks.test.tsx` |
 | 모바일의 좁은 배타 구간 레이블입니다. | 코드 수정 | 기본 격자가 비어도 유효 mark 레이블을 표시하며 조작은 비활성화합니다. | `7bb7d8a5b` | `0912a3c32` | `packages/canard/schema-form-antd-mobile-plugin/src/__tests__/roundFive.sliderMarks.test.tsx` |
 | 살아 있는 부모의 전체 쓰기 뒤 이탈입니다. | 코드 수정 | 명시한 원본에 나감 정책을 적용합니다. | `73c742533` | `4bdd06622` | `liveWholeWriteExit.test.ts` |
 | 키 생략 뒤 지명과 이탈입니다. | 코드 수정 | 뒤 규칙이 지명한 값을 앞 생략의 복구가 덮지 않습니다. | `86471687a` | `abeee05ce` | `liveWholeFillOrder.test.ts` |
@@ -405,7 +405,7 @@ agents-assets-sync는 사람이 실행하는 명령줄 도구라 측정 면제�
 | 낮은 전체 쓰기 뒤 높은 키 쓰기가 이탈 주소에 적용됩니다. | `{ z: 'hz' }` 뒤 `y='low'`이면 최종 보유 값은 `{ z: 'hz', y: 'low' }`입니다. |
 | AJV 애플리케이션 인스턴스입니다. | 플러그인은 원본에 등록, 쓰기나 제거를 하지 않습니다. 분리 사본이 현재 스키마와 정의를 읽고 원본 컴파일 사실을 보존합니다. |
 | AJV가 컴파일할 수 있는 위치입니다. | 로컬 참조 목적지와 매크로 전개를 포함하여 의존성, 비동기 상태와 키워드 교체를 기록합니다. 이전 검증 함수는 자기 스냅샷을 유지합니다. |
-| 네 슬라이더의 이동입니다. | 배타 경계와 십진 격자를 지키며 제공자의 방향, 좁은 포함 상한, 읽기 전용 유효 소수를 유지합니다. antd의 기본 lazy는 이동 키 해제로 확정합니다. |
+| 네 슬라이더의 이동입니다. | 스키마 경계와 좁은 범위의 포함 상한을 적용하고 읽기 전용 유효 소수를 유지합니다. Ant 5·6과 모바일의 아주 작은 포인터 step, MUI의 일반 소수 및 지수 step 키보드 오차는 외부 한계(EXTERNAL)입니다. |
 | MUI 레이블입니다. | for는 사용자가 조작하는 요소를 가리키고 선택기 클릭을 전달하며 비활성화된 컨트롤을 초점 대상으로 삼지 않습니다. |
 | 공개 React 결과입니다. | JSX runtime의 JSX.Element가 아니라 ReactElement를 사용합니다. |
 
@@ -534,7 +534,7 @@ AJV는 실행 시점에 $data로 선택하는 비동기 format을 동기 컴파�
 
 플러그인 첫 검토의 antd5 tooltip 식별자 참조는 마운트되지 않은 툴팁을 가리킬 수 있으며 실제 브라우저에서 확인하지 않았습니다. 모바일 Stepper의 SVG 식별자 중복은 라이브러리 소유이고 기준에도 있습니다. antd5와 antd6의 password 입력에 있는 eye-invisible 버튼도 검토가 남긴 라이브러리 동작입니다. AJV 6 모듈 문서의 기존 후행 공백도 해당 검토가 남긴 항목입니다. 첫 검토에서 놓친 수집 정리와 원본 format 쓰기 변형은 후속 검증을 추가했으므로 그대로 미검출 상태라고 기록하지 않습니다.
 
-MUI 선택기와 select는 조작 요소가 div이므로 label.control은 null입니다. for, aria-labelledby와 전달 클릭으로 연결합니다. MUI의 단일 입력은 외부 Form.Label과 내부 레이블의 제목이 중복 노출될 수 있습니다. 모바일과 MUI는 기본 lazy에서 이동 키를 잡은 채 Shift만 놓아도 저장하는 기존 동작이 남습니다. 모바일의 빈 기본 격자는 유효 mark 레이블이 있어도 조작을 비활성화하는 기존 동작을 유지합니다. 편집 가능하거나 disabled인 숫자 슬라이더의 표시용 초안은 기존 격자로 정규화되며, 이번 읽기 전용 소수 수정은 multipleOf 없는 선택 범위 안의 유효 값에 한정됩니다.
+MUI 선택기와 select는 조작 요소가 div이므로 label.control은 null입니다. for, aria-labelledby와 전달 클릭으로 연결합니다. MUI의 단일 입력은 외부 Form.Label과 내부 레이블의 제목이 중복 노출될 수 있습니다. 기본 lazy의 키보드 확정은 MUI에서 keydown에 발생하며 모바일은 키보드 조작을 지원하지 않습니다(EXTERNAL). 모바일의 빈 기본 격자는 유효 mark 레이블이 있어도 조작을 비활성화하는 기존 동작을 유지합니다. 편집 가능하거나 disabled인 숫자 슬라이더의 표시용 초안은 기존 격자로 정규화되며, 이번 읽기 전용 소수 수정은 multipleOf 없는 선택 범위 안의 유효 값에 한정됩니다.
 
 ## 소유자가 정할 일
 

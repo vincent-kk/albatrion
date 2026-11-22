@@ -190,13 +190,13 @@
 | mui | 5 | 수정 | 무관 | 값이 없는 enum select에 빈 문자열 표시값을 넘기므로 out-of-range 경고가 나지 않습니다. 폼의 값은 그대로 비어 있습니다. | #649 |
 | antd-mobile | 1 | 수정 | 무관 | enum label을 자기 키에서만 읽습니다. | #649 |
 | antd-mobile | 2 | 수정 | 무관 | 범위 slider가 숫자 `items` 스키마의 `minimum`, `maximum`, `multipleOf`를 먼저 읽습니다. 배열 수준의 값은 1라운드 회귀를 위해 대체값으로 남습니다. | #649 |
-| antd-mobile | 3 | 수정 | 무관 | 실제 thumb를 focus 대상으로 표시하고 `tabIndex`와 키보드 조작을 제공하므로 `focus(path)`가 동작합니다. | #649 |
-| antd-mobile | 4 | 수정(결정, 호환성 깨짐) | 무관 | 라벨이 코어의 scoped id로 Stepper, Switch, Slider의 실제 컨트롤을 가리킵니다. 코어 1번에 의존하던 항목입니다. | #649 |
+| antd-mobile | 3 | 보장 철회(EXTERNAL) | 무관 | antd-mobile Slider의 공개 API에는 조작 가능한 키보드 또는 포커스 대상이 없으므로 포인터 조작만 지원합니다. | #649 |
+| antd-mobile | 4 | 수정 및 외부 한계(EXTERNAL) | 무관 | Stepper와 Switch는 라이브러리의 연결 속성을 사용하고, Slider는 그룹이 제목을 참조하며 라이브러리에 손잡이 ID를 전달할 공개 속성이 없습니다. | #649 |
 | antd-mobile | 5 | 문서 수정 | 무관 | 연속 volume 예제에서 marks를 빼고, marks가 이산 stop을 정한다고 적었습니다. | #649 |
 | antd-mobile | 6 | 문서 수정 | 무관 | textarea 설정을 스키마 수준 예제로 고쳤습니다. | #649 |
 | ajv6 | 추가 수정 | 수정 | 무관(ajv7, ajv8 1번의 형제) | 나중에 등록한 format과 keyword를 ajv7, ajv8과 같은 구조로 반영합니다. | #649 |
 | ajv7, ajv8 | 추가 수정 | 수정 | 무관(3라운드 종류 24의 형제) | 동적 앵커 표를 `Object.create(null)`로 만들어, `toString` 같은 이름의 앵커가 저장되고 선언되지 않은 같은 이름이 묶인 것으로 보이지 않습니다. | #649 |
-| antd5, antd6, mui, antd-mobile | 추가 수정 | 수정(결정, 호환성 깨짐) | 무관(코어 1번, 6번의 소비) | 모든 입력과 라벨이 `FieldInputProps.id`를, 그룹 제목이 `FieldRendererProps.labelId`를, 라디오 그룹이 id를 native name으로 씁니다. 검증 subagent가 찾은 MUI 체크박스 그룹의 중복 제목 id, antd5와 antd6과 antd-mobile 대체 입력의 빠진 `htmlFor`, MUI와 antd-mobile 배열 객체 항목의 제목, URI protocol 선택기의 접근성 이름, 날짜 범위의 두 끝점, 이름 없는 그룹 wrapper, MUI가 사용자 입력에 `labelId`를 넘기던 경고를 함께 고쳤습니다. | #649 |
+| antd5, antd6, mui, antd-mobile | 추가 수정 | 수정(결정, 호환성 깨짐) 및 외부 한계(EXTERNAL) | 무관(코어 1번, 6번의 소비) | 공개 연결 속성에 코어 식별자를 쓰며, Ant 5·6과 antd-mobile의 Slider 손잡이 ID 및 antd-mobile의 네이티브 라디오 `name`에는 라이브러리 속성이 없습니다. 검증 subagent가 찾은 MUI 체크박스 그룹의 중복 제목 id, antd5와 antd6과 antd-mobile 대체 입력의 빠진 `htmlFor`, MUI와 antd-mobile 배열 객체 항목의 제목, URI protocol 선택기의 접근성 이름, 날짜 범위의 두 끝점, 이름 없는 그룹 wrapper, MUI가 사용자 입력에 `labelId`를 넘기던 경고를 함께 고쳤습니다. | #649 |
 
 함께 고친 형제 범위: URI는 세 플러그인에 바이트가 같은 28행 저장 값 표, 6행 구분자 표, 2행 사용자 목록으로 마운트, 서버 렌더, 경로 편집, scheme 편집, 외부 쓰기, reset, Activity를 비교하고, 기존 빈 값 회귀 12건은 바꾸지 않았습니다. 식별자는 플러그인마다 등록된 입력 정의(18, 18, 15, 10개)를 모두 렌더하는 동등성 표 98행(antd5와 antd6 각 27행, MUI 24행, antd-mobile 20행)으로 고정했습니다. AJV의 `cloneInstance`와 `makeSibling`의 스키마 키 검사도 자기 속성 검사로 통일했지만, AJV가 그 이름의 등록을 먼저 거부하므로 관찰 가능한 변화는 없습니다.
 
@@ -363,8 +363,8 @@
 | ajv7, ajv8 동적 앵커 | 표준 준수 | `Object.prototype` 이름의 앵커가 저장되지 않거나 묶인 것으로 보였습니다. | 자기 바인딩만 봅니다. | JSON Schema 2020-12의 유효한 앵커 이름과 가드 범위 계약입니다. |
 | antd5, antd6, mui 1, 2와 mui 4 | 표준 준수(결정) | Activity 뒤 마운트 때 scheme으로 돌아가 다음 편집이 그 scheme을 저장했고, 한 콜론 scheme에 `http://`가 붙었으며, 서버 렌더가 첫 protocol을 보였습니다. | 유효한 scheme 접두사를 그대로 두고 저장 값에서 표시합니다. 빈 계약은 아래 근거와 같습니다. | (1) RFC 3986 3.1의 scheme 문법입니다. (2) 편집하지 않은 값은 다시 쓰지 않고, 경로 편집은 scheme을, 주소가 있을 때 scheme 편집은 주소를 바꾸지 않으며, 표시 scheme과 주소를 이으면 저장 값입니다. 사용자가 비우거나 빈 주소에서 scheme만 고르면 `undefined`를 저장하고 고른 scheme은 다음 글자에 결합되며, 저장된 scheme만의 값은 편집 전까지 그대로입니다. (3) UI 플러그인은 측정 면제이고 scheme 상태는 파싱한 값으로 초기화한 `useState`라 렌더마다 도는 일을 더하지 않습니다. |
 | enum label 4종, antd5와 antd6 4, mui 5, antd6 6 | 표준 준수 | 상속 키를 label로 읽었고, 표시 label로 검색되지 않았으며, MUI 경고와 antd 6 경고가 났습니다. | 자기 키만 읽고 label로 검색하며 경고가 나지 않습니다. | 자기 키 조회, 표시와 값 검색의 동치, MUI Select의 빈 문자열 표시값, antd 6이 지원하는 조합입니다. |
-| antd-mobile 2, 3 | 표준 준수 | slider가 0에서 100에 고정되었고 `focus(path)`가 동작하지 않았습니다. | `items`의 제약과 키보드 조작이 가능한 thumb를 씁니다. | 숫자 `items` 스키마의 제약과 `focus(path)` 계약입니다. |
-| 네 UI 플러그인 식별자(antd-mobile 4 포함) | 스펙 변경(결정, major) | 경로나 말단 이름을 DOM 주소로 썼습니다. | 코어의 id, `labelId`, 라디오 native name은 id입니다. | (1) 코어 1번, 6번과 같은 HTML 규칙입니다. (2) 두 Form의 같은 경로가 독립이며 동등성 표 98행이 고정합니다. (3) UI 플러그인은 측정 면제이고, 더한 callback ref는 마운트와 identity 변경 때만 실제 컨트롤을 찾습니다. |
+| antd-mobile 2, 3 | 범위 수정 및 보장 철회(EXTERNAL) | slider가 0에서 100에 고정되었고 `focus(path)`가 동작하지 않았습니다. | 범위와 step은 숫자 `items`를 따르며 포인터로 조작합니다. | 라이브러리의 공개 API가 손잡이 키보드 조작과 포커스 연결을 제공하지 않습니다. |
+| 네 UI 플러그인 식별자(antd-mobile 4 포함) | 스펙 변경 및 외부 한계(EXTERNAL) | 경로나 말단 이름을 DOM 주소로 썼습니다. | 공개 속성으로 코어 식별자를 전달하므로 서로 다른 Form의 같은 경로는 독립입니다. | Ant 5·6과 antd-mobile Slider 손잡이 ID 및 antd-mobile 라디오의 네이티브 `name`은 라이브러리가 속성을 제공하지 않습니다. |
 | 테스트의 시간 fixture | 동작 변화 없음(결정) | 공통 offset 없는 fixture가 antd에서 Invalid Date를 보였습니다. | MUI와 antd-mobile은 `12:30:00`, antd는 문서화된 저장 형식 `12:30:00Z`를 씁니다. | (1) 각 플러그인이 문서화한 저장 형식입니다. (2) 표의 검사는 제목과 접근성만 보므로 두 시간대(UTC, 서울)에서 같습니다. (3) 테스트만 바뀌었습니다. |
 | 문서만 고친 항목 | 문서만 | ajv6 3, ajv7 2, ajv8 2, 3, antd5 5, antd6 5, antd-mobile 5, 6 | 동작은 바뀌지 않았습니다. | 새 메타 스키마나 의존성을 더하지 않았습니다. |
 
@@ -461,7 +461,7 @@
 
 - `@winglet/common-utils`: clone 프로필 밖의 값(Symbol과 BigInt 감싼 값, WeakMap, WeakSet, Promise, 함수)과 임의의 생성자나 프로토타입 변조는 보장하지 않습니다. 끝나지 않는 hook은 호출도 pending으로 남깁니다. 호스트 오류 handler가 없는 비브라우저 프로세스는 scheduler 작업 오류로 종료될 수 있습니다. 2라운드의 다른 realm `isEmpty` 한계는 그대로입니다.
 - `@winglet/react-utils`: React 16.14와 17의 layout effect 대체 경로에서는 자식 layout effect가 이전 commit의 콜백을 읽을 수 있습니다. 이 경로는 코드를 읽어 확인했고 런타임 테스트는 React 18과 19입니다. 숨긴 동안 앵커의 key를 바꾸면 목적지가 새로 마운트됩니다.
-- `@winglet/style-utils`: 따옴표 없는 `url()` 안의 중괄호 스코핑 한계, 깊이 256 대체 경로, `destroyScope` 뒤의 주입 함수 한계는 그대로입니다.
+- `@winglet/style-utils`: 따옴표 없는 `url()` 안의 중괄호 스코핑 한계와 깊이 256 대체 경로는 그대로입니다.
 - `@winglet/json-schema`: dialect URI의 퍼센트 escape와 깊이 대체 한계는 그대로이며, type 배열은 유효하고 중복이 없다고 전제합니다.
 - `@winglet/data-loader`: 키별 `Error`는 `clear(key)`까지 캐시에 남습니다.
 
@@ -481,9 +481,8 @@
 
 ### 플러그인 묶음
 
-- 서버 HTML에는 antd-mobile Stepper의 내부 input id와 name, Switch의 id, Radio의 native name, Slider thumb의 id와 `aria-labelledby`, antd5와 antd6 slider handle의 id가 없습니다. 라이브러리가 그 속성을 넘기는 prop을 제공하지 않아 연결은 hydration에서 완성됩니다. README(영어와 한국어)에 적었습니다.
+- 외부 한계(EXTERNAL): Ant 5·6과 antd-mobile Slider의 scoped ID는 바깥 요소를 가리키며, 공개 속성이 없는 손잡이 ID와 antd-mobile 라디오의 네이티브 `name`은 hydration 뒤에도 설정되지 않습니다.
 - 앞선 입력 정의(먼저 등록한 플러그인 정의, 필드 수준 입력 맵, Form과 Provider 정의, 인라인 `presentation.FieldInput`)가 그룹 입력을 앞서면, 렌더러는 어느 정의가 이겼는지 볼 수 없어 라벨의 `for`를 빠뜨릴 수 있습니다. 정확한 해결은 코어가 선택된 입력의 그룹 소유 정보를 넘기는 새 API입니다.
-- antd-mobile은 React 19에서 라이브러리의 내부 갱신이 지운 라디오 native name을 microtask에서 복원하므로, 같은 task에서 바로 읽는 코드는 복원 전 값을 볼 수 있습니다.
 - URI protocol 선택기의 접근성 이름 `Protocol`은 영어뿐입니다.
 - antd 시간 입력은 offset이 있는 형식(`12:30:00Z`)을 요구하고 MUI와 antd-mobile은 offset 없는 시간도 받습니다. offset이 있는 값은 지역 시간으로 표시되며, 편집 뒤 MUI는 지역 `HH:mm:ss`를, antd는 지역 `HH:mm:00Z`를 기록합니다.
 - AJV의 늦은 등록은 앞으로의 compile에만 적용되고 이미 만든 validator를 다시 만들지 않습니다. 같은 AJV 인스턴스를 여러 스레드에서 공유하는 계약은 없습니다.
@@ -499,7 +498,6 @@
 - `@winglet/common-utils` 4번의 scheduler 오류 규칙(작업 오류를 잃지 않고 handler가 없으면 호스트에 보고)을 확인해야 합니다.
 - major로 기록한 변경 일곱 가지(호환성이 깨지는 변경 절의 표)를 확인해야 합니다.
 - "먼저 물어볼 것"으로 정한 변경의 승인: `@lerx/promise-modal`의 `AbstractNode` getter, `@canard/schema-form`의 새 공개 API 네 가지(`FieldInputProps.id`, `FieldRendererProps.labelId`, `registerPlugin(plugin, { scope })`, `FormProvider`의 `pluginScope`)입니다.
-- 서버 렌더에서 antd-mobile과 antd slider의 라벨 연결이 hydration에서야 완성되는 한계를 받아들일지 정해야 합니다.
 - antd의 시간 형식(offset 필요)과 MUI의 시간 형식(offset 없음 허용)의 차이를 그대로 둘지 정해야 합니다.
 - 사용자 입력이 받은 `id`를 컨트롤에 두었는지 확인하는, 켜야만 동작하는 개발 검사를 만들지 정해야 합니다.
 - 공용 빌드 작업([#651](https://github.com/vincent-kk/albatrion/pull/651)): 15개 패키지(여섯 winglet 패키지, `@canard/schema-form`, ajv 플러그인 셋, UI 플러그인 넷, `@lerx/promise-modal`)가 CommonJS 선언 그래프(`.d.cts`)를 갖고, 내보내기 설정의 형태가 `import`와 `require` 분기별 `{ types, default }`로 바뀌었습니다. 실행 파일과 기존 ESM 선언은 바이트 단위로 같습니다(검토가 두 패키지를 기준 커밋에서 다시 빌드하여 확인). `@lerx/promise-modal`의 문서화된 `.d.cts` 부재 한계는 없앴습니다(모든 패키지의 소비자 경험을 하나로 맞추는 지휘 세션의 결정). 선언 생성 단계의 빌드 시간은 약 1.06배입니다. 내보내기 설정을 문자열로 읽는 외부 도구가 있으면 영향을 받으므로 patch 판정을 확인해야 합니다.
