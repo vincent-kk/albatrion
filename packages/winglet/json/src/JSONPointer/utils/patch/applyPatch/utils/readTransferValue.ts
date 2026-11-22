@@ -13,6 +13,7 @@ import { removeMoveSource } from './removeMoveSource';
  * Resolve a transfer's value before the target is walked and written.
  * @param source Current document, owned if a move will remove nested content.
  * @param patch Original transfer, including its written pointers.
+ * @param operation Transfer operation selected by the caller.
  * @param patchIndex Index used for structured patch errors.
  * @param cloned Containers owned by the immutable result, or null for mutable mode.
  * @param path Decoded target pointer, with an empty string naming the root.
@@ -21,12 +22,12 @@ import { removeMoveSource } from './removeMoveSource';
 export function readTransferValue(
   source: JSONRoot,
   patch: CopyPatch | MovePatch,
+  operation: CopyPatch['op'] | MovePatch['op'],
   patchIndex: number,
   cloned: WeakSet<object> | null,
   path: string,
 ): unknown {
   const from = patch.from;
-  const operation = patch.op;
   if (typeof from !== 'string')
     throw new JSONPatchError(
       'PATCH_PATH_INVALID',

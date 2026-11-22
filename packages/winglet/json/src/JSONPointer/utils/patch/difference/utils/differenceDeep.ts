@@ -16,6 +16,8 @@ type DifferenceFrame = {
   target: JSONObject;
   /** Source keys captured before descending into children. */
   keys: string[];
+  /** Target values already read for the source keys. */
+  compared: Map<string, JSONObject[string]>;
   /** Next source key to compare. */
   index: number;
   /** Lazily created merge patch. */
@@ -49,6 +51,7 @@ export const differenceDeep = (
       const sourceValue = frame.source[key];
       const present = hasOwnProperty(frame.target, key);
       const targetValue = present ? frame.target[key] : undefined;
+      if (present) frame.compared.set(key, targetValue);
       if (targetValue === undefined) {
         if (present && sourceValue === undefined) continue;
         setDataProperty((frame.patch ??= {}), key, null);
@@ -73,10 +76,10 @@ export const differenceDeep = (
     }
     const targetKeys = Object.keys(frame.target);
     if (frame.hasRemoved || targetKeys.length !== frame.keys.length) {
-      const compared = new Set(frame.keys);
       for (const key of targetKeys) {
-        if (compared.has(key)) continue;
-        const value = frame.target[key];
+        const value = frame.compared.has(key)
+          ? frame.compared.get(key)
+          : frame.target[key];
         if (!hasOwnProperty(frame.source, key) && value !== undefined)
           setDataProperty((frame.patch ??= {}), key, cloneLite(value));
       }
@@ -102,6 +105,7 @@ const createFrame = (
   source,
   target,
   keys: Object.keys(source),
+  compared: new Map(),
   index: 0,
   patch: undefined,
   hasRemoved: false,
