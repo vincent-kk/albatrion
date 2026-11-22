@@ -229,14 +229,16 @@ const readRetained = (root: Root) =>
     root.inactiveValues.map(({ path, value }) => [path, value]),
   );
 
-/** Seed classes: grouped virtual pair or not, times the exit policy of object.y and box. */
-const SEED_CLASSES = [false, true].flatMap((grouped) =>
-  POLICIES.map((policy) => `${grouped}:${policy}`),
-);
-
-const sampler = createSeedSampler(10000, SEED_CLASSES, 250);
-
-it(`a batch of declarative and caller writes leaves the state of the same calls in sequence for ${sampler.label}`, () => {
+/** Exercise one virtual-shape half of the same seed range and stratified quota. */
+const compareDeclarativeBatch = (
+  virtualPair: boolean,
+  operationCount: number,
+) => {
+  const sampler = createSeedSampler(
+    10000,
+    POLICIES.map((policy) => `${virtualPair}:${policy}`),
+    250,
+  );
   const reached = new Set<string>();
   for (let seed = 1; sampler.has(seed); seed++) {
     let randomState = seed;
@@ -246,7 +248,8 @@ it(`a batch of declarative and caller writes leaves the state of the same calls 
     };
     const grouped = random(2) === 1;
     const policy = POLICIES[random(POLICIES.length)];
-    if (!sampler.accept(`${grouped}:${policy}`)) continue;
+    if (grouped !== virtualPair || !sampler.accept(`${grouped}:${policy}`))
+      continue;
     const randomNested = (label: string) => {
       const nested: Record<string, string> = {};
       if (random(2)) nested.p = `${label}p`;
@@ -654,8 +657,18 @@ it(`a batch of declarative and caller writes leaves the state of the same calls 
     }
   }
   expect(sampler.shortfall()).toEqual([]);
-  expect(reached.size).toBe(29 + 23);
-}, 300_000);
+  expect(reached.size).toBe(operationCount);
+};
+
+it.each([
+  { group: 'ordinary fields', virtualPair: false, operationCount: 23 },
+  { group: 'a virtual pair', virtualPair: true, operationCount: 29 },
+])(
+  'a batch of declarative and caller writes with $group matches the same calls in sequence',
+  ({ virtualPair, operationCount }) =>
+    compareDeclarativeBatch(virtualPair, operationCount),
+  300_000,
+);
 
 it('caller-only segments match sequential writes through the generated schema classes', () => {
   const named = callerCases.map(({ name }) => name);
