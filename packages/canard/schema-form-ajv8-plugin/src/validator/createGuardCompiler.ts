@@ -34,10 +34,7 @@ export const createGuardCompiler = (
 ) : Fn<[value: unknown], boolean> => registerSchemaRoot(registry, ajv, root, (registration, register) => {
   const { copy, compiler: guard } = registration;
   const rootId = typeof root.$id === 'string' ? root.$id : '';
-  const fragment = pointer.startsWith('#')
-    ? pointer.replace(/%2f/gi, '/')
-    : `#${pointer.replace(/[^A-Za-z0-9_~./-]/gu, encodeURIComponent)}`;
-  const located = resolveGuardSchema(copy, fragment);
+  const located = resolveGuardSchema(copy, pointer);
   if (located === undefined)
     throw new GuardPointerNotSchemaError(rootId, pointer);
   const schema = directGuardCompile ? located : undefined;
@@ -52,13 +49,14 @@ export const createGuardCompiler = (
     return (value) => !!validate(value);
   }
   register();
+  const fragment = pointer.includes('%') ? pointer.replace(/%/g, '%25') : pointer;
   // Anchor locations compile before the guard so AJV generates the table lookup for its dynamic references.
   // A draft-07 instance leaves dynamic keywords unknown and ignored, so only a dynamic-vocabulary instance collects.
   const dynamicAnchors: Dictionary<ValidateFunction> =
     guard.opts.dynamicRef && registration.hasDynamicKeywords
-      ? collectGuardDynamicAnchors(copy, registration.key, fragment, guard)
+      ? collectGuardDynamicAnchors(copy, registration.key, pointer, guard)
       : {};
-  const validate = guard.compile({ $ref: `${registration.key}${fragment}` });
+  const validate = guard.compile({ $ref: `${registration.key}#${fragment}` });
   if (Object.keys(dynamicAnchors).length === 0)
     return (value) => !!validate(value);
   return (value) =>

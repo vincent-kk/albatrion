@@ -147,6 +147,8 @@ const defaultSettings: Ajv.Options = {
 - **상세한 오류 메시지**: 더 나은 사용자 경험을 위한 풍부한 오류 정보
 - **타입 안전성**: 적절한 타입 추론과 함께 완전한 TypeScript 지원
 
+`createValidatorFactory`는 AJV 인스턴스에 값 변환, 기본값 삽입 또는 추가 속성 제거 옵션이 켜져 있으면 `ValidatorBindRefusedError`를 던집니다. 팩터리 생성 뒤에 옵션을 켜면 다음 검증기 컴파일에서 거부합니다. 명시 키는 앱 등록을 선택하며 현재 앱 설정으로 사적으로 컴파일합니다. 사용자 지정 생성자는 사적 컴파일러에 부트스트랩 스키마를 등록하지 않아야 합니다. 앱 인스턴스를 생성한 뒤 `addSchema`로 앱 스키마를 등록하십시오.
+
 `createValidator(ajv)`는 Form의 `validatorFactory`에 넘길 인스턴스별 `{ compile, compileGuard }` 객체를 돌려줍니다. 새 객체는 Form이 트리를 다시 만들게 하므로 렌더 밖에서 한 번만 만드십시오(`const validator = createValidator(customAjv);` 뒤 `<Form validatorFactory={validator} />`). 여러 객체가 AJV 인스턴스 하나를 함께 써도 되며, 인스턴스는 값을 바꾸지 않아야 합니다(`coerceTypes`, `useDefaults`, `removeAdditional` 꺼짐).
 
 `compileGuard`는 포인터가 스키마(객체나 불리언)를 가리키지 않으면, 곧 없는 위치이거나 `/type`·`/required`처럼 스키마가 아닌 값이면 네이티브 `GuardPointerNotSchemaError`를 던집니다. 호출자는 `group`(`'UNHANDLED_ERROR'`)과 `code`(`'GUARD_POINTER_NOT_SCHEMA'`)로 구분하며, `details`에는 루트의 `$id`(없으면 `''`)와 포인터가 담깁니다.

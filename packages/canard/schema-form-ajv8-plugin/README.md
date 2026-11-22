@@ -138,6 +138,8 @@ Validation errors from the selected AJV instance's `ValidationError` class becom
 
 #### **`compileGuard(root, pointer)` and `release(root)`**
 
+For root-pointer guards, pass a slash-prefixed JSON Pointer such as `/properties/a~1b/if` for the property `a/b`. A URI fragment with encoded separators such as `#%2Fproperties%2Ffield%2Fif` works when the condition can be compiled directly.
+
 Guards are synchronous and use a JSON Pointer into the engine-owned copy root. `compileGuard` accepts that copy whether or not `compile` has run. A self-contained guard compiles its subschema without registering the root; only guards that need the root location, such as guards with `$ref` into root definitions, register the root on the guard instance. Whole validation compiles a detached root on a private AJV instance with the current application registrations. To make a schema address available to the application or to another root, register it on the application instance. The plugin enables asynchronous validation on its own root copy. Declare `$async: true` on separately registered resources that require asynchronous validation. Both kinds of guard work before whole-schema compilation. Pass the same copy object to `compile`, every `compileGuard`, and `release`; whole-schema validation can be compiled later.
 
 `release` accepts that copy whether or not `compile` has run and releases the plugin’s retained resources for that root. Releasing an unregistered root is a no-op.
@@ -199,6 +201,8 @@ The `createValidatorFactory` function provides:
 - **Performance Optimization**: Improved caching and validation speed
 - **Rich Error Context**: Detailed error information for better debugging
 - **Type Safety**: Full TypeScript support with advanced type inference
+
+`createValidatorFactory` throws `ValidatorBindRefusedError` when the AJV instance is configured to coerce values, apply defaults, or remove additional properties. Compiling a new validator also refuses those options if enabled after factory creation.
 
 `createValidator(ajv)` returns a per-instance `{ compile, compileGuard }` object for a Form's `validatorFactory`: create it once outside render (`const validator = createValidator(customAjv);` then `<Form validatorFactory={validator} />`), because a new object makes the Form rebuild its tree; several validators may share one AJV instance, which must not modify values (`coerceTypes`, `useDefaults`, `removeAdditional` off).
 

@@ -2,8 +2,7 @@ import type { JSONSchema, ValidatorFactory } from '@canard/schema-form';
 import type { Ajv } from 'ajv';
 
 import { createGuardCompiler } from './createGuardCompiler';
-import { createValidatorFactory } from './createValidatorFactory';
-import { assertBindableInstance } from './utils/assertBindableInstance';
+import { createValidationCompiler } from './createValidationCompiler';
 import type { SchemaRootRegistry } from './utils/registerSchemaRoot';
 
 /** Per-object selections of a validator built from one AJV instance. */
@@ -32,8 +31,7 @@ export const createInstanceValidator = (
   roots: SchemaRootRegistry = new WeakMap(),
   readDirectGuardCompile?: () => boolean,
 ) => {
-  assertBindableInstance(ajv);
-  const compile = createValidatorFactory(ajv, roots);
+  const compile = createValidationCompiler(ajv, roots);
   const directGuardCompile = options.directGuardCompile ?? true;
   return {
     compile,
