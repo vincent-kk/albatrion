@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { readFile } from 'node:fs/promises';
+import { readFile, realpath } from 'node:fs/promises';
 import { join } from 'node:path';
 
 /** Verifies a supplied SHA prefix against a frozen tree or Git checkout. */
@@ -10,6 +10,13 @@ export async function resolveRef(root: string, ref: string): Promise<string> {
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
     try {
+      const top = execFileSync('git', ['rev-parse', '--show-toplevel'], {
+        cwd: root,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }).trim();
+      if ((await realpath(top)) !== (await realpath(root)))
+        throw new Error('Not a checkout root');
       sha = execFileSync('git', ['rev-parse', '--verify', 'HEAD'], {
         cwd: root,
         encoding: 'utf8',

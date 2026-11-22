@@ -25,7 +25,11 @@ it('uses Git HEAD when the ref file is absent and fails without either source', 
   const sha = execFileSync('git', ['rev-parse', 'HEAD'], {
     encoding: 'utf8',
   }).trim();
-  await expect(resolveRef(process.cwd(), sha.slice(0, 7))).resolves.toBe(sha);
+  const checkoutRoot = execFileSync('git', ['rev-parse', '--show-toplevel'], {
+    encoding: 'utf8',
+  }).trim();
+  await expect(resolveRef(checkoutRoot, sha.slice(0, 7))).resolves.toBe(sha);
+  await expect(resolveRef(process.cwd(), sha.slice(0, 7))).rejects.toThrow();
   const root = await mkdtemp(join(tmpdir(), 'speed-no-ref-'));
   try {
     await expect(resolveRef(root, sha.slice(0, 7))).rejects.toThrow();
