@@ -137,3 +137,12 @@ describe('ValidationIssue.rejectedKey', () => {
     ]);
   });
 });
+
+it('reports a Draft 2020 tuple overflow as the native items issue', async () => {
+  const schema = JSON.parse('{"type":"array","prefixItems":[true],"items":false}');
+  const validate = plugin2020.validator.compile(schema);
+  const issues = await validate([1, 2]);
+
+  expect(issues?.map(({ keyword }) => keyword)).toEqual(['items']);
+  expect(issues?.[0]?.rejectedKey).toBeUndefined();
+});

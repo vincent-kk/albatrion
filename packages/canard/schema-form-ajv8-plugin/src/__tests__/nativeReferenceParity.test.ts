@@ -63,3 +63,55 @@ it('keeps an active form address private during compilation from a custom keywor
   expect(instance.getSchema(address)).toBeUndefined();
   await expect(validate(42)).resolves.toBeNull();
 });
+
+it.each(['macro', 'local pointer'] as const)('compiles an unmarked named root with an async %s', async (location) => {
+  const ajv = new Ajv({ strict: false, allErrors: true });
+  ajv.addFormat('late-format', { async: true, validate: async (value: string) => value === 'valid' });
+  ajv.addKeyword({ keyword: 'macroFormat', macro: () => ({ format: 'late-format' }) });
+  const $id = 'https://example.test/implicit-async';
+  const schema: JSONSchema = location === 'macro'
+    ? { $id, type: 'string', macroFormat: true }
+    : { $id, components: { name: { type: 'string', format: 'late-format' } }, $ref: '#/components/name' };
+  const validate = createValidator(ajv).compile(schema);
+
+  await expect(validate('valid')).resolves.toBeNull();
+  await expect(validate('invalid')).resolves.toEqual(
+    expect.arrayContaining([expect.objectContaining({ keyword: 'format' })]),
+  );
+});
+
+it('resolves a newly selected fragment in an already used application document', async () => {
+  const ajv = new Ajv({ strict: false });
+  const doc = 'https://example.test/document';
+  const string = 'https://example.test/string';
+  const number = 'https://example.test/number';
+  ajv.addSchema({ $id: string, type: 'string' });
+  ajv.addSchema({ $id: number, type: 'number' });
+  ajv.addSchema({ $id: doc, components: { a: { $ref: string }, b: { $ref: number } } });
+  const validator = createValidator(ajv);
+
+  await expect(validator.compile({ $ref: doc + '#/components/a' })('x')).resolves.toBeNull();
+  const validate = validator.compile({ $ref: doc + '#/components/b' });
+  await expect(validate('x')).resolves.toMatchObject([{ keyword: 'type', details: { type: 'number' } }]);
+  await expect(validate(1)).resolves.toBeNull();
+});
+
+it('observes a replaced keyword in a nonstandard application fragment', async () => {
+  const ajv = new Ajv({ strict: false });
+  const install = (allowed: string) => {
+    const definition = { compile: () => (value: unknown) => value === allowed };
+    ajv.addKeyword({ keyword: 'fieldRule', ...definition });
+  };
+  const doc = 'https://example.test/keyword-document';
+  install('one');
+  ajv.addSchema({ $id: doc, components: { value: { fieldRule: true } } });
+  const validator = createValidator(ajv);
+  const schema = { $ref: doc + '#/components/value' };
+  const previous = validator.compile(schema);
+
+  ajv.removeKeyword('fieldRule');
+  install('two');
+
+  await expect(previous('two')).resolves.toMatchObject([{ keyword: 'fieldRule' }]);
+  await expect(validator.compile(schema)('two')).resolves.toBeNull();
+});

@@ -22,3 +22,14 @@ it('a later format on a bound instance reaches later guards of an existing root'
   expect(verdict(false)).toBe(false);
   expect(verdict(true)).toBe(verdict(false));
 });
+
+it('uses a keyword added after the first compile', async () => {
+  const ajv = new Ajv({ allErrors: true });
+  const validator = createValidator(ajv);
+  const root = { type: 'number', even: true } as const;
+  await expect(validator.compile(root)(1)).resolves.toBeNull();
+
+  ajv.addKeyword('even', { type: 'number', validate: (_schema: unknown, value: number) => value % 2 === 0 });
+
+  await expect(validator.compile(root)(1)).resolves.toMatchObject([{ keyword: 'even' }]);
+});

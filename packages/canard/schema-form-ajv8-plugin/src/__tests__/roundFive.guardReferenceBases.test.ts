@@ -8,13 +8,13 @@ import { createValidator as create2019 } from '../2019/index';
 import { createValidator as create2020 } from '../2020/index';
 import { createValidator } from '../default/index';
 
-/** Pointer guards preserve the reference base of the containing whole schema. */
-it('guard bases: every id/reference/order/strategy row agrees with whole-root validation', async () => {
-  for (const { Native, createValidator: makeValidator } of [
-    { Native: Ajv, createValidator },
-    { Native: Ajv2019, createValidator: create2019 },
-    { Native: Ajv2020, createValidator: create2020 },
-  ]) {
+it.each([
+  { dialect: 'Draft-07', Native: Ajv, createValidator },
+  { dialect: 'Draft 2019-09', Native: Ajv2019, createValidator: create2019 },
+  { dialect: 'Draft 2020-12', Native: Ajv2020, createValidator: create2020 },
+])(
+  '$dialect guard bases agree with whole-root validation',
+  async ({ Native, createValidator: makeValidator }) => {
     for (const named of [false, true])
       for (const relative of [false, true]) {
         for (const compileFirst of [false, true])
@@ -57,5 +57,5 @@ it('guard bases: every id/reference/order/strategy row agrees with whole-root va
             expect(guard('valid'), context).toBe(true);
           }
       }
-  }
-});
+  },
+);
