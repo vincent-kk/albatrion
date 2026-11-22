@@ -6,7 +6,6 @@ import type { ErrorObject } from 'ajv';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { plugin } from '../index';
-import { resolveAjvConstructor } from '../validator/utils/resolveAjvConstructor';
 
 const cases = [
   { name: 'VALIDATE-036 if-only oneOf remains invalid',
@@ -43,8 +42,7 @@ describe.each([true, false])('directGuardCompile=%s', (directGuardCompile) => {
   afterEach(() => { plugin.validator.configure({ directGuardCompile: true }); });
 describe('same-ajv path comparison for the ajv7 plugin', () => {
   it.each(cases)('$name', async ({ name, schema, value, valid }) => {
-    const AjvConstructor = resolveAjvConstructor(Ajv);
-    const direct = new AjvConstructor({ allErrors: true, strict: false,
+    const direct = new Ajv({ allErrors: true, strict: false,
       validateFormats: false });
     const validateDirect = direct.compile(schema);
     const pluginSchema = JSON.parse(JSON.stringify(schema)) as JSONSchema;

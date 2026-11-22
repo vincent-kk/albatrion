@@ -3,14 +3,12 @@ import Ajv from 'ajv';
 import { expect, it } from 'vitest';
 
 import { createValidator } from '../index';
-import { resolveAjvConstructor } from '../validator/utils/resolveAjvConstructor';
 
 it.each([
   ['encoded slash', { components: { 'a/b': { $ref: 'https://example.test/scope/check' } }, $ref: '#/components/a%2Fb' }],
   ['relative reference in a custom array', { components: [{ $id: 'https://example.test/scope/', payload: { $ref: 'check' } }], $ref: '#/components/0/payload' }],
 ] satisfies [string, JSONSchema][])('uses native resolution for %s', async (_, schema) => {
-  const Constructor = resolveAjvConstructor(Ajv);
-  const instance = new Constructor({ allErrors: true, strict: false, logger: false });
+  const instance = new Ajv({ allErrors: true, strict: false, logger: false });
   instance.addSchema({ $id: 'https://example.test/scope/check', type: 'string', minLength: 4 });
   const native = instance.compile(schema);
   expect(native('bad')).toBe(false);
@@ -19,8 +17,7 @@ it.each([
 });
 
 it.each(['macro', 'anchored fragment'] as const)('uses native async semantics for a marked %s', async (selection) => {
-  const Constructor = resolveAjvConstructor(Ajv);
-  const instance = new Constructor({ allErrors: true, strict: false, logger: false });
+  const instance = new Ajv({ allErrors: true, strict: false, logger: false });
   instance.addFormat('custom', { async: true, validate: async (value: string) => value === 'valid' });
   instance.addKeyword({ keyword: 'available', macro: () => ({ format: 'custom' }) });
   const schema: JSONSchema = selection === 'macro'
@@ -35,8 +32,7 @@ it.each(['macro', 'anchored fragment'] as const)('uses native async semantics fo
 });
 
 it('keeps an active form address private during compilation from a custom keyword', async () => {
-  const Constructor = resolveAjvConstructor(Ajv);
-  const instance = new Constructor({ strict: false, logger: false });
+  const instance = new Ajv({ strict: false, logger: false });
   const validator = createValidator(instance);
   const address = 'https://example.test/outer-form';
   const target = address + '#/definitions/shared';

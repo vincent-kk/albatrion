@@ -1,6 +1,5 @@
 import type { JSONSchema } from '@canard/schema-form';
 import Ajv from 'ajv';
-import { resolveAjvConstructor } from '../validator/utils/resolveAjvConstructor';
 import { expect, it } from 'vitest';
 
 import { createValidator } from '../index';
@@ -11,7 +10,7 @@ it.each([
   [true, false],
   [true, true],
 ])('compiles a full root with an async keyword (named=%s, marker=%s)', async (named, declared) => {
-  const instance = new (resolveAjvConstructor(Ajv))({ allErrors: true, strict: false });
+  const instance = new Ajv({ allErrors: true, strict: false });
   instance.addKeyword({ keyword: 'available', async: true, validate: async () => false });
   const schema: JSONSchema = {
     ...(named ? { $id: 'https://example.test/async-root' } : {}),
@@ -28,7 +27,7 @@ it.each([
 });
 
 it('compiles an unmarked root with only an async format', async () => {
-  const instance = new (resolveAjvConstructor(Ajv))({ allErrors: true, strict: false });
+  const instance = new Ajv({ allErrors: true, strict: false });
   instance.addFormat('available', { async: true, validate: async () => false });
 
   const validate = createValidator(instance).compile({ type: 'string', format: 'available' });
