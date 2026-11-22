@@ -86,10 +86,12 @@ const FieldInputStringEnum = ({
       {label && <InputLabel id={ownLabelId}>{label}</InputLabel>}
       <Select
         inputRef={disabled ? undefined : focusRef}
+        inputProps={{ id: getInputId('native') }}
         SelectDisplayProps={{
           id: inputId,
           'aria-labelledby': ownLabelId ?? labelId,
         }}
+        MenuProps={{ id: getInputId('menu') }}
         name={name}
         labelId={ownLabelId}
         label={label}
