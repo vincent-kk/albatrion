@@ -16,8 +16,11 @@ afterEach(() => {
 const mount = (
   constraints: Partial<NumberSchema> = {},
   initial?: number,
-  readOnly = false,
-  direction: 'ltr' | 'rtl' = 'ltr',
+  {
+    readOnly = false,
+    direction = 'ltr',
+    lazy,
+  }: { readOnly?: boolean; direction?: 'ltr' | 'rtl'; lazy?: boolean } = {},
 ) => {
   const ref = createRef<FormHandle>();
   const view = render(
@@ -30,7 +33,7 @@ const mount = (
         ...constraints,
         presentation: {
           inputType: 'slider',
-          FieldInputProps: { unsetValueText: '미설정' },
+          FieldInputProps: { unsetValueText: '미설정', lazy },
         },
       }}
       fieldInputDefinitions={[FieldInputSliderDefinition]}
@@ -99,7 +102,7 @@ it.each([
 );
 
 it('displays a valid read-only decimal when the schema has no required step', () => {
-  const { ref, slider } = mount({ maximum: 10 }, 1.4, true);
+  const { ref, slider } = mount({ maximum: 10 }, 1.4, { readOnly: true });
   expect(slider().getAttribute('aria-valuenow')).toBe('1.4');
   expect(slider()).toHaveProperty('disabled', true);
   fireEvent.keyDown(slider(), { key: 'End', keyCode: 35 });
@@ -171,18 +174,36 @@ it('starts keyboard movement from a legal stop when the stored value is off grid
   expect(ref.current?.getValue()).toBe(55);
 });
 
-it('offers the included maximum in an interval narrower than the default step', () => {
-  const { ref, slider } = mount({ exclusiveMinimum: 0.1, maximum: 0.2 });
-  fireEvent.keyDown(slider(), { key: 'End', keyCode: 35 });
-  expect(ref.current?.getValue()).toBe(0.2);
+it.each([undefined, false])(
+  'offers the included maximum in a narrow interval (lazy=%s)',
+  (lazy) => {
+    const { ref, slider } = mount(
+      { exclusiveMinimum: 0.1, maximum: 0.2 },
+      undefined,
+      { lazy },
+    );
+    fireEvent.keyDown(slider(), { key: 'End', keyCode: 35 });
+    expect(ref.current?.getValue()).toBe(0.2);
+  },
+);
+
+it('stores the minimum when an unset slider with immediate updates is tapped there', () => {
+  const { ref, slider, track } = mount(
+    { minimum: 10, maximum: 20 },
+    undefined,
+    { lazy: false },
+  );
+  expect(slider().getAttribute('aria-valuetext')).toBe('미설정');
+  pressTrack(track(), 0);
+  expect(ref.current?.getValue()).toBe(10);
+  expect(slider().getAttribute('aria-valuenow')).toBe('10');
 });
 
 it('honors the provider direction while using the configured shift step', () => {
   const { ref, slider } = mount(
     { minimum: 0, maximum: 120, multipleOf: 3 },
     60,
-    false,
-    'rtl',
+    { direction: 'rtl' },
   );
   fireEvent.keyDown(slider(), {
     key: 'ArrowRight',
