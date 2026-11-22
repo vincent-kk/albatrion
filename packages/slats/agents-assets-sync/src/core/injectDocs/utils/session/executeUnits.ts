@@ -51,12 +51,16 @@ export async function executeUnits(
           undefined,
       ),
     );
+    const successfulFiles: Action[] = [];
     const failures: Action[] = [];
     const diagnostics: RunFailure[] = [];
     for (let index = 0; index < settled.length; index++) {
       const result = settled[index];
-      if (result.status !== 'rejected') continue;
       const action = fileActions[index];
+      if (result.status === 'fulfilled') {
+        successfulFiles.push(action);
+        continue;
+      }
       failures.push(action);
       diagnostics.push({
         unitKey: unit.key,
@@ -85,9 +89,9 @@ export async function executeUnits(
         );
       }
     }
-    if (installedAssets && fileActions.length && failures.length === 0) {
+    if (installedAssets && successfulFiles.length) {
       try {
-        await installedAssets.record(unit.target.name, fileActions);
+        await installedAssets.record(unit.target.name, successfulFiles);
       } catch (error) {
         diagnostics.push({
           unitKey: unit.key,
