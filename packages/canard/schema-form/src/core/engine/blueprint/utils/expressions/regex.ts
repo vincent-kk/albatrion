@@ -55,9 +55,6 @@ const PARENT_REFERENCES = `(?:\\.\\.\\${$.Separator})+`;
 /** Fragment/current prefix: `#` `.` */
 const FRAGMENT_OR_CURRENT_PREFIX = `(?:\\${$.Fragment}|\\${$.Current})`;
 
-/** Chars blocking standalone `@` `#`: identifiers, path prefixes, quotes, backslash */
-const CONTEXT_INVALID_PRECEDING_CHARS = `${IDENTIFIER_CHARS}${PATH_PREFIX_CHARS}"'\`\\\\`;
-
 /**
  * Extracts JSON Pointer paths from JS expressions.
  *
@@ -87,24 +84,20 @@ const CONTEXT_INVALID_PRECEDING_CHARS = `${IDENTIFIER_CHARS}${PATH_PREFIX_CHARS}
 export const JSON_POINTER_PATH_REGEX = new RegExp(
   NOT_PRECEDED_BY_IDENTIFIER_OR_PATH_CHAR +
     `(?:` +
-    // Pattern 1: #/ or ./ with optional path
-    `${FRAGMENT_OR_CURRENT_PREFIX}\\${$.Separator}${OPTIONAL_PATH}` +
-    `|` +
-    // Pattern 2: ../ (one or more) with optional path
-    PARENT_REFERENCES +
-    OPTIONAL_PATH +
+    // Patterns 1–2: ../, #/ or ./ with optional path
+    `(?:${PARENT_REFERENCES}|${FRAGMENT_OR_CURRENT_PREFIX}\\${$.Separator})${OPTIONAL_PATH}` +
     `|` +
     // Pattern 3: /path (requires path, lone / is division)
     `\\${$.Separator}${MULTI_LEVEL_PATH}` +
     `|` +
     // Pattern 4: @ standalone
-    `(?:(?<![${CONTEXT_INVALID_PRECEDING_CHARS}])\\${$.Context}|^\\${$.Context})${FOLLOWED_BY_VALID_JS_TOKEN}` +
+    `\\${$.Context}${FOLLOWED_BY_VALID_JS_TOKEN}` +
     `|` +
     // Pattern 5: (/) → captures / only
     `(?<=\\()\\${$.Separator}(?=\\))` +
     `|` +
     // Pattern 6: # standalone
-    `(?:(?<![${CONTEXT_INVALID_PRECEDING_CHARS}])\\${$.Fragment}|^\\${$.Fragment})${FOLLOWED_BY_VALID_JS_TOKEN}` +
+    `\\${$.Fragment}${FOLLOWED_BY_VALID_JS_TOKEN}` +
     `)`,
   'g',
 );
