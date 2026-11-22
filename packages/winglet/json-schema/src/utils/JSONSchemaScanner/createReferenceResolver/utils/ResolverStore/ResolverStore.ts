@@ -203,7 +203,12 @@ export class ResolverStore {
       !(dialect.startsWith('draft-') && typeof schema.$ref === 'string')
     ) {
       const id = dialect === Dialect.Draft04 ? schema.id : schema.$id;
-      if (typeof id === 'string')
+      // A canonical spelling of its own retrieval address resolves to itself or, when the
+      // parser rejects it, falls back to it; either way the address stays the retrieval URI.
+      if (
+        typeof id === 'string' &&
+        !(id === retrieval && isCanonicalRetrievalURI(id))
+      )
         uri = resolveURI(id, retrieval)?.split('#')[0] ?? retrieval;
     }
     const initial: ResolverContext = {
