@@ -86,7 +86,7 @@ registerPlugin(plugin);
 
 `presentation.FieldInputProps.lazy`를 생략하거나 `true`로 두면 확정 시점(포인터를 놓거나 트랙을 탭할 때)에 값을 저장하고, `false`이면 이동마다 저장합니다.
 
-범위 Slider는 thumb를 오름차순으로 표시합니다. 마운트할 때 폼 값은 입력한 순서를 유지합니다. 예를 들어 `[80, 20]`을 주면 thumb는 `20`과 `80`에 표시되고 폼 값은 `[80, 20]`으로 유지됩니다. Form 범위의 Slider ID는 트랙을 감싸는 그룹을 가리킵니다.
+범위 Slider는 thumb를 오름차순으로 표시합니다. 마운트할 때 폼 값은 입력한 순서를 유지합니다. 예를 들어 `[80, 20]`을 주면 thumb는 `20`과 `80`에 표시되고 폼 값은 `[80, 20]`으로 유지됩니다. Form 범위의 Slider ID는 트랙을 감싸는 그룹을 가리킵니다. Ant Design Mobile은 thumb ID prop을 제공하지 않습니다.
 
 미설정 Slider는 조작 전까지 폼 값을 저장하지 않습니다. 접근성 트리에는 기본 범위의 `0`과 같은 라이브러리의 초기 thumb 위치가 표시됩니다. 이 수치를 생략하려면 `fieldInputDefinitions`에 사용자 정의 `FieldInput`을 등록하세요.
 
@@ -112,7 +112,7 @@ registerPlugin(plugin);
 
 ### **[`FieldInputBoolean.tsx`](./src/fieldInputs/FieldInputBoolean.tsx)**
 
-읽기 전용 불리언 필드는 Checkbox를 비활성화하여 사용자 조작으로 표시값이 바뀌는 것을 막습니다.
+읽기 전용 불리언 필드의 Checkbox는 활성 상태이며 폼은 저장값을 유지합니다.
 
 - **역할**: boolean 값을 체크박스로 표시
 - **적용 조건**: `type`이 `"boolean"`인 경우 (다른 조건에 해당하지 않는 fallback)

@@ -84,7 +84,9 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 
 
 - **역할**: 날짜 선택을 위한 DatePicker
 - **적용 조건**: `type`이 `"string"`이고 `format`이 `"date"`인 경우
-- **추가 사항**: MUI X DatePickers와 Dayjs 사용, `presentation.FieldInputProps.minimum`과 `maximum`으로 날짜 범위를 제한하고 표시 설정에 없는 제한은 스키마의 같은 속성에서 가져옵니다(YYYY-MM-DD. `2024-02-31`처럼 유효하지 않은 제한값은 무시), YYYY-MM-DD 형식
+- **추가 사항**: MUI X DatePickers와 Dayjs 사용, `presentation.FieldInputProps.minimum`과 `maximum`으로 날짜 범위를 제한합니다(YYYY-MM-DD. `2024-02-31`처럼 유효하지 않은 제한값은 무시), YYYY-MM-DD 형식
+
+날짜 어댑터를 직접 사용할 때 입력 정의에 스키마 제한을 전달하면 표시 설정에 없는 제한을 그 스키마에서 가져옵니다. 일반 Form의 바인딩된 문자열 스키마에서는 해당 숫자 키워드를 생략하므로 제한은 표시 설정에 둡니다.
 
 ### **[`FieldInputTime.tsx`](./src/fieldInputs/FieldInputTime.tsx)**
 

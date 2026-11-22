@@ -25,7 +25,7 @@ The built-in Slider uses pointer interaction, as it did in beta. During developm
 <Form jsonSchema={sliderSchema} fieldInputDefinitions={[keyboardSlider]} />
 ```
 
-Sliders use numeric schema bounds and disable when no stop is legal. Array schemas select the range slider. Custom input IDs now use `inputId` or `getInputId(key)`; use `labelId` for the title and keep `path` for form data. Ant Design Mobile's native radio inputs do not expose a `name` prop. A custom radio input can supply a native group name. Set textarea `minRows` and `maxRows` in `presentation.FieldInputProps` to override the schema's defaults.
+Sliders use numeric schema bounds and disable when no stop is legal. Array schemas select the range slider. Custom input IDs now use `inputId` or `getInputId(key)`; use `labelId` for the title and keep `path` for form data. The scoped Slider ID identifies the group around the track. Ant Design Mobile does not expose a thumb ID prop or a native radio name prop. A custom radio input can supply a native group name. Set textarea `minRows` and `maxRows` in `presentation.FieldInputProps` to override the schema's defaults.
 
 Like beta, an unset Slider exposes the library’s initial thumb position to assistive technology, such as `0` on the default range. The form value stays unset until interaction. Register a custom `FieldInput` through `fieldInputDefinitions` to omit that number.
 

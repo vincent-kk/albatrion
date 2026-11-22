@@ -275,6 +275,6 @@ A boolean switch accepts `presentation.FieldInputProps.alias` with optional `che
 
 ### Sliders
 
-A read-only Slider displays an in-range decimal as stored for a `number` schema without `multipleOf`. An `integer` schema displays a grid point and keeps the stored value. The scoped Slider ID identifies the root. Use `form.focus(path)` to reach an editable thumb.
+A read-only Slider displays an in-range decimal as stored for a `number` schema without `multipleOf`. An `integer` schema displays a grid point and keeps the stored value. The scoped Slider ID identifies the root. The library does not expose a thumb ID prop. Use `form.focus(path)` to reach an editable thumb.
 
 Ant Design determines the slider’s unset display, stops, keyboard behavior, and rounding.

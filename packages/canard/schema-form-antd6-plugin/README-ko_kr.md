@@ -305,6 +305,6 @@ A boolean switch accepts `presentation.FieldInputProps.alias` with optional `che
 
 ### 슬라이더
 
-읽기 전용 Slider는 `multipleOf`가 없는 `number` 스키마에서 범위 안의 소수를 그대로 표시합니다. `integer` 스키마는 정수 격자점을 표시하고 저장값을 유지합니다. Form 범위의 Slider ID는 루트 요소를 가리킵니다. 편집 가능한 thumb로 이동하려면 `form.focus(path)`를 사용하세요.
+읽기 전용 Slider는 `multipleOf`가 없는 `number` 스키마에서 범위 안의 소수를 그대로 표시합니다. `integer` 스키마는 정수 격자점을 표시하고 저장값을 유지합니다. Form 범위의 Slider ID는 루트 요소를 가리킵니다. 라이브러리는 thumb ID prop을 제공하지 않습니다. 편집 가능한 thumb로 이동하려면 `form.focus(path)`를 사용하세요.
 
 슬라이더의 미설정 표시, 정지점 및 키 입력은 UI 라이브러리가 처리합니다.
