@@ -84,7 +84,7 @@ URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid schem
 
 - **Role**: DatePicker for date selection
 - **Applied when**: `type` is `"string"` and `format` is `"date"`
-- **Additional features**: Uses MUI X DatePickers with Dayjs, date range limits through `presentation.FieldInputProps.minimum` and `maximum` (YYYY-MM-DD; an invalid limit such as `2024-02-31` is ignored), YYYY-MM-DD format
+- **Additional features**: Uses MUI X DatePickers with Dayjs, date range limits from `presentation.FieldInputProps.minimum` and `maximum`, falling back to the matching schema property when a presentation limit is omitted (YYYY-MM-DD. An invalid limit such as `2024-02-31` is ignored), YYYY-MM-DD format
 
 ### **[`FieldInputTime.tsx`](./src/fieldInputs/FieldInputTime.tsx)**
 
@@ -104,6 +104,8 @@ URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid schem
 - **Applied when**: `type` is `"string"` and `enum` values exist
 - **Additional features**: Material Design styling with FormControl and InputLabel, support for custom labels per option (alias)
 
+The Select trigger, popup menu and hidden native input have separate Form-scoped IDs. Two Forms can use a Select with the same leaf name and still have distinct menu IDs.
+
 ### **[`FieldInputArray.tsx`](./src/fieldInputs/FieldInputArray.tsx)**
 
 - **Role**: Display array data as a list with dynamic add/remove capabilities
@@ -116,11 +118,11 @@ URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid schem
 - **Applied when**: `type` is `"number"` or `"integer"` and `inputType` is `"slider"`
 - **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties, lazy update option (`presentation.FieldInputProps.lazy`), mark display option, automatic value label display
 
-Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores the value on commit (keyboard keydown or pointer release); `false` stores on every move.
+With `presentation.FieldInputProps.lazy` omitted or set to `true`, the Slider stores the value when you press a movement key or release the pointer. Set `lazy: false` to store every move. If your app must store only on key release, register a custom `FieldInput` through `fieldInputDefinitions`.
 
 An unset slider hides its resting thumb. Set `presentation.FieldInputProps.unsetValueText` to localize its screen reader announcement.
 
-Keyboard commits at very small decimal steps can include floating-point error. With `multipleOf: 1e-7` and a current value of `1.2e-6`, ArrowUp can store `0.0000012999999999999998` instead of `1.3e-6` in MUI Material 7.3.1. If your form needs an exact decimal grid, register a custom `FieldInput` through `fieldInputDefinitions`.
+Keyboard commits at decimal steps can include floating-point error. MUI Material 7.3.1 can store `0.30000000000000004` after ArrowUp at `0.2` with `multipleOf: 0.1`, where the grid value is `0.3`. With `multipleOf: 1e-7` and a current value of `1.2e-6`, ArrowUp can store `0.0000012999999999999998` instead of `1.3e-6` in MUI Material 7.3.1. If your form needs an exact decimal grid, register a custom `FieldInput` through `fieldInputDefinitions`.
 The slider uses inclusive and exclusive schema limits to declare legal stops. If the interval contains no supported stop, the slider is disabled. An unset field announces `Not set` without a visible resting thumb. Set `presentation.FieldInputProps.unsetValueText` to localize that announcement.
 
 ### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**

@@ -82,9 +82,13 @@ registerPlugin(plugin);
 - **적용 조건**:
   - `type`이 `"number"` 또는 `"integer"`이고 `format`이 `"slider"`인 경우
   - 또는 `type`이 `"array"`이고 `items.type`이 `"number"` 또는 `"integer"`이며 `format`이 `"slider"`인 경우 (범위 슬라이더)
-- **추가 사항**: `presentation.FieldInputProps.lazy`(`false`이면 움직일 때마다 값 반영), `marks`(선택 가능한 값을 마크 위치로 제한). 범위 슬라이더의 숫자 제한과 `multipleOf`는 `items`에 둡니다. 슬라이더 형태는 스키마 타입이 정합니다. 배열 스키마는 숫자 두 개의 배열만 기록하는 범위 슬라이더를, 숫자 스키마는 숫자만 기록하는 단일 핸들 슬라이더를 받으며, `presentation.FieldInputProps.range`는 무시됩니다
+- **추가 사항**: `presentation.FieldInputProps.lazy`(`false`이면 움직일 때마다 값 반영), `marks`(선택 가능한 값을 마크 위치로 제한). 범위 슬라이더는 `items`의 숫자 제한과 `multipleOf`를 우선 적용합니다. 항목에 없는 제한과 간격은 배열 스키마에서 가져옵니다. 슬라이더 형태는 스키마 타입이 정합니다. 배열 스키마는 숫자 두 개의 배열만 기록하는 범위 슬라이더를, 숫자 스키마는 숫자만 기록하는 단일 핸들 슬라이더를 받으며, `presentation.FieldInputProps.range`는 무시됩니다
 
 `presentation.FieldInputProps.lazy`를 생략하거나 `true`로 두면 확정 시점(포인터를 놓거나 트랙을 탭할 때)에 값을 저장하고, `false`이면 이동마다 저장합니다.
+
+범위 Slider는 thumb를 오름차순으로 표시합니다. 마운트할 때 폼 값은 입력한 순서를 유지합니다. 예를 들어 `[80, 20]`을 주면 thumb는 `20`과 `80`에 표시되고 폼 값은 `[80, 20]`으로 유지됩니다. Form 범위의 Slider ID는 트랙을 감싸는 그룹을 가리킵니다.
+
+미설정 Slider는 조작 전까지 폼 값을 저장하지 않습니다. 접근성 트리에는 기본 범위의 `0`과 같은 라이브러리의 초기 thumb 위치가 표시됩니다. 이 수치를 생략하려면 `fieldInputDefinitions`에 사용자 정의 `FieldInput`을 등록하세요.
 
 `multipleOf`가 매우 작을 때는 포인터로 확정한 값이 정확한 스키마 격자점이라는 보장이 없습니다. Ant Design Mobile 5.43.0에서 범위를 `1e-7`부터 `9e-7`로, 간격을 `multipleOf: 1e-7`로 설정하고 트랙 가운데를 탭하면 `5e-7` 대신 `0`이 저장될 수 있습니다. 정확한 십진 격자가 필요하면 `fieldInputDefinitions`에 사용자 정의 `FieldInput`을 등록하세요.
 
@@ -107,6 +111,8 @@ registerPlugin(plugin);
 - **추가 사항**: `minimum`, `maximum`, `multipleOf` 스키마 속성 지원. Stepper의 사용자 정의 `formatter`와 `parser`는 Ant Design Mobile 5.26 이상에서 지원합니다.
 
 ### **[`FieldInputBoolean.tsx`](./src/fieldInputs/FieldInputBoolean.tsx)**
+
+읽기 전용 불리언 필드는 Checkbox를 비활성화하여 사용자 조작으로 표시값이 바뀌는 것을 막습니다.
 
 - **역할**: boolean 값을 체크박스로 표시
 - **적용 조건**: `type`이 `"boolean"`인 경우 (다른 조건에 해당하지 않는 fallback)

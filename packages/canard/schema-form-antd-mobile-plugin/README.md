@@ -82,9 +82,13 @@ This plugin provides the following Ant Design Mobile components:
 - **Applied when**:
   - `type` is `"number"` or `"integer"` and `format` is `"slider"`
   - or `type` is `"array"`, `items.type` is `"number"` or `"integer"`, and `format` is `"slider"` (range slider)
-- **Additional features**: `presentation.FieldInputProps.lazy` (`false` publishes on every move) and `marks` (restricts selectable values to the marked stops). For range sliders, put numeric bounds and `multipleOf` on `items`. The schema type decides the shape: an array schema gets a range slider that only writes a two-number array, and a number schema gets a single thumb that only writes a number. `presentation.FieldInputProps.range` is ignored
+- **Additional features**: `presentation.FieldInputProps.lazy` (`false` publishes on every move) and `marks` (restricts selectable values to the marked stops). For range sliders, the numeric bounds and `multipleOf` on `items` take precedence. Omitted limits and steps fall back to the array schema. The schema type decides the shape: an array schema gets a range slider that only writes a two-number array, and a number schema gets a single thumb that only writes a number. `presentation.FieldInputProps.range` is ignored
 
 Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores the value on commit (pointer release or track tap); `false` stores on every move.
+
+Range thumbs are displayed in ascending order. Mounting the Slider leaves the form value in its supplied order. For example, `[80, 20]` displays the thumbs at `20` and `80` while the form still stores `[80, 20]`. The scoped Slider ID identifies the group around the track.
+
+An unset Slider leaves the form value unset until interaction. Its accessibility tree exposes the initial thumb position, such as `0` on the default range. To omit that number, register a custom `FieldInput` through `fieldInputDefinitions`.
 
 For very small `multipleOf` values, pointer commits do not guarantee an exact schema grid point. With bounds of `1e-7` to `9e-7` and `multipleOf: 1e-7`, tapping the midpoint can store `0` instead of `5e-7` in Ant Design Mobile 5.43.0. If your form needs an exact decimal grid, register a custom `FieldInput` through `fieldInputDefinitions`.
 
@@ -107,6 +111,8 @@ For very small `multipleOf` values, pointer commits do not guarantee an exact sc
 - **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties. Custom Stepper `formatter` and `parser` require Ant Design Mobile 5.26 or later.
 
 ### **[`FieldInputBoolean.tsx`](./src/fieldInputs/FieldInputBoolean.tsx)**
+
+Read-only boolean fields disable the Checkbox so it cannot display an attempted change.
 
 - **Role**: Display boolean values as checkboxes
 - **Applied when**: `type` is `"boolean"` (fallback when other conditions don't match)
