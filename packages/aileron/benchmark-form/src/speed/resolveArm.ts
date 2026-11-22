@@ -1,7 +1,6 @@
 import { createHash } from 'node:crypto';
 import { readFile, readdir, realpath } from 'node:fs/promises';
-import { dirname, join, relative, resolve, sep } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { join, relative, resolve, sep } from 'node:path';
 
 /** Resolves and verifies a package's public Node ESM distribution entry. */
 export async function resolveArm(
@@ -10,45 +9,40 @@ export async function resolveArm(
   packageName: string,
   entry: string,
 ) {
-  const directory = await realpath(join(root, packagePath));
+  const tree = await realpath(root);
+  const directory = await realpath(join(tree, packagePath));
+  const contains = (parent: string, child: string) => {
+    const path = relative(parent, child);
+    return (
+      path !== '..' && !path.startsWith(`..${sep}`) && !path.startsWith(sep)
+    );
+  };
+  if (!contains(tree, directory)) throw new Error('Package is outside arm');
   const manifest = JSON.parse(
     await readFile(join(directory, 'package.json'), 'utf8'),
   );
   if (manifest.name !== packageName) throw new Error('Package name mismatch');
-  const specifier =
-    entry === '.' ? packageName : `${packageName}/${entry.slice(2)}`;
-  const resolver = import.meta.resolve as (
-    specifier: string,
-    parent?: string,
-  ) => string;
-  const url = resolver(
-    specifier,
-    pathToFileURL(join(directory, 'package.json')).href,
-  );
-  const path = await realpath(fileURLToPath(url));
   const dist = await realpath(join(directory, 'dist'));
-  const inside = relative(dist, path);
-  if (
-    inside.startsWith(`..${sep}`) ||
-    inside === '..' ||
-    resolve(dist, inside) !== path
-  )
-    throw new Error('Entry is outside dist');
-  const published = manifest.publishConfig?.exports?.[entry];
-  if (published) {
-    const select = (value: any): string | undefined =>
-      typeof value === 'string'
-        ? value
-        : value &&
-          (select(value.node) ?? select(value.import) ?? select(value.default));
-    const target = select(published);
-    if (
-      !target ||
-      (await realpath(
-        resolve(dirname(join(directory, 'package.json')), target),
-      )) !== path
-    )
-      throw new Error('Published entry differs');
+  if (!contains(directory, dist)) throw new Error('Dist is outside package');
+  const select = (value: unknown): string => {
+    if (typeof value === 'string' && value.startsWith('./')) return value;
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      const conditions = value as Record<string, unknown>;
+      for (const key of ['node', 'import', 'default']) {
+        if (key in conditions) return select(conditions[key]);
+      }
+    }
+    throw new Error('No public ESM export');
+  };
+  const path = await realpath(
+    resolve(directory, select(manifest.exports?.[entry])),
+  );
+  if (!contains(dist, path)) throw new Error('Entry is outside dist');
+  if (manifest.publishConfig?.exports !== undefined) {
+    const published = await realpath(
+      resolve(directory, select(manifest.publishConfig.exports[entry])),
+    );
+    if (published !== path) throw new Error('Published entry differs');
   }
   const hash = createHash('sha256')
     .update(await readFile(path))
