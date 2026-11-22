@@ -69,13 +69,17 @@ export const readStoredInput = <Self extends FieldNodeRecord<Self>>(
           value,
           live,
           ancestors,
-          (name, entry, child, raw) => {
-            if (entry && (child || !live))
+          (name, entry, child, raw, isNamed) => {
+            if (entry)
               active.set(
                 String(name),
-                readStoredInput(entry.node, raw, child, true, ancestors),
+                isNamed
+                  ? readStoredInput(entry.node, raw, child, true, ancestors)
+                  : undefined,
               );
           },
+          undefined,
+          'stored',
         );
     }
     stored =

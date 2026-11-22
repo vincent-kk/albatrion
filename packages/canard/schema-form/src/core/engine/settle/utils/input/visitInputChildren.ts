@@ -3,6 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
+import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { getWriteChild } from './getWriteChild';
 import { isPlain } from './isPlain';
 
@@ -23,6 +24,7 @@ type InputChild<Self> = (
  * @param seen - Input identities on the current recursive path
  * @param visit - Receives a candidate and its input, including sparse array positions
  * @param admits - Optional eligibility before resolving or reading a candidate
+ * @param view - Stored projection reads declared addresses in assembly order
  * @returns False when the input has no branch to visit or repeats an ancestor
  */
 export const visitInputChildren = <Self extends FieldNodeRecord<Self>>(
@@ -32,13 +34,18 @@ export const visitInputChildren = <Self extends FieldNodeRecord<Self>>(
   seen: WeakSet<object> | undefined,
   visit: InputChild<Self>,
   admits?: (key: string | number) => boolean,
+  view: 'input' | 'stored' = 'input',
 ): boolean => {
   const array = template.kind === 'array' && isArray(input) ? input : undefined;
   const object =
     template.kind === 'object' && isPlain(input) ? input : undefined;
   const container = array ?? object;
   if (!container || seen?.has(container)) return false;
-  const names = object && Object.keys(object);
+  const names =
+    object &&
+    (view === 'stored'
+      ? [...getDeclaredChildNames(template)]
+      : Object.keys(object));
   const count = names?.length ?? array?.length ?? 0;
   seen?.add(container);
   try {
@@ -46,13 +53,16 @@ export const visitInputChildren = <Self extends FieldNodeRecord<Self>>(
       const key = names?.[index] ?? index;
       if (admits && !admits(key)) continue;
       const { entry, child, isAmbiguous } = getWriteChild(template, live, key);
+      if (object && view === 'stored' && live && !child) continue;
+      const isNamed =
+        (!!object && view === 'input') || hasOwnProperty(container, key);
       if (entry || (array && child))
         visit(
           key,
           entry,
           child,
-          Reflect.get(container, key),
-          !!names || hasOwnProperty(container, key),
+          object && !isNamed ? undefined : Reflect.get(container, key),
+          isNamed,
           isAmbiguous,
         );
     }
