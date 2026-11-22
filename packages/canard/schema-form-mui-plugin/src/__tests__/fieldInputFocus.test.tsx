@@ -1,6 +1,12 @@
 import { createRef } from 'react';
 
-import { act, cleanup, render } from '@testing-library/react';
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import { Form, type FormHandle, type JSONSchema } from '@canard/schema-form';
@@ -73,3 +79,52 @@ it.each(cases)(
     expect(target?.contains(document.activeElement)).toBe(true);
   },
 );
+
+const renderEnumForms = () => {
+  const jsonSchema = {
+    type: 'object',
+    properties: { field: { type: 'string', enum: ['alpha', 'beta'] } },
+  } satisfies JSONSchema;
+  return render(
+    <>
+      {[0, 1].map((key) => (
+        <Form
+          key={key}
+          fieldInputDefinitions={plugin.fieldInputDefinitions}
+          FieldRenderer={plugin.FieldRenderer}
+          jsonSchema={jsonSchema}
+          defaultValue={{ field: 'alpha' }}
+        />
+      ))}
+    </>,
+  );
+};
+
+it('assigns distinct addresses to Select native inputs with the same leaf name', () => {
+  const { container, getAllByRole } = renderEnumForms();
+  const inputs = Array.from(
+    container.querySelectorAll<HTMLInputElement>('input[name="field"]'),
+  );
+  expect(inputs).toHaveLength(2);
+  const inputIds = inputs.map((input) => input.id);
+  expect(inputIds).not.toContain('');
+  expect(new Set(inputIds).size).toBe(2);
+  for (const combobox of getAllByRole('combobox')) {
+    expect(inputIds).not.toContain(combobox.id);
+  }
+});
+
+it('assigns distinct menu addresses to Selects with the same leaf name', async () => {
+  const view = renderEnumForms();
+  const menuIds: string[] = [];
+  for (const combobox of view.getAllByRole('combobox')) {
+    fireEvent.mouseDown(combobox, { button: 0 });
+    const listbox = view.getByRole('listbox');
+    const menu = listbox.closest<HTMLElement>('[role="presentation"]');
+    expect(menu?.id).toBeTruthy();
+    menuIds.push(menu!.id);
+    fireEvent.keyDown(listbox, { key: 'Escape' });
+    await waitForElementToBeRemoved(listbox);
+  }
+  expect(new Set(menuIds).size).toBe(2);
+});
