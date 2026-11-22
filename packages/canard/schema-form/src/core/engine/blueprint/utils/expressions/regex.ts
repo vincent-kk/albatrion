@@ -50,7 +50,7 @@ const MULTI_LEVEL_PATH = `${SINGLE_PATH_SEGMENT}(?:\\${$.Separator}${SINGLE_PATH
 const OPTIONAL_PATH = `(?:${MULTI_LEVEL_PATH})?(?!\\${$.Separator})`;
 
 /** Parent refs: `../` `../../` ... */
-const PARENT_REFERENCES = `(?:\\${$.Parent}\\${$.Separator})+`;
+const PARENT_REFERENCES = `(?:\\.\\.\\${$.Separator})+`;
 
 /** Fragment/current prefix: `#` `.` */
 const FRAGMENT_OR_CURRENT_PREFIX = `(?:\\${$.Fragment}|\\${$.Current})`;
