@@ -492,7 +492,11 @@ export class ResolverStore {
     const registered = new Map<string, SchemaValue>();
     const keys = new Map<string, string>();
     for (const key of Object.keys(source)) {
-      const uri = resolveURI(key, '');
+      // Parsing keeps a canonical key; an `xn--` label is parsed because runtimes differ on rejecting it.
+      const uri =
+        isCanonicalRetrievalURI(key) && !key.includes('xn--')
+          ? key
+          : resolveURI(key, '');
       if (uri === undefined || !isAbsoluteURI(uri)) continue;
       const previous = keys.get(uri);
       if (previous !== undefined && source[previous] !== source[key])
