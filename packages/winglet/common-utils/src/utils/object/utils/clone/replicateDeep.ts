@@ -59,6 +59,8 @@ export function replicateDeep(
         // Checked before listing keys so a proxy revoked meanwhile fails on IsArray first.
         Array.isArray(frame.source);
         names = frame.names = Object.keys(frame.source);
+        // A replaced Object.keys may return a non-array whose length never ends the walk.
+        if (!isArray(names)) names = frame.names = Array.from(names);
       }
       if (frame.position >= names.length) {
         if (frame.symbols) {
@@ -153,3 +155,4 @@ function createFrame(
 
 const OBJECT_PROTOTYPE = Object.prototype;
 const { getPrototypeOf, isExtensible } = Object;
+const { isArray } = Array;
