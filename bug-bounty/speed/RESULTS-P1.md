@@ -30,3 +30,34 @@
 | 24-react-bridges                | @canard/schema-form              | Form.Render SSR            | label and input bridge                  | plain     | 25.84 µs  | 1.027    | 1.035    | 0.994 / 1.008    | over                | p1-rerun-24 (48) |
 
 07과 09는 대조군이 범위를 2~4% 벗어났지만 후보와의 차이가 67~97%여서 초과로 분류했습니다. 개선 후 재측정에서 유효한 대조군으로 다시 확인합니다.
+
+## 개선 병합 뒤
+
+후보는 개선 묶음 다섯 개가 병합된 `1.0.0/optimize`의 `c8aa0cfda`이고, 원자료는 `results/final-p1/run.json`(24라운드)입니다. 허용 폭은 위 표와 같은 호출 한 번의 기준 시간으로 정했습니다.
+
+| 행                              | 기준 시간 | 개선 전 (min / p10) | 개선 후 (min / p10) | 대조 (min / p10) | 판정             | 비고                                                               |
+| ------------------------------- | --------- | ------------------- | ------------------- | ---------------- | ---------------- | ------------------------------------------------------------------ |
+| 01-schema-first-miss            | 1.07 µs   | 144.310 / 142.982   | 9.859 / 9.841       | 1.003 / 1.000    | over             | 수정 비용 ([기록](issues/json-schema-first-miss-fix-cost.md))      |
+| 02-rest-changed                 | 103 ns    | 1.651 / 1.708       | 1.529 / 1.700       | 1.003 / 1.002    | over             | 수정 비용 ([기록](issues/use-rest-properties-fix-cost.md))         |
+| 03-rest-equal                   | 91 ns     | 2.050 / 2.037       | 2.010 / 1.937       | 1.000 / 0.998    | over             | 수정 비용 ([기록](issues/use-rest-properties-fix-cost.md))         |
+| 04-equals-deep                  | 6.85 µs   | 2.636 / 2.667       | 1.464 / 1.471       | 1.001 / 1.003    | over             | 수정 비용 ([기록](issues/common-utils-deep-traversal-fix-cost.md)) |
+| 05-isEmpty-general              | 12 ns     | 0.998 / 0.998       | 0.997 / 0.999       | 1.001 / 1.001    | pass             |                                                                    |
+| 06-getValue-tokens              | 50 ns     | 1.290 / 1.310       | 1.323 / 1.322       | 0.999 / 1.000    | pass (허용 1.35) |                                                                    |
+| 07-document-fresh-add           | 343 ns    | 1.975 / 1.869       | 1.251 / 1.284       | 1.030 / 1.021    | void             | 대조군 이탈, 다른 실행에서 1.286 / 1.223                           |
+| 08-flat-combinator              | 562 ns    | 0.356 / 0.354       | 0.356 / 0.354       | 0.999 / 0.999    | pass             |                                                                    |
+| 09-inject-add                   | 194 ns    | 1.665 / 1.688       | 1.074 / 1.094       | 1.012 / 1.014    | pass (허용 1.35) |                                                                    |
+| 10-plain-multiple               | 12.98 µs  | 0.841 / 0.840       | 0.840 / 0.839       | 1.000 / 1.000    | pass             |                                                                    |
+| 11-checkboxChangePlain          | 291.16 µs | 1.043 / 1.042       | 1.031 / 1.019       | 1.015 / 1.005    | over             | 초과 0.001, 코어 비용을 그대로 받는 행                             |
+| 12-clone-builtins               | 365 ns    | 1.169 / 1.168       | 1.171 / 1.180       | 1.001 / 1.003    | pass (허용 1.35) |                                                                    |
+| 13-cloneLite-deep               | 14.26 µs  | 1.274 / 1.280       | 1.164 / 1.158       | 1.002 / 1.000    | over             | 수정 비용 ([기록](issues/common-utils-deep-traversal-fix-cost.md)) |
+| 14-clone-deep                   | 40.83 µs  | 1.174 / 1.178       | 1.063 / 1.067       | 1.006 / 0.997    | over             | 결정 대기 ([기록](issues/clone-deep-generator-option.md))          |
+| 15-getValue-array               | 84 ns     | 1.082 / 1.080       | 1.080 / 1.078       | 1.001 / 0.999    | pass (허용 1.35) |                                                                    |
+| 16-mount-plain                  | 43.39 µs  | 1.085 / 1.109       | 1.031 / 1.041       | 0.989 / 0.998    | over             | 결정 대기 ([기록](issues/schema-form-remaining-overage.md))        |
+| 17-whole-array-client-own-write | 54.91 µs  | 1.084 / 1.087       | 1.054 / 1.047       | 1.008 / 1.004    | over             | 결정 대기 ([기록](issues/schema-form-remaining-overage.md))        |
+| 18-getValue-fragment-plain      | 84 ns     | 0.956 / 0.956       | 0.958 / 0.951       | 1.001 / 0.999    | pass             |                                                                    |
+| 19-context-update               | 31.17 µs  | 1.067 / 1.071       | 1.052 / 1.060       | 0.999 / 1.002    | over             | 결정 대기 ([기록](issues/schema-form-remaining-overage.md))        |
+| 20-isEmpty-local-map            | 2 ns      | 1.000 / 1.000       | 1.000 / 1.000       | 1.000 / 1.000    | pass             |                                                                    |
+| 21-engine-mount-plain           | 249.79 µs | 0.985 / 0.969       | 0.976 / 0.947       | 1.000 / 1.002    | pass             |                                                                    |
+| 22-stringSwitchMount            | 388.29 µs | 1.017 / 1.020       | 1.011 / 1.005       | 1.002 / 0.999    | pass             |                                                                    |
+| 23-patch-array-test-mutable     | 53 ns     | 0.969 / 0.969       | 0.967 / 0.962       | 1.000 / 0.999    | pass             |                                                                    |
+| 24-react-bridges                | 25.84 µs  | 1.027 / 1.035       | 1.017 / 1.135       | 0.995 / 0.987    | over             | p10이 실행마다 0.97~1.14로 흔들림                                  |

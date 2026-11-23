@@ -1,0 +1,759 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "c8aa0cfda6a4638d73c8cccbd4f4bfa80384a841"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p1-01-schema-first-miss",
+   "pkg": "@winglet/json-schema",
+   "fn": "resolve",
+   "input": "first miss with 20 resources",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 8470,
+   "stat": {
+    "A1": {
+     "min": 1054.8945690637458,
+     "p10": 1077.8889020079725,
+     "median": 1095.9597402610427
+    },
+    "A2": {
+     "min": 1058.434592683451,
+     "p10": 1077.662101535525,
+     "median": 1099.7247933902934
+    },
+    "B": {
+     "min": 10399.853364817689,
+     "p10": 10607.485005903718,
+     "median": 10873.204368357117
+    }
+   },
+   "min": 9.858666135752227,
+   "p10": 9.840981743242088,
+   "controlMin": 1.0033558079864295,
+   "controlP10": 0.9997895882664483,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-02-rest-changed",
+   "pkg": "@winglet/react-utils",
+   "fn": "useRestProperties",
+   "input": "2000 hook calls in one rerender",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 46,
+   "stat": {
+    "A1": {
+     "min": 205740.00000000643,
+     "p10": 213652.19565216097,
+     "median": 221248.1086956596
+    },
+    "A2": {
+     "min": 206424.84782608197,
+     "p10": 214155.78260871372,
+     "median": 221567.78260870415
+    },
+    "B": {
+     "min": 314530.78260870907,
+     "p10": 363127.7173912978,
+     "median": 474759.0652174168
+    }
+   },
+   "min": 1.5287779848775116,
+   "p10": 1.699620807934463,
+   "controlMin": 1.0033287052885949,
+   "controlP10": 1.0023570408673572,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-03-rest-equal",
+   "pkg": "@winglet/react-utils",
+   "fn": "useRestProperties",
+   "input": "2000 hook calls in one rerender",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 48,
+   "stat": {
+    "A1": {
+     "min": 183045.9791666499,
+     "p10": 194255.0416666601,
+     "median": 199291.72916666954
+    },
+    "A2": {
+     "min": 183105.02083335223,
+     "p10": 193883.6249999885,
+     "median": 199481.7708333443
+    },
+    "B": {
+     "min": 367857.5833332995,
+     "p10": 376279.5208333453,
+     "median": 484205.6874999988
+    }
+   },
+   "min": 2.009645800514374,
+   "p10": 1.9370386354194995,
+   "controlMin": 1.0003225510168055,
+   "controlP10": 0.9980879947131105,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-04-equals-deep",
+   "pkg": "@winglet/common-utils",
+   "fn": "equals",
+   "input": "two independent 128-deep chains",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 1024,
+   "stat": {
+    "A1": {
+     "min": 6833.699218749989,
+     "p10": 6884.399414062492,
+     "median": 6956.624023437496
+    },
+    "A2": {
+     "min": 6840.617187499954,
+     "p10": 6907.633789062562,
+     "median": 6980.997070312523
+    },
+    "B": {
+     "min": 10003.784179687502,
+     "p10": 10127.116210937536,
+     "median": 10387.04394531248
+    }
+   },
+   "min": 1.4638900337081824,
+   "p10": 1.4710239197120485,
+   "controlMin": 1.0010123314662407,
+   "controlP10": 1.0033749312906817,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-05-isEmpty-general",
+   "pkg": "@winglet/common-utils",
+   "fn": "isEmpty",
+   "input": "12 mixed values in order",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 65536,
+   "stat": {
+    "A1": {
+     "min": 142.74406433105457,
+     "p10": 143.9749298095712,
+     "median": 145.48110961913954
+    },
+    "A2": {
+     "min": 142.8648681640627,
+     "p10": 144.07603454589906,
+     "median": 146.00689697265648
+    },
+    "B": {
+     "min": 142.32507324218705,
+     "p10": 143.80390930175852,
+     "median": 145.38192749023563
+    }
+   },
+   "min": 0.997064738972993,
+   "p10": 0.9988121507818141,
+   "controlMin": 1.0008462967169547,
+   "controlP10": 1.000702238483197,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-06-getValue-tokens",
+   "pkg": "@winglet/json",
+   "fn": "getValue",
+   "input": "three pointer tokens",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 131072,
+   "stat": {
+    "A1": {
+     "min": 49.851097106933665,
+     "p10": 49.98016357421909,
+     "median": 50.227798461913686
+    },
+    "A2": {
+     "min": 49.805961608887124,
+     "p10": 49.97698211669892,
+     "median": 50.267539978027244
+    },
+    "B": {
+     "min": 65.9322738647463,
+     "p10": 66.05943298339852,
+     "median": 66.49526214599562
+    }
+   },
+   "min": 1.3225842095975848,
+   "p10": 1.3217130209128305,
+   "controlMin": 0.9990945936866801,
+   "controlP10": 0.9999363455960794,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-07-document-fresh-add",
+   "pkg": "@winglet/style-utils",
+   "fn": "styleManagerFactory/inject",
+   "input": "fresh document scope",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 377,
+   "stat": {
+    "A1": {
+     "min": 338.2970822219758,
+     "p10": 447.93103447182267,
+     "median": 671.1697612592437
+    },
+    "A2": {
+     "min": 348.5039787823075,
+     "p10": 457.5596816991567,
+     "median": 674.0954907162383
+    },
+    "B": {
+     "min": 423.1856763997842,
+     "p10": 575.0450928380405,
+     "median": 847.9230769851479
+    }
+   },
+   "min": 1.2509291348901088,
+   "p10": 1.283780422841441,
+   "controlMin": 1.0301713999224928,
+   "controlP10": 1.0214958252193613,
+   "verdict": "void"
+  },
+  {
+   "row": "p1-08-flat-combinator",
+   "pkg": "@winglet/style-utils",
+   "fn": "compressCss",
+   "input": "flat combinator rule",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 16384,
+   "stat": {
+    "A1": {
+     "min": 561.2436523437514,
+     "p10": 566.7825927734362,
+     "median": 570.8745727539058
+    },
+    "A2": {
+     "min": 560.8800048828161,
+     "p10": 566.1163330078108,
+     "median": 571.2483520507808
+    },
+    "B": {
+     "min": 200.00457763671986,
+     "p10": 200.56152343750009,
+     "median": 201.64996337890955
+    }
+   },
+   "min": 0.35635962527415943,
+   "p10": 0.35385970916307213,
+   "controlMin": 0.999352068465422,
+   "controlP10": 0.9988244879533699,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-09-inject-add",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "active document scope",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 24048,
+   "stat": {
+    "A1": {
+     "min": 188.31649201555712,
+     "p10": 193.9076430483691,
+     "median": 204.98216068006397
+    },
+    "A2": {
+     "min": 190.57697105706092,
+     "p10": 196.69660678500233,
+     "median": 206.20400864770906
+    },
+    "B": {
+     "min": 202.33994511011957,
+     "p10": 212.04466067727105,
+     "median": 224.1928226867237
+    }
+   },
+   "min": 1.0744674719907377,
+   "p10": 1.0935343101683608,
+   "controlMin": 1.012003616981762,
+   "controlP10": 1.0143829489791567,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-10-plain-multiple",
+   "pkg": "@winglet/style-utils",
+   "fn": "compressCss",
+   "input": "200 flat rules",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 512,
+   "stat": {
+    "A1": {
+     "min": 12982.09570312503,
+     "p10": 13010.57812500006,
+     "median": 13093.669921874884
+    },
+    "A2": {
+     "min": 12980.38867187501,
+     "p10": 13012.287109375076,
+     "median": 13093.669921874995
+    },
+    "B": {
+     "min": 10911.376953125051,
+     "p10": 10921.548828125016,
+     "median": 10940.51171874999
+    }
+   },
+   "min": 0.8404942624555203,
+   "p10": 0.8394360898643746,
+   "controlMin": 0.9998685088071251,
+   "controlP10": 1.0001313534539815,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-11-checkboxChangePlain",
+   "pkg": "@canard/schema-form-antd5-plugin",
+   "fn": "checkbox change",
+   "input": "two string options",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 26,
+   "stat": {
+    "A1": {
+     "min": 281875.07692298543,
+     "p10": 301338.07692307245,
+     "median": 327734.00000003394
+    },
+    "A2": {
+     "min": 285982.5769230436,
+     "p10": 302985.6153845965,
+     "median": 329703.4230769301
+    },
+    "B": {
+     "min": 290693.8846153235,
+     "p10": 307148.92307689576,
+     "median": 335031.9615384041
+    }
+   },
+   "min": 1.0312862271776784,
+   "p10": 1.0192834779233915,
+   "controlMin": 1.014572058107785,
+   "controlP10": 1.0054674088264812,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-12-clone-builtins",
+   "pkg": "@winglet/common-utils",
+   "fn": "clone",
+   "input": "array and built-in values",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 16384,
+   "stat": {
+    "A1": {
+     "min": 363.91198730469085,
+     "p10": 368.6014404296889,
+     "median": 378.06958007812614
+    },
+    "A2": {
+     "min": 364.2755737304701,
+     "p10": 369.87048339843716,
+     "median": 377.3218994140605
+    },
+    "B": {
+     "min": 425.9669189453155,
+     "p10": 434.9644775390599,
+     "median": 443.4839477539046
+    }
+   },
+   "min": 1.1705218124311696,
+   "p10": 1.1800400916285345,
+   "controlMin": 1.000999105383893,
+   "controlP10": 1.0034428594941704,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-13-cloneLite-deep",
+   "pkg": "@winglet/common-utils",
+   "fn": "cloneLite",
+   "input": "300-deep child chain",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 512,
+   "stat": {
+    "A1": {
+     "min": 14190.105468750102,
+     "p10": 14325.439453124922,
+     "median": 14398.681640624965
+    },
+    "A2": {
+     "min": 14225.015625000004,
+     "p10": 14320.230468749973,
+     "median": 14407.552734374995
+    },
+    "B": {
+     "min": 16519.693359374975,
+     "p10": 16591.96093750004,
+     "median": 16718.261718750015
+    }
+   },
+   "min": 1.16416987849422,
+   "p10": 1.1582165414046481,
+   "controlMin": 1.002460175953363,
+   "controlP10": 0.9996363822281338,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-14-clone-deep",
+   "pkg": "@winglet/common-utils",
+   "fn": "clone",
+   "input": "300-deep next chain",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 128,
+   "stat": {
+    "A1": {
+     "min": 40317.062500000226,
+     "p10": 41113.93750000003,
+     "median": 42121.421875000124
+    },
+    "A2": {
+     "min": 40550.13281249975,
+     "p10": 40990.23437500015,
+     "median": 42038.7421874997
+    },
+    "B": {
+     "min": 42869.46874999975,
+     "p10": 43878.57812500018,
+     "median": 44890.62499999985
+    }
+   },
+   "min": 1.0633083387461453,
+   "p10": 1.0672433922194913,
+   "controlMin": 1.0057809348709252,
+   "controlP10": 0.996991211921751,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-15-getValue-array",
+   "pkg": "@winglet/json",
+   "fn": "getValue",
+   "input": "array pointer",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 65536,
+   "stat": {
+    "A1": {
+     "min": 84.5184326171873,
+     "p10": 84.98063659668001,
+     "median": 85.89427185058587
+    },
+    "A2": {
+     "min": 84.57756042480439,
+     "p10": 84.9024505615234,
+     "median": 85.91270446777366
+    },
+    "B": {
+     "min": 91.25009155273433,
+     "p10": 91.62457275390528,
+     "median": 92.37924194335952
+    }
+   },
+   "min": 1.079647228741652,
+   "p10": 1.078181764967913,
+   "controlMin": 1.0006995847625912,
+   "controlP10": 0.9990799547015905,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-16-mount-plain",
+   "pkg": "@canard/schema-form",
+   "fn": "Form SSR",
+   "input": "object with string and number",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 227,
+   "stat": {
+    "A1": {
+     "min": 43362.87665198107,
+     "p10": 45459.21585903098,
+     "median": 55936.30837003654
+    },
+    "A2": {
+     "min": 42874.475770936384,
+     "p10": 45386.94273127984,
+     "median": 55919.77533039915
+    },
+    "B": {
+     "min": 44712.22026432421,
+     "p10": 47314.48898679037,
+     "median": 58019.32158591013
+    }
+   },
+   "min": 1.0311174838139228,
+   "p10": 1.0408118154416168,
+   "controlMin": 0.9887368892759477,
+   "controlP10": 0.9984101545443447,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-17-whole-array-client-own-write",
+   "pkg": "@canard/schema-form",
+   "fn": "whole array own write",
+   "input": "uncontrolled array input",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 140,
+   "stat": {
+    "A1": {
+     "min": 54565.492857156125,
+     "p10": 57050.92142859485,
+     "median": 69283.62142858435
+    },
+    "A2": {
+     "min": 55000.29285716274,
+     "p10": 57282.17142858999,
+     "median": 69659.76428571789
+    },
+    "B": {
+     "min": 57488.77857143141,
+     "p10": 59715.47142857097,
+     "median": 73653.56428572016
+    }
+   },
+   "min": 1.053573890039406,
+   "p10": 1.0467047671317822,
+   "controlMin": 1.0079684059877339,
+   "controlP10": 1.0040533964080594,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-18-getValue-fragment-plain",
+   "pkg": "@winglet/json",
+   "fn": "getValue",
+   "input": "unencoded fragment pointer",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 65536,
+   "stat": {
+    "A1": {
+     "min": 83.86102294921909,
+     "p10": 85.421875,
+     "median": 85.97691345214875
+    },
+    "A2": {
+     "min": 83.93096923828193,
+     "p10": 85.3532104492195,
+     "median": 85.98136901855416
+    },
+    "B": {
+     "min": 80.34260559082028,
+     "p10": 81.21046447753973,
+     "median": 82.4693145751957
+    }
+   },
+   "min": 0.9580446644380985,
+   "p10": 0.9506986878658392,
+   "controlMin": 1.0008340738832293,
+   "controlP10": 0.9991961713462681,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-19-context-update",
+   "pkg": "@canard/schema-form",
+   "fn": "Form context update",
+   "input": "nested context change",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 310,
+   "stat": {
+    "A1": {
+     "min": 31312.903225810467,
+     "p10": 31926.587096772746,
+     "median": 32663.851612899693
+    },
+    "A2": {
+     "min": 31275.138709684732,
+     "p10": 31997.416129037185,
+     "median": 32710.583870962477
+    },
+    "B": {
+     "min": 32937.60967741007,
+     "p10": 33826.603225813946,
+     "median": 34642.16129031991
+    }
+   },
+   "min": 1.0518861646230362,
+   "p10": 1.0595120337567576,
+   "controlMin": 0.9987939631195039,
+   "controlP10": 1.0022184968299226,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-20-isEmpty-local-map",
+   "pkg": "@winglet/common-utils",
+   "fn": "isEmpty",
+   "input": "nonempty local map",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 4194304,
+   "stat": {
+    "A1": {
+     "min": 1.8587708473205533,
+     "p10": 1.8601317405700715,
+     "median": 1.8633704185485824
+    },
+    "A2": {
+     "min": 1.8587808609008776,
+     "p10": 1.8601417541503684,
+     "median": 1.863966464996336
+    },
+    "B": {
+     "min": 1.858780622482299,
+     "p10": 1.8601417541503955,
+     "median": 1.8638770580291546
+    }
+   },
+   "min": 1.0000052589385935,
+   "p10": 1.0000053832640483,
+   "controlMin": 1.0000053872053882,
+   "controlP10": 1.0000053832640337,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-21-engine-mount-plain",
+   "pkg": "@canard/schema-form",
+   "fn": "Form client mount",
+   "input": "object with a string and a number field",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 37,
+   "stat": {
+    "A1": {
+     "min": 249604.7837838076,
+     "p10": 269702.7567567516,
+     "median": 294789.51351348474
+    },
+    "A2": {
+     "min": 249622.6756756666,
+     "p10": 270119.35135134525,
+     "median": 295307.3243243248
+    },
+    "B": {
+     "min": 243557.43243242885,
+     "p10": 255403.21621618918,
+     "median": 291675.702702685
+    }
+   },
+   "min": 0.9757722938651023,
+   "p10": 0.9469803693795411,
+   "controlMin": 1.000071680885229,
+   "controlP10": 1.0015446434422965,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-22-stringSwitchMount",
+   "pkg": "@canard/schema-form-mui-plugin",
+   "fn": "string switch mount",
+   "input": "enum switch with aliases",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 25,
+   "stat": {
+    "A1": {
+     "min": 388783.4000000112,
+     "p10": 403721.88000008464,
+     "median": 428695.12000001123
+    },
+    "A2": {
+     "min": 389580.0400000189,
+     "p10": 403494.8800000347,
+     "median": 425248.36000004143
+    },
+    "B": {
+     "min": 393061.75999994593,
+     "p10": 405566.680000029,
+     "median": 429736.67999998725
+    }
+   },
+   "min": 1.0110044821870856,
+   "p10": 1.0045694823375537,
+   "controlMin": 1.0020490586789654,
+   "controlP10": 0.9994377317373785,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-23-patch-array-test-mutable",
+   "pkg": "@winglet/json",
+   "fn": "applyPatch",
+   "input": "mutable array test patch",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 131072,
+   "stat": {
+    "A1": {
+     "min": 52.95308685302705,
+     "p10": 53.909301757812734,
+     "median": 54.093360900878906
+    },
+    "A2": {
+     "min": 52.95721435546845,
+     "p10": 53.87910461425796,
+     "median": 54.0965347290037
+    },
+    "B": {
+     "min": 51.22724914550809,
+     "p10": 51.882110595703224,
+     "median": 52.46289825439456
+    }
+   },
+   "min": 0.967408175611951,
+   "p10": 0.9623962637984692,
+   "controlMin": 1.0000779463990996,
+   "controlP10": 0.9994398528163019,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-24-react-bridges",
+   "pkg": "@canard/schema-form",
+   "fn": "Form.Render SSR",
+   "input": "label and input bridge",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 380,
+   "stat": {
+    "A1": {
+     "min": 25619.410526314226,
+     "p10": 27925.899999999467,
+     "median": 37431.36842105059
+    },
+    "A2": {
+     "min": 25479.46842105555,
+     "p10": 27575.98421052786,
+     "median": 36944.27894737613
+    },
+    "B": {
+     "min": 26056.46842104438,
+     "p10": 31701.744736842316,
+     "median": 37467.41315788816
+    }
+   },
+   "min": 1.017059638990571,
+   "p10": 1.1352094198161178,
+   "controlMin": 0.9945376531940523,
+   "controlP10": 0.9874698473649332,
+   "verdict": "over"
+  }
+ ]
+}
