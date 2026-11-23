@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v26.13.1",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2e-10-plain-merge-shallow",
+   "pkg": "@canard/schema-form",
+   "fn": "shallow merge",
+   "input": "alternating two-key objects",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 2048,
+   "stat": {
+    "A1": {
+     "min": 3790.344238281229,
+     "p10": 4180.257324218728,
+     "median": 4520.629882812488
+    },
+    "A2": {
+     "min": 3780.31396484374,
+     "p10": 4171.793457031281,
+     "median": 4502.156738281249
+    },
+    "B": {
+     "min": 3774.6987304687063,
+     "p10": 4119.812011718737,
+     "median": 4451.192382812496
+    }
+   },
+   "min": 0.9958722725881971,
+   "p10": 0.985540289075078,
+   "controlMin": 0.997353730213687,
+   "controlP10": 0.9979752760342262,
+   "verdict": "pass"
+  }
+ ]
+}

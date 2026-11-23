@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v26.13.1",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2e-04-virtual-write",
+   "pkg": "@canard/schema-form",
+   "fn": "virtual write",
+   "input": "two active virtual members",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 1024,
+   "stat": {
+    "A1": {
+     "min": 4870.605468750066,
+     "p10": 5133.259765624954,
+     "median": 5588.541015625004
+    },
+    "A2": {
+     "min": 4912.597656250073,
+     "p10": 5083.291992187488,
+     "median": 5565.225585937416
+    },
+    "B": {
+     "min": 5077.351562499999,
+     "p10": 5305.1357421874945,
+     "median": 5712.605468750076
+    }
+   },
+   "min": 1.0424477192982313,
+   "p10": 1.033482812951239,
+   "controlMin": 1.008621553884713,
+   "controlP10": 0.990265878658221,
+   "verdict": "over"
+  }
+ ]
+}
