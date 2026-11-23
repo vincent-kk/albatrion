@@ -7,7 +7,7 @@ import { LabelRenderer as FallbackLabelRenderer } from '@/schema-form/components
 import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
 import { resolveFieldIdentifiers } from '@/schema-form/helpers/fieldId/resolveFieldIdentifiers';
 import { useFieldNodeTracker } from '@/schema-form/hooks';
-import type { LabelRendererProps } from '@/schema-form/types';
+import type { FieldRendererProps, LabelRendererProps } from '@/schema-form/types';
 
 import { hasArrayAncestor } from './hasArrayAncestor';
 
@@ -17,6 +17,9 @@ import { hasArrayAncestor } from './hasArrayAncestor';
  * @param node - Source node, or absence for an empty part.
  * @param required - The group's resolved display requirement.
  * @param jsonSchema - Current schema, present whenever node is present.
+ * @param formId - Scope used to resolve identifiers after the node moves.
+ * @param identifierPath - Path used to resolve the captured identifiers.
+ * @param identifiers - Resolved addresses shared with the field renderer.
  * @returns A memoized label whose explicit props override defaults except node.
  */
 export const createLabelPart = (
@@ -25,6 +28,8 @@ export const createLabelPart = (
   required: boolean,
   jsonSchema: FieldNode['jsonSchema'] | undefined,
   formId: string,
+  identifierPath: string | undefined,
+  identifiers: Pick<FieldRendererProps, 'inputId' | 'labelId'> | null,
 ): ComponentType<Partial<LabelRendererProps>> => {
   if (!node) return NULL_FUNCTION;
   const isFallback = Renderer === FallbackLabelRenderer;
@@ -34,7 +39,10 @@ export const createLabelPart = (
   }: Partial<LabelRendererProps>): ReactElement {
     const path = node.path;
     const name = node.name;
-    const { inputId, labelId } = resolveFieldIdentifiers(formId, path, false);
+    const { inputId, labelId } =
+      identifiers && path === identifierPath
+        ? identifiers
+        : resolveFieldIdentifiers(formId, path, false);
     const rendererProps: LabelRendererProps = {
       path,
       name,

@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v26.13.1",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2e-03-ab-derive-disjoint",
+   "pkg": "@canard/schema-form",
+   "fn": "disjoint derived writes",
+   "input": "one source and two derived siblings",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 512,
+   "stat": {
+    "A1": {
+     "min": 10055.664062500025,
+     "p10": 10607.259765625044,
+     "median": 11536.214843750115
+    },
+    "A2": {
+     "min": 9966.796875000127,
+     "p10": 10574.707031249853,
+     "median": 11549.884765625018
+    },
+    "B": {
+     "min": 10270.671875000082,
+     "p10": 10957.437500000111,
+     "median": 11923.50195312497
+    }
+   },
+   "min": 1.0213817616781642,
+   "p10": 1.033013025240495,
+   "controlMin": 0.9911624745071481,
+   "controlP10": 0.9969310891696379,
+   "verdict": "over"
+  }
+ ]
+}

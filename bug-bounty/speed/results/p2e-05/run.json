@@ -1,0 +1,139 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v26.13.1",
+ "cpu": "Apple M1 Max",
+ "rounds": 12,
+ "rows": [
+  {
+   "row": "p2e-05-virtual-reset",
+   "pkg": "@canard/schema-form",
+   "fn": "virtual reset",
+   "input": "two absent virtual members",
+   "inputKind": "repaired",
+   "kind": "micro",
+   "batch": 2048,
+   "stat": {
+    "A1": {
+     "min": 4581.461425781253,
+     "p10": 4785.624023437518,
+     "median": 5029.35791015624
+    },
+    "A2": {
+     "min": 4545.389648437536,
+     "p10": 4796.9565429687445,
+     "median": 5071.513183593779
+    },
+    "B": {
+     "min": 4851.3793945312855,
+     "p10": 5115.865234375016,
+     "median": 5368.184082031269
+    }
+   },
+   "min": 1.0589152551260441,
+   "p10": 1.0690069276901293,
+   "controlMin": 0.9921265784012215,
+   "controlP10": 1.00236803381873,
+   "verdict": "over"
+  },
+  {
+   "row": "p2e-06-virtual-absent-undefined",
+   "pkg": "@canard/schema-form",
+   "fn": "virtual merge with absent member",
+   "input": "object and explicit undefined inactive member",
+   "inputKind": "repaired",
+   "kind": "micro",
+   "batch": 512,
+   "stat": {
+    "A1": {
+     "min": 16969.32031250009,
+     "p10": 17509.439453124996,
+     "median": 18765.62500000012
+    },
+    "A2": {
+     "min": 16930.501953124956,
+     "p10": 17533.85546875008,
+     "median": 18816.324218750015
+    },
+    "B": {
+     "min": 17542.96874999994,
+     "p10": 18385.824218750015,
+     "median": 19784.66796874989
+    }
+   },
+   "min": 1.0338050332562398,
+   "p10": 1.0500521314786353,
+   "controlMin": 0.9977124387624093,
+   "controlP10": 1.0013944487309516,
+   "verdict": "over"
+  },
+  {
+   "row": "p2e-07-mount-100",
+   "pkg": "@canard/schema-form",
+   "fn": "client mount",
+   "input": "100 string fields and unrelated default keys",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 2,
+   "stat": {
+    "A1": {
+     "min": 7425791.50000006,
+     "p10": 7921895.999999947,
+     "median": 8511708.500000054
+    },
+    "A2": {
+     "min": 7519604.499999787,
+     "p10": 7998771.0000000335,
+     "median": 8501165.999999898
+    },
+    "B": {
+     "min": 7063916.500000118,
+     "p10": 7944292.000000019,
+     "median": 8672291.500000028
+    }
+   },
+   "min": 0.9512678210800911,
+   "p10": 1.0028271009869445,
+   "controlMin": 1.0126334007626967,
+   "controlP10": 1.009704116287324,
+   "verdict": "pass"
+  },
+  {
+   "row": "p2e-08-aliased-mount",
+   "pkg": "@canard/schema-form",
+   "fn": "aliased client mount",
+   "input": "two references to a derived object",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 112,
+   "stat": {
+    "A1": {
+     "min": 89072.91071427283,
+     "p10": 93404.40178571288,
+     "median": 102315.01785716749
+    },
+    "A2": {
+     "min": 87866.45535715211,
+     "p10": 93938.98214286927,
+     "median": 102934.07142856179
+    },
+    "B": {
+     "min": 103855.28571428284,
+     "p10": 114533.10714286959,
+     "median": 122744.77678571064
+    }
+   },
+   "min": 1.165958144642076,
+   "p10": 1.226206741365679,
+   "controlMin": 0.9864554178431333,
+   "controlP10": 1.005723288698779,
+   "verdict": "over"
+  }
+ ]
+}

@@ -24,15 +24,16 @@ export const readFieldNodeRevision = <Self extends FieldNodeRecord<Self>>(
   const ledger = node.revisionLedger;
   if (ledger === EMPTY_REVISION_LEDGER) return 0;
   let revision = 0;
+  const isLedger = ledger instanceof FieldNodeRevisionLedger;
   if (mask & EXTERNAL_VALUE_REVISION) {
     mask &= ~EXTERNAL_VALUE_REVISION;
     if (node.behavior.strategy === 'branch')
-      revision =
-        (ledger[FieldNodeEventType.UpdateValue] ?? 0) -
-        (ledger[INPUT_VALUE_REVISION] ?? 0);
+      revision = isLedger
+        ? ledger.readExternalValue()
+        : (ledger[FieldNodeEventType.UpdateValue] ?? 0) -
+          (ledger[INPUT_VALUE_REVISION] ?? 0);
   }
-  if (ledger instanceof FieldNodeRevisionLedger)
-    return revision + ledger.read(mask);
+  if (isLedger) return revision + ledger.read(mask);
   for (let bit = 1; bit <= FieldNodeEventType.UpdateDiagnostics; bit *= 2)
     if (mask & bit) revision += ledger[bit] ?? 0;
   return revision;

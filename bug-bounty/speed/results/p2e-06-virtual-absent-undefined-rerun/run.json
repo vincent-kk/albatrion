@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v26.13.1",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2e-06-virtual-absent-undefined",
+   "pkg": "@canard/schema-form",
+   "fn": "virtual merge with absent member",
+   "input": "object and explicit undefined inactive member",
+   "inputKind": "repaired",
+   "kind": "micro",
+   "batch": 256,
+   "stat": {
+    "A1": {
+     "min": 17401.36718749996,
+     "p10": 18257.812499999916,
+     "median": 19295.41015625036
+    },
+    "A2": {
+     "min": 17393.390625000116,
+     "p10": 18193.847656250207,
+     "median": 19120.44531249979
+    },
+    "B": {
+     "min": 17677.410156249796,
+     "p10": 18891.43750000022,
+     "median": 20088.539062499854
+    }
+   },
+   "min": 1.0158632919916848,
+   "p10": 1.0347043217800767,
+   "controlMin": 0.9995416128851317,
+   "controlP10": 0.9964965768078893,
+   "verdict": "over"
+  }
+ ]
+}

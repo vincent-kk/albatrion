@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v26.13.1",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2e-12-whole-array-client-own-write",
+   "pkg": "@canard/schema-form",
+   "fn": "whole array own write",
+   "input": "uncontrolled two-item whole-array input",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 271,
+   "stat": {
+    "A1": {
+     "min": 32262.49077489913,
+     "p10": 33949.0996309912,
+     "median": 35214.51291511954
+    },
+    "A2": {
+     "min": 32853.88191882894,
+     "p10": 33947.904059036824,
+     "median": 35219.867158679925
+    },
+    "B": {
+     "min": 35910.81180811788,
+     "p10": 37176.48339483196,
+     "median": 38625.295202946894
+    }
+   },
+   "min": 1.1130824355339985,
+   "p10": 1.095065371362443,
+   "controlMin": 1.018330610245069,
+   "controlP10": 0.9999647833972809,
+   "verdict": "over"
+  }
+ ]
+}

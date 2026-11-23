@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v26.13.1",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2c-18-installer-new",
+   "pkg": "@slats/agents-assets-sync",
+   "fn": "installer-new",
+   "input": "16 skill files",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 4,
+   "stat": {
+    "A1": {
+     "min": 3158770.7500000307,
+     "p10": 3616791.7499998338,
+     "median": 3772802.00000007
+    },
+    "A2": {
+     "min": 3213228.999999842,
+     "p10": 3613739.7500000363,
+     "median": 3784010.2499999376
+    },
+    "B": {
+     "min": 6412822.999999776,
+     "p10": 7008625.500000107,
+     "median": 7331832.999999961
+    }
+   },
+   "min": 2.030164107350846,
+   "p10": 1.9378017824776417,
+   "controlMin": 1.0172403299605743,
+   "controlP10": 0.9991561582167959,
+   "verdict": "over"
+  }
+ ]
+}

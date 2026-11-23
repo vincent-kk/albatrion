@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v26.13.1",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2c-20-installer-force",
+   "pkg": "@slats/agents-assets-sync",
+   "fn": "installer-force",
+   "input": "16 skills plus one orphan and one local edit",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 5,
+   "stat": {
+    "A1": {
+     "min": 2176516.5999999223,
+     "p10": 2269025.0000000102,
+     "median": 2381367.0000000005
+    },
+    "A2": {
+     "min": 2162641.999999687,
+     "p10": 2252824.7999999165,
+     "median": 2363808.2000000393
+    },
+    "B": {
+     "min": 5745449.999999983,
+     "p10": 5958024.800000021,
+     "median": 6153691.600000002
+    }
+   },
+   "min": 2.639745545703712,
+   "p10": 2.625808353808351,
+   "controlMin": 0.9936253185478872,
+   "controlP10": 0.9928602813983567,
+   "verdict": "over"
+  }
+ ]
+}

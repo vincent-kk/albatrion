@@ -1,0 +1,77 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-common-utils",
+  "ref": "DIAGNOSTIC (not committable): HEAD 50bfe1577 without equals active-pair tracking and without cloneLite deep active Set"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 12,
+ "rows": [
+  {
+   "row": "p1-04-equals-deep",
+   "pkg": "@winglet/common-utils",
+   "fn": "equals",
+   "input": "two independent 128-deep chains",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 1024,
+   "stat": {
+    "A1": {
+     "min": 6863.8105468750155,
+     "p10": 6978.312499999973,
+     "median": 7073.1601562500355
+    },
+    "A2": {
+     "min": 6865.316406249988,
+     "p10": 6973.876953125014,
+     "median": 7066.040039062471
+    },
+    "B": {
+     "min": 6368.896484374997,
+     "p10": 6457.560546874963,
+     "median": 6530.395507812481
+    }
+   },
+   "min": 0.9278951452520284,
+   "p10": 0.9253756616481403,
+   "controlMin": 1.0002193911624875,
+   "controlP10": 0.9993643811630736,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-13-cloneLite-deep",
+   "pkg": "@winglet/common-utils",
+   "fn": "cloneLite",
+   "input": "300-deep child chain",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 512,
+   "stat": {
+    "A1": {
+     "min": 14292.318359374945,
+     "p10": 14417.48046874991,
+     "median": 14649.82031249995
+    },
+    "A2": {
+     "min": 14246.744140624989,
+     "p10": 14476.642578124865,
+     "median": 14686.767578125038
+    },
+    "B": {
+     "min": 15128.417968750085,
+     "p10": 15278.076171875044,
+     "median": 15492.187500000033
+    }
+   },
+   "min": 1.0584999290074382,
+   "p10": 1.0596911301520737,
+   "controlMin": 0.9968112787859877,
+   "controlP10": 1.0041034984929016,
+   "verdict": "over"
+  }
+ ]
+}

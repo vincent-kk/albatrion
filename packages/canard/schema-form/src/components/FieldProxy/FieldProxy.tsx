@@ -74,8 +74,9 @@ export const FieldProxy = ({
   } = useFieldRendererContext();
 
   const { context, formId } = useWorkspaceContext();
+  const identifierPath = node?.path;
   const identifiers = node
-    ? resolveFieldIdentifiers(formId, node.path, false)
+    ? resolveFieldIdentifiers(formId, identifierPath!, false)
     : null;
   const jsonSchema = node?.jsonSchema;
   const presentation = (jsonSchema as JSONSchema | undefined)?.presentation;
@@ -85,7 +86,18 @@ export const FieldProxy = ({
     node?.isRequired ?? false,
   );
   const Label = useMemo(
-    () => createLabelPart(LabelRenderer, node, required, jsonSchema, formId),
+    () =>
+      createLabelPart(
+        LabelRenderer,
+        node,
+        required,
+        jsonSchema,
+        formId,
+        identifierPath,
+        identifiers,
+      ),
+    // The bound label checks its captured address against the live path.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [LabelRenderer, node, jsonSchema, required, formId],
   );
   const ErrorMessage = useMemo(

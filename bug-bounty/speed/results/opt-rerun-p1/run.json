@@ -1,0 +1,139 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "238950897ded3d71b4323094274368eab495f063"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p1-03-rest-equal",
+   "pkg": "@winglet/react-utils",
+   "fn": "useRestProperties",
+   "input": "2000 hook calls in one rerender",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 48,
+   "stat": {
+    "A1": {
+     "min": 183067.66666668278,
+     "p10": 192440.91666666445,
+     "median": 200534.68750001947
+    },
+    "A2": {
+     "min": 182855.93750000352,
+     "p10": 194730.02083332368,
+     "median": 203691.8333333138
+    },
+    "B": {
+     "min": 371209.2500000021,
+     "p10": 384980.08333334135,
+     "median": 499934.8541666725
+    }
+   },
+   "min": 2.0277160721990017,
+   "p10": 2.000510546310599,
+   "controlMin": 0.9988434376723403,
+   "controlP10": 1.0118951011370638,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-07-document-fresh-add",
+   "pkg": "@winglet/style-utils",
+   "fn": "styleManagerFactory/inject",
+   "input": "fresh document scope",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 369,
+   "stat": {
+    "A1": {
+     "min": 347.78048779656723,
+     "p10": 473.783197831197,
+     "median": 689.168021683125
+    },
+    "A2": {
+     "min": 324.4986449891654,
+     "p10": 470.9783198008977,
+     "median": 670.7398373504509
+    },
+    "B": {
+     "min": 378.8509485068387,
+     "p10": 574.9620596240865,
+     "median": 829.1382113911774
+    }
+   },
+   "min": 1.0893392867067515,
+   "p10": 1.2135551920288616,
+   "controlMin": 0.9330559257222607,
+   "controlP10": 0.99407982798221,
+   "verdict": "void"
+  },
+  {
+   "row": "p1-11-checkboxChangePlain",
+   "pkg": "@canard/schema-form-antd5-plugin",
+   "fn": "checkbox change",
+   "input": "two string options",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 28,
+   "stat": {
+    "A1": {
+     "min": 276598.3928571326,
+     "p10": 298641.2500000435,
+     "median": 324616.00000000803
+    },
+    "A2": {
+     "min": 278845.21428567107,
+     "p10": 299621.9285715337,
+     "median": 327001.46428572095
+    },
+    "B": {
+     "min": 290288.678571447,
+     "p10": 307970.28571432095,
+     "median": 334263.39285724034
+    }
+   },
+   "min": 1.0494951744762508,
+   "p10": 1.031238269041119,
+   "controlMin": 1.0081230458547856,
+   "controlP10": 1.0032838014557268,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-24-react-bridges",
+   "pkg": "@canard/schema-form",
+   "fn": "Form.Render SSR",
+   "input": "label and input bridge",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 397,
+   "stat": {
+    "A1": {
+     "min": 25176.664987399246,
+     "p10": 28187.39042821036,
+     "median": 37795.53652393427
+    },
+    "A2": {
+     "min": 25540.526448368164,
+     "p10": 28027.274559200654,
+     "median": 37721.549118387935
+    },
+    "B": {
+     "min": 26325.559193959733,
+     "p10": 30999.90428211329,
+     "median": 39034.64735516575
+    }
+   },
+   "min": 1.0456332960356545,
+   "p10": 1.0997791498672442,
+   "controlMin": 1.0144523296135937,
+   "controlP10": 0.9943195923220526,
+   "verdict": "over"
+  }
+ ]
+}
