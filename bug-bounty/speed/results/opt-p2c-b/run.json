@@ -1,0 +1,170 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "238950897ded3d71b4323094274368eab495f063"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 12,
+ "rows": [
+  {
+   "row": "p2c-20-installer-force",
+   "pkg": "@slats/agents-assets-sync",
+   "fn": "installer-force",
+   "input": "16 skills plus one orphan and one local edit",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 4,
+   "stat": {
+    "A1": {
+     "min": 3193624.999999997,
+     "p10": 3243229.250000013,
+     "median": 3308312.7499999707
+    },
+    "A2": {
+     "min": 3153802.0000000414,
+     "p10": 3258989.750000069,
+     "median": 3338406.500000019
+    },
+    "B": {
+     "min": 6428656.500000216,
+     "p10": 6582781.500000124,
+     "median": 6752979.249999953
+    }
+   },
+   "min": 2.012965360679548,
+   "p10": 2.0296997198086126,
+   "controlMin": 0.9875304708599301,
+   "controlP10": 1.0048595084667715,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-21-isEmpty-foreign-map",
+   "pkg": "@winglet/common-utils",
+   "fn": "isEmpty",
+   "input": "300000 independent foreign Maps",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 1,
+   "stat": {
+    "A1": {
+     "min": 5209959.000000026,
+     "p10": 5317000.000000007,
+     "median": 5383208.999999966
+    },
+    "A2": {
+     "min": 5239958.000000002,
+     "p10": 5339749.99999998,
+     "median": 5394000.000000006
+    },
+    "B": {
+     "min": 5224290.9999999935,
+     "p10": 5332333.000000062,
+     "median": 5384208.000000001
+    }
+   },
+   "min": 1.0027508853716445,
+   "p10": 1.0028837690427035,
+   "controlMin": 1.0057580107636117,
+   "controlP10": 1.004278728606352,
+   "verdict": "pass"
+  },
+  {
+   "row": "p2c-22-schema-known-noncanonical",
+   "pkg": "@winglet/json-schema",
+   "fn": "resolve",
+   "input": "known embedded ID and 20 noncanonical resource keys",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 2400,
+   "stat": {
+    "A1": {
+     "min": 4193.636250001683,
+     "p10": 4320.372916668115,
+     "median": 4393.442916666288
+    },
+    "A2": {
+     "min": 4181.825000001235,
+     "p10": 4297.74458332787,
+     "median": 4388.605416665428
+    },
+    "B": {
+     "min": 19726.11958333592,
+     "p10": 20103.477916664284,
+     "median": 20427.11041666763
+    }
+   },
+   "min": 4.703822269594317,
+   "p10": 4.653181173112285,
+   "controlMin": 0.9971835301641998,
+   "controlP10": 0.994762412000838,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-23-schema-first-embedded",
+   "pkg": "@winglet/json-schema",
+   "fn": "resolve",
+   "input": "first embedded lookup across 20 registered documents",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 8311,
+   "stat": {
+    "A1": {
+     "min": 1083.412465407631,
+     "p10": 1107.4001925151408,
+     "median": 1138.9990374198098
+    },
+    "A2": {
+     "min": 1077.9103597641727,
+     "p10": 1099.8636746473783,
+     "median": 1124.709300928516
+    },
+    "B": {
+     "min": 15083.44519311894,
+     "p10": 15401.783539882837,
+     "median": 15643.81686921145
+    }
+   },
+   "min": 13.92216323396633,
+   "p10": 13.908055682112641,
+   "controlMin": 0.9949215042108748,
+   "controlP10": 0.9931944044089016,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-24-schema-key-collision",
+   "pkg": "@winglet/json-schema",
+   "fn": "resolve",
+   "input": "embedded ID colliding with registered document",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 1720,
+   "stat": {
+    "A1": {
+     "min": 3750.294186054785,
+     "p10": 3850.711046506635,
+     "median": 3967.4552325563614
+    },
+    "A2": {
+     "min": 3768.864534880602,
+     "p10": 3840.0581395339836,
+     "median": 3933.5709302339064
+    },
+    "B": {
+     "min": 8935.29418604544,
+     "p10": 9080.236046510658,
+     "median": 9243.880813951999
+    }
+   },
+   "min": 2.3825582055057777,
+   "p10": 2.3580673638828986,
+   "controlMin": 1.0049517045609035,
+   "controlP10": 0.9972335221095554,
+   "verdict": "over"
+  }
+ ]
+}

@@ -1,4 +1,5 @@
 import '../dom.mjs';
+import '../css.mjs';
 import { createElement, createRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { flushSync } from 'react-dom';
