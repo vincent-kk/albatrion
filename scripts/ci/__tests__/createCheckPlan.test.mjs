@@ -401,7 +401,12 @@ test("plan and shard reject unsupported tiers", () => {
 
 test("build steps keep leaf builds and omit an empty closure", () => {
   const graph = [
-    { name: "leaf", dependencies: [], scripts: { build: "build" } },
+    {
+      name: "leaf",
+      dependencies: [],
+      selectionDependencies: [],
+      scripts: { build: "build" },
+    },
   ];
   assert.deepEqual(createBuildSteps(["leaf"], graph), [
     {
@@ -482,6 +487,30 @@ test("build closure precedes lint and includes every linted workspace dependency
       }
     }
   }
+});
+
+test("a leaf change builds every imported workspace before each dependent check", () => {
+  const plan = createCheckPlan(workspaces, [
+    "packages/winglet/style-utils/src/index.ts",
+  ]);
+  assert.ok(plan.dependents.includes("@aileron/benchmark"));
+  for (const shard of plan.shards)
+    shard.steps.forEach((step, index) => {
+      if (step.kind !== "test" && step.kind !== "typecheck") return;
+      const workspace = workspaces.find(({ name }) => name === step.args[1]);
+      for (const dependency of workspace.selectionDependencies) {
+        if (!workspaces.find(({ name }) => name === dependency).scripts.build)
+          continue;
+        assert.ok(
+          shard.steps
+            .slice(0, index)
+            .some(
+              ({ kind, args }) => kind === "build" && args.includes(dependency),
+            ),
+          `${shard.name}: ${workspace.name} needs ${dependency}`,
+        );
+      }
+    });
 });
 
 test("every planned Vitest command receives a generous supported test timeout and passWithNoTests at execution", () => {

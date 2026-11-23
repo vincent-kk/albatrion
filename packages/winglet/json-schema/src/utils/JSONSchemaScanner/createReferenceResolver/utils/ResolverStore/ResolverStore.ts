@@ -96,6 +96,8 @@ export class ResolverStore {
   private registered: Map<string, SchemaValue> | undefined;
   /** Whether every registered key is already spelled as resolution writes it; computed once, only by a known-address lookup. */
   private canonicalKeys: boolean | undefined;
+  /** Registered keys that normalization kept as written because their spelling is canonical. */
+  private canonical: Set<string> | undefined;
   /** Known addresses already checked against the registrations; the answer cannot change afterwards. */
   private settled = new Set<string>();
   /** Retrieval addresses already passed to indexing; an embedded identifier at the same address does not count. */
@@ -203,7 +205,15 @@ export class ResolverStore {
       !(dialect.startsWith('draft-') && typeof schema.$ref === 'string')
     ) {
       const id = dialect === Dialect.Draft04 ? schema.id : schema.$id;
-      if (typeof id === 'string')
+      // A canonical spelling of its own retrieval address resolves to itself or, when the
+      // parser rejects it, falls back to it; either way the address stays the retrieval URI.
+      if (
+        typeof id === 'string' &&
+        !(
+          id === retrieval &&
+          (this.canonical?.has(id) || isCanonicalRetrievalURI(id))
+        )
+      )
         uri = resolveURI(id, retrieval)?.split('#')[0] ?? retrieval;
     }
     const initial: ResolverContext = {
@@ -487,8 +497,11 @@ export class ResolverStore {
     const registered = new Map<string, SchemaValue>();
     const keys = new Map<string, string>();
     for (const key of Object.keys(source)) {
-      const uri = resolveURI(key, '');
-      if (uri === undefined || !isAbsoluteURI(uri)) continue;
+      // Parsing keeps a canonical key; an `xn--` label is parsed because runtimes differ on rejecting it.
+      const canonical = isCanonicalRetrievalURI(key) && !key.includes('xn--');
+      if (canonical) (this.canonical ??= new Set()).add(key);
+      const uri = canonical ? key : resolveURI(key, '');
+      if (uri === undefined || (!canonical && !isAbsoluteURI(uri))) continue;
       const previous = keys.get(uri);
       if (previous !== undefined && source[previous] !== source[key])
         this.duplicate(uri, previous, key);
