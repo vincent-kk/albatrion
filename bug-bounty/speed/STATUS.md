@@ -37,3 +37,13 @@
 - `SPEED-TARGETS.md`에 최종 값과 상태를 적습니다.
 - `sources/`, 이 파일, 저장소 밖 `albatrion-speed/`의 `analysis`, `specs`, `pr`을 지웁니다.
 - 남은 작업 트리와 가지를 지웁니다.
+
+## 병합 뒤 재측정 (후보 트리 `albatrion-speed/opt`)
+
+`albatrion-speed/opt`는 `head`의 복제본에 `1.0.0/optimize`의 `style-utils`, `json-schema`, `react-utils`, `schema-form` 소스를 덮어 빌드한 트리입니다. 개선이 더 병합되면 같은 방법으로 다시 만듭니다.
+
+- 12라운드 전체 결과는 `results/opt-p1`, `opt-p2c-a`, `opt-p2c-b`, `opt-p2e`에, 24라운드 재측정은 `opt-rerun-p1`, `opt-rerun-p2-a`, `opt-rerun-p2-b`에 있습니다.
+- `p1-07`은 대조군이 흔들려(0.933) 무효였고, `p1-24`는 실행마다 1.01~1.10으로 흔들립니다. 둘은 조용한 시간에 다시 잽니다.
+- `p1-11`(antd5 체크박스)은 1.049 / 1.031로 초과가 남습니다.
+- `p2c-05`(antd-mobile 슬라이더)는 `beta-am543` 기준 트리에서 행의 `check`가 실패합니다. 행 구현을 살펴야 합니다.
+- `RESULTS-P1.md`와 `RESULTS-P2.md`는 아직 병합 전 값입니다. `common-utils`가 병합된 뒤 최종 재측정으로 갱신합니다.

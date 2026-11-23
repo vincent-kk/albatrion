@@ -1,0 +1,139 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "238950897ded3d71b4323094274368eab495f063"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2e-02-virtual-merge-one",
+   "pkg": "@canard/schema-form",
+   "fn": "virtual merge",
+   "input": "one virtual member and disjoint sibling write",
+   "inputKind": "repaired",
+   "kind": "micro",
+   "batch": 512,
+   "stat": {
+    "A1": {
+     "min": 16417.15429687496,
+     "p10": 17078.531249999916,
+     "median": 18281.250000000025
+    },
+    "A2": {
+     "min": 16482.177734375102,
+     "p10": 17093.667968749894,
+     "median": 18342.529296875076
+    },
+    "B": {
+     "min": 17059.89648437489,
+     "p10": 17819.335937499847,
+     "median": 18990.640625
+    }
+   },
+   "min": 1.0391506454697985,
+   "p10": 1.0433763698210252,
+   "controlMin": 1.0039607008817917,
+   "controlP10": 1.000886300966307,
+   "verdict": "over"
+  },
+  {
+   "row": "p2e-03-ab-derive-disjoint",
+   "pkg": "@canard/schema-form",
+   "fn": "disjoint derived writes",
+   "input": "one source and two derived siblings",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 512,
+   "stat": {
+    "A1": {
+     "min": 9941.488281250076,
+     "p10": 10359.537109374984,
+     "median": 11134.033203125115
+    },
+    "A2": {
+     "min": 9874.023437500102,
+     "p10": 10408.121093749889,
+     "median": 11146.078124999904
+    },
+    "B": {
+     "min": 10570.718750000153,
+     "p10": 10943.68554687497,
+     "median": 11765.869140625051
+    }
+   },
+   "min": 1.063293387363019,
+   "p10": 1.056387503740042,
+   "controlMin": 0.9932138084518779,
+   "controlP10": 1.0046897833235173,
+   "verdict": "over"
+  },
+  {
+   "row": "p2e-06-virtual-absent-undefined",
+   "pkg": "@canard/schema-form",
+   "fn": "virtual merge with absent member",
+   "input": "object and explicit undefined inactive member",
+   "inputKind": "repaired",
+   "kind": "micro",
+   "batch": 512,
+   "stat": {
+    "A1": {
+     "min": 17355.957031250036,
+     "p10": 18035.562499999935,
+     "median": 19150.96093750002
+    },
+    "A2": {
+     "min": 17403.484375000167,
+     "p10": 18048.666015624938,
+     "median": 19178.222656250022
+    },
+    "B": {
+     "min": 17894.775390624894,
+     "p10": 18901.287109374996,
+     "median": 20045.572265624978
+    }
+   },
+   "min": 1.0310451540300944,
+   "p10": 1.0480009763696068,
+   "controlMin": 1.0027383879589329,
+   "controlP10": 1.0007265376738321,
+   "verdict": "over"
+  },
+  {
+   "row": "p2e-12-whole-array-client-own-write",
+   "pkg": "@canard/schema-form",
+   "fn": "whole array own write",
+   "input": "uncontrolled two-item whole-array input",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 297,
+   "stat": {
+    "A1": {
+     "min": 33558.64309764222,
+     "p10": 34439.11447812455,
+     "median": 35760.067340066045
+    },
+    "A2": {
+     "min": 33193.61952861773,
+     "p10": 34483.58249158403,
+     "median": 35696.11447811617
+    },
+    "B": {
+     "min": 34973.20875421088,
+     "p10": 36008.12457914046,
+     "median": 37196.27609427215
+    }
+   },
+   "min": 1.042152051632506,
+   "p10": 1.0455589559950076,
+   "controlMin": 0.9891228150088662,
+   "controlP10": 1.0012912066449247,
+   "verdict": "over"
+  }
+ ]
+}
