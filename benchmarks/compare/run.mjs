@@ -98,7 +98,7 @@ const trees = { A1: resolve(args.a), A2: resolve(args.a), B: resolve(args.b) };
 for (const tree of new Set(Object.values(trees))) {
   rmSync(join(tree, ".speed"), { recursive: true, force: true });
   cpSync(rowsDir, join(tree, ".speed/rows"), { recursive: true });
-  for (const file of ["slot.mjs", "dom.mjs"])
+  for (const file of ["slot.mjs", "dom.mjs", "css.mjs"])
     cpSync(join(here, file), join(tree, ".speed", file));
 }
 const prefixes = args.only.split(",");

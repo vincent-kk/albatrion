@@ -21,7 +21,7 @@ Add `--profile` to the same command to find where a row spends its time instead 
 
 ## How it runs
 
-The driver copies `slot.mjs`, `dom.mjs` and the row directory into `<tree>/.speed/` of both trees and runs each slot there as `node --expose-gc .speed/slot.mjs <row> <batch>`. Bare imports in a row therefore resolve inside the measured tree. Each round starts three processes (A1 and A2 from the baseline tree, B from the candidate) in a rotating order. A calibration process in the baseline tree fixes the batch size for the row first.
+The driver copies `slot.mjs`, `dom.mjs`, `css.mjs` and the row directory into `<tree>/.speed/` of both trees and runs each slot there as `node --expose-gc .speed/slot.mjs <row> <batch>`. Bare imports in a row therefore resolve inside the measured tree. Each round starts three processes (A1 and A2 from the baseline tree, B from the candidate) in a rotating order. A calibration process in the baseline tree fixes the batch size for the row first.
 
 Verdict per row: `pass` when B/A1 is at most 1.03 for both min and p10, `over` otherwise, `void` when the A2/A1 control leaves 0.98 to 1.02 or a slot fails. The driver never decides why a row is over.
 
@@ -52,7 +52,7 @@ export default {
 - `setup` runs once per process, may be async, and builds everything the operation consumes.
 - `run` is the timed operation. A `micro` row is synchronous and timed in a tight loop, so it must be repeatable on the same input. A `render` row is timed one operation at a time: it may return a promise, `before()` (fresh input or state) runs untimed before every operation and `after(result)` (unmount, reset) after it. Use `render` for any operation that needs fresh state each time, rendering or not; the two timer reads add a constant to both arms, which pulls the ratio of an operation under about 2 µs toward 1, so say so in such a row.
 - `check(result)` runs untimed and must return true; a false result voids the row.
-- A render row imports `../dom.mjs` first, before `react-dom`, to get jsdom globals.
+- A render row imports `../dom.mjs` first, before `react-dom`, to get jsdom globals. A row whose library imports stylesheets also imports `../css.mjs` before that library, which makes every `.css` import an empty module (it needs Node 22.15 or later).
 - Optional `samples` (default 40 batches per process) and, for render rows, `warmMs` (default 1000).
 - Import packages by name only. A row that needs a library a plugin depends on (for example `antd`) resolves it from that plugin's directory, because the tree root may hoist a different version.
 
