@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v26.13.1",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2c-09-mount-100",
+   "pkg": "@canard/schema-form",
+   "fn": "Form SSR",
+   "input": "100 string fields and default values",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 10,
+   "stat": {
+    "A1": {
+     "min": 1028662.499999973,
+     "p10": 1087195.7000000293,
+     "median": 1478912.500000024
+    },
+    "A2": {
+     "min": 1025450.1000000574,
+     "p10": 1090712.4000000295,
+     "median": 1400341.6000000015
+    },
+    "B": {
+     "min": 1115279.1999999862,
+     "p10": 1188179.1999999904,
+     "median": 1512308.4000000518
+    }
+   },
+   "min": 1.0842032250616849,
+   "p10": 1.0928843813491522,
+   "controlMin": 0.9968771098393149,
+   "controlP10": 1.003234652234184,
+   "verdict": "over"
+  }
+ ]
+}
