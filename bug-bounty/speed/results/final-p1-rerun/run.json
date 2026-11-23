@@ -1,0 +1,108 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "c8aa0cfda6a4638d73c8cccbd4f4bfa80384a841"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p1-07-document-fresh-add",
+   "pkg": "@winglet/style-utils",
+   "fn": "styleManagerFactory/inject",
+   "input": "fresh document scope",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 380,
+   "stat": {
+    "A1": {
+     "min": 341.22105262632,
+     "p10": 477.7631579097368,
+     "median": 698.2394736807787
+    },
+    "A2": {
+     "min": 316.99210526551866,
+     "p10": 486.87105261131745,
+     "median": 731.1236841886919
+    },
+    "B": {
+     "min": 440.86578945648637,
+     "p10": 585.636842111183,
+     "median": 900.4368420966401
+    }
+   },
+   "min": 1.2920240004630954,
+   "p10": 1.2257890388061832,
+   "controlMin": 0.9289933983430527,
+   "controlP10": 1.019063618763382,
+   "verdict": "void"
+  },
+  {
+   "row": "p1-11-checkboxChangePlain",
+   "pkg": "@canard/schema-form-antd5-plugin",
+   "fn": "checkbox change",
+   "input": "two string options",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 28,
+   "stat": {
+    "A1": {
+     "min": 276111.5714285357,
+     "p10": 299703.92857132666,
+     "median": 326657.71428582957
+    },
+    "A2": {
+     "min": 277043.14285711007,
+     "p10": 300749.96428587445,
+     "median": 326528.28571432177
+    },
+    "B": {
+     "min": 292674.10714295955,
+     "p10": 307434.46428560413,
+     "median": 335132.60714291193
+    }
+   },
+   "min": 1.0599849388011275,
+   "p10": 1.0257939085120724,
+   "controlMin": 1.0033738949213706,
+   "controlP10": 1.0034902302400044,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-24-react-bridges",
+   "pkg": "@canard/schema-form",
+   "fn": "Form.Render SSR",
+   "input": "label and input bridge",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 394,
+   "stat": {
+    "A1": {
+     "min": 25176.510152279574,
+     "p10": 27879.241116756744,
+     "median": 38652.60913705512
+    },
+    "A2": {
+     "min": 25429.055837563734,
+     "p10": 27918.375634520522,
+     "median": 38382.177664971096
+    },
+    "B": {
+     "min": 26653.76649746736,
+     "p10": 30428.50253806993,
+     "median": 38726.208121833624
+    }
+   },
+   "min": 1.0586759775780135,
+   "p10": 1.0914394122364026,
+   "controlMin": 1.0100310044464718,
+   "controlP10": 1.001403715316349,
+   "verdict": "over"
+  }
+ ]
+}

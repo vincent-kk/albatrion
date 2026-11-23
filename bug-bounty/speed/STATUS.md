@@ -57,7 +57,7 @@
 진행 중이던 것:
 
 1. **`clone` 생성기 제거 (승인됨)** — 작업 트리 `speed-clone-keys`, 가지 `perf/common-utils-clone-keys`, 명세 `albatrion-speed/specs/t33-clone-generator.md`, 배정 `ctx_548f17aec9b7`. 작업자가 끝냈으면 작업 트리의 `SPEED-REPORT.md`를 읽고, 독립 검증(이전 검증 기록은 `albatrion-speed/analysis/verify-common-utils.md`) → PR → 병합 → 작업 트리 삭제 순서로 진행합니다. 끝내지 못했으면 같은 명세로 다시 배정합니다.
-2. **흔들리는 세 행 재측정** — `p1-07`, `p1-11`, `p1-24`를 24라운드로 재는 실행이 `results/final-p1-rerun`에 쓰입니다. 끝나 있으면 커밋하고 `RESULTS-P1.md`의 해당 줄을 고칩니다. 없으면 다시 실행합니다.
+2. **흔들리는 세 행** — 재측정이 끝나 `RESULTS-P1.md` 끝에 적었습니다. `p1-11`과 `p1-24`는 초과(약 1.03~1.09)로 남고 원인 귀속이 없습니다. `p1-07`은 대조군이 안정된 실행이 없습니다. 셋 다 Vincent에게 보고됐는지 확인하고, `p1-24`는 `schema-form` 기록에 덧붙입니다.
 
 아직 시작하지 않은 것:
 
