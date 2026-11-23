@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v26.13.1",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2c-04-multiEnumMount",
+   "pkg": "@canard/schema-form-antd6-plugin",
+   "fn": "multi enum mount",
+   "input": "two options and an unknown object",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 3,
+   "stat": {
+    "A1": {
+     "min": 4030763.6666666437,
+     "p10": 4182666.9999999623,
+     "median": 4520139.000000199
+    },
+    "A2": {
+     "min": 4008749.999999812,
+     "p10": 4148903.0000000945,
+     "median": 4470152.66666646
+    },
+    "B": {
+     "min": 4172486.333333382,
+     "p10": 4410930.666666596,
+     "median": 4761319.333333328
+    }
+   },
+   "min": 1.0351602520978214,
+   "p10": 1.054573712577797,
+   "controlMin": 0.9945385866085678,
+   "controlP10": 0.9919276385139271,
+   "verdict": "over"
+  }
+ ]
+}
