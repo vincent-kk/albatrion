@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-common-utils",
+  "ref": "perf/common-utils-speed-3 six commits + live-target assignment fix"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p1-14-clone-deep",
+   "pkg": "@winglet/common-utils",
+   "fn": "clone",
+   "input": "300-deep next chain",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 128,
+   "stat": {
+    "A1": {
+     "min": 40865.234375,
+     "p10": 41825.84374999987,
+     "median": 42619.14062499983
+    },
+    "A2": {
+     "min": 40949.546874999854,
+     "p10": 41905.27343750006,
+     "median": 42958.656250000175
+    },
+    "B": {
+     "min": 43236.32812499989,
+     "p10": 44459.64062499996,
+     "median": 45398.43750000028
+    }
+   },
+   "min": 1.0580222721407038,
+   "p10": 1.0629705617116236,
+   "controlMin": 1.00206318405582,
+   "controlP10": 1.001899057625112,
+   "verdict": "over"
+  }
+ ]
+}

@@ -1,0 +1,139 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-common-utils",
+  "ref": "perf/common-utils-speed-2 HEAD 50bfe1577 (final)"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p1-05-isEmpty-general",
+   "pkg": "@winglet/common-utils",
+   "fn": "isEmpty",
+   "input": "12 mixed values in order",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 32768,
+   "stat": {
+    "A1": {
+     "min": 142.36831665039028,
+     "p10": 143.87765502929702,
+     "median": 145.1505126953117
+    },
+    "A2": {
+     "min": 141.81646728515622,
+     "p10": 143.82299804687435,
+     "median": 145.0971069335942
+    },
+    "B": {
+     "min": 142.5857543945301,
+     "p10": 143.66024780273352,
+     "median": 144.9826660156247
+    }
+   },
+   "min": 1.0015272902655286,
+   "p10": 0.998488943772963,
+   "controlMin": 0.9961237908952086,
+   "controlP10": 0.9996201148648722,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-12-clone-builtins",
+   "pkg": "@winglet/common-utils",
+   "fn": "clone",
+   "input": "array and built-in values",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 16384,
+   "stat": {
+    "A1": {
+     "min": 364.4917602539065,
+     "p10": 367.21038818359267,
+     "median": 372.76715087890614
+    },
+    "A2": {
+     "min": 365.0079956054701,
+     "p10": 367.77746582031256,
+     "median": 375.98162841797483
+    },
+    "B": {
+     "min": 426.1423950195319,
+     "p10": 429.4790039062503,
+     "median": 437.1998901367205
+    }
+   },
+   "min": 1.1691413674829831,
+   "p10": 1.169572042966076,
+   "controlMin": 1.0014163155600666,
+   "controlP10": 1.001544285387799,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-14-clone-deep",
+   "pkg": "@winglet/common-utils",
+   "fn": "clone",
+   "input": "300-deep next chain",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 128,
+   "stat": {
+    "A1": {
+     "min": 40658.203125000015,
+     "p10": 41483.398437499374,
+     "median": 42263.0234375001
+    },
+    "A2": {
+     "min": 40837.89062499976,
+     "p10": 41334.640624999694,
+     "median": 42041.664062499876
+    },
+    "B": {
+     "min": 39196.28906249972,
+     "p10": 39617.187500000204,
+     "median": 40406.89843749989
+    }
+   },
+   "min": 0.9640438103473051,
+   "p10": 0.9550130652793338,
+   "controlMin": 1.0044194648604443,
+   "controlP10": 0.9964140398785358,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-20-isEmpty-local-map",
+   "pkg": "@winglet/common-utils",
+   "fn": "isEmpty",
+   "input": "nonempty local map",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 4194304,
+   "stat": {
+    "A1": {
+     "min": 1.8587608337402293,
+     "p10": 1.859327316284181,
+     "median": 1.8606581687927268
+    },
+    "A2": {
+     "min": 1.8587708473205533,
+     "p10": 1.859376668930066,
+     "median": 1.8608171939849656
+    },
+    "B": {
+     "min": 1.8587708473205533,
+     "p10": 1.8593568801879963,
+     "median": 1.8607079982757688
+    }
+   },
+   "min": 1.0000053872344103,
+   "p10": 1.0000159003224212,
+   "controlMin": 1.0000053872344103,
+   "controlP10": 1.0000265432801705,
+   "verdict": "pass"
+  }
+ ]
+}
