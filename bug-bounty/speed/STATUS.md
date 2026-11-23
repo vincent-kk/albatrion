@@ -48,3 +48,4 @@
 - `p2c-05`(antd-mobile 슬라이더)는 `beta-am543` 기준 트리에서 행의 `check`가 실패합니다. 행 구현을 살펴야 합니다.
 - `RESULTS-P1.md`와 `RESULTS-P2.md`는 아직 병합 전 값입니다. `common-utils`가 병합된 뒤 최종 재측정으로 갱신합니다.
 - 우선순위 1의 모든 개선 묶음이 병합됐습니다. 최종 24라운드 측정은 `results/final-p1`이며, 끝나면 `RESULTS-P1.md`를 갱신합니다.
+- Vincent의 결정(2026-11-23): 수정 비용 기록 네 건과 `schema-form` 현재 값을 수용했고, `clone` 생성기 제거를 승인했습니다(작업 트리 `speed-clone-keys`, 가지 `perf/common-utils-clone-keys`, 명세 `albatrion-speed/specs/t33-clone-generator.md`). `schema-form`의 `p1-17`과 `p1-19`만 수정 비용과 비효율을 한 번 더 분리합니다.

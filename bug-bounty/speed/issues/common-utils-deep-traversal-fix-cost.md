@@ -13,3 +13,4 @@
   - `cloneLite`에서 활성 집합을 빼면 1.058 / 1.060이 됩니다(대조군 0.997 / 1.004). "cloneLite rejects an unbounded cycle within the watchdog"가 실패합니다.
   - `cloneLite`에서 깊이 256의 깊은 경로 전환까지 빼면 1.026 / 1.026으로 기준 안에 들어옵니다(대조군 0.999 / 1.001). 깊은 입력 테스트 15개(`cloneLite.depth.round2`, `depth.round5`, `publicDepth.round5`, `deepProfiles.round5`)가 실패합니다. 2만 단계 입력에서 스택이 넘칩니다.
 - **판단** — 수정 비용의 세 조건을 충족합니다. 두 행의 입력은 순환 추적과 깊은 경로를 지나고, 남은 작업은 컨테이너마다 한 번씩만 수행되며, 귀속은 진단 빌드 측정으로 보였습니다.
+- **결정** — Vincent이 수정 비용으로 수용했습니다.
