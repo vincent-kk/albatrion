@@ -1,0 +1,139 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v26.13.1",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2c-06-checkboxChange",
+   "pkg": "@canard/schema-form-mui-plugin",
+   "fn": "checkbox change",
+   "input": "two options and unknown initial value",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 29,
+   "stat": {
+    "A1": {
+     "min": 283718.34482755605,
+     "p10": 300439.6206896641,
+     "median": 333952.5517241374
+    },
+    "A2": {
+     "min": 280311.7241378616,
+     "p10": 303745.65517242195,
+     "median": 335030.17241383565
+    },
+    "B": {
+     "min": 269202.51724133216,
+     "p10": 287412.31034484436,
+     "median": 321867.8275861278
+    }
+   },
+   "min": 0.9488371906474831,
+   "p10": 0.9566391732391509,
+   "controlMin": 0.9879929488106769,
+   "controlP10": 1.0110039896707659,
+   "verdict": "pass"
+  },
+  {
+   "row": "p2c-07-branchError",
+   "pkg": "@canard/schema-form-mui-plugin",
+   "fn": "branch error validation",
+   "input": "array minItems error",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 96,
+   "stat": {
+    "A1": {
+     "min": 64163.18749998595,
+     "p10": 69376.7395833144,
+     "median": 78924.87500000319
+    },
+    "A2": {
+     "min": 63664.49999993999,
+     "p10": 69315.95833334351,
+     "median": 78960.50000000799
+    },
+    "B": {
+     "min": 89888.42708334251,
+     "p10": 97238.31250005332,
+     "median": 110343.36458336232
+    }
+   },
+   "min": 1.4009345636602326,
+   "p10": 1.4015981881546915,
+   "controlMin": 0.9922278253391624,
+   "controlP10": 0.9991238958426709,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-08-context-error-cause",
+   "pkg": "@canard/schema-form",
+   "fn": "context Error cause update",
+   "input": "same-message errors with distinct non-enumerable causes",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 1264,
+   "stat": {
+    "A1": {
+     "min": 7622.403481008898,
+     "p10": 7830.554588609051,
+     "median": 8062.310917719952
+    },
+    "A2": {
+     "min": 7546.368670887564,
+     "p10": 7824.258702535147,
+     "median": 8057.815664557571
+    },
+    "B": {
+     "min": 45723.556962036295,
+     "p10": 47836.71914558641,
+     "median": 49211.50870252166
+    }
+   },
+   "min": 5.998574737739329,
+   "p10": 6.108982269936987,
+   "controlMin": 0.9900248248061424,
+   "controlP10": 0.9991959846518326,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-09-mount-100",
+   "pkg": "@canard/schema-form",
+   "fn": "Form SSR",
+   "input": "100 string fields and default values",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 9,
+   "stat": {
+    "A1": {
+     "min": 1088444.3333333014,
+     "p10": 1296666.6666666747,
+     "median": 1661647.9999999632
+    },
+    "A2": {
+     "min": 1027972.111111088,
+     "p10": 1294518.6666666158,
+     "median": 1650870.4444444852
+    },
+    "B": {
+     "min": 1098286.8888888787,
+     "p10": 1263342.6666666816,
+     "median": 1732439.7777778006
+    }
+   },
+   "min": 1.0090427734833578,
+   "p10": 0.9743002570694143,
+   "controlMin": 0.9444416031483939,
+   "controlP10": 0.9983434447300317,
+   "verdict": "void"
+  }
+ ]
+}

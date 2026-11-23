@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-json-schema",
+  "ref": "unknown"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 6,
+ "rows": [
+  {
+   "row": "p1-01-schema-first-miss",
+   "pkg": "@winglet/json-schema",
+   "fn": "resolve",
+   "input": "first miss with 20 resources",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 7952,
+   "stat": {
+    "A1": {
+     "min": 1113.8611670037037,
+     "p10": 1131.2355382298201,
+     "median": 1166.717303822452
+    },
+    "A2": {
+     "min": 1114.0758299800711,
+     "p10": 1140.5139587523793,
+     "median": 1168.8370221319062
+    },
+    "B": {
+     "min": 5233.8790241468905,
+     "p10": 5298.608400402333,
+     "median": 5407.097208248816
+    }
+   },
+   "min": 4.698861203884206,
+   "p10": 4.683912608238688,
+   "controlMin": 1.0001927196878089,
+   "controlP10": 1.0082020235477027,
+   "verdict": "over"
+  }
+ ]
+}

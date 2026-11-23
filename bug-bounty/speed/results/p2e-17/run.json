@@ -1,0 +1,77 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v26.13.1",
+ "cpu": "Apple M1 Max",
+ "rounds": 12,
+ "rows": [
+  {
+   "row": "p2e-17-virtual-getter-divergence",
+   "pkg": "@canard/schema-form",
+   "fn": "virtual divergence getter",
+   "input": "150000 reads over 128 independent nodes",
+   "inputKind": "repaired",
+   "kind": "micro",
+   "batch": 2,
+   "stat": {
+    "A1": {
+     "min": 4214041.500000007,
+     "p10": 4271999.999999992,
+     "median": 4613083.500000016
+    },
+    "A2": {
+     "min": 4217500.00000003,
+     "p10": 4304562.499999975,
+     "median": 4748791.499999981
+    },
+    "B": {
+     "min": 10264479.00000005,
+     "p10": 10380833.499999994,
+     "median": 10570500.00000004
+    }
+   },
+   "min": 2.4357802361462344,
+   "p10": 2.4299703885767823,
+   "controlMin": 1.000820708576321,
+   "controlP10": 1.0076223080524305,
+   "verdict": "over"
+  },
+  {
+   "row": "p2e-18-virtual-getter-inactive",
+   "pkg": "@canard/schema-form",
+   "fn": "virtual inactive getter",
+   "input": "1200000 reads over 128 independent nodes",
+   "inputKind": "repaired",
+   "kind": "micro",
+   "batch": 2,
+   "stat": {
+    "A1": {
+     "min": 2987646.0000000405,
+     "p10": 3007729.0000000405,
+     "median": 3126479.0000000177
+    },
+    "A2": {
+     "min": 2982166.500000005,
+     "p10": 2989479.000000017,
+     "median": 3011021.000000028
+    },
+    "B": {
+     "min": 9990625.000000022,
+     "p10": 10536645.999999905,
+     "median": 11051958.000000013
+    }
+   },
+   "min": 3.3439788381889577,
+   "p10": 3.50318994829646,
+   "controlMin": 0.9981659473712631,
+   "controlP10": 0.9939322990867784,
+   "verdict": "over"
+  }
+ ]
+}

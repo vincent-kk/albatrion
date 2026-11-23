@@ -1,7 +1,14 @@
+import { getSimpleRuleEnd } from '@/style-utils/utils/cssTokens/getSimpleRuleEnd';
 import { processCssSheet } from '@/style-utils/utils/cssTokens/processCssSheet/processCssSheet';
 
 import { type StyleManagerConfig, type StyleRoot } from './type';
 import { RuleScoper } from './utils/RuleScoper';
+
+/** A registered manager shared with its injectors; `destroy` clears it so they release the manager. */
+type ManagerLink = { manager: StyleManager | null };
+
+/** Link of an injector that has not resolved a manager yet. */
+const UNRESOLVED_LINK: ManagerLink = { manager: null };
 
 /**
  * A scoped CSS management system that provides efficient style injection and cleanup.
@@ -73,6 +80,11 @@ export class StyleManager {
   private __scope__: string;
   private __root__: StyleRoot;
   private __isShadowDOM__: boolean;
+  /**
+   * Created by the first injector that resolves this manager; `destroy` clears
+   * its manager when the manager leaves the registry.
+   */
+  private __link__: ManagerLink | null = null;
 
   private constructor(
     private scopeId: string,
@@ -135,6 +147,36 @@ export class StyleManager {
   }
 
   /**
+   * Creates an injector that adds styles to the manager registered for a scope.
+   *
+   * The injector looks the manager up with `get` on its first call and after the
+   * manager leaves the registry, and reuses it in between without holding a
+   * removed manager alive.
+   *
+   * @param scopeId - The scope whose registered manager receives each style
+   * @param config - Optional ShadowRoot target, captured when the injector is created
+   * @returns An injector taking `(styleId, cssString, compressed?)` and returning
+   *   a cleanup that removes the style from the manager that received it
+   */
+  public static createInjector(
+    scopeId: string,
+    config?: StyleManagerConfig,
+  ): (styleId: string, cssString: string, compressed?: boolean) => () => void {
+    const shadowRoot = config?.shadowRoot;
+    const target = shadowRoot ? { shadowRoot } : undefined;
+    let link = UNRESOLVED_LINK;
+    return (styleId, cssString, compressed = false) => {
+      let owner = link.manager;
+      if (owner === null) {
+        owner = StyleManager.get(scopeId, target);
+        link = owner.__link__ ??= { manager: owner };
+      }
+      owner.add(styleId, cssString, compressed);
+      return () => owner.remove(styleId);
+    };
+  }
+
+  /**
    * Adds or updates a CSS style in this scope.
    *
    * The CSS will be automatically scoped with the scope ID and applied to the DOM.
@@ -173,8 +215,22 @@ export class StyleManager {
 
     // Pre-process the scoped CSS for this specific ID
     const shadow = this.__isShadowDOM__;
-    const preparedCSS = processCssSheet(css, !compressed, shadow ? 'shadow' : 'document');
-    const compressedCSS = shadow ? preparedCSS : this.__scopeCSS__(preparedCSS);
+    let compressedCSS: string;
+    if (
+      compressed &&
+      !shadow &&
+      typeof css === 'string' &&
+      getSimpleRuleEnd(css, 0) === css.length
+    ) {
+      compressedCSS = '.' + this.__scope__ + ' ' + css;
+    } else {
+      const preparedCSS = processCssSheet(
+        css,
+        !compressed,
+        shadow ? 'shadow' : 'document',
+      );
+      compressedCSS = shadow ? preparedCSS : this.__scopeCSS__(preparedCSS);
+    }
 
     // Only mark as dirty if processed CSS actually changed
     if (previousProcessedCSS !== compressedCSS) {
@@ -273,6 +329,9 @@ export class StyleManager {
     this.__processedStyles__.clear();
     this.__dirty__ = false;
 
+    // The entry may be a newer manager when a destroyed one is destroyed again.
+    const registered = this.__registry__.get(this.scopeId);
+    if (registered?.__link__) registered.__link__.manager = null;
     this.__registry__.delete(this.scopeId);
   }
 

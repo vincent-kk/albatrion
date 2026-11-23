@@ -1,0 +1,139 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v26.13.1",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2c-18-installer-new",
+   "pkg": "@slats/agents-assets-sync",
+   "fn": "installer-new",
+   "input": "16 skill files",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 3,
+   "stat": {
+    "A1": {
+     "min": 3302096.9999999274,
+     "p10": 3709597.0000000303,
+     "median": 3999333.333333349
+    },
+    "A2": {
+     "min": 3400167.000000086,
+     "p10": 3740361.3333333395,
+     "median": 4041375.3333333866
+    },
+    "B": {
+     "min": 6680166.666666613,
+     "p10": 7223930.333333253,
+     "median": 7753694.666666585
+    }
+   },
+   "min": 2.0230074000451106,
+   "p10": 1.947362566158317,
+   "controlMin": 1.0296993092571662,
+   "controlP10": 1.0082931739844812,
+   "verdict": "void"
+  },
+  {
+   "row": "p2c-19-installer-unchanged",
+   "pkg": "@slats/agents-assets-sync",
+   "fn": "installer-unchanged",
+   "input": "16 skill files",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 4,
+   "stat": {
+    "A1": {
+     "min": 2048499.5000001618,
+     "p10": 2145760.4999999376,
+     "median": 2291718.7500000866
+    },
+    "A2": {
+     "min": 2067031.5000000983,
+     "p10": 2151864.5000000447,
+     "median": 2294031.250000046
+    },
+    "B": {
+     "min": 4552770.749999809,
+     "p10": 4683499.749999953,
+     "median": 4932500.249999976
+    }
+   },
+   "min": 2.22249053514509,
+   "p10": 2.182675909077499,
+   "controlMin": 1.0090466216857437,
+   "controlP10": 1.002844679077701,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-20-installer-force",
+   "pkg": "@slats/agents-assets-sync",
+   "fn": "installer-force",
+   "input": "16 skills plus one orphan and one local edit",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 4,
+   "stat": {
+    "A1": {
+     "min": 2217927.250000116,
+     "p10": 2474552.0000000168,
+     "median": 2673697.999999945
+    },
+    "A2": {
+     "min": 2310156.0000000065,
+     "p10": 2485344.0000000545,
+     "median": 2663729.000000103
+    },
+    "B": {
+     "min": 6112822.74999985,
+     "p10": 6448426.750000181,
+     "median": 6747968.500000013
+    }
+   },
+   "min": 2.756097049621231,
+   "p10": 2.605896643109596,
+   "controlMin": 1.0415833071169875,
+   "controlP10": 1.0043611934604881,
+   "verdict": "void"
+  },
+  {
+   "row": "p2c-21-isEmpty-foreign-map",
+   "pkg": "@winglet/common-utils",
+   "fn": "isEmpty",
+   "input": "300000 independent foreign Maps",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 1,
+   "stat": {
+    "A1": {
+     "min": 5517708.000000027,
+     "p10": 5713666.999999987,
+     "median": 5864541.999999972
+    },
+    "A2": {
+     "min": 5507292.0000000065,
+     "p10": 5714207.999999985,
+     "median": 5855916.999999977
+    },
+    "B": {
+     "min": 5527792.00000009,
+     "p10": 5710750.000000019,
+     "median": 5835207.999999966
+    }
+   },
+   "min": 1.001827570433242,
+   "p10": 0.9994894697223398,
+   "controlMin": 0.9981122596556359,
+   "controlP10": 1.0000946852520454,
+   "verdict": "pass"
+  }
+ ]
+}

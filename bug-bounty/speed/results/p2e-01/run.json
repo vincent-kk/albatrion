@@ -1,0 +1,139 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v26.13.1",
+ "cpu": "Apple M1 Max",
+ "rounds": 12,
+ "rows": [
+  {
+   "row": "p2e-01-ab-reset-pending",
+   "pkg": "@canard/schema-form",
+   "fn": "batch reset pending",
+   "input": "eight sibling writes and object reset",
+   "inputKind": "repaired",
+   "kind": "micro",
+   "batch": 256,
+   "stat": {
+    "A1": {
+     "min": 25763.34375,
+     "p10": 27409.8281249997,
+     "median": 29873.210937499727
+    },
+    "A2": {
+     "min": 25736.328125000262,
+     "p10": 27368.488281249713,
+     "median": 29991.375000000266
+    },
+    "B": {
+     "min": 25348.957031249953,
+     "p10": 26798.667968749967,
+     "median": 29069.988281250404
+    }
+   },
+   "min": 0.9839156468674588,
+   "p10": 0.9777028825769136,
+   "controlMin": 0.9989513929068412,
+   "controlP10": 0.9984917875602334,
+   "verdict": "pass"
+  },
+  {
+   "row": "p2e-02-virtual-merge-one",
+   "pkg": "@canard/schema-form",
+   "fn": "virtual merge",
+   "input": "one virtual member and disjoint sibling write",
+   "inputKind": "repaired",
+   "kind": "micro",
+   "batch": 512,
+   "stat": {
+    "A1": {
+     "min": 16151.285156249973,
+     "p10": 16815.42968749983,
+     "median": 18163.410156250004
+    },
+    "A2": {
+     "min": 16191.080078124864,
+     "p10": 16842.60937500004,
+     "median": 18324.86914062481
+    },
+    "B": {
+     "min": 16785.97070312504,
+     "p10": 17573.404296874927,
+     "median": 18985.43164062505
+    }
+   },
+   "min": 1.0392962876164358,
+   "p10": 1.0450761368256059,
+   "controlMin": 1.002463885783076,
+   "controlP10": 1.0016163540275402,
+   "verdict": "over"
+  },
+  {
+   "row": "p2e-03-ab-derive-disjoint",
+   "pkg": "@canard/schema-form",
+   "fn": "disjoint derived writes",
+   "input": "one source and two derived siblings",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 512,
+   "stat": {
+    "A1": {
+     "min": 9979.248046875,
+     "p10": 10828.613281250065,
+     "median": 11745.525390625122
+    },
+    "A2": {
+     "min": 10306.558593750071,
+     "p10": 10846.027343750064,
+     "median": 11833.658203125096
+    },
+    "B": {
+     "min": 10457.031250000082,
+     "p10": 11197.589843749967,
+     "median": 12287.761718750013
+    }
+   },
+   "min": 1.047877675840987,
+   "p10": 1.0340742210398068,
+   "controlMin": 1.0327991192660622,
+   "controlP10": 1.0016081525905216,
+   "verdict": "void"
+  },
+  {
+   "row": "p2e-04-virtual-write",
+   "pkg": "@canard/schema-form",
+   "fn": "virtual write",
+   "input": "two active virtual members",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 1024,
+   "stat": {
+    "A1": {
+     "min": 4939.859374999966,
+     "p10": 5124.145507812483,
+     "median": 5623.087890625045
+    },
+    "A2": {
+     "min": 4928.426757812465,
+     "p10": 5133.584960937521,
+     "median": 5623.168945312562
+    },
+    "B": {
+     "min": 5187.622070312536,
+     "p10": 5396.60644531248,
+     "median": 5834.391601562516
+    }
+   },
+   "min": 1.0501558195292902,
+   "p10": 1.053171975129237,
+   "controlMin": 0.9976856391407901,
+   "controlP10": 1.0018421516544849,
+   "verdict": "over"
+  }
+ ]
+}

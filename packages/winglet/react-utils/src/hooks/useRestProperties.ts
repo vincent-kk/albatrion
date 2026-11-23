@@ -5,7 +5,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { Dictionary } from '@aileron/declare';
 
 import { equalRestSymbols } from './utils/equalRestSymbols';
-import { useCommittedReference } from './utils/useCommittedReference';
+import { useCommitEffect } from './utils/useCommitEffect';
 
 /**
  * Maintains referential stability for object props by returning the previous reference when the contents are shallow-equal.
@@ -81,6 +81,8 @@ export const useRestProperties = <T extends Dictionary>(props: T): T => {
       ? { value: previous.value, keys: previousKeys }
       : previous;
   }, [props]);
-  useCommittedReference(holder, next);
+  useCommitEffect(() => {
+    holder.current = next;
+  }, [next]);
   return props ? next.value : props;
 };
