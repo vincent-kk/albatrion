@@ -56,7 +56,7 @@
 
 진행 중이던 것:
 
-1. **`clone` 생성기 제거 (승인됨)** — 작업 트리 `speed-clone-keys`, 가지 `perf/common-utils-clone-keys`, 명세 `albatrion-speed/specs/t33-clone-generator.md`, 배정 `ctx_548f17aec9b7`. 작업자가 끝냈으면 작업 트리의 `SPEED-REPORT.md`를 읽고, 독립 검증(이전 검증 기록은 `albatrion-speed/analysis/verify-common-utils.md`) → PR → 병합 → 작업 트리 삭제 순서로 진행합니다. 끝내지 못했으면 같은 명세로 다시 배정합니다.
+1. **`clone` 생성기 제거** — PR #689로 병합됐고 작업 트리와 가지를 정리했습니다. `albatrion-speed/opt` 트리에는 아직 반영되지 않았습니다.
 2. **흔들리는 세 행** — `p1-07`, `p1-11`, `p1-24`는 Vincent이 현재 값으로 수용했습니다. 더 할 일이 없습니다.
 
 아직 시작하지 않은 것:
@@ -64,6 +64,8 @@
 3. **우선순위 2 초과 행의 원인 분석** — [RESULTS-P2.md](RESULTS-P2.md)는 병합 전 값입니다. 병합 뒤 값은 `results/opt-p2c-a`, `opt-p2c-b`, `opt-p2e`, `opt-rerun-p2-*`에 있습니다. 평범한 입력 초과 행(`p2c-09`, `p2c-18`, `p2c-19`, `p2c-22`, `p2e-03`, `p2e-09`, `p2e-12`)이 개선 대상이고, 수정 경로 행은 프로파일로 낭비를 걷어낸 뒤 진단 빌드로 귀속합니다. 배수가 큰 `style-utils` 계열(`p2c-12`~`17`)과 `p2c-03`부터 봅니다.
 4. **우선순위 2 화면 행 25개** — `rows/p2u-*.mjs`는 중단된 작업자가 남긴 미검증 초안입니다. 명세는 `albatrion-speed/specs/t29-rows-p2-ui.md`입니다. `p2c-05`는 두 번째 클릭부터 값이 바뀌지 않는 행 결함이 있습니다(양쪽 트리에서 동일).
 5. **우선순위 3의 19행** — [ROWS-P3.md](ROWS-P3.md)대로 구현하고 잽니다.
-6. **마무리** — `bug-bounty/SPEED-TARGETS.md` 갱신, `sources/`와 이 파일 삭제, 저장소 밖 `albatrion-speed/`의 `analysis`, `specs`, `pr` 삭제, 가지 `perf/common-utils-speed-2` 삭제(생성기 변경이 병합된 뒤).
+6. **마무리** — `bug-bounty/SPEED-TARGETS.md` 갱신, `sources/`와 이 파일 삭제, 저장소 밖 `albatrion-speed/`의 `analysis`, `specs`, `pr` 삭제.
 
 측정 트리는 `albatrion-speed/beta`(기준), `beta-am543`(antd-mobile 5.43.0 기준), `opt`(병합된 개선 반영, `.speed-ref`가 반영한 커밋)입니다.
+
+`1.0.0/optimize`를 `1.0.0-beta`로 올리는 초안 PR이 열려 있습니다. 남은 3~6번이 끝나면 본문을 갱신합니다.
