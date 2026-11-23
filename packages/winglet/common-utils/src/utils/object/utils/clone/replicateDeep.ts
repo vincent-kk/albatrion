@@ -8,8 +8,8 @@ type CloneFrame = {
   target: object;
   depth: number;
   keys: Generator<PropertyKey>;
-  /** Whether target's chain is only `Object.prototype` or empty, so a key absent from it is assignable. */
-  assignable: boolean;
+  /** Whether target is an ordinary object; an array target never becomes one, so this stays true to its creation. */
+  dictionary: boolean;
 };
 
 /**
@@ -63,8 +63,15 @@ export function replicateDeep(
         copy = child.target;
       } else copy = replicate(value, limit, childDepth, cache);
     }
-    // Assigning a key absent from an ordinary chain creates the same own data property.
-    if (frame.assignable && !(key in frame.target))
+    // User code may change the target mid-call, so its live state decides: on an extensible
+    // ordinary object whose chain is Object.prototype or empty and lacks the key, assigning
+    // creates the same own data property that defineProperty would, with no trap or setter.
+    const chain = frame.dictionary ? getPrototypeOf(frame.target) : undefined;
+    if (
+      (chain === OBJECT_PROTOTYPE || chain === null) &&
+      isExtensible(frame.target) &&
+      !(key in frame.target)
+    )
       (frame.target as Record<PropertyKey, unknown>)[key] = copy;
     else
       Object.defineProperty(frame.target, key, {
@@ -96,8 +103,9 @@ function createFrame(
     target,
     depth,
     keys: getCloneFrameKeys(source),
-    assignable: prototype === OBJECT_PROTOTYPE || prototype === null,
+    dictionary: prototype !== undefined,
   };
 }
 
 const OBJECT_PROTOTYPE = Object.prototype;
+const { getPrototypeOf, isExtensible } = Object;
