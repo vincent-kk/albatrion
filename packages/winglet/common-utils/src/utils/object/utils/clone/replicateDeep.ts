@@ -55,8 +55,12 @@ export function replicateDeep(
       key = next.value;
     } else {
       let names = frame.names;
-      if (names === null) names = frame.names = Object.keys(frame.source);
-      if (frame.position === names.length) {
+      if (names === null) {
+        // Checked before listing keys so a proxy revoked meanwhile fails on IsArray first.
+        Array.isArray(frame.source);
+        names = frame.names = Object.keys(frame.source);
+      }
+      if (frame.position >= names.length) {
         if (frame.symbols) {
           frames.pop();
           continue;

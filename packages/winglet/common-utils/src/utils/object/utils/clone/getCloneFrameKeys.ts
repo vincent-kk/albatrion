@@ -6,6 +6,8 @@
 export function* getCloneFrameKeys(
   source: readonly unknown[],
 ): Generator<PropertyKey> {
+  // Checked before reading length so a proxy revoked meanwhile fails on IsArray first.
+  Array.isArray(source);
   for (let index = 0, length = source.length; index < length; index++)
     if (index in source) yield index;
   if ('index' in source) yield 'index';
