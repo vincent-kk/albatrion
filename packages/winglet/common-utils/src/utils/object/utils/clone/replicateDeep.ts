@@ -1,5 +1,6 @@
 import { isPlainObject } from '@/common-utils/utils/filter';
 
+import { getSymbols } from '../../getSymbols';
 import { getCloneFrameKeys } from './getCloneFrameKeys';
 
 /** One container and its suspended position while copying a child. */
@@ -7,7 +8,14 @@ type CloneFrame = {
   source: object;
   target: object;
   depth: number;
-  keys: Generator<PropertyKey>;
+  /** Array key iterator, or null for a dictionary that walks `names`. */
+  keys: Generator<PropertyKey> | null;
+  /** Dictionary string keys, then its enumerable symbols; listed when first needed. */
+  names: PropertyKey[] | null;
+  /** Index of the next entry of `names`. */
+  position: number;
+  /** Whether `names` already holds the symbols. */
+  symbols: boolean;
   /** Whether target is an ordinary object; an array target never becomes one, so this stays true to its creation. */
   dictionary: boolean;
 };
@@ -37,12 +45,38 @@ export function replicateDeep(
   const frames: CloneFrame[] = [root];
   while (frames.length) {
     const frame = frames[frames.length - 1];
-    const next = frame.keys.next();
-    if (next.done) {
-      frames.pop();
-      continue;
+    let key: PropertyKey;
+    if (frame.keys !== null) {
+      const next = frame.keys.next();
+      if (next.done) {
+        frames.pop();
+        continue;
+      }
+      key = next.value;
+    } else {
+      let names = frame.names;
+      if (names === null) {
+        // Checked before listing keys so a proxy revoked meanwhile fails on IsArray first.
+        Array.isArray(frame.source);
+        names = frame.names = Object.keys(frame.source);
+        // A replaced Object.keys may return a non-array whose length never ends the walk.
+        if (!isArray(names)) names = frame.names = Array.from(names);
+      }
+      if (frame.position >= names.length) {
+        if (frame.symbols) {
+          frames.pop();
+          continue;
+        }
+        names = frame.names = getSymbols(frame.source);
+        frame.position = 0;
+        frame.symbols = true;
+        if (names.length === 0) {
+          frames.pop();
+          continue;
+        }
+      }
+      key = names[frame.position++];
     }
-    const key = next.value;
     const childDepth = frame.depth + 1;
     const value: unknown = Reflect.get(frame.source, key);
     let copy = value;
@@ -90,22 +124,35 @@ function createFrame(
   depth: number,
   cache: Map<object, unknown>,
 ): CloneFrame {
-  const prototype = Array.isArray(source)
-    ? undefined
-    : Object.getPrototypeOf(source);
-  const target: object =
-    prototype === undefined
-      ? new Array((source as unknown[]).length)
-      : Object.create(prototype);
+  if (Array.isArray(source)) {
+    const target: object = new Array(source.length);
+    cache.set(source, target);
+    return {
+      source,
+      target,
+      depth,
+      keys: getCloneFrameKeys(source),
+      names: null,
+      position: 0,
+      symbols: false,
+      dictionary: false,
+    };
+  }
+  const prototype = Object.getPrototypeOf(source);
+  const target: object = Object.create(prototype);
   cache.set(source, target);
   return {
     source,
     target,
     depth,
-    keys: getCloneFrameKeys(source),
-    dictionary: prototype !== undefined,
+    keys: null,
+    names: null,
+    position: 0,
+    symbols: false,
+    dictionary: true,
   };
 }
 
 const OBJECT_PROTOTYPE = Object.prototype;
 const { getPrototypeOf, isExtensible } = Object;
+const { isArray } = Array;
