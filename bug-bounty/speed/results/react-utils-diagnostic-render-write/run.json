@@ -1,0 +1,77 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-react-utils",
+  "ref": "unknown"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p1-02-rest-changed",
+   "pkg": "@winglet/react-utils",
+   "fn": "useRestProperties",
+   "input": "2000 hook calls in one rerender",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 45,
+   "stat": {
+    "A1": {
+     "min": 209286.02222223463,
+     "p10": 220396.33333332252,
+     "median": 231125.95555553527
+    },
+    "A2": {
+     "min": 213792.57777778344,
+     "p10": 219749.06666666054,
+     "median": 230572.24444442504
+    },
+    "B": {
+     "min": 232494.37777779653,
+     "p10": 243391.7111111138,
+     "median": 258880.5777777654
+    }
+   },
+   "min": 1.110893003312556,
+   "p10": 1.1043364806936855,
+   "controlMin": 1.0215329982752668,
+   "controlP10": 0.9970631695324846,
+   "verdict": "void"
+  },
+  {
+   "row": "p1-03-rest-equal",
+   "pkg": "@winglet/react-utils",
+   "fn": "useRestProperties",
+   "input": "2000 hook calls in one rerender",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 52,
+   "stat": {
+    "A1": {
+     "min": 185402.23076925817,
+     "p10": 194909.44230770643,
+     "median": 203131.38461540348
+    },
+    "A2": {
+     "min": 186916.65384614436,
+     "p10": 197645.90384614587,
+     "median": 204418.17307691788
+    },
+    "B": {
+     "min": 309497.5769230665,
+     "p10": 321641.86538462376,
+     "median": 332499.9423076896
+    }
+   },
+   "min": 1.669330383129267,
+   "p10": 1.6502118192757587,
+   "controlMin": 1.0081683109777193,
+   "controlP10": 1.0140396560886946,
+   "verdict": "over"
+  }
+ ]
+}
