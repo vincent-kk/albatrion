@@ -501,7 +501,7 @@ export class ResolverStore {
       const canonical = isCanonicalRetrievalURI(key) && !key.includes('xn--');
       if (canonical) (this.canonical ??= new Set()).add(key);
       const uri = canonical ? key : resolveURI(key, '');
-      if (uri === undefined || !isAbsoluteURI(uri)) continue;
+      if (uri === undefined || (!canonical && !isAbsoluteURI(uri))) continue;
       const previous = keys.get(uri);
       if (previous !== undefined && source[previous] !== source[key])
         this.duplicate(uri, previous, key);
