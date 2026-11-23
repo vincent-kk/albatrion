@@ -1,0 +1,139 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/head",
+  "ref": "d78e45c6b7ad0ce88783d720c19cbde52732acfe"
+ },
+ "node": "v26.13.1",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2c-01-checkboxChange",
+   "pkg": "@canard/schema-form-antd5-plugin",
+   "fn": "checkbox change",
+   "input": "two options and unknown initial value",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 29,
+   "stat": {
+    "A1": {
+     "min": 245301.65517234278,
+     "p10": 259683.8275862081,
+     "median": 281520.10344826424
+    },
+    "A2": {
+     "min": 244718.34482762366,
+     "p10": 262114.99999997864,
+     "median": 285670.93103438
+    },
+    "B": {
+     "min": 186574.79310341246,
+     "p10": 193014.482758654,
+     "median": 206952.55172413768
+    }
+   },
+   "min": 0.7605932906254942,
+   "p10": 0.7432672436814662,
+   "controlMin": 0.9976220692668816,
+   "controlP10": 1.0093620478270386,
+   "verdict": "pass"
+  },
+  {
+   "row": "p2c-02-branchError",
+   "pkg": "@canard/schema-form-antd5-plugin",
+   "fn": "branch error validation",
+   "input": "array minItems error",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 36,
+   "stat": {
+    "A1": {
+     "min": 131997.66666664596,
+     "p10": 142747.80555554875,
+     "median": 156607.6388890249
+    },
+    "A2": {
+     "min": 131765.11111100807,
+     "p10": 142944.47222222414,
+     "median": 157161.9999999838
+    },
+    "B": {
+     "min": 263575.13888888207,
+     "p10": 284312.5555555793,
+     "median": 306024.2499999378
+    }
+   },
+   "min": 1.9968166524831759,
+   "p10": 1.9917122680036028,
+   "controlMin": 0.9982381843443854,
+   "controlP10": 1.0013777211208956,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-03-coreExternalArray",
+   "pkg": "@canard/schema-form-antd5-plugin",
+   "fn": "external array child write",
+   "input": "three options and a one-item array",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 67,
+   "stat": {
+    "A1": {
+     "min": 136854.49253729015,
+     "p10": 150588.35820892494,
+     "median": 161861.91044774736
+    },
+    "A2": {
+     "min": 139606.35820896993,
+     "p10": 150084.58208951956,
+     "median": 160871.9552238803
+    },
+    "B": {
+     "min": 1057423.4328357591,
+     "p10": 1085712.0746269214,
+     "median": 1120346.4179105193
+    }
+   },
+   "min": 7.726625653502987,
+   "p10": 7.209800860705409,
+   "controlMin": 1.0201079673795141,
+   "controlP10": 0.9966546144376816,
+   "verdict": "void"
+  },
+  {
+   "row": "p2c-04-multiEnumMount",
+   "pkg": "@canard/schema-form-antd6-plugin",
+   "fn": "multi enum mount",
+   "input": "two options and an unknown object",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 3,
+   "stat": {
+    "A1": {
+     "min": 3995000.3333331854,
+     "p10": 4103222.0000000354,
+     "median": 4403861.333333225
+    },
+    "A2": {
+     "min": 4005610.9999998924,
+     "p10": 4124278.0000000796,
+     "median": 4438263.666666747
+    },
+    "B": {
+     "min": 4167472.333333535,
+     "p10": 4335763.999999926,
+     "median": 4636999.999999868
+    }
+   },
+   "min": 1.0431719613541182,
+   "p10": 1.056673024272118,
+   "controlMin": 1.0026559864283802,
+   "controlP10": 1.00513157708748,
+   "verdict": "over"
+  }
+ ]
+}
