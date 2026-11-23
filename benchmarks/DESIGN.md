@@ -47,7 +47,7 @@ Warm up for a fixed duration, not a fixed count: a count that suits a nanosecond
 
 ## 10. Hold the environment constant and state it
 
-Use the same runtime flags and environment for every arm, set by the harness rather than inherited: `NODE_ENV=production` for React, an empty `NODE_OPTIONS`, garbage collection exposed and triggered before sampling. Run one measurement at a time on the machine. Record the runtime version and CPU in the output.
+Use the same runtime flags and environment for every arm, set by the harness rather than inherited: `NODE_ENV=production` for React, an empty `NODE_OPTIONS`, garbage collection exposed and triggered before sampling. Run one measurement at a time on the machine, and enforce it with a lock rather than a convention when several people or agents can start one. Record the runtime version and CPU in the output.
 
 ## 11. One row, one file, one stated input
 

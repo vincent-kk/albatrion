@@ -4,7 +4,7 @@ import { createTopologicalBuild } from "./helpers/createTopologicalBuild.mjs";
 /**
  * Emits manifest-topological builds with the schema-form bootstrap and the plugin packages its tests import (AJV 6/7/8, antd5).
  * @param {string[]} affected Names whose build dependencies must exist.
- * @param {object[]} workspaces Manifest dependency graph and current scripts.
+ * @param {object[]} workspaces Manifest and selection (manifest plus source import) edges and current scripts.
  * @param {string} tier Check policy; PR Ant Design jobs need core artifacts as consumers only.
  * @param {object} [options] Build policy for this shard.
  * @param {boolean} [options.bootstrapSchemaForm] Use the core artifacts when another shard runs the full schema-form build.
@@ -17,7 +17,11 @@ export function createBuildSteps(
   tier = "pre-release",
   { bootstrapSchemaForm = false, parallelJobs } = {},
 ) {
-  const closure = collectClosure(affected, workspaces);
+  // Checked workspaces resolve the built exports of every workspace they import, declared in their manifest or not.
+  const imported = workspaces
+    .filter(({ name }) => affected.includes(name))
+    .flatMap(({ selectionDependencies }) => selectionDependencies);
+  const closure = collectClosure([...affected, ...imported], workspaces);
   const schemaForm = "@canard/schema-form";
   const ajvPlugins = [6, 7, 8].map(
     (version) => `@canard/schema-form-ajv${version}-plugin`,
