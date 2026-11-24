@@ -1,0 +1,108 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-style-utils-p2",
+  "ref": "unknown"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2c-15-escapes",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "200 compressed rules with escaped space and quote",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 670,
+   "stat": {
+    "A1": {
+     "min": 11662.235820892027,
+     "p10": 11704.280597006407,
+     "median": 11874.01194029754
+    },
+    "A2": {
+     "min": 11654.667164173507,
+     "p10": 11707.082089554462,
+     "median": 11867.489552246501
+    },
+    "B": {
+     "min": 46422.09104477985,
+     "p10": 46579.77014925659,
+     "median": 46958.895522380204
+    }
+   },
+   "min": 3.9805481348283265,
+   "p10": 3.979720903236911,
+   "controlMin": 0.9993510115183093,
+   "controlP10": 1.0002393562359375,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-16-pseudo",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "200 compressed functional-pseudo-class rules",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 354,
+   "stat": {
+    "A1": {
+     "min": 12001.44632772249,
+     "p10": 12103.471751383513,
+     "median": 15108.644067798345
+    },
+    "A2": {
+     "min": 11978.186440663163,
+     "p10": 12088.392655392443,
+     "median": 14466.790960441513
+    },
+    "B": {
+     "min": 52665.0367231805,
+     "p10": 53521.42655365858,
+     "median": 54272.601694911325
+    }
+   },
+   "min": 4.3882241594105205,
+   "p10": 4.421989628516355,
+   "controlMin": 0.9980619096712037,
+   "controlP10": 0.9987541511806853,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-17-mixed",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "six 200-rule sheets, compressed and scoped",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 8,
+   "stat": {
+    "A1": {
+     "min": 710124.9999999482,
+     "p10": 721697.9999999467,
+     "median": 735953.2500000796
+    },
+    "A2": {
+     "min": 711411.6250000393,
+     "p10": 720395.8750000084,
+     "median": 736604.0000000283
+    },
+    "B": {
+     "min": 2187348.874999941,
+     "p10": 2232197.8750000256,
+     "median": 2334401.1249999427
+    }
+   },
+   "min": 3.0802307692309108,
+   "p10": 3.0929805472651863,
+   "controlMin": 1.0018118289034905,
+   "controlP10": 0.9981957480830785,
+   "verdict": "over"
+  }
+ ]
+}

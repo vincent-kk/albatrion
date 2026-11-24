@@ -1,0 +1,108 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-style-utils-p2",
+  "ref": "unknown"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2c-12-lists",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "200 compressed selector-list rules",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 395,
+   "stat": {
+    "A1": {
+     "min": 11116.362025302207,
+     "p10": 11276.665822766472,
+     "median": 12597.587341779332
+    },
+    "A2": {
+     "min": 11159.805063292695,
+     "p10": 11300.313924066704,
+     "median": 12718.663291138622
+    },
+    "B": {
+     "min": 55707.01012660535,
+     "p10": 56324.050632911516,
+     "median": 57001.79999999369
+    }
+   },
+   "min": 5.011262677466724,
+   "p10": 4.994743261718267,
+   "controlMin": 1.003908026555055,
+   "controlP10": 1.0020970827434195,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-13-opaque",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "200 compressed rules with quoted and functional selectors",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 376,
+   "stat": {
+    "A1": {
+     "min": 12032.489361711263,
+     "p10": 12450.364361709346,
+     "median": 13029.374999985792
+    },
+    "A2": {
+     "min": 12046.707446800496,
+     "p10": 12439.699468078734,
+     "median": 13228.851063840775
+    },
+    "B": {
+     "min": 62318.6648936316,
+     "p10": 63175.06914891713,
+     "median": 64052.49999998921
+    }
+   },
+   "min": 5.179199666856687,
+   "p10": 5.074154242683035,
+   "controlMin": 1.0011816411934238,
+   "controlP10": 0.9991434071067501,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-14-media",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "200 compressed media groups",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 143,
+   "stat": {
+    "A1": {
+     "min": 31587.11888111681,
+     "p10": 31890.15384616421,
+     "median": 32869.72727273933
+    },
+    "A2": {
+     "min": 31618.251748276016,
+     "p10": 31879.650349652253,
+     "median": 32860.41958042572
+    },
+    "B": {
+     "min": 74427.72027973985,
+     "p10": 74864.80419580542,
+     "median": 75550.98601396885
+    }
+   },
+   "min": 2.3562680901623385,
+   "p10": 2.347583663501525,
+   "controlMin": 1.0009856190834112,
+   "controlP10": 0.9996706351257312,
+   "verdict": "over"
+  }
+ ]
+}
