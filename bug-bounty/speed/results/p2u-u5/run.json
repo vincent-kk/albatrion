@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "eefe19e8c35b35ed32d3bc4be5571c1f367b6c11"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 12,
+ "rows": [
+  {
+   "row": "p2u-21-mui-datePickerMount",
+   "pkg": "@canard/schema-form-mui-plugin",
+   "fn": "date picker mount",
+   "input": "bounded date, picker closed",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 6,
+   "stat": {
+    "A1": {
+     "min": 1679541.666666561,
+     "p10": 1769430.333333427,
+     "median": 2005201.3333333132
+    },
+    "A2": {
+     "min": 1650715.1666666383,
+     "p10": 1729750.1666666903,
+     "median": 1940805.666666847
+    },
+    "B": {
+     "min": 1707437.500000045,
+     "p10": 1856916.6666665447,
+     "median": 2111069.3333333377
+    }
+   },
+   "min": 1.016609193976622,
+   "p10": 1.0494432200494168,
+   "controlMin": 0.9828366865960905,
+   "controlP10": 0.9775746092291843,
+   "verdict": "void"
+  }
+ ]
+}

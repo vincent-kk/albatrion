@@ -1,0 +1,139 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "eefe19e8c35b35ed32d3bc4be5571c1f367b6c11"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 12,
+ "rows": [
+  {
+   "row": "p2u-09-antd5-timeRangePanelPlain",
+   "pkg": "@canard/schema-form-antd5-plugin",
+   "fn": "time range panel",
+   "input": "unbounded time range, start input opened",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 1,
+   "stat": {
+    "A1": {
+     "min": 19774790.99999982,
+     "p10": 20210624.99999971,
+     "median": 20823124.999999892
+    },
+    "A2": {
+     "min": 19657499.9999998,
+     "p10": 20181499.999999687,
+     "median": 20863083.000000186
+    },
+    "B": {
+     "min": 19401917.000000138,
+     "p10": 19997041.000000082,
+     "median": 20768791.999999847
+    }
+   },
+   "min": 0.9811439726468064,
+   "p10": 0.989432093267792,
+   "controlMin": 0.9940686604475353,
+   "controlP10": 0.9985589263073249,
+   "verdict": "pass"
+  },
+  {
+   "row": "p2u-10-antd6-sliderMount",
+   "pkg": "@canard/schema-form-antd6-plugin",
+   "fn": "slider mount",
+   "input": "integer slider with one thumb",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 2,
+   "stat": {
+    "A1": {
+     "min": 5220312.499999864,
+     "p10": 5344958.500000075,
+     "median": 5613958.499999967
+    },
+    "A2": {
+     "min": 5209603.999999899,
+     "p10": 5296937.000000071,
+     "median": 5555333.5000000745
+    },
+    "B": {
+     "min": 5216875.0000003,
+     "p10": 5297083.500000099,
+     "median": 5552104.0000001
+    }
+   },
+   "min": 0.9993415145166953,
+   "p10": 0.9910429613251486,
+   "controlMin": 0.9979486860221558,
+   "controlP10": 0.9910155523190678,
+   "verdict": "pass"
+  },
+  {
+   "row": "p2u-11-antd6-uriMount",
+   "pkg": "@canard/schema-form-antd6-plugin",
+   "fn": "uri mount",
+   "input": "one-colon scheme address",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 2,
+   "stat": {
+    "A1": {
+     "min": 8045854.499999678,
+     "p10": 8224249.999999983,
+     "median": 8597353.999999996
+    },
+    "A2": {
+     "min": 8076625.500000091,
+     "p10": 8231020.999999828,
+     "median": 8578125.000000114
+    },
+    "B": {
+     "min": 8345082.999999704,
+     "p10": 8499520.999999732,
+     "median": 8860187.499999711
+    }
+   },
+   "min": 1.0371903941340275,
+   "p10": 1.033470650819193,
+   "controlMin": 1.0038244539471122,
+   "controlP10": 1.0008232969571504,
+   "verdict": "over"
+  },
+  {
+   "row": "p2u-12-antd6-checkboxChange",
+   "pkg": "@canard/schema-form-antd6-plugin",
+   "fn": "checkbox change",
+   "input": "two options and unknown initial value",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 25,
+   "stat": {
+    "A1": {
+     "min": 289819.8400000183,
+     "p10": 306126.6799999066,
+     "median": 324373.2799999634
+    },
+    "A2": {
+     "min": 293136.76000008854,
+     "p10": 308510.04000011017,
+     "median": 327445.08000001585
+    },
+    "B": {
+     "min": 205904.96000000712,
+     "p10": 213490.11999998766,
+     "median": 225083.360000026
+    }
+   },
+   "min": 0.7104584696478824,
+   "p10": 0.6973914197875624,
+   "controlMin": 1.0114447651343332,
+   "controlP10": 1.0077855350608587,
+   "verdict": "pass"
+  }
+ ]
+}
