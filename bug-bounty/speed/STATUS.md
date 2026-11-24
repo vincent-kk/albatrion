@@ -90,3 +90,4 @@ Vincent의 우선순위 조정(2026-11-24): 기반 도구가 먼저이고, 화�
 - `agents-assets-sync` 작업자는 목표를 1.5배로 낮추고 통상적 낭비만 걷어냅니다.
 - `schema-form` 작업자가 측정 대기열 우선입니다. 플러그인 행 `p2c-04`, `p2c-07`은 수용 범위이고 `p2c-02`, `p2c-03`은 코어 변경 뒤 재측정만 합니다.
 - `agents-assets-sync` 묶음은 끝났습니다. Vincent이 현재 값(1.6~1.95배)을 수용했고 변경은 버렸습니다([기록](issues/assets-sync-installer-overage.md)). 작업 트리와 가지를 지웠습니다.
+- `json-schema` 우선순위 2 묶음은 병합됐습니다(PR #691). `p2c-22`는 4.70 → 1.97, `p2c-23`은 13.9 → 11.8, `p2c-24`는 2.38 그대로이고, 남은 차이는 [수정 비용 기록](issues/json-schema-registration-fix-cost.md)으로 Vincent의 수용을 기다립니다. 작업 트리를 지웠습니다. `albatrion-speed/opt`에는 아직 반영하지 않았습니다.
