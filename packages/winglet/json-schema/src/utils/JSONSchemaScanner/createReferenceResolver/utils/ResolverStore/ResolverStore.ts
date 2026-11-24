@@ -24,6 +24,7 @@ import type {
   ResolverContext,
   Resource,
 } from './type';
+import { foldRetrievalURI } from './utils/foldRetrievalURI';
 import { isCanonicalRetrievalURI } from './utils/isCanonicalRetrievalURI';
 import { shortestReference } from './utils/shortestReference';
 
@@ -498,10 +499,13 @@ export class ResolverStore {
     const registered = new Map<string, SchemaValue>();
     const keys = new Map<string, string>();
     for (const key of Object.keys(source)) {
-      // Parsing keeps a canonical key; an `xn--` label is parsed because runtimes differ on rejecting it.
+      // Parsing keeps a canonical key and only lowercases the scheme and host of a key that differs
+      // from one in letter case; an `xn--` label is parsed because runtimes differ on rejecting it.
       const canonical = isCanonicalRetrievalURI(key) && !key.includes('xn--');
       if (canonical) (this.canonical ??= new Set()).add(key);
-      const uri = canonical ? key : resolveURI(key, '');
+      const uri = canonical
+        ? key
+        : (foldRetrievalURI(key) ?? resolveURI(key, ''));
       if (uri === undefined || (!canonical && !isAbsoluteURI(uri))) continue;
       const previous = keys.get(uri);
       if (previous !== undefined && source[previous] !== source[key])
