@@ -114,3 +114,5 @@ Vincent의 우선순위 조정(2026-11-24): 기반 도구가 먼저이고, 화�
 `@winglet/json` 우선순위 3 병합됨 (PR #693, 머리 `7781a2b11`): `p3-08` 4.23 → 2.67, 독립 검증 통과, 작업 트리 정리됨. `opt`에는 아직 반영되지 않았습니다. `json-schema` `p3-18` 작업(`speed-json-schema-p3`, `t47-json-schema-p3.md`, `ctx_8196c6c29b95`)이 추가로 진행 중입니다.
 
 `schema-form` 우선순위 3 완료: 코드 변경 없음. `p3-16`(1.55)은 수정 비용으로 귀속되어 [issues/schema-form-p3-fix-cost.md](issues/schema-form-p3-fix-cost.md)에서 Vincent의 결정을 기다립니다. `p3-14`는 1.34로 통과. 작업 트리 정리됨.
+
+`style-utils` 순회 합치기 시작: `speed-style-utils-single-pass` / `perf/style-utils-single-pass`, 명세 `t49-style-utils-single-pass.md`, `ctx_8c385a215cba`. 값을 내지 못하면 변경 없이 끝냅니다.
