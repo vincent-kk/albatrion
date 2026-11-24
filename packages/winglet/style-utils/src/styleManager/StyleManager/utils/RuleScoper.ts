@@ -23,9 +23,16 @@ import { getFlatBlockEnd } from './RuleScoper/getFlatBlockEnd';
 import { getFlatSelectorEnd } from './RuleScoper/getFlatSelectorEnd';
 import { trimSelector } from './trimSelector';
 
-/** CSS whitespace (tab, LF, FF, CR, space), the only text the sheet preparation skips between flat rules. */
+/** CSS whitespace (tab, LF, FF, CR, space), the only text the fused walk accepts between flat rules. */
 const isCssWhitespace = (code: number): boolean =>
   code === 32 || code === 10 || code === 9 || code === 13 || code === 12;
+
+/**
+ * Sheet length from which the fused walk declines: the preparation reads each rule with one
+ * pattern match, which throws a RangeError when a rule nears 2^23 code units; longer sheets keep
+ * the two-pass path so they return or throw exactly as it does.
+ */
+const FLAT_SHEET_LENGTH_LIMIT = 1 << 20;
 
 /**
  * At-rules whose block holds style rules, which are scoped recursively.
@@ -83,20 +90,25 @@ export class RuleScoper {
    * Scopes the stylesheet in one pass when the uncompressed document preparation
    * would return it unchanged, proving that on the way.
    *
-   * The proof holds when the text does not start with U+FEFF and consists of CSS
-   * whitespace and top-level rules that the preparation skips whole: a style rule
-   * whose selector stops come from the flat selector search and whose block is a
-   * flat block (together the flat style rule), or an at-rule accepted by
-   * `getVerbatimRuleEnd` that the scoper also ends at that rule's end. Every read is
-   * one `scopeSheet` performs on the same text, so the result equals `scopeSheet`.
+   * The proof holds when the text is shorter than `FLAT_SHEET_LENGTH_LIMIT`, does not
+   * start with U+FEFF and consists of CSS whitespace and top-level rules that the
+   * preparation skips whole: a style rule whose selector stops come from the flat
+   * selector search and whose block is a flat block (together the flat style rule), or
+   * an at-rule accepted by `getVerbatimRuleEnd` that the scoper also ends at that
+   * rule's end. Every read is one the two-pass path performs at the same position, so
+   * the result equals `scopeSheet` of the unchanged text. A sheet at or above the
+   * length limit is declined, so a rule long enough to make the preparation's
+   * whole-rule match throw keeps that throw.
    *
-   * @returns The scoped stylesheet, or `null` at the first position outside that
-   * shape; the partial result is discarded and the caller prepares and scopes in two passes.
+   * @returns The scoped stylesheet, or `null` for a sheet at or above the length limit
+   * or at the first position outside that shape; the partial result is discarded and
+   * the caller prepares and scopes in two passes.
    */
   scopeFlatSheet(): string | null {
     const css = this.__css__;
     const length = css.length;
-    if (css.charCodeAt(0) === 0xfeff) return null;
+    if (length >= FLAT_SHEET_LENGTH_LIMIT || css.charCodeAt(0) === 0xfeff)
+      return null;
     let result = '';
     let cursor = 0;
     for (;;) {
