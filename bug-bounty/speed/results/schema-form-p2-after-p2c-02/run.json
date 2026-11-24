@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-schema-form-p2",
+  "ref": "unknown"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 12,
+ "rows": [
+  {
+   "row": "p2c-02-branchError",
+   "pkg": "@canard/schema-form-antd5-plugin",
+   "fn": "branch error validation",
+   "input": "array minItems error",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 34,
+   "stat": {
+    "A1": {
+     "min": 137173.79411772365,
+     "p10": 145764.58823524477,
+     "median": 157863.99999995087
+    },
+    "A2": {
+     "min": 136942.38235305366,
+     "p10": 145376.2647057802,
+     "median": 159814.85294117406
+    },
+    "B": {
+     "min": 245665.44117648364,
+     "p10": 278024.4705882337,
+     "median": 307792.94117653137
+    }
+   },
+   "min": 1.7909065121115741,
+   "p10": 1.9073526290180915,
+   "controlMin": 0.9983130031055977,
+   "controlP10": 0.9973359542659438,
+   "verdict": "over"
+  }
+ ]
+}
