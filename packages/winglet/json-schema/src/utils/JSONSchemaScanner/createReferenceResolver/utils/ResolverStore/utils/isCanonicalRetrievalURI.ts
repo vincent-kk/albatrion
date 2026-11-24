@@ -1,12 +1,4 @@
-/**
- * Lowercase http(s) scheme, a named host whose last label starts with a letter (so the URL parser
- * never reads it as an IPv4 address), no userinfo or port, and a non-empty path of characters the
- * URL parser keeps as written; query, fragment and percent-encoding are excluded.
- */
-const canonicalShape =
-  /^https?:\/\/(?:[a-z0-9-]+\.)*[a-z][a-z0-9-]*\/[A-Za-z0-9\-._~!$&'()*+,;=:@/]*$/;
-/** A `.` or `..` path segment, which resolution removes. */
-const dotSegment = /\/\.\.?(?:\/|$)/;
+import { canonicalShape, dotSegment } from './retrievalURIPatterns';
 
 /**
  * Tell whether resolving a retrieval key leaves its spelling unchanged.

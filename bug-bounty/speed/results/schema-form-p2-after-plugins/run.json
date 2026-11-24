@@ -1,0 +1,77 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-schema-form-p2",
+  "ref": "unknown"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 12,
+ "rows": [
+  {
+   "row": "p2c-02-branchError",
+   "pkg": "@canard/schema-form-antd5-plugin",
+   "fn": "branch error validation",
+   "input": "array minItems error",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 33,
+   "stat": {
+    "A1": {
+     "min": 124888.7575757456,
+     "p10": 147868.6363637032,
+     "median": 164924.24242423195
+    },
+    "A2": {
+     "min": 128267.69696957029,
+     "p10": 147064.42424245103,
+     "median": 167363.69696974923
+    },
+    "B": {
+     "min": 246215.90909086852,
+     "p10": 260017.72727270442,
+     "median": 308473.4242424378
+    }
+   },
+   "min": 1.9714817720204914,
+   "p10": 1.7584373107570637,
+   "controlMin": 1.027055592988627,
+   "controlP10": 0.9945613069746981,
+   "verdict": "void"
+  },
+  {
+   "row": "p2c-03-coreExternalArray",
+   "pkg": "@canard/schema-form-antd5-plugin",
+   "fn": "external array child write",
+   "input": "three options and a one-item array",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 57,
+   "stat": {
+    "A1": {
+     "min": 145597.859649107,
+     "p10": 149445.94736838902,
+     "median": 156329.00000001793
+    },
+    "A2": {
+     "min": 145133.15789476142,
+     "p10": 149779.26315789277,
+     "median": 156525.68421045656
+    },
+    "B": {
+     "min": 1120782.1578947532,
+     "p10": 1145148.4912281318,
+     "median": 1183451.0701754673
+    }
+   },
+   "min": 7.697792815058235,
+   "p10": 7.662626597731046,
+   "controlMin": 0.9968083201534313,
+   "controlP10": 1.0022303434477358,
+   "verdict": "over"
+  }
+ ]
+}

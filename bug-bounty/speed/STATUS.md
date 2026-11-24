@@ -69,3 +69,28 @@
 측정 트리는 `albatrion-speed/beta`(기준), `beta-am543`(antd-mobile 5.43.0 기준), `opt`(병합된 개선 반영, `.speed-ref`가 반영한 커밋)입니다.
 
 `1.0.0/optimize`를 `1.0.0-beta`로 올리는 초안 PR이 열려 있습니다. 남은 3~6번이 끝나면 본문을 갱신합니다.
+
+## 재개 (2026-11-24): 우선순위 2 묶음 네 개가 돌고 있습니다
+
+`albatrion-speed/opt`는 `clone` 변경까지 반영해 다시 빌드했습니다. 명세는 모두 `albatrion-speed/specs/`에 있고, 각 작업자는 작업 트리 루트의 `SPEED-REPORT.md`에 진행을 남깁니다.
+
+| 묶음               | 행                                                     | 작업 트리 / 가지                                     | 명세                       | 배정               |
+| ------------------ | ------------------------------------------------------ | ---------------------------------------------------- | -------------------------- | ------------------ |
+| style-utils        | `p2c-12`~`17`                                          | `speed-style-utils-p2` / `perf/style-utils-speed-p2` | `t35-style-utils-p2.md`    | `ctx_43a2933a7a8f` |
+| schema-form        | `p2c-08`~`11`, `p2e-*`, 플러그인 행 02·03·04·07 재측정 | `speed-schema-form-p2` / `perf/schema-form-speed-p2` | `t36-schema-form-p2.md`    | `ctx_6dcee4ca9026` |
+| agents-assets-sync | `p2c-18`~`20`                                          | `speed-assets-sync-p2` / `perf/assets-sync-speed-p2` | `t37-assets-sync-p2.md`    | `ctx_102ad6a10845` |
+| 화면 행            | `p2u-*` 25개와 `p2c-05`                                | 주 체크아웃 (행 파일과 결과만)                       | `t38-rows-p2-ui-resume.md` | `ctx_dd181952646f` |
+
+작업자가 보고하면 `HANDOFF.md`의 7~10단계(원자료 대조, 독립 검증, PR, 병합, 정리)로 이어갑니다. 우선순위 3과 `p2c-24`는 아직 배정하지 않았습니다.
+
+Vincent의 우선순위 조정(2026-11-24): 기반 도구가 먼저이고, 화면 플러그인과 `agents-assets-sync`는 1.5배까지 수용합니다([HANDOFF.md](HANDOFF.md)의 "패키지별 중요도"). 이에 따라 배정을 바꿨습니다.
+
+- `json-schema` 묶음을 추가했습니다: `p2c-22`(평범한 입력 4.7배), `p2c-23`, `p2c-24`. 작업 트리 `speed-json-schema-p2`, 가지 `perf/json-schema-speed-p2`, 명세 `t39-json-schema-p2.md`, 배정 `ctx_cb2cb0891322`.
+- 화면 행 작업자(`ctx_dd181952646f`)는 우선순위 3 행(명세 `t40-rows-p3.md`, 진행 기록 `albatrion-speed/analysis/report-p3.md`)을 먼저 하고, 화면 행은 그 뒤에 12라운드 한 번만 잽니다.
+- `agents-assets-sync` 작업자는 목표를 1.5배로 낮추고 통상적 낭비만 걷어냅니다.
+- `schema-form` 작업자가 측정 대기열 우선입니다. 플러그인 행 `p2c-04`, `p2c-07`은 수용 범위이고 `p2c-02`, `p2c-03`은 코어 변경 뒤 재측정만 합니다.
+- `agents-assets-sync` 묶음은 끝났습니다. Vincent이 현재 값(1.6~1.95배)을 수용했고 변경은 버렸습니다([기록](issues/assets-sync-installer-overage.md)). 작업 트리와 가지를 지웠습니다.
+- `json-schema` 우선순위 2 묶음은 병합됐습니다(PR #691). `p2c-22`는 4.70 → 1.97, `p2c-23`은 13.9 → 11.8, `p2c-24`는 2.38 그대로이고, 남은 차이는 [수정 비용 기록](issues/json-schema-registration-fix-cost.md)으로 Vincent이 수용했습니다. 작업 트리를 지웠습니다. `albatrion-speed/opt`에는 아직 반영하지 않았습니다.
+- `schema-form` 우선순위 2 묶음은 코드 변경 없이 끝났습니다. 유일한 개선(가상 분기 메모)은 독립 검증에서 탈락해 버렸고, 남은 초과는 [수정 비용 기록](issues/schema-form-p2-fix-cost.md)으로 Vincent이 수용했습니다. 작업 트리와 가지를 지웠습니다. 검증 기록은 `albatrion-speed/analysis/verify-schema-form-p2.md`입니다.
+
+`style-utils` 우선순위 2: 작업자 완료(커밋 5개, 머리 `39c2d1f95`). 24라운드 값은 `results/style-utils-p2-final-a`, `-b`, `-c`에 있습니다. 독립 검증 진행 중(`t43-verify-style-utils-p2.md`, `ctx_27780f9dae47`). 통과하면 PR, 병합, 남은 초과분 이슈 파일 순서입니다.
