@@ -1,0 +1,108 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "eefe19e8c35b35ed32d3bc4be5571c1f367b6c11"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p3-05-ajv8-factory-fresh",
+   "pkg": "@canard/schema-form-ajv8-plugin",
+   "fn": "factory compile on a fresh instance",
+   "input": "string schema with an id on a fresh instance",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 7,
+   "stat": {
+    "A1": {
+     "min": 1530029.7142857094,
+     "p10": 1585035.8571428843,
+     "median": 1680577.5714285574
+    },
+    "A2": {
+     "min": 1525797.4285714552,
+     "p10": 1591113.428571394,
+     "median": 1691184.4285713674
+    },
+    "B": {
+     "min": 1566517.8571428636,
+     "p10": 1618231.9999999697,
+     "median": 1718666.857142872
+    }
+   },
+   "min": 1.0238479962293991,
+   "p10": 1.0209434649112124,
+   "controlMin": 0.9972338539083667,
+   "controlP10": 1.0038343431797592,
+   "verdict": "pass"
+  },
+  {
+   "row": "p3-12-validate-writeback",
+   "pkg": "@canard/schema-form",
+   "fn": "validate with a same-value write",
+   "input": "string root whose validator rewrites its own value",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 5346,
+   "stat": {
+    "A1": {
+     "min": 1593.7422371889058,
+     "p10": 1699.0063598961253,
+     "median": 1876.7123082671676
+    },
+    "A2": {
+     "min": 1592.5523756093105,
+     "p10": 1693.6704077811091,
+     "median": 1874.520950242629
+    },
+    "B": {
+     "min": 1909.1021324358874,
+     "p10": 2080.3518518531996,
+     "median": 2236.9152637493953
+    }
+   },
+   "min": 1.1978738392497041,
+   "p10": 1.224452068549284,
+   "controlMin": 0.9992534165489056,
+   "controlP10": 0.9968593689576639,
+   "verdict": "over"
+  },
+  {
+   "row": "p3-14-r2-client-array-external",
+   "pkg": "@canard/schema-form",
+   "fn": "external array write",
+   "input": "uncontrolled one-item array input rewritten from outside",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 309,
+   "stat": {
+    "A1": {
+     "min": 31769.9449838184,
+     "p10": 32546.656957924017,
+     "median": 33675.58899676594
+    },
+    "A2": {
+     "min": 31589.44012945413,
+     "p10": 32454.553398050535,
+     "median": 33444.572815535175
+    },
+    "B": {
+     "min": 42431.64401293782,
+     "p10": 43527.10355986546,
+     "median": 45085.37864078033
+    }
+   },
+   "min": 1.3355907299981102,
+   "p10": 1.3373755595278758,
+   "controlMin": 0.994318376866683,
+   "controlP10": 0.9971701069024523,
+   "verdict": "over"
+  }
+ ]
+}
