@@ -29,7 +29,7 @@ const isCssWhitespace = (code: number): boolean =>
 
 /**
  * Sheet length from which the fused walk declines: the preparation reads each rule with one
- * pattern match, which throws a RangeError when a rule nears 2^23 code units; longer sheets keep
+ * pattern match, which throws a RangeError from about 6.7 million code units; longer sheets keep
  * the two-pass path so they return or throw exactly as it does.
  */
 const FLAT_SHEET_LENGTH_LIMIT = 1 << 20;
