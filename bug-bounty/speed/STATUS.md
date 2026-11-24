@@ -116,3 +116,5 @@ Vincent의 우선순위 조정(2026-11-24): 기반 도구가 먼저이고, 화�
 `schema-form` 우선순위 3 완료: 코드 변경 없음. `p3-16`(1.55)은 수정 비용으로 귀속되어 [issues/schema-form-p3-fix-cost.md](issues/schema-form-p3-fix-cost.md)에서 Vincent의 결정을 기다립니다. `p3-14`는 1.34로 통과. 작업 트리 정리됨.
 
 `style-utils` 순회 합치기 시작: `speed-style-utils-single-pass` / `perf/style-utils-single-pass`, 명세 `t49-style-utils-single-pass.md`, `ctx_8c385a215cba`. 값을 내지 못하면 변경 없이 끝냅니다.
+
+ajv 플러그인 우선순위 3: 작업자 완료, 작은 변경 하나가 독립 검토를 통과해 PR #694로 CI 대기 중. 남은 초과분은 [issues/ajv-p3-fix-cost.md](issues/ajv-p3-fix-cost.md)에서 Vincent의 결정을 기다립니다. 병합 뒤 `speed-ajv-p3` 작업 트리를 정리합니다.
