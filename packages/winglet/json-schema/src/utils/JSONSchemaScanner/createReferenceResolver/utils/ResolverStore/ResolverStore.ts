@@ -497,7 +497,8 @@ export class ResolverStore {
     source: Readonly<Record<string, SchemaValue>>,
   ): Map<string, SchemaValue> {
     const registered = new Map<string, SchemaValue>();
-    const keys = new Map<string, string>();
+    // The latest key stored at an address is the address itself unless it is recorded here.
+    const aliases = new Map<string, string>();
     for (const key of Object.keys(source)) {
       // Parsing keeps a canonical key and only lowercases the scheme and host of a key that differs
       // from one in letter case; an `xn--` label is parsed because runtimes differ on rejecting it.
@@ -507,10 +508,13 @@ export class ResolverStore {
       const uri = folded ?? resolveURI(key, '');
       if (uri === undefined || (folded === undefined && !isAbsoluteURI(uri)))
         continue;
-      const previous = keys.get(uri);
+      const previous = registered.has(uri)
+        ? (aliases.get(uri) ?? uri)
+        : undefined;
       if (previous !== undefined && source[previous] !== source[key])
         this.duplicate(uri, previous, key);
-      keys.set(uri, key);
+      if (uri !== key) aliases.set(uri, key);
+      else if (aliases.size !== 0) aliases.delete(uri);
       registered.set(uri, source[key]);
     }
     return registered;
