@@ -1,0 +1,77 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-assets-sync-p2",
+  "ref": "unknown"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 12,
+ "rows": [
+  {
+   "row": "p2c-19-installer-unchanged",
+   "pkg": "@slats/agents-assets-sync",
+   "fn": "installer-unchanged",
+   "input": "16 skill files",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 4,
+   "stat": {
+    "A1": {
+     "min": 3036374.75000005,
+     "p10": 3137520.750000135,
+     "median": 3227531.250000027
+    },
+    "A2": {
+     "min": 3058916.999999951,
+     "p10": 3136052.2500000345,
+     "median": 3232572.7499999176
+    },
+    "B": {
+     "min": 4905145.749999974,
+     "p10": 5038551.749999953,
+     "median": 5212103.999999953
+    }
+   },
+   "min": 1.6154612502952388,
+   "p10": 1.6059022876580933,
+   "controlMin": 1.0074240671379253,
+   "controlP10": 0.9995319552866382,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-20-installer-force",
+   "pkg": "@slats/agents-assets-sync",
+   "fn": "installer-force",
+   "input": "16 skills plus one orphan and one local edit",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 3,
+   "stat": {
+    "A1": {
+     "min": 3180249.666666593,
+     "p10": 3268069.0000000442,
+     "median": 3393902.6666666903
+    },
+    "A2": {
+     "min": 3174721.999999899,
+     "p10": 3278193.999999985,
+     "median": 3395125.0000000834
+    },
+    "B": {
+     "min": 6240444.333333471,
+     "p10": 6444749.666666667,
+     "median": 6641402.666666787
+    }
+   },
+   "min": 1.9622498191704705,
+   "p10": 1.9720359841443311,
+   "controlMin": 0.9982618765046557,
+   "controlP10": 1.0030981598001574,
+   "verdict": "over"
+  }
+ ]
+}

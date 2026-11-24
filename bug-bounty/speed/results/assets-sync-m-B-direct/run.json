@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion-speed-assets-sync-p2/3b5d1f71-33c8-4a80-90b9-07b3f3b1fd97/scratchpad/ref",
+  "ref": "unknown"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-assets-sync-p2",
+  "ref": "unknown"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 12,
+ "rows": [
+  {
+   "row": "p2c-18-installer-new",
+   "pkg": "@slats/agents-assets-sync",
+   "fn": "installer-new",
+   "input": "16 skill files",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 2,
+   "stat": {
+    "A1": {
+     "min": 6765249.999999924,
+     "p10": 7095208.4999998985,
+     "median": 7872416.499999986
+    },
+    "A2": {
+     "min": 6754875.000000084,
+     "p10": 7174646.000000052,
+     "median": 7955728.999999906
+    },
+    "B": {
+     "min": 6659646.000000293,
+     "p10": 6942708.000000039,
+     "median": 7786082.999999963
+    }
+   },
+   "min": 0.9843902294815962,
+   "p10": 0.9785065512874129,
+   "controlMin": 0.9984664277004043,
+   "controlP10": 1.0111959359615936,
+   "verdict": "pass"
+  }
+ ]
+}

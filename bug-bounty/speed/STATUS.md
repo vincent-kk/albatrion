@@ -89,3 +89,4 @@ Vincent의 우선순위 조정(2026-11-24): 기반 도구가 먼저이고, 화�
 - 화면 행 작업자(`ctx_dd181952646f`)는 우선순위 3 행(명세 `t40-rows-p3.md`, 진행 기록 `albatrion-speed/analysis/report-p3.md`)을 먼저 하고, 화면 행은 그 뒤에 12라운드 한 번만 잽니다.
 - `agents-assets-sync` 작업자는 목표를 1.5배로 낮추고 통상적 낭비만 걷어냅니다.
 - `schema-form` 작업자가 측정 대기열 우선입니다. 플러그인 행 `p2c-04`, `p2c-07`은 수용 범위이고 `p2c-02`, `p2c-03`은 코어 변경 뒤 재측정만 합니다.
+- `agents-assets-sync` 묶음은 끝났습니다. Vincent이 현재 값(1.6~1.95배)을 수용했고 변경은 버렸습니다([기록](issues/assets-sync-installer-overage.md)). 작업 트리와 가지를 지웠습니다.
