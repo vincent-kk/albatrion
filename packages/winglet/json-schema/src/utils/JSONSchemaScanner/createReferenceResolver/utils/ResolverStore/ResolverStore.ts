@@ -715,13 +715,13 @@ export class ResolverStore {
     const positions = new Map<string, ResolverContext>(),
       data: string[] = [],
       containers = new Set<string>();
+    // The options object is the caller's, so each option is read once, keywords first.
+    const keywords = this.options.keywords,
+      additionalKeywords = this.options.additionalKeywords;
     const vocabulary =
-      this.options.keywords !== undefined ||
-      this.options.additionalKeywords !== undefined
+      keywords !== undefined || additionalKeywords !== undefined
         ? buildKeywordMap(
-            (this.options.keywords ?? DEFAULT_KEYWORDS).concat(
-              this.options.additionalKeywords ?? [],
-            ),
+            (keywords ?? DEFAULT_KEYWORDS).concat(additionalKeywords ?? []),
           )
         : DEFAULT_KEYWORD_MAP;
     let safe = true;
