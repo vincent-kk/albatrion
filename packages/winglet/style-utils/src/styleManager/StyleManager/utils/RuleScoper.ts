@@ -3,11 +3,14 @@ import { findCssPunctuation } from '../../../utils/cssTokens/findCssPunctuation'
 import { getCssComponentEnd } from '../../../utils/cssTokens/getCssComponentEnd';
 import { getCssOpaqueEnd } from '../../../utils/cssTokens/getCssOpaqueEnd';
 import { getSimpleRuleEnd } from '../../../utils/cssTokens/getSimpleRuleEnd';
+import { getVerbatimRuleEnd } from '../../../utils/cssTokens/getVerbatimRuleEnd';
+import { isVerbatimRuleStart } from '../../../utils/cssTokens/isVerbatimRuleStart';
 import {
   ASTERISK,
   AT_SIGN,
   COLON,
   COMMA,
+  LBRACE,
   NON_ASCII_MIN,
   RBRACE,
   SEMICOLON,
@@ -16,7 +19,13 @@ import {
 } from '../constants/charCode';
 import { prefixSelector } from './prefixSelector';
 import { findSelectorStop } from './RuleScoper/findSelectorStop';
+import { getFlatBlockEnd } from './RuleScoper/getFlatBlockEnd';
+import { getFlatSelectorEnd } from './RuleScoper/getFlatSelectorEnd';
 import { trimSelector } from './trimSelector';
+
+/** CSS whitespace (tab, LF, FF, CR, space), the only text the sheet preparation skips between flat rules. */
+const isCssWhitespace = (code: number): boolean =>
+  code === 32 || code === 10 || code === 9 || code === 13 || code === 12;
 
 /**
  * At-rules whose block holds style rules, which are scoped recursively.
@@ -68,6 +77,72 @@ export class RuleScoper {
     if (css.length && getSimpleRuleEnd(css, 0) === css.length)
       return this.__prefix__ + css;
     return this.__scopeRuleList__(0, false);
+  }
+
+  /**
+   * Scopes the stylesheet in one pass when the uncompressed document preparation
+   * would return it unchanged, proving that on the way.
+   *
+   * The proof holds when the text does not start with U+FEFF and consists of CSS
+   * whitespace and top-level rules that the preparation skips whole: a style rule
+   * whose selector stops come from the flat selector search and whose block is a
+   * flat block (together the flat style rule), or an at-rule accepted by
+   * `getVerbatimRuleEnd` that the scoper also ends at that rule's end. Every read is
+   * one `scopeSheet` performs on the same text, so the result equals `scopeSheet`.
+   *
+   * @returns The scoped stylesheet, or `null` at the first position outside that
+   * shape; the partial result is discarded and the caller prepares and scopes in two passes.
+   */
+  scopeFlatSheet(): string | null {
+    const css = this.__css__;
+    const length = css.length;
+    if (css.charCodeAt(0) === 0xfeff) return null;
+    let result = '';
+    let cursor = 0;
+    for (;;) {
+      while (cursor < length && isCssWhitespace(css.charCodeAt(cursor)))
+        cursor++;
+      if (cursor >= length) return result;
+      if (!isVerbatimRuleStart(css, cursor)) return null;
+      if (css.charCodeAt(cursor) === AT_SIGN) {
+        const end = getVerbatimRuleEnd(css, cursor);
+        if (end === 0) return null;
+        const stop = findCssPunctuation(css, cursor, AT_RULE_PUNCTUATION);
+        if (css.charCodeAt(stop) !== LBRACE) return null;
+        const prelude = css.slice(cursor, stop).trim();
+        if (GROUPING_AT_RULE.test(prelude)) {
+          const inner = this.__scopeRuleList__(stop + 1, true);
+          if (this.__end__ !== end) return null;
+          result += prelude + '{' + inner + '}';
+        } else {
+          if (getCssComponentEnd(css, stop, 0) !== end) return null;
+          result += prelude + css.slice(stop, end);
+        }
+        cursor = end;
+        continue;
+      }
+      let selectorStart = cursor;
+      let selectors = '';
+      let stop = getFlatSelectorEnd(css, cursor);
+      let stopCode = css.charCodeAt(stop);
+      while (stopCode === COMMA) {
+        selectors +=
+          prefixSelector(
+            trimSelector(css.slice(selectorStart, stop)),
+            this.__prefix__,
+          ) + ',';
+        selectorStart = stop + 1;
+        stop = getFlatSelectorEnd(css, selectorStart);
+        stopCode = css.charCodeAt(stop);
+      }
+      if (stopCode !== LBRACE) return null;
+      const end = getFlatBlockEnd(css, stop);
+      if (end === 0) return null;
+      result +=
+        selectors +
+        this.__scopeStyleRule__(selectorStart, stop, end, selectors.length > 0);
+      cursor = end;
+    }
   }
 
   /**

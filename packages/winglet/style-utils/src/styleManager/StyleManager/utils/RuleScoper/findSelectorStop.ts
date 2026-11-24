@@ -1,17 +1,5 @@
 import { findCssPunctuation } from '../../../../utils/cssTokens/findCssPunctuation';
-import {
-  FLAT_ESCAPE_PATTERN,
-  FLAT_STRING_PATTERN,
-} from '../../../../utils/cssTokens/flatCssPatterns';
-
-/**
- * Plain selector text, escapes, quote-free parentheses (where a URL token and a
- * component end at the same `)`) and flat brackets: spans the probe would skip identically.
- */
-const FLAT_SELECTOR = new RegExp(
-  String.raw`(?:[^()[\]{},"'\\/]|${FLAT_ESCAPE_PATTERN}|\([^()[\]{}"'\\/]*\)|\[(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN})*\])*`,
-  'y',
-);
+import { getFlatSelectorEnd } from './getFlatSelectorEnd';
 
 /**
  * Find the `{`, `}` or `,` that ends one selector, outside strings, comments and components.
@@ -26,9 +14,7 @@ export const findSelectorStop = (
   start: number,
   probe: RegExp,
 ): number => {
-  FLAT_SELECTOR.lastIndex = start;
-  FLAT_SELECTOR.test(css);
-  const stop = FLAT_SELECTOR.lastIndex;
+  const stop = getFlatSelectorEnd(css, start);
   const code = css.charCodeAt(stop);
   if (code === 44 || code === 123 || code === 125 || stop === css.length)
     return stop;
