@@ -32,3 +32,7 @@
 | p2u-23 mui datePickerPanel | beta/opt | 14.0 ms | 1.010 / 1.003 | 1.014 / 0.999 | 12 | p2u-u5 |
 | p2u-24 mui sliderMount | beta/opt | 0.46 ms | 1.002 / 1.004 | 0.987 / 0.994 | 12 | p2u-u5 |
 | p2u-25 mui sliderChange | beta/opt | 266 us | 1.019 / 1.046 | 1.013 / 1.015 | 12 | p2u-u4 |
+
+## 결정
+
+Vincent가 `p2u-13`과 `p2u-20`을 수용했습니다. 두 행에서 귀속을 따로 확인하지는 않았고, 이미 수용된 `p2c-02`와 같은 원인으로 봅니다.
