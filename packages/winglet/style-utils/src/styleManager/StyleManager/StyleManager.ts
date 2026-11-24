@@ -224,12 +224,19 @@ export class StyleManager {
     ) {
       compressedCSS = '.' + this.__scope__ + ' ' + css;
     } else {
-      const preparedCSS = processCssSheet(
-        css,
-        !compressed,
-        shadow ? 'shadow' : 'document',
-      );
-      compressedCSS = shadow ? preparedCSS : this.__scopeCSS__(preparedCSS);
+      const scopedCSS =
+        compressed && !shadow && typeof css === 'string'
+          ? new RuleScoper(css, '.' + this.__scope__).scopeFlatSheet()
+          : null;
+      if (scopedCSS !== null) compressedCSS = scopedCSS;
+      else {
+        const preparedCSS = processCssSheet(
+          css,
+          !compressed,
+          shadow ? 'shadow' : 'document',
+        );
+        compressedCSS = shadow ? preparedCSS : this.__scopeCSS__(preparedCSS);
+      }
     }
 
     // Only mark as dirty if processed CSS actually changed

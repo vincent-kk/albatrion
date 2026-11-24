@@ -6,17 +6,12 @@ import { getCssEofSuffix } from '../getCssEofSuffix';
 import { getCssSignificantIndex } from '../getCssSignificantIndex';
 import { getSimpleDeclarationEnd } from '../getSimpleDeclarationEnd';
 import { getSimpleRuleEnd } from '../getSimpleRuleEnd';
+import { getVerbatimRuleEnd } from '../getVerbatimRuleEnd';
 import { hasCssName } from '../hasCssName';
+import { isVerbatimRuleStart } from '../isVerbatimRuleStart';
 import { readCssSheetToken } from '../readCssSheetToken';
 import { canDropCssComment } from './utils/canDropCssComment';
-import { getVerbatimRuleEnd } from './utils/getVerbatimRuleEnd';
 import { keepCssWhitespace } from './utils/keepCssWhitespace';
-
-/** Whitespace, comments and CDO/CDC markers (and any `<` or `-` start) keep the token reader at the rule list. */
-const isVerbatimRuleStart = (css: string, index: number): boolean => {
-  const code = css.charCodeAt(index);
-  return code > 32 && code !== 60 && code !== 45 && !(code === 47 && css.charCodeAt(index + 1) === 42);
-};
 
 /**
  * Process CSS grammar and token positions once for compression and optional fragment EOF recovery.

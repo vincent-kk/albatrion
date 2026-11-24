@@ -1,7 +1,8 @@
 import {
+  FLAT_CONTENT_PATTERN,
   FLAT_ESCAPE_PATTERN,
   FLAT_STRING_PATTERN,
-} from '../../flatCssPatterns';
+} from './flatCssPatterns';
 
 /**
  * A style rule whose prelude has only plain text, escapes, quote-free parentheses
@@ -9,7 +10,7 @@ import {
  * by a flat block: the token reader would end the rule at exactly the same place.
  */
 const FLAT_STYLE_RULE = new RegExp(
-  String.raw`(?:[^()[\]{}"'\\/]|${FLAT_ESCAPE_PATTERN}|\([^()[\]{}"'\\/]*\)|\[(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN})*\])*\{(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN})*\}`,
+  String.raw`(?:[^()[\]{}"'\\/]|${FLAT_ESCAPE_PATTERN}|\([^()[\]{}"'\\/]*\)|\[${FLAT_CONTENT_PATTERN}\])*\{${FLAT_CONTENT_PATTERN}\}`,
   'y',
 );
 
@@ -19,7 +20,7 @@ const FLAT_STYLE_RULE = new RegExp(
  * flat nested blocks: the token reader would end the rule at the same place.
  */
 const FLAT_AT_RULE = new RegExp(
-  String.raw`(?:[^()[\]{}"'\\/;]|${FLAT_ESCAPE_PATTERN}|\([^()[\]{}"'\\/]*\)|\[(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN})*\])*\{(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN}|\{(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN})*\})*\}`,
+  String.raw`(?:[^()[\]{}"'\\/;]|${FLAT_ESCAPE_PATTERN}|\([^()[\]{}"'\\/]*\)|\[${FLAT_CONTENT_PATTERN}\])*\{(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN}|\{${FLAT_CONTENT_PATTERN}\})*\}`,
   'y',
 );
 
