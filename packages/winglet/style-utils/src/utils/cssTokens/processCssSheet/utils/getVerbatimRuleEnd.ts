@@ -1,20 +1,12 @@
-import { createCssPunctuationProbe } from '../../createCssPunctuationProbe';
-import { findCssPunctuation } from '../../findCssPunctuation';
-import { getCssComponentEnd } from '../../getCssComponentEnd';
 import {
   FLAT_ESCAPE_PATTERN,
   FLAT_STRING_PATTERN,
 } from '../../flatCssPatterns';
 
-/** A qualified rule's prelude ends at its block; a stray `}` needs the token reader. */
-const STYLE_PRELUDE = createCssPunctuationProbe('{}');
-/** An at-rule's prelude also ends at a statement semicolon. */
-const AT_RULE_PRELUDE = createCssPunctuationProbe('{};');
-
 /**
  * A style rule whose prelude has only plain text, escapes, quote-free parentheses
- * (where a URL token and a component end at the same `)`) and flat brackets, followed
- * by a flat block: the probe and component reader would stop at exactly the same places.
+ * (where a URL token and a function end at the same `)`) and flat brackets, followed
+ * by a flat block: the token reader would end the rule at exactly the same place.
  */
 const FLAT_STYLE_RULE = new RegExp(
   String.raw`(?:[^()[\]{}"'\\/]|${FLAT_ESCAPE_PATTERN}|\([^()[\]{}"'\\/]*\)|\[(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN})*\])*\{(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN})*\}`,
@@ -24,7 +16,7 @@ const FLAT_STYLE_RULE = new RegExp(
 /**
  * An at-rule whose prelude has only plain text without `;`, escapes, quote-free
  * parentheses and flat brackets, and whose block holds plain text, strings and
- * flat nested blocks: the probe and component reader would stop at the same places.
+ * flat nested blocks: the token reader would end the rule at the same place.
  */
 const FLAT_AT_RULE = new RegExp(
   String.raw`(?:[^()[\]{}"'\\/;]|${FLAT_ESCAPE_PATTERN}|\([^()[\]{}"'\\/]*\)|\[(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN})*\])*\{(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN}|\{(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN})*\})*\}`,
@@ -32,27 +24,18 @@ const FLAT_AT_RULE = new RegExp(
 );
 
 /**
- * Skip one complete top-level rule that an uncompressed pass copies unchanged.
+ * Skip one complete flat top-level rule that an uncompressed pass copies unchanged.
  * @param css Sheet whose grammar position at `start` is the top-level rule list
  * @param start First code unit of a token that is not whitespace, a comment or a CDO/CDC marker
- * @returns The rule's exclusive end after its block or statement semicolon, or zero when token-by-token reading is required
+ * @returns The rule's exclusive end after its block, or zero when token-by-token reading is required
  */
 export const getVerbatimRuleEnd = (css: string, start: number): number => {
-  const first = css.charCodeAt(start);
-  const atRule = first === 64;
+  const atRule = css.charCodeAt(start) === 64;
   if (atRule) {
     const initial = css.charCodeAt(start + 1) | 32;
     if (initial < 97 || initial > 122) return 0;
   }
   const flat = atRule ? FLAT_AT_RULE : FLAT_STYLE_RULE;
   flat.lastIndex = start;
-  if (flat.test(css)) return flat.lastIndex;
-  const stop = findCssPunctuation(
-    css,
-    start,
-    atRule ? AT_RULE_PRELUDE : STYLE_PRELUDE,
-  );
-  const code = css.charCodeAt(stop);
-  if (code === 59) return stop + 1;
-  return code === 123 ? getCssComponentEnd(css, stop, 0) : 0;
+  return flat.test(css) ? flat.lastIndex : 0;
 };
