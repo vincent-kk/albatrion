@@ -126,3 +126,5 @@ ajv6 변경 병합됨 (PR #694, 머리 `0bbddece6`), 작업 트리 정리됨. `o
 Vincent 수용: `p3-18` (4.19, [issues/json-schema-p3-fix-cost.md](issues/json-schema-p3-fix-cost.md)). 변경 두 커밋은 독립 검증 중(`t50-verify-json-schema-p3.md`, `ctx_35513bb722d1`), 통과하면 PR과 병합입니다.
 
 `json-schema` 우선순위 3 병합됨 (PR #695, 머리 `385443711`), 작업 트리 정리됨. `opt`에 아직 없는 병합: #693, #694, #695. 남은 작업자는 `style-utils` 순회 합치기(`ctx_8c385a215cba`) 하나입니다.
+- T49 작업자 완료: `perf/style-utils-single-pass` `d15e27fcf` (합친 순회 `RuleScoper.scopeFlatSheet`). 24라운드 원자료 재계산(`results/style-utils-single-pass-d2-a`, `-d2-b`, `-d2-p107`, `-base-p1`, `-base-p107`): p2c-12 3.230/3.210, p2c-13 3.289/3.251, p2c-14 2.237/2.223, p2c-15 2.613/2.613, p2c-16 2.588/2.592, p2c-17 3.074/3.078(대상 아님), p1-09 1.054/1.086(변경 전 같은 날 1.076/1.082), p1-07 1.377/1.257(변경 전 대조 무효 1.143/1.239). 대조 0.989~1.017.
+- T51 독립 검증 시작: `ctx_905ded3cc606`, 워크트리 `verify-style-utils-single-pass`, 지시서 `../albatrion-speed/specs/t51-verify-style-utils-single-pass.md`. 통과 후 PR → 병합.
