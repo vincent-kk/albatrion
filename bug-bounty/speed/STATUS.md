@@ -69,3 +69,16 @@
 측정 트리는 `albatrion-speed/beta`(기준), `beta-am543`(antd-mobile 5.43.0 기준), `opt`(병합된 개선 반영, `.speed-ref`가 반영한 커밋)입니다.
 
 `1.0.0/optimize`를 `1.0.0-beta`로 올리는 초안 PR이 열려 있습니다. 남은 3~6번이 끝나면 본문을 갱신합니다.
+
+## 재개 (2026-11-24): 우선순위 2 묶음 네 개가 돌고 있습니다
+
+`albatrion-speed/opt`는 `clone` 변경까지 반영해 다시 빌드했습니다. 명세는 모두 `albatrion-speed/specs/`에 있고, 각 작업자는 작업 트리 루트의 `SPEED-REPORT.md`에 진행을 남깁니다.
+
+| 묶음               | 행                                                     | 작업 트리 / 가지                                     | 명세                       | 배정               |
+| ------------------ | ------------------------------------------------------ | ---------------------------------------------------- | -------------------------- | ------------------ |
+| style-utils        | `p2c-12`~`17`                                          | `speed-style-utils-p2` / `perf/style-utils-speed-p2` | `t35-style-utils-p2.md`    | `ctx_43a2933a7a8f` |
+| schema-form        | `p2c-08`~`11`, `p2e-*`, 플러그인 행 02·03·04·07 재측정 | `speed-schema-form-p2` / `perf/schema-form-speed-p2` | `t36-schema-form-p2.md`    | `ctx_6dcee4ca9026` |
+| agents-assets-sync | `p2c-18`~`20`                                          | `speed-assets-sync-p2` / `perf/assets-sync-speed-p2` | `t37-assets-sync-p2.md`    | `ctx_102ad6a10845` |
+| 화면 행            | `p2u-*` 25개와 `p2c-05`                                | 주 체크아웃 (행 파일과 결과만)                       | `t38-rows-p2-ui-resume.md` | `ctx_dd181952646f` |
+
+작업자가 보고하면 `HANDOFF.md`의 7~10단계(원자료 대조, 독립 검증, PR, 병합, 정리)로 이어갑니다. 우선순위 3과 `p2c-24`는 아직 배정하지 않았습니다.
