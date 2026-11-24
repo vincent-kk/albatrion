@@ -41,6 +41,99 @@
    "controlMin": 0.9828366865960905,
    "controlP10": 0.9775746092291843,
    "verdict": "void"
+  },
+  {
+   "row": "p2u-22-mui-uriMount",
+   "pkg": "@canard/schema-form-mui-plugin",
+   "fn": "uri mount",
+   "input": "one-colon scheme address",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 10,
+   "stat": {
+    "A1": {
+     "min": 923654.100000067,
+     "p10": 1017304.2999999325,
+     "median": 1190341.5999998287
+    },
+    "A2": {
+     "min": 947108.2999999452,
+     "p10": 1011549.9000000454,
+     "median": 1248054.2000000242
+    },
+    "B": {
+     "min": 956108.4999999367,
+     "p10": 1013079.2000000384,
+     "median": 1191574.8999999324
+    }
+   },
+   "min": 1.035136963068607,
+   "p10": 0.9958467687594612,
+   "controlMin": 1.0253928391590277,
+   "controlP10": 0.9943434820831019,
+   "verdict": "void"
+  },
+  {
+   "row": "p2u-23-mui-datePickerPanel",
+   "pkg": "@canard/schema-form-mui-plugin",
+   "fn": "date picker panel",
+   "input": "bounded date, calendar opened",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 1,
+   "stat": {
+    "A1": {
+     "min": 14013792.000000194,
+     "p10": 14630083.999999898,
+     "median": 15285540.99999974
+    },
+    "A2": {
+     "min": 14210082.99999994,
+     "p10": 14618082.999999842,
+     "median": 15242165.999999998
+    },
+    "B": {
+     "min": 14157583.000000158,
+     "p10": 14670874.999999797,
+     "median": 15283124.999999927
+    }
+   },
+   "min": 1.0102606774811531,
+   "p10": 1.0027881589743366,
+   "controlMin": 1.0140069868312405,
+   "controlP10": 0.9991797039579502,
+   "verdict": "pass"
+  },
+  {
+   "row": "p2u-24-mui-sliderMount",
+   "pkg": "@canard/schema-form-mui-plugin",
+   "fn": "slider mount",
+   "input": "integer slider with one thumb",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 22,
+   "stat": {
+    "A1": {
+     "min": 458327.5454545153,
+     "p10": 470706.31818178296,
+     "median": 496820.181818128
+    },
+    "A2": {
+     "min": 452405.3636363202,
+     "p10": 467793.4545454305,
+     "median": 500227.3636363787
+    },
+    "B": {
+     "min": 459284.1363636456,
+     "p10": 472539.81818190287,
+     "median": 507736.77272728825
+    }
+   },
+   "min": 1.002087133794635,
+   "p10": 1.0038952100902367,
+   "controlMin": 0.9870787128617327,
+   "controlP10": 0.9938117175745503,
+   "verdict": "pass"
   }
  ]
 }
