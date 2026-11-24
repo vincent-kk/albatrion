@@ -1,0 +1,139 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "eefe19e8c35b35ed32d3bc4be5571c1f367b6c11"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2u-07-antd5-coreOwnArray",
+   "pkg": "@canard/schema-form-antd5-plugin",
+   "fn": "own array write",
+   "input": "uncontrolled whole-array input, same-length edit",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 15,
+   "stat": {
+    "A1": {
+     "min": 244541.8666665622,
+     "p10": 269936.0666667417,
+     "median": 307241.5999999066
+    },
+    "A2": {
+     "min": 244652.8000001611,
+     "p10": 269422.1999998869,
+     "median": 303150.0666666337
+    },
+    "B": {
+     "min": 266741.66666671226,
+     "p10": 295758.33333340904,
+     "median": 344108.46666669386
+    }
+   },
+   "min": 1.0907811832090901,
+   "p10": 1.0956606761946601,
+   "controlMin": 1.000453637387786,
+   "controlP10": 0.9980963393547214,
+   "verdict": "over"
+  },
+  {
+   "row": "p2u-13-antd6-branchError",
+   "pkg": "@canard/schema-form-antd6-plugin",
+   "fn": "branch error validation",
+   "input": "array minItems error",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 34,
+   "stat": {
+    "A1": {
+     "min": 118061.14705883802,
+     "p10": 148996.32352933835,
+     "median": 180493.88235286804
+    },
+    "A2": {
+     "min": 116343.1470588287,
+     "p10": 156310.0588235851,
+     "median": 189096.82352927228
+    },
+    "B": {
+     "min": 278951.0000000465,
+     "p10": 317096.8529412034,
+     "median": 367214.47058837785
+    }
+   },
+   "min": 2.362767150322756,
+   "p10": 2.1282193105842975,
+   "controlMin": 0.9854482186323913,
+   "controlP10": 1.0490866829529968,
+   "verdict": "void"
+  },
+  {
+   "row": "p2u-21-mui-datePickerMount",
+   "pkg": "@canard/schema-form-mui-plugin",
+   "fn": "date picker mount",
+   "input": "bounded date, picker closed",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 6,
+   "stat": {
+    "A1": {
+     "min": 1669138.9999999348,
+     "p10": 1901138.999999906,
+     "median": 2171513.833333165
+    },
+    "A2": {
+     "min": 1675465.1666666784,
+     "p10": 1851902.8333331181,
+     "median": 2142881.9999999483
+    },
+    "B": {
+     "min": 1734590.1666667487,
+     "p10": 1930854.3333331728,
+     "median": 2207499.999999982
+    }
+   },
+   "min": 1.0392125321299284,
+   "p10": 1.0156302791817264,
+   "controlMin": 1.0037900777986397,
+   "controlP10": 0.9741017533874218,
+   "verdict": "void"
+  },
+  {
+   "row": "p2u-22-mui-uriMount",
+   "pkg": "@canard/schema-form-mui-plugin",
+   "fn": "uri mount",
+   "input": "one-colon scheme address",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 9,
+   "stat": {
+    "A1": {
+     "min": 908537.1111111473,
+     "p10": 1000199.2222222119,
+     "median": 1124175.8888890117
+    },
+    "A2": {
+     "min": 918314.9999999437,
+     "p10": 982268.6666666414,
+     "median": 1120462.9999999471
+    },
+    "B": {
+     "min": 927893.5555555816,
+     "p10": 1007486.2222222188,
+     "median": 1148356.666666738
+    }
+   },
+   "min": 1.021305067462529,
+   "p10": 1.0072855485568333,
+   "controlMin": 1.0107622338914015,
+   "controlP10": 0.9820730158980399,
+   "verdict": "pass"
+  }
+ ]
+}
