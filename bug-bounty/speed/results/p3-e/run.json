@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "eefe19e8c35b35ed32d3bc4be5571c1f367b6c11"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 12,
+ "rows": [
+  {
+   "row": "p3-05-ajv8-factory-fresh",
+   "pkg": "@canard/schema-form-ajv8-plugin",
+   "fn": "factory compile on a fresh instance",
+   "input": "string schema with an id on a fresh instance",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 7,
+   "stat": {
+    "A1": {
+     "min": 1524345.4285714508,
+     "p10": 1580357.4285714277,
+     "median": 1680904.8571428123
+    },
+    "A2": {
+     "min": 1534267.7142856962,
+     "p10": 1587100.9999999776,
+     "median": 1682428.8571428303
+    },
+    "B": {
+     "min": 1579583.428571433,
+     "p10": 1621952.4285714086,
+     "median": 1718862.9999999907
+    }
+   },
+   "min": 1.036237193332058,
+   "p10": 1.0263199952415707,
+   "controlMin": 1.0065092107919031,
+   "controlP10": 1.004267117872598,
+   "verdict": "over"
+  }
+ ]
+}
