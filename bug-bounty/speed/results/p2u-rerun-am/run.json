@@ -1,0 +1,77 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta-am543",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388+antd-mobile-5.43.0"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "eefe19e8c35b35ed32d3bc4be5571c1f367b6c11"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2u-16-am-sliderMount",
+   "pkg": "@canard/schema-form-antd-mobile-plugin",
+   "fn": "slider mount",
+   "input": "integer slider with one thumb",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 31,
+   "stat": {
+    "A1": {
+     "min": 297198.93548388925,
+     "p10": 317448.838709681,
+     "median": 353869.580645184
+    },
+    "A2": {
+     "min": 298475.7419354801,
+     "p10": 319158.6451612972,
+     "median": 351272.8387096881
+    },
+    "B": {
+     "min": 294974.4516128791,
+     "p10": 315129.03225805005,
+     "median": 352241.9354838847
+    }
+   },
+   "min": 0.9925151687794967,
+   "p10": 0.9926923454467178,
+   "controlMin": 1.0042961340003187,
+   "controlP10": 1.0053860850730025,
+   "verdict": "pass"
+  },
+  {
+   "row": "p2u-17-am-radioMount",
+   "pkg": "@canard/schema-form-antd-mobile-plugin",
+   "fn": "radio mount",
+   "input": "two-option radio group",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 33,
+   "stat": {
+    "A1": {
+     "min": 282597.3333333285,
+     "p10": 308405.3333333362,
+     "median": 337274.0909091149
+    },
+    "A2": {
+     "min": 286969.666666671,
+     "p10": 309883.87878788315,
+     "median": 338021.5454545289
+    },
+    "B": {
+     "min": 284099.81818183704,
+     "p10": 306152.8484848333,
+     "median": 337060.5454545539
+    }
+   },
+   "min": 1.005316698607118,
+   "p10": 0.9926963492357367,
+   "controlMin": 1.015471955385316,
+   "controlP10": 1.0047941630534283,
+   "verdict": "pass"
+  }
+ ]
+}

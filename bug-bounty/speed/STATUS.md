@@ -106,3 +106,13 @@ Vincent의 우선순위 조정(2026-11-24): 기반 도구가 먼저이고, 화�
 | ajv 플러그인 | `p3-01`~`04`, `p3-19` | `speed-ajv-p3` / `perf/ajv-speed-p3` | `t46-ajv-p3.md` | `ctx_4d4b1c1ab548` |
 
 `p3-18`(`json-schema`)은 `opt`를 #691, #692로 다시 만든 뒤 재측정합니다. 화면 플러그인 행(`p2u-*`)은 행 작업자(`ctx_dd181952646f`)가 측정 중입니다.
+
+대기 중인 작업: `style-utils` 준비와 범위 지정 순회를 하나로 합치는 재설계 (Vincent 승인, [issues/style-utils-p2-fix-cost.md](issues/style-utils-p2-fix-cost.md)). 우선순위 3 개선 작업 셋이 끝나면 시작합니다.
+
+화면 플러그인 행 측정 완료: [RESULTS-P2-UI.md](RESULTS-P2-UI.md). 26행 중 24행 통과, `p2u-13`과 `p2u-20`(분기 오류)이 1.5를 넘어 Vincent의 결정을 기다립니다. 행 작업자(`ctx_dd181952646f`)는 끝났습니다. `opt`를 #691, #692로 다시 만들고 `p3-18`, `p2c-22`~`24`를 재측정하는 중입니다(`results/p3-18-after-691`).
+
+`@winglet/json` 우선순위 3 병합됨 (PR #693, 머리 `7781a2b11`): `p3-08` 4.23 → 2.67, 독립 검증 통과, 작업 트리 정리됨. `opt`에는 아직 반영되지 않았습니다. `json-schema` `p3-18` 작업(`speed-json-schema-p3`, `t47-json-schema-p3.md`, `ctx_8196c6c29b95`)이 추가로 진행 중입니다.
+
+`schema-form` 우선순위 3 완료: 코드 변경 없음. `p3-16`(1.55)은 수정 비용으로 귀속되어 [issues/schema-form-p3-fix-cost.md](issues/schema-form-p3-fix-cost.md)에서 Vincent의 결정을 기다립니다. `p3-14`는 1.34로 통과. 작업 트리 정리됨.
+
+`style-utils` 순회 합치기 시작: `speed-style-utils-single-pass` / `perf/style-utils-single-pass`, 명세 `t49-style-utils-single-pass.md`, `ctx_8c385a215cba`. 값을 내지 못하면 변경 없이 끝냅니다.

@@ -1,0 +1,139 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta-am543",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388+antd-mobile-5.43.0"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "eefe19e8c35b35ed32d3bc4be5571c1f367b6c11"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 12,
+ "rows": [
+  {
+   "row": "p2u-16-am-sliderMount",
+   "pkg": "@canard/schema-form-antd-mobile-plugin",
+   "fn": "slider mount",
+   "input": "integer slider with one thumb",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 32,
+   "stat": {
+    "A1": {
+     "min": 300011.71874999243,
+     "p10": 310179.7500000174,
+     "median": 348778.75000001525
+    },
+    "A2": {
+     "min": 291588.4062499927,
+     "p10": 306286.4999999917,
+     "median": 334404.9062499863
+    },
+    "B": {
+     "min": 290810.0624999577,
+     "p10": 308963.56249999005,
+     "median": 350996.0624999948
+    }
+   },
+   "min": 0.9693290105854074,
+   "p10": 0.9960790880125885,
+   "controlMin": 0.9719233884093071,
+   "controlP10": 0.9874484069317049,
+   "verdict": "void"
+  },
+  {
+   "row": "p2u-17-am-radioMount",
+   "pkg": "@canard/schema-form-antd-mobile-plugin",
+   "fn": "radio mount",
+   "input": "two-option radio group",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 36,
+   "stat": {
+    "A1": {
+     "min": 278644.6944444378,
+     "p10": 295725.6944444629,
+     "median": 321492.05555556493
+    },
+    "A2": {
+     "min": 288773.19444442645,
+     "p10": 295067.16666667094,
+     "median": 319673.5833333201
+    },
+    "B": {
+     "min": 283785.8611110909,
+     "p10": 293687.5833333311,
+     "median": 318236.1666666793
+    }
+   },
+   "min": 1.0184506174678962,
+   "p10": 0.9931081027133591,
+   "controlMin": 1.0363491579130293,
+   "controlP10": 0.9977731803824857,
+   "verdict": "void"
+  },
+  {
+   "row": "p2u-18-am-rangeSliderChange",
+   "pkg": "@canard/schema-form-antd-mobile-plugin",
+   "fn": "range slider change",
+   "input": "two-thumb slider, track click at 70%",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 64,
+   "stat": {
+    "A1": {
+     "min": 122633.54687497241,
+     "p10": 136298.2187500421,
+     "median": 149627.64062500256
+    },
+    "A2": {
+     "min": 124707.06249998642,
+     "p10": 135638.62499997014,
+     "median": 150131.45312498466
+    },
+    "B": {
+     "min": 140579.98437502305,
+     "p10": 152620.51562498158,
+     "median": 167522.81250000678
+    }
+   },
+   "min": 1.1463419917092297,
+   "p10": 1.1197542933768856,
+   "controlMin": 1.0169082251786128,
+   "controlP10": 0.99516065759244,
+   "verdict": "over"
+  },
+  {
+   "row": "p2u-19-am-checkboxChange",
+   "pkg": "@canard/schema-form-antd-mobile-plugin",
+   "fn": "checkbox change",
+   "input": "two options and unknown initial value",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 80,
+   "stat": {
+    "A1": {
+     "min": 108700.52499998905,
+     "p10": 112703.16249999723,
+     "median": 120545.32500001471
+    },
+    "A2": {
+     "min": 109406.22499994675,
+     "p10": 112469.26249999375,
+     "median": 120229.1499999916
+    },
+    "B": {
+     "min": 112213.53749999707,
+     "p10": 118954.08749998637,
+     "median": 128151.06249997826
+    }
+   },
+   "min": 1.0323182661722046,
+   "p10": 1.0554636166486393,
+   "controlMin": 1.0064921489565737,
+   "controlP10": 0.9979246367642658,
+   "verdict": "over"
+  }
+ ]
+}

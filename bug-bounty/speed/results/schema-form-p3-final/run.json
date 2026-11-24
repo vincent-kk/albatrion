@@ -1,0 +1,139 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-schema-form-p3",
+  "ref": "unknown"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p3-12-validate-writeback",
+   "pkg": "@canard/schema-form",
+   "fn": "validate with a same-value write",
+   "input": "string root whose validator rewrites its own value",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 5498,
+   "stat": {
+    "A1": {
+     "min": 1577.7944707149688,
+     "p10": 1686.016733357503,
+     "median": 1866.2835576568039
+    },
+    "A2": {
+     "min": 1557.9894507102201,
+     "p10": 1682.009821754219,
+     "median": 1871.6300472902285
+    },
+    "B": {
+     "min": 1900.2568206627918,
+     "p10": 2053.966533285607,
+     "median": 2222.5927610036574
+    }
+   },
+   "min": 1.2043753834437643,
+   "p10": 1.218236149528229,
+   "controlMin": 0.9874476553363923,
+   "controlP10": 0.9976234449374031,
+   "verdict": "over"
+  },
+  {
+   "row": "p3-13-engine-validate-writeback",
+   "pkg": "@canard/schema-form",
+   "fn": "node validate with a same-value write",
+   "input": "string root whose validator rewrites its own value",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 6107,
+   "stat": {
+    "A1": {
+     "min": 1439.026035696577,
+     "p10": 1533.3992140172395,
+     "median": 1710.5701653828537
+    },
+    "A2": {
+     "min": 1440.085475684116,
+     "p10": 1532.4380219399345,
+     "median": 1707.4602914676702
+    },
+    "B": {
+     "min": 1801.0036024246626,
+     "p10": 1918.1229736357864,
+     "median": 2060.3186507292085
+    }
+   },
+   "min": 1.251543445183649,
+   "p10": 1.2508960198372852,
+   "controlMin": 1.0007362201664587,
+   "controlP10": 0.9993731625342452,
+   "verdict": "over"
+  },
+  {
+   "row": "p3-14-r2-client-array-external",
+   "pkg": "@canard/schema-form",
+   "fn": "external array write",
+   "input": "uncontrolled one-item array input rewritten from outside",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 303,
+   "stat": {
+    "A1": {
+     "min": 31642.18811881787,
+     "p10": 32618.778877898843,
+     "median": 33739.97359736158
+    },
+    "A2": {
+     "min": 31547.57425741772,
+     "p10": 32510.547854775625,
+     "median": 33612.2211221173
+    },
+    "B": {
+     "min": 42270.63036304415,
+     "p10": 43697.17491748975,
+     "median": 45279.26732672694
+    }
+   },
+   "min": 1.3358946670917948,
+   "p10": 1.3396324577649097,
+   "controlMin": 0.9970098824694149,
+   "controlP10": 0.9966819412974238,
+   "verdict": "over"
+  },
+  {
+   "row": "p3-16-validate-writeback-errors",
+   "pkg": "@canard/schema-form",
+   "fn": "node validate with a rewriting validator that reports errors",
+   "input": "string root whose validator rewrites its value and alternates its issues",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 1208,
+   "stat": {
+    "A1": {
+     "min": 3361.365894035759,
+     "p10": 3519.322019859383,
+     "median": 3765.1365894068617
+    },
+    "A2": {
+     "min": 3329.933774830954,
+     "p10": 3535.444536440847,
+     "median": 3770.6531456963703
+    },
+    "B": {
+     "min": 5220.4701986729615,
+     "p10": 5364.735099342156,
+     "median": 5662.79552980186
+    }
+   },
+   "min": 1.5530800166491558,
+   "p10": 1.5243660764968896,
+   "controlMin": 0.9906490039478961,
+   "controlP10": 1.0045811427571802,
+   "verdict": "over"
+  }
+ ]
+}
