@@ -2,7 +2,7 @@
 
 기준 `1c77ced57`, 후보는 `1.0.0/optimize`의 개선을 PR #689까지 담은 트리입니다. 비율은 후보 ÷ 기준이고 `min / p10` 순서입니다. 한도는 기준 시간 한 번이 1 ms 이상이면 1.05, 1 µs~1 ms면 1.35, 1 µs 미만이면 3배입니다. `출처`는 `results/` 아래 디렉터리입니다.
 
-`p3-11`과 `p3-17`은 기준 트리에서 유효한 입력이 되지 못해 후보끼리만 쟀고 비율이 없습니다. `p3-18`은 `json-schema` 우선순위 2 개선(PR #691) 전 값이라 다시 재야 합니다.
+`p3-11`과 `p3-17`은 기준 트리에서 유효한 입력이 되지 못해 후보끼리만 쟀고 비율이 없습니다. `p3-18`은 PR #691, #692까지 담은 트리로 다시 잰 값입니다.
 
 | 행 | 패키지 | 입력 종류 | 기준 시간 | min / p10 | 대조 | 라운드 | 출처 | 판정 |
 |---|---|---|---|---|---|---|---|---|
@@ -23,5 +23,5 @@
 | p3-15 r3 batch array | schema-form | repaired | 26.4 us | 0.493 / 0.498 | 1.001 / 0.999 | 12 | p3-c | 통과 (더 빠름) |
 | p3-16 validate writeback errors | schema-form | repaired | 3.35 us | 1.550 / 1.526 | 0.990 / 0.990 | 12 | p3-c | 초과 (1.35) |
 | p3-17 r2 async relay content | schema-form | repaired | 3.36 us (후보만) | 1.000 / 0.996 (후보끼리, 비율 없음) | 1.001 / 0.995 | 24 | p3-rerun-single-opt | 비교 불가 |
-| p3-18 schema alternate lookup | @winglet/json-schema | repaired | 1.03 us | 5.666 / 5.606 | 0.994 / 0.996 | 12 | p3-c | 초과 (1.35) |
+| p3-18 schema alternate lookup | @winglet/json-schema | repaired | 1.06 us | 5.026 / 5.038 | 1.006 / 1.008 | 12 | p3-18-after-691 | 초과 (1.35) |
 | p3-19 ajv6 bound first id resource invalid | ajv6-plugin | repaired | 508 ns | 8.272 / 7.826 | 1.010 / 1.005 | 12 | p3-c | 초과 (3배) |

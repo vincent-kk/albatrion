@@ -96,3 +96,17 @@ Vincent의 우선순위 조정(2026-11-24): 기반 도구가 먼저이고, 화�
 `style-utils` 우선순위 2: 작업자 완료(커밋 5개, 머리 `39c2d1f95`). 24라운드 값은 `results/style-utils-p2-final-a`, `-b`, `-c`에 있습니다. 독립 검증 진행 중(`t43-verify-style-utils-p2.md`, `ctx_27780f9dae47`). 통과하면 PR, 병합, 남은 초과분 이슈 파일 순서입니다.
 
 `style-utils` 우선순위 2 병합됨 (PR #692, 머리 `6031128b8`). 독립 검증이 첫 커밋의 차이를 잡아 수정했고 재검증 통과. 남은 초과분(2.4~5.2배)은 [issues/style-utils-p2-fix-cost.md](issues/style-utils-p2-fix-cost.md)에서 Vincent의 결정을 기다립니다. 작업 트리 정리됨. `albatrion-speed/opt`는 아직 #691, #692를 담지 않았습니다.
+
+우선순위 3: 표는 [RESULTS-P3.md](RESULTS-P3.md). 초과 행 개선 작업 셋이 진행 중입니다.
+
+| 묶음 | 행 | 작업 트리 / 브랜치 | 명세 | dispatch |
+| --- | --- | --- | --- | --- |
+| json | `p3-08` | `speed-json-p3` / `perf/json-speed-p3` | `t44-json-p3.md` | `ctx_f641764405b8` |
+| schema-form | `p3-16`, `p3-14` | `speed-schema-form-p3` / `perf/schema-form-speed-p3` | `t45-schema-form-p3.md` | `ctx_cf0da0f36d11` |
+| ajv 플러그인 | `p3-01`~`04`, `p3-19` | `speed-ajv-p3` / `perf/ajv-speed-p3` | `t46-ajv-p3.md` | `ctx_4d4b1c1ab548` |
+
+`p3-18`(`json-schema`)은 `opt`를 #691, #692로 다시 만든 뒤 재측정합니다. 화면 플러그인 행(`p2u-*`)은 행 작업자(`ctx_dd181952646f`)가 측정 중입니다.
+
+대기 중인 작업: `style-utils` 준비와 범위 지정 순회를 하나로 합치는 재설계 (Vincent 승인, [issues/style-utils-p2-fix-cost.md](issues/style-utils-p2-fix-cost.md)). 우선순위 3 개선 작업 셋이 끝나면 시작합니다.
+
+화면 플러그인 행 측정 완료: [RESULTS-P2-UI.md](RESULTS-P2-UI.md). 26행 중 24행 통과, `p2u-13`과 `p2u-20`(분기 오류)이 1.5를 넘어 Vincent의 결정을 기다립니다. 행 작업자(`ctx_dd181952646f`)는 끝났습니다. `opt`를 #691, #692로 다시 만들고 `p3-18`, `p2c-22`~`24`를 재측정하는 중입니다(`results/p3-18-after-691`).
