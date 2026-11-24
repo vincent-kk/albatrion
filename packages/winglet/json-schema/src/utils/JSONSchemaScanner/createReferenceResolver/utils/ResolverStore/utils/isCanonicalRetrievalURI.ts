@@ -1,4 +1,4 @@
-import { canonicalShape, dotSegment } from './retrievalURIPatterns';
+import { canonicalShape } from './retrievalURIPatterns';
 
 /**
  * Tell whether resolving a retrieval key leaves its spelling unchanged.
@@ -7,5 +7,5 @@ import { canonicalShape, dotSegment } from './retrievalURIPatterns';
  *   that would resolve unchanged, which costs a normalization pass but never a wrong lookup.
  */
 export function isCanonicalRetrievalURI(uri: string): boolean {
-  return canonicalShape.test(uri) && !dotSegment.test(uri);
+  return canonicalShape.test(uri);
 }
