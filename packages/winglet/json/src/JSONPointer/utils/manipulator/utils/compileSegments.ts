@@ -5,6 +5,7 @@ import { unescapePath } from '@/json/JSONPointer/utils/escape/unescapePath';
 
 import { decodePointerFragment } from '../../decodePointerFragment';
 import { JSONPointerError } from './error';
+import { splitDecodedPointer } from './splitDecodedPointer';
 
 export const compilePointer = (pointer: string | (string | number)[]) => {
   if (isString(pointer)) return handleStringPointer(pointer);
@@ -18,9 +19,10 @@ export const compilePointer = (pointer: string | (string | number)[]) => {
 
 const handleStringPointer = (pointer: string) => {
   if (pointer.length === 0) return [];
+  let decoded = pointer;
   if (pointer.charCodeAt(0) === 35) {
     try {
-      pointer = decodePointerFragment(pointer);
+      decoded = decodePointerFragment(pointer);
     } catch {
       throw new JSONPointerError(
         'INVALID_POINTER_TYPE',
@@ -29,7 +31,11 @@ const handleStringPointer = (pointer: string) => {
       );
     }
   }
-  const parts = pointer.split(JSONPointer.Separator);
+  const parts =
+    decoded === pointer
+      ? pointer.split(JSONPointer.Separator)
+      : splitDecodedPointer(decoded);
+  pointer = decoded;
   if (parts[0] !== '' && parts[0] !== JSONPointer.Fragment)
     throw new JSONPointerError(
       'INVALID_POINTER_TYPE',
