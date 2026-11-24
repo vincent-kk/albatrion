@@ -503,10 +503,10 @@ export class ResolverStore {
       // from one in letter case; an `xn--` label is parsed because runtimes differ on rejecting it.
       const canonical = isCanonicalRetrievalURI(key) && !key.includes('xn--');
       if (canonical) (this.canonical ??= new Set()).add(key);
-      const uri = canonical
-        ? key
-        : (foldRetrievalURI(key) ?? resolveURI(key, ''));
-      if (uri === undefined || (!canonical && !isAbsoluteURI(uri))) continue;
+      const folded = canonical ? key : foldRetrievalURI(key);
+      const uri = folded ?? resolveURI(key, '');
+      if (uri === undefined || (folded === undefined && !isAbsoluteURI(uri)))
+        continue;
       const previous = keys.get(uri);
       if (previous !== undefined && source[previous] !== source[key])
         this.duplicate(uri, previous, key);
