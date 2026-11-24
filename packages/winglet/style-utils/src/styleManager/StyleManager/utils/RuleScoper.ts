@@ -15,6 +15,7 @@ import {
   WHITESPACE_MAX,
 } from '../constants/charCode';
 import { prefixSelector } from './prefixSelector';
+import { findSelectorStop } from './RuleScoper/findSelectorStop';
 import { trimSelector } from './trimSelector';
 
 /**
@@ -92,11 +93,9 @@ export class RuleScoper {
         continue;
       }
       const isAtRule = first === AT_SIGN;
-      let stop = findCssPunctuation(
-        css,
-        cursor,
-        isAtRule ? AT_RULE_PUNCTUATION : STYLE_PUNCTUATION,
-      );
+      let stop = isAtRule
+        ? findCssPunctuation(css, cursor, AT_RULE_PUNCTUATION)
+        : findSelectorStop(css, cursor, STYLE_PUNCTUATION);
       let stopCode = css.charCodeAt(stop);
       let selectorStart = cursor;
       let selectors = '';
@@ -107,7 +106,7 @@ export class RuleScoper {
             this.__prefix__,
           ) + ',';
         selectorStart = stop + 1;
-        stop = findCssPunctuation(css, selectorStart, STYLE_PUNCTUATION);
+        stop = findSelectorStop(css, selectorStart, STYLE_PUNCTUATION);
         stopCode = css.charCodeAt(stop);
       }
       if (stop === length) {
