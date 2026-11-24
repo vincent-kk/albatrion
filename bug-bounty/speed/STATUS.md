@@ -92,3 +92,5 @@ Vincent의 우선순위 조정(2026-11-24): 기반 도구가 먼저이고, 화�
 - `agents-assets-sync` 묶음은 끝났습니다. Vincent이 현재 값(1.6~1.95배)을 수용했고 변경은 버렸습니다([기록](issues/assets-sync-installer-overage.md)). 작업 트리와 가지를 지웠습니다.
 - `json-schema` 우선순위 2 묶음은 병합됐습니다(PR #691). `p2c-22`는 4.70 → 1.97, `p2c-23`은 13.9 → 11.8, `p2c-24`는 2.38 그대로이고, 남은 차이는 [수정 비용 기록](issues/json-schema-registration-fix-cost.md)으로 Vincent이 수용했습니다. 작업 트리를 지웠습니다. `albatrion-speed/opt`에는 아직 반영하지 않았습니다.
 - `schema-form` 우선순위 2 묶음은 코드 변경 없이 끝났습니다. 유일한 개선(가상 분기 메모)은 독립 검증에서 탈락해 버렸고, 남은 초과는 [수정 비용 기록](issues/schema-form-p2-fix-cost.md)으로 Vincent이 수용했습니다. 작업 트리와 가지를 지웠습니다. 검증 기록은 `albatrion-speed/analysis/verify-schema-form-p2.md`입니다.
+
+`style-utils` 우선순위 2: 작업자 완료(커밋 5개, 머리 `39c2d1f95`). 24라운드 값은 `results/style-utils-p2-final-a`, `-b`, `-c`에 있습니다. 독립 검증 진행 중(`t43-verify-style-utils-p2.md`, `ctx_27780f9dae47`). 통과하면 PR, 병합, 남은 초과분 이슈 파일 순서입니다.
