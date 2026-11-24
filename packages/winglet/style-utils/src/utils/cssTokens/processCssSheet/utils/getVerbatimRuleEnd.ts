@@ -22,6 +22,16 @@ const FLAT_STYLE_RULE = new RegExp(
 );
 
 /**
+ * An at-rule whose prelude has only plain text without `;`, escapes, quote-free
+ * parentheses and flat brackets, and whose block holds plain text, strings and
+ * flat nested blocks: the probe and component reader would stop at the same places.
+ */
+const FLAT_AT_RULE = new RegExp(
+  String.raw`(?:[^()[\]{}"'\\/;]|${FLAT_ESCAPE_PATTERN}|\([^()[\]{}"'\\/]*\)|\[(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN})*\])*\{(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN}|\{(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN})*\})*\}`,
+  'y',
+);
+
+/**
  * Skip one complete top-level rule that an uncompressed pass copies unchanged.
  * @param css Sheet whose grammar position at `start` is the top-level rule list
  * @param start First code unit of a token that is not whitespace, a comment or a CDO/CDC marker
@@ -33,10 +43,10 @@ export const getVerbatimRuleEnd = (css: string, start: number): number => {
   if (atRule) {
     const initial = css.charCodeAt(start + 1) | 32;
     if (initial < 97 || initial > 122) return 0;
-  } else {
-    FLAT_STYLE_RULE.lastIndex = start;
-    if (FLAT_STYLE_RULE.test(css)) return FLAT_STYLE_RULE.lastIndex;
   }
+  const flat = atRule ? FLAT_AT_RULE : FLAT_STYLE_RULE;
+  flat.lastIndex = start;
+  if (flat.test(css)) return flat.lastIndex;
   const stop = findCssPunctuation(
     css,
     start,
