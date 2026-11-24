@@ -122,3 +122,5 @@ ajv 플러그인 우선순위 3: 작업자 완료, 작은 변경 하나가 독�
 Vincent 수용 (2026-11-24): `p3-16`, `p3-01`~`04`, `p3-19`, `p2u-13`, `p2u-20`. 결정이 남은 행은 `p3-18`(분석 중)뿐입니다.
 
 ajv6 변경 병합됨 (PR #694, 머리 `0bbddece6`), 작업 트리 정리됨. `opt`에 아직 없는 병합: #693(`@winglet/json`), #694(ajv6 플러그인).
+
+Vincent 수용: `p3-18` (4.19, [issues/json-schema-p3-fix-cost.md](issues/json-schema-p3-fix-cost.md)). 변경 두 커밋은 독립 검증 중(`t50-verify-json-schema-p3.md`, `ctx_35513bb722d1`), 통과하면 PR과 병합입니다.
