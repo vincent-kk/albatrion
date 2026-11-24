@@ -7,6 +7,18 @@ const STYLE_PRELUDE = createCssPunctuationProbe('{}');
 /** An at-rule's prelude also ends at a statement semicolon. */
 const AT_RULE_PRELUDE = createCssPunctuationProbe('{};');
 
+/** Escape-free string spans, matching the component reader's flat spans. */
+const STRING = String.raw`(?:"[^"\\\n\r\f]*(?:"|\r\n|\r(?!\n)|[\n\f])|'[^'\\\n\r\f]*(?:'|\r\n|\r(?!\n)|[\n\f]))`;
+/**
+ * A style rule whose prelude has only plain text, quote-free parentheses (where a
+ * URL token and a component end at the same `)`) and flat brackets, followed by a
+ * flat block: the probe and component reader would stop at exactly the same places.
+ */
+const FLAT_STYLE_RULE = new RegExp(
+  String.raw`(?:[^()[\]{}"'\\/]|\([^()[\]{}"'\\/]*\)|\[(?:[^()[\]{}"'\\/]|${STRING})*\])*\{(?:[^()[\]{}"'\\/]|${STRING})*\}`,
+  'y',
+);
+
 /**
  * Skip one complete top-level rule that an uncompressed pass copies unchanged.
  * @param css Sheet whose grammar position at `start` is the top-level rule list
@@ -19,6 +31,9 @@ export const getVerbatimRuleEnd = (css: string, start: number): number => {
   if (atRule) {
     const initial = css.charCodeAt(start + 1) | 32;
     if (initial < 97 || initial > 122) return 0;
+  } else {
+    FLAT_STYLE_RULE.lastIndex = start;
+    if (FLAT_STYLE_RULE.test(css)) return FLAT_STYLE_RULE.lastIndex;
   }
   const stop = findCssPunctuation(
     css,
