@@ -1,7 +1,11 @@
-import { isCanonicalRetrievalURI } from './isCanonicalRetrievalURI';
-
-/** An http(s) scheme and an ASCII host in any letter case, through the slash that starts the path. */
-const authority = /^https?:\/\/[a-z0-9.-]+\//i;
+/**
+ * The canonical retrieval shape with the scheme and host in any ASCII letter case; without the
+ * unicode flag, case-insensitive matching never pairs a non-ASCII character with an ASCII letter.
+ */
+const foldableShape =
+  /^https?:\/\/(?:[a-z0-9-]+\.)*[a-z][a-z0-9-]*\/[A-Za-z0-9\-._~!$&'()*+,;=:@/]*$/i;
+/** A `.` or `..` path segment, which resolution removes. */
+const dotSegment = /\/\.\.?(?:\/|$)/;
 
 /**
  * Spell a retrieval key as resolution writes it when only the letter case of its scheme and host differs.
@@ -10,10 +14,9 @@ const authority = /^https?:\/\/[a-z0-9.-]+\//i;
  *   `xn--` label; undefined otherwise, which leaves the key to the URL parser.
  */
 export function foldRetrievalURI(uri: string): string | undefined {
-  const prefix = authority.exec(uri)?.[0];
-  if (prefix === undefined) return;
-  const folded = prefix.toLowerCase() + uri.slice(prefix.length);
-  return isCanonicalRetrievalURI(folded) && !folded.includes('xn--')
-    ? folded
-    : undefined;
+  if (!foldableShape.test(uri) || dotSegment.test(uri)) return;
+  // The host is not empty, so the slash that starts the path comes after `http://`.
+  const path = uri.indexOf('/', 8);
+  const folded = uri.slice(0, path).toLowerCase() + uri.slice(path);
+  return folded.includes('xn--') ? undefined : folded;
 }
