@@ -9,7 +9,14 @@ import { getSimpleRuleEnd } from '../getSimpleRuleEnd';
 import { hasCssName } from '../hasCssName';
 import { readCssSheetToken } from '../readCssSheetToken';
 import { canDropCssComment } from './utils/canDropCssComment';
+import { getVerbatimRuleEnd } from './utils/getVerbatimRuleEnd';
 import { keepCssWhitespace } from './utils/keepCssWhitespace';
+
+/** Whitespace, comments and CDO/CDC markers (and any `<` or `-` start) keep the token reader at the rule list. */
+const isVerbatimRuleStart = (css: string, index: number): boolean => {
+  const code = css.charCodeAt(index);
+  return code > 32 && code !== 60 && code !== 45 && !(code === 47 && css.charCodeAt(index + 1) === 42);
+};
 
 /**
  * Process CSS grammar and token positions once for compression and optional fragment EOF recovery.
@@ -30,9 +37,9 @@ export const processCssSheet = (input: string, compressed: boolean, mode: 'none'
   let output = '', index = 0, segmentStart = 0, previousCode = 0, previousEnd = 0;
   let previousKind = CssTokenKind.Delimiter, hasOutput = false, lastKind = previousKind, lastStart = 0;
   while (index < css.length) {
-    const ruleEnd = batchDeclarations && context === CssContext.RuleList && components === 0 ? getSimpleRuleEnd(css, index) : 0;
+    const ruleEnd = (batchDeclarations && context === CssContext.RuleList && components === 0 ? getSimpleRuleEnd(css, index) : 0) || (!compressed && currentFrame === 0 && context === CssContext.RuleList && isVerbatimRuleStart(css, index) ? getVerbatimRuleEnd(css, index) : 0);
     if (ruleEnd) {
-      index = ruleEnd; previousCode = 125; previousKind = CssTokenKind.Delimiter;
+      index = ruleEnd; previousCode = css.charCodeAt(ruleEnd - 1); previousKind = CssTokenKind.Delimiter;
       previousEnd = ruleEnd; hasOutput = true; lastKind = previousKind; lastStart = ruleEnd - 1;
       if (currentFrame === 0) safeEnd = output.length + ruleEnd - segmentStart;
       continue;
