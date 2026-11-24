@@ -1,0 +1,139 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "eefe19e8c35b35ed32d3bc4be5571c1f367b6c11"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 12,
+ "rows": [
+  {
+   "row": "p3-01-ajv7-root-id-compile",
+   "pkg": "@canard/schema-form-ajv7-plugin",
+   "fn": "compile",
+   "input": "string schema with a root id on a freshly bound instance",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 7,
+   "stat": {
+    "A1": {
+     "min": 1484970.2857142931,
+     "p10": 1529928.4285714359,
+     "median": 1627607.1428571218
+    },
+    "A2": {
+     "min": 1476690.4285714384,
+     "p10": 1521529.857142923,
+     "median": 1622803.4285714526
+    },
+    "B": {
+     "min": 1563041.7142857432,
+     "p10": 1641357.0000000035,
+     "median": 1727732.1428572186
+    }
+   },
+   "min": 1.0525744045672245,
+   "p10": 1.072832538664971,
+   "controlMin": 0.9944242270552424,
+   "controlP10": 0.9945104808357897,
+   "verdict": "over"
+  },
+  {
+   "row": "p3-02-ajv7-bind-compile",
+   "pkg": "@canard/schema-form-ajv7-plugin",
+   "fn": "bind and compile",
+   "input": "string schema on a fresh instance",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 7,
+   "stat": {
+    "A1": {
+     "min": 1453178.7142856435,
+     "p10": 1496856.85714277,
+     "median": 1599261.8571428596
+    },
+    "A2": {
+     "min": 1451356.8571428226,
+     "p10": 1497202.5714285858,
+     "median": 1592874.857142858
+    },
+    "B": {
+     "min": 1565988.142857155,
+     "p10": 1625124.7142857078,
+     "median": 1721154.5714285423
+    }
+   },
+   "min": 1.077629425384865,
+   "p10": 1.0856914651062748,
+   "controlMin": 0.9987462951907353,
+   "controlP10": 1.0002309601510433,
+   "verdict": "over"
+  },
+  {
+   "row": "p3-03-ajv7-factory-compile",
+   "pkg": "@canard/schema-form-ajv7-plugin",
+   "fn": "factory compile",
+   "input": "string schema through a new factory",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 7,
+   "stat": {
+    "A1": {
+     "min": 1451000.142857148,
+     "p10": 1494851.2857143409,
+     "median": 1576946.4285714482
+    },
+    "A2": {
+     "min": 1449726.2857142426,
+     "p10": 1490493.9999999963,
+     "median": 1572720.1428571462
+    },
+    "B": {
+     "min": 1560654.7142857446,
+     "p10": 1607029.7142857076,
+     "median": 1698303.5714285637
+    }
+   },
+   "min": 1.0755717164938916,
+   "p10": 1.0750432030553194,
+   "controlMin": 0.999122083378712,
+   "controlP10": 0.9970851376615284,
+   "verdict": "over"
+  },
+  {
+   "row": "p3-04-ajv7-factory-fresh",
+   "pkg": "@canard/schema-form-ajv7-plugin",
+   "fn": "factory compile on a fresh instance",
+   "input": "string schema with an id on a fresh instance",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 7,
+   "stat": {
+    "A1": {
+     "min": 1467041.7142856747,
+     "p10": 1505392.7142857253,
+     "median": 1581571.2857142899
+    },
+    "A2": {
+     "min": 1469095.2857142424,
+     "p10": 1499047.7142856498,
+     "median": 1576232.1428571795
+    },
+    "B": {
+     "min": 1568732.1428572107,
+     "p10": 1634000.000000047,
+     "median": 1728357.000000025
+    }
+   },
+   "min": 1.0693166578573061,
+   "p10": 1.0854310536339635,
+   "controlMin": 1.0013998043876806,
+   "controlP10": 0.995785152977118,
+   "verdict": "over"
+  }
+ ]
+}
