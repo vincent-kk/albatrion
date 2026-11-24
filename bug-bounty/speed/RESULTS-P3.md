@@ -13,7 +13,7 @@
 | p3-05 ajv8 factory-fresh | ajv8-plugin | repaired | 1.52 ms | 1.024 / 1.021 | 0.997 / 1.004 | 24 | p3-rerun-mix | 통과 |
 | p3-06 anchor ssr initial errors | schema-form | repaired | 10.3 us | 1.247 / 1.196 | 0.997 / 1.006 | 12 | p3-a | 통과 |
 | p3-07 overlap array 32-4 | schema-form | repaired | 108.5 us | 1.191 / 1.166 | 1.011 / 0.992 | 12 | p3-a | 통과 |
-| p3-08 json getValue fragment | @winglet/json | repaired | 52 ns | 4.232 / 4.211 | 0.997 / 1.001 | 12 | p3-a | 초과 (3배) |
+| p3-08 json getValue fragment | @winglet/json | repaired | 52.7 ns | 2.668 / 2.676 | 0.992 / 1.003 | 24 | json-p3-final | 통과 (PR #693 뒤, 이전 4.23) |
 | p3-09 ab derive overlap | schema-form | repaired | 16.7 us | 1.192 / 1.192 | 1.001 / 0.998 | 12 | p3-a | 통과 |
 | p3-10 reset refused 8 | schema-form | repaired | 111.5 us | 1.229 / 1.231 | 1.010 / 1.006 | 12 | p3-b | 통과 |
 | p3-11 expr return regexp | schema-form | repaired | 67.6 us (후보만) | 1.015 / 0.998 (후보끼리, 비율 없음) | 1.012 / 1.000 | 24 | p3-rerun-single-opt | 비교 불가 |
