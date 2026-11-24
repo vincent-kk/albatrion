@@ -10,6 +10,7 @@ import { normalizeSchemaUri } from '../../../utils/dialectFlag/normalizeSchemaUr
 import { JSONSchemaScanError } from '../../../utils/error/JSONSchemaScanError';
 import { JSONSchemaScanErrorCode } from '../../../utils/error/JSONSchemaScanErrorCode';
 import { buildKeywordMap } from '../../../utils/keywordMap/buildKeywordMap';
+import { DEFAULT_KEYWORD_MAP } from '../../../utils/keywordMap/defaultKeywordMap';
 import { ReferenceSkipReason } from '../../../utils/referenceOutcome/ReferenceSkipReason';
 import { cloneSchema } from '../../../utils/schemaCopy/cloneSchema';
 import type { ReferenceKeyword, ReferenceStep } from '../../../utils/type';
@@ -706,11 +707,15 @@ export class ResolverStore {
     const positions = new Map<string, ResolverContext>(),
       data: string[] = [],
       containers = new Set<string>();
-    const vocabulary = buildKeywordMap(
-      (this.options.keywords ?? DEFAULT_KEYWORDS).concat(
-        this.options.additionalKeywords ?? [],
-      ),
-    );
+    const vocabulary =
+      this.options.keywords !== undefined ||
+      this.options.additionalKeywords !== undefined
+        ? buildKeywordMap(
+            (this.options.keywords ?? DEFAULT_KEYWORDS).concat(
+              this.options.additionalKeywords ?? [],
+            ),
+          )
+        : DEFAULT_KEYWORD_MAP;
     let safe = true;
     const provider = {
       root: () => location.context,
