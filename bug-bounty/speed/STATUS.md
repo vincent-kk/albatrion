@@ -82,3 +82,10 @@
 | 화면 행            | `p2u-*` 25개와 `p2c-05`                                | 주 체크아웃 (행 파일과 결과만)                       | `t38-rows-p2-ui-resume.md` | `ctx_dd181952646f` |
 
 작업자가 보고하면 `HANDOFF.md`의 7~10단계(원자료 대조, 독립 검증, PR, 병합, 정리)로 이어갑니다. 우선순위 3과 `p2c-24`는 아직 배정하지 않았습니다.
+
+Vincent의 우선순위 조정(2026-11-24): 기반 도구가 먼저이고, 화면 플러그인과 `agents-assets-sync`는 1.5배까지 수용합니다([HANDOFF.md](HANDOFF.md)의 "패키지별 중요도"). 이에 따라 배정을 바꿨습니다.
+
+- `json-schema` 묶음을 추가했습니다: `p2c-22`(평범한 입력 4.7배), `p2c-23`, `p2c-24`. 작업 트리 `speed-json-schema-p2`, 가지 `perf/json-schema-speed-p2`, 명세 `t39-json-schema-p2.md`, 배정 `ctx_cb2cb0891322`.
+- 화면 행 작업자(`ctx_dd181952646f`)는 우선순위 3 행(명세 `t40-rows-p3.md`, 진행 기록 `albatrion-speed/analysis/report-p3.md`)을 먼저 하고, 화면 행은 그 뒤에 12라운드 한 번만 잽니다.
+- `agents-assets-sync` 작업자는 목표를 1.5배로 낮추고 통상적 낭비만 걷어냅니다.
+- `schema-form` 작업자가 측정 대기열 우선입니다. 플러그인 행 `p2c-04`, `p2c-07`은 수용 범위이고 `p2c-02`, `p2c-03`은 코어 변경 뒤 재측정만 합니다.
