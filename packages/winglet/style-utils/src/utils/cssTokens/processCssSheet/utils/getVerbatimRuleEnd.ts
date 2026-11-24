@@ -1,21 +1,23 @@
 import { createCssPunctuationProbe } from '../../createCssPunctuationProbe';
 import { findCssPunctuation } from '../../findCssPunctuation';
 import { getCssComponentEnd } from '../../getCssComponentEnd';
+import {
+  FLAT_ESCAPE_PATTERN,
+  FLAT_STRING_PATTERN,
+} from '../../flatCssPatterns';
 
 /** A qualified rule's prelude ends at its block; a stray `}` needs the token reader. */
 const STYLE_PRELUDE = createCssPunctuationProbe('{}');
 /** An at-rule's prelude also ends at a statement semicolon. */
 const AT_RULE_PRELUDE = createCssPunctuationProbe('{};');
 
-/** Escape-free string spans, matching the component reader's flat spans. */
-const STRING = String.raw`(?:"[^"\\\n\r\f]*(?:"|\r\n|\r(?!\n)|[\n\f])|'[^'\\\n\r\f]*(?:'|\r\n|\r(?!\n)|[\n\f]))`;
 /**
- * A style rule whose prelude has only plain text, quote-free parentheses (where a
- * URL token and a component end at the same `)`) and flat brackets, followed by a
- * flat block: the probe and component reader would stop at exactly the same places.
+ * A style rule whose prelude has only plain text, escapes, quote-free parentheses
+ * (where a URL token and a component end at the same `)`) and flat brackets, followed
+ * by a flat block: the probe and component reader would stop at exactly the same places.
  */
 const FLAT_STYLE_RULE = new RegExp(
-  String.raw`(?:[^()[\]{}"'\\/]|\([^()[\]{}"'\\/]*\)|\[(?:[^()[\]{}"'\\/]|${STRING})*\])*\{(?:[^()[\]{}"'\\/]|${STRING})*\}`,
+  String.raw`(?:[^()[\]{}"'\\/]|${FLAT_ESCAPE_PATTERN}|\([^()[\]{}"'\\/]*\)|\[(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN})*\])*\{(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN})*\}`,
   'y',
 );
 
