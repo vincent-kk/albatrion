@@ -1,12 +1,11 @@
 import { getCssTextComponentEnd } from './getCssTextComponentEnd';
 import { CssTokenKind } from './CssTokenKind';
+import { FLAT_STRING_PATTERN } from './flatCssPatterns';
 import { type CssSource, readCssCode } from './readCssCode';
 import { readCssToken } from './readCssToken';
 
-/** Escape-free string spans cannot change the surrounding component nesting. */
-const STRING = String.raw`(?:"[^"\\\n\r\f]*(?:"|\r\n|\r(?!\n)|[\n\f])|'[^'\\\n\r\f]*(?:'|\r\n|\r(?!\n)|[\n\f]))`;
-/** All alternatives have disjoint first code units; nested and escaped forms use token traversal. */
-const CONTENT = String.raw`(?:[^()[\]{}"'\\/]|${STRING})*`;
+/** All alternatives have disjoint first code units; escape-free strings cannot change the nesting, and nested and escaped forms use token traversal. */
+const CONTENT = String.raw`(?:[^()[\]{}"'\\/]|${FLAT_STRING_PATTERN})*`;
 /** Flat parenthesized positions. */
 const SIMPLE_PAREN = new RegExp(CONTENT + String.raw`\)`, 'y');
 /** Flat bracketed positions. */
