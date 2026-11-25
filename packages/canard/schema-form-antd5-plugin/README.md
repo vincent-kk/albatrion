@@ -279,4 +279,4 @@ A boolean switch accepts `presentation.FieldInputProps.alias` with optional `che
 
 A read-only Slider displays an in-range decimal as stored for a `number` schema without `multipleOf`. An `integer` schema displays a grid point and keeps the stored value. The scoped Slider ID identifies the root. The library does not expose a thumb ID prop. Use `form.focus(path)` to reach an editable thumb.
 
-Ant Design determines the slider’s unset display, stops, keyboard behavior, and rounding.
+Ant Design determines the slider’s unset display, stops, keyboard behavior, and rounding. With a very small step, such as `multipleOf: 1e-7` on a range of `0` to `1e-6`, the thumb, tooltip and `aria-valuenow` can show a neighboring stop or a range end while the stored value stays exact.

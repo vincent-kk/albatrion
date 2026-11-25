@@ -279,4 +279,4 @@ A boolean switch accepts `presentation.FieldInputProps.alias` with optional `che
 
 읽기 전용 Slider는 `multipleOf`가 없는 `number` 스키마에서 범위 안의 소수를 그대로 표시합니다. `integer` 스키마는 정수 격자점을 표시하고 저장값을 유지합니다. Form 범위의 Slider ID는 루트 요소를 가리킵니다. 라이브러리는 thumb ID prop을 제공하지 않습니다. 편집 가능한 thumb로 이동하려면 `form.focus(path)`를 사용하세요.
 
-슬라이더의 미설정 표시, 정지점, 키 입력과 값 반올림은 Ant Design이 처리합니다.
+슬라이더의 미설정 표시, 정지점, 키 입력과 값 반올림은 Ant Design이 처리합니다. 범위가 `0`부터 `1e-6`이고 `multipleOf: 1e-7`인 경우처럼 간격이 아주 작으면, 저장값은 정확히 유지되지만 thumb, 툴팁과 `aria-valuenow`에는 이웃한 정지점이나 범위의 끝 값이 표시될 수 있습니다.
