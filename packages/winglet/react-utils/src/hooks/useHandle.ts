@@ -10,7 +10,7 @@ import { useCommittedReference } from './utils/useCommittedReference';
  * which has no committed handler yet, it runs that render's own handler.
  *
  * This hook solves the common "stale closure" problem in React by maintaining a stable
- * function reference while ensuring it always calls the most recent committed version of your handler.
+ * function reference while so it calls the most recent committed version of your handler.
  * It combines the benefits of `useCallback` (stable reference) with the flexibility of
  * always having access to the latest props and state.
  *

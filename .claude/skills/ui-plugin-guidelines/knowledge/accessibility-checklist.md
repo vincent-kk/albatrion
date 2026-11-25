@@ -21,7 +21,7 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 />
 ```
 
-MUI places ARIA props written directly on `TextField`, `Select` or `Checkbox` on the component's wrapper element, not on the control a screen reader announces. Pass control-level ARIA through `slotProps.htmlInput` (`TextField`), `SelectDisplayProps` (`Select`) or `slotProps.input` (`Checkbox`), as the MUI plugin's inputs do.
+On `TextField` and `Checkbox`, MUI places ARIA props written directly on the component's wrapper element, not on the control a screen reader announces. `Select` forwards `aria-describedby` to its combobox, but `aria-label` and `aria-labelledby` written directly on it do not reach the combobox, so those go in `SelectDisplayProps`. Pass control-level ARIA through `slotProps.htmlInput` (`TextField`), `SelectDisplayProps` (`Select`) or `slotProps.input` (`Checkbox`), as the MUI plugin's inputs do.
 
 ### Error Message Association
 
@@ -58,7 +58,7 @@ MUI places ARIA props written directly on `TextField`, `Select` or `Checkbox` on
 />
 ```
 
-The element with `labelId` exists only while a FieldRenderer or `Form.Label` renders it: the bound Label, or a branch legend as in the FieldRenderer template. Under a label-free FieldRenderer, such as the MUI plugin's, an input whose control references `labelId` has no accessible name; render the input's own caption at `getInputId('legend')` and reference that instead, as the MUI plugin's inputs do when they show a label.
+The element with `labelId` exists only while a FieldRenderer or `Form.Label` renders it: the bound Label, or a branch legend as in the FieldRenderer template. Under a label-free FieldRenderer, such as the MUI plugin's, an input whose control references `labelId` has no accessible name; render the input's own caption at `getInputId('legend')` and reference that instead, as the MUI plugin's picker, choice, switch and slider inputs do when they show a label.
 
 ## Keyboard Navigation
 
@@ -187,7 +187,7 @@ Use the `labelId` supplied to `FieldRendererProps` for the title and group assoc
 ```typescript
 <Select
   inputProps={{ id: getInputId('native') }}
-  SelectDisplayProps={{ id: inputId, 'aria-labelledby': labelId }}  // ✅ id and name on the combobox
+  SelectDisplayProps={{ id: inputId, 'aria-labelledby': labelId }}  // ✅ id and accessible name on the combobox
   name={name}
   required={required}  // MUI sets aria-required on the combobox
   error={hasError}     // MUI sets aria-invalid on the combobox
