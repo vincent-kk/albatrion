@@ -14,8 +14,8 @@ import { applyFormErrors } from './applyFormErrors';
  * Build a speculative root; prepared current loads deliver even while effects are disconnected.
  * @param props - Committed Form props; a current input-map error prevents construction, otherwise the default value is cloned before building.
  * @param reporter - Instance reporter that receives prepared current load reports; may be absent.
- * @param mount - Mount the built tree now; `false` leaves mounting to a reset that first adopts the previous tree.
- * @returns The load; a construction or mount failure is kept in `error` instead of thrown.
+ * @param mount - Mount the built tree now; `false` leaves mounting and the initial errors to a reset that first adopts the previous tree.
+ * @returns The load; a construction, mount or initial-error failure is kept in `error` instead of thrown, the first one kept, and the initial errors still reach a root that a failed mount left in place.
  */
 export const createRootLoad = (
   props: RootLoadProps,
@@ -66,17 +66,20 @@ export const createRootLoad = (
           load.props.onStateChange?.(load.root.globalState);
       },
     });
-    if (mount) {
+    if (mount)
       mountFieldNode(load.root, undefined, undefined, {
         deferValidation: true,
       });
-      if (props.errors?.length)
-        applyFormErrors(load.root, props.errors, undefined, 'load');
-    }
   } catch (error) {
     load.error = error;
     if (load.root?.diagnostics.cause === 'sharedConflict')
       load.root = undefined;
   }
+  if (mount && load.root && props.errors?.length)
+    try {
+      applyFormErrors(load.root, props.errors, undefined, 'load');
+    } catch (error) {
+      load.error ??= error;
+    }
   return load;
 };
