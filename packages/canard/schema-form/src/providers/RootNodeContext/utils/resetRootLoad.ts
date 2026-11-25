@@ -25,6 +25,7 @@ const AUTOMATIC_WRITES_MASK =
  * Call beginLoad to advance the reporter load and renew its warning scope.
  * Deliver the replaced never-prepared load's buffered and reset-chain records,
  * then the new build records, once to the reporter.
+ * Mount and apply the errors prop in one load chain, so a failed mount still receives the errors.
  * Retire the previous load after the reset chain, including failed adoption.
  * Report a replaced never-prepared load's construction error once to capture and the host.
  * @param previous - Committed or speculative load whose tree may be retained
@@ -89,8 +90,7 @@ export const resetRootLoad = (
     applyFormErrors(replacement, props.errors, undefined, 'load');
   };
   try {
-    if (root) batchFieldNodeLoad(root, load);
-    else load();
+    batchFieldNodeLoad(root ?? replacement, load);
   } catch (error) {
     next.error = error;
   }

@@ -1,6 +1,6 @@
 import { StrictMode, createRef } from 'react';
 
-import { cleanup, render } from '@testing-library/react';
+import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import {
@@ -30,6 +30,31 @@ const schema = {
 
 /** Stable empty context, so a re-render does not count as a context change. */
 const context = {};
+
+/** Two always-active `allOf` branches declare `shared` with different types, so the load keeps no root. */
+const conflictSchema = {
+  type: 'object',
+  allOf: [
+    {
+      controls: { active: 'true' },
+      properties: { shared: { type: 'number' } },
+    },
+    {
+      controls: { active: 'true' },
+      properties: { shared: { type: 'string' } },
+    },
+  ],
+} as const;
+
+/** The `oneOf` branches give the discriminator `kind` constants of different types, so construction fails. */
+const unbuildableSchema = {
+  type: 'object',
+  controls: { discriminator: 'kind' },
+  oneOf: [
+    { properties: { kind: { const: 'a' } } },
+    { properties: { kind: { const: 1 } } },
+  ],
+} as const;
 
 const issue = { dataPath: '/name', message: 'external name' };
 
@@ -182,3 +207,79 @@ it('REACT-007 applies the initial errors when input-map recovery mounts into a t
   ]);
   expectExpressionReportedOnce(onError, sink);
 });
+
+it.each([
+  {
+    source: 'a shared-conflict fallback',
+    initial: conflictSchema,
+    trigger: 'handle.reset()',
+  },
+  {
+    source: 'a shared-conflict fallback',
+    initial: conflictSchema,
+    trigger: 'a validatorFactory change',
+  },
+  {
+    source: 'a construction failure',
+    initial: unbuildableSchema,
+    trigger: 'handle.reset()',
+  },
+  {
+    source: 'a construction failure',
+    initial: unbuildableSchema,
+    trigger: 'a validatorFactory change',
+  },
+] as const)(
+  'WRITE-045 applies the errors prop when $trigger mounts a throwing expression after $source',
+  ({ initial, trigger }) => {
+    const sink = observeErrorSink();
+    const onError = vi.fn();
+    const handle = createRef<FormHandle>();
+    const first = { compile: () => () => null, compileGuard: () => () => true };
+    const second = {
+      compile: () => () => null,
+      compileGuard: () => () => true,
+    };
+    const element = (
+      jsonSchema: FormProps['jsonSchema'],
+      validatorFactory: FormProps['validatorFactory'],
+    ) => (
+      <Form
+        ref={handle}
+        onError={onError}
+        validationMode={ValidationMode.None}
+        errorVisibility={ErrorVisibility.Always}
+        validatorFactory={validatorFactory}
+        jsonSchema={jsonSchema}
+        context={context}
+        errors={[issue]}
+      />
+    );
+    const view = render(element(initial, first));
+    view.rerender(element(schema, first));
+    expect(handle.current?.node).toBeUndefined();
+    onError.mockClear();
+    const isCallerReset = trigger === 'handle.reset()';
+    let thrown: unknown;
+    if (isCallerReset)
+      act(() => {
+        try {
+          handle.current?.reset();
+        } catch (error) {
+          thrown = error;
+        }
+      });
+    else view.rerender(element(schema, second));
+    expectExternalErrorShown(handle, view.container);
+    expect(onError).toHaveBeenCalledTimes(1);
+    const [record] = onError.mock.calls[0];
+    expect(record).toMatchObject({
+      code: FormErrorCode.ExpressionThrew,
+      origin: 'load',
+    });
+    expect(thrown).toBe(isCallerReset ? record.error : undefined);
+    expect(
+      sink.errors().filter((error) => error === record.error),
+    ).toHaveLength(isCallerReset ? 0 : 1);
+  },
+);
