@@ -114,6 +114,13 @@ export interface FieldNodeRecord<Self> {
    * element stay `Object.is`-equal to a fresh projection; undefined on other kinds and before the first read.
    */
   virtualDefaultValue?: readonly unknown[];
+  /**
+   * Watch values from this occurrence's last changed read and the commit that read them; a read returns the
+   * same array while every value stays `Object.is`-equal, and a detached read returns it unchanged.
+   * Undefined until a read meets a watch list; in a tree that declares any watch, an exit replaces it with the
+   * departing snapshot's values.
+   */
+  watchValuesMemo?: { commit: number; values: readonly unknown[] };
   /** Merged effective schema for the active declarations. */
   schema: EffectiveSchema;
   /** Stored interaction flags updated by shallow patches. */

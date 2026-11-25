@@ -27,7 +27,7 @@ describe('watch-free exit snapshots', () => {
     expect(lookup.mock.calls.filter(([owner]) => owner === field)).toHaveLength(
       0,
     );
-    expect(root.runtime.watchValuesMemo?.has(field) ?? false).toBe(false);
+    expect(field.watchValuesMemo).toBeUndefined();
     expect(root.runtime.detachedReads?.has(field)).toBe(true);
     field.isDetached = true;
     const empty = readFieldNodeWatchValues(field);
@@ -46,12 +46,13 @@ describe('watch-free exit snapshots', () => {
       schema: field.schema.schema,
       outputValue: root.storedOutputValue,
     });
-    const memo = root.runtime.watchValuesMemo!.get(field);
+    const memo = field.watchValuesMemo;
+    expect(memo?.values).toBe(empty);
     captureDetachedFieldNodeReads(field, {
       schema: field.schema.schema,
       outputValue: root.storedOutputValue,
     });
-    expect(root.runtime.watchValuesMemo!.get(field)).toBe(memo);
+    expect(field.watchValuesMemo).toBe(memo);
     field.isDetached = true;
     expect(readFieldNodeWatchValues(field)).toBe(empty);
   });

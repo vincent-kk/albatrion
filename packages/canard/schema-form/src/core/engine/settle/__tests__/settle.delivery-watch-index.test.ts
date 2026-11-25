@@ -43,9 +43,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
     const before = root.runtime.commitNumber;
     expect(watchers).toHaveLength(1_000);
     expect(
-      watchers.every(
-        (node) => root.runtime.watchValuesMemo?.get(node)?.commit === before,
-      ),
+      watchers.every((node) => node.watchValuesMemo?.commit === before),
     ).toBe(true);
 
     for (const node of root.runtime.deliveries ?? [])
@@ -58,9 +56,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       WriteOption.Overwrite,
     );
     expect(
-      watchers.every(
-        (node) => root.runtime.watchValuesMemo?.get(node)?.commit === before,
-      ),
+      watchers.every((node) => node.watchValuesMemo?.commit === before),
     ).toBe(true);
     expect(
       watchers.every(
@@ -90,9 +86,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
     ).toBe(true);
     expect(
       watchers.every(
-        (node) =>
-          root.runtime.watchValuesMemo?.get(node)?.commit ===
-          root.runtime.commitNumber,
+        (node) => node.watchValuesMemo?.commit === root.runtime.commitNumber,
       ),
     ).toBe(true);
   });
@@ -116,9 +110,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       WriteOption.Overwrite,
     );
     const watcher = root.childrenByName!.watcher;
-    expect(root.runtime.watchValuesMemo?.get(watcher)?.values).toEqual([
-      undefined,
-    ]);
+    expect(watcher.watchValuesMemo?.values).toEqual([undefined]);
     for (const node of root.runtime.deliveries ?? [])
       node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
@@ -130,9 +122,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       WriteOption.Overwrite,
     );
     expect(root.childrenByName?.conditional).toBeDefined();
-    expect(root.runtime.watchValuesMemo?.get(watcher)?.values).toEqual([
-      'arrived',
-    ]);
+    expect(watcher.watchValuesMemo?.values).toEqual(['arrived']);
     expect(
       (watcher.pendingDelivery?.type ?? 0) &
         FieldNodeEventType.UpdateControlledProperties,
@@ -165,9 +155,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.runtime.watchValuesMemo?.get(watcher)?.commit).not.toBe(
-      root.runtime.commitNumber,
-    );
+    expect(watcher.watchValuesMemo?.commit).not.toBe(root.runtime.commitNumber);
     expect(
       (watcher.pendingDelivery?.type ?? 0) &
         FieldNodeEventType.UpdateControlledProperties,
@@ -177,9 +165,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
     root.runtime.deliveries?.clear();
 
     changeFieldNodeContext(root, { version: 2 });
-    expect(root.runtime.watchValuesMemo?.get(watcher)?.values).toEqual([
-      { version: 2 },
-    ]);
+    expect(watcher.watchValuesMemo?.values).toEqual([{ version: 2 }]);
     expect(
       (watcher.pendingDelivery?.type ?? 0) &
         FieldNodeEventType.UpdateControlledProperties,
@@ -249,9 +235,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
       WriteOption.Overwrite,
     );
     expect(root.childrenByName!.conditional).toBeUndefined();
-    expect(root.runtime.watchValuesMemo?.get(watcher)?.values).toEqual([
-      undefined,
-    ]);
+    expect(watcher.watchValuesMemo?.values).toEqual([undefined]);
     expect(
       (watcher.pendingDelivery?.type ?? 0) &
         FieldNodeEventType.UpdateControlledProperties,
@@ -343,9 +327,7 @@ describe('44C-01 EVENT-064 watch delivery candidates', () => {
     expect(watchers).toHaveLength(1_000);
     expect(
       watchers.filter(
-        (node) =>
-          root.runtime.watchValuesMemo?.get(node)?.commit ===
-          root.runtime.commitNumber,
+        (node) => node.watchValuesMemo?.commit === root.runtime.commitNumber,
       ),
     ).toHaveLength(0);
   });

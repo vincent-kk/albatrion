@@ -17,7 +17,7 @@ it('allocates no memo or witness for repeated empty live reads', () => {
   for (let index = 0; index < 100; index++)
     expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
   expect(lookup).not.toHaveBeenCalled();
-  expect(root.runtime.watchValuesMemo).toBeUndefined();
+  expect(root.watchValuesMemo).toBeUndefined();
   root.isDetached = true;
   expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
 });
@@ -36,10 +36,10 @@ it('clears real watch values before reusing an empty memo and detaching', () => 
   expect(readFieldNodeWatchValues(root)).toBe(watched);
   root.schema = { ...root.schema, schema: { type: 'string' } };
   expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
-  const memo = root.runtime.watchValuesMemo!.get(root);
+  const memo = root.watchValuesMemo;
   const lookup = vi.spyOn(derived, 'getHostDerived');
   expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
-  expect(root.runtime.watchValuesMemo!.get(root)).toBe(memo);
+  expect(root.watchValuesMemo).toBe(memo);
   expect(lookup).not.toHaveBeenCalled();
   root.isDetached = true;
   expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
@@ -58,5 +58,5 @@ it('retains snapshot memo writes and restores empty live reads', () => {
   expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
   const empty = { ...snapshot, schema: { type: 'string' as const } };
   expect(readFieldNodeWatchValues(root, empty)).toBe(EMPTY_ARRAY);
-  expect(root.runtime.watchValuesMemo!.get(root)!.values).toBe(EMPTY_ARRAY);
+  expect(root.watchValuesMemo?.values).toBe(EMPTY_ARRAY);
 });

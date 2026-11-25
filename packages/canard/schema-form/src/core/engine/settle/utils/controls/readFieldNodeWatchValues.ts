@@ -37,7 +37,7 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
 ): readonly unknown[] => {
   const runtime = node.runtime;
   const commit = runtime.commitNumber ?? 0;
-  const memo = runtime.watchValuesMemo?.get(node);
+  const memo = node.watchValuesMemo;
   if (!snapshot && memo && node.isDetached) return memo.values;
   if (node.isDetached) return EMPTY_ARRAY;
   const schema = snapshot?.schema ?? node.schema.schema;
@@ -96,8 +96,6 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
     };
   if (!next) return memo!.values;
   const values = next.length ? Object.freeze(next) : EMPTY_ARRAY;
-  const cache = runtime.watchValuesMemo ?? new WeakMap();
-  cache.set(node, { commit, values });
-  runtime.watchValuesMemo = cache;
+  node.watchValuesMemo = { commit, values };
   return values;
 };

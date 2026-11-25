@@ -455,11 +455,6 @@ export interface FieldNodeRuntime<Self>
   };
   /** Frozen last-commit reads for departed references, allocated on first exit. */
   detachedReads?: WeakMap<object, DetachedFieldNodeReads>;
-  /** Stable watch path results for each node within one completed commit. */
-  watchValuesMemo?: WeakMap<
-    object,
-    { commit: number; values: readonly unknown[] }
-  >;
   /** Settlement health retained until a form-level load. */
   diagnostics: FieldNodeDiagnostics;
   /** Single node creator used throughout this tree. */
