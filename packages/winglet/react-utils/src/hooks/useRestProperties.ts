@@ -1,7 +1,5 @@
 import { useMemo, useRef } from 'react';
 
-import { hasOwnProperty } from '@winglet/common-utils/lib';
-
 import type { Dictionary } from '@aileron/declare';
 
 import { equalRestSymbols } from './utils/equalRestSymbols';
@@ -20,8 +18,9 @@ import { useCommitEffect } from './utils/useCommitEffect';
  * 2. **Repeat Check**: a reference already compared is answered from that verdict
  * 3. **Key Count Comparison**: a differing property count is a fast rejection
  * 4. **Value Comparison**: shallow (`!==`) comparison of every own enumerable property;
- *    an `undefined` value matches only when the previous object owns the same key, so a
- *    renamed key whose old and new values are both `undefined` still counts as a change
+ *    a key matches only when it is also an own enumerable key of the previous object, so a
+ *    renamed key whose values compare equal — both `undefined`, or a value the previous
+ *    object inherits — still counts as a change; each property is read once
  * 5. **Reference Preservation**: return the previous reference when the contents match
  *
  * ### Performance Characteristics
@@ -72,7 +71,7 @@ export const useRestProperties = <T extends Dictionary>(props: T): T => {
       const key = keys[index];
       if (
         props[key] !== previous.value[key] ||
-        (props[key] === undefined && !hasOwnProperty(previous.value, key))
+        (key !== previousKeys[index] && !isEnumerable.call(previous.value, key))
       )
         return { value: props, keys };
     }
@@ -86,3 +85,6 @@ export const useRestProperties = <T extends Dictionary>(props: T): T => {
   }, [next]);
   return props ? next.value : props;
 };
+
+/** Check own enumerability independently of an object's prototype. */
+const isEnumerable = Object.prototype.propertyIsEnumerable;
