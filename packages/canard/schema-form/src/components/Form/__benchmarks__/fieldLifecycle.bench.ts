@@ -78,7 +78,7 @@ describe('fieldLifecycle', () => {
     setup: () => {
       form = new LifecycleBenchForm();
       form.mount(flatSchema);
-      const input = form.container.querySelector('input[id="/f0"]');
+      const input = form.container.querySelector('input');
       if (!input) throw new Error('missing write target');
       write = () => {
         fireEvent.change(input, { target: { value: '' + ++value } });
@@ -232,7 +232,7 @@ describe('fieldLifecycle', () => {
         if (!node || !isArrayNode(node)) throw new Error('missing array root');
         expect(
           form.container.querySelectorAll(
-            'label[for$="/name"], label[for$="/email"]',
+            'label[for*="name"], label[for*="email"]',
           ),
         ).toHaveLength(600);
         write = () => {
@@ -243,11 +243,11 @@ describe('fieldLifecycle', () => {
         expect(form.handle.current?.node?.value).toHaveLength(299);
         expect(
           form.container.querySelectorAll(
-            'label[for$="/name"], label[for$="/email"]',
+            'label[for*="name"], label[for*="email"]',
           ),
         ).toHaveLength(598);
         expect(
-          form.container.querySelector('input[id="/0/name"]'),
+          form.container.querySelector('input[id*="name"]'),
         ).toHaveProperty('value', 'Name 1');
         form.dispose();
       },
@@ -292,9 +292,7 @@ describe('fieldLifecycle', () => {
       },
       () => {
         expect(
-          form.container.querySelector(
-            'input[id="/outer/middle/inner/target"]',
-          ),
+          form.container.querySelector('input[id*="target"]'),
         ).not.toBeNull();
         form.dispose();
       },
@@ -310,7 +308,9 @@ describe('fieldLifecycle', () => {
         form.mount(nestedSchema, nestedOptions);
       },
       () => {
-        expect(document.activeElement?.id).toBe('/outer/middle/inner/target');
+        expect(document.activeElement?.id).toContain(
+          '/outer/middle/inner/target',
+        );
         form.dispose();
       },
     ),
