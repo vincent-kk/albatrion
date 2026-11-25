@@ -7,17 +7,32 @@
 | `ROWS-P1.md`, `ROWS-P2-*.md`  | 행별 고정 입력, 측정 구간, 입력 종류의 근거입니다.                                                                                                                 |
 | `issues/`                     | Vincent의 결정이 필요해 건너뛴 항목과, 바운티 수정의 필연적 비용으로 밝혀진 초과 행의 기록입니다. 항목마다 파일 하나이며 내용, 측정 근거, 선택지, 권고를 적습니다. |
 | `RESULTS-P<n>.md`, `results/` | 우선순위별 결과 표와 실행별 원자료입니다.                                                                                                                          |
-| `RESULTS-FINAL.md`             | 개선을 모두 병합한 뒤 110행 전체를 다시 잰 최종 값과 판정입니다.                                                                                                   |
+| `RESULTS-FINAL.md`            | 개선을 모두 병합한 뒤 110행 전체를 다시 잰 최종 값과 판정입니다.                                                                                                   |
+| `RESULTS-GENERAL.md`          | `@canard/schema-form`의 범용 벤치마크 58개 항목을 기준과 후보에서 돌린 결과입니다.                                                                                 |
 | `rows/`                       | 위 명세를 옮긴 행 파일입니다. 파일 이름은 `p<우선순위>-<순번>-<행 이름>.mjs`입니다.                                                                                |
 
 ## 실행
 
-두 트리는 각 커밋을 `git archive`로 풀어 따로 설치하고 빌드한 사본이며, 루트의 `.speed-ref`에 커밋을 적어 둡니다.
+측정 트리는 저장소에 두지 않습니다. 각 커밋을 저장소 밖에 풀어 따로 설치하고 빌드한 사본이며, 다시 잴 때 아래 순서로 만듭니다.
+
+1. `git archive <커밋>`을 빈 디렉터리에 풀고, 루트의 `.speed-ref`에 그 커밋을 적습니다.
+2. 그 디렉터리 안에서 `yarn install --immutable`을 실행합니다. 바깥에서 실행하면 전역 Yarn 1이 선택되어 실패합니다.
+3. `@canard/schema-form`을 뺀 나머지를 의존 순서대로 빌드한 다음 `@canard/schema-form`을 빌드합니다. 한 번에 빌드하면 `@canard/schema-form`의 타입 검사가 아직 빌드되지 않은 플러그인의 선언을 찾지 못해 실패합니다.
+4. 후보 트리에 새 변경을 반영할 때는 바뀐 패키지만 `git archive <커밋> <패키지 경로>`로 덮어쓰고 그 패키지를 다시 빌드한 뒤, `src`가 그 커밋과 같은지 `diff -rq`로 확인합니다.
+
+| 트리      | 커밋                                                          | 쓰임                              |
+| --------- | ------------------------------------------------------------- | --------------------------------- |
+| 기준      | `1c77ced57`                                                   | 모든 행의 `--a`입니다.            |
+| 기준 변형 | `1c77ced57`에서 플러그인의 `antd-mobile`만 5.43.0으로 맞춘 것 | antd-mobile 행의 `--a`입니다.     |
+| 수정 직후 | `d78e45c6b`                                                   | 개선 전 값을 잴 때의 `--b`입니다. |
+| 후보      | `1.0.0/optimize`의 끝                                         | 개선 후 값을 잴 때의 `--b`입니다. |
 
 ```sh
-node benchmarks/compare/run.mjs --a ../albatrion-speed/beta --b ../albatrion-speed/head \
-  --rows bug-bounty/speed/rows --only p1- --out <새 출력 디렉터리>
+node benchmarks/compare/run.mjs --a <기준 트리> --b <후보 트리> \
+  --rows bug-bounty/speed/rows --only p1- --rounds 24 --out <새 출력 디렉터리>
 ```
+
+이 자료의 값은 Apple M1 Max, Node v24.20.0에서 쟀습니다. 다른 Node 버전의 값과는 비교하지 않습니다. 초과 행을 개선하고 검증하는 절차는 [benchmarks/IMPROVING.md](../../benchmarks/IMPROVING.md)를 따릅니다.
 
 ## 이번 측정의 결정
 

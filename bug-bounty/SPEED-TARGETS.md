@@ -2,7 +2,7 @@
 
 ## 재측정 결과
 
-아래 목록의 모든 행을 다시 재고 개선을 마쳤습니다. 행별 최종 값과 판정은 [speed/RESULTS-FINAL.md](speed/RESULTS-FINAL.md)에 있습니다.
+아래 목록의 모든 행을 다시 재고 개선을 마쳤습니다. 행별 최종 값과 판정은 [speed/RESULTS-FINAL.md](speed/RESULTS-FINAL.md)에 있습니다. `@canard/schema-form`의 범용 벤치마크 58개 항목은 비율의 가운데값이 1.000이며, 값은 [speed/RESULTS-GENERAL.md](speed/RESULTS-GENERAL.md)에 있습니다.
 
 - 110행 중 78행이 한도 안이고, 32행은 Vincent가 수정 비용 또는 현재 값으로 수용했습니다.
 - 한도는 측정 중에 연산 한 번의 기준 시간에 따라 다시 정했습니다. 1 ms 이상은 1.05, 1 µs~1 ms는 1.35, 1 µs 미만은 3배이고, 화면 플러그인과 `@slats/agents-assets-sync`는 1.5입니다. 아래 2절의 1.03은 출발 시점의 규칙입니다.

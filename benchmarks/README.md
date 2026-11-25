@@ -5,6 +5,7 @@ Repository-level speed tooling and the design notes behind it. Package-specific 
 | Path                            | Purpose                                                                                                                          |
 | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | [`DESIGN.md`](DESIGN.md)        | Techniques for designing a speed comparison, each with the failure it prevents. Read it before building or changing any harness. |
+| [`IMPROVING.md`](IMPROVING.md)  | How to act on an over-limit row without changing behavior: which changes to keep, how to attribute what remains, how to verify.  |
 | [`compare/`](compare/README.md) | A kit that compares two prepared trees of this repository row by row, with a control in every row.                               |
 
 ## Choosing a tool
