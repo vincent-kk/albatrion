@@ -139,7 +139,7 @@ it('DR-8 keeps no-root recovery listener failures inside applyFormErrors own cha
   expect(host).not.toHaveBeenCalled();
 });
 
-it('DR-8 limit: a primitive props-driven reset reports load then render once each', () => {
+it('DR-8 reports a primitive props-driven reset failure once to onError and the host and keeps the form mounted', () => {
   const host = vi.fn();
   vi.stubGlobal('reportError', host);
   vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -178,6 +178,9 @@ it('DR-8 limit: a primitive props-driven reset reports load then render once eac
     onError.mock.calls
       .filter(([record]) => record.error === 'DR-8 props primitive')
       .map(([record]) => record.origin),
-  ).toEqual(['load', 'render']);
-  expect(host).not.toHaveBeenCalled();
+  ).toEqual(['load']);
+  expect(host.mock.calls).toEqual([['DR-8 props primitive']]);
+  expect(ref.current).not.toBeNull();
+  expect(ref.current?.node?.type).toBe('number');
+  expect(view.container.querySelector('span')).not.toBeNull();
 });

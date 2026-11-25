@@ -200,7 +200,7 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
     }
 
     const failure =
-      runtime.isInMountingGuardPass || repeated
+      (gate.kind === 'if' && runtime.isInMountingGuardPass) || repeated
         ? undefined
         : new SchemaFormError(
             code,

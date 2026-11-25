@@ -6,6 +6,7 @@ import {
   dispatchMount,
   subscribeFieldNode,
 } from '@/schema-form/core/engine/write';
+import type { FormErrorCode } from '@/schema-form/errors';
 
 import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
@@ -18,12 +19,14 @@ import { observeDetachedReads } from './observeDetachedReads';
  * @param schema - Authored declarations shared by independently owned trees
  * @param input - Initial source mounted before the measured history
  * @param steps - Public writes and whether each must use the shortcut
+ * @param mountFailure - Code the initial mount must throw after committing its tree, as a caller that catches it continues; omit when the mount must succeed
  * @returns Candidate tree after matching values, deliveries, records and departures
  */
 export const compareArraySelection = (
   schema: BlueprintSchema,
   input: unknown,
   steps: readonly { apply: (root: PlainNode) => unknown; reuse: boolean }[],
+  mountFailure?: FormErrorCode,
 ): PlainNode => {
   const observations: unknown[][] = [];
   let candidate: PlainNode | undefined;
@@ -44,9 +47,12 @@ export const compareArraySelection = (
       listen(node);
       return node;
     };
-    dispatchMount(root, input, WriteOption.Overwrite, {
-      deferValidation: true,
-    });
+    const mount = () =>
+      dispatchMount(root, input, WriteOption.Overwrite, {
+        deferValidation: true,
+      });
+    if (mountFailure === undefined) mount();
+    else expect(mount).toThrow(expect.objectContaining({ code: mountFailure }));
     const history: unknown[] = [];
     const route = vi.spyOn(selection, 'canReuseArrayChildren');
     if (generic) route.mockReturnValue(false);
