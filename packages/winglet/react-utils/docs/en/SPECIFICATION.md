@@ -271,7 +271,7 @@ useEffect(() => {
 
 ### useHandle
 
-Creates a stable callback function that always calls the handler from the latest committed render. The handler is published during commit, so a call made during a later render runs the previously committed handler, and a handler from a later render that never commits is never called. The first render has no committed handler yet, so a call made during it runs that render's own handler, even when that render never commits.
+Creates a stable callback function that calls the handler from the latest committed render. The handler is published during commit, so a call made during a later render runs the previously committed handler, and a handler from a later render that never commits is never called. The first render has no committed handler yet, so a call made during it runs that render's own handler, even when that render never commits.
 
 ```typescript
 function useHandle<P extends any[], R>(
