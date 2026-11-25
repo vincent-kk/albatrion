@@ -268,6 +268,8 @@ const FieldInputDate = ({
 };
 ```
 
+`'aria-labelledby': props.labelId` names the picker group only while a FieldRenderer or `Form.Label` renders the bound Label. Under a label-free FieldRenderer, such as the MUI plugin's, give the picker its own `label` and reference its caption at `getInputId('legend')`, as Scenario 2 below does.
+
 ## Performance Optimization Checklist
 
 - [ ] Apply the uncontrolled component pattern (use `defaultValue`)

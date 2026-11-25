@@ -305,6 +305,7 @@ import Ajv from 'ajv';
 const ajv = new Ajv({
   allErrors: true,
   verbose: true,
+  strict: false,
 });
 
 // 커스텀 키워드나 포맷 추가

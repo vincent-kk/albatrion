@@ -224,6 +224,8 @@ const FieldInputDate = ({
 };
 ```
 
+`'aria-labelledby': props.labelId` names the picker group only while a FieldRenderer or `Form.Label` renders the bound Label. Under a label-free FieldRenderer, such as the MUI plugin's, the group has no accessible name; give the picker its own `label` and reference its caption at `getInputId('legend')`, as Scenario 2 of `../SKILL.md` does.
+
 ## Wrapper Component Pattern
 
 When a UI library needs an extra Provider:
@@ -474,13 +476,14 @@ const FieldInputString = ({
         id={inputId}
         name={name}
         required={required}
-        aria-invalid={hasError}
-        aria-describedby={describedBy}
-        aria-required={required}
+        error={hasError}  // MUI sets aria-invalid on the <input>
         defaultValue={defaultValue ?? ''}
         onChange={(event) => onChange(event.target.value === '' ? undefined : event.target.value)}
         disabled={props.disabled}
-        slotProps={{ input: { readOnly: props.readOnly } }}
+        slotProps={{
+          htmlInput: { 'aria-describedby': describedBy },  // on TextField itself it lands on the wrapper
+          input: { readOnly: props.readOnly },
+        }}
       />
       {hasError && (
         <FormHelperText id={getInputId('error')} error>

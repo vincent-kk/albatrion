@@ -311,6 +311,7 @@ import Ajv from 'ajv';
 const ajv = new Ajv({
   allErrors: true,
   verbose: true,
+  strict: false,
 });
 
 // Add custom keywords or formats

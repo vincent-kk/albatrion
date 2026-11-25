@@ -132,7 +132,7 @@ type MuiContext = {
 
 ## 날짜/시간 선택기 설정 {#datetime-picker-setup}
 
-날짜·월·시간 입력은 각각 `AdapterDayjs`를 사용하는 자체 `LocalizationProvider`로 감싸므로 앱 수준 프로바이더가 필요하지 않습니다.
+날짜·월·시간 입력은 각각 `AdapterDayjs`를 사용하는 자체 `LocalizationProvider`로 감싸므로 앱 수준 프로바이더가 필요하지 않습니다. 이 프로바이더가 자체 어댑터를 만들기 때문에 앱 수준 프로바이더의 `adapterLocale`과 dayjs의 전역 로캘은 이 입력에 닿지 않으며, 입력은 `en` 로캘로 형식을 표시합니다. 로캘을 바꾸려면 테마의 `components.MuiLocalizationProvider.defaultProps`에 `adapterLocale`을 지정합니다.
 
 <ForAI>
 
@@ -173,6 +173,6 @@ type MuiContext = { checkboxLabels?: { checked?: ReactNode; unchecked?: ReactNod
 ```
 
 ### 날짜/시간 선택기 설정 {#datetime-picker-setup-1}
-날짜·월·시간 입력은 각각 `AdapterDayjs`를 사용하는 자체 `LocalizationProvider`로 감싸므로 앱 수준 프로바이더가 필요하지 않습니다.
+날짜·월·시간 입력은 각각 `AdapterDayjs`를 사용하는 자체 `LocalizationProvider`로 감싸므로 앱 수준 프로바이더가 필요하지 않습니다. 이 프로바이더가 자체 어댑터를 만들기 때문에 앱 수준 프로바이더의 `adapterLocale`과 dayjs의 전역 로캘은 이 입력에 닿지 않으며, 입력은 `en` 로캘로 형식을 표시합니다. 로캘을 바꾸려면 테마의 `components.MuiLocalizationProvider.defaultProps`에 `adapterLocale`을 지정합니다.
 
 </ForAI>

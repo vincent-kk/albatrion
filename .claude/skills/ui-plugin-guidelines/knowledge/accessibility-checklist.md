@@ -11,16 +11,17 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
   // ✅ Required attributes
   id={inputId}                          // Unique ID
   name={name}                        // Used on form submit
-  required={required}                // HTML required
+  required={required}                // MUI sets required on the <input>
 
-  // ✅ ARIA attributes
-  aria-required={required}           // For screen readers
-  aria-invalid={hasError}            // Error state
+  // ✅ Error state
+  error={hasError}                   // MUI sets aria-invalid on the <input>
 
   // ✅ Label association
   // Connect LabelRenderer htmlFor={inputId} with id={inputId}
 />
 ```
+
+MUI places ARIA props written directly on `TextField`, `Select` or `Checkbox` on the component's wrapper element, not on the control a screen reader announces. Pass control-level ARIA through `slotProps.htmlInput` (`TextField`), `SelectDisplayProps` (`Select`) or `slotProps.input` (`Checkbox`), as the MUI plugin's inputs do.
 
 ### Error Message Association
 
@@ -28,8 +29,8 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 // Input
 <TextField
   id={inputId}
-  aria-describedby={getInputId('error')}
-  aria-invalid={true}
+  error
+  slotProps={{ htmlInput: { 'aria-describedby': getInputId('error') } }}
 />
 
 // Error (rendered by the input itself)
@@ -56,6 +57,8 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
   id={inputId}  // ✅ Connected to the label htmlFor
 />
 ```
+
+The element with `labelId` exists only while a FieldRenderer or `Form.Label` renders it: the bound Label, or a branch legend as in the FieldRenderer template. Under a label-free FieldRenderer, such as the MUI plugin's, an input whose control references `labelId` has no accessible name; render the input's own caption at `getInputId('legend')` and reference that instead, as the MUI plugin's inputs do when they show a label.
 
 ## Keyboard Navigation
 
@@ -158,8 +161,7 @@ Use the `labelId` supplied to `FieldRendererProps` for the title and group assoc
   id={inputId}
   name={name}
   required={required}
-  aria-required={required}
-  aria-invalid={hasError}
+  error={hasError}
   placeholder={placeholder}  // Additional hint
 />
 ```
@@ -173,8 +175,7 @@ Use the `labelId` supplied to `FieldRendererProps` for the title and group assoc
       id={inputId}
       name={name}
       required={required}
-      aria-required={required}
-      aria-invalid={hasError}
+      slotProps={{ input: { 'aria-invalid': hasError || undefined } }}
     />
   }
   label={label}  // ✅ Label is required
@@ -186,12 +187,10 @@ Use the `labelId` supplied to `FieldRendererProps` for the title and group assoc
 ```typescript
 <Select
   inputProps={{ id: getInputId('native') }}
-  SelectDisplayProps={{ id: inputId }}
+  SelectDisplayProps={{ id: inputId, 'aria-labelledby': labelId }}  // ✅ id and name on the combobox
   name={name}
-  required={required}
-  aria-required={required}
-  aria-invalid={hasError}
-  aria-label={label}  // ✅ When there is no label
+  required={required}  // MUI sets aria-required on the combobox
+  error={hasError}     // MUI sets aria-invalid on the combobox
 >
   {options.map(option => (
     <MenuItem key={option.value} value={option.value}>
@@ -278,8 +277,8 @@ Confirm before publishing the plugin:
 
 ### Required
 - [ ] Every input has `id` and `name`
-- [ ] Required inputs have `aria-required`
-- [ ] Error states have `aria-invalid`
+- [ ] Required inputs have `required` or `aria-required` on the control itself
+- [ ] Error states have `aria-invalid` on the control itself
 - [ ] Label and input are connected with `htmlFor`
 - [ ] An `aria-describedby` points only at an element the input itself renders with `getInputId(key)`
 - [ ] Every feature is reachable by keyboard

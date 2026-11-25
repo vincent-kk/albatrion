@@ -191,6 +191,8 @@ const LabelRenderer = ({
 );
 ```
 
+A native `<label>` moves focus only to a labelable element such as `input`. When `htmlFor` names a non-labelable control, such as the `role="group"` section list of a MUI X picker, clicking this label does nothing; forward the click to that control, as the MUI plugin's `LabelRenderer` does for an enabled picker editor.
+
 #### 3. ErrorMessageRenderer
 
 **Role**: Error message display
@@ -236,9 +238,8 @@ const formatError: FormatError = (error, node, context) => {
 <TextField
   id={inputId}                          // ✅ Unique ID
   name={name}                        // ✅ name attribute
-  required={required}                // ✅ required
-  aria-required={required}           // ✅ ARIA required
-  aria-invalid={hasError}            // ✅ ARIA invalid
+  required={required}                // ✅ MUI sets required on the <input>
+  error={hasError}                   // ✅ MUI sets aria-invalid on the <input>
 />
 ```
 
@@ -504,8 +505,7 @@ const FieldRenderer = ({ depth, Input }: FieldRendererProps) => {
       id={inputId}
       name={name}
       checked={value ?? false}
-      required={required}
-      aria-required={required}
+      required={required}  // ✅ MUI sets required on the <input>
     />
   }
   label={label}  // ✅ Checkbox label (WCAG 1.3.1)

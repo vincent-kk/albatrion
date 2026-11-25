@@ -209,7 +209,7 @@ type DataLoaderOptions<Key, Value, CacheKey = Key> = {
 | `batchScheduler` | `(task: () => void) => void`                 | `process.nextTick`  | Controls when the batch is dispatched. Replace with `queueMicrotask`, `setTimeout`, `requestAnimationFrame`, or `fn => fn()` for immediate dispatch. |
 | `cacheKeyFn`     | `(key: Key) => CacheKey`                     | identity (`k => k`) | Converts a loader key to a cache key. Required when keys are objects (reference equality would fail).                                                |
 | `maxBatchSize`   | `number`                                     | `Infinity`          | Maximum number of keys per batch. When exceeded, a new batch is started automatically. Must be a positive integer.                                   |
-| `disableBatch`   | `true`                                       | —                   | Disables batching; each `load()` call dispatches immediately (equivalent to `maxBatchSize: 1`). Mutually exclusive with `maxBatchSize`.              |
+| `disableBatch`   | `true`                                       | —                   | Disables batching; each `load()` call dispatches immediately (equivalent to `maxBatchSize: 1`). Takes precedence over `maxBatchSize` when both are given.              |
 
 ---
 

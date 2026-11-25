@@ -50,7 +50,7 @@ const singleLoader = new DataLoader(batchLoad, { disableBatch: true });
 // Note: still uses the scheduler; each batch simply holds one key
 ```
 
-`disableBatch: true` and `maxBatchSize` are mutually exclusive in the type — pick one.
+`disableBatch: true` and `maxBatchSize` are both accepted by the type, and `disableBatch: true` wins (batch size 1) — pick one.
 
 ### Custom Schedulers
 

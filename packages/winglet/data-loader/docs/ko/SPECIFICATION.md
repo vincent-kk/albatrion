@@ -209,7 +209,7 @@ type DataLoaderOptions<Key, Value, CacheKey = Key> = {
 | `batchScheduler` | `(task: () => void) => void`                 | `process.nextTick`  | 배치 디스패치 시점을 제어합니다. `queueMicrotask`, `setTimeout`, `requestAnimationFrame`, 또는 즉시 실행을 위한 `fn => fn()`으로 교체 가능합니다. |
 | `cacheKeyFn`     | `(key: Key) => CacheKey`                     | identity (`k => k`) | 로더 키를 캐시 키로 변환합니다. 키가 객체인 경우(참조 동등성 실패) 필수입니다.                                                                    |
 | `maxBatchSize`   | `number`                                     | `Infinity`          | 배치당 최대 키 수. 초과 시 새 배치가 자동으로 시작됩니다. 양의 정수여야 합니다.                                                                   |
-| `disableBatch`   | `true`                                       | —                   | 배칭 비활성화. 각 `load()` 호출이 즉시 디스패치됩니다(`maxBatchSize: 1`과 동일). `maxBatchSize`와 상호 배타적입니다.                              |
+| `disableBatch`   | `true`                                       | —                   | 배칭 비활성화. 각 `load()` 호출이 즉시 디스패치됩니다(`maxBatchSize: 1`과 동일). 둘 다 지정하면 `disableBatch`가 `maxBatchSize`보다 우선합니다.                              |
 
 ---
 
