@@ -13,6 +13,6 @@ The specifications, READMEs and packaged agent skills now match current behavior
 
 `@winglet/data-loader`: The specification and the agent skill no longer say TypeScript rejects `maxBatchSize` together with `disableBatch`: both are accepted and `disableBatch` wins.
 
-`@winglet/react-utils`: The specifications and the agent skill now document the `ErrorBoundary` class (props `children`, `fallback`, `onError`) exported from the package root and `@winglet/react-utils/hoc`, and no longer describe `useConstant` as running a factory: it stores a function without calling it, and `useLazyConstant` calls its initializer once.
+`@winglet/react-utils`: The specifications and the agent skill now document the `ErrorBoundary` class (props `children`, `fallback`, `onError`) exported from the package root and `@winglet/react-utils/hoc`, and the agent skill names `useLazyConstant` as the hook that calls its initializer once, since `useConstant` stores a function without calling it.
 
 `@winglet/data-loader`: The specifications now write error codes with their namespace, for example `DATA_LOADER.INVALID_KEY`, which is the value of the `code` property.

@@ -161,7 +161,7 @@ batch 콜백이 실패해도 이미 적용한 배열 정렬을 되돌리지 않�
 
 ### ERROR-023 — 기록 병합은 발생을 지우지 않습니다
 
-미리 모은 기록과 뒤따른 같은 위치·코드의 실패는 수집 호출의 첫 일치만 병합하고, 그 호출에서 새로 만든 기록끼리는 합치지 않습니다. 서로 다른 발생의 원래 오류·상세·위치가 소실되는 것을 막습니다. 개별 기록에 묶음 자체를 넣지 않습니다. 반복 guard 기록은 validation, capture의 중복 판정은 FormErrorContext, commit 효과가 만난 load 실패를 렌더 경계로 넘기지 않는 규칙은 RootNodeContext의 계약입니다.
+미리 모은 기록과 뒤따른 같은 위치·코드의 실패는 수집 호출의 첫 일치만 병합하고, 그 호출에서 새로 만든 기록끼리는 합치지 않습니다. 서로 다른 발생의 원래 오류·상세·위치가 소실되는 것을 막습니다. 개별 기록에 묶음 자체를 넣지 않습니다. 반복 guard 기록은 validation, capture의 중복 판정은 FormErrorContext, commit 효과가 시작한 context 전달·reset의 실패를 렌더 경계로 넘기지 않는 규칙은 RootNodeContext의 계약입니다.
 
 ### dispatch-source-details — ERROR-005: 자동 쓰기의 원천을 잃지 않습니다
 

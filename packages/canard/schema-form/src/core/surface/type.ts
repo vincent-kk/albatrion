@@ -180,7 +180,11 @@ export interface NodeSurface<
    * deliveries but does not reduce the cost of many array method calls; one `setValue` of the
    * final array settles once.
    * @param fn - Synchronous writes to group; a nested `batch` joins the outer boundary
-   * @throws What `fn` throws, after the work it marked or applied is committed and delivered
+   * @throws Only as the outermost write: after the work it marked or applied is committed and delivered,
+   * the failure `fn` threw, or one `FormErrorCode.MultipleErrors` error when settlement, listener or
+   * callback failures were also collected, which can throw even when `fn` returns. A batch nested in
+   * another batch rethrows a failure of `fn` at once, before commit; a batch started inside another
+   * write's callbacks returns and leaves its failures to that write.
    */
   batch(fn: Fn): void;
 }

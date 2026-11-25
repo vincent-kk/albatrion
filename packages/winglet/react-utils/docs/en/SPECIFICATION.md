@@ -129,7 +129,7 @@ Creates a constant value that persists throughout the entire component lifecycle
 function useConstant<T>(input: T): T;
 ```
 
-The value is stored on the first render and never recomputed. If a function is passed, the function itself is stored (not called). Use `useTruthyConstant` for lazy factory initialization.
+The value is stored on the first render and never recomputed. If a function is passed, the function itself is stored (not called). To call a factory once, use `useLazyConstant`, or `useTruthyConstant` when a falsy result should be retried.
 
 **Parameters**:
 
@@ -142,11 +142,11 @@ const MyComponent = () => {
   // Stable object — never triggers React.memo re-renders
   const defaultConfig = useConstant({ showIcon: true, pageSize: 20 });
 
-  // Expensive one-time computation
-  const lookupTable = useConstant(() => buildLookupTable(rawData));
-  // Note: the function is STORED, not called. Use useTruthyConstant for factory calls.
+  // A function value: the function itself is stored, not called
+  const callback = useConstant(() => (value: string) => console.log(value));
+  // To call a factory once, use useLazyConstant.
 
-  return <ExpensiveChild config={defaultConfig} />;
+  return <ExpensiveChild config={defaultConfig} onLog={callback} />;
 };
 ```
 

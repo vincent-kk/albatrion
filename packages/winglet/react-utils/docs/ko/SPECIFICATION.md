@@ -129,7 +129,7 @@ const SafeWidget = withErrorBoundary(Widget, <p>로드에 실패했습니다.</p
 function useConstant<T>(input: T): T;
 ```
 
-첫 번째 렌더링에서 값을 저장하고 이후 재계산하지 않습니다. 함수를 전달하면 함수 자체가 저장됩니다(호출되지 않음). 팩토리 함수로 지연 초기화가 필요하다면 `useTruthyConstant`를 사용하세요.
+첫 번째 렌더링에서 값을 저장하고 이후 재계산하지 않습니다. 함수를 전달하면 함수 자체가 저장됩니다(호출되지 않음). 팩토리를 한 번 호출하려면 `useLazyConstant`를, 결과가 falsy일 때 다시 시도해야 하면 `useTruthyConstant`를 사용하세요.
 
 **매개변수**:
 
@@ -142,8 +142,8 @@ const MyComponent = () => {
   // 안정적인 객체 — React.memo 자식 컴포넌트를 불필요하게 리렌더링하지 않음
   const defaultConfig = useConstant({ showIcon: true, pageSize: 20 });
 
-  // 비용이 큰 초기화 연산 (함수가 저장되며 호출되지 않음)
-  // 호출을 원하면 useTruthyConstant를 사용하세요
+  // 함수 값: 함수 자체가 저장되며 호출되지 않음
+  // 팩토리를 한 번 호출하려면 useLazyConstant를 사용하세요
   const callback = useConstant(() => (value: string) => console.log(value));
 
   return <ExpensiveChild config={defaultConfig} onLog={callback} />;
