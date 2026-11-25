@@ -1,0 +1,170 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "53099d518a7920c44c6e1de02c5a6e42a269f49e"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p3-14-r2-client-array-external",
+   "pkg": "@canard/schema-form",
+   "fn": "external array write",
+   "input": "uncontrolled one-item array input rewritten from outside",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 292,
+   "stat": {
+    "A1": {
+     "min": 31633.256849314163,
+     "p10": 32396.815068497515,
+     "median": 33474.19520547854
+    },
+    "A2": {
+     "min": 31711.773972602554,
+     "p10": 32534.674657535114,
+     "median": 33629.28424658701
+    },
+    "B": {
+     "min": 42755.80479452557,
+     "p10": 43689.821917817186,
+     "median": 45191.71917809451
+    }
+   },
+   "min": 1.3516093204754083,
+   "p10": 1.3485838600319984,
+   "controlMin": 1.002482106842884,
+   "controlP10": 1.0042553438893953,
+   "verdict": "over"
+  },
+  {
+   "row": "p3-15-r3-batch-array",
+   "pkg": "@canard/schema-form",
+   "fn": "batched array push and pop",
+   "input": "root number array with two items",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 342,
+   "stat": {
+    "A1": {
+     "min": 26226.614035080842,
+     "p10": 26937.48245614539,
+     "median": 27968.03801169988
+    },
+    "A2": {
+     "min": 26388.01754385879,
+     "p10": 27030.71052629953,
+     "median": 27991.728070172787
+    },
+    "B": {
+     "min": 13033.602339181292,
+     "p10": 13526.456140364415,
+     "median": 14151.713450293
+    }
+   },
+   "min": 0.4969609238061568,
+   "p10": 0.5021425503435847,
+   "controlMin": 1.0061541878247056,
+   "controlP10": 1.0034609050903667,
+   "verdict": "pass"
+  },
+  {
+   "row": "p3-16-validate-writeback-errors",
+   "pkg": "@canard/schema-form",
+   "fn": "node validate with a rewriting validator that reports errors",
+   "input": "string root whose validator rewrites its value and alternates its issues",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 1167,
+   "stat": {
+    "A1": {
+     "min": 3372.251071126556,
+     "p10": 3548.2947729142074,
+     "median": 3817.372750648144
+    },
+    "A2": {
+     "min": 3363.636675242419,
+     "p10": 3533.713796057263,
+     "median": 3761.8920308448255
+    },
+    "B": {
+     "min": 5232.742930592173,
+     "p10": 5390.725792639735,
+     "median": 5653.834618669667
+    }
+   },
+   "min": 1.5517062105473924,
+   "p10": 1.5192440700782992,
+   "controlMin": 0.9974455057756839,
+   "controlP10": 0.9958907086952731,
+   "verdict": "over"
+  },
+  {
+   "row": "p3-18-schema-alternate-lookup",
+   "pkg": "@winglet/json-schema",
+   "fn": "resolve",
+   "input": "one registration spelled in upper case among 21 resources",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 8450,
+   "stat": {
+    "A1": {
+     "min": 1041.8804733741426,
+     "p10": 1074.7392899458064,
+     "median": 1101.9743195238711
+    },
+    "A2": {
+     "min": 1034.7985798820898,
+     "p10": 1076.295384614537,
+     "median": 1108.092307688622
+    },
+    "B": {
+     "min": 4376.91301775304,
+     "p10": 4465.372189349704,
+     "median": 4583.453491124666
+    }
+   },
+   "min": 4.200974228433664,
+   "p10": 4.154842231156237,
+   "controlMin": 0.9932027774077404,
+   "controlP10": 1.0014478810659364,
+   "verdict": "over"
+  },
+  {
+   "row": "p3-19-ajv6-bound-first-id-resource-invalid",
+   "pkg": "@canard/schema-form-ajv6-plugin",
+   "fn": "first failing validation",
+   "input": "identified local resource with a not-required rule, first failure of a fresh compile",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 185,
+   "stat": {
+    "A1": {
+     "min": 485.3459458949195,
+     "p10": 562.8054054083092,
+     "median": 734.7135135119429
+    },
+    "A2": {
+     "min": 514.8702703032492,
+     "p10": 575.4540540618945,
+     "median": 740.0216216312303
+    },
+    "B": {
+     "min": 3974.108108087494,
+     "p10": 4260.113513501475,
+     "median": 4581.724324334818
+    }
+   },
+   "min": 8.188196773251535,
+   "p10": 7.569425368988432,
+   "controlMin": 1.0608315051522483,
+   "controlP10": 1.0224742842411203,
+   "verdict": "void"
+  }
+ ]
+}

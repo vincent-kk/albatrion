@@ -1,0 +1,77 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "53099d518a7920c44c6e1de02c5a6e42a269f49e"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p1-07-document-fresh-add",
+   "pkg": "@winglet/style-utils",
+   "fn": "styleManagerFactory/inject",
+   "input": "fresh document scope",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 380,
+   "stat": {
+    "A1": {
+     "min": 327.2921052646445,
+     "p10": 482.578947362287,
+     "median": 688.0210526344997
+    },
+    "A2": {
+     "min": 346.9763157825487,
+     "p10": 466.007894745321,
+     "median": 696.1842105068315
+    },
+    "B": {
+     "min": 414.92631578182085,
+     "p10": 568.6342105263975,
+     "median": 857.8973684579021
+    }
+   },
+   "min": 1.2677553448663736,
+   "p10": 1.1783236994371122,
+   "controlMin": 1.0601426377272003,
+   "controlP10": 0.9656614680198106,
+   "verdict": "void"
+  },
+  {
+   "row": "p1-11-checkboxChangePlain",
+   "pkg": "@canard/schema-form-antd5-plugin",
+   "fn": "checkbox change",
+   "input": "two string options",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 29,
+   "stat": {
+    "A1": {
+     "min": 276297.37931021804,
+     "p10": 301275.793103365,
+     "median": 327346.275862071
+    },
+    "A2": {
+     "min": 281813.1724137041,
+     "p10": 299240.00000006217,
+     "median": 324797.344827669
+    },
+    "B": {
+     "min": 289142.2068965328,
+     "p10": 305570.37931035226,
+     "median": 330666.6206896086
+    }
+   },
+   "min": 1.0464891401372758,
+   "p10": 1.0142546673356987,
+   "controlMin": 1.0199632479948104,
+   "controlP10": 0.9932427591266705,
+   "verdict": "over"
+  }
+ ]
+}

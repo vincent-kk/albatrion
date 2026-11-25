@@ -1,0 +1,201 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "53099d518a7920c44c6e1de02c5a6e42a269f49e"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2e-13-whole-array-client-mixed-batch",
+   "pkg": "@canard/schema-form",
+   "fn": "whole array mixed batch",
+   "input": "uncontrolled two-item whole-array input",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 207,
+   "stat": {
+    "A1": {
+     "min": 37822.22705313357,
+     "p10": 38482.51690820526,
+     "median": 40282.41062803388
+    },
+    "A2": {
+     "min": 37676.53140096557,
+     "p10": 38473.61352657041,
+     "median": 40332.90338164822
+    },
+    "B": {
+     "min": 49484.47826086193,
+     "p10": 50504.14009660662,
+     "median": 52101.25603865372
+    }
+   },
+   "min": 1.3083438527124527,
+   "p10": 1.3123918120292726,
+   "controlMin": 0.9961478827789987,
+   "controlP10": 0.9997686382713457,
+   "verdict": "over"
+  },
+  {
+   "row": "p2e-14-whole-array-client-composition",
+   "pkg": "@canard/schema-form",
+   "fn": "whole array composition",
+   "input": "uncontrolled two-item whole-array input",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 116,
+   "stat": {
+    "A1": {
+     "min": 72218.06034482957,
+     "p10": 74174.91379310339,
+     "median": 77882.87931035437
+    },
+    "A2": {
+     "min": 72169.15517241675,
+     "p10": 74167.41379310467,
+     "median": 77984.24999997803
+    },
+    "B": {
+     "min": 103624.29310345862,
+     "p10": 108646.58620689703,
+     "median": 113996.78448276714
+    }
+   },
+   "min": 1.4348805909307085,
+   "p10": 1.4647349171169342,
+   "controlMin": 0.9993228124352924,
+   "controlP10": 0.9998988876479231,
+   "verdict": "over"
+  },
+  {
+   "row": "p2e-15-batch-structural",
+   "pkg": "@canard/schema-form",
+   "fn": "structural batch",
+   "input": "push and pop on nested object array",
+   "inputKind": "repaired",
+   "kind": "micro",
+   "batch": 512,
+   "stat": {
+    "A1": {
+     "min": 10285.076171874907,
+     "p10": 10706.216796875002,
+     "median": 11361.083984374964
+    },
+    "A2": {
+     "min": 10364.828124999947,
+     "p10": 10746.908203125071,
+     "median": 11373.373046875024
+    },
+    "B": {
+     "min": 18784.2597656247,
+     "p10": 19931.15234374998,
+     "median": 21680.499999999993
+    }
+   },
+   "min": 1.8263607825279182,
+   "p10": 1.8616428867354538,
+   "controlMin": 1.0077541431674688,
+   "controlP10": 1.0038007269068143,
+   "verdict": "over"
+  },
+  {
+   "row": "p2e-16-virtual-getters",
+   "pkg": "@canard/schema-form",
+   "fn": "virtual getters",
+   "input": "50000 getter triples over 128 independent nodes",
+   "inputKind": "repaired",
+   "kind": "micro",
+   "batch": 2,
+   "stat": {
+    "A1": {
+     "min": 4741583.49999999,
+     "p10": 4811541.499999976,
+     "median": 4975896.000000034
+    },
+    "A2": {
+     "min": 4695291.499999996,
+     "p10": 4830062.499999997,
+     "median": 4956250.000000011
+    },
+    "B": {
+     "min": 6307166.4999999935,
+     "p10": 6456333.499999971,
+     "median": 6538521.000000003
+    }
+   },
+   "min": 1.330181467857733,
+   "p10": 1.3418430455187809,
+   "controlMin": 0.9902370168109464,
+   "controlP10": 1.003849286138345,
+   "verdict": "over"
+  },
+  {
+   "row": "p2e-17-virtual-getter-divergence",
+   "pkg": "@canard/schema-form",
+   "fn": "virtual divergence getter",
+   "input": "150000 reads over 128 independent nodes",
+   "inputKind": "repaired",
+   "kind": "micro",
+   "batch": 1,
+   "stat": {
+    "A1": {
+     "min": 5115166.999999928,
+     "p10": 5216708.00000004,
+     "median": 5341833.000000065
+    },
+    "A2": {
+     "min": 5057708.0000000475,
+     "p10": 5233124.999999973,
+     "median": 5431624.99999994
+    },
+    "B": {
+     "min": 11163542.000000007,
+     "p10": 11436708.999999952,
+     "median": 11615499.999999998
+    }
+   },
+   "min": 2.182439400316776,
+   "p10": 2.192323012903897,
+   "controlMin": 0.9887669356640982,
+   "controlP10": 1.003147003819254,
+   "verdict": "over"
+  },
+  {
+   "row": "p2e-18-virtual-getter-inactive",
+   "pkg": "@canard/schema-form",
+   "fn": "virtual inactive getter",
+   "input": "1200000 reads over 128 independent nodes",
+   "inputKind": "repaired",
+   "kind": "micro",
+   "batch": 2,
+   "stat": {
+    "A1": {
+     "min": 3943729.499999961,
+     "p10": 3991250.0000000363,
+     "median": 4199332.999999967
+    },
+    "A2": {
+     "min": 3952416.4999999697,
+     "p10": 4020104.5000000023,
+     "median": 4278041.499999972
+    },
+    "B": {
+     "min": 11253687.500000069,
+     "p10": 11800895.49999991,
+     "median": 12182812.500000011
+    }
+   },
+   "min": 2.8535647538707156,
+   "p10": 2.956691637957984,
+   "controlMin": 1.0022027372820597,
+   "controlP10": 1.007229439398676,
+   "verdict": "over"
+  }
+ ]
+}

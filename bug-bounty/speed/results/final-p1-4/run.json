@@ -1,0 +1,201 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "53099d518a7920c44c6e1de02c5a6e42a269f49e"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p1-19-context-update",
+   "pkg": "@canard/schema-form",
+   "fn": "Form context update",
+   "input": "nested context change",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 311,
+   "stat": {
+    "A1": {
+     "min": 31226.987138269495,
+     "p10": 31986.414791006588,
+     "median": 32593.122186492426
+    },
+    "A2": {
+     "min": 31388.263665591585,
+     "p10": 32146.556270093086,
+     "median": 32755.57556270442
+    },
+    "B": {
+     "min": 33159.601286176185,
+     "p10": 33999.46945336863,
+     "median": 34567.7749196153
+    }
+   },
+   "min": 1.0618892286774033,
+   "p10": 1.0629346763466607,
+   "controlMin": 1.005164652183958,
+   "controlP10": 1.0050065466896754,
+   "verdict": "over"
+  },
+  {
+   "row": "p1-20-isEmpty-local-map",
+   "pkg": "@winglet/common-utils",
+   "fn": "isEmpty",
+   "input": "nonempty local map",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 4194304,
+   "stat": {
+    "A1": {
+     "min": 1.8587808609008776,
+     "p10": 1.8603603839874219,
+     "median": 1.8893878459930418
+    },
+    "A2": {
+     "min": 1.8587608337402293,
+     "p10": 1.8601021766662562,
+     "median": 1.8678009510040217
+    },
+    "B": {
+     "min": 1.858780622482299,
+     "p10": 1.8600723743438896,
+     "median": 1.8667776584625126
+    }
+   },
+   "min": 0.9999998717338963,
+   "p10": 0.9998451861015687,
+   "controlMin": 0.9999892256472672,
+   "controlP10": 0.9998612057516446,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-21-engine-mount-plain",
+   "pkg": "@canard/schema-form",
+   "fn": "Form client mount",
+   "input": "object with a string and a number field",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 35,
+   "stat": {
+    "A1": {
+     "min": 257165.51428574478,
+     "p10": 279133.3428571371,
+     "median": 301040.5714285623
+    },
+    "A2": {
+     "min": 254172.62857143086,
+     "p10": 276942.94285711943,
+     "median": 298860.542857158
+    },
+    "B": {
+     "min": 249702.2285714073,
+     "p10": 272795.2571428497,
+     "median": 299138.0857143018
+    }
+   },
+   "min": 0.970978668212703,
+   "p10": 0.9772936989561605,
+   "controlMin": 0.9883620254347617,
+   "controlP10": 0.992152854339803,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-22-stringSwitchMount",
+   "pkg": "@canard/schema-form-mui-plugin",
+   "fn": "string switch mount",
+   "input": "enum switch with aliases",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 24,
+   "stat": {
+    "A1": {
+     "min": 391822.91666668333,
+     "p10": 409038.2499999616,
+     "median": 431987.95833332796
+    },
+    "A2": {
+     "min": 394666.7500000179,
+     "p10": 408975.62499990646,
+     "median": 431010.2500000236
+    },
+    "B": {
+     "min": 395352.33333329717,
+     "p10": 410611.04166666005,
+     "median": 430437.4583333962
+    }
+   },
+   "min": 1.009007683105009,
+   "p10": 1.0038450968013348,
+   "controlMin": 1.007257955602821,
+   "controlP10": 0.9998468969587682,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-23-patch-array-test-mutable",
+   "pkg": "@winglet/json",
+   "fn": "applyPatch",
+   "input": "mutable array test patch",
+   "inputKind": "plain",
+   "kind": "micro",
+   "batch": 131072,
+   "stat": {
+    "A1": {
+     "min": 52.96134948730479,
+     "p10": 53.40766906738277,
+     "median": 54.395675659179695
+    },
+    "A2": {
+     "min": 52.92384338378888,
+     "p10": 53.34535980224594,
+     "median": 54.1458129882811
+    },
+    "B": {
+     "min": 51.22692871093771,
+     "p10": 51.64337158203129,
+     "median": 52.507720947265675
+    }
+   },
+   "min": 0.9672511974646185,
+   "p10": 0.9669654655190901,
+   "controlMin": 0.9992918212266305,
+   "controlP10": 0.9988333273811628,
+   "verdict": "pass"
+  },
+  {
+   "row": "p1-24-react-bridges",
+   "pkg": "@canard/schema-form",
+   "fn": "Form.Render SSR",
+   "input": "label and input bridge",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 379,
+   "stat": {
+    "A1": {
+     "min": 25212.839050131257,
+     "p10": 27870.269129291388,
+     "median": 37090.58575197852
+    },
+    "A2": {
+     "min": 25739.997361469705,
+     "p10": 27739.221635875696,
+     "median": 36969.664907660575
+    },
+    "B": {
+     "min": 26179.31134564408,
+     "p10": 30283.435356200353,
+     "median": 37961.32453826155
+    }
+   },
+   "min": 1.0383325453191194,
+   "p10": 1.0865856808096894,
+   "controlMin": 1.0209083281057831,
+   "controlP10": 0.9952979466108577,
+   "verdict": "void"
+  }
+ ]
+}

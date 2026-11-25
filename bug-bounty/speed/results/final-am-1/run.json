@@ -1,0 +1,201 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta-am543",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388+antd-mobile-5.43.0"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "53099d518a7920c44c6e1de02c5a6e42a269f49e"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2c-05-sliderChange",
+   "pkg": "@canard/schema-form-antd-mobile-plugin",
+   "fn": "slider change",
+   "input": "integer slider, track click at 70%",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 104,
+   "stat": {
+    "A1": {
+     "min": 87619.3749999743,
+     "p10": 92990.3557692324,
+     "median": 109848.58653846502
+    },
+    "A2": {
+     "min": 88307.68269230633,
+     "p10": 93064.57692305405,
+     "median": 110388.1923076922
+    },
+    "B": {
+     "min": 95848.57692308245,
+     "p10": 101385.0480768934,
+     "median": 123006.86538461255
+    }
+   },
+   "min": 1.0939198884163528,
+   "p10": 1.0902748703155145,
+   "controlMin": 1.0078556562670327,
+   "controlP10": 1.000798159693096,
+   "verdict": "over"
+  },
+  {
+   "row": "p2u-16-am-sliderMount",
+   "pkg": "@canard/schema-form-antd-mobile-plugin",
+   "fn": "slider mount",
+   "input": "integer slider with one thumb",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 34,
+   "stat": {
+    "A1": {
+     "min": 289783.1470588298,
+     "p10": 300235.176470591,
+     "median": 318200.99999999773
+    },
+    "A2": {
+     "min": 288031.94117646775,
+     "p10": 300939.9705882475,
+     "median": 316318.58823528304
+    },
+    "B": {
+     "min": 280512.2352941279,
+     "p10": 296900.70588238834,
+     "median": 316270.70588234236
+    }
+   },
+   "min": 0.9680074156872216,
+   "p10": 0.9888938044255808,
+   "controlMin": 0.9939568401401669,
+   "controlP10": 1.0023474734904207,
+   "verdict": "pass"
+  },
+  {
+   "row": "p2u-17-am-radioMount",
+   "pkg": "@canard/schema-form-antd-mobile-plugin",
+   "fn": "radio mount",
+   "input": "two-option radio group",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 35,
+   "stat": {
+    "A1": {
+     "min": 279966.68571429054,
+     "p10": 289833.4285714164,
+     "median": 303785.8285714395
+    },
+    "A2": {
+     "min": 281304.7142856833,
+     "p10": 290658.3142857146,
+     "median": 306206.0571428707
+    },
+    "B": {
+     "min": 276420.22857144184,
+     "p10": 286495.2285714675,
+     "median": 302134.4857142789
+    }
+   },
+   "min": 0.987332574467564,
+   "p10": 0.9884823499607935,
+   "controlMin": 1.0047792421015342,
+   "controlP10": 1.0028460682343097,
+   "verdict": "pass"
+  },
+  {
+   "row": "p2u-18-am-rangeSliderChange",
+   "pkg": "@canard/schema-form-antd-mobile-plugin",
+   "fn": "range slider change",
+   "input": "two-thumb slider, track click at 70%",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 78,
+   "stat": {
+    "A1": {
+     "min": 117392.66666669816,
+     "p10": 123458.84615386308,
+     "median": 139936.4102563852
+    },
+    "A2": {
+     "min": 118267.69230767753,
+     "p10": 124384.58974359561,
+     "median": 140603.07692308273
+    },
+    "B": {
+     "min": 136442.26923076695,
+     "p10": 144894.26923077166,
+     "median": 159424.15384615626
+    }
+   },
+   "min": 1.1622725090499435,
+   "p10": 1.1736240354149614,
+   "controlMin": 1.007453835625557,
+   "controlP10": 1.0074983981996626,
+   "verdict": "over"
+  },
+  {
+   "row": "p2u-19-am-checkboxChange",
+   "pkg": "@canard/schema-form-antd-mobile-plugin",
+   "fn": "checkbox change",
+   "input": "two options and unknown initial value",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 80,
+   "stat": {
+    "A1": {
+     "min": 107052.12499996151,
+     "p10": 110823.9999999796,
+     "median": 117035.8875000005
+    },
+    "A2": {
+     "min": 107115.61249995611,
+     "p10": 110652.08750001431,
+     "median": 116938.02499998469
+    },
+    "B": {
+     "min": 108895.8625000089,
+     "p10": 117342.66250000472,
+     "median": 126223.95000000209
+    }
+   },
+   "min": 1.0172228015095268,
+   "p10": 1.0588199532594593,
+   "controlMin": 1.000593052216335,
+   "controlP10": 0.9984487791456245,
+   "verdict": "over"
+  },
+  {
+   "row": "p2u-20-am-branchError",
+   "pkg": "@canard/schema-form-antd-mobile-plugin",
+   "fn": "branch error validation",
+   "input": "array minItems error",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 175,
+   "stat": {
+    "A1": {
+     "min": 30942.388571415257,
+     "p10": 32810.68571428737,
+     "median": 40625.49142857019
+    },
+    "A2": {
+     "min": 30996.897142828984,
+     "p10": 32827.61714285568,
+     "median": 40630.21714285372
+    },
+    "B": {
+     "min": 48475.285714303034,
+     "p10": 51478.06857143094,
+     "median": 64088.81142856054
+    }
+   },
+   "min": 1.5666303718739012,
+   "p10": 1.5689421738910772,
+   "controlMin": 1.0017616148568467,
+   "controlP10": 1.000516033974899,
+   "verdict": "over"
+  }
+ ]
+}

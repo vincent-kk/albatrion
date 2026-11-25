@@ -1,0 +1,46 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "53099d518a7920c44c6e1de02c5a6e42a269f49e"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p1-07-document-fresh-add",
+   "pkg": "@winglet/style-utils",
+   "fn": "styleManagerFactory/inject",
+   "input": "fresh document scope",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 328,
+   "stat": {
+    "A1": {
+     "min": 346.5579268336336,
+     "p10": 451.98170731903633,
+     "median": 663.1615853632134
+    },
+    "A2": {
+     "min": 347.5579268220971,
+     "p10": 464.7134146538763,
+     "median": 659.682926880123
+    },
+    "B": {
+     "min": 448.53658538968597,
+     "p10": 582.9481707284752,
+     "median": 814.8109755815889
+    }
+   },
+   "min": 1.2942615091444947,
+   "p10": 1.2897605396162521,
+   "controlMin": 1.0028855204600284,
+   "controlP10": 1.0281686341032674,
+   "verdict": "void"
+  }
+ ]
+}

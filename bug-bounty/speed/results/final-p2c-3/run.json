@@ -1,0 +1,201 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/opt",
+  "ref": "53099d518a7920c44c6e1de02c5a6e42a269f49e"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2c-14-media",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "200 compressed media groups",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 142,
+   "stat": {
+    "A1": {
+     "min": 31641.140845080452,
+     "p10": 32007.35915491728,
+     "median": 33209.79577466127
+    },
+    "A2": {
+     "min": 31607.45070422276,
+     "p10": 32037.60563378381,
+     "median": 33261.50000000613
+    },
+    "B": {
+     "min": 70626.51408451324,
+     "p10": 71088.62676054293,
+     "median": 72585.32394365361
+    }
+   },
+   "min": 2.2321102273243163,
+   "p10": 2.2210088128942562,
+   "controlMin": 0.9989352425368401,
+   "controlP10": 1.0009449851429522,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-15-escapes",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "200 compressed rules with escaped space and quote",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 649,
+   "stat": {
+    "A1": {
+     "min": 11726.733436058394,
+     "p10": 11876.331278882111,
+     "median": 12124.163328195918
+    },
+    "A2": {
+     "min": 11699.342064715029,
+     "p10": 11838.274268109515,
+     "median": 12091.930662546589
+    },
+    "B": {
+     "min": 30676.927580890824,
+     "p10": 31038.17719568182,
+     "median": 31700.491525429
+    }
+   },
+   "min": 2.6159823405350635,
+   "p10": 2.6134482498709284,
+   "controlMin": 0.9976641942538628,
+   "controlP10": 0.9967955583354039,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-16-pseudo",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "200 compressed functional-pseudo-class rules",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 351,
+   "stat": {
+    "A1": {
+     "min": 12068.606837573188,
+     "p10": 12242.07122506279,
+     "median": 15236.982905991521
+    },
+    "A2": {
+     "min": 12037.025641035774,
+     "p10": 12250.982905999908,
+     "median": 15161.529914546352
+    },
+    "B": {
+     "min": 31207.8433048801,
+     "p10": 31692.632478635616,
+     "median": 32275.68945867901
+    }
+   },
+   "min": 2.5858695808799355,
+   "p10": 2.5888292835408713,
+   "controlMin": 0.9973831945176064,
+   "controlP10": 1.0007279553249842,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-17-mixed",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "six 200-rule sheets, compressed and scoped",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 8,
+   "stat": {
+    "A1": {
+     "min": 708979.3749999558,
+     "p10": 714984.374999915,
+     "median": 724010.5000000483
+    },
+    "A2": {
+     "min": 707999.7499999991,
+     "p10": 715088.4999999789,
+     "median": 724760.374999903
+    },
+    "B": {
+     "min": 2175286.3750000414,
+     "p10": 2199604.2500000214,
+     "median": 2301786.624999977
+    }
+   },
+   "min": 3.0681941558598615,
+   "p10": 3.076436810245375,
+   "controlMin": 0.9986182602280119,
+   "controlP10": 1.0001456325532483,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-18-installer-new",
+   "pkg": "@slats/agents-assets-sync",
+   "fn": "installer-new",
+   "input": "16 skill files",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 3,
+   "stat": {
+    "A1": {
+     "min": 3727555.999999974,
+     "p10": 3862652.999999909,
+     "median": 3967582.999999953
+    },
+    "A2": {
+     "min": 3703958.333333351,
+     "p10": 3864555.666666698,
+     "median": 3961152.6666667485
+    },
+    "B": {
+     "min": 6531166.333333355,
+     "p10": 6731235.999999929,
+     "median": 6891805.666666566
+    }
+   },
+   "min": 1.7521309762572048,
+   "p10": 1.7426457929304258,
+   "controlMin": 0.9936693998248121,
+   "controlP10": 1.0004925802723643,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-19-installer-unchanged",
+   "pkg": "@slats/agents-assets-sync",
+   "fn": "installer-unchanged",
+   "input": "16 skill files",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 4,
+   "stat": {
+    "A1": {
+     "min": 2979291.750000016,
+     "p10": 3043333.2500001597,
+     "median": 3088229.500000011
+    },
+    "A2": {
+     "min": 2997645.999999918,
+     "p10": 3046333.2499999753,
+     "median": 3088510.499999984
+    },
+    "B": {
+     "min": 5009271.000000012,
+     "p10": 5096572.999999807,
+     "median": 5201323.250000314
+    }
+   },
+   "min": 1.6813630286459813,
+   "p10": 1.674668063380683,
+   "controlMin": 1.0061606084734407,
+   "controlP10": 1.0009857612536568,
+   "verdict": "over"
+  }
+ ]
+}
