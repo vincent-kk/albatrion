@@ -85,7 +85,7 @@
     "typescript": "^5.7.2"
   },
   "peerDependencies": {
-    "@canard/schema-form": "^1.0.0",
+    "@canard/schema-form": "workspace:^",
     "antd": "^6.0.0",
     "dayjs": "^1.0.0",
     "react": ">=18 <20",

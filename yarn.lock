@@ -2135,7 +2135,7 @@ __metadata:
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
   peerDependencies:
-    "@canard/schema-form": ^1.0.0
+    "@canard/schema-form": "workspace:^"
     antd: ^5.10.0
     dayjs: ^1.0.0
     react: ">=18 <20"
@@ -2164,7 +2164,7 @@ __metadata:
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
   peerDependencies:
-    "@canard/schema-form": ^1.0.0
+    "@canard/schema-form": "workspace:^"
     antd: ^6.0.0
     dayjs: ^1.0.0
     react: ">=18 <20"
@@ -2196,7 +2196,7 @@ __metadata:
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.7.2"
   peerDependencies:
-    "@canard/schema-form": ^1.0.0
+    "@canard/schema-form": "workspace:^"
     "@emotion/react": ^11.0.0
     "@emotion/styled": ^11.0.0
     "@mui/icons-material": ^7.0.0
