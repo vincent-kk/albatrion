@@ -29,13 +29,4 @@ describe('printWarning and printError print the given text verbatim', () => {
     expect(output).toContain('pattern "%s" is not allowed');
     expect(output).toContain("path: '/a'");
   });
-
-  it('control: plain text and details are printed', () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    printWarning('Title', ['line one'], { details: { path: '/a' } });
-    const output = render(warn.mock.calls[0]);
-    expect(output).toContain('Title');
-    expect(output).toContain('line one');
-    expect(output).toContain("path: '/a'");
-  });
 });

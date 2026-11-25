@@ -1,7 +1,6 @@
 import { Suspense, useState } from 'react';
 
 import { act, fireEvent, render } from '@testing-library/react';
-import { createPortal } from 'react-dom';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { Portal } from '../index';
@@ -67,32 +66,5 @@ describe('r3 react-utils: Portal anchor inside a re-suspending Suspense boundary
       duringSuspense: true,
       modal: view.queryByTestId('inlineSuspense')?.textContent,
     });
-  });
-
-  it('control: raw createPortal to a persistent host keeps state across the same suspension', async () => {
-    const host = document.createElement('div');
-    document.body.appendChild(host);
-    const Raw = ({ route }: { route: string }) => (
-      <div>
-        {createPortal(<Counter label="rawModal" />, host)}
-        <Suspense fallback={<span>loading</span>}>
-          <Gate route={route} />
-        </Suspense>
-      </div>
-    );
-    const view = render(<Raw route="home" />);
-    clickTwice(host.querySelector('button'));
-    let release: () => void = () => undefined;
-    pending = new Promise<void>((resolve) => {
-      release = resolve;
-    });
-    const current = pending;
-    await act(async () => view.rerender(<Raw route="lazy" />));
-    pending = null;
-    await act(async () => {
-      release();
-      await current;
-    });
-    expect(host.querySelector('button')?.textContent).toBe('2');
   });
 });

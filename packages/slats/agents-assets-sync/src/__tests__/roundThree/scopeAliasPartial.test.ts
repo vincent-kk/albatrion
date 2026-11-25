@@ -77,7 +77,7 @@ describe('r3-agents-assets-sync: a scope alias over a partial install', () => {
       mentionsPlain: errors.some((e) => e.includes('@probe/plain')),
       mentionsPartial: errors.some((e) => e.includes('partial')),
     }).toEqual({
-      exitCode: expect.any(Number),
+      exitCode: 0,
       units: 1,
       mentionsPlain: true,
       mentionsPartial: true,

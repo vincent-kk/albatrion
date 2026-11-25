@@ -54,6 +54,7 @@ it('round-5 ajv6 5: application removal before and after another form compile is
       })),
     );
   }
+  expect(results[0]).toEqual([{ keyword: 'minLength', dataPath: '' }]);
   expect(results[1]).toEqual(results[0]);
 });
 
@@ -73,6 +74,7 @@ it('round-5 ajv6 6: first and second async compile of the same named root are eq
   const first = (await adapter.compile(schema)({ name: 'taken' }))?.map(
     ({ keyword, dataPath }) => ({ keyword, dataPath }),
   );
+  expect(first).toEqual([{ keyword: 'available', dataPath: '/name' }]);
   expect(
     (await adapter.compile(schema)({ name: 'taken' }))?.map(
       ({ keyword, dataPath }) => ({ keyword, dataPath }),

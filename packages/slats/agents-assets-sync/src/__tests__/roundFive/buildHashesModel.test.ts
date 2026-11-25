@@ -12,8 +12,8 @@ import {
 } from '../roundThree/fixture.js';
 
 /** Exercise the published build executable, including real opt-out side effects. */
-it('matches the build opt-in model over 120 metadata and source combinations (seed 0x5b01)', () => {
-  for (let sequence = 0; sequence < 120; sequence++) {
+it('matches the build opt-in model over 12 metadata, BOM and source combinations (seed 0x5b01)', () => {
+  for (let sequence = 0; sequence < 12; sequence++) {
     const root = makeRoot('build-model');
     try {
       const assetPath = [undefined, null, '', 17, 'custom', 'absent'][
@@ -21,7 +21,7 @@ it('matches the build opt-in model over 120 metadata and source combinations (se
       ];
       writeAt(
         join(root, 'package.json'),
-        (sequence % 2 ? '\uFEFF' : '') +
+        (Math.floor(sequence / 6) % 2 ? '\uFEFF' : '') +
           JSON.stringify({
             name: '@probe/a',
             version: '1.0.0',

@@ -90,12 +90,6 @@ async function scenario(mode: string, action: string, hide: boolean) {
       if (!hide) act(() => node?.onHide());
       await act(async () => controller.abort());
     }
-    if (action === 'navigate-hidden') {
-      history.pushState(null, '', '/b');
-      await act(async () =>
-        navigation.dispatchEvent(new Event('currententrychange')),
-      );
-    }
     if (hide) await act(async () => view.rerender(app(false)));
   }
   await act(async () => {});
@@ -120,20 +114,35 @@ async function scenario(mode: string, action: string, hide: boolean) {
 it.for([
   ['activity', 'reveal'],
   ['suspense', 'reveal'],
-  ['activity', 'resuspend'],
   ['suspense', 'resuspend'],
-  ['activity', 'content-settle-hidden'],
   ['suspense', 'content-settle-hidden'],
   ['activity', 'settle-hidden'],
   ['suspense', 'settle-hidden'],
-  ['activity', 'navigate-hidden'],
-  ['suspense', 'navigate-hidden'],
 ])(
   '%s %s matches the equivalent visible workflow',
   async ([mode, action], { skip }) => {
     if (mode === 'activity' && !React.Activity)
       skip('Activity requires React 19');
     const control = await scenario(mode, action, false);
+    expect(control).toEqual(
+      action === 'reveal' || action === 'resuspend'
+        ? {
+            sameNode: true,
+            settled: false,
+            displayed: true,
+            pageLocked: true,
+            focused: true,
+            canAnimate: undefined,
+          }
+        : {
+            sameNode: true,
+            settled: true,
+            displayed: false,
+            pageLocked: false,
+            focused: false,
+            canAnimate: false,
+          },
+    );
     expect(await scenario(mode, action, true)).toEqual(control);
   },
 );

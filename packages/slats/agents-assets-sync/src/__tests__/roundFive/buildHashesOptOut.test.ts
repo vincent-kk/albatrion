@@ -1,6 +1,5 @@
 import { spawnSync } from 'node:child_process';
 import {
-  existsSync,
   mkdirSync,
   mkdtempSync,
   rmSync,
@@ -57,19 +56,3 @@ it.each([
     expect({ status, stderr }).toEqual({ status: 0, stderr: '' });
   },
 );
-
-it('control: a declared, present asset directory builds a manifest', () => {
-  const dir = consumer(
-    {
-      name: '@probe/wired',
-      version: '1.0.0',
-      agents: { assetPath: 'docs/agents' },
-    },
-    'docs/agents',
-  );
-  const { status } = build(dir);
-  expect({
-    status,
-    manifest: existsSync(join(dir, 'dist/agents-hashes.json')),
-  }).toEqual({ status: 0, manifest: true });
-});

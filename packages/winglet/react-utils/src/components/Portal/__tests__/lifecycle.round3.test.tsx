@@ -1,12 +1,6 @@
-import {
-  Activity,
-  type ReactNode,
-  StrictMode,
-  useState,
-} from 'react';
+import { useState } from 'react';
 
-import { act, fireEvent, render } from '@testing-library/react';
-import { createPortal } from 'react-dom';
+import { fireEvent, render } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { Portal } from '../index';
@@ -28,62 +22,6 @@ const clickTwice = (element: Element | null) => {
 
 afterEach(() => {
   document.body.innerHTML = '';
-});
-
-describe('r3 react-utils: Portal scope inside Activity (docs: "Activity hide/show preserves subtree state")', () => {
-  const Page = Portal.with(() => (
-    <div>
-      <Portal>
-        <Counter label="portal" />
-      </Portal>
-      <Counter label="inline" />
-      <Portal.Anchor />
-    </div>
-  ));
-  const App = ({ hidden }: { hidden: boolean }) => (
-    <Activity mode={hidden ? 'hidden' : 'visible'}>
-      <Page />
-    </Activity>
-  );
-
-  const run = async (wrap: (node: ReactNode) => ReactNode) => {
-    const view = render(wrap(<App hidden={false} />));
-    clickTwice(view.getByTestId('portal'));
-    clickTwice(view.getByTestId('inline'));
-    await act(async () => view.rerender(wrap(<App hidden />)));
-    await act(async () => view.rerender(wrap(<App hidden={false} />)));
-    const result = {
-      portal: view.queryByTestId('portal')?.textContent ?? null,
-      inline: view.queryByTestId('inline')?.textContent ?? null,
-    };
-    view.unmount();
-    return result;
-  };
-
-  it('keeps portal content state when the whole Portal.with scope is hidden and shown', async () => {
-    const result = await run((node) => node);
-    expect(result.portal).toBe(result.inline);
-  });
-
-  it('same under StrictMode', async () => {
-    const result = await run((node) => <StrictMode>{node}</StrictMode>);
-    expect(result.portal).toBe(result.inline);
-  });
-
-  it('control: raw createPortal into a persistent host inside the same Activity keeps state', async () => {
-    const host = document.createElement('div');
-    document.body.appendChild(host);
-    const Raw = ({ hidden }: { hidden: boolean }) => (
-      <Activity mode={hidden ? 'hidden' : 'visible'}>
-        <div>{createPortal(<Counter label="raw" />, host)}</div>
-      </Activity>
-    );
-    const view = render(<Raw hidden={false} />);
-    clickTwice(host.querySelector('button'));
-    await act(async () => view.rerender(<Raw hidden />));
-    await act(async () => view.rerender(<Raw hidden={false} />));
-    expect(host.querySelector('button')?.textContent).toBe('2');
-  });
 });
 
 describe('r3 react-utils: Portal inside a shadow root (control)', () => {

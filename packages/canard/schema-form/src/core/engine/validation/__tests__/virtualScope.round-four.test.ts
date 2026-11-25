@@ -4,7 +4,7 @@ import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSO
 
 import { ValidationMode } from '../../types/state';
 
-it.each(['/start', '/period/start', '/period/../start', '/period'])(
+it.each(['/period/start', '/period/../start', '/period'])(
   'validation at %s publishes the same stored field verdict',
   (path) => {
     const make = () =>

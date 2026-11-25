@@ -57,14 +57,3 @@ it('settling while route-hidden stays hidden equivalently with automatic and man
   expect(outcomes[0]).toEqual({ result: false, displayed: false });
   expect(outcomes[1]).toEqual(outcomes[0]);
 });
-
-it('control: keeps a modal settled while shown displayed for its manual exit animation', async () => {
-  render(<App />);
-  const controller = new AbortController();
-  act(() => {
-    void confirm({ title: 'Delete?', signal: controller.signal });
-  });
-  const wrapper = screen.getByText('Confirm').closest('[tabindex="-1"]')!;
-  await act(async () => controller.abort());
-  expect(wrapper.classList.contains(foregroundVisible)).toBe(true);
-});

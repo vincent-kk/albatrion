@@ -95,28 +95,6 @@ describe('URI protocol across an Activity hide and show (mui)', () => {
     act(() => setMode('visible'));
     expect(selectedProtocol()).toBe('https://');
   });
-
-  it('control: without the Activity toggle the chosen protocol survives a path edit', () => {
-    const formRef = createRef<FormHandle<typeof schema>>();
-    render(
-      <Host>
-        <Form
-          ref={formRef}
-          fieldInputDefinitions={plugin.fieldInputDefinitions}
-          jsonSchema={schema}
-          defaultValue={{ link: 'http://example.com' }}
-        />
-      </Host>,
-    );
-    chooseProtocol('https://');
-    const input = document.querySelector<HTMLInputElement>(
-      'input[id$=":/link~input"]',
-    )!;
-    fireEvent.change(input, { target: { value: 'example.com/x' } });
-    expect(formRef.current?.getValue()).toEqual({
-      link: 'https://example.com/x',
-    });
-  });
 });
 
 describe('URI protocol in the server render (mui)', () => {

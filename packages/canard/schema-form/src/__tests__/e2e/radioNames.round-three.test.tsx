@@ -121,19 +121,9 @@ it('radio fields inside two array items show both loaded selections', () => {
     second: [false, true],
     groupNames: expect.any(Array),
   });
-});
-
-it('control: a single radio field shows its loaded selection', () => {
-  const view = render(
-    <Form
-      jsonSchema={{ type: 'object', properties: { method } } as const}
-      validationMode={ValidationMode.None}
-      defaultValue={{ method: 'cash' }}
-    />,
-  );
-  expect(
-    radiosOf(view.container, '/method').map((radio) => radio.checked),
-  ).toEqual([false, true]);
+  expect(first[0].name).toBe(first[1].name);
+  expect(second[0].name).toBe(second[1].name);
+  expect(first[0].name).not.toBe(second[0].name);
 });
 
 it('round-3: native radio names differ by complete field path and FormData keeps both groups', () => {

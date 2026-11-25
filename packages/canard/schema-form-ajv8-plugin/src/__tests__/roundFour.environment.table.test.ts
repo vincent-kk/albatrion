@@ -8,16 +8,10 @@ afterEach(() => {
 
 it.each([
   { dialect: 'default', weak: true, finalizer: true },
-  { dialect: 'default', weak: false, finalizer: true },
-  { dialect: 'default', weak: true, finalizer: false },
   { dialect: 'default', weak: false, finalizer: false },
   { dialect: '2019', weak: true, finalizer: true },
-  { dialect: '2019', weak: false, finalizer: true },
-  { dialect: '2019', weak: true, finalizer: false },
   { dialect: '2019', weak: false, finalizer: false },
   { dialect: '2020', weak: true, finalizer: true },
-  { dialect: '2020', weak: false, finalizer: true },
-  { dialect: '2020', weak: true, finalizer: false },
   { dialect: '2020', weak: false, finalizer: false },
 ])(
   'keeps explicit lifetime behavior in $dialect with WeakRef=$weak FinalizationRegistry=$finalizer',

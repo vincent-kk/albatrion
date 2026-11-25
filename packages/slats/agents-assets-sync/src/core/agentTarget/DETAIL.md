@@ -77,7 +77,7 @@
 - 모든 kind 에서 `..` 세그먼트를 가진 매니페스트 경로는 호출을 throw 시키고, 오류 메시지는 그 경로를 명시한다.
 - `..` 세그먼트를 가진 스킬 네임스페이스 접두사도 throw 시킨다. 그 접두사는 `--force` 가 지우는 고아 스캔 루트를 정하기 때문이다.
 - 점이 들어 있을 뿐인 이름은 그대로 목적지를 얻는다.
-- 검증: `__tests__/destinationContainment.test.ts`.
+- 검증: 패키지의 `src/__tests__/publicDestinationContainment.test.ts`.
 
 ### AC-TARGET-REAL-ROOT — project 목적지는 해석한 위치도 프로젝트 안이다
 

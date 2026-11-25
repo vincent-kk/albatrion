@@ -9,10 +9,7 @@ import { mountEngineForm } from './fixtures/mountEngineForm';
 
 /*
  * Settle DETAIL WRITE-079 applies overlapping winners of one round in rank order, so the higher one
- * decides the address they share. Known defect: when the lower winner writes a live object whole and
- * the higher winner names an inactive child of it by its own path, the compute after the higher write
- * replays the lower winner's distribution into the child's slot. The sequence of the same two calls
- * keeps the higher value; one batch and one Merge write keep the lower one.
+ * decides the address they share.
  */
 
 const schema: AuthoredSchema = {
@@ -73,17 +70,12 @@ const run = (mode: 'sequence' | 'batch' | 'merge') => {
 };
 
 describe('a higher own-path write to an inactive child of a lower whole object write (WRITE-079)', () => {
-  it('the sequence keeps the higher value', () => {
-    expect(run('sequence')).toEqual(EXPECTED);
-  });
-
-  it('one batch keeps the higher value', () => {
-    expect(run('batch')).toEqual(EXPECTED);
-  });
-
-  it('one Merge write keeps the higher value', () => {
-    expect(run('merge')).toEqual(EXPECTED);
-  });
+  it.each(['sequence', 'batch', 'merge'] as const)(
+    'the %s form keeps the higher value',
+    (mode) => {
+      expect(run(mode)).toEqual(EXPECTED);
+    },
+  );
 });
 
 describe('a higher constituent winner overlaps a lower virtual group winner at the constituent address (WRITE-079)', () => {

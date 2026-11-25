@@ -23,6 +23,9 @@ describe('round-2 react-utils documentation', () => {
     expect(
       doc('docs/agents/skills/react-utils-skill/knowledge/portal-system.md'),
     ).not.toContain('**Content remounts on re-registration.**');
+    expect(
+      doc('docs/agents/skills/react-utils-skill/knowledge/portal-system.md'),
+    ).toContain('**Content updates preserve state.**');
   });
   it('round-2 react-utils 5: declares the JSX runtime peer floor', () => {
     const manifest = JSON.parse(doc('package.json'));

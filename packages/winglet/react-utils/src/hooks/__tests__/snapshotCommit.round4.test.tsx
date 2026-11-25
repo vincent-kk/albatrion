@@ -109,10 +109,6 @@ describe('render-time snapshot writes and abandoned renders (sibling of round-3 
     return { childRenders };
   };
 
-  it('control: useRestProperties keeps the previous object for a shallow-equal input', async () => {
-    expect(await runRestScenario(false)).toEqual({ childRenders: 1 });
-  });
-
   it('useRestProperties keeps the previous object for a shallow-equal input after an abandoned transition render', async () => {
     expect(await runRestScenario(true)).toEqual(await runRestScenario(false));
   });

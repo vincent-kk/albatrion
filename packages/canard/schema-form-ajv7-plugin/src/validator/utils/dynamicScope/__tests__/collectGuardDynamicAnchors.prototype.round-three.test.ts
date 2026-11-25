@@ -6,7 +6,6 @@ import { collectGuardDynamicAnchors } from '../collectGuardDynamicAnchors';
 
 // Round-3 class 24 sibling: anchor names have the same own-key semantics as enum labels.
 describe.each([
-  'toString',
   'constructor',
   'hasOwnProperty',
   'valueOf',

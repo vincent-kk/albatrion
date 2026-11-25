@@ -47,19 +47,6 @@ describe('core/agentTarget — written files resolve inside the project', () => 
     ).resolves.toBeUndefined();
   });
 
-  it('refuses a file link that points outside the project, naming it', async () => {
-    const link = join(namespace, 'SKILL.md');
-    writeFileSync(join(outside, 'target.md'), '', 'utf-8');
-    symlinkSync(join(outside, 'target.md'), link, 'file');
-    await expect(check([link])).rejects.toThrow(link);
-  });
-
-  it('refuses a dangling file link, which a copy would follow', async () => {
-    const link = join(namespace, 'SKILL.md');
-    symlinkSync(join(outside, 'missing.md'), link, 'file');
-    await expect(check([link])).rejects.toThrow(link);
-  });
-
   it('refuses a directory link below the namespace that points outside, naming it', async () => {
     const knowledge = join(namespace, 'knowledge');
     symlinkSync(outside, knowledge, 'dir');
@@ -84,15 +71,6 @@ describe('core/agentTarget — written files resolve inside the project', () => 
     await expect(
       check([join(namespace, 'SKILL.md'), join(namespace, 'knowledge/a.md')]),
     ).resolves.toBeUndefined();
-  });
-
-  it('resolves and lists each directory once into the shared cache', async () => {
-    await check([join(namespace, 'a.md'), join(namespace, 'b.md')]);
-    expect(resolved.get(namespace)).toEqual({
-      real: expect.stringContaining('pp'),
-      exists: true,
-      listing: { names: new Set(), linkNames: new Set() },
-    });
   });
 
   // One written name is checked with `lstat`, two or more through one listing

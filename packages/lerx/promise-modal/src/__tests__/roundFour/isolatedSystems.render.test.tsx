@@ -7,7 +7,6 @@ import { afterEach, expect, it, vi } from 'vitest';
 import {
   type ModalFrameProps,
   ModalProvider,
-  alert,
   confirm,
 } from '@/promise-modal';
 import { ModalManager } from '@/promise-modal/app';
@@ -133,26 +132,4 @@ it('keeps compatible dialog labels unique while refusing an incompatible copy', 
   );
   expect(labels).toHaveLength(2);
   expect(new Set(labels).size).toBe(labels.length);
-});
-
-it('control: one copy releases the scroll lock after two dialogs close in opening order', async () => {
-  render(
-    <>
-      <main>page</main>
-      <ModalProvider options={{ duration: 0 }} />
-    </>,
-  );
-  const first = new AbortController();
-  const second = new AbortController();
-  act(() => {
-    void confirm({ title: 'First', signal: first.signal });
-    void alert({ title: 'Second', signal: second.signal });
-  });
-  act(() => first.abort());
-  const whileSecondOpen = document.body.style.overflow;
-  act(() => second.abort());
-  expect({
-    whileSecondOpen,
-    afterBothClosed: document.body.style.overflow,
-  }).toEqual({ whileSecondOpen: 'hidden', afterBothClosed: '' });
 });

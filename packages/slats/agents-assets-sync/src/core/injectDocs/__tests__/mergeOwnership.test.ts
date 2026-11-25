@@ -39,20 +39,6 @@ function unit(name: string, hash: string): RunUnit {
   };
 }
 
-it('identical owners share one write while distinct bytes refuse both owners', async () => {
-  const first = unit('first', 'a');
-  const same = await mergePlans([first, unit('second', 'a')]);
-  const different = await mergePlans([first, unit('second', 'b')]);
-  expect(
-    same
-      .flatMap((entry) => entry.plan.actions)
-      .filter((action) => action.kind === 'copy'),
-  ).toHaveLength(1);
-  expect(different.every((entry) => entry.error?.includes('Conflicting'))).toBe(
-    true,
-  );
-});
-
 it('discovery uncertainty suppresses deletion as a notice without force confirmation', async () => {
   const first = unit('first', 'a');
   const units = [

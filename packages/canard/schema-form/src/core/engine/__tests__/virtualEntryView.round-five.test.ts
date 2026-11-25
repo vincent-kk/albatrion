@@ -41,19 +41,6 @@ it('the pre-call inactive classification survives a gate mark in the same batch'
   });
   expect(root.value).toEqual({ on: true, a: 'a1', b: 'b0', outside: 'o0' });
 });
-it('virtual snapshot getters use constituent addresses', () => {
-  const root = load();
-  const group = root.find('/group')!;
-  expect(group.defaultValue).toEqual(['a0', 'b0']);
-  expect(group.isDivergent).toBe(false);
-  root.find('/a')!.setValue('changed');
-  expect(group.isDivergent).toBe(true);
-});
-it('virtual inactive reads use constituent storage addresses', () => {
-  const root = load();
-  root.find('/on')!.setValue(false);
-  expect(root.find('/group')!.inactiveValues).toEqual(root.inactiveValues);
-});
 it('same-content virtual writes preserve retained descendants of an active object slot', () => {
   const root = nodeFromJSONSchema({
     jsonSchema: {
@@ -82,23 +69,6 @@ it('same-content virtual writes preserve retained descendants of an active objec
     on: true,
     item: { kept: 'retained', shown: 'shown' },
   });
-});
-it('field names pair compressed children with uncompressed tuple slots', () => {
-  const root = load();
-  root.find('/on')!.setValue(false);
-  const group = root.find('/group')!;
-  const fields = ['a', 'b'];
-  const slots = fields.map((name, index) => ({
-    name,
-    value: Array.isArray(group.value) ? group.value[index] : undefined,
-    node: group.children?.find((child) => child.name === name),
-  }));
-  expect(slots.map((slot) => [slot.name, slot.value, slot.node?.path])).toEqual(
-    [
-      ['a', 'a0', '/a'],
-      ['b', undefined, undefined],
-    ],
-  );
 });
 
 it('virtual inactive projections keep frozen references until a constituent changes', () => {

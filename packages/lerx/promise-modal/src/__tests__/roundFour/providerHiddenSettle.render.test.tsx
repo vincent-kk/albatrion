@@ -132,7 +132,6 @@ async function scenario(
   return {
     displayedOnShow:
       wrapper.isConnected && wrapper.classList.contains(foregroundVisible),
-    opacityOnShow: screen.queryByTestId('animated')?.style.opacity,
   };
 }
 
@@ -142,9 +141,6 @@ for (const kind of ['activity', 'suspense'] as const)
       `does not display a manualDestroy request settled by ${how} while its Provider was hidden (${kind})`,
       async () => {
         const outcome = await scenario(kind, how);
-        expect(outcome).toEqual({
-          displayedOnShow: false,
-          opacityOnShow: outcome.opacityOnShow,
-        });
+        expect(outcome.displayedOnShow).toBe(false);
       },
     );

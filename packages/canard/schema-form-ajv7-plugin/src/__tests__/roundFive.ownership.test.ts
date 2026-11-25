@@ -54,6 +54,7 @@ it('round-5 class 43: a form lifetime preserves application and later-form resol
       ),
     });
   }
+  expect(results[0]).toEqual({ application: false, newReference: false, later: [{ keyword: 'required', dataPath: '/home/city' }] });
   expect(results[1]).toEqual(results[0]);
 });
 

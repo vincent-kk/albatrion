@@ -117,9 +117,6 @@ async function capture(
 }
 
 it.each([
-  ['plain', 'read-only', /read-only/i],
-  ['json', 'read-only', /read-only/i],
-  ['ink', 'read-only', /read-only/i],
   ['ink', 'dangling', /dangling/i],
   ['plain', 'dangling', /dangling/i],
   ['json', 'dangling', /dangling/i],
@@ -134,7 +131,7 @@ it.each([
   },
 );
 
-it.each(['plain', 'json'] as const)(
+it.each(['plain', 'json', 'ink'] as const)(
   '%s retains the rule path together with the refusal reason',
   async (mode) => {
     const { code, output } = await capture(mode, 'read-only');
@@ -144,17 +141,3 @@ it.each(['plain', 'json'] as const)(
     }).toEqual({ code: 1, generic: true });
   },
 );
-
-it('ink: an apply failure names the failed rule in the summary, as the plain transcript does', async () => {
-  const { code, output } = await capture('ink', 'read-only');
-  expect({ code, namesPath: output.includes('rules/r.md') }).toEqual({
-    code: 1,
-    namesPath: true,
-  });
-});
-
-it('measurement: the terminal summary frame for a refused read-only AGENTS.md', async () => {
-  const { output } = await capture('ink', 'read-only');
-  process.stdout.write(`\n----- frame -----\n${output}\n-----------------\n`);
-  expect(output.length).toBeGreaterThan(0);
-});

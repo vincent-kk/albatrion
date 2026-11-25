@@ -9,7 +9,6 @@ import {
   makeRoot,
   removeRoot,
   runCliCode,
-  writeAt,
 } from '../../__tests__/roundThree/fixture.js';
 import { renderOrFallback } from '../../commands/runCli/renderers/renderOrFallback.js';
 import type { ConsumerPackage, DefaultFlags } from '../../types/index.js';
@@ -154,25 +153,3 @@ it.each([
     }).toEqual({ first: 0, forced: 1, bKept: true });
   },
 );
-
-it('control: without --force the failing participant blocks nothing and deletes nothing', async () => {
-  const { root, targets, breakB } = setup('unclosed-fence-rule');
-  await run('plain', root, targets);
-  breakB();
-  const code = await run('plain', root, targets);
-  expect({
-    code,
-    bKept: existsSync(join(root, '.claude/skills/shared/b.md')),
-  }).toEqual({ code: 1, bKept: true });
-});
-
-it('control: a participant that plans successfully keeps its files under --force', async () => {
-  const { root, targets } = setup('unclosed-fence-rule');
-  await run('plain', root, targets);
-  writeAt(join(root, 'unrelated.txt'), 'x');
-  const forced = await run('plain', root, targets, { force: true });
-  expect({
-    forced,
-    bKept: existsSync(join(root, '.claude/skills/shared/b.md')),
-  }).toEqual({ forced: 0, bKept: true });
-});

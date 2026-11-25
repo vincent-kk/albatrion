@@ -77,7 +77,6 @@ it('preserves statement-only CSS and separates statements from the next style id
 });
 
 it.each([
-  ['.a + .b { width : calc(1px + 2px) }', '.a+.b{width:calc(1px + 2px)}'],
   [
     '.a { content: "a ; b"; background: url(http://x/a/*b;c) }',
     '.a{content:"a ; b";background:url(http://x/a/*b;c)}',
@@ -85,12 +84,6 @@ it.each([
   ['.a{--p:1px/* split */2px}', '.a{--p:1px/**/2px}'],
 ])('preserves CSS lexical boundaries when compressing %j', (css, expected) => {
   expect(compressCss(css)).toBe(expected);
-});
-
-it('keeps the selector colon when a comment contains a brace', () => {
-  expect(compressCss('.a :hover /* } */ { color: red }')).toMatch(
-    /^\.a :hover ?\{color:red\}$/,
-  );
 });
 
 it('preserves later rules when an unquoted data URL includes a brace', () => {

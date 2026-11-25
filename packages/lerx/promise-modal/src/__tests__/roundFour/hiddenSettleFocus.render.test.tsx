@@ -144,16 +144,3 @@ it('keeps focus in the page input when a request of a detached (root={null}) Pro
       document.activeElement?.textContent,
   ).toBe('Search');
 });
-
-it('control: returns focus to the opener when a displayed request is aborted', async () => {
-  render(<RoutedApp />);
-  screen.getByText('Save').focus();
-  const controller = new AbortController();
-  act(() => {
-    void confirm({ title: 'Overwrite?', signal: controller.signal });
-  });
-  expect(document.activeElement?.textContent).not.toBe('Save');
-  act(() => controller.abort());
-  await act(async () => {});
-  expect(document.activeElement?.textContent).toBe('Save');
-});

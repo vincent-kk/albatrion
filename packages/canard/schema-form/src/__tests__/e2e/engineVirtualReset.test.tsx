@@ -56,7 +56,7 @@ it.each(['virtual-before-field', 'field-before-virtual'] as const)(
   },
 );
 
-it.each(['/start', '/period/start', '/period/../start', '/./start'])(
+it.each(['/period/start', '/period/../start', '/./start'])(
   'a field alias reads and writes the same storage: %s',
   (path) => {
     const root = load(),

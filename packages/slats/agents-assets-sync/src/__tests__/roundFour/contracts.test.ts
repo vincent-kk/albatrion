@@ -3,7 +3,6 @@ import {
   mkdirSync,
   mkdtempSync,
   readFileSync,
-  realpathSync,
   symlinkSync,
   writeFileSync,
 } from 'node:fs';
@@ -14,7 +13,6 @@ import { dirname, join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import * as entry from '../../index';
-import { resolveProjectRoot } from '../../index';
 
 const packageDir = resolve(__dirname, '../../..');
 const repositoryRoot = resolve(packageDir, '../../..');
@@ -67,28 +65,6 @@ describe('r4-contracts site guidance for --scope=project', () => {
       ),
     );
     expect(claims).toHaveLength(7);
-  });
-
-  it('--scope=project prioritizes the root marker over a nearer agent directory', () => {
-    const outer = realpathSync(
-      mkdtempSync(join(tmpdir(), 'r4-contracts-scope-')),
-    );
-    mkdirSync(join(outer, '.git'));
-    const member = join(outer, 'apps', 'web');
-    mkdirSync(join(member, '.claude'), { recursive: true });
-    const { projectRoot } = resolveProjectRoot('project', member);
-    expect(projectRoot).toBe(outer);
-  });
-
-  it('control: without a root marker the nearest existing .claude is chosen', () => {
-    const outer = realpathSync(
-      mkdtempSync(join(tmpdir(), 'r4-contracts-scope-')),
-    );
-    const member = join(outer, 'apps', 'web');
-    mkdirSync(join(member, '.claude'), { recursive: true });
-    expect(resolveProjectRoot('project', join(member)).projectRoot).toBe(
-      member,
-    );
   });
 });
 

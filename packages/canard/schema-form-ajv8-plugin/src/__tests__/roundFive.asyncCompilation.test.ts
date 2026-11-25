@@ -6,6 +6,7 @@ import { createValidator } from '../default';
 
 it.each([
   [false, false],
+  [true, false],
   [false, true],
   [true, true],
 ])('delegates full-root async keywords to AJV (named=%s, marker=%s)', async (named, declared) => {

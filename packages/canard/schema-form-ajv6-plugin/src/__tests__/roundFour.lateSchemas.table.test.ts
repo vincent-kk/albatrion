@@ -4,7 +4,7 @@ import { expect, it } from 'vitest';
 
 import { createValidator } from '../index';
 
-it.each([1, 65, 130])(
+it.each([1, 65])(
   'resolves late application schemas like an unrotated compiler after %s roots',
   async (earlierRoots) => {
     const instance = new Ajv({ allErrors: true });

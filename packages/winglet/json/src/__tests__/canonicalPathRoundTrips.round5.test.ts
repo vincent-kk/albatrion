@@ -3,10 +3,10 @@ import { convertJSONPathToPointer, convertJSONPointerToPath, getValue } from '..
 
 it('keeps empty-token paths equivalent to the pointers they address', () => {
   const document = { '': { x: 1 }, x: 2, a: { '': { b: 3 }, b: 4 } };
-  for (const pointer of ['//x', '/a//b']) {
+  for (const [pointer, expected] of [['//x', 1], ['/a//b', 3]] as const) {
     const roundTrip = convertJSONPathToPointer(convertJSONPointerToPath(pointer));
     expect(roundTrip).toBe(pointer);
-    expect(getValue(document, roundTrip)).toBe(getValue(document, pointer));
+    expect(getValue(document, roundTrip)).toBe(expected);
   }
 });
 

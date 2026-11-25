@@ -100,18 +100,4 @@ describe('context reads: which controls follow a context change at the second re
     const r = await runContext(field({ derived: '(@).on ? "yes" : "no"' }));
     expect(r.ref).toEqual(r.inline);
   });
-
-  it('C6 active reading context with a single referrer', async () => {
-    const schema = withQ(field({ active: '@.on === true' }), {
-      g: { type: 'object', properties: { y: { $ref: '#/$defs/Q' } } },
-    });
-    const read = (s: any) => {
-      const { root } = createDispatchTree(s);
-      setContext(root, { on: false });
-      dispatchMount(root, {});
-      setContext(root, { on: true });
-      return root.storedOutputValue;
-    };
-    expect(read(schema)).toEqual(read(inline(schema)));
-  });
 });

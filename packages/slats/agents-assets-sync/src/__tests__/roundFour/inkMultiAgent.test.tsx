@@ -59,8 +59,6 @@ it('a terminal run with --agent=claude,codex raises no duplicate-key error and l
     );
   });
   const summary = frames.at(-1) ?? '';
-  console.log(summary);
-  console.log(errors.find((line) => /same key/.test(line)));
   expect({
     code,
     duplicateKeyErrors: errors.filter((line) => /same key/.test(line)).length,

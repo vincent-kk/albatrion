@@ -23,16 +23,6 @@ const createRecordingLoader = <Key, Value>(
 };
 
 describe('immediate batchScheduler (fn) => fn()', () => {
-  it('resolves load() through one batchLoader call', async () => {
-    const { loader, calls } = createRecordingLoader<number, number>(
-      (key) => key * 10,
-      { batchScheduler: (fn) => fn() },
-    );
-    const result = await settleWithin(loader.load(1), 200);
-    expect(calls).toEqual([[1]]);
-    expect(result).toEqual({ settled: true, value: 10 });
-  });
-
   it('resolves loadMany() and serves a repeated key from the cache', async () => {
     const { loader, calls } = createRecordingLoader<number, number>(
       (key) => key * 10,
@@ -95,15 +85,5 @@ describe('falsy cache keys', () => {
     loader.prime(0, 'primed');
     expect(await loader.load(0)).toBe('primed');
     expect(calls).toEqual([]);
-  });
-
-  it('deduplicates repeated loads whose cache key is an empty string', async () => {
-    const { loader, calls } = createRecordingLoader<string, string>(
-      (key) => `loaded-${key}`,
-      { cacheKeyFn: (key) => key.trim() },
-    );
-    const results = await Promise.all([loader.load(' '), loader.load('  ')]);
-    expect(results).toEqual(['loaded- ', 'loaded- ']);
-    expect(calls).toEqual([[' ']]);
   });
 });

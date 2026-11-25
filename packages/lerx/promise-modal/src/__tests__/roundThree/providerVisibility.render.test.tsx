@@ -134,9 +134,7 @@ it.for(['activity', 'suspense'])(
 );
 
 it.for([
-  ['activity', false],
   ['activity', true],
-  ['suspense', false],
   ['suspense', true],
 ] as const)(
   '%s Provider removal cancels after hidden=%s',

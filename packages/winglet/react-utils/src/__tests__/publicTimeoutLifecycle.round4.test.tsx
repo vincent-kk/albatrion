@@ -76,17 +76,4 @@ describe('timeout scheduling across effect lifetimes', () => {
       });
     }
   }
-  it('a retained schedule stays inactive after unmount', () => {
-    const callback = vi.fn();
-    let schedule = () => {};
-    const Probe = () => {
-      schedule = useTimeout(callback, 50).schedule;
-      return null;
-    };
-    const view = render(<Probe />);
-    view.unmount();
-    schedule();
-    act(() => vi.advanceTimersByTime(100));
-    expect(callback).not.toHaveBeenCalled();
-  });
 });

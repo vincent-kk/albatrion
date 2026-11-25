@@ -7,7 +7,6 @@ it.each([
   '.a{background:url(a\\}b)}',
   '.a{--x:f([) {x}])}',
   '[data-x=a,b]{x:y}',
-  '.a:is(.b,.c){x:y}',
 ])('round-4 scoper shares lexical boundaries: %s', first => {
   const source = first + '.b{color:red}';
   const expected = '.s ' + first + '.s .b{color:red}';

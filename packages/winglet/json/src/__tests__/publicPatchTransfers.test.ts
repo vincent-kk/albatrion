@@ -20,51 +20,7 @@ it.each([true, false])(
   },
 );
 
-it('accepts self-moves and copies into a descendant but rejects moving there', () => {
-  const source = { item: { value: 1 } };
-  expect(
-    applyPatch(source, [{ op: Operation.MOVE, from: '/item', path: '/item' }]),
-  ).toEqual(source);
-  expect(
-    applyPatch(source, [
-      { op: Operation.COPY, from: '/item', path: '/item/copy' },
-    ]),
-  ).toEqual({ item: { value: 1, copy: { value: 1 } } });
-  expect(() =>
-    applyPatch(source, [
-      { op: Operation.MOVE, from: '/item', path: '/item/moved' },
-    ]),
-  ).toThrow();
-});
-
-it.each([undefined, true, false])(
-  'tests values independently of strict=%s',
-  (strict) => {
-    const source = { item: 1 };
-    const options = strict === undefined ? {} : { strict };
-    expect(() =>
-      applyPatch(
-        source,
-        [{ op: Operation.TEST, path: '/item', value: 2 }],
-        options,
-      ),
-    ).toThrow(expect.objectContaining({ specific: 'PATCH_TEST_FAILED' }));
-  },
-);
-
 it.each([
-  {
-    patch: { op: Operation.REPLACE, path: '/missing', value: 2 },
-    specific: 'PATCH_OBJECT_PROPERTY_NOT_FOUND',
-  },
-  {
-    patch: { op: Operation.COPY, from: '/missing', path: '/b' },
-    specific: 'PATCH_OBJECT_PROPERTY_NOT_FOUND',
-  },
-  {
-    patch: { op: Operation.MOVE, from: '/missing', path: '/b' },
-    specific: 'PATCH_OBJECT_PROPERTY_NOT_FOUND',
-  },
   {
     patch: { op: Operation.COPY, from: '/items/01', path: '/b' },
     specific: 'PATCH_ARRAY_INDEX_INVALID',

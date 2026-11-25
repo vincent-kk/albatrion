@@ -28,6 +28,10 @@ it('time-range minimum/maximum limit times, not calendar days', async () => {
   fireEvent.mouseDown(input);
   fireEvent.click(input);
   await act(async () => {});
+  expect(
+    document.querySelectorAll('.ant-picker-date-panel .ant-picker-cell-in-view')
+      .length,
+  ).toBeGreaterThan(0);
   const disabledDays = Array.from(
     document.querySelectorAll<HTMLElement>(
       '.ant-picker-date-panel .ant-picker-cell-in-view.ant-picker-cell-disabled',

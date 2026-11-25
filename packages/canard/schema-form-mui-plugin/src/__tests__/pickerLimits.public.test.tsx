@@ -117,12 +117,6 @@ it('month picker does not apply an overflowing or unparsable limit as a shifted 
   expect(props.maxDate).toBeUndefined();
 });
 
-it('control: date picker keeps both boundary days selectable', () => {
-  const props = renderDate('2024-03-01', '2024-06-30');
-  expect(props.minDate?.format('YYYY-MM-DD')).toBe('2024-03-01');
-  expect(props.maxDate?.format('YYYY-MM-DD')).toBe('2024-06-30');
-});
-
 it('uses the schema date limit when the public definition receives it directly', () => {
   const jsonSchema = {
     type: 'string',

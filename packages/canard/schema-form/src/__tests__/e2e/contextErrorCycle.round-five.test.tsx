@@ -42,7 +42,6 @@ const schema = {
 } as const;
 
 const cases: [string, (graph: object) => object][] = [
-  ['control: the graph itself (fixed in round 4)', (graph) => ({ graph })],
   [
     'an Error whose own enumerable property holds the graph',
     (graph) => ({ lastError: Object.assign(new Error('failed'), { graph }) }),

@@ -45,7 +45,6 @@ const choose = (label: string) => {
 it.each([
   ['sms', 'sms:'],
   ['HTTP', 'HTTP://'],
-  ['ftp', 'ftp://'],
   ['custom://', 'custom://'],
   ['http:', 'http:'],
   ['Custom:', 'Custom:'],

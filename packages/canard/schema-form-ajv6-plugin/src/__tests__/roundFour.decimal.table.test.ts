@@ -44,7 +44,7 @@ it.each([
 it('rejects a zero multipleOf schema as every default plugin does', () => {
   expect(() =>
     ajv6.validator.compile({ type: 'number', multipleOf: 0 }),
-  ).toThrow();
+  ).toThrow(/schema is invalid/);
 });
 
 it('keeps an application-supplied precision policy unchanged', async () => {

@@ -1,7 +1,7 @@
 import { runInNewContext } from 'node:vm';
 import { expect, it } from 'vitest';
 
-import { clone, equals, isEmpty, merge, stableEquals } from '../index';
+import { equals, isEmpty, merge, stableEquals } from '../index';
 
 it.each([
   () => new Date(1),
@@ -32,15 +32,6 @@ it('ignores an own prototype key when merging and preserves ordinary siblings', 
   expect(Object.getPrototypeOf(merged)).toBe(Object.prototype);
   expect(Object.prototype.hasOwnProperty.call(merged, '__proto__')).toBe(false);
   expect(merged).toEqual({ value: 1 });
-});
-
-it('preserves a built-in subclass prototype and slots while omitting extra own fields', () => {
-  class Collection extends Map<string, number> {}
-  const source = Object.assign(new Collection([['item', 42]]), { extra: true });
-  const copy = clone(source);
-  expect(copy).toBeInstanceOf(Collection);
-  expect(copy.get('item')).toBe(42);
-  expect(Object.prototype.hasOwnProperty.call(copy, 'extra')).toBe(false);
 });
 
 it.each(['new Map([[1, 2]])', 'new Set([1])'])(

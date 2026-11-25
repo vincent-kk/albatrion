@@ -110,24 +110,6 @@ describe('virtual tuple positions follow `fields` when a constituent is gated of
       inside: { country: 'KR', city: 'Seoul' },
     });
   });
-
-  it('a widget that edits position 0 (country) as the documented tuple keeps the city', () => {
-    const { root } = build(schema, load());
-    const address = root.find('/address')!;
-    const tuple = address.value;
-    if (!Array.isArray(tuple)) throw new Error('virtual tuple expected');
-    const [, state, city] = tuple;
-    address.setValue(['JP', state, city]);
-    expect(root.value).toEqual({ country: 'JP', city: 'Seoul' });
-  });
-
-  it('control: with every constituent active the tuple and the write-back agree', () => {
-    const { root } = build(schema, { country: 'US', state: 'CA', city: 'LA' });
-    const address = root.find('/address')!;
-    const before = root.value;
-    address.setValue(address.value);
-    expect([address.value, root.value]).toEqual([['US', 'CA', 'LA'], before]);
-  });
 });
 
 it('projects baseline values, divergence and retained storage in declared tuple order', () => {

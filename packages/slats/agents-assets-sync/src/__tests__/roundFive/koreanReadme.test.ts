@@ -21,6 +21,7 @@ it('control: the English invariants describe one run-wide plan for all targets',
 
 it('the Korean invariants no longer promise one consumer per invocation', () => {
   const korean = section('README-ko_kr.md', '## 아키텍처 불변식');
+  expect(korean).toContain('한 실행의 모든 대상은 실행 전체의 계획과 네임스페이스 병합을 공유합니다.');
   expect({
     oneConsumerPerInvocation: korean.includes('호출 1회당 컨슈머 1개'),
   }).toEqual({ oneConsumerPerInvocation: false });

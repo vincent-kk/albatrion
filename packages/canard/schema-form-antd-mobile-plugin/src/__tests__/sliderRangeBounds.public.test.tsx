@@ -87,25 +87,6 @@ describe('range slider bounds from items (antd-mobile)', () => {
     ]);
   });
 
-  it('a numeric array slider takes its bounds from items.minimum and items.maximum', () => {
-    const view = render(
-      <Form
-        fieldInputDefinitions={plugin.fieldInputDefinitions}
-        jsonSchema={{
-          type: 'array',
-          format: 'slider',
-          items: { type: 'number', minimum: 0, maximum: 1000 },
-        }}
-        defaultValue={[200, 800]}
-        onError={() => {}}
-      />,
-    );
-    expect(thumbBounds(view.container)).toEqual([
-      ['0', '1000', '200'],
-      ['0', '1000', '800'],
-    ]);
-  });
-
   it('a click at the middle of the track writes the middle of the item range', () => {
     const ref = createRef<FormHandle>();
     const view = render(

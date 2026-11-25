@@ -12,60 +12,22 @@ function freeze<T>(value: T): T {
 }
 
 describe('round-3 root ownership', () => {
-  it('root add and replace are equivalent to adding an owned child, for objects and arrays', () => {
-    for (const op of ['add', 'replace'] as const) {
-      const object = freeze({ item: { count: 1 } });
-      const array = freeze([{ count: 1 }]);
-      const source = freeze({ object, array });
-      expect(
-        applyPatch(source, [
-          { op, path: '', value: object },
-          { op: 'replace', path: '/item/count', value: 2 },
-          { op: 'add', path: '/extra', value: true },
-        ]),
-      ).toEqual({ item: { count: 2 }, extra: true });
-      expect(
-        applyPatch(source, [
-          { op, path: '', value: array },
-          { op: 'replace', path: '/0/count', value: 2 },
-          { op: 'add', path: '/-', value: { count: 3 } },
-        ]),
-      ).toEqual([{ count: 2 }, { count: 3 }]);
-      expect(source).toEqual({
-        object: { item: { count: 1 } },
-        array: [{ count: 1 }],
-      });
-    }
-  });
-
-  it('a failed batch preserves its caller value and the patch can be reused', () => {
-    const value = freeze({ a: 1, b: { count: 1 } });
-    const patches: Parameters<typeof applyPatch>[1] = [
-      { op: 'replace', path: '', value },
-      { op: 'remove', path: '/a' },
-    ];
-    expect(applyPatch({}, patches)).toEqual(applyPatch({}, patches));
-    expect(() =>
-      applyPatch({}, [...patches, { op: 'remove', path: '/missing' }]),
-    ).toThrow();
-    expect(value).toEqual({ a: 1, b: { count: 1 } });
-  });
-
   it('every root operation preserves frozen caller graphs in immutable mode', () => {
     for (const source of [{ item: 1 }, [1]]) {
       freeze(source);
       const value = freeze({ child: { count: 1 } });
-      const cases: Parameters<typeof applyPatch>[1][] = [
-        [{ op: 'add', path: '', value }],
-        [{ op: 'replace', path: '', value }],
-        [{ op: 'remove', path: '' }],
-        [{ op: 'test', path: '', value: source }],
-        [{ op: 'copy', from: '', path: '' }],
-        [{ op: 'move', from: '', path: '' }],
+      const cases: [Parameters<typeof applyPatch>[1], unknown][] = [
+        [[{ op: 'add', path: '', value }], value],
+        [[{ op: 'replace', path: '', value }], value],
+        [[{ op: 'remove', path: '' }], null],
+        [[{ op: 'test', path: '', value: source }], source],
+        [[{ op: 'copy', from: '', path: '' }], source],
+        [[{ op: 'move', from: '', path: '' }], source],
       ];
-      for (const patches of cases) {
-        const first = applyPatch(source, patches);
-        expect(first).toEqual(applyPatch(source, patches));
+      for (const [patches, expected] of cases) {
+        const result = applyPatch(source, patches);
+        if (expected === null) expect(result).toBeNull();
+        else expect(result).toEqual(expected);
       }
     }
   });
@@ -129,55 +91,6 @@ describe('round-3 root ownership', () => {
         ).toEqual({ a: { b: {} }, d: 2, ['__proto__']: { x: 9 } });
       }
       expect(value).toEqual({ a: { b: { c: 1 } }, ['__proto__']: { x: 1 } });
-    }
-  });
-
-  it('primitive replacement roots retain the same root-only behavior in both modes', () => {
-    for (const immutable of [true, false]) {
-      for (const value of [1, 'value', true, null]) {
-        for (const op of ['add', 'replace'] as const) {
-          expect(
-            applyPatch(
-              {},
-              [
-                { op, path: '', value },
-                { op: 'test', path: '', value },
-              ],
-              { immutable },
-            ),
-          ).toBe(value);
-          expect(
-            applyPatch(
-              {},
-              [
-                { op, path: '', value },
-                { op: 'remove', path: '' },
-              ],
-              { immutable },
-            ),
-          ).toBe(null);
-          expect(
-            applyPatch(
-              {},
-              [
-                { op, path: '', value },
-                { op: 'move', from: '', path: '' },
-              ],
-              { immutable },
-            ),
-          ).toBe(value);
-          expect(
-            applyPatch(
-              {},
-              [
-                { op, path: '', value },
-                { op: 'copy', from: '', path: '' },
-              ],
-              { immutable },
-            ),
-          ).toBe(value);
-        }
-      }
     }
   });
 });

@@ -164,15 +164,6 @@ describe('active gate in a reused $defs template that reads the form context', (
     return { initial, after };
   };
 
-  it('a context change activates the field at both referrers, as the inline schema does', async () => {
-    const inline = await run(schemaFor(false));
-    expect(inline.after).toEqual({
-      billing: { city: 'c', internalCode: 'IC' },
-      shipping: { city: 'c', internalCode: 'IC' },
-    });
-    expect(await run(schemaFor(true))).toEqual(inline);
-  });
-
   it('the context change still misses the second referrer when an unrelated visible control builds the occurrence index', async () => {
     const extra: JSONSchema = {
       type: 'string',

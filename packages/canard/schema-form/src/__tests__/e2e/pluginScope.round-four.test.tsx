@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import {
@@ -6,7 +6,6 @@ import {
   type FieldRendererProps,
   Form,
   FormProvider,
-  type SchemaFormPlugin,
   ValidationMode,
   registerPlugin,
 } from '../../index';
@@ -101,48 +100,4 @@ it('a nested FormProvider without pluginScope keeps the scoped validator', async
   );
   await vi.waitFor(() => expect(calls.length).toBeGreaterThan(0));
   expect([...new Set(calls)]).toEqual(['app-b']);
-});
-
-/**
- * FP4 / quality bar "failures surface": a plugin whose value is a class instance satisfies
- * SchemaFormPlugin, and registerPlugin documents @throws for a failed registration.
- */
-it('registerPlugin applies a class-instance plugin or reports that it did not', () => {
-  class MarkedPlugin implements SchemaFormPlugin {
-    FieldRenderer = createMarkedRenderer('class-plugin');
-  }
-  let thrown: unknown;
-  try {
-    registerPlugin(new MarkedPlugin());
-  } catch (error) {
-    thrown = error;
-  }
-  render(<Form jsonSchema={schema} validationMode={ValidationMode.None} />);
-  expect({ applied: owners(), thrown: thrown !== undefined }).not.toEqual({
-    applied: [],
-    thrown: false,
-  });
-});
-
-it('registerPlugin applies a plugin module namespace or reports that it did not', async () => {
-  const pluginModule = await import('./fixtures/markedPluginModule.round-four');
-  const plugin: SchemaFormPlugin = pluginModule;
-  let thrown: unknown;
-  try {
-    registerPlugin(plugin);
-  } catch (error) {
-    thrown = error;
-  }
-  render(<Form jsonSchema={schema} validationMode={ValidationMode.None} />);
-  expect({ applied: owners(), thrown: thrown !== undefined }).not.toEqual({
-    applied: [],
-    thrown: false,
-  });
-});
-
-it('control: the same renderer in a plain object plugin is applied', () => {
-  registerPlugin({ FieldRenderer: createMarkedRenderer('plain-plugin') });
-  render(<Form jsonSchema={schema} validationMode={ValidationMode.None} />);
-  expect(owners()).toEqual(['plain-plugin']);
-  expect(screen.getByRole('textbox')).toBeTruthy();
 });

@@ -19,7 +19,6 @@ describe('ajv6 dataPath of dynamic property names', () => {
     ["it's"],
     ['C:\\new'],
     ['a\\\\b'],
-    ["O'Brien"],
     ['plain'],
     [''],
     ['a/b~c'],

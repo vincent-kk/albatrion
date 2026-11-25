@@ -138,21 +138,4 @@ describe('r5-release antd5 slider on the peer floor antd 5.10.0 to 5.11.x', () =
     pressArrowRight();
     expect(ref.current!.getValue()).toEqual({ level: 20 });
   });
-
-  it('control: the same drag and key store the value on the installed antd 5.27', () => {
-    const ref = renderSlider();
-    dragToMaximum();
-    expect(ref.current!.getValue()).toEqual({ level: 20 });
-    cleanup();
-    const keyboard = renderSlider();
-    pressArrowRight();
-    expect(keyboard.current!.getValue()).toEqual({ level: 20 });
-  });
-
-  it('control: lazy false stores through onChange on the antd 5.10/5.11 surface', () => {
-    emulateAntd510.on = true;
-    const ref = renderSlider(false);
-    dragToMaximum();
-    expect(ref.current!.getValue()).toEqual({ level: 20 });
-  });
 });

@@ -31,6 +31,7 @@ it('round-3 react-utils 4: documented default debounce edges match an ordinary b
     const paragraph = text
       .split('**`useDebounce(callback, deps, ms, options)`')[1]
       ?.split('\n')[0];
+    expect(paragraph).toBeDefined();
     let query = 'a';
     const callback = vi.fn();
     const view = renderHook(() => useDebounce(callback, [query], 300));
