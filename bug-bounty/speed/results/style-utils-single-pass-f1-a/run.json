@@ -1,0 +1,139 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-style-utils-single-pass",
+  "ref": "unknown"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2c-12-lists",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "200 compressed selector-list rules",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 410,
+   "stat": {
+    "A1": {
+     "min": 11142.604878031994,
+     "p10": 11259.53902438019,
+     "median": 12796.660975620798
+    },
+    "A2": {
+     "min": 11154.551219511277,
+     "p10": 11288.217073178668,
+     "median": 12713.951219514389
+    },
+    "B": {
+     "min": 35868.59512193414,
+     "p10": 36192.47073174847,
+     "median": 37003.36829267987
+    }
+   },
+   "min": 3.21904936184628,
+   "p10": 3.2143829914689404,
+   "controlMin": 1.0010721318408082,
+   "controlP10": 1.0025470002578598,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-13-opaque",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "200 compressed rules with quoted and functional selectors",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 384,
+   "stat": {
+    "A1": {
+     "min": 12051.283854167612,
+     "p10": 12433.356770846634,
+     "median": 13010.234375000115
+    },
+    "A2": {
+     "min": 12035.263020858149,
+     "p10": 12422.341145838327,
+     "median": 13160.359374990569
+    },
+    "B": {
+     "min": 39575.18750002956,
+     "p10": 40365.757812499105,
+     "median": 40967.13020832491
+    }
+   },
+   "min": 3.283898045961597,
+   "p10": 3.2465695754140613,
+   "controlMin": 0.9986706119029863,
+   "controlP10": 0.999114026468368,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-14-media",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "200 compressed media groups",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 143,
+   "stat": {
+    "A1": {
+     "min": 31590.608391622158,
+     "p10": 31874.38461538312,
+     "median": 32851.18881118963
+    },
+    "A2": {
+     "min": 31618.31468530938,
+     "p10": 31877.356643353203,
+     "median": 32891.36363635445
+    },
+    "B": {
+     "min": 70588.55244755709,
+     "p10": 70914.04895106336,
+     "median": 71420.4265734218
+    }
+   },
+   "min": 2.2344790442933413,
+   "p10": 2.2247974292447688,
+   "controlMin": 1.0008770421051647,
+   "controlP10": 1.0000932418933244,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-15-escapes",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "200 compressed rules with escaped space and quote",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 670,
+   "stat": {
+    "A1": {
+     "min": 11665.846268659885,
+     "p10": 11704.910447757871,
+     "median": 11847.637313423627
+    },
+    "A2": {
+     "min": 11662.146268656501,
+     "p10": 11704.529850746792,
+     "median": 11826.849253735933
+    },
+    "B": {
+     "min": 30461.794029851084,
+     "p10": 30568.783582090753,
+     "median": 30741.104477605164
+    }
+   },
+   "min": 2.611194535598006,
+   "p10": 2.611620457800798,
+   "controlMin": 0.9996828348395672,
+   "controlP10": 0.9999674839877863,
+   "verdict": "over"
+  }
+ ]
+}

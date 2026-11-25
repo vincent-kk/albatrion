@@ -116,3 +116,18 @@ Vincent의 우선순위 조정(2026-11-24): 기반 도구가 먼저이고, 화�
 `schema-form` 우선순위 3 완료: 코드 변경 없음. `p3-16`(1.55)은 수정 비용으로 귀속되어 [issues/schema-form-p3-fix-cost.md](issues/schema-form-p3-fix-cost.md)에서 Vincent의 결정을 기다립니다. `p3-14`는 1.34로 통과. 작업 트리 정리됨.
 
 `style-utils` 순회 합치기 시작: `speed-style-utils-single-pass` / `perf/style-utils-single-pass`, 명세 `t49-style-utils-single-pass.md`, `ctx_8c385a215cba`. 값을 내지 못하면 변경 없이 끝냅니다.
+
+ajv 플러그인 우선순위 3: 작업자 완료, 작은 변경 하나가 독립 검토를 통과해 PR #694로 CI 대기 중. 남은 초과분은 [issues/ajv-p3-fix-cost.md](issues/ajv-p3-fix-cost.md)에서 Vincent의 결정을 기다립니다. 병합 뒤 `speed-ajv-p3` 작업 트리를 정리합니다.
+
+Vincent 수용 (2026-11-24): `p3-16`, `p3-01`~`04`, `p3-19`, `p2u-13`, `p2u-20`. 결정이 남은 행은 `p3-18`(분석 중)뿐입니다.
+
+ajv6 변경 병합됨 (PR #694, 머리 `0bbddece6`), 작업 트리 정리됨. `opt`에 아직 없는 병합: #693(`@winglet/json`), #694(ajv6 플러그인).
+
+Vincent 수용: `p3-18` (4.19, [issues/json-schema-p3-fix-cost.md](issues/json-schema-p3-fix-cost.md)). 변경 두 커밋은 독립 검증 중(`t50-verify-json-schema-p3.md`, `ctx_35513bb722d1`), 통과하면 PR과 병합입니다.
+
+`json-schema` 우선순위 3 병합됨 (PR #695, 머리 `385443711`), 작업 트리 정리됨. `opt`에 아직 없는 병합: #693, #694, #695. 남은 작업자는 `style-utils` 순회 합치기(`ctx_8c385a215cba`) 하나입니다.
+- T49 작업자 완료: `perf/style-utils-single-pass` `d15e27fcf` (합친 순회 `RuleScoper.scopeFlatSheet`). 24라운드 원자료 재계산(`results/style-utils-single-pass-d2-a`, `-d2-b`, `-d2-p107`, `-base-p1`, `-base-p107`): p2c-12 3.230/3.210, p2c-13 3.289/3.251, p2c-14 2.237/2.223, p2c-15 2.613/2.613, p2c-16 2.588/2.592, p2c-17 3.074/3.078(대상 아님), p1-09 1.054/1.086(변경 전 같은 날 1.076/1.082), p1-07 1.377/1.257(변경 전 대조 무효 1.143/1.239). 대조 0.989~1.017.
+- T51 독립 검증 시작: `ctx_905ded3cc606`, 워크트리 `verify-style-utils-single-pass`, 지시서 `../albatrion-speed/specs/t51-verify-style-utils-single-pass.md`. 통과 후 PR → 병합.
+- `opt` 갱신: `634a66f56`의 `packages/winglet/json`, `packages/winglet/json-schema`, `packages/canard/schema-form-ajv6-plugin`을 반영하고 빌드함(#693, #694, #695). `.speed-ref`는 아직 `fc7b6ce8c`이며 style-utils 병합분을 반영할 때 함께 고침. `opt`에 아직 없는 병합: style-utils single pass(검증 중).
+- T51 독립 검증 결과: FAIL 1건(F1). 790,521개 입력(합친 경로 303,837개) 출력 차이 0건이나, 한 규칙이 약 839만 코드 단위(2^23)를 넘으면 기존 경로는 RangeError를 던지고 합친 경로는 결과를 돌려줌. 보고서 `../albatrion-speed/analysis/verify-style-utils-single-pass.md`. 수정 요청 보냄(`ctx_a5d76fe9cf0e`): 시트 길이 1<<20 이상이면 합친 경로를 쓰지 않음(규칙마다 검색을 더하는 검증자 안은 채택하지 않음), 주석 N1·N2 반영, 재측정. 완료 후 재검증 → PR.
+- F1 수정 `e87c9743b`(시트 길이 2^20 이상이면 합친 경로 사용 안 함). 24라운드 원자료 재계산(`results/style-utils-single-pass-f1-a`, `-f1-b`, `-f1-p107`): p2c-12 3.219/3.214, p2c-13 3.284/3.247, p2c-14 2.234/2.225, p2c-15 2.611/2.612, p2c-16 2.584/2.590, p1-09 1.060/1.075, 대조 0.999~1.003. p1-07은 두 번 모두 대조 무효(0.980, 0.951). 재검증 요청 `ctx_834af6dac76a`.

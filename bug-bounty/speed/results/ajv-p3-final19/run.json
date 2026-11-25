@@ -1,0 +1,77 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-ajv-p3",
+  "ref": "unknown"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p3-02-ajv7-bind-compile",
+   "pkg": "@canard/schema-form-ajv7-plugin",
+   "fn": "bind and compile",
+   "input": "string schema on a fresh instance",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 6,
+   "stat": {
+    "A1": {
+     "min": 1507298.8333333796,
+     "p10": 1614090.499999937,
+     "median": 1712548.5000000254
+    },
+    "A2": {
+     "min": 1497597.166666689,
+     "p10": 1630374.999999958,
+     "median": 1716180.500000026
+    },
+    "B": {
+     "min": 1615201.499999974,
+     "p10": 1748805.500000003,
+     "median": 1844611.1666666714
+    }
+   },
+   "min": 1.071586777804351,
+   "p10": 1.0834618628881536,
+   "controlMin": 0.9935635413150057,
+   "controlP10": 1.0100889634131556,
+   "verdict": "over"
+  },
+  {
+   "row": "p3-19-ajv6-bound-first-id-resource-invalid",
+   "pkg": "@canard/schema-form-ajv6-plugin",
+   "fn": "first failing validation",
+   "input": "identified local resource with a not-required rule, first failure of a fresh compile",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 182,
+   "stat": {
+    "A1": {
+     "min": 508.73626378233894,
+     "p10": 595.0604395416071,
+     "median": 802.1813186680128
+    },
+    "A2": {
+     "min": 539.6373626354034,
+     "p10": 607.5879121124092,
+     "median": 807.005494509992
+    },
+    "B": {
+     "min": 3995.857142844226,
+     "p10": 4419.664835178172,
+     "median": 4959.703296705541
+    }
+   },
+   "min": 7.854476724611556,
+   "p10": 7.427253672892072,
+   "controlMin": 1.0607409006453006,
+   "controlP10": 1.0210524372624272,
+   "verdict": "void"
+  }
+ ]
+}

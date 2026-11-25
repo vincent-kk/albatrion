@@ -98,8 +98,8 @@ export class ResolverStore {
   private registered: Map<string, SchemaValue> | undefined;
   /** Whether every registered key is already spelled as resolution writes it; computed once, only by a known-address lookup. */
   private canonicalKeys: boolean | undefined;
-  /** Registered keys that normalization kept as written because their spelling is canonical. */
-  private canonical: Set<string> | undefined;
+  /** Normalized addresses the URL parser produced; every other normalized address is a canonical spelling. */
+  private parsed: Set<string> | undefined;
   /** Known addresses already checked against the registrations; the answer cannot change afterwards. */
   private settled = new Set<string>();
   /** Retrieval addresses already passed to indexing; an embedded identifier at the same address does not count. */
@@ -213,7 +213,8 @@ export class ResolverStore {
         typeof id === 'string' &&
         !(
           id === retrieval &&
-          (this.canonical?.has(id) || isCanonicalRetrievalURI(id))
+          ((this.registered?.has(id) && !this.parsed?.has(id)) ||
+            isCanonicalRetrievalURI(id))
         )
       )
         uri = resolveURI(id, retrieval)?.split('#')[0] ?? retrieval;
@@ -503,11 +504,11 @@ export class ResolverStore {
       // Parsing keeps a canonical key and only lowercases the scheme and host of a key that differs
       // from one in letter case; an `xn--` label is parsed because runtimes differ on rejecting it.
       const canonical = isCanonicalRetrievalURI(key) && !key.includes('xn--');
-      if (canonical) (this.canonical ??= new Set()).add(key);
       const folded = canonical ? key : foldRetrievalURI(key);
       const uri = folded ?? resolveURI(key, '');
       if (uri === undefined || (folded === undefined && !isAbsoluteURI(uri)))
         continue;
+      if (folded === undefined) (this.parsed ??= new Set()).add(uri);
       const previous = registered.has(uri)
         ? (aliases.get(uri) ?? uri)
         : undefined;

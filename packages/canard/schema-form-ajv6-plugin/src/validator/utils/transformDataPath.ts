@@ -48,8 +48,9 @@ export const transformDataPath = (errors: ErrorObject[], root?: object, errorDat
       let target: unknown = local?.schema ?? root;
       for (const segment of segments) {
         const token = segment.includes('%') ? decodeURIComponent(segment) : segment;
+        const name = token.includes('~') ? token.replace(/~1/g, '/').replace(/~0/g, '~') : token;
         target = typeof target === 'object' && target !== null
-          ? (target as Dictionary<unknown>)[token.replace(/~1/g, '/').replace(/~0/g, '~')]
+          ? (target as Dictionary<unknown>)[name]
           : undefined;
       }
       if (typeof target === 'object' && target !== null && 'required' in target &&

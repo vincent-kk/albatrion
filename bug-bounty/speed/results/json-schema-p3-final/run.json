@@ -1,0 +1,139 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-json-schema-p3",
+  "ref": "unknown"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p2c-22-schema-known-noncanonical",
+   "pkg": "@winglet/json-schema",
+   "fn": "resolve",
+   "input": "known embedded ID and 20 noncanonical resource keys",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 2370,
+   "stat": {
+    "A1": {
+     "min": 4320.478481013159,
+     "p10": 4465.021097042514,
+     "median": 4583.599578060252
+    },
+    "A2": {
+     "min": 4349.947257383889,
+     "p10": 4455.187341774373,
+     "median": 4571.883122366383
+    },
+    "B": {
+     "min": 8236.26877637053,
+     "p10": 8415.165400840568,
+     "median": 8644.5603375552
+    }
+   },
+   "min": 1.9063325538052704,
+   "p10": 1.8846865933991894,
+   "controlMin": 1.0068207205521875,
+   "controlP10": 0.9977976016116351,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-23-schema-first-embedded",
+   "pkg": "@winglet/json-schema",
+   "fn": "resolve",
+   "input": "first embedded lookup across 20 registered documents",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 7915,
+   "stat": {
+    "A1": {
+     "min": 1092.3591914066797,
+     "p10": 1117.622109917468,
+     "median": 1146.5167403664432
+    },
+    "A2": {
+     "min": 1094.5198989308055,
+     "p10": 1118.4492735327794,
+     "median": 1151.474542009491
+    },
+    "B": {
+     "min": 12073.901831964438,
+     "p10": 12288.591029687224,
+     "median": 12552.988629183092
+    }
+   },
+   "min": 11.053050980800863,
+   "p10": 10.995300576681228,
+   "controlMin": 1.0019780192642893,
+   "controlP10": 1.0007401102823321,
+   "verdict": "over"
+  },
+  {
+   "row": "p2c-24-schema-key-collision",
+   "pkg": "@winglet/json-schema",
+   "fn": "resolve",
+   "input": "embedded ID colliding with registered document",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 2548,
+   "stat": {
+    "A1": {
+     "min": 3756.143642071005,
+     "p10": 3819.9093406605753,
+     "median": 3930.155808480417
+    },
+    "A2": {
+     "min": 3719.3704866561898,
+     "p10": 3818.5800627943436,
+     "median": 3923.9478021971127
+    },
+    "B": {
+     "min": 8832.94858712769,
+     "p10": 8940.098508631756,
+     "median": 9101.678178967666
+    }
+   },
+   "min": 2.351600319059554,
+   "p10": 2.340395467889756,
+   "controlMin": 0.9902098644463607,
+   "controlP10": 0.9996520132422824,
+   "verdict": "over"
+  },
+  {
+   "row": "p3-18-schema-alternate-lookup",
+   "pkg": "@winglet/json-schema",
+   "fn": "resolve",
+   "input": "one registration spelled in upper case among 21 resources",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 8418,
+   "stat": {
+    "A1": {
+     "min": 1040.7448325004575,
+     "p10": 1059.4008077929634,
+     "median": 1083.2398431934091
+    },
+    "A2": {
+     "min": 1032.014492751463,
+     "p10": 1051.4746970777178,
+     "median": 1079.7190544061261
+    },
+    "B": {
+     "min": 4362.578997385137,
+     "p10": 4410.230814919083,
+     "median": 4491.9194583041935
+    }
+   },
+   "min": 4.191785403251781,
+   "p10": 4.162948321803588,
+   "controlMin": 0.9916114503033185,
+   "controlP10": 0.9925183078425643,
+   "verdict": "over"
+  }
+ ]
+}

@@ -1,0 +1,77 @@
+{
+ "a": {
+  "dir": "/Users/Vincent/Workspace/albatrion-speed/beta",
+  "ref": "1c77ced57dcb325d5ebb24d6c884bda0904e0388"
+ },
+ "b": {
+  "dir": "/Users/Vincent/Workspace/albatrion/speed-style-utils-single-pass",
+  "ref": "unknown"
+ },
+ "node": "v24.20.0",
+ "cpu": "Apple M1 Max",
+ "rounds": 24,
+ "rows": [
+  {
+   "row": "p1-07-document-fresh-add",
+   "pkg": "@winglet/style-utils",
+   "fn": "styleManagerFactory/inject",
+   "input": "fresh document scope",
+   "inputKind": "plain",
+   "kind": "render",
+   "batch": 374,
+   "stat": {
+    "A1": {
+     "min": 326.96256684744793,
+     "p10": 454.7112299383967,
+     "median": 670.9251336598784
+    },
+    "A2": {
+     "min": 318.60427807417904,
+     "p10": 458.4304812832315,
+     "median": 658.3074866508458
+    },
+    "B": {
+     "min": 375.06951873504426,
+     "p10": 563.3823529313469,
+     "median": 820.8689839526697
+    }
+   },
+   "min": 1.147132903779905,
+   "p10": 1.2389893097816667,
+   "controlMin": 0.9744365575121978,
+   "controlP10": 1.0081793698944683,
+   "verdict": "void"
+  },
+  {
+   "row": "p2c-17-mixed",
+   "pkg": "@winglet/style-utils",
+   "fn": "inject",
+   "input": "six 200-rule sheets, compressed and scoped",
+   "inputKind": "repaired",
+   "kind": "render",
+   "batch": 8,
+   "stat": {
+    "A1": {
+     "min": 708270.7500000538,
+     "p10": 714140.8749999414,
+     "median": 721885.1250000853
+    },
+    "A2": {
+     "min": 707010.3750000669,
+     "p10": 713666.5000000448,
+     "median": 720963.4999999821
+    },
+    "B": {
+     "min": 2177234.374999898,
+     "p10": 2198135.6250000205,
+     "median": 2301395.874999969
+    }
+   },
+   "min": 3.0740142452582333,
+   "p10": 3.078014019293043,
+   "controlMin": 0.9982204898338852,
+   "controlP10": 0.999335740304885,
+   "verdict": "over"
+  }
+ ]
+}

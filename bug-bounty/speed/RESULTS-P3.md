@@ -23,5 +23,5 @@
 | p3-15 r3 batch array | schema-form | repaired | 26.4 us | 0.493 / 0.498 | 1.001 / 0.999 | 12 | p3-c | 통과 (더 빠름) |
 | p3-16 validate writeback errors | schema-form | repaired | 3.35 us | 1.550 / 1.526 | 0.990 / 0.990 | 12 | p3-c | 초과 (1.35) |
 | p3-17 r2 async relay content | schema-form | repaired | 3.36 us (후보만) | 1.000 / 0.996 (후보끼리, 비율 없음) | 1.001 / 0.995 | 24 | p3-rerun-single-opt | 비교 불가 |
-| p3-18 schema alternate lookup | @winglet/json-schema | repaired | 1.06 us | 5.026 / 5.038 | 1.006 / 1.008 | 12 | p3-18-after-691 | 초과 (1.35) |
+| p3-18 schema alternate lookup | @winglet/json-schema | repaired | 1.04 us | 4.192 / 4.163 | 0.992 / 0.993 | 24 | json-schema-p3-final | 초과 (1.35), 수용됨 (PR #695 뒤) |
 | p3-19 ajv6 bound first id resource invalid | ajv6-plugin | repaired | 508 ns | 8.272 / 7.826 | 1.010 / 1.005 | 12 | p3-c | 초과 (3배) |
