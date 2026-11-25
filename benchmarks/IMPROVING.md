@@ -32,6 +32,7 @@ Stop when the row is within its limit, or when two consecutive profile-guided at
 
 Before a change merges, someone other than its author compares the build with the change against the build without it, from outside the repository:
 
+- **Fix the contract first.** Behavior on objects the caller supplied must be identical. Calls of built-ins on the package's own bookkeeping (an internal `Map`, an internal key array) are not contract: they differ only for a program that replaced a global built-in.
 - **Drive the public entry**, both the ESM and the CommonJS one, and compare everything a consumer can observe: return values, the class and message of thrown errors, and the calls made on objects the caller supplied.
 - **Count the inputs that reach the new code.** An input that falls back to the old path proves nothing about the new one, so generated inputs are steered until a large share takes the new path, and that share is reported.
 - **Attack what the author's own tests did not generate**: the boundaries between the readers or passes the change merged, shared mutable state that survives a call (a `lastIndex` on a sticky or global pattern, a cache), re-entrancy, and inputs large or deep enough to throw. A change must not alter which inputs throw.
