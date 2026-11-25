@@ -13,7 +13,7 @@ The file name is `<group>-<number>-<name>.mjs`, and `--only` selects by prefix.
 | `p2e-` | 18   | `@canard/schema-form` engine calls without React.                                                                          |
 | `p2u-` | 25   | UI plugin mounts and interactions. `am` in the name means `@canard/schema-form-antd-mobile-plugin`.                        |
 | `p3-`  | 19   | Calls that differed by less, or that only one of the two commits accepts.                                                  |
-| `p4-`  | 5    | Calls on the paths of the four behavior fixes that followed the speed work: early-mismatch and deep `equals`, a context holding built-ins, and repeated reads of a virtual `defaultValue`. |
+| `p4-`  | 5    | Calls on the paths where reading order, built-in checks and tuple identity are decided: early-mismatch and deep `equals`, a context holding built-ins, and repeated reads of a virtual `defaultValue`. |
 
 `inputKind` in a row is `plain` for input a consumer passes every day and `repaired` for input that reaches a path a fix changed on purpose.
 
