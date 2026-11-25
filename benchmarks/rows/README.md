@@ -1,6 +1,6 @@
 # Rows of the 1.0.0 speed comparison
 
-These 115 rows compare the public calls that the 1.0.0 bug-bounty fixes changed against the commit before those fixes, `1c77ced57`. They run with [`../compare/`](../compare/README.md); [`../DESIGN.md`](../DESIGN.md) and [`../IMPROVING.md`](../IMPROVING.md) give the method.
+These 119 rows compare the public calls that the 1.0.0 bug-bounty fixes changed against the commit before those fixes, `1c77ced57`. They run with [`../compare/`](../compare/README.md); [`../DESIGN.md`](../DESIGN.md) and [`../IMPROVING.md`](../IMPROVING.md) give the method.
 
 ## Groups
 
@@ -13,7 +13,7 @@ The file name is `<group>-<number>-<name>.mjs`, and `--only` selects by prefix.
 | `p2e-` | 18   | `@canard/schema-form` engine calls without React.                                                                          |
 | `p2u-` | 25   | UI plugin mounts and interactions. `am` in the name means `@canard/schema-form-antd-mobile-plugin`.                        |
 | `p3-`  | 19   | Calls that differed by less, or that only one of the two commits accepts.                                                  |
-| `p4-`  | 5    | Calls on the paths where reading order, built-in checks and tuple identity are decided: early-mismatch and deep `equals`, a context holding built-ins, and repeated reads of a virtual `defaultValue`. |
+| `p4-`  | 9    | Calls on the paths where reading order, built-in checks, tuple identity and the storage of node-keyed memos are decided: early-mismatch and deep `equals`, a context holding built-ins, repeated reads of a virtual `defaultValue`, repeated `watchValues` reads, leaf writes under nested objects and in an array, and a form reset. |
 
 `inputKind` in a row is `plain` for input a consumer passes every day and `repaired` for input that reaches a path a fix changed on purpose.
 
@@ -79,3 +79,4 @@ These rows are over their limit because the fixed code does work the baseline sk
 - The control of `p1-07` and `p3-19` leaves its window on most runs. Repeat them alone, and read the result as approximate.
 - A row under about 2 µs measured as `render` carries two timer reads in both arms, which pulls its ratio toward 1.
 - `p4-05` reads a virtual `defaultValue`, which the baseline `1c77ced57` answers with `undefined`; compare it between two trees that both hold the tuple projection.
+- `p4-06` to `p4-09` decide where a node-keyed memo is stored (the watch values, and the object and array shapes that a later write patches); compare a commit that moves one memo with its parent, not with `1c77ced57`.
