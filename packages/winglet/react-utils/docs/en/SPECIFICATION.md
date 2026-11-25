@@ -823,6 +823,8 @@ const SafeChart = withErrorBoundary(
 <SafeChart data={chartData} width={800} height={400} />;
 ```
 
+The class both HOCs render, `ErrorBoundary` (props `children`, optional `fallback` and optional `onError`), is also exported from the package root and `@winglet/react-utils/hoc` for direct use as JSX.
+
 ---
 
 ### withErrorBoundaryForwardRef

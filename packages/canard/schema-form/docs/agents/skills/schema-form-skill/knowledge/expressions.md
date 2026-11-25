@@ -75,7 +75,7 @@ controls: {
 }
 ```
 
-- Direct access is `@.field`. For optional chaining, wrap in parentheses: `(@).a?.b` — the parenthesized form is required and cannot be guessed.
+- `@` is the context object itself (the Form's `context` merged over a FormProvider's, `{}` when neither is set), and what follows it is plain JavaScript. `@.user` reads `undefined` when `user` is missing, but `@.user.plan` throws, so put `?.` after every member that can be missing: `@.user?.plan?.tier`. The parentheses in `(@).a?.b` are optional; only a field path needs them before a property access (`(../items)?.length`). A throw is not a quiet `false`: whether it happens at mount or after a context change, it reports `EXPRESSION_THREW` to `onError` and the form stays mounted but degraded, so submission is rejected until you correct the expression and recover as described under [watch and derived](#watch-and-derived).
 - When `context` changes, dependent controls expressions recompute automatically — no `watch` declaration needed.
 - `@` path expressions work only inside controls expressions — not in `node.find()` paths and not in `fieldInputMap` keys. (`node.find('@')` returns null and `findNodes('@')` returns an empty array; see `jsonpointer.md`.)
 

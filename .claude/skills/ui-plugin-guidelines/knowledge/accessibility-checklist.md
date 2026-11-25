@@ -281,6 +281,7 @@ Confirm before publishing the plugin:
 - [ ] Error states have `aria-invalid` on the control itself
 - [ ] Label and input are connected with `htmlFor`
 - [ ] An `aria-describedby` points only at an element the input itself renders with `getInputId(key)`
+- [ ] ARIA props reach the announced control, checked in a render, not assumed from where they were written (for MUI: `TextField`, `Select` and `Checkbox` take them through `slotProps.htmlInput`, `SelectDisplayProps` and `slotProps.input`; `RadioGroup` and `FormGroup` are themselves the announced group, so theirs go on the root)
 - [ ] Every feature is reachable by keyboard
 - [ ] Tab order is logical
 

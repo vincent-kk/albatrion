@@ -243,6 +243,8 @@ const formatError: FormatError = (error, node, context) => {
 />
 ```
 
+Where a library puts ARIA props written on a composite component is the library's decision: MUI's `TextField` and `Checkbox` put them on a wrapper, and `Select` forwards only `aria-describedby` to its combobox. Pass them through the prop that reaches the announced control (`slotProps.htmlInput` for `TextField`, `SelectDisplayProps` for `Select`, `slotProps.input` for `Checkbox`), and in review reject ARIA written on the component itself unless a render check shows it on the control (details in `knowledge/accessibility-checklist.md`).
+
 ### Keyboard Navigation
 
 - Tab: Move to the next field
@@ -855,6 +857,7 @@ Ant Design supports keyboard navigation by default:
 - [ ] Confirm id, name, and aria-required on every Input
 - [ ] When an error occurs, add aria-invalid; add aria-describedby only for an element the input itself renders with getInputId(key)
 - [ ] Confirm LabelRenderer is associated with Input via htmlFor
+- [ ] ARIA props reach the announced control, checked in a render, not assumed from where they were written
 - [ ] Test that every field is reachable by keyboard alone
 - [ ] Test that a screen reader reads labels and error messages
 ```
