@@ -100,6 +100,8 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   divergenceBase: unknown;
   /** Backing field for `isDivergent`: the memoized comparison, reused while `divergenceCurrent` and `divergenceBase` keep their identities. */
   storedIsDivergent: boolean;
+  /** Last default tuple of a virtual group, reused while unchanged; initialized on every kind so all nodes share one layout. */
+  virtualDefaultValue: Optional<readonly unknown[]>;
 
   /** Backing field for `state`: interaction flags the engine replaces directly, whereas the public `state` setter dispatches a patch. */
   storedState: FieldNodeRecord<FieldNode>['storedState'];
@@ -207,6 +209,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.divergenceSegments = undefined;
     this.divergenceBase = undefined;
     this.storedIsDivergent = false;
+    this.virtualDefaultValue = undefined;
     this.storedState = state;
     this.interactionEpoch = 0;
     this.revisionLedger = EMPTY_REVISION_LEDGER;
