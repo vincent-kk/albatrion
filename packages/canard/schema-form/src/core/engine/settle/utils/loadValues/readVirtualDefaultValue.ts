@@ -17,11 +17,10 @@ export const readVirtualDefaultValue = <Self extends FieldNodeRecord<Self>>(
 ): readonly unknown[] => {
   const parent = node.parent;
   if (!parent) return EMPTY_ARRAY;
-  const host = getLoadValue(
-    node.runtime.loadSnapshot,
-    parent.path,
-    readLoadSegments(parent),
-  );
+  const snapshot = node.runtime.loadSnapshot;
+  const host = parent.path
+    ? getLoadValue(snapshot, parent.path, readLoadSegments(parent))
+    : snapshot;
   const fields = node.blueprintNode.fields ?? EMPTY_ARRAY;
   const previous = node.virtualDefaultValue;
   if (previous && matchesProjection(previous, host, fields)) return previous;
