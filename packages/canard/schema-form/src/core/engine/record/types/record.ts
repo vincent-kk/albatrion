@@ -109,6 +109,11 @@ export interface FieldNodeRecord<Self> {
   divergenceBase: unknown;
   /** Pure comparison result for the two retained path values. */
   storedIsDivergent: boolean;
+  /**
+   * Last default tuple projected for a virtual group, returned again while its length and every
+   * element stay `Object.is`-equal to a fresh projection; undefined on other kinds and before the first read.
+   */
+  virtualDefaultValue?: readonly unknown[];
   /** Merged effective schema for the active declarations. */
   schema: EffectiveSchema;
   /** Stored interaction flags updated by shallow patches. */
