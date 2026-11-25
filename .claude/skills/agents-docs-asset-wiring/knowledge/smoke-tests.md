@@ -63,7 +63,7 @@ find .claude -name SKILL.md -exec sh -c 'echo tampered >> "$1"' _ {} \;
 
 Appends `tampered` to every `SKILL.md` under the local `.claude/`. Simulates a human edit the dispatcher must detect and refuse to clobber.
 
-The engine compares the installed copy only with the hash of the files the current package ships (`classify` in `src/core/buildPlan/buildPlan.ts`), so it cannot tell a hand edit from an unmodified copy installed by an older version of the package: both get `warn-diverged` and `requiresForce`. After a package upgrade, every file the new version changed therefore reports `requiresForce`: a normal run without `--force` exits 2, a `--dry-run` still exits 0, and a drift check that reads the `--dry-run --json` plan flags those files until a `--force` run refreshes the copies.
+The engine compares the installed copy only with the hash of the files the current package ships, so it cannot tell a hand edit from an unmodified copy installed by an older version of the package: both get `warn-diverged` and `requiresForce`. After a package upgrade, every file the new version changed therefore reports `requiresForce`: a normal run without `--force` exits 2, a `--dry-run` still exits 0, and a drift check that reads the `--dry-run --json` plan flags those files until a `--force` run refreshes the copies.
 
 ---
 
