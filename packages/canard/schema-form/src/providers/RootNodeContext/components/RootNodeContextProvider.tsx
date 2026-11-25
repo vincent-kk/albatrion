@@ -32,7 +32,10 @@ import { isSameSchema } from '@/schema-form/helpers/schemaIdentity';
 import { useExternalFormContext } from '../../ExternalFormContext';
 import { useFieldInputsContext } from '../../FieldInputsContext';
 import { useFieldRendererContext } from '../../FieldRendererContext';
-import { useFormErrorContext } from '../../FormErrorContext';
+import {
+  reportFailureToHost,
+  useFormErrorContext,
+} from '../../FormErrorContext';
 import { useWorkspaceContext } from '../../WorkspaceContext';
 import type { RootBinding, RootLoadProps, RootLoadStore } from '../type';
 import { applyFormErrors } from '../utils/applyFormErrors';
@@ -190,7 +193,11 @@ export const RootNodeContextProvider = ({
       !configurationBlockedLoad &&
       validatorChanged
     )
-      reset(requested?.option);
+      try {
+        reset(requested?.option);
+      } catch (error) {
+        reportFailureToHost(error);
+      }
     else if (requested) {
       const { props: requestedProps, option } = requested;
       if (
@@ -198,7 +205,11 @@ export const RootNodeContextProvider = ({
         !isSameSchema(requestedProps.defaultValue, current.defaultValue) ||
         !isSameSchema(requestedProps.errors, current.errors)
       )
-        reset(option);
+        try {
+          reset(option);
+        } catch (error) {
+          reportFailureToHost(error);
+        }
     }
     const activeLoad = store.load;
     const root = activeLoad.root;
@@ -208,7 +219,11 @@ export const RootNodeContextProvider = ({
       store.load === activeLoad &&
       previous.context !== current.context
     )
-      setContext(root, context);
+      try {
+        setContext(root, context);
+      } catch (error) {
+        reportFailureToHost(error);
+      }
   });
 
   useLayoutEffect(() => {

@@ -52,7 +52,7 @@ adoption은 컴파일하지 않으므로 자동 compile 실패가 새 트리를 
 
 ### root-live-settings — 실행 설정 수명
 
-commit은 구조 교체를 처리한 현행 root에 validationMode·자동 쓰기·비활성 정책·표시 정책을 함께 적용한 뒤 context와 외부 오류를 전달합니다. 표시 정책 변경은 reset 사유가 아니며 검증 모드·예약을 바꾸지 않습니다. 숨김 cleanup은 committed 설정을 지우지 않습니다.
+commit은 구조 교체를 처리한 현행 root에 validationMode·자동 쓰기·비활성 정책·표시 정책을 함께 적용한 뒤 context와 외부 오류를 전달합니다. commit 효과가 시작한 context 전달이나 reset(검증기 교체·재대조)이 던지는 식 같은 실패에 닿으면 그 커밋을 유지하고 실패를 onError와 host에 한 번씩 보고하며 트리는 degraded로 남기고 React에는 던지지 않습니다. 거절할 호출자가 없는 commit 효과에서 던지면 Form의 오류 경계가 degraded 트리 대신 폼 전체를 대체하기 때문입니다. 외부 오류 적용은 식을 평가하지 않으므로 이 경로에 들지 않습니다. 표시 정책 변경은 reset 사유가 아니며 검증 모드·예약을 바꾸지 않습니다. 숨김 cleanup은 committed 설정을 지우지 않습니다.
 
 load·activation은 하나의 유효 슬롯 토큰을 공유합니다. 실효 모드 변경은 이전 슬롯을 무효화하고 None→OnRequest는 컴파일 준비, None 또는 OnRequest→OnChange는 다음 쓰기를 기다리지 않고 판정을 예약합니다. 같은 설정의 최초 commit·StrictMode replay는 추가 활성화를 만들지 않습니다. 실행을 시작한 슬롯의 늦은 실패는 시작 root·validation epoch·은퇴 여부로 판정합니다. 같은 root reset·요청 stamp·token 교체만으로 같은 epoch의 실패를 버리지 않으며 루트 교체·은퇴·실효 모드 전환은 늦은 보고를 차단합니다.
 

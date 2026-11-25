@@ -300,7 +300,7 @@ export interface FieldNodeRuntime<Self>
   guardFailureRecords?: Map<string, PendingFormErrorRecord>;
   /** Failed guards already reported by this consuming tree. */
   reportedGuardFailures?: Set<string>;
-  /** Development mount currently defers guard failures until its commit. */
+  /** Development mount reports `if` guard failures as records without throwing; expression gates fail as in production. */
   isInMountingGuardPass?: boolean;
   /** Host observer for structured failures and warnings. */
   errorReporter?: FormErrorReporter;
