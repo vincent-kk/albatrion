@@ -106,7 +106,7 @@ URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid schem
 
 - **Role**: TimePicker for time selection
 - **Applied when**: `type` is `"string"` and `format` is `"time"`
-- **Additional features**: Time stored in HH:mm:00Z format
+- **Additional features**: Time stored in HH:mm:00Z format. Time values carry an offset; the picker shows them in the viewer's time zone and stores an edit as the viewer's local time with its offset, for example `21:30:00+09:00`.
 
 ### **[`FieldInputMonthRange.tsx`](./src/fieldInputs/FieldInputMonthRange.tsx)**
 
@@ -170,7 +170,7 @@ For very small `multipleOf` values, pointer commits do not guarantee an exact sc
 
 - **Role**: Default string input field
 - **Applied when**: `type` is `"string"` (fallback when other conditions don't match)
-- **Additional features**: Operates as password input field when `format` is `"password"`, adjustable input field size
+- **Additional features**: Operates as password input field when `format` is `"password"`, adjustable input field size. Password fields use Ant Design's `Input.Password`, which shows the library's visibility-toggle (eye) button.
 
 ### **[`FieldInputNumber.tsx`](./src/fieldInputs/FieldInputNumber.tsx)**
 
@@ -234,6 +234,8 @@ If you're using a JavaScript environment that doesn't support ES2020, you'll nee
 
 **For legacy environment support:**
 Please use a transpiler like Babel to transform the code for your target environment.
+
+**Duplicate copies:** The plugin lists Ant Design and dayjs as both dependencies and peer dependencies, so depending on how the package manager places packages, the application can still load a separate copy of a supported version. Deduplicate it so the plugin shares the host's theme and ConfigProvider.
 
 ---
 

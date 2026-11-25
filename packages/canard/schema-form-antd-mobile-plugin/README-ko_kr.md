@@ -108,7 +108,7 @@ registerPlugin(plugin);
 
 - **역할**: 숫자 입력을 위한 스테퍼 컴포넌트
 - **적용 조건**: `type`이 `"number"` 또는 `"integer"`인 경우 (다른 조건에 해당하지 않는 fallback)
-- **추가 사항**: `minimum`, `maximum`, `multipleOf` 스키마 속성 지원. Stepper의 사용자 정의 `formatter`와 `parser`는 Ant Design Mobile 5.26 이상에서 지원합니다.
+- **추가 사항**: `minimum`, `maximum`, `multipleOf` 스키마 속성 지원. Stepper의 사용자 정의 `formatter`와 `parser`는 Ant Design Mobile 5.26 이상에서 지원합니다. Ant Design Mobile의 Stepper는 고정된 id를 가진 자체 SVG 아이콘을 렌더링하므로, 한 페이지에 숫자 입력이 여러 개 있으면 해당 SVG id가 반복될 수 있습니다. 이는 라이브러리의 동작입니다.
 
 ### **[`FieldInputBoolean.tsx`](./src/fieldInputs/FieldInputBoolean.tsx)**
 
@@ -174,6 +174,8 @@ ES2020보다 낮은 버전의 JavaScript 환경에서 사용하시는 경우, �
 
 **레거시 환경 지원이 필요한 경우:**
 Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환해주세요.
+
+**중복 사본 안내:** 이 플러그인은 Ant Design Mobile과 dayjs를 dependencies와 peerDependencies에 모두 명시합니다. 따라서 패키지 매니저가 패키지를 배치하는 방식에 따라 애플리케이션이 지원 버전의 별도 사본을 추가로 불러올 수 있습니다. 플러그인이 호스트의 테마와 ConfigProvider를 공유하도록 중복 사본을 제거해 주세요.
 
 ---
 

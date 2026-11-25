@@ -210,6 +210,8 @@ Please use a transpiler like Babel to transform the code for your target environ
 - @emotion/react, @emotion/styled (MUI styling engine)
 - dayjs 1.0.0 or later (for date processing)
 
+**Duplicate copies:** The plugin lists Emotion, MUI Material and Icons, MUI X Date Pickers and dayjs as both dependencies and peer dependencies, so depending on how the package manager places packages, the application can still load a separate copy of a supported version. Deduplicate them so the plugin shares the host's theme and providers.
+
 ---
 
 ## License

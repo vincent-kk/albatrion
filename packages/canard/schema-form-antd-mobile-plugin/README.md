@@ -108,7 +108,7 @@ For very small `multipleOf` values, pointer commits do not guarantee an exact sc
 
 - **Role**: Stepper component for numeric input
 - **Applied when**: `type` is `"number"` or `"integer"` (fallback when other conditions don't match)
-- **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties. Custom Stepper `formatter` and `parser` require Ant Design Mobile 5.26 or later.
+- **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties. Custom Stepper `formatter` and `parser` require Ant Design Mobile 5.26 or later. Ant Design Mobile's Stepper renders its own SVG icons with fixed ids, so several number inputs on one page can repeat those SVG ids. This is library behavior.
 
 ### **[`FieldInputBoolean.tsx`](./src/fieldInputs/FieldInputBoolean.tsx)**
 
@@ -174,6 +174,8 @@ If you're using a JavaScript environment that doesn't support ES2020, you'll nee
 
 **For legacy environment support:**
 Please use a transpiler like Babel to transform the code for your target environment.
+
+**Duplicate copies:** The plugin lists Ant Design Mobile and dayjs as both dependencies and peer dependencies, so depending on how the package manager places packages, the application can still load a separate copy of a supported version. Deduplicate it so the plugin shares the host's theme and ConfigProvider.
 
 ---
 

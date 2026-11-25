@@ -210,6 +210,8 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 - @emotion/react, @emotion/styled (MUI 스타일링 엔진)
 - dayjs 1.0.0 이상 (날짜 처리용)
 
+**중복 사본 안내:** 이 플러그인은 Emotion, MUI Material과 Icons, MUI X Date Pickers, dayjs를 dependencies와 peerDependencies에 모두 명시합니다. 따라서 패키지 매니저가 패키지를 배치하는 방식에 따라 애플리케이션이 지원 버전의 별도 사본을 추가로 불러올 수 있습니다. 플러그인이 호스트의 테마와 프로바이더를 공유하도록 중복 사본을 제거해 주세요.
+
 ---
 
 ## 라이선스

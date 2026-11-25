@@ -127,7 +127,7 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 
 
 - **역할**: 시간 선택을 위한 TimePicker
 - **적용 조건**: `type`이 `"string"`이고 `format`이 `"time"`인 경우
-- **추가 사항**: HH:mm:00Z 형식으로 시간 저장
+- **추가 사항**: HH:mm:00Z 형식으로 시간 저장. 시간 값에는 오프셋이 포함됩니다. 선택기는 값을 보는 사용자의 시간대로 표시하고, 수정한 값은 사용자의 현지 시간과 그 오프셋으로 저장합니다. 예: `21:30:00+09:00`.
 
 ### **[`FieldInputMonthRange.tsx`](./src/fieldInputs/FieldInputMonthRange.tsx)**
 
@@ -191,7 +191,7 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 
 
 - **역할**: 기본 문자열 입력 필드
 - **적용 조건**: `type`이 `"string"`인 경우 (다른 조건에 해당하지 않는 fallback)
-- **추가 사항**: `format`이 `"password"`인 경우 비밀번호 입력 필드로 동작, 입력 필드 크기 조절 가능
+- **추가 사항**: `format`이 `"password"`인 경우 비밀번호 입력 필드로 동작, 입력 필드 크기 조절 가능. 비밀번호 필드는 Ant Design의 `Input.Password`를 사용하며, 라이브러리가 제공하는 표시 전환(눈 모양) 버튼이 나타납니다.
 
 ### **[`FieldInputNumber.tsx`](./src/fieldInputs/FieldInputNumber.tsx)**
 
@@ -256,6 +256,8 @@ ES2020보다 낮은 버전의 JavaScript 환경에서 사용하시는 경우, �
 
 **레거시 환경 지원이 필요한 경우:**
 Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환해주세요.
+
+**중복 사본 안내:** 이 플러그인은 Ant Design과 dayjs를 dependencies와 peerDependencies에 모두 명시합니다. 따라서 패키지 매니저가 패키지를 배치하는 방식에 따라 애플리케이션이 지원 버전의 별도 사본을 추가로 불러올 수 있습니다. 플러그인이 호스트의 테마와 ConfigProvider를 공유하도록 중복 사본을 제거해 주세요.
 
 ---
 

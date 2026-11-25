@@ -272,6 +272,8 @@ MIT — see [LICENSE](./LICENSE).
 - Failed participants, including discovery and gate failures, protect every namespace they could own from orphan deletion. The output names the participant and reason, and suppressed deletions are excluded from force confirmation.
 - Overwrites preserve mode, owner, group and hard links. A single-link file uses atomic replacement when its identity can be restored; otherwise writing stays in place and is not crash-atomic. Read-only targets and dangling write links are refused.
 - A user-scope AGENTS.md symlink is followed only when its target exists. A dangling link is refused with an error and preserved, so the tool cannot silently replace a dotfiles link.
+- On a case-insensitive volume, a release that only changes a file name's case can leave the installed file under its previous spelling.
+- Command files that a later release removes are not detected as orphans, so `--force` does not delete them.
 
 Removed skills and Claude rule files are eligible for the same force confirmation when a completed file action recorded their path and SHA-256 in `agents-assets-sync.json` beside the agent’s assets. File actions that finish can be recorded even when another action in the run fails. The file must still match its recorded content, and another recorded owner protects it, including through a spelling alias that names the same file and matches its bytes. If another package supplies the same bytes at a recorded path, the installer records that package as a co-owner. Codex and agents keep rule ownership in each managed block.
 
