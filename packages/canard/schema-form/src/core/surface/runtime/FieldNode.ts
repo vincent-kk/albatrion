@@ -102,6 +102,8 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   storedIsDivergent: boolean;
   /** Last default tuple of a virtual group, reused while unchanged; initialized on every kind so all nodes share one layout. */
   virtualDefaultValue: Optional<readonly unknown[]>;
+  /** Last watch values read for this node with their commit, reused while unchanged; initialized on every kind so all nodes share one layout. */
+  watchValuesMemo: FieldNodeRecord<FieldNode>['watchValuesMemo'];
 
   /** Backing field for `state`: interaction flags the engine replaces directly, whereas the public `state` setter dispatches a patch. */
   storedState: FieldNodeRecord<FieldNode>['storedState'];
@@ -210,6 +212,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.divergenceBase = undefined;
     this.storedIsDivergent = false;
     this.virtualDefaultValue = undefined;
+    this.watchValuesMemo = undefined;
     this.storedState = state;
     this.interactionEpoch = 0;
     this.revisionLedger = EMPTY_REVISION_LEDGER;
