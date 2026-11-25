@@ -47,7 +47,7 @@ Applies when choosing between this package's hooks, wiring its Portal system, or
 
 ## Invariants & Gotchas
 
-- **`useConstant(() => heavy())` never calls the function** — it stores it. The package's own JSDoc presents exactly this call as an "expensive computation that runs only once", contradicting its `@param` line one screen below. Symptom: consumers receive a function where they expected data. Use `useLazyConstant` or `useTruthyConstant` to actually run a factory.
+- **`useConstant(() => heavy())` never calls the function** — it stores the function, as it stores any value it is given. Symptom: consumers receive a function where they expected data. Use `useLazyConstant` (calls the initializer once) or `useTruthyConstant` to actually run a factory.
 - **`useMemorize(() => x)` does call it**, being the mirror image of the rule above. Same argument shape, opposite semantics.
 - **`useTruthyConstant` re-runs its factory on every render where the held value is falsy.** Unusable when `null`, `0`, `''`, or `false` is a legitimate result — that is what `useLazyConstant` is for.
 - **`useHandle(undefined)` still returns a callable**, which returns `null`; when the handler may be `undefined`, the return type is `R | null`. It never throws, so a missing handler surfaces as a downstream `null`, not as an error at the call site.

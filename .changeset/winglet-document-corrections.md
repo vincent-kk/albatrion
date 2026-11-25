@@ -12,3 +12,7 @@ The specifications, READMEs and packaged agent skills now match current behavior
 `@winglet/react-utils`: The specification and the `useHandle` reference now state that a call made during the first render runs that render's own handler, because no handler is committed yet.
 
 `@winglet/data-loader`: The specification and the agent skill no longer say TypeScript rejects `maxBatchSize` together with `disableBatch`: both are accepted and `disableBatch` wins.
+
+`@winglet/react-utils`: The specifications and the agent skill now document the `ErrorBoundary` class (props `children`, `fallback`, `onError`) exported from the package root and `@winglet/react-utils/hoc`, and no longer describe `useConstant` as running a factory: it stores a function without calling it, and `useLazyConstant` calls its initializer once.
+
+`@winglet/data-loader`: The specifications now write error codes with their namespace, for example `DATA_LOADER.INVALID_KEY`, which is the value of the `code` property.

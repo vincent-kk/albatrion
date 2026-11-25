@@ -16,6 +16,16 @@ const SafeInput = withErrorBoundaryForwardRef(
 );
 ```
 
+### The `ErrorBoundary` class
+
+`ErrorBoundary` (exported from the root entry and `@winglet/react-utils/hoc`) is the class both HOCs render. Its props are `children: ReactNode`, `fallback?: ReactNode` (the default message when `undefined`) and `onError?: (error: unknown, info: { componentStack?: string }) => void`, called after the boundary logs the error. Use it directly as JSX around a subtree that is not a single component, or when `onError` should be a plain callback rather than the hook the HOCs take; use an HOC to wrap one component definition.
+
+```tsx
+<ErrorBoundary fallback={<p>Unavailable</p>} onError={report}>
+  <Dashboard />
+</ErrorBoundary>
+```
+
 ### What the boundary does not catch
 
 It is an ordinary React class boundary — `getDerivedStateFromError` plus `componentDidCatch` — so the standard exclusions apply, plus two specific to this implementation:

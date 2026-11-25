@@ -42,7 +42,7 @@ import { isReactComponent } from '@winglet/react-utils/filter';
 
 **Hooks** (`@winglet/react-utils/hook`):
 - `useHandle` — Stable event handler (used mainly by schema-form plugins)
-- `useConstant` — Memoization of expensive computations
+- `useConstant` — Stores the value it is given, a function included, without calling it
 - `useLazyConstant` — Executes the factory once and guarantees identity (unlike useMemo, guarantees no recomputation; for resource-owning instances)
 - `useMemorize` — Enhanced memoization
 - `useEffectUntil` / `useLayoutEffectUntil` — Conditional effect

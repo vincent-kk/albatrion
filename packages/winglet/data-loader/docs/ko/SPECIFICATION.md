@@ -138,7 +138,7 @@ class DataLoader<Key = string, Value = any, CacheKey = Key> {
 
 단일 키의 값을 로드합니다. 자동으로 현재 배치에 합쳐지며 결과가 캐시됩니다.
 
-- `key`가 `null` 또는 `undefined`이면 `DataLoaderError`(코드: `INVALID_KEY`)를 **즉시 throws**합니다.
+- `key`가 `null` 또는 `undefined`이면 `DataLoaderError`(코드: `DATA_LOADER.INVALID_KEY`)를 **즉시 throws**합니다.
 - 동일 캐시 범위 내에서 같은 키에 대해 동일한 Promise를 반환합니다(중복 제거).
 
 ```typescript
@@ -149,7 +149,7 @@ const user = await userLoader.load('user-42');
 
 여러 키의 값을 로드합니다. 키별 실패는 예외를 throw하는 대신 결과 배열의 `Error` 인스턴스로 반환되어 부분 성공이 기본 동작입니다.
 
-- `keys`가 배열형 객체가 아니면 `DataLoaderError`(코드: `INVALID_KEYS`)를 **throws**합니다.
+- `keys`가 배열형 객체가 아니면 `DataLoaderError`(코드: `DATA_LOADER.INVALID_KEYS`)를 **throws**합니다.
 - 각 요소는 해결된 `Value` 또는 `Error`입니다.
 
 ```typescript

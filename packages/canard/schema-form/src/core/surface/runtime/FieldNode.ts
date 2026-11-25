@@ -335,7 +335,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   findNodes(pointer?: Nullable<string | readonly string[]>) {
     return findNodes<FieldNode>(this, pointer);
   }
-  /** Visit this occurrence and its current-shape subtree in preorder; writes settle once at the end. */
+  /** Visit this occurrence and its current-shape subtree in preorder; value writes settle once at the end, as in `batch`. */
   visitSubtree(visitor: Fn<[node: FieldNode], void | boolean>) {
     return dispatchVisitSubtree<FieldNode>(this, visitor);
   }

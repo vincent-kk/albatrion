@@ -726,7 +726,9 @@ const FieldInputStringEnum = ({
   const { errorMessage } = useFieldErrors(node);
   const hasError = errorMessage != null;
 
-  // 3️⃣ Render the RadioGroup (the caption id is owned by this input; labelId belongs to the renderer's title)
+  // 3️⃣ Render the RadioGroup (the caption id is owned by this input; labelId belongs to the renderer's title).
+  // Radio, checkbox, switch and slider have no read-only mode and keep their own selection state, so read-only disables them
+  // (otherwise a read-only form shows a choice the core already rejected); text fields, a value Select and pickers take `readOnly` themselves. The test is whether the control keeps state of its own and lacks a read-only mode, not its type.
   const captionId = getInputId('legend');
   return (
     <FormControl component="fieldset" aria-labelledby={captionId} error={hasError} required={required} disabled={disabled || readOnly} size={size}>
@@ -819,9 +821,10 @@ const FieldInputStringEnumSelect = ({
   const hasError = errorMessage != null;
 
   return (
-    <FormControl error={hasError} required={required} disabled={disabled || readOnly} size={size} fullWidth>
+    <FormControl error={hasError} required={required} disabled={disabled} size={size} fullWidth>
       <InputLabel id={getInputId('legend')}>{label}</InputLabel>
       <Select
+        readOnly={readOnly}
         labelId={getInputId('legend')}
         inputRef={disabled ? undefined : focusRef}
         inputProps={{ id: getInputId('native') }}

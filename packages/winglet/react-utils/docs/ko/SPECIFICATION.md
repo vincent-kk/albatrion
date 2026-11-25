@@ -837,6 +837,8 @@ const SafeChart = withErrorBoundary(
 - 이벤트 핸들러 내부의 에러는 잡지 않습니다 (try/catch 사용)
 - 비동기 에러는 잡지 않습니다 (에러 state 패턴 사용)
 
+두 HOC가 렌더링하는 클래스인 `ErrorBoundary`(props: `children`, 선택적 `fallback`, 선택적 `onError`)도 패키지 루트와 `@winglet/react-utils/hoc`에서 내보내므로 JSX로 직접 사용할 수 있습니다.
+
 ---
 
 ### withErrorBoundaryForwardRef
