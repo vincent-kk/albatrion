@@ -2,7 +2,7 @@
 "@canard/schema-form": major
 ---
 
-Breaking change: Form and FormProvider context now compare URL, URLSearchParams and opaque class instances by reference. A new instance recomputes dependent controls and validation state even when its enumerable properties look equal; equal-content class replacements may therefore update more often. Plain objects, arrays and supported built-ins retain content comparison.
+Breaking change: Form and FormProvider context now compare URL, URLSearchParams and opaque class instances by reference. A new instance recomputes dependent controls and validation state even when its enumerable properties look equal; equal-content class replacements may therefore update more often. Plain objects, arrays and supported built-ins retain content comparison. An object that claims a built-in `Symbol.toStringTag`, such as `Map` or `Date`, without that built-in's internal state is compared by reference, so it no longer throws during render or matches a different instance; on runtimes that provide `Error.isError`, this includes objects tagged `Error`.
 
 Before, a replacement query object could leave controls stale:
 

@@ -2,24 +2,10 @@ import { isPlainObject } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { equals } from '@winglet/common-utils/object';
 
-/** Built-in internal-slot tags supported by the shared comparator. */
-const COMPARABLE_TAGS: readonly string[] = [
-  '[object Date]',
-  '[object RegExp]',
-  '[object Set]',
-  '[object ArrayBuffer]',
-  '[object Number]',
-  '[object String]',
-  '[object Boolean]',
-  '[object Error]',
-];
+import { hasBuiltinSlots } from './hasBuiltinSlots';
 
 /** Own non-enumerable error state: the ES2022 `cause` and AggregateError `errors`. */
 const ERROR_SLOTS: readonly string[] = ['cause', 'errors'];
-
-/** Whether content comparison can inspect this built-in state. */
-const hasComparableSlots = (value: object, tag: string): boolean =>
-  ArrayBuffer.isView(value) || COMPARABLE_TAGS.includes(tag);
 
 /**
  * Compare context content while treating opaque instance state as reference-owned.
@@ -99,6 +85,8 @@ export const areContextsEqual = (left: unknown, right: unknown): boolean => {
     }
     const tag = Object.prototype.toString.call(left);
     if (tag !== Object.prototype.toString.call(right)) return false;
+    if (!hasBuiltinSlots(left, tag) || !hasBuiltinSlots(right, tag))
+      return false;
     if (tag === '[object Map]') {
       if (Reflect.get(left, 'size') !== Reflect.get(right, 'size'))
         return false;
@@ -153,7 +141,7 @@ export const areContextsEqual = (left: unknown, right: unknown): boolean => {
       }
       continue;
     }
-    if (!hasComparableSlots(left, tag) || !equals(left, right)) return false;
+    if (!equals(left, right)) return false;
   }
   return true;
 };
