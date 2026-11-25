@@ -1,3 +1,4 @@
+import { runInNewContext } from 'node:vm';
 import { expect, it } from 'vitest';
 
 import { areContextsEqual } from '../areContextsEqual';
@@ -116,4 +117,111 @@ it('ends on errors whose cause refers back to the error', () => {
     return { error };
   };
   expect(areContextsEqual(make(), make())).toBe(true);
+});
+
+/** Real built-ins keyed by the tag name an impostor can claim through `Symbol.toStringTag`. */
+const BUILTINS: ReadonlyArray<readonly [string, () => object]> = [
+  ['Map', () => new Map()],
+  ['Set', () => new Set()],
+  ['Date', () => new Date(0)],
+  ['RegExp', () => /a/],
+  ['ArrayBuffer', () => new ArrayBuffer(0)],
+  ['Number', () => Object(0)],
+  ['String', () => Object('')],
+  ['Boolean', () => Object(false)],
+  ['Error', () => new Error()],
+  ['Uint8Array', () => new Uint8Array(0)],
+  ['DataView', () => new DataView(new ArrayBuffer(0))],
+];
+/** Whether the runtime can tell a real error from an object that only claims the Error tag. */
+const canBrandErrors = typeof Reflect.get(Error, 'isError') === 'function';
+/** An instance of a class whose only claim to a built-in is its `Symbol.toStringTag`. */
+const claimTag = (tag: string): object =>
+  new (class {
+    get [Symbol.toStringTag]() {
+      return tag;
+    }
+  })();
+/** The comparison result, or the name of what it threw, so one assertion reports every tag. */
+const compare = (left: unknown, right: unknown): boolean | string => {
+  try {
+    return areContextsEqual(left, right);
+  } catch (error) {
+    return error instanceof Error ? error.name : 'non-error throw';
+  }
+};
+/** The expected comparison result for every tag in `BUILTINS`. */
+const expectedByTag = (result: (tag: string) => boolean) =>
+  Object.fromEntries(BUILTINS.map(([tag]) => [tag, result(tag)]));
+
+it('compares objects that only claim a built-in tag by reference', () => {
+  for (const claim of [
+    claimTag,
+    (tag: string): object =>
+      Object.assign(Object.create(null), { [Symbol.toStringTag]: tag }),
+  ]) {
+    const different: Record<string, boolean | string> = {};
+    const same: Record<string, boolean | string> = {};
+    for (const [tag] of BUILTINS) {
+      const shared = claim(tag);
+      different[tag] = compare({ value: claim(tag) }, { value: claim(tag) });
+      same[tag] = compare({ value: shared }, { value: shared });
+    }
+    expect(different).toEqual(
+      expectedByTag((tag) => tag === 'Error' && !canBrandErrors),
+    );
+    expect(same).toEqual(expectedByTag(() => true));
+  }
+});
+it('treats a real built-in and an object claiming its tag as different in both orders', () => {
+  const realFirst: Record<string, boolean | string> = {};
+  const claimFirst: Record<string, boolean | string> = {};
+  for (const [tag, make] of BUILTINS) {
+    realFirst[tag] = compare({ value: make() }, { value: claimTag(tag) });
+    claimFirst[tag] = compare({ value: claimTag(tag) }, { value: make() });
+  }
+  expect(realFirst).toEqual(expectedByTag(() => false));
+  expect(claimFirst).toEqual(expectedByTag(() => false));
+});
+it('does not take an own size of 0 for the state of an empty Map or Set', () => {
+  for (const [tag, make] of [
+    ['Map', () => new Map()],
+    ['Set', () => new Set()],
+  ] as const) {
+    const impostor = Object.assign(claimTag(tag), { size: 0 });
+    expect(compare({ value: make() }, { value: impostor }), tag).toBe(false);
+    expect(compare({ value: impostor }, { value: make() }), tag).toBe(false);
+  }
+});
+it('keeps content comparison for built-ins from another realm and for subclasses', () => {
+  const foreign: ReadonlyArray<readonly [string, unknown]> = [
+    ['new Map([["a", { b: 1 }]])', new Map([['a', { b: 1 }]])],
+    ['new Set([1, 2])', new Set([1, 2])],
+    ['new Date(5)', new Date(5)],
+    ['/a/g', /a/g],
+    ['new Uint8Array([1, 2]).buffer', new Uint8Array([1, 2]).buffer],
+    ['new Number(1)', Object(1)],
+    ['new String("a")', Object('a')],
+    ['new Boolean(true)', Object(true)],
+    ['new Error("a")', new Error('a')],
+    ['new Uint8Array([1, 2])', new Uint8Array([1, 2])],
+    [
+      'new DataView(new Uint8Array([1, 2]).buffer)',
+      new DataView(new Uint8Array([1, 2]).buffer),
+    ],
+  ];
+  for (const [source, local] of foreign) {
+    const other: unknown = runInNewContext(source);
+    expect(compare({ value: other }, { value: local }), source).toBe(true);
+    expect(compare({ value: local }, { value: other }), source).toBe(true);
+  }
+  class LocalMap extends Map<string, number> {}
+  class LocalDate extends Date {}
+  class LocalError extends Error {}
+  for (const make of [
+    () => new LocalMap([['a', 1]]),
+    () => new LocalDate(5),
+    () => new LocalError('a'),
+  ])
+    expect(compare({ value: make() }, { value: make() })).toBe(true);
 });
