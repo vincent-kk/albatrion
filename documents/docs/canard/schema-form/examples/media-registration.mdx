@@ -15,7 +15,7 @@ This live media catalog combines gated branches, arrays, and enum inputs.
 
 ## Binary files and JSON metadata {#files}
 
-`onFileAttach` stores File or File[] separately. It does not write JSON metadata: this input publishes filenames through onChange. Calling onFileAttach(undefined) removes the current path; input cleanup removes it too. Keeping a hidden field structurally present is different from removing its input.
+`onFileAttach` stores File or File[] separately. It does not write JSON metadata: this input publishes filenames through onChange. Calling onFileAttach(undefined) removes the current path, and unmounting the input removes it too; hiding the input with React 19 `<Activity mode="hidden">` keeps its files. Keeping a hidden field structurally present is different from removing its input.
 
 The handle normalizes single and multiple uploads to `Map<string, File[]>`. Append each file with its map path unchanged, including paths such as `/items/0/file`; do not convert them to bracket notation. This endpoint is an application example and must be provided by your server.
 

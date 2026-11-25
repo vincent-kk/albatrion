@@ -21,7 +21,7 @@ yarn add -D @slats/agents-assets-sync
 ## CLI Surface
 
 ```
-<bin> --package=<name...> [--agent=claude|codex] [--scope=user|project] [--asset=<kind...>]
+<bin> --package=<name...> [--agent=claude|codex|agents] [--scope=user|project] [--asset=<kind...>]
       [--asset-path=<path>] [--dry-run] [--force] [--yes] [--no-interactive]
       [--root=<cwd>] [--json]
 agents-build-hashes
@@ -103,7 +103,7 @@ The legacy explicit form `npx -p @slats/agents-assets-sync inject-agents-setting
 | `--force`             | Overwrite diverged files & delete orphans (interactive confirm on TTY).                                                                                                                                                                                                                                                                                       |
 | `--root <path>`       | Override scope-resolution cwd.                                                                                                                                                                                                                                                                                                                                |
 
-**Exit codes**: `0` success / up-to-date / dry-run, `1` runtime error, `2` user / configuration error (missing `--package`, missing `--scope` in non-TTY, unresolvable package, missing `agents.assetPath` with no `--asset-path`, an `--asset-path` that is absolute or names no directory inside the package, or an asset root that resolves outside its package).
+**Exit codes**: `0` — success, up to date, a dry run without errors (also when the plan needs `--force`), or a batch or scope alias whose only problems are skipped packages. `1` — an execution error: a unit refused during preparation (an unclosed fence or comment, a damaged or unmatched managed marker, a destination that a symlink resolves outside the project, different source contents for one destination), a failed copy, delete or `AGENTS.md` write, or a failed installation-record update. A dry run that contains such a refusal also exits 1. `2` — a usage error or a blocked run: missing `--package`; missing `--agent` or `--scope` outside an interactive TTY; an invalid `--agent`, `--scope`, `--asset` or `--asset-path` value; an unresolvable package; a scope alias that matches no installed package; a single named package with no `agents.assetPath` and no `--asset-path`, with an `--asset-path` that names no directory inside it, with an asset root that resolves outside it, or with neither a built manifest nor its declared directory; a non-dry run that needs `--force` without it; or a declined confirmation or an interactive run cancelled with Ctrl-C. When units end differently, `1` takes precedence over `2`.
 
 For `--scope=project`, use the root-marker precedence described under Agent destinations. The CLI logs `(auto-located)` when the resolved root is above the working directory.
 
@@ -165,11 +165,11 @@ docs/agents/
 └── commands/...
 ```
 
-Every file under the asset root is hashed and tracked in `dist/agents-hashes.json`.
+Every file under the asset root is hashed and tracked in `dist/agents-hashes.json`, except `.DS_Store`, `*.log`, anything under `.omc/` and anything named or under a directory named `.agents-assets-sync-*`; those paths are never shipped and never treated as orphans.
 
 ## Hash-Based Sync Strategy (Option A)
 
-- `dist/agents-hashes.json` (schema v1) is the source of truth whenever it is there. Without it, the asset root — the declared `agents.assetPath` or the one `--asset-path` names — is hashed at run time into the same document, so a package that has not been built is still injectable. A declared asset path with neither the manifest nor the directory present has no source at all: that target is reported and skipped.
+- `dist/agents-hashes.json` (schema v1) is the source of truth whenever it is there. Without it, the asset root — the declared `agents.assetPath` or the one `--asset-path` names — is hashed at run time into the same document, so a package that has not been built is still injectable. A declared asset path with neither the manifest nor the directory present has no source at all: in a batch or scope alias that target is reported and skipped, and a run that names only that package exits 2.
 - Per-file SHA-256 comparison:
   - **missing locally** → copy
   - **hash equal** → skip
@@ -198,7 +198,7 @@ import {
 } from '@slats/agents-assets-sync';
 ```
 
-See `src/index.ts` and `src/DETAIL.md` for the full export surface.
+The published declarations (`dist/index.d.ts`) list the full export surface; `src/` is not shipped. `parseBlocks(content)` returns every complete managed block in document order, sequential duplicates included, and throws with the line and reason for a document the installer refuses (an unmatched, nested or damaged managed marker, or an unclosed fence or HTML comment). `resolveDestinations` throws for a manifest path or skill namespace prefix that contains a `..` segment.
 
 ## Additional Docs
 
@@ -223,6 +223,7 @@ and diverts every diagnostic to stderr, so the whole stream parses:
   "units": [
     {
       "key": "codex:@canard/schema-form",
+      "diagnosticOnly": false,
       "package": { "name": "@canard/schema-form", "version": "0.13.2" },
       "agent": "codex",
       "scope": "project",
@@ -257,9 +258,11 @@ One `unit` per `(package, agent)` pair. A flag error becomes `errors` with
 `exitCode: 2` and empty `units`, so a reader always has a document to parse.
 A unit's `requiresForce` is `true` whenever applying it overwrites diverged
 content or deletes orphans, with or without `--force`; without `--force` such a
-unit blocks a non-preview run with exit code 2. A dry-run still exits 0.
+unit blocks a non-preview run with exit code 2. A dry run of such a unit still exits 0; a unit refused with an error makes any run, dry run included, exit 1.
 Unresolvable packages and gate failures also produce one JSON document.
 `failures` records each path, stage and reason; `notices` records suppressed deletions without counting them as applied work.
+
+`diagnosticOnly` is `true` for a unit refused during preparation or merging: its `actions` are evidence only and never run, its `requiresForce` is `false`, and its `error` field states the reason. A unit whose destinations another unit already covers carries `aliasOf` with that unit's `key` and has no actions of its own.
 
 ## License
 
@@ -278,6 +281,8 @@ MIT — see [LICENSE](./LICENSE).
 Removed skills and Claude rule files are eligible for the same force confirmation when a completed file action recorded their path and SHA-256 in `agents-assets-sync.json` beside the agent’s assets. File actions that finish can be recorded even when another action in the run fails. The file must still match its recorded content, and another recorded owner protects it, including through a spelling alias that names the same file and matches its bytes. If another package supplies the same bytes at a recorded path, the installer records that package as a co-owner. Codex and agents keep rule ownership in each managed block.
 
 If writing the record fails, the command reports an error and keeps the completed file changes. A retry leaves matching unrecorded files alone. To establish ownership after that failure, verify and deliberately reinstall the affected files.
+
+Record updates take a lock directory named `.agents-assets-sync-agents-assets-sync.json.lock` beside the record. A run that cannot take it within ten seconds keeps its completed file changes, names the lock path and exits 1. If an interrupted run left the lock behind, confirm that no other installation is running, delete that directory, and run again.
 
 ### Markdown boundaries for rules
 

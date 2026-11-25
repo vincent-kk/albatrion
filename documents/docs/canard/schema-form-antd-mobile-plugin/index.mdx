@@ -33,7 +33,7 @@ yarn add @canard/schema-form-antd-mobile-plugin antd-mobile@^5.2.0
 ### Peer Dependencies
 
 ```bash
-yarn add dayjs@^1.0.0 "react@>=18 <20" "react-dom@>=18 <20"
+yarn add @canard/schema-form dayjs@^1.0.0 "react@>=18 <20" "react-dom@>=18 <20"
 ```
 
 Note: `antd-mobile` is both a direct dependency and a peer dependency of this plugin.
@@ -57,8 +57,8 @@ Components are selected automatically based on JSON Schema properties. Priority 
 | `FieldInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | Checkbox group; items must be string schema |
 | `FieldInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
 | `FieldInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | Radio group |
-| `FieldInputArray` | `array` | — | — | — | Dynamic list with add/remove |
 | `FieldInputSlider` | `number` \| `integer` | `"slider"` | — | — | Slider; also supports range slider for numeric-item arrays |
+| `FieldInputArray` | `array` | — | — | — | Dynamic list with add/remove |
 | `FieldInputTextarea` | `string` | `"textarea"` or inputType `"textarea"` | — | — | Multi-line textarea |
 | `FieldInputString` | `string` | — | — | — | Default text input (password supported via `format: "password"`) |
 | `FieldInputNumber` | `number` \| `integer` | — | — | — | Stepper component |
@@ -85,8 +85,12 @@ See the [package README’s Slider section](https://github.com/vincent-kk/albatr
 ## Schema Extension Properties
 
 ```ts
+// Selection hints read by this plugin
 {
-  inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'textarea',
+  presentation?: {
+    inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'textarea',
+  },
+  // Standard JSON Schema properties also used for routing:
   format?:   'slider' | 'textarea' | 'password',
 }
 ```
@@ -117,18 +121,17 @@ const schema = {
 ## Context: Custom Switch Labels
 
 ```tsx
-// Pass checkboxLabels through context for BooleanSwitch
-<Form
-  jsonSchema={schema}
-  context={{ checkboxLabels: { active: { true: 'On', false: 'Off' } } }}
-/>
+// Per field (preferred):
+active: { type: 'boolean', presentation: { inputType: 'switch', FieldInputProps: { alias: { checked: 'On', unchecked: 'Off' } } } }
+// Form-wide: replaces the alias of every boolean switch and every checkbox group in the Form
+<Form jsonSchema={schema} context={{ checkboxLabels: { checked: 'On', unchecked: 'Off' } }} />
 ```
 
 <ForAI>
 
 ## AI Reference
 
-**Package**: `@canard/schema-form-antd-mobile-plugin` v0.10.0
+**Package**: `@canard/schema-form-antd-mobile-plugin` 1.x
 **Purpose**: Ant Design Mobile UI plugin — 10 touch-optimized form components for mobile web.
 
 ### Exports
@@ -137,7 +140,7 @@ import { plugin } from '@canard/schema-form-antd-mobile-plugin';
 ```
 
 ### Peer dependencies
-`antd-mobile@^5.2.0` (direct and peer dep), `dayjs@^1.0.0`, `react@>=18 <20`
+`@canard/schema-form`, `antd-mobile@^5.2.0` (direct and peer dep), `dayjs@^1.0.0`, `react@>=18 <20`
 
 ### Component mapping (priority order, high → low)
 | Component | Trigger |
@@ -146,8 +149,8 @@ import { plugin } from '@canard/schema-form-antd-mobile-plugin';
 | StringCheckbox | `array` + `inputType: "checkbox"` + items.enum |
 | StringSwitch | `string` + `inputType: "switch"` + 2 enum values |
 | RadioGroup | `string\|number` + `inputType: "radio"` + enum |
-| Array | `array` (dynamic list) |
 | Slider | `number` + `format: "slider"` (also supports range arrays) |
+| Array | `array` (dynamic list) |
 | Textarea | `string` + `format: "textarea"` |
 | String | `string` (default) |
 | Number | `number\|integer` (Stepper component) |
@@ -155,7 +158,10 @@ import { plugin } from '@canard/schema-form-antd-mobile-plugin';
 
 ### Context: custom switch labels
 ```ts
-context={{ checkboxLabels: { fieldName: { true: 'On', false: 'Off' } } }}
+// Per field (preferred):
+active: { type: 'boolean', presentation: { inputType: 'switch', FieldInputProps: { alias: { checked: 'On', unchecked: 'Off' } } } }
+// Form-wide: replaces the alias of every boolean switch and every checkbox group in the Form
+<Form jsonSchema={schema} context={{ checkboxLabels: { checked: 'On', unchecked: 'Off' } }} />
 ```
 
 ### Key differences from antd5/antd6

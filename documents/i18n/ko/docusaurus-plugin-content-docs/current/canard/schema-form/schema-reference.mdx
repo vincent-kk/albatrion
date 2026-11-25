@@ -62,6 +62,7 @@ nullable object·array가 null일 때의 규칙입니다.
 - default·derived·분기 복원·자동 `injectTo`만으로는 승격하지 않습니다. 자식 입력이 보여도 부모 객체를 만들지 않을 수 있습니다.
 - 자손 비우기와 빈 객체 Merge는 null을 유지하며 비운 사실을 이후 승격에 반영합니다.
 - null이나 잘못된 종류를 로드한 뒤 승격하면 기존 자식은 비어 있고 새로 생긴 자식만 기본값을 받습니다. null 대입으로 버린 데이터는 자동 복원하지 않습니다.
+- `node.value`와 FieldInput의 `value` prop도 `getValue()`처럼 `{}`나 `[]`가 아닌 `null`을 읽습니다. 사용자 정의 분기 입력은 `value.map(…)`이나 `Object.keys(value)`를 호출하기 전에 `null`을 처리해야 합니다.
 
 null을 허용하지 않는 object에 null을 쓰면 `{}`로 고치지 않고 잘못된 종류의 misfit 값으로 유지합니다. `setValue(undefined)`는 자식 값과 배열 항목을 비우며 자식 기본값을 복원하지 않습니다.
 
@@ -86,7 +87,7 @@ null을 허용하지 않는 object에 null을 쓰면 `{}`로 고치지 않고 �
 | `fields` | &#123; targets: string[], controls &#125; 배열이며 직접 자식을 이름으로 지정합니다. |
 | `injectTo` | 원본 변경을 다른 경로에 쓰는 함수입니다. |
 | `discriminator` | object·nullable-object 유니온 선택에 쓰는 비어 있지 않은 속성 이름입니다. |
-| `watch` | 순서대로 watchValues에 전달할 의존 경로 배열입니다. |
+| `watch` | 순서대로 watchValues에 전달할 의존 경로 배열입니다. 각 값은 `Object.is`로 비교하므로 감시 대상 배열·객체를 직접 변경하지 말고 새 참조를 쓰십시오. |
 
 표준 `readOnly`와 controls의 `readOnly`·`disabled` 계층은 대상 노드의 지역 입력 잠금에 논리합으로, `visible` 계층은 논리곱으로 결합합니다. 기본 분기 객체 입력은 이 지역 잠금을 자식 입력에 전파하지 않으며 분기 객체의 잠금 선언은 `LockOnNonTerminalObject`로 경고합니다. 직접 자식에는 `controls.fields`, 폼 전체에는 Form의 `readOnly`·`disabled`를 사용하십시오. 기본값 우선순위는 노드 `controls.default`, 부모 `fields`, 프래그먼트 `controls.default`, 표준 `default` 순입니다.
 

@@ -43,7 +43,7 @@ Typing into a child field promotes the object to an object holding that value. O
 
 ## Gotchas
 
-- A **non-nullable** object assigned `null` becomes `{}`; only `type: [..., 'null']` (or `nullable: true`) keeps `null`.
+- A **non-nullable** object or array assigned `null` keeps `null` as a misfit value: `node.value` and the emitted value are `null`, and the validator rejects it. The form does not repair it to `{}` or `[]`; only `type: [..., 'null']` (or `nullable: true`) makes `null` a valid value.
 - `setValue(undefined)` is not `null`: it clears the subtree — fields and array items — without restoring child defaults.
 - The form never alters a value to make it validate. `oneOf` branches that declare no `type` all match `null`, so `null` fails such a `oneOf` in any validator. Write the null-branch pattern: `oneOf: [{ type: 'null' }, { type: 'object', controls: { active: … }, properties: … }, …]` — one null branch, and `type: 'object'` on every object branch. `anyOf` needs neither.
 - The parent's own `type` decides the node's kind. A branch `type` that differs (including a `'null'` branch under a non-nullable object) is not rejected; only the validator applies it.

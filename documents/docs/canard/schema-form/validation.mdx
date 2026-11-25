@@ -49,7 +49,7 @@ Inputs and presentation parts that need one field’s formatted feedback use [us
 
 ## Validator object contract {#validator-contract}
 
-`validatorFactory` is an object with `compile(root)` and synchronous `compileGuard(root, pointer)`; `release(root)` and `dialect` are optional. `compile` returns a function that returns ordered issues, null, or a promise of either. Throws indicate execution failure, not a validation verdict. `compileGuard` returns a synchronous boolean predicate and can run before whole-schema compilation.
+`validatorFactory` is an object with `compile(root)` and synchronous `compileGuard(root, pointer)`; `release(root)` and `dialect` are optional. `compile` returns a function that returns ordered issues, null, or a promise of either. Throws indicate execution failure, not a validation verdict. `compileGuard` returns a synchronous boolean predicate and can run before whole-schema compilation. The `pointer` is an RFC 6901 JSON Pointer to the authored `if` schema inside `root`, without a `#` prefix. Decode only `~1` and `~0`; do not percent-decode it, even beneath properties named `*`, `.`, `..` or `@`.
 
 Validators must not write a different form value on every run: each changed output invalidates the in-flight verdict and requests another run, so validation never settles.
 
@@ -63,15 +63,15 @@ Guards do not support `$async`, asynchronous keywords/formats, or keywords that 
 
 | Package entry                          | Default dialect / configuration                                                                       |
 | -------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `@canard/schema-form-ajv6-plugin`      | Draft-07; `allErrors: true`, `nullable: true`, `verbose: true`, `format: false`                       |
-| `@canard/schema-form-ajv7-plugin`      | Draft-07; `allErrors: true`, `strict: false`, `validateFormats: false`                                |
-| `@canard/schema-form-ajv8-plugin`      | Draft-07; `allErrors: true`, `strictSchema: false`, `validateFormats: false`, `allowUnionTypes: true` |
+| `@canard/schema-form-ajv6-plugin`      | Draft-07; `allErrors: true`, `nullable: true`, `verbose: true`, `format: false`, `multipleOfPrecision: 9` |
+| `@canard/schema-form-ajv7-plugin`      | Draft-07; `allErrors: true`, `strict: false`, `validateFormats: false`, `multipleOfPrecision: 9`                  |
+| `@canard/schema-form-ajv8-plugin`      | Draft-07; `allErrors: true`, `strict: false`, `validateFormats: false`, `allowUnionTypes: true`, `multipleOfPrecision: 9` |
 | `@canard/schema-form-ajv8-plugin/2019` | Draft 2019-09                                                                                         |
 | `@canard/schema-form-ajv8-plugin/2020` | Draft 2020-12                                                                                         |
 
-Import `plugin` from the selected entry and register it. Its validator lives at `plugin.validator`. AJV 6 Draft-04/06 use requires a matching instance, meta-schema, and schemaId setting; `$id` is the default identifier, while `schemaId: 'id'` or `'auto'` recognizes Draft-04 `id`. AJV 7's 2019-09 use requires that constructor in the bound instance. AJV 8's supplied entries do not promise full Draft-04/06 support; choose a validator supporting that dialect.
+Import `plugin` from the selected entry and register it. Its validator lives at `plugin.validator`. AJV 6 Draft-06 needs its meta-schema on a bound instance, and Draft-04 also needs the Draft-04 meta-schema and a `schemaId` setting; `$id` is the default identifier, while `schemaId: 'id'` or `'auto'` recognizes Draft-04 `id`. AJV 7's 2019-09 use requires that constructor in the bound instance. AJV 7 and the AJV 8 default entry validate a declared Draft-06 schema after its meta-schema is added to the instance; neither supplies Draft-04, and the AJV 8 `/2020` entry cannot mix older drafts.
 
-Formats are disabled in the supplied defaults: do not assume `format: 'email'` alone enables an email verdict. Configure an instance with the formats you need. AJV 6 JSONPath error locations are normalized to JSON Pointer; AJV 7/8 already use native pointer paths. All adapters expose `ValidationIssue`, with `dataPath: ''` for root errors.
+Formats are disabled in the supplied defaults: do not assume `format: 'email'` alone enables an email verdict. Configure an instance with the formats you need. AJV 6 whole validation compiles with `jsonPointers: true`, and AJV 7/8 use native pointer paths, so every adapter's issue `dataPath` and `source` error path are JSON Pointers. All adapters expose `ValidationIssue`, with `dataPath: ''` for root errors.
 
 In bare Node ESM, AJV 7's default import can be an interop namespace rather than a constructor. Use the package's default plugin, or resolve the AJV constructor according to your module environment before creating a custom instance.
 
@@ -81,9 +81,9 @@ For a custom AJV 8 instance, install `ajv@8.17.1` in the consuming application. 
 
 Bind once before the first compile/registration; rebinding is not a supported lifecycle. `coerceTypes`, `useDefaults`, and `removeAdditional` cause refusal before replacing an existing binding. A native refusal error carries `group: 'UNHANDLED_ERROR'` and `code: FormErrorCode.ValidatorBindRefused`. Inspect those properties after narrowing the caught value; `isUnhandledError` does not recognize this native error.
 
-AJV 6/7 bind starts a fresh root registry. AJV 8 keeps an already registered root associated with the instance that registered it until release. Prefer `createValidator(ajv, options?)` for a Form-specific complete adapter, created outside render or memoized with stable dependencies. Independent adapters can share one nonmodifying AJV instance.
+AJV 6/7 bind starts a fresh root registry. After any rebind, later compiles of a root use the newly bound instance, while validators and guards compiled earlier keep the instance that compiled them. Prefer `createValidator(ajv, options?)` for a Form-specific complete adapter, created outside render or memoized with stable dependencies. Independent adapters can share one nonmodifying AJV instance.
 
-`createValidatorFactory(ajv)` returns only a compile function; passing it directly as `validatorFactory` does not satisfy the object contract. AJV 6/7 factory calls compile/remove a transient schema and normalize asynchronous results to issues or null. AJV 8 reuses the root registration until release.
+`createValidatorFactory(ajv)` returns only a compile function; passing it directly as `validatorFactory` does not satisfy the object contract. It throws `ValidatorBindRefusedError` when `coerceTypes`, `useDefaults` or `removeAdditional` is enabled. Each adapter compiles a detached copy of the root on a private compiler built from the instance's current options, formats, keywords and registered schemas, reuses that result for the same root object while they are unchanged, and normalizes asynchronous results to issues or null. With AJV 6/7, `createValidatorFactory(ajv, key)` instead compiles the schema registered under `key` privately on each call.
 
 ```tsx
 import { Form } from '@canard/schema-form';
@@ -116,7 +116,7 @@ Even with direct compilation selected, an own `$schema` on the root, or referenc
 
 Guard sibling instances preserve the bound dialect, formats, and keywords with `allErrors: false` and `validateSchema: false`. Root meta-schema checking belongs to whole validation under the bound `validateSchema` policy. Meta-only violations outside the guard or inside it do not create a separate guard meta check, but strict, custom-keyword, and code-generation checks still apply. A strict compile failure turns both conditional branches off with `GuardFailed` rather than returning true/false.
 
-Roots with `$id` are registered in isolation; whole roots without an ID use transient copies. A self-contained direct guard does not require registering the root in AJV. Release removes the root registration, compiled results, and direct guards; an unregistered root is a no-op. A pointer that does not locate a schema throws a native error with `group: 'UNHANDLED_ERROR'`, `code: 'GUARD_POINTER_NOT_SCHEMA'`, and `details.root` / `details.pointer`. Check these properties after narrowing the caught value.
+Whole validation compiles a detached copy of the root on a private compiler; the root's `$id` and other addresses are never added to your AJV instance. Register on your instance any schema that application code looks up or another root references, and declare `$async: true` on a separately registered schema that needs asynchronous validation. A self-contained direct guard does not register the root; a contextual guard registers it only on its own private guard compiler. Release drops the plugin's compiled results and guards for that root and never removes schemas registered on your instance; an unregistered root is a no-op. A pointer that does not locate a schema throws a native error with `group: 'UNHANDLED_ERROR'`, `code: 'GUARD_POINTER_NOT_SCHEMA'`, and `details.root` / `details.pointer`. Check these properties after narrowing the caught value.
 
 ## AJV 7/8 dynamic and recursive guard scope {#dynamic-guard-scope}
 
@@ -143,6 +143,6 @@ An inline reference inside `if` must bind from a chain resource or its lexical a
 | AJV does not check dynamic-ref bookending                                                     | Guard follows it; the initial target is not independently guaranteed to be a dynamic anchor                    |
 | Root anchor flag absent at compile time                                                       | Both keep the enclosing compiled-function fallback without a table lookup                                      |
 | DynamicRef does not start with `#`                                                            | Both whole validation and guard fail compilation                                                               |
-| Anchor name is `constructor`, `toString`, `__proto__`, or another Object.prototype collision  | AJV's plain-object table prevents binding                                                                      |
+| Anchor name collides with an Object.prototype member such as `toString` | Native evaluation of whole validation or of a lexical declaration can fail; a root-pointer guard supplies declared chain-resource anchors as own entries |
 
 These are adapter conditions, not a claim of arbitrary dynamic-scope equivalence.

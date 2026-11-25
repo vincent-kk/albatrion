@@ -15,7 +15,7 @@ Applies when code addresses a location inside a JSON document, diffs two documen
 
 **Immutability is per-function, not a library-wide policy.** There is no single `immutable` switch, and the word means something different in each place it appears. `setValue` always mutates. `compare` never mutates its inputs — its `immutable` option decides whether emitted patch values are deep clones or live references into the source. Only `applyPatch` and `mergePatch` protect the source document.
 
-**Externally supplied patches are a prototype-pollution vector.** The defense is on by default in `applyPatch`, where it throws, and always on in `setValue`, where it silently abandons the write. The two functions use different rules and report differently, so "protected" does not mean "you will hear about it".
+**Externally supplied patches cannot pollute prototypes, and no option controls this.** `applyPatch`, `setValue` and `mergePatch` treat `__proto__`, `constructor` and `prototype` as ordinary own data members: writes define own data properties, reads never walk the prototype chain, and a reserved path fails or succeeds exactly like any other path. Nothing is silently skipped, and there is no security-specific error.
 
 **Failures are silent more often than loud.** A missing read returns `undefined`; a blocked write returns the document; a mis-chosen escape function yields a valid-looking wrong pointer. Check return values — an exception is not the library's usual way of telling you something went wrong.
 
@@ -70,7 +70,7 @@ Corrections for claims that are commonly assumed and are wrong here:
 | `protectPrototype` guards `applyPatch` against pollution  | No such option exists. Reserved members are own data everywhere; a reserved intermediate without an own container fails as `PATCH_PATH_INVALID_INTERMEDIATE` like any missing path.         |
 | `mergePatch` merges arrays element-wise                   | An array in the patch body replaces the target wholesale, at every depth. Use JSON Patch for element-level array edits.                                                                     |
 
-`JSONPointerError` has exactly two codes — `INVALID_INPUT` and `INVALID_POINTER_TYPE`. There is no `INVALID_POINTER` and no `PROPERTY_NOT_FOUND`. Patch failures are a separate class, `JSONPatchError`, whose codes are prefixed `JSON_PATCH.` and include `PATCH_TEST_FAILED`, `PATCH_OBJECT_PROPERTY_NOT_FOUND`, `PATCH_ARRAY_INDEX_OUT_OF_BOUNDS`, `PATCH_ARRAY_INDEX_INVALID`, `PATCH_OPERATION_INVALID`, `PATCH_TARGET_NOT_OBJECT`, `PATCH_PATH_INVALID_INTERMEDIATE`, `PATCH_PATH_PROCESSING_ERROR`, and `PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN`. There is no security-specific code — reserved-member paths fail (or succeed) exactly like ordinary paths.
+`JSONPointerError` has exactly two codes — `INVALID_INPUT` and `INVALID_POINTER_TYPE`. There is no `INVALID_POINTER` and no `PROPERTY_NOT_FOUND`. Patch failures are a separate class, `JSONPatchError`, whose codes are prefixed `JSON_PATCH.` and include `PATCH_TEST_FAILED`, `PATCH_OBJECT_PROPERTY_NOT_FOUND`, `PATCH_ARRAY_INDEX_OUT_OF_BOUNDS`, `PATCH_ARRAY_INDEX_INVALID`, `PATCH_OPERATION_INVALID`, `PATCH_TARGET_NOT_OBJECT`, `PATCH_PATH_INVALID`, `PATCH_PATH_INVALID_INTERMEDIATE`, `PATCH_PATH_PROCESSING_ERROR`, and `PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN`. There is no security-specific code — reserved-member paths fail (or succeed) exactly like ordinary paths.
 
 ## Knowledge Router
 

@@ -136,8 +136,8 @@ sidebar_position: 8
 | Form 또는 FormProvider의 `errorVisibility`                               | 커밋된 정책이 즉시 갱신됩니다. `showError`와 boolean/mask를 이름 있는 enum으로 교체하고 노드 override와 `revealErrors()` / `resetErrorVisibility()`를 확인하십시오.                                               |
 | Form 또는 FormProvider의 렌더러 슬롯과 `formatError`                     | 렌더러 교체는 자신이 소유한 UI 하위 트리를 다시 만듭니다. 포맷터 교체는 메시지를 바꾸고 실패한 포맷터 경계를 복구할 수 있으며, 정상 입력은 재마운트할 필요가 없습니다.                                            |
 | Form 또는 FormProvider의 `fieldInputDefinitions`, Form의 `fieldInputMap` | 선택을 갱신하면서 노드 값·상태·외부 오류를 유지합니다. 선택 컴포넌트가 바뀌면 해당 입력을 재마운트하고, 부모 입력 교체는 자손 DOM과 미커밋 초안도 다시 만듭니다. 선택과 조상이 그대로면 입력 DOM을 유지합니다.    |
-| `context`, Form의 `readOnly` / `disabled`                                | context와 입력 잠금은 즉시 적용됩니다. context는 내용 스냅샷을 사용하므로 내용이 같은 Date/Map/클래스 객체는 갱신을 강제하지 않습니다. 입력 잠금은 명령형 노드 쓰기를 막지 않습니다.                              |
-| Form 콜백, `errors`, `children`, `ref`                                   | 현재 커밋 콜백과 레이아웃을 사용하며 외부 오류를 다시 적용하려면 errors 배열을 교체합니다. 루트 교체 뒤 현재 핸들·노드를 다시 얻으십시오. 숨겨진 폼은 아래 콜백 수명을 따릅니다.                                  |
+| `context`, Form의 `readOnly` / `disabled`                                | context와 입력 잠금은 즉시 적용됩니다. context는 일반 객체·배열과 Date·Map 같은 지원 내장 객체를 내용으로 비교하므로 내용이 같은 교체는 갱신을 강제하지 않습니다. URL·URLSearchParams와 그 밖의 클래스 인스턴스는 참조로 비교하므로 내용이 바뀌면 인스턴스를 교체하고 같은 인스턴스를 직접 변경하지 마십시오. 입력 잠금은 명령형 노드 쓰기를 막지 않습니다. |
+| Form 콜백, `errors`, `children`, `ref`                                   | 현재 커밋 콜백과 레이아웃을 사용하며 외부 오류를 다시 적용하려면 내용이 다른 errors 배열을 전달합니다(내용이 같은 새 배열은 편집으로 지운 오류를 복원하지 않습니다). 루트 교체 뒤 현재 핸들·노드를 다시 얻으십시오. 숨겨진 폼은 아래 콜백 수명을 따릅니다.                                  |
 | Form의 `virtualization`                                                  | 모든 옵션이 갱신되며 아래 단방향 공개·하이드레이션 한계를 따릅니다.                                                                                                                                                  |
 
 `Form.Field`, `Form.Input`, `Form.Render`에는 별도의 마운트 고정 컴포넌트·children 재정의가 있습니다. 이 override에는 실시간 `context`, 컴포넌트 내부 훅 또는 의도적인 새 key를 사용하십시오. Form 전체 연결된 설정이 이 [조합 계약](./schema-reference#input-resolution)을 바꾸지는 않습니다.
@@ -190,6 +190,22 @@ SSR은 모든 필드를 렌더하고 하이드레이션은 이를 보존하며 �
 
 AJV6, AJV7, 모든 AJV8 방언 진입점은 `coerceTypes`, `useDefaults`, `removeAdditional`이 켜진 `bind(instance)`를 즉시 거절합니다. 바인딩 전에 이 옵션을 끄십시오. 실패의 `group`은 `'UNHANDLED_ERROR'`, `code`는 `'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`(`FormErrorCode.ValidatorBindRefused`)이며 네이티브 플러그인 오류이므로 코어의 `isUnhandledError` 가드는 인식하지 않습니다. 거절한 인스턴스는 현재 바인딩을 교체하지 않습니다.
 
+폼 루트는 더 이상 애플리케이션의 AJV 인스턴스에 등록되지 않습니다. 전체 검증은 각 루트의 분리된 사본을 사적 컴파일러에서 컴파일하므로 `compile` 뒤의 `ajv.getSchema(rootId)`는 `undefined`를 반환하며, 다른 루트가 폼 루트를 `$id`로 `$ref`할 수 없습니다. 이런 스키마는 인스턴스에 직접 등록하고, 비동기 검증이 필요한 별도 등록 스키마에는 `$async: true`를 선언하십시오.
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
+import Ajv from 'ajv';
+
+const address = { $id: 'https://example.com/address', type: 'object', properties: { city: { type: 'string' } } };
+const appAjv = new Ajv({ strict: false });
+appAjv.addSchema(address); // form roots can use { $ref: 'https://example.com/address' }
+plugin.validator.bind(appAjv);
+registerPlugin(plugin);
+```
+
+`createValidatorFactory`와 `createValidator`도 `bind`와 같은 세 옵션을 거절하며, 바인딩 뒤에 그중 하나를 켜면 다음 검증 또는 가드 컴파일이 예외를 던집니다. 플러그인은 바인딩한 인스턴스의 생성자로 사적 컴파일러를 만들므로 사용자 지정 AJV 하위 클래스는 생성자에서 스키마나 메타 스키마를 등록하지 않아야 합니다. 인스턴스를 생성한 뒤 등록하십시오. AJV 6·7의 `createValidatorFactory(ajv, key)`는 `key`로 등록된 스키마를 사적으로 컴파일하며 인스턴스의 컴파일 캐시를 변경하지 않습니다.
+
 형 변환은 명시적인 애플리케이션 입력 변환으로 옮기고, 기본값은 스키마·defaultValue와 폼 load 규칙으로 설정하며, 불필요한 키 제거는 명시적인 애플리케이션 변환으로 처리하십시오. 제출 결과를 시험하고 검증의 폼 값 변경에 의존하지 마십시오. 특히 `removeAdditional`을 켜는 것은 JSON Schema로 추가 키를 거부하는 일을 대신하지 않습니다.
 
 AJV8 기본 인스턴스는 `allowUnionTypes: true`를 설정합니다. null이 아닌 여러 타입에 대한 strictTypes 로그를 없애지만 유니온을 만족하는 값의 판정은 바꾸지 않으며 강제 변환을 켜지도 않습니다. 소비자가 바인딩한 인스턴스는 자신의 strict 옵션을 유지하므로 의도적으로 설정하십시오. AJV7의 기본값은 `strict: false`이고 AJV6에는 AJV8의 strictTypes 유니온 경고가 없습니다. [검증기 설정과 방언 지원](./validation#ajv-configuration)을 입력 선택과 구별하십시오.
@@ -211,12 +227,30 @@ AJV8 기본 인스턴스는 `allowUnionTypes: true`를 설정합니다. null이 
 
 각 항목의 해당 여부를 애플리케이션 테스트로 확인하십시오. 가져오기 이름 변경만으로 릴리스 전체 이행이 끝나지는 않습니다.
 
-- null·undefined·빈 문자열·컨테이너, nullable 부모 승격과 배열 교체를 [값 상태](./schema-reference#value-states)에 대조하십시오. `minItems`는 제약이며 제출 항목 생성 약속이 아닙니다. 빈 입력은 undefined를 내고 명시적 null은 의도적인 값입니다. `omitTrailingEmpty`는 원시 노드를 지우지 않고 출력을 거르며, 0.x의 `omitTrailing`과 달리 끝의 `null`, `''`, `[]`, `{}`도 제거합니다. `propertyOrder`는 화면이 아닌 출력 키 순서입니다.
-- 시점 가정을 바꾸십시오. `onChange`와 노드 알림은 가장 바깥 쓰기 경계에서 동기적으로 정착합니다. batch와 다시 쓰는 콜백을 시험하고, 임의 마이크로태스크를 기다리기보다 [이벤트 리비전과 구독 따라잡기](./api-reference#events-hooks)을 사용하십시오.
+- null·undefined·빈 문자열·컨테이너, nullable 부모 승격과 배열 교체를 [값 상태](./schema-reference#value-states)에 대조하십시오. `minItems`는 제약이며 제출 항목 생성 약속이 아닙니다. 빈 입력은 undefined를 내고 명시적 null은 의도적인 값입니다. `omitTrailingEmpty`는 원시 노드를 지우지 않고 출력을 거르며, 0.x의 `omitTrailing`과 달리 끝의 `null`, `''`, `[]`, `{}`도 제거합니다. `propertyOrder`는 화면이 아닌 출력 키 순서입니다. `null`인 분기 객체·배열은 `node.value`와 FieldInput의 `value` prop에서도 `null`을 읽으므로 사용자 정의 분기 입력은 `value.map(…)`이나 `Object.keys(value)` 전에 `null`을 처리하십시오.
+- 시점 가정을 바꾸십시오. `onChange`와 노드 알림은 가장 바깥 쓰기 경계에서 동기적으로 정착합니다. batch와 다시 쓰는 콜백을 시험하고, 임의 마이크로태스크를 기다리기보다 [이벤트 리비전과 구독 따라잡기](./api-reference#events-hooks)을 사용하십시오. `node.batch()`와 `visitSubtree()` 안에서도 배열 메서드는 정렬을 즉시 적용하고 살아 있는 항목 노드를 유지하므로, 그 뒤의 읽기는 새 정렬을 보고 미리 잡아 둔 항목 참조는 새 위치의 그 항목을 수정합니다. 알림은 여전히 바깥 batch 끝까지 기다립니다.
 - 조건부 조합을 점검하십시오. 게이트 없는 oneOf/anyOf 분기는 모두 형태에 참여하고 검증은 별도입니다. 분기 선택에는 controls 또는 discriminator를 사용하고 if에는 검증기를 제공하며, 공유 속성 충돌·nullable 분기·말단 전략을 시험하십시오. [조합](./schema-reference#composition)과 [discriminator](./schema-reference#discriminator)를 확인하십시오.
 - Edited/Touched와 `isDivergent`·현재 load 기준값을 구별하십시오. 재진입·루트 교체 때 노드를 다시 얻으십시오. 분리된 노드는 살아 있는 폼에 쓰지 않습니다. 정리 단계의 쓰기는 [비활성 해석기 계약](./api-reference#inactive-listeners)으로 바꾸십시오.
 - 해석된 사용자 입력 잠금과 [접근성 이름 계약](./schema-reference#accessibility)을 사용하십시오. 분기 객체의 로컬 잠금은 자식 전체를 자동 잠그지 않으므로 `controls.fields`나 폼 전체 잠금을 사용합니다. enum 빈 옵션과 radio/checkbox 선택자를 시험하십시오.
 - 스키마·설정을 불변으로 유지하고 구독을 정리하며, degraded 진단·실행 실패와 원시 검증 오류를 구별하고, 표현식 controls 배포 전에 [CSP 요구사항](./quick-start#transpilation-csp)을 검증하십시오.
+
+## 입력 식별자 {#control-identifiers}
+
+호환되지 않는 변경입니다. 입력 id와 라벨 연결에 Form별 범위가 포함되므로 `id={path}`를 쓰던 사용자 입력은 더 이상 라벨과 연결되지 않습니다. 받은 `inputId`를 포커스 가능한 컨트롤에 적용하고 `path`는 데이터 조회에만 사용하십시오. 라디오 그룹은 `name` prop 대신 `inputId`를 모든 선택지의 네이티브 `name`으로 사용하므로 라디오의 네이티브 `FormData` 키가 바뀌며, `FormHandle.getValue()`는 스키마 키를 유지합니다. `${path}-${index}` 같은 직접 만든 선택지 id는 `getInputId(index)`로 바꾸고, 그룹 제목에는 FieldRenderer가 받은 `labelId`를 사용하십시오. 제거된 `id` prop은 `id?: never`로 선언되어 있으며, 자식·presentation 재정의로는 `id`, `inputId`, `labelId`, `getInputId`, `focusRef`를 지정할 수 없습니다. id는 불투명한 값이므로 `label[for="/name"]`처럼 경로로 입력을 찾던 DOM 테스트는 라벨 텍스트나 역할로 조회해야 합니다. 독립적인 서버 렌더링 루트와 서로 다른 `react-dom` 사본으로 한 문서에 Form을 렌더링하는 루트에는 서로 다른 `identifierPrefix`를 지정하십시오. [입력 식별자와 작성자의 책임](./api-reference#control-identifiers-and-author-responsibility)을 참조하십시오.
+
+```tsx
+// 변경 전
+const Input = ({ path, defaultValue }: FormTypeInputProps) => (
+  <input id={path} defaultValue={defaultValue} />
+);
+```
+
+```tsx
+// 변경 후
+const Input = ({ inputId, defaultValue }: FieldInputProps) => (
+  <input id={inputId} defaultValue={defaultValue} />
+);
+```
 
 ## 렌더러 부품과 입력 오류 피드백 {#renderer-parts}
 
@@ -276,13 +310,13 @@ const Input = ({ node }: FieldInputProps) => {
 
 사용자 입력의 구조 분해·멤버 읽기·속성 페이로드 전체에서 `errors`와 `errorVisible`을 검색하십시오(예: `rg "errors|errorVisible" src`). @deprecated 선택적 never 키는 errors.map 같은 멤버 접근과 값 전달을 막지만 `if (errorVisible)` 같은 단순 진리값 검사는 컴파일되어 undefined를 읽을 수 있습니다. 타입 검사만으로 이전을 끝낼 수 없습니다. 훅의 한계와 소유권은 [useFieldErrors](./api-reference#field-errors)를 참조하십시오.
 
-기본 그룹은 문구가 없으면 빈 em을 그리지 않습니다. 따라서 `[data-path="/branch"] em`은 자손의 문구를 집을 수 있으므로 문구 요소의 가장 가까운 data-path가 원하는 필드인지 확인하십시오. 기본 그룹은 필수가 아닌 라벨의 끝 공백을 없애고 기존 필수 별표에 aria-hidden을 적용합니다. 단독 기본 Form.Label에도 같은 별표가 표시됩니다. Form.Label은 명시적인 내용용 children을 받습니다. 다음 발췌는 다른 속성과 입력 마크업을 생략합니다. 문구가 없는 그룹 라벨·오류의 마크업입니다:
+기본 그룹은 문구가 없으면 빈 em을 그리지 않습니다. 따라서 `[data-path="/branch"] em`은 자손의 문구를 집을 수 있으므로 문구 요소의 가장 가까운 data-path가 원하는 필드인지 확인하십시오. 기본 그룹은 필수가 아닌 라벨의 끝 공백을 없애고 기존 필수 별표에 aria-hidden을 적용합니다. 단독 기본 Form.Label에도 같은 별표가 표시됩니다. Form.Label은 명시적인 내용용 children을 받습니다. 다음 발췌는 다른 속성과 입력 마크업을 생략합니다. 현재 마크업의 `«inputId»`는 경로가 아닌 필드의 불투명한 Form 범위 입력 id를 나타냅니다. 문구가 없는 그룹 라벨·오류의 마크업입니다:
 
 ```html
 <!-- 변경 전 -->
 <label for="/name">name </label><em></em>
 <!-- 변경 후 -->
-<label for="/name">name</label>
+<label for="«inputId»">name</label>
 ```
 
 필수 필드의 단독 기본 라벨에서는 data-path div가 label 안쪽에서 바깥쪽으로 이동합니다. `label > div` 같은 선택자를 변경하십시오. 다른 속성은 생략합니다:
@@ -291,7 +325,7 @@ const Input = ({ node }: FieldInputProps) => {
 <!-- 변경 전 -->
 <label for="/name"><div data-path="/name">name</div></label>
 <!-- 변경 후 -->
-<div data-path="/name"><label for="/name">name <span aria-hidden="true">*</span></label></div>
+<div data-path="/name"><label for="«inputId»">name <span aria-hidden="true">*</span></label></div>
 ```
 
 통과용 입력 렌더러는 의도적인 틀로 바꾸거나 생략하십시오. [children·unwrapped 수명 계약](./api-reference#input-frames)을 따르십시오. 조상 경로 변경은 현재 노드 값으로 입력을 다시 시작하며 포커스·조합을 잃습니다. 직접 그린 라벨·오류 대신 [묶인 부품의 기본값](./api-reference#renderer-parts)을 사용합니다.

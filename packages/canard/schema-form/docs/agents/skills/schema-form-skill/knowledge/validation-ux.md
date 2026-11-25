@@ -137,7 +137,7 @@ act(() => formRef.current!.revealErrors());
 
 A successful schema validation does not clear external issues. Replace the prop with an empty list when the server error is no longer relevant; assert both `getErrors()` and the message after adding and clearing it.
 
-Use an empty `dataPath` for a root issue; `/` addresses a child with an empty name. For a node-local message, use its `setExternalErrors`/`clearExternalErrors`; these issues also appear in form-wide `getErrors()`, and clearing them removes them from that aggregate. Typing into the affected field clears its server error through the input’s `onChange`.
+Use an empty `dataPath` for a root issue; `/` addresses a child with an empty name. For a node-local message, use its `setExternalErrors`/`clearExternalErrors`; these issues also appear in form-wide `getErrors()`, and clearing them removes them from that aggregate. Typing into the affected field clears its server error through the input’s `onChange`. A rerender that passes an `errors` array with unchanged content does not bring that error back; pass different content to show a new server error.
 
 For message copy and section summaries, read [error feedback](error-feedback.md). For interaction flags, unsaved changes and reset, read [interaction state](interaction-state.md). For `onError` origins and operation recovery, read [validation failures](validation-failures.md).
 

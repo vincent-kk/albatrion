@@ -54,7 +54,7 @@ Symptom-indexed dispatch. The mechanism behind each one lives in the knowledge f
 | A whole scope stopped updating, one `console.warn` in the log | `replaceSync` threw; the scope is frozen at its last good state                             |
 | A generated per-instance scope works sometimes, not always    | The id is unescaped — a digit-leading one is invalid and the browser drops every rule       |
 | CSS is present in the sheet but matches nothing               | Invalid selectors are dropped with no error — read back the injected text, not the input    |
-| Rules after a `content:` value scoped wrongly or dropped      | A `{` or `}` inside the string cut the rule — escape it as `\7b` / `\7d`                    |
+| Rules after a `content:` value scoped wrongly or dropped      | Braces inside a quoted string are skipped, so look elsewhere: an unterminated string ends at the next newline, and an unbalanced brace outside strings, comments and `url(…)` shifts every following rule |
 | `:host(...)` or `:root.dark` came out prefixed                | Only the exactly-bare forms pass through                                                    |
 | `@keyframes` or `@font-face` collide across scopes            | Namespace the names yourself                                                                |
 | Passing `true` shipped uncompressed CSS                       | The third argument means "already compressed"                                               |
@@ -77,7 +77,7 @@ Symptom-indexed dispatch. The mechanism behind each one lives in the knowledge f
 
 ## API Truth
 
-Five exported symbols. Read shapes from `node_modules/@winglet/style-utils/dist/**/*.d.ts` and the README rather than guessing — but note the README's source links point at `./src/utils/styleManager/`, which does not exist (the real path is `./src/styleManager/`).
+Five exported symbols. Read shapes from `node_modules/@winglet/style-utils/dist/**/*.d.ts` and the README rather than guessing.
 
 ```typescript
 import { cx, cxLite, compressCss } from '@winglet/style-utils/util';

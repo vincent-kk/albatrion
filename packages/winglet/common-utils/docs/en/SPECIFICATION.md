@@ -94,11 +94,11 @@ Returns elements for which predicate returns true.
 
 ```typescript
 forEach<Type>(array: Type[], callback: (item: Type, index: number, array: Type[]) => void): void
-forEachDual<A, B>(arrayA: A[], arrayB: B[], callback: (a: A, b: B, index: number) => void): void
+forEachDual<A, B>(arrayA: readonly A[], arrayB: readonly B[], callback: (a: A | undefined, b: B | undefined, index: number, arrayA: readonly A[], arrayB: readonly B[]) => boolean | void): void
 forEachReverse<Type>(array: Type[], callback: (item: Type, index: number, array: Type[]) => void): void
 ```
 
-Iteration utilities. `forEachDual` stops at shorter array length.
+Iteration utilities. `forEachDual` runs to the longer array's length, passing `undefined` for the exhausted side, and stops when the callback returns `false`.
 
 #### groupBy
 
@@ -126,7 +126,7 @@ Transform each element. Pre-allocates result array.
 
 #### orderedMerge
 
-Merges two sorted arrays while maintaining sort order.
+`orderedMerge(preferred: readonly string[], source: readonly string[]): string[]` — a priority-ordered deduplicating union: `preferred` keys first in their given order, then the `source` keys not already present. No sorting is performed.
 
 #### primitiveArrayEqual
 
@@ -221,7 +221,7 @@ Full deep clone. Handles Date, RegExp, Map, Set, TypedArray, Error, circular ref
 cloneLite<Type>(target: Type, maxDepth?: number): Type
 ```
 
-Fast deep clone for plain objects/arrays with primitive values only. No Date/Map/Set/circular reference support. An own `__proto__` key is cloned as an own data property — the clone keeps the input's prototype.
+Fast deep clone for plain objects/arrays with primitive values only. Date/Map/Set are not supported and are copied by reference. Without a finite `maxDepth`, a circular reference throws `RangeError`. An own `__proto__` key is cloned as an own data property — the clone keeps the input's prototype.
 
 #### getDataProperty / setDataProperty / deleteDataProperty
 
@@ -252,10 +252,18 @@ Shallow copy of arrays or plain objects.
 #### merge
 
 ```typescript
-merge<Target, Source>(target: Target, source: Source): Target & Source
+merge<Target, Source>(target: Target, source: Source, options?: MergeOptions): Target & Source
 ```
 
-Deep recursive merge. Mutates `target`. Arrays are concatenated. No circular reference protection.
+Deep recursive merge. Mutates `target` unless `options.immutable` is `true`. Arrays merge index-wise by default (`merge({ a: [1, 2] }, { a: [3] })` gives `{ a: [3, 2] }`); `arrayStrategy: 'replace'` uses the later array whole. No circular reference protection.
+
+```typescript
+merge({ a: 1, b: { x: 10 } }, { b: { y: 20 }, c: 3 });
+// { a: 1, b: { x: 10, y: 20 }, c: 3 }
+
+merge({ tags: ['a'] }, { tags: ['b'] });
+// { tags: ['b'] }  ← arrays merge index-wise (index 0 is overwritten)
+```
 
 #### equals
 
@@ -263,7 +271,7 @@ Deep recursive merge. Mutates `target`. Arrays are concatenated. No circular ref
 equals<L, R>(left: L, right: R, omit?: Set<PropertyKey> | PropertyKey[]): boolean
 ```
 
-Deep equality. Handles NaN correctly. No circular reference support (stack overflow risk).
+Deep equality. Handles NaN correctly. Circular references are not supported: a comparison that repeats on the current path throws `RangeError`. Use `stableEquals` for cyclic input.
 
 #### stableEquals
 
@@ -304,11 +312,10 @@ New object with transformed values, original keys unchanged.
 | `countKey(obj)`                | Count all enumerable properties including inherited |
 | `countObjectKey(obj)`          | Count own enumerable properties                     |
 | `getEmptyObject()`             | Create `Object.create(null)`                        |
-| `getFirstKey(obj)`             | First own enumerable key                            |
-| `getJSONPointer(obj, pointer)` | Get value by JSON Pointer                           |
+| `getFirstKey(obj)` | First key from `for...in` (inherited enumerable keys included) |
 | `getObjectKeys(obj)`           | `Object.keys` with better typing                    |
 | `getSymbols(obj)`              | Own symbol properties                               |
-| `hasUndefined(obj)`            | True if any own property is undefined               |
+| `hasUndefined(obj)` | True if `undefined` appears at any depth, arrays included; cycle-safe |
 | `removePrototype(obj)`         | Remove prototype chain in-place                     |
 | `removeUndefined(obj)`         | New object without undefined values                 |
 | `sortObjectKeys(obj)`          | New object with alphabetically sorted keys          |
@@ -328,10 +335,10 @@ Resolves after `ms` ms (default 0). Throws `AbortError` if signal is aborted.
 #### timeout
 
 ```typescript
-timeout(ms: number, options?: { signal?: AbortSignal }): Promise<never>
+timeout(ms?: number, options?: { signal?: AbortSignal }): Promise<never>
 ```
 
-Always rejects with `TimeoutError` after `ms` ms.
+Rejects with `TimeoutError` after `ms` ms (default 0); if `signal` aborts first, it rejects with `AbortError` instead.
 
 #### withTimeout
 
@@ -346,22 +353,35 @@ Requires a global `AbortController` implementation or compatible polyfill. If ab
 #### waitAndExecute
 
 ```typescript
-waitAndExecute<T>(ms: number, fn: () => T): Promise<T>
+waitAndExecute<Return>(fn: () => Return, ms?: number): Promise<Return>
 ```
 
-Wait then execute function, returning its result.
+Waits `ms` ms (default 0), then calls `fn` and resolves with its result.
 
 #### waitAndReturn
 
 ```typescript
-waitAndReturn<T>(ms: number, value: T): Promise<T>
+waitAndReturn<Return>(fn: () => Return, ms?: number): Promise<Return>
 ```
 
-Wait then resolve with value.
+Calls `fn` on the next microtask without waiting and resolves with its result after at least `ms` ms (default 0) — a minimum duration. A throw from `fn` rejects after the wait.
 
 ---
 
 ### Scheduler Utilities (`/scheduler`)
+
+#### Event loop execution order
+
+```
+Synchronous code
+  → Microtask (scheduleMicrotask)
+  → Next tick (scheduleNextTick)
+  → Macrotask (scheduleMacrotask)
+  → setTimeout(0)
+  → Browser rendering
+```
+
+This order holds in Node. In a browser, `scheduleNextTick` falls back to `setTimeout`, so it runs after a `setTimeout(0)` queued alongside it; code that depends on its order against timers must not assume either. `scheduleMacrotask` is guaranteed to run only before a `setTimeout` with a longer delay.
 
 #### scheduleMicrotask
 
@@ -389,7 +409,7 @@ cancelMacrotask(id: number): void
 scheduleCancelableMacrotask(callback: () => void): () => void
 ```
 
-Schedule/cancel macrotasks. Uses native `setImmediate` in Node.js, `MessageChannelScheduler` in browsers (faster than `setTimeout(0)`, automatic batching).
+Schedule/cancel macrotasks. Uses native `setImmediate` in Node.js, `MessageChannelScheduler` in browsers (faster than `setTimeout(0)`, automatic batching). In a browser, an error thrown by a task is reported to the host when `MessageChannelScheduler` has no `onTaskError` handler, so it reaches `window.onerror` or the unhandled-error path; other tasks still run. Pass `{ onTaskError }` to the first `MessageChannelScheduler.getInstance(options)` call to handle these errors yourself.
 
 ---
 
@@ -471,7 +491,12 @@ instance.reset(seed?)          // reuse instance
 polynomialHash(target: string, length?: number): string
 ```
 
-Java-style `String.hashCode()` in base36. Default length 7, max 7.
+Java-style `String.hashCode()` in base36. Default length 7; a longer length is zero-padded and a shorter one keeps the low-order digits.
+
+```typescript
+polynomialHash('cache-key'); // '1putuhg'
+polynomialHash('cache-key', 4); // 'tuhg'
+```
 
 ---
 
@@ -480,10 +505,10 @@ Java-style `String.hashCode()` in base36. Default length 7, max 7.
 #### convertMsFromDuration
 
 ```typescript
-convertMsFromDuration(duration: string): number
+convertMsFromDuration(duration: string | null | undefined): number
 ```
 
-Parse `'5s'`, `'30m'`, `'2h'`, `'500ms'` to milliseconds. Returns `0` for invalid input.
+Parse `'5s'`, `'30m'`, `'2h'`, `'500ms'` to milliseconds. Returns `0` for invalid input. `null` and `undefined` return `0`.
 
 ---
 
@@ -609,6 +634,24 @@ try {
 }
 ```
 
+### Exponential backoff retry
+
+```typescript
+import { delay } from '@winglet/common-utils/promise';
+
+async function retry<T>(fn: () => Promise<T>, maxAttempts = 3): Promise<T> {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (attempt === maxAttempts) throw err;
+      await delay(Math.pow(2, attempt - 1) * 1000); // 1s before attempt 2, 2s before attempt 3, doubling
+    }
+  }
+  throw new Error('unreachable');
+}
+```
+
 ### Debounced search
 
 ```typescript
@@ -646,6 +689,17 @@ import { removeUndefined } from '@winglet/common-utils/object';
 
 const cleanArray = rawArray.filter(isNotNil);
 const cleanObject = removeUndefined(rawObject);
+```
+
+### Batched API requests
+
+```typescript
+import { chunk } from '@winglet/common-utils/array';
+
+const batches = chunk(userIds, 50);
+for (const batch of batches) {
+  await Promise.all(batch.map((id) => fetchUser(id)));
+}
 ```
 
 ---

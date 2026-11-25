@@ -12,7 +12,7 @@ import LazyDemo from '@site/src/components/LazyDemo';
 
 `@canard/schema-form`을 위한 Material UI v7 플러그인입니다.
 `@mui/material ^7.0.0`과 MUI X 날짜/시간 선택기 기반의 15개 폼 입력 컴포넌트를 제공합니다.
-MUI의 `size`, `variant`, `fullWidth` 컨텍스트 옵션을 지원합니다.
+MUI의 `size`, `variant`, `fullWidth` 컨텍스트 옵션과 스위치 상태 라벨용 `checkboxLabels`, `switchLabels`를 지원합니다.
 
 ## 컴포넌트 카탈로그
 
@@ -33,7 +33,7 @@ yarn add @canard/schema-form-mui-plugin
 ### 피어 의존성 {#peer-dependencies}
 
 ```bash
-yarn add @mui/material@^7.0.0 @mui/x-date-pickers@^8.0.0 \
+yarn add @canard/schema-form@^1.0.0 @mui/material@^7.0.0 @mui/x-date-pickers@^8.0.0 \
          @mui/icons-material@^7.0.0 \
          @emotion/react@^11.0.0 @emotion/styled@^11.0.0 \
          dayjs@^1.0.0 "react@>=18 <20" "react-dom@>=18 <20"
@@ -60,7 +60,7 @@ registerPlugin(plugin);
 | `FieldInputUri` | `string` | `"uri"` 또는 inputType `"uri"` | — | — | 프로토콜 드롭다운이 있는 URI 입력 |
 | `FieldInputMonth` | `string` | `"month"` | — | — | MUI X MonthPicker |
 | `FieldInputDate` | `string` | `"date"` | — | — | MUI X DatePicker |
-| `FieldInputTime` | `string` | `"time"` | — | — | MUI X TimePicker (HH:mm:00Z 형식) |
+| `FieldInputTime` | `string` | `"time"` | — | — | MUI X TimePicker (시간대 오프셋 없이 `HH:mm:ss`로 저장) |
 | `FieldInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` 또는 `"radiogroup"` | 필수 | MUI RadioGroup |
 | `FieldInputStringEnum` | `string` | — | — | 필수 | MUI Select 드롭다운 |
 | `FieldInputArray` | `array` | — | — | — | 추가/제거가 가능한 동적 목록 |
@@ -75,8 +75,12 @@ registerPlugin(plugin);
 ## 스키마 확장 속성 {#schema-extension-properties}
 
 ```ts
+// Selection hints read by this plugin
 {
-  inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri',
+  presentation?: {
+    inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri',
+  },
+  // Standard JSON Schema properties also used for routing:
   format?:   'date' | 'time' | 'month' | 'password' | 'uri' | 'textarea',
 }
 ```
@@ -108,11 +112,15 @@ const schema = {
 
 ```ts
 type MuiContext = {
+  checkboxLabels?: { checked?: ReactNode; unchecked?: ReactNode };
+  switchLabels?:   { [value: string]: ReactNode };
   size?:      'small' | 'medium';
   variant?:   'outlined' | 'filled' | 'standard';
   fullWidth?: boolean;
 };
 ```
+
+`checkboxLabels`는 Form 안 모든 불리언 스위치의 `alias`를 대체하고, 저장된 enum 값을 키로 쓰는 `switchLabels`는 모든 문자열 스위치의 `alias`를 대체합니다.
 
 ```tsx
 <Form
@@ -124,22 +132,13 @@ type MuiContext = {
 
 ## 날짜/시간 선택기 설정 {#datetime-picker-setup}
 
-MUI X 날짜 선택기는 `LocalizationProvider`가 필요합니다. 앱을 다음과 같이 감싸십시오:
-
-```tsx
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-
-<LocalizationProvider dateAdapter={AdapterDayjs}>
-  <Form jsonSchema={schema} onChange={setValue} />
-</LocalizationProvider>
-```
+날짜·월·시간 입력은 각각 `AdapterDayjs`를 사용하는 자체 `LocalizationProvider`로 감싸므로 앱 수준 프로바이더가 필요하지 않습니다.
 
 <ForAI>
 
 ## AI 참조 {#ai-reference}
 
-**패키지**: `@canard/schema-form-mui-plugin` v0.10.0
+**패키지**: `@canard/schema-form-mui-plugin` 1.x
 **목적**: Material UI v7 플러그인으로, MUI X 날짜/시간 선택기를 포함한 폼 입력 컴포넌트 15개를 제공합니다.
 
 ### 내보내기 {#exports}
@@ -149,7 +148,7 @@ import type { MuiContext } from '@canard/schema-form-mui-plugin';
 ```
 
 ### 피어 의존성 {#peer-dependencies-1}
-`@mui/material@^7.0.0`, `@mui/x-date-pickers@^8.0.0`, `@mui/icons-material@^7.0.0`, `@emotion/react@^11.0.0`, `@emotion/styled@^11.0.0`, `dayjs@^1.0.0`, `react@>=18 <20`
+`@canard/schema-form@^1.0.0`, `@mui/material@^7.0.0`, `@mui/x-date-pickers@^8.0.0`, `@mui/icons-material@^7.0.0`, `@emotion/react@^11.0.0`, `@emotion/styled@^11.0.0`, `dayjs@^1.0.0`, `react@>=18 <20`
 
 ### 컴포넌트 매핑 (우선순위 높은 순) {#component-mapping-priority-order-high--low}
 | 컴포넌트 | 선택 조건 |
@@ -170,14 +169,10 @@ import type { MuiContext } from '@canard/schema-form-mui-plugin';
 
 ### 컨텍스트 타입 {#context-type}
 ```ts
-type MuiContext = { size?: 'small' | 'medium'; variant?: 'outlined' | 'filled' | 'standard'; fullWidth?: boolean };
+type MuiContext = { checkboxLabels?: { checked?: ReactNode; unchecked?: ReactNode }; switchLabels?: { [value: string]: ReactNode }; size?: 'small' | 'medium'; variant?: 'outlined' | 'filled' | 'standard'; fullWidth?: boolean };
 ```
 
-### 날짜/시간 선택기에 필요한 설정 {#required-setup-for-datetime-pickers}
-```tsx
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-<LocalizationProvider dateAdapter={AdapterDayjs}><Form ... /></LocalizationProvider>
-```
+### 날짜/시간 선택기 설정 {#datetime-picker-setup-1}
+날짜·월·시간 입력은 각각 `AdapterDayjs`를 사용하는 자체 `LocalizationProvider`로 감싸므로 앱 수준 프로바이더가 필요하지 않습니다.
 
 </ForAI>

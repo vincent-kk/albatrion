@@ -204,11 +204,13 @@ Please use a transpiler like Babel to transform the code for your target environ
 
 **Dependency requirements:**
 
-- React 18.0.0 or later (below 20.0.0)
-- @mui/material 7.0.0 or later
-- @mui/x-date-pickers 8.0.0 or later (for date/time related components)
-- @emotion/react, @emotion/styled (MUI styling engine)
-- dayjs 1.0.0 or later (for date processing)
+- @canard/schema-form 1.x (`^1.0.0`)
+- React 18 or 19, with React DOM in the same range (`>=18 <20`)
+- @mui/material 7.x (`^7.0.0`)
+- @mui/icons-material 7.x (`^7.0.0`)
+- @mui/x-date-pickers 8.x (`^8.0.0`)
+- @emotion/react and @emotion/styled 11.x (`^11.0.0`, MUI styling engine)
+- dayjs 1.x (`^1.0.0`, for date processing)
 
 **Duplicate copies:** The plugin lists Emotion, MUI Material and Icons, MUI X Date Pickers and dayjs as both dependencies and peer dependencies, so depending on how the package manager places packages, the application can still load a separate copy of a supported version. Deduplicate them so the plugin shares the host's theme and providers.
 
@@ -244,10 +246,6 @@ For inquiries or suggestions related to the project, please create an issue.
 
 For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the unchecked (off) value.
 
-A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
+A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels come from `context.checkboxLabels` when it is set (the whole object replaces `alias`), otherwise from `alias`; with neither, no state labels are shown. The current state label does not replace the field name.
 
-For string switches, use the schema-level `switchLabels: [checkedLabel, uncheckedLabel]` tuple for custom state labels.
-
-### Sliders
-
-The UI library determines the slider’s unset display, stops, and keyboard behavior.
+For string switches, state labels come from `context.switchLabels` when it is set, otherwise from `presentation.FieldInputProps.alias`; both are keyed by the stored enum value, and a key missing from the chosen map shows the enum value. The schema-level `switchLabels: [checkedLabel, uncheckedLabel]` tuple applies only when neither map is supplied.

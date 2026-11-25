@@ -53,8 +53,8 @@ Everything else `applyPatch` rejects always throws as well: `remove` or `replace
 | `compare`    | Never mutates, in either mode.                                                                              |
 | `difference` | Never mutates.                                                                                              |
 | `setValue`   | Always mutates and returns the same reference. No option changes this.                                      |
-| `applyPatch` | `immutable: true` (default) deep-clones first; `immutable: false` mutates and returns the same reference.   |
-| `mergePatch` | Same, via a third **positional** argument — `mergePatch(source, patch, false)`, not `{ immutable: false }`. |
+| `applyPatch` | `immutable: true` (default) never modifies the source or the patch values, but copies only the containers on each written path: unwritten subtrees are shared with the source, and `add`/`replace` values are installed by reference, so they are shared with the patch. `immutable: false` mutates and returns the same reference. |
+| `mergePatch` | `immutable: true` (default, third **positional** argument) deep-copies the source and the patch with `cloneLite` before merging; `mergePatch(source, patch, false)` mutates the source — not `{ immutable: false }`. |
 
 `compare`'s `immutable` option therefore means something different from the others: since comparison reads only, it controls whether the values _embedded in the emitted patch_ are deep clones or live references into the source document. With `immutable: false` the patch aliases your data, so a later mutation of the document silently rewrites the patch you are holding. Keep the default unless the patch is consumed immediately.
 

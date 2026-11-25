@@ -91,7 +91,7 @@ Use sub-path imports to minimize bundle size:
 | `@winglet/json/pointer-manipulator` | `getValue`, `setValue`                              |
 | `@winglet/json/pointer-patch`       | `compare`, `applyPatch`, `difference`, `mergePatch` |
 | `@winglet/json/pointer-escape`      | `escapePath`, `unescapePath`, `escapeSegment`       |
-| `@winglet/json/pointer-common`      | `JSONPointer` constants, `convertJSONPointerToPath` |
+| `@winglet/json/pointer-common`      | `convertJSONPointerToPath`, `getJSONPointer` |
 | `@winglet/json/path`                | `JSONPath` constants                                |
 | `@winglet/json/path-common`         | `getJSONPath`, `convertJSONPathToPointer`           |
 
@@ -117,6 +117,8 @@ A JSON Pointer (RFC 6901) is a string that identifies a specific value within a 
 | `"/arr/0"`   | First element of array `arr`      |
 | `"/a~1b"`    | Key `a/b` (slash escaped as `~1`) |
 | `"/a~0b"`    | Key `a~b` (tilde escaped as `~0`) |
+
+A pointer that starts with `#` is a URI fragment (`"#"` is the whole document, `"#/a%20b"` is the key `a b`): percent escapes are decoded once before `~1` and `~0` are unescaped. A plain `/a%20b` keeps the percent text as key data. A malformed percent escape throws `JSONPointerError` with code `INVALID_POINTER_TYPE`, and `applyPatch` throws `JSONPatchError` with code `PATCH_PATH_INVALID`.
 
 ### getValue
 
@@ -356,6 +358,8 @@ function applyPatch<Result>(
 ): Result;
 ```
 
+With `immutable: true` (the default) the source and the patch values are never modified, but the result is not a deep copy: only the containers on each written path are copied, so unwritten subtrees are shared with `source`, and `add`/`replace` values are installed by reference and shared with the patch. When the last operation is a root `add` or `replace`, the patch value itself is returned. Deep-copy the result before mutating it in place when the source or the patch must stay unchanged.
+
 ```typescript
 import { applyPatch } from '@winglet/json/pointer-patch';
 
@@ -381,6 +385,8 @@ applyPatch({ status: 'draft' }, [
 ]);
 // { status: 'published' }
 ```
+
+**Throws** `JSONPatchError` (name `'JSONPatch'`, bare code on `specific`) in every mode: a `test` whose value differs or whose location is missing; `remove` or `replace` of a missing member; an array index that is non-numeric, has a leading zero (`/a/01`), is out of bounds or exceeds `4294967294`; an unknown `op`; a `move` or `copy` whose `from` does not exist; a `move` into its own `from` subtree; a path that does not start with `/` or `#`; a missing intermediate container. Codes: `PATCH_TEST_FAILED`, `PATCH_OBJECT_PROPERTY_NOT_FOUND`, `PATCH_ARRAY_INDEX_INVALID`, `PATCH_ARRAY_INDEX_OUT_OF_BOUNDS`, `PATCH_OPERATION_INVALID`, `PATCH_TARGET_NOT_OBJECT`, `PATCH_PATH_INVALID`, `PATCH_PATH_INVALID_INTERMEDIATE`, `PATCH_PATH_PROCESSING_ERROR`, `PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN`. With `immutable: false`, operations before the failing one have already been written.
 
 ### difference
 
@@ -627,7 +633,7 @@ getValue(new Map(), '/path'); // throws INVALID_INPUT
 
 | Code                   | Trigger                                                                                                        |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `INVALID_INPUT`        | Input is not a plain object or array                                                                           |
+| `INVALID_INPUT` | Input is not a plain object or array, or `setValue` would write below a primitive value (for example `/a/b` when `a` is `1`) |
 | `INVALID_POINTER_TYPE` | Pointer is not a string or an array of strings and numbers, or a string pointer does not start with `/` or `#` |
 
 A missing location is not an error: `getValue` returns `undefined`.
@@ -652,7 +658,7 @@ try {
 
 | Scenario                      | Recommendation                                      |
 | ----------------------------- | --------------------------------------------------- |
-| Large deeply-nested documents | `immutable: false` to avoid deep clone overhead     |
+| Large deeply-nested documents | `immutable: false` to skip copying the containers on each written path |
 | Memory-sensitive environments | `immutable: false` in `mergePatch` to avoid cloning |
 
 ```typescript

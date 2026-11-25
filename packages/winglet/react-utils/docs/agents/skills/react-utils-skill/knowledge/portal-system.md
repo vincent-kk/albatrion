@@ -24,7 +24,7 @@ import { Portal } from '@winglet/react-utils/portal';
 
 ## Anchor constraints
 
-**One anchor per provider scope, and the last one to mount wins.** Every `Portal.Anchor` reports its node through the same stable callback ref, so each mount overwrites whatever the previous anchor stored — the winner is the last to attach, not the first. Worse, React reports null through that shared callback when _any_ anchor unmounts, and nothing reattaches the survivor: portal content silently disappears while an anchor is still on screen. Mount exactly one anchor per scope.
+**One anchor per provider scope, and the last one to mount wins.** Every `Portal.Anchor` writes its node into the same provider state when it attaches, so each mount overwrites whatever the previous anchor stored — the winner is the last to attach, not the first. Unmounting an anchor that is not the current one leaves the current anchor in place. Unmounting the current anchor clears it in a microtask, and a surviving anchor does not attach again on its own, so portal content disappears while that anchor is still on screen until it remounts. Mount exactly one anchor per scope.
 
 **A `style` prop replaces `display: contents` outright.** The anchor renders as `<div role="none" style={{ display: 'contents' }} {...props} ref={ref} />` — the spread comes after `style`, so a caller-supplied `style` overwrites the whole declaration rather than merging into it. The div then becomes a real layout box where the default was layout-transparent, shifting everything around it:
 

@@ -8,7 +8,7 @@ Promise-based React modals, inside or outside components. See the [specification
 yarn add @lerx/promise-modal
 ```
 
-Use matching React and React DOM versions, 18 or 19. Browser interaction requires a DOM; page isolation uses the browser’s `inert` support. Both ESM and CommonJS bundles declare `'use client'`. DOM-free import and server rendering are supported without React 18 layout-effect warnings; call modal functions only in the browser. Server rendering has no modal portal and reports zero active modals.
+Use matching React and React DOM versions, 18 or 19. Browser interaction requires a DOM; page isolation uses the browser’s `inert` support. Both ESM and CommonJS bundles declare `'use client'`. DOM-free import and server rendering are supported without React 18 layout-effect warnings; call modal functions only in the browser. Server rendering has no modal portal and reports zero active modals. Keep one compatible version of the package per document: copies with the same internal state version, such as the ESM and CommonJS builds or two bundles, share one modal system, while an incompatible copy warns in development, refuses to initialize its `ModalProvider`, and rejects its `alert`, `confirm`, and `prompt` calls.
 
 ## Setup
 

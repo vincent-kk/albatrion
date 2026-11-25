@@ -33,7 +33,7 @@ yarn add @canard/schema-form-antd-mobile-plugin antd-mobile@^5.2.0
 ### 피어 의존성 {#peer-dependencies}
 
 ```bash
-yarn add dayjs@^1.0.0 "react@>=18 <20" "react-dom@>=18 <20"
+yarn add @canard/schema-form dayjs@^1.0.0 "react@>=18 <20" "react-dom@>=18 <20"
 ```
 
 참고: `antd-mobile`은 이 플러그인의 직접 의존성이자 피어 의존성입니다.
@@ -57,8 +57,8 @@ registerPlugin(plugin);
 | `FieldInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | 체크박스 그룹이며, items는 문자열 스키마여야 합니다. |
 | `FieldInputStringSwitch` | `string` | — | `"switch"` | 값 2개 | 두 enum 값 사이를 전환합니다. |
 | `FieldInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` 또는 `"radiogroup"` | 필수 | 라디오 그룹 |
-| `FieldInputArray` | `array` | — | — | — | 추가/제거가 가능한 동적 목록 |
 | `FieldInputSlider` | `number` \| `integer` | `"slider"` | — | — | 슬라이더이며, 숫자 항목 배열의 범위 슬라이더도 지원합니다. |
+| `FieldInputArray` | `array` | — | — | — | 추가/제거가 가능한 동적 목록 |
 | `FieldInputTextarea` | `string` | `"textarea"` 또는 inputType `"textarea"` | — | — | 여러 줄 텍스트 영역 |
 | `FieldInputString` | `string` | — | — | — | 기본 텍스트 입력 (`format: "password"`로 비밀번호 지원) |
 | `FieldInputNumber` | `number` \| `integer` | — | — | — | Stepper 컴포넌트 |
@@ -85,8 +85,12 @@ registerPlugin(plugin);
 ## 스키마 확장 속성 {#schema-extension-properties}
 
 ```ts
+// Selection hints read by this plugin
 {
-  inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'textarea',
+  presentation?: {
+    inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'textarea',
+  },
+  // Standard JSON Schema properties also used for routing:
   format?:   'slider' | 'textarea' | 'password',
 }
 ```
@@ -117,18 +121,17 @@ const schema = {
 ## 컨텍스트: 사용자 정의 스위치 라벨 {#context-custom-switch-labels}
 
 ```tsx
-// Pass checkboxLabels through context for BooleanSwitch
-<Form
-  jsonSchema={schema}
-  context={{ checkboxLabels: { active: { true: 'On', false: 'Off' } } }}
-/>
+// Per field (preferred):
+active: { type: 'boolean', presentation: { inputType: 'switch', FieldInputProps: { alias: { checked: 'On', unchecked: 'Off' } } } }
+// Form-wide: replaces the alias of every boolean switch and every checkbox group in the Form
+<Form jsonSchema={schema} context={{ checkboxLabels: { checked: 'On', unchecked: 'Off' } }} />
 ```
 
 <ForAI>
 
 ## AI 참조 {#ai-reference}
 
-**패키지**: `@canard/schema-form-antd-mobile-plugin` v0.10.0
+**패키지**: `@canard/schema-form-antd-mobile-plugin` 1.x
 **목적**: Ant Design Mobile UI 플러그인으로, 모바일 웹을 위한 터치 최적화 폼 컴포넌트 10개를 제공합니다.
 
 ### 내보내기 {#exports}
@@ -137,7 +140,7 @@ import { plugin } from '@canard/schema-form-antd-mobile-plugin';
 ```
 
 ### 피어 의존성 {#peer-dependencies-1}
-`antd-mobile@^5.2.0` (직접·피어 의존성), `dayjs@^1.0.0`, `react@>=18 <20`
+`@canard/schema-form`, `antd-mobile@^5.2.0` (직접·피어 의존성), `dayjs@^1.0.0`, `react@>=18 <20`
 
 ### 컴포넌트 매핑 (우선순위 높은 순) {#component-mapping-priority-order-high--low}
 | 컴포넌트 | 선택 조건 |
@@ -146,8 +149,8 @@ import { plugin } from '@canard/schema-form-antd-mobile-plugin';
 | StringCheckbox | `array` + `inputType: "checkbox"` + items.enum |
 | StringSwitch | `string` + `inputType: "switch"` + enum 값 2개 |
 | RadioGroup | `string\|number` + `inputType: "radio"` + enum |
-| Array | `array` (동적 목록) |
 | Slider | `number` + `format: "slider"` (범위 배열도 지원) |
+| Array | `array` (동적 목록) |
 | Textarea | `string` + `format: "textarea"` |
 | String | `string` (기본값) |
 | Number | `number\|integer` (Stepper 컴포넌트) |
@@ -155,7 +158,10 @@ import { plugin } from '@canard/schema-form-antd-mobile-plugin';
 
 ### 컨텍스트: 사용자 정의 스위치 라벨 {#context-custom-switch-labels-1}
 ```ts
-context={{ checkboxLabels: { fieldName: { true: 'On', false: 'Off' } } }}
+// Per field (preferred):
+active: { type: 'boolean', presentation: { inputType: 'switch', FieldInputProps: { alias: { checked: 'On', unchecked: 'Off' } } } }
+// Form-wide: replaces the alias of every boolean switch and every checkbox group in the Form
+<Form jsonSchema={schema} context={{ checkboxLabels: { checked: 'On', unchecked: 'Off' } }} />
 ```
 
 ### antd5/antd6와의 주요 차이점 {#key-differences-from-antd5antd6}

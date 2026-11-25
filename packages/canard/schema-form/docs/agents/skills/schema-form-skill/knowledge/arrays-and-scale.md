@@ -67,7 +67,7 @@ A terminal object or array is a contract: the FieldInput owns the whole subtree 
 
 ## Bulk Mutation
 
-Each `push()` delivers its own events, so a loop of N pushes notifies subscribers N times. Write the whole array once with `setValue`, which notifies each affected node once as long as no listener writes again (a listener's write starts another delivery), or group the writes in `node.batch(fn)`:
+Each `push()` delivers its own events, so a loop of N pushes notifies subscribers N times. Write the whole array once with `setValue`, which notifies each affected node once as long as no listener writes again (a listener's write starts another delivery). Grouping array methods in `node.batch(fn)` merges their notifications but does not reduce their cost: each method still settles immediately, and without observers the batch bookkeeping can cost more than separate calls:
 
 ```typescript
 // ❌ notifies 100 times

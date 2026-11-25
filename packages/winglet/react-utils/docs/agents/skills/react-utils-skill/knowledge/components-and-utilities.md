@@ -22,7 +22,7 @@ It is an ordinary React class boundary — `getDerivedStateFromError` plus `comp
 
 - **Event handlers and async code.** Errors thrown in `onClick`, `setTimeout`, promise rejections, or anything outside the render/lifecycle path never reach it. Handle those with `try`/`catch` and an error state.
 - **The fallback itself.** A throwing fallback is rendered by the already-failed boundary, so it escapes to the _parent_ boundary — or crashes the app when there is none. Keep fallbacks trivial.
-- **The error never reaches the fallback.** `fallback` is a `ReactNode`, not a render function; the caught error is held in state but only ever surfaces through `console.error` in `componentDidCatch`. To display error details, catch them yourself.
+- **The error never reaches the fallback.** `fallback` is a `ReactNode`, not a render function; the boundary logs the caught error with `console.error` and passes it, with React's component stack, to an optional reporter: `withErrorBoundary(Component, fallback, useReporter)` and `withErrorBoundaryForwardRef(Component, fallback, useReporter)` call the `useReporter` hook on every render and use the function it returns as the boundary's `onError`. To show error details in the UI, catch them yourself.
 - **There is no reset.** Once caught, the instance shows the fallback for the rest of its life. Recovery means remounting it — typically by changing its `key`.
 
 ## `withUploader`

@@ -191,7 +191,6 @@ Please use a transpiler like Babel to transform the code for your target environ
 - Draft-07 with the default instance.
 - Draft 2019-09 with a bound AJV 2019 instance.
 - Draft-06 requires registering its meta-schema on a compatible bound instance. Draft-04 is not supplied.
-- Draft 2019-09 (partial support)
 
 ---
 

@@ -124,7 +124,7 @@ URI scheme parsing follows RFC 3986 section 3.1: every syntactically valid schem
 
 - **Role**: DatePicker RangePicker for time range selection (time mode)
 - **Applied when**: `type` is `"array"`, `format` is `"time-range"` or `inputType` is `"timeRange"`, and `items.type` is `"string"`
-- **Additional features**: `presentation.FieldInputProps.minimum` and `maximum` (HH:mm:00Z) limit the selectable times, returns array in [start time, end time] format
+- **Additional features**: `presentation.FieldInputProps.minimum` and `maximum` (HH:mm:00Z) limit the selectable times, returns array in [start time, end time] format. The limits are compared in the viewer's local time zone after their offset is applied; when the converted `minimum` is later than `maximum`, the selectable range runs from `minimum` past midnight to `maximum`.
 
 ### **[`FieldInputRadioGroup.tsx`](./src/fieldInputs/FieldInputRadioGroup.tsx)**
 
@@ -203,7 +203,7 @@ const jsonSchema = {
 };
 ```
 
-Input settings other than textarea row limits belong in `presentation.FieldInputProps`, which is forwarded to the input. Custom `options` keys are accepted without errors or warnings, but these built-in inputs do not read their settings from that group.
+Input settings, including textarea `minRows` and `maxRows`, belong in `presentation.FieldInputProps`, which is forwarded to the input; schema-level `minRows` and `maxRows` only supply textarea defaults. Custom `options` keys are accepted without errors or warnings, but these built-in inputs do not read their settings from that group.
 
 ## Component Priority
 
@@ -231,6 +231,7 @@ If you're using a JavaScript environment that doesn't support ES2020, you'll nee
 
 - Node.js 14.17.0 or later
 - Modern browsers (Chrome 91+, Firefox 90+, Safari 14+)
+- @canard/schema-form 1.x, Ant Design 5.10 or later within 5.x, dayjs 1.x, React and React DOM 18 or 19
 
 **For legacy environment support:**
 Please use a transpiler like Babel to transform the code for your target environment.
@@ -273,7 +274,7 @@ For inquiries or suggestions related to the project, please create an issue.
 
 For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the unchecked (off) value.
 
-A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
+A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels come from `context.checkboxLabels` when it is set (the whole object replaces `alias`), otherwise from `alias`; with neither, no state labels are shown. The current state label does not replace the field name.
 
 ### Sliders
 

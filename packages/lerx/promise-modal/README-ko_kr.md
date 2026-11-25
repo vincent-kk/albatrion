@@ -8,7 +8,7 @@ React 컴포넌트 안팎에서 사용하는 Promise 기반 모달입니다. 수
 yarn add @lerx/promise-modal
 ```
 
-React와 React DOM은 같은 버전의 18 또는 19를 사용합니다. 브라우저 상호작용에는 DOM이 필요하며 페이지 격리는 브라우저의 `inert` 지원을 사용합니다. ESM·CommonJS 번들은 모두 `'use client'`를 선언합니다. DOM 없는 가져오기와 서버 렌더는 React 18 layout effect 경고 없이 지원합니다. 모달 열기 함수는 브라우저에서만 호출하며 서버 렌더에는 포털이 없고 활성 개수는 0입니다.
+React와 React DOM은 같은 버전의 18 또는 19를 사용합니다. 브라우저 상호작용에는 DOM이 필요하며 페이지 격리는 브라우저의 `inert` 지원을 사용합니다. ESM·CommonJS 번들은 모두 `'use client'`를 선언합니다. DOM 없는 가져오기와 서버 렌더는 React 18 layout effect 경고 없이 지원합니다. 모달 열기 함수는 브라우저에서만 호출하며 서버 렌더에는 포털이 없고 활성 개수는 0입니다. 문서마다 호환되는 패키지 버전 하나를 사용합니다. ESM·CommonJS 빌드나 두 번들처럼 내부 상태 버전이 같은 사본은 모달 시스템 하나를 공유하지만, 호환되지 않는 사본은 개발 환경에서 경고하고 자신의 `ModalProvider` 초기화를 거부하며 `alert`·`confirm`·`prompt` 호출을 거부합니다.
 
 ## 설정
 

@@ -36,7 +36,10 @@ function alert<B = any>(options: AlertProps<B>): Promise<void>
 | `manualDestroy` | `boolean` | `false` | If `true`, modal is not destroyed automatically after closing animation |
 | `closeOnBackdropClick` | `boolean` | `true` | Close when backdrop is clicked |
 | `group` | `string` | — | Group identifier for ordering |
-| `handleResolve` | `(result: void \| null) => void` | — | Called when promise resolves |
+| `closeOnEscape` | `boolean` | inherits `closeOnBackdropClick` | Escape cancels this modal when true |
+| `trapFocus` | `boolean` | `true` | Keeps Tab inside a dimmed top modal |
+| `lockScroll` | `boolean` | `true` | Locks body scrolling while a dimmed modal is visible |
+| `signal` | `AbortSignal` | — | Aborting cancels the modal with its ordinary cancellation result |
 | `ForegroundComponent` | `ComponentType<PropsWithChildren<ModalFrameProps>>` | — | Per-modal foreground override |
 | `BackgroundComponent` | `ComponentType<ModalFrameProps>` | — | Per-modal background override |
 
@@ -102,7 +105,7 @@ function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined |
 | `Input` | `(props: PromptInputProps<T>) => ReactNode` | **required** | Input component renderer |
 | `defaultValue` | `T` | — | Initial value |
 | `disabled` | `(value: T \| undefined) => boolean` | — | Disables confirm button when returns `true` |
-| `returnOnCancel` | `boolean` | `false` | If `true`, resolves with `defaultValue` on cancel |
+| `returnOnCancel` | `boolean` | `false` | If `true`, cancellation resolves the current input value instead of `null` (the `defaultValue` before the modal renders) |
 | `footer` | `PromptFooterRender<T> \| FooterOptions \| false` | — | Footer config |
 
 **`PromptInputProps<T>`**
@@ -111,7 +114,7 @@ function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined |
 interface PromptInputProps<T, Context = object> {
   value?: T;
   defaultValue?: T;
-  onChange: (value: T | undefined) => void;
+  onChange: (value: T | undefined | ((current: T | undefined) => T | undefined)) => void;
   onConfirm: () => void;
   onCancel: () => void;
   context: Context;
@@ -153,8 +156,8 @@ import { ModalProvider, type ModalProviderProps, type ModalProviderHandle } from
 | `FooterComponent` | `ComponentType<FooterComponentProps>` | Global footer component |
 | `options` | `ModalOptions` | Global defaults for all modals |
 | `context` | `Record<string, any>` | Arbitrary data passed to every component slot |
-| `usePathname` | `() => { pathname: string }` | Custom hook for route-aware modal cleanup |
-| `root` | `HTMLElement \| null` | DOM element to mount modals into |
+| `usePathname` | `() => { pathname: string }` | Router hook; a pending modal is hidden, not settled, while the pathname differs from the one it opened on. |
+| `root` | `HTMLElement \| null` | Container for the modal portal: omit for `document.body`, pass an element for that container, or `null` to defer until `initialize(element)`. Changing it moves open modals without remounting them. |
 
 **Handle (`ModalProviderHandle`)** — accessed via `ref`:
 
@@ -164,12 +167,15 @@ interface ModalProviderHandle {
 }
 ```
 
+A ref does not defer initialization: modals mount into `document.body` unless `root` says otherwise. Pass `root={null}` to wait for `initialize(element)`; the last `root` change or `initialize` call wins, and moving the root keeps open modals, their input and focus.
+
 ```tsx
 const ref = useRef<ModalProviderHandle>(null);
+
+<ModalProvider ref={ref} root={null}>...</ModalProvider>
+
 // Mount modals into a specific DOM node:
 ref.current?.initialize(containerElement);
-
-<ModalProvider ref={ref}>...</ModalProvider>
 ```
 
 ---
@@ -192,12 +198,12 @@ The optional `configuration` object provides default values merged into every ca
 
 ---
 
-### `useInitializeModal(options?)`
+### `useInitializeModal(props?)`
 
-Provides manual control over modal service initialization. Useful when you need to mount modals into a specific DOM container.
+Accepts the same props as `ModalProvider`, including `root`; `mode: 'manual'` defers only the initial root until `initialize(element)` or a later `root` change. Always render the returned `portal`.
 
 ```ts
-function useInitializeModal(options?: { mode?: 'auto' | 'manual' }): {
+function useInitializeModal(props?: ModalProviderProps & { mode?: 'auto' | 'manual' }): {
   initialize: (element: HTMLElement) => void;
   portal: ReactNode;
 }
@@ -205,45 +211,42 @@ function useInitializeModal(options?: { mode?: 'auto' | 'manual' }): {
 
 ---
 
-### `useActiveModalCount()`
+### `useActiveModalCount(validate?)`
 
-Returns the number of currently active (open) modals.
+Returns how many modals match `validate`, re-rendering when the store changes; works in any component, including outside `ModalProvider`. Without a predicate it counts visible modals; a custom predicate replaces that default and receives read-only `ModalNodeView` metadata, so include `node.visible` to count only visible matches. Server rendering returns `0`.
 
 ```ts
-function useActiveModalCount(): number
+function useActiveModalCount(validate?: (node: ModalNodeView) => boolean | undefined): number
 ```
 
 ---
 
 ### `useModalOptions()`
 
-Returns the current global modal configuration options.
+Returns the normalized Provider options, not a modal's per-call overrides. Call it only inside a modal frame, content, input or footer component; elsewhere, including ordinary `ModalProvider` children, it throws.
 
 ```ts
-function useModalOptions(): ConfigurationContextProps
+function useModalOptions(): Required<Omit<ModalOptions, 'backdrop' | 'duration' | 'closeOnEscape'>> & { backdrop: CSSProperties; duration: `${number}ms`; closeOnEscape?: boolean }
 ```
 
 ---
 
-### `useModalDuration()`
+### `useModalDuration(id?)`
 
-Returns the modal animation duration from configuration.
+Omit `id` for the Provider duration; pass a live modal id for that modal's own duration (a missing id falls back to the Provider). Modal tree only; throws elsewhere.
 
 ```ts
-function useModalDuration(): {
-  duration: string;     // CSS duration string, e.g. '250ms'
-  milliseconds: number; // numeric value, e.g. 250
-}
+function useModalDuration(id?: number): { duration: `${number}ms`; milliseconds: number }
 ```
 
 ---
 
 ### `useModalBackdrop()`
 
-Returns the modal backdrop CSS value from configuration.
+Returns the Provider backdrop as CSS properties. Modal tree only; throws elsewhere.
 
 ```ts
-function useModalBackdrop(): string | CSSProperties
+function useModalBackdrop(): CSSProperties
 ```
 
 ---
@@ -264,22 +267,22 @@ function useModalAnimation(
 
 ---
 
-### `useDestroyAfter(modalId, delayMs)`
+### `useDestroyAfter(modalId, delay)`
 
-Automatically destroys a modal after the specified delay. Used in custom foreground components (e.g., toast notifications).
+Destroys a modal `delay` after it settles; use it in a custom `manualDestroy` frame to remove the frame after its exit animation. It never closes a pending modal, does not start while the modal is only hidden by route, and reschedules when `delay` changes. Modal tree only; throws elsewhere.
 
 ```ts
-function useDestroyAfter(modalId: number, delayMs: number): void
+function useDestroyAfter(modalId: number, delay: number | `${number}ms` | `${number}s`): void
 ```
 
 ---
 
-### `useSubscribeModal(modal)`
+### `useSubscribeModal(id)`
 
-Subscribes to a modal node's state changes and returns the current version number. Causes the component to re-render when the modal updates.
+Subscribes to the modal store and returns the publication version of the modal with this id, re-rendering on each change. Works in any component, including outside `ModalProvider`. Pass the `id` a custom frame receives; a missing or destroyed id returns `-1`, and server rendering returns `0`.
 
 ```ts
-function useSubscribeModal(modal: ModalNode): number
+function useSubscribeModal(modalId: number): number
 ```
 
 ---
@@ -294,6 +297,9 @@ Props received by `ForegroundComponent` and `BackgroundComponent`.
 interface ModalFrameProps<Context = object, B = any> {
   id: number;
   type: 'alert' | 'confirm' | 'prompt';
+  subtype?: 'info' | 'success' | 'warning' | 'error';
+  group?: string;
+  settled: boolean;
   alive: boolean;
   visible: boolean;
   initiator: string;
@@ -402,17 +408,18 @@ export interface ModalProviderHandle { initialize: (element: HTMLElement) => voi
 
 // Hooks
 export function useModal(configuration?: OverridableHandleProps): { alert, confirm, prompt }
-export function useInitializeModal(options?: { mode?: 'auto' | 'manual' }): { initialize, portal }
-export function useActiveModalCount(): number
-export function useModalOptions(): ConfigurationContextProps
-export function useModalDuration(): { duration: string; milliseconds: number }
-export function useModalBackdrop(): string | CSSProperties
+export function useInitializeModal(props?: ModalProviderProps & { mode?: 'auto' | 'manual' }): { initialize, portal }
+export function useActiveModalCount(validate?: (node: ModalNodeView) => boolean | undefined): number
+export function useModalOptions(): Required<Omit<ModalOptions, 'backdrop' | 'duration' | 'closeOnEscape'>> & { backdrop: CSSProperties; duration: `${number}ms`; closeOnEscape?: boolean }
+export function useModalDuration(id?: number): { duration: `${number}ms`; milliseconds: number }
+export function useModalBackdrop(): CSSProperties
 export function useModalAnimation(visible: boolean, handlers: { onVisible?(); onHidden?() }): void
-export function useDestroyAfter(modalId: number, delayMs: number): void
-export function useSubscribeModal(modal: ModalNode): number
+export function useDestroyAfter(modalId: number, delay: number | `${number}ms` | `${number}s`): void
+export function useSubscribeModal(modalId: number): number
 
 // Types
 export type { ModalOptions, ModalFrameProps, FooterComponentProps, ModalBackground }
+export type { AlertProps, ConfirmProps, PromptProps, OverridableHandleProps, ModalNodeView }
 export type { PromptInputProps, AlertContentProps, ConfirmContentProps, PromptContentProps }
 export type { WrapperComponentProps }
 ```
@@ -433,8 +440,7 @@ interface BaseModal<T, B> {
   closeOnEscape?: boolean;
   trapFocus?: boolean;
   lockScroll?: boolean;
-  handleResolve?: (result: T | undefined | null) => void;  // internal
-  handleReject?: (error: unknown) => void;                 // internal
+  signal?: AbortSignal;
   ForegroundComponent?: ComponentType<PropsWithChildren<ModalFrameProps>>;
   BackgroundComponent?: ComponentType<ModalFrameProps>;
 }

@@ -8,7 +8,7 @@ Each entry is a claim that looks right, is wrong, and often type-checks anyway. 
 
 **`trackableHandler.loading`** → the property is **`.pending`**. There is no `.loading`, and because the real properties are non-enumerable, a typo here reads as `undefined` rather than failing.
 
-**`withTimeout(fetchPromise, 5000)`** → `withTimeout` takes a **thunk**: `withTimeout(() => fetchPromise, 5000)`. It calls `fn()` inside `Promise.race`, so passing an already-created promise means the argument is invoked as a function — a `TypeError`. Note also that the losing timeout timer is not cancelled, so in Node the process stays alive for the remainder of `ms`.
+**`withTimeout(fetchPromise, 5000)`** → `withTimeout` takes a **thunk**: `withTimeout(() => fetchPromise, 5000)`. It calls `fn()` inside `Promise.race`, so passing an already-created promise means the argument is invoked as a function — a `TypeError`. When the race settles, the pending timeout timer is cleared, so it does not keep a Node process alive.
 
 **`convertMsFromDuration('1h30m')`** → returns **`0`**. The parser accepts exactly one integer and one unit (`/^\s*(\d+)\s*(ms|s|m|h)\s*$/`). Compound durations, decimals (`'1.5s'`), uppercase units (`'5S'`), and spelled-out units (`'5 sec'`) all yield `0` rather than throwing.
 

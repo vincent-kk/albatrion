@@ -171,6 +171,7 @@ ES2020보다 낮은 버전의 JavaScript 환경에서 사용하시는 경우, �
 
 - Node.js 14.17.0 이상
 - 최신 브라우저 (Chrome 91+, Firefox 90+, Safari 14+)
+- @canard/schema-form 1.x, Ant Design Mobile 5.x(5.2 이상), dayjs 1.x, React 및 React DOM 18 또는 19
 
 **레거시 환경 지원이 필요한 경우:**
 Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환해주세요.
@@ -205,11 +206,11 @@ const Input = ({ inputId, name }: FieldInputProps<string>) => (
 
 프로젝트와 관련된 문의나 제안은 이슈를 생성해 주세요.
 
-### Switch values and state labels
+### 스위치 값과 상태 라벨
 
-For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the unchecked (off) value.
+문자열 스위치에서 `enum[0]`은 켜진(checked) 값이고 `enum[1]`은 꺼진(unchecked) 값입니다.
 
-A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
+불리언 스위치는 선택 항목인 `checked`, `unchecked` ReactNode 라벨을 담은 `presentation.FieldInputProps.alias`를 받습니다. `context.checkboxLabels`가 있으면 그 객체 전체가 `alias`를 대체하고, 없으면 `alias`를 사용하며, 둘 다 없으면 상태 라벨을 표시하지 않습니다. 현재 상태 라벨이 필드 이름을 대체하지는 않습니다.
 
 ### 슬라이더
 

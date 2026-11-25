@@ -22,7 +22,7 @@ Import consumer APIs from `@canard/schema-form`. Types inferred from callbacks c
 | `readOnly / disabled`                                  | Form-wide input locks, default false.                                                                                                                             |
 | `unsetOnInactive`                                      | Default exit-removal policy, overridden by node controls.                                                                                                         |
 | `disableAutomaticWrites`                               | Suppress automatic writes while allowing imperative writes.                                                                                                       |
-| `errors`                                               | External issues, reapplied on array-reference changes and reset.                                                                                                  |
+| `errors`                                               | External issues, reapplied when the array's content changes and on reset; a new array with unchanged content does not restore issues cleared by edits. |
 | `errorVisibility / validationMode`                     | Policies described in Validation.                                                                                                                                 |
 | `validatorFactory`                                     | Complete validator object; see Validation.                                                                                                                        |
 | `FieldRenderer`                                        | Group renderer for fields.                                                                                                                                        |
@@ -38,7 +38,7 @@ See [rendering](./core-concepts#rendering), [input resolution](./schema-referenc
 
 ## Root loads and configuration lifetime {#configuration-lifetime}
 
-Changing `jsonSchema` or `defaultValue` alone preserves the current tree and edits. `reset()` reads the latest committed props, clears attached files, and reloads defaults. Function children receive the schema of their current tree, so before reset they do not pair the newer schema prop with the old node. Reset accepts only an automatic-write override flag, not a replacement value.
+Changing `jsonSchema` or `defaultValue` alone preserves the current tree and edits. `reset()` reads the latest committed props, clears attached files, and reloads defaults. Function children receive the schema of their current tree, so before reset they do not pair the newer schema prop with the old node. Reset accepts only an automatic-write override flag, not a replacement value. A native reset button inside the Form performs the same reset as `reset()`, including its onChange and lifecycle, in a microtask after the browser resets unmanaged native controls; a reset whose default action is prevented does nothing.
 
 `rebuild()` invalidates that schema object's cached analysis and replaces this Form's root using reset's load options. Another Form using the same schema object keeps its existing tree. Reacquire nodes from the current handle after replacement.
 
@@ -61,7 +61,7 @@ Replace an invalid input map with a valid map to recover without remounting. A f
 | `findNode(path) / findNodes(path)`                | First or all matching live nodes; no match returns null or [], respectively.                                                                                                                                                                                                                                                       |
 | `getState() / setState(flags) / clearState()`     | Read aggregate flags / patch or clear the whole tree.                                                                                                                                                                                                                                                                              |
 | `getErrors() / validate()`                        | Raw issues / a promise for a fresh verdict.                                                                                                                                                                                                                                                                                        |
-| `focus(path?) / select(path?)`                    | Focus the exact input through nested virtualization gates, using the first `[data-focus-target]` element, input, textarea, select, or button in its input container in DOM order; request text selection on the first input or textarea, skipping buttons and selects. Selection calls the element's select method when available. |
+| `focus(path?) / select(path?)`                    | Focus the exact input through nested virtualization gates. The target is the control connected to the input's `focusRef`; without one, it is the first `[data-focus-target]` element, input, textarea, select, or button in its input container in DOM order. Text selection is requested on the first input or textarea, skipping buttons and selects; selection calls the element's select method when available. |
 | `refresh(path?) / remount(path?)`                 | Re-read committed input values (an input declaring `controlled: true` is not replaced) / remount a rendered subtree.                                                                                                                                                                                                               |
 | `reset(option?) / rebuild(option?)`               | Root load operations described above.                                                                                                                                                                                                                                                                                              |
 | `revealErrors()` / `resetErrorVisibility()`       | Display override; see Validation.                                                                                                                                                                                                                                                                                                  |
@@ -76,11 +76,11 @@ Use `SetValueOption.Overwrite` (default) or `Merge`, with an optional `DisableAu
 
 `node.batch(fn)` groups synchronous writes. `visitSubtree(visitor)` visits self, then descendants in preorder/sibling order; returning false skips that node's descendants. The visitor receives a required FieldNode. A live walk visits current shape; a detached walk visits the frozen subtree. A node reachable twice is visited once, and new nodes created during the walk may be missed.
 
-Value writes settle once at the end, so intermediate value reads see the preceding commit. State/external-error changes apply immediately but their events wait; an enclosing batch postpones everything to its end. A Form reset or `resetSubtree()` still settles its load immediately outside that enclosing batch. A read-only walk opens no write boundary until a write occurs and can run inside listeners.
+Inside a batch, scalar value writes are marked and settle once when the outermost batch ends, so `value` and `children` reads between them see the preceding commit, while an updater passed to `setValue` reads what the batch's earlier calls produced. An array method first settles the earlier marks and applies its arrangement immediately, so reads after it see that arrangement. `resetSubtree()` settles the earlier writes outside its scope, discards those inside it and loads immediately; if that settlement detaches the field, for example by making it inactive, the reset is refused and the writes inside it are kept. A Form reset also loads immediately inside a batch. State/external-error changes apply immediately, but subscriptions, onChange and validation delivery wait for the outermost write or batch to end. A read-only walk opens no write boundary until a write occurs and can run inside listeners.
 
 A visitor failure applies writes already made and then propagates. When a value-writing walk runs inside a listener, its failure may be reported through the listener channel instead of returning to the direct caller. The handle has no visitSubtree method; use `handle.node`.
 
-For a non-native focusable element, add `data-focus-target`. The marker does not itself grant focusability; mounted-target detection treats `aria-disabled="true"` as disabled.
+To choose the control that `focus(path)` calls, connect the input's optional `focusRef` prop to that control's React `ref`, or to a component handle with a synchronous `focus()` method. A DOM target must be a connected element in the same document as the input container. Child, layout and schema presentation overrides cannot set `focusRef`, so destructure it before spreading the remaining props onto a DOM element or widget. Without a target, add `data-focus-target` to an already focusable non-native element. The marker does not itself grant focusability; mounted-target detection treats `aria-disabled="true"` as disabled.
 
 ## Form composition and custom inputs {#composition}
 
@@ -90,7 +90,7 @@ Use the supplied `Input` in a custom renderer when you need input-write interact
 
 `Form.Input`, `Form.Render`, and `Form.Field` reject `onChange` and `onFileAttach`. Supply relay callbacks through a hybrid parent’s `<Child>` or a renderer’s `<Input>`.
 
-`FieldInputProps` supplies `jsonSchema`, `node`, `type`, `schemaType`, `misfit`, `name`, `path`, `nullable`, `required`, `readOnly`, `disabled`, `watchValues`, `defaultValue`, `value`, `onChange`, `onFileAttach`, `ChildFields`, `context`, and presentation props. Empty input publishes undefined; null is published only deliberately. Honor resolved input locks and [accessible naming](./schema-reference#accessibility).
+`FieldInputProps` supplies `jsonSchema`, `node`, `type`, `schemaType`, `misfit`, `name`, `path`, `inputId`, `labelId`, `getInputId`, the optional `focusRef`, `nullable`, `required`, `readOnly`, `disabled`, `watchValues`, `defaultValue`, `value`, `onChange`, `onFileAttach`, `ChildFields`, `context`, and presentation props. `name` is the leaf name and `path` the data pointer; put `inputId` on the focusable control ([control identifiers](#control-identifiers-and-author-responsibility)). Empty input publishes undefined; null is published only deliberately. Honor resolved input locks and [accessible naming](./schema-reference#accessibility).
 
 The node prop is required in both FieldInputProps and FieldRendererProps.
 
@@ -168,6 +168,24 @@ For a child without a controlled declaration:
 
 `FormProvider` shares renderer defaults, input definitions, formatError, errorVisibility, validationMode, validatorFactory, and context within a subtree. Explicit Form props take precedence; Form context overlays provider context. Use the public name `FormProvider`. It has no `plugin` prop: pass renderer slots, `fieldInputDefinitions`, and `formatError` explicitly, and connect the plugin's validator with `validatorFactory={plugin.validator}`. For validator requirements see the [validator object contract](./validation#validator-contract).
 
+Unscoped registrations are shared by every compatible copy of the package in the same JavaScript realm. To isolate an independently bundled application, register its plugins with `registerPlugin(plugin, { scope })`, using one stable string or symbol for that application, and render its forms under `<FormProvider pluginScope={scope}>`. Different scopes and the unscoped registry never share registrations, deduplication or resets; `registerPlugin(null, { scope })` resets only that scope. A nested FormProvider without `pluginScope` inherits the enclosing provider's registry; a root provider uses the unscoped registry. Register before rendering: registration does not update mounted forms, and a scope's registry lives for the lifetime of the realm.
+
+```tsx
+import { Form, FormProvider, registerPlugin } from '@canard/schema-form';
+import { plugin as uiPlugin } from '@canard/schema-form-antd6-plugin';
+
+const applicationScope = Symbol('application');
+registerPlugin(uiPlugin, { scope: applicationScope });
+
+export function Application() {
+  return (
+    <FormProvider pluginScope={applicationScope}>
+      <Form jsonSchema={{ type: 'string' }} />
+    </FormProvider>
+  );
+}
+```
+
 ## Node values, state, and array operations {#nodes}
 
 Read node identity/tree through `type`, `strategy`, `schemaType`, `jsonSchema`, `path`, `name`, `escapedName`, `depth`, `rootNode`, `parentNode`, and `children`. Terminals have null children. `value` is the interpreted value; `outputValue` is emitted JSON; `source`, `extras`, and `inactiveValues` describe retained input. `isRequired`, `isNullable`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`, `misfits`, `watchValues`, `context`, and `diagnostics` describe the current node. `isPresent` means active and visible, independent of disabled state.
@@ -222,7 +240,7 @@ While the form is hidden, React detaches its ref, so `formRef.current` is null. 
 | `*`          | Wildcard; find gives the first match and findNodes gives all                             |
 | `@`          | Context expression token, not a queryable node; find returns null / findNodes returns [] |
 
-In controls, `@.prop` and optional chaining read the live form context. A branch expression's `./` addresses host children; an ordinary node expression uses `../` to reach siblings through its parent. Calculate depth from the expression's origin.
+In controls, `@.prop` and optional chaining read the live form context. A branch expression's `./` addresses host children; an ordinary node expression uses `../` to reach siblings through its parent. Calculate depth from the expression's origin. Text inside string literals, comments and regular expression literals is not read as a path; in a template literal only `${…}` placeholders are code. A slash after a value is division. A regular expression literal that also reads as an absolute path is read as that path, so `/foo/.test(../name)` reads the path `/foo/.test`; write `new RegExp('foo').test(../name)` instead. Prefer block comments: a line comment at the end of a boolean control fails to compile, and one at the start of a `derived` expression makes it return `undefined`.
 
 Segments exactly `*`, `..`, `.`, or `@` are operators first. Escape literal names as `%2A`, `%2E%2E`, `%2E`, `%40`. Other percent text remains literal; other segments decode only `~1` and `~0`. A leading `#` alone is the fragment prefix; internal `#` is an ordinary name. The literal property names `%2A`, `%2E`, `%2E%2E`, `%40` themselves cannot round-trip and are rejected with ReservedPropertyName.
 
@@ -277,7 +295,7 @@ A newer focus request, reset, confirmed form unmount, or disappearing gate cance
 
 Terminal interiors, omitted layouts, hidden Activity and inputs suspended during the reveal commit cannot be reached. Hidden, disabled or inert elements may ignore focus. Scrolling is not corrected when nearby placeholder heights change. A request sent to an already mounted target or one with no blocking gate can be delivered later to newly mounted positions and cannot be cancelled by a newer request. Native invalid submissions keep their [candidate selection](./error-reference#submission).
 
-SSR renders all inputs and hydration preserves them. Gating applies to branches/children added after hydration; prepared children retain their gate decision even when a tab or accordion first displays them later. Without IntersectionObserver browsers render eagerly, while servers do not warn.
+SSR renders all inputs and hydration preserves them. Gating applies to branches/children added after hydration; prepared children retain their gate decision even when a tab or accordion first displays them later. Without IntersectionObserver browsers render eagerly, and servers do not warn about its absence. In React 18 development builds, `renderToString` logs React's `useLayoutEffect does nothing on the server` warning because field bindings use layout effects; the server HTML is unchanged, and React 19 and production builds do not log it.
 
 Hydration itself sends no extra update into a custom branch input's Suspense. On React 18, a subsequent update before hydration completes can still switch that boundary to client rendering. See the [virtualized example](./examples/virtualized-form) and test your actual branch layout.
 

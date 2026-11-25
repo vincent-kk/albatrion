@@ -136,8 +136,8 @@ Remove Form key changes used only to apply configuration, after checking the lif
 | `errorVisibility` on Form or FormProvider                                | The committed policy updates live. Replace `showError` and boolean/mask settings with the named enum; check node overrides and `revealErrors()` / `resetErrorVisibility()`.                                                                                  |
 | Renderer slots and `formatError` on Form or FormProvider                 | A changed renderer recreates the UI subtree it owns. A formatter update changes messages and can recover a failed formatter boundary; a healthy input need not remount.                                                                                      |
 | `fieldInputDefinitions` on Form or FormProvider, `fieldInputMap` on Form | Selection updates live, retaining node values, state and external issues. A changed selected component remounts that input; a changed parent input also recreates descendant DOM and uncommitted drafts. Stable selections and ancestors preserve input DOM. |
-| `context`, Form `readOnly` / `disabled`                                  | Context and input locks apply live. Context uses a content snapshot, so equal-content Date/Map/class objects do not force an update. Input locks do not prohibit imperative node writes.                                                                     |
-| Form callbacks, `errors`, `children`, `ref`                              | Use current committed callbacks and layout; replace the errors array to reapply external issues. Reacquire the current handle/node after root replacement. For hidden forms, follow the callback lifetime below.                                             |
+| `context`, Form `readOnly` / `disabled`                                  | Context and input locks apply live. Context compares plain objects, arrays and supported built-ins such as Date and Map by content, so an equal-content replacement does not force an update. URL, URLSearchParams and other class instances compare by reference: replace the instance when its content changes, and do not mutate it in place. Input locks do not prohibit imperative node writes. |
+| Form callbacks, `errors`, `children`, `ref`                              | Use current committed callbacks and layout; pass an `errors` array with different content to reapply external issues; an array with unchanged content does not restore issues cleared by edits. Reacquire the current handle/node after root replacement. For hidden forms, follow the callback lifetime below.                                             |
 | Form `virtualization`                                                    | All options update live, subject to the one-way reveal and hydration limits below.                                                                                                                                                                           |
 
 `Form.Field`, `Form.Input`, and `Form.Render` have their own mount-fixed component/children overrides. For those overrides, use live context, hooks inside the component, or a deliberate new key; the Form-wide live settings do not change this [composition contract](./schema-reference#input-resolution).
@@ -190,6 +190,22 @@ SSR renders all fields; hydration preserves them, with gating only for later-add
 
 AJV6, AJV7 and every AJV8 dialect entry refuse `bind(instance)` immediately when `coerceTypes`, `useDefaults`, or `removeAdditional` is enabled. Turn these options off before binding. The failure has `group: 'UNHANDLED_ERROR'` and `code: 'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'` (`FormErrorCode.ValidatorBindRefused`); it is a native plugin error, so the core `isUnhandledError` guard does not recognize it. A refused instance does not replace the active binding.
 
+Form roots are no longer registered on your AJV instance. Whole validation compiles a detached copy of each root on a private compiler, so `ajv.getSchema(rootId)` after `compile` returns `undefined`, and another root cannot `$ref` a form root by its `$id`. Register such schemas on the instance yourself, and declare `$async: true` on a separately registered schema that needs asynchronous validation:
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
+import Ajv from 'ajv';
+
+const address = { $id: 'https://example.com/address', type: 'object', properties: { city: { type: 'string' } } };
+const appAjv = new Ajv({ strict: false });
+appAjv.addSchema(address); // form roots can use { $ref: 'https://example.com/address' }
+plugin.validator.bind(appAjv);
+registerPlugin(plugin);
+```
+
+`createValidatorFactory` and `createValidator` refuse the same three options as `bind`, and enabling one of them after binding makes the next validation or guard compile throw. A custom AJV subclass must not register schemas or meta-schemas in its constructor, because the plugins build private compilers with that constructor; register them after constructing the instance. With AJV 6 and 7, `createValidatorFactory(ajv, key)` compiles the schema registered under `key` privately and leaves the instance's compile cache untouched.
+
 Move coercion to an explicit application input conversion, establish defaults through schema/defaultValue and the form's load rules, and remove unwanted keys in an explicit application transformation. Test the resulting submitted value; do not depend on validation to mutate the form. In particular, enabling `removeAdditional` is not a substitute for rejecting extra keys with JSON Schema.
 
 AJV8's built-in instances set `allowUnionTypes: true`. This removes the strictTypes log for multiple non-null types without changing which values satisfy the union and without enabling coercion. A consumer-bound instance retains its own strict options; configure it deliberately. AJV7 defaults to `strict: false`; AJV6 does not have AJV8's strictTypes union warning. Keep [validator configuration and dialect support](./validation#ajv-configuration) separate from input selection.
@@ -211,12 +227,30 @@ Migrate custom definitions with the [input selection contract](./schema-referenc
 
 Use application tests to decide whether each item applies; renaming imports alone does not cover the release line.
 
-- Check null, undefined, empty strings and containers, nullable-parent promotion and array replacement against [value states](./schema-reference#value-states). `minItems` is a constraint, not a promise to create submitted entries. Empty inputs publish undefined; explicit null is intentional. `omitTrailingEmpty` filters output without deleting raw nodes and, unlike 0.x `omitTrailing`, also removes trailing `null`, `''`, `[]` and `{}`, and `propertyOrder` orders output keys, not screen fields.
-- Replace timing assumptions: `onChange` and node notifications settle synchronously at the outer write boundary. Test batches and callbacks that write again, and use [event revisions and subscription catch-up](./api-reference#events-hooks) instead of waiting for an assumed microtask.
+- Check null, undefined, empty strings and containers, nullable-parent promotion and array replacement against [value states](./schema-reference#value-states). `minItems` is a constraint, not a promise to create submitted entries. Empty inputs publish undefined; explicit null is intentional. `omitTrailingEmpty` filters output without deleting raw nodes and, unlike 0.x `omitTrailing`, also removes trailing `null`, `''`, `[]` and `{}`, and `propertyOrder` orders output keys, not screen fields. A branch object or array holding `null` reads `null` from `node.value` and the FieldInput `value` prop; guard custom branch inputs before `value.map(…)` or `Object.keys(value)`.
+- Replace timing assumptions: `onChange` and node notifications settle synchronously at the outer write boundary. Test batches and callbacks that write again, and use [event revisions and subscription catch-up](./api-reference#events-hooks) instead of waiting for an assumed microtask. Inside `node.batch()` and `visitSubtree()`, an array method applies its arrangement immediately and keeps surviving item nodes, so reads after it see the new arrangement and a captured item reference edits that item at its new position; notifications still wait for the outer batch.
 - Audit conditional composition: ungated oneOf/anyOf branches all participate in shape; validation is separate. Use controls or a discriminator for branch selection, provide a validator for if, and test shared-property conflicts, nullable branches and terminal strategy. See [composition](./schema-reference#composition) and [discriminators](./schema-reference#discriminator).
 - Distinguish Edited/Touched from `isDivergent` and the current load baseline. Reacquire nodes on reentry/root replacement; detached nodes do not write into the live form. Replace cleanup-time writes with the [inactive resolver contract](./api-reference#inactive-listeners).
 - Use resolved custom-input locks and the [accessible naming contract](./schema-reference#accessibility). A branch object's local lock does not automatically lock all children: use `controls.fields` or a form-wide lock. Test enum empty options and radio/checkbox selectors.
 - Keep schemas and configuration immutable, clean up subscriptions, handle degraded diagnostics and execution failures separately from raw validation issues, and verify [CSP requirements](./quick-start#transpilation-csp) before deploying expression-based controls.
+
+## Control identifiers {#control-identifiers}
+
+This is a breaking change. Input ids and label associations include a per-Form scope, so a custom input that used `id={path}` is no longer associated with its label. Put the supplied `inputId` on the focusable control and keep `path` for data lookup. A radio group uses `inputId` as the native `name` of every option instead of the `name` prop; native `FormData` keys for radios therefore change, while `FormHandle.getValue()` keeps schema keys. Replace hand-built option ids such as `${path}-${index}` with `getInputId(index)`, and give a group title the `labelId` that FieldRenderer receives. The removed `id` prop is typed `id?: never`, and child and presentation overrides cannot set `id`, `inputId`, `labelId`, `getInputId` or `focusRef`. Ids are opaque: DOM tests that selected an input by its path, such as `label[for="/name"]`, must query by label text or role. Give distinct `identifierPrefix` values to independent server-rendered roots and to roots that render Forms with separate copies of `react-dom` in one document; see [control identifiers and author responsibility](./api-reference#control-identifiers-and-author-responsibility).
+
+```tsx
+// Before
+const Input = ({ path, defaultValue }: FormTypeInputProps) => (
+  <input id={path} defaultValue={defaultValue} />
+);
+```
+
+```tsx
+// After
+const Input = ({ inputId, defaultValue }: FieldInputProps) => (
+  <input id={inputId} defaultValue={defaultValue} />
+);
+```
 
 ## Renderer parts and input error feedback {#renderer-parts}
 
@@ -276,13 +310,13 @@ const Input = ({ node }: FieldInputProps) => {
 
 Search all custom inputs, destructuring, member reads and prop payloads for `errors` and `errorVisible` (for example, `rg "errors|errorVisible" src`). Their @deprecated optional-never keys catch member access such as errors.map and passing values, but a bare `if (errorVisible)` can still compile and read undefined. Typecheck alone cannot finish this migration. For hook limits and ownership, read [useFieldErrors](./api-reference#field-errors).
 
-The default group renders no empty em when a message is absent. A selector such as `[data-path="/branch"] em` can therefore match a descendant’s message; check that the message element’s closest data-path is the desired field. The default group removes the non-required label’s trailing space and marks its existing required asterisk aria-hidden; a default standalone Form.Label now shows the same asterisk. Form.Label accepts children for explicit copy. These markup excerpts omit other attributes and input markup. Group label/error markup without a message:
+The default group renders no empty em when a message is absent. A selector such as `[data-path="/branch"] em` can therefore match a descendant’s message; check that the message element’s closest data-path is the desired field. The default group removes the non-required label’s trailing space and marks its existing required asterisk aria-hidden; a default standalone Form.Label now shows the same asterisk. Form.Label accepts children for explicit copy. These markup excerpts omit other attributes and input markup. In the current markup, `«inputId»` stands for the field's opaque Form-scoped input id, not its path. Group label/error markup without a message:
 
 ```html
 <!-- Before -->
 <label for="/name">name </label><em></em>
 <!-- After -->
-<label for="/name">name</label>
+<label for="«inputId»">name</label>
 ```
 
 For a required standalone default label, the data-path div moves from inside the label to outside it; selectors such as `label > div` must change. Other attributes are omitted:
@@ -291,7 +325,7 @@ For a required standalone default label, the data-path div moves from inside the
 <!-- Before -->
 <label for="/name"><div data-path="/name">name</div></label>
 <!-- After -->
-<div data-path="/name"><label for="/name">name <span aria-hidden="true">*</span></label></div>
+<div data-path="/name"><label for="«inputId»">name <span aria-hidden="true">*</span></label></div>
 ```
 
 Replace a pass-through input renderer with a deliberate frame, or omit it. Follow [the children and unwrapped lifetime contract](./api-reference#input-frames); changing the ancestor path restarts the input with the current node value and loses focus/composition. The [bound part defaults](./api-reference#renderer-parts) replace hand-drawn labels and errors.

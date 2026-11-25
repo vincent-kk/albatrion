@@ -36,7 +36,10 @@ function alert<B = any>(options: AlertProps<B>): Promise<void>
 | `manualDestroy` | `boolean` | `false` | `true`이면 닫기 애니메이션 후 모달을 자동으로 제거하지 않습니다. |
 | `closeOnBackdropClick` | `boolean` | `true` | 백드롭을 클릭하면 닫습니다. |
 | `group` | `string` | — | 순서 지정을 위한 그룹 식별자 |
-| `handleResolve` | `(result: void \| null) => void` | — | 프로미스가 이행되면 호출합니다. |
+| `closeOnEscape` | `boolean` | `closeOnBackdropClick` 상속 | true이면 Escape가 이 모달을 취소합니다. |
+| `trapFocus` | `boolean` | `true` | dimmed 최상위 모달 안에 Tab을 가둡니다. |
+| `lockScroll` | `boolean` | `true` | dimmed 모달이 보이는 동안 body 스크롤을 잠급니다. |
+| `signal` | `AbortSignal` | — | 중단하면 일반 취소 결과로 모달을 취소합니다. |
 | `ForegroundComponent` | `ComponentType<PropsWithChildren<ModalFrameProps>>` | — | 모달별 전경 재정의 |
 | `BackgroundComponent` | `ComponentType<ModalFrameProps>` | — | 모달별 배경 재정의 |
 
@@ -102,7 +105,7 @@ function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined |
 | `Input` | `(props: PromptInputProps<T>) => ReactNode` | **필수** | 입력 컴포넌트 렌더러 |
 | `defaultValue` | `T` | — | 초기 값 |
 | `disabled` | `(value: T \| undefined) => boolean` | — | `true`를 반환하면 확인 버튼을 비활성화합니다. |
-| `returnOnCancel` | `boolean` | `false` | `true`이면 취소 시 `defaultValue`로 이행됩니다. |
+| `returnOnCancel` | `boolean` | `false` | `true`이면 취소 시 `null` 대신 현재 입력값으로 이행됩니다(렌더 전에는 `defaultValue`). |
 | `footer` | `PromptFooterRender<T> \| FooterOptions \| false` | — | 푸터 설정 |
 
 **`PromptInputProps<T>`**
@@ -111,7 +114,7 @@ function prompt<T, B = any>(options: PromptProps<T, B>): Promise<T | undefined |
 interface PromptInputProps<T, Context = object> {
   value?: T;
   defaultValue?: T;
-  onChange: (value: T | undefined) => void;
+  onChange: (value: T | undefined | ((current: T | undefined) => T | undefined)) => void;
   onConfirm: () => void;
   onCancel: () => void;
   context: Context;
@@ -153,8 +156,8 @@ import { ModalProvider, type ModalProviderProps, type ModalProviderHandle } from
 | `FooterComponent` | `ComponentType<FooterComponentProps>` | 전역 푸터 컴포넌트 |
 | `options` | `ModalOptions` | 모든 모달의 전역 기본값 |
 | `context` | `Record<string, any>` | 모든 컴포넌트 슬롯에 전달하는 임의의 데이터 |
-| `usePathname` | `() => { pathname: string }` | 경로를 인식하여 모달을 정리하는 사용자 정의 훅 |
-| `root` | `HTMLElement \| null` | 모달을 마운트할 DOM 요소 |
+| `usePathname` | `() => { pathname: string }` | 라우터 훅입니다. 미확정 모달은 열린 pathname과 다른 동안 확정되지 않고 숨겨집니다. |
+| `root` | `HTMLElement \| null` | 모달 포털의 컨테이너입니다. 생략하면 `document.body`, 요소를 주면 그 컨테이너, `null`이면 `initialize(element)`까지 초기화를 미룹니다. 바꾸면 열린 모달을 다시 마운트하지 않고 옮깁니다. |
 
 **핸들 (`ModalProviderHandle`)** — `ref`로 접근합니다:
 
@@ -164,12 +167,15 @@ interface ModalProviderHandle {
 }
 ```
 
+ref만으로는 초기화가 미뤄지지 않으며, `root`를 지정하지 않으면 모달은 `document.body`에 마운트됩니다. `initialize(element)`까지 기다리려면 `root={null}`을 전달합니다. 마지막 `root` 변경 또는 `initialize` 호출이 우선하며, root를 옮겨도 열린 모달과 입력, 포커스가 유지됩니다.
+
 ```tsx
 const ref = useRef<ModalProviderHandle>(null);
+
+<ModalProvider ref={ref} root={null}>...</ModalProvider>
+
 // Mount modals into a specific DOM node:
 ref.current?.initialize(containerElement);
-
-<ModalProvider ref={ref}>...</ModalProvider>
 ```
 
 ---
@@ -192,12 +198,12 @@ function useModal(configuration?: OverridableHandleProps): {
 
 ---
 
-### `useInitializeModal(options?)`
+### `useInitializeModal(props?)`
 
-모달 서비스 초기화를 수동으로 제어합니다. 특정 DOM 컨테이너에 모달을 마운트해야 할 때 유용합니다.
+`ModalProvider`와 같은 props(`root` 포함)를 받습니다. `mode: 'manual'`은 `initialize(element)` 또는 이후 `root` 변경까지 초기 root만 미룹니다. 반환된 `portal`은 항상 렌더링합니다.
 
 ```ts
-function useInitializeModal(options?: { mode?: 'auto' | 'manual' }): {
+function useInitializeModal(props?: ModalProviderProps & { mode?: 'auto' | 'manual' }): {
   initialize: (element: HTMLElement) => void;
   portal: ReactNode;
 }
@@ -205,45 +211,42 @@ function useInitializeModal(options?: { mode?: 'auto' | 'manual' }): {
 
 ---
 
-### `useActiveModalCount()`
+### `useActiveModalCount(validate?)`
 
-현재 활성화된(열린) 모달의 수를 반환합니다.
+`validate`와 일치하는 모달 수를 반환하고 저장소가 바뀌면 다시 렌더링합니다. `ModalProvider` 밖을 포함한 모든 컴포넌트에서 사용할 수 있습니다. 판별 함수가 없으면 보이는 모달을 세며, 사용자 판별 함수는 이 기본값을 대체하고 읽기 전용 `ModalNodeView`를 받으므로 보이는 모달만 세려면 `node.visible`을 포함합니다. 서버 렌더는 `0`을 반환합니다.
 
 ```ts
-function useActiveModalCount(): number
+function useActiveModalCount(validate?: (node: ModalNodeView) => boolean | undefined): number
 ```
 
 ---
 
 ### `useModalOptions()`
 
-현재 전역 모달 설정 옵션을 반환합니다.
+모달별 호출 재정의가 아닌 정규화된 Provider 옵션을 반환합니다. 모달 프레임·내용·입력·푸터 컴포넌트 안에서만 호출하며, 일반 `ModalProvider` 자식을 포함한 그 밖에서는 예외를 던집니다.
 
 ```ts
-function useModalOptions(): ConfigurationContextProps
+function useModalOptions(): Required<Omit<ModalOptions, 'backdrop' | 'duration' | 'closeOnEscape'>> & { backdrop: CSSProperties; duration: `${number}ms`; closeOnEscape?: boolean }
 ```
 
 ---
 
-### `useModalDuration()`
+### `useModalDuration(id?)`
 
-설정에서 모달 애니메이션 시간을 반환합니다.
+`id`를 생략하면 Provider 지속시간, 살아 있는 모달 id를 주면 그 모달의 지속시간을 반환하며 없는 id는 Provider 값으로 대체합니다. 모달 트리 안에서만 사용할 수 있으며 그 밖에서는 예외를 던집니다.
 
 ```ts
-function useModalDuration(): {
-  duration: string;     // CSS duration string, e.g. '250ms'
-  milliseconds: number; // numeric value, e.g. 250
-}
+function useModalDuration(id?: number): { duration: `${number}ms`; milliseconds: number }
 ```
 
 ---
 
 ### `useModalBackdrop()`
 
-설정에서 모달 백드롭 CSS 값을 반환합니다.
+Provider 백드롭을 CSS 속성으로 반환합니다. 모달 트리 안에서만 사용할 수 있으며 그 밖에서는 예외를 던집니다.
 
 ```ts
-function useModalBackdrop(): string | CSSProperties
+function useModalBackdrop(): CSSProperties
 ```
 
 ---
@@ -264,22 +267,22 @@ function useModalAnimation(
 
 ---
 
-### `useDestroyAfter(modalId, delayMs)`
+### `useDestroyAfter(modalId, delay)`
 
-지정된 지연 시간 후 모달을 자동으로 제거합니다. 커스텀 전경 컴포넌트(예: 토스트 알림)에서 사용합니다.
+모달이 확정된 뒤 `delay`가 지나면 파괴합니다. 사용자 정의 `manualDestroy` 프레임에서 종료 애니메이션 뒤 프레임을 제거할 때 사용합니다. 미확정 모달을 닫지 않고 경로 숨김만으로 시작하지 않으며 `delay`가 바뀌면 다시 예약합니다. 모달 트리 안에서만 사용할 수 있으며 그 밖에서는 예외를 던집니다.
 
 ```ts
-function useDestroyAfter(modalId: number, delayMs: number): void
+function useDestroyAfter(modalId: number, delay: number | `${number}ms` | `${number}s`): void
 ```
 
 ---
 
-### `useSubscribeModal(modal)`
+### `useSubscribeModal(id)`
 
-모달 노드의 상태 변경을 구독하고 현재 버전 번호를 반환합니다. 모달이 업데이트될 때 컴포넌트를 다시 렌더링합니다.
+모달 저장소를 구독하고 이 id를 가진 모달의 발행 버전을 반환하며 변경될 때마다 다시 렌더링합니다. `ModalProvider` 밖을 포함한 모든 컴포넌트에서 사용할 수 있습니다. 사용자 정의 프레임이 받는 `id`를 전달하며, 없거나 파괴된 id는 `-1`, 서버 렌더는 `0`을 반환합니다.
 
 ```ts
-function useSubscribeModal(modal: ModalNode): number
+function useSubscribeModal(modalId: number): number
 ```
 
 ---
@@ -294,6 +297,9 @@ function useSubscribeModal(modal: ModalNode): number
 interface ModalFrameProps<Context = object, B = any> {
   id: number;
   type: 'alert' | 'confirm' | 'prompt';
+  subtype?: 'info' | 'success' | 'warning' | 'error';
+  group?: string;
+  settled: boolean;
   alive: boolean;
   visible: boolean;
   initiator: string;
@@ -402,17 +408,18 @@ export interface ModalProviderHandle { initialize: (element: HTMLElement) => voi
 
 // Hooks
 export function useModal(configuration?: OverridableHandleProps): { alert, confirm, prompt }
-export function useInitializeModal(options?: { mode?: 'auto' | 'manual' }): { initialize, portal }
-export function useActiveModalCount(): number
-export function useModalOptions(): ConfigurationContextProps
-export function useModalDuration(): { duration: string; milliseconds: number }
-export function useModalBackdrop(): string | CSSProperties
+export function useInitializeModal(props?: ModalProviderProps & { mode?: 'auto' | 'manual' }): { initialize, portal }
+export function useActiveModalCount(validate?: (node: ModalNodeView) => boolean | undefined): number
+export function useModalOptions(): Required<Omit<ModalOptions, 'backdrop' | 'duration' | 'closeOnEscape'>> & { backdrop: CSSProperties; duration: `${number}ms`; closeOnEscape?: boolean }
+export function useModalDuration(id?: number): { duration: `${number}ms`; milliseconds: number }
+export function useModalBackdrop(): CSSProperties
 export function useModalAnimation(visible: boolean, handlers: { onVisible?(); onHidden?() }): void
-export function useDestroyAfter(modalId: number, delayMs: number): void
-export function useSubscribeModal(modal: ModalNode): number
+export function useDestroyAfter(modalId: number, delay: number | `${number}ms` | `${number}s`): void
+export function useSubscribeModal(modalId: number): number
 
 // Types
 export type { ModalOptions, ModalFrameProps, FooterComponentProps, ModalBackground }
+export type { AlertProps, ConfirmProps, PromptProps, OverridableHandleProps, ModalNodeView }
 export type { PromptInputProps, AlertContentProps, ConfirmContentProps, PromptContentProps }
 export type { WrapperComponentProps }
 ```
@@ -433,8 +440,7 @@ interface BaseModal<T, B> {
   closeOnEscape?: boolean;
   trapFocus?: boolean;
   lockScroll?: boolean;
-  handleResolve?: (result: T | undefined | null) => void;  // 내부용
-  handleReject?: (error: unknown) => void;                 // 내부용
+  signal?: AbortSignal;
   ForegroundComponent?: ComponentType<PropsWithChildren<ModalFrameProps>>;
   BackgroundComponent?: ComponentType<ModalFrameProps>;
 }

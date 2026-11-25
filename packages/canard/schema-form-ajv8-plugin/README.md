@@ -85,7 +85,7 @@ registerPlugin(plugin);
 - **Draft 2019-09**: Use for `$recursiveRef`, enhanced `$ref` handling, and `unevaluatedProperties`
 - **Draft 2020-12**: Use for `prefixItems`, `$dynamicRef`, and the latest JSON Schema features
 
-> **Note**: Existing users importing from `@canard/schema-form-ajv8-plugin` require no migration. The default export maintains full backward compatibility.
+> **Note**: The default entry still validates Draft-07, so existing imports from `@canard/schema-form-ajv8-plugin` keep their dialect. Version 1.0.0 refuses AJV instances that modify values and no longer registers form roots on your AJV instance; see the binding rule and `compileGuard(root, pointer)` below.
 
 ---
 
@@ -101,7 +101,7 @@ The plugin implements the `ValidatorPlugin` interface providing two main methods
 - **Usage**: Optional - if not called, a default AJV instance will be created automatically
 - **Benefits**: Custom keywords, formats, and validation settings that preserve input values
 - **Binding rule**: Instances with enabled `coerceTypes`, `useDefaults`, or `removeAdditional` are rejected immediately. The previous instance remains bound. The next validator or guard compile also rejects if one of those options is enabled after binding.
-- **Binding order**: Call `bind` once before the first compile; re-binding after a root is registered is not supported, and in this plugin roots that are already registered stay on the instance that registered them.
+- **Binding order**: Call `bind` once before the first compile; re-binding after a root is registered is not supported. After a rebind, later compiles of a root use the newly bound instance, while validators and guards compiled earlier keep the instance that compiled them.
 
 Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, the value of `FormErrorCode.ValidatorBindRefused`); core's `isUnhandledError` does not recognize it.
 
@@ -205,6 +205,8 @@ The `createValidatorFactory` function provides:
 - **Type Safety**: Full TypeScript support with advanced type inference
 
 `createValidatorFactory` throws `ValidatorBindRefusedError` when the AJV instance is configured to coerce values, apply defaults, or remove additional properties. Compiling a new validator also refuses those options if enabled after factory creation.
+
+The plugin builds private compilers with the bound instance's constructor. A custom AJV subclass must not register schemas or meta-schemas in its constructor; otherwise the next validation or guard compile throws `AJV isolation compiler creation failed: constructor registers bootstrap schemas`. Register application schemas with `addSchema` or `addMetaSchema` after constructing the instance.
 
 `createValidator(ajv)` returns a per-instance `{ compile, compileGuard }` object for a Form's `validatorFactory`: create it once outside render (`const validator = createValidator(customAjv);` then `<Form validatorFactory={validator} />`), because a new object makes the Form rebuild its tree; several validators may share one AJV instance, which must not modify values (`coerceTypes`, `useDefaults`, `removeAdditional` off).
 

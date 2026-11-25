@@ -98,11 +98,11 @@ filter<Type>(array: Type[], predicate: (item: Type, index: number, array: Type[]
 
 ```typescript
 forEach<Type>(array: Type[], callback: (item: Type, index: number, array: Type[]) => void): void
-forEachDual<A, B>(arrayA: A[], arrayB: B[], callback: (a: A, b: B, index: number) => void): void
+forEachDual<A, B>(arrayA: readonly A[], arrayB: readonly B[], callback: (a: A | undefined, b: B | undefined, index: number, arrayA: readonly A[], arrayB: readonly B[]) => boolean | void): void
 forEachReverse<Type>(array: Type[], callback: (item: Type, index: number, array: Type[]) => void): void
 ```
 
-순회 유틸리티. `forEachDual`은 더 짧은 배열의 길이에서 중단됩니다.
+순회 유틸리티. `forEachDual`은 더 긴 배열의 길이까지 실행하며 끝난 쪽에는 `undefined`를 전달하고, 콜백이 `false`를 반환하면 중단합니다.
 
 #### groupBy
 
@@ -132,6 +132,18 @@ map<Type, Result>(array: Type[], callback: (item: Type, index: number, array: Ty
 ```
 
 각 요소를 변환합니다. 결과 배열을 미리 할당합니다.
+
+#### orderedMerge
+
+`orderedMerge(preferred: readonly string[], source: readonly string[]): string[]` — 우선순위 순서를 따르는 중복 제거 합집합입니다. `preferred`의 키가 주어진 순서대로 먼저 오고, 그다음 아직 없는 `source`의 키가 옵니다. 정렬은 수행하지 않습니다.
+
+#### primitiveArrayEqual
+
+```typescript
+primitiveArrayEqual(a: unknown[], b: unknown[]): boolean
+```
+
+원시값 배열을 위한 빠른 동등성 검사.
 
 #### sortWithReference
 
@@ -222,7 +234,7 @@ const cloned = clone(obj); // 스택 오버플로우 없음
 cloneLite<Type>(target: Type, maxDepth?: number): Type
 ```
 
-순수 객체/배열과 원시값만 있는 단순 구조에 최적화된 빠른 깊은 복제. Date/Map/Set/순환 참조 미지원. own `__proto__` 키는 own 데이터 속성으로 복제되며 클론은 입력의 프로토타입을 유지합니다.
+순수 객체/배열과 원시값만 있는 단순 구조에 최적화된 빠른 깊은 복제. Date/Map/Set은 지원하지 않으며 참조 그대로 복사됩니다. 유한한 `maxDepth`가 없으면 순환 참조에서 `RangeError`를 던집니다. own `__proto__` 키는 own 데이터 속성으로 복제되며 클론은 입력의 프로토타입을 유지합니다.
 
 #### getDataProperty / setDataProperty / deleteDataProperty
 
@@ -253,17 +265,17 @@ shallowClone<Type>(target: Type): Type
 #### merge
 
 ```typescript
-merge<Target, Source>(target: Target, source: Source): Target & Source
+merge<Target, Source>(target: Target, source: Source, options?: MergeOptions): Target & Source
 ```
 
-깊은 재귀 병합. **`target`을 직접 수정합니다.** 배열은 연결(concatenation)됩니다. 순환 참조 보호 없음.
+깊은 재귀 병합. `options.immutable`이 `true`가 아니면 **`target`을 직접 수정합니다.** 배열은 기본적으로 인덱스별로 병합하며(`merge({ a: [1, 2] }, { a: [3] })`의 결과는 `{ a: [3, 2] }`), `arrayStrategy: 'replace'`는 뒤 배열 전체를 사용합니다. 순환 참조 보호 없음.
 
 ```typescript
 merge({ a: 1, b: { x: 10 } }, { b: { y: 20 }, c: 3 });
 // { a: 1, b: { x: 10, y: 20 }, c: 3 }
 
 merge({ tags: ['a'] }, { tags: ['b'] });
-// { tags: ['a', 'b'] }  ← 배열 연결
+// { tags: ['b'] }  ← 배열은 인덱스별로 병합 (0번 인덱스를 덮어씀)
 ```
 
 #### equals
@@ -272,7 +284,7 @@ merge({ tags: ['a'] }, { tags: ['b'] });
 equals<L, R>(left: L, right: R, omit?: Set<PropertyKey> | PropertyKey[]): boolean
 ```
 
-깊은 동등성 비교. NaN을 올바르게 처리합니다. **순환 참조 미지원** (스택 오버플로우 위험).
+깊은 동등성 비교. NaN을 올바르게 처리합니다. 순환 참조는 지원하지 않으며, 현재 경로에서 같은 비교가 반복되면 `RangeError`를 던집니다. 순환이 있을 수 있는 입력에는 `stableEquals`를 사용합니다.
 
 ```typescript
 equals({ a: 1 }, { a: 1 }); // true
@@ -286,6 +298,14 @@ stableEquals<L, R>(left: L, right: R): boolean
 ```
 
 순환 참조 안전한 깊은 동등성. 모든 타입 지원. `equals`보다 약 2배 느림.
+
+#### stringifyGraph / parseGraph
+
+순환, 공유 참조, 확장 내장 값을 위한 그래프 코덱.
+
+#### createFingerprint / createSortedFingerprint / createSafeFingerprint
+
+빠른 얕은 비교, 정렬된 경로, 순환 안전 구조 비교 용도에 맞춘 비교 키.
 
 #### transformKeys
 
@@ -320,11 +340,10 @@ transformValues<Type, Value>(object: Type, getValue: (value, key, object) => Val
 | `countKey(obj)`                | 상속 포함 모든 열거 가능 속성 수       |
 | `countObjectKey(obj)`          | 자체 열거 가능 속성 수                 |
 | `getEmptyObject()`             | `Object.create(null)` 생성             |
-| `getFirstKey(obj)`             | 첫 번째 자체 열거 가능 키              |
-| `getJSONPointer(obj, pointer)` | JSON Pointer로 값 조회                 |
+| `getFirstKey(obj)` | `for...in` 순서의 첫 키(상속된 열거 가능 키 포함) |
 | `getObjectKeys(obj)`           | 더 나은 타입의 `Object.keys`           |
 | `getSymbols(obj)`              | 자체 Symbol 속성 배열                  |
-| `hasUndefined(obj)`            | 자체 속성 중 undefined가 있으면 true   |
+| `hasUndefined(obj)` | 배열을 포함한 모든 깊이에서 `undefined`가 있으면 true, 순환 안전 |
 | `removePrototype(obj)`         | 프로토타입 체인 제거 (in-place)        |
 | `removeUndefined(obj)`         | undefined 값 속성 제거 후 새 객체 반환 |
 | `sortObjectKeys(obj)`          | 키가 알파벳 순으로 정렬된 새 객체 반환 |
@@ -353,6 +372,14 @@ try {
 }
 ```
 
+#### timeout
+
+```typescript
+timeout(ms?: number, options?: { signal?: AbortSignal }): Promise<never>
+```
+
+`ms` 밀리초(기본 0) 후 `TimeoutError`로 reject됩니다. 그 전에 `signal`이 중단되면 대신 `AbortError`로 reject됩니다.
+
 #### withTimeout
 
 ```typescript
@@ -374,18 +401,18 @@ try {
 #### waitAndExecute
 
 ```typescript
-waitAndExecute<T>(ms: number, fn: () => T): Promise<T>
+waitAndExecute<Return>(fn: () => Return, ms?: number): Promise<Return>
 ```
 
-`ms` 밀리초 대기 후 함수를 실행하여 결과를 반환합니다.
+`ms` 밀리초(기본 0) 대기한 뒤 `fn`을 호출하고 그 결과로 resolve합니다.
 
 #### waitAndReturn
 
 ```typescript
-waitAndReturn<T>(ms: number, value: T): Promise<T>
+waitAndReturn<Return>(fn: () => Return, ms?: number): Promise<Return>
 ```
 
-`ms` 밀리초 대기 후 값으로 resolve합니다.
+`fn`을 기다리지 않고 다음 마이크로태스크에서 호출하고, 최소 `ms` 밀리초(기본 0)가 지난 뒤 그 결과로 resolve합니다(최소 지속 시간). `fn`이 던진 예외는 대기 후 reject됩니다.
 
 ---
 
@@ -401,6 +428,8 @@ waitAndReturn<T>(ms: number, value: T): Promise<T>
   → setTimeout(0)
   → 브라우저 렌더링
 ```
+
+이 순서는 Node 기준입니다. 브라우저에서는 `scheduleNextTick`이 `setTimeout`으로 폴백하므로 함께 예약한 `setTimeout(0)`보다 늦게 실행되며, 타이머와의 순서에 의존하는 코드는 어느 쪽도 가정하면 안 됩니다. `scheduleMacrotask`는 더 긴 지연의 `setTimeout`보다 먼저 실행되는 것만 보장됩니다.
 
 #### scheduleMicrotask
 
@@ -428,7 +457,7 @@ cancelMacrotask(id: number): void
 scheduleCancelableMacrotask(callback: () => void): () => void  // 취소 함수 반환
 ```
 
-매크로태스크를 스케줄링/취소합니다. Node.js에서는 네이티브 `setImmediate`, 브라우저에서는 `MessageChannelScheduler` 사용 (`setTimeout(0)`보다 빠름, 자동 배치 최적화).
+매크로태스크를 스케줄링/취소합니다. Node.js에서는 네이티브 `setImmediate`, 브라우저에서는 `MessageChannelScheduler` 사용 (`setTimeout(0)`보다 빠름, 자동 배치 최적화). 브라우저에서 `MessageChannelScheduler`에 `onTaskError`가 없으면 작업에서 던진 오류를 호스트에 보고하므로 `window.onerror`나 처리되지 않은 오류 경로에 도달합니다. 다른 작업은 계속 실행됩니다. 오류를 직접 처리하려면 처음 호출하는 `MessageChannelScheduler.getInstance(options)`에 `{ onTaskError }`를 전달합니다.
 
 ---
 
@@ -566,11 +595,11 @@ const result = hasher.result();
 polynomialHash(target: string, length?: number): string
 ```
 
-Java의 `String.hashCode()` 방식 해시를 base36 문자열로 반환합니다. 기본 길이 7, 최대 7.
+Java의 `String.hashCode()` 방식 해시를 base36 문자열로 반환합니다. 기본 길이는 7이며, 더 긴 길이는 앞을 0으로 채우고 더 짧은 길이는 하위 자릿수를 남깁니다.
 
 ```typescript
-polynomialHash('cache-key'); // '2g4k8f1'
-polynomialHash('cache-key', 4); // '2g4k'
+polynomialHash('cache-key'); // '1putuhg'
+polynomialHash('cache-key', 4); // 'tuhg'
 ```
 
 ---
@@ -580,10 +609,10 @@ polynomialHash('cache-key', 4); // '2g4k'
 #### convertMsFromDuration
 
 ```typescript
-convertMsFromDuration(duration: string): number
+convertMsFromDuration(duration: string | null | undefined): number
 ```
 
-사람이 읽을 수 있는 기간 문자열을 밀리초로 변환합니다. 잘못된 입력에는 `0`을 반환합니다 (예외 발생 없음).
+사람이 읽을 수 있는 기간 문자열을 밀리초로 변환합니다. 잘못된 입력에는 `0`을 반환합니다 (예외 발생 없음). `null`과 `undefined`는 `0`을 반환합니다.
 
 | 단위 | 의미   | 예시      | 결과      |
 | ---- | ------ | --------- | --------- |
@@ -743,7 +772,7 @@ async function retry<T>(fn: () => Promise<T>, maxAttempts = 3): Promise<T> {
       return await fn();
     } catch (err) {
       if (attempt === maxAttempts) throw err;
-      await delay(Math.pow(2, attempt - 1) * 1000); // 1s, 2s, 4s
+      await delay(Math.pow(2, attempt - 1) * 1000); // 1s before attempt 2, 2s before attempt 3, doubling
     }
   }
   throw new Error('unreachable');

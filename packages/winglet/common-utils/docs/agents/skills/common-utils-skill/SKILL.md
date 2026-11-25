@@ -39,14 +39,14 @@ Applies when the consuming project imports from `@winglet/common-utils` or one o
 - **`getTrackableHandler` blocks concurrent calls by default** (`preventConcurrent: true`), and a blocked call resolves `undefined`. The guard also covers lifecycle hooks and their asynchronous waits.
 - **`.pending`, `.state`, and `.subscribe` are non-enumerable**, so they disappear from `{...handler}` and `Object.keys`. A trackable handler has no `.execute()`, `.clear()`, or `onError` — those belong to `debounce`/`throttle`.
 - **`clone(target, maxDepth)` returns nodes at or beyond `maxDepth` by reference**, so a depth-bounded clone silently shares mutable state with its original.
-- Before trusting a remembered signature, check `knowledge/corrections.md` — the package README contains four errors that agents reproduce verbatim.
+- Before trusting a remembered signature, check `knowledge/corrections.md` — it lists names and signatures that agents commonly get wrong.
 
 ## Knowledge Router
 
 | Topic                                                                                                                                                                                                                                                | File                       |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
 | Near-twin selection tables, circular-safety matrix, mutation and identity contracts, event-loop and scheduling model, rate-limiting modes, the `getTrackableHandler` contract, surprising predicates, and performance figures absent from signatures | `knowledge/semantics.md`   |
-| Flat wrong-to-right list for names, signatures, and behaviors that are commonly misremembered, including the four README errors                                                                                                                      | `knowledge/corrections.md` |
+| Flat wrong-to-right list for names, signatures, and behaviors that are commonly misremembered                                                                                                                      | `knowledge/corrections.md` |
 
 ## API Truth
 

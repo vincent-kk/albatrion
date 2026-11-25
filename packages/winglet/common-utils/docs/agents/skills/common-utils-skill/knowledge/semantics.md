@@ -47,7 +47,7 @@ An own `__proto__` key (as `JSON.parse` produces) is cloned by `cloneLite` as an
 | Family                               | What `Lite` changes                      | Consequence                                                                                                 |
 | ------------------------------------ | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `differenceLite`, `intersectionLite` | `indexOf` linear scan instead of a `Set` | **equality changes from SameValueZero to `===`, so `NaN` never matches**; faster below roughly 100 elements |
-| `cloneLite`                          | narrower type coverage                   | unsupported types pass through by reference; no cycle detection                                             |
+| `cloneLite`                          | narrower type coverage                   | unsupported types pass through by reference; a cycle throws `RangeError` unless a finite `maxDepth` stops traversal first |
 | `minLite`, `maxLite`                 | arity, not algorithm                     | takes two scalars, whereas `min`/`max` take one array — the call shapes are not interchangeable             |
 
 ```typescript
@@ -93,11 +93,11 @@ await waitAndReturn(fn, 500); // call fn now, resolve after 500 ms — a minimum
 
 ## Circular-reference safety matrix
 
-| Safe                                                                                          | Unsafe — recursion, so a cycle overflows the stack | Unsafe — iterative, so a cycle spins forever |
-| --------------------------------------------------------------------------------------------- | -------------------------------------------------- | -------------------------------------------- |
-| `clone`, `stableEquals`, `stringifyGraph`, `createSortedFingerprint`, `createSafeFingerprint` | `merge`, `removeUndefined`  | `cloneLite`, `equals`, `hasUndefined`                               |
+| Safe | Throws `RangeError` on a cycle | Unsafe — recursion, so a cycle overflows the stack |
+| --- | --- | --- |
+| `clone`, `stableEquals`, `stringifyGraph`, `createSortedFingerprint`, `createSafeFingerprint`, `hasUndefined` | `equals`, `cloneLite` (without a finite `maxDepth`) | `merge`, `removeUndefined` |
 
-`equals` rejects repeated comparisons on the current path. Without a finite depth limit, `cloneLite` detects cycles in its explicit work stack. A finite clone depth stops traversal at its boundary. Use `stableEquals` and `clone` when cycles are possible. When input can come from user data or a graph structure, this table picks the function.
+`equals` throws `RangeError` when a comparison repeats on the current path. Without a finite depth limit, `cloneLite` throws `RangeError` on a cycle; a finite clone depth stops traversal at its boundary. `hasUndefined` keeps a visited set, so a cycle ends its walk. Use `stableEquals` and `clone` when cycles are possible. When input can come from user data or a graph structure, this table picks the function.
 
 ## Mutation and identity contracts
 

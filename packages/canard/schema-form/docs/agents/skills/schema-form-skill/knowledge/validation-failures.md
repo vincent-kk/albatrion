@@ -21,7 +21,7 @@ The origin identifies the operation that opened the reporting chain, not the com
 Construction records remain `load` even if a different operation requested construction.
 An operation nested inside another keeps the origin of the operation that started it: a write in reset's onChange can be `load`, while reset from a write listener can be `write`.
 A failure already reported during validation keeps `validate` when submit encounters it; do not recategorize it as submit merely because the submit promise rejected.
-The errors prop is applied with `load` at first commit and with `write` when replaced later.
+The errors prop is applied with `load` at first commit and with `write` when a later array differs in content; an array with unchanged content is not reapplied.
 Some development console warnings are not onError records, so the console and callback need not contain identical lists.
 
 ## Handle an imperative failure at its caller

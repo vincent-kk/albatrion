@@ -12,7 +12,7 @@
 
 `@canard/schema-form-mui-plugin`은 Material-UI (MUI) 컴포넌트를 제공하는 `@canard/schema-form`용 플러그인입니다.
 
-FieldRenderer는 Input과 ErrorMessage 부품을 조립하고 공유 필드 제목의 참조 대상을 제공하며, 단독 라벨은 LabelRenderer를 사용합니다. LabelRenderer와 ErrorMessageRenderer는 각 루트 요소를 소유하며 LabelRenderer와 ErrorMessageRenderer로 등록됩니다. 플러그인은 입력 틀을 등록하지 않습니다.
+FieldRenderer는 그룹 라벨 없이 묶인 Input과 ErrorMessage 부품을 조립하며, 단독 라벨은 LabelRenderer를 사용합니다. LabelRenderer와 ErrorMessageRenderer는 각 루트 요소를 소유하며 LabelRenderer와 ErrorMessageRenderer로 등록됩니다. 플러그인은 입력 틀을 등록하지 않습니다.
 
 ---
 
@@ -204,11 +204,13 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 **의존성 요구사항:**
 
-- React 18.0.0 이상 (20.0.0 미만)
-- @mui/material 7.0.0 이상
-- @mui/x-date-pickers 8.0.0 이상 (날짜/시간 관련 컴포넌트 사용 시)
-- @emotion/react, @emotion/styled (MUI 스타일링 엔진)
-- dayjs 1.0.0 이상 (날짜 처리용)
+- @canard/schema-form 1.x (`^1.0.0`)
+- React 18 또는 19, React DOM도 같은 범위 (`>=18 <20`)
+- @mui/material 7.x (`^7.0.0`)
+- @mui/icons-material 7.x (`^7.0.0`)
+- @mui/x-date-pickers 8.x (`^8.0.0`)
+- @emotion/react, @emotion/styled 11.x (`^11.0.0`, MUI 스타일링 엔진)
+- dayjs 1.x (`^1.0.0`, 날짜 처리용)
 
 **중복 사본 안내:** 이 플러그인은 Emotion, MUI Material과 Icons, MUI X Date Pickers, dayjs를 dependencies와 peerDependencies에 모두 명시합니다. 따라서 패키지 매니저가 패키지를 배치하는 방식에 따라 애플리케이션이 지원 버전의 별도 사본을 추가로 불러올 수 있습니다. 플러그인이 호스트의 테마와 프로바이더를 공유하도록 중복 사본을 제거해 주세요.
 
@@ -240,14 +242,10 @@ const Input = ({ inputId, name }: FieldInputProps<string>) => (
 
 프로젝트와 관련된 문의나 제안은 이슈를 생성해 주세요.
 
-### Switch values and state labels
+### 스위치 값과 상태 라벨
 
-For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the unchecked (off) value.
+문자열 스위치에서 `enum[0]`은 켜진(checked) 값이고 `enum[1]`은 꺼진(unchecked) 값입니다.
 
-A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
+불리언 스위치는 선택 항목인 `checked`, `unchecked` ReactNode 라벨을 담은 `presentation.FieldInputProps.alias`를 받습니다. `context.checkboxLabels`가 있으면 그 객체 전체가 `alias`를 대체하고, 없으면 `alias`를 사용하며, 둘 다 없으면 상태 라벨을 표시하지 않습니다. 현재 상태 라벨이 필드 이름을 대체하지는 않습니다.
 
-For string switches, use the schema-level `switchLabels: [checkedLabel, uncheckedLabel]` tuple for custom state labels.
-
-### 슬라이더
-
-슬라이더의 미설정 표시, 정지점 및 키 입력은 UI 라이브러리가 처리합니다.
+문자열 스위치의 상태 라벨은 `context.switchLabels`가 있으면 그것을, 없으면 `presentation.FieldInputProps.alias`를 사용하며 둘 다 저장된 enum 값을 키로 씁니다. 선택한 맵에 없는 키는 enum 값을 표시합니다. 스키마 수준의 `switchLabels: [checkedLabel, uncheckedLabel]` 튜플은 두 맵이 모두 없을 때만 적용됩니다.

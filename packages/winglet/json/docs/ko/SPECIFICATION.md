@@ -90,7 +90,7 @@ const updated = applyPatch(source, patches);
 | `@winglet/json/pointer-manipulator` | `getValue`, `setValue`                              |
 | `@winglet/json/pointer-patch`       | `compare`, `applyPatch`, `difference`, `mergePatch` |
 | `@winglet/json/pointer-escape`      | `escapePath`, `unescapePath`, `escapeSegment`       |
-| `@winglet/json/pointer-common`      | `JSONPointer` 상수, `convertJSONPointerToPath`      |
+| `@winglet/json/pointer-common`      | `convertJSONPointerToPath`, `getJSONPointer` |
 | `@winglet/json/path`                | `JSONPath` 상수                                     |
 | `@winglet/json/path-common`         | `getJSONPath`, `convertJSONPathToPointer`           |
 
@@ -116,6 +116,8 @@ JSON Pointer(RFC 6901)는 JSON 문서 내의 특정 값을 식별하는 문자�
 | `"/arr/0"`   | `arr` 배열의 첫 번째 원소             |
 | `"/a~1b"`    | 키 `a/b` (슬래시를 `~1`로 이스케이프) |
 | `"/a~0b"`    | 키 `a~b` (틸드를 `~0`으로 이스케이프) |
+
+`#`로 시작하는 포인터는 URI 프래그먼트입니다(`"#"`은 문서 전체, `"#/a%20b"`는 키 `a b`). 퍼센트 이스케이프를 한 번 해석한 뒤 `~1`과 `~0`을 해제합니다. 일반 포인터 `/a%20b`는 퍼센트 텍스트를 키 데이터로 유지합니다. 잘못된 퍼센트 이스케이프는 `JSONPointerError`(코드 `INVALID_POINTER_TYPE`)를, `applyPatch`에서는 `JSONPatchError`(코드 `PATCH_PATH_INVALID`)를 던집니다.
 
 ### getValue
 
@@ -350,6 +352,8 @@ function applyPatch<Result>(
 ): Result;
 ```
 
+`immutable: true`(기본값)에서는 소스와 patch 값을 수정하지 않지만, 결과는 깊은 복사본이 아닙니다. 쓰기 경로에 있는 컨테이너만 복사하므로 쓰지 않은 하위 트리는 `source`와 공유하고, `add`·`replace`의 값은 참조 그대로 설치되어 patch와 공유합니다. 마지막 연산이 루트 `add` 또는 `replace`이면 patch 값 자체를 반환합니다. 소스나 patch를 그대로 유지해야 하면 결과를 직접 변경하기 전에 깊은 복사를 하세요.
+
 ```typescript
 import { applyPatch } from '@winglet/json/pointer-patch';
 
@@ -375,6 +379,8 @@ applyPatch({ status: 'draft' }, [
 ]);
 // { status: 'published' }
 ```
+
+**예외**: `JSONPatchError`(name `'JSONPatch'`, `specific`에 코드)를 모든 모드에서 던집니다. 값이 다르거나 위치가 없는 `test`, 없는 멤버의 `remove`·`replace`, 숫자가 아니거나 앞자리 0(`/a/01`)이 있거나 범위를 벗어나거나 `4294967294`를 넘는 배열 인덱스, 알 수 없는 `op`, `from`이 없는 `move`·`copy`, 자기 `from` 하위로의 `move`, `/` 또는 `#`로 시작하지 않는 경로, 없는 중간 컨테이너가 해당합니다. 코드: `PATCH_TEST_FAILED`, `PATCH_OBJECT_PROPERTY_NOT_FOUND`, `PATCH_ARRAY_INDEX_INVALID`, `PATCH_ARRAY_INDEX_OUT_OF_BOUNDS`, `PATCH_OPERATION_INVALID`, `PATCH_TARGET_NOT_OBJECT`, `PATCH_PATH_INVALID`, `PATCH_PATH_INVALID_INTERMEDIATE`, `PATCH_PATH_PROCESSING_ERROR`, `PATCH_MOVE_INTO_DESCENDANT_FORBIDDEN`. `immutable: false`에서는 실패한 연산 이전의 연산이 이미 기록되어 있습니다.
 
 ### difference
 
@@ -621,7 +627,7 @@ getValue(new Map(), '/path'); // INVALID_INPUT 예외
 
 | 코드                   | 발생 조건                                                                                          |
 | ---------------------- | -------------------------------------------------------------------------------------------------- |
-| `INVALID_INPUT`        | 입력이 일반 객체 또는 배열이 아닌 경우                                                             |
+| `INVALID_INPUT` | 입력이 일반 객체 또는 배열이 아니거나, `setValue`가 원시값 아래에 써야 하는 경우(예: `a`가 `1`일 때 `/a/b`) |
 | `INVALID_POINTER_TYPE` | 포인터가 문자열이나 문자열·숫자 배열이 아니거나, 문자열 포인터가 `/` 또는 `#`로 시작하지 않는 경우 |
 
 위치가 없는 것은 에러가 아닙니다: `getValue`는 `undefined`를 반환합니다.
@@ -646,7 +652,7 @@ try {
 
 | 상황                         | 권장 설정                                  |
 | ---------------------------- | ------------------------------------------ |
-| 깊은 중첩 구조의 대용량 문서 | `immutable: false` — 딥 클론 오버헤드 제거 |
+| 깊은 중첩 구조의 대용량 문서 | `immutable: false` — 쓰기 경로마다 컨테이너를 복사하는 비용 제거 |
 | 메모리 제약 환경             | `mergePatch`의 `immutable: false`          |
 
 ```typescript

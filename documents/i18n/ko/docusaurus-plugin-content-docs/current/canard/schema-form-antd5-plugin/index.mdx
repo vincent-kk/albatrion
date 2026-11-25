@@ -33,7 +33,7 @@ yarn add @canard/schema-form-antd5-plugin
 ### 피어 의존성 {#peer-dependencies}
 
 ```bash
-yarn add antd@^5.10.0 dayjs@^1.0.0 "react@>=18 <20" "react-dom@>=18 <20"
+yarn add @canard/schema-form@^1.0.0 antd@^5.10.0 dayjs@^1.0.0 "react@>=18 <20" "react-dom@>=18 <20"
 ```
 
 ## 빠른 설정 {#quick-setup}
@@ -75,10 +75,12 @@ registerPlugin(plugin);
 ## 스키마 확장 속성 {#schema-extension-properties}
 
 ```ts
-// Custom schema properties recognized by this plugin
+// Selection hints read by this plugin
 {
-  inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' |
-             'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange',
+  presentation?: {
+    inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' |
+               'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange',
+  },
   // Standard JSON Schema properties also used for routing:
   format?: 'date' | 'time' | 'month' | 'password' | 'uri' |
            'textarea' | 'date-range' | 'month-range' | 'time-range',
@@ -120,7 +122,7 @@ type AntdContext = {
 
 ## AI 참조 {#ai-reference}
 
-**패키지**: `@canard/schema-form-antd5-plugin` v0.10.0
+**패키지**: `@canard/schema-form-antd5-plugin` 1.x
 **목적**: Ant Design v5 UI 플러그인으로, `@canard/schema-form`을 위한 폼 입력 컴포넌트 18개를 제공합니다.
 
 ### 내보내기 {#exports}
@@ -129,7 +131,7 @@ import { plugin } from '@canard/schema-form-antd5-plugin';
 ```
 
 ### 피어 의존성 {#peer-dependencies-1}
-`antd@^5.10.0`, `dayjs@^1.0.0`, `react@>=18 <20`
+`@canard/schema-form@^1.0.0`, `antd@^5.10.0`, `dayjs@^1.0.0`, `react@>=18 <20`
 
 ### 컴포넌트 매핑 (우선순위 높은 순) {#component-mapping-priority-order-high--low}
 | 컴포넌트 | 선택 조건 |
@@ -155,6 +157,6 @@ type AntdContext = { size?: 'small' | 'middle' | 'large' };
 ```
 
 ### 스키마 확장 {#schema-extensions}
-`inputType`: `'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange'`
+`presentation.inputType`: `'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange'`
 
 </ForAI>

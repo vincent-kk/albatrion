@@ -23,7 +23,7 @@ sidebar_position: 7
 | submit   | degraded 제출 거부 또는 판정 전에 네이티브 제출이 처음 포착한 실패. 스키마 판정과 onSubmit 실패는 제외 |
 | render   | 렌더링 경계가 잡은 사용자 FieldInput·렌더러 예외와 렌더링 경고                                       |
 
-이미 열린 체인은 중첩 쓰기·reset에도 바깥 origin을 유지하며 트리 생성 발생은 항상 load입니다. 외부 errors의 최초 적용은 load, 이후 속성 교체는 write이며 submit 안에서 이미 보고한 검증기 실행·컴파일 실패는 validate를 유지합니다. 스키마 판정과 콜백 실패는 [제출](#submission)을 참조하십시오. 일부 개발 콘솔 경고에는 onError 레코드가 없어 두 채널이 같지 않을 수 있습니다.
+이미 열린 체인은 중첩 쓰기·reset에도 바깥 origin을 유지하며 트리 생성 발생은 항상 load입니다. 외부 errors의 최초 적용은 load, 이후 속성 내용 변경은 write이며 submit 안에서 이미 보고한 검증기 실행·컴파일 실패는 validate를 유지합니다. 스키마 판정과 콜백 실패는 [제출](#submission)을 참조하십시오. 일부 개발 콘솔 경고에는 onError 레코드가 없어 두 채널이 같지 않을 수 있습니다.
 
 `^/invalid[`처럼 컴파일할 수 없는 명시적 입력 맵 패턴은 커밋 뒤 `level: 'error'`, `code: FormErrorCode.FieldInputMap`, `origin: 'load'` 레코드를 StrictMode에서도 한 번 보고합니다. 처음부터 잘못된 맵은 load 폴백을 유지합니다. 실행 중 잘못된 맵으로 교체하면 현재 트리와 마지막 유효 맵을 보존합니다. 맵 참조를 바꾸면 다시 평가하며 새 잘못된 키는 한 번 보고하고 유효한 맵으로 재마운트 없이 복구합니다.
 
@@ -89,7 +89,7 @@ Enter 제출은 네이티브 폼 알고리즘을 따릅니다. 텍스트 계열 
 | `FormErrorCode.InvalidVirtualNodeValues`     | `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`      | virtual 노드에 잘못된 형상의 값을 쓰는 경우                                                                                                       |
 | `FormErrorCode.ArrayMethodOnNonArray`        | `SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY`        | 배열이 아닌 노드에 배열 명령을 호출하는 경우                                                                                                      |
 | `FormErrorCode.RecursiveShapeUnbounded`      | `JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED`        | 분석 중 무한 재귀 형상이 발견되는 경우                                                                                                            |
-| `FormErrorCode.RecursiveShapeDiverged`       | `SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED`         | 재귀 형상 확장이 정착 예산을 초과하는 경우                                                                                                      |
+| `FormErrorCode.RecursiveShapeDiverged`       | `SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED`         | 재귀 형상 확장이 정착 예산을 초과하거나 값 확장이 객체·배열 노드 256단계를 넘는 경우(객체와 배열은 각각 한 단계) |
 | `FormErrorCode.VirtualFieldsMismatch`        | `JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH`          | 선언 간 가상 필드가 일치하지 않는 경우                                                                                                       |
 | `FormErrorCode.ChildrenTargetNotFound`       | `JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND`        | 선언한 자식 이름을 찾을 수 없는 경우                                                                                                              |
 | `FormErrorCode.TerminalOptionUnsupported`    | `JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED`      | 전략이 고정된 종류에 반대 말단 옵션을 지정한 경우                                                                                             |

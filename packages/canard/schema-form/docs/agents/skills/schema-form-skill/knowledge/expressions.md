@@ -77,7 +77,7 @@ controls: {
 
 - Direct access is `@.field`. For optional chaining, wrap in parentheses: `(@).a?.b` — the parenthesized form is required and cannot be guessed.
 - When `context` changes, dependent controls expressions recompute automatically — no `watch` declaration needed.
-- `@` path expressions work only inside controls expressions — not in `node.find()` paths and not in `fieldInputMap` keys. (`node.find('@')` — the bare token — returns the context node itself; see `jsonpointer.md`.)
+- `@` path expressions work only inside controls expressions — not in `node.find()` paths and not in `fieldInputMap` keys. (`node.find('@')` returns null and `findNodes('@')` returns an empty array; see `jsonpointer.md`.)
 
 ## Conditional Branches: oneOf / anyOf / allOf
 

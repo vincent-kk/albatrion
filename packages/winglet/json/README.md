@@ -97,7 +97,6 @@ Provides special character constants used in JSONPath expressions.
 #### Supported Operators
 
 - **[`JSONPath.Root`](./src/JSONPath/enum.ts)** (`$`): Root node of the JSON document
-- **[`JSONPath.Parent`](./src/JSONPath/enum.ts)** (`_`): Parent node of the current node
 - **[`JSONPath.Current`](./src/JSONPath/enum.ts)** (`@`): Currently processing node
 - **[`JSONPath.Child`](./src/JSONPath/enum.ts)** (`.`): Child node access operator
 - **[`JSONPath.Filter`](./src/JSONPath/enum.ts)** (`#`): Filter condition operator
@@ -152,7 +151,7 @@ const result = setValue(data, '/user/profile/email', 'vincent@example.com');
 import { escapePath } from '@winglet/json';
 
 const escaped = escapePath('path/with~special');
-// Result: "path~1with~0special"
+// Result: "path/with~0special" ("/" stays a separator; use escapeSegment to escape a "/" inside one key)
 ```
 
 **[`unescapePath`](./src/JSONPointer/utils/escape/unescapePath.ts)**

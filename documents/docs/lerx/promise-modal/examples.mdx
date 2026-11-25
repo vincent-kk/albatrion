@@ -162,19 +162,16 @@ Pass typed data to `BackgroundComponent` via `background.data`.
 ```tsx
 type BgData = 'danger' | 'normal';
 
-const MyBackground = ({ background, children, onClick }: ModalFrameProps<object, BgData>) => {
+const MyBackground = ({ background }: ModalFrameProps<object, BgData>) => {
   const color = background?.data === 'danger' ? 'rgba(200,0,0,0.4)' : 'rgba(0,0,0,0.35)';
-  return (
-    <div style={{ position: 'fixed', inset: 0, background: color, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={onClick}>
-      {children}
-    </div>
-  );
+  return <div style={{ position: 'fixed', inset: 0, background: color }} />;
 };
 
 await confirm({
   title: 'Delete account',
   content: 'This is permanent.',
   background: { data: 'danger' },
+  BackgroundComponent: MyBackground,
 });
 ```
 
@@ -190,16 +187,21 @@ async function handleSubmit() {
   });
   if (!confirmed) return;
 
-  // Show a loading-style alert while work completes
-  const done = submitOrder();
-  await alert({
+  // Show a progress alert that only the finished work closes.
+  const controller = new AbortController();
+  const processing = alert({
     title: 'Processing',
     content: 'Please wait...',
-    manualDestroy: true,   // keep alive until we call onDestroy
-    closeOnBackdropClick: false,
     footer: false,
+    closeOnBackdropClick: false,
+    signal: controller.signal,
   });
-  await done;
+  try {
+    await submitOrder();
+  } finally {
+    controller.abort(); // resolves `processing` with the ordinary cancellation result
+    await processing;
+  }
 }
 ```
 
@@ -267,22 +269,14 @@ function ItemEditor({ itemId }: { itemId: string }) {
 ## Custom anchor (render modals into a specific DOM node)
 
 ```tsx
-import { useRef, useEffect } from 'react';
-import { ModalProvider, type ModalProviderHandle, alert } from '@lerx/promise-modal';
+import { useState } from 'react';
+import { ModalProvider, alert } from '@lerx/promise-modal';
 
 function CustomAnchorExample() {
-  const providerRef = useRef<ModalProviderHandle>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (providerRef.current && containerRef.current) {
-      providerRef.current.initialize(containerRef.current);
-    }
-  }, []);
-
+  const [container, setContainer] = useState<HTMLDivElement | null>(null);
   return (
-    <ModalProvider ref={providerRef}>
-      <div ref={containerRef} style={{ position: 'relative', height: 400 }} />
+    <ModalProvider root={container}>
+      <div ref={setContainer} style={{ position: 'relative', height: 400 }} />
       <button onClick={() => alert({ title: 'In container', content: 'Rendered inside the div above.' })}>
         Open
       </button>
@@ -394,7 +388,7 @@ const myPrompt = await prompt<string>({
 | Background data | `alert({ background: { data: myData } })` |
 | Sequential workflow | `await confirm(...)` then `await prompt(...)` then `await alert(...)` |
 | Auto-close on unmount | `const modal = useModal(); await modal.confirm(...)` |
-| Custom DOM target | `ModalProviderHandle.initialize(element)` |
+| Custom DOM target | `<ModalProvider root={element}>`, or `root={null}` plus `ModalProviderHandle.initialize(element)` |
 | Toast | `alert({ footer: false, dimmed: false, ForegroundComponent: toastComponent })` |
 | Theme/locale in components | `ModalProvider context={...}` + `WrapperComponentProps.context` |
 
@@ -405,7 +399,7 @@ const myPrompt = await prompt<string>({
 3. Custom `ForegroundComponent` must forward `children` (it wraps title, content, footer slots).
 4. `BackgroundComponent` does NOT receive `children` — it is a sibling layer, not a wrapper.
 5. `manualDestroy: true` requires calling `onDestroy()` explicitly; otherwise the modal DOM node leaks.
-6. `useDestroyAfter` and `useModalAnimation` must be called inside a `ForegroundComponent` rendered by the modal system (they read modal context internally).
+6. `useDestroyAfter` and the configuration hooks (`useModalOptions`, `useModalBackdrop`, `useModalDuration`) throw outside the modal tree (frame, content, input, footer); `useModalAnimation` works in any component.
 7. `footer: false` hides the footer entirely — no confirm/cancel buttons.
 8. `disabled` in `prompt` controls the confirm button state; it does not prevent the modal from being closed via backdrop or cancel.
 

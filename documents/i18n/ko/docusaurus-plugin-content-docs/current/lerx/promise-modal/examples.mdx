@@ -162,19 +162,16 @@ await alert({
 ```tsx
 type BgData = 'danger' | 'normal';
 
-const MyBackground = ({ background, children, onClick }: ModalFrameProps<object, BgData>) => {
+const MyBackground = ({ background }: ModalFrameProps<object, BgData>) => {
   const color = background?.data === 'danger' ? 'rgba(200,0,0,0.4)' : 'rgba(0,0,0,0.35)';
-  return (
-    <div style={{ position: 'fixed', inset: 0, background: color, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={onClick}>
-      {children}
-    </div>
-  );
+  return <div style={{ position: 'fixed', inset: 0, background: color }} />;
 };
 
 await confirm({
   title: 'Delete account',
   content: 'This is permanent.',
   background: { data: 'danger' },
+  BackgroundComponent: MyBackground,
 });
 ```
 
@@ -190,16 +187,21 @@ async function handleSubmit() {
   });
   if (!confirmed) return;
 
-  // Show a loading-style alert while work completes
-  const done = submitOrder();
-  await alert({
+  // Show a progress alert that only the finished work closes.
+  const controller = new AbortController();
+  const processing = alert({
     title: 'Processing',
     content: 'Please wait...',
-    manualDestroy: true,   // keep alive until we call onDestroy
-    closeOnBackdropClick: false,
     footer: false,
+    closeOnBackdropClick: false,
+    signal: controller.signal,
   });
-  await done;
+  try {
+    await submitOrder();
+  } finally {
+    controller.abort(); // resolves `processing` with the ordinary cancellation result
+    await processing;
+  }
 }
 ```
 
@@ -267,22 +269,14 @@ function ItemEditor({ itemId }: { itemId: string }) {
 ## 사용자 정의 앵커 (특정 DOM 노드에 모달 렌더링하기) {#custom-anchor-render-modals-into-a-specific-dom-node}
 
 ```tsx
-import { useRef, useEffect } from 'react';
-import { ModalProvider, type ModalProviderHandle, alert } from '@lerx/promise-modal';
+import { useState } from 'react';
+import { ModalProvider, alert } from '@lerx/promise-modal';
 
 function CustomAnchorExample() {
-  const providerRef = useRef<ModalProviderHandle>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (providerRef.current && containerRef.current) {
-      providerRef.current.initialize(containerRef.current);
-    }
-  }, []);
-
+  const [container, setContainer] = useState<HTMLDivElement | null>(null);
   return (
-    <ModalProvider ref={providerRef}>
-      <div ref={containerRef} style={{ position: 'relative', height: 400 }} />
+    <ModalProvider root={container}>
+      <div ref={setContainer} style={{ position: 'relative', height: 400 }} />
       <button onClick={() => alert({ title: 'In container', content: 'Rendered inside the div above.' })}>
         Open
       </button>
@@ -394,7 +388,7 @@ const myPrompt = await prompt<string>({
 | 배경 데이터 | `alert({ background: { data: myData } })` |
 | 순차 작업 흐름 | `await confirm(...)` 다음 `await prompt(...)` 다음 `await alert(...)` |
 | 언마운트 시 자동 닫기 | `const modal = useModal(); await modal.confirm(...)` |
-| 사용자 정의 DOM 대상 | `ModalProviderHandle.initialize(element)` |
+| 사용자 정의 DOM 대상 | `<ModalProvider root={element}>` 또는 `root={null}`과 `ModalProviderHandle.initialize(element)` |
 | 토스트 | `alert({ footer: false, dimmed: false, ForegroundComponent: toastComponent })` |
 | 컴포넌트의 테마/로케일 | `ModalProvider context={...}` + `WrapperComponentProps.context` |
 
@@ -405,7 +399,7 @@ const myPrompt = await prompt<string>({
 3. 사용자 정의 `ForegroundComponent`는 `children`을 전달해야 합니다 (`title`, `content`, `footer` 슬롯을 감쌉니다).
 4. `BackgroundComponent`는 `children`을 받지 않습니다. 래퍼가 아닌 형제 레이어입니다.
 5. `manualDestroy: true`를 사용하면 `onDestroy()`를 명시적으로 호출해야 합니다. 그렇지 않으면 모달 DOM 노드가 누수됩니다.
-6. `useDestroyAfter`와 `useModalAnimation`은 모달 시스템이 렌더링한 `ForegroundComponent` 내부에서 호출해야 합니다 (내부적으로 모달 컨텍스트를 읽습니다).
+6. `useDestroyAfter`와 설정 훅(`useModalOptions`, `useModalBackdrop`, `useModalDuration`)은 모달 트리(프레임·내용·입력·푸터) 밖에서 예외를 던지며, `useModalAnimation`은 모든 컴포넌트에서 사용할 수 있습니다.
 7. `footer: false`는 푸터 전체를 숨기므로 확인/취소 버튼이 없습니다.
 8. `prompt`의 `disabled`는 확인 버튼 상태를 제어합니다. 백드롭이나 취소를 통한 모달 닫기를 막지는 않습니다.
 

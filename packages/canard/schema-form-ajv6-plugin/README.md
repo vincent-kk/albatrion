@@ -112,7 +112,7 @@ Strict options on a bound instance, such as `strictKeywords`, may make some `if`
 
 #### **`release(root)`**
 
-- **Purpose**: Removes that root's Ajv registrations and compiled results when the form cache evicts it
+- **Purpose**: Releases the plugin's retained resources for that root when the form cache evicts it; schemas registered on your AJV instance are not removed
 - **Call order**: Accepts the same engine-owned copy whether or not `compile` has run. Releasing an unregistered root is a no-op.
 
 ### **Default Configuration**
@@ -134,7 +134,7 @@ const defaultSettings: Ajv.Options = {
 The `createValidatorFactory` function provides:
 
 - **Error Standardization**: Converts AJV errors to a consistent format
-- **Performance Optimization**: Reuses the registration for the same root object until `release(root)`
+- **Performance Optimization**: Reuses the compiled validator for the same root object while the root and the instance's options, formats, keywords and registered schemas are unchanged
 - **Detailed Error Messages**: Rich error information for better user experience
 - **Type Safety**: Full TypeScript support with proper type inference
 
