@@ -3,7 +3,12 @@ import { createRef } from 'react';
 import { act, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { Form, FormErrorCode, type FormHandle } from '../../index';
+import {
+  type FieldNode,
+  Form,
+  FormErrorCode,
+  type FormHandle,
+} from '../../index';
 import { mountEngineForm } from './fixtures/mountEngineForm';
 
 afterEach(() => vi.unstubAllGlobals());
@@ -40,6 +45,73 @@ it.each([300, 1000])(
     expect(reportError).toHaveBeenCalledWith(
       expect.objectContaining({ code: FormErrorCode.RecursiveShapeDiverged }),
     );
+  },
+);
+
+const nestedLists = (levels: number): unknown[] => {
+  let value: unknown[] = [];
+  for (let level = 1; level < levels; level++) value = [value];
+  return value;
+};
+const deepestDepth = (root: FieldNode): number => {
+  let deepest = 0;
+  root.visitSubtree((node) => {
+    deepest = Math.max(deepest, node.depth);
+  });
+  return deepest;
+};
+
+it.each([
+  ['loads', 256, undefined],
+  ['loads', 257, FormErrorCode.RecursiveShapeDiverged],
+  ['activates', 256, undefined],
+  ['activates', 257, FormErrorCode.RecursiveShapeDiverged],
+] as const)(
+  '%s a value whose deepest node would sit %i levels below the root with error %s',
+  (path, deepest, code) => {
+    const onError = vi.fn();
+    vi.stubGlobal('reportError', vi.fn());
+    const $defs = {
+      list: { type: 'array', items: { $ref: '#/$defs/list' } },
+    } as const;
+    const root =
+      path === 'loads'
+        ? mountEngineForm({
+            jsonSchema: { $defs, $ref: '#/$defs/list' },
+            defaultValue: nestedLists(deepest + 1),
+            onError,
+          })
+        : mountEngineForm({
+            jsonSchema: {
+              $defs,
+              type: 'object',
+              properties: {
+                on: { type: 'boolean' },
+                list: {
+                  $ref: '#/$defs/list',
+                  controls: { active: '../on === true' },
+                },
+              },
+            },
+            defaultValue: { on: false, list: nestedLists(deepest) },
+            onError,
+          });
+    if (path === 'activates') {
+      expect(root.find('/list')).toBeNull();
+      let thrown: unknown;
+      try {
+        act(() => root.find('/on')!.setValue(true));
+      } catch (error) {
+        thrown = error;
+      }
+      expect(thrown).toEqual(
+        code ? expect.objectContaining({ code }) : undefined,
+      );
+    }
+    expect(onError.mock.calls.map(([record]) => record.code)).toEqual(
+      code ? [code] : [],
+    );
+    expect(deepestDepth(root)).toBe(code ? deepest - 1 : deepest);
   },
 );
 

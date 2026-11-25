@@ -119,7 +119,7 @@ const loader = new DataLoader<Key, Value, CacheKey>(
     cacheKeyFn, // (key) => CacheKey — defaults to identity
     batchScheduler, // (task) => void — defaults to scheduleNextTick
     maxBatchSize, // number — defaults to Infinity
-    // disableBatch: true is the mutually exclusive alternative to maxBatchSize
+    // disableBatch: true is an alternative to maxBatchSize and wins when both are given
   },
 );
 

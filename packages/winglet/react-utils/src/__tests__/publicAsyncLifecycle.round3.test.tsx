@@ -30,4 +30,25 @@ describe('r3 react-utils: useTimeout after unmount (JSDoc: "Auto-cleanup: Preven
       vi.useRealTimers();
     }
   });
+
+  it('schedule() called after unmount creates no timer and leaves the hook idle', () => {
+    vi.useFakeTimers();
+    try {
+      let schedule = () => {};
+      let isIdle = () => false;
+      const Probe = () => {
+        ({ schedule, isIdle } = useTimeout(() => {}, 50));
+        return null;
+      };
+      render(<Probe />).unmount();
+      const timers = vi.getTimerCount();
+      schedule();
+      expect({ timers: vi.getTimerCount(), idle: isIdle() }).toEqual({
+        timers,
+        idle: true,
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

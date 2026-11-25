@@ -199,3 +199,70 @@ it.each(['timeout', 'version'])(
     }
   },
 );
+
+it('a handle called during a later render runs the previously committed handler, and an uncommitted handler never runs', async () => {
+  const ran: string[] = [];
+  const duringRender: Array<{ value: string; called: string; shown: string }> =
+    [];
+  let mounted = false;
+  let handle = () => '';
+  let setValue = (_value: string) => {};
+  const pending = new Promise<void>(() => {});
+  const Probe = () => {
+    const [value, set] = useState('A');
+    setValue = set;
+    handle = useHandle(() => {
+      ran.push(value);
+      return value;
+    });
+    if (mounted)
+      duringRender.push({
+        value,
+        called: handle(),
+        shown: document.body.textContent ?? '',
+      });
+    if (value === 'B') throw pending;
+    return <span>{value}</span>;
+  };
+  const view = render(
+    <Suspense fallback="loading">
+      <Probe />
+    </Suspense>,
+  );
+  mounted = true;
+  await act(async () => {
+    startTransition(() => setValue('B'));
+  });
+  await act(async () => {
+    setValue('C');
+  });
+  expect(view.container.textContent).toBe('C');
+  expect(duringRender.map(({ value }) => value)).toEqual(
+    expect.arrayContaining(['B', 'C']),
+  );
+  expect(duringRender.filter(({ called, shown }) => called !== shown)).toEqual(
+    [],
+  );
+  expect(duringRender.find(({ value }) => value === 'C')?.called).toBe('A');
+  expect(handle()).toBe('C');
+  expect(ran).not.toContain('B');
+  view.unmount();
+});
+
+it('a handle called during the first render runs that render’s handler, even when the render never commits', () => {
+  const ran: string[] = [];
+  const pending = new Promise<void>(() => {});
+  const Probe = ({ value }: { value: string }) => {
+    const handle = useHandle(() => ran.push(value));
+    handle();
+    throw pending;
+  };
+  const view = render(
+    <Suspense fallback="loading">
+      <Probe value="first" />
+    </Suspense>,
+  );
+  expect(view.container.textContent).toBe('loading');
+  expect(ran).toContain('first');
+  view.unmount();
+});
