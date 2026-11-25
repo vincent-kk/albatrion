@@ -1,6 +1,6 @@
 # Rows of the 1.0.0 speed comparison
 
-These 110 rows compare the public calls that the 1.0.0 bug-bounty fixes changed against the commit before those fixes, `1c77ced57`. They run with [`../compare/`](../compare/README.md); [`../DESIGN.md`](../DESIGN.md) and [`../IMPROVING.md`](../IMPROVING.md) give the method.
+These 115 rows compare the public calls that the 1.0.0 bug-bounty fixes changed against the commit before those fixes, `1c77ced57`. They run with [`../compare/`](../compare/README.md); [`../DESIGN.md`](../DESIGN.md) and [`../IMPROVING.md`](../IMPROVING.md) give the method.
 
 ## Groups
 
@@ -13,6 +13,7 @@ The file name is `<group>-<number>-<name>.mjs`, and `--only` selects by prefix.
 | `p2e-` | 18   | `@canard/schema-form` engine calls without React.                                                                          |
 | `p2u-` | 25   | UI plugin mounts and interactions. `am` in the name means `@canard/schema-form-antd-mobile-plugin`.                        |
 | `p3-`  | 19   | Calls that differed by less, or that only one of the two commits accepts.                                                  |
+| `p4-`  | 5    | Calls on the paths of the four behavior fixes that followed the speed work: early-mismatch and deep `equals`, a context holding built-ins, and repeated reads of a virtual `defaultValue`. |
 
 `inputKind` in a row is `plain` for input a consumer passes every day and `repaired` for input that reaches a path a fix changed on purpose.
 
@@ -77,3 +78,4 @@ These rows are over their limit because the fixed code does work the baseline sk
 - `p3-11` and `p3-17` use input the baseline rejects. Measure them with the candidate tree on both sides; the ratio then shows noise only.
 - The control of `p1-07` and `p3-19` leaves its window on most runs. Repeat them alone, and read the result as approximate.
 - A row under about 2 µs measured as `render` carries two timer reads in both arms, which pulls its ratio toward 1.
+- `p4-05` reads a virtual `defaultValue`, which the baseline `1c77ced57` answers with `undefined`; compare it between two trees that both hold the tuple projection.
