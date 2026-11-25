@@ -17,8 +17,8 @@ The template prose is English. Copy it as written — headings, commands, and th
 ````markdown
 ## Agent Docs Injector
 
-Inject `docs/agents/**` assets into the selected agent location. Engine: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
-`--agent` selects the target agent — `claude` uses `.claude/{skills,rules,commands}`; `codex`/`agents` uses `.agents/skills` plus the `AGENTS.md` marker block (project scope).
+Inject `docs/agents/**` assets into the selected agent's locations. Engine: `@slats/agents-assets-sync` (bin: `inject-agents-settings`).
+Select agents with `--agent`: `claude` uses `.claude/{skills,rules,commands}`; `codex`/`agents` use `.agents/skills` and marker blocks in `AGENTS.md` (at project scope).
 
 ```bash
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
@@ -29,7 +29,7 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 
 ### Isolation Guardrails
 
-- `src/**` must not import either `docs/**` or `@slats/agents-assets-sync`.
+- `src/**` MUST NOT import from `docs/**` or `@slats/agents-assets-sync`.
 - **Never add `./docs/*` to `exports`.**
 ````
 

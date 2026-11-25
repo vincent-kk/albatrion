@@ -23,6 +23,8 @@ The plugin exports a `SchemaFormPlugin` object:
 
 ## Schema → Component Mapping
 
+`inputType` in this table is `presentation.inputType`; a top-level `inputType` on the schema is not read.
+
 | Condition                                       | Component      |
 | ----------------------------------------------- | -------------- |
 | `type: boolean`, `inputType: switch`            | Switch         |

@@ -13,9 +13,9 @@ description: "Expert on React-based @canard/schema-form plugin implementation pa
 - A select preserves an unknown stored enum value while displaying a library-safe empty selection; mounting it emits no out-of-range warning. Verify callback support over the entire declared peer range with a feature check or a proven minimum version.
 - Render array and object validation messages at both root and nested positions. Do not add empty root error markup when no message exists.
 - With `multipleOf`, slider stops are its zero-based multiples inside the strictest inclusive and exclusive bounds. Integer sliders use the integer intersection. Without `multipleOf`, number sliders step from the lower bound by the default step and retain inclusive endpoints exactly; an exclusive lower bound excludes that anchor, and an exclusive upper bound excludes its endpoint. An absent side defaults to 0 or 100 only when neither kind of bound exists on that side. Range sliders apply item constraints to both ends, and marked stops obey the same constraints.
-- Every slider interaction either stores a value that validates against its own schema or stores nothing. Home and End select the first and last valid stops; arrows, PageUp/PageDown, Shift+Arrow and pointer selection normalize off-grid or out-of-bounds starting values. Use decimal-exact arithmetic, including exponent-written steps. An empty interval stores nothing. Treat `maximum: Number.MAX_SAFE_INTEGER` as a documented precision limit.
+- Let the UI library own slider keyboard, pointer and stop handling; do not reimplement it. Pass the schema bounds and step the library supports. When the library cannot produce a schema-valid result (for example floating-point error from a decimal step), document it as an external limit in the plugin README and point consumers to a custom `FieldInput` registered through `fieldInputDefinitions`.
 - Test slider bounds, step, integer/number type, unset/on-grid/off-grid/outside values, pointer and keyboard interactions, and omitted/false `lazy` against an independent decimal reference model. Keep the absent-step anchor explicit.
-- An unset slider exposes no current value to assistive technology and stores nothing until the user acts. A first committed selection of the minimum must store it even when the library skips its ordinary change callback. Preserve read-only and disabled behavior. Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores on commit (key up, pointer up, or the library change-complete event); `false` stores on every move.
+- An unset slider exposes no current value to assistive technology and stores nothing until the user acts. A first committed selection of the minimum must store it even when the library skips its ordinary change callback. Preserve read-only and disabled behavior. Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores on the library's commit events (each plugin README states the exact keyboard and pointer timing); `false` stores on every move.
 - Range pickers publish only a committed selection with both ends chosen, or clear. Browsing a panel, hovering, changing the viewed month or time, and choosing just one end never write form data.
 - Verify these contracts with equivalence tables across sibling plugins and input kinds, including stored values outside the enum, root and nested errors, and unset and populated numeric controls.
 
@@ -99,7 +99,8 @@ const FieldInputText = ({
       id={inputId}
       name={name}
       required={required}
-      disabled={disabled || readOnly}
+      disabled={disabled}
+      slotProps={{ input: { readOnly } }}
       defaultValue={defaultValue ?? ''}
       onChange={handleChange}
       size={size}
@@ -242,12 +243,23 @@ const FieldInputDate = ({
       <DatePicker
         defaultValue={dateValue}
         onChange={handleChange}
+        disabled={props.disabled}
+        readOnly={props.readOnly}
         slotProps={{
           textField: {
-            id: props.inputId,
+            id: props.getInputId('native'),
+            InputProps: {
+              slotProps: {
+                input: {
+                  id: props.inputId,
+                  ref: props.disabled ? undefined : props.focusRef,
+                  role: 'group',
+                  'aria-labelledby': props.labelId,
+                },
+              },
+            },
             name: props.name,
             required: props.required,
-            disabled: props.disabled,
           },
         }}
       />
@@ -358,7 +370,7 @@ const FieldInputString = ({
   rows,
 }: FieldInputStringProps) => {
   // 4️⃣ Apply prop priority with useMemo (direct props > context > default)
-  const [size, variant, label] = useMemo(() => {
+  const [size, variant, label] = useMemo((): ['small' | 'medium', 'outlined' | 'filled' | 'standard', string] => {
     return [
       sizeProp ?? context.size ?? 'medium',
       variantProp ?? context.variant ?? 'outlined',
@@ -382,7 +394,8 @@ const FieldInputString = ({
       name={name}
       label={label}
       required={required}
-      disabled={disabled || readOnly}
+      disabled={disabled}
+      slotProps={{ input: { readOnly } }}
       defaultValue={defaultValue ?? ''}  // ✅ uncontrolled component
       onChange={handleChange}
       size={size}
@@ -483,7 +496,6 @@ describe('FieldInputString', () => {
 // src/fieldInputs/FieldInputDate.tsx
 import { useMemo } from 'react';
 import { useHandle } from '@winglet/react-utils';
-import { useFieldErrors } from '@canard/schema-form';
 import type { FieldInputDefinition, FieldInputPropsWithSchema, StringSchema } from '@canard/schema-form';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -500,8 +512,11 @@ interface FieldInputDateProps
 
 const FieldInputDate = ({
   jsonSchema,
-  node,
   inputId,
+  getInputId,
+  labelId,
+  focusRef,
+  misfit,
   name,
   required,
   disabled,
@@ -548,7 +563,7 @@ const FieldInputDate = ({
     }
   });
 
-  const [size, variant, label] = useMemo(() => {
+  const [size, variant, label] = useMemo((): ['small' | 'medium', 'outlined' | 'filled' | 'standard', string] => {
     return [
       sizeProp ?? context.size ?? 'medium',
       variantProp ?? context.variant ?? 'outlined',
@@ -556,8 +571,8 @@ const FieldInputDate = ({
     ];
   }, [sizeProp, context.size, variantProp, context.variant, jsonSchema.title, name]);
 
-  const { errorMessage } = useFieldErrors(node);
-  const hasError = errorMessage != null;
+  const inlineId = label ? getInputId('legend') : undefined;
+  const labelledBy = inlineId ?? labelId;
 
   // 4️⃣ Render the DatePicker
   return (
@@ -568,16 +583,29 @@ const FieldInputDate = ({
         onChange={handleChange}  // ✅ takes a Dayjs value and converts it to an ISO string
         minDate={minDateObj}
         maxDate={maxDateObj}
-        disabled={disabled || readOnly}
+        disabled={disabled}
+        readOnly={readOnly}
         slotProps={{
           textField: {
-            id: inputId,
+            id: getInputId('native'),
+            InputLabelProps: { id: inlineId },
+            InputProps: {
+              'aria-labelledby': labelledBy,
+              slotProps: {
+                input: {
+                  id: inputId,
+                  ref: disabled ? undefined : focusRef,
+                  role: 'group',
+                  'aria-disabled': disabled || undefined,
+                  'aria-labelledby': labelledBy,
+                },
+              },
+            },
             name: name,
             required: required,
             size: size,
             variant: variant,
-            error: hasError,
-            helperText: errorMessage ?? jsonSchema.description,
+            error: misfit,
             fullWidth: true,
           },
         }}
@@ -661,7 +689,6 @@ const FieldInputStringEnum = ({
   node,
   inputId,
   getInputId,
-  labelId,
   name,
   required,
   disabled,
@@ -687,7 +714,7 @@ const FieldInputStringEnum = ({
     onChange(event.target.value === '' ? undefined : event.target.value);
   });
 
-  const [size, label] = useMemo(() => {
+  const [size, label] = useMemo((): ['small' | 'medium', string] => {
     return [
       sizeProp ?? context.size ?? 'medium',
       jsonSchema.title ?? node.name,
@@ -697,13 +724,14 @@ const FieldInputStringEnum = ({
   const { errorMessage } = useFieldErrors(node);
   const hasError = errorMessage != null;
 
-  // 3️⃣ Render the RadioGroup
+  // 3️⃣ Render the RadioGroup (the caption id is owned by this input; labelId belongs to the renderer's title)
+  const captionId = getInputId('legend');
   return (
-    <FormControl component="fieldset" aria-labelledby={labelId} error={hasError} required={required} disabled={disabled || readOnly} size={size}>
-      <FormLabel component="legend" id={labelId}>{label}</FormLabel>
+    <FormControl component="fieldset" aria-labelledby={captionId} error={hasError} required={required} disabled={disabled || readOnly} size={size}>
+      <FormLabel component="legend" id={captionId}>{label}</FormLabel>
       <RadioGroup
         id={inputId}
-        aria-labelledby={labelId}
+        aria-labelledby={captionId}
         name={inputId}
         defaultValue={defaultValue ?? ''}
         onChange={handleChange}
@@ -753,6 +781,7 @@ const FieldInputStringEnumSelect = ({
   node,
   inputId,
   getInputId,
+  focusRef,
   name,
   required,
   disabled,
@@ -776,7 +805,7 @@ const FieldInputStringEnumSelect = ({
     onChange(event.target.value === '' ? undefined : event.target.value);
   });
 
-  const [size, variant, label] = useMemo(() => {
+  const [size, variant, label] = useMemo((): ['small' | 'medium', 'outlined' | 'filled' | 'standard', string] => {
     return [
       sizeProp ?? context.size ?? 'medium',
       variantProp ?? context.variant ?? 'outlined',
@@ -789,12 +818,12 @@ const FieldInputStringEnumSelect = ({
 
   return (
     <FormControl error={hasError} required={required} disabled={disabled || readOnly} size={size} fullWidth>
-      <InputLabel id={getInputId('label')} htmlFor={getInputId('display')}>{label}</InputLabel>
+      <InputLabel id={getInputId('legend')}>{label}</InputLabel>
       <Select
-        labelId={getInputId('label')}
-        id={inputId}
-        inputProps={{ id: inputId }}
-        SelectDisplayProps={{ id: getInputId('display') }}
+        labelId={getInputId('legend')}
+        inputRef={disabled ? undefined : focusRef}
+        inputProps={{ id: getInputId('native') }}
+        SelectDisplayProps={{ id: inputId, 'aria-labelledby': getInputId('legend') }}
         MenuProps={{ id: getInputId('menu') }}
         name={name}
         label={label}

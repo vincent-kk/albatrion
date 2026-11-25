@@ -17,7 +17,7 @@ const FieldInputString = ({ onChange, ...props }: Props) => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value === '' ? undefined : event.target.value);
   });
-  return <TextField onChange={handleChange} id={props.id} name={props.name} disabled={props.disabled || props.readOnly} />;
+  return <TextField onChange={handleChange} id={props.inputId} name={props.name} disabled={props.disabled} slotProps={{ input: { readOnly: props.readOnly } }} />;
 };
 ```
 
@@ -81,7 +81,7 @@ const FieldInputString = ({
   label: labelProp,
 }: Props) => {
   // ✅ Compute several props at once
-  const [size, variant, label] = useMemo(() => {
+  const [size, variant, label] = useMemo((): ['small' | 'medium', 'outlined' | 'filled' | 'standard', string] => {
     return [
       sizeProp || context.size || 'medium',
       variantProp || context.variant || 'outlined',
@@ -101,10 +101,7 @@ const FieldInputString = ({
   disabled,
   readOnly,
 }: Props) => {
-  // A simple logical operation - just use it
-  const isDisabled = disabled || readOnly;
-
-  return <TextField disabled={isDisabled} />;
+  return <TextField disabled={disabled} slotProps={{ input: { readOnly } }} />;
 };
 
 // ✅ Primitive values do not need useMemo
@@ -122,7 +119,10 @@ const FieldInputString = ({
 ```typescript
 const FieldInputDate = ({
   jsonSchema,
-  id,
+  inputId,
+  labelId,
+  focusRef,
+  getInputId,
   name,
   required,
   disabled,
@@ -131,11 +131,21 @@ const FieldInputDate = ({
   // ✅ Memoize nested objects with useMemo
   const slotProps = useMemo(() => ({
     textField: {
-      id: id,
+      id: getInputId('native'),
       name,
       required,
-      disabled,
       size,
+      InputProps: {
+        'aria-labelledby': labelId,
+        slotProps: {
+          input: {
+            id: inputId,
+            ref: disabled ? undefined : focusRef,
+            role: 'group' as const,
+            'aria-labelledby': labelId,
+          },
+        },
+      },
     },
     day: {
       sx: {
@@ -144,9 +154,9 @@ const FieldInputDate = ({
         },
       },
     },
-  }), [id, name, required, disabled, size, jsonSchema.highlightColor]);
+  }), [inputId, labelId, getInputId, focusRef, name, required, disabled, size, jsonSchema.highlightColor]);
 
-  return <DatePicker slotProps={slotProps} />;
+  return <DatePicker disabled={disabled} slotProps={slotProps} />;
 };
 ```
 
@@ -262,18 +272,18 @@ const FieldInputArray = ({
 // ❌ Handle the condition in one component - it gets complicated
 const FieldInputString = ({ isPassword, ...props }: Props) => {
   if (isPassword) {
-    return <PasswordField id={props.id} name={props.name} disabled={props.disabled || props.readOnly} />;
+    return <PasswordField id={props.inputId} name={props.name} readOnly={props.readOnly} disabled={props.disabled} />;
   }
-  return <TextField id={props.id} name={props.name} disabled={props.disabled || props.readOnly} />;
+  return <TextField id={props.inputId} name={props.name} disabled={props.disabled} slotProps={{ input: { readOnly: props.readOnly } }} />;
 };
 
 // ✅ Split into separate components - it stays clear
 const FieldInputString = (props: Props) => {
-  return <TextField id={props.id} name={props.name} disabled={props.disabled || props.readOnly} />;
+  return <TextField id={props.inputId} name={props.name} disabled={props.disabled} slotProps={{ input: { readOnly: props.readOnly } }} />;
 };
 
 const FieldInputPassword = (props: Props) => {
-  return <PasswordField id={props.id} name={props.name} disabled={props.disabled || props.readOnly} />;
+  return <PasswordField id={props.inputId} name={props.name} readOnly={props.readOnly} disabled={props.disabled} />;
 };
 
 // Split at the definition stage
@@ -378,7 +388,7 @@ if (process.env.NODE_ENV === 'development') {
 
     console.log(`FieldInputString rendered ${renderCount.current} times`);
 
-    return <TextField id={props.id} name={props.name} disabled={props.disabled || props.readOnly} />;
+    return <TextField id={props.inputId} name={props.name} disabled={props.disabled} slotProps={{ input: { readOnly: props.readOnly } }} />;
   };
 }
 ```
@@ -409,7 +419,7 @@ const handleChange = (event) => {
 
 // ❌ Recreate the object on every render
 const slotProps = {
-  textField: { id: id, name },
+  textField: { id: getInputId('native'), name },
 };
 
 // ❌ Inline function

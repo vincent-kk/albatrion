@@ -15,7 +15,7 @@ yarn storybook         # Storybook dev (port 6006)
 
 The plugin exports a `SchemaFormPlugin` object:
 
-- `FieldRenderer` composes bound input and error parts with scoped group titles; `LabelRenderer` serves standalone labels.
+- `FieldRenderer` composes the bound input and error parts without a group label; `LabelRenderer` serves standalone labels.
 - `ErrorMessageRenderer` owns the error root. The plugin registers `LabelRenderer` and `ErrorMessageRenderer`, with no pass-through input frame.
 - `fieldInputDefinitions` — 15 input component definitions (in priority order)
 
@@ -23,11 +23,11 @@ The plugin exports a `SchemaFormPlugin` object:
 
 ## Context
 
-`MuiContext` applies consistent styling: `size` (`small`|`medium`), `variant` (`outlined`|`filled`|`standard`), `fullWidth`.
+`MuiContext` applies consistent styling: `size` (`small`|`medium`), `variant` (`outlined`|`filled`|`standard`), `fullWidth`. It also carries switch state labels: `checkboxLabels` (`checked`, `unchecked`) replaces the `alias` of every boolean switch, and `switchLabels`, keyed by the stored enum value, replaces the `alias` of every string switch.
 
 ## Schema → Component Mapping Criteria
 
-Components are selected automatically from the `type`, `format`, `inputType`, and `enum` JSON Schema properties.
+Components are selected automatically from the `type`, `format` and `enum` JSON Schema properties and from `presentation.inputType`.
 
 ## Peer Dependencies
 

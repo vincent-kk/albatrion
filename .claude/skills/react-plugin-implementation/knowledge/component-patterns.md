@@ -29,8 +29,9 @@ const FieldInputString = ({
     <TextField
       defaultValue={defaultValue}  // ✅ Uncontrolled
       onChange={handleChange}
-      id={props.id} name={props.name}
-      disabled={props.disabled || props.readOnly}
+      id={props.inputId} name={props.name}
+      disabled={props.disabled}
+      slotProps={{ input: { readOnly: props.readOnly } }}
       required={props.required}
     />
   );
@@ -65,8 +66,9 @@ const FieldInputEmail = ({
       onChange={handleChange}
       error={!isValid && (value?.length ?? 0) > 0}
       helperText={!isValid ? 'Invalid email' : ''}
-      id={props.id} name={props.name}
-      disabled={props.disabled || props.readOnly}
+      id={props.inputId} name={props.name}
+      disabled={props.disabled}
+      slotProps={{ input: { readOnly: props.readOnly } }}
       required={props.required}
     />
   );
@@ -197,11 +199,23 @@ const FieldInputDate = ({
       <DatePicker
         defaultValue={dateValue}  // Dayjs value
         onChange={handleChange}
+        disabled={props.disabled}
+        readOnly={props.readOnly}
         slotProps={{
           textField: {
-            id: props.id, name: props.name,
+            id: props.getInputId('native'),
+            name: props.name,
             required: props.required,
-            disabled: props.disabled,
+            InputProps: {
+              slotProps: {
+                input: {
+                  id: props.inputId,
+                  ref: props.disabled ? undefined : props.focusRef,
+                  role: 'group',
+                  'aria-labelledby': props.labelId,
+                },
+              },
+            },
           },
         }}
       />
@@ -225,7 +239,25 @@ const FieldInputDate = ({ ...props }: FieldInputDateProps) => {
           if (date === null) props.onChange(undefined);
           else if (date.isValid()) props.onChange(date.format('YYYY-MM-DD'));
         }}
-        slotProps={{ textField: { id: props.id, name: props.name, required: props.required } }}
+        disabled={props.disabled}
+        readOnly={props.readOnly}
+        slotProps={{
+          textField: {
+            id: props.getInputId('native'),
+            name: props.name,
+            required: props.required,
+            InputProps: {
+              slotProps: {
+                input: {
+                  id: props.inputId,
+                  ref: props.disabled ? undefined : props.focusRef,
+                  role: 'group',
+                  'aria-labelledby': props.labelId,
+                },
+              },
+            },
+          },
+        }}
       />
     </LocalizationProvider>
   );
@@ -248,10 +280,14 @@ When a UI library component uses a nested props structure:
 
 ```typescript
 const FieldInputDate = ({
-  id,
+  inputId,
+  labelId,
+  getInputId,
+  focusRef,
   name,
   required,
   disabled,
+  readOnly,
   size,
   defaultValue,
   onChange,
@@ -263,12 +299,23 @@ const FieldInputDate = ({
         if (date === null) onChange(undefined);
         else if (date.isValid()) onChange(date.format('YYYY-MM-DD'));
       }}
+      disabled={disabled}
+      readOnly={readOnly}
       slotProps={{
         textField: {
-          id: id,
+          id: getInputId('native'),
+          InputProps: {
+            slotProps: {
+              input: {
+                id: inputId,
+                ref: disabled ? undefined : focusRef,
+                role: 'group',
+                'aria-labelledby': labelId,
+              },
+            },
+          },
           name,
           required,
-          disabled,
           size,
         },
         day: {
@@ -285,7 +332,7 @@ const FieldInputDate = ({
 ```typescript
 import { Upload, Button as UploadButton } from 'antd';
 const FieldInputUpload = ({
-  id,
+  inputId,
   name,
   onChange,
   onFileAttach,
@@ -293,7 +340,7 @@ const FieldInputUpload = ({
 }: FieldInputUploadProps) => {
   return (
     <Upload
-      id={id}
+      id={inputId}
       name={name}
       maxCount={1}
       customRequest={({ file, onSuccess }) => {
@@ -330,7 +377,7 @@ const FieldInputStringEnum = ({
     <Select
       defaultValue={defaultValue ?? ''}
       onChange={handleChange}
-      id={props.id} name={props.name}
+      id={props.inputId} name={props.name}
       disabled={props.disabled || props.readOnly}
       required={props.required}
     >
@@ -362,8 +409,9 @@ const FieldInputString = ({
       onChange={(event) => onChange(event.target.value === '' ? undefined : event.target.value)}
       error={hasError}
       helperText={errorMessage}
-      id={props.id} name={props.name}
-      disabled={props.disabled || props.readOnly}
+      id={props.inputId} name={props.name}
+      disabled={props.disabled}
+      slotProps={{ input: { readOnly: props.readOnly } }}
       required={props.required}
     />
   );
@@ -394,7 +442,7 @@ const FieldInputBoolean = ({
   }, [hideLabel, labelProp, jsonSchema, name]);
   return (
     <FormControlLabel
-      control={<Checkbox id={props.id} name={name} checked={value ?? false} disabled={props.disabled || props.readOnly} onChange={(event) => onChange(event.target.checked)} />}
+      control={<Checkbox id={props.inputId} name={name} checked={value ?? false} disabled={props.disabled || props.readOnly} onChange={(event) => onChange(event.target.checked)} />}
       label={label}
     />
   );
@@ -408,7 +456,8 @@ import { useFieldErrors } from '@canard/schema-form';
 
 const FieldInputString = ({
   node,
-  id,
+  inputId,
+  getInputId,
   name,
   required,
   defaultValue,
@@ -417,12 +466,12 @@ const FieldInputString = ({
 }: FieldInputStringProps) => {
   const { errorMessage } = useFieldErrors(node);
   const hasError = errorMessage != null;
-  const describedBy = hasError ? `${id}-error` : undefined;
+  const describedBy = hasError ? getInputId('error') : undefined;
 
   return (
     <>
       <TextField
-        id={id}
+        id={inputId}
         name={name}
         required={required}
         aria-invalid={hasError}
@@ -430,10 +479,11 @@ const FieldInputString = ({
         aria-required={required}
         defaultValue={defaultValue ?? ''}
         onChange={(event) => onChange(event.target.value === '' ? undefined : event.target.value)}
-        disabled={props.disabled || props.readOnly}
+        disabled={props.disabled}
+        slotProps={{ input: { readOnly: props.readOnly } }}
       />
       {hasError && (
-        <FormHelperText id={`${id}-error`} error>
+        <FormHelperText id={getInputId('error')} error>
           {errorMessage}
         </FormHelperText>
       )}

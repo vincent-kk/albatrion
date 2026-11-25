@@ -321,9 +321,9 @@ Every additional element uses `getInputId(key)` with a required, distinct key. N
 - A select preserves an unknown stored enum value while displaying a library-safe empty selection; mounting it emits no out-of-range warning. Verify callback support over the entire declared peer range with a feature check or a proven minimum version.
 - Render array and object validation messages at both root and nested positions. Do not add empty root error markup when no message exists.
 - With `multipleOf`, slider stops are its zero-based multiples inside the strictest inclusive and exclusive bounds. Integer sliders use the integer intersection. Without `multipleOf`, number sliders step from the lower bound by the default step and retain inclusive endpoints exactly; an exclusive lower bound excludes that anchor, and an exclusive upper bound excludes its endpoint. An absent side defaults to 0 or 100 only when neither kind of bound exists on that side. Range sliders apply item constraints to both ends, and marked stops obey the same constraints.
-- Every slider interaction either stores a value that validates against its own schema or stores nothing. Home and End select the first and last valid stops; arrows, PageUp/PageDown, Shift+Arrow and pointer selection normalize off-grid or out-of-bounds starting values. Use decimal-exact arithmetic, including exponent-written steps. An empty interval stores nothing. Treat `maximum: Number.MAX_SAFE_INTEGER` as a documented precision limit.
+- Let the UI library own slider keyboard, pointer and stop handling; do not reimplement it. Pass the schema bounds and step the library supports. When the library cannot produce a schema-valid result (for example floating-point error from a decimal step), document it as an external limit in the plugin README and point consumers to a custom `FieldInput` registered through `fieldInputDefinitions`.
 - Test slider bounds, step, integer/number type, unset/on-grid/off-grid/outside values, pointer and keyboard interactions, and omitted/false `lazy` against an independent decimal reference model. Keep the absent-step anchor explicit.
-- An unset slider exposes no current value to assistive technology and stores nothing until the user acts. A first committed selection of the minimum must store it even when the library skips its ordinary change callback. Preserve read-only and disabled behavior. Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores on commit (key up, pointer up, or the library change-complete event); `false` stores on every move.
+- An unset slider exposes no current value to assistive technology and stores nothing until the user acts. A first committed selection of the minimum must store it even when the library skips its ordinary change callback. Preserve read-only and disabled behavior. Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores on the library's commit events (each plugin README states the exact keyboard and pointer timing); `false` stores on every move.
 - Range pickers publish only a committed selection with both ends chosen, or clear. Browsing a panel, hovering, changing the viewed month or time, and choosing just one end never write form data.
 - Verify these contracts with equivalence tables across sibling plugins and input kinds, including stored values outside the enum, root and nested errors, and unset and populated numeric controls.
 
@@ -573,14 +573,15 @@ Situation: detect the latest stable version automatically
 Command: /create-canard-plugin "Material-UI"
 Output:
   - Look up the latest version with WebSearch: @mui/material@5.15.0
-  - Compatibility check: React 18.x is required
+  - Compatibility check: React 18 or 19 is supported
   - Automatically generated package.json:
     {
-      "dependencies": {
-        "@mui/material": "^5.15.0"
-      },
       "peerDependencies": {
-        "react": "^18.0.0"
+        "@canard/schema-form": "^1.0.0",
+        "@mui/material": "^5.0.0",
+        "dayjs": "^1.0.0",
+        "react": ">=18 <20",
+        "react-dom": ">=18 <20"
       }
     }
   - Conflict detection: none ✅

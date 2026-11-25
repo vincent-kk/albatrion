@@ -30,7 +30,7 @@ The plugin exports a `SchemaFormPlugin` object:
 
 ## Schema → Component Mapping Criteria
 
-Components are selected automatically from the `type`, `format`, `inputType`, and `enum` JSON Schema properties.
+Components are selected automatically from the `type`, `format` and `enum` JSON Schema properties and from `presentation.inputType`.
 
 ## Peer Dependencies
 

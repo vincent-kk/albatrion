@@ -9,17 +9,16 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 ```typescript
 <TextField
   // ✅ Required attributes
-  id={id}                          // Unique ID
+  id={inputId}                          // Unique ID
   name={name}                        // Used on form submit
   required={required}                // HTML required
 
   // ✅ ARIA attributes
   aria-required={required}           // For screen readers
   aria-invalid={hasError}            // Error state
-  aria-describedby={hasError ? `${id}-error` : undefined}  // Links the error message
 
   // ✅ Label association
-  // Connect LabelRenderer htmlFor={id} with id={id}
+  // Connect LabelRenderer htmlFor={inputId} with id={inputId}
 />
 ```
 
@@ -28,14 +27,14 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 ```typescript
 // Input
 <TextField
-  id={id}
-  aria-describedby={`${id}-error`}
+  id={inputId}
+  aria-describedby={getInputId('error')}
   aria-invalid={true}
 />
 
-// Error
+// Error (rendered by the input itself)
 <FormHelperText
-  id={`${id}-error`}  // ✅ Matching ID
+  id={getInputId('error')}  // ✅ Matching ID
   error
 >
   {errorMessage}
@@ -47,14 +46,14 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 ```typescript
 // Label
 <Label
-  htmlFor={id}  // ✅ Connected to the input ID
+  htmlFor={inputId}  // ✅ Connected to the input ID
 >
   {label}
 </Label>
 
 // Input
 <TextField
-  id={id}  // ✅ Connected to the label htmlFor
+  id={inputId}  // ✅ Connected to the label htmlFor
 />
 ```
 
@@ -109,9 +108,10 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 
 ### Grouping
 
-Use the `labelId` supplied to `FieldRendererProps` for the title and group association. Option ids derive from the supplied input `id`; native radio names use that scoped input id. `path` is only a data pointer.
+Use the `labelId` supplied to `FieldRendererProps` for the title and group association. Option ids come from `getInputId(index)` (packages/canard/schema-form-mui-plugin/src/fieldInputs/utils/enum/getEnumOptions.ts); never concatenate onto `inputId`. Native radio names use `inputId`. `path` is only a data pointer.
 
 ```typescript
+// In a FieldRenderer branch: renderers receive labelId, not getInputId
 // Group object types with fieldset
 <fieldset aria-labelledby={labelId}>
   <legend id={labelId}>{jsonSchema.title || name}</legend>
@@ -155,12 +155,11 @@ Use the `labelId` supplied to `FieldRendererProps` for the title and group assoc
 
 ```typescript
 <TextField
-  id={id}
+  id={inputId}
   name={name}
   required={required}
   aria-required={required}
   aria-invalid={hasError}
-  aria-describedby={hasError ? `${id}-error` : undefined}
   placeholder={placeholder}  // Additional hint
 />
 ```
@@ -171,12 +170,11 @@ Use the `labelId` supplied to `FieldRendererProps` for the title and group assoc
 <FormControlLabel
   control={
     <Checkbox
-      id={id}
+      id={inputId}
       name={name}
       required={required}
       aria-required={required}
       aria-invalid={hasError}
-      aria-describedby={hasError ? `${id}-error` : undefined}
     />
   }
   label={label}  // ✅ Label is required
@@ -187,12 +185,12 @@ Use the `labelId` supplied to `FieldRendererProps` for the title and group assoc
 
 ```typescript
 <Select
-  id={id}
+  inputProps={{ id: getInputId('native') }}
+  SelectDisplayProps={{ id: inputId }}
   name={name}
   required={required}
   aria-required={required}
   aria-invalid={hasError}
-  aria-describedby={hasError ? `${id}-error` : undefined}
   aria-label={label}  // ✅ When there is no label
 >
   {options.map(option => (
@@ -207,16 +205,16 @@ Use the `labelId` supplied to `FieldRendererProps` for the title and group assoc
 
 ```typescript
 <RadioGroup
-  name={id}
+  id={inputId}
+  name={inputId}
   aria-labelledby={labelId}
-  aria-describedby={hasError ? `${id}-error` : undefined}
   aria-required={required}
 >
   {options.map((option, index) => (
     <FormControlLabel
       key={option.value}
       value={option.value}
-      control={<Radio id={`${id}-${index}`} />}
+      control={<Radio id={getInputId(index)} />}
       label={option.label}
     />
   ))}
@@ -226,8 +224,8 @@ Use the `labelId` supplied to `FieldRendererProps` for the title and group assoc
 ### Array (Dynamic Items)
 
 ```typescript
-<Box role="group" aria-labelledby={labelId}>
-  <Typography id={labelId}>{label}</Typography>
+<Box role="group" aria-labelledby={getInputId('legend')}>
+  <Typography id={getInputId('legend')}>{label}</Typography>
 
   {items.map((item, index) => (
     <Box key={index} role="listitem">
@@ -281,9 +279,9 @@ Confirm before publishing the plugin:
 ### Required
 - [ ] Every input has `id` and `name`
 - [ ] Required inputs have `aria-required`
-- [ ] Error states have `aria-invalid` and `aria-describedby`
+- [ ] Error states have `aria-invalid`
 - [ ] Label and input are connected with `htmlFor`
-- [ ] Error message id matches the input `aria-describedby`
+- [ ] An `aria-describedby` points only at an element the input itself renders with `getInputId(key)`
 - [ ] Every feature is reachable by keyboard
 - [ ] Tab order is logical
 

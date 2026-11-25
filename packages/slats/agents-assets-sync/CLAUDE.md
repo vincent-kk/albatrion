@@ -44,7 +44,7 @@ Where `<bin>` is `agents-assets-sync` (npx) or `inject-agents-settings` (install
 
 | Flag                  | Meaning                                                                                                                                                                                                                                                                                                             |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--agent <type...>`   | `claude` \| `codex`. Omitted, an interactive TTY asks; anywhere else exits 2.                                                                                                                                                                                                                                       |
+| `--agent <type...>`   | `claude` \| `codex` \| `agents`. Omitted, an interactive TTY asks; anywhere else exits 2.                                                                                                                                                                                                                                       |
 | `--asset <kind...>`   | `skills` \| `rules` \| `commands`. Default: all. An excluded kind is absent from the plan, so it is neither reported nor deleted.                                                                                                                                                                                   |
 | `--asset-path <path>` | Asset root relative to each target's package root, for a package that ships assets without declaring `agents.assetPath`. Overrides the declaration on every target and hashes that directory at run time, so no `dist/agents-hashes.json` is needed. Must be relative and name a real directory inside the package. |
 | `--yes`               | Approve the force dialog without showing it.                                                                                                                                                                                                                                                                        |
@@ -142,12 +142,15 @@ src/
 ├── index.ts                        # ESM public barrel (runCli + core primitives)
 ├── __tests__/                      # e2e: spawns the built bin (cli, json, round trip)
 ├── commands/
+│   ├── index.ts                    # commands barrel
 │   └── runCli/
+│       ├── index.ts                # runCli barrel
 │       ├── runCli.ts               # commander root + action
 │       ├── targets/                # argv --package values → ConsumerPackage[]
 │       │   ├── classifyTarget.ts   # pure: scope | package | invalid
 │       │   ├── resolvePackage.ts   # single-target resolve (cwd → install roots → engine)
 │       │   ├── findInstallRoots.ts # project dirs owning a node_modules (pnpm members, hoist dir)
+│       │   ├── rejectTarget.ts     # route a resolution failure to run owner or exit
 │       │   ├── resolveScopeAlias.ts# scope → packages enumeration (only enumerator)
 │       │   ├── resolveTargets.ts   # classify/resolve/dedupe orchestrator
 │       │   ├── toConsumerPackages.ts # metadata → ConsumerPackage
@@ -156,13 +159,15 @@ src/
 │       ├── flags/                  # one CLI flag value → a validated value
 │       │   ├── resolveScopeFlag.ts # plain-path scope flag validator
 │       │   ├── resolveAgentFlag.ts # --agent validator (exits 2 when non-interactive)
-│       │   ├── resolveAssetFlag.ts # --asset validator → Set<AssetKind>
-│       │   └── resolveAssetPathFlag.ts # --asset-path shape validator
+│       │   └── resolveAssetFlag.ts # --asset validator → Set<AssetKind>
+│       ├── utils/
+│       │   └── createFailureResult.ts # preflight failure as a final run result
 │       └── renderers/              # the three mutually exclusive output paths
 │           ├── renderOrFallback.ts # TTY vs plain branch + dynamic UI import
 │           ├── renderPlain.ts      # non-TTY / --no-interactive picocolors renderer
 │           └── renderJSON.ts       # --json single-document renderer
 ├── core/
+│   ├── index.ts                    # core barrel
 │   ├── hash/                       # sha256 compute / compare
 │   ├── hashManifest/               # manifest IO, or hash the asset dir (--asset-path)
 │   ├── scope/                      # user | project → one agent-neutral project root
@@ -170,11 +175,14 @@ src/
 │   ├── markerBlock/                # this tool's blocks inside a shared AGENTS.md
 │   ├── buildPlan/                  # copy / skip / warn-diverged / warn-orphan / delete
 │   ├── injectDocs/                 # apply + partition + summarize (no orchestrator)
-│   └── utils/                      # walkFiles, toPosix — shared by hashManifest + buildPlan
+│   ├── types/                      # sourceSnapshot
+│   └── utils/                      # isNoisePath, normalizeRuleSource, statFile, toPosix, walkFiles
 ├── ui/                             # Ink React TTY path (internal only)
+│   ├── index.ts                    # ui barrel (renderInjectApp + types)
 │   ├── InjectApp/                  # phase state machine + <InjectApp/>
 │   ├── components/                 # Banner, StepTracker, PlanTable, ...
-│   ├── hooks/                      # pipeline hooks + useInjectSession
+│   ├── hooks/                      # useExitApp, useInjectSession, useInterval, usePhase, useTerminalWidth
+│   ├── reducer/                    # phaseReducer
 │   ├── theme/                      # colors, icons, layout
 │   └── types/                      # Phase, InjectEvent, RenderInput, target
 ├── types/                          # DefaultFlags, ConsumerPackage, AssetType
@@ -185,6 +193,7 @@ there is no root `tests/` directory. `tsconfig.declarations.json` excludes them
 from the build; `tsconfig.json` does not, so they are type-checked.
 scripts/
 ├── buildHashes.mjs                 # pure Node ESM, importable from Rolldown
+├── buildHashes.d.mts               # declarations for buildHashes.mjs
 ├── agents-build-hashes.mjs         # self-executing bin, cwd-based (consumers)
 ├── build-hashes.mjs                # this package's own `build:hashes` step
 ├── inject-version.js               # regenerates src/utils/version.ts

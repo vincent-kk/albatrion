@@ -30,7 +30,7 @@ Three bins. The first two are the same dispatcher under two names; the program n
 | `inject-agents-settings` | descriptive name for installed environments (`yarn add -D` / `npm i -g`).                                               |
 | `agents-build-hashes`    | build-time helper: reads `process.cwd()/package.json`, hashes everything under `agents.assetPath`, writes the manifest. |
 
-`buildHashes()` is available programmatically at the `./buildHashes` subpath. There is no `injectDocs()` counterpart — both renderers compose the core primitives directly, so injection is driven through a bin. For machine-readable output, add `--json`.
+`buildHashes()` is available programmatically at the `./buildHashes` subpath. Injection has no programmatic counterpart besides `runCli(argv)`: every output mode runs the same internal plan and executor, so drive injection through a bin. For machine-readable output, add `--json`.
 
 ---
 
@@ -74,6 +74,8 @@ Point to the engine's bin (NOT a local stub):
 
 `agents-build-hashes` reads `process.cwd()/package.json` and picks up `agents.assetPath`. Works because `@slats/agents-assets-sync` is in `devDependencies`, so `node_modules/.bin/agents-build-hashes` is linked at workspace install time (yarn workspaces link devDeps and deps identically for workspace-local builds).
 
+With `agents.assetPath` declared, `agents-build-hashes` exits 1 when that directory is missing or is not a directory, or when `package.json` lacks a string `name` or `version`; it never writes an empty manifest. Without a non-empty string `agents.assetPath` it does nothing and succeeds.
+
 If a different `build:hashes` script exists, ask.
 
 ---
@@ -102,7 +104,7 @@ Guarantees `dist/agents-hashes.json` is regenerated before publish. If the targe
 
 Reasons:
 
-- The engine is CLI-only. Declaring it in `dependencies` would pull `commander`, `@inquirer/prompts`, and their transitive trees into every end-user's production install even though the consumer's runtime never imports the engine.
+- The engine is CLI-only. Declaring it in `dependencies` would pull `commander`, `ink`, `react`, and their transitive trees into every end-user's production install even though the consumer's runtime never imports the engine.
 - The monorepo build chain still resolves `.bin/agents-build-hashes` from `devDependencies` at `yarn install` time — yarn workspaces link devDeps and deps identically for workspace-local builds.
 - End users invoke the engine via `npx -p @slats/agents-assets-sync inject-agents-settings --package=<THIS>`, which fetches the engine on demand and caches it. No transitive bin hoist is required.
 - Bundle isolation is enforced by the import graph (`src/**` never references the engine), not by dependency-type.
