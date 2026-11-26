@@ -306,6 +306,53 @@ it('rebinds kept property candidates when survivors shift to earlier indices', (
   expect(getDispatchNode(root, 'list', '0', 'keep').source).toBe(12);
 });
 
+it('rebinds kept nullable item candidates when survivors shift to earlier indices', () => {
+  const { root } = createDispatchTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      number: { type: 'boolean' },
+      list: {
+        type: 'array',
+        controls: { active: '#/open', unsetOnInactive: true },
+        allOf: [
+          {
+            controls: { active: '#/number' },
+            items: {
+              type: ['number', 'null'],
+              controls: { unsetOnInactive: false },
+            },
+          },
+          {
+            controls: { active: '!#/number' },
+            items: {
+              type: ['string', 'null'],
+              default: 'held',
+              controls: { unsetOnInactive: false },
+            },
+          },
+        ],
+      },
+    },
+  });
+  dispatchMount(root, {
+    open: true,
+    number: true,
+    list: [undefined, undefined, 12],
+  });
+  dispatchSetValue(getDispatchNode(root, 'open'), false);
+  expect(readFieldNodeInactiveValues(root)).toEqual([
+    { path: '/list/0', value: 12 },
+  ]);
+  dispatchSetValue(getDispatchNode(root, 'open'), true);
+  expect(getDispatchNode(root, 'list').__itemCount__).toBe(1);
+  expect(getDispatchNode(root, 'list', '0').source).toBe(12);
+  dispatchSetValue(getDispatchNode(root, 'number'), false);
+  expect(getDispatchNode(root, 'list', '0').source).toBe('held');
+  dispatchSetValue(getDispatchNode(root, 'number'), true);
+  expect(getDispatchNode(root, 'list', '0').source).toBe(12);
+});
+
 it('keeps an item whose only kept source is an explicitly kept empty array', () => {
   const { root } = createDispatchTree({
     type: 'object',
