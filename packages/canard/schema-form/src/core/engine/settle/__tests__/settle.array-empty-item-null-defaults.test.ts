@@ -7,6 +7,25 @@ import { mountPublicTree } from './fixtures/mountPublicTree';
 const items = { type: 'string', default: 'D' };
 
 /**
+ * An object whose `flag` gates every item of `list` through the item's own gate.
+ * @param controls - Further controls of each item
+ * @returns The object schema
+ */
+const itemGatedList = (controls: Readonly<Record<string, unknown>> = {}) => ({
+  type: 'object',
+  properties: {
+    flag: { type: 'boolean' },
+    list: {
+      type: 'array',
+      items: {
+        ...items,
+        controls: { active: '../../flag === true', ...controls },
+      },
+    },
+  },
+});
+
+/**
  * An object whose `flag` gates a `list` of `items`, directly or through the branch holding it.
  * @param gated - `list` leaves through its own gate, `branch` leaves with the object holding it
  * @returns The schema and the path of the list's second item
@@ -129,5 +148,83 @@ describe('defaults around a null item position', () => {
       branch: { list: ['x', 'D'] },
     });
     expect(tree.at(item).isMisfit).toBe(false);
+  });
+
+  it('fills an item cleared with null again when the item re-enters through its own gate', () => {
+    const tree = mountPublicTree(itemGatedList(), {
+      flag: true,
+      list: ['x', 'y'],
+    });
+    tree.at('/list/1').setValue(null);
+    tree.at('/flag').setValue(false);
+    tree.at('/flag').setValue(true);
+    expect(tree.root.outputValue).toEqual({ flag: true, list: ['x', 'D'] });
+    expect(tree.at('/list/1').isMisfit).toBe(false);
+  });
+
+  it.each([
+    ['loaded while the item was inactive', false],
+    ['written while the item was inactive', true],
+  ])(
+    'keeps a null %s an empty item without its default when the item re-enters',
+    (_kept, written) => {
+      const tree = mountPublicTree(itemGatedList(), {
+        flag: written,
+        list: written ? ['x', 'y'] : ['x', null],
+      });
+      if (written) {
+        tree.at('/flag').setValue(false);
+        tree.root.setValue({ flag: false, list: ['x', null] });
+      }
+      tree.at('/flag').setValue(true);
+      expect(tree.root.outputValue).toEqual({ flag: true, list: ['x', null] });
+      expectEmptyItem(tree.at('/list/1'));
+      expect(tree.root.runtime.misfitRecords).toEqual([]);
+    },
+  );
+
+  it('keeps the null an item left with its inactiveValue an empty item when the item re-enters', () => {
+    const tree = mountPublicTree(itemGatedList({ inactiveValue: null }), {
+      flag: true,
+      list: ['x', 'y'],
+    });
+    tree.at('/flag').setValue(false);
+    tree.at('/flag').setValue(true);
+    expect(tree.root.outputValue).toEqual({ flag: true, list: [null, null] });
+    expectEmptyItem(tree.at('/list/0'));
+    expectEmptyItem(tree.at('/list/1'));
+    expect(tree.root.runtime.misfitRecords).toEqual([]);
+  });
+
+  it('keeps a null loaded into an inactive array of item candidates an empty item on activation', () => {
+    const tree = mountPublicTree(
+      {
+        type: 'object',
+        properties: {
+          kind: { type: 'string' },
+          flag: { type: 'boolean' },
+          list: {
+            type: 'array',
+            controls: { active: '../flag === true' },
+            allOf: [
+              { controls: { active: '../kind === "s"' }, items },
+              {
+                controls: { active: '../kind === "n"' },
+                items: { type: 'number', default: 1 },
+              },
+            ],
+          },
+        },
+      },
+      { kind: 's', flag: false, list: ['x', null] },
+    );
+    tree.at('/flag').setValue(true);
+    expect(tree.root.outputValue).toEqual({
+      kind: 's',
+      flag: true,
+      list: ['x', null],
+    });
+    expectEmptyItem(tree.at('/list/1'));
+    expect(tree.root.runtime.misfitRecords).toEqual([]);
   });
 });
