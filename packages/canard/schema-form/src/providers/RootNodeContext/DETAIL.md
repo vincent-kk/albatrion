@@ -38,7 +38,7 @@ React는 숨김과 실제 unmount를 같은 cleanup으로 표현하므로 루트
 
 ### ERROR-077 — 생성 실패와 보고
 
-생성·mount 실패는 렌더에서 잡아 load에 보관합니다. 공유 충돌은 루트를 제거하여 fallback으로 가고, 커밋 가능한 정착 실패는 degraded 트리를 유지합니다. 렌더 중 소비자 callback을 호출하지 않으며 SSR에는 commit 보고가 없습니다. 확정 load가 오류를 한 번 보고하고 host에 전달합니다. reset의 caller 오류와 자동 슬롯 실패는 별도 경로입니다.
+생성·mount 실패는 렌더에서 잡아 load에 보관합니다. 공유 충돌을 포함해 커밋된 트리를 남기는 정착 실패는 reset과 같이 최초 mount에서도 degraded 트리를 유지하고, 트리를 만들지 못한 생성·구성 실패만 fallback을 그립니다. 루트 없는 fallback의 `submit()`은 아무것도 호출하지 않고 끝나는 반면 degraded 트리는 `SubmitWhileDegraded`로 제출을 거부하므로, 같은 충돌이 경로에 따라 조용한 제출 무시와 거부로 갈리지 않게 하기 위한 규칙입니다. 렌더 중 소비자 callback을 호출하지 않으며 SSR에는 commit 보고가 없습니다. 확정 load가 오류를 한 번 보고하고 host에 전달합니다. reset의 caller 오류와 자동 슬롯 실패는 별도 경로입니다.
 
 교체 전 never-prepared load의 기록은 원래 root·warning scope를 보존해 새 build 기록 앞에 옮깁니다. mount 사슬 기록이 build 기록보다 먼저 전달될 수 있고 binding 교체 전 보고 중 handle.node는 옛 루트일 수 있습니다. 기록별 handler 실패를 격리하여 나머지 기록과 교체를 계속합니다. 새 load는 isPrepared·isReported를 함께 확정하되 caller에게 던질 error는 보존하여 pending flush에서 같은 실패를 재보고하지 않습니다. 옛 생성 실패도 한 번만 capture·host 보고합니다.
 
