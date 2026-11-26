@@ -179,7 +179,7 @@ The guard follows AJV, not the specification, in these cases:
 
 `compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.
 
-Strict options on a bound instance, such as `strictTypes` and `strictRequired`, may make some `if` guards fail to compile. The affected gate becomes false and produces a `GUARD_FAILED` `onError` record. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
+Strict options on a bound instance, such as `strictTypes` and `strictRequired`, may make some `if` guards fail to compile. The affected condition applies neither `then` nor `else` and reports one `GUARD_FAILED` record through `onError`; a later write that re-evaluates the condition throws `GUARD_FAILED`, and a production build throws it at mount as well. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
 
 ### **Default Configuration**
 

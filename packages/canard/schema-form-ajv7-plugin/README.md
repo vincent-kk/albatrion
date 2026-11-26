@@ -134,7 +134,7 @@ The guard follows AJV, not the specification, in these cases:
 - An anchor name that collides with an `Object.prototype` member, such as `toString`, can fail during native evaluation of whole validation or a lexical declaration. A root-pointer guard supplies declared chain-resource anchors as own entries in its dynamic-anchor table.
 - `$data` references and custom keywords that read root or parent data see only the host value in a guard. This is a separate limit of the host-value guard interface and is unrelated to dynamic scope.
 
-Strict options on a bound instance, such as `strictTypes` and `strictRequired`, may make some `if` guards fail to compile. The affected gate becomes false and produces a `GUARD_FAILED` `onError` record. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
+Strict options on a bound instance, such as `strictTypes` and `strictRequired`, may make some `if` guards fail to compile. The affected condition applies neither `then` nor `else` and reports one `GUARD_FAILED` record through `onError`; a later write that re-evaluates the condition throws `GUARD_FAILED`, and a production build throws it at mount as well. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
 
 ### **Default Configuration**
 
