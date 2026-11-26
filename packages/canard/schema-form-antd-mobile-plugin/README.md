@@ -14,7 +14,7 @@
 
 FieldRenderer composes the bound Label, Input, and ErrorMessage parts. LabelRenderer and ErrorMessageRenderer own their root elements and register as LabelRenderer and ErrorMessageRenderer. The plugin does not register an input frame.
 
-Nested objects and arrays, including checkbox groups and range sliders, show no visible title or required marker. Under a parent that is not an array, a hidden title element with `labelId` and the field name stays in the DOM, so the array, checkbox and slider groups that reference it through `aria-labelledby` keep their accessible name. Their validation messages and the root's are shown below the input.
+Nested objects and arrays, including checkbox groups and range sliders, and the fields of array items show no visible title or required marker. Each of them keeps a hidden title element with `labelId` and the field name (an array item's index) in the DOM, so the controls and groups that reference it through `aria-labelledby` keep their accessible name. In an array item, a text input, password input or text area has no accessible name, because Ant Design Mobile forwards no `aria-labelledby` to the native element; register a custom `FieldInput` through `fieldInputDefinitions` to name it. Their validation messages and the root's are shown below the input.
 
 ---
 

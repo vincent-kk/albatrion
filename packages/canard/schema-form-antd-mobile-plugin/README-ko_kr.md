@@ -14,7 +14,7 @@
 
 FieldRenderer는 묶인 Label, Input, ErrorMessage 부품을 조립합니다. LabelRenderer와 ErrorMessageRenderer는 각 루트 요소를 소유하며 LabelRenderer와 ErrorMessageRenderer로 등록됩니다. 플러그인은 입력 틀을 등록하지 않습니다.
 
-중첩 객체와 배열은 Checkbox 그룹과 범위 Slider를 포함하여 보이는 제목과 필수 표시 없이 그려집니다. 배열이 아닌 부모 아래에서는 `labelId`와 필드 이름을 가진 숨긴 제목 요소가 DOM에 남으므로, 이를 `aria-labelledby`로 참조하는 배열·Checkbox·Slider 그룹이 접근성 이름을 유지합니다. 이들과 루트의 유효성 검사 메시지는 입력 아래에 표시됩니다.
+Checkbox 그룹과 범위 Slider를 포함한 중첩 객체와 배열, 그리고 배열 항목의 필드는 보이는 제목과 필수 표시 없이 그려집니다. 이들은 각각 `labelId`와 필드 이름(배열 항목은 인덱스)을 가진 숨긴 제목 요소를 DOM에 남기므로, 이를 `aria-labelledby`로 참조하는 컨트롤과 그룹이 접근성 이름을 유지합니다. 배열 항목의 텍스트 입력, 비밀번호 입력, 텍스트 영역은 Ant Design Mobile이 네이티브 요소에 `aria-labelledby`를 전달하지 않으므로 접근성 이름이 없으며, 이름이 필요하면 `fieldInputDefinitions`로 사용자 정의 `FieldInput`을 등록하세요. 이들과 루트의 유효성 검사 메시지는 입력 아래에 표시됩니다.
 
 ---
 
