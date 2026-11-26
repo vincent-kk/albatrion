@@ -4,7 +4,7 @@ import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTre
 
 // filid:contract settle-array-carryover
 describe('array projection carryovers', () => {
-  it('26C-03 VALUE-034 keeps omitTrailingEmpty source slots after a load', () => {
+  it('26C-03 VALUE-034 keeps the trimmed slots of a load as empty items with a null source', () => {
     const { root } = makeFieldNodeTree(
       {
         type: 'object',
@@ -22,8 +22,8 @@ describe('array projection carryovers', () => {
     expect(root.outputValue).toEqual({ tail: ['a'] });
     expect(root.find('/tail')?.children?.map((item) => item.source)).toEqual([
       'a',
-      undefined,
-      undefined,
+      null,
+      null,
     ]);
     expect(root.find('/tail')?.children).toHaveLength(3);
   });
@@ -65,7 +65,7 @@ describe('array projection carryovers', () => {
     expect(root.outputValue).toEqual([{}, { a: 1 }, {}]);
   });
 
-  it('rootOutput:30 VALUE-034 trims only the trailing empty leaf slot', () => {
+  it('rootOutput:30 VALUE-034 trims only the trailing empty leaf slot and stores both unsupplied slots as null', () => {
     const { root } = makeFieldNodeTree(
       {
         type: 'array',
@@ -77,9 +77,9 @@ describe('array projection carryovers', () => {
     root.resetSubtree();
     expect(root.outputValue).toEqual([null, 'x']);
     expect(root.children?.map((item) => item.source)).toEqual([
-      undefined,
+      null,
       'x',
-      undefined,
+      null,
     ]);
   });
 });

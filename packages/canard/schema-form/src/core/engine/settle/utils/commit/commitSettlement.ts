@@ -106,7 +106,12 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     const effective = effectiveType(node);
     // Only a virtual node lacks a JSON type, and it never misfits.
     if (schemaType === undefined || effective === undefined) return;
-    const misfit = isMisfit(node.source, effective, node.isNullable);
+    // A terminal node is judged on what it reads, so an empty item's stored null is no misfit.
+    const misfit = isMisfit(
+      node.behavior.strategy === 'terminal' ? node.__value__ : node.source,
+      effective,
+      node.isNullable,
+    );
     const wasOn = runtime.misfitPaths.has(node.path);
     if (misfit) runtime.misfitPaths.add(node.path);
     else runtime.misfitPaths.delete(node.path);

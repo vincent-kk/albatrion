@@ -4,7 +4,6 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
-import { isEmptyItemNull } from '../input/isEmptyItemNull';
 import { markWrite } from '../input/markWrite';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
 import { markRestoredSlotSource } from './markRestoredSlotSource';
@@ -45,13 +44,7 @@ export const applySlotOverlay = <Self extends FieldNodeRecord<Self>>(
         });
     }
   } else if (ownsSource || overlay.isWhole) {
-    const source = ownsSource ? overlay.source : undefined;
-    // A kept null at an empty item position is this settlement's given input, as markWrite
-    // records it, so the appearance fill sees a given null rather than a missing source.
-    if (source === null && isEmptyItemNull(node)) {
-      node.source = undefined;
-      context.writtenInputs.set(node, null);
-    } else node.source = source;
+    node.source = ownsSource ? overlay.source : undefined;
   }
   if (hasOwnProperty(overlay, 'extras') || (overlay.isWhole && !arrayInput))
     node.extras = overlay.extras;

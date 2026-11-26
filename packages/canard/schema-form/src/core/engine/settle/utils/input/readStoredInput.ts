@@ -1,3 +1,4 @@
+import { EMPTY_ARRAY } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
 import {
@@ -13,7 +14,6 @@ import { BATCH_HOST_SOURCE } from '../../../utils/batchHostSource';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { arrayExtras } from './arrayExtras';
-import { isEmptyItemNull } from './isEmptyItemNull';
 import { isPlain } from './isPlain';
 import { nextExtras } from './nextExtras';
 import { staticSpec } from './staticSpec';
@@ -21,8 +21,8 @@ import { visitInputChildren } from './visitInputChildren';
 
 /**
  * Evaluate a marked storage input with the currently selected child bindings.
- * The target's own read takes a null at a deliberately empty array item position (isEmptyItemNull)
- * as undefined, as the settlement stores it; child emissions keep the null the array emits there.
+ * A live terminal target's own read goes through its row's assembly, so an item leaf reads a
+ * stored null as undefined as its node does; child emissions keep the null the array emits there.
  * @param template - Binding that provides the static input type
  * @param input - Composed caller source, including any hidden wrong-kind host source
  * @param live - Current occurrence, if it exists
@@ -40,23 +40,19 @@ export const readStoredInput = <Self extends FieldNodeRecord<Self>>(
   template = live?.blueprintNode ?? template;
   const row = BEHAVIORS[template.kind]?.[template.strategy];
   if (!row) return input;
-  const interpreted = row.interpret(
+  const value = row.interpret(
     input,
     staticSpec(template.schemaType, template.isNullable),
   );
-  const value =
-    interpreted === null &&
-    !output &&
-    live !== undefined &&
-    isEmptyItemNull(live)
-      ? undefined
-      : interpreted;
   const schema =
     live?.__schema__ ?? mergeEffectiveSchema(template, [], { mode: 'runtime' });
   let source = value;
   let stored = value;
 
-  if (
+  if (live && !output && template.strategy === 'terminal') {
+    const record: Self = Object.create(live, { source: { value } });
+    stored = live.behavior.assemble(record, EMPTY_ARRAY);
+  } else if (
     template.strategy === 'branch' &&
     template.kind === 'object' &&
     value !== null

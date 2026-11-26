@@ -1,1 +1,1 @@
-export { numberBehavior } from './numberBehavior';
+export { numberBehavior, numberItemLeafBehavior } from './numberBehavior';

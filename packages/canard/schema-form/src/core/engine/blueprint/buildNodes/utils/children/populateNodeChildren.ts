@@ -25,6 +25,7 @@ import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintEr
 import { createBlueprintGate } from '../gates/createBlueprintGate';
 import { appendChildEntries } from './appendChildEntries';
 import { assertAddressableName } from './assertAddressableName';
+import { hasLeafTemplate } from './hasLeafTemplate';
 import { populateVirtualNodes } from './populateVirtualNodes';
 
 /**
@@ -299,6 +300,8 @@ export const populateNodeChildren = (
       ]),
     );
     node.item = candidates[0];
+    if (!context.hasLeafItems)
+      context.hasLeafItems = hasLeafTemplate(candidates);
     if (candidates.length > 1) {
       node.itemCandidates = candidates;
       context.isStaticFirstLoad = false;
@@ -312,6 +315,9 @@ export const populateNodeChildren = (
         build(context, inputs, appendSegment(node.path, index)),
     );
     node.prefixItems = mapArray(candidates, (items) => items[0]);
+    for (let index = 0; index < candidates.length; index++)
+      if (!context.hasLeafItems)
+        context.hasLeafItems = hasLeafTemplate(candidates[index]);
     let hasPrefixCandidates = false;
     for (let index = 0, count = candidates.length; index < count; index++) {
       const items = candidates[index];

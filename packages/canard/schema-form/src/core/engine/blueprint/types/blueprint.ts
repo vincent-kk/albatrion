@@ -33,6 +33,8 @@ export interface Blueprint {
   readonly capabilities: {
     /** Reused or recursive templates require live dependency occurrence binding. */
     readonly hasAliasedDependencies?: boolean;
+    /** A branch array may hold a statically non-nullable terminal item, so settlement stores its empty positions. */
+    readonly hasLeafItems?: boolean;
     /** No disjunction, if, discriminator or active control was reached. */
     readonly isBranchless: boolean;
     /** At least one supported control was authored as an expression string. */

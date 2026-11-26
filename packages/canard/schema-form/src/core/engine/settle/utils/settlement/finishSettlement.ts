@@ -15,6 +15,7 @@ import { alignArraySnapshotSlots } from '../loadValues/alignArraySnapshotSlots';
 import { finalizeExits } from '../transition/finalizeExits';
 import { restoreSourceB } from '../transition/restoreSourceB';
 import { transitionSettlement } from '../transition/transitionSettlement';
+import { storeEmptyItemNulls } from './storeEmptyItemNulls';
 
 /**
  * Complete derivation, transition, rollback, and one commit after calculation.
@@ -65,6 +66,8 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
     restoreSourceB(context, scratch.explicitSource);
     captureDeriveBaseline(context);
   }
+  if (context.root.runtime.blueprint.capabilities.hasLeafItems)
+    storeEmptyItemNulls(context);
   publishStateKeys(context);
   if (
     context.pendingExits.size > 0 ||

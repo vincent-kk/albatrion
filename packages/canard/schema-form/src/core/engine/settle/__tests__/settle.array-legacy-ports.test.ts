@@ -166,18 +166,18 @@ describe('array legacy contract ports', () => {
     expect(root.outputValue).toEqual({});
   });
 
-  it('VALUE-034 fills an unsupplied push slot when items has no default', () => {
+  it('VALUE-034 stores an unsupplied push slot as an empty item with a null source when items has no default', () => {
     const { root } = makeRecordTree({
       type: 'array',
       items: { type: 'string' },
     });
     expect((root as ArrayNode).push()).toBe(1);
-    expect(root.children?.map((item) => item.source)).toEqual([undefined]);
+    expect(root.children?.map((item) => item.source)).toEqual([null]);
     expect(root.value).toEqual([null]);
     expect(root.outputValue).toEqual([null]);
   });
 
-  it('GOAL-074 restores omitTrailingEmpty slots from source after branch reactivation', () => {
+  it('GOAL-074 restores the trimmed slots and their null sources after branch reactivation', () => {
     const { root } = makeRecordTree({
       type: 'object',
       properties: {
@@ -195,14 +195,14 @@ describe('array legacy contract ports', () => {
     root.find('/active')?.setValue(false);
     expect(readRetainedSlotSource(root, '/tail', 'array')).toEqual([
       'a',
-      undefined,
-      undefined,
+      null,
+      null,
     ]);
     root.find('/active')?.setValue(true);
     expect(root.find('/tail')?.children?.map((item) => item.source)).toEqual([
       'a',
-      undefined,
-      undefined,
+      null,
+      null,
     ]);
     expect(root.find('/tail')?.children).toHaveLength(3);
     expect(root.outputValue).toEqual({ active: true, tail: ['a'] });

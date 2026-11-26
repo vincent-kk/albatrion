@@ -24,9 +24,9 @@ branch의 비배열 원본에는 아이템이 없습니다. 객체 branch의 선
 
 잎 자리를 undefined가 아니라 null로 채우는 것은 폼이 보는 값을 전송값과 같게 하기 위해서입니다. JSON에는 undefined가 없어 JSON.stringify가 배열 안의 undefined를 null로 바꾸므로, undefined로 채우면 getValue·onChange·루트 검증이 보는 값과 실제 전송값이 달라집니다. null을 허용하지 않는 아이템 스키마는 undefined와 null을 똑같이 거부하므로(Ajv 8.17.1에서 둘 다 `must be string`) undefined로 채워도 검증 오류를 피하지 못합니다.
 
-branch 배열에서 아이템(또는 prefixItems) 템플릿이 잎이고 정적 선언으로 null을 허용하지 않는 자리에 들어온 null은 일부러 비워 둔 아이템으로 읽습니다. 잎은 종류가 object·array·null이 아닌 템플릿이며, union은 객체를 담아도 잎입니다. 로드·reset·부모의 쓰기·아이템 자신의 쓰기·구조 동사·derived·injectTo 등 어디서 온 null이든 같습니다. 아이템의 원본과 value는 undefined이고 misfit도 경고도 없으며, 방출은 위의 채움과 같은 null이고 검증 오류도 같습니다. 채움 null은 JSON 왕복 뒤 실제 입력으로 돌아오므로, 이렇게 읽어야 저장한 출력을 다시 로드한 트리가 저장 전의 빈 아이템과 같아지고 그 null이 저장 전에는 없던 misfit 경고를 만들지 않습니다. 노드에 값의 출처를 기록하지 않으므로 어디서 온 null인지 구별하지 않습니다.
+branch 배열에서 아이템(또는 prefixItems) 템플릿이 잎이고 정적 선언으로 null을 허용하지 않는 자리는 비워 둔 아이템을 원본 null 하나로 나타냅니다. 잎은 종류가 string·number·boolean·union인 템플릿이며, union은 객체를 담아도 잎입니다. 이 자리의 노드는 [behaviors의 item-leaf-rows](../DETAIL.md#item-leaf-rows--아이템-잎-행은-저장된-null을-값-없음으로-읽습니다)가 정한 행으로 저장된 null을 값 없음으로 읽습니다. 원본은 쓰기 경계의 정적 해석 결과 그대로 null이고, value와 FieldInput이 받는 value는 undefined이며, misfit은 terminal 잎에서 읽은 값으로 판정하므로 misfit도 경고도 없습니다. 방출은 위의 채움과 같은 null이고 검증 오류도 같습니다. 로드·reset·부모의 쓰기·아이템 자신의 쓰기·구조 동사·derived·injectTo 등 어디서 온 null이든 같습니다. 채움 null은 JSON 왕복 뒤 실제 입력으로 돌아오므로, 이렇게 읽어야 저장한 출력을 다시 로드한 트리가 원본까지 저장 전의 빈 아이템과 같아지고 그 null이 저장 전에는 없던 misfit 경고를 만들지 않습니다. 값 없이 정착을 마친 자리를 null로 적는 확정, 빈 자리에 빈 입력을 쓰는 쓰기, 기본값의 조건은 [settle의 empty-item-position](../../settle/DETAIL.md#empty-item-position--아이템-자리는-값이거나-빈-자리입니다)을 따릅니다.
 
-이 판정은 쓰기 경계의 정적 선언(schemaType·isNullable)을 기준으로 하며 misfit 판정과 같은 기준입니다. 게이트가 유효형을 좁히는 선택은 쓰기 경계보다 나중이므로, 정적으로 nullable인 아이템은 게이트가 null을 뺀 동안에도 받은 null을 실제 값으로 둡니다. nullable 아이템과 null 종류 아이템의 null은 실제 값이고, object·array 종류 아이템(중첩 배열의 바깥 자리 포함)의 null은 misfit이며, terminal 배열은 통째 값을 그대로 둡니다. 빈자리 채움은 nullable·null 종류를 포함한 모든 잎 자리를 null로 채우고 이 판정은 그 null이 실제 값인 두 경우를 빼므로, 두 정의는 따로 둡니다. 비워 둔 아이템에 기본값을 적용하지 않는 조건과 재진입의 채움은 [settle 계약의 SETTLE-005](../../settle/DETAIL.md#settle-005--채움은-생김에-한-번-적용합니다)를 따릅니다.
+대상은 노드를 만들 때 정적 선언(isNullable)으로 정하며 misfit 판정과 같은 기준입니다. 게이트가 유효형을 좁히는 선택은 노드 생성보다 나중이고 행은 노드 수명 동안 고정이므로, 정적으로 nullable인 아이템은 게이트가 null을 뺀 동안에도 받은 null을 실제 값으로 둡니다. nullable 아이템과 null 종류 아이템의 null은 실제 값이고, object·array 종류 아이템(중첩 배열의 바깥 자리 포함)의 null은 misfit이며, terminal 배열은 통째 값을 그대로 둡니다. 빈자리 채움은 nullable·null 종류를 포함한 모든 잎 자리를 null로 채우고 이 판정은 그 null이 실제 값인 두 경우를 빼므로, 두 정의는 따로 둡니다.
 
 ### array-projection — 꼬리 생략은 두 전략에서 같은 빈 값 판정을 씁니다
 
@@ -36,7 +36,7 @@ omitTrailingEmpty는 배열 값의 끝에서부터 null·undefined·''·빈 배�
 
 판정은 각 자리의 값만 얕게 봅니다. branch의 자리는 아이템 투영을 거친 방출이므로, 기본 omitEmpty에서 `{ name: '' }` 행은 name이 빠져 빈 객체가 되고 잘립니다. terminal은 아이템 투영 없이 원본을 보므로 같은 `{ name: '' }`가 남고, 빈 행은 입력이 undefined나 {}로 내보내야 합니다. terminal에서 아이템 스키마대로 안쪽을 정리하면 아이템 노드의 일을 다시 구현하게 되므로 하지 않으며, 두 전략의 결과는 이 차이만큼 다를 수 있습니다. 빈 객체의 뜻은 [behaviors 계약의 empty-values](../DETAIL.md)를 따릅니다.
 
-꼬리가 생략된 방출로 새로 마운트하면 아이템 수가 줄 수 있으며, 두 트리를 같게 하려고 원본 아이템을 지우지 않습니다. 방출 없는 잎 아이템을 채운 null은 저장·로드 뒤 nullable이 아닌 아이템에서는 [VALUE-034](#value-034--방출-없는-아이템도-자리를-차지합니다)에 따라 비워 둔 아이템이 되고, nullable 아이템에서는 실제 null 값이 됩니다. nullable 허용은 그 null을 유효한 값으로 만드는 선택이고, omitTrailingEmpty는 nullable 여부와 상관없이 꼬리를 출력에서 빼는 선택입니다.
+꼬리가 생략된 방출로 새로 마운트하면 아이템 수가 줄 수 있으며, 두 트리를 같게 하려고 원본 아이템을 지우지 않습니다. 방출 없는 잎 아이템을 채운 null은 저장·로드 뒤 nullable이 아닌 아이템에서는 [VALUE-034](#value-034--방출-없는-아이템도-자리를-차지합니다)에 따라 편집 트리의 그 자리와 원본까지 같은 비워 둔 아이템이 되고, nullable 아이템에서는 실제 null 값이 됩니다. nullable 허용은 그 null을 유효한 값으로 만드는 선택이고, omitTrailingEmpty는 nullable 여부와 상관없이 꼬리를 출력에서 빼는 선택입니다.
 
 ### array-terminal — 통째 원본과 자리별 합성을 섞지 않습니다
 
@@ -56,4 +56,4 @@ terminal은 자식 없이 통째 배열 참조를 유지하고, 유효한 구조
 
 ## Last Updated
 
-자리별 종류·빈자리 채움·아이템 자리 null의 읽기·꼬리 투영·순수 구조 계획 또는 합성 증명이 바뀔 때 갱신합니다.
+자리별 종류·빈자리 채움·비워 둔 아이템의 원본과 읽기·꼬리 투영·순수 구조 계획 또는 합성 증명이 바뀔 때 갱신합니다.

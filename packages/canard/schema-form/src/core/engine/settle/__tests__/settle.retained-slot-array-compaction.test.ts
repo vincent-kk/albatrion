@@ -41,7 +41,7 @@ it('compacts live kept descendants in their original order', () => {
   expect(getDispatchNode(root, 'list').__itemCount__).toBe(2);
 });
 
-it('restores scalar items that explicitly keep their own source', () => {
+it('restores scalar items that explicitly keep their own source, an empty item as its null', () => {
   const { root } = createDispatchTree({
     type: 'object',
     properties: {
@@ -57,12 +57,13 @@ it('restores scalar items that explicitly keep their own source', () => {
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   expect(readFieldNodeInactiveValues(root)).toEqual([
     { path: '/list/0', value: 'first' },
-    { path: '/list/1', value: 'last' },
+    { path: '/list/1', value: null },
+    { path: '/list/2', value: 'last' },
   ]);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
   expect(root.__outputValue__).toEqual({
     open: true,
-    list: ['first', 'last'],
+    list: ['first', null, 'last'],
   });
 });
 
@@ -254,7 +255,7 @@ it.each([
   },
 );
 
-it('rebinds kept item candidates when survivors shift to earlier indices', () => {
+it('rebinds kept property candidates when survivors shift to earlier indices', () => {
   const { root } = createDispatchTree({
     type: 'object',
     properties: {
@@ -263,39 +264,46 @@ it('rebinds kept item candidates when survivors shift to earlier indices', () =>
       list: {
         type: 'array',
         controls: { active: '#/open', unsetOnInactive: true },
-        allOf: [
-          {
-            controls: { active: '#/number' },
-            items: { type: 'number', controls: { unsetOnInactive: false } },
-          },
-          {
-            controls: { active: '!#/number' },
-            items: {
-              type: 'string',
-              default: 'held',
-              controls: { unsetOnInactive: false },
+        items: {
+          type: 'object',
+          allOf: [
+            {
+              controls: { active: '#/number' },
+              properties: {
+                keep: { type: 'number', controls: { unsetOnInactive: false } },
+              },
             },
-          },
-        ],
+            {
+              controls: { active: '!#/number' },
+              properties: {
+                keep: {
+                  type: 'string',
+                  default: 'held',
+                  controls: { unsetOnInactive: false },
+                },
+              },
+            },
+          ],
+        },
       },
     },
   });
   dispatchMount(root, {
     open: true,
     number: true,
-    list: [undefined, undefined, 12],
+    list: [{}, {}, { keep: 12 }],
   });
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   expect(readFieldNodeInactiveValues(root)).toEqual([
-    { path: '/list/0', value: 12 },
+    { path: '/list/0/keep', value: 12 },
   ]);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
   expect(getDispatchNode(root, 'list').__itemCount__).toBe(1);
-  expect(getDispatchNode(root, 'list', '0').source).toBe(12);
+  expect(getDispatchNode(root, 'list', '0', 'keep').source).toBe(12);
   dispatchSetValue(getDispatchNode(root, 'number'), false);
-  expect(getDispatchNode(root, 'list', '0').source).toBe('held');
+  expect(getDispatchNode(root, 'list', '0', 'keep').source).toBe('held');
   dispatchSetValue(getDispatchNode(root, 'number'), true);
-  expect(getDispatchNode(root, 'list', '0').source).toBe(12);
+  expect(getDispatchNode(root, 'list', '0', 'keep').source).toBe(12);
 });
 
 it('keeps an item whose only kept source is an explicitly kept empty array', () => {
