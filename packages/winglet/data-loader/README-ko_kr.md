@@ -125,7 +125,14 @@ const userLoaderNoCache = new DataLoader(userBatchLoader, {
 const userLoader = new DataLoader(userBatchLoader, {
   maxBatchSize: 50, // 한 번에 최대 50개까지만 배치 처리
 });
+
+// 배칭 끄기: 배치 함수가 호출마다 키 하나를 받습니다
+const singleUserLoader = new DataLoader(userBatchLoader, {
+  disableBatch: true,
+});
 ```
+
+`maxBatchSize`와 `disableBatch: true`는 서로 모순되므로 함께 쓰면 타입 오류입니다. 위의 두 형태 중 하나를 고르세요. 둘을 함께 넘기는 JavaScript 호출도 호출마다 키 하나를 받습니다. `disableBatch: true`가 우선하고, `maxBatchSize`는 읽지도 검증하지도 않습니다.
 
 ### 사용자 정의 캐시 키 함수
 
@@ -226,7 +233,7 @@ userLoader.prime('invalidUser', new Error('사용자를 찾을 수 없음'));
 ### DataLoaderOptions
 
 ```typescript
-interface DataLoaderOptions<Key, Value, CacheKey = Key> {
+type DataLoaderOptions<Key, Value, CacheKey = Key> = {
   /** 로더의 이름 (디버깅용) */
   name?: string;
 
@@ -238,13 +245,20 @@ interface DataLoaderOptions<Key, Value, CacheKey = Key> {
 
   /** 로더 키를 캐시 키로 변환하는 함수 */
   cacheKeyFn?: (key: Key) => CacheKey;
-
-  /** 배치당 최대 키 수: 양의 정수 또는 Infinity(기본값). 그 외 값은 생성자에서 INVALID_MAX_BATCH_SIZE를 던집니다. disableBatch가 true이면 읽지 않습니다. */
-  maxBatchSize?: number;
-
-  /** 모든 load()를 각자의 배치로 디스패치합니다(maxBatchSize: 1과 동일). maxBatchSize보다 우선합니다. */
-  disableBatch?: true;
-}
+} & (
+  | {
+      /** 배칭 켜기(기본값). false는 생략과 같습니다 */
+      disableBatch?: false;
+      /** 배치당 최대 키 수: 양의 정수 또는 Infinity(기본값). 그 외 값은 생성자에서 INVALID_MAX_BATCH_SIZE를 던집니다. */
+      maxBatchSize?: number;
+    }
+  | {
+      /** 배칭 끄기: 배치 함수가 호출마다 키 하나를 받습니다(maxBatchSize: 1과 동일) */
+      disableBatch: true;
+      /** disableBatch: true와 함께 쓰면 타입 오류입니다 */
+      maxBatchSize?: never;
+    }
+);
 ```
 
 ### BatchLoader 함수

@@ -28,9 +28,10 @@ describe('round-2 data-loader 1: positive integral batch limits', () => {
       expect(calls).toEqual(maxBatchSize === 1 ? [[1], [2], [3]] : [[1, 2, 3]]);
     },
   );
-  it('keeps disableBatch precedence over unused maxBatchSize', async () => {
+  it('keeps disableBatch precedence over unused maxBatchSize for untyped callers', async () => {
     const loader = new DataLoader<number, number>(async (keys) => keys, {
       disableBatch: true,
+      // @ts-expect-error maxBatchSize is a type error beside disableBatch: true
       maxBatchSize: NaN,
     });
     expect(await loader.load(1)).toBe(1);

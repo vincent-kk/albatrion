@@ -199,7 +199,10 @@ type DataLoaderOptions<Key, Value, CacheKey = Key> = {
   cache?: MapLike<CacheKey, Promise<Value>> | false;
   batchScheduler?: (task: () => void) => void;
   cacheKeyFn?: (key: Key) => CacheKey;
-} & ({ maxBatchSize?: number } | { disableBatch: true });
+} & (
+  | { disableBatch?: false; maxBatchSize?: number }
+  | { disableBatch: true; maxBatchSize?: never }
+);
 ```
 
 | Option           | Type                                         | Default             | Description                                                                                                                                          |
@@ -208,8 +211,18 @@ type DataLoaderOptions<Key, Value, CacheKey = Key> = {
 | `cache`          | `MapLike<CacheKey, Promise<Value>> \| false` | `new Map()`         | Custom cache implementation. Pass `false` to disable caching entirely.                                                                               |
 | `batchScheduler` | `(task: () => void) => void`                 | `process.nextTick`  | Controls when the batch is dispatched. Replace with `queueMicrotask`, `setTimeout`, `requestAnimationFrame`, or `fn => fn()` for immediate dispatch. |
 | `cacheKeyFn`     | `(key: Key) => CacheKey`                     | identity (`k => k`) | Converts a loader key to a cache key. Required when keys are objects (reference equality would fail).                                                |
-| `maxBatchSize`   | `number`                                     | `Infinity`          | Maximum number of keys per batch. When exceeded, a new batch is started automatically. Must be a positive integer.                                   |
-| `disableBatch`   | `true`                                       | —                   | Disables batching; each `load()` call dispatches immediately (equivalent to `maxBatchSize: 1`). Takes precedence over `maxBatchSize` when both are given.              |
+| `maxBatchSize`   | `number`                                     | `Infinity`          | Maximum number of keys per batch. When exceeded, a new batch is started automatically. Must be a positive integer or `Infinity`. A type error beside `disableBatch: true`. |
+| `disableBatch`   | `boolean`                                    | —                   | `true` disables batching: the batch loader receives one key per call (equivalent to `maxBatchSize: 1`), and each batch still waits for `batchScheduler`. `false` is the same as omitting it. |
+
+The batching options take one of two shapes, and passing `maxBatchSize` together with `disableBatch: true` is a type error, because the two contradict each other:
+
+```typescript
+new DataLoader(batchLoad, { maxBatchSize: 100 }); // batching on, at most 100 keys per call
+new DataLoader(batchLoad, { disableBatch: true }); // batching off, one key per call
+new DataLoader(batchLoad, { disableBatch: true, maxBatchSize: 100 }); // TS2322 on maxBatchSize
+```
+
+A `disableBatch` typed as `boolean` may be `true`, so it cannot sit beside `maxBatchSize` either; choose the shape per branch, as in `flag ? { disableBatch: true } : { maxBatchSize: 100 }`. A JavaScript caller, which the type does not reach, gets one key per call when it passes both: `disableBatch: true` wins, and `maxBatchSize` is neither read nor validated.
 
 ---
 
@@ -459,6 +472,6 @@ const { successes, failures } = results.reduce(
 ### Disabling Batch for Singleton Loaders
 
 ```typescript
-// Each load dispatches immediately — no coalescing
-const immediateLoader = new DataLoader(batchLoad, { disableBatch: true });
+// Each batch carries at most one key — no coalescing; batches still wait for batchScheduler
+const singleKeyLoader = new DataLoader(batchLoad, { disableBatch: true });
 ```

@@ -11,7 +11,7 @@ The specifications, READMEs and packaged agent skills now match current behavior
 
 `@winglet/react-utils`: The specification and the `useHandle` reference now state that a call made during the first render runs that render's own handler, because no handler is committed yet.
 
-`@winglet/data-loader`: The specification and the agent skill no longer say TypeScript rejects `maxBatchSize` together with `disableBatch`: both are accepted and `disableBatch` wins.
+`@winglet/data-loader`: The specification and the agent skill state what happens at runtime when `maxBatchSize` is given together with `disableBatch: true`: `disableBatch` wins and `maxBatchSize` is neither read nor validated. TypeScript rejects the combination.
 
 `@winglet/react-utils`: The specifications and the agent skill now document the `ErrorBoundary` class (props `children`, `fallback`, `onError`) exported from the package root and `@winglet/react-utils/hoc`, and the agent skill names `useLazyConstant` as the hook that calls its initializer once, since `useConstant` stores a function without calling it.
 
