@@ -39,6 +39,40 @@ const listDefault = (
 });
 
 // filid:contract settle-static-first-load-empty-item-null
+it.each([
+  [
+    'without an item default',
+    { type: 'string' },
+    [null, 'x'],
+    [null, undefined],
+  ],
+  [
+    'with an item default',
+    { type: 'string', default: 'D' },
+    ['D', 'x'],
+    ['D', 'D'],
+  ],
+])(
+  'routes a literal default with an array hole %s to the general load, which loads the hole as the static-first load reads its filled literal',
+  (_default, items, filled, hole) => {
+    const literal = mountDefaults(
+      listDefault(filled, { items }),
+      'static-first',
+    );
+    const admission = vi.spyOn(staticFirstAdmission, 'canLoadStaticFirstTree');
+    const holed: unknown[] = [];
+    holed[1] = 'x';
+    const tree = mountPublicTree(listDefault(holed, { items }));
+    expect(admission).toHaveLastReturnedWith(false);
+    expect(tree.root.outputValue).toEqual(literal.root.outputValue);
+    for (const loaded of [tree, literal])
+      expect([loaded.at('/list/0').source, loaded.at('/list/0').value]).toEqual(
+        hole,
+      );
+    expect(tree.root.runtime.misfitRecords).toEqual([]);
+  },
+);
+
 describe.each(['static-first', 'generic'] as const)(
   'a null item position in a literal default, %s first load',
   (path) => {

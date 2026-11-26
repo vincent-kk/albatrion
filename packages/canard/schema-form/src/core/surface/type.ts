@@ -78,7 +78,7 @@ export interface NodeSurface<
   readonly escapedName: string;
   readonly path: string;
   readonly children: Children;
-  /** Interpreted terminal source or a branch's non-plain source. */
+  /** Interpreted terminal source or a branch's non-plain source; an empty item at a non-nullable leaf item position stores null, which `value` reads as undefined. */
   readonly source: unknown;
   /** Undeclared object keys retained in incoming own-key order. */
   readonly extras: unknown;

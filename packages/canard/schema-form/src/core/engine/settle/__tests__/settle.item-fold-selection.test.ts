@@ -194,7 +194,7 @@ describe('array item fold selection', () => {
     keyword: 'items' | 'prefixItems';
     absentBeforeClose: boolean;
   }[])(
-    '$keyword preserves candidate sources across host capture, absentBeforeClose=$absentBeforeClose',
+    '$keyword preserves candidate sources across host capture and stores the entered empty candidate as null, absentBeforeClose=$absentBeforeClose',
     async ({ keyword, absentBeforeClose }) => {
       const validationInputs: unknown[] = [];
       const validator: Validator = {
@@ -251,7 +251,7 @@ describe('array item fold selection', () => {
       dispatchSetValue(root.__childrenByName__!.open, true);
       const list = root.__childrenByName__!.list;
       expect(list.__childrenByName__!['0'].blueprintNode.kind).toBe('number');
-      expect(list.__childrenByName__!['0'].source).toBeUndefined();
+      expect(list.__childrenByName__!['0'].source).toBeNull();
       const later = { open: true, a: false, b: true, list: [null] };
       expect(root.__value__).toEqual(later);
       expect(root.__outputValue__).toEqual(later);

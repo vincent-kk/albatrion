@@ -122,6 +122,9 @@ export const blueprint = (
       context.hasTemplateAliases === true &&
       context.capabilities.hasDependencies,
   });
+  Object.defineProperty(context.capabilities, 'hasLeafItems', {
+    value: context.hasLeafItems === true,
+  });
   const result: Blueprint = {
     capabilities: context.capabilities,
     isAtomic: options.isAtomic,

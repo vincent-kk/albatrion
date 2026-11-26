@@ -48,6 +48,10 @@ FE 전용 조건부 필드는 단일 스키마의 properties와 controls.active�
 
 fixedFirstLoadPlan은 isStaticFirstLoadEligible·capabilities.isBranchless와 독립된 비열거·읽기 전용 생성 사실입니다. 기존 자격을 역산하지 않고 최종 검사까지 남은 유한·리터럴 증거를 받으며, 모드 초기화나 캐시 재사용으로 지우지 않습니다. 검증기 판정·살아 있는 레코드를 보유하지 않아 분석 재사용이 실행 상태를 공유하지 않게 합니다.
 
+### leaf-items-proof — 아이템 잎 자리의 부재 증명
+
+capabilities.hasLeafItems는 어떤 branch 배열이 정적 선언으로 nullable이 아닌 terminal 템플릿을 아이템이나 prefixItems 후보로 가지는지의 비열거·읽기 전용 생성 사실입니다. 템플릿을 만든 뒤에 아는 종류·전략·isNullable에서 정하므로, 작성된 위치마다 모으는 열거 가능한 capability와 달리 hasAliasedDependencies처럼 분석 끝에 붙입니다. 이 사실이 거짓이면 정착 끝의 빈 아이템 확정([settle의 empty-item-position](../settle/DETAIL.md#empty-item-position--아이템-자리는-값이거나-빈-자리입니다))이 순회하지 않아, 그런 자리가 없는 폼은 그 비용을 치르지 않습니다. 아이템 잎 행을 받지 않는 terminal object·array 아이템도 참으로 만드는 보수적 증명이며, 대상의 판정은 행 선택이 소유합니다. 대상 판정을 여기서 복제하면 두 정의가 갈라질 수 있습니다.
+
 ### fixed-first-load-fallback — 닫힌 overlay 언어
 
 독립적인 로컬 if의 then·else는 생략하거나, 무조건 존재하는 문자열 자식의 유한 비음수 정수 minLength·maxLength만 바꾸는 properties 조각입니다. 봉투와 속성 지도는 plain/null prototype의 열거 가능한 자기 데이터 속성만 허용하며 심볼·접근자를 거절합니다. required·default·type·nullable·참조·options·presentation·미지 키가 있으면 계획 전체를 포기합니다. if 자체의 불투명한 조건은 일반 가드에 남겨 지원하지 않는 의미를 증명한 것처럼 취급하지 않습니다.

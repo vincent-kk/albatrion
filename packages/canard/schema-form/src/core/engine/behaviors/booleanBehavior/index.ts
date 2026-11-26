@@ -1,1 +1,1 @@
-export { booleanBehavior } from './booleanBehavior';
+export { booleanBehavior, booleanItemLeafBehavior } from './booleanBehavior';

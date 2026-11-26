@@ -13,7 +13,7 @@ it.each([
   ['off', false],
   ['verify', false],
 ] as const)(
-  '%s preserves candidate arrays through host exits, absent=%s',
+  '%s preserves candidate arrays through host exits and retains the empty candidate as null, absent=%s',
   (_mode, absent) => {
     const { root } = createDispatchTree({
       type: 'object',
@@ -46,7 +46,7 @@ it.each([
     dispatchSetValue(getDispatchNode(root, 'open'), false);
     const second = readFieldNodeInactiveValues(root);
     expect(second).toEqual([
-      { path: '/list', value: [undefined] },
+      { path: '/list', value: [null] },
       { path: '/list/0', value: 'A' },
     ]);
     expect(second[1]).not.toBe(first[1]);

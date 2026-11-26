@@ -21,7 +21,10 @@ export const readStaticFirstWarning = <Self extends FieldNodeRecord<Self>>(
   const effective = effectiveType(node);
   // Only a virtual node lacks a JSON type, and it never misfits.
   if (schemaType === undefined || effective === undefined) return undefined;
-  if (!isMisfit(node.source, effective, node.isNullable)) return undefined;
+  // A terminal node is judged on what it reads, so an empty item's stored null is no misfit.
+  const read =
+    node.behavior.strategy === 'terminal' ? node.__value__ : node.source;
+  if (!isMisfit(read, effective, node.isNullable)) return undefined;
   const candidates = conversionCandidates(node, effective);
   const ambiguous = candidates.length > 1;
   return {

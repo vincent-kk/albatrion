@@ -20,13 +20,13 @@ import type {
   Validator,
 } from '../../engine';
 import {
-  BEHAVIORS,
   PathKeyedSet,
   collectBlueprintWarnings,
   compileEntryGuards,
   createFormErrorRecord,
   mergeEffectiveSchema,
   readValidationEntry,
+  selectBehavior,
 } from '../../engine';
 import { FieldNode as RuntimeFieldNode } from '../runtime/FieldNode';
 import type {
@@ -109,7 +109,8 @@ const createFieldNode = (
     : $.Root;
   const depth = parent ? parent.depth + 1 : 0;
   const row =
-    instance?.behavior ?? BEHAVIORS[template.kind]?.[template.strategy];
+    instance?.behavior ??
+    selectBehavior(template, parent?.behavior.type === 'array');
   if (!row)
     throw new Error(
       `Missing behavior for ${template.kind}/${template.strategy}`,

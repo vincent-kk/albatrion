@@ -1,1 +1,1 @@
-export { stringBehavior } from './stringBehavior';
+export { stringBehavior, stringItemLeafBehavior } from './stringBehavior';

@@ -4,6 +4,7 @@ import type { Optional } from '@aileron/declare';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
+import { isItemLeafBehavior } from '../../../behaviors';
 import type { Distribution, FieldNodeRecord, UnionSpec } from '../../../record';
 import { FieldNodeWriteKind } from '../../../types/value';
 import { BATCH_HOST_SOURCE } from '../../../utils/batchHostSource';
@@ -24,7 +25,6 @@ import { assertVirtualWriteShape } from './assertVirtualWriteShape';
 import { decideAddressWrite } from './decideAddressWrite';
 import { getWriteChild } from './getWriteChild';
 import { hasDistributedChildInput } from './hasDistributedChildInput';
-import { isEmptyItemNull } from './isEmptyItemNull';
 import { isPlain } from './isPlain';
 import { nextExtras } from './nextExtras';
 import { staticSpec } from './staticSpec';
@@ -46,7 +46,6 @@ const UNINTERPRETED: unique symbol = Symbol('uninterpreted');
  * named value into a child leaving in this settlement, as the same write after the exit does.
  * In an admitted static write a host keeping its key set or item count stays out of
  * shape-dirty and its leaf children whose interpreted value equals their source are not marked (W1).
- * A null at a deliberately empty array item position (isEmptyItemNull) is stored and compared as undefined.
  * @param node - Caller target or descendant reached by a whole host write
  * @param input - Value received at this occurrence's write boundary
  * @param context - Work list recording source, shape, and automatic changes
@@ -93,15 +92,18 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     recordSourceDecision(node, input, context, writeOrigin, writeOrder);
   }
   const known = changedValue !== UNINTERPRETED;
-  const interpretation = known
-    ? changedValue
-    : node.behavior.interpret(input, spec);
-  const value =
-    interpretation === null && isEmptyItemNull(node)
-      ? undefined
-      : interpretation;
+  const value = known ? changedValue : node.behavior.interpret(input, spec);
   if (node.behavior.strategy !== 'branch') {
-    if (known || !sameValue(node.source, value)) {
+    // An input reading as undefined onto an item leaf reading as undefined changes nothing,
+    // except that a null becomes the source of a position still without one, so the fill
+    // does not take that position for missing.
+    if (
+      (value === null || value === undefined) &&
+      (node.source === null || node.source === undefined) &&
+      isItemLeafBehavior(node.behavior)
+    ) {
+      if (value === null) node.source = null;
+    } else if (known || !sameValue(node.source, value)) {
       node.source = value;
       context.changedSource.add(node.path);
       context.changedNodes.add(node);
@@ -262,8 +264,6 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     if (sameShape && child.behavior.strategy !== 'branch') {
       childSpec = staticSpec(child.schemaType, child.isNullable);
       interpreted = child.behavior.interpret(childInput, childSpec);
-      if (interpreted === null && isEmptyItemNull(child))
-        interpreted = undefined;
     }
     if (interpreted !== UNINTERPRETED && sameValue(child.source, interpreted))
       continue;

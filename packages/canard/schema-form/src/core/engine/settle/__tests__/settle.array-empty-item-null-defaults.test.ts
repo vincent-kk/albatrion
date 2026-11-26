@@ -122,19 +122,19 @@ describe('defaults around a null item position', () => {
   });
 
   it.each([null, undefined])(
-    'fills an item cleared with %s again when its array re-enters through a gate',
+    'keeps an item cleared with %s empty without its default when its array re-enters through a gate',
     (cleared) => {
       const { schema, item } = gatedList('list');
       const tree = mountPublicTree(schema, { flag: true, list: ['x', 'y'] });
       tree.at(item).setValue(cleared);
       tree.at('/flag').setValue(false);
       tree.at('/flag').setValue(true);
-      expect(tree.root.outputValue).toEqual({ flag: true, list: ['x', 'D'] });
-      expect(tree.at(item).isMisfit).toBe(false);
+      expect(tree.root.outputValue).toEqual({ flag: true, list: ['x', null] });
+      expectEmptyItem(tree.at(item));
     },
   );
 
-  it('fills an item cleared with null again when the branch holding its array re-enters', () => {
+  it('keeps an item cleared with null empty without its default when the branch holding its array re-enters', () => {
     const { schema, item } = gatedList('branch');
     const tree = mountPublicTree(schema, {
       flag: true,
@@ -145,12 +145,12 @@ describe('defaults around a null item position', () => {
     tree.at('/flag').setValue(true);
     expect(tree.root.outputValue).toEqual({
       flag: true,
-      branch: { list: ['x', 'D'] },
+      branch: { list: ['x', null] },
     });
-    expect(tree.at(item).isMisfit).toBe(false);
+    expectEmptyItem(tree.at(item));
   });
 
-  it('fills an item cleared with null again when the item re-enters through its own gate', () => {
+  it('keeps an item cleared with null empty without its default when the item re-enters through its own gate', () => {
     const tree = mountPublicTree(itemGatedList(), {
       flag: true,
       list: ['x', 'y'],
@@ -158,8 +158,8 @@ describe('defaults around a null item position', () => {
     tree.at('/list/1').setValue(null);
     tree.at('/flag').setValue(false);
     tree.at('/flag').setValue(true);
-    expect(tree.root.outputValue).toEqual({ flag: true, list: ['x', 'D'] });
-    expect(tree.at('/list/1').isMisfit).toBe(false);
+    expect(tree.root.outputValue).toEqual({ flag: true, list: ['x', null] });
+    expectEmptyItem(tree.at('/list/1'));
   });
 
   it.each([

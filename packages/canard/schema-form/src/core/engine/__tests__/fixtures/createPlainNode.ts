@@ -15,7 +15,8 @@ import type {
 export interface PlainNode extends FieldNodeRecord<PlainNode> {}
 
 /**
- * Create one record through the same row selection the later factory uses.
+ * Create one record with a per-record wrapper of its kind and strategy row. The wrapper breaks
+ * row identity, so a plain record never carries an item leaf row; public trees cover that row.
  * @param entry - Blueprint template or bound child occurrence
  * @param parent - Structural owner of the new record
  * @param runtime - Single tree runtime supplied to every child
