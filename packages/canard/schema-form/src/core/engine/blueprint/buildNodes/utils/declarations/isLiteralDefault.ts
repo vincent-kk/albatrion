@@ -1,4 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 /**
  * Recognize finite literal data without evaluating getters or copying its values.
@@ -20,9 +21,12 @@ export const isLiteralDefault = (
   active ??= new WeakSet();
   if (active.has(value)) return false;
   active.add(value);
+  // A hole would be the only item position the static-first loader leaves without a value; an
+  // array's other own properties neither hide nor fake one.
+  if (isArray(value))
+    for (let index = 0; index < value.length; index++)
+      if (!hasOwnProperty(value, index)) return false;
   const keys = Object.keys(value);
-  // A hole would be the only item position the static-first loader leaves without a value.
-  if (isArray(value) && keys.length !== value.length) return false;
   for (let index = 0; index < keys.length; index++) {
     const descriptor = Object.getOwnPropertyDescriptor(value, keys[index]);
     if (

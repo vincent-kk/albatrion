@@ -6,6 +6,7 @@ import {
   assembleArrayValue,
   assembleObjectValue,
   getStaticChoices,
+  isItemLeafBehavior,
 } from '../../../behaviors';
 import { mergeEffectiveSchema } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
@@ -21,8 +22,9 @@ import { visitInputChildren } from './visitInputChildren';
 
 /**
  * Evaluate a marked storage input with the currently selected child bindings.
- * A live terminal target's own read goes through its row's assembly, so an item leaf reads a
- * stored null as undefined as its node does; child emissions keep the null the array emits there.
+ * A live item leaf target's own read goes through its row's assembly, so it reads a stored null
+ * as undefined as its node does; child emissions keep the null the array emits there. Every
+ * other terminal row assembles its source unchanged, so its read allocates no record.
  * @param template - Binding that provides the static input type
  * @param input - Composed caller source, including any hidden wrong-kind host source
  * @param live - Current occurrence, if it exists
@@ -49,7 +51,7 @@ export const readStoredInput = <Self extends FieldNodeRecord<Self>>(
   let source = value;
   let stored = value;
 
-  if (live && !output && template.strategy === 'terminal') {
+  if (live && !output && isItemLeafBehavior(live.behavior)) {
     const record: Self = Object.create(live, { source: { value } });
     stored = live.behavior.assemble(record, EMPTY_ARRAY);
   } else if (
