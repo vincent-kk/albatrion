@@ -50,8 +50,8 @@ for (const [group, scenes] of [
     expect(await replayRenderScenes(scenes, task)).toEqual([]);
   }, 120000);
 
-// 남는 차이는 settle/DETAIL.md VALUE-031 표의 행뿐이며, 바깥 관찰자(state의 표시·readOnly·disabled,
-// gate.leaf, watchValues)와 FormHandle·DOM에 생긴 차이는 목록 밖이므로 실패합니다.
+// Only the VALUE-031 table rows remain; a difference in an outside observer (state visibility, readOnly, disabled, gate.leaf, watchValues)
+// or in FormHandle and DOM is not listed and fails.
 it('replays the omitEmpty overlay scene through DOM and FormHandle', async ({
   task,
 }) => {
@@ -79,7 +79,7 @@ it('replays the omitTrailingEmpty overlay scene through DOM and FormHandle', asy
   ).toStrictEqual([['gap-overlay-trailing', 1, [...node, ...screen]]]);
 }, 120000);
 
-// settle/DETAIL.md VALUE-031 표의 union 행: 별도 브랜치에서 바뀔 현재 동작을 그대로 고정합니다.
+// VALUE-031 table, union row: pins the current unconverted reading of a gate-narrowed union.
 it('replays the union type overlay scene through DOM and FormHandle', async ({
   task,
 }) => {

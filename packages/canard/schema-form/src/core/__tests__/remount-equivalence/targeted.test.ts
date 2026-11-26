@@ -39,8 +39,8 @@ it('literal-star state owners match a fresh public-output mount', async ({
   expect(mismatches).toEqual([]);
 }, 120000);
 
-// 남는 차이는 settle/DETAIL.md VALUE-031 표의 행뿐이며, 바깥 관찰자(state의 표시·readOnly·disabled,
-// gate.leaf, watchValues)에 생긴 차이는 목록 밖이므로 실패합니다.
+// Only the VALUE-031 table rows remain; a difference in an outside observer (state visibility, readOnly, disabled, gate.leaf, watchValues)
+// is not listed and fails.
 it('projection overlays reach readers outside the overlay host: omitEmpty', async ({
   task,
 }) => {
@@ -73,19 +73,17 @@ it('projection overlays reach readers outside the overlay host: omitTrailingEmpt
   ]);
 }, 120000);
 
-// settle/DETAIL.md VALUE-031 표의 union 행: 별도 브랜치에서 바뀔 현재 동작을 그대로 고정합니다.
+// VALUE-031 table, union row: pins the current unconverted reading of a gate-narrowed union.
 it('a gate-narrowed union keeps its unconverted value until a fresh load', async ({
   task,
 }) => {
-  const mismatches = await replayOverlayScene(typeScene, task);
-  expect(
-    mismatches.map(({ scene, prefix, differences }) => [
-      scene,
-      prefix,
-      differences.map(({ path }) => path),
-    ]),
-  ).toStrictEqual([
-    ['gap-overlay-type', 1, overlayDifferencePaths['gap-overlay-type'].node],
+  expect(await replayOverlayScene(typeScene, task)).toStrictEqual([
+    {
+      scene: 'gap-overlay-type',
+      seed: 443,
+      prefix: 1,
+      differences: overlayDifferencePaths['gap-overlay-type'].nodeDifferences,
+    },
   ]);
 }, 120000);
 

@@ -32,7 +32,7 @@ it('replays a deterministic feature-pair cover through the screen adapter', asyn
       selected: scenes.map(({ id }) => id),
     },
   });
-  // 14가족 장면은 settle/DETAIL.md VALUE-031 표의 omitEmpty 행만큼 다르고, FormHandle과 DOM은 같습니다.
+  // Family 14 scenes differ only by the omitEmpty row of the VALUE-031 round-trip table in settle/DETAIL.md; FormHandle and DOM match.
   expect(mismatches).toStrictEqual(
     scenes
       .filter((scene) => scene.group === 'family-14')
