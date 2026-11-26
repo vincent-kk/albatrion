@@ -66,7 +66,11 @@ For a nullable object or array holding null:
 
 Writing null to a non-nullable object preserves the wrong-kind value as a misfit; it does not repair it to `{}`. `setValue(undefined)` clears child values and array entries without restoring child defaults.
 
+In a branch array, a `null` entry at an item position whose schema is a non-nullable scalar or union is an emptied item, whether it is loaded or written: `node.value` and the FieldInput `value` prop are `undefined`, the item is not a misfit and reports no `Misfit` warning, the array emits `null` there again, and validation still reports the position unless `omitTrailingEmpty` trims it from the end. That `null` does not take the item's `default` or the `default` of the array or a parent; an `undefined` entry and `push()` without a value do. When a condition removes the array and brings it back, an emptied item takes its default again. A nullable or `type: 'null'` item keeps `null` as a value, an object or array item keeps it as a misfit, and a terminal array keeps its value as given.
+
 Arrays are replaced even with `SetValueOption.Merge`. A parent Overwrite that omits an array clears it, while a parent Merge that omits it retains it. See [write options](./api-reference#write-options).
+
+Loading a saved `getValue()` result does not restore what the output left out. A field whose `''` was dropped by `omitEmpty` loads with `node.value` `undefined`, and items trimmed by `omitTrailingEmpty` do not return as rows; the output is the same. A union value that a condition narrows is not converted until it is written: in a `type: ['string', 'number']` field that a condition narrows to `number`, `'2'` stays `'2'` in the value and the output with a type error, while loading that output converts it to `2`, so conditions that read the value can evaluate differently after the reload.
 
 ## Controls and declaration layers {#controls}
 
