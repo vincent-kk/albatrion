@@ -20,7 +20,7 @@ import type { FieldInputProps, InputRendererProps } from '@/schema-form/types';
 
 afterEach(cleanup);
 
-it('round-2 schema-form 3 sibling: container swap keeps the previous ownership record', () => {
+it('round-2 schema-form 3 sibling: a container swap starts a fresh ownership record like a renderer type change', () => {
   const schema = {
     type: 'object',
     properties: { list: { type: 'array', items: { type: 'string' } } },

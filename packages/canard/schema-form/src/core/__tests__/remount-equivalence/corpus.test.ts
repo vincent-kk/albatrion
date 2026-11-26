@@ -40,7 +40,7 @@ for (const family of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]) {
         project: task.file.projectName,
       }),
     );
-    // 14가족은 settle/DETAIL.md VALUE-031 표의 omitEmpty 행만큼, 조건이 omitEmpty를 켠 접두 1에서만 다릅니다.
+    // Family 14 differs only by the omitEmpty row of the VALUE-031 table, at prefix 1 where the condition enables omitEmpty.
     expect(mismatches).toStrictEqual(
       family === 14
         ? scenes.map((scene) => ({
