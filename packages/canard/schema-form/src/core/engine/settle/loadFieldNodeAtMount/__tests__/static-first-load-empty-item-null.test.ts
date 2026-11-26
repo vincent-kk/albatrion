@@ -73,6 +73,29 @@ it.each([
   },
 );
 
+it('routes a literal default with an array hole and an extra own property to the general load, which loads the hole as null', () => {
+  const admission = vi.spyOn(staticFirstAdmission, 'canLoadStaticFirstTree');
+  const holed: unknown[] = [];
+  holed[1] = 'x';
+  const tree = mountPublicTree(
+    listDefault(Object.assign(holed, { extra: 1 }), {
+      items: { type: 'string' },
+    }),
+  );
+  expect(admission).toHaveLastReturnedWith(false);
+  expect(tree.at('/list/0').source).toBeNull();
+});
+
+it('admits a dense literal array default with an extra own property to the static-first load', () => {
+  const schema = listDefault(Object.assign(['x'], { extra: 1 }), {
+    items: { type: 'string' },
+  });
+  const tree = mountDefaults(schema, 'static-first');
+  expect(tree.root.outputValue).toEqual(
+    mountDefaults(schema, 'generic').root.outputValue,
+  );
+});
+
 describe.each(['static-first', 'generic'] as const)(
   'a null item position in a literal default, %s first load',
   (path) => {
