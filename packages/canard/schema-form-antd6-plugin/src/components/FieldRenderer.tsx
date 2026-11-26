@@ -11,7 +11,10 @@ import { TEXT_STYLE } from './styles';
 
 /**
  * Assemble plugin parts while preserving the existing group structure and empty error line.
- * @param props - Bound field parts, node strategy and indentation depth.
+ * A nested branch shows its name in a legend carrying `labelId`. A leaf under a
+ * non-array parent shows `Label`; an array item leaf instead gets a hidden title
+ * carrying `labelId` and its index for the input's `aria-labelledby`.
+ * @param props - Bound field parts, node strategy, indentation depth and title address.
  * @returns The existing group structure composed with registered parts.
  */
 export const FieldRenderer = ({
@@ -78,8 +81,12 @@ export const FieldRenderer = ({
         }}
       >
         <Flex gap={10} align="center">
-          {node.parentNode && isArraySchema(node.parentNode) === false && (
+          {node.parentNode && isArraySchema(node.parentNode) === false ? (
             <Label />
+          ) : (
+            <span hidden id={labelId}>
+              {name}
+            </span>
           )}
           <Input readOnly={readOnly} disabled={disabled} />
         </Flex>
