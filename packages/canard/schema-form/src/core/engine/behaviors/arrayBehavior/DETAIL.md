@@ -20,7 +20,7 @@ branch의 비배열 원본에는 아이템이 없습니다. 객체 branch의 선
 
 ### VALUE-034 — 방출 없는 아이템도 자리를 차지합니다
 
-선언된 아이템의 방출이 없으면 객체 종류는 {}, 배열 종류는 [], 잎 종류는 null로 채웁니다. union은 객체를 담아도 잎이므로 생략된 union 아이템의 자리는 null입니다. 이것은 방출용 채움이며 원본이나 로드 스냅숏에 저장할 데이터가 아닙니다. 앞·가운데의 빈자리를 압축하면 JSON 배열의 색인이 바뀝니다.
+선언된 아이템의 방출이 없으면 객체 종류는 {}, 배열 종류는 [], 잎 종류는 null로 채웁니다. union은 객체를 담아도 잎이므로 생략된 union 아이템의 자리는 null입니다. 이 채움은 방출에만 쓰며 배열이 원본이나 로드 스냅숏에 적지 않습니다. nullable이 아닌 잎 아이템 자리의 원본 null은 이 채움이 아니라 아래 문단과 [settle의 empty-item-position](../../settle/DETAIL.md#empty-item-position--아이템-자리는-값이거나-빈-자리입니다)이 정하는 확정입니다. 앞·가운데의 빈자리를 압축하면 JSON 배열의 색인이 바뀝니다.
 
 잎 자리를 undefined가 아니라 null로 채우는 것은 폼이 보는 값을 전송값과 같게 하기 위해서입니다. JSON에는 undefined가 없어 JSON.stringify가 배열 안의 undefined를 null로 바꾸므로, undefined로 채우면 getValue·onChange·루트 검증이 보는 값과 실제 전송값이 달라집니다. null을 허용하지 않는 아이템 스키마는 undefined와 null을 똑같이 거부하므로(Ajv 8.17.1에서 둘 다 `must be string`) undefined로 채워도 검증 오류를 피하지 못합니다.
 

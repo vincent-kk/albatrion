@@ -50,8 +50,8 @@ for (const [group, scenes] of [
     expect(await replayRenderScenes(scenes, task)).toEqual([]);
   }, 120000);
 
-// Only the VALUE-031 table rows remain; a difference in an outside observer (state visibility, readOnly, disabled, gate.leaf, watchValues)
-// or in FormHandle and DOM is not listed and fails.
+// Each overlay scene asserts its exact difference paths from one VALUE-031 table row; any other difference fails.
+// The trailing row also reaches the DOM, and the union row outside observers, FormHandle and the DOM.
 it('replays the omitEmpty overlay scene through DOM and FormHandle', async ({
   task,
 }) => {

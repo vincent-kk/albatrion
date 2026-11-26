@@ -4,7 +4,7 @@ import { isArray } from '@winglet/common-utils/filter';
  * Recognize finite literal data without evaluating getters or copying its values.
  * @param value - Authored default whose descendants must also be literal data
  * @param active - Current object ancestry, allocated only for container defaults
- * @returns Whether the value is finite JSON data without executable members or array holes
+ * @returns Whether the value is finite JSON data without executable members, array holes or non-enumerable array indices
  */
 export const isLiteralDefault = (
   value: unknown,

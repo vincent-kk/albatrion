@@ -22,7 +22,7 @@
 
 ### static-first-admission — 무게이트 로더의 좁은 증명
 
-입력이 undefined이고, 붙어 있는 fresh root에 이전 커밋·배달·pending·자식·source·extras·전역 상태가 없으며 청사진의 StaticFirstLoadCapability가 증명된 경우에만 무게이트 로더를 사용합니다. 명시 입력은 같은 값처럼 보여도 일반 경로로 보냅니다. 게이트·식·파생·watch·virtual·union·통째 host·재귀·controls.default 등 증명 밖 기능을 정적 로더에서 부분 해석하지 않습니다. 구멍이 있는 배열 리터럴 기본값(`[, 'x']`)도 리터럴 증명 밖입니다. 이 경로에서 값 없는 아이템 자리를 만드는 것은 그 구멍뿐입니다. 두 경로 모두 구멍을 값 없는 새 자리로 읽어 아이템 default를 채우지만, default가 없으면 정적 로더는 그 원본을 undefined로 남깁니다. 일반 경로로 보내면 값 없이 정착을 마친 자리를 null로 적는 [settle의 empty-item-position](../DETAIL.md#empty-item-position--아이템-자리는-값이거나-빈-자리입니다) 확정이 한 곳에만 있고, 출력·값·경고는 그대로이며 그 자리의 원본만 null이 됩니다.
+입력이 undefined이고, 붙어 있는 fresh root에 이전 커밋·배달·pending·자식·source·extras·전역 상태가 없으며 청사진의 StaticFirstLoadCapability가 증명된 경우에만 무게이트 로더를 사용합니다. 명시 입력은 같은 값처럼 보여도 일반 경로로 보냅니다. 게이트·식·파생·watch·virtual·union·통째 host·재귀·controls.default 등 증명 밖 기능을 정적 로더에서 부분 해석하지 않습니다. 구멍이나 열거되지 않는 색인이 있는 배열 리터럴 기본값(`[, 'x']`)도 리터럴 증명 밖입니다. 열거되지 않는 색인은 리터럴 검사의 키 열거가 방문하지 않기 때문입니다. 이 경로에서 값 없는 아이템 자리를 만드는 것은 그 구멍뿐입니다. 두 경로 모두 구멍을 값 없는 새 자리로 읽어 아이템 default를 채우지만, default가 없으면 정적 로더는 그 원본을 undefined로 남깁니다. 일반 경로로 보내면 값 없이 정착을 마친 자리를 null로 적는 [settle의 empty-item-position](../DETAIL.md#empty-item-position--아이템-자리는-값이거나-빈-자리입니다) 확정이 한 곳에만 있고, 출력·값·경고는 그대로이며 그 자리의 원본만 null이 됩니다.
 
 이 경로는 부모 default의 명시 분배를 자손 default보다 먼저 적용하고 각 노드를 자식 완료 뒤 한 번 조립합니다. 일반 선택의 occurrence별 임시 선언·dirty·빈 자동/나감 집합과 initialOutputs 목록을 만들지 않습니다. 이미 필요한 O(N) 노드·배달 순서 셀과 O(D) DFS 스택은 남고, O(N) 마운트를 상수 비용이라고 약속하지 않습니다. 입력 없는 무게이트 청사진은 게이트 선택 계획·표를 준비할 이유가 없습니다.
 
