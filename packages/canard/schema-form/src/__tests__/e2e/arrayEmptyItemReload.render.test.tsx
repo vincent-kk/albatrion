@@ -1,6 +1,7 @@
 import { createRef } from 'react';
 
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import {
@@ -119,4 +120,34 @@ it('gives the reloaded empty row the same value and misfit props as the pushed r
   expect(saved).toEqual({ list: ['x', null] });
   expect(pushed).toEqual({ value: undefined, misfit: false });
   expect(received.get('/list/1')).toEqual(pushed);
+});
+
+it('keeps an item cleared by typing empty without its default when re-entering through a gate', async () => {
+  const gatedList: JSONSchema = {
+    type: 'object',
+    properties: {
+      flag: { type: 'boolean' },
+      list: {
+        type: 'array',
+        items: {
+          type: 'string',
+          default: 'D',
+          controls: { active: '../../flag === true' },
+        },
+      },
+    },
+  };
+  const user = userEvent.setup();
+  const live = await mountForm(gatedList, { flag: true, list: ['x', 'y'] });
+  await user.clear(secondRow(live.view).input);
+  const flagInput = live.view.container.querySelector(
+    '[data-path="/flag"] input[type="checkbox"]',
+  );
+  if (!(flagInput instanceof HTMLInputElement))
+    throw new Error('Expected the /flag checkbox');
+  await user.click(flagInput);
+  await user.click(flagInput);
+
+  expect(secondRow(live.view).input.value).toBe('');
+  expect(live.handle().getValue()).toEqual({ flag: true, list: ['x', null] });
 });
