@@ -315,11 +315,11 @@ describe('468C-01 exit default read characterization', () => {
     expect(readFieldNodeWatchValues(node)).toEqual([3]);
     expect(readFieldNodeIsMisfit(node)).toBe(true);
     expect(readFieldNodeMisfits(node)).toBe(paths);
-    expect(root.runtime.detachedReads?.get(node)).toMatchObject({
+    expect(node.__detachedReads__).toMatchObject({
       isVisible: false,
       isReadOnly: true,
       isDisabled: true,
     });
-    expect(Object.isFrozen(root.runtime.detachedReads?.get(node))).toBe(true);
+    expect(Object.isFrozen(node.__detachedReads__)).toBe(true);
   });
 });

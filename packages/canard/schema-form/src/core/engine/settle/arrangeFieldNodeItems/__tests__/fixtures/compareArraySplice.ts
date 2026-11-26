@@ -119,7 +119,7 @@ export const compareArraySplice = (
           value: slotsOf(current.__value__),
           outputValue: slotsOf(current.__outputValue__),
           defaults: defaultsOf(root),
-          departed: observeDetachedReads(root, formerChildren),
+          departed: observeDetachedReads(formerChildren),
           positions: formerChildren.map((child, position) => ({
             at: current.children?.indexOf(child) ?? -1,
             key: child.__itemKey__ === formerKeys[position],

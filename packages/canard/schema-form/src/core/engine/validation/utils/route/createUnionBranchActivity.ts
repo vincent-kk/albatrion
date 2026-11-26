@@ -63,8 +63,7 @@ export const createUnionBranchActivity = <Self extends FieldNodeRecord<Self>>(
           if (preparation.conditional.has(child.blueprintNode))
             pending.push(child);
         const ids =
-          committed.get(getCommittedDeclarationKey(current, runtime)) ??
-          EMPTY_ARRAY;
+          committed.get(getCommittedDeclarationKey(current)) ?? EMPTY_ARRAY;
         visited.set(current, ids);
         const activity = hosts.get(current);
         if (activity) activity.ids = ids;

@@ -7,5 +7,5 @@ export const readFieldNodeMisfits = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): readonly string[] =>
   node.isDetached
-    ? (node.runtime.detachedReads?.get(node)?.misfits ?? EMPTY_ARRAY)
+    ? (node.__detachedReads__?.misfits ?? EMPTY_ARRAY)
     : (node.runtime.misfitsMemo?.get(node.path)?.paths ?? EMPTY_ARRAY);

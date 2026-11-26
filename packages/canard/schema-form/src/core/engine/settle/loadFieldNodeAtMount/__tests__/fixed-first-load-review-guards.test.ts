@@ -76,7 +76,7 @@ it.each([false, true])(
       for (const node of [host, host.__childrenByName__!.value])
         expect(
           actual.root.runtime.committedDeclarationIds?.get(
-            getCommittedDeclarationKey(node, node.runtime),
+            getCommittedDeclarationKey(node),
           ),
         ).toBeDefined();
     }

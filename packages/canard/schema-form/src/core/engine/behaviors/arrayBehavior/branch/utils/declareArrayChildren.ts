@@ -19,7 +19,7 @@ export const declareArrayChildren: Behavior['declareChildren'] = (node) => {
   )
     return EMPTY_ARRAY;
   const count = node.__itemCount__;
-  const cached = node.runtime.arrayChildEntries?.get(node);
+  const cached = node.__childEntries__;
   if (cached?.count === count) return cached.result;
   const entries: BlueprintChildEntry[] = [];
   for (let index = 0; index < count; index++) {
@@ -27,9 +27,6 @@ export const declareArrayChildren: Behavior['declareChildren'] = (node) => {
     for (const entry of candidates) entries.push(entry);
   }
   const result = entries.length === 0 ? EMPTY_ARRAY : Object.freeze(entries);
-  (node.runtime.arrayChildEntries ??= new WeakMap()).set(node, {
-    count,
-    result,
-  });
+  node.__childEntries__ = { count, result };
   return result;
 };

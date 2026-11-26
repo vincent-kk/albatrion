@@ -1,28 +1,21 @@
-import type { TreeMemoStores } from '../../types/treeMemoStores';
+import type { CommittedDeclarationKey } from '../../types/controls';
 import { getBlueprintNodeIdentity } from '../nodeIdentity/getBlueprintNodeIdentity';
 
 /**
  * Reuse the exact path/fold-inclusive-kind pair identity until an occurrence is reindexed.
- * @param node - Declaration target with an absolute path and immutable fold-inclusive kind
- * @param runtime - Root owner of this occurrence memo
+ * @param node - Declaration target with an absolute path and immutable fold-inclusive kind; its `__declarationKey__` holds the reused key
  * @returns JSON pair key compatible with committed path-store moves
  */
-export const getCommittedDeclarationKey = (
-  node: {
-    readonly path: string;
-    readonly blueprintNode: Parameters<typeof getBlueprintNodeIdentity>[0];
-  },
-  runtime: Pick<TreeMemoStores, 'committedDeclarationKeys'>,
-): string => {
+export const getCommittedDeclarationKey = (node: {
+  readonly path: string;
+  readonly blueprintNode: Parameters<typeof getBlueprintNodeIdentity>[0];
+  __declarationKey__?: CommittedDeclarationKey;
+}): string => {
   const path = node.path;
   const kind = getBlueprintNodeIdentity(node.blueprintNode);
-  const cached = runtime.committedDeclarationKeys?.get(node);
+  const cached = node.__declarationKey__;
   if (cached?.path === path && cached.kind === kind) return cached.key;
   const key = JSON.stringify([path, kind]);
-  (runtime.committedDeclarationKeys ??= new WeakMap()).set(node, {
-    path,
-    kind,
-    key,
-  });
+  node.__declarationKey__ = { path, kind, key };
   return key;
 };

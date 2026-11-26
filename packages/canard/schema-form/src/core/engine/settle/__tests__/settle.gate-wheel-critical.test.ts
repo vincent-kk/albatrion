@@ -30,7 +30,7 @@ describe('gate-wheel input evidence at critical wheels', () => {
             observations.push({
               outputValue: root.__outputValue__,
               declarations: root.runtime.committedDeclarationIds?.get(
-                getCommittedDeclarationKey(root, root.runtime),
+                getCommittedDeclarationKey(root),
               ),
             });
             decisions.push(

@@ -12,8 +12,7 @@ import { readVirtualDefaultValue } from './readVirtualDefaultValue';
 export const readFieldNodeDefaultValue = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): unknown => {
-  if (node.isDetached)
-    return node.runtime.detachedReads?.get(node)?.defaultValue;
+  if (node.isDetached) return node.__detachedReads__?.defaultValue;
   if (node.behavior.type === 'virtual') return readVirtualDefaultValue(node);
   return getLoadValue(
     node.runtime.loadSnapshot,

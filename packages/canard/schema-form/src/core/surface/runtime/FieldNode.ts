@@ -100,6 +100,18 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   __virtualDefaultValue__: Optional<readonly unknown[]>;
   /** Last watch values read for this node with their commit, reused while unchanged; initialized on every kind so all nodes share one layout. */
   __watchValues__: FieldNodeRecord<FieldNode>['__watchValues__'];
+  /** Shape an object branch proved at its last full assembly; initialized on every kind so all nodes share one layout. */
+  __objectShape__: FieldNodeRecord<FieldNode>['__objectShape__'];
+  /** Shape an array branch proved at its last assembly; initialized on every kind so all nodes share one layout. */
+  __arrayShape__: FieldNodeRecord<FieldNode>['__arrayShape__'];
+  /** Item entries an array branch declared for its last item count; initialized on every kind so all nodes share one layout. */
+  __childEntries__: FieldNodeRecord<FieldNode>['__childEntries__'];
+  /** Committed declaration key reused while this occurrence's path and kind stay equal. */
+  __declarationKey__: FieldNodeRecord<FieldNode>['__declarationKey__'];
+  /** Gate wheel budget cap reused while this host's gate list is unchanged; initialized on every kind so all nodes share one layout. */
+  __budgetCap__: FieldNodeRecord<FieldNode>['__budgetCap__'];
+  /** Last committed reads frozen when this reference first left the live shape. */
+  __detachedReads__: FieldNodeRecord<FieldNode>['__detachedReads__'];
 
   /** Backing field for `state`: interaction flags the engine replaces directly, whereas the public `state` setter dispatches a patch. */
   __state__: FieldNodeRecord<FieldNode>['__state__'];
@@ -209,6 +221,12 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.__isDivergent__ = false;
     this.__virtualDefaultValue__ = undefined;
     this.__watchValues__ = undefined;
+    this.__objectShape__ = undefined;
+    this.__arrayShape__ = undefined;
+    this.__childEntries__ = undefined;
+    this.__declarationKey__ = undefined;
+    this.__budgetCap__ = undefined;
+    this.__detachedReads__ = undefined;
     this.__state__ = state;
     this.__interactionEpoch__ = 0;
     this.__revisionLedger__ = EMPTY_REVISION_LEDGER;

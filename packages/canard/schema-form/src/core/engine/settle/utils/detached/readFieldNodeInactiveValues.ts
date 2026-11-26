@@ -14,7 +14,7 @@ export const readFieldNodeInactiveValues = <Self extends FieldNodeRecord<Self>>(
     return node.__inactiveValues__;
   if (node.isDetached)
     return (
-      node.runtime.detachedReads?.get(node)?.inactiveValues ??
+      node.__detachedReads__?.inactiveValues ??
       materializeInactiveSlotValues(node)
     );
   if (node.behavior.type !== 'virtual' || !node.__parent__)

@@ -9,5 +9,5 @@ export const readFieldNodeIsMisfit = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): boolean =>
   node.isDetached
-    ? (node.runtime.detachedReads?.get(node)?.isMisfit ?? false)
+    ? (node.__detachedReads__?.isMisfit ?? false)
     : node.runtime.misfitPaths.has(node.path);

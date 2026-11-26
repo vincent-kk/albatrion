@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import {
@@ -7,6 +7,7 @@ import {
 } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { readFieldNodeIsMisfit } from '../utils/detached/readFieldNodeIsMisfit';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import {
   hasRetainedSlotOwnSource,
@@ -411,6 +412,75 @@ describe('array settlement lifecycle', () => {
     expect(tuple.__itemCount__).toBe(2);
     expect(tuple.extras).toBe(previousExtras);
     expect(tuple.extras).toEqual(['extra']);
+  });
+
+  it('35C-05 restores an automatically removed item without detached reads, so its next departure captures them', () => {
+    const inject = vi.fn(() => ({ '../items': [{ name: 'x' }] }));
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        a: { type: ['string', 'boolean'] },
+        flag: { type: 'boolean' },
+        source: {
+          type: 'string',
+          default: 'fill',
+          controls: {
+            active: '../flag',
+            injectTo: inject,
+          },
+        },
+        items: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: { name: { type: 'string' } },
+          },
+        },
+      },
+      allOf: [
+        {
+          controls: { active: './a === "0"' },
+          properties: { a: { type: 'boolean' } },
+        },
+        {
+          controls: { active: './a !== "0"' },
+          properties: { a: { type: 'string' } },
+        },
+      ],
+    });
+    const write = (value: object) =>
+      writeFieldNode(
+        root,
+        value,
+        FieldNodeWriteKind.CallerReplace,
+        WriteOption.Overwrite,
+      );
+    write({ a: 'stable', flag: false, items: [{ name: 'x' }, { name: 'y' }] });
+    expect(inject).not.toHaveBeenCalled();
+    const host = root.__childrenByName__!.items;
+    const item = host.children![1];
+    const name = item.__childrenByName__!.name;
+    expect(() =>
+      write({ a: 0, flag: true, items: [{ name: 'x' }, { name: 'y' }] }),
+    ).toThrow();
+    expect(inject).toHaveBeenCalled();
+    expect(root.runtime.diagnostics).toMatchObject({
+      cause: 'budget',
+      exceededBudget: 'transition',
+    });
+    expect(host.children![1]).toBe(item);
+    expect(item.isDetached).toBe(false);
+    expect(item.__detachedReads__).toBeUndefined();
+    expect(name.__detachedReads__).toBeUndefined();
+    write({
+      a: 'stable',
+      flag: false,
+      items: [{ name: 'x' }, { name: { bad: true } }],
+    });
+    expect(readFieldNodeIsMisfit(name)).toBe(true);
+    write({ a: 'stable', flag: false, items: [{ name: 'x' }] });
+    expect(name.isDetached).toBe(true);
+    expect(readFieldNodeIsMisfit(name)).toBe(true);
   });
 
   it('35C-08 gates out an item as an exit while retaining its array slot', () => {

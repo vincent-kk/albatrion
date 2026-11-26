@@ -187,7 +187,6 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
           node,
           node.runtime.blueprint,
           gates,
-          node.runtime,
         ))
       : wheelPlan.cap
     : 1;
@@ -271,7 +270,6 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
             node,
             node.runtime.blueprint,
             gates,
-            node.runtime,
           ))
         : wheelPlan.cap
       : 1;

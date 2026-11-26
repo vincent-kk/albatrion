@@ -175,7 +175,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     visitFieldNodes(
       item,
       (departing) => {
-        if (!departing.runtime.detachedReads?.has(departing))
+        if (departing.__detachedReads__ === undefined)
           captureDetachedFieldNodeReads(departing, {
             outputValue: context.previousOutputValue,
             context: context.previousContext,

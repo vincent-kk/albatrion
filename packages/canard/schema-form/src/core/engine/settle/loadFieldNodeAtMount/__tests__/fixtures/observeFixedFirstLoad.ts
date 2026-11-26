@@ -164,7 +164,7 @@ export const observeFixedFirstLoad = (
         disabled: node.isDisabled,
         state: node.__state__,
         ids: root.runtime.committedDeclarationIds?.get(
-          getCommittedDeclarationKey(node, node.runtime),
+          getCommittedDeclarationKey(node),
         ),
         revisions: { ...node.__revisionLedger__ },
         delivery: node.__pendingDelivery__,

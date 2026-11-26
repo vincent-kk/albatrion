@@ -99,12 +99,12 @@ describe('direct exit-policy child ownership', () => {
             child.blueprintNode.declarations.map(({ id }) => id),
           );
           root.runtime.committedDeclarationIds?.set(
-            getCommittedDeclarationKey(child, child.runtime),
+            getCommittedDeclarationKey(child),
             [],
           );
         } else if (selection === 'authored')
           root.runtime.committedDeclarationIds?.delete(
-            getCommittedDeclarationKey(child, child.runtime),
+            getCommittedDeclarationKey(child),
           );
         else if (selection === 'unselected')
           context.selectedDeclarationIds.set(child, []);

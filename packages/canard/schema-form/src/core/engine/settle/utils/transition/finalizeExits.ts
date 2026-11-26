@@ -62,7 +62,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
           !context.throwingGateExits?.has(node)
         )
           resolveInactiveValue(departing, node, context);
-        if (!departing.runtime.detachedReads?.has(departing))
+        if (departing.__detachedReads__ === undefined)
           captureDetachedFieldNodeReads(departing, {
             outputValue: context.previousOutputValue,
             context: context.previousContext,

@@ -11,22 +11,22 @@ import { holeValue } from './holeValue';
  * Record the slot owners of this assembly so a later unchanged-shape write may patch it.
  * @param node - Array host just assembled
  * @param children - Ordered item nodes the assembly read
- * @returns Nothing; the runtime's stable-shape record holds the owners
+ * @returns Nothing; the host's `__arrayShape__` holds the owners
  */
 const rememberShape = <Self>(
   node: Pick<
     FieldNodeRecord<Self>,
-    '__schema__' | 'extras' | 'source' | '__itemCount__' | 'runtime'
+    '__schema__' | 'extras' | 'source' | '__itemCount__' | '__arrayShape__'
   >,
-  children: readonly unknown[],
+  children: readonly Self[],
 ): void => {
-  (node.runtime.arrayShapes ??= new WeakMap()).set(node, {
+  node.__arrayShape__ = {
     children,
     schema: node.__schema__,
     extras: node.extras,
     source: node.source,
     itemCount: node.__itemCount__,
-  });
+  };
 };
 
 /**
@@ -110,7 +110,7 @@ export const assembleArray: Behavior['assemble'] = (
       return result;
     }
   }
-  const stable = node.runtime.arrayShapes?.get(node);
+  const stable = node.__arrayShape__;
   if (
     recalculated &&
     previous?.length === node.__itemCount__ &&

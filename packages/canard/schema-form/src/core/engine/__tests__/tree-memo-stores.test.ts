@@ -7,6 +7,7 @@ import {
   resetFieldNodeSubtree,
 } from '../settle';
 import { WriteOption } from '../types/value';
+import { getCommittedDeclarationKey } from '../utils/controls/getCommittedDeclarationKey';
 import { createPlainNode } from './fixtures/createPlainNode';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -17,13 +18,12 @@ const schema = {
     sibling: { type: 'string' },
   },
 };
-const stores = [
-  'committedDeclarationKeys',
-  'deriveTargetIds',
-  'arrayShapes',
-  'objectShapes',
-  'hostBudgetCaps',
-  'arrayChildEntries',
+const nodeMemos = [
+  '__objectShape__',
+  '__arrayShape__',
+  '__childEntries__',
+  '__declarationKey__',
+  '__budgetCap__',
 ] as const;
 
 it('keeps count and shape memos independent for two trees sharing one blueprint', () => {
@@ -46,41 +46,45 @@ it('keeps count and shape memos independent for two trees sharing one blueprint'
   const selected = left.behavior.declareChildren(left);
   right.behavior.declareChildren(right);
   expect(left.behavior.declareChildren(left)).toBe(selected);
-  expect(Reflect.get(first.runtime, 'arrayChildEntries')).toBeInstanceOf(
-    WeakMap,
-  );
-  expect(Reflect.get(first.runtime, 'arrayChildEntries')).not.toBe(
-    Reflect.get(second.runtime, 'arrayChildEntries'),
-  );
-  expect(Reflect.get(first.runtime, 'objectShapes')).not.toBe(
-    Reflect.get(second.runtime, 'objectShapes'),
-  );
+  expect(left.__childEntries__).toBeDefined();
+  expect(right.__childEntries__).toBeDefined();
+  expect(left.__childEntries__).not.toBe(right.__childEntries__);
+  expect(first.__objectShape__).toBeDefined();
+  expect(second.__objectShape__).toBeDefined();
+  expect(first.__objectShape__).not.toBe(second.__objectShape__);
   expect(first.__value__).toEqual({ values: ['a'], sibling: 'x' });
   expect(second.__value__).toEqual({ values: ['b', 'c'], sibling: 'y' });
 });
 
-it('drops recomputable stores on form reset and disposal, preserving partial-reset stores', () => {
+it('drops recomputable memos on form reset and disposal, preserving them on partial reset', () => {
   const { root } = createTestTree(schema);
   const value = { values: ['a'], sibling: 'x' };
   loadFieldNodeAtMount(root, value, WriteOption.Overwrite);
+  const values = root.__childrenByName__!.values;
+  const sibling = root.__childrenByName__!.sibling;
+  getCommittedDeclarationKey(values);
+  const entries = values.__childEntries__;
+  const key = values.__declarationKey__;
+  expect(entries).toBeDefined();
+  expect(key).toBeDefined();
+  expect(values.__arrayShape__).toBeDefined();
+  expect(root.__objectShape__).toBeDefined();
   const sentinel = {};
-  for (const name of stores) {
-    const memo: WeakMap<object, unknown> =
-      Reflect.get(root.runtime, name) ?? new WeakMap();
-    Reflect.set(root.runtime, name, memo);
-    memo.set(sentinel, {});
-  }
-  resetFieldNodeSubtree(
-    root.__childrenByName__!.sibling,
-    WriteOption.Overwrite,
-  );
-  for (const name of stores)
-    expect(Reflect.get(root.runtime, name)!.has(sentinel)).toBe(true);
+  const targetIds = new WeakMap<object, number>([[sentinel, 1]]);
+  root.runtime.deriveTargetIds = targetIds;
+  resetFieldNodeSubtree(values, WriteOption.Overwrite);
+  expect(values.__childEntries__).toBe(entries);
+  expect(values.__declarationKey__).toBe(key);
+  expect(root.runtime.deriveTargetIds).toBe(targetIds);
   const runtime = root.runtime;
   resetFieldNodeForm(root, value, WriteOption.Overwrite);
   expect(root.runtime).toBe(runtime);
-  for (const name of stores)
-    expect(Reflect.get(runtime, name)?.has(sentinel) ?? false).toBe(false);
+  expect(values.__childEntries__).toBeDefined();
+  expect(values.__childEntries__).not.toBe(entries);
+  expect(values.__declarationKey__).not.toBe(key);
+  expect(runtime.deriveTargetIds?.has(sentinel) ?? false).toBe(false);
   disposeFieldNodeTree(root);
-  for (const name of stores) expect(Reflect.get(runtime, name)).toBeUndefined();
+  for (const node of [root, values, sibling])
+    for (const name of nodeMemos) expect(node[name]).toBeUndefined();
+  expect(runtime.deriveTargetIds).toBeUndefined();
 });

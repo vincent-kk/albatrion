@@ -1,7 +1,10 @@
 import type { Nullable, Optional } from '@aileron/declare';
 
 import type { Blueprint, BlueprintNode } from '../../../blueprint';
-import type { DeclarationLayer } from '../../../types/controls';
+import type {
+  CommittedDeclarationKey,
+  DeclarationLayer,
+} from '../../../types/controls';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { getStaticDeclarationIds } from '../../../utils/controls/getStaticDeclarationIds';
 import { prepareControlLayers } from './prepareControlLayers';
@@ -17,13 +20,11 @@ export interface ControlTarget<Self> {
   readonly blueprintNode: BlueprintNode;
   /** Direct parent whose groups may address this occurrence. */
   readonly __parent__: Nullable<Self>;
+  /** Reused committed declaration key of this occurrence. */
+  __declarationKey__?: CommittedDeclarationKey;
   /** Last active declaration choices for the whole tree. */
   readonly runtime: {
     readonly blueprint?: Blueprint;
-    committedDeclarationKeys?: WeakMap<
-      object,
-      { path: string; kind: string; key: string }
-    >;
     readonly committedDeclarationIds?: ReadonlyMap<string, readonly number[]>;
   };
 }
@@ -77,7 +78,7 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
     selectedDeclarationIds.get(current) ??
     getStaticDeclarationIds(current) ??
     current.runtime.committedDeclarationIds?.get(
-      getCommittedDeclarationKey(current, current.runtime),
+      getCommittedDeclarationKey(current),
     ) ??
     prepareControlLayers(current.blueprintNode).ids;
   const nodeIds = selected(node);

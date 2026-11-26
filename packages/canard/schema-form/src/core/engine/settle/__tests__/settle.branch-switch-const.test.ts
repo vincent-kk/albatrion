@@ -232,8 +232,8 @@ describe('branch-switch constant-factor regression records', () => {
       const observed: { host: string; gates: string[]; cap: number }[] = [];
       const identities = new Map<BlueprintGate, number>();
       vi.spyOn(budget, 'getHostWheelBudgetCap').mockImplementation(
-        (host, blueprint, gates, runtime) => {
-          const cap = original(host, blueprint, gates, runtime);
+        (host, blueprint, gates) => {
+          const cap = original(host, blueprint, gates);
           expect(
             gates.filter((gate, index) => gates.indexOf(gate) === index),
           ).toHaveLength(gates.length);
@@ -277,9 +277,9 @@ describe('branch-switch constant-factor regression records', () => {
     const original = budget.getHostWheelBudgetCap;
     const seen: BlueprintGate[][] = [];
     vi.spyOn(budget, 'getHostWheelBudgetCap').mockImplementation(
-      (host, blueprint, gates, runtime) => {
+      (host, blueprint, gates) => {
         if (host === root) seen.push([...gates]);
-        return original(host, blueprint, gates, runtime);
+        return original(host, blueprint, gates);
       },
     );
     writeFieldNode(

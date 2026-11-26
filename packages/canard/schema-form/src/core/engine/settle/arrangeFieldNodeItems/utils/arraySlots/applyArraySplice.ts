@@ -90,7 +90,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
     visitFieldNodes(
       removedItem,
       (departing) => {
-        if (!departing.runtime.detachedReads?.has(departing))
+        if (departing.__detachedReads__ === undefined)
           captureDetachedFieldNodeReads(departing, {
             outputValue: context.previousOutputValue,
             context: context.previousContext,

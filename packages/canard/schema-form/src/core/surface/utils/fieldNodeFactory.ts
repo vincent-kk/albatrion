@@ -154,9 +154,7 @@ export function fieldNodeFactory(
   // The spread stays first so V8 clones the seed on its fast path.
   const runtime: FieldNodeRuntime<RuntimeFieldNode> = {
     ...runtimeSeed,
-    hostBudgetCaps: runtimeSeed.hostBudgetCaps,
     committedDeclarationIds: runtimeSeed.committedDeclarationIds,
-    committedDeclarationKeys: runtimeSeed.committedDeclarationKeys,
     deriveTargetIds: runtimeSeed.deriveTargetIds,
     committedRuleValues: runtimeSeed.committedRuleValues,
     committedRuleKeysBySource: runtimeSeed.committedRuleKeysBySource,

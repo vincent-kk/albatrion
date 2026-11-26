@@ -125,7 +125,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
     visitFieldNodes(
       item,
       (departing) => {
-        if (!departing.runtime.detachedReads?.has(departing))
+        if (departing.__detachedReads__ === undefined)
           captureDetachedFieldNodeReads(
             departing,
             {

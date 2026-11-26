@@ -24,12 +24,12 @@ const rememberObjectShape = <Node>(
   result: object,
   names: readonly string[],
 ): object => {
-  (node.runtime.objectShapes ??= new WeakMap()).set(node, {
+  node.__objectShape__ = {
     children,
     schema: node.__schema__,
     extras: node.extras,
     names,
-  });
+  };
   objectKeyCounts.set(result, names.length);
   return result;
 };
@@ -43,7 +43,7 @@ export const assembleObject: Behavior['assemble'] = (
 ) => {
   if (node.source === null) return null;
   const previous = node.__value__;
-  const stable = node.runtime.objectShapes?.get(node);
+  const stable = node.__objectShape__;
   if (
     recalculated &&
     hint &&

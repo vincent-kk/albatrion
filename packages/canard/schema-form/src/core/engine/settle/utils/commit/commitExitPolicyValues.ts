@@ -111,7 +111,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           const childSelected =
             context.selectedDeclarationIds.get(child) ??
             child.runtime.committedDeclarationIds?.get(
-              getCommittedDeclarationKey(child, child.runtime),
+              getCommittedDeclarationKey(child),
             );
           let belongsToExitingFragment = false;
           for (const childDeclaration of child.blueprintNode.declarations) {

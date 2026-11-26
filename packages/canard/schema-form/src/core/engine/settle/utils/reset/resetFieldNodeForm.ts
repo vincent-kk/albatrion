@@ -20,10 +20,10 @@ export const resetFieldNodeForm = <Self extends FieldNodeRecord<Self>>(
   value: unknown,
   option: WriteOption,
 ): void => {
-  clearTreeMemoStores(root.runtime);
   const nextSnapshot = setLoadValue(root.runtime.loadSnapshot, $.Root, value);
+  clearTreeMemoStores(root.runtime);
   root.runtime.diagnostics = { status: 'stable' };
-  clearSubtreeState(root);
+  clearSubtreeState(root, true);
   try {
     writeFieldNode(root, value, FieldNodeWriteKind.Load, option);
   } finally {

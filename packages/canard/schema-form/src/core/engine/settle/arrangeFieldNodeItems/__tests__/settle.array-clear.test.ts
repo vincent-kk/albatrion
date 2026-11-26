@@ -187,11 +187,11 @@ describe('clear empties the host by host prefix with positional detached reads',
       expect(node.__pendingRevisionMask__).toBe(0);
       expect({ ...node.__revisionLedger__ }).toEqual(ledgers[index]);
     }
-    expect(root.runtime.detachedReads?.get(former[0])?.defaultValue).toEqual({
+    expect(former[0].__detachedReads__?.defaultValue).toEqual({
       name: 'a',
     });
-    expect(root.runtime.detachedReads?.get(former[1])?.defaultValue).toBe('a');
-    expect(root.runtime.detachedReads?.get(former[2])?.defaultValue).toEqual({
+    expect(former[1].__detachedReads__?.defaultValue).toBe('a');
+    expect(former[2].__detachedReads__?.defaultValue).toEqual({
       name: 'b',
     });
   });

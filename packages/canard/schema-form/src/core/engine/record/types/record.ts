@@ -4,10 +4,12 @@ import type { PointerSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type {
   BlueprintChildEntry,
+  BlueprintGate,
   BlueprintNode,
   BlueprintSchemaType,
   EffectiveSchema,
 } from '../../blueprint';
+import type { CommittedDeclarationKey } from '../../types/controls';
 import type { NodeStateFlags } from '../../types/state';
 import type { Behavior } from './behavior';
 import type { FieldNodeRuntime } from './runtime';
@@ -16,6 +18,22 @@ import type {
   InactiveSlotOverlay,
   InactiveSlotValueMemo,
 } from './slots';
+
+/** Last committed reads retained for one node reference after it exits. */
+interface DetachedFieldNodeReads {
+  readonly errors: readonly { readonly dataPath: string }[];
+  /** Mismatch decision at the final live commit. */
+  readonly isMisfit: boolean;
+  readonly misfits: readonly string[];
+  readonly inactiveValues?: readonly { path: string; value: unknown }[];
+  readonly defaultValue: unknown;
+  /** Visibility at the final live commit. */
+  readonly isVisible: boolean;
+  /** Read-only decision at the final live commit. */
+  readonly isReadOnly: boolean;
+  /** Input-lock decision at the final live commit. */
+  readonly isDisabled: boolean;
+}
 
 /** One pending node event with values indexed by their event bits. */
 export interface FieldNodeDelivery {
@@ -124,6 +142,48 @@ export interface FieldNodeRecord<Self> {
    * departing snapshot's values.
    */
   __watchValues__?: { commit: number; values: readonly unknown[] };
+  /**
+   * Shape an object branch proved at its last full assembly; a later value-only patch reuses it while the
+   * child array, effective schema and extras keep these identities. Cleared by a form reset and by disposal.
+   */
+  __objectShape__?: {
+    children: readonly Self[];
+    schema: EffectiveSchema;
+    extras: unknown;
+    /** Own keys of the assembled value in their assembled order. */
+    names: readonly string[];
+  };
+  /**
+   * Shape an array branch proved at its last assembly; an unchanged-shape write patches only recalculated
+   * slots while every recorded identity and the item count still match. Cleared by a form reset and by disposal.
+   */
+  __arrayShape__?: {
+    children: readonly Self[];
+    schema: EffectiveSchema;
+    extras: unknown;
+    source: unknown;
+    itemCount: number;
+  };
+  /**
+   * Templated item entries an array branch declared for `count` positions, reused while its item count
+   * stays `count`. Cleared by a form reset and by disposal.
+   */
+  __childEntries__?: { count: number; result: readonly BlueprintChildEntry[] };
+  /**
+   * Committed declaration key built from this occurrence's path and fold-inclusive kind, reused while both
+   * stay equal. Cleared by a form reset and by disposal.
+   */
+  __declarationKey__?: CommittedDeclarationKey;
+  /**
+   * Gate wheel budget cap computed for this host's gate list, reused while the list keeps the same gates
+   * in the same order. Cleared by a form reset and by disposal.
+   */
+  __budgetCap__?: { gates: readonly BlueprintGate[]; cap: number };
+  /**
+   * Last committed reads frozen when this reference first leaves the live shape; detached reads return
+   * them, and a departure skips the capture while they are present. Never cleared.
+   */
+  __detachedReads__?: DetachedFieldNodeReads;
   /** Merged effective schema for the active declarations. */
   __schema__: EffectiveSchema;
   /** Stored interaction flags updated by shallow patches. */

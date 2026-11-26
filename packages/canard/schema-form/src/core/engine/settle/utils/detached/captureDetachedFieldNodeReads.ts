@@ -12,7 +12,7 @@ import { readFieldNodeInactiveValues } from './readFieldNodeInactiveValues';
  * @param node - Departing occurrence whose reference remains externally readable
  * @param watchSnapshot - Previous output value and effective schema for watched reads
  * @param load - The node's load source when the caller already read it, equal to `readFieldNodeDefaultValue(node)`; read here when absent
- * @returns Nothing; the tree runtime retains frozen reads by node identity
+ * @returns Nothing; the node retains its frozen reads in `__detachedReads__`
  */
 export const captureDetachedFieldNodeReads = <
   Self extends FieldNodeRecord<Self>,
@@ -43,7 +43,5 @@ export const captureDetachedFieldNodeReads = <
     isReadOnly: node.isReadOnly,
     isDisabled: node.isDisabled,
   });
-  const detachedReads = runtime.detachedReads ?? new WeakMap();
-  runtime.detachedReads = detachedReads;
-  detachedReads.set(node, reads);
+  node.__detachedReads__ = reads;
 };

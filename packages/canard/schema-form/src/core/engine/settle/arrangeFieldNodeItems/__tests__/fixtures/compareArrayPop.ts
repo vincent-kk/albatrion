@@ -107,7 +107,7 @@ export const compareArrayPop = (
           value: slotsOf(current.__value__),
           outputValue: slotsOf(current.__outputValue__),
           defaults: defaultsOf(root),
-          departed: observeDetachedReads(root, formerChildren),
+          departed: observeDetachedReads(formerChildren),
           owners: formerChildren.map(
             (child, index) =>
               current.children?.[index] === child &&

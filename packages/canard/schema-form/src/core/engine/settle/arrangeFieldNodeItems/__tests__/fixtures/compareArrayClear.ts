@@ -136,7 +136,7 @@ export const compareArrayClear = (
           settlement: observeArraySettlement(root),
           stores: observePathStores(root.runtime, current.path),
           gates,
-          departed: observeDetachedReads(root, former),
+          departed: observeDetachedReads(former),
           formerPaths: former.map((node) => [node.path, node.isActive]),
         });
       }

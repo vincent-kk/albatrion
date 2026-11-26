@@ -369,7 +369,7 @@ describe('settled controls', () => {
       true,
       true,
     ]);
-    expect(root.runtime.detachedReads?.get(child)).toMatchObject({
+    expect(child.__detachedReads__).toMatchObject({
       isVisible: false,
       isReadOnly: true,
       isDisabled: true,

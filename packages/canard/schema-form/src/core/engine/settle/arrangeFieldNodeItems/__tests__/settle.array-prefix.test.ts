@@ -73,7 +73,7 @@ describe('array prefix parity', () => {
     });
 
     it('captures identical detached reads for a removed item that watches and has a load snapshot', () => {
-      const { former, actual } = compareArrayTail(
+      const { former } = compareArrayTail(
         {
           type: 'array',
           items: {
@@ -93,7 +93,7 @@ describe('array prefix parity', () => {
         undefined,
         true,
       );
-      expect(actual.runtime.detachedReads?.get(former[1])).toBeDefined();
+      expect(former[1].__detachedReads__).toBeDefined();
       expect(former[1].isDetached).toBe(true);
     });
 

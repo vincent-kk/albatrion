@@ -28,7 +28,7 @@ describe('watch-free exit snapshots', () => {
       0,
     );
     expect(field.__watchValues__).toBeUndefined();
-    expect(root.runtime.detachedReads?.has(field)).toBe(true);
+    expect(field.__detachedReads__).toBeDefined();
     field.isDetached = true;
     const empty = readFieldNodeWatchValues(field);
     expect(empty).toEqual([]);

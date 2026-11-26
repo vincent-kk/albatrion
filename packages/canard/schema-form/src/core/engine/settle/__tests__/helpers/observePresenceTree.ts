@@ -20,7 +20,7 @@ export const observePresenceTree = (root: DispatchTestNode) => {
       isReadOnly: node.isReadOnly,
       isDisabled: node.isDisabled,
       declarations: root.runtime.committedDeclarationIds?.get(
-        getCommittedDeclarationKey(node, node.runtime),
+        getCommittedDeclarationKey(node),
       ),
     });
     const children = node.children ?? [];

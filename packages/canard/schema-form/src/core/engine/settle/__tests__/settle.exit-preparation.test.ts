@@ -119,7 +119,7 @@ describe('exit preparation preserves committed policies and document order', () 
       WriteOption.Overwrite,
     );
     expect(readUnsetPolicy(secret, true)).toBe(false);
-    const key = getCommittedDeclarationKey(root, root.runtime);
+    const key = getCommittedDeclarationKey(root);
     const committed = (root.runtime.committedDeclarationIds ??=
       new PathKeyedMap<readonly number[]>('pair'));
     const selected = committed.get(key);

@@ -8,6 +8,7 @@ import {
   releaseFieldNodeRevealHistory,
   settleFieldNodeValidation,
 } from '../../../validation';
+import { clearFieldNodeMemos } from '../reset/clearFieldNodeMemos';
 
 /**
  * Retire an adopted tree without changing its committed reads or references.
@@ -30,6 +31,7 @@ export const disposeFieldNodeTree = <Self extends FieldNodeRecord<Self>>(
   visitFieldNodes(
     root,
     (node) => {
+      clearFieldNodeMemos(node);
       if (node.isDisposed) return;
       node.isDisposed = true;
       node.__interactionEpoch__ += 1;

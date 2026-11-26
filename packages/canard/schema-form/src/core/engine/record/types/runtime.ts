@@ -7,8 +7,6 @@ import type {
 } from '../../../../errors';
 import type {
   Blueprint,
-  BlueprintChildEntry,
-  BlueprintGate,
   BlueprintSchemaType,
   EffectiveSchema,
 } from '../../blueprint';
@@ -59,22 +57,6 @@ interface FieldNodeRootRuntimeState {
   loadBaseline?: { readonly value: unknown };
   /** Current paths whose source values miss their effective types. */
   misfitPaths: PathKeyedSet;
-}
-
-/** Last committed reads retained for one node reference after it exits. */
-interface DetachedFieldNodeReads {
-  readonly errors: readonly { readonly dataPath: string }[];
-  /** Mismatch decision at the final live commit. */
-  readonly isMisfit: boolean;
-  readonly misfits: readonly string[];
-  readonly inactiveValues?: readonly { path: string; value: unknown }[];
-  readonly defaultValue: unknown;
-  /** Visibility at the final live commit. */
-  readonly isVisible: boolean;
-  /** Read-only decision at the final live commit. */
-  readonly isReadOnly: boolean;
-  /** Input-lock decision at the final live commit. */
-  readonly isDisabled: boolean;
 }
 
 /** Structured warning emitted when a committed source value misses its effective type. */
@@ -183,7 +165,7 @@ interface FieldNodeInputRelay<Self> {
 /** Minimal per-tree slots consumed by the first settlement engine. */
 export interface FieldNodeRuntime<Self>
   extends FieldNodeRootRuntimeState,
-    TreeMemoStores<BlueprintChildEntry, BlueprintGate> {
+    TreeMemoStores {
   /** Hosts whose unpublished slot changes must become visible at a commit. */
   slotDirtyHosts?: Set<Self>;
   /** Last issued static whole-write generation; never reused within this tree. */
@@ -453,8 +435,6 @@ export interface FieldNodeRuntime<Self>
     /** `misfitPaths.mutationCount` the build read. */
     readonly mutationCount: number;
   };
-  /** Frozen last-commit reads for departed references, allocated on first exit. */
-  detachedReads?: WeakMap<object, DetachedFieldNodeReads>;
   /** Settlement health retained until a form-level load. */
   diagnostics: FieldNodeDiagnostics;
   /** Single node creator used throughout this tree. */
