@@ -108,6 +108,8 @@ export function EvenNumberForm() {
 
 Keep this setup outside the component body; follow the [validator lifetime contract](./api-reference#configuration-lifetime) for memoized setup, plugin reuse and the effects of accidental per-render creation.
 
+The same keyword can also decide an `if`/`then`/`else` condition and choose a `oneOf` or `anyOf` branch written with `if` and `else: false`; see [custom AJV instance and custom keywords](../schema-form-ajv8-plugin/index.mdx#custom-ajv-instance-and-custom-keywords).
+
 ## Guard compilation and root lifetime {#guard-compilation}
 
 All three AJV adapters support `plugin.validator.configure({ directGuardCompile })`, default true. True directly compiles self-contained guards; false sends later compiles through root pointers. Omitted options retain their values, existing predicates keep their behavior, and configure does not change bound AJV settings.

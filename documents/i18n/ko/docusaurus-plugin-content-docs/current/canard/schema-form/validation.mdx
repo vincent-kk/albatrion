@@ -108,6 +108,8 @@ export function EvenNumberForm() {
 
 이 설정은 컴포넌트 본문 밖에 두십시오. 메모이제이션·플러그인 재사용과 실수로 렌더마다 생성했을 때의 효과는 [검증기 수명 계약](./api-reference#configuration-lifetime)을 따르십시오.
 
+같은 키워드로 `if`/`then`/`else` 조건을 판정하고 `if`와 `else: false`로 작성한 `oneOf`·`anyOf` 분기를 선택할 수도 있습니다([커스텀 AJV 인스턴스와 사용자 정의 키워드](../schema-form-ajv8-plugin/index.mdx#custom-ajv-instance-and-custom-keywords) 참고).
+
 ## 가드 컴파일과 루트 수명 {#guard-compilation}
 
 AJV 어댑터 세 가지는 모두 `plugin.validator.configure({ directGuardCompile })`를 지원하며 기본값은 true입니다. true이면 독립적인 가드를 직접 컴파일하고 false이면 이후 컴파일을 루트 포인터로 보냅니다. 생략한 옵션은 유지하고 기존 판정 함수는 바꾸지 않으며 바인딩된 AJV 설정도 변경하지 않습니다.

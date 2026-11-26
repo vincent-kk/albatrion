@@ -164,6 +164,87 @@ The `createValidatorFactory` function provides:
 
 ---
 
+## Custom AJV instance and custom keywords
+
+Give a Form your own AJV instance with `createValidator(ajv)`. Create the instance and the validator once at module scope, because a new validator object makes the Form rebuild its tree.
+
+```tsx
+import { Form, type JSONSchema } from '@canard/schema-form';
+import { createValidator } from '@canard/schema-form-ajv7-plugin';
+import Ajv from 'ajv';
+
+const ajv = new Ajv({ strict: false });
+ajv.addKeyword({
+  keyword: 'isEven',
+  schemaType: 'boolean',
+  validate: (schema: boolean, data: unknown) =>
+    typeof data === 'number' && (data % 2 === 0) === schema,
+});
+const validator = createValidator(ajv);
+
+const schema = {
+  type: 'object',
+  properties: { n: { type: 'number' } },
+  if: { type: 'object', properties: { n: { isEven: true } }, required: ['n'] },
+  then: { properties: { evenField: { type: 'string' } } },
+  else: { properties: { oddField: { type: 'string' } } },
+} satisfies JSONSchema;
+
+export const EvenOddForm = () => (
+  <Form jsonSchema={schema} defaultValue={{ n: 2 }} validatorFactory={validator} />
+);
+```
+
+To use the instance for every Form instead, bind it to the plugin and register the plugin:
+
+```ts
+import { registerPlugin } from '@canard/schema-form';
+import { plugin } from '@canard/schema-form-ajv7-plugin';
+
+plugin.validator.bind(ajv);
+registerPlugin(plugin);
+```
+
+The plugin validates and evaluates `if` conditions on private copies of the instance. Keywords and formats you add to the instance before the next compile apply to both, including a format added after `createValidator(ajv)` but before the Form mounts. In the form above, `evenField` exists while `n` is 2, and `oddField` replaces it when `n` becomes 3.
+
+### Choosing a `oneOf` or `anyOf` branch
+
+A branch is chosen in one of three ways:
+
+1. `controls.active` on the branch.
+2. `controls.discriminator` on the object, with `const` or `enum` tags in each branch.
+3. An `if` on the branch with `else: false`. The validator decides the `if`, so a custom keyword can choose the branch:
+
+```ts
+const schema = {
+  type: 'object',
+  properties: { n: { type: 'number' } },
+  oneOf: [
+    {
+      if: { type: 'object', properties: { n: { isEven: true } }, required: ['n'] },
+      then: { properties: { evenField: { type: 'string' } } },
+      else: false,
+    },
+    {
+      if: { type: 'object', properties: { n: { isEven: false } }, required: ['n'] },
+      then: { properties: { oddField: { type: 'string' } } },
+      else: false,
+    },
+  ],
+} satisfies JSONSchema;
+```
+
+A branch with none of the three is always part of the form. A keyword written directly in such a branch takes part in validation but does not choose the branch: when each branch only carries `n: { isEven: … }` beside its own field, both `evenField` and `oddField` stay in the form. See [composition and conditional gates](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/schema-reference#composition) for `controls.active` and the discriminator.
+
+### Limits
+
+- A condition AJV cannot compile fails its guard, for example on an instance in strict mode, which AJV 7 enables by default, that lacks a keyword the condition uses. Neither `then` nor `else` applies, `onError` receives one `GUARD_FAILED` record (`FormErrorCode.GuardFailed`), and every later write that evaluates the condition again keeps its value but throws that error. A production build also raises the error, uncaught, when the Form mounts. Add every keyword before the Form compiles, or use `strict: false`, under which AJV ignores unknown keywords.
+- Guards are synchronous: a condition that uses an asynchronous keyword (`async: true`) fails to compile (`async keyword in sync schema`).
+- A guard receives only the value of the object that holds the `if`; a keyword that reads parent or root data, and `$data`, see only that value.
+- The plugin refuses an instance with `coerceTypes`, `useDefaults` or `removeAdditional` enabled. It does not refuse a keyword declared with `modifying: true`; keeping such a keyword from changing the form's values is your responsibility.
+
+---
+
 ## Decimal multiples
 
 The plugin's default validation uses AJV's `multipleOfPrecision: 9`. It accepts decimal multiples such as `19.99` for `multipleOf: 0.01` and rejects `19.995` for the same divisor. The `1e-9` tolerance on the quotient can accept extremely close nonmultiples. Exact decimal multiples are supported for finite values with `Math.abs(value / multipleOf) <= 1e6` and a finite divisor of at least `2.2250738585072014e-308`. The default validator rejects a zero divisor when it compiles the schema. A synchronous numeric guard with `multipleOf: 0` returns `false`. A supplied AJV instance retains its own precision and schema-validation options.
