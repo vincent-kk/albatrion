@@ -22,6 +22,7 @@ import type { VirtualizationManager } from '@/schema-form/helpers/virtualization
 import type { AttachedFilesStore } from '@/schema-form/providers/WorkspaceContext';
 
 import { FieldLifecycleRender } from '../components/FieldLifecycleRender';
+import type { ChildInputOwnership } from '../type';
 import { runSlotAction } from '../utils/runSlotAction';
 
 /**
@@ -34,6 +35,10 @@ import { runSlotAction } from '../utils/runSlotAction';
  * @param virtualizationManager - Form manager only when this position renders an input.
  * @param lifecycle - Form registry only when this position renders an input.
  * @param update - Stable bridge dispatch used after a committed container replacement.
+ * @param mountedChildren - Committed child proxy count; read at a container replacement, after
+ *        the new input's child layout effects in the same commit.
+ * @param childValueRevision - The bridge's child-ownership record; a container replacement whose
+ *        new input attached no child starts it fresh, so external writes key the input again.
  * @param inputPositions - The form's registry of actual input locations.
  * @param attachedFiles - Form-owned records projected on committed path deliveries.
  * @returns Stable position with its callback ref, replacement epoch and optional Render detector.
@@ -47,6 +52,8 @@ export const useFieldLifecycle = (
   virtualizationManager: Nullable<VirtualizationManager>,
   lifecycle: Nullable<FieldLifecycleRegistry>,
   update: Fn,
+  mountedChildren: RefObject<number>,
+  childValueRevision: ChildInputOwnership,
   inputPositions: InputPositions,
   attachedFiles?: AttachedFilesStore,
 ) => {
@@ -62,6 +69,8 @@ export const useFieldLifecycle = (
       inputPositions.set(element, position);
       registered = element;
       position.epoch++;
+      if (mountedChildren.current === 0)
+        childValueRevision.externalValueRevision = undefined;
       update();
     };
     const effect = () => {
@@ -140,6 +149,8 @@ export const useFieldLifecycle = (
     virtualizationManager,
     lifecycle,
     update,
+    mountedChildren,
+    childValueRevision,
     inputPositions,
     attachedFiles,
   ]);

@@ -129,6 +129,8 @@ export const FieldInputBridge = memo(
       FieldInput ? virtualizationManager : null,
       FieldInput ? lifecycle : null,
       update,
+      mountedChildren,
+      childValueRevision,
       inputPositions,
       attachedFilesMap,
     );
