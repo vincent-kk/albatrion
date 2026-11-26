@@ -39,8 +39,8 @@ it('literal-star state owners match a fresh public-output mount', async ({
   expect(mismatches).toEqual([]);
 }, 120000);
 
-// Only the VALUE-031 table rows remain; a difference in an outside observer (state visibility, readOnly, disabled, gate.leaf, watchValues)
-// is not listed and fails.
+// Each overlay scene asserts its exact difference list from one VALUE-031 table row; any other difference fails.
+// Only the union row reaches outside observers (state, gate.leaf, watchValues).
 it('projection overlays reach readers outside the overlay host: omitEmpty', async ({
   task,
 }) => {
