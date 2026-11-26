@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { expectEmptyItem } from './fixtures/expectEmptyItem';
 import { mountPublicTree } from './fixtures/mountPublicTree';
 
+type Tree = ReturnType<typeof mountPublicTree>;
+
 /** String items that default to 'D'. */
 const items = { type: 'string', default: 'D' };
 
@@ -227,4 +229,21 @@ describe('defaults around a null item position', () => {
     expectEmptyItem(tree.at('/list/1'));
     expect(tree.root.runtime.misfitRecords).toEqual([]);
   });
+
+  it.each([
+    ['root.resetSubtree()', (t: Tree) => t.root.resetSubtree()],
+    ["at('/list/1').resetSubtree()", (t: Tree) => t.at('/list/1').resetSubtree()],
+  ])(
+    'refills an emptied array item with its default on %s',
+    (_scope, reset) => {
+      const t = mountPublicTree(
+        { type: 'object', properties: { list: { type: 'array', items } } },
+        { list: ['x', undefined] },
+      );
+      t.at('/list/1').setValue(null);
+      reset(t);
+      expect(t.root.outputValue).toEqual({ list: ['x', 'D'] });
+      expect(t.at('/list/1').source).toBe('D');
+    },
+  );
 });
