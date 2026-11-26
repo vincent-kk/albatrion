@@ -8,8 +8,9 @@ import type { FieldRendererProps } from '@canard/schema-form';
 
 /**
  * Assemble mobile parts without adding Space items for absent message children.
- * A nested branch shows no visible title; under a non-array parent a hidden
- * title carries `labelId` and the name for the branch input's `aria-labelledby`.
+ * A nested branch and an array item show no visible title; for each of them a
+ * hidden title carries `labelId` and the name (an array item's index) for the
+ * input's `aria-labelledby`. A leaf under a non-array parent shows `Label`.
  * @param props - Bound field parts, node strategy, indentation depth and title address.
  * @returns The existing group structure composed with registered parts.
  */
@@ -46,27 +47,28 @@ export const FieldRenderer = ({
       </>
     );
 
-  const titled = node.parentNode != null && !isArraySchema(node.parentNode);
+  const hiddenTitle = (
+    <span hidden id={labelId}>
+      {name}
+    </span>
+  );
   if (node.strategy === 'branch')
     return (
       <Space direction="vertical" block className={className} style={style}>
         {/* One Space item: a separate item for the hidden title would add a gap. */}
         <>
-          {titled && (
-            <span hidden id={labelId}>
-              {name}
-            </span>
-          )}
+          {hiddenTitle}
           <Input readOnly={readOnly} disabled={disabled} />
         </>
         {error}
       </Space>
     );
 
+  const titled = node.parentNode != null && !isArraySchema(node.parentNode);
   return (
     <Space direction="vertical" block className={className} style={style}>
       <div>
-        {titled && <Label />}
+        {titled ? <Label /> : hiddenTitle}
         <Input readOnly={readOnly} disabled={disabled} />
       </div>
       {error}

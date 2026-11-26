@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import {
@@ -78,6 +78,32 @@ const range: Record<string, JSONSchema> = {
     maxItems: 2,
   },
 };
+/** One array per item kind; every item is the array's first, named `0`. */
+const arrayItems: Record<string, JSONSchema> = {
+  texts: { type: 'array', items: { type: 'string' } },
+  counts: { type: 'array', items: { type: 'number' } },
+  flags: { type: 'array', items: { type: 'boolean' } },
+  choices: { type: 'array', items: tags.tags },
+  grid: { type: 'array', items: { type: 'array', items: { type: 'string' } } },
+  spans: { type: 'array', items: range.range },
+  picks: {
+    type: 'array',
+    items: {
+      type: 'string',
+      enum: ['a', 'b'],
+      presentation: { inputType: 'radiogroup' },
+    },
+  },
+};
+const arrayItemsValue = {
+  texts: ['a'],
+  counts: [5],
+  flags: [true],
+  choices: [['one']],
+  grid: [['a']],
+  spans: [[20, 40]],
+  picks: ['a'],
+};
 
 it('hides the nested object title and keeps its leaf label', () => {
   renderForm(address);
@@ -98,7 +124,7 @@ it('names a nested array group by its hidden title', () => {
 
 it('gives array items no title and keeps the item leaf label', () => {
   renderForm(people, { defaultValue: { people: [{ nick: 'x' }] } });
-  expect(screen.queryByText('0')).toBeNull();
+  expect(visibleText('0')).toHaveLength(0);
   const label = screen.getByText('nick').closest('label')!;
   expect(label.htmlFor).toBe(screen.getByRole('textbox').id);
 });
@@ -139,12 +165,24 @@ it.each([
   expect(view.container.querySelector('label[for]')).toBeNull();
 });
 
+it('names each array item group by its hidden index', () => {
+  const view = renderForm(arrayItems, { defaultValue: arrayItemsValue });
+  const item = (path: string) =>
+    within(view.container.querySelector<HTMLElement>(`[data-path="${path}"]`)!);
+  for (const path of ['/counts/0', '/choices/0', '/grid/0', '/spans/0'])
+    expect(item(path).getByRole('group', { name: '0' })).toBeTruthy();
+  expect(item('/picks/0').getByRole('radiogroup', { name: '0' })).toBeTruthy();
+  expect(item('/flags/0').getByRole('checkbox', { name: '0' })).toBeTruthy();
+  expect(visibleText('0')).toHaveLength(0);
+});
+
 it.each([
   ['nested object', address, undefined],
   ['nested array', list, { list: ['a'] }],
   ['array of objects', people, { people: [{ nick: 'x' }] }],
   ['checkbox group', tags, undefined],
   ['range slider', range, undefined],
+  ['array items', arrayItems, arrayItemsValue],
 ] as const)(
   'points every label and title reference of the %s form at an existing element',
   (_, properties, defaultValue) => {
