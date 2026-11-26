@@ -127,7 +127,9 @@ The dedicated `verify-unit` and `verify-render` projects live in `vitest.verify.
   It observes both DOM (`data-path`, input values, deferred placeholders) and
   node state, with StrictMode, validators, caught errors, and user interactions.
 - Existing render scenarios keep their location and assertions until the engine
-  switch. Known legacy defects retain their explicit `it.fails` records.
+  switch. An accepted difference is asserted exactly (see the remount
+  equivalence tests), never recorded with `it.fails`: an expected failure
+  passes on any failing assertion and hides every other regression.
 - New shared scenarios belong to private `@aileron/schema-form-scenarios` as pure
   data. The package cannot import schema-form, including types; inject forms,
   handles, and adapters through structural contracts.
