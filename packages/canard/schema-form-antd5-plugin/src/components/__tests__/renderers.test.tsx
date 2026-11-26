@@ -4,6 +4,7 @@ import { afterEach, expect, it } from 'vitest';
 import {
   ErrorVisibility,
   Form,
+  type FormProps,
   type JSONSchema,
   registerPlugin,
 } from '@canard/schema-form';
@@ -212,6 +213,78 @@ it('names each array item by its index and shows it only as a branch legend', ()
       element.closest('[data-path]')?.getAttribute('data-path'),
     );
   expect(shown).toEqual(['/choices/0', '/grid/0']);
+});
+
+/** `for`, `aria-labelledby` and `aria-describedby` targets no element carries. */
+const danglingReferences = (container: HTMLElement) => {
+  const missing: string[] = [];
+  for (const label of container.querySelectorAll<HTMLLabelElement>(
+    'label[for]',
+  ))
+    if (!document.getElementById(label.htmlFor))
+      missing.push(`for=${label.htmlFor}`);
+  for (const attribute of ['aria-labelledby', 'aria-describedby'])
+    for (const element of container.querySelectorAll(`[${attribute}]`))
+      for (const id of element.getAttribute(attribute)!.split(/\s+/))
+        if (!document.getElementById(id)) missing.push(`${attribute}=${id}`);
+  return missing;
+};
+
+const strings: JSONSchema = { type: 'array', items: { type: 'string' } };
+// Numeric options: an array of string enums is a multiple Select instead.
+const radios: JSONSchema = {
+  type: 'array',
+  items: {
+    type: 'number',
+    enum: [1, 2],
+    presentation: { inputType: 'radiogroup' },
+  },
+};
+
+it.each<[string, JSONSchema, FormProps['defaultValue']]>([
+  ['strings', strings, { list: ['a'] }],
+  ['radio groups', radios, { list: [1] }],
+])(
+  'points every reference of an array of %s at an existing element and shows no index',
+  (_, list, defaultValue) => {
+    const view = render(
+      <Form
+        jsonSchema={{ type: 'object', properties: { list } }}
+        defaultValue={defaultValue}
+        validationMode={0}
+        fieldInputDefinitions={plugin.fieldInputDefinitions}
+        FieldRenderer={FieldRenderer}
+        LabelRenderer={LabelRenderer}
+        ErrorMessageRenderer={ErrorMessageRenderer}
+      />,
+    );
+    expect(danglingReferences(view.container)).toEqual([]);
+    expect(
+      screen
+        .queryAllByText('0')
+        .filter((element) => !element.closest('[hidden]')),
+    ).toHaveLength(0);
+  },
+);
+
+it('names a root array group by a Form.Label with an empty path', () => {
+  const view = render(
+    <Form
+      jsonSchema={strings}
+      defaultValue={['a']}
+      validationMode={0}
+      fieldInputDefinitions={plugin.fieldInputDefinitions}
+      FieldRenderer={FieldRenderer}
+      LabelRenderer={LabelRenderer}
+      ErrorMessageRenderer={ErrorMessageRenderer}
+    >
+      <Form.Label path="">Tags</Form.Label>
+      <Form.Input path="" />
+    </Form>,
+  );
+  expect(view.getByRole('group', { name: 'Tags' }).id).toBe(
+    view.getByText('Tags').closest('label')!.htmlFor,
+  );
 });
 
 it('retains the empty error root and its existing layout', () => {
