@@ -1,13 +1,13 @@
 import { beforeEach, expect, it } from 'vitest';
 
+import { createOmitEmptyDifferences } from '@/schema-form/__tests__/fixtures/remountEquivalence/createOmitEmptyDifferences';
 import { encodeValue } from '@/schema-form/__tests__/fixtures/remountEquivalence/encodeValue';
 import { generateCorpus } from '@/schema-form/__tests__/fixtures/remountEquivalence/generateCorpus';
 import { selectRenderScenes } from '@/schema-form/__tests__/fixtures/remountEquivalence/selectRenderScenes';
 
 import { checkRenderScene } from './remount-equivalence/helpers/checkRenderScene';
 
-// VALUE-031·034: omitEmpty 출력의 새 로드는 편집 원본을 복원하지 않습니다.
-it.fails('replays a deterministic feature-pair cover through the screen adapter', async ({
+it('replays a deterministic feature-pair cover through the screen adapter', async ({
   task,
 }) => {
   const count = task.file.projectName?.startsWith('verify-') ? 1024 : 128;
@@ -32,7 +32,17 @@ it.fails('replays a deterministic feature-pair cover through the screen adapter'
       selected: scenes.map(({ id }) => id),
     },
   });
-  expect(mismatches).toEqual([]);
+  // 14가족 장면은 settle/DETAIL.md VALUE-031 표의 omitEmpty 행만큼 다르고, FormHandle과 DOM은 같습니다.
+  expect(mismatches).toStrictEqual(
+    scenes
+      .filter((scene) => scene.group === 'family-14')
+      .map((scene) => ({
+        scene: scene.id,
+        seed: 443,
+        prefix: 1,
+        differences: createOmitEmptyDifferences('~1source~1data'),
+      })),
+  );
 }, 120000);
 
 beforeEach(({ task }) => {
