@@ -32,7 +32,7 @@ InputRenderer는 전용 폼 Context의 Form prop, 자기 위치의 가장 가까
 
 인라인 입력, 경로 맵, Form 정의, Provider 정의, 플러그인 순으로 선택하며 인라인 null은 fallback 탐색을 막습니다. preferred 입력은 이 선택 대신 사용합니다. 유효 스키마·경로·입력 공급 설정 변경은 선택에 반영하고 동일 원본 컴포넌트는 [입력 해석 어댑터](../../../../helpers/fieldInputDefinition/DETAIL.md)를 재사용합니다. 무관한 맵 변경이 입력 초안을 지우지 않기 위한 정체성 계약입니다.
 
-CONTROLS-081·REACT-032. presentation의 입력 props는 표현 payload로 전달하고 브리지에서 뜻을 재해석하지 않습니다. props 덮어쓰기 순서는 구현이 정하되 노드 신원과 실효 잠금이 임의 표현 props로 바뀌지 않아야 합니다. Hint의 형·초안·nullable·misfit 의미는 [types](../../../../types/DETAIL.md)가 소유하며 객체 시험의 정규화와 잘못된 키 경고는 입력 해석 어댑터가 소유합니다.
+CONTROLS-081·REACT-032. presentation의 입력 props는 표현 payload로 전달하고 브리지에서 뜻을 재해석하지 않습니다. props 덮어쓰기 순서는 구현이 정하되 노드 신원과 쓰기 잠금이 임의 표현 props로 바뀌지 않아야 하며, 표현 props의 readOnly·disabled는 아래 CONTROLS-083에 따라 입력과 틀의 prop을 참으로만 바꾸며 잠금을 풀거나 쓰기를 막지 않습니다. Hint의 형·초안·nullable·misfit 의미는 [types](../../../../types/DETAIL.md)가 소유하며 객체 시험의 정규화와 잘못된 키 경고는 입력 해석 어댑터가 소유합니다.
 
 `createFieldInputBridge`만 null·undefined를 같은 공유 무동작 함수로 받습니다. 실제 브리지와 FieldInputProps.node는 필수 노드로 작업하여 부재 검사를 사용자 입력에 퍼뜨리지 않습니다.
 
@@ -44,7 +44,7 @@ CONTROLS-081·REACT-032. presentation의 입력 props는 표현 payload로 전�
 
 값·파일 callback은 자식 자신의 prop을 우선하고, 없으면 호출 시점의 부모 ref를 읽습니다. 부모의 재렌더만으로 메모된 형제 브리지가 다시 렌더된다고 가정하면 옛 클로저가 형제의 편집을 덮거나 첨부를 오래된 상태로 처리합니다. 자식 prop을 제거하면 현재 부모 callback으로 돌아가며, 부모 ref의 값을 브리지 렌더 시점에 복사하지 않습니다. 안정된 ref를 전달하므로 렌더마다 훅이나 할당을 추가하지 않습니다.
 
-CONTROLS-083. Form과 노드의 readOnly·disabled는 사용자 값·파일 첨부 쓰기를 차단합니다. 첨부의 교체·제거와 부모·렌더러 중계에도 같은 잠금을 적용하여 값만 거부하고 제출 파일은 바뀌는 불일치를 막습니다. 콜백 생성 때의 잠금이 아닌 호출 시점에 커밋된 Form 잠금을 검사하여 지연 응답도 잠금 변경을 따릅니다. 잠금 게시와 자식 layout 단계의 순서는 [InputControlContext](../../../../providers/InputControlContext/DETAIL.md)가 소유합니다. 표현 props의 잠금 합성과 실제 브리지 진입 검사를 혼동하지 않으며, 공개·자동 쓰기를 UI 잠금으로 거부하지 않습니다. 입력 자체의 제약 집행과 초안 표현은 [fieldInputs](../../../../fieldInputs/DETAIL.md)가 소유합니다.
+CONTROLS-083. Form과 노드의 readOnly·disabled는 사용자 값·파일 첨부 쓰기를 차단합니다. 입력과 틀이 받는 readOnly·disabled prop은 Form 잠금, 노드 플래그, 스키마의 `presentation.FieldInputProps`, 덮어쓰기 중 하나라도 참이면 참이고, 값·파일 쓰기는 커밋된 Form 잠금과 노드 플래그만 차단하며, 어느 출처의 false도 잠금을 풀지 못합니다. 첨부의 교체·제거와 부모·렌더러 중계에도 같은 잠금을 적용하여 값만 거부하고 제출 파일은 바뀌는 불일치를 막습니다. 콜백 생성 때의 잠금이 아닌 호출 시점에 커밋된 Form 잠금을 검사하여 지연 응답도 잠금 변경을 따릅니다. 잠금 게시와 자식 layout 단계의 순서는 [InputControlContext](../../../../providers/InputControlContext/DETAIL.md)가 소유합니다. 표현 props의 잠금 합성과 실제 브리지 진입 검사를 혼동하지 않으며, 공개·자동 쓰기를 UI 잠금으로 거부하지 않습니다. 입력 자체의 제약 집행과 초안 표현은 [fieldInputs](../../../../fieldInputs/DETAIL.md)가 소유합니다.
 
 GOAL-061·WRITE-083. blur는 입력 마침을 알리고 touched를 다음 프레임으로 미룹니다. focus는 예약을 취소하여 포커스 이동 중 오류 깜빡임을 막습니다. blur 때의 상호작용 초기화 번호가 바뀌면 늦은 touched를 버립니다. trim은 엔진의 자동 쓰기 정책을 따르며 blur 자체가 외부 오류를 지우거나 Edited를 세우지 않습니다.
 

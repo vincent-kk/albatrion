@@ -238,9 +238,15 @@ export const FieldInputBridge = memo(
       node.isRequired,
     );
     const readOnly =
-      rootReadOnly || node.isReadOnly || !!overrideProps.readOnly;
+      rootReadOnly ||
+      node.isReadOnly ||
+      !!inputProps?.readOnly ||
+      !!overrideProps.readOnly;
     const disabled =
-      rootDisabled || node.isDisabled || !!overrideProps.disabled;
+      rootDisabled ||
+      node.isDisabled ||
+      !!inputProps?.disabled ||
+      !!overrideProps.disabled;
     const input = (
       <div
         ref={position.ref}
