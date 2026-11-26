@@ -24,6 +24,7 @@ import { assertVirtualWriteShape } from './assertVirtualWriteShape';
 import { decideAddressWrite } from './decideAddressWrite';
 import { getWriteChild } from './getWriteChild';
 import { hasDistributedChildInput } from './hasDistributedChildInput';
+import { isEmptyItemNull } from './isEmptyItemNull';
 import { isPlain } from './isPlain';
 import { nextExtras } from './nextExtras';
 import { staticSpec } from './staticSpec';
@@ -45,6 +46,7 @@ const UNINTERPRETED: unique symbol = Symbol('uninterpreted');
  * named value into a child leaving in this settlement, as the same write after the exit does.
  * In an admitted static write a host keeping its key set or item count stays out of
  * shape-dirty and its leaf children whose interpreted value equals their source are not marked (W1).
+ * A null at a deliberately empty array item position (isEmptyItemNull) is stored and compared as undefined.
  * @param node - Caller target or descendant reached by a whole host write
  * @param input - Value received at this occurrence's write boundary
  * @param context - Work list recording source, shape, and automatic changes
@@ -91,7 +93,13 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     recordSourceDecision(node, input, context, writeOrigin, writeOrder);
   }
   const known = changedValue !== UNINTERPRETED;
-  const value = known ? changedValue : node.behavior.interpret(input, spec);
+  const interpretation = known
+    ? changedValue
+    : node.behavior.interpret(input, spec);
+  const value =
+    interpretation === null && isEmptyItemNull(node)
+      ? undefined
+      : interpretation;
   if (node.behavior.strategy !== 'branch') {
     if (known || !sameValue(node.source, value)) {
       node.source = value;
@@ -254,6 +262,8 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     if (sameShape && child.behavior.strategy !== 'branch') {
       childSpec = staticSpec(child.schemaType, child.isNullable);
       interpreted = child.behavior.interpret(childInput, childSpec);
+      if (interpreted === null && isEmptyItemNull(child))
+        interpreted = undefined;
     }
     if (interpreted !== UNINTERPRETED && sameValue(child.source, interpreted))
       continue;

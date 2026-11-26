@@ -82,6 +82,10 @@ container default·배열·union·disjunction 등 계획이 증명하지 못한 
 
 [static-first-admission](#static-first-admission--무게이트-로더의-좁은-증명)의 계약을 적용합니다.
 
+### settle-static-first-load-empty-item-null — 두 최초 로드 경로의 빈 아이템 null
+
+[arrayBehavior의 VALUE-034](../../behaviors/arrayBehavior/DETAIL.md#value-034--방출-없는-아이템도-자리를-차지합니다)의 계약을 정적 첫 로드와 일반 로드에 같게 적용합니다.
+
 ## Boundary Exemptions
 
 ### `__tests__/fixtures/observeFixedFirstLoad.ts` — 최초 로드의 차등 관측

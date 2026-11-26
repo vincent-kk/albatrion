@@ -195,14 +195,14 @@ describe('array legacy contract ports', () => {
     root.find('/active')?.setValue(false);
     expect(readRetainedSlotSource(root, '/tail', 'array')).toEqual([
       'a',
-      null,
-      null,
+      undefined,
+      undefined,
     ]);
     root.find('/active')?.setValue(true);
     expect(root.find('/tail')?.children?.map((item) => item.source)).toEqual([
       'a',
-      null,
-      null,
+      undefined,
+      undefined,
     ]);
     expect(root.find('/tail')?.children).toHaveLength(3);
     expect(root.outputValue).toEqual({ active: true, tail: ['a'] });
