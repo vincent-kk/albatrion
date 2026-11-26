@@ -88,7 +88,7 @@ it('prepares a new wheel for a host that leaves and re-enters', () => {
   });
   loadFieldNodeAtMount(root, { show: true }, WriteOption.Overwrite);
   const old = root.__childrenByName__!.host;
-  const plan = getHostDerived(old).wheelPlan;
+  const plan = old.__wheelPlan__;
   expect(plan).toBeDefined();
   writeFieldNode(
     root.__childrenByName__!.show,
@@ -104,7 +104,8 @@ it('prepares a new wheel for a host that leaves and re-enters', () => {
   );
   const current = root.__childrenByName__!.host;
   expect(current).not.toBe(old);
-  expect(getHostDerived(current).wheelPlan).not.toBe(plan);
+  expect(current.__wheelPlan__).toBeDefined();
+  expect(current.__wheelPlan__).not.toBe(plan);
   expect(current.__childrenByName__!.kind.path).toBe('/host/kind');
 });
 

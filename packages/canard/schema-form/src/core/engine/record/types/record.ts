@@ -3,9 +3,11 @@ import type { Dictionary, Nullable, Optional } from '@aileron/declare';
 import type { PointerSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type {
+  Blueprint,
   BlueprintChildEntry,
   BlueprintGate,
   BlueprintNode,
+  BlueprintSchema,
   BlueprintSchemaType,
   EffectiveSchema,
 } from '../../blueprint';
@@ -185,6 +187,52 @@ export interface FieldNodeRecord<Self> {
    * reset and by disposal, so the next rule key issues a new one; kept by a subtree reset.
    */
   __deriveTargetId__?: number;
+  /**
+   * Identity guards of this occurrence's last watch read, mutated in place by each read; an unchanged schema, watch
+   * list and path with an absent context lets a read within the same commit reuse its empty context value.
+   */
+  __watchValuesWitness__?: {
+    schema: BlueprintSchema;
+    watch: unknown;
+    path: string;
+    isSnapshotRead: boolean;
+    isContextAbsent: boolean;
+  };
+  /**
+   * Gate wheel metadata of this branch host, reused while the blueprint, path, item count and relocated
+   * occurrences keep these identities; `cap` holds the wheel budget computed for `gates`.
+   */
+  __wheelPlan__?: {
+    readonly blueprint: Blueprint;
+    readonly path: string;
+    readonly itemCount: number;
+    readonly relocatedOccurrences: readonly {
+      gate: BlueprintGate;
+      hostPath: string;
+      evaluationHostPath: string;
+    }[];
+    readonly gates: readonly BlueprintGate[];
+    cap?: number;
+    readonly isBaselineEligible: boolean;
+  };
+  /**
+   * Whether no alternate kind can hold a retained source in this occurrence's write scope, decided once from its
+   * fixed lineage; true lets a write skip source pruning, and undefined means not decided yet.
+   */
+  __isSourceScopeUnique__?: boolean;
+  /** Resolved syntax of this host's authored dependencies, bound to `hostPath` and rebuilt when the host moves. */
+  __stateDependencyPlans__?: {
+    readonly hostPath: string;
+    readonly dependencies: Map<
+      string,
+      {
+        /** Absolute dependency address, including the context sentinel. */
+        readonly path: string;
+        /** Decoded names and operators reused by emitted-value traversal. */
+        readonly segments: readonly PointerSegment[];
+      }
+    >;
+  };
   /**
    * Last committed reads frozen when this reference first leaves the live shape; detached reads return
    * them, and a departure skips the capture while they are present. Never cleared.

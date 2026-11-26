@@ -112,6 +112,14 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   __budgetCap__: FieldNodeRecord<FieldNode>['__budgetCap__'];
   /** Derive rule target identity issued the first time a rule key addresses this occurrence. */
   __deriveTargetId__: FieldNodeRecord<FieldNode>['__deriveTargetId__'];
+  /** Identity guards of the last watch read, mutated in place; initialized on every kind so all nodes share one layout. */
+  __watchValuesWitness__: FieldNodeRecord<FieldNode>['__watchValuesWitness__'];
+  /** Gate wheel metadata of a branch host; initialized on every kind so all nodes share one layout. */
+  __wheelPlan__: FieldNodeRecord<FieldNode>['__wheelPlan__'];
+  /** Whether a write here may skip source pruning, decided once from the fixed lineage. */
+  __isSourceScopeUnique__: FieldNodeRecord<FieldNode>['__isSourceScopeUnique__'];
+  /** Resolved dependency syntax of this host's authored state and watch expressions. */
+  __stateDependencyPlans__: FieldNodeRecord<FieldNode>['__stateDependencyPlans__'];
   /** Last committed reads frozen when this reference first left the live shape. */
   __detachedReads__: FieldNodeRecord<FieldNode>['__detachedReads__'];
 
@@ -229,6 +237,10 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.__declarationKey__ = undefined;
     this.__budgetCap__ = undefined;
     this.__deriveTargetId__ = undefined;
+    this.__watchValuesWitness__ = undefined;
+    this.__wheelPlan__ = undefined;
+    this.__isSourceScopeUnique__ = undefined;
+    this.__stateDependencyPlans__ = undefined;
     this.__detachedReads__ = undefined;
     this.__state__ = state;
     this.__interactionEpoch__ = 0;

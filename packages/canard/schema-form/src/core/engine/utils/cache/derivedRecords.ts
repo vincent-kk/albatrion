@@ -20,14 +20,8 @@ export interface BlueprintDerived {
 export interface HostDerived {
   /** Bounded concrete syntax owned by a runtime; values never contain live lookups. */
   pointerSegments?: unknown;
-  /** Authored dependency syntax witnessed by one actual host path. */
-  stateDependencyPlans?: unknown;
-  /** Definition witnesses for the node/commit watch memo; never select a watch list. */
-  watchValuesWitness?: unknown;
-  wheelPlan?: unknown;
+  /** Fixed baseline of one live object host; keyed by the field node, and kept here because its steps depend on the engine mode. */
   preparedStaticHost?: unknown;
-  /** Live occurrence source-scope writer selected from its fixed lineage. */
-  sourcePruner?: unknown;
   controlLayerIndex?: unknown;
   childOrderIndex?: unknown;
   watchPaths?: unknown;
@@ -53,7 +47,12 @@ type SlotValue<Record, Slot extends keyof Record, Value> = Omit<
   Record,
   Slot
 > & { [Key in Slot]?: Value };
-/** Keys are immutable analyses/templates; owners fill only the requested property. */
+/**
+ * Owners fill only the requested property. `blueprintRecords` is keyed by immutable analyses. `hostRecords` is keyed by
+ * blueprint nodes and tree runtimes, plus the live object hosts of `preparedStaticHost`, whose content depends on the
+ * engine mode. Every other value keyed by a field node is mode-independent and lives in that node's own field, which
+ * a mode transition does not reach.
+ */
 let blueprintRecords = new WeakMap<object, BlueprintDerived>();
 let hostRecords = new WeakMap<object, HostDerived>();
 

@@ -11,17 +11,17 @@ import { pruneInactiveSources } from './pruneInactiveSources';
 const skipSourcePruning: typeof pruneInactiveSources = () => {};
 
 /**
- * Choose a source writer once for a live occurrence's immutable lineage.
+ * Choose a source writer for a live occurrence's immutable lineage, deciding once in its `__isSourceScopeUnique__`.
  * @param node - Write target whose current lifetime and object ancestry are fixed
  * @returns A shared no-op for a terminal with no alternate kind along its path, otherwise the general scope pruner
  */
 export const prepareSourcePruner = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): typeof pruneInactiveSources => {
-  const derived = getHostDerived<'sourcePruner', typeof pruneInactiveSources>(
-    node,
-  );
-  if (derived.sourcePruner) return derived.sourcePruner;
+  if (node.__isSourceScopeUnique__ !== undefined)
+    return node.__isSourceScopeUnique__
+      ? skipSourcePruning
+      : pruneInactiveSources;
   let unique = !hasRetainableDescendants(node.blueprintNode, new WeakSet());
   for (
     let current: Nullable<Self> = node;
@@ -53,9 +53,8 @@ export const prepareSourcePruner = <Self extends FieldNodeRecord<Self>>(
       [])
       if (getBlueprintNodeIdentity(template) !== identity) unique = false;
   }
-  return (derived.sourcePruner = unique
-    ? skipSourcePruning
-    : pruneInactiveSources);
+  node.__isSourceScopeUnique__ = unique;
+  return unique ? skipSourcePruning : pruneInactiveSources;
 };
 
 /** Prove source-free descendants from the finite template graph without reading live slots. */
