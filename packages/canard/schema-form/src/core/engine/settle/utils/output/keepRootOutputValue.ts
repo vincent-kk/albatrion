@@ -15,7 +15,7 @@ export const keepRootOutputValue = <Self extends FieldNodeRecord<Self>>(
   outputValue: unknown,
 ): unknown => {
   if (
-    node.parent !== null ||
+    node.__parent__ !== null ||
     outputValue !== undefined ||
     (node.behavior.type !== 'object' && node.behavior.type !== 'array')
   )

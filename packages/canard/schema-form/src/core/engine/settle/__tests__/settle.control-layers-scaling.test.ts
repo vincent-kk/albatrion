@@ -16,7 +16,7 @@ describe('P-08 fragment ownership work', () => {
         { enabled: true, target: 'retained' },
         WriteOption.Overwrite,
       );
-      const target = root.childrenByName?.target;
+      const target = root.__childrenByName__?.target;
       if (!target) throw new Error('Missing P-08 state-key target');
       const { layers, work } = countControlLayerWork(target);
       expect(work).toBeGreaterThan(0);

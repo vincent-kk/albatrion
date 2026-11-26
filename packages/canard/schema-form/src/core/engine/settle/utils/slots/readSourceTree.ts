@@ -31,7 +31,7 @@ export const readSourceTree = <Self extends FieldNodeRecord<Self>>(
   if (node.behavior.type === 'array') {
     const slots: unknown[] = [];
     let tailStart = 0;
-    for (let index = 0; index < node.itemCount; index++) {
+    for (let index = 0; index < node.__itemCount__; index++) {
       const candidates = getItemEntries(node.blueprintNode, index);
       let value: unknown;
       if (candidates.length === 0)
@@ -40,7 +40,7 @@ export const readSourceTree = <Self extends FieldNodeRecord<Self>>(
           : undefined;
       else {
         tailStart++;
-        const item = node.childrenByName?.['' + index];
+        const item = node.__childrenByName__?.['' + index];
         value = item
           ? readSourceTree(item, context)
           : readAbsentSlotSource(node, index, candidates, context);
@@ -55,7 +55,7 @@ export const readSourceTree = <Self extends FieldNodeRecord<Self>>(
   let found = Object.keys(value).length > 0;
   for (const entry of node.blueprintNode.childEntries) {
     if (hasOwnProperty(value, entry.name)) continue;
-    const child = node.childrenByName?.[entry.name];
+    const child = node.__childrenByName__?.[entry.name];
     const source = child
       ? readSourceTree(child, context)
       : readInactiveSlotSource(

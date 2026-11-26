@@ -54,9 +54,9 @@ describe('array entry integration', () => {
     expect(dispatchPop(root)).toBe(3);
     expect(dispatchUpdate(root, 0, '7')).toBe(7);
     expect(dispatchRemove(root, 0)).toBe(7);
-    expect(root.storedValue).toEqual([2]);
+    expect(root.__value__).toEqual([2]);
     expect(dispatchClear(root)).toBeUndefined();
-    expect(root.storedValue).toEqual([]);
+    expect(root.__value__).toEqual([]);
   });
 
   it('33C-01 exports all five entries; refused push returns the current length and the others undefined', () => {
@@ -76,7 +76,7 @@ describe('array entry integration', () => {
     expect(dispatchClear(root)).toBeUndefined();
     expect(runtime.commitNumber).toBe(commit);
     expect(runtime.entryDepth).toBe(1);
-    expect(root.storedValue).toEqual([1, 2]);
+    expect(root.__value__).toEqual([1, 2]);
   });
 
   it('62C-01 EVENT-035 setValue then push applies both inputs before one onChange', () => {
@@ -90,10 +90,10 @@ describe('array entry integration', () => {
     dispatchBatch(root, () => {
       dispatchSetValue(root, [1, 2]);
       expect(dispatchPush(root, 3)).toBe(3);
-      expect(root.storedValue).toEqual([1, 2, 3]);
+      expect(root.__value__).toEqual([1, 2, 3]);
       expect(runtime.commitNumber).toBe(commit + 2);
     });
-    expect(root.storedValue).toEqual([1, 2, 3]);
+    expect(root.__value__).toEqual([1, 2, 3]);
     expect(runtime.commitNumber).toBe(commit + 2);
     expect(runtime.onChange).toHaveBeenCalledExactlyOnceWith([1, 2, 3]);
   });
@@ -108,7 +108,7 @@ describe('array entry integration', () => {
       expect(dispatchPush(root, 2)).toBe(2);
       dispatchSetValue(root, [9]);
     });
-    expect(root.storedValue).toEqual([9]);
+    expect(root.__value__).toEqual([9]);
   });
 
   it('62C-01 pop/remove return marked interpreted source, including descendant marks', () => {
@@ -127,7 +127,7 @@ describe('array entry integration', () => {
       dispatchSetValue(root, [{ n: '8' }, { n: '9' }]);
       expect(dispatchPop(root)).toEqual({ n: 9 });
     });
-    expect(root.storedValue).toEqual([{ n: 8 }]);
+    expect(root.__value__).toEqual([{ n: 8 }]);
   });
 
   it('62C-01 update/clear and terminal plans keep synchronous contracts', () => {
@@ -143,7 +143,7 @@ describe('array entry integration', () => {
         expect(dispatchClear(root)).toBeUndefined();
         expect(dispatchPush(root, 9)).toBe(1);
       });
-      expect(root.storedValue).toEqual([9]);
+      expect(root.__value__).toEqual([9]);
     }
   });
 
@@ -162,7 +162,7 @@ describe('array entry integration', () => {
       expect(runtime.batchWrites).toBeUndefined();
       expect(dispatchPush(root, 3)).toBe(1);
     });
-    expect(root.storedValue).toEqual([3]);
+    expect(root.__value__).toEqual([3]);
   });
 
   it('35C-01 non-array errors reach onError with surface thrown', () => {
@@ -213,7 +213,7 @@ describe('array entry integration', () => {
         code: FormErrorCode.ArrayMethodOnNonArray,
       }),
     );
-    expect(list.storedValue).toEqual([2]);
+    expect(list.__value__).toEqual([2]);
     expect(order).toEqual(['change', 'error']);
   });
 
@@ -287,14 +287,14 @@ describe('array entry integration', () => {
     expect(dispatchInsert(root, 1, 9)).toBe(3);
     expect(dispatchInsert(root, -1, 9)).toBe(3);
     expect(dispatchInsert(root, 4, 9)).toBe(3);
-    expect(root.storedValue).toEqual([1, 9, 2]);
+    expect(root.__value__).toEqual([1, 9, 2]);
     const commit = runtime.commitNumber;
     runtime.entryDepth = 1;
     runtime.feedbackBudget = 25;
     runtime.currentListener = () => {};
     expect(dispatchInsert(root, 0, 7)).toBe(3);
     expect(runtime.commitNumber).toBe(commit);
-    expect(root.storedValue).toEqual([1, 9, 2]);
+    expect(root.__value__).toEqual([1, 9, 2]);
   });
 
   it('62C-01 insert and remove in one batch apply arrangements before one delivery', () => {
@@ -314,10 +314,10 @@ describe('array entry integration', () => {
       expect(dispatchInsert(root, 0.5, 0)).toBe(4);
       expect(dispatchRemove(root, 1)).toBe(2);
       expect(dispatchInsert(root, 0, '5')).toBe(4);
-      expect(root.storedValue).toEqual([5, 9, 3, 7]);
+      expect(root.__value__).toEqual([5, 9, 3, 7]);
       expect(runtime.commitNumber).toBe(commit + 5);
     });
-    expect(root.storedValue).toEqual([5, 9, 3, 7]);
+    expect(root.__value__).toEqual([5, 9, 3, 7]);
     expect(runtime.commitNumber).toBe(commit + 5);
     expect(runtime.onChange).toHaveBeenCalledExactlyOnceWith([5, 9, 3, 7]);
     expect(first.isDetached).toBe(true);
@@ -336,6 +336,6 @@ describe('array entry integration', () => {
       expect(dispatchInsert(root, 0, 2)).toBe(1);
       expect(dispatchInsert(root, 1, 3)).toBe(2);
     });
-    expect(root.storedValue).toEqual([2, 3]);
+    expect(root.__value__).toEqual([2, 3]);
   });
 });

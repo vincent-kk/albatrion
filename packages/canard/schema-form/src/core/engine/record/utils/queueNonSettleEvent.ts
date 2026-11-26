@@ -18,8 +18,8 @@ export const queueNonSettleEvent = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const runtime = node.rootNode.runtime;
   const queued = runtime.queuedNonSettleEvents ?? new Set();
-  const previous = node.pendingNonSettleDelivery;
-  node.pendingNonSettleDelivery = {
+  const previous = node.__pendingNonSettleDelivery__;
+  node.__pendingNonSettleDelivery__ = {
     type: (previous?.type ?? BIT_MASK_NONE) | bit,
     payload:
       payload === undefined

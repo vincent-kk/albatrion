@@ -36,7 +36,7 @@ const makeRecord = (
     misfitPaths: new PathKeyedSet(),
   },
   blueprintNode: template,
-  parent: null,
+  __parent__: null,
   rootNode: undefined,
   name: '',
   escapedName: '',
@@ -45,33 +45,33 @@ const makeRecord = (
   isRequired: false,
   isNullable: false,
   schemaType: template.schemaType,
-  childrenByName: null,
+  __childrenByName__: null,
   children: null,
-  itemKey: null,
-  itemCount: 0,
-  nextItemKey: 0,
+  __itemKey__: null,
+  __itemCount__: 0,
+  __nextItemKey__: 0,
   source,
   extras: undefined,
   isActive: true,
   isVisible: true,
   isReadOnly: false,
   isDisabled: false,
-  storedValue: undefined,
-  storedOutputValue: undefined,
-  divergenceCurrent: undefined,
-  divergencePath: undefined,
-  divergenceSegments: undefined,
-  divergenceBase: undefined,
-  storedIsDivergent: false,
-  schema: { schema: { options }, hasTypeConflict: false },
-  storedState: {},
-  revisionLedger: EMPTY_REVISION_LEDGER,
-  isDeliveryInitialized: false,
-  deliveryChanges: 0,
-  pendingRevisionMask: 0,
+  __value__: undefined,
+  __outputValue__: undefined,
+  __divergenceCurrent__: undefined,
+  __divergencePath__: undefined,
+  __divergenceSegments__: undefined,
+  __divergenceBase__: undefined,
+  __isDivergent__: false,
+  __schema__: { schema: { options }, hasTypeConflict: false },
+  __state__: {},
+  __revisionLedger__: EMPTY_REVISION_LEDGER,
+  __isDeliveryInitialized__: false,
+  __deliveryChanges__: 0,
+  __pendingRevisionMask__: 0,
   isDetached: false,
   isDisposed: false,
-  interactionEpoch: 0,
+  __interactionEpoch__: 0,
 });
 
 // filid:contract array-branch
@@ -83,19 +83,19 @@ describe('array branch calculation', () => {
       items: false,
     }).root;
     const node = makeRecord(arrayBehavior.branch, template);
-    node.itemCount = 4;
+    node.__itemCount__ = 4;
     const first = arrayBehavior.branch.declareChildren(node);
     expect(first.map((entry) => entry.name)).toEqual(['0', '1']);
     expect(arrayBehavior.branch.declareChildren(node)).toBe(first);
     const other = makeRecord(arrayBehavior.branch, template);
-    other.itemCount = 1;
+    other.__itemCount__ = 1;
     expect(
       arrayBehavior.branch.declareChildren(other).map((entry) => entry.name),
     ).toEqual(['0']);
     const again = arrayBehavior.branch.declareChildren(node);
     expect(again).toEqual(first);
     again.forEach((entry, index) => expect(entry).toBe(first[index]));
-    node.itemCount = 0;
+    node.__itemCount__ = 0;
     expect(arrayBehavior.branch.declareChildren(node)).toBe(
       arrayBehavior.branch.declareChildren(node),
     );
@@ -108,7 +108,7 @@ describe('array branch calculation', () => {
       items: false,
     }).root;
     const node = makeRecord(arrayBehavior.branch, template);
-    node.itemCount = 3;
+    node.__itemCount__ = 3;
     expect(arrayBehavior.branch.assemble(node, [])).toEqual([{}, [], null]);
     expect(
       arrayBehavior.branch.interpret([1], {
@@ -135,8 +135,8 @@ describe('array branch calculation', () => {
       },
     }).root;
     const node = makeRecord(arrayBehavior.branch, template);
-    node.itemCount = 1;
-    node.childrenByName = { '0': { storedOutputValue: undefined } };
+    node.__itemCount__ = 1;
+    node.__childrenByName__ = { '0': { __outputValue__: undefined } };
     expect(arrayBehavior.branch.assemble(node, [])).toEqual([null]);
   });
 
@@ -147,12 +147,12 @@ describe('array branch calculation', () => {
       items: false,
     }).root;
     const node = makeRecord(arrayBehavior.branch, template);
-    node.itemCount = 3;
-    node.childrenByName = { '0': { storedOutputValue: 'first' } };
+    node.__itemCount__ = 3;
+    node.__childrenByName__ = { '0': { __outputValue__: 'first' } };
     node.extras = ['second', 'third'];
     const value = arrayBehavior.branch.assemble(node, []);
     expect(value).toEqual(['first', 'second', 'third']);
-    node.storedValue = value;
+    node.__value__ = value;
     expect(arrayBehavior.branch.assemble(node, [])).toBe(value);
   });
 
@@ -164,10 +164,10 @@ describe('array branch calculation', () => {
     const node = makeRecord(arrayBehavior.branch, template, undefined, {
       omitTrailingEmpty: true,
     });
-    node.itemCount = 3;
-    node.childrenByName = {
-      '0': { storedOutputValue: 'kept' },
-      '1': { storedOutputValue: null },
+    node.__itemCount__ = 3;
+    node.__childrenByName__ = {
+      '0': { __outputValue__: 'kept' },
+      '1': { __outputValue__: null },
     };
     const value = arrayBehavior.branch.assemble(node, []);
     expect(value).toEqual(['kept', null, null]);
@@ -175,10 +175,10 @@ describe('array branch calculation', () => {
     expect(projected).toEqual(['kept']);
     expect(arrayBehavior.branch.project(node, value)).toBe(projected);
     expect(value).toEqual(['kept', null, null]);
-    node.childrenByName = null;
-    node.itemCount = 0;
+    node.__childrenByName__ = null;
+    node.__itemCount__ = 0;
     expect(arrayBehavior.branch.project(node, [])).toBeUndefined();
-    node.schema = {
+    node.__schema__ = {
       schema: { options: { omitEmpty: false } },
       hasTypeConflict: false,
     };
@@ -196,9 +196,9 @@ describe('array branch calculation', () => {
     const node = makeRecord(arrayBehavior.branch, template, undefined, {
       omitTrailingEmpty: true,
     });
-    node.itemCount = 4;
+    node.__itemCount__ = 4;
     const childOutputValue = { name: 'kept' };
-    node.childrenByName = { '0': { storedOutputValue: childOutputValue } };
+    node.__childrenByName__ = { '0': { __outputValue__: childOutputValue } };
     node.extras = [null, undefined];
     const value = arrayBehavior.branch.assemble(node, []);
     expect(value).toEqual([{ name: 'kept' }, [], null, undefined]);
@@ -213,7 +213,7 @@ describe('array branch calculation', () => {
       arrayBehavior.branch,
       blueprint({ type: 'array', items: { type: 'string' } }).root,
     );
-    node.itemCount = 3;
+    node.__itemCount__ = 3;
     expect(
       arrayBehavior.branch.arrange(node, { kind: 'push', value: 'x' }),
     ).toEqual({
@@ -289,7 +289,7 @@ describe('array branch calculation', () => {
       arrayBehavior.branch,
       blueprint({ type: 'array', items: { type: 'string' } }).root,
     );
-    node.itemCount = 3;
+    node.__itemCount__ = 3;
     const plans = [0, 1, 3].map((index) =>
       arrayBehavior.branch.arrange(node, { kind: 'insert', index, value: 'x' }),
     );
@@ -322,14 +322,14 @@ describe('array branch calculation', () => {
         blueprint({ type: 'array', items: { type: 'string' } }).root,
         row.strategy === 'terminal' ? ['a', 'b'] : undefined,
       );
-      node.itemCount = row.strategy === 'branch' ? 2 : 0;
+      node.__itemCount__ = row.strategy === 'branch' ? 2 : 0;
       for (const index of [-1, 3, 1.5, Number.NaN, Infinity])
         expect(
           row.arrange(node, { kind: 'insert', index, value: 'x' }),
         ).toEqual({ kind: 'noop' });
       for (const source of [null, 5, { a: 1 }]) {
         node.source = source;
-        node.itemCount = 0;
+        node.__itemCount__ = 0;
         expect(
           row.arrange(node, { kind: 'insert', index: 1, value: 'x' }),
         ).toEqual({ kind: 'noop' });
@@ -449,7 +449,7 @@ describe('array terminal calculation', () => {
     expect(projected).toEqual(['kept']);
     expect(arrayBehavior.terminal.project(node, source)).toBe(projected);
     expect(source).toEqual(['kept', null, undefined]);
-    node.schema = {
+    node.__schema__ = {
       schema: { options: { omitTrailingEmpty: false } },
       hasTypeConflict: false,
     };

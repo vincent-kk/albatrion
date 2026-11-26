@@ -11,7 +11,7 @@ it('clones sources without carrying interaction or external errors into re-entry
     { dataPath: '/group/leaf', message: 'external' },
   ]);
   tree.close();
-  expect(Reflect.get(tree.root, 'inactiveSlots')).toBeInstanceOf(Map);
+  expect(Reflect.get(tree.root, '__inactiveSlots__')).toBeInstanceOf(Map);
   tree.open();
   const group = tree.root.find('/group')!;
   const leaf = tree.root.find('/group/leaf')!;

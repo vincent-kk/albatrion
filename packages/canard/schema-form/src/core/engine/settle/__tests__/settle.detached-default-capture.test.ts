@@ -20,8 +20,8 @@ const requireNode = (root: DispatchTestNode, path: string) => {
 /** Capture the last live reads and expose them through detached readers. */
 const detach = (node: DispatchTestNode, load?: { readonly value: unknown }) => {
   const snapshot = {
-    schema: node.schema.schema,
-    outputValue: node.rootNode.storedOutputValue,
+    schema: node.__schema__.schema,
+    outputValue: node.rootNode.__outputValue__,
     context: node.runtime.context,
   };
   captureDetachedFieldNodeReads(node, snapshot, load);
@@ -196,10 +196,10 @@ describe('468C-01 exit default read characterization', () => {
       { first: 1, second: 2, field: 'loaded' },
     );
     const node = requireNode(root, '/field');
-    const original = node.schema.schema;
+    const original = node.__schema__.schema;
     const context = { atExit: true };
-    node.schema = {
-      ...node.schema,
+    node.__schema__ = {
+      ...node.__schema__,
       schema: { type: 'string', controls: { watch: ['../second'] } },
     };
     captureDetachedFieldNodeReads(node, {
@@ -208,7 +208,7 @@ describe('468C-01 exit default read characterization', () => {
       context,
     });
     node.isDetached = true;
-    root.storedOutputValue = { first: 10, second: 11 };
+    root.__outputValue__ = { first: 10, second: 11 };
     root.runtime.context = { later: true };
     const watched = readFieldNodeWatchValues(node);
     expect(watched).toEqual([7, context]);
@@ -311,7 +311,7 @@ describe('468C-01 exit default read characterization', () => {
     detach(node);
     root.runtime.misfitPaths.clear();
     root.runtime.misfitsMemo?.clear();
-    root.storedOutputValue = { source: 9, field: 1 };
+    root.__outputValue__ = { source: 9, field: 1 };
     expect(readFieldNodeWatchValues(node)).toEqual([3]);
     expect(readFieldNodeIsMisfit(node)).toBe(true);
     expect(readFieldNodeMisfits(node)).toBe(paths);

@@ -12,14 +12,14 @@ export const canLoadFixedFirstTree = <Self extends FieldNodeRecord<Self>>(
   value: unknown,
 ): boolean =>
   value === undefined &&
-  root.parent === null &&
+  root.__parent__ === null &&
   !root.isDisposed &&
   !root.isDetached &&
-  !root.isDeliveryInitialized &&
+  !root.__isDeliveryInitialized__ &&
   !root.runtime.commitNumber &&
   !root.children?.length &&
-  !root.pendingDelivery &&
-  !root.pendingRevisionMask &&
+  !root.__pendingDelivery__ &&
+  !root.__pendingRevisionMask__ &&
   root.source === undefined &&
   root.extras === undefined &&
   !root.runtime.deliveries?.size &&

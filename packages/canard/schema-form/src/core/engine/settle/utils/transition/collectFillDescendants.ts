@@ -23,21 +23,21 @@ export const collectFillDescendants = <Self extends FieldNodeRecord<Self>>(
   const firstEvaluations = context.hasGates ? new Set<Self>() : undefined;
   for (let index = 0; index < count; index++) {
     const node = appearances.next().value!;
-    if (node.isDetached || !node.parent) continue;
-    const parentOrigin = ancestors.get(node.parent);
+    if (node.isDetached || !node.__parent__) continue;
+    const parentOrigin = ancestors.get(node.__parent__);
     if (
       parentOrigin === undefined &&
-      !context.distributedInputs.get(node.parent)?.isAutomatic
+      !context.distributedInputs.get(node.__parent__)?.isAutomatic
     )
       continue;
     const newItem =
-      node.parent.behavior.type === 'array' &&
-      newArrayHosts?.has(node.parent) &&
+      node.__parent__.behavior.type === 'array' &&
+      newArrayHosts?.has(node.__parent__) &&
       parentOrigin !== undefined &&
       parentOrigin >= 0 &&
       Number(node.name) >= parentOrigin;
     const firstEvaluation =
-      parentOrigin === -1 && firstEvaluations?.has(node.parent);
+      parentOrigin === -1 && firstEvaluations?.has(node.__parent__);
     if (context.hasGates && !firstEvaluation && !newItem) {
       const declarations = node.blueprintNode.declarations;
       let ungated = false;

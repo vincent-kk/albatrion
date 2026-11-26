@@ -58,7 +58,7 @@ describe('commit candidate Set work', () => {
     });
     loadFieldNodeAtMount(root, { a: 'A' }, 0);
     dispatchBatch(root, () => {});
-    const a = root.childrenByName!.a;
+    const a = root.__childrenByName__!.a;
     a.isDetached = true;
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(

@@ -67,20 +67,20 @@ describe('union.entry-two-step', () => {
           );
       },
       assert: (expected) => {
-        if (root.childrenByName?.kind?.source === 'flag') {
-          expect(root.childrenByName?.a?.schema.schema).toMatchObject({
+        if (root.__childrenByName__?.kind?.source === 'flag') {
+          expect(root.__childrenByName__?.a?.__schema__.schema).toMatchObject({
             type: ['boolean'],
           });
-          expect(root.childrenByName?.a?.source).toBe(false);
+          expect(root.__childrenByName__?.a?.source).toBe(false);
           expect(root.runtime.misfitPaths.has('/a')).toBe(false);
         }
-        expect(root.storedOutputValue).toEqual(expected.outputValue);
+        expect(root.__outputValue__).toEqual(expected.outputValue);
       },
     });
     expect(result.executedSteps).toBe(2);
     const loaded = createTestTree(schema).root;
     loadFieldNodeAtMount(loaded, { kind: 'flag', a: 0 }, WriteOption.Overwrite);
-    expect(loaded.childrenByName?.a?.source).toBe(false);
+    expect(loaded.__childrenByName__?.a?.source).toBe(false);
   });
 
   it('WRITE-099 repeats interpretation from original 0 until the feedback reaches string', async () => {
@@ -124,11 +124,11 @@ describe('union.entry-two-step', () => {
           );
       },
       assert: (expected) => {
-        expect(root.storedOutputValue).toEqual(expected.outputValue);
-        expect(root.childrenByName?.a?.schema.schema).toMatchObject({
+        expect(root.__outputValue__).toEqual(expected.outputValue);
+        expect(root.__childrenByName__?.a?.__schema__.schema).toMatchObject({
           type: ['string'],
         });
-        expect(root.childrenByName?.a?.source).toBe('0');
+        expect(root.__childrenByName__?.a?.source).toBe('0');
         expect(root.runtime.misfitPaths.has('/a')).toBe(false);
       },
     });
@@ -178,8 +178,8 @@ describe('union.entry-two-step', () => {
           ).toThrow();
       },
       assert: (expected) => {
-        expect(root.storedOutputValue).toEqual(expected.outputValue);
-        expect(root.childrenByName?.a?.source).toBe(0);
+        expect(root.__outputValue__).toEqual(expected.outputValue);
+        expect(root.__childrenByName__?.a?.source).toBe(0);
         expect(root.runtime.misfitPaths.has('/a')).toBe(true);
         expect(root.runtime.diagnostics).toMatchObject({
           status: 'degraded',

@@ -41,14 +41,14 @@ export const canApplyArrayTail = <Self extends FieldNodeRecord<Self>>(
   if (hasMultipleItemCandidates) {
     return false;
   }
-  if (host.source !== undefined || host.itemCount === plan.slots.length)
+  if (host.source !== undefined || host.__itemCount__ === plan.slots.length)
     return false;
-  const prefixCount = minLite(host.itemCount, plan.slots.length);
+  const prefixCount = minLite(host.__itemCount__, plan.slots.length);
   for (let index = 0; index < prefixCount; index++) {
     const slot = plan.slots[index];
     if (!('from' in slot) || slot.from !== index) return false;
     const entry = getItemEntry(host.blueprintNode, index);
-    const item = host.childrenByName?.['' + index];
+    const item = host.__childrenByName__?.['' + index];
     if (
       entry
         ? !item || item.blueprintNode !== entry.node || item.name !== '' + index

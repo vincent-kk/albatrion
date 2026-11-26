@@ -31,7 +31,7 @@ describe('H2 non-wheel reference preservation', () => {
       dispatchMount(root, {}, WriteOption.Overwrite, {
         deferValidation: true,
       });
-      const leaf = root.childrenByName!['pad_' + (count - 1)];
+      const leaf = root.__childrenByName__!['pad_' + (count - 1)];
       dispatchSetValue(leaf, -2);
       const compare = vi.spyOn(comparisons, 'sameValue');
       const keys = vi.spyOn(Object, 'keys');
@@ -48,7 +48,7 @@ describe('H2 non-wheel reference preservation', () => {
       keys.mockRestore();
       compare.mockRestore();
       console.info('H2_WORK', JSON.stringify({ count, calls, wholeKeys }));
-      expect(Reflect.get(Object(root.storedOutputValue), leaf.name)).toBe(-1);
+      expect(Reflect.get(Object(root.__outputValue__), leaf.name)).toBe(-1);
       expect(calls).toBeLessThanOrEqual(3);
       // Module spies miss sameValue's local recursion; key enumeration exposes that work.
       expect(wholeKeys).toBe(0);
@@ -94,38 +94,38 @@ describe('H2 non-wheel reference preservation', () => {
       WriteOption.Overwrite,
       { deferValidation: true },
     );
-    const outer = root.childrenByName!.outer;
-    const group = outer.childrenByName!.group;
+    const outer = root.__childrenByName__!.outer;
+    const group = outer.__childrenByName__!.group;
     const before = [outer, group].map((node) => ({
       node,
       value: Reflect.get(node, 'value'),
       outputValue: Reflect.get(node, 'outputValue'),
       children: node.children,
-      schema: node.schema,
+      schema: node.__schema__,
       isActive: node.isActive,
-      revision: node.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0,
+      revision: node.__revisionLedger__[FieldNodeEventType.UpdateValue] ?? 0,
     }));
-    const previousOther = root.childrenByName!.other.storedValue;
+    const previousOther = root.__childrenByName__!.other.__value__;
 
-    dispatchSetValue(group.childrenByName!.value, 1);
+    dispatchSetValue(group.__childrenByName__!.value, 1);
 
-    expect(root.childrenByName!.other.storedValue).not.toBe(previousOther);
+    expect(root.__childrenByName__!.other.__value__).not.toBe(previousOther);
     for (const previous of before) {
       const node = previous.node;
       expect(Reflect.get(node, 'value')).toBe(previous.value);
       expect(Reflect.get(node, 'outputValue')).toBe(previous.outputValue);
       expect(node.children).toBe(previous.children);
-      expect(node.schema).toBe(previous.schema);
+      expect(node.__schema__).toBe(previous.schema);
       expect(node.isActive).toBe(previous.isActive);
-      expect(node.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0).toBe(
+      expect(node.__revisionLedger__[FieldNodeEventType.UpdateValue] ?? 0).toBe(
         previous.revision,
       );
     }
-    expect(Reflect.get(Object(root.storedValue), 'outer')).toBe(
-      outer.storedOutputValue,
+    expect(Reflect.get(Object(root.__value__), 'outer')).toBe(
+      outer.__outputValue__,
     );
-    expect(Reflect.get(Object(outer.storedValue), 'group')).toBe(
-      group.storedOutputValue,
+    expect(Reflect.get(Object(outer.__value__), 'group')).toBe(
+      group.__outputValue__,
     );
   });
 });

@@ -57,9 +57,11 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
   };
   for (const host of hosts) {
     const previous = getLoadValue(draft, host.path);
-    if (!isArray(previous) && host.itemCount === 0) continue;
-    const slots = isArray(previous) ? previous.slice(0, host.itemCount) : [];
-    while (slots.length < host.itemCount) slots.push(undefined);
+    if (!isArray(previous) && host.__itemCount__ === 0) continue;
+    const slots = isArray(previous)
+      ? previous.slice(0, host.__itemCount__)
+      : [];
+    while (slots.length < host.__itemCount__) slots.push(undefined);
     if (sameValue(previous, slots)) continue;
     draftContainers.add(slots);
     holey.add(slots);
@@ -77,7 +79,9 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
         break;
       }
       probe =
-        probe !== null && typeof probe === 'object' && hasOwnProperty(probe, segment)
+        probe !== null &&
+        typeof probe === 'object' &&
+        hasOwnProperty(probe, segment)
           ? Reflect.get(probe, segment)
           : undefined;
     }
@@ -91,7 +95,12 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
     for (let index = 0; index < segments.length - 1; index++) {
       const segment = segments[index];
       parentPath = appendSegment(parentPath, segments[index]);
-      const child = draftCopy(hasOwnProperty(parent, segment) ? Reflect.get(parent, segment) : undefined, parentPath);
+      const child = draftCopy(
+        hasOwnProperty(parent, segment)
+          ? Reflect.get(parent, segment)
+          : undefined,
+        parentPath,
+      );
       if (isArray(parent) && Number(segment) > parent.length) holey.add(parent);
       setDataProperty(parent, segment, child);
       parent = child;

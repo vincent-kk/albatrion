@@ -60,14 +60,14 @@ describe('92C-01 원본 없는 재귀 사슬', () => {
       { id: 'root', children: [] },
     );
     expect(
-      arrangeFieldNodeItems(root.childrenByName!.children, {
+      arrangeFieldNodeItems(root.__childrenByName__!.children, {
         kind: 'push',
         value: undefined,
       }),
     ).toBe(1);
     expect(
-      root.childrenByName!.children.children![0].childrenByName!.children
-        .storedValue,
+      root.__childrenByName__!.children.children![0].__childrenByName__!
+        .children.__value__,
     ).toEqual([]);
     expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
   });
@@ -82,10 +82,10 @@ describe('92C-01 원본 없는 재귀 사슬', () => {
       },
       [{ next: [{ next: [] }] }],
     );
-    expect(root.storedOutputValue).toEqual([{ next: [{}] }]);
+    expect(root.__outputValue__).toEqual([{ next: [{}] }]);
     expect(
-      root.children![0].childrenByName!.next.children![0].childrenByName!.next
-        .storedValue,
+      root.children![0].__childrenByName__!.next.children![0]
+        .__childrenByName__!.next.__value__,
     ).toEqual([]);
     expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
   });
@@ -99,8 +99,8 @@ describe('92C-01 원본 없는 재귀 사슬', () => {
         properties: { next: { $ref: '#' } },
       },
     });
-    expect(root.storedOutputValue).toEqual([{}]);
-    expect(root.children![0].childrenByName!.next.storedValue).toEqual([]);
+    expect(root.__outputValue__).toEqual([{}]);
+    expect(root.children![0].__childrenByName__!.next.__value__).toEqual([]);
     expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
   });
 
@@ -188,7 +188,7 @@ describe('92C-03 첫 평가와 게이트 뒤집힘의 라운드', () => {
           },
         },
       });
-      expect(root.storedOutputValue).toEqual([
+      expect(root.__outputValue__).toEqual([
         { a: true, branch: { label: 'next-round' } },
       ]);
       const continuations = collect.mock.results.filter(
@@ -196,7 +196,7 @@ describe('92C-03 첫 평가와 게이트 뒤집힘의 라운드', () => {
       ).length;
       expect(continuations).toBe(1);
       expect(
-        compute.mock.calls.filter(([node]) => node.parent === null).length -
+        compute.mock.calls.filter(([node]) => node.__parent__ === null).length -
           1 -
           continuations,
       ).toBe(2);
@@ -227,14 +227,12 @@ describe('92C-03 첫 평가와 게이트 뒤집힘의 라운드', () => {
           },
         },
       });
-      expect(root.storedOutputValue).toEqual([
-        { nested: [{ label: 'filled' }] },
-      ]);
+      expect(root.__outputValue__).toEqual([{ nested: [{ label: 'filled' }] }]);
       const continuations = collect.mock.results.filter(
         (result) => result.value !== undefined,
       ).length;
       expect(
-        compute.mock.calls.filter(([node]) => node.parent === null).length -
+        compute.mock.calls.filter(([node]) => node.__parent__ === null).length -
           1 -
           continuations,
       ).toBe(1);
@@ -249,7 +247,7 @@ describe('92C-03 첫 평가와 게이트 뒤집힘의 라운드', () => {
     try {
       const root = loadGeneric(gatedItemSchema);
       expect(transitionCap.getTransitionCap(root.runtime.blueprint)).toBe(4);
-      expect(root.storedOutputValue).toEqual([
+      expect(root.__outputValue__).toEqual([
         { a: true, b: true, c: true, d: true },
       ]);
       expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
@@ -259,7 +257,7 @@ describe('92C-03 첫 평가와 게이트 뒤집힘의 라운드', () => {
       expect(continuations).toBe(1);
       // One initial calculation, four counted writes, and one continued fill.
       expect(
-        compute.mock.calls.filter(([node]) => node.parent === null).length -
+        compute.mock.calls.filter(([node]) => node.__parent__ === null).length -
           1 -
           continuations,
       ).toBe(4);
@@ -326,7 +324,7 @@ describe('92C-03 첫 평가와 게이트 뒤집힘의 라운드', () => {
         items: itemSchema,
       });
       expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
-      expect(root.storedOutputValue).toEqual([
+      expect(root.__outputValue__).toEqual([
         { value: -1, label: 'item', priority: 'control' },
       ]);
       expect(transitionCap.getTransitionCap(root.runtime.blueprint)).toBe(1);
@@ -334,7 +332,7 @@ describe('92C-03 첫 평가와 게이트 뒤집힘의 라운드', () => {
         (result) => result.value !== undefined,
       ).length;
       expect(
-        compute.mock.calls.filter(([node]) => node.parent === null).length -
+        compute.mock.calls.filter(([node]) => node.__parent__ === null).length -
           1 -
           continuations,
       ).toBe(1);

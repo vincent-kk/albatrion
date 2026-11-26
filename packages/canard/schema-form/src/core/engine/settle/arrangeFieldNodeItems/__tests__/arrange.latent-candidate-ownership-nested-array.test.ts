@@ -52,10 +52,10 @@ it.each(['insert', 'remove'] as const)(
     expect(old.isDetached).toBe(true);
     expect(getDispatchNode(list, '' + destination, '0', 'v').source).toBe(37);
 
-    expect(list.storedValue).toEqual(
+    expect(list.__value__).toEqual(
       operation === 'insert' ? [[], [{ v: 37 }]] : [[{ v: 37 }]],
     );
-    expect(root.storedOutputValue).toEqual(root.storedValue);
+    expect(root.__outputValue__).toEqual(root.__value__);
     expect(readRetainedSlotSource(root, path, 'string')).toBe('live');
 
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');

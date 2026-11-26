@@ -39,7 +39,7 @@ describe('same-name union fold selection', () => {
       },
     });
     loadFieldNodeAtMount(root, { shared: 17 }, WriteOption.Overwrite);
-    const original = root.childrenByName!.shared;
+    const original = root.__childrenByName__!.shared;
     const factory = vi.spyOn(root.runtime, 'nodeFactory');
     const select = selection.selectChildren;
     const key = JSON.stringify(['/shared', 'union:3']);
@@ -60,7 +60,7 @@ describe('same-name union fold selection', () => {
     );
 
     writeFieldNode(
-      root.childrenByName!.t,
+      root.__childrenByName__!.t,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -71,7 +71,7 @@ describe('same-name union fold selection', () => {
         ([entry]) => 'node' in entry && entry.name === 'shared',
       ).length,
     ).toBe(0);
-    expect(root.childrenByName?.shared).toBe(original);
+    expect(root.__childrenByName__?.shared).toBe(original);
     expect(pending).toContain(true);
     expect(pending[pending.length - 1]).toBe(false);
     expect(revived).toContain(true);
@@ -92,8 +92,10 @@ describe('same-name union fold selection', () => {
     const variants = blueprint.root.childEntries.filter(
       (entry) => entry.name === 'shared',
     );
-    expect(root.childrenByName?.shared?.blueprintNode).toBe(variants[1].node);
-    expect(root.childrenByName?.shared?.source).toBe(true);
+    expect(root.__childrenByName__?.shared?.blueprintNode).toBe(
+      variants[1].node,
+    );
+    expect(root.__childrenByName__?.shared?.source).toBe(true);
     expect(
       root.children?.filter((child) => child.name === 'shared'),
     ).toHaveLength(1);
@@ -112,7 +114,7 @@ describe('same-name union fold selection', () => {
         { [from]: true, [to]: false, shared: value },
         WriteOption.Overwrite,
       );
-      const original = root.childrenByName!.shared;
+      const original = root.__childrenByName__!.shared;
       expect(() =>
         writeFieldNode(
           root,
@@ -124,10 +126,10 @@ describe('same-name union fold selection', () => {
       const variants = blueprint.root.childEntries.filter(
         (entry) => entry.name === 'shared',
       );
-      expect(root.childrenByName?.shared?.blueprintNode).toBe(
+      expect(root.__childrenByName__?.shared?.blueprintNode).toBe(
         variants[index].node,
       );
-      expect(root.childrenByName?.shared).not.toBe(original);
+      expect(root.__childrenByName__?.shared).not.toBe(original);
       expect(root.runtime.diagnostics.status).toBe('stable');
       expect(() =>
         writeFieldNode(
@@ -137,7 +139,7 @@ describe('same-name union fold selection', () => {
           WriteOption.Merge,
         ),
       ).not.toThrow();
-      expect(root.childrenByName?.shared?.blueprintNode).toBe(
+      expect(root.__childrenByName__?.shared?.blueprintNode).toBe(
         original.blueprintNode,
       );
       expect(root.runtime.diagnostics.status).toBe('stable');
@@ -151,7 +153,7 @@ describe('same-name union fold selection', () => {
       { left: false, right: true, shared: true },
       WriteOption.Overwrite,
     );
-    const later = root.childrenByName!.shared;
+    const later = root.__childrenByName__!.shared;
     let conflict: unknown;
     try {
       writeFieldNode(
@@ -167,11 +169,11 @@ describe('same-name union fold selection', () => {
       code: 'SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT',
       message: 'Active declarations conflict at /shared',
     });
-    expect(root.childrenByName?.shared?.blueprintNode).toBe(
+    expect(root.__childrenByName__?.shared?.blueprintNode).toBe(
       blueprint.root.childEntries.find((entry) => entry.name === 'shared')
         ?.node,
     );
-    expect(root.childrenByName?.shared).not.toBe(later);
+    expect(root.__childrenByName__?.shared).not.toBe(later);
     expect(
       root.children?.filter((child) => child.name === 'shared'),
     ).toHaveLength(1);

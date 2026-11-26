@@ -36,7 +36,7 @@ export const prepareHostWheelPlan = <Self extends FieldNodeRecord<Self>>(
     (previous !== undefined || node.behavior.type === 'object') &&
     cached.blueprint === node.runtime.blueprint &&
     cached.path === node.path &&
-    cached.itemCount === node.itemCount &&
+    cached.itemCount === node.__itemCount__ &&
     cached.relocatedOccurrences === relocatedOccurrences
   )
     return cached;
@@ -74,7 +74,7 @@ export const prepareHostWheelPlan = <Self extends FieldNodeRecord<Self>>(
   const plan: HostWheelPlan = {
     blueprint: node.runtime.blueprint,
     path: node.path,
-    itemCount: node.itemCount,
+    itemCount: node.__itemCount__,
     relocatedOccurrences,
     gates,
     isBaselineEligible: matches,

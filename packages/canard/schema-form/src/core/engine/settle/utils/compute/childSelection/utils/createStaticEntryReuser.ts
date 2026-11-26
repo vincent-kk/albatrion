@@ -18,10 +18,10 @@ import type { StaticShapeMemo } from '../staticShape';
 
 /**
  * Prepare one selection call to reuse only its fixed ungated entries.
- * @param node - Object host whose current `childrenByName` is being selected
+ * @param node - Object host whose current `__childrenByName__` is being selected
  * @param prior - Shape captured before this wheel's fixed baseline
  * @param context - Write scope and dirty child work
- * @param next - Destination `childrenByName` map, including the priming baseline
+ * @param next - Destination `__childrenByName__` map, including the priming baseline
  * @param computeChild - Dirty-child computation, absent while priming
  * @param isImmediate - Whether child computation queues host publication
  * @param hasRelocated - Existing wheel evidence; unknown callers keep the general path
@@ -79,14 +79,14 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
     if (
       !selected ||
       !child ||
-      child.parent !== node ||
+      child.__parent__ !== node ||
       child.name !== entry.name ||
       child.path !== appendSegment(node.path, entry.name) ||
       child.blueprintNode !== entry.node ||
-      child.schema !== selected.schema ||
+      child.__schema__ !== selected.schema ||
       !child.isActive ||
       child.isDetached ||
-      node.childrenByName?.[entry.name] !== child ||
+      node.__childrenByName__?.[entry.name] !== child ||
       (next[entry.name] !== undefined && next[entry.name] !== child)
     )
       return false;

@@ -31,16 +31,16 @@ it('retains live and latent candidate sources while a slot is parked in an undec
   runtime.disableAutomaticWrites = true;
   dispatchInsert(list, 0, {});
   expect(old.isDetached).toBe(true);
-  expect(list.storedOutputValue).toEqual([{}, { v: 'live' }]);
+  expect(list.__outputValue__).toEqual([{}, { v: 'live' }]);
   expect(readRetainedSlotSource(root, '/list/1/v', 'string')).toBe('live');
   expect(readRetainedSlotSource(root, '/list/1/v', 'number')).toBe(37);
 
   dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
   dispatchRemove(list, 0);
-  expect(list.storedOutputValue).toEqual([{ v: 37 }]);
+  expect(list.__outputValue__).toEqual([{ v: 37 }]);
   expect(readRetainedSlotSource(root, '/list/0/v', 'string')).toBe('live');
   dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-  expect(root.storedOutputValue).toEqual({
+  expect(root.__outputValue__).toEqual({
     kind: 'string',
     list: [{ v: 'live' }],
   });

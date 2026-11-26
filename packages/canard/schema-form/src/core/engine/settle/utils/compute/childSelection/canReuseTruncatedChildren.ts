@@ -14,7 +14,7 @@ import type {
  * @param context - Settlement facts the proof reads: gate presence, distributed inputs, path changes, pending exits and the dirty frontier
  * @param prior - Structure captured before the host's selection round
  * @param proof - The settlement's pop proof for this host
- * @returns Whether the N-1 retained positions keep the `childrenByName` and children the truncation published and none of them is dirty
+ * @returns Whether the N-1 retained positions keep the `__childrenByName__` and children the truncation published and none of them is dirty
  */
 export const canReuseTruncatedChildren = <Self extends FieldNodeRecord<Self>>(
   node: Self,
@@ -26,8 +26,8 @@ export const canReuseTruncatedChildren = <Self extends FieldNodeRecord<Self>>(
   return (
     !context.hasGates &&
     node.source === undefined &&
-    node.itemCount === proof.count - 1 &&
-    node.childrenByName === prior &&
+    node.__itemCount__ === proof.count - 1 &&
+    node.__childrenByName__ === prior &&
     node.children === proof.children &&
     !context.distributedInputs.has(node) &&
     context.pathChanges.length === 0 &&

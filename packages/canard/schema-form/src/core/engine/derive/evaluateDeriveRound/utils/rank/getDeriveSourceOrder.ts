@@ -13,9 +13,9 @@ export const getDeriveSourceOrder = <Self extends FieldNodeRecord<Self>>(
 ): readonly number[] => {
   const order: number[] = [];
   let node: Nullable<Self> = source;
-  while (node?.parent) {
+  while (node?.__parent__) {
     const current: Self = node;
-    const parent: Nullable<Self> = current.parent;
+    const parent: Nullable<Self> = current.__parent__;
     if (!parent) break;
     const found = getDeriveChildEntry(
       parent.blueprintNode,

@@ -110,7 +110,7 @@ it('keeps the by-entry derivative lazy after preparing a static shape', () => {
   );
   const reuser = createStaticEntryReuser(
     root,
-    root.childrenByName!,
+    root.__childrenByName__!,
     context,
     {},
     undefined,

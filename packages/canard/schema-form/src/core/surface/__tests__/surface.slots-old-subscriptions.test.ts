@@ -12,7 +12,7 @@ it('keeps the retained source subscriptions silent during a new lifetime', () =>
   tree.close();
   groupListener.mockClear();
   leafListener.mockClear();
-  expect(Reflect.get(tree.root, 'inactiveSlots')).toBeInstanceOf(Map);
+  expect(Reflect.get(tree.root, '__inactiveSlots__')).toBeInstanceOf(Map);
   tree.open();
   const live = tree.root.find('/group/leaf')!;
   const liveListener = vi.fn();

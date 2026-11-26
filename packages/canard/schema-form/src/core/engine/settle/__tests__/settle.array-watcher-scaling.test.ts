@@ -90,7 +90,9 @@ describe('I9 array costs follow changed paths', () => {
       throw new Error('Expected runtime tree');
     const watchers = [leafWatcher, hostWatcher];
     const bit = FieldNodeEventType.UpdateControlledProperties;
-    const before = watchers.map((watcher) => watcher.revisionLedger[bit] ?? 0);
+    const before = watchers.map(
+      (watcher) => watcher.__revisionLedger__[bit] ?? 0,
+    );
     const allNodes = root.runtime.deliveryWatchIndex!.allNodes;
     const iterate = allNodes[Symbol.iterator].bind(allNodes);
     let wholeVisits = 0;
@@ -128,7 +130,7 @@ describe('I9 array costs follow changed paths', () => {
       expect(outsideCandidates).toBe(2);
       expect(wholeVisits).toBe(0);
       expect(
-        watchers.map((watcher) => watcher.revisionLedger[bit] ?? 0),
+        watchers.map((watcher) => watcher.__revisionLedger__[bit] ?? 0),
       ).toEqual(before.map((revision) => revision + 1));
     } finally {
       spy.mockRestore();

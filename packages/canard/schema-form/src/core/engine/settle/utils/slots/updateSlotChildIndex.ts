@@ -1,6 +1,6 @@
 import type { FieldNodeRecord } from '../../../record';
 
-/** Annotates the lazily created `inactiveSlotChildren`; an argument-less `new Map()` would be `Map<any, any>`. */
+/** Annotates the lazily created `__inactiveSlotChildren__`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlotChildren<Self> = Map<string, Self>;
 
 /**
@@ -13,16 +13,16 @@ export const updateSlotChildIndex = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   name: string,
 ): void => {
-  const live = host.childrenByName?.[name];
+  const live = host.__childrenByName__?.[name];
   if (
     live &&
     !live.isDetached &&
-    (live.inactiveSlots?.size ||
-      live.inactiveSlotOverlays?.size ||
-      live.inactiveSlotChildren?.size)
+    (live.__inactiveSlots__?.size ||
+      live.__inactiveSlotOverlays__?.size ||
+      live.__inactiveSlotChildren__?.size)
   ) {
-    const children: InactiveSlotChildren<Self> = (host.inactiveSlotChildren ??=
-      new Map());
+    const children: InactiveSlotChildren<Self> =
+      (host.__inactiveSlotChildren__ ??= new Map());
     children.set(name, live);
-  } else host.inactiveSlotChildren?.delete(name);
+  } else host.__inactiveSlotChildren__?.delete(name);
 };

@@ -5,9 +5,10 @@ export const discardFieldNodeChainWork = <Self extends FieldNodeRecord<Self>>(
   root: Self,
 ): void => {
   const runtime = root.runtime;
-  for (const node of runtime.deliveries ?? []) node.pendingDelivery = undefined;
+  for (const node of runtime.deliveries ?? [])
+    node.__pendingDelivery__ = undefined;
   for (const node of runtime.queuedNonSettleEvents ?? [])
-    node.pendingNonSettleDelivery = undefined;
+    node.__pendingNonSettleDelivery__ = undefined;
   runtime.deliveries = undefined;
   runtime.queuedNonSettleEvents = undefined;
   runtime.pendingExternalErrorNodes = undefined;

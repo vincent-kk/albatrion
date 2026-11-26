@@ -14,15 +14,15 @@ export const readFieldNodeIsDivergent = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   const baseline = node.runtime.loadBaseline;
   if (!baseline || node.isDetached) return false;
-  let segments = node.divergenceSegments;
-  if (!segments || !Object.is(node.path, node.divergencePath)) {
+  let segments = node.__divergenceSegments__;
+  if (!segments || !Object.is(node.path, node.__divergencePath__)) {
     if (node.behavior.type === 'virtual') {
-      if (!node.parent) return false;
+      if (!node.__parent__) return false;
       const current = getLoadValue(
-        node.rootNode.storedOutputValue,
-        node.parent.path,
+        node.rootNode.__outputValue__,
+        node.__parent__.path,
       );
-      const base = getLoadValue(baseline.value, node.parent.path);
+      const base = getLoadValue(baseline.value, node.__parent__.path);
       return (node.blueprintNode.fields ?? []).some(
         (name) =>
           !sameValue(
@@ -32,23 +32,23 @@ export const readFieldNodeIsDivergent = <Self extends FieldNodeRecord<Self>>(
       );
     }
     segments = readLoadSegments(node);
-    node.divergencePath = node.path;
-    node.divergenceSegments = segments;
+    node.__divergencePath__ = node.path;
+    node.__divergenceSegments__ = segments;
   }
   const current = getLoadValue(
-    node.rootNode.storedOutputValue,
+    node.rootNode.__outputValue__,
     node.path,
     segments,
   );
   const base = getLoadValue(baseline.value, node.path, segments);
   if (
-    Object.is(current, node.divergenceCurrent) &&
-    Object.is(base, node.divergenceBase)
+    Object.is(current, node.__divergenceCurrent__) &&
+    Object.is(base, node.__divergenceBase__)
   )
-    return node.storedIsDivergent;
+    return node.__isDivergent__;
   const result = !sameValue(current, base);
-  node.divergenceCurrent = current;
-  node.divergenceBase = base;
-  node.storedIsDivergent = result;
+  node.__divergenceCurrent__ = current;
+  node.__divergenceBase__ = base;
+  node.__isDivergent__ = result;
   return result;
 };

@@ -30,7 +30,7 @@ export const finalizeDeriveTrace = <Self extends FieldNodeRecord<Self>>(
             break;
           }
           const children: Nullable<Dictionary<Self>> =
-            node?.childrenByName ?? null;
+            node?.__childrenByName__ ?? null;
           node =
             children && hasOwnProperty(children, name)
               ? children[name]

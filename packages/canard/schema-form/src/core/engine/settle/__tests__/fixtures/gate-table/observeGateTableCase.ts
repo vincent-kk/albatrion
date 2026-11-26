@@ -131,7 +131,7 @@ export const observeGateTableCase = (
             path: child.path,
             entered: args[1].enteredNodes.has(child),
             revived: args[1].revivedNodes.has(child),
-            value: child.storedValue,
+            value: child.__value__,
           });
           computeChild(child);
         },
@@ -141,7 +141,7 @@ export const observeGateTableCase = (
       selections.push({
         host: node.path,
         changed: result,
-        childrenByName: Object.keys(node.childrenByName ?? {}),
+        childrenByName: Object.keys(node.__childrenByName__ ?? {}),
         pendingExits: [...context.pendingExits.keys()],
         revived: [...context.revivedNodes].map((child) => child.path),
         entered: [...context.enteredNodes].map((child) => child.path),
@@ -179,28 +179,28 @@ export const observeGateTableCase = (
           hosts.push({
             path: node.path,
             identity: identityOf(node),
-            childrenByName: node.childrenByName
-              ? Object.keys(node.childrenByName)
+            childrenByName: node.__childrenByName__
+              ? Object.keys(node.__childrenByName__)
               : null,
-            revision: node.revisionLedger,
-            payload: node.pendingDelivery,
+            revision: node.__revisionLedger__,
+            payload: node.__pendingDelivery__,
           });
           for (
             let index = (node.children?.length ?? 0) - 1;
             index >= 0;
             index--
           )
-            if (node.children![index].parent === node)
+            if (node.children![index].__parent__ === node)
               pending.push(node.children![index]);
         }
         const extra = {
           hosts,
           deliveryOrder: [...(root.runtime.deliveries ?? [])].map((node) => ({
             path: node.path,
-            type: node.pendingDelivery?.type,
-            payloadKinds: Object.keys(node.pendingDelivery?.payload ?? {}),
-            payload: node.pendingDelivery?.payload,
-            options: node.pendingDelivery?.options,
+            type: node.__pendingDelivery__?.type,
+            payloadKinds: Object.keys(node.__pendingDelivery__?.payload ?? {}),
+            payload: node.__pendingDelivery__?.payload,
+            options: node.__pendingDelivery__?.options,
           })),
           declarationIds: root.runtime.committedDeclarationIds
             ? [...root.runtime.committedDeclarationIds]

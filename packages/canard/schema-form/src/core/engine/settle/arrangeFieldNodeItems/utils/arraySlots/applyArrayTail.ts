@@ -36,7 +36,7 @@ const readPositionLoadValue = (hostValue: unknown, key: string): unknown =>
 
 /**
  * Apply a proven prefix-preserving proposal without composing retained source trees.
- * Mutates `host.childrenByName` in place, reusing prefix entries and adding or deleting only tail keys.
+ * Mutates `host.__childrenByName__` in place, reusing prefix entries and adding or deleting only tail keys.
  * A perished item's detached defaultValue is filled from the host's load value by position (NODE-044 reads unchanged).
  * An empty result (clear, or a pop of the only item) removes the host's path-store entries by host prefix instead of per-position re-keying.
  * Callers collecting perishedPaths remove at most one tail slot (append/pop); reassess its children-by-name map if multi-slot callers are added.
@@ -52,10 +52,11 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   offset: number = 0,
 ): unknown => {
-  const oldCount = host.itemCount;
+  const oldCount = host.__itemCount__;
   const length = offset + plan.slots.length;
   const prefixCount = minLite(oldCount, length);
-  const items: Dictionary<Self> = host.childrenByName ?? Object.create(null);
+  const items: Dictionary<Self> =
+    host.__childrenByName__ ?? Object.create(null);
   const snapshot = getLoadValue(host.runtime.loadSnapshot, host.path);
   const oldSnapshot = isArray(snapshot) ? snapshot : [];
   const oldExtras = isArray(host.extras) ? host.extras : [];
@@ -71,7 +72,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
     removedIndex < 0
       ? undefined
       : removedItem
-        ? removedItem.storedValue
+        ? removedItem.__value__
         : removedEntry
           ? readInactiveSlotSource(
               context,
@@ -130,7 +131,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
             {
               outputValue: context.previousOutputValue,
               context: context.previousContext,
-              schema: departing.schema.schema,
+              schema: departing.__schema__.schema,
             },
             departing === item ? load : undefined,
           );
@@ -154,10 +155,10 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   }
   if (issueOwners) queueValidationIssueMoves(host.rootNode, issueOwners);
 
-  host.itemCount = length;
+  host.__itemCount__ = length;
   host.source = undefined;
   host.extras = extras.length ? extras : undefined;
-  host.childrenByName = items;
+  host.__childrenByName__ = items;
   host.children = captureFieldNodeChange(host, 'children', children);
   context.arrayCounts.set(host, oldCount);
   context.changedSource.add(host.path);

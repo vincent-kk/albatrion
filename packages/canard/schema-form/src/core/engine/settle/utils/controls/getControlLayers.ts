@@ -16,7 +16,7 @@ export interface ControlTarget<Self> {
   /** Static declarations for this occurrence. */
   readonly blueprintNode: BlueprintNode;
   /** Direct parent whose groups may address this occurrence. */
-  readonly parent: Nullable<Self>;
+  readonly __parent__: Nullable<Self>;
   /** Last active declaration choices for the whole tree. */
   readonly runtime: {
     readonly blueprint?: Blueprint;
@@ -56,7 +56,7 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
 ): readonly ControlLayer<Self>[] => {
   const prepared = prepareControlLayers(node.blueprintNode);
   const own = exitOnly ? prepared.node.exit : prepared.node.all;
-  const parent = node.parent;
+  const parent = node.__parent__;
   if (
     exitOnly &&
     !prepared.hasExitControls &&

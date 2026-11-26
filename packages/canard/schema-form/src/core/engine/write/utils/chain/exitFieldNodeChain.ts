@@ -126,7 +126,7 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
     }
     const changed = !sameValueZero(
       runtime.chainInitialOutputValue,
-      root.storedOutputValue,
+      root.__outputValue__,
     );
     const requests = runtime.validationTargets;
     if (prepareFieldNodeValidation(root, changed)) {
@@ -164,7 +164,7 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
       } else {
         runtime.onChangeBudget = (runtime.onChangeBudget ?? 0) + 1;
         try {
-          runtime.onChange(root.storedOutputValue);
+          runtime.onChange(root.__outputValue__);
         } catch (error) {
           captureChainError(resolveFieldNodeChainRoot(root).runtime, error);
         } finally {

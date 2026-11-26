@@ -91,10 +91,10 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
         if (
           child.name !== entry.name ||
           child.blueprintNode !== entry.node ||
-          child.schema !== schema ||
+          child.__schema__ !== schema ||
           !child.isActive ||
           child.isDetached ||
-          node.childrenByName?.[entry.name] !== child
+          node.__childrenByName__?.[entry.name] !== child
         ) {
           matches = false;
           break;
@@ -106,7 +106,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
           node,
           prior,
           context,
-          node.childrenByName!,
+          node.__childrenByName__!,
           computeChild,
           false,
           hasRelocated,
@@ -136,7 +136,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     const fields = node.blueprintNode.fields;
     for (let index = 0; fields && index < fields.length; index++) {
       const field = fields[index];
-      const sibling = node.parent?.childrenByName?.[field];
+      const sibling = node.__parent__?.__childrenByName__?.[field];
       if (!sibling) continue;
       next[field] = sibling;
       children.push(sibling);
@@ -144,7 +144,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     let changed = children.length !== before.length;
     for (let index = 0; !changed && index < children.length; index++)
       if (children[index] !== before[index]) changed = true;
-    node.childrenByName = next;
+    node.__childrenByName__ = next;
     node.children = captureFieldNodeChange(
       node,
       'children',
@@ -157,7 +157,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     return changed;
   }
   const before = node.children ?? [];
-  const current = node.childrenByName;
+  const current = node.__childrenByName__;
   const prepared = prepareStaticHost(node, prior, context, hasRelocated);
   let reuse = prepared
     ? (entry: BlueprintChildEntry) => prepared.entries.has(entry.name)
@@ -186,13 +186,13 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       ? current
       : { ...current };
   if (!prepared && next !== current) Object.setPrototypeOf(next, null);
-  // Mutate the private target directly; node.childrenByName keeps the own-key gate view.
+  // Mutate the private target directly; node.__childrenByName__ keeps the own-key gate view.
   const selectionTarget = dynamic ?? next;
   if (node.behavior.type === 'array') {
     const names = Object.keys(next);
     for (let index = 0; index < names.length; index++) {
       const name = names[index];
-      if (Number(name) >= node.itemCount) delete next[name];
+      if (Number(name) >= node.__itemCount__) delete next[name];
     }
   }
   reuse ??= createStaticEntryReuser(
@@ -250,7 +250,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   };
   let selectedChildren: Optional<readonly Self[]>;
   try {
-    node.childrenByName = next;
+    node.__childrenByName__ = next;
     const round = direct && context.gateSelectionRounds?.get(node);
     if (round?.isActive) selectTableChildren(frame, round);
     else {
@@ -263,8 +263,8 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     }
     selectedChildren = prepared ? publishPreparedSelection(frame) : undefined;
   } finally {
-    if (prepared && node.childrenByName === next)
-      node.childrenByName = prepared.selectedChildrenByName;
+    if (prepared && node.__childrenByName__ === next)
+      node.__childrenByName__ = prepared.selectedChildrenByName;
   }
   changed = frame.hasChanged;
   const flushed = flushPendingOutput(node, context, selectedChildren);
@@ -318,9 +318,9 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   for (let index = 0; index < priorNames.length; index++) {
     const name = priorNames[index];
     const child = prior[name];
-    if (node.childrenByName![name] !== child) {
+    if (node.__childrenByName__![name] !== child) {
       if (context.hasGates) (context.presenceHosts ??= new Set()).add(node);
-      if (node.behavior.type === 'array' && Number(name) >= node.itemCount)
+      if (node.behavior.type === 'array' && Number(name) >= node.__itemCount__)
         context.perishedNodes.add(child);
       else {
         const key = JSON.stringify([

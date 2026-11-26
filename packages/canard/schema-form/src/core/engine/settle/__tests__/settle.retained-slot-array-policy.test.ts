@@ -61,7 +61,7 @@ it.each([
       dispatchSetValue(getDispatchNode(root, 'open'), true);
       return {
         closed,
-        reopened: root.storedOutputValue,
+        reopened: root.__outputValue__,
         inactive: readFieldNodeInactiveValues(root),
       };
     };

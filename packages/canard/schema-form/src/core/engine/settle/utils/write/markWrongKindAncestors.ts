@@ -12,7 +12,7 @@ export const markWrongKindAncestors = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): void => {
-  let parent = node.parent;
+  let parent = node.__parent__;
   while (parent) {
     if (
       parent.behavior.type === 'object' &&
@@ -21,6 +21,6 @@ export const markWrongKindAncestors = <Self extends FieldNodeRecord<Self>>(
       !isPlain(parent.source)
     )
       context.wrongKindHosts.add(parent);
-    parent = parent.parent;
+    parent = parent.__parent__;
   }
 };

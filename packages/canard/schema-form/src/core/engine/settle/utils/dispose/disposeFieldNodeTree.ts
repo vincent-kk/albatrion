@@ -32,14 +32,14 @@ export const disposeFieldNodeTree = <Self extends FieldNodeRecord<Self>>(
     (node) => {
       if (node.isDisposed) return;
       node.isDisposed = true;
-      node.interactionEpoch += 1;
-      node.revisionLedger = new FieldNodeRevisionLedger(
-        node.revisionLedger,
+      node.__interactionEpoch__ += 1;
+      node.__revisionLedger__ = new FieldNodeRevisionLedger(
+        node.__revisionLedger__,
         FieldNodeEventType.RequestRefresh,
       );
-      node.pendingDelivery = undefined;
-      node.pendingRevisionMask = BIT_MASK_NONE;
-      node.pendingNonSettleDelivery = undefined;
+      node.__pendingDelivery__ = undefined;
+      node.__pendingRevisionMask__ = BIT_MASK_NONE;
+      node.__pendingNonSettleDelivery__ = undefined;
     },
     { isOwned: true },
   );

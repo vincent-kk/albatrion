@@ -21,7 +21,7 @@ export const getSlotEntries = <Self extends FieldNodeRecord<Self>>(
   const entries = new Set<BlueprintChildEntry>();
   if (!overlay?.isWhole)
     for (const child of host?.children ?? []) {
-      if (child.parent !== host || !host) continue;
+      if (child.__parent__ !== host || !host) continue;
       const entry = getRetainedChildEntry(
         host,
         child.name,
@@ -30,8 +30,9 @@ export const getSlotEntries = <Self extends FieldNodeRecord<Self>>(
       if (entry) entries.add(entry);
     }
   if (!overlay?.isWhole) {
-    for (const entry of host?.inactiveSlots?.keys() ?? []) entries.add(entry);
-    for (const entry of host?.inactiveSlotOverlays?.keys() ?? [])
+    for (const entry of host?.__inactiveSlots__?.keys() ?? [])
+      entries.add(entry);
+    for (const entry of host?.__inactiveSlotOverlays__?.keys() ?? [])
       entries.add(entry);
   }
   for (const entry of overlay?.children?.keys() ?? []) entries.add(entry);

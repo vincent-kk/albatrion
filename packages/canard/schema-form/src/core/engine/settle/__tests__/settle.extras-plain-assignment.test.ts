@@ -40,7 +40,7 @@ describe('extras copy settlement equivalence', () => {
         for (let index = 0; index < inputs.length; index++) {
           delivered.length = 0;
           changed.length = 0;
-          const oldOutput = root.storedOutputValue;
+          const oldOutput = root.__outputValue__;
           const oldExtras = root.extras;
           if (index === 0) dispatchMount(root, inputs[index]);
           else
@@ -54,7 +54,7 @@ describe('extras copy settlement equivalence', () => {
             delivered: [...delivered],
             changed: [...changed],
             extraKeys: Object.keys(Object(root.extras)),
-            sameOutput: root.storedOutputValue === oldOutput,
+            sameOutput: root.__outputValue__ === oldOutput,
             sameExtras: root.extras === oldExtras,
           });
         }
@@ -123,8 +123,8 @@ describe('extras copy settlement equivalence', () => {
             delivered.length = 0;
             changed.length = 0;
             const before = structuredClone(inputs[index]);
-            const oldOutput = root.storedOutputValue;
-            const oldExtras = root.childrenByName?.h?.extras;
+            const oldOutput = root.__outputValue__;
+            const oldExtras = root.__childrenByName__?.h?.extras;
             if (index === 0) dispatchMount(root, inputs[index]);
             else
               dispatchWriteInput(
@@ -133,14 +133,14 @@ describe('extras copy settlement equivalence', () => {
                 index < 4 ? WriteOption.Merge : WriteOption.Overwrite,
               );
             expect(inputs[index]).toStrictEqual(before);
-            const host = root.childrenByName!.h;
+            const host = root.__childrenByName__!.h;
             history.push({
               observation: observeArraySelection(root),
               delivered: [...delivered],
               changed: [...changed],
-              keys: Object.keys(Object(host.storedOutputValue)),
+              keys: Object.keys(Object(host.__outputValue__)),
               extraKeys: Object.keys(Object(host.extras)),
-              sameOutput: root.storedOutputValue === oldOutput,
+              sameOutput: root.__outputValue__ === oldOutput,
               sameExtras: host.extras === oldExtras,
             });
           }

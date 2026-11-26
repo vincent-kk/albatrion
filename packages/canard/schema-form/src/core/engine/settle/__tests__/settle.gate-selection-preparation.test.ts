@@ -82,7 +82,7 @@ describe('mount-time gate selection preparation', () => {
     ).length;
     builds.mockClear();
     writer.writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'kind_4',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -172,7 +172,7 @@ describe('mount-time gate selection preparation', () => {
     ).toBe(false);
     const builds = observeHostSlotWrites('directChildSelectionPlan');
     writer.writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'kind_4',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,

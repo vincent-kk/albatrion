@@ -38,18 +38,18 @@ describe('settlement delivery ledger', () => {
         b: { type: 'string' },
       },
     });
-    expect(root.revisionLedger).toBe(EMPTY_REVISION_LEDGER);
-    expect(Object.isFrozen(root.revisionLedger)).toBe(true);
+    expect(root.__revisionLedger__).toBe(EMPTY_REVISION_LEDGER);
+    expect(Object.isFrozen(root.__revisionLedger__)).toBe(true);
     writeFieldNode(
       root,
       { a: 'first', b: 'same' },
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.revisionLedger).not.toBe(EMPTY_REVISION_LEDGER);
-    const a = root.childrenByName!.a;
-    const b = root.childrenByName!.b;
-    const previous = a.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0;
+    expect(root.__revisionLedger__).not.toBe(EMPTY_REVISION_LEDGER);
+    const a = root.__childrenByName__!.a;
+    const b = root.__childrenByName__!.b;
+    const previous = a.__revisionLedger__[FieldNodeEventType.UpdateValue] ?? 0;
     writeFieldNode(
       root,
       { a: 'second', b: 'same' },
@@ -57,10 +57,12 @@ describe('settlement delivery ledger', () => {
       WriteOption.Overwrite,
     );
     expect(
-      (a.pendingDelivery?.type ?? 0) & FieldNodeEventType.UpdateValue,
+      (a.__pendingDelivery__?.type ?? 0) & FieldNodeEventType.UpdateValue,
     ).toBe(FieldNodeEventType.UpdateValue);
-    expect(a.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(previous + 1);
-    expect(b.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(1);
+    expect(a.__revisionLedger__[FieldNodeEventType.UpdateValue]).toBe(
+      previous + 1,
+    );
+    expect(b.__revisionLedger__[FieldNodeEventType.UpdateValue]).toBe(1);
   });
 
   it('WRITE-096 carries old and new value references and the caller replacement source', () => {
@@ -72,7 +74,7 @@ describe('settlement delivery ledger', () => {
       WriteOption.Overwrite,
     );
     for (const node of root.runtime.deliveries ?? [])
-      node.pendingDelivery = undefined;
+      node.__pendingDelivery__ = undefined;
     root.runtime.deliveries?.clear();
     writeFieldNode(
       root,
@@ -80,7 +82,7 @@ describe('settlement delivery ledger', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const event = root.pendingDelivery;
+    const event = root.__pendingDelivery__;
     expect(event?.payload?.[FieldNodeEventType.UpdateValue]).toEqual({
       previous: 'old',
       current: 'new',
@@ -104,11 +106,11 @@ describe('settlement delivery ledger', () => {
       WriteOption.Overwrite,
     );
     const previous = {
-      value: root.storedValue,
-      outputValue: root.storedOutputValue,
+      value: root.__value__,
+      outputValue: root.__outputValue__,
     };
     for (const node of root.runtime.deliveries ?? [])
-      node.pendingDelivery = undefined;
+      node.__pendingDelivery__ = undefined;
     root.runtime.deliveries?.clear();
     writeFieldNode(
       root,
@@ -117,12 +119,12 @@ describe('settlement delivery ledger', () => {
       WriteOption.Overwrite,
     );
     expect(
-      root.pendingDelivery?.payload?.[FieldNodeEventType.UpdateValue],
+      root.__pendingDelivery__?.payload?.[FieldNodeEventType.UpdateValue],
     ).toEqual({
       previous,
       current: {
-        value: root.storedValue,
-        outputValue: root.storedOutputValue,
+        value: root.__value__,
+        outputValue: root.__outputValue__,
       },
     });
   });
@@ -136,7 +138,7 @@ describe('settlement delivery ledger', () => {
       WriteOption.Overwrite,
     );
     for (const node of root.runtime.deliveries ?? [])
-      node.pendingDelivery = undefined;
+      node.__pendingDelivery__ = undefined;
     root.runtime.deliveries?.clear();
     markFieldNodeEvent(root, FieldNodeEventType.RequestFocus);
     writeFieldNode(
@@ -145,15 +147,17 @@ describe('settlement delivery ledger', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.pendingDelivery?.type).toBe(FieldNodeEventType.RequestFocus);
-    expect(root.revisionLedger[FieldNodeEventType.RequestFocus]).toBe(1);
+    expect(root.__pendingDelivery__?.type).toBe(
+      FieldNodeEventType.RequestFocus,
+    );
+    expect(root.__revisionLedger__[FieldNodeEventType.RequestFocus]).toBe(1);
     writeFieldNode(
       root,
       'same',
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.revisionLedger[FieldNodeEventType.RequestFocus]).toBe(1);
+    expect(root.__revisionLedger__[FieldNodeEventType.RequestFocus]).toBe(1);
   });
 
   it('EVENT-060 records an automatic derived write as its own source', () => {
@@ -170,10 +174,10 @@ describe('settlement delivery ledger', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const target = root.childrenByName!.target;
-    expect(target.storedValue).toBe('A');
+    const target = root.__childrenByName__!.target;
+    expect(target.__value__).toBe('A');
     expect(
-      target.pendingDelivery?.options?.[FieldNodeEventType.UpdateValue],
+      target.__pendingDelivery__?.options?.[FieldNodeEventType.UpdateValue],
     ).toEqual({ source: FieldNodeWriteKind.Automatic });
   });
 
@@ -186,19 +190,19 @@ describe('settlement delivery ledger', () => {
       },
     });
     loadFieldNodeAtMount(root, { a: 'one', b: 'same' }, WriteOption.Overwrite);
-    const a = root.childrenByName!.a;
-    const b = root.childrenByName!.b;
+    const a = root.__childrenByName__!.a;
+    const b = root.__childrenByName__!.b;
     expect(
-      (root.pendingDelivery?.type ?? 0) & FieldNodeEventType.RequestRefresh,
+      (root.__pendingDelivery__?.type ?? 0) & FieldNodeEventType.RequestRefresh,
     ).toBe(FieldNodeEventType.RequestRefresh);
     expect(
-      (a.pendingDelivery?.type ?? 0) & FieldNodeEventType.RequestRefresh,
+      (a.__pendingDelivery__?.type ?? 0) & FieldNodeEventType.RequestRefresh,
     ).toBe(FieldNodeEventType.RequestRefresh);
     expect(
-      (b.pendingDelivery?.type ?? 0) & FieldNodeEventType.RequestRefresh,
+      (b.__pendingDelivery__?.type ?? 0) & FieldNodeEventType.RequestRefresh,
     ).toBe(FieldNodeEventType.RequestRefresh);
     for (const node of root.runtime.deliveries ?? [])
-      node.pendingDelivery = undefined;
+      node.__pendingDelivery__ = undefined;
     root.runtime.deliveries?.clear();
     writeFieldNode(
       root,
@@ -207,13 +211,13 @@ describe('settlement delivery ledger', () => {
       WriteOption.Overwrite,
     );
     expect(
-      (a.pendingDelivery?.type ?? 0) & FieldNodeEventType.RequestRefresh,
+      (a.__pendingDelivery__?.type ?? 0) & FieldNodeEventType.RequestRefresh,
     ).toBe(FieldNodeEventType.RequestRefresh);
     expect(
-      (b.pendingDelivery?.type ?? 0) & FieldNodeEventType.RequestRefresh,
+      (b.__pendingDelivery__?.type ?? 0) & FieldNodeEventType.RequestRefresh,
     ).toBe(0);
     expect(
-      (root.pendingDelivery?.type ?? 0) & FieldNodeEventType.RequestRefresh,
+      (root.__pendingDelivery__?.type ?? 0) & FieldNodeEventType.RequestRefresh,
     ).toBe(0);
   });
 
@@ -251,10 +255,10 @@ describe('settlement delivery ledger', () => {
       { left: { source: 'A' }, rightSource: 'B' },
       WriteOption.Overwrite,
     );
-    const left = root.childrenByName!.left;
-    const instance = left.childrenByName!['source'];
-    const leftTarget = root.childrenByName!.leftTarget;
-    const rightTarget = root.childrenByName!.rightTarget;
+    const left = root.__childrenByName__!.left;
+    const instance = left.__childrenByName__!['source'];
+    const leftTarget = root.__childrenByName__!.leftTarget;
+    const rightTarget = root.__childrenByName__!.rightTarget;
     writeFieldNode(
       leftTarget,
       'manual-left',
@@ -268,30 +272,30 @@ describe('settlement delivery ledger', () => {
       WriteOption.Overwrite,
     );
     for (const node of root.runtime.deliveries ?? [])
-      node.pendingDelivery = undefined;
+      node.__pendingDelivery__ = undefined;
     root.runtime.deliveries?.clear();
     const targetRevision =
-      leftTarget.revisionLedger[FieldNodeEventType.RequestRefresh] ?? 0;
+      leftTarget.__revisionLedger__[FieldNodeEventType.RequestRefresh] ?? 0;
     const sourceRevision =
-      instance.revisionLedger[FieldNodeEventType.RequestRefresh] ?? 0;
+      instance.__revisionLedger__[FieldNodeEventType.RequestRefresh] ?? 0;
 
     resetFieldNodeSubtree(left, WriteOption.Overwrite);
 
     expect(leftTarget.source).toBe('left:A');
     expect(
-      (leftTarget.pendingDelivery?.type ?? 0) &
+      (leftTarget.__pendingDelivery__?.type ?? 0) &
         FieldNodeEventType.RequestRefresh,
     ).toBe(FieldNodeEventType.RequestRefresh);
-    expect(leftTarget.revisionLedger[FieldNodeEventType.RequestRefresh]).toBe(
-      targetRevision + 1,
-    );
+    expect(
+      leftTarget.__revisionLedger__[FieldNodeEventType.RequestRefresh],
+    ).toBe(targetRevision + 1);
     expect(instance.source).toBe('A');
-    expect(instance.revisionLedger[FieldNodeEventType.RequestRefresh]).toBe(
+    expect(instance.__revisionLedger__[FieldNodeEventType.RequestRefresh]).toBe(
       sourceRevision + 1,
     );
     expect(rightTarget.source).toBe('manual-right');
     expect(
-      (rightTarget.pendingDelivery?.type ?? 0) &
+      (rightTarget.__pendingDelivery__?.type ?? 0) &
         FieldNodeEventType.RequestRefresh,
     ).toBe(0);
   });
@@ -315,20 +319,25 @@ describe('settlement delivery ledger', () => {
       { group: { source: 'A' } },
       WriteOption.Overwrite,
     );
-    const target = root.childrenByName!.target;
-    const revision = target.revisionLedger[FieldNodeEventType.RequestRefresh];
+    const target = root.__childrenByName__!.target;
+    const revision =
+      target.__revisionLedger__[FieldNodeEventType.RequestRefresh];
     for (const node of root.runtime.deliveries ?? [])
-      node.pendingDelivery = undefined;
+      node.__pendingDelivery__ = undefined;
     root.runtime.deliveries?.clear();
 
-    resetFieldNodeSubtree(root.childrenByName!.group, WriteOption.Overwrite);
+    resetFieldNodeSubtree(
+      root.__childrenByName__!.group,
+      WriteOption.Overwrite,
+    );
 
     expect(injectTo).toHaveBeenCalledTimes(2);
     expect(target.source).toBe('injected');
     expect(
-      (target.pendingDelivery?.type ?? 0) & FieldNodeEventType.RequestRefresh,
+      (target.__pendingDelivery__?.type ?? 0) &
+        FieldNodeEventType.RequestRefresh,
     ).toBe(0);
-    expect(target.revisionLedger[FieldNodeEventType.RequestRefresh]).toBe(
+    expect(target.__revisionLedger__[FieldNodeEventType.RequestRefresh]).toBe(
       revision,
     );
   });
@@ -349,28 +358,28 @@ describe('settlement delivery ledger', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const value = root.childrenByName!.value;
-    const previous = value.schema;
+    const value = root.__childrenByName__!.value;
+    const previous = value.__schema__;
     for (const node of root.runtime.deliveries ?? [])
-      node.pendingDelivery = undefined;
+      node.__pendingDelivery__ = undefined;
     root.runtime.deliveries?.clear();
     writeFieldNode(
-      root.childrenByName!.enabled,
+      root.__childrenByName__!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     const payload =
-      value.pendingDelivery?.payload?.[FieldNodeEventType.UpdateJsonSchema];
+      value.__pendingDelivery__?.payload?.[FieldNodeEventType.UpdateJsonSchema];
     expect(payload).toEqual({
       previous: previous.schema,
-      current: value.schema.schema,
+      current: value.__schema__.schema,
     });
     expect(Object.isFrozen(payload)).toBe(
       process.env.NODE_ENV !== 'production',
     );
     expect(
-      (value.pendingDelivery?.type ?? 0) &
+      (value.__pendingDelivery__?.type ?? 0) &
         FieldNodeEventType.UpdateControlledProperties,
     ).toBe(0);
   });
@@ -384,10 +393,11 @@ describe('settlement delivery ledger', () => {
       WriteOption.Overwrite,
     );
     expect(
-      (root.pendingDelivery?.type ?? 0) & FieldNodeEventType.UpdateDiagnostics,
+      (root.__pendingDelivery__?.type ?? 0) &
+        FieldNodeEventType.UpdateDiagnostics,
     ).toBe(0);
     for (const node of root.runtime.deliveries ?? [])
-      node.pendingDelivery = undefined;
+      node.__pendingDelivery__ = undefined;
     root.runtime.deliveries?.clear();
     writeFieldNode(
       root,
@@ -396,7 +406,8 @@ describe('settlement delivery ledger', () => {
       WriteOption.Overwrite,
     );
     expect(
-      (root.pendingDelivery?.type ?? 0) & FieldNodeEventType.UpdateDiagnostics,
+      (root.__pendingDelivery__?.type ?? 0) &
+        FieldNodeEventType.UpdateDiagnostics,
     ).toBe(0);
     root.runtime.diagnostics = { status: 'degraded', cause: 'budget' };
     writeFieldNode(
@@ -406,7 +417,8 @@ describe('settlement delivery ledger', () => {
       WriteOption.Overwrite,
     );
     expect(
-      (root.pendingDelivery?.type ?? 0) & FieldNodeEventType.UpdateDiagnostics,
+      (root.__pendingDelivery__?.type ?? 0) &
+        FieldNodeEventType.UpdateDiagnostics,
     ).toBe(FieldNodeEventType.UpdateDiagnostics);
   });
 
@@ -426,16 +438,16 @@ describe('settlement delivery ledger', () => {
       WriteOption.Overwrite,
     );
     for (const node of root.runtime.deliveries ?? [])
-      node.pendingDelivery = undefined;
+      node.__pendingDelivery__ = undefined;
     root.runtime.deliveries?.clear();
     writeFieldNode(
-      root.childrenByName!.enabled,
+      root.__childrenByName__!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(
-      (root.pendingDelivery?.type ?? 0) & FieldNodeEventType.UpdateChildren,
+      (root.__pendingDelivery__?.type ?? 0) & FieldNodeEventType.UpdateChildren,
     ).toBe(FieldNodeEventType.UpdateChildren);
   });
 
@@ -452,22 +464,22 @@ describe('settlement delivery ledger', () => {
       { clear: false, target: 'X' },
       WriteOption.Overwrite,
     );
-    const target = root.childrenByName!.target;
-    target.storedState = {
+    const target = root.__childrenByName__!.target;
+    target.__state__ = {
       [FieldNodeState.Edited]: true,
       [FieldNodeState.Touched]: true,
     };
     for (const node of root.runtime.deliveries ?? [])
-      node.pendingDelivery = undefined;
+      node.__pendingDelivery__ = undefined;
     root.runtime.deliveries?.clear();
     writeFieldNode(
-      root.childrenByName!.clear,
+      root.__childrenByName__!.clear,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(
-      (target.pendingDelivery?.type ?? 0) & FieldNodeEventType.UpdateState,
+      (target.__pendingDelivery__?.type ?? 0) & FieldNodeEventType.UpdateState,
     ).toBe(FieldNodeEventType.UpdateState);
   });
 
@@ -485,18 +497,18 @@ describe('settlement delivery ledger', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const watcher = root.childrenByName!.watcher;
+    const watcher = root.__childrenByName__!.watcher;
     for (const node of root.runtime.deliveries ?? [])
-      node.pendingDelivery = undefined;
+      node.__pendingDelivery__ = undefined;
     root.runtime.deliveries?.clear();
     writeFieldNode(
-      root.childrenByName!['source'],
+      root.__childrenByName__!['source'],
       'new',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(
-      (watcher.pendingDelivery?.type ?? 0) &
+      (watcher.__pendingDelivery__?.type ?? 0) &
         FieldNodeEventType.UpdateControlledProperties,
     ).toBe(FieldNodeEventType.UpdateControlledProperties);
   });

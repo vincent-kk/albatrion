@@ -8,7 +8,7 @@ it('retains the detached source while re-entry issues a new subtree', () => {
   const value = tree.group.value;
   const extras = tree.group.extras;
   tree.close();
-  expect(Reflect.get(tree.root, 'inactiveSlots')).toBeInstanceOf(Map);
+  expect(Reflect.get(tree.root, '__inactiveSlots__')).toBeInstanceOf(Map);
   tree.open();
   expect(tree.root.find('/group')).not.toBe(tree.group);
   expect(tree.root.find('/group/leaf')).not.toBe(tree.leaf);

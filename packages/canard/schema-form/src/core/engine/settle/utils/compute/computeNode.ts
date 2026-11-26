@@ -75,7 +75,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     context.kind === FieldNodeWriteKind.Load &&
     node.behavior.type === 'object' &&
     node.behavior.strategy === 'branch' &&
-    !node.isDeliveryInitialized &&
+    !node.__isDeliveryInitialized__ &&
     !context.isAutomaticWriteSuppressed &&
     !context.hasGates &&
     context.writtenInputs.get(node) === undefined &&
@@ -85,7 +85,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   context.stateDirtyNodes.add(node);
   if (
     !context.hasGates &&
-    node.parent !== null &&
+    node.__parent__ !== null &&
     node.behavior.strategy === 'terminal' &&
     context.enteredNodes.has(node)
   ) {
@@ -101,24 +101,24 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
         computeNode(recalculated[index], context);
       updateOutput(node, context, recalculated);
     } else {
-      if (node.parent === null) selectNodeSchema(node, context);
+      if (node.__parent__ === null) selectNodeSchema(node, context);
       updateOutput(node, context);
     }
     context.dirtyPaths.delete(node.path);
     return;
   }
   if (!context.originalSchemas.has(node.path))
-    context.originalSchemas.set(node.path, node.schema);
+    context.originalSchemas.set(node.path, node.__schema__);
   if (node.behavior.strategy !== 'branch') {
-    if (node.parent === null) selectNodeSchema(node, context);
+    if (node.__parent__ === null) selectNodeSchema(node, context);
     updateOutput(node, context);
     context.dirtyPaths.delete(node.path);
     return;
   }
-  const previousValue = node.storedValue;
-  const previousOutputValue = node.storedOutputValue;
+  const previousValue = node.__value__;
+  const previousOutputValue = node.__outputValue__;
   const previousChildren = node.children;
-  const previousSchema = node.schema;
+  const previousSchema = node.__schema__;
   const wasActive = node.isActive;
   if (!context.shapeDirtyPaths.has(node.path)) {
     const recalculated = dirtyChildren(node, context);
@@ -164,7 +164,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     schema: previousSchema,
     isActive: wasActive,
   };
-  const prior = node.childrenByName ?? {};
+  const prior = node.__childrenByName__ ?? {};
   let wheelPlan = context.hasGates ? prepareHostWheelPlan(node) : undefined;
   let gates = wheelPlan?.gates ?? [];
   const relocatedOccurrences = wheelPlan?.relocatedOccurrences ?? [];
@@ -197,8 +197,8 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   let registered = false;
   let hasRelocated = relocatedOccurrences.length > 0;
   for (let round = 0; round < cap; round++) {
-    const roundStoredValue = node.storedValue;
-    const roundStoredOutputValue = node.storedOutputValue;
+    const roundValue = node.__value__;
+    const roundOutputValue = node.__outputValue__;
     const frame: Optional<GateWheelFrame> =
       gates.length > 0 && context.kind !== FieldNodeWriteKind.Load
         ? {
@@ -212,7 +212,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     context.gateWheelFrame = frame;
     prepareGateTableRound(node, context, round);
     const schemaChanged =
-      node.parent === null && selectNodeSchema(node, context);
+      node.__parent__ === null && selectNodeSchema(node, context);
     if (context.hasGates) {
       context.presenceClock = (context.presenceClock ?? 0) + 1;
       const starts: PresenceRoundStarts<Self> = (context.presenceRoundStarts ??=
@@ -234,7 +234,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     if (flagged || registered)
       registered =
         registerPresenceChanges(node, lastStructure, context) || registered;
-    if (registered) lastStructure = node.childrenByName ?? {};
+    if (registered) lastStructure = node.__childrenByName__ ?? {};
     flushPresenceTemplates(node, context);
     const dirty = dirtyChildren(node, context);
     for (let index = 0; index < dirty.length; index++)
@@ -247,8 +247,8 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
       !changed &&
       dirty.length === 0 &&
       !context.pendingOutputs?.has(node) &&
-      node.storedValue === roundStoredValue &&
-      node.storedOutputValue === roundStoredOutputValue &&
+      node.__value__ === roundValue &&
+      node.__outputValue__ === roundOutputValue &&
       !context.distributedInputs.has(node) &&
       context.pathChanges.length === 0;
     if (context.initialOutputs) context.initialOutputs.push(node);
@@ -280,8 +280,8 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     const publishedChanged =
       !outputChanged &&
       context.kind !== FieldNodeWriteKind.Load &&
-      (node.storedValue !== roundStoredValue ||
-        node.storedOutputValue !== roundStoredOutputValue) &&
+      (node.__value__ !== roundValue ||
+        node.__outputValue__ !== roundOutputValue) &&
       scheduleChangedRelocatedGates(currentRelocatedOccurrences, context);
     const wheelChanged =
       schemaChanged || changed || outputChanged || publishedChanged;

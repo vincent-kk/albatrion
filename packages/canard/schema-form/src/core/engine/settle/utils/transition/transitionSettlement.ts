@@ -121,7 +121,7 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
           (fillHosts ??= new Set()).add(node);
           fillAncestors ??= new Map();
           if (!fillAncestors.has(node) || fillAncestors.get(node) === -1)
-            fillAncestors.set(node, node.itemCount);
+            fillAncestors.set(node, node.__itemCount__);
         }
         context.filledNodes.add(node);
         context.isAutomatic = true;
@@ -138,7 +138,7 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
               (!fillAncestors.has(host) || fillAncestors.get(host) === -1)
             )
               fillAncestors.set(host, previousCount);
-            if (context.hasGates && host.itemCount > previousCount)
+            if (context.hasGates && host.__itemCount__ > previousCount)
               (newArrayHosts ??= new Set()).add(host);
           }
           context.fillArrayCounts.clear();

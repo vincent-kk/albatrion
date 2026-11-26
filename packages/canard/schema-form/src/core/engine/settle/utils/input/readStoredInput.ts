@@ -42,7 +42,7 @@ export const readStoredInput = <Self extends FieldNodeRecord<Self>>(
     staticSpec(template.schemaType, template.isNullable),
   );
   const schema =
-    live?.schema ?? mergeEffectiveSchema(template, [], { mode: 'runtime' });
+    live?.__schema__ ?? mergeEffectiveSchema(template, [], { mode: 'runtime' });
   let source = value;
   let stored = value;
 
@@ -86,7 +86,7 @@ export const readStoredInput = <Self extends FieldNodeRecord<Self>>(
       source === null
         ? null
         : assembleObjectValue(
-            live?.storedValue,
+            live?.__value__,
             entries,
             getStaticChoices(schema).propertyOrder,
             getHostDerived<
@@ -112,25 +112,19 @@ export const readStoredInput = <Self extends FieldNodeRecord<Self>>(
           const node = entry.node;
           slots[index] = {
             blueprintNode: node,
-            storedOutputValue: readStoredInput(
-              node,
-              raw,
-              child,
-              true,
-              ancestors,
-            ),
+            __outputValue__: readStoredInput(node, raw, child, true, ancestors),
           };
         },
         undefined,
         'stored',
       );
     }
-    const previous = live?.storedValue;
+    const previous = live?.__value__;
     stored = assembleArrayValue(
       {
         blueprintNode: template,
-        childrenByName: slots,
-        itemCount: items?.length ?? 0,
+        __childrenByName__: slots,
+        __itemCount__: items?.length ?? 0,
         extras:
           items &&
           arrayExtras({ blueprintNode: template, extras: live?.extras }, items),
@@ -139,5 +133,5 @@ export const readStoredInput = <Self extends FieldNodeRecord<Self>>(
       isArray(previous) ? previous : undefined,
     );
   }
-  return output ? row.project({ schema, source }, stored) : stored;
+  return output ? row.project({ __schema__: schema, source }, stored) : stored;
 };

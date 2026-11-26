@@ -18,15 +18,15 @@ export const registerProjectionChanges = <Self extends FieldNodeRecord<Self>>(
   const baselines = context.projectionBaselines?.get(host);
   if (!baselines) return;
   for (const [child, previous] of baselines) {
-    if (host.childrenByName?.[child.name] !== child) continue;
+    if (host.__childrenByName__?.[child.name] !== child) continue;
     if (
-      child.schema !== previous.schema &&
-      child.storedOutputValue !== previous.outputValue
+      child.__schema__ !== previous.schema &&
+      child.__outputValue__ !== previous.outputValue
     ) {
       const name = formatSegment(child.name);
       if (names.indexOf(name) === -1) names.push(name);
     }
-    previous.schema = child.schema;
-    previous.outputValue = child.storedOutputValue;
+    previous.schema = child.__schema__;
+    previous.outputValue = child.__outputValue__;
   }
 };

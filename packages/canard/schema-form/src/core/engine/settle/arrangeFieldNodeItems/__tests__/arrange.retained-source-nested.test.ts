@@ -38,21 +38,21 @@ it.each([['insert'], ['remove']] as const)(
     const destination = operation === 'insert' ? 1 : 0;
     const old = getDispatchNode(list, '' + source);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-    expect(getDispatchNode(old, '0', 'v').storedValue).toBe(37);
+    expect(getDispatchNode(old, '0', 'v').__value__).toBe(37);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
     runtime.disableAutomaticWrites = true;
     if (operation === 'insert') dispatchInsert(list, 0, []);
     else dispatchRemove(list, 0);
     expect(old.isDetached).toBe(true);
-    expect(getDispatchNode(list, '' + destination, '0', 'v').storedValue).toBe(
+    expect(getDispatchNode(list, '' + destination, '0', 'v').__value__).toBe(
       37,
     );
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
-    expect(getDispatchNode(list, '' + destination, '0', 'v').storedValue).toBe(
+    expect(getDispatchNode(list, '' + destination, '0', 'v').__value__).toBe(
       'live',
     );
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-    expect(getDispatchNode(list, '' + destination, '0', 'v').storedValue).toBe(
+    expect(getDispatchNode(list, '' + destination, '0', 'v').__value__).toBe(
       37,
     );
   },

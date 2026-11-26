@@ -53,14 +53,14 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
   const index = getFeatureNodeIndex(blueprint);
   const isTarget = (node: Self): boolean =>
     index.stateKeyNodes.has(node.blueprintNode.id) ||
-    (!!node.parent &&
+    (!!node.__parent__ &&
       !!(
         index.stateKeyChildren
-          .get(node.parent.blueprintNode.id)
+          .get(node.__parent__.blueprintNode.id)
           ?.has(node.name) ||
-        (node.parent.blueprintNode.kind === 'array' &&
+        (node.__parent__.blueprintNode.kind === 'array' &&
           index.stateKeyChildren
-            .get(node.parent.blueprintNode.id)
+            .get(node.__parent__.blueprintNode.id)
             ?.has($.Wildcard))
       ));
   const candidates = new Set<Self>();
@@ -83,10 +83,11 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
   for (const node of candidates) {
     if (
       node.isDetached ||
-      (node.parent && node.parent.childrenByName?.[node.name] !== node)
+      (node.__parent__ &&
+        node.__parent__.__childrenByName__?.[node.name] !== node)
     )
       continue;
-    const schema = node.schema.schema;
+    const schema = node.__schema__.schema;
     const next: Record<(typeof STATE_CONTROL_KEYS)[number], boolean> = {
       visible: RESERVED_SCHEMA_KEYS.controls.visible.stateInitial,
       readOnly: typeof schema === 'object' && schema.readOnly === true,

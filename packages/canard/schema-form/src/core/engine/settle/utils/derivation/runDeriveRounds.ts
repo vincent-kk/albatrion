@@ -48,7 +48,7 @@ const isUnchanged = <Self extends FieldNodeRecord<Self>>(
 ) =>
   !!write.target &&
   write.target.blueprintNode.kind !== 'virtual' &&
-  sameValue(write.target.storedOutputValue, write.value);
+  sameValue(write.target.__outputValue__, write.value);
 
 /**
  * Apply bounded automatic candidates and recalculate before the next decision.

@@ -23,7 +23,7 @@ export const cloneFromSlot = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): Self => {
   const binding = getSlotBinding(host, entry);
-  const overlay = host.inactiveSlotOverlays?.get(binding);
+  const overlay = host.__inactiveSlotOverlays__?.get(binding);
   const same = instance.blueprintNode === entry.node;
   const node = same
     ? cloneSlotSubtree(host, entry, instance, context, true)
@@ -32,7 +32,7 @@ export const cloneFromSlot = <Self extends FieldNodeRecord<Self>>(
     if (overlay) applySlotOverlay(node, overlay, context);
   } else restoreTransferredSlotSource(node, instance, overlay, context);
   markSlotChange(host, binding, undefined, context);
-  host.inactiveSlots?.delete(binding);
-  host.inactiveSlotOverlays?.delete(binding);
+  host.__inactiveSlots__?.delete(binding);
+  host.__inactiveSlotOverlays__?.delete(binding);
   return node;
 };

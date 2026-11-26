@@ -17,14 +17,14 @@ export const expireOccupiedSlotMemos = <Self extends FieldNodeRecord<Self>>(
   live: Optional<Self>,
 ): void => {
   if (!live) return;
-  if (instance) instance.inactiveValueMemo = undefined;
+  if (instance) instance.__inactiveSlotValue__ = undefined;
   if (overlay) overlay.valueMemo = undefined;
   for (const entry of getSlotEntries(instance, overlay)) {
     const child = getSlotSource(instance, entry, overlay);
     expireOccupiedSlotMemos(
       child.instance,
       child.overlay,
-      live.childrenByName?.[entry.name],
+      live.__childrenByName__?.[entry.name],
     );
   }
 };

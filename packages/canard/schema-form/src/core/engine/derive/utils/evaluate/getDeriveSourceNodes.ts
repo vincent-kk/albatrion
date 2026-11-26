@@ -27,7 +27,8 @@ export const getDeriveSourceNodes = <Self extends FieldNodeRecord<Self>>(
         node = undefined;
         break;
       }
-      const children: Nullable<Dictionary<Self>> = node?.childrenByName ?? null;
+      const children: Nullable<Dictionary<Self>> =
+        node?.__childrenByName__ ?? null;
       node =
         children && hasOwnProperty(children, name) ? children[name] : undefined;
       if (!node) break;

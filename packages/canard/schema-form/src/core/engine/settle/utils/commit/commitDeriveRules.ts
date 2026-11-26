@@ -45,14 +45,14 @@ export const commitDeriveRules = <Self extends FieldNodeRecord<Self>>(
     );
   }
   for (const node of decision.nodes) {
-    node.interactionEpoch += 1;
-    const previous = node.storedState;
-    node.storedState = captureFieldNodeChange(
+    node.__interactionEpoch__ += 1;
+    const previous = node.__state__;
+    node.__state__ = captureFieldNodeChange(
       node,
-      'storedState',
-      shallowPatch(node.storedState, CLEAN_STATE_PATCH),
+      '__state__',
+      shallowPatch(node.__state__, CLEAN_STATE_PATCH),
     );
-    if (node.storedState !== previous) context.changedNodes.add(node);
+    if (node.__state__ !== previous) context.changedNodes.add(node);
   }
   const runtime = context.root.runtime;
   for (const path of state.visitedSourcePaths)

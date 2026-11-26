@@ -31,15 +31,15 @@ it('keeps caller whole coverage after a later automatic write in its batch', () 
     },
   });
   dispatchSetValue(root, { open: true, group: { x: 'before' } });
-  const x = root.childrenByName!.group.childrenByName!.x;
+  const x = root.__childrenByName__!.group.__childrenByName__!.x;
   dispatchBatch(root, () => {
     dispatchSetValue(x, ' caller ');
     dispatchFinishInput(x);
-    dispatchSetValue(root.childrenByName!.open, false);
+    dispatchSetValue(root.__childrenByName__!.open, false);
   });
   expect(resolver).not.toHaveBeenCalled();
-  dispatchSetValue(root.childrenByName!.open, true);
-  expect(root.childrenByName!.group.childrenByName!.x.storedValue).toBe(
+  dispatchSetValue(root.__childrenByName__!.open, true);
+  expect(root.__childrenByName__!.group.__childrenByName__!.x.__value__).toBe(
     'caller',
   );
 });
@@ -88,8 +88,8 @@ it('treats a form input merge like a caller merge', () => {
   dispatchSetValue(root, { open: true, group: { x: 'before' } });
   dispatchWriteInput(root, { open: false, group: {} }, WriteOption.Merge);
   expect(resolver).toHaveBeenCalledTimes(1);
-  dispatchSetValue(root.childrenByName!.open, true);
-  expect(root.childrenByName!.group.childrenByName!.x.storedValue).toBe(
+  dispatchSetValue(root.__childrenByName__!.open, true);
+  expect(root.__childrenByName__!.group.__childrenByName__!.x.__value__).toBe(
     'resolved',
   );
 });

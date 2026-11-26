@@ -18,9 +18,9 @@ export const pruneInactiveSources = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   if (
     context &&
-    (context.root.inactiveSlots?.size ||
-      context.root.inactiveSlotOverlays?.size ||
-      context.root.inactiveSlotChildren?.size)
+    (context.root.__inactiveSlots__?.size ||
+      context.root.__inactiveSlotOverlays__?.size ||
+      context.root.__inactiveSlotChildren__?.size)
   )
     pruneSlotSources(context.root, path, names, context);
 };

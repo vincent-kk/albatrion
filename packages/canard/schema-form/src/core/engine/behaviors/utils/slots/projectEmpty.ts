@@ -10,7 +10,7 @@ import { getStaticChoices } from '../options/getStaticChoices';
  * @returns `undefined` for an omitted empty value; otherwise `value` by reference, including a keyless Date or File
  */
 export const projectEmpty: Behavior['project'] = (node, value) => {
-  if (!getStaticChoices(node.schema).omitEmpty) return value;
+  if (!getStaticChoices(node.__schema__).omitEmpty) return value;
   if (value === '' || isEmptyArray(value) || isEmptyPlainObject(value))
     return undefined;
   return value;

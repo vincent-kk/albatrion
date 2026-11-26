@@ -11,7 +11,7 @@ export const readArrayLength = <Self extends FieldNodeRecord<Self>>(
   node: FieldNodeRecord<Self>,
 ): number =>
   node.behavior.strategy === 'branch'
-    ? node.itemCount
+    ? node.__itemCount__
     : isArray(node.source)
       ? node.source.length
       : 0;

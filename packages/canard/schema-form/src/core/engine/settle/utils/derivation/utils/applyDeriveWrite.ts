@@ -1,9 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import {
-  JSONPointer,
-  resolvePointer,
-} from '@/schema-form/helpers/jsonPointer';
+import { JSONPointer, resolvePointer } from '@/schema-form/helpers/jsonPointer';
 
 import type { DeriveRoundDecision } from '../../../../derive';
 import type { FieldNodeRecord } from '../../../../record';
@@ -51,7 +48,7 @@ export const applyDeriveWrite = <Self extends FieldNodeRecord<Self>>(
       placeDeclarativeValue(context, write.targetPath, template, write.value);
     return;
   }
-  const host = write.target ? write.target.parent : write.host;
+  const host = write.target ? write.target.__parent__ : write.host;
   const hostPath =
     host?.path ?? resolvePointer(write.targetPath, JSONPointer.Parent);
   const entries = host?.blueprintNode.childEntries ?? write.siblings ?? [];
@@ -59,7 +56,7 @@ export const applyDeriveWrite = <Self extends FieldNodeRecord<Self>>(
   const targets = resolveVirtualStorageTargets(
     hostPath,
     template.fields,
-    host?.childrenByName,
+    host?.__childrenByName__,
   );
   for (let index = 0; index < targets.length; index++) {
     const { name, path, node: sibling } = targets[index];
@@ -68,7 +65,6 @@ export const applyDeriveWrite = <Self extends FieldNodeRecord<Self>>(
       continue;
     }
     const entry = entries.find((entry) => entry.name === name);
-    if (entry)
-      placeDeclarativeValue(context, path, entry.node, values[index]);
+    if (entry) placeDeclarativeValue(context, path, entry.node, values[index]);
   }
 };

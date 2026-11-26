@@ -21,7 +21,7 @@ export const detachPerishedNode = <Self extends FieldNodeRecord<Self>>(
       context: context.previousContext,
       schema:
         context.originalSchemas.get(departing.path)?.schema ??
-        departing.schema.schema,
+        departing.__schema__.schema,
     });
   if (rekeyed?.current !== undefined)
     departing.runtime.misfitPaths.delete(

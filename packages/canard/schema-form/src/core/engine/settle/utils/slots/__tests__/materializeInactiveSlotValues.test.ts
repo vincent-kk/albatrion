@@ -42,16 +42,16 @@ it('matches the latent publication while preserving a detached host own view', (
     group.blueprintNode,
   );
   if (!hiddenEntry || !groupEntry) throw new Error('Expected bindings');
-  group.inactiveSlots = new Map([[hiddenEntry, hidden]]);
-  root.inactiveSlotChildren = new Map([['group', group]]);
+  group.__inactiveSlots__ = new Map([[hiddenEntry, hidden]]);
+  root.__inactiveSlotChildren__ = new Map([['group', group]]);
   const held = materializeInactiveSlotValues(group);
   expect(materializeInactiveSlotValues(root)).toEqual([
     { path: '/group/hidden', value: 'hidden' },
   ]);
   dispatchSetValue(getDispatchNode(root, 'open'), false);
-  root.inactiveSlots = new Map([[groupEntry, group]]);
-  root.inactiveSlotChildren.clear();
-  root.isInactiveValuesDirty = true;
+  root.__inactiveSlots__ = new Map([[groupEntry, group]]);
+  root.__inactiveSlotChildren__.clear();
+  root.__isInactiveValuesDirty__ = true;
   const values = materializeInactiveSlotValues(root);
   expect(values).toEqual([
     { path: '/group/childOpen', value: false },
@@ -90,9 +90,9 @@ it('represents inherited clearing as an overlay while leaving the source unchang
   if (!entry) throw new Error('Expected binding');
   const result = createExitSlotOverlay(group, false, true);
   expect(result.canRetain).toBe(true);
-  root.inactiveSlots = new Map([[entry, group]]);
+  root.__inactiveSlots__ = new Map([[entry, group]]);
   if (result.overlay)
-    root.inactiveSlotOverlays = new Map([[entry, result.overlay]]);
+    root.__inactiveSlotOverlays__ = new Map([[entry, result.overlay]]);
   expect(materializeInactiveSlotValues(root)).toEqual([
     { path: '/group/keep', value: 'keep' },
   ]);

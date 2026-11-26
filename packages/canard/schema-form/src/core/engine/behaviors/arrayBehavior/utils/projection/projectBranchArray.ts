@@ -14,7 +14,7 @@ import { omitTrailingEmptyArray } from './omitTrailingEmptyArray';
 export const projectBranchArray: Behavior['project'] = (node, value) => {
   if (node.source !== undefined && !isArray(node.source)) return node.source;
   if (!isArray(value)) return undefined;
-  const choices = getStaticChoices(node.schema);
+  const choices = getStaticChoices(node.__schema__);
   const projected = choices.omitTrailingEmpty
     ? omitTrailingEmptyArray(value)
     : value;

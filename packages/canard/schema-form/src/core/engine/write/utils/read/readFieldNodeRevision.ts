@@ -21,7 +21,7 @@ export const readFieldNodeRevision = <Self extends FieldNodeRecord<Self>>(
   mask = (FieldNodeEventType.UpdateDiagnostics << 1) - 1,
 ): number => {
   node.runtime.isRevisionObserved = true;
-  const ledger = node.revisionLedger;
+  const ledger = node.__revisionLedger__;
   if (ledger === EMPTY_REVISION_LEDGER) return 0;
   let revision = 0;
   const isLedger = ledger instanceof FieldNodeRevisionLedger;

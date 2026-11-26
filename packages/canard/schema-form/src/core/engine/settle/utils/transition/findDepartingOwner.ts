@@ -31,7 +31,7 @@ export const findDepartingOwner = <Self extends FieldNodeRecord<Self>>(
   for (let index = 0; index < segments.length; index++) {
     const name = segments[index];
     if (typeof name !== 'string') return undefined;
-    const children = host.childrenByName;
+    const children = host.__childrenByName__;
     if (children && hasOwnProperty(children, name)) {
       host = children[name];
       continue;

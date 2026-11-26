@@ -40,7 +40,7 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
       '' + index === name
         ? getItemEntries(template, index)
         : undefined;
-    const selected = live?.childrenByName?.[name]?.blueprintNode;
+    const selected = live?.__childrenByName__?.[name]?.blueprintNode;
     const item = items?.find((entry) => entry.node === selected) ?? items?.[0];
     if (items) siblings = items;
     const found = item
@@ -50,7 +50,7 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
     order.push(found.position);
     host = live;
     const childrenByName: Nullable<Dictionary<Self>> =
-      live?.childrenByName ?? null;
+      live?.__childrenByName__ ?? null;
     live =
       childrenByName && hasOwnProperty(childrenByName, name)
         ? childrenByName[name]

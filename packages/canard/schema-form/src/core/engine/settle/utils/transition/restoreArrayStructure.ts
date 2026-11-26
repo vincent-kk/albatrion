@@ -44,9 +44,9 @@ export const restoreArrayStructure = <Self extends FieldNodeRecord<Self>>(
       item.isActive = captureFieldNodeChange(item, 'isActive', true);
       context.perishedNodes.delete(item);
     }
-    host.childrenByName = childrenByName;
+    host.__childrenByName__ = childrenByName;
     host.children = captureFieldNodeChange(host, 'children', previousItems);
-    host.itemCount = previousItemCount;
+    host.__itemCount__ = previousItemCount;
     host.extras = source.extras;
     context.dirtyPaths.add(host.path);
     context.shapeDirtyPaths.add(host.path);

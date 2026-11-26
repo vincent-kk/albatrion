@@ -23,7 +23,7 @@ export const observePresenceChangeNames = () => {
   const collect = presence.collectPresenceChangeNames;
   vi.spyOn(presence, 'collectPresenceChangeNames').mockImplementation(
     (host, previous, context) => {
-      const childrenByName = host.childrenByName ?? {};
+      const childrenByName = host.__childrenByName__ ?? {};
       const expected: string[] = [];
       for (const name in previous)
         if (

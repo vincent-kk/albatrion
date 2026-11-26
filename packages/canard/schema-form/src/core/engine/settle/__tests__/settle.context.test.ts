@@ -86,13 +86,13 @@ describe('context change settlement', () => {
     root.setValue('value');
     const runtime: FieldNodeRuntime<unknown> = Reflect.get(root, 'runtime');
     const trace = runtime.settlementTrace;
-    const revision = Reflect.get(root, 'revisionLedger');
+    const revision = Reflect.get(root, '__revisionLedger__');
     setContext(root, original);
     setContext(root, { nested: { label: 'same' } });
     expect(runtime.context).toBe(original);
     expect(root.context).toBe(original);
     expect(runtime.settlementTrace).toBe(trace);
-    expect(Reflect.get(root, 'revisionLedger')).toBe(revision);
+    expect(Reflect.get(root, '__revisionLedger__')).toBe(revision);
   });
 
   it('28C-08 form default suppression consumes the context edge', () => {

@@ -43,22 +43,22 @@ export const runGateSelectionCase = (
       nodes.push({
         path: node.path,
         kind: node.blueprintNode.kind,
-        schema: node.schema,
+        schema: node.__schema__,
         source: node.source,
         extras: node.extras,
-        storedValue: node.storedValue,
-        storedOutputValue: node.storedOutputValue,
+        storedValue: node.__value__,
+        storedOutputValue: node.__outputValue__,
         isActive: node.isActive,
         isVisible: node.isVisible,
         isDisabled: node.isDisabled,
-        revisions: node.revisionLedger,
-        pendingRevisionMask: node.pendingRevisionMask,
-        delivery: node.pendingDelivery,
-        deliveryChanges: node.deliveryChanges,
+        revisions: node.__revisionLedger__,
+        pendingRevisionMask: node.__pendingRevisionMask__,
+        delivery: node.__pendingDelivery__,
+        deliveryChanges: node.__deliveryChanges__,
       });
       const children = node.children ?? [];
       for (let index = children.length - 1; index >= 0; index--)
-        if (children[index].parent === node) pending.push(children[index]);
+        if (children[index].__parent__ === node) pending.push(children[index]);
     }
     const observation = {
       nodes,
@@ -85,7 +85,9 @@ export const runGateSelectionCase = (
     let target = root;
     for (const segment of write.path?.slice(1).split('/') ?? [])
       target =
-        target.childrenByName![segment.replace(/~1/g, '/').replace(/~0/g, '~')];
+        target.__childrenByName__![
+          segment.replace(/~1/g, '/').replace(/~0/g, '~')
+        ];
     failure = undefined;
     try {
       if (write.reset === 'form')

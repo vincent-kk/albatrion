@@ -18,38 +18,38 @@ export const commitSlotChanges = <Self extends FieldNodeRecord<Self>>(
   const visited = new Set<Self>();
   for (const host of hosts) {
     if (!host.isDetached) {
-      for (const [entry, previous] of host.inactiveSlotBaselines ?? []) {
+      for (const [entry, previous] of host.__inactiveSlotBaselines__ ?? []) {
         preserveSlotValueMemos(
           previous.instance,
           previous.overlay,
-          host.inactiveSlots?.get(entry),
-          host.inactiveSlotOverlays?.get(entry),
+          host.__inactiveSlots__?.get(entry),
+          host.__inactiveSlotOverlays__?.get(entry),
         );
         updateSlotChildIndex(host, entry.name);
       }
-      host.inactiveSlotBaselines?.clear();
-      const bindings = new Set(host.inactiveSlots?.keys());
-      for (const entry of host.inactiveSlotOverlays?.keys() ?? [])
+      host.__inactiveSlotBaselines__?.clear();
+      const bindings = new Set(host.__inactiveSlots__?.keys());
+      for (const entry of host.__inactiveSlotOverlays__?.keys() ?? [])
         bindings.add(entry);
       for (const entry of bindings) {
         expireOccupiedSlotMemos(
-          host.inactiveSlots?.get(entry),
-          host.inactiveSlotOverlays?.get(entry),
-          host.childrenByName?.[entry.name],
+          host.__inactiveSlots__?.get(entry),
+          host.__inactiveSlotOverlays__?.get(entry),
+          host.__childrenByName__?.[entry.name],
         );
       }
     }
     for (
       let current: Nullable<Self> = host;
       current;
-      current = current.parent
+      current = current.__parent__
     ) {
-      const parent = current.parent;
+      const parent = current.__parent__;
       if (parent && !parent.isDetached)
         updateSlotChildIndex(parent, current.name);
       if (current.isDetached || visited.has(current)) continue;
       visited.add(current);
-      current.isInactiveValuesDirty = true;
+      current.__isInactiveValuesDirty__ = true;
     }
   }
   hosts.clear();

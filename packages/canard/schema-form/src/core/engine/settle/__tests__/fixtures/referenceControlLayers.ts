@@ -31,7 +31,7 @@ export interface ControlTarget<Self> {
   /** Static declarations for this occurrence. */
   readonly blueprintNode: BlueprintNode;
   /** Direct parent whose groups may address this occurrence. */
-  readonly parent: Self | null;
+  readonly __parent__: Self | null;
   /** Last active declaration choices for the whole tree. */
   readonly runtime: {
     committedDeclarationKeys?: WeakMap<
@@ -97,7 +97,7 @@ export const referenceControlLayers = <Self extends ControlTarget<Self>>(
         host: node,
       });
   }
-  const parent = node.parent;
+  const parent = node.__parent__;
   if (!parent) return groups;
   const parentIds = selected(parent);
   const parentDeclarations = parent.blueprintNode.declarations;

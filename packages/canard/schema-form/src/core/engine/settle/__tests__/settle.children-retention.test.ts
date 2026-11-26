@@ -36,21 +36,21 @@ describe('child list array retention across reselection', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const host = root.childrenByName!.host;
+    const host = root.__childrenByName__!.host;
     const rootChildren = root.children;
     const hostChildren = host.children;
 
     writeFieldNode(
-      host.childrenByName!.flag,
+      host.__childrenByName__!.flag,
       true,
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
 
-    expect(host.childrenByName!.selected?.storedOutputValue).toBe('entered');
+    expect(host.__childrenByName__!.selected?.__outputValue__).toBe('entered');
     expect(root.children).toBe(rootChildren);
     expect(host.children).not.toBe(hostChildren);
-    expect(host.children).toContain(host.childrenByName!.selected);
+    expect(host.children).toContain(host.__childrenByName__!.selected);
   });
 
   it('P-09 publishes a new host children array when a child really leaves', () => {
@@ -61,17 +61,17 @@ describe('child list array retention across reselection', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const host = root.childrenByName!.host;
+    const host = root.__childrenByName__!.host;
     const hostChildren = host.children;
 
     writeFieldNode(
-      host.childrenByName!.flag,
+      host.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
 
-    expect(host.childrenByName!.selected).toBeUndefined();
+    expect(host.__childrenByName__!.selected).toBeUndefined();
     expect(host.children).not.toBe(hostChildren);
     expect(host.children).toHaveLength(1);
   });

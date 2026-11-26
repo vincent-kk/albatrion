@@ -37,7 +37,7 @@ it('preserves values, shape, errors, deliveries, write rounds and iterations for
       { path: '/source', value: 4 },
     ],
   );
-  expect(result.root.storedOutputValue).toEqual({ source: 4, target: 8 });
+  expect(result.root.__outputValue__).toEqual({ source: 4, target: 8 });
   expect(result.contexts.map((context) => context.deriveRounds)).toEqual([
     1, 1, 1,
   ]);
@@ -79,7 +79,7 @@ it('keeps ancestor injectTo edges when derived writes a descendant', () => {
     { source: 1, group: { value: 0 } },
     [{ path: '/source', value: 3 }],
   );
-  expect(result.root.storedOutputValue).toEqual({
+  expect(result.root.__outputValue__).toEqual({
     source: 3,
     sink: '{"value":3}',
     group: { value: 3 },
@@ -109,7 +109,7 @@ it('includes disabled gates and the rules they can introduce', () => {
     { source: 0 },
     [{ path: '/source', value: 2 }],
   );
-  expect(result.root.storedOutputValue).toEqual({
+  expect(result.root.__outputValue__).toEqual({
     source: 2,
     target: 2,
     extra: 12,
@@ -138,7 +138,7 @@ it('retains the watch-only edge after a user override', () => {
       { path: '/source', value: 2 },
     ],
   );
-  expect(result.root.storedOutputValue).toEqual({
+  expect(result.root.__outputValue__).toEqual({
     source: 2,
     first: 2,
     watched: 9,
@@ -162,7 +162,7 @@ it('runs every writing round of a dependency chain', () => {
     { source: 1, a: 0, b: 0, c: 0 },
     [{ path: '/source', value: 5 }],
   );
-  expect(result.root.storedOutputValue).toEqual({
+  expect(result.root.__outputValue__).toEqual({
     source: 5,
     a: 6,
     b: 7,
@@ -192,7 +192,7 @@ it('consumes losing edges and preserves rank across subsequent caller writes', (
       { path: '/source', value: 2 },
     ],
   );
-  expect(result.root.storedOutputValue).toEqual({ source: 2, target: 2 });
+  expect(result.root.__outputValue__).toEqual({ source: 2, target: 2 });
   const mount = JSON.parse(result.snapshots[0]);
   expect(
     mount.trace.rounds[0].filter(
@@ -228,7 +228,7 @@ it('re-enters derive after transition fills even when an earlier round was termi
     { source: 1, enabled: false },
     [{ path: '', value: { source: 2, enabled: true } }],
   );
-  expect(result.root.storedOutputValue).toEqual({
+  expect(result.root.__outputValue__).toEqual({
     source: 2,
     enabled: true,
     target: 3,
@@ -251,7 +251,7 @@ it('falls back for context expressions anywhere in the blueprint', () => {
     { source: 1 },
     [{ path: '/source', value: 2 }],
   );
-  expect(result.root.childrenByName!.target.source).toBe(2);
+  expect(result.root.__childrenByName__!.target.source).toBe(2);
   if (process.env.ROUND99_SKIP === 'on') expect(result.proof).toBeUndefined();
 });
 
@@ -268,7 +268,7 @@ it('falls back for whole host expressions anywhere in the blueprint', () => {
     { source: 1 },
     [{ path: '/source', value: 2 }],
   );
-  expect(result.root.childrenByName!.target.source).toBe(2);
+  expect(result.root.__childrenByName__!.target.source).toBe(2);
   if (process.env.ROUND99_SKIP === 'on') expect(result.proof).toBeUndefined();
 });
 
@@ -285,7 +285,7 @@ it('falls back for reads not proven complete rather than guessing from an empty 
     { source: 1 },
     [{ path: '/source', value: 2 }],
   );
-  expect(result.root.storedOutputValue).toEqual({
+  expect(result.root.__outputValue__).toEqual({
     source: 2,
     target: 2,
     other: 9,
@@ -306,8 +306,8 @@ it('falls back for recursive templates with per-occurrence paths', () => {
     { source: 1, rows: [] },
     [{ path: '/source', value: 2 }],
   );
-  expect(result.root.storedOutputValue).toEqual({ source: 2, target: 2 });
-  expect(result.root.childrenByName!.rows.itemCount).toBe(0);
+  expect(result.root.__outputValue__).toEqual({ source: 2, target: 2 });
+  expect(result.root.__childrenByName__!.rows.__itemCount__).toBe(0);
   if (process.env.ROUND99_SKIP === 'on') expect(result.proof).toBeUndefined();
 });
 
@@ -327,7 +327,7 @@ it('preserves deferred errors and committed values', () => {
     { source: 1, broken: 7 },
     [{ path: '/source', value: 2 }],
   );
-  expect(result.root.storedOutputValue).toEqual({
+  expect(result.root.__outputValue__).toEqual({
     source: 2,
     target: 2,
     broken: 7,
@@ -349,7 +349,7 @@ it('preserves derive budget rollback and iterations exactly', () => {
     },
     { a: 0, b: 0 },
   );
-  expect(result.root.storedOutputValue).toEqual({ a: 0, b: 0 });
+  expect(result.root.__outputValue__).toEqual({ a: 0, b: 0 });
   expect(result.root.runtime.diagnostics).toMatchObject({
     status: 'degraded',
     iterations: 25,
@@ -394,7 +394,7 @@ it('actually runs shadow and rejects a false proof with nonzero confirmation can
   DeriveConvergenceTargets.set(blueprint, new Set(['/a', '/b']));
   expect(() =>
     writeFieldNode(
-      root.childrenByName!['source'],
+      root.__childrenByName__!['source'],
       3,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,

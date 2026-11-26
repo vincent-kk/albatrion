@@ -37,7 +37,7 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
     prepareGateSelection(blueprint, kind !== FieldNodeWriteKind.Load);
   const context: SettlementContext<Self> = {
     root,
-    previousOutputValue: root.storedOutputValue,
+    previousOutputValue: root.__outputValue__,
     previousContext: runtime.context,
     target: node,
     kind,

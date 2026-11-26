@@ -7,8 +7,8 @@ import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { objectKeyCounts } from '../../../../utils/cache/valueMemos';
 import { writeObjectKey } from '../../../../utils/writeObjectKey';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
-import { patchObjectKeys } from './patchObjectKeys';
 import { assembleObjectValue } from './assembleObjectValue';
+import { patchObjectKeys } from './patchObjectKeys';
 
 /**
  * Store the shape proven during assembly for the next value-only patch.
@@ -26,7 +26,7 @@ const rememberObjectShape = <Node>(
 ): object => {
   (node.runtime.objectShapes ??= new WeakMap()).set(node, {
     children,
-    schema: node.schema,
+    schema: node.__schema__,
     extras: node.extras,
     names,
   });
@@ -42,13 +42,13 @@ export const assembleObject: Behavior['assemble'] = (
   hint,
 ) => {
   if (node.source === null) return null;
-  const previous = node.storedValue;
+  const previous = node.__value__;
   const stable = node.runtime.objectShapes?.get(node);
   if (
     recalculated &&
     hint &&
     stable?.children === children &&
-    stable.schema === node.schema &&
+    stable.schema === node.__schema__ &&
     stable.extras === node.extras &&
     previous !== null &&
     typeof previous === 'object' &&
@@ -63,7 +63,7 @@ export const assembleObject: Behavior['assemble'] = (
   }
   if (
     stable?.children === children &&
-    stable.schema === node.schema &&
+    stable.schema === node.__schema__ &&
     stable.extras === undefined &&
     node.extras === undefined &&
     previous !== null &&
@@ -87,7 +87,7 @@ export const assembleObject: Behavior['assemble'] = (
       }
     }
   }
-  const propertyOrder = getStaticChoices(node.schema).propertyOrder;
+  const propertyOrder = getStaticChoices(node.__schema__).propertyOrder;
   const entries = node.blueprintNode.childEntries;
   if (
     (previous === undefined || previous === null) &&
@@ -105,15 +105,15 @@ export const assembleObject: Behavior['assemble'] = (
         typeof child !== 'object' ||
         !('name' in child) ||
         typeof child.name !== 'string' ||
-        !('storedOutputValue' in child) ||
+        !('__outputValue__' in child) ||
         entries[index].name !== child.name
       ) {
         aligned = false;
         break;
       }
-      if (child.storedOutputValue !== undefined) {
+      if (child.__outputValue__ !== undefined) {
         names.push(child.name);
-        writeObjectKey(result, child.name, child.storedOutputValue);
+        writeObjectKey(result, child.name, child.__outputValue__);
       }
     }
     if (aligned) {
@@ -145,9 +145,9 @@ export const assembleObject: Behavior['assemble'] = (
       typeof child === 'object' &&
       'name' in child &&
       typeof child.name === 'string' &&
-      'storedOutputValue' in child
+      '__outputValue__' in child
     )
-      childValues.set(child.name, child.storedOutputValue);
+      childValues.set(child.name, child.__outputValue__);
   const names: string[] = [];
   // Each inner map's first value is the first childEntries position.
   const orderIndex = getHostDerived<

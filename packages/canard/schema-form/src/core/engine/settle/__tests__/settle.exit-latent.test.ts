@@ -43,7 +43,7 @@ describe('latent descendant exit policies', () => {
       const parse = vi.spyOn(JSON, 'parse');
       try {
         writeFieldNode(
-          root.childrenByName!.flag,
+          root.__childrenByName__!.flag,
           false,
           FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
@@ -84,7 +84,7 @@ describe('latent descendant exit policies', () => {
       FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
-    expect(root.childrenByName?.secret).toBeUndefined();
+    expect(root.__childrenByName__?.secret).toBeUndefined();
     expect(readRetainedSlotSource(root, '/secret', 'string')).toBe('held');
   });
 
@@ -109,13 +109,13 @@ describe('latent descendant exit policies', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.clear,
+      root.__childrenByName__!.clear,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -159,14 +159,14 @@ describe('latent descendant exit policies', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.outer.childrenByName!.kind,
+      root.__childrenByName__!.outer.__childrenByName__!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(readRetainedSlotSource(root, '/outer/value', 'string')).toBe('held');
     writeFieldNode(
-      root.childrenByName!.show,
+      root.__childrenByName__!.show,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -210,7 +210,7 @@ describe('latent descendant exit policies', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.branch.childrenByName!.gate,
+      root.__childrenByName__!.branch.__childrenByName__!.gate,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.DisableAutomaticWrites,
@@ -224,7 +224,7 @@ describe('latent descendant exit policies', () => {
       ),
     ).toBe(false);
     writeFieldNode(
-      root.childrenByName!.show,
+      root.__childrenByName__!.show,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,

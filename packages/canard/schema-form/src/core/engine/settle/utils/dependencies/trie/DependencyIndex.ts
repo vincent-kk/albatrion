@@ -377,14 +377,14 @@ export class DependencyIndex {
         let host: Optional<Self> = root;
         for (const segment of this.pathSegments(bucket.hostPath))
           if (typeof segment === 'string')
-            host = host?.childrenByName?.[segment];
+            host = host?.__childrenByName__?.[segment];
           else {
             host = undefined;
             break;
           }
         const living: { path: string; rank: number }[] = [];
-        if (host?.childrenByName)
-          for (const name of Object.keys(host.childrenByName)) {
+        if (host?.__childrenByName__)
+          for (const name of Object.keys(host.__childrenByName__)) {
             const rank = bucket.ranksByName.get(name);
             if (rank !== undefined)
               living.push({

@@ -4,12 +4,12 @@ import type { Dictionary, Nullable, Optional } from '@aileron/declare';
 
 /**
  * Stage only dynamic own entries while exposing the immutable baseline to gate reads.
- * @param baseline - Fixed null-prototype `childrenByName` map whose occurrences stay active
+ * @param baseline - Fixed null-prototype `__childrenByName__` map whose occurrences stay active
  * @param current - Round-entry view; the fixed baseline has no dynamic members
  * @param names - Previous dynamic names, used only to preserve the round-entry shape
  * @param dynamic - Caller-owned dynamic target, retained for own-key publication order
  * @returns A private view; enumeration materializes keys in ordinary object order.
- * The caller publishes an ordinary `childrenByName` map before ending selection. No prior shape is mutated.
+ * The caller publishes an ordinary `__childrenByName__` map before ending selection. No prior shape is mutated.
  */
 export const createPreparedChildrenByName = <Self>(
   baseline: Dictionary<Self>,

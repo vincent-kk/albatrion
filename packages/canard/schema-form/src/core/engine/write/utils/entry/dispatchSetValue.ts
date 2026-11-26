@@ -50,12 +50,12 @@ export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
     const marking = isBatchMarking(node);
     const value =
       typeof input === 'function'
-        ? input(marking ? readBatchValue(node) : node.storedValue)
+        ? input(marking ? readBatchValue(node) : node.__value__)
         : input;
     let virtualTargets: readonly StorageTarget<Self>[] | undefined;
     if (node.behavior.type === 'virtual') {
       assertVirtualWriteShape(node, value);
-      if (sameValue(value, marking ? readBatchValue(node) : node.storedValue))
+      if (sameValue(value, marking ? readBatchValue(node) : node.__value__))
         return;
       const values = isArray(value) ? value : undefined;
       virtualTargets = resolveStorageTargets(node)?.filter(({ node, index }) =>

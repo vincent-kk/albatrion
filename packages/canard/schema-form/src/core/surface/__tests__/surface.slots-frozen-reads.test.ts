@@ -11,7 +11,7 @@ it('reads a retained detached host without observing later overlays or reset', (
   const extras = tree.group.extras;
   const inactive = tree.group.inactiveValues;
   tree.close();
-  expect(Reflect.get(tree.root, 'inactiveSlots')).toBeInstanceOf(Map);
+  expect(Reflect.get(tree.root, '__inactiveSlots__')).toBeInstanceOf(Map);
   tree.leaf.setValue('overlay');
   tree.open();
   expect(tree.root.find('/group/leaf')!.value).toBe('kept');

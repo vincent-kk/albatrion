@@ -49,7 +49,7 @@ describe('named decision-62 mutation witnesses', () => {
     selectChildren(
       root,
       context,
-      root.childrenByName!,
+      root.__childrenByName__!,
       () => events.push('compute'),
       true,
     );
@@ -61,12 +61,12 @@ describe('named decision-62 mutation witnesses', () => {
   it('V2 removing R3 leaves a pending exit unvisited and violates S2′', () => {
     engineModes.setMode('gateSelection', 'verify');
     const { root, context } = gateTableScene();
-    const child = root.childrenByName!.a;
+    const child = root.__childrenByName__!.a;
     context.pendingExits.set('["/a","string"]', child);
     updatePendingExitIndex(context, '/a', 1);
-    delete root.childrenByName!.a;
-    root.childrenByName!.kind.storedValue =
-      root.childrenByName!.kind.storedOutputValue = 'b';
+    delete root.__childrenByName__!.a;
+    root.__childrenByName__!.kind.__value__ =
+      root.__childrenByName__!.kind.__outputValue__ = 'b';
     const get = visits.getTableVisitSteps;
     vi.spyOn(visits, 'getTableVisitSteps').mockImplementation((frame, table) =>
       get(frame, table).filter(
@@ -84,9 +84,9 @@ describe('named decision-62 mutation witnesses', () => {
   it('V3 removing R4 loses a dormant caller input and violates S2′', () => {
     engineModes.setMode('gateSelection', 'verify');
     const { root, context } = gateTableScene();
-    delete root.childrenByName!.a;
-    root.childrenByName!.kind.storedValue =
-      root.childrenByName!.kind.storedOutputValue = 'b';
+    delete root.__childrenByName__!.a;
+    root.__childrenByName__!.kind.__value__ =
+      root.__childrenByName__!.kind.__outputValue__ = 'b';
     context.distributedInputs.set(root, {
       input: { a: 'dormant' },
       isWhole: false,
@@ -109,12 +109,12 @@ describe('named decision-62 mutation witnesses', () => {
   it('V2 retains the required pending-exit visit without a fault injection', () => {
     engineModes.setMode('gateSelection', 'verify');
     const { root, context } = gateTableScene();
-    context.pendingExits.set('["/a","string"]', root.childrenByName!.a);
+    context.pendingExits.set('["/a","string"]', root.__childrenByName__!.a);
     updatePendingExitIndex(context, '/a', 1);
-    delete root.childrenByName!.a;
-    root.childrenByName!.kind.source =
-      root.childrenByName!.kind.storedValue =
-      root.childrenByName!.kind.storedOutputValue =
+    delete root.__childrenByName__!.a;
+    root.__childrenByName__!.kind.source =
+      root.__childrenByName__!.kind.__value__ =
+      root.__childrenByName__!.kind.__outputValue__ =
         'b';
     prepareGateTableRound(root, context, 0);
     expect(() =>
@@ -128,10 +128,10 @@ describe('named decision-62 mutation witnesses', () => {
       engineModes.setMode('gateSelection', mode);
 
       const { root, context } = gateTableScene();
-      delete root.childrenByName!.a;
-      root.childrenByName!.kind.source =
-        root.childrenByName!.kind.storedValue =
-        root.childrenByName!.kind.storedOutputValue =
+      delete root.__childrenByName__!.a;
+      root.__childrenByName__!.kind.source =
+        root.__childrenByName__!.kind.__value__ =
+        root.__childrenByName__!.kind.__outputValue__ =
           'b';
       context.distributedInputs.set(root, {
         input: { a: 'dormant' },

@@ -16,7 +16,7 @@ export const getInactiveValueContext = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): InactiveValueContext => {
-  const parent = node.parent;
+  const parent = node.__parent__;
   const root = context.root;
   const origins = context.pathChanges.length
     ? readPathOrigins(context)
@@ -27,7 +27,7 @@ export const getInactiveValueContext = <Self extends FieldNodeRecord<Self>>(
     dataPath: path,
     schemaPath: node.blueprintNode.schemaPath,
     jsonSchema:
-      context.originalSchemas.get(node.path)?.schema ?? node.schema.schema,
+      context.originalSchemas.get(node.path)?.schema ?? node.__schema__.schema,
     parentValue: parent
       ? getLoadValue(
           context.previousOutputValue,
@@ -37,11 +37,11 @@ export const getInactiveValueContext = <Self extends FieldNodeRecord<Self>>(
       : null,
     parentJSONSchema: parent
       ? (context.originalSchemas.get(parent.path)?.schema ??
-        parent.schema.schema)
+        parent.__schema__.schema)
       : null,
     rootValue: context.previousOutputValue,
     rootJSONSchema:
-      context.originalSchemas.get(root.path)?.schema ?? root.schema.schema,
+      context.originalSchemas.get(root.path)?.schema ?? root.__schema__.schema,
     context: context.previousContext ?? {},
   };
 };

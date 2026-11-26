@@ -23,7 +23,7 @@ describe('a root object or array never omits itself', () => {
     (terminal) => {
       const { root } = createTestTree(trimmedStrings(terminal));
       loadFieldNodeAtMount(root, ['', null], WriteOption.Overwrite);
-      expect(root.storedOutputValue).toEqual([]);
+      expect(root.__outputValue__).toEqual([]);
     },
   );
 
@@ -38,7 +38,7 @@ describe('a root object or array never omits itself', () => {
         FieldNodeWriteKind.Load,
         WriteOption.Overwrite,
       );
-      expect(root.storedOutputValue).toEqual([]);
+      expect(root.__outputValue__).toEqual([]);
     },
   );
 
@@ -51,7 +51,7 @@ describe('a root object or array never omits itself', () => {
     });
     loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
     expect(root.children).toHaveLength(2);
-    expect(root.storedOutputValue).toEqual([]);
+    expect(root.__outputValue__).toEqual([]);
   });
 
   it('settle-root-output-value keeps the empty stored value of a root object and array', () => {
@@ -60,11 +60,11 @@ describe('a root object or array never omits itself', () => {
       properties: { name: { type: 'string' } },
     }).root;
     loadFieldNodeAtMount(object, { name: '' }, WriteOption.Overwrite);
-    expect(object.storedOutputValue).toEqual({});
-    expect(object.storedOutputValue).toBe(object.storedValue);
+    expect(object.__outputValue__).toEqual({});
+    expect(object.__outputValue__).toBe(object.__value__);
 
     const array = createTestTree(trimmedStrings(false)).root;
     loadFieldNodeAtMount(array, [], WriteOption.Overwrite);
-    expect(array.storedOutputValue).toBe(array.storedValue);
+    expect(array.__outputValue__).toBe(array.__value__);
   });
 });

@@ -35,7 +35,7 @@ import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 import { applyArrayTail } from './applyArrayTail';
 import { canApplyArrayTail } from './canApplyArrayTail';
 
-/** Annotates the lazily created `inactiveSlots`; an argument-less `new Map()` would be `Map<any, any>`. */
+/** Annotates the lazily created `__inactiveSlots__`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlots<Self> = Map<BlueprintChildEntry, Self>;
 /** Annotates the lazily created `rekeyedArrayMoves`; an argument-less `new Map()` would be `Map<any, any>`. */
 type RekeyedArrayMoves<Self> = Map<
@@ -57,8 +57,8 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): unknown => {
   if (canApplyArrayTail(host, plan)) return applyArrayTail(host, plan, context);
-  const oldCount = host.itemCount;
-  const oldItems = host.childrenByName ?? {};
+  const oldCount = host.__itemCount__;
+  const oldItems = host.__childrenByName__ ?? {};
   // With an item template and no tuple positions, extras or whole source, only a slot without a live node reads source.
   let sourceSlots =
     host.source === undefined &&
@@ -76,7 +76,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     removedIndex < 0
       ? undefined
       : removedItem
-        ? removedItem.storedValue
+        ? removedItem.__value__
         : (sourceSlots ??= readSourceSlots(host, context))[removedIndex];
   const registry = getGateRegistry(host.runtime);
   if (context.hasGates)
@@ -146,7 +146,8 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       const binding = getRetainedChildEntry(host, old.name, old.blueprintNode);
       if (binding) {
         markSlotChange(host, binding, old, context);
-        const slots: InactiveSlots<Self> = (host.inactiveSlots ??= new Map());
+        const slots: InactiveSlots<Self> = (host.__inactiveSlots__ ??=
+          new Map());
         slots.set(binding, old);
       }
     }
@@ -178,7 +179,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
           captureDetachedFieldNodeReads(departing, {
             outputValue: context.previousOutputValue,
             context: context.previousContext,
-            schema: departing.schema.schema,
+            schema: departing.__schema__.schema,
           });
       },
       { isOwned: true },
@@ -201,7 +202,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
         updateFieldNodeNameAndPath(
           descendant,
           descendant === item ? name : descendant.name,
-          descendant === item ? host : descendant.parent,
+          descendant === item ? host : descendant.__parent__,
         );
         context.pathChanges.push({
           node: descendant,
@@ -209,9 +210,9 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
           current: descendant.path,
         });
         if (
-          descendant.inactiveSlots?.size ||
-          descendant.inactiveSlotOverlays?.size ||
-          descendant.inactiveSlotChildren?.size
+          descendant.__inactiveSlots__?.size ||
+          descendant.__inactiveSlotOverlays__?.size ||
+          descendant.__inactiveSlotChildren__?.size
         )
           (descendant.runtime.slotDirtyHosts ??= new Set()).add(descendant);
         context.dirtyPaths.add(descendant.path);
@@ -222,10 +223,10 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       { isOwned: true },
     );
   }
-  host.itemCount = plan.slots.length;
+  host.__itemCount__ = plan.slots.length;
   host.source = undefined;
   host.extras = arrayExtras(host, nextSource);
-  host.childrenByName = nextItems;
+  host.__childrenByName__ = nextItems;
   host.children = captureFieldNodeChange(
     host,
     'children',

@@ -12,15 +12,15 @@ NODE-016·045. 의존은 청사진·레코드·순수 동작과 탐색·검증·
 
 ### virtual-storage-model — 가상 튜플과 저장 주소의 상태 모형
 
-가상 그룹은 데이터·원본·스냅숏을 소유하지 않습니다. 모형은 `(fields, host.child(name)?.storedValue, host.retainedSlotOrOverlay(name), root.loadSnapshotAt(storagePath))`의 투영입니다. 각 constituent는 활성(visible: false 포함), 조건 비활성, 현재 oneOf·if 분기 부재 중 하나이며 보유 원본 유무와 별개입니다. 그룹 자체의 활성 상태도 별개입니다.
+가상 그룹은 데이터·원본·스냅숏을 소유하지 않습니다. 모형은 `(fields, host.child(name)?.__value__, host.retainedSlotOrOverlay(name), root.loadSnapshotAt(storagePath))`의 투영입니다. 각 constituent는 활성(visible: false 포함), 조건 비활성, 현재 oneOf·if 분기 부재 중 하나이며 보유 원본 유무와 별개입니다. 그룹 자체의 활성 상태도 별개입니다.
 
 #### 읽기와 쓰기
 
-- value는 fields 길이의 튜플입니다. 활성 칸은 storedValue, 비활성·부재 칸은 undefined이며 순서를 압축하지 않습니다. children은 활성 constituent의 선언 순서 투영이므로 field 이름으로 칸과 연결합니다.
+- value는 fields 길이의 튜플입니다. 활성 칸은 `__value__`, 비활성·부재 칸은 undefined이며 순서를 압축하지 않습니다. children은 활성 constituent의 선언 순서 투영이므로 field 이름으로 칸과 연결합니다.
 - setValue는 undefined 또는 정확한 길이의 배열을 받습니다. undefined는 모든 칸에 undefined를 준 것과 같고, sparse 배열의 빈 칸도 undefined입니다. null·비배열·짧거나 긴 배열은 INVALID_VIRTUAL_NODE_VALUES로 변경 전에 거부합니다. 배치의 거부는 앞선 표시를 취소하지 않습니다(EVENT-017).
 - 각 칸은 **호출 진입 시점** constituent 상태로 분류합니다. undefined는 활성 칸을 비우고 비활성·부재 칸에서는 무시합니다. 같은 호출에서 gate가 켜져도 분류를 다시 하지 않습니다. 비활성·부재 칸의 non-undefined는 일반 비활성 선언 쓰기처럼 overlay에 보유하며 gate exit의 unset 정책과 별개입니다. 명시적으로 보유 값을 지우려면 살아 있는 호스트의 해당 이름에 undefined를 씁니다.
 - Overwrite는 각 constituent의 전체 교체, Merge는 branch 객체 칸의 재귀 병합이며 그 밖의 칸은 일반 Merge 계약을 따릅니다. 튜플 자체의 길이를 Merge로 바꾸지는 않습니다.
-- 같음은 VALUE-021(SameValueZero·배열·plain 객체 내용, 불투명 값 참조)입니다. 유효한 튜플이 직전 유효 뷰와 같으면 원본·overlay·스냅숏·상태·오류·배달·재검증을 바꾸지 않습니다. 배치의 유효 뷰는 대상 자신의 직전 committed storedValue(가상 그룹이면 각 살아 있는 constituent 자신의 storedValue)에 앞선 호출을 순차 적용하고 각 노드의 정적 형으로 해석한 값이며([EVENT-061](write/DETAIL.md#event-061--updater와-일반-읽기는-서로-다른-기준을-가집니다)) 공개 value는 committed 값입니다. 부모의 storedValue는 undefined로 비워진 객체 constituent처럼 자식이 가진 값을 생략할 수 있으므로 유효 뷰의 바탕으로 쓰지 않습니다. 그렇지 않으면 배치 안의 같은 튜플 비교와 updater가 배치 밖과 다른 값을 받습니다. 그러므로 앞선 표시와 다른 오래된 group.value를 다시 쓰면 그 표시는 덮일 수 있습니다. updater는 EVENT-061의 유효 뷰를 한 번 받습니다. 배치 중 gate 표시만으로 미정착 활성 상태를 새로 계산하지 않습니다. updater와 같은 튜플 판정의 비활성·부재 칸은 앞선 쓰기가 보유 원본을 바꾸어도 단일 쓰기와 같이 undefined입니다.
+- 같음은 VALUE-021(SameValueZero·배열·plain 객체 내용, 불투명 값 참조)입니다. 유효한 튜플이 직전 유효 뷰와 같으면 원본·overlay·스냅숏·상태·오류·배달·재검증을 바꾸지 않습니다. 배치의 유효 뷰는 대상 자신의 직전 committed `__value__`(가상 그룹이면 각 살아 있는 constituent 자신의 `__value__`)에 앞선 호출을 순차 적용하고 각 노드의 정적 형으로 해석한 값이며([EVENT-061](write/DETAIL.md#event-061--updater와-일반-읽기는-서로-다른-기준을-가집니다)) 공개 value는 committed 값입니다. 부모의 `__value__`는 undefined로 비워진 객체 constituent처럼 자식이 가진 값을 생략할 수 있으므로 유효 뷰의 바탕으로 쓰지 않습니다. 그렇지 않으면 배치 안의 같은 튜플 비교와 updater가 배치 밖과 다른 값을 받습니다. 그러므로 앞선 표시와 다른 오래된 group.value를 다시 쓰면 그 표시는 덮일 수 있습니다. updater는 EVENT-061의 유효 뷰를 한 번 받습니다. 배치 중 gate 표시만으로 미정착 활성 상태를 새로 계산하지 않습니다. updater와 같은 튜플 판정의 비활성·부재 칸은 앞선 쓰기가 보유 원본을 바꾸어도 단일 쓰기와 같이 undefined입니다.
 
 #### 초기화와 주소 범위
 
@@ -42,7 +42,7 @@ fields는 직계 실제 프로퍼티 이름만 허용합니다. 중복은 VIRTUA
 
 #### 사건 뒤의 불변식
 
-모든 사건 뒤 tuple 길이·이름 대응·활성 children 투영을 확인합니다. 그룹 밖 필드의 storedValue·보유 원본·노드 신원·상호작용·오류는 해당 constituent와 교차하는 선언된 반응형 규칙의 의존 폐쇄 밖에서 보존됩니다. 같은 유효 튜플 쓰기는 배치 안팎에서 전체 모형 상태를 보존합니다. 객체 constituent가 undefined로 비워진 뒤 그 조건 비활성 자손이 값을 보유한 경우도 같으며, 어떤 규칙도 표시 구간의 중간 상태를 관측하지 않으면 여러 쓰기를 묶은 배치의 결과는 같은 호출을 차례로 한 결과와 같은 저장 값과 보유 원본을 남깁니다([WRITE-079](settle/DETAIL.md#write-079--교체-범위는-명시한-쓰기에서-정합니다)). 그룹 reset 후 각 constituent를 활성화한 결과는 같은 constituents에 대한 부모 reset 후 활성화 결과 및 각 constituent 자체 reset 후 활성화 결과와 같습니다. 그룹에 대한 선언적 쓰기는 그룹의 활성 여부와 무관하게 같은 칸 분류의 setValue 분배와 같습니다. 순환 입력의 구조 동등성은 VALUE-021의 기존 비보장 범위이며 이 계약이 추가 보장하지 않습니다.
+모든 사건 뒤 tuple 길이·이름 대응·활성 children 투영을 확인합니다. 그룹 밖 필드의 `__value__`·보유 원본·노드 신원·상호작용·오류는 해당 constituent와 교차하는 선언된 반응형 규칙의 의존 폐쇄 밖에서 보존됩니다. 같은 유효 튜플 쓰기는 배치 안팎에서 전체 모형 상태를 보존합니다. 객체 constituent가 undefined로 비워진 뒤 그 조건 비활성 자손이 값을 보유한 경우도 같으며, 어떤 규칙도 표시 구간의 중간 상태를 관측하지 않으면 여러 쓰기를 묶은 배치의 결과는 같은 호출을 차례로 한 결과와 같은 저장 값과 보유 원본을 남깁니다([WRITE-079](settle/DETAIL.md#write-079--교체-범위는-명시한-쓰기에서-정합니다)). 그룹 reset 후 각 constituent를 활성화한 결과는 같은 constituents에 대한 부모 reset 후 활성화 결과 및 각 constituent 자체 reset 후 활성화 결과와 같습니다. 그룹에 대한 선언적 쓰기는 그룹의 활성 여부와 무관하게 같은 칸 분류의 setValue 분배와 같습니다. 순환 입력의 구조 동등성은 VALUE-021의 기존 비보장 범위이며 이 계약이 추가 보장하지 않습니다.
 
 정착 사슬과 검증 snapshot의 얕은 입력 판정은 객체 참조와 원시 SameValueZero를 사용합니다. NaN의 자기 불일치를 새 입력으로 오인하면 무변경 쓰기가 콜백·검증을 되먹이므로 깊은 값 비교와 구별한 공유 판정을 사용합니다.
 

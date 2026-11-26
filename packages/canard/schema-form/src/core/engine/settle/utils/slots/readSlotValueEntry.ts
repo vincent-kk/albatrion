@@ -19,11 +19,11 @@ export const readSlotValueEntry = <Self extends FieldNodeRecord<Self>>(
   value: unknown,
   composed = false,
 ): Readonly<{ path: string; value: unknown }> => {
-  const prior = instance?.inactiveValueMemo ?? overlay?.valueMemo;
+  const prior = instance?.__inactiveSlotValue__ ?? overlay?.valueMemo;
   if (prior && composed && sameValue(prior.value, value)) value = prior.value;
   if (prior?.path === path && Object.is(prior.value, value)) return prior.entry;
   const memo = { path, value, entry: Object.freeze({ path, value }) };
-  if (instance) instance.inactiveValueMemo = memo;
+  if (instance) instance.__inactiveSlotValue__ = memo;
   else if (overlay) overlay.valueMemo = memo;
   return memo.entry;
 };

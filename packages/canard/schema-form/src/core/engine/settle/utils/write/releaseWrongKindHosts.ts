@@ -23,9 +23,8 @@ export const releaseWrongKindHosts = <Self extends FieldNodeRecord<Self>>(
         host.isDetached ||
         !canReleaseCallerHost(
           host.source,
-          host.children?.some(
-            (child) => child.storedOutputValue !== undefined,
-          ) ?? false,
+          host.children?.some((child) => child.__outputValue__ !== undefined) ??
+            false,
         )
       )
         continue;

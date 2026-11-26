@@ -126,7 +126,7 @@ const createFieldNode = (
     depth,
     template.strategy === 'branch' ? {} : null,
     template.strategy === 'branch' ? [] : null,
-    instance?.schema ??
+    instance?.__schema__ ??
       mergeEffectiveSchema(template, NO_ACTIVE_DECLARATION_IDS, {
         mode: 'runtime',
         isAtomic: runtime.blueprint?.isAtomic,

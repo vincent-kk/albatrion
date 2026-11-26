@@ -164,8 +164,8 @@ describe('moving tuple slot-root candidate sources', () => {
     expect(moved).not.toBe(original);
     expect(moved.blueprintNode.kind).toBe(other);
     expect(moved.source).toBe(expectedValue);
-    expect(root.storedValue).toEqual(expected);
-    expect(root.storedOutputValue).toEqual(expected);
+    expect(root.__value__).toEqual(expected);
+    expect(root.__outputValue__).toEqual(expected);
     expect(
       events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
     ).toMatchObject({
@@ -208,8 +208,8 @@ describe('moving tuple slot-root candidate sources', () => {
       b: false,
       list: operation === 'insert' ? [liveValue] : [stored, liveValue],
     };
-    expect(root.storedValue).toEqual(returned);
-    expect(root.storedOutputValue).toEqual(returned);
+    expect(root.__value__).toEqual(returned);
+    expect(root.__outputValue__).toEqual(returned);
     expect(
       events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
     ).toMatchObject({

@@ -25,10 +25,10 @@ export const prepareSourcePruner = <Self extends FieldNodeRecord<Self>>(
   let unique = !hasRetainableDescendants(node.blueprintNode, new WeakSet());
   for (
     let current: Nullable<Self> = node;
-    unique && current?.parent;
-    current = current.parent
+    unique && current?.__parent__;
+    current = current.__parent__
   ) {
-    const parent = current.parent;
+    const parent = current.__parent__;
     if (
       parent.behavior.type === 'array' &&
       !parent.blueprintNode.hasCandidateDescendants

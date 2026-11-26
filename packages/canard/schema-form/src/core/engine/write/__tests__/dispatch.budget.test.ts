@@ -31,7 +31,7 @@ describe('dispatcher budgets', () => {
       if (deliveries <= 26) dispatchSetValue(root, deliveries);
     });
     expect(() => dispatchSetValue(root, 0)).toThrow();
-    expect(root.storedOutputValue).toBeGreaterThanOrEqual(25);
+    expect(root.__outputValue__).toBeGreaterThanOrEqual(25);
     expect(runtime.diagnostics.status).toBe('stable');
   });
 
@@ -43,9 +43,9 @@ describe('dispatcher budgets', () => {
       feedbackCalls += 1;
       dispatchSetValue(root, feedbackCalls);
     });
-    subscribeFieldNode(root, () => observed.push(root.storedOutputValue));
+    subscribeFieldNode(root, () => observed.push(root.__outputValue__));
     expect(() => dispatchSetValue(root, 0)).toThrow();
-    expect(observed.at(-1)).toBe(root.storedOutputValue);
+    expect(observed.at(-1)).toBe(root.__outputValue__);
     expect(observed.length).toBe(feedbackCalls);
   });
 
@@ -55,21 +55,21 @@ describe('dispatcher budgets', () => {
     let feedbackCalls = 0;
     let feedbackEnabled = true;
     subscribeFieldNode(root, () => {
-      observed.push(root.storedOutputValue);
+      observed.push(root.__outputValue__);
       if (feedbackEnabled && feedbackCalls < 26)
         dispatchSetValue(root, `p${feedbackCalls++}`);
     });
 
     expect(() => dispatchSetValue(root, 'go')).toThrow();
     expect(feedbackCalls).toBe(26);
-    expect(root.storedOutputValue).toBe('p24');
+    expect(root.__outputValue__).toBe('p24');
     expect(observed).toHaveLength(26);
     expect(observed.at(-1)).toBe('p24');
     expect(runtime.entryDepth).toBe(0);
 
     feedbackEnabled = false;
     dispatchSetValue(root, 'caller');
-    expect(root.storedOutputValue).toBe('caller');
+    expect(root.__outputValue__).toBe('caller');
     expect(observed).toHaveLength(27);
     expect(runtime.entryDepth).toBe(0);
   });
@@ -80,7 +80,7 @@ describe('dispatcher budgets', () => {
     let batchRan = false;
     const observed: unknown[] = [];
     subscribeFieldNode(root, () => {
-      observed.push(root.storedOutputValue);
+      observed.push(root.__outputValue__);
       if (feedbackCalls < 25) dispatchSetValue(root, `p${feedbackCalls++}`);
       else
         dispatchBatch(root, () => {
@@ -91,7 +91,7 @@ describe('dispatcher budgets', () => {
 
     expect(() => dispatchSetValue(root, 'go')).toThrow();
     expect(batchRan).toBe(false);
-    expect(root.storedOutputValue).toBe('p24');
+    expect(root.__outputValue__).toBe('p24');
     expect(observed).toHaveLength(26);
     expect(runtime.entryDepth).toBe(0);
     expect(runtime.batchDepth ?? 0).toBe(0);
@@ -120,8 +120,8 @@ describe('dispatcher budgets', () => {
     });
 
     expect(() => dispatchSetValue(root, 'go')).toThrow();
-    expect(root.storedState[FieldNodeState.Touched]).toBe(true);
-    expect(root.storedState[FieldNodeState.Edited]).toBeUndefined();
+    expect(root.__state__[FieldNodeState.Touched]).toBe(true);
+    expect(root.__state__[FieldNodeState.Edited]).toBeUndefined();
     expect(runtime.nodeErrors?.get(root)).toBe(issues);
     expect(observed).toHaveLength(26);
     expect(readFieldNodeRevision(root, FieldNodeEventType.UpdateState)).toBe(1);
@@ -141,7 +141,7 @@ describe('dispatcher budgets', () => {
     };
     expect(() => dispatchSetValue(root, 0)).toThrow();
     expect(changes).toBe(25);
-    expect(root.storedOutputValue).toBe(25);
+    expect(root.__outputValue__).toBe(25);
   });
 
   it('CONTROLS-079 treats a user callback write as nested feedback', () => {
@@ -166,7 +166,7 @@ describe('dispatcher budgets', () => {
     root = created;
     dispatchMount(root, { source: 'start', target: 'old' });
     dispatchSetValue(getDispatchChild(root, 'source'), 'next');
-    expect(getDispatchChild(root, 'target').storedOutputValue).toBe('callback');
+    expect(getDispatchChild(root, 'target').__outputValue__).toBe('callback');
     expect(runtime.entryDepth).toBe(0);
   });
 });

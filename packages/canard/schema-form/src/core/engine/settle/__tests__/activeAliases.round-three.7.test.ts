@@ -54,7 +54,7 @@ describe('context reads: which controls follow a context change at the second re
       setContext(root, { on: false });
       dispatchMount(root, {});
       const state = () => ({
-        value: root.storedOutputValue,
+        value: root.__outputValue__,
         visible: [
           find(root, '/x/t')?.isVisible,
           find(root, '/g/y/t')?.isVisible,

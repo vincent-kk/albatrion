@@ -43,7 +43,7 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   if (!context.hasGates) return false;
   if (context.presenceMetrics) context.presenceMetrics.calls++;
-  const childrenByName = host.childrenByName ?? {};
+  const childrenByName = host.__childrenByName__ ?? {};
   const names = collectPresenceChangeNames(host, previous, context);
   registerProjectionChanges(host, names, context);
   if (names.length === 0) return false;
@@ -128,9 +128,9 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
     if (!live) continue;
     if (
       features.stateKeyNodes.has(live.blueprintNode.id) ||
-      (live.parent &&
+      (live.__parent__ &&
         features.stateKeyChildren
-          .get(live.parent.blueprintNode.id)
+          .get(live.__parent__.blueprintNode.id)
           ?.has(live.name))
     ) {
       context.dependencyOwnerPaths.add(owner);

@@ -28,16 +28,12 @@ export const preserveReferences = <Self extends FieldNodeRecord<Self>>(
   previous: CalculatedSnapshot<Self>,
   context: SettlementContext<Self>,
 ): void => {
-  if (sameValue(previous.value, node.storedValue))
-    node.storedValue = captureFieldNodeChange(
+  if (sameValue(previous.value, node.__value__))
+    node.__value__ = captureFieldNodeChange(node, '__value__', previous.value);
+  if (sameValue(previous.outputValue, node.__outputValue__))
+    node.__outputValue__ = captureFieldNodeChange(
       node,
-      'storedValue',
-      previous.value,
-    );
-  if (sameValue(previous.outputValue, node.storedOutputValue))
-    node.storedOutputValue = captureFieldNodeChange(
-      node,
-      'storedOutputValue',
+      '__outputValue__',
       previous.outputValue,
     );
   if (
@@ -60,10 +56,10 @@ export const preserveReferences = <Self extends FieldNodeRecord<Self>>(
       );
   }
   if (
-    node.storedValue === previous.value &&
-    node.storedOutputValue === previous.outputValue &&
+    node.__value__ === previous.value &&
+    node.__outputValue__ === previous.outputValue &&
     node.children === previous.children &&
-    node.schema ===
+    node.__schema__ ===
       (context.originalSchemas.get(node.path) ?? previous.schema) &&
     node.isActive === previous.isActive &&
     !context.changedSource.has(node.path) &&

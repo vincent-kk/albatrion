@@ -18,7 +18,7 @@ export const declareArrayChildren: Behavior['declareChildren'] = (node) => {
     template.prefixItemCandidates === undefined
   )
     return EMPTY_ARRAY;
-  const count = node.itemCount;
+  const count = node.__itemCount__;
   const cached = node.runtime.arrayChildEntries?.get(node);
   if (cached?.count === count) return cached.result;
   const entries: BlueprintChildEntry[] = [];

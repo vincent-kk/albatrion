@@ -48,22 +48,22 @@ export const readBatchValue = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   const root = node.rootNode;
   const writes = root.runtime.batchWrites;
-  if (!writes?.length) return node.storedValue;
+  if (!writes?.length) return node.__value__;
   const targets = resolveStorageTargets(node);
   const names: string[] = [];
   for (
-    let cursor: Nullable<Self> = targets ? node.parent : node;
+    let cursor: Nullable<Self> = targets ? node.__parent__ : node;
     cursor && cursor !== root;
-    cursor = cursor.parent
+    cursor = cursor.__parent__
   )
     names.unshift(cursor.name);
-  let base = root.storedValue;
+  let base = root.__value__;
   if (!targets) {
-    if (readOwnPath(base, names) !== node.storedValue)
+    if (readOwnPath(base, names) !== node.__value__)
       base = replaceAtPath(
         base,
         names,
-        node.storedValue,
+        node.__value__,
         WriteOption.Overwrite,
         node,
         undefined,
@@ -74,12 +74,12 @@ export const readBatchValue = <Self extends FieldNodeRecord<Self>>(
     for (const target of targets)
       if (
         target.node &&
-        readOwnPath(host, [target.name]) !== target.node.storedValue
+        readOwnPath(host, [target.name]) !== target.node.__value__
       )
         base = replaceAtPath(
           base,
           [...names, target.name],
-          target.node.storedValue,
+          target.node.__value__,
           WriteOption.Overwrite,
           target.node,
           undefined,

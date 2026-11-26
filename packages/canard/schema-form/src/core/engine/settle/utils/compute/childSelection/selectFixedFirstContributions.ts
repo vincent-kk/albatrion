@@ -35,7 +35,7 @@ export const selectFixedFirstContributions = <
     prior,
     computeChild,
     isImmediate,
-    next: node.childrenByName!,
+    next: node.__childrenByName__!,
     seenNodesByName: new Map(),
     inactiveEntries: [],
     hasChanged: false,

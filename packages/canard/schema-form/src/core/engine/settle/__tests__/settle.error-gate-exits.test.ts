@@ -65,7 +65,7 @@ describe('throwing gate exit isolation', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.k,
+      root.__childrenByName__!.k,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -84,7 +84,7 @@ describe('throwing gate exit isolation', () => {
         WriteOption.Merge,
       ),
     ).toThrow('Gate evaluation failed');
-    expect(root.childrenByName?.h).toBeUndefined();
+    expect(root.__childrenByName__?.h).toBeUndefined();
     expect(readRetainedSlotSource(root, '/h/d', 'string')).toBe('D');
   });
 
@@ -133,10 +133,10 @@ describe('throwing gate exit isolation', () => {
         WriteOption.Merge,
       ),
     ).toThrow('Gate evaluation failed');
-    expect(root.childrenByName?.bad).toBeUndefined();
-    expect(root.childrenByName?.other).toBeUndefined();
+    expect(root.__childrenByName__?.bad).toBeUndefined();
+    expect(root.__childrenByName__?.other).toBeUndefined();
     expect(readRetainedSlotSource(root, '/bad/child', 'string')).toBe('B');
     expect(hasRetainedSlotOwnSource(root, '/other', 'string')).toBe(false);
-    expect(root.childrenByName?.target?.source).toBe('C');
+    expect(root.__childrenByName__?.target?.source).toBe('C');
   });
 });

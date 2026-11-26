@@ -20,10 +20,10 @@ export const findDepartingChild = <Self extends FieldNodeRecord<Self>>(
   if (context.pendingExits.size === 0) return undefined;
   for (const departing of context.pendingExits.values())
     if (
-      departing.parent === host &&
+      departing.__parent__ === host &&
       departing.name === name &&
       !departing.isDetached &&
-      host.childrenByName?.[name] !== departing
+      host.__childrenByName__?.[name] !== departing
     )
       return departing;
   return undefined;

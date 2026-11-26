@@ -32,20 +32,20 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
   const detach = (departing: Self): void =>
     detachPerishedNode(departing, context, rekeyed);
   for (const node of context.perishedNodes) {
-    if (node.parent?.childrenByName?.[node.name] === node) continue;
-    rekeyed = node.parent
-      ? context.rekeyedArrayMoves?.get(node.parent)?.[Number(node.name)]
+    if (node.__parent__?.__childrenByName__?.[node.name] === node) continue;
+    rekeyed = node.__parent__
+      ? context.rekeyedArrayMoves?.get(node.__parent__)?.[Number(node.name)]
       : undefined;
     visitFieldNodes(node, detach, OWNED);
     registry.remove(node);
     perishing?.add(node);
-    const parent = node.parent;
+    const parent = node.__parent__;
     const destinationCount =
       parent && context.rekeyedArrayMoves?.has(parent)
-        ? parent.itemCount
+        ? parent.__itemCount__
         : undefined;
     if (
-      !parent?.childrenByName?.[node.name] &&
+      !parent?.__childrenByName__?.[node.name] &&
       (destinationCount === undefined || Number(node.name) >= destinationCount)
     )
       (perishedPaths ??= new Set()).add(node.path);
@@ -54,8 +54,8 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
     for (const [key, pending] of pendingExits) {
       const ancestor = findPerishedAncestor(pending, perishing);
       if (ancestor) {
-        rekeyed = ancestor.parent
-          ? context.rekeyedArrayMoves?.get(ancestor.parent)?.[
+        rekeyed = ancestor.__parent__
+          ? context.rekeyedArrayMoves?.get(ancestor.__parent__)?.[
               Number(ancestor.name)
             ]
           : undefined;
@@ -72,9 +72,9 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
   }
   const resizedHosts = new Map<string, number>();
   for (const [host, previousCount] of context.arrayCounts)
-    if (!host.isDetached && host.itemCount !== previousCount) {
+    if (!host.isDetached && host.__itemCount__ !== previousCount) {
       pruneArraySlotTail(host, context);
-      resizedHosts.set(host.path, host.itemCount);
+      resizedHosts.set(host.path, host.__itemCount__);
     }
   if (resizedHosts.size) {
     pruneArrayTailPaths(context.root.runtime, resizedHosts);
@@ -91,7 +91,11 @@ const findPerishedAncestor = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   perishing: ReadonlySet<Self>,
 ): Optional<Self> => {
-  for (let current: Nullable<Self> = node; current; current = current.parent)
+  for (
+    let current: Nullable<Self> = node;
+    current;
+    current = current.__parent__
+  )
     if (perishing.has(current)) return current;
   return undefined;
 };

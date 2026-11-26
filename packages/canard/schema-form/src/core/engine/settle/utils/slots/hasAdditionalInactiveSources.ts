@@ -16,7 +16,7 @@ export const hasAdditionalInactiveSources = <
   Self extends FieldNodeRecord<Self>,
 >(
   instance: Self,
-  overlay: Optional<InactiveSlotOverlay> = instance.retainedSourceOverlay,
+  overlay: Optional<InactiveSlotOverlay> = instance.__retainedSourceOverlay__,
 ): boolean => {
   const own = overlay && hasOwnProperty(overlay, 'source');
   const source = own
@@ -34,7 +34,7 @@ export const hasAdditionalInactiveSources = <
     return true;
   if (overlay?.isWhole) return false;
   for (const child of instance.children ?? []) {
-    if (child.parent !== instance) continue;
+    if (child.__parent__ !== instance) continue;
     const binding = getRetainedChildEntry(
       instance,
       child.name,

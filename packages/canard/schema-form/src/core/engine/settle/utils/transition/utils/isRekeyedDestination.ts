@@ -14,12 +14,12 @@ export const isRekeyedDestination = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   for (
     let current: Nullable<Self> = node;
-    current?.parent;
-    current = current.parent
+    current?.__parent__;
+    current = current.__parent__
   ) {
     if (
-      moves.has(current.parent) &&
-      Number(current.name) < current.parent.itemCount
+      moves.has(current.__parent__) &&
+      Number(current.name) < current.__parent__.__itemCount__
     )
       return true;
   }

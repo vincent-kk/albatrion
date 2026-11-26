@@ -177,7 +177,7 @@ describe('the general slot path reads the source tree only when a slot needs it'
       dispatchInsert(root, 1, 9);
       const counts = [slots.mock.calls.length, read.mock.calls.length];
       vi.restoreAllMocks();
-      return { removed, counts, outputValue: root.storedOutputValue };
+      return { removed, counts, outputValue: root.__outputValue__ };
     };
     expect(declined(NUMBERS)).toEqual({
       removed: 1,

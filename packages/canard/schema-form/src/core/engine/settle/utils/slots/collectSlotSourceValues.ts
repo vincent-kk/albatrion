@@ -61,7 +61,7 @@ export const collectSlotSourceValues = <Self extends FieldNodeRecord<Self>>(
       const materialized = readSlotSourceTree(
         template,
         instance,
-        instance.retainedSourceOverlay,
+        instance.__retainedSourceOverlay__,
       );
       value = isArray(materialized)
         ? Object.freeze(materialized)
@@ -79,7 +79,7 @@ export const collectSlotSourceValues = <Self extends FieldNodeRecord<Self>>(
     const explicit =
       overlay?.children?.has(entry) === true &&
       overlay.children.get(entry) !==
-        instance?.retainedSourceOverlay?.children?.get(entry);
+        instance?.__retainedSourceOverlay__?.children?.get(entry);
     const candidate =
       array &&
       (entry.node.hasCandidateDescendants ||
@@ -93,7 +93,7 @@ export const collectSlotSourceValues = <Self extends FieldNodeRecord<Self>>(
       child.overlay,
       appendSegment(path, entry.name),
       [...order, getSlotEntryPosition(template, entry)],
-      live?.childrenByName?.[entry.name],
+      live?.__childrenByName__?.[entry.name],
       values,
       patchOnly || (packed && !candidate),
     );

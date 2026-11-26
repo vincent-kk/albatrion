@@ -82,11 +82,11 @@ export const observeFixedFirstLoad = (
       const pending = [root];
       while (pending.length) {
         const current = pending.pop()!;
-        expect(current.pendingRevisionMask).toBe(0);
-        expect(current.isDeliveryInitialized).toBe(true);
+        expect(current.__pendingRevisionMask__).toBe(0);
+        expect(current.__isDeliveryInitialized__).toBe(true);
         pending.push(...(current.children ?? []));
       }
-      delivered.push({ path: node.path, event, value: root.storedOutputValue });
+      delivered.push({ path: node.path, event, value: root.__outputValue__ });
     });
   listen(root);
   let allocations = 0;
@@ -152,23 +152,23 @@ export const observeFixedFirstLoad = (
       nodes.push({
         path: node.path,
         kind: node.behavior.type,
-        schema: node.schema.schema,
+        schema: node.__schema__.schema,
         source: node.source,
         extras: node.extras,
-        value: node.storedValue,
-        outputValue: node.storedOutputValue,
+        value: node.__value__,
+        outputValue: node.__outputValue__,
         required: node.isRequired,
         isActive: node.isActive,
         visible: node.isVisible,
         readOnly: node.isReadOnly,
         disabled: node.isDisabled,
-        state: node.storedState,
+        state: node.__state__,
         ids: root.runtime.committedDeclarationIds?.get(
           getCommittedDeclarationKey(node, node.runtime),
         ),
-        revisions: { ...node.revisionLedger },
-        delivery: node.pendingDelivery,
-        initialized: node.isDeliveryInitialized,
+        revisions: { ...node.__revisionLedger__ },
+        delivery: node.__pendingDelivery__,
+        initialized: node.__isDeliveryInitialized__,
         children: node.children?.map((child) => child.path),
       });
       pending.push(...(node.children ?? []));

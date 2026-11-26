@@ -18,7 +18,7 @@ it('skips source bookkeeping when a plain write changes no inactive source', () 
   const value = getDispatchNode(root, 'value');
   dispatchSetValue(value, 'next');
   expect(publish).not.toHaveBeenCalled();
-  expect(root.storedValue).toEqual({ value: 'next' });
+  expect(root.__value__).toEqual({ value: 'next' });
   expect(getDispatchNode(root, 'value')).toBe(value);
 });
 
@@ -32,7 +32,7 @@ it('leaves a fresh active occurrence without an unused inactive item memo', () =
   expect(
     Object.prototype.hasOwnProperty.call(
       getDispatchNode(root, 'value'),
-      'inactiveValueMemo',
+      '__inactiveSlotValue__',
     ),
   ).toBe(false);
 });

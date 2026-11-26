@@ -37,10 +37,10 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
 ): readonly unknown[] => {
   const runtime = node.runtime;
   const commit = runtime.commitNumber ?? 0;
-  const memo = node.watchValuesMemo;
+  const memo = node.__watchValues__;
   if (!snapshot && memo && node.isDetached) return memo.values;
   if (node.isDetached) return EMPTY_ARRAY;
-  const schema = snapshot?.schema ?? node.schema.schema;
+  const schema = snapshot?.schema ?? node.__schema__.schema;
   const watch = readValidatedControls(schema)?.watch;
   const paths = isArray(watch) ? watch : EMPTY_ARRAY;
   if (!snapshot && paths.length === 0 && (!memo || memo.values.length === 0))
@@ -96,6 +96,6 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
     };
   if (!next) return memo!.values;
   const values = next.length ? Object.freeze(next) : EMPTY_ARRAY;
-  node.watchValuesMemo = { commit, values };
+  node.__watchValues__ = { commit, values };
   return values;
 };

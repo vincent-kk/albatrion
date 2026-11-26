@@ -8,7 +8,7 @@ import { markWrite } from '../input/markWrite';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
 import { markRestoredSlotSource } from './markRestoredSlotSource';
 
-/** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
+/** Annotates the lazily created `__inactiveSlotOverlays__`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
 
 /**
@@ -48,20 +48,20 @@ export const applySlotOverlay = <Self extends FieldNodeRecord<Self>>(
   }
   if (hasOwnProperty(overlay, 'extras') || (overlay.isWhole && !arrayInput))
     node.extras = overlay.extras;
-  if (overlay.itemCount !== undefined) node.itemCount = overlay.itemCount;
+  if (overlay.itemCount !== undefined) node.__itemCount__ = overlay.itemCount;
   else if (
     overlay.isWhole &&
     node.behavior.type === 'array' &&
     !isArray(overlay.source)
   )
-    node.itemCount = 0;
+    node.__itemCount__ = 0;
   if (overlay.isWhole) {
-    node.inactiveSlotOverlays?.clear();
-    for (const entry of node.inactiveSlots?.keys() ?? [])
-      if (!overlay.children?.has(entry)) node.inactiveSlots?.delete(entry);
+    node.__inactiveSlotOverlays__?.clear();
+    for (const entry of node.__inactiveSlots__?.keys() ?? [])
+      if (!overlay.children?.has(entry)) node.__inactiveSlots__?.delete(entry);
   }
   for (const child of node.children ?? []) {
-    if (child.parent !== node) continue;
+    if (child.__parent__ !== node) continue;
     const entry = getRetainedChildEntry(node, child.name, child.blueprintNode);
     if (!entry) continue;
     const patch = overlay.children?.get(entry);
@@ -70,9 +70,9 @@ export const applySlotOverlay = <Self extends FieldNodeRecord<Self>>(
       applySlotOverlay(child, { isWhole: true }, context);
   }
   for (const [entry, patch] of overlay.children ?? []) {
-    const live = node.childrenByName?.[entry.name];
+    const live = node.__childrenByName__?.[entry.name];
     if (live?.blueprintNode === entry.node) continue;
-    const overlays: InactiveSlotOverlays = (node.inactiveSlotOverlays ??=
+    const overlays: InactiveSlotOverlays = (node.__inactiveSlotOverlays__ ??=
       new Map());
     overlays.set(entry, patch);
   }

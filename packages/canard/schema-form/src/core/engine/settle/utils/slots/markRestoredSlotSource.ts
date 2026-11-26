@@ -21,7 +21,7 @@ export const markRestoredSlotSource = <Self extends FieldNodeRecord<Self>>(
   if (
     node.source !== undefined ||
     node.extras !== undefined ||
-    (node.behavior.type === 'array' && node.itemCount > 0)
+    (node.behavior.type === 'array' && node.__itemCount__ > 0)
   ) {
     context.changedSource.add(node.path);
     context.changedNodes.add(node);

@@ -58,7 +58,7 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
     const running = { stamp, targets };
     runtime.activeValidationRun = running;
     const initialCommit = runtime.commitNumber ?? 0;
-    const validatedValue = root.storedOutputValue;
+    const validatedValue = root.__outputValue__;
     const validatedContext = runtime.context;
     void runFieldNodeValidation(node)
       .then((result) => {

@@ -13,34 +13,34 @@ afterEach(() => vi.restoreAllMocks());
 const fixture = (numeric = true) => {
   const nested = { nested: 1 };
   const children = [
-    { name: 'constructor', storedOutputValue: 'ctor' },
-    { name: '__proto__', storedOutputValue: nested },
+    { name: 'constructor', __outputValue__: 'ctor' },
+    { name: '__proto__', __outputValue__: nested },
     ...(numeric
       ? [
-          { name: '10', storedOutputValue: 10 },
-          { name: '2', storedOutputValue: 2 },
-          { name: '01', storedOutputValue: 1 },
+          { name: '10', __outputValue__: 10 },
+          { name: '2', __outputValue__: 2 },
+          { name: '01', __outputValue__: 1 },
         ]
       : []),
-    { name: 'group', storedOutputValue: nested },
+    { name: 'group', __outputValue__: nested },
   ];
   const node = {
     runtime: {},
-    storedValue: undefined,
+    __value__: undefined,
     extras: undefined,
-    schema: { schema: { type: 'object' } },
+    __schema__: { schema: { type: 'object' } },
     blueprintNode: {
       childEntries: children.map((child) => ({ name: child.name })),
     },
   } as unknown as FieldNodeRecord<unknown>;
   const first = assembleObject(node, children) as Record<string, unknown>;
-  node.storedValue = first;
+  node.__value__ = first;
   return { node, children, first, nested };
 };
 
 it('preserves numeric/string order, special data keys and unchanged child identities', () => {
   const { node, children, first, nested } = fixture();
-  children[0].storedOutputValue = 'changed';
+  children[0].__outputValue__ = 'changed';
   const result = assembleObject(node, children, [children[0]], {
     isIncremental: false,
   }) as Record<string, unknown>;
@@ -61,10 +61,10 @@ it('preserves numeric/string order, special data keys and unchanged child identi
     writable: true,
   });
   expect(result.constructor).toBe('changed');
-  expect(result.group).toBe(children[5].storedOutputValue);
-  expect(result.__proto__).toBe(children[1].storedOutputValue);
+  expect(result.group).toBe(children[5].__outputValue__);
+  expect(result.__proto__).toBe(children[1].__outputValue__);
   expect(first.constructor).toBe('ctor');
-  node.storedValue = result;
+  node.__value__ = result;
   expect(
     assembleObject(node, children, [children[0]], { isIncremental: false }),
   ).toBe(result);
@@ -72,13 +72,13 @@ it('preserves numeric/string order, special data keys and unchanged child identi
 
 it('also preserves the proven full-child patch and equal-value reference', () => {
   const { node, children, first } = fixture(false);
-  children[0].storedOutputValue = 'changed';
+  children[0].__outputValue__ = 'changed';
   const result = assembleObject(node, children) as Record<string, unknown>;
   expect(result).not.toBe(first);
   expect(Object.keys(result)).toEqual(Object.keys(first));
-  expect(result.__proto__).toBe(children[1].storedOutputValue);
-  expect(result.group).toBe(children[2].storedOutputValue);
-  node.storedValue = result;
+  expect(result.__proto__).toBe(children[1].__outputValue__);
+  expect(result.group).toBe(children[2].__outputValue__);
+  node.__value__ = result;
   expect(assembleObject(node, children)).toBe(result);
 });
 
@@ -91,9 +91,9 @@ it('keeps the existing fallback when children identity changes', () => {
       return Reflect.ownKeys(target);
     },
   });
-  node.storedValue = previous;
+  node.__value__ = previous;
   objectKeyCounts.set(previous, Object.keys(first).length);
-  children[0].storedOutputValue = 'changed';
+  children[0].__outputValue__ = 'changed';
   const hint = { isIncremental: false };
   const result = assembleObject(
     node,
@@ -109,14 +109,14 @@ it('keeps the existing fallback when children identity changes', () => {
 
 it('rebuilds authored key order when schema identity changes', () => {
   const { node, children } = fixture();
-  node.schema = {
+  node.__schema__ = {
     schema: {
       type: 'object',
       options: { propertyOrder: ['group', '01', '__proto__', 'constructor'] },
     },
     hasTypeConflict: false,
-  } as typeof node.schema;
-  children[0].storedOutputValue = 'changed';
+  } as typeof node.__schema__;
+  children[0].__outputValue__ = 'changed';
   const hint = { isIncremental: false };
   const result = assembleObject(node, children, [children[0]], hint) as Record<
     string,
@@ -131,13 +131,13 @@ it('rebuilds authored key order when schema identity changes', () => {
     '__proto__',
     'constructor',
   ]);
-  expect(result.group).toBe(children[5].storedOutputValue);
+  expect(result.group).toBe(children[5].__outputValue__);
 });
 
 it('rebuilds extras and key insertion/deletion through the existing path', () => {
   const { node, children } = fixture();
   node.extras = { extra: { retained: true } };
-  children[0].storedOutputValue = 'changed';
+  children[0].__outputValue__ = 'changed';
   const hint = { isIncremental: false };
   let result = assembleObject(node, children, [children[0]], hint) as Record<
     string,
@@ -145,8 +145,8 @@ it('rebuilds extras and key insertion/deletion through the existing path', () =>
   >;
   expect(hint.isIncremental).toBe(false);
   expect(result.extra).toBe((node.extras as Record<string, unknown>).extra);
-  node.storedValue = result;
-  children[4].storedOutputValue = undefined!;
+  node.__value__ = result;
+  children[4].__outputValue__ = undefined!;
   hint.isIncremental = false;
   result = assembleObject(node, children, [children[4]], hint) as Record<
     string,
@@ -154,8 +154,8 @@ it('rebuilds extras and key insertion/deletion through the existing path', () =>
   >;
   expect(hint.isIncremental).toBe(false);
   expect(hasOwnProperty(result, '01')).toBe(false);
-  node.storedValue = result;
-  children[4].storedOutputValue = 11;
+  node.__value__ = result;
+  children[4].__outputValue__ = 11;
   hint.isIncremental = false;
   result = assembleObject(node, children, [children[4]], hint) as Record<
     string,

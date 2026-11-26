@@ -64,7 +64,7 @@ describe('baseline fixed-width branch-axis characterization', () => {
         for (const transition of transitions) {
           evaluations = 0;
           writeFieldNode(
-            root.childrenByName!.kind,
+            root.__childrenByName__!.kind,
             transition.kind,
             FieldNodeWriteKind.Input,
             WriteOption.Overwrite,
@@ -72,9 +72,9 @@ describe('baseline fixed-width branch-axis characterization', () => {
           expect(evaluations).toBe(transition.calls);
           expect(root.children).toHaveLength(5);
           expect(root.runtime.diagnostics.status).toBe('stable');
-          expect(
-            Buffer.byteLength(JSON.stringify(root.storedOutputValue)),
-          ).toBe(90);
+          expect(Buffer.byteLength(JSON.stringify(root.__outputValue__))).toBe(
+            90,
+          );
         }
       } finally {
         compiling.mockRestore();

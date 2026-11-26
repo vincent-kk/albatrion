@@ -159,7 +159,7 @@ describe('L2 (d1) GOAL-011 fully admitted edges reuse a constant schema', () => 
     loadFieldNodeAtMount(root, { k: 0, x: 'v' }, WriteOption.Overwrite);
     expect(spy.mock.calls.map(([entry]) => entry.name)).not.toContain('x');
     writeFieldNode(
-      root.childrenByName!.k,
+      root.__childrenByName__!.k,
       1,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -201,16 +201,16 @@ describe('L2 (d1) GOAL-011 fully admitted edges reuse a constant schema', () => 
       { sw: 1, a: 'A', b: 'B', c: 'C' },
       WriteOption.Overwrite,
     );
-    const a = root.childrenByName!.a;
-    const schema = a.schema;
+    const a = root.__childrenByName__!.a;
+    const schema = a.__schema__;
     writeFieldNode(
-      root.childrenByName!.c,
+      root.__childrenByName__!.c,
       'C2',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(a, 'A2', FieldNodeWriteKind.Input, WriteOption.Overwrite);
-    expect(a.schema).toBe(schema);
+    expect(a.__schema__).toBe(schema);
     const served = spy.mock.calls.flatMap(([entry], index) =>
       entry.name === 'a' ? [spy.mock.results[index].value?.schema] : [],
     );

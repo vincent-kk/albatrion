@@ -47,7 +47,7 @@ it.each([['clear'], ['replace'], ['load'], ['reset']] as const)(
       dispatchSetValue(getDispatchNode(root, 'show'), true);
     }
     expect(readFieldNodeInactiveValues(root)).toEqual([]);
-    expect(list.storedValue).toEqual(
+    expect(list.__value__).toEqual(
       operation === 'reset' ? [{}, { v: 'old' }] : [],
     );
   },

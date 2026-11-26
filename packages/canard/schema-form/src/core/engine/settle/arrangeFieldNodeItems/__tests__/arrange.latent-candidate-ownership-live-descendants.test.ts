@@ -68,8 +68,8 @@ it.each([
       kind: 'number',
       list: operation === 'insert' ? [{}, value] : [value],
     };
-    expect(root.storedValue).toEqual(expected);
-    expect(root.storedOutputValue).toEqual(expected);
+    expect(root.__value__).toEqual(expected);
+    expect(root.__outputValue__).toEqual(expected);
     expect(
       events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
     ).toMatchObject({

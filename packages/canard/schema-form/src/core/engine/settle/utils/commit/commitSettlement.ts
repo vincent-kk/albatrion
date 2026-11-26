@@ -39,7 +39,8 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const runtime = context.root.runtime;
-  if (runtime.blueprint.capabilities.hasAliasedDependencies) getAliasedDependencyIndex(context);
+  if (runtime.blueprint.capabilities.hasAliasedDependencies)
+    getAliasedDependencyIndex(context);
   const development = process.env.NODE_ENV !== 'production';
   if (runtime.blueprint.capabilities.hasDerive) commitDeriveRules(context);
   if (runtime.blueprint.capabilities.hasExpressions)
@@ -92,10 +93,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
       continue;
     if (readSettlementSource(context, path, true) === FieldNodeWriteKind.Input)
       continue;
-    if (
-      relays !== undefined &&
-      isRelayedInput(relays, path, isEqualRelayArray)
-    )
+    if (relays !== undefined && isRelayedInput(relays, path, isEqualRelayArray))
       continue;
     refreshTargets.add(path);
   }
@@ -259,16 +257,17 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   runtime.misfitsMemo = misfitsMemo;
   for (const node of context.enteredNodes)
     if (!node.isDetached) {
-      if (node.inactiveValueMemo !== undefined)
-        node.inactiveValueMemo = undefined;
-      const parent = node.parent;
+      if (node.__inactiveSlotValue__ !== undefined)
+        node.__inactiveSlotValue__ = undefined;
+      const parent = node.__parent__;
       if (
         parent &&
-        (parent.inactiveSlots?.size || parent.inactiveSlotOverlays?.size)
+        (parent.__inactiveSlots__?.size ||
+          parent.__inactiveSlotOverlays__?.size)
       )
         (runtime.slotDirtyHosts ??= new Set()).add(parent);
     }
   if (runtime.slotDirtyHosts?.size) commitSlotChanges(context.root);
   if (loadScope === context.root)
-    runtime.loadBaseline = { value: context.root.storedOutputValue };
+    runtime.loadBaseline = { value: context.root.__outputValue__ };
 };

@@ -88,12 +88,12 @@ it('leaves frozen reads, overlay, and inactive publication unchanged through det
   const old = root.find('/leaf')!;
   root.find('/open')!.setValue(false);
   const publication = root.inactiveValues;
-  const overlay = Reflect.get(root, 'inactiveSlotOverlays');
+  const overlay = Reflect.get(root, '__inactiveSlotOverlays__');
   const updater = vi.fn(() => 'ignored');
   old.setValue(updater);
   expect(updater).not.toHaveBeenCalled();
   expect(old.value).toBe('held');
-  expect(Reflect.get(root, 'inactiveSlotOverlays')).toBe(overlay);
+  expect(Reflect.get(root, '__inactiveSlotOverlays__')).toBe(overlay);
   expect(root.inactiveValues).toBe(publication);
   root.find('/open')!.setValue(true);
   expect(root.find('/leaf')!.value).toBe('held');

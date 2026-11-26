@@ -16,7 +16,7 @@ export const verifyWriteEpoch = <Self extends FieldNodeRecord<Self>>(
   const pending = [context.target];
   while (pending.length) {
     const node = pending.pop()!;
-    if (node.writeEpoch === context.writeEpoch) actual.add(node.path);
+    if (node.__writeEpoch__ === context.writeEpoch) actual.add(node.path);
     if (node.children) for (const child of node.children) pending.push(child);
   }
   let matches = actual.size === shadow.size;

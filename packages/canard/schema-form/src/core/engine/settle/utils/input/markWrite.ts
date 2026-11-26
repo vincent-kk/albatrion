@@ -99,13 +99,14 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
       context.changedNodes.add(node);
       if (context.isAutomatic) context.hasAutomaticChanged = true;
     }
-    if (context.writeEpoch !== undefined) node.writeEpoch = context.writeEpoch;
+    if (context.writeEpoch !== undefined)
+      node.__writeEpoch__ = context.writeEpoch;
     else context.dirtyPaths.add(node.path);
     return;
   }
   if (node.behavior.type === 'virtual') {
     context.dirtyPaths.add(node.path);
-    const parent = node.parent;
+    const parent = node.__parent__;
     if (!parent) return;
     const targets =
       (node === context.target ? context.virtualWriteTargets : undefined) ??
@@ -158,12 +159,12 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   let previousItemCount: number | undefined;
 
   if (node.behavior.type === 'array') {
-    previousItemCount = node.itemCount;
+    previousItemCount = node.__itemCount__;
     if (context.isAutomatic) recordArrayBoundary(node, context);
     if (!context.arrayCounts.has(node))
       context.arrayCounts.set(node, previousItemCount);
-    node.itemCount = isArray(value) ? value.length : 0;
-    countChanged = node.itemCount !== previousItemCount;
+    node.__itemCount__ = isArray(value) ? value.length : 0;
+    countChanged = node.__itemCount__ !== previousItemCount;
     if (context.isAutomatic)
       retireArraySources(node, previousItemCount, context);
     nextSource = isArray(value) ? undefined : value;
@@ -231,14 +232,15 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
       writeOrigin,
       previousItemCount,
     );
-  if (context.writeEpoch !== undefined) node.writeEpoch = context.writeEpoch;
+  if (context.writeEpoch !== undefined)
+    node.__writeEpoch__ = context.writeEpoch;
   else context.dirtyPaths.add(node.path);
   if (!sameShape) context.shapeDirtyPaths.add(node.path);
-  if (node.childrenByName === null) return;
-  for (const name of Object.keys(node.childrenByName)) {
-    if (node.behavior.type === 'array' && Number(name) >= node.itemCount)
+  if (node.__childrenByName__ === null) return;
+  for (const name of Object.keys(node.__childrenByName__)) {
+    if (node.behavior.type === 'array' && Number(name) >= node.__itemCount__)
       continue;
-    const child = node.childrenByName[name];
+    const child = node.__childrenByName__[name];
     if (child.behavior.type === 'virtual') continue;
     const hasInput = hasDistributedChildInput(
       value,
@@ -283,7 +285,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     return;
   for (const name of Object.keys(value)) {
     const childInput = Reflect.get(value, name);
-    if (childInput === undefined || node.childrenByName[name]) continue;
+    if (childInput === undefined || node.__childrenByName__[name]) continue;
     const departing = findDepartingChild(node, name, context);
     if (departing)
       placeDeclarativeValue(

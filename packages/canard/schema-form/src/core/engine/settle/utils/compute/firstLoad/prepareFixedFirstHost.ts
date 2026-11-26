@@ -25,11 +25,11 @@ export const prepareFixedFirstHost = <Self extends FieldNodeRecord<Self>>(
     if (!constructed) return false;
     const affected = [];
     for (const entry of plan.entries) {
-      const child = node.childrenByName![entry.name];
+      const child = node.__childrenByName__![entry.name];
       if (
         entry.declarations.some((declaration) => declaration.gates.length > 0)
       )
-        affected.push({ child, schema: child.schema });
+        affected.push({ child, schema: child.__schema__ });
       else
         context.selectedDeclarationIds.set(
           child,
@@ -40,11 +40,11 @@ export const prepareFixedFirstHost = <Self extends FieldNodeRecord<Self>>(
     return false;
   }
   for (const { child, schema } of baseline) {
-    if (child.schema === schema) continue;
+    if (child.__schema__ === schema) continue;
     captureProjectionBaseline(node, child, true, context);
     if (!context.originalSchemas.has(child.path))
-      context.originalSchemas.set(child.path, child.schema);
-    child.schema = captureFieldNodeChange(child, 'schema', schema);
+      context.originalSchemas.set(child.path, child.__schema__);
+    child.__schema__ = captureFieldNodeChange(child, '__schema__', schema);
     context.dirtyPaths.add(child.path);
     context.changedNodes.add(child);
   }

@@ -29,7 +29,7 @@ describe('array structural verbs', () => {
     expect(root.value).toEqual(['a', 'x']);
     expect(root.children![0]).toBe(first);
     const added = root.children![1];
-    expect(added.itemKey).toBeGreaterThan(first.itemKey!);
+    expect(added.__itemKey__).toBeGreaterThan(first.__itemKey__!);
     expect(added.defaultValue).toBe('x');
     added.setValue('edited');
     added.resetSubtree();
@@ -81,7 +81,7 @@ describe('array structural verbs', () => {
     );
     expect(first.isDetached).toBe(true);
     expect(root.children![0]).toBe(second);
-    expect(second).toMatchObject({ name: '0', path: '/0', itemKey: 1 });
+    expect(second).toMatchObject({ name: '0', path: '/0', __itemKey__: 1 });
     expect(grandchild.path).toBe('/0/name');
     expect(second.state).toMatchObject({ edited: true, touched: true });
     expect(root.value).toEqual([{ name: 'b' }, { name: 'c' }]);
@@ -107,9 +107,13 @@ describe('array structural verbs', () => {
     expect(root.value).toEqual(['b', 'c', 'd']);
     expect(oldSecond.isDetached).toBe(true);
     expect(root.children![0].value).toBe('b');
-    expect(root.children![0].itemKey).toBeGreaterThan(oldSecond.itemKey!);
+    expect(root.children![0].__itemKey__).toBeGreaterThan(
+      oldSecond.__itemKey__!,
+    );
     expect(root.children![1].value).toBe('c');
-    expect(root.children![1].itemKey).toBeGreaterThan(oldSecond.itemKey!);
+    expect(root.children![1].__itemKey__).toBeGreaterThan(
+      oldSecond.__itemKey__!,
+    );
     expect(root.extras).toEqual(['d']);
   });
 
@@ -132,7 +136,7 @@ describe('array structural verbs', () => {
     );
     expect(root.value).toEqual(['b']);
     expect(root.children![0].blueprintNode).toBe(firstBlueprint);
-    expect(root.children![0].itemKey).toBeGreaterThan(moved.itemKey!);
+    expect(root.children![0].__itemKey__).toBeGreaterThan(moved.__itemKey__!);
     expect(moved.isDetached).toBe(true);
   });
 
@@ -168,7 +172,7 @@ describe('array structural verbs', () => {
     expect(Reflect.get(runtime, 'commitNumber')).toBe(nullCommit);
     expect(arrangeFieldNodeItems(record, { kind: 'push', value: 'x' })).toBe(1);
     expect(root.value).toEqual(['x']);
-    expect(root.children![0].itemKey).toBeGreaterThan(former.itemKey!);
+    expect(root.children![0].__itemKey__).toBeGreaterThan(former.__itemKey__!);
     expect(Reflect.get(runtime, 'commitNumber')).toBeGreaterThan(nullCommit);
     root.setValue(17);
     expect(arrangeFieldNodeItems(record, { kind: 'push', value: 'y' })).toBe(1);
@@ -208,7 +212,7 @@ describe('array structural verbs', () => {
     const record: TestFieldNode = root;
     root.resetSubtree();
     const item = root.children![0];
-    const key = item.itemKey;
+    const key = item.__itemKey__;
     expect(
       arrangeFieldNodeItems(record, {
         kind: 'update',
@@ -217,7 +221,7 @@ describe('array structural verbs', () => {
       }),
     ).toBe('updated');
     expect(root.children![0]).toBe(item);
-    expect(item.itemKey).toBe(key);
+    expect(item.__itemKey__).toBe(key);
     expect(item.defaultValue).toBe('snapshot');
     expect(Reflect.get(runtime, 'loadSnapshot')).toEqual(['snapshot']);
   });
@@ -267,7 +271,7 @@ describe('array structural verbs', () => {
     expect(second.isDetached).toBe(true);
     arrangeFieldNodeItems(record, { kind: 'push', value: 'c' });
     const third = root.children![1];
-    expect(third.itemKey).toBeGreaterThan(second.itemKey!);
+    expect(third.__itemKey__).toBeGreaterThan(second.__itemKey__!);
     expect(arrangeFieldNodeItems(record, { kind: 'clear' })).toBeUndefined();
     expect(first.isDetached).toBe(true);
     expect(third.isDetached).toBe(true);

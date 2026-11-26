@@ -266,7 +266,7 @@ describe('pop admission declines and the general path settles', () => {
       ],
     );
     expect(proof).toHaveBeenCalled();
-    expect(candidate.storedOutputValue).toEqual([{ v: 1 }]);
+    expect(candidate.__outputValue__).toEqual([{ v: 1 }]);
 
     const { root } = createDispatchTree({
       type: 'array',
@@ -278,12 +278,12 @@ describe('pop admission declines and the general path settles', () => {
     const selected = vi.spyOn(ids, 'staticIds');
     expect(dispatchPop(root)).toBe(4);
     expect(selected.mock.calls.length).toBeGreaterThanOrEqual(3);
-    expect(root.storedValue).toEqual([1, 2, 3]);
+    expect(root.__value__).toEqual([1, 2, 3]);
   });
 });
 
 describe('the truncation proof reads only facts a later write could move', () => {
-  it('admission requires the last live node at the end of both childrenByName and children', () => {
+  it('admission requires the last live node at the end of both __childrenByName__ and children', () => {
     const { root } = createDispatchTree({
       type: 'array',
       items: { type: 'number' },
@@ -291,11 +291,11 @@ describe('the truncation proof reads only facts a later write could move', () =>
     dispatchMount(root, [1, 2, 3], WriteOption.Overwrite, {
       deferValidation: true,
     });
-    const childrenByName = root.childrenByName!;
+    const childrenByName = root.__childrenByName__!;
     expect(prepareArrayPop(root, { kind: 'pop' })?.count).toBe(3);
-    root.childrenByName = { ...childrenByName, '2': childrenByName['0'] };
+    root.__childrenByName__ = { ...childrenByName, '2': childrenByName['0'] };
     expect(prepareArrayPop(root, { kind: 'pop' })).toBeUndefined();
-    root.childrenByName = childrenByName;
+    root.__childrenByName__ = childrenByName;
     expect(prepareArrayPop(root, { kind: 'remove', index: 2 })?.count).toBe(3);
   });
 
@@ -315,7 +315,7 @@ describe('the truncation proof reads only facts a later write could move', () =>
         WriteOption.Overwrite,
         scratch,
       );
-      const prior = root.childrenByName!;
+      const prior = root.__childrenByName__!;
       const proof: ArrayPopProof<DispatchTestNode> = {
         host: root,
         count: 4,
@@ -324,7 +324,7 @@ describe('the truncation proof reads only facts a later write could move', () =>
           slots: [],
           result: { source: 'removed', index: 3 },
         },
-        value: root.storedValue,
+        value: root.__value__,
         children: root.children,
         isValid: true,
       };

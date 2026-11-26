@@ -59,7 +59,7 @@ describe('host lifetime preparation', () => {
   it('does not recheck gate expressions or budget membership on repeated writes', () => {
     const { root } = createHost(0, 80);
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       1,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -67,21 +67,21 @@ describe('host lifetime preparation', () => {
     const caps = vi.spyOn(budget, 'getHostWheelBudgetCap');
     const reads = vi.spyOn(expressions, 'getGateExpression');
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       2,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       3,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(caps).not.toHaveBeenCalled();
     expect(reads.mock.calls.length).toBeLessThanOrEqual(2);
-    expect(root.childrenByName!.payload_3.source).toBe(3);
-    expect(root.childrenByName!.payload_2).toBeUndefined();
+    expect(root.__childrenByName__!.payload_3.source).toBe(3);
+    expect(root.__childrenByName__!.payload_2).toBeUndefined();
   });
 
   it.each([0, 100, 1000])(
@@ -89,12 +89,12 @@ describe('host lifetime preparation', () => {
     (siblings) => {
       const { root } = createHost(siblings);
       writeFieldNode(
-        root.childrenByName!.kind,
+        root.__childrenByName__!.kind,
         1,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
-      const fixed = root.childrenByName!.kind;
+      const fixed = root.__childrenByName__!.kind;
       const original = Map.prototype.set;
       let publications = 0;
       const sets = vi.spyOn(Map.prototype, 'set').mockImplementation(function (
@@ -116,27 +116,27 @@ describe('host lifetime preparation', () => {
         sets.mockRestore();
       }
       expect(publications).toBe(0);
-      expect(root.childrenByName!.kind).toBe(fixed);
-      expect(root.childrenByName!.payload_0.source).toBe(0);
+      expect(root.__childrenByName__!.kind).toBe(fixed);
+      expect(root.__childrenByName__!.payload_0.source).toBe(0);
     },
   );
 
-  it('keeps previously published children, childrenByName and value unchanged', () => {
+  it('keeps previously published children, __childrenByName__ and value unchanged', () => {
     const { root } = createHost(100);
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       1,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    const childrenByName = root.childrenByName!;
+    const childrenByName = root.__childrenByName__!;
     const children = root.children!;
-    const outputValue = root.storedOutputValue;
+    const outputValue = root.__outputValue__;
     const names = Object.keys(childrenByName);
     const previousChildren = [...children];
     const previousOutputValue = { ...(outputValue as object) };
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       0,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -144,13 +144,13 @@ describe('host lifetime preparation', () => {
     expect(Object.keys(childrenByName)).toEqual(names);
     expect(children).toEqual(previousChildren);
     expect(outputValue).toEqual(previousOutputValue);
-    expect(root.childrenByName).not.toBe(childrenByName);
+    expect(root.__childrenByName__).not.toBe(childrenByName);
   });
 
   it('discards static occurrence preparation on load and prepares a fresh witness', () => {
     const { root } = createHost(4);
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       1,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -167,7 +167,7 @@ describe('host lifetime preparation', () => {
       Reflect.get(getHostDerived(root), 'preparedStaticHost'),
     ).toBeUndefined();
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       1,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -183,17 +183,17 @@ describe('host lifetime preparation', () => {
     try {
       const { root } = createHost(4);
       writeFieldNode(
-        root.childrenByName!.kind,
+        root.__childrenByName__!.kind,
         1,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
       const prepared = Reflect.get(getHostDerived(root), 'preparedStaticHost');
       expect(prepared).toBeDefined();
-      root.childrenByName!.fixed_0.isDetached = true;
+      root.__childrenByName__!.fixed_0.isDetached = true;
       expect(() =>
         writeFieldNode(
-          root.childrenByName!.kind,
+          root.__childrenByName__!.kind,
           0,
           FieldNodeWriteKind.Input,
           WriteOption.Overwrite,

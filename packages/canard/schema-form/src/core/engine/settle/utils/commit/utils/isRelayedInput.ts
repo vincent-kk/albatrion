@@ -19,10 +19,10 @@ export const isRelayedInput = <Self extends FieldNodeRecord<Self>>(
       relay.node.path === path &&
       !relay.node.isDetached &&
       !relay.node.isDisposed &&
-      (isSameDeliveryValue(relay.node.storedValue, relay.value) ||
+      (isSameDeliveryValue(relay.node.__value__, relay.value) ||
         (equalArrays !== undefined &&
           (relay.node.behavior.type === 'array' ||
             relay.node.behavior.type === 'virtual') &&
           relay.node.behavior.strategy === 'branch' &&
-          equalArrays(relay.node.storedValue, relay.value))),
+          equalArrays(relay.node.__value__, relay.value))),
   );

@@ -50,17 +50,17 @@ describe('root declaration tables retain selection and warning observations', ()
           );
           for (const kind of ['both', 'b', 'none', 'both']) {
             writeFieldNode(
-              root.childrenByName!.kind,
+              root.__childrenByName__!.kind,
               kind,
               FieldNodeWriteKind.Input,
               WriteOption.Overwrite,
             );
             history.push({
-              outputValue: root.storedOutputValue,
-              schema: root.schema,
+              outputValue: root.__outputValue__,
+              schema: root.__schema__,
               ids: [...(root.runtime.committedDeclarationIds ?? [])],
               warnings: [...(root.runtime.warningKeys ?? [])],
-              revision: root.revisionLedger,
+              revision: root.__revisionLedger__,
             });
           }
           if (keyword === 'oneOf')

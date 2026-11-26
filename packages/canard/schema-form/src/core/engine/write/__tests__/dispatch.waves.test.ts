@@ -52,8 +52,8 @@ describe('dispatcher delivery waves', () => {
       subscribeFieldNode(node, () => seen.push(node.path));
 
     let unobservedParentReads = 0;
-    const parent = a.parent;
-    Object.defineProperty(a, 'parent', {
+    const parent = a.__parent__;
+    Object.defineProperty(a, '__parent__', {
       configurable: true,
       get() {
         unobservedParentReads += 1;
@@ -85,8 +85,8 @@ describe('dispatcher delivery waves', () => {
     const seen: string[] = [];
     subscribeFieldNode(root, (event) => {
       if (!(event.type & FieldNodeEventType.UpdateValue)) return;
-      seen.push(String(root.storedOutputValue));
-      if (root.storedOutputValue === 'first') dispatchSetValue(root, 'second');
+      seen.push(String(root.__outputValue__));
+      if (root.__outputValue__ === 'first') dispatchSetValue(root, 'second');
     });
     dispatchSetValue(root, 'first');
     expect(seen).toEqual(['first', 'second']);
@@ -151,7 +151,7 @@ describe('dispatcher delivery waves', () => {
     });
     child.isDetached = true;
     runtime.deliveries?.add(child);
-    child.pendingDelivery = { type: FieldNodeEventType.UpdateValue };
+    child.__pendingDelivery__ = { type: FieldNodeEventType.UpdateValue };
     dispatchBatch(root, () => {});
     expect(calls).toBe(0);
     expect(runtime.deliveries?.has(child)).toBe(false);

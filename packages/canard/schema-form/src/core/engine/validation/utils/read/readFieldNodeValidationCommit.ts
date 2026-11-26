@@ -9,7 +9,9 @@ import { sameValueZero } from '../../../utils/compute/sameValueZero';
  * @param context - Form context captured at that commit.
  * @returns The current commit, or undefined when a newer commit changed the inputs.
  */
-export const readFieldNodeValidationCommit = <Self extends FieldNodeRecord<Self>>(
+export const readFieldNodeValidationCommit = <
+  Self extends FieldNodeRecord<Self>,
+>(
   root: Self,
   commit: number,
   value: unknown,
@@ -18,7 +20,7 @@ export const readFieldNodeValidationCommit = <Self extends FieldNodeRecord<Self>
   const current = root.runtime.commitNumber ?? 0;
   if (
     current === commit ||
-    (sameValueZero(root.storedOutputValue, value) &&
+    (sameValueZero(root.__outputValue__, value) &&
       root.runtime.context === context)
   )
     return current;

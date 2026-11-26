@@ -50,7 +50,7 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
     node === node.rootNode ? { stamp, targets: new Set([node]) } : undefined;
   if (running) runtime.activeValidationRun = running;
   const initialCommit = runtime.commitNumber ?? 0;
-  const validatedValue = root.storedOutputValue;
+  const validatedValue = root.__outputValue__;
   const validatedContext = runtime.context;
   const loadStamp = runtime.validationLoadStamp;
   const epoch = runtime.validationEpoch;

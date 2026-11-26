@@ -26,7 +26,7 @@ it('prepares a unique-kind terminal write without slot checks, overlay lookups o
   const prune = vi.spyOn(pruning, 'pruneSlotSources');
   const apply = vi.spyOn(overlays, 'applySlotOverlay');
   const lookup = vi.fn(() => undefined);
-  Object.defineProperty(root, 'inactiveSlotOverlays', {
+  Object.defineProperty(root, '__inactiveSlotOverlays__', {
     configurable: true,
     get: lookup,
   });
@@ -34,5 +34,5 @@ it('prepares a unique-kind terminal write without slot checks, overlay lookups o
   expect(prune).not.toHaveBeenCalled();
   expect(apply).not.toHaveBeenCalled();
   expect(lookup).not.toHaveBeenCalled();
-  expect(root.storedValue).toEqual({ type: 'a', x: 'A', y: 1 });
+  expect(root.__value__).toEqual({ type: 'a', x: 'A', y: 1 });
 });

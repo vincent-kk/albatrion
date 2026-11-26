@@ -17,8 +17,9 @@ export const runDeliveryWaves = <Self extends FieldNodeRecord<Self>>(
     const runtime = active.runtime;
     const pending: [Self, FieldNodeDelivery][] = [];
     for (const node of runtime.deliveries ?? []) {
-      if (node.pendingDelivery) pending.push([node, node.pendingDelivery]);
-      node.pendingDelivery = undefined;
+      if (node.__pendingDelivery__)
+        pending.push([node, node.__pendingDelivery__]);
+      node.__pendingDelivery__ = undefined;
     }
     runtime.deliveries = new Set();
     waves += 1;

@@ -36,7 +36,7 @@ export interface FieldNodeRecord<Self> {
   /** Immutable analysis template for this occurrence. */
   readonly blueprintNode: BlueprintNode;
   /** Current structural parent, absent only at the root. */
-  parent: Nullable<Self>;
+  __parent__: Nullable<Self>;
   /** Live root, including when this node has detached. */
   rootNode: Self;
   /** Unescaped name within the parent. */
@@ -46,7 +46,7 @@ export interface FieldNodeRecord<Self> {
   /** Canonical absolute path of this occurrence. */
   path: string;
   /** Settlement generation marking this occurrence for a static whole write. */
-  writeEpoch?: number;
+  __writeEpoch__?: number;
   /** Number of structural edges from the root. */
   depth: number;
   /** Whether the current declaration requires this node. */
@@ -56,33 +56,36 @@ export interface FieldNodeRecord<Self> {
   /** Stable JSON type restriction retained from blueprint analysis; undefined on virtual nodes. */
   readonly schemaType: Optional<BlueprintSchemaType>;
   /** Direct children in the last committed shape, keyed by their names. */
-  childrenByName: Nullable<Dictionary<Self>>;
+  __childrenByName__: Nullable<Dictionary<Self>>;
   /** Stored public child array for the last committed shape. */
   children: Nullable<readonly Self[]>;
   /** Previously active occurrences retained by their exact blueprint binding. */
-  inactiveSlots?: Map<BlueprintChildEntry, Self>;
+  __inactiveSlots__?: Map<BlueprintChildEntry, Self>;
   /** Immutable missing-child inputs and source exclusions at this occurrence's exit. */
-  retainedSourceOverlay?: InactiveSlotOverlay;
+  __retainedSourceOverlay__?: InactiveSlotOverlay;
   /** Host-owned source patches that never mutate retained public references. */
-  inactiveSlotOverlays?: Map<BlueprintChildEntry, InactiveSlotOverlay>;
+  __inactiveSlotOverlays__?: Map<BlueprintChildEntry, InactiveSlotOverlay>;
   /** Pre-change sources retained until a live host publishes its next commit. */
-  inactiveSlotBaselines?: Map<BlueprintChildEntry, InactiveSlotBaseline<Self>>;
+  __inactiveSlotBaselines__?: Map<
+    BlueprintChildEntry,
+    InactiveSlotBaseline<Self>
+  >;
   /** Owned active child hosts with retained descendants, excluding unrelated siblings. */
-  inactiveSlotChildren?: Map<string, Self>;
+  __inactiveSlotChildren__?: Map<string, Self>;
   /** Frozen materialization for this reference's committed inactive sources. */
-  inactiveValuesCache?: readonly { path: string; value: unknown }[];
+  __inactiveValues__?: readonly { path: string; value: unknown }[];
   /** Whether a committed slot or descendant change invalidated this host read. */
-  isInactiveValuesDirty?: boolean;
+  __isInactiveValuesDirty__?: boolean;
   /** Last item published from this inactive lifetime; absent on active clones. */
-  inactiveValueMemo?: InactiveSlotValueMemo;
+  __inactiveSlotValue__?: InactiveSlotValueMemo;
   /** Last-live explicit keep/clear decision; an own undefined means inheritance. */
-  shouldUnsetOnInactive?: boolean;
+  __shouldUnsetOnInactive__?: boolean;
   /** Creation-order nonce for an array item, absent on other nodes. */
-  itemKey: Nullable<number>;
+  __itemKey__: Nullable<number>;
   /** Number of array host positions, including positions without templates. */
-  itemCount: number;
+  __itemCount__: number;
   /** Next creation-order nonce owned by an array host. */
-  nextItemKey: number;
+  __nextItemKey__: number;
   /** Interpreted terminal source or a branch's non-plain source. */
   source: unknown;
   /** Undeclared object keys retained in their incoming own-key order. */
@@ -96,37 +99,37 @@ export interface FieldNodeRecord<Self> {
   /** Local disabled result after all active state declarations are combined. */
   isDisabled: boolean;
   /** Calculated local value before output projection. */
-  storedValue: unknown;
+  __value__: unknown;
   /** Calculated output value. */
-  storedOutputValue: unknown;
+  __outputValue__: unknown;
   /** Current output at this occurrence's path when divergence was last read. */
-  divergenceCurrent: unknown;
+  __divergenceCurrent__: unknown;
   /** Concrete path whose parsed segments this occurrence retains. */
-  divergencePath: string | undefined;
+  __divergencePath__: string | undefined;
   /** Parsed path syntax retained until this occurrence changes address. */
-  divergenceSegments: readonly PointerSegment[] | undefined;
+  __divergenceSegments__: readonly PointerSegment[] | undefined;
   /** Baseline output at this occurrence's path when divergence was last read. */
-  divergenceBase: unknown;
+  __divergenceBase__: unknown;
   /** Pure comparison result for the two retained path values. */
-  storedIsDivergent: boolean;
+  __isDivergent__: boolean;
   /**
    * Last default tuple projected for a virtual group, returned again while its length and every
    * element stay `Object.is`-equal to a fresh projection; undefined on other kinds and before the first read.
    */
-  virtualDefaultValue?: readonly unknown[];
+  __virtualDefaultValue__?: readonly unknown[];
   /**
    * Watch values from this occurrence's last changed read and the commit that read them; a read returns the
    * same array while every value stays `Object.is`-equal, and a detached read returns it unchanged.
    * Undefined until a read meets a watch list; in a tree that declares any watch, an exit replaces it with the
    * departing snapshot's values.
    */
-  watchValuesMemo?: { commit: number; values: readonly unknown[] };
+  __watchValues__?: { commit: number; values: readonly unknown[] };
   /** Merged effective schema for the active declarations. */
-  schema: EffectiveSchema;
+  __schema__: EffectiveSchema;
   /** Stored interaction flags updated by shallow patches. */
-  storedState: NodeStateFlags;
+  __state__: NodeStateFlags;
   /** Unreleased pre-change eligibility entries, one per public write sequence, cut by release generation. */
-  revealBaseline?: {
+  __revealBaseline__?: {
     entries: {
       readonly state: NodeStateFlags;
       /** Presence before this write's first eligibility change. */
@@ -136,36 +139,36 @@ export interface FieldNodeRecord<Self> {
     }[];
   };
   /** Per-bit commit counts, allocated on the first delivery. */
-  revisionLedger: Readonly<Record<number, number>>;
+  __revisionLedger__: Readonly<Record<number, number>>;
   /** Whether this occurrence has completed its initial delivery comparison. */
-  isDeliveryInitialized: boolean;
+  __isDeliveryInitialized__: boolean;
   /** Event kinds with first-change baselines pending this commit. */
-  deliveryChanges: number;
+  __deliveryChanges__: number;
   /** Value/output identities at the first value change in this commit. */
-  deliveryPreviousValue?: unknown;
-  deliveryPreviousOutputValue?: unknown;
+  __deliveryPreviousValue__?: unknown;
+  __deliveryPreviousOutputValue__?: unknown;
   /** Address before this commit's first rekey. */
-  deliveryPreviousPath?: string;
+  __deliveryPreviousPath__?: string;
   /** Child identity collection before the first shape change. */
-  deliveryPreviousChildren?: Nullable<readonly Self[]>;
+  __deliveryPreviousChildren__?: Nullable<readonly Self[]>;
   /** Packed active/visible/readOnly/disabled values before their first change. */
-  deliveryPreviousComputedBits?: number;
+  __deliveryPreviousComputedBits__?: number;
   /** Effective schema identity before this commit's first schema change. */
-  deliveryPreviousSchema?: EffectiveSchema;
+  __deliveryPreviousSchema__?: EffectiveSchema;
   /** Interaction state before settlement clears or patches it. */
-  deliveryPreviousState?: NodeStateFlags;
+  __deliveryPreviousState__?: NodeStateFlags;
   /** Last compared watch values, present only on declared watch targets. */
-  deliveryWatchValues?: readonly unknown[];
+  __deliveryWatchValues__?: readonly unknown[];
   /** Event bits and immutable payloads awaiting the next settlement wave. */
-  pendingDelivery?: FieldNodeDelivery;
+  __pendingDelivery__?: FieldNodeDelivery;
   /** Bits to advance once at this commit, independently of listeners. */
-  pendingRevisionMask: number;
+  __pendingRevisionMask__: number;
   /** State and command events awaiting their separate wave. */
-  pendingNonSettleDelivery?: FieldNodeDelivery;
+  __pendingNonSettleDelivery__?: FieldNodeDelivery;
   /** Whether this reference has left the live shape. */
   isDetached: boolean;
   /** Retired by binding adoption; reads retain the preceding commit. */
   isDisposed: boolean;
   /** Monotone interaction lifetime, independent of event delivery. */
-  interactionEpoch: number;
+  __interactionEpoch__: number;
 }

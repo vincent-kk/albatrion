@@ -19,6 +19,7 @@ import { recordSettlementFailure } from '../../errors/recordSettlementFailure';
 import { evaluateGate } from '../../gates/evaluateGate';
 import { flushPendingGateReads } from '../../gates/flushPendingGateReads';
 import { getGateRegistry } from '../../gates/getGateRegistry';
+import { isOwnActiveGate } from '../../gates/isOwnActiveGate';
 import { readGateSelectionGroup } from '../../gates/readGateSelectionGroup';
 import { getChildDistribution } from '../../input/getChildDistribution';
 import { hasDistributedChildInput } from '../../input/hasDistributedChildInput';
@@ -36,7 +37,6 @@ import { staticIds } from './staticIds';
 import type { PreparedDiscriminatorEntry } from './utils/prepareDiscriminatorEntrySelection';
 import type { PreparedStaticHost } from './utils/prepareStaticHost';
 import { readDiscriminatorEntrySelection } from './utils/readDiscriminatorEntrySelection';
-import { isOwnActiveGate } from '../../gates/isOwnActiveGate';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
 const NO_ACTIVE_IDS: readonly number[] = EMPTY_ARRAY;
@@ -51,7 +51,7 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   readonly preparedDynamic?: Dictionary<Self>;
   /** Original dynamic membership is retained solely for exit comparison. */
   readonly priorDynamicNames?: readonly string[];
-  /** Host whose current `childrenByName` is selected. */
+  /** Host whose current `__childrenByName__` is selected. */
   readonly node: Self;
   /** Settlement effects, dirty paths, failures, latent state and gate evidence. */
   readonly context: SettlementContext<Self>;
@@ -84,7 +84,7 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
  * @param entry - Candidate edge whose declarations, blueprint and name are evaluated
  * @param step - Prepared gate and declaration IDs, or undefined for general selection
  * @param frame - Host, context, prior shape, compute callback, immediate/flush flags,
- * current `childrenByName`, admitted-name map, inactive list and accumulated changed flag
+ * current `__childrenByName__`, admitted-name map, inactive list and accumulated changed flag
  * @returns Nothing; mutates frame.changed, frame.next, frame.seenNodesByName and frame.inactiveEntries
  * @remarks Gate reads may publish pending projections and record inputs or failures.
  * Updates throwing exits, presence hosts, projection baselines, recursion budget, perished/pending exit
@@ -368,7 +368,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       context.hasGates ? ids : NO_ACTIVE_IDS,
       { mode: 'runtime', isAtomic },
     );
-  if (child.schema !== effectiveSchema) {
+  if (child.__schema__ !== effectiveSchema) {
     captureProjectionBaseline(
       node,
       child,
@@ -376,8 +376,12 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       context,
     );
     if (!context.originalSchemas.has(child.path))
-      context.originalSchemas.set(child.path, child.schema);
-    child.schema = captureFieldNodeChange(child, 'schema', effectiveSchema);
+      context.originalSchemas.set(child.path, child.__schema__);
+    child.__schema__ = captureFieldNodeChange(
+      child,
+      '__schema__',
+      effectiveSchema,
+    );
     context.dirtyPaths.add(child.path);
     if (child.behavior.strategy === 'branch')
       context.shapeDirtyPaths.add(child.path);

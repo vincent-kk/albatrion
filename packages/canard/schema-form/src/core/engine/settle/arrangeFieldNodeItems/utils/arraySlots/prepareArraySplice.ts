@@ -28,7 +28,7 @@ export const prepareArraySplice = <Self extends FieldNodeRecord<Self>>(
 ): Optional<ArraySpliceProof<Self>> => {
   if (operation.kind !== 'remove' && operation.kind !== 'insert')
     return undefined;
-  const count = node.itemCount;
+  const count = node.__itemCount__;
   const index = operation.index;
   const template = node.blueprintNode;
   if (
@@ -38,7 +38,7 @@ export const prepareArraySplice = <Self extends FieldNodeRecord<Self>>(
     !admitsStaticArrayTail(node)
   )
     return undefined;
-  const items = node.childrenByName;
+  const items = node.__childrenByName__;
   const children = node.children;
   for (let position = index; position < count; position++) {
     const item = items?.['' + position];

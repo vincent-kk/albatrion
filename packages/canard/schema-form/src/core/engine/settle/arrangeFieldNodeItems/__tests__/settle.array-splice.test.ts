@@ -55,7 +55,7 @@ describe('static middle remove and insert through the splice path match the gene
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       [remove(0), remove(1), remove(4), remove(5), remove(5, false)],
     );
-    expect(candidate.storedOutputValue).toEqual([1, 3, 4, 5, 7]);
+    expect(candidate.__outputValue__).toEqual([1, 3, 4, 5, 7]);
   });
 
   it('inserts number items, undefined and -0 at 0, 1, N/2 and N-2, leaves N to push, and declines after a misfit NaN', () => {
@@ -72,7 +72,7 @@ describe('static middle remove and insert through the splice path match the gene
         insert(1, 1, false),
       ],
     );
-    expect(candidate.itemCount).toBe(11);
+    expect(candidate.__itemCount__).toBe(11);
   });
 
   it('moves nested object items with their descendants and fills an inserted item default', () => {
@@ -89,7 +89,7 @@ describe('static middle remove and insert through the splice path match the gene
       remove(4),
       insert(4, { nested: [7] }),
     ]);
-    expect(candidate.storedOutputValue).toHaveLength(6);
+    expect(candidate.__outputValue__).toHaveLength(6);
     expect(candidate.children!.map((child) => child.path)).toEqual([
       '/0',
       '/1',
@@ -232,15 +232,15 @@ describe('NODE-051 identity on the splice path', () => {
     );
     const children = run.root.children!;
     expect(children[0]).toBe(run.before[0]);
-    expect(children[0].itemKey).toBe(run.keys[0]);
+    expect(children[0].__itemKey__).toBe(run.keys[0]);
     expect(run.before).not.toContain(children[1]);
-    expect(run.keys).not.toContain(children[1].itemKey);
+    expect(run.keys).not.toContain(children[1].__itemKey__);
     for (let index = 1; index < run.before.length; index++) {
       expect(children[index + 1]).toBe(run.before[index]);
-      expect(children[index + 1].itemKey).toBe(run.keys[index]);
+      expect(children[index + 1].__itemKey__).toBe(run.keys[index]);
       expect(children[index + 1].name).toBe('' + (index + 1));
       expect(children[index + 1].path).toBe('/' + (index + 1));
-      expect(children[index + 1].parent).toBe(run.root);
+      expect(children[index + 1].__parent__).toBe(run.root);
     }
 
     const removed = runArrayWrite(NUMBERS, [10, 11, 12, 13], (root) =>
@@ -252,7 +252,7 @@ describe('NODE-051 identity on the splice path', () => {
     expect(removed.before[1].isDetached).toBe(true);
     for (let index = 2; index < removed.before.length; index++) {
       expect(rest[index - 1]).toBe(removed.before[index]);
-      expect(rest[index - 1].itemKey).toBe(removed.keys[index]);
+      expect(rest[index - 1].__itemKey__).toBe(removed.keys[index]);
       expect(rest[index - 1].path).toBe('/' + (index - 1));
     }
   });

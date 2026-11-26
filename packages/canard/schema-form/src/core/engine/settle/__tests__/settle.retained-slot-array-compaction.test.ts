@@ -34,11 +34,11 @@ it('compacts live kept descendants in their original order', () => {
     { path: '/list/1/keep', value: 24 },
   ]);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(root.storedOutputValue).toEqual({
+  expect(root.__outputValue__).toEqual({
     open: true,
     list: [{ keep: 12 }, { keep: 24 }],
   });
-  expect(getDispatchNode(root, 'list').itemCount).toBe(2);
+  expect(getDispatchNode(root, 'list').__itemCount__).toBe(2);
 });
 
 it('restores scalar items that explicitly keep their own source', () => {
@@ -60,7 +60,7 @@ it('restores scalar items that explicitly keep their own source', () => {
     { path: '/list/1', value: 'last' },
   ]);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(root.storedOutputValue).toEqual({
+  expect(root.__outputValue__).toEqual({
     open: true,
     list: ['first', 'last'],
   });
@@ -97,7 +97,7 @@ it('recursively compacts nested clearing arrays', () => {
     { path: '/list/1/0/keep', value: 24 },
   ]);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(root.storedOutputValue).toEqual({
+  expect(root.__outputValue__).toEqual({
     open: true,
     list: [[{ keep: 12 }], [{ keep: 24 }]],
   });
@@ -119,8 +119,8 @@ it('keeps clearing arrays without keep descendants empty on re-entry', () => {
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   expect(readFieldNodeInactiveValues(root)).toEqual([]);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(getDispatchNode(root, 'list').itemCount).toBe(0);
-  expect(root.storedOutputValue).toEqual({ open: true });
+  expect(getDispatchNode(root, 'list').__itemCount__).toBe(0);
+  expect(root.__outputValue__).toEqual({ open: true });
 });
 
 it('preserves each kept candidate kind inside a compacted survivor', () => {
@@ -241,7 +241,7 @@ it.each([
       spy.mockRestore();
     }
     dispatchSetValue(getDispatchNode(root, 'open'), true);
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       open: true,
       list:
         kind === 'array'
@@ -290,7 +290,7 @@ it('rebinds kept item candidates when survivors shift to earlier indices', () =>
     { path: '/list/0', value: 12 },
   ]);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(getDispatchNode(root, 'list').itemCount).toBe(1);
+  expect(getDispatchNode(root, 'list').__itemCount__).toBe(1);
   expect(getDispatchNode(root, 'list', '0').source).toBe(12);
   dispatchSetValue(getDispatchNode(root, 'number'), false);
   expect(getDispatchNode(root, 'list', '0').source).toBe('held');
@@ -323,8 +323,8 @@ it('keeps an item whose only kept source is an explicitly kept empty array', () 
   dispatchMount(root, { open: true, list: [{ name: 'a' }, { name: 'b' }] });
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(getDispatchNode(root, 'list').itemCount).toBe(2);
-  expect(root.storedOutputValue).toEqual({ open: true, list: [{}, {}] });
+  expect(getDispatchNode(root, 'list').__itemCount__).toBe(2);
+  expect(root.__outputValue__).toEqual({ open: true, list: [{}, {}] });
 });
 
 it('visits a clearing array without keep declarations once, whatever its item count', () => {
@@ -354,5 +354,5 @@ it('visits a clearing array without keep declarations once, whatever its item co
     spy.mockRestore();
   }
   dispatchSetValue(getDispatchNode(root, 'open'), true);
-  expect(getDispatchNode(root, 'list').itemCount).toBe(0);
+  expect(getDispatchNode(root, 'list').__itemCount__).toBe(0);
 });

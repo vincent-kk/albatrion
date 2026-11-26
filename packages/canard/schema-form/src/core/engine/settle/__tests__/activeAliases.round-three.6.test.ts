@@ -60,9 +60,9 @@ describe('context reads in a reused active-only template', () => {
       const { root } = createDispatchTree(s);
       setContext(root, { on: false });
       dispatchMount(root, {});
-      const before = root.storedOutputValue;
+      const before = root.__outputValue__;
       setContext(root, { on: true });
-      return { before, after: root.storedOutputValue };
+      return { before, after: root.__outputValue__ };
     };
     expect(read(schema)).toEqual(read(inline(schema)));
   });

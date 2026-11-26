@@ -31,8 +31,8 @@ describe('array settlement lifecycle', () => {
     expect(hasRetainedSlotOwnSource(root, '/1', 'string')).toBe(false);
     root.setValue(['x', 'c']);
     expect(root.children![1]).not.toBe(perished);
-    expect(Reflect.get(root.children![1], 'itemKey')).toBeGreaterThan(
-      Reflect.get(perished, 'itemKey'),
+    expect(Reflect.get(root.children![1], '__itemKey__')).toBeGreaterThan(
+      Reflect.get(perished, '__itemKey__'),
     );
   });
 
@@ -335,9 +335,9 @@ describe('array settlement lifecycle', () => {
       cause: 'budget',
       exceededBudget: 'transition',
     });
-    expect(root.childrenByName?.items?.itemCount).toBe(0);
-    expect(root.childrenByName?.items?.children).toEqual([]);
-    expect(root.childrenByName?.items?.nextItemKey).toBeGreaterThan(0);
+    expect(root.__childrenByName__?.items?.__itemCount__).toBe(0);
+    expect(root.__childrenByName__?.items?.children).toEqual([]);
+    expect(root.__childrenByName__?.items?.__nextItemKey__).toBeGreaterThan(0);
   });
 
   it('35C-05 restores prior item references and extras after automatic array growth', () => {
@@ -385,9 +385,9 @@ describe('array settlement lifecycle', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const host = root.childrenByName!.items;
+    const host = root.__childrenByName__!.items;
     const first = host.children![0];
-    const tuple = root.childrenByName!.tuple;
+    const tuple = root.__childrenByName__!.tuple;
     const tupleFirst = tuple.children![0];
     const previousExtras = tuple.extras;
     expect(() =>
@@ -404,11 +404,11 @@ describe('array settlement lifecycle', () => {
     });
     expect(host.children).toEqual([first]);
     expect(host.children![0]).toBe(first);
-    expect(host.itemCount).toBe(1);
+    expect(host.__itemCount__).toBe(1);
     expect(host.extras).toBeUndefined();
-    expect(host.nextItemKey).toBeGreaterThan(first.itemKey! + 1);
+    expect(host.__nextItemKey__).toBeGreaterThan(first.__itemKey__! + 1);
     expect(tuple.children![0]).toBe(tupleFirst);
-    expect(tuple.itemCount).toBe(2);
+    expect(tuple.__itemCount__).toBe(2);
     expect(tuple.extras).toBe(previousExtras);
     expect(tuple.extras).toEqual(['extra']);
   });

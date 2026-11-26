@@ -16,7 +16,7 @@ export const computeStableNode = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const epoch = context.writeEpoch;
-  const marked = epoch !== undefined && node.writeEpoch === epoch;
+  const marked = epoch !== undefined && node.__writeEpoch__ === epoch;
   if (!marked && !context.dirtyPaths.has(node.path)) return;
   context.stateDirtyNodes.add(node);
   if (node.behavior.strategy === 'branch') {
@@ -25,17 +25,17 @@ export const computeStableNode = <Self extends FieldNodeRecord<Self>>(
       : dirtyChildren(node, context);
     for (let index = 0; index < recalculated.length; index++) {
       const child = recalculated[index];
-      if (!marked || child.writeEpoch === epoch)
+      if (!marked || child.__writeEpoch__ === epoch)
         computeStableNode(child, context);
     }
     updateOutput(node, context, recalculated);
   } else {
-    if (node.parent === null) selectNodeSchema(node, context);
+    if (node.__parent__ === null) selectNodeSchema(node, context);
     updateOutput(node, context);
   }
   if (marked) {
-    node.writeEpoch = 0;
-    if (node !== context.target || node.parent === null) return;
+    node.__writeEpoch__ = 0;
+    if (node !== context.target || node.__parent__ === null) return;
   }
   if (context.dirtyPaths instanceof DirtyPathSet)
     context.dirtyPaths.consume(node.path);

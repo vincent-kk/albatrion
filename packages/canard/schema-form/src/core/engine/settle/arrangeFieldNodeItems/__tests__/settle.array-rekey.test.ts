@@ -56,12 +56,12 @@ describe('array path movement', () => {
       getGateRegistry(root.runtime).hasRegisteredPathKind('/1', 'object'),
     ).toBe(false);
     writeFieldNode(
-      shifted.childrenByName!.show,
+      shifted.__childrenByName__!.show,
       true,
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(shifted.childrenByName!.hidden.storedValue).toBe('secret');
+    expect(shifted.__childrenByName__!.hidden.__value__).toBe('secret');
   });
 
   it('NODE-044 ignores writes through popped and removed references', () => {
@@ -95,7 +95,7 @@ describe('array path movement', () => {
       WriteOption.Overwrite,
     );
     expect(root.runtime.commitNumber).toBe(commit);
-    expect(root.storedValue).toEqual(['c']);
+    expect(root.__value__).toEqual(['c']);
     expect(hasRetainedSlotOwnSource(root, '/0', 'string')).toBe(false);
   });
 
@@ -117,9 +117,9 @@ describe('array path movement', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const former = root.childrenByName!.list;
+    const former = root.__childrenByName__!.list;
     writeFieldNode(
-      root.childrenByName!.show,
+      root.__childrenByName__!.show,
       false,
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
@@ -128,16 +128,16 @@ describe('array path movement', () => {
     expect(arrangeFieldNodeItems(former, { kind: 'push', value: 'b' })).toBe(1);
     expect(readRetainedSlotSource(root, '/list', 'array')).toEqual(['a']);
     writeFieldNode(
-      root.childrenByName!.show,
+      root.__childrenByName__!.show,
       true,
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName!.list.storedValue).toEqual(['a']);
+    expect(root.__childrenByName__!.list.__value__).toEqual(['a']);
     const commit = root.runtime.commitNumber;
     arrangeFieldNodeItems(former, { kind: 'push', value: 'ignored' });
     expect(root.runtime.commitNumber).toBe(commit);
-    expect(root.childrenByName!.list.storedValue).toEqual(['a']);
+    expect(root.__childrenByName__!.list.__value__).toEqual(['a']);
   });
 
   it('58C-01 GOAL-073 retains the single budget error and does not reuse a spent key', () => {
@@ -177,12 +177,12 @@ describe('array path movement', () => {
     if (!(caught instanceof SchemaFormError))
       throw new Error('Missing budget failure');
     expect(caught.code).toBe('SCHEMA_FORM_ERROR.BUDGET_EXCEEDED');
-    const host = root.childrenByName!.items;
-    const spent = host.nextItemKey;
+    const host = root.__childrenByName__!.items;
+    const spent = host.__nextItemKey__;
     expect(spent).toBeGreaterThan(0);
     root.runtime.disableAutomaticWrites = true;
     arrangeFieldNodeItems(host, { kind: 'push', value: 'caller' });
-    expect(host.children![0].itemKey).toBe(spent);
-    expect(host.nextItemKey).toBeGreaterThan(spent);
+    expect(host.children![0].__itemKey__).toBe(spent);
+    expect(host.__nextItemKey__).toBeGreaterThan(spent);
   });
 });

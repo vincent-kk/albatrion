@@ -27,7 +27,7 @@ it('P1 retains BudgetExceeded when a changed wheel consumes the complete cap', (
   try {
     expect(() =>
       writeFieldNode(
-        root.childrenByName!.sw,
+        root.__childrenByName__!.sw,
         2,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,

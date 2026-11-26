@@ -35,28 +35,28 @@ const observe = (root: PlainNode) => {
   const pending = [root];
   while (pending.length) {
     const node = pending.pop()!;
-    expect(node.storedValue).toBe(node.storedValue);
+    expect(node.__value__).toBe(node.__value__);
     expect(node.children).toBe(node.children);
     nodes.push({
       path: node.path,
       source: node.source,
       extras: node.extras,
-      value: node.storedValue,
-      outputValue: node.storedOutputValue,
+      value: node.__value__,
+      outputValue: node.__outputValue__,
       isRequired: node.isRequired,
       isActive: node.isActive,
       isVisible: node.isVisible,
       isReadOnly: node.isReadOnly,
       isDisabled: node.isDisabled,
-      state: node.storedState,
-      revisions: { ...node.revisionLedger },
-      delivery: node.pendingDelivery,
-      initialized: node.isDeliveryInitialized,
-      itemKey: node.itemKey,
+      state: node.__state__,
+      revisions: { ...node.__revisionLedger__ },
+      delivery: node.__pendingDelivery__,
+      initialized: node.__isDeliveryInitialized__,
+      itemKey: node.__itemKey__,
     });
     const children = node.children;
     for (let index = (children?.length ?? 0) - 1; index >= 0; index--)
-      if (children![index].parent === node) pending.push(children![index]);
+      if (children![index].__parent__ === node) pending.push(children![index]);
   }
   return {
     nodes,
@@ -73,7 +73,7 @@ const observe = (root: PlainNode) => {
     refresh: [...(root.runtime.refreshTargets ?? [])],
     errors: [...(root.runtime.combinedErrors ?? [])],
     globalErrors: root.runtime.globalErrors,
-    nonSettle: root.pendingNonSettleDelivery,
+    nonSettle: root.__pendingNonSettleDelivery__,
   };
 };
 
@@ -108,8 +108,8 @@ const compare = (
   expect(observe(actual)).toEqual(observe(oracle));
   expect(actual.runtime.commitNumber).toBe(1);
   for (const node of actual.runtime.deliveries ?? []) {
-    expect(node.isDeliveryInitialized).toBe(true);
-    expect(node.revisionLedger[FieldNodeEventType.RequestRefresh]).toBe(1);
+    expect(node.__isDeliveryInitialized__).toBe(true);
+    expect(node.__revisionLedger__[FieldNodeEventType.RequestRefresh]).toBe(1);
   }
   return { actual, oracle, actualError, eligible };
 };
@@ -126,22 +126,22 @@ it('matches flat defaults, integer and escaped names, required and subsequent wr
       '~tail': { type: 'string' },
     },
   });
-  const sibling = actual.childrenByName!['2'];
+  const sibling = actual.__childrenByName__!['2'];
   for (const value of ['b', 'a', 'a']) {
     writeFieldNode(
-      actual.childrenByName!['a/b'],
+      actual.__childrenByName__!['a/b'],
       value,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      oracle.childrenByName!['a/b'],
+      oracle.__childrenByName__!['a/b'],
       value,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     expect(observe(actual)).toEqual(observe(oracle));
-    expect(actual.childrenByName!['2']).toBe(sibling);
+    expect(actual.__childrenByName__!['2']).toBe(sibling);
   }
 });
 
@@ -186,7 +186,7 @@ it.each([0, 1, 1000])('matches array defaults with %i items', (count) => {
   expect(actualError).toBeUndefined();
   expect(eligible).toBe(!genericFirstLoad);
   expect(actual.runtime.diagnostics).toEqual({ status: 'stable' });
-  expect(actual.storedOutputValue).toEqual(
+  expect(actual.__outputValue__).toEqual(
     count === 0
       ? {}
       : {
@@ -269,9 +269,9 @@ it('finishes every revision before any queued delivery can be observed', () => {
   const nodes = [...(actual.runtime.deliveries ?? [])];
   for (const _delivery of nodes)
     for (const node of nodes) {
-      expect(node.isDeliveryInitialized).toBe(true);
-      expect(node.pendingRevisionMask).toBe(0);
-      expect(node.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(1);
+      expect(node.__isDeliveryInitialized__).toBe(true);
+      expect(node.__pendingRevisionMask__).toBe(0);
+      expect(node.__revisionLedger__[FieldNodeEventType.UpdateValue]).toBe(1);
     }
 });
 
@@ -309,9 +309,9 @@ it('matches a literal null container default without filling its children', () =
     },
   });
   expect(eligible).toBe(!genericFirstLoad);
-  expect(actual.storedOutputValue).toEqual({ account: null });
+  expect(actual.__outputValue__).toEqual({ account: null });
   expect(
-    actual.childrenByName?.account?.childrenByName?.kind?.source,
+    actual.__childrenByName__?.account?.__childrenByName__?.kind?.source,
   ).toBeUndefined();
 });
 
@@ -395,9 +395,9 @@ it('does not expose intermediate values to a synchronous reporter during first l
   const observed: unknown[] = [];
   const report = vi.fn(() =>
     observed.push({
-      value: root.storedValue,
+      value: root.__value__,
       commit: root.runtime.commitNumber,
-      revisions: root.revisionLedger,
+      revisions: root.__revisionLedger__,
     }),
   );
   root.runtime.errorReporter = { hasConsumer: () => true, report };
@@ -406,7 +406,7 @@ it('does not expose intermediate values to a synchronous reporter during first l
   expect(report).not.toHaveBeenCalled();
   expect(warning).not.toHaveBeenCalled();
   expect(observed).toEqual([]);
-  expect(root.storedValue).toEqual({ group: { mismatch: 'bad' }, tail: 2 });
+  expect(root.__value__).toEqual({ group: { mismatch: 'bad' }, tail: 2 });
   expect(
     [...(root.runtime.pendingWarningRecords?.values() ?? [])].map(
       (record) => record.path,
@@ -429,17 +429,17 @@ it('delivers the same listener payloads after all nodes and global state are fin
   const run = (generic: boolean) => {
     const { root } = createTestTree(schema);
     root.runtime.validationMode = 0;
-    root.storedState = { touched: true };
+    root.__state__ = { touched: true };
     const delivered: unknown[] = [];
     const listen = (node: PlainNode) =>
       subscribeFieldNode(node, (event) => {
         const pending = root.runtime.commitNumber === 1 ? [root] : [];
         while (pending.length) {
           const current = pending.pop()!;
-          expect(current.isDeliveryInitialized).toBe(true);
-          expect(current.pendingRevisionMask).toBe(0);
+          expect(current.__isDeliveryInitialized__).toBe(true);
+          expect(current.__pendingRevisionMask__).toBe(0);
           expect(
-            current.revisionLedger[FieldNodeEventType.RequestRefresh],
+            current.__revisionLedger__[FieldNodeEventType.RequestRefresh],
           ).toBe(1);
           for (const child of current.children ?? []) pending.push(child);
         }
@@ -470,7 +470,7 @@ it('delivers the same listener payloads after all nodes and global state are fin
     forceStaticGeneric?.mockRestore();
     for (const value of ['again', 'leaf', 'leaf'])
       dispatchSetValue(
-        root.childrenByName!.nested.childrenByName!.leaf,
+        root.__childrenByName__!.nested.__childrenByName__!.leaf,
         value,
         WriteOption.Overwrite,
       );

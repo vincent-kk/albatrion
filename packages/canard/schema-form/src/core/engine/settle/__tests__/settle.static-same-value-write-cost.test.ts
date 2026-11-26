@@ -59,12 +59,12 @@ const measureWrite = (count: number, changed: number) => {
       finish(context, scratch, scalarWrite);
     },
   );
-  const host = root.childrenByName!.h;
+  const host = root.__childrenByName__!.h;
   const next: Record<string, number> = { ...value };
   for (let index = 0; index < changed; index++) next['k' + index] = -index - 1;
   dispatchSetValue(host, next);
   vi.restoreAllMocks();
-  expect(Object(root.storedOutputValue).h).toEqual(next);
+  expect(Object(root.__outputValue__).h).toEqual(next);
   return counts;
 };
 

@@ -46,7 +46,7 @@ it.each(['#/items/oneOf/0/properties/value/minLength', '#/unknown/minLength'])(
     expect(reads).toBe(once);
     for (let index = 0; index < issues.length; index++) {
       const shown = readFieldNodeErrors(
-        root.childrenByName![index].childrenByName!.value,
+        root.__childrenByName__![index].__childrenByName__!.value,
       );
       expect(shown).toEqual(
         schemaPath.includes('/unknown/') || index % 2 === 0

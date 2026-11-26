@@ -17,9 +17,9 @@ export const getRetainedChildEntry = <Self extends FieldNodeRecord<Self>>(
   name: string,
   template: BlueprintNode,
 ): Optional<BlueprintChildEntry> => {
-  for (const binding of host.inactiveSlots?.keys() ?? [])
+  for (const binding of host.__inactiveSlots__?.keys() ?? [])
     if (binding.name === name && binding.node === template) return binding;
-  for (const binding of host.inactiveSlotOverlays?.keys() ?? [])
+  for (const binding of host.__inactiveSlotOverlays__?.keys() ?? [])
     if (binding.name === name && binding.node === template) return binding;
   if (host.behavior.type === 'array')
     return getItemEntries(host.blueprintNode, Number(name)).find(

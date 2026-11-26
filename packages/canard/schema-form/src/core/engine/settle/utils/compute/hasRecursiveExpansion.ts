@@ -58,7 +58,7 @@ const hasOriginalInput = <Self extends FieldNodeRecord<Self>>(
     return true;
   if (
     node.behavior.type === 'array' &&
-    node.itemCount > 0 &&
+    node.__itemCount__ > 0 &&
     !distribution?.isAutomatic &&
     !context.filledNodes.has(node)
   )
@@ -111,14 +111,14 @@ export const hasRecursiveExpansion = <Self extends FieldNodeRecord<Self>>(
   while (ancestor) {
     if (
       ancestor.blueprintNode === template &&
-      (!schema || ancestor.schema === schema) &&
+      (!schema || ancestor.__schema__ === schema) &&
       (!hosts || hosts.has(ancestor)) &&
       !hasOriginalInput(ancestor, context)
     ) {
       relativeSpan ??= getRecursiveRelativeSpan(analysis);
       if (depth - ancestor.depth >= relativeSpan) return true;
     }
-    ancestor = ancestor.parent;
+    ancestor = ancestor.__parent__;
   }
   return false;
 };

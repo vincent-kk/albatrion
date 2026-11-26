@@ -52,7 +52,7 @@ it('replays the resolved batch without invoking its callback again', () => {
   });
   dispatchBatch(root, callback);
   expect(callback).toHaveBeenCalledTimes(1);
-  expect(root.storedValue).toEqual({ open: false, count: 3 });
+  expect(root.__value__).toEqual({ open: false, count: 3 });
 });
 
 it('compares frozen detached reads after external state and error inputs', () => {

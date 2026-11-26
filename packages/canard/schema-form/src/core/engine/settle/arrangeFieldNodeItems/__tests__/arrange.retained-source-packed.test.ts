@@ -39,7 +39,7 @@ it('moves packed inactive arrays without publishing their internal leaves', () =
     { path: '/list/1', value: ['three'] },
   ]);
   dispatchSetValue(getDispatchNode(root, 'show'), true);
-  expect(list.storedValue).toEqual([[], ['one', 'two'], ['three']]);
+  expect(list.__value__).toEqual([[], ['one', 'two'], ['three']]);
 });
 
 it('ignores old descendant writes after an array has already re-entered', () => {
@@ -66,6 +66,6 @@ it('ignores old descendant writes after an array has already re-entered', () => 
   dispatchSetValue(old, 'after move');
   dispatchSetValue(getDispatchNode(root, 'show'), true);
   expect(readFieldNodeInactiveValues(root)).toEqual([]);
-  expect(getDispatchNode(list, '1', '0').storedValue).toBe('first');
-  expect(old.storedValue).toBe('first');
+  expect(getDispatchNode(list, '1', '0').__value__).toBe('first');
+  expect(old.__value__).toBe('first');
 });

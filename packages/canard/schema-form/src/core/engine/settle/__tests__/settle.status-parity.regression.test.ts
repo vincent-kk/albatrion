@@ -19,10 +19,10 @@ describe('settle status parity regressions', () => {
     const second = createTestTree(schema).root;
     loadFieldNodeAtMount(first, { b: 5 }, WriteOption.Overwrite);
     loadFieldNodeAtMount(second, { a: 1, b: 5 }, WriteOption.Overwrite);
-    expect(first.childrenByName?.b).toBeDefined();
-    expect(second.childrenByName?.b).toBeDefined();
-    expect(first.storedOutputValue).toEqual({ a: 1, b: 5 });
-    expect(first.storedOutputValue).toEqual(second.storedOutputValue);
+    expect(first.__childrenByName__?.b).toBeDefined();
+    expect(second.__childrenByName__?.b).toBeDefined();
+    expect(first.__outputValue__).toEqual({ a: 1, b: 5 });
+    expect(first.__outputValue__).toEqual(second.__outputValue__);
     expect(first.runtime.diagnostics.status).toBe(
       second.runtime.diagnostics.status,
     );
@@ -52,7 +52,7 @@ describe('settle status parity regressions', () => {
       loadFieldNodeAtMount(root, { a: 0 }, WriteOption.Overwrite),
     ).toThrow();
     expect(root.source).toBeUndefined();
-    expect(root.childrenByName?.a?.source).toBe(0);
+    expect(root.__childrenByName__?.a?.source).toBe(0);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'budget',

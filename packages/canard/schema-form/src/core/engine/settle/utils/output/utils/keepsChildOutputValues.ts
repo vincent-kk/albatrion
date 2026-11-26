@@ -13,7 +13,7 @@ export const keepsChildOutputValues = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   if (host === null || typeof host !== 'object') return true;
   for (const child of children) {
-    const outputValue = child.storedOutputValue;
+    const outputValue = child.__outputValue__;
     if (
       outputValue !== undefined &&
       !isSameDeliveryValue(Reflect.get(host, child.name), outputValue)

@@ -48,7 +48,7 @@ const makeRecord = (
     misfitPaths: new PathKeyedSet(),
   },
   blueprintNode,
-  parent: null,
+  __parent__: null,
   rootNode: undefined,
   name: '',
   escapedName: '',
@@ -57,33 +57,33 @@ const makeRecord = (
   isRequired: false,
   isNullable: false,
   schemaType: blueprintNode.schemaType,
-  childrenByName: null,
+  __childrenByName__: null,
   children: null,
-  itemKey: null,
-  itemCount: 0,
-  nextItemKey: 0,
+  __itemKey__: null,
+  __itemCount__: 0,
+  __nextItemKey__: 0,
   source,
   extras: undefined,
   isActive: true,
   isVisible: true,
   isReadOnly: false,
   isDisabled: false,
-  storedValue: undefined,
-  storedOutputValue: undefined,
-  divergenceCurrent: undefined,
-  divergencePath: undefined,
-  divergenceSegments: undefined,
-  divergenceBase: undefined,
-  storedIsDivergent: false,
-  schema: { schema: { options }, hasTypeConflict: false },
-  storedState: {},
-  revisionLedger: EMPTY_REVISION_LEDGER,
-  isDeliveryInitialized: false,
-  deliveryChanges: 0,
-  pendingRevisionMask: 0,
+  __value__: undefined,
+  __outputValue__: undefined,
+  __divergenceCurrent__: undefined,
+  __divergencePath__: undefined,
+  __divergenceSegments__: undefined,
+  __divergenceBase__: undefined,
+  __isDivergent__: false,
+  __schema__: { schema: { options }, hasTypeConflict: false },
+  __state__: {},
+  __revisionLedger__: EMPTY_REVISION_LEDGER,
+  __isDeliveryInitialized__: false,
+  __deliveryChanges__: 0,
+  __pendingRevisionMask__: 0,
   isDetached: false,
   isDisposed: false,
-  interactionEpoch: 0,
+  __interactionEpoch__: 0,
 });
 
 /** Construct the read-only scalar interpretation restriction. */
@@ -158,9 +158,9 @@ describe('behavior rows', () => {
     expect(stringBehavior.finishInput(node)).toBe('text');
     expect(node.source).toBe('  text  ');
     expect(stringBehavior.project(node, '')).toBeUndefined();
-    const choices = getStaticChoices(node.schema);
-    expect(getStaticChoices(node.schema)).toBe(choices);
-    node.schema = {
+    const choices = getStaticChoices(node.__schema__);
+    expect(getStaticChoices(node.__schema__)).toBe(choices);
+    node.__schema__ = {
       schema: { options: { omitEmpty: false } },
       hasTypeConflict: false,
     };
@@ -195,10 +195,10 @@ describe('behavior rows', () => {
     );
     const first = { value: 1 };
     const second = { value: 'two' };
-    node.childrenByName = { first, second };
+    node.__childrenByName__ = { first, second };
     const tuple = virtualBehavior.assemble(node, [first, second]);
     expect(tuple).toEqual([1, 'two']);
-    node.storedValue = tuple;
+    node.__value__ = tuple;
     expect(virtualBehavior.assemble(node, [first, second])).toBe(tuple);
     expect(virtualBehavior.project(node, tuple)).toBeUndefined();
     expect(virtualBehavior.declareChildren(node)).toBe(
@@ -243,8 +243,8 @@ describe('behavior rows', () => {
       propertyOrder: ['second'],
     });
     const children = [
-      { name: 'first', storedOutputValue: 1 },
-      { name: 'second', storedOutputValue: 2 },
+      { name: 'first', __outputValue__: 1 },
+      { name: 'second', __outputValue__: 2 },
     ];
     node.extras = { other: 3 };
     const value = objectBehavior.branch.assemble(node, children);
@@ -252,13 +252,13 @@ describe('behavior rows', () => {
       throw new Error('object assembly returned a scalar');
     expect(Object.keys(value)).toEqual(['second', 'first', 'other']);
     expect(value).toEqual({ second: 2, first: 1, other: 3 });
-    node.storedValue = value;
+    node.__value__ = value;
     expect(objectBehavior.branch.assemble(node, children)).toBe(value);
-    children[0].storedOutputValue = 4;
+    children[0].__outputValue__ = 4;
     const changed = objectBehavior.branch.assemble(node, children);
     expect(changed).not.toBe(value);
     expect(changed).toEqual({ second: 2, first: 4, other: 3 });
-    node.storedValue = changed;
+    node.__value__ = changed;
     node.extras = { other: 3, last: 5 };
     const expanded = objectBehavior.branch.assemble(node, children);
     if (expanded === null || typeof expanded !== 'object')

@@ -10,7 +10,7 @@ import { getSlotPathNames } from './getSlotPathNames';
 import { getSlotSource } from './getSlotSource';
 import { markSlotChange } from './markSlotChange';
 
-/** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
+/** Annotates the lazily created `__inactiveSlotOverlays__`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
 
 /**
@@ -34,15 +34,17 @@ export const pruneSlotSources = <Self extends FieldNodeRecord<Self>>(
   const parts = getSlotPathNames(root.runtime, path);
   if (parts === undefined) return;
   const clear = (host: Self): void => {
-    const entries = new Set<BlueprintChildEntry>(host.inactiveSlots?.keys());
-    for (const entry of host.inactiveSlotOverlays?.keys() ?? [])
+    const entries = new Set<BlueprintChildEntry>(
+      host.__inactiveSlots__?.keys(),
+    );
+    for (const entry of host.__inactiveSlotOverlays__?.keys() ?? [])
       entries.add(entry);
     for (const entry of entries)
       markSlotChange(host, entry, undefined, context);
-    host.inactiveSlots?.clear();
-    host.inactiveSlotOverlays?.clear();
-    for (const child of host.inactiveSlotChildren?.values() ?? [])
-      if (host.childrenByName?.[child.name] === child && !child.isDetached)
+    host.__inactiveSlots__?.clear();
+    host.__inactiveSlotOverlays__?.clear();
+    for (const child of host.__inactiveSlotChildren__?.values() ?? [])
+      if (host.__childrenByName__?.[child.name] === child && !child.isDetached)
         clear(child);
   };
   const patch = (
@@ -65,29 +67,31 @@ export const pruneSlotSources = <Self extends FieldNodeRecord<Self>>(
       return;
     }
     const name = parts[position];
-    const entries = new Set<BlueprintChildEntry>(host.inactiveSlots?.keys());
-    for (const entry of host.inactiveSlotOverlays?.keys() ?? [])
+    const entries = new Set<BlueprintChildEntry>(
+      host.__inactiveSlots__?.keys(),
+    );
+    for (const entry of host.__inactiveSlotOverlays__?.keys() ?? [])
       entries.add(entry);
     for (const entry of entries) {
       if (entry.name !== name) continue;
       markSlotChange(host, entry, undefined, context);
       if (position + 1 === parts.length) {
-        host.inactiveSlots?.delete(entry);
-        host.inactiveSlotOverlays?.delete(entry);
+        host.__inactiveSlots__?.delete(entry);
+        host.__inactiveSlotOverlays__?.delete(entry);
       } else {
-        const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
-          new Map());
+        const overlays: InactiveSlotOverlays =
+          (host.__inactiveSlotOverlays__ ??= new Map());
         overlays.set(
           entry,
           patch(
-            host.inactiveSlots?.get(entry),
-            host.inactiveSlotOverlays?.get(entry),
+            host.__inactiveSlots__?.get(entry),
+            host.__inactiveSlotOverlays__?.get(entry),
             position + 1,
           ),
         );
       }
     }
-    const live = host.childrenByName?.[name];
+    const live = host.__childrenByName__?.[name];
     if (live && !live.isDetached) visit(live, position + 1);
   };
   visit(root, 0);

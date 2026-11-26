@@ -20,7 +20,7 @@ import { isOwnActiveGate } from '../gates/isOwnActiveGate';
 interface Occurrence {
   readonly path: string;
   readonly blueprintNode: BlueprintNode;
-  readonly parent: Occurrence | null;
+  readonly __parent__: Occurrence | null;
   readonly children: readonly Occurrence[] | null;
   readonly isDetached: boolean;
   readonly isDisposed?: boolean;
@@ -141,7 +141,7 @@ class AliasedDependencyIndex {
     seen.add(node);
     this.register(node);
     for (const child of node.children ?? [])
-      if (child.parent === node) this.registerSubtree(child, seen);
+      if (child.__parent__ === node) this.registerSubtree(child, seen);
   }
 
   /** Rebind one occurrence only when its address or child shape changes. */
@@ -151,7 +151,7 @@ class AliasedDependencyIndex {
     if (
       previous?.path === node.path &&
       previous.children === node.children &&
-      previous.parent === node.parent
+      previous.parent === node.__parent__
     )
       return;
     this.affectedPath = undefined;
@@ -165,7 +165,7 @@ class AliasedDependencyIndex {
         this.paths.delete(key);
         this.owners.delete(key);
       }
-      if (previous.parent !== node.parent && previous.parent)
+      if (previous.parent !== node.__parent__ && previous.parent)
         this.children.get(previous.parent)?.delete(node);
     }
     this.contextNodes.delete(node);
@@ -230,10 +230,12 @@ class AliasedDependencyIndex {
             continue;
           const expression = getGateExpression(this.blueprint, gate.schemaPath);
           if (!expression) continue;
-          const childHost =
-            isOwnActiveGate(gate.schemaPath, declaration.schemaPath)
-              ? appendSegment(node.path, entry.name)
-              : undefined;
+          const childHost = isOwnActiveGate(
+            gate.schemaPath,
+            declaration.schemaPath,
+          )
+            ? appendSegment(node.path, entry.name)
+            : undefined;
           const host = bindGateHostPath(
             gate,
             node.blueprintNode.path,
@@ -255,12 +257,12 @@ class AliasedDependencyIndex {
     this.byNode.set(node, {
       path: node.path,
       children: node.children,
-      parent: node.parent,
+      parent: node.__parent__,
       keys,
     });
-    if (node.parent) {
-      let children = this.children.get(node.parent);
-      if (!children) this.children.set(node.parent, (children = new Set()));
+    if (node.__parent__) {
+      let children = this.children.get(node.__parent__);
+      if (!children) this.children.set(node.__parent__, (children = new Set()));
       children.add(node);
     }
   }

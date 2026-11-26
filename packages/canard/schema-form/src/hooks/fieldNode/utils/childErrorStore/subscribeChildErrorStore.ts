@@ -8,7 +8,7 @@ import type { ChildErrorStoreState } from './types';
 
 /**
  * Bind one parent/children listener set, preserving unchanged reconnect tokens.
- * @param node - Parent retained in the subscription set for childrenByName changes
+ * @param node - Parent retained in the subscription set for __childrenByName__ changes
  * @param children - Child identities selected by the hook's current render
  * @param state - Private token and last close vector; a new store has no close vector
  * @param listener - React check called for deliveries and same-store reconnects, after attachment

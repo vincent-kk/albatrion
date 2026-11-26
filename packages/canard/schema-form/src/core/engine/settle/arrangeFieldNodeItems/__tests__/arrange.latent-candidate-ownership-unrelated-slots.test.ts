@@ -57,8 +57,8 @@ it.each([{ position: 3 }, { position: 4 }])(
         { path: '/list/1/v', value: '1' },
         { path: '/list/2/v', value: 2 },
       ]);
-      expect(root.storedValue).toEqual({ show: false, list: [{}, {}, {}] });
-      expect(root.storedOutputValue).toEqual(root.storedValue);
+      expect(root.__value__).toEqual({ show: false, list: [{}, {}, {}] });
+      expect(root.__outputValue__).toEqual(root.__value__);
     }
   },
 );

@@ -48,9 +48,9 @@ export const expandTemplatePaths = <Self extends FieldNodeRecord<Self>>(
       segment === PointerOperator.Wildcard &&
       node.blueprintNode.item !== undefined
     ) {
-      for (let index = node.itemCount - 1; index >= 0; index--) {
+      for (let index = node.__itemCount__ - 1; index >= 0; index--) {
         const name = '' + index;
-        const child = node.childrenByName?.[name];
+        const child = node.__childrenByName__?.[name];
         if (depth + 1 === segments.length || child)
           pending.push({
             node: child,
@@ -62,7 +62,7 @@ export const expandTemplatePaths = <Self extends FieldNodeRecord<Self>>(
     }
     const name = segment;
     if (typeof name !== 'string') continue;
-    const childrenByName = node.childrenByName;
+    const childrenByName = node.__childrenByName__;
     const child =
       childrenByName && hasOwnProperty(childrenByName, name)
         ? childrenByName[name]

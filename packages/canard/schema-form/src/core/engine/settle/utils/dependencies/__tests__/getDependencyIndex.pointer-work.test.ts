@@ -69,7 +69,7 @@ it('reuses authored arrays across affected, presence and exact live queries', ()
     });
     expect(registered).toContain('/reader');
     expect(getLivePresenceNode(root, '/reader')).toBe(
-      root.childrenByName!.reader,
+      root.__childrenByName__!.reader,
     );
   }
   expect(wrapper).not.toHaveBeenCalled();

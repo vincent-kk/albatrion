@@ -9,5 +9,5 @@ export const readFieldNodeRevealBaseline = <Self extends FieldNodeRecord<Self>>(
 ) =>
   (node.rootNode.runtime.validationMode ?? ValidationMode.None) &
   ValidationMode.OnChange
-    ? node.revealBaseline
+    ? node.__revealBaseline__
     : undefined;

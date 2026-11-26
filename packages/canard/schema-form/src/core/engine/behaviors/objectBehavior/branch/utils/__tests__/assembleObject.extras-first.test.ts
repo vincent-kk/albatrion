@@ -25,9 +25,9 @@ const makeNode = (
 ) =>
   ({
     runtime: {},
-    storedValue: undefined,
+    __value__: undefined,
     extras,
-    schema: {
+    __schema__: {
       schema: { type: 'object', options: { propertyOrder } },
       hasTypeConflict: false,
     },
@@ -102,8 +102,8 @@ it.each([3, 1000])(
     let baseline = assembleObjectBaseline(baselineNode, children);
     for (const addKey of [false, true]) {
       if (addKey) extras.added = { retained: true };
-      node.storedValue = actual;
-      baselineNode.storedValue = baseline;
+      node.__value__ = actual;
+      baselineNode.__value__ = baseline;
       const hint = { isIncremental: false };
       const baselineHint = { isIncremental: false };
       const next = assembleObject(node, children, [], hint);

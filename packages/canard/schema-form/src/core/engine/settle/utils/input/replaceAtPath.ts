@@ -129,7 +129,7 @@ export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
   if (wrongSource !== undefined) {
     let childNode = node;
     while (childNode && childNode.depth > depth + 1)
-      childNode = childNode.parent ?? undefined;
+      childNode = childNode.__parent__ ?? undefined;
     const hasOutput =
       !isCommittedInput &&
       !!childNode &&

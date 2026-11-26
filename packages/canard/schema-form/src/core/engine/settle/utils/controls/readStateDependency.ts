@@ -45,7 +45,7 @@ export const readStateDependency = <Self extends FieldNodeRecord<Self>>(
       absentContext ??
       {}
     );
-  let value: unknown = snapshot ? snapshot.outputValue : root.storedOutputValue;
+  let value: unknown = snapshot ? snapshot.outputValue : root.__outputValue__;
   for (const name of segments) {
     if (value === null || typeof value !== 'object') return undefined;
     if (typeof name !== 'string') return undefined;

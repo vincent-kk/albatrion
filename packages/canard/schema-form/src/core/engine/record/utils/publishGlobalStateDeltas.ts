@@ -27,8 +27,8 @@ export const publishGlobalStateDeltas = <Self extends FieldNodeRecord<Self>>(
   if (!nextState) return;
   runtime.globalState = nextState;
   const queued = runtime.queuedNonSettleEvents ?? new Set();
-  const previous = root.pendingNonSettleDelivery;
-  root.pendingNonSettleDelivery = {
+  const previous = root.__pendingNonSettleDelivery__;
+  root.__pendingNonSettleDelivery__ = {
     type:
       (previous?.type ?? BIT_MASK_NONE) | FieldNodeEventType.UpdateGlobalState,
     payload: {

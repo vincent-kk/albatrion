@@ -149,10 +149,10 @@ it.each<MoveCase>([
       })),
     );
     expect(list.children).toEqual([]);
-    expect(root.storedValue).toEqual({
+    expect(root.__value__).toEqual({
       show: false,
       list: operation === 'insert' ? [{}, {}, {}, {}] : [{}, {}],
     });
-    expect(root.storedOutputValue).toEqual(root.storedValue);
+    expect(root.__outputValue__).toEqual(root.__value__);
   },
 );

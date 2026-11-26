@@ -18,7 +18,7 @@ export const prepareArrayPop = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   operation: ArrayOperation,
 ): Optional<ArrayPopProof<Self>> => {
-  const count = node.itemCount;
+  const count = node.__itemCount__;
   const index = count - 1;
   if (
     (operation.kind !== 'pop' &&
@@ -27,7 +27,7 @@ export const prepareArrayPop = <Self extends FieldNodeRecord<Self>>(
     !admitsStaticArrayTail(node)
   )
     return undefined;
-  const last = node.childrenByName?.['' + index];
+  const last = node.__childrenByName__?.['' + index];
   if (!last || node.children?.[index] !== last) return undefined;
   return {
     host: node,
@@ -37,7 +37,7 @@ export const prepareArrayPop = <Self extends FieldNodeRecord<Self>>(
       slots: EMPTY_ARRAY,
       result: { source: 'removed', index },
     },
-    value: node.storedValue,
+    value: node.__value__,
     isValid: true,
   };
 };

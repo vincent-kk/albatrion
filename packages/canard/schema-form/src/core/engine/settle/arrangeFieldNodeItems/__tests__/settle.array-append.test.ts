@@ -103,7 +103,7 @@ describe('static push through the append path matches the general path', () => {
         { apply: (root) => dispatchPush(root, 'b'), append: true },
       ],
     );
-    expect(candidate.storedValue).toEqual(['a', 'b']);
+    expect(candidate.__value__).toEqual(['a', 'b']);
   });
 
   it('creates nested object items eagerly and fills only their missing literal defaults', () => {
@@ -136,9 +136,9 @@ describe('static push through the append path matches the general path', () => {
         { apply: (root) => dispatchPush(root, {}), append: true },
       ],
     );
-    expect(candidate.children![1].childrenByName!.nested.children).toHaveLength(
-      1,
-    );
+    expect(
+      candidate.children![1].__childrenByName__!.nested.children,
+    ).toHaveLength(1);
   });
 
   it('appends to a non-root array without changing its sibling', () => {
@@ -153,17 +153,17 @@ describe('static push through the append path matches the general path', () => {
       { rows: [1, 2], sibling: 'same' },
       [
         {
-          apply: (root) => dispatchPush(root.childrenByName!.rows, 3),
+          apply: (root) => dispatchPush(root.__childrenByName__!.rows, 3),
           append: true,
         },
         {
-          apply: (root) => dispatchPush(root.childrenByName!.rows, 4),
+          apply: (root) => dispatchPush(root.__childrenByName__!.rows, 4),
           append: true,
         },
       ],
-      (root) => root.childrenByName!.rows,
+      (root) => root.__childrenByName__!.rows,
     );
-    expect(candidate.storedOutputValue).toEqual({
+    expect(candidate.__outputValue__).toEqual({
       rows: [1, 2, 3, 4],
       sibling: 'same',
     });
@@ -201,7 +201,7 @@ describe('static push through the append path matches the general path', () => {
           { apply: (root) => dispatchPush(root, count + 1), append: true },
         ],
       );
-      expect(candidate.storedValue).toHaveLength(count + 2);
+      expect(candidate.__value__).toHaveLength(count + 2);
     },
   );
 });

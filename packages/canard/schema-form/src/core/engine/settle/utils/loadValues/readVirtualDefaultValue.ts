@@ -10,24 +10,24 @@ import { readLoadSegments } from './readLoadSegments';
  * @param node - Attached virtual group; the caller answers detached reads from their capture
  * @returns The memoized tuple when its length and every element are `Object.is`-equal to a fresh
  * declaration-ordered projection of the current load snapshot, so an unchanged read allocates nothing;
- * otherwise a new unfrozen tuple that replaces it in the node's `virtualDefaultValue`. Empty when the group has no parent.
+ * otherwise a new unfrozen tuple that replaces it in the node's `__virtualDefaultValue__`. Empty when the group has no parent.
  */
 export const readVirtualDefaultValue = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): readonly unknown[] => {
-  const parent = node.parent;
+  const parent = node.__parent__;
   if (!parent) return EMPTY_ARRAY;
   const snapshot = node.runtime.loadSnapshot;
   const host = parent.path
     ? getLoadValue(snapshot, parent.path, readLoadSegments(parent))
     : snapshot;
   const fields = node.blueprintNode.fields ?? EMPTY_ARRAY;
-  const previous = node.virtualDefaultValue;
+  const previous = node.__virtualDefaultValue__;
   if (previous && matchesProjection(previous, host, fields)) return previous;
   const next: unknown[] = [];
   for (let index = 0; index < fields.length; index++)
     next.push(readLoadProperty(host, fields[index]));
-  node.virtualDefaultValue = next;
+  node.__virtualDefaultValue__ = next;
   return next;
 };
 

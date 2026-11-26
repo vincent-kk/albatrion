@@ -44,11 +44,11 @@ const fixture = () => {
 it('IR-6 H separate standalone writes retain every pre-change state in generation order', () => {
   const { a, runtime } = fixture();
   runtime.isValidationPending = true;
-  const first = a.storedState;
+  const first = a.__state__;
   dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: false });
-  const second = a.storedState;
+  const second = a.__state__;
   dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
-  expect(a.revealBaseline).toMatchObject({
+  expect(a.__revealBaseline__).toMatchObject({
     entries: [
       { state: first, isPresent: true },
       { state: second, isPresent: true },
@@ -60,12 +60,12 @@ it('IR-6 H an intermediate hide within one batch coalesces to its painted entry'
   dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
   clock.frame();
   return clock.task().then(() => {
-    const before = a.storedState;
+    const before = a.__state__;
     dispatchBatch(root, () => {
       dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: false });
       dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
     });
-    expect(a.revealBaseline).toMatchObject({
+    expect(a.__revealBaseline__).toMatchObject({
       entries: [{ state: before, isPresent: true }],
     });
   });
@@ -75,14 +75,14 @@ it('IR-6 H a subtree walk shares one sequence across its standalone state writes
   dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
   clock.frame();
   await clock.task();
-  const before = a.storedState;
+  const before = a.__state__;
   dispatchVisitSubtree(root, (node) => {
     if (node === a) {
       dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: false });
       dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
     }
   });
-  expect(a.revealBaseline).toMatchObject({
+  expect(a.__revealBaseline__).toMatchObject({
     entries: [{ state: before, isPresent: true }],
   });
 });
@@ -92,16 +92,16 @@ it('IR-6 H later nodes do not extend the first node past its captured release ge
   clock.frame();
   dispatchSetState(b, { [FieldNodeState.Touched]: true });
   await clock.task();
-  expect(a.revealBaseline).toBeUndefined();
-  expect(b.revealBaseline).toBeDefined();
+  expect(a.__revealBaseline__).toBeUndefined();
+  expect(b.__revealBaseline__).toBeDefined();
   clock.frame();
   dispatchSetState(root, { [FieldNodeState.ErrorVisibility]: true });
   await clock.task();
-  expect(b.revealBaseline).toBeUndefined();
-  expect(root.revealBaseline).toBeDefined();
+  expect(b.__revealBaseline__).toBeUndefined();
+  expect(root.__revealBaseline__).toBeDefined();
   clock.frame();
   await clock.task();
-  expect(root.revealBaseline).toBeUndefined();
+  expect(root.__revealBaseline__).toBeUndefined();
 });
 it.each(['setState', 'setSubtreeState', 'clearState'] as const)(
   'IR-6 H %s schedules a release even when its listener throws',
@@ -126,7 +126,7 @@ it.each(['setState', 'setSubtreeState', 'clearState'] as const)(
     unsubscribe();
     clock.frame();
     await clock.task();
-    expect(a.revealBaseline).toBeUndefined();
+    expect(a.__revealBaseline__).toBeUndefined();
   },
 );
 it('IR-6 D accepted root validation releases quiet history without a frame', async () => {
@@ -134,7 +134,7 @@ it('IR-6 D accepted root validation releases quiet history without a frame', asy
   dispatchSetState(a, { [FieldNodeState.ErrorVisibility]: true });
   expect(runtime.isValidationPending).toBeFalsy();
   await dispatchValidate(root);
-  expect(a.revealBaseline).toBeUndefined();
+  expect(a.__revealBaseline__).toBeUndefined();
   expect(runtime.revealDropTask).toBeUndefined();
 });
 it('IR-6 H a release listener can record and schedule its own fresh drop', async () => {
@@ -151,12 +151,12 @@ it('IR-6 H a release listener can record and schedule its own fresh drop', async
   clock.frame();
   await clock.task();
   expect(listener).toHaveBeenCalledTimes(1);
-  expect(a.revealBaseline).toBeUndefined();
-  expect(b.revealBaseline).toBeDefined();
+  expect(a.__revealBaseline__).toBeUndefined();
+  expect(b.__revealBaseline__).toBeDefined();
   expect(runtime.revealDropTask).toBeDefined();
   clock.frame();
   await clock.task();
-  expect(b.revealBaseline).toBeUndefined();
+  expect(b.__revealBaseline__).toBeUndefined();
   expect(listener).toHaveBeenCalledTimes(2);
 });
 it('IR-6 H disposal clears release listeners before settling and stays silent', () => {
@@ -172,6 +172,6 @@ it('IR-6 H disposal clears release listeners before settling and stays silent', 
   disposeFieldNodeTree(root);
   expect(listeners.size).toBe(0);
   expect(listener).not.toHaveBeenCalled();
-  expect(a.revealBaseline).toBeUndefined();
+  expect(a.__revealBaseline__).toBeUndefined();
   expect(runtime.revealPolicy).toBeUndefined();
 });

@@ -30,12 +30,12 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   if (context.writeEpoch !== undefined) {
-    if (context.target.parent !== null)
+    if (context.target.__parent__ !== null)
       context.dirtyPaths.add(context.target.path);
-    let parent = context.target.parent;
+    let parent = context.target.__parent__;
     while (parent) {
       context.dirtyPaths.add(parent.path);
-      parent = parent.parent;
+      parent = parent.__parent__;
     }
     if (engineModes.gateSelection === 'verify') verifyWriteEpoch(context);
     return;
@@ -103,7 +103,9 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
         context.shapeDirtyPaths.add(resolvePointer(declarationPath, $.Parent));
       }
   }
-  const aliases = blueprint.capabilities.hasAliasedDependencies ? getAliasedDependencyIndex(context) : undefined;
+  const aliases = blueprint.capabilities.hasAliasedDependencies
+    ? getAliasedDependencyIndex(context)
+    : undefined;
   if (aliases)
     for (const changed of context.changedSource)
       for (const owner of aliases.affectedOwners(changed)) {
@@ -184,7 +186,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
             node = undefined;
             break;
           }
-          node = node?.childrenByName?.[segment];
+          node = node?.__childrenByName__?.[segment];
         }
         verifyGateSelection(!node, 'S3 removed a living split owner: ' + path);
       }

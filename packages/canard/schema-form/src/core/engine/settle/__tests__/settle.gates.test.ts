@@ -76,16 +76,16 @@ describe('settle gate calculation', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.target?.isActive).toBe(true);
-    expect(root.storedOutputValue).toEqual({ flag: true, target: 'shown' });
+    expect(root.__childrenByName__?.target?.isActive).toBe(true);
+    expect(root.__outputValue__).toEqual({ flag: true, target: 'shown' });
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.target).toBeUndefined();
-    expect(root.storedOutputValue).toEqual({ flag: false });
+    expect(root.__childrenByName__?.target).toBeUndefined();
+    expect(root.__outputValue__).toEqual({ flag: false });
   });
 
   it('CONTROLS-080 hides extras below a host omitted by projection', () => {
@@ -112,10 +112,10 @@ describe('settle gate calculation', () => {
       FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
-    expect(root.childrenByName?.user?.source).toBeNull();
-    expect(root.childrenByName?.user?.extras).toEqual({ mode: 'on' });
-    expect(root.childrenByName?.probe).toBeUndefined();
-    expect(root.storedOutputValue).toEqual({ user: null });
+    expect(root.__childrenByName__?.user?.source).toBeNull();
+    expect(root.__childrenByName__?.user?.extras).toEqual({ mode: 'on' });
+    expect(root.__childrenByName__?.probe).toBeUndefined();
+    expect(root.__outputValue__).toEqual({ user: null });
   });
 
   it('CONTROLS-080 withholds host extras from an if predicate when source is null', () => {
@@ -146,9 +146,11 @@ describe('settle gate calculation', () => {
       FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
-    expect(root.childrenByName?.user?.source).toBeNull();
-    expect(root.childrenByName?.user?.extras).toEqual({ enabled: true });
-    expect(root.childrenByName?.user?.childrenByName?.guarded).toBeUndefined();
+    expect(root.__childrenByName__?.user?.source).toBeNull();
+    expect(root.__childrenByName__?.user?.extras).toEqual({ enabled: true });
+    expect(
+      root.__childrenByName__?.user?.__childrenByName__?.guarded,
+    ).toBeUndefined();
   });
 
   it('28C-03 context slot supplies @ independently of host extras', () => {
@@ -179,9 +181,11 @@ describe('settle gate calculation', () => {
       FieldNodeWriteKind.CallerPartial,
       WriteOption.Merge,
     );
-    expect(root.childrenByName?.user?.source).toBeNull();
-    expect(root.childrenByName?.user?.extras).toEqual({ mode: 'off' });
-    expect(root.childrenByName?.user?.childrenByName?.guarded).toBeDefined();
+    expect(root.__childrenByName__?.user?.source).toBeNull();
+    expect(root.__childrenByName__?.user?.extras).toEqual({ mode: 'off' });
+    expect(
+      root.__childrenByName__?.user?.__childrenByName__?.guarded,
+    ).toBeDefined();
   });
 
   it('CONTROLS-080 excludes a root child from a wrong-kind source output value', () => {
@@ -198,15 +202,15 @@ describe('settle gate calculation', () => {
     });
     loadFieldNodeAtMount(root, null, WriteOption.Overwrite);
     writeFieldNode(
-      root.childrenByName!.child,
+      root.__childrenByName__!.child,
       'D',
       FieldNodeWriteKind.Automatic,
       WriteOption.Overwrite,
     );
     expect(root.source).toBeNull();
-    expect(root.storedOutputValue).toBeNull();
-    expect(root.childrenByName?.child?.source).toBe('D');
-    expect(root.childrenByName?.probe).toBeUndefined();
+    expect(root.__outputValue__).toBeNull();
+    expect(root.__childrenByName__?.child?.source).toBe('D');
+    expect(root.__childrenByName__?.probe).toBeUndefined();
   });
 
   it('TEST-069 fragment active evaluates a compiled host expression', () => {
@@ -228,14 +232,14 @@ describe('settle gate calculation', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.storedOutputValue).toEqual({ flag: true, gated: 'on' });
+    expect(root.__outputValue__).toEqual({ flag: true, gated: 'on' });
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.storedOutputValue).toEqual({ flag: false });
+    expect(root.__outputValue__).toEqual({ flag: false });
   });
 
   it('SETTLE-045 reads a root sibling through the bound evaluation location', () => {
@@ -261,10 +265,10 @@ describe('settle gate calculation', () => {
       WriteOption.Overwrite,
     );
     expect(
-      getGateRegistry(root.runtime).locate(root.childrenByName!.p, gate)
+      getGateRegistry(root.runtime).locate(root.__childrenByName__!.p, gate)
         .evaluationHostPath,
     ).toBe('');
-    expect(root.storedOutputValue).toEqual({ flag: true, p: { child: 'yes' } });
+    expect(root.__outputValue__).toEqual({ flag: true, p: { child: 'yes' } });
   });
 
   it('SETTLE-045 retains the static p and local L for one occurrence', () => {
@@ -286,7 +290,7 @@ describe('settle gate calculation', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const p = root.childrenByName!.p;
+    const p = root.__childrenByName__!.p;
     const [child, extra] = blueprint.root.childEntries[0].node.childEntries;
     const registry = getGateRegistry(root.runtime);
     expect(
@@ -319,7 +323,7 @@ describe('settle gate calculation', () => {
       WriteOption.Overwrite,
     );
     const first = blueprint.root.childEntries[1];
-    const nested = root.childrenByName!.next;
+    const nested = root.__childrenByName__!.next;
     expect(first.node).toBe(nested.blueprintNode);
     expect(
       getGateRegistry(root.runtime).locate(root, first.declarations[0].gates[0])
@@ -331,7 +335,7 @@ describe('settle gate calculation', () => {
       getGateRegistry(root.runtime).locate(nested, secondGate, 'next')
         .evaluationHostPath,
     ).toBe('/next');
-    expect(nested.childrenByName?.next).toBeDefined();
+    expect(nested.__childrenByName__?.next).toBeDefined();
   });
 
   it('SETTLE-045 recomputes a relocated gate after a later sibling is projected', () => {
@@ -353,15 +357,19 @@ describe('settle gate calculation', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.p?.childrenByName?.child).toBeUndefined();
+    expect(
+      root.__childrenByName__?.p?.__childrenByName__?.child,
+    ).toBeUndefined();
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       '0',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.p?.childrenByName?.child?.isActive).toBe(true);
-    expect(root.storedOutputValue).toEqual({ p: { child: 'yes' }, flag: 0 });
+    expect(
+      root.__childrenByName__?.p?.__childrenByName__?.child?.isActive,
+    ).toBe(true);
+    expect(root.__outputValue__).toEqual({ p: { child: 'yes' }, flag: 0 });
   });
 
   it('SETTLE-045 evaluates each shared reference at its bound host', () => {
@@ -390,7 +398,7 @@ describe('settle gate calculation', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       p: { flag: false },
       q: { flag: true, child: 'shown' },
     });
@@ -418,7 +426,8 @@ describe('settle gate calculation', () => {
       WriteOption.Overwrite,
     );
     expect(
-      root.childrenByName?.['p/q~r']?.childrenByName?.child?.storedOutputValue,
+      root.__childrenByName__?.['p/q~r']?.__childrenByName__?.child
+        ?.__outputValue__,
     ).toBe('shown');
   });
 
@@ -441,20 +450,20 @@ describe('settle gate calculation', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    const first = root.storedOutputValue;
+    const first = root.__outputValue__;
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.storedOutputValue).toEqual(first);
+    expect(root.__outputValue__).toEqual(first);
   });
 
   it('SETTLE-050 starts mutually gated siblings closed despite latent source', () => {
@@ -472,7 +481,7 @@ describe('settle gate calculation', () => {
       WriteOption.Overwrite,
     );
     expect(root.children).toEqual([]);
-    expect(root.storedOutputValue).toEqual({});
+    expect(root.__outputValue__).toEqual({});
   });
 
   it('SETTLE-050 uses Gauss-Seidel decisions in declaration order', () => {
@@ -490,7 +499,7 @@ describe('settle gate calculation', () => {
       WriteOption.Overwrite,
     );
     expect(root.children?.map((child) => child.name)).toEqual(['a']);
-    expect(root.storedOutputValue).toEqual({ a: true });
+    expect(root.__outputValue__).toEqual({ a: true });
   });
 
   it('25C-06 combines discriminator tags and branch active expressions', () => {
@@ -514,14 +523,14 @@ describe('settle gate calculation', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.onlyX).toBeUndefined();
+    expect(root.__childrenByName__?.onlyX).toBeUndefined();
     writeFieldNode(
-      root.childrenByName!.enabled,
+      root.__childrenByName__!.enabled,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.onlyX?.storedOutputValue).toBe('value');
+    expect(root.__childrenByName__?.onlyX?.__outputValue__).toBe('value');
   });
 
   it('SETTLE-017 invalidates a nested gate when an ancestor of its read path changes', () => {
@@ -544,14 +553,16 @@ describe('settle gate calculation', () => {
       WriteOption.Overwrite,
     );
     expect(
-      root.childrenByName?.p?.childrenByName?.child?.storedOutputValue,
+      root.__childrenByName__?.p?.__childrenByName__?.child?.__outputValue__,
     ).toBe('visible');
     writeFieldNode(
-      root.childrenByName!.group,
+      root.__childrenByName__!.group,
       { flag: false },
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.p?.childrenByName?.child).toBeUndefined();
+    expect(
+      root.__childrenByName__?.p?.__childrenByName__?.child,
+    ).toBeUndefined();
   });
 });

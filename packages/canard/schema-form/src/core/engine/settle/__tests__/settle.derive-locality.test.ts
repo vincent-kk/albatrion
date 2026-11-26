@@ -34,28 +34,28 @@ describe('derive rule locality', () => {
       { t: 'T1', flag: true, x: '' },
       WriteOption.Overwrite,
     );
-    const observed = [root.childrenByName?.x?.source];
+    const observed = [root.__childrenByName__?.x?.source];
     writeFieldNode(
-      root.childrenByName!.x,
+      root.__childrenByName__!.x,
       'manual',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    observed.push(root.childrenByName?.x?.source);
+    observed.push(root.__childrenByName__?.x?.source);
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    observed.push(root.childrenByName?.x?.source);
+    observed.push(root.__childrenByName__?.x?.source);
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       true,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    observed.push(root.childrenByName?.x?.source);
+    observed.push(root.__childrenByName__?.x?.source);
     expect(observed).toEqual(['T1', 'manual', 'manual', 'manual']);
   });
 
@@ -91,24 +91,26 @@ describe('derive rule locality', () => {
         WriteOption.Overwrite,
       );
       writeFieldNode(
-        root.childrenByName!.H.childrenByName!.x,
+        root.__childrenByName__!.H.__childrenByName__!.x,
         'manual',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
       writeFieldNode(
-        root.childrenByName!.s,
+        root.__childrenByName__!.s,
         'b',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
       writeFieldNode(
-        root.childrenByName!.H.childrenByName!.y,
+        root.__childrenByName__!.H.__childrenByName__!.y,
         'Y',
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
-      expect(root.childrenByName?.H?.childrenByName?.x?.source).toBe('manual');
+      expect(root.__childrenByName__?.H?.__childrenByName__?.x?.source).toBe(
+        'manual',
+      );
     },
   );
 
@@ -135,7 +137,7 @@ describe('derive rule locality', () => {
       const parse = vi.spyOn(JSON, 'parse');
       try {
         writeFieldNode(
-          root.childrenByName!.changed,
+          root.__childrenByName__!.changed,
           'B',
           FieldNodeWriteKind.Input,
           WriteOption.Overwrite,
@@ -176,7 +178,7 @@ describe('derive rule locality', () => {
       { left: { source: 'A' }, right: { value: 'R' } },
       WriteOption.Overwrite,
     );
-    const right = root.childrenByName!.right;
+    const right = root.__childrenByName__!.right;
     Object.defineProperty(right, 'children', {
       configurable: true,
       get: () => {
@@ -184,11 +186,13 @@ describe('derive rule locality', () => {
       },
     });
     writeFieldNode(
-      root.childrenByName!.left.childrenByName!['source'],
+      root.__childrenByName__!.left.__childrenByName__!['source'],
       'B',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.left?.childrenByName?.target?.source).toBe('B');
+    expect(
+      root.__childrenByName__?.left?.__childrenByName__?.target?.source,
+    ).toBe('B');
   });
 });

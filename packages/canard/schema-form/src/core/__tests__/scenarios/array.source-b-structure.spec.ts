@@ -28,13 +28,13 @@ describe('array Source-B structure rollback', () => {
 
     const host = adapter.root.find('/items');
     if (!isTestFieldNode(host)) throw new Error('Expected a runtime FieldNode');
-    expect(host?.itemCount).toBe(0);
+    expect(host?.__itemCount__).toBe(0);
     expect(host?.children).toEqual([]);
     expect(host?.source).toBeUndefined();
     expect(host?.extras).toBeUndefined();
     expect(host?.value).toEqual([]);
     expect(host?.outputValue).toBeUndefined();
-    expect(host?.nextItemKey).toBeGreaterThan(0);
+    expect(host?.__nextItemKey__).toBeGreaterThan(0);
     expect(records.filter((record) => record.level === 'error')).toEqual([
       expect.objectContaining({
         code: 'SCHEMA_FORM_ERROR.BUDGET_EXCEEDED',

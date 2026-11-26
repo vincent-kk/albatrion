@@ -63,9 +63,9 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       affectedPaths = runtime.deliveryAffectedPaths ?? new Set();
       for (const node of context.enteredNodes) affectedPaths.add(node.path);
       for (const node of context.exitedNodes)
-        affectedPaths.add(node.deliveryPreviousPath ?? node.path);
+        affectedPaths.add(node.__deliveryPreviousPath__ ?? node.path);
       for (const node of context.perishedNodes)
-        affectedPaths.add(node.deliveryPreviousPath ?? node.path);
+        affectedPaths.add(node.__deliveryPreviousPath__ ?? node.path);
       for (const change of context.pathChanges) {
         affectedPaths.add(change.previous);
         affectedPaths.add(change.current);
@@ -83,7 +83,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
     const candidates = new Set<unknown>();
     const enteredByParent = new Map<Self, Self[]>();
     for (const child of context.enteredNodes) {
-      const parent = child.parent;
+      const parent = child.__parent__;
       if (!parent) continue;
       const children = enteredByParent.get(parent);
       if (children) children.push(child);
@@ -97,12 +97,12 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       )
         continue;
       if (
-        host.isDeliveryInitialized &&
-        host.deliveryPreviousSchema === undefined &&
-        !(host.deliveryChanges & FieldNodeEventType.UpdateChildren)
+        host.__isDeliveryInitialized__ &&
+        host.__deliveryPreviousSchema__ === undefined &&
+        !(host.__deliveryChanges__ & FieldNodeEventType.UpdateChildren)
       )
         continue;
-      const schema = host.schema.schema;
+      const schema = host.__schema__.schema;
       const required = typeof schema === 'object' ? schema.required : undefined;
       const children = getRequiredChildren(
         host,
@@ -110,13 +110,13 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       );
       for (let index = 0; index < children.length; index++) {
         const child = children[index];
-        if (child.parent !== host || child.blueprintNode.kind === 'virtual')
+        if (child.__parent__ !== host || child.blueprintNode.kind === 'virtual')
           continue;
         const next = isArray(required) && required.indexOf(child.name) !== -1;
         if (child.isRequired === next) continue;
         child.isRequired = next;
         candidates.add(child);
-        if (child.isDeliveryInitialized)
+        if (child.__isDeliveryInitialized__)
           markFieldNodeEvent(
             child,
             FieldNodeEventType.UpdateControlledProperties,
@@ -207,14 +207,14 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       }
       if (node.isDetached) {
         clearFieldNodeChanges(node);
-        node.deliveryWatchValues = undefined;
+        node.__deliveryWatchValues__ = undefined;
         watchIndex?.remove(node);
         continue;
       }
-      const initialized = node.isDeliveryInitialized;
-      const changes = node.deliveryChanges;
-      const previousWatchValues = node.deliveryWatchValues ?? EMPTY_ARRAY;
-      const pendingPayload = node.pendingDelivery?.payload;
+      const initialized = node.__isDeliveryInitialized__;
+      const changes = node.__deliveryChanges__;
+      const previousWatchValues = node.__deliveryWatchValues__ ?? EMPTY_ARRAY;
+      const pendingPayload = node.__pendingDelivery__?.payload;
       const hasWatch = watchNodes.has(node.blueprintNode.id);
       const watched = hasWatch ? readFieldNodeWatchValues(node) : EMPTY_ARRAY;
       if (hasWatch) {
@@ -239,10 +239,13 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       if (initialized) {
         if (
           changes & FieldNodeEventType.UpdateValue &&
-          (!isSameDeliveryValue(node.deliveryPreviousValue, node.storedValue) ||
+          (!isSameDeliveryValue(
+            node.__deliveryPreviousValue__,
+            node.__value__,
+          ) ||
             !isSameDeliveryValue(
-              node.deliveryPreviousOutputValue,
-              node.storedOutputValue,
+              node.__deliveryPreviousOutputValue__,
+              node.__outputValue__,
             ))
         ) {
           if (
@@ -253,7 +256,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
               node.path === inputTracking.inputPath) &&
             !isExternalBranchValueChange(context, node)
           )
-            node.pendingRevisionMask |= INPUT_VALUE_REVISION;
+            node.__pendingRevisionMask__ |= INPUT_VALUE_REVISION;
           if (silent) mark(node, FieldNodeEventType.UpdateValue);
           else {
             const pendingValue =
@@ -263,17 +266,17 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
                 ? Reflect.get(pendingValue, 'previous')
                 : node.behavior.strategy === 'branch'
                   ? {
-                      value: node.deliveryPreviousValue,
-                      outputValue: node.deliveryPreviousOutputValue,
+                      value: node.__deliveryPreviousValue__,
+                      outputValue: node.__deliveryPreviousOutputValue__,
                     }
-                  : node.deliveryPreviousValue;
+                  : node.__deliveryPreviousValue__;
             const current =
               node.behavior.strategy === 'branch'
                 ? {
-                    value: node.storedValue,
-                    outputValue: node.storedOutputValue,
+                    value: node.__value__,
+                    outputValue: node.__outputValue__,
                   }
-                : node.storedValue;
+                : node.__value__;
             const payload = { previous: oldValue, current };
             const source =
               context.retainedSources?.get(node)?.hasAutomaticWrite ||
@@ -292,7 +295,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         }
         if (
           changes & FieldNodeEventType.UpdatePath &&
-          node.deliveryPreviousPath !== node.path
+          node.__deliveryPreviousPath__ !== node.path
         ) {
           if (silent) mark(node, FieldNodeEventType.UpdatePath);
           else {
@@ -300,7 +303,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
             const oldPath =
               pendingPath !== null && typeof pendingPath === 'object'
                 ? Reflect.get(pendingPath, 'previous')
-                : node.deliveryPreviousPath;
+                : node.__deliveryPreviousPath__;
             const payload = { previous: oldPath, current: node.path };
             mark(
               node,
@@ -313,17 +316,17 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         }
         if (
           changes & FieldNodeEventType.UpdateChildren &&
-          node.deliveryPreviousChildren !== node.children
+          node.__deliveryPreviousChildren__ !== node.children
         )
           mark(node, FieldNodeEventType.UpdateChildren);
         if (
           changes & FieldNodeEventType.UpdateState &&
-          node.deliveryPreviousState !== node.storedState
+          node.__deliveryPreviousState__ !== node.__state__
         ) {
           runtime.hasStateChanged = true;
           if (
             !(
-              (node.pendingNonSettleDelivery?.type ?? BIT_MASK_NONE) &
+              (node.__pendingNonSettleDelivery__?.type ?? BIT_MASK_NONE) &
               FieldNodeEventType.UpdateState
             )
           )
@@ -331,7 +334,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         }
         if (
           (changes & FieldNodeEventType.UpdateControlledProperties &&
-            node.deliveryPreviousComputedBits !==
+            node.__deliveryPreviousComputedBits__ !==
               (+node.isActive |
                 (+node.isVisible << VISIBLE_BIT_SHIFT) |
                 (+node.isReadOnly << READ_ONLY_BIT_SHIFT) |
@@ -341,7 +344,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
           mark(node, FieldNodeEventType.UpdateControlledProperties);
         if (
           changes & FieldNodeEventType.UpdateJsonSchema &&
-          node.deliveryPreviousSchema !== node.schema
+          node.__deliveryPreviousSchema__ !== node.__schema__
         ) {
           if (silent) mark(node, FieldNodeEventType.UpdateJsonSchema);
           else {
@@ -350,10 +353,10 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
             const oldSchema =
               pendingSchema !== null && typeof pendingSchema === 'object'
                 ? Reflect.get(pendingSchema, 'previous')
-                : node.deliveryPreviousSchema?.schema;
+                : node.__deliveryPreviousSchema__?.schema;
             const payload = {
               previous: oldSchema,
-              current: node.schema.schema,
+              current: node.__schema__.schema,
             };
             mark(
               node,
@@ -369,8 +372,8 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         else {
           const current =
             node.behavior.strategy === 'branch'
-              ? { value: node.storedValue, outputValue: node.storedOutputValue }
-              : node.storedValue;
+              ? { value: node.__value__, outputValue: node.__outputValue__ }
+              : node.__value__;
           const payload = { previous: undefined, current };
           const source =
             context.retainedSources?.get(node)?.hasAutomaticWrite ||
@@ -394,19 +397,19 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         mark(node, FieldNodeEventType.RequestRefresh);
       else if (refreshTargets?.has(node.path))
         mark(node, FieldNodeEventType.RequestRefresh);
-      node.isDeliveryInitialized = true;
-      if (hasWatch) node.deliveryWatchValues = watched;
+      node.__isDeliveryInitialized__ = true;
+      if (hasWatch) node.__deliveryWatchValues__ = watched;
       clearFieldNodeChanges(node);
-      if (silentMask) node.pendingRevisionMask |= silentMask;
-      if (node.pendingRevisionMask) {
+      if (silentMask) node.__pendingRevisionMask__ |= silentMask;
+      if (node.__pendingRevisionMask__) {
         if (silent)
-          advanceFieldNodeRevision(node, node.pendingRevisionMask, silent);
+          advanceFieldNodeRevision(node, node.__pendingRevisionMask__, silent);
         else
-          node.revisionLedger = new FieldNodeRevisionLedger(
-            node.revisionLedger,
-            node.pendingRevisionMask,
+          node.__revisionLedger__ = new FieldNodeRevisionLedger(
+            node.__revisionLedger__,
+            node.__pendingRevisionMask__,
           );
-        node.pendingRevisionMask = BIT_MASK_NONE;
+        node.__pendingRevisionMask__ = BIT_MASK_NONE;
       }
     }
     globalState.finish();
@@ -420,10 +423,10 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       if (!node || !node.isDetached || seenDeparting.has(node)) continue;
       seenDeparting.add(node);
       clearFieldNodeChanges(node);
-      node.deliveryWatchValues = undefined;
-      node.pendingDelivery = undefined;
-      node.pendingRevisionMask = BIT_MASK_NONE;
-      node.pendingNonSettleDelivery = undefined;
+      node.__deliveryWatchValues__ = undefined;
+      node.__pendingDelivery__ = undefined;
+      node.__pendingRevisionMask__ = BIT_MASK_NONE;
+      node.__pendingNonSettleDelivery__ = undefined;
       runtime.deliveryWatchIndex?.remove(node);
       runtime.deliveries?.delete(node);
       runtime.revisionNodes?.delete(node);

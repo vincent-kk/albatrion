@@ -47,8 +47,8 @@ const gatedList = (
  * @returns `[readOnly, disabled, visible]` of the addressed item
  */
 const stateKeys = (root: TestRoot, ...path: number[]) => {
-  let node: TestRoot | undefined = root.childrenByName!.list;
-  for (const index of path) node = node?.childrenByName?.[index];
+  let node: TestRoot | undefined = root.__childrenByName__!.list;
+  for (const index of path) node = node?.__childrenByName__?.[index];
   return [node?.isReadOnly, node?.isDisabled, node?.isVisible];
 };
 
@@ -67,7 +67,7 @@ const latentItem = (root: TestRoot, index: number) =>
  */
 const turnOff = (root: TestRoot) =>
   writeFieldNode(
-    root.childrenByName!.flag,
+    root.__childrenByName__!.flag,
     false,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,
@@ -121,7 +121,8 @@ describe('array item fragment layer', () => {
     expect(
       [on, off].map((root) =>
         [0, 1].map(
-          (index) => root.childrenByName!.list!.childrenByName![index]?.source,
+          (index) =>
+            root.__childrenByName__!.list!.__childrenByName__![index]?.source,
         ),
       ),
     ).toEqual([
@@ -207,7 +208,7 @@ describe('array item fragment layer', () => {
     );
     expect(
       [0, 1].map((index) => [
-        root.childrenByName!.list!.childrenByName![index]?.source,
+        root.__childrenByName__!.list!.__childrenByName__![index]?.source,
         ...stateKeys(root, index),
       ]),
     ).toEqual([

@@ -12,13 +12,13 @@ export const dropFieldNodeRevealBaselines = <
 ): boolean => {
   const runtime = node.rootNode.runtime;
   for (const current of runtime.revealBaselineNodes ?? []) {
-    const history = current.revealBaseline;
+    const history = current.__revealBaseline__;
     if (history)
       history.entries = history.entries.filter(
         (entry) => entry.generation > cutoff,
       );
     if (!history?.entries.length) {
-      current.revealBaseline = undefined;
+      current.__revealBaseline__ = undefined;
       runtime.revealBaselineNodes?.delete(current);
     }
   }

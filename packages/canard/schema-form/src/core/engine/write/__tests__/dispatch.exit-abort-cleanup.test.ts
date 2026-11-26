@@ -99,8 +99,8 @@ it('discards interrupted delivery and state queues before the next independent w
     throw new Error('listener');
   });
   expect(() => dispatchSetValue(a, 'first')).toThrow(failure);
-  expect(b.pendingDelivery).toBeUndefined();
-  expect(b.pendingNonSettleDelivery).toBeUndefined();
+  expect(b.__pendingDelivery__).toBeUndefined();
+  expect(b.__pendingNonSettleDelivery__).toBeUndefined();
   expect(tree.runtime.deliveries).toBeUndefined();
   expect(tree.runtime.queuedNonSettleEvents).toBeUndefined();
   expect(tree.runtime.pendingExternalErrorNodes).toBeUndefined();
@@ -232,7 +232,7 @@ it('keeps a failed reporter out of deferred settings callbacks while preserving 
   };
   const applied = vi.fn(() => dispatchSetValue(tree.root, 'settings'));
   const unsubscribe = subscribeFieldNode(tree.root, () => {
-    if (tree.root.storedValue === 'next') {
+    if (tree.root.__value__ === 'next') {
       dispatchUpdateSettings(
         tree.root,
         {

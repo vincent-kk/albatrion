@@ -32,16 +32,16 @@ export const dispatchSetState = <Self extends FieldNodeRecord<Self>>(
   assertNotInDelivery(runtime);
   if (refuseListenerFeedback(runtime)) return;
   advanceFieldNodeRevealSequence(node);
-  const previous = node.storedState;
+  const previous = node.__state__;
   patchFieldNodeInteractionState(node, state);
-  if (previous === node.storedState) return;
+  if (previous === node.__state__) return;
   const deltas = new Map<string, number>();
-  accumulateGlobalStateDeltas(deltas, previous, node.storedState, state);
+  accumulateGlobalStateDeltas(deltas, previous, node.__state__, state);
   publishGlobalStateDeltas(node.rootNode, deltas);
-  if (node.deliveryChanges & FieldNodeEventType.UpdateState)
-    node.deliveryPreviousState = node.storedState;
+  if (node.__deliveryChanges__ & FieldNodeEventType.UpdateState)
+    node.__deliveryPreviousState__ = node.__state__;
   runtime.hasStateChanged = true;
-  queueNonSettleEvent(node, FieldNodeEventType.UpdateState, node.storedState);
+  queueNonSettleEvent(node, FieldNodeEventType.UpdateState, node.__state__);
   try {
     closeNonSettleEntry(node);
   } finally {

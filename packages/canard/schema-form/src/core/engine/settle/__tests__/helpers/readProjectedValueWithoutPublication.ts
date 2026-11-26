@@ -19,11 +19,11 @@ export const readProjectedValueWithoutPublication = <
 ): unknown => {
   let node = context.root;
   const readOutputValue = (record: Self): unknown =>
-    record.storedOutputValue === undefined ||
+    record.__outputValue__ === undefined ||
     (context.changedSource.has(record.path) &&
       !context.changedNodes.has(record))
       ? undefined
-      : record.storedOutputValue;
+      : record.__outputValue__;
   const assertPublished = (record: Self): void => {
     if (context.pendingOutputs?.has(record))
       throw new Error(
@@ -42,15 +42,15 @@ export const readProjectedValueWithoutPublication = <
     if (
       node.behavior.strategy === 'branch' &&
       node.source !== undefined &&
-      (node.parent !== null ||
+      (node.__parent__ !== null ||
         value === null ||
         typeof value !== 'object' ||
         !hasOwnProperty(value, name))
     )
       return undefined;
     const child =
-      node.childrenByName && hasOwnProperty(node.childrenByName, name)
-        ? node.childrenByName[name]
+      node.__childrenByName__ && hasOwnProperty(node.__childrenByName__, name)
+        ? node.__childrenByName__[name]
         : undefined;
     if (child) {
       node = child;

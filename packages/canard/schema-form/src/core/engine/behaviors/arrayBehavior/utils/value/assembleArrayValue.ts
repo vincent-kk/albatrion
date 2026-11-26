@@ -13,7 +13,11 @@ import { holeValue } from './holeValue';
 export const assembleArrayValue = (
   node: Pick<
     FieldNodeRecord<unknown>,
-    'blueprintNode' | 'childrenByName' | 'extras' | 'itemCount' | 'source'
+    | 'blueprintNode'
+    | '__childrenByName__'
+    | 'extras'
+    | '__itemCount__'
+    | 'source'
   >,
   previous?: readonly unknown[],
 ): unknown => {
@@ -21,19 +25,17 @@ export const assembleArrayValue = (
   const extras = isArray(node.extras) ? node.extras : [];
   const result: unknown[] = [];
   let tailStart = 0;
-  for (let index = 0; index < node.itemCount; index++) {
+  for (let index = 0; index < node.__itemCount__; index++) {
     const template = getArrayItemTemplate(node, index);
     if (!template) {
       result.push(extras[index - tailStart]);
       continue;
     }
     tailStart++;
-    const child = node.childrenByName?.['' + index];
+    const child = node.__childrenByName__?.['' + index];
     const outputValue =
-      child !== null &&
-      typeof child === 'object' &&
-      'storedOutputValue' in child
-        ? child.storedOutputValue
+      child !== null && typeof child === 'object' && '__outputValue__' in child
+        ? child.__outputValue__
         : undefined;
     result.push(
       outputValue === undefined

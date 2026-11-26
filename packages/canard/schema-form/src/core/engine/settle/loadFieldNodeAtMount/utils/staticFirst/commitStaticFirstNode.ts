@@ -25,14 +25,14 @@ export const commitStaticFirstNode = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const type = STATIC_FIRST_DELIVERY_TYPE;
   const silent = canOmitFieldNodePayload(node);
-  if (silent) node.pendingDelivery = undefined;
+  if (silent) node.__pendingDelivery__ = undefined;
   else {
     const current =
       node.behavior.strategy === 'branch'
-        ? { value: node.storedValue, outputValue: node.storedOutputValue }
-        : node.storedValue;
+        ? { value: node.__value__, outputValue: node.__outputValue__ }
+        : node.__value__;
     const payload = { previous: undefined, current };
-    node.pendingDelivery = {
+    node.__pendingDelivery__ = {
       type,
       payload: {
         [FieldNodeEventType.UpdateValue]:
@@ -49,12 +49,12 @@ export const commitStaticFirstNode = <Self extends FieldNodeRecord<Self>>(
       },
     };
   }
-  node.isDeliveryInitialized = true;
+  node.__isDeliveryInitialized__ = true;
   if (silent) advanceFieldNodeRevision(node, type, silent);
   else
-    node.revisionLedger = new FieldNodeRevisionLedger(
-      node.revisionLedger,
+    node.__revisionLedger__ = new FieldNodeRevisionLedger(
+      node.__revisionLedger__,
       type,
     );
-  node.pendingRevisionMask = BIT_MASK_NONE;
+  node.__pendingRevisionMask__ = BIT_MASK_NONE;
 };

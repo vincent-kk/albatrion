@@ -15,20 +15,20 @@ export const resolveStorageTargets = <
   Node extends {
     readonly behavior: { readonly type: string };
     readonly blueprintNode: { readonly fields?: readonly string[] };
-    readonly parent: {
+    readonly __parent__: {
       readonly path: string;
-      readonly childrenByName: Readonly<Record<string, Node>> | null;
+      readonly __childrenByName__: Readonly<Record<string, Node>> | null;
     } | null;
   },
 >(
   node: Node,
 ): readonly StorageTarget<Node>[] | undefined => {
   if (node.behavior.type !== 'virtual') return undefined;
-  const parent = node.parent;
+  const parent = node.__parent__;
   if (!parent) return EMPTY_ARRAY;
   return resolveVirtualStorageTargets(
     parent.path,
     node.blueprintNode.fields,
-    parent.childrenByName,
+    parent.__childrenByName__,
   );
 };

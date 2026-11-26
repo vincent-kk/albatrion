@@ -321,7 +321,7 @@ try {
             defaultValue: { source: 1, list: [1] },
           });
           engine.mountFieldNode(tree);
-          const list = tree.childrenByName.list,
+          const list = tree.__childrenByName__.list,
             old = list.children[0],
             getter =
               options.negative === 'wrong-module' && label === 'source'

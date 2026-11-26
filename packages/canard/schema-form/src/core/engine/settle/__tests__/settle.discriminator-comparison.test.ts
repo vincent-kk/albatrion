@@ -30,9 +30,9 @@ describe('판별 게이트의 엄격 비교', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.kind?.storedOutputValue).toBe(-0);
-    expect(root.childrenByName?.payload?.storedOutputValue).toBe('선택됨');
-    expect(root.storedOutputValue).toEqual({ kind: -0, payload: '선택됨' });
+    expect(root.__childrenByName__?.kind?.__outputValue__).toBe(-0);
+    expect(root.__childrenByName__?.payload?.__outputValue__).toBe('선택됨');
+    expect(root.__outputValue__).toEqual({ kind: -0, payload: '선택됨' });
     expect(root.runtime.diagnostics?.status).toBe('stable');
   });
 
@@ -59,8 +59,8 @@ describe('판별 게이트의 엄격 비교', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.payload?.storedOutputValue).toBe('선택됨');
-    expect(root.storedOutputValue).toEqual({ kind: value, payload: '선택됨' });
+    expect(root.__childrenByName__?.payload?.__outputValue__).toBe('선택됨');
+    expect(root.__outputValue__).toEqual({ kind: value, payload: '선택됨' });
     expect(root.runtime.diagnostics?.status).toBe('stable');
   });
 
@@ -90,18 +90,18 @@ describe('판별 게이트의 엄격 비교', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.numeric?.storedOutputValue).toBe('수');
-    expect(root.childrenByName?.textual).toBeUndefined();
-    expect(root.storedOutputValue).toEqual({ kind: 1, numeric: '수' });
+    expect(root.__childrenByName__?.numeric?.__outputValue__).toBe('수');
+    expect(root.__childrenByName__?.textual).toBeUndefined();
+    expect(root.__outputValue__).toEqual({ kind: 1, numeric: '수' });
     writeFieldNode(
       root,
       { kind: '1', numeric: '수', textual: '문자열' },
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.numeric).toBeUndefined();
-    expect(root.childrenByName?.textual?.storedOutputValue).toBe('문자열');
-    expect(root.storedOutputValue).toEqual({ kind: '1', textual: '문자열' });
+    expect(root.__childrenByName__?.numeric).toBeUndefined();
+    expect(root.__childrenByName__?.textual?.__outputValue__).toBe('문자열');
+    expect(root.__outputValue__).toEqual({ kind: '1', textual: '문자열' });
     expect(root.runtime.diagnostics?.status).toBe('stable');
   });
 
@@ -131,9 +131,9 @@ describe('판별 게이트의 엄격 비교', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.nan).toBeUndefined();
-    expect(root.childrenByName?.finite).toBeUndefined();
-    expect(root.storedOutputValue).toEqual({ kind: NaN });
+    expect(root.__childrenByName__?.nan).toBeUndefined();
+    expect(root.__childrenByName__?.finite).toBeUndefined();
+    expect(root.__outputValue__).toEqual({ kind: NaN });
     expect(root.runtime.diagnostics?.status).toBe('stable');
   });
 });

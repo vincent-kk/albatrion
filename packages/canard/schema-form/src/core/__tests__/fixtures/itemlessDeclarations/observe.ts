@@ -47,7 +47,7 @@ function applyStep(
     case 'insert-middle':
       return engine.dispatchInsert(host, 1, 3);
     case 'insert-end':
-      return engine.dispatchInsert(host, host.itemCount, 3);
+      return engine.dispatchInsert(host, host.__itemCount__, 3);
     case 'remove':
       return engine.dispatchRemove(host, 0);
     case 'pop':

@@ -35,7 +35,7 @@ export const commitGlobalState = <Self extends FieldNodeRecord<Self>>(
     departing.add(node);
     // A virtual group's children project its host's constituents, which leave on their own.
     for (const child of node.children ?? [])
-      if (child.parent === node) pending.push(child);
+      if (child.__parent__ === node) pending.push(child);
   }
   let loadNodes: Optional<Set<Self>>;
   if (
@@ -57,11 +57,11 @@ export const commitGlobalState = <Self extends FieldNodeRecord<Self>>(
     loadNodes,
     visit(node: Self): void {
       const previousState =
-        node.deliveryChanges & FieldNodeEventType.UpdateState
-          ? (node.deliveryPreviousState ?? node.storedState)
-          : node.storedState;
+        node.__deliveryChanges__ & FieldNodeEventType.UpdateState
+          ? (node.__deliveryPreviousState__ ?? node.__state__)
+          : node.__state__;
       if (departing.size && departing.has(node)) {
-        if (!context.enteredNodes.has(node) || node.isDeliveryInitialized)
+        if (!context.enteredNodes.has(node) || node.__isDeliveryInitialized__)
           accumulateGlobalStateDeltas(deltas, previousState, {});
         if (node.isDetached) return;
       }
@@ -69,20 +69,20 @@ export const commitGlobalState = <Self extends FieldNodeRecord<Self>>(
       if (context.enteredNodes.size && context.enteredNodes.has(node)) {
         accumulateGlobalStateDeltas(
           deltas,
-          node.isDeliveryInitialized ? previousState : {},
-          node.storedState,
+          node.__isDeliveryInitialized__ ? previousState : {},
+          node.__state__,
         );
         return;
       }
       if (!hadGlobalState) {
-        for (const key in node.storedState)
-          if (hasOwnProperty(node.storedState, key) && node.storedState[key])
+        for (const key in node.__state__)
+          if (hasOwnProperty(node.__state__, key) && node.__state__[key])
             deltas.set(key, (deltas.get(key) ?? 0) + 1);
         return;
       }
       const previous = previousState;
-      if (previous !== node.storedState)
-        accumulateGlobalStateDeltas(deltas, previous, node.storedState);
+      if (previous !== node.__state__)
+        accumulateGlobalStateDeltas(deltas, previous, node.__state__);
     },
     finish(): void {
       publishGlobalStateDeltas(context.root, deltas);

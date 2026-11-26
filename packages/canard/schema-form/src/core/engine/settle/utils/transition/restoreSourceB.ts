@@ -41,10 +41,10 @@ export const restoreSourceB = <Self extends FieldNodeRecord<Self>>(
   computeNode(context.root, context);
   for (const node of context.changedNodes)
     if (
-      node.deliveryChanges & FieldNodeEventType.UpdateValue &&
+      node.__deliveryChanges__ & FieldNodeEventType.UpdateValue &&
       !isLiveOccurrence(node, context)
     ) {
-      node.storedValue = node.deliveryPreviousValue;
-      node.storedOutputValue = node.deliveryPreviousOutputValue;
+      node.__value__ = node.__deliveryPreviousValue__;
+      node.__outputValue__ = node.__deliveryPreviousOutputValue__;
     }
 };

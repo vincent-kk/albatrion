@@ -3,9 +3,9 @@ import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { markSlotChange } from './markSlotChange';
 
-/** Annotates the lazily created `inactiveSlots`; an argument-less `new Map()` would be `Map<any, any>`. */
+/** Annotates the lazily created `__inactiveSlots__`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlots<Self> = Map<BlueprintChildEntry, Self>;
-/** Annotates the lazily created `inactiveSlotOverlays`; an argument-less `new Map()` would be `Map<any, any>`. */
+/** Annotates the lazily created `__inactiveSlotOverlays__`; an argument-less `new Map()` would be `Map<any, any>`. */
 type InactiveSlotOverlays = Map<BlueprintChildEntry, InactiveSlotOverlay>;
 
 /**
@@ -21,13 +21,14 @@ export const restoreSlotSources = <Self extends FieldNodeRecord<Self>>(
       if (!previous) continue;
       markSlotChange(host, entry);
       if (previous.instance) {
-        const slots: InactiveSlots<Self> = (host.inactiveSlots ??= new Map());
-        slots.set(entry, previous.instance);
-      } else host.inactiveSlots?.delete(entry);
-      if (previous.overlay) {
-        const overlays: InactiveSlotOverlays = (host.inactiveSlotOverlays ??=
+        const slots: InactiveSlots<Self> = (host.__inactiveSlots__ ??=
           new Map());
+        slots.set(entry, previous.instance);
+      } else host.__inactiveSlots__?.delete(entry);
+      if (previous.overlay) {
+        const overlays: InactiveSlotOverlays =
+          (host.__inactiveSlotOverlays__ ??= new Map());
         overlays.set(entry, previous.overlay);
-      } else host.inactiveSlotOverlays?.delete(entry);
+      } else host.__inactiveSlotOverlays__?.delete(entry);
     }
 };

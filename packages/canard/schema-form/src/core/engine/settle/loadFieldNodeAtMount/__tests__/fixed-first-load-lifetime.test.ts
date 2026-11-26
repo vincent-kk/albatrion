@@ -71,13 +71,13 @@ it('T12 a reused root and listener-triggered input cannot reuse mount preparatio
       if (once) return;
       once = true;
       dispatchSetValue(
-        tree.root.childrenByName!.kind,
+        tree.root.__childrenByName__!.kind,
         'a',
         WriteOption.Overwrite,
       );
     });
     dispatchSetValue(
-      tree.root.childrenByName!.kind,
+      tree.root.__childrenByName__!.kind,
       'b',
       WriteOption.Overwrite,
     );
@@ -108,8 +108,8 @@ it('T12 explicit caller input declines preparation before the ordinary commit', 
   for (const [, context] of computeSpy.mock.calls)
     expect(Reflect.get(context, 'fixedFirstLoad')).toBeUndefined();
   expect(root.runtime.commitNumber).toBe(1);
-  expect(root.storedOutputValue).toEqual({ kind: 'b', value: 'explicit' });
-  expect(root.childrenByName!.value.schema.schema).toMatchObject({
+  expect(root.__outputValue__).toEqual({ kind: 'b', value: 'explicit' });
+  expect(root.__childrenByName__!.value.__schema__.schema).toMatchObject({
     maxLength: 3,
   });
 });

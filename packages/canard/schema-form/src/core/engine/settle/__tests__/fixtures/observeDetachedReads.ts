@@ -13,5 +13,5 @@ export const observeDetachedReads = (
   former.map((node) => [
     node.isDetached,
     root.runtime.detachedReads?.get(node),
-    node.watchValuesMemo?.values,
+    node.__watchValues__?.values,
   ]);

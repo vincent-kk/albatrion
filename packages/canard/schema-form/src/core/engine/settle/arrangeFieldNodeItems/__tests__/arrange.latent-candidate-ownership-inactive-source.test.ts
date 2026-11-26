@@ -85,7 +85,7 @@ it.each<MoveCase>([
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
     expect(getDispatchNode(list, '' + from, ...names).source).toBe('live');
     dispatchSetValue(getDispatchNode(root, 'show'), false);
-    expect(list.childrenByName?.['' + from]).toBeUndefined();
+    expect(list.__childrenByName__?.['' + from]).toBeUndefined();
     expect(readRetainedSlotSource(root, sourcePath, 'number')).toBe(37);
     expect(readRetainedSlotSource(root, sourcePath, 'string')).toBe('live');
 
@@ -102,8 +102,8 @@ it.each<MoveCase>([
     const moved = getDispatchNode(list, '' + to, ...names);
     expect(moved.blueprintNode.kind).toBe('number');
     expect(moved.source).toBe(37);
-    expect(root.storedValue).toEqual(expected);
-    expect(root.storedOutputValue).toEqual(expected);
+    expect(root.__value__).toEqual(expected);
+    expect(root.__outputValue__).toEqual(expected);
     expect(
       events.at(-1)?.payload?.[FieldNodeEventType.UpdateValue],
     ).toMatchObject({ current: { value: expected, outputValue: expected } });

@@ -22,7 +22,7 @@ export const createPreparedPublicationFixture = () => {
   });
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
   writeFieldNode(
-    root.childrenByName!.kind,
+    root.__childrenByName__!.kind,
     true,
     FieldNodeWriteKind.Input,
     WriteOption.Overwrite,

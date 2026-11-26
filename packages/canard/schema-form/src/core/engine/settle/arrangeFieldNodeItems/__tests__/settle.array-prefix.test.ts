@@ -43,7 +43,7 @@ describe('array prefix parity', () => {
         true,
       );
       expect(actual.children![0]).toBe(former[0]);
-      expect(actual.storedValue).toEqual([
+      expect(actual.__value__).toEqual([
         { name: 'old', fill: 7, nested: [{}, {}] },
         { name: 'new', fill: 7 },
       ]);
@@ -61,7 +61,7 @@ describe('array prefix parity', () => {
         [{ name: 'kept' }, { name: 'removed' }],
         { kind: 'remove', index: 1 },
         (root) => {
-          root.children![0].storedState = { touched: true };
+          root.children![0].__state__ = { touched: true };
         },
         undefined,
         true,
@@ -69,7 +69,7 @@ describe('array prefix parity', () => {
       expect(result).toEqual({ name: 'removed' });
       expect(actual.children![0]).toBe(former[0]);
       expect(former[1].isDetached).toBe(true);
-      expect(former[1].storedValue).toEqual({ name: 'removed' });
+      expect(former[1].__value__).toEqual({ name: 'removed' });
     });
 
     it('captures identical detached reads for a removed item that watches and has a load snapshot', () => {
@@ -304,7 +304,7 @@ describe('array prefix retained source work', () => {
     expect(arrangeFieldNodeItems(root, { kind: 'pop' })).toEqual({
       value: 'c',
     });
-    expect(root.storedValue).toEqual([{ value: 'a' }, { value: 'b' }]);
+    expect(root.__value__).toEqual([{ value: 'a' }, { value: 'b' }]);
     expect(read).not.toHaveBeenCalled();
   });
 });

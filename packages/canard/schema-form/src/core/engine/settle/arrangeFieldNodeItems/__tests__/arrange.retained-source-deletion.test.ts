@@ -25,11 +25,11 @@ it.each([['pop'], ['clear']] as const)(
     else dispatchClear(root);
     const frozen = readFieldNodeInactiveValues(old);
     dispatchSetValue(old, 'detached write');
-    expect(root.storedValue).toEqual([]);
+    expect(root.__value__).toEqual([]);
     dispatchPush(root, 'caller');
-    expect(root.storedValue).toEqual(['caller']);
+    expect(root.__value__).toEqual(['caller']);
     expect(readFieldNodeInactiveValues(root)).toEqual([]);
-    expect(old.storedValue).toBe('old');
+    expect(old.__value__).toBe('old');
     expect(readFieldNodeInactiveValues(old)).toBe(frozen);
   },
 );
@@ -50,6 +50,6 @@ it('whole replacement prunes an unpublished write beneath a live array host', ()
   dispatchSetValue(root, { list: [] });
   expect(readFieldNodeInactiveValues(root)).toEqual([]);
   dispatchPush(list, 'caller');
-  expect(list.storedValue).toEqual(['caller']);
-  expect(old.storedValue).toBe('old');
+  expect(list.__value__).toEqual(['caller']);
+  expect(old.__value__).toBe('old');
 });

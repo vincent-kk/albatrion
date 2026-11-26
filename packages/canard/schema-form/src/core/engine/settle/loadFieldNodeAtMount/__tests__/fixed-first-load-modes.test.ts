@@ -46,12 +46,12 @@ it.each([
       expect(actual.snapshot()).toEqual(oracle.snapshot());
       expect(actual.prepared).toBe(admitted);
       dispatchSetValue(
-        actual.root.childrenByName!.kind,
+        actual.root.__childrenByName__!.kind,
         'b',
         WriteOption.Overwrite,
       );
       dispatchSetValue(
-        oracle.root.childrenByName!.kind,
+        oracle.root.__childrenByName__!.kind,
         'b',
         WriteOption.Overwrite,
       );

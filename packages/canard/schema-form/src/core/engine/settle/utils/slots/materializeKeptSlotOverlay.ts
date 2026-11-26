@@ -43,7 +43,7 @@ export const materializeKeptSlotOverlay = <Self extends FieldNodeRecord<Self>>(
     source,
     extras,
     ...(template.kind === 'array'
-      ? { itemCount: overlay?.itemCount ?? inherited?.itemCount ?? 0 }
+      ? { itemCount: overlay?.itemCount ?? inherited?.__itemCount__ ?? 0 }
       : undefined),
     ...(children.size ? { children } : undefined),
   };

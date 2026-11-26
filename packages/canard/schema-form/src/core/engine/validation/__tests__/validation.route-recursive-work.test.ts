@@ -67,7 +67,7 @@ it.each(['outer-first', 'inner-first'] as const)(
       expect(paths).toHaveBeenCalledTimes(fields.length);
       expect(reads.mock.calls.length).toBeLessThanOrEqual(nodes.length);
       for (const field of fields) {
-        const kind = field.parent!.childrenByName!.kind.storedValue;
+        const kind = field.__parent__!.__childrenByName__!.kind.__value__;
         const branch = kind === 'x' ? 0 : 1;
         expect(
           readFieldNodeErrors(field).map((issue) => issue.schemaPath),
@@ -120,7 +120,7 @@ it.each([1, 100])(
     };
     try {
       routeValidationIssues([root], [issue]);
-      expect(readFieldNodeErrors(root.childrenByName!.value)).toEqual([]);
+      expect(readFieldNodeErrors(root.__childrenByName__!.value)).toEqual([]);
       expect(reads).toHaveBeenCalledTimes(3);
     } finally {
       reads.mockRestore();

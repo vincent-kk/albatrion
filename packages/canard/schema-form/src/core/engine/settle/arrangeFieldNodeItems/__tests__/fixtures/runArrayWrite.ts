@@ -64,7 +64,7 @@ export const runArrayWrite = (
   root.runtime.onChange = onChange;
   delivered.clear();
   const before = [...(root.children ?? [])];
-  const keys = before.map((item) => item.itemKey);
+  const keys = before.map((item) => item.__itemKey__);
   const snapshot = root.runtime.loadSnapshot;
   const result = write(root);
   return {

@@ -39,10 +39,14 @@ it.each(['oneOf', 'anyOf'] as const)(
     routeValidationIssues([root], issues);
     expect(root.runtime.globalErrors).toBe(issues);
     expect(
-      readFieldNodeErrors(root.childrenByName!['0'].childrenByName!.value),
+      readFieldNodeErrors(
+        root.__childrenByName__!['0'].__childrenByName__!.value,
+      ),
     ).toEqual([issues[0]]);
     expect(
-      readFieldNodeErrors(root.childrenByName!['1'].childrenByName!.value),
+      readFieldNodeErrors(
+        root.__childrenByName__!['1'].__childrenByName__!.value,
+      ),
     ).toEqual([issues[3]]);
   },
 );

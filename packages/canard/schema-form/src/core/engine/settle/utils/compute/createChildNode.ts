@@ -13,6 +13,6 @@ export const createChildNode = <Self extends FieldNodeRecord<Self>>(
 ): Self => {
   const child = host.runtime.nodeFactory(entry, host, host.runtime);
   if (host.behavior.type === 'array' && host.behavior.strategy === 'branch')
-    child.itemKey = host.nextItemKey++;
+    child.__itemKey__ = host.__nextItemKey__++;
   return child;
 };

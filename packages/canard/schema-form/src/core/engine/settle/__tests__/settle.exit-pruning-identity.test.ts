@@ -91,7 +91,7 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     const deliveries = pathDeliveries(moved);
     expect(registered(root, '/rows/0/note')).toBe(true);
     dispatchRemove(at('/rows'), 0);
-    expect(root.storedOutputValue).toEqual({ rows: [{ on: false }] });
+    expect(root.__outputValue__).toEqual({ rows: [{ on: false }] });
     expect(moved.isDetached).toBe(true);
     expect(moved.isActive).toBe(false);
     expect(moved.path).toBe('/rows/0/note');
@@ -127,7 +127,7 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     const moved = at('/rows/2/note');
     const deliveries = pathDeliveries(moved);
     dispatchRemove(at('/rows'), 0);
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       rows: [{ on: false }, { on: true }],
     });
     expect(perished.isDetached).toBe(true);
@@ -158,7 +158,7 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     const moved = at('/rows/1/note');
     const deliveries = pathDeliveries(moved);
     dispatchRemove(at('/rows'), 0);
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       rows: [{ on: true, note: 'n1' }],
     });
     expect(moved.isDetached).toBe(false);
@@ -209,7 +209,7 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
       },
       WriteOption.Overwrite,
     );
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       trim: true,
       rows: [{ on: true, note: 'n0' }],
     });
@@ -239,7 +239,7 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     const second = at('/rows/1/note');
     const deliveries = [pathDeliveries(first), pathDeliveries(second)];
     dispatchInsert(at('/rows'), 0, { on: false, note: 'x' });
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       rows: [{ on: false }, { on: true }, { on: true }],
     });
     expect([first.path, second.path]).toEqual(['/rows/1/note', '/rows/2/note']);
@@ -278,7 +278,7 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     const notes = ['/rows/0/note', '/rows/1/note', '/rows/2/note'].map(at);
     const deliveries = notes.map(pathDeliveries);
     dispatchInsert(at('/rows'), 0, { on: false, note: 'x' });
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       rows: [{ on: false }, { on: true }, { on: true }, { on: true }],
     });
     expect(notes.map((note) => note.path)).toEqual([
@@ -338,7 +338,7 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     const cellDeliveries = pathDeliveries(cell);
     const noteDeliveries = pathDeliveries(note);
     dispatchRemove(at('/rows'), 0);
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       rows: [{ on: false, cells: [{}] }],
     });
     expect(note.isDetached).toBe(true);
@@ -384,7 +384,7 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     const moved = at('/rows/0/cells/1/note');
     const deliveries = pathDeliveries(moved);
     dispatchRemove(at('/rows/0/cells'), 0);
-    expect(root.storedOutputValue).toEqual({
+    expect(root.__outputValue__).toEqual({
       rows: [{ cells: [{ on: false }] }],
     });
     expect(moved.isDetached).toBe(true);

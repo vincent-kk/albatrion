@@ -24,7 +24,7 @@ export const clearFieldNodeFormErrors = <Self extends FieldNodeRecord<Self>>(
     if (!node) continue;
     if (runtime.nodeErrors?.has(node)) changed.add(node);
     for (const child of node.children ?? [])
-      if (child.parent === node) pending.push(child);
+      if (child.__parent__ === node) pending.push(child);
   }
   runtime.nodeErrors?.clear();
   runtime.adoptedExternalErrors = undefined;

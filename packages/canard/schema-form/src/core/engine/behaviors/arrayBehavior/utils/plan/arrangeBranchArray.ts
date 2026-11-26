@@ -29,7 +29,7 @@ export const arrangeBranchArray: Behavior['arrange'] = (node, operation) => {
     operation.kind !== 'insert'
   )
     return NOOP_PLAN;
-  const count = node.itemCount;
+  const count = node.__itemCount__;
   switch (operation.kind) {
     case 'push':
       return {

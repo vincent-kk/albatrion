@@ -88,7 +88,9 @@ describe('final-shape exits', () => {
           WriteOption.Overwrite,
         ),
       ).not.toThrow();
-      expect(mounted.childrenByName?.value?.blueprintNode.kind).toBe('number');
+      expect(mounted.__childrenByName__?.value?.blueprintNode.kind).toBe(
+        'number',
+      );
       expect(mounted.runtime.diagnostics.status).toBe('stable');
       expect(
         readInactiveValuesAt(mounted, '')?.some(
@@ -102,7 +104,7 @@ describe('final-shape exits', () => {
         { kind: 'a', value: 'first' },
         WriteOption.Overwrite,
       );
-      expect(root.childrenByName?.value?.blueprintNode.kind).toBe('string');
+      expect(root.__childrenByName__?.value?.blueprintNode.kind).toBe('string');
       expect(() =>
         writeFieldNode(
           root,
@@ -111,7 +113,7 @@ describe('final-shape exits', () => {
           WriteOption.Overwrite,
         ),
       ).not.toThrow();
-      expect(root.childrenByName?.value?.blueprintNode.kind).toBe('number');
+      expect(root.__childrenByName__?.value?.blueprintNode.kind).toBe('number');
       expect(() =>
         writeFieldNode(
           root,
@@ -120,7 +122,7 @@ describe('final-shape exits', () => {
           WriteOption.Overwrite,
         ),
       ).not.toThrow();
-      expect(root.childrenByName?.value?.blueprintNode.kind).toBe('string');
+      expect(root.__childrenByName__?.value?.blueprintNode.kind).toBe('string');
       expect(root.runtime.diagnostics.status).toBe('stable');
     });
 
@@ -132,14 +134,14 @@ describe('final-shape exits', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.value?.blueprintNode.kind).toBe('number');
+    expect(root.__childrenByName__?.value?.blueprintNode.kind).toBe('number');
     writeFieldNode(
-      root.childrenByName!.value,
+      root.__childrenByName__!.value,
       3,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -149,18 +151,18 @@ describe('final-shape exits', () => {
       readInactiveValuesAt(root, '')?.some((entry) => entry.path === '/value'),
     ).toBe(false);
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'a',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.value?.blueprintNode.kind).toBe('string');
-    expect(root.childrenByName?.value?.source).toBe('hello');
+    expect(root.__childrenByName__?.value?.blueprintNode.kind).toBe('string');
+    expect(root.__childrenByName__?.value?.source).toBe('hello');
     expect(
       readInactiveValuesAt(root, '')?.some((entry) => entry.path === '/value'),
     ).toBe(false);
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'none',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -178,13 +180,13 @@ describe('final-shape exits', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.value,
+      root.__childrenByName__!.value,
       3,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -197,13 +199,13 @@ describe('final-shape exits', () => {
     );
     expect(hasRetainedSlotOwnSource(root, '/value', 'string')).toBe(false);
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'a',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.value?.blueprintNode.kind).toBe('string');
-    expect(root.childrenByName?.value?.source).not.toBe('hello');
+    expect(root.__childrenByName__?.value?.blueprintNode.kind).toBe('string');
+    expect(root.__childrenByName__?.value?.source).not.toBe('hello');
   });
 
   it('26C-13 replaces every kind at a path covered by a whole write', () => {
@@ -214,13 +216,13 @@ describe('final-shape exits', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.value,
+      root.__childrenByName__!.value,
       3,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -231,22 +233,22 @@ describe('final-shape exits', () => {
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.value?.source).toBe('again');
+    expect(root.__childrenByName__?.value?.source).toBe('again');
     expect(root.source).toBeUndefined();
-    expect(root.childrenByName?.kind?.source).toBe('a');
+    expect(root.__childrenByName__?.kind?.source).toBe('a');
     expect(
       readInactiveValuesAt(root, '')?.some((entry) => entry.path === '/value'),
     ).toBe(false);
     expect(root.runtime.misfitPaths.has('/value')).toBe(false);
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.value?.blueprintNode.kind).toBe('number');
-    expect(root.childrenByName?.value?.source).not.toBe(3);
-    expect(root.childrenByName?.value?.source).toBeUndefined();
+    expect(root.__childrenByName__?.value?.blueprintNode.kind).toBe('number');
+    expect(root.__childrenByName__?.value?.source).not.toBe(3);
+    expect(root.__childrenByName__?.value?.source).toBeUndefined();
   });
 
   it('VALUE-025 enters an other-kind node from its own latent or absent', () => {
@@ -257,13 +259,13 @@ describe('final-shape exits', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.value?.blueprintNode.kind).toBe('number');
-    expect(root.childrenByName?.value?.source).toBeUndefined();
+    expect(root.__childrenByName__?.value?.blueprintNode.kind).toBe('number');
+    expect(root.__childrenByName__?.value?.source).toBeUndefined();
     expect(root.runtime.misfitPaths.has('/value')).toBe(false);
     expect(
       readInactiveValuesAt(root, '')?.some((entry) => entry.path === '/value'),
@@ -271,13 +273,13 @@ describe('final-shape exits', () => {
     expect(readRetainedSlotSource(root, '/value', 'string')).toBe('hello');
     expect(hasRetainedSlotOwnSource(root, '/value', 'number')).toBe(false);
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'a',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.value?.blueprintNode.kind).toBe('string');
-    expect(root.childrenByName?.value?.source).toBe('hello');
+    expect(root.__childrenByName__?.value?.blueprintNode.kind).toBe('string');
+    expect(root.__childrenByName__?.value?.source).toBe('hello');
     expect(hasRetainedSlotOwnSource(root, '/value', 'number')).toBe(false);
   });
 
@@ -291,15 +293,15 @@ describe('final-shape exits', () => {
       { outer: { kind: 'a', value: 'hello' } },
       WriteOption.Overwrite,
     );
-    const outer = root.childrenByName!.outer;
+    const outer = root.__childrenByName__!.outer;
     writeFieldNode(
-      outer.childrenByName!.kind,
+      outer.__childrenByName__!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(outer.childrenByName?.value?.blueprintNode.kind).toBe('number');
-    expect(outer.childrenByName?.value?.source).toBeUndefined();
+    expect(outer.__childrenByName__?.value?.blueprintNode.kind).toBe('number');
+    expect(outer.__childrenByName__?.value?.source).toBeUndefined();
     expect(root.runtime.misfitPaths.has('/outer/value')).toBe(false);
     expect(
       readInactiveValuesAt(root, '')?.some(
@@ -313,13 +315,13 @@ describe('final-shape exits', () => {
       false,
     );
     writeFieldNode(
-      outer.childrenByName!.kind,
+      outer.__childrenByName__!.kind,
       'a',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(outer.childrenByName?.value?.blueprintNode.kind).toBe('string');
-    expect(outer.childrenByName?.value?.source).toBe('hello');
+    expect(outer.__childrenByName__?.value?.blueprintNode.kind).toBe('string');
+    expect(outer.__childrenByName__?.value?.source).toBe('hello');
     expect(hasRetainedSlotOwnSource(root, '/outer/value', 'number')).toBe(
       false,
     );
@@ -355,19 +357,19 @@ describe('final-shape exits', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.inside.childrenByName!.kind,
+      root.__childrenByName__!.inside.__childrenByName__!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.outside.childrenByName!.kind,
+      root.__childrenByName__!.outside.__childrenByName__!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.inside,
+      root.__childrenByName__!.inside,
       { kind: 'b', value: 4 },
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
@@ -379,14 +381,14 @@ describe('final-shape exits', () => {
       'out',
     );
     writeFieldNode(
-      root.childrenByName!.outside.childrenByName!.kind,
+      root.__childrenByName__!.outside.__childrenByName__!.kind,
       'a',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.outside?.childrenByName?.value?.source).toBe(
-      'out',
-    );
+    expect(
+      root.__childrenByName__?.outside?.__childrenByName__?.value?.source,
+    ).toBe('out');
   });
 
   it('26C-13 loads one latent kind when every declaration is gated off', () => {
@@ -396,7 +398,7 @@ describe('final-shape exits', () => {
       { kind: 'none', value: 2 },
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.value).toBeUndefined();
+    expect(root.__childrenByName__?.value).toBeUndefined();
     expect(readInactiveValuesAt(root, '')).toEqual([
       { path: '/value', value: '2' },
     ]);
@@ -427,12 +429,12 @@ describe('final-shape exits', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
-    expect(root.childrenByName?.value?.blueprintNode.kind).toBe('number');
+    expect(root.__childrenByName__?.value?.blueprintNode.kind).toBe('number');
     expect(root.runtime.diagnostics.status).toBe('stable');
     expect(readRetainedSlotSource(root, '/value', 'string')).toBe('hello');
   });
@@ -445,7 +447,7 @@ describe('final-shape exits', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      root.childrenByName!.kind,
+      root.__childrenByName__!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -493,26 +495,27 @@ describe('final-shape exits', () => {
       { host: { kind: 'a', value: 'hello' } },
       WriteOption.Overwrite,
     );
-    const host = root.childrenByName!.host;
+    const host = root.__childrenByName__!.host;
     writeFieldNode(
-      host.childrenByName!.kind,
+      host.__childrenByName__!.kind,
       'b',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     writeFieldNode(
-      host.childrenByName!.value,
+      host.__childrenByName__!.value,
       2,
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
     );
     resetFieldNodeSubtree(host, WriteOption.Overwrite);
     expect(
-      root.childrenByName?.host?.childrenByName?.value?.blueprintNode.kind,
+      root.__childrenByName__?.host?.__childrenByName__?.value?.blueprintNode
+        .kind,
     ).toBe('string');
-    expect(root.childrenByName?.host?.childrenByName?.value?.source).toBe(
-      'hello',
-    );
+    expect(
+      root.__childrenByName__?.host?.__childrenByName__?.value?.source,
+    ).toBe('hello');
     expect(hasRetainedSlotOwnSource(root, '/host/value', 'number')).toBe(false);
     expect(readInactiveValuesAt(root, '')).toEqual([]);
   });
@@ -542,18 +545,18 @@ describe('final-shape exits', () => {
         { g: { leaf: 'keep' } },
         WriteOption.Overwrite,
       );
-      const g = root.childrenByName?.g;
+      const g = root.__childrenByName__?.g;
       if (!g) throw new Error('Expected g in the previous commit');
       writeFieldNode(
-        root.childrenByName!.t,
+        root.__childrenByName__!.t,
         true,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,
       );
-      expect(root.childrenByName?.g).toBe(g);
+      expect(root.__childrenByName__?.g).toBe(g);
       expect(g.isDetached).toBe(false);
       expect(g.source).toBeUndefined();
-      expect(g.childrenByName?.leaf?.source).toBe('keep');
+      expect(g.__childrenByName__?.leaf?.source).toBe('keep');
       expect(root.source).toBeUndefined();
     });
 
@@ -581,7 +584,7 @@ describe('final-shape exits', () => {
       { g: { leaf: 'keep' }, x: 'steady' },
       WriteOption.Overwrite,
     );
-    const g = root.childrenByName?.g;
+    const g = root.__childrenByName__?.g;
     if (!g) throw new Error('Expected g in the previous commit');
     expect(() =>
       writeFieldNode(
@@ -592,10 +595,10 @@ describe('final-shape exits', () => {
       ),
     ).toThrow();
     expect(root.runtime.diagnostics).toMatchObject({ cause: 'budget' });
-    expect(root.childrenByName?.g).toBe(g);
+    expect(root.__childrenByName__?.g).toBe(g);
     expect(g.isDetached).toBe(false);
     expect(g.source).toBeUndefined();
-    expect(g.childrenByName?.leaf?.source).toBe('keep');
+    expect(g.__childrenByName__?.leaf?.source).toBe('keep');
     expect(root.source).toBeUndefined();
   });
 
@@ -618,9 +621,9 @@ describe('final-shape exits', () => {
       { flag: true, secret: 'held' },
       WriteOption.Overwrite,
     );
-    const secret = root.childrenByName!.secret;
+    const secret = root.__childrenByName__!.secret;
     writeFieldNode(
-      root.childrenByName!.flag,
+      root.__childrenByName__!.flag,
       false,
       FieldNodeWriteKind.Input,
       WriteOption.DisableAutomaticWrites,
@@ -661,10 +664,10 @@ describe('final-shape exits', () => {
       { flag: true, secret: 'held' },
       WriteOption.Overwrite,
     );
-    const secret = root.childrenByName!.secret;
+    const secret = root.__childrenByName__!.secret;
     expect(() =>
       writeFieldNode(
-        root.childrenByName!.flag,
+        root.__childrenByName__!.flag,
         false,
         FieldNodeWriteKind.Input,
         WriteOption.Overwrite,

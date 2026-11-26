@@ -78,7 +78,7 @@ describe('same schema id trees', () => {
     await expect(dispatchValidate(newTree.root)).rejects.toMatchObject({
       details: { reason: 'duplicateSchemaId', $id: 'urn:shared' },
     });
-    expect(oldTree.root.storedOutputValue).toBe('kept');
+    expect(oldTree.root.__outputValue__).toBe('kept');
     expect(await dispatchValidate(oldTree.root)).toEqual([]);
   });
 

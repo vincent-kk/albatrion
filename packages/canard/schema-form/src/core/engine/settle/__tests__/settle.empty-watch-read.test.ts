@@ -17,7 +17,7 @@ it('allocates no memo or witness for repeated empty live reads', () => {
   for (let index = 0; index < 100; index++)
     expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
   expect(lookup).not.toHaveBeenCalled();
-  expect(root.watchValuesMemo).toBeUndefined();
+  expect(root.__watchValues__).toBeUndefined();
   root.isDetached = true;
   expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
 });
@@ -26,20 +26,20 @@ it('clears real watch values before reusing an empty memo and detaching', () => 
   const { root } = createTestTree({ type: 'string' });
   loadFieldNodeAtMount(root, 'value', WriteOption.Overwrite);
   expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
-  root.schema = {
-    ...root.schema,
+  root.__schema__ = {
+    ...root.__schema__,
     schema: { type: 'string', controls: { watch: ['@'] } },
   };
   root.runtime.context = { watched: true };
   const watched = readFieldNodeWatchValues(root);
   expect(watched).toEqual([root.runtime.context]);
   expect(readFieldNodeWatchValues(root)).toBe(watched);
-  root.schema = { ...root.schema, schema: { type: 'string' } };
+  root.__schema__ = { ...root.__schema__, schema: { type: 'string' } };
   expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
-  const memo = root.watchValuesMemo;
+  const memo = root.__watchValues__;
   const lookup = vi.spyOn(derived, 'getHostDerived');
   expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
-  expect(root.watchValuesMemo).toBe(memo);
+  expect(root.__watchValues__).toBe(memo);
   expect(lookup).not.toHaveBeenCalled();
   root.isDetached = true;
   expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
@@ -58,5 +58,5 @@ it('retains snapshot memo writes and restores empty live reads', () => {
   expect(readFieldNodeWatchValues(root)).toBe(EMPTY_ARRAY);
   const empty = { ...snapshot, schema: { type: 'string' as const } };
   expect(readFieldNodeWatchValues(root, empty)).toBe(EMPTY_ARRAY);
-  expect(root.watchValuesMemo?.values).toBe(EMPTY_ARRAY);
+  expect(root.__watchValues__?.values).toBe(EMPTY_ARRAY);
 });

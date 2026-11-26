@@ -86,11 +86,11 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
     const aligned =
       arrayAppend &&
       arrayAppend.host.runtime.loadSnapshot === arrayAppend.snapshot &&
-      arrayAppend.host.itemCount === arrayAppend.count + 1
+      arrayAppend.host.__itemCount__ === arrayAppend.count + 1
         ? arrayAppend.host
         : arrayPop &&
             arrayPop.host.runtime.loadSnapshot === arrayPop.snapshot &&
-            arrayPop.host.itemCount === arrayPop.count - 1
+            arrayPop.host.__itemCount__ === arrayPop.count - 1
           ? arrayPop.host
           : undefined;
     const resized: Self[] = [];
@@ -98,7 +98,7 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
       if (
         host !== aligned &&
         !host.isDetached &&
-        host.itemCount !== previousCount
+        host.__itemCount__ !== previousCount
       )
         resized.push(host);
     alignArraySnapshotSlots(resized);

@@ -110,35 +110,35 @@ export const buildChildSelectionRuntime = async (
       for (const { host, value } of pendingKeptOut.splice(0))
         keptOut.push({
           path: host.path,
-          sameValue: host.storedValue === value,
+          sameValue: host.__value__ === value,
           valueDelivery:
-            ((host.pendingDelivery?.type ?? 0) &
+            ((host.__pendingDelivery__?.type ?? 0) &
               (FieldNodeEventType.UpdateValue |
                 FieldNodeEventType.UpdateChildren)) !==
             0,
         });
     if (
       label === 'updateOutput' &&
-      before[0] === node.storedValue &&
-      before[1] === node.storedOutputValue
+      before[0] === node.__value__ &&
+      before[1] === node.__outputValue__
     )
       return;
     points.push(
       normalizeSelectionObservation({
         label,
         path: node.path,
-        value: node.storedValue,
-        outputValue: node.storedOutputValue,
+        value: node.__value__,
+        outputValue: node.__outputValue__,
         children: node.children,
-        schema: node.schema,
+        schema: node.__schema__,
         changedNodes: [...context.changedNodes],
         pendingOutputs: [...(context.pendingOutputs ?? [])],
         gateExceptionVersion: context.gateExceptionVersion,
         deliveries: [...(context.root.runtime.deliveries ?? [])].map(
           (candidate) => ({
             node: candidate,
-            event: candidate.pendingDelivery,
-            revisions: candidate.revisionLedger,
+            event: candidate.__pendingDelivery__,
+            revisions: candidate.__revisionLedger__,
           }),
         ),
       }),
@@ -323,11 +323,11 @@ export const buildChildSelectionRuntime = async (
                                 ts.factory.createArrayLiteralExpression([
                                   ts.factory.createPropertyAccessExpression(
                                     owner,
-                                    'storedValue',
+                                    '__value__',
                                   ),
                                   ts.factory.createPropertyAccessExpression(
                                     owner,
-                                    'storedOutputValue',
+                                    '__outputValue__',
                                   ),
                                 ]),
                               ),

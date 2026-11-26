@@ -69,7 +69,7 @@ describe('prepared gate tables during the load pass', () => {
               : { evaluations: 0, visits: 22 },
           );
           expect(gateSelectionTable.violations).toBe(0);
-          expect(root.storedOutputValue).toEqual({
+          expect(root.__outputValue__).toEqual({
             common: 'shared',
             kind: 'kind_0',
             payload_0_a: 'a_0',

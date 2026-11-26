@@ -27,7 +27,7 @@ import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 /**
  * Apply an admitted middle remove or insert by cutting at the edited position and splicing only the tail.
  * Positions before `proof.index` keep their nodes, keys, source, load-snapshot slots and children-by-name entries, and are never read.
- * Mutates `host.childrenByName` in place; the tail items shift by one position and are renamed in the general path's order.
+ * Mutates `host.__childrenByName__` in place; the tail items shift by one position and are renamed in the general path's order.
  * Admission proved the blueprint ungated, so no gate is removed or registered here.
  * Renamed tail descendants are re-published and marked changed but not scheduled for recalculation: no value or selection of a static blueprint reads a position.
  * @param host - Live static branch array admitted by prepareArraySplice
@@ -42,10 +42,11 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   const { count, index, entry } = proof;
   const length = entry ? count + 1 : count - 1;
-  const items: Dictionary<Self> = host.childrenByName ?? Object.create(null);
+  const items: Dictionary<Self> =
+    host.__childrenByName__ ?? Object.create(null);
   const previous = host.children ?? [];
   const removedItem = entry ? undefined : items['' + index];
-  const removedValue = removedItem?.storedValue;
+  const removedValue = removedItem?.__value__;
   const slot = proof.plan.slots[0];
   const value = slot && 'value' in slot ? slot.value : undefined;
   const inserted = entry ? createChildNode(host, entry) : undefined;
@@ -93,7 +94,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
           captureDetachedFieldNodeReads(departing, {
             outputValue: context.previousOutputValue,
             context: context.previousContext,
-            schema: departing.schema.schema,
+            schema: departing.__schema__.schema,
           });
       },
       { isOwned: true },
@@ -122,7 +123,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
         updateFieldNodeNameAndPath(
           descendant,
           descendant === item ? name : descendant.name,
-          descendant === item ? host : descendant.parent,
+          descendant === item ? host : descendant.__parent__,
         );
         context.pathChanges.push({
           node: descendant,
@@ -135,10 +136,10 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
       { isOwned: true },
     );
   }
-  host.itemCount = length;
+  host.__itemCount__ = length;
   host.source = undefined;
   host.extras = undefined;
-  host.childrenByName = items;
+  host.__childrenByName__ = items;
   host.children = captureFieldNodeChange(host, 'children', children);
   context.arrayCounts.set(host, count);
   context.changedSource.add(host.path);

@@ -27,7 +27,7 @@ describe('bounded settlement traversal', () => {
     );
     visits.length = 0;
     writeFieldNode(
-      root.childrenByName!.field0,
+      root.__childrenByName__!.field0,
       'changed',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -62,7 +62,7 @@ describe('bounded settlement traversal', () => {
     );
     visits.length = 0;
     writeFieldNode(
-      root.childrenByName!.field49,
+      root.__childrenByName__!.field49,
       'changed',
       FieldNodeWriteKind.Input,
       WriteOption.Overwrite,
@@ -95,7 +95,7 @@ describe('bounded settlement traversal', () => {
     );
     visits.length = 0;
     writeFieldNode(
-      root.childrenByName!.left,
+      root.__childrenByName__!.left,
       { field0: 'changed' },
       FieldNodeWriteKind.CallerReplace,
       WriteOption.Overwrite,
@@ -104,7 +104,9 @@ describe('bounded settlement traversal', () => {
       visits.some((visit) => visit === '/right' || visit.startsWith('/right/')),
     ).toBe(false);
     expect(
-      root.childrenByName!.right.revisionLedger[FieldNodeEventType.UpdateValue],
+      root.__childrenByName__!.right.__revisionLedger__[
+        FieldNodeEventType.UpdateValue
+      ],
     ).toBe(1);
   });
 });

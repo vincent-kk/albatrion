@@ -27,7 +27,7 @@ export const readDefault = <Self extends FieldNodeRecord<Self>>(
       )
         return Reflect.get(group.controls, CONTROL_KEY.default);
     }
-  const schema = node.schema.schema;
+  const schema = node.__schema__.schema;
   if (schema === null || typeof schema !== 'object') return undefined;
   return hasOwnProperty(schema, 'default') ? schema.default : undefined;
 };
