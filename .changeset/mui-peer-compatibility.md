@@ -2,7 +2,7 @@
 "@canard/schema-form-mui-plugin": major
 ---
 
-Breaking change: restrict UI peer dependencies to the major versions bundled by this plugin so an unsupported host UI version is reported instead of silently using an isolated UI copy that misses the host theme or ConfigProvider.
+Breaking change: restrict UI peer dependencies to the major versions bundled by this plugin so an unsupported host UI version is reported instead of silently using an isolated UI copy that misses the host's theme provider.
 
 Before:
 

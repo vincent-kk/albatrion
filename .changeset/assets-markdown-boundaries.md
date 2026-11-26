@@ -2,7 +2,9 @@
 "@slats/agents-assets-sync": major
 ---
 
-Breaking change: rule sources and managed documents now require closed Markdown fences and HTML comments; nested fences in blockquotes or lists and fence syntax indented with tabs or four or more spaces are refused. Errors identify the file, opening line and repair, leave the affected unit unchanged, and allow other units to proceed. Source bytes are never canonicalized.
+Breaking change: rule files a package ships under `rules/`, and the `AGENTS.md` that receives rule blocks for `--agent codex` and `--agent agents`, must now use closed, top-level Markdown fences and closed HTML comments. A fence nested in a blockquote or list item, a fence indented with a tab or four or more spaces, and an unclosed fence or comment are refused, including in your own text outside the managed blocks of `AGENTS.md`.
+
+The error names the file, the opening line and the repair. Nothing is written for that package and agent, and other packages and agents still proceed. The command does not rewrite the file for you.
 
 Move a nested example to the top level before running the command again. Before:
 

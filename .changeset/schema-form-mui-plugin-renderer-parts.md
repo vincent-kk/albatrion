@@ -2,29 +2,35 @@
 "@canard/schema-form-mui-plugin": major
 ---
 
-Breaking change: the plugin supplies `LabelRenderer` and `ErrorMessageRenderer` for the renderer-parts API and no longer supplies a pass-through input frame. Upgrade it together with the matching `@canard/schema-form` API, and rename explicitly wired slot props.
+Breaking change: the exported `plugin` object uses the `@canard/schema-form` 1.0 slot names. `FormGroup` is now `FieldRenderer`, `FormLabel` is now `LabelRenderer`, `FormError` is now `ErrorMessageRenderer`, `formTypeInputDefinitions` is now `fieldInputDefinitions`, and the pass-through `FormInput` is removed.
+
+`registerPlugin(plugin)` needs no change. Rename the parts where you wire them explicitly:
 
 Before:
 
 ```tsx
-<Form
-  FormLabelRenderer={plugin.FormLabelRenderer}
-  FormErrorRenderer={plugin.FormErrorRenderer}
-  FormInputRenderer={plugin.FormInputRenderer}
-  jsonSchema={schema}
-/>
+<FormProvider
+  FormGroupRenderer={plugin.FormGroup}
+  FormLabelRenderer={plugin.FormLabel}
+  FormInputRenderer={plugin.FormInput}
+  FormErrorRenderer={plugin.FormError}
+  formTypeInputDefinitions={plugin.formTypeInputDefinitions}
+>
+  {children}
+</FormProvider>
 ```
 
 After:
 
 ```tsx
-<Form
+<FormProvider
+  FieldRenderer={plugin.FieldRenderer}
   LabelRenderer={plugin.LabelRenderer}
   ErrorMessageRenderer={plugin.ErrorMessageRenderer}
-  jsonSchema={schema}
-/>
+  fieldInputDefinitions={plugin.fieldInputDefinitions}
+>
+  {children}
+</FormProvider>
 ```
 
-The label and error renderers own their roots and accept their dedicated part props; custom groups reuse the bound Label and ErrorMessage. Required marks are aria-hidden. Existing group layout and array-item label omission are preserved.
-
-The group still draws no label; use Form.Label when arranging a standalone label.
+`LabelRenderer` and `ErrorMessageRenderer` render their own root and accept `LabelRendererProps` and `ErrorMessageRendererProps`, so `Form.Label`, `Form.ErrorMessage` and the parts given to a custom `FieldRenderer` use the plugin's markup. A label's `for` points at its control's Form-scoped id. The group still draws no label; use `Form.Label` when arranging a standalone label.

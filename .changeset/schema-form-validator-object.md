@@ -25,4 +25,4 @@ const validatorFactory: ValidatorFactory = {
 };
 ```
 
-The AJV plugins already provide the complete object. Create the validator once and keep its reference stable: replacing `validatorFactory` after mount rebuilds the form's nodes and inputs.
+The AJV plugins' `createValidator(ajv)` returns the complete object; the function that their `createValidatorFactory(ajv)` returns is not one. Create the validator once and keep its reference stable: replacing `validatorFactory` after mount rebuilds the form's nodes and inputs.

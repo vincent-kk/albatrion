@@ -2,26 +2,24 @@
 "@canard/schema-form-antd-mobile-plugin": major
 ---
 
-Breaking: the slider's shape now follows the schema type, and `presentation.FieldInputProps.range` is ignored. A numeric array schema with `format: "slider"` always renders a range slider, keeps its two-number default and writes only two-number arrays; a number or integer schema always renders a single thumb and writes only numbers.
+Breaking change: the slider no longer reads `range`; its shape follows the schema type. A `number` or `integer` schema with `format: "slider"` renders a single thumb and stores a number, and a numeric array schema with `format: "slider"` renders a two-thumb range slider and stores a two-number array.
 
-Before, an array schema without `range: true` rendered a single thumb, dropped its array default and wrote one number into the array field, while a number schema with `range: true` wrote an array into the number field. Both produced values that contradict the schema.
-
-To keep a range slider, declare the field as a numeric array; the `range` setting is no longer needed:
+In 0.x, `options.range: true` on a number schema rendered two thumbs and stored an array in the number field, which contradicts the schema. In 0.x a numeric array schema with `format: "slider"` rendered the generic array editor instead. To keep a range slider, declare the field as an array of numbers:
 
 ```ts
 // Before
 const before = {
-  type: "number",
-  format: "slider",
-  presentation: { FieldInputProps: { range: true } },
+  type: 'number',
+  format: 'slider',
+  options: { range: true },
 };
 
 // After
 const after = {
-  type: "array",
-  items: { type: "number" },
-  format: "slider",
+  type: 'array',
+  items: { type: 'number' },
+  format: 'slider',
 };
 ```
 
-Schemas that still set `range` keep loading without errors. The setting has no effect. The two thumbs appear in ascending order, and mounting preserves the supplied order of the stored range. For example, the form keeps `[80, 20]` while the thumbs appear at `20` and `80`.
+A schema that still sets `range`, under `options` or `presentation.FieldInputProps`, loads without errors, and the setting has no effect. The range slider keeps a stored two-number default and writes only two-number arrays. Its thumbs appear in ascending order, and mounting keeps the stored order: the form keeps `[80, 20]` while the thumbs appear at `20` and `80`.

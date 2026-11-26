@@ -2,20 +2,31 @@
 "@winglet/common-utils": major
 ---
 
-Breaking change: `getTrackableHandler` starts the original function only after an asynchronous `beforeExecute` fulfills, and a hook rejection now rejects the call.
+Breaking change: `getTrackableHandler` now waits for a promise or thenable returned by `beforeExecute` or `afterExecute`. The original function starts only after `beforeExecute` fulfills, and a rejection from either hook rejects the call.
 
-Previously, `beforeExecute` could still be running when the original function started, and its rejection did not block execution. Promises and thenables returned by lifecycle hooks are now awaited. An async `afterExecute` finishes before pending is cleared, and its rejection reaches the handler after cleanup. Synchronous hooks retain their same-tick execution.
+Before, `beforeExecute` could still be running when the original function started, its rejection did not stop the call, and an async `afterExecute` neither delayed `pending` becoming `false` nor affected the result. Now `pending` stays `true` until an async `afterExecute` settles, and its rejection rejects the call after `pending` is cleared. Hooks that do not return a promise or thenable keep their same-tick execution.
+
+```ts
+const save = getTrackableHandler(persist, { beforeExecute: async () => authorize() });
+await save();
+// Before: persist could start before authorization finished.
+// After: persist starts only after authorization succeeds.
+```
+
+To keep a hook as background work that neither delays nor fails the call, do not return its promise.
 
 Before:
 
 ```ts
-const save = getTrackableHandler(persist, { beforeExecute: async () => authorize() });
-await save(); // persist could start before authorization finished
+getTrackableHandler(persist, { afterExecute: async () => sendMetrics() });
 ```
 
 After:
 
 ```ts
-const save = getTrackableHandler(persist, { beforeExecute: async () => authorize() });
-await save(); // persist starts only after authorization succeeds
+getTrackableHandler(persist, {
+  afterExecute: () => {
+    void sendMetrics().catch(reportMetricsError);
+  },
+});
 ```

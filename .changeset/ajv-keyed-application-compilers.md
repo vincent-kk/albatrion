@@ -1,28 +1,12 @@
 ---
-"@canard/schema-form-ajv6-plugin": major
-"@canard/schema-form-ajv7-plugin": major
+"@canard/schema-form-ajv6-plugin": minor
+"@canard/schema-form-ajv7-plugin": minor
 ---
 
-Breaking change: `createValidatorFactory(ajv, key)` compiles the application registration privately. It leaves the application's cache untouched, applies current schema and keyword definitions on each compile, and keeps the verdicts and issue details of existing validators. An empty string selects an explicit registration key.
-
-A custom constructor must leave the private compiler free of bootstrap schemas. Move application schema registration out of the constructor.
-
-Before:
-
-```typescript
-class AppAjv extends Ajv {
-  constructor(options) {
-    super(options);
-    this.addSchema(schema, key);
-  }
-}
-const compile = createValidatorFactory(new AppAjv(), key);
-```
-
-After:
+`createValidatorFactory(ajv, key)` accepts an optional registration key. With a key, each validator it creates uses the schema registered on `ajv` under that key, such as with `addSchema(schema, key)`, and ignores the schema passed to the returned function. The plugin compiles that registration privately on every call: your instance stays unchanged, the compile uses the current schema, keyword and format definitions, and validators created earlier keep their verdicts and issue details. An empty string is a key, not the absence of one. Compiling throws when no schema is registered under the key.
 
 ```typescript
 const ajv = new Ajv();
-ajv.addSchema(schema, key);
-const compile = createValidatorFactory(ajv, key);
+ajv.addSchema(schema, 'order');
+const compile = createValidatorFactory(ajv, 'order');
 ```
