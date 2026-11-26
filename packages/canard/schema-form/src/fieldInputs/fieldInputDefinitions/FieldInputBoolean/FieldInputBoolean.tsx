@@ -7,9 +7,13 @@ import type { Nullable } from '@aileron/declare';
 
 import type { FieldInputProps } from '@/schema-form/types';
 
+import { readArrayItemTitleId } from '../../utils/readArrayItemTitleId';
+
 /** Render a boolean node as a checkbox; a non-boolean value shows as indeterminate. */
 export const FieldInputBoolean = ({
   inputId: fieldId,
+  labelId,
+  node,
   name,
   readOnly,
   disabled,
@@ -37,6 +41,7 @@ export const FieldInputBoolean = ({
       onChange={handleChange}
       style={style}
       className={className}
+      aria-labelledby={readArrayItemTitleId(node, labelId)}
       aria-invalid={misfit || undefined}
     />
   );

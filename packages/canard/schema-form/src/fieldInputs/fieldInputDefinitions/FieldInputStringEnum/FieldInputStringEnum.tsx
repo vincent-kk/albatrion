@@ -12,12 +12,15 @@ import type {
   StringSchema,
 } from '@/schema-form/types';
 
-import type { EnumLabelsContext } from './type';
+import { readArrayItemTitleId } from '../../utils/readArrayItemTitleId';
 import { readEnumOptionValue } from '../../utils/readEnumOptionValue';
+import type { EnumLabelsContext } from './type';
 
 /** Render a select for a string enum node. */
 export const FieldInputStringEnum = ({
   inputId: fieldId,
+  labelId,
+  node,
   name,
   jsonSchema,
   defaultValue,
@@ -87,6 +90,7 @@ export const FieldInputStringEnum = ({
       onChange={handleChange}
       style={style}
       className={className}
+      aria-labelledby={readArrayItemTitleId(node, labelId)}
       aria-invalid={misfit || undefined}
     >
       {outOfDomainValue !== undefined && (

@@ -7,9 +7,13 @@ import type { Nullable } from '@aileron/declare';
 
 import type { FieldInputProps } from '@/schema-form/types';
 
+import { readArrayItemTitleId } from '../../utils/readArrayItemTitleId';
+
 /** Render a number input whose empty field writes undefined and whose bad input stays a draft. */
 export const FieldInputNumber = ({
   inputId: fieldId,
+  labelId,
+  node,
   name,
   jsonSchema,
   readOnly,
@@ -37,6 +41,7 @@ export const FieldInputNumber = ({
       readOnly={readOnly}
       disabled={disabled}
       placeholder={placeholder}
+      aria-labelledby={readArrayItemTitleId(node, labelId)}
       aria-invalid={misfit || undefined}
       defaultValue={
         defaultValue == null ||

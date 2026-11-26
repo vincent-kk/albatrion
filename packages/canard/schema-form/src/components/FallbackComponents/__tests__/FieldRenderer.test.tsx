@@ -3,11 +3,15 @@ import { createRef } from 'react';
 import { act, cleanup, render, screen, within } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
+import { expectedFieldPartId } from '@/schema-form/__tests__/fixtures/expectedFieldPartId';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { ValidationMode } from '@/schema-form/core';
-import { expectedFieldPartId } from '@/schema-form/__tests__/fixtures/expectedFieldPartId';
 import { ErrorVisibility } from '@/schema-form/types';
-import type { FieldRendererProps } from '@/schema-form/types';
+import type {
+  AllowedValue,
+  FieldRendererProps,
+  JSONSchema,
+} from '@/schema-form/types';
 
 import { FieldRenderer } from '../components/FieldRenderer';
 
@@ -103,6 +107,125 @@ it.each(['checkbox', 'radio'])(
   },
 );
 
+/** `for`, `aria-labelledby` and `aria-describedby` targets no element carries. */
+const danglingReferences = (container: HTMLElement) => {
+  const missing: string[] = [];
+  for (const label of container.querySelectorAll<HTMLLabelElement>(
+    'label[for]',
+  ))
+    if (!document.getElementById(label.htmlFor))
+      missing.push(`for=${label.htmlFor}`);
+  for (const attribute of ['aria-labelledby', 'aria-describedby'])
+    for (const element of container.querySelectorAll(`[${attribute}]`))
+      for (const id of element.getAttribute(attribute)!.split(/\s+/))
+        if (!document.getElementById(id)) missing.push(`${attribute}=${id}`);
+  return missing;
+};
+
+/** Paths of the fields showing `text` outside a `hidden` subtree. */
+const shownPaths = (text: string) =>
+  screen
+    .queryAllByText(text)
+    .filter((element) => !element.closest('[hidden]'))
+    .map((element) =>
+      element.closest('[data-path]')?.getAttribute('data-path'),
+    );
+
+const strings: JSONSchema = { type: 'array', items: { type: 'string' } };
+const radios: JSONSchema = {
+  type: 'array',
+  items: {
+    type: 'string',
+    enum: ['a', 'b'],
+    presentation: { inputType: 'radio' },
+  },
+};
+/** One single-control field per built-in input; the array of each names its item `0`. */
+const controls: Record<string, JSONSchema> = {
+  text: { type: 'string' },
+  count: { type: 'number' },
+  flag: { type: 'boolean' },
+  size: { type: 'string', enum: ['S', 'M'] },
+  day: { type: 'string', format: 'date' },
+  union: { type: ['string', 'number'] },
+};
+
+it.each<[string, JSONSchema, AllowedValue]>([
+  ['strings', strings, { list: ['a'] }],
+  ['radio groups', radios, { list: ['a'] }],
+])(
+  'points every reference of an array of %s at an existing element and shows no index',
+  (_, list, defaultValue) => {
+    const view = render(
+      <Form
+        jsonSchema={{ type: 'object', properties: { list } }}
+        defaultValue={defaultValue}
+      />,
+    );
+    expect(danglingReferences(view.container)).toEqual([]);
+    expect(shownPaths('0')).toEqual([]);
+  },
+);
+
+it('names a root checkbox group by a Form.Label with an empty path', () => {
+  render(
+    <Form
+      jsonSchema={{
+        type: 'array',
+        items: { type: 'string', enum: ['one', 'two'] },
+        presentation: { inputType: 'checkbox' },
+      }}
+    >
+      <Form.Label path="">Tags</Form.Label>
+      <Form.Input path="" />
+    </Form>,
+  );
+  expect(screen.getByRole('group', { name: 'Tags' })).toBeTruthy();
+});
+
+it('names the control of each array item by its hidden index', () => {
+  const properties: Record<string, JSONSchema> = { picks: radios };
+  for (const key in controls)
+    properties[key] = { type: 'array', items: controls[key] };
+  const view = render(
+    <Form
+      jsonSchema={{ type: 'object', properties }}
+      defaultValue={{
+        text: ['a'],
+        count: [1],
+        flag: [true],
+        size: ['S'],
+        day: ['2024-01-01'],
+        union: ['u'],
+        picks: ['a'],
+      }}
+    />,
+  );
+  const item = (path: string) =>
+    within(view.container.querySelector<HTMLElement>(`[data-path="${path}"]`)!);
+  expect(item('/text/0').getByRole('textbox', { name: '0' })).toBeTruthy();
+  expect(item('/count/0').getByRole('spinbutton', { name: '0' })).toBeTruthy();
+  expect(item('/flag/0').getByRole('checkbox', { name: '0' })).toBeTruthy();
+  expect(item('/size/0').getByRole('combobox', { name: '0' })).toBeTruthy();
+  expect(item('/day/0').getByLabelText('0')).toHaveProperty('type', 'date');
+  expect(item('/union/0').getByRole('textbox', { name: '0' })).toBeTruthy();
+  expect(item('/picks/0').getByRole('group', { name: '0' })).toBeTruthy();
+  expect(shownPaths('0')).toEqual([]);
+});
+
+it('keeps the label name of each single control outside an array', () => {
+  const view = render(
+    <Form jsonSchema={{ type: 'object', properties: controls }} />,
+  );
+  expect(view.getByRole('textbox', { name: 'text' })).toBeTruthy();
+  expect(view.getByRole('spinbutton', { name: 'count' })).toBeTruthy();
+  expect(view.getByRole('checkbox', { name: 'flag' })).toBeTruthy();
+  expect(view.getByRole('combobox', { name: 'size' })).toBeTruthy();
+  expect(view.getByLabelText('day')).toHaveProperty('type', 'date');
+  expect(view.getByRole('textbox', { name: 'union' })).toBeTruthy();
+  expect(view.container.querySelector('[aria-labelledby]')).toBeNull();
+});
+
 it('keeps a plain string title associated with its input', () => {
   render(
     <Form
@@ -115,7 +238,9 @@ it('keeps a plain string title associated with its input', () => {
   const input = screen.getByRole<HTMLInputElement>('textbox');
   expect(screen.getByText('Text').getAttribute('for')).toBe(input.id);
   expect(input.id).toMatch(/^.+:\/Text~input$/);
-  expect(screen.getByText('Text').id).toBe(expectedFieldPartId(input.id, 'label'));
+  expect(screen.getByText('Text').id).toBe(
+    expectedFieldPartId(input.id, 'label'),
+  );
   expect(screen.getByText('Text').textContent).toBe('Text');
   expect(screen.getByText('Text').childNodes).toHaveLength(1);
 });

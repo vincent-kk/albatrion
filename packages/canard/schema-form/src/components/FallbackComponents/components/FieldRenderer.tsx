@@ -11,7 +11,14 @@ const LABEL_NOTE_STYLE: CSSProperties = { fontSize: '0.85em' };
 /** Space between the label text and the input. */
 const LABEL_GAP_STYLE: CSSProperties = { marginRight: 5 };
 
-/** Assemble the default group from bound parts while preserving branch accessibility. */
+/**
+ * Assemble the default group from bound parts while preserving branch accessibility.
+ * A branch shows its name in a legend carrying `labelId`. A leaf under a non-array
+ * parent shows `Label`; an array item leaf instead gets a hidden title carrying
+ * `labelId` and its index for the inputs that reference it through `aria-labelledby`.
+ * @param props - Bound field parts, node strategy, indentation depth and title address.
+ * @returns The input alone at the root, otherwise the titled group.
+ */
 export const FieldRenderer = ({
   node,
   depth,
@@ -56,8 +63,12 @@ export const FieldRenderer = ({
         }}
         className={className}
       >
-        {node.parentNode && isArraySchema(node.parentNode) === false && (
+        {node.parentNode && isArraySchema(node.parentNode) === false ? (
           <Label style={LABEL_GAP_STYLE} />
+        ) : (
+          <span hidden id={labelId}>
+            {node.name}
+          </span>
         )}
         <Input />
         <br />
