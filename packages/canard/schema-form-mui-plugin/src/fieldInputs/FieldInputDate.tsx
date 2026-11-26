@@ -17,11 +17,7 @@ import { parsePickerLimit } from './utils/picker/parsePickerLimit';
 import { usePickerValueChange } from './utils/picker/usePickerValueChange';
 import { getMuiFieldPresentation } from './utils/presentation/getMuiFieldPresentation';
 
-type DateJSONSchema = StringSchema & {
-  format: 'date';
-  minimum?: string; // date string
-  maximum?: string; // date string
-};
+type DateJSONSchema = StringSchema & { format: 'date' };
 
 interface FieldInputDateProps
   extends FieldInputPropsWithSchema<string | null, DateJSONSchema, MuiContext>,
@@ -38,7 +34,6 @@ const FieldInputDate = ({
   labelId,
   getInputId,
   name,
-  jsonSchema,
   required,
   disabled,
   readOnly,
@@ -51,8 +46,8 @@ const FieldInputDate = ({
   fullWidth: fullWidthProp,
   hideLabel,
   misfit,
-  minimum: minimumProp,
-  maximum: maximumProp,
+  minimum,
+  maximum,
   className,
   style,
 }: FieldInputDateProps) => {
@@ -64,8 +59,6 @@ const FieldInputDate = ({
     context,
   );
 
-  const minimum = minimumProp ?? jsonSchema.minimum;
-  const maximum = maximumProp ?? jsonSchema.maximum;
   const { minDate, maxDate } = useMemo(
     () => ({
       minDate: parsePickerLimit(minimum, 'YYYY-MM-DD'),
