@@ -86,6 +86,21 @@ it('routes a literal default with an array hole and an extra own property to the
   expect(tree.at('/list/0').source).toBeNull();
 });
 
+it('routes a literal array default with a non-enumerable index to the general load, which loads the position as null', () => {
+  const admission = vi.spyOn(staticFirstAdmission, 'canLoadStaticFirstTree');
+  const arr: unknown[] = [];
+  Object.defineProperty(arr, '0', {
+    value: undefined,
+    enumerable: false,
+    configurable: true,
+  });
+  const tree = mountPublicTree(
+    listDefault(arr, { items: { type: 'string' } }),
+  );
+  expect(admission).toHaveLastReturnedWith(false);
+  expect(tree.at('/list/0').source).toBeNull();
+});
+
 it('admits a dense literal array default with an extra own property to the static-first load', () => {
   const schema = listDefault(Object.assign(['x'], { extra: 1 }), {
     items: { type: 'string' },
