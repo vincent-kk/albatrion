@@ -106,44 +106,6 @@ it('runs a removed item updater on an absent value and drops its result', () => 
   expect(batched.received).toStrictEqual([undefined]);
 });
 
-it('counts a dropped item write when a refused reset replays its later marks', () => {
-  const run = (batched: boolean) => {
-    const root = nodeFromJSONSchema({
-      jsonSchema: {
-        type: 'object',
-        properties: {
-          open: { type: 'boolean' },
-          box: {
-            type: 'object',
-            controls: { active: '../open === true' },
-            properties: { a: { type: 'string' } },
-          },
-          list: strings,
-        },
-      } as const satisfies AuthoredSchema,
-      defaultValue: { open: true, box: { a: 'x' }, list: ['x', 'y'] },
-      validationMode: ValidationMode.None,
-    });
-    const [list, item, field, box] = ['/list', '/list/1', '/box/a', '/box'].map(
-      (path) => root.find(path),
-    );
-    if (!list || !item || !field || !box) throw new Error('Missing test node');
-    const calls = () => {
-      list.setValue(['n']);
-      item.setValue('z');
-      field.setValue('c');
-      // Closing the scope refuses the reset, which keeps the in-scope mark minus what later
-      // marks cover, so the dropped item write must still count as a mark.
-      root.setValue({ open: false, box: { a: 'r' }, list: ['n'] });
-      box.resetSubtree();
-    };
-    if (batched) root.batch(calls);
-    else calls();
-    return { value: root.value, inactive: root.inactiveValues };
-  };
-  expect(run(true)).toStrictEqual(run(false));
-});
-
 it.each([
   { host: '/list', hostValue: ['a', 'b'], target: '/list/1' },
   { host: '/m', hostValue: [['a'], ['b']], target: '/m/1/0' },

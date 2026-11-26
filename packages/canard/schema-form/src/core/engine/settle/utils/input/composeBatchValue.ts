@@ -12,14 +12,12 @@ import type { WriteRange } from '../../types/writeRange';
 import { assertVirtualWriteShape } from './assertVirtualWriteShape';
 import { getWriteChild } from './getWriteChild';
 import { isMergeWrite } from './isMergeWrite';
-import { isRemovedItemAddress } from './isRemovedItemAddress';
 import { replaceAtPath } from './replaceAtPath';
 
 /**
  * Overlay marked caller inputs onto the last committed root value. A virtual write is
  * spread over its reference fields in call order, so the composed value never carries a
- * virtual key and a later field write wins over an earlier virtual one (R2). A write through a
- * reference below an item position an earlier write removed adds nothing, virtual slots included.
+ * virtual key and a later field write wins over an earlier virtual one (R2).
  * @param root - Common root of every marked occurrence
  * @param writes - Call-order inputs, already resolved from updaters
  * @param base - Committed root value the marks overlay; a reader passes it with a target's own
@@ -40,12 +38,6 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
   const direct = mode === 'direct';
   let value = base;
   for (const write of writes) {
-    if (isRemovedItemAddress(value, write.node)) {
-      // Separate calls would detach this reference with its item first (NODE-066). The empty
-      // decision list keeps one markRanges entry per mark.
-      markRanges?.push([]);
-      continue;
-    }
     const ownRanges = markRanges ? [] : ranges;
     const merge = isMergeWrite(write.option);
     const source =
