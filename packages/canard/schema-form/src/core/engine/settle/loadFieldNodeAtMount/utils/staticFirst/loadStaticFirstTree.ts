@@ -13,6 +13,7 @@ import { WriteOption } from '../../../../types/value';
 import { createChildNode } from '../../../utils/compute/createChildNode';
 import { getDeclaredChildNames } from '../../../utils/declarations/getDeclaredChildNames';
 import { arrayExtras } from '../../../utils/input/arrayExtras';
+import { isEmptyItemNull } from '../../../utils/input/isEmptyItemNull';
 import { isPlain } from '../../../utils/input/isPlain';
 import { nextExtras } from '../../../utils/input/nextExtras';
 import { staticSpec } from '../../../utils/input/staticSpec';
@@ -102,10 +103,14 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
         input = fallback;
         frame.isAutomatic = true;
       }
-      const value = node.behavior.interpret(
+      const interpretation = node.behavior.interpret(
         input,
         staticSpec(node.schemaType, node.isNullable),
       );
+      const value =
+        interpretation === null && isEmptyItemNull(node)
+          ? undefined
+          : interpretation;
       frame.input = value;
       if (node.behavior.strategy === 'branch') {
         node.__childrenByName__ = Object.create(null);

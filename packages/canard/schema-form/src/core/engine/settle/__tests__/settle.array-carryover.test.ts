@@ -22,8 +22,8 @@ describe('array projection carryovers', () => {
     expect(root.outputValue).toEqual({ tail: ['a'] });
     expect(root.find('/tail')?.children?.map((item) => item.source)).toEqual([
       'a',
-      null,
-      null,
+      undefined,
+      undefined,
     ]);
     expect(root.find('/tail')?.children).toHaveLength(3);
   });
