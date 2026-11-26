@@ -31,8 +31,7 @@ import { mergeMarkedValue } from './mergeMarkedValue';
  * @param path - Target's physical address
  * @param isIndirect - Whether the target is a constituent of a whole virtual write
  * @param mode - Direct input keeps non-enumerable declared fields
- * @returns Candidate value with one path overlaid, or `current` unchanged when the target's
- * array ancestor no longer holds the target's position
+ * @returns Candidate value with one path overlaid
  */
 export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
   current: unknown,
@@ -82,12 +81,6 @@ export const replaceAtPath = <Self extends FieldNodeRecord<Self>>(
   }
 
   const name = names[depth];
-  if (!isArray(current) || Number(name) >= current.length) {
-    let host = node;
-    while (host && host.depth > depth) host = host.__parent__ ?? undefined;
-    // An earlier write removed this item position; separate calls would detach the item.
-    if (host?.behavior.type === 'array') return current;
-  }
   if (isArray(current)) {
     const next = [...current];
     const index = Number(name);
