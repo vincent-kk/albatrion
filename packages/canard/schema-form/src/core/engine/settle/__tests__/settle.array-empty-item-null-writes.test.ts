@@ -88,6 +88,19 @@ describe('a null written to a non-nullable leaf item position', () => {
     expectEmptyItem(tree.at('/list/1'));
   });
 
+  it('passes an updater undefined for an item cleared with null earlier in the same batch', () => {
+    const tree = mountPublicTree(schema, { list: ['x', 'y'] });
+    const item = tree.at('/list/1');
+    let previous: unknown = 'unread';
+    tree.root.batch(() => {
+      item.setValue(null);
+      item.setValue((value: unknown) => (previous = value));
+    });
+    expect(previous).toBeUndefined();
+    expect(tree.root.outputValue).toEqual({ list: ['x', null] });
+    expectEmptyItem(tree.at('/list/1'));
+  });
+
   it('rewrites the output of a pushed empty item twice without an item event', () => {
     const tree = mountPublicTree(
       {

@@ -326,7 +326,11 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   isShadowRegistration?: boolean;
   /** Active declaration choices published only after this call commits. */
   selectedDeclarationIds: Map<Self, readonly number[]>;
-  /** Original inputs retained for effective-list interpretation. */
+  /**
+   * Original inputs retained for effective-list interpretation. A null entry also marks a leaf
+   * given null, which the appearance fill leaves empty, including a null that slot restoration
+   * kept at an empty item position.
+   */
   writtenInputs: Map<Self, unknown>;
   /** Host inputs that must reach children during this settlement. */
   distributedInputs: Map<Self, Distribution>;
