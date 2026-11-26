@@ -13,7 +13,7 @@ import {
 
 afterEach(cleanup);
 
-it('retains previous child ownership after a container swap until the renderer type changes', () => {
+it('starts a fresh child ownership record after a container swap, as a renderer type change does', () => {
   const schema = {
     type: 'object',
     properties: { list: { type: 'array', items: { type: 'string' } } },
@@ -73,6 +73,6 @@ it('retains previous child ownership after a container swap until the renderer t
     return result;
   };
 
-  expect(run('container')).toBe('["before"]');
+  expect(run('container')).toBe('["after"]');
   expect(run('component')).toBe('["after"]');
 });
