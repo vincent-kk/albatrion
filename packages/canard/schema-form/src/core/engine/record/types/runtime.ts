@@ -12,7 +12,6 @@ import type {
 } from '../../blueprint';
 import type { InactiveValueResolver } from '../../types/controls';
 import type { ValidationMode } from '../../types/state';
-import type { TreeMemoStores } from '../../types/treeMemoStores';
 import type { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import type { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import type { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
@@ -163,9 +162,7 @@ interface FieldNodeInputRelay<Self> {
 }
 
 /** Minimal per-tree slots consumed by the first settlement engine. */
-export interface FieldNodeRuntime<Self>
-  extends FieldNodeRootRuntimeState,
-    TreeMemoStores {
+export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   /** Hosts whose unpublished slot changes must become visible at a commit. */
   slotDirtyHosts?: Set<Self>;
   /** Last issued static whole-write generation; never reused within this tree. */

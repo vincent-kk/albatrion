@@ -155,7 +155,6 @@ export function fieldNodeFactory(
   const runtime: FieldNodeRuntime<RuntimeFieldNode> = {
     ...runtimeSeed,
     committedDeclarationIds: runtimeSeed.committedDeclarationIds,
-    deriveTargetIds: runtimeSeed.deriveTargetIds,
     committedRuleValues: runtimeSeed.committedRuleValues,
     committedRuleKeysBySource: runtimeSeed.committedRuleKeysBySource,
     committedRuleKeysByTarget: runtimeSeed.committedRuleKeysByTarget,

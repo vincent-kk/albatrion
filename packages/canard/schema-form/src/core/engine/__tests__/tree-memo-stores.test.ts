@@ -24,6 +24,7 @@ const nodeMemos = [
   '__childEntries__',
   '__declarationKey__',
   '__budgetCap__',
+  '__deriveTargetId__',
 ] as const;
 
 it('keeps count and shape memos independent for two trees sharing one blueprint', () => {
@@ -57,11 +58,16 @@ it('keeps count and shape memos independent for two trees sharing one blueprint'
 });
 
 it('drops recomputable memos on form reset and disposal, preserving them on partial reset', () => {
-  const { root } = createTestTree(schema);
+  const { root } = createTestTree({
+    ...schema,
+    properties: {
+      ...schema.properties,
+      twin: { type: 'string', controls: { derived: '../sibling' } },
+    },
+  });
   const value = { values: ['a'], sibling: 'x' };
   loadFieldNodeAtMount(root, value, WriteOption.Overwrite);
-  const values = root.__childrenByName__!.values;
-  const sibling = root.__childrenByName__!.sibling;
+  const { values, sibling, twin } = root.__childrenByName__!;
   getCommittedDeclarationKey(values);
   const entries = values.__childEntries__;
   const key = values.__declarationKey__;
@@ -69,22 +75,21 @@ it('drops recomputable memos on form reset and disposal, preserving them on part
   expect(key).toBeDefined();
   expect(values.__arrayShape__).toBeDefined();
   expect(root.__objectShape__).toBeDefined();
-  const sentinel = {};
-  const targetIds = new WeakMap<object, number>([[sentinel, 1]]);
-  root.runtime.deriveTargetIds = targetIds;
+  const targetId = twin.__deriveTargetId__;
+  expect(targetId).toBeDefined();
   resetFieldNodeSubtree(values, WriteOption.Overwrite);
   expect(values.__childEntries__).toBe(entries);
   expect(values.__declarationKey__).toBe(key);
-  expect(root.runtime.deriveTargetIds).toBe(targetIds);
+  expect(twin.__deriveTargetId__).toBe(targetId);
   const runtime = root.runtime;
   resetFieldNodeForm(root, value, WriteOption.Overwrite);
   expect(root.runtime).toBe(runtime);
   expect(values.__childEntries__).toBeDefined();
   expect(values.__childEntries__).not.toBe(entries);
   expect(values.__declarationKey__).not.toBe(key);
-  expect(runtime.deriveTargetIds?.has(sentinel) ?? false).toBe(false);
+  expect(twin.__deriveTargetId__).toBeDefined();
+  expect(twin.__deriveTargetId__).not.toBe(targetId);
   disposeFieldNodeTree(root);
-  for (const node of [root, values, sibling])
+  for (const node of [root, values, sibling, twin])
     for (const name of nodeMemos) expect(node[name]).toBeUndefined();
-  expect(runtime.deriveTargetIds).toBeUndefined();
 });

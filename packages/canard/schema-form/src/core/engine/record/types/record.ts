@@ -180,6 +180,12 @@ export interface FieldNodeRecord<Self> {
    */
   __budgetCap__?: { gates: readonly BlueprintGate[]; cap: number };
   /**
+   * Identity a derive rule key gives this occurrence as its target, issued from a counter that never rewinds
+   * so a node created again at the same path does not inherit the old committed baselines. Cleared by a form
+   * reset and by disposal, so the next rule key issues a new one; kept by a subtree reset.
+   */
+  __deriveTargetId__?: number;
+  /**
    * Last committed reads frozen when this reference first leaves the live shape; detached reads return
    * them, and a departure skips the capture while they are present. Never cleared.
    */

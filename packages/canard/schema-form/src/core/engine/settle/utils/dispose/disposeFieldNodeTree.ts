@@ -3,7 +3,6 @@ import { BIT_MASK_NONE } from '@/schema-form/constants/bitmask';
 import { visitFieldNodes } from '../../../navigation';
 import { FieldNodeEventType, FieldNodeRevisionLedger } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
-import { clearTreeMemoStores } from '../../../utils/cache/clearTreeMemoStores';
 import {
   releaseFieldNodeRevealHistory,
   settleFieldNodeValidation,
@@ -51,7 +50,6 @@ export const disposeFieldNodeTree = <Self extends FieldNodeRecord<Self>>(
   for (const subscriptions of runtime.inactiveListeners?.values() ?? [])
     subscriptions.clear();
   runtime.inactiveListeners?.clear();
-  clearTreeMemoStores(runtime);
   runtime.validationStamp = (runtime.validationStamp ?? 0) + 1;
   runtime.validationPendingTargets = undefined;
 };

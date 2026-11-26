@@ -110,6 +110,8 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   __declarationKey__: FieldNodeRecord<FieldNode>['__declarationKey__'];
   /** Gate wheel budget cap reused while this host's gate list is unchanged; initialized on every kind so all nodes share one layout. */
   __budgetCap__: FieldNodeRecord<FieldNode>['__budgetCap__'];
+  /** Derive rule target identity issued the first time a rule key addresses this occurrence. */
+  __deriveTargetId__: FieldNodeRecord<FieldNode>['__deriveTargetId__'];
   /** Last committed reads frozen when this reference first left the live shape. */
   __detachedReads__: FieldNodeRecord<FieldNode>['__detachedReads__'];
 
@@ -226,6 +228,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.__childEntries__ = undefined;
     this.__declarationKey__ = undefined;
     this.__budgetCap__ = undefined;
+    this.__deriveTargetId__ = undefined;
     this.__detachedReads__ = undefined;
     this.__state__ = state;
     this.__interactionEpoch__ = 0;
