@@ -14,6 +14,8 @@
 
 FieldRenderer composes the bound Label, Input, and ErrorMessage parts. LabelRenderer and ErrorMessageRenderer own their root elements and register as LabelRenderer and ErrorMessageRenderer. The plugin does not register an input frame.
 
+Nested objects and arrays, including checkbox groups and range sliders, show no visible title or required marker. Under a parent that is not an array, a hidden title element with `labelId` and the field name stays in the DOM, so the array, checkbox and slider groups that reference it through `aria-labelledby` keep their accessible name. Their validation messages and the root's are shown below the input.
+
 ---
 
 ## Notice
@@ -120,7 +122,7 @@ In a read-only boolean field the Checkbox remains enabled, and the form keeps it
 
 ---
 
-Ant Design Mobile Switch inputs now use the library's pointer interaction. Tab and `formRef.current.focus(path)` no longer focus these switches, and Space and Enter no longer toggle them. To keep keyboard interaction, register a custom `FieldInput` through `fieldInputDefinitions` that renders a keyboard-accessible switch or a native checkbox and forwards the core's value, change handler and lock state.
+Ant Design Mobile Switch inputs use the library's pointer interaction. Tab and `formRef.current.focus(path)` do not focus these switches, and Space and Enter do not toggle them. For keyboard interaction, register a custom `FieldInput` through `fieldInputDefinitions` that renders a keyboard-accessible switch or a native checkbox and forwards the core's value, change handler and lock state.
 
 ---
 

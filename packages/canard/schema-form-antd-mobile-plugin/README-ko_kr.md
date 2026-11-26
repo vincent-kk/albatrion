@@ -14,6 +14,8 @@
 
 FieldRenderer는 묶인 Label, Input, ErrorMessage 부품을 조립합니다. LabelRenderer와 ErrorMessageRenderer는 각 루트 요소를 소유하며 LabelRenderer와 ErrorMessageRenderer로 등록됩니다. 플러그인은 입력 틀을 등록하지 않습니다.
 
+중첩 객체와 배열은 Checkbox 그룹과 범위 Slider를 포함하여 보이는 제목과 필수 표시 없이 그려집니다. 배열이 아닌 부모 아래에서는 `labelId`와 필드 이름을 가진 숨긴 제목 요소가 DOM에 남으므로, 이를 `aria-labelledby`로 참조하는 배열·Checkbox·Slider 그룹이 접근성 이름을 유지합니다. 이들과 루트의 유효성 검사 메시지는 입력 아래에 표시됩니다.
+
 ---
 
 ## 안내사항
@@ -120,7 +122,7 @@ registerPlugin(plugin);
 
 ---
 
-Ant Design Mobile Switch는 이제 라이브러리의 포인터 조작을 따릅니다. Tab과 `formRef.current.focus(path)`로는 더 이상 이 Switch에 초점을 줄 수 없고, Space와 Enter로는 상태를 바꿀 수 없습니다. 키보드 조작을 유지하려면 키보드를 지원하는 Switch 또는 네이티브 체크박스를 렌더하는 사용자 정의 `FieldInput`을 `fieldInputDefinitions`에 등록하고 코어의 값, 변경 핸들러, 잠금 상태를 전달하세요.
+Ant Design Mobile Switch는 라이브러리의 포인터 조작을 따릅니다. Tab과 `formRef.current.focus(path)`로는 이 Switch에 초점을 줄 수 없고, Space와 Enter로는 상태를 바꿀 수 없습니다. 키보드 조작이 필요하면 키보드를 지원하는 Switch 또는 네이티브 체크박스를 렌더하는 사용자 정의 `FieldInput`을 `fieldInputDefinitions`에 등록하고 코어의 값, 변경 핸들러, 잠금 상태를 전달하세요.
 
 ---
 
