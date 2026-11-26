@@ -37,7 +37,7 @@ The MUI plugin depends on MUI 7, MUI X 8, Emotion 11, and dayjs 1 ranges. Keep t
 
 ## Transpilation and CSP {#transpilation-csp}
 
-For targets that cannot parse the distributed ES2020 syntax, include the core and the external `@winglet` packages you actually consume in transpilation: `@winglet/common-utils`, `@winglet/json`, `@winglet/json-schema`, and `@winglet/react-utils`. Apply the same check to the UI plugin bundles. Transpilation alone does not supply missing APIs; AJV adapters use `WeakRef` and `FinalizationRegistry`.
+For targets that cannot parse the distributed ES2020 syntax, include the core and the external `@winglet` packages you actually consume in transpilation: `@winglet/common-utils`, `@winglet/json`, `@winglet/json-schema`, and `@winglet/react-utils`. Apply the same check to the UI plugin bundles. Transpilation alone does not supply missing APIs. The AJV adapters do not require `WeakRef` or `FinalizationRegistry`; `release(root)` frees a root's resources explicitly.
 
 String controls expressions compile with `new Function`. A CSP that prohibits dynamic function compilation cannot run those expressions unchanged. Check this policy before adopting expression-based controls.
 
@@ -69,5 +69,7 @@ Register plugins globally before mounting forms so their captured configuration 
 - `fieldInputDefinitions`: the new list is prepended, preserving order within it; the first matching definition wins. Earlier definitions remain as fallbacks.
 - Registrations are deduplicated by a content hash that includes function identity. Registering identical content again does nothing, even after another plugin overrides it; a new object with the same content and function references is also a duplicate. Only a hash not registered since the last reset is applied.
 - `registerPlugin(null)` restores defaults and clears the registered hashes, allowing the same plugins to be applied again.
+- A registration that throws applies no part of that plugin.
+- Unscoped registrations are shared by every compatible package copy in the same JavaScript realm, including ESM and CommonJS copies. Independently bundled applications on one page share them unless each registers with its own scope; see [application scopes](./api-reference#plugins).
 
 Use [FormProvider](./api-reference#plugins) for subtree defaults.

@@ -63,12 +63,5 @@ import { StyleManager, type StyleManagerConfig } from './StyleManager';
 export const styleManagerFactory = (
   scopeId: string,
   config?: StyleManagerConfig,
-): Fn<[styleId: string, cssString: string, compress?: boolean], Fn> => {
-  const shadowRoot = config?.shadowRoot;
-  const target = shadowRoot ? { shadowRoot } : undefined;
-  return (styleId: string, cssString: string, compress = false) => {
-    const manager = StyleManager.get(scopeId, target);
-    manager.add(styleId, cssString, compress);
-    return () => manager.remove(styleId);
-  };
-};
+): Fn<[styleId: string, cssString: string, compress?: boolean], Fn> =>
+  StyleManager.createInjector(scopeId, config);

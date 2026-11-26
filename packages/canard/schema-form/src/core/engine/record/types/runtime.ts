@@ -300,7 +300,8 @@ export interface FieldNodeRuntime<Self>
   guardFailureRecords?: Map<string, PendingFormErrorRecord>;
   /** Failed guards already reported by this consuming tree. */
   reportedGuardFailures?: Set<string>;
-  /** Development mount currently defers guard failures until its commit. */
+  /** Development mount pass: only `if` guard failures are deferred as records without throwing;
+   * every other gate failure (expression and discriminator gates) is built as in production. */
   isInMountingGuardPass?: boolean;
   /** Host observer for structured failures and warnings. */
   errorReporter?: FormErrorReporter;
@@ -454,11 +455,6 @@ export interface FieldNodeRuntime<Self>
   };
   /** Frozen last-commit reads for departed references, allocated on first exit. */
   detachedReads?: WeakMap<object, DetachedFieldNodeReads>;
-  /** Stable watch path results for each node within one completed commit. */
-  watchValuesMemo?: WeakMap<
-    object,
-    { commit: number; values: readonly unknown[] }
-  >;
   /** Settlement health retained until a form-level load. */
   diagnostics: FieldNodeDiagnostics;
   /** Single node creator used throughout this tree. */

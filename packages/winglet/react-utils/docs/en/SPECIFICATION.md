@@ -129,7 +129,7 @@ Creates a constant value that persists throughout the entire component lifecycle
 function useConstant<T>(input: T): T;
 ```
 
-The value is stored on the first render and never recomputed. If a function is passed, the function itself is stored (not called). Use `useTruthyConstant` for lazy factory initialization.
+The value is stored on the first render and never recomputed. If a function is passed, the function itself is stored (not called). To call a factory once, use `useLazyConstant`, or `useTruthyConstant` when a falsy result should be retried.
 
 **Parameters**:
 
@@ -142,11 +142,11 @@ const MyComponent = () => {
   // Stable object — never triggers React.memo re-renders
   const defaultConfig = useConstant({ showIcon: true, pageSize: 20 });
 
-  // Expensive one-time computation
-  const lookupTable = useConstant(() => buildLookupTable(rawData));
-  // Note: the function is STORED, not called. Use useTruthyConstant for factory calls.
+  // A function value: the function itself is stored, not called
+  const callback = useConstant(() => (value: string) => console.log(value));
+  // To call a factory once, use useLazyConstant.
 
-  return <ExpensiveChild config={defaultConfig} />;
+  return <ExpensiveChild config={defaultConfig} onLog={callback} />;
 };
 ```
 
@@ -271,7 +271,7 @@ useEffect(() => {
 
 ### useHandle
 
-Creates a stable callback function that always calls the latest version of the provided handler.
+Creates a stable callback function that calls the handler from the latest committed render. The handler is published during commit, so a call made during a later render runs the previously committed handler, and a handler from a later render that never commits is never called. The first render has no committed handler yet, so a call made during it runs that render's own handler, even when that render never commits.
 
 ```typescript
 function useHandle<P extends any[], R>(
@@ -295,6 +295,8 @@ const handleClick = useHandle(() => process(data));
 
 return <ExpensiveChild onClick={handleClick} />;
 ```
+
+**vs useCallback**: `useCallback` recreates the function when its dependencies change, while `useHandle` never recreates it.
 
 ---
 
@@ -347,7 +349,7 @@ function useSnapshotReference<T extends object | undefined>(
 - `input` — The object to track.
 - `omit` — Optional. Properties to exclude from deep comparison.
 
-**Returns**: A `RefObject<T>` whose `current` updates only on content change.
+**Returns**: A `RefObject<T>` whose `current` updates only on content change. The new snapshot is published during commit, so during the render that receives changed input `current` still holds the previous committed snapshot, and a render that never commits does not change it.
 
 ```tsx
 const dataRef = useSnapshotReference(complexData);
@@ -439,7 +441,7 @@ function useOnUnmount(handler: Fn): void;
 
 **Parameters**:
 
-- `handler` — Cleanup function. The handler passed on the most recent render is the one that runs, so it reads that render's props and state. It runs only on unmount, never on re-renders.
+- `handler` — Cleanup function. The handler from the latest committed render is the one that runs, so it reads that render's props and state; a handler from a render that never commits is not used. It runs only on unmount, never on re-renders.
 
 ```tsx
 // Reads the current formData and isDirty, not the mount-time values
@@ -454,7 +456,7 @@ useOnUnmount(() => {
 
 ### useOnUnmountLayout
 
-Synchronous cleanup on unmount via `useLayoutEffect`. Like `useOnUnmount`, it runs the handler passed on the most recent render.
+Synchronous cleanup on unmount via `useLayoutEffect`. Like `useOnUnmount`, it runs the handler from the latest committed render.
 
 ```typescript
 function useOnUnmountLayout(handler: Fn): void;
@@ -581,7 +583,7 @@ function useTimeout(
 **Returns**:
 
 - `isIdle()` — Returns `true` if no timeout is pending.
-- `schedule()` — Starts or resets the timeout.
+- `schedule()` — Starts or resets the timeout. After the component unmounts it does nothing, and a pending timeout is cancelled on unmount.
 - `cancel()` — Aborts any pending timeout.
 
 ```tsx
@@ -772,6 +774,23 @@ const Inner = Portal.with(() => (
 ));
 ```
 
+### Fixed header use case
+
+The use case the README documents — rendering header content at another location:
+
+```tsx
+const PageLayout = Portal.with(() => (
+  <div>
+    <Portal.Anchor className={styles.header} /> {/* Header renders here */}
+    <Portal>
+      <h1>Page title</h1>
+      <nav>...</nav>
+    </Portal>
+    <main>Page body content</main>
+  </div>
+));
+```
+
 ---
 
 ## Higher-Order Components
@@ -803,6 +822,8 @@ const SafeChart = withErrorBoundary(
 // Usage
 <SafeChart data={chartData} width={800} height={400} />;
 ```
+
+The class both HOCs render, `ErrorBoundary` (props `children`, optional `fallback` and optional `onError`), is also exported from the package root and `@winglet/react-utils/hoc` for direct use as JSX.
 
 ---
 
@@ -1021,7 +1042,7 @@ type EffectCallback = () => void | (() => void); // from React
 
 // Portal type
 type Portal = {
-  (props: PropsWithChildren): null;
+  (props: PropsWithChildren): ReactPortal | null;
   with: typeof withPortal;
   Anchor: typeof Anchor;
 };
@@ -1040,8 +1061,8 @@ type UseTimeoutReturn = {
 
 | Environment    | Requirement                         |
 | -------------- | ----------------------------------- |
-| React          | 16, 17, 18, 19                      |
-| React DOM      | 16, 17, 18, 19                      |
+| React          | 16.14 or later, 17, 18, 19 (`>=16.14 <20`) |
+| React DOM      | 16.14 or later, 17, 18, 19 (`>=16.14 <20`) |
 | Node.js        | 14.0.0 or higher                    |
 | Browsers       | Modern browsers with ES2020 support |
 | Module formats | ESM (`.mjs`) and CJS (`.cjs`)       |

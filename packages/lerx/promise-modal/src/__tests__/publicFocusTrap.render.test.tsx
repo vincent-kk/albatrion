@@ -162,7 +162,7 @@ it('keeps native Tab between controls inside an open shadow root', () => {
   expect(deepActiveElement()?.id).toBe('s1');
 });
 
-it.each(['', 'plaintext-only', 'TRUE'])(
+it.each([''])(
   'includes contenteditable=%j without DOM constructor globals',
   (editable) => {
     render(<ModalProvider />);

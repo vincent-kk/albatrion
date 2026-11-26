@@ -74,7 +74,7 @@ const customValidatorPlugin: SchemaFormPlugin = {
 };
 ```
 
-- `ValidatorPlugin` has a required `compile(jsonSchema) => ValidateFunction` and a required `compileGuard(root, pointer)`, plus optional `bind?`, `release?(root)` and `readonly dialect?`.
+- `ValidatorPlugin` has a required `compile(jsonSchema) => ValidateFunction` and a required `compileGuard(root, pointer)`, plus optional `bind?`, `release?(root)` and `readonly dialect?`. The `pointer` is an RFC 6901 pointer without a `#` prefix; decode only `~1` and `~0` and never percent-decode it.
 - A `ValidateFunction` may be sync or async, returns `readonly ValidationIssue[] | null` (`null` when valid), and must not throw.
 - The `validatorFactory` prop of `Form` and `FormProvider` takes the same object shape (`ValidatorFactory`). Selection order is Form prop, then FormProvider, then plugin. `createValidatorFactory(ajv)` from the AJV plugin returns only a compile function, so it is not a valid `validatorFactory` by itself.
 - Never create a validator object during render, including inline `validatorFactory={createValidator(new Ajv(...))}` or an unmemoized object in a component body: each parent render would reset the form and discard user input. Use module scope as above, memoize with stable inputs, or reuse `plugin.validator`. Swapping after mount is unsupported; see the [validator lifetime contract](https://vincent-kk.github.io/albatrion/docs/canard/schema-form/api-reference#configuration-lifetime) for all reset effects and the FormProvider selection rule.

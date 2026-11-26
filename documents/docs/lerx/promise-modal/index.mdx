@@ -110,7 +110,7 @@ function App() {
 
 ## Claude Code Integration
 
-`@lerx/promise-modal` ships coding-agent assets — the `promise-modal-skill` expert skill with its API, hooks, and advanced-pattern knowledge base — under `docs/agents/`. They are published alongside the package so AI assistants can reason about modal flows with package-specific context.
+`@lerx/promise-modal` ships coding-agent assets — the `promise-modal-skill` skill (a single `SKILL.md`) — under `docs/agents/`. They are published alongside the package so AI assistants can reason about modal flows with package-specific context.
 
 Inject those assets with `@slats/agents-assets-sync` (bin: `inject-agents-settings`). `--agent` decides where they land — `claude`, `codex`, or the vendor-neutral `agents`:
 
@@ -129,13 +129,13 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@lerx/promise-
 npx -p @slats/agents-assets-sync inject-agents-settings --package=@lerx/promise-modal --agent=claude --scope=user --force
 ```
 
-The CLI resolves `@lerx/promise-modal/package.json` via `createRequire`, reads its `agents.assetPath` (`docs/agents`), and applies hash-based diff into the selected agent's asset locations (skip unchanged, warn on divergence, require `--force` to overwrite).
+The CLI resolves `@lerx/promise-modal/package.json` via `createRequire`, reads its `agents.assetPath` (`docs/agents`), and applies hash-based diff into the selected agent's asset locations (skip unchanged, warn on divergence, require `--force` to overwrite). The project root is the nearest ancestor owning `.git`, a workspace manifest or a lockfile; without one, the nearest agent directory.
 
 <ForAI>
 
 ## AI Reference
 
-**Package**: `@lerx/promise-modal` v0.10.5
+**Package**: `@lerx/promise-modal` v1.0.0
 **Purpose**: Promise-based modal management for React — alert, confirm, prompt as async functions.
 
 ### Core functions (usable anywhere, including outside React)
@@ -173,7 +173,7 @@ import type { WrapperComponentProps } from '@lerx/promise-modal';
 
 ### Architecture
 - `ModalProvider` wraps app → enables global modal rendering
-- `alert/confirm/prompt` → returns `Promise<boolean | string | void>`
+- `alert` → `Promise<void>`, `confirm` → `Promise<boolean>`, `prompt<T>` → `Promise<T | undefined | null>`
 - `useModal()` → returns lifecycle-scoped instance (auto-closes on unmount)
 
 </ForAI>

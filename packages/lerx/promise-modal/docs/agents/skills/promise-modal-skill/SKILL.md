@@ -31,7 +31,9 @@ The package supports DOM-free import and server rendering, but call modal functi
 
 ## Platform integration
 
-Copies of the package with the same internal state version share one modal system in the same JavaScript realm. An `alert`, `confirm`, or `prompt` imported by another copy reaches the active Provider; style identity, ownership, and cleanup are shared. Incompatible state versions stay independent and warn in development. Keep one compatible package version across the application; different windows or realms do not share a system.
+Copies of the package with the same internal state version share one modal system in the same JavaScript realm. An `alert`, `confirm`, or `prompt` imported by another copy reaches the active Provider; style identity, ownership, cleanup and the configuration, modal and user-context hooks are shared. A copy with an incompatible state version warns in development, refuses to initialize its own `ModalProvider`, and rejects its `alert`, `confirm`, and `prompt` calls, including calls queued before mounting, so two copies cannot leave the page inert or scroll-locked. Keep one compatible package version per document; different windows or realms do not share a system.
+
+A modal root inside an open shadow root gets the same Tab boundaries, page isolation and scoped styles as a light-DOM root; a root inside a closed shadow root is not supported, because focus there resolves to the shadow host, so initial focus goes to the first control even when another has `autoFocus` and Tab cannot move past that first control (see Platform integration in the specification).
 
 The default pathname hook uses the Navigation API when available. Otherwise it polls only while a modal is alive, including route-hidden modals and closed modals awaiting destruction. Requests opened after an idle route change belong to the pathname at opening time. Custom `usePathname` hooks continue to follow their router's pathname.
 

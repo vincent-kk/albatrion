@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
 import { clone } from '../index';
-import { cloneLite } from '../index';
-import { equals } from '../index';
 import { stableEquals } from '../index';
 
 /** Builds a chain of `depth` nested objects, optionally linked back to its parent. */
@@ -30,27 +28,16 @@ const outcome = (run: () => unknown) => {
 describe('deep acyclic and cyclic chains through sibling functions (EQ11)', () => {
   const depth = 20_000;
 
-  it('control: cloneLite and equals handle a 20,000-level acyclic chain', () => {
-    const value = chain(depth, false);
-    expect(outcome(() => cloneLite(value))).toBe('returned');
-    expect(outcome(() => equals(value, chain(depth, false)))).toBe('returned');
-  });
-
-  it('clone handles the same 20,000-level acyclic chain as cloneLite', () => {
-    const value = chain(depth, false);
-    expect(outcome(() => clone(value))).toBe(outcome(() => cloneLite(value)));
-  });
-
-  it('stableEquals handles the same 20,000-level acyclic chain as equals', () => {
-    expect(
-      outcome(() => stableEquals(chain(depth, false), chain(depth, false))),
-    ).toBe(outcome(() => equals(chain(depth, false), chain(depth, false))));
-  });
-
   it('stableEquals does not overflow on a deeply nested circular structure (JSDoc: no risk of stack overflow)', () => {
     expect(
       outcome(() => stableEquals(chain(depth, true), chain(depth, true))),
     ).toBe('returned');
+    expect(stableEquals(chain(depth, true), chain(depth, true))).toBe(true);
+    const different = chain(depth, true);
+    let tail: Record<string, unknown> = different;
+    while (tail.next) tail = tail.next as Record<string, unknown>;
+    tail.value = -1;
+    expect(stableEquals(chain(depth, true), different)).toBe(false);
   });
 
   it('clone copies a deeply nested circular structure (the documented choice for cycles)', () => {

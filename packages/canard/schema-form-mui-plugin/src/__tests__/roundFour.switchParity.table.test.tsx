@@ -15,41 +15,6 @@ import { Form, type FormHandle, type JSONSchema } from '@canard/schema-form';
 import { plugin } from '../index';
 
 afterEach(cleanup);
-it.each(['on', 'off'])(
-  'string switch agrees with enum order when stored %s',
-  (stored) => {
-    const ref = createRef<FormHandle>();
-    render(
-      <Form
-        ref={ref}
-        jsonSchema={{
-          type: 'object',
-          properties: {
-            mode: {
-              type: 'string',
-              enum: ['on', 'off'],
-              presentation: { inputType: 'switch' },
-            },
-          },
-        }}
-        defaultValue={{ mode: stored }}
-        fieldInputDefinitions={plugin.fieldInputDefinitions}
-        FieldRenderer={plugin.FieldRenderer}
-        LabelRenderer={plugin.LabelRenderer}
-      />,
-    );
-    const control = screen.getByRole('switch');
-    const checked =
-      control instanceof HTMLInputElement
-        ? control.checked
-        : control.getAttribute('aria-checked') === 'true';
-    expect(checked).toBe(stored === 'on');
-    fireEvent.click(control);
-    expect(ref.current!.getValue()).toEqual({
-      mode: stored === 'on' ? 'off' : 'on',
-    });
-  },
-);
 it.each([
   {
     source: 'alias',

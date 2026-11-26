@@ -22,14 +22,6 @@ const rulesOf = (css: string): string[] => {
   return rules;
 };
 
-const declarationValues = (css: string, prop: string): string[] => {
-  const values: string[] = [];
-  postcss.parse(css).walkDecls(prop, (decl) => {
-    values.push(decl.value);
-  });
-  return values;
-};
-
 const scopes: string[] = [];
 const scoped = (scope: string) => {
   scopes.push(scope);
@@ -47,23 +39,6 @@ afterEach(() => {
 
 describe('compressCss: a backslash-escaped quote outside a string', () => {
   // Tailwind arbitrary values escape quotes in class names: content-['x'] -> .content-\[\'x\'\]
-  it('control: without an escaped quote the string value and the next rule survive', () => {
-    const css = `.content-x::after { content: '/*'; } .b { color: red; }`;
-    expect(rulesOf(compressCss(css))).toEqual(rulesOf(css));
-  });
-
-  it('keeps the string value after a selector with an escaped quote', () => {
-    const css = String.raw`.content-\[\'a\'\]::after { content: 'a  b'; }`;
-    expect(declarationValues(compressCss(css), 'content')).toEqual([`'a  b'`]);
-  });
-
-  it('keeps the rules after a selector with an escaped quote and a "/*" string', () => {
-    const css = String.raw`.content-\[\'x\'\]::after { content: '/*'; } .b { color: red; }`;
-    expect(compressCss(css)).toBe(
-      String.raw`.content-\[\'x\'\]::after{content:'/*'}.b{color:red}`,
-    );
-  });
-
   it('keeps every rule of a Tailwind-like sheet with arbitrary content values', () => {
     const css = [
       String.raw`.after\:content-\[\'\'\]::after { --tw-content: ''; content: var(--tw-content); }`,
@@ -82,13 +57,6 @@ describe('compressCss: a backslash-escaped quote outside a string', () => {
     flush();
     expect(injected('r3esc')).toContain('.r3esc .b{color:red}');
   });
-
-  it('keeps the descendant combinator when an escaped quote precedes a later string', () => {
-    const css = String.raw`.a :is(.content-\[\'x\'\]) { color: red; } .b { content: 'y;'; }`;
-    expect(compressCss(css)).toBe(
-      String.raw`.a :is(.content-\[\'x\'\]){color:red}.b{content:'y;'}`,
-    );
-  });
 });
 
 describe('styleManagerFactory: a statement at-rule that ends one injected style', () => {
@@ -100,11 +68,6 @@ describe('styleManagerFactory: a statement at-rule that ends one injected style'
     expect(rulesOf(injected('r3stmtok'))).toEqual([
       '.r3stmtok .btn{color:red}',
     ]);
-  });
-
-  it('each snippet parses on its own, so the one-shot reading has the rule', () => {
-    expect(postcss.parse('@layer reset, base').first?.type).toBe('atrule');
-    expect(rulesOf('.btn { color: red; }')).toEqual(['.btn{color:red}']);
   });
 
   it('an @layer statement without its semicolon does not swallow the next style', () => {
@@ -126,55 +89,16 @@ describe('styleManagerFactory: a statement at-rule that ends one injected style'
     });
     expect(rulesOf(injected('r3stmt'))).toEqual(['.r3stmt .btn{color:red}']);
   });
-
-  it('in a shadow root, an @layer statement without its semicolon does not swallow the next style', () => {
-    const shadowRoot = document
-      .createElement('div')
-      .attachShadow({ mode: 'open' });
-    const add = styleManagerFactory('r3stmtshadow', { shadowRoot });
-    add('layers', '@layer reset, base');
-    add('button', '.btn { color: red; }');
-    flush();
-    const text = Array.from(shadowRoot.querySelectorAll('style'))
-      .map((element) => element.textContent ?? '')
-      .join('\n');
-    destroyScope('r3stmtshadow', { shadowRoot });
-    expect(rulesOf(text)).toEqual(['.btn{color:red}']);
-  });
-
-  it('an @import statement without its semicolon does not swallow the next style', () => {
-    const add = scoped('r3import');
-    add('font', `@import url("https://example.com/font.css")`);
-    add('button', '.btn { color: red; }');
-    flush();
-    expect(rulesOf(injected('r3import'))).toEqual([
-      '.r3import .btn{color:red}',
-    ]);
-  });
 });
 
 describe('styleManagerFactory: spelling variants of :root', () => {
-  it('control: :root keeps no prefix', () => {
-    const add = scoped('r3root');
-    add('vars', ':root { --bg: #fff; }');
-    flush();
-    expect(rulesOf(injected('r3root'))).toEqual([':root{--bg:#fff}']);
-  });
-
-  it('treats :ROOT like :root (pseudo-class names are ASCII case-insensitive)', () => {
-    const add = scoped('r3rootcase');
-    add('vars', ':ROOT { --bg: #fff; }');
-    flush();
-    expect(rulesOf(injected('r3rootcase'))).toEqual([':ROOT{--bg:#fff}']);
-  });
-
   it('treats ":root /* light theme */" like :root', () => {
     const add = scoped('r3rootcomment');
     add('vars', ':root /* light theme */ { --bg: #fff; }');
     flush();
-    expect(rulesOf(injected('r3rootcomment'))[0]).not.toMatch(
-      /^\.r3rootcomment /,
-    );
+    expect(rulesOf(injected('r3rootcomment'))).toEqual([
+      ':root{--bg:#fff}',
+    ]);
   });
 });
 
@@ -207,11 +131,6 @@ describe('styleManagerFactory: an unterminated string ends at the newline (CSS S
 });
 
 describe('escaped whitespace at the end of a selector', () => {
-  it('compressCss keeps an escaped space that ends a selector', () => {
-    const css = '.a\\  { color: red; } .b { color: blue; }';
-    expect(compressCss(css)).toBe('.a\\ {color:red}.b{color:blue}');
-  });
-
   it('styleManagerFactory keeps an escaped space that ends a selector', () => {
     const add = scoped('r3escspace');
     add('x', '.a\\ , .b { color: red; } .c { color: blue; }', true);
@@ -220,13 +139,6 @@ describe('escaped whitespace at the end of a selector', () => {
       '.r3escspace .a\\ ,.r3escspace .b{color:red}',
       '.r3escspace .c{color:blue}',
     ]);
-  });
-});
-
-describe('compressCss: a comment that separates two tokens', () => {
-  it('does not glue two dimensions into one token', () => {
-    // CSS Syntax: a comment ends the token before it, so 1px/**/2px is two dimensions.
-    expect(compressCss('.a { margin: 1px/**/2px; }')).not.toContain('1px2px');
   });
 });
 

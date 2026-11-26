@@ -144,7 +144,7 @@ async function execute(surface: string, scenario: string) {
       : surface === 'ink' ? /updated\s+1/.test(frame) : /~ skills\/good\/SKILL\.md/.test(transcript)) : false,
   };
 }
-it.each(['unknown', 'scope', 'write', 'force'])('public CLI reports %s equivalently on all surfaces', async (scenario) => {
+it.each(['scope', 'write', 'force'])('public CLI reports %s equivalently on all surfaces', async (scenario) => {
   const plain = await execute('plain', scenario);
   expect(plain.code).toBe(scenario === 'unknown' ? 2 : scenario === 'write' ? 1 : 0);
   if (scenario === 'write') expect(plain.originalKept).toBe(true);

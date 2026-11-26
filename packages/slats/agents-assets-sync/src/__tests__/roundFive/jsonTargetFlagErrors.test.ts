@@ -90,41 +90,20 @@ it('trims a relative asset path before resolving the package', async () => {
   expect(result).toEqual({ code: 0, parses: true, exitCode: 0 });
 });
 
-it.each([
-  ['missing agents.assetPath', 'undeclared'],
-  ['no source hashes (unbuilt, declared directory absent)', 'unbuilt'],
-] as const)(
-  'diagnostic: a single named package with %s is a configuration error upstream of the renderer',
-  async (_label, kind) => {
-    const root = makeRoot('r5-json-target-config');
-    roots.push(root);
-    const packageRoot = installPackage(root, {
-      name: '@probe/kit',
-      assets: {},
-    });
-    const { writeFileSync } = await import('node:fs');
-    writeFileSync(
-      join(packageRoot, 'package.json'),
-      JSON.stringify({
-        name: '@probe/kit',
-        version: '1.0.0',
-        ...(kind === 'unbuilt' ? { agents: { assetPath: 'docs/none' } } : {}),
-      }),
-    );
-    const result = await jsonRun([
-      '--package=@probe/kit',
-      '--agent=claude',
-      '--scope=project',
-      `--root=${root}`,
-    ]);
-    expect(result).toEqual({ code: 2, parses: true, exitCode: 2 });
-  },
-);
-
-it('an unresolvable --package yields the same JSON configuration result', async () => {
-  const { root } = setup();
+it('diagnostic: a single named package with missing agents.assetPath is a configuration error upstream of the renderer', async () => {
+  const root = makeRoot('r5-json-target-config');
+  roots.push(root);
+  const packageRoot = installPackage(root, {
+    name: '@probe/kit',
+    assets: {},
+  });
+  const { writeFileSync } = await import('node:fs');
+  writeFileSync(
+    join(packageRoot, 'package.json'),
+    JSON.stringify({ name: '@probe/kit', version: '1.0.0' }),
+  );
   const result = await jsonRun([
-    '--package=@probe/absent',
+    '--package=@probe/kit',
     '--agent=claude',
     '--scope=project',
     `--root=${root}`,

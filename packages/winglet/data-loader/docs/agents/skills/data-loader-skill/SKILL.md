@@ -75,7 +75,7 @@ Every code below belongs to `DataLoaderError`, whose `code` is `DATA_LOADER.<COD
 | `INVALID_KEY`             | `load()`, synchronously     | Key is `null` or `undefined`                                              |
 | `INVALID_KEYS`            | `loadMany()`, synchronously | `keys` is not array-like                                                  |
 | `INVALID_BATCH_LOADER`    | Constructor / dispatch      | Not a function, non-thenable return, non-array result, or length mismatch |
-| `INVALID_MAX_BATCH_SIZE`  | Constructor                 | `maxBatchSize` is not a number, or is below 1                             |
+| `INVALID_MAX_BATCH_SIZE`  | Constructor                 | `maxBatchSize` is neither `Infinity` nor a positive integer (for example `0`, `2.5` or `NaN`) |
 | `INVALID_CACHE`           | Constructor                 | Custom `cache` is missing any of `get`/`set`/`delete`/`clear`             |
 | `INVALID_CACHE_KEY_FN`    | Constructor                 | `cacheKeyFn` is not a function                                            |
 | `INVALID_BATCH_SCHEDULER` | Constructor                 | `batchScheduler` is not a function                                        |
@@ -119,7 +119,7 @@ const loader = new DataLoader<Key, Value, CacheKey>(
     cacheKeyFn, // (key) => CacheKey — defaults to identity
     batchScheduler, // (task) => void — defaults to scheduleNextTick
     maxBatchSize, // number — defaults to Infinity
-    // disableBatch: true is the mutually exclusive alternative to maxBatchSize
+    // disableBatch: true is an alternative to maxBatchSize and wins when both are given
   },
 );
 

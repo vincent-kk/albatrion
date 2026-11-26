@@ -35,16 +35,23 @@ const installedRanges = (text: string) => {
 describe('r5-release documented UI peer ranges', () => {
   it('every `yarn add name@range` on the plugin site pages stays inside the plugin peer range', () => {
     const outside: string[] = [];
+    const checked: Record<string, number> = {};
     for (const plugin of PLUGINS) {
       const peers = manifestOf(plugin).peerDependencies;
       for (const page of sitePages(plugin)) {
         const text = readFileSync(join(repositoryRoot, page), 'utf8');
-        for (const [name, range] of installedRanges(text))
-          if (peers[name] && range !== peers[name])
+        checked[page] = 0;
+        for (const [name, range] of installedRanges(text)) {
+          if (!peers[name]) continue;
+          checked[page]++;
+          if (range !== peers[name])
             outside.push(`${plugin}: ${name}@${range} (peer ${peers[name]})`);
+        }
       }
     }
     expect(outside).toEqual([]);
+    for (const page of Object.keys(checked))
+      expect([page, checked[page] > 0]).toEqual([page, true]);
   });
 
   it('the quick-start compatibility table states the published UI peer ranges', () => {

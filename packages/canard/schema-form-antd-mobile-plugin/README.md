@@ -108,7 +108,7 @@ For very small `multipleOf` values, pointer commits do not guarantee an exact sc
 
 - **Role**: Stepper component for numeric input
 - **Applied when**: `type` is `"number"` or `"integer"` (fallback when other conditions don't match)
-- **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties. Custom Stepper `formatter` and `parser` require Ant Design Mobile 5.26 or later.
+- **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties. Custom Stepper `formatter` and `parser` require Ant Design Mobile 5.26 or later. Ant Design Mobile's Stepper renders its own SVG icons with fixed ids, so several number inputs on one page can repeat those SVG ids. This is library behavior.
 
 ### **[`FieldInputBoolean.tsx`](./src/fieldInputs/FieldInputBoolean.tsx)**
 
@@ -171,9 +171,12 @@ If you're using a JavaScript environment that doesn't support ES2020, you'll nee
 
 - Node.js 14.17.0 or later
 - Modern browsers (Chrome 91+, Firefox 90+, Safari 14+)
+- @canard/schema-form 1.x, Ant Design Mobile 5.2 or later within 5.x, dayjs 1.x, React and React DOM 18 or 19
 
 **For legacy environment support:**
 Please use a transpiler like Babel to transform the code for your target environment.
+
+**Duplicate copies:** The plugin lists Ant Design Mobile and dayjs as both dependencies and peer dependencies, so depending on how the package manager places packages, the application can still load a separate copy of a supported version. Deduplicate it so the plugin shares the host's theme and ConfigProvider.
 
 ---
 
@@ -207,7 +210,7 @@ For inquiries or suggestions related to the project, please create an issue.
 
 For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the unchecked (off) value.
 
-A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
+A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels come from `context.checkboxLabels` when it is set (the whole object replaces `alias`), otherwise from `alias`; with neither, no state labels are shown. The current state label does not replace the field name.
 
 ### Sliders
 

@@ -6,7 +6,9 @@ import { getCssEofSuffix } from '../getCssEofSuffix';
 import { getCssSignificantIndex } from '../getCssSignificantIndex';
 import { getSimpleDeclarationEnd } from '../getSimpleDeclarationEnd';
 import { getSimpleRuleEnd } from '../getSimpleRuleEnd';
+import { getVerbatimRuleEnd } from '../getVerbatimRuleEnd';
 import { hasCssName } from '../hasCssName';
+import { isVerbatimRuleStart } from '../isVerbatimRuleStart';
 import { readCssSheetToken } from '../readCssSheetToken';
 import { canDropCssComment } from './utils/canDropCssComment';
 import { keepCssWhitespace } from './utils/keepCssWhitespace';
@@ -30,9 +32,9 @@ export const processCssSheet = (input: string, compressed: boolean, mode: 'none'
   let output = '', index = 0, segmentStart = 0, previousCode = 0, previousEnd = 0;
   let previousKind = CssTokenKind.Delimiter, hasOutput = false, lastKind = previousKind, lastStart = 0;
   while (index < css.length) {
-    const ruleEnd = batchDeclarations && context === CssContext.RuleList && components === 0 ? getSimpleRuleEnd(css, index) : 0;
+    const ruleEnd = (batchDeclarations && context === CssContext.RuleList && components === 0 ? getSimpleRuleEnd(css, index) : 0) || (!compressed && currentFrame === 0 && context === CssContext.RuleList && isVerbatimRuleStart(css, index) ? getVerbatimRuleEnd(css, index) : 0);
     if (ruleEnd) {
-      index = ruleEnd; previousCode = 125; previousKind = CssTokenKind.Delimiter;
+      index = ruleEnd; previousCode = css.charCodeAt(ruleEnd - 1); previousKind = CssTokenKind.Delimiter;
       previousEnd = ruleEnd; hasOutput = true; lastKind = previousKind; lastStart = ruleEnd - 1;
       if (currentFrame === 0) safeEnd = output.length + ruleEnd - segmentStart;
       continue;

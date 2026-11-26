@@ -84,7 +84,7 @@ useEffectUntil(() => {
 
 **`useDebounce(callback, deps, ms, options)` uses leading and trailing edges by default** — `immediate` defaults to `true`, firing the callback immediately when idle and then running a trailing call if further dependency changes occur within the window. A single isolated call does not run twice. Pass `{ immediate: false }` for the trailing-edge behavior most debounce implementations default to. The options are read into a ref on the first render only, so changing them later has no effect. It returns `{ isIdle, cancel }`.
 
-`useTimeout(callback, ms)` returns `{ isIdle, schedule, cancel }`; `schedule()` clears any pending timer first, making it a reschedule.
+`useTimeout(callback, ms)` returns `{ isIdle, schedule, cancel }`; `schedule()` clears any pending timer first, making it a reschedule. After unmount `schedule()` is a no-op, and a pending timer is cancelled on unmount.
 
 **`useWindowSize()` returns `{ width: 0, height: 0 }` on the first render** — the listener and the first measurement both happen in an effect. Every server render sees `{ 0, 0 }`, so branching on it directly produces hydration mismatches; gate on mount, or accept one corrective render.
 

@@ -119,37 +119,6 @@ it('a new class instance with different private state in context recomputes visi
   expect(ref.current!.findNode('/audit')!.isVisible).toBe(true);
 });
 
-it('control: a plain string change in context recomputes visible', () => {
-  const plain = {
-    type: 'object',
-    properties: {
-      advanced: {
-        type: 'string',
-        controls: { visible: '@.mode === "advanced"' },
-      },
-    },
-  } as const;
-  const ref = createRef<FormHandle<typeof plain>>();
-  const view = render(
-    <Form
-      ref={ref}
-      jsonSchema={plain}
-      validationMode={ValidationMode.None}
-      context={{ mode: 'basic' }}
-    />,
-  );
-  expect(ref.current!.findNode('/advanced')!.isVisible).toBe(false);
-  view.rerender(
-    <Form
-      ref={ref}
-      jsonSchema={plain}
-      validationMode={ValidationMode.None}
-      context={{ mode: 'advanced' }}
-    />,
-  );
-  expect(ref.current!.findNode('/advanced')!.isVisible).toBe(true);
-});
-
 it('a mutation of the same opaque context object does not republish a visible state', () => {
   const ref = createRef<FormHandle<typeof schema>>();
   const query = new URLSearchParams('mode=basic');

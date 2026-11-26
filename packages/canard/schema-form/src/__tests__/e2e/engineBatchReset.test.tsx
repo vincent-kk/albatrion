@@ -1,89 +1,8 @@
-import { expect, it } from 'vitest';
+import { expect, it, vi } from 'vitest';
 
 import { isArrayNode } from '../../index';
 import { SetValueOption } from '../../index';
 import { mountEngineForm } from './fixtures/mountEngineForm';
-
-it.each([false, true])(
-  'consumes a merge getter once before a subtree reset (per-call settlement=%s)',
-  (perCall) => {
-    const root = mountEngineForm({
-      jsonSchema: {
-        type: 'object',
-        properties: {
-          obj: {
-            type: 'object',
-            properties: { x: { type: 'number' }, y: { type: 'number' } },
-          },
-          reset: { type: 'number' },
-          sibling: { type: 'number' },
-          copy: { type: 'number', controls: { derived: '../obj/x * 2' } },
-        },
-      },
-      defaultValue: { obj: { x: 0, y: 2 }, reset: 0, sibling: 0, copy: 0 },
-      disableAutomaticWrites: true,
-    });
-    let reads = 0;
-    const incoming = {
-      get x() {
-        return ++reads;
-      },
-    };
-    const reset = root.find('/reset')!;
-    root.batch(() => {
-      root
-        .find('/obj')!
-        .setValue(
-          incoming,
-          perCall
-            ? SetValueOption.Merge | SetValueOption.EnableAutomaticWrites
-            : SetValueOption.Merge,
-        );
-      if (perCall) root.find('/sibling')!.setValue(2);
-      reset.setValue(9);
-      reset.resetSubtree();
-    });
-
-    expect(reads).toBe(1);
-    expect(root.value).toEqual({
-      obj: { x: 1, y: 2 },
-      reset: 0,
-      sibling: perCall ? 2 : 0,
-      copy: perCall ? 2 : 0,
-    });
-  },
-);
-
-it('runs a virtual mark before a constituent reset when its other member is inactive', () => {
-  const root = mountEngineForm({
-    jsonSchema: {
-      type: 'object',
-      properties: {
-        on: { type: 'boolean' },
-        a: {
-          type: 'string',
-          controls: {
-            injectTo: (value) =>
-              value === 'marked' ? { '../c': 'reacted' } : {},
-          },
-        },
-        b: { type: 'string', controls: { active: '/on === true' } },
-        c: { type: 'string' },
-      },
-      options: { virtual: { pair: { fields: ['a', 'b'] } } },
-    },
-    defaultValue: { a: 'base', c: 'base', on: false },
-  });
-  const a = root.find('/a')!;
-  expect(root.find('/b')).toBeNull();
-
-  root.batch(() => {
-    root.find('/pair')!.setValue(['marked', undefined]);
-    a.resetSubtree();
-  });
-
-  expect(root.value).toEqual({ a: 'base', c: 'reacted', on: false });
-});
 
 it('parent write followed by subtree reset equals sequential calls', () => {
   const run = (batch: boolean) => {
@@ -127,6 +46,82 @@ it('array push then edited-item reset equals sequential calls', () => {
     else calls();
     return root.value;
   };
+  expect(run(true)).toEqual(run(false));
+});
+
+it('refuses a subtree reset whose earlier writes make the field inactive and keeps the write inside it', () => {
+  const run = (batch: boolean) => {
+    const onError = vi.fn();
+    const root = mountEngineForm({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          on: { type: 'boolean' },
+          o: {
+            type: 'object',
+            controls: { active: '/on === true' },
+            properties: { x: { type: 'string' } },
+          },
+        },
+      },
+      defaultValue: { on: true, o: { x: 'loaded' } },
+      onError,
+    });
+    const o = root.find('/o')!;
+    const calls = () => {
+      o.setValue({ x: 'inside' });
+      root.find('/on')!.setValue(false);
+      o.resetSubtree();
+    };
+    if (batch) root.batch(calls);
+    else calls();
+    const settled = {
+      value: root.value,
+      retained: root.inactiveValues,
+      errors: onError.mock.calls.length,
+    };
+    root.find('/on')!.setValue(true);
+    return { ...settled, reactivated: root.value };
+  };
+  expect(run(true)).toEqual({
+    value: { on: false },
+    retained: [{ path: '/o/x', value: 'inside' }],
+    errors: 0,
+    reactivated: { on: true, o: { x: 'inside' } },
+  });
+  expect(run(true)).toEqual(run(false));
+});
+
+it('refuses a subtree reset whose earlier writes remove the array item', () => {
+  const run = (batch: boolean) => {
+    const onError = vi.fn();
+    const root = mountEngineForm({
+      jsonSchema: {
+        type: 'object',
+        properties: { list: { type: 'array', items: { type: 'string' } } },
+      },
+      defaultValue: { list: ['a', 'b'] },
+      onError,
+    });
+    const item = root.find('/list/1')!;
+    const calls = () => {
+      item.setValue('inside');
+      root.find('/list')!.setValue(['a']);
+      item.resetSubtree();
+    };
+    if (batch) root.batch(calls);
+    else calls();
+    return {
+      value: root.value,
+      isActive: item.isActive,
+      errors: onError.mock.calls.length,
+    };
+  };
+  expect(run(true)).toEqual({
+    value: { list: ['a'] },
+    isActive: false,
+    errors: 0,
+  });
   expect(run(true)).toEqual(run(false));
 });
 

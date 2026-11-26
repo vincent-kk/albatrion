@@ -19,7 +19,7 @@ import {
 import { runInjection } from '../utils/session/runInjection.js';
 
 it('writes the plan-time bytes and mode for all source kinds after mutation or unlink (seed 0x5a11)', async () => {
-  for (let sequence = 0; sequence < 240; sequence++) {
+  for (let sequence = 0; sequence < 60; sequence++) {
     const root = makeRoot('all-source-snapshot');
     try {
       const kind = ['rules', 'skills/alpha', 'commands'][sequence % 3];

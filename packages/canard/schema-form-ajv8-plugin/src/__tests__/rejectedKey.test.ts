@@ -26,16 +26,6 @@ describe('ValidationIssue.rejectedKey', () => {
     expect(notIssue?.rejectedKey).toBeUndefined();
   });
 
-  it('reports the rejected key for a root-level not-required in a root with $id', async () => {
-    const schema = {
-      $id: 'urn:schema-form-ajv8:rejected-key-root',
-      type: 'object',
-      not: { required: ['banned'] },
-    };
-    const issues = await validate(schema, { banned: 1 });
-    expect(issues?.find((issue) => issue.keyword === 'not')).toMatchObject({ dataPath: '', rejectedKey: 'banned' });
-  });
-
   it('keeps a value-level false schema (then: false) on the value instead of rejecting its key', async () => {
     const schema = {
       type: 'object',

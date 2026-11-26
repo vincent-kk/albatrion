@@ -17,25 +17,23 @@ import { expect, it } from 'vitest';
 import { makeRoot, removeRoot } from '../../../__tests__/roundThree/fixture.js';
 import { applyAction } from '../utils/applyAction.js';
 
-it('matches an entry/identity reference model for 3000 seeded file operations', async () => {
+const kinds = [
+  'missing',
+  'regular',
+  'hard-link',
+  'symbolic-link',
+  'dangling-link',
+] as const;
+const combinations = kinds.flatMap((kind) =>
+  [false, true].flatMap((deletion) =>
+    [false, true].map((readonly) => ({ kind, deletion, readonly })),
+  ),
+);
+
+it('matches an entry/identity reference model for every kind, deletion and read-only combination', async () => {
   const root = makeRoot('identity-model');
-  let seed = 0x5f11e;
-  const random = (size: number) => {
-    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
-    return (seed >>> 8) % size;
-  };
   try {
-    for (let sequence = 0; sequence < 3000; sequence++) {
-      const initialSeed = seed;
-      const kind = [
-        'missing',
-        'regular',
-        'hard-link',
-        'symbolic-link',
-        'dangling-link',
-      ][random(5)];
-      const deletion = !!random(2);
-      const readonly = !!random(2);
+    for (const { kind, deletion, readonly } of combinations) {
       const mode = readonly ? 0o444 : 0o640;
       const directory = join(root, 'case');
       mkdirSync(directory);
@@ -63,7 +61,7 @@ it('matches an entry/identity reference model for 3000 seeded file operations', 
         () => 'written',
         () => 'refused',
       );
-      const label = `seed=${initialSeed}, sequence=${sequence}, kind=${kind}, deletion=${deletion}, readonly=${readonly}`;
+      const label = `kind=${kind}, deletion=${deletion}, readonly=${readonly}`;
       expect(outcome, label).toBe(shouldRefuse ? 'refused' : 'written');
       if (shouldRefuse) {
         if (existsSync(actual))

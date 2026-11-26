@@ -100,6 +100,10 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   divergenceBase: unknown;
   /** Backing field for `isDivergent`: the memoized comparison, reused while `divergenceCurrent` and `divergenceBase` keep their identities. */
   storedIsDivergent: boolean;
+  /** Last default tuple of a virtual group, reused while unchanged; initialized on every kind so all nodes share one layout. */
+  virtualDefaultValue: Optional<readonly unknown[]>;
+  /** Last watch values read for this node with their commit, reused while unchanged; initialized on every kind so all nodes share one layout. */
+  watchValuesMemo: FieldNodeRecord<FieldNode>['watchValuesMemo'];
 
   /** Backing field for `state`: interaction flags the engine replaces directly, whereas the public `state` setter dispatches a patch. */
   storedState: FieldNodeRecord<FieldNode>['storedState'];
@@ -207,6 +211,8 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.divergenceSegments = undefined;
     this.divergenceBase = undefined;
     this.storedIsDivergent = false;
+    this.virtualDefaultValue = undefined;
+    this.watchValuesMemo = undefined;
     this.storedState = state;
     this.interactionEpoch = 0;
     this.revisionLedger = EMPTY_REVISION_LEDGER;
@@ -332,7 +338,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   findNodes(pointer?: Nullable<string | readonly string[]>) {
     return findNodes<FieldNode>(this, pointer);
   }
-  /** Visit this occurrence and its current-shape subtree in preorder; writes settle once at the end. */
+  /** Visit this occurrence and its current-shape subtree in preorder; value writes settle once at the end, as in `batch`. */
   visitSubtree(visitor: Fn<[node: FieldNode], void | boolean>) {
     return dispatchVisitSubtree<FieldNode>(this, visitor);
   }

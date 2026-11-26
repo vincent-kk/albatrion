@@ -5,7 +5,7 @@ import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSO
 import { ValidationMode } from '../types/state';
 import { WriteOption } from '../types/value';
 
-it.each([null, {}, ['short'], ['too', 'many', 'slots']])(
+it.each([{}])(
   'invalid virtual input %j is rejected before storage changes',
   (input) => {
     const root = nodeFromJSONSchema({

@@ -21,7 +21,7 @@ yarn add -D @slats/agents-assets-sync
 ## CLI 표면
 
 ```
-<bin> --package=<name...> [--agent=claude|codex] [--scope=user|project] [--asset=<kind...>]
+<bin> --package=<name...> [--agent=claude|codex|agents] [--scope=user|project] [--asset=<kind...>]
       [--asset-path=<path>] [--dry-run] [--force] [--yes] [--no-interactive]
       [--root=<cwd>] [--json]
 agents-build-hashes
@@ -103,7 +103,7 @@ inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
 | `--force`             | 발산 파일 덮어쓰기 & 고아 파일 삭제 (TTY 에서는 대화형 확인).                                                                                                                                                                                                                                                             |
 | `--root <path>`       | scope 해석용 cwd 재정의.                                                                                                                                                                                                                                                                                                  |
 
-**Exit code**: `0` 성공 / up-to-date / dry-run, `1` 런타임 오류, `2` 사용자 / 설정 오류 (`--package` 누락, 비-TTY 환경에서 `--scope` 누락, 해석 불가한 패키지, `--asset-path` 없이 `agents.assetPath` 누락, 절대 경로이거나 패키지 안의 디렉토리를 가리키지 않는 `--asset-path`, 패키지 밖으로 해석되는 asset 루트).
+**Exit code**: `0` — 성공, 최신 상태, 오류 없는 dry-run(계획이 `--force`를 요구해도 포함), 생략된 패키지만 있는 배치나 scope alias. `1` — 실행 오류: 준비 단계에서 거부된 단위(닫히지 않은 fence나 주석, 손상되었거나 짝이 없는 관리 마커, 심볼릭 링크로 프로젝트 밖에 해석되는 목적지, 한 목적지에 대한 서로 다른 원본 내용), 복사·삭제·`AGENTS.md` 쓰기 실패, 설치 기록 갱신 실패. 이런 거부가 있는 dry-run도 1로 종료합니다. `2` — 사용 오류 또는 차단된 실행: `--package` 누락, 대화형 TTY 밖에서 `--agent`나 `--scope` 누락, 유효하지 않은 `--agent`·`--scope`·`--asset`·`--asset-path` 값, 해석 불가한 패키지, 설치된 패키지와 하나도 일치하지 않는 scope alias, `agents.assetPath`도 `--asset-path`도 없거나 패키지 안의 디렉터리를 가리키지 않는 `--asset-path`를 받았거나 asset 루트가 패키지 밖으로 해석되거나 빌드된 매니페스트와 선언된 디렉터리가 모두 없는 단일 지정 패키지, `--force`가 필요한데 `--force` 없이 실행한 dry-run이 아닌 실행, 거절한 확인 또는 Ctrl-C로 취소한 대화형 실행. 단위마다 결과가 다르면 `1`이 `2`보다 우선합니다.
 
 `--scope=project`는 에이전트별 목적지의 root marker 우선순위를 따릅니다. 작업 디렉터리 위의 루트가 자동 탐지되면 CLI는 `(auto-located)`를 표시합니다.
 
@@ -165,11 +165,11 @@ docs/agents/
 └── commands/...
 ```
 
-asset 루트 하위의 모든 파일은 해시되어 `dist/agents-hashes.json` 에 추적됩니다.
+asset 루트 하위의 모든 파일은 해시되어 `dist/agents-hashes.json` 에 추적됩니다. 단 `.DS_Store`, `*.log`, `.omc/` 아래, 이름이 `.agents-assets-sync-`로 시작하는 항목과 그 아래 경로는 배포하지 않으며 고아로 취급하지도 않습니다.
 
 ## 해시 기반 동기화 전략 (Option A)
 
-- `dist/agents-hashes.json` (schema v1) 이 있으면 그것이 진실의 원천입니다. 없으면 asset 루트 — 선언된 `agents.assetPath` 또는 `--asset-path` 가 지정한 경로 — 를 실행 시점에 해싱해 같은 문서를 만들므로, 빌드하지 않은 패키지도 주입할 수 있습니다. 선언된 asset 경로에 매니페스트도 디렉토리도 없으면 참조할 원천이 없으므로 그 대상은 보고 후 건너뜁니다.
+- `dist/agents-hashes.json` (schema v1) 이 있으면 그것이 진실의 원천입니다. 없으면 asset 루트 — 선언된 `agents.assetPath` 또는 `--asset-path` 가 지정한 경로 — 를 실행 시점에 해싱해 같은 문서를 만들므로, 빌드하지 않은 패키지도 주입할 수 있습니다. 선언된 asset 경로에 매니페스트도 디렉토리도 없으면 참조할 원천이 없으므로 배치나 scope alias에서는 그 대상을 보고 후 건너뛰고, 그 패키지 하나만 지정한 실행은 2로 종료합니다.
 - 파일별 SHA-256 비교:
   - **로컬에 없음** → 복사
   - **해시 일치** → 건너뜀
@@ -198,7 +198,7 @@ import {
 } from '@slats/agents-assets-sync';
 ```
 
-공개 내보내기는 `src/index.ts`와 `src/DETAIL.md`를 참고합니다.
+전체 공개 내보내기는 배포 선언(`dist/index.d.ts`)에 있으며 `src/`는 배포하지 않습니다. `parseBlocks(content)`는 순차 중복을 포함한 완전한 관리 블록을 문서 순서로 반환하고, 설치기가 거부하는 문서(짝이 없거나 중첩되거나 손상된 관리 마커, 닫히지 않은 fence나 HTML 주석)에는 행과 이유를 담아 예외를 던집니다. `resolveDestinations`는 `..` 세그먼트를 포함한 매니페스트 경로나 스킬 네임스페이스 접두사에 예외를 던집니다.
 
 ## 추가 문서
 
@@ -223,6 +223,7 @@ stderr 로 돌립니다. 따라서 스트림 전체가 그대로 파싱됩니다
   "units": [
     {
       "key": "codex:@canard/schema-form",
+      "diagnosticOnly": false,
       "package": { "name": "@canard/schema-form", "version": "0.13.2" },
       "agent": "codex",
       "scope": "project",
@@ -256,8 +257,10 @@ stderr 로 돌립니다. 따라서 스트림 전체가 그대로 파싱됩니다
 `(패키지, 에이전트)` 쌍마다 `unit` 하나입니다. 플래그 오류는 `errors` 에 담기고
 `exitCode: 2`, `units` 는 빈 배열이 되므로 읽는 쪽은 항상 파싱할 문서를 받습니다.
 unit 의 `requiresForce` 는 적용이 발산 내용을 덮어쓰거나 고아를 삭제하면 `--force`
-여부와 무관하게 `true` 입니다. `--force`가 없으면 그런 unit은 미리보기가 아닌 실행을 2로 막습니다. dry-run은 0입니다.
+여부와 무관하게 `true` 입니다. `--force`가 없으면 그런 unit은 미리보기가 아닌 실행을 2로 막습니다. 그런 unit의 dry-run은 0이며, 오류로 거부된 unit이 있으면 dry-run을 포함한 모든 실행이 1로 종료합니다.
 해석할 수 없는 패키지와 gate 실패도 JSON 문서 하나를 출력합니다. failures는 경로·단계·이유를, notices는 실제 적용 작업에서 제외한 삭제 보호 안내를 담습니다.
+
+`diagnosticOnly`는 준비나 병합 단계에서 거부된 unit에서 `true`입니다. 그 unit의 `actions`는 실행되지 않는 진단 근거일 뿐이며 `requiresForce`는 `false`이고 `error` 필드가 이유를 담습니다. 다른 unit이 이미 같은 목적지를 다루는 unit은 그 unit의 `key`를 `aliasOf`로 가지며 자체 액션이 없습니다.
 
 ## 라이선스
 
@@ -270,10 +273,14 @@ MIT — [LICENSE](./LICENSE) 참조.
 - 발견·gate 단계도 포함한 실패 참여자가 소유할 수 있는 네임스페이스의 고아는 삭제하지 않습니다. 출력은 참여자와 이유를 명시하며 보호된 삭제는 force 확인에서 제외합니다.
 - 덮어쓰기는 mode·owner·group·하드 링크를 보존합니다. 단일 링크이며 소유권을 복원할 수 있으면 원자 교체하고, 그렇지 않으면 in-place 쓰기이므로 crash-atomic하지 않습니다. 읽기 전용 대상과 끊어진 쓰기 링크는 거부합니다.
 - 사용자 스코프 AGENTS.md 심볼릭 링크는 대상이 존재할 때만 따라갑니다. 끊긴 링크는 오류로 거부하고 보존하여 dotfiles 링크가 일반 파일로 바뀌지 않게 합니다.
+- 대소문자를 구분하지 않는 볼륨에서는 파일 이름의 대소문자만 바꾼 릴리스가 설치된 파일을 이전 철자로 남길 수 있습니다.
+- 이후 릴리스에서 제거된 명령 파일은 고아로 감지되지 않으므로 `--force`로도 삭제되지 않습니다.
 
 스킬이나 Claude 규칙 파일이 새 버전에서 빠지면 에이전트의 자산 루트에 있는 `agents-assets-sync.json`에 완료된 작업의 경로와 SHA-256을 기록한 파일만 같은 강제 적용 확인에 올립니다. 같은 실행의 다른 작업이 실패해도 완료한 파일 작업은 기록할 수 있습니다. 현재 내용이 기록과 일치해야 하며 기록된 다른 소유자가 있으면 보존합니다. 다른 철자의 기록도 같은 실제 파일을 가리키고 해시가 일치하면 파일을 보존합니다. 다른 패키지가 기록된 경로에 같은 바이트를 공급하면 해당 패키지도 공동 소유자로 기록합니다. Codex와 agents는 각 관리 규칙 블록에 소유 증거를 기록합니다.
 
 설치 기록 쓰기가 실패하면 명령은 오류를 보고하고 완료한 파일 변경은 보존합니다. 재실행 시 내용이 같은 미기록 파일은 그대로 둡니다. 이 경우 소유권을 기록하려면 해당 파일을 직접 확인한 뒤 다시 설치합니다.
+
+기록 갱신은 기록 옆의 `.agents-assets-sync-agents-assets-sync.json.lock` 잠금 디렉터리를 사용합니다. 10초 안에 잠금을 얻지 못한 실행은 완료한 파일 변경을 유지하고 잠금 경로를 명시하며 종료 코드 1로 끝납니다. 중단된 실행이 잠금을 남겼다면 다른 설치가 실행 중이지 않음을 확인한 뒤 그 디렉터리를 지우고 다시 실행합니다.
 
 ### 규칙 Markdown의 구획
 

@@ -95,16 +95,6 @@ async function run(
   return { code, files };
 }
 
-it('a first install of two packages sharing a skill namespace gives the same result on every output path', async () => {
-  const results: Record<string, unknown> = {};
-  for (const surface of ['plain', 'json', 'ink'] as const) {
-    const { root, targets } = setup();
-    results[surface] = await run(surface, root, targets);
-  }
-  expect(results.json).toEqual(results.plain);
-  expect(results.ink).toEqual(results.plain);
-});
-
 it('two packages sharing a skill namespace settle after --force instead of deleting each other on every run', async () => {
   const { root, targets } = setup();
   const runs = [

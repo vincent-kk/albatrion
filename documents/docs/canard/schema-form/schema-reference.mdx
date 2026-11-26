@@ -62,6 +62,7 @@ For a nullable object or array holding null:
 - Defaults, derived values, branch restoration, and automatic `injectTo` alone do not promote it. Child inputs can remain visible without materializing a parent object.
 - Clearing a descendant or merging an empty object retains null and remembers the clearing for later promotion.
 - After loading null or a wrong-kind value, promotion leaves existing children empty; only newly created children receive defaults. Data discarded by assigning null does not return automatically.
+- `node.value` and the FieldInput `value` prop read `null`, as `getValue()` does, not `{}` or `[]`. A custom branch input must handle `null` before calling `value.map(…)` or `Object.keys(value)`.
 
 Writing null to a non-nullable object preserves the wrong-kind value as a misfit; it does not repair it to `{}`. `setValue(undefined)` clears child values and array entries without restoring child defaults.
 
@@ -86,7 +87,7 @@ A node has the following 14 control keys. `controls.fields[].controls` and fragm
 | `fields` | Array of &#123; targets: string[], controls &#125;; addresses direct children by name. |
 | `injectTo` | Function that writes other paths from a changed source. |
 | `discriminator` | Nonempty property name for object/nullable-object union selection. |
-| `watch` | Array of dependency paths passed as watchValues in order. |
+| `watch` | Array of dependency paths passed as watchValues in order; each value compares with `Object.is`, so write a new array or object instead of mutating a watched one. |
 
 Standard `readOnly` and controls `readOnly`/`disabled` layers combine by OR for the target node's local input lock; `visible` layers combine by AND. The default branch-object input does not forward its local lock to child inputs; declaring that lock produces `LockOnNonTerminalObject`. Apply locks to direct children with `controls.fields`, or use Form `readOnly`/`disabled` for the whole form. Default precedence is node `controls.default`, parent `fields`, fragment `controls.default`, then standard `default`.
 

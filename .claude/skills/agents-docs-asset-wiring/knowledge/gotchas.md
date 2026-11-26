@@ -46,15 +46,15 @@ If no shortcut exists, the full form may still work depending on yarn version an
 
 ## `--scope=project` walks upward
 
-`--scope=project` walks `process.cwd()` upward for the first directory owning any of `.claude`, `AGENTS.md`, `.agents`, `.codex`, `.git`. The first match is reused; with no match anywhere, the engine falls back to `cwd`.
+`--scope=project` walks `process.cwd()` upward in two tiers. The nearest ancestor owning a root marker (`.git`, `pnpm-workspace.yaml`, or a lockfile: `pnpm-lock.yaml`, `yarn.lock`, `package-lock.json`, `npm-shrinkwrap.json`, `bun.lock`, `bun.lockb`) wins, even over a nearer `.claude`, `AGENTS.md`, `.agents` or `.codex`; a marker owned by the home directory or one of its ancestors is ignored. Only when no marker exists does the nearest of those agent directories become the root, and with neither the engine falls back to `cwd`.
 
-`.git` is one of the anchors, so every directory in this repository resolves to the repository root. Running the smoke tests from anywhere inside the monorepo would write into the real `.claude/` — always run them from a fresh `/tmp/...` directory.
+`.git` is a root marker, so every directory in this repository resolves to the repository root, even one that owns its own `.claude`. Running the smoke tests from anywhere inside the monorepo would write into the real `.claude/` — always run them from a fresh `/tmp/...` directory.
 
 ---
 
 ## Dispatcher exception to the `src/core` purity rule
 
-`src/core/**` never reads `package.json` or walks the filesystem. The engine's `bin/inject-agents-settings.mjs` and `src/commands/runCli/targets/resolvePackage.ts` are allowed to ``createRequire().resolve(`${name}/package.json`)`` for one explicitly-named target at a time. Sibling enumeration is confined to `targets/resolveScopeAlias.ts`, the only file allowed to walk `node_modules`. Preserve this boundary: any new enumeration path is a re-architecture, not a patch.
+`src/core/**` never reads a consumer's `package.json` or discovers installed packages; it reads asset and destination files only to hash, validate, plan and apply. The engine's `bin/inject-agents-settings.mjs` and `src/commands/runCli/targets/resolvePackage.ts` are allowed to ``createRequire().resolve(`${name}/package.json`)`` for one explicitly-named target at a time. Sibling enumeration is confined to `targets/resolveScopeAlias.ts`, the only file allowed to walk `node_modules`. Preserve this boundary: any new enumeration path is a re-architecture, not a patch.
 
 ---
 

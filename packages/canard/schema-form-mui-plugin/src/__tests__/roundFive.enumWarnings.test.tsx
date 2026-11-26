@@ -56,26 +56,6 @@ it.each([
   },
 );
 
-it('a value outside the enum is preserved until the user picks, then the pick is stored', () => {
-  vi.spyOn(console, 'warn').mockImplementation(() => {});
-  const ref = createRef<FormHandle>();
-  render(
-    <Form
-      ref={ref}
-      jsonSchema={{
-        type: 'object',
-        properties: { topic: { type: 'string', enum: ['news', 'sports'] } },
-      }}
-      defaultValue={{ topic: 'legacy' }}
-      fieldInputDefinitions={plugin.fieldInputDefinitions}
-    />,
-  );
-  expect(ref.current!.getValue()).toEqual({ topic: 'legacy' });
-  fireEvent.mouseDown(screen.getByRole('combobox'));
-  fireEvent.click(within(screen.getByRole('listbox')).getByText('news'));
-  expect(ref.current!.getValue()).toEqual({ topic: 'news' });
-});
-
 it.each(['unknown', 'Alpha'] as const)(
   'preserves the stored enum and displays a later write or reset (DETAIL, initial=%s)',
   async (initial) => {

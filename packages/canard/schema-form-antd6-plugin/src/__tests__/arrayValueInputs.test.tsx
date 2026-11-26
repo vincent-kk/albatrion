@@ -126,6 +126,9 @@ describe.each([
         );
         const expected = display(fresh.container, selector);
         expect(expected.length).toBeGreaterThan(0);
+        expect(
+          expected.some((item) => item !== '' && item !== false && item != null),
+        ).toBe(true);
         expect(actual).toEqual(expected);
       },
     );

@@ -77,14 +77,7 @@ Names declared by `@keyframes` and `@font-face` are global regardless — nothin
 
 ## Where the rewriter fails
 
-**A brace inside an unquoted `url(…)` miscounts the block.** The rewriter skips quoted strings, comments and escapes, but an unquoted URL is plain text to it, so a `{` or `}` there shifts the brace depth. The rule and the rules after it are lost:
-
-```typescript
-addStyle('u', '.a { background: url(a{b.png); } .b { color: blue; }');
-// injected: ''
-```
-
-Quote such a URL (`url("a{b.png")`). A `/*` inside an unquoted `url(…)`, in any letter case, opens no comment, and a `;` inside one does not end an `@import` or other statement. A function whose name only ends in `url`, such as `myurl(`, is not a URL and is read as ordinary CSS.
+**An unquoted `url(…)` is one opaque token.** A brace inside it does not change the block depth, a `/*` inside it, in any letter case, opens no comment, and a `;` inside it does not end an `@import` or other statement. A function whose name only ends in `url`, such as `myurl(`, is not a URL and is read as ordinary CSS.
 
 **Comments between rules and stray `}` are dropped.** A `}` with no open block is removed instead of being glued onto the next selector.
 
@@ -112,7 +105,7 @@ class MyCard extends HTMLElement {
 }
 ```
 
-Rewriting is skipped because shadow encapsulation already isolates the selectors — and because prefixing would break `:host` and `::slotted(…)`, which must stay at the root of their selector. This also means none of the rewriting above happens in shadow mode: at-rules, selector lists, and pseudo-selectors all pass through untouched, and a brace inside an unquoted URL cannot cut a rule.
+Rewriting is skipped because shadow encapsulation already isolates the selectors — and because prefixing would break `:host` and `::slotted(…)`, which must stay at the root of their selector. This also means none of the rewriting above happens in shadow mode: at-rules, selector lists, and pseudo-selectors all pass through untouched.
 
 Never reuse a document-mode factory for a shadow root, or one host's factory for another host. Both mistakes route CSS to the wrong root, and the symptom — styles appearing on `document` instead of inside the component — looks like a scoping bug rather than a wiring one.
 
@@ -134,7 +127,7 @@ The observable consequence is that **nothing is in the DOM until the next frame*
 
 The path is chosen per flush: `CSSStyleSheet.replaceSync` plus `adoptedStyleSheets` when both are available on the target root, otherwise a `<style>` element appended to the shadow root or to `document.head`. The fallback element carries `className = scopeId`, which makes it findable — `document.head.querySelector('style.my-widget')` is the quickest way to read back exactly what a scope injected.
 
-Neither path reports bad CSS. The fallback path only assigns `textContent`; the modern path calls `replaceSync`, which per CSSOM parses the text and **drops invalid rules rather than throwing**. So a selector the browser cannot parse — the digit-leading scope id above, or a rule lost to a brace inside an unquoted URL — does not raise anything anywhere. The rule simply never exists, and every valid rule around it applies normally. When a style is missing, read back what was actually injected instead of reasoning about the input.
+Neither path reports bad CSS. The fallback path only assigns `textContent`; the modern path calls `replaceSync`, which per CSSOM parses the text and **drops invalid rules rather than throwing**. So a selector the browser cannot parse — the digit-leading scope id above, — does not raise anything anywhere. The rule simply never exists, and every valid rule around it applies normally. When a style is missing, read back what was actually injected instead of reasoning about the input.
 
 The modern path's `replaceSync` call is nonetheless wrapped in a `try`/`catch` that warns and returns. That is a defensive path — `replaceSync` throws on a non-modifiable sheet, not on malformed CSS, and the manager always constructs its own — but if it ever does fire, the failure mode is worth knowing: **the flush does not throw, and the sheet keeps its previous content**. Every style in the scope freezes at its last good state, with `StyleManager: Failed to apply CSS for scope "…"` on the console as the only evidence. The stored styles are not lost, so the next successful flush applies all of them.
 
@@ -189,7 +182,7 @@ Work down this list; each step rules out one layer.
 1. **Which mode?** `styleManagerFactory(id)` injects into `document`; `styleManagerFactory(id, { shadowRoot })` injects into that root. Styles showing up in the wrong place is almost always a missing `{ shadowRoot }`.
 2. **Document mode — is the scope class applied?** The rule is `.scopeId .selector`; it needs an ancestor with that class. This is the most frequent cause by a wide margin.
 3. **Has a frame passed?** Flushes are asynchronous. Assertions and reads taken in the same tick see nothing.
-4. **Is the selector one the rewriter mishandles?** A brace inside an unquoted `url(…)`, a compound `:root`/`:host`, or a leading pseudo-selector — check the injected text, not the input.
+4. **Is the selector one the rewriter mishandles?** A compound `:root`/`:host` or a leading pseudo-selector — check the injected text, not the input.
 5. **Shadow mode — is it on the right root?** Inspect `host.shadowRoot.adoptedStyleSheets` rather than `document.adoptedStyleSheets`.
 
 ## Test isolation

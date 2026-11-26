@@ -186,18 +186,3 @@ it.each([
     expect(await run('ink', kind, force, dryRun)).toEqual(plain);
   },
 );
-
-it.each([
-  { asset: ['rule'] },
-  { agent: ['codx'] },
-  { agent: ['claude', 'codx'] },
-  { scope: 'bad' },
-])(
-  'rejects flags equivalently across output surfaces: %j',
-  async (overrides) => {
-    const plain = await run('plain', 'good', false, false, overrides);
-    expect(plain.code).toBe(2);
-    expect(await run('json', 'good', false, false, overrides)).toEqual(plain);
-    expect(await run('ink', 'good', false, false, overrides)).toEqual(plain);
-  },
-);

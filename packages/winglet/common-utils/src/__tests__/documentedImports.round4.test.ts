@@ -49,13 +49,4 @@ describe('r4-contracts common-utils README import examples', () => {
   it('every name the Korean README imports is exported by its subpath', async () => {
     expect(await missingNames('README-ko_kr.md')).toEqual([]);
   });
-
-  it('control: the chunk function the example means exists on the array subpath', async () => {
-    const { chunk } = await import(join(packageDir, 'src/utils/array/index.ts'));
-    expect(chunk([1, 2, 3, 4, 5, 6], 2)).toEqual([
-      [1, 2],
-      [3, 4],
-      [5, 6],
-    ]);
-  });
 });

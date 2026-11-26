@@ -133,10 +133,52 @@ it.for(['activity', 'suspense'])(
   },
 );
 
+it.for(['activity', 'suspense'])(
+  '%s Provider hide releases keyboard, focus and page effects that show reacquires',
+  async (kind, { skip }) => {
+    if (kind === 'activity' && !Activity) skip('Activity requires React 19');
+    const app = (hidden: boolean) => (
+      <>
+        <main>page</main>
+        <Visibility hidden={hidden} kind={kind}>
+          <ModalProvider />
+        </Visibility>
+      </>
+    );
+    const view = render(app(false));
+    let result: boolean | undefined;
+    act(() => {
+      void confirm({ title: 'Kept' }).then((value) => {
+        result = value;
+      });
+    });
+    const page = screen.getByText('page');
+    const effects = () => {
+      if (document.activeElement instanceof HTMLElement)
+        document.activeElement.blur();
+      return {
+        inert: !!page.closest('[inert]'),
+        scrollLocked: document.body.style.overflow === 'hidden',
+        tabTrapped: !fireEvent.keyDown(document.body, { key: 'Tab' }),
+      };
+    };
+    const engaged = { inert: true, scrollLocked: true, tabTrapped: true };
+    expect(effects()).toEqual(engaged);
+    await act(async () => view.rerender(app(true)));
+    expect(effects()).toEqual({
+      inert: false,
+      scrollLocked: false,
+      tabTrapped: false,
+    });
+    expect(fireEvent.keyDown(document.body, { key: 'Escape' })).toBe(true);
+    await act(async () => view.rerender(app(false)));
+    expect(effects()).toEqual(engaged);
+    expect(result).toBeUndefined();
+  },
+);
+
 it.for([
-  ['activity', false],
   ['activity', true],
-  ['suspense', false],
   ['suspense', true],
 ] as const)(
   '%s Provider removal cancels after hidden=%s',

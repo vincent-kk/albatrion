@@ -10,8 +10,8 @@ import ForAI from '@site/src/components/ForAI';
 <PackageHeader name="@canard/schema-form-ajv6-plugin" />
 
 `@canard/schema-form`을 위한 AJV 6.x 검증 플러그인입니다.
-JSON Schema Draft-04, Draft-06, Draft-07을 지원합니다.
-레거시 스키마 또는 Draft-04/06 지원이 필요한 경우에 사용하세요.
+기본 인스턴스는 JSON Schema Draft-07을 검증합니다.
+Draft-06 스키마는 바인딩한 인스턴스에 Draft-06 메타 스키마를 등록해야 하고, Draft-04 스키마는 Draft-04 메타 스키마와 `schemaId` 설정도 필요합니다.
 신규 프로젝트에는 `@canard/schema-form-ajv8-plugin`을 권장합니다.
 
 :::tip 공식 문서
@@ -22,7 +22,7 @@ JSON Schema Draft-04, Draft-06, Draft-07을 지원합니다.
 ## 설치 {#installation}
 
 ```bash
-yarn add @canard/schema-form-ajv6-plugin
+yarn add @canard/schema-form @canard/schema-form-ajv6-plugin
 # ajv@^6 is bundled as a direct dependency
 ```
 
@@ -44,6 +44,7 @@ registerPlugin(plugin);
   nullable: true,       // allow null values
   verbose: true,        // include additional error context
   format: false,        // format validation disabled for performance
+  multipleOfPrecision: 9, // accept decimal multiples such as 19.99 for multipleOf: 0.01
 }
 ```
 
@@ -55,9 +56,15 @@ import { plugin } from '@canard/schema-form-ajv6-plugin';
 
 const ajv = new Ajv({ allErrors: true, nullable: true });
 
-// Bind before registerPlugin — or rebind at any time
+// Bind once, before registerPlugin and the first compile; rebinding later is not supported
 plugin.validator.bind(ajv);
 ```
+
+## 인스턴스 요구 사항 {#instance-requirements}
+
+- `bind`, `createValidator`, `createValidatorFactory`는 `coerceTypes`, `useDefaults`, `removeAdditional` 중 하나가 켜진 인스턴스에 `ValidatorBindRefusedError`(`group: 'UNHANDLED_ERROR'`, `code: 'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`)를 던집니다. 나중에 이 옵션을 켜면 다음 검증 또는 가드 컴파일이 예외를 던집니다. 데이터를 수정해야 하는 코드에는 별도의 AJV 인스턴스를 사용하십시오.
+- 플러그인은 폼 루트를 사적 컴파일러에서 컴파일하며 루트의 `$id`를 애플리케이션 인스턴스에 추가하지 않습니다. 애플리케이션 코드가 조회하거나 다른 루트가 참조하는 스키마는 `addSchema`로 등록하고, 비동기 검증이 필요하면 `$async: true`를 선언하십시오.
+- 사용자 지정 AJV 하위 클래스는 생성자에서 스키마나 메타 스키마를 등록하지 않아야 합니다. 인스턴스를 생성한 뒤 등록하십시오.
 
 ## `createValidatorFactory` 직접 사용하기 {#using-createvalidatorfactory-directly}
 
@@ -68,26 +75,42 @@ import { createValidatorFactory } from '@canard/schema-form-ajv6-plugin';
 const ajv = new Ajv({ allErrors: true });
 const validate = createValidatorFactory(ajv)(myJSONSchema);
 
-const errors = await validate(formData); // null | ValidationError[]
+const errors = await validate(formData); // null | ValidationIssue[]
+```
+
+## `createValidator`로 Form별 검증기 만들기 {#per-form-validator-with-createvalidator}
+
+`createValidator(ajv, options?)`는 `plugin.validator`와 독립된 완전한 검증기 객체를 돌려주며 Form의 `validatorFactory`에 전달합니다. 새 객체는 Form이 트리를 다시 만들게 하므로 렌더 밖에서 한 번만 만드십시오.
+
+```tsx
+import { Form } from '@canard/schema-form';
+import { createValidator } from '@canard/schema-form-ajv6-plugin';
+import Ajv from 'ajv';
+
+const validator = createValidator(new Ajv({ allErrors: true }));
+const schema = { type: 'object', properties: { name: { type: 'string' } } } as const;
+
+export const NameForm = () => <Form jsonSchema={schema} validatorFactory={validator} />;
 ```
 
 ## AJV 6.x 참고 사항 {#ajv-6x-notes}
 
-- 오류의 `dataPath`는 **JSONPath** 형식(`$.foo.bar`)을 사용합니다. 플러그인은 `schema-form`과의 호환성을 위해 이를 **JSONPointer** 형식(`/foo/bar`)으로 자동 변환합니다.
-- `nullable: true`는 `{ type: ['string', 'null'] }` 축약형을 활성화합니다.
+- 플러그인은 AJV의 `jsonPointers: true`로 전체 검증을 컴파일하므로 issue의 `dataPath`와 그 `source` AJV 오류의 `dataPath`는 JSON Pointer(`/foo/bar`)입니다. `required` issue는 누락된 속성 이름을 issue의 `dataPath`에 덧붙입니다.
+- `nullable: true`는 `nullable` 키워드를 활성화합니다. `{ type: 'string', nullable: true }`는 `{ type: ['string', 'null'] }`처럼 `null`을 허용합니다.
 - AJV 6은 Draft 2019-09와 Draft 2020-12를 지원하지 않습니다. 자세한 내용은 [검증기 비교](#)를 참조하십시오.
 
 <ForAI>
 
 ## AI 참조 {#ai-reference}
 
-**패키지**: `@canard/schema-form-ajv6-plugin` v0.10.0
-**목적**: AJV 6.x 검증 플러그인으로, 레거시 JSON Schema Draft-04/06/07에 사용합니다.
+**패키지**: `@canard/schema-form-ajv6-plugin`
+**목적**: AJV 6.x 검증 플러그인으로, 기본값은 Draft-07이며 Draft-04/06은 바인딩한 인스턴스에 메타 스키마를 추가해야 합니다.
 
 ### 내보내기 {#exports}
 ```ts
 import { plugin } from '@canard/schema-form-ajv6-plugin';
 import { createValidatorFactory } from '@canard/schema-form-ajv6-plugin';
+import { createValidator } from '@canard/schema-form-ajv6-plugin';
 ```
 
 ### 사용법 {#usage}
@@ -95,14 +118,15 @@ import { createValidatorFactory } from '@canard/schema-form-ajv6-plugin';
 registerPlugin(plugin);                         // use default AJV config
 plugin.validator.bind(new Ajv({ ... }));        // bind custom AJV instance
 createValidatorFactory(ajv)(schema);            // standalone usage without plugin
+createValidator(ajv);                            // per-Form validatorFactory object
 ```
 
 ### 기본 AJV 설정 {#default-ajv-config}
-`{ allErrors: true, nullable: true, verbose: true, format: false }`
+`{ allErrors: true, nullable: true, verbose: true, format: false, multipleOfPrecision: 9 }`
 
 ### 주요 동작 {#key-behaviors}
-- 오류의 `dataPath`는 JSONPath(`$.foo`)에서 JSONPointer(`/foo`)로 자동 변환됩니다.
-- `nullable: true` → `{ type: ['string', 'null'] }`을 지원합니다.
+- 플러그인이 `jsonPointers: true`로 컴파일하므로 오류의 `dataPath`는 JSONPointer(`/foo`)입니다.
+- `nullable: true` → `{ type: 'string', nullable: true }`가 `null`을 허용합니다.
 - Draft 2019-09 / 2020-12는 지원하지 않으므로 ajv8-plugin을 대신 사용하십시오.
 
 </ForAI>

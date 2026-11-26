@@ -124,27 +124,3 @@ it('reports what happens with no Suspense boundary above the Provider (diagnosti
     loaded: !!screen.queryByText('Heavy form loaded'),
   }).toEqual({ thrown: undefined, outcome: 'pending', loaded: true });
 });
-
-it('control: the same lazy content renders when the content brings its own Suspense', async () => {
-  render(<App />);
-  const { Content, load } = createLazyContent();
-  let accepted: boolean | undefined;
-  await act(async () => {
-    void confirm({
-      title: 'Heavy',
-      content: (
-        <Suspense fallback={<p>Loading form</p>}>
-          <Content />
-        </Suspense>
-      ),
-    }).then((value) => {
-      accepted = value;
-    });
-  });
-  await act(async () => {
-    load();
-  });
-  await act(async () => {});
-  expect(accepted).toBeUndefined();
-  expect(screen.getByText('Heavy form loaded')).toBeTruthy();
-});

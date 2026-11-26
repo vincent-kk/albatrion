@@ -1,17 +1,5 @@
 ---
-"@canard/schema-form": major
+"@canard/schema-form": patch
 ---
 
-Breaking: a nullable array or object field whose value is `null` now reads `null` from `node.value` and from the FieldInput `value` prop, instead of `[]` or `{}`. This matches `getValue()`, the `options.terminal: true` behavior and the documented difference between "no list" (`null`) and "empty list" (`[]`). A custom FieldInput for a nullable array or object must handle `null` before reading the value.
-
-```tsx
-// Before: value was [] while the field was null
-const TagsInput = ({ value }: FieldInputProps<string[] | null>) => (
-  <ul>{value.map((tag) => <li key={tag}>{tag}</li>)}</ul>
-);
-
-// After: value is null while the field is null
-const TagsInput = ({ value }: FieldInputProps<string[] | null>) => (
-  <ul>{(value ?? []).map((tag) => <li key={tag}>{tag}</li>)}</ul>
-);
-```
+The nullable branch guide now states that a nullable array or object field whose value is `null` reads `null` from `node.value` and from the FieldInput `value` prop, the same as with `options.terminal: true` and as in 0.16.1. A custom FieldInput for such a field handles `null` before calling `value.map(…)` or `Object.keys(value)`.

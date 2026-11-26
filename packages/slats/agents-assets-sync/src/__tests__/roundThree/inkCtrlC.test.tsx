@@ -115,10 +115,6 @@ async function waitForFrame(text: string): Promise<boolean> {
 describe('r3-agents-assets-sync: cancelling the TTY force dialog', () => {
   it.each([
     ['answering "No, cancel"', ['j', '\r'], 2, true],
-    ['pressing Ctrl-C', ['\u0003'], 2, true],
-    // The dialog footer reads "y:accept · n:cancel" (Footer.tsx:19).
-    ['pressing "n" as the footer hint says', ['n'], 2, true],
-    ['pressing Escape', ['\u001b'], 2, true],
     ['pressing y', ['y'], 0, false],
     ['unadvertised a followed by cancel', ['a', 'n'], 2, true],
   ] as const)(

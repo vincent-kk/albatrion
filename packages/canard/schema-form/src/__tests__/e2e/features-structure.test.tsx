@@ -59,7 +59,7 @@ describe('features — structure shared screen runner (TEST-025)', () => {
     await run('structure.array-constraint-errors');
   });
 
-  it('EVENT-013 a batch of array verbs settles once as a whole write with positional identity (NODE-051)', async () => {
+  it('EVENT-013 array verbs in a batch apply at each call, keep surviving item nodes and call onChange once (NODE-051)', async () => {
     await run('structure.batch-verbs-positional-identity');
   });
 });

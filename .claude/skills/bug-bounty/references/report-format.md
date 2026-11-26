@@ -1,12 +1,12 @@
 # Round documents
 
-The record of round N lives in `bug-bounty/round-N/`. From round 3 on, write it in English, in complete sentences without abbreviations. Rounds 1 and 2 are written in Korean and stay as they are; their headings map to this format as "버그가 아니라고 확인한 가설" to "Hypotheses checked and not bugs", "확인하지 못한 가능성" to "Open leads", "다시 볼 영역" to "Areas to revisit", and "우선순위를 낮출 영역" to "Areas to lower".
+The record of round N lives in `bug-bounty/round-N/`. Write it in English, in complete sentences without abbreviations.
 
 ## Layout
 
 - `README.md`: the round index. Write it last; its presence marks the round finished.
 - `<package-slug>.md`: one document per package that a hunter covered, such as `canard-schema-form.md` or `winglet-json.md`. A covered package without findings still gets a short document that says so and lists its checked hypotheses, so the next round does not repeat them.
-- `probes/<package-slug>/<hunter-id>/`: copies of the probes. Rounds 1 and 2 used flatter folders; from round 3 on, every probe sits under its hunter id. Copies do not run in place, because path aliases and relative imports do not resolve there, and editors show TypeScript errors for them. Each document says where to copy them and which command runs them.
+- `probes/<package-slug>/<hunter-id>/`: copies of the probes. Every probe sits under its hunter id. Copies do not run in place, because path aliases and relative imports do not resolve there, and editors show TypeScript errors for them. Each document says where to copy them and which command runs them.
 - `.progress/`: the working brief and progress note, deleted when the round is cleaned up.
 
 ## Rules

@@ -97,7 +97,6 @@ JSONPath 표현식에서 사용되는 특수 문자 상수를 제공합니다.
 #### 지원되는 연산자
 
 - **[`JSONPath.Root`](./src/JSONPath/enum.ts)** (`$`): JSON 문서의 루트 노드
-- **[`JSONPath.Parent`](./src/JSONPath/enum.ts)** (`_`): 현재 노드의 부모 노드
 - **[`JSONPath.Current`](./src/JSONPath/enum.ts)** (`@`): 현재 처리 중인 노드
 - **[`JSONPath.Child`](./src/JSONPath/enum.ts)** (`.`): 자식 노드 접근 연산자
 - **[`JSONPath.Filter`](./src/JSONPath/enum.ts)** (`#`): 필터 조건 연산자
@@ -152,7 +151,7 @@ const result = setValue(data, '/user/profile/email', 'vincent@example.com');
 import { escapePath } from '@winglet/json';
 
 const escaped = escapePath('path/with~special');
-// 결과: "path~1with~0special"
+// 결과: "path/with~0special" ("/"는 구분자로 남습니다. 키 안의 "/"는 escapeSegment로 이스케이프합니다)
 ```
 
 **[`unescapePath`](./src/JSONPointer/utils/escape/unescapePath.ts)**

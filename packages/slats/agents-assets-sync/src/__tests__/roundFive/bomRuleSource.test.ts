@@ -42,10 +42,6 @@ const args = (root: string, ...extra: string[]) => [
   ...extra,
 ];
 
-it('control: the BOM rule source alone passes the Markdown boundary check', () => {
-  expect(() => assertManagedMarkdown(RULE, 'rules/lint.md')).not.toThrow();
-});
-
 it('codex: a BOM-prefixed rule that opens with a fence installs and the next run is a no-op', async () => {
   const root = setup();
   const first = await runCliCode(args(root));

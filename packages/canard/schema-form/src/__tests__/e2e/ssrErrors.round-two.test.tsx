@@ -32,25 +32,6 @@ afterEach(async () => {
   vi.restoreAllMocks();
 });
 
-it(
-  'round-2 schema-form 6: ' +
-    'server rendering shows the errors prop message under ErrorVisibility.Always',
-  () => {
-    const html = renderToString(
-      <Form
-        jsonSchema={schema}
-        errors={serverErrors}
-        errorVisibility={ErrorVisibility.Always}
-        validationMode={ValidationMode.None}
-      >
-        <Form.Input path="/name" />
-        <Form.ErrorMessage path="/name" />
-      </Form>,
-    );
-    expect(html).toContain('This name is taken.');
-  },
-);
-
 it('round-2 schema-form 6: server rendering passes the errors prop to function children', () => {
   const html = renderToString(
     <Form

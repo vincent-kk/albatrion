@@ -13,7 +13,7 @@ import LazyDemo from '@site/src/components/LazyDemo';
 Material UI v7 plugin for `@canard/schema-form`.
 Provides 15 form input components built on `@mui/material ^7.0.0`
 with MUI X date/time pickers.
-Supports MUI's `size`, `variant`, and `fullWidth` context options.
+Supports MUI `size`, `variant` and `fullWidth` context options, plus `checkboxLabels` and `switchLabels` for switch state labels.
 
 ## Component Catalog
 
@@ -34,7 +34,7 @@ yarn add @canard/schema-form-mui-plugin
 ### Peer Dependencies
 
 ```bash
-yarn add @mui/material@^7.0.0 @mui/x-date-pickers@^8.0.0 \
+yarn add @canard/schema-form @mui/material@^7.0.0 @mui/x-date-pickers@^8.0.0 \
          @mui/icons-material@^7.0.0 \
          @emotion/react@^11.0.0 @emotion/styled@^11.0.0 \
          dayjs@^1.0.0 "react@>=18 <20" "react-dom@>=18 <20"
@@ -61,7 +61,7 @@ Components are selected automatically based on JSON Schema properties. Priority 
 | `FieldInputUri` | `string` | `"uri"` or inputType `"uri"` | — | — | URI input with protocol dropdown |
 | `FieldInputMonth` | `string` | `"month"` | — | — | MUI X MonthPicker |
 | `FieldInputDate` | `string` | `"date"` | — | — | MUI X DatePicker |
-| `FieldInputTime` | `string` | `"time"` | — | — | MUI X TimePicker (HH:mm:00Z format) |
+| `FieldInputTime` | `string` | `"time"` | — | — | MUI X TimePicker (stores `HH:mm:ss` without a time-zone offset) |
 | `FieldInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | MUI RadioGroup |
 | `FieldInputStringEnum` | `string` | — | — | required | MUI Select dropdown |
 | `FieldInputArray` | `array` | — | — | — | Dynamic list with add/remove |
@@ -76,8 +76,12 @@ See the [package README’s Slider section](https://github.com/vincent-kk/albatr
 ## Schema Extension Properties
 
 ```ts
+// Selection hints read by this plugin
 {
-  inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri',
+  presentation?: {
+    inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri',
+  },
+  // Standard JSON Schema properties also used for routing:
   format?:   'date' | 'time' | 'month' | 'password' | 'uri' | 'textarea',
 }
 ```
@@ -109,11 +113,15 @@ Pass MUI styling options through `<Form context={...}>`:
 
 ```ts
 type MuiContext = {
+  checkboxLabels?: { checked?: ReactNode; unchecked?: ReactNode };
+  switchLabels?:   { [value: string]: ReactNode };
   size?:      'small' | 'medium';
   variant?:   'outlined' | 'filled' | 'standard';
   fullWidth?: boolean;
 };
 ```
+
+`checkboxLabels` replaces the `alias` of every boolean switch in the Form; `switchLabels`, keyed by the stored enum value, replaces the `alias` of every string switch.
 
 ```tsx
 <Form
@@ -125,22 +133,13 @@ type MuiContext = {
 
 ## Date/Time Picker Setup
 
-MUI X date pickers require a `LocalizationProvider`. Wrap your app:
-
-```tsx
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-
-<LocalizationProvider dateAdapter={AdapterDayjs}>
-  <Form jsonSchema={schema} onChange={setValue} />
-</LocalizationProvider>
-```
+Each date, month and time input wraps its own `LocalizationProvider` with `AdapterDayjs`; no app-level provider is required. Because that provider builds its own adapter, an app-level provider's `adapterLocale` and dayjs's global locale do not reach these inputs, and they format in the `en` locale. To change their locale, set `adapterLocale` in the theme's `components.MuiLocalizationProvider.defaultProps`.
 
 <ForAI>
 
 ## AI Reference
 
-**Package**: `@canard/schema-form-mui-plugin` v0.10.0
+**Package**: `@canard/schema-form-mui-plugin` 1.x
 **Purpose**: Material UI v7 plugin — 15 form input components with MUI X date/time pickers.
 
 ### Exports
@@ -150,7 +149,7 @@ import type { MuiContext } from '@canard/schema-form-mui-plugin';
 ```
 
 ### Peer dependencies
-`@mui/material@^7.0.0`, `@mui/x-date-pickers@^8.0.0`, `@mui/icons-material@^7.0.0`, `@emotion/react@^11.0.0`, `@emotion/styled@^11.0.0`, `dayjs@^1.0.0`, `react@>=18 <20`
+`@canard/schema-form`, `@mui/material@^7.0.0`, `@mui/x-date-pickers@^8.0.0`, `@mui/icons-material@^7.0.0`, `@emotion/react@^11.0.0`, `@emotion/styled@^11.0.0`, `dayjs@^1.0.0`, `react@>=18 <20`
 
 ### Component mapping (priority order, high → low)
 | Component | Trigger |
@@ -171,14 +170,10 @@ import type { MuiContext } from '@canard/schema-form-mui-plugin';
 
 ### Context type
 ```ts
-type MuiContext = { size?: 'small' | 'medium'; variant?: 'outlined' | 'filled' | 'standard'; fullWidth?: boolean };
+type MuiContext = { checkboxLabels?: { checked?: ReactNode; unchecked?: ReactNode }; switchLabels?: { [value: string]: ReactNode }; size?: 'small' | 'medium'; variant?: 'outlined' | 'filled' | 'standard'; fullWidth?: boolean };
 ```
 
-### Required setup for date/time pickers
-```tsx
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-<LocalizationProvider dateAdapter={AdapterDayjs}><Form ... /></LocalizationProvider>
-```
+### Date/time picker setup
+Each date, month and time input wraps its own `LocalizationProvider` with `AdapterDayjs`; no app-level provider is required. Because that provider builds its own adapter, an app-level provider's `adapterLocale` and dayjs's global locale do not reach these inputs, and they format in the `en` locale. To change their locale, set `adapterLocale` in the theme's `components.MuiLocalizationProvider.defaultProps`.
 
 </ForAI>

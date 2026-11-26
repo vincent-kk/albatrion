@@ -47,14 +47,14 @@ Applies when choosing between this package's hooks, wiring its Portal system, or
 
 ## Invariants & Gotchas
 
-- **`useConstant(() => heavy())` never calls the function** — it stores it. The package's own JSDoc presents exactly this call as an "expensive computation that runs only once", contradicting its `@param` line one screen below. Symptom: consumers receive a function where they expected data. Use `useLazyConstant` or `useTruthyConstant` to actually run a factory.
+- **`useConstant(() => heavy())` never calls the function** — it stores the function, as it stores any value it is given. Symptom: consumers receive a function where they expected data. Use `useLazyConstant` (calls the initializer once) or `useTruthyConstant` to actually run a factory.
 - **`useMemorize(() => x)` does call it**, being the mirror image of the rule above. Same argument shape, opposite semantics.
 - **`useTruthyConstant` re-runs its factory on every render where the held value is falsy.** Unusable when `null`, `0`, `''`, or `false` is a legitimate result — that is what `useLazyConstant` is for.
-- **`useHandle(undefined)` still returns a callable**, which returns `null` at runtime while typed as the handler's return type. It never throws, so a missing handler surfaces as a downstream `null`, not as an error at the call site.
-- **`useOnUnmount(fn)` runs the handler from the last render, not the one from mount.** State read inside it is current, so wrapping values in `useReference` first is unnecessary. The same applies to `useOnUnmountLayout`.
+- **`useHandle(undefined)` still returns a callable**, which returns `null`; when the handler may be `undefined`, the return type is `R | null`. It never throws, so a missing handler surfaces as a downstream `null`, not as an error at the call site.
+- **`useOnUnmount(fn)` runs the handler from the latest committed render, not the one from mount.** State read inside it is the last committed state, so wrapping values in `useReference` first is unnecessary; a handler from a render that never commits is never used. The same applies to `useOnUnmountLayout`.
 - **`isReactComponent` accepts `forwardRef` and `lazy` as well as functions, classes, and `memo`.** `remainOnlyReactComponent` preserves those component types. Ordinary helper functions also pass the function predicate; validate mixed registries downstream.
 - **`@winglet/react-utils/portal` exports exactly one value: `Portal`.** `PortalContextProvider` and `withPortal` are not public values, so `Portal.with(Component)` is the only supported setup — any answer importing the provider directly does not compile. Setup and `<Portal.Anchor />` placement are always answered together; neither works alone.
-- **With several anchors in one provider scope, the LAST one to mount wins** — every anchor writes to the same shared ref, so each mount overwrites the previous. One anchor per scope is the only predictable arrangement.
+- **With several anchors in one provider scope, the LAST one to mount wins** — every anchor writes its node into the same provider state, so each mount overwrites the previous. One anchor per scope is the only predictable arrangement.
 - **A `style` prop on `Portal.Anchor` replaces `display: contents` outright** rather than merging with it, silently turning the anchor into a layout-participating block.
 - **`useDebounce` defaults to `immediate: true`** — it uses leading and trailing edges for a burst, and its options are frozen at first render.
 - **`useWindowSize()` returns `{ width: 0, height: 0 }` on the first render**, including every server render. Branch on it and the SSR and client markup diverge.

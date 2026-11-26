@@ -38,47 +38,19 @@ const schema = {
 } as const;
 
 describe('multiple enum search by the displayed label (antd5)', () => {
-  it('typing a displayed non-Latin label finds that option', () => {
+  it.each([
+    ['a displayed non-Latin label', '대한', '대한민국'],
+    ['a displayed Latin label', 'United', 'United States'],
+    ['an original enum value absent from its label', 'RAW-TOKEN', 'café'],
+    ['an NFD query with different case for an NFC label', 'CAFE\u0301', 'café'],
+  ])('typing %s finds that option', (_, query, option) => {
     render(
       <Form
         fieldInputDefinitions={plugin.fieldInputDefinitions}
         jsonSchema={schema}
       />,
     );
-    search('대한');
-    expect(visibleOptions()).toEqual(['대한민국']);
-  });
-
-  it('typing a displayed Latin label finds that option', () => {
-    render(
-      <Form
-        fieldInputDefinitions={plugin.fieldInputDefinitions}
-        jsonSchema={schema}
-      />,
-    );
-    search('United');
-    expect(visibleOptions()).toEqual(['United States']);
-  });
-
-  it('finds an original enum value that is absent from its label', () => {
-    render(
-      <Form
-        fieldInputDefinitions={plugin.fieldInputDefinitions}
-        jsonSchema={schema}
-      />,
-    );
-    search('RAW-TOKEN');
-    expect(visibleOptions()).toEqual(['café']);
-  });
-
-  it('finds an NFC label using an NFD query with different case', () => {
-    render(
-      <Form
-        fieldInputDefinitions={plugin.fieldInputDefinitions}
-        jsonSchema={schema}
-      />,
-    );
-    search('CAFE\u0301');
-    expect(visibleOptions()).toEqual(['café']);
+    search(query);
+    expect(visibleOptions()).toEqual([option]);
   });
 });

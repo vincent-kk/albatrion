@@ -104,13 +104,15 @@ AJV6 defaults to `$id`; `schemaId: 'id'` or `'auto'` also treats draft-04 `id` a
 - **Call order**: Accepts that copy whether or not `compile` has run. A self-contained guard compiles its subschema without registering the root; only guards that need the root location, such as guards with `$ref` into root definitions, register the root on the guard instance. Whole validation compiles a detached root on a private AJV instance with the current application registrations. To make a schema address available to the application or to another root, register it on the application instance. The plugin enables asynchronous validation on its own root copy. Declare `$async: true` on separately registered resources that require asynchronous validation. Both kinds of guard work before whole-schema compilation.
 - **Identity**: Pass the same copy object to `compile`, every `compileGuard`, and `release`; whole-schema validation can be compiled later.
 - **Limits**: Asynchronous formats and keywords are unsupported
+- A guard compiles synchronously, so an asynchronous format that `$data` selects at run time is not detected when the guard compiles.
+- An AJV instance and the validators the plugin builds from it are used within one JavaScript realm; sharing one AJV instance across worker threads is not supported.
 - **Refusal**: `compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.
 
 Strict options on a bound instance, such as `strictKeywords`, may make some `if` guards fail to compile. The affected gate becomes false and produces a `GUARD_FAILED` `onError` record. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
 
 #### **`release(root)`**
 
-- **Purpose**: Removes that root's Ajv registrations and compiled results when the form cache evicts it
+- **Purpose**: Releases the plugin's retained resources for that root when the form cache evicts it; schemas registered on your AJV instance are not removed
 - **Call order**: Accepts the same engine-owned copy whether or not `compile` has run. Releasing an unregistered root is a no-op.
 
 ### **Default Configuration**
@@ -132,7 +134,7 @@ const defaultSettings: Ajv.Options = {
 The `createValidatorFactory` function provides:
 
 - **Error Standardization**: Converts AJV errors to a consistent format
-- **Performance Optimization**: Reuses the registration for the same root object until `release(root)`
+- **Performance Optimization**: Reuses the compiled validator for the same root object while the root and the instance's options, formats, keywords and registered schemas are unchanged
 - **Detailed Error Messages**: Rich error information for better user experience
 - **Type Safety**: Full TypeScript support with proper type inference
 

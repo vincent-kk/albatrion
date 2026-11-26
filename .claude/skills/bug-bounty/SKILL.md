@@ -27,13 +27,13 @@ A round finds defects that consumers would actually hit, proves each one with a 
 - If a `bug-bounty/round-K/` folder has no `README.md`, round K is unfinished: resume it with N = K, read its `.progress/brief.md` and `.progress/progress.md`, and continue from the first step they do not record as done. Otherwise set N to the highest K plus one and create `bug-bounty/round-N/.progress/`.
 - Record the base commit (`git log -1`), `git status --porcelain`, and `git worktree list` in `.progress/progress.md`. If files under `packages/` are modified or untracked, name them to the user and ask whether to start now or wait. When the round starts anyway, the brief and the round README list those files.
 - Check every package's `dist`, because a workspace import by package name resolves to it. A `dist` entry is stale when its modification time is older than the last commit that touched that package's `src` (`git log -1 --format=%cI -- <package path>/src`) or than an uncommitted change there; source file times alone mislead, because a checkout or merge rewrites them. Neither hunters nor the main session rebuild, so when any `dist` is stale, the brief tells hunters to load workspace dependencies from source through a probe-local Vitest configuration (the `source` export condition first, plus each package's internal `@/<name>` aliases), with a control test that proves source was loaded.
-- Read every finished round's `README.md`: its areas and angle ids, its cross-package classes, and its areas to revisit or to lower. Round 1 predates the angle catalog, so none of its work counts as a catalog angle. For each planned area, note the earlier package documents a hunter must read.
+- Read every finished round's `README.md`: its areas and angle ids, its cross-package classes, and its areas to revisit or to lower. When no earlier round exists, every catalog angle is unused. For each planned area, note the earlier package documents a hunter must read.
 
 ### 2. Plan areas and angles
 
 - Split the published packages into 8 to 12 hunter areas small enough for one hunter to probe deeply. Split `@canard/schema-form` into several areas (for example compile time and engine, React layer, validation with the AJV plugins), and split any area an earlier README lists under areas to revisit; group the small packages.
-- Give each hunter 4 to 6 angles by id from [references/angles.md](references/angles.md), at least 3 of them unused by earlier rounds in that area, plus the cross-package classes found so far as sibling targets.
-- When an area has fewer than 3 applicable angles left unused, first add angles to the catalog with the next free ids, derived from the previous round's cross-package classes; the round README names the added ids.
+- Give each hunter 4 to 6 angles by id from [references/angles.md](references/angles.md), at least 3 of them unused by earlier rounds in that area, plus the cross-package classes in [references/classes.md](references/classes.md) as sibling targets.
+- When an area has fewer than 3 applicable angles left unused, first add angles to the catalog with the next free ids, derived from the previous round's cross-package classes; the round README names the added ids. Append every new cross-package class the round finds to [references/classes.md](references/classes.md) with the next number.
 - Lowering an area's priority means giving it fewer angles or sharing a hunter with a neighboring area; never drop a published package from the plan.
 - Write each area as one block: packages, modules to focus on, angle ids, and the earlier documents to read.
 
@@ -67,7 +67,7 @@ Each hunter reports at most 20 findings, ranked by severity, and never pads its 
 
 ## Waves
 
-A wave is a run of consecutive rounds the user asks for together, such as rounds 3 to 5. Rounds alternate with fixing, as the round cycle in `bug-bounty/FIX-PROCEDURE.md` defines: a separate fix session fixes and merges a round's findings, then notifies this session with the new HEAD, and the next round runs at that HEAD.
+A wave is a run of consecutive rounds the user asks for together, such as rounds 3 to 5. Rounds alternate with fixing, as the round cycle in [references/fix-procedure.md](references/fix-procedure.md) defines: a separate fix session fixes and merges a round's findings, then notifies this session with the new HEAD, and the next round runs at that HEAD.
 
 - Only the next round can be prepared ahead of time. It plans its areas after the previous round's `README.md` exists, because it reads that round's angles, classes, and areas to revisit.
 - A prepared round records "launch pending" in its progress note. At launch, refresh the base commit, the working-tree status, and the worktree list in the progress note and the brief.
@@ -83,3 +83,13 @@ A wave has a target last round that the user sets (round 5 for the wave that sta
 - Oscillating: a finding at medium or above reopens behavior that an earlier round's fix decided, or the same function yields a finding of the same class for a third round. Churn between fixes means the contract itself is unsettled, and more hunting will not settle it; the owner has to decide the contract.
 
 When the target round shows none of these signals, another round runs only if the user has allowed rounds past the target; aim to end by the target, and give the reason for each extra round. Record the decision and the signals behind it in the round README, report it to the user, and say in the handoff to the fix session whether another round follows. Stopping ends only the hunting; the fix session still fixes the round's findings.
+
+## Closing the campaign
+
+`bug-bounty/` is the working record of a campaign, not a permanent document. When the last round is fixed and no further round follows, the directory is removed in the pull request that ends the campaign, after everything in it has one of these homes:
+
+- A behavior the campaign decided is pinned by a test that imports the package entry point, and a defect is fixed in code.
+- A reason, limit, rejected alternative or design idea is in the document its reader opens: the package's `DETAIL.md`, `INTENT.md`, README or changeset, or this skill's references for the method itself (new angles, new classes).
+- History that has no present reader, such as measurements, item verdicts and what was tried, is in a pull request description or comment.
+
+Before removing it, have an independent reviewer audit each kind of record against those homes and list what would be lost: items with no recorded outcome, decisions recorded only in the directory, and open owner decisions. Then confirm that no file outside the directory links into it. An item still unfixed at that point becomes an issue or a pull request comment, never a silent omission.

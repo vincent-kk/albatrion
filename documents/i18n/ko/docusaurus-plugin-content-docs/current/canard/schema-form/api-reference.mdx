@@ -22,7 +22,7 @@ sidebar_position: 6
 | `readOnly / disabled`                                  | 폼 전체 입력 잠금이며 기본값은 false입니다.                                                                                                                |
 | `unsetOnInactive`                                      | 기본 이탈 제거 정책이며 노드 controls가 우선합니다.                                                                                                        |
 | `disableAutomaticWrites`                               | 명령형 쓰기는 허용하면서 자동 쓰기를 억제합니다.                                                                                                           |
-| `errors`                                               | 외부 오류이며 배열 참조 변경과 reset에 다시 적용합니다.                                                                                                    |
+| `errors`                                               | 외부 오류이며 배열 내용이 바뀔 때와 reset에 다시 적용합니다. 내용이 같은 새 배열은 편집으로 지운 오류를 복원하지 않습니다. |
 | `errorVisibility / validationMode`                     | 검증 페이지의 표시·실행 정책입니다.                                                                                                                        |
 | `validatorFactory`                                     | 완전한 검증기 객체이며 검증 페이지를 참조하십시오.                                                                                                         |
 | `FieldRenderer`                                        | 필드 그룹 렌더러입니다.                                                                                                                                    |
@@ -38,7 +38,7 @@ sidebar_position: 6
 
 ## 루트 로드와 설정 수명 {#configuration-lifetime}
 
-`jsonSchema`·`defaultValue`만 바꾸면 현재 트리와 편집 값을 유지합니다. `reset()`은 가장 최근에 커밋된 속성을 읽고 첨부 파일을 지우며 기본값을 로드합니다. 함수 children은 현재 트리의 스키마를 받으므로 reset 전에도 새 스키마 속성과 옛 node가 짝지어지지 않습니다. reset은 대체 값 대신 자동 쓰기 재정의 플래그만 받습니다.
+`jsonSchema`·`defaultValue`만 바꾸면 현재 트리와 편집 값을 유지합니다. `reset()`은 가장 최근에 커밋된 속성을 읽고 첨부 파일을 지우며 기본값을 로드합니다. 함수 children은 현재 트리의 스키마를 받으므로 reset 전에도 새 스키마 속성과 옛 node가 짝지어지지 않습니다. reset은 대체 값 대신 자동 쓰기 재정의 플래그만 받습니다. Form 안의 네이티브 reset 버튼도 브라우저가 관리되지 않는 네이티브 컨트롤을 되돌린 뒤 마이크로태스크에서 `reset()`과 같은 onChange·수명으로 초기화하며, 기본 동작을 막은 reset은 아무 작업도 하지 않습니다.
 
 `rebuild()`는 스키마 객체의 캐시된 분석을 무효화하고 reset의 load 옵션으로 이 Form의 루트를 교체합니다. 같은 스키마 객체를 쓰는 다른 Form은 기존 트리를 유지합니다. 교체 후에는 현재 handle에서 노드를 다시 조회하십시오.
 
@@ -61,7 +61,7 @@ context·입력 잠금은 실시간 변경을 지원하며 렌더러·입력 설
 | `findNode(path) / findNodes(path)`                | 일치하는 연결된 노드 하나 또는 전부이며 없으면 각각 null 또는 []를 반환합니다.                                                                                                                                                                                        |
 | `getState() / setState(flags) / clearState()`     | 집계 플래그 읽기·전체 트리 patch·clear입니다.                                                                                                                                                                                                                         |
 | `getErrors() / validate()`                        | 원시 오류·새 판정 프로미스입니다.                                                                                                                                                                                                                                     |
-| `focus(path?) / select(path?)`                    | 중첩 가상화 게이트를 열어 정확한 대상 입력 컨테이너의 DOM 순서상 첫 `[data-focus-target]` 요소·input·textarea·select·button에 focus를 요청합니다. 텍스트 선택은 button·select를 건너뛰고 첫 input·textarea에 요청하며, 해당 요소에 select 메서드가 있으면 호출합니다. |
+| `focus(path?) / select(path?)`                    | 중첩 가상화 게이트를 열어 정확한 대상 입력에 focus를 요청합니다. 입력의 `focusRef`에 연결된 컨트롤이 대상이며, 없으면 입력 컨테이너의 DOM 순서상 첫 `[data-focus-target]` 요소·input·textarea·select·button입니다. 텍스트 선택은 button·select를 건너뛰고 첫 input·textarea에 요청하며, 해당 요소에 select 메서드가 있으면 호출합니다. |
 | `refresh(path?) / remount(path?)`                 | 커밋된 입력 값 재읽기(`controlled: true`를 선언한 입력은 교체하지 않음)·렌더 하위 트리 재마운트입니다.                                                                                                                                                                |
 | `reset(option?) / rebuild(option?)`               | 위에서 설명한 루트 로드 연산입니다.                                                                                                                                                                                                                                   |
 | `revealErrors()` / `resetErrorVisibility()`       | 표시 override이며 검증 페이지를 참조하십시오.                                                                                                                                                                                                                         |
@@ -76,11 +76,11 @@ context·입력 잠금은 실시간 변경을 지원하며 렌더러·입력 설
 
 `node.batch(fn)`은 동기 쓰기를 묶습니다. `visitSubtree(visitor)`는 자기 노드, 자손을 전위·형제 순서로 방문하며 false 반환은 그 노드의 자손을 건너뜁니다. 방문자는 필수 FieldNode를 받습니다. 연결된 순회는 현재 형상, 분리된 순회는 고정된 하위 트리를 방문합니다. 중복 도달 노드는 한 번만 방문하고 순회 중 생긴 노드는 놓칠 수 있습니다.
 
-값 쓰기는 끝에서 한 번 정착하므로 중간 값 읽기는 직전 커밋을 봅니다. 상태·외부 오류 변경은 즉시 적용하고 이벤트만 기다리며 외부 batch가 있으면 모두 그 끝까지 미룹니다. 그런 외부 batch 밖에서는 Form reset·`resetSubtree()`의 load는 즉시 정착합니다. 읽기 전용 순회는 쓰기가 발생할 때까지 write 경계를 열지 않고 리스너 안에서도 사용할 수 있습니다.
+batch 안에서 스칼라 값 쓰기는 표시만 해 두었다가 가장 바깥 batch가 끝날 때 한 번 정착하므로, 그 사이의 `value`·`children` 읽기는 직전 커밋을 보고 `setValue`에 전달한 갱신자는 같은 batch의 앞선 호출이 만든 값을 읽습니다. 배열 메서드는 앞선 표시를 먼저 정착하고 자기 정렬을 즉시 적용하므로 그 뒤의 읽기는 적용된 정렬을 봅니다. `resetSubtree()`는 범위 밖의 앞선 쓰기를 정착하고 범위 안의 앞선 쓰기는 버린 뒤 즉시 로드합니다. 정착 결과 그 필드가 떼어지면(예: 비활성이 되면) reset을 거부하고 범위 안의 쓰기를 유지합니다. Form reset도 batch 안에서 즉시 로드합니다. 상태·외부 오류 변경은 즉시 적용하지만 구독·onChange·검증 전달은 가장 바깥 쓰기나 batch가 끝날 때까지 기다립니다. 읽기 전용 순회는 쓰기가 발생할 때까지 write 경계를 열지 않고 리스너 안에서도 사용할 수 있습니다.
 
 방문자 실패는 이미 수행한 쓰기를 적용한 뒤 전파합니다. 리스너 안의 값 쓰기 순회에서는 실패가 직접 호출자 대신 리스너 채널로 보고될 수 있습니다. handle에는 visitSubtree가 없으므로 `handle.node`를 사용하십시오.
 
-네이티브 컨트롤이 아닌 포커스 가능한 요소에는 `data-focus-target`을 붙이십시오. 표시 자체는 포커스 가능성을 만들지 않으며, 마운트 판정은 `aria-disabled="true"`도 비활성으로 취급합니다.
+`focus(path)`가 호출할 컨트롤을 정하려면 입력의 선택적 `focusRef` prop을 그 컨트롤의 React `ref`나 동기 `focus()` 메서드를 가진 컴포넌트 핸들에 연결하십시오. DOM 대상은 입력 컨테이너와 같은 문서에 연결된 요소여야 합니다. 자식·레이아웃·스키마 presentation 재정의로는 `focusRef`를 지정할 수 없으므로 나머지 props를 DOM 요소나 위젯에 펼치기 전에 `focusRef`를 구조 분해하십시오. 대상이 없으면 이미 포커스 가능한 비네이티브 요소에 `data-focus-target`을 붙이십시오. 표시 자체는 포커스 가능성을 만들지 않으며, 마운트 판정은 `aria-disabled="true"`도 비활성으로 취급합니다.
 
 ## Form 조합과 사용자 입력 {#composition}
 
@@ -90,7 +90,7 @@ context·입력 잠금은 실시간 변경을 지원하며 렌더러·입력 설
 
 `Form.Input`, `Form.Render`, `Form.Field`에는 `onChange`와 `onFileAttach`를 전달할 수 없습니다. 중계 콜백은 하이브리드 부모의 `<Child>` 또는 렌더러의 `<Input>`에서 제공하십시오.
 
-`FieldInputProps`는 `jsonSchema`, `node`, `type`, `schemaType`, `misfit`, `name`, `path`, `nullable`, `required`, `readOnly`, `disabled`, `watchValues`, `defaultValue`, `value`, `onChange`, `onFileAttach`, `ChildFields`, `context`, presentation 속성을 제공합니다. 빈 입력은 undefined를, null은 의도적으로 선택할 때만 발행합니다. 계산된 입력 잠금과 [접근 가능한 이름](./schema-reference#accessibility)을 지키십시오.
+`FieldInputProps`는 `jsonSchema`, `node`, `type`, `schemaType`, `misfit`, `name`, `path`, `inputId`, `labelId`, `getInputId`, 선택적인 `focusRef`, `nullable`, `required`, `readOnly`, `disabled`, `watchValues`, `defaultValue`, `value`, `onChange`, `onFileAttach`, `ChildFields`, `context`, presentation 속성을 제공합니다. `name`은 말단 이름, `path`는 데이터 포인터이며 포커스 가능한 컨트롤에는 `inputId`를 적용합니다([입력 식별자](#control-identifiers-and-author-responsibility)). 빈 입력은 undefined를, null은 의도적으로 선택할 때만 발행합니다. 계산된 입력 잠금과 [접근 가능한 이름](./schema-reference#accessibility)을 지키십시오.
 
 FieldInputProps와 FieldRendererProps의 node 속성은 모두 필수입니다.
 
@@ -168,6 +168,24 @@ controlled 선언이 없는 자식에는 다음 한계가 있습니다.
 
 `FormProvider`는 하위 트리에 렌더러 기본값·입력 정의·formatError·errorVisibility·validationMode·validatorFactory·context를 공유합니다. 명시적인 Form 속성이 우선하고 Form context는 프로바이더 컨텍스트 위에 병합합니다. 공개 이름 `FormProvider`를 사용하십시오. `plugin` 속성은 없으므로 렌더러 슬롯·`fieldInputDefinitions`·`formatError`를 명시적으로 전달하고 검증기는 `validatorFactory={plugin.validator}`로 연결하십시오. 검증기 요구사항은 [검증기 객체 계약](./validation#validator-contract)에 있습니다.
 
+scope 없는 등록은 같은 JavaScript realm의 호환되는 모든 패키지 사본이 공유합니다. 따로 번들한 애플리케이션을 격리하려면 애플리케이션마다 안정된 string 또는 symbol 하나로 `registerPlugin(plugin, { scope })`를 호출하고, 그 애플리케이션의 폼을 `<FormProvider pluginScope={scope}>` 아래에서 렌더링하십시오. 서로 다른 scope와 scope 없는 등록소는 등록·중복 기록·초기화를 공유하지 않으며 `registerPlugin(null, { scope })`는 그 scope만 초기화합니다. `pluginScope`를 생략한 중첩 FormProvider는 바깥 프로바이더의 등록소를 상속하고, 최상위 프로바이더는 scope 없는 등록소를 사용합니다. 렌더링 전에 등록하십시오. 등록은 이미 마운트된 폼을 갱신하지 않으며 scope의 등록소는 realm이 유지되는 동안 남습니다.
+
+```tsx
+import { Form, FormProvider, registerPlugin } from '@canard/schema-form';
+import { plugin as uiPlugin } from '@canard/schema-form-antd6-plugin';
+
+const applicationScope = Symbol('application');
+registerPlugin(uiPlugin, { scope: applicationScope });
+
+export function Application() {
+  return (
+    <FormProvider pluginScope={applicationScope}>
+      <Form jsonSchema={{ type: 'string' }} />
+    </FormProvider>
+  );
+}
+```
+
 ## 노드 값·상태·배열 연산 {#nodes}
 
 동일성·트리는 `type`, `strategy`, `schemaType`, `jsonSchema`, `path`, `name`, `escapedName`, `depth`, `rootNode`, `parentNode`, `children`으로 읽습니다. 말단 children은 null입니다. `value`는 해석된 값, `outputValue`는 방출 JSON, `source`, `extras`, `inactiveValues`는 보존된 입력을 나타냅니다. `isRequired`, `isNullable`, `isActive`, `isVisible`, `isPresent`, `isReadOnly`, `isDisabled`, `isMisfit`, `misfits`, `watchValues`, `context`, `diagnostics`는 현재 노드 상태입니다. `isPresent`는 disabled와 무관하게 active이면서 visible임을 뜻합니다.
@@ -222,7 +240,7 @@ React가 숨겨진 폼을 다시 표시하면 입력은 현재 노드 값을 보
 | `*`           | 와일드카드이며 find는 첫 일치, findNodes는 전부 반환                |
 | `@`           | context 표현식 토큰이며 질의 노드가 아니므로 find=null·findNodes=[] |
 
-controls의 `@.prop`과 선택적 체이닝은 실시간 폼 `context`를 읽습니다. 분기 표현식의 `./`는 호스트 자식, 일반 노드 표현식의 `../`는 부모를 통한 형제 경로입니다. 표현식 기준점을 기준으로 깊이를 계산하십시오.
+controls의 `@.prop`과 선택적 체이닝은 실시간 폼 `context`를 읽습니다. 분기 표현식의 `./`는 호스트 자식, 일반 노드 표현식의 `../`는 부모를 통한 형제 경로입니다. 표현식 기준점을 기준으로 깊이를 계산하십시오. 문자열 리터럴·주석·정규식 리터럴 안의 텍스트는 경로로 읽지 않으며 템플릿 리터럴에서는 `${…}` 자리만 코드입니다. 값 뒤의 슬래시는 나눗셈입니다. 절대 경로로도 읽히는 정규식 리터럴은 경로로 읽으므로 `/foo/.test(../name)`은 `/foo/.test` 경로를 읽습니다. 이런 패턴은 `new RegExp('foo').test(../name)`으로 쓰십시오. 블록 주석을 사용하십시오. 불리언 control 끝의 줄 주석은 컴파일에 실패하고, `derived` 식 앞의 줄 주석은 `undefined`를 반환하게 합니다.
 
 세그먼트 자체가 `*`, `..`, `.`, `@`이면 연산자로 먼저 해석합니다. 리터럴 이름은 `%2A`, `%2E%2E`, `%2E`, `%40`으로 이스케이프합니다. 그 밖의 퍼센트 문자는 그대로 두고 다른 세그먼트는 `~1`, `~0`만 디코딩합니다. 맨 앞의 `#`만 프래그먼트 접두사이며 내부 `#`는 일반 이름입니다. 리터럴 속성 이름 `%2A`, `%2E`, `%2E%2E`, `%40` 자체는 왕복 변환할 수 없어 ReservedPropertyName으로 거부합니다.
 
@@ -277,7 +295,7 @@ placeholder는 추정 높이와 `data-path`, `data-deferred`, aria-hidden을 사
 
 말단 내부, 생략된 레이아웃, 숨겨진 Activity와 공개 커밋에서 Suspense로 마운트되지 않은 입력에는 도달할 수 없습니다. 숨김·disabled·inert 요소는 포커스를 무시할 수 있습니다. 주변 자리표시자 높이 변경에 따른 스크롤 이동은 보정하지 않습니다. 이미 마운트된 대상이나 막는 게이트가 없는 대상에 보낸 요청이 지연되면 나중에 마운트된 위치에도 도달하며 새 요청으로 취소할 수 없습니다. 네이티브 무효 제출은 [후보 선택 규칙](./error-reference#submission)을 유지합니다.
 
-SSR은 모든 입력을 렌더링하고 하이드레이션은 이를 그대로 유지합니다. 하이드레이션 뒤 추가한 분기·children에 게이트를 적용하며 준비된 자식은 나중에 탭·아코디언에서 처음 표시해도 준비 시의 게이트 결정을 유지합니다. IntersectionObserver가 없으면 브라우저는 즉시 렌더링하고 서버는 경고하지 않습니다.
+SSR은 모든 입력을 렌더링하고 하이드레이션은 이를 그대로 유지합니다. 하이드레이션 뒤 추가한 분기·children에 게이트를 적용하며 준비된 자식은 나중에 탭·아코디언에서 처음 표시해도 준비 시의 게이트 결정을 유지합니다. IntersectionObserver가 없으면 브라우저는 즉시 렌더링하며, 서버는 그 부재를 경고하지 않습니다. React 18 개발 빌드의 `renderToString`은 필드 바인딩이 layout effect를 사용하므로 React의 `useLayoutEffect does nothing on the server` 경고를 기록합니다. 서버 HTML은 바뀌지 않으며 React 19와 프로덕션 빌드는 이 경고를 기록하지 않습니다.
 
 하이드레이션 자체는 사용자 분기 입력의 Suspense에 추가 갱신을 보내지 않습니다. React 18에서 하이드레이션 완료 전 후속 갱신은 해당 경계를 클라이언트 렌더링으로 바꿀 수 있습니다. [가상화 예제](./examples/virtualized-form)와 실제 분기 레이아웃을 검증하십시오.
 

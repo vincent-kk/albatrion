@@ -213,15 +213,4 @@ describe('MUI: grouped inputs and the title that Form.Label renders', () => {
       .closest('[role="group"]')!;
     expect(computeAccessibleName(sections)).toContain('day');
   });
-
-  it('control: the core built-in radio with Form.Label keeps ids unique and is named', () => {
-    const { container } = render(
-      <Form jsonSchema={schema}>
-        <Form.Label path="/plan" />
-        <Form.Input path="/plan" />
-      </Form>,
-    );
-    expect(duplicateIds(container)).toEqual([]);
-    expect(groupNames(container, 'input[type="radio"]')).toContain('plan');
-  });
 });

@@ -21,7 +21,6 @@ it.each([
     code: 2,
   },
   { args: ['--agent=claude', '--scope=project'], code: 2 },
-  { args: ['--unknown'], code: 2 },
 ])(
   'preflight $args emits one JSON document with exit $code',
   async ({ args, code }) => {

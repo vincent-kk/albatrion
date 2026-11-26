@@ -40,6 +40,63 @@ afterEach(() => {
   cleanup();
 });
 
+const originalZone = process.env.TZ;
+afterEach(() => {
+  if (originalZone === undefined) delete process.env.TZ;
+  else process.env.TZ = originalZone;
+});
+
+it.each([
+  {
+    zone: 'Asia/Seoul',
+    minimum: '01:15:00Z',
+    maximum: '09:30:00Z',
+    firstHour: 10,
+    inside: [10, 12, 18],
+    outside: [1, 9, 19],
+  },
+  {
+    zone: 'UTC',
+    minimum: '10:15:00+09:00',
+    maximum: '18:30:00+09:00',
+    firstHour: 1,
+    inside: [1, 5, 9],
+    outside: [0, 10, 18],
+  },
+  {
+    zone: 'Asia/Seoul',
+    minimum: '13:15:00Z',
+    maximum: '21:30:00Z',
+    firstHour: 22,
+    inside: [22, 0, 6],
+    outside: [7, 13, 21],
+  },
+])(
+  'converts $minimum and $maximum to the $zone viewer before comparing',
+  ({ zone, minimum, maximum, firstHour, inside, outside }) => {
+    process.env.TZ = zone;
+    render(
+      <Form
+        fieldInputDefinitions={plugin.fieldInputDefinitions}
+        jsonSchema={{
+          type: 'array',
+          format: 'time-range',
+          items: { type: 'string' },
+          presentation: { FieldInputProps: { minimum, maximum } },
+        }}
+      />,
+    );
+    const limits = received.props
+      .at(-1)
+      ?.props.disabledTime?.(dayjs(), 'start', {});
+    const hours = limits?.disabledHours?.();
+    for (const hour of inside) expect(hours).not.toContain(hour);
+    for (const hour of outside) expect(hours).toContain(hour);
+    expect(limits?.disabledMinutes?.(firstHour)).toContain(14);
+    expect(limits?.disabledMinutes?.(firstHour)).not.toContain(15);
+  },
+);
+
 it.each([
   {
     minimum: '10:15',

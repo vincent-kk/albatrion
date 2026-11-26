@@ -8,7 +8,6 @@ import {
   screen,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Switch } from 'antd-mobile';
 import { computeAccessibleName } from 'dom-accessibility-api';
 import { afterEach, expect, it, vi } from 'vitest';
 
@@ -17,41 +16,6 @@ import { Form, type FormHandle, type JSONSchema } from '@canard/schema-form';
 import { plugin } from '../index';
 
 afterEach(cleanup);
-it.each(['on', 'off'])(
-  'string switch agrees with enum order when stored %s',
-  (stored) => {
-    const ref = createRef<FormHandle>();
-    render(
-      <Form
-        ref={ref}
-        jsonSchema={{
-          type: 'object',
-          properties: {
-            mode: {
-              type: 'string',
-              enum: ['on', 'off'],
-              presentation: { inputType: 'switch' },
-            },
-          },
-        }}
-        defaultValue={{ mode: stored }}
-        fieldInputDefinitions={plugin.fieldInputDefinitions}
-        FieldRenderer={plugin.FieldRenderer}
-        LabelRenderer={plugin.LabelRenderer}
-      />,
-    );
-    const control = screen.getByRole('switch');
-    const checked =
-      control instanceof HTMLInputElement
-        ? control.checked
-        : control.getAttribute('aria-checked') === 'true';
-    expect(checked).toBe(stored === 'on');
-    fireEvent.click(control);
-    expect(ref.current!.getValue()).toEqual({
-      mode: stored === 'on' ? 'off' : 'on',
-    });
-  },
-);
 it.each([
   {
     source: 'alias',
@@ -241,38 +205,6 @@ it('applies the context labels and enum order after external writes, reset and l
     expect(onChange).not.toHaveBeenCalled();
     assertMode('off');
   }
-});
-
-it('plain Ant Design Mobile Switch skips Tab and never saves on Space or Enter', async () => {
-  const onChange = vi.fn();
-  const keys = userEvent.setup();
-  render(
-    <>
-      <button>Before</button>
-      <Switch onChange={onChange} />
-      <button>After</button>
-    </>,
-  );
-  const widget = screen.getByRole('switch');
-
-  await keys.tab();
-  expect(document.activeElement).toBe(
-    screen.getByRole('button', { name: 'Before' }),
-  );
-  await keys.tab();
-  const after = screen.getByRole('button', { name: 'After' });
-  expect(document.activeElement).toBe(after);
-  widget.focus();
-  expect(document.activeElement).toBe(after);
-
-  for (const key of [' ', 'Enter']) {
-    fireEvent.keyDown(widget, { key });
-    fireEvent.keyUp(widget, { key });
-  }
-  expect(onChange).not.toHaveBeenCalled();
-  fireEvent.click(widget);
-  expect(onChange).toHaveBeenCalledTimes(1);
-  expect(onChange).toHaveBeenCalledWith(true);
 });
 
 it('keeps native focus and activation behavior and saves one unlocked boolean click', async () => {

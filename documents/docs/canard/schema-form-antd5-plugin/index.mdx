@@ -33,7 +33,7 @@ yarn add @canard/schema-form-antd5-plugin
 ### Peer Dependencies
 
 ```bash
-yarn add antd@^5.10.0 dayjs@^1.0.0 "react@>=18 <20" "react-dom@>=18 <20"
+yarn add @canard/schema-form antd@^5.10.0 dayjs@^1.0.0 "react@>=18 <20" "react-dom@>=18 <20"
 ```
 
 ## Quick Setup
@@ -75,10 +75,12 @@ See the [package README’s Slider section](https://github.com/vincent-kk/albatr
 ## Schema Extension Properties
 
 ```ts
-// Custom schema properties recognized by this plugin
+// Selection hints read by this plugin
 {
-  inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' |
-             'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange',
+  presentation?: {
+    inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' |
+               'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange',
+  },
   // Standard JSON Schema properties also used for routing:
   format?: 'date' | 'time' | 'month' | 'password' | 'uri' |
            'textarea' | 'date-range' | 'month-range' | 'time-range',
@@ -120,7 +122,7 @@ type AntdContext = {
 
 ## AI Reference
 
-**Package**: `@canard/schema-form-antd5-plugin` v0.10.0
+**Package**: `@canard/schema-form-antd5-plugin` 1.x
 **Purpose**: Ant Design v5 UI plugin — 18 form input components for `@canard/schema-form`.
 
 ### Exports
@@ -129,7 +131,7 @@ import { plugin } from '@canard/schema-form-antd5-plugin';
 ```
 
 ### Peer dependencies
-`antd@^5.10.0`, `dayjs@^1.0.0`, `react@>=18 <20`
+`@canard/schema-form`, `antd@^5.10.0`, `dayjs@^1.0.0`, `react@>=18 <20`
 
 ### Component mapping (priority order, high → low)
 | Component | Trigger |
@@ -155,6 +157,6 @@ type AntdContext = { size?: 'small' | 'middle' | 'large' };
 ```
 
 ### Schema extensions
-`inputType`: `'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange'`
+`presentation.inputType`: `'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange'`
 
 </ForAI>

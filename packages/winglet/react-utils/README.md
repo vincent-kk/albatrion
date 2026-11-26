@@ -148,11 +148,11 @@ Various utility functions for working with React components.
 Prevents unnecessary recalculations and maintains a consistent value throughout the component's lifecycle.
 
 ```tsx
-import { useConstant } from '@winglet/react-utils';
+import { useConstant, useLazyConstant } from '@winglet/react-utils';
 
 const MyComponent = () => {
-  // Create a complex value only once
-  const complexValue = useConstant(() => {
+  // Create a complex value only once — useLazyConstant runs the factory once
+  const complexValue = useLazyConstant(() => {
     return performExpensiveCalculation();
   });
 

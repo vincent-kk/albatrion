@@ -234,3 +234,46 @@ it('(round-2 promise-modal 1, 6) releases styles after an open modal host is rem
   });
   expect(shadow).toEqual(light);
 });
+
+it('cannot see the focused control inside a closed shadow root, unlike an open one', () => {
+  function focusInside(mode: ShadowRootMode) {
+    const host = document.createElement('div');
+    document.body.append(host);
+    const tree = host.attachShadow({ mode });
+    const root = document.createElement('div');
+    tree.append(root);
+    render(<ModalProvider root={root} />);
+    act(() => {
+      void confirm({
+        title: 'Closed',
+        content: (
+          <>
+            <button>first</button>
+            <input aria-label="typed" autoFocus />
+          </>
+        ),
+      });
+    });
+    const autoFocusKept = tree.activeElement === tree.querySelector('input');
+    const first = tree.querySelector('button')!;
+    first.focus();
+    return {
+      documentFocusOnHost: document.activeElement === host,
+      autoFocusKept,
+      nativeTabFromFirst: fireEvent.keyDown(first, { key: 'Tab' }),
+    };
+  }
+  const open = focusInside('open');
+  reset();
+  const closed = focusInside('closed');
+  expect(open).toEqual({
+    documentFocusOnHost: true,
+    autoFocusKept: true,
+    nativeTabFromFirst: true,
+  });
+  expect(closed).toEqual({
+    documentFocusOnHost: true,
+    autoFocusKept: false,
+    nativeTabFromFirst: false,
+  });
+});

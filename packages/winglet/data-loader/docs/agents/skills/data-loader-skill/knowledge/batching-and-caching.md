@@ -38,7 +38,7 @@ const loader = new DataLoader(batchLoad, { maxBatchSize: 100 });
 // → batch 2: batchLoad(keys[100..149])
 ```
 
-`maxBatchSize` must be a number of at least 1; otherwise the constructor throws with code `DATA_LOADER.INVALID_MAX_BATCH_SIZE`. The default is `Infinity`.
+`maxBatchSize` must be a positive integer or `Infinity`; any other value, such as `0`, `2.5` or `NaN`, makes the constructor throw with code `DATA_LOADER.INVALID_MAX_BATCH_SIZE`. The default is `Infinity`. With `disableBatch: true` the option is not read.
 
 ### Disabling Batching
 
@@ -50,7 +50,7 @@ const singleLoader = new DataLoader(batchLoad, { disableBatch: true });
 // Note: still uses the scheduler; each batch simply holds one key
 ```
 
-`disableBatch: true` and `maxBatchSize` are mutually exclusive in the type — pick one.
+`disableBatch: true` and `maxBatchSize` are both accepted by the type, and `disableBatch: true` wins (batch size 1) — pick one.
 
 ### Custom Schedulers
 

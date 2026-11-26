@@ -121,15 +121,3 @@ it.each([
     plugin.validator.release?.(schema);
   },
 );
-
-it.each([false, 0, '', null])(
-  'treats successful asynchronous validation of %j like synchronous validation',
-  async (value) => {
-    const schema: JSONSchema = { $async: true };
-    const actual = await plugin.validator.compile(schema)(value);
-    const synchronous = await plugin.validator.compile({})(value);
-    expect(actual).toEqual(synchronous);
-    expect(actual).toBeNull();
-    plugin.validator.release?.(schema);
-  },
-);

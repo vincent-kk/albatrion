@@ -138,7 +138,7 @@ class DataLoader<Key = string, Value = any, CacheKey = Key> {
 
 Loads the value for a single key. The load is automatically coalesced into the current batch and the result is cached.
 
-- **Throws** `DataLoaderError` (code `INVALID_KEY`) if `key` is `null` or `undefined`.
+- **Throws** `DataLoaderError` (code `DATA_LOADER.INVALID_KEY`) if `key` is `null` or `undefined`.
 - Returns the same Promise for a given key within the same cache scope (deduplication).
 
 ```typescript
@@ -149,7 +149,7 @@ const user = await userLoader.load('user-42');
 
 Loads values for multiple keys. Per-key failures are returned as `Error` instances in the result array rather than causing a thrown exception, enabling partial success.
 
-- **Throws** `DataLoaderError` (code `INVALID_KEYS`) if `keys` is not array-like.
+- **Throws** `DataLoaderError` (code `DATA_LOADER.INVALID_KEYS`) if `keys` is not array-like.
 - Each element is either a resolved `Value` or an `Error`.
 
 ```typescript
@@ -209,7 +209,7 @@ type DataLoaderOptions<Key, Value, CacheKey = Key> = {
 | `batchScheduler` | `(task: () => void) => void`                 | `process.nextTick`  | Controls when the batch is dispatched. Replace with `queueMicrotask`, `setTimeout`, `requestAnimationFrame`, or `fn => fn()` for immediate dispatch. |
 | `cacheKeyFn`     | `(key: Key) => CacheKey`                     | identity (`k => k`) | Converts a loader key to a cache key. Required when keys are objects (reference equality would fail).                                                |
 | `maxBatchSize`   | `number`                                     | `Infinity`          | Maximum number of keys per batch. When exceeded, a new batch is started automatically. Must be a positive integer.                                   |
-| `disableBatch`   | `true`                                       | —                   | Disables batching; each `load()` call dispatches immediately (equivalent to `maxBatchSize: 1`). Mutually exclusive with `maxBatchSize`.              |
+| `disableBatch`   | `true`                                       | —                   | Disables batching; each `load()` call dispatches immediately (equivalent to `maxBatchSize: 1`). Takes precedence over `maxBatchSize` when both are given.              |
 
 ---
 

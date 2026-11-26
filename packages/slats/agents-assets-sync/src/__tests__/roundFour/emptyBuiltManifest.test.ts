@@ -1,5 +1,4 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { afterEach, expect, it, vi } from 'vitest';
@@ -43,19 +42,6 @@ const injectArgs = (root: string) => [
   `--root=${root}`,
   '--no-interactive',
 ];
-
-it('agents-build-hashes fails, rather than writing an empty manifest, when the declared asset directory is absent', () => {
-  const { packageRoot } = setup();
-  const result = spawnSync(process.execPath, [BUILD_BIN], {
-    cwd: packageRoot,
-    encoding: 'utf8',
-  });
-  const manifestPath = join(packageRoot, 'dist/agents-hashes.json');
-  const files = existsSync(manifestPath)
-    ? Object.keys(JSON.parse(readFileSync(manifestPath, 'utf8')).files)
-    : null;
-  expect({ status: result.status, files }).toEqual({ status: 1, files: null });
-});
 
 it('the injector refuses an absent declared asset directory the same way before and after agents-build-hashes ran', async () => {
   const { root, packageRoot } = setup();

@@ -5,10 +5,12 @@ import type { Fn } from '@aileron/declare';
 import { useCommittedReference } from './utils/useCommittedReference';
 
 /**
- * Creates a stable callback reference that always invokes the latest committed version of the provided handler.
+ * Creates a stable callback reference that invokes the latest committed version of the provided handler.
+ * A call made during a later render runs the previously committed handler; during the first render,
+ * which has no committed handler yet, it runs that render's own handler.
  *
  * This hook solves the common "stale closure" problem in React by maintaining a stable
- * function reference while ensuring it always calls the most recent committed version of your handler.
+ * function reference while so it calls the most recent committed version of your handler.
  * It combines the benefits of `useCallback` (stable reference) with the flexibility of
  * always having access to the latest props and state.
  *
@@ -47,7 +49,7 @@ import { useCommittedReference } from './utils/useCommittedReference';
  * @typeParam P - The array type of the handler's parameters
  * @typeParam R - The return type of the handler
  * @param handler - The function to wrap
- * @returns A stable callback that always invokes the latest committed version of the handler
+ * @returns A stable callback that invokes the latest committed version of the handler, or the first render's own handler when called during that render
  */
 export function useHandle<P extends Array<any>, R>(handler: Fn<P, R>): Fn<P, R>;
 /**

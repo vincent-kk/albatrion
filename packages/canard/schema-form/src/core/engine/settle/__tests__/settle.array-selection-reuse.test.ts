@@ -13,6 +13,7 @@ import {
   dispatchRemove,
   dispatchSetValue,
 } from '@/schema-form/core/engine/write';
+import { FormErrorCode } from '@/schema-form/errors';
 
 import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
@@ -342,6 +343,7 @@ describe('static array selection matches the full route', () => {
       },
       [{ show: true }],
       [{ apply: (node) => dispatchPush(node, { show: false }), reuse: false }],
+      FormErrorCode.ExpressionThrew,
     );
   });
 

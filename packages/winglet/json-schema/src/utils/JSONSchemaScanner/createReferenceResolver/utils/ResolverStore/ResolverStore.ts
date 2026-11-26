@@ -10,6 +10,7 @@ import { normalizeSchemaUri } from '../../../utils/dialectFlag/normalizeSchemaUr
 import { JSONSchemaScanError } from '../../../utils/error/JSONSchemaScanError';
 import { JSONSchemaScanErrorCode } from '../../../utils/error/JSONSchemaScanErrorCode';
 import { buildKeywordMap } from '../../../utils/keywordMap/buildKeywordMap';
+import { DEFAULT_KEYWORD_MAP } from '../../../utils/keywordMap/defaultKeywordMap';
 import { ReferenceSkipReason } from '../../../utils/referenceOutcome/ReferenceSkipReason';
 import { cloneSchema } from '../../../utils/schemaCopy/cloneSchema';
 import type { ReferenceKeyword, ReferenceStep } from '../../../utils/type';
@@ -23,6 +24,7 @@ import type {
   ResolverContext,
   Resource,
 } from './type';
+import { foldRetrievalURI } from './utils/foldRetrievalURI';
 import { isCanonicalRetrievalURI } from './utils/isCanonicalRetrievalURI';
 import { shortestReference } from './utils/shortestReference';
 
@@ -96,6 +98,8 @@ export class ResolverStore {
   private registered: Map<string, SchemaValue> | undefined;
   /** Whether every registered key is already spelled as resolution writes it; computed once, only by a known-address lookup. */
   private canonicalKeys: boolean | undefined;
+  /** Normalized addresses the URL parser produced; every other normalized address is a canonical spelling. */
+  private parsed: Set<string> | undefined;
   /** Known addresses already checked against the registrations; the answer cannot change afterwards. */
   private settled = new Set<string>();
   /** Retrieval addresses already passed to indexing; an embedded identifier at the same address does not count. */
@@ -203,7 +207,16 @@ export class ResolverStore {
       !(dialect.startsWith('draft-') && typeof schema.$ref === 'string')
     ) {
       const id = dialect === Dialect.Draft04 ? schema.id : schema.$id;
-      if (typeof id === 'string')
+      // A canonical spelling of its own retrieval address resolves to itself or, when the
+      // parser rejects it, falls back to it; either way the address stays the retrieval URI.
+      if (
+        typeof id === 'string' &&
+        !(
+          id === retrieval &&
+          ((this.registered?.has(id) && !this.parsed?.has(id)) ||
+            isCanonicalRetrievalURI(id))
+        )
+      )
         uri = resolveURI(id, retrieval)?.split('#')[0] ?? retrieval;
     }
     const initial: ResolverContext = {
@@ -485,14 +498,24 @@ export class ResolverStore {
     source: Readonly<Record<string, SchemaValue>>,
   ): Map<string, SchemaValue> {
     const registered = new Map<string, SchemaValue>();
-    const keys = new Map<string, string>();
+    // The latest key stored at an address is the address itself unless it is recorded here.
+    const aliases = new Map<string, string>();
     for (const key of Object.keys(source)) {
-      const uri = resolveURI(key, '');
-      if (uri === undefined || !isAbsoluteURI(uri)) continue;
-      const previous = keys.get(uri);
+      // Parsing keeps a canonical key and only lowercases the scheme and host of a key that differs
+      // from one in letter case; an `xn--` label is parsed because runtimes differ on rejecting it.
+      const canonical = isCanonicalRetrievalURI(key) && !key.includes('xn--');
+      const folded = canonical ? key : foldRetrievalURI(key);
+      const uri = folded ?? resolveURI(key, '');
+      if (uri === undefined || (folded === undefined && !isAbsoluteURI(uri)))
+        continue;
+      if (folded === undefined) (this.parsed ??= new Set()).add(uri);
+      const previous = registered.has(uri)
+        ? (aliases.get(uri) ?? uri)
+        : undefined;
       if (previous !== undefined && source[previous] !== source[key])
         this.duplicate(uri, previous, key);
-      keys.set(uri, key);
+      if (uri !== key) aliases.set(uri, key);
+      else if (aliases.size !== 0) aliases.delete(uri);
       registered.set(uri, source[key]);
     }
     return registered;
@@ -693,11 +716,15 @@ export class ResolverStore {
     const positions = new Map<string, ResolverContext>(),
       data: string[] = [],
       containers = new Set<string>();
-    const vocabulary = buildKeywordMap(
-      (this.options.keywords ?? DEFAULT_KEYWORDS).concat(
-        this.options.additionalKeywords ?? [],
-      ),
-    );
+    // The options object is the caller's, so each option is read once, keywords first.
+    const keywords = this.options.keywords,
+      additionalKeywords = this.options.additionalKeywords;
+    const vocabulary =
+      keywords !== undefined || additionalKeywords !== undefined
+        ? buildKeywordMap(
+            (keywords ?? DEFAULT_KEYWORDS).concat(additionalKeywords ?? []),
+          )
+        : DEFAULT_KEYWORD_MAP;
     let safe = true;
     const provider = {
       root: () => location.context,

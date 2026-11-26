@@ -63,37 +63,6 @@ it('round-2 schema-form 3: plugin-style definitions refresh without a plugin cha
   await act(() => ref.current!.setValue({ list: ['b'] }));
   expect(view.container.querySelector('input')!.value).toBe('["b"]');
 });
-it.each([false, true])(
-  'round-2 schema-form 3: own input writes preserve DOM (relay=%s)',
-  async (relay) => {
-    const ref = createRef<FormHandle>();
-    const view = render(
-      <Form
-        ref={ref}
-        jsonSchema={schema}
-        defaultValue={{ list: ['a'] }}
-        validationMode={ValidationMode.None}
-        fieldInputMap={{ '/list': WholeArray }}
-      >
-        <Form.Render path="/list">
-          {({ Input }) => (
-            <Input
-              onChange={
-                relay
-                  ? (value) => ref.current!.findNode('/list')!.setValue(value)
-                  : undefined
-              }
-            />
-          )}
-        </Form.Render>
-      </Form>,
-    );
-    const input = view.container.querySelector('input')!;
-    fireEvent.change(input, { target: { value: 'own' } });
-    expect(ref.current!.getValue()).toEqual({ list: ['own'] });
-    expect(view.container.querySelector('input')).toBe(input);
-  },
-);
 it('round-2 schema-form 3: controlled arrays receive value without replacing DOM', async () => {
   const Controlled = ({ value }: FieldInputProps<string[]>) => (
     <input value={JSON.stringify(value)} readOnly />

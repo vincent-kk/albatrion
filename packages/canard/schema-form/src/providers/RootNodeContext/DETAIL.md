@@ -30,7 +30,7 @@ React의 터미널·원자 판정과 app 소유 청사진 캐시는 생성 인�
 
 ### REACT-007 — 준비된 load의 수명
 
-첫 commit 전 load는 변경·상태·진단 콜백을 버리고 오류 기록만 보관합니다. 초기 외부 오류는 추측성 루트의 마운트 직후 콜백 없이 적용하여 서버 HTML과 첫 클라이언트 렌더가 같은 오류를 읽습니다. 확정 commit은 루트 구독과 isPrepared 표시 뒤 기록을 flush하고 현재 외부 오류를 load 사슬 안에서 한 번 보고하며 로드 검증을 연결합니다. 초기 오류 적용만을 위한 추가 렌더·값 콜백·검증 콜백은 만들지 않습니다. StrictMode 재연결은 이미 준비된 load를 다시 flush하거나 예약하지 않습니다. 준비된 현행 load는 effect 연결 여부와 무관하게 engine chain 끝에서 콜백과 기록을 전달합니다. 교체된 load는 reset 사슬 뒤 은퇴하며 소비자 기록을 다시 배달하지 않습니다.
+첫 commit 전 load는 변경·상태·진단 콜백을 버리고 오류 기록만 보관합니다. 초기 외부 오류는 추측성 루트의 마운트 직후 콜백 없이 적용하여 서버 HTML과 첫 클라이언트 렌더가 같은 오류를 읽으며, 마운트가 실패해 degraded 트리가 남은 경우에도 적용합니다. 확정 commit은 루트 구독과 isPrepared 표시 뒤 기록을 flush하고 현재 외부 오류를 load 사슬 안에서 한 번 보고하며 로드 검증을 연결합니다. 초기 오류 적용만을 위한 추가 렌더·값 콜백·검증 콜백은 만들지 않습니다. StrictMode 재연결은 이미 준비된 load를 다시 flush하거나 예약하지 않습니다. 준비된 현행 load는 effect 연결 여부와 무관하게 engine chain 끝에서 콜백과 기록을 전달합니다. 교체된 load는 reset 사슬 뒤 은퇴하며 소비자 기록을 다시 배달하지 않습니다.
 
 React는 숨김과 실제 unmount를 같은 cleanup으로 표현하므로 루트 구독은 cleanup에서 끊지 않습니다. retained handle·노드의 쓰기·reset·rebuild·validate·submit과 예약 슬롯은 unmount 뒤에도 전달할 수 있습니다. cleanup은 검증 캐시 retain만 해제하며 그 뒤 만든 새 루트는 retain하지 않아 축출 후 재컴파일할 수 있습니다.
 
@@ -52,7 +52,7 @@ adoption은 컴파일하지 않으므로 자동 compile 실패가 새 트리를 
 
 ### root-live-settings — 실행 설정 수명
 
-commit은 구조 교체를 처리한 현행 root에 validationMode·자동 쓰기·비활성 정책·표시 정책을 함께 적용한 뒤 context와 외부 오류를 전달합니다. 표시 정책 변경은 reset 사유가 아니며 검증 모드·예약을 바꾸지 않습니다. 숨김 cleanup은 committed 설정을 지우지 않습니다.
+commit은 구조 교체를 처리한 현행 root에 validationMode·자동 쓰기·비활성 정책·표시 정책을 함께 적용한 뒤 context와 외부 오류를 전달합니다. commit 효과가 시작한 context 전달이나 reset(검증기 교체·재대조)이 던지는 식 같은 실패에 닿으면 그 커밋을 유지하고 실패를 onError와 host에 한 번씩 보고하며 트리는 degraded로 남기고 React에는 던지지 않습니다. 거절할 호출자가 없는 commit 효과에서 던지면 Form의 오류 경계가 degraded 트리 대신 폼 전체를 대체하기 때문입니다. 외부 오류 적용은 식을 평가하지 않으므로 식 실패로는 이 경로에 들지 않습니다. 표시 정책 변경은 reset 사유가 아니며 검증 모드·예약을 바꾸지 않습니다. 숨김 cleanup은 committed 설정을 지우지 않습니다.
 
 load·activation은 하나의 유효 슬롯 토큰을 공유합니다. 실효 모드 변경은 이전 슬롯을 무효화하고 None→OnRequest는 컴파일 준비, None 또는 OnRequest→OnChange는 다음 쓰기를 기다리지 않고 판정을 예약합니다. 같은 설정의 최초 commit·StrictMode replay는 추가 활성화를 만들지 않습니다. 실행을 시작한 슬롯의 늦은 실패는 시작 root·validation epoch·은퇴 여부로 판정합니다. 같은 root reset·요청 stamp·token 교체만으로 같은 epoch의 실패를 버리지 않으며 루트 교체·은퇴·실효 모드 전환은 늦은 보고를 차단합니다.
 

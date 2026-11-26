@@ -152,11 +152,11 @@ React 컴포넌트 작업을 위한 다양한 유틸리티 함수를 제공합�
 불필요한 재계산을 방지하고 컴포넌트 생명주기 동안 일정한 값을 유지합니다.
 
 ```tsx
-import { useConstant } from '@winglet/react-utils';
+import { useConstant, useLazyConstant } from '@winglet/react-utils';
 
 const MyComponent = () => {
-  // 복잡한 계산이 필요한 값을 한 번만 생성합니다
-  const complexValue = useConstant(() => {
+  // useLazyConstant는 팩토리를 한 번만 실행합니다
+  const complexValue = useLazyConstant(() => {
     return performExpensiveCalculation();
   });
 

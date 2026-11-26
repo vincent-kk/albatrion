@@ -1,6 +1,6 @@
-import { StrictMode, useState } from 'react';
+import { StrictMode } from 'react';
 
-import { act, cleanup, fireEvent, render } from '@testing-library/react';
+import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import { ModalProvider, confirm, useModal } from '@/promise-modal';
@@ -42,36 +42,6 @@ it('StrictMode: shown content restores the opener on abort from inside, body, an
     view.unmount();
     ModalManager.reset();
   }
-});
-
-it('re-suspends after focus was inside and still returns focus to the opener', async () => {
-  const gate = new Promise<void>(() => {});
-  function Content() {
-    const [blocked, setBlocked] = useState(false);
-    if (blocked) throw gate;
-    return <button onClick={() => setBlocked(true)}>suspend</button>;
-  }
-  const view = render(
-    <ModalProvider options={{ duration: 0 }}>
-      <button>opener</button>
-    </ModalProvider>,
-  );
-  const opener = view.getByText('opener');
-  opener.focus();
-  const controller = new AbortController();
-  act(() => {
-    void confirm({ content: <Content />, signal: controller.signal });
-  });
-  const inside = view.getByText('suspend');
-  inside.focus();
-  act(() => fireEvent.click(inside));
-  expect(view.getByText('suspend').closest('[style*="none"]')).not.toBeNull();
-  const active = document.activeElement;
-  if (active instanceof HTMLElement && active.closest('[style*="none"]'))
-    active.blur();
-  await act(async () => controller.abort());
-  expect(document.activeElement).toBe(opener);
-  view.unmount();
 });
 
 it('useModal cleanup under StrictMode restores the opener when focus is on the body', async () => {

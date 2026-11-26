@@ -169,11 +169,22 @@ export interface NodeSurface<
   /** Request one renderer action. */
   request(kind: FieldNodeRequestType): void;
   /**
-   * Group synchronous writes in one outer delivery boundary.
-   * Array verbs (`push`, `pop`, `update`, `remove`, `insert`, `clear`) also compute their
-   * array at the call site on top of prior marks, return the synchronous result
-   * and mark the resulting array. Settlement at the end of the batch is a whole
-   * write, so item keys carry over by position.
+   * Group synchronous writes in one outer delivery boundary: event deliveries, validation
+   * requests and `onChange` wait until the outermost write or batch ends and are delivered there.
+   * Value writes are marked and settle together at that end, so ordinary reads inside the batch
+   * see the last commit while an updater passed to `setValue` sees the earlier marks. An array
+   * method (`push`, `pop`, `update`, `remove`, `insert`, `clear`) first settles the earlier marks,
+   * then applies and settles its arrangement at the call as it does outside a batch: it returns
+   * its usual result, later reads see the arranged array, and surviving item nodes keep their
+   * identity. A form reset and `resetSubtree()` also load at the call. A batch therefore merges
+   * deliveries but does not reduce the cost of many array method calls; one `setValue` of the
+   * final array settles once.
+   * @param fn - Synchronous writes to group; a nested `batch` joins the outer boundary
+   * @throws Only as the outermost write: after the work it marked or applied is committed and delivered,
+   * the failure `fn` threw, or one `FormErrorCode.MultipleErrors` error when settlement, listener or
+   * callback failures were also collected, which can throw even when `fn` returns. A batch nested in
+   * another batch rethrows a failure of `fn` at once, before commit; a batch started inside another
+   * write's callbacks returns and leaves its failures to that write.
    */
   batch(fn: Fn): void;
 }

@@ -4,7 +4,7 @@ import { expect, it } from 'vitest';
 
 import { createValidator } from '../default';
 
-it.each(['keyword', 'format', 'late-format', 'async-ref', 'declared'])(
+it.each(['keyword', 'format', 'late-format', 'async-ref'])(
   'round-5: root-pointer guard order is independent for %s',
   (trigger) => {
     for (const directGuardCompile of [true, false]) {

@@ -5,6 +5,7 @@
  *   empty, relative or opaque base such as `urn:example:root`.
  */
 export function isHierarchical(base: string): boolean {
+  if (base === '') return false;
   try {
     const url = new URL(base);
     return url.host !== '' || url.pathname.startsWith('/');

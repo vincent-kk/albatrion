@@ -2,7 +2,7 @@ import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
 
 /**
  * Capture the departure facts of former children without comparing node identities.
- * @param root - Committed tree whose runtime stores the detached reads and watch memo
+ * @param root - Committed tree whose runtime stores the detached reads; each node holds its own watch memo
  * @param former - Children the tree held before the update, in order
  * @returns Per former child: detached flag, retained read bundle and memoized watch values
  */
@@ -13,5 +13,5 @@ export const observeDetachedReads = (
   former.map((node) => [
     node.isDetached,
     root.runtime.detachedReads?.get(node),
-    root.runtime.watchValuesMemo?.get(node)?.values,
+    node.watchValuesMemo?.values,
   ]);

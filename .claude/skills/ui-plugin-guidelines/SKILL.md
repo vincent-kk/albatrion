@@ -13,9 +13,9 @@ description: "Expert at verifying compatibility between a UI library and an @can
 - A select preserves an unknown stored enum value while displaying a library-safe empty selection; mounting it emits no out-of-range warning. Verify callback support over the entire declared peer range with a feature check or a proven minimum version.
 - Render array and object validation messages at both root and nested positions. Do not add empty root error markup when no message exists.
 - With `multipleOf`, slider stops are its zero-based multiples inside the strictest inclusive and exclusive bounds. Integer sliders use the integer intersection. Without `multipleOf`, number sliders step from the lower bound by the default step and retain inclusive endpoints exactly; an exclusive lower bound excludes that anchor, and an exclusive upper bound excludes its endpoint. An absent side defaults to 0 or 100 only when neither kind of bound exists on that side. Range sliders apply item constraints to both ends, and marked stops obey the same constraints.
-- Every slider interaction either stores a value that validates against its own schema or stores nothing. Home and End select the first and last valid stops; arrows, PageUp/PageDown, Shift+Arrow and pointer selection normalize off-grid or out-of-bounds starting values. Use decimal-exact arithmetic, including exponent-written steps. An empty interval stores nothing. Treat `maximum: Number.MAX_SAFE_INTEGER` as a documented precision limit.
+- Let the UI library own slider keyboard, pointer and stop handling; do not reimplement it. Pass the schema bounds and step the library supports. When the library cannot produce a schema-valid result (for example floating-point error from a decimal step), document it as an external limit in the plugin README and point consumers to a custom `FieldInput` registered through `fieldInputDefinitions`.
 - Test slider bounds, step, integer/number type, unset/on-grid/off-grid/outside values, pointer and keyboard interactions, and omitted/false `lazy` against an independent decimal reference model. Keep the absent-step anchor explicit.
-- An unset slider exposes no current value to assistive technology and stores nothing until the user acts. A first committed selection of the minimum must store it even when the library skips its ordinary change callback. Preserve read-only and disabled behavior. Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores on commit (key up, pointer up, or the library change-complete event); `false` stores on every move.
+- An unset slider exposes no current value to assistive technology and stores nothing until the user acts. A first committed selection of the minimum must store it even when the library skips its ordinary change callback. Preserve read-only and disabled behavior. Omitting `presentation.FieldInputProps.lazy` (or setting it to `true`) stores on the library's commit events (each plugin README states the exact keyboard and pointer timing); `false` stores on every move.
 - Range pickers publish only a committed selection with both ends chosen, or clear. Browsing a panel, hovering, changing the viewed month or time, and choosing just one end never write form data.
 - Verify these contracts with equivalence tables across sibling plugins and input kinds, including stored values outside the enum, root and nested errors, and unset and populated numeric controls.
 
@@ -191,6 +191,8 @@ const LabelRenderer = ({
 );
 ```
 
+A native `<label>` moves focus only to a labelable element such as `input`. When `htmlFor` names a non-labelable control, such as the `role="group"` section list of a MUI X picker, clicking this label does nothing; forward the click to that control, as the MUI plugin's `LabelRenderer` does for an enabled picker editor.
+
 #### 3. ErrorMessageRenderer
 
 **Role**: Error message display
@@ -236,12 +238,12 @@ const formatError: FormatError = (error, node, context) => {
 <TextField
   id={inputId}                          // ✅ Unique ID
   name={name}                        // ✅ name attribute
-  required={required}                // ✅ required
-  aria-required={required}           // ✅ ARIA required
-  aria-invalid={hasError}            // ✅ ARIA invalid
-  aria-describedby={getInputId('error')} // ✅ Error association
+  required={required}                // ✅ MUI sets required on the <input>
+  error={hasError}                   // ✅ MUI sets aria-invalid on the <input>
 />
 ```
+
+Where a library puts ARIA props written on a composite component is the library's decision: MUI's `TextField` and `Checkbox` put them on a wrapper, and `Select` forwards only `aria-describedby` to its combobox. Pass them through the prop that reaches the announced control (`slotProps.htmlInput` for `TextField`, `SelectDisplayProps` for `Select`, `slotProps.input` for `Checkbox`), and in review reject ARIA written on the component itself unless a render check shows it on the control (details in `knowledge/accessibility-checklist.md`).
 
 ### Keyboard Navigation
 
@@ -257,8 +259,19 @@ const formatError: FormatError = (error, node, context) => {
 **slotProps pattern**:
 ```typescript
 <DatePicker
+  disabled={disabled}
+  readOnly={readOnly}
   slotProps={{
-    textField: { id: inputId, name, required, disabled },
+    textField: {
+      id: getInputId('native'),
+      InputProps: {
+        slotProps: {
+          input: { id: inputId, ref: disabled ? undefined : focusRef, role: 'group', 'aria-labelledby': labelId },
+        },
+      },
+      name,
+      required,
+    },
   }}
 />
 ```
@@ -331,14 +344,14 @@ const formatError: FormatError = (error, node, context) => {
 
 ## Usage Scenarios
 
-### Scenario 1: MUI (Material-UI) v6 Plugin Compatibility Verification
+### Scenario 1: MUI (Material-UI) v7 Plugin Compatibility Verification
 
-**Situation**: Starting development of an MUI v6 plugin for @canard/schema-form
+**Situation**: Starting development of an MUI v7 plugin for @canard/schema-form
 
 **Step 1: Compatibility Analysis**
 
 ```markdown
-## MUI v6 Compatibility Analysis
+## MUI v7 Compatibility Analysis
 
 ### ✅ Directly usable (Priority 1)
 
@@ -383,7 +396,7 @@ const formatError: FormatError = (error, node, context) => {
 **Step 2: Confirm Special Notes**
 
 ```markdown
-## MUI v6 Special Notes
+## MUI v7 / MUI X v8 notes
 
 ### 1. DatePicker slotProps pattern
 MUI DatePicker uses TextField internally. With AdapterDayjs, pass Dayjs values and accessibility attributes through slotProps:
@@ -395,18 +408,34 @@ MUI DatePicker uses TextField internally. With AdapterDayjs, pass Dayjs values a
     if (newDate === null) onChange(undefined);
     else if (newDate.isValid()) onChange(newDate.format('YYYY-MM-DD'));
   }}
+  label={label}
+  disabled={disabled}
+  readOnly={readOnly}
   slotProps={{
     textField: {
-      id: inputId,
-      name: name,
-      required: required,
-      disabled: disabled,
-      error: hasError,
-      helperText: errorMessage,
+      id: getInputId('native'),
+      InputLabelProps: { id: inlineId },
+      InputProps: {
+        'aria-labelledby': labelledBy,
+        slotProps: {
+          input: {
+            id: inputId,
+            ref: disabled ? undefined : focusRef,
+            role: 'group',
+            'aria-disabled': disabled || undefined,
+            'aria-labelledby': labelledBy,
+          },
+        },
+      },
+      name,
+      required,
+      error: misfit,
     },
   }}
 />
 ```
+
+`const inlineId = label ? getInputId('legend') : undefined;` and `const labelledBy = inlineId ?? labelId;` go above the return. Errors are rendered by the FieldRenderer's ErrorMessage, or read with `useFieldErrors(node)`.
 
 ### 2. sx prop styling
 Use MUI's sx prop for consistent styling:
@@ -441,10 +470,12 @@ const FieldRenderer = ({ depth, Input }: FieldRendererProps) => {
 ```json
 {
   "peerDependencies": {
-    "@mui/material": ">=7.0.0",
-    "@mui/x-date-pickers": ">=8.0.0",  // When using DatePicker
-    "react": ">=18.0.0",
-    "@canard/schema-form": "*"
+    "@canard/schema-form": "^1.0.0",
+    "@mui/material": "^7.0.0",
+    "@mui/x-date-pickers": "^8.0.0",  // When using DatePicker
+    "dayjs": "^1.0.0",
+    "react": ">=18 <20",
+    "react-dom": ">=18 <20"
   }
 }
 ```
@@ -464,9 +495,7 @@ const FieldRenderer = ({ depth, Input }: FieldRendererProps) => {
   name={name}                        // ✅ name attribute
   label={label}                      // ✅ Label (WCAG 1.3.1)
   required={required}                // ✅ required (WCAG 3.3.2)
-  error={hasError}                   // ✅ error state
-  helperText={errorMessage}          // ✅ Error message (WCAG 3.3.1)
-  aria-describedby={getInputId('helper')} // ✅ Helper text association
+  error={misfit}                     // ✅ error state (misfit comes from FieldInputProps; the message is rendered by the FieldRenderer's ErrorMessage)
 />
 ```
 
@@ -478,8 +507,7 @@ const FieldRenderer = ({ depth, Input }: FieldRendererProps) => {
       id={inputId}
       name={name}
       checked={value ?? false}
-      required={required}
-      aria-required={required}
+      required={required}  // ✅ MUI sets required on the <input>
     />
   }
   label={label}  // ✅ Checkbox label (WCAG 1.3.1)
@@ -488,18 +516,29 @@ const FieldRenderer = ({ depth, Input }: FieldRendererProps) => {
 
 **RadioGroup**:
 ```typescript
+// options carry JSON tokens in `value` and the raw enum value in `rawValue`
+// getEnumOptions: copy packages/canard/schema-form-mui-plugin/src/fieldInputs/utils/enum/getEnumOptions.ts (no package exports it)
+const options = getEnumOptions(jsonSchema.enum, alias, getInputId);
+const initialValue = options.find((option) => option.rawValue === defaultValue)?.value;
+const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const selected = options.find((option) => option.value === event.target.value);
+  if (selected) onChange(selected.rawValue);  // numeric enums keep their number type
+};
+
 <FormControl component="fieldset" required={required}>
-  <FormLabel component="legend">{label}</FormLabel>  {/* ✅ Group label */}
+  <FormLabel component="legend" id={getInputId('legend')}>{label}</FormLabel>  {/* ✅ Group label */}
   <RadioGroup
-    name={name}
-    value={value ?? ''}
-    onChange={(e) => onChange(e.target.value)}
+    id={inputId}
+    name={inputId}  // ✅ radios use inputId as the native name
+    aria-labelledby={getInputId('legend')}
+    defaultValue={initialValue}
+    onChange={handleChange}
   >
-    {options.map(option => (
+    {options.map((option) => (
       <FormControlLabel
         key={option.value}
         value={option.value}
-        control={<Radio />}
+        control={<Radio id={option.id} />}
         label={option.label}
       />
     ))}
@@ -537,7 +576,7 @@ const FieldRenderer = ({ depth, Input }: FieldRendererProps) => {
 
 **Result summary**:
 ```markdown
-## MUI v6 plugin development ready
+## MUI v7 plugin development ready
 
 ### ✅ Verified items
 - 9 basic input kinds can be supported directly
@@ -627,13 +666,12 @@ Ant Design v5 uses dayjs for date handling (moment.js removed):
 
 ```json
 {
-  "dependencies": {
-    "dayjs": "^1.11.10"
-  },
   "peerDependencies": {
-    "antd": ">=5.0.0 <6.0.0",
-    "react": ">=18.0.0",
-    "@canard/schema-form": "*"
+    "@canard/schema-form": "^1.0.0",
+    "antd": "^5.0.0",
+    "dayjs": "^1.0.0",
+    "react": ">=18 <20",
+    "react-dom": ">=18 <20"
   }
 }
 ```
@@ -743,7 +781,6 @@ Ant Design v5 handles most accessibility attributes automatically, but some must
   name={name}                  // ✅ name attribute
   aria-required={required}     // ⚠️ Manual addition required
   aria-invalid={hasError}      // ⚠️ Manual addition required
-  aria-describedby={hasError ? getInputId('error') : undefined}  // ⚠️ Manual
   status={hasError ? 'error' : undefined}
 />
 ```
@@ -818,8 +855,9 @@ Ant Design supports keyboard navigation by default:
 ### 📝 Accessibility Test Checklist
 
 - [ ] Confirm id, name, and aria-required on every Input
-- [ ] When an error occurs, add aria-invalid and aria-describedby
+- [ ] When an error occurs, add aria-invalid; add aria-describedby only for an element the input itself renders with getInputId(key)
 - [ ] Confirm LabelRenderer is associated with Input via htmlFor
+- [ ] ARIA props reach the announced control, checked in a render, not assumed from where they were written
 - [ ] Test that every field is reachable by keyboard alone
 - [ ] Test that a screen reader reads labels and error messages
 ```
@@ -1195,7 +1233,7 @@ If the conditions above apply, MUI, Ant Design, or Chakra UI is recommended
 ```markdown
 ## Comprehensive UI Library Comparison
 
-| Criterion | MUI v6 | Ant Design v5 | Chakra UI v2 | Headless UI + TW |
+| Criterion | MUI v7 | Ant Design v5 | Chakra UI v2 | Headless UI + TW |
 |------|--------|---------------|--------------|------------------|
 | **Basic components** | ✅ Complete (9/9) | ✅ Complete (9/9) | ✅ Complete (9/9) | ⚠️ Manual (5/9) |
 | **DatePicker** | ✅ Available (@mui/x) | ✅ Available (dayjs) | ❌ None | ❌ None |
@@ -1210,7 +1248,7 @@ If the conditions above apply, MUI, Ant Design, or Chakra UI is recommended
 
 **Recommendation ranking**:
 
-1. **MUI v6** - the safest choice
+1. **MUI v7** - the safest choice
    - 👍 Complete component set
    - 👍 DatePicker supported by default
    - 👍 Largest community
@@ -1247,7 +1285,7 @@ If the conditions above apply, MUI, Ant Design, or Chakra UI is recommended
 ```
 Does the project need a DatePicker?
 ├─ Yes
-│  ├─ MUI v6 ✅ (the most complete component set)
+│  ├─ MUI v7 ✅ (the most complete component set)
 │  └─ Ant Design v5 ✅ (rich enterprise features)
 │
 └─ No
@@ -1258,7 +1296,7 @@ Does the project need a DatePicker?
    │  └─ Headless UI + Tailwind ✅ (complete freedom)
    │
    └─ Fast development?
-      └─ MUI v6 ✅ (the fastest prototyping)
+      └─ MUI v7 ✅ (the fastest prototyping)
 ```
 ```
 

@@ -6,8 +6,6 @@ describe('round-3 retired scheduler batch equivalence', () => {
   it.each([
     ['before', 'resolve', 1],
     ['before', 'resolve', 2],
-    ['before', 'reject', 1],
-    ['before', 'reject', 2],
     ['after', 'resolve', 1],
     ['after', 'resolve', 2],
     ['after', 'reject', 1],

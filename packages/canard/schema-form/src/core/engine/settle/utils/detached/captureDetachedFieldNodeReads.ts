@@ -23,7 +23,7 @@ export const captureDetachedFieldNodeReads = <
 ): void => {
   const runtime = node.runtime;
   if (runtime.blueprint.capabilities.hasWatch) {
-    runtime.watchValuesMemo?.delete(node);
+    node.watchValuesMemo = undefined;
     readFieldNodeWatchValues(node, watchSnapshot);
   }
   const reads = Object.freeze({

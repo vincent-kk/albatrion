@@ -15,7 +15,7 @@ Apply this skill when working with `cx`, `cxLite`, `compressCss`, `styleManagerF
 
 **`add` writes to a Map; the DOM write is deferred.** Each `addStyle(id, css)` stores processed CSS under `id`, then schedules a single `requestAnimationFrame` flush. The flush concatenates _every_ style in the scope and replaces the entire sheet at once. Per-style work is paid at call time; DOM work is paid once per frame.
 
-**The scoper counts braces; it does not parse CSS.** It walks rules by brace depth, prefixes every selector of each style rule, scopes the rules inside grouping at-rules such as `@media`, and copies other at-rules unchanged. Braces, semicolons and commas inside quoted strings, comments and backslash escapes are skipped, and so are a `/*` and a statement-ending `;` inside an unquoted `url(…)`; only a brace inside an unquoted `url(…)` still counts, and malformed input fails silently rather than throwing. `knowledge/style-manager.md` lists the rules and the remaining edges.
+**The scoper counts braces; it does not parse CSS.** It walks rules by brace depth, prefixes every selector of each style rule, scopes the rules inside grouping at-rules such as `@media`, and copies other at-rules unchanged. Braces, semicolons and commas inside quoted strings, comments and backslash escapes are skipped, and so are a `/*`, a statement-ending `;` and a brace inside an unquoted `url(…)`; malformed input fails silently rather than throwing. `knowledge/style-manager.md` lists the rules and the remaining edges.
 
 **It is for CSS you assemble at runtime.** The manager exists for styles whose text is not known until the code runs — themes, host-provided CSS, styles shipped inside a library that must not require a build step from its consumer. When the CSS is static and a bundler is already in the pipeline, CSS modules or a plain stylesheet do the same job with real parsing, real scoping, and no rAF gap. Reaching for this library for static styles buys the scoping limits below and nothing else.
 
@@ -38,7 +38,6 @@ Apply this skill when working with `cx`, `cxLite`, `compressCss`, `styleManagerF
 
 - **No type is exported from any entry point.** `ClassValue`, `ClassArray`, `ClassObject`, `StyleManagerConfig`, and `StyleRoot` are declared in source but never re-exported through the barrel or the sub-paths. `import type { ClassValue } from '@winglet/style-utils'` does not compile. Pass config objects inline (`{ shadowRoot }` is structurally typed) and declare local aliases if you need the union.
 - **At-rules are scoped by kind.** Rules inside `@media`, `@supports`, `@container`, `@layer`, `@scope`, `@document` and `@starting-style` are prefixed like top-level rules; `@keyframes`, `@font-face`, `@page` and statement at-rules such as `@import` are copied unchanged. Details: `knowledge/style-manager.md`.
-- **A brace inside an unquoted `url(…)` breaks scoping.** `url(a{b.png)` miscounts the block and drops that rule and every rule after it. Quote the URL (`url("a{b.png")`); braces inside quoted strings are safe.
 - **Adding whitespace-only CSS is ignored, not a removal.** `addStyle('x', '')` leaves the previous `x` in place. Call the cleanup function to remove a style.
 - **A flush is one frame away.** Reading `document.styleSheets` or computed style synchronously after `addStyle` sees the pre-flush state. Tests must advance a frame.
 - **`destroyScope(scopeId, { shadowRoot })` releases that root's scope.** Omitting the config targets the document. Per-style cleanups remove individual styles; the weak registry also permits host collection.
@@ -55,7 +54,7 @@ Symptom-indexed dispatch. The mechanism behind each one lives in the knowledge f
 | A whole scope stopped updating, one `console.warn` in the log | `replaceSync` threw; the scope is frozen at its last good state                             |
 | A generated per-instance scope works sometimes, not always    | The id is unescaped — a digit-leading one is invalid and the browser drops every rule       |
 | CSS is present in the sheet but matches nothing               | Invalid selectors are dropped with no error — read back the injected text, not the input    |
-| Rules after a `content:` value scoped wrongly or dropped      | A `{` or `}` inside the string cut the rule — escape it as `\7b` / `\7d`                    |
+| Rules after a `content:` value scoped wrongly or dropped      | Braces inside a quoted string are skipped, so look elsewhere: an unterminated string ends at the next newline, and an unbalanced brace outside strings, comments and `url(…)` shifts every following rule |
 | `:host(...)` or `:root.dark` came out prefixed                | Only the exactly-bare forms pass through                                                    |
 | `@keyframes` or `@font-face` collide across scopes            | Namespace the names yourself                                                                |
 | Passing `true` shipped uncompressed CSS                       | The third argument means "already compressed"                                               |
@@ -78,7 +77,7 @@ Symptom-indexed dispatch. The mechanism behind each one lives in the knowledge f
 
 ## API Truth
 
-Five exported symbols. Read shapes from `node_modules/@winglet/style-utils/dist/**/*.d.ts` and the README rather than guessing — but note the README's source links point at `./src/utils/styleManager/`, which does not exist (the real path is `./src/styleManager/`).
+Five exported symbols. Read shapes from `node_modules/@winglet/style-utils/dist/**/*.d.ts` and the README rather than guessing.
 
 ```typescript
 import { cx, cxLite, compressCss } from '@winglet/style-utils/util';

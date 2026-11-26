@@ -24,8 +24,11 @@ const rows = [
 it.each(rows)(
   'shown $settlement / $focus follows the displayed ownership rule',
   async ({ settlement, focus }) => {
-    const shown = await runFocusCase('shown', settlement, focus);
-    const result = await runFocusCase('shown', settlement, focus);
-    expect(result).toEqual(shown);
+    expect(await runFocusCase('shown', settlement, focus)).toEqual({
+      restored: focus !== 'outside',
+      preserved: focus === 'outside',
+      isolated: true,
+      focusedInsideBeforeTransition: focus === 'inside',
+    });
   },
 );

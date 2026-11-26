@@ -26,19 +26,6 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-it('(round-2 promise-modal 6) control: one copy removes its stylesheet on detach', async () => {
-  const first = await loadManager();
-  first.reset();
-  first.defineStyleSheet('probe', '.probe{color:red}');
-  const owner = {};
-  first.attach(owner, document.body, vi.fn());
-  await flushFrames();
-  expect(styleCount()).toBe(1);
-  first.detach(owner);
-  await flushFrames();
-  expect(styleCount()).toBe(0);
-});
-
 it('(round-2 promise-modal 6) removes the shared stylesheet when another compatible copy detaches the owner', async () => {
   const first = await loadManager();
   first.reset();

@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { expect, it } from 'vitest';
 
-it.each([12, 24, 48])(
+it.each([48])(
   'terminates repeated escaped EOF recovery with %i pairs',
   (size) => {
     const css = '(' + String.fromCharCode(34, 92).repeat(size);

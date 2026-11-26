@@ -95,20 +95,6 @@ describe('fields-entry gate in a template that reads outside the template', () =
     expect(run(schema, {}, steps)).toEqual(run(inline(schema), {}, steps));
   });
 
-  it('O3 single referrer (no aliasing) control', () => {
-    const schema = withQ(fieldsGate('active', '../flag === true'), {
-      g: {
-        type: 'object',
-        properties: {
-          flag: { type: 'boolean', default: true },
-          y: { $ref: '#/$defs/Q' },
-        },
-      },
-    });
-    const steps = [(root: any) => root.find('/g/flag')!.setValue(false)];
-    expect(run(schema, {}, steps)).toEqual(run(inline(schema), {}, steps));
-  });
-
   it('O4 node own active with an outer path, referrers at different depths', () => {
     const Q = {
       type: 'object',

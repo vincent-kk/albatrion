@@ -46,6 +46,7 @@ describe.each(['UTC', 'Asia/Seoul'])('time zone %s', (zone) => {
     ['12:30:00.250Z', '12:30:00Z'],
   ])('time %s shows the same time as %s', (variant, canonical) => {
     const field: JSONSchema = { type: 'string', format: 'time' };
+    expect(shown(field, canonical).every((text) => text !== '')).toBe(true);
     expect(shown(field, variant)).toEqual(shown(field, canonical));
   });
 
@@ -57,6 +58,9 @@ describe.each(['UTC', 'Asia/Seoul'])('time zone %s', (zone) => {
         format: 'time-range',
         items: { type: 'string' },
       };
+      expect(
+        shown(field, [canonical, '18:00:00Z']).every((text) => text !== ''),
+      ).toBe(true);
       expect(shown(field, [variant, '18:00:00Z'])).toEqual(
         shown(field, [canonical, '18:00:00Z']),
       );

@@ -239,8 +239,11 @@ interface DataLoaderOptions<Key, Value, CacheKey = Key> {
   /** 로더 키를 캐시 키로 변환하는 함수 */
   cacheKeyFn?: (key: Key) => CacheKey;
 
-  /** 한 번에 처리할 최대 배치 크기 */
+  /** 배치당 최대 키 수: 양의 정수 또는 Infinity(기본값). 그 외 값은 생성자에서 INVALID_MAX_BATCH_SIZE를 던집니다. disableBatch가 true이면 읽지 않습니다. */
   maxBatchSize?: number;
+
+  /** 모든 load()를 각자의 배치로 디스패치합니다(maxBatchSize: 1과 동일). maxBatchSize보다 우선합니다. */
+  disableBatch?: true;
 }
 ```
 

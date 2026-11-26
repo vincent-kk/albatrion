@@ -215,7 +215,7 @@ import { equalsRecursive } from './utils/equalsRecursive';
  * - **Performance degrades** with very deep nesting (>50 levels)
  *
  * **Production Considerations:**
- * - **Memory**: Pending comparisons use an explicit work stack
+ * - **Memory**: Nesting below 256 levels is compared recursively; deeper levels continue on an explicit cursor stack, so depth is not bound by the call stack
  * - **Performance**: Consider memoization for frequently compared objects
  * - **Error Handling**: Wrap in try-catch for user-provided data
  * - **Security**: Reject cyclic untrusted input before comparing it

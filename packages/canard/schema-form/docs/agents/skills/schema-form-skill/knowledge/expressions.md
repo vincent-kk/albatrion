@@ -40,7 +40,7 @@ Choosing wrong causes silent data loss (`active` where `visible` was intended) o
 
 ## watch and derived
 
-- `watch` declares extra dependencies as an array of paths: `controls: { watch: ['../items'] }`. Their values reach the input as `watchValues` and join the dependency set of the node's `derived` expression. A path followed by a property access must be parenthesized: `(../items)?.length > 0`. Empty arrays with omitEmpty emit undefined, so optional chaining is required. If a throwing expression degrades the form, correct the expression and perform a form-level reset or load to recover; ordinary writes do not clear degraded status.
+- `watch` declares extra dependencies as an array of paths: `controls: { watch: ['../items'] }`. Their values reach the input as `watchValues` and join the dependency set of the node's `derived` expression. A path followed by a property access must be parenthesized: `(../items)?.length > 0`. Empty arrays with omitEmpty emit undefined, so optional chaining is required. If a throwing expression degrades the form, correct the expression and perform a form-level reset or load to recover; ordinary writes do not clear degraded status. `watchValues` compares each watched value with `Object.is`, so mutating a watched array or object in place is not detected; write a new reference.
 - `derived` computes the field's value from its dependencies and recomputes whenever one of them changes, **replacing any value written to it**; a value written directly stays until the next dependency change. For one-time propagation that stays editable, use `injectTo` instead (`inject-to.md`).
 - Keep expressions to boolean/arithmetic/comparison. For list reductions, watch the source and compute inside the component:
 
@@ -75,9 +75,9 @@ controls: {
 }
 ```
 
-- Direct access is `@.field`. For optional chaining, wrap in parentheses: `(@).a?.b` — the parenthesized form is required and cannot be guessed.
+- `@` is the context object itself (the Form's `context` merged over a FormProvider's, `{}` when neither is set), and what follows it is plain JavaScript. `@.user` reads `undefined` when `user` is missing, but `@.user.plan` throws, so put `?.` after every member that can be missing: `@.user?.plan?.tier`. The parentheses in `(@).a?.b` are optional; only a field path needs them before a property access (`(../items)?.length`). A throw is not a quiet `false`: whether it happens at mount or after a context change, it reports `EXPRESSION_THREW` to `onError` and the form stays mounted but degraded, so submission is rejected until you correct the expression and recover as described under [watch and derived](#watch-and-derived).
 - When `context` changes, dependent controls expressions recompute automatically — no `watch` declaration needed.
-- `@` path expressions work only inside controls expressions — not in `node.find()` paths and not in `fieldInputMap` keys. (`node.find('@')` — the bare token — returns the context node itself; see `jsonpointer.md`.)
+- `@` path expressions work only inside controls expressions — not in `node.find()` paths and not in `fieldInputMap` keys. (`node.find('@')` returns null and `findNodes('@')` returns an empty array; see `jsonpointer.md`.)
 
 ## Conditional Branches: oneOf / anyOf / allOf
 

@@ -85,7 +85,7 @@ registerPlugin(plugin);
 - **Draft 2019-09**: `$recursiveRef`, 향상된 `$ref` 처리, `unevaluatedProperties` 사용 시
 - **Draft 2020-12**: `prefixItems`, `$dynamicRef` 등 최신 JSON Schema 기능 사용 시
 
-> **참고**: `@canard/schema-form-ajv8-plugin`에서 import하는 기존 사용자는 마이그레이션이 필요하지 않습니다. 기본 export는 완전한 하위 호환성을 유지합니다.
+> **참고**: 기본 진입점은 계속 Draft-07을 검증하므로 `@canard/schema-form-ajv8-plugin`에서 가져오는 기존 코드의 방언은 바뀌지 않습니다. 1.0.0은 값을 바꾸는 AJV 인스턴스를 거부하며 폼 루트를 애플리케이션의 AJV 인스턴스에 더 이상 등록하지 않습니다. 아래의 바인딩 규칙과 `compileGuard(root, pointer)` 설명을 확인하십시오.
 
 ---
 
@@ -99,9 +99,9 @@ registerPlugin(plugin);
 
 - **목적**: 선호하는 설정으로 구성된 커스텀 AJV 인스턴스를 제공할 수 있습니다
 - **사용법**: 선택적 - 호출하지 않으면 기본 AJV 인스턴스가 자동으로 생성됩니다
-- **장점**: AJV 설정, 커스텀 키워드, 포맷, 검증 규칙에 대한 완전한 제어 가능
+- **장점**: 입력 값을 보존하는 커스텀 키워드, 포맷, 검증 설정
 - **바인딩 규칙**: `coerceTypes`, `useDefaults`, `removeAdditional` 중 하나라도 활성화된 인스턴스는 즉시 거부되며, 이전 인스턴스가 계속 바인딩된 상태로 유지됩니다. 바인딩 뒤에 이 옵션을 활성화하면 다음 검증기 또는 가드 컴파일도 거부됩니다.
-- **바인딩 순서**: `bind`는 첫 컴파일 전에 한 번 부릅니다. 루트가 등록된 뒤 다시 바인딩하는 것은 지원하지 않으며, 이 플러그인에서는 이미 등록된 루트는 등록한 인스턴스에 그대로 남습니다.
+- **바인딩 순서**: `bind`는 첫 컴파일 전에 한 번 부릅니다. 루트가 등록된 뒤 다시 바인딩하는 것은 지원하지 않습니다. 다시 바인딩하면 이후의 루트 컴파일은 새로 바인딩한 인스턴스를 사용하며, 그 전에 컴파일한 검증 함수와 가드는 자신을 컴파일한 인스턴스를 유지합니다.
 
 호출하는 쪽은 `group`(`'UNHANDLED_ERROR'`)과 `code`(`'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, 즉 `FormErrorCode.ValidatorBindRefused`의 값)로 이 거부를 구분합니다. core의 `isUnhandledError`는 이를 인식하지 않습니다.
 
@@ -137,6 +137,8 @@ registerPlugin(plugin);
 - `compileGuard`는 엔진이 소유한 복사본 루트의 JSON Pointer에서 동기 불리언 가드를 컴파일합니다. `compile` 호출 여부와 관계없이 복사본을 받습니다. 자체 완결적인 가드는 루트를 등록하지 않고 그 부분 스키마를 컴파일하며, 루트 정의를 `$ref`로 참조하는 가드처럼 루트 위치가 필요한 가드만 가드용 인스턴스에 루트를 등록하고, `compile`은 원본과 분리한 사본을 플러그인 소유의 검증 컴파일러에서 컴파일합니다. 새 컴파일에는 현재 애플리케이션 등록을 사용합니다. 애플리케이션에서 조회하거나 다른 루트에서 참조할 주소는 애플리케이션 인스턴스에 등록합니다. 전체 검증은 사적 루트 사본에 비동기 모드를 사용합니다. 비동기 검증이 필요한 별도 등록 자원은 `$async: true`를 선언합니다. 두 가드 모두 전체 스키마 컴파일 전에 사용할 수 있습니다. 가드는 AJV의 루트 메타 스키마 검사 없이(`validateSchema: false`) 컴파일되며 AJV의 루트 메타 스키마 검사는 전체 검증 컴파일에서만 돕니다. 그래서 조건과 무관한 곳의 루트 메타 스키마 위반은 어느 가드도 실패시키지 않고, 기본 검사 설정에서는 전체 검증이 `VALIDATOR_COMPILE_FAILED`로 보고합니다(`validateSchema: false`나 `'log'`로 바인딩한 인스턴스는 그 옵션대로 동작합니다). 사용자 정의 키워드의 메타 검사·엄격 옵션·코드 생성 검사는 가드 컴파일에도 남습니다.
 - `compile`, 모든 `compileGuard`, `release`에는 동일한 복사본 객체를 전달합니다. 전체 스키마 검증은 가드 컴파일 이후에 컴파일해도 됩니다.
 - `release`도 `compile` 호출 여부와 관계없이 같은 복사본을 받아 플러그인이 보유한 해당 루트 자원을 해제합니다. 등록되지 않은 루트를 해제하면 아무 작업도 하지 않습니다.
+- 가드는 동기로 컴파일되므로, `$data`가 실행 시점에 선택하는 비동기 포맷은 가드를 컴파일할 때 감지되지 않습니다.
+- AJV 인스턴스와 플러그인이 그 인스턴스로 만든 검증기는 하나의 JavaScript 실행 영역 안에서 사용하며, 하나의 AJV 인스턴스를 워커 스레드 사이에서 공유하는 것은 지원하지 않습니다.
 
 **가드의 동적 범위.** 루트 위치가 필요한 가드는 AJV의 동적 앵커 표를 먼저 채운 뒤에야 가드용 인스턴스에서 `{ $ref: <루트>#<포인터> }`를 컴파일합니다. AJV가 동적 참조의 표 조회 여부를 컴파일 때 정하기 때문입니다. 사슬 자원은 루트와, 포인터 경로 위에서 자기 `$id`로 새 자원을 여는 조상이며 바깥부터 셉니다. 각 앵커 이름은 그 이름을 선언한 가장 바깥 사슬 자원의 선언에 묶이며, 선언은 그 자원 어디에 있어도 됩니다. 문자열 `$dynamicAnchor`는 어디서나, `$recursiveAnchor: true`는 자원 루트에서만(이름 `''`) 셉니다. 탐색은 하위 스키마 키워드(`properties`, `items`, `allOf`, `$defs` 등)로만 내려가며, `const`, `enum`, `default`, `examples` 같은 데이터 키워드, 중첩 자원, 가드 자신의 서브트리 안으로는 들어가지 않습니다. 루트의 다른 단언은 가드에 영향을 주지 않습니다. 표 채우기와 아래 검사는 AJV의 동적 어휘를 켠 인스턴스(`opts.dynamicRef`, Ajv2019와 Ajv2020이 켭니다)에서, 그리고 어딘가에 `$dynamicAnchor`, `$dynamicRef`, `$recursiveAnchor`, `$recursiveRef` 키가 있는 루트에서만 돌며, 이 판단은 루트를 등록할 때 한 번만 합니다. draft-07 인스턴스에서는 이 키워드들이 알 수 없는 키워드라서 전체 검증과 가드 모두 무시합니다.
 
@@ -169,6 +171,8 @@ AJV 전체 검증이 명세와 다른 다음 경우에는 가드가 명세를 �
 - `toString`처럼 `Object.prototype` 멤버와 겹치는 앵커 이름은 전체 검증이나 어휘적 선언을 AJV가 직접 평가할 때 실패할 수 있습니다. 루트 포인터 가드는 사슬 자원이 선언한 동적 앵커를 자체 항목으로 전달합니다.
 - 루트나 부모 데이터를 읽는 `$data` 참조와 사용자 정의 키워드는 가드에서 호스트 값만 봅니다. 이것은 호스트 값만 받는 가드 인터페이스의 별도 한계이며 동적 범위와 무관합니다.
 
+바인딩한 인스턴스의 엄격 옵션(예: `strictTypes`, `strictRequired`)은 일부 `if` 가드의 컴파일을 실패시킬 수 있습니다. 해당 게이트는 false가 되고 `GUARD_FAILED` `onError` 기록을 만듭니다. 플러그인은 소비자의 옵션을 덮어쓰지 않으며, 엄격 모드는 플러그인 기본값이 아닙니다(VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
+
 ### **기본 설정**
 
 커스텀 AJV 인스턴스가 제공되지 않은 경우, 플러그인은 AJV 8.x에 최적화된 다음 기본 설정을 사용합니다:
@@ -193,6 +197,8 @@ const defaultSettings: Ajv.Options = {
 - **타입 안전성**: 고급 타입 추론과 함께 완전한 TypeScript 지원
 
 `createValidatorFactory`는 AJV 인스턴스에 값 변환, 기본값 삽입 또는 추가 속성 제거 옵션이 켜져 있으면 `ValidatorBindRefusedError`를 던집니다. 팩터리 생성 뒤에 옵션을 켜면 다음 검증기 컴파일에서 거부합니다.
+
+플러그인은 바인딩한 인스턴스의 생성자로 사적 컴파일러를 만듭니다. 사용자 정의 AJV 하위 클래스가 생성자에서 스키마나 메타 스키마를 등록하면 다음 검증 또는 가드 컴파일이 `AJV isolation compiler creation failed: constructor registers bootstrap schemas` 오류를 던집니다. 앱 스키마는 인스턴스를 생성한 뒤 `addSchema` 또는 `addMetaSchema`로 등록하십시오.
 
 `createValidator(ajv)`는 Form의 `validatorFactory`에 넘길 인스턴스별 `{ compile, compileGuard }` 객체를 돌려줍니다. 새 객체는 Form이 트리를 다시 만들게 하므로 렌더 밖에서 한 번만 만드십시오(`const validator = createValidator(customAjv);` 뒤 `<Form validatorFactory={validator} />`). 여러 객체가 AJV 인스턴스 하나를 함께 써도 되며, 인스턴스는 값을 바꾸지 않아야 합니다(`coerceTypes`, `useDefaults`, `removeAdditional` 꺼짐).
 
@@ -271,6 +277,8 @@ plugin.validator.bind(customAjv);
 registerPlugin(plugin);
 ```
 
+이 예시를 사용할 때는 애플리케이션에 `ajv-formats`를 설치하십시오. AJV 8은 이 포맷 정의를 포함하지 않습니다.
+
 ### 수동 AJV 사용에서 마이그레이션
 
 ```typescript
@@ -297,6 +305,7 @@ import Ajv from 'ajv';
 const ajv = new Ajv({
   allErrors: true,
   verbose: true,
+  strict: false,
 });
 
 // 커스텀 키워드나 포맷 추가

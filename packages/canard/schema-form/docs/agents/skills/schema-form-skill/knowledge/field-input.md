@@ -167,8 +167,7 @@ An invalid live map reports `FieldInputMap` with origin `load` once and retains 
 
 `Form.Field`, `Form.Render` and `Form.Input` retain their own component props at mount: `FieldInput`, `FieldRenderer` and `Wrapper` on `Form.Field`; `children`, `FieldInput` and `Wrapper` on `Form.Render`; `FieldInput` on `Form.Input`. Read changing data through the received context or a hook inside those components, or replace that element's key when its local component configuration must change.
 
-`context` has a different role: it is live application data and is compared by content before propagation.
-An equal fresh plain object retains the snapshot; changed content propagates to the current tree and can affect controls and validation freshness without rebuilding it.
+`context` has a different role: it is live application data compared before propagation. Plain objects, arrays and supported built-ins such as Date and Map compare by content, so an equal fresh plain object retains the snapshot; URL, URLSearchParams and other class instances compare by reference ([validation UX](validation-ux.md#account-for-display-timing-limits)). Changed content propagates to the current tree and can affect controls and validation freshness without rebuilding it.
 Keep callbacks and identity-sensitive values inside context stable when they have not changed, so new identities do not create artificial context changes.
 This recommendation avoids unnecessary renders/comparisons and unintended semantic updates; it is not a claim that every new prop reference destroys state.
 

@@ -34,7 +34,7 @@ FieldRenderer는 묶인 Label, Input, ErrorMessage 부품을 조립합니다. La
 
 ## 안내사항
 
-⚠️ 이 플러그인은 Ant Design Mobile 환경에서 `@canard/schema-form`을 사용할 때 자주 필요한 핵심 컴포넌트들을 미리 구현해 놓은 것입니다.
+⚠️ 이 플러그인은 Ant Design 5 환경에서 `@canard/schema-form`을 사용할 때 자주 필요한 핵심 컴포넌트들을 미리 구현해 놓은 것입니다.
 
 📌 플러그인의 목적은 개발 편의성을 높이는 것이므로, 모든 가능한 컴포넌트를 포함하지는 않습니다.
 
@@ -106,7 +106,7 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 
 
 - **역할**: 시간 선택을 위한 TimePicker
 - **적용 조건**: `type`이 `"string"`이고 `format`이 `"time"`인 경우
-- **추가 사항**: HH:mm:00Z 형식으로 시간 저장
+- **추가 사항**: HH:mm:00Z 형식으로 시간 저장. 시간 값에는 오프셋이 포함됩니다. 선택기는 값을 보는 사용자의 시간대로 표시하고, 수정한 값은 사용자의 현지 시간과 그 오프셋으로 저장합니다. 예: `21:30:00+09:00`.
 
 ### **[`FieldInputMonthRange.tsx`](./src/fieldInputs/FieldInputMonthRange.tsx)**
 
@@ -124,7 +124,7 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 
 
 - **역할**: 시간 범위 선택을 위한 DatePicker RangePicker (시간 모드)
 - **적용 조건**: `type`이 `"array"`이고 `format`이 `"time-range"` 또는 `inputType`이 `"timeRange"`이며, `items.type`이 `"string"`인 경우
-- **추가 사항**: `presentation.FieldInputProps.minimum`·`maximum`(HH:mm:00Z)으로 선택 가능한 시간 제한, [시작시간, 종료시간] 배열 형태로 반환
+- **추가 사항**: `presentation.FieldInputProps.minimum`·`maximum`(HH:mm:00Z)으로 선택 가능한 시간 제한, [시작시간, 종료시간] 배열 형태로 반환. 제한값은 오프셋을 적용해 보는 사람의 현지 시간대로 변환한 뒤 비교합니다. 변환한 `minimum`이 `maximum`보다 늦으면 `minimum`부터 자정을 지나 `maximum`까지 선택할 수 있습니다.
 
 ### **[`FieldInputRadioGroup.tsx`](./src/fieldInputs/FieldInputRadioGroup.tsx)**
 
@@ -170,7 +170,7 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 
 
 - **역할**: 기본 문자열 입력 필드
 - **적용 조건**: `type`이 `"string"`인 경우 (다른 조건에 해당하지 않는 fallback)
-- **추가 사항**: `format`이 `"password"`인 경우 비밀번호 입력 필드로 동작, 입력 필드 크기 조절 가능
+- **추가 사항**: `format`이 `"password"`인 경우 비밀번호 입력 필드로 동작, 입력 필드 크기 조절 가능. 비밀번호 필드는 Ant Design의 `Input.Password`를 사용하며, 라이브러리가 제공하는 표시 전환(눈 모양) 버튼이 나타납니다.
 
 ### **[`FieldInputNumber.tsx`](./src/fieldInputs/FieldInputNumber.tsx)**
 
@@ -188,7 +188,7 @@ URI 스킴은 RFC 3986 3.1절의 문법으로 구분합니다. 목록에 없는 
 
 ## 입력 설정
 
-위의 `protocols`, `lazy`, `minimum`, `maximum` 같은 textarea 행 제한 이외의 입력별 설정은 `presentation.FieldInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
+위의 `protocols`, `lazy`, `minimum`, `maximum` 같은 입력별 설정은 `presentation.FieldInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
 
 ```ts
 const jsonSchema = {
@@ -203,7 +203,7 @@ const jsonSchema = {
 };
 ```
 
-입력별 설정은 입력으로 전달되는 `presentation.FieldInputProps`에 둡니다. 사용자 정의 `options` 키는 오류나 경고 없이 허용하지만 이 내장 입력은 해당 그룹에서 입력 설정을 읽지 않습니다.
+textarea의 `minRows`, `maxRows`를 포함한 입력 설정은 입력으로 전달되는 `presentation.FieldInputProps`에 둡니다. 스키마 수준의 `minRows`, `maxRows`는 textarea 기본값만 제공합니다. 사용자 정의 `options` 키는 오류나 경고 없이 허용되지만 이 내장 입력들은 그 그룹에서 설정을 읽지 않습니다.
 
 ## 컴포넌트 우선순위
 
@@ -231,9 +231,12 @@ ES2020보다 낮은 버전의 JavaScript 환경에서 사용하시는 경우, �
 
 - Node.js 14.17.0 이상
 - 최신 브라우저 (Chrome 91+, Firefox 90+, Safari 14+)
+- @canard/schema-form 1.x, Ant Design 5.x(5.10 이상), dayjs 1.x, React 및 React DOM 18 또는 19
 
 **레거시 환경 지원이 필요한 경우:**
 Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환해주세요.
+
+**중복 사본 안내:** 이 플러그인은 Ant Design과 dayjs를 dependencies와 peerDependencies에 모두 명시합니다. 따라서 패키지 매니저가 패키지를 배치하는 방식에 따라 애플리케이션이 지원 버전의 별도 사본을 추가로 불러올 수 있습니다. 플러그인이 호스트의 테마와 ConfigProvider를 공유하도록 중복 사본을 제거해 주세요.
 
 ---
 
@@ -267,14 +270,14 @@ Ant Design 5 Select는 팝업이 마운트되기 전에 내부 접미사 `_list`
 
 프로젝트와 관련된 문의나 제안은 이슈를 생성해 주세요.
 
-### Switch values and state labels
+### 스위치 값과 상태 라벨
 
-For a string switch, `enum[0]` is the checked (on) value and `enum[1]` is the unchecked (off) value.
+문자열 스위치에서 `enum[0]`은 켜진(checked) 값이고 `enum[1]`은 꺼진(unchecked) 값입니다.
 
-A boolean switch accepts `presentation.FieldInputProps.alias` with optional `checked` and `unchecked` ReactNode labels. Labels use `context.checkboxLabels`, then `alias`, then no state labels. The current state label does not replace the field name.
+불리언 스위치는 선택 항목인 `checked`, `unchecked` ReactNode 라벨을 담은 `presentation.FieldInputProps.alias`를 받습니다. `context.checkboxLabels`가 있으면 그 객체 전체가 `alias`를 대체하고, 없으면 `alias`를 사용하며, 둘 다 없으면 상태 라벨을 표시하지 않습니다. 현재 상태 라벨이 필드 이름을 대체하지는 않습니다.
 
 ### 슬라이더
 
 읽기 전용 Slider는 `multipleOf`가 없는 `number` 스키마에서 범위 안의 소수를 그대로 표시합니다. `integer` 스키마는 정수 격자점을 표시하고 저장값을 유지합니다. Form 범위의 Slider ID는 루트 요소를 가리킵니다. 라이브러리는 thumb ID prop을 제공하지 않습니다. 편집 가능한 thumb로 이동하려면 `form.focus(path)`를 사용하세요.
 
-슬라이더의 미설정 표시, 정지점, 키 입력과 값 반올림은 Ant Design이 처리합니다.
+슬라이더의 미설정 표시, 정지점, 키 입력과 값 반올림은 Ant Design이 처리합니다. 범위가 `0`부터 `1e-6`이고 `multipleOf: 1e-7`인 경우처럼 간격이 아주 작으면, 저장값은 정확히 유지되지만 thumb, 툴팁과 `aria-valuenow`에는 이웃한 정지점이나 범위의 끝 값이 표시될 수 있습니다.

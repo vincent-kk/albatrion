@@ -54,3 +54,7 @@ export default function App() {
 - [코딩 에이전트 자산](https://vincent-kk.github.io/albatrion/ko/docs/canard/schema-form#agent-assets)
 
 기존 애플리케이션은 위 이주 가이드를 따라 변경하십시오. 패키지에 포함된 [소비자 이주 프롬프트](./docs/agents/skills/schema-form-skill/knowledge/migration-from-0x.md)는 코딩 에이전트가 애플리케이션 수정과 검증을 수행하도록 안내합니다.
+
+### TypeScript 모듈 해석
+
+`moduleResolution`에는 `"bundler"`, `"node16"`, `"nodenext"` 중 하나를 그에 맞는 TypeScript module 설정과 함께 사용하십시오. 레거시 `"node10"` 해석은 의존성의 subpath exports를 따르지 않습니다. `types`로 이 패키지의 루트 선언은 찾지만 전이 import는 해석하지 못해 `FormHandle.submit` 같은 루트 API가 `any`가 될 수 있으며, `skipLibCheck: true`는 이 해석 오류를 숨길 수 있습니다. 루트 선언을 찾았다는 사실만으로 API 전체의 형이 보장되지는 않습니다.

@@ -138,7 +138,7 @@ class DataLoader<Key = string, Value = any, CacheKey = Key> {
 
 단일 키의 값을 로드합니다. 자동으로 현재 배치에 합쳐지며 결과가 캐시됩니다.
 
-- `key`가 `null` 또는 `undefined`이면 `DataLoaderError`(코드: `INVALID_KEY`)를 **즉시 throws**합니다.
+- `key`가 `null` 또는 `undefined`이면 `DataLoaderError`(코드: `DATA_LOADER.INVALID_KEY`)를 **즉시 throws**합니다.
 - 동일 캐시 범위 내에서 같은 키에 대해 동일한 Promise를 반환합니다(중복 제거).
 
 ```typescript
@@ -149,7 +149,7 @@ const user = await userLoader.load('user-42');
 
 여러 키의 값을 로드합니다. 키별 실패는 예외를 throw하는 대신 결과 배열의 `Error` 인스턴스로 반환되어 부분 성공이 기본 동작입니다.
 
-- `keys`가 배열형 객체가 아니면 `DataLoaderError`(코드: `INVALID_KEYS`)를 **throws**합니다.
+- `keys`가 배열형 객체가 아니면 `DataLoaderError`(코드: `DATA_LOADER.INVALID_KEYS`)를 **throws**합니다.
 - 각 요소는 해결된 `Value` 또는 `Error`입니다.
 
 ```typescript
@@ -209,7 +209,7 @@ type DataLoaderOptions<Key, Value, CacheKey = Key> = {
 | `batchScheduler` | `(task: () => void) => void`                 | `process.nextTick`  | 배치 디스패치 시점을 제어합니다. `queueMicrotask`, `setTimeout`, `requestAnimationFrame`, 또는 즉시 실행을 위한 `fn => fn()`으로 교체 가능합니다. |
 | `cacheKeyFn`     | `(key: Key) => CacheKey`                     | identity (`k => k`) | 로더 키를 캐시 키로 변환합니다. 키가 객체인 경우(참조 동등성 실패) 필수입니다.                                                                    |
 | `maxBatchSize`   | `number`                                     | `Infinity`          | 배치당 최대 키 수. 초과 시 새 배치가 자동으로 시작됩니다. 양의 정수여야 합니다.                                                                   |
-| `disableBatch`   | `true`                                       | —                   | 배칭 비활성화. 각 `load()` 호출이 즉시 디스패치됩니다(`maxBatchSize: 1`과 동일). `maxBatchSize`와 상호 배타적입니다.                              |
+| `disableBatch`   | `true`                                       | —                   | 배칭 비활성화. 각 `load()` 호출이 즉시 디스패치됩니다(`maxBatchSize: 1`과 동일). 둘 다 지정하면 `disableBatch`가 `maxBatchSize`보다 우선합니다.                              |
 
 ---
 

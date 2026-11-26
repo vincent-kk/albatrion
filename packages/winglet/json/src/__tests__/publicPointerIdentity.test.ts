@@ -2,13 +2,10 @@ import { getJSONPointer } from '@winglet/json/pointer-common';
 import { describe, expect, it } from 'vitest';
 
 import {
-  Operation,
-  applyPatch,
   convertJSONPathToPointer,
   convertJSONPointerToPath,
   getJSONPath,
   getValue,
-  setValue,
 } from '../index';
 
 describe('round-2 json 5: empty token round trips', () => {
@@ -22,16 +19,6 @@ describe('round-2 json 5: empty token round trips', () => {
       expect(getValue(doc, pointer ?? '')).toBe(leaf);
     },
   );
-});
-
-it('returns the root pointer and creates intermediate containers only through setValue', () => {
-  const document = {};
-  expect(getJSONPointer(document, document)).toBe('');
-  expect(() =>
-    applyPatch(document, [{ op: Operation.ADD, path: '/a/b', value: 1 }]),
-  ).toThrow();
-  setValue(document, '/a/b', 1);
-  expect(document).toEqual({ a: { b: 1 } });
 });
 
 it('can represent an empty member by adjacent dots in a JSON path', () => {

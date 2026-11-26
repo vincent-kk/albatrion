@@ -3,7 +3,6 @@ import Ajv from 'ajv';
 import { describe, expect, it } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
-import { readFieldNodeRuntime } from '@/schema-form/__tests__/helpers/readFieldNodeRuntime';
 import { ValidationMode } from '@/schema-form/core/engine/types/state';
 
 import type { Validator } from '../types/validator';
@@ -193,9 +192,10 @@ it('round-3: a same-value NaN root write-back settles using the value equality c
   await wait(200);
   expect(runs).toBeLessThanOrEqual(3);
   expect(root.errors.map((issue: any) => issue.keyword)).toEqual(['finite']);
+  const runsBefore = runs;
   root.setValue(NaN);
   await wait(20);
-  expect(readFieldNodeRuntime(root).isValidationPending).toBe(false);
+  expect(runs).toBe(runsBefore);
 });
 
 it('round-3: node.validate explicitly reruns for the same unchanged input', async () => {

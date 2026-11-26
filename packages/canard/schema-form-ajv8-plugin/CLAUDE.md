@@ -24,7 +24,7 @@ yarn storybook         # Storybook development server
 
 ## Key Details
 
-- Default options: `allErrors: true`, `strictSchema: false`, `validateFormats: false`, `allowUnionTypes: true`.
+- Default options: `allErrors: true`, `strict: false`, `validateFormats: false`, `allowUnionTypes: true`, `multipleOfPrecision: 9`.
 - The package contract defines registration ownership and call order. The registration function uses a root-local guard compiler and a bounded private whole-validation compiler.
 - **Guard meta-schema**: the guard instance uses `allErrors: false` and `validateSchema: false`; AJV's root meta-schema check runs only in the whole-schema compile, so a root meta-schema violation outside the condition fails no guard, and a meta-only violation inside the condition schema is evaluated by the generated code; custom keyword meta-schema checks, strict options and code-generation checks still apply to guards (VALIDATE-033, ERROR-041).
 - `bind(instance)` immediately refuses enabled `coerceTypes`, `useDefaults`, or `removeAdditional`; a refused instance never replaces the current binding.
@@ -37,7 +37,7 @@ yarn storybook         # Storybook development server
 
 ## AJV 7 differences
 
-- AJV 8 uses `strictSchema: false` and `instancePath`.
+- AJV 8 uses `strict: false` and `instancePath`.
 - The 2020 entry point supports Draft 2020-12.
 
 ## Maintainer contract

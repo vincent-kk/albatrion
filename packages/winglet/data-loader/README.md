@@ -239,8 +239,11 @@ interface DataLoaderOptions<Key, Value, CacheKey = Key> {
   /** Function that converts loader keys to cache keys */
   cacheKeyFn?: (key: Key) => CacheKey;
 
-  /** Maximum batch size to process at once */
+  /** Maximum keys per batch: a positive integer, or Infinity (default). Any other value makes the constructor throw INVALID_MAX_BATCH_SIZE. Not read when disableBatch is true. */
   maxBatchSize?: number;
+
+  /** Dispatch every load() in its own batch (same as maxBatchSize: 1). Takes precedence over maxBatchSize. */
+  disableBatch?: true;
 }
 ```
 

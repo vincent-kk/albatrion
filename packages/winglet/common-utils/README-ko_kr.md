@@ -166,7 +166,7 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 
 #### DataLoader
 
-- **[`DataLoader`](./src/utils/DataLoader/DataLoader.ts)**: 여러 요청을 배치로 처리하고 캐싱하여 효율적으로 데이터를 로드하는 유틸리티 클래스
+DataLoader는 별도 패키지 `@winglet/data-loader`에 있습니다.
 
 #### 필터 (Filter)
 
@@ -262,11 +262,10 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 - **[`countKey`](./src/utils/object/countKey.ts)**: 상속된 속성을 포함한 모든 열거 가능한 속성을 세는 함수
 - **[`countObjectKey`](./src/utils/object/countObjectKey.ts)**: 객체의 자체 열거 가능한 속성만 세는 함수
 - **[`deleteDataProperty`](./src/utils/object/deleteDataProperty.ts)**: 데이터 속성 프리미티브의 삭제 대응으로, 일반 `delete` 의미론으로 속성을 제거하는 함수
-- **[`equals`](./src/utils/object/equals.ts)**: 두 객체의 동등성을 비교하는 함수
+- **[`equals`](./src/utils/object/equals/equals.ts)**: 두 객체의 동등성을 비교하는 함수
 - **[`getDataProperty`](./src/utils/object/getDataProperty.ts)**: 예약 멤버 이름(`__proto__`, `constructor`, `prototype`)을 불투명한 own 데이터로 취급하며 속성을 읽는 함수
 - **[`getEmptyObject`](./src/utils/object/getEmptyObject.ts)**: 프로토타입 체인이 없는 진정한 빈 객체를 생성하는 함수
 - **[`getFirstKey`](./src/utils/object/getFirstKey.ts)**: 객체에서 첫 번째 열거 가능한 속성 키를 가져오는 함수
-- **[`getJSONPointer`](./src/utils/object/getJSONPointer.ts)**: 객체에서 JSON Pointer를 사용하여 값을 가져오는 함수
 - **[`getObjectKeys`](./src/utils/object/getObjectKeys.ts)**: 객체의 모든 키를 배열로 반환하는 함수
 - **[`getSymbols`](./src/utils/object/getSymbols.ts)**: 객체의 모든 심볼 속성을 배열로 반환하는 함수
 - **[`hasUndefined`](./src/utils/object/hasUndefined.ts)**: 객체에 undefined 값이 있는지 확인하는 함수
@@ -277,7 +276,7 @@ Babel 등의 트랜스파일러를 사용하여 타겟 환경에 맞게 변환�
 - **[`setDataProperty`](./src/utils/object/setDataProperty.ts)**: 예약 멤버 이름을 불투명한 own 데이터로 취급하며 `__proto__` setter를 트리거하지 않고 속성을 쓰는 함수
 - **[`shallowClone`](./src/utils/object/shallowClone.ts)**: 배열과 일반 객체의 얕은 복사본을 생성하는 함수 (중첩 구조의 참조는 유지)
 - **[`sortObjectKeys`](./src/utils/object/sortObjectKeys.ts)**: 객체의 키를 알파벳 순으로 정렬하는 함수
-- **[`stableEquals`](./src/utils/object/stableEquals.ts)**: 안정적인 방식으로 두 객체의 동등성을 비교하는 함수
+- **[`stableEquals`](./src/utils/object/equals/utils/stableEquals.ts)**: 안정적인 방식으로 두 객체의 동등성을 비교하는 함수
 - **[`transformKeys`](./src/utils/object/transformKeys.ts)**: 객체의 모든 키에 변환 함수를 적용하는 함수
 - **[`transformValues`](./src/utils/object/transformValues.ts)**: 객체의 모든 값에 변환 함수를 적용하는 함수
 

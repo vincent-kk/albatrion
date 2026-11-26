@@ -9,33 +9,33 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 ```typescript
 <TextField
   // ✅ Required attributes
-  id={id}                          // Unique ID
+  id={inputId}                          // Unique ID
   name={name}                        // Used on form submit
-  required={required}                // HTML required
+  required={required}                // MUI sets required on the <input>
 
-  // ✅ ARIA attributes
-  aria-required={required}           // For screen readers
-  aria-invalid={hasError}            // Error state
-  aria-describedby={hasError ? `${id}-error` : undefined}  // Links the error message
+  // ✅ Error state
+  error={hasError}                   // MUI sets aria-invalid on the <input>
 
   // ✅ Label association
-  // Connect LabelRenderer htmlFor={id} with id={id}
+  // Connect LabelRenderer htmlFor={inputId} with id={inputId}
 />
 ```
+
+On `TextField` and `Checkbox`, MUI places ARIA props written directly on the component's wrapper element, not on the control a screen reader announces. `Select` forwards `aria-describedby` to its combobox, but `aria-label` and `aria-labelledby` written directly on it do not reach the combobox, so those go in `SelectDisplayProps`. Pass control-level ARIA through `slotProps.htmlInput` (`TextField`), `SelectDisplayProps` (`Select`) or `slotProps.input` (`Checkbox`), as the MUI plugin's inputs do.
 
 ### Error Message Association
 
 ```typescript
 // Input
 <TextField
-  id={id}
-  aria-describedby={`${id}-error`}
-  aria-invalid={true}
+  id={inputId}
+  error
+  slotProps={{ htmlInput: { 'aria-describedby': getInputId('error') } }}
 />
 
-// Error
+// Error (rendered by the input itself)
 <FormHelperText
-  id={`${id}-error`}  // ✅ Matching ID
+  id={getInputId('error')}  // ✅ Matching ID
   error
 >
   {errorMessage}
@@ -47,16 +47,18 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 ```typescript
 // Label
 <Label
-  htmlFor={id}  // ✅ Connected to the input ID
+  htmlFor={inputId}  // ✅ Connected to the input ID
 >
   {label}
 </Label>
 
 // Input
 <TextField
-  id={id}  // ✅ Connected to the label htmlFor
+  id={inputId}  // ✅ Connected to the label htmlFor
 />
 ```
+
+The element with `labelId` exists only while a FieldRenderer or `Form.Label` renders it: the bound Label, or a branch legend as in the FieldRenderer template. Under a label-free FieldRenderer, such as the MUI plugin's, an input whose control references `labelId` has no accessible name; render the input's own caption at `getInputId('legend')` and reference that instead, as the MUI plugin's picker, choice, switch and slider inputs do when they show a label.
 
 ## Keyboard Navigation
 
@@ -109,9 +111,10 @@ Accessibility requirements for an @canard/schema-form plugin. Label fragments us
 
 ### Grouping
 
-Use the `labelId` supplied to `FieldRendererProps` for the title and group association. Option ids derive from the supplied input `id`; native radio names use that scoped input id. `path` is only a data pointer.
+Use the `labelId` supplied to `FieldRendererProps` for the title and group association. Option ids come from `getInputId(index)` (packages/canard/schema-form-mui-plugin/src/fieldInputs/utils/enum/getEnumOptions.ts); never concatenate onto `inputId`. Native radio names use `inputId`. `path` is only a data pointer.
 
 ```typescript
+// In a FieldRenderer branch: renderers receive labelId, not getInputId
 // Group object types with fieldset
 <fieldset aria-labelledby={labelId}>
   <legend id={labelId}>{jsonSchema.title || name}</legend>
@@ -155,12 +158,10 @@ Use the `labelId` supplied to `FieldRendererProps` for the title and group assoc
 
 ```typescript
 <TextField
-  id={id}
+  id={inputId}
   name={name}
   required={required}
-  aria-required={required}
-  aria-invalid={hasError}
-  aria-describedby={hasError ? `${id}-error` : undefined}
+  error={hasError}
   placeholder={placeholder}  // Additional hint
 />
 ```
@@ -171,12 +172,10 @@ Use the `labelId` supplied to `FieldRendererProps` for the title and group assoc
 <FormControlLabel
   control={
     <Checkbox
-      id={id}
+      id={inputId}
       name={name}
       required={required}
-      aria-required={required}
-      aria-invalid={hasError}
-      aria-describedby={hasError ? `${id}-error` : undefined}
+      slotProps={{ input: { 'aria-invalid': hasError || undefined } }}
     />
   }
   label={label}  // ✅ Label is required
@@ -187,13 +186,11 @@ Use the `labelId` supplied to `FieldRendererProps` for the title and group assoc
 
 ```typescript
 <Select
-  id={id}
+  inputProps={{ id: getInputId('native') }}
+  SelectDisplayProps={{ id: inputId, 'aria-labelledby': labelId }}  // ✅ id and accessible name on the combobox
   name={name}
-  required={required}
-  aria-required={required}
-  aria-invalid={hasError}
-  aria-describedby={hasError ? `${id}-error` : undefined}
-  aria-label={label}  // ✅ When there is no label
+  required={required}  // MUI sets aria-required on the combobox
+  error={hasError}     // MUI sets aria-invalid on the combobox
 >
   {options.map(option => (
     <MenuItem key={option.value} value={option.value}>
@@ -207,16 +204,16 @@ Use the `labelId` supplied to `FieldRendererProps` for the title and group assoc
 
 ```typescript
 <RadioGroup
-  name={id}
+  id={inputId}
+  name={inputId}
   aria-labelledby={labelId}
-  aria-describedby={hasError ? `${id}-error` : undefined}
   aria-required={required}
 >
   {options.map((option, index) => (
     <FormControlLabel
       key={option.value}
       value={option.value}
-      control={<Radio id={`${id}-${index}`} />}
+      control={<Radio id={getInputId(index)} />}
       label={option.label}
     />
   ))}
@@ -226,8 +223,8 @@ Use the `labelId` supplied to `FieldRendererProps` for the title and group assoc
 ### Array (Dynamic Items)
 
 ```typescript
-<Box role="group" aria-labelledby={labelId}>
-  <Typography id={labelId}>{label}</Typography>
+<Box role="group" aria-labelledby={getInputId('legend')}>
+  <Typography id={getInputId('legend')}>{label}</Typography>
 
   {items.map((item, index) => (
     <Box key={index} role="listitem">
@@ -280,10 +277,11 @@ Confirm before publishing the plugin:
 
 ### Required
 - [ ] Every input has `id` and `name`
-- [ ] Required inputs have `aria-required`
-- [ ] Error states have `aria-invalid` and `aria-describedby`
+- [ ] Required inputs have `required` or `aria-required` on the control itself
+- [ ] Error states have `aria-invalid` on the control itself
 - [ ] Label and input are connected with `htmlFor`
-- [ ] Error message id matches the input `aria-describedby`
+- [ ] An `aria-describedby` points only at an element the input itself renders with `getInputId(key)`
+- [ ] ARIA props reach the announced control, checked in a render, not assumed from where they were written (for MUI: `TextField`, `Select` and `Checkbox` take them through `slotProps.htmlInput`, `SelectDisplayProps` and `slotProps.input`; `RadioGroup` and `FormGroup` are themselves the announced group, so theirs go on the root)
 - [ ] Every feature is reachable by keyboard
 - [ ] Tab order is logical
 

@@ -1,7 +1,9 @@
+import { createRef } from 'react';
+
 import { cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { Form, type JSONSchema } from '@canard/schema-form';
+import { Form, type FormHandle, type JSONSchema } from '@canard/schema-form';
 
 import { plugin } from '../index';
 
@@ -10,23 +12,30 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 it.each([
-  { type: 'string', nullable: true, enum: ['red', 'green'] },
   { type: ['string', 'null'], enum: ['red', 'green'] },
 ] satisfies JSONSchema[])('empty enum values agree for $type', (field) => {
-  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  const messages: string[] = [];
+  for (const method of ['warn', 'error'] as const)
+    vi.spyOn(console, method).mockImplementation((...args: unknown[]) => {
+      messages.push(args.map(String).join(' '));
+    });
   const results = [];
   for (const value of [undefined, null]) {
-    warn.mockClear();
+    messages.length = 0;
+    const ref = createRef<FormHandle>();
     const { unmount } = render(
       <Form
+        ref={ref}
         jsonSchema={{ type: 'object', properties: { color: field } }}
         defaultValue={{ color: value }}
         fieldInputDefinitions={plugin.fieldInputDefinitions}
       />,
     );
     results.push(
-      warn.mock.calls.filter((call) => call.join(' ').includes('out-of-range'))
-        .length,
+      messages.filter((message) => message.includes('out-of-range')).length,
+    );
+    expect(ref.current!.getValue()).toEqual(
+      value === undefined ? {} : { color: value },
     );
     unmount();
   }

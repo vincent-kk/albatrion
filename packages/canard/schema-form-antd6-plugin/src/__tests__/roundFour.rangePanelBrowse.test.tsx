@@ -73,12 +73,6 @@ describe.each(['UTC', 'Asia/Seoul'])('time zone %s', (zone) => {
       '.ant-picker-header-next-btn',
     ],
   ] as const)('%s', (_name, field, initial, nextSelector) => {
-    it('control: opening the panel alone leaves the stored range unchanged', async () => {
-      const { ref, container } = mount(field, initial);
-      await openFirst(container);
-      expect(ref.current!.getValue()).toEqual({ value: [...initial] });
-    });
-
     it('browsing to the next page of the panel leaves the stored range unchanged', async () => {
       const { ref, container } = mount(field, initial);
       await openFirst(container);
@@ -101,6 +95,10 @@ describe.each(['UTC', 'Asia/Seoul'])('time zone %s', (zone) => {
 
     it('browsing then dismissing with Escape shows the value the form stores', async () => {
       const { ref, container } = mount(field, initial);
+      const before = Array.from(
+        container.querySelectorAll<HTMLInputElement>('input'),
+        (element) => element.value,
+      );
       const input = await openFirst(container);
       fireEvent.click(panelButton(nextSelector)!);
       await act(async () => {});
@@ -111,10 +109,8 @@ describe.each(['UTC', 'Asia/Seoul'])('time zone %s', (zone) => {
         (element) => element.value,
       );
       const stored = ref.current!.getValue();
-      expect({ shown, stored }).toEqual({
-        shown,
-        stored: { value: [...initial] },
-      });
+      expect(shown).toEqual(before);
+      expect(stored).toEqual({ value: [...initial] });
     });
   });
 });

@@ -37,17 +37,18 @@ npx @slats/agents-assets-sync \
 
 ```
 <bin> --package <name...> [--agent <type...>] [--scope=user|project] [--asset <kind...>]
-      [--dry-run] [--force] [--yes] [--no-interactive] [--root=<cwd>] [--json]
+      [--asset-path=<path>] [--dry-run] [--force] [--yes] [--no-interactive] [--root=<cwd>] [--json]
 ```
 
 | Flag               | Meaning                                                                                                                             |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `--package <name>` | **Required.** `@scope/pkg`, `pkg`, or a scope alias `@scope` that fans out to every installed package declaring `agents.assetPath`. |
 | `--agent <type>`   | `claude` \| `codex` \| `agents`. Omitted, an interactive terminal asks; anywhere else the run exits 2.                              |
-| `--scope`          | `user` (home) or `project` (nearest ancestor owning `.claude`, `AGENTS.md`, `.agents`, `.codex` or `.git`).                         |
+| `--scope`          | `user` (home) or `project`: the nearest ancestor owning a root marker (`.git`, `pnpm-workspace.yaml` or a lockfile), which wins over a nearer `.claude`, `AGENTS.md`, `.agents` or `.codex`; without a marker, the nearest of those agent directories; otherwise cwd. Markers at or above the home directory are ignored.                         |
 | `--asset <kind>`   | `skills` \| `rules` \| `commands`. Default: all. An excluded kind is absent from the plan, so it is neither reported nor deleted.   |
 | `--dry-run`        | Print the plan; write nothing.                                                                                                      |
-| `--force`          | Overwrite diverged content and delete orphans.                                                                                      |
+| `--asset-path <path>` | Asset root relative to each package root, for a package that ships assets without declaring `agents.assetPath`; hashes that directory at run time. |
+| `--force`          | Overwrite diverged content and delete orphans, including skills and Claude rule files that an earlier run recorded in `agents-assets-sync.json` and that the package no longer ships, while they still match the recorded hash. Preview with `--dry-run` before an unattended `--force --yes`.                                                                                      |
 | `--yes`            | Approve the confirmation without showing it.                                                                                        |
 | `--no-interactive` | Never prompt, even on a terminal.                                                                                                   |
 
@@ -68,13 +69,11 @@ straddle two projects.
 tools that read it instead of keeping a home of their own. It differs from
 `codex` only at `user` scope.
 
-One rule file becomes one marker block, so its body hash equals the manifest
-hash for that file and the copy/skip/diverged verdict is as precise as it is
-for a copied file:
+One rule file becomes one marker block. The block body is the rule source with a leading UTF-8 BOM removed and CRLF or CR line endings turned into LF; other bytes keep their encoding. The manifest's `ruleBodyHashes` hold the hash of that normalized body, so the copy/skip/diverged verdict is as precise as it is for a copied file:
 
 ```
 <!-- AGENTS-ASSETS-SYNC:START:@canard/schema-form:rules/schema-form-rule.md -->
-…source bytes, verbatim…
+…normalized rule bytes…
 <!-- AGENTS-ASSETS-SYNC:END:@canard/schema-form:rules/schema-form-rule.md -->
 ```
 
@@ -90,7 +89,7 @@ prose — is carried through byte for byte.
     "build:hashes": "agents-build-hashes",
   },
   "devDependencies": {
-    "@slats/agents-assets-sync": "^0.1.0",
+    "@slats/agents-assets-sync": "^1.0.0",
   },
   "files": ["dist", "docs", "README.md"],
   "agents": {
@@ -109,6 +108,8 @@ docs/agents/
 `agents-build-hashes` hashes the tree at build time into
 `dist/agents-hashes.json`, which the engine compares against on every inject.
 
+Rule files must close every fenced code block and HTML comment and keep fences at the top level, not inside list items or blockquotes; the installer refuses a rule that breaks this and leaves that package unchanged. See the package README's “Markdown boundaries for rules”.
+
 ## Relationship to `@slats/claude-assets-sync`
 
 `@slats/claude-assets-sync` is the single-agent name this engine was migrated
@@ -121,7 +122,7 @@ under that name. Declare `agents.assetPath` and use this engine.
 
 ## AI Reference
 
-**Package**: `@slats/agents-assets-sync` v0.1.2
+**Package**: `@slats/agents-assets-sync` v0.3.1
 **Purpose**: AI agent asset injection CLI engine.
 
 ### Exports
@@ -130,6 +131,7 @@ import { runCli } from '@slats/agents-assets-sync';
 import { HASH_MANIFEST_FILENAME } from '@slats/agents-assets-sync';
 import { MARKER_PREFIX } from '@slats/agents-assets-sync';
 import { PROJECT_ANCHORS } from '@slats/agents-assets-sync';
+import { PROJECT_ROOT_MARKERS } from '@slats/agents-assets-sync';
 import { computeNamespacePrefixes } from '@slats/agents-assets-sync';
 import { formatBlockId } from '@slats/agents-assets-sync';
 import { isValidAgent } from '@slats/agents-assets-sync';

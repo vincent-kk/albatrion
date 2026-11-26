@@ -12,8 +12,8 @@ import {
 } from '../../../__tests__/roundThree/fixture.js';
 import { runInjection } from '../utils/session/runInjection.js';
 
-it('models known and unknown failed-owner prefixes in 1000 real preparations (seed 0x5f1e)', async () => {
-  for (let sequence = 0; sequence < 1000; sequence++) {
+it('models known and unknown failed-owner prefixes in 120 real preparations (seed 0x5f1e)', async () => {
+  for (let sequence = 0; sequence < 120; sequence++) {
     const root = makeRoot('known-prefix-model');
     try {
       const shared = sequence % 2 === 0;

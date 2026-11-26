@@ -16,13 +16,23 @@ const SafeInput = withErrorBoundaryForwardRef(
 );
 ```
 
+### The `ErrorBoundary` class
+
+`ErrorBoundary` (exported from the root entry and `@winglet/react-utils/hoc`) is the class both HOCs render. Its props are `children: ReactNode`, `fallback?: ReactNode` (the default message when `undefined`) and `onError?: (error: unknown, info: { componentStack?: string }) => void`, called after the boundary logs the error. Use it directly as JSX around a subtree that is not a single component, or when `onError` should be a plain callback rather than the hook the HOCs take; use an HOC to wrap one component definition.
+
+```tsx
+<ErrorBoundary fallback={<p>Unavailable</p>} onError={report}>
+  <Dashboard />
+</ErrorBoundary>
+```
+
 ### What the boundary does not catch
 
 It is an ordinary React class boundary — `getDerivedStateFromError` plus `componentDidCatch` — so the standard exclusions apply, plus two specific to this implementation:
 
 - **Event handlers and async code.** Errors thrown in `onClick`, `setTimeout`, promise rejections, or anything outside the render/lifecycle path never reach it. Handle those with `try`/`catch` and an error state.
 - **The fallback itself.** A throwing fallback is rendered by the already-failed boundary, so it escapes to the _parent_ boundary — or crashes the app when there is none. Keep fallbacks trivial.
-- **The error never reaches the fallback.** `fallback` is a `ReactNode`, not a render function; the caught error is held in state but only ever surfaces through `console.error` in `componentDidCatch`. To display error details, catch them yourself.
+- **The error never reaches the fallback.** `fallback` is a `ReactNode`, not a render function; the boundary logs the caught error with `console.error` and passes it, with React's component stack, to an optional reporter: `withErrorBoundary(Component, fallback, useReporter)` and `withErrorBoundaryForwardRef(Component, fallback, useReporter)` call the `useReporter` hook on every render and use the function it returns as the boundary's `onError`. To show error details in the UI, catch them yourself.
 - **There is no reset.** Once caught, the instance shows the fallback for the rest of its life. Recovery means remounting it — typically by changing its `key`.
 
 ## `withUploader`

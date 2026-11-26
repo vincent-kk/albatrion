@@ -1,18 +1,15 @@
 import { getCssTextComponentEnd } from './getCssTextComponentEnd';
 import { CssTokenKind } from './CssTokenKind';
+import { FLAT_CONTENT_PATTERN } from './flatCssPatterns';
 import { type CssSource, readCssCode } from './readCssCode';
 import { readCssToken } from './readCssToken';
 
-/** Escape-free string spans cannot change the surrounding component nesting. */
-const STRING = String.raw`(?:"[^"\\\n\r\f]*(?:"|\r\n|\r(?!\n)|[\n\f])|'[^'\\\n\r\f]*(?:'|\r\n|\r(?!\n)|[\n\f]))`;
-/** All alternatives have disjoint first code units; nested and escaped forms use token traversal. */
-const CONTENT = String.raw`(?:[^()[\]{}"'\\/]|${STRING})*`;
-/** Flat parenthesized positions. */
-const SIMPLE_PAREN = new RegExp(CONTENT + String.raw`\)`, 'y');
+/** Flat parenthesized positions; nested and escaped forms use token traversal. */
+const SIMPLE_PAREN = new RegExp(FLAT_CONTENT_PATTERN + String.raw`\)`, 'y');
 /** Flat bracketed positions. */
-const SIMPLE_BRACKET = new RegExp(CONTENT + String.raw`\]`, 'y');
+const SIMPLE_BRACKET = new RegExp(FLAT_CONTENT_PATTERN + String.raw`\]`, 'y');
 /** Flat brace positions. */
-const SIMPLE_BRACE = new RegExp(CONTENT + String.raw`\}`, 'y');
+const SIMPLE_BRACE = new RegExp(FLAT_CONTENT_PATTERN + String.raw`\}`, 'y');
 
 /**
  * Skip a bracketed component through shared lexical positions and matching delimiters.
